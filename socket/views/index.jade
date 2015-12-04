@@ -1,0 +1,9 @@
+extends layout
+
+block headers
+  - var title = "MEDiA LiNK"
+  title= title
+  script(type='text/javascript' src='http://socket.localhost:8080/client/asite.js')
+
+block content
+  h1= title
