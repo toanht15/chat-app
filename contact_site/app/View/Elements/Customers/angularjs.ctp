@@ -200,6 +200,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           $scope.monitorList[obj.tabId].connectToken = obj.connectToken;
           $scope.monitorList[obj.tabId].title = obj.title;
           $scope.monitorList[obj.tabId].url = obj.url;
+          $scope.monitorList[obj.tabId].prev = obj.prev;
         }
         else {
           socket.emit('getCustomerInfo', JSON.stringify({tabId: obj.tabId}));
@@ -217,7 +218,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       // 担当しているユーザーかチェック
       var obj = JSON.parse(data), url, scscale, scwidth, scheight;
       if (connectToken !== obj.connectToken) return false;
-      $scope.monitorList[obj.tabId].connectToken = obj.connectToken;
       scscale = window.parent.screen.width / obj.screen.width;
       var wSpan = window.parent.screen.width - obj.windowSize.width;
       var hSpan = window.parent.screen.height - obj.windowSize.height;
@@ -253,6 +253,13 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     socket.on('connectConfirm', function(data){
       var obj = JSON.parse(data);
+    });
+
+    socket.on('syncEvStart', function(data){
+      var obj = JSON.parse(data);
+      if ( obj.tabId !== undefined && angular.isDefined($scope.monitorList[obj.tabId])) {
+        $scope.monitorList[obj.tabId].connectToken = obj.connectToken;
+      }
     });
 
     socket.on('syncStop', function(data){

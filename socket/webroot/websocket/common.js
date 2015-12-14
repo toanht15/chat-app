@@ -31,7 +31,7 @@ var socket, // socket.io
 
   common = {
     n: 20,
-    str: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQESTUVWXYZ1234567890",
+    str: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
     token: null,
     cursorTag: null,
     params : {},
@@ -81,12 +81,12 @@ var socket, // socket.io
       if ( !check.browser() ) return false;
       var info  = '<div id="sincloBox" style="position: fixed; bottom: -10px; right: 5px; background-color: #FFF; border: 1.5px solid #E8E7E0; border-radius: 10px; z-index:999998; height: 45px; width: 250px; overflow: hidden;">';
           info += '  <div style="position: relative;">';
-          info += '    <img onclick="sinclo.operatorInfo.ev()" style="position: absolute; top: 11.5px; right: 10px; z-index: 0;" src="http://183.177.237.205:3000/img/yajirushi.png" height="12" width="16.5">';
-          info += '    <div onclick="sinclo.operatorInfo.ev()" style=" position: absolute; top: 0; left: 0; right: 0; z-index: -1; background-color: #ABCD05; width: 100%; height: 35px; background-image: url(http://183.177.237.205:3000/img/call.png); background-repeat: no-repeat; background-position: 15px, 0; background-size: 4.5%; color: #FFF;">';
+          info += '    <img onclick="sinclo.operatorInfo.ev()" style="position: absolute; top: 11.5px; right: 10px; z-index: 0;" src="http://sinclows.dip.jp/img/yajirushi.png" height="12" width="16.5">';
+          info += '    <div onclick="sinclo.operatorInfo.ev()" style=" position: absolute; top: 0; left: 0; right: 0; z-index: -1; background-color: #ABCD05; width: 100%; height: 35px; background-image: url(http://sinclows.dip.jp/img/call.png); background-repeat: no-repeat; background-position: 15px, 0; background-size: 4.5%; color: #FFF;">';
           info += '      <pre style="color: #FFF; text-align: center; font-size: 15px; padding: 10px; margin:  0;">お電話でのお問い合わせ</pre>'
           info += '    </div>';
           info += '    <div style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin-top: 35px;">';
-          info += '      <div style="background-image: url(http://183.177.237.205:3000/img/call_circle.png); background-repeat: no-repeat; background-position: 5px, 0px; height: 60px; margin: 15px 10px; background-size: 55px auto, 55px auto; padding-left: 55px;">';
+          info += '      <div style="background-image: url(http://sinclows.dip.jp/img/call_circle.png); background-repeat: no-repeat; background-position: 5px, 0px; height: 60px; margin: 15px 10px; background-size: 55px auto, 55px auto; padding-left: 55px;">';
           info += '        <pre style="font-weight: bold; color: #ABCD05; margin: 0 auto; font-size: 150%; text-align: center; padding: 5px 0px 0px">03-3455-7700</pre>';
           info += '        <pre style="font-weight: bold; color: #ABCD05; margin: 0 auto; font-size: 80%; text-align: center; padding: 3px 0px 0px;">受付時間： 平日9:00-19:00</pre>';
           info += '      </div>';
@@ -199,7 +199,6 @@ var socket, // socket.io
       this.globalSet();
       // ストレージにリファラーのセット
       this.setPrevpage();
-      //
       common.getParams();
       if ( check.isset(storage.s.get('params')) ) {
         common.setParams();
@@ -365,8 +364,10 @@ var socket, // socket.io
       var code = this.getCode(cnst.info_type.referrer);
       userInfo.referrer = storage.s.get(code);
       // IE8対応コード
-      if ( location.href !== userInfo.referrer ) {
-        storage.s.set(code, location.href);
+      if ( !check.isset(userInfo.referrer) ) {
+        if ( check.isset(document.referrer) ) {
+          storage.s.set(code, document.referrer);
+        }
       }
     },
     setPrevpage: function(){
@@ -606,6 +607,7 @@ var socket, // socket.io
     },
     focusCall: function(e){
       this.addEventListener('keyup', syncEvent.changeCall, false);
+      this.addEventListener('change', syncEvent.changeCall, false);
     },
     elmScrollCallTimers: {},
     elmScrollCall: function(e){
@@ -826,7 +828,7 @@ var socket, // socket.io
   };
 
   var timer = window.setInterval(function(){
-    if ( io !== "" ) {
+    if ( io !== "" && sinclo !== "" ) {
       window.clearInterval(timer);
       init();
     }
@@ -841,10 +843,13 @@ function emit(evName, data){
   data.title = common.title();
   data.siteKey = info.site.key;
   data.url= browserInfo.href;
-  data.connectToken = userInfo.connectToken;
   data.tabId = userInfo.tabId;
   data.prevList = browserInfo.prevList;
   data.accessType = userInfo.accessType;
+  data.connectToken = userInfo.get(cnst.info_type.connect);
+  if ( evName == "sendWindowInfo" ) {
+    data.connectToken = userInfo.connectToken;
+  }
   if ( check.isset(userInfo.sendTabId) ) {
     data.from = userInfo.tabId;
     data.to = userInfo.sendTabId;

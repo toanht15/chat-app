@@ -50,6 +50,8 @@ td {
 	border-right-color: rgba(0,0,0,0);
 }
 
+img { -ms-interpolation-mode: bicubic; }
+
 td pre{ padding: 0 5px }
 
 div[id$='_list'] table {

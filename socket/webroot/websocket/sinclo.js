@@ -41,8 +41,7 @@
       // モニタリング中であればスルー
       if ( check.isset(userInfo.connectToken) ) {
         if ( Number(userInfo.accessType) !== Number(cnst.access_type.guest) ) {
-        //   syncEvent.start(true);
-          emit('requestSyncStart', {});
+          // emit('requestSyncStart', {});
         }
         else {
           emitData.connectToken = userInfo.connectToken;
@@ -101,6 +100,7 @@
       emit('connectSuccess', {
         confirm: false,
         subWindow: false,
+        prev: userInfo.prev,
         userAgent: window.navigator.userAgent,
         time: userInfo.time,
         ipAddress: userInfo.getIp(),
@@ -117,7 +117,7 @@
       emit('connectSuccess', {
         confirm: true,
         subWindow: subWindow,
-        connectToken: userInfo.connectToken
+        prev: userInfo.prev
       });
     },
     getAccessInfo: function(d) { // guest only
@@ -152,8 +152,7 @@
       var obj = common.jParse(d);
       if ( obj.tabId !== userInfo.tabId ) return false;
       if ( userInfo.accessType !== Number(cnst.access_type.guest) ) return false;
-
-      userInfo.setConnect(obj.connectToken);
+      userInfo.connectToken = obj.connectToken;
       browserInfo.resetPrevList();
 
       emit('sendWindowInfo', {
@@ -187,7 +186,6 @@
       if ( common.load.flg && browserInfo.url !== obj.url ) {
         location.href = obj.url;
       }
-
       common.load.start();
       userInfo.setConnect(obj.connectToken);
       userInfo.sendTabId = obj.from;
@@ -273,7 +271,7 @@
       if ( Number(obj.accessType) === Number(userInfo.accessType) ) return false;
       // カーソルを作成していなければ作成する
       if ( !document.getElementById('cursorImg') ) {
-        $('body').append('<div id="cursorImg" style="position:fixed; top:' + obj.mousePoint.x + '; left:' + obj.mousePoint.y + '; z-index:999999"><img width="50px" src="http://183.177.237.205:3000/img/pointer.png"></div>');
+        $('body').append('<div id="cursorImg" style="position:fixed; top:' + obj.mousePoint.x + '; left:' + obj.mousePoint.y + '; z-index:999999"><img width="50px" src="http://sinclows.dip.jp/img/pointer.png"></div>');
         cursor = common.cursorTag = document.getElementById("cursorImg");
       }
       // カーソル位置

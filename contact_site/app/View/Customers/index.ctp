@@ -50,12 +50,14 @@
 				<td ng-hide="labelHideList.ua" class="tCenter">{{ua(monitor.userAgent)}}</td>
 				<td ng-hide="labelHideList.time" class="tCenter">{{monitor.time | customDate}}</td>
 				<td ng-hide="labelHideList.stayTime" class="tCenter" cal-stay-time></td>
-				<td ng-hide="labelHideList.page" class="tCenter">{{monitor.page}}（<a href="javascript:void(0)" ng-click="openHistory(monitor)" >移動履歴</a>）</td>
+				<td ng-hide="labelHideList.page" class="tCenter">{{monitor.prev.length}}（<a href="javascript:void(0)" ng-click="openHistory(monitor)" >移動履歴</a>）</td>
 				<td ng-hide="labelHideList.title" class="tCenter"><a href={{monitor.url}} ng-if="monitor.title">{{monitor.title}}</a><span ng-if="!monitor.title">{{monitor.url}}</span></td>
 				<td ng-hide="labelHideList.referrer" class="tCenter">{{monitor.referrer}}</td>
 				<td class='w10'>
-					<span ng-if="monitor.connectToken&&monitor.tabId">モニタリング中</span>
-					<a class='monitorBtn blueBtn btn-shadow' ng-if="!monitor.connectToken&&monitor.tabId" href='javascript:void(0)' ng-click="windowOpen(monitor.tabId)">接続する</a>
+					<ng-if="monitor.tabId">
+					<span ng-if=" monitor.connectToken">モニタリング中</span>
+					<a    ng-if="!monitor.connectToken" class='monitorBtn blueBtn btn-shadow' href='javascript:void(0)' ng-click="windowOpen(monitor.tabId)">接続する</a>
+					</ng-if>
 				</td>
 			</tr>
 		</tbody>
