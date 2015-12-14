@@ -1,11 +1,11 @@
   // mysql
-  var mysql = require('mysql');
-  var pool = mysql.createPool({
-    host: process.env.DB_HOST || 'localhost',
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASS || 'password',
-    database: process.env.DB_NAME || 'sinclo_db'
-  });
+  var mysql = require('mysql'),
+      pool = mysql.createPool({
+        host: process.env.DB_HOST || 'localhost',
+        user: process.env.DB_USER || 'root',
+        password: process.env.DB_PASS || 'password',
+        database: process.env.DB_NAME || 'sinclo_db'
+      });
 
   var http = require('http'),
       //サーバインスタンス作成
@@ -16,6 +16,26 @@
       io = require('socket.io').listen(server), access,
       connect, displayShere;
       server.listen(9090);//9090番ポートで起動
+
+  var crypto = require('crypto');
+      crypto_func = {
+      type: 'aes192',
+      key: null,
+      init: function(){
+        var str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
+        t = "";
+        for(var i = 0; i < 30; i++){
+          t += str[Math.floor(Math.random()*str.length)];
+        }
+        this.key = t;
+      },
+      main: function(str){
+        var cipher = crypto.createCipher(this.type, key);
+        cipher.update(str, 'utf8', 'hex');
+        return cipher.final('hex');
+      }
+  };
+  crypto_func.init();
 
   function makeUserId(){
     var d = new Date();
