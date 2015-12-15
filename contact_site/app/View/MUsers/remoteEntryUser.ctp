@@ -1,14 +1,16 @@
 <script type="text/javascript">
 	closePopup = function(){
+		var userId = document.getElementById('MUserId').value;
 		var userName = document.getElementById('MUserUserName').value;
 		var displayName = document.getElementById('MUserDisplayName').value;
 		var mailAddress = document.getElementById('MUserMailAddress').value;
-		var password = document.getElementById('MUserPassword').value;
+		var password = document.getElementById('MUserNewPassword').value;
 		var permissionLevel = document.getElementById('MUserPermissionLevel').value;
 		$.ajax({
 			type: "post",
 			url: "<?=$this->Html->url('/MUsers/remoteSaveEntryForm')?>",
 			data: {
+				userId: userId,
 				userName: userName,
 				displayName: displayName,
 				mailAddress: mailAddress,
@@ -52,6 +54,7 @@
 </script>
 <?= $this->Form->create('MUser', array('action' => 'add')); ?>
 	<div class="form01">
+		<?= $this->Form->input('id', array('type' => 'hidden')); ?>
 		<div>
 			<?= $this->Html->image('monitor_g.png', array('alt' => '氏名', 'width' => 30, 'height' => 30)) ?>
 			<?= $this->Form->input('user_name', array('placeholder' => 'user_name', 'div' => false, 'label' => false, 'maxlength' => 50)) ?>
@@ -68,7 +71,7 @@
 			<input type="text" style="display: none">
 			<input type="password" style="display: none">
 			<?= $this->Html->image('password.png', array('alt' => 'パスワード', 'width' => 30, 'height' => 30)) ?>
-			<?= $this->Form->input('password', array('placeholder' => 'password', 'div' => false, 'label' => false, 'maxlength' => 12)) ?>
+			<?= $this->Form->input('new_password', array('type' => 'password', 'placeholder' => 'password', 'div' => false, 'label' => false, 'maxlength' => 12)) ?>
 		</div>
 		<div>
 			<?= $this->Html->image('permission.png', array('alt' => '権限', 'width' => 30, 'height' => 30)) ?>

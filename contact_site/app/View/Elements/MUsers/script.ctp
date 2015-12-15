@@ -1,13 +1,15 @@
 <script type="text/javascript">
 function openAddDialog(){
-	openEntryDialog(1);
+	openEntryDialog({type: 1});
 }
-function openEntryDialog(type){
+function openEditDialog(id){
+	openEntryDialog({type: 2, id: id});
+}
+function openEntryDialog(setting){
+	var type = setting.type;
 	$.ajax({
 		type: 'post',
-		data: {
-			type: type
-		},
+		data: setting, // type:1 => type, type:2 => type, id
 		dataType: 'html',
 		url: "<?= $this->Html->url('/MUsers/remoteOpenEntryForm') ?>",
 		success: function(html){

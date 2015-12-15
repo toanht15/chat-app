@@ -95,7 +95,7 @@ class MUser extends AppModel {
 	);
 
 	public function makePassword($str){
-		$passwordHasher = new SimplePasswordHasher(array('hashType' => 'sha256'));
+		$passwordHasher = new SimplePasswordHasher();
 		return $passwordHasher->hash($str);
 	}
 }

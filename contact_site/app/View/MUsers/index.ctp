@@ -31,7 +31,45 @@
 				<td class="tCenter"><?=$val['MUser']['display_name']?></td>
 				<td class="tCenter"><?=$authorityList[$val['MUser']['permission_level']]?></td>
 				<td class="tCenter"><?=$val['MUser']['mail_address']?></td>
-				<td class="tCenter"></td>
+				<td class="tCenter">
+					<?php
+						echo $this->Html->link(
+							$this->Html->image(
+								'edit.png',
+								array(
+									'alt' => '更新',
+									'width' => 30,
+									'height' => 30,
+								)
+							),
+							'javascript:void(0)',
+							array(
+								'class' => 'btn-shadow greenBtn fLeft',
+								'onclick' => 'openEditDialog('.$val['MUser']['id'].')',
+								'escape' => false
+							)
+						);
+					?>
+					<?php
+						echo $this->Html->link(
+								$this->Html->image(
+									'trash.png',
+									array(
+										'alt' => '削除',
+										'width' => 30,
+										'height' => 30
+									)
+								),
+								'javascript:void(0)',
+								array(
+									'class' => 'btn-shadow redBtn fRight',
+									'onclick' => 'openEditDialog('.$val['MUser']['id'].')',
+									'escape' => false
+								)
+						);
+					?>
+
+				</td>
 			</tr>
 		<?php endforeach; ?>
 		</tbody>

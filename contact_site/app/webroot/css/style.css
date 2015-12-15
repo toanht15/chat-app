@@ -24,6 +24,10 @@ table {
 	border: none;
 }
 
+tr:hover {
+	background-color: rgba(195, 214, 155, 0.1);
+}
+
 th,
 td {
 	font-weight: 100;
@@ -475,4 +479,15 @@ div[id$="_title"] p{
 /* ユーザマスタ */
 #muser_menu [class$='Btn']{
 	border-radius: 15px;
+}
+
+#muser_list table td:last-child {
+	width: 100px;
+
+}
+
+#muser_list table td:last-child a {
+	width: 30px;
+	height: 30px;
+	margin: 5px;
 }

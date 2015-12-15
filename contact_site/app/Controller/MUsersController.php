@@ -40,13 +40,14 @@ class MUsersController extends AppController {
 	 * @return void
 	 * */
 	public function remoteOpenEntryForm() {
-		// Configure::write('debug', 0);
+		Configure::write('debug', 0);
 		$this->autoRender = FALSE;
 		$this->layout = 'ajax';
 		$this->__viewElement();
 		// const
-		if ( $this->request->data['type'] === 2 ) {
-
+		if ( strcmp($this->request->data['type'], 2) === 0 ) {
+			$this->MUser->recursive = -1;
+			$this->request->data = $this->MUser->read(null, $this->request->data['id']);
 		}
 		$this->render('/MUsers/remoteEntryUser');
 	}
@@ -56,30 +57,48 @@ class MUsersController extends AppController {
 	 * @return void
 	 * */
 	public function remoteSaveEntryForm() {
-		// Configure::write('debug', 0);
+		Configure::write('debug', 0);
 		$this->autoRender = FALSE;
 		$this->layout = 'ajax';
 		$tmpData = [];
 		$saveData = [];
+		$insertFlg = true;
+
 		if ( !$this->request->is('ajax') ) return false;
+
+		if (!empty($this->request->data['userId'])) {
+			$tmpData['MUser']['id'] = $this->request->data['userId'];
+			$insertFlg = false;
+		}
+		else {
+			$this->MUser->create();
+		}
+
 		$tmpData['MUser']['user_name'] = $this->request->data['userName'];
 		$tmpData['MUser']['display_name'] = $this->request->data['displayName'];
 		$tmpData['MUser']['mail_address'] = $this->request->data['mailAddress'];
 		$tmpData['MUser']['password'] = $this->request->data['password'];
 		$tmpData['MUser']['permission_level'] = $this->request->data['permissionLevel'];
-// pr($this->request);
+
 		// const
 		$this->MUser->set($tmpData);
+
+		if ( !$insertFlg && empty($tmpData['MUser']['password']) ) {
+			unset($this->MUser->validate['password']);
+			unset($tmpData['MUser']['password']);
+		}
+
 		$this->MUser->begin();
 		// バリデーションチェックでエラーが出た場合
 		if ( $this->MUser->validates() ) {
 			$saveData = $tmpData;
 			$saveData['MUser']['m_companies_id'] = $this->userInfo['MCompany']['id'];
-			$saveData['MUser']['password'] = $this->MUser->makePassword($tmpData['MUser']['password']);
-			$this->MUser->create();
+			if ( !empty($tmpData['MUser']['password']) ) {
+				$saveData['MUser']['password'] = $this->MUser->makePassword($tmpData['MUser']['password']);
+			}
+
 			if ( $this->MUser->save($saveData, false) ) {
-				$this->MUser->rollback();
-				// $this->MUser->commit();
+				$this->MUser->commit();
 			}
 			else {
 				$this->MUser->rollback();
