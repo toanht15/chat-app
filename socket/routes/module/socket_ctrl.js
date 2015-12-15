@@ -323,7 +323,7 @@
             var d = new Date();
             send.time = Date.parse(d);
           }
-          send.ipAddress = socket.handshake.address;
+          send.ipAddress = socket.handshake.headers['x-forwarded-for'];
         }
 
         // 企業キーが取得できなければスルー
