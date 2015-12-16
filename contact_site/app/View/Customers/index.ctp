@@ -52,7 +52,7 @@
 				<td ng-hide="labelHideList.stayTime" class="tCenter" cal-stay-time></td>
 				<td ng-hide="labelHideList.page" class="tCenter">{{monitor.prev.length}}（<a href="javascript:void(0)" ng-click="openHistory(monitor)" >移動履歴</a>）</td>
 				<td ng-hide="labelHideList.title" class="tCenter"><a href={{monitor.url}} ng-if="monitor.title">{{monitor.title}}</a><span ng-if="!monitor.title">{{monitor.url}}</span></td>
-				<td ng-hide="labelHideList.referrer" class="tCenter">{{monitor.referrer}}</td>
+				<td ng-hide="labelHideList.referrer" class="tCenter"><span>{{monitor.referrer}}</span></td>
 				<td class='w10'>
 					<ng-if="monitor.tabId">
 					<span ng-if=" monitor.connectToken">モニタリング中</span>

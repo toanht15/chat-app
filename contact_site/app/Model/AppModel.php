@@ -30,18 +30,47 @@ App::uses('Model', 'Model');
  * @package       app.Model
  */
 class AppModel extends Model {
-	function begin() {
-		$dataSource = $this->getDataSource();
-		$dataSource->begin($this);
-	}
+  function begin() {
+    $dataSource = $this->getDataSource();
+    $dataSource->begin($this);
+  }
 
-	function commit() {
-		$dataSource = $this->getDataSource();
-		$dataSource->commit($this);
-	}
+  function commit() {
+    $dataSource = $this->getDataSource();
+    $dataSource->commit($this);
+  }
 
-	function rollback() {
-		$dataSource = $this->getDataSource();
-		$dataSource->rollback($this);
-	}
+  function rollback() {
+    $dataSource = $this->getDataSource();
+    $dataSource->rollback($this);
+  }
+
+  function logicalDelete($id) {
+    $ret = $this->read(null, $id);
+    if ( !empty($ret) && !empty($ret[$this->name]) && isset($ret[$this->name]['del_flg']) ) {
+      $ret[$this->name]['del_flg'] = 1;
+      if ( $this->save($ret, false) ) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public function beforeSave() {
+    $now = new DateTime('now', new DateTimeZone('Asia/Tokyo'));
+    // insert
+    if(empty($this->id)){
+      $this->data[$this->alias]['created_user_id'] = Configure::read('logged_user_id');
+      $this->data[$this->alias]['created'] = $now->format("Y/m/d H:i:s");
+    }
+    // insert && update && delete
+    $this->data[$this->alias]['modified_user_id'] = Configure::read('logged_user_id');
+    $this->data[$this->alias]['modified'] = $now->format("Y/m/d H:i:s");
+    // delete
+    if(!empty($this->data[$this->alias]['del_flg'])){
+      $this->data[$this->alias]['deleted_user_id'] = Configure::read('logged_user_id');
+      $this->data[$this->alias]['deleted'] = $now->format("Y/m/d H:i:s");
+    }
+    return true;
+  }
 }

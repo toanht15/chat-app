@@ -36,11 +36,7 @@ class MUser extends AppModel {
 				'message' => 'メールアドレスの形式が不正です。'
 			)
 		),
-		'password' => array(
-		// 	'notEmpty' => array(
-		// 		'rule' => 'notEmpty',
-		// 		'message' => 'パスワードを入力してください。'
-		// 	),
+		'new_password' => array(
 			'minLength' => array(
 				'rule' => array('between', 6, 12),
 				'allowEmpty' => false,

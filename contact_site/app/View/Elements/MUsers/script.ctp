@@ -20,4 +20,23 @@ function openEntryDialog(setting){
 		}
 	});
 }
+function openConfirmDialog(id){
+	modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', 'ユーザー情報');
+	closePopup = function(){
+		$.ajax({
+			type: 'post',
+			data: {
+				id: id
+			},
+			url: "<?= $this->Html->url('/MUsers/remoteDeleteUser') ?>",
+			success: function(){
+				location.href = "<?= $this->Html->url('/MUsers/index') ?>";
+			},
+			error: function(){
+
+			}
+		});
+	};
+
+}
 </script>

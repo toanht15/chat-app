@@ -63,7 +63,7 @@
 								'javascript:void(0)',
 								array(
 									'class' => 'btn-shadow redBtn fRight',
-									'onclick' => 'openEditDialog('.$val['MUser']['id'].')',
+									'onclick' => 'openConfirmDialog('.$val['MUser']['id'].')',
 									'escape' => false
 								)
 						);

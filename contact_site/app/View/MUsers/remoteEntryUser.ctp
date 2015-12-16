@@ -29,7 +29,7 @@
 				}
 				for (var i = 0; i < keys.length; i++) {
 					if ( data[keys[i]].length > 0 ) {
-						var target = $("input[name='data[MUser][" + keys[i] + "]']");
+						var target = $("[name='data[MUser][" + keys[i] + "]']");
 						for (var u = 0; u < data[keys[i]].length; u++) {
 							target.after("<p class='error-message hide'>" + data[keys[i]][u] + "</p>");
 							num ++;

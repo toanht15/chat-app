@@ -67,7 +67,8 @@ class MUsersController extends AppController {
 		if ( !$this->request->is('ajax') ) return false;
 
 		if (!empty($this->request->data['userId'])) {
-			$tmpData['MUser']['id'] = $this->request->data['userId'];
+			$this->MUser->recursive = -1;
+			$tmpData = $this->MUser->read(null, $this->request->data['userId']);
 			$insertFlg = false;
 		}
 		else {
@@ -77,26 +78,27 @@ class MUsersController extends AppController {
 		$tmpData['MUser']['user_name'] = $this->request->data['userName'];
 		$tmpData['MUser']['display_name'] = $this->request->data['displayName'];
 		$tmpData['MUser']['mail_address'] = $this->request->data['mailAddress'];
-		$tmpData['MUser']['password'] = $this->request->data['password'];
 		$tmpData['MUser']['permission_level'] = $this->request->data['permissionLevel'];
+
+		if ( !$insertFlg && empty($this->request->data['password']) ) {
+			unset($this->MUser->validate['password']);
+		}
+		else {
+			$tmpData['MUser']['new_password'] = $this->request->data['password'];
+		}
 
 		// const
 		$this->MUser->set($tmpData);
-
-		if ( !$insertFlg && empty($tmpData['MUser']['password']) ) {
-			unset($this->MUser->validate['password']);
-			unset($tmpData['MUser']['password']);
-		}
 
 		$this->MUser->begin();
 		// バリデーションチェックでエラーが出た場合
 		if ( $this->MUser->validates() ) {
 			$saveData = $tmpData;
 			$saveData['MUser']['m_companies_id'] = $this->userInfo['MCompany']['id'];
-			if ( !empty($tmpData['MUser']['password']) ) {
+			if ( !empty($saveData['MUser']['new_password']) ) {
+				unset($saveData['MUser']['new_password']);
 				$saveData['MUser']['password'] = $this->MUser->makePassword($tmpData['MUser']['password']);
 			}
-
 			if ( $this->MUser->save($saveData, false) ) {
 				$this->MUser->commit();
 			}
@@ -110,11 +112,18 @@ class MUsersController extends AppController {
 
 
 	/* *
-	 * 更新画面
+	 * 削除
 	 * @return void
 	 * */
-	public function delete() {
-
+	public function remoteDeleteUser() {
+		Configure::write('debug', 0);
+		$this->autoRender = FALSE;
+		$this->layout = 'ajax';
+		$this->MUser->recursive = -1;
+		$ret = $this->MUser->logicalDelete($this->request->data['id']);
+		// $saveData = $ret;
+		// $saveData['MUser']['del_flg'] = 1;
+		// $this->log($saveData, 'debug');
 	}
 
 	private function __viewElement(){

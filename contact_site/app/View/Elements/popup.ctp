@@ -25,6 +25,7 @@ var closePopup,
 			this.elm.help = document.getElementById('popupHelpBtn');
 			this.elm.close = document.getElementById('popupCloseBtn');
 			this.elm.btnArea = document.getElementById('popup-button');
+			closePopup = '';
 			// イベントのセット
 			this._setEvent();
 		},
@@ -47,6 +48,16 @@ var closePopup,
 				area.removeChild(area.childNodes[i]);
 			}
 			switch ( popupEvent.id ) {
+				case 'p-confirm':
+					var closeBtn = _button("はい");
+					closeBtn.onclick = function(){
+						return closePopup();
+					};
+					var closeBtn = _button("いいえ");
+					closeBtn.onclick = function(){
+						return popupEvent.close();
+					};
+					break;
 				case 'p-cus-menu':
 					var closeBtn = _button("設定");
 					closeBtn.onclick = function(){
@@ -132,9 +143,10 @@ var closePopup,
 
 !function(pe){
 	$(document).ready(function(){
-		pe.init();
+		// pe.init();
 	});
 	window.modalOpen = function(contents, id, title){
+		pe.init();
 		return pe.open(contents, id, title);
 	};
 	window.modalClose = function(){

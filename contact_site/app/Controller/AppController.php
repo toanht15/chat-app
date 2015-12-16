@@ -58,6 +58,8 @@ class AppController extends Controller {
             $this->userInfo = $this->Session->read('global.userInfo');
             $this->set('userInfo', $this->userInfo);
         }
+        // コンフィグにユーザーIDを設定
+        Configure::write('logged_user_id', $this->Auth->user('id'));
     }
 
     public function setUserInfo($info){
