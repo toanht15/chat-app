@@ -50,12 +50,16 @@ switch ($this->name) {
 <div id="sidebar-sub" class="card-shadow">
 	<div>
 		<div class="icon">
+			<?= $this->Html->image('monitor.png', array('alt' => '個人設定', 'width' => 30, 'height' => 30, 'url' => array('controller' => 'MUsers', 'action' => 'index'))) ?>
+			<p>個人設定</p>
+		</div>
+		<div class="icon">
 			<?= $this->Html->image('company.png', array('alt' => '企業設定', 'width' => 30, 'height' => 30, 'url' => array('controller' => 'Customers', 'action' => 'index'))) ?>
 			<p>企業設定</p>
 		</div>
 		<div class="icon">
-			<?= $this->Html->image('monitor.png', array('alt' => '個人設定', 'width' => 30, 'height' => 30, 'url' => array('controller' => 'MUsers', 'action' => 'index'))) ?>
-			<p>個人設定</p>
+			<?= $this->Html->image('monitors.png', array('alt' => '個人設定', 'width' => 30, 'height' => 30, 'url' => array('controller' => 'MUsers', 'action' => 'index'))) ?>
+			<p>ユーザーマスタ</p>
 		</div>
 		<div class="icon">
 			<?= $this->Html->image('script.png', array('alt' => 'コード・デモ', 'width' => 30, 'height' => 30, 'url' => array('controller' => 'ScriptSettings', 'action' => 'index'))) ?>
