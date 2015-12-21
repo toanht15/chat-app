@@ -31,7 +31,7 @@ class MUsersController extends AppController {
 	 * */
 	public function index() {
 		$this->paginate['MUser']['conditions']['MUser.m_companies_id'] = $this->userInfo['MCompany']['id'];
-		$this->__viewElement();
+		$this->_viewElement();
 		$this->set('userList', $this->paginate('MUser'));
 	}
 
@@ -43,7 +43,7 @@ class MUsersController extends AppController {
 		Configure::write('debug', 0);
 		$this->autoRender = FALSE;
 		$this->layout = 'ajax';
-		$this->__viewElement();
+		$this->_viewElement();
 		// const
 		if ( strcmp($this->request->data['type'], 2) === 0 ) {
 			$this->MUser->recursive = -1;
@@ -121,12 +121,9 @@ class MUsersController extends AppController {
 		$this->layout = 'ajax';
 		$this->MUser->recursive = -1;
 		$ret = $this->MUser->logicalDelete($this->request->data['id']);
-		// $saveData = $ret;
-		// $saveData['MUser']['del_flg'] = 1;
-		// $this->log($saveData, 'debug');
 	}
 
-	private function __viewElement(){
+	private function _viewElement(){
 		$this->set('authorityList', Configure::read("Authority"));
 	}
 

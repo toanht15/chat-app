@@ -56,7 +56,7 @@ class AppModel extends Model {
     return false;
   }
 
-  public function beforeSave() {
+  public function beforeSave($options = []) {
     $now = new DateTime('now', new DateTimeZone('Asia/Tokyo'));
     // insert
     if(empty($this->id)){
