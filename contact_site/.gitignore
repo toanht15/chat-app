@@ -9,6 +9,7 @@
 /dist
 /tags
 *.mo
+*.css
 
 # IDE and editor specific files #
 #################################

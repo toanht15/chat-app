@@ -1,0 +1,305 @@
+@charset "UTF-8";
+
+/* ポップアップ */
+
+#popup {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: white;
+  margin: auto;
+  z-index: 51;
+
+  /* リアルタイムモニタ-ポップアップ用 */
+  &.p-cus-menu {
+    width: 450px;
+    max-height: 80%;
+    display: inline-table;
+    .ms-container {
+      margin: 0 auto;
+    }
+    #popup-button .textBtn {
+      width: 5em;
+      margin: 0 auto;
+    }
+  }
+
+  /* ポップアップ用:装飾系 */
+  #popup-content {
+    position: relative;
+
+    #popup-title {
+      padding: 18px 0 5px;
+      text-align: center;
+      border-bottom: 1px solid #909090;
+      font-size: 23px;
+      color: #555;
+    }
+
+    #popup-main {
+      padding: 20px;
+    }
+  }
+
+  #popup-ctrl-btn {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    a {
+      width: 30px;
+      height: 30px;
+      padding: 5px;
+      float: left;
+      margin-right: 5px;
+      border-radius: 15px;
+    }
+  }
+
+  /* リアルタイムモニタ-表示項目選択ダイアログ用 */
+  &.p-cus-menu {
+    #popup-title {
+      height: 50px;
+    }
+    #popup-main {
+      display: inline-block;
+      width: 100%;
+    }
+    #popup-button {
+      height: 50px;
+    }
+  }
+
+
+  /* リアルタイムモニタ-移動履歴用 */
+  &.p-cus-history {
+    width: 400px;
+    max-height: 300px;
+    display: inline-table;
+    .ms-container {
+      margin: 0 auto;
+    }
+    #tBodyDiv {
+      max-height: 300px;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+    #popup-button .textBtn {
+      width: 5em;
+      margin: 0 auto;
+    }
+    #popup-title {
+      height: 50px;
+    }
+    #popup-main #frame {
+      height: 160px;
+      width: 100%;
+      overflow: auto;
+      display: flex;
+    }
+    #popup-button {
+      height: 50px;
+    }
+    #popup-main table {
+      table-layout: fixed;
+      border-collapse: collapse;
+    }
+    table {
+      th {
+        background-color: #C3D69B;
+        border: none;
+        border-bottom: 1px solid #595959;
+        border-left: 1px solid #595959;
+        &:first-child {
+          border-left: none;
+        }
+      }
+      td {
+        border: none;
+        border-bottom: 1px solid rgba(0, 0, 0, 0);
+        border-left: 1px solid rgba(0, 0, 0, 0);
+        &:first-child {
+          border-left: none;
+        }
+      }
+      .popupHistoryNo {
+        width: 40px;
+      }
+      .popupHistoryUrl {
+        width: 200px;
+      }
+      .popupHistoryTimer {
+        width: 100px;
+      }
+      td span {
+        word-wrap: break-word;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        display: block;
+        overflow: hidden;
+        padding: 2px;
+      }
+    }
+  }
+
+  /* 履歴一覧-ポップアップ用 */
+  &.p-history-logs {
+    width: 400px;
+    height: 300px;
+    display: inline-table;
+    .ms-container {
+      margin: 0 auto;
+    }
+    #popup-button .textBtn {
+      width: 5em;
+      margin: 0 auto;
+    }
+    #popup-title {
+      height: 50px;
+    }
+    #popup-main #frame {
+      height: 160px;
+      width: 100%;
+      overflow: auto;
+      display: flex;
+    }
+    #popup-button {
+      height: 50px;
+    }
+    #popup-main {
+      position: relative;
+      height: 280px;
+      margin: 20px 0;
+      padding: 0 !important;
+      #tHeadDiv {
+        position: absolute;
+        top: 0;
+        left: 30px;
+      }
+      #tBodyDiv {
+        height: 250px;
+        overflow-x: hidden;
+        overflow-y: auto;
+        width: 360px;
+        position: absolute;
+        top: 20px;
+        left: 30px;
+      }
+      table {
+        table-layout: fixed;
+        border-collapse: collapse;
+      }
+    }
+    table {
+      th {
+        background-color: #C3D69B;
+        border: none;
+        border-bottom: 1px solid #595959;
+        border-left: 1px solid #595959;
+        &:first-child {
+          border-left: none;
+        }
+      }
+      td {
+        border: none;
+        border-bottom: 1px solid rgba(0, 0, 0, 0);
+        border-left: 1px solid rgba(0, 0, 0, 0);
+        &:first-child {
+          border-left: none;
+        }
+      }
+      .popupHistoryNo {
+        width: 40px;
+      }
+      .popupHistoryUrl {
+        width: 200px;
+      }
+      .popupHistoryTimer {
+        width: 100px;
+      }
+      td span {
+        word-wrap: break-word;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        display: block;
+        overflow: hidden;
+        padding: 2px;
+      }
+    }
+  }
+
+  /* ユーザーマスタ-登録ダイアログ用 */
+  &.p-muser-entry {
+    width: 350px;
+    height: 320px;
+    #popup-main {
+      input, select {
+        height: 26px;
+        font-size: 12px;
+        margin: 2px 5px;
+        width: 270px;
+        padding-left: 4px;
+      }
+    }
+    #popup-main {
+      .form01 div {
+        margin: 5px 0;
+      }
+      img {
+        float: left;
+      }
+    }
+    #popup-button a {
+      width: 75px;
+      float: left;
+      margin: 0 50px;
+    }
+  }
+
+  /* 確認ダイアログ */
+  &.p-confirm {
+    width: 350px;
+    height: 150px;
+    #popup-main {
+      text-align: center;
+      input, select {
+        height: 26px;
+        font-size: 12px;
+        margin: 2px 5px;
+        width: 270px;
+        padding-left: 4px;
+      }
+    }
+    #popup-main {
+      .form01 div {
+        margin: 5px 0;
+      }
+      img {
+        float: left;
+      }
+    }
+    #popup-button a {
+      width: 75px;
+      float: left;
+      margin: 0 50px;
+    }
+  }
+
+}
+
+/* ポップアップ用:バックグラウンド */
+#popup-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 50;
+}
+
+/* ポップアップ用非表示クラス */
+.popup-off {
+  display: none;
+}
