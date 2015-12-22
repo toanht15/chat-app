@@ -10,6 +10,7 @@ switch ($this->name) {
 		$historySelected = "selected";
 		break;
 	case 'MUsers':
+	case 'PersonalSettings':
 		$settingSelected = "selected";
 		break;
 };
@@ -50,7 +51,7 @@ switch ($this->name) {
 <div id="sidebar-sub" class="card-shadow">
 	<div>
 		<div class="icon">
-			<?= $this->Html->image('monitor.png', array('alt' => '個人設定', 'width' => 30, 'height' => 30, 'url' => array('controller' => 'MUsers', 'action' => 'index'))) ?>
+			<?= $this->Html->image('monitor.png', array('alt' => '個人設定', 'width' => 30, 'height' => 30, 'url' => array('controller' => 'PersonalSettings', 'action' => 'index'))) ?>
 			<p>個人設定</p>
 		</div>
 		<div class="icon">
@@ -58,7 +59,7 @@ switch ($this->name) {
 			<p>企業設定</p>
 		</div>
 		<div class="icon">
-			<?= $this->Html->image('monitors.png', array('alt' => '個人設定', 'width' => 30, 'height' => 30, 'url' => array('controller' => 'MUsers', 'action' => 'index'))) ?>
+			<?= $this->Html->image('monitors.png', array('alt' => 'ユーザーマスタ', 'width' => 30, 'height' => 30, 'url' => array('controller' => 'MUsers', 'action' => 'index'))) ?>
 			<p>ユーザーマスタ</p>
 		</div>
 		<div class="icon">

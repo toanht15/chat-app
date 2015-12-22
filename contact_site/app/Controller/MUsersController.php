@@ -95,10 +95,6 @@ class MUsersController extends AppController {
 		if ( $this->MUser->validates() ) {
 			$saveData = $tmpData;
 			$saveData['MUser']['m_companies_id'] = $this->userInfo['MCompany']['id'];
-			if ( !empty($saveData['MUser']['new_password']) ) {
-				unset($saveData['MUser']['new_password']);
-				$saveData['MUser']['password'] = $this->MUser->makePassword($tmpData['MUser']['password']);
-			}
 			if ( $this->MUser->save($saveData, false) ) {
 				$this->MUser->commit();
 			}

@@ -30,22 +30,22 @@ App::uses('Model', 'Model');
  * @package       app.Model
  */
 class AppModel extends Model {
-  function begin() {
+  public function begin() {
     $dataSource = $this->getDataSource();
     $dataSource->begin($this);
   }
 
-  function commit() {
+  public function commit() {
     $dataSource = $this->getDataSource();
     $dataSource->commit($this);
   }
 
-  function rollback() {
+  public function rollback() {
     $dataSource = $this->getDataSource();
     $dataSource->rollback($this);
   }
 
-  function logicalDelete($id) {
+  public function logicalDelete($id) {
     $ret = $this->read(null, $id);
     if ( !empty($ret) && !empty($ret[$this->name]) && isset($ret[$this->name]['del_flg']) ) {
       $ret[$this->name]['del_flg'] = 1;

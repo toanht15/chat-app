@@ -65,6 +65,23 @@ if( strcmp($this->name, 'Login') !== 0 ) {
 		<div id="footer">
 		</div>
 	</div>
-	<?php echo $this->element('sql_dump'); ?>
+
+<?php if ( Configure::read("debug") != 0 ): ?>
+	<section>
+		<div id="debug-area-toggle">Debug</div>
+		<div id="debug-area">
+			<?php echo $this->element('sql_dump'); ?>
+		</div>
+		<script type="text/javascript">
+			$("#debug-area-toggle").on('click', function(){
+				$("#debug-area").animate(
+					{opacity: "toggle"},
+					"slow"
+				);
+			});
+		</script>
+	</section>
+<?php endif; ?>
+
 </body>
 </html>
