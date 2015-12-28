@@ -712,6 +712,11 @@ div[id$="_title"] p {
   width: auto;
 }
 
+#personal_idx #personal_form input[type='radio'] {
+  width: auto;
+  height: auto;
+}
+
 #personal_idx #personal_form #set_password_area {
   border: 1px solid #595959;
   border-radius: 10px;
@@ -724,6 +729,60 @@ div[id$="_title"] p {
 }
 
 #personal_idx #personal_form #personal_action a {
+  width: 100px;
+  padding: 10px;
+  display: block;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* ウィジェット */
+#m_widget_setting_idx #m_widget_setting_form .form01 {
+  width: 600px;
+  margin: 0 auto;
+}
+
+#m_widget_setting_idx #m_widget_setting_form input {
+  height: 26px;
+  font-size: 12px;
+  margin: 2px 5px;
+  width: 270px;
+  padding-left: 4px;
+}
+
+#m_widget_setting_idx #m_widget_setting_form input[type='checkbox'] {
+  width: auto;
+}
+
+#m_widget_setting_idx #m_widget_setting_form input[type='radio'] {
+  width: auto;
+  height: auto;
+}
+
+#m_widget_setting_idx #m_widget_setting_form #set_widget_detail_area {
+  border: 1px solid #595959;
+  border-radius: 10px;
+  margin-left: 0px;
+  display: inline-block;
+}
+
+#m_widget_setting_idx #m_widget_setting_form #set_widget_detail_area #widget_detail_area {
+  float: left;
+  width: 50%;
+}
+
+#m_widget_setting_idx #m_widget_setting_form #set_widget_detail_area #sample_widget_area {
+  float: right;
+  width: 50%;
+}
+
+#m_widget_setting_idx #m_widget_setting_form #m_widget_setting_action {
+  padding: 10px;
+  vertical-align: right;
+  clear: both;
+}
+
+#m_widget_setting_idx #m_widget_setting_form #m_widget_setting_action a {
   width: 100px;
   padding: 10px;
   display: block;

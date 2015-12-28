@@ -695,6 +695,11 @@ div {
       &[type='checkbox'] {
         width: auto;
       }
+
+      &[type='radio'] {
+        width: auto;
+        height: auto;
+      }
     }
 
     #set_password_area {
@@ -706,6 +711,64 @@ div {
     #personal_action {
       padding: 10px;
       vertical-align: right;
+
+      a {
+        width: 100px;
+        padding: 10px;
+        display: block;
+        margin: 0 auto;
+        text-align: center;
+      }
+    }
+  }
+}
+
+/* ウィジェット */
+
+#m_widget_setting_idx {
+  #m_widget_setting_form {
+    .form01 {
+      width: 600px;
+      margin: 0 auto;
+    }
+    input {
+      height: 26px;
+      font-size: 12px;
+      margin: 2px 5px;
+      width: 270px;
+      padding-left: 4px;
+
+      &[type='checkbox'] {
+        width: auto;
+      }
+
+      &[type='radio'] {
+        width: auto;
+        height: auto;
+      }
+    }
+
+    #set_widget_detail_area {
+      border: 1px solid #595959;
+      border-radius: 10px;
+      margin-left: 0px;
+      display: inline-block;
+
+      #widget_detail_area {
+        float: left;
+        width: 50%;
+      }
+
+      #sample_widget_area {
+        float: right;
+        width: 50%;
+      }
+    }
+
+    #m_widget_setting_action {
+      padding: 10px;
+      vertical-align: right;
+      clear: both;
 
       a {
         width: 100px;

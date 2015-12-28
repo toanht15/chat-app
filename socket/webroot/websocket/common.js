@@ -740,7 +740,7 @@ var socket, // socket.io
   }
 
   var init = function(){
-    socket = io.connect(info.site.socket);
+    socket = io.connect(info.site.socket, {port: 9090, rememberTransport : false});
     // 接続時
     socket.on("connect", function(){
       sinclo.connect();

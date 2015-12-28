@@ -11,6 +11,7 @@ switch ($this->name) {
 		break;
 	case 'MUsers':
 	case 'PersonalSettings':
+	case 'MWidgetSettings':
 		$settingSelected = "selected";
 		break;
 };
@@ -67,7 +68,7 @@ switch ($this->name) {
 			<p>コード・デモ</p>
 		</div>
 		<div class="icon">
-			<?= $this->Html->image('chat.png', array('alt' => 'ウィジェット', 'width' => 30, 'height' => 30, 'url' => array('controller' => 'Customers', 'action' => 'index'))) ?>
+			<?= $this->Html->image('chat.png', array('alt' => 'ウィジェット', 'width' => 30, 'height' => 30, 'url' => array('controller' => 'MWidgetSettings', 'action' => 'index'))) ?>
 			<p>ウィジェット</p>
 		</div>
 	</div>
