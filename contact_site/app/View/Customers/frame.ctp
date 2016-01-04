@@ -38,6 +38,12 @@ var socket, userId, iframe, connectToken, url, emit, windowResize, arg = new Obj
 
 window.onload = function(){
 
+  // スクロール禁止
+  $(window).scroll(function(e) {
+    $(this).scrollTop(0);
+    $(this).scrollLeft(0);
+  });
+
   // WebSocketサーバに接続
   socket = io.connect("http://socket.localhost:9090");
   var first = true;

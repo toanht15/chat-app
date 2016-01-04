@@ -2,7 +2,13 @@ var gulp = require('gulp'),
     webserver = require('gulp-webserver'),
     jade = require('gulp-jade'),
     plumber = require('gulp-plumber'),
-    express = require('gulp-express');
+    express = require('gulp-express'),
+    sass = require('gulp-sass'),
+    cssnext = require('gulp-cssnext'),
+    path = {
+      css: '../contact_site/app/webroot/css/',
+      scss: '../compiler/scss/'
+    };
 
 //Webサーバー
 gulp.task('webserver', function() {
@@ -26,8 +32,19 @@ gulp.task('jade-compile', function() {
     .pipe(gulp.dest('./webroot/'))
 });
 
+gulp.task('scss-compile', function(){
+  gulp.src(path.scss + "**/*.scss")
+    .pipe(sass({outputStyle: 'expanded'}))
+    .on('error', function(err) {
+      console.log(err.message);
+    })
+    .pipe(cssnext())
+    .pipe(gulp.dest(path.css))
+});
+
 gulp.task('watch', function(){
 	gulp.watch(['./views/*.jade'], ['jade-compile']);
+	gulp.watch([path.scss + "*.scss"], ['scss-compile']);
 	gulp.watch(['./routes/*.js']);
 });
 
@@ -36,5 +53,5 @@ gulp.task('watch', function(){
  *
  * コマンド'gulp'で実行される
  */
-gulp.task('serve', ['jade-compile', 'webserver', 'watch']);
+gulp.task('serve', ['scss-compile', 'jade-compile', 'webserver', 'watch']);
 gulp.task('default', ['webserver','watch']);

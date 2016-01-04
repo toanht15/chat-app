@@ -14,12 +14,14 @@
     "morgan": "~1.6.1",
     "node-sass-middleware": "0.8.0",
     "serve-favicon": "~2.3.0",
-    "mysql": "~2.9.0"
+    "mysql": "~2.9.0",
+    "sass": "~0.5.0"
   },
   "devDependencies": {
     "gulp-webserver": "~0.9.1",
     "gulp-jade": "~1.1.0",
     "gulp-sass": "~2.0.4",
+    "gulp-cssnext": "~1.0.1",
     "gulp-plumber": "~1.0.1",
     "gulp-express": "~0.3.5",
     "serve-favicon": "~2.3.0"

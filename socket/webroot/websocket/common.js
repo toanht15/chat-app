@@ -100,6 +100,8 @@ var socket, // socket.io
           info += '  </div>';
           info += '</div>';
 
+      this.load.finish();
+
       var sincloBox = document.getElementById('sincloBox');
       if ( sincloBox ) {
         sincloBox.parentNode.removeChild(sincloBox);

@@ -172,7 +172,6 @@
       // 担当しているユーザーかチェック
       if ( obj.to !== userInfo.tabId ) return false;
       if ( Number(userInfo.accessType) !== Number(cnst.access_type.host) ) return false;
-
       browserInfo.set.scroll(obj.scrollPosition);
     },
     syncStart: function(d) {
@@ -183,9 +182,10 @@
       }
       if ( obj.to !== userInfo.tabId ) return false;
       // 二度目以降の同期でURLが異なっていた場合はリロード
-      if ( common.load.flg && browserInfo.url !== obj.url ) {
+      if ( common.load.flg && browserInfo.href !== obj.url ) {
         location.href = obj.url;
       }
+      // userInfo.getConnect()
       common.load.start();
       userInfo.setConnect(obj.connectToken);
       userInfo.sendTabId = obj.from;
@@ -274,23 +274,26 @@
         $('body').append('<div id="cursorImg" style="position:fixed; top:' + obj.mousePoint.x + '; left:' + obj.mousePoint.y + '; z-index:999999"><img width="50px" src="http://sinclows.dip.jp/img/pointer.png"></div>');
         cursor = common.cursorTag = document.getElementById("cursorImg");
       }
+      else {
+        // スクロール位置
+        if ( check.isset(obj.scrollPosition) ) {
+          syncEvent.receiveEvInfo.type = "scroll";
+          syncEvent.receiveEvInfo.nodeName = "body";
+
+          browserInfo.set.scroll(obj.scrollPosition);
+
+          // TODO まだ微調整が必要
+          setTimeout(function(){
+            syncEvent.receiveEvInfo = { nodeName: null, type: null };
+          }, browserInfo.interval);
+        }
+      }
       // カーソル位置
       if ( check.isset(obj.mousePoint)) {
         cursor.style.left = obj.mousePoint.x + "px";
         cursor.style.top  = obj.mousePoint.y + "px";
       }
-      // スクロール位置
-      if ( check.isset(obj.scrollPosition) ) {
-        syncEvent.receiveEvInfo.type = "scroll";
-        syncEvent.receiveEvInfo.nodeName = "body";
 
-        browserInfo.set.scroll(obj.scrollPosition);
-
-        // TODO まだ微調整が必要
-        setTimeout(function(){
-          syncEvent.receiveEvInfo = { nodeName: null, type: null };
-        }, browserInfo.interval);
-      }
     },
     syncResponceEv: function (d) {
       var obj = common.jParse(d), elm;
