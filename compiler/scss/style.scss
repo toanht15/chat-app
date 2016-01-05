@@ -2,6 +2,7 @@
 
 $main-color: #C3D69B;
 $string-color: #595959;
+$line-color: #B5B5B5;
 $shadow-color: rgba(70, 70, 70, 0.7);
 
 * {
@@ -563,6 +564,7 @@ div[id^="sidebar-"] .icon {
 div {
   &[id$=_idx] {
     width: 90%;
+    min-width: 1000px!important;
     margin: 50px 50px;
   }
   &[id$=_menu] {
@@ -703,7 +705,7 @@ div {
     }
 
     #set_password_area {
-      border: 1px solid #595959;
+      border: 1px solid $line-color;
       border-radius: 10px;
       margin-left: 0px;
     }
@@ -728,10 +730,10 @@ div {
 #m_widget_setting_idx {
   #m_widget_setting_form {
     .form01 {
-      width: 600px;
+      width: 800px;
       margin: 0 auto;
     }
-    input {
+    input, select {
       height: 26px;
       font-size: 12px;
       margin: 2px 5px;
@@ -749,19 +751,43 @@ div {
     }
 
     #set_widget_detail_area {
-      border: 1px solid #595959;
+      border: 1px solid $line-color;
       border-radius: 10px;
-      margin-left: 0px;
       display: inline-block;
+      width: 100%;
+
+      h2 {
+        text-align: center;
+      }
 
       #widget_detail_area {
         float: left;
-        width: 50%;
+        width: 498px;
+
+        .labelArea {
+          width: 200px;
+        }
+
+        input[type='text'], .radio {
+          width: 300px;
+        }
+
+        textarea {
+          width: 300px;
+          padding: 10px;
+        }
       }
 
       #sample_widget_area {
         float: right;
-        width: 50%;
+        width: 300px;
+        padding: 5px;
+        #sincloBox {
+          margin: 0 auto;
+          pre, span {
+            font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana;
+          }
+        }
       }
     }
 

@@ -4,17 +4,58 @@
  * ウィジェット設定マスタ
  */
 class MWidgetSettingsController extends AppController {
-	public $uses = array('MWidgetSetting');
+    public $uses = array('MWidgetSetting');
+    public $helpers = array('ngForm');
 
-	// public function beforeRender(){
-	// 	$this->set('siteKey', $this->userInfo['MCompany']['company_key']);
-	// }
+    /* *
+     * 一覧画面
+     * @return void
+     * */
+    public function index() {
+        if ( $this->request->is('post') ) {
+            $errors = $this->_update($this->request->data);
+            if ( empty($errors) ) {
+            }
+        }
+        else {
+            $this->data = $this->MWidgetSetting->read(null, $this->userInfo['MCompany']['id']);
+        }
+        $this->_viewElement();
+    }
 
-	/* *
-	 * 一覧画面
-	 * @return void
-	 * */
-	public function index() {
-	}
+    private function _viewElement() {
+        $this->set('widgetDisplayType', Configure::read('WidgetDisplayType'));
+    }
+
+    /* *
+     * 更新
+     *
+     * @params $inputData(array)
+     * @return $errors(array) エラー文言
+     * */
+    private function _update($inputData) {
+        $errors = [];
+
+        // パスワードチェックが問題なければ単独でバリデーションチェックのみ
+        $this->MWidgetSetting->set($inputData);
+        $this->MWidgetSetting->begin();
+
+        if ( $this->MWidgetSetting->validates() ) {
+            // バリデーションチェックが成功した場合
+            // 保存処理
+            if ( $this->MWidgetSetting->save($inputData, false) ) {
+                $this->MWidgetSetting->commit();
+            }
+            else {
+                $this->MWidgetSetting->rollback();
+                $errors['rollback'] = "保存処理に失敗しました。";
+            }
+        }
+        else {
+            // 画面に返す
+            $errors = $this->MWidgetSetting->validationErrors;
+        }
+        return $errors;
+    }
 
 }
