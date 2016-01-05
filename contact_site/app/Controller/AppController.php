@@ -48,7 +48,7 @@ class AppController extends Controller {
         )
     );
 
-    public $helper = array('HtmlEx');
+    public $helper = array('');
 
     public $userInfo;
 
