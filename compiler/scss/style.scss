@@ -3,6 +3,7 @@
 $main-color: #C3D69B;
 $string-color: #595959;
 $line-color: #B5B5B5;
+$error-color: #F57E7E;
 $shadow-color: rgba(70, 70, 70, 0.7);
 
 * {
@@ -78,10 +79,21 @@ input{
   border-bottom: 1px solid #909090;
   &:focus {
       outline: none!important;
-      border-bottom: 1px solid #C3D69B;
+      border-bottom: 1px solid $main-color;
   }
   &.form-error:focus {
-      border-bottom-color: #F57E7E;
+      border-bottom-color: $error-color;
+  }
+}
+
+textarea {
+  border-radius: 5px;
+  &:focus {
+      outline: none!important;
+      border-color: $main-color;
+  }
+  &.form-error:focus {
+      border-color: $error-color;
   }
 }
 
