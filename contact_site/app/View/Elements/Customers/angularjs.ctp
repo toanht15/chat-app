@@ -201,6 +201,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           $scope.monitorList[obj.tabId].title = obj.title;
           $scope.monitorList[obj.tabId].url = obj.url;
           $scope.monitorList[obj.tabId].prev = obj.prev;
+          $scope.monitorList[obj.tabId].widget = obj.widget;
         }
         else {
           socket.emit('getCustomerInfo', JSON.stringify({tabId: obj.tabId}));

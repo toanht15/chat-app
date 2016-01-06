@@ -335,7 +335,21 @@
         if ( res.siteKey ) {
           socket.join(res.siteKey);
           send.siteKey = res.siteKey;
-          emit(type, send);
+          var siteId = companyList[res.siteKey];
+          pool.query('SELECT * FROM m_widget_settings WHERE m_companies_id = ? AND display_type <> 3 ORDER BY id DESC LIMIT 1;', [siteId], function(err, rows){
+            if ( isset(rows) && isset(rows[0]) ) {
+              send.widget = {
+                title: rows[0].title,
+                tel: rows[0].tel,
+                content: rows[0].content.replace(/\r\n/g, '<br>'),
+                time_text: rows[0].time_text
+              };
+              emit(type, send);
+            }
+            else {
+              emit(type, send);
+            }
+          });
         }
       });
 

@@ -89,7 +89,7 @@ var socket, // socket.io
           html += '    </div>';
           html += '      <div style="background-image: url(//sinclows.dip.jp/img/call_circle.png); background-repeat: no-repeat; background-position: 5px, 0px; height: 60px; margin: 15px 10px; background-size: 55px auto, 55px auto; padding-left: 55px;">';
           html += '        <pre style="font-weight: bold; color: #ABCD05; margin: 0 auto; font-size: 150%; text-align: center; padding: 5px 0px 0px">' + widget.tel + '</pre>';
-          html += '        <pre style="font-weight: bold; color: #ABCD05; margin: 0 auto; font-size: 80%; text-align: center; padding: 3px 0px 0px;">受付時間： ' + widget.tel_text + '</pre>';
+          html += '        <pre style="font-weight: bold; color: #ABCD05; margin: 0 auto; font-size: 80%; text-align: center; padding: 3px 0px 0px;">受付時間： ' + widget.time_text + '</pre>';
           html += '      </div>';
           html += '      <pre style="display: block; word-wrap: break-word; font-size: 11px; text-align: center; margin: 10px; line-height:1.5; color: #6B6B6B; width: 20em;">' + widget.content + '</pre>';
           html += '      <span style="display: block; margin: 10px auto; width: 80%; padding: 7px;  color: #FFF; background-color: rgb(188, 188, 188); font-size: 25px; font-weight: bold; text-align: center; border: 1px solid rgb(188, 188, 188); border-radius: 15px">' + code + '</span>';
@@ -721,6 +721,7 @@ var socket, // socket.io
 
     emit('connectSuccess', {
       confirm: true,
+      widget: window.info.widgetDisplay,
       subWindow: subWindow,
       connectToken: userInfo.connectToken
     });

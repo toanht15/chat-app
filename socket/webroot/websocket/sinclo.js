@@ -78,6 +78,13 @@
     accessInfo: function(d){
       var obj = common.jParse(d);
       if ( obj.token !== common.token ) return false;
+      if ( check.isset(obj.widget) ) {
+        window.info.widgetDisplay = true;
+        window.info.widget = obj.widget;
+      }
+      else {
+        window.info.widgetDisplay = false;
+      }
 
       if ( check.isset(obj.accessId) && !check.isset(obj.connectToken)) {
         userInfo.set(cnst.info_type.access, obj.accessId, true);
@@ -99,6 +106,7 @@
       emit('customerInfo', obj);
       emit('connectSuccess', {
         confirm: false,
+        widget: window.info.widgetDisplay,
         subWindow: false,
         prev: userInfo.prev,
         userAgent: window.navigator.userAgent,
@@ -116,6 +124,7 @@
 
       emit('connectSuccess', {
         confirm: true,
+        widget: window.info.widgetDisplay,
         subWindow: subWindow,
         prev: userInfo.prev
       });
