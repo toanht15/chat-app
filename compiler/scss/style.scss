@@ -388,7 +388,7 @@ div[id^="sidebar-"] {
   position: absolute;
   top: 0;
   left: 0;
-  height: 100%;
+  bottom: 0;
   overflow: hidden;
   .icon {
     height: 60px !important;
@@ -510,7 +510,8 @@ div[id^="sidebar-"] .icon {
 #login_idx {
   position: absolute;
   margin: auto;
-  width: 300px;
+  min-width: 300px!important;
+  width: 300px!important;
   height: 350px;
   right: 0;
   left: 0;

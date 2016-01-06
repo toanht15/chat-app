@@ -10,7 +10,7 @@
       ev: function() {
         var height = "45px";
         if ( !this.flg ) {
-          height = "290px";
+          height = (common.sincloBoxHeight + 45) + "px";
         }
         this.flg = !this.flg;
         $("#sincloBox").animate({

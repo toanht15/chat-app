@@ -77,28 +77,23 @@ var socket, // socket.io
       if ( d === undefined ) return d;
       return JSON.parse(d);
     },
+    sincloBoxHeight: 270,
     makeAccessIdTag: function(code){
       if ( !check.browser() ) return false;
-      var info  = '<div id="sincloBox" style="position: fixed; bottom: -10px; right: 5px; background-color: #FFF; border: 1.5px solid #E8E7E0; border-radius: 10px; z-index:999998; height: 45px; width: 250px; overflow: hidden;">';
-          info += '  <div style="position: relative;">';
-          info += '    <img onclick="sinclo.operatorInfo.ev()" style="position: absolute; top: 11.5px; right: 10px; z-index: 0;" src="http://sinclows.dip.jp/img/yajirushi.png" height="12" width="16.5">';
-          info += '    <div onclick="sinclo.operatorInfo.ev()" style=" position: absolute; top: 0; left: 0; right: 0; z-index: -1; background-color: #ABCD05; width: 100%; height: 35px; background-image: url(http://sinclows.dip.jp/img/call.png); background-repeat: no-repeat; background-position: 15px, 0; background-size: 4.5%; color: #FFF;">';
-          info += '      <pre style="color: #FFF; text-align: center; font-size: 15px; padding: 10px; margin:  0;">お電話でのお問い合わせ</pre>'
-          info += '    </div>';
-          info += '    <div style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin-top: 35px;">';
-          info += '      <div style="background-image: url(http://sinclows.dip.jp/img/call_circle.png); background-repeat: no-repeat; background-position: 5px, 0px; height: 60px; margin: 15px 10px; background-size: 55px auto, 55px auto; padding-left: 55px;">';
-          info += '        <pre style="font-weight: bold; color: #ABCD05; margin: 0 auto; font-size: 150%; text-align: center; padding: 5px 0px 0px">03-3455-7700</pre>';
-          info += '        <pre style="font-weight: bold; color: #ABCD05; margin: 0 auto; font-size: 80%; text-align: center; padding: 3px 0px 0px;">受付時間： 平日9:00-19:00</pre>';
-          info += '      </div>';
-          info += '      <pre style="display: block; font-size: 90%; text-align: center; margin: 10px; line-height:1.5; color: #6B6B6B">';
-          info +=         'お気軽にお問い合わせください。<br /><br />';
-          info +=         'オペレータに下記番号をお伝え頂くと、<br />';
-          info +=         'リモートでのサポートも可能です。';
-          info +=       '</pre>';
-          info += '      <span style="display: block; margin: 0 auto; width: 80%; padding: 7px;  color: #FFF; background-color: rgb(188, 188, 188); font-size: 25px; font-weight: bold; text-align: center; border: 1px solid rgb(188, 188, 188); border-radius: 15px">' + code + '</span>';
-          info += '    </div>';
-          info += '  </div>';
-          info += '</div>';
+      if ( !check.isset(window.info.widget) ) return false;
+      var widget = window.info.widget;
+      var html  = '<div id="sincloBox" style="position: fixed; height: 45px; bottom: -11px; right: 5px; border: 1.5px solid rgb(232, 231, 224); border-radius: 10px; z-index: 999998; width: 250px; overflow: hidden; background-color: rgb(255, 255, 255);">';
+          html += '    <img onclick="sinclo.operatorInfo.ev()" style="position: absolute; top: 11.5px; right: 10px; z-index: 0;" src="http://sinclows.dip.jp/img/yajirushi.png" height="12" width="16.5">';
+          html += '    <div onclick="sinclo.operatorInfo.ev()" style="background-color: #ABCD05; width: 100%; height: 35px; background-image: url(//sinclows.dip.jp/img/call.png); background-repeat: no-repeat; background-position: 15px, 0; background-size: 4.5%; color: #FFF;">';
+          html += '      <pre style="color: #FFF; text-align: center; font-size: 15px; padding: 10px; margin:  0;">' + widget.title + '</pre>'
+          html += '    </div>';
+          html += '      <div style="background-image: url(//sinclows.dip.jp/img/call_circle.png); background-repeat: no-repeat; background-position: 5px, 0px; height: 60px; margin: 15px 10px; background-size: 55px auto, 55px auto; padding-left: 55px;">';
+          html += '        <pre style="font-weight: bold; color: #ABCD05; margin: 0 auto; font-size: 150%; text-align: center; padding: 5px 0px 0px">' + widget.tel + '</pre>';
+          html += '        <pre style="font-weight: bold; color: #ABCD05; margin: 0 auto; font-size: 80%; text-align: center; padding: 3px 0px 0px;">受付時間： ' + widget.tel_text + '</pre>';
+          html += '      </div>';
+          html += '      <pre style="display: block; word-wrap: break-word; font-size: 11px; text-align: center; margin: 10px; line-height:1.5; color: #6B6B6B; width: 20em;">' + widget.content + '</pre>';
+          html += '      <span style="display: block; margin: 10px auto; width: 80%; padding: 7px;  color: #FFF; background-color: rgb(188, 188, 188); font-size: 25px; font-weight: bold; text-align: center; border: 1px solid rgb(188, 188, 188); border-radius: 15px">' + code + '</span>';
+          html += '</div>';
 
       this.load.finish();
 
@@ -106,7 +101,11 @@ var socket, // socket.io
       if ( sincloBox ) {
         sincloBox.parentNode.removeChild(sincloBox);
       }
-      $('body').append(info);
+      $('body').append(html);
+      common.sincloBoxHeight = 0;
+      $("#sincloBox").children().each(function(){
+        common.sincloBoxHeight = common.sincloBoxHeight + this.offsetHeight;
+      });
     },
     load: {
       id: "loadingImg",
