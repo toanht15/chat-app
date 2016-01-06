@@ -342,7 +342,8 @@
                 title: rows[0].title,
                 tel: rows[0].tel,
                 content: rows[0].content.replace(/\r\n/g, '<br>'),
-                time_text: rows[0].time_text
+                time_text: rows[0].time_text,
+                display_time_flg: rows[0].display_time_flg
               };
               emit(type, send);
             }
