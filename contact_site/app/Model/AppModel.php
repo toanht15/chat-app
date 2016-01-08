@@ -30,21 +30,39 @@ App::uses('Model', 'Model');
  * @package       app.Model
  */
 class AppModel extends Model {
+
+  /**
+   * begin: トランザクション開始
+   * @return void
+   * */
   public function begin() {
     $dataSource = $this->getDataSource();
     $dataSource->begin($this);
   }
 
+  /**
+   * commit: コミット処理へ
+   * @return void
+   * */
   public function commit() {
     $dataSource = $this->getDataSource();
     $dataSource->commit($this);
   }
 
+  /**
+   * rollback: ロールバック処理へ
+   * @return void
+   * */
   public function rollback() {
     $dataSource = $this->getDataSource();
     $dataSource->rollback($this);
   }
 
+  /**
+   * logicalDelete: 論理削除関数
+   * @param int $id: ターゲットのID
+   * @return boolean true/false: 処理に成功したか、失敗したか
+   * */
   public function logicalDelete($id) {
     $ret = $this->read(null, $id);
     if ( !empty($ret) && !empty($ret[$this->name]) && isset($ret[$this->name]['del_flg']) ) {
@@ -56,6 +74,21 @@ class AppModel extends Model {
     return false;
   }
 
+  /**
+   * beforeSave: データ更新情報を格納
+   * [登録処理]
+   *   条件：データにIDがセットされていない
+   *   処理：登録者ID、登録日、更新者ID、更新日を保存
+   * [更新処理]
+   *   条件：データにIDがセットされている、削除フラグが立っていない
+   *   処理：更新者ID、更新日を保存
+   * [削除処理]
+   *   条件：削除フラグが立っている
+   *   処理：更新者ID、更新日、削除者ID、削除日を保存
+   *
+   * @param array $options
+   * @return boolean true
+   * */
   public function beforeSave($options = []) {
     $now = new DateTime('now', new DateTimeZone('Asia/Tokyo'));
     // insert
