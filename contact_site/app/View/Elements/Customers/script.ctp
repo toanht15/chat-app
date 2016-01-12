@@ -69,14 +69,7 @@ var _access_type_guest = 1, _access_type_host = 2, userAgentChk,
     }
   };
 
-  $(window).bind('focus', function(){
-    sendRegularlyRequest.start();
-  })
-  .bind('blur', function(){
-    sendRegularlyRequest.end();
-  });
-
-  $('window').bind('beforeunload', function(){
+  $(window).bind('beforeunload', function(){
     sendRegularlyRequest.end();
   });
 
