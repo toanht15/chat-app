@@ -48,20 +48,23 @@ var _access_type_guest = 1, _access_type_host = 2, userAgentChk,
   var sendRegularlyRequest = {
     time: 1500,
     id: null,
-    ev: function(status){
-      if ( status === <?=C_OPERATOR_ACTIVE?> ) {
-        emit('sendOperatorStatus', {userId: <?=$muserId?>, active: true});
-      }
-      else {
-        emit('sendOperatorStatus', {userId: <?=$muserId?>, active: false});
-      }
+    ev: function(){
+      window.clearTimeout(this.id);
+      this.id = window.setTimeout(function(){
+        var opState = $('#operatorStatus');
+
+        if ( opState.data('status') === <?=C_OPERATOR_ACTIVE?> ) {
+          emit('sendOperatorStatus', {userId: <?=$muserId?>, active: true});
+        }
+        else {
+          emit('sendOperatorStatus', {userId: <?=$muserId?>, active: false});
+        }
+        sendRegularlyRequest.ev();
+      }, sendRegularlyRequest.time);
+
     },
     start: function(){
-      var opState = $('#operatorStatus');
-      window.clearInterval(this.id);
-      this.id = window.setInterval(function(){
-        sendRegularlyRequest.ev(opState.data('status'));
-      }, sendRegularlyRequest.time);
+      sendRegularlyRequest.ev();
     },
     end: function(){
       window.clearInterval(this.id);

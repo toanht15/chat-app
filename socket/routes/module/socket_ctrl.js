@@ -341,14 +341,21 @@
           socket.join(res.siteKey);
           send.siteKey = res.siteKey;
           var siteId = companyList[res.siteKey];
-          pool.query('SELECT * FROM m_widget_settings WHERE m_companies_id = ? AND display_type <> 3 ORDER BY id DESC LIMIT 1;', [siteId], function(err, rows){
+          var cnt = 0;
+          if ( isset(activeOperator[res.siteKey]) ) {
+            var key = Object.keys(activeOperator[res.siteKey]);
+            cnt = key.length;
+          }
+          pool.query('SELECT * FROM m_widget_settings WHERE m_companies_id = ? ORDER BY id DESC LIMIT 1;', [siteId], function(err, rows){
             if ( isset(rows) && isset(rows[0]) ) {
               send.widget = {
+                display_type: rows[0].display_type,
                 title: rows[0].title,
                 tel: rows[0].tel,
                 content: rows[0].content.replace(/\r\n/g, '<br>'),
                 time_text: rows[0].time_text,
-                display_time_flg: rows[0].display_time_flg
+                display_time_flg: rows[0].display_time_flg,
+                active_operator_cnt: cnt
               };
               emit(type, send);
             }

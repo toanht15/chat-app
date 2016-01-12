@@ -78,9 +78,15 @@
     accessInfo: function(d){
       var obj = common.jParse(d);
       if ( obj.token !== common.token ) return false;
-      if ( check.isset(obj.widget) ) {
+      if ( check.isset(obj.widget) && obj.widget.display_type === 1 ) {
         window.info.widgetDisplay = true;
         window.info.widget = obj.widget;
+      }
+      else if ( check.isset(obj.widget) && obj.widget.display_type === 2 ) {
+        if ( obj.widget.active_operator_cnt > 0 ) {
+          window.info.widgetDisplay = true;
+          window.info.widget = obj.widget;
+        }
       }
       else {
         window.info.widgetDisplay = false;
