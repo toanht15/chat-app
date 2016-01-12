@@ -49,6 +49,7 @@ class AppController extends Controller {
     );
 
     public $helper = array('');
+    public $uses = array('MWidgetSetting');
 
     public $userInfo;
 
@@ -60,11 +61,54 @@ class AppController extends Controller {
         }
         // コンフィグにユーザーIDを設定
         Configure::write('logged_user_id', $this->Auth->user('id'));
+        // コンフィグに企業IDを設定
+        Configure::write('logged_company_id', $this->userInfo['MCompany']['id']);
+        // ウィジェットの情報をビューへ渡す
+        $widgetInfo = $this->MWidgetSetting->coFind('first', []);
+
+        /* オペレーター待ち状態 */
+        // 在籍/退席
+        $opStatus = C_OPERATOR_PASSIVE; // 退席（デフォルト）
+        if ( !empty($widgetInfo['MWidgetSetting']['display_type']) && strcmp($widgetInfo['MWidgetSetting']['display_type'], C_WIDGET_DISPLAY_CODE_OPER) === 0 ) {
+          // セッションから
+          if ( $this->Session->check('widget.operator.status') ) {
+            $opStatus = $this->Session->read('widget.operator.status');
+          }
+          else {
+            $this->Session->write('widget.operator.status', C_OPERATOR_PASSIVE);
+          }
+
+          $this->set('widgetCheck', C_OPERATOR_ACTIVE); // オペレーターの在籍/退席を使用するか
+          $this->set('opStatus', $opStatus);
+        }
+        else {
+          $this->set('widgetCheck', C_OPERATOR_PASSIVE);
+        }
     }
 
     public function setUserInfo($info){
         $this->userInfo = $info;
         $this->Session->write('global.userInfo', $info);
+    }
+
+    /**
+     * オペレーターの在籍状況を変更する
+     * */
+    public function remoteChangeOperatorStatus(){
+        Configure::write('debug', 0);
+        $this->autoRender = FALSE;
+        $this->layout = 'ajax';
+
+        $status = $this->Session->read('widget.operator.status');
+        if ( $status === C_OPERATOR_PASSIVE ) {
+            $status = C_OPERATOR_ACTIVE;
+        }
+        else {
+            $status = C_OPERATOR_PASSIVE;
+        }
+        $this->Session->write('widget.operator.status', $status);
+		return new CakeResponse(array('body' => json_encode(['status' => $status])));
+
     }
 
 }

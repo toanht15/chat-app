@@ -6,7 +6,7 @@
 
 <div id='customer_title'>
 	<div class="fLeft"><?= $this->Html->image('monitor_g.png', array('alt' => 'リアルタイムモニタ', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?></div>
-	<h1>リアルタイムモニタ</h1>
+	<h1>リアルタイムモニタ<span ng-show="oprCnt">（待機中のオペレーター人数：{{oprCnt}}人）</span><span ng-hide="oprCnt">（待機中のオペレーターが居ません）</span></h1>
 </div>
 
 <div id='customer_menu' class="p20tl">

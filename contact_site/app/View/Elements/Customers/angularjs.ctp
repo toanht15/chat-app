@@ -70,6 +70,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
   sincloApp.controller('MainCtrl', ['$scope', 'angularSocket', function($scope, socket) {
     $scope.searchText = "";
+    $scope.oprCnt = 0; // 待機中のオペレーター人数
     $scope.labelHideList = {
       accessId : false,
       ipAddress : false,
@@ -268,6 +269,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       if ( obj.tabId !== undefined && angular.isDefined($scope.monitorList[obj.tabId])) {
         $scope.monitorList[obj.tabId].connectToken = "";
       }
+    });
+
+    socket.on('activeOpCnt', function(data){
+      var obj = JSON.parse(data);
+      $scope.oprCnt = obj.count;
     });
 
     socket.on('unsetUser', function(data){

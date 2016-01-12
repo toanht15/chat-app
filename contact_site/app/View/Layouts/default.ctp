@@ -42,11 +42,12 @@ if( strcmp($this->name, 'Login') !== 0 ) {
 		echo $this->Html->css("multi-select.css");
 		echo $this->Html->script("//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js");
 		if (strcmp($this->name, "Customers") === 0) {
-			echo $this->Html->script("http://socket.localhost:9090/socket.io/socket.io.js");
+			echo $this->Html->script("//socket.localhost:9090/socket.io/socket.io.js");
 		}
 		echo $this->Html->script("jquery.multi-select.js");
 		echo $this->Html->script("//ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js");
 		echo $this->Html->script("//ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-sanitize.js");
+		echo $this->element("common-js");
 	?>
 </head>
 <body>

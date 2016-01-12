@@ -20,6 +20,7 @@ var _access_type_guest = 1, _access_type_host = 2, userAgentChk,
       obj = d;
     }
     obj.siteKey = "<?=$siteKey?>";
+    var status = $('#operatorStatus').data('status');
     var data = JSON.stringify(obj);
     socket.emit(ev, data);
   }
@@ -43,8 +44,45 @@ var _access_type_guest = 1, _access_type_host = 2, userAgentChk,
     return ( a !== undefined && a !== null && a !== "" );
   }
 
+  // TODO ここをもとに、顧客側の存在確認コードも変える
+  var sendRegularlyRequest = {
+    time: 1500,
+    id: null,
+    ev: function(status){
+      if ( status === <?=C_OPERATOR_ACTIVE?> ) {
+        emit('sendOperatorStatus', {userId: <?=$muserId?>, active: true});
+      }
+      else {
+        emit('sendOperatorStatus', {userId: <?=$muserId?>, active: false});
+      }
+    },
+    start: function(){
+      var opState = $('#operatorStatus');
+      window.clearInterval(this.id);
+      this.id = window.setInterval(function(){
+        sendRegularlyRequest.ev(opState.data('status'));
+      }, sendRegularlyRequest.time);
+    },
+    end: function(){
+      window.clearInterval(this.id);
+      emit('sendOperatorStatus', {userId: <?=$muserId?>, active: false});
+    }
+  };
+
+  $(window).bind('focus', function(){
+    sendRegularlyRequest.start();
+  })
+  .bind('blur', function(){
+    sendRegularlyRequest.end();
+  });
+
+  $('window').bind('beforeunload', function(){
+    sendRegularlyRequest.end();
+  });
+
   socket.on("connect", function() {
     receiveAccessInfoToken = makeToken();
+    sendRegularlyRequest.start();
     var data = {type: 'admin', data: {token: receiveAccessInfoToken}};
     emit('connected', data);
   });

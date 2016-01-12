@@ -7,8 +7,8 @@
         database: process.env.DB_NAME || 'sinclo_db'
       });
 
+  //サーバインスタンス作成
   var http = require('http'),
-      //サーバインスタンス作成
       server = http.createServer(function (req, res) {
           res.writeHead(200, {'Content-Type':'text/html'});
           res.end('server connected');
@@ -17,6 +17,10 @@
       connect, displayShere;
       server.listen(9090);//9090番ポートで起動
 
+  // 待機中ユーザー
+  var activeOperator = {};
+
+  // 暗号化ロジック
   var crypto = require('crypto');
       crypto_func = {
       type: 'aes192',
@@ -37,6 +41,7 @@
   };
   crypto_func.init();
 
+  // ユーザーIDの新規作成
   function makeUserId(){
     var d = new Date();
     return d.getFullYear() + ("0" + (d.getMonth() + 1)).slice(-2) + ("0" + d.getDate()).slice(-2) + d.getHours() + d.getMinutes() + d.getSeconds() + Math.floor(Math.random() * 1000);
@@ -497,6 +502,30 @@
           emit('redirect', newObj);
         }
       });
+
+      socket.on('sendOperatorStatus', function(data){
+        var obj = JSON.parse(data);
+        if ( !isset(activeOperator[obj.siteKey]) ) {
+          activeOperator[obj.siteKey] = {};
+        }
+        // 在席中
+        if ( obj.active ) {
+          if ( !isset(activeOperator[obj.siteKey][obj.userId]) ) {
+            activeOperator[obj.siteKey][obj.userId] = true;
+          }
+        }
+        // 退席中
+        else {
+          if ( isset(activeOperator[obj.siteKey][obj.userId]) ) {
+            delete activeOperator[obj.siteKey][obj.userId];
+          }
+        }
+        var keys = Object.keys(activeOperator[obj.siteKey]);
+        emit('activeOpCnt', {
+          siteKey: obj.siteKey,
+          count: keys.length
+        });
+      })
 
       socket.on('userOut', function (data) {
         console.log('send : userOut');

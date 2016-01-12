@@ -5,7 +5,7 @@ $string-color: #595959;
 $line-color: #B5B5B5;
 $error-color: #F57E7E;
 $shadow-color: rgba(70, 70, 70, 0.7);
-
+$header-btn-hover-color: #D6E8B0;
 * {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -152,25 +152,31 @@ img {
   -ms-interpolation-mode: bicubic;
 }
 
-a {
-  &[class*='Btn'] {
-    color: #FFFFFF;
-    text-decoration: none;
-
-    img {
-      transform: scale(0.8);
-    }
+@mixin btnHoverEv {
+  img {
+    transform: scale(0.8);
   }
-
   &:hover {
-    color: $main-color;
-
     img {
         transform: scale(1);
         transition: transform 0.3s ease;
     }
   }
 }
+
+a {
+  @include btnHoverEv;
+
+  &[class*='Btn'] {
+    color: #FFFFFF;
+    text-decoration: none;
+  }
+
+  &:hover {
+    color: $main-color;
+  }
+}
+
 
 
 /**
@@ -481,24 +487,53 @@ div[id^="sidebar-"] .icon {
 
 /* ヘッダー：上部カラーバー */
 
-#color-bar-right {
-  height: 60px !important;
-  div {
-    bottom: 0;
-    padding: 15px 0;
-    display: inline-flex;
+ul#color-bar-left {
+  margin: 0 0 0 60px;
+  padding: 0;
 
-    span {
-        padding: 5px 10px;
-        height: 30px !important;
-        color: #fff;
+  li {
+    height: 60px !important;
+    padding: 0 10px;
+
+    &#operatorStatus {
+      @include btnHoverEv;
+
+      padding: 10px;
+      img {
+        transform: scale(0.8);
+      }
+
+      &:hover {
+        background-color: $header-btn-hover-color;
+        box-shadow: 0 0 3px $shadow-color;
+        img {
+          transform: scale(1);
+        }
+      }
+
+    }
+  }
+}
+
+ul#color-bar-right {
+  margin: 0;
+  li {
+    height: 60px !important;
+    padding: 0 10px;
+
+    p {
+      margin: 20px 0;
+      height: 20px!important;
+      color: #fff;
+      font-size: 13px;
+      padding: 3.5px 0 3.5px 0;
     }
   }
 }
 
 #logout{
   &:hover {
-    background-color: #D6E8B0;
+    background-color: $header-btn-hover-color;
     box-shadow: 0 0 3px $shadow-color;
   }
 
@@ -819,3 +854,4 @@ div {
     }
   }
 }
+
