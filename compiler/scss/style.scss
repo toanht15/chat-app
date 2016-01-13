@@ -6,11 +6,17 @@ $line-color: #B5B5B5;
 $error-color: #F57E7E;
 $shadow-color: rgba(70, 70, 70, 0.7);
 $header-btn-hover-color: #D6E8B0;
+$content-min-width: 1000px;
+
 * {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   color: $string-color;
+}
+
+::selection {
+  background-color: #ADAFAE;
 }
 
 body {
@@ -612,7 +618,7 @@ ul#color-bar-right {
 div {
   &[id$=_idx] {
     width: 90%;
-    min-width: 1000px!important;
+    min-width: $content-min-width!important;
     margin: 50px 50px;
   }
   &[id$=_menu] {
@@ -709,6 +715,46 @@ div {
 
 #script_setting_content {
   width: 90%;
+  $ssc-border-color: #9A9A9A;
+  $ssc-content-width: 900px;
+
+  li {
+    p {
+      background-color: #E3E8E5;
+      border: 1px solid $ssc-border-color;
+      border-radius: 5px;
+      overflow: hidden;
+      width: $ssc-content-width;
+
+      span {
+        height: 45px;
+        float: left;
+
+        &#copyBtn {
+          display: inline-block;
+          padding: 10px 5px;
+          background-color: #FFF;
+          border-right: 1px solid $ssc-border-color;
+          width: 36px!important;
+        }
+
+        &#copyArea {
+          height: 45px;
+          padding: 10px;
+          width: $ssc-content-width - 38px!important;
+
+          input {
+            background-color: #E3E8E5;
+            height: 25px;
+            font-size: 15px;
+            border-bottom: none;
+            width: 100%;
+          }
+        }
+
+      }
+    }
+  }
 }
 
 /* ユーザマスタ */

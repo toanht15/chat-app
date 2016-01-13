@@ -7,3 +7,4 @@
 		document.body.appendChild(iframe);
 	})();
 </script>
+<script type='text/javascript' src='//socket.localhost:8080/client/medialink.js'></script>
