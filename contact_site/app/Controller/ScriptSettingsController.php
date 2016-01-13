@@ -5,11 +5,11 @@
  */
 class ScriptSettingsController extends AppController {
 
-	public function index(){
+    public function index(){
 
-	}
+    }
 
-	public function demopage(){
-		$this->layout = "frame";
-	}
+    public function demopage(){
+        $this->layout = "frame";
+    }
 }
