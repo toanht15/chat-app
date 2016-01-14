@@ -13,8 +13,12 @@ define('C_OPERATOR_PASSIVE', 0); // 退席
 define('C_OPERATOR_ACTIVE', 1); // 在籍
 
 // 正規表現
-define('C_MATCH_RULE_TEL', '/^\+?(\d|-)*$/');
+define('C_MATCH_RULE_TEL', '/^\+?(\d|-)*$/'); // TEL
 
+// メッセージ種別
+define('C_MESSAGE_TYPE_SUCCESS', 1); // 処理成功
+define('C_MESSAGE_TYPE_ERROR', 2); // 処理失敗
+// define('C_MESSAGE_TYPE_NOTICE', 3); // 通知（未実装）
 
 /* ユーザー権限 */
 $config['Authority'] = [

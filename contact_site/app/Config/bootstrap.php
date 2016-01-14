@@ -117,3 +117,4 @@ define('SERVER_NAME', $_SERVER['SERVER_NAME']);
 CakePlugin::load('WebSocket');
 
 Configure::load("const");
+Configure::load("messageConst");
