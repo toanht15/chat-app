@@ -97,6 +97,7 @@ class MUsersController extends AppController {
 			$saveData['MUser']['m_companies_id'] = $this->userInfo['MCompany']['id'];
 			if ( $this->MUser->save($saveData, false) ) {
 				$this->MUser->commit();
+				$this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
 			}
 			else {
 				$this->MUser->rollback();
@@ -116,7 +117,12 @@ class MUsersController extends AppController {
 		$this->autoRender = FALSE;
 		$this->layout = 'ajax';
 		$this->MUser->recursive = -1;
-		$ret = $this->MUser->logicalDelete($this->request->data['id']);
+		if ( $this->MUser->logicalDelete($this->request->data['id']) ) {
+			$this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
+		}
+		else {
+			$this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
+		}
 	}
 
 	private function _viewElement(){

@@ -158,7 +158,7 @@ var closePopup,
             $("#shortMessage").removeClass('popup-off');
             window.setTimeout(function(){
                 shortMessage.close();
-            }, 1000);
+            }, 1500);
         },
         close: function(){
             $("#shortMessage").animate(

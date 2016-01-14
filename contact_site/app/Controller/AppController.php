@@ -84,15 +84,14 @@ class AppController extends Controller {
         else {
           $this->set('widgetCheck', C_OPERATOR_PASSIVE);
         }
-    }
 
-    // public function beforeRender(){
-    //     // 通知メッセージをセット
-    //     if ($this->Session->check('global.message')) {
-    //         $this->set('successMessage', $this->Session->read('global.message'));
-    //         $this->Session->delete('global.message');
-    //     }
-    // }
+        // 通知メッセージをセット
+        if ($this->Session->check('global.message')) {
+            $this->set('successMessage', $this->Session->read('global.message'));
+            $this->Session->delete('global.message');
+        }
+
+    }
 
     public function setUserInfo($info){
         $this->userInfo = $info;
@@ -119,13 +118,13 @@ class AppController extends Controller {
 
     }
 
-    // /**
-    //  * 通知メッセージをセッションに保存
-    //  * @param $type int (1:success, 2:error, 3:notice) 通知の種類
-    //  * @param $text string メッセージ本文
-    //  * */
-    // public function renderMessage($type, $text){
-    //     $this->Session->write('global.message', ['type'=>$type, 'text' => $text]);
-    // }
+    /**
+     * 通知メッセージをセッションに保存
+     * @param $type int (1:success, 2:error, 3:notice) 通知の種類
+     * @param $text string メッセージ本文
+     * */
+    public function renderMessage($type, $text){
+        $this->Session->write('global.message', ['type'=>$type, 'text' => $text]);
+    }
 
 }
