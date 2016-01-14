@@ -33,7 +33,7 @@
                   'error' => false
               ]) ?>
             </li>
-            <?php if ($this->Form->isFieldError('title')) echo $this->Form->error('current_password', null, ['wrap' => 'li']); ?>
+            <?php if ($this->Form->isFieldError('title')) echo $this->Form->error('title', null, ['wrap' => 'li']); ?>
           <!-- ウィジェットタイトル -->
 
           <!-- お問い合わせ先 -->
@@ -44,7 +44,7 @@
                   'placeholder' => 'お問い合わせ先電話番号',
                   'div' => false,
                   'label' => false,
-                  'maxlength' => 12,
+                  'maxlength' => 13,
                   'error' => false
               ],
               [
@@ -81,12 +81,20 @@
           <!-- 受付時間の表記 -->
             <li>
               <div class="labelArea fLeft"><span><label>受付時間の表記</label></span></div>
+<?php
+// ウィジェットに受付時間を表記しない場合は、受付時間を更新対象外にする。
+$isDisableTimeText = false;
+if ( isset($this->data['MWidgetSetting']['display_time_flg']) && intval($this->data['MWidgetSetting']['display_time_flg']) !== 1 ) {
+  $isDisableTimeText = true;
+}
+?>
               <?= $this->ngForm->input('time_text', [
                   'type' => 'text',
-                  'placeholder' => 'confirm password',
+                  'placeholder' => '受付時間の表記',
                   'div' => false,
                   'label' => false,
                   'maxlength' => 15,
+                  'disabled' => $isDisableTimeText,
                   'error' => false
               ],
               [

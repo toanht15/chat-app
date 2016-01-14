@@ -12,6 +12,9 @@ define('C_WIDGET_DISPLAY_CODE_HIDE', 3); // 表示しない
 define('C_OPERATOR_PASSIVE', 0); // 退席
 define('C_OPERATOR_ACTIVE', 1); // 在籍
 
+// 正規表現
+define('C_MATCH_RULE_TEL', '/^\+?(\d|-)*$/');
+
 
 /* ユーザー権限 */
 $config['Authority'] = [
