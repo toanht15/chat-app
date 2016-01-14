@@ -36,6 +36,10 @@ li {
   list-style-type: none;
 }
 
+.bold {
+  font-weight: bold;
+}
+
 table {
   border-collapse: collapse;
   border: none;
@@ -247,6 +251,10 @@ a {
 
 .w50 {
   width: 50%;
+}
+
+.p15l {
+  padding-left: 15px;
 }
 
 .p20x {
@@ -901,3 +909,63 @@ div {
   }
 }
 
+/* テストページ用 */
+#testpage_bg {
+
+  #testpage_idx {
+    min-height: 120%;
+    background-color: #FFF;
+    width: 500px!important;
+    min-width: 500px!important;
+    margin: 10px auto 0 auto;
+    border: 3px solid #595959;
+    box-shadow: 0 0 1px 1px rgba(0,0,0,0.5);
+    border-radius: 5px;
+
+    #title {
+      text-align: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #595959;
+      font-size: 15px;
+    }
+
+    #detail {
+      padding-left: 15px;
+      font-weight: bold;
+      font-size: 14px;
+
+      ul {
+        background-color: #eee;
+        width: 90%;
+        margin: 0 auto;
+        padding: 20px;
+
+        li {
+          list-style-type: circle;
+          font-size: 12px;
+        }
+      }
+    }
+
+    .form01 {
+      ul {
+        padding-left: 20px;
+
+        li {
+          padding: 20px 10px;
+
+          &.lb {
+            padding: 20px 10px 5px 10px;
+          }
+
+          input[type="text"], input[type="number"] {
+            height: 30px;
+            width: 300px;
+          }
+        }
+
+      }
+    }
+
+  }
+}

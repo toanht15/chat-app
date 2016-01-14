@@ -18,4 +18,18 @@ class ScriptSettingsController extends AppController {
     public function demopage(){
         $this->layout = "frame";
     }
+
+    public function testpage(){
+        $this->layout = "normal";
+        $layoutNumber = 1;
+        $title = "サンプルページ：１ページ目";
+        if ( !empty($this->params->query['page']) ) {
+            if ( intval($this->params->query['page']) === 2 ) {
+                $layoutNumber = $this->params->query['page'];
+                $title = 'サンプルページ：２ページ目';
+            }
+        }
+        $this->set('layoutNumber', $layoutNumber);
+        $this->set('title_for_layout', $title);
+    }
 }
