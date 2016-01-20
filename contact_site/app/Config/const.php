@@ -1,7 +1,7 @@
 <?php
 /* 定数定義 */
 // Nodeサーバー
-define('C_NODE_SERVER_ADDR', "//socket.localhost:8080");
+define('C_NODE_SERVER_ADDR', "//socket.localhost:9090");
 
 // 表示設定種別
 define('C_WIDGET_DISPLAY_CODE_SHOW', 1); // 常に表示する
