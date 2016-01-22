@@ -304,35 +304,23 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       restrict: "A",
       template: "{{stayTime}}",
       link: function(scope, attr, elem) {
-        scope.stayTime = "00:00:00";
-        function init(){
-          scope.timeConf = {
-            time: Number(scope.monitor.time),
-            count: "",
-            level: 1
-          };
-          count();
-        }
+        scope.stayTime = scope.monitor.term;
+
         function _numPad(str){
           return ("0" + str).slice(-2);
         }
 
-        function count(){
-          var req, hour, min, sec,
-              now = new Date(),
-              start = new Date(scope.timeConf.time);
-          req = parseInt((now.getTime() - start.getTime()) / 1000);
-          hour = parseInt(req / 3600);
-          min = parseInt((req / 60) % 60);
-          sec = req % 60;
+        function countUp(){
+          scope.monitor.term = Number(scope.monitor.term) + 1;
+          var hour = parseInt(scope.monitor.term / 3600),
+              min = parseInt((scope.monitor.term / 60) % 60),
+              sec = scope.monitor.term % 60;
           scope.stayTime = _numPad(hour) + ":" + _numPad(min) + ":" + _numPad(sec); // 表示を更新
-          scope.timeConf.count = $timeout(function(e){
-            count();
+          $timeout(function(e){
+            countUp();
           }, 1000); // 1秒ごとに実行
         }
-
-        // 計算開始
-        init();
+        countUp();
       }
     }
   }]);

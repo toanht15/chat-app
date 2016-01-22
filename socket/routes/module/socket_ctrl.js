@@ -55,7 +55,7 @@
     else {
       obj = d;
     }
-    if ( ev !== "connectConfirm" && ev !== "connectInfo" && ev !== "syncResponce") {
+    if ( ev !== "connectConfirm" && ev !== "connectInfo" && ev !== "syncResponce" && ev !== "activeOpCnt") {
       console.log('emit : ' + ev);
     }
     connect.to(obj.siteKey).emit(ev, JSON.stringify(obj));
@@ -68,6 +68,13 @@
 
   function isset(a){
     return ( a !== undefined && a !== null && a !== "" );
+  }
+
+  var timeCalculator = function(obj){
+      var now = new Date(),
+          start = new Date(Number(obj.time)),
+          req = parseInt((now.getTime() - start.getTime()) / 1000);
+    return Number(req);
   }
 
   function timeUpdate(history, obj, time){
@@ -345,7 +352,6 @@
       });
 
       socket.on("getWidgetInfo", function (data) {
-        // console.log('send : connectSuccess' );
         var obj = JSON.parse(data);
         pool.query('SELECT * FROM m_widget_settings WHERE m_companies_id = ? ORDER BY id DESC LIMIT 1;', [companyList[obj.siteKey]], function(err, rows){
           var cnt = 0;
@@ -368,13 +374,13 @@
           else {
             emit('setWidgetInfo', obj);
           }
-console.log('setWidgetInfo', JSON.stringify(obj));
         });
       });
 
       socket.on("customerInfo", function (data) {
         console.log('send : customerInfo' );
         var obj = JSON.parse(data);
+        obj.term = timeCalculator(obj);
         emit('sendCustomerInfo', obj);
       });
 
@@ -384,7 +390,6 @@ console.log('setWidgetInfo', JSON.stringify(obj));
       });
 
       socket.on("connectSuccess", function (data) {
-        // console.log('send : connectSuccess' );
         var obj = JSON.parse(data);
 
         // 初回
@@ -398,12 +403,6 @@ console.log('setWidgetInfo', JSON.stringify(obj));
         }
       });
 
-      socket.on("customerInfo", function (data) {
-        console.log('send : customerInfo' );
-        var obj = JSON.parse(data);
-        emit('sendCustomerInfo', obj);
-      });
-
       socket.on("getCustomerInfo", function(data) {
         var obj = JSON.parse(data);
         emit('confirmCustomerInfo', obj);
@@ -414,7 +413,9 @@ console.log('setWidgetInfo', JSON.stringify(obj));
       // -----------------------------------------------------------------------
       socket.on("sendAccessInfo", function (data) {
         console.log('send : sendAccessInfo' );
-        emit("receiveAccessInfo", data);
+        var obj = JSON.parse(data);
+        obj.term = timeCalculator(obj);
+        emit("receiveAccessInfo", obj);
       });
       // -----------------------------------------------------------------------
       //  モニタリング通信接続前
@@ -496,7 +497,6 @@ console.log('setWidgetInfo', JSON.stringify(obj));
       });
 
       socket.on('syncBrowserInfo', function (data) {
-       // console.log('send : syncBrowserInfo');
         emit('syncResponce', data);
       });
 
@@ -512,6 +512,8 @@ console.log('setWidgetInfo', JSON.stringify(obj));
 
       socket.on('sendConnectInfo', function (data) {
         console.log('send : sendConnectInfo');
+        var obj = JSON.parse(data);
+        obj.term = timeCalculator(obj);
         emit('receiveConnect', data);
       });
 
@@ -560,12 +562,7 @@ console.log('setWidgetInfo', JSON.stringify(obj));
         }
       });
 
-socket.on('debug', function(){
-  pool.query('select * from t_histories', function(err, rows){
-    return console.log(rows);
-  });
-
-});
+    });
 
   });
 // }
