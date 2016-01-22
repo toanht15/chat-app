@@ -340,30 +340,47 @@
         if ( res.siteKey ) {
           socket.join(res.siteKey);
           send.siteKey = res.siteKey;
-          var siteId = companyList[res.siteKey];
+          emit(type, send);
+        }
+      });
+
+      socket.on("getWidgetInfo", function (data) {
+        // console.log('send : connectSuccess' );
+        var obj = JSON.parse(data);
+        pool.query('SELECT * FROM m_widget_settings WHERE m_companies_id = ? ORDER BY id DESC LIMIT 1;', [companyList[obj.siteKey]], function(err, rows){
           var cnt = 0;
-          if ( isset(activeOperator[res.siteKey]) ) {
-            var key = Object.keys(activeOperator[res.siteKey]);
+          if ( isset(activeOperator[obj.siteKey]) ) {
+            var key = Object.keys(activeOperator[obj.siteKey]);
             cnt = key.length;
           }
-          pool.query('SELECT * FROM m_widget_settings WHERE m_companies_id = ? ORDER BY id DESC LIMIT 1;', [siteId], function(err, rows){
-            if ( isset(rows) && isset(rows[0]) ) {
-              send.widget = {
-                display_type: rows[0].display_type,
-                title: rows[0].title,
-                tel: rows[0].tel,
-                content: rows[0].content.replace(/\r\n/g, '<br>'),
-                time_text: rows[0].time_text,
-                display_time_flg: rows[0].display_time_flg,
-                active_operator_cnt: cnt
-              };
-              emit(type, send);
-            }
-            else {
-              emit(type, send);
-            }
-          });
-        }
+          if ( isset(rows) && isset(rows[0]) ) {
+            obj.widget = {
+              display_type: rows[0].display_type,
+              title: rows[0].title,
+              tel: rows[0].tel,
+              content: rows[0].content.replace(/\r\n/g, '<br>'),
+              time_text: rows[0].time_text,
+              display_time_flg: rows[0].display_time_flg,
+              active_operator_cnt: cnt
+            };
+            emit('setWidgetInfo', obj);
+          }
+          else {
+            emit('setWidgetInfo', obj);
+          }
+console.log('setWidgetInfo', JSON.stringify(obj));
+        });
+      });
+
+      socket.on("customerInfo", function (data) {
+        console.log('send : customerInfo' );
+        var obj = JSON.parse(data);
+        emit('sendCustomerInfo', obj);
+      });
+
+      socket.on("getCustomerInfo", function(data) {
+        var obj = JSON.parse(data);
+        emit('confirmCustomerInfo', obj);
       });
 
       socket.on("connectSuccess", function (data) {

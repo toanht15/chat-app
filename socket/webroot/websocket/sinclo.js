@@ -54,6 +54,7 @@
 
         browserInfo.setPrevList();
 
+
         if ( !check.isset(common.tmpParams) ) {
           emit('connectContinue', {
             connectToken: userInfo.connectToken,
@@ -78,19 +79,6 @@
     accessInfo: function(d){
       var obj = common.jParse(d);
       if ( obj.token !== common.token ) return false;
-      if ( check.isset(obj.widget) && obj.widget.display_type === 1 ) {
-        window.info.widgetDisplay = true;
-        window.info.widget = obj.widget;
-      }
-      else if ( check.isset(obj.widget) && obj.widget.display_type === 2 ) {
-        if ( obj.widget.active_operator_cnt > 0 ) {
-          window.info.widgetDisplay = true;
-          window.info.widget = obj.widget;
-        }
-      }
-      else {
-        window.info.widgetDisplay = false;
-      }
 
       if ( check.isset(obj.accessId) && !check.isset(obj.connectToken)) {
         userInfo.set(cnst.info_type.access, obj.accessId, true);
@@ -347,6 +335,34 @@
       if ( obj.connectToken !== userInfo.connectToken ) return false;
       if ( obj.to !== userInfo.tabId ) return false;
       emit('requestSyncStart', obj);
+    },
+    setWidgetInfo: function(d){
+      var obj = JSON.parse(d);
+      if ( check.isset(obj.widget) && obj.widget.display_type === 1 ) {
+        window.info.widgetDisplay = true;
+        window.info.widget = obj.widget;
+      }
+      else if ( check.isset(obj.widget) && obj.widget.display_type === 2 ) {
+        if ( obj.widget.active_operator_cnt > 0 ) {
+          window.info.widgetDisplay = true;
+          window.info.widget = obj.widget;
+        }
+      }
+      else {
+        window.info.widgetDisplay = false;
+      }
+      var html = common.widgetTemplate();
+      common.load.finish();
+      var sincloBox = document.getElementById('sincloBox');
+      if ( sincloBox ) {
+        sincloBox.parentNode.removeChild(sincloBox);
+      }
+      $('body').append(html);
+      common.sincloBoxHeight = 0;
+      $("#sincloBox").children().each(function(){
+        common.sincloBoxHeight = common.sincloBoxHeight + this.offsetHeight;
+      });
+
     },
     redirect: function(d){
       var obj = common.jParse(d);
