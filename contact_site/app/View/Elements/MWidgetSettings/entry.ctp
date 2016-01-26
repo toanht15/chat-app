@@ -5,7 +5,7 @@
       <?= $this->Form->input('id', ['type' => 'hidden']); ?>
       <ul>
         <li>
-          <div class="labelArea fLeft"><span><label>表示設定</label></span></div>
+          <div class="labelArea fLeft"><span class="require"><label>表示設定</label></span></div>
           <?= $this->Form->input('display_type', ['type' => 'select', 'options' => $widgetDisplayType, 'label' => false, 'error' => false, 'div' => false]) ?>
         </li>
         <?php if ( $this->Form->isFieldError('display_type') ) echo $this->Form->error('display_type', null, ['wrap' => 'li']); ?>
@@ -21,7 +21,7 @@
 
           <!-- ウィジェットタイトル -->
             <li>
-              <div class="labelArea fLeft"><span><label>タイトル</label></span></div>
+              <div class="labelArea fLeft"><span class="require"><label>タイトル</label></span></div>
               <?= $this->Form->input('title', [
                   'type' => 'text',
                   'placeholder' => 'ウィジェットタイトル',
@@ -38,7 +38,7 @@
 
           <!-- お問い合わせ先 -->
             <li>
-              <div class="labelArea fLeft"><span><label>お問い合わせ先</label></span></div>
+              <div class="labelArea fLeft"><span class="require"><label>お問い合わせ先</label></span></div>
               <?= $this->ngForm->input('tel', [
                   'type' => 'text',
                   'placeholder' => 'お問い合わせ先電話番号',
@@ -57,7 +57,7 @@
 
           <!-- 受付時間指定 -->
             <li>
-              <div class="labelArea fLeft"><span><label>受付時間指定</label></span></div>
+              <div class="labelArea fLeft"><span class="require"><label>受付時間指定</label></span></div>
               <?= $this->ngForm->input('display_time_flg', [
                   'type' => 'radio',
                   'fieldset' => false,
@@ -79,15 +79,19 @@
           <!-- 受付時間指定 -->
 
           <!-- 受付時間の表記 -->
-            <li>
-              <div class="labelArea fLeft"><span><label>受付時間の表記</label></span></div>
 <?php
 // ウィジェットに受付時間を表記しない場合は、受付時間を更新対象外にする。
 $isDisableTimeText = false;
 if ( isset($this->data['MWidgetSetting']['display_time_flg']) && intval($this->data['MWidgetSetting']['display_time_flg']) !== 1 ) {
   $isDisableTimeText = true;
 }
+$isRequired = "";
+if ( !$isDisableTimeText ) {
+  $isRequired = "class='require'";
+}
 ?>
+            <li>
+              <div class="labelArea fLeft"><span <?=$isRequired?> id="timeTextLabel"><label>受付時間の表記</label></span></div>
               <?= $this->ngForm->input('time_text', [
                   'type' => 'text',
                   'placeholder' => '受付時間の表記',

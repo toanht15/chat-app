@@ -84,6 +84,13 @@ table {
 
 }
 
+.require {
+  &:after {
+    content: "*";
+    color: red;
+  }
+}
+
 input{
   border: none;
   border-bottom: 1px solid #909090;
