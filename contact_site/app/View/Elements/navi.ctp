@@ -75,7 +75,7 @@ else {
             <?= $this->Html->image('monitor.png', array('alt' => '個人設定', 'width' => 30, 'height' => 30, 'url' => array('controller' => 'PersonalSettings', 'action' => 'index'))) ?>
             <p>個人設定</p>
         </div>
-        <div class="icon">
+        <div class="icon" style="display:none">
             <?= $this->Html->image('company.png', array('alt' => '企業設定', 'width' => 30, 'height' => 30, 'url' => array('controller' => 'Customers', 'action' => 'index'))) ?>
             <p>企業設定</p>
         </div>

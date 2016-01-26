@@ -26,7 +26,7 @@ if( strcmp($this->name, 'Login') !== 0 ) {
 <head>
 	<?php echo $this->Html->charset(); ?>
 	<title>
-		<?php echo $this->fetch('title'); ?>
+		<?php echo $this->fetch('title'); ?> | sinclo
 	</title>
 	<?php
 		echo $this->Html->meta('icon');

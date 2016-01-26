@@ -7,6 +7,10 @@ class MWidgetSettingsController extends AppController {
     public $uses = array('MWidgetSetting');
     public $helpers = array('ngForm');
 
+    public function beforeRender(){
+        $this->set('title_for_layout', 'ウィジェット設定');
+    }
+
     /* *
      * 一覧画面
      * @return void

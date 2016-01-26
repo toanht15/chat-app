@@ -9,6 +9,7 @@ class LoginController extends AppController {
 
     public function beforeFilter(){
       $this->Auth->allow('index');
+      $this->set('title_for_layout', 'ログイン');
     }
 
     /* *

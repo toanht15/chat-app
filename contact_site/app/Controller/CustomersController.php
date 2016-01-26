@@ -9,7 +9,7 @@ class CustomersController extends AppController {
     public function beforeRender(){
         $this->set('siteKey', $this->userInfo['MCompany']['company_key']);
         $this->set('muserId', $this->userInfo['id']);
-
+        $this->set('title_for_layout', 'リアルタイムモニタ');
     }
 
     /* *

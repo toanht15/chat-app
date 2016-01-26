@@ -6,7 +6,8 @@
 class PersonalSettingsController extends AppController {
     public $uses = array('MUser');
 
-    public function beforeRender(){
+    public function beforeFilter(){
+        $this->set('title_for_layout', '個人設定');
         $this->set('siteKey', $this->userInfo['MCompany']['company_key']);
     }
 
