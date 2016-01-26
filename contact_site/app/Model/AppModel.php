@@ -107,6 +107,13 @@ class AppModel extends Model {
 		return true;
 	}
 
+	/**
+	 * coFind: 企業IDに紐付く情報を取得する関数
+	 *
+	 * @param $type string ('first', 'all')
+	 * @param $params array find関数の第２引数
+	 * @return find関数の戻り値
+	 * */
 	public function coFind($type, $params = []) {
 		// is empty
 		if ( !isset($params['conditions']) ) {
