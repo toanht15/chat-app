@@ -31,99 +31,99 @@ App::uses('Model', 'Model');
  */
 class AppModel extends Model {
 
-	/**
-	 * begin: トランザクション開始
-	 * @return void
-	 * */
-	public function begin() {
-		$dataSource = $this->getDataSource();
-		$dataSource->begin($this);
-	}
+    /**
+     * begin: トランザクション開始
+     * @return void
+     * */
+    public function begin() {
+        $dataSource = $this->getDataSource();
+        $dataSource->begin($this);
+    }
 
-	/**
-	 * commit: コミット処理へ
-	 * @return void
-	 * */
-	public function commit() {
-		$dataSource = $this->getDataSource();
-		$dataSource->commit($this);
-	}
+    /**
+     * commit: コミット処理へ
+     * @return void
+     * */
+    public function commit() {
+        $dataSource = $this->getDataSource();
+        $dataSource->commit($this);
+    }
 
-	/**
-	 * rollback: ロールバック処理へ
-	 * @return void
-	 * */
-	public function rollback() {
-		$dataSource = $this->getDataSource();
-		$dataSource->rollback($this);
-	}
+    /**
+     * rollback: ロールバック処理へ
+     * @return void
+     * */
+    public function rollback() {
+        $dataSource = $this->getDataSource();
+        $dataSource->rollback($this);
+    }
 
-	/**
-	 * logicalDelete: 論理削除関数
-	 * @param int $id: ターゲットのID
-	 * @return boolean true/false: 処理に成功したか、失敗したか
-	 * */
-	public function logicalDelete($id) {
-		$ret = $this->read(null, $id);
-		if ( !empty($ret) && !empty($ret[$this->name]) && isset($ret[$this->name]['del_flg']) ) {
-			$ret[$this->name]['del_flg'] = 1;
-			if ( $this->save($ret, false) ) {
-				return true;
-			}
-		}
-		return false;
-	}
+    /**
+     * logicalDelete: 論理削除関数
+     * @param int $id: ターゲットのID
+     * @return boolean true/false: 処理に成功したか、失敗したか
+     * */
+    public function logicalDelete($id) {
+        $ret = $this->read(null, $id);
+        if ( !empty($ret) && !empty($ret[$this->name]) && isset($ret[$this->name]['del_flg']) ) {
+            $ret[$this->name]['del_flg'] = 1;
+            if ( $this->save($ret, false) ) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-	/**
-	 * beforeSave: データ更新情報を格納
-	 * [登録処理]
-	 *   条件：データにIDがセットされていない
-	 *   処理：登録者ID、登録日、更新者ID、更新日を保存
-	 * [更新処理]
-	 *   条件：データにIDがセットされている、削除フラグが立っていない
-	 *   処理：更新者ID、更新日を保存
-	 * [削除処理]
-	 *   条件：削除フラグが立っている
-	 *   処理：更新者ID、更新日、削除者ID、削除日を保存
-	 *
-	 * @param array $options
-	 * @return boolean true
-	 * */
-	public function beforeSave($options = []) {
-		$now = new DateTime('now', new DateTimeZone('Asia/Tokyo'));
-		// insert
-		if(empty($this->id)){
-			$this->data[$this->alias]['created_user_id'] = Configure::read('logged_user_id');
-			$this->data[$this->alias]['created'] = $now->format("Y/m/d H:i:s");
-		}
-		// insert && update && delete
-		$this->data[$this->alias]['modified_user_id'] = Configure::read('logged_user_id');
-		$this->data[$this->alias]['modified'] = $now->format("Y/m/d H:i:s");
-		// delete
-		if(!empty($this->data[$this->alias]['del_flg'])){
-			$this->data[$this->alias]['deleted_user_id'] = Configure::read('logged_user_id');
-			$this->data[$this->alias]['deleted'] = $now->format("Y/m/d H:i:s");
-		}
-		return true;
-	}
+    /**
+     * beforeSave: データ更新情報を格納
+     * [登録処理]
+     *   条件：データにIDがセットされていない
+     *   処理：登録者ID、登録日、更新者ID、更新日を保存
+     * [更新処理]
+     *   条件：データにIDがセットされている、削除フラグが立っていない
+     *   処理：更新者ID、更新日を保存
+     * [削除処理]
+     *   条件：削除フラグが立っている
+     *   処理：更新者ID、更新日、削除者ID、削除日を保存
+     *
+     * @param array $options
+     * @return boolean true
+     * */
+    public function beforeSave($options = []) {
+        $now = new DateTime('now', new DateTimeZone('Asia/Tokyo'));
+        // insert
+        if(empty($this->id)){
+            $this->data[$this->alias]['created_user_id'] = Configure::read('logged_user_id');
+            $this->data[$this->alias]['created'] = $now->format("Y/m/d H:i:s");
+        }
+        // insert && update && delete
+        $this->data[$this->alias]['modified_user_id'] = Configure::read('logged_user_id');
+        $this->data[$this->alias]['modified'] = $now->format("Y/m/d H:i:s");
+        // delete
+        if(!empty($this->data[$this->alias]['del_flg'])){
+            $this->data[$this->alias]['deleted_user_id'] = Configure::read('logged_user_id');
+            $this->data[$this->alias]['deleted'] = $now->format("Y/m/d H:i:s");
+        }
+        return true;
+    }
 
-	/**
-	 * coFind: 企業IDに紐付く情報を取得する関数
-	 *
-	 * @param $type string ('first', 'all')
-	 * @param $params array find関数の第２引数
-	 * @return find関数の戻り値
-	 * */
-	public function coFind($type, $params = []) {
-		// is empty
-		if ( !isset($params['conditions']) ) {
-			$params['conditions'] = [];
-		}
-		// set company id
-		$params['conditions']['m_companies_id'] = Configure::read('logged_company_id');
-		// set delete flg
-		$params['conditions']['del_flg'] = 0;
+    /**
+     * coFind: 企業IDに紐付く情報を取得する関数
+     *
+     * @param $type string ('first', 'all')
+     * @param $params array find関数の第２引数
+     * @return find関数の戻り値
+     * */
+    public function coFind($type, $params = []) {
+        // is empty
+        if ( !isset($params['conditions']) ) {
+            $params['conditions'] = [];
+        }
+        // set company id
+        $params['conditions']['m_companies_id'] = Configure::read('logged_company_id');
+        // set delete flg
+        $params['conditions']['del_flg'] = 0;
 
-		return $this->find($type, $params);
-	}
+        return $this->find($type, $params);
+    }
 }
