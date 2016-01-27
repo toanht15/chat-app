@@ -21,6 +21,9 @@ class LoginController extends AppController {
     }
 
     public function login() {
+      if(strcmp($_SERVER['HTTP_X_FORWARDED_PORT'],80) === 0){
+         $this->redirect("https://".env('SERVER_NAME').$this->here);
+      }
       if ($this->request->is('post')) {
         if ($this->Auth->login()) {
           parent::setUserInfo($this->Auth->user());

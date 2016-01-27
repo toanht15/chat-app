@@ -54,6 +54,9 @@ class AppController extends Controller {
     public $userInfo;
 
     public function beforeFilter(){
+        // プロトコルチェック
+        $this->checkPort();
+
         // ログイン情報をオブジェクトに格納
         if ( $this->Session->check('global.userInfo') ) {
             $this->userInfo = $this->Session->read('global.userInfo');
@@ -89,6 +92,44 @@ class AppController extends Controller {
         if ($this->Session->check('global.message')) {
             $this->set('successMessage', $this->Session->read('global.message'));
             $this->Session->delete('global.message');
+        }
+
+    }
+
+    /**
+     * checkPort プロトコルチェック
+     * @return void
+     * */
+    public function checkPort(){
+        $params = $this->request->params;
+        $query = $this->request->query;
+
+        switch($params['controller'] . "/" . $params['action']){
+            case "Customers/frame":
+                $port = 80;
+                $protocol = "http";
+                break;
+            default:
+                $port = 443;
+                $protocol = "https";
+        }
+
+        // 推奨のプロトコルではなかった場合
+        if(strcmp($_SERVER['HTTP_X_FORWARDED_PORT'],$port) !== 0){
+            $queryStr = "";
+            $url = $protocol . "://".env('SERVER_NAME').$this->here;
+            foreach((array)$query as $key => $val){
+                if ( empty($queryStr) ) {
+                  $queryStr = "?";
+                }
+                else {
+                  $queryStr .= "&";
+                }
+                $queryStr .= $key . "=" . $val;
+            }
+
+            // 推奨のプロトコルでリダイレクト
+            $this->redirect($url.$queryStr);
         }
 
     }
