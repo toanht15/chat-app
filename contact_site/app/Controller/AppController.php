@@ -54,8 +54,8 @@ class AppController extends Controller {
     public $userInfo;
 
     public function beforeFilter(){
-        // プロトコルチェック
-        $this->checkPort();
+        // プロトコルチェック(本番のみ)
+        // $this->checkPort();
 
         // ログイン情報をオブジェクトに格納
         if ( $this->Session->check('global.userInfo') ) {
