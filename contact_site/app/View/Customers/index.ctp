@@ -59,9 +59,11 @@
                 <td ng-hide="labelHideList.referrer" class="tCenter"><span>{{monitor.referrer}}</span></td>
                 <td class='w10'>
                     <span ng-show="monitor.widget">
-                    <span ng-if=" monitor.connectToken">モニタリング中</span>
-                    <a    ng-if="!monitor.connectToken" class='monitorBtn blueBtn btn-shadow' href='javascript:void(0)' ng-click="windowOpen(monitor.tabId)">接続する</a>
+                      <a   ng-if="!monitor.connectToken" class='monitorBtn blueBtn btn-shadow' href='javascript:void(0)' ng-click="windowOpen(monitor.tabId)">接続する</a>
                     </span>
+                    <ng-hide="monitor.widget">
+                      <span ng-if=" monitor.connectToken">モニタリング中</span>
+                    </ng-hide>
                 </td>
             </tr>
         </tbody>
