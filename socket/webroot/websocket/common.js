@@ -213,6 +213,7 @@ var socket, // socket.io
       this.globalSet();
       // ストレージにリファラーのセット
       this.setPrevpage();
+
       common.getParams();
       if ( check.isset(storage.s.get('params')) ) {
         common.setParams();
@@ -824,14 +825,6 @@ var socket, // socket.io
       sinclo.userDissconnectionEv(d);
     });
 
-    socket.on('redirect', function (d) {
-      sinclo.redirect(d);
-    });
-
-    // 継続接続
-    socket.on('syncContinue', function (d) {
-      sinclo.syncContinue(d);
-    });
     // 継続接続
     socket.on('syncContinue', function (d) {
       sinclo.syncContinue(d);
@@ -843,6 +836,10 @@ var socket, // socket.io
 
     socket.on('receiveConnect', function (d) {
       sinclo.receiveConnectEv(d);
+    }); // socket-on: receiveConnectEV
+
+    socket.on('resUrlChecker', function (d) {
+      sinclo.resUrlChecker(d);
     }); // socket-on: receiveConnectEV
 
     socket.on('syncStop', function(d){

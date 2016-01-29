@@ -47,13 +47,13 @@
           emitData.connectToken = userInfo.connectToken;
           userInfo.syncInfo.get();
         }
+        emit('reqUrlChecker', {});
 
         if ( check.isset(common.tmpParams) ) {
           browserInfo.resetPrevList();
         }
 
         browserInfo.setPrevList();
-
 
         if ( !check.isset(common.tmpParams) ) {
           emit('connectContinue', {
@@ -184,10 +184,6 @@
         window.clearTimeout(this.syncTimeout);
       }
       if ( obj.to !== userInfo.tabId ) return false;
-      // 二度目以降の同期でURLが異なっていた場合はリロード
-      if ( common.load.flg && browserInfo.href !== obj.url ) {
-        location.href = obj.url;
-      }
       // userInfo.getConnect()
       common.load.start();
       userInfo.setConnect(obj.connectToken);
@@ -262,8 +258,6 @@
     syncEvStart: function(d){
       var obj = common.jParse(d);
       if ( obj.to !== userInfo.tabId && obj.from !== userInfo.tabId ) return false;
-      // URLが異なっていたらサーバーへチェック
-      emit('checkUrl', {});
       syncEvent.start(true);
       common.load.finish();
     },
@@ -364,12 +358,20 @@
       });
 
     },
-    redirect: function(d){
-      var obj = common.jParse(d);
+    resUrlChecker: function(d){
+      var obj = JSON.parse(d);
       if ( obj.connectToken !== userInfo.connectToken ) return false;
-      if ( obj.tabId !== userInfo.tabId ) return false;
-      if ( !check.isset(obj.url) ) return false;
-      location.href = obj.url;
+      if ( obj.accessType === userInfo.accessType ) return false;
+      if ( userInfo.accessType === cnst.access_type.host ) {
+        if ( obj.url !== browserInfo.href ) {
+          location.href = obj.url;
+        }
+      }
+      else {
+        if ( obj.url !== browserInfo.href ) {
+          location.href = obj.url;
+        }
+      }
     },
     syncStop: function(d){
       var obj = common.jParse(d);

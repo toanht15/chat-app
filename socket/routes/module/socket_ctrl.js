@@ -14,7 +14,7 @@ var http = require('http'),
         res.end('server connected');
     }),
     io = require('socket.io').listen(server), access,
-    connect, displayShere;
+    connect;
     server.listen(9090);//9090番ポートで起動
 
 // 待機中ユーザー
@@ -114,28 +114,6 @@ function timeUpdate(history, obj, time){
     }
   );
 }
-
-displayShere = {
-  list: {},
-  set: function(obj){
-    if ( !isset(this.list[obj.siteKey]) ) {
-      this.list[obj.siteKey] = {};
-    }
-    if ( !isset(this.list[obj.siteKey][obj.connectToken]) ) {
-      this.list[obj.siteKey][obj.connectToken] = {};
-    }
-    this.list[obj.siteKey][obj.connectToken].url = obj.url;
-  },
-  get: function(obj){
-    if ( !isset(this.list[obj.siteKey]) ) {
-      this.list[obj.siteKey] = {};
-    }
-    if ( !isset(this.list[obj.siteKey][obj.connectToken]) ) {
-      this.list[obj.siteKey][obj.connectToken] = {};
-    }
-    return this.list[obj.siteKey][obj.connectToken].url;
-  }
-};
 
 access = {
   setInterbalTime: 3000,
@@ -445,8 +423,6 @@ connect = io.sockets.on('connection', function (socket) {
     console.log('send : connectContinue');
     var obj = JSON.parse(data);
 
-    // URLを保存
-    displayShere.set(obj);
     // 企業キーが取得できなければスルー
     if ( obj.siteKey ) {
       socket.join(obj.siteKey);
@@ -516,18 +492,6 @@ connect = io.sockets.on('connection', function (socket) {
     emit('receiveConnect', data);
   });
 
-  socket.on('checkUrl', function (data) {
-    var obj = JSON.parse(data);
-    var url = displayShere.get(obj);
-    console.log('send : checkUrl(' + url + ')');
-    // 最新のURLと照合し、合っていなければリダイレクト
-    if ( url !== obj.url ) {
-      var newObj = obj;
-      newObj.url = url;
-      emit('redirect', newObj);
-    }
-  });
-
   socket.on('sendOperatorStatus', function(data){
     var obj = JSON.parse(data);
     if ( !isset(activeOperator[obj.siteKey]) ) {
@@ -551,6 +515,11 @@ connect = io.sockets.on('connection', function (socket) {
       count: keys.length
     });
   })
+
+  socket.on('reqUrlChecker', function (data){
+    var obj = JSON.parse(data);
+    emit('resUrlChecker', data);
+  });
 
   socket.on('userOut', function (data) {
     console.log('send : userOut');
