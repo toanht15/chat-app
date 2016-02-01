@@ -1,7 +1,8 @@
 <?php
 /* 定数定義 */
 // Nodeサーバー
-define('C_NODE_SERVER_ADDR', "//socket.localhost");
+define('C_NODE_SERVER_ADDR', "//socket.localhost:9090"); // Dev
+// define('C_NODE_SERVER_ADDR', "//ws1.sinclo.jp"); // 本番(今後動的になる)
 
 // 表示設定種別
 define('C_WIDGET_DISPLAY_CODE_SHOW', 1); // 常に表示する
