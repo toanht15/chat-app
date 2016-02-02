@@ -15,19 +15,19 @@
  */
 ?>
 <script type="text/javascript">
-var closePopup,
-    popupEvent = {
+'use strict';
+
+$(window).ready(function(){
+  popupEvent._setEvent();
+});
+
+var popupEvent = {
         id: null,
         title: null,
         contents: null,
+        closePopup: null,
         init: function() {
-            this.elm.popup = document.getElementById('popup');
-            this.elm.help = document.getElementById('popupHelpBtn');
-            this.elm.close = document.getElementById('popupCloseBtn');
-            this.elm.btnArea = document.getElementById('popup-button');
-            closePopup = '';
-            // イベントのセット
-            this._setEvent();
+            this.closePopup = '';
         },
         elm: {
             popup: null,
@@ -36,10 +36,14 @@ var closePopup,
             btnArea: null
         },
         _setEvent: function(){
-            var help = this.elm.help;
-            help.addEventListener('click', function(){ return popupEvent.help(); });
-            var close = this.elm.close;
-            close.addEventListener('click', function(){ return popupEvent.close(); });
+          this.elm.popup = document.getElementById('popup-frame');
+          this.elm.help = document.getElementById('popupHelpBtn');
+          this.elm.close = document.getElementById('popupCloseBtn');
+          this.elm.btnArea = document.getElementById('popup-button');
+          var help = this.elm.help;
+          help.addEventListener('click', function(){ return popupEvent.help(); });
+          var close = this.elm.close;
+          close.addEventListener('click', function(){ return popupEvent.close(); });
         },
         help: function(){},
         create: function () {
@@ -51,7 +55,7 @@ var closePopup,
                 case 'p-confirm':
                     var closeBtn = _button("はい");
                     closeBtn.onclick = function(){
-                        return closePopup();
+                        return popupEvent.closePopup();
                     };
                     var closeBtn = _button("いいえ");
                     closeBtn.onclick = function(){
@@ -61,13 +65,13 @@ var closePopup,
                 case 'p-cus-menu':
                     var closeBtn = _button("設定");
                     closeBtn.onclick = function(){
-                        return closePopup();
+                        return popupEvent.closePopup();
                     };
                     break;
                 case 'p-muser-entry':
                     var entryBtn = _button("登録");
                     entryBtn.onclick = function(){
-                        return closePopup();
+                        return popupEvent.closePopup();
                     };
                     var closeBtn = _button("閉じる");
                     closeBtn.onclick = function(){
@@ -97,10 +101,9 @@ var closePopup,
             $('#popup-main').html(this.contents);
             // タイトルをセット
             $('#popup-title').text(this.title);
-            // 出現初期位置をセット
-            var popup = this.elm.popup.classList.add(this.id);
-            this.elm.popup.style.bottom = -(window.innerHeight + $('#popup').height()) + "px";
             this.create();
+            // 出現初期位置をセット
+            this.elm.popup.classList.add(this.id);
         },
         open: function(contents, id, title){
             // データをセット
@@ -109,16 +112,21 @@ var closePopup,
             this.title = title;
 
             // スタイルのリセット
-            $("#popup").removeAttr('style');
+            $("#popup-frame").removeAttr('style');
             // コンテンツを作成
             this._popupCreate();
             // 一時的にスクロール非表示に
             $('body').css('overflow', 'hidden');
             // ポップアップを表示状態にする
-            $("#popup, #popup-bg").removeClass('popup-off');
-            $('#popup').animate(
+            $(".popup-off").addClass('popup-on').removeClass('popup-off');
+            var contHeight = $('#popup-content').height();
+            $('#popup-frame').css('height', contHeight);
+console.log(contHeight);
+            this.elm.popup.style.top = (window.innerHeight) + "px";
+
+            $('#popup-frame').animate(
                 {
-                    bottom: 0
+                    top: 0
                 },
                 500,
                 function(){
@@ -128,14 +136,14 @@ var closePopup,
         },
         close: function(){
             $('body').css('overflow', 'hidden');
-            $('#popup').animate(
+            $('#popup-frame').animate(
                 {
-                    bottom: -(window.innerHeight + $('#popup').height())
+                    top: (window.innerHeight + $('#popup-frame').height())
                 },
                 500,
                 function(){
                     $('body').css('overflow', 'auto');
-                    $('#popup-bg, #popup').attr('class', 'popup-off');
+                    $('.popup-on').addClass('popup-off').removeClass('popup-on');
                 }
             );
         }
@@ -199,26 +207,31 @@ if ( isset($successMessage) && !empty($successMessage) ) {
 }(popupEvent, shortMessage);
 
 </script>
-<div id="popup-bg" class="popup-off"></div>
-<div id="popup" class="popup-off">
-    <div id="popup-content">
-        <div id="popup-ctrl-btn">
-            <?php echo $this->Html->link(
-                $this->Html->image('question.png', array('alt' => 'ヘルプ', 'width'=>20, 'height'=>20)),
-                'javascript:void(0)',
-                array('escape' => false, 'class'=>'greenBtn btn-shadow', 'id' => 'popupHelpBtn'));
-            ?>
-            <?php echo $this->Html->link(
-                $this->Html->image('close.png', array('alt' => '閉じる', 'width'=>20, 'height'=>20)),
-                'javascript:void(0)',
-                array('escape' => false, 'class'=>'redBtn btn-shadow', 'id' => 'popupCloseBtn'));
-            ?>
-        </div>
-        <div id="popup-title"></div>
-        <div id="popup-main"></div>
-        <div id="popup-button">
+<div id="popup" class="popup-off" style="">
+  <div id="popup-frame-base">
+    <div id="popup-bg"></div>
+    <div id="popup-frame">
+        <div id="popup-content">
+            <div id="popup-ctrl-btn">
+                <?php echo $this->Html->link(
+                    $this->Html->image('question.png', array('alt' => 'ヘルプ', 'width'=>20, 'height'=>20)),
+                    'javascript:void(0)',
+                    array('escape' => false, 'class'=>'greenBtn btn-shadow', 'id' => 'popupHelpBtn'));
+                ?>
+                <?php echo $this->Html->link(
+                    $this->Html->image('close.png', array('alt' => '閉じる', 'width'=>20, 'height'=>20)),
+                    'javascript:void(0)',
+                    array('escape' => false, 'class'=>'redBtn btn-shadow', 'id' => 'popupCloseBtn'));
+                ?>
+            </div>
+            <div id="popup-title"></div>
+            <div id="popup-main"></div>
+            <div id="popup-button">
+            </div>
         </div>
     </div>
+  </div>
+
 </div>
 <div id="shortMessage" class="popup-off">
 </div>

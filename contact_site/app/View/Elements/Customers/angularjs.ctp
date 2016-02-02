@@ -107,6 +107,28 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         dataType: 'html',
         success: function(html){
           modalOpen.call(window, html, 'p-cus-menu', '表示項目の設定');
+
+          popupEvent.closePopup = function(){
+            var retList = {};
+            $('#labelHideList option').each(function(e){
+              retList[this.value] = this.selected;
+            });
+
+            $.ajax({
+              type: 'GET',
+              url: "<?= $this->Html->url(array('controller' => 'Customers', 'action' => 'remoteSaveSetting')) ?>",
+              data: {
+                labelHideList: JSON.stringify(retList)
+              },
+              dataType: 'html',
+              success: function(html){
+                $scope.updateList(retList);
+                modalClose();
+              },
+              error: function(){
+              }
+            });
+          };
         },
         error: function(){
         }
@@ -118,27 +140,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       $scope.labelHideList = retList;
     };
 
-    closePopup = function(){
-      var retList = {};
-      $('#labelHideList option').each(function(e){
-        retList[this.value] = this.selected;
-      });
-
-      $.ajax({
-        type: 'GET',
-        url: "<?= $this->Html->url(array('controller' => 'Customers', 'action' => 'remoteSaveSetting')) ?>",
-        data: {
-          labelHideList: JSON.stringify(retList)
-        },
-        dataType: 'html',
-        success: function(html){
-          $scope.updateList(retList);
-          modalClose();
-        },
-        error: function(){
-        }
-      });
-    };
 
     $scope.ua = function(str){
       return userAgentChk.init(str);
