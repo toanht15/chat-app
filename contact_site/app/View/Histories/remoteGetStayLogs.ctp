@@ -17,7 +17,7 @@
 						<span><?=$key + 1?></span>
 					</td>
 					<td class="tCenter">
-						<span class="popupHistoryUrl"><?=$this->Html->link(h($val['THistoryStayLog']['title']), h($val['THistoryStayLog']['url']));?></span>
+						<span class="popupHistoryUrl"><?=$this->Html->link(h($val['THistoryStayLog']['title']), h($val['THistoryStayLog']['url']), array('target' => 'monitor'));?></span>
 					</td>
 					<td class="popupHistoryTimer tCenter">
 						<span><?=h($val['THistoryStayLog']['stay_time'])?></span>

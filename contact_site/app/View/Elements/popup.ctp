@@ -121,7 +121,6 @@ var popupEvent = {
             $(".popup-off").addClass('popup-on').removeClass('popup-off');
             var contHeight = $('#popup-content').height();
             $('#popup-frame').css('height', contHeight);
-console.log(contHeight);
             this.elm.popup.style.top = (window.innerHeight) + "px";
 
             $('#popup-frame').animate(

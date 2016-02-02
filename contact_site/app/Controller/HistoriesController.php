@@ -33,6 +33,7 @@ class HistoriesController extends AppController {
     );
 
     public function beforeFilter(){
+        parent::beforeFilter();
         $this->set('siteKey', $this->userInfo['MCompany']['company_key']);
         $this->set('title_for_layout', '履歴');
     }
