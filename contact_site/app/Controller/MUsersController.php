@@ -22,6 +22,7 @@ class MUsersController extends AppController {
     );
 
     public function beforeFilter(){
+        parent::beforeFilter();
         $this->set('title_for_layout', 'ユーザー管理');
         $this->set('siteKey', $this->userInfo['MCompany']['company_key']);
     }
