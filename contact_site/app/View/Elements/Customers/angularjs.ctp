@@ -221,20 +221,14 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       // 担当しているユーザーかチェック
       var obj = JSON.parse(data), url, scscale, scwidth, scheight;
       if (connectToken !== obj.connectToken) return false;
-      scscale = window.parent.screen.width / obj.screen.width;
+      scscale = screen.availWidth / obj.screen.width;
       var wSpan = window.parent.screen.width - obj.windowSize.width;
       var hSpan = window.parent.screen.height - obj.windowSize.height;
       // サイズが超えてしまう場合
       if ( wSpan < 0 || hSpan < 0 ) {
         // 縮小する
         if ( hSpan > wSpan ) {
-          scscale = window.parent.screen.height / obj.screen.height;
-        }
-      }
-      // サイズが小さい場合
-      else if ( wSpan > 0 && hSpan > 0 ) {
-        if ( hSpan <= wSpan ) {
-      //    scscale = window.parent.screen.width / obj.screen.width;
+          scscale = screen.availHeight / obj.screen.height;
         }
       }
       scwidth = obj.windowSize.width * scscale;

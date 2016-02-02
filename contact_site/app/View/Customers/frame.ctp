@@ -27,11 +27,12 @@ var socket, userId, iframe, connectToken, url, emit, windowResize, arg = new Obj
   };
 
   windowResize = function (ws) {
-    var headBarSize = window.outerHeight - window.innerHeight;
     iframe.width = ws.width;
     iframe.height = ws.height;
-    wswidth = ws.width * arg.scale;
-    wsheight = (ws.height + headBarSize) * arg.scale;
+    var outHeightSize = window.outerHeight - window.innerHeight;
+    var outWidthSize = window.outerWidth - window.innerWidth;
+    wswidth = (ws.width + outWidthSize) * arg.scale;
+    wsheight = (ws.height + outHeightSize) * arg.scale;
     window.resizeTo(wswidth, wsheight);
   };
 })();
