@@ -62,7 +62,7 @@ if ( !empty($this->data['MUser']['edit_password']) ) {
         <!-- /* 操作 */ -->
         <section>
             <div id="personal_action">
-                <?= $this->Html->link('更新', 'javascript:void(0)', ['onclick' => 'saveAct()', 'class' => 'greenBtn btn-shadow']) ?>
+                <?= $this->Html->link('更新', 'javascript:void(0)', ['onclick' => 'loading.ev(saveAct)', 'class' => 'greenBtn btn-shadow']) ?>
             </div>
         </section>
 
