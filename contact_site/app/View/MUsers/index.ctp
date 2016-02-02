@@ -24,7 +24,7 @@
 			</tr>
 		</thead>
 		<tbody>
-		<?php foreach($userList as $val): ?>
+		<?php foreach((array)$userList as $val): ?>
 			<tr>
 				<td class="tCenter"><?=$val['MUser']['id']?></td>
 				<td class="tCenter"><?=$val['MUser']['user_name']?></td>
