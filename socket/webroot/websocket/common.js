@@ -232,10 +232,6 @@ var socket, // socket.io
         userInfo.sendTabId = common.params.sendTabId;
         userInfo.tabId = common.params.tabId;
         userInfo.setConnect(common.params.connectToken);
-        emit('requestSyncStart', {
-          accessType: common.params.type
-        });
-
         emit('connectSuccess', {
           confirm: false,
           subWindow: true
@@ -528,30 +524,6 @@ var socket, // socket.io
             });
             // do something ...
           }, browserInfo.interval);
-        }
-      },
-      {
-        type: "click",
-        ev: function(e){
-          var elm = document.elementFromPoint(e.clientX,e.clientY),
-          nodeName = e.target.nodeName.toLowerCase(),
-          href = "",
-          idx = $(String(nodeName)).index(elm);
-
-          // 排他処理
-          if ( nodeName === syncEvent.receiveEvInfo.nodeName ) return false;
-
-          if ( nodeName === "a" ) {
-            href = $(String(nodeName)).eq(Number(idx)).prop('href');
-          }
-
-          emit('syncChangeEv', {
-            accessType: userInfo.accessType,
-            nodeName: nodeName,
-            type: e.type,
-            idx: idx,
-            href: href
-          });
         }
       }
     ],

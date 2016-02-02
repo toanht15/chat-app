@@ -40,6 +40,7 @@
 
       // モニタリング中であればスルー
       if ( check.isset(userInfo.connectToken) ) {
+        common.load.start();
         if ( Number(userInfo.accessType) !== Number(cnst.access_type.guest) ) {
           // emit('requestSyncStart', {});
         }
@@ -51,6 +52,9 @@
 
         if ( check.isset(common.tmpParams) ) {
           browserInfo.resetPrevList();
+          emit('requestSyncStart', {
+            accessType: common.params.type
+          });
         }
 
         browserInfo.setPrevList();
@@ -301,9 +305,6 @@
       syncEvent.receiveEvInfo.nodeName = String(obj.nodeName);
       syncEvent.receiveEvInfo.idx = Number(obj.idx);
       switch (obj.type) {
-        case "click":
-          elm.trigger(String(obj.type));
-          break;
         case "change":
         case "keyup":
           elm.val(obj.value);
@@ -362,14 +363,15 @@
       var obj = JSON.parse(d);
       if ( obj.connectToken !== userInfo.connectToken ) return false;
       if ( obj.accessType === userInfo.accessType ) return false;
-      if ( userInfo.accessType === cnst.access_type.host ) {
+      if ( obj.to === userInfo.tabId ) {
         if ( obj.url !== browserInfo.href ) {
+          common.load.start();
           location.href = obj.url;
         }
-      }
-      else {
-        if ( obj.url !== browserInfo.href ) {
-          location.href = obj.url;
+        else {
+          emit('requestSyncStart', {
+            accessType: common.params.type
+          });
         }
       }
     },
