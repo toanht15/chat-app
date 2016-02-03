@@ -22,7 +22,7 @@ function openEntryDialog(setting){
 }
 function openConfirmDialog(id){
 	modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', 'ユーザー情報');
-	closePopup = function(){
+	popupEvent.closePopup = function(){
 		$.ajax({
 			type: 'post',
 			data: {
