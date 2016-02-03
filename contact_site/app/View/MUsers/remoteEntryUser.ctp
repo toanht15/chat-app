@@ -1,5 +1,5 @@
 <script type="text/javascript">
-    closePopup = function(){
+    popupEvent.closePopup = function(){
         var userId = document.getElementById('MUserId').value;
         var userName = document.getElementById('MUserUserName').value;
         var displayName = document.getElementById('MUserDisplayName').value;
@@ -19,7 +19,7 @@
             },
             dataType: "JSON",
             success: function(data){
-                var keys = Object.keys(data), num = 0, popup = $("#popup");
+                var keys = Object.keys(data), num = 0, popup = $("#popup-frame");
                 popup.removeAttr('style');
                 $(".error-message").remove();
 
