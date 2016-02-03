@@ -35,7 +35,7 @@ class MUser extends AppModel {
                 'rule' => 'email',
                 'message' => 'メールアドレスの形式が不正です。'
             ],
-            'email' => [
+            'isUniqueChk' => [
                 'rule' => 'isUniqueChk',
                 'message' => '既に登録されているアドレスです。'
             ]
