@@ -8,6 +8,7 @@ class LoginController extends AppController {
     public $uses = array('MUser');
 
     public function beforeFilter(){
+      parent::beforeFilter();
       $this->Auth->allow('index');
       $this->set('title_for_layout', 'ログイン');
     }
@@ -21,8 +22,6 @@ class LoginController extends AppController {
     }
 
     public function login() {
-      // プロトコルチェック
-      // $this->checkPort();
       if ($this->request->is('post')) {
         if ($this->Auth->login()) {
           parent::setUserInfo($this->Auth->user());
