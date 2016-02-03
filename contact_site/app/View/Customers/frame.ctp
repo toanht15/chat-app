@@ -46,7 +46,7 @@ window.onload = function(){
   });
 
   // WebSocketサーバに接続
-  socket = io.connect("http://socket.localhost:9090");
+  socket = io.connect("<?=C_NODE_SERVER_ADDR?>");
   var first = true;
 
 
@@ -76,6 +76,7 @@ window.onload = function(){
 
     iframe.src = url + "?type=2&userId=" + userId + "&sendTabId=" + tabId + "&connectToken=" + arg.connectToken + "&first=true";
     emit('connectFrame', {tabId: tabId});
+    windowResize(obj.windowSize);
   });
 
   socket.on('syncResponce', function(data){

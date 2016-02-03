@@ -4,7 +4,7 @@
 //  定数
 // -----------------------------------------------------------------------------
 var _access_type_guest = 1, _access_type_host = 2, userAgentChk,
-    socket = io.connect("http://socket.localhost:9090"),
+    socket = io.connect("<?=C_NODE_SERVER_ADDR?>"),
     connectToken = null, receiveAccessInfoToken = null;
 
 (function(){
