@@ -45,6 +45,7 @@ if( strcmp($this->name, 'Login') !== 0 ) {
 			echo $this->Html->script(C_NODE_SERVER_ADDR."/socket.io/socket.io.js");
 		}
 		echo $this->Html->script("jquery.multi-select.js");
+		echo $this->Html->script("common.js");
 		echo $this->Html->script("//ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js");
 		echo $this->Html->script("//ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-sanitize.js");
 		echo $this->element("common-js");
