@@ -76,7 +76,6 @@ window.onload = function(){
 
     iframe.src = url + "?type=2&userId=" + userId + "&sendTabId=" + tabId + "&connectToken=" + arg.connectToken + "&first=true";
     emit('connectFrame', {tabId: tabId});
-    windowResize(obj.windowSize);
   });
 
   socket.on('syncResponce', function(data){
