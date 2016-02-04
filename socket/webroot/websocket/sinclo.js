@@ -47,6 +47,16 @@
         else {
           emitData.connectToken = userInfo.connectToken;
           userInfo.syncInfo.get();
+          emit('connectSuccess', {
+            confirm: false,
+            widget: window.info.widgetDisplay,
+            subWindow: false,
+            prev: userInfo.prev,
+            userAgent: window.navigator.userAgent,
+            time: userInfo.time,
+            ipAddress: userInfo.getIp(),
+            referrer: userInfo.referrer
+          });
         }
         emit('reqUrlChecker', {});
 
@@ -310,8 +320,17 @@
           elm.val(obj.value);
           break;
         case "scroll":
-          $(obj.nodeName).eq(Number(obj.idx)).stop(false, false).scrollTop(Number(obj.value.top));
-          $(obj.nodeName).eq(Number(obj.idx)).stop(false, false).scrollLeft(Number(obj.value.left));
+          var elm = $(obj.nodeName).eq(Number(obj.idx));
+          if ( elm.length > 0 ) {
+            var scrollBarSize = {
+                  height: elm[0].scrollHeight - elm[0].clientHeight,
+                  width: elm[0].scrollWidth - elm[0].clientWidth
+                };
+console.log('scrollBarSize', scrollBarSize);
+console.log('obj', obj);
+                elm.stop(false, false).scrollTop(scrollBarSize.height * Number(obj.value.topRatio));
+                elm.stop(false, false).scrollLeft(scrollBarSize.width * Number(obj.value.leftRatio));
+          }
       };
       syncEvent.receiveEvInfo = { nodeName: null, type: null };
     },

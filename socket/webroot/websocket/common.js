@@ -500,6 +500,7 @@ var socket, // socket.io
           if ( socket === undefined ) return false;
           // 排他処理
           if ( "body" === syncEvent.receiveEvInfo.nodeName && "scroll" === syncEvent.receiveEvInfo.type ) return false;
+console.log('sc', {x: e.clientX, y: e.clientY});
           // スクロール用
           emit('syncBrowserInfo', {
             accessType: userInfo.accessType,
@@ -604,11 +605,18 @@ var socket, // socket.io
 
       // 排他処理
       if ( nodeName === String(syncEvent.receiveEvInfo.nodeName) &&  Number(index) === Number(syncEvent.receiveEvInfo.idx) ) return false;
+      var elem = document.getElementsByTagName(nodeName)[Number(index)],
+          scrollBarSize = {
+            height: elem.scrollHeight - elem.clientHeight,
+            width: elem.scrollWidth - elem.clientWidth
+          };
+
 
       if (check.isset(syncEvent.elmScrollCallTimers[nodeName+'_'+index])) {
         clearTimeout(syncEvent.elmScrollCallTimers[nodeName+'_'+index]);
       }
       syncEvent.elmScrollCallTimers[nodeName+'_'+index] = setTimeout(function(){
+
         emit('syncChangeEv', {
           tabId: userInfo.tabId,
           userId: userInfo.userId,
@@ -617,11 +625,11 @@ var socket, // socket.io
           type: e.type,
           idx: index,
           value: {
-            top: document.getElementsByTagName(nodeName)[Number(index)].scrollTop,
-            left: document.getElementsByTagName(nodeName)[Number(index)].scrollLeft,
+            topRatio: elem.scrollTop / scrollBarSize.height,
+            leftRatio: elem.scrollLeft / scrollBarSize.width
           }
         });
-      }, 100);
+      }, 1000);
 
     },
     receiveEvInfo: { nodeName: null, type: null },
