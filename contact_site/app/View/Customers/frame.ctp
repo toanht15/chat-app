@@ -31,8 +31,8 @@ var socket, userId, iframe, connectToken, url, emit, windowResize, arg = new Obj
     iframe.height = ws.height;
     var outHeightSize = window.outerHeight - window.innerHeight;
     var outWidthSize = window.outerWidth - window.innerWidth;
-    wswidth = (ws.width + outWidthSize) * arg.scale;
-    wsheight = (ws.height + outHeightSize) * arg.scale;
+    wswidth = ws.width * arg.scale + outWidthSize;
+    wsheight = ws.height * arg.scale + outHeightSize;
     window.resizeTo(wswidth, wsheight);
   };
 })();
