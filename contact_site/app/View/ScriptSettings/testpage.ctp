@@ -3,7 +3,7 @@
   <?php if ( $layoutNumber === 1 ) { ?>
     <div id="testpage_idx">
       <div id="title">
-        <span class="bold">サンプルページ：１ページ目</span>：<a href="<?=$this->Html->url(array('controller' => 'ScriptSettings', 'action' => 'testpage', '?' => array('page' => 2)))?>"><span>サンプルページ：２ページ目</span></a>
+        <span class="bold">サンプルページ：１ページ目</span>：<a href="<?=$this->Html->url(array('controller' => 'ScriptSettings', 'action' => 'testpage2'))?>"><span>サンプルページ：２ページ目</span></a>
       </div>
       <div id="detail">
         <p>モニタリングでは以下のことが可能です</p>
@@ -25,7 +25,8 @@
               <input type="text" id="name" placeholder="名前">
             </li>
             <li class="lb">
-              クリックの同期にも対応していますので、ラジオボタンの選択も反映されます。
+              <pre><span style="text-decoration:line-through">クリックの同期にも対応していますので、ラジオボタンの選択も反映されます。</span><br>※実装予定</pre>
+
             </li>
             <li>
               <p>性別：
@@ -59,9 +60,9 @@
             <li>
               <textarea id="other" placeholder="その他"></textarea>
             </li>
-            <li>
+<!--             <li>
               <button type="button" onclick="alert('こんにちは')">send!!</button>
-            </li>
+            </li> -->
           </ul>
         </form>
       </div>
