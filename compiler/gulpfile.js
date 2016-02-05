@@ -3,7 +3,16 @@ var gulp = require('gulp'),
     cssnext = require('gulp-cssnext'),
     path = {
       css: '../contact_site/app/webroot/css/',
-      scss: './scss/'
+      scss: './scss/',
+      js: 'socketJs/websocket/*.js',
+      minjs: '../socket/webroot/websocket/'
+    };
+
+var uglify = require('gulp-uglify'),
+    rename = require("gulp-rename"),
+    uglifyOpt = {
+      mangle: true,
+      comments: false
     };
 
 gulp.task('scss-compile', function(){
@@ -16,7 +25,18 @@ gulp.task('scss-compile', function(){
     .pipe(gulp.dest(path.css))
 });
 
-gulp.task('scss', function(){
-  gulp.watch([path.scss + '**/*.scss'], ['scss-compile']);
+gulp.task('js-minify', function(){
+  return gulp.src(path.js)
+    .pipe(uglify(uglifyOpt))
+    .pipe(rename({
+      extname: '.min.js'
+    }))
+    .pipe(gulp.dest(path.minjs))
 });
 
+gulp.task('watch', function(){
+  gulp.watch([path.scss + '**/*.scss'], ['scss-compile']);
+  gulp.watch([path.js], ['js-minify']);
+});
+
+gulp.task('dev', ['scss-compile', 'js-minify', 'watch']);
