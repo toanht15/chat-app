@@ -131,14 +131,14 @@ if ( !$isDisableTimeText ) {
 
         <div id="sample_widget_area">
           <div id="sincloBox" style="position: relative; border: 1.5px solid rgb(232, 231, 224); border-radius: 10px 10px 0 0; z-index: 1; width: 250px; overflow: hidden; background-color: rgb(255, 255, 255);">
-            <img style="position: absolute; top: 11.5px; right: 10px; z-index: 0;" src="//sinclows.dip.jp/img/yajirushi.png" height="12" width="16.5">
-            <div style="background-color: #ABCD05; width: 100%; height: 35px; background-image: url(//sinclows.dip.jp/img/call.png); background-repeat: no-repeat; background-position: 15px, 0; background-size: 4.5%; color: #FFF;">
+            <img style="position: absolute; top: 11.5px; right: 10px; z-index: 0;" src="https://ws1.sinclo.jp/img/yajirushi.png" height="12" width="16.5">
+            <div style="background-color: #ABCD05; width: 100%; height: 35px; background-image: url(https://ws1.sinclo.jp/img/call.png); background-repeat: no-repeat; background-position: 15px, 0; background-size: 4.5%; color: #FFF;">
               <!-- タイトル -->
               <pre style="color: #FFF; text-align: center; font-size: 15px; padding: 10px; margin:  0;">{{title}}</pre>
               <!-- タイトル -->
             </div>
 
-            <div id="receiptArea" style="background-image: url(//sinclows.dip.jp/img/call_circle.png); background-repeat: no-repeat; background-position: 5px, 0px; height: 50px; margin: 15px 10px; background-size: 55px auto, 55px auto; padding-left: 55px;">
+            <div id="receiptArea" style="background-image: url(https://ws1.sinclo.jp/img/call_circle.png); background-repeat: no-repeat; background-position: 5px, 0px; height: 50px; margin: 15px 10px; background-size: 55px auto, 55px auto; padding-left: 55px;">
 
               <!-- 受付電話番号 -->
               <pre id="telNumber" style="font-weight: bold; color: #ABCD05; margin: 0 auto; font-size: 18px; text-align: center; padding: 5px 0px 0px; height: 30px">{{tel}}</pre>
