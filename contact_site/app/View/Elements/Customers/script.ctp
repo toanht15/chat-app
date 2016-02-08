@@ -4,7 +4,7 @@
 //  定数
 // -----------------------------------------------------------------------------
 var _access_type_guest = 1, _access_type_host = 2, userAgentChk,
-    socket = io.connect("<?=C_NODE_SERVER_ADDR?>"),
+    socket = io.connect("<?=C_NODE_SERVER_ADDR.C_NODE_SERVER_WS_PORT?>"),
     connectToken = null, receiveAccessInfoToken = null;
 
 (function(){

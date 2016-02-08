@@ -46,7 +46,7 @@ window.onload = function(){
   });
 
   // WebSocketサーバに接続
-  socket = io.connect("<?=C_NODE_SERVER_ADDR?>");
+  socket = io.connect("<?=C_NODE_SERVER_ADDR.C_NODE_SERVER_WS_PORT?>");
   var first = true;
 
 

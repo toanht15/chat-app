@@ -1,8 +1,12 @@
 <?php
 /* 定数定義 */
 // Nodeサーバー
-define('C_NODE_SERVER_ADDR', "//socket.localhost:9090"); // Dev
-// define('C_NODE_SERVER_ADDR', "//ws1.sinclo.jp"); // 本番(今後動的になる)
+define('C_NODE_SERVER_ADDR', "//socket.localhost"); // Dev
+define('C_NODE_SERVER_FILE_PORT', ":8080"); // Dev
+define('C_NODE_SERVER_WS_PORT', ":9090"); // Dev
+// define('C_NODE_SERVER_ADDR', "https://ws1.sinclo.jp"); // 本番(今後動的になる)
+// define('C_NODE_SERVER_FILE_PORT', ""); // Dev
+// define('C_NODE_SERVER_WS_PORT', ""); // Dev
 
 // 表示設定種別
 define('C_WIDGET_DISPLAY_CODE_SHOW', 1); // 常に表示する

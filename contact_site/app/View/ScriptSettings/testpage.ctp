@@ -26,7 +26,6 @@
             </li>
             <li class="lb">
               <pre><span style="text-decoration:line-through">クリックの同期にも対応していますので、ラジオボタンの選択も反映されます。</span><br>※実装予定</pre>
-
             </li>
             <li>
               <p>性別：
@@ -88,6 +87,7 @@
       </div>
     </div>
   <?php } ?>
-  <script type='text/javascript' src='<?=C_NODE_SERVER_ADDR?>/client/medialink.js'></script>
+  <?= $scriptName?>
+
 
 </div>

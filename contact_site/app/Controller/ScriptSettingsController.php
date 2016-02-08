@@ -5,18 +5,17 @@
  */
 class ScriptSettingsController extends AppController {
 
-    public function beforeFilter(){
+    public function beforeRender(){
+    	$fileName = C_NODE_SERVER_ADDR . C_NODE_SERVER_FILE_PORT . "/client/" . $this->userInfo['MCompany']['company_key'] . ".js";
+    	$scriptTag  = "";
+    	$scriptTag .= "<script type='text/javascript' src='" . $fileName . "'>";
+    	$scriptTag .= "</script>";
+
+    	$this->set("scriptName", $scriptTag);
     }
 
     public function index(){
         $this->set('title_for_layout', 'コード設置・デモ画面');
-        $fileName = C_NODE_SERVER_ADDR . "/client/" . $this->userInfo['MCompany']['company_key'] . ".js";
-        $scriptTag  = "";
-        $scriptTag .= "<script type='text/javascript' src='" . $fileName . "'>";
-        $scriptTag .= "</script>";
-
-        $this->set("scriptName", $scriptTag);
-
     }
 
     public function demopage(){

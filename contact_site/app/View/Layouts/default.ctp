@@ -42,7 +42,7 @@ if( strcmp($this->name, 'Login') !== 0 ) {
 		echo $this->Html->css("multi-select.css");
 		echo $this->Html->script("//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js");
 		if (strcmp($this->name, "Customers") === 0) {
-			echo $this->Html->script(C_NODE_SERVER_ADDR."/socket.io/socket.io.js");
+			echo $this->Html->script(C_NODE_SERVER_ADDR.C_NODE_SERVER_WS_PORT."/socket.io/socket.io.js");
 		}
 		echo $this->Html->script("jquery.multi-select.js");
 		echo $this->Html->script("common.js");
