@@ -26,7 +26,10 @@ class MWidgetSettingsController extends AppController {
             }
         }
         else {
-            $this->data = $this->MWidgetSetting->read(null, $this->userInfo['MCompany']['id']);
+            $ret = $this->MWidgetSetting->coFind('first');
+            if ( !empty($ret) ) {
+              $this->data = $ret;
+            }
         }
         $this->_viewElement();
     }

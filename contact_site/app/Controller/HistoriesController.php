@@ -34,12 +34,16 @@ class HistoriesController extends AppController {
 
     public function beforeFilter(){
         parent::beforeFilter();
+        $this->paginate['THistory']['conditions'] = [
+            'THistory.del_flg !=' => 1,
+            'THistory.m_companies_id' => $this->userInfo['MCompany']['id']
+        ];
         $this->set('siteKey', $this->userInfo['MCompany']['company_key']);
         $this->set('title_for_layout', '履歴');
     }
 
     /* *
-     * 一覧画面
+	     * 一覧画面
      * @return void
      * */
     public function index() {
