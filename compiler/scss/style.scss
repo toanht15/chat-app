@@ -158,6 +158,19 @@ div[id$='_list'] {
   }
   th, td {
     height: 60px;
+
+    &.omit {
+      width: 20em;
+
+      span {
+            width: 20em;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            word-break: break-word;
+            white-space: nowrap;
+            display: block;
+          }
+    }
   }
   th {
     padding: 5px;
@@ -417,8 +430,9 @@ a {
 #color-bar {
   position: absolute;
   top: 0;
+  left: 0;
   right: 0;
-  width: 100%;
+  min-width: $content-min-width!important;
   background-color: $main-color;
   height: 60px;
   z-index: 3;

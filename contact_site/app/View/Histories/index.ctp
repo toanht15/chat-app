@@ -52,7 +52,7 @@
 				<td class="tCenter"><?=h($history['THistory']['access_date'])?></td>
 				<td class="tCenter">{{ calcTime('<?=h($history['THistory']['access_date'])?>', '<?=h($history['THistory']['out_date'])?>') }}</td>
 				<td class="tCenter"><?=h($history['THistoryStayLog']['count'])?>（<a href="javascript:void(0)" onclick="openHistoryById('<?=h($history['THistory']['id'])?>')" >移動履歴</a>）</td>
-				<td class="tCenter"><?=h($history['THistory']['referrer_url'])?></td>
+				<td class="tCenter omit"><span><?=h($history['THistory']['referrer_url'])?></span></td>
 				<!-- <td class="tCenter"></td> -->
 			</tr>
 <?php endforeach; ?>
