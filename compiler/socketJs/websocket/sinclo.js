@@ -10,7 +10,7 @@
       ev: function() {
         var height = "45px";
         if ( !this.flg ) {
-          height = (common.sincloBoxHeight + 45) + "px";
+          height = (common.sincloBoxHeight + 55) + "px";
         }
         this.flg = !this.flg;
         $("#sincloBox").animate({
@@ -169,20 +169,22 @@
       var obj = common.jParse(d);
       if ( obj.tabId !== userInfo.tabId ) return false;
       if ( userInfo.accessType !== Number(cnst.access_type.guest) ) return false;
-      userInfo.connectToken = obj.connectToken;
-      browserInfo.resetPrevList();
+      if (window.confirm('画面の同期を開始しますか？')) {
+        userInfo.connectToken = obj.connectToken;
+        browserInfo.resetPrevList();
 
-      emit('sendWindowInfo', {
-        userId: userInfo.userId,
-        tabId: userInfo.tabId,
-        connectToken: userInfo.connectToken,
-        // 解像度
-        screen: browserInfo.windowScreen(),
-        // ブラウザのサイズ
-        windowSize: browserInfo.windowSize(),
-        // スクロール位置の取得
-        scrollPosition: browserInfo.windowScroll()
-      });
+        emit('sendWindowInfo', {
+          userId: userInfo.userId,
+          tabId: userInfo.tabId,
+          connectToken: userInfo.connectToken,
+          // 解像度
+          screen: browserInfo.windowScreen(),
+          // ブラウザのサイズ
+          windowSize: browserInfo.windowSize(),
+          // スクロール位置の取得
+          scrollPosition: browserInfo.windowScroll()
+        });
+      }
     },
     windowSyncInfo: function(d) {
       var obj = common.jParse(d);
@@ -326,8 +328,6 @@
                   height: elm[0].scrollHeight - elm[0].clientHeight,
                   width: elm[0].scrollWidth - elm[0].clientWidth
                 };
-console.log('scrollBarSize', scrollBarSize);
-console.log('obj', obj);
                 elm.stop(false, false).scrollTop(scrollBarSize.height * Number(obj.value.topRatio));
                 elm.stop(false, false).scrollLeft(scrollBarSize.width * Number(obj.value.leftRatio));
           }
@@ -371,11 +371,21 @@ console.log('obj', obj);
       if ( sincloBox ) {
         sincloBox.parentNode.removeChild(sincloBox);
       }
-      $('body').append(html);
-      common.sincloBoxHeight = 0;
-      $("#sincloBox").children().each(function(){
-        common.sincloBoxHeight = common.sincloBoxHeight + this.offsetHeight;
-      });
+      if ( !check.isset(sessionStorage.params) && sinclo.operatorInfo.flg === false ) {
+        $('body').append(html);
+        common.sincloBoxHeight = 0;
+        $("#sincloBox").children().each(function(){
+          common.sincloBoxHeight = common.sincloBoxHeight + this.offsetHeight;
+        });
+        window.setTimeout(function(){
+          if ( sinclo.operatorInfo.flg === false ) {
+            sinclo.operatorInfo.flg = true;
+            $("#sincloBox").animate({
+              'height':  (common.sincloBoxHeight + 55) + 'px'
+            }, 'first');
+          }
+        }, 3000);
+      }
 
     },
     resUrlChecker: function(d){
