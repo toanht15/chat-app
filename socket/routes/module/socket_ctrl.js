@@ -145,8 +145,8 @@ access = {
 
     this.list[siteKey][tabId].closeIntervalId = setTimeout(function (){
       if ( obj.subWindow ) {
-        emit('syncStop', {siteKey: siteKey, tabId: sendTabId, connectToken: obj.connectToken});
-        access.delete(siteKey, tabId);
+        emit('syncStop', {siteKey: obj.siteKey, tabId: sendTabId, connectToken: obj.connectToken});
+        access.delete(obj.siteKey, tabId);
         if ( !isset(companyList[obj.siteKey]) || !isset(obj.tabId) || !isset(obj.userId)) return false;
         if ( !isset(companyList[obj.siteKey]) || obj.subWindow ) return false;
         var siteId = companyList[obj.siteKey];
@@ -158,8 +158,8 @@ access = {
         });
       }
       else {
-        emit('unsetUser', {siteKey: siteKey, tabId: tabId});
-        access.delete(siteKey, tabId);
+        emit('unsetUser', {siteKey: obj.siteKey, tabId: tabId});
+        access.delete(obj.siteKey, tabId);
         if ( !isset(companyList[obj.siteKey]) || !isset(obj.tabId) || !isset(obj.userId)) return false;
         if ( !isset(companyList[obj.siteKey]) || obj.subWindow ) return false;
         var siteId = companyList[obj.siteKey];
