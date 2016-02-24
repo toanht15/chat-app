@@ -169,7 +169,7 @@
       var obj = common.jParse(d);
       if ( obj.tabId !== userInfo.tabId ) return false;
       if ( userInfo.accessType !== Number(cnst.access_type.guest) ) return false;
-      if (window.confirm('画面の同期を開始しますか？')) {
+      if (window.confirm(location.host + ' が閲覧ページへのアクセスを求めています。\n許可しますか？')) {
         userInfo.connectToken = obj.connectToken;
         browserInfo.resetPrevList();
 
