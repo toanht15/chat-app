@@ -158,6 +158,8 @@ if ( !$isDisableTimeText ) {
               ●●●●
             </span>
 
+            <p >Powered by <a target="sinclo" href="http://medialink-ml.co.jp/index.html">sinclo</a></p>
+
           </div>
         </div>
       </div>

@@ -294,6 +294,25 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     };
   });
 
+  // http://stackoverflow.com/questions/18313576/confirmation-dialog-on-ng-click-angularjs
+  sincloApp.directive('ngConfirmClick', [
+    function(){
+      return {
+        priority: -1,
+        restrict: 'A',
+        link: function(scope, element, attrs){
+          element.bind('click', function(e){
+            var message = attrs.ngConfirmClick;
+            if(message && !confirm(message)){
+              e.stopImmediatePropagation();
+              e.preventDefault();
+            }
+          });
+        }
+      }
+    }
+  ]);
+
   sincloApp.directive('calStayTime', ['$timeout', function($timeout){
     return {
       restrict: "A",
