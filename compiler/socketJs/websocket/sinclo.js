@@ -371,7 +371,7 @@
       if ( sincloBox ) {
         sincloBox.parentNode.removeChild(sincloBox);
       }
-      if ( !check.isset(sessionStorage.params) && sinclo.operatorInfo.flg === false ) {
+      if ( !check.isset(sessionStorage.params) ) {
         $('body').append(html);
         common.sincloBoxHeight = 0;
         $("#sincloBox").children().each(function(){
