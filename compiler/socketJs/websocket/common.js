@@ -78,46 +78,99 @@ var socket, // socket.io
       return JSON.parse(d);
     },
     sincloBoxHeight: 270,
-    widgetTemplate: function(){
-      var widget = window.info.widget;
-      var css   = '#sincloBox * {';
-          css  += '  box-sizing: border-box;';
-          css  += '  background-color: rgba(0,0,0,0);';
-          css  += '  border: none;';
-          css  += '  border-radius: 0;';
-          css  += '  padding: 0;';
-          css  += '  margin: 0;';
-          css  += '  line-height: 1;';
-          css  += '  color: #6B6B6B;';
-          css  += '}';
-          css  += '#sincloBox pre, #sincloBox span {';
-          css  += '  font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana;';
-          css  += '}';
-          css  += '#sincloBox a:hover { color: #ABCD05 }';
+    createWidget: function(){
+      var chat = this.chatWidgetTemplate();
+      var call = this.widgetTemplate();
+      var css = '';
 
-      var html  = '<div id="sincloBox" style="box-sizing: border-box; position: fixed; height: 45px; bottom: -11px; right: 5px; border: 1.5px solid rgb(232, 231, 224); border-radius: 10px; z-index: 999998; width: 250px; overflow: hidden; background-color: rgb(255, 255, 255);">';
-          html += '  <style>' + css + '</style>';
-          html += '  <img onclick="sinclo.operatorInfo.ev()" style="position: absolute; top: 11.5px; right: 10px; z-index: 0;" src=" ' + window.info.site.files + '/img/yajirushi.png" height="12" width="16.5">';
-          html += '  <div onclick="sinclo.operatorInfo.ev()" style="background-color: #ABCD05; width: 100%; height: 35px; background-image: url( ' + window.info.site.files + '/img/call.png); background-repeat: no-repeat; background-position: 15px, 0; background-size: 4.5%; color: #FFF;">';
-          html += '    <pre style="color: #FFF; text-align: center; font-size: 15px; padding: 10px; margin:  0;">' + widget.title + '</pre>'
-          html += '  </div>';
-          // 受付時間を表示しない
-          if ( widget.display_time_flg === 0 ) {
-            html += '    <div style="background-image: url( ' + window.info.site.files + '/img/call_circle.png); background-repeat: no-repeat; background-position: 5px, 0px;height: 45px; margin: 15px 10px;background-size: 45px auto, 45px auto;padding-left: 45px;">';
-            html += '      <pre style="font-weight: bold; color: #ABCD05; margin: 0 auto;font-size: 20px; text-align: center;padding: 10px 0px 0px;height: 45px;">' + widget.tel + '</pre>';
-            html += '    </div>';
-          }
-          else {
-            html += '    <div style="background-image: url( ' + window.info.site.files + '/img/call_circle.png); background-repeat: no-repeat; background-position: 5px, 0; height: 50px; margin: 15px 10px; background-size: 55px auto, 55px auto; padding-left: 55px;">';
-            html += '      <pre style="font-weight: bold; color: #ABCD05; margin: 0 auto; font-size: 18px; text-align: center; padding: 5px 0 0; height: 30px">' + widget.tel + '</pre>';
-            html += '      <pre style="font-weight: bold; color: #ABCD05; margin: 0 auto; font-size: 10px; text-align: center; padding: 0 0 5px; height: 20px">受付時間： ' + widget.time_text + '</pre>';
-            html += '    </div>';
-          }
-          html += '    <pre style="display: block; word-wrap: break-word; font-size: 11px; text-align: center; margin: auto; line-height:1.5; color: #6B6B6B; width: 20em;">' + widget.content + '</pre>';
-          html += '    <span style="display: block; margin: 10px auto; width: 80%; padding: 7px;  color: #FFF; background-color: rgb(188, 188, 188); font-size: 25px; font-weight: bold; text-align: center; border: 1px solid rgb(188, 188, 188); border-radius: 15px">' + userInfo.accessId + '</span>';
-          html += '    <p style="padding: 5px 0; text-align: center; border-top: 1px solid #DBDBDB;color: #A1A1A1!important; height: 20px; font-size: 11px;">Powered by <a target="sinclo" href="http://medialink-ml.co.jp/index.html">sinclo</a></p>';
-          html += '</div>';
-      return html;
+      css += '<style>';
+      css += '#sincloContents *{';
+      css += '  box-sizing: border-box;';
+      css += '  background-color: rgba(0,0,0,0);';
+      css += '  border: none;';
+      css += '  border-radius: 0;';
+      css += '  padding: 0;';
+      css += '  margin: 0;';
+      css += '  line-height: 1;';
+      css += '  color: #6B6B6B;';
+      css += '  font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana;';
+      css += '}';
+      css += '</style>';
+
+      return "<section id='sincloContents'>" + css + chat + call + "</section>";
+    },
+    widgetTemplate: function(){
+      var widget = window.info.widget,
+          call  = { html: "", css: "" };
+
+      call.css  += '#sincloBox{';
+      call.css  += '  box-sizing: border-box; position: fixed; height: 45px; bottom: -11px; right: 5px; border: 1.5px solid rgb(232, 231, 224); border-radius: 10px; z-index: 999998; width: 250px; overflow: hidden; background-color: rgb(255, 255, 255);';
+      call.css  += '}';
+      call.css  += '#sincloBox a:hover { color: #ABCD05 }';
+
+      call.html += '<div id="sincloBox" class="sincloBoxes">';
+      call.html += '  <style>' + call.css + '</style>';
+      call.html += '  <img onclick="sinclo.operatorInfo.ev(\'sincloBox\')" style="position: absolute; top: 11.5px; right: 10px; z-index: 0;" src=" ' + window.info.site.files + '/img/yajirushi.png" height="12" width="16.5">';
+      call.html += '  <div onclick="sinclo.operatorInfo.ev(\'sincloBox\')" style="background-color: #ABCD05; width: 100%; height: 35px; background-image: url( ' + window.info.site.files + '/img/call.png); background-repeat: no-repeat; background-position: 15px, 0; background-size: 4.5%; color: #FFF;">';
+      call.html += '    <pre style="color: #FFF; text-align: center; font-size: 15px; padding: 10px; margin:  0;">' + widget.title + '</pre>'
+      call.html += '  </div>';
+      // 受付時間を表示しない
+      if ( widget.display_time_flg === 0 ) {
+        call.html += '    <div style="background-image: url( ' + window.info.site.files + '/img/call_circle.png); background-repeat: no-repeat; background-position: 5px, 0px;height: 45px; margin: 15px 10px;background-size: 45px auto, 45px auto;padding-left: 45px;">';
+        call.html += '      <pre style="font-weight: bold; color: #ABCD05; margin: 0 auto;font-size: 20px; text-align: center;padding: 10px 0px 0px;height: 45px;">' + widget.tel + '</pre>';
+        call.html += '    </div>';
+      }
+      else {
+        call.html += '    <div style="background-image: url( ' + window.info.site.files + '/img/call_circle.png); background-repeat: no-repeat; background-position: 5px, 0; height: 50px; margin: 15px 10px; background-size: 55px auto, 55px auto; padding-left: 55px;">';
+        call.html += '      <pre style="font-weight: bold; color: #ABCD05; margin: 0 auto; font-size: 18px; text-align: center; padding: 5px 0 0; height: 30px">' + widget.tel + '</pre>';
+        call.html += '      <pre style="font-weight: bold; color: #ABCD05; margin: 0 auto; font-size: 10px; text-align: center; padding: 0 0 5px; height: 20px">受付時間： ' + widget.time_text + '</pre>';
+        call.html += '    </div>';
+      }
+      call.html += '    <pre style="display: block; word-wrap: break-word; font-size: 11px; text-align: center; margin: auto; line-height:1.5; color: #6B6B6B; width: 20em;">' + widget.content + '</pre>';
+      call.html += '    <span style="display: block; margin: 10px auto; width: 80%; padding: 7px;  color: #FFF; background-color: rgb(188, 188, 188); font-size: 25px; font-weight: bold; text-align: center; border: 1px solid rgb(188, 188, 188); border-radius: 15px">' + userInfo.accessId + '</span>';
+      call.html += '    <p style="padding: 5px 0; text-align: center; border-top: 1px solid #DBDBDB;color: #A1A1A1!important; height: 20px; font-size: 11px;">Powered by <a target="sinclo" href="http://medialink-ml.co.jp/index.html">sinclo</a></p>';
+      call.html += '</div>';
+      return call.html;
+    },
+    chatWidgetTemplate: function(){
+      var widget = window.info.widget,
+          chat = {
+            html: "",
+            css: ""
+      };
+
+      chat.css  += '#sincloChatBox {';
+      chat.css  += '  height: 342px;';
+      chat.css  += '  box-sizing: border-box; position: fixed; bottom: -11px; right: 270px; border: 1.5px solid rgb(232, 231, 224); border-radius: 10px; z-index: 999998; width: 250px; overflow: hidden; background-color: rgb(255, 255, 255);';
+      chat.css  += '}';
+      chat.css  += '#sincloChatBox ul { width: 100%; height: 200px; padding: 5px;background-color: #FDFDFD; list-style-type: none; overflow-y: scroll; overflow-x: hidden;}';
+      chat.css  += '#sincloChatBox li { margin: 5px 0;padding: 5px; font-size: 12px; box-shadow: 0 0 1px rgba(0,0,0,0.5); color: #8A8A8A; }';
+      chat.css  += '#sincloChatBox li.sinclo_se { border-radius: 5px 5px 0; margin-left: 10px; background-color: #FFF; }';
+      chat.css  += '#sincloChatBox li.sinclo_re { margin-right: 10px; border-radius: 5px 5px 5px 0; background-color: #F1F5C8; }';
+      chat.css  += '#sinclo_sendbtn{ position: absolute; bottom: 3px; right: 3px; background-color: #FF7B7B; border-radius: 15px; padding: 2px; font-size: 20px; color: #FFF; opacity: 0.3 }';
+      chat.css  += '#sinclo_sendbtn:hover{ opacity: 1!important; cursor: pointer; transition: opacity 500ms linear; }';
+      chat.css  += '#sincloChatBox textarea { padding: 5px; resize: none; width: 230px; height: 50px; border: 1px solid #E4E4E4; border-radius: 5px; background-color: rgb(253, 253, 253)}';
+      chat.css  += '#sincloChatBox textarea:focus{ outline: none; border-color: #CDDC39!important }';
+      chat.css  += '#sincloChatBox a:hover { color: #ABCD05 }';
+
+      chat.html += '<div id="sincloChatBox" class="sincloBoxes">';
+      chat.html += '  <style>' + chat.css + '</style>';
+      chat.html += '  <img onclick="sinclo.operatorInfo.ev(\'sincloChatBox\')" style="position: absolute; top: 11.5px; right: 10px; z-index: 0;" src=" ' + window.info.site.files + '/img/yajirushi.png" height="12" width="16.5">';
+      chat.html += '  <div onclick="sinclo.operatorInfo.ev(\'sincloChatBox\')" style="background-color: #ABCD05; width: 100%; height: 35px; background-image: url( ' + window.info.site.files + '/img/chat.png); background-repeat: no-repeat; background-position: 15px, 0; background-size: 9%; color: #FFF;">';
+      chat.html += '    <pre style="color: #FFF; text-align: center; font-size: 15px; padding: 10px; margin:  0;">チャット</pre>'
+      chat.html += '  </div>';
+      chat.html += '  <ul>';
+      chat.html += '    <li class="sinclo_re">といかけ</li>';
+      chat.html += '    <li class="sinclo_se">おうとう</li>';
+      chat.html += '  </ul>';
+      chat.html += '  <div style="border-top: 1px solid #DEDEDE; height: 70px; padding: 10px; position: relative;">';
+      chat.html += '    <textarea name="hoge" />';
+      chat.html += '    <span id="sinclo_sendbtn">＋</span>';
+      chat.html += '  </div>';
+      chat.html += '  <p style="padding: 5px 0; text-align: center; border-top: 1px solid #DBDBDB;color: #A1A1A1!important; height: 20px; font-size: 11px;">Powered by <a target="sinclo" href="http://medialink-ml.co.jp/index.html">sinclo</a></p>';
+      chat.html += '</div>';
+
+      return chat.html;
     },
     makeAccessIdTag: function(){
       if ( !check.browser() ) return false;

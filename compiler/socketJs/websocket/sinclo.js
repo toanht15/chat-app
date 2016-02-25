@@ -7,15 +7,21 @@
     syncTimeout: "",
     operatorInfo: {
       flg: false,
-      ev: function() {
+      ev: function(contentId) {
         var height = "45px";
-        if ( !this.flg ) {
-          height = (common.sincloBoxHeight + 55) + "px";
+        var elm = $('#' + contentId);
+        var flg = elm.data('flg');
+        if ( !check.isset(flg) ) {
+          flg = false;
         }
-        this.flg = !this.flg;
-        $("#sincloBox").animate({
+        if ( flg ) {
+          height = common[contentId + 'Height'] + "px";
+        }
+console.log(flg, contentId);
+        elm.animate({
           height: height
-        }, 'first');
+        }, 'first')
+        .data('flg', !flg);
       }
     },
     connect: function(){
@@ -218,9 +224,9 @@
       $('select').each(function(){
         selectInfo.push(this.value);
       });
-      var sincloBox = document.getElementById('sincloBox');
-      if ( sincloBox ) {
-        sincloBox.parentNode.removeChild(sincloBox);
+      var sincloContents = document.getElementById('sincloContents');
+      if ( sincloContents ) {
+        sincloContents.parentNode.removeChild(sincloContents);
       }
 
       emit('getSyncInfo', {
@@ -365,23 +371,33 @@
       else {
         window.info.widgetDisplay = false;
       }
-      var html = common.widgetTemplate();
+      var html = common.createWidget();
       common.load.finish();
-      var sincloBox = document.getElementById('sincloBox');
-      if ( sincloBox ) {
-        sincloBox.parentNode.removeChild(sincloBox);
+      var sincloContents = document.getElementById('sincloContents');
+      if ( sincloContents ) {
+        sincloContents.parentNode.removeChild(sincloContents);
       }
       if ( !check.isset(sessionStorage.params) ) {
         $('body').append(html);
-        common.sincloBoxHeight = 0;
+        common.sincloBoxHeight = 15;
+        common.sincloChatBoxHeight = 15;
         $("#sincloBox").children().each(function(){
-          common.sincloBoxHeight = common.sincloBoxHeight + this.offsetHeight;
+          if ( this.tagName !== "STYLE" && this.tagName !== "IMG" ) {
+            common.sincloBoxHeight = common.sincloBoxHeight + $(this).outerHeight(true);
+          }
         });
+
+        $("#sincloChatBox").children().each(function(){
+          if ( this.tagName !== "STYLE" && this.tagName !== "IMG" ) {
+            common.sincloChatBoxHeight = common.sincloChatBoxHeight + $(this).outerHeight(true);
+          }
+        });
+
         window.setTimeout(function(){
           if ( sinclo.operatorInfo.flg === false ) {
             sinclo.operatorInfo.flg = true;
             $("#sincloBox").animate({
-              'height':  (common.sincloBoxHeight + 55) + 'px'
+              'height':  common.sincloBoxHeight + 'px'
             }, 'first');
           }
         }, 3000);
