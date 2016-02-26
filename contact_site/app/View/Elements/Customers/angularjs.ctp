@@ -179,6 +179,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         });
     };
 
+    $scope.showDetail = function(tabId){
+      console.log($scope.monitorList[tabId]);
+    };
+
     function pushToList(obj){
       $scope.monitorList[obj.tabId] = obj;
     }

@@ -84,5 +84,23 @@ var _access_type_guest = 1, _access_type_host = 2, userAgentChk,
   });
 
 })();
+
+var chatApi = {
+    createMessage: function(cs, val){
+      var chatTalk = document.getElementById('chatTalk');
+      var li = document.createElement('li');
+      li.className = cs;
+      li.textContent = val;
+      chatTalk.appendChild(li);
+    },
+    pushMessage: function() {
+      var elm = document.getElementById('sendMessage');
+      this.createMessage("sinclo_se", elm.value);
+
+      elm.value = "";
+    }
+};
+
+
 // -->
 </script>
