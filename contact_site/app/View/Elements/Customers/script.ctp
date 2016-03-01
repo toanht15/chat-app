@@ -3,7 +3,7 @@
 // -----------------------------------------------------------------------------
 //  定数
 // -----------------------------------------------------------------------------
-var _access_type_guest = 1, _access_type_host = 2, userAgentChk,
+var _access_type_guest = 1, _access_type_host = 2, userAgentChk, chatApi,
     socket = io.connect("<?=C_NODE_SERVER_ADDR.C_NODE_SERVER_WS_PORT?>"),
     connectToken = null, receiveAccessInfoToken = null;
 
@@ -83,24 +83,58 @@ var _access_type_guest = 1, _access_type_host = 2, userAgentChk,
     emit('connected', data);
   });
 
+  chatApi = {
+      userId: null,
+      historyId: null,
+      getMessage: function(obj){
+        $("#sendMessage").attr('disabled', true);
+        // チャットの取得
+        emit('getChatMessage', {userId: obj.userId, tabId: obj.tabId});
+      },
+      createMessage: function(cs, val){
+        var chatTalk = document.getElementById('chatTalk');
+        var li = document.createElement('li');
+        li.className = cs;
+        li.textContent = val;
+        chatTalk.appendChild(li);
+      },
+      pushMessage: function() {
+        var elm = document.getElementById('sendMessage');
+        if ( isset(elm.value) ) {
+          emit('sendChat', {historyId: this.historyId, userId: this.userId, chatMessage:elm.value, mUserId: <?= h($muserId)?>});
+        }
+      },
+      sendMessage: function(){
+        var elm = document.getElementById('sendMessage');
+
+      },
+      _init: function(){
+        // チャットメッセージ群の受信
+        socket.on("chatMessageData", function(d){
+          var obj = JSON.parse(d);
+          if ( isset(obj.chat.historyId) ) {
+            chatApi.historyId = obj.chat.historyId;
+            $("#sendMessage").attr('disabled', false);
+          }
+        });
+        // チャットメッセージ送信結果
+        socket.on("sendChatResult", function(d){
+          var obj = JSON.parse(d);
+          if ( obj.ret ) {
+            elm.value = "";
+            this.createMessage("sinclo_se", elm.value);
+          }
+          else {
+            alert('メッセージの送信に失敗しました。');
+          }
+        });
+      }
+  };
+
+  chatApi._init();
+
+
 })();
-
-var chatApi = {
-    createMessage: function(cs, val){
-      var chatTalk = document.getElementById('chatTalk');
-      var li = document.createElement('li');
-      li.className = cs;
-      li.textContent = val;
-      chatTalk.appendChild(li);
-    },
-    pushMessage: function() {
-      var elm = document.getElementById('sendMessage');
-      this.createMessage("sinclo_se", elm.value);
-
-      elm.value = "";
-    }
-};
-
 
 // -->
 </script>

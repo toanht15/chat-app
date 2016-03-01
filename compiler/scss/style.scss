@@ -715,8 +715,49 @@ ul.naviBtn {
 
 #customer_idx {
   #customer_main {
-    width: 73%;
+    width: 100%;
     float: left;
+    transition: width 500ms linear 0s;
+  }
+
+  #customer_sub  {
+    float: right;
+    width: 0%;
+    opacity: 0;
+    transition: width 500ms linear 0ms, opacity 400ms linear 100ms;
+
+    div.card-shadow * {
+      opacity: 0;
+      transition: opacity 100ms linear 40ms;
+
+    }
+  }
+
+  &.showDetail {
+    #customer_main {
+      width: 73%;
+      float: left;
+      transition: width 500ms linear 0ms;
+    }
+
+
+    #customer_sub  {
+      float: right;
+      width: 25%;
+      opacity: 1;
+      transition: width 500ms linear 0ms, opacity 500ms linear 400ms;
+
+      div.card-shadow * {
+        opacity: 1;
+        transition: opacity 100ms linear 50ms;
+
+      }
+    }
+  }
+}
+
+#customer_idx {
+  #customer_main {
 
     #customer_menu {
       a {
@@ -741,6 +782,13 @@ ul.naviBtn {
         margin: 2px 5px;
       }
     }
+
+    #customer_list {
+      td, td * {
+        cursor: default;
+      }
+    }
+
     .monitorBtn {
       text-decoration: none;
       font-weight: bold;
@@ -750,12 +798,11 @@ ul.naviBtn {
       display: block;
       width: 5em;
       text-align: center;
+
     }
   }
 
   #customer_sub  {
-    width: 25%;
-    float: right;
 
     h2 {
       font-size: 15px;
@@ -803,7 +850,7 @@ ul.naviBtn {
         padding: 5px;
         resize: none;
         outline: none;
-        background-color: #FDFDFD;
+        background-color: #FFF;
       }
 
       #sinclo_sendbtn {
@@ -819,6 +866,7 @@ ul.naviBtn {
         height: 30px;
         width: 30px;
         text-align: center;
+        user-select: none;
 
         &:hover {
           opacity: 1!important;

@@ -17,7 +17,6 @@
         if ( flg ) {
           height = common[contentId + 'Height'] + "px";
         }
-console.log(flg, contentId);
         elm.animate({
           height: height
         }, 'first')
@@ -90,7 +89,7 @@ console.log(flg, contentId);
 
         }
         return false;
-      };
+      }
       emit('connected', {
         type: 'user',
         data: emitData
@@ -371,12 +370,15 @@ console.log(flg, contentId);
       else {
         window.info.widgetDisplay = false;
       }
-      var html = common.createWidget();
+
       common.load.finish();
       var sincloContents = document.getElementById('sincloContents');
       if ( sincloContents ) {
         sincloContents.parentNode.removeChild(sincloContents);
       }
+      if ( !check.isset(window.info.widget) ) return false;
+
+      var html = common.createWidget();
       if ( !check.isset(sessionStorage.params) ) {
         $('body').append(html);
         common.sincloBoxHeight = 15;

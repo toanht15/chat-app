@@ -2,7 +2,7 @@
 <?php echo $this->element('Customers/script') ?>
 <?php echo $this->element('Customers/angularjs') ?>
 
-<section id='customer_idx' ng-app="sincloApp" ng-controller="MainCtrl">
+<section id='customer_idx' class="{{customerMainClass}}" ng-app="sincloApp" ng-controller="MainCtrl">
 
     <div id='customer_main' class="card-shadow">
 
@@ -85,11 +85,10 @@
         <div class="card-shadow m10b p10x">
             <h2>基本情報</h2>
             <ul class="p20l">
-                <li>IPアドレス：XXX.XXX.XXX.XXX</li>
-                <li>ユーザーエージェント：XXXXXXXXXXXX</li>
-                <li>ユーザーエージェント：XXXXXXXXXXXX</li>
-                <li>ユーザーエージェント：XXXXXXXXXXXX</li>
-                <li>ユーザーエージェント：XXXXXXXXXXXX</li>
+                <li>アクセスID：{{detailData.accessId}}</li>
+                <li>IPアドレス：{{detailData.ipAddress}}</li>
+                <li>ユーザーエージェント：{{detailData.userAgent}}</li>
+                <li>閲覧中ページ：<a ng-href='{{detailData.url}}' target='showBlack'>{{detailData.title}}</a></li>
             </ul>
         </div>
         <div id="chatArea" class="card-shadow p10x">
@@ -99,10 +98,10 @@
                 <li class="w50 tCenter">メモ</li>
             </ul>
             <div id="chatContent">
-                <ul id="chatTalk">
+                <ul id="chatTalk" >
                 </ul>
                 <div style="position: relative;">
-                    <textarea rows="5" id="sendMessage"></textarea>
+                    <textarea rows="5" id="sendMessage" placeholder="問いかけ内容"></textarea>
                     <span id="sinclo_sendbtn" onclick="chatApi.pushMessage()">＋</span>
                 </div>
             </div>

@@ -102,7 +102,6 @@ var socket, // socket.io
     widgetTemplate: function(){
       var widget = window.info.widget,
           call  = { html: "", css: "" };
-
       call.css  += '#sincloBox{';
       call.css  += '  box-sizing: border-box; position: fixed; height: 45px; bottom: -11px; right: 5px; border: 1.5px solid rgb(232, 231, 224); border-radius: 10px; z-index: 999998; width: 250px; overflow: hidden; background-color: rgb(255, 255, 255);';
       call.css  += '}';

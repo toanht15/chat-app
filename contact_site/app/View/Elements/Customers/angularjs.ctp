@@ -179,8 +179,18 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         });
     };
 
+    $scope.customerMainClass = "";
     $scope.showDetail = function(tabId){
-      console.log($scope.monitorList[tabId]);
+      if ( $scope.customerMainClass !== "" ) {
+        $scope.customerMainClass = "";
+        $scope.detailData = "";
+      }
+      else {
+        $scope.customerMainClass = "showDetail";
+        chatApi.getMessage($scope.monitorList[tabId]);
+        $scope.detailData = $scope.monitorList[tabId];
+        chatApi.userId = $scope.detailData.userId;
+      }
     };
 
     function pushToList(obj){

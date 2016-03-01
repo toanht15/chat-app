@@ -20,6 +20,10 @@ var http = require('http'),
 // 待機中ユーザー
 var activeOperator = {};
 
+// 機能仕様状況
+var sincloCore = {};
+
+
 // 暗号化ロジック
 var crypto = require('crypto');
     crypto_func = {
@@ -150,7 +154,7 @@ access = {
         if ( !isset(companyList[obj.siteKey]) || !isset(obj.tabId) || !isset(obj.userId)) return false;
         if ( !isset(companyList[obj.siteKey]) || obj.subWindow ) return false;
         var siteId = companyList[obj.siteKey];
-        pool.query('SELECT * FROM t_histories WHERE m_companies_id = ? AND tab_id = ? AND tmp_customers_id = ? ORDER BY id DESC LIMIT 1;', [siteId, obj.tabId, obj.userId], function(err, rows){
+        pool.query('SELECT * FROM t_histories WHERE m_companies_id = ? AND tab_id = ? AND t_visitors_id = ? ORDER BY id DESC LIMIT 1;', [siteId, obj.tabId, obj.userId], function(err, rows){
           if ( isset(rows) && isset(rows[0]) ) {
             var now = formatDateParse();
             timeUpdate(rows[0], obj, now);
@@ -163,7 +167,7 @@ access = {
         if ( !isset(companyList[obj.siteKey]) || !isset(obj.tabId) || !isset(obj.userId)) return false;
         if ( !isset(companyList[obj.siteKey]) || obj.subWindow ) return false;
         var siteId = companyList[obj.siteKey];
-        pool.query('SELECT * FROM t_histories WHERE m_companies_id = ? AND tab_id = ? AND tmp_customers_id = ? ORDER BY id DESC LIMIT 1;', [siteId, obj.tabId, obj.userId], function(err, rows){
+        pool.query('SELECT * FROM t_histories WHERE m_companies_id = ? AND tab_id = ? AND t_visitors_id = ? ORDER BY id DESC LIMIT 1;', [siteId, obj.tabId, obj.userId], function(err, rows){
           if ( isset(rows) && isset(rows[0]) ) {
             var now = formatDateParse();
             timeUpdate(rows[0], obj, now);
@@ -211,6 +215,71 @@ access = {
   }
 };
 
+var chatApi = {
+  set: function(d){ // メッセージが渡されてきたとき
+    // // 履歴idかメッセージがない
+    if ( !isset(d.historyId) || !isset(d.chatMessage) ) {
+      // エラーを渡す
+      // return emit('sendChatResult', {ret: false});
+    }
+    // チャットidがある
+    else {
+      // DBへ書き込む
+      if ( this.commit(d) ) {
+        console.log('chat-commit---------------->>');
+        console.log(d);
+        console.log('chat-commit----------------<<');
+    //     // 書き込みが成功したら相手側に結果を返す
+    //     return emit('sendChatResult', {ret: true, chatMessage: d.chatMessage});
+      }
+      else {
+        // 書き込みが失敗したらエラーを渡す
+    //     return emit('sendChatResult', {ret: false});
+      }
+    }
+
+
+  },
+  get: function(obj){ // 最初にデータを取得するとき
+    pool.query('SELECT * FROM t_histories WHERE m_companies_id = ? AND tab_id = ? AND t_visitors_id = ? ORDER BY id DESC LIMIT 1;', [companyList[obj.siteKey], obj.tabId, obj.userId], function(err, rows){
+      var chatData = {historyId: null, messages: []};
+      if ( isset(rows) && isset(rows[0]) ) {
+        chatData.historyId = rows[0].id;
+        pool.query('SELECT * FROM t_history_chat_logs WHERE id = ?;', [chatData.historyId], function(err, rows){
+          chatData.messages = rows;
+          obj.chat = chatData;
+          emit('chatMessageData', obj);
+        });
+      }
+      else {
+        obj.chat = chatData;
+        emit('chatMessageData', obj);
+      }
+    });
+ },
+  commit: function(d){ // DBに書き込むとき
+    //insert
+    var insertData = {
+      t_histories_id: d.historyId,
+      t_visitors_id: d.userId,
+      m_users_id: d.mUserId,
+      message: d.chatMessage,
+      created: now
+    };
+
+    pool.query("INSERT INTO t_history_chat_logs SET ?", insertData,
+      function (error,results,fields){
+console.log("error", error)
+console.log("results", results)
+console.log("fields", fields)
+        return error;
+      }
+    );
+    // DBへの書き込み
+      // return 値はbool
+  }
+};
+
 var companyList = {};
 pool.query('select * from m_companies;', function(err, rows){
   var key = Object.keys(rows);
@@ -241,11 +310,27 @@ function formatDateParse(parse){
 }
 
 var db = {
+  checkVisitor: function(siteKey, userId) {
+    pool.query("SELECT * FROM t_visitors WHERE m_companies_id = ? AND browser_id = ?", [companyList[siteKey], userId], function(err, rows){
+      if ( !isset(err) && !isset(rows[0]) ) {
+        db.addVisitor(siteKey, userId);
+      }
+    });
+  },
+  addVisitor: function(siteKey, browserId) {
+    if ( !isset(companyList[siteKey]) || !isset(browserId) ) return false;
+    var insertData = {
+      m_companies_id: companyList[siteKey],
+      browser_id: browserId
+    };
+    pool.query("INSERT INTO t_visitors SET ?", insertData,function(err, rows){
+    });
+  },
   addHistory: function(obj) {
     if ( isset(obj.tabId) && isset(obj.siteKey) ) {
       if ( !isset(companyList[obj.siteKey]) || obj.subWindow ) return false;
       var siteId = companyList[obj.siteKey];
-      pool.query('SELECT * FROM t_histories WHERE m_companies_id = ? AND tab_id = ? AND tmp_customers_id = ? ORDER BY id DESC LIMIT 1;', [siteId, obj.tabId, obj.userId], function(err, rows){
+      pool.query('SELECT * FROM t_histories WHERE m_companies_id = ? AND tab_id = ? AND t_visitors_id = ? ORDER BY id DESC LIMIT 1;', [siteId, obj.tabId, obj.userId], function(err, rows){
         var now = formatDateParse();
         var insertStayData = {
           title: obj.title,
@@ -261,7 +346,7 @@ var db = {
           //insert
           var insertData = {
             m_companies_id: siteId,
-            tmp_customers_id: obj.userId,
+            t_visitors_id: obj.userId,
             tab_id: obj.tabId,
             ip_address: obj.ipAddress,
             user_agent: obj.userAgent,
@@ -311,6 +396,8 @@ connect = io.sockets.on('connection', function (socket) {
       if ( data.firstConnection ) {
         var d = new Date();
         send.time = Date.parse(d);
+        // ユーザー登録チェック
+        db.checkVisitor(res.siteKey, send.userId);
       }
       if ( isset(socket.handshake.headers['x-forwarded-for']) ) {
         send.ipAddress = socket.handshake.headers['x-forwarded-for'];
@@ -519,6 +606,22 @@ connect = io.sockets.on('connection', function (socket) {
   socket.on('reqUrlChecker', function (data){
     var obj = JSON.parse(data);
     emit('resUrlChecker', data);
+  });
+
+  // -----------------------------------------------------------------------
+  //  チャット関連
+  // -----------------------------------------------------------------------
+
+  // チャットデータ取得
+  socket.on("getChatMessage", function(d){
+    var obj = JSON.parse(d);
+    chatApi.get(obj);
+  });
+
+  // 新着チャット
+  socket.on("sendChat", function(d){
+    var obj = JSON.parse(d);
+    chatApi.set(obj);
   });
 
   socket.on('userOut', function (data) {
