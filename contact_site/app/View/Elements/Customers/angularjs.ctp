@@ -70,6 +70,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
   sincloApp.controller('MainCtrl', ['$scope', 'angularSocket', function($scope, socket) {
     $scope.searchText = "";
+    $scope.chatMessage = "";
     $scope.oprCnt = 0; // 待機中のオペレーター人数
     $scope.labelHideList = {
       accessId : false,
@@ -184,6 +185,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       if ( $scope.customerMainClass !== "" ) {
         $scope.customerMainClass = "";
         $scope.detailData = "";
+        $("#chatTalk").children().remove();
       }
       else {
         $scope.customerMainClass = "showDetail";
@@ -352,6 +354,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       }
     }
   }]);
+
 
 }());
 </script>

@@ -101,14 +101,10 @@ var _access_type_guest = 1, _access_type_host = 2, userAgentChk, chatApi,
       pushMessage: function() {
         var elm = document.getElementById('sendMessage');
         if ( isset(elm.value) ) {
-          emit('sendChat', {historyId: this.historyId, userId: this.userId, chatMessage:elm.value, mUserId: <?= h($muserId)?>});
+          emit('sendChat', {historyId: this.historyId, userId: this.userId, chatMessage:elm.value, mUserId: <?= h($muserId)?>, messageType: 2});
         }
       },
-      sendMessage: function(){
-        var elm = document.getElementById('sendMessage');
-
-      },
-      _init: function(){
+      init: function(){
         // チャットメッセージ群の受信
         socket.on("chatMessageData", function(d){
           var obj = JSON.parse(d);
@@ -116,13 +112,20 @@ var _access_type_guest = 1, _access_type_host = 2, userAgentChk, chatApi,
             chatApi.historyId = obj.chat.historyId;
             $("#sendMessage").attr('disabled', false);
           }
+
+          for (var i = 0; i < obj.chat.messages.length; i++) {
+            var chat = obj.chat.messages[i],
+                cn = (chat.messageType == 1) ? "sinclo_re" : "sinclo_se";
+            chatApi.createMessage(cn, chat.message);
+          }
         });
         // チャットメッセージ送信結果
         socket.on("sendChatResult", function(d){
           var obj = JSON.parse(d);
+          var elm = document.getElementById('sendMessage');
           if ( obj.ret ) {
             elm.value = "";
-            this.createMessage("sinclo_se", elm.value);
+            chatApi.createMessage("sinclo_se", obj.chatMessage);
           }
           else {
             alert('メッセージの送信に失敗しました。');
@@ -131,7 +134,7 @@ var _access_type_guest = 1, _access_type_host = 2, userAgentChk, chatApi,
       }
   };
 
-  chatApi._init();
+  chatApi.init();
 
 
 })();
