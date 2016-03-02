@@ -185,6 +185,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       if ( $scope.customerMainClass !== "" ) {
         $scope.customerMainClass = "";
         $scope.detailData = "";
+        chatApi.historyId = "";
         chatApi.userId = "";
         $("#chatTalk").children().remove();
         if ( chatApi.tabId !== tabId ) {
@@ -300,6 +301,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       if ( obj.tabId !== undefined ) {
         if ( obj.accessType !== _access_type_host ) {
           delete $scope.monitorList[obj.tabId];
+          if ( obj.tabId === chatApi.tabId ){
+            $scope.showDetail(obj.tabId);
+          }
         }
         else {
           socket.emit("requestSyncStop", obj);

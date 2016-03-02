@@ -107,7 +107,7 @@ var socket, // socket.io
       call.css  += '}';
       call.css  += '#sincloBox a:hover { color: #ABCD05 }';
 
-      call.html += '<div id="sincloBox" class="sincloBoxes">';
+      call.html += '<div id="sincloBox" data-flg=false class="sincloBoxes">';
       call.html += '  <style>' + call.css + '</style>';
       call.html += '  <img onclick="sinclo.operatorInfo.ev(\'sincloBox\')" style="position: absolute; top: 11.5px; right: 10px; z-index: 0;" src=" ' + window.info.site.files + '/img/yajirushi.png" height="12" width="16.5">';
       call.html += '  <div onclick="sinclo.operatorInfo.ev(\'sincloBox\')" style="background-color: #ABCD05; width: 100%; height: 35px; background-image: url( ' + window.info.site.files + '/img/call.png); background-repeat: no-repeat; background-position: 15px, 0; background-size: 4.5%; color: #FFF;">';
@@ -139,8 +139,7 @@ var socket, // socket.io
       };
 
       chat.css  += '#sincloChatBox {';
-      chat.css  += '  height: 342px;';
-      chat.css  += '  box-sizing: border-box; position: fixed; bottom: -11px; right: 270px; border: 1.5px solid rgb(232, 231, 224); border-radius: 10px; z-index: 999998; width: 250px; overflow: hidden; background-color: rgb(255, 255, 255);';
+      chat.css  += '  box-sizing: border-box; position: fixed; height: 45px;  bottom: -11px; right: 270px; border: 1.5px solid rgb(232, 231, 224); border-radius: 10px; z-index: 999998; width: 250px; overflow: hidden; background-color: rgb(255, 255, 255);';
       chat.css  += '}';
       chat.css  += '#sincloChatBox ul { width: 100%; height: 200px; padding: 5px;background-color: #FDFDFD; list-style-type: none; overflow-y: scroll; overflow-x: hidden;}';
       chat.css  += '#sincloChatBox li { margin: 5px 0;padding: 5px; font-size: 12px; box-shadow: 0 0 1px rgba(0,0,0,0.5); color: #8A8A8A; white-space: pre; }';
@@ -152,7 +151,7 @@ var socket, // socket.io
       chat.css  += '#sincloChatBox textarea:focus{ outline: none; border-color: #CDDC39!important }';
       chat.css  += '#sincloChatBox a:hover { color: #ABCD05 }';
 
-      chat.html += '<div id="sincloChatBox" class="sincloBoxes">';
+      chat.html += '<div id="sincloChatBox" data-flg=false class="sincloBoxes">';
       chat.html += '  <style>' + chat.css + '</style>';
       chat.html += '  <img onclick="sinclo.operatorInfo.ev(\'sincloChatBox\')" style="position: absolute; top: 11.5px; right: 10px; z-index: 0;" src=" ' + window.info.site.files + '/img/yajirushi.png" height="12" width="16.5">';
       chat.html += '  <div onclick="sinclo.operatorInfo.ev(\'sincloChatBox\')" style="background-color: #ABCD05; width: 100%; height: 35px; background-image: url( ' + window.info.site.files + '/img/chat.png); background-repeat: no-repeat; background-position: 15px, 0; background-size: 9%; color: #FFF;">';

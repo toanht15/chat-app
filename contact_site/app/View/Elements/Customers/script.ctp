@@ -113,7 +113,7 @@ var _access_type_guest = 1, _access_type_host = 2, userAgentChk, chatApi,
           emit('sendChat', {
             token: this.token,
             historyId: this.historyId,
-            tabId: $("#chatTalk").data("tabId"),
+            tabId: chatApi.tabId,
             userId: this.userId,
             chatMessage:elm.value,
             mUserId: <?= h($muserId)?>,
@@ -140,6 +140,7 @@ var _access_type_guest = 1, _access_type_host = 2, userAgentChk, chatApi,
         // チャットメッセージ送信結果
         socket.on("sendChatResult", function(d){
           var obj = JSON.parse(d);
+          if ( obj.tabId !== chatApi.tabId ) return false;
           var elm = document.getElementById('sendMessage'), cn;
           if ( obj.ret ) {
             if (obj.messageType === chatApi.messageType.customer) {
@@ -159,7 +160,6 @@ var _access_type_guest = 1, _access_type_host = 2, userAgentChk, chatApi,
   };
 
   chatApi.init();
-
 
 })();
 

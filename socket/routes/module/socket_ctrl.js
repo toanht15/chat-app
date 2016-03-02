@@ -256,7 +256,7 @@ var chatApi = {
       m_users_id: d.mUserId,
       message: d.chatMessage,
       message_type: d.messageType,
-      created: now
+      created: formatDateParse()
     };
 
     pool.query('INSERT INTO t_history_chat_logs SET ?', insertData, function(error,results,fields){

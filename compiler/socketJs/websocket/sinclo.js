@@ -6,15 +6,11 @@
   sinclo = {
     syncTimeout: "",
     operatorInfo: {
-      flg: false,
       ev: function(contentId) {
         var height = "45px";
         var elm = $('#' + contentId);
         var flg = elm.data('flg');
-        if ( !check.isset(flg) ) {
-          flg = false;
-        }
-        if ( flg ) {
+        if ( !flg ) {
           height = common[contentId + 'Height'] + "px";
         }
         elm.animate({
@@ -398,9 +394,9 @@
         sinclo.chatApi.init();
 
         window.setTimeout(function(){
-          if ( sinclo.operatorInfo.flg === false ) {
-            sinclo.operatorInfo.flg = true;
-            $("#sincloBox").animate({
+          var elm = $('#sincloBox');
+          if ( elm.data('flg') === false ) {
+            elm.data('flg', true).animate({
               'height':  common.sincloBoxHeight + 'px'
             }, 'first');
           }
@@ -441,10 +437,10 @@
       if ( obj.ret ) {
         if (obj.messageType === sinclo.chatApi.messageType.customer) {
           cn = "sinclo_se";
+          elm.value = "";
         }
         else {
           cn = "sinclo_re";
-          elm.value = "";
         }
         this.chatApi.createMessage(cn, obj.chatMessage);
       }
