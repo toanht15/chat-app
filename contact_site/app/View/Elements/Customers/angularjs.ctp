@@ -185,13 +185,21 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       if ( $scope.customerMainClass !== "" ) {
         $scope.customerMainClass = "";
         $scope.detailData = "";
+        chatApi.userId = "";
         $("#chatTalk").children().remove();
+        if ( chatApi.tabId !== tabId ) {
+          window.setTimeout(function(){
+            $scope.showDetail(tabId);
+          }, 300);
+        }
+        chatApi.tabId = "";
       }
       else {
         $scope.customerMainClass = "showDetail";
         chatApi.getMessage($scope.monitorList[tabId]);
         $scope.detailData = $scope.monitorList[tabId];
         chatApi.userId = $scope.detailData.userId;
+        chatApi.tabId = tabId;
       }
     };
 

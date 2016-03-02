@@ -84,8 +84,14 @@ var _access_type_guest = 1, _access_type_host = 2, userAgentChk, chatApi,
   });
 
   chatApi = {
+      tabId: null,
       userId: null,
+      token: null,
       historyId: null,
+      messageType: {
+        customer: 1,
+        company: 2
+      },
       getMessage: function(obj){
         $("#sendMessage").attr('disabled', true);
         // チャットの取得
@@ -97,17 +103,29 @@ var _access_type_guest = 1, _access_type_host = 2, userAgentChk, chatApi,
         li.className = cs;
         li.textContent = val;
         chatTalk.appendChild(li);
+        $('#chatTalk').animate({
+          scrollTop: chatTalk.scrollHeight - chatTalk.clientHeight
+        }, 100);
       },
       pushMessage: function() {
         var elm = document.getElementById('sendMessage');
         if ( isset(elm.value) ) {
-          emit('sendChat', {historyId: this.historyId, userId: this.userId, chatMessage:elm.value, mUserId: <?= h($muserId)?>, messageType: 2});
+          emit('sendChat', {
+            token: this.token,
+            historyId: this.historyId,
+            tabId: $("#chatTalk").data("tabId"),
+            userId: this.userId,
+            chatMessage:elm.value,
+            mUserId: <?= h($muserId)?>,
+            messageType: chatApi.messageType.company
+          });
         }
       },
       init: function(){
         // チャットメッセージ群の受信
         socket.on("chatMessageData", function(d){
           var obj = JSON.parse(d);
+          if ( this.token !== obj.token ) return false;
           if ( isset(obj.chat.historyId) ) {
             chatApi.historyId = obj.chat.historyId;
             $("#sendMessage").attr('disabled', false);
@@ -115,17 +133,23 @@ var _access_type_guest = 1, _access_type_host = 2, userAgentChk, chatApi,
 
           for (var i = 0; i < obj.chat.messages.length; i++) {
             var chat = obj.chat.messages[i],
-                cn = (chat.messageType == 1) ? "sinclo_re" : "sinclo_se";
+                cn = (chat.messageType === chatApi.messageType.customer) ? "sinclo_re" : "sinclo_se";
             chatApi.createMessage(cn, chat.message);
           }
         });
         // チャットメッセージ送信結果
         socket.on("sendChatResult", function(d){
           var obj = JSON.parse(d);
-          var elm = document.getElementById('sendMessage');
+          var elm = document.getElementById('sendMessage'), cn;
           if ( obj.ret ) {
-            elm.value = "";
-            chatApi.createMessage("sinclo_se", obj.chatMessage);
+            if (obj.messageType === chatApi.messageType.customer) {
+              cn = "sinclo_re";
+            }
+            else if (obj.messageType === chatApi.messageType.company) {
+              cn = "sinclo_se";
+              elm.value = "";
+            }
+            chatApi.createMessage(cn, obj.chatMessage);
           }
           else {
             alert('メッセージの送信に失敗しました。');

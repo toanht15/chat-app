@@ -221,7 +221,7 @@ var chatApi = {
     // // 履歴idかメッセージがない
     if ( !isset(d.historyId) || !isset(d.chatMessage) ) {
       // エラーを渡す
-      return emit('sendChatResult', {ret: false, siteKey: d.siteKey});
+      return emit('sendChatResult', {ret: false, messageType: d.messageType, tabId: d.tabId, siteKey: d.siteKey});
     }
     // チャットidがある
     else {
@@ -253,18 +253,20 @@ var chatApi = {
     var insertData = {
       t_histories_id: d.historyId,
       visitors_id: d.userId,
+      m_users_id: d.mUserId,
       message: d.chatMessage,
       message_type: d.messageType,
       created: now
     };
+
     pool.query('INSERT INTO t_history_chat_logs SET ?', insertData, function(error,results,fields){
       if ( !isset(error) ) {
         // 書き込みが成功したら相手側に結果を返す
-        return emit('sendChatResult', {ret: true, chatMessage: d.chatMessage, siteKey: d.siteKey});
+        return emit('sendChatResult', {tabId: d.tabId, messageType: d.messageType, ret: true, chatMessage: d.chatMessage, siteKey: d.siteKey});
       }
       else {
         // 書き込みが失敗したらエラーを渡す
-        return emit('sendChatResult', {ret: false, siteKey: d.siteKey});
+        return emit('sendChatResult', {tabId: d.tabId, messageType: d.messageType, ret: false, siteKey: d.siteKey});
       }
     });
 
@@ -593,6 +595,12 @@ connect = io.sockets.on('connection', function (socket) {
 
   // 新着チャット
   socket.on("sendChat", function(d){
+    var obj = JSON.parse(d);
+    chatApi.set(obj);
+  });
+
+  // 新着チャット
+  socket.on("clientSendChat", function(d){
     var obj = JSON.parse(d);
     chatApi.set(obj);
   });

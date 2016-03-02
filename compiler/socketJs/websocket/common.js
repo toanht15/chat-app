@@ -143,7 +143,7 @@ var socket, // socket.io
       chat.css  += '  box-sizing: border-box; position: fixed; bottom: -11px; right: 270px; border: 1.5px solid rgb(232, 231, 224); border-radius: 10px; z-index: 999998; width: 250px; overflow: hidden; background-color: rgb(255, 255, 255);';
       chat.css  += '}';
       chat.css  += '#sincloChatBox ul { width: 100%; height: 200px; padding: 5px;background-color: #FDFDFD; list-style-type: none; overflow-y: scroll; overflow-x: hidden;}';
-      chat.css  += '#sincloChatBox li { margin: 5px 0;padding: 5px; font-size: 12px; box-shadow: 0 0 1px rgba(0,0,0,0.5); color: #8A8A8A; }';
+      chat.css  += '#sincloChatBox li { margin: 5px 0;padding: 5px; font-size: 12px; box-shadow: 0 0 1px rgba(0,0,0,0.5); color: #8A8A8A; white-space: pre; }';
       chat.css  += '#sincloChatBox li.sinclo_se { border-radius: 5px 5px 0; margin-left: 10px; background-color: #FFF; }';
       chat.css  += '#sincloChatBox li.sinclo_re { margin-right: 10px; border-radius: 5px 5px 5px 0; background-color: #F1F5C8; }';
       chat.css  += '#sinclo_sendbtn{ position: absolute; bottom: 3px; right: 3px; background-color: #FF7B7B; border-radius: 15px; padding: 2px; font-size: 20px; color: #FFF; opacity: 0.3 }';
@@ -158,13 +158,10 @@ var socket, // socket.io
       chat.html += '  <div onclick="sinclo.operatorInfo.ev(\'sincloChatBox\')" style="background-color: #ABCD05; width: 100%; height: 35px; background-image: url( ' + window.info.site.files + '/img/chat.png); background-repeat: no-repeat; background-position: 15px, 0; background-size: 9%; color: #FFF;">';
       chat.html += '    <pre style="color: #FFF; text-align: center; font-size: 15px; padding: 10px; margin:  0;">チャット</pre>'
       chat.html += '  </div>';
-      chat.html += '  <ul>';
-      chat.html += '    <li class="sinclo_re">といかけ</li>';
-      chat.html += '    <li class="sinclo_se">おうとう</li>';
-      chat.html += '  </ul>';
+      chat.html += '  <ul id="chatTalk"></ul>';
       chat.html += '  <div style="border-top: 1px solid #DEDEDE; height: 70px; padding: 10px; position: relative;">';
-      chat.html += '    <textarea name="hoge" />';
-      chat.html += '    <span id="sinclo_sendbtn">＋</span>';
+      chat.html += '    <textarea name="sincloChat" id="sincloChatMessage" />';
+      chat.html += '    <span id="sinclo_sendbtn" onclick="sinclo.chatApi.push()">＋</span>';
       chat.html += '  </div>';
       chat.html += '  <p style="padding: 5px 0; text-align: center; border-top: 1px solid #DBDBDB;color: #A1A1A1!important; height: 20px; font-size: 11px;">Powered by <a target="sinclo" href="http://medialink-ml.co.jp/index.html">sinclo</a></p>';
       chat.html += '</div>';
@@ -555,7 +552,6 @@ var socket, // socket.io
           if ( socket === undefined ) return false;
           // 排他処理
           if ( "body" === syncEvent.receiveEvInfo.nodeName && "scroll" === syncEvent.receiveEvInfo.type ) return false;
-console.log('sc', {x: e.clientX, y: e.clientY});
           // スクロール用
           emit('syncBrowserInfo', {
             accessType: userInfo.accessType,
@@ -875,6 +871,16 @@ console.log('sc', {x: e.clientX, y: e.clientY});
 
     socket.on('resUrlChecker', function (d) {
       sinclo.resUrlChecker(d);
+    }); // socket-on: receiveConnectEV
+
+    // チャット初期データ
+    socket.on('chatMessageData', function (d) {
+      sinclo.chatMessageData(d);
+    }); // socket-on: receiveConnectEV
+
+    // 新着チャット
+    socket.on('sendChatResult', function (d) {
+      sinclo.sendChatResult(d);
     }); // socket-on: receiveConnectEV
 
     socket.on('syncStop', function(d){

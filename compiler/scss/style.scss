@@ -737,7 +737,7 @@ ul.naviBtn {
     #customer_main {
       width: 73%;
       float: left;
-      transition: width 500ms linear 0ms;
+      transition: width 300ms linear 0ms;
     }
 
 
@@ -745,7 +745,7 @@ ul.naviBtn {
       float: right;
       width: 25%;
       opacity: 1;
-      transition: width 500ms linear 0ms, opacity 500ms linear 400ms;
+      transition: width 300ms linear 0ms, opacity 300ms linear 200ms;
 
       div.card-shadow * {
         opacity: 1;

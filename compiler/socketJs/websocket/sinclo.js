@@ -394,6 +394,8 @@
             common.sincloChatBoxHeight = common.sincloChatBoxHeight + $(this).outerHeight(true);
           }
         });
+        // チャット情報読み込み
+        sinclo.chatApi.init();
 
         window.setTimeout(function(){
           if ( sinclo.operatorInfo.flg === false ) {
@@ -422,6 +424,34 @@
         }
       }
     },
+    chatMessageData:function(d){
+      var obj = JSON.parse(d);
+      if ( obj.token !== common.token ) return false;
+      this.chatApi.historyId = obj.chat.historyId;
+      for (var i = 0; i < obj.chat.messages.length; i++) {
+        var chat = obj.chat.messages[i],
+            cn = (chat.messageType == 1) ? "sinclo_se" : "sinclo_re";
+        this.chatApi.createMessage(cn, chat.message);
+      }
+    },
+    sendChatResult: function(d){
+      var obj = JSON.parse(d);
+      if ( obj.tabId !== userInfo.tabId ) return false;
+      var elm = document.getElementById('sincloChatMessage'), cn;
+      if ( obj.ret ) {
+        if (obj.messageType === sinclo.chatApi.messageType.customer) {
+          cn = "sinclo_se";
+        }
+        else {
+          cn = "sinclo_re";
+          elm.value = "";
+        }
+        this.chatApi.createMessage(cn, obj.chatMessage);
+      }
+      else {
+        alert('メッセージの送信に失敗しました。');
+      }
+    },
     syncStop: function(d){
       var obj = common.jParse(d);
       if ( obj.connectToken !== userInfo.connectToken ) return false;
@@ -430,6 +460,37 @@
       syncEvent.stop(false);
       userInfo.syncInfo.unset();
       common.makeAccessIdTag(userInfo.accessId);
+    },
+    chatApi: {
+      historyId: null,
+      messageType: {
+        customer: 1,
+        company: 2
+      },
+      init: function(){
+        emit('getChatMessage', {});
+      },
+      createMessage: function(cs, val){
+        var chatTalk = document.getElementById('chatTalk');
+        var li = document.createElement('li');
+        li.className = cs;
+        li.textContent = val;
+        chatTalk.appendChild(li);
+        $('#chatTalk').animate({
+          scrollTop: chatTalk.scrollHeight - chatTalk.clientHeight
+        }, 100);
+      },
+      push: function(){
+        var elm = document.getElementById('sincloChatMessage');
+        if ( check.isset(elm.value) ) {
+          emit('sendChat', {
+            historyId: sinclo.chatApi.historyId,
+            chatMessage:elm.value,
+            mUserId: null,
+            messageType: sinclo.chatApi.messageType.customer
+          });
+        }
+      }
     }
   };
 
