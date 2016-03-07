@@ -4,7 +4,7 @@ $main-color: #C3D69B;
 $string-color: #595959;
 $line-color: #B5B5B5;
 $error-color: #F57E7E;
-$shadow-color: rgba(70, 70, 70, 0.7);
+$shadow-color: rgba(0, 0, 0, 0.3);
 $header-btn-hover-color: #D6E8B0;
 $content-min-width: 1000px;
 
@@ -44,7 +44,7 @@ table {
   border-collapse: collapse;
   border: none;
 
-  tr:hover {
+  tr:hover, tr.on {
     background-color: rgba(195, 214, 155, 0.1);
   }
 
@@ -373,19 +373,19 @@ a {
 }
 
 .btn-shadow {
-  &.greenBtn:hover {
+  &.greenBtn:hover, &.greenBtn.on {
     background-color: #A5B77E;
     border: 1px solid #A5B77E;
     transition: background-color, border-color 0.1s linear;
     color: #fff;
   }
-  &.redBtn:hover {
+  &.redBtn:hover, &.redBtn.on {
     background-color: #B78080;
     border: 1px solid #B78080;
     transition: background-color, border-color 0.1s linear;
     color: #fff;
   }
-  &.blueBtn:hover {
+  &.blueBtn:hover, &.blueBtn.on {
     background-color: #808CB7;
     border: 1px solid #808CB7;
     transition: background-color, border-color 0.1s linear;
@@ -800,6 +800,21 @@ ul.naviBtn {
       text-align: center;
 
     }
+
+    #chatTypeBtn {
+      a {
+          text-decoration: none!important;
+          font-weight: bold;
+          padding: 5px;
+          border-radius: 5px;
+          margin: 0 auto;
+          display: block;
+          min-width: 5em;
+          text-align: center;
+          cursor: pointer;
+      }
+
+    }
   }
 
   #customer_sub  {
@@ -828,7 +843,7 @@ ul.naviBtn {
           font-size: 12px;
           box-shadow: 0 0 1px rgba(0,0,0,0.5);
           color: #8A8A8A;
-          white-space: pre!important;
+          white-space: pre-wrap!important;
 
           &.sinclo_re {
               margin-right: 10px;
@@ -845,14 +860,27 @@ ul.naviBtn {
       }
 
       textarea {
-        margin: 5px 1%;
-        width: 98%;
-        padding: 5px;
-        resize: none;
-        outline: none;
-        background-color: #FFF;
+        display: none;
+      }
+      #sinclo_sendbtn {
+        display: none;
       }
 
+      &.connectChat {
+        textarea{
+          margin: 5px 1%;
+          width: 98%;
+          padding: 5px;
+          resize: none;
+          outline: none;
+          background-color: #FFF;
+          display: block;
+        }
+
+        #sinclo_sendbtn {
+          display: block;
+        }
+      }
       #sinclo_sendbtn {
         position: absolute;
         bottom: 0px;

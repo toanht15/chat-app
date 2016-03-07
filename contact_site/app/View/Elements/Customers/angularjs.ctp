@@ -1,9 +1,27 @@
 <script type="text/javascript">
 'use strict';
 
-(function(){
 var sincloApp = angular.module('sincloApp', ['ngSanitize']),
-    modalFunc;
+    modalFunc, myUserId = <?= h($muserId)?>, chatApi;
+
+(function(){
+
+  // -----------------------------------------------------------------------------
+  //  関数
+  // -----------------------------------------------------------------------------
+  function emit(ev, d){
+    var obj = {};
+    if ( typeof(d) !== "object" ) {
+      obj = JSON.parse(d);
+    }
+    else {
+      obj = d;
+    }
+    obj.siteKey = "<?=$siteKey?>";
+    var status = $('#operatorStatus').data('status');
+    var data = JSON.stringify(obj);
+    socket.emit(ev, data);
+  }
 
   modalFunc = {
     option: {
@@ -27,6 +45,97 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       modalFunc.func(this.option);
     }
   };
+
+  chatApi = {
+      connect: false,
+      tabId: null,
+      userId: null,
+      token: null,
+      historyId: null,
+      messageType: {
+        customer: 1,
+        company: 2
+      },
+      connection: function(monitor){
+        if ( isset(monitor.tabId) && isset(monitor.userId) && !isset(monitor.chat) ) {
+          emit("chatStart", {tabId: monitor.tabId, userId: myUserId});
+        }
+      },
+      disConnect: function(monitor){
+        if ( isset(monitor.tabId) && (isset(monitor.userId) && isset(monitor.chat) && myUserId === monitor.chat ) ) {
+          emit("chatEnd", {tabId: monitor.tabId});
+        }
+      },
+      getMessage: function(obj){
+        $("#sendMessage").attr('disabled', true);
+        // チャットの取得
+        emit('getChatMessage', {userId: obj.userId, tabId: obj.tabId, token: chatApi.token});
+      },
+      createMessage: function(cs, val){
+        var chatTalk = document.getElementById('chatTalk');
+        var li = document.createElement('li');
+        li.className = cs;
+        li.textContent = val;
+        chatTalk.appendChild(li);
+        $('#chatTalk').animate({
+          scrollTop: chatTalk.scrollHeight - chatTalk.clientHeight
+        }, 100);
+      },
+      pushMessage: function() {
+        var elm = document.getElementById('sendMessage');
+        if ( isset(elm.value) ) {
+          emit('sendChat', {
+            token: this.token,
+            historyId: this.historyId,
+            tabId: chatApi.tabId,
+            userId: this.userId,
+            chatMessage:elm.value,
+            mUserId: myUserId,
+            messageType: chatApi.messageType.company
+          });
+        }
+      },
+      init: function(){
+        // チャットメッセージ群の受信
+        socket.on("chatMessageData", function(d){
+          var obj = JSON.parse(d);
+          if ( chatApi.token !== obj.token ) return false;
+          if ( isset(obj.chat.historyId) ) {
+            chatApi.historyId = obj.chat.historyId;
+          }
+          if ( !isset(obj.chat.mUserId) || ( isset(obj.chat.mUserId) && obj.chat.mUserId === myUserId ) ) {
+            $("#sendMessage").attr('disabled', false);
+          }
+
+          for (var i = 0; i < obj.chat.messages.length; i++) {
+            var chat = obj.chat.messages[i],
+                cn = (chat.messageType === chatApi.messageType.customer) ? "sinclo_re" : "sinclo_se";
+            chatApi.createMessage(cn, chat.message);
+          }
+        });
+        // チャットメッセージ送信結果
+        socket.on("sendChatResult", function(d){
+          var obj = JSON.parse(d);
+          if ( obj.tabId !== chatApi.tabId ) return false;
+          var elm = document.getElementById('sendMessage'), cn;
+          if ( obj.ret ) {
+            if (obj.messageType === chatApi.messageType.customer) {
+              cn = "sinclo_re";
+            }
+            else if (obj.messageType === chatApi.messageType.company) {
+              cn = "sinclo_se";
+              elm.value = "";
+            }
+            chatApi.createMessage(cn, obj.chatMessage);
+          }
+          else {
+            alert('メッセージの送信に失敗しました。');
+          }
+        });
+      }
+  };
+
+  chatApi.init();
 
   function makeDateTime(dParse){
     var d = new Date(Number(dParse)),
@@ -72,6 +181,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     $scope.searchText = "";
     $scope.chatMessage = "";
     $scope.oprCnt = 0; // 待機中のオペレーター人数
+    $scope.userList = <?=json_encode($muserList)?>;
     $scope.labelHideList = {
       accessId : false,
       ipAddress : false,
@@ -163,7 +273,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     };
 
     $scope.openHistory = function(monitor){
-     var retList = {};
+        var retList = {};
         $.ajax({
           type: 'GET',
           url: "<?= $this->Html->url(array('controller' => 'Customers', 'action' => 'remoteGetStayLogs')) ?>",
@@ -181,13 +291,21 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     };
 
     $scope.customerMainClass = "";
+
     $scope.showDetail = function(tabId){
+      // $scope.showChatArea = false;
+      $("#sendMessage").attr('value', '');
       if ( $scope.customerMainClass !== "" ) {
         $scope.customerMainClass = "";
         $scope.detailData = "";
         chatApi.historyId = "";
         chatApi.userId = "";
         $("#chatTalk").children().remove();
+        $("#customer_list tr.on").removeClass('on');
+        if ( chatApi.connect ) {
+         socket.emit("chatStart", {tabId: chatApi.tabId, userId: myUserId});
+        }
+
         if ( chatApi.tabId !== tabId ) {
           window.setTimeout(function(){
             $scope.showDetail(tabId);
@@ -197,10 +315,28 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       }
       else {
         $scope.customerMainClass = "showDetail";
+        chatApi.token = makeToken();
         chatApi.getMessage($scope.monitorList[tabId]);
         $scope.detailData = $scope.monitorList[tabId];
         chatApi.userId = $scope.detailData.userId;
         chatApi.tabId = tabId;
+        $("#monitor_" + tabId).addClass('on');
+        chatApi.connect = false;
+        if ( isset($scope.detailData.chat) && $scope.detailData.chat === myUserId ) {
+          $("#chatContent").addClass("connectChat");
+        }
+        else {
+          $("#chatContent").removeClass("connectChat");
+        }
+      }
+    };
+
+    $scope.ngChatApi = {
+      connect: function(obj){
+        chatApi.connection(obj);
+      },
+      disConnect: function(obj){
+        chatApi.disConnect(obj);
       }
     };
 
@@ -229,6 +365,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           $scope.monitorList[obj.tabId].url = obj.url;
           $scope.monitorList[obj.tabId].prev = obj.prev;
           $scope.monitorList[obj.tabId].widget = obj.widget;
+          $scope.monitorList[obj.tabId].chat = obj.chat;
         }
         else {
           socket.emit('getCustomerInfo', JSON.stringify({tabId: obj.tabId}));
@@ -311,6 +448,17 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       }
     });
 
+    // チャット接続結果
+    socket.on("chatStartResult", function(d){
+      var obj = JSON.parse(d);
+      if ( obj.userId === myUserId && obj.ret ) {
+        chatApi.connect = true;
+        if ( obj.tabId !== chatApi.tabId ) {
+          $scope.showDetail(obj.tabId);
+        }
+      }
+    });
+
   }]);
 
   sincloApp.filter('customDate', function(){
@@ -366,7 +514,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       }
     }
   }]);
-
 
 }());
 </script>

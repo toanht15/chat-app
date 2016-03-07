@@ -906,6 +906,7 @@ function emit(evName, data){
   data.tabId = userInfo.tabId;
   data.prevList = browserInfo.prevList;
   data.accessType = userInfo.accessType;
+  data.chat = null;
   data.connectToken = userInfo.get(cnst.info_type.connect);
   if ( evName == "sendWindowInfo" ) {
     data.connectToken = userInfo.connectToken;

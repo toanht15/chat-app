@@ -4,7 +4,7 @@
  * モニタリング機能
  */
 class CustomersController extends AppController {
-    public $uses = array('THistory');
+    public $uses = array('THistory', 'MUser');
 
     public function beforeRender(){
         $this->set('siteKey', $this->userInfo['MCompany']['company_key']);
@@ -17,6 +17,11 @@ class CustomersController extends AppController {
      * @return void
      * */
     public function index() {
+        $this->set('muserList', $this->MUser->find('list', [
+            'fields' => 'MUser.id, MUser.display_name',
+            'conditions' => ['MUser.del_flg != ' => 1],
+            'recursive' => -1
+        ]));
     }
 
     /* *

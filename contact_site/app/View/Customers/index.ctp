@@ -2,7 +2,7 @@
 <?php echo $this->element('Customers/script') ?>
 <?php echo $this->element('Customers/angularjs') ?>
 
-<section id='customer_idx' class="{{customerMainClass}}" ng-app="sincloApp" ng-controller="MainCtrl">
+<section id='customer_idx' class="{{customerMainClass}}" ng-app="sincloApp" ng-controller="MainCtrl" ng-cloak>
 
     <div id='customer_main' class="card-shadow">
 
@@ -46,11 +46,12 @@
                         <th ng-hide="labelHideList.page" >閲覧ページ数</th>
                         <th ng-hide="labelHideList.title" >閲覧中ページ</th>
                         <th ng-hide="labelHideList.referrer" >参照元URL</th>
+                        <th>チャット</th>
                         <th>モニター</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="monitor in search(monitorList)" ng-click="showDetail(monitor.tabId)">
+                    <tr ng-repeat="monitor in search(monitorList)" ng-dblclick="showDetail(monitor.tabId)" id="monitor_{{monitor.tabId}}">
                         <td ng-hide="labelHideList.accessId" class="tCenter">{{monitor.accessId}}</td>
                         <td ng-hide="labelHideList.ipAddress" class="tCenter">{{monitor.ipAddress}}</td>
                         <td ng-hide="labelHideList.ua" class="tCenter">{{ua(monitor.userAgent)}}</td>
@@ -59,6 +60,13 @@
                         <td ng-hide="labelHideList.page" class="tCenter">{{monitor.prev.length}}（<a href="javascript:void(0)" ng-click="openHistory(monitor)" >移動履歴</a>）</td>
                         <td ng-hide="labelHideList.title" class="tCenter"><a href={{monitor.url}} target="monitor" ng-if="monitor.title">{{monitor.title}}</a><span ng-if="!monitor.title">{{monitor.url}}</span></td>
                         <td ng-hide="labelHideList.referrer" class="tCenter omit"><span>{{monitor.referrer}}</span></td>
+                        <td class="w10 tCenter" id="chatTypeBtn">
+                            <span ng-show="monitor.widget">
+                              <a ng-click="ngChatApi.connect(monitor)" class="btn-shadow blueBtn " ng-if="monitor.chat === null" href="javascript:void(0)">対応する</a>
+                              <a ng-click="ngChatApi.disConnect(monitor)" class="btn-shadow redBtn " ng-if="monitor.chat === <?= h($muserId)?>" href="javascript:void(0)">対応を終わる</a>
+                              <span ng-if="monitor.chat !== null && monitor.chat !== <?= h($muserId)?>" href="javascript:void(0)">{{userList[monitor.chat]}}さん対応中</span>
+                            </span>
+                        </td>
                         <td class='w10 tCenter'>
                             <span ng-show="monitor.widget">
                               <a   ng-if="!monitor.connectToken" class='monitorBtn blueBtn btn-shadow' href='javascript:void(0)' ng-click="windowOpen(monitor.tabId)" ng-confirm-click="アクセスID【{{monitor.accessId}}】のユーザーに接続しますか？">接続する</a>
@@ -101,8 +109,10 @@
                 <ul id="chatTalk" >
                 </ul>
                 <div style="position: relative;">
+                  <ng-if="detailData.chat === <?= h($muserId)?>">
                     <textarea rows="5" id="sendMessage" placeholder="問いかけ内容"></textarea>
                     <span id="sinclo_sendbtn" onclick="chatApi.pushMessage()">＋</span>
+                  </ng-if>
                 </div>
             </div>
         </div>

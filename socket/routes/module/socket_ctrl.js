@@ -22,7 +22,9 @@ var http = require('http'),
 var activeOperator = {};
 
 // 機能仕様状況
-var sincloCore = {};
+var sincloCore = {
+  chat: {}
+};
 
 
 // 暗号化ロジック
@@ -179,9 +181,6 @@ access = {
     }, access.setTime);
   },
   start: function(obj){
-      console.log('----------------------------');
-      console.log(obj);
-      console.log('----------------------------');
     if ( !isset(this.list[obj.siteKey]) ) {
       this.list[obj.siteKey] = {};
     }
@@ -437,6 +436,10 @@ connect = io.sockets.on('connection', function (socket) {
     }
     // 継続
     else {
+      // チャット情報
+      if ( isset(sincloCore.chat[obj.siteKey]) && isset(sincloCore.chat[obj.siteKey][obj.tabId]) ) {
+        obj.chat = sincloCore.chat[obj.siteKey][obj.tabId];
+      }
       access.update(obj);
       emit('connectInfo', obj);
     }
@@ -591,6 +594,29 @@ connect = io.sockets.on('connection', function (socket) {
   socket.on("getChatMessage", function(d){
     var obj = JSON.parse(d);
     chatApi.get(obj);
+  });
+
+  // チャット開始
+  socket.on("chatStart", function(d){
+    var obj = JSON.parse(d);
+    if ( !isset(sincloCore.chat[obj.siteKey]) ) {
+      sincloCore.chat[obj.siteKey] = {};
+    }
+    if ( isset(sincloCore.chat[obj.siteKey][obj.tabId]) && sincloCore.chat[obj.siteKey][obj.tabId] !== obj.userId ) {
+      emit("chatStartResult", {ret: false, siteKey: obj.siteKey, userId: sincloCore.chat[obj.siteKey][obj.tabId]});
+    }
+    else {
+      emit("chatStartResult", {ret: true, tabId: obj.tabId, siteKey: obj.siteKey, userId: obj.userId});
+      sincloCore.chat[obj.siteKey][obj.tabId] = obj.userId;
+    }
+  });
+
+  // チャット開始
+  socket.on("chatEnd", function(d){
+    var obj = JSON.parse(d);
+    if ( isset(sincloCore.chat[obj.siteKey]) && isset(sincloCore.chat[obj.siteKey][obj.tabId]) ) {
+      delete sincloCore.chat[obj.siteKey][obj.tabId];
+    }
   });
 
   // 新着チャット
