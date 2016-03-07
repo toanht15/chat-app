@@ -293,7 +293,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     $scope.customerMainClass = "";
 
     $scope.showDetail = function(tabId){
-      // $scope.showChatArea = false;
       $("#sendMessage").attr('value', '');
       if ( $scope.customerMainClass !== "" ) {
         $scope.customerMainClass = "";

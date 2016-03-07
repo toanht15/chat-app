@@ -786,6 +786,7 @@ ul.naviBtn {
     #customer_list {
       td, td * {
         cursor: default;
+        user-select: none;
       }
     }
 
@@ -825,6 +826,10 @@ ul.naviBtn {
       padding-left: 10px;
     }
 
+    #customer_detail {
+      ul li span { font-weight: bold; margin-left: -5px }
+    }
+
     #chatContent {
       margin: 0 5px;
 
@@ -860,27 +865,15 @@ ul.naviBtn {
       }
 
       textarea {
-        display: none;
-      }
-      #sinclo_sendbtn {
-        display: none;
+        margin: 5px 1%;
+        width: 98%;
+        padding: 5px;
+        resize: none;
+        outline: none;
+        background-color: #FFF;
+        display: block;
       }
 
-      &.connectChat {
-        textarea{
-          margin: 5px 1%;
-          width: 98%;
-          padding: 5px;
-          resize: none;
-          outline: none;
-          background-color: #FFF;
-          display: block;
-        }
-
-        #sinclo_sendbtn {
-          display: block;
-        }
-      }
       #sinclo_sendbtn {
         position: absolute;
         bottom: 0px;

@@ -90,16 +90,28 @@
                 <h1>詳細情報</h1>
             </div>
         </div>
-        <div class="card-shadow m10b p10x">
+        <div id="customer_detail" class="card-shadow m10b p10x">
             <h2>基本情報</h2>
             <ul class="p20l">
-                <li>アクセスID：{{detailData.accessId}}</li>
-                <li>IPアドレス：{{detailData.ipAddress}}</li>
-                <li>ユーザーエージェント：{{detailData.userAgent}}</li>
-                <li>閲覧中ページ：<a ng-href='{{detailData.url}}' target='showBlack'>{{detailData.title}}</a></li>
+                <li>
+                  <span>アクセスID：</span><br>
+                    {{detailData.accessId}}
+                </li>
+                <li>
+                  <span>IPアドレス：</span><br>
+                    {{detailData.ipAddress}}
+                </li>
+                <li>
+                  <span>ユーザーエージェント：</span><br>
+                    {{detailData.userAgent}}
+                </li>
+                <li>
+                  <span>閲覧中ページ：</span><br>
+                  <a ng-href='{{detailData.url}}' target='showBlack'>{{detailData.title}}</a>
+                </li>
             </ul>
         </div>
-        <div id="chatArea" class="card-shadow p10x">
+        <div id="chat-area" class="card-shadow p10x">
             <h2>チャット</h2>
             <ul class="naviBtn p0">
                 <li class="w50 tCenter on">チャット</li>
@@ -108,11 +120,9 @@
             <div id="chatContent">
                 <ul id="chatTalk" >
                 </ul>
-                <div style="position: relative;">
-                  <ng-if="detailData.chat === <?= h($muserId)?>">
-                    <textarea rows="5" id="sendMessage" placeholder="問いかけ内容"></textarea>
-                    <span id="sinclo_sendbtn" onclick="chatApi.pushMessage()">＋</span>
-                  </ng-if>
+                <div style="position: relative" ng-if="detailData.chat === <?=h($muserId)?>">
+                  <textarea rows="5" id="sendMessage" placeholder="問いかけ内容"></textarea>
+                  <span id="sinclo_sendbtn" onclick="chatApi.pushMessage()">＋</span>
                 </div>
             </div>
         </div>
