@@ -54,6 +54,7 @@ table {
     border: 1px solid #8B8B8B;
     border-left: none !important;
     border-top: none !important;
+    word-break: break-word;
 
     &:last-child {
       border-right: none !important;
@@ -788,6 +789,37 @@ ul.naviBtn {
         cursor: default;
         user-select: none;
       }
+
+      #chatTypeBtn {
+        .blueBtn, .redBtn {
+            text-decoration: none!important;
+            font-weight: bold;
+            padding: 5px;
+            border-radius: 5px;
+            margin: 0 auto;
+            display: block;
+            min-width: 5em;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+
+            .unread {
+              position: absolute;
+              top: -15px;
+              right: -5px;
+              background-image: url('/img/chat-bg.png');
+              background-size: contain;
+              background-repeat: no-repeat;
+              width: 25px;
+              height: 20px;
+              padding: 2px 1px;
+              font-size: 11px;
+              color: #FFF;
+
+            }
+        }
+
+      }
     }
 
     .monitorBtn {
@@ -802,20 +834,6 @@ ul.naviBtn {
 
     }
 
-    #chatTypeBtn {
-      a {
-          text-decoration: none!important;
-          font-weight: bold;
-          padding: 5px;
-          border-radius: 5px;
-          margin: 0 auto;
-          display: block;
-          min-width: 5em;
-          text-align: center;
-          cursor: pointer;
-      }
-
-    }
   }
 
   #customer_sub  {

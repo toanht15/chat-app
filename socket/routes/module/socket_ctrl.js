@@ -220,6 +220,7 @@ var chatApi = {
     // // 履歴idかメッセージがない
     if ( !isset(d.historyId) || !isset(d.chatMessage) ) {
       // エラーを渡す
+console.log('ChatCommit:Error-1');
       return emit('sendChatResult', {ret: false, messageType: d.messageType, tabId: d.tabId, siteKey: d.siteKey});
     }
     // チャットidがある
@@ -235,7 +236,7 @@ var chatApi = {
       var chatData = {historyId: null, messages: []};
       if ( isset(rows) && isset(rows[0]) ) {
         chatData.historyId = rows[0].id;
-        pool.query('SELECT message, message_type as messageType FROM t_history_chat_logs WHERE t_histories_id = ?;', [chatData.historyId], function(err, rows){
+        pool.query('SELECT id, message, message_type as messageType FROM t_history_chat_logs WHERE t_histories_id = ?;', [chatData.historyId], function(err, rows){
           chatData.messages = rows;
           obj.chat = chatData;
           emit('chatMessageData', obj);
@@ -261,11 +262,33 @@ var chatApi = {
     pool.query('INSERT INTO t_history_chat_logs SET ?', insertData, function(error,results,fields){
       if ( !isset(error) ) {
         // 書き込みが成功したら相手側に結果を返す
-        return emit('sendChatResult', {tabId: d.tabId, messageType: d.messageType, ret: true, chatMessage: d.chatMessage, siteKey: d.siteKey});
+        return emit('sendChatResult', {tabId: d.tabId, chatId: results.insertId, messageType: d.messageType, ret: true, chatMessage: d.chatMessage, siteKey: d.siteKey});
       }
       else {
         // 書き込みが失敗したらエラーを渡す
+console.log('ChatCommit:Error-2');
         return emit('sendChatResult', {tabId: d.tabId, messageType: d.messageType, ret: false, siteKey: d.siteKey});
+      }
+    });
+
+  },
+  sendUnreadCnt: function(evName, obj){
+    var sql, tabId = obj.tabId, siteId = companyList[obj.siteKey];
+
+    sql  = " SELECT chat.id AS chatId, his.visitors_id, his.tab_id, chat.message FROM t_histories AS his";
+    sql += " INNER JOIN t_history_chat_logs AS chat ON ( his.id = chat.t_histories_id )";
+    sql += " WHERE his.tab_id = ? AND his.m_companies_id = ? AND chat.message_type = 1";
+    sql += "   AND chat.m_users_id IS NULL AND chat.message_read_flg != 1 ORDER BY chat.id asc";
+
+    pool.query(sql, [tabId, siteId], function(err, rows){
+      if ( !isset(err) && (rows.length > 0 && isset(rows[0].chatId))) {
+        obj.chatUnread = {id: rows[0].chatId, cnt: rows.length};
+        emit(evName, obj);
+      }
+      else {
+        console.log("It broke:" + err);
+        obj.chatUnread = {id: null, cnt: 0};
+        emit(evName, obj);
       }
     });
 
@@ -419,7 +442,7 @@ connect = io.sockets.on('connection', function (socket) {
     console.log('send : customerInfo' );
     var obj = JSON.parse(data);
     obj.term = timeCalculator(obj);
-    emit('sendCustomerInfo', obj);
+    chatApi.sendUnreadCnt("sendCustomerInfo", obj);
   });
 
   socket.on("getCustomerInfo", function(data) {
@@ -457,7 +480,12 @@ connect = io.sockets.on('connection', function (socket) {
     console.log('send : sendAccessInfo' );
     var obj = JSON.parse(data);
     obj.term = timeCalculator(obj);
-    emit("receiveAccessInfo", obj);
+    if ( !isset(obj.chatCnt) || (isset(obj.chatCnt) && obj.chatCnt === 0) ) {
+      emit("receiveAccessInfo", obj);
+    }
+    else {
+      chatApi.sendUnreadCnt("receiveAccessInfo", obj);
+    }
   });
   // -----------------------------------------------------------------------
   //  モニタリング通信接続前

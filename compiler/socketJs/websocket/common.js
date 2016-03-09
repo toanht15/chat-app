@@ -462,13 +462,14 @@ var socket, // socket.io
       return this.unset(cnst.info_type.connect);
     },
     getSendList: function() {
-        return {
+      return {
         ipAddress: this.getIp(),
         time: this.getTime(),
         page: this.getPage(),
         prev: this.prev,
         referrer: this.referrer,
         userAgent: window.navigator.userAgent,
+        chatCnt: document.getElementsByClassName('sinclo_se').length,
         service: check.browser()
       };
     }

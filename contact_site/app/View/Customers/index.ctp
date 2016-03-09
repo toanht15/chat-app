@@ -61,11 +61,15 @@
                         <td ng-hide="labelHideList.title" class="tCenter"><a href={{monitor.url}} target="monitor" ng-if="monitor.title">{{monitor.title}}</a><span ng-if="!monitor.title">{{monitor.url}}</span></td>
                         <td ng-hide="labelHideList.referrer" class="tCenter omit"><span>{{monitor.referrer}}</span></td>
                         <td class="w10 tCenter" id="chatTypeBtn">
-                            <span ng-show="monitor.widget">
-                              <a ng-click="ngChatApi.connect(monitor)" class="btn-shadow blueBtn " ng-if="monitor.chat === null" href="javascript:void(0)">対応する</a>
-                              <a ng-click="ngChatApi.disConnect(monitor)" class="btn-shadow redBtn " ng-if="monitor.chat === <?= h($muserId)?>" href="javascript:void(0)">対応を終わる</a>
-                              <span ng-if="monitor.chat !== null && monitor.chat !== <?= h($muserId)?>" href="javascript:void(0)">{{userList[monitor.chat]}}さん対応中</span>
-                            </span>
+                            <ng-show="monitor.widget">
+                              <span ng-click="ngChatApi.connect(monitor)" class="btn-shadow blueBtn " ng-if="monitor.chat === null">対応する
+                                <div class="unread" ng-if="monitor.chatUnread.cnt > 0">{{monitor.chatUnread.cnt}}</div>
+                              </span>
+                              <span ng-click="ngChatApi.disConnect(monitor)" class="btn-shadow redBtn " ng-if="monitor.chat === <?= h($muserId)?>">対応を終わる
+                                <div class="unread" ng-if="monitor.chatUnread.cnt > 0">{{monitor.chatUnread.cnt}}</div>
+                              </span>
+                              <span ng-if="monitor.chat !== null && monitor.chat !== <?= h($muserId)?>">{{userList[monitor.chat]}}さん対応中</span>
+                            </ng-show>
                         </td>
                         <td class='w10 tCenter'>
                             <span ng-show="monitor.widget">
