@@ -95,12 +95,17 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           });
         }
       },
-      init: function(){
-
+      isReadMessage: function(monitor){
+        // メッセージを既読にする
+        if ( isset(monitor.chatUnread) && isset(monitor.chatUnread['cnt']) && monitor.chatUnread.cnt > 0 ) {
+          emit('isReadChatMessage', {
+            tabId: this.tabId,
+            historyId: this.historyId,
+            chatId: monitor.chatUnread.id
+          });
+        }
       }
   };
-
-  // chatApi.init();
 
   function makeDateTime(dParse){
     var d = new Date(Number(dParse)),
@@ -280,8 +285,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       else {
         $scope.customerMainClass = "showDetail";
         chatApi.token = makeToken();
-        chatApi.getMessage($scope.monitorList[tabId]);
         $scope.detailData = $scope.monitorList[tabId];
+        chatApi.getMessage($scope.detailData);
         chatApi.userId = $scope.detailData.userId;
         chatApi.tabId = tabId;
         $("#monitor_" + tabId).addClass('on');
@@ -404,6 +409,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           delete $scope.monitorList[obj.tabId];
           if ( obj.tabId === chatApi.tabId ){
             $scope.showDetail(obj.tabId);
+            chatApi.tabId = null;
           }
         }
         else {
@@ -412,20 +418,27 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       }
     });
 
+    // =======================================
+    //   チャット関連受信ここから
+    // =======================================
+
     // チャット接続結果
     socket.on("chatStartResult", function(d){
       var obj = JSON.parse(d);
       if ( obj.userId === myUserId && obj.ret ) {
         chatApi.connect = true;
+        // 詳細表示
         if ( obj.tabId !== chatApi.tabId ) {
           $scope.showDetail(obj.tabId);
         }
+        else {
+          $scope.monitorList[obj.tabId].chat = myUserId;
+        }
+        // 既読にする
+        chatApi.isReadMessage($scope.monitorList[obj.tabId]);
       }
     });
 
-    function readMessage(id){
-      console.log('readMessage', id);
-    }
     // チャットメッセージ群の受信
     socket.on("chatMessageData", function(d){
       var obj = JSON.parse(d);
@@ -433,28 +446,34 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       if ( isset(obj.chat.historyId) ) {
         chatApi.historyId = obj.chat.historyId;
       }
-      if ( !isset(obj.chat.mUserId) || ( isset(obj.chat.mUserId) && obj.chat.mUserId === myUserId ) ) {
-        $("#sendMessage").attr('disabled', false);
-      }
       for (var i = 0; i < obj.chat.messages.length; i++) {
         var chat = obj.chat.messages[i],
             cn = (chat.messageType === chatApi.messageType.customer) ? "sinclo_re" : "sinclo_se";
         chatApi.createMessage(cn, chat.message);
       }
-      if ( obj.chat.messages.length > 0 && isset(obj.chat.messages[obj.chat.messages.length -1 ].id)) {
-        readMessage(obj.chat.messages[obj.chat.messages.length -1 ].id);
+      if ( $scope.monitorList[obj.tabId].chat === myUserId  ) {
+        // 既読にする(ok)
+        chatApi.isReadMessage($scope.monitorList[obj.tabId]);
       }
     });
     // チャットメッセージ送信結果
     socket.on("sendChatResult", function(d){
       var obj = JSON.parse(d);
-      if ( obj.tabId !== chatApi.tabId ) {
-        if ( isset($scope.monitorList[obj.tabId]) && ($scope.monitorList[obj.tabId].chat === null || $scope.monitorList[obj.tabId].chat === myUserId)) {
-console.log($scope.monitorList);
+      // 未読数加算（自分以外の誰も対応していないとき）
+      if ( isset($scope.monitorList[obj.tabId]) && ($scope.monitorList[obj.tabId].chat === null || $scope.monitorList[obj.tabId].chat === myUserId) ) {
           $scope.monitorList[obj.tabId].chatUnread.cnt++;
-        }
-        return false;
-      };
+          $scope.monitorList[obj.tabId].chatUnread.id = obj.chatId;
+          var n = new Notification(obj.chatMessage);
+      }
+      // 既読にする（自分が対応しているとき）
+      if ( isset($scope.monitorList[obj.tabId]) && $scope.monitorList[obj.tabId].chat === myUserId ) {
+          // 既読にする
+          chatApi.isReadMessage($scope.monitorList[obj.tabId]);
+      }
+
+      // 対象のタブを開いていない場合
+      if ( obj.tabId !== chatApi.tabId ) return false;
+
       var elm = document.getElementById('sendMessage'), cn;
       if ( obj.ret ) {
         if (obj.messageType === chatApi.messageType.customer) {
@@ -465,12 +484,22 @@ console.log($scope.monitorList);
           elm.value = "";
         }
         chatApi.createMessage(cn, obj.chatMessage);
-        // readMessage(obj.chatId);
       }
       else {
         alert('メッセージの送信に失敗しました。');
       }
     });
+
+    // チャットメッセージ既読処理結果関数
+    socket.on('retReadChatMessage', function(d){
+      var obj = JSON.parse(d);
+      console.log('retReadChatMessage', obj);
+      $scope.monitorList[obj.tabId].chatUnread = {id: null, cnt: 0};
+    });
+
+    // =======================================
+    //   チャット関連受信ここまで
+    // =======================================
 
   }]);
 

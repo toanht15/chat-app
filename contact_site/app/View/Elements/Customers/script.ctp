@@ -3,7 +3,7 @@
 // -----------------------------------------------------------------------------
 //  定数
 // -----------------------------------------------------------------------------
-var _access_type_guest = 1, _access_type_host = 2, userAgentChk,
+var _access_type_guest = 1, _access_type_host = 2, userAgentChk, notificationStatus = false,
     socket = io.connect("<?=C_NODE_SERVER_ADDR.C_NODE_SERVER_WS_PORT?>"),
     connectToken = null, receiveAccessInfoToken = null, isset, myUserId = <?= h($muserId)?>;
 
@@ -71,6 +71,30 @@ var _access_type_guest = 1, _access_type_host = 2, userAgentChk,
       emit('sendOperatorStatus', {userId: myUserId, active: false});
     }
   };
+
+  // http://qiita.com/kidatti/items/10a6a033ed0b84619d81
+  // デスクトップ通知が利用できる場合
+  if (window.Notification) {
+
+    // Permissionの確認
+    if (Notification.permission === 'granted') {
+      // 許可されている場合はNotificationで通知
+      notificationStatus = true;
+
+    }
+    else if (Notification.permission === 'denied') {
+      notificationStatus = false;
+    }
+    else if (Notification.permission === 'default') {
+
+      // 許可が取れていない場合はNotificationの許可を取る
+      Notification.requestPermission(function(result) {
+        if (result === 'granted') {
+          notificationStatus = true;
+        }
+      });
+    }
+  }
 
   $(window).bind('beforeunload', function(){
     sendRegularlyRequest.end();

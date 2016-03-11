@@ -22,9 +22,8 @@
     connect: function(){
       var firstConnection = false;
       // 新規アクセスの場合
-      if ( !check.isset(userInfo.getTabId()) ) {
+      if ( !check.isset(userInfo.getTabId()) || check.isset(window.opener) ) {
         firstConnection = true;
-        window.opener = null;
         userInfo.strageReset();
         userInfo.setReferrer();
       }
@@ -93,10 +92,12 @@
     },
     accessInfo: function(d){
       var obj = common.jParse(d);
+
       if ( obj.token !== common.token ) return false;
 
       if ( check.isset(obj.accessId) && !check.isset(obj.connectToken)) {
         userInfo.set(cnst.info_type.access, obj.accessId, true);
+console.log("obj",obj.token),console.log("common",common.token);
         common.makeAccessIdTag(userInfo.accessId);
       }
 
@@ -353,6 +354,9 @@
     },
     setWidgetInfo: function(d){
       var obj = JSON.parse(d);
+console.log('obj', obj.token);
+console.log('common', common.token);
+      if ( obj.token !== common.token ) return false;
       if ( check.isset(obj.widget) && obj.widget.display_type === 1 ) {
         window.info.widgetDisplay = true;
         window.info.widget = obj.widget;

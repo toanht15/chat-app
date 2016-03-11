@@ -22,9 +22,7 @@ var http = require('http'),
 var activeOperator = {};
 
 // 機能仕様状況
-var sincloCore = {
-  chat: {}
-};
+var sincloCore = {};
 
 
 // 暗号化ロジック
@@ -104,6 +102,9 @@ function timeUpdate(history, obj, time){
           function (error,results,fields){
           }
         );
+      }
+      else {
+        rows[0] = { url: null };
       }
       pool.query("UPDATE t_histories SET out_date = ?, modified = ? WHERE id = ?",
         [time, time, historyId],
@@ -218,9 +219,9 @@ access = {
 var chatApi = {
   set: function(d){ // メッセージが渡されてきたとき
     // // 履歴idかメッセージがない
-    if ( !isset(d.historyId) || !isset(d.chatMessage) ) {
+    if ( !isset(sincloCore[d.siteKey][d.tabId].historyId) || !isset(d.chatMessage) ) {
       // エラーを渡す
-console.log('ChatCommit:Error-1');
+console.log('ChatCommit:Error-1 [' + JSON.stringify(sincloCore[d.siteKey][d.tabId]) + ']');
       return emit('sendChatResult', {ret: false, messageType: d.messageType, tabId: d.tabId, siteKey: d.siteKey});
     }
     // チャットidがある
@@ -251,7 +252,7 @@ console.log('ChatCommit:Error-1');
   commit: function(d){ // DBに書き込むとき
 
     var insertData = {
-      t_histories_id: d.historyId,
+      t_histories_id: sincloCore[d.siteKey][d.tabId].historyId,
       visitors_id: d.userId,
       m_users_id: d.mUserId,
       message: d.chatMessage,
@@ -278,7 +279,7 @@ console.log('ChatCommit:Error-2');
     sql  = " SELECT chat.id AS chatId, his.visitors_id, his.tab_id, chat.message FROM t_histories AS his";
     sql += " INNER JOIN t_history_chat_logs AS chat ON ( his.id = chat.t_histories_id )";
     sql += " WHERE his.tab_id = ? AND his.m_companies_id = ? AND chat.message_type = 1";
-    sql += "   AND chat.m_users_id IS NULL AND chat.message_read_flg != 1 ORDER BY chat.id asc";
+    sql += "   AND chat.m_users_id IS NULL AND chat.message_read_flg != 1 ORDER BY chat.id desc";
 
     pool.query(sql, [tabId, siteId], function(err, rows){
       if ( !isset(err) && (rows.length > 0 && isset(rows[0].chatId))) {
@@ -286,7 +287,9 @@ console.log('ChatCommit:Error-2');
         emit(evName, obj);
       }
       else {
-        console.log("It broke:" + err);
+        if ( isset(err) ) {
+          console.log("It broke:" + err);
+        }
         obj.chatUnread = {id: null, cnt: 0};
         emit(evName, obj);
       }
@@ -359,6 +362,7 @@ var db = {
             function (error,results,fields){
               if ( isset(error) ) return false;
               insertStayData['t_histories_id'] = results.insertId;
+              sincloCore[obj.siteKey][obj.tabId].historyId = results.insertId;
               pool.query("INSERT INTO t_history_stay_logs SET ?", insertStayData,
                 function (error,results,fields){
                 }
@@ -455,14 +459,18 @@ connect = io.sockets.on('connection', function (socket) {
 
     // 初回
     if ( !obj.confirm ) {
+      if ( !isset(sincloCore[obj.siteKey]) ) {
+        sincloCore[obj.siteKey] = {};
+      }
+      if ( !isset(sincloCore[obj.siteKey][obj.tabId]) ) {
+        sincloCore[obj.siteKey][obj.tabId] = { chat: null };
+      }
       access.start(obj);
     }
     // 継続
     else {
-      // チャット情報
-      if ( isset(sincloCore.chat[obj.siteKey]) && isset(sincloCore.chat[obj.siteKey][obj.tabId]) ) {
-        obj.chat = sincloCore.chat[obj.siteKey][obj.tabId];
-      }
+      obj.chat = sincloCore[obj.siteKey][obj.tabId].chat;
+
       access.update(obj);
       emit('connectInfo', obj);
     }
@@ -627,23 +635,21 @@ connect = io.sockets.on('connection', function (socket) {
   // チャット開始
   socket.on("chatStart", function(d){
     var obj = JSON.parse(d);
-    if ( !isset(sincloCore.chat[obj.siteKey]) ) {
-      sincloCore.chat[obj.siteKey] = {};
-    }
-    if ( isset(sincloCore.chat[obj.siteKey][obj.tabId]) && sincloCore.chat[obj.siteKey][obj.tabId] !== obj.userId ) {
-      emit("chatStartResult", {ret: false, siteKey: obj.siteKey, userId: sincloCore.chat[obj.siteKey][obj.tabId]});
+    if ( sincloCore[obj.siteKey][obj.tabId] === null ) {
+      emit("chatStartResult", {ret: false, siteKey: obj.siteKey, userId: sincloCore[obj.siteKey][obj.tabId].chat});
     }
     else {
       emit("chatStartResult", {ret: true, tabId: obj.tabId, siteKey: obj.siteKey, userId: obj.userId});
-      sincloCore.chat[obj.siteKey][obj.tabId] = obj.userId;
+      sincloCore[obj.siteKey][obj.tabId].chat = obj.userId;
     }
+console.log('sincloCore', sincloCore);
   });
 
   // チャット開始
   socket.on("chatEnd", function(d){
     var obj = JSON.parse(d);
-    if ( isset(sincloCore.chat[obj.siteKey]) && isset(sincloCore.chat[obj.siteKey][obj.tabId]) ) {
-      delete sincloCore.chat[obj.siteKey][obj.tabId];
+    if ( isset(sincloCore[obj.siteKey]) && isset(sincloCore[obj.siteKey][obj.tabId].chat) ) {
+      sincloCore[obj.siteKey][obj.tabId].chat = null;
     }
   });
 
@@ -657,6 +663,21 @@ connect = io.sockets.on('connection', function (socket) {
   socket.on("clientSendChat", function(d){
     var obj = JSON.parse(d);
     chatApi.set(obj);
+  });
+
+  // 既読操作
+  socket.on("isReadChatMessage", function(d){
+    var obj = JSON.parse(d);
+console.log("isReadChatMessage", obj);
+    if ( isset(sincloCore[obj.siteKey][obj.tabId].historyId) ) {
+      obj.historyId = sincloCore[obj.siteKey][obj.tabId].historyId;
+      pool.query("UPDATE t_history_chat_logs SET message_read_flg = 1 WHERE t_histories_id = ? AND id <= ?;",
+        [obj.historyId, obj.chatId], function(err, ret, fields){
+console.log("isReadChatMessage:err", err);
+          chatApi.sendUnreadCnt('retReadChatMessage', obj);
+        }
+      );
+    }
   });
 
   socket.on('userOut', function (data) {

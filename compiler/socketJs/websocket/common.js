@@ -139,7 +139,7 @@ var socket, // socket.io
       };
 
       chat.css  += '#sincloChatBox {';
-      chat.css  += '  box-sizing: border-box; position: fixed; height: 45px;  bottom: -11px; right: 270px; border: 1.5px solid rgb(232, 231, 224); border-radius: 10px; z-index: 999998; width: 250px; overflow: hidden; background-color: rgb(255, 255, 255);';
+      chat.css  += '  box-sizing: border-box; position: fixed; height: 340px; /* height: 45px; */ bottom: -11px; right: 270px; border: 1.5px solid rgb(232, 231, 224); border-radius: 10px; z-index: 999998; width: 250px; overflow: hidden; background-color: rgb(255, 255, 255);';
       chat.css  += '}';
       chat.css  += '#sincloChatBox ul { width: 100%; height: 200px; padding: 5px;background-color: #FDFDFD; list-style-type: none; overflow-y: scroll; overflow-x: hidden;}';
       chat.css  += '#sincloChatBox li { margin: 5px 0;padding: 5px; font-size: 12px; box-shadow: 0 0 1px rgba(0,0,0,0.5); color: #8A8A8A; white-space: pre; }';
@@ -260,6 +260,8 @@ var socket, // socket.io
     ipAddress: null,
     userAgent: window.navigator.userAgent,
     init: function(){
+      // トークン初期化
+      common.token_add();
       // ストレージの内容をオブジェクトに格納
       this.globalSet();
       // ストレージにリファラーのセット
@@ -900,7 +902,7 @@ var socket, // socket.io
 function emit(evName, data){
   data.userId = userInfo.userId;
   data.accessId = userInfo.accessId;
-  data.token = common.token_add();
+  data.token = common.token;
   data.title = common.title();
   data.siteKey = info.site.key;
   data.url= browserInfo.href;
