@@ -46,7 +46,7 @@ else {
 <!-- /* 上部カラーバー(ここまで) */ -->
 
 <!-- /* システムアイコン（ここから） */ -->
-<div id="sys-icon" class="card-shadow"><?= $this->Html->image('icon.png', array('alt' => 'アイコン', 'width' => 60, 'height' => 60, 'style'=>'margin: 0 auto; display: block'))?></div>
+<div id="sys-icon" class="card-shadow"><?= $this->Html->image('logo.png', array('alt' => 'アイコン', 'width' => 60, 'height' => 60, 'style'=>'margin: 0 auto; display: block'))?></div>
 <!-- /* システムアイコン（ここまで） */ -->
 
 <!-- /* サイドバー１（ここから） */ -->

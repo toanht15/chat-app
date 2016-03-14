@@ -472,6 +472,7 @@ var socket, // socket.io
         referrer: this.referrer,
         userAgent: window.navigator.userAgent,
         chatCnt: document.getElementsByClassName('sinclo_se').length,
+        chatUnread: {id: null, cnt: 0},
         service: check.browser()
       };
     }

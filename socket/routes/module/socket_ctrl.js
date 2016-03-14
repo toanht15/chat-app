@@ -342,6 +342,7 @@ var db = {
           modified: now
         };
         if ( isset(rows) && isset(rows[0]) ) {
+          sincloCore[obj.siteKey][obj.tabId].historyId = rows[0].id;
           timeUpdate(rows[0], obj, now);
         }
         else {
@@ -642,7 +643,6 @@ connect = io.sockets.on('connection', function (socket) {
       emit("chatStartResult", {ret: true, tabId: obj.tabId, siteKey: obj.siteKey, userId: obj.userId});
       sincloCore[obj.siteKey][obj.tabId].chat = obj.userId;
     }
-console.log('sincloCore', sincloCore);
   });
 
   // チャット開始
@@ -668,12 +668,10 @@ console.log('sincloCore', sincloCore);
   // 既読操作
   socket.on("isReadChatMessage", function(d){
     var obj = JSON.parse(d);
-console.log("isReadChatMessage", obj);
     if ( isset(sincloCore[obj.siteKey][obj.tabId].historyId) ) {
       obj.historyId = sincloCore[obj.siteKey][obj.tabId].historyId;
       pool.query("UPDATE t_history_chat_logs SET message_read_flg = 1 WHERE t_histories_id = ? AND id <= ?;",
         [obj.historyId, obj.chatId], function(err, ret, fields){
-console.log("isReadChatMessage:err", err);
           chatApi.sendUnreadCnt('retReadChatMessage', obj);
         }
       );
