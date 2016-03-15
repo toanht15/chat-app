@@ -95,7 +95,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           '【' + accessId + '】新着チャットが届きました',
           {
             body: chatMessage,
-            icon: "/img/icon.png"
+            icon: "/img/sinclo_square_logo.png"
         });
         setTimeout(nInstance.close.bind(nInstance), 3000);
       },

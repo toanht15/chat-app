@@ -46,7 +46,7 @@ else {
 <!-- /* 上部カラーバー(ここまで) */ -->
 
 <!-- /* システムアイコン（ここから） */ -->
-<div id="sys-icon" class="card-shadow"><?= $this->Html->image('logo.png', array('alt' => 'アイコン', 'width' => 60, 'height' => 60, 'style'=>'margin: 0 auto; display: block'))?></div>
+<div id="sys-icon" class="card-shadow"><?= $this->Html->image('sinclo_square_logo.png', array('alt' => 'アイコン', 'width' => 54, 'height' => 48, 'style'=>'margin: 6px 3px; display: block'))?></div>
 <!-- /* システムアイコン（ここまで） */ -->
 
 <!-- /* サイドバー１（ここから） */ -->
