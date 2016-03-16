@@ -302,6 +302,20 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       }
     };
 
+    $scope.isset = function(value){
+      var result;
+      if ( angular.isUndefined(value) ) {
+        result = false;
+      }
+      if ( angular.isNumber(value) && value > 0 ) {
+        result = true;
+      }
+      else {
+        result = false;
+      }
+      return result;
+    };
+
     $scope.ngChatApi = {
       connect: function(obj){
         chatApi.connection(obj);
@@ -481,7 +495,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         if (obj.messageType === chatApi.messageType.company) return false;
 
         // 未読数加算（自分以外の誰も対応していないとき）
-        if ( isset($scope.monitorList[obj.tabId]) && ($scope.monitorList[obj.tabId].chat === null || $scope.monitorList[obj.tabId].chat === myUserId) ) {
+        if ( isset($scope.monitorList[obj.tabId]) && (!$scope.isset($scope.monitorList[obj.tabId].chat) || $scope.monitorList[obj.tabId].chat === myUserId) ) {
             $scope.monitorList[obj.tabId].chatUnread.cnt++;
             $scope.monitorList[obj.tabId].chatUnread.id = obj.chatId;
             chatApi.notification($scope.monitorList[obj.tabId].accessId, obj.chatMessage);

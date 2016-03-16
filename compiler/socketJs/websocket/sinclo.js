@@ -58,13 +58,15 @@
             referrer: userInfo.referrer
           });
         }
-        emit('reqUrlChecker', {});
 
         if ( check.isset(common.tmpParams) ) {
           browserInfo.resetPrevList();
           emit('requestSyncStart', {
             accessType: common.params.type
           });
+        }
+        else {
+          emit('reqUrlChecker', {});
         }
 
         browserInfo.setPrevList();
@@ -94,10 +96,8 @@
       var obj = common.jParse(d);
 
       if ( obj.token !== common.token ) return false;
-
       if ( check.isset(obj.accessId) && !check.isset(obj.connectToken)) {
         userInfo.set(cnst.info_type.access, obj.accessId, true);
-console.log("obj",obj.token),console.log("common",common.token);
         common.makeAccessIdTag(userInfo.accessId);
       }
 
@@ -197,16 +197,19 @@ console.log("obj",obj.token),console.log("common",common.token);
     },
     syncStart: function(d) {
       var obj = common.jParse(d);
-      if ( obj.to !== userInfo.tabId && obj.from !== userInfo.tabId ) return false;
-      if ( obj.to === userInfo.tabId ) {
+      if ( Number(userInfo.accessType) === Number(cnst.access_type.host) ) {
         window.clearTimeout(this.syncTimeout);
+        return false;
       }
-      if ( obj.to !== userInfo.tabId ) return false;
-      // userInfo.getConnect()
       common.load.start();
       userInfo.setConnect(obj.connectToken);
-      userInfo.sendTabId = obj.from;
-      userInfo.syncInfo.set();
+      if ( !check.isset(userInfo.sendTabId) ) {
+        userInfo.sendTabId = obj.from;
+        userInfo.syncInfo.set();
+      }
+      else {
+       userInfo.syncInfo.get();
+      }
       // フォーム情報収集
       var inputInfo = [];
       $('input').each(function(){
@@ -237,12 +240,7 @@ console.log("obj",obj.token),console.log("common",common.token);
     },
     syncElement: function(d){
       var obj = common.jParse(d);
-      if ( obj.to === userInfo.tabId ) {
-        window.clearTimeout(this.syncTimeout);
-      }
-
-      if ( obj.to !== userInfo.tabId ) return false;
-      if ( Number(userInfo.accessType) ==! Number(cnst.access_type.host) ) return false;
+      window.clearTimeout(this.syncTimeout);
 
       $("body").animate(
         {
@@ -277,6 +275,7 @@ console.log("obj",obj.token),console.log("common",common.token);
       var obj = common.jParse(d);
       if ( obj.to !== userInfo.tabId && obj.from !== userInfo.tabId ) return false;
       syncEvent.start(true);
+      window.clearTimeout(sinclo.syncTimeout);
       common.load.finish();
     },
     syncResponce: function(d){
@@ -354,8 +353,6 @@ console.log("obj",obj.token),console.log("common",common.token);
     },
     setWidgetInfo: function(d){
       var obj = JSON.parse(d);
-console.log('obj', obj.token);
-console.log('common', common.token);
       if ( obj.token !== common.token ) return false;
       if ( check.isset(obj.widget) && obj.widget.display_type === 1 ) {
         window.info.widgetDisplay = true;
