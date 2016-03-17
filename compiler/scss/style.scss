@@ -162,7 +162,7 @@ div[id$='_list'] {
     &.omit {
       width: 20em;
 
-      span {
+      span, a {
             width: 20em;
             text-overflow: ellipsis;
             overflow: hidden;
