@@ -609,8 +609,7 @@ ul#color-bar-right {
   height: 320px;
   border: none;
   border-radius: 5px;
-  background: -moz-linear-gradient(top, #F8FCFD, #EEF2F3);
-  background: -webkit-gradient(linear, left top, left bottom, from(#F8FCFD), to(#EEF2F3));
+  background: linear-gradient(to top, #F8FCFD, #EEF2F3);
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#F8FCFD', endColorstr='#EEF2F3', GradientType=0)";
   box-shadow: 0 0 5px $shadow-color;
   padding: 15px;
