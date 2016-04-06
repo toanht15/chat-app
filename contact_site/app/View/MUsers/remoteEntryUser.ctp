@@ -55,6 +55,7 @@
 <?= $this->Form->create('MUser', array('action' => 'add')); ?>
     <div class="form01">
         <?= $this->Form->input('id', array('type' => 'hidden')); ?>
+        <?= $this->Form->input('other', array('type' => 'hidden')); ?>
         <div>
             <span class="require"><?= $this->Html->image('monitor_g.png', array('alt' => '氏名', 'width' => 30, 'height' => 30)) ?></span>
             <?= $this->Form->input('user_name', array('placeholder' => '氏名', 'div' => false, 'label' => false, 'maxlength' => 50)) ?>

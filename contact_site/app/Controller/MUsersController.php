@@ -4,7 +4,7 @@
  * ユーザーマスタ
  */
 class MUsersController extends AppController {
-    public $uses = array('MUser');
+    public $uses = array('MUser', 'MCompany');
     public $paginate = array(
         'MUser' => array(
             'limit' => 10,
@@ -25,6 +25,7 @@ class MUsersController extends AppController {
         parent::beforeFilter();
         $this->set('title_for_layout', 'ユーザー管理');
         $this->set('siteKey', $this->userInfo['MCompany']['company_key']);
+        $this->set('limitUserNum', $this->userInfo['MCompany']['limit_users']);
     }
 
     /* *
@@ -93,8 +94,15 @@ class MUsersController extends AppController {
         $this->MUser->set($tmpData);
 
         $this->MUser->begin();
+
+        $errorMessage = null;
+        // アカウント数チェック
+        if (!$this->_checkAcoundNum()) {
+            $errorMessage = ['other' => ["契約しているアカウント数をオーバーしています"]];
+        }
+
         // バリデーションチェックでエラーが出た場合
-        if ( $this->MUser->validates() ) {
+        if ( empty($errorMessage) && $this->MUser->validates() ) {
             $saveData = $tmpData;
             $saveData['MUser']['m_companies_id'] = $this->userInfo['MCompany']['id'];
             if ( $this->MUser->save($saveData, false) ) {
@@ -105,8 +113,10 @@ class MUsersController extends AppController {
                 $this->MUser->rollback();
             }
         }
-        $json = $this->MUser->validationErrors;
-        return new CakeResponse(array('body' => json_encode($json)));
+        if ( empty($errorMessage) ) {
+            $errorMessage = $this->MUser->validationErrors;
+        }
+        return new CakeResponse(array('body' => json_encode($errorMessage)));
     }
 
 
@@ -129,6 +139,31 @@ class MUsersController extends AppController {
 
     private function _viewElement(){
         $this->set('authorityList', Configure::read("Authority"));
+    }
+
+    /**
+     * アカウント数のチェック
+     * @return bool
+     **/
+    private function _checkAcoundNum(){
+        $mCompany = $this->MCompany->read(null, $this->userInfo['MCompany']['id']);
+        if ( isset($mCompany['MCompany']) ) {
+            $this->userInfo['MCompany'] = $mCompany['MCompany'];
+        }
+
+        $params = [
+          'fields' => 'MUser.id',
+          'conditions' => [
+              'MUser.del_flg !=' => 1,
+              'MUser.m_companies_id' => $this->userInfo['MCompany']['id']
+          ],
+          'recursive' => -1
+        ];
+        $mUserCnt = $this->MUser->find('count', $params);
+        if ( $this->userInfo['MCompany']['limit_users'] <= $mUserCnt ) {
+          return false;
+        }
+        return true;
     }
 
 }

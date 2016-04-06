@@ -4,18 +4,20 @@
 
 <div id='muser_add_title'>
 	<div class="fLeft"><?= $this->Html->image('setting_g.png', array('alt' => 'ユーザー管理', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?></div>
-	<h1>ユーザー管理</h1>
+	<h1>ユーザー管理<span>（未使用アカウント数：<?=$limitUserNum - count($userList)?>）</span></h1>
 </div>
 
+<?php if( $limitUserNum > count($userList) ): ?>
 <div id='muser_menu' class="p20tl">
 <?= $this->Html->image('add.png', array('alt' => '登録', 'class' => 'btn-shadow greenBtn', 'width' => 30, 'height' => 30, 'onclick' => 'openAddDialog()')) ?>
 </div>
+<?php endif;?>
 
 <div id='muser_list' class="p20x">
 	<table>
 		<thead>
 			<tr>
-				<th>ID</th>
+				<th>No</th>
 				<th>氏名</th>
 				<th>表示名</th>
 				<th>権限</th>
@@ -24,9 +26,9 @@
 			</tr>
 		</thead>
 		<tbody>
-		<?php foreach((array)$userList as $val): ?>
+		<?php foreach((array)$userList as $key => $val): ?>
 			<tr>
-				<td class="tCenter"><?=$val['MUser']['id']?></td>
+				<td class="tCenter"><?=($key + 1)?></td>
 				<td class="tCenter"><?=$val['MUser']['user_name']?></td>
 				<td class="tCenter"><?=$val['MUser']['display_name']?></td>
 				<td class="tCenter"><?=$authorityList[$val['MUser']['permission_level']]?></td>
