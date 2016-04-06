@@ -210,6 +210,14 @@
       $('input').each(function(){
         inputInfo.push(this.value);
       });
+      var checkboxInfo = [];
+      $('input[type="checkbox"]').each(function(){
+        checkboxInfo.push(this.checked);
+      });
+      var radioInfo = [];
+      $('input[type="radio"]').each(function(){
+        radioInfo.push(this.checked);
+      });
        var textareaInfo = [];
       $('textarea').each(function(){
         textareaInfo.push(this.value);
@@ -227,6 +235,8 @@
         userId: userInfo.userId,
         connectToken: userInfo.connectToken,
         inputInfo: inputInfo,
+        checkboxInfo: checkboxInfo,
+        radioInfo: radioInfo,
         textareaInfo: textareaInfo,
         selectInfo: selectInfo,
         // スクロール位置の取得
@@ -254,6 +264,14 @@
               for ( var i in obj.inputInfo ) {
                 var n = Number(i);
                 $('input').eq(n).val(obj.inputInfo[n]);
+              }
+              for ( var i in obj.checkboxInfo ) {
+                var n = Number(i);
+                $('input[type="checkbox"]').eq(n).prop("checked", obj.checkboxInfo[n]);
+              }
+              for ( var i in obj.radioInfo ) {
+                var n = Number(i);
+                $('input[type="radio"]').eq(n).prop("checked", obj.radioInfo[n]);
               }
               for ( var i in obj.textareaInfo ) {
                 var n = Number(i);
@@ -318,6 +336,9 @@
       syncEvent.receiveEvInfo.idx = Number(obj.idx);
       switch (obj.type) {
         case "change":
+          if ( String(obj.nodeType) === "radio" || String(obj.nodeType) === "checkbox" ) {
+            elm.prop('checked', obj.checked);
+          }
         case "keyup":
           elm.val(obj.value);
           break;

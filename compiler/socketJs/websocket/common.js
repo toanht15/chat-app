@@ -506,7 +506,6 @@ var socket, // socket.io
           if ( socket === undefined ) return false;
           // 排他処理
           if ( "body" === syncEvent.receiveEvInfo.nodeName && "scroll" === syncEvent.receiveEvInfo.type ) return false;
-console.log('sc', {x: e.clientX, y: e.clientY});
           // スクロール用
           emit('syncBrowserInfo', {
             accessType: userInfo.accessType,
@@ -585,8 +584,12 @@ console.log('sc', {x: e.clientX, y: e.clientY});
     },
     changeCall: function(e){
       var nodeName = e.target.nodeName.toLowerCase(),
+          checked = false,
           index = $(String(nodeName)).index(this);
       if ( nodeName !== "input" && nodeName !== "textarea" && nodeName !== "select" ) return false;
+      if ( e.target.type === "radio" || e.target.type === "checkbox" ) {
+        checked = e.target.checked;
+      }
       // 排他処理
       if ( nodeName === String(syncEvent.receiveEvInfo.nodeName) &&  Number(index) === Number(syncEvent.receiveEvInfo.idx) ) return false;
       emit('syncChangeEv', {
@@ -595,6 +598,8 @@ console.log('sc', {x: e.clientX, y: e.clientY});
         accessType: userInfo.accessType,
         nodeName: nodeName,
         type: e.type,
+        nodeType: e.target.type,
+        checked: checked,
         idx: index,
         value: this.value
       });
@@ -653,6 +658,8 @@ console.log('sc', {x: e.clientX, y: e.clientY});
       // 要素に対してのイベント操作
       var els = document.getElementsByTagName('input');
       this.ctrlElmEventListener(eventFlg, els, "focus", syncEvent.focusCall);
+        // checkbox, radioボタンのイベント操作
+        this.ctrlElmEventListener(eventFlg, els, "change", syncEvent.changeCall);
       var els = document.getElementsByTagName('textarea');
       this.ctrlElmEventListener(eventFlg, els, "focus", syncEvent.focusCall);
 
