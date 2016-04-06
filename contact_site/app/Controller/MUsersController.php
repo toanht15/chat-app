@@ -66,6 +66,7 @@ class MUsersController extends AppController {
         $tmpData = [];
         $saveData = [];
         $insertFlg = true;
+        $errorMessage = null;
 
         if ( !$this->request->is('ajax') ) return false;
 
@@ -76,6 +77,11 @@ class MUsersController extends AppController {
         }
         else {
             $this->MUser->create();
+
+            // アカウント数チェック
+            if (!$this->_checkAcoundNum()) {
+                $errorMessage = ['other' => ["契約しているアカウント数をオーバーしています"]];
+            }
         }
 
         $tmpData['MUser']['user_name'] = $this->request->data['userName'];
@@ -94,12 +100,6 @@ class MUsersController extends AppController {
         $this->MUser->set($tmpData);
 
         $this->MUser->begin();
-
-        $errorMessage = null;
-        // アカウント数チェック
-        if (!$this->_checkAcoundNum()) {
-            $errorMessage = ['other' => ["契約しているアカウント数をオーバーしています"]];
-        }
 
         // バリデーションチェックでエラーが出た場合
         if ( empty($errorMessage) && $this->MUser->validates() ) {

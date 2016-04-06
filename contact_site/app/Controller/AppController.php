@@ -94,6 +94,16 @@ class AppController extends Controller {
             $this->Session->delete('global.message');
         }
 
+        /* 権限 */
+        switch($this->name){
+          // 管理者権限のみのページ
+          case "MUsers":
+          case "MWidgetSettings":
+            // 一先ずトップ画面へ
+            $this->redirect("/");
+          default:
+            break;
+        }
     }
 
     /**

@@ -25,10 +25,15 @@ define('C_MESSAGE_TYPE_SUCCESS', 1); // 処理成功
 define('C_MESSAGE_TYPE_ERROR', 2); // 処理失敗
 // define('C_MESSAGE_TYPE_NOTICE', 3); // 通知（未実装）
 
-/* ユーザー権限 */
+// ユーザー権限（リストあり：$config['Authority']）
+define('C_AUTHORITY_ADMIN', 1); // 管理者
+define('C_AUTHORITY_NORMAL', 2); // 一般
+
+
+/* ユーザー権限（単体あり：C_AUTHORITY_%） */
 $config['Authority'] = [
-    1 => "管理者",
-    2 => "一般"
+    C_AUTHORITY_ADMIN => "管理者",
+    C_AUTHORITY_NORMAL => "一般"
 ];
 
 /* ウィジェット設定 － 表示設定種別 */
