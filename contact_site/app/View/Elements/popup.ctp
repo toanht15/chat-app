@@ -160,6 +160,10 @@ var popupEvent = {
                 case 2: // failure
                     className = "failure";
                     break;
+                case 3: // alert
+                    alert(message);
+                    return false;
+                    break;
             }
             $("#shortMessage").text(message).attr('style', '').addClass(className);
             $("#shortMessage").removeClass('popup-off');
@@ -197,8 +201,8 @@ var popupEvent = {
 
     $(document).ready(function(){
 <?php
-if ( isset($successMessage) && !empty($successMessage) ) {
-      echo "showMessage(". $successMessage['type'] .", '" . $successMessage['text'] . "');";
+if ( isset($alertMessage) && !empty($alertMessage) ) {
+      echo "showMessage(". $alertMessage['type'] .", '" . $alertMessage['text'] . "');";
 }
 ?>
 

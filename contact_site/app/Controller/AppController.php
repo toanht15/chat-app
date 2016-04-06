@@ -49,19 +49,32 @@ class AppController extends Controller {
     );
 
     // public $helpers = array('htmlEx');
-    public $uses = array('MWidgetSetting');
+    public $uses = array('MUser', 'MWidgetSetting');
 
     public $userInfo;
 
     public function beforeFilter(){
         // プロトコルチェック(本番のみ)
-        // $this->checkPort();
+        if ( APP_MODE_DEV === false ) {
+            $this->checkPort();
+        }
 
         // ログイン情報をオブジェクトに格納
         if ( $this->Session->check('global.userInfo') ) {
             $this->userInfo = $this->Session->read('global.userInfo');
             $this->set('userInfo', $this->userInfo);
         }
+        // 多重ログインチェック
+        if ( isset($this->userInfo['id']) && isset($this->userInfo['session_rand_str']) ) {
+            $newInfo = $this->MUser->read(null, $this->userInfo['id']);
+            if ( strcmp($this->userInfo['session_rand_str'], $newInfo['MUser']['session_rand_str']) !== 0 ) {
+                $this->userInfo = [];
+                $this->Session->destroy();
+                $this->renderMessage(C_MESSAGE_TYPE_ALERT, Configure::read('message.const.doubleLoginFailed'));
+                return $this->redirect(['controller'=>'Login', 'action' => 'index']);
+            }
+        }
+
         // コンフィグにユーザーIDを設定
         Configure::write('logged_user_id', $this->Auth->user('id'));
         // コンフィグに企業IDを設定
@@ -90,7 +103,7 @@ class AppController extends Controller {
 
         // 通知メッセージをセット
         if ($this->Session->check('global.message')) {
-            $this->set('successMessage', $this->Session->read('global.message'));
+            $this->set('alertMessage', $this->Session->read('global.message'));
             $this->Session->delete('global.message');
         }
 
