@@ -352,18 +352,26 @@
     },
     setWidgetInfo: function(d){
       var obj = JSON.parse(d);
+      window.info.widgetDisplay = false; // デフォルト表示しない
+      // ウィジェットを常に表示する
       if ( check.isset(obj.widget) && obj.widget.display_type === 1 ) {
         window.info.widgetDisplay = true;
         window.info.widget = obj.widget;
       }
+      // オペレーターの数に応じて表示する
       else if ( check.isset(obj.widget) && obj.widget.display_type === 2 ) {
         if ( obj.widget.active_operator_cnt > 0 ) {
           window.info.widgetDisplay = true;
           window.info.widget = obj.widget;
         }
       }
-      else {
+      if (!window.info.widgetDisplay) {
+        return false;
+      }
+      // 同期対象とするが、ウィジェットは表示しない
+      if (check.isset(window.info['dataset']) && (check.isset(window.info.dataset['hide']) && window.info.dataset.hide === "1")) {
         window.info.widgetDisplay = false;
+        return false;
       }
       var html = common.widgetTemplate();
       common.load.finish();

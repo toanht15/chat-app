@@ -80,8 +80,7 @@ var socket, // socket.io
     sincloBoxHeight: 270,
     widgetTemplate: function(){
       var widget = window.info.widget;
-//      var maincolor = ( widget.maincolor !== undefined ) ? widget.maincolor : "#ABCD05";
-     var maincolor = ( window.info.site.maincolor !== undefined ) ? window.info.site.maincolor : "#ABCD05";
+      var maincolor = ( window.info.site.maincolor !== undefined ) ? window.info.site.maincolor : "#ABCD05";
       var css   = '#sincloBox * {';
           css  += '  box-sizing: border-box;';
           css  += '  background-color: rgba(0,0,0,0);';
