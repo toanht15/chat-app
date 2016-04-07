@@ -11,10 +11,19 @@ class LoginController extends AppController {
       parent::beforeFilter();
       $this->Auth->allow(['index', 'logout']);
       $this->set('title_for_layout', 'ログイン');
+
+      $notSupportBrowser = false;
+      if ( preg_match("/Trident\/7/i", $_SERVER['HTTP_USER_AGENT']) ) {
+        if ( !preg_match("/rv:[1-9]{1}[0-9]{1}?/", $_SERVER['HTTP_USER_AGENT']) ) {
+          $notSupportBrowser = true;
+        }
+      }
+
+      $this->set('notSupportBrowser', $notSupportBrowser);
     }
 
     /* *
-     * 一覧画面
+     * ログイン画面
      * @return void
      * */
     public function index() {
