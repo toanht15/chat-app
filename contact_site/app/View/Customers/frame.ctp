@@ -80,8 +80,6 @@ window.onload = function(){
 
   socket.on('syncResponce', function(data){
     var obj = JSON.parse(data);
-    if ( obj.from !== tabId ) return false;
-    if ( obj.windowSize === undefined ) return false;
     windowResize(obj.windowSize);
   });
 
