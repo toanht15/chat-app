@@ -69,7 +69,7 @@ window.onload = function(){
 
     var content = document.getElementById('customer_flame');
     var html  = "<iframe src='' style='transform:scale(" + Number(arg.scale) + "); transform-origin: 0 0' ";
-        html += "        width='" + arg.width + "' height='" + arg.height + "' sandbox=\"allow-scripts allow-top-navigation allow-same-origin allow-modals\"></iframe>";
+        html += "        width='" + arg.width + "' height='" + arg.height + "' sandbox=\"allow-scripts allow-top-navigation allow-forms allow-same-origin allow-modals\"></iframe>";
 
     content.innerHTML = html;
     iframe = document.getElementsByTagName('iframe')[0];
@@ -96,6 +96,18 @@ window.onload = function(){
     var obj = JSON.parse(d);
     // 現在のURLを保存しておく
     sessionStorage.setItem('url', obj.url);
+  });
+
+  socket.on('syncStop', function(d){
+    var obj = JSON.parse(d);
+    if (('message' in obj) && window.confirm(obj.message)){
+      window.open('about:blank', '_self').close();
+      window.close();
+    }
+    else {
+      window.open('about:blank', '_self').close();
+      window.close();
+    }
   });
 
   socket.on('unsetUser', function(d){

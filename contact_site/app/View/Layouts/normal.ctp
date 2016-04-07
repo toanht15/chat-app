@@ -30,7 +30,6 @@
 		echo $this->Html->meta(array('http-equiv' => "Cache-Control", 'content' => "no-cache"));
 		echo $this->fetch('meta');
 		echo $this->Html->script("//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js");
-		echo $this->Html->script("http://socket.localhost:9090/socket.io/socket.io.js");
 		echo $this->Html->css("style.css");
 	?>
 	<style type="text/css">
@@ -40,5 +39,6 @@
 </head>
 <body>
   <?php echo $this->fetch('content'); ?>
+</body>
 </html>
 

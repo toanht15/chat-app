@@ -608,6 +608,15 @@ var socket, // socket.io
       this.addEventListener('keyup', syncEvent.changeCall, false);
       this.addEventListener('change', syncEvent.changeCall, false);
     },
+    disabledSubmit: function(e) {
+      if ( !check.isset(sessionStorage.params) && userInfo.accessType !== cnst.access_type.host ) {
+        emit('requestSyncStop', {message: "サブミットの処理が行われました。"});
+      }
+      else {
+        emit('requestSyncStop', {});
+        return false;
+      }
+    },
     elmScrollCallTimers: {},
     elmScrollCall: function(e){
       e.stopPropagation();
@@ -678,7 +687,6 @@ var socket, // socket.io
       var els = document.getElementsByTagName("select");
       this.ctrlElmEventListener(eventFlg, els, "change", syncEvent.changeCall);
 
-
       // 要素スクロール
       var scEls = [];
       var els = document.getElementsByTagName("ul");
@@ -714,6 +722,13 @@ var socket, // socket.io
         }
       }
       this.ctrlElmEventListener(eventFlg, scEls, "scroll", syncEvent.elmScrollCall);
+
+      // フォーム制御
+      if ( document.forms.length > 0 ) {
+        if ( ('form' in info.dataset) && String(info.dataset.form) === "1" ) {
+            this.ctrlElmEventListener(eventFlg, scEls, "submit", syncEvent.disabledSubmit);
+        }
+      }
 
     },
     start: function(e){ syncEvent.change(true); },
