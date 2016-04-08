@@ -8,7 +8,7 @@ if ( APP_MODE_DEV ) {
   define('C_NODE_SERVER_WS_PORT', ":9090"); // Dev
 }
 else {
-  define('C_NODE_SERVER_ADDR', "https://ws1.sinclo.jp"); // 本番(今後動的になる)
+  define('C_NODE_SERVER_ADDR', "//ws1.sinclo.jp"); // 本番(今後動的になる)
   define('C_NODE_SERVER_FILE_PORT', ""); // Dev
   define('C_NODE_SERVER_WS_PORT', ""); // Dev
 }

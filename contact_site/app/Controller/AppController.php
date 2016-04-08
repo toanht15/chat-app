@@ -108,14 +108,16 @@ class AppController extends Controller {
         }
 
         /* 権限 */
-        switch($this->name){
-          // 管理者権限のみのページ
-          case "MUsers":
-          case "MWidgetSettings":
-            // 一先ずトップ画面へ
-            $this->redirect("/");
-          default:
-            break;
+        if (strcmp($this->userInfo['permission_level'], C_AUTHORITY_ADMIN) !== 0) {
+            switch($this->name){
+              // 管理者権限のみのページ
+              case "MUsers":
+              case "MWidgetSettings":
+                // 一先ずトップ画面へ
+                $this->redirect("/");
+              default:
+                break;
+            }
         }
     }
 
