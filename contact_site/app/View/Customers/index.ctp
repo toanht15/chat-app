@@ -33,6 +33,7 @@
 </div>
 
 <div id='customer_list' class="p20x">
+    <p class="tRight">現在 <b>{{objCnt(monitorList)}}</b>名がサイト訪問中</p>
     <table>
         <thead>
             <tr>
@@ -48,7 +49,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="monitor in search(monitorList)">
+            <tr ng-repeat="monitor in search(monitorList) | orderObjectBy: 'monitorSort': true">
                 <td ng-hide="labelHideList.accessId" class="tCenter">{{monitor.accessId}}</td>
                 <td ng-hide="labelHideList.ipAddress" class="tCenter">{{monitor.ipAddress}}</td>
                 <td ng-hide="labelHideList.ua" class="tCenter">{{ua(monitor.userAgent)}}</td>

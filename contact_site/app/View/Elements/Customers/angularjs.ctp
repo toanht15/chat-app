@@ -35,6 +35,15 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     return date + " " + time;
   }
 
+  function updateSort(monitor){
+    var sort = "0";
+    if ( ('connectToken' in monitor) && monitor.connectToken ) {
+      sort = "1";
+    }
+    monitor.monitorSort = String(sort) + String(monitor.time);
+    return monitor;
+  }
+
   // http://weathercook.hatenadiary.jp/entry/2013/12/02/062136
   sincloApp.factory('angularSocket', function ($rootScope) {
     return {
@@ -179,8 +188,14 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         });
     };
 
+    $scope.objCnt = function(list){
+      if ( angular.isUndefined(list) ) return 0;
+      var ret = Object.keys(list);
+      return ret.length;
+    };
+
     function pushToList(obj){
-      $scope.monitorList[obj.tabId] = obj;
+      $scope.monitorList[obj.tabId] = updateSort(obj);
     }
 
     socket.on('receiveAccessInfo', function (data) {
@@ -215,6 +230,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           $scope.monitorList[obj.to].connectToken = obj.connectToken;
         }
       }
+      $scope.monitorList[obj.tabId] = updateSort($scope.monitorList[obj.tabId]);
     });
 
     socket.on('windowSyncInfo', function (data) {
@@ -256,6 +272,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var obj = JSON.parse(data);
       if ( obj.tabId !== undefined && angular.isDefined($scope.monitorList[obj.tabId])) {
         $scope.monitorList[obj.tabId].connectToken = obj.connectToken;
+        $scope.monitorList[obj.tabId] = updateSort($scope.monitorList[obj.tabId]);
       }
     });
 
@@ -263,6 +280,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var obj = JSON.parse(data);
       if ( obj.tabId !== undefined && angular.isDefined($scope.monitorList[obj.tabId])) {
         $scope.monitorList[obj.tabId].connectToken = "";
+        $scope.monitorList[obj.tabId] = updateSort($scope.monitorList[obj.tabId]);
       }
     });
 
@@ -284,6 +302,21 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     });
 
   }]);
+
+  sincloApp.filter('orderObjectBy', function() {
+    return function(items, field, reverse) {
+      var filtered = [];
+      var obj = ( typeof field === "object" );
+      angular.forEach(items, function(item) {
+        filtered.push(item);
+      });
+      filtered.sort(function (a, b) {
+        return (a[field] > b[field] ? 1 : -1);
+      });
+      if(reverse) filtered.reverse();
+      return filtered;
+    };
+  });
 
   sincloApp.filter('customDate', function(){
     return function(input) {
