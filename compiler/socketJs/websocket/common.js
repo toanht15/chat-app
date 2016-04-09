@@ -38,14 +38,11 @@ var socket, // socket.io
     tmpParams : {},
     getParams: function(){
       // パラメータの取得
-      var params = location.href.split('?'), pair, i, kv;
-      if ( params[1] !== undefined ) {
-        pair=params[1].split('&');
-        for(i=0; pair[i]; i++) {
-          kv = pair[i].split('=');
-          if ( kv[0] !== "first" ) {
-            this.tmpParams[kv[0]]=kv[1];
-          }
+      var params = location.href.split('?'), param, i, kv;
+      if ( params[1] !== undefined && params[1].match(/sincloData/)) {
+        param=params[1].split('sincloData=');
+        if ( param[1] ) {
+          this.tmpParams = JSON.parse(decodeURIComponent(param[1]));
         }
       }
     },
@@ -129,14 +126,20 @@ var socket, // socket.io
     load: {
       id: "loadingImg",
       flg: false,
+      timer: null,
       start:  function(){
+        window.clearTimeout(this.timer);
         var div = document.createElement('div');
         div.id = this.id;
         div.style.cssText = "position: fixed; top: 0; left: 0; bottom: 0; right: 0; background-color: rgba(255,255,255); z-index: 99999";
         document.body.appendChild(div);
         this.flg = true; // 一度接続済みというフラグを持たせる
+        this.timer = window.setTimeout(function(){
+          common.load.finish();
+        }, 8000);
       },
       finish: function(){
+        window.clearTimeout(this.timer);
         if ( document.getElementById(this.id) ) {
           var target = document.getElementById(this.id);
           target.parentNode.removeChild(target);
@@ -178,7 +181,7 @@ var socket, // socket.io
       var ret = false;
       // 消費者のみ、ローカルストレージとセッションストレージが使用できる環境のみ
       if (window.localStorage && window.sessionStorage) {
-        if (!check.isset(common.tmpParams) && !check.isset(sessionStorage.params)) {
+        if (!check.isset(common.tmpParams) && !check.isset(storage.s.get('params'))) {
           ret = true;
         }
       }
@@ -198,6 +201,14 @@ var socket, // socket.io
         return ( Object.keys(a).length !== 0 );
       }
       return true;
+    },
+    firstUrl: function(){
+      if ( location.href.match('/sincloData\=/') ) {
+        return true;
+      }
+      else {
+        return false;
+      }
     },
     ref: function(){
       var reg = new RegExp("^http(s)?:\/\/([A-z]+.)?" + location.hostname + "\/"),
@@ -431,7 +442,7 @@ var socket, // socket.io
 
   browserInfo = {
     referrer: "",
-    href: location.href.replace(location.search, ""),
+    href: location.href,
     prevList: [],
     sc: function(){
       return 'BackCompat' === document.compatMode ? document.body : document.documentElement
@@ -444,12 +455,12 @@ var socket, // socket.io
     },
     setPrevList: function(){
       var prevList = [];
-      if ( check.isset(sessionStorage.prevList) ) {
-        prevList = JSON.parse(sessionStorage.prevList);
+      if ( check.isset(storage.s.get('prevList')) ) {
+        prevList = JSON.parse(storage.s.get('prevList'));
       }
       prevList.push(this.href);
       this.prevList = prevList;
-      sessionStorage.prevList = JSON.stringify(this.prevList);
+      storage.s.set('prevList', JSON.stringify(this.prevList));
     },
     windowScroll: function (){
       return {
@@ -512,6 +523,14 @@ var socket, // socket.io
             mousePoint: {x: e.clientX, y: e.clientY},
             scrollPosition: browserInfo.windowScroll()
           });
+        }
+      },
+      {
+        type: "hashchange",
+        ev: function(e){
+          if ( socket === undefined ) return false;
+          browserInfo.href = location.href;
+          emit('reqUrlChecker', {});
         }
       },
       {
@@ -609,7 +628,7 @@ var socket, // socket.io
       this.addEventListener('change', syncEvent.changeCall, false);
     },
     disabledSubmit: function(e) {
-      if ( !check.isset(sessionStorage.params) && userInfo.accessType !== cnst.access_type.host ) {
+      if ( !check.isset(storage.s.get('params')) && userInfo.accessType !== cnst.access_type.host ) {
         emit('requestSyncStop', {message: "サブミットの処理が行われました。"});
       }
       else {
@@ -737,7 +756,7 @@ var socket, // socket.io
 
   var windowBeforeUnload = function(e) {
     var subWindow = true;
-    if ( !check.isset(sessionStorage.params) && userInfo.accessType !== cnst.access_type.host ) {
+    if ( !check.isset(storage.s.get('params')) && userInfo.accessType !== cnst.access_type.host ) {
       subWindow = false;
     }
 

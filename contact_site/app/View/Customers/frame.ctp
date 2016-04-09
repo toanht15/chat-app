@@ -74,7 +74,22 @@ window.onload = function(){
     content.innerHTML = html;
     iframe = document.getElementsByTagName('iframe')[0];
 
-    iframe.src = url + "?type=2&userId=" + userId + "&sendTabId=" + tabId + "&connectToken=" + arg.connectToken + "&first=true";
+    if ( url.match(/\?/) ) {
+      url += "&";
+    }
+    else {
+      url += "?";
+    }
+
+    var data = {
+      type:2,
+      userId: userId,
+      sendTabId: tabId,
+      connectToken: arg.connectToken,
+      first: true
+    };
+
+    iframe.src = url + "sincloData=" + encodeURIComponent(JSON.stringify(data));
     emit('connectFrame', {tabId: tabId});
   });
 
