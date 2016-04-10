@@ -42,9 +42,6 @@ var userAgentChk = (function(){
       else if (ua.match(/Mac|PPC/)) {
         os = "Mac OS"; // Macintosh の処理
       }
-      else if (ua.match(/Linux/)) {
-        os = "Linux"; // Linux の処理
-      }
       else if (ua.match(/^.*\s([A-Za-z]+BSD)/)) {
         os = RegExp.$1; // BSD 系の処理
       }
@@ -60,8 +57,11 @@ var userAgentChk = (function(){
       else if (ua.indexOf(/iPod/) > 0) {
         os = "iPod"; // iPod の処理
       }
-      else if (ua.indexOf(/Android/) > 0) {
+      else if (ua.match(/Android/)) {
         os = "Android"; // Android の処理
+      }
+      else if (ua.match(/Linux/)) {
+        os = "Linux"; // Linux の処理
       }
       else {
         os = "unknown"; // 上記以外 OS の処理
