@@ -77,13 +77,13 @@ class CustomersController extends AppController {
         $this->layout = null;
 
         $ret = array();
-        if ( isset($this->params->query['tmpCustomersId']) && isset($this->params->query['tabId']) ) {
+        if ( isset($this->params->query['visitorsId']) && isset($this->params->query['tabId']) ) {
             $params = array(
                 'fields' => '*',
                 'conditions' => array(
                     'THistory.del_flg !=' => 1,
                     'THistory.m_companies_id' => $this->userInfo['MCompany']['id'],
-                    'THistory.tmp_customers_id' => $this->params->query['tmpCustomersId'],
+                    'THistory.visitors_id' => $this->params->query['visitorsId'],
                     'THistory.tab_id' => $this->params->query['tabId']
                 ),
                 'joins' => array(
