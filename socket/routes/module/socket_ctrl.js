@@ -247,13 +247,16 @@ access = {
 };
 
 var companyList = {};
-pool.query('select * from m_companies;', function(err, rows){
-  var key = Object.keys(rows);
-  for ( var i = 0; key.length > i; i++ ) {
-    var row = rows[key[i]];
-    companyList[row.company_key] = row.id;
-  }
-});
+function getCompanyList(){
+  pool.query('select * from m_companies;', function(err, rows){
+    var key = Object.keys(rows);
+    for ( var i = 0; key.length > i; i++ ) {
+      var row = rows[key[i]];
+      companyList[row.company_key] = row.id;
+    }
+  });
+}
+getCompanyList();
 
 function _numPad(str){
   return ("0" + str).slice(-2);
@@ -610,6 +613,27 @@ connect = io.sockets.on('connection', function (socket) {
     if ( !isset(obj.connectToken) ) {
       emit.toCompany('unsetUser', data, obj.siteKey);
       access.clear(obj.siteKey, obj.tabId);
+    }
+  });
+
+  socket.on('settingReload', function (data) {
+    var obj = JSON.parse(data);
+    if ( isset(obj.type) && String(obj.siteKey) === "master") {
+      switch (obj.type) {
+        case 1: // get new company ( sample: socket.emit('settingReload', JSON.stringify({type:1, siteKey: "master"})); )
+          console.log('before', companyList);
+          getCompanyList();
+          console.log('after', companyList);
+          break;
+        case 2: // del company ( sample: socket.emit('settingReload', JSON.stringify({type:2, targetKey: "demo", siteKey: "master"})); )
+          console.log('before', companyList);
+          if ( isset(obj.targetKey) && isset(companyList[obj.targetKey]) ) {
+            delete companyList[obj.targetKey];
+          }
+          console.log('after', companyList);
+          break;
+        default:
+      }
     }
   });
 });
