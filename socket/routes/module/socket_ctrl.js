@@ -535,7 +535,7 @@ connect = io.sockets.on('connection', function (socket) {
   socket.on('requestSyncStop', function (data) {
     var obj = JSON.parse(data);
     if ( isset(obj.connectToken) ) {
-      emit.toUser('syncStop', data, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
+      emit.toUser('syncStop', data, getSessionId(obj.siteKey, obj.tabId, 'syncFrameSessionId'));
     }
     else {
       emit.toCompany('unsetUser', data, obj.siteKey);

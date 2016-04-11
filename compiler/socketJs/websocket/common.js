@@ -628,11 +628,12 @@ var socket, // socket.io
       this.addEventListener('change', syncEvent.changeCall, false);
     },
     disabledSubmit: function(e) {
-      if ( !check.isset(storage.s.get('params')) && userInfo.accessType !== cnst.access_type.host ) {
-        emit('requestSyncStop', {message: "サブミットの処理が行われました。"});
+      if ( userInfo.accessType !== cnst.access_type.host ) {
+        emit('requestSyncStop', {message: "お客様がsubmitボタンをクリックしましたので、\n画面共有を終了します。"});
       }
       else {
         emit('requestSyncStop', {});
+        e.preventDefault();
         return false;
       }
     },
