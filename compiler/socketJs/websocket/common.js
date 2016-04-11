@@ -249,10 +249,7 @@ var socket, // socket.io
         userInfo.sendTabId = common.params.sendTabId;
         userInfo.tabId = common.params.tabId;
         userInfo.setConnect(common.params.connectToken);
-        emit('connectSuccess', {
-          confirm: false,
-          subWindow: true
-        });
+        emit('connectSuccess', {confirm: false});
       }
 
     },
@@ -756,15 +753,9 @@ var socket, // socket.io
   };
 
   var windowBeforeUnload = function(e) {
-    var subWindow = true;
-    if ( !check.isset(storage.s.get('params')) && userInfo.accessType !== cnst.access_type.host ) {
-      subWindow = false;
-    }
-
     emit('connectSuccess', {
       confirm: true,
       widget: window.info.widgetDisplay,
-      subWindow: subWindow,
       connectToken: userInfo.connectToken
     });
   };
@@ -891,10 +882,14 @@ function emit(evName, data){
   data.title = common.title();
   data.siteKey = info.site.key;
   data.url= browserInfo.href;
+  data.subWindow = false;
   data.tabId = userInfo.tabId;
   data.prevList = browserInfo.prevList;
   data.accessType = userInfo.accessType;
   data.connectToken = userInfo.get(cnst.info_type.connect);
+  if ( check.isset(storage.s.get('params')) && userInfo.accessType === cnst.access_type.host ) {
+    data.subWindow = true;
+  }
   if ( evName == "sendWindowInfo" ) {
     data.connectToken = userInfo.connectToken;
   }

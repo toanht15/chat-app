@@ -47,7 +47,6 @@
           emit('connectSuccess', {
             confirm: false,
             widget: window.info.widgetDisplay,
-            subWindow: false,
             prev: userInfo.prev,
             userAgent: window.navigator.userAgent,
             time: userInfo.time,
@@ -115,7 +114,6 @@
       emit('connectSuccess', {
         confirm: false,
         widget: window.info.widgetDisplay,
-        subWindow: false,
         prev: userInfo.prev,
         userAgent: window.navigator.userAgent,
         time: userInfo.time,
@@ -124,16 +122,12 @@
       });
     },
     connectConfirm: function(d) {
-      var obj = common.jParse(d), subWindow = false;
+      var obj = common.jParse(d);
       if ( userInfo.tabId !== obj.tabId ) return false;
-      if ( userInfo.accessType === Number(cnst.access_type.host) ) {
-        subWindow = true;
-      }
 
       emit('connectSuccess', {
         confirm: true,
         widget: window.info.widgetDisplay,
-        subWindow: subWindow,
         prev: userInfo.prev
       });
     },
