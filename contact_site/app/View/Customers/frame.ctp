@@ -29,6 +29,11 @@ var socket, userId, iframe, connectToken, url, emit, windowResize, arg = new Obj
   windowResize = function (ws) {
     iframe.width = ws.width;
     iframe.height = ws.height;
+
+    ws = {'width':iframe.width, 'height':iframe.height};
+    // 現在のウィンドウサイズを保存しておく
+    sessionStorage.setItem('window', JSON.stringify(ws));
+
     var outHeightSize = window.outerHeight - window.innerHeight;
     var outWidthSize = window.outerWidth - window.innerWidth;
     wswidth = ws.width * arg.scale + outWidthSize;
@@ -54,17 +59,16 @@ window.onload = function(){
   socket.on('connect', function(){
     userId = arg.userId;
     tabId = arg.id;
-    try {
-      if ( sessionStorage.getItem('url') ) {
-        url = sessionStorage.url;
-      }
-      else {
-        url = decodeURIComponent(arg.url);
-      }
+    if ( sessionStorage.getItem('url') && sessionStorage.getItem('window') ) {
+      url = sessionStorage.getItem('url');
+      ws = JSON.parse(sessionStorage.getItem('window'));
     }
-    catch(e) {
-      alert('connection error.');
-      return false;
+    else {
+      url = decodeURIComponent(arg.url);
+
+      ws = {'width':arg.width, 'height':arg.height};
+      // 現在のウィンドウサイズを保存しておく
+      sessionStorage.setItem('window', JSON.stringify(ws));
     }
 
     var content = document.getElementById('customer_flame');
@@ -90,6 +94,7 @@ window.onload = function(){
     };
 
     iframe.src = url + "sincloData=" + encodeURIComponent(JSON.stringify(data));
+    windowResize(ws);
     emit('connectFrame', {tabId: tabId});
   });
 
@@ -106,9 +111,19 @@ window.onload = function(){
 
   // ページ移動が行われるタイミング
   socket.on('syncStart', function(d){
-    var obj = JSON.parse(d);
+    var obj = JSON.parse(d), str, re, array;
+
     // 現在のURLを保存しておく
-    sessionStorage.setItem('url', obj.url);
+    str = obj.url;
+    re = new RegExp("[?|&]{1}\sincloData=", "g");
+    array = re.exec(str);
+
+    if ( (array !== null) && ('index' in array) ) {
+      sessionStorage.setItem('url', str.substring(0, array.index));
+    }
+    else {
+      sessionStorage.setItem('url', obj.url);
+    }
   });
 
   socket.on('syncStop', function(d){
