@@ -37,10 +37,12 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
   function updateSort(monitor){
     var sort = "0";
-    if ( ('connectToken' in monitor) && monitor.connectToken ) {
-      sort = "1";
+    if ( angular.isDefined(monitor) ) {
+      if ( ('connectToken' in monitor) && monitor.connectToken ) {
+        sort = "1";
+      }
+      monitor.monitorSort = String(sort) + String(monitor.time);
     }
-    monitor.monitorSort = String(sort) + String(monitor.time);
     return monitor;
   }
 
@@ -223,6 +225,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         else {
           socket.emit('getCustomerInfo', JSON.stringify({tabId: obj.tabId}));
         }
+        $scope.monitorList[obj.tabId] = updateSort($scope.monitorList[obj.tabId]);
       }
       else {
         // 接続中
@@ -230,7 +233,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           $scope.monitorList[obj.to].connectToken = obj.connectToken;
         }
       }
-      $scope.monitorList[obj.tabId] = updateSort($scope.monitorList[obj.tabId]);
     });
 
     socket.on('windowSyncInfo', function (data) {
