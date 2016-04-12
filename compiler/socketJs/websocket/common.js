@@ -446,7 +446,7 @@ var socket, // socket.io
       y: window.pageYOffset || document.body.scrollHeight - document.documentElement.clientHeight
     },
     sc: function(){
-      if ( document.body.scrollTop > document.documentElement.scrollTop ) {
+      if ( document.body.scrollTop > document.documentElement.scrollTop || document.body.scrollLeft > document.documentElement.scrollLeft ) {
         return document.body;
       }
       else {

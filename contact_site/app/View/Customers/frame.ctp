@@ -37,19 +37,19 @@ var socket, userId, ws, tabId, iframe, connectToken, url, emit, windowResize, ar
     // 現在のウィンドウサイズを保存しておく
     sessionStorage.setItem('window', JSON.stringify(ws));
 
-    var innerWidth  = Number(ws.width) ;
-    var innerHeight = Number(ws.height);
+    var innerW  = Number(ws.width) ;
+    var innerH = Number(ws.height);
     if ( ws.width > screen.availWidth || ws.height > screen.availHeight ) {
       if ( ws.width > screen.availWidth ) {
-        innerHeight = screen.availWidth / ws.width;
+        innerW = ws.width * (ws.height / screen.availHeight);
       }
       else {
-        innerWidth = screen.availHeight / ws.height;
+        innerH = ws.height * (ws.width / screen.availWidth);
       }
     }
 
-    iframe.width = innerWidth;
-    iframe.height = innerHeight;
+    iframe.width = innerW;
+    iframe.height = innerH;
 
     if ( !('width' in frameSize) || !('height' in frameSize)  ) {
       frameSize = {
@@ -60,8 +60,8 @@ var socket, userId, ws, tabId, iframe, connectToken, url, emit, windowResize, ar
 
     var outHeightSize = window.outerHeight - window.innerHeight;
     var outWidthSize = window.outerWidth - window.innerWidth;
-    var wswidth = innerWidth + frameSize.width;
-    var wsheight = innerHeight + frameSize.height;
+    var wswidth = innerW + frameSize.width;
+    var wsheight = innerH + frameSize.height;
     try {
       window.resizeTo(wswidth, wsheight);
     }
