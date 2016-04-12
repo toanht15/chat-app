@@ -1,13 +1,14 @@
 <script type="text/javascript">
 <!--
-var socket, userId, iframe, connectToken, url, emit, windowResize, arg = new Object;
+'use strict';
+var socket, userId, ws, tabId, iframe, connectToken, url, emit, windowResize, arg = new Object;
 
 (function(){
   // -----------------------------------------------------------------------------
   //  関数
   // -----------------------------------------------------------------------------
 
-  pair=location.search.substring(1).split('&');
+  var pair=location.search.substring(1).split('&');
   for(var i=0;pair[i];i++) {
       var kv = pair[i].split('=');
       arg[kv[0]]=kv[1];
@@ -26,19 +27,47 @@ var socket, userId, iframe, connectToken, url, emit, windowResize, arg = new Obj
     socket.emit(ev, data);
   };
 
-  windowResize = function (ws) {
-    iframe.width = ws.width;
-    iframe.height = ws.height;
+  var frameSize = {
+    width: window.outerWidth - window.innerWidth,
+    height: window.outerHeight - window.innerHeight
+  };
 
-    ws = {'width':iframe.width, 'height':iframe.height};
+  windowResize = function (ws) {
+    ws = {'width':Number(ws.width), 'height':Number(ws.height)};
     // 現在のウィンドウサイズを保存しておく
     sessionStorage.setItem('window', JSON.stringify(ws));
 
+    var innerWidth  = Number(ws.width) ;
+    var innerHeight = Number(ws.height);
+    if ( ws.width > screen.availWidth || ws.height > screen.availHeight ) {
+      if ( ws.width > screen.availWidth ) {
+        innerHeight = screen.availWidth / ws.width;
+      }
+      else {
+        innerWidth = screen.availHeight / ws.height;
+      }
+    }
+
+    iframe.width = innerWidth;
+    iframe.height = innerHeight;
+
+    if ( !('width' in frameSize) || !('height' in frameSize)  ) {
+      frameSize = {
+        width: window.outerWidth - window.innerWidth,
+        height: window.outerHeight - window.innerHeight
+      };
+    }
+
     var outHeightSize = window.outerHeight - window.innerHeight;
     var outWidthSize = window.outerWidth - window.innerWidth;
-    wswidth = ws.width * arg.scale + outWidthSize;
-    wsheight = ws.height * arg.scale + outHeightSize;
-    window.resizeTo(wswidth, wsheight);
+    var wswidth = innerWidth + frameSize.width;
+    var wsheight = innerHeight + frameSize.height;
+    try {
+      window.resizeTo(wswidth, wsheight);
+    }
+    catch(e) {
+      console.log("error resize.", e);
+    }
   };
 })();
 
@@ -72,8 +101,8 @@ window.onload = function(){
     }
 
     var content = document.getElementById('customer_flame');
-    var html  = "<iframe src='' style='transform:scale(" + Number(arg.scale) + "); transform-origin: 0 0' ";
-        html += "        width='" + arg.width + "' height='" + arg.height + "' sandbox=\"allow-scripts allow-top-navigation allow-forms allow-same-origin allow-modals\"></iframe>";
+    var html  = "<iframe src='' style='transform-origin: 0 0' ";
+        html += "        width='300' height='300' sandbox=\"allow-scripts allow-top-navigation allow-forms allow-same-origin allow-modals\"></iframe>";
 
     content.innerHTML = html;
     iframe = document.getElementsByTagName('iframe')[0];
