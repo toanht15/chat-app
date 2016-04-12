@@ -441,8 +441,17 @@ var socket, // socket.io
     referrer: "",
     href: location.href,
     prevList: [],
+    scrollSize: { // 全体のスクロール幅
+      x: window.pageXOffset || document.body.scrollWidth - document.documentElement.clientWidth,
+      y: window.pageYOffset || document.body.scrollHeight - document.documentElement.clientHeight
+    },
     sc: function(){
-      return 'BackCompat' === document.compatMode ? document.body : document.documentElement
+      if ( document.body.scrollTop > document.documentElement.scrollTop ) {
+        return document.body;
+      }
+      else {
+        return document.documentElement;
+      }
     },
     resetPrevList: function(){
       var prevList = [];
@@ -460,9 +469,12 @@ var socket, // socket.io
       storage.s.set('prevList', JSON.stringify(this.prevList));
     },
     windowScroll: function (){
+      var customDoc = browserInfo.sc();
+      var x = (customDoc.scrollLeft);
+      var y = (customDoc.scrollTop);
       return {
-        x: window.pageXOffset || this.sc().scrollLeft,
-        y: window.pageYOffset || this.sc().scrollTop
+        x: (x / browserInfo.scrollSize.x),
+        y: (y / browserInfo.scrollSize.y)
       };
     },
     windowScreen: function(){
@@ -488,10 +500,10 @@ var socket, // socket.io
     interval: Math.floor(1000 / 60 * 10),
     set: {
       scroll: function(obj){
-        document.body.scrollLeft = obj.x;
-        document.body.scrollTop  = obj.y;
-        document.documentElement.scrollLeft = obj.x;
-        document.documentElement.scrollTop  = obj.y;
+        document.body.scrollLeft = browserInfo.scrollSize.x * obj.x;
+        document.body.scrollTop  = browserInfo.scrollSize.y * obj.y;
+        document.documentElement.scrollLeft = browserInfo.scrollSize.x * obj.x;
+        document.documentElement.scrollTop  = browserInfo.scrollSize.y * obj.y;
       }
     }
   };

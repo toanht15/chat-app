@@ -246,8 +246,8 @@
 
       $("body").animate(
         {
-          scrollLeft:obj.scrollPosition.x,
-          scrollTop:obj.scrollPosition.y
+          scrollLeft: browserInfo.scrollSize.x * obj.scrollPosition.x,
+          scrollTop: browserInfo.scrollSize.y * obj.scrollPosition.y
         },
         {
             duration: 'first',
