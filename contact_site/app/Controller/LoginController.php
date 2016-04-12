@@ -13,7 +13,7 @@ class LoginController extends AppController {
       $this->set('title_for_layout', 'ログイン');
 
       $notSupportBrowser = false;
-      if ( preg_match("/Trident\[1-5]/i", $_SERVER['HTTP_USER_AGENT']) ) {
+      if ( preg_match("/Trident\/[1-5]/i", $_SERVER['HTTP_USER_AGENT']) ) {
         $notSupportBrowser = true;
       }
 
