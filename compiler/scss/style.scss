@@ -654,6 +654,22 @@ div {
   }
   &[id$=_menu] {
     height: 50px;
+    #paging {
+      min-width: 70px;
+    }
+    span {
+      border-radius: 2px;
+      border: 0px;
+      width: 30px;
+      height: 30px;
+      display: inline-block;
+      img {
+        height: 30px;
+        width: 30px;
+        display: block;
+        padding: 2.5px;
+      }
+    }
   }
   &[id$="_title"] {
     border-bottom: 1px solid #8B8B8B;
@@ -708,22 +724,6 @@ div {
 #history_idx {
   #history_menu {
     height: 50px;
-    #paging {
-      min-width: 70px;
-    }
-    span {
-      border-radius: 2px;
-      border: 0px;
-      width: 30px;
-      height: 30px;
-      display: inline-block;
-      img {
-        height: 30px;
-        width: 30px;
-        display: block;
-        padding: 2.5px;
-      }
-    }
   }
   .monitorBtn {
     text-decoration: none;
@@ -790,7 +790,7 @@ div {
 
 /* ユーザマスタ */
 
-#muser_menu [class$='Btn'] {
+#muser_menu img[class$='Btn'] {
   border-radius: 15px;
 }
 
