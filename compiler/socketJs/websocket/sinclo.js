@@ -288,6 +288,7 @@
       window.clearTimeout(sinclo.syncTimeout);
       common.load.finish();
     },
+    receiveScTimer: false,
     syncResponce: function(d){
       var obj = common.jParse(d), cursor = common.cursorTag;
       // 画面共有用トークンでの認証に変更する？
@@ -303,11 +304,14 @@
         if ( check.isset(obj.scrollPosition) ) {
           syncEvent.receiveEvInfo.type = "scroll";
           syncEvent.receiveEvInfo.nodeName = "body";
+          if (this.receiveScTimer) {
+            clearTimeout(this.receiveScTimer);
+          }
 
           browserInfo.set.scroll(obj.scrollPosition);
 
           // TODO まだ微調整が必要
-          setTimeout(function(){
+          this.receiveScTimer = setTimeout(function(){
             syncEvent.receiveEvInfo = { nodeName: null, type: null };
           }, browserInfo.interval);
         }

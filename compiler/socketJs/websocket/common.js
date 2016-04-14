@@ -442,8 +442,8 @@ var socket, // socket.io
     href: location.href,
     prevList: [],
     scrollSize: { // 全体のスクロール幅
-      x: window.pageXOffset || document.body.scrollWidth - document.documentElement.clientWidth,
-      y: window.pageYOffset || document.body.scrollHeight - document.documentElement.clientHeight
+      x: document.body.offsetWidth - window.innerWidth,
+      y: document.body.offsetHeight - window.innerHeight
     },
     sc: function(){
       if ( document.body.scrollTop > document.documentElement.scrollTop || document.body.scrollLeft > document.documentElement.scrollLeft ) {
@@ -470,11 +470,12 @@ var socket, // socket.io
     },
     windowScroll: function (){
       var customDoc = browserInfo.sc();
-      var x = (customDoc.scrollLeft);
-      var y = (customDoc.scrollTop);
+      var x = (customDoc.scrollLeft / browserInfo.scrollSize.x);
+      var y = (customDoc.scrollTop / browserInfo.scrollSize.y);
+
       return {
-        x: (x / browserInfo.scrollSize.x),
-        y: (y / browserInfo.scrollSize.y)
+        x: (isNaN(x)) ? 0 : x,
+        y: (isNaN(y)) ? 0 : y
       };
     },
     windowScreen: function(){
@@ -524,7 +525,6 @@ var socket, // socket.io
         type: "scroll",
         ev: function(e){
           if ( socket === undefined ) return false;
-          // 排他処理
           if ( "body" === syncEvent.receiveEvInfo.nodeName && "scroll" === syncEvent.receiveEvInfo.type ) return false;
           // スクロール用
           emit('syncBrowserInfo', {
