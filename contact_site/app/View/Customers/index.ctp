@@ -38,6 +38,7 @@
         <thead>
             <tr>
                 <th ng-hide="labelHideList.accessId" >アクセスID</th>
+                <th>モニター</th>
                 <th ng-hide="labelHideList.ipAddress" >訪問ユーザ</th>
                 <th ng-hide="labelHideList.ua" >ユーザー環境</th>
                 <th ng-hide="labelHideList.time" >アクセス日時</th>
@@ -45,19 +46,11 @@
                 <th ng-hide="labelHideList.page" >閲覧ページ数</th>
                 <th ng-hide="labelHideList.title" >閲覧中ページ</th>
                 <th ng-hide="labelHideList.referrer" >参照元URL</th>
-                <th>モニター</th>
             </tr>
         </thead>
         <tbody>
             <tr ng-repeat="monitor in search(monitorList) | orderObjectBy: 'monitorSort': true">
                 <td ng-hide="labelHideList.accessId" class="tCenter">{{monitor.accessId}}</td>
-                <td ng-hide="labelHideList.ipAddress" class="tCenter">{{monitor.ipAddress}}</td>
-                <td ng-hide="labelHideList.ua" class="tCenter">{{ua(monitor.userAgent)}}</td>
-                <td ng-hide="labelHideList.time" class="tCenter">{{monitor.time | customDate}}</td>
-                <td ng-hide="labelHideList.stayTime" class="tCenter" cal-stay-time></td>
-                <td ng-hide="labelHideList.page" class="tCenter">{{monitor.prev.length}}（<a href="javascript:void(0)" ng-click="openHistory(monitor)" >移動履歴</a>）</td>
-                <td ng-hide="labelHideList.title" class="tCenter omit"><a href={{monitor.url}} target="monitor" ng-if="monitor.title">{{monitor.title}}</a><span ng-if="!monitor.title">{{monitor.url}}</span></td>
-                <td ng-hide="labelHideList.referrer" class="tCenter omit"><span>{{monitor.referrer}}</span></td>
                 <td class='w10 tCenter'>
                     <span ng-show="monitor.widget">
                       <a   ng-if="!monitor.connectToken" class='monitorBtn blueBtn btn-shadow' href='javascript:void(0)' ng-click="windowOpen(monitor.tabId)" ng-confirm-click="アクセスID【{{monitor.accessId}}】のユーザーに接続しますか？">接続する</a>
@@ -66,6 +59,13 @@
                       <span ng-if=" monitor.connectToken">モニタリング中</span>
                     </ng-hide>
                 </td>
+                <td ng-hide="labelHideList.ipAddress" class="tCenter">{{monitor.ipAddress}}</td>
+                <td ng-hide="labelHideList.ua" class="tCenter">{{ua(monitor.userAgent)}}</td>
+                <td ng-hide="labelHideList.time" class="tCenter">{{monitor.time | customDate}}</td>
+                <td ng-hide="labelHideList.stayTime" class="tCenter" cal-stay-time></td>
+                <td ng-hide="labelHideList.page" class="tCenter">{{monitor.prev.length}}（<a href="javascript:void(0)" ng-click="openHistory(monitor)" >移動履歴</a>）</td>
+                <td ng-hide="labelHideList.title" class="tCenter omit"><a href={{monitor.url}} target="monitor" ng-if="monitor.title">{{monitor.title}}</a><span ng-if="!monitor.title">{{monitor.url}}</span></td>
+                <td ng-hide="labelHideList.referrer" class="tCenter omit"><span>{{monitor.referrer}}</span></td>
             </tr>
         </tbody>
     </table>
