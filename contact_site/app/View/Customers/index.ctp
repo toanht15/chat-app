@@ -56,8 +56,10 @@
                       <span ng-if="!monitor.connectToken">
                         <a class='monitorBtn blueBtn btn-shadow' href='javascript:void(0)' ng-click='windowOpen(monitor.tabId)' ng-confirm-click='アクセスID【{{monitor.accessId}}】のユーザーに接続しますか？'>接続する</a>
                       </span>
-                      <span ng-if="monitor.connectToken && !monitor.responderName">接続中...</span>
-                      <span ng-if="monitor.connectToken && monitor.responderName">{{monitor.responderName}}さん対応中</span>
+                    </span>
+                    <span ng-if="monitor.connectToken">
+                      <span ng-if="!monitor.responderName">対応中...</span>
+                      <span ng-if="monitor.responderName">{{monitor.responderName}}さん対応中</span>
                     </span>
                 </td>
                 <td ng-hide="labelHideList.ipAddress" class="tCenter">{{monitor.ipAddress}}</td>
