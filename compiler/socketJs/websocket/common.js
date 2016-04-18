@@ -269,6 +269,7 @@ var socket, // socket.io
       },
       unset: function(){
         storage.s.unset(this.code);
+        delete userInfo['sendTabId'];
         // TODO minify
         userInfo.unsetConnect();
       }
