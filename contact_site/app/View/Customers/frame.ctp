@@ -1,7 +1,7 @@
 <script type="text/javascript">
 <!--
 'use strict';
-var socket, userId, ws, tabId, iframe, connectToken, url, emit, windowResize, arg = new Object;
+var socket, userId, tabId, iframe, windowSize, connectToken, url, emit, resizeApi, arg = new Object;
 
 (function(){
   // -----------------------------------------------------------------------------
@@ -27,48 +27,76 @@ var socket, userId, ws, tabId, iframe, connectToken, url, emit, windowResize, ar
     socket.emit(ev, data);
   };
 
-  var frameSize = {
-    width: window.outerWidth - window.innerWidth,
-    height: window.outerHeight - window.innerHeight
+// TODO 消費者と画面サイズを合わせるためのコードと、
+// 企業側がリサイズ行為を行った際に修正するためのコードの
+// 切り分けを考える
+  resizeApi = {
+    timer: null,
+    adResizeChk: function(e){ // 管理者が行ったリサイズ
+        resizeApi.resizeBy();
+    },
+    resizeBy: function(){
+      var w = windowSize.width - window.outerWidth;
+      var h = windowSize.height - window.outerHeight;
+      if ( this.timer ) {
+        clearTimeout(this.timer);
+      }
+      if ( w === 0 && h === 0 ) return false;
+      this.timer = setTimeout(function(){
+        window.resizeBy(Number(w), Number(h));
+      },300);
+    },
+    cuResize: function(wsInfo){
+      // 現在のウィンドウサイズを保存しておく
+      sessionStorage.setItem('window', JSON.stringify({
+        'width':Number(wsInfo.width),
+        'height':Number(wsInfo.height)
+      }));
+      resizeApi.change();
+    },
+    frameSize: {
+      width: window.outerWidth - window.innerWidth,
+      height: window.outerHeight - window.innerHeight
+    },
+    change: function () {
+      var wsInfo = JSON.parse(sessionStorage.getItem('window'));
+
+      var innerW  = Number(wsInfo.width) ;
+      var innerH = Number(wsInfo.height);
+      if ( wsInfo.width > screen.availWidth || wsInfo.height > screen.availHeight ) {
+        if ( wsInfo.width > screen.availWidth ) {
+          innerW = wsInfo.width * (wsInfo.height / screen.availHeight);
+        }
+        else {
+          innerH = wsInfo.height * (wsInfo.width / screen.availWidth);
+        }
+      }
+
+      iframe.width = innerW;
+      iframe.height = innerH;
+      if ( !('width' in this.frameSize) || !('height' in this.frameSize)  ) {
+        this.frameSize = {
+          width: window.outerWidth - window.innerWidth,
+          height: window.outerHeight - window.innerHeight
+        };
+      }
+
+      var outHeightSize = window.outerHeight - window.innerHeight;
+      var outWidthSize = window.outerWidth - window.innerWidth;
+      var wswidth = innerW + this.frameSize.width;
+      var wsheight = innerH + this.frameSize.height;
+      try {
+        windowSize = {'width': wswidth, 'height': wsheight};
+        window.resizeTo(wswidth, wsheight);
+      }
+      catch(e) {
+        console.log("error resize.", e);
+      }
+    }
   };
 
-  windowResize = function (ws) {
-    ws = {'width':Number(ws.width), 'height':Number(ws.height)};
-    // 現在のウィンドウサイズを保存しておく
-    sessionStorage.setItem('window', JSON.stringify(ws));
+  window.addEventListener('resize', resizeApi.adResizeChk, false);
 
-    var innerW  = Number(ws.width) ;
-    var innerH = Number(ws.height);
-    if ( ws.width > screen.availWidth || ws.height > screen.availHeight ) {
-      if ( ws.width > screen.availWidth ) {
-        innerW = ws.width * (ws.height / screen.availHeight);
-      }
-      else {
-        innerH = ws.height * (ws.width / screen.availWidth);
-      }
-    }
-
-    iframe.width = innerW;
-    iframe.height = innerH;
-
-    if ( !('width' in frameSize) || !('height' in frameSize)  ) {
-      frameSize = {
-        width: window.outerWidth - window.innerWidth,
-        height: window.outerHeight - window.innerHeight
-      };
-    }
-
-    var outHeightSize = window.outerHeight - window.innerHeight;
-    var outWidthSize = window.outerWidth - window.innerWidth;
-    var wswidth = innerW + frameSize.width;
-    var wsheight = innerH + frameSize.height;
-    try {
-      window.resizeTo(wswidth, wsheight);
-    }
-    catch(e) {
-      console.log("error resize.", e);
-    }
-  };
 })();
 
 window.onload = function(){
@@ -90,14 +118,12 @@ window.onload = function(){
     tabId = arg.id;
     if ( sessionStorage.getItem('url') && sessionStorage.getItem('window') ) {
       url = sessionStorage.getItem('url');
-      ws = JSON.parse(sessionStorage.getItem('window'));
+      var ws = JSON.parse(sessionStorage.getItem('window'));
     }
     else {
       url = decodeURIComponent(arg.url);
 
-      ws = {'width':arg.width, 'height':arg.height};
-      // 現在のウィンドウサイズを保存しておく
-      sessionStorage.setItem('window', JSON.stringify(ws));
+      var ws = {'width':arg.width, 'height':arg.height};
     }
 
     var content = document.getElementById('customer_flame');
@@ -124,13 +150,13 @@ window.onload = function(){
     };
 
     iframe.src = url + "sincloData=" + encodeURIComponent(JSON.stringify(data));
-    windowResize(ws);
+    resizeApi.cuResize(ws);
     emit('connectFrame', {tabId: tabId});
   });
 
   socket.on('syncResponce', function(data){
     var obj = JSON.parse(data);
-    windowResize(obj.windowSize);
+    resizeApi.cuResize(obj.windowSize);
   });
 
   socket.on('syncEvStart', function(){
@@ -179,7 +205,6 @@ window.onload = function(){
       window.close();
     }
   });
-
 };
 // -->
 </script>

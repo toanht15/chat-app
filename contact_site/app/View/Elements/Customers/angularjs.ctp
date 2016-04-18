@@ -20,7 +20,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       window.open(option.url,
                   option.tabId,
                   "width=" + option.width + ",height=" + option.height +
-                  ",dialog=no,toolbar=no,location=no,status=no,menubar=no,directories=no, scrollbars=no"
+                  ",dialog=no,toolbar=no,location=no,status=no,menubar=no,directories=no,resizable=no,scrollbars=no"
       );
       return false;
     },
