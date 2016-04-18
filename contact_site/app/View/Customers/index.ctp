@@ -48,16 +48,17 @@
                 <th ng-hide="labelHideList.referrer" >参照元URL</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody  ng-cloak>
             <tr ng-repeat="monitor in search(monitorList) | orderObjectBy: 'monitorSort': true">
                 <td ng-hide="labelHideList.accessId" class="tCenter">{{monitor.accessId}}</td>
                 <td class='w10 tCenter'>
-                    <span ng-show="monitor.widget">
-                      <a   ng-if="!monitor.connectToken" class='monitorBtn blueBtn btn-shadow' href='javascript:void(0)' ng-click="windowOpen(monitor.tabId)" ng-confirm-click="アクセスID【{{monitor.accessId}}】のユーザーに接続しますか？">接続する</a>
+                    <span ng-if="monitor.widget">
+                      <span ng-if="!monitor.connectToken">
+                        <a class='monitorBtn blueBtn btn-shadow' href='javascript:void(0)' ng-click='windowOpen(monitor.tabId)' ng-confirm-click='アクセスID【{{monitor.accessId}}】のユーザーに接続しますか？'>接続する</a>
+                      </span>
+                      <span ng-if="monitor.connectToken && !monitor.responderName">接続中...</span>
+                      <span ng-if="monitor.connectToken && monitor.responderName">{{monitor.responderName}}さん対応中</span>
                     </span>
-                    <ng-hide="monitor.widget">
-                      <span ng-if=" monitor.connectToken">モニタリング中</span>
-                    </ng-hide>
                 </td>
                 <td ng-hide="labelHideList.ipAddress" class="tCenter">{{monitor.ipAddress}}</td>
                 <td ng-hide="labelHideList.ua" class="tCenter">{{ua(monitor.userAgent)}}</td>

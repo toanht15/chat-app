@@ -3,6 +3,7 @@
 
 (function(){
 var sincloApp = angular.module('sincloApp', ['ngSanitize']),
+    userList = <?php echo json_encode($responderList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>,
     modalFunc;
 
   modalFunc = {
@@ -231,6 +232,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         // 接続中
         if ( angular.isDefined($scope.monitorList[obj.to]) ) {
           $scope.monitorList[obj.to].connectToken = obj.connectToken;
+          if ( ('responderId' in obj) && ('responderId' in obj && !userList[obj.responderId]) ) return false;
+          $scope.monitorList[obj.to]['responderName'] = userList[obj.responderId];
         }
       }
     });

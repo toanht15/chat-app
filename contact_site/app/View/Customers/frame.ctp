@@ -116,6 +116,7 @@ window.onload = function(){
 
     var data = {
       type:2,
+      responderId: "<?= $muserId?>",
       userId: userId,
       sendTabId: tabId,
       connectToken: arg.connectToken,

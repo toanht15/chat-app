@@ -901,6 +901,7 @@ function emit(evName, data){
   data.connectToken = userInfo.get(cnst.info_type.connect);
   if ( check.isset(storage.s.get('params')) && userInfo.accessType === cnst.access_type.host ) {
     data.subWindow = true;
+    data.responderId = common.params.responderId;
   }
   if ( evName == "sendWindowInfo" ) {
     data.connectToken = userInfo.connectToken;
