@@ -233,7 +233,12 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         if ( angular.isDefined($scope.monitorList[obj.to]) ) {
           $scope.monitorList[obj.to].connectToken = obj.connectToken;
           if ( ('responderId' in obj) && ('responderId' in obj && !userList[obj.responderId]) ) return false;
-          $scope.monitorList[obj.to]['responderName'] = userList[obj.responderId];
+          if ( String(obj.responderId) === "<?=$muserId?>" ) {
+            $scope.monitorList[obj.to]['responderName'] = "あなたが";
+          }
+          else {
+            $scope.monitorList[obj.to]['responderName'] = userList[obj.responderId] + "さん";
+          }
         }
       }
     });

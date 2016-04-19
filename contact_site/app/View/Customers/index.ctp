@@ -60,7 +60,7 @@
                   </span>
                   <span ng-if="monitor.connectToken">
                     <span ng-if="!monitor.responderName">対応中...</span>
-                    <span ng-if="monitor.responderName">{{monitor.responderName}}さん対応中</span>
+                    <span ng-if="monitor.responderName">{{monitor.responderName}}対応中</span>
                   </span>
               </td>
               <td ng-hide="labelHideList.ipAddress" class="tCenter">{{monitor.ipAddress}}</td>
