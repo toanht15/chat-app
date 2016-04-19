@@ -506,10 +506,8 @@ var socket, // socket.io
     interval: Math.floor(1000 / 60 * 10),
     set: {
       scroll: function(obj){
-        var scrollSize = {
-          x: document.body.offsetWidth - window.innerWidth,
-          y: document.body.offsetHeight - window.innerHeight
-        };
+        var scrollSize = browserInfo.scrollSize();
+
         document.body.scrollLeft = scrollSize.x * obj.x;
         document.body.scrollTop  = scrollSize.y * obj.y;
         document.documentElement.scrollLeft = scrollSize.x * obj.x;

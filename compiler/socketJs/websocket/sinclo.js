@@ -182,9 +182,6 @@
     },
     windowSyncInfo: function(d) {
       var obj = common.jParse(d);
-      // 担当しているユーザーかチェック
-      if ( obj.to !== userInfo.tabId ) return false;
-      if ( Number(userInfo.accessType) !== Number(cnst.access_type.host) ) return false;
       browserInfo.set.scroll(obj.scrollPosition);
     },
     syncStart: function(d) {
@@ -242,12 +239,12 @@
     },
     syncElement: function(d){
       var obj = common.jParse(d);
+      var scrollSize = browserInfo.scrollSize();
       window.clearTimeout(this.syncTimeout);
-
       $("body").animate(
         {
-          scrollLeft: browserInfo.scrollSize.x * obj.scrollPosition.x,
-          scrollTop: browserInfo.scrollSize.y * obj.scrollPosition.y
+          scrollLeft: scrollSize.x * obj.scrollPosition.x,
+          scrollTop: scrollSize.y * obj.scrollPosition.y
         },
         {
             duration: 'first',
