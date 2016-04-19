@@ -61,19 +61,6 @@ var socket, userId, tabId, iframe, windowSize, connectToken, url, emit, resizeAp
     change: function () {
       var wsInfo = JSON.parse(sessionStorage.getItem('window'));
 
-      var innerW  = Number(wsInfo.width) ;
-      var innerH = Number(wsInfo.height);
-      if ( wsInfo.width > screen.availWidth || wsInfo.height > screen.availHeight ) {
-        if ( wsInfo.width > screen.availWidth ) {
-          innerW = wsInfo.width * (wsInfo.height / screen.availHeight);
-        }
-        else {
-          innerH = wsInfo.height * (wsInfo.width / screen.availWidth);
-        }
-      }
-
-      iframe.width = innerW;
-      iframe.height = innerH;
       if ( !('width' in this.frameSize) || !('height' in this.frameSize)  ) {
         this.frameSize = {
           width: window.outerWidth - window.innerWidth,
@@ -81,10 +68,33 @@ var socket, userId, tabId, iframe, windowSize, connectToken, url, emit, resizeAp
         };
       }
 
-      var outHeightSize = window.outerHeight - window.innerHeight;
-      var outWidthSize = window.outerWidth - window.innerWidth;
-      var wswidth = innerW + this.frameSize.width;
-      var wsheight = innerH + this.frameSize.height;
+      var cal = 1;
+      var frame = {width:null, height:null};
+      var comScreen = {width:(screen.availWidth - this.frameSize.width), height:(screen.availHeight - this.frameSize.height)};
+      var ratio = {
+        w: wsInfo.width / comScreen.width,
+        h: wsInfo.height / comScreen.height
+      };
+      if ( ratio.w > 1 || ratio.h > 1 ) {
+        if (ratio.w > ratio.h) {
+          cal = Math.ceil((comScreen.width / wsInfo.width)*100)/100;
+        }
+        else {
+          cal = Math.ceil((comScreen.height / wsInfo.height)*100)/100;
+        }
+        frame.height = wsInfo.height * cal;
+        frame.width = wsInfo.width * cal;
+      }
+      else {
+        frame = wsInfo;
+      }
+
+      iframe.width = wsInfo.width;
+      iframe.height = wsInfo.height;
+      iframe.style.transform = "scale(" + cal + ")";
+
+      var wswidth = frame.width + this.frameSize.width;
+      var wsheight = frame.height + this.frameSize.height;
       try {
         windowSize = {'width': wswidth, 'height': wsheight};
         window.resizeTo(wswidth, wsheight);

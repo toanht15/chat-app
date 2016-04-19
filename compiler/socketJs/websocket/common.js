@@ -542,26 +542,37 @@ var socket, // socket.io
           browserInfo.href = location.href;
           emit('reqUrlChecker', {});
         }
-      },
-      {
-        type: "resize",
-        ev: function(e){
-          if (syncEvent.resizeTimer !== false) {
-            clearTimeout(syncEvent.resizeTimer);
-          }
-          syncEvent.resizeTimer = setTimeout(function () {
-            emit('syncBrowserInfo', {
-              accessType: userInfo.accessType,
-              // ブラウザのサイズ
-              windowSize: browserInfo.windowSize(),
-              mousePoint: {x: e.clientX, y: e.clientY},
-              scrollPosition: browserInfo.windowScroll()
-            });
-            // do something ...
-          }, browserInfo.interval);
-        }
       }
     ],
+    pcResize: function(e){
+      if (syncEvent.resizeTimer !== false) {
+        clearTimeout(syncEvent.resizeTimer);
+      }
+      syncEvent.resizeTimer = setTimeout(function () {
+        emit('syncBrowserInfo', {
+          accessType: userInfo.accessType,
+          // ブラウザのサイズ
+          windowSize: browserInfo.windowSize(),
+          mousePoint: {x: e.clientX, y: e.clientY},
+          scrollPosition: browserInfo.windowScroll()
+        });
+        // do something ...
+      }, browserInfo.interval);
+    },
+    tabletResize: function(e){
+      var size = {
+        width: window.innerWidth,
+        height: window.innerHeight
+      };
+      var scroll = browserInfo.windowScroll();
+
+      emit('syncBrowserInfo', {
+        accessType: userInfo.accessType,
+        // ブラウザのサイズ
+        windowSize: size,
+        scrollPosition: scroll
+      });
+    },
     ctrlEventListener: function(eventFlg, evList){ // ウィンドウに対してのイベント操作
 
       var attachFlg = false;
@@ -580,8 +591,6 @@ var socket, // socket.io
         }
       }
       for ( var i in evList ) {
-        // ウィンドウリサイズは消費者の状態のみ反映
-        if ( evList[i].type === "resize" && Number(userInfo.accessType) !== Number(cnst.access_type.guest) ) continue;
         var evName = ( attachFlg ) ? "on" + String(evList[Number(i)].type) : String(evList[Number(i)].type);
         var event = evList[Number(i)].ev;
         evListener(evName, event);
@@ -636,6 +645,28 @@ var socket, // socket.io
     focusCall: function(e){
       this.addEventListener('keyup', syncEvent.changeCall, false);
       this.addEventListener('change', syncEvent.changeCall, false);
+    },
+    resizeCall: function(ua, eventFlg){
+      if ( !eventFlg ) {
+        window.removeEventListener("resize", syncEvent.pcResize);
+        window.removeEventListener("orientationchange", syncEvent.tabletResize);
+        return false;
+      }
+      // ウィンドウリサイズは消費者の状態のみ反映
+      if ( Number(userInfo.accessType) !== Number(cnst.access_type.guest) ) return false;
+      if ((ua.indexOf("windows") != -1 && ua.indexOf("touch") != -1)
+          ||  ua.indexOf("ipad") != -1
+          || (ua.indexOf("android") != -1 && ua.indexOf("mobile") == -1)
+          || (ua.indexOf("firefox") != -1 && ua.indexOf("tablet") != -1)
+          ||  ua.indexOf("kindle") != -1
+          ||  ua.indexOf("silk") != -1
+          ||  ua.indexOf("playbook") != -1)
+      {
+        window.addEventListener("orientationchange", syncEvent.tabletResize, false);
+      }
+      else {
+        window.addEventListener("resize", syncEvent.pcResize, false);
+      }
     },
     disabledSubmit: function(e) {
       if ( userInfo.accessType !== cnst.access_type.host ) {
@@ -693,6 +724,9 @@ var socket, // socket.io
       }
       // windowに対してのイベント操作
       this.ctrlEventListener(eventFlg, syncEvent.evList);
+
+      // resizeCall
+      this.resizeCall(window.navigator.userAgent.toLowerCase(), eventFlg);
 
       // 要素に対してのイベント操作
       var els = document.getElementsByTagName('input');
