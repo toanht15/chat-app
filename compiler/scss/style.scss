@@ -309,6 +309,10 @@ a {
   display: none;
 }
 
+.bold {
+  font-weight: bold;
+}
+
 .card-shadow {
   box-shadow: 0 0 5px $shadow-color;
 }
@@ -352,8 +356,8 @@ a {
 }
 
 .blueBtn {
-  background-color: #96A3D4;
-  border: 1px solid #96A3D4;
+  background-color: #788DCA;
+  border: 1px solid #788DCA;
   display: block;
   color: white;
   font-weight: bold;
@@ -374,8 +378,8 @@ a {
     color: #fff;
   }
   &.blueBtn:hover {
-    background-color: #808CB7;
-    border: 1px solid #808CB7;
+    background-color: #6A80BE;
+    border: 1px solid #6A80BE;
     transition: background-color, border-color 0.1s linear;
     color: #fff;
   }
@@ -711,6 +715,9 @@ div {
       font-size: 12px;
       margin: 2px 5px;
     }
+  }
+  .monitorOn, .monitorOn * {
+    color: #788DCA;
   }
   .monitorBtn {
     text-decoration: none;

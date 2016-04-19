@@ -234,7 +234,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           $scope.monitorList[obj.to].connectToken = obj.connectToken;
           if ( ('responderId' in obj) && ('responderId' in obj && !userList[obj.responderId]) ) return false;
           if ( String(obj.responderId) === "<?=$muserId?>" ) {
-            $scope.monitorList[obj.to]['responderName'] = "あなたが";
+            $scope.monitorList[obj.to]['responderName'] = "あなた";
           }
           else {
             $scope.monitorList[obj.to]['responderName'] = userList[obj.responderId] + "さん";
