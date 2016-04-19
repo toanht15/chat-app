@@ -740,6 +740,11 @@ div {
     width: 5em;
     text-align: center;
   }
+  #history_list {
+    td, th {
+      height: 30px!important;
+    }
+  }
 }
 
 /* コード設置・デモ */

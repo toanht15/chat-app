@@ -7,7 +7,7 @@ class HistoriesController extends AppController {
     public $uses = array('THistory', 'THistoryStayLog', 'THistoryShareDisplay');
     public $paginate = array(
         'THistory' => array(
-            'limit' => 10,
+            'limit' => 100,
             'order' => array(
                 'THistory.created' => 'desc'
             ),
