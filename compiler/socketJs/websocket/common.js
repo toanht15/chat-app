@@ -442,11 +442,15 @@ var socket, // socket.io
     referrer: "",
     href: location.href,
     prevList: [],
-    scrollSize: { // 全体のスクロール幅
-      x: document.body.offsetWidth - window.innerWidth,
-      y: document.body.offsetHeight - window.innerHeight
+    // TODO 画面同期時セットするようにする
+    scrollSize: function (){ // 全体のスクロール幅
+      return {
+        x: document.body.offsetWidth - window.innerWidth,
+        y: document.body.offsetHeight - window.innerHeight
+      }
     },
-    sc: function(){
+    // TODO 画面同期時セットするようにする
+    sc: function(){ // スクロール量を取得する先
       if ( document.body.scrollTop > document.documentElement.scrollTop || document.body.scrollLeft > document.documentElement.scrollLeft ) {
         return document.body;
       }
@@ -471,9 +475,9 @@ var socket, // socket.io
     },
     windowScroll: function (){
       var customDoc = browserInfo.sc();
-      var x = (customDoc.scrollLeft / browserInfo.scrollSize.x);
-      var y = (customDoc.scrollTop / browserInfo.scrollSize.y);
-
+      var scrollSize = browserInfo.scrollSize();
+      var x = (customDoc.scrollLeft / scrollSize.x);
+      var y = (customDoc.scrollTop / scrollSize.y);
       return {
         x: (isNaN(x)) ? 0 : x,
         y: (isNaN(y)) ? 0 : y
@@ -502,10 +506,14 @@ var socket, // socket.io
     interval: Math.floor(1000 / 60 * 10),
     set: {
       scroll: function(obj){
-        document.body.scrollLeft = browserInfo.scrollSize.x * obj.x;
-        document.body.scrollTop  = browserInfo.scrollSize.y * obj.y;
-        document.documentElement.scrollLeft = browserInfo.scrollSize.x * obj.x;
-        document.documentElement.scrollTop  = browserInfo.scrollSize.y * obj.y;
+        var scrollSize = {
+          x: document.body.offsetWidth - window.innerWidth,
+          y: document.body.offsetHeight - window.innerHeight
+        };
+        document.body.scrollLeft = scrollSize.x * obj.x;
+        document.body.scrollTop  = scrollSize.y * obj.y;
+        document.documentElement.scrollLeft = scrollSize.x * obj.x;
+        document.documentElement.scrollTop  = scrollSize.y * obj.y;
       }
     }
   };
