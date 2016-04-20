@@ -38,14 +38,11 @@ var socket, // socket.io
     tmpParams : {},
     getParams: function(){
       // パラメータの取得
-      var params = location.href.split('?'), pair, i, kv;
-      if ( params[1] !== undefined ) {
-        pair=params[1].split('&');
-        for(i=0; pair[i]; i++) {
-          kv = pair[i].split('=');
-          if ( kv[0] !== "first" ) {
-            this.tmpParams[kv[0]]=kv[1];
-          }
+      var params = location.href.split('?'), param, i, kv;
+      if ( params[1] !== undefined && params[1].match(/sincloData/)) {
+        param=params[1].split('sincloData=');
+        if ( param[1] ) {
+          this.tmpParams = JSON.parse(decodeURIComponent(param[1]));
         }
       }
     },
@@ -80,6 +77,7 @@ var socket, // socket.io
     sincloBoxHeight: 270,
     widgetTemplate: function(){
       var widget = window.info.widget;
+      var maincolor = ( window.info.site.maincolor !== undefined ) ? window.info.site.maincolor : "#ABCD05";
       var css   = '#sincloBox * {';
           css  += '  box-sizing: border-box;';
           css  += '  background-color: rgba(0,0,0,0);';
@@ -93,25 +91,27 @@ var socket, // socket.io
           css  += '#sincloBox pre, #sincloBox span {';
           css  += '  font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana;';
           css  += '}';
-          css  += '#sincloBox a:hover { color: #ABCD05 }';
+          css  += '#sincloBox a:hover { color: ' + maincolor + ' }';
 
       var html  = '<div id="sincloBox" style="box-sizing: border-box; position: fixed; height: 45px; bottom: -11px; right: 5px; border: 1.5px solid rgb(232, 231, 224); border-radius: 10px; z-index: 999998; width: 250px; overflow: hidden; background-color: rgb(255, 255, 255);">';
           html += '  <style>' + css + '</style>';
           html += '  <img onclick="sinclo.operatorInfo.ev()" style="position: absolute; top: 11.5px; right: 10px; z-index: 0;" src=" ' + window.info.site.files + '/img/yajirushi.png" height="12" width="16.5">';
-          html += '  <div onclick="sinclo.operatorInfo.ev()" style="background-color: #ABCD05; width: 100%; height: 35px; background-image: url( ' + window.info.site.files + '/img/call.png); background-repeat: no-repeat; background-position: 15px, 0; background-size: 4.5%; color: #FFF;">';
+          html += '  <div onclick="sinclo.operatorInfo.ev()" style="background-color: ' + maincolor + '; width: 100%; height: 35px; background-image: url( ' + window.info.site.files + '/img/call.png); background-repeat: no-repeat; background-position: 15px, 0; background-size: 4.5%; color: #FFF;">';
           html += '    <pre style="color: #FFF; text-align: center; font-size: 15px; padding: 10px; margin:  0;">' + widget.title + '</pre>'
           html += '  </div>';
           // 受付時間を表示しない
           if ( widget.display_time_flg === 0 ) {
-            html += '    <div style="background-image: url( ' + window.info.site.files + '/img/call_circle.png); background-repeat: no-repeat; background-position: 5px, 0px;height: 45px; margin: 15px 10px;background-size: 45px auto, 45px auto;padding-left: 45px;">';
-            html += '      <pre style="font-weight: bold; color: #ABCD05; margin: 0 auto;font-size: 20px; text-align: center;padding: 10px 0px 0px;height: 45px;">' + widget.tel + '</pre>';
+            html += '    <div style="height: 45px; margin: 15px 10px;">';
+            html += '      <span style="display: block; width: 45px; height: 45px; float: left; background-color: ' + maincolor + '; border-radius: 25px; padding: 2px;"><img width="16.5" height="30" src=" ' + window.info.site.files + '/img/call.png" style="margin: 5px 12px"></span>';
+            html += '      <pre style="font-weight: bold; color: ' + maincolor + '; margin: 0 auto;font-size: 20px; text-align: center;padding: 10px 0px 0px;height: 45px;">' + widget.tel + '</pre>';
             html += '    </div>';
           }
           else {
-            html += '    <div style="background-image: url( ' + window.info.site.files + '/img/call_circle.png); background-repeat: no-repeat; background-position: 5px, 0; height: 50px; margin: 15px 10px; background-size: 55px auto, 55px auto; padding-left: 55px;">';
-            html += '      <pre style="font-weight: bold; color: #ABCD05; margin: 0 auto; font-size: 18px; text-align: center; padding: 5px 0 0; height: 30px">' + widget.tel + '</pre>';
-            html += '      <pre style="font-weight: bold; color: #ABCD05; margin: 0 auto; font-size: 10px; text-align: center; padding: 0 0 5px; height: 20px">受付時間： ' + widget.time_text + '</pre>';
-            html += '    </div>';
+            html += '<div style="height: 50px;margin: 15px 10px">';
+            html +=   '<span style="display: block; width: 50px; height: 50px; float: left; background-color: ' + maincolor + '; border-radius: 25px; padding: 3px;"><img width="19.5" height="33" src=" ' + window.info.site.files + '/img/call.png" style="margin: 6px 12px"></span>';
+            html +=   '<pre style="font-weight: bold; color: ' + maincolor + '; margin: 0 auto; font-size: 18px; text-align: center; padding: 5px 0 0; height: 30px">' + widget.tel + '</pre>';
+            html +=   '<pre style="font-weight: bold; color: ' + maincolor + '; margin: 0 auto; font-size: 10px; text-align: center; padding: 0 0 5px; height: 20px">受付時間： ' + widget.time_text + '</pre>';
+            html += '</div>';
           }
           html += '    <pre style="display: block; word-wrap: break-word; font-size: 11px; text-align: center; margin: auto; line-height:1.5; color: #6B6B6B; width: 20em;">' + widget.content + '</pre>';
           html += '    <span style="display: block; margin: 10px auto; width: 80%; padding: 7px;  color: #FFF; background-color: rgb(188, 188, 188); font-size: 25px; font-weight: bold; text-align: center; border: 1px solid rgb(188, 188, 188); border-radius: 15px">' + userInfo.accessId + '</span>';
@@ -126,14 +126,20 @@ var socket, // socket.io
     load: {
       id: "loadingImg",
       flg: false,
+      timer: null,
       start:  function(){
+        window.clearTimeout(this.timer);
         var div = document.createElement('div');
         div.id = this.id;
         div.style.cssText = "position: fixed; top: 0; left: 0; bottom: 0; right: 0; background-color: rgba(255,255,255); z-index: 99999";
         document.body.appendChild(div);
         this.flg = true; // 一度接続済みというフラグを持たせる
+        this.timer = window.setTimeout(function(){
+          common.load.finish();
+        }, 8000);
       },
       finish: function(){
+        window.clearTimeout(this.timer);
         if ( document.getElementById(this.id) ) {
           var target = document.getElementById(this.id);
           target.parentNode.removeChild(target);
@@ -175,7 +181,7 @@ var socket, // socket.io
       var ret = false;
       // 消費者のみ、ローカルストレージとセッションストレージが使用できる環境のみ
       if (window.localStorage && window.sessionStorage) {
-        if (!check.isset(common.tmpParams) && !check.isset(sessionStorage.params)) {
+        if (!check.isset(common.tmpParams) && !check.isset(storage.s.get('params'))) {
           ret = true;
         }
       }
@@ -195,6 +201,14 @@ var socket, // socket.io
         return ( Object.keys(a).length !== 0 );
       }
       return true;
+    },
+    firstUrl: function(){
+      if ( location.href.match('/sincloData\=/') ) {
+        return true;
+      }
+      else {
+        return false;
+      }
     },
     ref: function(){
       var reg = new RegExp("^http(s)?:\/\/([A-z]+.)?" + location.hostname + "\/"),
@@ -235,10 +249,7 @@ var socket, // socket.io
         userInfo.sendTabId = common.params.sendTabId;
         userInfo.tabId = common.params.tabId;
         userInfo.setConnect(common.params.connectToken);
-        emit('connectSuccess', {
-          confirm: false,
-          subWindow: true
-        });
+        emit('connectSuccess', {confirm: false});
       }
 
     },
@@ -428,10 +439,19 @@ var socket, // socket.io
 
   browserInfo = {
     referrer: "",
-    href: location.href.replace(location.search, ""),
+    href: location.href,
     prevList: [],
+    scrollSize: { // 全体のスクロール幅
+      x: window.pageXOffset || document.body.scrollWidth - document.documentElement.clientWidth,
+      y: window.pageYOffset || document.body.scrollHeight - document.documentElement.clientHeight
+    },
     sc: function(){
-      return 'BackCompat' === document.compatMode ? document.body : document.documentElement
+      if ( document.body.scrollTop > document.documentElement.scrollTop || document.body.scrollLeft > document.documentElement.scrollLeft ) {
+        return document.body;
+      }
+      else {
+        return document.documentElement;
+      }
     },
     resetPrevList: function(){
       var prevList = [];
@@ -441,17 +461,20 @@ var socket, // socket.io
     },
     setPrevList: function(){
       var prevList = [];
-      if ( check.isset(sessionStorage.prevList) ) {
-        prevList = JSON.parse(sessionStorage.prevList);
+      if ( check.isset(storage.s.get('prevList')) ) {
+        prevList = JSON.parse(storage.s.get('prevList'));
       }
       prevList.push(this.href);
       this.prevList = prevList;
-      sessionStorage.prevList = JSON.stringify(this.prevList);
+      storage.s.set('prevList', JSON.stringify(this.prevList));
     },
     windowScroll: function (){
+      var customDoc = browserInfo.sc();
+      var x = (customDoc.scrollLeft);
+      var y = (customDoc.scrollTop);
       return {
-        x: window.pageXOffset || this.sc().scrollLeft,
-        y: window.pageYOffset || this.sc().scrollTop
+        x: (x / browserInfo.scrollSize.x),
+        y: (y / browserInfo.scrollSize.y)
       };
     },
     windowScreen: function(){
@@ -477,10 +500,10 @@ var socket, // socket.io
     interval: Math.floor(1000 / 60 * 10),
     set: {
       scroll: function(obj){
-        document.body.scrollLeft = obj.x;
-        document.body.scrollTop  = obj.y;
-        document.documentElement.scrollLeft = obj.x;
-        document.documentElement.scrollTop  = obj.y;
+        document.body.scrollLeft = browserInfo.scrollSize.x * obj.x;
+        document.body.scrollTop  = browserInfo.scrollSize.y * obj.y;
+        document.documentElement.scrollLeft = browserInfo.scrollSize.x * obj.x;
+        document.documentElement.scrollTop  = browserInfo.scrollSize.y * obj.y;
       }
     }
   };
@@ -503,13 +526,20 @@ var socket, // socket.io
           if ( socket === undefined ) return false;
           // 排他処理
           if ( "body" === syncEvent.receiveEvInfo.nodeName && "scroll" === syncEvent.receiveEvInfo.type ) return false;
-console.log('sc', {x: e.clientX, y: e.clientY});
           // スクロール用
           emit('syncBrowserInfo', {
             accessType: userInfo.accessType,
             mousePoint: {x: e.clientX, y: e.clientY},
             scrollPosition: browserInfo.windowScroll()
           });
+        }
+      },
+      {
+        type: "hashchange",
+        ev: function(e){
+          if ( socket === undefined ) return false;
+          browserInfo.href = location.href;
+          emit('reqUrlChecker', {});
         }
       },
       {
@@ -582,8 +612,12 @@ console.log('sc', {x: e.clientX, y: e.clientY});
     },
     changeCall: function(e){
       var nodeName = e.target.nodeName.toLowerCase(),
+          checked = false,
           index = $(String(nodeName)).index(this);
       if ( nodeName !== "input" && nodeName !== "textarea" && nodeName !== "select" ) return false;
+      if ( e.target.type === "radio" || e.target.type === "checkbox" ) {
+        checked = e.target.checked;
+      }
       // 排他処理
       if ( nodeName === String(syncEvent.receiveEvInfo.nodeName) &&  Number(index) === Number(syncEvent.receiveEvInfo.idx) ) return false;
       emit('syncChangeEv', {
@@ -592,6 +626,8 @@ console.log('sc', {x: e.clientX, y: e.clientY});
         accessType: userInfo.accessType,
         nodeName: nodeName,
         type: e.type,
+        nodeType: e.target.type,
+        checked: checked,
         idx: index,
         value: this.value
       });
@@ -599,6 +635,16 @@ console.log('sc', {x: e.clientX, y: e.clientY});
     focusCall: function(e){
       this.addEventListener('keyup', syncEvent.changeCall, false);
       this.addEventListener('change', syncEvent.changeCall, false);
+    },
+    disabledSubmit: function(e) {
+      if ( userInfo.accessType !== cnst.access_type.host ) {
+        emit('requestSyncStop', {message: "お客様がsubmitボタンをクリックしましたので、\n画面共有を終了します。"});
+      }
+      else {
+        emit('requestSyncStop', {});
+        e.preventDefault();
+        return false;
+      }
     },
     elmScrollCallTimers: {},
     elmScrollCall: function(e){
@@ -650,6 +696,8 @@ console.log('sc', {x: e.clientX, y: e.clientY});
       // 要素に対してのイベント操作
       var els = document.getElementsByTagName('input');
       this.ctrlElmEventListener(eventFlg, els, "focus", syncEvent.focusCall);
+        // checkbox, radioボタンのイベント操作
+        this.ctrlElmEventListener(eventFlg, els, "change", syncEvent.changeCall);
       var els = document.getElementsByTagName('textarea');
       this.ctrlElmEventListener(eventFlg, els, "focus", syncEvent.focusCall);
 
@@ -667,7 +715,6 @@ console.log('sc', {x: e.clientX, y: e.clientY});
       // プルダウンに対してのイベント操作
       var els = document.getElementsByTagName("select");
       this.ctrlElmEventListener(eventFlg, els, "change", syncEvent.changeCall);
-
 
       // 要素スクロール
       var scEls = [];
@@ -705,21 +752,22 @@ console.log('sc', {x: e.clientX, y: e.clientY});
       }
       this.ctrlElmEventListener(eventFlg, scEls, "scroll", syncEvent.elmScrollCall);
 
+      // フォーム制御
+      if ( document.forms.length > 0 ) {
+        if ( ('form' in info.dataset) && String(info.dataset.form) === "1" ) {
+            this.ctrlElmEventListener(eventFlg, scEls, "submit", syncEvent.disabledSubmit);
+        }
+      }
+
     },
     start: function(e){ syncEvent.change(true); },
     stop: function(e){ syncEvent.change(false); }
   };
 
   var windowBeforeUnload = function(e) {
-    var subWindow = true;
-    if ( !check.isset(sessionStorage.params) && userInfo.accessType !== cnst.access_type.host ) {
-      subWindow = false;
-    }
-
     emit('connectSuccess', {
       confirm: true,
       widget: window.info.widgetDisplay,
-      subWindow: subWindow,
       connectToken: userInfo.connectToken
     });
   };
@@ -846,10 +894,14 @@ function emit(evName, data){
   data.title = common.title();
   data.siteKey = info.site.key;
   data.url= browserInfo.href;
+  data.subWindow = false;
   data.tabId = userInfo.tabId;
   data.prevList = browserInfo.prevList;
   data.accessType = userInfo.accessType;
   data.connectToken = userInfo.get(cnst.info_type.connect);
+  if ( check.isset(storage.s.get('params')) && userInfo.accessType === cnst.access_type.host ) {
+    data.subWindow = true;
+  }
   if ( evName == "sendWindowInfo" ) {
     data.connectToken = userInfo.connectToken;
   }

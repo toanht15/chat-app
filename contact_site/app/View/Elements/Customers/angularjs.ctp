@@ -19,7 +19,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       window.open(option.url,
                   option.tabId,
                   "width=" + option.width + ",height=" + option.height +
-                  ",dialog=no,toolbar=no,location=no,status=no,menubar=no,directories=no,resizable=no, scrollbars=no"
+                  ",dialog=no,toolbar=no,location=no,status=no,menubar=no,directories=no, scrollbars=no"
       );
       return false;
     },
@@ -33,6 +33,17 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         date = d.getFullYear() + '/' + ( '0' + (d.getMonth() + 1) ).slice(-2) + '/' + ('0' + d.getDate()).slice(-2),
         time = d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
     return date + " " + time;
+  }
+
+  function updateSort(monitor){
+    var sort = "0";
+    if ( angular.isDefined(monitor) ) {
+      if ( ('connectToken' in monitor) && monitor.connectToken ) {
+        sort = "1";
+      }
+      monitor.monitorSort = String(sort) + String(monitor.time);
+    }
+    return monitor;
   }
 
   // http://weathercook.hatenadiary.jp/entry/2013/12/02/062136
@@ -167,7 +178,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           type: 'GET',
           url: "<?= $this->Html->url(array('controller' => 'Customers', 'action' => 'remoteGetStayLogs')) ?>",
           data: {
-            tmpCustomersId: monitor.userId,
+            visitorsId: monitor.userId,
             tabId: monitor.tabId
           },
           dataType: 'html',
@@ -179,8 +190,14 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         });
     };
 
+    $scope.objCnt = function(list){
+      if ( angular.isUndefined(list) ) return 0;
+      var ret = Object.keys(list);
+      return ret.length;
+    };
+
     function pushToList(obj){
-      $scope.monitorList[obj.tabId] = obj;
+      $scope.monitorList[obj.tabId] = updateSort(obj);
     }
 
     socket.on('receiveAccessInfo', function (data) {
@@ -208,6 +225,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         else {
           socket.emit('getCustomerInfo', JSON.stringify({tabId: obj.tabId}));
         }
+        $scope.monitorList[obj.tabId] = updateSort($scope.monitorList[obj.tabId]);
       }
       else {
         // 接続中
@@ -219,31 +237,20 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     socket.on('windowSyncInfo', function (data) {
       // 担当しているユーザーかチェック
-      var obj = JSON.parse(data), url, scscale, scwidth, scheight;
+      var obj = JSON.parse(data), url;
       if (connectToken !== obj.connectToken) return false;
-      scscale = screen.availWidth / obj.screen.width;
-      var wSpan = window.parent.screen.width - obj.windowSize.width;
-      var hSpan = window.parent.screen.height - obj.windowSize.height;
-      // サイズが超えてしまう場合
-      if ( wSpan < 0 || hSpan < 0 ) {
-        // 縮小する
-        if ( hSpan > wSpan ) {
-          scscale = screen.availHeight / obj.screen.height;
-        }
-      }
-      scwidth = obj.windowSize.width * scscale;
-      scheight = obj.windowSize.height * scscale;
+
       connectToken = null; // リセット
       url  = "<?= $this->Html->url(array('controller'=>'Customers', 'action'=>'frame')) ?>/?userId=" + obj.userId + "&type=" + _access_type_host;
       url += "&url=" + encodeURIComponent(obj.url) + "&userId=" + obj.userId;
       url += "&connectToken=" + obj.connectToken + "&id=" + obj.tabId;
-      url += "&width=" + obj.windowSize.width + "&height=" + obj.windowSize.height + "&scale=" + scscale;
+      url += "&width=" + obj.windowSize.width + "&height=" + obj.windowSize.height;
       modalFunc.set.call({
         option: {
           url: url,
           tabId: obj.tabId,
-          width: scwidth,
-          height: scheight
+          width: 300,
+          height: 300
         }
       });
     });
@@ -256,6 +263,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var obj = JSON.parse(data);
       if ( obj.tabId !== undefined && angular.isDefined($scope.monitorList[obj.tabId])) {
         $scope.monitorList[obj.tabId].connectToken = obj.connectToken;
+        $scope.monitorList[obj.tabId] = updateSort($scope.monitorList[obj.tabId]);
       }
     });
 
@@ -263,6 +271,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var obj = JSON.parse(data);
       if ( obj.tabId !== undefined && angular.isDefined($scope.monitorList[obj.tabId])) {
         $scope.monitorList[obj.tabId].connectToken = "";
+        $scope.monitorList[obj.tabId] = updateSort($scope.monitorList[obj.tabId]);
       }
     });
 
@@ -284,6 +293,21 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     });
 
   }]);
+
+  sincloApp.filter('orderObjectBy', function() {
+    return function(items, field, reverse) {
+      var filtered = [];
+      var obj = ( typeof field === "object" );
+      angular.forEach(items, function(item) {
+        filtered.push(item);
+      });
+      filtered.sort(function (a, b) {
+        return (a[field] > b[field] ? 1 : -1);
+      });
+      if(reverse) filtered.reverse();
+      return filtered;
+    };
+  });
 
   sincloApp.filter('customDate', function(){
     return function(input) {

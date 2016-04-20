@@ -41,16 +41,12 @@
       // モニタリング中であればスルー
       if ( check.isset(userInfo.connectToken) ) {
         common.load.start();
-        if ( Number(userInfo.accessType) !== Number(cnst.access_type.guest) ) {
-          // emit('requestSyncStart', {});
-        }
-        else {
+        if ( Number(userInfo.accessType) === Number(cnst.access_type.guest) ) {
           emitData.connectToken = userInfo.connectToken;
           userInfo.syncInfo.get();
           emit('connectSuccess', {
             confirm: false,
             widget: window.info.widgetDisplay,
-            subWindow: false,
             prev: userInfo.prev,
             userAgent: window.navigator.userAgent,
             time: userInfo.time,
@@ -58,13 +54,17 @@
             referrer: userInfo.referrer
           });
         }
-        emit('reqUrlChecker', {});
 
         if ( check.isset(common.tmpParams) ) {
           browserInfo.resetPrevList();
           emit('requestSyncStart', {
             accessType: common.params.type
           });
+        }
+
+        var re = new RegExp("sincloData\=");
+        if ( !re.test(browserInfo.href) ) {
+          emit('reqUrlChecker', {});
         }
 
         browserInfo.setPrevList();
@@ -77,9 +77,9 @@
 
           window.clearTimeout(this.syncTimeout);
           this.syncTimeout = window.setTimeout(function(){
-            userInfo.syncInfo.unset();
             emit('requestSyncStop', emitData);
             emit('connected', {type: 'user',data: emitData});
+            userInfo.syncInfo.unset();
           }, 5000);
 
         }
@@ -93,10 +93,9 @@
     accessInfo: function(d){
       var obj = common.jParse(d);
       if ( obj.token !== common.token ) return false;
-
       if ( check.isset(obj.accessId) && !check.isset(obj.connectToken)) {
         userInfo.set(cnst.info_type.access, obj.accessId, true);
-        common.makeAccessIdTag(userInfo.accessId);
+        common.makeAccessIdTag();
       }
 
       if ( obj.firstConnection ) {
@@ -115,7 +114,6 @@
       emit('connectSuccess', {
         confirm: false,
         widget: window.info.widgetDisplay,
-        subWindow: false,
         prev: userInfo.prev,
         userAgent: window.navigator.userAgent,
         time: userInfo.time,
@@ -124,16 +122,12 @@
       });
     },
     connectConfirm: function(d) {
-      var obj = common.jParse(d), subWindow = false;
+      var obj = common.jParse(d);
       if ( userInfo.tabId !== obj.tabId ) return false;
-      if ( userInfo.accessType === Number(cnst.access_type.host) ) {
-        subWindow = true;
-      }
 
       emit('connectSuccess', {
         confirm: true,
         widget: window.info.widgetDisplay,
-        subWindow: subWindow,
         prev: userInfo.prev
       });
     },
@@ -195,20 +189,31 @@
     },
     syncStart: function(d) {
       var obj = common.jParse(d);
-      if ( obj.to !== userInfo.tabId && obj.from !== userInfo.tabId ) return false;
-      if ( obj.to === userInfo.tabId ) {
+      if ( Number(userInfo.accessType) === Number(cnst.access_type.host) ) {
         window.clearTimeout(this.syncTimeout);
+        return false;
       }
-      if ( obj.to !== userInfo.tabId ) return false;
-      // userInfo.getConnect()
       common.load.start();
       userInfo.setConnect(obj.connectToken);
-      userInfo.sendTabId = obj.from;
-      userInfo.syncInfo.set();
+      if ( !check.isset(userInfo.sendTabId) ) {
+        userInfo.sendTabId = obj.from;
+        userInfo.syncInfo.set();
+      }
+      else {
+       userInfo.syncInfo.get();
+      }
       // フォーム情報収集
       var inputInfo = [];
       $('input').each(function(){
         inputInfo.push(this.value);
+      });
+      var checkboxInfo = [];
+      $('input[type="checkbox"]').each(function(){
+        checkboxInfo.push(this.checked);
+      });
+      var radioInfo = [];
+      $('input[type="radio"]').each(function(){
+        radioInfo.push(this.checked);
       });
        var textareaInfo = [];
       $('textarea').each(function(){
@@ -227,6 +232,8 @@
         userId: userInfo.userId,
         connectToken: userInfo.connectToken,
         inputInfo: inputInfo,
+        checkboxInfo: checkboxInfo,
+        radioInfo: radioInfo,
         textareaInfo: textareaInfo,
         selectInfo: selectInfo,
         // スクロール位置の取得
@@ -235,17 +242,12 @@
     },
     syncElement: function(d){
       var obj = common.jParse(d);
-      if ( obj.to === userInfo.tabId ) {
-        window.clearTimeout(this.syncTimeout);
-      }
-
-      if ( obj.to !== userInfo.tabId ) return false;
-      if ( Number(userInfo.accessType) ==! Number(cnst.access_type.host) ) return false;
+      window.clearTimeout(this.syncTimeout);
 
       $("body").animate(
         {
-          scrollLeft:obj.scrollPosition.x,
-          scrollTop:obj.scrollPosition.y
+          scrollLeft: browserInfo.scrollSize.x * obj.scrollPosition.x,
+          scrollTop: browserInfo.scrollSize.y * obj.scrollPosition.y
         },
         {
             duration: 'first',
@@ -254,6 +256,14 @@
               for ( var i in obj.inputInfo ) {
                 var n = Number(i);
                 $('input').eq(n).val(obj.inputInfo[n]);
+              }
+              for ( var i in obj.checkboxInfo ) {
+                var n = Number(i);
+                $('input[type="checkbox"]').eq(n).prop("checked", obj.checkboxInfo[n]);
+              }
+              for ( var i in obj.radioInfo ) {
+                var n = Number(i);
+                $('input[type="radio"]').eq(n).prop("checked", obj.radioInfo[n]);
               }
               for ( var i in obj.textareaInfo ) {
                 var n = Number(i);
@@ -275,6 +285,7 @@
       var obj = common.jParse(d);
       if ( obj.to !== userInfo.tabId && obj.from !== userInfo.tabId ) return false;
       syncEvent.start(true);
+      window.clearTimeout(sinclo.syncTimeout);
       common.load.finish();
     },
     syncResponce: function(d){
@@ -318,6 +329,9 @@
       syncEvent.receiveEvInfo.idx = Number(obj.idx);
       switch (obj.type) {
         case "change":
+          if ( String(obj.nodeType) === "radio" || String(obj.nodeType) === "checkbox" ) {
+            elm.prop('checked', obj.checked);
+          }
         case "keyup":
           elm.val(obj.value);
           break;
@@ -352,18 +366,26 @@
     },
     setWidgetInfo: function(d){
       var obj = JSON.parse(d);
+      window.info.widgetDisplay = false; // デフォルト表示しない
+      // ウィジェットを常に表示する
       if ( check.isset(obj.widget) && obj.widget.display_type === 1 ) {
         window.info.widgetDisplay = true;
         window.info.widget = obj.widget;
       }
+      // オペレーターの数に応じて表示する
       else if ( check.isset(obj.widget) && obj.widget.display_type === 2 ) {
         if ( obj.widget.active_operator_cnt > 0 ) {
           window.info.widgetDisplay = true;
           window.info.widget = obj.widget;
         }
       }
-      else {
+      if (!window.info.widgetDisplay) {
+        return false;
+      }
+      // 同期対象とするが、ウィジェットは表示しない
+      if (check.isset(window.info['dataset']) && (check.isset(window.info.dataset['hide']) && window.info.dataset.hide === "1")) {
         window.info.widgetDisplay = false;
+        return false;
       }
       var html = common.widgetTemplate();
       common.load.finish();
@@ -371,7 +393,7 @@
       if ( sincloBox ) {
         sincloBox.parentNode.removeChild(sincloBox);
       }
-      if ( !check.isset(sessionStorage.params) ) {
+      if ( !check.isset(storage.s.get('params')) ) {
         $('body').append(html);
         common.sincloBoxHeight = 0;
         $("#sincloBox").children().each(function(){
@@ -390,25 +412,21 @@
     },
     resUrlChecker: function(d){
       var obj = JSON.parse(d);
-      if ( obj.connectToken !== userInfo.connectToken ) return false;
-      if ( obj.accessType === userInfo.accessType ) return false;
-      if ( obj.to === userInfo.tabId ) {
-        if ( obj.url !== browserInfo.href ) {
-          common.load.start();
-          location.href = obj.url;
-        }
-        else {
-          emit('requestSyncStart', {
-            accessType: common.params.type
-          });
-        }
+      if ( obj.url !== browserInfo.href ) {
+        common.load.start();
+        location.href = obj.url;
+      }
+      else {
+        emit('requestSyncStart', {
+          accessType: common.params.type
+        });
       }
     },
     syncStop: function(d){
       var obj = common.jParse(d);
       if ( obj.connectToken !== userInfo.connectToken ) return false;
       if ( obj.tabId !== userInfo.tabId ) return false;
-      if (check.isset(common.tmpParams) || check.isset(sessionStorage.params)) return false;
+      if (check.isset(common.tmpParams) || check.isset(storage.s.get('params'))) return false;
       syncEvent.stop(false);
       userInfo.syncInfo.unset();
       common.makeAccessIdTag(userInfo.accessId);

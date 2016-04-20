@@ -1,13 +1,14 @@
 <script type="text/javascript">
 <!--
-var socket, userId, iframe, connectToken, url, emit, windowResize, arg = new Object;
+'use strict';
+var socket, userId, ws, tabId, iframe, connectToken, url, emit, windowResize, arg = new Object;
 
 (function(){
   // -----------------------------------------------------------------------------
   //  関数
   // -----------------------------------------------------------------------------
 
-  pair=location.search.substring(1).split('&');
+  var pair=location.search.substring(1).split('&');
   for(var i=0;pair[i];i++) {
       var kv = pair[i].split('=');
       arg[kv[0]]=kv[1];
@@ -26,14 +27,47 @@ var socket, userId, iframe, connectToken, url, emit, windowResize, arg = new Obj
     socket.emit(ev, data);
   };
 
+  var frameSize = {
+    width: window.outerWidth - window.innerWidth,
+    height: window.outerHeight - window.innerHeight
+  };
+
   windowResize = function (ws) {
-    iframe.width = ws.width;
-    iframe.height = ws.height;
+    ws = {'width':Number(ws.width), 'height':Number(ws.height)};
+    // 現在のウィンドウサイズを保存しておく
+    sessionStorage.setItem('window', JSON.stringify(ws));
+
+    var innerW  = Number(ws.width) ;
+    var innerH = Number(ws.height);
+    if ( ws.width > screen.availWidth || ws.height > screen.availHeight ) {
+      if ( ws.width > screen.availWidth ) {
+        innerW = ws.width * (ws.height / screen.availHeight);
+      }
+      else {
+        innerH = ws.height * (ws.width / screen.availWidth);
+      }
+    }
+
+    iframe.width = innerW;
+    iframe.height = innerH;
+
+    if ( !('width' in frameSize) || !('height' in frameSize)  ) {
+      frameSize = {
+        width: window.outerWidth - window.innerWidth,
+        height: window.outerHeight - window.innerHeight
+      };
+    }
+
     var outHeightSize = window.outerHeight - window.innerHeight;
     var outWidthSize = window.outerWidth - window.innerWidth;
-    wswidth = ws.width * arg.scale + outWidthSize;
-    wsheight = ws.height * arg.scale + outHeightSize;
-    window.resizeTo(wswidth, wsheight);
+    var wswidth = innerW + frameSize.width;
+    var wsheight = innerH + frameSize.height;
+    try {
+      window.resizeTo(wswidth, wsheight);
+    }
+    catch(e) {
+      console.log("error resize.", e);
+    }
   };
 })();
 
@@ -54,34 +88,47 @@ window.onload = function(){
   socket.on('connect', function(){
     userId = arg.userId;
     tabId = arg.id;
-    try {
-      if ( sessionStorage.getItem('url') ) {
-        url = sessionStorage.url;
-      }
-      else {
-        url = decodeURIComponent(arg.url);
-      }
+    if ( sessionStorage.getItem('url') && sessionStorage.getItem('window') ) {
+      url = sessionStorage.getItem('url');
+      ws = JSON.parse(sessionStorage.getItem('window'));
     }
-    catch(e) {
-      alert('connection error.');
-      return false;
+    else {
+      url = decodeURIComponent(arg.url);
+
+      ws = {'width':arg.width, 'height':arg.height};
+      // 現在のウィンドウサイズを保存しておく
+      sessionStorage.setItem('window', JSON.stringify(ws));
     }
 
     var content = document.getElementById('customer_flame');
-    var html  = "<iframe src='' style='transform:scale(" + Number(arg.scale) + "); transform-origin: 0 0' ";
-        html += "        width='" + arg.width + "' height='" + arg.height + "' sandbox=\"allow-scripts allow-top-navigation allow-same-origin allow-modals\"></iframe>";
+    var html  = "<iframe src='' style='transform-origin: 0 0' ";
+        html += "        width='300' height='300' sandbox=\"allow-scripts allow-top-navigation allow-forms allow-same-origin allow-modals\"></iframe>";
 
     content.innerHTML = html;
     iframe = document.getElementsByTagName('iframe')[0];
 
-    iframe.src = url + "?type=2&userId=" + userId + "&sendTabId=" + tabId + "&connectToken=" + arg.connectToken + "&first=true";
+    if ( url.match(/\?/) ) {
+      url += "&";
+    }
+    else {
+      url += "?";
+    }
+
+    var data = {
+      type:2,
+      userId: userId,
+      sendTabId: tabId,
+      connectToken: arg.connectToken,
+      first: true
+    };
+
+    iframe.src = url + "sincloData=" + encodeURIComponent(JSON.stringify(data));
+    windowResize(ws);
     emit('connectFrame', {tabId: tabId});
   });
 
   socket.on('syncResponce', function(data){
     var obj = JSON.parse(data);
-    if ( obj.from !== tabId ) return false;
-    if ( obj.windowSize === undefined ) return false;
     windowResize(obj.windowSize);
   });
 
@@ -93,9 +140,31 @@ window.onload = function(){
 
   // ページ移動が行われるタイミング
   socket.on('syncStart', function(d){
-    var obj = JSON.parse(d);
+    var obj = JSON.parse(d), str, re, array;
+
     // 現在のURLを保存しておく
-    sessionStorage.setItem('url', obj.url);
+    str = obj.url;
+    re = new RegExp("[?|&]{1}\sincloData=", "g");
+    array = re.exec(str);
+
+    if ( (array !== null) && ('index' in array) ) {
+      sessionStorage.setItem('url', str.substring(0, array.index));
+    }
+    else {
+      sessionStorage.setItem('url', obj.url);
+    }
+  });
+
+  socket.on('syncStop', function(d){
+    var obj = JSON.parse(d);
+    if (('message' in obj) && window.confirm(obj.message)){
+      window.open('about:blank', '_self').close();
+      window.close();
+    }
+    else {
+      window.open('about:blank', '_self').close();
+      window.close();
+    }
   });
 
   socket.on('unsetUser', function(d){

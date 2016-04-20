@@ -46,7 +46,7 @@ else {
 <!-- /* 上部カラーバー(ここまで) */ -->
 
 <!-- /* システムアイコン（ここから） */ -->
-<div id="sys-icon" class="card-shadow"><?= $this->Html->image('icon.png', array('alt' => 'アイコン', 'width' => 50, 'height' => 50, 'style'=>'margin: 0 auto; display: block; opacity: 0.7'))?></div>
+<div id="sys-icon" class="card-shadow"><?= $this->Html->image('sinclo_square_logo.png', array('alt' => 'アイコン', 'width' => 54, 'height' => 48, 'style'=>'margin: 6px 3px; display: block'))?></div>
 <!-- /* システムアイコン（ここまで） */ -->
 
 <!-- /* サイドバー１（ここから） */ -->
@@ -71,18 +71,22 @@ else {
         <div class="icon">
             <?= $this->htmlEx->naviLink('個人設定', 'monitor.png', ['href' => ['controller' => 'PersonalSettings', 'action' => 'index']]) ?>
         </div>
+    <?php if (strcmp($userInfo['permission_level'], C_AUTHORITY_ADMIN) === 0): ?>
         <div class="icon" style="display:none">
             <?= $this->htmlEx->naviLink('企業設定', 'company.png', ['href' => ['controller' => 'Customers', 'action' => 'index']]) ?>
         </div>
         <div class="icon">
             <?= $this->htmlEx->naviLink('ユーザーマスタ', 'monitors.png', ['href' => ['controller' => 'MUsers', 'action' => 'index']]) ?>
         </div>
+    <?php endif; ?>
         <div class="icon">
             <?= $this->htmlEx->naviLink('コード・デモ', 'script.png', ['href' => ['controller' => 'ScriptSettings', 'action' => 'index']]) ?>
         </div>
+    <?php if (strcmp($userInfo['permission_level'], C_AUTHORITY_ADMIN) === 0): ?>
         <div class="icon">
             <?= $this->htmlEx->naviLink('ウィジェット', 'chat.png', ['href' => ['controller' => 'MWidgetSettings', 'action' => 'index']]) ?>
         </div>
+    <?php endif; ?>
     </div>
 </div>
 <!-- /* サイドバー２（ここまで） */ -->

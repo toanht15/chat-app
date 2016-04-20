@@ -42,9 +42,6 @@ var userAgentChk = (function(){
       else if (ua.match(/Mac|PPC/)) {
         os = "Mac OS"; // Macintosh の処理
       }
-      else if (ua.match(/Linux/)) {
-        os = "Linux"; // Linux の処理
-      }
       else if (ua.match(/^.*\s([A-Za-z]+BSD)/)) {
         os = RegExp.$1; // BSD 系の処理
       }
@@ -60,8 +57,11 @@ var userAgentChk = (function(){
       else if (ua.indexOf(/iPod/) > 0) {
         os = "iPod"; // iPod の処理
       }
-      else if (ua.indexOf(/Android/) > 0) {
+      else if (ua.match(/Android/)) {
         os = "Android"; // Android の処理
+      }
+      else if (ua.match(/Linux/)) {
+        os = "Linux"; // Linux の処理
       }
       else {
         os = "unknown"; // 上記以外 OS の処理
@@ -82,15 +82,15 @@ var userAgentChk = (function(){
       if (ua.indexOf("msie") != -1 ) {
           name = 'Internet Explorer' + _get_var(ua, "msie ", ";");
       } else if ( ua.indexOf('trident/7') != -1){
-          name = 'Internet Explorer' + _get_var(ua, "rv:", ")");
+          name = 'IE' + _get_var(ua, "rv:", ")");
       } else if (ua.indexOf('edge') != -1 ) {
-          name = 'Microsoft Edge' + _get_var(ua, "edge/", ";");
+          name = 'Edge' + _get_var(ua, "edge/", ";");
       } else if (ua.indexOf('opera') != -1 ) {
           name = 'Opera' + _get_var(ua, "opera/", ";");
       } else if (ua.indexOf('opr') != -1){
           name = 'Opera' + _get_var(ua, "opr/", ";");
       } else if (ua.indexOf('chrome') != -1){
-          name = 'Google Chrome' + _get_var(ua, "chrome/", " ");
+          name = 'Chrome' + _get_var(ua, "chrome/", " ");
       } else if (ua.indexOf('safari') != -1){
           name = 'Safari' + _get_var(ua, "version/", " ");
       } else if (ua.indexOf('firefox') != -1){

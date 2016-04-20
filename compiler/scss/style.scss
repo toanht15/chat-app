@@ -162,7 +162,7 @@ div[id$='_list'] {
     &.omit {
       width: 20em;
 
-      span {
+      span, a {
             width: 20em;
             text-overflow: ellipsis;
             overflow: hidden;
@@ -422,7 +422,6 @@ a {
   z-index: 4;
   width: 60px;
   height: 60px;
-  padding: 5px;
 }
 
 /* ヘッダー：カラーバー */
@@ -610,8 +609,7 @@ ul#color-bar-right {
   height: 320px;
   border: none;
   border-radius: 5px;
-  background: -moz-linear-gradient(top, #F8FCFD, #EEF2F3);
-  background: -webkit-gradient(linear, left top, left bottom, from(#F8FCFD), to(#EEF2F3));
+  background: linear-gradient(to top, #F8FCFD, #EEF2F3);
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#F8FCFD', endColorstr='#EEF2F3', GradientType=0)";
   box-shadow: 0 0 5px $shadow-color;
   padding: 15px;
@@ -763,7 +761,7 @@ div {
         height: 45px;
         float: left;
 
-        &#copyBtn {
+        &.copyBtn {
           display: inline-block;
           padding: 10px 5px;
           background-color: #FFF;
@@ -771,7 +769,7 @@ div {
           width: 36px!important;
         }
 
-        &#copyArea {
+        &.copyArea {
           height: 45px;
           padding: 10px;
           width: $ssc-content-width - 38px!important;
@@ -972,7 +970,7 @@ div {
       font-weight: bold;
       font-size: 14px;
 
-      ul {
+      ul, span {
         background-color: #eee;
         width: 90%;
         margin: 0 auto;
@@ -982,6 +980,11 @@ div {
           list-style-type: circle;
           font-size: 12px;
         }
+      }
+
+      span {
+        display: block;
+        margin-bottom: 20px;
       }
     }
 

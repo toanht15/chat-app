@@ -60,10 +60,29 @@
       <h1>Customer</h1>
       <div id="chat-area">
         <div class="input-prepend">
+          <p>名前</p>
           <input type="text" id="name" placeholder="名前"><br />
+          <p>年齢</p>
           <input type="text" id="old" placeholder="年齢"><br />
+          <p>会社</p>
           <input type="text" id="office" placeholder="会社"><br />
+          <p>趣味</p>
           <input type="text" id="favorite" placeholder="趣味"><br />
+          <p>年代</p>
+            <label><input type="radio" name="sendai" value="１年生" checked>平成１年</label>
+            <label><input type="radio" name="sendai" value="２年生">平成２年</label>
+            <label><input type="radio" name="sendai" value="３年生">平成３年</label>
+            <label><input type="radio" name="sendai" value="４年生">平成４年</label>
+            <label><input type="radio" name="sendai" value="５年生">平成５年</label>
+            <label><input type="radio" name="sendai" value="６年生">平成６年</label>
+          <p>好きな言語</p>
+            <label><input type="checkbox" name="kamoku" value="PHP">PHP</label>
+            <label><input type="checkbox" name="kamoku" value="JavaScript">JavaScript</label>
+            <label><input type="checkbox" name="kamoku" value="Java">Java</label>
+            <label><input type="checkbox" name="kamoku" value="Ruby">Ruby</label>
+            <label><input type="checkbox" name="kamoku" value="Scala">Scala</label>
+            <label><input type="checkbox" name="kamoku" value="Swift">Swift</label>
+          <p>その他</p>
           <textarea id="other" placeholder="その他"></textarea><br />
           <button id="sendButton" onclick="alert('hoge!')">send!!</button>
         </div>
