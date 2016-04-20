@@ -30,9 +30,9 @@
         echo $this->Html->meta(array('http-equiv' => "Cache-Control", 'content' => "no-cache"));
         echo $this->fetch('meta');
         echo $this->Html->script("//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js");
-        echo $this->Html->script("http://socket.localhost:9090/socket.io/socket.io.js");
-		echo $this->Html->css("style.css");
-		echo $this->Html->css("modal.css");
+        echo $this->Html->script(C_NODE_SERVER_ADDR.C_NODE_SERVER_WS_PORT."/socket.io/socket.io.js");
+        echo $this->Html->css("style.css");
+        echo $this->Html->css("modal.css");
     ?>
     <style type="text/css">
         body { margin: 0; overflow: hidden }
