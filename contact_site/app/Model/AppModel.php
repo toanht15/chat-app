@@ -110,7 +110,7 @@ class AppModel extends Model {
     /**
      * coFind: 企業IDに紐付く情報を取得する関数
      *
-     * @param $type string ('first', 'all')
+     * @param $type string ('first', 'list', 'all')
      * @param $params array find関数の第２引数
      * @return find関数の戻り値
      * */

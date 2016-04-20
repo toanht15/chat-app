@@ -36,6 +36,12 @@ class MUsersController extends AppController {
         $this->paginate['MUser']['conditions']['MUser.m_companies_id'] = $this->userInfo['MCompany']['id'];
         $this->_viewElement();
         $this->set('userList', $this->paginate('MUser'));
+        $this->set('userListCnt', $this->MUser->find('count', [
+          'conditions' => [
+            'MUser.del_flg != ' => 1,
+            'MUser.m_companies_id' => $this->userInfo['MCompany']['id']
+          ]
+        ]));
     }
 
     /* *

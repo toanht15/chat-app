@@ -15,7 +15,7 @@
     height: 100%;
 
     #popup-frame {
-      position: absolute;
+      position: fixed;
       top: 0;
       left: 0;
       right: 0;
@@ -360,7 +360,7 @@
 
 /* ポップアップ用:バックグラウンド */
 #popup-bg {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;

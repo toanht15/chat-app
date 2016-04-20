@@ -461,7 +461,7 @@ connect = io.sockets.on('connection', function (socket) {
   socket.on('requestWindowSync', function (data) {
     var obj = JSON.parse(data);
     // 同形ウィンドウを作成するための情報取得依頼
-    if ( !isset(sincloCore[obj.siteKey][obj.tabId]['sessionId']) ) return false;
+    if ( !getSessionId(obj.siteKey, obj.tabId, 'sessionId') ) return false;
     sincloCore[obj.siteKey][obj.tabId].syncSessionId = null;
     sincloCore[obj.siteKey][obj.tabId].syncHostSessionId = socket.id; // 企業画面側のセッションID
     emit.toUser('getWindowInfo', data, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));

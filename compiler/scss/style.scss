@@ -84,6 +84,10 @@ table {
 
 }
 
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+  display: none !important;
+}
+
 .require {
   &:after {
     content: "*";
@@ -305,6 +309,10 @@ a {
   display: none;
 }
 
+.bold {
+  font-weight: bold;
+}
+
 .card-shadow {
   box-shadow: 0 0 5px $shadow-color;
 }
@@ -348,8 +356,8 @@ a {
 }
 
 .blueBtn {
-  background-color: #96A3D4;
-  border: 1px solid #96A3D4;
+  background-color: #788DCA;
+  border: 1px solid #788DCA;
   display: block;
   color: white;
   font-weight: bold;
@@ -370,8 +378,8 @@ a {
     color: #fff;
   }
   &.blueBtn:hover {
-    background-color: #808CB7;
-    border: 1px solid #808CB7;
+    background-color: #6A80BE;
+    border: 1px solid #6A80BE;
     transition: background-color, border-color 0.1s linear;
     color: #fff;
   }
@@ -654,6 +662,23 @@ div {
   }
   &[id$=_menu] {
     height: 50px;
+    #paging {
+      min-width: 70px;
+      span {
+        border-radius: 2px;
+        border: 0px;
+        width: 30px;
+        height: 30px;
+        display: inline-block;
+        img {
+          height: 30px;
+          width: 30px;
+          display: block;
+          padding: 2.5px;
+        }
+      }
+    }
+
   }
   &[id$="_title"] {
     border-bottom: 1px solid #8B8B8B;
@@ -691,6 +716,9 @@ div {
       margin: 2px 5px;
     }
   }
+  .monitorOn, .monitorOn * {
+    color: #788DCA;
+  }
   .monitorBtn {
     text-decoration: none;
     font-weight: bold;
@@ -708,22 +736,6 @@ div {
 #history_idx {
   #history_menu {
     height: 50px;
-    #paging {
-      min-width: 70px;
-    }
-    span {
-      border-radius: 2px;
-      border: 0px;
-      width: 30px;
-      height: 30px;
-      display: inline-block;
-      img {
-        height: 30px;
-        width: 30px;
-        display: block;
-        padding: 2.5px;
-      }
-    }
   }
   .monitorBtn {
     text-decoration: none;
@@ -734,6 +746,11 @@ div {
     display: block;
     width: 5em;
     text-align: center;
+  }
+  #history_list {
+    td, th {
+      height: 30px!important;
+    }
   }
 }
 
@@ -790,7 +807,7 @@ div {
 
 /* ユーザマスタ */
 
-#muser_menu [class$='Btn'] {
+#muser_menu img[class$='Btn'] {
   border-radius: 15px;
 }
 

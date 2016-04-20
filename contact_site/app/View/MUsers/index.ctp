@@ -4,14 +4,36 @@
 
 <div id='muser_add_title'>
 	<div class="fLeft"><?= $this->Html->image('setting_g.png', array('alt' => 'ユーザー管理', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?></div>
-	<h1>ユーザー管理<span>（未使用アカウント数：<?=$limitUserNum - count($userList)?>）</span></h1>
+	<h1>ユーザー管理<span>（未使用アカウント数：<?=$limitUserNum - $userListCnt?>）</span></h1>
 </div>
 
-<?php if( $limitUserNum > count($userList) ): ?>
-<div id='muser_menu' class="p20tl">
-<?= $this->Html->image('add.png', array('alt' => '登録', 'class' => 'btn-shadow greenBtn', 'width' => 30, 'height' => 30, 'onclick' => 'openAddDialog()')) ?>
-</div>
+<div id='muser_menu' class="p20trl">
+<?php if( $limitUserNum > $userListCnt ): ?>
+	<div class="fLeft" >
+		<?= $this->Html->image('add.png', array('alt' => '登録', 'class' => 'btn-shadow greenBtn', 'width' => 30, 'height' => 30, 'onclick' => 'openAddDialog()')) ?>
+	</div>
 <?php endif;?>
+	<!-- 検索窓 -->
+	<div id="paging" class="fRight">
+		<?php
+			echo $this->Paginator->prev(
+				$this->Html->image('paging.png', array('alt' => '前のページへ', 'width'=>25, 'height'=>25)),
+				array('escape' => false, 'class' => 'btn-shadow greenBtn tr180'),
+				null,
+				array('class' => 'grayBtn tr180')
+			);
+		?>
+		<span style="width: auto!important"> <?php echo $this->Paginator->counter('{:page} / {:pages}'); ?> </span>
+		<?php
+			echo $this->Paginator->next(
+				$this->Html->image('paging.png', array('alt' => '次のページへ', 'width'=>25, 'height'=>25)),
+				array('escape' => false, 'class' => 'btn-shadow greenBtn'),
+				null,
+				array('escape' => false, 'class' => 'grayBtn')
+			);
+		?>
+	</div>
+</div>
 
 <div id='muser_list' class="p20x">
 	<table>

@@ -270,6 +270,7 @@ var socket, // socket.io
       },
       unset: function(){
         storage.s.unset(this.code);
+        delete userInfo['sendTabId'];
         // TODO minify
         userInfo.unsetConnect();
       }
@@ -442,11 +443,15 @@ var socket, // socket.io
     referrer: "",
     href: location.href,
     prevList: [],
-    scrollSize: { // 全体のスクロール幅
-      x: window.pageXOffset || document.body.scrollWidth - document.documentElement.clientWidth,
-      y: window.pageYOffset || document.body.scrollHeight - document.documentElement.clientHeight
+    // TODO 画面同期時セットするようにする
+    scrollSize: function (){ // 全体のスクロール幅
+      return {
+        x: document.body.offsetWidth - window.innerWidth,
+        y: document.body.offsetHeight - window.innerHeight
+      }
     },
-    sc: function(){
+    // TODO 画面同期時セットするようにする
+    sc: function(){ // スクロール量を取得する先
       if ( document.body.scrollTop > document.documentElement.scrollTop || document.body.scrollLeft > document.documentElement.scrollLeft ) {
         return document.body;
       }
@@ -471,11 +476,12 @@ var socket, // socket.io
     },
     windowScroll: function (){
       var customDoc = browserInfo.sc();
-      var x = (customDoc.scrollLeft);
-      var y = (customDoc.scrollTop);
+      var scrollSize = browserInfo.scrollSize();
+      var x = (customDoc.scrollLeft / scrollSize.x);
+      var y = (customDoc.scrollTop / scrollSize.y);
       return {
-        x: (x / browserInfo.scrollSize.x),
-        y: (y / browserInfo.scrollSize.y)
+        x: (isNaN(x)) ? 0 : x,
+        y: (isNaN(y)) ? 0 : y
       };
     },
     windowScreen: function(){
@@ -501,10 +507,12 @@ var socket, // socket.io
     interval: Math.floor(1000 / 60 * 10),
     set: {
       scroll: function(obj){
-        document.body.scrollLeft = browserInfo.scrollSize.x * obj.x;
-        document.body.scrollTop  = browserInfo.scrollSize.y * obj.y;
-        document.documentElement.scrollLeft = browserInfo.scrollSize.x * obj.x;
-        document.documentElement.scrollTop  = browserInfo.scrollSize.y * obj.y;
+        var scrollSize = browserInfo.scrollSize();
+
+        document.body.scrollLeft = scrollSize.x * obj.x;
+        document.body.scrollTop  = scrollSize.y * obj.y;
+        document.documentElement.scrollLeft = scrollSize.x * obj.x;
+        document.documentElement.scrollTop  = scrollSize.y * obj.y;
       }
     }
   };
@@ -525,7 +533,6 @@ var socket, // socket.io
         type: "scroll",
         ev: function(e){
           if ( socket === undefined ) return false;
-          // 排他処理
           if ( "body" === syncEvent.receiveEvInfo.nodeName && "scroll" === syncEvent.receiveEvInfo.type ) return false;
           // スクロール用
           emit('syncBrowserInfo', {
@@ -542,26 +549,37 @@ var socket, // socket.io
           browserInfo.href = location.href;
           emit('reqUrlChecker', {});
         }
-      },
-      {
-        type: "resize",
-        ev: function(e){
-          if (syncEvent.resizeTimer !== false) {
-            clearTimeout(syncEvent.resizeTimer);
-          }
-          syncEvent.resizeTimer = setTimeout(function () {
-            emit('syncBrowserInfo', {
-              accessType: userInfo.accessType,
-              // ブラウザのサイズ
-              windowSize: browserInfo.windowSize(),
-              mousePoint: {x: e.clientX, y: e.clientY},
-              scrollPosition: browserInfo.windowScroll()
-            });
-            // do something ...
-          }, browserInfo.interval);
-        }
       }
     ],
+    pcResize: function(e){
+      if (syncEvent.resizeTimer !== false) {
+        clearTimeout(syncEvent.resizeTimer);
+      }
+      syncEvent.resizeTimer = setTimeout(function () {
+        emit('syncBrowserInfo', {
+          accessType: userInfo.accessType,
+          // ブラウザのサイズ
+          windowSize: browserInfo.windowSize(),
+          mousePoint: {x: e.clientX, y: e.clientY},
+          scrollPosition: browserInfo.windowScroll()
+        });
+        // do something ...
+      }, browserInfo.interval);
+    },
+    tabletResize: function(e){
+      var size = {
+        width: window.innerWidth,
+        height: window.innerHeight
+      };
+      var scroll = browserInfo.windowScroll();
+
+      emit('syncBrowserInfo', {
+        accessType: userInfo.accessType,
+        // ブラウザのサイズ
+        windowSize: size,
+        scrollPosition: scroll
+      });
+    },
     ctrlEventListener: function(eventFlg, evList){ // ウィンドウに対してのイベント操作
 
       var attachFlg = false;
@@ -580,8 +598,6 @@ var socket, // socket.io
         }
       }
       for ( var i in evList ) {
-        // ウィンドウリサイズは消費者の状態のみ反映
-        if ( evList[i].type === "resize" && Number(userInfo.accessType) !== Number(cnst.access_type.guest) ) continue;
         var evName = ( attachFlg ) ? "on" + String(evList[Number(i)].type) : String(evList[Number(i)].type);
         var event = evList[Number(i)].ev;
         evListener(evName, event);
@@ -636,6 +652,28 @@ var socket, // socket.io
     focusCall: function(e){
       this.addEventListener('keyup', syncEvent.changeCall, false);
       this.addEventListener('change', syncEvent.changeCall, false);
+    },
+    resizeCall: function(ua, eventFlg){
+      if ( !eventFlg ) {
+        window.removeEventListener("resize", syncEvent.pcResize);
+        window.removeEventListener("orientationchange", syncEvent.tabletResize);
+        return false;
+      }
+      // ウィンドウリサイズは消費者の状態のみ反映
+      if ( Number(userInfo.accessType) !== Number(cnst.access_type.guest) ) return false;
+      if ((ua.indexOf("windows") != -1 && ua.indexOf("touch") != -1)
+          ||  ua.indexOf("ipad") != -1
+          || (ua.indexOf("android") != -1 && ua.indexOf("mobile") == -1)
+          || (ua.indexOf("firefox") != -1 && ua.indexOf("tablet") != -1)
+          ||  ua.indexOf("kindle") != -1
+          ||  ua.indexOf("silk") != -1
+          ||  ua.indexOf("playbook") != -1)
+      {
+        window.addEventListener("orientationchange", syncEvent.tabletResize, false);
+      }
+      else {
+        window.addEventListener("resize", syncEvent.pcResize, false);
+      }
     },
     disabledSubmit: function(e) {
       if ( userInfo.accessType !== cnst.access_type.host ) {
@@ -693,6 +731,9 @@ var socket, // socket.io
       }
       // windowに対してのイベント操作
       this.ctrlEventListener(eventFlg, syncEvent.evList);
+
+      // resizeCall
+      this.resizeCall(window.navigator.userAgent.toLowerCase(), eventFlg);
 
       // 要素に対してのイベント操作
       var els = document.getElementsByTagName('input');
@@ -1003,6 +1044,7 @@ function emit(evName, data){
   data.connectToken = userInfo.get(cnst.info_type.connect);
   if ( check.isset(storage.s.get('params')) && userInfo.accessType === cnst.access_type.host ) {
     data.subWindow = true;
+    data.responderId = common.params.responderId;
   }
   if ( evName == "sendWindowInfo" ) {
     data.connectToken = userInfo.connectToken;

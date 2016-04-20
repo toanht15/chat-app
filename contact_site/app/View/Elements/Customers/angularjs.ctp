@@ -3,6 +3,7 @@
 
 (function(){
 var sincloApp = angular.module('sincloApp', ['ngSanitize']),
+    userList = <?php echo json_encode($responderList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>,
     modalFunc;
 
   modalFunc = {
@@ -19,7 +20,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       window.open(option.url,
                   option.tabId,
                   "width=" + option.width + ",height=" + option.height +
-                  ",dialog=no,toolbar=no,location=no,status=no,menubar=no,directories=no, scrollbars=no"
+                  ",dialog=no,toolbar=no,location=no,status=no,menubar=no,directories=no,resizable=no,scrollbars=no"
       );
       return false;
     },
@@ -236,6 +237,13 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         // 接続中
         if ( angular.isDefined($scope.monitorList[obj.to]) ) {
           $scope.monitorList[obj.to].connectToken = obj.connectToken;
+          if ( ('responderId' in obj) && ('responderId' in obj && !userList[obj.responderId]) ) return false;
+          if ( String(obj.responderId) === "<?=$muserId?>" ) {
+            $scope.monitorList[obj.to]['responderName'] = "あなた";
+          }
+          else {
+            $scope.monitorList[obj.to]['responderName'] = userList[obj.responderId] + "さん";
+          }
         }
       }
     });

@@ -186,9 +186,6 @@
     },
     windowSyncInfo: function(d) {
       var obj = common.jParse(d);
-      // 担当しているユーザーかチェック
-      if ( obj.to !== userInfo.tabId ) return false;
-      if ( Number(userInfo.accessType) !== Number(cnst.access_type.host) ) return false;
       browserInfo.set.scroll(obj.scrollPosition);
     },
     syncStart: function(d) {
@@ -246,12 +243,12 @@
     },
     syncElement: function(d){
       var obj = common.jParse(d);
+      var scrollSize = browserInfo.scrollSize();
       window.clearTimeout(this.syncTimeout);
-
       $("body").animate(
         {
-          scrollLeft: browserInfo.scrollSize.x * obj.scrollPosition.x,
-          scrollTop: browserInfo.scrollSize.y * obj.scrollPosition.y
+          scrollLeft: scrollSize.x * obj.scrollPosition.x,
+          scrollTop: scrollSize.y * obj.scrollPosition.y
         },
         {
             duration: 'first',
@@ -292,6 +289,7 @@
       window.clearTimeout(sinclo.syncTimeout);
       common.load.finish();
     },
+    receiveScTimer: false,
     syncResponce: function(d){
       var obj = common.jParse(d), cursor = common.cursorTag;
       // 画面共有用トークンでの認証に変更する？
@@ -307,11 +305,14 @@
         if ( check.isset(obj.scrollPosition) ) {
           syncEvent.receiveEvInfo.type = "scroll";
           syncEvent.receiveEvInfo.nodeName = "body";
+          if (this.receiveScTimer) {
+            clearTimeout(this.receiveScTimer);
+          }
 
           browserInfo.set.scroll(obj.scrollPosition);
 
           // TODO まだ微調整が必要
-          setTimeout(function(){
+          this.receiveScTimer = setTimeout(function(){
             syncEvent.receiveEvInfo = { nodeName: null, type: null };
           }, browserInfo.interval);
         }
