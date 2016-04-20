@@ -167,9 +167,14 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           return token;
     };
 
-    $scope.windowOpen = function(tabId){
-      connectToken = makeToken();
-      socket.emit('requestWindowSync', {tabId: tabId, connectToken: connectToken});
+    $scope.windowOpen = function(tabId, accessId){
+      var message = "アクセスID【" + accessId + "】のユーザーに接続しますか？";
+      modalOpen.call(window, message, 'p-confirm', 'メッセージ');
+       popupEvent.closePopup = function(){
+         popupEvent.close();
+         connectToken = makeToken();
+         socket.emit('requestWindowSync', {tabId: tabId, connectToken: connectToken});
+       };
     };
 
     $scope.openHistory = function(monitor){
@@ -317,25 +322,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       return date + " " + time;
     };
   });
-
-  // http://stackoverflow.com/questions/18313576/confirmation-dialog-on-ng-click-angularjs
-  sincloApp.directive('ngConfirmClick', [
-    function(){
-      return {
-        priority: -1,
-        restrict: 'A',
-        link: function(scope, element, attrs){
-          element.bind('click', function(e){
-            var message = attrs.ngConfirmClick;
-            if(message && !confirm(message)){
-              e.stopImmediatePropagation();
-              e.preventDefault();
-            }
-          });
-        }
-      }
-    }
-  ]);
 
   sincloApp.directive('calStayTime', ['$timeout', function($timeout){
     return {

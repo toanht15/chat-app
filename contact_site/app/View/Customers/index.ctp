@@ -60,7 +60,7 @@
                 <td ng-hide="labelHideList.referrer" class="tCenter omit"><span>{{monitor.referrer}}</span></td>
                 <td class='w10 tCenter'>
                     <span ng-show="monitor.widget">
-                      <a   ng-if="!monitor.connectToken" class='monitorBtn blueBtn btn-shadow' href='javascript:void(0)' ng-click="windowOpen(monitor.tabId)" ng-confirm-click="アクセスID【{{monitor.accessId}}】のユーザーに接続しますか？">接続する</a>
+                      <a   ng-if="!monitor.connectToken" class='monitorBtn blueBtn btn-shadow' href='javascript:void(0)' ng-click="windowOpen(monitor.tabId, monitor.accessId)">接続する</a>
                     </span>
                     <ng-hide="monitor.widget">
                       <span ng-if=" monitor.connectToken">モニタリング中</span>

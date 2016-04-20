@@ -157,26 +157,28 @@ window.onload = function(){
 
   socket.on('syncStop', function(d){
     var obj = JSON.parse(d);
-    if (('message' in obj) && window.confirm(obj.message)){
-      window.open('about:blank', '_self').close();
-      window.close();
-    }
-    else {
-      window.open('about:blank', '_self').close();
-      window.close();
+    if ('message' in obj) {
+      modalOpen.call(window, obj.message, 'p-alert', 'メッセージ');
+      popupEvent.closeNoPopup = function(){
+        popupEvent.close();
+        window.open('about:blank', '_self').close();
+        window.close();
+      };
     }
   });
 
   socket.on('unsetUser', function(d){
     var obj = JSON.parse(d);
     if ( obj.tabId !== tabId ) return false;
-    if (window.confirm('再接続しますか？')){
-      location.reload();
-    }
-    else {
-      window.open('about:blank', '_self').close();
-      window.close();
-    }
+      modalOpen.call(window, '再接続しますか？', 'p-confirm', 'メッセージ');
+      popupEvent.closePopup = function(){
+        location.reload();
+      };
+      popupEvent.closeNoPopup = function(){
+        popupEvent.close();
+        window.open('about:blank', '_self').close();
+        window.close();
+      };
   });
 
 };

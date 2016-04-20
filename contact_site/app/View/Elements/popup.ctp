@@ -26,6 +26,9 @@ var popupEvent = {
         title: null,
         contents: null,
         closePopup: null,
+        closeNoPopup: function(){
+          return popupEvent.close();
+        },
         init: function() {
             this.closePopup = '';
         },
@@ -37,13 +40,15 @@ var popupEvent = {
         },
         _setEvent: function(){
           this.elm.popup = document.getElementById('popup-frame');
-          this.elm.help = document.getElementById('popupHelpBtn');
           this.elm.close = document.getElementById('popupCloseBtn');
           this.elm.btnArea = document.getElementById('popup-button');
+/*
+          this.elm.help = document.getElementById('popupHelpBtn');
           var help = this.elm.help;
           help.addEventListener('click', function(){ return popupEvent.help(); });
+*/
           var close = this.elm.close;
-          close.addEventListener('click', function(){ return popupEvent.close(); });
+          close.addEventListener('click', function(){ return popupEvent.closeNoPopup(); });
         },
         help: function(){},
         create: function () {
@@ -59,7 +64,7 @@ var popupEvent = {
                     };
                     var closeBtn = _button("いいえ");
                     closeBtn.onclick = function(){
-                        return popupEvent.close();
+                        return popupEvent.closeNoPopup();
                     };
                     break;
                 case 'p-cus-menu':
@@ -76,6 +81,12 @@ var popupEvent = {
                     var closeBtn = _button("閉じる");
                     closeBtn.onclick = function(){
                         return popupEvent.close();
+                    };
+                    break;
+                case 'p-alert':
+                    var closeBtn = _button("閉じる");
+                    closeBtn.onclick = function(){
+                        return popupEvent.closeNoPopup();
                     };
                     break;
                 default:
@@ -108,11 +119,11 @@ var popupEvent = {
         open: function(contents, id, title){
             // データをセット
             this.contents = contents;
-            this.id = id;
+            this.id = (id) ? id : 'popup-normal';
             this.title = title;
 
             // スタイルのリセット
-            $("#popup-frame").removeAttr('style');
+            $("#popup-frame").removeAttr('style').removeClass();
             // コンテンツを作成
             this._popupCreate();
             // 一時的にスクロール非表示に
@@ -216,11 +227,13 @@ if ( isset($alertMessage) && !empty($alertMessage) ) {
     <div id="popup-frame">
         <div id="popup-content">
             <div id="popup-ctrl-btn">
+<!--
                 <?php echo $this->Html->link(
                     $this->Html->image('question.png', array('alt' => 'ヘルプ', 'width'=>20, 'height'=>20)),
                     'javascript:void(0)',
                     array('escape' => false, 'class'=>'greenBtn btn-shadow', 'id' => 'popupHelpBtn'));
                 ?>
+-->
                 <?php echo $this->Html->link(
                     $this->Html->image('close.png', array('alt' => '閉じる', 'width'=>20, 'height'=>20)),
                     'javascript:void(0)',

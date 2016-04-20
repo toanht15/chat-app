@@ -83,9 +83,6 @@
           display: inline-block;
           width: 100%;
         }
-        // #popup-button {
-        //   height: 50px;
-        // }
       }
 
 
@@ -115,9 +112,7 @@
           overflow: auto;
           display: flex;
         }
-        // #popup-button {
-        //   height: 50px;
-        // }
+
         #popup-main table {
           table-layout: fixed;
           border-collapse: collapse;
@@ -300,6 +295,19 @@
           width: 75px;
           float: left;
           margin: 0 50px;
+        }
+      }
+
+      /* アラート用 */
+      &.p-alert {
+        width: 350px;
+        height: 150px;
+        #popup-button{
+          text-align: center;
+          a {
+            width: 75px;
+            margin: 0 auto;
+          }
         }
       }
 

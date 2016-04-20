@@ -163,7 +163,9 @@
       var obj = common.jParse(d);
       if ( obj.tabId !== userInfo.tabId ) return false;
       if ( userInfo.accessType !== Number(cnst.access_type.guest) ) return false;
-      if (window.confirm(location.host + ' が閲覧ページへのアクセスを求めています。\n許可しますか？')) {
+      var title = location.host + 'の内容';
+      var content = location.host + 'が閲覧ページへのアクセスを求めています。<br>許可しますか';
+      popup.ok = function(){
         userInfo.connectToken = obj.connectToken;
         browserInfo.resetPrevList();
 
@@ -178,7 +180,9 @@
           // スクロール位置の取得
           scrollPosition: browserInfo.windowScroll()
         });
-      }
+        this.remove();
+      };
+      popup.set(title, content);
     },
     windowSyncInfo: function(d) {
       var obj = common.jParse(d);
