@@ -191,6 +191,9 @@ var socket, // socket.io
       if ( ua.indexOf('iphone') > 0 || ua.indexOf('ipod') > 0 || ua.indexOf('android') > 0 || ua.indexOf('bot') > 0 ) {
         ret = false;
       }
+      if ( ua.match(/msie\ [1-9]\./g) ) {
+        ret = false;
+      }
       return ret;
     },
     isset: function(a){

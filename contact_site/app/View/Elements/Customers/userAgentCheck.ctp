@@ -80,7 +80,7 @@ var userAgentChk = (function(){
       var name = 'unknown', ua = ua.toLowerCase();
 
       if (ua.indexOf("msie") != -1 ) {
-          name = 'Internet Explorer' + _get_var(ua, "msie ", ";");
+          name = 'IE' + _get_var(ua, "msie ", ";");
       } else if ( ua.indexOf('trident/7') != -1){
           name = 'IE' + _get_var(ua, "rv:", ")");
       } else if (ua.indexOf('edge') != -1 ) {
