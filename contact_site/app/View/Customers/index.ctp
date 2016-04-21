@@ -55,7 +55,7 @@
               <td class='w10 tCenter'>
                   <span ng-if="monitor.widget">
                     <span ng-if="!monitor.connectToken">
-                      <a class='monitorBtn blueBtn btn-shadow' href='javascript:void(0)' ng-click='windowOpen(monitor.tabId)' ng-confirm-click='アクセスID【{{monitor.accessId}}】のユーザーに接続しますか？'>接続する</a>
+                      <a class='monitorBtn blueBtn btn-shadow' href='javascript:void(0)' ng-click='windowOpen(monitor.tabId, monitor.accessId)' ng-confirm-click='アクセスID【{{monitor.accessId}}】のユーザーに接続しますか？'>接続する</a>
                     </span>
                   </span>
                   <span ng-if="monitor.connectToken">
