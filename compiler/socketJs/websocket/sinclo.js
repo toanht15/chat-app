@@ -44,15 +44,7 @@
         if ( Number(userInfo.accessType) === Number(cnst.access_type.guest) ) {
           emitData.connectToken = userInfo.connectToken;
           userInfo.syncInfo.get();
-          emit('connectSuccess', {
-            confirm: false,
-            widget: window.info.widgetDisplay,
-            prev: userInfo.prev,
-            userAgent: window.navigator.userAgent,
-            time: userInfo.time,
-            ipAddress: userInfo.getIp(),
-            referrer: userInfo.referrer
-          });
+          emit('connectSuccess', {prev: userInfo.prev});
         }
 
         if ( check.isset(common.tmpParams) ) {
@@ -121,21 +113,12 @@
         referrer: userInfo.referrer
       });
     },
-    connectConfirm: function(d) {
-      var obj = common.jParse(d);
-      if ( userInfo.tabId !== obj.tabId ) return false;
-
-      emit('connectSuccess', {
-        confirm: true,
-        widget: window.info.widgetDisplay,
-        prev: userInfo.prev
-      });
-    },
     getAccessInfo: function(d) { // guest only
       var obj = common.jParse(d);
       if ( userInfo.accessType !== Number(cnst.access_type.guest) ) return false;
       var emitData = userInfo.getSendList();
       emitData.receiveAccessInfoToken = obj.token;
+      emitData.widget = window.info.widgetDisplay;
       emit('sendAccessInfo', emitData);
     },
     confirmCustomerInfo: function(d) {
@@ -392,13 +375,17 @@
         window.info.widgetDisplay = false;
         return false;
       }
+      // 画面同期中であれば抑制
+      if ( check.isset(userInfo.connectToken) ) {
+        return false;
+      }
       var html = common.widgetTemplate();
       common.load.finish();
       var sincloBox = document.getElementById('sincloBox');
       if ( sincloBox ) {
         sincloBox.parentNode.removeChild(sincloBox);
       }
-      if ( !check.isset(storage.s.get('params')) ) {
+      if ( userInfo.accessType !== cnst.access_type.host ) {
         $('body').append(html);
         common.sincloBoxHeight = 0;
         $("#sincloBox").children().each(function(){
@@ -412,6 +399,7 @@
             }, 'first');
           }
         }, 3000);
+        emit('syncReady', {widget: window.info.widgetDisplay});
       }
 
     },
@@ -429,9 +417,6 @@
     },
     syncStop: function(d){
       var obj = common.jParse(d);
-      if ( obj.connectToken !== userInfo.connectToken ) return false;
-      if ( obj.tabId !== userInfo.tabId ) return false;
-      if (check.isset(common.tmpParams) || check.isset(storage.s.get('params'))) return false;
       syncEvent.stop(false);
       userInfo.syncInfo.unset();
       common.makeAccessIdTag(userInfo.accessId);

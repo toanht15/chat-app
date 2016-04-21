@@ -161,7 +161,7 @@ window.onload = function(){
 
     iframe.src = url + "sincloData=" + encodeURIComponent(JSON.stringify(data));
     resizeApi.cuResize(ws);
-    emit('connectFrame', {tabId: tabId});
+    emit('connectFrame', {tabId: tabId, responderId: "<?= $muserId?>"});
   });
 
   socket.on('syncResponce', function(data){
@@ -202,6 +202,10 @@ window.onload = function(){
         window.close();
       };
     }
+    else {
+      window.open('about:blank', '_self').close();
+      window.close();
+    }
   });
 
   socket.on('unsetUser', function(d){
@@ -209,7 +213,7 @@ window.onload = function(){
     if ( obj.tabId !== tabId ) return false;
       modalOpen.call(window, '再接続しますか？', 'p-confirm', 'メッセージ');
       popupEvent.closePopup = function(){
-        location.reload();
+        emit('connectFrame', {tabId: tabId});
       };
       popupEvent.closeNoPopup = function(){
         popupEvent.close();

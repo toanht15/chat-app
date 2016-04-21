@@ -172,9 +172,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var message = "アクセスID【" + accessId + "】のユーザーに接続しますか？";
       modalOpen.call(window, message, 'p-confirm', 'メッセージ');
        popupEvent.closePopup = function(){
-         popupEvent.close();
-         connectToken = makeToken();
-         socket.emit('requestWindowSync', {tabId: tabId, connectToken: connectToken});
+          sessionStorage.clear();
+          popupEvent.close();
+          connectToken = makeToken();
+          socket.emit('requestWindowSync', {tabId: tabId, connectToken: connectToken});
        };
     };
 
@@ -204,6 +205,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     function pushToList(obj){
       $scope.monitorList[obj.tabId] = updateSort(obj);
+
+      if ( 'connectToken' in obj && 'responderId' in obj) {
+        $scope.monitorList[obj.tabId].connectToken = obj.connectToken;
+        setResponderName(obj.tabId, obj.responderId);
+      }
     }
 
     socket.on('receiveAccessInfo', function (data) {
@@ -217,35 +223,33 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       pushToList(obj);
     });
 
-    socket.on('connectInfo', function (data) {
-      var obj = JSON.parse(data);
-      // 消費者
-      if ( obj.subWindow === false ) {
-        if ( angular.isDefined($scope.monitorList[obj.tabId]) ) {
-          $scope.monitorList[obj.tabId].connectToken = obj.connectToken;
-          $scope.monitorList[obj.tabId].title = obj.title;
-          $scope.monitorList[obj.tabId].url = obj.url;
-          $scope.monitorList[obj.tabId].prev = obj.prev;
-          $scope.monitorList[obj.tabId].widget = obj.widget;
-        }
-        else {
-          socket.emit('getCustomerInfo', JSON.stringify({tabId: obj.tabId}));
-        }
-        $scope.monitorList[obj.tabId] = updateSort($scope.monitorList[obj.tabId]);
+    function setResponderName(tabId, responderId){
+      if ( !(responderId in userList) ) return false;
+
+      if ( String(responderId) === "<?=$muserId?>" ) {
+        $scope.monitorList[tabId]['responderName'] = "あなた";
       }
       else {
-        // 接続中
-        if ( angular.isDefined($scope.monitorList[obj.to]) ) {
-          $scope.monitorList[obj.to].connectToken = obj.connectToken;
-          if ( ('responderId' in obj) && ('responderId' in obj && !userList[obj.responderId]) ) return false;
-          if ( String(obj.responderId) === "<?=$muserId?>" ) {
-            $scope.monitorList[obj.to]['responderName'] = "あなた";
-          }
-          else {
-            $scope.monitorList[obj.to]['responderName'] = userList[obj.responderId] + "さん";
-          }
-        }
+        $scope.monitorList[tabId]['responderName'] = userList[responderId] + "さん";
       }
+    }
+
+    socket.on('syncNewInfo', function (data) {
+      var obj = JSON.parse(data);
+      // 消費者
+      if ( angular.isDefined($scope.monitorList[obj.tabId]) ) {
+        if ( 'widget' in obj ) { $scope.monitorList[obj.tabId].widget = obj.widget; }
+        if ( 'connectToken' in obj ) { $scope.monitorList[obj.tabId].connectToken = obj.connectToken; }
+        if ( 'prev' in obj ) { $scope.monitorList[obj.tabId].prev = obj.prev; }
+        updateSort($scope.monitorList[obj.tabId]);
+      }
+
+      var tabId = ( obj.subWindow ) ? obj.to : obj.tabId;
+      if ( 'connectToken' in obj && 'responderId' in obj) {
+        $scope.monitorList[tabId].connectToken = obj.connectToken;
+        setResponderName(tabId, obj.responderId);
+      }
+
     });
 
     socket.on('windowSyncInfo', function (data) {
@@ -303,6 +307,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           socket.emit("requestSyncStop", obj);
         }
       }
+    });
+
+    socket.on('disconnect', function(data) {
+      $scope.monitorList = {};
     });
 
   }]);
