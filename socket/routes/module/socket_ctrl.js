@@ -1,4 +1,3 @@
-var Promise = require('es6-promise').Promise;
 // mysql
 var mysql = require('mysql'),
     pool = mysql.createPool({
@@ -9,41 +8,10 @@ var mysql = require('mysql'),
     });
 
 //サーバインスタンス作成
-var http = require('http'),
-    server = http.createServer(function (req, res) {
-        res.writeHead(200, {'Content-Type':'text/html'});
-        res.end('server connected');
-    }),
-    io = require('socket.io').listen(server), access,
-    connect;
-    server.listen(9090);//9090番ポートで起動
-
-// 待機中ユーザー
-var activeOperator = {};
-
-// 機能仕様状況
-var sincloCore = {};
-
-// 暗号化ロジック
-var crypto = require('crypto');
-    crypto_func = {
-    type: 'aes192',
-    key: null,
-    init: function(){
-      var str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
-      t = "";
-      for(var i = 0; i < 30; i++){
-        t += str[Math.floor(Math.random()*str.length)];
-      }
-      this.key = t;
-    },
-    main: function(str){
-      var cipher = crypto.createCipher(this.type, key);
-      cipher.update(str, 'utf8', 'hex');
-      return cipher.final('hex');
-    }
-};
-crypto_func.init();
+var io = require('socket.io')(9090),
+    access, // Keep & Aliveの処理
+    activeOperator = {}, // 待機中オペレーター
+    sincloCore = {}; // socketIDの管理
 
 // ユーザーIDの新規作成
 function makeUserId(){
@@ -51,6 +19,7 @@ function makeUserId(){
   return d.getFullYear() + ("0" + (d.getMonth() + 1)).slice(-2) + ("0" + d.getDate()).slice(-2) + d.getHours() + d.getMinutes() + d.getSeconds() + Math.floor(Math.random() * 1000);
 }
 
+// sincloCoreオブジェクトからセッションIDを取得する関数
 function getSessionId(siteKey, tabId, key){
   if ( !(siteKey in sincloCore) ) return false;
   if ( !(tabId in sincloCore[siteKey]) ) return false;
@@ -58,6 +27,7 @@ function getSessionId(siteKey, tabId, key){
   return sincloCore[siteKey][tabId][key];
 }
 
+// emit用
 var emit = {
   roomKey: {
     client: 'cl001',
@@ -70,6 +40,10 @@ var emit = {
     else {
       return d;
     }
+  },
+  toMine: function(ev, d){ // 送り主に返信
+    var obj = this._convert(d);
+    return io.sockets.emit(ev, obj);
   },
   toUser: function(ev, d, sId){ // 対象ユーザーに送信(sId = the session id)
     var obj = this._convert(d);
@@ -166,7 +140,7 @@ access = {
     this.clear(siteKey, tabId);
     this.list[siteKey][tabId].confirmIntervalId = setInterval(
       function(){
-        emit.toUser('connectConfirm', obj, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
+        emit.toMine('connectConfirm', obj);
         emit.toCompany('connectConfirm', obj, obj.siteKey);
       },
       access.setInterbalTime
@@ -332,7 +306,7 @@ var db = {
 };
 
 //接続確立時の処理
-connect = io.sockets.on('connection', function (socket) {
+io.sockets.on('connection', function (socket) {
   // 接続時
   socket.on('connected', function (r) {
     var res = JSON.parse(r),
@@ -374,7 +348,7 @@ connect = io.sockets.on('connection', function (socket) {
       }
       else {
         socket.join(res.siteKey + emit.roomKey.client);
-        emit.toUser('accessInfo', send, socket.id);
+        emit.toMine('accessInfo', send);
       }
 
     }
@@ -398,10 +372,10 @@ connect = io.sockets.on('connection', function (socket) {
           display_time_flg: rows[0].display_time_flg,
           active_operator_cnt: cnt
         };
-        emit.toUser('setWidgetInfo', obj, socket.id);
+        emit.toMine('setWidgetInfo', obj);
       }
       else {
-        emit.toUser('setWidgetInfo', obj, socket.id);
+        emit.toMine('setWidgetInfo', obj);
       }
     });
   });
@@ -439,7 +413,7 @@ connect = io.sockets.on('connection', function (socket) {
     // 継続
     else {
 
-      emit.toUser('connectInfo', obj, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
+      emit.toMine('connectInfo', obj);
       emit.toCompany('connectInfo', obj, obj.siteKey);
       access.update(obj);
     }
@@ -482,9 +456,11 @@ connect = io.sockets.on('connection', function (socket) {
       sincloCore[obj.siteKey][obj.tabId]['syncFrameSessionId'] = socket.id; // フレームのセッションID
     }
     else {
-      emit.toUser('syncStop', data, socket.id);
+      emit.toMine('syncStop', data);
     }
   });
+
+// FIX ME !!!!!!!
   // 継続接続(両用)
   socket.on('connectContinue', function (data) {
     var obj = JSON.parse(data);
@@ -517,6 +493,7 @@ connect = io.sockets.on('connection', function (socket) {
     else {
       tabId = obj.tabId; // guest
     }
+// FIX ME !!! | Change to 'toMine'
     emit.toUser('syncStart', data, getSessionId(obj.siteKey, tabId, 'sessionId'));
     emit.toUser('syncStart', data, getSessionId(obj.siteKey, tabId, 'syncSessionId'));
     emit.toUser('syncStart', data, getSessionId(obj.siteKey, tabId, 'syncFrameSessionId'));
