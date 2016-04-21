@@ -216,27 +216,14 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       pushToList(obj);
     });
 
-    socket.on('connectInfo', function (data) {
+    socket.on('syncNewInfo', function (data) {
       var obj = JSON.parse(data);
       // 消費者
-      if ( obj.subWindow === false ) {
-        if ( angular.isDefined($scope.monitorList[obj.tabId]) ) {
-          $scope.monitorList[obj.tabId].connectToken = obj.connectToken;
-          $scope.monitorList[obj.tabId].title = obj.title;
-          $scope.monitorList[obj.tabId].url = obj.url;
-          $scope.monitorList[obj.tabId].prev = obj.prev;
-          $scope.monitorList[obj.tabId].widget = obj.widget;
-        }
-        else {
-          socket.emit('getCustomerInfo', JSON.stringify({tabId: obj.tabId}));
-        }
-        $scope.monitorList[obj.tabId] = updateSort($scope.monitorList[obj.tabId]);
-      }
-      else {
-        // 接続中
-        if ( angular.isDefined($scope.monitorList[obj.to]) ) {
-          $scope.monitorList[obj.to].connectToken = obj.connectToken;
-        }
+      if ( angular.isDefined($scope.monitorList[obj.tabId]) ) {
+        if ( 'widget' in obj ) { $scope.monitorList[obj.tabId].widget = obj.widget; }
+        if ( 'connectToken' in obj ) { $scope.monitorList[obj.tabId].connectToken = obj.connectToken; }
+        if ( 'prev' in obj ) { $scope.monitorList[obj.tabId].prev = obj.prev; }
+        updateSort($scope.monitorList[obj.tabId])
       }
     });
 
@@ -295,6 +282,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           socket.emit("requestSyncStop", obj);
         }
       }
+    });
+
+    socket.on('disconnect', function(data) {
+      $scope.monitorList = {};
     });
 
   }]);

@@ -869,28 +869,6 @@ var socket, // socket.io
       no: function(){ this.remove() }
   };
 
-  var windowBeforeUnload = function(e) {
-    emit('connectSuccess', {
-      confirm: true,
-      widget: window.info.widgetDisplay,
-      connectToken: userInfo.connectToken
-    });
-  };
-
-  // イベントリスナーに対応している
-  if(window.addEventListener){
-    // アンロードされる直前に実行されるイベント
-    window.addEventListener("beforeunload" , windowBeforeUnload);
-  // アタッチイベントに対応している
-  }else if(window.attachEvent){
-    // アンロードされる直前に実行されるイベント
-    window.attachEvent("onbeforeunload" , windowBeforeUnload);
-  }
-  else{
-    // アンロードされる直前に実行されるイベント
-    window.onbeforeunload = windowBeforeUnload;
-  }
-
   var init = function(){
     socket = io.connect(info.site.socket, {port: 9090, rememberTransport : false});
     // 接続時
@@ -901,11 +879,6 @@ var socket, // socket.io
     // 接続直後（ユーザＩＤ、アクセスコード発番等）
     socket.on("accessInfo", function(d){
       sinclo.accessInfo(d);
-    }); // socket-on: accessInfo
-
-    // 通信確認
-    socket.on("connectConfirm", function(d){
-      sinclo.connectConfirm(d);
     }); // socket-on: accessInfo
 
     // 情報送信
@@ -981,6 +954,14 @@ var socket, // socket.io
     socket.on('syncStop', function(d){
       sinclo.syncStop(d);
     }); // socket-on: syncStop
+
+    socket.on('disconnect', function(data) {
+      var sincloBox = document.getElementById('sincloBox');
+      if ( sincloBox ) {
+        sincloBox.parentNode.removeChild(sincloBox);
+      }
+      popup.remove();
+    });
   };
 
   var timer = window.setInterval(function(){
