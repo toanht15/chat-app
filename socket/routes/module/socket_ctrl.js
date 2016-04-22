@@ -199,7 +199,7 @@ io.sockets.on('connection', function (socket) {
     },
     toMine: function(ev, d){ // 送り主に返信
       var obj = this._convert(d);
-      return io.sockets.emit(ev, obj);
+      return socket.emit(ev, obj);
     },
     toUser: function(ev, d, sId){ // 対象ユーザーに送信(sId = the session id)
       var obj = this._convert(d);
