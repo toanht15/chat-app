@@ -449,8 +449,8 @@ var socket, // socket.io
     // TODO 画面同期時セットするようにする
     scrollSize: function (){ // 全体のスクロール幅
       return {
-        x: document.body.offsetWidth - window.innerWidth,
-        y: document.body.offsetHeight - window.innerHeight
+        x: document.body.scrollWidth - window.innerWidth,
+        y: document.body.scrollHeight - window.innerHeight
       }
     },
     // TODO 画面同期時セットするようにする
