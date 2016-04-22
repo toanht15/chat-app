@@ -470,6 +470,23 @@ io.sockets.on('connection', function (socket) {
       emit.toUser('syncResponceEv', data, getSessionId(obj.siteKey, obj.to, 'sessionId'));
   });
 
+  socket.on('syncReconnectConfirm', function (data) {
+    var obj = JSON.parse(data), timer, i = 1;
+    timer = setInterval(function(){
+      var sessionId = getSessionId(obj.siteKey, obj.to, 'sessionId');
+      if ( sessionId && connectList[sessionId] ) {
+        emit.toUser('syncStart', data, getSessionId(obj.siteKey, obj.to, 'sessionId'));
+        emit.toUser('syncStart', data, getSessionId(obj.siteKey, obj.to, 'syncSessionId'));
+        clearInterval(timer);
+      }
+      if ( i === 5 ) {
+        clearInterval(timer);
+        emit.toUser('syncStop', {message: "接続できませんでした。"}, socket.id);
+      }
+      i++;
+    }, 1000);
+  });
+
   socket.on('sendConfirmConnect', function (data) {
     var obj = JSON.parse(data);
     if ( obj.accessType === 1 ) { // to host
@@ -568,6 +585,10 @@ io.sockets.on('connection', function (socket) {
             timeUpdate(rows[0], {}, now);
           }
         });
+      }
+
+      if ( 'timeoutTimer' in sincloCore[info.siteKey][info.tabId] ) {
+        clearTimeout(sincloCore[info.siteKey][info.tabId]['timeoutTimer']);
       }
 
       sincloCore[info.siteKey][info.tabId]['timeoutTimer'] = setTimeout(function(){

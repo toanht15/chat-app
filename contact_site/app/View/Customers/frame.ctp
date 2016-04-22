@@ -213,7 +213,8 @@ window.onload = function(){
     if ( obj.tabId !== tabId ) return false;
       modalOpen.call(window, '再接続しますか？', 'p-confirm', 'メッセージ');
       popupEvent.closePopup = function(){
-        emit('connectFrame', {tabId: tabId});
+        emit('syncReconnectConfirm', {to: tabId});
+        popupEvent.close();
       };
       popupEvent.closeNoPopup = function(){
         popupEvent.close();
