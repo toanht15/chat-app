@@ -419,7 +419,7 @@
       var obj = common.jParse(d);
       syncEvent.stop(false);
       userInfo.syncInfo.unset();
-      common.makeAccessIdTag(userInfo.accessId);
+      common.makeAccessIdTag();
     }
   };
 
