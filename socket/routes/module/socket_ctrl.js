@@ -29,42 +29,6 @@ function getSessionId(siteKey, tabId, key){
   }
 }
 
-// emit用
-var emit = {
-  roomKey: {
-    client: 'cl001',
-    company: 'cm001'
-  },
-  _convert: function(d){
-    if ( typeof(d) === "object" ) {
-      return JSON.stringify(d);
-    }
-    else {
-      return d;
-    }
-  },
-  toMine: function(ev, d){ // 送り主に返信
-    var obj = this._convert(d);
-    return io.sockets.emit(ev, obj);
-  },
-  toUser: function(ev, d, sId){ // 対象ユーザーに送信(sId = the session id)
-    var obj = this._convert(d);
-    if ( !isset(sId) ) return false;
-    if ( !isset(io.sockets.connected[sId]) ) return false;
-    return io.sockets.connected[sId].emit(ev, obj);
-  },
-  toClient: function(ev, d, rName) { // 対象企業を閲覧中のユーザーに送信(rName = the room's name)
-    var obj = this._convert(d);
-    if ( !isset(rName) ) return false;
-    return io.sockets.in(rName+this.roomKey.client).emit(ev, obj);
-  },
-  toCompany: function(ev, d, rName) { // 対象企業にのみ送信(rName = the room's name)
-    var obj = this._convert(d);
-    if ( !isset(rName) ) return false;
-    return io.sockets.in(rName+this.roomKey.company).emit(ev, obj);
-  }
-};
-
 function now(){
   var d = new Date();
   return "【" + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds() + "】";
@@ -218,6 +182,42 @@ var db = {
 
 //接続確立時の処理
 io.sockets.on('connection', function (socket) {
+
+  // emit用
+  var emit = {
+    roomKey: {
+      client: 'cl001',
+      company: 'cm001'
+    },
+    _convert: function(d){
+      if ( typeof(d) === "object" ) {
+        return JSON.stringify(d);
+      }
+      else {
+        return d;
+      }
+    },
+    toMine: function(ev, d){ // 送り主に返信
+      var obj = this._convert(d);
+      return io.sockets.emit(ev, obj);
+    },
+    toUser: function(ev, d, sId){ // 対象ユーザーに送信(sId = the session id)
+      var obj = this._convert(d);
+      if ( !isset(sId) ) return false;
+      if ( !isset(io.sockets.connected[sId]) ) return false;
+      return io.sockets.connected[sId].emit(ev, obj);
+    },
+    toClient: function(ev, d, rName) { // 対象企業を閲覧中のユーザーに送信(rName = the room's name)
+      var obj = this._convert(d);
+      if ( !isset(rName) ) return false;
+      return io.sockets.in(rName+this.roomKey.client).emit(ev, obj);
+    },
+    toCompany: function(ev, d, rName) { // 対象企業にのみ送信(rName = the room's name)
+      var obj = this._convert(d);
+      if ( !isset(rName) ) return false;
+      return io.sockets.in(rName+this.roomKey.company).emit(ev, obj);
+    }
+  };
 
   // 接続時
   socket.on('connected', function (r) {
