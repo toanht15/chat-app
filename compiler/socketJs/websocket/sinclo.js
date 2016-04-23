@@ -224,7 +224,7 @@
       var obj = common.jParse(d);
       var scrollSize = browserInfo.scrollSize();
       window.clearTimeout(this.syncTimeout);
-      $("body").animate(
+      $("html, body").animate(
         {
           scrollLeft: scrollSize.x * obj.scrollPosition.x,
           scrollTop: scrollSize.y * obj.scrollPosition.y
