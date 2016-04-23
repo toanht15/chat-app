@@ -1018,13 +1018,22 @@ var socket, // socket.io
 
 }(sincloJquery));
 
+function f_url(url){
+  var re = /(\?|&)?sincloData=/;
+  var num =  url.search(re);
+  if ( num < 0 ) {
+    return browserInfo.href;
+  }
+  return url.substr(0,num);
+}
+
 function emit(evName, data){
   data.userId = userInfo.userId;
   data.accessId = userInfo.accessId;
   data.token = common.token_add();
   data.title = common.title();
   data.siteKey = info.site.key;
-  data.url= browserInfo.href;
+  data.url= f_url(browserInfo.href);
   data.subWindow = false;
   data.tabId = userInfo.tabId;
   data.prevList = browserInfo.prevList;

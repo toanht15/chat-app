@@ -46,7 +46,6 @@
           userInfo.syncInfo.get();
           emit('connectSuccess', {prev: userInfo.prev});
         }
-
         if ( check.isset(common.tmpParams) ) {
           browserInfo.resetPrevList();
           emit('requestSyncStart', {
@@ -54,10 +53,7 @@
           });
         }
 
-        var re = new RegExp("sincloData\=");
-        if ( !re.test(browserInfo.href) ) {
-          emit('reqUrlChecker', {});
-        }
+        emit('reqUrlChecker', {});
 
         browserInfo.setPrevList();
 
