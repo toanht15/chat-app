@@ -97,7 +97,7 @@ var socket, // socket.io
       var html  = '<div id="sincloBox" style="box-sizing: border-box; position: fixed; height: 45px; bottom: -11px; right: 5px; border: 1.5px solid rgb(232, 231, 224); border-radius: 10px; z-index: 999998; width: 250px; overflow: hidden; background-color: rgb(255, 255, 255);">';
           html += '  <style>' + css + '</style>';
           html += '  <img onclick="sinclo.operatorInfo.ev()" style="position: absolute; top: 11.5px; right: 10px; z-index: 0;" src=" ' + window.info.site.files + '/img/yajirushi.png" height="12" width="16.5">';
-          html += '  <div onclick="sinclo.operatorInfo.ev()" style="background-color: ' + maincolor + '; width: 100%; height: 35px; background-image: url( ' + window.info.site.files + '/img/call.png); background-repeat: no-repeat; background-position: 15px, 0; background-size: 4.5%; color: #FFF;">';
+          html += '  <div onclick="sinclo.operatorInfo.ev()" style="cursor: pointer; background-color: ' + maincolor + '; width: 100%; height: 35px; background-image: url( ' + window.info.site.files + '/img/call.png); background-repeat: no-repeat; background-position: 15px, 0; background-size: 4.5%; color: #FFF;">';
           html += '    <pre style="color: #FFF; text-align: center; font-size: 15px; padding: 10px; margin:  0;">' + widget.title + '</pre>'
           html += '  </div>';
           // 受付時間を表示しない
