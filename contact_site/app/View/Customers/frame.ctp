@@ -95,8 +95,18 @@ var socket, userId, tabId, iframe, windowSize, connectToken, url, emit, resizeAp
 
       var wswidth = frame.width + this.frameSize.width;
       var wsheight = frame.height + this.frameSize.height;
+
+      var winY = window.screenY, winX = window.screenX;
+      if ((screen.availHeight-window.screenY - wsheight) < 0) {
+        winY = screen.availHeight - wsheight;
+      }
+      if ((screen.availWidth-window.screenX - wswidth) < 0) {
+        winX = screen.availWidth - wswidth;
+      }
+
       try {
         windowSize = {'width': wswidth, 'height': wsheight};
+        window.moveTo(winX, winY);
         window.resizeTo(wswidth, wsheight);
       }
       catch(e) {
