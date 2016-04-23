@@ -330,11 +330,15 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     };
   });
 
+  function _numPad(str){
+    return ("0" + str).slice(-2);
+  }
+
   sincloApp.filter('customDate', function(){
     return function(input) {
       var d = new Date(Number(input)),
-          date = d.getFullYear() + '/' + ( '0' + (d.getMonth() + 1) ).slice(-2) + '/' + ('0' + d.getDate()).slice(-2),
-          time = d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+          date = d.getFullYear() + '-' + _numPad(d.getMonth() + 1) + '-' + _numPad(d.getDate()),
+          time = _numPad(d.getHours()) + ':' + _numPad(d.getMinutes()) + ':' + _numPad(d.getSeconds());
       return date + " " + time;
     };
   });
@@ -345,10 +349,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       template: "{{stayTime}}",
       link: function(scope, attr, elem) {
         scope.stayTime = scope.monitor.term;
-
-        function _numPad(str){
-          return ("0" + str).slice(-2);
-        }
 
         function countUp(){
           scope.monitor.term = Number(scope.monitor.term) + 1;
