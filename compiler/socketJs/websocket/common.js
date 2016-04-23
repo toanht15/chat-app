@@ -664,13 +664,17 @@ var socket, // socket.io
       }
       // ウィンドウリサイズは消費者の状態のみ反映
       if ( Number(userInfo.accessType) !== Number(cnst.access_type.guest) ) return false;
-      if ((ua.indexOf("windows") != -1 && ua.indexOf("touch") != -1)
-          ||  ua.indexOf("ipad") != -1
-          || (ua.indexOf("android") != -1 && ua.indexOf("mobile") == -1)
-          || (ua.indexOf("firefox") != -1 && ua.indexOf("tablet") != -1)
-          ||  ua.indexOf("kindle") != -1
-          ||  ua.indexOf("silk") != -1
-          ||  ua.indexOf("playbook") != -1)
+      if (
+          ( (ua.indexOf("windows") != -1 && ua.indexOf("touch") != -1)
+            ||  ua.indexOf("ipad") != -1
+            || (ua.indexOf("android") != -1 && ua.indexOf("mobile") == -1)
+            || (ua.indexOf("firefox") != -1 && ua.indexOf("tablet") != -1)
+            ||  ua.indexOf("kindle") != -1
+            ||  ua.indexOf("silk") != -1
+            ||  ua.indexOf("playbook") != -1
+          )
+          && 'orientationchange' in window
+        )
       {
         window.addEventListener("orientationchange", syncEvent.tabletResize, false);
       }
