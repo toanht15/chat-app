@@ -41,4 +41,21 @@ class htmlExHelper extends AppHelper {
 
 		return sprintf($_tmp, $a, $this->Html->image($img['src'], $img['option']), $title);
 	}
+
+	public function timepad($str){
+		return sprintf("%02d", $str);
+	}
+
+	public function calcTime($startDateTime, $endDateTime){
+		if ( empty($startDateTime) || empty($endDateTime) ) {
+			return "-";
+		}
+		$start = strtotime($startDateTime);
+		$end = strtotime($endDateTime);
+		$term = intval($end - $start);
+		$hour = intval($term / 3600);
+		$min = intval(($term / 60) % 60);
+		$sec = $term % 60;
+		return $this->timepad($hour) . ":" . $this->timepad($min) . ":" . $this->timepad($sec);
+	}
 }

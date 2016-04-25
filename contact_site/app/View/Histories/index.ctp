@@ -41,7 +41,6 @@
 				<th>滞在時間</th>
 				<th>閲覧ページ数</th>
 				<th>参照元URL</th>
-				<!-- <th>モニタリング</th> -->
 			</tr>
 		</thead>
 		<tbody>
@@ -50,10 +49,9 @@
 				<td class="tCenter"><?=h($history['THistory']['ip_address'])?></td>
 				<td class="tCenter">{{ ua('<?=h($history['THistory']['user_agent'])?>') }}</td>
 				<td class="tCenter"><?=h($history['THistory']['access_date'])?></td>
-				<td class="tCenter">{{ calcTime('<?=h($history['THistory']['access_date'])?>', '<?=h($history['THistory']['out_date'])?>') }}</td>
+				<td class="tCenter"><?=$this->htmlEx->calcTime($history['THistory']['access_date'], $history['THistory']['out_date']) ?></td>
 				<td class="tCenter"><?=h($history['THistoryStayLog']['count'])?>（<a href="javascript:void(0)" onclick="openHistoryById('<?=h($history['THistory']['id'])?>')" >移動履歴</a>）</td>
 				<td class="tCenter omit"><span><?=h($history['THistory']['referrer_url'])?></span></td>
-				<!-- <td class="tCenter"></td> -->
 			</tr>
 <?php endforeach; ?>
 		</tbody>
