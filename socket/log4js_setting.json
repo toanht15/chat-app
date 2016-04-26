@@ -1,0 +1,28 @@
+{
+    "appenders": [
+        {
+            "type": "dateFile",
+            "category": "request",
+            "filename": "./logs/request_",
+            "pattern": "yyyyMMdd.log",
+            "backups": 3,
+            "alwaysIncludePattern": "true"
+        },
+        {
+            "type": "dateFile",
+            "category": "error",
+            "filename": "./logs/error_",
+            "pattern": "yyyyMMdd.log",
+            "backups": 7,
+            "alwaysIncludePattern": "true"
+        },
+        {
+            "type": "dateFile",
+            "category": "debug",
+            "filename": "./logs/debug_",
+            "pattern": "yyyyMMdd.log",
+            "backups": 3,
+            "alwaysIncludePattern": "false"
+        }
+    ]
+}
