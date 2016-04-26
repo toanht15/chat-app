@@ -33,9 +33,6 @@ function getSessionId(siteKey, tabId, key){
   if ( (siteKey in sincloCore) && (tabId in sincloCore[siteKey]) && (key in sincloCore[siteKey][tabId]) ) {
     return sincloCore[siteKey][tabId][key];
   }
-  else {
-    console.log('>>>>> getSessionId: Not Found <<<<<');
-  }
 }
 
 function now(){
@@ -186,6 +183,27 @@ var db = {
         };
       });
     }
+  }
+};
+
+var console = {
+  date: function(){
+    var d = new Date();
+    return d.getFullYear() + "/" + ( "0" + (d.getMonth() + 1) ).slice(-2) + "/" + ("0" + d.getDate()).slice(-2) + " " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2) + ":" + ("0" + d.getSeconds()).slice(-2);
+  },
+  log: function(a, b){
+    var label = null, data = null, d = this.date();
+    switch(typeof b){
+      case 'object':
+        var data = "【" + a + "|" + d + "】 " + JSON.stringify(b, null, "\t");
+        break;
+      case 'string':
+        var data = "【" + a + "|" + d + "】 " + b;
+        break;
+      default:
+        var data = "【" + d + "】 " + JSON.stringify(a, null, "\t");
+    }
+    reqlogger.info(data);
   }
 };
 
@@ -566,9 +584,22 @@ io.sockets.on('connection', function (socket) {
           }
           console.log('after', companyList);
           break;
-        case 3: // del company ( sample: socket.emit('log', JSON.stringify({type:3, siteKey: "master"})); )
+        case 3: // del company ( sample: socket.emit('log', JSON.stringify({type:3, targetKey: "demo", siteKey: "master"})); )
           console.log('connectList', connectList);
-          console.log('sincloCore', sincloCore[obj.siteKey]);
+          if ( 'targetKey' in obj ) {
+            console.log("--------------------------------" + obj.targetKey + "--------------------------------");
+            console.log('sincloCore', sincloCore[obj.targetKey]);
+            console.log("-------------------------------------------------------------------------");
+          }
+          else {
+            var keys = Object.keys(sincloCore);
+            for( var i = 0; i < keys.length; i++ ){
+              var targetKey = keys[i];
+              console.log("--------------------------------" + targetKey + "--------------------------------");
+              console.log('sincloCore', sincloCore[targetKey]);
+            }
+            console.log("-------------------------------------------------------------------------");
+          }
           break;
         default:
       }
