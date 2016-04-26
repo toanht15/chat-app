@@ -822,10 +822,9 @@ var socket, // socket.io
           html += '<div id="sincloPopup" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 99999999999999;">';
           html += '  <style>';
           html += '    #sincloPopupFrame {';
-          html += '        border: 1px solid #999;';
-          html += '        padding: 0.5em 1em;';
+          html += '        border: 0.15em solid #ABABAB;';
           html += '        width: 30em;';
-          html += '        height: 10em;';
+          html += '        opacity: 0;';
           html += '        background-color: #EDEDED;';
           html += '        color: #3C3C3C;';
           html += '        margin: auto;';
@@ -834,14 +833,27 @@ var socket, // socket.io
           html += '        left: 0;';
           html += '        right: 0;';
           html += '        bottom: 0;';
-          html += '        box-shadow: 0 2px 2px rgb(188, 188, 188);';
-          html += '        border-radius: 3px;';
+          html += '        box-shadow: 0 35px 42px rgba(141, 141, 141, 0.8);';
+          html += '        border-radius: 5px;';
           html += '        box-sizing: border-box;';
+          html += '    }';
+          html += '    #sincloPopBar {';
+          html += '        height: 1.85em;';
+          html += '        background: linear-gradient(#EDEDED, #D2D2D2);';
+          html += '        border-bottom: 0.15em solid #989898;';
+          html += '        border-radius: 5px 5px 0 0;';
+          html += '    }';
+          html += '    #sincloLogo {';
+          html += '        padding: 1em;';
+          html += '    }';
+          html += '    #sincloMessage {';
+          html += '        padding-right: 1em;';
           html += '    }';
           html += '    sinclo-h3 {';
           html += '        font-weight: bold;';
           html += '        display: block;';
           html += '        font-size: 1.2em;';
+          html += '        height: 1.2em;';
           html += '        margin: 0.4em 0;';
           html += '    }';
           html += '    sinclo-div {';
@@ -849,28 +861,34 @@ var socket, // socket.io
           html += '    }';
           html += '    sinclo-content {';
           html += '        display: block;';
-          html += '        font-size: 1em;';
+          html += '        font-size: 0.9em;';
           html += '        margin: 0.5em 0;';
+          html += '        line-height: 2em;';
           html += '    }';
           html += '    #sincloPopMain {';
-          html += '        height: 6em;';
+          html += '        display: table;';
+          html += '    }';
+          html += '    sinclo-div#sincloPopMain sinclo-div {';
+          html += '        display: table-cell;';
+          html += '        vertical-align: top;';
           html += '    }';
           html += '    #sincloPopAct {';
           html += '        width: 100%;';
           html += '        height: 2em;';
           html += '        text-align: center;';
           html += '        padding: 0.5em 0;';
+          html += '        box-sizing: content-box;';
           html += '    }';
           html += '    #sincloPopAct sinclo-a {';
           html += '        background-color: #FFF;';
           html += '        padding: 5px 10px;';
           html += '        text-decoration: none;';
-          html += '        color: #666;';
           html += '        border-radius: 5px;';
-          html += '        border: 1px solid #BEBEBE;';
+          html += '        border: 1px solid #959595;';
           html += '        margin: 10px;';
           html += '        font-size: 1em;';
-          html += '        box-shadow: 0 0 1px rgba(75, 75, 75, 0.3);';
+          html += '        box-shadow: 0 0 2px rgba(75, 75, 75, 0.3);';
+          html += '        font-weight: bold;';
           html += '    }';
           html += '    #sincloPopAct sinclo-a:hover {';
           html += '        cursor: pointer;';
@@ -879,10 +897,7 @@ var socket, // socket.io
           html += '        outline: none;';
           html += '    }';
           html += '    #sincloPopAct sinclo-a#sincloPopupOk {';
-          html += '       background-color: ' + maincolor;
-          html += '    }';
-          html += '    #sincloPopAct sinclo-a#sincloPopupOk:hover, #sincloPopAct sinclo-a#sincloPopupOk:focus {';
-          html += '       background-color: ' + hovercolor;
+          html += '       background: linear-gradient(to top, #D5FAFF, #80BEEA, #D5FAFF);';
           html += '    }';
           html += '    #sincloPopAct sinclo-a#sincloPopupNg {';
           html += '       background-color: #FFF';
@@ -892,8 +907,13 @@ var socket, // socket.io
           html += '    }';
           html += '  </style>';
           html += '  <sinclo-div id="sincloPopupFrame">';
+          html += '    <sinclo-div id="sincloPopBar">';
+          html += '    </sinclo-div>';
           html += '    <sinclo-div id="sincloPopMain">';
-          html += '      <sinclo-h3>' + title + ':</sinclo-h3><sinclo-content>' + content + '</sinclo-content>';
+          html += '      <sinclo-div id="sincloLogo"><img src="' + info.site.files + '/img/mark.png" width="60" height="60"></sinclo-div>';
+          html += '      <sinclo-div id="sincloMessage">';
+          html += '          <sinclo-h3>' + title + ':</sinclo-h3><sinclo-content>' + content + '</sinclo-content>';
+          html += '      </sinclo-div>';
           html += '    </sinclo-div>';
           html += '    <sinclo-div id="sincloPopAct">';
           html += '      <sinclo-a href="javascript:void(0)" id="sincloPopupOk" onclick="popup.ok()">許可する</sinclo-a>';
@@ -903,6 +923,13 @@ var socket, // socket.io
           html += '</sinclo-div>';
 
           $("body").append(html);
+
+          var height = 0;
+          $("#sincloPopupFrame > sinclo-div").each(function(e){
+            height += this.offsetHeight;
+          });
+
+          $("#sincloPopupFrame").height(height).css("opacity", 1);
       },
       remove: function(){
           var elm = document.getElementById('sincloPopup');
