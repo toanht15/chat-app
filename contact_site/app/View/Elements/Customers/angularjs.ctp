@@ -258,7 +258,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       if (connectToken !== obj.connectToken) return false;
 
       connectToken = null; // リセット
-      url  = "<?= $this->Html->url(array('controller'=>'Customers', 'action'=>'frame')) ?>/?userId=" + obj.userId + "&type=" + _access_type_host;
+      url  = "<?= $this->Html->url(array('controller'=>'Customers', 'action'=>'frame')) ?>?type=" + _access_type_host;
       url += "&url=" + encodeURIComponent(obj.url) + "&userId=" + obj.userId;
       url += "&connectToken=" + obj.connectToken + "&id=" + obj.tabId;
       url += "&width=" + obj.windowSize.width + "&height=" + obj.windowSize.height;
