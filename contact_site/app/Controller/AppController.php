@@ -150,7 +150,12 @@ class AppController extends Controller {
                 else {
                   $queryStr .= "&";
                 }
-                $queryStr .= $key . "=" . $val;
+                if ( strcmp('url', $key) === 0 ) {
+                  $queryStr .= $key . "=" . urlencode($val);
+                }
+                else {
+                  $queryStr .= $key . "=" . $val;
+                }
             }
 
             // 推奨のプロトコルでリダイレクト

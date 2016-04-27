@@ -8,12 +8,7 @@ var socket, userId, tabId, iframe, windowSize, connectToken, url, emit, resizeAp
   //  関数
   // -----------------------------------------------------------------------------
 
-  var pair=location.search.substring(1).split('&');
-  for(var i=0;pair[i];i++) {
-      var kv = pair[i].split('=');
-      arg[kv[0]]=kv[1];
-  }
-
+  arg = <?php echo json_encode($query, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   emit = function(ev, d){
     var obj = {};
     if ( typeof(d) !== "object" ) {
@@ -141,7 +136,7 @@ window.onload = function(){
       var ws = JSON.parse(sessionStorage.getItem('window'));
     }
     else {
-      url = decodeURIComponent(arg.url);
+      url = arg.url;
 
       var ws = {'width':arg.width, 'height':arg.height};
     }

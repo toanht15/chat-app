@@ -26,7 +26,7 @@ class CustomersController extends AppController {
      * */
     public function frame() {
         $this->layout = 'frame';
-        Configure::write('debug', 0);
+        $this->set('query', $this->request->query);
     }
 
     /* *
