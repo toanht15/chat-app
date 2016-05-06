@@ -73,7 +73,7 @@ class CustomersController extends AppController {
     }
 
     public function remoteGetStayLogs() {
-        Configure::write('debug', 0);
+        Configure::write('debug', 2);
         $this->autoRender = FALSE;
         $this->layout = null;
 

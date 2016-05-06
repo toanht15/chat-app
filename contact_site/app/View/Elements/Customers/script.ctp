@@ -3,9 +3,9 @@
 // -----------------------------------------------------------------------------
 //  定数
 // -----------------------------------------------------------------------------
-var _access_type_guest = 1, _access_type_host = 2, userAgentChk,
+var _access_type_guest = 1, _access_type_host = 2, userAgentChk, notificationStatus = false,
     socket = io.connect("<?=C_NODE_SERVER_ADDR.C_NODE_SERVER_WS_PORT?>"),
-    connectToken = null, receiveAccessInfoToken = null;
+    connectToken = null, receiveAccessInfoToken = null, isset, myUserId = <?= h($muserId)?>;
 
 (function(){
   // -----------------------------------------------------------------------------
@@ -40,9 +40,9 @@ var _access_type_guest = 1, _access_type_host = 2, userAgentChk,
         return token;
   }
 
- function isset(a){
+ isset = function(a){
     return ( a !== undefined && a !== null && a !== "" );
-  }
+  };
 
   // TODO ここをもとに、顧客側の存在確認コードも変える
   var sendRegularlyRequest = {
@@ -54,10 +54,10 @@ var _access_type_guest = 1, _access_type_host = 2, userAgentChk,
         var opState = $('#operatorStatus');
 
         if ( opState.data('status') === <?=C_OPERATOR_ACTIVE?> ) {
-          emit('sendOperatorStatus', {userId: <?=$muserId?>, active: true});
+          emit('sendOperatorStatus', {userId: myUserId, active: true});
         }
         else {
-          emit('sendOperatorStatus', {userId: <?=$muserId?>, active: false});
+          emit('sendOperatorStatus', {userId: myUserId, active: false});
         }
         sendRegularlyRequest.ev();
       }, sendRegularlyRequest.time);
@@ -68,9 +68,34 @@ var _access_type_guest = 1, _access_type_host = 2, userAgentChk,
     },
     end: function(){
       window.clearInterval(this.id);
-      emit('sendOperatorStatus', {userId: <?=$muserId?>, active: false});
+      emit('sendOperatorStatus', {userId: myUserId, active: false});
     }
   };
+
+  // http://qiita.com/kidatti/items/10a6a033ed0b84619d81
+  // デスクトップ通知が利用できる場合
+  var Notification = window.Notification || window.mozNotification || window.webkitNotification;
+  if (Notification) {
+
+    // Permissionの確認
+    if (Notification.permission === 'granted') {
+      // 許可されている場合はNotificationで通知
+      notificationStatus = true;
+
+    }
+    else if (Notification.permission === 'denied') {
+      notificationStatus = false;
+    }
+    else if (Notification.permission === 'default') {
+
+      // 許可が取れていない場合はNotificationの許可を取る
+      Notification.requestPermission(function(result) {
+        if (result === 'granted') {
+          notificationStatus = true;
+        }
+      });
+    }
+  }
 
   $(window).bind('beforeunload', function(){
     sendRegularlyRequest.end();
@@ -84,5 +109,6 @@ var _access_type_guest = 1, _access_type_host = 2, userAgentChk,
   });
 
 })();
+
 // -->
 </script>

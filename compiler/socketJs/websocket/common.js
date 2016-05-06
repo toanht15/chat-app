@@ -76,6 +76,27 @@ var socket, // socket.io
       return JSON.parse(d);
     },
     sincloBoxHeight: 270,
+    createWidget: function(){
+      var chat = this.chatWidgetTemplate();
+      var call = this.widgetTemplate();
+      var css = '';
+
+      css += '<style>';
+      css += '#sincloContents *{';
+      css += '  box-sizing: border-box;';
+      css += '  background-color: rgba(0,0,0,0);';
+      css += '  border: none;';
+      css += '  border-radius: 0;';
+      css += '  padding: 0;';
+      css += '  margin: 0;';
+      css += '  line-height: 1;';
+      css += '  color: #6B6B6B;';
+      css += '  font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana;';
+      css += '}';
+      css += '</style>';
+
+      return "<section id='sincloContents'>" + css + chat + call + "</section>";
+    },
     widgetTemplate: function(){
       var widget = window.info.widget;
       var maincolor = ( window.info.site.maincolor !== undefined ) ? window.info.site.maincolor : "#ABCD05";
@@ -94,10 +115,10 @@ var socket, // socket.io
           css  += '}';
           css  += '#sincloBox a:hover { color: ' + maincolor + ' }';
 
-      var html  = '<div id="sincloBox" style="box-sizing: border-box; position: fixed; height: 45px; bottom: -11px; right: 5px; border: 1.5px solid rgb(232, 231, 224); border-radius: 10px; z-index: 999998; width: 250px; overflow: hidden; background-color: rgb(255, 255, 255);">';
+      var html  = '<div id="sincloBox" data-flg="false" style="box-sizing: border-box; position: fixed; height: 45px; bottom: -11px; right: 5px; border: 1.5px solid rgb(232, 231, 224); border-radius: 10px; z-index: 999998; width: 250px; overflow: hidden; background-color: rgb(255, 255, 255);">';
           html += '  <style>' + css + '</style>';
-          html += '  <img onclick="sinclo.operatorInfo.ev()" style="position: absolute; top: 11.5px; right: 10px; z-index: 0;" src=" ' + window.info.site.files + '/img/yajirushi.png" height="12" width="16.5">';
-          html += '  <div onclick="sinclo.operatorInfo.ev()" style="cursor: pointer; background-color: ' + maincolor + '; width: 100%; height: 35px; background-image: url( ' + window.info.site.files + '/img/call.png); background-repeat: no-repeat; background-position: 15px, 0; background-size: 4.5%; color: #FFF;">';
+          html += '  <img onclick="sinclo.operatorInfo.ev(\'sincloBox\')" style="position: absolute; top: 11.5px; right: 10px; z-index: 0;" src=" ' + window.info.site.files + '/img/yajirushi.png" height="12" width="16.5">';
+          html += '  <div onclick="sinclo.operatorInfo.ev(\'sincloBox\')" style="cursor: pointer; background-color: ' + maincolor + '; width: 100%; height: 35px; background-image: url( ' + window.info.site.files + '/img/call.png); background-repeat: no-repeat; background-position: 15px, 0; background-size: 4.5%; color: #FFF;">';
           html += '    <pre style="color: #FFF; text-align: center; font-size: 15px; padding: 10px; margin:  0;">' + widget.title + '</pre>'
           html += '  </div>';
           // 受付時間を表示しない
@@ -118,6 +139,38 @@ var socket, // socket.io
           html += '    <span style="display: block; margin: 10px auto; width: 80%; padding: 7px;  color: #FFF; background-color: rgb(188, 188, 188); font-size: 25px; font-weight: bold; text-align: center; border: 1px solid rgb(188, 188, 188); border-radius: 15px">' + userInfo.accessId + '</span>';
           html += '    <p style="padding: 5px 0; text-align: center; border-top: 1px solid #DBDBDB;color: #A1A1A1!important; height: 20px; font-size: 11px;">Powered by <a target="sinclo" href="http://medialink-ml.co.jp/index.html">sinclo</a></p>';
           html += '</div>';
+      return html;
+    },
+    chatWidgetTemplate: function(){
+      var widget = window.info.widget;
+
+      var css   = '#sincloChatBox {';
+          css  += '  box-sizing: border-box; position: fixed; height: 340px; /* height: 45px; */ bottom: -11px; right: 270px; border: 1.5px solid rgb(232, 231, 224); border-radius: 10px; z-index: 999998; width: 250px; overflow: hidden; background-color: rgb(255, 255, 255);';
+          css  += '}';
+          css  += '#sincloChatBox ul { width: 100%; height: 200px; padding: 5px;background-color: #FDFDFD; list-style-type: none; overflow-y: scroll; overflow-x: hidden;}';
+          css  += '#sincloChatBox li { margin: 5px 0;padding: 5px; font-size: 12px; box-shadow: 0 0 1px rgba(0,0,0,0.5); color: #8A8A8A; white-space: pre; }';
+          css  += '#sincloChatBox li.sinclo_se { border-radius: 5px 5px 0; margin-left: 10px; background-color: #FFF; }';
+          css  += '#sincloChatBox li.sinclo_re { margin-right: 10px; border-radius: 5px 5px 5px 0; background-color: #F1F5C8; }';
+          css  += '#sinclo_sendbtn{ position: absolute; bottom: 3px; right: 3px; background-color: #FF7B7B; border-radius: 15px; padding: 2px; font-size: 20px; color: #FFF; opacity: 0.3 }';
+          css  += '#sinclo_sendbtn:hover{ opacity: 1!important; cursor: pointer; transition: opacity 500ms linear; }';
+          css  += '#sincloChatBox textarea { padding: 5px; resize: none; width: 230px; height: 50px; border: 1px solid #E4E4E4; border-radius: 5px; background-color: rgb(253, 253, 253)}';
+          css  += '#sincloChatBox textarea:focus{ outline: none; border-color: #CDDC39!important }';
+          css  += '#sincloChatBox a:hover { color: #ABCD05 }';
+
+      var html  = '<div id="sincloChatBox" data-flg=false class="sincloBoxes">';
+          html += '  <style>' + css + '</style>';
+          html += '  <img onclick="sinclo.operatorInfo.ev(\'sincloChatBox\')" style="position: absolute; top: 11.5px; right: 10px; z-index: 0;" src=" ' + window.info.site.files + '/img/yajirushi.png" height="12" width="16.5">';
+          html += '  <div onclick="sinclo.operatorInfo.ev(\'sincloChatBox\')" style="background-color: #ABCD05; width: 100%; height: 35px; background-image: url( ' + window.info.site.files + '/img/chat.png); background-repeat: no-repeat; background-position: 15px, 0; background-size: 9%; color: #FFF;">';
+          html += '    <pre style="color: #FFF; text-align: center; font-size: 15px; padding: 10px; margin:  0;">チャット</pre>'
+          html += '  </div>';
+          html += '  <ul id="chatTalk"></ul>';
+          html += '  <div style="border-top: 1px solid #DEDEDE; height: 70px; padding: 10px; position: relative;">';
+          html += '    <textarea name="sincloChat" id="sincloChatMessage" />';
+          html += '    <span id="sinclo_sendbtn" onclick="sinclo.chatApi.push()">＋</span>';
+          html += '  </div>';
+          html += '  <p style="padding: 5px 0; text-align: center; border-top: 1px solid #DBDBDB;color: #A1A1A1!important; height: 20px; font-size: 11px;">Powered by <a target="sinclo" href="http://medialink-ml.co.jp/index.html">sinclo</a></p>';
+          html += '</div>';
+
       return html;
     },
     makeAccessIdTag: function(){
@@ -230,6 +283,8 @@ var socket, // socket.io
     ipAddress: null,
     userAgent: window.navigator.userAgent,
     init: function(){
+      // トークン初期化
+      common.token_add();
       // ストレージの内容をオブジェクトに格納
       this.globalSet();
       // ストレージにリファラーのセット
@@ -430,13 +485,15 @@ var socket, // socket.io
       return this.unset(cnst.info_type.connect);
     },
     getSendList: function() {
-        return {
+      return {
         ipAddress: this.getIp(),
         time: this.getTime(),
         page: this.getPage(),
         prev: this.prev,
         referrer: this.referrer,
         userAgent: window.navigator.userAgent,
+        chatCnt: document.getElementsByClassName('sinclo_se').length,
+        chatUnread: {id: null, cnt: 0},
         service: check.browser()
       };
     }
@@ -1023,6 +1080,16 @@ var socket, // socket.io
       sinclo.resUrlChecker(d);
     }); // socket-on: receiveConnectEV
 
+    // チャット初期データ
+    socket.on('chatMessageData', function (d) {
+      sinclo.chatMessageData(d);
+    }); // socket-on: receiveConnectEV
+
+    // 新着チャット
+    socket.on('sendChatResult', function (d) {
+      sinclo.sendChatResult(d);
+    }); // socket-on: receiveConnectEV
+
     socket.on('syncStop', function(d){
       sinclo.syncStop(d);
     }); // socket-on: syncStop
@@ -1057,7 +1124,7 @@ function f_url(url){
 function emit(evName, data){
   data.userId = userInfo.userId;
   data.accessId = userInfo.accessId;
-  data.token = common.token_add();
+  data.token = common.token;
   data.title = common.title();
   data.siteKey = info.site.key;
   data.url= f_url(browserInfo.href);
@@ -1065,6 +1132,7 @@ function emit(evName, data){
   data.tabId = userInfo.tabId;
   data.prevList = browserInfo.prevList;
   data.accessType = userInfo.accessType;
+  data.chat = null;
   data.connectToken = userInfo.get(cnst.info_type.connect);
   if ( check.isset(storage.s.get('params')) || userInfo.accessType === cnst.access_type.host ) {
     data.subWindow = true;

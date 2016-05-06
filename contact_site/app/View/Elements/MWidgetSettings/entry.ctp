@@ -158,7 +158,7 @@ if ( !$isDisableTimeText ) {
               ●●●●
             </span>
 
-            <p >Powered by <a target="sinclo" href="http://medialink-ml.co.jp/index.html">sinclo</a></p>
+            <p style="padding: 5px 0; text-align: center; border-top: 1px solid #DBDBDB;color: #A1A1A1!important; height: 20px; font-size: 11px;">Powered by <a target="sinclo" href="http://medialink-ml.co.jp/index.html">sinclo</a></p>
 
           </div>
         </div>

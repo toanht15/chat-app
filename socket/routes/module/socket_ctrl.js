@@ -246,6 +246,92 @@ io.sockets.on('connection', function (socket) {
     }
   };
 
+  // チャット用
+  var chatApi = {
+    set: function(d){ // メッセージが渡されてきたとき
+      // // 履歴idかメッセージがない
+      if ( !isset(sincloCore[d.siteKey][d.tabId]['historyId']) || !isset(d.chatMessage) ) {
+        // エラーを渡す
+        return emit.toUser('sendChatResult', {ret: false, messageType: d.messageType, tabId: d.tabId, siteKey: d.siteKey}, d.siteKey);
+      }
+      // チャットidがある
+      else {
+        // DBへ書き込む
+        this.commit(d);
+      }
+
+    },
+    get: function(obj, sId){ // 最初にデータを取得するとき
+      pool.query('SELECT * FROM t_histories WHERE m_companies_id = ? AND tab_id = ? AND visitors_id = ? ORDER BY id DESC LIMIT 1;', [companyList[obj.siteKey], obj.tabId, obj.userId], function(err, rows){
+        var chatData = {historyId: null, messages: []};
+        if ( isset(rows) && isset(rows[0]) ) {
+          chatData.historyId = rows[0].id;
+          pool.query('SELECT id, message, message_type as messageType FROM t_history_chat_logs WHERE t_histories_id = ?;', [chatData.historyId], function(err, rows){
+            chatData.messages = rows;
+            obj.chat = chatData;
+            emit.toUser('chatMessageData', obj, sId);
+          });
+        }
+        else {
+          obj.chat = chatData;
+          emit.toUser('chatMessageData', obj, sId);
+        }
+      });
+    },
+    commit: function(d){ // DBに書き込むとき
+
+      var insertData = {
+        t_histories_id: sincloCore[d.siteKey][d.tabId].historyId,
+        visitors_id: d.userId,
+        m_users_id: d.mUserId,
+        message: d.chatMessage,
+        message_type: d.messageType,
+        created: formatDateParse()
+      };
+
+      pool.query('INSERT INTO t_history_chat_logs SET ?', insertData, function(error,results,fields){
+        if ( !isset(error) ) {
+          if ( !isset(sincloCore[d.siteKey][d.tabId]['sessionId'])) return false;
+          var sId = sincloCore[d.siteKey][d.tabId].sessionId;
+          // 書き込みが成功したら顧客側に結果を返す
+          emit.toUser('sendChatResult', {tabId: d.tabId, chatId: results.insertId, messageType: d.messageType, ret: true, chatMessage: d.chatMessage, siteKey: d.siteKey}, sId);
+
+          // 書き込みが成功したら企業側に結果を返す
+          emit.toCompany('sendChatResult', {tabId: d.tabId, chatId: results.insertId, messageType: d.messageType, ret: true, chatMessage: d.chatMessage, siteKey: d.siteKey}, d.siteKey);
+
+        }
+        else {
+          // 書き込みが失敗したらエラーを渡す
+          return emit.toUser('sendChatResult', {tabId: d.tabId, messageType: d.messageType, ret: false, siteKey: d.siteKey}, d.siteKey);
+        }
+      });
+
+    },
+    sendUnreadCnt: function(evName, obj){
+      var sql, tabId = obj.tabId, siteId = companyList[obj.siteKey];
+
+      sql  = " SELECT chat.id AS chatId, his.visitors_id, his.tab_id, chat.message FROM t_histories AS his";
+      sql += " INNER JOIN t_history_chat_logs AS chat ON ( his.id = chat.t_histories_id )";
+      sql += " WHERE his.tab_id = ? AND his.m_companies_id = ? AND chat.message_type = 1";
+      sql += "   AND chat.m_users_id IS NULL AND chat.message_read_flg != 1 ORDER BY chat.id desc";
+
+      pool.query(sql, [tabId, siteId], function(err, rows){
+        if ( !isset(err) && (rows.length > 0 && isset(rows[0].chatId))) {
+          obj.chatUnread = {id: rows[0].chatId, cnt: rows.length};
+          emit.toCompany(evName, obj, obj.siteKey);
+        }
+        else {
+          if ( isset(err) ) {
+          }
+          obj.chatUnread = {id: null, cnt: 0};
+          emit.toCompany(evName, obj, obj.siteKey);
+        }
+      });
+
+    }
+  };
+
+
   // 接続時
   socket.on('connected', function (r) {
     var res = JSON.parse(r),
@@ -323,6 +409,7 @@ io.sockets.on('connection', function (socket) {
     var obj = JSON.parse(data);
     obj.term = timeCalculator(obj);
     emit.toCompany("sendCustomerInfo", obj, obj.siteKey);
+    chatApi.sendUnreadCnt("sendCustomerInfo", obj);
   });
 
   socket.on("getCustomerInfo", function(data) {
@@ -393,6 +480,7 @@ io.sockets.on('connection', function (socket) {
     sincloCore[obj.siteKey][obj.tabId].syncSessionId = null;
     sincloCore[obj.siteKey][obj.tabId].syncHostSessionId = socket.id; // 企業画面側のセッションID
     emit.toUser('getWindowInfo', data, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
+
   });
   // 同形ウィンドウを作成するための情報受け取り
   socket.on('sendWindowInfo', function (data) {
@@ -469,6 +557,8 @@ io.sockets.on('connection', function (socket) {
     // マウス・スクロールバーの位置監視
     emit.toUser('syncEvStart', data, getSessionId(obj.siteKey, obj.to, 'sessionId'));
     emit.toUser('syncEvStart', data, getSessionId(obj.siteKey, obj.to, 'syncSessionId'));
+    emit.toUser('syncEvStart', data, sincloCore[obj.siteKey][obj.to].sessionId);
+    emit.toUser('syncEvStart', data, sincloCore[obj.siteKey][obj.to].syncSessionId);
   });
 
   socket.on('requestSyncStop', function (data) {
@@ -556,8 +646,61 @@ io.sockets.on('connection', function (socket) {
 
   socket.on('reqUrlChecker', function (data){
     var obj = JSON.parse(data);
-    if ( isset(sincloCore[obj.siteKey]) && isset(sincloCore[obj.siteKey][obj.to]) && isset(sincloCore[obj.siteKey][obj.to]['sessionId']) ) {
-      emit.toUser('resUrlChecker', data, getSessionId(obj.siteKey, obj.to, 'sessionId'));
+    emit.toUser('resUrlChecker', data, getSessionId(obj.siteKey, obj.to, 'sessionId'));
+  });
+
+  // -----------------------------------------------------------------------
+  //  チャット関連
+  // -----------------------------------------------------------------------
+
+  // チャットデータ取得
+  socket.on("getChatMessage", function(d){
+    var obj = JSON.parse(d);
+    chatApi.get(obj, socket.id);
+  });
+
+  // チャット開始
+  socket.on("chatStart", function(d){
+    var obj = JSON.parse(d);
+    if ( sincloCore[obj.siteKey][obj.tabId] === null ) {
+      emit.toUser("chatStartResult", {ret: false, siteKey: obj.siteKey, userId: sincloCore[obj.siteKey][obj.tabId].chat}, socket.id);
+    }
+    else {
+      emit.toUser("chatStartResult", {ret: true, tabId: obj.tabId, siteKey: obj.siteKey, userId: obj.userId}, socket.id);
+      sincloCore[obj.siteKey][obj.tabId].chat = obj.userId;
+    }
+  });
+
+  // チャット開始
+  socket.on("chatEnd", function(d){
+    var obj = JSON.parse(d);
+    if ( isset(sincloCore[obj.siteKey]) && isset(sincloCore[obj.siteKey][obj.tabId].chat) ) {
+      sincloCore[obj.siteKey][obj.tabId].chat = null;
+    }
+  });
+
+  // 新着チャット
+  socket.on("sendChat", function(d){
+    var obj = JSON.parse(d);
+    chatApi.set(obj);
+  });
+
+  // 新着チャット
+  socket.on("clientSendChat", function(d){
+    var obj = JSON.parse(d);
+    chatApi.set(obj);
+  });
+
+  // 既読操作
+  socket.on("isReadChatMessage", function(d){
+    var obj = JSON.parse(d);
+    if ( isset(sincloCore[obj.siteKey][obj.tabId].historyId) ) {
+      obj.historyId = sincloCore[obj.siteKey][obj.tabId].historyId;
+      pool.query("UPDATE t_history_chat_logs SET message_read_flg = 1 WHERE t_histories_id = ? AND id <= ?;",
+        [obj.historyId, obj.chatId], function(err, ret, fields){
+          chatApi.sendUnreadCnt('retReadChatMessage', obj);
+        }
+      );
     }
   });
 
@@ -654,7 +797,6 @@ io.sockets.on('connection', function (socket) {
       }, timeout);
       // connectListから削除
       delete connectList[socket.id];
-
     }
   });
 });
