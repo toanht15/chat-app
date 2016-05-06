@@ -92,7 +92,8 @@ var socket, // socket.io
           css  += '#sincloBox pre, #sincloBox span {';
           css  += '  font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana;';
           css  += '}';
-          css  += '#sincloBox a:hover { color: ' + maincolor + ' }';
+          css  += '#sincloBox a[target="sinclo"] { font-size: 12px; text-decoration: underline; }';
+          css  += '#sincloBox a[target="sinclo"]:hover { color: ' + maincolor + ' }';
 
       var html  = '<div id="sincloBox" style="box-sizing: border-box; position: fixed; height: 45px; bottom: -11px; right: 5px; border: 1.5px solid rgb(232, 231, 224); border-radius: 10px; z-index: 999998; width: 250px; overflow: hidden; background-color: rgb(255, 255, 255);">';
           html += '  <style>' + css + '</style>';
@@ -116,7 +117,7 @@ var socket, // socket.io
           }
           html += '    <pre style="display: block; word-wrap: break-word; font-size: 11px; text-align: center; margin: auto; line-height:1.5; color: #6B6B6B; width: 20em;">' + widget.content + '</pre>';
           html += '    <span style="display: block; margin: 10px auto; width: 80%; padding: 7px;  color: #FFF; background-color: rgb(188, 188, 188); font-size: 25px; font-weight: bold; text-align: center; border: 1px solid rgb(188, 188, 188); border-radius: 15px">' + userInfo.accessId + '</span>';
-          html += '    <p style="padding: 5px 0; text-align: center; border-top: 1px solid #DBDBDB;color: #A1A1A1!important; height: 20px; font-size: 11px;">Powered by <a target="sinclo" href="http://medialink-ml.co.jp/index.html">sinclo</a></p>';
+          html += '    <p style="padding: 5px 0; text-align: center; border-top: 1px solid #DBDBDB;color: #A1A1A1!important; height: 20px; font-size: 11px;">Powered by <a target="sinclo" href="http://www.medialink-ml.co.jp/index.html">sinclo</a></p>';
           html += '</div>';
       return html;
     },
