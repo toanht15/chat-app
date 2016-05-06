@@ -73,6 +73,7 @@
         }
         return false;
       };
+
       emit('connected', {
         type: 'user',
         data: emitData
@@ -387,15 +388,20 @@
         $("#sincloBox").children().each(function(){
           common.sincloBoxHeight = common.sincloBoxHeight + this.offsetHeight;
         });
-        window.setTimeout(function(){
-          if ( sinclo.operatorInfo.flg === false ) {
-            sinclo.operatorInfo.flg = true;
-            $("#sincloBox").animate({
-              'height':  (common.sincloBoxHeight + 55) + 'px'
-            }, 'first');
-          }
-        }, 3000);
         emit('syncReady', {widget: window.info.widgetDisplay});
+        var widgetOpen = storage.s.get('widgetOpen');
+
+        if (!widgetOpen) {
+          window.setTimeout(function(){
+            if ( sinclo.operatorInfo.flg === false ) {
+              sinclo.operatorInfo.flg = true;
+              storage.s.set('widgetOpen', true);
+              $("#sincloBox").animate({
+                'height':  (common.sincloBoxHeight + 55) + 'px'
+              }, 'first');
+            }
+          }, 3000);
+        }
       }
 
     },
