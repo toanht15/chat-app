@@ -26,6 +26,7 @@ var popupEvent = {
         title: null,
         contents: null,
         closePopup: null,
+        customizeBtn: null,
         closeNoPopup: function(){
           return popupEvent.close();
         },
@@ -65,6 +66,16 @@ var popupEvent = {
                     var closeBtn = _button("いいえ");
                     closeBtn.onclick = function(){
                         return popupEvent.closeNoPopup();
+                    };
+                    break;
+                case 'p-cus-detail':
+                    var closeBtn = _button("チャットを終了する");
+                    closeBtn.onclick = function(){
+                        return popupEvent.closePopup();
+                    };
+                    var closeBtn = _button("最小化する");
+                    closeBtn.onclick = function(){
+                        return popupEvent.customizeBtn();
                     };
                     break;
                 case 'p-cus-menu':

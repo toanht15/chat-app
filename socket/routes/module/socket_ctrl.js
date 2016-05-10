@@ -317,13 +317,15 @@ io.sockets.on('connection', function (socket) {
 
       pool.query(sql, [tabId, siteId], function(err, rows){
         if ( !isset(err) && (rows.length > 0 && isset(rows[0].chatId))) {
-          obj.chatUnread = {id: rows[0].chatId, cnt: rows.length};
+          obj.chatUnreadId = rows[0].chatId;
+          obj.chatUnreadCnt = rows.length;
           emit.toCompany(evName, obj, obj.siteKey);
         }
         else {
           if ( isset(err) ) {
           }
-          obj.chatUnread = {id: null, cnt: 0};
+          obj.chatUnreadId = null;
+          obj.chatUnreadCnt = 0;
           emit.toCompany(evName, obj, obj.siteKey);
         }
       });
@@ -466,7 +468,12 @@ io.sockets.on('connection', function (socket) {
     if ( getSessionId(obj.siteKey, obj.tabId, 'responderId') ) {
       obj.responderId = getSessionId(obj.siteKey, obj.tabId, 'responderId');
     }
+    if ( getSessionId(obj.siteKey, obj.tabId, 'chat') ) {
+      obj.chat = getSessionId(obj.siteKey, obj.tabId, 'chat');
+    }
+    // TODO ここを要求したユーザのみに送るようにする
     emit.toCompany("receiveAccessInfo", obj, obj.siteKey);
+    chatApi.sendUnreadCnt("sendCustomerInfo", obj);
   });
   // -----------------------------------------------------------------------
   //  モニタリング通信接続前
@@ -666,16 +673,17 @@ io.sockets.on('connection', function (socket) {
       emit.toUser("chatStartResult", {ret: false, siteKey: obj.siteKey, userId: sincloCore[obj.siteKey][obj.tabId].chat}, socket.id);
     }
     else {
-      emit.toUser("chatStartResult", {ret: true, tabId: obj.tabId, siteKey: obj.siteKey, userId: obj.userId}, socket.id);
+      emit.toCompany("chatStartResult", {ret: true, tabId: obj.tabId, siteKey: obj.siteKey, userId: obj.userId}, obj.siteKey);
       sincloCore[obj.siteKey][obj.tabId].chat = obj.userId;
     }
   });
 
-  // チャット開始
+  // チャット終了
   socket.on("chatEnd", function(d){
     var obj = JSON.parse(d);
     if ( isset(sincloCore[obj.siteKey]) && isset(sincloCore[obj.siteKey][obj.tabId].chat) ) {
       sincloCore[obj.siteKey][obj.tabId].chat = null;
+      emit.toCompany("chatEndResult", {ret: true, tabId: obj.tabId, siteKey: obj.siteKey, userId: obj.userId}, obj.siteKey);
     }
   });
 

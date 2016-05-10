@@ -483,6 +483,12 @@
         company: 2
       },
       init: function(){
+        $("#sincloChatMessage").on("keydown", function(e){
+          if ( e.ctrlKey && e.keyCode === 13 ) {
+            sinclo.chatApi.push();
+          }
+        });
+
         emit('getChatMessage', {});
       },
       createMessage: function(cs, val){

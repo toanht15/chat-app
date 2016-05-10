@@ -671,6 +671,11 @@ ul#color-bar-right {
   }
 }
 
+#paging span{
+  float: left;
+  margin-right: 5px;
+}
+
 [id$=_idx] {
   width: 90%;
   min-width: $content-min-width!important;
@@ -750,12 +755,55 @@ ul.naviBtn {
     float: right;
     width: 0%;
     opacity: 0;
+    display: none;
     transition: width 500ms linear 0ms, opacity 400ms linear 100ms;
 
     div.card-shadow * {
       opacity: 0;
       transition: opacity 100ms linear 40ms;
+    }
 
+    a.customer_detail_btn {
+      border-radius: 15px;
+      height: 25px;
+      width: 25px;
+      margin: 5px 2px;
+      text-align: center;
+    }
+  }
+
+  #customer_tab {
+    position: fixed;
+    bottom: 0;
+    left: 60px;
+    z-index: 2;
+
+    ul {
+      padding: 0;
+
+      li {
+        padding: 10px 20px;
+        float: left;
+        font-size: 14px;
+        cursor: pointer;
+        white-space: nowrap;
+        background-color: $main-color;
+
+        &.selected {
+          background-color: #2B3A0B;
+          color: $main-color;
+        }
+
+        &:nth-child(even) {
+          background-color: #A9C176;
+          color: $main-color;
+        }
+
+        &:hover {
+            opacity: 0.8;
+        }
+
+      }
     }
   }
 
@@ -931,25 +979,21 @@ ul.naviBtn {
       }
 
       #sinclo_sendbtn {
-        position: absolute;
-        bottom: 0px;
-        right: -10px;
         background-color: #FF7B7B;
         border-radius: 15px;
-        padding: 2px;
-        font-size: 20px;
+        padding: 5px;
+        font-size: 15px;
         color: #FFF;
-        opacity: 0.3;
         height: 30px;
-        width: 30px;
-        text-align: center;
         user-select: none;
         box-shadow: 0 0 2px rgba(0,0,0,0.5);
+        display: block;
+        text-align: center;
+        margin: 5px 3px;
 
         &:hover, &.on {
-          opacity: 1!important;
+          background-color: #D55555;
           cursor: pointer;
-          transition: opacity 500ms linear;
         }
       }
 

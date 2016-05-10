@@ -98,17 +98,24 @@ var _access_type_guest = 1, _access_type_host = 2, userAgentChk, notificationSta
   }
 
   $(window).bind('beforeunload', function(){
+<?php if ( $widgetCheck ): ?>
     sendRegularlyRequest.end();
+<?php endif; ?>
   });
-
   socket.on("connect", function() {
     receiveAccessInfoToken = makeToken();
+<?php if ( $widgetCheck ): ?>
     sendRegularlyRequest.start();
+<?php endif; ?>
     var data = {type: 'admin', data: {token: receiveAccessInfoToken}};
     emit('connected', data);
   });
 
 })();
+
+$(document).ready(function(){
+  chatApi.init();
+});
 
 // -->
 </script>

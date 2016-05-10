@@ -56,18 +56,22 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         customer: 1,
         company: 2
       },
-      connection: function(monitor){
-        if ( isset(monitor.tabId) && isset(monitor.userId) && !isset(monitor.chat) ) {
-          emit("chatStart", {tabId: monitor.tabId, userId: myUserId});
-        }
+      init: function(){
+        $("#sendMessage").keydown(function(e){
+          if (e.keyCode === 13 ) {
+            chatApi.pushMessage();
+          }
+        })
+        .focus(function(e){
+          chatApi.connection();
+        });
       },
-      disConnect: function(monitor){
-        if ( isset(monitor.tabId) && (isset(monitor.userId) && isset(monitor.chat) && myUserId === monitor.chat ) ) {
-          emit("chatEnd", {tabId: monitor.tabId});
+      connection: function(){
+        if ( isset(this.tabId) && isset(this.userId) ) {
+          emit("chatStart", {tabId: this.tabId, userId: myUserId});
         }
       },
       getMessage: function(obj){
-        $("#sendMessage").attr('disabled', true);
         // チャットの取得
         emit('getChatMessage', {userId: obj.userId, tabId: obj.tabId, token: chatApi.token});
       },
@@ -102,10 +106,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       },
       isReadMessage: function(monitor){
         // メッセージを既読にする
-        if ( isset(monitor.chatUnread) && isset(monitor.chatUnread['cnt']) && monitor.chatUnread.cnt > 0 ) {
+        if ( isset(monitor.chatUnreadCnt) && monitor.chatUnreadCnt > 0 ) {
           emit('isReadChatMessage', {
             tabId: monitor.tabId,
-            chatId: monitor.chatUnread.id
+            chatId: monitor.chatUnreadId
           });
         }
       }
@@ -116,17 +120,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         date = d.getFullYear() + '/' + ( '0' + (d.getMonth() + 1) ).slice(-2) + '/' + ('0' + d.getDate()).slice(-2),
         time = d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
     return date + " " + time;
-  }
-
-  function updateSort(monitor){
-    var sort = "0";
-    if ( angular.isDefined(monitor) ) {
-      if ( ('connectToken' in monitor) && monitor.connectToken ) {
-        sort = "1";
-      }
-      monitor.monitorSort = String(sort) + String(monitor.time);
-    }
-    return monitor;
   }
 
   // http://weathercook.hatenadiary.jp/entry/2013/12/02/062136
@@ -177,6 +170,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       referrer : false
     };
     $scope.monitorList = {};
+    $scope.chatList = [];
     $scope.search = function(array){
       var result = {};
       if ( $scope.searchText ) {
@@ -286,17 +280,33 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     $scope.customerMainClass = "";
 
+    $scope.confirmDisConnect = function(tabId){
+      modalOpen.call(window, 'チャットを終了してもよろしいでしょうか？', 'p-cus-detail', '操作確認');
+      // チャットを終了する
+      popupEvent.closePopup = function(){
+        $scope.ngChatApi.disConnect(tabId); // チャットを終了する
+        $scope.showDetail(tabId);
+        popupEvent.close(); // モーダルを閉じる
+      };
+      // 最小化する
+      popupEvent.customizeBtn = function(){
+        $scope.showDetail(tabId); // 詳細を閉じる
+        popupEvent.close(); // モーダルを閉じる
+      };
+
+    };
+
     $scope.showDetail = function(tabId){
       $("#sendMessage").attr('value', '');
       if ( $scope.customerMainClass !== "" ) {
         $scope.customerMainClass = "";
-        $scope.detailData = "";
+        $scope.detailId = "";
         chatApi.userId = "";
         $("#chatTalk").children().remove();
         $("#customer_list tr.on").removeClass('on');
-        if ( chatApi.connect ) {
-         socket.emit("chatStart", {tabId: chatApi.tabId, userId: myUserId});
-        }
+        setTimeout(function(){
+          $("#customer_sub").css("display", "");
+        }, 200);
 
         if ( chatApi.tabId !== tabId ) {
           window.setTimeout(function(){
@@ -308,18 +318,20 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       else {
         $scope.customerMainClass = "showDetail";
         chatApi.token = makeToken();
-        $scope.detailData = $scope.monitorList[tabId];
-        chatApi.getMessage($scope.detailData);
-        chatApi.userId = $scope.detailData.userId;
+        $scope.detailId = tabId;
+        chatApi.getMessage($scope.monitorList[tabId]);
+        chatApi.userId = $scope.monitorList[tabId].userId;
         chatApi.tabId = tabId;
         $("#monitor_" + tabId).addClass('on');
-        chatApi.connect = false;
-        if ( isset($scope.detailData.chat) && $scope.detailData.chat === myUserId ) {
+        if ( isset($scope.monitorList[tabId].chat) && $scope.monitorList[tabId].chat === myUserId ) {
           $("#chatContent").addClass("connectChat");
         }
         else {
           $("#chatContent").removeClass("connectChat");
         }
+        setTimeout(function(){
+          $("#customer_sub").css("display", "block");
+        }, 400);
       }
     };
 
@@ -341,17 +353,28 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       connect: function(obj){
         chatApi.connection(obj);
       },
-      disConnect: function(obj){
-        chatApi.disConnect(obj);
+      disConnect: function(tabId){
+        emit("chatEnd", {tabId: tabId, userId: myUserId});
       }
     };
 
     function pushToList(obj){
-      $scope.monitorList[obj.tabId] = updateSort(obj);
+      $scope.monitorList[obj.tabId] = obj;
 
       if ( 'connectToken' in obj && 'responderId' in obj) {
         $scope.monitorList[obj.tabId].connectToken = obj.connectToken;
-        setResponderName(obj.tabId, obj.responderId);
+        // setResponderName(obj.tabId, obj.responderId);
+      }
+    }
+
+    function pushToChatList(tabId){
+      if ( $scope.chatList.length === 0 ) {
+          $scope.chatList.push(tabId);
+      }
+      else {
+        if ( $scope.chatList.indexOf(tabId) < 0 ) {
+            $scope.chatList.push(tabId);
+        }
       }
     }
 
@@ -359,6 +382,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var obj = JSON.parse(data);
       if ( receiveAccessInfoToken !== obj.receiveAccessInfoToken ) return false;
       pushToList(obj);
+      if ( 'chat' in obj && String(obj.chat) === "<?=$muserId?>" ) {
+        pushToChatList(obj.tabId);
+      }
     });
 
     socket.on('sendCustomerInfo', function (data) {
@@ -366,16 +392,14 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       pushToList(obj);
     });
 
-    function setResponderName(tabId, responderId){
-      if ( !(responderId in userList) ) return false;
-
-      if ( String(responderId) === "<?=$muserId?>" ) {
-        $scope.monitorList[tabId]['responderName'] = "あなた";
+    $scope.setName = function(uId){
+      if ( String(uId) === "<?=$muserId?>" ) {
+        return "あなた";
       }
       else {
-        $scope.monitorList[tabId]['responderName'] = userList[responderId] + "さん";
+        return userList[uId] + "さん";
       }
-    }
+    };
 
     socket.on('syncNewInfo', function (data) {
       var obj = JSON.parse(data);
@@ -384,7 +408,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         if ( 'widget' in obj ) { $scope.monitorList[obj.tabId].widget = obj.widget; }
         if ( 'connectToken' in obj ) { $scope.monitorList[obj.tabId].connectToken = obj.connectToken; }
         if ( 'prev' in obj ) { $scope.monitorList[obj.tabId].prev = obj.prev; }
-        updateSort($scope.monitorList[obj.tabId]);
       }
 
       var tabId = ( obj.subWindow ) ? obj.to : obj.tabId;
@@ -422,7 +445,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var obj = JSON.parse(data);
       if ( obj.tabId !== undefined && angular.isDefined($scope.monitorList[obj.tabId])) {
         $scope.monitorList[obj.tabId].connectToken = obj.connectToken;
-        $scope.monitorList[obj.tabId] = updateSort($scope.monitorList[obj.tabId]);
       }
     });
 
@@ -430,7 +452,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var obj = JSON.parse(data);
       if ( obj.tabId !== undefined && angular.isDefined($scope.monitorList[obj.tabId])) {
         $scope.monitorList[obj.tabId].connectToken = "";
-        $scope.monitorList[obj.tabId] = updateSort($scope.monitorList[obj.tabId]);
       }
     });
 
@@ -466,17 +487,22 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     // チャット接続結果
     socket.on("chatStartResult", function(d){
       var obj = JSON.parse(d);
+        $scope.monitorList[obj.tabId].chat = obj.userId;
       if ( obj.userId === myUserId && obj.ret ) {
-        chatApi.connect = true;
-        // 詳細表示
-        if ( obj.tabId !== chatApi.tabId ) {
-          $scope.showDetail(obj.tabId);
-        }
-        else {
-          $scope.monitorList[obj.tabId].chat = myUserId;
-        }
+        pushToChatList(obj.tabId);
         // 既読にする
         chatApi.isReadMessage($scope.monitorList[obj.tabId]);
+      }
+    });
+
+    // チャット接続終了
+    socket.on("chatEndResult", function(d){
+      var obj = JSON.parse(d);
+      if ( 'tabId' in obj && obj.tabId in $scope.monitorList && 'chat' in $scope.monitorList[obj.tabId] ) {
+        $scope.chatList = $scope.chatList.filter(function(v){
+          return (v !== this.t)
+        }, {t: obj.tabId});
+        $scope.monitorList[obj.tabId].chat = null;
       }
     });
 
@@ -521,8 +547,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
         // 未読数加算（自分以外の誰も対応していないとき）
         if ( isset($scope.monitorList[obj.tabId]) && (!$scope.isset($scope.monitorList[obj.tabId].chat) || $scope.monitorList[obj.tabId].chat === myUserId) ) {
-            $scope.monitorList[obj.tabId].chatUnread.cnt++;
-            $scope.monitorList[obj.tabId].chatUnread.id = obj.chatId;
+            $scope.monitorList[obj.tabId].chatUnreadCnt++;
+            $scope.monitorList[obj.tabId].chatUnreadId = obj.chatId;
             chatApi.notification($scope.monitorList[obj.tabId].accessId, obj.chatMessage);
         }
         // 既読にする（自分が対応しているとき）
@@ -540,7 +566,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     // チャットメッセージ既読処理結果関数
     socket.on('retReadChatMessage', function(d){
       var obj = JSON.parse(d);
-      $scope.monitorList[obj.tabId].chatUnread = {id: null, cnt: 0};
+      $scope.monitorList[obj.tabId].chatUnreadId = null;
+      $scope.monitorList[obj.tabId].chatUnreadCnt = 0;
     });
 
     // =======================================
@@ -549,19 +576,28 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
   }]);
 
-  sincloApp.filter('orderObjectBy', function() {
-    return function(items, field, reverse) {
-      var filtered = [];
-      var obj = ( typeof field === "object" );
-      angular.forEach(items, function(item) {
-        filtered.push(item);
+  // 参考 http://stackoverflow.com/questions/14478106/angularjs-sorting-by-property
+  sincloApp.filter('orderObjectBy', function(){
+   return function(input, atr) {
+      if (!angular.isObject(input)) return input;
+      var array = [];
+      for(var objectKey in input) {
+          array.push(input[objectKey]);
+      }
+      var sortAsc = (atr.match(/^-{1}/) === null);
+      var attribute = (sortAsc) ? atr : atr.substr(1);
+      array.sort(function(a, b){
+          a = (isNaN(parseInt(a[attribute]))) ? 0 : parseInt(a[attribute]);
+          b = (isNaN(parseInt(b[attribute]))) ? 0 : parseInt(b[attribute]);
+          if (sortAsc) {
+            return a - b;
+          }
+          else {
+            return b - a;
+          }
       });
-      filtered.sort(function (a, b) {
-        return (a[field] > b[field] ? 1 : -1);
-      });
-      if(reverse) filtered.reverse();
-      return filtered;
-    };
+      return array;
+   }
   });
 
   function _numPad(str){

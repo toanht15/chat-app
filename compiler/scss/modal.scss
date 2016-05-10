@@ -155,6 +155,31 @@
         }
       }
 
+      &.p-cus-detail {
+        width: 400px;
+
+        #popup-main {
+          text-align: center;
+        }
+
+        #popup-button {
+          width: 350px;
+          margin: 0 auto;
+
+          a {
+            width: 10em;
+
+            &:nth-child(odd) {
+              float: left;
+            }
+
+            &:nth-child(even) {
+              float: right;
+            }
+          }
+        }
+      }
+
       /* 履歴一覧-ポップアップ用 */
       &.p-history-logs {
         width: 400px;
