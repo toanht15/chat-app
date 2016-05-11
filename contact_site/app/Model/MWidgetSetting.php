@@ -9,43 +9,96 @@ class MWidgetSetting extends AppModel {
 
     public $name = "MWidgetSetting";
 
+    public $styleColumns = [
+      'max_show_time' => "maxShowTime",
+      'show_position' => "showPosition",
+      'title' => "title",
+      'sub_title' => "subTitle",
+      'description' => "description",
+      'main_color' => "mainColor",
+      'radius_ratio' => "radiusRatio",
+      'tel' => "tel",
+      'display_time_flg' => "displayTimeFlg",
+      'time_text' => "timeText",
+      'content' => "content"
+    ];
+
     /**
      * Validation rules
      *
      * @var array
      */
     public $validate = [
+        'max_show_time' => [
+            'numeric' => [
+              'rule' => 'numeric',
+              'allowEmpty' => false,
+              'message' => '数値を入力してください'
+            ],
+            'range' => [
+              'rule' => ['range', 1, 60],
+              'allowEmpty' => false,
+              'message' => '１～６０秒の間で設定してください'
+            ]
+        ],
+        'sub_title' => [
+            'maxLength' => [
+              'rule' => ['maxLength', 15],
+              'allowEmpty' => false,
+              'message' => '１５文字以内で設定してください'
+            ]
+        ],
+        'description' => [
+            'maxLength' => [
+              'rule' => ['maxLength', 15],
+              'allowEmpty' => false,
+              'message' => '１５文字以内で設定してください'
+            ]
+        ],
+        'main_color' => [
+            'colorcode' => [
+              'rule' => C_MATCH_RULE_COLOR_CODE,
+              'allowEmpty' => false,
+              'message' => '３ケタ、もしくは６ケタの１６進数を使用して設定してください'
+            ]
+        ],
+        'radius_ratio' => [
+            'between' => [
+              'rule' => ['between', 1, 15],
+              'message' => '１～１５の間で設定してください'
+            ]
+        ],
         'title' => [
             'maxLength' => [
                 'rule' => ['maxLength', 12],
                 'allowEmpty' => false,
-                'message' => 'タイトルは１２文字以内で設定してください。'
+                'message' => '１２文字以内で設定してください。'
             ]
         ],
         'tel' => [
             'tel' => [
                 'rule' => ['custom', C_MATCH_RULE_TEL],
                 'allowEmpty' => false,
-                'message' => '電話番号は半角数字とプラスとハイフンのみ使用できます'
+                'message' => '半角数字とプラスとハイフンのみ使用できます'
             ],
             'maxlength' => [
                 'rule' => ['maxLength', 13],
                 'allowEmpty' => true,
-                'message' => '電話番号は１３文字以内で設定してください。'
+                'message' => '１３文字以内で設定してください。'
             ]
         ],
         'content' => [
             'maxlength' => [
                 'rule' => ['maxLength', 100],
                 'allowEmpty' => true,
-                'message' => 'ウィジェット本文は１００文字以内で設定してください。'
+                'message' => '１００文字以内で設定してください。'
             ]
         ],
         'time_text' => [
             'maxlength' => [
                 'rule' => ['maxLength', 15],
                 'allowEmpty' => false,
-                'message' => '受付時間の表記は１５文字以内で設定してください。'
+                'message' => '１５文字以内で設定してください。'
             ]
         ]
     ];

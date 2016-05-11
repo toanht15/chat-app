@@ -18,12 +18,17 @@ define('C_WIDGET_DISPLAY_CODE_SHOW', 1); // 常に表示する
 define('C_WIDGET_DISPLAY_CODE_OPER', 2); // オペレーターが待機中の時のみ表示する
 define('C_WIDGET_DISPLAY_CODE_HIDE', 3); // 表示しない
 
+// 表示位置種別
+define('C_WIDGET_POSITION_RIGHT_BOTTOM', 1); // 右下
+define('C_WIDGET_POSITION_LEFT_BOTTOM', 2); // 左下
+
 // 在籍/退席コード
 define('C_OPERATOR_PASSIVE', 0); // 退席
 define('C_OPERATOR_ACTIVE', 1); // 在籍
 
 // 正規表現
 define('C_MATCH_RULE_TEL', '/^\+?(\d|-)*$/'); // TEL
+define('C_MATCH_RULE_COLOR_CODE', '/^#([0-9|a-f|A-F]{3}|[0-9|a-f|A-F]{6})$/');
 
 // メッセージ種別
 define('C_MESSAGE_TYPE_SUCCESS', 1); // 処理成功
@@ -34,7 +39,6 @@ define('C_MESSAGE_TYPE_ALERT', 3); // 処理失敗
 // ユーザー権限（リストあり：$config['Authority']）
 define('C_AUTHORITY_ADMIN', 1); // 管理者
 define('C_AUTHORITY_NORMAL', 2); // 一般
-
 
 /* ユーザー権限（単体あり：C_AUTHORITY_%） */
 $config['Authority'] = [
@@ -47,4 +51,10 @@ $config['WidgetDisplayType'] = [
     1 => "常に表示する",
     2 => "オペレーターが待機中の時のみ表示する",
     3 => "表示しない"
+];
+
+/* ウィジェット設定 － 表示位置種別 */
+$config['widgetPositionType'] = [
+    C_WIDGET_POSITION_RIGHT_BOTTOM => "右下",
+    C_WIDGET_POSITION_LEFT_BOTTOM => "左下"
 ];

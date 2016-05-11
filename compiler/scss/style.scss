@@ -4,6 +4,7 @@ $main-color: #C3D69B;
 $string-color: #595959;
 $line-color: #B5B5B5;
 $error-color: #F57E7E;
+$line-color: #909090;
 $shadow-color: rgba(0, 0, 0, 0.3);
 $header-btn-hover-color: #D6E8B0;
 $content-min-width: 1000px;
@@ -98,7 +99,7 @@ table {
 
 input{
   border: none;
-  border-bottom: 1px solid #909090;
+  border-bottom: 1px solid $line-color;
   &:focus {
       outline: none!important;
       border-bottom: 1px solid $main-color;
@@ -109,13 +110,15 @@ input{
 }
 
 textarea {
-  border-radius: 5px;
+  border-radius: 5px!important;
+  border: 1px solid $line-color!important;
+  padding: 5px;
   &:focus {
       outline: none!important;
-      border-color: $main-color;
+      border-color: $main-color!important;
   }
   &.form-error:focus {
-      border-color: $error-color;
+      border-color: $error-color!important;
   }
 }
 
@@ -314,6 +317,9 @@ a {
   padding: 20px 0 0 20px;
 }
 
+.m0 {
+  margin: 0;
+}
 .m40l {
   margin-left: 40px;
 }
@@ -679,7 +685,7 @@ ul#color-bar-right {
 [id$=_idx] {
   width: 90%;
   min-width: $content-min-width!important;
-  margin: 50px 50px;
+  margin: 50px 50px 0 50px;
 }
 
 [id$=_menu] {
@@ -1141,79 +1147,72 @@ ul.naviBtn {
 
 #m_widget_setting_idx {
   #m_widget_setting_form {
-    .form01 {
-      width: 800px;
-      margin: 0 auto;
-    }
-    input, select {
-      height: 26px;
-      font-size: 12px;
-      margin: 2px 5px;
-      width: 270px;
-      padding-left: 4px;
+    position: relative;
 
-      &[type='checkbox'] {
-        width: auto;
+    #m_widget_setting_entry {
+      max-width: 60%;
+
+      h3 {
+        border-bottom: 3px solid #C3D69B;
+        padding-left: 5px;
       }
+      .form01 {
 
-      &[type='radio'] {
-        width: auto;
-        height: auto;
-      }
-    }
+        .settingList li {
+          padding: 15px 0;
+          border-bottom: 1px solid #B7B7B7;
+          margin: 0;
 
-    #set_widget_detail_area {
-      border: 1px solid $line-color;
-      border-radius: 10px;
-      display: inline-block;
-      width: 100%;
+          pre { margin: 0 }
 
-      h2 {
-        text-align: center;
-      }
-
-      #widget_detail_area {
-        float: left;
-        width: 498px;
-
-        .labelArea {
-          width: 200px;
-        }
-
-        .error-message {
-            padding-left: 195px!important;
-        }
-
-        input[type='text'], .radio {
-          width: 300px;
-        }
-
-        textarea {
-          width: 300px;
-          padding: 10px;
-        }
-      }
-
-      #sample_widget_area {
-        float: right;
-        width: 300px;
-        padding: 5px;
-        #sincloBox {
-          margin: 0 auto;
-          color: #6B6B6B;
-
-          pre, span {
-            font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana;
+          &:last-child {
+            border-bottom: none;
           }
-
-          p {
-            padding: 5px 0; text-align: center; border-top: 1px solid #DBDBDB;color: #A1A1A1!important; height: 20px; font-size: 11px;
-          }
-
-          a:hover { color: #ABCD05 }
-
         }
       }
+
+      input{
+
+        &[type='text']{
+          height: 26px;
+          font-size: 12px;
+          margin: 2px 5px;
+          width: 270px;
+          padding-left: 4px;
+        }
+
+        &[type='checkbox'] {
+          width: auto;
+        }
+
+        &[type='number'] {
+          width: auto;
+          text-align: right;
+        }
+
+        &[type='radio'] {
+          width: auto;
+          height: auto;
+          border: none;
+        }
+
+        &[type='range'] {
+          height: auto;
+          border-bottom: none;
+        }
+
+      }
+
+      textarea {
+        font-size: 12px;
+      }
+
+      li span {
+        width: 15em;
+        padding-top: 5px;
+        display: block;
+      }
+
     }
 
     #m_widget_setting_action {
@@ -1229,6 +1228,16 @@ ul.naviBtn {
         text-align: center;
       }
     }
+
+    #m_widget_simulator {
+      position: absolute;
+      top: 20px;
+      left: 60%;
+      margin: 10px 0 0 30px;
+      margin-left: 30px;
+    }
+
+
   }
 }
 
