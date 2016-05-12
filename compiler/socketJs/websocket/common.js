@@ -129,6 +129,7 @@ var socket, // socket.io
       html += '  <style>';
       html += '      #sincloBox { position: fixed; ' + showPosition + ' z-index: 999998; background-color: rgba(0,0,0,0); display: block; width: 270px; }';
       html += '      #sincloBox * { box-sizing: border-box; font-size: 12px; font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana;}';
+      html += '      #sincloBox span, #sincloBox pre { font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana!important }';
       html += '      #sincloBox section { width: 270px; border: 1px solid #E8E7E0; background-color: #FFF; border-top: none;}';
       html += '      #sincloBox p#widgetTitle { cursor:pointer; border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px 0 0; border: 1px solid ' + widget.mainColor + '; border-bottom:none; background-color: ' + widget.mainColor + ';text-align: left; font-size: 14px;padding: 7px; padding-left: 77px; margin: 0;color: #FFF; height: 32px }';
       html += '      #sincloBox p#widgetSubTitle { background-color: #FFF; margin: 0; padding: 7px 0; text-align: left; border-width: 0 1px 0 1px; border-color: #E8E7E0; border-style: solid; padding-left: 77px; font-weight: bold; color: ' + widget.mainColor + '; height: 29px }';
@@ -183,7 +184,7 @@ var socket, // socket.io
     widgetTemplate: function(widget){
       var html = "";
       html += '<section id="callTab">';
-      html += '    <div style="height: 50px;margin: 15px 10px">';
+      html += '    <div style="height: 50px;margin: 15px 25px">';
       // アイコン
       html += '    <span style="display: block; width: 50px; height: 50px; float: left; background-color: ' + widget.mainColor + '; border-radius: 25px; padding: 3px;"><img width="19.5" height="33" src=" http://socket.localhost:8080/img/call.png" style="margin: 6px 12px"></span>';
       // 受付電話番号
