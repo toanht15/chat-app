@@ -19,7 +19,8 @@ class MWidgetSettingsController extends AppController {
         if ( $this->request->is('post') ) {
             $errors = $this->_update($this->request->data);
             if ( empty($errors) ) {
-                $this->set('alertMessage', ['type' => C_MESSAGE_TYPE_SUCCESS, 'text' => Configure::read('message.const.saveSuccessful')]);
+                $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
+                $this->redirect('index');
             }
             else {
                 $this->set('alertMessage', ['type' => C_MESSAGE_TYPE_ERROR, 'text' => Configure::read('message.const.saveFailed')]);
