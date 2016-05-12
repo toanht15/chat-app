@@ -6,17 +6,26 @@
   sinclo = {
     syncTimeout: "",
     operatorInfo: {
-      ev: function(contentId) {
-        var height = "45px";
-        var elm = $('#' + contentId);
-        var flg = elm.data('flg');
-        if ( !flg ) {
-          height = common[contentId + 'Height'] + "px";
+      flg: false,
+      ev: function() {
+        var height = 0;
+        var elm = $('#sincloBox');
+        if ( this.flg ) {
+          var height = 0;
+          height += $("#sincloBox #widgetHeader").outerHeight(true);
+          height += $("#sincloBox > #navigation").outerHeight(true);
+          var tab = $("#navigation li.selected").data('tab');
+          height += $("#" + tab + "Tab").outerHeight(true);
+          height += $("#sincloBox > #fotter").outerHeight(true);
+          this.flg = true;
+        }
+        else {
+          height = 85;
+          this.flg = false;
         }
         elm.animate({
-          height: height
-        }, 'first')
-        .data('flg', !flg);
+          height: height + "px"
+        }, 'first');
       }
     },
     connect: function(){
@@ -208,9 +217,9 @@
       $('select').each(function(){
         selectInfo.push(this.value);
       });
-      var sincloContents = document.getElementById('sincloContents');
-      if ( sincloContents ) {
-        sincloContents.parentNode.removeChild(sincloContents);
+      var sincloBox = document.getElementById('sincloBox');
+      if ( sincloBox ) {
+        sincloBox.parentNode.removeChild(sincloBox);
       }
 
       emit('getSyncInfo', {
@@ -382,51 +391,49 @@
       }
 
       common.load.finish();
-      var sincloContents = document.getElementById('sincloContents');
-      if ( sincloContents ) {
-        sincloContents.parentNode.removeChild(sincloContents);
+      var sincloBox = document.getElementById('sincloBox');
+      if ( sincloBox ) {
+        sincloBox.parentNode.removeChild(sincloBox);
       }
       if ( userInfo.accessType !== cnst.access_type.host ) {
       var html = common.createWidget();
         $('body').append(html);
-        common.sincloBoxHeight = 15;
-        common.sincloChatBoxHeight = 15;
-        $("#sincloBox").children().each(function(){
-          if ( this.tagName !== "STYLE" && this.tagName !== "IMG" ) {
-            common.sincloBoxHeight = common.sincloBoxHeight + $(this).outerHeight(true);
-          }
-        });
+        common.sincloBoxHeight = $("#sincloBox").outerHeight(true);
+        $("#sincloBox").outerHeight(85);
 
-        $("#sincloChatBox").children().each(function(){
-          if ( this.tagName !== "STYLE" && this.tagName !== "IMG" ) {
-            common.sincloChatBoxHeight = common.sincloChatBoxHeight + $(this).outerHeight(true);
-          }
+        $(".widgetCtrl").click(function(){
+            var target = $(".widgetCtrl.selected"), clickTab = $(this).data('tab');
+            target.removeClass("selected");
+            common.sincloBoxHeight = $("#sincloBox").outerHeight(true);
+            $("#sincloBox").attr("style", "");
+
+            if ( clickTab === "call" ) {
+              $("#callTab").css('display', 'inline-block');
+              $("#chatTab").hide();
+            }
+            else {
+              $("#callTab").hide();
+              $("#chatTab").css('display', 'inline-block');
+            }
+            $(this).addClass("selected");
         });
         // チャット情報読み込み
         sinclo.chatApi.init();
-
-        window.setTimeout(function(){
-          var elm = $('#sincloBox');
-          if ( elm.data('flg') === false ) {
-            elm.data('flg', true).animate({
-              'height':  common.sincloBoxHeight + 'px'
-            }, 'first');
+        if ( ('maxShowTime' in window.info.widget) && String(window.info.widget.maxShowTime).match(/^[0-9]{1,2}$/) !== null ) {
+          var maxShowTime = Number(window.info.widget.maxShowTime) * 1000;
+          var widgetOpen = storage.s.get('widgetOpen');
+          if (!widgetOpen) {
+            window.setTimeout(function(){
+              if ( !sinclo.operatorInfo.flg ) {
+                storage.s.set('widgetOpen', true);
+                $("#sincloBox").animate({
+                  'height':  (common.sincloBoxHeight) + 'px'
+                }, 'first');
+              }
+            }, maxShowTime);
           }
-        }, 3000);
-        emit('syncReady', {widget: window.info.widgetDisplay});
-        var widgetOpen = storage.s.get('widgetOpen');
-
-        if (!widgetOpen) {
-          window.setTimeout(function(){
-            if ( sinclo.operatorInfo.flg === false ) {
-              sinclo.operatorInfo.flg = true;
-              storage.s.set('widgetOpen', true);
-              $("#sincloBox").animate({
-                'height':  (common.sincloBoxHeight + 55) + 'px'
-              }, 'first');
-            }
-          }, 3000);
         }
+        emit('syncReady', {widget: window.info.widgetDisplay});
       }
 
     },
@@ -484,8 +491,10 @@
       },
       init: function(){
         $("#sincloChatMessage").on("keydown", function(e){
-          if ( e.ctrlKey && e.keyCode === 13 ) {
-            sinclo.chatApi.push();
+          if ( e.keyCode === 13 ) {
+            if ( !(e.shiftKey || e.ctrlKey) ) {
+              sinclo.chatApi.push();
+            }
           }
         });
 

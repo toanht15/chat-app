@@ -77,101 +77,117 @@ var socket, // socket.io
     },
     sincloBoxHeight: 270,
     createWidget: function(){
-      var chat = this.chatWidgetTemplate();
-      var call = this.widgetTemplate();
-      var css = '';
-
-      css += '<style>';
-      css += '#sincloContents *{';
-      css += '  box-sizing: border-box;';
-      css += '  background-color: rgba(0,0,0,0);';
-      css += '  border: none;';
-      css += '  border-radius: 0;';
-      css += '  padding: 0;';
-      css += '  margin: 0;';
-      css += '  line-height: 1;';
-      css += '  color: #6B6B6B;';
-      css += '  font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana;';
-      css += '}';
-      css += '</style>';
-
-      return "<section id='sincloContents'>" + css + chat + call + "</section>";
-    },
-    widgetTemplate: function(){
       var widget = window.info.widget;
-      var maincolor = ( window.info.site.maincolor !== undefined ) ? window.info.site.maincolor : "#ABCD05";
-      var css   = '#sincloBox * {';
-          css  += '  box-sizing: border-box;';
-          css  += '  background-color: rgba(0,0,0,0);';
-          css  += '  border: none;';
-          css  += '  border-radius: 0;';
-          css  += '  padding: 0;';
-          css  += '  margin: 0;';
-          css  += '  line-height: 1;';
-          css  += '  color: #6B6B6B;';
-          css  += '}';
-          css  += '#sincloBox pre, #sincloBox span {';
-          css  += '  font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana;';
-          css  += '}';
-          css  += '#sincloBox a[target="sinclo"] { font-size: 12px; text-decoration: underline; }';
-          css  += '#sincloBox a[target="sinclo"]:hover { color: ' + maincolor + ' }';
+      var header = this.widgetHeaderTemplate(widget);
+      var navi = this.widgetNaviTemplate(widget);
+      var chat = this.chatWidgetTemplate(widget);
+      var call = this.widgetTemplate(widget);
+      var fotter = '<p id="fotter">Powered by <a target="sinclo" href="http://medialink-ml.co.jp/index.html">sinclo</a></p>';
+      return "<sinclo id='sincloBox' data-flg='false' >" + header + navi + chat + call + fotter + "</sinclo>";
+    },
+    widgetHeaderTemplate: function(widget){
+      var html = "";
+      var faintColor = widget.mainColor;
+      if ( faintColor.indexOf("#") >= 0 ) {
+        var code = faintColor.substr(1), r,g,b;
+        if (code.length === 3) {
+          r = String(code.substr(0,1)) + String(code.substr(0,1));
+          g = String(code.substr(1,1)) + String(code.substr(1,1));
+          b = String(code.substr(2)) + String(code.substr(2));
+        }
+        else {
+          r = String(code.substr(0,2));
+          g = String(code.substr(2,2));
+          b = String(code.substr(4));
+        }
+        faintColor = "rgba(" + parseInt(r,16) + ", " + parseInt(g,16) + ", " + parseInt(b,16) + ", 0.1)";
+      }
 
-      var html  = '<div id="sincloBox" data-flg="false" style="box-sizing: border-box; position: fixed; height: 45px; bottom: -11px; right: 5px; border: 1.5px solid rgb(232, 231, 224); border-radius: 10px; z-index: 999998; width: 250px; overflow: hidden; background-color: rgb(255, 255, 255);">';
-          html += '  <style>' + css + '</style>';
-          html += '  <img onclick="sinclo.operatorInfo.ev(\'sincloBox\')" style="position: absolute; top: 11.5px; right: 10px; z-index: 0;" src=" ' + window.info.site.files + '/img/yajirushi.png" height="12" width="16.5">';
-          html += '  <div onclick="sinclo.operatorInfo.ev(\'sincloBox\')" style="cursor: pointer; background-color: ' + maincolor + '; width: 100%; height: 35px; background-image: url( ' + window.info.site.files + '/img/call.png); background-repeat: no-repeat; background-position: 15px, 0; background-size: 4.5%; color: #FFF;">';
-          html += '    <pre style="color: #FFF; text-align: center; font-size: 15px; padding: 10px; margin:  0;">' + widget.title + '</pre>'
-          html += '  </div>';
-          // 受付時間を表示しない
-          if ( widget.display_time_flg === 0 ) {
-            html += '    <div style="height: 45px; margin: 15px 10px;">';
-            html += '      <span style="display: block; width: 45px; height: 45px; float: left; background-color: ' + maincolor + '; border-radius: 25px; padding: 2px;"><img width="16.5" height="30" src=" ' + window.info.site.files + '/img/call.png" style="margin: 5px 12px"></span>';
-            html += '      <pre style="font-weight: bold; color: ' + maincolor + '; margin: 0 auto;font-size: 20px; text-align: center;padding: 10px 0px 0px;height: 45px;">' + widget.tel + '</pre>';
-            html += '    </div>';
-          }
-          else {
-            html += '<div style="height: 50px;margin: 15px 10px">';
-            html +=   '<span style="display: block; width: 50px; height: 50px; float: left; background-color: ' + maincolor + '; border-radius: 25px; padding: 3px;"><img width="19.5" height="33" src=" ' + window.info.site.files + '/img/call.png" style="margin: 6px 12px"></span>';
-            html +=   '<pre style="font-weight: bold; color: ' + maincolor + '; margin: 0 auto; font-size: 18px; text-align: center; padding: 5px 0 0; height: 30px">' + widget.tel + '</pre>';
-            html +=   '<pre style="font-weight: bold; color: ' + maincolor + '; margin: 0 auto; font-size: 10px; text-align: center; padding: 0 0 5px; height: 20px">受付時間： ' + widget.time_text + '</pre>';
-            html += '</div>';
-          }
-          html += '    <pre style="display: block; word-wrap: break-word; font-size: 11px; text-align: center; margin: auto; line-height:1.5; color: #6B6B6B; width: 20em;">' + widget.content + '</pre>';
-          html += '    <span style="display: block; margin: 10px auto; width: 80%; padding: 7px;  color: #FFF; background-color: rgb(188, 188, 188); font-size: 25px; font-weight: bold; text-align: center; border: 1px solid rgb(188, 188, 188); border-radius: 15px">' + userInfo.accessId + '</span>';
-          html += '    <p style="padding: 5px 0; text-align: center; border-top: 1px solid #DBDBDB;color: #A1A1A1!important; height: 20px; font-size: 11px;">Powered by <a target="sinclo" href="http://www.medialink-ml.co.jp/index.html">sinclo</a></p>';
-          html += '</div>';
+      // 表示位置
+      var showPosition = "";
+      switch ( widget.showPosition ) {
+        case 1: // 右下
+          showPosition = "bottom: 0; right: 10px;";
+          break;
+        case 2:
+          showPosition = "bottom: 0; left: 10px;";
+          break;
+      }
+
+      html += '  <style>';
+      html += '      #sincloBox { position: fixed; ' + showPosition + ' z-index: 999998; background-color: rgba(0,0,0,0); display: block; width: 270px; }';
+      html += '      #sincloBox * { box-sizing: border-box; font-size: 12px; font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana;}';
+      html += '      #sincloBox section { width: 270px; border: 1px solid #E8E7E0; background-color: #FFF; border-top: none;}';
+      html += '      #sincloBox p#widgetTitle { border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px 0 0; border: 1px solid ' + widget.mainColor + '; border-bottom:none; background-color: ' + widget.mainColor + ';text-align: left; font-size: 14px;padding: 7px; padding-left: 77px; margin: 0;color: #FFF; height: 32px }';
+      html += '      #sincloBox p#widgetSubTitle { background-color: #FFF; margin: 0; padding: 7px 0; text-align: left; border-width: 0 1px 0 1px; border-color: #E8E7E0; border-style: solid; padding-left: 77px; font-weight: bold; color: ' + widget.mainColor + '; height: 29px }';
+      html += '      #sincloBox p#widgetDescription { background-color: #FFF; margin: 0; padding-bottom: 7px; text-align: left; border-width: 0 1px 1px 1px; border-color: #E8E7E0; border-style: solid; padding-left: 77px; height: 23px; color: #8A8A8A; }';
+      html += '      #sincloBox section { display: inline-block; width: 270px; border: 1px solid #E8E7E0; border-top: none; }';
+      html += '      #sincloBox section#navigation { border-width: 0 1px; height: 40px; position: relative; display: block; }';
+      html += '      #sincloBox section#navigation ul { margin: 0 0 0 -1px; display: table; padding: 0; position: absolute; top: 0; left: 0; height: 40px; width: 270px }';
+      html += '      #sincloBox section#navigation ul li { position: relative; overflow: hidden; cursor: pointer; color: #8A8A8A; width: 50%; text-align: center; display: table-cell; padding: 10px 0; border-left: 1px solid #E8E7E0; height: 40px }';
+      html += '      #sincloBox section#navigation ul li:last-child { border-right: 1px solid #E8E7E0; }';
+      html += '      #sincloBox section#navigation ul li.selected { background-color: #FFFFFF; }';
+      html += '      #sincloBox section#navigation ul li:not(.selected) { border-bottom: 1px solid #E8E7E0 }';
+      html += '      #sincloBox section#chatTab { padding-top: 5px;  }';
+      html += '      #sincloBox ul#chatTalk { width: 100%; height: 250px; padding: 5px; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0}';
+      html += '      #sincloBox ul#chatTalk li { margin: 5px 0; padding: 5px; font-size: 12px; border: 1px solid #C9C9C9; color: #595959; white-space: pre; color: #8A8A8A; }';
+      html += '      #sincloBox ul#chatTalk li.sinclo_se { border-radius: 5px 5px 0; margin-left: 10px; background-color: #FFF; }';
+      html += '      #sincloBox ul#chatTalk li.sinclo_re { margin-right: 10px; border-radius: 5px 5px 5px 0; background-color:' + faintColor + ' }';
+      html += '      #sincloBox section#chatTab textarea { padding: 5px; resize: none; width: 100%; height: 50px; border: 1px solid #E4E4E4; border-radius: 5px; color: #8A8A8A; }';
+      html += '      #sincloBox #callTab { display: none }';
+      html += '      #sincloBox section#navigation ul li.selected::after{ content: " "; border-bottom: 2px solid ' + widget.mainColor + '; position: absolute; bottom: 0px; left: 5px; right: 5px;}';
+      html += '      #sincloBox #fotter { padding: 5px 0;text-align: center;border: 1px solid #E8E7E0;color: #A1A1A1!important; background-color: #FFF; font-size: 11px;margin: 0;border-top: none; }';
+      html += '  </style>';
+
+      // 画像
+      html += '  <span style="position: absolute; top: 7px; left: 7px;"><img src="' + window.info.site.files + '/img/chat_sample_picture.png" width="62" height="70" alt="チャット画像"></span>';
+      html += '  <div id="widgetHeader" >';
+      // タイトル
+      html += '    <p id="widgetTitle" onclick="sinclo.operatorInfo.ev()">' + widget.title + '</p>';
+      // サブタイトル
+      html += '    <p id="widgetSubTitle">' + widget.subTitle + '</p>';
+      // 説明文
+      html += '    <p id="widgetDescription">' + widget.description + '</p>';
+      html += '  </div>';
+
+      return html;
+
+    },
+    widgetNaviTemplate: function(widget){
+      var html = "";
+      html += '  <section id="navigation">';
+      html += '    <ul>';
+      html += '        <li data-tab="chat" class="widgetCtrl selected">チャットでの受付</li>';
+      html += '        <li data-tab="call" class="widgetCtrl" >電話での受付</li>';
+      html += '    </ul>';
+      html += '  </section>';
       return html;
     },
-    chatWidgetTemplate: function(){
-      var widget = window.info.widget;
-
-      var css   = '#sincloChatBox {';
-          css  += '  box-sizing: border-box; position: fixed; height: 340px; /* height: 45px; */ bottom: -11px; right: 270px; border: 1.5px solid rgb(232, 231, 224); border-radius: 10px; z-index: 999998; width: 250px; overflow: hidden; background-color: rgb(255, 255, 255);';
-          css  += '}';
-          css  += '#sincloChatBox ul { width: 100%; height: 200px; padding: 5px;background-color: #FDFDFD; list-style-type: none; overflow-y: scroll; overflow-x: hidden;}';
-          css  += '#sincloChatBox li { margin: 5px 0;padding: 5px; font-size: 12px; box-shadow: 0 0 1px rgba(0,0,0,0.5); color: #8A8A8A; white-space: pre; }';
-          css  += '#sincloChatBox li.sinclo_se { border-radius: 5px 5px 0; margin-left: 10px; background-color: #FFF; }';
-          css  += '#sincloChatBox li.sinclo_re { margin-right: 10px; border-radius: 5px 5px 5px 0; background-color: #F1F5C8; }';
-          css  += '#sinclo_sendbtn{ position: absolute; bottom: 3px; right: 3px; background-color: #FF7B7B; border-radius: 15px; padding: 2px; font-size: 20px; color: #FFF; opacity: 0.3 }';
-          css  += '#sinclo_sendbtn:hover{ opacity: 1!important; cursor: pointer; transition: opacity 500ms linear; }';
-          css  += '#sincloChatBox textarea { padding: 5px; resize: none; width: 230px; height: 50px; border: 1px solid #E4E4E4; border-radius: 5px; background-color: rgb(253, 253, 253)}';
-          css  += '#sincloChatBox textarea:focus{ outline: none; border-color: #CDDC39!important }';
-          css  += '#sincloChatBox a:hover { color: #ABCD05 }';
-
-      var html  = '<div id="sincloChatBox" data-flg=false class="sincloBoxes">';
-          html += '  <style>' + css + '</style>';
-          html += '  <img onclick="sinclo.operatorInfo.ev(\'sincloChatBox\')" style="position: absolute; top: 11.5px; right: 10px; z-index: 0;" src=" ' + window.info.site.files + '/img/yajirushi.png" height="12" width="16.5">';
-          html += '  <div onclick="sinclo.operatorInfo.ev(\'sincloChatBox\')" style="background-color: #ABCD05; width: 100%; height: 35px; background-image: url( ' + window.info.site.files + '/img/chat.png); background-repeat: no-repeat; background-position: 15px, 0; background-size: 9%; color: #FFF;">';
-          html += '    <pre style="color: #FFF; text-align: center; font-size: 15px; padding: 10px; margin:  0;">チャット</pre>'
-          html += '  </div>';
-          html += '  <ul id="chatTalk"></ul>';
-          html += '  <div style="border-top: 1px solid #DEDEDE; height: 70px; padding: 10px; position: relative;">';
-          html += '    <textarea name="sincloChat" id="sincloChatMessage" />';
-          html += '    <span id="sinclo_sendbtn" onclick="sinclo.chatApi.push()">＋</span>';
-          html += '  </div>';
-          html += '  <p style="padding: 5px 0; text-align: center; border-top: 1px solid #DBDBDB;color: #A1A1A1!important; height: 20px; font-size: 11px;">Powered by <a target="sinclo" href="http://medialink-ml.co.jp/index.html">sinclo</a></p>';
-          html += '</div>';
-
+    widgetTemplate: function(widget){
+      var html = "";
+      html += '<section id="callTab" style="display:none;">';
+      html += '    <div style="height: 50px;margin: 15px 10px">';
+      // アイコン
+      html += '    <span style="display: block; width: 50px; height: 50px; float: left; background-color: ' + widget.mainColor + '; border-radius: 25px; padding: 3px;"><img width="19.5" height="33" src=" http://socket.localhost:8080/img/call.png" style="margin: 6px 12px"></span>';
+      // 受付電話番号
+      html += '    <pre id="telNumber" style="font-weight: bold; color: ' + widget.mainColor + '; margin: 0 auto; font-size: 18px; text-align: center; padding: 5px 0px 0px; height: 30px">' + widget.tel + '</pre>';
+      // 受付時間
+      html += '    <pre ng-if="display_time_flg == \'1\'" style="font-weight: bold; color: ' + widget.mainColor + '; margin: 0 auto; font-size: 10px; text-align: center; padding: 0 0 5px; height: 20px">受付時間： ' + widget.time_text + '</pre>';
+      html += '    </div>';
+      // テキスト
+      html += '    <pre style="display: block; word-wrap: break-word; font-size: 11px; text-align: center; margin: auto; line-height: 1.5; color: #6B6B6B; width: 20em;">' + widget.content + '</pre>';
+      html += '    <span style="display: block; margin: 10px auto; width: 80%; padding: 7px;  color: #FFF; background-color: rgb(188, 188, 188); font-size: 25px; font-weight: bold; text-align: center; border: 1px solid rgb(188, 188, 188); border-radius: 15px">' + userInfo.accessId + '</span>';
+      html += '</section>';
+      return html;
+    },
+    chatWidgetTemplate: function(widget){
+      var html = "";
+      html += '  <section id="chatTab">';
+      html += '    <ul id="chatTalk"></ul>';
+      html += '    <div style="border-top: 1px solid #E8E7E0; padding: 10px;">';
+      html += '    <textarea name="sincloChat" id="sincloChatMessage" placeholder="メッセージ入力後、Enterで送信"></textarea>';
+      html += '    </div>';
+      html += '  </section>';
       return html;
     },
     makeAccessIdTag: function(){
@@ -874,7 +890,7 @@ var socket, // socket.io
   popup = {
       set: function(title, content){
           popup.remove();
-          var maincolor = ( window.info.site.maincolor !== undefined ) ? window.info.site.maincolor : "#ABCD05";
+          var maincolor = ( window.info.widget.mainColor !== undefined ) ? window.info.widget.mainColor : "#ABCD05";
           var hovercolor = ( window.info.site.hovercolor !== undefined ) ? window.info.site.hovercolor : "#9CB90E";
           var html = '';
           html += '<div id="sincloPopup" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 99999999999999;">';

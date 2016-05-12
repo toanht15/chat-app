@@ -186,26 +186,26 @@ var db = {
   }
 };
 
-var console = {
-  date: function(){
-    var d = new Date();
-    return d.getFullYear() + "/" + ( "0" + (d.getMonth() + 1) ).slice(-2) + "/" + ("0" + d.getDate()).slice(-2) + " " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2) + ":" + ("0" + d.getSeconds()).slice(-2);
-  },
-  log: function(a, b){
-    var label = null, data = null, d = this.date();
-    switch(typeof b){
-      case 'object':
-        var data = "【" + a + "|" + d + "】 " + JSON.stringify(b, null, "\t");
-        break;
-      case 'string':
-        var data = "【" + a + "|" + d + "】 " + b;
-        break;
-      default:
-        var data = "【" + d + "】 " + JSON.stringify(a, null, "\t");
-    }
-    reqlogger.info(data);
-  }
-};
+// var console = {
+//   date: function(){
+//     var d = new Date();
+//     return d.getFullYear() + "/" + ( "0" + (d.getMonth() + 1) ).slice(-2) + "/" + ("0" + d.getDate()).slice(-2) + " " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2) + ":" + ("0" + d.getSeconds()).slice(-2);
+//   },
+//   log: function(a, b){
+//     var label = null, data = null, d = this.date();
+//     switch(typeof b){
+//       case 'object':
+//         var data = "【" + a + "|" + d + "】 " + JSON.stringify(b, null, "\t");
+//         break;
+//       case 'string':
+//         var data = "【" + a + "|" + d + "】 " + b;
+//         break;
+//       default:
+//         var data = "【" + d + "】 " + JSON.stringify(a, null, "\t");
+//     }
+//     reqlogger.info(data);
+//   }
+// };
 
 //接続確立時の処理
 io.sockets.on('connection', function (socket) {
@@ -389,14 +389,26 @@ io.sockets.on('connection', function (socket) {
         var key = Object.keys(activeOperator[obj.siteKey]);
         cnt = key.length;
       }
-      if ( isset(rows) && isset(rows[0]) ) {
+      if ( isset(rows) && isset(rows[0]) && 'style_settings' in rows[0] ) {
+        var settings = JSON.parse(rows[0].style_settings);
+        // TODO ホントはどうてきに
         obj.widget = {
+          contract: {
+            chat: true,
+            synclo: true
+          },
           display_type: rows[0].display_type,
-          title: rows[0].title,
-          tel: rows[0].tel,
-          content: rows[0].content.replace(/\r\n/g, '<br>'),
-          time_text: rows[0].time_text,
-          display_time_flg: rows[0].display_time_flg,
+          showPosition: settings.showPosition,
+          maxShowTime: settings.maxShowTime,
+          title: settings.title,
+          subTitle: settings.subTitle,
+          description: settings.description,
+          mainColor: settings.mainColor,
+          radiusRatio: settings.radiusRatio,
+          tel: settings.tel,
+          content: settings.content.replace(/\r\n/g, '<br>'),
+          time_text: settings.timeText,
+          display_time_flg: settings.displayTimeFlg,
           active_operator_cnt: cnt
         };
         emit.toMine('setWidgetInfo', obj);
