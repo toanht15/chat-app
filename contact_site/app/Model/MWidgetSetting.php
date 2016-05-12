@@ -44,14 +44,14 @@ class MWidgetSetting extends AppModel {
         'sub_title' => [
             'maxLength' => [
               'rule' => ['maxLength', 15],
-              'allowEmpty' => false,
+              'allowEmpty' => true,
               'message' => '１５文字以内で設定してください'
             ]
         ],
         'description' => [
             'maxLength' => [
               'rule' => ['maxLength', 15],
-              'allowEmpty' => false,
+              'allowEmpty' => true,
               'message' => '１５文字以内で設定してください'
             ]
         ],

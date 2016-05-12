@@ -16,20 +16,24 @@
 				<!-- 最大化時間設定 -->
 				<li>
 					<span><label>最大化する条件</label></span>
-					<div ng-init="showTime=<?=h($this->data['showTime'])?>">
-						<label><input type="radio" name="showTime" ng-model="showTime" ng-change="showTimeToggle()" id="showTime1" value="1" >
-							<?= $this->Form->input('max_show_time', [
-								'type' => 'number',
-								'div' => false,
-								'label' => false,
-								'disabled' => (strcmp($this->data['showTime'],1) !== 0),
-								'after' => '秒後に自動で最大化する',
-								'maxlength' => 2,
-								'max' => 60,
-								'min' => 0,
-								'error' => false
-							]);?></label><br>
-						<label><input type="radio" name="showTime" ng-model="showTime" ng-change="showTimeToggle()" id="showTime2" value="2">自動で最大化しない</label>
+					<div>
+						<?php $maxShowTimeTag = $this->Form->input('max_show_time', [
+							'type' => 'number',
+							'div' => false,
+							'label' => false,
+							'ng-disabled' => 'showTime == "2"',
+							'after' => '秒後に自動で最大化する',
+							'maxlength' => 2,
+							'max' => 60,
+							'min' => 0,
+							'error' => false
+						],[
+							'entity' => 'MWidgetSetting.max_show_time'
+						]); ?>
+						<div ng-init="showTime=inputInitToggle('<?=$this->formEx->val($this->data['MWidgetSetting'], 'max_show_time')?>')">
+							<label for="showDescription1"><input type="radio" name="showTime" ng-model="showTime" id="showTime1" value="1" ><?=$maxShowTimeTag?></label><br>
+							<label for="showDescription2"><input type="radio" name="showTime" ng-model="showTime" id="showTime2" value="2">自動で最大化しない</label>
+						</div>
 					</div>
 				</li>
 				<?php if ( $this->Form->isFieldError('max_show_time') ) echo $this->Form->error('max_show_time', null, ['wrap' => 'li']); ?>
@@ -60,15 +64,15 @@
 				<!-- ウィジェットタイトル -->
 				<li>
 					<span class="require"><label>トップタイトル</label></span>
-					<?= $this->Form->input('title', [
+					<?= $this->ngForm->input('title', [
 						'type' => 'text',
-						'placeholder' => 'ウィジェットタイトル',
-						'ng-model' => 'title',
-						'ng-init' => 'title="' . h($this->data['MWidgetSetting']['title']) . '";',
+						'placeholder' => 'トップタイトル',
 						'div' => false,
 						'label' => false,
 						'maxlength' => 12,
 						'error' => false
+					],[
+						'entity' => 'MWidgetSetting.title'
 					]) ?>
 				</li>
 				<?php if ($this->Form->isFieldError('title')) echo $this->Form->error('title', null, ['wrap' => 'li']); ?>
@@ -76,17 +80,23 @@
 
 				<!-- サブタイトル -->
 				<li>
-					<span class="require"><label>サブタイトル</label></span>
-					<?= $this->Form->input('sub_title', [
+					<span><label>サブタイトル</label></span>
+					<?php $subTitle = $this->ngForm->input('sub_title', [
 						'type' => 'text',
 						'placeholder' => 'サブタイトル',
-						'ng-model' => 'sub_title',
-						'ng-init' => 'sub_title="' . h($this->data['MWidgetSetting']['sub_title']) . '";',
+						'ng-disabled' => 'subTitleToggle == "2"',
 						'div' => false,
+						'style' => 'margin:10px 0 10px 20px;',
 						'label' => false,
 						'maxlength' => 15,
 						'error' => false
+					],[
+						'entity' => 'MWidgetSetting.sub_title'
 					]) ?>
+					<div ng-init="subTitleToggle=inputInitToggle('<?=$this->formEx->val($this->data['MWidgetSetting'], 'sub_title')?>')">
+						<label for="showSubtitle1"><input type="radio" name="showSubtitle" ng-model="subTitleToggle" id="showSubtitle1" value="1" >サブタイトルを表示する</label><br><?=$subTitle?><br>
+						<label for="showSubtitle2"><input type="radio" name="showSubtitle" ng-model="subTitleToggle" id="showSubtitle2" value="2" >サブタイトルを表示しない</label>
+					</div>
 				</li>
 				<?php if ($this->Form->isFieldError('sub_title')) echo $this->Form->error('sub_title', null, ['wrap' => 'li']); ?>
 				<!-- サブタイトル -->
@@ -94,16 +104,23 @@
 				<!-- 説明文 -->
 				<li>
 					<span class="require"><label>説明文</label></span>
-					<?= $this->Form->input('description', [
+					<?php $description = $this->ngForm->input('description', [
 						'type' => 'text',
 						'placeholder' => '説明文',
-						'ng-model' => 'description',
-						'ng-init' => 'description="' . h($this->data['MWidgetSetting']['description']) . '";',
+						'ng-disabled' => 'descriptionToggle == "2"',
+						'style' => 'margin:10px 0 10px 20px;',
 						'div' => false,
 						'label' => false,
 						'maxlength' => 15,
 						'error' => false
+					],
+					[
+						'entity' => 'MWidgetSetting.description'
 					]) ?>
+					<div ng-init="descriptionToggle=inputInitToggle('<?=$this->formEx->val($this->data['MWidgetSetting'], 'description')?>')">
+						<label for="showDescription1"><input type="radio" name="showDescription1" ng-model="descriptionToggle" id="showDescription1" value="1" >説明文を表示する</label><br><?=$description?><br>
+						<label for="showDescription2"><input type="radio" name="showDescription2" ng-model="descriptionToggle" id="showDescription2" value="2" >説明文を表示しない</label>
+					</div>
 				</li>
 				<?php if ($this->Form->isFieldError('description')) echo $this->Form->error('description', null, ['wrap' => 'li']); ?>
 				<!-- 説明文 -->
@@ -111,11 +128,9 @@
 				<!-- メインカラー -->
 				<li>
 					<span class="require"><label>メインカラー</label></span>
-					<?= $this->Form->input('main_color', [
+					<?= $this->ngForm->input('main_color', [
 						'type' => 'text',
 						'placeholder' => 'メインカラー',
-						'ng-model' => 'main_color',
-						'ng-init' => 'main_color="'. h($this->data['MWidgetSetting']['main_color']) . '";',
 						'div' => false,
 						'class' => 'jscolor {hash:true}',
 						'label' => false,
@@ -123,7 +138,7 @@
 						'error' => false
 					],
 					[
-					'entity' => 'MWidgetSetting.main_color'
+						'entity' => 'MWidgetSetting.main_color'
 					]) ?>
 				</li>
 				<?php if ($this->Form->isFieldError('main_color')) echo $this->Form->error('main_color', null, ['wrap' => 'li']); ?>
@@ -135,8 +150,6 @@
 				<?= $this->ngForm->input('radius_ratio', [
 					'type' => 'range',
 					'step' => 1,
-					'ng-model' => 'radius_ratio',
-					'ng-init' => 'radius_ratio="' . h($this->data['MWidgetSetting']['radius_ratio']) . '";',
 					'div' => false,
 					'label' => false,
 					'max' => 15,
@@ -175,11 +188,11 @@
 					<?= $this->ngForm->input('display_time_flg', [
 						'type' => 'radio',
 						'fieldset' => false,
-						'separator' => '&nbsp;',
+						'separator' => '<br>',
 						'legend' => false,
 						'options' => [
-							'しない',
-							'する'
+							'営業時間を表示しない',
+							'営業時間を表示する'
 						],
 						'label' => false,
 						'error' => false

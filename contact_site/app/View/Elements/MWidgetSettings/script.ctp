@@ -39,11 +39,8 @@ sincloApp.controller('WidgetCtrl', function($scope){
       return defColor;
     };
 
-    $scope.showTimeToggle = function(){
-      $("#MWidgetSettingMaxShowTime").prop("disabled", false);
-      if ( String($scope.showTime) === "2" ) {
-        $("#MWidgetSettingMaxShowTime").prop("disabled", true);
-      }
+    $scope.inputInitToggle = function(item){
+      return (item) ? 1 : 2;
     };
 });
 

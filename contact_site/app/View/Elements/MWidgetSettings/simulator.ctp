@@ -1,7 +1,8 @@
 <section id="sample_widget_area" ng-cloak>
 	<div id="sincloBox" style="position: relative; z-index: 1; width: 270px; overflow: hidden; background-color: rgb(255, 255, 255);">
 	<style>
-		#sincloBox p#widgetTitle { border-radius: {{radius_ratio}}px {{radius_ratio}}px 0 0; border: 1px solid {{main-color}}; border-bottom:none; background-color: {{main_color}};text-align: left; font-size: 14px;padding: 7px; padding-left: 77px; margin: 0;color: #FFF; height: 32px }
+		#sincloBox span, #sincloBox pre { font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana!important }
+		#sincloBox p#widgetTitle { cursor:pointer; border-radius: {{radius_ratio}}px {{radius_ratio}}px 0 0; border: 1px solid {{main-color}}; border-bottom:none; background-color: {{main_color}};text-align: left; font-size: 14px;padding: 7px; padding-left: 77px; margin: 0;color: #FFF; height: 32px }
 		#sincloBox p#widgetSubTitle { margin: 0; padding: 7px 0; text-align: left; border-width: 0 1px 0 1px; border-color: #E8E7E0; border-style: solid; padding-left: 77px; font-weight: bold; color: {{main_color}}; height: 29px }
 		#sincloBox p#widgetDescription { margin: 0; padding-bottom: 7px; text-align: left; border-width: 0 1px 1px 1px; border-color: #E8E7E0; border-style: solid; padding-left: 77px; height: 23px; color: #8A8A8A; }
 		#sincloBox section#navigation { border-width: 0 1px; height: 40px; position: relative; display: block; }
@@ -56,7 +57,7 @@
 		</div>
 	</section>
 	<section id="callTab">
-		<div style="height: 50px;margin: 15px 10px">
+		<div style="height: 50px;margin: 15px 25px;">
 		<!-- アイコン -->
 		<span style="display: block; width: 50px; height: 50px; float: left; background-color: {{main_color}}; border-radius: 25px; padding: 3px;"><img width="19.5" height="33" src=" http://socket.localhost:8080/img/call.png" style="margin: 6px 12px"></span>
 		<!-- アイコン -->

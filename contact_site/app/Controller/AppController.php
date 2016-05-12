@@ -48,7 +48,7 @@ class AppController extends Controller {
         )
     );
 
-    // public $helpers = array('htmlEx');
+    public $helpers = array('formEx');
     public $uses = array('MUser', 'MWidgetSetting');
 
     public $userInfo;
