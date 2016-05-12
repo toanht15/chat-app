@@ -186,7 +186,7 @@ var socket, // socket.io
       html += '<section id="callTab">';
       html += '    <div style="height: 50px;margin: 15px 25px">';
       // アイコン
-      html += '    <span style="display: block; width: 50px; height: 50px; float: left; background-color: ' + widget.mainColor + '; border-radius: 25px; padding: 3px;"><img width="19.5" height="33" src=" http://socket.localhost:8080/img/call.png" style="margin: 6px 12px"></span>';
+      html += '    <span style="display: block; width: 50px; height: 50px; float: left; background-color: ' + widget.mainColor + '; border-radius: 25px; padding: 3px;"><img width="19.5" height="33" src="' + window.info.site.files + '/img/call.png" style="margin: 6px 12px"></span>';
       // 受付電話番号
       html += '    <pre id="telNumber" style="font-weight: bold; color: ' + widget.mainColor + '; margin: 0 auto; font-size: 18px; text-align: center; padding: 5px 0px 0px; height: 30px">' + widget.tel + '</pre>';
       // 受付時間

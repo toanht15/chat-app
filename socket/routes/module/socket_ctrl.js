@@ -267,7 +267,7 @@ io.sockets.on('connection', function (socket) {
         if ( isset(rows) && isset(rows[0]) ) {
           chatData.historyId = rows[0].id;
           pool.query('SELECT id, message, message_type as messageType FROM t_history_chat_logs WHERE t_histories_id = ?;', [chatData.historyId], function(err, rows){
-            chatData.messages = rows;
+            chatData.messages = ( isset(rows) ) ? rows : [];
             obj.chat = chatData;
             emit.toUser('chatMessageData', obj, sId);
           });

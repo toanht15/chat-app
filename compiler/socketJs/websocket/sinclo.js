@@ -498,7 +498,7 @@
       init: function(){
         $("#sincloChatMessage").on("keydown", function(e){
           if ( e.keyCode === 13 ) {
-            if ( !(e.shiftKey || e.ctrlKey) ) {
+            if ( !e.shiftKey && !e.ctrlKey ) {
               sinclo.chatApi.push();
             }
           }

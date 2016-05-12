@@ -14,7 +14,7 @@
 		#sincloBox section { display: inline-block; width: 270px; border: 1px solid #E8E7E0; border-top: none; }
 		#sincloBox section#callTab { display: none; }
 		#sincloBox ul#chatTalk { width: 100%; height: 250px; padding: 5px; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0}
-		#sincloBox ul#chatTalk li { margin: 5px 0; padding: 5px; font-size: 12px; border: 1px solid #C9C9C9; color: #595959; white-space: pre; color: #8A8A8A; }
+		#sincloBox ul#chatTalk li { margin: 5px 0; padding: 5px; font-size: 12px; border: 1px solid #C9C9C9; line-height: 1.8; white-space: pre; color: #5E614E; }
 		#sincloBox ul#chatTalk li.sinclo_se { border-radius: 5px 5px 0; margin-left: 10px; background-color: #FFF; }
 		#sincloBox ul#chatTalk li.sinclo_re { margin-right: 10px; border-radius: 5px 5px 5px 0; }
 		#sincloBox section#chatTab textarea { padding: 5px; resize: none; width: 100%; height: 50px; border: 1px solid #E4E4E4; border-radius: 5px; color: #8A8A8A; }
@@ -59,7 +59,7 @@
 	<section id="callTab">
 		<div style="height: 50px;margin: 15px 25px;">
 		<!-- アイコン -->
-		<span style="display: block; width: 50px; height: 50px; float: left; background-color: {{main_color}}; border-radius: 25px; padding: 3px;"><img width="19.5" height="33" src=" http://socket.localhost:8080/img/call.png" style="margin: 6px 12px"></span>
+		<span style="display: block; width: 50px; height: 50px; float: left; background-color: {{main_color}}; border-radius: 25px; padding: 3px;"><img width="19.5" height="33" src="<?=C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT?>/img/call.png" style="margin: 6px 12px"></span>
 		<!-- アイコン -->
 
 		<!-- 受付電話番号 -->

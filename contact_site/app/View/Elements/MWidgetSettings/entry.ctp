@@ -4,7 +4,6 @@
 			<h3>１．表示設定</h3>
 			<section>
 			<?= $this->Form->input('id', ['type' => 'hidden']); ?>
-			<input type="hidden" value="<?=$this->data['showTime']?>" name="showTime" />
 			<ul class="settingList">
 				<!-- 表示設定 -->
 				<li>
