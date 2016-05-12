@@ -10,12 +10,17 @@
       ev: function() {
         var height = 0;
         var elm = $('#sincloBox');
-        if ( this.flg ) {
+        if ( !this.flg ) {
           var height = 0;
           height += $("#sincloBox #widgetHeader").outerHeight(true);
-          height += $("#sincloBox > #navigation").outerHeight(true);
-          var tab = $("#navigation li.selected").data('tab');
-          height += $("#" + tab + "Tab").outerHeight(true);
+          if ( $("#sincloBox").children().is("#navigation") ) {
+            height += $("#sincloBox > #navigation").outerHeight(true);
+            var tab = $("#navigation li.selected").data('tab');
+            height += $("#" + tab + "Tab").outerHeight(true);
+          }
+          else {
+            height += $("[id$='Tab']").outerHeight(true);
+          }
           height += $("#sincloBox > #fotter").outerHeight(true);
           this.flg = true;
         }
@@ -426,6 +431,7 @@
             window.setTimeout(function(){
               if ( !sinclo.operatorInfo.flg ) {
                 storage.s.set('widgetOpen', true);
+                sinclo.operatorInfo.flg = true;
                 $("#sincloBox").animate({
                   'height':  (common.sincloBoxHeight) + 'px'
                 }, 'first');

@@ -77,17 +77,29 @@ var socket, // socket.io
     },
     sincloBoxHeight: 270,
     createWidget: function(){
-      var widget = window.info.widget;
-      var header = this.widgetHeaderTemplate(widget);
-      var navi = this.widgetNaviTemplate(widget);
-      var chat = this.chatWidgetTemplate(widget);
-      var call = this.widgetTemplate(widget);
-      var fotter = '<p id="fotter">Powered by <a target="sinclo" href="http://medialink-ml.co.jp/index.html">sinclo</a></p>';
-      return "<sinclo id='sincloBox' data-flg='false' >" + header + navi + chat + call + fotter + "</sinclo>";
+      var widget = window.info.widget, displaySet = "";
+      var css = this.widgetCssTemplate(widget),
+          header = this.widgetHeaderTemplate(widget),
+          navi = this.widgetNaviTemplate(widget),
+          chat = this.chatWidgetTemplate(widget),
+          call = this.widgetTemplate(widget),
+          fotter = '<p id="fotter">Powered by <a target="sinclo" href="http://medialink-ml.co.jp/index.html">sinclo</a></p>';
+
+      if ( widget.contract.chat && widget.contract.synclo ) {
+        displaySet += navi + chat + call;
+      }
+      else {
+        if ( widget.contract.chat ) {
+          displaySet += chat;
+        }
+        if ( widget.contract.synclo ) {
+          displaySet += call;
+        }
+      }
+      return "<sinclo id='sincloBox' data-flg='false' >" + css + header + displaySet + fotter + "</sinclo>";
     },
-    widgetHeaderTemplate: function(widget){
-      var html = "";
-      var faintColor = widget.mainColor;
+    widgetCssTemplate: function(widget){
+      var html = "", faintColor = widget.mainColor;
       if ( faintColor.indexOf("#") >= 0 ) {
         var code = faintColor.substr(1), r,g,b;
         if (code.length === 3) {
@@ -118,7 +130,7 @@ var socket, // socket.io
       html += '      #sincloBox { position: fixed; ' + showPosition + ' z-index: 999998; background-color: rgba(0,0,0,0); display: block; width: 270px; }';
       html += '      #sincloBox * { box-sizing: border-box; font-size: 12px; font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana;}';
       html += '      #sincloBox section { width: 270px; border: 1px solid #E8E7E0; background-color: #FFF; border-top: none;}';
-      html += '      #sincloBox p#widgetTitle { border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px 0 0; border: 1px solid ' + widget.mainColor + '; border-bottom:none; background-color: ' + widget.mainColor + ';text-align: left; font-size: 14px;padding: 7px; padding-left: 77px; margin: 0;color: #FFF; height: 32px }';
+      html += '      #sincloBox p#widgetTitle { cursor:pointer; border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px 0 0; border: 1px solid ' + widget.mainColor + '; border-bottom:none; background-color: ' + widget.mainColor + ';text-align: left; font-size: 14px;padding: 7px; padding-left: 77px; margin: 0;color: #FFF; height: 32px }';
       html += '      #sincloBox p#widgetSubTitle { background-color: #FFF; margin: 0; padding: 7px 0; text-align: left; border-width: 0 1px 0 1px; border-color: #E8E7E0; border-style: solid; padding-left: 77px; font-weight: bold; color: ' + widget.mainColor + '; height: 29px }';
       html += '      #sincloBox p#widgetDescription { background-color: #FFF; margin: 0; padding-bottom: 7px; text-align: left; border-width: 0 1px 1px 1px; border-color: #E8E7E0; border-style: solid; padding-left: 77px; height: 23px; color: #8A8A8A; }';
       html += '      #sincloBox section { display: inline-block; width: 270px; border: 1px solid #E8E7E0; border-top: none; }';
@@ -129,16 +141,23 @@ var socket, // socket.io
       html += '      #sincloBox section#navigation ul li.selected { background-color: #FFFFFF; }';
       html += '      #sincloBox section#navigation ul li:not(.selected) { border-bottom: 1px solid #E8E7E0 }';
       html += '      #sincloBox section#chatTab { padding-top: 5px;  }';
+      // チャットも画面同期も使用する際にはデフォルトで画面同期ウィジェットの表示をnoneにする
+      if ( widget.contract.chat && widget.contract.synclo ) {
+        html += '      #sincloBox section#callTab { display: none; }';
+      }
       html += '      #sincloBox ul#chatTalk { width: 100%; height: 250px; padding: 5px; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0}';
       html += '      #sincloBox ul#chatTalk li { margin: 5px 0; padding: 5px; font-size: 12px; border: 1px solid #C9C9C9; color: #595959; white-space: pre; color: #8A8A8A; }';
       html += '      #sincloBox ul#chatTalk li.sinclo_se { border-radius: 5px 5px 0; margin-left: 10px; background-color: #FFF; }';
       html += '      #sincloBox ul#chatTalk li.sinclo_re { margin-right: 10px; border-radius: 5px 5px 5px 0; background-color:' + faintColor + ' }';
       html += '      #sincloBox section#chatTab textarea { padding: 5px; resize: none; width: 100%; height: 50px; border: 1px solid #E4E4E4; border-radius: 5px; color: #8A8A8A; }';
-      html += '      #sincloBox #callTab { display: none }';
       html += '      #sincloBox section#navigation ul li.selected::after{ content: " "; border-bottom: 2px solid ' + widget.mainColor + '; position: absolute; bottom: 0px; left: 5px; right: 5px;}';
       html += '      #sincloBox #fotter { padding: 5px 0;text-align: center;border: 1px solid #E8E7E0;color: #A1A1A1!important; background-color: #FFF; font-size: 11px;margin: 0;border-top: none; }';
       html += '  </style>';
 
+      return html;
+    },
+    widgetHeaderTemplate: function(widget){
+      var html = "";
       // 画像
       html += '  <span style="position: absolute; top: 7px; left: 7px;"><img src="' + window.info.site.files + '/img/chat_sample_picture.png" width="62" height="70" alt="チャット画像"></span>';
       html += '  <div id="widgetHeader" >';
@@ -149,9 +168,7 @@ var socket, // socket.io
       // 説明文
       html += '    <p id="widgetDescription">' + widget.description + '</p>';
       html += '  </div>';
-
       return html;
-
     },
     widgetNaviTemplate: function(widget){
       var html = "";
@@ -165,7 +182,7 @@ var socket, // socket.io
     },
     widgetTemplate: function(widget){
       var html = "";
-      html += '<section id="callTab" style="display:none;">';
+      html += '<section id="callTab">';
       html += '    <div style="height: 50px;margin: 15px 10px">';
       // アイコン
       html += '    <span style="display: block; width: 50px; height: 50px; float: left; background-color: ' + widget.mainColor + '; border-radius: 25px; padding: 3px;"><img width="19.5" height="33" src=" http://socket.localhost:8080/img/call.png" style="margin: 6px 12px"></span>';
