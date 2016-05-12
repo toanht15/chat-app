@@ -1158,14 +1158,14 @@ ul.naviBtn {
       }
       .form01 {
 
-        .settingList li {
+        .settingList li:not(.error-message) {
           padding: 15px 0;
-          border-bottom: 1px solid #B7B7B7;
+          border-top: 1px solid #B7B7B7;
           margin: 0;
 
           pre { margin: 0 }
 
-          &:last-child {
+          &:first-child {
             border-bottom: none;
           }
         }

@@ -35,8 +35,8 @@ class MWidgetSetting extends AppModel {
               'allowEmpty' => false,
               'message' => '数値を入力してください'
             ],
-            'range' => [
-              'rule' => ['range', 1, 60],
+            'numberRange' => [
+              'rule' => '/^(0[1-9]|[1-9]|[1-5][0-9]|60)$/',
               'allowEmpty' => false,
               'message' => '１～６０秒の間で設定してください'
             ]

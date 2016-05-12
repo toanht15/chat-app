@@ -29,10 +29,12 @@ class MWidgetSettingsController extends AppController {
             $inputData = [];
             $ret = $this->MWidgetSetting->coFind('first');
             $inputData = $ret;
+            $inputData['showTime'] = 2;
 
             if ( isset($ret['MWidgetSetting']['style_settings']) ) {
               $json = $this->_settingToObj($ret['MWidgetSetting']['style_settings']);
               if ( !empty($json['max_show_time']) ) {
+                $inputData['showTime'] = 1;
                 $inputData['MWidgetSetting']['max_show_time'] = $json['max_show_time'];
               }
               if ( !empty($json['show_position']) ) {

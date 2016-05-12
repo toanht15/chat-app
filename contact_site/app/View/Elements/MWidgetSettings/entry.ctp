@@ -4,6 +4,7 @@
 			<h3>１．表示設定</h3>
 			<section>
 			<?= $this->Form->input('id', ['type' => 'hidden']); ?>
+			<input type="hidden" value="<?=$this->data['showTime']?>" name="showTime" />
 			<ul class="settingList">
 				<!-- 表示設定 -->
 				<li>
@@ -15,15 +16,21 @@
 				<!-- 最大化時間設定 -->
 				<li>
 					<span><label>最大化する条件</label></span>
-					<?= $this->Form->input('max_show_time', [
-						'type' => 'number',
-						'div' => false,
-						'label' => false,
-						'maxlength' => 2,
-						'max' => 60,
-						'min' => 0,
-						'error' => false
-					]);?><span class="numberLabel">秒後に自動で最大化する</span>
+					<div ng-init="showTime=<?=h($this->data['showTime'])?>">
+						<label><input type="radio" name="showTime" ng-model="showTime" ng-change="showTimeToggle()" id="showTime1" value="1" >
+							<?= $this->Form->input('max_show_time', [
+								'type' => 'number',
+								'div' => false,
+								'label' => false,
+								'disabled' => (strcmp($this->data['showTime'],1) !== 0),
+								'after' => '秒後に自動で最大化する',
+								'maxlength' => 2,
+								'max' => 60,
+								'min' => 0,
+								'error' => false
+							]);?></label><br>
+						<label><input type="radio" name="showTime" ng-model="showTime" ng-change="showTimeToggle()" id="showTime2" value="2">自動で最大化しない</label>
+					</div>
 				</li>
 				<?php if ( $this->Form->isFieldError('max_show_time') ) echo $this->Form->error('max_show_time', null, ['wrap' => 'li']); ?>
 				<!-- 最大化時間設定 -->
