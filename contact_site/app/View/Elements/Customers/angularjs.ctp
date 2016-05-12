@@ -58,8 +58,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       },
       init: function(){
         $("#sendMessage").keydown(function(e){
-          if (e.keyCode === 13 ) {
-            chatApi.pushMessage();
+           if ( e.keyCode === 13 ) {
+            if ( !(e.shiftKey || e.ctrlKey) ) {
+              chatApi.pushMessage();
+            }
           }
         })
         .focus(function(e){
