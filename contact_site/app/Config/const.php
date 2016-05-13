@@ -40,6 +40,28 @@ define('C_MESSAGE_TYPE_ALERT', 3); // 処理失敗
 define('C_AUTHORITY_ADMIN', 1); // 管理者
 define('C_AUTHORITY_NORMAL', 2); // 一般
 
+// オートメッセージ機能－トリガー種別コード
+define('C_AUTO_TRIGGER_TYPE_BODYLOAD', 1); // 画面読み込み時
+
+// オートメッセージ機能－トリガーリスト
+define('C_AUTO_TRIGGER_STAY_TIME',  1); // 滞在時間
+define('C_AUTO_TRIGGER_VISIT_CNT',  2); // 訪問回数
+define('C_AUTO_TRIGGER_STAY_PAGE',  3); // ページ
+define('C_AUTO_TRIGGER_DAY_TIME',   4); // 曜日・時間
+define('C_AUTO_TRIGGER_REFERRER',   5); // 参照元URL（リファラー）
+define('C_AUTO_TRIGGER_SEARCH_KEY', 6); // 検索キーワード
+
+// オートメッセージ機能－アクション種別コード
+define('C_AUTO_ACTION_TYPE_SENDMESSAGE', 1); // チャットメッセージを送る
+
+// 条件設定
+define('C_COINCIDENT', 1); // 全て一致
+define('C_SOME_EITHER', 2); // いずれかが一致
+
+// 有効/無効設定
+define('C_STATUS_AVAILABLE', 0); // 有効
+define('C_STATUS_UNAVAILABLE', 1); // 無効
+
 /* ユーザー権限（単体あり：C_AUTHORITY_%） */
 $config['Authority'] = [
     C_AUTHORITY_ADMIN => "管理者",
@@ -57,4 +79,36 @@ $config['WidgetDisplayType'] = [
 $config['widgetPositionType'] = [
     C_WIDGET_POSITION_RIGHT_BOTTOM => "右下",
     C_WIDGET_POSITION_LEFT_BOTTOM => "左下"
+];
+
+/* オートメッセージ － トリガー種別 */
+$config['outMessageTriggerType'] = [
+    C_AUTO_TRIGGER_TYPE_BODYLOAD => "画面読み込み時"
+];
+
+/* オートメッセージ － 条件設定 */
+$config['outMessageIfType'] = [
+    C_COINCIDENT => "全て一致",
+    C_SOME_EITHER => "いずれかが一致"
+];
+
+/* オートメッセージ － 条件設定 */
+$config['outMessageAvailableType'] = [
+    C_STATUS_AVAILABLE => "有効",
+    C_STATUS_UNAVAILABLE => "無効"
+];
+
+/* オートメッセージ － 条件リスト */
+$config['outMessageTriggerList'] = [
+    C_AUTO_TRIGGER_STAY_TIME => "滞在時間",
+    C_AUTO_TRIGGER_VISIT_CNT => "訪問回数",
+    C_AUTO_TRIGGER_STAY_PAGE => "ページ",
+    C_AUTO_TRIGGER_DAY_TIME => "曜日・時間",
+    C_AUTO_TRIGGER_REFERRER => "参照元URL（リファラー）",
+    C_AUTO_TRIGGER_SEARCH_KEY => "検索キーワード"
+];
+
+/* オートメッセージ － アクション種別 */
+$config['outMessageActionType'] = [
+    C_AUTO_ACTION_TYPE_SENDMESSAGE => "チャットメッセージを送る"
 ];

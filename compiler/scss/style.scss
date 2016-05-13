@@ -313,6 +313,10 @@ a {
   padding-right: 20px;
 }
 
+.pl30 {
+  padding-left: 30px!important;
+}
+
 .p20trl {
   padding: 20px 20px 0 20px;
 }
@@ -330,6 +334,13 @@ a {
 
 .m10b {
   margin-bottom: 10px;
+}
+
+.bb0 {
+  border-bottom: none!important;
+}
+.bt0 {
+  border-top: none!important;
 }
 
 .hide {
@@ -1305,4 +1316,128 @@ ul.naviBtn {
     }
 
   }
+}
+
+/* オートメッセージ機能 */
+#tautomessages_idx {
+  $list-color: #ECF4DA;
+  #tautomessages_form {
+    h3 {
+      border-bottom: 3px solid #C3D69B;
+      padding-left: 5px;
+    }
+    ul { padding: 0 }
+    li { margin: 0 }
+    section {
+
+      ul.settingList {
+        > li {
+          padding: 15px 0;
+
+          &:not(.error-message) {
+            border-top: 1px solid #B7B7B7;
+          }
+
+          &:first-child {
+            border-top: none;
+          }
+
+          span {
+            width: 15em;
+          }
+
+          &#tautomessages_triggers {
+            position: relative;
+            min-height: 300px;
+          }
+
+          #setTriggerList {
+            width: 30em;
+
+            ul {
+              border-bottom: 1px solid $main-color;
+
+              li {
+                display: block;
+                overflow: hidden;
+                height: 34px;
+                transition: height 500ms linear;
+
+                h4 {
+                  border-color: $main-color;
+                  border-style: solid;
+                  border-width: 1px 0 0 0;
+                  margin: 0;
+                  padding-left: 10px;
+                  background-color: #FFF;
+                  padding: 10px 0 10px 5px;
+                  font-weight: bold;
+                  font-size: 13px;
+                }
+
+                div {
+                  padding: 5px;
+                  border-top: 1px solid $main-color;
+                }
+
+                &.selected {
+                  transition: height 500ms linear;
+
+                  h4 {
+                    background-color: $list-color;
+                  }
+
+                  div {
+
+                  }
+                }
+
+
+              }
+            }
+          }
+
+          #triggerList {
+            position: absolute;
+            top: 15px;
+            left: 50%;
+
+            ul {
+              height: 200px;
+              border: 1px solid $main-color;
+              overflow-x: hidden;
+              overflow-y: auto;
+              padding: 0;
+
+              li {
+                width: 20em;
+                margin: 0;
+                border-bottom: 1px solid $main-color;
+                border-width: 0 0 1px 0;
+                padding: 10px 25px 10px 10px;
+
+                &:hover {
+                  background-color: $list-color;
+                }
+
+                &:last-child {
+                  border-bottom: none;
+                }
+              }
+            }
+          }
+        }
+      }
+
+      #tautomessages_actions > a.greenBtn {
+        width: 10em;
+        padding: 10px;
+        display: block;
+        margin: 0 auto;
+        text-align: center;
+      }
+
+    }
+  }
+
 }

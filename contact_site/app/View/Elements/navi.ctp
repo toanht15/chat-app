@@ -86,6 +86,9 @@ else {
         <div class="icon">
             <?= $this->htmlEx->naviLink('ウィジェット', 'chat.png', ['href' => ['controller' => 'MWidgetSettings', 'action' => 'index']]) ?>
         </div>
+        <div class="icon">
+            <?= $this->htmlEx->naviLink('メッセージ', 'auto_message.png', ['href' => ['controller' => 'TAutoMessages', 'action' => 'index']]) ?>
+        </div>
     <?php endif; ?>
     </div>
 </div>
