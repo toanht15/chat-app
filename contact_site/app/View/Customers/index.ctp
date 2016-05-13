@@ -12,7 +12,7 @@
 
     <div id='customer_tab' ng-cloak>
       <ul>
-        <li ng-repeat="cInfo in chatList" ng-click="showDetail(monitorList[cInfo].tabId)">{{monitorList[cInfo].accessId}}｜チャット対応中</li>
+        <li ng-repeat="cInfo in chatList" ng-click="showDetail(monitorList[cInfo].tabId)" ng-class="{selected: cInfo == detailId}">{{monitorList[cInfo].accessId}}</li>
       </ul>
     </div>
 </section>

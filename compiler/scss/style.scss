@@ -797,20 +797,16 @@ ul.naviBtn {
         font-size: 14px;
         cursor: pointer;
         white-space: nowrap;
-        background-color: $main-color;
+        background-color: #D4D4D4;
+        margin-right: 3px;
+        opacity: 0.8;
 
         &.selected {
-          background-color: #2B3A0B;
-          color: $main-color;
-        }
-
-        &:nth-child(even) {
-          background-color: #A9C176;
-          color: $main-color;
+          background-color: $main-color;
         }
 
         &:hover {
-            opacity: 0.8;
+          opacity: 1;
         }
 
       }
