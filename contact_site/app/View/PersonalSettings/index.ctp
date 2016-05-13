@@ -24,7 +24,7 @@
 <div id='personal_idx' class="card-shadow">
 
 <div id='personal_title'>
-	<div class="fLeft"><?= $this->Html->image('setting_g.png', array('alt' => '個人設定', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?></div>
+	<div class="fLeft"><?= $this->Html->image('monitor_g.png', array('alt' => '個人設定', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?></div>
 	<h1>個人設定</h1>
 </div>
 

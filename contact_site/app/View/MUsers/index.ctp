@@ -3,7 +3,7 @@
 <div id='muser_idx' class="card-shadow">
 
 <div id='muser_add_title'>
-	<div class="fLeft"><?= $this->Html->image('setting_g.png', array('alt' => 'ユーザー管理', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?></div>
+	<div class="fLeft"><?= $this->Html->image('monitors_g.png', array('alt' => 'ユーザー管理', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?></div>
 	<h1>ユーザー管理<span>（未使用アカウント数：<?=$limitUserNum - $userListCnt?>）</span></h1>
 </div>
 
