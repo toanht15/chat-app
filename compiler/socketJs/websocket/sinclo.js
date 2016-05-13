@@ -36,8 +36,9 @@
     connect: function(){
       var firstConnection = false;
       // 新規アクセスの場合
-      if ( !check.isset(userInfo.getTabId()) || check.isset(window.opener) ) {
+      if ( !check.isset(userInfo.getTabId()) ) {
         firstConnection = true;
+        window.opener = null;
         userInfo.strageReset();
         userInfo.setReferrer();
       }
