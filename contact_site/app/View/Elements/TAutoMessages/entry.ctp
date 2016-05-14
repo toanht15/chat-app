@@ -56,9 +56,7 @@
 				</div>
 				<div id="triggerList">
 					<ul>
-						<?php foreach($outMessageTriggerList as $key => $val) { ?>
-						<li data-type="<?=$key?>"><?=h($val);?></li>
-						<?php } ?>
+						<li ng-repeat="(key, item) in tmpList" ng-click="addItem(key)">{{item.label}}</li>
 					</ul>
 				</div>
 			</li>

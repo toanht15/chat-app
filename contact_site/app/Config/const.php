@@ -100,13 +100,51 @@ $config['outMessageAvailableType'] = [
 
 /* オートメッセージ － 条件リスト */
 $config['outMessageTriggerList'] = [
-    C_AUTO_TRIGGER_STAY_TIME => "滞在時間",
-    C_AUTO_TRIGGER_VISIT_CNT => "訪問回数",
-    C_AUTO_TRIGGER_STAY_PAGE => "ページ",
-    C_AUTO_TRIGGER_DAY_TIME => "曜日・時間",
-    C_AUTO_TRIGGER_REFERRER => "参照元URL（リファラー）",
-    C_AUTO_TRIGGER_SEARCH_KEY => "検索キーワード"
+    // 滞在時間
+    C_AUTO_TRIGGER_STAY_TIME => [
+        'label' => '滞在時間',
+        'createLimit' => ['and' => 1, 'or' => 1],
+        'key' => 'stay_time'
+    ],
+    // 訪問回数
+    C_AUTO_TRIGGER_VISIT_CNT => [
+        'label' => '訪問回数',
+        'createLimit' => ['and' => 1, 'or' => 1],
+        'key' => 'visit_cnt'
+    ],
+    // ページ
+    C_AUTO_TRIGGER_STAY_PAGE => [
+        'label' => 'ページ',
+        'createLimit' => ['and' => 1, 'or' => 1],
+        'key' => 'stay_page'
+    ],
+    // 曜日・時間
+    C_AUTO_TRIGGER_DAY_TIME => [
+        'label' => '曜日・時間',
+        'createLimit' => ['and' => 1, 'or' => 7],
+        'key' => 'day_time'
+    ],
+    // 参照元URL（リファラー）
+    C_AUTO_TRIGGER_REFERRER => [
+        'label' => '参照元URL（リファラー）',
+        'createLimit' => ['and' => 1, 'or' => 1],
+        'key' => 'referrer'
+    ],
+    // 検索キーワード
+    C_AUTO_TRIGGER_SEARCH_KEY => [
+        'label' => '検索キーワード',
+        'createLimit' => ['and' => 1, 'or' => 1],
+        'key' => 'search_keyword'
+    ]
 ];
+// $config['outMessageTriggerList'] = [
+//     C_AUTO_TRIGGER_STAY_TIME => "滞在時間",
+//     C_AUTO_TRIGGER_VISIT_CNT => "訪問回数",
+//     C_AUTO_TRIGGER_STAY_PAGE => "ページ",
+//     C_AUTO_TRIGGER_DAY_TIME => "曜日・時間",
+//     C_AUTO_TRIGGER_REFERRER => "参照元URL（リファラー）",
+//     C_AUTO_TRIGGER_SEARCH_KEY => "検索キーワード"
+// ];
 
 /* オートメッセージ － アクション種別 */
 $config['outMessageActionType'] = [

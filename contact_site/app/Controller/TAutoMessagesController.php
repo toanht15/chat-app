@@ -45,13 +45,6 @@ class TAutoMessagesController extends AppController {
         if ( $this->request->is('post') ) {
 
         }
-        // $inputData = [
-        //     'TAutoMessage' => [
-        //         'trigger' => C_AUTO_TRIGGER_TYPE_BODYLOAD,
-        //         'action' => C_AUTO_ACTION_TYPE_SENDMESSAGE
-        //     ]
-        // ];
-        // $this->data = $inputData;
         $this->_viewElement();
     }
 

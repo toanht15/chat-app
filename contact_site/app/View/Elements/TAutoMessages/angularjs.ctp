@@ -4,58 +4,44 @@
 var sincloApp = angular.module('sincloApp', []);
 sincloApp.controller('MainCtrl', function($scope) {
 	$scope.setItemList = {};
-	$scope.tmpList = {
-		"<?=C_AUTO_TRIGGER_STAY_TIME?>": {
-		createLimit: {and:1, or:1},
-		html: Handlebars.compile($("#tmp_stay_time").html())
-		}, // 滞在時間
-		"<?=C_AUTO_TRIGGER_VISIT_CNT?>": {
-		createLimit: {and:1, or:1},
-		html: Handlebars.compile($("#tmp_visit_cnt").html())
-		}, // 訪問回数
-		"<?=C_AUTO_TRIGGER_STAY_PAGE?>": {
-		createLimit: {and:1, or:1},
-		html: Handlebars.compile($("#tmp_stay_page").html())
-		}, // ページ
-		"<?=C_AUTO_TRIGGER_DAY_TIME?>": {
-		createLimit: {and:1, or:1},
-		html: Handlebars.compile($("#tmp_day_time").html())
-		}, // 曜日・時間
-		"<?=C_AUTO_TRIGGER_REFERRER?>": {
-		createLimit: {and:1, or:1},
-		html: Handlebars.compile($("#tmp_referrer").html())
-		}, // 参照元URL（リファラー）
-		"<?=C_AUTO_TRIGGER_SEARCH_KEY?>": {
-		createLimit: {and:1, or:1},
-		html: Handlebars.compile($("#tmp_search_keyword").html())
-		} // 検索キーワード
-	};
+	$scope.tmpList = {};
 
-	$(document).ready(function(){
-		var inputTarget = $("#setTriggerList > ul");
-		$("#triggerList li").click( function(e){
+	angular.forEach(<?php echo json_encode($outMessageTriggerList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>, function(v, k){
+		$scope.tmpList[k] = v;
+		if ( $("#tmp_" + v.key) !== undefined ) {
+			$scope.tmpList[k].html = Handlebars.compile($("#tmp_" + v.key).html());
+		}
+	});
+
+	var inputTarget = $("#setTriggerList > ul");
+
+	$scope.addItem = function(tmpId){
 		var template = null;
 		var ifType = (String($scope.max_show_time) === "<?=C_COINCIDENT?>") ? "and" : "or";
-		if ( $(this).data('type') in $scope.tmpList ) {
-			var tmpId = $(this).data('type');
+		if ( tmpId in $scope.tmpList ) {
 			template = $scope.tmpList[tmpId].html;
 			if ( !(tmpId in $scope.setItemList) ) {
 				$scope.setItemList[tmpId] = [];
 			}
-			else if (tmpId in $scope.setItemList && $scope.setItemList[tmpId] >= $scope.tmpList[tmpId].createLimit[ifType]) {
+			else if (tmpId in $scope.setItemList && $scope.setItemList[tmpId].length >= $scope.tmpList[tmpId].createLimit[ifType]) {
 				return false;
 			}
 			inputTarget.append(template());
-			$scope.setItemList[tmpId] = [];
-console.log($scope.setItemList);
+			$scope.setItemList[tmpId].push({});
 			openList();
-			if ( String($(this).data('type')) === "<?=C_AUTO_TRIGGER_DAY_TIME?>" ) {
-			$(".clockpicker").clockpicker({
-				autoclose: true,
-			});
+			if ( String(tmpId) === "<?=C_AUTO_TRIGGER_DAY_TIME?>" ) {
+				$(".clockpicker").clockpicker({
+					autoclose: true,
+				});
 			}
 		}
-		});
-	});
+
+
+	};
+
+	// $(document).ready(function(){
+	// 	$("#triggerList li").click( function(e){
+	// 	});
+	// });
 });
 </script>
