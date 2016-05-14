@@ -1,15 +1,27 @@
 <script type="text/javascript">
+var openList = null;
 $(document).ready(function(){
-  $("#setTriggerList li").click(function(){
-    var target = $(this);
-    if (!target.is(".selected")) {
-      $("#setTriggerList .selected").css('height', 34 + "px").removeClass("selected");
-      $(this).css('height',$(this).children("div").prop("offsetHeight") + 34 + "px").addClass("selected");
+
+  $(document).on("click", "li.triggerItem h4", function(){
+    openList(this);
+  });
+
+  openList = function(elm){
+    var target = null;
+    if ( elm === undefined ) {
+      target = $("li.triggerItem:last-child");
     }
     else {
-      $("#setTriggerList .selected").css('height', 34 + "px").removeClass("selected");
+      target = $(elm).parent("li.triggerItem");
     }
-  });
+    if (!target.is(".selected")) {
+      $("li.triggerItem.selected").css('height', 34 + "px").removeClass("selected");
+      target.css('height', target.children("div").prop("offsetHeight") + 34 + "px").addClass("selected");
+    }
+    else {
+      $("li.triggerItem.selected").css('height', 34 + "px").removeClass("selected");
+    }
+  };
 
   function saveAct(){
     $('#MUserIndexForm').submit();

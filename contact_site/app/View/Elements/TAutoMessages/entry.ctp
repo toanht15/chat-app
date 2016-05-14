@@ -1,9 +1,10 @@
-<?php echo $this->element('TAutoMessages/templates'); ?>
 <?php echo $this->element('TAutoMessages/script'); ?>
+<?php echo $this->element('TAutoMessages/templates'); ?>
+<?php echo $this->element('TAutoMessages/angularjs'); ?>
 
 <?=$this->Form->create('TAutoMessages', ['action' => 'entry'])?>
 <?php $this->Form->inputDefaults(['label'=>false, 'div' => false, 'error' => false, 'legend' => false ]);?>
-<div class="form01">
+<div class="form01" ng-app="sincloApp" ng-controller="MainCtrl" ng-cloak>
 	<section>
 		<h3>１．基本設定</h3>
 		<ul class="settingList pl30">
@@ -28,18 +29,20 @@
 		</ul>
 	</section>
 
-	<section class="section2">
+	<section class="section2" >
 		<h3>２．条件詳細設定</h3>
 		<ul class="settingList pl30">
 			<!-- 条件設定 -->
 			<li>
 				<span class="require"><label>条件設定</label></span>
-				<?= $this->Form->input('max_show_time', [
+				<?= $this->ngForm->input('max_show_time', [
 					'type' => 'radio',
 					'options' => $outMessageIfType,
-					'default' => C_COINCIDENT,
 					'separator' => '&nbsp',
 					'error' => false
+				],[
+					'entity' => 'max_show_time',
+					'default' => C_COINCIDENT,
 				]); ?>
 			</li>
 			<?php if ($this->Form->isFieldError('name')) echo $this->Form->error('name', null, ['wrap' => 'li']); ?>
@@ -49,30 +52,12 @@
 			<li id="tautomessages_triggers" class="bt0">
 				<div id="setTriggerList" class="pl30">
 					<ul>
-						<li class="selected">
-							<h4>滞在時間</h4>
-							<div>
-								aaaaaa
-							</div>
-						</li>
-						<li>
-							<h4>曜日・時間</h4>
-							<div>
-								aaaaaa
-							</div>
-						</li>
-						<li>
-							<h4>曜日・時間</h4>
-							<div>
-								aaaaaa
-							</div>
-						</li>
 					</ul>
 				</div>
 				<div id="triggerList">
 					<ul>
-						<?php foreach($outMessageTriggerList as $val) { ?>
-						<li><?=h($val);?></li>
+						<?php foreach($outMessageTriggerList as $key => $val) { ?>
+						<li data-type="<?=$key?>"><?=h($val);?></li>
 						<?php } ?>
 					</ul>
 				</div>

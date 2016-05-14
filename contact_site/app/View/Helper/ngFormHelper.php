@@ -17,7 +17,15 @@ class ngFormHelper extends AppHelper {
             if ( !empty($ngOptions['entity']) ) {
                 $value = Hash::get($this->request->data, $ngOptions['entity']);
                 $options['ng-model'] = $fieldName;
-                $options['ng-init'] = $fieldName .'="' . $value . '";';
+                // set: default
+                if ( empty($value) && !empty($ngOptions['default']) ) {
+                    $options['ng-init'] = $fieldName .'="' . $ngOptions['default'] . '";';
+                    $options['default'] = $ngOptions['default'];
+                }
+                else {
+                    $options['ng-init'] = $fieldName .'="' . $value . '";';
+                }
+
             }
             // set: ng-change
             if ( !empty($ngOptions['change']) ) {

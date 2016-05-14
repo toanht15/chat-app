@@ -111,6 +111,12 @@ input{
   &.form-error:focus {
       border-bottom-color: $error-color;
   }
+
+
+  &[type='number'] {
+    width: auto;
+    text-align: right;
+  }
 }
 
 textarea {
@@ -1196,11 +1202,6 @@ ul.naviBtn {
           width: auto;
         }
 
-        &[type='number'] {
-          width: auto;
-          text-align: right;
-        }
-
         &[type='radio'] {
           width: auto;
           height: auto;
@@ -1354,14 +1355,14 @@ ul.naviBtn {
           #setTriggerList {
             width: 30em;
 
-            ul {
+            > ul {
               border-bottom: 1px solid $main-color;
 
-              li {
+              > li.triggerItem {
                 display: block;
                 overflow: hidden;
                 height: 34px;
-                transition: height 500ms linear;
+                transition: height 200ms linear;
 
                 h4 {
                   border-color: $main-color;
@@ -1378,17 +1379,38 @@ ul.naviBtn {
                 div {
                   padding: 5px;
                   border-top: 1px solid $main-color;
+
+                  ul li {
+                    padding: 5px;
+                    span { width: 8em }
+                  }
+                }
+
+                &:hover h4{
+                  background-color: $list-color;
                 }
 
                 &.selected {
-                  transition: height 500ms linear;
-
+                  transition: height 300ms linear 200ms;
                   h4 {
                     background-color: $list-color;
                   }
+                }
 
-                  div {
+                ul.setDayTime {
+                  li:last-child {
+                    div:not(.clockpicker) {
+                      width:10%;
+                      text-align:center;
+                    }
 
+                    div.clockpicker {
+                      width:45%;
+                      input {
+                        width: 100%;
+                        text-align: center;
+                      }
+                    }
                   }
                 }
 
