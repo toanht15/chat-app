@@ -56,7 +56,7 @@ class PersonalSettingsController extends AppController {
             }
             else {
                 $this->MUser->rollback();
-                $errors['rollback'] = "保存処理に失敗しました。";
+                $errors['rollback'] = Configure::read('message.const.saveFailed');
             }
         }
         else {

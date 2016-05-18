@@ -42,6 +42,7 @@ sincloApp.controller('WidgetCtrl', function($scope){
     $scope.inputInitToggle = function(item){
       return (item) ? 1 : 2;
     };
+
 });
 
 function saveAct(){
@@ -49,10 +50,18 @@ function saveAct(){
 }
 
 $(document).ready(function(){
+    var scrollTimer = null;
     $(window).scroll(function(e){
-        $("#m_widget_simulator").css("top", 20);
-        if (document.body.scrollTop < 180 ) return false;
-        $("#m_widget_simulator").css("top", document.body.scrollTop-160);
+        var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
+        if (scrollTimer) {
+          clearTimeout(scrollTimer);
+        };
+        var position = (scrollTop < 180 ) ? 20 : scrollTop-160;
+        scrollTimer = setTimeout(function(){
+          $("#m_widget_simulator").animate({
+            "top": position
+          }, 'slow');
+        }, 200);
     });
     $(".widgetCtrl").click(function(){
         var target = $(".widgetCtrl.selected"), clickTab = $(this).data('tab');
@@ -67,6 +76,7 @@ $(document).ready(function(){
           $("#chatTab").css('display', 'inline-block');
         }
     });
+
 });
 
 </script>

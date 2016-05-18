@@ -101,7 +101,7 @@ table {
   }
 }
 
-input{
+input[type='text'], input[type='number'], input[type='password']{
   border: none;
   border-bottom: 1px solid $line-color;
   &:focus {
@@ -132,9 +132,20 @@ textarea {
   }
 }
 
-select:focus {
-  outline-color: $main-color;
+select {
+  padding: 0 0.5em;
+  border: none;
+  border-bottom: 1px solid #909090;
+
+  &:focus {
+    border: none;
+    outline: none;
+    border-bottom: 1px solid $main-color;
+    outline-color: $main-color;
+  }
+
 }
+
 
 /**
  *  デバッグ画面
@@ -381,6 +392,15 @@ a {
   transition: background-color, border-color 0.1s linear;
 }
 
+.whiteBtn {
+  background-color: #FFF!important  ;
+  border: 1px solid $main-color!important;
+  color: $main-color!important;
+  display: block;
+  font-weight: bold;
+  transition: background-color, border-color 0.1s linear;
+}
+
 .grayBtn {
   background-color: #DADADA;
   border: 1px solid #DADADA;
@@ -414,6 +434,12 @@ a {
     border: 1px solid #A5B77E;
     transition: background-color, border-color 0.1s linear;
     color: #fff;
+  }
+  &.whiteBtn:hover, &.whiteBtn.on {
+    background-color: #D5DCC7 !important;
+    border: 1px solid #D5DCC7 !important;
+    color: #FFF!important;
+    transition: background-color, border-color 0.1s linear;
   }
   &.redBtn:hover, &.redBtn.on {
     background-color: #B78080;
@@ -1082,7 +1108,7 @@ ul.naviBtn {
         &.copyArea {
           height: 45px;
           padding: 10px;
-          width: $ssc-content-width - 38px!important;
+          width: $ssc-content-width - 40px!important;
 
           input {
             background-color: #E3E8E5;
@@ -1343,46 +1369,128 @@ ul.naviBtn {
             border-top: none;
           }
 
-          span {
+          &.disableLi {
+            background-color: #595959;
+          }
+
+          > span:first-child {
             width: 15em;
+            display: block;
           }
 
           &#tautomessages_triggers {
-            position: relative;
             min-height: 300px;
           }
 
           #setTriggerList {
             width: 30em;
+            position: relative;
 
             > ul {
-              border-bottom: 1px solid $main-color;
 
-              > li.triggerItem {
+              >li.error-message {
+                padding-left: 0;
+                font-size: 12px;
+                padding: 5px;
+              }
+
+              > items:last-child li.triggerItem:last-child {
+                border-bottom: 1px solid $main-color;
+              }
+              > items li.triggerItem {
                 display: block;
+                position: relative;
                 overflow: hidden;
                 height: 34px;
                 transition: height 200ms linear;
 
                 h4 {
+                  cursor: pointer;
                   border-color: $main-color;
                   border-style: solid;
                   border-width: 1px 0 0 0;
                   margin: 0;
-                  padding-left: 10px;
                   background-color: #FFF;
-                  padding: 10px 0 10px 5px;
                   font-weight: bold;
-                  font-size: 13px;
+
+                  span {
+                    &.removeArea {
+                      width: 2em;
+                      float: left;
+                      text-align: center;
+                      padding: 9px 0.25em;
+                      height: 34px;
+                    }
+                    &.labelArea  {
+                      display: block;
+                      width: 25.5em;
+                      margin-left: 2em;
+                      padding: 9px 0.25em;
+                      height: 34px;
+                    }
+
+                  }
+
+                  i {
+                    background-size: 12px;
+                    background-repeat: no-repeat;
+                    width: 16px;
+                    height: 16px;
+                    border-radius: 15px;
+                    display: block;
+                    background-position: 1px;
+
+                    &.remove {
+                      border: 1px solid #878787;
+                      background-color: #FFFFFF;
+                      background-image: url("/img/close_b.png");
+
+                      &:hover {
+                        background-color: #CFCFCF;
+                      }
+                    }
+
+                    &.error {
+                      float: right;
+                      background-image: url("/img/exclamation_mark.png");
+                      background-color: #FF8E9E;
+                      width: 15px;
+                      height: 15px;
+                    }
+                  }
+
                 }
 
                 div {
-                  padding: 5px;
+                  padding: 0.5em;
                   border-top: 1px solid $main-color;
 
-                  ul li {
-                    padding: 5px;
-                    span { width: 8em }
+                  ul {
+                    > li {
+                      padding: 0.5em;
+                      > span:first-child {
+                        width: 8em;
+                        display: block;
+                      }
+                    }
+
+                    &.setDayTime {
+                      li:last-child {
+                        div:not(.clockpicker) {
+                          width:10%;
+                          text-align:center;
+                        }
+
+                        div.clockpicker {
+                          width:45%;
+                          input {
+                            width: 100%;
+                            text-align: center;
+                          }
+                        }
+                      }
+                    }
+
                   }
                 }
 
@@ -1396,54 +1504,82 @@ ul.naviBtn {
                     background-color: $list-color;
                   }
                 }
+              }
 
-                ul.setDayTime {
-                  li:last-child {
-                    div:not(.clockpicker) {
-                      width:10%;
-                      text-align:center;
-                    }
+            }
 
-                    div.clockpicker {
-                      width:45%;
-                      input {
-                        width: 100%;
-                        text-align: center;
-                      }
-                    }
-                  }
+            div.balloon {
+              position: absolute;
+              top: 0;
+              left: 31em;
+              background-color: #FF8E9E;
+              z-index: 2;
+              display: none;
+
+              p { color: #FFF }
+              div.balloonContent {
+                position: relative;
+                width: 30em;
+                min-height: 5em;
+                padding: 0 1em;
+
+                &:before {
+                  content: " ";
+                  position: absolute;
+                  border-right: 10px solid #FF8E9E;
+                  border-bottom: 14px solid transparent;
+                  top: -5px;
+                  left: -10px;
+                  width: 0;
+                  height: 0;
                 }
 
+                p { margin: 0; padding: 0; margin-top: 5px }
 
               }
             }
+
           }
 
           #triggerList {
-            position: absolute;
-            top: 15px;
-            left: 50%;
 
-            ul {
-              height: 200px;
-              border: 1px solid $main-color;
-              overflow-x: hidden;
-              overflow-y: auto;
-              padding: 0;
+            span#pushImg {
+              background-image: url("/img/push.png");
+              width: 50px;
+              display: block;
+              height: 100px;
+              background-size: 100%;
+              background-repeat: no-repeat;
+              float: left;
+              margin: 50px 3em;
+            }
 
-              li {
-                width: 20em;
-                margin: 0;
-                border-bottom: 1px solid $main-color;
-                border-width: 0 0 1px 0;
-                padding: 10px 25px 10px 10px;
+            > div {
+              float: left;
 
-                &:hover {
-                  background-color: $list-color;
-                }
+              ul {
+                height: 200px;
+                border: 1px solid $main-color;
+                overflow-x: hidden;
+                overflow-y: auto;
+                padding: 0;
+                display: inline-block;
 
-                &:last-child {
-                  border-bottom: none;
+                li {
+                  width: 20em;
+                  margin: 0;
+                  border-bottom: 1px solid $main-color;
+                  border-width: 0 0 1px 0;
+                  padding: 10px 25px 10px 10px;
+
+                  &:hover {
+                    background-color: $list-color;
+                  }
+
+                  &:last-child {
+                    border-bottom: none;
+                  }
+
                 }
               }
             }
@@ -1451,12 +1587,21 @@ ul.naviBtn {
         }
       }
 
-      #tautomessages_actions > a.greenBtn {
-        width: 10em;
-        padding: 10px;
-        display: block;
+      #tautomessages_actions {
+        display: flex;
+        flex-direction: row;
+        width: 50%;
         margin: 0 auto;
-        text-align: center;
+
+
+        > a[class*='Btn'] {
+          width: 10em;
+          padding: 10px;
+          display: block;
+          margin: 0 auto;
+          text-align: center;
+        }
+
       }
 
     }

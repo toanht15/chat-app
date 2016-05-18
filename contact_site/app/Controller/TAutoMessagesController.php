@@ -42,10 +42,69 @@ class TAutoMessagesController extends AppController {
      * @return void
      * */
     public function add() {
+        $errors = [];
         if ( $this->request->is('post') ) {
-
+            $this->_entry($this->request->data);
         }
         $this->_viewElement();
+    }
+
+     /**
+     * 更新画面
+     * @return void
+     * */
+    public function edit($id=null) {
+        $errors = [];
+
+        if ($this->request->is('put')) {
+            $this->_entry($this->request->data);
+        }
+        else {
+            // 確実なデータを取得するために企業IDを指定する形とする
+            $editData = $this->TAutoMessage->coFind("all", [
+                'conditions' => [
+                    'TAutoMessage.id' => $id
+                ]
+            ]);
+            if (empty($editData) || (!empty($editData) && empty($editData[0]))) {
+                $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.notFoundId'));
+            	$this->redirect('/TAutoMessages/index');
+            }
+            $json = json_decode($editData[0]['TAutoMessage']['activity'], true);
+            $this->request->data = $editData[0];
+            $this->request->data['TAutoMessage']['condition_type'] = (!empty($json['conditionType'])) ? $json['conditionType'] : "";
+            $this->request->data['TAutoMessage']['action'] = (!empty($json['message'])) ? $json['message'] : "";
+        }
+
+
+        $this->_viewElement();
+    }
+
+    /**
+     * 保存機能
+     * @param array $inputData
+     * @return void
+     * */
+    private function _entry($inputData) {
+
+        $inputData['TAutoMessage']['m_companies_id'] = $this->userInfo['MCompany']['id'];
+
+        $this->TAutoMessage->begin();
+        if ( empty($inputData['TAutoMessage']['id']) ) {
+            $this->TAutoMessage->create();
+        }
+        $this->TAutoMessage->set($inputData);
+
+        if ($this->TAutoMessage->save()) {
+            $this->TAutoMessage->commit();
+            $this->set('alertMessage',['type' => C_MESSAGE_TYPE_SUCCESS, 'text'=>Configure::read('message.const.saveSuccessful')]);
+        }
+        else {
+            $this->TAutoMessage->rollback();
+            $errors = $this->TAutoMessage->validationErrors;
+            $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
+        }
+        $this->set('errors', $errors);
     }
 
     /**

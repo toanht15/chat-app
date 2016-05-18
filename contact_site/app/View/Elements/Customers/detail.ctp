@@ -48,7 +48,7 @@
 		<ul id="chatTalk" >
 		</ul>
 		<div style="position: relative">
-			<textarea rows="5" id="sendMessage" placeholder="メッセージ入力後、Enterで送信"></textarea>
+			<textarea rows="5" id="sendMessage" maxlength="300" placeholder="メッセージ入力後、Enterで送信"></textarea>
 			<span id="sinclo_sendbtn" class="btn-shadow" onclick="chatApi.pushMessage()">送信</span>
 		</div>
 	</div>

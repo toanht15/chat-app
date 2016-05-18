@@ -1,10 +1,8 @@
 <?php echo $this->element('TAutoMessages/script'); ?>
-<?php echo $this->element('TAutoMessages/templates'); ?>
 <?php echo $this->element('TAutoMessages/angularjs'); ?>
 
-<?=$this->Form->create('TAutoMessages', ['action' => 'entry'])?>
 <?php $this->Form->inputDefaults(['label'=>false, 'div' => false, 'error' => false, 'legend' => false ]);?>
-<div class="form01" ng-app="sincloApp" ng-controller="MainCtrl" ng-cloak>
+<div class="form01" ng-app="sincloApp" ng-controller="MainCtrl as main" ng-cloak>
 	<section>
 		<h3>１．基本設定</h3>
 		<ul class="settingList pl30">
@@ -16,8 +14,8 @@
 					'placeholder' => '名称',
 					'maxlength' => 12
 				]) ?>
+			<?php if (!empty($errors['name'])) echo "<li class='error-message'>" . h($errors['name'][0]) . "</li>"; ?>
 			</li>
-			<?php if ($this->Form->isFieldError('name')) echo $this->Form->error('name', null, ['wrap' => 'li']); ?>
 			<!-- 名称 -->
 
 			<!-- トリガー -->
@@ -35,33 +33,57 @@
 			<!-- 条件設定 -->
 			<li>
 				<span class="require"><label>条件設定</label></span>
-				<?= $this->ngForm->input('max_show_time', [
+				<?= $this->ngForm->input('condition_type', [
 					'type' => 'radio',
 					'options' => $outMessageIfType,
-					'separator' => '&nbsp',
+					'separator' => '&nbsp;',
 					'error' => false
 				],[
-					'entity' => 'max_show_time',
-					'default' => C_COINCIDENT,
+					'entity' => 'conditionType',
+					'default' => (!empty($this->data['TAutoMessage']['condition_type'])) ? $this->data['TAutoMessage']['condition_type'] : C_COINCIDENT,
 				]); ?>
 			</li>
-			<?php if ($this->Form->isFieldError('name')) echo $this->Form->error('name', null, ['wrap' => 'li']); ?>
+			<?php if (!empty($errors['condition_type'])) echo "<li class='error-message'>" . h($errors['condition_type'][0]) . "</li>"; ?>
 			<!-- 条件設定 -->
 
 			<!-- トリガー -->
 			<li id="tautomessages_triggers" class="bt0">
+				<!-- セット済みトリガー -->
 				<div id="setTriggerList" class="pl30">
 					<ul>
+						<items ng-repeat="(itemType, list) in main.setItemList" ng-if="main.keys(main.setItemList)!==0">
+							<li ng-repeat="(itemId, setItem) in list track by $index" class="triggerItem " id="triggerItem_{{$id}}">
+								<ng-form name="itemForm" ng-err-cnt novalidate>
+									<h4>
+										<span class="removeArea"><i class="remove"ng-click="main.removeItem(itemType, itemId)"></i></span>
+										<span class="labelArea" ng-click="main.openList('#triggerItem_' + $id)">{{main.tmpList[itemType].label}}<i class="error" ng-if="!itemForm.$valid" ng-showonhover="{{itemType}}"></i></span>
+									</h4>
+									<div>
+										<?php echo $this->element('TAutoMessages/templates'); ?>
+									</div>
+								</ng-form>
+							</li>
+						</items>
+						<li class='error-message' ng-if="main.keys(main.setItemList)===0">条件を設定してください</li>
 					</ul>
+					<div class="balloon"><div class="balloonContent"></div></div>
 				</div>
+				<!-- セット済みトリガー -->
+				<!-- トリガーリスト -->
 				<div id="triggerList">
-					<ul>
-						<li ng-repeat="(key, item) in tmpList" ng-click="addItem(key)">{{item.label}}</li>
-					</ul>
+					<span id="pushImg"></span>
+					<div>
+						<span></span>
+						<ul>
+							<li ng-repeat="(key, item) in main.tmpList" ng-class="{disableLi:checkDisabled(key)}" ng-click="main.addItem(key)">{{item.label}}</li>
+						</ul>
+					</div>
 				</div>
+				<!-- トリガーリスト -->
 			</li>
 			<!-- トリガー -->
 		</ul>
+		<?=$this->ngForm->input('activity', ['type'=>'hidden'])?>
 	</section>
 
 	<h3>３．実行設定</h3>
@@ -70,14 +92,16 @@
 			<!-- アクション -->
 			<li>
 				<span class="require"><label>アクション</label></span>
-				<?= $this->Form->input('action', array('type' => 'select', 'options' => $outMessageActionType, 'default' => C_AUTO_ACTION_TYPE_SENDMESSAGE)) ?>
+				<?= $this->Form->input('action_type', array('type' => 'select', 'options' => $outMessageActionType, 'default' => C_AUTO_ACTION_TYPE_SENDMESSAGE)) ?>
 			</li>
 			<!-- アクション -->
 
 			<!-- メッセージ -->
 			<li class="pl30 bt0">
 					<span class="require"><label>メッセージ</label></span>
-					<?= $this->Form->textarea('messages') ?>
+					<?=$this->ngForm->input('action', ['type'=>'textarea', 'maxlength'=>300],['entiry'=>'action'])?>
+					<?php if (!empty($errors['action'])) echo "<pre class='error-message'>" . h($errors['action'][0]) . "</pre>"; ?>
+
 			</li>
 			<!-- メッセージ -->
 
@@ -88,21 +112,20 @@
 					'type' => 'radio',
 					'options' => $outMessageAvailableType,
 					'default' => C_STATUS_AVAILABLE,
-					'separator' => '&nbsp',
+					'separator' => '&nbsp;',
 					'error' => false
 				]); ?>
 			</li>
-			<?php if ($this->Form->isFieldError('name')) echo $this->Form->error('name', null, ['wrap' => 'li']); ?>
 			<!-- 状態 -->
 		</ul>
 	</section>
 
 	<section>
+		<?=$this->Form->hidden('id')?>
 		<div id="tautomessages_actions">
-			<a href="javascript:void(0)" onclick="loading.ev(saveAct)" class="greenBtn btn-shadow">保存</a>
+			<?=$this->Html->link('戻る','/TAutoMessages/index', ['class'=>'whiteBtn btn-shadow'])?>
+			<a href="javascript:void(0)" ng-click="main.saveAct()" class="greenBtn btn-shadow">保存</a>
 		</div>
 	</section>
 
 </div>
-
-<?=$this->Form->end();?>

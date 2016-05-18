@@ -104,47 +104,70 @@ $config['outMessageTriggerList'] = [
     C_AUTO_TRIGGER_STAY_TIME => [
         'label' => '滞在時間',
         'createLimit' => ['and' => 1, 'or' => 1],
-        'key' => 'stay_time'
+        'key' => 'stay_time',
+        'default' => [
+            "stayTimeType" => "1",
+            "stayTimeRange" => 3
+        ]
     ],
     // 訪問回数
     C_AUTO_TRIGGER_VISIT_CNT => [
         'label' => '訪問回数',
         'createLimit' => ['and' => 1, 'or' => 1],
-        'key' => 'visit_cnt'
+        'key' => 'visit_cnt',
+        'default' => [
+            "visitCnt" => "",
+            "visitCntCond" => 1
+        ]
     ],
     // ページ
     C_AUTO_TRIGGER_STAY_PAGE => [
         'label' => 'ページ',
         'createLimit' => ['and' => 1, 'or' => 1],
-        'key' => 'stay_page'
+        'key' => 'stay_page',
+        'default' => [
+            "keyword" => "",
+            "targetName" => 1,
+            "stayPageCond" => 2
+        ]
     ],
     // 曜日・時間
     C_AUTO_TRIGGER_DAY_TIME => [
         'label' => '曜日・時間',
         'createLimit' => ['and' => 1, 'or' => 7],
-        'key' => 'day_time'
+        'key' => 'day_time',
+        'default' => [
+            "day" => [
+              "mon" => false, "tue" => false, "wed" => false, "thu" => false,
+              "fri" => false, "sat" => false, "sun" => false
+            ],
+            "timeSetting" => 1,
+            "startTime" => "09:00",
+            "endTime" => "18:00",
+        ]
     ],
     // 参照元URL（リファラー）
     C_AUTO_TRIGGER_REFERRER => [
         'label' => '参照元URL（リファラー）',
         'createLimit' => ['and' => 1, 'or' => 1],
-        'key' => 'referrer'
+        'key' => 'referrer',
+        'default' => [
+           "targetName" => "1",
+           "keyword" => "",
+           "referrerCond" => "1"
+        ]
     ],
     // 検索キーワード
     C_AUTO_TRIGGER_SEARCH_KEY => [
         'label' => '検索キーワード',
         'createLimit' => ['and' => 1, 'or' => 1],
-        'key' => 'search_keyword'
+        'key' => 'search_keyword',
+        'default' => [
+           "keyword" => "",
+           "searchCond" => "1"
+        ]
     ]
 ];
-// $config['outMessageTriggerList'] = [
-//     C_AUTO_TRIGGER_STAY_TIME => "滞在時間",
-//     C_AUTO_TRIGGER_VISIT_CNT => "訪問回数",
-//     C_AUTO_TRIGGER_STAY_PAGE => "ページ",
-//     C_AUTO_TRIGGER_DAY_TIME => "曜日・時間",
-//     C_AUTO_TRIGGER_REFERRER => "参照元URL（リファラー）",
-//     C_AUTO_TRIGGER_SEARCH_KEY => "検索キーワード"
-// ];
 
 /* オートメッセージ － アクション種別 */
 $config['outMessageActionType'] = [

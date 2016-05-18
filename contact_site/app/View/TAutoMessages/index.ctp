@@ -43,9 +43,9 @@
 		</thead>
 		<tbody>
 		<?php foreach((array)$settingList as $key => $val): ?>
-			<tr>
-				<td class="tCenter"><?=($key + 1)?></td>
-				<td class="tCenter"><?=$val['TAutoMessage']['name']?></td>
+			<tr onclick="location.href='/TAutoMessages/edit/<?=h($val['TAutoMessage']['id'])?>';return false;">
+				<td class="tCenter" width="50%"><?=h($val['TAutoMessage']['id'])?></td>
+				<td class="tCenter" width="50%"><?=$this->Html->link(h($val['TAutoMessage']['name']), ['controller'=>'TAutoMessages', 'action'=>'edit', $val['TAutoMessage']['id']])?></td>
 			</tr>
 		<?php endforeach; ?>
 		</tbody>
