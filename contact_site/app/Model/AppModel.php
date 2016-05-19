@@ -126,4 +126,13 @@ class AppModel extends Model {
 
         return $this->find($type, $params);
     }
+
+    /**
+     *　getLog: SQLの実行ログを取得する関数
+     *
+     * @return array getLogの戻り値
+     * */
+    public function getLog(){
+      return $this->getDataSource()->getLog();
+    }
 }
