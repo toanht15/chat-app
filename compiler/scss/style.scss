@@ -1348,6 +1348,69 @@ ul.naviBtn {
 /* オートメッセージ機能 */
 #tautomessages_idx {
   $list-color: #ECF4DA;
+
+  #tautomessages_menu {
+    img[class$='Btn'] {
+        border-radius: 15px;
+    }
+
+    div.ctrlBtnArea {
+        width: 100px;
+        display: flex;
+    }
+
+  }
+
+  #tautomessages_list {
+
+    .bgGrey {
+      background-color: #DEDEDE;
+    }
+
+        input[type='checkbox'] {
+            width: 0;
+            height: 0;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: -1;
+
+            &:checked + label {
+                background-color: #C3D69B;
+                border: 1px solid #C3D69B;
+                position: relative;
+
+                &:after {
+                    content: "";
+                    font-weight: bold;
+                    border-right: 4px solid #FFF;
+                    border-bottom: 4px solid #FFF;
+                    width: 6px;
+                    height: 10px;
+                    position: absolute;
+                    top: 0;
+                    right: 4px;
+                    transform: rotate(45deg);
+                }
+            }
+
+            & + label {
+                width: 20px;
+                height: 20px;
+                display: block;
+                margin: 0 auto;
+                background-color: #FFF;
+                padding: 1px;
+                border: 1px solid #828282;
+            }
+        }
+
+    th input[type='checkbox']:checked + label {
+        border: 1px solid #FFF;
+    }
+
+  }
+
   #tautomessages_form {
     h3 {
       border-bottom: 3px solid #C3D69B;

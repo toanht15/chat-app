@@ -1,4 +1,3 @@
-<?php echo $this->element('TAutoMessages/script'); ?>
 <?php echo $this->element('TAutoMessages/angularjs'); ?>
 
 <?php $this->Form->inputDefaults(['label'=>false, 'div' => false, 'error' => false, 'legend' => false ]);?>
@@ -108,7 +107,7 @@
 			<!-- 状態 -->
 			<li>
 				<span class="require"><label>状態</label></span>
-				<?= $this->Form->input('available_flg', [
+				<?= $this->Form->input('active_flg', [
 					'type' => 'radio',
 					'options' => $outMessageAvailableType,
 					'default' => C_STATUS_AVAILABLE,

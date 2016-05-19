@@ -81,6 +81,30 @@ class TAutoMessagesController extends AppController {
     }
 
     /**
+     * ステータス更新
+     * @return void
+     * */
+    public function changeStatus() {
+        Configure::write('debug', 0);
+        $this->autoRender = FALSE;
+        $this->layout = 'ajax';
+        $inputData = $this->request->query;
+        $case = gettype($inputData['status']);
+        $activeFlg = 1;
+        if ($case === "boolean" && $inputData['status'] || $case === "string" && strcmp($inputData['status'], 'true') === 0) {
+            $activeFlg = 0;
+        }
+        $this->TAutoMessage->updateAll(
+            ['active_flg'=>$activeFlg],
+            [
+                'id' => $inputData['targetList'],
+                'm_companies_id' => $this->userInfo['MCompany']['id'],
+                'del_flg' => 0
+            ]
+        );
+    }
+
+    /**
      * 保存機能
      * @param array $inputData
      * @return void

@@ -6,7 +6,7 @@ CREATE TABLE `t_auto_messages` (
   `trigger_type` int NOT NULL COMMENT "トリガーの種類",
   `activity` text DEFAULT NULL COMMENT "オートメッセージ設定内容",
   `action_type` int NOT NULL COMMENT "アクションの種類",
-  `available_flg` int NOT NULL COMMENT "0:有効、1:無効",
+  `active_flg` int NOT NULL COMMENT "0:有効、1:無効",
   `del_flg` int(11) DEFAULT '0' COMMENT '削除フラグ',
   `created` datetime DEFAULT NULL COMMENT '登録日',
   `created_user_id` int(11) DEFAULT NULL COMMENT '登録実行ユーザ',
