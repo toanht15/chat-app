@@ -5,9 +5,10 @@
  */
 class TAutoMessagesController extends AppController {
     public $uses = array('TAutoMessage');
+    public $helpers = ['AutoMessage'];
     public $paginate = array(
         'TAutoMessage' => array(
-            'limit' => 10,
+            'limit' => 3,
             'order' => array(
                 'TAutoMessage.id' => 'asc'
             ),
@@ -35,6 +36,7 @@ class TAutoMessagesController extends AppController {
     public function index() {
         $this->paginate['TAutoMessage']['conditions']['TAutoMessage.m_companies_id'] = $this->userInfo['MCompany']['id'];
         $this->set('settingList', $this->paginate('TAutoMessage'));
+        $this->_viewElement();
     }
 
     /**
@@ -42,7 +44,6 @@ class TAutoMessagesController extends AppController {
      * @return void
      * */
     public function add() {
-        $errors = [];
         if ( $this->request->is('post') ) {
             $this->_entry($this->request->data);
         }
@@ -54,8 +55,6 @@ class TAutoMessagesController extends AppController {
      * @return void
      * */
     public function edit($id=null) {
-        $errors = [];
-
         if ($this->request->is('put')) {
             $this->_entry($this->request->data);
         }
@@ -109,17 +108,19 @@ class TAutoMessagesController extends AppController {
      * @param array $inputData
      * @return void
      * */
-    private function _entry($inputData) {
+    private function _entry($saveData) {
+        $errors = [];
 
-        $inputData['TAutoMessage']['m_companies_id'] = $this->userInfo['MCompany']['id'];
+        $saveData['TAutoMessages']['m_companies_id'] = $this->userInfo['MCompany']['id'];
 
         $this->TAutoMessage->begin();
-        if ( empty($inputData['TAutoMessage']['id']) ) {
+        if ( empty($saveData['TAutoMessages']['id']) ) {
             $this->TAutoMessage->create();
         }
-        $this->TAutoMessage->set($inputData);
+        $this->TAutoMessage->set($saveData);
 
         if ($this->TAutoMessage->save()) {
+            // $this->TAutoMessage->rollback();
             $this->TAutoMessage->commit();
             $this->set('alertMessage',['type' => C_MESSAGE_TYPE_SUCCESS, 'text'=>Configure::read('message.const.saveSuccessful')]);
         }

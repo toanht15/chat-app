@@ -27,8 +27,6 @@ sincloApp.controller('MainCtrl', function($scope) {
 
 	$scope.$watch(function(){
 	  return self.setItemList;
-	}, function() {
-	  console.log('値が変更されました')
 	});
 
 	// var inputTarget = $("#setTriggerList > ul");

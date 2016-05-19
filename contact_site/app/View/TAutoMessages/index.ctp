@@ -1,4 +1,8 @@
 <?php echo $this->element('TAutoMessages/script'); ?>
+<?php
+$params = $this->Paginator->params();
+$prevCnt = ($params['page'] - 1) * $params['limit'];
+?>
 
 <div id='tautomessages_idx' class="card-shadow">
 
@@ -39,9 +43,11 @@
 	<table>
 		<thead>
 			<tr>
-				<th width="10%"><input type="checkbox" name="allCheck" id="allCheck"><label for="allCheck"></label></th>
-				<th width="40%">No</th>
-				<th width="50%">名称</th>
+				<th width=" 5%"><input type="checkbox" name="allCheck" id="allCheck"><label for="allCheck"></label></th>
+				<th width="10%">No</th>
+				<th width="20%">名称</th>
+				<th width="30%">条件</th>
+				<th width="30%">アクション</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -51,18 +57,49 @@
 			if ($val['TAutoMessage']['active_flg']) {
 				$class = "bgGrey";
 			}
-			 ?>
-			<tr class="<?=$class?>">
-				<td class="tCenter">
+			$activity = "";
+			if ($val['TAutoMessage']['activity']) {
+				$activity = json_decode($val['TAutoMessage']['activity'],true);
+			}
+			$activity_detail = "";
+			switch($val['TAutoMessage']['action_type']) {
+				case C_AUTO_ACTION_TYPE_SENDMESSAGE:
+					if ( !empty($activity['message']) ) {
+						$activity_detail = "<span class='actionValueLabel'>メッセージ</span><span class='actionValue'>" . $activity['message'] . "</span>";
+					}
+					break;
+			}
+			$conditionType = "";
+			if (!empty($activity['conditionType'])) {
+				if(!empty($outMessageIfType[$activity['conditionType']])){
+					$conditionType = $outMessageIfType[$activity['conditionType']];
+				}
+			}
+
+			$conditions = "";
+			if (!empty($activity['conditions'])) {
+				$condList = $this->AutoMessage->setAutoMessage($activity['conditions']);
+				$conditions = implode($condList, ", ");
+			}
+			?>
+			<tr class="<?=$class?>" data-id="<?=h($val['TAutoMessage']['id'])?>">
+				<td class="tCenter noClick">
 					<input type="checkbox" name="selectTab" id="selectTab<?=h($val['TAutoMessage']['id'])?>" value="<?=h($val['TAutoMessage']['id'])?>">
 					<label for="selectTab<?=h($val['TAutoMessage']['id'])?>"></label>
 				</td>
-				<td class="tCenter" onclick="location.href='/TAutoMessages/edit/<?=h($val['TAutoMessage']['id'])?>';return false;"><?=h($val['TAutoMessage']['id'])?></td>
-				<td class="tCenter" onclick="location.href='/TAutoMessages/edit/<?=h($val['TAutoMessage']['id'])?>';return false;"><?=$this->Html->link(h($val['TAutoMessage']['name']), ['controller'=>'TAutoMessages', 'action'=>'edit', $val['TAutoMessage']['id']])?></td>
+				<td class="tCenter"><?=$prevCnt + h($key+1)?></td>
+				<td class="tCenter"><?=$this->Html->link(h($val['TAutoMessage']['name']), ['controller'=>'TAutoMessages', 'action'=>'edit', $val['TAutoMessage']['id']])?></td>
+				<td>
+					<span class="conditionTypeLabel m10b">条件</span><span class="m10b actionValue"><?=h($conditionType)?></span>
+					<span class="conditionValueLabel m10b">設定</span><span class="m10b actionValue"><?=$conditions?></span>
+				</td>
+				<td class="p10x">
+					<span class="actionTypeLabel m10b">対象</span><span class="m10b actionValue"><?=h($outMessageActionType[$val['TAutoMessage']['action_type']])?></span>
+					<?=$activity_detail?>
+				</td>
 			</tr>
 		<?php endforeach; ?>
 		</tbody>
 	</table>
 </div>
-
 </div>

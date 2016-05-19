@@ -1367,46 +1367,84 @@ ul.naviBtn {
       background-color: #DEDEDE;
     }
 
-        input[type='checkbox'] {
-            width: 0;
-            height: 0;
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: -1;
+    input[type='checkbox'] {
+        width: 0;
+        height: 0;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: -1;
 
-            &:checked + label {
-                background-color: #C3D69B;
-                border: 1px solid #C3D69B;
-                position: relative;
+        &:checked + label {
+            background-color: #C3D69B;
+            border: 1px solid #C3D69B;
+            position: relative;
 
-                &:after {
-                    content: "";
-                    font-weight: bold;
-                    border-right: 4px solid #FFF;
-                    border-bottom: 4px solid #FFF;
-                    width: 6px;
-                    height: 10px;
-                    position: absolute;
-                    top: 0;
-                    right: 4px;
-                    transform: rotate(45deg);
-                }
-            }
-
-            & + label {
-                width: 20px;
-                height: 20px;
-                display: block;
-                margin: 0 auto;
-                background-color: #FFF;
-                padding: 1px;
-                border: 1px solid #828282;
+            &:after {
+                content: "";
+                font-weight: bold;
+                border-right: 4px solid #FFF;
+                border-bottom: 4px solid #FFF;
+                width: 6px;
+                height: 10px;
+                position: absolute;
+                top: 0;
+                right: 4px;
+                transform: rotate(45deg);
             }
         }
 
+        & + label {
+            width: 20px;
+            height: 20px;
+            display: block;
+            margin: 0 auto;
+            background-color: #FFF;
+            padding: 1px;
+            border: 1px solid #828282;
+        }
+    }
+
     th input[type='checkbox']:checked + label {
         border: 1px solid #FFF;
+    }
+
+    li {
+      height: 2em;
+      display: block;
+    }
+
+    span {
+      &[class*='Label'] {
+        padding: 4px 2%;
+        margin-right: 1%;
+        margin-bottom: 5px;
+        border-radius: 5px;
+        color: #FFF;
+        font-weight: bold;
+        display: block;
+        float: left;
+        width: 25%;
+        text-align: center;
+      }
+
+      &.actionValue {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        display: block;
+        padding: 4px 8px;
+        margin-bottom: 5px;
+        width: 16em;
+      }
+
+      &.conditionTypeLabel, &.actionTypeLabel {
+        background-color: #D86585;
+      }
+      &.conditionValueLabel, &.actionValueLabel {
+        background-color: #E499B8;
+      }
+
     }
 
   }

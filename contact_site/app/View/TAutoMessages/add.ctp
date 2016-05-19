@@ -6,7 +6,7 @@
 </div>
 
 <div id='tautomessages_form' class="p20x">
-  <?=$this->Form->create('TAutoMessages', ['url'=>['controller' =>'TAutoMessages', 'action'=>'add'], 'novalidate' => true, 'id'=>'TAutoMessageEntryForm', 'name'=>'TAutoMessageEntryForm'])?>
+  <?=$this->Form->create('TAutoMessage', ['url'=>['controller' =>'TAutoMessages', 'action'=>'add'], 'novalidate' => true, 'id'=>'TAutoMessageEntryForm', 'name'=>'TAutoMessageEntryForm'])?>
     <?= $this->element('TAutoMessages/entry'); ?>
   <?=$this->Form->end();?>
 </div><!-- /m_widget_setting_form -->
