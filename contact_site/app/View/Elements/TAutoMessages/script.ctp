@@ -3,8 +3,15 @@ document.body.onload = function(){
 	// 全選択用チェックボックス
 	var allCheckElm = document.getElementById('allCheck');
 	allCheckElm.addEventListener('click', setAllCheck); // 全選択
+	allCheckElm.addEventListener('change', actBtnShow); // 全選択
 
-	// 全てのチェックボックス
+	// チェックボックス群
+	var checkBoxList = document.querySelectorAll('[id^="selectTab"]');
+	for (var i = 0; i < checkBoxList.length; i++) {
+		checkBoxList[i].addEventListener('change', actBtnShow); // 更新画面への遷移
+	}
+
+	// チェックボックスが入っていないtdタグ群
 	var clickTargetTds = document.querySelectorAll('td:not(.noClick)');
 	for (var i = 0; i < clickTargetTds.length; i++) {
 		clickTargetTds[i].addEventListener('click', toEditPage); // 更新画面への遷移
@@ -29,6 +36,17 @@ document.body.onload = function(){
 var setAllCheck = function() {
 	$('input[name="selectTab"]').prop('checked', this.checked);
 }
+
+// 有効/無効ボタンの表示/非表示
+var actBtnShow = function(){
+	// 選択中の場合
+	if ( $('input[name="selectTab"]').is(":checked") ) {
+		$(".actCtrlBtn").css('opacity', 1);
+	}
+	else {
+		$(".actCtrlBtn").css('opacity', 0);
+	}
+};
 
 // 更新画面への遷移
 var toEditPage = function(){

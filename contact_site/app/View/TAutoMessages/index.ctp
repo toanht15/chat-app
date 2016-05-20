@@ -14,8 +14,8 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
 <div id='tautomessages_menu' class="p20trl">
 	<div class="fLeft ctrlBtnArea" >
 		<?= $this->Html->image('add.png', ['url' => ['controller'=>'TAutoMessages', 'action' => 'add'], 'alt' => '登録', 'class' => 'btn-shadow greenBtn', 'width' => 30, 'height' => 30]) ?>
-		<?= $this->Html->image('check.png', ['url' => 'javascript:void(0)', 'onclick'=>'toActive(true)', 'alt' => '有効にする', 'class' => 'btn-shadow greenBtn', 'width' => 30, 'height' => 30]) ?>
-		<?= $this->Html->image('inactive.png', ['url' => 'javascript:void(0)', 'onclick'=>'toActive(false)', 'alt' => '無効にする', 'class' => 'btn-shadow redBtn', 'width' => 30, 'height' => 30]) ?>
+		<?= $this->Html->image('check.png', ['url' => 'javascript:void(0)', 'onclick'=>'toActive(true)', 'alt' => '有効にする', 'class' => 'btn-shadow greenBtn actCtrlBtn', 'width' => 30, 'height' => 30]) ?>
+		<?= $this->Html->image('inactive.png', ['url' => 'javascript:void(0)', 'onclick'=>'toActive(false)', 'alt' => '無効にする', 'class' => 'btn-shadow redBtn actCtrlBtn', 'width' => 30, 'height' => 30]) ?>
 	</div>
 	<!-- 検索窓 -->
 	<div id="paging" class="fRight">
