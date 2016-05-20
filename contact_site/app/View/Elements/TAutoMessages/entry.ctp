@@ -124,6 +124,9 @@
 		<div id="tautomessages_actions">
 			<?=$this->Html->link('戻る','/TAutoMessages/index', ['class'=>'whiteBtn btn-shadow'])?>
 			<a href="javascript:void(0)" ng-click="main.saveAct()" class="greenBtn btn-shadow">保存</a>
+			<?php if ( !empty($this->data['TAutoMessage']['id']) ) : ?>
+				<a href="javascript:void(0)" onclick="removeAct()" class="redBtn btn-shadow">削除</a>
+			<?php endif; ?>
 		</div>
 	</section>
 

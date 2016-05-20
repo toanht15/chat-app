@@ -97,12 +97,8 @@ sincloApp.controller('MainCtrl', function($scope) {
 				'message': angular.element("#TAutoMessageAction").val()
 		};
 		$('#TAutoMessageActivity').val(JSON.stringify(setList));
-	console.log('saveAct', $('#TAutoMessageActivity').val());
-
-		// loading.ev(saveAct);
-		saveAct();
+		submitAct();
 	};
-
 });
 
 // http://stackoverflow.com/questions/17035621/what-is-the-angular-way-of-displaying-a-tooltip-lightbox
@@ -180,8 +176,26 @@ sincloApp.directive('ngShowonhover',function() {
 	};
 });
 
-function saveAct(){
-	console.log('A');
+function removeAct(){
+	modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', 'オートメッセージ設定');
+	popupEvent.closePopup = function(){
+		$.ajax({
+			type: 'post',
+			data: {
+				id: document.getElementById('TAutoMessageId').value
+			},
+			url: "<?= $this->Html->url('/TAutoMessages/remoteDelete') ?>",
+			success: function(){
+				location.href = "<?= $this->Html->url('/TAutoMessages/index') ?>";
+			},
+			error: function(){
+				location.href = "<?= $this->Html->url('/TAutoMessages/index') ?>";
+			}
+		});
+	};
+}
+
+function submitAct(){
   $('#TAutoMessageEntryForm').submit();
 }
 </script>

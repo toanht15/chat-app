@@ -8,7 +8,7 @@ class TAutoMessagesController extends AppController {
     public $helpers = ['AutoMessage'];
     public $paginate = array(
         'TAutoMessage' => array(
-            'limit' => 3,
+            'limit' => 10,
             'order' => array(
                 'TAutoMessage.id' => 'asc'
             ),
@@ -67,7 +67,7 @@ class TAutoMessagesController extends AppController {
             ]);
             if (empty($editData) || (!empty($editData) && empty($editData[0]))) {
                 $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.notFoundId'));
-            	$this->redirect('/TAutoMessages/index');
+                $this->redirect('/TAutoMessages/index');
             }
             $json = json_decode($editData[0]['TAutoMessage']['activity'], true);
             $this->request->data = $editData[0];
@@ -75,8 +75,32 @@ class TAutoMessagesController extends AppController {
             $this->request->data['TAutoMessage']['action'] = (!empty($json['message'])) ? $json['message'] : "";
         }
 
-
         $this->_viewElement();
+    }
+
+    public function remoteDelete(){
+        Configure::write('debug', 0);
+        $this->autoRender = FALSE;
+        $this->layout = 'ajax';
+
+        $id = (isset($this->request->data['id'])) ? $this->request->data['id'] : "";
+        $ret = $this->TAutoMessage->find('first', [
+            'fields' => 'TAutoMessage.*',
+            'conditions' => [
+                'TAutoMessage.del_flg' => 0,
+                'TAutoMessage.id' => $id,
+                'TAutoMessage.m_companies_id' => $this->userInfo['MCompany']['id']
+            ],
+            'recursive' => -1
+        ]);
+        if ( count($ret) === 1 ) {
+            if ( $this->TAutoMessage->logicalDelete($id) ) {
+                $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
+            }
+            else {
+                $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
+            }
+        }
     }
 
     /**
