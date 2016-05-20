@@ -51,6 +51,8 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
 			</tr>
 		</thead>
 		<tbody>
+		<?php $allCondList = []; ?>
+		<?php $allActionList = []; ?>
 		<?php foreach((array)$settingList as $key => $val): ?>
 			<?php
 			$class = "";
@@ -65,6 +67,10 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
 			switch($val['TAutoMessage']['action_type']) {
 				case C_AUTO_ACTION_TYPE_SENDMESSAGE:
 					if ( !empty($activity['message']) ) {
+						$allActionList[$val['TAutoMessage']['id']] = [
+							'type' => $val['TAutoMessage']['action_type'],
+							'detail' => $activity['message']
+						];
 						$activity_detail = "<span class='actionValueLabel'>メッセージ</span><span class='actionValue'>" . $activity['message'] . "</span>";
 					}
 					break;
@@ -79,6 +85,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
 			$conditions = "";
 			if (!empty($activity['conditions'])) {
 				$condList = $this->AutoMessage->setAutoMessage($activity['conditions']);
+				$allCondList[$val['TAutoMessage']['id']] = $condList;
 				$conditions = implode($condList, ", ");
 			}
 			?>
@@ -89,7 +96,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
 				</td>
 				<td class="tCenter"><?=$prevCnt + h($key+1)?></td>
 				<td class="tCenter"><?=$this->Html->link(h($val['TAutoMessage']['name']), ['controller'=>'TAutoMessages', 'action'=>'edit', $val['TAutoMessage']['id']])?></td>
-				<td>
+				<td class="targetBalloon">
 					<span class="conditionTypeLabel m10b">条件</span><span class="m10b actionValue"><?=h($conditionType)?></span>
 					<span class="conditionValueLabel m10b">設定</span><span class="m10b actionValue"><?=$conditions?></span>
 				</td>
@@ -101,5 +108,17 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
 		<?php endforeach; ?>
 		</tbody>
 	</table>
+	<div id="balloons">
+		<?php foreach((array)$allCondList as $id => $condList): ?>
+		<ul id="balloon_cond_<?=h($id)?>">
+			<?php foreach((array)$condList as $val): ?>
+				<li><?=h($val)?></li>
+			<?php endforeach;?>
+		</ul>
+		<ul id="balloon_act_<?=h($id)?>">
+			<li><?=$allActionList[$id]['detail']?></li>
+		</ul>
+		<?php endforeach;?>
+	</div>
 </div>
 </div>

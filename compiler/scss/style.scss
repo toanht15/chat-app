@@ -1356,7 +1356,7 @@ ul.naviBtn {
 
     div.ctrlBtnArea {
         width: 100px;
-        display: flex;
+        a { float: left }
     }
 
   }
@@ -1368,12 +1368,7 @@ ul.naviBtn {
     }
 
     input[type='checkbox'] {
-        width: 0;
-        height: 0;
-        position: absolute;
-        top: 0;
-        left: 0;
-        z-index: -1;
+        display: none;
 
         &:checked + label {
             background-color: #C3D69B;
@@ -1409,11 +1404,6 @@ ul.naviBtn {
         border: 1px solid #FFF;
     }
 
-    li {
-      height: 2em;
-      display: block;
-    }
-
     span {
       &[class*='Label'] {
         padding: 4px 2%;
@@ -1426,6 +1416,7 @@ ul.naviBtn {
         float: left;
         width: 25%;
         text-align: center;
+        cursor: pointer;
       }
 
       &.actionValue {
@@ -1439,12 +1430,37 @@ ul.naviBtn {
       }
 
       &.conditionTypeLabel, &.actionTypeLabel {
-        background-color: #D86585;
+        background-color: #9BBBD6;
       }
       &.conditionValueLabel, &.actionValueLabel {
-        background-color: #E499B8;
+        background-color: #9BD6D1;
       }
 
+    }
+
+    #balloons {
+        ul[id^='balloon_'] {
+            background-color: rgba(255, 255, 255, 0.9);
+            min-width: 300px;
+            letter-spacing: 0.1em;
+            line-height: 1.5em;
+            padding: 0.5em;
+            margin: 0;
+            display: none;
+            position: fixed;
+            border-radius: 5px;
+            border: 1px solid #9BBBD6;
+
+            &[id^='balloon_cond_'] li {
+                list-style-type: decimal;
+                list-style-position: inside;
+            }
+            &[id^='balloon_act_'] li {
+                max-width: 400px;
+                word-wrap: break-word;
+                white-space: pre-line;
+            }
+        }
     }
 
   }
