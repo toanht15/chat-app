@@ -4,3 +4,4 @@ webroot/client/*
 webroot/websocket/*
 logs/*
 !logs/.gitkeep
+npm-debug.log

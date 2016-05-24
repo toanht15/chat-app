@@ -43,6 +43,7 @@
         userInfo.setReferrer();
       }
       userInfo.init();
+
       var emitData = {
           referrer: userInfo.referrer,
           time: userInfo.getTime(),
@@ -116,6 +117,10 @@
           userInfo.set(cnst.info_type.time, obj.time, true);
         }
         userInfo.setTabId();
+      }
+
+      if ( ('active_operator_cnt' in obj) ) {
+        window.info.active_operator_cnt = obj['active_operator_cnt'];
       }
 
       emit('customerInfo', obj);
@@ -367,82 +372,6 @@
       if ( obj.connectToken !== userInfo.connectToken ) return false;
       if ( obj.to !== userInfo.tabId ) return false;
       emit('requestSyncStart', obj);
-    },
-    setWidgetInfo: function(d){
-      var obj = JSON.parse(d);
-      window.info.widgetDisplay = false; // デフォルト表示しない
-      // ウィジェットを常に表示する
-      if ( check.isset(obj.widget) && obj.widget.display_type === 1 ) {
-        window.info.widgetDisplay = true;
-        window.info.widget = obj.widget;
-      }
-      // オペレーターの数に応じて表示する
-      else if ( check.isset(obj.widget) && obj.widget.display_type === 2 ) {
-        if ( obj.widget.active_operator_cnt > 0 ) {
-          window.info.widgetDisplay = true;
-          window.info.widget = obj.widget;
-        }
-      }
-      if (!window.info.widgetDisplay) {
-        return false;
-      }
-      // 同期対象とするが、ウィジェットは表示しない
-      if (check.isset(window.info['dataset']) && (check.isset(window.info.dataset['hide']) && window.info.dataset.hide === "1")) {
-        window.info.widgetDisplay = false;
-        return false;
-      }
-      // 画面同期中であれば抑制
-      if ( check.isset(userInfo.connectToken) ) {
-        return false;
-      }
-
-      common.load.finish();
-      var sincloBox = document.getElementById('sincloBox');
-      if ( sincloBox ) {
-        sincloBox.parentNode.removeChild(sincloBox);
-      }
-      if ( userInfo.accessType !== cnst.access_type.host ) {
-      var html = common.createWidget();
-        $('body').append(html);
-        common.sincloBoxHeight = $("#sincloBox").outerHeight(true);
-        $("#sincloBox").outerHeight(85);
-
-        $(".widgetCtrl").click(function(){
-            var target = $(".widgetCtrl.selected"), clickTab = $(this).data('tab');
-            target.removeClass("selected");
-            common.sincloBoxHeight = $("#sincloBox").outerHeight(true);
-            $("#sincloBox").attr("style", "");
-
-            if ( clickTab === "call" ) {
-              $("#callTab").css('display', 'inline-block');
-              $("#chatTab").hide();
-            }
-            else {
-              $("#callTab").hide();
-              $("#chatTab").css('display', 'inline-block');
-            }
-            $(this).addClass("selected");
-        });
-        // チャット情報読み込み
-        sinclo.chatApi.init();
-        if ( ('maxShowTime' in window.info.widget) && String(window.info.widget.maxShowTime).match(/^[0-9]{1,2}$/) !== null ) {
-          var maxShowTime = Number(window.info.widget.maxShowTime) * 1000;
-          var widgetOpen = storage.s.get('widgetOpen');
-          if (!widgetOpen) {
-            window.setTimeout(function(){
-              if ( !sinclo.operatorInfo.flg ) {
-                storage.s.set('widgetOpen', true);
-                sinclo.operatorInfo.flg = true;
-                $("#sincloBox").animate({
-                  'height':  (common.sincloBoxHeight) + 'px'
-                }, 'first');
-              }
-            }, maxShowTime);
-          }
-        }
-        emit('syncReady', {widget: window.info.widgetDisplay});
-      }
-
     },
     resUrlChecker: function(d){
       var obj = JSON.parse(d);

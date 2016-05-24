@@ -210,7 +210,78 @@ var socket, // socket.io
     },
     makeAccessIdTag: function(){
       if ( !check.browser() ) return false;
-      emit('getWidgetInfo', {});
+      if ( !('widget' in window.info) ) return false;
+      window.info.widgetDisplay = false; // デフォルト表示しない
+      // ウィジェットを常に表示する
+      if ( !('display_type' in window.info.widget) && window.info.widget.display_type === 1 ) {
+        window.info.widgetDisplay = true;
+      }
+      // オペレーターの数に応じて表示する
+      else if ( window.info.widget.display_type === 2 ) {
+        if ( window.info.active_operator_cnt > 0 ) {
+          window.info.widgetDisplay = true;
+        }
+      }
+      if (!window.info.widgetDisplay) {
+        return false;
+      }
+      // 同期対象とするが、ウィジェットは表示しない
+      if (check.isset(window.info['dataset']) && (check.isset(window.info.dataset['hide']) && window.info.dataset.hide === "1")) {
+        window.info.widgetDisplay = false;
+        return false;
+      }
+      // 画面同期中であれば抑制
+      if ( check.isset(userInfo.connectToken) ) {
+        return false;
+      }
+
+      common.load.finish();
+      var sincloBox = document.getElementById('sincloBox');
+      if ( sincloBox ) {
+        sincloBox.parentNode.removeChild(sincloBox);
+      }
+      if ( userInfo.accessType !== cnst.access_type.host ) {
+      var html = common.createWidget();
+        $('body').append(html);
+        common.sincloBoxHeight = $("#sincloBox").outerHeight(true);
+        $("#sincloBox").outerHeight(85);
+
+        $(".widgetCtrl").click(function(){
+            var target = $(".widgetCtrl.selected"), clickTab = $(this).data('tab');
+            target.removeClass("selected");
+            common.sincloBoxHeight = $("#sincloBox").outerHeight(true);
+            $("#sincloBox").attr("style", "");
+
+            if ( clickTab === "call" ) {
+              $("#callTab").css('display', 'inline-block');
+              $("#chatTab").hide();
+            }
+            else {
+              $("#callTab").hide();
+              $("#chatTab").css('display', 'inline-block');
+            }
+            $(this).addClass("selected");
+        });
+        // チャット情報読み込み
+        sinclo.chatApi.init();
+        if ( ('maxShowTime' in window.info.widget) && String(window.info.widget.maxShowTime).match(/^[0-9]{1,2}$/) !== null ) {
+          var maxShowTime = Number(window.info.widget.maxShowTime) * 1000;
+          var widgetOpen = storage.s.get('widgetOpen');
+          if (!widgetOpen) {
+            window.setTimeout(function(){
+              if ( !sinclo.operatorInfo.flg ) {
+                storage.s.set('widgetOpen', true);
+                sinclo.operatorInfo.flg = true;
+                $("#sincloBox").animate({
+                  'height':  (common.sincloBoxHeight) + 'px'
+                }, 'first');
+              }
+            }, maxShowTime);
+          }
+        }
+        emit('syncReady', {widget: window.info.widgetDisplay});
+      }
+
     },
     load: {
       id: "loadingImg",
@@ -1103,9 +1174,9 @@ var socket, // socket.io
       sinclo.syncContinue(d);
     });
 
-    socket.on('setWidgetInfo', function (d) {
-      sinclo.setWidgetInfo(d);
-    }); // socket-on: setWidgetInfo
+    socket.on('setInitInfo', function (d) {
+      sinclo.setInitInfo(d);
+    }); // socket-on: setInitInfo
 
     socket.on('receiveConnect', function (d) {
       sinclo.receiveConnectEv(d);
@@ -1136,6 +1207,25 @@ var socket, // socket.io
       }
       popup.remove();
     });
+
+        $.ajax({
+    	    type: 'get',
+            url: window.info.site.files + "/settings/",
+            data: {
+                'sitekey': window.info.site.key
+            },
+            dataType: "json",
+            success: function(json){
+                window.info.widget = json.widget;
+                window.info.messages = json.messages;
+                window.info.contract = json.contract;
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                  $("#XMLHttpRequest").html("XMLHttpRequest : " + XMLHttpRequest.status);
+                  $("#textStatus").html("textStatus : " + textStatus);
+                  $("#errorThrown").html("errorThrown : " + errorThrown.message);
+            }
+        });
   };
 
   var timer = window.setInterval(function(){

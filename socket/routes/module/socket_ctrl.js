@@ -358,12 +358,14 @@ io.sockets.on('connection', function (socket) {
         var d = new Date();
         send.time = Date.parse(d);
       }
+
       if ( isset(socket.handshake.headers['x-forwarded-for']) ) {
         send.ipAddress = socket.handshake.headers['x-forwarded-for'];
       }
       else {
         send.ipAddress = "0.0.0.0";
       }
+
     }
 
     // 企業キーが取得できなければスルー
@@ -374,49 +376,17 @@ io.sockets.on('connection', function (socket) {
         emit.toClient('getAccessInfo', send, res.siteKey);
       }
       else {
+        var cnt = 0;
+        if ( isset(activeOperator[res.siteKey]) ) {
+          var key = Object.keys(activeOperator[res.siteKey]);
+          cnt = key.length;
+        }
+        send['activeOperatorCnt'] = cnt
         socket.join(res.siteKey + emit.roomKey.client);
         emit.toMine('accessInfo', send);
       }
 
     }
-  });
-
-  socket.on("getWidgetInfo", function (data) {
-    var obj = JSON.parse(data);
-    pool.query('SELECT * FROM m_widget_settings WHERE m_companies_id = ? ORDER BY id DESC LIMIT 1;', [companyList[obj.siteKey]], function(err, rows){
-      var cnt = 0;
-      if ( isset(activeOperator[obj.siteKey]) ) {
-        var key = Object.keys(activeOperator[obj.siteKey]);
-        cnt = key.length;
-      }
-      if ( isset(rows) && isset(rows[0]) && 'style_settings' in rows[0] ) {
-        var settings = JSON.parse(rows[0].style_settings);
-        // TODO ホントはどうてきに
-        obj.widget = {
-          contract: {
-            chat: true,
-            synclo: true
-          },
-          display_type: rows[0].display_type,
-          showPosition: settings.showPosition,
-          maxShowTime: settings.maxShowTime,
-          title: settings.title,
-          subTitle: settings.subTitle,
-          description: settings.description,
-          mainColor: settings.mainColor,
-          radiusRatio: settings.radiusRatio,
-          tel: settings.tel,
-          content: settings.content.replace(/\r\n/g, '<br>'),
-          time_text: settings.timeText,
-          display_time_flg: settings.displayTimeFlg,
-          active_operator_cnt: cnt
-        };
-        emit.toMine('setWidgetInfo', obj);
-      }
-      else {
-        emit.toMine('setWidgetInfo', obj);
-      }
-    });
   });
 
   socket.on("customerInfo", function (data) {
