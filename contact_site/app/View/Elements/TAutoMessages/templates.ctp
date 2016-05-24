@@ -56,7 +56,6 @@
 			</span>
 		</div>
 	</li>
-	{{setItem|json}}
 	<script type="text/javascript">$('.clockpicker').clockpicker({'donetext':'設定'});</script>
 </ul>
 

@@ -47,7 +47,7 @@
 						<th ng-hide="labelHideList.referrer" >参照元URL</th>
 				</tr>
 		</thead>
-		<tbody  ng-cloak>
+		<tbody ng-cloak>
 				<tr ng-repeat="monitor in search(monitorList) | orderObjectBy : '-chatUnreadId'" ng-dblclick="showDetail(monitor.tabId)" id="monitor_{{monitor.tabId}}">
 					<!-- /* アクセスID */ -->
 					<td ng-hide="labelHideList.accessId" class="tCenter">{{monitor.accessId}}</td>

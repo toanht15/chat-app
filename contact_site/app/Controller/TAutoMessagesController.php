@@ -134,19 +134,18 @@ class TAutoMessagesController extends AppController {
      * */
     private function _entry($saveData) {
         $errors = [];
-
-        $saveData['TAutoMessages']['m_companies_id'] = $this->userInfo['MCompany']['id'];
+        $saveData['TAutoMessage']['m_companies_id'] = $this->userInfo['MCompany']['id'];
 
         $this->TAutoMessage->begin();
-        if ( empty($saveData['TAutoMessages']['id']) ) {
+        if ( empty($saveData['TAutoMessage']['id']) ) {
             $this->TAutoMessage->create();
         }
         $this->TAutoMessage->set($saveData);
 
         if ($this->TAutoMessage->save()) {
-            // $this->TAutoMessage->rollback();
             $this->TAutoMessage->commit();
-            $this->set('alertMessage',['type' => C_MESSAGE_TYPE_SUCCESS, 'text'=>Configure::read('message.const.saveSuccessful')]);
+            $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
+            $this->redirect('/TAutomessages/index');
         }
         else {
             $this->TAutoMessage->rollback();

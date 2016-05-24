@@ -106,6 +106,9 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
 				</td>
 			</tr>
 		<?php endforeach; ?>
+		<?php if ( count($settingList) === 0 ) : ?>
+			<tr><td colspan="5" class="tCenter" style="letter-spacing: 2px">オートメッセージ設定がありません</td></tr>
+		<?php endif; ?>
 		</tbody>
 	</table>
 	<div id="balloons">
