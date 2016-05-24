@@ -100,8 +100,12 @@
     },
     accessInfo: function(d){
       var obj = common.jParse(d);
-
       if ( obj.token !== common.token ) return false;
+
+      if ( ('activeOperatorCnt' in obj) ) {
+        window.info.activeOperatorCnt = obj['activeOperatorCnt'];
+      }
+
       if ( check.isset(obj.accessId) && !check.isset(obj.connectToken)) {
         userInfo.set(cnst.info_type.access, obj.accessId, true);
         common.makeAccessIdTag();
@@ -117,10 +121,6 @@
           userInfo.set(cnst.info_type.time, obj.time, true);
         }
         userInfo.setTabId();
-      }
-
-      if ( ('active_operator_cnt' in obj) ) {
-        window.info.active_operator_cnt = obj['active_operator_cnt'];
       }
 
       emit('customerInfo', obj);

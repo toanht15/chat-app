@@ -85,14 +85,14 @@ var socket, // socket.io
           call = this.widgetTemplate(widget),
           fotter = '<p id="fotter">Powered by <a target="sinclo" href="http://medialink-ml.co.jp/index.html">sinclo</a></p>';
 
-      if ( widget.contract.chat && widget.contract.synclo ) {
+      if ( window.info.contract.chat && window.info.contract.synclo ) {
         displaySet += navi + chat + call;
       }
       else {
-        if ( widget.contract.chat ) {
+        if ( window.info.contract.chat ) {
           displaySet += chat;
         }
-        if ( widget.contract.synclo ) {
+        if ( window.info.contract.synclo ) {
           displaySet += call;
         }
       }
@@ -143,7 +143,7 @@ var socket, // socket.io
       html += '      #sincloBox section#navigation ul li:not(.selected) { border-bottom: 1px solid #E8E7E0 }';
       html += '      #sincloBox section#chatTab { padding-top: 5px;  }';
       // チャットも画面同期も使用する際にはデフォルトで画面同期ウィジェットの表示をnoneにする
-      if ( widget.contract.chat && widget.contract.synclo ) {
+      if ( window.info.contract.chat && window.info.contract.synclo ) {
         html += '      #sincloBox section#callTab { display: none; }';
       }
       html += '      #sincloBox ul#chatTalk { width: 100%; height: 250px; padding: 5px; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0}';
@@ -213,12 +213,12 @@ var socket, // socket.io
       if ( !('widget' in window.info) ) return false;
       window.info.widgetDisplay = false; // デフォルト表示しない
       // ウィジェットを常に表示する
-      if ( !('display_type' in window.info.widget) && window.info.widget.display_type === 1 ) {
+      if ( ('display_type' in window.info.widget) && window.info.widget.display_type === 1 ) {
         window.info.widgetDisplay = true;
       }
       // オペレーターの数に応じて表示する
-      else if ( window.info.widget.display_type === 2 ) {
-        if ( window.info.active_operator_cnt > 0 ) {
+      else if ( ('display_type' in window.info.widget) && window.info.widget.display_type === 2 ) {
+        if ( Number(window.info.activeOperatorCnt) > 0 ) {
           window.info.widgetDisplay = true;
         }
       }
