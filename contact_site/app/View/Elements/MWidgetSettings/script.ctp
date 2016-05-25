@@ -20,6 +20,10 @@ sincloApp.controller('WidgetCtrl', function($scope){
         }
     };
 
+    $scope.headerpd = function(){
+      return $scope.descriptionToggle == '1';
+    }
+
     $scope.makeFaintColor = function(){
       var defColor = "#F1F5C8";
       if ( $scope.main_color.indexOf("#") >= 0 ) {

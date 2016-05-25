@@ -143,6 +143,17 @@
 				<?php if ($this->Form->isFieldError('main_color')) echo $this->Form->error('main_color', null, ['wrap' => 'li']); ?>
 				<!-- メインカラー -->
 
+				<!-- 画像の設定 -->
+				<li>
+					<span><label>画像の設定</label></span>
+					<div ng-init="mainImageToggle=inputInitToggle('<?=$this->formEx->val($this->data['MWidgetSetting'], 'main_image')?>')">
+						<label for="showMainImage1"><input type="radio" name="showMainImage" ng-model="mainImageToggle" id="showMainImage1" value="1" >画像を表示する</label><br><br>
+						<label for="showMainImage2"><input type="radio" name="showMainImage" ng-model="mainImageToggle" id="showMainImage2" value="2" >画像を表示しない</label>
+					</div>
+				</li>
+				<?php if ($this->Form->isFieldError('main_image')) echo $this->Form->error('main_image', null, ['wrap' => 'li']); ?>
+				<!-- 画像の設定 -->
+
 				<!-- 角の丸み -->
 				<li>
 				<span class="require"><label>角の丸み</label></span>

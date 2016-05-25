@@ -33,22 +33,25 @@ class MWidgetSettingsController extends AppController {
 
             if ( isset($ret['MWidgetSetting']['style_settings']) ) {
               $json = $this->_settingToObj($ret['MWidgetSetting']['style_settings']);
-              if ( !empty($json['max_show_time']) ) {
+              if ( isset($json['max_show_time']) ) {
                 $inputData['MWidgetSetting']['max_show_time'] = $json['max_show_time'];
               }
-              if ( !empty($json['show_position']) ) {
+              if ( isset($json['show_position']) ) {
                 $inputData['MWidgetSetting']['show_position'] = $json['show_position'];
               }
-              if ( !empty($json['description']) ) {
+              if ( isset($json['description']) ) {
                 $inputData['MWidgetSetting']['description'] = $json['description'];
               }
-              if ( !empty($json['sub_title']) ) {
+              if ( isset($json['sub_title']) ) {
                 $inputData['MWidgetSetting']['sub_title'] = $json['sub_title'];
               }
-              if ( !empty($json['main_color']) ) {
+              if ( isset($json['main_color']) ) {
                 $inputData['MWidgetSetting']['main_color'] = $json['main_color'];
               }
-              if ( !empty($json['radius_ratio']) ) {
+              if ( isset($json['main_image']) ) {
+                $inputData['MWidgetSetting']['main_image'] = $json['main_image'];
+              }
+              if ( isset($json['radius_ratio']) ) {
                 $inputData['MWidgetSetting']['radius_ratio'] = $json['radius_ratio'];
               }
             }
