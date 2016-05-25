@@ -147,8 +147,19 @@
 				<li>
 					<span><label>画像の設定</label></span>
 					<div ng-init="mainImageToggle=inputInitToggle('<?=$this->formEx->val($this->data['MWidgetSetting'], 'main_image')?>')">
-						<label for="showMainImage1"><input type="radio" name="showMainImage" ng-model="mainImageToggle" id="showMainImage1" value="1" >画像を表示する</label><br><br>
-						<label for="showMainImage2"><input type="radio" name="showMainImage" ng-model="mainImageToggle" id="showMainImage2" value="2" >画像を表示しない</label>
+						<?= $this->Form->hidden('main_image') ?>
+						<label for="showMainImage1"><input type="radio" name="data[MWidgetSetting][show_main_image]" ng-model="mainImageToggle" id="showMainImage1" value="1" >画像を表示する</label><br>
+						<div id="imageSelectBtns" ng-class="{chooseImg: showChooseImg()}">
+
+							<div id="picDiv">
+								<img ng-src="<?=$gallaryPath?>{{main_image}}" err-src="<?=$gallaryPath?>chat_sample_picture.png" style="background-color: {{main_color}}" width="62" height="70" alt="チャットに設定している画像">
+							</div>
+							<div id="picChooseDiv">
+								<a href="javascript:void(0)" ng-click="showGallary()">ギャラリーから選択</a>
+								<a href="javascript:void(0)" ng-if="1!=1">画像をアップロード</a>
+							</div>
+						</div>
+						<label for="showMainImage2"><input type="radio" name="data[MWidgetSetting][show_main_image]" ng-model="mainImageToggle" id="showMainImage2" value="2" >画像を表示しない</label>
 					</div>
 				</li>
 				<?php if ($this->Form->isFieldError('main_image')) echo $this->Form->error('main_image', null, ['wrap' => 'li']); ?>
@@ -271,6 +282,6 @@
 	<!-- /* 操作 */ -->
 	<section>
 		<div id="m_widget_setting_action">
-		<?= $this->Html->link('更新', 'javascript:void(0)', ['onclick' => 'saveAct()', 'class' => 'greenBtn btn-shadow']) ?>
+		<?= $this->Html->link('更新', 'javascript:void(0)', ['ng-click' => 'saveAct()', 'class' => 'greenBtn btn-shadow']) ?>
 		</div>
 	</section>

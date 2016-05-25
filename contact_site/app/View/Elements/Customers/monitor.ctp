@@ -36,8 +36,12 @@
 		<thead>
 				<tr>
 						<th ng-hide="labelHideList.accessId" >アクセスID</th>
+				<?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
 						<th>モニター</th>
+				<?php endif; ?>
+				<?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
 						<th>チャット</th>
+				<?php endif; ?>
 						<th ng-hide="labelHideList.ipAddress" >訪問ユーザ</th>
 						<th ng-hide="labelHideList.ua" >ユーザー環境</th>
 						<th ng-hide="labelHideList.time" >アクセス日時</th>
@@ -51,6 +55,7 @@
 				<tr ng-repeat="monitor in search(monitorList) | orderObjectBy : '-chatUnreadId'" ng-dblclick="showDetail(monitor.tabId)" id="monitor_{{monitor.tabId}}">
 					<!-- /* アクセスID */ -->
 					<td ng-hide="labelHideList.accessId" class="tCenter">{{monitor.accessId}}</td>
+				<?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
 					<!-- /* モニター */ -->
 					<td class='w10 tCenter'>
 							<span ng-if="monitor.widget">
@@ -63,6 +68,10 @@
 								<span class="monitorOn" ng-if="monitor.responderId"><span class="bold">対応中</span><br>（{{setName(monitor.responderId)}}）</span>
 							</span>
 					</td>
+				<?php endif; ?>
+
+				<?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
+
 					<!-- /* チャット */ -->
 					<td class="w10 tCenter" id="chatTypeBtn">
 
@@ -83,8 +92,9 @@
                             <div class="unread" ng-if="monitor.chatUnreadCnt > 0">{{monitor.chatUnreadCnt}}</div>
                           </span>
                         </span>
-
 					</td>
+				<?php endif; ?>
+
 					<!-- /* 訪問ユーザ */ -->
 					<td ng-hide="labelHideList.ipAddress" class="tCenter">{{monitor.ipAddress}}</td>
 					<!-- /* ユーザー環境 */ -->

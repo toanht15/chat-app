@@ -6,11 +6,13 @@
   sinclo = {
     syncTimeout: "",
     operatorInfo: {
-      flg: false,
+      header: null,
       ev: function() {
         var height = 0;
+        var sincloBox = document.getElementById('sincloBox');
+        var flg = sincloBox.getAttribute('data-openflg');
         var elm = $('#sincloBox');
-        if ( !this.flg ) {
+        if ( String(flg) === "false" ) {
           var height = 0;
           height += $("#sincloBox #widgetHeader").outerHeight(true);
           if ( $("#sincloBox").children().is("#navigation") ) {
@@ -22,11 +24,11 @@
             height += $("[id$='Tab']").outerHeight(true);
           }
           height += $("#sincloBox > #fotter").outerHeight(true);
-          this.flg = true;
+          sincloBox.setAttribute('data-openflg', true);
         }
         else {
-          height = 85;
-          this.flg = false;
+          height = this.header.offsetHeight;
+          sincloBox.setAttribute('data-openflg', false);
         }
         elm.animate({
           height: height + "px"

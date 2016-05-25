@@ -16,6 +16,8 @@ class MWidgetSetting extends AppModel {
       'sub_title' => "subTitle",
       'description' => "description",
       'main_color' => "mainColor",
+      'show_main_image' => "showMainImage",
+      'main_image' => "mainImage",
       'radius_ratio' => "radiusRatio",
       'tel' => "tel",
       'display_time_flg' => "displayTimeFlg",
@@ -60,6 +62,13 @@ class MWidgetSetting extends AppModel {
               'rule' => C_MATCH_RULE_COLOR_CODE,
               'allowEmpty' => false,
               'message' => '３ケタ、もしくは６ケタの１６進数を使用して設定してください'
+            ]
+        ],
+        'main_image' => [
+            'colorcode' => [
+              'rule' => C_MATCH_RULE_IMAGE_FILE,
+              'allowEmpty' => true,
+              'message' => '設定できるファイルはJPG/PNG/GIFのみとなっております'
             ]
         ],
         'radius_ratio' => [

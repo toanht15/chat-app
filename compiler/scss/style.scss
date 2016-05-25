@@ -26,6 +26,7 @@ body {
   line-height: 1.3;
   font-weight: normal;
   margin: 0;
+  overflow: hidden;
 }
 
 pre, input, textarea {
@@ -658,6 +659,9 @@ ul#color-bar-right {
   }
 }
 
+/* コンテンツ */
+#content { overflow: auto }
+
 /* ログイン */
 #login_idx_bg {
   background: radial-gradient(at 50% 50%, #A0BDD2 0%, #7B8F9E 100%);
@@ -1214,6 +1218,40 @@ ul.naviBtn {
         }
       }
 
+      #imageSelectBtns {
+        display: none;
+
+        &.chooseImg {
+            display: flex;
+            flex-direction: row;
+        }
+
+        div#picDiv {
+            margin-right: 10px;
+            border: 1px solid #444;
+            width: 64px;
+            height: 72px;
+        }
+
+        div#picChooseDiv {
+            > a {
+                height: 30px;
+                background-color: #C3D69B;
+                color: #FFF;
+                font-weight: bold;
+                vertical-align: middle;
+                padding: 8px 10px;
+                display: block;
+                border-radius: 5px;
+                text-decoration: none;
+                margin: 3.5px 0;
+            }
+
+        }
+
+
+      }
+
       input{
 
         &[type='text']{
@@ -1249,6 +1287,10 @@ ul.naviBtn {
         width: 15em;
         padding-top: 5px;
         display: block;
+      }
+
+      div#imageSelectBtns {
+        padding: 1em;
       }
 
     }

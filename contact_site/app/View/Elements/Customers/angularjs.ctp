@@ -545,7 +545,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         }
 
         // 以降、受信時のみの処理
-        if (obj.messageType === chatApi.messageType.company) return false;
+        if (obj.messageType !== chatApi.messageType.customer) return false;
 
         // 未読数加算（自分以外の誰も対応していないとき）
         if ( isset($scope.monitorList[obj.tabId]) && (!$scope.isset($scope.monitorList[obj.tabId].chat) || $scope.monitorList[obj.tabId].chat === myUserId) ) {

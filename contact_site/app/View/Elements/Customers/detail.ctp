@@ -38,6 +38,8 @@
 		</li>
 	</ul>
 </div>
+
+<?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
 <div id="chat-area" class="card-shadow p10x">
 	<h2>チャット</h2>
 	<ul class="naviBtn p0">
@@ -53,3 +55,4 @@
 		</div>
 	</div>
 </div>
+<?php endif; ?>

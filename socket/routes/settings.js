@@ -10,7 +10,7 @@ var mysql = require('mysql'),
     database: process.env.DB_NAME || 'sinclo_db'
 });
 
-var getWidgetSettingSql  = "SELECT ws.* FROM m_widget_settings AS ws";
+var getWidgetSettingSql  = "SELECT ws.*, com.core_settings FROM m_widget_settings AS ws";
     getWidgetSettingSql += " INNER JOIN (SELECT * FROM m_companies WHERE company_key = ? AND del_flg = 0 ) AS com  ON ( com.id = ws.m_companies_id )";
     getWidgetSettingSql += " WHERE ws.del_flg = 0 ORDER BY id DESC LIMIT 1;";
 
@@ -32,11 +32,9 @@ router.get("/", function(req, res, next) {
         function(err, rows){
 
             if ( rows.length > 0 && 'style_settings' in rows[0] ) {
+                var core_settings = JSON.parse(rows[0].core_settings);
                 var settings = JSON.parse(rows[0].style_settings);
-                sendData['contract'] = {
-                    chat: true,
-                    synclo: true
-                };
+                sendData['contract'] = core_settings;
                 sendData['widget'] = {
                     display_type: rows[0].display_type,
                     showPosition: settings.showPosition,
@@ -45,6 +43,8 @@ router.get("/", function(req, res, next) {
                     subTitle: settings.subTitle,
                     description: settings.description,
                     mainColor: settings.mainColor,
+                    showMainImage: settings.showMainImage,
+                    mainImage: settings.mainImage,
                     radiusRatio: settings.radiusRatio,
                     tel: settings.tel,
                     content: settings.content.replace(/\r\n/g, '<br>'),

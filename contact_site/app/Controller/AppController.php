@@ -52,12 +52,22 @@ class AppController extends Controller {
     public $uses = array('MUser', 'MWidgetSetting');
 
     public $userInfo;
+    public $coreSettings;
 
     public function beforeFilter(){
         // プロトコルチェック(本番のみ)
         if ( APP_MODE_DEV === false ) {
             $this->checkPort();
         }
+
+        // 通知メッセージをセット
+        if ($this->Session->check('global.message')) {
+            $this->set('alertMessage', $this->Session->read('global.message'));
+            $this->Session->delete('global.message');
+        }
+
+        // 未ログインの場合は以降の処理を通さない
+        if (!$this->Auth->user()) return false;
 
         // ログイン情報をオブジェクトに格納
         if ( $this->Session->check('global.userInfo') ) {
@@ -74,6 +84,16 @@ class AppController extends Controller {
                 return $this->redirect(['controller'=>'Login', 'action' => 'index']);
             }
         }
+
+        // 使用機能のセット
+        if ( empty($this->userInfo['MCompany']['core_settings']) ) {
+            $this->userInfo = [];
+            $this->Session->destroy();
+            return $this->redirect(['controller'=>'Login', 'action' => 'index']);
+        }
+        $this->coreSettings = json_decode($this->userInfo['MCompany']['core_settings'], true);
+        $this->set('coreSettings', $this->coreSettings);
+
 
         // コンフィグにユーザーIDを設定
         Configure::write('logged_user_id', $this->Auth->user('id'));
@@ -99,12 +119,6 @@ class AppController extends Controller {
         }
         else {
           $this->set('widgetCheck', C_OPERATOR_PASSIVE);
-        }
-
-        // 通知メッセージをセット
-        if ($this->Session->check('global.message')) {
-            $this->set('alertMessage', $this->Session->read('global.message'));
-            $this->Session->delete('global.message');
         }
 
         /* 権限 */

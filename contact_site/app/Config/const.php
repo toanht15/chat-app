@@ -13,6 +13,10 @@ else {
   define('C_NODE_SERVER_WS_PORT', ""); // Dev
 }
 
+// 使用機能
+define('C_COMPANY_USE_SYNCLO', 'synclo'); // 画面同期
+define('C_COMPANY_USE_CHAT', 'chat'); // オペレーターが待機中の時のみ表示する
+
 // 表示設定種別
 define('C_WIDGET_DISPLAY_CODE_SHOW', 1); // 常に表示する
 define('C_WIDGET_DISPLAY_CODE_OPER', 2); // オペレーターが待機中の時のみ表示する
@@ -29,6 +33,7 @@ define('C_OPERATOR_ACTIVE', 1); // 在籍
 // 正規表現
 define('C_MATCH_RULE_TEL', '/^\+?(\d|-)*$/'); // TEL
 define('C_MATCH_RULE_COLOR_CODE', '/^#([0-9|a-f|A-F]{3}|[0-9|a-f|A-F]{6})$/');
+define('C_MATCH_RULE_IMAGE_FILE', '/^[a-zA-Z0-9_-]*.(png|jpg|git){1}$/i');
 
 // メッセージ種別
 define('C_MESSAGE_TYPE_SUCCESS', 1); // 処理成功

@@ -7,6 +7,8 @@ class MWidgetSettingsController extends AppController {
     public $uses = array('MWidgetSetting');
     public $helpers = array('ngForm');
 
+    public $coreSettings = null;
+
     public function beforeRender(){
         $this->set('title_for_layout', 'ウィジェット設定');
     }
@@ -20,7 +22,7 @@ class MWidgetSettingsController extends AppController {
             $errors = $this->_update($this->request->data);
             if ( empty($errors) ) {
                 $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
-                $this->redirect('index');
+                $this->redirect('/MWidgetSettings/index');
             }
             else {
                 $this->set('alertMessage', ['type' => C_MESSAGE_TYPE_ERROR, 'text' => Configure::read('message.const.saveFailed')]);
@@ -30,6 +32,10 @@ class MWidgetSettingsController extends AppController {
             $inputData = [];
             $ret = $this->MWidgetSetting->coFind('first');
             $inputData = $ret;
+
+            if ( empty($this->userInfo['MCompany']['core_settings']) ) {
+                $this->redirect("/");
+            }
 
             if ( isset($ret['MWidgetSetting']['style_settings']) ) {
               $json = $this->_settingToObj($ret['MWidgetSetting']['style_settings']);
@@ -60,9 +66,29 @@ class MWidgetSettingsController extends AppController {
         $this->_viewElement();
     }
 
+    public function remoteShowGallary() {
+        Configure::write('debug', 0);
+        $this->autoRender = FALSE;
+        $this->layout = 'ajax';
+
+        $cssStyle = [];
+
+        if (  isset($this->request->data['color']) ) {
+          $cssStyle['.p-show-gallary .bgOn, li:after'] = [
+            'background-color' => $this->request->data['color']
+          ];
+        }
+
+        $this->set('cssStyle', $cssStyle);
+        $this->_viewElement();
+
+        $this->render('/Elements/MWidgetSettings/remoteGallary');
+    }
+
     private function _viewElement() {
         $this->set('widgetDisplayType', Configure::read('WidgetDisplayType'));
         $this->set('widgetPositionType', Configure::read('widgetPositionType'));
+        $this->set('gallaryPath', C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT.'/img/widget/');
     }
 
     /* *
@@ -73,7 +99,6 @@ class MWidgetSettingsController extends AppController {
      * */
     private function _update($inputData) {
         $errors = [];
-
         // バリデーションチェック
         $this->MWidgetSetting->set($inputData);
         $this->MWidgetSetting->begin();

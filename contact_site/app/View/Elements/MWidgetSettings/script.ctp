@@ -3,6 +3,7 @@
 
 var sincloApp = angular.module('sincloApp', ['ngSanitize']);
 sincloApp.controller('WidgetCtrl', function($scope){
+    $scope.main_image = "<?=$this->formEx->val($this->data['MWidgetSetting'], 'main_image')?>";
     $scope.isDisplayTime = function(){
         // 表示しない
         if ( Number(this.display_time_flg) === 0 ) {
@@ -22,6 +23,10 @@ sincloApp.controller('WidgetCtrl', function($scope){
 
     $scope.headerpd = function(){
       return $scope.descriptionToggle == '1';
+    }
+
+    $scope.showChooseImg = function(){
+      return $scope.mainImageToggle == '1';
     }
 
     $scope.makeFaintColor = function(){
@@ -47,20 +52,83 @@ sincloApp.controller('WidgetCtrl', function($scope){
       return (item) ? 1 : 2;
     };
 
+    $scope.showGallary = function(){
+      $.ajax({
+        type: 'post',
+        data: {
+          color: $scope.main_color,
+        },
+        dataType: 'html',
+        url: "<?= $this->Html->url('/MWidgetSettings/remoteShowGallary') ?>",
+        success: function(html){
+          modalOpen.call(window, html, 'p-show-gallary', 'ギャラリー');
+          popupEvent.customizeBtn = function(name){
+            $scope.main_image = name;
+            $scope.$apply();
+            popupEvent.close();
+          };
+        },
+        error: function(){
+
+        }
+      });
+
+    }
+
+        var sincloBox = document.getElementById("sincloBox");
+        sincloBox.setAttribute("data-openflg", true);
+        var widgetTitle = document.getElementById("widgetTitle");
+        widgetTitle.addEventListener("click", function(e){
+          var target = document.getElementById("sincloBox");
+          var main = document.getElementById("miniTarget");
+          var flg = target.getAttribute("data-openflg");
+          var nextFlg = true;
+          if ( String(flg) === "true" ) {
+            nextFlg = false;
+            main.style.height = 0;
+          }
+          else {
+            var height = 0;
+            for(var i = 0; main.children.length > i; i++){
+                height += main.children[i].offsetHeight;
+            }
+            main.style.height = height + "px";
+          }
+          sincloBox.setAttribute("data-openflg", nextFlg);
+        });
+
+        $scope.saveAct = function (){
+            $('#MWidgetSettingMainImage').val($scope.main_image);
+            $('#MWidgetSettingIndexForm').submit();
+        }
+
+
 });
 
-function saveAct(){
-    $('#MWidgetSettingIndexForm').submit();
-}
+sincloApp.directive('errSrc', function(){
+	return {
+		link: function(scope,elements, attrs) {
+			if ( attrs.ngSrc === "" ) {
+				attrs.$set('src', attrs.errSrc);
+			}
+			elements.bind("error", function(){
+				if ( attrs.ngSrc != attrs.errSrc ) {
+					attrs.$set('src', attrs.errSrc);
+				}
+			});
+		}
+	};
+});
+
 
 $(document).ready(function(){
     var scrollTimer = null;
-    $(window).scroll(function(e){
-        var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
+    $("#content").scroll(function(e){
+        var scrollTop = this.scrollTop;
         if (scrollTimer) {
           clearTimeout(scrollTimer);
         };
-        var position = (scrollTop < 180 ) ? 20 : scrollTop-160;
+        var position = (scrollTop < 180 ) ? 20 : scrollTop - 80;
         scrollTimer = setTimeout(function(){
           $("#m_widget_simulator").animate({
             "top": position
@@ -80,6 +148,8 @@ $(document).ready(function(){
           $("#chatTab").css('display', 'inline-block');
         }
     });
+
+
 
 });
 

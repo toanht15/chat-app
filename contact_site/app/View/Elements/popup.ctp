@@ -78,6 +78,12 @@ var popupEvent = {
                         return popupEvent.customizeBtn();
                     };
                     break;
+                case 'p-show-gallary':
+                    var closeBtn = _button("閉じる");
+                    closeBtn.onclick = function(){
+                        return popupEvent.closeNoPopup();
+                    };
+                    break;
                 case 'p-cus-menu':
                     var closeBtn = _button("設定");
                     closeBtn.onclick = function(){
