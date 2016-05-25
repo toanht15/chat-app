@@ -26,7 +26,8 @@ var socket, // socket.io
       referrer: 6,
       connect: 7,
       tab: 8,
-      prev: 9
+      prev: 9,
+      staycount: 10,
     }
   };
 
@@ -243,6 +244,7 @@ var socket, // socket.io
       if ( userInfo.accessType !== cnst.access_type.host ) {
       var html = common.createWidget();
         $('body').append(html);
+
         common.sincloBoxHeight = $("#sincloBox").outerHeight(true);
         $("#sincloBox").outerHeight(85);
 
@@ -262,6 +264,8 @@ var socket, // socket.io
             }
             $(this).addClass("selected");
         });
+        // オートメッセージ読み込み
+        sinclo.trigger.init();
         // チャット情報読み込み
         sinclo.chatApi.init();
         if ( ('maxShowTime' in window.info.widget) && String(window.info.widget.maxShowTime).match(/^[0-9]{1,2}$/) !== null ) {
@@ -387,6 +391,9 @@ var socket, // socket.io
     userId: null,
     accessId: null,
     ipAddress: null,
+    pageTime: null,
+    firstConnection: false,
+    searchKeyword: null,
     userAgent: window.navigator.userAgent,
     init: function(){
       // トークン初期化
@@ -406,6 +413,14 @@ var socket, // socket.io
           userInfo.setTabId();
           common.tmpParams.tabId = userInfo.tabId;
           common.saveParams();
+        }
+        else {
+          var code = this.getCode(cnst.info_type.referrer);
+          userInfo.referrer = storage.s.get(code);
+          if ( check.isset(userInfo.referrer) ) {
+            var ret = userInfo.referrer.match(/[?&](kw|MT|name|p|q|qt|query|search|word)=([^&]+)/);
+            userInfo.searchKeyword = (check.isset(ret) && ret.length === 3) ? ret[2] : null;
+          }
         }
       }
       // 複製したウィンドウの場合
@@ -467,6 +482,9 @@ var socket, // socket.io
           break;
         case cnst.info_type.prev:
           return "prev";
+          break;
+        case cnst.info_type.staycount:
+          return "stayCount";
           break;
       }
     },
@@ -545,17 +563,26 @@ var socket, // socket.io
     getConnect: function(){
       return this.get(cnst.info_type.connect);
     },
+    getStayCount: function(){
+      var code = this.getCode(cnst.info_type.staycount);
+      return Number(storage.l.get(code));
+    },
     setPage: function(){
       var p = this.get(cnst.info_type.page),
       n = ( isNaN(p) ) ? 1 : Number(p) + 1;
       this.set(cnst.info_type.page, n, true);
       return n;
     },
+    setStayCount: function(){
+      var code = this.getCode(cnst.info_type.staycount),
+          cnt = Number(storage.l.get(code)) + 1;
+      storage.l.set(code, cnt);
+    },
     setReferrer: function(){
       var code = this.getCode(cnst.info_type.referrer);
-      userInfo.referrer = storage.s.get(code);
+
       // IE8対応コード
-      if ( !check.isset(userInfo.referrer) ) {
+      if ( userInfo.referrer === null ) {
         if ( check.isset(document.referrer) ) {
           storage.s.set(code, document.referrer);
         }
@@ -1207,25 +1234,6 @@ var socket, // socket.io
       }
       popup.remove();
     });
-
-        $.ajax({
-    	    type: 'get',
-            url: window.info.site.files + "/settings/",
-            data: {
-                'sitekey': window.info.site.key
-            },
-            dataType: "json",
-            success: function(json){
-                window.info.widget = json.widget;
-                window.info.messages = json.messages;
-                window.info.contract = json.contract;
-            },
-            error: function(XMLHttpRequest, textStatus, errorThrown) {
-                  $("#XMLHttpRequest").html("XMLHttpRequest : " + XMLHttpRequest.status);
-                  $("#textStatus").html("textStatus : " + textStatus);
-                  $("#errorThrown").html("errorThrown : " + errorThrown.message);
-            }
-        });
   };
 
   var timer = window.setInterval(function(){
@@ -1278,3 +1286,27 @@ function now(){
   var d = new Date();
   return "【" + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds() + "】";
 }
+
+$.ajaxSetup({
+  cache: false
+});
+
+$.ajax({
+    type: 'get',
+    url: window.info.site.files + "/settings/",
+    cache: false,
+    data: {
+        'sitekey': window.info.site.key
+    },
+    dataType: "json",
+    success: function(json){
+        window.info.widget = json.widget;
+        window.info.messages = json.messages;
+        window.info.contract = json.contract;
+    },
+    error: function(XMLHttpRequest, textStatus, errorThrown) {
+        $("#XMLHttpRequest").html("XMLHttpRequest : " + XMLHttpRequest.status);
+        $("#textStatus").html("textStatus : " + textStatus);
+        $("#errorThrown").html("errorThrown : " + errorThrown.message);
+    }
+});

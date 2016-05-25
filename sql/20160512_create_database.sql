@@ -2,7 +2,7 @@
 CREATE TABLE `t_auto_messages` (
   `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT "ID",
   `m_companies_id` int NOT NULL COMMENT "企業ID",
-  `name` varchar(20) NOT NULL COMMENT "オートメッセージ名称",
+  `name` varchar(50) DEFAULT NULL COMMENT "オートメッセージ名称",
   `trigger_type` int NOT NULL COMMENT "トリガーの種類",
   `activity` text DEFAULT NULL COMMENT "オートメッセージ設定内容",
   `action_type` int NOT NULL COMMENT "アクションの種類",

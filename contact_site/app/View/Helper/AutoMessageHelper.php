@@ -186,8 +186,9 @@ class autoMessageHelper extends AppHelper {
 							&& isset($v['stayPageCond']) && !empty($this->dataList['stayPageCond']['dataList'][$v['stayPageCond']])
 						) {
 							$retList[] = sprintf(
-								$this->labelList[$itemId], $v['keyword'],
+								$this->labelList[$itemId],
 								$this->dataList['targetName']['dataList'][$v['targetName']],
+								$v['keyword'],
 								$this->dataList['stayPageCond']['dataList'][$v['stayPageCond']]
 							);
 						}

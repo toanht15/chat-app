@@ -34,13 +34,13 @@
       }
     },
     connect: function(){
-      var firstConnection = false;
       // 新規アクセスの場合
       if ( !check.isset(userInfo.getTabId()) ) {
-        firstConnection = true;
+        userInfo.firstConnection = true;
         window.opener = null;
         userInfo.strageReset();
         userInfo.setReferrer();
+        userInfo.setStayCount();
       }
       userInfo.init();
 
@@ -48,10 +48,10 @@
           referrer: userInfo.referrer,
           time: userInfo.getTime(),
           page: userInfo.getPage(),
-          firstConnection: firstConnection,
+          firstConnection: userInfo.firstConnection,
           userAgent: window.navigator.userAgent,
           service: check.browser(),
-          prev: userInfo.prev
+          prevList: userInfo.prevList
         };
 
       // モニタリング中であればスルー
@@ -60,7 +60,7 @@
         if ( Number(userInfo.accessType) === Number(cnst.access_type.guest) ) {
           emitData.connectToken = userInfo.connectToken;
           userInfo.syncInfo.get();
-          emit('connectSuccess', {prev: userInfo.prev});
+          emit('connectSuccess', {prevList: userInfo.prevList});
         }
 
         if ( check.isset(common.tmpParams) ) {
@@ -98,6 +98,7 @@
         data: emitData
       });
     },
+
     accessInfo: function(d){
       var obj = common.jParse(d);
       if ( obj.token !== common.token ) return false;
@@ -106,9 +107,24 @@
         window.info.activeOperatorCnt = obj['activeOperatorCnt'];
       }
 
+      if ( ('pagetime' in obj) ) {
+        userInfo.pageTime = obj['pagetime'];
+      }
+
       if ( check.isset(obj.accessId) && !check.isset(obj.connectToken)) {
         userInfo.set(cnst.info_type.access, obj.accessId, true);
-        common.makeAccessIdTag();
+
+        var setWidgetFnc = function(){
+          if ( window.info.widget === undefined ) {
+            setTimeout(setWidgetFnc, 500);
+          }
+          else {
+            common.makeAccessIdTag();
+          }
+        };
+
+        setWidgetFnc();
+
       }
 
       if ( obj.firstConnection ) {
@@ -127,7 +143,7 @@
       emit('connectSuccess', {
         confirm: false,
         widget: window.info.widgetDisplay,
-        prev: userInfo.prev,
+        prevList: userInfo.prevList,
         userAgent: window.navigator.userAgent,
         time: userInfo.time,
         ipAddress: userInfo.getIp(),
@@ -423,7 +439,8 @@
       historyId: null,
       messageType: {
         customer: 1,
-        company: 2
+        company: 2,
+        auto: 3
       },
       init: function(){
         $("#sincloChatMessage").on("keydown", function(e){
@@ -457,6 +474,314 @@
           });
         }
       }
+    },
+    trigger: {
+        timerList: {},
+        init: function(){
+            if ( !('messages' in window.info) || (('messages' in window.info) && typeof(window.info.messages) !== "object" ) ) return false;
+            var messages = window.info.messages;
+            // 設定ごと
+            for( var i = 0; messages.length > i; i++ ){
+                var ret = false;
+                // AND
+                if ( Number(messages[i]['activity']['conditionType']) === 1 ) {
+                    ret = this.setAndSetting(messages[i]['activity']);
+                }
+                // OR
+                else {
+                    ret = this.setOrSetting(messages[i]['activity']);
+                }
+                if ( typeof(ret) === "number" ) {
+                    this.setAction(messages[i]['action_type'], messages[i]['activity']);
+                }
+            }
+        },
+        /**
+         * return 即時実行(0)、タイマー実行(ミリ秒)、非実行(null)
+         */
+        setAndSetting: function(setting) {
+            var keys = Object.keys(setting['conditions']);
+            var ret = 0;
+            for(var i = 0; keys.length > i; i++){
+                var conditions = setting['conditions'][keys[i]];
+                var last = (keys.length === Number(i+1)) ? true : false;
+                var timer = 0;
+                switch(Number(keys[i])) {
+                    case 1: // 滞在時間
+                      timer = this.judge.stayTime(conditions[0]);
+                      if (typeof(timer) !== "number") {
+                        return null;
+                      }
+                      else {
+                        if ( ret < timer ) {
+                          ret = Number(timer);
+                        }
+                      }
+                      break;
+                    case 2: // 訪問回数
+                      timer = (!this.judge.stayCount(conditions[0]));
+                      if (typeof(timer) === "number" && typeof(ret) !== "number") {
+                        ret = 0;
+                      }
+                      break;
+                    case 3: // ページ
+                      timer = (!this.judge.page(conditions[0]));
+                      if (typeof(timer) === "number" && typeof(ret) !== "number") {
+                        ret = 0;
+                      }
+                      break;
+                    case 4: // 曜日・時間
+                      timer = this.judge.dayTime(conditions[0]);
+                      if (typeof(timer) !== "number") return null;
+                      if ( ret < timer ) {
+                        ret = Number(timer);
+                      }
+                      break;
+                    case 5: // リファラー
+                      timer = (!this.judge.referrer(conditions[0]));
+                      if (typeof(timer) === "number" && typeof(ret) !== "number") {
+                        ret = 0;
+                      }
+                      break;
+                    case 6: // 検索ワード
+                      timer = (!this.judge.searchWord(conditions[0]));
+                      if (typeof(timer) === "number" && typeof(ret) !== "number") {
+                        ret = 0;
+                      }
+                      break;
+                    default:
+                      ret = null;
+                      break;
+                }
+            }
+            return ret;
+        },
+        /**
+         * return 即時実行(0)、タイマー実行(ミリ秒)、非実行(null)
+         */
+        setOrSetting: function(setting) {
+            var keys = Object.keys(setting['conditions']);
+            var ret = null;
+            for(var i = 0; keys.length > i; i++){
+                var conditions = setting['conditions'][keys[i]];
+                var last = (keys.length === Number(i+1)) ? true : false;
+                var timer = 0;
+                switch(Number(keys[i])) {
+                    case 1: // 滞在時間
+                      for (var u = 0; u < conditions.length; u++) {
+                        timer = this.judge.stayTime(conditions[u]);
+                        if (typeof(timer) === "number") {
+                          if ( ret < timer ) {
+                            ret = Number(timer);
+                          }
+                        }
+                      }
+                      break;
+                    case 2: // 訪問回数
+                      for (var u = 0; u < conditions.length; u++) {
+                        timer = this.judge.stayCount(conditions[u]);
+                        if (typeof(timer) === "number" && typeof(ret) !== "number") {
+                          ret = 0;
+                        }
+                      }
+                      break;
+                    case 3: // ページ
+                      for (var u = 0; u < conditions.length; u++) {
+                        timer = this.judge.page(conditions[u]);
+                        if (typeof(timer) === "number" && typeof(ret) !== "number") {
+                          ret = 0;
+                        }
+                      }
+                      break;
+                    case 4: // 曜日・時間
+                      for (var u = 0; u < conditions.length; u++) {
+                        timer = this.judge.dayTime(conditions[u]);
+                        if (typeof(timer) === "number"){
+                          if ( typeof(ret) !== "number" || (typeof(ret) === "number" && ret < timer) ) {
+                            ret = Number(timer);
+                          }
+                        }
+                      }
+                      break;
+                    case 5: // リファラー
+                      for (var u = 0; u < conditions.length; u++) {
+                        timer = this.judge.referrer(conditions[u]);
+                        if (typeof(timer) === "number" && typeof(ret) !== "number") {
+                          ret = 0;
+                        }
+                      }
+                      break;
+                    case 6: // 検索ワード
+                      for (var u = 0; u < conditions.length; u++) {
+                        timer = this.judge.searchWord(conditions[u]);
+                        if (typeof(timer) === "number" && typeof(ret) !== "number") {
+                          ret = 0;
+                        }
+                      }
+                      break;
+                    default:
+                      break;
+                }
+            }
+            return ret;
+        },
+        setAction: function(type, cond){
+            // TODO 今のところはメッセージ送信のみ、拡張予定
+            if ( String(type) === "1" && ('message' in cond)) {
+
+                emit('sendChat', {
+                  historyId: sinclo.chatApi.historyId,
+                  chatMessage:cond.message,
+                  mUserId: null,
+                  messageType: sinclo.chatApi.messageType.auto
+                });
+            }
+        },
+        common: {
+            /**
+             * @params int type 比較種別
+             * @params int a 基準値
+             * @params int b 比較対象
+             * @return bool
+             */
+            numMatch: function(type, a, b) {
+                switch(Number(type)) {
+                    case 1: // 一致
+                      if (Number(a) ===  Number(b) ) return true;
+                      break;
+                    case 2: // 以上
+                      if (Number(a) <= Number(b) ) return true;
+                      break;
+                    case 3: // 未満
+                      if (Number(a) > Number(b) ) return true;
+                      break;
+                }
+                return false;
+            },
+            /**
+             * @params int type 比較種別
+             * @params int a キーワード
+             * @params int b マッチ対象
+             * @return bool
+             */
+            pregMatch: function(type, a, b) {
+                var preg = "";
+                switch(Number(type)) {
+                    case 1: // 一致
+                      preg = new RegExp("^" + a + "$");
+                      return preg.test(b);
+                      break;
+                    case 2: // 部分一致
+                      preg = new RegExp(a);
+                      return preg.test(b);
+                      break;
+                    case 3: // 不一致
+                      preg = new RegExp("^" + a + "$");
+                      return !preg.test(b);
+                      break;
+                }
+                return false;
+            }
+        },
+        judge: {
+            stayTime: function(cond){
+                if (!('stayTimeType' in cond) || !('stayTimeRange' in cond )) return null;
+                var time = 0;
+                switch(Number(cond.stayTimeType)) {
+                    case 1: // 秒
+                      time = Number(cond.stayTimeRange) * 1000;
+                      break;
+                    case 2: // 分
+                      time = Number(cond.stayTimeRange) * 1000 * 60;
+                      break;
+                    case 3: // 時
+                      time = Number(cond.stayTimeRange) * 1000 * 60 * 60;
+                      break;
+                }
+                var term = (Number(userInfo.pageTime) - Number(userInfo.time));
+
+                if ( term < time ) {
+                    return time-term;
+                }
+                else {
+                	return null;
+                }
+
+            },
+            stayCount: function(cond){
+                if (!('visitCntCond' in cond) || !('visitCnt' in cond )) return null;
+                return (sinclo.trigger.common.numMatch(cond.visitCntCond, userInfo.getStayCount(), cond.visitCnt)) ? 0 : null;
+            },
+            page: function(cond){
+                if (!('keyword' in cond) || !('targetName' in cond ) || !('stayPageCond' in cond )) return null;
+                var target = ( Number(cond.targetName) === 1 ) ? common.title() : location.href ;
+                return (sinclo.trigger.common.pregMatch(cond.stayPageCond, cond.keyword, target)) ? 0 : null;
+            },
+            dayTime: function(cond){
+                if (!('day' in cond) || !('timeSetting' in cond)) return null;
+                if (Number(cond.timeSetting) === 1 && (!('startTime' in cond) || !('endTime' in cond))) return null;
+                // DBに保存している文字列から、JSのgetDay関数に対応する数値を返す関数
+                function translateDay(str){
+                    var day = {'sun':0, 'mon':1, 'tue':2, 'thu':3, 'wed':4, 'fri':5, 'sat':6};
+                    return (str in day) ? day[str] : null;
+                }
+                function checkTime(time){
+                    var reg = new RegExp(/^(0{0,1}[0-9]{1}|1[0-9]{1}|2[0-3]{1}):([0-5]{1}[0-9]{1})$/);
+                    return reg.test(time);
+                }
+                function makeDate(date){
+                    var d = new Date(date);
+                    return Date.parse(d);
+                }
+                var d = new Date(), date, dateParse, nowDay, nextDay, keys, dayList = [];
+                // 今日の曜日
+                nowDay = d.getDay();
+                // 明日の曜日
+                nextDay = Math.abs((nowDay + 1 > 6) ? 0 : nowDay + 1);
+                // 今日の日付
+                date = d.getFullYear() + "/" + (d.getMonth()+1) + "/" + d.getDate() + " ";
+                dateParse = Date.parse(d);
+                keys = Object.keys(cond.day);
+                for(var i = 0; keys.length > i; i++){
+                  if (!cond.day[keys[i]]) continue;
+                  var day = translateDay(keys[i]);
+                  if (day === null) continue;
+                  // 曜日が今日若しくは明日ではない場合
+                  if (day !== nowDay && day !== nextDay) continue;
+                  // 時間指定なしの場合
+                  if (Number(cond.timeSetting) === 2) return 0;
+                  if (!checkTime(cond.startTime) || !checkTime(cond.endTime)) return null;
+                  var startDate = makeDate(date + cond.startTime);
+                  var endDate = makeDate(date + cond.endTime);
+
+                  // 今日で開始中の場合
+                  if (day === nowDay && startDate <= dateParse && dateParse < endDate ) {
+                    return 0;
+                  }
+                  // 今日で開始前の場合
+                  else if (day === nowDay && startDate > dateParse && dateParse < endDate ) {
+                    return startDate-dateParse;
+                  }
+                  // 次回の場合
+                  else {
+                    var nextDate = startDate + 24*60*60*1000;
+                    return nextDate-dateParse;
+                  }
+                }
+            	return null;
+            },
+            referrer: function(cond){
+                if (!('keyword' in cond) || !('referrerCond' in cond )) return null;
+                if ( userInfo.referrer === "" ) return null;
+                return (sinclo.trigger.common.pregMatch(cond.referrerCond, cond.keyword, userInfo.referrer)) ? 0 : null;
+            },
+            searchWord: function(cond){
+                if (!('keyword' in cond) || !('searchCond' in cond )) return null;
+                if ( userInfo.searchKeyword === null && Number(cond.searchCond) !== 3 ) return null;
+                if ( userInfo.searchKeyword === null && Number(cond.searchCond) === 3 ) return true;
+                return (sinclo.trigger.common.pregMatch(cond.searchCond, cond.keyword, userInfo.searchKeyword)) ? 0 : null;
+            }
+        }
     }
   };
 

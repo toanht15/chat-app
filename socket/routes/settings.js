@@ -56,27 +56,33 @@ router.get("/", function(req, res, next) {
                     function(err, rows){
                         for(var i=0; i<rows.length; i++){
                             if ( !(rows[i].trigger_type in sendData['messages']) ) {
-                                sendData['messages'][rows[i].trigger_type] = [];
+                                sendData['messages'] = [];
                             }
-                            sendData['messages'][rows[i].trigger_type].push({
+                            sendData['messages'].push({
                                 "id": rows[i].id,
                                 "sitekey": siteKey,
                                 "activity": JSON.parse(rows[i].activity),
                                 "action_type": rows[i].action_type,
                             });
                         }
+
+                        /* Cross-Origin */
+                        // http://stackoverflow.com/questions/18310394/no-access-control-allow-origin-node-apache-port-issue
+
                         // Website you wish to allow to connect
                         res.setHeader('Access-Control-Allow-Origin', '*');
-
                         // Request methods you wish to allow
                         res.setHeader('Access-Control-Allow-Methods', 'GET');
-
                         // Request headers you wish to allow
                         res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-
                         // Set to true if you need the website to include cookies in the requests sent
                         // to the API (e.g. in case you use sessions)
                         res.setHeader('Access-Control-Allow-Credentials', true);
+
+                        /* no-cache */
+                        // http://garafu.blogspot.jp/2013/06/ajax.html
+                        res.setHeader("Cache-Control", "no-cache");
+                        res.setHeader("Pragma", "no-cache");
 
                         res.send(sendData);
 

@@ -103,6 +103,7 @@ $config['outMessageTriggerList'] = [
     // 滞在時間
     C_AUTO_TRIGGER_STAY_TIME => [
         'label' => '滞在時間',
+        // いずれも複数はNG固定で（sinclo.jsを書き直す必要がある為）
         'createLimit' => ['and' => 1, 'or' => 1],
         'key' => 'stay_time',
         'default' => [
@@ -152,7 +153,6 @@ $config['outMessageTriggerList'] = [
         'createLimit' => ['and' => 1, 'or' => 1],
         'key' => 'referrer',
         'default' => [
-           "targetName" => "1",
            "keyword" => "",
            "referrerCond" => "1"
         ]

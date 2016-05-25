@@ -62,9 +62,6 @@
 <?php /* 参照元URL（リファラー）｜C_AUTO_TRIGGER_REFERRER */ ?>
 <ul ng-if="itemType == '<?=C_AUTO_TRIGGER_REFERRER?>'" class="setReferrer">
 	<li>
-		<?=$this->AutoMessage->radio('targetName')?>
-	</li>
-	<li>
 		<span><label>キーワード</label></span>
 		<input type="text" ng-model="setItem.keyword" name="keyword" required="">
 	</li>

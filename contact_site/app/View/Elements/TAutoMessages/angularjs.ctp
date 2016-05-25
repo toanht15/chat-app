@@ -91,7 +91,7 @@ sincloApp.controller('MainCtrl', function($scope) {
 
 	this.saveAct = function(){
 		var setList = {
-				'conditionType': angular.element("input[name='data[TAutoMessage][condition_type]']:checked").val(),
+				'conditionType': Number(this.condition_type),
 				'conditions': angular.copy(this.setItemList),
 				 // TODO 後々動的に
 				'message': angular.element("#TAutoMessageAction").val()

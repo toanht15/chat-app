@@ -266,7 +266,7 @@ io.sockets.on('connection', function (socket) {
         var chatData = {historyId: null, messages: []};
         if ( isset(rows) && isset(rows[0]) ) {
           chatData.historyId = rows[0].id;
-          pool.query('SELECT id, message, message_type as messageType FROM t_history_chat_logs WHERE t_histories_id = ?;', [chatData.historyId], function(err, rows){
+          pool.query('SELECT id, message, message_type as messageType FROM t_history_chat_logs WHERE t_histories_id = ? AND message_type != 3;', [chatData.historyId], function(err, rows){
             chatData.messages = ( isset(rows) ) ? rows : [];
             obj.chat = chatData;
             emit.toUser('chatMessageData', obj, sId);
@@ -353,10 +353,13 @@ io.sockets.on('connection', function (socket) {
       if ( res.token !== undefined ) {
         send.token = res.token;
       }
+      // ページ表示開始時間
+      var d = new Date();
+      send.pagetime = Date.parse(d);
+
       // アクセス開始フラグ
       if ( data.firstConnection ) {
-        var d = new Date();
-        send.time = Date.parse(d);
+        send.time = send.pagetime;
       }
 
       if ( isset(socket.handshake.headers['x-forwarded-for']) ) {
@@ -765,6 +768,7 @@ io.sockets.on('connection', function (socket) {
       }
 
       sincloCore[info.siteKey][info.tabId]['timeoutTimer'] = setTimeout(function(){
+        var historyId = sincloCore[info.siteKey][info.tabId].historyId;
         // sincloCoreから情報削除
         delete sincloCore[info.siteKey][info.tabId];
         if ( core.subWindow ) {
@@ -776,6 +780,15 @@ io.sockets.on('connection', function (socket) {
           syncStopCtrl(info.siteKey, info.tabId);
         }
         else {
+          // チャット使用状況を確認
+          pool.query('SELECT * FROM t_history_chat_logs WHERE message_type != 3 AND t_histories_id = ?', [historyId], function(err, rows){
+          	// 未使用の場合
+            if (!(isset(rows) && isset(rows[0]))) {
+              // 自動送信履歴を削除
+              pool.query('DELETE FROM t_history_chat_logs WHERE message_type = 3 AND t_histories_id = ?', [historyId]);
+            }
+          });
+
           // 消費者側
           if ( 'syncFrameSessionId' in core ) {
             emit.toUser('unsetUser', {siteKey: info.siteKey, tabId: info.tabId}, core.syncFrameSessionId);

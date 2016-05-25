@@ -12,9 +12,9 @@ class TAutoMessage extends AppModel {
 	public $validate = [
 		'name' => [
 			'maxLength' => [
-				'rule' => ['maxLength', 12],
+				'rule' => ['maxLength', 50],
 				'allowEmpty' => false,
-				'message' => '名称を入力してください'
+				'message' => '名称を５０文字以内で入力してください'
 			]
 		],
 		'activity' => [

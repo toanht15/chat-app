@@ -11,7 +11,7 @@
 				<?= $this->Form->input('name', [
 					'type' => 'text',
 					'placeholder' => '名称',
-					'maxlength' => 12
+					'maxlength' => 50
 				]) ?>
 			<?php if (!empty($errors['name'])) echo "<li class='error-message'>" . h($errors['name'][0]) . "</li>"; ?>
 			</li>
@@ -32,7 +32,7 @@
 			<!-- 条件設定 -->
 			<li>
 				<span class="require"><label>条件設定</label></span>
-				<?= $this->ngForm->input('condition_type', [
+				<?= $this->ngForm->input('main.condition_type', [
 					'type' => 'radio',
 					'options' => $outMessageIfType,
 					'separator' => '&nbsp;',
