@@ -20,6 +20,7 @@
 		#sincloBox section#chatTab textarea { padding: 5px; resize: none; width: 100%; height: 50px; border: 1px solid #E4E4E4; border-radius: 5px; color: #8A8A8A; }
 	<?php if ( $coreSettings[C_COMPANY_USE_CHAT] && $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
 		#sincloBox section#callTab { display: none }
+		#sincloBox section#callTab #telNumber { color: {{main_color}}; font-weight: bold; margin: 0 auto; text-align: center }
 	<?php endif; ?>
 	<?php if ( $coreSettings[C_COMPANY_USE_CHAT] && $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
 		#sincloBox section#navigation { border-width: 0 1px; height: 40px; position: relative; display: block; }
@@ -86,7 +87,7 @@
 			<!-- アイコン -->
 
 			<!-- 受付電話番号 -->
-			<pre id="telNumber" style="font-weight: bold; color: {{main_color}}; margin: 0 auto; font-size: 18px; text-align: center; padding: 5px 0px 0px; height: 30px">{{tel}}</pre>
+			<pre id="telNumber" style="font-weight: bold; font-size: 18px; padding: 5px 0px 0px; height: 30px">{{tel}}</pre>
 			<!-- 受付電話番号 -->
 
 			<!-- 受付時間 -->
