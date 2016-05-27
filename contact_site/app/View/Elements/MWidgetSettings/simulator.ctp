@@ -10,14 +10,19 @@
 		#sincloBox div#descriptionSet p:not(.ng-hide) { padding-bottom: 7px }
 		#sincloBox p#widgetTitle { position:relative; z-index: 1; cursor:pointer; border-radius: {{radius_ratio}}px {{radius_ratio}}px 0 0; border: 1px solid {{main-color}}; border-bottom:none; background-color: {{main_color}};text-align: left; font-size: 14px;padding: 7px 11px 7px 73px; margin: 0;color: #FFF; height: 32px }
 		#sincloBox p#widgetTitle:after { background-position-y: 3px; background-image: url('<?=$gallaryPath?>yajirushi.png'); top: 6px; right: 6px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear}
+		#sincloBox[data-openflg='true'] p#widgetTitle:after { transform: rotate(0deg); }
+		#sincloBox[data-openflg='false'] p#widgetTitle:after { transform: rotate(180deg); }
 		#sincloBox p#widgetSubTitle { margin: 0; text-align: left; padding-left: 77px; font-weight: bold; color: {{main_color}} }
 		#sincloBox p#widgetDescription { margin: 0; text-align: left; padding-left: 77px; color: #8A8A8A; }
 		#sincloBox section { display: inline-block; width: 270px; border: 1px solid #E8E7E0; border-top: none; }
+		#sincloBox div#miniTarget { overflow: hidden; transition: height 200ms linear; }
+	<?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
 		#sincloBox ul#chatTalk { width: 100%; height: 250px; padding: 5px; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0}
-		#sincloBox ul#chatTalk li { margin: 5px 0; padding: 5px; font-size: 12px; border: 1px solid #C9C9C9; line-height: 1.8; white-space: pre; color: #5E614E; }
-		#sincloBox ul#chatTalk li.sinclo_se { border-radius: 5px 5px 0; margin-left: 10px; background-color: #FFF; }
-		#sincloBox ul#chatTalk li.sinclo_re { margin-right: 10px; border-radius: 5px 5px 5px 0; }
+		#sincloBox ul#chatTalk li { border-radius: 5px; background-color: #FFF; margin: 5px 0; padding: 5px; font-size: 12px; border: 1px solid #C9C9C9; line-height: 1.8; white-space: pre; color: #5E614E; }
+		#sincloBox ul#chatTalk li.chat_right { border-bottom-right-radius: 0; margin-left: 10px }
+		#sincloBox ul#chatTalk li.chat_left { border-bottom-left-radius: 0; margin-right: 10px }
 		#sincloBox section#chatTab textarea { padding: 5px; resize: none; width: 100%; height: 50px; border: 1px solid #E4E4E4; border-radius: 5px; color: #8A8A8A; }
+	<?php endif; ?>
 	<?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
 		#sincloBox section#callTab #telNumber { color: {{main_color}}; font-weight: bold; margin: 0 auto; text-align: center }
 		#sincloBox section#callTab #telIcon { background-color: {{main_color}}; display: block; width: 50px; height: 50px; float: left; border-radius: 25px; padding: 3px }
@@ -37,9 +42,6 @@
 		#sincloBox section#navigation ul li.selected::before{ background-color: {{main_color}}; }
 		#sincloBox section#callTab { display: none }
 	<?php endif; ?>
-		#sincloBox[data-openflg='true'] p#widgetTitle:after { transform: rotate(0deg); }
-		#sincloBox[data-openflg='false'] p#widgetTitle:after { transform: rotate(180deg); }
-		#sincloBox div#miniTarget { overflow: hidden; transition: height 200ms linear; }
 	</style>
 	<!-- 画像 -->
 	<span id="mainImage" ng-if="mainImageToggle == '1'" style="position: absolute; top: 7px; left: 7px;">
@@ -72,9 +74,9 @@
 	<?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
 		<section id="chatTab">
 			<ul id="chatTalk">
-			<li class="sinclo_se">○○について質問したいのですが</li>
-			<li class="sinclo_re" style="background-color:{{makeFaintColor()}}">こんにちは</li>
-			<li class="sinclo_re" style="background-color:{{makeFaintColor()}}">○○についてですね<br>どのようなご質問でしょうか？</li>
+			<li class="sinclo_se" ng-class="{chat_right: show_position == 2, chat_left: show_position == 1 }">○○について質問したいのですが</li>
+			<li class="sinclo_re" ng-class="{chat_right: show_position == 1, chat_left: show_position == 2 }" style="background-color:{{makeFaintColor()}}">こんにちは</li>
+			<li class="sinclo_re" ng-class="{chat_right: show_position == 1, chat_left: show_position == 2 }" style="background-color:{{makeFaintColor()}}">○○についてですね<br>どのようなご質問でしょうか？</li>
 			</ul>
 			<div style="border-top: 1px solid #E8E7E0; padding: 10px;">
 			<textarea name="sincloChat" id="sincloChatMessage" placeholder="メッセージ入力後、Enterで送信"></textarea>

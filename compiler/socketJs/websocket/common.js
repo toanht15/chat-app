@@ -116,22 +116,30 @@ var socket, // socket.io
       }
 
       // 表示位置
-      var showPosition = "";
+      var showPosition = "", chatPosition = {se: "", re: ""};
       switch ( widget.showPosition ) {
         case 1: // 右下
           showPosition = "bottom: 0; right: 10px;";
+          chatPosition = {
+            se: "border-bottom-left-radius: 0; margin-right: 10px;",
+            re: "border-bottom-right-radius: 0; margin-left: 10px;"
+          };
           break;
         case 2:
           showPosition = "bottom: 0; left: 10px;";
+          chatPosition = {
+            se: "border-bottom-right-radius: 0; margin-left: 10px;",
+            re: "border-bottom-left-radius: 0; margin-right: 10px;"
+          };
           break;
       }
 
       html += '  <style>';
-      html += '      #sincloBox { position: fixed; ' + showPosition + ' z-index: 999998; background-color: rgba(0,0,0,0); display: block; width: 270px; }';
+      html += '      #sincloBox { display: none; position: fixed; ' + showPosition + ' z-index: 999998; background-color: rgba(0,0,0,0); width: 270px; }';
       html += '      #sincloBox * { box-sizing: border-box; font-size: 12px; font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana;}';
       html += '      #sincloBox span, #sincloBox pre { font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana!important }';
       html += '      #sincloBox span#mainImage { z-index: 2 }';
-      html += '      #sincloBox p#widgetTitle { position:relative; cursor:pointer; border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px 0 0; border: 1px solid ' + widget.mainColor + '; border-bottom:none; background-color: ' + widget.mainColor + ';text-align: center; font-size: 14px;padding: 7px; margin: 0;color: #FFF; height: 32px }';
+      html += '      #sincloBox p#widgetTitle { position:relative; cursor:pointer; border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px 0 0; border: 1px solid ' + widget.mainColor + '; border-bottom:none; background-color: ' + widget.mainColor + ';text-align: center; font-size: 14px;padding: 7px 30px; margin: 0;color: #FFF; height: 32px }';
       html += '      #sincloBox p#widgetTitle:after { background-position-y: 3px; background-image: url("' + window.info.site.files + '/img/widget/yajirushi.png"); top: 6px; right: 6px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear}';
       html += '      #sincloBox[data-openflg="true"] p#widgetTitle:after { transform: rotate(0deg); }';
       html += '      #sincloBox[data-openflg="false"] p#widgetTitle:after { transform: rotate(180deg); }';
@@ -143,15 +151,23 @@ var socket, // socket.io
       if ( String(widget.showMainImage) !== "2" ) {
       html += '      #sincloBox p#widgetTitle { padding-left: 70px; }';
       }
+      // 画面同期を使用する際
+      if ( window.info.contract.synclo ) {
+        html += '      #sincloBox ul#chatTalk { width: 100%; height: 250px; padding: 5px; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0}';
+        html += '      #sincloBox ul#chatTalk li { border-radius: 5px; background-color: #FFF; margin: 5px 0; padding: 5px; font-size: 12px; border: 1px solid #C9C9C9; color: #595959; white-space: pre; color: #8A8A8A; }';
+        html += '      #sincloBox ul#chatTalk li.sinclo_se { ' + chatPosition.se + 'background-color: #FFF; }';
+        html += '      #sincloBox ul#chatTalk li.sinclo_re { ' + chatPosition.re + 'background-color:' + faintColor + ' }';
+        html += '      #sincloBox section#chatTab textarea { padding: 5px; resize: none; width: 100%; height: 50px; border: 1px solid #E4E4E4; border-radius: 5px; color: #8A8A8A; }';
+      }
+      // チャットを使用する際
+      if ( window.info.contract.synclo ) {
+        html += '      #sincloBox section#callTab #telNumber { color: ' + widget.mainColor + '; font-weight: bold; margin: 0 auto; text-align: center }';
+        html += '      #sincloBox section#callTab #telIcon { color: ' + widget.mainColor + '; display: block; width: 50px; height: 50px; float: left; background-color: #3EA3DE; border-radius: 25px; padding: 3px }';
+      }
       // チャットも画面同期も使用する際にはデフォルトで画面同期ウィジェットの表示をnoneにする
       if ( window.info.contract.chat && window.info.contract.synclo ) {
         html += '      #sincloBox section#callTab { display: none; }';
       }
-      html += '      #sincloBox ul#chatTalk { width: 100%; height: 250px; padding: 5px; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0}';
-      html += '      #sincloBox ul#chatTalk li { margin: 5px 0; padding: 5px; font-size: 12px; border: 1px solid #C9C9C9; color: #595959; white-space: pre; color: #8A8A8A; }';
-      html += '      #sincloBox ul#chatTalk li.sinclo_se { border-radius: 5px 5px 0; margin-left: 10px; background-color: #FFF; }';
-      html += '      #sincloBox ul#chatTalk li.sinclo_re { margin-right: 10px; border-radius: 5px 5px 5px 0; background-color:' + faintColor + ' }';
-      html += '      #sincloBox section#chatTab textarea { padding: 5px; resize: none; width: 100%; height: 50px; border: 1px solid #E4E4E4; border-radius: 5px; color: #8A8A8A; }';
       html += '      #sincloBox section#navigation { border-width: 0 1px; height: 40px; position: relative; display: block; }';
       html += '      #sincloBox section#navigation ul { margin: 0 0 0 -1px; display: table; padding: 0; position: absolute; top: 0; left: 0; height: 40px; width: 270px }';
       html += '      #sincloBox section#navigation ul li { position: relative; overflow: hidden; cursor: pointer; color: #8A8A8A; width: 50%; text-align: center; display: table-cell; padding: 10px 0; border-left: 1px solid #E8E7E0; height: 40px }';
@@ -253,7 +269,6 @@ var socket, // socket.io
       if ( check.isset(userInfo.connectToken) ) {
         return false;
       }
-console.log('A');
       common.load.finish();
       var sincloBox = document.getElementById('sincloBox');
       if ( sincloBox ) {
@@ -266,8 +281,6 @@ console.log('A');
         var sincloBox = document.getElementById('sincloBox');
         sincloBox.setAttribute('data-openflg', false);
         sinclo.operatorInfo.header = document.querySelector('#sincloBox #widgetHeader');
-
-        $("#sincloBox").outerHeight(sinclo.operatorInfo.header.offsetHeight);
 
         $(".widgetCtrl").click(function(){
             var target = $(".widgetCtrl.selected"), clickTab = $(this).data('tab');
@@ -285,20 +298,6 @@ console.log('A');
             $(this).addClass("selected");
         });
 
-        if ( ('maxShowTime' in window.info.widget) && String(window.info.widget.maxShowTime).match(/^[0-9]{1,2}$/) !== null ) {
-          var maxShowTime = Number(window.info.widget.maxShowTime) * 1000;
-          var widgetOpen = storage.s.get('widgetOpen');
-          if (!widgetOpen) {
-            window.setTimeout(function(){
-              var sincloBox = document.getElementById('sincloBox'),
-                  flg = sincloBox.getAttribute('data-openflg');
-              if ( String(flg) === "false" ) {
-                storage.s.set('widgetOpen', true);
-                sinclo.operatorInfo.ev();
-              }
-            }, maxShowTime);
-          }
-        }
       }
 
     },
@@ -1299,7 +1298,6 @@ function emit(evName, data){
     data.to = userInfo.sendTabId;
     data.prevList = browserInfo.prevList;
   }
-console.log(evName, data);
   socket.emit(evName, JSON.stringify(data));
 }
 

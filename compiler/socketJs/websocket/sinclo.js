@@ -153,11 +153,27 @@
       });
     },
     setHistoryId: function(d){
-      if ( window.info.widgetDisplay && window.info.contract.chat ) {
-          // チャット情報読み込み
-          sinclo.chatApi.init();
-          // オートメッセージ読み込み
-          sinclo.trigger.init();
+        if ( window.info.widgetDisplay && window.info.contract.chat ) {
+            var sincloBox = document.getElementById('sincloBox');
+            // チャット表示
+            if ( ('maxShowTime' in window.info.widget) && String(window.info.widget.maxShowTime).match(/^[0-9]{1,2}$/) !== null ) {
+              var widgetOpen = storage.s.get('widgetOpen');
+              if (!widgetOpen) {
+                window.setTimeout(function(){
+                  var flg = sincloBox.getAttribute('data-openflg');
+                  if ( String(flg) === "false" ) {
+                    storage.s.set('widgetOpen', true);
+                    sinclo.operatorInfo.ev();
+                  }
+                }, Number(window.info.widget.maxShowTime) * 1000);
+              }
+            }
+            sincloBox.style.display = "block";
+            sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
+            // チャット情報読み込み
+            sinclo.chatApi.init();
+            // オートメッセージ読み込み
+            sinclo.trigger.init();
       }
     },
     getAccessInfo: function(d) { // guest only

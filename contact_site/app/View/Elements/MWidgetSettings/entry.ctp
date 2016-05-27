@@ -8,7 +8,7 @@
 				<!-- 表示設定 -->
 				<li>
 					<span class="require"><label>表示する条件</label></span>
-					<pre><?= $this->Form->input('display_type', ['type' => 'radio', 'options' => $widgetDisplayType, 'legend' => false, 'separator' => '<br>', 'label' => false, 'error' => false, 'div' => false]) ?></pre>
+					<pre><label><?= $this->Form->input('display_type', ['type' => 'radio',  'options' => $widgetDisplayType, 'legend' => false, 'separator' => '</label><br><label>', 'label' => false, 'error' => false, 'div' => false]) ?></label></pre>
 				</li>
 				<?php if ( $this->Form->isFieldError('display_type') ) echo $this->Form->error('display_type', null, ['wrap' => 'li']); ?>
 				<!-- 表示設定 -->
@@ -30,8 +30,8 @@
 							'entity' => 'MWidgetSetting.max_show_time'
 						]); ?>
 						<div ng-init="showTime=inputInitToggle('<?=$this->formEx->val($this->data['MWidgetSetting'], 'max_show_time')?>')">
-							<label for="showDescription1"><input type="radio" name="showTime" ng-model="showTime" id="showTime1" value="1" ><?=$maxShowTimeTag?></label><br>
-							<label for="showDescription2"><input type="radio" name="showTime" ng-model="showTime" id="showTime2" value="2">自動で最大化しない</label>
+							<label for="showTime1"><input type="radio" name="showTime" ng-model="showTime" id="showTime1" value="1" ><?=$maxShowTimeTag?></label><br>
+							<label for="showTime2"><input type="radio" name="showTime" ng-model="showTime" id="showTime2" value="2">自動で最大化しない</label>
 						</div>
 					</div>
 				</li>
@@ -40,15 +40,18 @@
 				<!-- 表示位置 -->
 				<li>
 					<span class="require"><label>表示位置</label></span>
-					<pre><?= $this->Form->input('show_position', [
+					<pre><label><?= $this->ngForm->input('show_position', [
 							'type' => 'radio',
 							'options' => $widgetPositionType,
 							'legend' => false,
-							'separator' => '<br>',
+							'separator' => '</label><br><label>',
 							'div' => false,
 							'label' => false,
 							'error' => false
-						]) ?></pre>
+						],
+						[
+							'entity' => 'MWidgetSetting.show_position'
+						]) ?></label></pre>
 				</li>
 				<?php if ( $this->Form->isFieldError('show_position') ) echo $this->Form->error('show_position', null, ['wrap' => 'li']); ?>
 				<!-- 表示位置 -->
@@ -146,7 +149,7 @@
 				<!-- 画像の設定 -->
 				<li>
 					<span ng-class="{require: mainImageToggle=='1'}"><label>画像の設定</label></span>
-					<div ng-init="mainImageToggle=inputInitToggle('<?=$this->formEx->val($this->data['MWidgetSetting'], 'show_main_image')?>')">
+					<div ng-init="mainImageToggle='<?=$this->formEx->val($this->data['MWidgetSetting'], 'show_main_image')?>'">
 						<?= $this->Form->hidden('main_image') ?>
 						<label for="showMainImage1"><input type="radio" name="data[MWidgetSetting][show_main_image]" ng-model="mainImageToggle" id="showMainImage1" value="1" >画像を表示する</label><br>
 						<div id="imageSelectBtns" ng-class="{chooseImg: showChooseImg()}">
@@ -206,10 +209,10 @@
 				<!-- 受付時間指定 -->
 				<li>
 					<span class="require"><label>受付時間指定</label></span>
-					<?= $this->ngForm->input('display_time_flg', [
+					<label><?= $this->ngForm->input('display_time_flg', [
 						'type' => 'radio',
 						'fieldset' => false,
-						'separator' => '<br>',
+						'separator' => '</label><br><label>',
 						'legend' => false,
 						'options' => [
 							'営業時間を表示しない',
@@ -221,7 +224,7 @@
 					[
 						'entity' => 'MWidgetSetting.display_time_flg',
 						'change' => 'isDisplayTime()'
-					]) ?>
+					]) ?></label>
 				</li>
 				<?php if ($this->Form->isFieldError('display_time_flg') ) echo $this->Form->error('display_time_flg', null, ['wrap' => 'li']); ?>
 				<!-- 受付時間指定 -->
