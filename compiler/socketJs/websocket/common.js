@@ -285,7 +285,7 @@ var socket, // socket.io
         $(".widgetCtrl").click(function(){
             var target = $(".widgetCtrl.selected"), clickTab = $(this).data('tab');
             target.removeClass("selected");
-            $("#sincloBox").attr("style", "");
+            $("#sincloBox").height("");
 
             if ( clickTab === "call" ) {
               $("#callTab").css('display', 'inline-block');
