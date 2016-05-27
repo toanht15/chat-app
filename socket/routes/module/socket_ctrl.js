@@ -52,8 +52,7 @@ var timeCalculator = function(obj){
   return Number(req);
 }
 
-function timeUpdate(history, obj, time){
-  var historyId = history.id;
+function timeUpdate(historyId, obj, time){
   var insertStayData = {
     t_histories_id: historyId,
     title: ('title' in obj) ? obj.title : "",
@@ -141,20 +140,13 @@ var db = {
       var siteId = companyList[obj.siteKey];
       pool.query('SELECT * FROM t_histories WHERE m_companies_id = ? AND tab_id = ? AND visitors_id = ? ORDER BY id DESC LIMIT 1;', [siteId, obj.tabId, obj.userId], function(err, rows){
         var now = formatDateParse();
-        var insertStayData = {
-          title: obj.title,
-          url: obj.url,
-          stay_time: "",
-          created: now,
-          modified: now
-        };
         if ( !(obj.tabId in sincloCore[obj.siteKey]) ) {
           sincloCore[obj.siteKey][obj.tabId] = {};
         }
 
         if ( isset(rows) && isset(rows[0]) ) {
           sincloCore[obj.siteKey][obj.tabId]['historyId'] = rows[0].id;
-          timeUpdate(rows[0], obj, now);
+          timeUpdate(rows[0].id, obj, now);
           emit.toMine('setHistoryId', obj);
         }
         else {
@@ -173,14 +165,13 @@ var db = {
 
           pool.query("INSERT INTO t_histories SET ?", insertData,
             function (error,results,fields){
-              if ( isset(error) ) return false;
-              insertStayData['t_histories_id'] = results.insertId;
-              sincloCore[obj.siteKey][obj.tabId].historyId = results.insertId;
+              if ( isset(error) ) {
+                return false;
+              }
+              var historyId = results.insertId;
+              sincloCore[obj.siteKey][obj.tabId].historyId = historyId;
+              timeUpdate(historyId, {}, now);
               emit.toMine('setHistoryId', obj);
-              pool.query("INSERT INTO t_history_stay_logs SET ?", insertStayData,
-                function (error,results,fields){
-                }
-              );
             }
           );
         };
@@ -310,25 +301,24 @@ io.sockets.on('connection', function (socket) {
 
     },
     sendUnreadCnt: function(evName, obj){
-      var sql, ret = {}, tabId = obj.tabId, siteId = companyList[obj.siteKey];
+      var sql, ret = {tabId: obj.tabId}, tabId = obj.tabId, siteId = companyList[obj.siteKey];
 
       sql  = " SELECT chat.id AS chatId, his.visitors_id, his.tab_id, chat.message FROM t_histories AS his";
       sql += " INNER JOIN t_history_chat_logs AS chat ON ( his.id = chat.t_histories_id )";
       sql += " WHERE his.tab_id = ? AND his.m_companies_id = ? AND chat.message_type = 1";
       sql += "   AND chat.m_users_id IS NULL AND chat.message_read_flg != 1 ORDER BY chat.id desc";
-
       pool.query(sql, [tabId, siteId], function(err, rows){
         if ( !isset(err) && (rows.length > 0 && isset(rows[0].chatId))) {
           ret.chatUnreadId = rows[0].chatId;
           ret.chatUnreadCnt = rows.length;
-          emit.toCompany(evName, obj, obj.siteKey);
+          emit.toCompany(evName, ret, obj.siteKey);
         }
         else {
           if ( isset(err) ) {
           }
           ret.chatUnreadId = null;
           ret.chatUnreadCnt = 0;
-          emit.toCompany(evName, obj, obj.siteKey);
+          emit.toCompany(evName, ret, obj.siteKey);
         }
       });
 
@@ -762,7 +752,7 @@ io.sockets.on('connection', function (socket) {
         pool.query('SELECT * FROM t_histories WHERE m_companies_id = ? AND tab_id = ? AND visitors_id = ? ORDER BY id DESC LIMIT 1;', [siteId, info.tabId, info.userId], function(err, rows){
           if ( isset(rows) && isset(rows[0]) ) {
             var now = formatDateParse();
-            timeUpdate(rows[0], {}, now);
+            timeUpdate(rows[0].id, {}, now);
           }
         });
 

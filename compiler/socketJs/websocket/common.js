@@ -246,7 +246,7 @@ var socket, // socket.io
     makeAccessIdTag: function(){
       if ( !check.browser() ) return false;
       if ( !('widget' in window.info) ) return false;
-      window.info.widgetDisplay = false; // デフォルト表示しない
+      window.info.widgetDisplay = null; // デフォルト表示しない
       // ウィジェットを常に表示する
       if ( ('display_type' in window.info.widget) && window.info.widget.display_type === 1 ) {
         window.info.widgetDisplay = true;
