@@ -151,15 +151,15 @@ var socket, // socket.io
       if ( String(widget.showMainImage) !== "2" ) {
       html += '      #sincloBox p#widgetTitle { padding-left: 70px; }';
       }
-      // 画面同期を使用する際
-      if ( window.info.contract.synclo ) {
+      // チャットを使用する際
+      if ( window.info.contract.chat ) {
         html += '      #sincloBox ul#chatTalk { width: 100%; height: 250px; padding: 5px; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0}';
-        html += '      #sincloBox ul#chatTalk li { border-radius: 5px; background-color: #FFF; margin: 5px 0; padding: 5px; font-size: 12px; border: 1px solid #C9C9C9; color: #595959; white-space: pre; color: #8A8A8A; }';
+        html += '      #sincloBox ul#chatTalk li { white-space: pre-wrap!important; border-radius: 5px; background-color: #FFF; margin: 5px 0; padding: 5px; font-size: 12px; border: 1px solid #C9C9C9; color: #595959; white-space: pre; color: #8A8A8A; }';
         html += '      #sincloBox ul#chatTalk li.sinclo_se { ' + chatPosition.se + 'background-color: #FFF; }';
         html += '      #sincloBox ul#chatTalk li.sinclo_re { ' + chatPosition.re + 'background-color:' + faintColor + ' }';
         html += '      #sincloBox section#chatTab textarea { padding: 5px; resize: none; width: 100%; height: 50px; border: 1px solid #E4E4E4; border-radius: 5px; color: #8A8A8A; }';
       }
-      // チャットを使用する際
+      // 画面同期を使用する際
       if ( window.info.contract.synclo ) {
         html += '      #sincloBox section#callTab #telNumber { color: ' + widget.mainColor + '; font-weight: bold; margin: 0 auto; text-align: center }';
         html += '      #sincloBox section#callTab #telIcon { color: ' + widget.mainColor + '; display: block; width: 50px; height: 50px; float: left; background-color: #3EA3DE; border-radius: 25px; padding: 3px }';
