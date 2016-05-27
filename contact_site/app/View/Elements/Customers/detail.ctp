@@ -1,6 +1,5 @@
 <div class="card-shadow m10b">
 	<div id='customer_subtitle'>
-		<?= $this->Html->image('sub_icon.png', ['alt' => '詳細情報', 'width' => 25, 'height' => 25, 'style' => 'margin: 0 15px 0 auto;transform: rotate(45deg);', 'class'=>'fLeft']) ?>
 		<h1 class="fLeft">詳細情報</h1>
 		<!-- 閉じる -->
 		<a ng-if="chatList.indexOf(detailId) < 0" href="javascript:void(0)" ng-click="showDetail(detailId)" class="fRight customer_detail_btn redBtn btn-shadow">
