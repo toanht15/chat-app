@@ -65,6 +65,10 @@ class MWidgetSetting extends AppModel {
             ]
         ],
         'main_image' => [
+            'setImage' => [
+              'rule' => 'setImage',
+              'message' => '画像を選択してください'
+            ],
             'colorcode' => [
               'rule' => C_MATCH_RULE_IMAGE_FILE,
               'allowEmpty' => true,
@@ -111,4 +115,15 @@ class MWidgetSetting extends AppModel {
             ]
         ]
     ];
+
+    public function setImage($value=['main_image' => '']){
+        if (isset($this->data['MWidgetSetting']['show_main_image']) && strcmp($this->data['MWidgetSetting']['show_main_image'], 1) === 0) {
+            if ( empty($value['main_image']) ) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 }
+

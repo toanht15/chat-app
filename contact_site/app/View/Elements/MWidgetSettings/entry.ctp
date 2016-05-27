@@ -79,7 +79,7 @@
 
 				<!-- サブタイトル -->
 				<li>
-					<span><label>サブタイトル</label></span>
+					<span ng-class="{require: subTitleToggle=='1'}"><label>サブタイトル</label></span>
 					<?php $subTitle = $this->ngForm->input('sub_title', [
 						'type' => 'text',
 						'placeholder' => 'サブタイトル',
@@ -102,7 +102,7 @@
 
 				<!-- 説明文 -->
 				<li>
-					<span class="require"><label>説明文</label></span>
+					<span ng-class="{require: descriptionToggle=='1'}"><label>説明文</label></span>
 					<?php $description = $this->ngForm->input('description', [
 						'type' => 'text',
 						'placeholder' => '説明文',
@@ -145,8 +145,8 @@
 
 				<!-- 画像の設定 -->
 				<li>
-					<span><label>画像の設定</label></span>
-					<div ng-init="mainImageToggle=inputInitToggle('<?=$this->formEx->val($this->data['MWidgetSetting'], 'main_image')?>')">
+					<span ng-class="{require: mainImageToggle=='1'}"><label>画像の設定</label></span>
+					<div ng-init="mainImageToggle=inputInitToggle('<?=$this->formEx->val($this->data['MWidgetSetting'], 'show_main_image')?>')">
 						<?= $this->Form->hidden('main_image') ?>
 						<label for="showMainImage1"><input type="radio" name="data[MWidgetSetting][show_main_image]" ng-model="mainImageToggle" id="showMainImage1" value="1" >画像を表示する</label><br>
 						<div id="imageSelectBtns" ng-class="{chooseImg: showChooseImg()}">
@@ -159,10 +159,10 @@
 								<a href="javascript:void(0)" ng-if="1!=1">画像をアップロード</a>
 							</div>
 						</div>
+						<?php if ($this->Form->isFieldError('main_image')) echo $this->Form->error('main_image', null, ['ng-if'=>'mainImageToggle=="1"']); ?>
 						<label for="showMainImage2"><input type="radio" name="data[MWidgetSetting][show_main_image]" ng-model="mainImageToggle" id="showMainImage2" value="2" >画像を表示しない</label>
 					</div>
 				</li>
-				<?php if ($this->Form->isFieldError('main_image')) echo $this->Form->error('main_image', null, ['wrap' => 'li']); ?>
 				<!-- 画像の設定 -->
 
 				<!-- 角の丸み -->

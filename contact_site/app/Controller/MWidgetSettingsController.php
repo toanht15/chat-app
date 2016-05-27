@@ -54,6 +54,9 @@ class MWidgetSettingsController extends AppController {
               if ( isset($json['main_color']) ) {
                 $inputData['MWidgetSetting']['main_color'] = $json['main_color'];
               }
+              if ( isset($json['show_main_image']) ) {
+                $inputData['MWidgetSetting']['show_main_image'] = $json['show_main_image'];
+              }
               if ( isset($json['main_image']) ) {
                 $inputData['MWidgetSetting']['main_image'] = $json['main_image'];
               }
@@ -147,6 +150,10 @@ class MWidgetSettingsController extends AppController {
             $settings[$this->MWidgetSetting->styleColumns[$key]] = $val;
           }
         }
+        if ( isset($settings['showMainImage']) && strcmp($settings['showMainImage'], "2") === 0 ) {
+          $settings['mainImage'] = "";
+        }
+
         return json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_FORCE_OBJECT | JSON_NUMERIC_CHECK );
     }
 

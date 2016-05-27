@@ -18,9 +18,10 @@
 		#sincloBox ul#chatTalk li.sinclo_se { border-radius: 5px 5px 0; margin-left: 10px; background-color: #FFF; }
 		#sincloBox ul#chatTalk li.sinclo_re { margin-right: 10px; border-radius: 5px 5px 5px 0; }
 		#sincloBox section#chatTab textarea { padding: 5px; resize: none; width: 100%; height: 50px; border: 1px solid #E4E4E4; border-radius: 5px; color: #8A8A8A; }
-	<?php if ( $coreSettings[C_COMPANY_USE_CHAT] && $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
-		#sincloBox section#callTab { display: none }
+	<?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
 		#sincloBox section#callTab #telNumber { color: {{main_color}}; font-weight: bold; margin: 0 auto; text-align: center }
+		#sincloBox section#callTab #telIcon { background-color: {{main_color}}; display: block; width: 50px; height: 50px; float: left; border-radius: 25px; padding: 3px }
+		#sincloBox section#callTab #telTime { font-weight: bold; color: {{main_color}}; margin: 0 auto; font-size: 10px; text-align: center; padding: 0 0 5px; height: 20px }
 	<?php endif; ?>
 	<?php if ( $coreSettings[C_COMPANY_USE_CHAT] && $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
 		#sincloBox section#navigation { border-width: 0 1px; height: 40px; position: relative; display: block; }
@@ -34,6 +35,7 @@
 		#sincloBox section#navigation ul li[data-tab='call']::before{ background-image: url('<?=C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT?>/img/widget/icon_tel.png'); }
 		#sincloBox section#navigation ul li[data-tab='chat']::before{ background-image: url('<?=C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT?>/img/widget/icon_chat.png'); }
 		#sincloBox section#navigation ul li.selected::before{ background-color: {{main_color}}; }
+		#sincloBox section#callTab { display: none }
 	<?php endif; ?>
 		#sincloBox[data-openflg='true'] p#widgetTitle:after { transform: rotate(0deg); }
 		#sincloBox[data-openflg='false'] p#widgetTitle:after { transform: rotate(180deg); }
@@ -83,7 +85,7 @@
 		<section id="callTab">
 			<div style="height: 50px;margin: 15px 25px;">
 			<!-- アイコン -->
-			<span style="display: block; width: 50px; height: 50px; float: left; background-color: {{main_color}}; border-radius: 25px; padding: 3px;"><img width="19.5" height="33" src="<?=C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT?>/img/call.png" style="margin: 6px 12px"></span>
+			<span id="telIcon"><img width="19.5" height="33" src="<?=C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT?>/img/call.png" style="margin: 6px 12px"></span>
 			<!-- アイコン -->
 
 			<!-- 受付電話番号 -->
@@ -91,7 +93,7 @@
 			<!-- 受付電話番号 -->
 
 			<!-- 受付時間 -->
-			<pre ng-if="display_time_flg == '1'" style="font-weight: bold; color: {{main_color}}; margin: 0 auto; font-size: 10px; text-align: center; padding: 0 0 5px; height: 20px">受付時間： {{time_text}}</pre>
+			<pre id="telTime" ng-if="display_time_flg == '1'">受付時間： {{time_text}}</pre>
 			<!-- 受付時間 -->
 
 			</div>
