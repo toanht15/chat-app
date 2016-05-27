@@ -410,6 +410,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         if ( 'widget' in obj ) { $scope.monitorList[obj.tabId].widget = obj.widget; }
         if ( 'connectToken' in obj ) { $scope.monitorList[obj.tabId].connectToken = obj.connectToken; }
         if ( 'prev' in obj ) { $scope.monitorList[obj.tabId].prev = obj.prev; }
+        if ( 'responderId' in obj ) { $scope.monitorList[obj.tabId].responderId = obj.responderId; }
       }
 
       var tabId = ( obj.subWindow ) ? obj.to : obj.tabId;
@@ -563,6 +564,13 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       else {
         alert('メッセージの送信に失敗しました。');
       }
+    });
+
+    // チャット情報取得関数
+    socket.on('sendChatInfo', function(d){
+      var obj = JSON.parse(d);
+      $scope.monitorList[obj.tabId].chatUnreadId  = obj.chatUnreadId;
+      $scope.monitorList[obj.tabId].chatUnreadCnt = obj.chatUnreadCnt;
     });
 
     // チャットメッセージ既読処理結果関数

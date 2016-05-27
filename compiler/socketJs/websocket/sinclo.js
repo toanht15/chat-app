@@ -152,6 +152,14 @@
         referrer: userInfo.referrer
       });
     },
+    setHistoryId: function(d){
+      if ( window.info.widgetDisplay && window.info.contract.chat ) {
+          // チャット情報読み込み
+          sinclo.chatApi.init();
+          // オートメッセージ読み込み
+          sinclo.trigger.init();
+      }
+    },
     getAccessInfo: function(d) { // guest only
       var obj = common.jParse(d);
       if ( userInfo.accessType !== Number(cnst.access_type.guest) ) return false;

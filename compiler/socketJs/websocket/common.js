@@ -131,7 +131,7 @@ var socket, // socket.io
       html += '      #sincloBox * { box-sizing: border-box; font-size: 12px; font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana;}';
       html += '      #sincloBox span, #sincloBox pre { font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana!important }';
       html += '      #sincloBox span#mainImage { z-index: 2 }';
-      html += '      #sincloBox p#widgetTitle { position:relative; cursor:pointer; border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px 0 0; border: 1px solid ' + widget.mainColor + '; border-bottom:none; background-color: ' + widget.mainColor + ';text-align: center; font-size: 14px;padding: 7px 30px 7px 7px; margin: 0;color: #FFF; height: 32px }';
+      html += '      #sincloBox p#widgetTitle { position:relative; cursor:pointer; border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px 0 0; border: 1px solid ' + widget.mainColor + '; border-bottom:none; background-color: ' + widget.mainColor + ';text-align: center; font-size: 14px;padding: 7px; margin: 0;color: #FFF; height: 32px }';
       html += '      #sincloBox p#widgetTitle:after { background-position-y: 3px; background-image: url("' + window.info.site.files + '/img/widget/yajirushi.png"); top: 6px; right: 6px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear}';
       html += '      #sincloBox[data-openflg="true"] p#widgetTitle:after { transform: rotate(0deg); }';
       html += '      #sincloBox[data-openflg="false"] p#widgetTitle:after { transform: rotate(180deg); }';
@@ -140,7 +140,7 @@ var socket, // socket.io
       html += '      #sincloBox section { display: inline-block; background-color: #FFF; width: 270px; border: 1px solid #E8E7E0; border-top: none; }';
       html += '      #sincloBox section#chatTab { padding-top: 5px;  }';
       // 画像がセットされている場合のスタイル
-      if ( widget.showMainImage !== "" ) {
+      if ( String(widget.showMainImage) !== "2" ) {
       html += '      #sincloBox p#widgetTitle { padding-left: 70px; }';
       }
       // チャットも画面同期も使用する際にはデフォルトで画面同期ウィジェットの表示をnoneにする
@@ -253,7 +253,7 @@ var socket, // socket.io
       if ( check.isset(userInfo.connectToken) ) {
         return false;
       }
-
+console.log('A');
       common.load.finish();
       var sincloBox = document.getElementById('sincloBox');
       if ( sincloBox ) {
@@ -262,6 +262,7 @@ var socket, // socket.io
       if ( userInfo.accessType !== cnst.access_type.host ) {
       var html = common.createWidget();
         $('body').append(html);
+        emit('syncReady', {widget: window.info.widgetDisplay});
         var sincloBox = document.getElementById('sincloBox');
         sincloBox.setAttribute('data-openflg', false);
         sinclo.operatorInfo.header = document.querySelector('#sincloBox #widgetHeader');
@@ -283,10 +284,7 @@ var socket, // socket.io
             }
             $(this).addClass("selected");
         });
-        // オートメッセージ読み込み
-        sinclo.trigger.init();
-        // チャット情報読み込み
-        sinclo.chatApi.init();
+
         if ( ('maxShowTime' in window.info.widget) && String(window.info.widget.maxShowTime).match(/^[0-9]{1,2}$/) !== null ) {
           var maxShowTime = Number(window.info.widget.maxShowTime) * 1000;
           var widgetOpen = storage.s.get('widgetOpen');
@@ -301,7 +299,6 @@ var socket, // socket.io
             }, maxShowTime);
           }
         }
-        emit('syncReady', {widget: window.info.widgetDisplay});
       }
 
     },
@@ -1161,6 +1158,11 @@ var socket, // socket.io
       sinclo.accessInfo(d);
     }); // socket-on: accessInfo
 
+    // 履歴ID割り振り後
+    socket.on("setHistoryId", function(d) {
+      sinclo.setHistoryId(d);
+    }); // socket-on: getAccessInfo
+
     // 情報送信
     socket.on("getAccessInfo", function(d) {
       sinclo.getAccessInfo(d);
@@ -1297,6 +1299,7 @@ function emit(evName, data){
     data.to = userInfo.sendTabId;
     data.prevList = browserInfo.prevList;
   }
+console.log(evName, data);
   socket.emit(evName, JSON.stringify(data));
 }
 
