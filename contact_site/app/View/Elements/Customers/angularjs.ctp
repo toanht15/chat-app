@@ -333,6 +333,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         }
         setTimeout(function(){
           $("#customer_sub").css("display", "block");
+          var chatTalk = document.getElementById('chatTalk');
+          $('#chatTalk').animate({
+            scrollTop: chatTalk.scrollHeight - chatTalk.clientHeight
+          }, 800);
         }, 400);
       }
     };
@@ -365,7 +369,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
       if ( 'connectToken' in obj && 'responderId' in obj) {
         $scope.monitorList[obj.tabId].connectToken = obj.connectToken;
-        // setResponderName(obj.tabId, obj.responderId);
       }
     }
 
