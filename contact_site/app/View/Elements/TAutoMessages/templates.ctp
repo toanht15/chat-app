@@ -43,14 +43,14 @@
 	</li>
 	<li>
 		<div class="input-group clockpicker bt0">
-			<input type="text" class="form-control" ng-model="setItem.startTime" ng-disabled="setItem.referrerCond == '2'" required="">
+			<input type="text" class="form-control" ng-model="setItem.startTime" ng-disabled="setItem.timeSetting == '2'" required="">
 			<span class="input-group-addon">
 				<span class="glyphicon glyphicon-time"></span>
 			</span>
 		</div>
 		<div class="bt0"><span>～</span></div>
 		<div class="input-group clockpicker bt0">
-			<input type="text" class="form-control" ng-model="setItem.endTime" ng-disabled="setItem.referrerCond == '2'" required="">
+			<input type="text" class="form-control" ng-model="setItem.endTime" ng-disabled="setItem.timeSetting == '2'" required="">
 			<span class="input-group-addon">
 				<span class="glyphicon glyphicon-time"></span>
 			</span>
@@ -62,7 +62,7 @@
 <?php /* 参照元URL（リファラー）｜C_AUTO_TRIGGER_REFERRER */ ?>
 <ul ng-if="itemType == '<?=C_AUTO_TRIGGER_REFERRER?>'" class="setReferrer">
 	<li>
-		<span><label>キーワード</label></span>
+		<span><label>URL</label></span>
 		<input type="text" ng-model="setItem.keyword" name="keyword" required="">
 	</li>
 	<li>

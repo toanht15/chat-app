@@ -98,7 +98,7 @@ class autoMessageHelper extends AppHelper {
 			C_STATUS_UNAVAILABLE => "曜日が「%s」で「%s～%s」の間",
 			C_STATUS_AVAILABLE => "曜日が「%s」"
 		],
-		C_AUTO_TRIGGER_REFERRER => "参照元URLの%sにて「%s」という文字列が%s",
+		C_AUTO_TRIGGER_REFERRER => "参照元URLにて「%s」という文字列が%s",
 		C_AUTO_TRIGGER_SEARCH_KEY => "検索キーワードにて「%s」という文字列が%s",
 	];
 
@@ -230,12 +230,10 @@ class autoMessageHelper extends AppHelper {
 				case C_AUTO_TRIGGER_REFERRER: // 参照元URL（リファラー）
 					foreach((array)$items as $v) {
 						if ( isset($v['keyword'])
-							&& isset($v['targetName']) && !empty($this->dataList['targetName']['dataList'][$v['targetName']])
 							&& isset($v['referrerCond']) && !empty($this->dataList['referrerCond']['dataList'][$v['referrerCond']])
 						) {
 							$retList[] = sprintf(
 								$this->labelList[$itemId],
-								$this->dataList['targetName']['dataList'][$v['targetName']],
 								$v['keyword'],
 								$this->dataList['referrerCond']['dataList'][$v['referrerCond']]
 							);

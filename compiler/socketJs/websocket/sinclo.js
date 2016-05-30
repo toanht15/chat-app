@@ -461,10 +461,18 @@
           cn = "sinclo_re";
         }
         this.chatApi.createMessage(cn, obj.chatMessage);
+        // オートメッセージの内容をDBに保存し、オブジェクトから削除する
+        emit("sendAutoChat", {messageList: sinclo.chatApi.autoMessages});
+        sinclo.chatApi.autoMessages = [];
       }
       else {
         alert('メッセージの送信に失敗しました。');
       }
+    },
+    sendReqAutoChatMessage: function(d){
+      // 自動メッセージの情報を渡す（保存の為）
+      var obj = common.jParse(d);
+      emit("sendAutoChatMessage", {messages: sinclo.chatApi.autoMessages, chatToken: obj.chatToken});
     },
     syncStop: function(d){
       var obj = common.jParse(d);
@@ -479,6 +487,7 @@
         company: 2,
         auto: 3
       },
+      autoMessages: [],
       init: function(){
         $("#sincloChatMessage").on("keydown", function(e){
           if ( e.keyCode === 13 ) {
@@ -529,7 +538,10 @@
                     ret = this.setOrSetting(messages[i]['activity']);
                 }
                 if ( typeof(ret) === "number" ) {
-                    this.setAction(messages[i]['action_type'], messages[i]['activity']);
+                    var message = messages[i];
+                    setTimeout(function(){
+                        sinclo.trigger.setAction(message['id'], message['action_type'], message['activity']);
+                    }, ret);
                 }
             }
         },
@@ -546,13 +558,8 @@
                 switch(Number(keys[i])) {
                     case 1: // 滞在時間
                       timer = this.judge.stayTime(conditions[0]);
-                      if (typeof(timer) !== "number") {
-                        return null;
-                      }
-                      else {
-                        if ( ret < timer ) {
-                          ret = Number(timer);
-                        }
+                      if ( ret < timer ) {
+                        ret = Number(timer);
                       }
                       break;
                     case 2: // 訪問回数
@@ -607,10 +614,8 @@
                     case 1: // 滞在時間
                       for (var u = 0; u < conditions.length; u++) {
                         timer = this.judge.stayTime(conditions[u]);
-                        if (typeof(timer) === "number") {
-                          if ( ret < timer ) {
-                            ret = Number(timer);
-                          }
+                        if ( ret < timer ) {
+                          ret = Number(timer);
                         }
                       }
                       break;
@@ -662,15 +667,14 @@
             }
             return ret;
         },
-        setAction: function(type, cond){
+        setAction: function(id, type, cond){
             // TODO 今のところはメッセージ送信のみ、拡張予定
             if ( String(type) === "1" && ('message' in cond)) {
-
-                emit('sendChat', {
-                  historyId: sinclo.chatApi.historyId,
+                sinclo.chatApi.createMessage("sinclo_re", cond.message);
+                sinclo.chatApi.autoMessages.push({
+                  chatId:id,
                   chatMessage:cond.message,
-                  mUserId: null,
-                  messageType: sinclo.chatApi.messageType.auto
+                  created: common.formatDateParse()
                 });
             }
         },
@@ -736,12 +740,11 @@
                       break;
                 }
                 var term = (Number(userInfo.pageTime) - Number(userInfo.time));
-
                 if ( term < time ) {
                     return time-term;
                 }
                 else {
-                	return null;
+                	return 0;
                 }
 
             },

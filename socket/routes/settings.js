@@ -16,7 +16,7 @@ var getWidgetSettingSql  = "SELECT ws.*, com.core_settings FROM m_widget_setting
 
 var getTriggerListSql  = "SELECT am.* FROM t_auto_messages AS am ";
     getTriggerListSql += " INNER JOIN (SELECT * FROM m_companies WHERE company_key = ? AND del_flg = 0 ) AS com  ON ( com.id = am.m_companies_id )";
-    getTriggerListSql += " WHERE am.active_flg = 0 AND am.del_flg = 0;";
+    getTriggerListSql += " WHERE am.active_flg = 0 AND am.del_flg = 0 AND am.action_type IN (?);";
 
 /* GET home page. */
 router.get("/", function(req, res, next) {
@@ -52,7 +52,13 @@ router.get("/", function(req, res, next) {
                     display_time_flg: settings.displayTimeFlg
                 };
 
-                pool.query(getTriggerListSql, siteKey,
+                actionTypeList = [];
+                // チャット
+                if (('chat' in core_settings) && core_settings['chat']) {
+                    actionTypeList.push('1');
+                }
+
+                pool.query(getTriggerListSql, [siteKey, actionTypeList.join(",")],
                     function(err, rows){
                         for(var i=0; i<rows.length; i++){
                             if ( !(rows[i].trigger_type in sendData['messages']) ) {

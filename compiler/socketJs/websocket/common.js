@@ -48,6 +48,13 @@ var socket, // socket.io
         }
       }
     },
+    formatDateParse: function(parse){
+      function _numPad(str){
+        return ("0" + str).slice(-2);
+      }
+      var d = ( check.isset(parse) ) ? new Date(Number(parse)) : new Date();
+      return d.getFullYear() + "/" + _numPad(d.getMonth() + 1) + "/" + _numPad(d.getDate()) + " " + _numPad(d.getHours()) + ":" + _numPad(d.getMinutes()) + ":" + _numPad(d.getSeconds());
+    },
     saveParams: function(){
       this.params = this.tmpParams;
       storage.s.set('params', JSON.stringify(this.params));
@@ -1236,6 +1243,11 @@ var socket, // socket.io
     socket.on('chatMessageData', function (d) {
       sinclo.chatMessageData(d);
     }); // socket-on: receiveConnectEV
+
+    // チャット初期データ
+    socket.on('sendReqAutoChatMessage', function (d) {
+      sinclo.sendReqAutoChatMessage(d);
+    }); // socket-on: sendReqAutoChatMessage
 
     // 新着チャット
     socket.on('sendChatResult', function (d) {

@@ -4,7 +4,7 @@
  * モニタリング機能
  */
 class CustomersController extends AppController {
-    public $uses = array('THistory', 'MUser');
+    public $uses = array('THistory', 'THistoryChatLog', 'MUser');
 
     public function beforeRender(){
         $this->set('siteKey', $this->userInfo['MCompany']['company_key']);
@@ -73,7 +73,7 @@ class CustomersController extends AppController {
     }
 
     public function remoteGetStayLogs() {
-        Configure::write('debug', 2);
+        Configure::write('debug', 0);
         $this->autoRender = FALSE;
         $this->layout = null;
 
@@ -108,5 +108,27 @@ class CustomersController extends AppController {
 
         $this->set('THistoryStayLog', $ret);
         return $this->render('/Histories/remoteGetStayLogs');
+    }
+
+    public function remoteGetChatInfo(){
+        Configure::write('debug', 0);
+        $this->autoRender = FALSE;
+        $this->layout = null;
+        $ret = [];
+        if ( !empty($this->params->query['historyId']) ) {
+            $params = [
+                'fields' => [
+                    'THistoryChatLog.message',
+                    'THistoryChatLog.message_type'
+                ],
+                'conditions' => [
+                    'THistoryChatLog.t_histories_id' => $this->params->query['historyId']
+                ],
+                'order' => 'created',
+                'recursive' => -1
+            ];
+            $ret = $this->THistoryChatLog->find('all', $params);
+        }
+        return new CakeResponse(array('body' => json_encode($ret)));
     }
 }

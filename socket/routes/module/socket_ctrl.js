@@ -260,7 +260,7 @@ io.sockets.on('connection', function (socket) {
         var historyId = getSessionId(obj.siteKey, obj.tabId, 'historyId');
         if ( historyId ) {
             chatData.historyId = historyId;
-            pool.query('SELECT id, message, message_type as messageType FROM t_history_chat_logs WHERE t_histories_id = ?;', [chatData.historyId], function(err, rows){
+            pool.query('SELECT id, message, message_type as messageType FROM t_history_chat_logs WHERE t_histories_id = ? ORDER BY created;', [chatData.historyId], function(err, rows){
               chatData.messages = ( isset(rows) ) ? rows : [];
               obj.chat = chatData;
               emit.toUser('chatMessageData', obj, sId);
@@ -278,9 +278,10 @@ io.sockets.on('connection', function (socket) {
         visitors_id: d.userId,
         m_users_id: d.mUserId,
         message: d.chatMessage,
-        message_type: d.messageType,
-        created: formatDateParse()
+        message_type: d.messageType
       };
+
+      insertData['created'] = (('created' in d)) ? d.created : formatDateParse();
 
       pool.query('INSERT INTO t_history_chat_logs SET ?', insertData, function(error,results,fields){
         if ( !isset(error) ) {
@@ -300,8 +301,8 @@ io.sockets.on('connection', function (socket) {
       });
 
     },
-    sendUnreadCnt: function(evName, obj){
-      var sql, ret = {tabId: obj.tabId}, tabId = obj.tabId, siteId = companyList[obj.siteKey];
+    sendUnreadCnt: function(evName, obj, toUserFlg){
+      var sql, ret = {tabId: obj.tabId, chatUnreadId:null, chatUnreadCnt:0}, tabId = obj.tabId, siteId = companyList[obj.siteKey];
 
       sql  = " SELECT chat.id AS chatId, his.visitors_id, his.tab_id, chat.message FROM t_histories AS his";
       sql += " INNER JOIN t_history_chat_logs AS chat ON ( his.id = chat.t_histories_id )";
@@ -311,14 +312,10 @@ io.sockets.on('connection', function (socket) {
         if ( !isset(err) && (rows.length > 0 && isset(rows[0].chatId))) {
           ret.chatUnreadId = rows[0].chatId;
           ret.chatUnreadCnt = rows.length;
-          emit.toCompany(evName, ret, obj.siteKey);
         }
-        else {
-          if ( isset(err) ) {
-          }
-          ret.chatUnreadId = null;
-          ret.chatUnreadCnt = 0;
-          emit.toCompany(evName, ret, obj.siteKey);
+        emit.toCompany(evName, ret, obj.siteKey);
+        if ( toUserFlg ) {
+          emit.toMine(evName, ret);
         }
       });
 
@@ -387,7 +384,7 @@ io.sockets.on('connection', function (socket) {
     var obj = JSON.parse(data);
     obj.term = timeCalculator(obj);
     emit.toCompany("sendCustomerInfo", obj, obj.siteKey);
-    chatApi.sendUnreadCnt("sendChatInfo", obj);
+    chatApi.sendUnreadCnt("sendChatInfo", obj, false);
   });
 
   socket.on("getCustomerInfo", function(data) {
@@ -445,7 +442,7 @@ io.sockets.on('connection', function (socket) {
     }
     // TODO ここを要求したユーザのみに送るようにする
     emit.toCompany("receiveAccessInfo", obj, obj.siteKey);
-    chatApi.sendUnreadCnt("sendChatInfo", obj);
+    chatApi.sendUnreadCnt("sendChatInfo", obj, false);
   });
   // -----------------------------------------------------------------------
   //  モニタリング通信接続前
@@ -644,6 +641,26 @@ io.sockets.on('connection', function (socket) {
     chatApi.get(obj, socket.id);
   });
 
+  // チャットデータ取得(オートメッセージのみ)
+  socket.on("getAutoChatMessage", function(d){
+    var obj = JSON.parse(d);
+    if (!getSessionId(obj.siteKey, obj.tabId, 'sessionId')) return false;
+    var sId = getSessionId(obj.siteKey, obj.tabId, 'sessionId');
+    emit.toUser('sendReqAutoChatMessage', d, sId);
+  });
+
+  // チャットデータ取得(オートメッセージのみ)
+  socket.on("sendAutoChatMessage", function(d){
+    var obj = JSON.parse(d);
+
+    var ret = {};
+        ret['messages'] = obj['messages'];
+        ret['chatToken'] = obj['chatToken'];
+        ret['tabId'] = obj['tabId'];
+        ret['historyId'] = getSessionId(obj.siteKey, obj.tabId, 'historyId');
+    emit.toCompany('resAutoChatMessage', ret, obj.siteKey);
+  });
+
   // チャット開始
   socket.on("chatStart", function(d){
     var obj = JSON.parse(d);
@@ -671,10 +688,29 @@ io.sockets.on('connection', function (socket) {
     chatApi.set(obj);
   });
 
-  // 新着チャット
-  socket.on("clientSendChat", function(d){
+  // オートチャット
+  socket.on("sendAutoChat", function(d){
     var obj = JSON.parse(d);
-    chatApi.set(obj);
+    for (var i = 0; obj.messageList.length > i; i++) {
+        var message = obj.messageList[i];
+        pool.query("SELECT * FROM t_auto_messages WHERE id = ?  AND m_companies_id = ? AND del_flg = 0 AND active_flg = 0 AND action_type = 1", [message.chatId, companyList[obj.siteKey]], function(err, rows){
+            if ( !err && (rows && rows[0]) ) {
+                var activity = JSON.parse(rows[0].activity);
+                var ret = {
+                    siteKey: obj.siteKey,
+                    tabId: obj.tabId,
+                    userId: obj.userId,
+                    mUserId: null,
+                    chatMessage: activity.message,
+                    messageType: 3,
+                    created: message.created
+                };
+
+                chatApi.set(ret);
+            }
+        });
+    }
+
   });
 
   // 既読操作
@@ -684,7 +720,7 @@ io.sockets.on('connection', function (socket) {
       obj.historyId = sincloCore[obj.siteKey][obj.tabId].historyId;
       pool.query("UPDATE t_history_chat_logs SET message_read_flg = 1 WHERE t_histories_id = ? AND id <= ?;",
         [obj.historyId, obj.chatId], function(err, ret, fields){
-          chatApi.sendUnreadCnt('retReadChatMessage', obj);
+          chatApi.sendUnreadCnt('retReadChatMessage', obj, true);
         }
       );
     }
@@ -756,23 +792,6 @@ io.sockets.on('connection', function (socket) {
           }
         });
 
-        if ( ('historyId' in core) ) {
-          // チャット使用状況を確認
-          pool.query('SELECT * FROM t_history_chat_logs WHERE message_type != 3 AND t_histories_id = ? ORDER BY id DESC LIMIT 1', [core.historyId], function(err, rows){
-            var where = " WHERE message_type = 3 AND t_histories_id = ? ";
-            // 使用している場合は、最後に手動送信した後からを削除対象とする
-            if ( isset(rows) && isset(rows[0])) {
-              where += " AND id > "+ rows[0].id;
-            }
-
-            // 自動送信履歴を削除
-            pool.query('DELETE FROM t_history_chat_logs' + where, [core.historyId], function(err, rows) {
-
-            });
-
-          });
-
-        }
       }
 
       if ( 'timeoutTimer' in sincloCore[info.siteKey][info.tabId] ) {
