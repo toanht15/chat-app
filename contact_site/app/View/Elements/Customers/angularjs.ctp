@@ -450,7 +450,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var tabId = ( obj.subWindow ) ? obj.to : obj.tabId;
       if ( 'connectToken' in obj && 'responderId' in obj) {
         $scope.monitorList[tabId].connectToken = obj.connectToken;
-        setResponderName(tabId, obj.responderId);
       }
     });
 

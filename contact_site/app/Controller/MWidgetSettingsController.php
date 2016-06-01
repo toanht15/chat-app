@@ -45,11 +45,14 @@ class MWidgetSettingsController extends AppController {
               if ( isset($json['show_position']) ) {
                 $inputData['MWidgetSetting']['show_position'] = $json['show_position'];
               }
-              if ( isset($json['description']) ) {
-                $inputData['MWidgetSetting']['description'] = $json['description'];
+              if ( isset($json['title']) ) {
+                $inputData['MWidgetSetting']['title'] = $json['title'];
               }
               if ( isset($json['sub_title']) ) {
                 $inputData['MWidgetSetting']['sub_title'] = $json['sub_title'];
+              }
+              if ( isset($json['description']) ) {
+                $inputData['MWidgetSetting']['description'] = $json['description'];
               }
               if ( isset($json['main_color']) ) {
                 $inputData['MWidgetSetting']['main_color'] = $json['main_color'];
@@ -59,6 +62,18 @@ class MWidgetSettingsController extends AppController {
               }
               if ( isset($json['main_image']) ) {
                 $inputData['MWidgetSetting']['main_image'] = $json['main_image'];
+              }
+              if ( isset($json['tel']) ) {
+                $inputData['MWidgetSetting']['tel'] = $json['tel'];
+              }
+              if ( isset($json['content']) ) {
+                $inputData['MWidgetSetting']['content'] = $json['content'];
+              }
+              if ( isset($json['display_time_flg']) ) {
+                $inputData['MWidgetSetting']['display_time_flg'] = $json['display_time_flg'];
+              }
+              if ( isset($json['time_text']) ) {
+                $inputData['MWidgetSetting']['time_text'] = $json['time_text'];
               }
               if ( isset($json['radius_ratio']) ) {
                 $inputData['MWidgetSetting']['radius_ratio'] = $json['radius_ratio'];
