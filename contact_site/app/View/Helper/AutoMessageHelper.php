@@ -95,8 +95,8 @@ class autoMessageHelper extends AppHelper {
 		C_AUTO_TRIGGER_VISIT_CNT => "訪問回数が %d回%s",
 		C_AUTO_TRIGGER_STAY_PAGE => "ページの%sにて「%s」という文字列が%s",
 		C_AUTO_TRIGGER_DAY_TIME => [
-			C_STATUS_UNAVAILABLE => "曜日が「%s」で「%s～%s」の間",
-			C_STATUS_AVAILABLE => "曜日が「%s」"
+			C_SELECT_CAN => "曜日が「%s」曜日で「%s～%s」の間",
+			C_SELECT_CAN_NOT => "曜日が「%s」曜日",
 		],
 		C_AUTO_TRIGGER_REFERRER => "参照元URLにて「%s」という文字列が%s",
 		C_AUTO_TRIGGER_SEARCH_KEY => "検索キーワードにて「%s」という文字列が%s",
@@ -210,17 +210,16 @@ class autoMessageHelper extends AppHelper {
 								$i++;
 							}
 							$dayList = implode($tmpDayList, ",");
-
-							if ( strcmp($v['timeSetting'],C_STATUS_AVAILABLE) === 0
+							if ( intval($v['timeSetting']) === intval(C_SELECT_CAN)
 								&& isset($v['startTime']) && isset($v['endTime'])
 							) {
 								$retList[] = sprintf(
-									$this->labelList[$itemId][C_STATUS_AVAILABLE], $dayList, $v['startTime'], $v['endTime']
+									$this->labelList[$itemId][C_SELECT_CAN], $dayList, $v['startTime'], $v['endTime']
 								);
 							}
 							else {
 								$retList[] = sprintf(
-									$this->labelList[$itemId][C_STATUS_UNAVAILABLE], $dayList, $v['startTime'], $v['endTime']
+									$this->labelList[$itemId][C_SELECT_CAN_NOT], $dayList
 								);
 							}
 						}

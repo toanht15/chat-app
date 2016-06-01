@@ -96,6 +96,16 @@ sincloApp.controller('MainCtrl', function($scope) {
 				 // TODO 後々動的に
 				'message': angular.element("#TAutoMessageAction").val()
 		};
+		var keys = Object.keys(setList['conditions']);
+		if ("<?=C_AUTO_TRIGGER_DAY_TIME?>" in setList['conditions']) {
+			for(var i = 0; setList['conditions']["<?=C_AUTO_TRIGGER_DAY_TIME?>"].length > i; i++){
+				if ( 'timeSetting' in setList['conditions']["<?=C_AUTO_TRIGGER_DAY_TIME?>"][i] && Number(setList['conditions']["<?=C_AUTO_TRIGGER_DAY_TIME?>"][i].timeSetting) === 2 ) {
+					delete setList['conditions']["<?=C_AUTO_TRIGGER_DAY_TIME?>"][i]['startTime'];
+					delete setList['conditions']["<?=C_AUTO_TRIGGER_DAY_TIME?>"][i]['endTime'];
+				}
+			}
+		}
+
 		$('#TAutoMessageActivity').val(JSON.stringify(setList));
 		submitAct();
 	};
@@ -157,12 +167,18 @@ sincloApp.directive('ngShowonhover',function() {
 				}
 				if ( 'startTime' in form ) {
 					if ('required' in form.startTime.$error) {
-						messageList.push("開始時間が未選択です");
+						messageList.push("開始時間が未入力です");
+					}
+					if ('pattern' in form.startTime.$error) {
+						messageList.push("開始時間は「00:00」の形で入力してください");
 					}
 				}
 				if ( 'endTime' in form ) {
 					if ('required' in form.endTime.$error) {
-						messageList.push("開始時間が未選択です");
+						messageList.push("終了時間が未入力です");
+					}
+					if ('pattern' in form.endTime.$error) {
+						messageList.push("終了時間は「00:00」の形で入力してください");
 					}
 				}
 

@@ -55,21 +55,36 @@ class TAutoMessage extends AppModel {
 			if ( count($items) === 0 ) return false;
 			// 条件設定リストをセット
 			$defaultList = $triggerList[$itemType]['default'];
-
 			// 条件単位の設定ごと
 			foreach( (array)$items as $itemId => $item ){
 
 				// 設定単位ごと
 				foreach( (array)$defaultList as $field => $value ){
-					// キーが存在しない
-					if (!isset($item[$field])) return false;
 
-					if (is_array($item[$field])) {
+					if (isset($item[$field]) && is_array($item[$field])) {
 						if (!array_search(true, $item[$field], true)) {
 							return false;
 						}
 					}
+					elseif (!isset($item[$field])) {
+						// 曜日・日時の開始/終了時間のチェック
+						if ((strcmp($field, "startTime") === 0 || strcmp($field, "endTime") === 0)) {
+							// 時間を使用しなければスルー
+							if ( isset($item['timeSetting']) && strcmp($item['timeSetting'], C_SELECT_CAN_NOT) === 0 ) {
+								continue;
+							}
+							return false;
+						}
+					}
 					else {
+
+						// 曜日・日時の開始/終了時間のチェック
+						if ((strcmp($field, "startTime") === 0 || strcmp($field, "endTime") === 0)) {
+							if ( !preg_match(C_MATCH_RULE_TIME, $item[$field]) ) {
+								return false;
+							}
+						}
+
 						// 値が未入力のものはエラー
 						if ( strcmp($item[$field], "") === 0 ) {
 							return false;

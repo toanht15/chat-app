@@ -32,6 +32,7 @@ define('C_OPERATOR_ACTIVE', 1); // 在籍
 
 // 正規表現
 define('C_MATCH_RULE_TEL', '/^\+?(\d|-)*$/'); // TEL
+define('C_MATCH_RULE_TIME', '/^(24:00|2[0-3]:[0-5][0-9]|[0-1]?[0-9]:[0-5][0-9])$/'); // 時間 H:i
 define('C_MATCH_RULE_COLOR_CODE', '/^#([0-9|a-f|A-F]{3}|[0-9|a-f|A-F]{6})$/');
 define('C_MATCH_RULE_IMAGE_FILE', '/^[a-zA-Z0-9_-]*.(png|jpg|git){1}$/i');
 
@@ -58,6 +59,10 @@ define('C_AUTO_TRIGGER_SEARCH_KEY', 6); // 検索キーワード
 
 // オートメッセージ機能－アクション種別コード
 define('C_AUTO_ACTION_TYPE_SENDMESSAGE', 1); // チャットメッセージを送る
+
+// する/しない設定
+define('C_SELECT_CAN', 1); // する
+define('C_SELECT_CAN_NOT', 2); // しない
 
 // 条件設定
 define('C_COINCIDENT', 1); // 全て一致
@@ -147,7 +152,7 @@ $config['outMessageTriggerList'] = [
               "mon" => false, "tue" => false, "wed" => false, "thu" => false,
               "fri" => false, "sat" => false, "sun" => false
             ],
-            "timeSetting" => 1,
+            "timeSetting" => C_SELECT_CAN,
             "startTime" => "09:00",
             "endTime" => "18:00",
         ]

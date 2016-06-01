@@ -43,14 +43,14 @@
 	</li>
 	<li>
 		<div class="input-group clockpicker bt0">
-			<input type="text" class="form-control" ng-model="setItem.startTime" ng-disabled="setItem.timeSetting == '2'" required="">
+			<input type="text" class="form-control" name="startTime" ng-pattern="/^(24:00|2[0-3]:[0-5][0-9]|[0-1]?[0-9]:[0-5][0-9])$/" ng-model="setItem.startTime" ng-disabled="setItem.timeSetting == '2'" ng-required="setItem.timeSetting == '1'">
 			<span class="input-group-addon">
 				<span class="glyphicon glyphicon-time"></span>
 			</span>
 		</div>
 		<div class="bt0"><span>～</span></div>
 		<div class="input-group clockpicker bt0">
-			<input type="text" class="form-control" ng-model="setItem.endTime" ng-disabled="setItem.timeSetting == '2'" required="">
+			<input type="text" class="form-control" name="endTime" ng-pattern="/^(24:00|2[0-3]:[0-5][0-9]|[0-1]?[0-9]:[0-5][0-9])$/" ng-model="setItem.endTime" ng-disabled="setItem.timeSetting == '2'" ng-required="setItem.timeSetting == '1'">
 			<span class="input-group-addon">
 				<span class="glyphicon glyphicon-time"></span>
 			</span>
