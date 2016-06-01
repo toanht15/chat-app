@@ -174,8 +174,6 @@
                 if ( window.info.contract.chat ) {
                     // チャット情報読み込み
                     sinclo.chatApi.init();
-                    // オートメッセージ読み込み
-                    sinclo.trigger.init();
                 }
         };
 
@@ -445,11 +443,14 @@
       for (var i = 0; i < obj.chat.messages.length; i++) {
         var chat = obj.chat.messages[i],
             cn = (chat.messageType == 1) ? "sinclo_se" : "sinclo_re";
-        if (chat.messageReadFlg && cs === "sinclo_re") {
+        if (Number(chat.messageReadFlg) === 0 && chat.messageType === sinclo.chatApi.messageType.company) {
             this.chatApi.unread++;
         }
         this.chatApi.createMessage(cn, chat.message);
       }
+      // オートメッセージ読み込み
+      sinclo.trigger.init();
+      // 未読数
       sinclo.chatApi.showUnreadCnt();
     },
     sendChatResult: function(d){
@@ -457,12 +458,15 @@
       if ( obj.tabId !== userInfo.tabId ) return false;
       var elm = document.getElementById('sincloChatMessage'), cn;
       if ( obj.ret ) {
-        if (obj.messageType === sinclo.chatApi.messageType.customer) {
+        if (obj.messageType === sinclo.chatApi.messageType.company) {
+          cn = "sinclo_re";
+        }
+        else if (obj.messageType === sinclo.chatApi.messageType.customer) {
           cn = "sinclo_se";
           elm.value = "";
         }
-        else {
-          cn = "sinclo_re";
+        if (obj.messageType === sinclo.chatApi.messageType.auto) {
+          return false;
         }
         this.chatApi.createMessageUnread(cn, obj.chatMessage);
         // オートメッセージの内容をDBに保存し、オブジェクトから削除する
@@ -483,6 +487,14 @@
       syncEvent.stop(false);
       userInfo.syncInfo.unset();
       common.makeAccessIdTag();
+      var sincloBox = document.getElementById('sincloBox');
+      sincloBox.style.display = "block";
+      sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
+      sincloBox.setAttribute('data-openflg', false);
+      if ( window.info.contract.chat ) {
+          // チャット情報読み込み
+          sinclo.chatApi.init();
+      }
     },
     chatApi: {
         historyId: null,
@@ -541,20 +553,23 @@
                 sinclo.chatApi.showUnreadCnt();
             }
         },
-        showUnreadCnt: function( ){
+        showUnreadCnt: function(cnt){
             var elmId = "sincloChatUnread";
-
+            var unreadIcon = document.getElementById(elmId);
+            if ( unreadIcon ) {
+                unreadIcon.parentNode.removeChild(unreadIcon);
+            }
             if ( Number(sinclo.chatApi.unread) > 0 ) {
                 var em = document.createElement('em');
                 em.id = elmId;
                 em.textContent = sinclo.chatApi.unread;
                 var mainImg = document.getElementById('mainImage');
-                mainImg.appendChild(em);
-            }
-            else {
-                var unreadIcon = document.getElementById(elmId);
-                if ( unreadIcon ) {
-                    unreadIcon.parentNode.removeChild(unreadIcon);
+                var titleElm = document.getElementById('widgetTitle');
+                if ( mainImg ) {
+                    mainImg.appendChild(em);
+                }
+                else if (titleElm) {
+                    titleElm.appendChild(em);
                 }
             }
         }
@@ -566,161 +581,155 @@
             var messages = window.info.messages;
             // 設定ごと
             for( var i = 0; messages.length > i; i++ ){
-                var ret = false;
                 // AND
                 if ( Number(messages[i]['activity']['conditionType']) === 1 ) {
-                    ret = this.setAndSetting(messages[i]['activity']);
+                    this.setAndSetting(i, messages[i]['activity'], function(key, ret){
+                        var message = messages[key];
+                        if (typeof(ret) === 'number') {
+                            setTimeout(function(){
+                                sinclo.trigger.setAction(message['id'], message['action_type'], message['activity']);
+                            }, ret);
+                        }
+                    });
                 }
                 // OR
                 else {
-                    ret = this.setOrSetting(messages[i]['activity']);
-                }
-                if ( typeof(ret) === "number" ) {
-                    var message = messages[i];
-                    setTimeout(function(){
-                        sinclo.trigger.setAction(message['id'], message['action_type'], message['activity']);
-                    }, ret);
+                    this.setOrSetting(i, messages[i]['activity'], function(key, ret){
+                        var message = messages[key];
+                        if (typeof(ret) === 'number') {
+                            setTimeout(function(){
+                                sinclo.trigger.setAction(message['id'], message['action_type'], message['activity']);
+                            }, ret);
+                        }
+                    });
                 }
             }
         },
         /**
          * return 即時実行(0)、タイマー実行(ミリ秒)、非実行(null)
          */
-        setAndSetting: function(setting) {
+        setAndSetting: function(key, setting, callback) {
             var keys = Object.keys(setting['conditions']);
             var ret = 0;
             for(var i = 0; keys.length > i; i++){
 
                 var conditions = setting['conditions'][keys[i]];
                 var last = (keys.length === Number(i+1)) ? true : false;
-                var timer = 0;
                 switch(Number(keys[i])) {
                     case 1: // 滞在時間
-                      timer = this.judge.stayTime(conditions[0]);
-                      if ( ret < timer ) {
-                        ret = Number(timer);
-                      }
-                      if (timer === null) {
-                        return null;
-                      }
-
-                      break;
+                        this.judge.stayTime(conditions[0], function(err, timer){
+                            if ( !err && (typeof(timer) === "number" && ret <= timer) ) {
+                                ret = Number(timer);
+                            }
+                            if (err) ret = null;
+                        });
+                        break;
                     case 2: // 訪問回数
-                      timer = (!this.judge.stayCount(conditions[0]));
-                      if (typeof(timer) === "number" && typeof(ret) !== "number") {
-                        ret = 0;
-                      }
-                      else {
-                        return null;
-                      }
-                      break;
+                        this.judge.stayCount(conditions[0], function(err, timer){
+                            if (err) ret = null;
+                        });
+                        break;
                     case 3: // ページ
-                      timer = (!this.judge.page(conditions[0]));
-                      if (typeof(timer) === "number" && typeof(ret) !== "number") {
-                        ret = 0;
-                      }
-                      else {
-                        return null;
-                      }
-                      break;
+                        this.judge.page(conditions[0], function(err, timer){
+                            if (err) ret = null;
+                        });
+                        break;
                     case 4: // 曜日・時間
-                      timer = this.judge.dayTime(conditions[0]);
-                      if (typeof(timer) !== "number") return null;
-                      if ( ret < timer ) {
-                        ret = Number(timer);
-                      }
-                      break;
+                        this.judge.dayTime(conditions[0], function(err, timer){
+                            if ( !err && (typeof(timer) === "number" && ret <= timer) ) {
+                                ret = Number(timer);
+                            }
+                            if (err) ret = null;
+                        });
+                        break;
                     case 5: // リファラー
-                      timer = (!this.judge.referrer(conditions[0]));
-                      if (typeof(timer) === "number" && typeof(ret) !== "number") {
-                        ret = 0;
-                      }
-                      else {
-                        return null;
-                      }
-                      break;
+                        this.judge.referrer(conditions[0], function(err, timer){
+                            if (err) ret = null;
+                        });
+                        break;
                     case 6: // 検索ワード
-                      timer = (!this.judge.searchWord(conditions[0]));
-                      if (typeof(timer) === "number" && typeof(ret) !== "number") {
-                        ret = 0;
-                      }
-                      else {
-                        return null;
-                      }
-                      break;
+                        this.judge.searchWord(conditions[0], function(err, timer){
+                            if (err) ret = null;
+                        });
+                        break;
                     default:
-                      ret = null;
-                      break;
+                        ret = null;
+                        break;
                 }
+                if (ret === null) break;
             }
-            return ret;
+            callback(key, ret);
         },
         /**
          * return 即時実行(0)、タイマー実行(ミリ秒)、非実行(null)
          */
-        setOrSetting: function(setting) {
+        setOrSetting: function(key, setting, callback) {
             var keys = Object.keys(setting['conditions']);
             var ret = null;
             for(var i = 0; keys.length > i; i++){
                 var conditions = setting['conditions'][keys[i]];
                 var last = (keys.length === Number(i+1)) ? true : false;
-                var timer = 0;
                 switch(Number(keys[i])) {
                     case 1: // 滞在時間
-                      for (var u = 0; u < conditions.length; u++) {
-                        timer = this.judge.stayTime(conditions[u]);
-                        if ( ret < timer ) {
-                          ret = Number(timer);
+                        for (var u = 0; u < conditions.length; u++) {
+                          this.judge.stayTime(conditions[u], function(err, timer){
+                              if ( !err && (typeof(timer) === "number" && ret <= timer) ) {
+                                  ret = Number(timer);
+                              }
+                          });
                         }
-                      }
-                      break;
+                        break;
                     case 2: // 訪問回数
-                      for (var u = 0; u < conditions.length; u++) {
-                        timer = this.judge.stayCount(conditions[u]);
-                        if (typeof(timer) === "number" && typeof(ret) !== "number") {
-                          ret = 0;
+                        for (var u = 0; u < conditions.length; u++) {
+                          this.judge.stayCount(conditions[u], function(err, timer){
+                              if ( !err ) {
+                                  ret = 0;
+                              }
+                          });
                         }
-                      }
-                      break;
+                        break;
                     case 3: // ページ
-                      for (var u = 0; u < conditions.length; u++) {
-                        timer = this.judge.page(conditions[u]);
-                        if (typeof(timer) === "number" && typeof(ret) !== "number") {
-                          ret = 0;
+                        for (var u = 0; u < conditions.length; u++) {
+                          this.judge.page(conditions[u], function(err, timer){
+                              if ( !err ) {
+                                  ret = 0;
+                              }
+                          });
                         }
-                      }
-                      break;
+                        break;
                     case 4: // 曜日・時間
-                      for (var u = 0; u < conditions.length; u++) {
-                        timer = this.judge.dayTime(conditions[u]);
-                        if (typeof(timer) === "number"){
-                          if ( typeof(ret) !== "number" || (typeof(ret) === "number" && ret < timer) ) {
-                            ret = Number(timer);
-                          }
+                        for (var u = 0; u < conditions.length; u++) {
+                          this.judge.dayTime(conditions[u], function(err, timer){
+                              if ( !err && (typeof(timer) === "number" && ret <= timer) ) {
+                                  ret = Number(timer);
+                              }
+                          });
                         }
-                      }
-                      break;
+                        break;
                     case 5: // リファラー
-                      for (var u = 0; u < conditions.length; u++) {
-                        timer = this.judge.referrer(conditions[u]);
-                        if (typeof(timer) === "number" && typeof(ret) !== "number") {
-                          ret = 0;
+                        for (var u = 0; u < conditions.length; u++) {
+                          this.judge.referrer(conditions[u], function(err, timer){
+                              if ( !err ) {
+                                  ret = 0;
+                              }
+                          });
                         }
-                      }
-                      break;
+                        break;
                     case 6: // 検索ワード
-                      for (var u = 0; u < conditions.length; u++) {
-                        timer = this.judge.searchWord(conditions[u]);
-                        if (typeof(timer) === "number" && typeof(ret) !== "number") {
-                          ret = 0;
+                        for (var u = 0; u < conditions.length; u++) {
+                          this.judge.searchWord(conditions[u], function(err, timer){
+                              if ( !err ) {
+                                  ret = 0;
+                              }
+                          });
                         }
-                      }
-                      break;
+                        break;
                     default:
-                      break;
+                        break;
                 }
             }
-            return ret;
+
+            callback(key, ret);
         },
         setAction: function(id, type, cond){
             // TODO 今のところはメッセージ送信のみ、拡張予定
@@ -780,8 +789,8 @@
             }
         },
         judge: {
-            stayTime: function(cond){
-                if (!('stayTimeType' in cond) || !('stayTimeRange' in cond )) return null;
+            stayTime: function(cond, callback){
+                if (!('stayTimeType' in cond) || !('stayTimeRange' in cond )) callback(true, null);
                 var time = 0;
                 switch(Number(cond.stayTimeType)) {
                     case 1: // 秒
@@ -795,26 +804,36 @@
                       break;
                 }
                 var term = (Number(userInfo.pageTime) - Number(userInfo.time));
-                if ( term < time ) {
-                    return time-term;
+                if ( term <= time ) {
+                    callback(false, (time-term));
                 }
                 else {
-                	return 0;
+                	callback(true, null);
                 }
 
             },
-            stayCount: function(cond){
-                if (!('visitCntCond' in cond) || !('visitCnt' in cond )) return null;
-                return (sinclo.trigger.common.numMatch(cond.visitCntCond, userInfo.getStayCount(), cond.visitCnt)) ? 0 : null;
+            stayCount: function(cond, callback){
+                if (!('visitCntCond' in cond) || !('visitCnt' in cond )) callback(true, null);
+                if (sinclo.trigger.common.numMatch(cond.visitCntCond, userInfo.getStayCount(), cond.visitCnt)) {
+                    callback(false, 0);
+                }
+                else {
+                    callback(false, 0);
+                }
             },
-            page: function(cond){
-                if (!('keyword' in cond) || !('targetName' in cond ) || !('stayPageCond' in cond )) return null;
+            page: function(cond, callback){
+                if (!('keyword' in cond) || !('targetName' in cond ) || !('stayPageCond' in cond )) callback(true, null);
                 var target = ( Number(cond.targetName) === 1 ) ? common.title() : location.href ;
-                return (sinclo.trigger.common.pregMatch(cond.stayPageCond, cond.keyword, target)) ? 0 : null;
+                if (sinclo.trigger.common.pregMatch(cond.stayPageCond, cond.keyword, target)) {
+                    callback(false, 0);
+                }
+                else {
+                    callback(true, null);
+                }
             },
-            dayTime: function(cond){
-                if (!('day' in cond) || !('timeSetting' in cond)) return null;
-                if (Number(cond.timeSetting) === 1 && (!('startTime' in cond) || !('endTime' in cond))) return null;
+            dayTime: function(cond, callback){
+                if (!('day' in cond) || !('timeSetting' in cond)) callback(true, null );
+                if (Number(cond.timeSetting) === 1 && (!('startTime' in cond) || !('endTime' in cond))) callback(true, null);
                 // DBに保存している文字列から、JSのgetDay関数に対応する数値を返す関数
                 function translateDay(str){
                     var day = {'sun':0, 'mon':1, 'tue':2, 'thu':3, 'wed':4, 'fri':5, 'sat':6};
@@ -837,44 +856,59 @@
                 date = d.getFullYear() + "/" + (d.getMonth()+1) + "/" + d.getDate() + " ";
                 dateParse = Date.parse(d);
                 keys = Object.keys(cond.day);
+                callback(true, null); // 条件にあたらなかった場合は終了
+
                 for(var i = 0; keys.length > i; i++){
                   if (!cond.day[keys[i]]) continue;
-                  var day = translateDay(keys[i]);
-                  if (day === null) continue;
-                  // 曜日が今日若しくは明日ではない場合
-                  if (day !== nowDay && day !== nextDay) continue;
-                  // 時間指定なしの場合
-                  if (Number(cond.timeSetting) === 2) return 0;
-                  if (!checkTime(cond.startTime) || !checkTime(cond.endTime)) return null;
+                  var day = translateDay(keys[i]); // 曜日を取得
+                  if (day === null) continue; // 曜日が取得できなければContinue.
+                  // 曜日が今日若しくは明日ではない場合は終了
+                  if (day !== nowDay && day !== nextDay) callback(true, null);
+                  // 時間指定なしの場合は即時表示
+                  if (Number(cond.timeSetting) === 2) callback(false, 0);
+                  // 時間指定ありで、開始・終了時間が取得できない場合は終了
+                  if (!checkTime(cond.startTime) || !checkTime(cond.endTime)) callback(true, null);
                   var startDate = makeDate(date + cond.startTime);
                   var endDate = makeDate(date + cond.endTime);
 
                   // 今日で開始中の場合
                   if (day === nowDay && startDate <= dateParse && dateParse < endDate ) {
-                    return 0;
+                      callback(false, 0); // 即時表示
+
                   }
                   // 今日で開始前の場合
                   else if (day === nowDay && startDate > dateParse && dateParse < endDate ) {
-                    return startDate-dateParse;
+                      callback(false, (startDate-dateParse) ); // 開始時間に表示されるようにタイマーセット
+
                   }
                   // 次回の場合
                   else if ( day === nextDay) {
                     var nextDate = startDate + 24*60*60*1000;
-                    return nextDate-dateParse;
+                      callback(false, (nextDate-dateParse)); // 開始時間に表示されるようにタイマーセット
+
                   }
                 }
-            	return null;
             },
-            referrer: function(cond){
-                if (!('keyword' in cond) || !('referrerCond' in cond )) return null;
-                if ( userInfo.referrer === "" ) return null;
-                return (sinclo.trigger.common.pregMatch(cond.referrerCond, cond.keyword, userInfo.referrer)) ? 0 : null;
+            referrer: function(cond, callback){
+                if (!('keyword' in cond) || !('referrerCond' in cond )) callback(true, null );
+                if ( userInfo.referrer === "" ) callback(true, null );
+                if (sinclo.trigger.common.pregMatch(cond.referrerCond, cond.keyword, userInfo.referrer)) {
+                    callback(false, 0);
+                }
+                else {
+                    callback(true, null);
+                }
             },
-            searchWord: function(cond){
-                if (!('keyword' in cond) || !('searchCond' in cond )) return null;
-                if ( userInfo.searchKeyword === null && Number(cond.searchCond) !== 3 ) return null;
-                if ( userInfo.searchKeyword === null && Number(cond.searchCond) === 3 ) return true;
-                return (sinclo.trigger.common.pregMatch(cond.searchCond, cond.keyword, userInfo.searchKeyword)) ? 0 : null;
+            searchWord: function(cond, callback){
+                if (!('keyword' in cond) || !('searchCond' in cond )) callback( true, null );
+                if ( userInfo.searchKeyword === null && Number(cond.searchCond) !== 3 ) callback( true, null );
+                if ( userInfo.searchKeyword === null && Number(cond.searchCond) === 3 ) callback( false, 0 );
+                if (sinclo.trigger.common.pregMatch(cond.searchCond, cond.keyword, userInfo.searchKeyword)) {
+                    callback(false, 0);
+                }
+                else {
+                    callback(true, null);
+                }
             }
         }
     }

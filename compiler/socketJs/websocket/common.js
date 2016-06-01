@@ -147,6 +147,7 @@ var socket, // socket.io
       html += '      #sincloBox span, #sincloBox pre { font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana!important }';
       html += '      #sincloBox span#mainImage { z-index: 2 }';
       html += '      #sincloBox p#widgetTitle { position:relative; cursor:pointer; border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px 0 0; border: 1px solid ' + widget.mainColor + '; border-bottom:none; background-color: ' + widget.mainColor + ';text-align: center; font-size: 14px;padding: 7px 30px; margin: 0;color: #FFF; height: 32px }';
+      html += '      #sincloBox p#widgetTitle #sincloChatUnread { position: absolute; top: 0; left: 0; width: 25px; height: 25px; font-size: 13px; color: #FFF; font-style: normal; text-align: center; font-weight: bold; background-color: #FF5C5C; border-radius: 15px; margin: 2.5px 6px; padding: 3px; }';
       html += '      #sincloBox p#widgetTitle:after { background-position-y: 3px; background-image: url("' + window.info.site.files + '/img/widget/yajirushi.png"); top: 6px; right: 6px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear}';
       html += '      #sincloBox[data-openflg="true"] p#widgetTitle:after { transform: rotate(0deg); }';
       html += '      #sincloBox[data-openflg="false"] p#widgetTitle:after { transform: rotate(180deg); }';
@@ -231,9 +232,16 @@ var socket, // socket.io
       // アイコン
       html += '    <span style="display: block; width: 50px; height: 50px; float: left; background-color: ' + widget.mainColor + '; border-radius: 25px; padding: 3px;"><img width="19.5" height="33" src="' + window.info.site.files + '/img/call.png" style="margin: 6px 12px"></span>';
       // 受付電話番号
-      html += '    <pre id="telNumber" style="font-weight: bold; color: ' + widget.mainColor + '; margin: 0 auto; font-size: 18px; text-align: center; padding: 5px 0px 0px; height: 30px">' + widget.tel + '</pre>';
+      if ( Number(widget.display_time_flg) === 1 ) {
+          html += '    <pre id="telNumber" style="font-size: 18px; padding: 5px 0px 0px; height: 30px">' + widget.tel + '</pre>';
+      }
+      else {
+          html += '    <pre id="telNumber" style="font-size: 20px; padding: 10px 0px 0px; height: 45px;">' + widget.tel + '</pre>';
+      }
       // 受付時間
-      html += '    <pre ng-if="display_time_flg == \'1\'" style="font-weight: bold; color: ' + widget.mainColor + '; margin: 0 auto; font-size: 10px; text-align: center; padding: 0 0 5px; height: 20px">受付時間： ' + widget.time_text + '</pre>';
+      if ( Number(widget.display_time_flg) === 1 ) {
+          html += '    <pre style="font-weight: bold; color: ' + widget.mainColor + '; margin: 0 auto; font-size: 10px; text-align: center; padding: 0 0 5px; height: 20px">受付時間： ' + widget.time_text + '</pre>';
+      }
       html += '    </div>';
       // テキスト
       html += '    <pre style="display: block; word-wrap: break-word; font-size: 11px; text-align: center; margin: auto; line-height: 1.5; color: #6B6B6B; width: 20em;">' + widget.content + '</pre>';
@@ -1317,6 +1325,15 @@ function emit(evName, data){
 function now(){
   var d = new Date();
   return "【" + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds() + "】";
+}
+
+// get type
+var myTag = document.querySelector("script[src='" + info.site.files + "/client/" + info.site.key + ".js']");
+if (myTag.getAttribute('data-hide')) {
+    info.dataset['hide'] = myTag.getAttribute('data-hide');
+}
+if (myTag.getAttribute('data-form')) {
+    info.dataset['form'] = myTag.getAttribute('data-form');
 }
 
 $.ajaxSetup({
