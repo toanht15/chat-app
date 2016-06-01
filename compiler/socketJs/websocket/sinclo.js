@@ -445,8 +445,12 @@
       for (var i = 0; i < obj.chat.messages.length; i++) {
         var chat = obj.chat.messages[i],
             cn = (chat.messageType == 1) ? "sinclo_se" : "sinclo_re";
+        if (chat.messageReadFlg && cs === "sinclo_re") {
+            this.chatApi.unread++;
+        }
         this.chatApi.createMessage(cn, chat.message);
       }
+      sinclo.chatApi.showUnreadCnt();
     },
     sendChatResult: function(d){
       var obj = JSON.parse(d);
@@ -460,7 +464,7 @@
         else {
           cn = "sinclo_re";
         }
-        this.chatApi.createMessage(cn, obj.chatMessage);
+        this.chatApi.createMessageUnread(cn, obj.chatMessage);
         // オートメッセージの内容をDBに保存し、オブジェクトから削除する
         emit("sendAutoChat", {messageList: sinclo.chatApi.autoMessages});
         sinclo.chatApi.autoMessages = [];
@@ -481,45 +485,79 @@
       common.makeAccessIdTag();
     },
     chatApi: {
-      historyId: null,
-      messageType: {
-        customer: 1,
-        company: 2,
-        auto: 3
-      },
-      autoMessages: [],
-      init: function(){
-        $("#sincloChatMessage").on("keydown", function(e){
-          if ( e.keyCode === 13 ) {
-            if ( !e.shiftKey && !e.ctrlKey ) {
-              sinclo.chatApi.push();
-            }
-          }
-        });
+        historyId: null,
+        unread: 0,
+        messageType: {
+            customer: 1,
+            company: 2,
+            auto: 3
+        },
+        autoMessages: [],
+        init: function(){
+            $("#sincloChatMessage").on("keydown", function(e){
+                if ( e.keyCode === 13 ) {
+                    if ( !e.shiftKey && !e.ctrlKey ) {
+                        sinclo.chatApi.push();
+                    }
+                }
+            }).on("focus", function(e){
+                sinclo.chatApi.isRead();
+            });
 
-        emit('getChatMessage', {});
-      },
-      createMessage: function(cs, val){
-        var chatTalk = document.getElementById('chatTalk');
-        var li = document.createElement('li');
-        li.className = cs;
-        li.textContent = val;
-        chatTalk.appendChild(li);
-        $('#chatTalk').animate({
-          scrollTop: chatTalk.scrollHeight - chatTalk.clientHeight
-        }, 100);
-      },
-      push: function(){
-        var elm = document.getElementById('sincloChatMessage');
-        if ( check.isset(elm.value) ) {
-          emit('sendChat', {
-            historyId: sinclo.chatApi.historyId,
-            chatMessage:elm.value,
-            mUserId: null,
-            messageType: sinclo.chatApi.messageType.customer
-          });
+            emit('getChatMessage', {});
+        },
+        createMessage: function(cs, val){
+            var chatTalk = document.getElementById('chatTalk');
+            var li = document.createElement('li');
+            li.className = cs;
+            li.textContent = val;
+            chatTalk.appendChild(li);
+            $('#chatTalk').animate({
+                scrollTop: chatTalk.scrollHeight - chatTalk.clientHeight
+            }, 100);
+        },
+        createMessageUnread: function(cs, val){
+            if ( cs === "sinclo_re" ) {
+                sinclo.chatApi.unread++;
+                sinclo.chatApi.showUnreadCnt();
+            }
+            sinclo.chatApi.createMessage(cs, val);
+        },
+        push: function(){
+            var elm = document.getElementById('sincloChatMessage');
+            if ( check.isset(elm.value) ) {
+                emit('sendChat', {
+                    historyId: sinclo.chatApi.historyId,
+                    chatMessage:elm.value,
+                    mUserId: null,
+                    messageType: sinclo.chatApi.messageType.customer
+                });
+            }
+        },
+        isRead: function(){
+            if ( Number(sinclo.chatApi.unread) > 0 ) {
+                emit("isReadFromCustomer", {});
+                sinclo.chatApi.unread = 0;
+                sinclo.chatApi.showUnreadCnt();
+            }
+        },
+        showUnreadCnt: function( ){
+            var elmId = "sincloChatUnread";
+
+            if ( Number(sinclo.chatApi.unread) > 0 ) {
+                var em = document.createElement('em');
+                em.id = elmId;
+                em.textContent = sinclo.chatApi.unread;
+                var mainImg = document.getElementById('mainImage');
+                mainImg.appendChild(em);
+            }
+            else {
+                var unreadIcon = document.getElementById(elmId);
+                if ( unreadIcon ) {
+                    unreadIcon.parentNode.removeChild(unreadIcon);
+                }
+            }
         }
-      }
     },
     trigger: {
         timerList: {},
@@ -552,6 +590,7 @@
             var keys = Object.keys(setting['conditions']);
             var ret = 0;
             for(var i = 0; keys.length > i; i++){
+
                 var conditions = setting['conditions'][keys[i]];
                 var last = (keys.length === Number(i+1)) ? true : false;
                 var timer = 0;
@@ -561,17 +600,27 @@
                       if ( ret < timer ) {
                         ret = Number(timer);
                       }
+                      if (timer === null) {
+                        return null;
+                      }
+
                       break;
                     case 2: // 訪問回数
                       timer = (!this.judge.stayCount(conditions[0]));
                       if (typeof(timer) === "number" && typeof(ret) !== "number") {
                         ret = 0;
                       }
+                      else {
+                        return null;
+                      }
                       break;
                     case 3: // ページ
                       timer = (!this.judge.page(conditions[0]));
                       if (typeof(timer) === "number" && typeof(ret) !== "number") {
                         ret = 0;
+                      }
+                      else {
+                        return null;
                       }
                       break;
                     case 4: // 曜日・時間
@@ -586,11 +635,17 @@
                       if (typeof(timer) === "number" && typeof(ret) !== "number") {
                         ret = 0;
                       }
+                      else {
+                        return null;
+                      }
                       break;
                     case 6: // 検索ワード
                       timer = (!this.judge.searchWord(conditions[0]));
                       if (typeof(timer) === "number" && typeof(ret) !== "number") {
                         ret = 0;
+                      }
+                      else {
+                        return null;
                       }
                       break;
                     default:
@@ -670,7 +725,7 @@
         setAction: function(id, type, cond){
             // TODO 今のところはメッセージ送信のみ、拡張予定
             if ( String(type) === "1" && ('message' in cond)) {
-                sinclo.chatApi.createMessage("sinclo_re", cond.message);
+                sinclo.chatApi.createMessageUnread("sinclo_re", cond.message);
                 sinclo.chatApi.autoMessages.push({
                   chatId:id,
                   chatMessage:cond.message,
@@ -803,7 +858,7 @@
                     return startDate-dateParse;
                   }
                   // 次回の場合
-                  else {
+                  else if ( day === nextDay) {
                     var nextDate = startDate + 24*60*60*1000;
                     return nextDate-dateParse;
                   }

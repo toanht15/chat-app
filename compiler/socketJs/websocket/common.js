@@ -160,6 +160,7 @@ var socket, // socket.io
       }
       // チャットを使用する際
       if ( window.info.contract.chat ) {
+        html += '      #sincloBox #mainImage em { position: absolute;top: -10px;right: -10px;background-image: url("' + window.info.site.files + '/img/chat-bg.png");background-size: contain;background-repeat: no-repeat; width: 25px; height: 20px; font-size: 11px; color: #FFF; font-style: normal; padding: 1px; text-align: center; font-weight: bold }';
         html += '      #sincloBox ul#chatTalk { width: 100%; height: 250px; padding: 5px; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0}';
         html += '      #sincloBox ul#chatTalk li { white-space: pre-wrap!important; border-radius: 5px; background-color: #FFF; margin: 5px 0; padding: 5px; font-size: 12px; border: 1px solid #C9C9C9; color: #595959; white-space: pre; color: #8A8A8A; }';
         html += '      #sincloBox ul#chatTalk li.sinclo_se { ' + chatPosition.se + 'background-color: #FFF; }';
