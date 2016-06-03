@@ -10,6 +10,20 @@
 
 <div id='history_menu' class="p20trl">
 	<!-- 検索窓 -->
+	<div class="fLeft">
+		<?php
+			$checked = "";
+			$class = "";
+			if (strcmp($groupByChatChecked, 'false') !== 0) {
+				$class = "checked";
+				$checked = "checked=\"\"";
+			}
+		?>
+		<label for="g_chat" class="<?=$class?>">
+			<input type="checkbox" id="g_chat" name="group_by_chat" <?=$checked?> />
+			チャット履歴があるもののみ表示
+		</label>
+	</div>
 	<div id="paging" class="fRight">
 		<?php
 			echo $this->Paginator->prev(
@@ -32,30 +46,7 @@
 </div>
 
 <div id='history_list' class="p20x">
-	<table>
-		<thead>
-			<tr>
-				<th>訪問ユーザ</th>
-				<th>ユーザー環境</th>
-				<th>アクセス日時</th>
-				<th>滞在時間</th>
-				<th>閲覧ページ数</th>
-				<th>参照元URL</th>
-			</tr>
-		</thead>
-		<tbody>
-<?php foreach($historyList as $key => $history): ?>
-			<tr>
-				<td class="tCenter"><?=h($history['THistory']['ip_address'])?></td>
-				<td class="tCenter">{{ ua('<?=h($history['THistory']['user_agent'])?>') }}</td>
-				<td class="tCenter"><?=h($history['THistory']['access_date'])?></td>
-				<td class="tCenter"><?=$this->htmlEx->calcTime($history['THistory']['access_date'], $history['THistory']['out_date']) ?></td>
-				<td class="tCenter"><?=h($history['THistoryStayLog']['count'])?>（<a href="javascript:void(0)" onclick="openHistoryById('<?=h($history['THistory']['id'])?>')" >移動履歴</a>）</td>
-				<td class="tCenter omit"><span><?=h($history['THistory']['referrer_url'])?></span></td>
-			</tr>
-<?php endforeach; ?>
-		</tbody>
-	</table>
+	<?=$this->element('Histories/list')?>
 	<a href="javascript:void(0)" style="display:none" id="modalCtrl"></a>
 </div>
 

@@ -5,42 +5,42 @@
  * 履歴一覧画面
  */
 class HistoriesController extends AppController {
-    public $uses = array('THistory', 'THistoryChatLog', 'THistoryStayLog', 'THistoryShareDisplay');
-    public $paginate = array(
-        'THistory' => array(
-            'limit' => 100,
-            'order' => array(
-                'THistory.created' => 'desc'
-            ),
-            'fields' => array(
-                'THistory.*',
-                'THistoryChatLog.*',
-                'THistoryStayLog.*'
-            ),
-            'joins' => array(
-                array(
-                    'type' => 'LEFT',
-                    'table' => '(SELECT t_histories_id, COUNT(t_histories_id) AS count FROM t_history_chat_logs GROUP BY t_histories_id)',
-                    'alias' => 'THistoryChatLog',
-                    'conditions' => array(
-                        'THistoryChatLog.t_histories_id = THistory.id'
-                    )
-                ),
-                array(
-                    'type' => 'LEFT',
-                    'table' => '(SELECT t_histories_id, COUNT(t_histories_id) AS count FROM t_history_stay_logs WHERE del_flg != 1 GROUP BY t_histories_id)',
-                    'alias' => 'THistoryStayLog',
-                    'conditions' => array(
-                        'THistoryStayLog.t_histories_id = THistory.id'
-                    )
-                )
-            ),
-            'conditions' => array(
-                'THistory.del_flg !=' => 1
-            )
-        ),
-        'THistoryStayLog' => array()
-    );
+    public $uses = ['THistory', 'THistoryChatLog', 'THistoryStayLog', 'THistoryShareDisplay'];
+    public $paginate = [
+            'THistory' => [
+                'limit' => 100,
+                'order' => [
+                    'THistory.created' => 'desc'
+                ],
+                'fields' => [
+                    'THistory.*',
+                    'THistoryChatLog.*',
+                    'THistoryStayLog.*'
+                ],
+                'joins' => [
+                    [
+                        'type' => 'INNER',
+                        'table' => '(SELECT t_histories_id, COUNT(t_histories_id) AS count FROM t_history_chat_logs GROUP BY t_histories_id)',
+                        'alias' => 'THistoryChatLog',
+                        'conditions' => [
+                            'THistoryChatLog.t_histories_id = THistory.id'
+                        ]
+                    ],
+                    [
+                        'type' => 'LEFT',
+                        'table' => '(SELECT t_histories_id, COUNT(t_histories_id) AS count FROM t_history_stay_logs WHERE del_flg != 1 GROUP BY t_histories_id)',
+                        'alias' => 'THistoryStayLog',
+                        'conditions' => [
+                            'THistoryStayLog.t_histories_id = THistory.id'
+                        ]
+                    ]
+                ],
+                'conditions' => [
+                    'THistory.del_flg !=' => 1
+                ]
+        ],
+        'THistoryStayLog' => []
+    ];
 
     public function beforeFilter(){
         parent::beforeFilter();
@@ -57,8 +57,11 @@ class HistoriesController extends AppController {
      * @return void
      * */
     public function index() {
-        $historyList = $this->paginate('THistory');
-        $this->set('historyList', $historyList);
+        $isChat = 'true';
+        if ( !empty($this->params->query['isChat']) ) {
+            $isChat = $this->params->query['isChat'];
+        }
+        $this->_setList($isChat);
     }
 
     public function remoteGetChatLogs() {
@@ -68,13 +71,13 @@ class HistoriesController extends AppController {
 
         $historyId = $this->params->query['historyId'];
 
-        $params = array(
+        $params = [
             'fields' => '*',
-            'conditions' => array(
+            'conditions' => [
                 'THistoryChatLog.t_histories_id' => $historyId
-            ),
+            ],
             'recursive' => -1
-        );
+        ];
         $ret = $this->THistoryChatLog->find('all', $params);
         $this->set('THistoryChatLog', $ret);
         return $this->render('/Elements/Histories/remoteGetChatLogs');
@@ -87,17 +90,31 @@ class HistoriesController extends AppController {
 
         $historyId = $this->params->query['historyId'];
 
-        $params = array(
+        $params = [
             'fields' => '*',
-            'conditions' => array(
+            'conditions' => [
                 'THistoryStayLog.t_histories_id' => $historyId,
                 'THistoryStayLog.del_flg !=' => 1
-            ),
+            ],
             'recursive' => -1
-        );
+        ];
         $ret = $this->THistoryStayLog->find('all', $params);
         $this->set('THistoryStayLog', $ret);
         return $this->render('/Elements/Histories/remoteGetStayLogs');
+    }
+
+    private function _setList($type=true){
+        if ( strcmp($type, 'false') === 0 ) {
+            $this->paginate['THistory']['joins'][0]['type'] = "LEFT";
+        }
+        else {
+            $this->paginate['THistory']['joins'][0]['type'] = "INNER";
+        }
+
+        $this->Session->write("histories.joins", $this->paginate['THistory']['joins'][0]['type']);
+        $historyList = $this->paginate('THistory');
+        $this->set('historyList', $historyList);
+        $this->set('groupByChatChecked', $type);
     }
 
 }
