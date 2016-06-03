@@ -31,25 +31,33 @@ router.get("/", function(req, res, next) {
     pool.query(getWidgetSettingSql, siteKey,
         function(err, rows){
 
+            function isNumeric(str){
+                var num = Number(str);
+                if (isNaN(num)){
+                  num = 0;
+                }
+                return num;
+            }
+
             if ( rows.length > 0 && 'style_settings' in rows[0] ) {
                 var core_settings = JSON.parse(rows[0].core_settings);
                 var settings = JSON.parse(rows[0].style_settings);
                 sendData['contract'] = core_settings;
                 sendData['widget'] = {
-                    display_type: rows[0].display_type,
-                    showPosition: settings.showPosition,
-                    maxShowTime: settings.maxShowTime,
+                    display_type: isNumeric(rows[0].display_type),
+                    showPosition: isNumeric(settings.showPosition),
+                    maxShowTime: isNumeric(settings.maxShowTime),
                     title: settings.title,
                     subTitle: settings.subTitle,
                     description: settings.description,
                     mainColor: settings.mainColor,
                     showMainImage: settings.showMainImage,
                     mainImage: settings.mainImage,
-                    radiusRatio: settings.radiusRatio,
+                    radiusRatio: isNumeric(settings.radiusRatio),
                     tel: settings.tel,
                     content: settings.content.replace(/\r\n/g, '<br>'),
                     time_text: settings.timeText,
-                    display_time_flg: settings.displayTimeFlg
+                    display_time_flg: isNumeric(settings.displayTimeFlg)
                 };
 
                 actionTypeList = [];
@@ -68,7 +76,7 @@ router.get("/", function(req, res, next) {
                                 "id": rows[i].id,
                                 "sitekey": siteKey,
                                 "activity": JSON.parse(rows[i].activity),
-                                "action_type": rows[i].action_type,
+                                "action_type": isNumeric(rows[i].action_type),
                             });
                         }
 

@@ -117,6 +117,7 @@ class MWidgetSettingsController extends AppController {
      * */
     private function _update($inputData) {
         $errors = [];
+
         // バリデーションチェック
         $this->MWidgetSetting->set($inputData);
         $this->MWidgetSetting->begin();
@@ -168,8 +169,7 @@ class MWidgetSettingsController extends AppController {
         if ( isset($settings['showMainImage']) && strcmp($settings['showMainImage'], "2") === 0 ) {
           $settings['mainImage'] = "";
         }
-
-        return json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_FORCE_OBJECT | JSON_NUMERIC_CHECK );
+        return json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_FORCE_OBJECT );
     }
 
     /**
