@@ -155,7 +155,7 @@
 						<div id="imageSelectBtns" ng-class="{chooseImg: showChooseImg()}">
 
 							<div id="picDiv">
-								<img ng-src="<?=$gallaryPath?>{{main_image}}" err-src="<?=$gallaryPath?>chat_sample_picture.png" style="background-color: {{main_color}}" width="62" height="70" alt="チャットに設定している画像">
+								<img ng-src="<?=$gallaryPath?>{{main_image}}" err-src="<?=$gallaryPath?>chat_sample_picture.png" ng-style="{'background-color': main_color}" width="62" height="70" alt="チャットに設定している画像">
 							</div>
 							<div id="picChooseDiv">
 								<a href="javascript:void(0)" ng-click="showGallary()">ギャラリーから選択</a>
