@@ -170,7 +170,7 @@ var db = {
               }
               var historyId = results.insertId;
               sincloCore[obj.siteKey][obj.tabId].historyId = historyId;
-              timeUpdate(historyId, {}, now);
+              timeUpdate(historyId, obj, now);
               emit.toMine('setHistoryId', obj);
             }
           );
@@ -281,29 +281,35 @@ io.sockets.on('connection', function (socket) {
         message_type: d.messageType
       };
 
-      insertData['created'] = (('created' in d)) ? d.created : formatDateParse();
-      // オートメッセージの場合は既読
-      if (Number(insertData['message_type'] === 3) ) {
-          insertData['message_read_flg'] = 1;
-      }
+      pool.query('SELECT * FROM t_history_stay_logs WHERE t_histories_id = ? ORDER BY id DESC LIMIT 1;', insertData.t_histories_id,
+        function(err, rows){
+          if ( rows && rows[0] ) {
+            insertData['t_history_stay_logs_id'] = rows[0].id;
+          }
+          insertData['created'] = (('created' in d)) ? d.created : formatDateParse();
+          // オートメッセージの場合は既読
+          if (Number(insertData['message_type'] === 3) ) {
+              insertData['message_read_flg'] = 1;
+          }
 
-      pool.query('INSERT INTO t_history_chat_logs SET ?', insertData, function(error,results,fields){
-        if ( !isset(error) ) {
-          if ( !isset(sincloCore[d.siteKey][d.tabId]['sessionId'])) return false;
-          var sId = sincloCore[d.siteKey][d.tabId].sessionId;
-          // 書き込みが成功したら顧客側に結果を返す
-          emit.toUser('sendChatResult', {tabId: d.tabId, chatId: results.insertId, messageType: d.messageType, ret: true, chatMessage: d.chatMessage, siteKey: d.siteKey}, sId);
-          // オートメッセージは対象外
-          if (Number(insertData['message_type']) === 3) return false;
-          // 書き込みが成功したら企業側に結果を返す
-          emit.toCompany('sendChatResult', {tabId: d.tabId, chatId: results.insertId, messageType: d.messageType, ret: true, chatMessage: d.chatMessage, siteKey: d.siteKey}, d.siteKey);
-
+          pool.query('INSERT INTO t_history_chat_logs SET ?', insertData, function(error,results,fields){
+            if ( !isset(error) ) {
+              if ( !isset(sincloCore[d.siteKey][d.tabId]['sessionId'])) return false;
+              var sId = sincloCore[d.siteKey][d.tabId].sessionId;
+              // 書き込みが成功したら顧客側に結果を返す
+              emit.toUser('sendChatResult', {tabId: d.tabId, chatId: results.insertId, messageType: d.messageType, ret: true, chatMessage: d.chatMessage, siteKey: d.siteKey}, sId);
+              // オートメッセージは対象外
+              if (Number(insertData['message_type']) === 3) return false;
+              // 書き込みが成功したら企業側に結果を返す
+              emit.toCompany('sendChatResult', {tabId: d.tabId, chatId: results.insertId, messageType: d.messageType, ret: true, chatMessage: d.chatMessage, siteKey: d.siteKey}, d.siteKey);
+            }
+            else {
+              // 書き込みが失敗したらエラーを渡す
+              return emit.toUser('sendChatResult', {tabId: d.tabId, messageType: d.messageType, ret: false, siteKey: d.siteKey}, d.siteKey);
+            }
+          });
         }
-        else {
-          // 書き込みが失敗したらエラーを渡す
-          return emit.toUser('sendChatResult', {tabId: d.tabId, messageType: d.messageType, ret: false, siteKey: d.siteKey}, d.siteKey);
-        }
-      });
+      );
 
     },
     sendUnreadCnt: function(evName, obj, toUserFlg){
