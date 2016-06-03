@@ -1,3 +1,4 @@
+
 @charset "UTF-8";
 
 /* ポップアップ */
@@ -240,6 +241,55 @@
             &:nth-child(even) {
               float: right;
             }
+          }
+        }
+      }
+
+      &.p-chat-logs {
+        width: 400px;
+
+        #popup-main {
+          text-align: center;
+
+          ul{
+            height: 200px;
+            padding: 0;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            border: 1px solid #7F7F7F;
+            padding-top: 5px;
+            background-color: #FDFDFD;
+
+
+            li {
+              width: 280px;
+              text-align: left;
+              border: 1px solid #878787;
+              padding: 5px;
+              border-radius: 5px;
+              white-space: pre-line;
+
+              &.sinclo_re {
+                margin: 0 55px 10px 20px;
+                border-bottom-left-radius: 0;
+                background-color: #FFF;
+              }
+              &.sinclo_se {
+                margin: 0 20px 10px 55px;
+                border-bottom-right-radius: 0;
+                background-color: rgba(195,214,155,0.3);
+              }
+            }
+
+          }
+
+        }
+
+        #popup-button {
+
+          a {
+            width: 10em;
+            margin: 0 auto;
           }
         }
       }

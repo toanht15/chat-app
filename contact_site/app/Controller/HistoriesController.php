@@ -5,7 +5,7 @@
  * 履歴一覧画面
  */
 class HistoriesController extends AppController {
-    public $uses = array('THistory', 'THistoryStayLog', 'THistoryShareDisplay');
+    public $uses = array('THistory', 'THistoryChatLog', 'THistoryStayLog', 'THistoryShareDisplay');
     public $paginate = array(
         'THistory' => array(
             'limit' => 100,
@@ -14,9 +14,18 @@ class HistoriesController extends AppController {
             ),
             'fields' => array(
                 'THistory.*',
+                'THistoryChatLog.*',
                 'THistoryStayLog.*'
             ),
             'joins' => array(
+                array(
+                    'type' => 'LEFT',
+                    'table' => '(SELECT t_histories_id, COUNT(t_histories_id) AS count FROM t_history_chat_logs GROUP BY t_histories_id)',
+                    'alias' => 'THistoryChatLog',
+                    'conditions' => array(
+                        'THistoryChatLog.t_histories_id = THistory.id'
+                    )
+                ),
                 array(
                     'type' => 'LEFT',
                     'table' => '(SELECT t_histories_id, COUNT(t_histories_id) AS count FROM t_history_stay_logs WHERE del_flg != 1 GROUP BY t_histories_id)',
@@ -52,6 +61,25 @@ class HistoriesController extends AppController {
         $this->set('historyList', $historyList);
     }
 
+    public function remoteGetChatLogs() {
+        Configure::write('debug', 0);
+        $this->autoRender = FALSE;
+        $this->layout = null;
+
+        $historyId = $this->params->query['historyId'];
+
+        $params = array(
+            'fields' => '*',
+            'conditions' => array(
+                'THistoryChatLog.t_histories_id' => $historyId
+            ),
+            'recursive' => -1
+        );
+        $ret = $this->THistoryChatLog->find('all', $params);
+        $this->set('THistoryChatLog', $ret);
+        return $this->render('/Elements/Histories/remoteGetChatLogs');
+    }
+
     public function remoteGetStayLogs() {
         Configure::write('debug', 0);
         $this->autoRender = FALSE;
@@ -69,7 +97,7 @@ class HistoriesController extends AppController {
         );
         $ret = $this->THistoryStayLog->find('all', $params);
         $this->set('THistoryStayLog', $ret);
-        return $this->render('/Histories/remoteGetStayLogs');
+        return $this->render('/Elements/Histories/remoteGetStayLogs');
     }
 
 }

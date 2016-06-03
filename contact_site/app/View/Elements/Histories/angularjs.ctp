@@ -25,6 +25,23 @@
 				}
 			});
 	};
+
+	window.openChatById = function(id){
+		var retList = {};
+			$.ajax({
+				type: 'GET',
+				url: "<?= $this->Html->url(array('controller' => 'Histories', 'action' => 'remoteGetChatLogs')) ?>",
+				data: {
+					historyId: id
+				},
+				dataType: 'html',
+				success: function(html){
+					modalOpen.call(window, html, 'p-chat-logs', 'チャット履歴');
+				},
+				error: function(){
+				}
+			});
+	};
 }());
 
 </script>
