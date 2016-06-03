@@ -124,7 +124,7 @@ var socket, // socket.io
 
       // 表示位置
       var showPosition = "", chatPosition = {se: "", re: ""};
-      switch ( widget.showPosition ) {
+      switch ( Number(widget.showPosition) ) {
         case 1: // 右下
           showPosition = "bottom: 0; right: 10px;";
           chatPosition = {
@@ -140,7 +140,6 @@ var socket, // socket.io
           };
           break;
       }
-
       html += '  <style>';
       html += '      #sincloBox { display: none; position: fixed; ' + showPosition + ' z-index: 999998; background-color: rgba(0,0,0,0); width: 270px; }';
       html += '      #sincloBox * { box-sizing: border-box; font-size: 12px; font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana;}';
@@ -173,6 +172,7 @@ var socket, // socket.io
       if ( window.info.contract.synclo ) {
         html += '      #sincloBox section#callTab #telNumber { color: ' + widget.mainColor + '; font-weight: bold; margin: 0 auto; text-align: center }';
         html += '      #sincloBox section#callTab #telIcon { color: ' + widget.mainColor + '; display: block; width: 50px; height: 50px; float: left; background-color: #3EA3DE; border-radius: 25px; padding: 3px }';
+        html += '      #sincloBox section#callTab #telContent { display: block; word-wrap: break-word; font-size: 11px; text-align: center; margin: auto; line-height: 1.5; color: #6B6B6B; width: 20em; white-space: pre-wrap }';
       }
       // チャットも画面同期も使用する際にはデフォルトで画面同期ウィジェットの表示をnoneにする
       if ( window.info.contract.chat && window.info.contract.synclo ) {
@@ -245,7 +245,7 @@ var socket, // socket.io
       }
       html += '    </div>';
       // テキスト
-      html += '    <pre style="display: block; word-wrap: break-word; font-size: 11px; text-align: center; margin: auto; line-height: 1.5; color: #6B6B6B; width: 20em;">' + widget.content + '</pre>';
+      html += '    <pre id="telContent">' + widget.content + '</pre>';
       html += '    <span style="display: block; margin: 10px auto; width: 80%; padding: 7px;  color: #FFF; background-color: rgb(188, 188, 188); font-size: 25px; font-weight: bold; text-align: center; border: 1px solid rgb(188, 188, 188); border-radius: 15px">' + userInfo.accessId + '</span>';
       html += '</section>';
       return html;

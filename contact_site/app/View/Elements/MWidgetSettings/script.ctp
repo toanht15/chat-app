@@ -7,13 +7,11 @@ sincloApp.controller('WidgetCtrl', function($scope){
     $scope.isDisplayTime = function(){
         // 表示しない
         if ( Number(this.display_time_flg) === 0 ) {
-            $('#telNumber').attr('style', 'font-size: 20px; padding: 10px 0px 0px; height: 45px;');
             $('#MWidgetSettingTimeText').prop('disabled', true);
             $('#timeTextLabel').removeClass('require');
         }
         // 表示する
         else {
-            $('#telNumber').attr('style', 'font-size: 18px; padding: 5px 0px 0px; height: 30px');
             $('#MWidgetSettingTimeText').prop('disabled', false);
             $('#timeTextLabel').addClass('require');
         }

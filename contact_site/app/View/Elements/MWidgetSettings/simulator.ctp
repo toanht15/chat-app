@@ -27,8 +27,11 @@
 	<?php endif; ?>
 	<?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
 		#sincloBox section#callTab #telNumber { color: {{main_color}}; font-weight: bold; margin: 0 auto; text-align: center }
+		#sincloBox section#callTab #telNumber:not(.notUseTime) { font-size: 18px; padding: 5px 0px 0px; height: 30px }
+		#sincloBox section#callTab #telNumber.notUseTime { font-size: 20px; padding: 10px 0px 0px; height: 45px }
 		#sincloBox section#callTab #telIcon { background-color: {{main_color}}; display: block; width: 50px; height: 50px; float: left; border-radius: 25px; padding: 3px }
 		#sincloBox section#callTab #telTime { font-weight: bold; color: {{main_color}}; margin: 0 auto; font-size: 10px; text-align: center; padding: 0 0 5px; height: 20px }
+		#sincloBox section#callTab #telContent { display: block; word-wrap: break-word; font-size: 11px; text-align: center; margin: auto; line-height: 1.5; color: #6B6B6B; width: 20em; white-space: pre-wrap }
 	<?php endif; ?>
 	<?php if ( $coreSettings[C_COMPANY_USE_CHAT] && $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
 		#sincloBox section#navigation { border-width: 0 1px; height: 40px; position: relative; display: block; }
@@ -101,7 +104,7 @@
 			<!-- アイコン -->
 
 			<!-- 受付電話番号 -->
-			<pre id="telNumber" style="font-weight: bold; font-size: 18px; padding: 5px 0px 0px; height: 30px">{{tel}}</pre>
+			<pre id="telNumber" ng-class="{notUseTime: display_time_flg !== '1'}" >{{tel}}</pre>
 			<!-- 受付電話番号 -->
 
 			<!-- 受付時間 -->
@@ -111,7 +114,7 @@
 			</div>
 
 			<!-- テキスト -->
-			<pre style="display: block; word-wrap: break-word; font-size: 11px; text-align: center; margin: auto; line-height: 1.5; color: #6B6B6B; width: 20em;">{{content}}</pre>
+			<pre id="telContent">{{content}}</pre>
 			<!-- テキスト -->
 
 			<span style="display: block; margin: 10px auto; width: 80%; padding: 7px;  color: #FFF; background-color: rgb(188, 188, 188); font-size: 25px; font-weight: bold; text-align: center; border: 1px solid rgb(188, 188, 188); border-radius: 15px">
