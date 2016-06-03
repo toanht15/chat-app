@@ -246,7 +246,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     };
 
     $scope.windowOpen = function(tabId, accessId){
-      var message = "アクセスID【" + accessId + "】のユーザーに接続しますか？";
+      var message = "アクセスID【" + accessId + "】のユーザーに接続しますか？<br><br>";
+      message += "<span style='font-size: 0.9em; color: red;'><?=Configure::read('message.const.chatStartConfirm')?></span>";
       modalOpen.call(window, message, 'p-confirm', 'メッセージ');
        popupEvent.closePopup = function(){
           sessionStorage.clear();
