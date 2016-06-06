@@ -10,6 +10,7 @@ class MWidgetSetting extends AppModel {
     public $name = "MWidgetSetting";
 
     public $styleColumns = [
+      'show_time' => "showTime",
       'max_show_time' => "maxShowTime",
       'show_position' => "showPosition",
       'title' => "title",

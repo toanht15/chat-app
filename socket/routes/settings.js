@@ -45,6 +45,7 @@ router.get("/", function(req, res, next) {
                 sendData['contract'] = core_settings;
                 sendData['widget'] = {
                     display_type: isNumeric(rows[0].display_type),
+                    showTime: isNumeric(settings.showTime),
                     showPosition: isNumeric(settings.showPosition),
                     maxShowTime: isNumeric(settings.maxShowTime),
                     title: settings.title,

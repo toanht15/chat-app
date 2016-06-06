@@ -25,6 +25,7 @@
           }
           height += $("#sincloBox > #fotter").outerHeight(true);
           sincloBox.setAttribute('data-openflg', true);
+          sinclo.chatApi.isRead();
         }
         else {
           height = this.header.offsetHeight;
@@ -156,12 +157,12 @@
         var createStartTimer,
             createStart = function(){
                 var sincloBox = document.getElementById('sincloBox');
+                var widgetOpen = storage.s.get('widgetOpen');
                 sincloBox.style.display = "block";
                 sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
                 // ウィジェット表示
-                if ( ('maxShowTime' in window.info.widget) && String(window.info.widget.maxShowTime).match(/^[0-9]{1,2}$/) !== null ) {
-                  var widgetOpen = storage.s.get('widgetOpen');
-                  if (!widgetOpen) {
+                if (!widgetOpen) {
+                  if ( (('maxShowTime' in window.info.widget) && String(window.info.widget.maxShowTime).match(/^[0-9]{1,2}$/) !== null) && ('showTime' in window.info.widget) && String(window.info.widget.showTime) === "1" ) {
                     window.setTimeout(function(){
                       var flg = sincloBox.getAttribute('data-openflg');
                       if ( String(flg) === "false" ) {
@@ -169,6 +170,9 @@
                         sinclo.operatorInfo.ev();
                       }
                     }, Number(window.info.widget.maxShowTime) * 1000);
+                  }
+                  else {
+                      storage.s.set('widgetOpen', true);
                   }
                 }
                 if ( window.info.contract.chat ) {
@@ -470,8 +474,11 @@
         }
         this.chatApi.createMessageUnread(cn, obj.chatMessage);
         // オートメッセージの内容をDBに保存し、オブジェクトから削除する
-        emit("sendAutoChat", {messageList: sinclo.chatApi.autoMessages});
-        sinclo.chatApi.autoMessages = [];
+        if (!sinclo.chatApi.saveFlg) {
+          emit("sendAutoChat", {messageList: sinclo.chatApi.autoMessages});
+          sinclo.chatApi.autoMessages = [];
+          sinclo.chatApi.saveFlg = true;
+        }
       }
       else {
         alert('メッセージの送信に失敗しました。');
@@ -497,6 +504,7 @@
       }
     },
     chatApi: {
+        saveFlg: false,
         historyId: null,
         unread: 0,
         messageType: {
@@ -512,8 +520,6 @@
                         sinclo.chatApi.push();
                     }
                 }
-            }).on("focus", function(e){
-                sinclo.chatApi.isRead();
             });
 
             emit('getChatMessage', {});
@@ -548,18 +554,26 @@
         },
         isRead: function(){
             if ( Number(sinclo.chatApi.unread) > 0 ) {
-                emit("isReadFromCustomer", {});
+                if ( sinclo.chatApi.saveFlg ) {
+                    emit("isReadFromCustomer", {});
+                }
                 sinclo.chatApi.unread = 0;
                 sinclo.chatApi.showUnreadCnt();
             }
         },
-        showUnreadCnt: function(cnt){
-            var elmId = "sincloChatUnread";
-            var unreadIcon = document.getElementById(elmId);
+        showUnreadCnt: function(){
+            var elmId = "sincloChatUnread",
+                unreadIcon = document.getElementById(elmId),
+                flg = sincloBox.getAttribute('data-openflg');
             if ( unreadIcon ) {
                 unreadIcon.parentNode.removeChild(unreadIcon);
             }
             if ( Number(sinclo.chatApi.unread) > 0 ) {
+                if (String(flg) === "true") {
+                    sinclo.chatApi.isRead();
+                    return false;
+                }
+
                 var em = document.createElement('em');
                 em.id = elmId;
                 em.textContent = sinclo.chatApi.unread;
@@ -735,11 +749,18 @@
             // TODO 今のところはメッセージ送信のみ、拡張予定
             if ( String(type) === "1" && ('message' in cond)) {
                 sinclo.chatApi.createMessageUnread("sinclo_re", cond.message);
-                sinclo.chatApi.autoMessages.push({
-                  chatId:id,
-                  chatMessage:cond.message,
-                  created: common.formatDateParse()
-                });
+                var data = {
+                    chatId:id,
+                    chatMessage:cond.message,
+                    created: common.formatDateParse()
+                };
+                if ( sinclo.chatApi.saveFlg ) {
+                    // オートメッセージの内容をDBに保存し、オブジェクトから削除する
+                    emit("sendAutoChat", {messageList: [data]});
+                }
+                else {
+                    sinclo.chatApi.autoMessages.push(data);
+                }
             }
         },
         common: {

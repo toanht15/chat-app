@@ -39,6 +39,9 @@ class MWidgetSettingsController extends AppController {
 
             if ( isset($ret['MWidgetSetting']['style_settings']) ) {
               $json = $this->_settingToObj($ret['MWidgetSetting']['style_settings']);
+              if ( isset($json['show_time']) ) {
+                $inputData['MWidgetSetting']['show_time'] = $json['show_time'];
+              }
               if ( isset($json['max_show_time']) ) {
                 $inputData['MWidgetSetting']['max_show_time'] = $json['max_show_time'];
               }
@@ -160,7 +163,6 @@ class MWidgetSettingsController extends AppController {
      * */
     private function _settingToJson($objData){
         $settings = [];
-
         foreach ($objData as $key => $val ) {
           if ( isset($this->MWidgetSetting->styleColumns[$key]) ) {
             $settings[$this->MWidgetSetting->styleColumns[$key]] = $val;
