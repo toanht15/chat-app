@@ -240,7 +240,7 @@
 					<span class="require"><label>受付時間</label></span>
 					<?php $subTitle = $this->ngForm->input('time_text', [
 						'type' => 'text',
-						'placeholder' => '受付時間',
+						'placeholder' => '（例）9：00-18：00',
 						'ng-disabled' => 'timeTextToggle == "2"',
 						'div' => false,
 						'style' => 'margin:10px 0 10px 20px;',
