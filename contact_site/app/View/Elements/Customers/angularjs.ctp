@@ -7,6 +7,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
 (function(){
 
+  $.ajaxSetup({
+    cache: false
+  });
+
   // -----------------------------------------------------------------------------
   //  関数
   // -----------------------------------------------------------------------------
@@ -410,6 +414,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                     data: {
                         historyId: obj.historyId
                     },
+                    cache: false,
                     dataType: "json",
                     success: function(json){
                         for (var i = 0; json.length > i; i++) {

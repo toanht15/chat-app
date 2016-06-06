@@ -75,12 +75,8 @@
 					<!-- /* チャット */ -->
 					<td class="w10 tCenter" id="chatTypeBtn">
 
-						<span class="monitorOn" ng-if="monitor.chat === <?= h($muserId)?>"><span class="bold">対応中</span><br>（あなた）
-							<div class="unread" ng-if="monitor.chatUnreadCnt > 0">{{monitor.chatUnreadCnt}}</div>
-							</span>
-							<span class="monitorOn" ng-if="isset(monitor.chat) && monitor.chat !== <?= h($muserId)?>"><span class="bold">対応中</span><br>（{{setName(monitor.chat)}}）</span>
-						</span>
-
+						<span class="monitorOn" ng-if="monitor.chat === <?= h($muserId)?>"><span class="bold">対応中</span><br>（あなた）</span>
+						<span class="monitorOn" ng-if="isset(monitor.chat) && monitor.chat !== <?= h($muserId)?>"><span class="bold">対応中</span><br>（{{setName(monitor.chat)}}）</span>
 
                         <span ng-if="monitor.widget">
                           <span ng-if="monitor.tabId != detailId" ng-click="showDetail(monitor.tabId)" class="btn-shadow blueBtn ">
