@@ -76,6 +76,7 @@ class HistoriesController extends AppController {
             'conditions' => [
                 'THistoryChatLog.t_histories_id' => $historyId
             ],
+            'order' => 'created',
             'recursive' => -1
         ];
         $ret = $this->THistoryChatLog->find('all', $params);

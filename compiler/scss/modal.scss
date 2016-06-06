@@ -264,20 +264,21 @@
             li {
               width: 280px;
               text-align: left;
-              border: 1px solid #878787;
+              box-shadow: 0 0 1px rgba(0, 0, 0, 0.5);
               padding: 5px;
               border-radius: 5px;
               white-space: pre-line;
+              color: #8A8A8A;
 
               &.sinclo_re {
                 margin: 0 55px 10px 20px;
                 border-bottom-left-radius: 0;
-                background-color: #FFF;
+                background-color: #F1F5C8;
               }
               &.sinclo_se {
                 margin: 0 20px 10px 55px;
                 border-bottom-right-radius: 0;
-                background-color: rgba(195,214,155,0.3);
+                background-color: #FFF;
               }
             }
 

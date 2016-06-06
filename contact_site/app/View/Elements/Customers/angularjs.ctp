@@ -111,6 +111,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         setTimeout(nInstance.close.bind(nInstance), 3000);
       },
       isReadMessage: function(monitor){
+        // フォーカスが入っているもののみ
+        if (!$("#sendMessage").is(":focus")) return false;
         // メッセージを既読にする
         if ( isset(monitor.chatUnreadCnt) && monitor.chatUnreadCnt > 0 ) {
           emit('isReadChatMessage', {
@@ -561,7 +563,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         chatApi.createMessage(cn, chat.message);
         $('#chatTalk').prop({scrollTop: chatTalk.scrollHeight - chatTalk.clientHeight});
       }
-      if ( $scope.monitorList[obj.tabId].chat === myUserId  ) {
+      if ( $scope.monitorList[obj.tabId].chat === myUserId ) {
         // 既読にする(ok)
         chatApi.isReadMessage($scope.monitorList[obj.tabId]);
       }
@@ -570,6 +572,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     socket.on("sendChatResult", function(d){
       var obj = JSON.parse(d),
           elm = document.getElementById('sendMessage'), cn;
+
+      if ( !(obj.tabId in $scope.monitorList) ) return false;
+
       if ( obj.ret ) {
         if (obj.messageType === chatApi.messageType.customer) {
           cn = "sinclo_re";
@@ -590,15 +595,13 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         // 以降、受信時のみの処理
         if (obj.messageType !== chatApi.messageType.customer) return false;
 
-        // 未読数加算（自分以外の誰も対応していないとき）
-        if ( isset($scope.monitorList[obj.tabId]) && (!$scope.isset($scope.monitorList[obj.tabId].chat) || $scope.monitorList[obj.tabId].chat === myUserId) ) {
-            $scope.monitorList[obj.tabId].chatUnreadCnt++;
-            $scope.monitorList[obj.tabId].chatUnreadId = obj.chatId;
-            chatApi.notification($scope.monitorList[obj.tabId].accessId, obj.chatMessage);
-        }
-        // 既読にする（自分が対応しているとき）
-        if ( isset($scope.monitorList[obj.tabId]) && $scope.monitorList[obj.tabId].chat === myUserId ) {
-            // 既読にする
+        // 未読数加算（自分が対応していないとき）
+        $scope.monitorList[obj.tabId].chatUnreadCnt++;
+        $scope.monitorList[obj.tabId].chatUnreadId = obj.chatId;
+        chatApi.notification($scope.monitorList[obj.tabId].accessId, obj.chatMessage);
+
+        // 既読にする(対象のタブを開いている、且つ自分が対応しているとき)
+        if ( $scope.monitorList[obj.tabId].chat === myUserId ) {
             chatApi.isReadMessage($scope.monitorList[obj.tabId]);
         }
 
