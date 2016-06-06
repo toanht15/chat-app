@@ -507,6 +507,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       if ( obj.tabId !== undefined ) {
         if ( obj.accessType !== _access_type_host ) {
           delete $scope.monitorList[obj.tabId];
+          $scope.chatList = $scope.chatList.filter(function(v){
+            return (v !== this.t)
+          }, {t: obj.tabId});
           if ( obj.tabId === chatApi.tabId ){
             $scope.showDetail(obj.tabId);
             chatApi.tabId = null;
