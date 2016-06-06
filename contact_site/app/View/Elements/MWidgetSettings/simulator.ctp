@@ -19,7 +19,7 @@
 	<?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
 		#sincloBox p#widgetTitle #sincloChatUnread { position: absolute; top: 0; left: 0; width: 25px; height: 25px; font-size: 13px; color: #FFF; font-style: normal; text-align: center; font-weight: bold; background-color: #FF5C5C; border-radius: 15px; margin: 2.5px 6px; padding: 5px; }
 		#sincloBox span#mainImage #sincloChatUnread { position: absolute; top: -10px; right: -10px; background-image: url("http://socket.localhost:8080/img/chat-bg.png"); background-size: contain; background-repeat: no-repeat; width: 25px; height: 20px; font-size: 11px; color: #FFF; font-style: normal; padding: 1px; text-align: center; font-weight: bold; }
-		#sincloBox ul#chatTalk { width: 100%; height: 250px; padding: 5px; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0}
+		#sincloBox ul#chatTalk { width: 100%; height: 194px; padding: 5px; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0}
 		#sincloBox ul#chatTalk li { border-radius: 5px; background-color: #FFF; margin: 5px 0; padding: 5px; font-size: 12px; border: 1px solid #C9C9C9; line-height: 1.8; white-space: pre; color: #5E614E; }
 		#sincloBox ul#chatTalk li.chat_right { border-bottom-right-radius: 0; margin-left: 10px }
 		#sincloBox ul#chatTalk li.chat_left { border-bottom-left-radius: 0; margin-right: 10px }
@@ -31,7 +31,13 @@
 		#sincloBox section#callTab #telNumber.notUseTime { font-size: 20px; padding: 10px 0px 0px; height: 45px }
 		#sincloBox section#callTab #telIcon { background-color: {{main_color}}; display: block; width: 50px; height: 50px; float: left; border-radius: 25px; padding: 3px }
 		#sincloBox section#callTab #telTime { font-weight: bold; color: {{main_color}}; margin: 0 auto; font-size: 10px; text-align: center; padding: 0 0 5px; height: 20px }
-		#sincloBox section#callTab #telContent { display: block; word-wrap: break-word; font-size: 11px; text-align: center; margin: auto; line-height: 1.5; color: #6B6B6B; width: 20em; white-space: pre-wrap }
+	<?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
+		#sincloBox section#callTab #telContent { text-align: center; margin: 0 auto; width: 240px; display: table; flex-direction: column; align-content: center; min-height: 120px; justify-content: center; overflow-x: hidden; overflow-y: auto }
+	<?php else: ?>
+		#sincloBox section#callTab #telContent { text-align: center; margin: 0 auto; width: 240px; display: table; flex-direction: column; align-content: center; justify-content: center; overflow-x: hidden; overflow-y: auto }
+	<?php endif; ?>
+		#sincloBox section#callTab #telContent span { word-wrap: break-word; font-size: 11px; line-height: 1.5; color: #6B6B6B; white-space: pre-wrap; max-height: 120px; display: table-cell; vertical-align: middle; text-align: center }
+		#sincloBox section#callTab #accessIdArea { height: 50px; display: block; margin: 10px auto; width: 80%; padding: 7px;  color: #FFF; background-color: rgb(188, 188, 188); font-size: 25px; font-weight: bold; text-align: center; border-radius: 15px }
 	<?php endif; ?>
 	<?php if ( $coreSettings[C_COMPANY_USE_CHAT] && $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
 		#sincloBox section#navigation { border-width: 0 1px; height: 40px; position: relative; display: block; }
@@ -114,10 +120,10 @@
 			</div>
 
 			<!-- テキスト -->
-			<pre id="telContent">{{content}}</pre>
+			<div id="telContent"><span>{{content}}</span></div>
 			<!-- テキスト -->
 
-			<span style="display: block; margin: 10px auto; width: 80%; padding: 7px;  color: #FFF; background-color: rgb(188, 188, 188); font-size: 25px; font-weight: bold; text-align: center; border: 1px solid rgb(188, 188, 188); border-radius: 15px">
+			<span id="accessIdArea">
 			●●●●
 			</span>
 		</section>

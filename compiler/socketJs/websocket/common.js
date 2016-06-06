@@ -154,7 +154,6 @@ var socket, // socket.io
       html += '      #sincloBox p#widgetSubTitle { background-color: #FFF; margin: 0; padding: 7px 0; text-align: left; border-width: 0 1px 0 1px; border-color: #E8E7E0; border-style: solid; padding-left: 77px; font-weight: bold; color: ' + widget.mainColor + '; height: 29px }';
       html += '      #sincloBox p#widgetDescription { background-color: #FFF; margin: 0; padding-bottom: 7px; text-align: left; border-width: 0 1px 1px 1px; border-color: #E8E7E0; border-style: solid; padding-left: 77px; height: 23px; color: #8A8A8A; }';
       html += '      #sincloBox section { display: inline-block; background-color: #FFF; width: 270px; border: 1px solid #E8E7E0; border-top: none; }';
-      html += '      #sincloBox section#chatTab { padding-top: 5px;  }';
       // 画像がセットされている場合のスタイル
       if ( String(widget.showMainImage) !== "2" ) {
       html += '      #sincloBox p#widgetTitle { padding-left: 70px; }';
@@ -162,7 +161,7 @@ var socket, // socket.io
       // チャットを使用する際
       if ( window.info.contract.chat ) {
         html += '      #sincloBox #mainImage em { position: absolute;top: -10px;right: -10px;background-image: url("' + window.info.site.files + '/img/chat-bg.png");background-size: contain;background-repeat: no-repeat; width: 25px; height: 20px; font-size: 11px; color: #FFF; font-style: normal; padding: 1px; text-align: center; font-weight: bold }';
-        html += '      #sincloBox ul#chatTalk { width: 100%; height: 250px; padding: 5px; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0}';
+        html += '      #sincloBox ul#chatTalk { width: 100%; height: 194px; padding: 5px; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0}';
         html += '      #sincloBox ul#chatTalk li { white-space: pre-wrap!important; border-radius: 5px; background-color: #FFF; margin: 5px 0; padding: 5px; font-size: 12px; border: 1px solid #C9C9C9; color: #595959; white-space: pre; color: #8A8A8A; }';
         html += '      #sincloBox ul#chatTalk li.sinclo_se { ' + chatPosition.se + 'background-color: #FFF; }';
         html += '      #sincloBox ul#chatTalk li.sinclo_re { ' + chatPosition.re + 'background-color:' + faintColor + ' }';
@@ -172,7 +171,12 @@ var socket, // socket.io
       if ( window.info.contract.synclo ) {
         html += '      #sincloBox section#callTab #telNumber { color: ' + widget.mainColor + '; font-weight: bold; margin: 0 auto; text-align: center }';
         html += '      #sincloBox section#callTab #telIcon { color: ' + widget.mainColor + '; display: block; width: 50px; height: 50px; float: left; background-color: #3EA3DE; border-radius: 25px; padding: 3px }';
-        html += '      #sincloBox section#callTab #telContent { display: block; word-wrap: break-word; font-size: 11px; text-align: center; margin: auto; line-height: 1.5; color: #6B6B6B; width: 20em; white-space: pre-wrap }';
+        html += '      #sincloBox section#callTab #telContent { text-align: center; margin: 0 auto; width: 240px; display: table; flex-direction: column; align-content: center; justify-content: center; overflow-x: hidden; overflow-y: auto }';
+        if ( window.info.contract.chat ) {
+          html += '      #sincloBox section#callTab #telContent { text-align: center; margin: 0 auto; width: 240px; display: table; flex-direction: column; align-content: center; min-height: 120px; justify-content: center; overflow-x: hidden; overflow-y: auto }';
+        }
+        html += '      #sincloBox section#callTab #telContent span { word-wrap: break-word; font-size: 11px; line-height: 1.5; color: #6B6B6B; white-space: pre-wrap; max-height: 120px; display: table-cell; vertical-align: middle; text-align: center }';
+        html += '      #sincloBox section#callTab #accessIdArea { height: 50px; display: block; margin: 10px auto; width: 80%; padding: 7px;  color: #FFF; background-color: rgb(188, 188, 188); font-size: 25px; font-weight: bold; text-align: center; border-radius: 15px } ';
       }
       // チャットも画面同期も使用する際にはデフォルトで画面同期ウィジェットの表示をnoneにする
       if ( window.info.contract.chat && window.info.contract.synclo ) {
@@ -245,8 +249,8 @@ var socket, // socket.io
       }
       html += '    </div>';
       // テキスト
-      html += '    <pre id="telContent">' + widget.content + '</pre>';
-      html += '    <span style="display: block; margin: 10px auto; width: 80%; padding: 7px;  color: #FFF; background-color: rgb(188, 188, 188); font-size: 25px; font-weight: bold; text-align: center; border: 1px solid rgb(188, 188, 188); border-radius: 15px">' + userInfo.accessId + '</span>';
+      html += '    <div id="telContent"><span>' + widget.content + '</span></div>';
+      html += '    <span id="accessIdArea">' + userInfo.accessId + '</span>';
       html += '</section>';
       return html;
     },
