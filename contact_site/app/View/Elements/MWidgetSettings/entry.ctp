@@ -14,6 +14,13 @@
 				<!-- 表示設定 -->
 				<!-- 最大化時間設定 -->
 				<li>
+					<?php
+					// 最大化時間入力欄のdisabled制御
+					$isDisableMaxShowTime = false;
+					if ( isset($this->data['MWidgetSetting']['max_show_time']) ) {
+						$isDisableMaxShowTime = true;
+					}
+					?>
 					<span><label>最大化する条件</label></span>
 					<div>
 						<?php $maxShowTimeTag = $this->Form->input('max_show_time', [
@@ -29,7 +36,7 @@
 						],[
 							'entity' => 'MWidgetSetting.max_show_time'
 						]); ?>
-						<div ng-init="showTime=inputInitToggle('<?=$this->formEx->val($this->data['MWidgetSetting'], 'max_show_time')?>')">
+						<div ng-init="showTime=inputInitToggle('<?=$isDisableMaxShowTime?>')">
 							<label for="showTime1"><input type="radio" name="showTime" ng-model="showTime" id="showTime1" value="1" ><?=$maxShowTimeTag?></label><br>
 							<label for="showTime2"><input type="radio" name="showTime" ng-model="showTime" id="showTime2" value="2">自動で最大化しない</label>
 						</div>
@@ -82,7 +89,14 @@
 
 				<!-- サブタイトル -->
 				<li>
-					<span ng-class="{require: subTitleToggle=='1'}"><label>サブタイトル</label></span>
+					<?php
+					// サブタイトル入力欄のdisabled制御
+					$isDisableSubTitle = false;
+					if ( isset($this->data['MWidgetSetting']['sub_title']) && intval($this->data['MWidgetSetting']['sub_title']) !== 1 ) {
+						$isDisableSubTitle = true;
+					}
+					?>
+					<span class='require'><label>サブタイトル</label></span>
 					<?php $subTitle = $this->ngForm->input('sub_title', [
 						'type' => 'text',
 						'placeholder' => 'サブタイトル',
@@ -95,7 +109,7 @@
 					],[
 						'entity' => 'MWidgetSetting.sub_title'
 					]) ?>
-					<div ng-init="subTitleToggle=inputInitToggle('<?=$this->formEx->val($this->data['MWidgetSetting'], 'sub_title')?>')">
+					<div ng-init="subTitleToggle=inputInitToggle('<?=$isDisableSubTitle?>')">
 						<label for="showSubtitle1"><input type="radio" name="showSubtitle" ng-model="subTitleToggle" id="showSubtitle1" value="1" >サブタイトルを表示する</label><br><?=$subTitle?><br>
 						<label for="showSubtitle2"><input type="radio" name="showSubtitle" ng-model="subTitleToggle" id="showSubtitle2" value="2" >サブタイトルを表示しない</label>
 					</div>
@@ -105,7 +119,14 @@
 
 				<!-- 説明文 -->
 				<li>
-					<span ng-class="{require: descriptionToggle=='1'}"><label>説明文</label></span>
+					<?php
+					// 説明文入力欄のdisabled制御
+					$isDisableDescription = false;
+					if ( isset($this->data['MWidgetSetting']['description']) && intval($this->data['MWidgetSetting']['description']) !== 1 ) {
+						$isDisableDescription = true;
+					}
+					?>
+					<span class='require'><label>説明文</label></span>
 					<?php $description = $this->ngForm->input('description', [
 						'type' => 'text',
 						'placeholder' => '説明文',
@@ -119,7 +140,7 @@
 					[
 						'entity' => 'MWidgetSetting.description'
 					]) ?>
-					<div ng-init="descriptionToggle=inputInitToggle('<?=$this->formEx->val($this->data['MWidgetSetting'], 'description')?>')">
+					<div ng-init="descriptionToggle=inputInitToggle('<?=$isDisableDescription?>')">
 						<label for="showDescription1"><input type="radio" name="showDescription1" ng-model="descriptionToggle" id="showDescription1" value="1" >説明文を表示する</label><br><?=$description?><br>
 						<label for="showDescription2"><input type="radio" name="showDescription2" ng-model="descriptionToggle" id="showDescription2" value="2" >説明文を表示しない</label>
 					</div>
@@ -206,58 +227,36 @@
 				<?php if ($this->Form->isFieldError('tel') ) echo $this->Form->error('tel', null, ['wrap' => 'li']); ?>
 				<!-- お問い合わせ先 -->
 
-				<!-- 受付時間指定 -->
-				<li>
-					<span class="require"><label>受付時間指定</label></span>
-					<label><?= $this->ngForm->input('display_time_flg', [
-						'type' => 'radio',
-						'fieldset' => false,
-						'separator' => '</label><br><label>',
-						'legend' => false,
-						'options' => [
-							'営業時間を表示しない',
-							'営業時間を表示する'
-						],
-						'label' => false,
-						'error' => false
-					],
-					[
-						'entity' => 'MWidgetSetting.display_time_flg',
-						'change' => 'isDisplayTime()'
-					]) ?></label>
-				</li>
-				<?php if ($this->Form->isFieldError('display_time_flg') ) echo $this->Form->error('display_time_flg', null, ['wrap' => 'li']); ?>
-				<!-- 受付時間指定 -->
 
-				<!-- 受付時間の表記 -->
-				<?php
-				// ウィジェットに受付時間を表記しない場合は、受付時間を更新対象外にする。
-				$isDisableTimeText = false;
-				if ( isset($this->data['MWidgetSetting']['display_time_flg']) && intval($this->data['MWidgetSetting']['display_time_flg']) !== 1 ) {
-					$isDisableTimeText = true;
-				}
-				$isRequired = "";
-				if ( !$isDisableTimeText ) {
-					$isRequired = "class='require'";
-				}
-				?>
+				<!-- 受付時間 -->
 				<li>
-					<span <?=$isRequired?> id="timeTextLabel"><label>受付時間の表記</label></span>
-					<?= $this->ngForm->input('time_text', [
+					<?php
+					// 受付時間入力欄のdisabled制御
+					$isDisableTimeText = false;
+					if ( isset($this->data['MWidgetSetting']['time_text']) && intval($this->data['MWidgetSetting']['time_text']) !== 1 ) {
+						$isDisableTimeText = true;
+					}
+					?>
+					<span class="require"><label>受付時間</label></span>
+					<?php $subTitle = $this->ngForm->input('time_text', [
 						'type' => 'text',
-						'placeholder' => '受付時間の表記',
+						'placeholder' => '受付時間',
+						'ng-disabled' => 'timeTextToggle == "2"',
 						'div' => false,
+						'style' => 'margin:10px 0 10px 20px;',
 						'label' => false,
 						'maxlength' => 15,
-						'disabled' => $isDisableTimeText,
 						'error' => false
-					],
-					[
+					],[
 						'entity' => 'MWidgetSetting.time_text'
 					]) ?>
+					<div ng-init="timeTextToggle=inputInitToggle('<?=$isDisableTimeText?>')">
+						<label for="showTimeText1"><input type="radio" name="showTimeText" ng-model="timeTextToggle" id="showTimeText1" value="1" >受付時間を表示する</label><br><?=$subTitle?><br>
+						<label for="showTimeText2"><input type="radio" name="showTimeText" ng-model="timeTextToggle" id="showTimeText2" value="2" >受付時間を表示しない</label>
+					</div>
 				</li>
-				<?php if ($this->Form->isFieldError('time_text') ) echo $this->Form->error('time_text', null, ['wrap' => 'li']); ?>
-				<!-- 受付時間の表記 -->
+				<?php if ($this->Form->isFieldError('time_text')) echo $this->Form->error('time_text', null, ['wrap' => 'li']); ?>
+				<!-- 受付時間 -->
 
 				<!-- ウィジェット本文 -->
 				<li>

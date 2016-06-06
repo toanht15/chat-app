@@ -17,8 +17,6 @@
 		#sincloBox section { display: inline-block; width: 270px; border: 1px solid #E8E7E0; border-top: none; }
 		#sincloBox div#miniTarget { overflow: hidden; transition: height 200ms linear; }
 	<?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
-		#sincloBox p#widgetTitle #sincloChatUnread { position: absolute; top: 0; left: 0; width: 25px; height: 25px; font-size: 13px; color: #FFF; font-style: normal; text-align: center; font-weight: bold; background-color: #FF5C5C; border-radius: 15px; margin: 2.5px 6px; padding: 5px; }
-		#sincloBox span#mainImage #sincloChatUnread { position: absolute; top: -10px; right: -10px; background-image: url("http://socket.localhost:8080/img/chat-bg.png"); background-size: contain; background-repeat: no-repeat; width: 25px; height: 20px; font-size: 11px; color: #FFF; font-style: normal; padding: 1px; text-align: center; font-weight: bold; }
 		#sincloBox ul#chatTalk { width: 100%; height: 194px; padding: 5px; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0}
 		#sincloBox ul#chatTalk li { border-radius: 5px; background-color: #FFF; margin: 5px 0; padding: 5px; font-size: 12px; border: 1px solid #C9C9C9; line-height: 1.8; white-space: pre; color: #5E614E; }
 		#sincloBox ul#chatTalk li.chat_right { border-bottom-right-radius: 0; margin-left: 10px }
@@ -57,7 +55,6 @@
 	<!-- 画像 -->
 	<span id="mainImage" ng-if="mainImageToggle == '1'" style="position: absolute; top: 7px; left: 7px;">
 	<?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
-		<em id="sincloChatUnread">1</em>
 	<?php endif; ?>
 		<img ng-src="<?=$gallaryPath?>{{main_image}}" err-src="<?=$gallaryPath?>chat_sample_picture.png" width="62" height="70" alt="チャット画像">
 	</span>
@@ -65,9 +62,6 @@
 	<div>
 		<!-- タイトル -->
 		<p id="widgetTitle" ng-class="{center: mainImageToggle == '2'}">
-			<?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
-				<em ng-if="mainImageToggle == '2'" id="sincloChatUnread">1</em>
-			<?php endif; ?>
 			{{title}}
 		</p>
 		<!-- タイトル -->
@@ -110,11 +104,11 @@
 			<!-- アイコン -->
 
 			<!-- 受付電話番号 -->
-			<pre id="telNumber" ng-class="{notUseTime: display_time_flg !== '1'}" >{{tel}}</pre>
+			<pre id="telNumber" ng-class="{notUseTime: timeTextToggle !== '1'}" >{{tel}}</pre>
 			<!-- 受付電話番号 -->
 
 			<!-- 受付時間 -->
-			<pre id="telTime" ng-if="display_time_flg == '1'">受付時間： {{time_text}}</pre>
+			<pre id="telTime" ng-if="timeTextToggle == '1'">受付時間： {{time_text}}</pre>
 			<!-- 受付時間 -->
 
 			</div>
