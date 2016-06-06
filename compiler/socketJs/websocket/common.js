@@ -245,7 +245,7 @@ var socket, // socket.io
       }
       // 受付時間
       if ( Number(widget.display_time_flg) === 1 ) {
-          html += '    <pre style="font-weight: bold; color: ' + widget.mainColor + '; margin: 0 auto; font-size: 10px; text-align: center; padding: 0 0 5px; height: 20px">受付時間： ' + widget.time_text + '</pre>';
+          html += '    <pre style="font-weight: bold; color: ' + widget.mainColor + '; margin: 0 auto; white-space: pre-line; font-size: 10px; text-align: center; padding: 0 0 5px; height: 20px">受付時間： ' + widget.time_text + '</pre>';
       }
       html += '    </div>';
       // テキスト

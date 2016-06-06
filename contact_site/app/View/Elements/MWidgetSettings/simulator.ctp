@@ -30,7 +30,7 @@
 		#sincloBox section#callTab #telNumber:not(.notUseTime) { font-size: 18px; padding: 5px 0px 0px; height: 30px }
 		#sincloBox section#callTab #telNumber.notUseTime { font-size: 20px; padding: 10px 0px 0px; height: 45px }
 		#sincloBox section#callTab #telIcon { background-color: {{main_color}}; display: block; width: 50px; height: 50px; float: left; border-radius: 25px; padding: 3px }
-		#sincloBox section#callTab #telTime { font-weight: bold; color: {{main_color}}; margin: 0 auto; font-size: 10px; text-align: center; padding: 0 0 5px; height: 20px }
+		#sincloBox section#callTab #telTime { font-weight: bold; color: {{main_color}}; margin: 0 auto; white-space: pre-line; font-size: 10px; text-align: center; padding: 0 0 5px; height: 20px }
 	<?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
 		#sincloBox section#callTab #telContent { text-align: center; margin: 0 auto; width: 240px; display: table; flex-direction: column; align-content: center; min-height: 120px; justify-content: center; overflow-x: hidden; overflow-y: auto }
 	<?php else: ?>
