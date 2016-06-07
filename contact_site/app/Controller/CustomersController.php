@@ -75,7 +75,7 @@ class CustomersController extends AppController {
     public function remoteGetStayLogs() {
         Configure::write('debug', 0);
         $this->autoRender = FALSE;
-        $this->layout = null;
+        $this->layout = 'ajax';
 
         $ret = array();
         if ( isset($this->params->query['visitorsId']) && isset($this->params->query['tabId']) ) {
@@ -107,7 +107,7 @@ class CustomersController extends AppController {
         }
 
         $this->set('THistoryStayLog', $ret);
-        return $this->render('/Histories/remoteGetStayLogs');
+        return $this->render('/Elements/Histories/remoteGetStayLogs');
     }
 
     public function remoteGetChatInfo(){

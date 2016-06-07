@@ -67,7 +67,7 @@ class HistoriesController extends AppController {
     public function remoteGetChatLogs() {
         Configure::write('debug', 0);
         $this->autoRender = FALSE;
-        $this->layout = null;
+        $this->layout = 'ajax';
 
         $historyId = $this->params->query['historyId'];
 
@@ -87,7 +87,7 @@ class HistoriesController extends AppController {
     public function remoteGetStayLogs() {
         Configure::write('debug', 0);
         $this->autoRender = FALSE;
-        $this->layout = null;
+        $this->layout = 'ajax';
 
         $historyId = $this->params->query['historyId'];
 

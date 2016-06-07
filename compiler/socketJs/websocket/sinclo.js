@@ -153,7 +153,7 @@
         referrer: userInfo.referrer
       });
     },
-    setHistoryId: function(d){
+    setHistoryId: function(){
         var createStartTimer,
             createStart = function(){
                 var sincloBox = document.getElementById('sincloBox');
@@ -253,6 +253,10 @@
         window.clearTimeout(this.syncTimeout);
         return false;
       }
+      var sincloBox = document.getElementById('sincloBox');
+      if (sincloBox) {
+        sincloBox.style.display = "none";
+      }
       common.load.start();
       userInfo.setConnect(obj.connectToken);
       if ( !check.isset(userInfo.sendTabId) ) {
@@ -283,10 +287,6 @@
       $('select').each(function(){
         selectInfo.push(this.value);
       });
-      var sincloBox = document.getElementById('sincloBox');
-      if ( sincloBox ) {
-        sincloBox.parentNode.removeChild(sincloBox);
-      }
 
       emit('getSyncInfo', {
         userId: userInfo.userId,
@@ -446,7 +446,7 @@
       this.chatApi.historyId = obj.chat.historyId;
       for (var i = 0; i < obj.chat.messages.length; i++) {
         var chat = obj.chat.messages[i],
-            cn = (chat.messageType == 1) ? "sinclo_se" : "sinclo_re";
+            cn = (Number(chat.messageType) === 1) ? "sinclo_se" : "sinclo_re";
         if (Number(chat.messageReadFlg) === 0 && chat.messageType === sinclo.chatApi.messageType.company) {
             this.chatApi.unread++;
         }
@@ -484,24 +484,33 @@
         alert('メッセージの送信に失敗しました。');
       }
     },
-    sendReqAutoChatMessage: function(d){
+    sendReqAutoChatMessages: function(d){
       // 自動メッセージの情報を渡す（保存の為）
       var obj = common.jParse(d);
-      emit("sendAutoChatMessage", {messages: sinclo.chatApi.autoMessages, chatToken: obj.chatToken});
+      emit("sendAutoChatMessages", {messages: sinclo.chatApi.autoMessages, chatToken: obj.chatToken});
     },
     syncStop: function(d){
       var obj = common.jParse(d);
       syncEvent.stop(false);
       userInfo.syncInfo.unset();
-      common.makeAccessIdTag();
-      var sincloBox = document.getElementById('sincloBox');
-      sincloBox.style.display = "block";
-      sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
-      sincloBox.setAttribute('data-openflg', false);
-      if ( window.info.contract.chat ) {
-          // チャット情報読み込み
-          sinclo.chatApi.init();
+      if (!document.getElementById('sincloBox')) {
+        common.makeAccessIdTag();
       }
+
+      var timer = setInterval(function(){
+        if (window.info.widgetDisplay === false) {
+          clearInterval(timer);
+          return false;
+        }
+        var sincloBox = document.getElementById('sincloBox');
+        if (sincloBox) {
+          sincloBox.style.display = "block";
+          sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
+          sincloBox.setAttribute('data-openflg', false);
+          clearInterval(timer);
+        }
+
+      }, 500);
     },
     chatApi: {
         saveFlg: false,
@@ -554,9 +563,7 @@
         },
         isRead: function(){
             if ( Number(sinclo.chatApi.unread) > 0 ) {
-                if ( sinclo.chatApi.saveFlg ) {
-                    emit("isReadFromCustomer", {});
-                }
+                emit("isReadFromCustomer", {});
                 sinclo.chatApi.unread = 0;
                 sinclo.chatApi.showUnreadCnt();
             }
@@ -759,6 +766,7 @@
                     emit("sendAutoChat", {messageList: [data]});
                 }
                 else {
+                    emit('sendAutoChatMessage', data);
                     sinclo.chatApi.autoMessages.push(data);
                 }
             }

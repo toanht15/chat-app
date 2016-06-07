@@ -295,6 +295,7 @@ var socket, // socket.io
       if ( sincloBox ) {
         sincloBox.parentNode.removeChild(sincloBox);
       }
+      console.log('make');
       if ( userInfo.accessType !== cnst.access_type.host ) {
       var html = common.createWidget();
         $('body').append(html);
@@ -1258,10 +1259,15 @@ var socket, // socket.io
       sinclo.chatMessageData(d);
     }); // socket-on: receiveConnectEV
 
-    // チャット初期データ
-    socket.on('sendReqAutoChatMessage', function (d) {
-      sinclo.sendReqAutoChatMessage(d);
-    }); // socket-on: sendReqAutoChatMessage
+    // オートメッセージデータ群
+    socket.on('sendReqAutoChatMessages', function (d) {
+      sinclo.sendReqAutoChatMessages(d);
+    }); // socket-on: sendReqAutoChatMessages
+
+    // オートメッセージ
+    socket.on('sendAutoChatMessage', function (d) {
+      sinclo.sendAutoChatMessage(d);
+    }); // socket-on: sendReqAutoChatMessages
 
     // 新着チャット
     socket.on('sendChatResult', function (d) {

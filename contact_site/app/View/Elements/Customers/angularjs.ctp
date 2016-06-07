@@ -79,7 +79,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       },
       getMessage: function(obj){
         // オートメッセージの取得
-        emit('getAutoChatMessage', {userId: obj.userId, tabId: obj.tabId, chatToken: chatApi.token});
+        emit('getAutoChatMessages', {userId: obj.userId, tabId: obj.tabId, chatToken: chatApi.token});
       },
       createMessage: function(cs, val){
         var chatTalk = document.getElementById('chatTalk');
@@ -399,36 +399,50 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       }
     });
 
-    socket.on('resAutoChatMessage', function(d){
+    socket.on('resAutoChatMessages', function(d){
         var obj = JSON.parse(d);
 
         if ( chatApi.token !== obj.chatToken ) return false;
-        if ( ('messages' in obj) ) {
-            for (var i = 0; obj.messages.length > i; i++) {
-                chatApi.createMessage("sinclo_se", obj.messages[i].chatMessage);
-            }
-        }
-        // else {
-            if ( ('historyId' in obj) ) {
-                $.ajax({
-                    type: "GET",
-                    url: "<?=$this->Html->url('/Customers/remoteGetChatInfo')?>",
-                    data: {
-                        historyId: obj.historyId
-                    },
-                    cache: false,
-                    dataType: "json",
-                    success: function(json){
-                        for (var i = 0; json.length > i; i++) {
-                            var data= json[i]['THistoryChatLog'];
-                            var cn = (Number(data['message_type']) === Number(chatApi.messageType.customer)) ? "sinclo_re" : "sinclo_se";
-                            chatApi.createMessage(cn, data['message']);
-                        }
-                    }
-                });
-            }
-        // }
 
+       if ( ('historyId' in obj) ) {
+           $.ajax({
+               type: "GET",
+               url: "<?=$this->Html->url('/Customers/remoteGetChatInfo')?>",
+               data: {
+                   historyId: obj.historyId
+               },
+               cache: false,
+               dataType: "json",
+               success: function(json){
+                   if (json.length === 0) {
+                       for (var u = 0; obj.messages.length > u; u++) {
+                           chatApi.createMessage("sinclo_se", obj.messages[u].chatMessage);
+                       }
+                   }
+                   else {
+                       for (var i = 0; json.length > i; i++) {
+                           var data= json[i]['THistoryChatLog'];
+                           var cn = (Number(data['message_type']) === Number(chatApi.messageType.customer)) ? "sinclo_re" : "sinclo_se";
+                           chatApi.createMessage(cn, data['message']);
+                           if ( ((json.length - 1) === i && 'messages' in obj) ) {
+                               for (var u = 0; obj.messages.length > u; u++) {
+                                   chatApi.createMessage("sinclo_se", obj.messages[u].chatMessage);
+                               }
+                           }
+                       }
+
+                   }
+               }
+           });
+       }
+
+    });
+
+    socket.on('resAutoChatMessage', function(d){
+        var obj = JSON.parse(d);
+        if (obj.tabId === chatApi.tabId ) {
+            chatApi.createMessage("sinclo_auto" , obj.chatMessage);
+        }
     });
 
     socket.on('sendCustomerInfo', function (data) {

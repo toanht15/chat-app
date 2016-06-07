@@ -298,7 +298,6 @@ io.sockets.on('connection', function (socket) {
               var sId = sincloCore[d.siteKey][d.tabId].sessionId;
               // 書き込みが成功したら顧客側に結果を返す
               emit.toUser('sendChatResult', {tabId: d.tabId, chatId: results.insertId, messageType: d.messageType, ret: true, chatMessage: d.chatMessage, siteKey: d.siteKey}, sId);
-              // オートメッセージは対象外
               if (Number(insertData['message_type']) === 3) return false;
               // 書き込みが成功したら企業側に結果を返す
               emit.toCompany('sendChatResult', {tabId: d.tabId, chatId: results.insertId, messageType: d.messageType, ret: true, chatMessage: d.chatMessage, siteKey: d.siteKey}, d.siteKey);
@@ -646,22 +645,28 @@ io.sockets.on('connection', function (socket) {
   //  チャット関連
   // -----------------------------------------------------------------------
 
-  // チャットデータ取得
+  // 一括：チャットデータ取得
   socket.on("getChatMessage", function(d){
     var obj = JSON.parse(d);
     chatApi.get(obj, socket.id);
   });
 
-  // チャットデータ取得(オートメッセージのみ)
-  socket.on("getAutoChatMessage", function(d){
+  // 都度：チャットデータ取得(オートメッセージのみ)
+  socket.on("sendAutoChatMessage", function(d){
+    var obj = JSON.parse(d);
+    emit.toCompany('resAutoChatMessage', obj, obj.siteKey);
+  });
+
+  // 一括：チャットデータ取得(オートメッセージのみ)
+  socket.on("getAutoChatMessages", function(d){
     var obj = JSON.parse(d);
     if (!getSessionId(obj.siteKey, obj.tabId, 'sessionId')) return false;
     var sId = getSessionId(obj.siteKey, obj.tabId, 'sessionId');
-    emit.toUser('sendReqAutoChatMessage', d, sId);
+    emit.toUser('sendReqAutoChatMessages', d, sId);
   });
 
-  // チャットデータ取得(オートメッセージのみ)
-  socket.on("sendAutoChatMessage", function(d){
+  // 一括：チャットデータ取得(オートメッセージのみ)
+  socket.on("sendAutoChatMessages", function(d){
     var obj = JSON.parse(d);
 
     var ret = {};
@@ -669,7 +674,7 @@ io.sockets.on('connection', function (socket) {
         ret['chatToken'] = obj['chatToken'];
         ret['tabId'] = obj['tabId'];
         ret['historyId'] = getSessionId(obj.siteKey, obj.tabId, 'historyId');
-    emit.toCompany('resAutoChatMessage', ret, obj.siteKey);
+    emit.toCompany('resAutoChatMessages', ret, obj.siteKey);
   });
 
   // チャット開始
