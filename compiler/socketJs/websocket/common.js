@@ -162,7 +162,7 @@ var socket, // socket.io
       if ( window.info.contract.chat ) {
         html += '      #sincloBox #mainImage em { position: absolute;top: -10px;right: -10px;background-image: url("' + window.info.site.files + '/img/chat-bg.png");background-size: contain;background-repeat: no-repeat; width: 25px; height: 20px; font-size: 11px; color: #FFF; font-style: normal; padding: 1px; text-align: center; font-weight: bold }';
         html += '      #sincloBox ul#chatTalk { width: 100%; height: 194px; padding: 5px; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0}';
-        html += '      #sincloBox ul#chatTalk li { white-space: pre-wrap!important; border-radius: 5px; background-color: #FFF; margin: 5px 0; padding: 5px; font-size: 12px; border: 1px solid #C9C9C9; color: #595959; white-space: pre; color: #8A8A8A; }';
+        html += '      #sincloBox ul#chatTalk li { word-break: break-all; white-space: pre-wrap!important; border-radius: 5px; background-color: #FFF; margin: 5px 0; padding: 5px; font-size: 12px; border: 1px solid #C9C9C9; color: #595959; white-space: pre; color: #8A8A8A; }';
         html += '      #sincloBox ul#chatTalk li.sinclo_se { ' + chatPosition.se + 'background-color: #FFF; }';
         html += '      #sincloBox ul#chatTalk li.sinclo_re { ' + chatPosition.re + 'background-color:' + faintColor + ' }';
         html += '      #sincloBox section#chatTab textarea { padding: 5px; resize: none; width: 100%; height: 50px; border: 1px solid #E4E4E4; border-radius: 5px; color: #8A8A8A; }';
@@ -175,7 +175,7 @@ var socket, // socket.io
         if ( window.info.contract.chat ) {
           html += '      #sincloBox section#callTab #telContent { text-align: center; margin: 0 auto; width: 240px; display: table; flex-direction: column; align-content: center; min-height: 120px; justify-content: center; overflow-x: hidden; overflow-y: auto }';
         }
-        html += '      #sincloBox section#callTab #telContent span { word-wrap: break-word; font-size: 11px; line-height: 1.5; color: #6B6B6B; white-space: pre-wrap; max-height: 120px; display: table-cell; vertical-align: middle; text-align: center }';
+        html += '      #sincloBox section#callTab #telContent span { word-wrap: break-all; font-size: 11px; line-height: 1.5; color: #6B6B6B; white-space: pre-wrap; max-height: 120px; display: table-cell; vertical-align: middle; text-align: center }';
         html += '      #sincloBox section#callTab #accessIdArea { height: 50px; display: block; margin: 10px auto; width: 80%; padding: 7px;  color: #FFF; background-color: rgb(188, 188, 188); font-size: 25px; font-weight: bold; text-align: center; border-radius: 15px } ';
       }
       // チャットも画面同期も使用する際にはデフォルトで画面同期ウィジェットの表示をnoneにする

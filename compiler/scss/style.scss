@@ -377,6 +377,10 @@ a {
   box-shadow: 0 0 2px $shadow-color;
 }
 
+.underL {
+  text-decoration: underline;
+}
+
 .error-message {
   padding: 0;
   margin: 0 0 0 35px;
@@ -1022,12 +1026,17 @@ ul.naviBtn {
         margin: 0;
 
         li {
-          margin: 5px 0;
+          margin: 10px 0;
           padding: 5px;
           font-size: 12px;
-          box-shadow: 0 0 1px rgba(0,0,0,0.5);
+          border: 1px solid #C9C9C9;
           color: #8A8A8A;
           white-space: pre-wrap!important;
+          word-break: break-all!important;
+
+          :last-child {
+              margin-bottom: 20px;
+          }
 
           &.sinclo_re {
               margin-right: 10px;

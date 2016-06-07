@@ -19,12 +19,12 @@
             <td class="tCenter"><?=$this->htmlEx->calcTime($history['THistory']['access_date'], $history['THistory']['out_date']) ?></td>
             <td class="tCenter">
                 <?php if( is_numeric($history['THistoryChatLog']['count']) ): ?>
-                    <?=h($history['THistoryChatLog']['count'])?>（<a href="javascript:void(0)" onclick="openChatById('<?=h($history['THistory']['id'])?>')" >履歴</a>）
+                    <?=h($history['THistoryChatLog']['count'])?>（<a class="underL" href="javascript:void(0)" onclick="openChatById('<?=h($history['THistory']['id'])?>')" >履歴</a>）
                 <?php endif; ?>
             </td>
             <td class="tCenter">
                 <?php if( is_numeric($history['THistoryStayLog']['count']) ): ?>
-                    <?=h($history['THistoryStayLog']['count'])?>（<a href="javascript:void(0)" onclick="openHistoryById('<?=h($history['THistory']['id'])?>')" >移動履歴</a>）
+                    <?=h($history['THistoryStayLog']['count'])?>（<a class="underL" href="javascript:void(0)" onclick="openHistoryById('<?=h($history['THistory']['id'])?>')" >移動履歴</a>）
                 <?php endif; ?>
             </td>
             <td class="tCenter omit"><span><?=h($history['THistory']['referrer_url'])?></span></td>
