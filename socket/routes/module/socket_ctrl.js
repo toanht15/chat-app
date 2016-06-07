@@ -393,6 +393,10 @@ io.sockets.on('connection', function (socket) {
   socket.on("customerInfo", function (data) {
     var obj = JSON.parse(data);
     obj.term = timeCalculator(obj);
+    if ( getSessionId(obj.siteKey, obj.tabId, 'chat') ) {
+      obj.chat = getSessionId(obj.siteKey, obj.tabId, 'chat');
+    }
+
     emit.toCompany("sendCustomerInfo", obj, obj.siteKey);
     chatApi.sendUnreadCnt("sendChatInfo", obj, false);
   });
@@ -685,7 +689,7 @@ io.sockets.on('connection', function (socket) {
     }
     else {
       emit.toCompany("chatStartResult", {ret: true, tabId: obj.tabId, siteKey: obj.siteKey, userId: obj.userId}, obj.siteKey);
-      sincloCore[obj.siteKey][obj.tabId].chat = obj.userId;
+      sincloCore[obj.siteKey][obj.tabId]['chat'] = obj.userId;
     }
   });
 
@@ -777,9 +781,9 @@ io.sockets.on('connection', function (socket) {
           }
           console.log('after', companyList);
           break;
-        case 3: // del company ( sample: socket.emit('log', JSON.stringify({type:3, targetKey: "demo", siteKey: "master"})); )
+        case 3: // del company ( sample: socket.emit('settingReload', JSON.stringify({type:3, targetKey: "demo", siteKey: "master"})); )
           console.log('connectList', connectList);
-          if ( 'targetKey' in obj ) {
+          if ( ('targetKey' in obj) && (obj.targetKey in sincloCore) ) {
             console.log("--------------------------------" + obj.targetKey + "--------------------------------");
             console.log('sincloCore', sincloCore[obj.targetKey]);
             console.log("-------------------------------------------------------------------------");
