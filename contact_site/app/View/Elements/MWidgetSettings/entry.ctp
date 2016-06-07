@@ -207,7 +207,7 @@
 				<?php if ( $this->Form->isFieldError('radius_ratio') ) echo $this->Form->error('radius_ratio', null, ['wrap' => 'li']); ?>
 				<!-- 角の丸み -->
 
-
+			<?php if($coreSettings[C_COMPANY_USE_SYNCLO]): ?>
 				<!-- お問い合わせ先 -->
 				<li>
 					<span class="require"><label>お問い合わせ先</label></span>
@@ -275,6 +275,7 @@
 				</li>
 				<?php if ($this->Form->isFieldError('content') ) echo $this->Form->error('content', null, ['wrap' => 'li']); ?>
 				<!-- ウィジェット本文 -->
+			<?php endif; ?>
 
 			</ul>
 			</section>

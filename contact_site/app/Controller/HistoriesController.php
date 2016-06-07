@@ -105,7 +105,7 @@ class HistoriesController extends AppController {
     }
 
     private function _setList($type=true){
-        if ( strcmp($type, 'false') === 0 ) {
+        if ( !$this->coreSettings[C_COMPANY_USE_CHAT] || strcmp($type, 'false') === 0 ) {
             $this->paginate['THistory']['joins'][0]['type'] = "LEFT";
         }
         else {

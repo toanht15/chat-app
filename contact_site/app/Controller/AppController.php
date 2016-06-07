@@ -133,6 +133,14 @@ class AppController extends Controller {
                 break;
             }
         }
+
+        /* 契約ごと使用可能ページ */
+        switch($this->name){
+            case "TAutoMessages":
+                if (!$this->coreSettings["chat"]) {
+                    $this->redirect("/");
+                }
+        }
     }
 
     /**

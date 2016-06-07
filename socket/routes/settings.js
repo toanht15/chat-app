@@ -54,17 +54,24 @@ router.get("/", function(req, res, next) {
                     mainColor: settings.mainColor,
                     showMainImage: settings.showMainImage,
                     mainImage: settings.mainImage,
-                    radiusRatio: isNumeric(settings.radiusRatio),
-                    tel: settings.tel,
-                    content: settings.content.replace(/\r\n/g, '<br>'),
-                    time_text: settings.timeText,
-                    display_time_flg: isNumeric(settings.displayTimeFlg)
+                    radiusRatio: isNumeric(settings.radiusRatio)
                 };
 
                 actionTypeList = [];
                 // チャット
                 if (('chat' in core_settings) && core_settings['chat']) {
                     actionTypeList.push('1');
+                }
+
+                // 画面同期
+                if (('sync' in core_settings) && core_settings['sync']) {
+                    sendData['widget']['tel'] = settings.tel;
+                    sendData['widget']['content'] = "";
+                    if ( typeof(settings.content) === "string" ) {
+                        sendData['widget']['content'] = settings.content.replace(/\r\n/g, '<br>');
+                    }
+                    sendData['widget']['time_text'] = settings.timeText;
+                    sendData['widget']['display_time_flg'] = isNumeric(settings.displayTimeFlg);
                 }
 
                 pool.query(getTriggerListSql, [siteKey, actionTypeList.join(",")],

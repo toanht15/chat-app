@@ -66,17 +66,19 @@ class MWidgetSettingsController extends AppController {
               if ( isset($json['main_image']) ) {
                 $inputData['MWidgetSetting']['main_image'] = $json['main_image'];
               }
-              if ( isset($json['tel']) ) {
-                $inputData['MWidgetSetting']['tel'] = $json['tel'];
-              }
-              if ( isset($json['content']) ) {
-                $inputData['MWidgetSetting']['content'] = $json['content'];
-              }
-              if ( isset($json['display_time_flg']) ) {
-                $inputData['MWidgetSetting']['display_time_flg'] = $json['display_time_flg'];
-              }
-              if ( isset($json['time_text']) ) {
-                $inputData['MWidgetSetting']['time_text'] = $json['time_text'];
+              if ( $this->coreSettings['synclo'] ) {
+                if ( isset($json['tel']) ) {
+                  $inputData['MWidgetSetting']['tel'] = $json['tel'];
+                }
+                if ( isset($json['content']) ) {
+                  $inputData['MWidgetSetting']['content'] = $json['content'];
+                }
+                if ( isset($json['display_time_flg']) ) {
+                  $inputData['MWidgetSetting']['display_time_flg'] = $json['display_time_flg'];
+                }
+                if ( isset($json['time_text']) ) {
+                  $inputData['MWidgetSetting']['time_text'] = $json['time_text'];
+                }
               }
               if ( isset($json['radius_ratio']) ) {
                 $inputData['MWidgetSetting']['radius_ratio'] = $json['radius_ratio'];

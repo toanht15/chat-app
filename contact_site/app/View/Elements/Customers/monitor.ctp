@@ -12,10 +12,13 @@
 <div id='customer_menu' class="p20tl">
     <!-- 検索窓 -->
     <div class="form01 fLeft">
-        <span>
-            <?= $this->Html->image('search_g.png', array('alt' => 'アクセスID', 'width'=>20, 'height'=>20, 'class'=>'fLeft')); ?>
-        </span>
-        <?= $this->Form->input('searchText', array('type'=>'text', 'label' => false, 'ng-model' => 'searchText', 'placeholder' => 'アクセスID')); ?>
+        <?php if ($coreSettings[C_COMPANY_USE_SYNCLO]) : ?>
+            <span>
+                <?= $this->Html->image('search_g.png', array('alt' => 'アクセスID', 'width'=>20, 'height'=>20, 'class'=>'fLeft')); ?>
+            </span>
+            <?= $this->Form->input('searchText', array('type'=>'text', 'label' => false, 'ng-model' => 'searchText', 'placeholder' => 'アクセスID')); ?>
+        <?php endif; ?>
+
     </div>
     <!-- 検索窓 -->
     <!-- 機能 -->

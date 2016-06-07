@@ -12,6 +12,7 @@
 	<!-- 検索窓 -->
 	<div class="fLeft">
 		<?php
+			if ($coreSettings[C_COMPANY_USE_CHAT]) :
 			$checked = "";
 			$class = "";
 			if (strcmp($groupByChatChecked, 'false') !== 0) {
@@ -19,10 +20,11 @@
 				$checked = "checked=\"\"";
 			}
 		?>
-		<label for="g_chat" class="<?=$class?>">
-			<input type="checkbox" id="g_chat" name="group_by_chat" <?=$checked?> />
-			チャット履歴があるもののみ表示
-		</label>
+			<label for="g_chat" class="<?=$class?>">
+				<input type="checkbox" id="g_chat" name="group_by_chat" <?=$checked?> />
+				チャット履歴があるもののみ表示
+			</label>
+		<?php endif; ?>
 	</div>
 	<div id="paging" class="fRight">
 		<?php

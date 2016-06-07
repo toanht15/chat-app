@@ -5,7 +5,9 @@
             <th>ユーザー環境</th>
             <th>アクセス日時</th>
             <th>滞在時間</th>
+        <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
             <th>チャット</th>
+        <?php endif; ?>
             <th>閲覧ページ数</th>
             <th>参照元URL</th>
         </tr>
@@ -17,11 +19,13 @@
             <td class="tCenter">{{ ua('<?=h($history['THistory']['user_agent'])?>') }}</td>
             <td class="tCenter"><?=h($history['THistory']['access_date'])?></td>
             <td class="tCenter"><?=$this->htmlEx->calcTime($history['THistory']['access_date'], $history['THistory']['out_date']) ?></td>
+        <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
             <td class="tCenter">
                 <?php if( is_numeric($history['THistoryChatLog']['count']) ): ?>
                     <?=h($history['THistoryChatLog']['count'])?>（<a class="underL" href="javascript:void(0)" onclick="openChatById('<?=h($history['THistory']['id'])?>')" >履歴</a>）
                 <?php endif; ?>
             </td>
+        <?php endif; ?>
             <td class="tCenter">
                 <?php if( is_numeric($history['THistoryStayLog']['count']) ): ?>
                     <?=h($history['THistoryStayLog']['count'])?>（<a class="underL" href="javascript:void(0)" onclick="openHistoryById('<?=h($history['THistory']['id'])?>')" >移動履歴</a>）
