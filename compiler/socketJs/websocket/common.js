@@ -295,7 +295,7 @@ var socket, // socket.io
       if ( sincloBox ) {
         sincloBox.parentNode.removeChild(sincloBox);
       }
-      console.log('make');
+
       if ( userInfo.accessType !== cnst.access_type.host ) {
       var html = common.createWidget();
         $('body').append(html);

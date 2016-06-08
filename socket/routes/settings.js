@@ -64,7 +64,7 @@ router.get("/", function(req, res, next) {
                 }
 
                 // 画面同期
-                if (('sync' in core_settings) && core_settings['sync']) {
+                if (('synclo' in core_settings) && core_settings['synclo']) {
                     sendData['widget']['tel'] = settings.tel;
                     sendData['widget']['content'] = "";
                     if ( typeof(settings.content) === "string" ) {
