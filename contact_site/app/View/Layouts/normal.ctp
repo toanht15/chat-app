@@ -19,9 +19,7 @@
 <html>
 <head>
 	<?php echo $this->Html->charset(); ?>
-	<title>
-		<?php echo $this->fetch('title'); ?>
-	</title>
+	<title><?=$this->fetch('title')?></title>
 	<?php
 		echo $this->Html->meta('icon');
 		// TODO 後程検討
