@@ -7,6 +7,7 @@
         status: stat
       },
       dataType: 'json',
+      cache: false,
       success: function(json){
         var opState = $('#operatorStatus');
         if (json.status == "<?=C_OPERATOR_ACTIVE?>") {

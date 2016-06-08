@@ -102,6 +102,7 @@ var toActive = function(flg){
 	$.ajax({
 		type: 'GET',
 		url: '/TAutoMessages/changeStatus',
+		cache: false,
 		data: data,
 		dataType: 'html',
 		success: function(html){

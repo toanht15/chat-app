@@ -17,6 +17,7 @@
                 password: password,
                 permissionLevel: permissionLevel
             },
+            cache: false,
             dataType: "JSON",
             success: function(data){
                 var keys = Object.keys(data), num = 0, popup = $("#popup-frame");

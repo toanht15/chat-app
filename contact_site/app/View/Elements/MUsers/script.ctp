@@ -11,6 +11,7 @@ function openEntryDialog(setting){
 		type: 'post',
 		data: setting, // type:1 => type, type:2 => type, id
 		dataType: 'html',
+                cache: false,
 		url: "<?= $this->Html->url('/MUsers/remoteOpenEntryForm') ?>",
 		success: function(html){
 			modalOpen.call(window, html, 'p-muser-entry', 'ユーザー情報');
@@ -25,6 +26,7 @@ function openConfirmDialog(id){
 	popupEvent.closePopup = function(){
 		$.ajax({
 			type: 'post',
+                        cache: false,
 			data: {
 				id: id
 			},

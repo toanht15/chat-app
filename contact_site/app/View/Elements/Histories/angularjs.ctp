@@ -31,6 +31,7 @@
             $.ajax({
                 type: 'GET',
                 url: "<?= $this->Html->url(array('controller' => 'Histories', 'action' => 'remoteGetChatLogs')) ?>",
+                cache: false,
                 data: {
                     historyId: id
                 },

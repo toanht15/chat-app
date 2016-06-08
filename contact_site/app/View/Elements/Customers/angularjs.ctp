@@ -202,6 +202,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           labelHideList: JSON.stringify($scope.labelHideList)
         },
         dataType: 'html',
+        cache: false,
         success: function(html){
           modalOpen.call(window, html, 'p-cus-menu', '表示項目の設定');
 
@@ -267,6 +268,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         var retList = {};
         $.ajax({
           type: 'GET',
+          cache: false,
           url: "<?= $this->Html->url(array('controller' => 'Customers', 'action' => 'remoteGetStayLogs')) ?>",
           data: {
             visitorsId: monitor.userId,

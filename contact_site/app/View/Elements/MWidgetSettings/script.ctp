@@ -54,6 +54,7 @@ sincloApp.controller('WidgetCtrl', function($scope){
         data: {
           color: $scope.main_color,
         },
+        cache: false,
         dataType: 'html',
         url: "<?= $this->Html->url('/MWidgetSettings/remoteShowGallary') ?>",
         success: function(html){

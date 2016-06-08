@@ -200,6 +200,7 @@ function removeAct(){
 			data: {
 				id: document.getElementById('TAutoMessageId').value
 			},
+			cache: false,
 			url: "<?= $this->Html->url('/TAutoMessages/remoteDelete') ?>",
 			success: function(){
 				location.href = "<?= $this->Html->url('/TAutoMessages/index') ?>";
