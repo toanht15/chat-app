@@ -819,7 +819,7 @@
         },
         judge: {
             stayTime: function(cond, callback){
-                if (!('stayTimeType' in cond) || !('stayTimeRange' in cond )) callback(true, null);
+                if (!('stayTimeType' in cond) || !('stayTimeRange' in cond )) return callback(true, null);
                 var time = 0;
                 switch(Number(cond.stayTimeType)) {
                     case 1: // 秒
@@ -842,7 +842,7 @@
 
             },
             stayCount: function(cond, callback){
-                if (!('visitCntCond' in cond) || !('visitCnt' in cond )) callback(true, null);
+                if (!('visitCntCond' in cond) || !('visitCnt' in cond )) return callback(true, null);
                 if (sinclo.trigger.common.numMatch(cond.visitCntCond, userInfo.getStayCount(), cond.visitCnt)) {
                     callback(false, 0);
                 }
@@ -851,7 +851,7 @@
                 }
             },
             page: function(cond, callback){
-                if (!('keyword' in cond) || !('targetName' in cond ) || !('stayPageCond' in cond )) callback(true, null);
+                if (!('keyword' in cond) || !('targetName' in cond ) || !('stayPageCond' in cond )) return callback(true, null);
                 var target = ( Number(cond.targetName) === 1 ) ? common.title() : location.href ;
                 if (sinclo.trigger.common.pregMatch(cond.stayPageCond, cond.keyword, target)) {
                     callback(false, 0);
@@ -861,11 +861,11 @@
                 }
             },
             dayTime: function(cond, callback){
-                if (!('day' in cond) || !('timeSetting' in cond)) callback(true, null );
-                if (Number(cond.timeSetting) === 1 && (!('startTime' in cond) || !('endTime' in cond))) callback(true, null);
+                if (!('day' in cond) || !('timeSetting' in cond)) return callback(true, null );
+                if (Number(cond.timeSetting) === 1 && (!('startTime' in cond) || !('endTime' in cond))) return callback(true, null);
                 // DBに保存している文字列から、JSのgetDay関数に対応する数値を返す関数
                 function translateDay(str){
-                    var day = {'sun':0, 'mon':1, 'tue':2, 'thu':3, 'wed':4, 'fri':5, 'sat':6};
+                    var day = {'sun':0, 'mon':1, 'tue':2, 'wed':3, 'thu':4, 'fri':5, 'sat':6};
                     return (str in day) ? day[str] : null;
                 }
                 function checkTime(time){
@@ -885,42 +885,41 @@
                 date = d.getFullYear() + "/" + (d.getMonth()+1) + "/" + d.getDate() + " ";
                 dateParse = Date.parse(d);
                 keys = Object.keys(cond.day);
-                callback(true, null); // 条件にあたらなかった場合は終了
-
                 for(var i = 0; keys.length > i; i++){
                   if (!cond.day[keys[i]]) continue;
                   var day = translateDay(keys[i]); // 曜日を取得
                   if (day === null) continue; // 曜日が取得できなければContinue.
-                  // 曜日が今日若しくは明日ではない場合は終了
-                  if (day !== nowDay && day !== nextDay) callback(true, null);
-                  // 時間指定なしの場合は即時表示
-                  if (Number(cond.timeSetting) === 2) callback(false, 0);
+
+                  // 曜日が今日若しくは明日ではない場合はContinue
+                  if (day !== nowDay && day !== nextDay) continue;
+                  // 曜日が今日で時間指定なしの場合は即時表示
+                  if (day === nowDay && Number(cond.timeSetting) === 2) return callback(false, 0);
                   // 時間指定ありで、開始・終了時間が取得できない場合は終了
-                  if (!checkTime(cond.startTime) || !checkTime(cond.endTime)) callback(true, null);
+                  if (!checkTime(cond.startTime) || !checkTime(cond.endTime)) return callback(true, null);
                   var startDate = makeDate(date + cond.startTime);
                   var endDate = makeDate(date + cond.endTime);
 
                   // 今日で開始中の場合
                   if (day === nowDay && startDate <= dateParse && dateParse < endDate ) {
-                      callback(false, 0); // 即時表示
+                    return callback(false, 0); // 即時表示
 
                   }
                   // 今日で開始前の場合
                   else if (day === nowDay && startDate > dateParse && dateParse < endDate ) {
-                      callback(false, (startDate-dateParse) ); // 開始時間に表示されるようにタイマーセット
+                    return callback(false, (startDate-dateParse) ); // 開始時間に表示されるようにタイマーセット
 
                   }
                   // 次回の場合
                   else if ( day === nextDay) {
                     var nextDate = startDate + 24*60*60*1000;
-                      callback(false, (nextDate-dateParse)); // 開始時間に表示されるようにタイマーセット
+                    return callback(false, (nextDate-dateParse)); // 開始時間に表示されるようにタイマーセット
 
                   }
                 }
             },
             referrer: function(cond, callback){
-                if (!('keyword' in cond) || !('referrerCond' in cond )) callback(true, null );
-                if ( userInfo.referrer === "" ) callback(true, null );
+                if (!('keyword' in cond) || !('referrerCond' in cond )) return callback(true, null );
+                if ( userInfo.referrer === "" ) return callback(true, null );
                 if (sinclo.trigger.common.pregMatch(cond.referrerCond, cond.keyword, userInfo.referrer)) {
                     callback(false, 0);
                 }
@@ -929,9 +928,9 @@
                 }
             },
             searchWord: function(cond, callback){
-                if (!('keyword' in cond) || !('searchCond' in cond )) callback( true, null );
-                if ( userInfo.searchKeyword === null && Number(cond.searchCond) !== 3 ) callback( true, null );
-                if ( userInfo.searchKeyword === null && Number(cond.searchCond) === 3 ) callback( false, 0 );
+                if (!('keyword' in cond) || !('searchCond' in cond )) return callback( true, null );
+                if ( userInfo.searchKeyword === null && Number(cond.searchCond) !== 3 ) return callback( true, null );
+                if ( userInfo.searchKeyword === null && Number(cond.searchCond) === 3 ) return callback( false, 0 );
                 if (sinclo.trigger.common.pregMatch(cond.searchCond, cond.keyword, userInfo.searchKeyword)) {
                     callback(false, 0);
                 }
