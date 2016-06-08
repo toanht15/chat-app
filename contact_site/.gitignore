@@ -9,7 +9,8 @@
 /dist
 /tags
 *.mo
-*.css
+/app/webroot/css/style.css
+/app/webroot/css/modal.css
 
 # IDE and editor specific files #
 #################################
