@@ -26,7 +26,7 @@
 	</li>
 	<li>
 		<span><label>キーワード</label></span>
-		<input type="text" ng-model="setItem.keyword" name="keyword" required="">
+		<input type="text" ng-model="setItem.keyword" maxlength="50" name="keyword" required="">
 	</li>
 	<li>
 		<?=$this->AutoMessage->radio('stayPageCond')?>
@@ -63,7 +63,7 @@
 <ul ng-if="itemType == '<?=C_AUTO_TRIGGER_REFERRER?>'" class="setReferrer">
 	<li>
 		<span><label>URL</label></span>
-		<input type="text" ng-model="setItem.keyword" name="keyword" required="">
+		<input type="text" ng-model="setItem.keyword" maxlength="100" name="keyword" required="">
 	</li>
 	<li>
 		<?=$this->AutoMessage->radio('referrerCond')?>
@@ -74,7 +74,7 @@
 <ul ng-if="itemType == '<?=C_AUTO_TRIGGER_SEARCH_KEY?>'" class="setSearchKeyword">
 	<li>
 		<span><label>キーワード</label></span>
-		<input type="text" ng-model="setItem.keyword" name="keyword" required="">
+		<input type="text" ng-model="setItem.keyword" name="keyword" maxlength="20" required="">
 	</li>
 	<li>
 		<?=$this->AutoMessage->radio('searchCond')?>
