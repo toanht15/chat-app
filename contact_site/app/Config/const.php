@@ -114,7 +114,7 @@ $config['outMessageTriggerList'] = [
     C_AUTO_TRIGGER_STAY_TIME => [
         'label' => '滞在時間',
         // いずれも複数はNG固定で（sinclo.jsを書き直す必要がある為）
-        'createLimit' => ['and' => 1, 'or' => 1],
+        'createLimit' => [C_COINCIDENT => 1, C_SOME_EITHER => 1],
         'key' => 'stay_time',
         'default' => [
             "stayTimeType" => "1",
@@ -124,7 +124,7 @@ $config['outMessageTriggerList'] = [
     // 訪問回数
     C_AUTO_TRIGGER_VISIT_CNT => [
         'label' => '訪問回数',
-        'createLimit' => ['and' => 1, 'or' => 1],
+        'createLimit' => [C_COINCIDENT => 1, C_SOME_EITHER => 1],
         'key' => 'visit_cnt',
         'default' => [
             "visitCnt" => "",
@@ -134,7 +134,7 @@ $config['outMessageTriggerList'] = [
     // ページ
     C_AUTO_TRIGGER_STAY_PAGE => [
         'label' => 'ページ',
-        'createLimit' => ['and' => 1, 'or' => 1],
+        'createLimit' => [C_COINCIDENT => 1, C_SOME_EITHER => 1],
         'key' => 'stay_page',
         'default' => [
             "keyword" => "",
@@ -145,7 +145,7 @@ $config['outMessageTriggerList'] = [
     // 曜日・時間
     C_AUTO_TRIGGER_DAY_TIME => [
         'label' => '曜日・時間',
-        'createLimit' => ['and' => 1, 'or' => 7],
+        'createLimit' => [C_COINCIDENT => 1, C_SOME_EITHER => 7],
         'key' => 'day_time',
         'default' => [
             "day" => [
@@ -160,7 +160,7 @@ $config['outMessageTriggerList'] = [
     // 参照元URL（リファラー）
     C_AUTO_TRIGGER_REFERRER => [
         'label' => '参照元URL（リファラー）',
-        'createLimit' => ['and' => 1, 'or' => 1],
+        'createLimit' => [C_COINCIDENT => 1, C_SOME_EITHER => 1],
         'key' => 'referrer',
         'default' => [
            "keyword" => "",
@@ -170,7 +170,7 @@ $config['outMessageTriggerList'] = [
     // 検索キーワード
     C_AUTO_TRIGGER_SEARCH_KEY => [
         'label' => '検索キーワード',
-        'createLimit' => ['and' => 1, 'or' => 1],
+        'createLimit' => [C_COINCIDENT => 1, C_SOME_EITHER => 1],
         'key' => 'search_keyword',
         'default' => [
            "keyword" => "",

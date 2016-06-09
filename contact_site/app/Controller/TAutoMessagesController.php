@@ -21,12 +21,14 @@ class TAutoMessagesController extends AppController {
             'recursive' => -1
         )
     );
+    public $outMessageIfType;
+    public $outMessageTriggerList;
 
     public function beforeFilter(){
         parent::beforeFilter();
         $this->set('title_for_layout', 'オートメッセージ機能');
-        // $this->set('siteKey', $this->userInfo['MCompany']['company_key']);
-        // $this->set('limitUserNum', $this->userInfo['MCompany']['limit_users']);
+        $this->outMessageIfType = Configure::read('outMessageIfType');
+        $this->outMessageTriggerList = Configure::read('outMessageTriggerList');
     }
 
     /**
@@ -140,16 +142,35 @@ class TAutoMessagesController extends AppController {
         if ( empty($saveData['TAutoMessage']['id']) ) {
             $this->TAutoMessage->create();
         }
+
         $this->TAutoMessage->set($saveData);
 
-        if ($this->TAutoMessage->save()) {
+        $validate = $this->TAutoMessage->validates();
+        $errors = $this->TAutoMessage->validationErrors;
+
+        // その他のチェック
+        if ( !empty($saveData['TAutoMessage']) ) {
+            $activity = json_decode($saveData['TAutoMessage']['activity']);
+
+            /* 項目ごとの設定数上限チェック */
+            $tmpMessage = "%sの場合、『%s』は%d個まで設定可能です";
+
+            foreach((array)$activity->conditions as $key => $val) {
+                $setting = $this->outMessageTriggerList[$key];
+                if ( !isset($setting['createLimit'][$activity->conditionType]) ) continue;
+                if ( count($val) > intval($setting['createLimit'][$activity->conditionType]) ) {
+                    $validate = false;
+                    $errors['triggers'][$setting['key']] = sprintf($tmpMessage, $this->outMessageIfType[$activity->conditionType], $setting['label'], $setting['createLimit'][$activity->conditionType]);
+                }
+            }
+        }
+        if ( $validate && $this->TAutoMessage->save(false) ) {
             $this->TAutoMessage->commit();
             $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
             $this->redirect('/TAutomessages/index');
         }
         else {
             $this->TAutoMessage->rollback();
-            $errors = $this->TAutoMessage->validationErrors;
             $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
         }
         $this->set('errors', $errors);
@@ -163,9 +184,9 @@ class TAutoMessagesController extends AppController {
         // トリガー種別
         $this->set('outMessageTriggerType', Configure::read('outMessageTriggerType'));
         // 条件設定種別
-        $this->set('outMessageIfType', Configure::read('outMessageIfType'));
+        $this->set('outMessageIfType', $this->outMessageIfType);
         // 条件リスト
-        $this->set('outMessageTriggerList', Configure::read('outMessageTriggerList'));
+        $this->set('outMessageTriggerList', $this->outMessageTriggerList);
         // アクション種別
         $this->set('outMessageActionType', Configure::read('outMessageActionType'));
         // 有効無効

@@ -29,22 +29,16 @@ sincloApp.controller('MainCtrl', function($scope) {
 	  return self.setItemList;
 	});
 
-	// var inputTarget = $("#setTriggerList > ul");
-
 	this.checkDisabled = function(itemId){
-		var ifType = (String(this.condition_type) === "<?=C_COINCIDENT?>") ? "and" : "or";
-
-		return (itemId in this.setItemList && this.setItemList[itemId].length >= this.tmpList[itemId].createLimit[ifType]);
+		return (itemId in this.setItemList && this.setItemList[itemId].length >= this.tmpList[itemId].createLimit[this.condition_type]);
 	};
 
 	this.addItem = function(tmpId){
-		var ifType = (String(this.condition_type) === "<?=C_COINCIDENT?>") ? "and" : "or";
-
 		if ( tmpId in this.tmpList ) {
 			if ( !(tmpId in this.setItemList) ) {
 				this.setItemList[tmpId] = [];
 			}
-			else if (tmpId in this.setItemList && this.setItemList[tmpId].length >= this.tmpList[tmpId].createLimit[ifType]) {
+			else if (tmpId in this.setItemList && this.setItemList[tmpId].length >= this.tmpList[tmpId].createLimit[this.condition_type]) {
 				return false;
 			}
 			this.setItemList[tmpId].push(angular.copy(this.tmpList[tmpId].default));

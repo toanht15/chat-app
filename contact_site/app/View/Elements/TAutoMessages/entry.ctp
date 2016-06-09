@@ -81,6 +81,14 @@
 				<!-- トリガーリスト -->
 			</li>
 			<!-- トリガー -->
+			<?php
+			if (!empty($errors['triggers'])) {
+				foreach((array)$errors['triggers'] as $val) {
+					echo "<li class='error-message' style='padding: 0 0 0 30px'>" . h($val) . "</li>";
+				}
+			}
+			?>
+
 		</ul>
 		<?=$this->ngForm->input('activity', ['type'=>'hidden'])?>
 	</section>
