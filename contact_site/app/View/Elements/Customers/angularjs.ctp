@@ -282,7 +282,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           sessionStorage.clear();
           popupEvent.close();
           connectToken = makeToken();
-          socket.emit('requestWindowSync', {tabId: tabId, connectToken: connectToken});
+          socket.emit('requestWindowSync', {
+            tabId: tabId,
+            connectToken: connectToken
+          });
+          socket.emit('confirmVideochatStart', {toTabId: tabId, connectToken: connectToken, receiverID: connectToken+'_vc'});
        };
     };
 
@@ -725,7 +729,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       modalFunc.set.call({
         option: {
           url:  url, // FIXME
-          tabId: obj.tabId,
+          tabId: obj.receiverID,
           width: 300,
           height: 300
         }
