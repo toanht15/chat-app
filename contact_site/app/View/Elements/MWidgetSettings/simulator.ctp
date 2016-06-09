@@ -29,12 +29,13 @@
 		#sincloBox section#callTab #telNumber.notUseTime { font-size: 20px; padding: 10px 0px 0px; height: 45px }
 		#sincloBox section#callTab #telIcon { background-color: {{main_color}}; display: block; width: 50px; height: 50px; float: left; border-radius: 25px; padding: 3px }
 		#sincloBox section#callTab #telTime { font-weight: bold; color: {{main_color}}; margin: 0 auto; white-space: pre-line; font-size: 10px; text-align: center; padding: 0 0 5px; height: 20px }
+		#sincloBox section#callTab #telContent { display: block; overflow: auto; max-height: 120px }
 	<?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
-		#sincloBox section#callTab #telContent { text-align: center; margin: 0 auto; width: 240px; display: table; flex-direction: column; align-content: center; min-height: 120px; justify-content: center; overflow-x: hidden; overflow-y: auto }
+		#sincloBox section#callTab #telContent .tblBlock {  text-align: center;  margin: 0 auto;  width: 240px;  display: table;  flex-direction: column;  align-content: center;  height: 120px!important;  justify-content: center; }
 	<?php else: ?>
-		#sincloBox section#callTab #telContent { text-align: center; margin: 0 auto; width: 240px; display: table; flex-direction: column; align-content: center; justify-content: center; overflow-x: hidden; overflow-y: auto }
+		#sincloBox section#callTab #telContent .tblBlock { text-align: center; margin: 0 auto; width: 240px; display: table; flex-direction: column; align-content: center; justify-content: center; }
 	<?php endif; ?>
-		#sincloBox section#callTab #telContent span { word-wrap: break-word; word-break: break-all; font-size: 11px; line-height: 1.5; color: #6B6B6B; white-space: pre-wrap; max-height: 120px; display: table-cell; vertical-align: middle; text-align: center }
+		#sincloBox section#callTab #telContent span { word-wrap: break-word; word-break: break-all; font-size: 11px; line-height: 1.5; color: #6B6B6B; white-space: pre-wrap; display: table-cell; vertical-align: middle; text-align: center }
 		#sincloBox section#callTab #accessIdArea { height: 50px; display: block; margin: 10px auto; width: 80%; padding: 7px;  color: #FFF; background-color: rgb(188, 188, 188); font-size: 25px; font-weight: bold; text-align: center; border-radius: 15px }
 	<?php endif; ?>
 	<?php if ( $coreSettings[C_COMPANY_USE_CHAT] && $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
@@ -114,7 +115,7 @@
 			</div>
 
 			<!-- テキスト -->
-			<div id="telContent"><span>{{content}}</span></div>
+			<div id="telContent"><div class="tblBlock"><span>{{content}}</span></div></div>
 			<!-- テキスト -->
 
 			<span id="accessIdArea">
