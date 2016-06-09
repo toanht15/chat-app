@@ -380,7 +380,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           sessionStorage.clear();
           popupEvent.close();
           connectToken = makeToken();
-          socket.emit('requestVideochatStart', {tabId: tabId, connectToken: connectToken});
+          socket.emit('confirmVideochatStart', {toTabId: tabId, connectToken: connectToken, receiverID: connectToken});
        };
     };
 
@@ -554,7 +554,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           height: 300
         }
       });
-      cameraApi.connect(obj);
+      //cameraApi.connect(obj);
     });
 
     socket.on('connectConfirm', function(data){
@@ -714,16 +714,17 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var obj = JSON.parse(d), url;
       /*
       if (connectToken !== obj.connectToken) return false;
-
-      connectToken = null; // リセット
-      url  = "<?= $this->Html->url(array('controller'=>'Customers', 'action'=>'frame')) ?>?type=" + _access_type_host;
-      url += "&url=" + encodeURIComponent(obj.url) + "&userId=" + obj.userId;
-      url += "&connectToken=" + obj.connectToken + "&id=" + obj.tabId;
-      url += "&width=640" + "&height=480";
       */
+      var sincloData = {
+        from: obj.receiverID, // 管理者側はtabIdが無いのでリアルモニタ画面のsocket.idで代用
+        to: obj.tabId,
+      }
+      //connectToken = null; // リセット
+      url  = "<?php echo C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT ?>/webcam.html?h=true&sincloData=" + encodeURIComponent(JSON.stringify(sincloData));
+
       modalFunc.set.call({
         option: {
-          url: "http://localhost:8787/?h=true",
+          url:  url, // FIXME
           tabId: obj.tabId,
           width: 300,
           height: 300

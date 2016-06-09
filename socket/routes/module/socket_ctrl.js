@@ -21,6 +21,7 @@ var io = require('socket.io')(9090),
     activeOperator = {}, // 待機中オペレーター
     sincloCore = {}, // socketIDの管理
     connectList = {}, // socketIDをキーとした管理
+    vc_connectList = {}, // tabId: socketID
     emit = {}; // Emit
 
 // ユーザーIDの新規作成
@@ -796,14 +797,14 @@ io.sockets.on('connection', function (socket) {
   // ビデオチャット関連
   // ビデオチャットで利用している各値はプレフィックス（vc_）をつけている。
   // -----------------------------------------------------------------------
-  socket.on('requestVideochatStart', function (data) {
+  socket.on('confirmVideochatStart', function (data) {
     var obj = JSON.parse(data);
     // 同形ウィンドウを作成するための情報取得依頼
-    if ( !getSessionId(obj.siteKey, obj.tabId, 'sessionId') ) return false;
-    sincloCore[obj.siteKey][obj.tabId].vc_connectToken = obj.connectToken;
-    sincloCore[obj.siteKey][obj.tabId].vc_syncSessionId = null;
-    sincloCore[obj.siteKey][obj.tabId].vc_syncHostSessionId = socket.id; // 企業画面側のセッションID
-    emit.toUser('confirmVideochatStart', data, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
+    if ( !getSessionId(obj.siteKey, obj.toTabId, 'sessionId') ) return false;
+    sincloCore[obj.siteKey][obj.toTabId].vc_connectToken = obj.connectToken;
+    sincloCore[obj.siteKey][obj.toTabId].vc_syncSessionId = null;
+    sincloCore[obj.siteKey][obj.toTabId].vc_syncHostSessionId = socket.id; // 企業画面側のセッションID
+    emit.toUser('confirmVideochatStart', data, getSessionId(obj.siteKey, obj.toTabId, 'sessionId'));
   });
 
   socket.on('videochatConfirmOK', function (data) {
@@ -811,6 +812,38 @@ io.sockets.on('connection', function (socket) {
     console.log(data);
     //obj.connectToken = sincloCore[obj.siteKey][obj.tabId].vc_connectToken;
     emit.toUser('videochatConfirmOK', JSON.stringify(obj), getSessionId(obj.siteKey, obj.tabId, 'vc_syncHostSessionId'));
+  });
+
+  //
+  // data {
+  //   siteKey:
+  //   from: socket.id,
+  //   fromTabId: tabId,
+  //   toTabId: tabId
+  // }
+  socket.on('videoChatConnected', function (data) {
+    console.log('VIDEOCHAT CONNECTED : ' + data);
+    var obj = JSON.parse(data);
+    vc_connectList[obj.from] = socket.id;
+    if(vc_connectList[obj.to]) {
+      console.log('VIDEOCHAT TO FOUND!');
+      emit.toUser('videoChatConnected', data, vc_connectList[obj.to]);
+    }
+  });
+
+  socket.on('askMakeOffer', function (data) {
+    console.log('askMakeOffer : ' + data);
+    var obj = JSON.parse(data);
+    if(vc_connectList[obj.to]) {
+      emit.toUser('askMakeOffer', data, vc_connectList[obj.to]);
+    }
+  });
+
+  socket.on('sendMessage', function(d){
+    console.log('sendMessage : ' + d);
+    var obj = JSON.parse(d);
+    var host = (obj.host !== "true") ? "host" : "guest";
+    emit.toUser('receiveMessage', d, vc_connectList[obj.fromto.to]);
   });
 
   socket.on('userOut', function (data) {

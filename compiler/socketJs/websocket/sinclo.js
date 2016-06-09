@@ -489,7 +489,7 @@
       emit("sendAutoChatMessages", {messages: sinclo.chatApi.autoMessages, chatToken: obj.chatToken});
     },
     confirmVideochatStart: function(obj) {
-      if ( obj.tabId !== userInfo.tabId ) return false;
+      if ( obj.toTabId !== userInfo.tabId ) return false;
       if ( userInfo.accessType !== Number(cnst.access_type.guest) ) return false;
       var title = location.host + 'の内容';
       var content = location.host + 'がビデオ表示を求めています。<br>許可しますか？<br>ビデオは別のウィンドウで表示されます。';
@@ -499,17 +499,22 @@
         iframe.width = 480;
         iframe.height = 400;
         //if ( isset(obj.userId) ) {
-          iframe.src = "http://localhost:8787/?h=false"; // FIXME
-          document.body.appendChild(iframe);
+        var sincloData = {
+          from: obj.toTabId,
+          to: obj.receiverID,
+        };
+        iframe.src = info.site.webcam_view + "?h=false&sincloData=" + encodeURIComponent(JSON.stringify(sincloData)); // FIXME
+        document.body.appendChild(iframe);
         //}
         //window.open('http://www.google.co.jp',obj.tabId,'width=400, height=300, menubar=no, toolbar=no, scrollbars=yes');
         userInfo.connectToken = obj.connectToken;
         browserInfo.resetPrevList();
-
+        
         emit('videochatConfirmOK', {
           userId: userInfo.userId,
-          tabId: userInfo.tabId,
-          connectToken: userInfo.connectToken
+          fromTabId: userInfo.tabId,
+          fromConnectToken: userInfo.connectToken,
+          receiverID: obj.receiverID
         });
         this.remove();
       };
