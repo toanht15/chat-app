@@ -134,8 +134,8 @@ sincloApp.directive('ngShowonhover',function() {
 					if ( 'required' in form.stayTimeRange.$error ) {
 						messageList.push("時間が未入力です");
 					}
-					if ('max' in form.stayTimeRange.$error) {
-						messageList.push("時間は０～１００回までの間で指定できます");
+					if (('max' in form.stayTimeRange.$error) || ('min' in form.stayTimeRange.$error)) {
+						messageList.push("時間は０～１００までの間で指定できます");
 					}
 				}
 				/* 訪問回数 */
@@ -143,7 +143,7 @@ sincloApp.directive('ngShowonhover',function() {
 					if ('required' in form.visitCnt.$error) {
 						messageList.push("訪問回数が未入力です");
 					}
-					if ('max' in form.visitCnt.$error) {
+					if (('max' in form.visitCnt.$error) || ('min' in form.visitCnt.$error)) {
 						messageList.push("訪問回数は０～１００回までの間で指定できます");
 					}
 				}
