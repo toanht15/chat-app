@@ -108,13 +108,15 @@ sincloApp.controller('MainCtrl', function($scope) {
 // http://stackoverflow.com/questions/17035621/what-is-the-angular-way-of-displaying-a-tooltip-lightbox
 sincloApp.directive('ngShowonhover',function() {
 	return {
+		controller: 'MainCtrl',
+		controllerAs: 'main',
 		link : function(scope, element, attrs) {
 			var balloon = $("div.balloon");
-
 			var itemsTag = element.closest("li");
 			element.parent().bind('mouseenter', function(e) {
-				if (Object.keys(scope.itemForm.$error).length === 0) { return false; }
-				createBalloon(attrs['ngShowonhover'], scope.itemForm);
+				if ( scope.$parent === null || !('itemForm' in scope.$parent) ) { return false; }
+				if (Object.keys(scope.$parent.itemForm.$error).length === 0) { return false; }
+				createBalloon(attrs['ngShowonhover'], scope.$parent.itemForm);
 				var top = itemsTag.prop('offsetTop');
 				var left = itemsTag.prop('offsetLeft');
 				balloon.css({
@@ -134,6 +136,9 @@ sincloApp.directive('ngShowonhover',function() {
 					if ( 'required' in form.stayTimeRange.$error ) {
 						messageList.push("時間が未入力です");
 					}
+					if ( 'number' in form.stayTimeRange.$error ) {
+						messageList.push("時間は数値で入力してください");
+					}
 					if (('max' in form.stayTimeRange.$error) || ('min' in form.stayTimeRange.$error)) {
 						messageList.push("時間は０～１００までの間で指定できます");
 					}
@@ -143,13 +148,19 @@ sincloApp.directive('ngShowonhover',function() {
 					if ('required' in form.visitCnt.$error) {
 						messageList.push("訪問回数が未入力です");
 					}
+					if ( 'number' in form.visitCnt.$error ) {
+						messageList.push("訪問回数は数値で入力してください");
+					}
 					if (('max' in form.visitCnt.$error) || ('min' in form.visitCnt.$error)) {
 						messageList.push("訪問回数は０～１００回までの間で指定できます");
 					}
 				}
 				/* ページ・リファラー・検索キーワード */
 				if ( 'keyword' in form ) {
-					if ('required' in form.keyword.$error) {
+					if (String(key) === '<?=h(C_AUTO_TRIGGER_REFERRER)?>' && 'required' in form.keyword.$error) {
+						messageList.push("URLが未入力です");
+					}
+					else if (String(key) !== '<?=h(C_AUTO_TRIGGER_REFERRER)?>' && 'required' in form.keyword.$error) {
 						messageList.push("キーワードが未入力です");
 					}
 				}
