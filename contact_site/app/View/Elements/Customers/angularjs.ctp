@@ -2,8 +2,12 @@
 'use strict';
 
 var sincloApp = angular.module('sincloApp', ['ngSanitize']),
+//<<<<<<< HEAD
     userList = <?php echo json_encode($responderList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>,
-    modalFunc, myUserId = <?= h($muserId)?>, chatApi;
+//    modalFunc, myUserId = <?= h($muserId)?>, chatApi;
+//=======
+    modalFunc, myUserId = <?= h($muserId)?>, chatApi, cameraApi;
+//>>>>>>> dev-camera
 
 (function(){
 
@@ -121,6 +125,24 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           });
         }
       }
+  };
+
+  cameraApi = {
+    connect: function(monitor){
+      var tabInfo = JSON.stringify({
+        userId: monitor.userId,
+        tabId: monitor.tabId
+      });
+      window.open(
+        "<?= $this->Html->url(['controller' => 'Customers', 'action' => 'monitor']) ?>?tabInfo=" + encodeURIComponent(tabInfo),
+        "monitor_" + monitor.userId,
+        "width=480,height=400,dialog=no,toolbar=no,location=no,status=no,menubar=no,directories=no,resizable=no, scrollbars=no"
+      );
+      return false;
+    },
+    disConnect: function(){
+
+    }
   };
 
   function makeDateTime(dParse){
@@ -350,6 +372,18 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       }
     };
 
+    $scope.showVideochat = function(tabId, accessId) {
+      var message = "アクセスID【" + accessId + "】のユーザーにビデオを表示しますか？<br><br>";
+      message += "<span style='font-size: 0.9em; color: red;'><?=Configure::read('message.const.chatStartConfirm')?></span>";
+      modalOpen.call(window, message, 'p-confirm', 'メッセージ');
+       popupEvent.closePopup = function(){
+          sessionStorage.clear();
+          popupEvent.close();
+          connectToken = makeToken();
+          socket.emit('requestVideochatStart', {tabId: tabId, connectToken: connectToken});
+       };
+    };
+
     $scope.isset = function(value){
       var result;
       if ( angular.isUndefined(value) ) {
@@ -370,6 +404,15 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       },
       disConnect: function(tabId){
         emit("chatEnd", {tabId: tabId, userId: myUserId});
+      }
+    };
+
+    $scope.ngCameraApi = {
+      connect: function(obj){
+        cameraApi.connect(obj);
+      },
+      disConnect: function(obj){
+        cameraApi.disConnect(obj);
       }
     };
 
@@ -464,11 +507,27 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     socket.on('syncNewInfo', function (data) {
       var obj = JSON.parse(data);
       // 消費者
+// <<<<<<< HEAD
       if ( angular.isDefined($scope.monitorList[obj.tabId]) ) {
         if ( 'widget' in obj ) { $scope.monitorList[obj.tabId].widget = obj.widget; }
         if ( 'connectToken' in obj ) { $scope.monitorList[obj.tabId].connectToken = obj.connectToken; }
         if ( 'prev' in obj ) { $scope.monitorList[obj.tabId].prev = obj.prev; }
         if ( 'responderId' in obj ) { $scope.monitorList[obj.tabId].responderId = obj.responderId; }
+// =======
+//       if ( obj.subWindow === false ) {
+//         if ( angular.isDefined($scope.monitorList[obj.tabId]) ) {
+//           $scope.monitorList[obj.tabId].connectToken = obj.connectToken;
+//           $scope.monitorList[obj.tabId].title = obj.title;
+//           $scope.monitorList[obj.tabId].url = obj.url;
+//           $scope.monitorList[obj.tabId].prev = obj.prev;
+//           $scope.monitorList[obj.tabId].widget = obj.widget;
+//           $scope.monitorList[obj.tabId].chat = obj.chat;
+//           $scope.monitorList[obj.tabId].camera = obj.camera;
+//         }
+//         else {
+//           socket.emit('getCustomerInfo', JSON.stringify({tabId: obj.tabId}));
+//         }
+// >>>>>>> dev-camera
       }
 
       var tabId = ( obj.subWindow ) ? obj.to : obj.tabId;
@@ -495,6 +554,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           height: 300
         }
       });
+      cameraApi.connect(obj);
     });
 
     socket.on('connectConfirm', function(data){
@@ -645,7 +705,36 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     //   チャット関連受信ここまで
     // =======================================
 
+    // =======================================
+    // 　ビデオチャット関連ここから
+    // =======================================
+    // ビデオチャット開始許可通知
+    socket.on('videochatConfirmOK', function(d){
+      // 担当しているユーザー かチェック
+      var obj = JSON.parse(d), url;
+      /*
+      if (connectToken !== obj.connectToken) return false;
+
+      connectToken = null; // リセット
+      url  = "<?= $this->Html->url(array('controller'=>'Customers', 'action'=>'frame')) ?>?type=" + _access_type_host;
+      url += "&url=" + encodeURIComponent(obj.url) + "&userId=" + obj.userId;
+      url += "&connectToken=" + obj.connectToken + "&id=" + obj.tabId;
+      url += "&width=640" + "&height=480";
+      */
+      modalFunc.set.call({
+        option: {
+          url: "http://localhost:8787/?h=true",
+          tabId: obj.tabId,
+          width: 300,
+          height: 300
+        }
+      });
+      //cameraApi.connect(obj);
+    });
+
   }]);
+
+
 
   // 参考 http://stackoverflow.com/questions/14478106/angularjs-sorting-by-property
   sincloApp.filter('orderObjectBy', function(){

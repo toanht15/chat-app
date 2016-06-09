@@ -5,8 +5,8 @@ var router = express.Router();
 var mysql = require('mysql'),
     pool = mysql.createPool({
     host: process.env.DB_HOST || 'localhost',
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASS || 'password',
+    user: process.env.DB_USER || 'sinclo',
+    password: process.env.DB_PASS || 'mlmysql',
     database: process.env.DB_NAME || 'sinclo_db'
 });
 

@@ -2,8 +2,8 @@
 var mysql = require('mysql'),
     pool = mysql.createPool({
       host: process.env.DB_HOST || 'localhost',
-      user: process.env.DB_USER || 'root',
-      password: process.env.DB_PASS || 'password',
+      user: process.env.DB_USER || 'sinclo',
+      password: process.env.DB_PASS || 'mlmysql',
       database: process.env.DB_NAME || 'sinclo_db'
     });
 
@@ -430,10 +430,26 @@ io.sockets.on('connection', function (socket) {
       }
     }
     else {
+// <<<<<<< HEAD
       connectList[socket.id] = {siteKey: obj.siteKey, tabId: obj.tabId, userId: obj.userId};
       // 履歴作成
       db.addHistory(obj);
       emit.toCompany('syncNewInfo', obj, obj.siteKey);
+// =======
+//       if ( !obj.subWindow ) {
+//         obj.chat = sincloCore[obj.siteKey][obj.tabId].chat;
+//       }
+
+//       if ( isset(sincloCore[obj.siteKey][obj.tabId]['sessionId']) ) {
+//         emit.toUser('connectInfo', obj, sincloCore[obj.siteKey][obj.tabId].sessionId);
+//       }
+//       else {
+//         console.log('| L:519 -------------------------------------------------->> ');
+//         console.log('| <<-------------------------------------------------- L:522 ');
+//       }
+//       emit.toCompany('connectInfo', obj, obj.siteKey);
+//       access.update(obj);
+// >>>>>>> dev-camera
     }
   });
   // ウィジェットが生成されたことを企業側に通知する
@@ -573,8 +589,13 @@ io.sockets.on('connection', function (socket) {
     if ( isset(obj.windowSize) ) {
       emit.toUser('syncResponce', data, getSessionId(obj.siteKey, obj.tabId, 'syncFrameSessionId'));
     }
+// <<<<<<< HEAD
     else {
       emit.toUser('syncResponce', data, getSessionId(obj.siteKey, obj.to, 'sessionId'));
+// =======
+//     else if ( isset(obj.windowSize) && isset(sincloCore[obj.siteKey][obj.to]['syncFrameSessionId'])) {
+//       emit.toUser('syncResponce', data, sincloCore[obj.siteKey][obj.to].sessionId);
+// >>>>>>> dev-camera
     }
   });
 
@@ -642,7 +663,20 @@ io.sockets.on('connection', function (socket) {
 
   socket.on('reqUrlChecker', function (data){
     var obj = JSON.parse(data);
+// <<<<<<< HEAD
     emit.toUser('resUrlChecker', data, getSessionId(obj.siteKey, obj.to, 'sessionId'));
+// =======
+// console.log('reqUrlChecker', sincloCore[obj.siteKey][obj.to]);
+//     if ( isset(sincloCore[obj.siteKey][obj.to]['sessionId']) ) {
+//       emit.toUser('resUrlChecker', data, sincloCore[obj.siteKey][obj.to].sessionId);
+//     }
+//     else {
+//       console.log('| resUrlChecker -------------------------------------------------->> ');
+//       console.log('obj', obj);
+//       console.log('sincloCore', sincloCore[obj.siteKey]);
+//       console.log('| <<-------------------------------------------------- resUrlChecker ');
+//     }
+// >>>>>>> dev-camera
   });
 
   // -----------------------------------------------------------------------
@@ -756,6 +790,27 @@ io.sockets.on('connection', function (socket) {
         }
       );
     }
+  });
+
+  // -----------------------------------------------------------------------
+  // ビデオチャット関連
+  // ビデオチャットで利用している各値はプレフィックス（vc_）をつけている。
+  // -----------------------------------------------------------------------
+  socket.on('requestVideochatStart', function (data) {
+    var obj = JSON.parse(data);
+    // 同形ウィンドウを作成するための情報取得依頼
+    if ( !getSessionId(obj.siteKey, obj.tabId, 'sessionId') ) return false;
+    sincloCore[obj.siteKey][obj.tabId].vc_connectToken = obj.connectToken;
+    sincloCore[obj.siteKey][obj.tabId].vc_syncSessionId = null;
+    sincloCore[obj.siteKey][obj.tabId].vc_syncHostSessionId = socket.id; // 企業画面側のセッションID
+    emit.toUser('confirmVideochatStart', data, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
+  });
+
+  socket.on('videochatConfirmOK', function (data) {
+    var obj = JSON.parse(data);
+    console.log(data);
+    //obj.connectToken = sincloCore[obj.siteKey][obj.tabId].vc_connectToken;
+    emit.toUser('videochatConfirmOK', JSON.stringify(obj), getSessionId(obj.siteKey, obj.tabId, 'vc_syncHostSessionId'));
   });
 
   socket.on('userOut', function (data) {

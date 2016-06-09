@@ -9,6 +9,7 @@ var socket, // socket.io
     syncEvent, // 画面同期関連関数
     popup, // ポップアップ関連関数
     sinclo, // リアルタイム通信補助関数
+    sincloVideo, // ビデオ通信補助関数
     sincloJquery = $.noConflict(true);
 
 (function($){
@@ -1201,7 +1202,9 @@ var socket, // socket.io
 
     // 画面共有
     socket.on('getWindowInfo', function(d){
-      sinclo.getWindowInfo(d);
+      var obj = common.jParse(d);
+      sinclo.getWindowInfo(obj);
+      sincloVideo.open(obj);
     }); // socket-on: getWindowInfo
 
     // スクロール位置のセット
@@ -1273,6 +1276,13 @@ var socket, // socket.io
     socket.on('sendChatResult', function (d) {
       sinclo.sendChatResult(d);
     }); // socket-on: receiveConnectEV
+
+    // 画面共有
+    socket.on('confirmVideochatStart', function(d){
+      var obj = common.jParse(d);
+      sinclo.confirmVideochatStart(obj);
+      // sincloVideo.open(obj);
+    }); // socket-on: confirmVideochatStart
 
     socket.on('syncStop', function(d){
       sinclo.syncStop(d);

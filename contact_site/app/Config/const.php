@@ -4,7 +4,7 @@ define('APP_MODE_DEV', true);
 // Nodeサーバー
 if ( APP_MODE_DEV ) {
   define('C_NODE_SERVER_ADDR', "//socket.localhost"); // Dev
-  define('C_NODE_SERVER_FILE_PORT', ":8080"); // Dev
+  define('C_NODE_SERVER_FILE_PORT', ":8787"); // Dev
   define('C_NODE_SERVER_WS_PORT', ":9090"); // Dev
 }
 else {
@@ -16,6 +16,7 @@ else {
 // 使用機能
 define('C_COMPANY_USE_SYNCLO', 'synclo'); // 画面同期
 define('C_COMPANY_USE_CHAT', 'chat'); // オペレーターが待機中の時のみ表示する
+define('C_COMPANY_USE_VIDEO_CHAT', 'videochat'); // ビデオチャット
 
 // 表示設定種別
 define('C_WIDGET_DISPLAY_CODE_SHOW', 1); // 常に表示する

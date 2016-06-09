@@ -218,8 +218,7 @@
         connectToken: userInfo.connectToken
       });
     },
-    getWindowInfo: function(d) {
-      var obj = common.jParse(d);
+    getWindowInfo: function(obj) {
       if ( obj.tabId !== userInfo.tabId ) return false;
       if ( userInfo.accessType !== Number(cnst.access_type.guest) ) return false;
       var title = location.host + 'の内容';
@@ -488,6 +487,33 @@
       // 自動メッセージの情報を渡す（保存の為）
       var obj = common.jParse(d);
       emit("sendAutoChatMessages", {messages: sinclo.chatApi.autoMessages, chatToken: obj.chatToken});
+    },
+    confirmVideochatStart: function(obj) {
+      if ( obj.tabId !== userInfo.tabId ) return false;
+      if ( userInfo.accessType !== Number(cnst.access_type.guest) ) return false;
+      var title = location.host + 'の内容';
+      var content = location.host + 'がビデオ表示を求めています。<br>許可しますか？<br>ビデオは別のウィンドウで表示されます。';
+      popup.ok = function(){
+        var url = "ht",
+        iframe = document.createElement('iframe');
+        iframe.width = 480;
+        iframe.height = 400;
+        //if ( isset(obj.userId) ) {
+          iframe.src = "http://localhost:8787/?h=false"; // FIXME
+          document.body.appendChild(iframe);
+        //}
+        //window.open('http://www.google.co.jp',obj.tabId,'width=400, height=300, menubar=no, toolbar=no, scrollbars=yes');
+        userInfo.connectToken = obj.connectToken;
+        browserInfo.resetPrevList();
+
+        emit('videochatConfirmOK', {
+          userId: userInfo.userId,
+          tabId: userInfo.tabId,
+          connectToken: userInfo.connectToken
+        });
+        this.remove();
+      };
+      popup.set(title, content);
     },
     syncStop: function(d){
       var obj = common.jParse(d);
@@ -940,6 +966,18 @@
                 }
             }
         }
+    }
+  };
+
+  sincloVideo = {
+    open: function(obj){
+      window.open(
+        "https://ap1.sinclo.jp/index.html?userId=" + userInfo.userId,
+        "monitor_" + userInfo.userId,
+        "width=480,height=400,dialog=no,toolbar=no,location=no,status=no,menubar=no,directories=no,resizable=no, scrollbars=no"
+      );
+
+      return false;
     }
   };
 

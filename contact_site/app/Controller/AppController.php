@@ -42,7 +42,8 @@ class AppController extends Controller {
             'authenticate' => array(
                 'Form' => array(
                     'userModel' => 'MUser',
-                    'fields' => array('username' => 'mail_address')
+                    'fields' => array('username' => 'mail_address'),
+                    'scope' => array('MUser.del_flg' => 0)
                 )
             )
         )

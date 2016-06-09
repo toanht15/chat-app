@@ -45,6 +45,9 @@
 				<?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
 						<th>チャット</th>
 				<?php endif; ?>
+				<?php if ( $coreSettings[C_COMPANY_USE_VIDEO_CHAT] ) :?>
+						<th>ビデオ</th>
+				<?php endif; ?>
 						<th ng-hide="labelHideList.ipAddress" >訪問ユーザ</th>
 						<th ng-hide="labelHideList.ua" >ユーザー環境</th>
 						<th ng-hide="labelHideList.time" >アクセス日時</th>
@@ -89,6 +92,21 @@
                           <span ng-if="monitor.tabId == detailId" ng-click="showDetail(monitor.tabId)" class="btn-shadow redBtn ">
                             詳細を閉じる
                             <div class="unread" ng-if="monitor.chatUnreadCnt > 0">{{monitor.chatUnreadCnt}}</div>
+                          </span>
+                        </span>
+					</td>
+				<?php endif; ?>
+
+				<?php if ( $coreSettings[C_COMPANY_USE_VIDEO_CHAT] ) :?>
+					<!-- /* ビデオチャット */ -->
+					<td class="w10 tCenter" id="videoChatTypeBtn">
+
+						<span class="monitorOn" ng-if="monitor.videochat === <?= h($muserId)?>"><span class="bold">対応中</span><br>（あなた）</span>
+						<span class="monitorOn" ng-if="isset(monitor.videochat) && monitor.videochat !== <?= h($muserId)?>"><span class="bold">対応中</span><br>（{{setName(monitor.chat)}}）</span>
+
+                        <span ng-if="monitor.widget">
+                          <span ng-if="monitor.tabId != detailId" ng-click="showVideochat(monitor.tabId, monitor.accessId)" class="btn-shadow blueBtn ">
+						  	開始
                           </span>
                         </span>
 					</td>
