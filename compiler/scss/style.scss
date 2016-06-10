@@ -514,7 +514,6 @@ a {
   top: 0;
   left: 0;
   right: 0;
-  min-width: $content-min-width!important;
   background-color: $main-color;
   height: 60px;
   z-index: 3;
@@ -1487,7 +1486,7 @@ ul.naviBtn {
         width: 100px;
         a {
           float: left;
-          img.actCtrlBtn{ opacity: 0 }
+          img.actCtrlBtn{ display: none }
         }
     }
 

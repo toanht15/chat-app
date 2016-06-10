@@ -35,16 +35,23 @@ document.body.onload = function(){
 // 全選択
 var setAllCheck = function() {
 	$('input[name="selectTab"]').prop('checked', this.checked);
+	if ( this.checked ) {
+		$(".actCtrlBtn").css('display', 'block');
+	}
+	else {
+		$(".actCtrlBtn").css('display', 'none');
+	}
 }
 
 // 有効/無効ボタンの表示/非表示
 var actBtnShow = function(){
 	// 選択中の場合
 	if ( $('input[name="selectTab"]').is(":checked") ) {
-		$(".actCtrlBtn").css('opacity', 1);
+		$(".actCtrlBtn").css('display', 'block');
 	}
 	else {
-		$(".actCtrlBtn").css('opacity', 0);
+		$(".actCtrlBtn").css('display', 'none');
+		$('#allCheck').prop('checked', false);
 	}
 };
 
