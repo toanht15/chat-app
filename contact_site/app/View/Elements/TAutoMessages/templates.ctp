@@ -5,7 +5,7 @@
 	</li>
 	<li>
 		<span><label>時間</label></span>
-		<input type="number" min="0" max="100" step="1" ng-model="setItem.stayTimeRange" name="stayTimeRange" required="">
+		<input type="text" class="tRight" ng-pattern="<?=C_MATCH_RULE_NUM_1?>" ng-model="setItem.stayTimeRange" name="stayTimeRange" required="">
 	</li>
 </ul>
 
@@ -13,7 +13,7 @@
 <ul ng-if="itemType == '<?=C_AUTO_TRIGGER_VISIT_CNT?>'"  class="setVisitCnt">
 		<li>
 			<span><label>訪問回数</label></span>
-			<input type="number" min="0" max="99" step="1" ng-model="setItem.visitCnt" name="visitCnt" required="">&nbsp;回
+			<input type="text" class="tRight" ng-pattern="<?=C_MATCH_RULE_NUM_2?>" ng-model="setItem.visitCnt" name="visitCnt" required="">&nbsp;回
 		</li>
 		<li>
 			<?=$this->AutoMessage->radio('visitCntCond')?>
@@ -43,14 +43,14 @@
 	</li>
 	<li>
 		<div class="input-group clockpicker bt0">
-			<input type="text" class="form-control" name="startTime" ng-pattern="/^(24:00|2[0-3]:[0-5][0-9]|[0-1]?[0-9]:[0-5][0-9])$/" ng-model="setItem.startTime" ng-disabled="setItem.timeSetting == '2'" ng-required="setItem.timeSetting == '1'">
+			<input type="text" class="form-control" name="startTime" ng-pattern="<?=C_MATCH_RULE_TIME?>" ng-model="setItem.startTime" ng-disabled="setItem.timeSetting == '2'" ng-required="setItem.timeSetting == '1'">
 			<span class="input-group-addon">
 				<span class="glyphicon glyphicon-time"></span>
 			</span>
 		</div>
 		<div class="bt0"><span>～</span></div>
 		<div class="input-group clockpicker bt0">
-			<input type="text" class="form-control" name="endTime" ng-pattern="/^(24:00|2[0-3]:[0-5][0-9]|[0-1]?[0-9]:[0-5][0-9])$/" ng-model="setItem.endTime" ng-disabled="setItem.timeSetting == '2'" ng-required="setItem.timeSetting == '1'">
+			<input type="text" class="form-control" name="endTime" ng-pattern="<?=C_MATCH_RULE_TIME?>" ng-model="setItem.endTime" ng-disabled="setItem.timeSetting == '2'" ng-required="setItem.timeSetting == '1'">
 			<span class="input-group-addon">
 				<span class="glyphicon glyphicon-time"></span>
 			</span>

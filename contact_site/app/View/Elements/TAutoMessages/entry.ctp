@@ -32,15 +32,15 @@
 			<!-- 条件設定 -->
 			<li>
 				<span class="require"><label>条件設定</label></span>
-				<?= $this->ngForm->input('main.condition_type', [
+				<label><?= $this->ngForm->input('main.condition_type', [
 					'type' => 'radio',
 					'options' => $outMessageIfType,
-					'separator' => '&nbsp;',
+					'separator' => '</label><label>',
 					'error' => false
 				],[
 					'entity' => 'conditionType',
 					'default' => (!empty($this->data['TAutoMessage']['condition_type'])) ? $this->data['TAutoMessage']['condition_type'] : C_COINCIDENT,
-				]); ?>
+				]); ?></label>
 			</li>
 			<?php if (!empty($errors['condition_type'])) echo "<li class='error-message'>" . h($errors['condition_type'][0]) . "</li>"; ?>
 			<!-- 条件設定 -->

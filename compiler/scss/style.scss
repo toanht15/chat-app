@@ -103,6 +103,7 @@ table {
 }
 
 input[type='text'], input[type='number'], input[type='password']{
+  padding: 5px 10px;
   border: none;
   border-bottom: 1px solid $line-color;
   &:focus {
@@ -704,7 +705,6 @@ ul#color-bar-right {
     text-align: center;
     input {
       width: 100%;
-      padding: 5px 10px;
       border: none;
       background-color: #FFF;
       height: 40px;
@@ -1763,6 +1763,7 @@ ul.naviBtn {
               background-color: #FF8E9E;
               z-index: 2;
               display: none;
+              box-shadow: 0 0 2px rgba(0,0,0,0.3);
 
               p { color: #FFF }
               div.balloonContent {

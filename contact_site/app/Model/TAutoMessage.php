@@ -61,11 +61,14 @@ class TAutoMessage extends AppModel {
 				// 設定単位ごと
 				foreach( (array)$defaultList as $field => $value ){
 
+					// 値に配列が入っている
 					if (isset($item[$field]) && is_array($item[$field])) {
+						// 一つでもtrueが入っていればOK
 						if (!array_search(true, $item[$field], true)) {
 							return false;
 						}
 					}
+					// キーが存在しない
 					elseif (!isset($item[$field])) {
 						// 曜日・日時の開始/終了時間のチェック
 						if ((strcmp($field, "startTime") === 0 || strcmp($field, "endTime") === 0)) {
@@ -73,14 +76,28 @@ class TAutoMessage extends AppModel {
 							if ( isset($item['timeSetting']) && strcmp($item['timeSetting'], C_SELECT_CAN_NOT) === 0 ) {
 								continue;
 							}
-							return false;
 						}
+						return false;
 					}
+					// キーが存在し、配列以外の値が入っている
 					else {
 
 						// 曜日・日時の開始/終了時間のチェック
 						if ((strcmp($field, "startTime") === 0 || strcmp($field, "endTime") === 0)) {
 							if ( !preg_match(C_MATCH_RULE_TIME, $item[$field]) ) {
+								return false;
+							}
+						}
+
+						// 滞在時間の入力チェック
+						if (strcmp($field, "stayTimeRange") === 0) {
+							if ( !preg_match(C_MATCH_RULE_NUM_1, $item[$field]) ) {
+								return false;
+							}
+						}
+						// 訪問回数の入力チェック
+						if (strcmp($field, "visitCnt") === 0) {
+							if ( !preg_match(C_MATCH_RULE_NUM_2, $item[$field]) ) {
 								return false;
 							}
 						}
