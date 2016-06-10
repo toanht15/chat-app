@@ -84,7 +84,13 @@
           emit('connectContinue', {
             connectToken: userInfo.connectToken,
             accessType: common.params.type,
+            receiverID: userInfo.vc_receiverID
           });
+
+          var vcInfo = common.getVcInfo();
+          if(typeof vcInfo !== 'undefined') {
+            common.showVideoChatView(vcInfo.toTabId, vcInfo.receiverID);
+          }
 
           window.clearTimeout(this.syncTimeout);
           this.syncTimeout = window.setTimeout(function(){
@@ -227,17 +233,6 @@
         userInfo.connectToken = obj.connectToken;
         browserInfo.resetPrevList();
 
-        iframe = document.createElement('iframe');
-        iframe.width = 480;
-        iframe.height = 400;
-        //if ( isset(obj.userId) ) {
-        var sincloData = {
-          from: userInfo.vc_toTabId,
-          to: userInfo.vc_receiverID,
-        };
-        iframe.src = info.site.webcam_view + "?h=false&sincloData=" + encodeURIComponent(JSON.stringify(sincloData)); // FIXME
-        document.body.appendChild(iframe);
-
         emit('sendWindowInfo', {
           userId: userInfo.userId,
           tabId: userInfo.tabId,
@@ -250,12 +245,16 @@
           scrollPosition: browserInfo.windowScroll()
         });
 
+        common.showVideoChatView(userInfo.tabId, userInfo.vc_receiverID);
+
         emit('videochatConfirmOK', {
           userId: userInfo.userId,
           fromTabId: userInfo.tabId,
           fromConnectToken: userInfo.connectToken,
           receiverID: userInfo.vc_receiverID
         });
+        // 開始したタイミングでビデオチャット情報をセッションストレージに保存
+        common.saveVcInfo();
         this.remove();
       };
       popup.set(title, content);
@@ -507,10 +506,12 @@
       emit("sendAutoChatMessages", {messages: sinclo.chatApi.autoMessages, chatToken: obj.chatToken});
     },
     confirmVideochatStart: function(obj) {
+      // ビデオチャット開始に必要な情報をオペレータ側から受信し、セットする
       if ( obj.toTabId !== userInfo.tabId ) return false;
       if ( userInfo.accessType !== Number(cnst.access_type.guest) ) return false;
       userInfo.vc_receiverID = obj.receiverID;
       userInfo.vc_toTabId = obj.toTabId;
+      common.setVcInfo({receiverID: obj.receiverID, toTabId: obj.toTabId});
     },
     syncStop: function(d){
       var obj = common.jParse(d);

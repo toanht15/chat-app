@@ -39,6 +39,7 @@ var socket, // socket.io
     cursorTag: null,
     params : {},
     tmpParams : {},
+    vcInfo : {}, // ビデオチャット用のセッション情報
     getParams: function(){
       // パラメータの取得
       var params = location.href.split('?'), param, i, kv;
@@ -66,6 +67,22 @@ var socket, // socket.io
     unsetParams: function(){
       storage.s.unset('params');
     },
+    // ==========
+    // ビデオ用情報保存
+    // ==========
+    saveVcInfo: function(){
+      storage.s.set('vcInfo', JSON.stringify(this.vcInfo));
+    },
+    getVcInfo: function(){
+      return JSON.parse(storage.s.get('vcInfo')) || undefined;
+    },
+    setVcInfo: function(obj){
+      this.vcInfo = obj;
+    },
+    unsetVcInfo: function(){
+      storage.s.unset('vcInfo');
+    },
+    // ==========
     title: function(){
       return ( document.getElementsByTagName('title')[0] ) ? document.getElementsByTagName('title')[0].text : "";
     },
@@ -254,6 +271,18 @@ var socket, // socket.io
       html += '    <span id="accessIdArea">' + userInfo.accessId + '</span>';
       html += '</section>';
       return html;
+    },
+    showVideoChatView: function(fromID, toID) {
+        var iframe = document.createElement('iframe');
+        iframe.width = 480;
+        iframe.height = 400;
+        //if ( isset(obj.userId) ) {
+        var sincloData = {
+          from: fromID,
+          to: toID,
+        };
+        iframe.src = info.site.webcam_view + "?h=false&sincloData=" + encodeURIComponent(JSON.stringify(sincloData)); // FIXME
+        document.body.appendChild(iframe);
     },
     chatWidgetTemplate: function(widget){
       var html = "";
@@ -1204,7 +1233,7 @@ var socket, // socket.io
     socket.on('getWindowInfo', function(d){
       var obj = common.jParse(d);
       sinclo.getWindowInfo(obj);
-      sincloVideo.open(obj);
+      //sincloVideo.open(obj);
     }); // socket-on: getWindowInfo
 
     // スクロール位置のセット

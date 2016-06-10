@@ -286,6 +286,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             tabId: tabId,
             connectToken: connectToken
           });
+          // モニター開始時にビデオ表示
+          // TODO: ビデオ表示可能な条件をつける。（オプションでビデオチャット可能で、かつユーザーがカメラONにしているとき）
           socket.emit('confirmVideochatStart', {toTabId: tabId, connectToken: connectToken, receiverID: connectToken+'_vc'});
        };
     };
@@ -374,18 +376,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           }, 800);
         }, 400);
       }
-    };
-
-    $scope.showVideochat = function(tabId, accessId) {
-      var message = "アクセスID【" + accessId + "】のユーザーにビデオを表示しますか？<br><br>";
-      message += "<span style='font-size: 0.9em; color: red;'><?=Configure::read('message.const.chatStartConfirm')?></span>";
-      modalOpen.call(window, message, 'p-confirm', 'メッセージ');
-       popupEvent.closePopup = function(){
-          sessionStorage.clear();
-          popupEvent.close();
-          connectToken = makeToken();
-          socket.emit('confirmVideochatStart', {toTabId: tabId, connectToken: connectToken, receiverID: connectToken});
-       };
     };
 
     $scope.isset = function(value){
