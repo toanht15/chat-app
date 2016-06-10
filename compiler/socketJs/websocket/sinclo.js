@@ -89,7 +89,7 @@
 
           var vcInfo = common.getVcInfo();
           if(typeof vcInfo !== 'undefined') {
-            common.showVideoChatView(vcInfo.toTabId, vcInfo.receiverID);
+            vcPopup.set(vcInfo.toTabId, vcInfo.receiverID);
           }
 
           window.clearTimeout(this.syncTimeout);
@@ -245,7 +245,7 @@
           scrollPosition: browserInfo.windowScroll()
         });
 
-        common.showVideoChatView(userInfo.tabId, userInfo.vc_receiverID);
+        vcPopup.set(userInfo.tabId, userInfo.vc_receiverID);
 
         emit('videochatConfirmOK', {
           userId: userInfo.userId,
