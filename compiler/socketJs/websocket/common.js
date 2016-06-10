@@ -1199,6 +1199,7 @@ var socket, // socket.io
   };
 
   vcPopup = {
+      dragging: false,
       set: function(fromID, toID){
           vcPopup.remove();
           var maincolor = ( window.info.widget.mainColor !== undefined ) ? window.info.widget.mainColor : "#ABCD05";
@@ -1209,7 +1210,7 @@ var socket, // socket.io
             to: toID,
           };
           var url = info.site.webcam_view + "?h=false&sincloData=" + encodeURIComponent(JSON.stringify(sincloData));
-          html += '<div id="sincloVcPopup" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 99999999999999;">';
+          //html += '<div id="sincloVcPopup" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 99999999999999;">';
           html += '  <style>';
           html += '    #sincloVcPopupFrame {';
           html += '        border: 0.15em solid #ABABAB;';
@@ -1221,8 +1222,6 @@ var socket, // socket.io
           html += '        position: absolute;';
           html += '        top: 0;';
           html += '        left: 0;';
-          html += '        right: 0;';
-          html += '        bottom: 0;';
           html += '        box-shadow: 0 35px 42px rgba(141, 141, 141, 0.8);';
           html += '        border-radius: 5px;';
           html += '        box-sizing: border-box;';
@@ -1306,7 +1305,7 @@ var socket, // socket.io
           html += '      </sinclo-div>';
           html += '    </sinclo-div>';
           html += '  </sinclo-div>';
-          html += '</sinclo-div>';
+          //html += '</sinclo-div>';
 
           $("body").append(html);
 
@@ -1316,6 +1315,9 @@ var socket, // socket.io
           });
 
           $("#sincloVcPopupFrame").height(height).css("opacity", 1);
+          $("#sincloVcPopupFrame").on('mousedown', vcPopup.dragOn);
+          $("#sincloVcPopupFrame").on('mouseup', vcPopup.dragOff);
+          $("#sincloVcPopupFrame").on('mousemove', vcPopup.drag);
       },
       remove: function(){
           var elm = document.getElementById('sincloVcPopup');
@@ -1324,7 +1326,32 @@ var socket, // socket.io
           }
       },
       ok: function(){ return true; },
-      no: function(){ this.remove() }
+      no: function(){ this.remove() },
+      // ドラッグ用プロパティ・メソッド群
+      startDragX: 0,
+      startDragY: 0,
+      dragOn: function(e) {
+        vcPopup.dragging = true;
+        vcPopup.startDragX = e.screenX;
+        vcPopup.startDragY = e.screenY;
+      },
+      dragOff: function() {
+        vcPopup.dragging = false;
+      },
+      drag: function(e) {
+        if(!vcPopup.dragging) return;
+        e.stopPropagation();
+        var deltaX = e.screenX - vcPopup.startDragX;
+        var deltaY = e.screenY - vcPopup.startDragY;
+        console.log('delta X: ' + deltaX + ' Y: ' + deltaY);
+        $("#sincloVcPopupFrame").css({
+          top: $('#sincloVcPopupFrame').offset().top + deltaY,
+          left: $('#sincloVcPopupFrame').offset().left + deltaX
+        });
+        vcPopup.startDragX = e.screenX;
+        vcPopup.startDragY = e.screenY;
+        return false;
+      }
   };
 
   var init = function(){
