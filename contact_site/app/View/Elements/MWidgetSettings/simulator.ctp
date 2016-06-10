@@ -29,9 +29,9 @@
 		#sincloBox section#callTab #telNumber.notUseTime { font-size: 20px; padding: 10px 0px 0px; height: 45px }
 		#sincloBox section#callTab #telIcon { background-color: {{main_color}}; display: block; width: 50px; height: 50px; float: left; border-radius: 25px; padding: 3px }
 		#sincloBox section#callTab #telTime { font-weight: bold; color: {{main_color}}; margin: 0 auto; white-space: pre-line; font-size: 10px; text-align: center; padding: 0 0 5px; height: 20px }
-		#sincloBox section#callTab #telContent { display: block; overflow: auto; max-height: 120px }
+		#sincloBox section#callTab #telContent { display: block; overflow: auto; max-height: 119px }
 	<?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
-		#sincloBox section#callTab #telContent .tblBlock {  text-align: center;  margin: 0 auto;  width: 240px;  display: table;  flex-direction: column;  align-content: center;  height: 120px!important;  justify-content: center; }
+		#sincloBox section#callTab #telContent .tblBlock {  text-align: center;  margin: 0 auto;  width: 240px;  display: table;  flex-direction: column;  align-content: center;  height: 119px!important;  justify-content: center; }
 	<?php else: ?>
 		#sincloBox section#callTab #telContent .tblBlock { text-align: center; margin: 0 auto; width: 240px; display: table; flex-direction: column; align-content: center; justify-content: center; }
 	<?php endif; ?>
@@ -123,8 +123,8 @@
 			</span>
 		</section>
 	<?php endif; ?>
+		<p style="padding: 5px 0;text-align: center;border: 1px solid #E8E7E0;color: #A1A1A1!important;font-size: 11px;margin: 0;border-top: none;">Powered by <a target="sinclo" href="http://medialink-ml.co.jp/index.html">sinclo</a></p>
 	</div>
-	<p style="padding: 5px 0;text-align: center;border: 1px solid #E8E7E0;color: #A1A1A1!important;font-size: 11px;margin: 0;border-top: none;">Powered by <a target="sinclo" href="http://medialink-ml.co.jp/index.html">sinclo</a></p>
 
 
 	</div>
