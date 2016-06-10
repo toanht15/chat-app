@@ -141,7 +141,7 @@ var socket, // socket.io
           break;
       }
       html += '  <style>';
-      html += '      #sincloBox { display: none; position: fixed; ' + showPosition + ' z-index: 999998; background-color: rgba(0,0,0,0); width: 270px; }';
+      html += '      #sincloBox { display: none; position: fixed; ' + showPosition + ' z-index: 999998; background-color: rgba(0,0,0,0); width: 285px; }';
       html += '      #sincloBox * { box-sizing: border-box; font-size: 12px; font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana;}';
       html += '      #sincloBox span, #sincloBox pre { font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana!important }';
       html += '      #sincloBox span#mainImage { z-index: 2 }';
@@ -153,7 +153,7 @@ var socket, // socket.io
       html += '      #sincloBox[data-openflg="false"] p#widgetTitle:after { transform: rotate(180deg); }';
       html += '      #sincloBox p#widgetSubTitle { background-color: #FFF; margin: 0; padding: 7px 0; text-align: left; border-width: 0 1px 0 1px; border-color: #E8E7E0; border-style: solid; padding-left: 77px; font-weight: bold; color: ' + widget.mainColor + '; height: 29px }';
       html += '      #sincloBox p#widgetDescription { background-color: #FFF; margin: 0; padding-bottom: 7px; text-align: left; border-width: 0 1px 1px 1px; border-color: #E8E7E0; border-style: solid; padding-left: 77px; height: 23px; color: #8A8A8A; }';
-      html += '      #sincloBox section { display: inline-block; background-color: #FFF; width: 270px; border: 1px solid #E8E7E0; border-top: none; }';
+      html += '      #sincloBox section { display: inline-block; background-color: #FFF; width: 285px; border: 1px solid #E8E7E0; border-top: none; }';
       // 画像がセットされている場合のスタイル
       if ( String(widget.showMainImage) !== "2" ) {
       html += '      #sincloBox p#widgetTitle { padding-left: 70px; }';
@@ -186,7 +186,7 @@ var socket, // socket.io
         html += '      #sincloBox section#callTab { display: none; }';
       }
       html += '      #sincloBox section#navigation { border-width: 0 1px; height: 40px; position: relative; display: block; }';
-      html += '      #sincloBox section#navigation ul { margin: 0 0 0 -1px; display: table; padding: 0; position: absolute; top: 0; left: 0; height: 40px; width: 270px }';
+      html += '      #sincloBox section#navigation ul { margin: 0 0 0 -1px; display: table; padding: 0; position: absolute; top: 0; left: 0; height: 40px; width: 285px }';
       html += '      #sincloBox section#navigation ul li { position: relative; overflow: hidden; cursor: pointer; color: #8A8A8A; width: 50%; text-align: center; display: table-cell; padding: 10px 0; border-left: 1px solid #E8E7E0; height: 40px }';
       html += '      #sincloBox section#navigation ul li:last-child { border-right: 1px solid #E8E7E0; }';
       html += '      #sincloBox section#navigation ul li.selected { background-color: #FFFFFF; }';

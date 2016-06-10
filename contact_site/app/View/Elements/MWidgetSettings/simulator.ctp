@@ -1,5 +1,5 @@
 <section id="sample_widget_area" ng-cloak>
-	<div id="sincloBox" style="position: relative; z-index: 1; width: 270px; background-color: rgb(255, 255, 255);">
+	<div id="sincloBox" style="position: relative; z-index: 1; width: 285px; background-color: rgb(255, 255, 255);">
 	<style>
 		#sincloBox span, #sincloBox pre { font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana!important }
 		#sincloBox span#mainImage { z-index: 2 }
@@ -14,7 +14,7 @@
 		#sincloBox[data-openflg='false'] p#widgetTitle:after { transform: rotate(180deg); }
 		#sincloBox p#widgetSubTitle { margin: 0; text-align: left; padding-left: 77px; font-weight: bold; color: {{main_color}}!important }
 		#sincloBox p#widgetDescription { margin: 0; text-align: left; padding-left: 77px; color: #8A8A8A; }
-		#sincloBox section { display: inline-block; width: 270px; border: 1px solid #E8E7E0; border-top: none; }
+		#sincloBox section { display: inline-block; width: 285px; border: 1px solid #E8E7E0; border-top: none; }
 		#sincloBox div#miniTarget { overflow: hidden; transition: height 200ms linear; }
 	<?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
 		#sincloBox ul#chatTalk { width: 100%; height: 194px; padding: 5px; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0}
@@ -40,7 +40,7 @@
 	<?php endif; ?>
 	<?php if ( $coreSettings[C_COMPANY_USE_CHAT] && $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
 		#sincloBox section#navigation { border-width: 0 1px; height: 40px; position: relative; display: block; }
-		#sincloBox section#navigation ul { margin: 0 0 0 -1px; display: table; padding: 0; position: absolute; top: 0; left: 0; height: 40px; width: 270px }
+		#sincloBox section#navigation ul { margin: 0 0 0 -1px; display: table; padding: 0; position: absolute; top: 0; left: 0; height: 40px; width: 285px }
 		#sincloBox section#navigation ul li { position: relative; overflow: hidden; cursor: pointer; color: #8A8A8A; width: 50%; text-align: center; display: table-cell; padding: 10px 0; border-left: 1px solid #E8E7E0; height: 40px }
 		#sincloBox section#navigation ul li:last-child { border-right: 1px solid #E8E7E0; }
 		#sincloBox section#navigation ul li.selected { background-color: #FFFFFF; }
