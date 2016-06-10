@@ -21,6 +21,8 @@ class MWidgetSetting extends AppModel {
       'main_image' => "mainImage",
       'radius_ratio' => "radiusRatio",
       'tel' => "tel",
+      'show_subtitle' => "showSubtitle",
+      'show_description' => "showDescription",
       'display_time_flg' => "displayTimeFlg",
       'time_text' => "timeText",
       'content' => "content"

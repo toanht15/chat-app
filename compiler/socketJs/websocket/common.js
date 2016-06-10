@@ -214,7 +214,7 @@ var socket, // socket.io
       html += '    <p id="widgetTitle" onclick="sinclo.operatorInfo.ev()">' + widget.title + '</p>';
       var subTitle = (widget.subTitle === undefined) ? "" : widget.subTitle;
       var description = (widget.description === undefined) ? "" : widget.description;
-      if ( !(Number(widget.showMainImage) === 2 && subTitle === "" && description === "") ) {
+      if ( Number(widget.showSubtitle) === 1 || Number(widget.showDescription) === 1) {
         // サブタイトル
         html += '    <p id="widgetSubTitle">' + subTitle + '</p>';
         // 説明文

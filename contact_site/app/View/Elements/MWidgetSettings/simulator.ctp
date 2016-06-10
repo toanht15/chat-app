@@ -12,7 +12,7 @@
 		#sincloBox p#widgetTitle:after { background-position-y: 3px; background-image: url('<?=$gallaryPath?>yajirushi.png'); top: 6px; right: 6px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear}
 		#sincloBox[data-openflg='true'] p#widgetTitle:after { transform: rotate(0deg); }
 		#sincloBox[data-openflg='false'] p#widgetTitle:after { transform: rotate(180deg); }
-		#sincloBox p#widgetSubTitle { margin: 0; text-align: left; padding-left: 77px; font-weight: bold; color: {{main_color}} }
+		#sincloBox p#widgetSubTitle { margin: 0; text-align: left; padding-left: 77px; font-weight: bold; color: {{main_color}}!important }
 		#sincloBox p#widgetDescription { margin: 0; text-align: left; padding-left: 77px; color: #8A8A8A; }
 		#sincloBox section { display: inline-block; width: 270px; border: 1px solid #E8E7E0; border-top: none; }
 		#sincloBox div#miniTarget { overflow: hidden; transition: height 200ms linear; }

@@ -89,13 +89,6 @@
 
 				<!-- サブタイトル -->
 				<li>
-					<?php
-					// サブタイトル入力欄のdisabled制御
-					$isDisableSubTitle = false;
-					if ( isset($this->data['MWidgetSetting']['sub_title']) && intval($this->data['MWidgetSetting']['sub_title']) !== 1 ) {
-						$isDisableSubTitle = true;
-					}
-					?>
 					<span class='require'><label>サブタイトル</label></span>
 					<?php $subTitle = $this->ngForm->input('sub_title', [
 						'type' => 'text',
@@ -109,7 +102,7 @@
 					],[
 						'entity' => 'MWidgetSetting.sub_title'
 					]) ?>
-					<div ng-init="subTitleToggle=inputInitToggle('<?=$isDisableSubTitle?>')">
+					<div ng-init="subTitleToggle='<?=$this->formEx->val($this->data['MWidgetSetting'], 'show_subtitle')?>'">
 						<label for="showSubtitle1"><input type="radio" name="data[MWidgetSetting][show_subtitle]" ng-model="subTitleToggle" id="showSubtitle1" value="1" >サブタイトルを表示する</label><br><?=$subTitle?><br>
 						<label for="showSubtitle2"><input type="radio" name="data[MWidgetSetting][show_subtitle]" ng-model="subTitleToggle" id="showSubtitle2" value="2" >サブタイトルを表示しない</label>
 					</div>
@@ -119,13 +112,6 @@
 
 				<!-- 説明文 -->
 				<li>
-					<?php
-					// 説明文入力欄のdisabled制御
-					$isDisableDescription = false;
-					if ( isset($this->data['MWidgetSetting']['description']) && intval($this->data['MWidgetSetting']['description']) !== 1 ) {
-						$isDisableDescription = true;
-					}
-					?>
 					<span class='require'><label>説明文</label></span>
 					<?php $description = $this->ngForm->input('description', [
 						'type' => 'text',
@@ -140,7 +126,7 @@
 					[
 						'entity' => 'MWidgetSetting.description'
 					]) ?>
-					<div ng-init="descriptionToggle=inputInitToggle('<?=$isDisableDescription?>')">
+					<div ng-init="descriptionToggle='<?=$this->formEx->val($this->data['MWidgetSetting'], 'show_description')?>'">
 						<label for="showDescription1"><input type="radio" name="data[MWidgetSetting][show_description]" ng-model="descriptionToggle" id="showDescription1" value="1" >説明文を表示する</label><br><?=$description?><br>
 						<label for="showDescription2"><input type="radio" name="data[MWidgetSetting][show_description]" ng-model="descriptionToggle" id="showDescription2" value="2" >説明文を表示しない</label>
 					</div>
@@ -230,13 +216,6 @@
 
 				<!-- 受付時間 -->
 				<li>
-					<?php
-					// 受付時間入力欄のdisabled制御
-					$isDisableTimeText = false;
-					if ( isset($this->data['MWidgetSetting']['time_text']) && intval($this->data['MWidgetSetting']['time_text']) !== 1 ) {
-						$isDisableTimeText = true;
-					}
-					?>
 					<span class="require"><label>受付時間</label></span>
 					<?php $subTitle = $this->ngForm->input('time_text', [
 						'type' => 'text',
@@ -250,9 +229,9 @@
 					],[
 						'entity' => 'MWidgetSetting.time_text'
 					]) ?>
-					<div ng-init="timeTextToggle=inputInitToggle('<?=$isDisableTimeText?>')">
-						<label for="showTimeText1"><input type="radio" name="data[MWidgetSetting][show_time_text]" ng-model="timeTextToggle" id="showTimeText1" value="1" >受付時間を表示する</label><br><?=$subTitle?><br>
-						<label for="showTimeText2"><input type="radio" name="data[MWidgetSetting][show_time_text]" ng-model="timeTextToggle" id="showTimeText2" value="2" >受付時間を表示しない</label>
+					<div ng-init="timeTextToggle='<?=$this->formEx->val($this->data['MWidgetSetting'], 'display_time_flg')?>'">
+						<label for="showTimeText1"><input type="radio" name="data[MWidgetSetting][display_time_flg]" ng-model="timeTextToggle" id="showTimeText1" value="1" >受付時間を表示する</label><br><?=$subTitle?><br>
+						<label for="showTimeText2"><input type="radio" name="data[MWidgetSetting][display_time_flg]" ng-model="timeTextToggle" id="showTimeText2" value="2" >受付時間を表示しない</label>
 					</div>
 				</li>
 				<?php if ($this->Form->isFieldError('time_text')) echo $this->Form->error('time_text', null, ['wrap' => 'li']); ?>

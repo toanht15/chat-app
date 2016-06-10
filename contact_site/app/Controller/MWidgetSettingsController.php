@@ -51,8 +51,14 @@ class MWidgetSettingsController extends AppController {
               if ( isset($json['title']) ) {
                 $inputData['MWidgetSetting']['title'] = $json['title'];
               }
+              if ( isset($json['show_subtitle']) ) {
+                $inputData['MWidgetSetting']['show_subtitle'] = $json['show_subtitle'];
+              }
               if ( isset($json['sub_title']) ) {
                 $inputData['MWidgetSetting']['sub_title'] = $json['sub_title'];
+              }
+              if ( isset($json['show_description']) ) {
+                $inputData['MWidgetSetting']['show_description'] = $json['show_description'];
               }
               if ( isset($json['description']) ) {
                 $inputData['MWidgetSetting']['description'] = $json['description'];
