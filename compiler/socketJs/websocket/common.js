@@ -1315,9 +1315,9 @@ var socket, // socket.io
           });
 
           $("#sincloVcPopupFrame").height(height).css("opacity", 1);
-          $("#sincloVcPopupFrame").on('mousedown', vcPopup.dragOn);
-          $("#sincloVcPopupFrame").on('mouseup', vcPopup.dragOff);
-          $("#sincloVcPopupFrame").on('mousemove', vcPopup.drag);
+          $("#sincloVcPopupFrame *").on('mousedown', vcPopup.dragOn);
+          $("#sincloVcPopupFrame *").on('mouseup', vcPopup.dragOff);
+          $("#sincloVcPopupFrame *").on('mousemove', vcPopup.drag);
       },
       remove: function(){
           var elm = document.getElementById('sincloVcPopup');
