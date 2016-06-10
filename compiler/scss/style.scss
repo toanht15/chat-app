@@ -1597,6 +1597,8 @@ ul.naviBtn {
   }
 
   #tautomessages_form {
+    padding-bottom: 50px;
+
     h3 {
       border-bottom: 3px solid #C3D69B;
       padding-left: 5px;
@@ -1837,11 +1839,15 @@ ul.naviBtn {
       }
 
       #tautomessages_actions {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
         display: flex;
         flex-direction: row;
-        width: 50%;
         margin: 0 auto;
-
+        padding: 10px 0;
+        background-color: rgba(77, 77, 77, 0.24);
 
         > a[class*='Btn'] {
           width: 10em;
