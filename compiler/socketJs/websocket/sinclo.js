@@ -247,12 +247,16 @@
 
         vcPopup.set(userInfo.tabId, userInfo.vc_receiverID);
 
-        emit('videochatConfirmOK', {
-          userId: userInfo.userId,
-          fromTabId: userInfo.tabId,
-          fromConnectToken: userInfo.connectToken,
-          receiverID: userInfo.vc_receiverID
-        });
+        // sendWindowInfoとほぼ同時にメッセージを送信してしまうと
+        // 企業側がFireFoxの場合windowを開くタイミングでapplyができないためウェイトを挟む
+        setTimeout(function(){
+          emit('videochatConfirmOK', {
+            userId: userInfo.userId,
+            fromTabId: userInfo.tabId,
+            fromConnectToken: userInfo.connectToken,
+            receiverID: userInfo.vc_receiverID
+          });
+        }, 300);
         // 開始したタイミングでビデオチャット情報をセッションストレージに保存
         common.saveVcInfo();
         this.remove();
