@@ -128,13 +128,48 @@ class MWidgetSettingsController extends AppController {
      * */
     private function _update($inputData) {
         $errors = [];
+        $filename = null;
+        $uploadImage = $inputData['MWidgetSetting']['uploadImage'];
+
+        $prevFileInfo = mb_split("/", $inputData['MWidgetSetting']['main_image']);
+        if ( is_numeric($inputData['MWidgetSetting']['show_main_image']) === 1 && count($prevFileInfo) > 0 ) {
+            $filename = $prevFileInfo[count($prevFileInfo) - 1];
+        }
+
+        if ( !(isset($uploadImage['tmp_name']) && is_uploaded_file($uploadImage['tmp_name'])) ) {
+            $inputData['MWidgetSetting']['uploadImage'] = [];
+            $uploadImage = null;
+        }
+        else {
+            $this->request->data['MWidgetSetting']['main_image'] = "";
+        }
 
         // バリデーションチェック
         $this->MWidgetSetting->set($inputData);
         $this->MWidgetSetting->begin();
 
         if ( $this->MWidgetSetting->validates() ) {
-            // バリデーションチェックが成功した場合
+            if ( !empty($uploadImage) ) {
+                $extension = pathinfo($uploadImage['name'], PATHINFO_EXTENSION);
+                $filename = $this->userInfo['MCompany']['company_key'].'_'.date('YmdHis').'.'.$extension;
+                $tmpFile = $uploadImage['tmp_name'];
+                // ファイルの保存先フルパス＋ファイル名
+                $saveFile = C_PATH_WIDGET_IMG_DIR.DS.$filename;
+                $in = $this->_imageCreate($extension, $tmpFile); // 元画像ファイル読み込み
+                $width = ImageSx($in); // 画像の幅を取得
+                $height = ImageSy($in); // 画像の高さを取得
+                $save_width = 62; // 幅の最低サイズ
+                $save_height = 70; // 高さの最低サイズ
+                $image_type = exif_imagetype($tmpFile); // 画像タイプ判定用
+                $out = ImageCreateTrueColor($save_width , $save_height);
+                //ブレンドモードを無効にする
+                imagealphablending($out, false);
+                //完全なアルファチャネル情報を保存するフラグをonにする
+                imagesavealpha($out, true);
+                ImageCopyResampled($out, $in,0,0,0,0, $save_width, $save_height, $width, $height);
+                $this->_imageOut($extension, $out, $saveFile);
+                $inputData['MWidgetSetting']['main_custom_image'] = $filename;
+            }
             // ウィジェットのスタイル設定周りをJSON化
             $widgetStyle = $this->_settingToJson($inputData['MWidgetSetting']);
 
@@ -146,13 +181,27 @@ class MWidgetSettingsController extends AppController {
               ]
             ];
 
+
             // 保存処理
             if ( $this->MWidgetSetting->save($saveData, false) ) {
                 $this->MWidgetSetting->commit();
+                $pattern = "files/".$this->userInfo['MCompany']['company_key']."_[0-9]*.*";
+
+                foreach (glob($pattern) as $file) {
+                    if ( strcmp("files/".$filename, $file) !== 0 ) {
+                      unlink($file);
+                    }
+                }
             }
             else {
                 $this->MWidgetSetting->rollback();
                 $errors['rollback'] = "保存処理に失敗しました。";
+                foreach (glob($pattern) as $file) {
+                    if ( !empty($uploadImage) && strcmp("files/".$filename, $file) !== 0 ) {
+                      unlink($file);
+                    }
+                }
+
             }
         }
         else {
@@ -160,6 +209,24 @@ class MWidgetSettingsController extends AppController {
             $errors = $this->MWidgetSetting->validationErrors;
         }
         return $errors;
+    }
+
+    private function _imageCreate($extension, $file){
+        if ( preg_match('/^png$/i', $extension) ) {
+            return imagecreatefrompng($file);
+        }
+        if ( preg_match('/^jpeg|jpg$/i', $extension) ) {
+            return imagecreatefromjpeg($file);
+        }
+    }
+
+    private function _imageOut($extension, $file, $saveFile){
+        if ( preg_match('/^png$/i', $extension) ) {
+            return imagepng($file, $saveFile);
+        }
+        if ( preg_match('/^jpeg|jpg$/i', $extension) ) {
+            return imagejpeg($file, $saveFile);
+        }
     }
 
     /**
@@ -178,6 +245,11 @@ class MWidgetSettingsController extends AppController {
         }
         if ( isset($settings['showMainImage']) && strcmp($settings['showMainImage'], "2") === 0 ) {
           $settings['mainImage'] = "";
+        }
+        else if( !empty($settings['mainImage']) ) {
+          if ( isset($objData['main_custom_image']) ) {
+            $settings['mainImage'] = C_PATH_WIDGET_CUSTOM_IMG.'/'.$objData['main_custom_image'];
+          }
         }
         return json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_FORCE_OBJECT );
     }

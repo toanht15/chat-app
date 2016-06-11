@@ -207,7 +207,7 @@ var socket, // socket.io
       var html = "";
       // 画像
       if ( Number(widget.showMainImage) === 1 || widget.mainImage !== "" ) {
-        html += '  <span id="mainImage" style="position: absolute; top: 7px; left: 7px;"><img src="' + window.info.site.files + '/img/widget/' + widget.mainImage + '" width="62" height="70" alt="チャット画像"></span>';
+        html += '  <span id="mainImage" style="position: absolute; top: 7px; left: 7px;"><img src="' + widget.mainImage + '" width="62" height="70" alt="チャット画像"></span>';
       }
       html += '  <div id="widgetHeader" >';
       // タイトル

@@ -3,14 +3,21 @@
 define('APP_MODE_DEV', true);
 // Nodeサーバー
 if ( APP_MODE_DEV ) {
-  define('C_NODE_SERVER_ADDR', "//socket.localhost"); // Dev
-  define('C_NODE_SERVER_FILE_PORT', ":8080"); // Dev
-  define('C_NODE_SERVER_WS_PORT', ":9090"); // Dev
+  define('C_NODE_SERVER_ADDR', "//socket.localhost"); // Nodeサーバー
+  define('C_NODE_SERVER_FILE_PORT', ":8080"); // NodeサーバーのHTTP通信ポート
+  define('C_NODE_SERVER_WS_PORT', ":9090"); // WS通信ポート
+  define('C_PATH_WIDGET_GALLERY_IMG', C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT.'/img/widget/'); // ウィジェット用画像保存先
+  define('C_PATH_WIDGET_CUSTOM_IMG', C_NODE_SERVER_ADDR.'/widget'); // ウィジェット用画像保存先
+  define('C_PATH_WIDGET_IMG_DIR', ROOT.DS.APP_DIR.DS.WEBROOT_DIR.DS.'files'); // ウィジェット用画像保存先
 }
+ // 本番(今後動的になる)
 else {
-  define('C_NODE_SERVER_ADDR', "//ws1.sinclo.jp"); // 本番(今後動的になる)
-  define('C_NODE_SERVER_FILE_PORT', ""); // Dev
-  define('C_NODE_SERVER_WS_PORT', ""); // Dev
+  define('C_NODE_SERVER_ADDR', "//ws1.sinclo.jp"); // Nodeサーバー
+  define('C_NODE_SERVER_FILE_PORT', ""); // NodeサーバーのHTTP通信ポート
+  define('C_NODE_SERVER_WS_PORT', ""); // WS通信ポート
+  define('C_PATH_WIDGET_GALLERY_IMG', C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT.'/img/widget/'); // ウィジェット用画像保存先
+  define('C_PATH_WIDGET_CUSTOM_IMG', C_NODE_SERVER_ADDR.'/widget'); // ウィジェット用画像保存先
+  define('C_PATH_WIDGET_IMG_DIR', ROOT.DS.APP_DIR.DS.WEBROOT_DIR.DS.'files'); // ウィジェット用画像保存先
 }
 
 // 使用機能
@@ -34,7 +41,7 @@ define('C_OPERATOR_ACTIVE', 1); // 在籍
 define('C_MATCH_RULE_TEL', '/^\+?(\d|-)*$/'); // TEL
 define('C_MATCH_RULE_TIME', '/^(24:00|2[0-3]:[0-5][0-9]|[0-1]?[0-9]:[0-5][0-9])$/'); // 時間 H:i
 define('C_MATCH_RULE_COLOR_CODE', '/^#([0-9|a-f|A-F]{3}|[0-9|a-f|A-F]{6})$/');
-define('C_MATCH_RULE_IMAGE_FILE', '/^[a-zA-Z0-9_-]*.(png|jpg|git){1}$/i');
+define('C_MATCH_RULE_IMAGE_FILE', '/.(png|jpg|jpeg)$/i');
 define('C_MATCH_RULE_NUM_1', '/^(100|[0-9]{1,2})$/');
 define('C_MATCH_RULE_NUM_2', '/^(100|[1-9][0-9]|[1-9]{1})$/');
 

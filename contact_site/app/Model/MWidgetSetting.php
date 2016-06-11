@@ -67,16 +67,39 @@ class MWidgetSetting extends AppModel {
               'message' => '３ケタ、もしくは６ケタの１６進数を使用して設定してください'
             ]
         ],
-        'main_image' => [
+        'main_image' => [ // ギャラリーから選択
             'setImage' => [
               'rule' => 'setImage',
               'message' => '画像を選択してください'
             ],
-            'colorcode' => [
-              'rule' => C_MATCH_RULE_IMAGE_FILE,
-              'allowEmpty' => true,
-              'message' => '設定できるファイルはJPG/PNG/GIFのみとなっております'
-            ]
+        ],
+        'uploadImage' => [
+            // ルール：extension => pathinfoを使用して拡張子を検証
+            'extension' => [
+                'rule' => [ 'extension', [ 'jpg', 'jpeg', 'png'] ],
+                'allowEmpty' => true,
+                'message' => ["無効なファイル形式です"]
+            ],
+            // ルール：mimeType =>
+            // finfo_file(もしくは、mime_content_type)でファイルのmimeを検証 (2.2 以降)
+            // 2.5 以降 - MIMEタイプを正規表現(文字列)で設定可能に
+            // 'mimetype' => [
+            //     'rule' => [ 'mimeType', ['image/jpeg', 'image/png'] ],
+            //     'message' => ["無効なファイル形式です"]
+            // ],
+            // ルール：fileSize => filesizeでファイルサイズを検証(2GBまで)  (2.3 以降)
+            'size' => [
+                'maxFileSize' => [
+                    'rule' => [ 'fileSize', '<=', '2MB'],  // 2M以下
+                    'allowEmpty' => true,
+                    'message' => [ 'ファイルサイズが大きすぎます']
+                ],
+                'minFileSize' => [
+                    'rule' => ['fileSize', '>',  0],
+                    'allowEmpty' => true,
+                    'message' => ['無効なファイルです']
+                ],
+            ],
         ],
         'radius_ratio' => [
             'between' => [
@@ -121,7 +144,8 @@ class MWidgetSetting extends AppModel {
 
     public function setImage($value=['main_image' => '']){
         if (isset($this->data['MWidgetSetting']['show_main_image']) && strcmp($this->data['MWidgetSetting']['show_main_image'], 1) === 0) {
-            if ( empty($value['main_image']) ) {
+            // 画像をギャラリーから選択や、アップロードをされていない場合
+            if ( empty($value['main_image']) && empty($value['uploadImage']) ) {
                 return false;
             }
         }
