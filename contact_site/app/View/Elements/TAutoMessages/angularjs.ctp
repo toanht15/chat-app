@@ -49,11 +49,10 @@ sincloApp.controller('MainCtrl', function($scope) {
 		var target = null;
 		target = $(String(elm));
 		if (!target.is(".selected")) {
-			$("li.triggerItem.selected").css('height', 34 + "px").removeClass("selected");
 			target.css('height', target.children("ng-form").children("div").prop("offsetHeight") + 34 + "px").addClass("selected");
 		}
 		else {
-			$("li.triggerItem.selected").css('height', 34 + "px").removeClass("selected");
+			target.css('height', "34px").removeClass("selected");
 		}
 	};
 
