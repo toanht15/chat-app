@@ -6,6 +6,6 @@
         $className = "sinclo_re";
     }
   ?>
-  <li class="<?=$className?>"><?=h($val['THistoryChatLog']['message'])?></li>
+  <li class="<?=$className?>"><?=$this->htmlEx->makeChatView($val['THistoryChatLog']['message'])?></li>
 <?php endforeach; ?>
 </ul>

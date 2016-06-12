@@ -143,12 +143,14 @@ var socket, // socket.io
       html += '  <style>';
       html += '      #sincloBox { display: none; position: fixed; ' + showPosition + ' z-index: 999998; background-color: rgba(0,0,0,0); width: 285px; }';
       html += '      #sincloBox * { box-sizing: border-box; font-size: 12px; font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana;}';
+      html += '      #sincloBox a { color: #8a8a8a }';
+      html += '      #sincloBox a:hover { color: ' + widget.mainColor + '; }';
       html += '      #sincloBox span, #sincloBox pre { font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana!important }';
-      html += '      #sincloBox span#mainImage { z-index: 2 }';
+      html += '      #sincloBox span#mainImage { z-index: 2; position: absolute; top: 7px; left: 10px; }';
       html += '      #sincloBox span#mainImage img { background-color: ' + widget.mainColor + ' }';
       html += '      #sincloBox p#widgetTitle { position:relative; cursor:pointer; border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px 0 0; border: 1px solid ' + widget.mainColor + '; border-bottom:none; background-color: ' + widget.mainColor + ';text-align: center; font-size: 14px;padding: 7px 30px; margin: 0;color: #FFF; height: 32px }';
       html += '      #sincloBox p#widgetTitle #sincloChatUnread { position: absolute; top: 0; left: 0; width: 25px; height: 25px; font-size: 13px; color: #FFF; font-style: normal; text-align: center; font-weight: bold; background-color: #FF5C5C; border-radius: 15px; margin: 2.5px 6px; padding: 3px; }';
-      html += '      #sincloBox p#widgetTitle:after { background-position-y: 3px; background-image: url("' + window.info.site.files + '/img/widget/yajirushi.png"); top: 6px; right: 6px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear}';
+      html += '      #sincloBox p#widgetTitle:after { background-position-y: 3px; background-image: url("' + window.info.site.files + '/img/widget/yajirushi.png"); top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear}';
       html += '      #sincloBox[data-openflg="true"] p#widgetTitle:after { transform: rotate(0deg); }';
       html += '      #sincloBox[data-openflg="false"] p#widgetTitle:after { transform: rotate(180deg); }';
       html += '      #sincloBox p#widgetSubTitle { background-color: #FFF; margin: 0; padding: 7px 0; text-align: left; border-width: 0 1px 0 1px; border-color: #E8E7E0; border-style: solid; padding-left: 77px; font-weight: bold; color: ' + widget.mainColor + '; height: 29px }';
@@ -178,7 +180,7 @@ var socket, // socket.io
         else {
           html += '      #sincloBox section#callTab #telContent .tblBlock { text-align: center; margin: 0 auto; width: 240px; display: table; flex-direction: column; align-content: center; justify-content: center; overflow-x: hidden; overflow-y: auto }';
         }
-        html += '      #sincloBox section#callTab #telContent span { word-wrap: break-word ;word-break: break-all; font-size: 11px; line-height: 1.5; color: #6B6B6B; white-space: pre-wrap; max-height: 119px; display: table-cell; vertical-align: middle; text-align: center }';
+        html += '      #sincloBox section#callTab #telContent span { word-wrap: break-word ;word-break: break-all; font-size: 11px; line-height: 1.5!important; color: #6B6B6B; white-space: pre-wrap; max-height: 119px; display: table-cell; vertical-align: middle; text-align: center }';
         html += '      #sincloBox section#callTab #accessIdArea { height: 50px; display: block; margin: 10px auto; width: 80%; padding: 7px;  color: #FFF; background-color: rgb(188, 188, 188); font-size: 25px; font-weight: bold; text-align: center; border-radius: 15px } ';
       }
       // チャットも画面同期も使用する際にはデフォルトで画面同期ウィジェットの表示をnoneにする
@@ -207,7 +209,7 @@ var socket, // socket.io
       var html = "";
       // 画像
       if ( Number(widget.showMainImage) === 1 || widget.mainImage !== "" ) {
-        html += '  <span id="mainImage" style="position: absolute; top: 7px; left: 7px;"><img src="' + widget.mainImage + '" width="62" height="70" alt="チャット画像"></span>';
+        html += '  <span id="mainImage"><img src="' + widget.mainImage + '" width="62" height="70" alt="チャット画像"></span>';
       }
       html += '  <div id="widgetHeader" >';
       // タイトル
@@ -248,7 +250,7 @@ var socket, // socket.io
       }
       // 受付時間
       if ( Number(widget.display_time_flg) === 1 ) {
-          html += '    <pre style="font-weight: bold; color: ' + widget.mainColor + '; margin: 0 auto; white-space: pre-line; font-size: 10px; text-align: center; padding: 0 0 5px; height: 20px">受付時間： ' + widget.time_text + '</pre>';
+          html += '    <pre style="font-weight: bold; color: ' + widget.mainColor + '; margin: 0 auto; white-space: pre-line; font-size: 11px; text-align: center; padding: 0 0 5px; height: 20px">受付時間： ' + widget.time_text + '</pre>';
       }
       html += '    </div>';
       // テキスト

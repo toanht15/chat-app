@@ -119,7 +119,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
 			<?php endforeach;?>
 		</ul>
 		<ul id="balloon_act_<?=h($id)?>">
-			<li><?=$allActionList[$id]['detail']?></li>
+			<li><?=$this->htmlEx->makeChatView($allActionList[$id]['detail'])?></li>
 		</ul>
 		<?php endforeach;?>
 	</div>

@@ -2,14 +2,14 @@
 	<div id="sincloBox" style="position: relative; z-index: 1; width: 285px; background-color: rgb(255, 255, 255);">
 	<style>
 		#sincloBox span, #sincloBox pre { font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana!important }
-		#sincloBox span#mainImage { z-index: 2 }
-		#sincloBox span#mainImage img { background-color: {{main_color}} }
+		#sincloBox span#mainImage { z-index: 2; position: absolute; top: 7px; left: 10px; }
+		#sincloBox span#mainImage img { background-color: {{main_color}}; }
 		#sincloBox .pb07 { padding-bottom: 7px }
 		#sincloBox .center { text-align: center!important; padding: 7px 30px!important }
 		#sincloBox div#descriptionSet { height: 52px; padding-top: 7px; border-width: 0 1px 1px 1px; border-style: solid; border-color: #E8E7E0 }
 		#sincloBox div#descriptionSet p:not(.ng-hide) { padding-bottom: 7px }
 		#sincloBox p#widgetTitle { position:relative; z-index: 1; cursor:pointer; border-radius: {{radius_ratio}}px {{radius_ratio}}px 0 0; border: 1px solid {{main-color}}; border-bottom:none; background-color: {{main_color}};text-align: center; font-size: 14px;padding: 7px 30px 7px 70px; margin: 0;color: #FFF; height: 32px }
-		#sincloBox p#widgetTitle:after { background-position-y: 3px; background-image: url('<?=$gallaryPath?>yajirushi.png'); top: 6px; right: 6px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear}
+		#sincloBox p#widgetTitle:after { background-position-y: 3px; background-image: url('<?=$gallaryPath?>yajirushi.png'); top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear}
 		#sincloBox[data-openflg='true'] p#widgetTitle:after { transform: rotate(0deg); }
 		#sincloBox[data-openflg='false'] p#widgetTitle:after { transform: rotate(180deg); }
 		#sincloBox p#widgetSubTitle { margin: 0; text-align: left; padding-left: 77px; font-weight: bold }
@@ -29,14 +29,14 @@
 		#sincloBox section#callTab #telNumber:not(.notUseTime) { font-size: 18px; padding: 5px 0px 0px; height: 30px }
 		#sincloBox section#callTab #telNumber.notUseTime { font-size: 20px; padding: 10px 0px 0px; height: 45px }
 		#sincloBox section#callTab #telIcon { background-color: {{main_color}}; display: block; width: 50px; height: 50px; float: left; border-radius: 25px; padding: 3px }
-		#sincloBox section#callTab #telTime { font-weight: bold; color: {{main_color}}; margin: 0 auto; white-space: pre-line; font-size: 10px; text-align: center; padding: 0 0 5px; height: 20px }
+		#sincloBox section#callTab #telTime { font-weight: bold; color: {{main_color}}; margin: 0 auto; white-space: pre-line; font-size: 11px; text-align: center; padding: 0 0 5px; height: 20px }
 		#sincloBox section#callTab #telContent { display: block; overflow: auto; max-height: 119px }
 	<?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
 		#sincloBox section#callTab #telContent .tblBlock {  text-align: center;  margin: 0 auto;  width: 240px;  display: table;  flex-direction: column;  align-content: center;  height: 119px!important;  justify-content: center; }
 	<?php else: ?>
 		#sincloBox section#callTab #telContent .tblBlock { text-align: center; margin: 0 auto; width: 240px; display: table; flex-direction: column; align-content: center; justify-content: center; }
 	<?php endif; ?>
-		#sincloBox section#callTab #telContent span { word-wrap: break-word; word-break: break-all; font-size: 11px; line-height: 1.5; color: #6B6B6B; white-space: pre-wrap; display: table-cell; vertical-align: middle; text-align: center }
+		#sincloBox section#callTab #telContent span { word-wrap: break-word; word-break: break-all; font-size: 11px; line-height: 1.5!important; color: #6B6B6B; white-space: pre-wrap; display: table-cell; vertical-align: middle; text-align: center }
 		#sincloBox section#callTab #accessIdArea { height: 50px; display: block; margin: 10px auto; width: 80%; padding: 7px;  color: #FFF; background-color: rgb(188, 188, 188); font-size: 25px; font-weight: bold; text-align: center; border-radius: 15px }
 	<?php endif; ?>
 	<?php if ( $coreSettings[C_COMPANY_USE_CHAT] && $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
@@ -55,7 +55,7 @@
 	<?php endif; ?>
 	</style>
 	<!-- 画像 -->
-	<span id="mainImage" ng-if="mainImageToggle == '1'" style="position: absolute; top: 7px; left: 7px;">
+	<span id="mainImage" ng-if="mainImageToggle == '1'">
 	<?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
 	<?php endif; ?>
 		<img ng-src="{{main_image}}" err-src="<?=$gallaryPath?>chat_sample_picture.png" width="62" height="70" alt="チャット画像">

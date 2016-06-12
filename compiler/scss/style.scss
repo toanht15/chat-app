@@ -102,6 +102,11 @@ table {
   }
 }
 
+// IE独自実装のクリアボタンを非表示に
+input::-ms-clear { visibility:hidden }
+// IE独自実装のパスワード表示ボタンを非表示に
+input::-ms-reveal { visibility:hidden }
+
 input[type='text'], input[type='number'], input[type='password']{
   padding: 5px 10px;
   border: none;
@@ -1014,6 +1019,17 @@ ul.naviBtn {
 
     #chatContent {
       margin: 0 5px;
+
+      #chatMenu {
+        padding: 5px 0;
+
+        span {
+          width: 10em;
+          font-weight: normal;
+          font-size: 1em;
+          padding: 0.25em 0.8em;
+        }
+      }
 
       #chatTalk {
         height: 300px;

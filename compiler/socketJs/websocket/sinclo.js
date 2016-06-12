@@ -531,13 +531,45 @@
                 }
             });
 
+            $(document).on("change", "input[name^='sinclo-radio']", function(e){
+                sinclo.chatApi.send(e.target.value);
+            });
+
             emit('getChatMessage', {});
         },
         createMessage: function(cs, val){
             var chatTalk = document.getElementById('chatTalk');
             var li = document.createElement('li');
+            var strings = val.split('\n');
+            var radioCnt = 1;
+            var linkReg = RegExp(/http(s)?:\/\/[!-~.a-z]*/);
+            var radioName = "sinclo-radio" + chatTalk.children.length;
+            var content = "";
+
+            for (var i = 0; strings.length > i; i++) {
+                var str = strings[i];
+
+                if ( cs === "sinclo_re" ) {
+                    // ラジオボタン
+                    var radio = str.indexOf('[]');
+                    if ( radio > -1 ) {
+                        var val = str.slice(radio+2);
+                        str = "<input type='radio' name='" + radioName + "' id='" + radioName + "-" + i + "' class='sinclo-chat-radio' value='" + val + "'>";
+                        str += "<label for='" + radioName + "-" + i + "'>" + val + "</label>";
+                    }
+                    // リンク
+                    var link = str.match(linkReg);
+                    if ( link !== null ) {
+                        var url = link[0];
+                        var a = "<a href='" + url + "' target='_blank'>"  + url + "</a>";
+                        str = str.replace(url, a);
+                    }
+                }
+                content += str + "\n";
+
+            }
             li.className = cs;
-            li.textContent = val;
+            li.innerHTML = content;
             chatTalk.appendChild(li);
             $('#chatTalk').animate({
                 scrollTop: chatTalk.scrollHeight - chatTalk.clientHeight
@@ -553,13 +585,16 @@
         push: function(){
             var elm = document.getElementById('sincloChatMessage');
             if ( check.isset(elm.value) ) {
-                emit('sendChat', {
-                    historyId: sinclo.chatApi.historyId,
-                    chatMessage:elm.value,
-                    mUserId: null,
-                    messageType: sinclo.chatApi.messageType.customer
-                });
+                this.send(elm.value);
             }
+        },
+        send: function(value){
+            emit('sendChat', {
+                historyId: sinclo.chatApi.historyId,
+                chatMessage:value,
+                mUserId: null,
+                messageType: sinclo.chatApi.messageType.customer
+            });
         },
         isRead: function(){
             if ( Number(sinclo.chatApi.unread) > 0 ) {
