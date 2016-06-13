@@ -105,7 +105,10 @@
 
 			<!-- メッセージ -->
 			<li class="pl30 bt0">
-					<span class="require"><label>メッセージ</label></span>
+					<span>
+						<label class="require">メッセージ</label>
+						<span class="greenBtn btn-shadow actBtn" onclick="addOption(1)">選択肢を追加する</span>
+					</span>
 					<?=$this->ngForm->input('action', ['type'=>'textarea', 'maxlength'=>300],['entiry'=>'action'])?>
 					<?php if (!empty($errors['action'])) echo "<pre class='error-message'>" . h($errors['action'][0]) . "</pre>"; ?>
 

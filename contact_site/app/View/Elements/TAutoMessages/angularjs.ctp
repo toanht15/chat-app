@@ -196,6 +196,15 @@ sincloApp.directive('ngShowonhover',function() {
 	};
 });
 
+function addOption(type){
+	var sendMessage = document.getElementById('TAutoMessageAction');
+	switch(type){
+		case 1:
+			sendMessage.value += "[] 選択肢\n";
+	}
+}
+
+
 function removeAct(){
 	modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', 'オートメッセージ設定');
 	popupEvent.closePopup = function(){

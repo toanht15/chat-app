@@ -1655,6 +1655,13 @@ ul.naviBtn {
             background-color: #595959;
           }
 
+          .actBtn {
+            width: 10em;
+            text-align: center;
+            margin: 1em 0 0 1em;
+            cursor: pointer;
+          }
+
           > span:first-child {
             width: 15em;
             display: block;

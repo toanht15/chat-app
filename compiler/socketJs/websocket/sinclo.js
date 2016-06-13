@@ -557,13 +557,13 @@
                         str = "<input type='radio' name='" + radioName + "' id='" + radioName + "-" + i + "' class='sinclo-chat-radio' value='" + val + "'>";
                         str += "<label for='" + radioName + "-" + i + "'>" + val + "</label>";
                     }
-                    // リンク
-                    var link = str.match(linkReg);
-                    if ( link !== null ) {
-                        var url = link[0];
-                        var a = "<a href='" + url + "' target='_blank'>"  + url + "</a>";
-                        str = str.replace(url, a);
-                    }
+                }
+                // リンク
+                var link = str.match(linkReg);
+                if ( link !== null ) {
+                    var url = link[0];
+                    var a = "<a href='" + url + "' target='_blank'>" + url + "</a>";
+                    str = str.replace(url, a);
                 }
                 content += str + "\n";
 
