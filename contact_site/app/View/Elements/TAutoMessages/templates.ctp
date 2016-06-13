@@ -1,6 +1,9 @@
 <?php /* 滞在時間｜C_AUTO_TRIGGER_STAY_TIME */ ?>
 <ul ng-if="itemType == '<?=C_AUTO_TRIGGER_STAY_TIME?>'" class="setStayTime">
 	<li>
+		<?=$this->AutoMessage->radio('stayTimeCheckType')?>
+	</li>
+	<li>
 		<?=$this->AutoMessage->select('stayTimeType')?>
 	</li>
 	<li>

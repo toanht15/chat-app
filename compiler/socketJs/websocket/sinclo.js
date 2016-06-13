@@ -854,7 +854,7 @@
         },
         judge: {
             stayTime: function(cond, callback){
-                if (!('stayTimeType' in cond) || !('stayTimeRange' in cond )) return callback(true, null);
+                if (!('stayTimeCheckType' in cond) || !('stayTimeType' in cond) || !('stayTimeRange' in cond )) return callback(true, null);
                 var time = 0;
                 switch(Number(cond.stayTimeType)) {
                     case 1: // 秒
@@ -867,12 +867,20 @@
                       time = Number(cond.stayTimeRange) * 1000 * 60 * 60;
                       break;
                 }
-                var term = (Number(userInfo.pageTime) - Number(userInfo.time));
-                if ( term <= time ) {
-                    callback(false, (time-term));
+
+                // ページ
+                if ( Number(cond.stayTimeCheckType) === 1 ) {
+                    callback(false, time);
                 }
+                // サイト
                 else {
-                	callback(true, null);
+                    var term = (Number(userInfo.pageTime) - Number(userInfo.time));
+                    if ( term <= time ) {
+                        callback(false, (time-term));
+                    }
+                    else {
+                        callback(true, null);
+                    }
                 }
 
             },

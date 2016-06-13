@@ -10,6 +10,13 @@ class autoMessageHelper extends AppHelper {
 	 * 要素を作成するためのリスト
 	 *  */
 	public $dataList = [
+		'stayTimeCheckType' => [
+			'label' => '種類',
+			'dataList' => [
+				1 => "ページ",
+				2 => "サイト"
+			]
+		],
 		'stayTimeType' => [
 			'label' => '単位',
 			'dataList' => [
@@ -91,7 +98,7 @@ class autoMessageHelper extends AppHelper {
 	 * 説明用のフォーマットリスト
 	 *  */
 	public $labelList = [
-		C_AUTO_TRIGGER_STAY_TIME => "滞在時間が %d%s経過",
+		C_AUTO_TRIGGER_STAY_TIME => "%s滞在時間が %d%s経過",
 		C_AUTO_TRIGGER_VISIT_CNT => "訪問回数が %d回%s",
 		C_AUTO_TRIGGER_STAY_PAGE => "ページの%sにて「%s」という文字列が%s",
 		C_AUTO_TRIGGER_DAY_TIME => [
@@ -161,7 +168,9 @@ class autoMessageHelper extends AppHelper {
 					foreach((array)$items as $v) {
 						if (isset($v['stayTimeRange']) && isset($v['stayTimeType']) && !empty($this->dataList['stayTimeType']['dataList'][$v['stayTimeType']])) {
 							$retList[] = sprintf(
-								$this->labelList[$itemId], $v['stayTimeRange'],
+								$this->labelList[$itemId],
+								$this->dataList['stayTimeCheckType']['dataList'][$v['stayTimeCheckType']],
+								$v['stayTimeRange'],
 								$this->dataList['stayTimeType']['dataList'][$v['stayTimeType']]
 							);
 						}
