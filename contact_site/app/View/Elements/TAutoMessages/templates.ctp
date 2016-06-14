@@ -59,7 +59,13 @@
 			</span>
 		</div>
 	</li>
-	<script type="text/javascript">$('.clockpicker').clockpicker({'donetext':'設定'});</script>
+	<script type="text/javascript">
+		$('.clockpicker').clockpicker({
+			donetext:'設定',
+			placement: 'original',
+			align: 'original'
+		});
+	</script>
 </ul>
 
 <?php /* 参照元URL（リファラー）｜C_AUTO_TRIGGER_REFERRER */ ?>

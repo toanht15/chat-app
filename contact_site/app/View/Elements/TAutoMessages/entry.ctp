@@ -48,7 +48,7 @@
 			<!-- トリガー -->
 			<li id="tautomessages_triggers" class="bt0">
 				<!-- セット済みトリガー -->
-				<div id="setTriggerList" class="pl30">
+				<div id="setTriggerList" class="pl30 setClockPicker">
 					<ul>
 						<items ng-repeat="(itemType, list) in main.setItemList" ng-if="main.keys(main.setItemList)!==0">
 							<li ng-repeat="(itemId, setItem) in list track by $index" class="triggerItem selected" id="triggerItem_{{$id}}">
@@ -63,7 +63,7 @@
 								</ng-form>
 							</li>
 						</items>
-						<li class='error-message' ng-if="main.keys(main.setItemList)===0">条件を設定してください</li>
+						<li class='error-message' ng-if="main.keys(main.setItemList)===0">条件を右のリストから選択し、設定してください</li>
 					</ul>
 					<div class="balloon"><div class="balloonContent"></div></div>
 				</div>

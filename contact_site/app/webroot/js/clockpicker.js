@@ -391,7 +391,6 @@
 			self = this;
 
 		popover.show();
-
 		// Place the popover
 		switch (placement) {
 			case 'bottom':
@@ -405,6 +404,10 @@
 				break;
 			case 'left':
 				styles.left = offset.left - popover.outerWidth();
+				break;
+			case 'original':
+				var parentOffset = $(element).parents("li.triggerItem").prop('offsetTop');
+				styles.top = element[0].offsetTop + parentOffset - popover.outerHeight();
 				break;
 		}
 
@@ -421,6 +424,9 @@
 				break;
 			case 'bottom':
 				styles.top = offset.top + height - popover.outerHeight();
+				break;
+			case 'original':
+				styles.left = element[0].offsetLeft;
 				break;
 		}
 
@@ -441,7 +447,7 @@
 		// Initialize
 		if (! this.isAppended) {
 			// Append popover to body
-			$body = $(document.body).append(this.popover);
+			$body = $('.setClockPicker').append(this.popover);
 
 			// Reset position when resize
 			$win.on('resize.clockpicker' + this.id, function(){

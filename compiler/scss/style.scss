@@ -1769,6 +1769,7 @@ ul.naviBtn {
 
                         div.clockpicker {
                           width:45%;
+
                           input {
                             width: 100%;
                             text-align: center;
@@ -1858,7 +1859,7 @@ ul.naviBtn {
                   border-bottom: 1px solid #969696;
                   border-width: 0 0 1px 0;
                   padding: 10px 25px 10px 10px;
-
+                  cursor: pointer;
 
                   &.disableLi {
                     background-color: #BFBFBF;
