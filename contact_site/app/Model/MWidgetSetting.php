@@ -68,6 +68,13 @@ class MWidgetSetting extends AppModel {
               'message' => '３ケタ、もしくは６ケタの１６進数を使用して設定してください'
             ]
         ],
+        'string_color' => [
+            'colorcode' => [
+              'rule' => C_MATCH_RULE_COLOR_CODE,
+              'allowEmpty' => false,
+              'message' => '３ケタ、もしくは６ケタの１６進数を使用して設定してください'
+            ]
+        ],
         'main_image' => [ // ギャラリーから選択
             'setImage' => [
               'rule' => 'setImage',
@@ -81,14 +88,6 @@ class MWidgetSetting extends AppModel {
                 'allowEmpty' => true,
                 'message' => ["無効なファイル形式です"]
             ],
-            // ルール：mimeType =>
-            // finfo_file(もしくは、mime_content_type)でファイルのmimeを検証 (2.2 以降)
-            // 2.5 以降 - MIMEタイプを正規表現(文字列)で設定可能に
-            // 'mimetype' => [
-            //     'rule' => [ 'mimeType', ['image/jpeg', 'image/png'] ],
-            //     'message' => ["無効なファイル形式です"]
-            // ],
-            // ルール：fileSize => filesizeでファイルサイズを検証(2GBまで)  (2.3 以降)
             'size' => [
                 'maxFileSize' => [
                     'rule' => [ 'fileSize', '<=', '2MB'],  // 2M以下
