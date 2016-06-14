@@ -89,7 +89,6 @@
           window.clearTimeout(this.syncTimeout);
           this.syncTimeout = window.setTimeout(function(){
             emit('requestSyncStop', emitData);
-            emit('connected', {type: 'user',data: emitData});
             userInfo.syncInfo.unset();
           }, 5000);
 
@@ -492,6 +491,8 @@
     syncStop: function(d){
       var obj = common.jParse(d);
       syncEvent.stop(false);
+      window.clearTimeout(sinclo.syncTimeout);
+
       userInfo.syncInfo.unset();
       if (!document.getElementById('sincloBox')) {
         common.makeAccessIdTag();
