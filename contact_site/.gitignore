@@ -11,6 +11,7 @@
 *.mo
 /app/webroot/css/style.css
 /app/webroot/css/modal.css
+/app/webroot/files/*
 
 # IDE and editor specific files #
 #################################
