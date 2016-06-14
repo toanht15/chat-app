@@ -142,12 +142,18 @@ sincloApp.directive('errSrc', function(){
 
 $(document).ready(function(){
     var scrollTimer = null;
+
+    var content = document.getElementById('content');
+    var widget = document.getElementById('m_widget_simulator');
+    var defaultTop = (content.offsetHeight - $("#m_widget_setting_form").offset().top - widget.offsetHeight) / 2;
+    widget.style.top = defaultTop + "px";
+
     $("#content").scroll(function(e){
         var scrollTop = this.scrollTop;
         if (scrollTimer) {
           clearTimeout(scrollTimer);
         };
-        var position = (scrollTop < 180 ) ? 20 : scrollTop - 80;
+        var position = (scrollTop < defaultTop ) ? defaultTop : scrollTop + defaultTop;
         scrollTimer = setTimeout(function(){
           $("#m_widget_simulator").animate({
             "top": position
@@ -167,9 +173,6 @@ $(document).ready(function(){
           $("#chatTab").css('display', 'inline-block');
         }
     });
-
-
-
 
 });
 
