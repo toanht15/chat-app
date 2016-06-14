@@ -66,6 +66,9 @@ class MWidgetSettingsController extends AppController {
               if ( isset($json['main_color']) ) {
                 $inputData['MWidgetSetting']['main_color'] = $json['main_color'];
               }
+              if ( isset($json['string_color']) ) {
+                $inputData['MWidgetSetting']['string_color'] = $json['string_color'];
+              }
               if ( isset($json['show_main_image']) ) {
                 $inputData['MWidgetSetting']['show_main_image'] = $json['show_main_image'];
               }

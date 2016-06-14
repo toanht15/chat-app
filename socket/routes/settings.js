@@ -54,6 +54,7 @@ router.get("/", function(req, res, next) {
                     showDescription: isNumeric(settings.showDescription),
                     description: settings.description,
                     mainColor: settings.mainColor,
+                    stringColor: settings.stringColor,
                     showMainImage: settings.showMainImage,
                     mainImage: settings.mainImage,
                     radiusRatio: isNumeric(settings.radiusRatio)

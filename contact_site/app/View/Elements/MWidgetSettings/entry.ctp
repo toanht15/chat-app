@@ -136,21 +136,38 @@
 
 				<!-- メインカラー -->
 				<li>
-					<span class="require"><label>メインカラー</label></span>
-					<?= $this->ngForm->input('main_color', [
-						'type' => 'text',
-						'placeholder' => 'メインカラー',
-						'div' => false,
-						'class' => 'jscolor {hash:true}',
-						'label' => false,
-						'maxlength' => 7,
-						'error' => false
-					],
-					[
-						'entity' => 'MWidgetSetting.main_color'
-					]) ?>
+					<span class="require"><label>カラー</label></span>
+					<div style="display: flex; flex-direction: column">
+						<label>メイン</label>
+						<?= $this->ngForm->input('main_color', [
+							'type' => 'text',
+							'placeholder' => 'メインカラー',
+							'div' => false,
+							'class' => 'jscolor {hash:true}',
+							'label' => false,
+							'maxlength' => 7,
+							'error' => false
+						],
+						[
+							'entity' => 'MWidgetSetting.main_color'
+						]) ?><br>
+						<label>文字</label>
+						<?= $this->ngForm->input('string_color', [
+							'type' => 'text',
+							'placeholder' => 'メインカラー',
+							'div' => false,
+							'class' => 'jscolor {hash:true}',
+							'label' => false,
+							'maxlength' => 7,
+							'error' => false
+						],
+						[
+							'entity' => 'MWidgetSetting.string_color'
+						]) ?>
+					</div>
 				</li>
 				<?php if ($this->Form->isFieldError('main_color')) echo $this->Form->error('main_color', null, ['wrap' => 'li']); ?>
+				<?php if ($this->Form->isFieldError('string_color')) echo $this->Form->error('string_color', null, ['wrap' => 'li']); ?>
 				<!-- メインカラー -->
 
 				<!-- 画像の設定 -->

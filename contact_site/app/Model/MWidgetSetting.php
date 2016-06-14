@@ -17,6 +17,7 @@ class MWidgetSetting extends AppModel {
       'sub_title' => "subTitle",
       'description' => "description",
       'main_color' => "mainColor",
+      'string_color' => "stringColor",
       'show_main_image' => "showMainImage",
       'main_image' => "mainImage",
       'radius_ratio' => "radiusRatio",

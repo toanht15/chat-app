@@ -8,7 +8,7 @@
 		#sincloBox .center { text-align: center!important; padding: 7px 30px!important }
 		#sincloBox div#descriptionSet { height: 52px; padding-top: 7px; border-width: 0 1px 1px 1px; border-style: solid; border-color: #E8E7E0 }
 		#sincloBox div#descriptionSet p:not(.ng-hide) { padding-bottom: 7px }
-		#sincloBox p#widgetTitle { position:relative; z-index: 1; cursor:pointer; border-radius: {{radius_ratio}}px {{radius_ratio}}px 0 0; border: 1px solid {{main-color}}; border-bottom:none; background-color: {{main_color}};text-align: center; font-size: 14px;padding: 7px 30px 7px 70px; margin: 0;color: #FFF; height: 32px }
+		#sincloBox p#widgetTitle { position:relative; z-index: 1; cursor:pointer; border-radius: {{radius_ratio}}px {{radius_ratio}}px 0 0; border: 1px solid {{main-color}}; border-bottom:none; background-color: {{main_color}};text-align: center; font-size: 14px;padding: 7px 30px 7px 70px; margin: 0;color: {{string_color}}; height: 32px }
 		#sincloBox p#widgetTitle:after { background-position-y: 3px; background-image: url('<?=$gallaryPath?>yajirushi.png'); top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear}
 		#sincloBox[data-openflg='true'] p#widgetTitle:after { transform: rotate(0deg); }
 		#sincloBox[data-openflg='false'] p#widgetTitle:after { transform: rotate(180deg); }
