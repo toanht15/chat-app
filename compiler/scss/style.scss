@@ -7,7 +7,7 @@ $error-color: #F57E7E;
 $line-color: #909090;
 $shadow-color: rgba(0, 0, 0, 0.3);
 $header-btn-hover-color: #D6E8B0;
-$content-min-width: 1400px;
+$content-min-width: 1000px;
 
 * {
   -webkit-box-sizing: border-box;
@@ -811,6 +811,8 @@ ul.naviBtn {
 /* リアルタイムモニタ */
 
 #customer_idx {
+  min-width: 1400px!important;
+
   #customer_main {
     width: 100%;
     float: left;
@@ -1690,7 +1692,6 @@ ul.naviBtn {
                 display: block;
                 position: relative;
                 overflow: hidden;
-                height: 34px;
                 transition: height 200ms linear;
 
                 h4 {

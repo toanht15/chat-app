@@ -51,10 +51,10 @@
 				<div id="setTriggerList" class="pl30">
 					<ul>
 						<items ng-repeat="(itemType, list) in main.setItemList" ng-if="main.keys(main.setItemList)!==0">
-							<li ng-repeat="(itemId, setItem) in list track by $index" class="triggerItem " id="triggerItem_{{$id}}">
+							<li ng-repeat="(itemId, setItem) in list track by $index" class="triggerItem selected" id="triggerItem_{{$id}}">
 								<ng-form name="itemForm" ng-err-cnt novalidate>
 									<h4>
-										<span class="removeArea"><i class="remove"ng-click="main.removeItem(itemType, itemId)"></i></span>
+										<span class="removeArea"><i class="remove" ng-click="main.removeItem(itemType, itemId)"></i></span>
 										<span class="labelArea" ng-click="main.openList('#triggerItem_' + $id)">{{main.tmpList[itemType].label}}<i class="error" ng-if="!itemForm.$valid" ng-showonhover="{{itemType}}"></i></span>
 									</h4>
 									<div>
