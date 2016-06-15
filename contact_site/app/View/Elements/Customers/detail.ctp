@@ -48,11 +48,11 @@
 	<div id="chatContent">
 		<ul id="chatTalk" >
 		</ul>
-		<div id="chatMenu">
+		<div id="chatMenu" ng-class="{showOption: chatOptionDisabled(detailId)}">
 			<span class="greenBtn btn-shadow" onclick="chatApi.addOption(1)">選択肢を追加する</span>
 		</div>
 		<div style="position: relative">
-			<textarea rows="5" id="sendMessage" maxlength="300" placeholder="メッセージ入力後、Enterで送信"></textarea>
+			<textarea rows="5" id="sendMessage" ng-focus="sendMessageConnectConfirm(detailId)" maxlength="300" placeholder="メッセージ入力後、Enterで送信"></textarea>
 			<span id="sinclo_sendbtn" class="btn-shadow" onclick="chatApi.pushMessage()">送信</span>
 		</div>
 	</div>

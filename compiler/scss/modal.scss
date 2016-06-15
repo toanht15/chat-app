@@ -271,8 +271,10 @@
               word-break: break-word;
               color: #8A8A8A;
 
-              :last-child {
-                  margin-bottom: 20px;
+              p {
+                margin: 0 0 5px 0;
+                font-size: 1.1em;
+                display: none;
               }
 
               &.sinclo_re {
@@ -280,10 +282,21 @@
                 border-bottom-left-radius: 0;
                 background-color: #F1F5C8;
               }
-              &.sinclo_se {
+              &.sinclo_se, &.sinclo_auto {
                 margin: 0 20px 10px 55px;
                 border-bottom-right-radius: 0;
                 background-color: #FFF;
+                p { display: block; }
+              }
+              &.sinclo_se {
+                p {
+                  color: #c3d69b;
+                }
+              }
+              &.sinclo_auto {
+                p {
+                  color: #C9C9C9;
+                }
               }
             }
 

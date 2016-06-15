@@ -5,7 +5,7 @@
  * 履歴一覧画面
  */
 class HistoriesController extends AppController {
-    public $uses = ['THistory', 'THistoryChatLog', 'THistoryStayLog', 'THistoryShareDisplay'];
+    public $uses = ['MUser', 'THistory', 'THistoryChatLog', 'THistoryStayLog', 'THistoryShareDisplay'];
     public $paginate = [
             'THistory' => [
                 'limit' => 100,
@@ -65,16 +65,30 @@ class HistoriesController extends AppController {
     }
 
     public function remoteGetChatLogs() {
-        Configure::write('debug', 0);
+        Configure::write('debug', 2);
         $this->autoRender = FALSE;
         $this->layout = 'ajax';
 
         $historyId = $this->params->query['historyId'];
 
         $params = [
-            'fields' => '*',
+            'fields' => [
+                'MUser.display_name',
+                'THistoryChatLog.*'
+            ],
             'conditions' => [
                 'THistoryChatLog.t_histories_id' => $historyId
+            ],
+            'joins' => [
+                [
+                    'type' => 'LEFT',
+                    'table' => 'm_users',
+                    'alias' => 'MUser',
+                    'conditions' => [
+                        'THistoryChatLog.m_users_id = MUser.id',
+                        'MUser.m_companies_id' => $this->userInfo['MCompany']['id']
+                    ]
+                ]
             ],
             'order' => 'created',
             'recursive' => -1

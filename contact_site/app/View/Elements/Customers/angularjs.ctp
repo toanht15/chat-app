@@ -67,9 +67,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
               chatApi.pushMessage();
             }
           }
-        })
-        .focus(function(e){
-          chatApi.connection();
         });
       },
       connection: function(){
@@ -315,6 +312,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         });
     };
 
+    $scope.chatOptionDisabled = function(detailId){
+        if (!isset(detailId)) return false;
+        return ( isset($scope.monitorList[detailId].chat) && Number($scope.monitorList[detailId].chat) === Number(myUserId));
+    };
+
     $scope.objCnt = function(list){
       if ( angular.isUndefined(list) ) return 0;
       var ret = Object.keys(list);
@@ -322,6 +324,31 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     };
 
     $scope.customerMainClass = "";
+
+    $scope.sendMessageConnectConfirm = function(detailId){
+        var monitor = $scope.monitorList[detailId];
+        if ( !(monitor.chat in userList) ) {
+            $scope.ngChatApi.connect();
+            return true;
+        }
+        else if ( (monitor.chat in userList) && monitor.chat === myUserId ) {
+            // 既読にする
+            chatApi.isReadMessage($scope.monitorList[detailId]);
+        }
+        else {
+            var message = "現在 " + userList[monitor.chat] + "さん が対応中です。<br><br>";
+            message += "対応者を切り替えますか？";
+            modalOpen.call(window, message, 'p-confirm', 'メッセージ');
+            popupEvent.closePopup = function(){
+                $scope.ngChatApi.connect();
+                popupEvent.close();
+                return true;
+            };
+
+        }
+
+
+    };
 
     $scope.confirmDisConnect = function(tabId){
       modalOpen.call(window, 'チャットを終了してもよろしいでしょうか？', 'p-cus-detail', '操作確認');
@@ -582,11 +609,17 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     // チャット接続結果
     socket.on("chatStartResult", function(d){
       var obj = JSON.parse(d);
-        $scope.monitorList[obj.tabId].chat = obj.userId;
+      $scope.monitorList[obj.tabId].chat = obj.userId;
       if ( obj.userId === myUserId && obj.ret ) {
         pushToChatList(obj.tabId);
+        $("#sendMessage").focus();
         // 既読にする
         chatApi.isReadMessage($scope.monitorList[obj.tabId]);
+      }
+      else {
+        $scope.chatList = $scope.chatList.filter(function(v){
+          return (v !== this.t)
+        }, {t: obj.tabId});
       }
     });
 
@@ -648,8 +681,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         $scope.monitorList[obj.tabId].chatUnreadId = obj.chatId;
         chatApi.notification($scope.monitorList[obj.tabId].accessId, obj.chatMessage);
 
-        // 既読にする(対象のタブを開いている、且つ自分が対応しているとき)
-        if ( $scope.monitorList[obj.tabId].chat === myUserId ) {
+        // 既読にする(対象のタブを開いている、且つ自分が対応しており、フォーカスが当たっているとき)
+        if (  obj.tabId === chatApi.tabId && $scope.monitorList[obj.tabId].chat === myUserId && $("#sendMessage").is(":focus") ) {
             chatApi.isReadMessage($scope.monitorList[obj.tabId]);
         }
 

@@ -1024,6 +1024,11 @@ ul.naviBtn {
 
       #chatMenu {
         padding: 5px 0;
+        visibility: hidden;
+
+        &.showOption {
+          visibility: inherit;
+        }
 
         span {
           width: 10em;
