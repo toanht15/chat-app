@@ -64,6 +64,11 @@
           emitData.connectToken = userInfo.connectToken;
           userInfo.syncInfo.get();
           emit('connectSuccess', {prevList: userInfo.prevList});
+
+          // チャットの契約をしている場合はウィジェット表示
+          if ( window.info.contract.chat ) {
+            common.makeAccessIdTag();
+          }
         }
 
         if ( check.isset(common.tmpParams) ) {
@@ -273,7 +278,8 @@
         return false;
       }
       var sincloBox = document.getElementById('sincloBox');
-      if (sincloBox) {
+      // チャット未契約のときはウィジェットを非表示
+      if (sincloBox && !window.info.contract.chat) {
         sincloBox.style.display = "none";
       }
       common.load.start();
@@ -532,7 +538,8 @@
           return false;
         }
         var sincloBox = document.getElementById('sincloBox');
-        if (sincloBox) {
+        // チャット未契約のときはウィジェットを非表示
+        if (sincloBox && !window.info.contract.chat) {
           sincloBox.style.display = "block";
           sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
           sincloBox.setAttribute('data-openflg', false);

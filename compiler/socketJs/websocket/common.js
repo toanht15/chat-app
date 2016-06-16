@@ -321,8 +321,8 @@ var socket, // socket.io
         window.info.widgetDisplay = false;
         return false;
       }
-      // 画面同期中であれば抑制
-      if ( check.isset(userInfo.connectToken) ) {
+      // チャット未契約の場合、画面同期中であれば抑制
+      if ( check.isset(userInfo.connectToken) && !window.info.contract.chat ) {
         return false;
       }
       common.load.finish();
