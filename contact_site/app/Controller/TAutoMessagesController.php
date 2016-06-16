@@ -167,7 +167,7 @@ class TAutoMessagesController extends AppController {
         if ( $validate && $this->TAutoMessage->save(false) ) {
             $this->TAutoMessage->commit();
             $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
-            $this->redirect('/TAutomessages/index');
+            $this->redirect('/TAutoMessages/index');
         }
         else {
             $this->TAutoMessage->rollback();

@@ -166,7 +166,7 @@ class autoMessageHelper extends AppHelper {
 			switch ($itemId) {
 				case C_AUTO_TRIGGER_STAY_TIME: // 滞在時間
 					foreach((array)$items as $v) {
-						if (isset($v['stayTimeRange']) && isset($v['stayTimeType']) && !empty($this->dataList['stayTimeType']['dataList'][$v['stayTimeType']])) {
+						if (isset($v['stayTimeRange']) && isset($v['stayTimeType']) && isset($v['stayTimeCheckType']) && !empty($this->dataList['stayTimeType']['dataList'][$v['stayTimeType']])) {
 							$retList[] = sprintf(
 								$this->labelList[$itemId],
 								$this->dataList['stayTimeCheckType']['dataList'][$v['stayTimeCheckType']],
