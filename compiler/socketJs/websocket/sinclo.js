@@ -244,7 +244,7 @@
           scrollPosition: browserInfo.windowScroll()
         });
 
-        vcPopup.set(userInfo.tabId, userInfo.vc_receiverID);
+/*        vcPopup.set(userInfo.tabId, userInfo.vc_receiverID);
 
         // sendWindowInfoとほぼ同時にメッセージを送信してしまうと
         // 企業側がFireFoxの場合windowを開くタイミングでapplyができないためウェイトを挟む
@@ -257,7 +257,7 @@
           });
         }, 300);
         // 開始したタイミングでビデオチャット情報をセッションストレージに保存
-        common.saveVcInfo();
+        common.saveVcInfo();*/
         this.remove();
       };
       popup.set(title, content);
