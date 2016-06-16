@@ -33,6 +33,15 @@ class CustomersController extends AppController {
      * モニタリング画面
      * @return void
      * */
+    public function monitor() {
+        $this->layout = 'frame';
+        Configure::write('debug', 0);
+    }
+
+    /* *
+     * モニタリング画面
+     * @return void
+     * */
     public function remoteCreateSetting() {
         Configure::write('debug', 0);
         $this->autoRender = FALSE;

@@ -3,7 +3,7 @@
 
 var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     userList = <?php echo json_encode($responderList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>,
-    modalFunc, myUserId = <?= h($muserId)?>, chatApi;
+    modalFunc, myUserId = <?= h($muserId)?>, chatApi, cameraApi;
 
 (function(){
 
@@ -152,6 +152,24 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       }
   };
 
+  cameraApi = {
+    connect: function(monitor){
+      var tabInfo = JSON.stringify({
+        userId: monitor.userId,
+        tabId: monitor.tabId
+      });
+      window.open(
+        "<?= $this->Html->url(['controller' => 'Customers', 'action' => 'monitor']) ?>?tabInfo=" + encodeURIComponent(tabInfo),
+        "monitor_" + monitor.userId,
+        "width=480,height=400,dialog=no,toolbar=no,location=no,status=no,menubar=no,directories=no,resizable=no, scrollbars=no"
+      );
+      return false;
+    },
+    disConnect: function(){
+
+    }
+  };
+
   function makeDateTime(dParse){
     var d = new Date(Number(dParse)),
         date = d.getFullYear() + '/' + ( '0' + (d.getMonth() + 1) ).slice(-2) + '/' + ('0' + d.getDate()).slice(-2),
@@ -289,7 +307,13 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           sessionStorage.clear();
           popupEvent.close();
           connectToken = makeToken();
-          socket.emit('requestWindowSync', {tabId: tabId, connectToken: connectToken});
+          socket.emit('requestWindowSync', {
+            tabId: tabId,
+            connectToken: connectToken
+          });
+          // モニター開始時にビデオ表示
+          // TODO: ビデオ表示可能な条件をつける。（オプションでビデオチャット可能で、かつユーザーがカメラONにしているとき）
+          socket.emit('confirmVideochatStart', {toTabId: tabId, connectToken: connectToken, receiverID: connectToken+'_vc'});
        };
     };
 
@@ -429,6 +453,15 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       },
       disConnect: function(tabId){
         emit("chatEnd", {tabId: tabId, userId: myUserId});
+      }
+    };
+
+    $scope.ngCameraApi = {
+      connect: function(obj){
+        cameraApi.connect(obj);
+      },
+      disConnect: function(obj){
+        cameraApi.disConnect(obj);
       }
     };
 
@@ -710,7 +743,32 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     //   チャット関連受信ここまで
     // =======================================
 
+    // =======================================
+    // 　ビデオチャット関連ここから
+    // =======================================
+    // ビデオチャット開始許可通知
+    socket.on('videochatConfirmOK', function(d){
+      // 担当しているユーザー かチェック
+      var obj = JSON.parse(d), url;
+      var sincloData = {
+        from: obj.receiverID, // 管理者側はtabIdが無いのでリアルモニタ画面のsocket.idで代用
+        to: obj.tabId,
+      }
+      url  = "<?php echo C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT ?>/webcam.html?h=true&sincloData=" + encodeURIComponent(JSON.stringify(sincloData));
+
+      modalFunc.set.call({
+        option: {
+          url:  url, // FIXME
+          tabId: obj.receiverID,
+          width: 300,
+          height: 300
+        }
+      });
+    });
+
   }]);
+
+
 
   // 参考 http://stackoverflow.com/questions/14478106/angularjs-sorting-by-property
   sincloApp.filter('orderObjectBy', function(){

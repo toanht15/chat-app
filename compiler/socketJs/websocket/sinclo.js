@@ -84,7 +84,13 @@
           emit('connectContinue', {
             connectToken: userInfo.connectToken,
             accessType: common.params.type,
+            receiverID: userInfo.vc_receiverID
           });
+
+          var vcInfo = common.getVcInfo();
+          if(typeof vcInfo !== 'undefined') {
+            vcPopup.set(vcInfo.toTabId, vcInfo.receiverID);
+          }
 
           window.clearTimeout(this.syncTimeout);
           this.syncTimeout = window.setTimeout(function(){
@@ -217,8 +223,7 @@
         connectToken: userInfo.connectToken
       });
     },
-    getWindowInfo: function(d) {
-      var obj = common.jParse(d);
+    getWindowInfo: function(obj) {
       if ( obj.tabId !== userInfo.tabId ) return false;
       if ( userInfo.accessType !== Number(cnst.access_type.guest) ) return false;
       var title = location.host + 'の内容';
@@ -238,6 +243,21 @@
           // スクロール位置の取得
           scrollPosition: browserInfo.windowScroll()
         });
+
+        vcPopup.set(userInfo.tabId, userInfo.vc_receiverID);
+
+        // sendWindowInfoとほぼ同時にメッセージを送信してしまうと
+        // 企業側がFireFoxの場合windowを開くタイミングでapplyができないためウェイトを挟む
+        setTimeout(function(){
+          emit('videochatConfirmOK', {
+            userId: userInfo.userId,
+            fromTabId: userInfo.tabId,
+            fromConnectToken: userInfo.connectToken,
+            receiverID: userInfo.vc_receiverID
+          });
+        }, 300);
+        // 開始したタイミングでビデオチャット情報をセッションストレージに保存
+        common.saveVcInfo();
         this.remove();
       };
       popup.set(title, content);
@@ -487,6 +507,14 @@
       // 自動メッセージの情報を渡す（保存の為）
       var obj = common.jParse(d);
       emit("sendAutoChatMessages", {messages: sinclo.chatApi.autoMessages, chatToken: obj.chatToken});
+    },
+    confirmVideochatStart: function(obj) {
+      // ビデオチャット開始に必要な情報をオペレータ側から受信し、セットする
+      if ( obj.toTabId !== userInfo.tabId ) return false;
+      if ( userInfo.accessType !== Number(cnst.access_type.guest) ) return false;
+      userInfo.vc_receiverID = obj.receiverID;
+      userInfo.vc_toTabId = obj.toTabId;
+      common.setVcInfo({receiverID: obj.receiverID, toTabId: obj.toTabId});
     },
     syncStop: function(d){
       var obj = common.jParse(d);
@@ -983,6 +1011,18 @@
                 }
             }
         }
+    }
+  };
+
+  sincloVideo = {
+    open: function(obj){
+      window.open(
+        "https://ap1.sinclo.jp/index.html?userId=" + userInfo.userId,
+        "monitor_" + userInfo.userId,
+        "width=480,height=400,dialog=no,toolbar=no,location=no,status=no,menubar=no,directories=no,resizable=no, scrollbars=no"
+      );
+
+      return false;
     }
   };
 

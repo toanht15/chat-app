@@ -23,6 +23,7 @@ else {
 // 使用機能
 define('C_COMPANY_USE_SYNCLO', 'synclo'); // 画面同期
 define('C_COMPANY_USE_CHAT', 'chat'); // オペレーターが待機中の時のみ表示する
+define('C_COMPANY_USE_VIDEO_CHAT', 'videochat'); // ビデオチャット
 
 // 表示設定種別
 define('C_WIDGET_DISPLAY_CODE_SHOW', 1); // 常に表示する
