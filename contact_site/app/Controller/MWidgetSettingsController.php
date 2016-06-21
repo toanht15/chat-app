@@ -18,11 +18,13 @@ class MWidgetSettingsController extends AppController {
      * @return void
      * */
     public function index() {
+
         if ( $this->request->is('post') ) {
             $errors = $this->_update($this->request->data);
             if ( empty($errors) ) {
                 $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
-                $this->redirect('/MWidgetSettings/index');
+
+                $this->redirect(['controller' =>'MWidgetSettings', 'action' => 'index', 'showTab' => $this->request->data['widget']['showTab']]);
             }
             else {
                 $this->set('alertMessage', ['type' => C_MESSAGE_TYPE_ERROR, 'text' => Configure::read('message.const.saveFailed')]);
@@ -35,6 +37,23 @@ class MWidgetSettingsController extends AppController {
 
             if ( empty($this->userInfo['MCompany']['core_settings']) ) {
                 $this->redirect("/");
+            }
+
+            // チャットのみ
+            if ( $this->coreSettings[C_COMPANY_USE_CHAT] && !$this->coreSettings[C_COMPANY_USE_SYNCLO] ) {
+              $inputData['widget']['showTab'] = "chat";
+            }
+            // 画面同期のみ
+            else if ( $this->coreSettings[C_COMPANY_USE_SYNCLO] && !$this->coreSettings[C_COMPANY_USE_CHAT] ) {
+              $inputData['widget']['showTab'] = "call";
+            }
+            // どちらも
+            else {
+              // チャットがデフォルト
+              $inputData['widget']['showTab'] = "chat";
+              if ( isset($this->request->params['named']['showTab']) && strcmp($this->request->params['named']['showTab'], "call") === 0 ) {
+                $inputData['widget']['showTab'] = "call";
+              }
             }
 
             if ( isset($ret['MWidgetSetting']['style_settings']) ) {

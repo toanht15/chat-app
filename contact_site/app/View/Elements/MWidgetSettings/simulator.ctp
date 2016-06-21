@@ -16,6 +16,7 @@
 		#sincloBox p#widgetSubTitle span { color: {{main_color}}!important }
 		#sincloBox p#widgetDescription { margin: 0; text-align: left; padding-left: 77px; color: #8A8A8A; }
 		#sincloBox section { display: inline-block; width: 285px; border: 1px solid #E8E7E0; border-top: none; }
+		#sincloBox section.noDisplay { display: none }
 		#sincloBox div#miniTarget { overflow: hidden; transition: height 200ms linear; }
 	<?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
 		#sincloBox ul#chatTalk { width: 100%; height: 194px; padding: 5px; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0}
@@ -31,11 +32,11 @@
 		#sincloBox section#callTab #telIcon { background-color: {{main_color}}; display: block; width: 50px; height: 50px; float: left; border-radius: 25px; padding: 3px }
 		#sincloBox section#callTab #telTime { font-weight: bold; color: {{main_color}}; margin: 0 auto; white-space: pre-line; font-size: 11px; text-align: center; padding: 0 0 5px; height: 20px }
 		#sincloBox section#callTab #telContent { display: block; overflow: auto; max-height: 119px }
-	<?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
-		#sincloBox section#callTab #telContent .tblBlock {  text-align: center;  margin: 0 auto;  width: 240px;  display: table;  flex-direction: column;  align-content: center;  height: 119px!important;  justify-content: center; }
-	<?php else: ?>
-		#sincloBox section#callTab #telContent .tblBlock { text-align: center; margin: 0 auto; width: 240px; display: table; flex-direction: column; align-content: center; justify-content: center; }
-	<?php endif; ?>
+		<?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
+			#sincloBox section#callTab #telContent .tblBlock {  text-align: center;  margin: 0 auto;  width: 240px;  display: table;  flex-direction: column;  align-content: center;  height: 119px!important;  justify-content: center; }
+		<?php else: ?>
+			#sincloBox section#callTab #telContent .tblBlock { text-align: center; margin: 0 auto; width: 240px; display: table; flex-direction: column; align-content: center; justify-content: center; }
+		<?php endif; ?>
 		#sincloBox section#callTab #telContent span { word-wrap: break-word; word-break: break-word; font-size: 11px; line-height: 1.5!important; color: #6B6B6B; white-space: pre-wrap; display: table-cell; vertical-align: middle; text-align: center }
 		#sincloBox section#callTab #accessIdArea { height: 50px; display: block; margin: 10px auto; width: 80%; padding: 7px;  color: #FFF; background-color: rgb(188, 188, 188); font-size: 25px; font-weight: bold; text-align: center; border-radius: 15px }
 	<?php endif; ?>
@@ -51,7 +52,6 @@
 		#sincloBox section#navigation ul li[data-tab='call']::before{ background-image: url('<?=C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT?>/img/widget/icon_tel.png'); }
 		#sincloBox section#navigation ul li[data-tab='chat']::before{ background-image: url('<?=C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT?>/img/widget/icon_chat.png'); }
 		#sincloBox section#navigation ul li.selected::before{ background-color: {{main_color}}; }
-		#sincloBox section#callTab { display: none }
 	<?php endif; ?>
 	</style>
 	<!-- 画像 -->
@@ -79,13 +79,13 @@
 	<?php if ( $coreSettings[C_COMPANY_USE_CHAT] && $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
 		<section id="navigation">
 			<ul>
-				<li data-tab="chat" class="widgetCtrl selected">チャットでの受付</li>
-				<li data-tab="call" class="widgetCtrl" >電話での受付</li>
+				<li data-tab="chat" class="widgetCtrl" ng-class="{selected: widget.showTab == 'chat'}">チャットでの受付</li>
+				<li data-tab="call" class="widgetCtrl" ng-class="{selected: widget.showTab == 'call'}" >電話での受付</li>
 			</ul>
 		</section>
 	<?php endif; ?>
 	<?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
-		<section id="chatTab">
+		<section id="chatTab" ng-hide="widget.showTab !== 'chat'">
 			<ul id="chatTalk">
 			<li class="sinclo_se" ng-class="{chat_right: show_position == 2, chat_left: show_position == 1 }">○○について質問したいのですが</li>
 			<li class="sinclo_re" ng-class="{chat_right: show_position == 1, chat_left: show_position == 2 }" style="background-color:{{makeFaintColor()}}">こんにちは</li>
@@ -97,7 +97,7 @@
 		</section>
 	<?php endif; ?>
 	<?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
-		<section id="callTab">
+		<section id="callTab" ng-hide="widget.showTab !== 'call'">
 			<div style="height: 50px;margin: 15px 25px;">
 			<!-- アイコン -->
 			<span id="telIcon"><img width="19.5" height="33" src="<?=C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT?>/img/call.png" style="margin: 6px 12px"></span>

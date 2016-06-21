@@ -95,6 +95,19 @@ sincloApp.controller('WidgetCtrl', function($scope){
         }
     });
 
+
+    angular.element(".widgetCtrl").click(function(e){
+        var clickTab = $(this).data('tab');
+        if ( clickTab === $scope.widget.showTab ) return false;
+        $scope.widget.showTab = clickTab;
+        $scope.$apply();
+    });
+
+    angular.element(".showTel").focus(function(e){
+        $scope.widget.showTab = "call";
+        $scope.$apply();
+    });
+
         var sincloBox = document.getElementById("sincloBox");
         sincloBox.setAttribute("data-openflg", true);
         var widgetTitle = document.getElementById("widgetTitle");
@@ -118,9 +131,11 @@ sincloApp.controller('WidgetCtrl', function($scope){
         });
 
         $scope.saveAct = function (){
+            $('#widgetShowTab').val($scope.widget.showTab);
             $('#MWidgetSettingMainImage').val($scope.main_image);
             $('#MWidgetSettingIndexForm').submit();
         }
+
 
 });
 
@@ -159,19 +174,6 @@ $(document).ready(function(){
             "top": position
           }, 'slow');
         }, 200);
-    });
-    $(".widgetCtrl").click(function(){
-        var target = $(".widgetCtrl.selected"), clickTab = $(this).data('tab');
-        target.removeClass('selected');
-        $(this).addClass('selected');
-        if ( clickTab === "call" ) {
-          $("#callTab").css('display', 'inline-block');
-          $("#chatTab").hide();
-        }
-        else {
-          $("#callTab").hide();
-          $("#chatTab").css('display', 'inline-block');
-        }
     });
 
 });

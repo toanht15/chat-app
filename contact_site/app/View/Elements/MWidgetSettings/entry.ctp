@@ -220,6 +220,7 @@
 						'type' => 'text',
 						'placeholder' => 'お問い合わせ先電話番号',
 						'div' => false,
+						'class' => 'showTel',
 						'label' => false,
 						'maxlength' => 13,
 						'error' => false
@@ -243,14 +244,15 @@
 						'div' => false,
 						'style' => 'margin:10px 0 10px 20px;',
 						'label' => false,
+						'class' => 'showTel',
 						'maxlength' => 15,
 						'error' => false
 					],[
 						'entity' => 'MWidgetSetting.time_text'
 					]) ?>
 					<div ng-init="timeTextToggle='<?=$this->formEx->val($this->data['MWidgetSetting'], 'display_time_flg')?>'">
-						<label for="showTimeText1"><input type="radio" name="data[MWidgetSetting][display_time_flg]" ng-model="timeTextToggle" id="showTimeText1" value="1" >受付時間を表示する</label><br><?=$subTitle?><br>
-						<label for="showTimeText2"><input type="radio" name="data[MWidgetSetting][display_time_flg]" ng-model="timeTextToggle" id="showTimeText2" value="2" >受付時間を表示しない</label>
+						<label for="showTimeText1"><input type="radio" name="data[MWidgetSetting][display_time_flg]" ng-model="timeTextToggle" class="showTel" id="showTimeText1" value="1" >受付時間を表示する</label><br><?=$subTitle?><br>
+						<label for="showTimeText2"><input type="radio" name="data[MWidgetSetting][display_time_flg]" ng-model="timeTextToggle" class="showTel" id="showTimeText2" value="2" >受付時間を表示しない</label>
 					</div>
 				</li>
 				<?php if ($this->Form->isFieldError('time_text')) echo $this->Form->error('time_text', null, ['wrap' => 'li']); ?>
@@ -262,6 +264,7 @@
 					<?= $this->ngForm->input('content', [
 						'type' => 'textarea',
 						'placeholder' => '本文',
+						'class' => 'showTel',
 						'div' => false,
 						'label' => false,
 						'maxlength' => 100,
@@ -278,6 +281,7 @@
 			</ul>
 			</section>
 		</div>
+		<?= $this->ngForm->input('widget.showTab', ['type' => 'hidden'], ['entity' => 'widget.showTab']) ?>
 	<?= $this->Form->end(); ?>
 
 	<!-- /* 操作 */ -->
