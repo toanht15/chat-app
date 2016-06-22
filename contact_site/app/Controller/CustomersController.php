@@ -128,7 +128,8 @@ class CustomersController extends AppController {
             $params = [
                 'fields' => [
                     'THistoryChatLog.message',
-                    'THistoryChatLog.message_type'
+                    'THistoryChatLog.message_type',
+                    'THistoryChatLog.created'
                 ],
                 'conditions' => [
                     'THistoryChatLog.t_histories_id' => $this->params->query['historyId']

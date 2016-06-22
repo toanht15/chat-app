@@ -76,7 +76,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       },
       getMessage: function(obj){
         // オートメッセージの取得
-        emit('getAutoChatMessages', {userId: obj.userId, tabId: obj.tabId, chatToken: chatApi.token});
+        emit('getAutoChatMessages', {userId: obj.userId, tabId: obj.tabId});
       },
       addOption: function(type){
         var sendMessage = document.getElementById('sendMessage');
@@ -84,6 +84,14 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             case 1:
             sendMessage.value += "[] 選択肢\n";
         }
+      },
+      createNotifyMessage: function(val){
+          var chatTalk = document.getElementById('chatTalk');
+          var li = document.createElement('li');
+          chatTalk.appendChild(li);
+          li.className = "sinclo_etc";
+          li.innerHTML = val;
+          scDown(); // チャット画面のスクロール
       },
       createMessage: function(cs, val){
         var chatTalk = document.getElementById('chatTalk');
@@ -175,6 +183,16 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         date = d.getFullYear() + '/' + ( '0' + (d.getMonth() + 1) ).slice(-2) + '/' + ('0' + d.getDate()).slice(-2),
         time = d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
     return date + " " + time;
+  }
+
+  /**
+   * チャットのスクロール
+   */
+  function scDown(){
+    var chatTalk = document.getElementById('chatTalk');
+    $('#chatTalk').animate({
+      scrollTop: chatTalk.scrollHeight - chatTalk.clientHeight
+    }, 100);
   }
 
   // http://weathercook.hatenadiary.jp/entry/2013/12/02/062136
@@ -427,10 +445,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         }
         setTimeout(function(){
           $("#customer_sub").css("display", "block");
-          var chatTalk = document.getElementById('chatTalk');
-          $('#chatTalk').animate({
-            scrollTop: chatTalk.scrollHeight - chatTalk.clientHeight
-          }, 800);
+          scDown();
         }, 400);
       }
     };
@@ -498,39 +513,15 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     socket.on('resAutoChatMessages', function(d){
         var obj = JSON.parse(d);
 
-        if ( chatApi.token !== obj.chatToken ) return false;
-
-       if ( ('historyId' in obj) ) {
-           $.ajax({
-               type: "GET",
-               url: "<?=$this->Html->url('/Customers/remoteGetChatInfo')?>",
-               data: {
-                   historyId: obj.historyId
-               },
-               cache: false,
-               dataType: "json",
-               success: function(json){
-                   if (json.length === 0) {
-                       for (var u = 0; obj.messages.length > u; u++) {
-                           chatApi.createMessage("sinclo_se", obj.messages[u].chatMessage);
-                       }
-                   }
-                   else {
-                       for (var i = 0; json.length > i; i++) {
-                           var data= json[i]['THistoryChatLog'];
-                           var cn = (Number(data['message_type']) === Number(chatApi.messageType.customer)) ? "sinclo_re" : "sinclo_se";
-                           chatApi.createMessage(cn, data['message']);
-                           if ( ((json.length - 1) === i && 'messages' in obj) ) {
-                               for (var u = 0; obj.messages.length > u; u++) {
-                                   chatApi.createMessage("sinclo_se", obj.messages[u].chatMessage);
-                               }
-                           }
-                       }
-
-                   }
-               }
-           });
-       }
+        if ( ('historyId' in obj) ) {
+          socket.emit('getChatMessage', {
+            siteKey: obj.siteKey,
+            tabId: obj.tabId
+          });
+          for (var key in obj.messages) {
+              chatApi.createMessage("sinclo_se", obj.messages[key].chatMessage);
+          }
+        }
 
     });
 
@@ -644,7 +635,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     // チャット接続結果
     socket.on("chatStartResult", function(d){
       var obj = JSON.parse(d);
+      var prev = angular.copy($scope.monitorList[obj.tabId].chat);
       $scope.monitorList[obj.tabId].chat = obj.userId;
+
       if ( obj.userId === myUserId && obj.ret ) {
         pushToChatList(obj.tabId);
         $("#sendMessage").focus();
@@ -656,27 +649,44 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           return (v !== this.t)
         }, {t: obj.tabId});
       }
+      if ( !isset(prev) && obj.tabId === chatApi.tabId ) {
+        chatApi.createNotifyMessage("～　オペレーターが入室しました　～");
+      }
     });
 
     // チャット接続終了
     socket.on("chatEndResult", function(d){
       var obj = JSON.parse(d);
+
       if ( 'tabId' in obj && obj.tabId in $scope.monitorList && 'chat' in $scope.monitorList[obj.tabId] ) {
         $scope.chatList = $scope.chatList.filter(function(v){
           return (v !== this.t)
         }, {t: obj.tabId});
         $scope.monitorList[obj.tabId].chat = null;
       }
+      if ( obj.tabId === chatApi.tabId ) {
+        chatApi.createNotifyMessage("～　オペレーターが退室しました　～");
+      }
+
     });
 
     // チャットメッセージ群の受信
     socket.on("chatMessageData", function(d){
       var obj = JSON.parse(d);
-      if ( chatApi.token !== obj.token ) return false;
-      for (var i = 0; i < obj.chat.messages.length; i++) {
-        var chat = obj.chat.messages[i],
-            cn = (chat.messageType === chatApi.messageType.customer) ? "sinclo_re" : "sinclo_se";
-        chatApi.createMessage(cn, chat.message);
+      for (var key in obj.chat.messages) {
+        var chat = obj.chat.messages[key];
+        if ( typeof(chat) !== "object" ) {
+            if ( chat === "start" ) {
+                chatApi.createNotifyMessage("～　オペレーターが入室しました　～");
+            }
+            if ( chat === "end" ) {
+                chatApi.createNotifyMessage("～　オペレーターが退室しました　～");
+            }
+        }
+        else {
+            var cn = (chat.messageType === chatApi.messageType.customer) ? "sinclo_re" : "sinclo_se";
+            chatApi.createMessage(cn, chat.message);
+        }
         $('#chatTalk').prop({scrollTop: chatTalk.scrollHeight - chatTalk.clientHeight});
       }
       if ( $scope.monitorList[obj.tabId].chat === myUserId ) {
@@ -702,10 +712,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         // 対象のタブを開いている場合
         if ( obj.tabId === chatApi.tabId ){
           chatApi.createMessage(cn, obj.chatMessage);
-          var chatTalk = document.getElementById('chatTalk');
-          $('#chatTalk').animate({
-            scrollTop: chatTalk.scrollHeight - chatTalk.clientHeight
-          }, 100);
+          scDown(); // チャットのスクロール
         }
 
         // 以降、受信時のみの処理

@@ -186,6 +186,7 @@ var socket, // socket.io
         html += '      #sincloBox ul#chatTalk li { word-wrap: break-word; word-break: break-word; white-space: pre-wrap!important; border-radius: 5px; background-color: #FFF; margin: 5px 0; padding: 5px; font-size: 12px; border: 1px solid #C9C9C9; color: #595959; white-space: pre; color: #8A8A8A; }';
         html += '      #sincloBox ul#chatTalk li.sinclo_se { ' + chatPosition.se + 'background-color: #FFF; }';
         html += '      #sincloBox ul#chatTalk li.sinclo_re { ' + chatPosition.re + 'background-color:' + faintColor + ' }';
+        html += '      #sincloBox ul#chatTalk li.sinclo_etc { border: none; text-align: center; margin: 0 auto; font-weight: bold }';
         html += '      #sincloBox section#chatTab textarea { padding: 5px; resize: none; width: 100%; height: 50px; border: 1px solid #E4E4E4; border-radius: 5px; color: #8A8A8A; }';
       }
       // 画面同期を使用する際
@@ -500,7 +501,6 @@ var socket, // socket.io
         userInfo.sendTabId = common.params.sendTabId;
         userInfo.tabId = common.params.tabId;
         userInfo.setConnect(common.params.connectToken);
-console.log('connectSuccess-3');
         emit('connectSuccess', {confirm: false});
       }
 
@@ -1346,7 +1346,6 @@ console.log('connectSuccess-3');
         e.stopPropagation();
         var deltaX = e.screenX - vcPopup.startDragX;
         var deltaY = e.screenY - vcPopup.startDragY;
-        console.log('delta X: ' + deltaX + ' Y: ' + deltaY);
         $("#sincloVcPopupFrame").css({
           top: $('#sincloVcPopupFrame').offset().top + deltaY,
           left: $('#sincloVcPopupFrame').offset().left + deltaX
@@ -1443,12 +1442,22 @@ console.log('connectSuccess-3');
 
     socket.on('resUrlChecker', function (d) {
       sinclo.resUrlChecker(d);
-    }); // socket-on: receiveConnectEV
+    }); // socket-on: resUrlChecker
+
+    // チャット対応開始結果
+    socket.on('chatStartResult', function (d) {
+      sinclo.chatStartResult(d);
+    }); // socket-on: chatStartResult
+
+    // チャット対応終了結果
+    socket.on('chatEndResult', function (d) {
+      sinclo.chatEndResult(d);
+    }); // socket-on: chatEndResult
 
     // チャット初期データ
     socket.on('chatMessageData', function (d) {
       sinclo.chatMessageData(d);
-    }); // socket-on: receiveConnectEV
+    }); // socket-on: chatMessageData
 
     // オートメッセージデータ群
     socket.on('sendReqAutoChatMessages', function (d) {
@@ -1463,7 +1472,7 @@ console.log('connectSuccess-3');
     // 新着チャット
     socket.on('sendChatResult', function (d) {
       sinclo.sendChatResult(d);
-    }); // socket-on: receiveConnectEV
+    }); // socket-on: sendChatResult
 
     // 画面共有
     socket.on('confirmVideochatStart', function(d){

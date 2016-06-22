@@ -465,20 +465,46 @@
         });
       }
     },
+    chatStartResult: function(d){
+      var obj = JSON.parse(d);
+      this.chatApi.online = true;
+      sinclo.chatApi.createNotifyMessage("～　オペレーターが入室しました　～");
+    },
+    chatEndResult: function(d){
+      var obj = JSON.parse(d);
+      this.chatApi.online = false;
+      sinclo.chatApi.createNotifyMessage("～　オペレーターが退室しました　～");
+    },
     chatMessageData:function(d){
       var obj = JSON.parse(d);
       if ( obj.token !== common.token ) return false;
       this.chatApi.historyId = obj.chat.historyId;
-      for (var i = 0; i < obj.chat.messages.length; i++) {
-        var chat = obj.chat.messages[i],
-            cn = (Number(chat.messageType) === 1) ? "sinclo_se" : "sinclo_re";
-        if (Number(chat.messageReadFlg) === 0 && chat.messageType === sinclo.chatApi.messageType.company) {
-            this.chatApi.unread++;
+      var keys = Object.keys(obj.chat.messages);
+      for (var key in obj.chat.messages) {
+        if ( !obj.chat.messages.hasOwnProperty(key) ) return false;
+        var chat = obj.chat.messages[key];
+        if ( typeof(chat) === "object" ) {
+          var cn = (Number(chat.messageType) === 1) ? "sinclo_se" : "sinclo_re";
+          if (Number(chat.messageReadFlg) === 0 && chat.messageType === sinclo.chatApi.messageType.company) {
+              this.chatApi.unread++;
+          }
+          this.chatApi.createMessage(cn, chat.message);
         }
-        this.chatApi.createMessage(cn, chat.message);
+        else {
+          if ( chat === "start" ) {
+            this.chatApi.online = true;
+            this.chatApi.createNotifyMessage("～　オペレーターが入室しました　～");
+          }
+          if ( chat === "end" ) {
+            this.chatApi.online = false;
+            this.chatApi.createNotifyMessage("～　オペレーターが退室しました　～");
+          }
+        }
       }
-      // オートメッセージ読み込み
-      sinclo.trigger.init();
+      if ( !this.chatApi.online ) {
+        // オートメッセージ読み込み
+        sinclo.trigger.init();
+      }
       // 未読数
       sinclo.chatApi.showUnreadCnt();
     },
@@ -512,7 +538,7 @@
     sendReqAutoChatMessages: function(d){
       // 自動メッセージの情報を渡す（保存の為）
       var obj = common.jParse(d);
-      emit("sendAutoChatMessages", {messages: sinclo.chatApi.autoMessages, chatToken: obj.chatToken});
+      emit("sendAutoChatMessages", {messages: sinclo.chatApi.autoMessages, sendTo: obj.sendTo});
     },
     confirmVideochatStart: function(obj) {
       // ビデオチャット開始に必要な情報をオペレータ側から受信し、セットする
@@ -550,6 +576,7 @@
     },
     chatApi: {
         saveFlg: false,
+        online: false,
         historyId: null,
         unread: 0,
         messageType: {
@@ -573,9 +600,18 @@
 
             emit('getChatMessage', {});
         },
+        createNotifyMessage: function(val){
+            var chatTalk = document.getElementById('chatTalk');
+            var li = document.createElement('li');
+            chatTalk.appendChild(li);
+            li.className = "sinclo_etc";
+            li.innerHTML = val;
+            this.scDown();
+        },
         createMessage: function(cs, val){
             var chatTalk = document.getElementById('chatTalk');
             var li = document.createElement('li');
+            chatTalk.appendChild(li);
             var strings = val.split('\n');
             var radioCnt = 1;
             var linkReg = RegExp(/http(s)?:\/\/[!-~.a-z]*/);
@@ -606,10 +642,7 @@
             }
             li.className = cs;
             li.innerHTML = content;
-            chatTalk.appendChild(li);
-            $('#chatTalk').animate({
-                scrollTop: chatTalk.scrollHeight - chatTalk.clientHeight
-            }, 100);
+            this.scDown();
         },
         createMessageUnread: function(cs, val){
             if ( cs === "sinclo_re" ) {
@@ -617,6 +650,12 @@
                 sinclo.chatApi.showUnreadCnt();
             }
             sinclo.chatApi.createMessage(cs, val);
+        },
+        scDown: function(){
+            var chatTalk = document.getElementById('chatTalk');
+            $('#chatTalk').animate({
+                scrollTop: chatTalk.scrollHeight - chatTalk.clientHeight
+            }, 100);
         },
         push: function(){
             var elm = document.getElementById('sincloChatMessage');
