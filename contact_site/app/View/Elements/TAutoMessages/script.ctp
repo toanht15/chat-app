@@ -3,7 +3,6 @@ document.body.onload = function(){
 	// 全選択用チェックボックス
 	var allCheckElm = document.getElementById('allCheck');
 	allCheckElm.addEventListener('click', setAllCheck); // 全選択
-	allCheckElm.addEventListener('change', actBtnShow); // 全選択
 
 	// チェックボックス群
 	var checkBoxList = document.querySelectorAll('[id^="selectTab"]');
@@ -14,7 +13,7 @@ document.body.onload = function(){
 	// チェックボックスが入っていないtdタグ群
 	var clickTargetTds = document.querySelectorAll('td:not(.noClick)');
 	for (var i = 0; i < clickTargetTds.length; i++) {
-		clickTargetTds[i].addEventListener('click', toEditPage); // 更新画面への遷移
+		clickTargetTds[i].addEventListener('click', isCheck); // 対象にチェックを付ける
 	}
 
 	// 「条件」の「設定」ラベル
@@ -24,11 +23,11 @@ document.body.onload = function(){
 		targetBalloonList[i].addEventListener('mouseleave', balloonApi.hide); // 設定した条件リストのポップアップ非表示
 	}
 
-	// 「条件」の「設定」ラベル
+	// 「アクション」の「内容」ラベル
 	var targetBalloonList = document.querySelectorAll('.actionValueLabel');
 	for (var i = 0; i < targetBalloonList.length; i++) {
-		targetBalloonList[i].addEventListener('mouseenter', balloonApi.show('act')); // 設定した条件リストのポップアップ表示
-		targetBalloonList[i].addEventListener('mouseleave', balloonApi.hide); // 設定した条件リストのポップアップ非表示
+		targetBalloonList[i].addEventListener('mouseenter', balloonApi.show('act')); // 設定したアクション内容のポップアップ表示
+		targetBalloonList[i].addEventListener('mouseleave', balloonApi.hide); // 設定したアクション内容のポップアップ非表示
 	}
 };
 
@@ -43,6 +42,17 @@ var setAllCheck = function() {
 	}
 }
 
+// 全選択用チェックボックスのコントロール
+var allCheckCtrl = function(){
+	// 全て選択されている場合
+	if ( $('input[name="selectTab"]:not(:checked)').length === 0 ) {
+		$('input[name="allCheck"]').prop('checked', true);
+	}
+	else {
+		$('input[name="allCheck"]').prop('checked', false);
+	}
+}
+
 // 有効/無効ボタンの表示/非表示
 var actBtnShow = function(){
 	// 選択中の場合
@@ -53,14 +63,23 @@ var actBtnShow = function(){
 		$(".actCtrlBtn").css('display', 'none');
 		$('#allCheck').prop('checked', false);
 	}
+	allCheckCtrl();
 };
 
-// 更新画面への遷移
-var toEditPage = function(){
-	if ('id' in this.parentElement.dataset) {
-		location.href = "<?=$this->Html->url(['controller'=>'TAutoMessages', 'action'=>'edit'])?>/" + this.parentElement.dataset['id'];
+// 行クリックでチェックする
+var isCheck = function(e){
+	var id = getData(this.parentElement, 'id');
+	if (id !== undefined) {
+		var target = $("#selectTab" + id);
+		if (target.prop('checked')) {
+			target.prop('checked', false);
+		}
+		else {
+			target.prop('checked', true);
+		}
 	}
-}
+	actBtnShow();
+};
 
 // 設定した条件リストのポップアップ表示
 var balloonApi = {
@@ -94,18 +113,8 @@ var balloonApi = {
 	}
 };
 
-// 有効/無効処理
-var toActive = function(flg){
-	var list = document.querySelectorAll('input[name="selectTab"]:checked');
-	var selectedList = [];
-	for (var i = 0; i < list.length; i++){
-		selectedList.push(Number(list[i].value));
-	}
-	var data = {
-		status: flg,
-		targetList: selectedList
-	};
-
+// 有効/無効処理のリクエスト
+var sendActiveRequest = function(data){
 	$.ajax({
 		type: 'GET',
 		url: '/TAutoMessages/changeStatus',
@@ -119,4 +128,47 @@ var toActive = function(flg){
 		}
 	});
 };
+
+// 有効/無効処理
+function toActive(flg){
+	var list = document.querySelectorAll('input[name="selectTab"]:checked');
+	var selectedList = [];
+	for (var i = 0; i < list.length; i++){
+		selectedList.push(Number(list[i].value));
+	}
+	sendActiveRequest({
+		status: flg,
+		targetList: selectedList
+	});
+}
+
+// 有効/無効処理
+function isActive(flg, id){
+	var selectedList = [];
+	selectedList.push(Number(id));
+	sendActiveRequest({
+		status: flg,
+		targetList: selectedList
+	});
+}
+
+function removeAct(no, id){
+	modalOpen.call(window, "No." + no + " を削除します、よろしいですか？", 'p-confirm', 'オートメッセージ設定');
+	popupEvent.closePopup = function(){
+		$.ajax({
+			type: 'post',
+			data: {
+				id: id
+			},
+			cache: false,
+			url: "/TAutoMessages/remoteDelete",
+			success: function(){
+				location.href = "/TAutoMessages/index";
+			},
+			error: function(){
+				location.href = "/TAutoMessages/index";
+			}
+		});
+	};
+}
 </script>

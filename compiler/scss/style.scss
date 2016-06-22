@@ -1545,6 +1545,20 @@ ul.naviBtn {
       background-color: #DEDEDE;
     }
 
+    .lineCtrl {
+      text-align: center;
+
+      div {
+        display: inline-block;
+        a {
+          float: left;
+          margin: 0 10px;
+        }
+      }
+    }
+
+    :not(.lineCtrl) a { text-decoration: underline; }
+
     input[type='checkbox'] {
         display: none;
 

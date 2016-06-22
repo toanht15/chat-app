@@ -46,8 +46,9 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
 				<th width=" 5%"><input type="checkbox" name="allCheck" id="allCheck"><label for="allCheck"></label></th>
 				<th width="10%">No</th>
 				<th width="20%">名称</th>
-				<th width="30%">条件</th>
-				<th width="30%">アクション</th>
+				<th width="25%">条件</th>
+				<th width="25%">アクション</th>
+				<th width="15%">操作</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -55,6 +56,10 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
 		<?php $allActionList = []; ?>
 		<?php foreach((array)$settingList as $key => $val): ?>
 			<?php
+			$id = "";
+			if ($val['TAutoMessage']['id']) {
+				$id = $val['TAutoMessage']['id'];
+			}
 			$class = "";
 			if ($val['TAutoMessage']['active_flg']) {
 				$class = "bgGrey";
@@ -67,7 +72,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
 			switch($val['TAutoMessage']['action_type']) {
 				case C_AUTO_ACTION_TYPE_SENDMESSAGE:
 					if ( !empty($activity['message']) ) {
-						$allActionList[$val['TAutoMessage']['id']] = [
+						$allActionList[$id] = [
 							'type' => $val['TAutoMessage']['action_type'],
 							'detail' => $activity['message']
 						];
@@ -85,17 +90,18 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
 			$conditions = "";
 			if (!empty($activity['conditions'])) {
 				$condList = $this->AutoMessage->setAutoMessage($activity['conditions']);
-				$allCondList[$val['TAutoMessage']['id']] = $condList;
+				$allCondList[$id] = $condList;
 				$conditions = implode($condList, ", ");
 			}
+			$no = $prevCnt + h($key+1);
 			?>
-			<tr class="<?=$class?>" data-id="<?=h($val['TAutoMessage']['id'])?>">
-				<td class="tCenter noClick">
-					<input type="checkbox" name="selectTab" id="selectTab<?=h($val['TAutoMessage']['id'])?>" value="<?=h($val['TAutoMessage']['id'])?>">
-					<label for="selectTab<?=h($val['TAutoMessage']['id'])?>"></label>
+			<tr class="<?=$class?>" data-id="<?=h($id)?>">
+				<td class="tCenter">
+					<input type="checkbox" name="selectTab" id="selectTab<?=h($id)?>" value="<?=h($id)?>">
+					<label for="selectTab<?=h($id)?>"></label>
 				</td>
-				<td class="tCenter"><?=$prevCnt + h($key+1)?></td>
-				<td class="tCenter"><?=$this->Html->link(h($val['TAutoMessage']['name']), ['controller'=>'TAutoMessages', 'action'=>'edit', $val['TAutoMessage']['id']])?></td>
+				<td class="tCenter"><?=$no?></td>
+				<td class="tCenter noClick"><?=$this->Html->link(h($val['TAutoMessage']['name']), ['controller'=>'TAutoMessages', 'action'=>'edit', $id])?></td>
 				<td class="targetBalloon">
 					<span class="conditionTypeLabel m10b">条件</span><span class="m10b actionValue"><?=h($conditionType)?></span>
 					<span class="conditionValueLabel m10b">設定</span><span class="m10b actionValue"><?=$conditions?></span>
@@ -103,6 +109,17 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
 				<td class="p10x">
 					<span class="actionTypeLabel m10b">対象</span><span class="m10b actionValue"><?=h($outMessageActionType[$val['TAutoMessage']['action_type']])?></span>
 					<?=$activity_detail?>
+				</td>
+				<td class="p10x noClick lineCtrl">
+					<div>
+						<a href="<?=$this->Html->url(['controller'=>'TAutoMessages', 'action'=>'edit', $id])?>" class="btn-shadow greenBtn fLeft"><img src="/img/edit.png" alt="更新" width="30" height="30"></a>
+						<?php if ($val['TAutoMessage']['active_flg']) { ?>
+							<a href="javascript:void(0)" class="btn-shadow redBtn fLeft" onclick="isActive(true, '<?=$id?>')"><img src="/img/inactive.png" alt="無効" width="30" height="30"></a>
+						<?php } else { ?>
+							<a href="javascript:void(0)" class="btn-shadow greenBtn fLeft" onclick="isActive(false, '<?=$id?>')"><img src="/img/check.png" alt="有効" width="30" height="30"></a>
+						<?php } ?>
+						<a href="javascript:void(0)" class="btn-shadow redBtn fRight" onclick="removeAct('<?=$no?>', '<?=$id?>')"><img src="/img/trash.png" alt="削除" width="30" height="30"></a>
+					</div>
 				</td>
 			</tr>
 		<?php endforeach; ?>
