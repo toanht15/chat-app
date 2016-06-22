@@ -344,6 +344,7 @@ var socket, // socket.io
             var target = $(".widgetCtrl.selected"), clickTab = $(this).data('tab');
             target.removeClass("selected");
             $("#sincloBox").height("");
+            $(this).addClass("selected");
 
             if ( clickTab === "call" ) {
               $("#callTab").css('display', 'inline-block');
@@ -352,8 +353,9 @@ var socket, // socket.io
             else {
               $("#callTab").hide();
               $("#chatTab").css('display', 'inline-block');
+              sinclo.chatApi.showUnreadCnt();
+              sinclo.chatApi.scDown();
             }
-            $(this).addClass("selected");
         });
 
       }

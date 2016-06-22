@@ -25,7 +25,8 @@
           }
           height += $("#sincloBox > #fotter").outerHeight(true);
           sincloBox.setAttribute('data-openflg', true);
-          sinclo.chatApi.isRead();
+          sinclo.chatApi.showUnreadCnt();
+          sinclo.chatApi.scDown();
         }
         else {
           height = this.header.offsetHeight;
@@ -671,13 +672,6 @@
                 messageType: sinclo.chatApi.messageType.customer
             });
         },
-        isRead: function(){
-            if ( Number(sinclo.chatApi.unread) > 0 ) {
-                emit("isReadFromCustomer", {});
-                sinclo.chatApi.unread = 0;
-                sinclo.chatApi.showUnreadCnt();
-            }
-        },
         showUnreadCnt: function(){
             var elmId = "sincloChatUnread",
                 unreadIcon = document.getElementById(elmId),
@@ -686,8 +680,9 @@
                 unreadIcon.parentNode.removeChild(unreadIcon);
             }
             if ( Number(sinclo.chatApi.unread) > 0 ) {
-                if (String(flg) === "true") {
-                    sinclo.chatApi.isRead();
+                if ($("[data-tab='chat']").is(".selected") && String(flg) === "true") {
+                    emit("isReadFromCustomer", {});
+                    sinclo.chatApi.unread = 0;
                     return false;
                 }
 
