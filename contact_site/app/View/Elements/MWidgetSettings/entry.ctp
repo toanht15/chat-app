@@ -267,7 +267,6 @@
 						'class' => 'showTel',
 						'div' => false,
 						'label' => false,
-						'maxlength' => 100,
 						'error' => false
 					],
 					[
