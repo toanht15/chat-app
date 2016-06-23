@@ -238,4 +238,24 @@ function removeAct(){
 function submitAct(){
   $('#TAutoMessageEntryForm').submit();
 }
+
+function setCtrlArea(){
+    var cont = document.getElementById('content');
+    var bottom = cont.offsetHeight - cont.clientHeight;
+    var right = cont.offsetWidth - cont.clientWidth;
+    var left = 60;
+    $('#tautomessages_actions').animate({
+        bottom: bottom,
+        right: right,
+        left: left
+    }, 100);
+}
+
+$(window).resize(function(){
+    setCtrlArea();
+});
+
+document.body.onload = function(){
+    setCtrlArea();
+};
 </script>

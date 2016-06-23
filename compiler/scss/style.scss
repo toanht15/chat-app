@@ -391,6 +391,10 @@ a {
   text-decoration: underline;
 }
 
+.vHidden {
+  visibility: hidden;
+}
+
 .error-message {
   padding: 0;
   margin: 0 0 0 35px;
@@ -409,7 +413,7 @@ a {
 
 .whiteBtn {
   background-color: #FFF!important  ;
-  border: 1px solid $main-color!important;
+  border: 1px solid #FFF!important;
   color: $main-color!important;
   display: block;
   font-weight: bold;
