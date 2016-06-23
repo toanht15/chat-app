@@ -999,34 +999,45 @@
                 dateParse = Date.parse(d);
                 keys = Object.keys(cond.day);
                 for(var i = 0; keys.length > i; i++){
-                  if (!cond.day[keys[i]]) continue;
+                  if (!cond.day[keys[i]]) {
+                    if ((keys.length - 1) === i) return callback(true, null); // 最終行だった場合はfalse
+                    continue;
+                  }
+                  // 曜日が取得できなければContinue.
                   var day = translateDay(keys[i]); // 曜日を取得
-                  if (day === null) continue; // 曜日が取得できなければContinue.
-
+                  if (day === null) {
+                    if ((keys.length - 1) === i) return callback(true, null); // 最終行だった場合はfalse
+                    continue;
+                  }
                   // 曜日が今日若しくは明日ではない場合はContinue
-                  if (day !== nowDay && day !== nextDay) continue;
+                  if (day !== nowDay && day !== nextDay) {
+
+                    if ((keys.length - 1) === i) return callback(true, null); // 最終行だった場合はfalse
+                    continue;
+                  }
                   // 曜日が今日で時間指定なしの場合は即時表示
-                  if (day === nowDay && Number(cond.timeSetting) === 2) return callback(false, 0);
+                  if (day === nowDay && Number(cond.timeSetting) === 2) {
+                    return callback(false, 0);
+                  }
                   // 時間指定ありで、開始・終了時間が取得できない場合は終了
                   if (!checkTime(cond.startTime) || !checkTime(cond.endTime)) return callback(true, null);
                   var startDate = makeDate(date + cond.startTime);
                   var endDate = makeDate(date + cond.endTime);
-
                   // 今日で開始中の場合
                   if (day === nowDay && startDate <= dateParse && dateParse < endDate ) {
                     return callback(false, 0); // 即時表示
-
                   }
                   // 今日で開始前の場合
                   else if (day === nowDay && startDate > dateParse && dateParse < endDate ) {
                     return callback(false, (startDate-dateParse) ); // 開始時間に表示されるようにタイマーセット
-
                   }
                   // 次回の場合
                   else if ( day === nextDay) {
                     var nextDate = startDate + 24*60*60*1000;
                     return callback(false, (nextDate-dateParse)); // 開始時間に表示されるようにタイマーセット
-
+                  }
+                  else {
+                    return callback(true, null);
                   }
                 }
             },
