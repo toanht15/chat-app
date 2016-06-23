@@ -27,7 +27,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
 				array('class' => 'grayBtn tr180')
 			);
 		?>
-		<span style="width: auto!important"> <?php echo $this->Paginator->counter('{:page} / {:pages}'); ?> </span>
+		<span style="width: auto!important;padding: 10px 0 0;"> <?php echo $this->Paginator->counter('{:page} / {:pages}'); ?> </span>
 		<?php
 			echo $this->Paginator->next(
 				$this->Html->image('paging.png', array('alt' => '次のページへ', 'width'=>25, 'height'=>25)),
@@ -124,7 +124,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
 			</tr>
 		<?php endforeach; ?>
 		<?php if ( count($settingList) === 0 ) : ?>
-			<tr><td colspan="5" class="tCenter" style="letter-spacing: 2px">オートメッセージ設定がありません</td></tr>
+			<tr><td colspan="6" class="tCenter" style="letter-spacing: 2px">オートメッセージ設定がありません</td></tr>
 		<?php endif; ?>
 		</tbody>
 	</table>

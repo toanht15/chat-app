@@ -278,7 +278,7 @@ a {
 }
 
 .tr180 {
-  transform: rotate(180deg);
+  transform: matrix(-1,0,0,1,0,0);
 }
 
 .w05 {
@@ -743,6 +743,9 @@ ul#color-bar-right {
 #paging span{
   float: left;
   margin-right: 5px;
+  width: 33px;
+  height: 33px;
+  padding: 3px 0px 0px 2px;
 }
 
 [id$=_idx] {
