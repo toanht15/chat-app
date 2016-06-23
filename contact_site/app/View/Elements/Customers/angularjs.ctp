@@ -138,15 +138,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           });
         }
       },
-      notification: function(accessId, chatMessage){
-        var nInstance = new Notification(
-          '【' + accessId + '】新着チャットが届きました',
-          {
-            body: chatMessage,
-            icon: "/img/sinclo_square_logo.png"
-        });
-        setTimeout(nInstance.close.bind(nInstance), 3000);
-      },
       isReadMessage: function(monitor){
         // フォーカスが入っているもののみ
         if (!$("#sendMessage").is(":focus")) return false;
@@ -470,6 +461,20 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       },
       disConnect: function(tabId){
         emit("chatEnd", {tabId: tabId, userId: myUserId});
+      },
+      notification: function(tabId, accessId, chatMessage){
+        var nInstance = new Notification(
+          '【' + accessId + '】新着チャットが届きました',
+          {
+            body: chatMessage,
+            icon: "<?=C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT?>/img/mark.png"
+        });
+        nInstance.onclick = function(){
+          window.focus(); // 現在のタブにフォーカスを当てる
+          if ( chatApi.tabId !== tabId ) {
+            $scope.showDetail(tabId); // 詳細を開く
+          }
+        };
       }
     };
 
@@ -721,7 +726,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         // 未読数加算（自分が対応していないとき）
         $scope.monitorList[obj.tabId].chatUnreadCnt++;
         $scope.monitorList[obj.tabId].chatUnreadId = obj.chatId;
-        chatApi.notification($scope.monitorList[obj.tabId].accessId, obj.chatMessage);
+        $scope.ngChatApi.notification(obj.tabId, $scope.monitorList[obj.tabId].accessId, obj.chatMessage);
 
         // 既読にする(対象のタブを開いている、且つ自分が対応しており、フォーカスが当たっているとき)
         if (  obj.tabId === chatApi.tabId && $scope.monitorList[obj.tabId].chat === myUserId && $("#sendMessage").is(":focus") ) {

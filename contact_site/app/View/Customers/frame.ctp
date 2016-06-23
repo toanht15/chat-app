@@ -111,6 +111,7 @@ var socket, userId, tabId, iframe, windowSize, connectToken, url, emit, resizeAp
   };
 
   window.addEventListener('resize', resizeApi.adResizeChk, false);
+  window.focus();
 
 })();
 
