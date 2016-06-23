@@ -352,6 +352,10 @@ a {
 .m0 {
   margin: 0;
 }
+
+.m10r10l {
+  margin: 0 10px;
+}
 .m40l {
   margin-left: 40px;
 }
@@ -1552,7 +1556,6 @@ ul.naviBtn {
         display: inline-block;
         a {
           float: left;
-          margin: 0 10px;
         }
       }
     }
