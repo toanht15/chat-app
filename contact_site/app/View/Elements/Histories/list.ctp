@@ -12,7 +12,7 @@
             <th>参照元URL</th>
         </tr>
     </thead>
-    <tbody>
+    <tbody ng-cloak>
 <?php foreach($historyList as $key => $history): ?>
         <tr>
             <td class="tCenter"><?=h($history['THistory']['ip_address'])?></td>
