@@ -889,10 +889,10 @@
                       if (Number(a) ===  Number(b) ) return true;
                       break;
                     case 2: // 以上
-                      if (Number(a) <= Number(b) ) return true;
+                      if (Number(a) >= Number(b) ) return true;
                       break;
                     case 3: // 未満
-                      if (Number(a) > Number(b) ) return true;
+                      if (Number(a) < Number(b) ) return true;
                       break;
                 }
                 return false;
@@ -960,7 +960,7 @@
                     callback(false, 0);
                 }
                 else {
-                    callback(false, 0);
+                    callback(true, null);
                 }
             },
             page: function(cond, callback){
