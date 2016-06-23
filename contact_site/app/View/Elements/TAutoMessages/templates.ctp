@@ -13,10 +13,10 @@
 </ul>
 
 <?php /* 訪問回数｜C_AUTO_TRIGGER_VISIT_CNT */ ?>
-<ul ng-if="itemType == '<?=C_AUTO_TRIGGER_VISIT_CNT?>'"  class="setVisitCnt">
+<ul ng-if="itemType == '<?=C_AUTO_TRIGGER_VISIT_CNT?>'" class="setVisitCnt">
 		<li>
 			<span><label>訪問回数</label></span>
-			<input type="text" class="tRight" ng-pattern="<?=C_MATCH_RULE_NUM_2?>" ng-model="setItem.visitCnt" name="visitCnt" required="">&nbsp;回
+			<input type="text" class="tRight" ng-pattern="<?=C_MATCH_RULE_NUM_2?>" ui-validate-watch=" 'setItem.visitCntCond' " ui-validate="{isVisitCntRule : 'main.isVisitCntRule($value, setItem.visitCntCond)' }" ng-model="setItem.visitCnt" name="visitCnt" required="">&nbsp;回
 		</li>
 		<li>
 			<?=$this->AutoMessage->radio('visitCntCond')?>
