@@ -7,7 +7,7 @@ document.body.onload = function(){
 	// チェックボックス群
 	var checkBoxList = document.querySelectorAll('[id^="selectTab"]');
 	for (var i = 0; i < checkBoxList.length; i++) {
-		checkBoxList[i].addEventListener('change', actBtnShow); // 更新画面への遷移
+		checkBoxList[i].addEventListener('change', actBtnShow); // 有効無効ボタンの表示切り替え
 	}
 
 	// チェックボックスが入っていないtdタグ群

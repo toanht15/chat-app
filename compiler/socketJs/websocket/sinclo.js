@@ -469,12 +469,12 @@
     chatStartResult: function(d){
       var obj = JSON.parse(d);
       this.chatApi.online = true;
-      sinclo.chatApi.createNotifyMessage("～　オペレーターが入室しました　～");
+      sinclo.chatApi.createNotifyMessage("オペレーターが入室しました");
     },
     chatEndResult: function(d){
       var obj = JSON.parse(d);
       this.chatApi.online = false;
-      sinclo.chatApi.createNotifyMessage("～　オペレーターが退室しました　～");
+      sinclo.chatApi.createNotifyMessage("オペレーターが退室しました");
     },
     chatMessageData:function(d){
       var obj = JSON.parse(d);
@@ -494,11 +494,11 @@
         else {
           if ( chat === "start" ) {
             this.chatApi.online = true;
-            this.chatApi.createNotifyMessage("～　オペレーターが入室しました　～");
+            this.chatApi.createNotifyMessage("オペレーターが入室しました");
           }
           if ( chat === "end" ) {
             this.chatApi.online = false;
-            this.chatApi.createNotifyMessage("～　オペレーターが退室しました　～");
+            this.chatApi.createNotifyMessage("オペレーターが退室しました");
           }
         }
       }
@@ -606,7 +606,7 @@
             var li = document.createElement('li');
             chatTalk.appendChild(li);
             li.className = "sinclo_etc";
-            li.innerHTML = val;
+            li.innerHTML = "－　" + val + "　－";
             this.scDown();
         },
         createMessage: function(cs, val){

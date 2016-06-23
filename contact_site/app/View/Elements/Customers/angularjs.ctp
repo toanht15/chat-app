@@ -90,7 +90,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           var li = document.createElement('li');
           chatTalk.appendChild(li);
           li.className = "sinclo_etc";
-          li.innerHTML = val;
+          li.innerHTML = "－　" + val + "　－";
           scDown(); // チャット画面のスクロール
       },
       createMessage: function(cs, val){
@@ -319,7 +319,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     $scope.windowOpen = function(tabId, accessId){
       var message = "アクセスID【" + accessId + "】のユーザーに接続しますか？<br><br>";
-      message += "<span style='color: red'><?=Configure::read('message.const.chatStartConfirm')?></span>";
+      message += "<span style='color: #FF7B7B'><?=Configure::read('message.const.chatStartConfirm')?></span>";
       modalOpen.call(window, message, 'p-confirm', 'メッセージ');
        popupEvent.closePopup = function(){
           sessionStorage.clear();
@@ -650,7 +650,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         }, {t: obj.tabId});
       }
       if ( !isset(prev) && obj.tabId === chatApi.tabId ) {
-        chatApi.createNotifyMessage("～　オペレーターが入室しました　～");
+        chatApi.createNotifyMessage("オペレーターが入室しました");
       }
     });
 
@@ -665,7 +665,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         $scope.monitorList[obj.tabId].chat = null;
       }
       if ( obj.tabId === chatApi.tabId ) {
-        chatApi.createNotifyMessage("～　オペレーターが退室しました　～");
+        chatApi.createNotifyMessage("オペレーターが退室しました");
       }
 
     });
@@ -677,10 +677,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         var chat = obj.chat.messages[key];
         if ( typeof(chat) !== "object" ) {
             if ( chat === "start" ) {
-                chatApi.createNotifyMessage("～　オペレーターが入室しました　～");
+                chatApi.createNotifyMessage("オペレーターが入室しました");
             }
             if ( chat === "end" ) {
-                chatApi.createNotifyMessage("～　オペレーターが退室しました　～");
+                chatApi.createNotifyMessage("オペレーターが退室しました");
             }
         }
         else {
