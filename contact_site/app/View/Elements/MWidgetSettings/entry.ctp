@@ -263,9 +263,10 @@
 					<span><label>ウィジェット本文</label></span>
 					<?= $this->ngForm->input('content', [
 						'type' => 'textarea',
-						'placeholder' => '本文',
+						'placeholder' => '本文を１００文字以内で設定してください',
 						'class' => 'showTel',
 						'div' => false,
+						'cols' => 40,
 						'label' => false,
 						'error' => false
 					],
