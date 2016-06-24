@@ -297,6 +297,9 @@ var socket, // socket.io
       html += '    <div style="border-top: 1px solid #E8E7E0; padding: 10px;">';
       html += '    <textarea name="sincloChat" id="sincloChatMessage" maxlength="300" placeholder="ここにメッセージを入力してください。（Shift+Enterで改行/Enterで送信）"></textarea>';
       html += '    </div>';
+      html += '    <audio id="sinclo-sound">';
+      html += '      <source src="' + window.info.site.files + '/sounds/decision.mp3" type="audio/mp3">';
+      html += '    </audio>';
       html += '  </section>';
       return html;
     },

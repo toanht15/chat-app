@@ -49,8 +49,8 @@
 		#sincloBox section#navigation ul li:not(.selected) { border-bottom: 1px solid #E8E7E0 }
 		#sincloBox section#navigation ul li.selected::after{ content: " "; border-bottom: 2px solid {{main_color}}; position: absolute; bottom: 0px; left: 5px; right: 5px;}
 		#sincloBox section#navigation ul li::before{ margin-right: 5px; background-color: #BCBCBC; content: " "; display: inline-block; width: 18px; height: 18px; position: relative; background-size: contain; vertical-align: middle; background-repeat: no-repeat }
-		#sincloBox section#navigation ul li[data-tab='call']::before{ background-image: url('<?=C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT?>/img/widget/icon_tel.png'); }
-		#sincloBox section#navigation ul li[data-tab='chat']::before{ background-image: url('<?=C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT?>/img/widget/icon_chat.png'); }
+		#sincloBox section#navigation ul li[data-tab='call']::before{ background-image: url('<?=C_PATH_NODE_FILE_SERVER?>/img/widget/icon_tel.png'); }
+		#sincloBox section#navigation ul li[data-tab='chat']::before{ background-image: url('<?=C_PATH_NODE_FILE_SERVER?>/img/widget/icon_chat.png'); }
 		#sincloBox section#navigation ul li.selected::before{ background-color: {{main_color}}; }
 	<?php endif; ?>
 	</style>
@@ -100,7 +100,7 @@
 		<section id="callTab" ng-hide="widget.showTab !== 'call'">
 			<div style="height: 50px;margin: 15px 25px;">
 			<!-- アイコン -->
-			<span id="telIcon"><img width="19.5" height="33" src="<?=C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT?>/img/call.png" style="margin: 6px 12px"></span>
+			<span id="telIcon"><img width="19.5" height="33" src="<?=C_PATH_NODE_FILE_SERVER?>/img/call.png" style="margin: 6px 12px"></span>
 			<!-- アイコン -->
 
 			<!-- 受付電話番号 -->

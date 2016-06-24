@@ -1,5 +1,5 @@
 <?php
-$gallaryPath = C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT.'/img/widget/';
+$gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
 ?>
 <style>
 	<?php foreach((array)$cssStyle as $key => $val): ?>

@@ -68,6 +68,16 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             }
           }
         });
+        this.sound = document.getElementById('sinclo-sound');
+        if ( this.sound ) {
+            this.sound.volume = 0.3;
+        }
+      },
+      sound: null,
+      call: function(){
+        if (this.sound) {
+            this.sound.play();
+        }
       },
       connection: function(){
         if ( isset(this.tabId) && isset(this.userId) ) {
@@ -471,7 +481,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           '【' + accessId + '】新着チャットが届きました',
           {
             body: chatMessage,
-            icon: "<?=C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT?>/img/mark.png"
+            icon: "<?=C_PATH_NODE_FILE_SERVER?>/img/mark.png"
         });
         nInstance.onclick = function(){
           window.focus(); // 現在のタブにフォーカスを当てる
@@ -727,6 +737,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         // 以降、受信時のみの処理
         if (obj.messageType !== chatApi.messageType.customer) return false;
 
+        // 着信音を鳴らす
+        chatApi.call();
+
         // 未読数加算（自分が対応していないとき）
         $scope.monitorList[obj.tabId].chatUnreadCnt++;
         $scope.monitorList[obj.tabId].chatUnreadId = obj.chatId;
@@ -772,7 +785,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         from: obj.receiverID, // 管理者側はtabIdが無いのでリアルモニタ画面のsocket.idで代用
         to: obj.tabId,
       }
-      url  = "<?php echo C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT ?>/webcam.html?h=true&sincloData=" + encodeURIComponent(JSON.stringify(sincloData));
+      url  = "<?php echo C_PATH_NODE_FILE_SERVER ?>/webcam.html?h=true&sincloData=" + encodeURIComponent(JSON.stringify(sincloData));
 
       modalFunc.set.call({
         option: {

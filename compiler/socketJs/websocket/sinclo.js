@@ -516,6 +516,7 @@
       if ( obj.ret ) {
         if (obj.messageType === sinclo.chatApi.messageType.company) {
           cn = "sinclo_re";
+          sinclo.chatApi.call();
         }
         else if (obj.messageType === sinclo.chatApi.messageType.customer) {
           cn = "sinclo_se";
@@ -595,6 +596,11 @@
                 }
             });
 
+            this.sound = document.getElementById('sinclo-sound');
+            if ( this.sound ) {
+                this.sound.volume = 0.3;
+            }
+
             $(document).on("change", "input[name^='sinclo-radio']", function(e){
                 sinclo.chatApi.send(e.target.value);
             });
@@ -671,6 +677,13 @@
                 mUserId: null,
                 messageType: sinclo.chatApi.messageType.customer
             });
+        },
+        sound: null,
+        call: function(){
+            // デスクトップ通知用
+            if ( this.sound ) {
+                this.sound.play();
+            }
         },
         showUnreadCnt: function(){
             var elmId = "sincloChatUnread",
