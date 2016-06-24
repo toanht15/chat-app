@@ -153,7 +153,7 @@ function isActive(flg, id){
 }
 
 function removeAct(no, id){
-	modalOpen.call(window, "No." + no + " を削除します、よろしいですか？", 'p-confirm', 'オートメッセージ設定');
+	modalOpen.call(window, "No." + no + " を削除します、よろしいですか？", 'p-confirm', 'オートメッセージ設定', 'moment');
 	popupEvent.closePopup = function(){
 		$.ajax({
 			type: 'post',

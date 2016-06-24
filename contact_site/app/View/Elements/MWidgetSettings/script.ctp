@@ -58,7 +58,7 @@ sincloApp.controller('WidgetCtrl', function($scope){
         dataType: 'html',
         url: "<?= $this->Html->url('/MWidgetSettings/remoteShowGallary') ?>",
         success: function(html){
-          modalOpen.call(window, html, 'p-show-gallary', 'ギャラリー');
+          modalOpen.call(window, html, 'p-show-gallary', 'ギャラリー', 'moment');
           popupEvent.customizeBtn = function(name){
             $scope.main_image = "<?=$gallaryPath?>" + name;
             $("#MWidgetSettingUploadImage").val("");

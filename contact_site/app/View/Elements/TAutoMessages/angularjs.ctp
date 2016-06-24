@@ -220,7 +220,7 @@ function addOption(type){
 
 
 function removeAct(){
-    modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', 'オートメッセージ設定');
+    modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', 'オートメッセージ設定', 'moment');
     popupEvent.closePopup = function(){
         $.ajax({
             type: 'post',

@@ -27,11 +27,15 @@ var popupEvent = {
         contents: null,
         closePopup: null,
         customizeBtn: null,
+        moveType: null, // スクロール
         closeNoPopup: function(){
           return popupEvent.close();
         },
         init: function() {
             this.closePopup = '';
+            if ( !this.moveType ) {
+                this.moveType = 'moveup';
+            }
         },
         elm: {
             popup: null,
@@ -143,36 +147,51 @@ var popupEvent = {
             $("#popup-frame").removeAttr('style').removeClass();
             // コンテンツを作成
             this._popupCreate();
-            // 一時的にスクロール非表示に
-            $('body').css('overflow', 'hidden');
-            // ポップアップを表示状態にする
-            $(".popup-off").addClass('popup-on').removeClass('popup-off');
-            var contHeight = $('#popup-content').height();
-            $('#popup-frame').css('height', contHeight);
-            this.elm.popup.style.top = (window.innerHeight) + "px";
 
-            $('#popup-frame').animate(
-                {
-                    top: 0
-                },
-                500,
-                function(){
-                    $('body').css('overflow', 'auto');
-                }
-            );
+            if ( this.moveType === 'moment' ) {
+                // ポップアップを表示状態にする
+                $(".popup-off").addClass('popup-on').removeClass('popup-off');
+                var contHeight = $('#popup-content').height();
+                $('#popup-frame').css('top', 0).css('height', contHeight);
+            }
+            else {
+                // 一時的にスクロール非表示に
+                $('body').css('overflow', 'hidden');
+                // ポップアップを表示状態にする
+                $(".popup-off").addClass('popup-on').removeClass('popup-off');
+                var contHeight = $('#popup-content').height();
+                $('#popup-frame').css('height', contHeight);
+                this.elm.popup.style.top = (window.innerHeight) + "px";
+
+                $('#popup-frame').animate(
+                    {
+                        top: 0
+                    },
+                    500,
+                    function(){
+                        $('body').css('overflow', 'auto');
+                    }
+                );
+            }
+
         },
         close: function(){
-            $('body').css('overflow', 'hidden');
-            $('#popup-frame').animate(
-                {
-                    top: (window.innerHeight + $('#popup-frame').height())
-                },
-                500,
-                function(){
-                    $('body').css('overflow', 'auto');
-                    $('.popup-on').addClass('popup-off').removeClass('popup-on');
-                }
-            );
+            if ( this.moveType === 'moment' ) {
+                $('.popup-on').addClass('popup-off').removeClass('popup-on');
+            }
+            else {
+                $('body').css('overflow', 'hidden');
+                $('#popup-frame').animate(
+                    {
+                        top: (window.innerHeight + $('#popup-frame').height())
+                    },
+                    500,
+                    function(){
+                        $('body').css('overflow', 'auto');
+                        $('.popup-on').addClass('popup-off').removeClass('popup-on');
+                    }
+                );
+            }
         }
     },
     shortMessage = {
@@ -215,7 +234,10 @@ var popupEvent = {
     };
 
 !function(pe, se){
-    window.modalOpen = function(contents, id, title){
+    window.modalOpen = function(contents, id, title, type){
+        if (typeof(type) !== 'undefined') {
+            pe.moveType = type;
+        }
         pe.init();
         return pe.open(contents, id, title);
     };

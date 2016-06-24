@@ -14,7 +14,7 @@ function openEntryDialog(setting){
                 cache: false,
 		url: "<?= $this->Html->url('/MUsers/remoteOpenEntryForm') ?>",
 		success: function(html){
-			modalOpen.call(window, html, 'p-muser-entry', 'ユーザー情報');
+			modalOpen.call(window, html, 'p-muser-entry', 'ユーザー情報', 'moment');
 		},
 		error: function(){
 
@@ -22,7 +22,7 @@ function openEntryDialog(setting){
 	});
 }
 function openConfirmDialog(id){
-	modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', 'ユーザー情報');
+	modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', 'ユーザー情報', 'moment');
 	popupEvent.closePopup = function(){
 		$.ajax({
 			type: 'post',
