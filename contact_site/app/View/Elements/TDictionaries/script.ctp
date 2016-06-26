@@ -11,13 +11,10 @@ function openEntryDialog(setting){
 		type: 'post',
 		data: setting, // type:1 => type, type:2 => type, id
 		dataType: 'html',
-        cache: false,
+		cache: false,
 		url: "<?= $this->Html->url('/TDictionaries/remoteOpenEntryForm') ?>",
 		success: function(html){
 			modalOpen.call(window, html, 'p-tdictionary-entry', '簡易入力メッセージ情報', 'moment');
-		},
-		error: function(){
-
 		}
 	});
 }
@@ -33,9 +30,6 @@ function openConfirmDialog(id){
 			url: "<?= $this->Html->url('/TDictionaries/remoteDeleteUser') ?>",
 			success: function(){
 				location.href = "<?= $this->Html->url('/TDictionaries/index') ?>";
-			},
-			error: function(){
-
 			}
 		});
 	};

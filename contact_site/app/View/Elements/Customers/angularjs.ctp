@@ -7,10 +7,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
 (function(){
 
-  $.ajaxSetup({
-    cache: false
-  });
-
   // -----------------------------------------------------------------------------
   //  関数
   // -----------------------------------------------------------------------------
@@ -332,13 +328,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
               success: function(html){
                 $scope.updateList(retList);
                 modalClose();
-              },
-              error: function(){
               }
             });
           };
-        },
-        error: function(){
         }
       });
     };
@@ -395,8 +387,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           dataType: 'html',
           success: function(html){
             modalOpen.call(window, html, 'p-cus-history', 'ページ移動履歴');
-          },
-          error: function(){
           }
         });
     };

@@ -27,8 +27,6 @@
             dataType: 'html',
             success: function(html){
                 modalOpen.call(window, html, 'p-history-logs', 'ページ移動履歴');
-            },
-            error: function(){
             }
         });
     };
@@ -45,8 +43,6 @@
                 dataType: 'html',
                 success: function(html){
                     modalOpen.call(window, html, 'p-chat-logs', 'チャット履歴');
-                },
-                error: function(){
                 }
             });
         };

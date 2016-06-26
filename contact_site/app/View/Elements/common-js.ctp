@@ -18,11 +18,26 @@
           opState.data('status', <?=C_OPERATOR_PASSIVE?>);
           opState.children('img').prop('src', '/img/n_op.png').prop('alt', '退席');
         }
-      },
-      error: function(){
       }
     });
   }
+
+  function ajaxTimeout(){
+	modalOpen.call(window, "タイムアウトしました", 'p-alert', 'アラート');
+	popupEvent.closeNoPopup = function(){
+		location.href = "<?=$this->Html->url(['controller' => 'Login', 'action'=>'logout'])?>";
+	};
+
+  }
+
+  $.ajaxSetup({
+    cache: false,
+    error: function(XMLHttpRequest, textStatus, errorThrown){
+      if ( textStatus ) {
+        ajaxTimeout();
+      }
+    }
+  });
 
 
 </script>

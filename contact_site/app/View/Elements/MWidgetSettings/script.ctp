@@ -65,9 +65,6 @@ sincloApp.controller('WidgetCtrl', function($scope){
             $scope.$apply();
             popupEvent.close();
           };
-        },
-        error: function(){
-
         }
       });
 

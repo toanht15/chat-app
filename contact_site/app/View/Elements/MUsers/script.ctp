@@ -15,9 +15,6 @@ function openEntryDialog(setting){
 		url: "<?= $this->Html->url('/MUsers/remoteOpenEntryForm') ?>",
 		success: function(html){
 			modalOpen.call(window, html, 'p-muser-entry', 'ユーザー情報', 'moment');
-		},
-		error: function(){
-
 		}
 	});
 }
@@ -33,9 +30,6 @@ function openConfirmDialog(id){
 			url: "<?= $this->Html->url('/MUsers/remoteDeleteUser') ?>",
 			success: function(){
 				location.href = "<?= $this->Html->url('/MUsers/index') ?>";
-			},
-			error: function(){
-
 			}
 		});
 	};

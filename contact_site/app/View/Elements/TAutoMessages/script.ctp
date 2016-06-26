@@ -123,8 +123,6 @@ var sendActiveRequest = function(data){
 		dataType: 'html',
 		success: function(html){
 			location.href = "/TAutoMessages/index"
-		},
-		error: function(){
 		}
 	});
 };
@@ -163,9 +161,6 @@ function removeAct(no, id){
 			cache: false,
 			url: "/TAutoMessages/remoteDelete",
 			success: function(){
-				location.href = "/TAutoMessages/index";
-			},
-			error: function(){
 				location.href = "/TAutoMessages/index";
 			}
 		});

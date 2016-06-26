@@ -32,7 +32,6 @@
                 }
                 if ( num > 0 ) {
                     var newHeight = $("#popup-content").height() + (num * 15);
-console.log(newHeight);
                     $("#popup-frame").animate({
                         height: newHeight + "px"
                     }, {
