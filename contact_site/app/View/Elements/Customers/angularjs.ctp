@@ -3,7 +3,7 @@
 
 var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     userList = <?php echo json_encode($responderList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>,
-    modalFunc, myUserId = <?= h($muserId)?>, chatApi, cameraApi;
+    modalFunc, myUserId = <?= h($muserId)?>, chatApi, cameraApi, entryWordApi;
 
 (function(){
 
@@ -180,6 +180,46 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     },
     disConnect: function(){
 
+    }
+  };
+
+  // API
+  entryWordApi = {
+    scSize: null,
+    init: function(){
+      var top = $("#wordList").offset().top;
+      this.scSize = {
+        max: top + document.getElementById('wordList').clientHeight,
+        min: top
+      };
+      document.getElementById('wordList').scrollTop = 0;
+    },
+    push: function(str){
+        var input = document.getElementById('sendMessage');
+        input.value += str; // 文字列を追記
+    },
+    prev: function(){
+        var input = document.getElementById('sendMessage');
+        input.focus(); // テキストエリアにフォーカスを当てる
+        this.close(); // 選択エリアを非表示に
+    },
+    close: function(){
+       var list = document.getElementById('wordListArea');
+       list.style.display = "none";
+    },
+    scTimer: null,
+    scroll: function(now){
+        var now_t = now.offset().top;
+        var now_b = now_t + now.prop("offsetHeight");
+        var sc = $("#wordList").offset().top - $("#wordList > li:first-child").offset().top;
+        if ( this.scSize.max < now_b ) { // 下に
+          var sc = sc + now.prop("offsetHeight");
+          $("#wordList").animate({scrollTop: sc}, 0);
+        }
+        if ( this.scSize.min > now_t ) { // 上に
+          var sc = now_t - $("#wordList > li:first-child").offset().top;
+          $("#wordList").animate({scrollTop: sc}, 0);
+        }
     }
   };
 
@@ -796,6 +836,155 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         }
       });
     });
+
+
+    // =======================================
+    // 　入力補助関連ここから
+    // =======================================
+
+    $scope.entryWordList = [
+      {id: 1, label:'AAA'},
+      {id: 2, label:'AAB'},
+      {id: 3, label:'ABB'},
+      {id: 4, label:'AAC'},
+      {id: 5, label:'ACC'},
+      {id: 6, label:'ABC'},
+      {id: 7, label:'ACB'},
+      {id: 8, label:'BBB'},
+      {id: 9, label:'BBA'},
+      {id:10, label:'BAA'},
+      {id:11, label:'BAB'},
+      {id:12, label:'BAC'}
+    ];
+
+    // フィルター
+    $scope.entryWordSearch = function(list){
+      var array = [];
+      var keys = Object.keys(list);
+      angular.forEach(list, function(item){
+        if (item.label.indexOf($scope.searchWord) === 0 || angular.isUndefined($scope.searchWord) ) {
+          array.push(item);
+        }
+      });
+      return array;
+    };
+
+    // テキストエリア
+    $("#sendMessage").on("keydown", function(e) {
+      if ( e.keyCode === 40 ) {
+        var target = e.target;
+        if ( target.selectionStart === target.selectionEnd
+          && target.selectionStart === target.textLength ) {
+          var testarea_offset = $(this).offset();
+          var testarea_size = {
+            height: this.offsetHeight,
+            width: this.offsetWidth
+          };
+          var area = document.getElementById('wordListArea');
+          area.style.display = "block";
+          $("#wordSearchCond").focus();
+          $scope.entryWord = '';
+          $scope.searchWord = "";
+          $scope.$apply();
+          entryWordApi.init();
+
+          return false;
+        }
+      }
+    });
+
+    /* 【ここから】ワードリスト内 */
+
+    // ワードリストエリア
+    $("#wordListArea").on('click', function(e){
+      e.stopPropagation();
+    });
+
+    // ワードリスト絞り込み
+    $("#wordSearchCond").on('keydown', function(e){
+      if ( e.keyCode === 13 ) { // Enter
+        if ( $scope.search($scope.entryWordList).length === 1 ) {
+          entryWordApi.push($scope.entryWordList[0].label);
+          entryWordApi.prev();
+          return false;
+        }
+      }
+      if ( e.keyCode === 38 || e.keyCode === 27 ) { // 上もしくは、ESCキー
+        entryWordApi.prev(); // 元の操作に戻る
+        return false;
+      }
+      if ( e.keyCode === 40 ) { // 下
+          var list = document.getElementById('entryWordList');
+          list.focus();
+          $scope.entryWord = 1;
+          $scope.$apply();
+          return false;
+      }
+      entryWordApi.sc = 0;
+
+    });
+
+    // ワードリスト（内部プルダウン）
+    $("#entryWordList").on('keydown', function(e){
+      if ( e.keyCode === 13 ) { // Enter
+        if ( e.target.selectedIndex in $scope.entryWordList
+          && 'label' in $scope.entryWordList[e.target.selectedIndex] ) {
+          entryWordApi.push($scope.entryWordList[e.target.selectedIndex].label);
+        }
+        entryWordApi.prev();
+        return false;
+      }
+      if ( e.keyCode === 38 ) { // 上キー
+        if ( $(this).val() === $("#entryWordList option").eq(0).val() ) {
+          $("#wordSearchCond").focus();
+          $scope.entryWord = "";
+        }
+      }
+      if ( e.keyCode === 40 ) { // 下キー
+        if ( $(this).val() === $("#entryWordList option").eq($scope.entryWordList.length - 1).val() ) {
+          entryWordApi.prev();
+          return false;
+        }
+      }
+      if ( e.keyCode === 27 ) { // ESCキー
+        entryWordApi.prev();
+        return false;
+      }
+    })
+    .on('keydown', function(e){
+      if ( e.keyCode === 38 ) {
+        var prev = $("#item" + $scope.entryWord).prev();
+        if (prev.prop('id')){
+          entryWordApi.scroll(prev);
+        }
+      }
+      if ( e.keyCode === 40 ) {
+        var next = $("#item" + $scope.entryWord).next();
+        if (next.prop('id')){
+          entryWordApi.scroll(next);
+        }
+      }
+    });
+
+    // ワードリスト（表示用）
+    $("#wordList")
+      .on('mouseover', function(e){
+      $scope.entryWord = $scope.entryWordList[$(e.target).index()].id;
+      $scope.$apply();
+    })
+      .on('click', function(e){
+      entryWordApi.push($scope.entryWordList[$(e.target).index()].label);
+      entryWordApi.prev();
+      return false;
+    });
+
+    /* 【ここまで】ワードリスト内 */
+
+    // ドキュメントオブジェクト内
+    $(document).on('click', function(e){
+      entryWordApi.close();
+    });
+
 
   }]);
 

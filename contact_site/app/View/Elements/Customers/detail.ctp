@@ -54,6 +54,13 @@
 		<div style="position: relative">
 			<textarea rows="5" id="sendMessage" ng-focus="sendMessageConnectConfirm(detailId)" maxlength="300" placeholder="ここにメッセージ入力してください。
 (Shift + Enterで改行)"></textarea>
+			<div id="wordListArea">
+				<select ng-init="entryWord=''" ng-model="entryWord" ng-options="v.id as v.label for (k, v) in entryWordSearch(entryWordList)" id="entryWordList"></select>
+				<input type="text" ng-model="searchWord" id="wordSearchCond" />
+				<ul id="wordList">
+					<li ng-repeat="item in entryWordSearch(entryWordList)" id="item{{item.id}}" ng-class="{selected: item.id === entryWord}">{{item.label}}</li>
+				</ul>
+			</div>
 			<span id="sinclo_sendbtn" class="btn-shadow" onclick="chatApi.pushMessage()">送信（Enter）</span>
 		</div>
 	</div>
