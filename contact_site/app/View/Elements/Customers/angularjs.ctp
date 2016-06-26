@@ -842,21 +842,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     // 　入力補助関連ここから
     // =======================================
 
-    $scope.entryWordList = [
-      {id: 1, label:'AAA'},
-      {id: 2, label:'AAB'},
-      {id: 3, label:'ABB'},
-      {id: 4, label:'AAC'},
-      {id: 5, label:'ACC'},
-      {id: 6, label:'ABC'},
-      {id: 7, label:'ACB'},
-      {id: 8, label:'BBB'},
-      {id: 9, label:'BBA'},
-      {id:10, label:'BAA'},
-      {id:11, label:'BAB'},
-      {id:12, label:'BAC'}
-    ];
-
+    $scope.entryWordList = <?php echo json_encode($dictionaryList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
     // フィルター
     $scope.entryWordSearch = function(list){
       var array = [];
@@ -874,7 +860,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       if ( e.keyCode === 40 ) {
         var target = e.target;
         if ( target.selectionStart === target.selectionEnd
-          && target.selectionStart === target.textLength ) {
+          && target.selectionStart === target.value.length ) {
           var testarea_offset = $(this).offset();
           var testarea_size = {
             height: this.offsetHeight,

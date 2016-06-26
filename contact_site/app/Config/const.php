@@ -27,6 +27,10 @@ define('C_COMPANY_USE_SYNCLO', 'synclo'); // 画面同期
 define('C_COMPANY_USE_CHAT', 'chat'); // オペレーターが待機中の時のみ表示する
 define('C_COMPANY_USE_VIDEO_CHAT', 'videochat'); // ビデオチャット
 
+// 簡易メッセージ入力機能種別
+define('C_DICTIONARY_TYPE_COMP', 1); // 企業で使用する
+define('C_DICTIONARY_TYPE_PERSON', 2); // 個人で使用する
+
 // 表示設定種別
 define('C_WIDGET_DISPLAY_CODE_SHOW', 1); // 常に表示する
 define('C_WIDGET_DISPLAY_CODE_OPER', 2); // オペレーターが待機中の時のみ表示する
@@ -88,6 +92,12 @@ define('C_STATUS_UNAVAILABLE', 1); // 無効
 $config['Authority'] = [
     C_AUTHORITY_ADMIN => "管理者",
     C_AUTHORITY_NORMAL => "一般"
+];
+
+/* ユーザー権限（単体あり：C_AUTHORITY_%） */
+$config['dictionaryType'] = [
+    C_DICTIONARY_TYPE_COMP => "企業",
+    C_DICTIONARY_TYPE_PERSON => "個人"
 ];
 
 /* ウィジェット設定 － 表示設定種別 */

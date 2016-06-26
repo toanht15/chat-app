@@ -92,6 +92,11 @@ else {
             </div>
         <?php endif; ?>
     <?php endif; ?>
+    <?php if ($coreSettings[C_COMPANY_USE_CHAT]): ?>
+        <div class="icon">
+            <?= $this->htmlEx->naviLink('メッセージ', 'dictionary.png', ['href' => ['controller' => 'TDictionaries', 'action' => 'index']]) ?>
+        </div>
+    <?php endif; ?>
     </div>
 </div>
 <!-- /* サイドバー２（ここまで） */ -->

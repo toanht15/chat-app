@@ -95,7 +95,8 @@ var popupEvent = {
                     };
                     break;
                 case 'p-muser-entry':
-                    var entryBtn = _button("登録");
+                case 'p-tdictionary-entry':
+                    var entryBtn = _button("保存");
                     entryBtn.onclick = function(){
                         return popupEvent.closePopup();
                     };

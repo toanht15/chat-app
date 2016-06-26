@@ -4,7 +4,7 @@
  * モニタリング機能
  */
 class CustomersController extends AppController {
-    public $uses = array('THistory', 'THistoryChatLog', 'MUser');
+    public $uses = array('THistory', 'THistoryChatLog', 'MUser', 'TDictionary');
 
     public function beforeRender(){
         $this->set('siteKey', $this->userInfo['MCompany']['company_key']);
@@ -17,6 +17,34 @@ class CustomersController extends AppController {
      * @return void
      * */
     public function index() {
+        $dictionaryList = $this->TDictionary->find('list',
+            [
+                "fields" => [
+                    "TDictionary.id", "TDictionary.word"
+                ],
+                "conditions" => [
+                    'OR' => [
+                      'TDictionary.type' => C_DICTIONARY_TYPE_COMP,
+                      [
+                        'TDictionary.type' => C_DICTIONARY_TYPE_PERSON,
+                        'TDictionary.m_users_id' => $this->userInfo['id']
+                      ]
+                    ],
+                    'TDictionary.m_companies_id' => $this->userInfo['MCompany']['id']
+                ],
+                "recursive" => -1
+            ]
+        );
+
+        $list = [];
+        foreach ( (array)$dictionaryList as $key => $val ) {
+            $list[] = [
+              'id' => $key,
+              'label' => $val
+            ];
+        }
+
+        $this->set('dictionaryList', $list);
         $this->set('responderList', $this->MUser->coFind('list',["fields" => ["MUser.id", "MUser.display_name"], "recursive" => -1]));
     }
 
