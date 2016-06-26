@@ -128,7 +128,58 @@ class HistoriesController extends AppController {
 
         $this->Session->write("histories.joins", $this->paginate['THistory']['joins'][0]['type']);
         $historyList = $this->paginate('THistory');
+
+        // チャット担当者リスト
+        // select * from t_history_chat_logs WHERE  GROUP BY t_histories_id, m_users_id
+        $chat = [];
+        if ( !empty($historyList) ) {
+            $params = [
+                'fields' => [
+                    'THistory.id',
+                    'MUser.user_name'
+                ],
+                'joins' => [
+                    [
+                        'type' => 'INNER',
+                        'table' => '(SELECT * FROM t_history_chat_logs '.
+                                   ' WHERE m_users_id IS NOT NULL '.
+                                   '   AND t_histories_id <= ' . $historyList[0]['THistory']['id'].
+                                   '   AND t_histories_id >= ' . $historyList[count($historyList) - 1]['THistory']['id'].
+                                   ' GROUP BY t_histories_id, m_users_id'.
+                                   ')',
+                        'alias' => 'THistoryChatLog',
+                        'conditions' => [
+                            'THistoryChatLog.t_histories_id = THistory.id'
+                        ]
+                    ],
+                    [
+                        'type' => 'INNER',
+                        'table' => 'm_users',
+                        'alias' => 'MUser',
+                        'conditions' => [
+                            'THistoryChatLog.m_users_id = MUser.id'
+                        ]
+                    ]
+                ],
+                'conditions' => [
+                    'THistory.m_companies_id' => $this->userInfo['MCompany']['id'],
+                    'THistory.del_flg !=' => 1
+                ],
+                'recursive' => -1
+            ];
+            $ret = $this->THistory->find('all', $params);
+            foreach((array)$ret as $val){
+                if ( isset($chat[$val['THistory']['id']]) ) {
+                    $chat[$val['THistory']['id']] .= "\n".$val['MUser']['user_name'];
+                }
+                else {
+                    $chat[$val['THistory']['id']] = $val['MUser']['user_name'];
+                }
+            }
+        }
+        $this->set('userList', $historyList);
         $this->set('historyList', $historyList);
+        $this->set('chatUserList', $chat);
         $this->set('groupByChatChecked', $type);
     }
 

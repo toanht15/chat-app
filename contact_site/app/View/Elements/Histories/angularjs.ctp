@@ -4,7 +4,7 @@
     var sincloApp = angular.module('sincloApp', ['ngSanitize']);
     sincloApp.controller('MainCtrl', function($scope) {
         $scope.ua = function(str){
-            return userAgentChk.init(str);
+            return userAgentChk.pre(str);
         };
 
     <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>

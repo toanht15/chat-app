@@ -252,6 +252,9 @@ a {
 /**
  * 共有
  */
+.pre {
+  white-space: pre-line;
+}
 
 .tLeft {
   text-align: left;
@@ -1273,6 +1276,8 @@ ul.naviBtn {
   #history_list {
     td, th {
       height: 30px!important;
+      line-height: 1.5;
+      padding: 0 3px;
     }
   }
 }

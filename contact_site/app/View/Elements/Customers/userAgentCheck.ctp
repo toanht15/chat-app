@@ -103,6 +103,10 @@ var userAgentChk = (function(){
       init: function(ua){
         ua = ua + ";";
         return _pc_chk(ua) + ", " + _browser_chk(ua);
+      },
+      pre: function(ua){
+        ua = ua + ";";
+        return _pc_chk(ua) + "\n" + _browser_chk(ua);
       }
     };
 
