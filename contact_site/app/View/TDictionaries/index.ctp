@@ -100,6 +100,9 @@
 				</td>
 			</tr>
 		<?php endforeach; ?>
+		<?php if ( count($dictionaryList) === 0 ) :?>
+			<td class="tCenter" colspan="4">簡易入力メッセージが設定されていません</td>
+		<?php endif; ?>
 		</tbody>
 	</table>
 </div>
