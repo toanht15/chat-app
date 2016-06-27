@@ -68,8 +68,8 @@
             <?= $this->Form->textarea('word', array('placeholder' => '入力文字', 'div' => false, 'label' => false, 'maxlength' => 200)) ?>
         </div>
         <div>
-            <label class="require">種類</label>
-            <?= $this->Form->input('type', array('type' => 'select', 'options' => $dictionaryTypeList, 'empty' => '-- 種類を選択してください --', 'div' => false, 'label' => false)) ?>
+            <label class="require">使用範囲</label>
+            <?= $this->Form->input('type', array('type' => 'select', 'options' => $dictionaryTypeList, 'empty' => '-- 使用範囲を選択してください --', 'div' => false, 'label' => false)) ?>
         </div>
     </div>
 <?= $this->Form->end(); ?>

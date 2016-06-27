@@ -26,13 +26,23 @@ switch ($this->name) {
  */
  ?>
 <?php if ( !empty($monitorSelected) && $widgetCheck ) : ?>
-        <li class="fLeft" id="operatorStatus" onclick="chgOpStatus()" data-status="<?=$opStatus?>" >
 <?php
+
 if ( $opStatus ) {
-  echo $this->Html->image('op.png', array('alt' => '待機中', 'width' => 40, 'height' => 40));
+  echo "<li id='operatorStatus' class='opWait'><span>待機中</span>";
 }
 else {
-  echo  $this->Html->image('n_op.png', array('alt' => '退席中', 'width' => 40, 'height' => 40));
+  echo "<li id='operatorStatus' class='opStop'><span>離席中</span>";
+}
+?>
+        </li>
+        <li id="changeOpStatus" onclick="chgOpStatus()" data-status="<?=$opStatus?>">
+<?php
+if ( $opStatus ) {
+  echo "<p>離席中にする</p>";
+}
+else {
+  echo "<p>待機中にする</p>";
 }
 ?>
         </li>
@@ -94,7 +104,7 @@ else {
     <?php endif; ?>
     <?php if ($coreSettings[C_COMPANY_USE_CHAT]): ?>
         <div class="icon">
-            <?= $this->htmlEx->naviLink('メッセージ', 'dictionary.png', ['href' => ['controller' => 'TDictionaries', 'action' => 'index']]) ?>
+            <?= $this->htmlEx->naviLink('簡易入力', 'dictionary.png', ['href' => ['controller' => 'TDictionaries', 'action' => 'index']]) ?>
         </div>
     <?php endif; ?>
     </div>

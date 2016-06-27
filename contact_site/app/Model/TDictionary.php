@@ -26,7 +26,7 @@ class TDictionary extends AppModel {
       'type' => [
             'inList' => [
                   'rule' => ['inList', [C_AUTHORITY_ADMIN, C_AUTHORITY_NORMAL]],
-                  'message' => '種類を選択してください'
+                  'message' => '使用範囲を選択してください'
             ]
       ],
     ];

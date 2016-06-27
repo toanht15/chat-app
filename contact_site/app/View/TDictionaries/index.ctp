@@ -38,7 +38,7 @@
 		<thead>
 			<tr>
 				<th width="5%">No</th>
-				<th width="15%">種類</th>
+				<th width="15%">使用範囲</th>
 				<th width="70%">ワード</th>
 				<th width="10%">操作</th>
 			</tr>
@@ -58,8 +58,8 @@
 			<tr>
 				<td class="tCenter"><?=$no?></td>
 				<td class="tCenter"><?=$dictionaryTypeList[$val['TDictionary']['type']]?></td>
-				<td class="tCenter"><?=$val['TDictionary']['word']?></td>
-				<td class="tCenter">
+				<td class="tLeft pre"><?=$val['TDictionary']['word']?></td>
+				<td class="tCenter ctrlBtnArea">
 					<?php
 						echo $this->Html->link(
 							$this->Html->image(

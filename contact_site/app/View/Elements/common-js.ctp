@@ -9,14 +9,16 @@
       dataType: 'json',
       cache: false,
       success: function(json){
-        var opState = $('#operatorStatus');
+        var opState = $('#changeOpStatus');
         if (json.status == "<?=C_OPERATOR_ACTIVE?>") {
           opState.data('status', <?=C_OPERATOR_ACTIVE?>);
-          opState.children('img').prop('src', '/img/op.png').prop('alt', '在籍中');
+          opState.children('p').text('離席中にする');
+          $('#operatorStatus').prop("class", "opStop").children("span").text('待機中');
         }
         else {
           opState.data('status', <?=C_OPERATOR_PASSIVE?>);
-          opState.children('img').prop('src', '/img/n_op.png').prop('alt', '退席');
+          opState.children('p').text('待機中にする');
+          $('#operatorStatus').prop("class", "opWait").children("span").text('離席中');
         }
       }
     });
