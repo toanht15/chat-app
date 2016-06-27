@@ -199,13 +199,15 @@ class AppController extends Controller {
         Configure::write('debug', 0);
         $this->autoRender = FALSE;
         $this->layout = 'ajax';
-
-        $status = $this->Session->read('widget.operator.status');
-        if ( $status === C_OPERATOR_PASSIVE ) {
-            $status = C_OPERATOR_ACTIVE;
+        $status = C_OPERATOR_PASSIVE;
+        if ( $this->Session->check('widget.operator.status') ) {
+          $status = $this->Session->read('widget.operator.status');
+        }
+        if ( $status == C_OPERATOR_ACTIVE ) {
+            $status = C_OPERATOR_PASSIVE;
         }
         else {
-            $status = C_OPERATOR_PASSIVE;
+            $status = C_OPERATOR_ACTIVE;
         }
         $this->Session->write('widget.operator.status', $status);
 		return new CakeResponse(array('body' => json_encode(['status' => $status])));

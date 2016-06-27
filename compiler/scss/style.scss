@@ -634,29 +634,29 @@ ul#color-bar-left {
     float: left;
 
     @keyframes greenFlash {
-        to {
+        0% {
             text-shadow: 0 0 -1px #00efff;
         }
-        from {
+        50% {
             text-shadow: 0 0 10px #00efff;
         }
     }
 
     @keyframes redFlash {
-        to {
+        0% {
             text-shadow: 0 0 -1px #ff0000;
         }
-        from {
+        50% {
             text-shadow: 0 0 10px #ff0000;
         }
     }
 
     &#operatorStatus {
         &.opWait span:before {
-            animation: greenFlash 3s linear infinite;
+            animation: greenFlash 2s linear infinite;
         }
         &.opStop span:before {
-            animation: redFlash 3s linear infinite;
+            animation: redFlash 2s linear infinite;
         }
         span{
               padding: 10px 15px 10px 20px;
@@ -2062,6 +2062,11 @@ ul.naviBtn {
   #tdictionaries_menu {
       .greenBtn {
           border-radius: 15px;
+      }
+  }
+  #tdictionaries_list {
+      .ctrlBtnArea {
+          padding: 0 25px;
       }
   }
 }

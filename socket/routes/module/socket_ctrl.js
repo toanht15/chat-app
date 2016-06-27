@@ -22,7 +22,12 @@ var io = require('socket.io')(9090),
     sincloCore = {}, // socketIDの管理
     connectList = {}, // socketIDをキーとした管理
     c_connectList = {}, // socketIDをキーとしたチャット管理
-    vc_connectList = {}; // tabId: socketID
+    vc_connectList = {}, // tabId: socketID
+    company = {
+        info : {}, // siteKeyをキーとした企業側ユーザー人数管理
+        user : {}, // socket.idをキーとした企業側ユーザー管理
+        timeout : {} // userIdをキーとした企業側ユーザー管理
+    };
 
 // ユーザーIDの新規作成
 function makeUserId(){
@@ -379,7 +384,6 @@ io.sockets.on('connection', function (socket) {
         siteKey = "",
         data = res.data;
         send = data;
-
     if ( res.type !== 'admin' ) {
       if ( data.userId === undefined || data.userId === '' || data.userId === null ) {
         send.userId = makeUserId();
@@ -412,7 +416,47 @@ io.sockets.on('connection', function (socket) {
 
       if ( res.type === 'admin' ) {
         socket.join(res.siteKey + emit.roomKey.company);
+        if ( 'userId' in data ) {
+            company.user[socket.id] = {
+                userId: data.userId,
+                siteKey: res.siteKey
+            };
+            if ( !(res.siteKey in activeOperator) ) {
+                activeOperator[res.siteKey] = {};
+            }
+            if ( !(res.siteKey in company.info) ) {
+                company.info[res.siteKey] = {};
+                company.timeout[res.siteKey] = {};
+            }
+            if ( !(data.userId in company.info[res.siteKey]) ) {
+                company.info[res.siteKey][data.userId] = {};
+            }
+            if ( data.userId in company.timeout[res.siteKey] ) {
+                clearTimeout(company.timeout[res.siteKey][data.userId]);
+            }
+
+            company.info[res.siteKey][data.userId][socket.id] = null;
+            var cnt = Object.keys(company.info[res.siteKey]);
+
+            if ( ('status' in data) && String(data.status) === '1' ) {
+              activeOperator[res.siteKey][data.userId] = data.status;
+            }
+            else {
+              data.status =  0;
+            }
+
+            var opKeys = [];
+            if ( res.siteKey in activeOperator ) {
+              opKeys = Object.keys(activeOperator[res.siteKey]);
+            }
+
+            data.userCnt = cnt.length;
+            data.onlineUserCnt = opKeys.length;
+        }
+        // 消費者にアクセス情報要求
         emit.toClient('getAccessInfo', send, res.siteKey);
+        // 企業側に情報提供
+        emit.toCompany('getAccessInfo', data, res.siteKey);
       }
       else {
         var cnt = 0;
@@ -672,9 +716,12 @@ io.sockets.on('connection', function (socket) {
         delete activeOperator[obj.siteKey][obj.userId];
       }
     }
+
     var keys = Object.keys(activeOperator[obj.siteKey]);
     emit.toCompany('activeOpCnt', {
       siteKey: obj.siteKey,
+      userId: obj.userId,
+      active: obj.active,
       count: keys.length
     }, obj.siteKey);
   })
@@ -839,7 +886,6 @@ io.sockets.on('connection', function (socket) {
 
   socket.on('videochatConfirmOK', function (data) {
     var obj = JSON.parse(data);
-    console.log(data);
     //obj.connectToken = sincloCore[obj.siteKey][obj.tabId].vc_connectToken;
     emit.toUser('videochatConfirmOK', JSON.stringify(obj), getSessionId(obj.siteKey, obj.tabId, 'vc_syncHostSessionId'));
   });
@@ -863,7 +909,6 @@ io.sockets.on('connection', function (socket) {
   });
 
   socket.on('sendMessage', function(d){
-    console.log('sendMessage : ' + d);
     var obj = JSON.parse(d);
     var host = (obj.host !== "true") ? "host" : "guest";
     emit.toUser('receiveMessage', d, vc_connectList[obj.fromto.to]);
@@ -916,6 +961,43 @@ io.sockets.on('connection', function (socket) {
 
   // ユーザーのアウトを感知
   socket.on('disconnect', function () {
+    // リアルタイムモニタからのアクセスの場合
+    if ( socket.id in company.user ) {
+      // ユーザーの情報を削除
+      var userInfo = company.user[socket.id];
+      delete company.user[socket.id];
+
+      // socket.id情報を削除
+      delete company.info[userInfo.siteKey][userInfo.userId][socket.id];
+
+      if ( !(userInfo.userId in company.timeout[userInfo.siteKey]) ) {
+        company.timeout[userInfo.siteKey][userInfo.userId] = "";
+      }
+
+      company.timeout[userInfo.siteKey][userInfo.userId] = setTimeout(function(){
+        // 同一ユーザーが完全にログアウトした場合はユーザーのオブジェクトごと削除
+        var keys = Object.keys(company.info[userInfo.siteKey][userInfo.userId]);
+        if ( keys.length === 0 ) {
+          delete company.info[userInfo.siteKey][userInfo.userId];
+
+          // 新しいユーザーの人数を送る
+          var cnt = Object.keys(company.info[userInfo.siteKey]);
+          emit.toCompany('outCompanyUser', {siteKey: userInfo.siteKey, userCnt: cnt.length}, userInfo.siteKey);
+
+          // 受付中オペレータの情報削除
+          if ( (userInfo.siteKey in activeOperator) && (userInfo.userId in activeOperator[userInfo.siteKey]) ) {
+            delete activeOperator[userInfo.siteKey][userInfo.userId];
+          }
+          var opKeys = [];
+          if ( userInfo.siteKey in activeOperator ) {
+            opKeys = Object.keys(activeOperator[userInfo.siteKey]);
+          }
+          emit.toCompany('activeOpCnt', {siteKey: userInfo.siteKey,count: opKeys.length}, userInfo.siteKey);
+
+        }
+      }, 5000);
+      return false;
+    }
     // タグ入りページからのアクセスの場合
     if ( !(socket.id in connectList) ) return false;
     var info = connectList[socket.id];

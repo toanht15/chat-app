@@ -273,6 +273,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     $scope.searchText = "";
     $scope.chatMessage = "";
     $scope.oprCnt = 0; // 待機中のオペレーター人数
+    $scope.oprWaitCnt = 0; // 総オペレーター人数
     $scope.labelHideList = {
       accessId : false,
       ipAddress : false,
@@ -550,6 +551,27 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       }
     }
 
+    socket.on('getAccessInfo', function (data) {
+      var obj = JSON.parse(data);
+<?php if($widgetCheck): ?>
+      if ( Number(obj.userId) === Number(myUserId) ) {
+        if ( String(obj.status) == "<?=C_OPERATOR_ACTIVE?>") {
+          chgOpStatusView("<?=C_OPERATOR_ACTIVE?>");
+        }
+        else {
+          chgOpStatusView("<?=C_OPERATOR_PASSIVE?>");
+        }
+      }
+      $scope.oprCnt = obj.onlineUserCnt;
+<?php endif; ?>
+      $scope.oprWaitCnt = obj.userCnt;
+    });
+
+    socket.on('outCompanyUser', function (data) {
+      var obj = JSON.parse(data);
+      $scope.oprWaitCnt = obj.userCnt;
+    });
+
     socket.on('receiveAccessInfo', function (data) {
       var obj = JSON.parse(data);
       if ( receiveAccessInfoToken !== obj.receiveAccessInfoToken ) return false;
@@ -652,6 +674,14 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     socket.on('activeOpCnt', function(data){
       var obj = JSON.parse(data);
       $scope.oprCnt = obj.count;
+      if ( obj.userId === myUserId ) {
+        if ( obj.active ) {
+          chgOpStatusView("<?=C_OPERATOR_ACTIVE?>");
+        }
+        else {
+          chgOpStatusView("<?=C_OPERATOR_PASSIVE?>");
+        }
+      }
     });
 
     socket.on('unsetUser', function(data){

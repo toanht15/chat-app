@@ -45,32 +45,32 @@ var _access_type_guest = 1, _access_type_host = 2, userAgentChk, notificationSta
   };
 
   // TODO ここをもとに、顧客側の存在確認コードも変える
-  var sendRegularlyRequest = {
-    time: 1500,
-    id: null,
-    ev: function(){
-      window.clearTimeout(this.id);
-      this.id = window.setTimeout(function(){
-        var opState = $('#operatorStatus');
-
-        if ( opState.data('status') === <?=C_OPERATOR_ACTIVE?> ) {
-          emit('sendOperatorStatus', {userId: myUserId, active: true});
-        }
-        else {
-          emit('sendOperatorStatus', {userId: myUserId, active: false});
-        }
-        sendRegularlyRequest.ev();
-      }, sendRegularlyRequest.time);
-
-    },
-    start: function(){
-      sendRegularlyRequest.ev();
-    },
-    end: function(){
-      window.clearInterval(this.id);
+  window.sendRegularlyRequest = function(status){
+    if ( status === undefined ) {
+      var opState = $('#changeOpStatus');
+      var status = opState.data('status');
+    }
+    if ( status == <?=C_OPERATOR_ACTIVE?> ) {
+      emit('sendOperatorStatus', {userId: myUserId, active: true});
+    }
+    else {
       emit('sendOperatorStatus', {userId: myUserId, active: false});
     }
   };
+
+    window.chgOpStatusView = function(status){
+      var opState = $('#changeOpStatus');
+      if (status == "<?=C_OPERATOR_ACTIVE?>") {
+        opState.data('status', <?=C_OPERATOR_ACTIVE?>);
+        opState.children('p').text('離席中にする');
+        $('#operatorStatus').prop("class", "opWait").children("span").text('待機中');
+      }
+      else {
+        opState.data('status', <?=C_OPERATOR_PASSIVE?>);
+        opState.children('p').text('待機中にする');
+        $('#operatorStatus').prop("class", "opStop").children("span").text('離席中');
+      }
+    };
 
   // http://qiita.com/kidatti/items/10a6a033ed0b84619d81
   // デスクトップ通知が利用できる場合
@@ -97,17 +97,19 @@ var _access_type_guest = 1, _access_type_host = 2, userAgentChk, notificationSta
     }
   }
 
-  $(window).bind('beforeunload', function(){
-<?php if ( $widgetCheck ): ?>
-    sendRegularlyRequest.end();
-<?php endif; ?>
-  });
   socket.on("connect", function() {
     receiveAccessInfoToken = makeToken();
-<?php if ( $widgetCheck ): ?>
-    sendRegularlyRequest.start();
+    var data = {
+        type: 'admin',
+        data: {
+            token: receiveAccessInfoToken,
+            userId: '<?=$muserId?>'
+        }
+    };
+<?php if ($widgetCheck): ?>
+    data.data['status'] = '<?=$opStatus?>';
+
 <?php endif; ?>
-    var data = {type: 'admin', data: {token: receiveAccessInfoToken}};
     emit('connected', data);
   });
 

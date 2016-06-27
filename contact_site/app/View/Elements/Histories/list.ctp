@@ -17,7 +17,7 @@
             <td class="tRight pre"><?=date_format(date_create($history['THistory']['access_date']), "Y/m/d\nH:i:s")?></td>
             <td class="tLeft"><?=h($history['THistory']['ip_address'])?></td>
             <td class="tLeft pre">{{ ua('<?=h($history['THistory']['user_agent'])?>') }}</td>
-            <td class="tLeft omit"><span><?=h($history['THistory']['referrer_url'])?></span></td>
+            <td class="tLeft omit"><a href="<?=h($history['THistory']['referrer_url'])?>"><?=h($history['THistory']['referrer_url'])?></a></td>
             <td class="tCenter">
                 <?php if( is_numeric($history['THistoryStayLog']['count']) ): ?>
                     <a class="underL" href="javascript:void(0)" onclick="openHistoryById('<?=h($history['THistory']['id'])?>')" ><?=h($history['THistoryStayLog']['count'])?></a>
