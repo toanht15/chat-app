@@ -810,6 +810,9 @@ ul#color-bar-right {
   p {
     margin: 0;
   }
+  > div {
+    margin-right: 10px;
+  }
   &[id$=_menu] {
     height: 50px;
     #paging {

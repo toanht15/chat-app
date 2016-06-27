@@ -79,14 +79,14 @@ else {
 <div id="sidebar-sub" class="card-shadow">
     <div>
         <div class="icon">
-            <?= $this->htmlEx->naviLink('個人設定', 'monitor.png', ['href' => ['controller' => 'PersonalSettings', 'action' => 'index']]) ?>
+            <?= $this->htmlEx->naviLink('個人設定', 'personal.png', ['href' => ['controller' => 'PersonalSettings', 'action' => 'index']]) ?>
         </div>
     <?php if (strcmp($userInfo['permission_level'], C_AUTHORITY_ADMIN) === 0): ?>
         <div class="icon" style="display:none">
             <?= $this->htmlEx->naviLink('企業設定', 'company.png', ['href' => ['controller' => 'Customers', 'action' => 'index']]) ?>
         </div>
         <div class="icon">
-            <?= $this->htmlEx->naviLink('ユーザーマスタ', 'monitors.png', ['href' => ['controller' => 'MUsers', 'action' => 'index']]) ?>
+            <?= $this->htmlEx->naviLink('ユーザーマスタ', 'users.png', ['href' => ['controller' => 'MUsers', 'action' => 'index']]) ?>
         </div>
     <?php endif; ?>
         <div class="icon">
@@ -94,7 +94,7 @@ else {
         </div>
     <?php if (strcmp($userInfo['permission_level'], C_AUTHORITY_ADMIN) === 0): ?>
         <div class="icon">
-            <?= $this->htmlEx->naviLink('ウィジェット', 'chat.png', ['href' => ['controller' => 'MWidgetSettings', 'action' => 'index']]) ?>
+            <?= $this->htmlEx->naviLink('ウィジェット', 'widget.png', ['href' => ['controller' => 'MWidgetSettings', 'action' => 'index']]) ?>
         </div>
         <?php if ($coreSettings[C_COMPANY_USE_CHAT]): ?>
             <div class="icon">

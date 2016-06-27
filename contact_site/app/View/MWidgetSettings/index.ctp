@@ -2,7 +2,7 @@
 <div id='m_widget_setting_idx' class="card-shadow">
 
   <div id='m_widget_setting_title'>
-    <div class="fLeft"><?= $this->Html->image('chat_g.png', array('alt' => 'ウィジェット設定', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?></div>
+    <div class="fLeft"><?= $this->Html->image('widget_g.png', array('alt' => 'ウィジェット設定', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?></div>
     <h1>ウィジェット設定</h1>
   </div>
 
