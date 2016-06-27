@@ -698,7 +698,7 @@
                 unreadIcon.parentNode.removeChild(unreadIcon);
             }
             if ( Number(sinclo.chatApi.unread) > 0 ) {
-                if ($("[data-tab='chat']").is(".selected") && String(flg) === "true") {
+                if ($("#chatTab").css("display") !== "none" && String(flg) === "true") {
                     emit("isReadFromCustomer", {});
                     sinclo.chatApi.unread = 0;
                     return false;
