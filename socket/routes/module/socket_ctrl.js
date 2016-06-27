@@ -298,7 +298,7 @@ io.sockets.on('connection', function (socket) {
               var messages = ( isset(rows) ) ? rows : [];
               var setList = {};
               if ((obj.siteKey in c_connectList) && (obj.tabId in c_connectList[obj.siteKey])) {
-                setList = c_connectList[obj.siteKey][obj.tabId];
+                setList = JSON.parse(JSON.stringify(c_connectList[obj.siteKey][obj.tabId]));
               }
               for (var i = 0; i < messages.length; i++) {
                 var date = Date.parse(messages[i].created);
