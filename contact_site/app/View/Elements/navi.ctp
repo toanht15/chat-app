@@ -18,36 +18,6 @@ switch ($this->name) {
 ?>
 <!-- /* 上部カラーバー(ここから) */ -->
 <div id="color-bar" class="card-shadow">
-    <ul id="color-bar-left" class="fLeft">
-<?php
-/*
- * リアルタイムモニタ画面にて、ウィジェットの表示方法を「オペレーターが待機中の時のみ表示する」に
- * している場合にのみ表示します。
- */
- ?>
-<?php if ( !empty($monitorSelected) && $widgetCheck ) : ?>
-<?php
-
-if ( $opStatus ) {
-  echo "<li id='operatorStatus' class='opWait'><span>待機中</span>";
-}
-else {
-  echo "<li id='operatorStatus' class='opStop'><span>離席中</span>";
-}
-?>
-        </li>
-        <li id="changeOpStatus" onclick="chgOpStatus()" data-status="<?=$opStatus?>">
-<?php
-if ( $opStatus ) {
-  echo "<p>離席中にする</p>";
-}
-else {
-  echo "<p>待機中にする</p>";
-}
-?>
-        </li>
-<?php endif; ?>
-    </ul>
     <ul id="color-bar-right" class="fRight">
         <li class="fLeft"><p><?= h($userInfo['user_name']) ?></p></li>
         <li class="fRight" id="logout" onclick='location.href = "/Login/logout"'><p>ログアウト</p></li>

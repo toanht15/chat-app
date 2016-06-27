@@ -10,31 +10,62 @@
     </h1>
 </div>
 <!-- タイトル -->
-<div id='customer_menu' class="p20tl">
-    <!-- 検索窓 -->
-    <div class="form01 fLeft">
-        <?php if ($coreSettings[C_COMPANY_USE_SYNCLO]) : ?>
-            <span>
-                <?= $this->Html->image('search_g.png', array('alt' => 'アクセスID', 'width'=>20, 'height'=>20, 'class'=>'fLeft')); ?>
-            </span>
-            <?= $this->Form->input('searchText', array('type'=>'text', 'label' => false, 'ng-model' => 'searchText', 'placeholder' => 'アクセスID')); ?>
-        <?php endif; ?>
+<div id='customer_menu'>
+	<div>
+		<!-- 検索窓 -->
+		<div class="form01 fLeft">
+		    <?php if ($coreSettings[C_COMPANY_USE_SYNCLO]) : ?>
+		        <span>
+		            <?= $this->Html->image('search_g.png', array('alt' => 'アクセスID', 'width'=>20, 'height'=>20, 'class'=>'fLeft')); ?>
+		        </span>
+		        <?= $this->Form->input('searchText', array('type'=>'text', 'label' => false, 'ng-model' => 'searchText', 'placeholder' => 'アクセスID')); ?>
+		    <?php endif; ?>
+		</div>
+		<!-- 検索窓 -->
+		<!-- 機能 -->
+		<div class="w50 fRight tRight p20r">
+		    <?= $this->Html->link(
+		            $this->Html->image('menu.png', array('alt' => 'メニュー', 'width'=>20, 'height'=>20)),
+		            'javascript:void(0)',
+		            array('escape' => false, 'ng-click'=>'openSetting()', 'class'=>'btn-shadow greenBtn')); ?>
+		</div>
+		<!-- 機能 -->
+	</div>
+	<div>
+		<ul id="color-bar-left" class="fLeft">
+		<?php
+		/*
+		 * リアルタイムモニタ画面にて、ウィジェットの表示方法を「オペレーターが待機中の時のみ表示する」に
+		 * している場合にのみ表示します。
+		 */
+		 ?>
+		<?php if ( $widgetCheck ) : ?>
+		<?php
 
-    </div>
-    <!-- 検索窓 -->
-    <!-- 機能 -->
-    <div class="w50 fRight tRight p20r">
-        <?= $this->Html->link(
-                $this->Html->image('menu.png', array('alt' => 'メニュー', 'width'=>20, 'height'=>20)),
-                'javascript:void(0)',
-                array('escape' => false, 'ng-click'=>'openSetting()', 'class'=>'btn-shadow greenBtn')); ?>
-    </div>
-    <!-- 機能 -->
+		if ( $opStatus ) {
+		  echo "<li id='operatorStatus' class='opWait'>待機中";
+		}
+		else {
+		  echo "<li id='operatorStatus' class='opStop'>離席中";
+		}
+		?>
+		        </li>
+		<?php
+		if ( $opStatus ) {
+		  echo "<li id='changeOpStatus' onclick='chgOpStatus()' data-status='<?=$opStatus?>' class='redBtn btn-shadow'>離席中にする</li>";
+		}
+		else {
+		  echo "<li id='changeOpStatus' onclick='chgOpStatus()' data-status='<?=$opStatus?>' class='blueBtn btn-shadow'>待機中にする</li>";
+		}
+		?>
+		<?php endif; ?>
+		    </ul>
+		<p class="tRight" ng-cloak>現在 <b>{{objCnt(monitorList)}}</b>名がサイト訪問中</p>
+	</div>
 </div>
 
 <!-- リスト -->
 <div id='customer_list' class="p20x">
-	<p class="tRight" ng-cloak>現在 <b>{{objCnt(monitorList)}}</b>名がサイト訪問中</p>
 
 	<table>
 		<thead>

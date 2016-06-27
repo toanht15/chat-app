@@ -623,73 +623,6 @@ div[id^="sidebar-"] .icon {
 }
 
 /* ヘッダー：上部カラーバー */
-
-ul#color-bar-left {
-  margin: 0 0 0 60px;
-  padding: 0;
-
-  li {
-    height: 60px !important;
-    padding: 10px;
-    float: left;
-
-    @keyframes greenFlash {
-        0% {
-            text-shadow: 0 0 -1px #00efff;
-        }
-        50% {
-            text-shadow: 0 0 10px #00efff;
-        }
-    }
-
-    @keyframes redFlash {
-        0% {
-            text-shadow: 0 0 -1px #ff0000;
-        }
-        50% {
-            text-shadow: 0 0 10px #ff0000;
-        }
-    }
-
-    &#operatorStatus {
-        &.opWait span:before {
-            animation: greenFlash 2s linear infinite;
-        }
-        &.opStop span:before {
-            animation: redFlash 2s linear infinite;
-        }
-        span{
-              padding: 10px 15px 10px 20px;
-              display: block;
-              text-decoration: none;
-              color: #FFF;
-
-              &:before {
-                content: "●";
-                display: inline;
-                color: #FFF;
-                font-size: 15px;
-                margin-right: 5px;
-              }
-
-        }
-    }
-
-    &#changeOpStatus {
-      &:hover {
-        background-color: $header-btn-hover-color;
-        box-shadow: 0 0 3px $shadow-color;
-      }
-
-      p {
-          color: #FFF;
-          font-size: 13px;
-      }
-
-    }
-  }
-}
-
 ul#color-bar-right {
   margin: 0;
   li {
@@ -867,6 +800,86 @@ ul.naviBtn {
 
 #customer_idx {
   min-width: 1400px!important;
+
+  #customer_menu {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+
+    > div {
+      padding: 20px 20px 0 20px;
+    }
+
+    ul {
+      margin: 0;
+      padding: 0;
+
+      li {
+        padding: 10px;
+        float: left;
+        width: 8em;
+        text-align: center;
+
+        $wait-color: #9BD6D1;
+        $stop-color: #ff7575;
+
+        @keyframes greenFlash {
+            0% {
+                text-shadow: 0 0 -1px $wait-color;
+            }
+            50% {
+                text-shadow: 0 0 10px $wait-color;
+            }
+        }
+
+        @keyframes redFlash {
+            0% {
+                text-shadow: 0 0 -1px $stop-color;
+            }
+            50% {
+                text-shadow: 0 0 10px $stop-color;
+            }
+        }
+
+        &#operatorStatus {
+            color: $wait-color;
+            font-size: 15px;
+            &.opWait {
+                color: $wait-color;
+            }
+            &.opStop {
+                color: $stop-color;
+            }
+
+            &.opWait:before {
+                animation: greenFlash 2s linear infinite;
+            }
+            &.opStop:before {
+                animation: redFlash 2s linear infinite;
+            }
+            &:before {
+              content: "●";
+              display: inline;
+              font-size: 15px;
+              margin-right: 5px;
+            }
+        }
+
+        &#changeOpStatus {
+            border-radius: 10px;
+            padding: 5px 10px;
+            cursor: pointer;
+            margin: 5px 0;
+
+            &.blueBtn {
+                background-color: $wait-color!important;
+                border-color: $wait-color!important;
+            }
+        }
+      }
+    }
+
+  }
 
   #customer_main {
     width: 100%;
