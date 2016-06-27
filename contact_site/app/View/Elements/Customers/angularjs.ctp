@@ -103,7 +103,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           li.innerHTML = "－　" + val + "　－";
           scDown(); // チャット画面のスクロール
       },
-      createMessage: function(cs, val){
+      createMessage: function(cs, val, opt){
         var chatTalk = document.getElementById('chatTalk');
         var li = document.createElement('li');
         var strings = val.split('\n');
@@ -112,6 +112,12 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         var radioName = "sinclo-radio" + chatTalk.children.length;
 
         var content = "";
+        if ( cs === "sinclo_se" && (opt !== undefined && ('userId' in opt))) {
+            content = "<span class='cName'>" + userList[Number(opt.userId)] + "さん</span>";
+        }
+        if ( cs === "sinclo_auto") {
+            content = "<span class='cName'>自動応答</span>";
+        }
         for (var i = 0; strings.length > i; i++) {
             var str = strings[i];
             // ラジオボタン
@@ -590,7 +596,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             tabId: obj.tabId
           });
           for (var key in obj.messages) {
-              chatApi.createMessage("sinclo_se", obj.messages[key].chatMessage);
+              chatApi.createMessage("sinclo_auto", obj.messages[key].chatMessage);
           }
         }
 
@@ -763,8 +769,14 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             }
         }
         else {
-            var cn = (chat.messageType === chatApi.messageType.customer) ? "sinclo_re" : "sinclo_se";
-            chatApi.createMessage(cn, chat.message);
+            var cn = "sinclo_auto";
+            if (chat.messageType === chatApi.messageType.customer) {
+              cn = "sinclo_re";
+            }
+            else if (chat.messageType === chatApi.messageType.company) {
+              cn = "sinclo_se";
+            }
+            chatApi.createMessage(cn, chat.message, chat);
         }
         $('#chatTalk').prop({scrollTop: chatTalk.scrollHeight - chatTalk.clientHeight});
       }
@@ -779,7 +791,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           elm = document.getElementById('sendMessage'), cn;
 
       if ( !(obj.tabId in $scope.monitorList) ) return false;
-
       if ( obj.ret ) {
         if (obj.messageType === chatApi.messageType.customer) {
           cn = "sinclo_re";
@@ -790,7 +801,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         }
         // 対象のタブを開いている場合
         if ( obj.tabId === chatApi.tabId ){
-          chatApi.createMessage(cn, obj.chatMessage);
+          chatApi.createMessage(cn, obj.chatMessage, obj);
           scDown(); // チャットのスクロール
         }
 
@@ -933,9 +944,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     // ワードリスト（内部プルダウン）
     $("#entryWordList").on('keydown', function(e){
       if ( e.keyCode === 13 ) { // Enter
-        if ( e.target.selectedIndex in $scope.entryWordList
-          && 'label' in $scope.entryWordList[e.target.selectedIndex] ) {
-          entryWordApi.push($scope.entryWordList[e.target.selectedIndex].label);
+        var list = angular.copy($scope.entryWordSearch($scope.entryWordList));
+        if ( e.target.selectedIndex in list
+          && 'label' in list[e.target.selectedIndex] ) {
+          entryWordApi.push(list[e.target.selectedIndex].label);
         }
         entryWordApi.prev();
         return false;

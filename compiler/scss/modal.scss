@@ -286,15 +286,20 @@
                 margin: 0 20px 10px 55px;
                 border-bottom-right-radius: 0;
                 background-color: #FFF;
-                p { display: block; }
+                span {
+                  display: block;
+                  font-weight: bold;
+                  font-size: 13px;
+                  margin: 0 0 5px 0;
+                }
               }
               &.sinclo_se {
-                p {
+                span {
                   color: #c3d69b;
                 }
               }
               &.sinclo_auto {
-                p {
+                span {
                   color: #C9C9C9;
                 }
               }

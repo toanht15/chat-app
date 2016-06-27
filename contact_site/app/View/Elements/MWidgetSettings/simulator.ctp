@@ -23,6 +23,7 @@
 		#sincloBox ul#chatTalk li { border-radius: 5px; background-color: #FFF; margin: 5px 0; padding: 5px; font-size: 12px; border: 1px solid #C9C9C9; line-height: 1.8; white-space: pre; color: #5E614E; }
 		#sincloBox ul#chatTalk li.chat_right { border-bottom-right-radius: 0; margin-left: 10px }
 		#sincloBox ul#chatTalk li.chat_left { border-bottom-left-radius: 0; margin-right: 10px }
+		#sincloBox ul#chatTalk li.chat_right span.cName { display: block; color: {{main_color}}!important; font-weight: bold; font-size: 13px }
 		#sincloBox section#chatTab textarea { padding: 5px; resize: none; width: 100%; height: 50px; border: 1px solid #E4E4E4; border-radius: 5px; color: #8A8A8A; }
 	<?php endif; ?>
 	<?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
@@ -88,8 +89,8 @@
 		<section id="chatTab" ng-hide="widget.showTab !== 'chat'">
 			<ul id="chatTalk">
 			<li class="sinclo_se" ng-class="{chat_right: show_position == 2, chat_left: show_position == 1 }">○○について質問したいのですが</li>
-			<li class="sinclo_re" ng-class="{chat_right: show_position == 1, chat_left: show_position == 2 }" style="background-color:{{makeFaintColor()}}">こんにちは</li>
-			<li class="sinclo_re" ng-class="{chat_right: show_position == 1, chat_left: show_position == 2 }" style="background-color:{{makeFaintColor()}}">○○についてですね<br>どのようなご質問でしょうか？</li>
+			<li class="sinclo_re" ng-class="{chat_right: show_position == 1, chat_left: show_position == 2 }" style="background-color:{{makeFaintColor()}}"><span class="cName">{{sub_title}}</span>こんにちは</li>
+			<li class="sinclo_re" ng-class="{chat_right: show_position == 1, chat_left: show_position == 2 }" style="background-color:{{makeFaintColor()}}"><span class="cName">{{sub_title}}</span>○○についてですね<br>どのようなご質問でしょうか？</li>
 			</ul>
 			<div style="border-top: 1px solid #E8E7E0; padding: 10px;">
 			<textarea name="sincloChat" id="sincloChatMessage" placeholder="メッセージ入力後、Enterで送信"></textarea>

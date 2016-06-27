@@ -25,8 +25,10 @@
           }
           height += $("#sincloBox > #fotter").outerHeight(true);
           sincloBox.setAttribute('data-openflg', true);
-          sinclo.chatApi.showUnreadCnt();
-          sinclo.chatApi.scDown();
+          if ( window.info.contract.chat ) {
+            sinclo.chatApi.showUnreadCnt();
+            sinclo.chatApi.scDown();
+          }
         }
         else {
           height = this.header.offsetHeight;
@@ -625,6 +627,9 @@
             var radioName = "sinclo-radio" + chatTalk.children.length;
             var content = "";
 
+            if ( cs === "sinclo_re" ) {
+              content = "<span class='cName'>" + window.info.widget.subTitle + "</span>";
+            }
             for (var i = 0; strings.length > i; i++) {
                 var str = strings[i];
 

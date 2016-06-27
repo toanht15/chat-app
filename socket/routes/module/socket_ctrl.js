@@ -294,7 +294,7 @@ io.sockets.on('connection', function (socket) {
         var historyId = getSessionId(obj.siteKey, obj.tabId, 'historyId');
         if ( historyId ) {
             chatData.historyId = historyId;
-            pool.query('SELECT id, message, message_type as messageType, message_read_flg as messageReadFlg, created FROM t_history_chat_logs WHERE t_histories_id = ? ORDER BY created;', [chatData.historyId], function(err, rows){
+            pool.query('SELECT id, message, message_type as messageType, m_users_id as userId,  message_read_flg as messageReadFlg, created FROM t_history_chat_logs WHERE t_histories_id = ? ORDER BY created;', [chatData.historyId], function(err, rows){
               var messages = ( isset(rows) ) ? rows : [];
               var setList = {};
               if ((obj.siteKey in c_connectList) && (obj.tabId in c_connectList[obj.siteKey])) {
@@ -343,7 +343,7 @@ io.sockets.on('connection', function (socket) {
               emit.toUser('sendChatResult', {tabId: d.tabId, chatId: results.insertId, messageType: d.messageType, ret: true, chatMessage: d.chatMessage, siteKey: d.siteKey}, sId);
               if (Number(insertData['message_type']) === 3) return false;
               // 書き込みが成功したら企業側に結果を返す
-              emit.toCompany('sendChatResult', {tabId: d.tabId, chatId: results.insertId, messageType: d.messageType, ret: true, chatMessage: d.chatMessage, siteKey: d.siteKey}, d.siteKey);
+              emit.toCompany('sendChatResult', {tabId: d.tabId, chatId: results.insertId, userId: insertData.m_users_id, messageType: d.messageType, ret: true, chatMessage: d.chatMessage, siteKey: d.siteKey}, d.siteKey);
             }
             else {
               // 書き込みが失敗したらエラーを渡す

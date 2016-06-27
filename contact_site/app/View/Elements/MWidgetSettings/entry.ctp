@@ -87,28 +87,37 @@
 				<?php if ($this->Form->isFieldError('title')) echo $this->Form->error('title', null, ['wrap' => 'li']); ?>
 				<!-- ウィジェットタイトル -->
 
-				<!-- サブタイトル -->
+				<!-- 企業名 -->
 				<li>
-					<span class='require'><label>サブタイトル</label></span>
-					<?php $subTitle = $this->ngForm->input('sub_title', [
-						'type' => 'text',
-						'placeholder' => 'サブタイトル',
-						'ng-disabled' => 'subTitleToggle == "2"',
-						'div' => false,
-						'style' => 'margin:10px 0 10px 20px;',
-						'label' => false,
-						'maxlength' => 15,
-						'error' => false
-					],[
+					<span class='require'><label>企業名</label></span>
+
+					<?php
+					$subTitleOpt = [
+							'type' => 'text',
+							'placeholder' => '企業名',
+							'div' => false,
+							'style' => 'margin:10px 0 10px 20px;',
+							'label' => false,
+							'class' => 'showChat',
+							'required' => false,
+							'maxlength' => 15,
+							'error' => false
+					];
+					if($coreSettings[C_COMPANY_USE_SYNCLO]) {
+						$subTitleOpt['ng-disabled'] = 'subTitleToggle == "2"';
+					}
+					$subTitle = $this->ngForm->input('sub_title', $subTitleOpt, [
 						'entity' => 'MWidgetSetting.sub_title'
-					]) ?>
+					]);
+					?>
 					<div ng-init="subTitleToggle='<?=$this->formEx->val($this->data['MWidgetSetting'], 'show_subtitle')?>'">
-						<label for="showSubtitle1"><input type="radio" name="data[MWidgetSetting][show_subtitle]" ng-model="subTitleToggle" id="showSubtitle1" value="1" >サブタイトルを表示する</label><br><?=$subTitle?><br>
-						<label for="showSubtitle2"><input type="radio" name="data[MWidgetSetting][show_subtitle]" ng-model="subTitleToggle" id="showSubtitle2" value="2" >サブタイトルを表示しない</label>
+						<label for="showSubtitle1"><input type="radio" name="data[MWidgetSetting][show_subtitle]" ng-model="subTitleToggle" id="showSubtitle1" value="1" >企業名を表示する</label><br>
+						<label for="showSubtitle2"><input type="radio" name="data[MWidgetSetting][show_subtitle]" ng-model="subTitleToggle" id="showSubtitle2" value="2" >企業名を表示しない</label><br>
+						<?=$subTitle?>
 					</div>
 				</li>
 				<?php if ($this->Form->isFieldError('sub_title')) echo $this->Form->error('sub_title', null, ['wrap' => 'li']); ?>
-				<!-- サブタイトル -->
+				<!-- 企業名 -->
 
 				<!-- 説明文 -->
 				<li>

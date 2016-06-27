@@ -1122,6 +1122,8 @@ ul.naviBtn {
           position: absolute;
           top: 0;
           left: 0;
+          width: 0;
+          height: 0;
         }
 
         input {
@@ -1194,6 +1196,21 @@ ul.naviBtn {
               border-radius: 5px 5px 0;
               margin-left: 10px;
               background-color: #FFF;
+
+              span.cName {
+                display: block;
+                color: $main-color;
+                font-weight: bold;
+                font-size: 13px;
+                margin: 0 0 5px 0;
+              }
+          }
+          &.sinclo_se span.cName{
+            color: #c3d69b!important;
+          }
+
+          &.sinclo_auto span.cName{
+            color: #C9C9C9!important;
           }
 
           &.sinclo_etc {

@@ -4,18 +4,6 @@
 var sincloApp = angular.module('sincloApp', ['ngSanitize']);
 sincloApp.controller('WidgetCtrl', function($scope){
     $scope.main_image = "<?=$this->formEx->val($this->data['MWidgetSetting'], 'main_image')?>";
-    $scope.isDisplayTime = function(){
-        // 表示しない
-        if ( Number(this.display_time_flg) === 0 ) {
-            $('#MWidgetSettingTimeText').prop('disabled', true);
-            $('#timeTextLabel').removeClass('require');
-        }
-        // 表示する
-        else {
-            $('#MWidgetSettingTimeText').prop('disabled', false);
-            $('#timeTextLabel').addClass('require');
-        }
-    };
 
     $scope.headerpd = function(){
       return $scope.descriptionToggle == '1';
@@ -97,6 +85,11 @@ sincloApp.controller('WidgetCtrl', function($scope){
         var clickTab = $(this).data('tab');
         if ( clickTab === $scope.widget.showTab ) return false;
         $scope.widget.showTab = clickTab;
+        $scope.$apply();
+    });
+
+    angular.element(".showChat").focus(function(e){
+        $scope.widget.showTab = "chat";
         $scope.$apply();
     });
 
