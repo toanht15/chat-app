@@ -238,8 +238,15 @@ var socket, // socket.io
       var subTitle = (widget.subTitle === undefined && Number(widget.showSubtitle) === 1 ) ? "" : widget.subTitle;
       var description = (widget.description === undefined) ? "" : widget.description;
       if ( Number(widget.showMainImage) === 1 || Number(widget.showSubtitle) === 1 || Number(widget.showDescription) === 1) {
+
         // サブタイトル
-        html += '    <p id="widgetSubTitle">' + subTitle + '</p>';
+        if ( Number(widget.showSubtitle) === 1 ) {
+          html += '    <p id="widgetSubTitle">' + subTitle + '</p>';
+        }
+        else {
+          html += '    <p id="widgetSubTitle"></p>';
+        }
+
         // 説明文
         html += '    <p id="widgetDescription">' + description + '</p>';
       }

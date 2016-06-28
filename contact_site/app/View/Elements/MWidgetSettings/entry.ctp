@@ -103,7 +103,7 @@
 							'maxlength' => 15,
 							'error' => false
 					];
-					if(!$coreSettings[C_COMPANY_USE_SYNCLO]) {
+					if($coreSettings[C_COMPANY_USE_SYNCLO] && !$coreSettings[C_COMPANY_USE_CHAT]) {
 						$subTitleOpt['ng-disabled'] = 'subTitleToggle == "2"';
 					}
 					$subTitle = $this->ngForm->input('sub_title', $subTitleOpt, [

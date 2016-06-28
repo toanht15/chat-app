@@ -5,10 +5,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']);
 sincloApp.controller('WidgetCtrl', function($scope){
     $scope.main_image = "<?=$this->formEx->val($this->data['MWidgetSetting'], 'main_image')?>";
 
-    $scope.headerpd = function(){
-      return $scope.descriptionToggle == '1';
-    }
-
     $scope.showChooseImg = function(){
       return $scope.mainImageToggle == '1';
     }
