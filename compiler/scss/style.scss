@@ -7,7 +7,7 @@ $error-color: #F57E7E;
 $line-color: #909090;
 $shadow-color: rgba(0, 0, 0, 0.3);
 $header-btn-hover-color: #D6E8B0;
-$content-min-width: 1000px;
+$content-min-width: 800px;
 
 * {
   -webkit-box-sizing: border-box;
@@ -194,19 +194,6 @@ div[id$='_list'] {
   }
   th, td {
     height: 60px;
-
-    &.omit {
-      width: 20em;
-
-      span, a {
-            width: 20em;
-            text-overflow: ellipsis;
-            overflow: hidden;
-            word-break: break-word;
-            white-space: nowrap;
-            display: block;
-          }
-    }
   }
   th {
     padding: 5px;
@@ -799,7 +786,6 @@ ul.naviBtn {
 /* リアルタイムモニタ */
 
 #customer_idx {
-  min-width: 1400px!important;
 
   #customer_menu {
     display: flex;
@@ -1084,7 +1070,12 @@ ul.naviBtn {
     }
 
     #customer_detail {
-      ul li span { font-weight: bold; margin-left: -5px }
+      ul li {
+        word-break: break-all;
+        word-wrap: break-word;
+
+        span { font-weight: bold; margin-left: -5px }
+      }
     }
 
     #chatContent {
@@ -1363,7 +1354,7 @@ ul.naviBtn {
 #script_setting_content {
   width: 90%;
   $ssc-border-color: #9A9A9A;
-  $ssc-content-width: 900px;
+  $ssc-content-width: 700px;
 
   li {
     p {
@@ -1393,7 +1384,7 @@ ul.naviBtn {
           input {
             background-color: #E3E8E5;
             height: 25px;
-            font-size: 15px;
+            // font-size: 15px;
             border-bottom: none;
             width: 100%;
           }
@@ -1711,6 +1702,8 @@ ul.naviBtn {
         display: inline-block;
         a {
           float: left;
+          margin-bottom: 5px;
+          margin-top: 5px;
         }
       }
     }
@@ -2100,6 +2093,9 @@ ul.naviBtn {
   #tdictionaries_list {
       .ctrlBtnArea {
           padding: 0 25px;
+          a {
+            margin: 5px;
+          }
       }
   }
 }
