@@ -217,6 +217,7 @@ var db = {
         if ( isset(rows) && isset(rows[0]) ) {
           sincloCore[obj.siteKey][obj.tabId]['historyId'] = rows[0].id;
           timeUpdate(rows[0].id, obj, now);
+          obj.historyId = rows[0].id;
           emit.toMine('setHistoryId', obj, s);
         }
         else {
@@ -241,6 +242,7 @@ var db = {
               var historyId = results.insertId;
               sincloCore[obj.siteKey][obj.tabId].historyId = historyId;
               timeUpdate(historyId, obj, now);
+              obj.historyId = historyId;
               emit.toMine('setHistoryId', obj, s);
             }
           );
@@ -343,7 +345,7 @@ io.sockets.on('connection', function (socket) {
               emit.toUser('sendChatResult', {tabId: d.tabId, chatId: results.insertId, messageType: d.messageType, ret: true, chatMessage: d.chatMessage, siteKey: d.siteKey}, sId);
               if (Number(insertData['message_type']) === 3) return false;
               // 書き込みが成功したら企業側に結果を返す
-              emit.toCompany('sendChatResult', {tabId: d.tabId, chatId: results.insertId, userId: insertData.m_users_id, messageType: d.messageType, ret: true, chatMessage: d.chatMessage, siteKey: d.siteKey}, d.siteKey);
+              emit.toCompany('sendChatResult', {tabId: d.tabId, chatId: results.insertId, userId: insertData.m_users_id, messageType: d.messageType, ret: true, message: d.chatMessage, siteKey: d.siteKey}, d.siteKey);
             }
             else {
               // 書き込みが失敗したらエラーを渡す
@@ -763,6 +765,7 @@ io.sockets.on('connection', function (socket) {
     var setList = {};
     for (var i = 0; i < obj.messages.length; i++) {
       var date = Date.parse(obj.messages[i].created);
+
       setList[date + "_" + i] = obj.messages[i];
     }
     var ret = {};

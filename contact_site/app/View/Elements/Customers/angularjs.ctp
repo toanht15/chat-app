@@ -95,52 +95,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             sendMessage.focus();
         }
       },
-      createNotifyMessage: function(val){
-          var chatTalk = document.getElementById('chatTalk');
-          var li = document.createElement('li');
-          chatTalk.appendChild(li);
-          li.className = "sinclo_etc";
-          li.innerHTML = "－　" + val + "　－";
-          scDown(); // チャット画面のスクロール
-      },
-      createMessage: function(cs, val, opt){
-        var chatTalk = document.getElementById('chatTalk');
-        var li = document.createElement('li');
-        var strings = val.split('\n');
-        var radioCnt = 1;
-        var linkReg = RegExp(/http(s)?:\/\/[!-~.a-z]*/);
-        var radioName = "sinclo-radio" + chatTalk.children.length;
-
-        var content = "";
-        if ( cs === "sinclo_se" && (opt !== undefined && ('userId' in opt))) {
-            content = "<span class='cName'>" + userList[Number(opt.userId)] + "さん</span>";
-        }
-        if ( cs === "sinclo_auto") {
-            content = "<span class='cName'>自動応答</span>";
-        }
-        for (var i = 0; strings.length > i; i++) {
-            var str = strings[i];
-            // ラジオボタン
-            var radio = str.indexOf('[]');
-            if ( radio > -1 ) {
-                var val = str.slice(radio+2);
-                str = "<input type='radio' name='" + radioName + "' id='" + radioName + "-" + i + "' class='sinclo-chat-radio' value='" + val + "' disabled=''>";
-                str += "<label for='" + radioName + "-" + i + "'>" + val + "</label>";
-            }
-            // リンク
-            var link = str.match(linkReg);
-            if ( link !== null ) {
-                var url = link[0];
-                var a = "<a href='" + url + "' target='_blank'>"  + url + "</a>";
-                str = str.replace(url, a);
-            }
-            content += str + "\n";
-
-        }
-        li.className = cs;
-        li.innerHTML = content;
-        chatTalk.appendChild(li);
-      },
       pushMessage: function() {
         var elm = document.getElementById('sendMessage');
         if ( isset(elm.value) ) {
@@ -235,11 +189,18 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
   /**
    * チャットのスクロール
    */
+  var scDownTimer = null;
   function scDown(){
-    var chatTalk = document.getElementById('chatTalk');
-    $('#chatTalk').animate({
-      scrollTop: chatTalk.scrollHeight - chatTalk.clientHeight
-    }, 100);
+    if ( scDownTimer ) {
+      clearTimeout(scDownTimer);
+    }
+    scDownTimer = setTimeout(function(){
+      var chatTalk = document.getElementById('chatTalk');
+      $('#chatTalk').animate({
+        scrollTop: chatTalk.scrollHeight - chatTalk.clientHeight
+      }, 300);
+
+    }, 500);
   }
 
   // http://weathercook.hatenadiary.jp/entry/2013/12/02/062136
@@ -291,6 +252,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       referrer : false
     };
     $scope.monitorList = {};
+    $scope.messageList = {};
     $scope.chatList = [];
     $scope.search = function(array){
       var result = {};
@@ -457,6 +419,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       if ( $scope.customerMainClass !== "" ) {
         $scope.customerMainClass = "";
         $scope.detailId = "";
+        $scope.messageList = {};
         chatApi.userId = "";
         $("#chatTalk").children().remove();
         $("#customer_list tr.on").removeClass('on');
@@ -487,7 +450,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         }
         setTimeout(function(){
           $("#customer_sub").css("display", "block");
-          scDown();
         }, 400);
       }
     };
@@ -596,7 +558,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             tabId: obj.tabId
           });
           for (var key in obj.messages) {
-              chatApi.createMessage("sinclo_auto", obj.messages[key].chatMessage);
+              $scope.messageList[key] = obj.messages[key];
           }
         }
 
@@ -605,7 +567,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     socket.on('resAutoChatMessage', function(d){
         var obj = JSON.parse(d);
         if (obj.tabId === chatApi.tabId ) {
-            chatApi.createMessage("sinclo_auto" , obj.chatMessage);
+            var date = Date.parse(obj.created);
+            $scope.messageList[date] = obj;
         }
     });
 
@@ -735,7 +698,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         }, {t: obj.tabId});
       }
       if ( !isset(prev) && obj.tabId === chatApi.tabId ) {
-        chatApi.createNotifyMessage("オペレーターが入室しました");
+        var date = Date.parse(new Date);
+        $scope.messageList[date] = "start";
       }
     });
 
@@ -750,7 +714,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         $scope.monitorList[obj.tabId].chat = null;
       }
       if ( obj.tabId === chatApi.tabId ) {
-        chatApi.createNotifyMessage("オペレーターが退室しました");
+        var date = Date.parse(new Date);
+        $scope.messageList[date] = "end";
       }
 
     });
@@ -760,25 +725,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var obj = JSON.parse(d);
       for (var key in obj.chat.messages) {
         var chat = obj.chat.messages[key];
-        if ( typeof(chat) !== "object" ) {
-            if ( chat === "start" ) {
-                chatApi.createNotifyMessage("オペレーターが入室しました");
-            }
-            if ( chat === "end" ) {
-                chatApi.createNotifyMessage("オペレーターが退室しました");
-            }
-        }
-        else {
-            var cn = "sinclo_auto";
-            if (chat.messageType === chatApi.messageType.customer) {
-              cn = "sinclo_re";
-            }
-            else if (chat.messageType === chatApi.messageType.company) {
-              cn = "sinclo_se";
-            }
-            chatApi.createMessage(cn, chat.message, chat);
-        }
-        $('#chatTalk').prop({scrollTop: chatTalk.scrollHeight - chatTalk.clientHeight});
+        $scope.messageList[key] = chat;
       }
       if ( $scope.monitorList[obj.tabId].chat === myUserId ) {
         // 既読にする(ok)
@@ -801,7 +748,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         }
         // 対象のタブを開いている場合
         if ( obj.tabId === chatApi.tabId ){
-          chatApi.createMessage(cn, obj.chatMessage, obj);
+          var date = Date.parse(new Date);
+          $scope.messageList[date] = obj;
           scDown(); // チャットのスクロール
         }
 
@@ -1006,7 +954,78 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
   }]);
 
+  sincloApp.directive('ngCreateMessage', function(){
+    return {
+      restrict: 'E',
+      link: function(scope, elem, attr) {
+        var cn = "";
+        var li = document.createElement('li');
+        var content = "";
+        if ( typeof(scope.chat) === "object" ) {
+          // 消費者からのメッセージの場合
+          if (scope.chat.messageType === chatApi.messageType.customer) {
+            cn = "sinclo_re";
+            li.className = cn;
+            content = scope.chat.message;
+          }
+          // 企業側か、オートメッセージの場合
+          else if (scope.chat.messageType === chatApi.messageType.company && Number(scope.chat.userId) in userList) {
+            cn = "sinclo_se";
+            content = "<span class='cName'>" + userList[Number(scope.chat.userId)] + "さん</span>";
+            content += createCompanyMessage(scope.chat.message);
+          }
+          else  {
+            cn = "sinclo_auto";
+            content = "<span class='cName'>自動応答</span>";
+            content += createCompanyMessage(scope.chat.message);
+          }
 
+        }
+        else {
+          cn = "sinclo_etc";
+          if ( scope.chat === "start" ) {
+            content = "－　オペレーターが入室しました　－";
+          }
+          if ( scope.chat === "end" ) {
+            content = "－　オペレーターが退室しました　－";
+          }
+        }
+        li.className = cn;
+        li.innerHTML = content;
+        $(elem).append(li)
+
+        scDown();
+
+        function createCompanyMessage(message){
+          var strings = message.split('\n');
+          var custom = "";
+          var linkReg = RegExp(/http(s)?:\/\/[!-~.a-z]*/);
+          var radioName = "sinclo-radio" + Object.keys(scope.chat).length;
+
+          for (var i = 0; strings.length > i; i++) {
+              var str = strings[i];
+              // ラジオボタン
+              var radio = str.indexOf('[]');
+              if ( radio > -1 ) {
+                  var val = str.slice(radio+2);
+                  str = "<input type='radio' name='" + radioName + "' id='" + radioName + "-" + i + "' class='sinclo-chat-radio' value='" + val + "' disabled=''>";
+                  str += "<label for='" + radioName + "-" + i + "'>" + val + "</label>";
+              }
+              // リンク
+              var link = str.match(linkReg);
+              if ( link !== null ) {
+                  var url = link[0];
+                  var a = "<a href='" + url + "' target='_blank'>"  + url + "</a>";
+                  str = str.replace(url, a);
+              }
+              custom += str + "\n";
+
+          }
+          return custom;
+        }
+      }
+    };
+  });
 
   // 参考 http://stackoverflow.com/questions/14478106/angularjs-sorting-by-property
   sincloApp.filter('orderObjectBy', function(){
