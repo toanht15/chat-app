@@ -62,11 +62,11 @@ var _access_type_guest = 1, _access_type_host = 2, userAgentChk, notificationSta
       var opState = $('#changeOpStatus');
       if (status == "<?=C_OPERATOR_ACTIVE?>") {
         opState.data('status', <?=C_OPERATOR_ACTIVE?>).prop("class", "redBtn btn-shadow").text('離席中にする');
-        $('#operatorStatus').prop("class", "opWait").text('待機中');
+        $('#operatorStatus').prop("class", "opWait").children('span').text('待機中');
       }
       else {
         opState.data('status', <?=C_OPERATOR_PASSIVE?>).prop("class", "blueBtn btn-shadow").text('待機中にする');
-        $('#operatorStatus').prop("class", "opStop").text('離席中');
+        $('#operatorStatus').prop("class", "opStop").children('span').text('離席中');
       }
     };
 

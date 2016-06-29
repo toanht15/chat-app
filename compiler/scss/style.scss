@@ -346,6 +346,9 @@ a {
 .m10r10l {
   margin: 0 10px;
 }
+.m40t {
+  margin-top: 40px!important;
+}
 .m40l {
   margin-left: 40px;
 }
@@ -788,78 +791,98 @@ ul.naviBtn {
 #customer_idx {
 
   #customer_menu {
+    margin: 0;
+    padding: 0;
     display: flex;
     flex-direction: column;
     height: auto;
 
     > div {
-      padding: 20px 20px 0 20px;
+      padding: 10px 20px 0 20px;
+
+      p {
+        height: auto;
+        float: right;
+        margin: 0 20px 0 0;
+        font-size: 14px;
+      }
     }
 
     ul {
       margin: 0;
       padding: 0;
+      $wait-color: #9bbb59;
+      $stop-color: #d99694;
+
+      &#color-bar-left {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+      }
 
       li {
-        padding: 10px;
+        padding: 0.5em;
         float: left;
-        width: 8em;
         text-align: center;
 
-        $wait-color: #9BD6D1;
-        $stop-color: #ff7575;
-
-        @keyframes greenFlash {
-            0% {
-                text-shadow: 0 0 -1px $wait-color;
-            }
-            50% {
-                text-shadow: 0 0 10px $wait-color;
-            }
-        }
-
-        @keyframes redFlash {
-            0% {
-                text-shadow: 0 0 -1px $stop-color;
-            }
-            50% {
-                text-shadow: 0 0 10px $stop-color;
-            }
+        &#opStatus {
+          font-size: 13px;
+          width: 10em;
+          text-align: right;
         }
 
         &#operatorStatus {
-            color: $wait-color;
             font-size: 15px;
-            &.opWait {
-                color: $wait-color;
+            span {
+              width: 4em;
+              display: block;
+              margin-left: 1.8em;
+              text-align: left;
+              padding: 0.3em 0;
+              font-weight: bold;
+              font-size: 21px;
             }
-            &.opStop {
-                color: $stop-color;
+
+            &.opWait span{
+              color: $wait-color;
+            }
+            &.opStop span{
+              color: $stop-color;
             }
 
             &.opWait:before {
-                animation: greenFlash 2s linear infinite;
+              background-image: url('/img/avail_green.png');
             }
             &.opStop:before {
-                animation: redFlash 2s linear infinite;
+              background-image: url('/img/aux_red.png');
             }
             &:before {
-              content: "●";
-              display: inline;
-              font-size: 15px;
-              margin-right: 5px;
+              content: " ";
+              display: block;
+              width: 1.8em;
+              height: 1.8em;
+              float: left;
+              background-size: 1.8em;
+              background-repeat: no-repeat;
+              background-position: 1px 0px;
+              margin: 2px 0px 0 1px;
+              font-size: 22px;
             }
         }
 
         &#changeOpStatus {
-            border-radius: 10px;
-            padding: 5px 10px;
-            cursor: pointer;
-            margin: 5px 0;
+          padding: 0.3em 1.3em;
+          font-size: 14px;
+          font-weight: normal;
+          border-radius: 5px;
 
             &.blueBtn {
                 background-color: $wait-color!important;
                 border-color: $wait-color!important;
+            }
+            &.redBtn {
+                background-color: $stop-color!important;
+                border-color: $stop-color!important;
             }
         }
       }
@@ -992,7 +1015,7 @@ ul.naviBtn {
         display: inline-block;
         height: 30px;
       }
-      span {
+      i {
         border-radius: 15px;
         padding: 4px;
         display: inline-block;
@@ -1010,6 +1033,7 @@ ul.naviBtn {
     }
 
     #customer_list {
+      padding: 10px 20px 20px 20px;
       td, td * {
         cursor: default;
         user-select: none;
