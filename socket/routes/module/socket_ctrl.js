@@ -516,6 +516,10 @@ io.sockets.on('connection', function (socket) {
     else {
       connectList[socket.id] = {siteKey: obj.siteKey, tabId: obj.tabId, userId: obj.userId};
 
+      if ( ('reconnect' in obj) && obj.reconnect ) {
+        socket.join(obj.siteKey + emit.roomKey.client);
+      }
+
       // 履歴作成
       db.addHistory(obj, socket);
       emit.toCompany('syncNewInfo', obj, obj.siteKey);
@@ -1007,7 +1011,6 @@ io.sockets.on('connection', function (socket) {
 
     if (getSessionId(info.siteKey, info.tabId, 'sessionId')) {
       var core = sincloCore[info.siteKey][info.tabId];
-
       var siteId = companyList[info.siteKey];
       var timeout = ('connectToken' in core) ? 10000 : 5000;
       // 消費者側の履歴更新

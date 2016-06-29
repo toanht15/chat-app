@@ -340,8 +340,10 @@ var socket, // socket.io
       }
       common.load.finish();
       var sincloBox = document.getElementById('sincloBox');
-      if ( sincloBox ) {
-        sincloBox.parentNode.removeChild(sincloBox);
+      // 非表示にされているだけであれば、再表示
+      if ( sincloBox && sincloBox.style.display === "none" ) {
+        sincloBox.style.display = "block";
+        // sincloBox.parentNode.removeChild(sincloBox);
       }
 
       if ( userInfo.accessType !== cnst.access_type.host ) {
@@ -1374,7 +1376,16 @@ var socket, // socket.io
     socket = io.connect(info.site.socket, {port: 9090, rememberTransport : false});
     // 接続時
     socket.on("connect", function(){
-      sinclo.connect();
+      // ウィジェットがある状態での再接続があった場合
+      var sincloBox = document.getElementById('sincloBox');
+      if ( sinclo.trigger.flg && sincloBox ) {
+        emit('connectSuccess', {confirm: false, reconnect: true});
+        sincloBox.style.display = "block";
+      }
+      else {
+        sinclo.trigger.flg = false;
+        sinclo.connect();
+      }
     }); // socket-on: connect
 
     // 接続直後（ユーザＩＤ、アクセスコード発番等）
@@ -1501,7 +1512,8 @@ var socket, // socket.io
     socket.on('disconnect', function(data) {
       var sincloBox = document.getElementById('sincloBox');
       if ( sincloBox ) {
-        sincloBox.parentNode.removeChild(sincloBox);
+        // sincloBox.parentNode.removeChild(sincloBox);
+        sincloBox.style.display = "none";
       }
       popup.remove();
     });
@@ -1530,16 +1542,16 @@ function emit(evName, data){
   data.accessId = userInfo.accessId;
   data.token = common.token;
   data.title = common.title();
-  data.siteKey = info.site.key;
+  data.siteKey = info.site.key; // 必須
   data.url= f_url(browserInfo.href);
-  data.subWindow = false;
+  data.subWindow = false; // 必須
   data.tabId = userInfo.tabId;
   data.prevList = browserInfo.prevList;
   data.accessType = userInfo.accessType;
   data.chat = null;
   data.connectToken = userInfo.get(cnst.info_type.connect);
   if ( check.isset(storage.s.get('params')) || userInfo.accessType === cnst.access_type.host ) {
-    data.subWindow = true;
+    data.subWindow = true; // 必須
     data.responderId = common.params.responderId;
   }
   if ( evName == "sendWindowInfo" ) {

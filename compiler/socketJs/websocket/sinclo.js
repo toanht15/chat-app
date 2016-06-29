@@ -196,7 +196,7 @@
         };
 
         createStartTimer = window.setInterval(function(){
-          if (window.info.widgetDisplay) {
+          if (window.info.widgetDisplay && !sinclo.trigger.flg) {
             window.clearInterval(createStartTimer);
             createStart();
           }
@@ -699,8 +699,9 @@
         },
         showUnreadCnt: function(){
             var elmId = "sincloChatUnread",
-                unreadIcon = document.getElementById(elmId),
-                flg = sincloBox.getAttribute('data-openflg');
+                unreadIcon = document.getElementById(elmId);
+            var sincloBox = document.getElementById('sincloBox');
+            var flg = sincloBox.getAttribute('data-openflg');
             if ( unreadIcon ) {
                 unreadIcon.parentNode.removeChild(unreadIcon);
             }
