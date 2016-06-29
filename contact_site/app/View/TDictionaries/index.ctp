@@ -37,10 +37,10 @@
 	<table>
 		<thead>
 			<tr>
-				<th width="5%">No</th>
-				<th width="15%">使用範囲</th>
-				<th width="70%">ワード</th>
-				<th width="10%">操作</th>
+				<th>No</th>
+				<th>使用範囲</th>
+				<th>ワード</th>
+				<th width="150">操作</th>
 			</tr>
 		</thead>
 		<tbody>

@@ -60,7 +60,7 @@ table {
     border: 1px solid #8B8B8B;
     border-left: none !important;
     border-top: none !important;
-    word-break: break-word;
+    word-break: break-all;
 
     &:last-child {
       border-right: none !important;
@@ -381,7 +381,8 @@ a {
 }
 
 .underL {
-  text-decoration: underline;
+  text-decoration: underline!important;
+  cursor: pointer!important;
 }
 
 .vHidden {
@@ -394,8 +395,9 @@ a {
   color: #F57E7E;
 }
 
-/* ボタン */
 .greenBtn {
+
+  cursor: pointer!important;
   background-color: #C3D69B;
   border: 1px solid #C3D69B;
   display: block;
@@ -405,6 +407,7 @@ a {
 }
 
 .whiteBtn {
+  cursor: pointer!important;
   background-color: #FFF!important  ;
   border: 1px solid #FFF!important;
   color: $main-color!important;
@@ -423,6 +426,7 @@ a {
 }
 
 .redBtn {
+  cursor: pointer!important;
   background-color: #D69B9B;
   border: 1px solid #D69B9B;
   display: block;
@@ -432,6 +436,7 @@ a {
 }
 
 .blueBtn {
+  cursor: pointer!important;
   background-color: #788DCA;
   border: 1px solid #788DCA;
   display: block;

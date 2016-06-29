@@ -47,7 +47,7 @@
         </li>
         <li>
             <h2>デモ画面</h2>
-            <?= $this->Html->link('デモ画面へ', array('controller' => 'ScriptSettings', 'action' => 'testpage'), array('target' => '_demo')) ?>
+            <?= $this->Html->link('デモ画面へ', array('controller' => 'ScriptSettings', 'action' => 'testpage'), array('target' => '_demo', 'class' => 'underL')) ?>
         </li>
     </ul>
 </div>

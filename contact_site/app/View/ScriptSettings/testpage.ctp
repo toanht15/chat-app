@@ -6,8 +6,8 @@
     <div id="testpage_idx">
       <div id="title">
         <span class="bold">目次</span>：
-        <a href="<?=$this->Html->url(array('controller' => 'ScriptSettings', 'action' => 'testpage2'))?>"><span>ウィジェット非表示タグ</span></a>：
-        <a href="<?=$this->Html->url(array('controller' => 'ScriptSettings', 'action' => 'testpage3'))?>"><span>フォーム用タグ</span></a>
+        <a href="<?=$this->Html->url(array('controller' => 'ScriptSettings', 'action' => 'testpage2'))?>"><span class="underL">ウィジェット非表示タグ</span></a>：
+        <a href="<?=$this->Html->url(array('controller' => 'ScriptSettings', 'action' => 'testpage3'))?>"><span class="underL">フォーム用タグ</span></a>
       </div>
       <div id="detail">
         <p>モニタリングでは以下のことが可能です</p>
@@ -30,9 +30,9 @@
 <?php   case 2: ?>
     <div id="testpage_idx">
       <div id="title">
-        <a href="<?=$this->Html->url(array('controller' => 'ScriptSettings', 'action' => 'testpage'))?>"><span>目次</span></a>：
+        <a href="<?=$this->Html->url(array('controller' => 'ScriptSettings', 'action' => 'testpage'))?>"><span class="underL">目次</span></a>：
         <span class="bold">ウィジェット非表示タグ</span>：
-        <a href="<?=$this->Html->url(array('controller' => 'ScriptSettings', 'action' => 'testpage3'))?>"><span>フォーム用タグ</span></a>
+        <a href="<?=$this->Html->url(array('controller' => 'ScriptSettings', 'action' => 'testpage3'))?>"><span class="underL">フォーム用タグ</span></a>
       </div>
       <div id="detail">
         <p>ウィジェット非表示タグの特徴</p>
@@ -45,8 +45,8 @@
 
     <div id="testpage_idx">
       <div id="title">
-        <a href="<?=$this->Html->url(array('controller' => 'ScriptSettings', 'action' => 'testpage'))?>"><span>目次</span></a>：
-        <a href="<?=$this->Html->url(array('controller' => 'ScriptSettings', 'action' => 'testpage2'))?>"><span>ウィジェット非表示タグ</span></a>：
+        <a href="<?=$this->Html->url(array('controller' => 'ScriptSettings', 'action' => 'testpage'))?>"><span class="underL">目次</span></a>：
+        <a href="<?=$this->Html->url(array('controller' => 'ScriptSettings', 'action' => 'testpage2'))?>"><span class="underL">ウィジェット非表示タグ</span></a>：
         <span class="bold">フォーム用タグ</span>
       </div>
       <div id="detail">

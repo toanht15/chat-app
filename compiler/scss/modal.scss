@@ -268,8 +268,9 @@
               padding: 5px;
               border-radius: 5px;
               white-space: pre-wrap;
-              word-break: break-word;
               color: #8A8A8A;
+              word-break: break-all;
+              word-wrap: break-word;
 
               p {
                 margin: 0 0 5px 0;

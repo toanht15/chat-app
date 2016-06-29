@@ -16,7 +16,7 @@
 				<tr>
 					<td class="popupHistoryNo tCenter"><?=$key + 1?></td>
 					<td class="popupHistoryUrl tLeft pre"><?=h($val['THistoryStayLog']['title']);?></td>
-					<td class="popupHistoryUrl tLeft pre"><?=$this->Html->link(h($val['THistoryStayLog']['url']), h($val['THistoryStayLog']['url']), array('target' => 'monitor'));?></td>
+					<td class="popupHistoryUrl tLeft pre"><?=$this->Html->link(h($val['THistoryStayLog']['url']), h($val['THistoryStayLog']['url']), array('target' => 'monitor', 'class' => 'underL'));?></td>
 					<td class="popupHistoryTimer tRight"><?=h($val['THistoryStayLog']['stay_time'])?></td>
 				</tr>
 			<?php endforeach; ?>

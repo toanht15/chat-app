@@ -44,11 +44,11 @@
             echo '<li id="opStatus">現在のステータス</li>';
             if ( $opStatus ) {
               echo "<li id='operatorStatus' class='opWait'><span>待機中</span></li>";
-              echo "<li id='changeOpStatus' onclick='chgOpStatus()' data-status='<?=$opStatus?>' class='redBtn btn-shadow'>離席中にする</li>";
+              echo "<li id='changeOpStatus' onclick='chgOpStatus()' data-status='" . $opStatus. "' class='redBtn btn-shadow'>離席中にする</li>";
             }
             else {
               echo "<li id='operatorStatus' class='opStop'><span>離席中</span></li>";
-              echo "<li id='changeOpStatus' onclick='chgOpStatus()' data-status='<?=$opStatus?>' class='blueBtn btn-shadow'>待機中にする</li>";
+              echo "<li id='changeOpStatus' onclick='chgOpStatus()' data-status='" . $opStatus. "' class='blueBtn btn-shadow'>待機中にする</li>";
             }
           }
           ?>
@@ -128,9 +128,9 @@
                     <!-- /* 滞在時間 */ -->
                     <td ng-hide="labelHideList.stayTime" class="tCenter" cal-stay-time></td>
                     <!-- /* 閲覧ページ数 */ -->
-                    <td ng-hide="labelHideList.page" class="tCenter">{{monitor.prev.length}}（<a href="javascript:void(0)" ng-click="openHistory(monitor)" >移動履歴</a>）</td>
+                    <td ng-hide="labelHideList.page" class="tCenter">{{monitor.prev.length}}（<a href="javascript:void(0)" class="underL" ng-click="openHistory(monitor)" >移動履歴</a>）</td>
                     <!-- /* 閲覧中ページ */ -->
-                    <td ng-hide="labelHideList.title" class="tCenter omit"><a href={{monitor.url}} target="monitor" ng-if="monitor.title">{{monitor.title}}</a><span ng-if="!monitor.title">{{monitor.url}}</span></td>
+                    <td ng-hide="labelHideList.title" class="tCenter omit"><a href={{monitor.url}} target="monitor" class="underL" ng-if="monitor.title">{{monitor.title}}</a><span ng-if="!monitor.title">{{monitor.url}}</span></td>
                     <!-- /* 参照元URL */ -->
                     <td ng-hide="labelHideList.referrer" class="tCenter omit"><span>{{monitor.referrer}}</span></td>
             </tr>
