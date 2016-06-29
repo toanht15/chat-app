@@ -544,6 +544,7 @@ div[id^="sidebar-"] {
     height: 60px !important;
     padding: 7.5px 0 !important;
     position: relative;
+    cursor: pointer;
   }
 }
 
@@ -635,6 +636,8 @@ ul#color-bar-right {
 }
 
 #logout{
+  cursor: pointer;
+
   &:hover {
     background-color: $header-btn-hover-color;
     box-shadow: 0 0 3px $shadow-color;
@@ -1720,6 +1723,10 @@ ul.naviBtn {
 
   #tautomessages_list {
 
+    td:not(.noClick) {
+      cursor: pointer;
+    }
+
     .bgGrey {
       background-color: #DEDEDE;
     }
@@ -1746,6 +1753,7 @@ ul.naviBtn {
             background-color: #C3D69B;
             border: 1px solid #C3D69B;
             position: relative;
+            cursor: pointer;
 
             &:after {
                 content: "";
@@ -1769,6 +1777,7 @@ ul.naviBtn {
             background-color: #FFF;
             padding: 1px;
             border: 1px solid #828282;
+            cursor: pointer;
         }
     }
 
@@ -1788,7 +1797,6 @@ ul.naviBtn {
         float: left;
         width: 25%;
         text-align: center;
-        cursor: pointer;
       }
 
       &.actionValue {
