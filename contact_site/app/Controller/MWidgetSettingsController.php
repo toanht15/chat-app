@@ -210,7 +210,7 @@ class MWidgetSettingsController extends AppController {
                 $pattern = "files/".$this->userInfo['MCompany']['company_key']."_[0-9]*.*";
 
                 foreach (glob($pattern) as $file) {
-                    if ( strcmp("files/".$filename, $file) !== 0 ) {
+                    if ( !empty($uploadImage) && strcmp("files/".$filename, $file) !== 0 ) {
                       unlink($file);
                     }
                 }
