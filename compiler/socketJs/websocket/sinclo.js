@@ -472,11 +472,13 @@
     chatStartResult: function(d){
       var obj = JSON.parse(d);
       this.chatApi.online = true;
+      storage.s.set('chatAct', true); // オートメッセージを表示しない
       sinclo.chatApi.createNotifyMessage("オペレーターが入室しました");
     },
     chatEndResult: function(d){
       var obj = JSON.parse(d);
       this.chatApi.online = false;
+      storage.s.set('chatAct', false); // オートメッセージを表示してもいい
       sinclo.chatApi.createNotifyMessage("オペレーターが退室しました");
     },
     chatMessageData:function(d){
@@ -581,7 +583,7 @@
     },
     chatApi: {
         saveFlg: false,
-        online: false,
+        online: false, // 現在の対応状況
         historyId: null,
         unread: 0,
         messageType: {
@@ -683,6 +685,7 @@
             }
         },
         send: function(value){
+            storage.s.set('chatAct', true); // オートメッセージを表示しない
             emit('sendChat', {
                 historyId: sinclo.chatApi.historyId,
                 chatMessage:value,
@@ -886,7 +889,12 @@
         },
         setAction: function(id, type, cond){
             // TODO 今のところはメッセージ送信のみ、拡張予定
-            if ( String(type) === "1" && ('message' in cond)) {
+            var chatActFlg = storage.s.get('chatAct');
+            if ( !check.isset(chatActFlg) ) {
+              chatActFlg = "false";
+            }
+
+            if ( String(type) === "1" && ('message' in cond) && (String(chatActFlg) === "false") ) {
                 sinclo.chatApi.createMessageUnread("sinclo_re", cond.message);
                 var data = {
                     chatId:id,
