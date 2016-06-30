@@ -63,7 +63,7 @@
             <?= $this->Form->input('name', ['placeholder' => "名前", 'label' => false, 'div' => false]) ?>
           </li>
           <li class="lb">
-            <pre><span>クリックの同期にも対応していますので、ラジオボタンやチェックボックスの選択も<br>反映されます。</span></pre>
+            <pre><span>ラジオボタンやチェックボックスの選択も反映されます。</span></pre>
           </li>
           <li>
             <p>性別：
@@ -111,7 +111,7 @@
             <?= $this->Form->textarea('other', ['label' => false, 'placeholder'=>"その他"]); ?>
           </li>
           <li>
-            <input type="submit" value="send!!">
+            <input type="submit" value="send!!" style="margin: 0 auto">
           </li>
         </ul>
   <?= $this->Form->end(); ?>
@@ -127,7 +127,7 @@
         <a href="<?=$this->Html->url(array('controller' => 'ScriptSettings', 'action' => 'testpage3'))?>"><span>フォーム用タグ</span></a>
       </div>
       <div id="detail" style="margin:15px 10px">
-        <span>フォーム内容が表示されます。<br>このページはウィジェット非表示タグを使用しています。</span>
+        <span>フォーム内容が表示されます。<br>このページは、同期対象外の為、専用タグを設置しておりません。<br><br>フォームの入力以降のページには専用タグを設置しないようにお願いします。</span>
 
         <ul>
           <li><label>名前</label>：<?php if ( isset($data['name']) ) { echo $data['name']; } ?></li>
@@ -150,7 +150,6 @@
         </ul>
       </div>
     </div>
-    <?php echo $this->Html->script($fileName, ['data-hide' => 1]); ?>
 
 <?php     break; ?>
 <?php   default; ?>

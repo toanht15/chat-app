@@ -466,7 +466,7 @@ io.sockets.on('connection', function (socket) {
           var key = Object.keys(activeOperator[res.siteKey]);
           cnt = key.length;
         }
-        send['activeOperatorCnt'] = cnt
+        send['activeOperatorCnt'] = cnt;
         socket.join(res.siteKey + emit.roomKey.client);
         emit.toMine('accessInfo', send, socket);
       }
@@ -986,6 +986,7 @@ io.sockets.on('connection', function (socket) {
         var keys = Object.keys(company.info[userInfo.siteKey][userInfo.userId]);
         if ( keys.length === 0 ) {
           delete company.info[userInfo.siteKey][userInfo.userId];
+          delete company.timeout[userInfo.siteKey][userInfo.userId];
 
           // 新しいユーザーの人数を送る
           var cnt = Object.keys(company.info[userInfo.siteKey]);
@@ -1034,7 +1035,7 @@ io.sockets.on('connection', function (socket) {
         // sincloCoreから情報削除
         delete sincloCore[info.siteKey][info.tabId];
         // c_connectListから情報削除
-        if ( (info.siteKey in sincloCore) && (info.tabId in sincloCore[info.siteKey]) ) {
+        if ( (info.siteKey in c_connectList) && (info.tabId in c_connectList[info.siteKey]) ) {
           delete c_connectList[info.siteKey][info.tabId];
         }
         if ( core.subWindow ) {

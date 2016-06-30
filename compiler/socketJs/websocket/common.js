@@ -313,9 +313,14 @@ var socket, // socket.io
       return html;
     },
     makeAccessIdTag: function(){
+
       if ( !check.browser() ) return false;
       if ( !('widget' in window.info) ) return false;
       window.info.widgetDisplay = null; // デフォルト表示しない
+      // チャット契約、画面同期中であれば表示
+      if ( check.isset(userInfo.connectToken) && window.info.contract.chat ) {
+        window.info.widgetDisplay = true;
+      }
       // ウィジェットを常に表示する
       if ( ('display_type' in window.info.widget) && window.info.widget.display_type === 1 ) {
         window.info.widgetDisplay = true;
@@ -332,10 +337,6 @@ var socket, // socket.io
       // 同期対象とするが、ウィジェットは表示しない
       if (check.isset(window.info['dataset']) && (check.isset(window.info.dataset['hide']) && window.info.dataset.hide === "1")) {
         window.info.widgetDisplay = false;
-        return false;
-      }
-      // チャット未契約の場合、画面同期中であれば抑制
-      if ( check.isset(userInfo.connectToken) && !window.info.contract.chat ) {
         return false;
       }
       common.load.finish();
@@ -960,16 +961,6 @@ var socket, // socket.io
         window.addEventListener("resize", syncEvent.pcResize, false);
       }
     },
-    disabledSubmit: function(e) {
-      if ( userInfo.accessType !== cnst.access_type.host ) {
-        emit('requestSyncStop', {message: "お客様がsubmitボタンをクリックしましたので、\n画面共有を終了します。"});
-      }
-      else {
-        emit('requestSyncStop', {});
-        e.preventDefault();
-        return false;
-      }
-    },
     elmScrollCallTimers: {},
     elmScrollCall: function(e){
       e.stopPropagation();
@@ -1080,11 +1071,15 @@ var socket, // socket.io
       this.ctrlElmEventListener(eventFlg, scEls, "scroll", syncEvent.elmScrollCall);
 
       // フォーム制御
-      if ( document.forms.length > 0 ) {
-        if ( ('form' in info.dataset) && String(info.dataset.form) === "1" ) {
-            this.ctrlElmEventListener(eventFlg, scEls, "submit", syncEvent.disabledSubmit);
+      $(document).submit(function(e){
+        if ( userInfo.accessType !== cnst.access_type.host ) {
+          emit('requestSyncStop', {message: "お客様がsubmitボタンをクリックしましたので、\n画面共有を終了します。"});
         }
-      }
+        else {
+          emit('requestSyncStop', {});
+          return false;
+        }
+      });
 
     },
     start: function(e){ syncEvent.change(true); },
@@ -1378,7 +1373,11 @@ var socket, // socket.io
     socket.on("connect", function(){
       // ウィジェットがある状態での再接続があった場合
       var sincloBox = document.getElementById('sincloBox');
-      if ( sinclo.trigger.flg && sincloBox ) {
+      if ( sincloBox && userInfo.accessType === Number(cnst.access_type.guest) ) {
+        sinclo.trigger.flg = true;
+        var emitData = userInfo.getSendList();
+        emitData.widget = window.info.widgetDisplay;
+        emit('customerInfo', emitData);
         emit('connectSuccess', {confirm: false, reconnect: true});
         sincloBox.style.display = "block";
       }
