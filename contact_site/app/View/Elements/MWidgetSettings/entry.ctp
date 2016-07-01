@@ -196,8 +196,8 @@
 								<img ng-src="{{main_image}}" err-src="<?=C_PATH_WIDGET_GALLERY_IMG?>chat_sample_picture.png" ng-style="{'background-color': main_color}" width="62" height="70" alt="チャットに設定している画像">
 							</div>
 							<div id="picChooseDiv">
-								<a href="javascript:void(0)" ng-click="showGallary()">ギャラリーから選択</a>
-								<a href="javascript:void(0)" id="fileTagWrap"><?php echo $this->Form->file('uploadImage'); ?>画像をアップロード</a>
+								<div class="greenBtn btn-shadow" ng-click="showGallary()">ギャラリーから選択</div>
+								<div class="greenBtn btn-shadow" id="fileTagWrap"><?php echo $this->Form->file('uploadImage'); ?>画像をアップロード</div>
 
 							</div>
 						</div>

@@ -1533,7 +1533,8 @@ ul.naviBtn {
         }
 
         div#picChooseDiv {
-            > a {
+            > div {
+                cursor: pointer!important;
                 height: 30px;
                 background-color: #C3D69B;
                 color: #FFF;
@@ -1550,13 +1551,14 @@ ul.naviBtn {
                     overflow: hidden;
 
                     input[type='file'] {
+                        cursor: pointer!important;
                         opacity: 0;
-                        width: 10em;
                         position: absolute;
-                        top: 0;
-                        left: 0;
+                        top: 0px;
+                        right: 0px;
                         height: 30px;
                         display: block;
+                        font-size: 300px;
                     }
 
                 }
