@@ -92,13 +92,18 @@
 					<span class='require'><label>企業名</label></span>
 
 					<?php
+					$subTitleClass = '';
+					if($coreSettings[C_COMPANY_USE_CHAT]){
+						$subTitleClass = 'showChat';
+					}
+
 					$subTitleOpt = [
 							'type' => 'text',
 							'placeholder' => '企業名',
 							'div' => false,
 							'style' => 'margin:10px 0 10px 20px;',
 							'label' => false,
-							'class' => 'showChat',
+							'class' => $subTitleClass,
 							'required' => false,
 							'maxlength' => 15,
 							'error' => false

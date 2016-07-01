@@ -66,7 +66,7 @@
 		<p id="widgetTitle" ng-class="{center: mainImageToggle == '2'}">{{title}}</p>
 		<!-- タイトル -->
 	</div>
-	<!-- <div id='descriptionSet' ng-hide="mainImageToggle == '2' && subTitleToggle == '2' && descriptionToggle == '2'"> -->
+	<div id='descriptionSet' ng-hide="mainImageToggle == '2' && subTitleToggle == '2' && descriptionToggle == '2'">
 		<!-- サブタイトル -->
 		<p ng-if="subTitleToggle == '1'" id="widgetSubTitle">{{sub_title}}</p>
 		<p ng-if="subTitleToggle == '2'" id="widgetSubTitle"></p>
@@ -76,7 +76,7 @@
 		<p ng-if="descriptionToggle == '1'" id="widgetDescription">{{description}}</p>
 		<p ng-if="descriptionToggle == '2'" id="widgetDescription"></p>
 		<!-- 説明文 -->
-	<!-- </div> -->
+	</div>
 	<div id="miniTarget" ng-style="miniTargetCss">
 	<?php if ( $coreSettings[C_COMPANY_USE_CHAT] && $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
 		<section id="navigation">
