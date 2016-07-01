@@ -54,12 +54,13 @@
 		</div>
 		<div style="position: relative">
 			<textarea rows="5" id="sendMessage" ng-focus="sendMessageConnectConfirm(detailId)" maxlength="300" placeholder="ここにメッセージ入力してください。
-(Shift + Enterで改行)"></textarea>
-			<div id="wordListArea">
-				<select ng-init="entryWord=''" ng-model="entryWord" ng-options="v.id as v.label for (k, v) in entryWordSearch(entryWordList)" id="entryWordList"></select>
+・Shift + Enterで改行されます
+・下矢印キー(↓)で簡易入力が開きます"></textarea>
+			<div id="wordListArea" ng-keydown="searchKeydown($event)">
 				<input type="text" ng-model="searchWord" id="wordSearchCond" />
 				<ul id="wordList">
-					<li ng-repeat="item in entryWordSearch(entryWordList)" id="item{{item.id}}" ng-class="{selected: item.id === entryWord}">{{item.label}}</li>
+					<li ng-repeat="item in entryWordSearch(entryWordList)" id="item{{$index}}" ng-class="{selected: $index === entryWord}">{{item.label}}</li>
+					<li style="border:none; color:#ff7b7b" ng-if="entryWordList.length === 0">[設定] > [簡易入力] から<br>メッセージを登録してください</li>
 				</ul>
 			</div>
 			<span id="sinclo_sendbtn" class="btn-shadow" onclick="chatApi.pushMessage()">送信（Enter）</span>

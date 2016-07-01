@@ -269,6 +269,12 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       return result;
     };
 
+    $scope.$watch('searchWord', function(n,o){
+      if ( n !== o ) {
+        $scope.entryWord = 0;
+      }
+    });
+
     $scope.openSetting = function(){
       $.ajax({
         type: 'GET',
@@ -866,81 +872,58 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     });
 
     // ワードリスト絞り込み
-    $("#wordSearchCond").on('keydown', function(e){
+    $scope.searchKeydown = function(e){
       if ( e.keyCode === 13 ) { // Enter
-        if ( $scope.search($scope.entryWordList).length === 1 ) {
-          entryWordApi.push($scope.entryWordList[0].label);
-          entryWordApi.prev();
-          return false;
-        }
-      }
-      if ( e.keyCode === 38 || e.keyCode === 27 ) { // 上もしくは、ESCキー
-        entryWordApi.prev(); // 元の操作に戻る
-        return false;
-      }
-      if ( e.keyCode === 40 ) { // 下
-          var list = document.getElementById('entryWordList');
-          list.focus();
-          $scope.entryWord = 1;
-          $scope.$apply();
-          return false;
-      }
-      entryWordApi.sc = 0;
-
-    });
-
-    // ワードリスト（内部プルダウン）
-    $("#entryWordList").on('keydown', function(e){
-      if ( e.keyCode === 13 ) { // Enter
-        var list = angular.copy($scope.entryWordSearch($scope.entryWordList));
-        if ( e.target.selectedIndex in list
-          && 'label' in list[e.target.selectedIndex] ) {
-          entryWordApi.push(list[e.target.selectedIndex].label);
+        var list = $scope.entryWordSearch($scope.entryWordList);
+        if ( list.length > 0 ) {
+          entryWordApi.push(list[$scope.entryWord].label);
         }
         entryWordApi.prev();
         return false;
       }
       if ( e.keyCode === 38 ) { // 上キー
-        if ( $(this).val() === $("#entryWordList option").eq(0).val() ) {
-          $("#wordSearchCond").focus();
-          $scope.entryWord = "";
+        if ( $scope.entryWord > 0 ) {
+          $scope.entryWord--;
+          var prev = $("#item" + $scope.entryWord);
+          if (prev.prop('id')){
+            entryWordApi.scroll(prev);
+          }
         }
-      }
-      if ( e.keyCode === 40 ) { // 下キー
-        if ( $(this).val() === $("#entryWordList option").eq($scope.entryWordList.length - 1).val() ) {
-          entryWordApi.prev();
+        else {
+          entryWordApi.prev(); // 元の操作に戻る
           return false;
         }
       }
       if ( e.keyCode === 27 ) { // ESCキー
-        entryWordApi.prev();
+        entryWordApi.prev(); // 元の操作に戻る
         return false;
       }
-    })
-    .on('keydown', function(e){
-      if ( e.keyCode === 38 ) {
-        var prev = $("#item" + $scope.entryWord).prev();
-        if (prev.prop('id')){
-          entryWordApi.scroll(prev);
+      if ( e.keyCode === 40 ) { // 下
+        if ( $scope.entryWordSearch($scope.entryWordList).length > ($scope.entryWord + 1) ) {
+          $scope.entryWord++;
+          var next = $("#item" + $scope.entryWord);
+          if (next.prop('id')){
+            entryWordApi.scroll(next);
+          }
         }
+        return false;
       }
-      if ( e.keyCode === 40 ) {
-        var next = $("#item" + $scope.entryWord).next();
-        if (next.prop('id')){
-          entryWordApi.scroll(next);
-        }
-      }
-    });
+      entryWordApi.sc = 0;
+
+    };
 
     // ワードリスト（表示用）
     $("#wordList")
       .on('mouseover', function(e){
-      $scope.entryWord = $scope.entryWordList[$(e.target).index()].id;
+      $scope.entryWord = $(e.target).index();
       $scope.$apply();
     })
       .on('click', function(e){
-      entryWordApi.push($scope.entryWordList[$(e.target).index()].label);
-      entryWordApi.prev();
+      var list = $scope.entryWordSearch($scope.entryWordList);
+      if ( list.length > 0 ) {
+        entryWordApi.push(list[$(e.target).index()].label);
+        entryWordApi.prev();
+      }
       return false;
     });
 
