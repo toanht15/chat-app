@@ -96,8 +96,8 @@ $config['Authority'] = [
 
 /* ユーザー権限（単体あり：C_AUTHORITY_%） */
 $config['dictionaryType'] = [
-    C_DICTIONARY_TYPE_COMP => "企業",
-    C_DICTIONARY_TYPE_PERSON => "個人"
+    C_DICTIONARY_TYPE_COMP => "共有設定",
+    C_DICTIONARY_TYPE_PERSON => "個人設定"
 ];
 
 /* ウィジェット設定 － 表示設定種別 */
