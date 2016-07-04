@@ -455,7 +455,6 @@
     resUrlChecker: function(d){
       var obj = JSON.parse(d);
       if ( obj.url !== browserInfo.href ) {
-        common.load.start();
         location.href = obj.url;
       }
       else {
