@@ -80,11 +80,6 @@
             accessType: common.params.type
           });
         }
-        else {
-          // TODO 要る？
-          emit('reqUrlChecker', {});
-        }
-
         emit('reqUrlChecker', {});
 
         browserInfo.setPrevList();

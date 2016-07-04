@@ -201,6 +201,10 @@ window.onload = function(){
   socket.on('syncStop', function(d){
     var obj = JSON.parse(d);
     if ('message' in obj) {
+      // ポップアップが表示されていれば、続行しない
+      if ( $("#popup").is(".popup-on") ) {
+        return false;
+      }
       modalOpen.call(window, obj.message, 'p-alert', 'メッセージ');
       popupEvent.closeNoPopup = function(){
         popupEvent.close();

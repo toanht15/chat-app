@@ -25,7 +25,6 @@
     </div>
     <?php echo $this->Html->script($fileName); ?>
 
-
 <?php     break; ?>
 <?php   case 2: ?>
     <div id="testpage_idx">

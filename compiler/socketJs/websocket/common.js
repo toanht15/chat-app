@@ -1069,7 +1069,6 @@ var socket, // socket.io
         }
       }
       this.ctrlElmEventListener(eventFlg, scEls, "scroll", syncEvent.elmScrollCall);
-
       // フォーム制御
       $(document).submit(function(e){
         if ( userInfo.accessType !== cnst.access_type.host ) {
@@ -1077,8 +1076,11 @@ var socket, // socket.io
         }
         else {
           emit('requestSyncStop', {});
-          return false;
+          e.preventDefault();
+          e.stopPropagation();
         }
+
+        return false;
       });
 
     },
@@ -1519,7 +1521,7 @@ var socket, // socket.io
   };
 
   var timer = window.setInterval(function(){
-    if ( io !== "" && sinclo !== "" ) {
+    if ( io !== "" && sinclo !== "" && window.info.contract !== undefined ) {
       window.clearInterval(timer);
       init();
     }

@@ -642,8 +642,6 @@ io.sockets.on('connection', function (socket) {
     // マウス・スクロールバーの位置監視
     emit.toUser('syncEvStart', data, getSessionId(obj.siteKey, obj.to, 'sessionId'));
     emit.toUser('syncEvStart', data, getSessionId(obj.siteKey, obj.to, 'syncSessionId'));
-    emit.toUser('syncEvStart', data, sincloCore[obj.siteKey][obj.to].sessionId);
-    emit.toUser('syncEvStart', data, sincloCore[obj.siteKey][obj.to].syncSessionId);
   });
 
   socket.on('requestSyncStop', function (data) {
