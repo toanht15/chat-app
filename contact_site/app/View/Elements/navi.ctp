@@ -19,7 +19,7 @@ switch ($this->name) {
 <!-- /* 上部カラーバー(ここから) */ -->
 <div id="color-bar" class="card-shadow">
     <ul id="color-bar-right" class="fRight">
-        <li class="fLeft"><p><?= h($userInfo['user_name']) ?></p></li>
+        <li class="fLeft"><p><?= h($userInfo['display_name']) ?>さん</p></li>
         <li class="fRight" id="logout" onclick='location.href = "/Login/logout"'><p>ログアウト</p></li>
     </ul>
 </div>

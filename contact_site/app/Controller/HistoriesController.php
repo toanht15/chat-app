@@ -136,7 +136,7 @@ class HistoriesController extends AppController {
             $params = [
                 'fields' => [
                     'THistory.id',
-                    'MUser.user_name'
+                    'MUser.display_name'
                 ],
                 'joins' => [
                     [
@@ -170,10 +170,10 @@ class HistoriesController extends AppController {
             $ret = $this->THistory->find('all', $params);
             foreach((array)$ret as $val){
                 if ( isset($chat[$val['THistory']['id']]) ) {
-                    $chat[$val['THistory']['id']] .= "\n".$val['MUser']['user_name'];
+                    $chat[$val['THistory']['id']] .= "\n".$val['MUser']['display_name']."さん";
                 }
                 else {
-                    $chat[$val['THistory']['id']] = $val['MUser']['user_name'];
+                    $chat[$val['THistory']['id']] = $val['MUser']['display_name']."さん";
                 }
             }
         }
