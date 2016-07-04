@@ -49,11 +49,6 @@
 			$params = $this->Paginator->params();
 			$prevCnt = ($params['page'] - 1) * $params['limit'];
 			$no = $prevCnt + h($key+1);
-
-			$kind = "企業";
-			if ( strcmp(C_DICTIONARY_TYPE_COMP, $val['TDictionary']['type']) === 0 ) {
-				$kind = "個人";
-			}
 			?>
 			<tr>
 				<td class="tCenter"><?=$no?></td>
