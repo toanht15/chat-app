@@ -495,6 +495,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           if ( chatApi.tabId !== tabId ) {
             $scope.showDetail(tabId); // 詳細を開く
           }
+          nInstance.close();
         };
       }
     };
