@@ -90,7 +90,7 @@ class HistoriesController extends AppController {
                     ]
                 ]
             ],
-            'order' => 'created',
+            'order' => 'THistoryChatLog.created',
             'recursive' => -1
         ];
         $ret = $this->THistoryChatLog->find('all', $params);

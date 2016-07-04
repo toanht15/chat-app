@@ -51,6 +51,13 @@ var socket, // socket.io
         }
       }
     },
+    fullDateTime: function(parse){
+      function _numPad(str){
+        return ("0" + str).slice(-2);
+      }
+      var d = ( check.isset(parse) ) ? new Date(Number(parse)) : new Date();
+      return d.getFullYear() + "/" + _numPad(d.getMonth() + 1) + "/" + _numPad(d.getDate()) + " " + _numPad(d.getHours()) + ":" + _numPad(d.getMinutes()) + ":" + _numPad(d.getSeconds()) + "." + _numPad(d.getTime());
+    },
     formatDateParse: function(parse){
       function _numPad(str){
         return ("0" + str).slice(-2);

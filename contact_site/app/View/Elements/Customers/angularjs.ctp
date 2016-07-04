@@ -95,6 +95,13 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             sendMessage.focus();
         }
       },
+      fullDateTime: function(parse){
+        function _numPad(str){
+          return ("0" + str).slice(-2);
+        }
+        var d = ( parse !== "" && parse !== null && parse !== undefined ) ? new Date(Number(parse)) : new Date();
+        return d.getFullYear() + "/" + _numPad(d.getMonth() + 1) + "/" + _numPad(d.getDate()) + " " + _numPad(d.getHours()) + ":" + _numPad(d.getMinutes()) + ":" + _numPad(d.getSeconds()) + "." + _numPad(d.getTime());
+      },
       pushMessage: function() {
         var elm = document.getElementById('sendMessage');
         if ( isset(elm.value) ) {
@@ -104,7 +111,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             userId: this.userId,
             chatMessage:elm.value,
             mUserId: myUserId,
-            messageType: chatApi.messageType.company
+            messageType: chatApi.messageType.company,
+            created: this.fullDateTime()
           });
         }
       },

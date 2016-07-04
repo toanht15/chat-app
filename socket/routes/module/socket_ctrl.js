@@ -303,8 +303,7 @@ io.sockets.on('connection', function (socket) {
                 setList = JSON.parse(JSON.stringify(c_connectList[obj.siteKey][obj.tabId]));
               }
               for (var i = 0; i < messages.length; i++) {
-                var date = Date.parse(messages[i].created);
-                setList[date + "_" + i] = messages[i];
+                setList[messages[i].created + "_" + i] = messages[i];
               }
               chatData.messages = objectSort(setList);
               obj.chat = chatData;
@@ -766,9 +765,7 @@ io.sockets.on('connection', function (socket) {
 
     var setList = {};
     for (var i = 0; i < obj.messages.length; i++) {
-      var date = Date.parse(obj.messages[i].created);
-
-      setList[date + "_" + i] = obj.messages[i];
+      setList[obj.messages[i].created + "_" + i] = obj.messages[i];
     }
     var ret = {};
         ret['messages'] = objectSort(setList);
@@ -830,7 +827,7 @@ io.sockets.on('connection', function (socket) {
     var obj = JSON.parse(d);
     for (var i = 0; obj.messageList.length > i; i++) {
         var message = obj.messageList[i];
-        pool.query("SELECT * FROM t_auto_messages WHERE id = ?  AND m_companies_id = ? AND del_flg = 0 AND active_flg = 0 AND action_type = 1", [message.chatId, companyList[obj.siteKey]], function(err, rows){
+        pool.query("SELECT *, ? as inputed FROM t_auto_messages WHERE id = ?  AND m_companies_id = ? AND del_flg = 0 AND active_flg = 0 AND action_type = 1", [message.created, message.chatId, companyList[obj.siteKey]], function(err, rows){
             if ( !err && (rows && rows[0]) ) {
                 var activity = JSON.parse(rows[0].activity);
                 var ret = {
@@ -840,7 +837,7 @@ io.sockets.on('connection', function (socket) {
                     mUserId: null,
                     chatMessage: activity.message,
                     messageType: 3,
-                    created: message.created
+                    created: rows[0].inputed
                 };
 
                 chatApi.set(ret);
