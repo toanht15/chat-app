@@ -9,7 +9,7 @@ CREATE TABLE `t_history_chat_logs` (
   `message` varchar(500) NOT NULL COMMENT "メッセージ",
   `message_type` int NOT NULL COMMENT "メッセージ種別（1:訪問者から、2:企業側から）",
   `message_read_flg` int DEFAULT 0 COMMENT "既読フラグ",
-  `created` datetime NOT NULL COMMENT "登録日",
+  `created` datetime(2) NOT NULL COMMENT "登録日",
   FOREIGN KEY (`t_histories_id`) REFERENCES t_histories(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

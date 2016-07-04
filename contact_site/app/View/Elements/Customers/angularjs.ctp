@@ -865,7 +865,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           var area = document.getElementById('wordListArea');
           area.style.display = "block";
           $("#wordSearchCond").focus();
-          $scope.entryWord = '';
+          $scope.entryWord = 0;
           $scope.searchWord = "";
           $scope.$apply();
           entryWordApi.init();
