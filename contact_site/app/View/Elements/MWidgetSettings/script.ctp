@@ -94,10 +94,16 @@ sincloApp.controller('WidgetCtrl', function($scope){
         $scope.$apply();
     });
 
+    $scope.saveAct = function (){
+        $('#widgetShowTab').val($scope.widget.showTab);
+        $('#MWidgetSettingMainImage').val($scope.main_image);
+        $('#MWidgetSettingIndexForm').submit();
+    }
+
+    $(document).ready(function(){
         var sincloBox = document.getElementById("sincloBox");
         sincloBox.setAttribute("data-openflg", true);
-        var widgetTitle = document.getElementById("widgetTitle");
-        widgetTitle.addEventListener("click", function(e){
+        $(".widgetOpener").bind("click", function(){
           var target = document.getElementById("sincloBox");
           var main = document.getElementById("miniTarget");
           var flg = target.getAttribute("data-openflg");
@@ -115,13 +121,7 @@ sincloApp.controller('WidgetCtrl', function($scope){
           }
           sincloBox.setAttribute("data-openflg", nextFlg);
         });
-
-        $scope.saveAct = function (){
-            $('#widgetShowTab').val($scope.widget.showTab);
-            $('#MWidgetSettingMainImage').val($scope.main_image);
-            $('#MWidgetSettingIndexForm').submit();
-        }
-
+    });
 
 });
 

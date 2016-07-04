@@ -2,12 +2,11 @@
 	<div id="sincloBox" style="position: relative; z-index: 1; width: 285px; background-color: rgb(255, 255, 255);">
 	<style>
 		#sincloBox span, #sincloBox pre { font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana!important }
-		#sincloBox span#mainImage { z-index: 2; position: absolute; top: 7px; left: 10px; }
+		#sincloBox span#mainImage { cursor: pointer; z-index: 2; position: absolute; top: 7px; left: 10px; }
 		#sincloBox span#mainImage img { background-color: {{main_color}}; }
 		#sincloBox .pb07 { padding-bottom: 7px }
 		#sincloBox .center { text-align: center!important; padding: 7px 30px!important }
-		/*#sincloBox div#descriptionSet { height: 52px; padding-top: 7px; border-width: 0 1px 1px 1px; border-style: solid; border-color: #E8E7E0 }*/
-		/*#sincloBox div#descriptionSet p:not(.ng-hide) { padding-bottom: 7px }*/
+		#sincloBox div#descriptionSet { cursor: pointer; }
 		#sincloBox p#widgetTitle { position:relative; z-index: 1; cursor:pointer; border-radius: {{radius_ratio}}px {{radius_ratio}}px 0 0; border: 1px solid {{main-color}}; border-bottom:none; background-color: {{main_color}};text-align: center; font-size: 14px;padding: 7px 30px 7px 70px; margin: 0;color: {{string_color}}; height: 32px }
 		#sincloBox p#widgetTitle:after { background-position-y: 3px; background-image: url('<?=$gallaryPath?>yajirushi.png'); top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear}
 		#sincloBox[data-openflg='true'] p#widgetTitle:after { transform: rotate(0deg); }
@@ -55,7 +54,7 @@
 	<?php endif; ?>
 	</style>
 	<!-- 画像 -->
-	<span id="mainImage" ng-if="mainImageToggle == '1'">
+	<span id="mainImage" class="widgetOpener" ng-if="mainImageToggle == '1'">
 	<?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
 	<?php endif; ?>
 		<img ng-src="{{main_image}}" err-src="<?=$gallaryPath?>chat_sample_picture.png" width="62" height="70" alt="チャット画像">
@@ -63,10 +62,10 @@
 	<!-- 画像 -->
 	<div>
 		<!-- タイトル -->
-		<p id="widgetTitle" ng-class="{center: mainImageToggle == '2'}">{{title}}</p>
+		<p id="widgetTitle" class="widgetOpener" ng-class="{center: mainImageToggle == '2'}">{{title}}</p>
 		<!-- タイトル -->
 	</div>
-	<div id='descriptionSet' ng-hide="mainImageToggle == '2' && subTitleToggle == '2' && descriptionToggle == '2'">
+	<div id='descriptionSet' class="widgetOpener" ng-hide="mainImageToggle == '2' && subTitleToggle == '2' && descriptionToggle == '2'">
 		<!-- サブタイトル -->
 		<p ng-if="subTitleToggle == '1'" id="widgetSubTitle">{{sub_title}}</p>
 		<p ng-if="subTitleToggle == '2'" id="widgetSubTitle"></p>

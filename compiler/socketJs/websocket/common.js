@@ -171,8 +171,9 @@ var socket, // socket.io
       html += '      #sincloBox * { box-sizing: border-box; font-size: 12px; font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana;}';
       html += '      #sincloBox a { color: #8a8a8a }';
       html += '      #sincloBox a:hover { color: ' + widget.mainColor + '; }';
+      html += '      #sincloBox div#widgetHeader { cursor:pointer; }';
       html += '      #sincloBox span, #sincloBox pre { font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana!important }';
-      html += '      #sincloBox span#mainImage { z-index: 2; position: absolute; top: 7px; left: 10px; }';
+      html += '      #sincloBox span#mainImage { cursor:pointer; z-index: 2; position: absolute; top: 7px; left: 10px; }';
       html += '      #sincloBox span#mainImage img { background-color: ' + widget.mainColor + ' }';
       html += '      #sincloBox p#widgetTitle { position:relative; cursor:pointer; border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px 0 0; border: 1px solid ' + widget.mainColor + '; border-bottom:none; background-color: ' + widget.mainColor + ';text-align: center; font-size: 14px;padding: 7px 30px; margin: 0;color: ' + widget.stringColor + '; height: 32px }';
       html += '      #sincloBox p#widgetTitle #sincloChatUnread { position: absolute; top: 0; left: 0; width: 25px; height: 25px; font-size: 13px; color: #FFF; font-style: normal; text-align: center; font-weight: bold; background-color: #FF5C5C; border-radius: 15px; margin: 2.5px 6px; padding: 3px; }';
@@ -237,11 +238,11 @@ var socket, // socket.io
       var html = "";
       // 画像
       if ( Number(widget.showMainImage) === 1 || widget.mainImage !== "" ) {
-        html += '  <span id="mainImage"><img src="' + widget.mainImage + '" width="62" height="70" alt="チャット画像"></span>';
+        html += '  <span id="mainImage" onclick="sinclo.operatorInfo.ev()"><img src="' + widget.mainImage + '" width="62" height="70" alt="チャット画像"></span>';
       }
-      html += '  <div id="widgetHeader" >';
+      html += '  <div id="widgetHeader" onclick="sinclo.operatorInfo.ev()">';
       // タイトル
-      html += '    <p id="widgetTitle" onclick="sinclo.operatorInfo.ev()">' + widget.title + '</p>';
+      html += '    <p id="widgetTitle">' + widget.title + '</p>';
       var subTitle = (widget.subTitle === undefined && Number(widget.showSubtitle) === 1 ) ? "" : widget.subTitle;
       var description = (widget.description === undefined) ? "" : widget.description;
       if ( Number(widget.showMainImage) === 1 || Number(widget.showSubtitle) === 1 || Number(widget.showDescription) === 1) {
