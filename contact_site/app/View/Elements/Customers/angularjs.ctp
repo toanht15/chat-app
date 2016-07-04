@@ -160,8 +160,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         this.close(); // 選択エリアを非表示に
     },
     close: function(){
-       var list = document.getElementById('wordListArea');
-       list.style.display = "none";
+        var list = document.getElementById('wordListArea');
+        if ( list ) {
+            list.style.display = "none";
+        }
     },
     scTimer: null,
     scroll: function(now){

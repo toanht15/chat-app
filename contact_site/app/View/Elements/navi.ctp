@@ -51,7 +51,7 @@ switch ($this->name) {
         <div class="icon">
             <?= $this->htmlEx->naviLink('個人設定', 'personal.png', ['href' => ['controller' => 'PersonalSettings', 'action' => 'index']]) ?>
         </div>
-    <?php if (strcmp($userInfo['permission_level'], C_AUTHORITY_ADMIN) === 0): ?>
+    <?php if ( strcmp($userInfo['permission_level'], C_AUTHORITY_SUPER) === 0 || strcmp($userInfo['permission_level'], C_AUTHORITY_ADMIN) === 0 ): ?>
         <div class="icon" style="display:none">
             <?= $this->htmlEx->naviLink('企業設定', 'company.png', ['href' => ['controller' => 'Customers', 'action' => 'index']]) ?>
         </div>
@@ -62,7 +62,7 @@ switch ($this->name) {
         <div class="icon">
             <?= $this->htmlEx->naviLink('コード・デモ', 'script.png', ['href' => ['controller' => 'ScriptSettings', 'action' => 'index']]) ?>
         </div>
-    <?php if (strcmp($userInfo['permission_level'], C_AUTHORITY_ADMIN) === 0): ?>
+    <?php if ( strcmp($userInfo['permission_level'], C_AUTHORITY_SUPER) === 0 || strcmp($userInfo['permission_level'], C_AUTHORITY_ADMIN) === 0 ): ?>
         <div class="icon">
             <?= $this->htmlEx->naviLink('ウィジェット', 'widget.png', ['href' => ['controller' => 'MWidgetSettings', 'action' => 'index']]) ?>
         </div>

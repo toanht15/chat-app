@@ -53,17 +53,19 @@
 			<span class="greenBtn btn-shadow" onclick="chatApi.addOption(1)">選択肢を追加する</span>
 		</div>
 		<div style="position: relative">
-			<textarea rows="5" id="sendMessage" ng-focus="sendMessageConnectConfirm(detailId)" maxlength="300" placeholder="ここにメッセージ入力してください。
+			<?php if ( strcmp($userInfo['permission_level'], C_AUTHORITY_SUPER) !== 0) :?>
+				<textarea rows="5" id="sendMessage" ng-focus="sendMessageConnectConfirm(detailId)" maxlength="300" placeholder="ここにメッセージ入力してください。
 ・Shift + Enterで改行されます
 ・下矢印キー(↓)で簡易入力が開きます"></textarea>
-			<div id="wordListArea" ng-keydown="searchKeydown($event)">
-				<input type="text" ng-model="searchWord" id="wordSearchCond" />
-				<ul id="wordList">
-					<li ng-repeat="item in entryWordSearch(entryWordList)" id="item{{$index}}" ng-class="{selected: $index === entryWord}">{{item.label}}</li>
-					<li style="border:none; color:#ff7b7b" ng-if="entryWordList.length === 0">[設定] > [簡易入力] から<br>メッセージを登録してください</li>
-				</ul>
-			</div>
-			<span id="sinclo_sendbtn" class="btn-shadow" onclick="chatApi.pushMessage()">送信（Enter）</span>
+				<div id="wordListArea" ng-keydown="searchKeydown($event)">
+					<input type="text" ng-model="searchWord" id="wordSearchCond" />
+					<ul id="wordList">
+						<li ng-repeat="item in entryWordSearch(entryWordList)" id="item{{$index}}" ng-class="{selected: $index === entryWord}">{{item.label}}</li>
+						<li style="border:none; color:#ff7b7b" ng-if="entryWordList.length === 0">[設定] > [簡易入力] から<br>メッセージを登録してください</li>
+					</ul>
+				</div>
+				<span id="sinclo_sendbtn" class="btn-shadow" onclick="chatApi.pushMessage()">送信（Enter）</span>
+			<?php endif; ?>
 		</div>
 	</div>
 	<audio id="sinclo-sound">

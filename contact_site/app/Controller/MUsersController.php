@@ -15,7 +15,8 @@ class MUsersController extends AppController {
                 'MUser.*'
             ),
             'conditions' => array(
-                'MUser.del_flg != ' => 1
+                'MUser.del_flg != ' => 1,
+                'MUser.permission_level !=' => C_AUTHORITY_SUPER
             ),
             'recursive' => -1
         )
@@ -39,6 +40,7 @@ class MUsersController extends AppController {
         $this->set('userListCnt', $this->MUser->find('count', [
           'conditions' => [
             'MUser.del_flg != ' => 1,
+            'MUser.permission_level !=' => C_AUTHORITY_SUPER,
             'MUser.m_companies_id' => $this->userInfo['MCompany']['id']
           ]
         ]));
@@ -161,6 +163,7 @@ class MUsersController extends AppController {
           'fields' => 'MUser.id',
           'conditions' => [
               'MUser.del_flg !=' => 1,
+              'MUser.permission_level !=' => C_AUTHORITY_SUPER,
               'MUser.m_companies_id' => $this->userInfo['MCompany']['id']
           ],
           'recursive' => -1

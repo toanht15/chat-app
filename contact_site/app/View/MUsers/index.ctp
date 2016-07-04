@@ -49,8 +49,13 @@
 		</thead>
 		<tbody>
 		<?php foreach((array)$userList as $key => $val): ?>
+			<?php
+			$params = $this->Paginator->params();
+			$prevCnt = ($params['page'] - 1) * $params['limit'];
+			$no = $prevCnt + h($key+1);
+			?>
 			<tr>
-				<td class="tCenter"><?=($key + 1)?></td>
+				<td class="tCenter"><?=$no?></td>
 				<td class="tCenter"><?=$val['MUser']['user_name']?></td>
 				<td class="tCenter"><?=$val['MUser']['display_name']?></td>
 				<td class="tCenter"><?=$authorityList[$val['MUser']['permission_level']]?></td>

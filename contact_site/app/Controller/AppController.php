@@ -31,23 +31,25 @@ App::uses('Controller', 'Controller');
  * @link		http://book.cakephp.org/2.0/en/controllers.html#the-app-controller
  */
 class AppController extends Controller {
-    public $components = array(
+    public $components = [
         'Session',
-        'Auth' => array(
-            'loginAction' => array(
+        'Auth' => [
+            'loginAction' => [
                 'controller' => 'Login',
                 'action' => 'login'
-            ),
+            ],
             'authError' => 'ログインに失敗しました。',
-            'authenticate' => array(
-                'Form' => array(
+            'authenticate' => [
+                'Form' => [
                     'userModel' => 'MUser',
-                    'fields' => array('username' => 'mail_address'),
-                    'scope' => array('MUser.del_flg' => 0)
-                )
-            )
-        )
-    );
+                    'fields' => ['username' => 'mail_address'],
+                    'scope' => [
+                        'MUser.del_flg' => 0
+                    ]
+                ]
+            ]
+        ]
+    ];
 
     public $helpers = array('formEx');
     public $uses = array('MUser', 'MWidgetSetting');
@@ -123,7 +125,7 @@ class AppController extends Controller {
         }
 
         /* 権限 */
-        if (strcmp($this->userInfo['permission_level'], C_AUTHORITY_ADMIN) !== 0) {
+        if ( !(strcmp($this->userInfo['permission_level'], C_AUTHORITY_SUPER) === 0 || strcmp($this->userInfo['permission_level'], C_AUTHORITY_ADMIN) === 0) ) {
             switch($this->name){
               // 管理者権限のみのページ
               case "MUsers":
@@ -137,6 +139,7 @@ class AppController extends Controller {
 
         /* 契約ごと使用可能ページ */
         switch($this->name){
+            case "TDictionaries":
             case "TAutoMessages":
                 if (!$this->coreSettings["chat"]) {
                     $this->redirect("/");

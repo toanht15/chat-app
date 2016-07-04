@@ -86,6 +86,7 @@
                 <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
                     <!-- /* モニター */ -->
                     <td class='w10 tCenter'>
+                        <?php if ( strcmp($userInfo['permission_level'], C_AUTHORITY_SUPER) !== 0) :?>
                             <span ng-if="monitor.widget">
                                 <span ng-if="!monitor.connectToken">
                                     <a class='monitorBtn blueBtn btn-shadow' href='javascript:void(0)' ng-click='windowOpen(monitor.tabId, monitor.accessId)' ng-confirm-click='アクセスID【{{monitor.accessId}}】のユーザーに接続しますか？'>接続する</a>
@@ -95,13 +96,15 @@
                                 <span class="monitorOn" ng-if="!monitor.responderId">対応中...</span>
                                 <span class="monitorOn" ng-if="monitor.responderId"><span class="bold">対応中</span><br>（{{setName(monitor.responderId)}}）</span>
                             </span>
+                        <?php endif; ?>
                     </td>
                 <?php endif; ?>
 
                 <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
 
-                    <!-- /* チャット */ -->
-                    <td class="w10 tCenter" id="chatTypeBtn">
+                <!-- /* チャット */ -->
+                <td class="w10 tCenter" id="chatTypeBtn">
+                    <?php if ( strcmp($userInfo['permission_level'], C_AUTHORITY_SUPER) !== 0) :?>
 
                         <span class="monitorOn" ng-if="monitor.chat === <?= h($muserId)?>"><span class="bold">対応中</span><br>（あなた）</span>
                         <span class="monitorOn" ng-if="isset(monitor.chat) && monitor.chat !== <?= h($muserId)?>"><span class="bold">対応中</span><br>（{{setName(monitor.chat)}}）</span>
@@ -116,7 +119,8 @@
                             <div class="unread" ng-if="monitor.chatUnreadCnt > 0">{{monitor.chatUnreadCnt}}</div>
                           </span>
                         </span>
-                    </td>
+                    <?php endif; ?>
+                </td>
                 <?php endif; ?>
 
                     <!-- /* 訪問ユーザ */ -->
