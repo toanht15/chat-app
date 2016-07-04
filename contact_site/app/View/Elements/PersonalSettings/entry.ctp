@@ -11,7 +11,7 @@ if ( !empty($this->data['MUser']['edit_password']) ) {
             <?= $this->Form->input('id', array('type' => 'hidden')); ?>
             <ul>
                 <li>
-                    <div class="labelArea fLeft"><span class="require"><label>名前</label></span></div>
+                    <div class="labelArea fLeft"><span class="require"><label>氏名</label></span></div>
                     <?= $this->Form->input('user_name', array('placeholder' => 'user_name', 'div' => false, 'label' => false, 'maxlength' => 50, 'error' => false)) ?>
                 </li>
                 <?php if ( $this->Form->isFieldError('user_name') ) echo $this->Form->error('user_name', null, array('wrap' => 'li')); ?>
