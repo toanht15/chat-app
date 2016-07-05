@@ -101,6 +101,7 @@ var _access_type_guest = 1, _access_type_host = 2, userAgentChk, notificationSta
         type: 'admin',
         data: {
             token: receiveAccessInfoToken,
+            authority: <?=$userInfo['permission_level']?>,
             userId: '<?=$muserId?>'
         }
     };

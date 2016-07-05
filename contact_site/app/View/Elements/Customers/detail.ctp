@@ -47,7 +47,7 @@
 	</ul> -->
 	<div id="chatContent">
 		<ul id="chatTalk" >
-			<ng-create-message ng-repeat="chat in messageList"></ng-create-message>
+			<ng-create-message ng-repeat="chat in messageList | orderBy: 'sort'"></ng-create-message>
 		</ul>
 		<div id="chatMenu" ng-class="{showOption: chatOptionDisabled(detailId)}">
 			<span class="greenBtn btn-shadow" onclick="chatApi.addOption(1)">選択肢を追加する</span>

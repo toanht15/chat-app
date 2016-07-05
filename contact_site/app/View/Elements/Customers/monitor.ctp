@@ -39,7 +39,7 @@
            * している場合にのみ表示します。
            */
           $nowCntClass = "";
-          if ( $widgetCheck ) {
+          if ( $widgetCheck && strcmp($userInfo['permission_level'], C_AUTHORITY_SUPER) !== 0 ) {
             $nowCntClass = "m40t";
             echo '<li id="opStatus">現在のステータス</li>';
             if ( $opStatus ) {
@@ -52,6 +52,7 @@
             }
           }
           ?>
+
         </ul>
         <p class="tRight <?=$nowCntClass?>" ng-cloak>現在 <b>{{objCnt(monitorList)}}</b>名がサイト訪問中</p>
     </div>

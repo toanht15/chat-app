@@ -67,6 +67,7 @@
           emitData.connectToken = userInfo.connectToken;
           userInfo.syncInfo.get();
           emit('connectSuccess', {prevList: userInfo.prevList});
+          emit('connectedForSync', {});
 
           // チャットの契約をしている場合はウィジェット表示
           if ( window.info.contract.chat ) {
@@ -110,7 +111,12 @@
         data: emitData
       });
     },
-
+    retConnectedForSync: function (d) {
+      var obj = common.jParse(d);
+      if ( ('pagetime' in obj) ) {
+        userInfo.pageTime = obj['pagetime'];
+      }
+    },
     accessInfo: function(d){
       var obj = common.jParse(d);
       if ( obj.token !== common.token ) return false;
@@ -118,7 +124,6 @@
       if ( ('activeOperatorCnt' in obj) ) {
         window.info.activeOperatorCnt = obj['activeOperatorCnt'];
       }
-
       if ( ('pagetime' in obj) ) {
         userInfo.pageTime = obj['pagetime'];
       }
@@ -681,13 +686,15 @@
         send: function(value){
             storage.s.set('chatAct', true); // オートメッセージを表示しない
 
-            emit('sendChat', {
-                historyId: sinclo.chatApi.historyId,
-                chatMessage:value,
-                mUserId: null,
-                created: common.fullDateTime(),
-                messageType: sinclo.chatApi.messageType.customer
-            });
+            setTimeout(function(){
+              emit('sendChat', {
+                  historyId: sinclo.chatApi.historyId,
+                  chatMessage:value,
+                  mUserId: null,
+                  created: common.fullDateTime(),
+                  messageType: sinclo.chatApi.messageType.customer
+              });
+            }, 50);
 
         },
         sound: null,

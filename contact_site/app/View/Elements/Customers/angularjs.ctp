@@ -262,7 +262,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       referrer : false
     };
     $scope.monitorList = {};
-    $scope.messageList = {};
+    $scope.messageList = [];
     $scope.chatList = [];
     $scope.search = function(array){
       var result = {};
@@ -435,7 +435,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       if ( $scope.customerMainClass !== "" ) {
         $scope.customerMainClass = "";
         $scope.detailId = "";
-        $scope.messageList = {};
+        $scope.messageList = [];
         chatApi.userId = "";
         $("#chatTalk").children().remove();
         $("#customer_list tr.on").removeClass('on');
@@ -575,7 +575,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             tabId: obj.tabId
           });
           for (var key in obj.messages) {
-              $scope.messageList[key] = obj.messages[key];
+            var chat = obj.messages[key];
+            chat.sort = Number(key);
+            $scope.messageList.push(obj.messages[key]);
           }
         }
 
@@ -584,8 +586,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     socket.on('resAutoChatMessage', function(d){
         var obj = JSON.parse(d);
         if (obj.tabId === chatApi.tabId ) {
-            var date = Date.parse(obj.created);
-            $scope.messageList[date] = obj;
+            var chat = obj;
+            chat.sort = Number(chat.sort);
+            $scope.messageList.push(obj);
         }
     });
 
@@ -715,8 +718,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         }, {t: obj.tabId});
       }
       if ( !isset(prev) && obj.tabId === chatApi.tabId ) {
-        var date = Date.parse(new Date);
-        $scope.messageList[date] = "start";
+        var chat = {
+          sort: Number(obj.created),
+          text: "start"
+        };
+        $scope.messageList.push(chat);
       }
     });
 
@@ -731,8 +737,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         $scope.monitorList[obj.tabId].chat = null;
       }
       if ( obj.tabId === chatApi.tabId ) {
-        var date = Date.parse(new Date);
-        $scope.messageList[date] = "end";
+        var chat = {
+          sort: Number(obj.created),
+          text: "end"
+        };
+        $scope.messageList.push(chat);
       }
 
     });
@@ -741,8 +750,15 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     socket.on("chatMessageData", function(d){
       var obj = JSON.parse(d);
       for (var key in obj.chat.messages) {
-        var chat = obj.chat.messages[key];
-        $scope.messageList[key] = chat;
+        var chat = {};
+        if ( typeof(obj.chat.messages[key]) === "object" ) {
+          chat = obj.chat.messages[key];
+        }
+        else {
+          chat.text = obj.chat.messages[key];
+        }
+        chat.sort = Number(key);
+        $scope.messageList.push(chat);
       }
       if ( $scope.monitorList[obj.tabId].chat === myUserId ) {
         // 既読にする(ok)
@@ -765,8 +781,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         }
         // 対象のタブを開いている場合
         if ( obj.tabId === chatApi.tabId ){
-          var date = Date.parse(new Date);
-          $scope.messageList[date] = obj;
+          var chat = JSON.parse(JSON.stringify(obj));
+          chat.sort = Number(obj.sort);
+          $scope.messageList.push(chat);
           scDown(); // チャットのスクロール
         }
 
@@ -955,7 +972,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         var cn = "";
         var li = document.createElement('li');
         var content = "";
-        if ( typeof(scope.chat) === "object" ) {
+        if ( !("text" in scope.chat) ) {
           // 消費者からのメッセージの場合
           if (scope.chat.messageType === chatApi.messageType.customer) {
             cn = "sinclo_re";
@@ -977,10 +994,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         }
         else {
           cn = "sinclo_etc";
-          if ( scope.chat === "start" ) {
+          if ( scope.chat.text === "start" ) {
             content = "－　オペレーターが入室しました　－";
           }
-          if ( scope.chat === "end" ) {
+          if ( scope.chat.text === "end" ) {
             content = "－　オペレーターが退室しました　－";
           }
         }
