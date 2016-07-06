@@ -130,6 +130,7 @@ class AppController extends Controller {
               // 管理者権限のみのページ
               case "MUsers":
               case "MWidgetSettings":
+              case "TAutoMessages":
                 // 一先ずトップ画面へ
                 $this->redirect("/");
               default:
