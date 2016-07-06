@@ -605,6 +605,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         if ( 'widget' in obj ) { $scope.monitorList[obj.tabId].widget = obj.widget; }
         if ( 'connectToken' in obj ) { $scope.monitorList[obj.tabId].connectToken = obj.connectToken; }
         if ( 'prev' in obj ) { $scope.monitorList[obj.tabId].prev = obj.prev; }
+        if ( 'title' in obj ) { $scope.monitorList[obj.tabId].title = obj.title; }
+        if ( 'url' in obj ) { $scope.monitorList[obj.tabId].url = obj.url; }
         if ( 'responderId' in obj ) { $scope.monitorList[obj.tabId].responderId = obj.responderId; }
       }
 

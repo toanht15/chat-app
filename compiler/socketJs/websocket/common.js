@@ -168,7 +168,7 @@ var socket, // socket.io
       }
       html += '  <style>';
       html += '      #sincloBox { display: none; position: fixed; ' + showPosition + ' z-index: 999998; background-color: rgba(0,0,0,0); width: 285px; }';
-      html += '      #sincloBox * { box-sizing: border-box; font-size: 12px; font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana;}';
+      html += '      #sincloBox * { line-height: 1.4; box-sizing: border-box; font-size: 12px; font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana;}';
       html += '      #sincloBox a { color: #8a8a8a }';
       html += '      #sincloBox a:hover { color: ' + widget.mainColor + '; }';
       html += '      #sincloBox div#widgetHeader { cursor:pointer; }';
@@ -1437,19 +1437,20 @@ var socket, // socket.io
         }
       }
       this.ctrlElmEventListener(eventFlg, scEls, "scroll", syncEvent.elmScrollCall);
-      // フォーム制御
-      $(document).submit(function(e){
-        if ( userInfo.accessType !== cnst.access_type.host ) {
-          emit('requestSyncStop', {message: "お客様がsubmitボタンをクリックしましたので、\n画面共有を終了します。"});
-        }
-        else {
-          emit('requestSyncStop', {});
-          e.preventDefault();
-          e.stopPropagation();
-          return false;
-        }
-
-      });
+      if ( ('form' in window.info.dataset ) && window.info.dataset.form ) {
+        // フォーム制御
+        $(document).submit(function(e){
+          if ( userInfo.accessType !== cnst.access_type.host ) {
+            emit('requestSyncStop', {message: "お客様がsubmitボタンをクリックしましたので、\n画面共有を終了します。"});
+          }
+          else {
+            emit('requestSyncStop', {});
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+          }
+        });
+      }
 
     },
     start: function(e){ syncEvent.change(true); },

@@ -66,7 +66,7 @@
         if ( Number(userInfo.accessType) === Number(cnst.access_type.guest) ) {
           emitData.connectToken = userInfo.connectToken;
           userInfo.syncInfo.get();
-          emit('connectSuccess', {prevList: userInfo.prevList});
+          emit('connectSuccess', {prevList: userInfo.prevList, prev: userInfo.prev});
           emit('connectedForSync', {});
 
           // チャットの契約をしている場合はウィジェット表示
@@ -155,6 +155,8 @@
         }
         userInfo.setTabId();
       }
+
+      obj['prev'] = userInfo.prev;
 
       emit('customerInfo', obj);
       emit('connectSuccess', {
