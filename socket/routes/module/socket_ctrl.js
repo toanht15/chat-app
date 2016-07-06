@@ -129,7 +129,7 @@ function fullDateTime(parse){
     return ("0" + str).slice(-2);
   }
   var d = ( isset(parse) ) ? new Date(Number(parse)) : new Date();
-  return d.getFullYear() + _numPad(d.getMonth() + 1) + _numPad(d.getDate()) + _numPad(d.getHours()) + _numPad(d.getMinutes()) + _numPad(d.getSeconds()) + _numPad(d.getTime());
+  return d.getFullYear() + _numPad(d.getMonth() + 1) + _numPad(d.getDate()) + _numPad(d.getHours()) + _numPad(d.getMinutes()) + _numPad(d.getSeconds()) + _numPad(Number(String(d.getMilliseconds()).slice(0,2)));
 }
 
 function formatDateParse(parse){
@@ -311,6 +311,8 @@ io.sockets.on('connection', function (socket) {
                 setList = JSON.parse(JSON.stringify(c_connectList[obj.siteKey][obj.tabId]));
               }
               for (var i = 0; i < messages.length; i++) {
+                var date = messages[i].created;
+                date = new Date(date);
                 setList[fullDateTime(messages[i].created)] = messages[i];
               }
               chatData.messages = objectSort(setList);
@@ -338,22 +340,20 @@ io.sockets.on('connection', function (socket) {
           if ( rows && rows[0] ) {
             insertData['t_history_stay_logs_id'] = rows[0].id;
           }
-          insertData['created'] = (('created' in d)) ? d.created : formatDateParse();
+          insertData['created'] = (('created' in d)) ? new Date(d.created) : new Date();
           // オートメッセージの場合は既読
           if (Number(insertData['message_type'] === 3) ) {
               insertData['message_read_flg'] = 1;
           }
-
           pool.query('INSERT INTO t_history_chat_logs SET ?', insertData, function(error,results,fields){
             if ( !isset(error) ) {
               if ( !isset(sincloCore[d.siteKey][d.tabId]['sessionId'])) return false;
               var sId = sincloCore[d.siteKey][d.tabId].sessionId;
               // 書き込みが成功したら顧客側に結果を返す
-              emit.toUser('sendChatResult', {tabId: d.tabId, chatId: results.insertId, messageType: d.messageType, ret: true, chatMessage: d.chatMessage, siteKey: d.siteKey}, sId);
+              emit.toUser('sendChatResult', {tabId: d.tabId, chatId: results.insertId, messageType: d.messageType, created: insertData.created, ret: true, chatMessage: d.chatMessage, siteKey: d.siteKey}, sId);
               if (Number(insertData['message_type']) === 3) return false;
               // 書き込みが成功したら企業側に結果を返す
-              var date = Date.parse(insertData.created);
-              emit.toCompany('sendChatResult', {tabId: d.tabId, chatId: results.insertId, sort: fullDateTime(date), created: insertData.created, userId: insertData.m_users_id, messageType: d.messageType, ret: true, message: d.chatMessage, siteKey: d.siteKey}, d.siteKey);
+              emit.toCompany('sendChatResult', {tabId: d.tabId, chatId: results.insertId, sort: fullDateTime(insertData.created), created: insertData.created, userId: insertData.m_users_id, messageType: d.messageType, ret: true, message: d.chatMessage, siteKey: d.siteKey}, d.siteKey);
             }
             else {
               // 書き込みが失敗したらエラーを渡す
@@ -768,9 +768,10 @@ io.sockets.on('connection', function (socket) {
   socket.on("sendAutoChatMessage", function(d){
     var obj = JSON.parse(d);
     var chat = JSON.parse(JSON.stringify(obj));
-    chat.created = new Date(obj.created);
-    chat.sort = fullDateTime(Date.parse(obj.created));
+    chat.created = new Date();
+    chat.sort = fullDateTime(chat.created);
     emit.toCompany('resAutoChatMessage', chat, chat.siteKey);
+    emit.toMine('resAutoChatMessage', chat, socket);
   });
 
   // 一括：チャットデータ取得(オートメッセージのみ)
@@ -789,7 +790,7 @@ io.sockets.on('connection', function (socket) {
     var setList = {};
     for (var i = 0; i < obj.messages.length; i++) {
       var created = new Date(obj.messages[i].created);
-      setList[fullDateTime(created)] = obj.messages[i];
+      setList[fullDateTime(Date.parse(created))] = obj.messages[i];
     }
     var ret = {};
         ret['messages'] = objectSort(setList);
@@ -863,7 +864,6 @@ io.sockets.on('connection', function (socket) {
                     messageType: 3,
                     created: rows[0].inputed
                 };
-
                 chatApi.set(ret);
             }
         });

@@ -56,7 +56,7 @@ var socket, // socket.io
         return ("0" + str).slice(-2);
       }
       var d = ( check.isset(parse) ) ? new Date(Number(parse)) : new Date();
-      return d.getFullYear() + "-" + _numPad(d.getMonth() + 1) + "-" + _numPad(d.getDate()) + " " + _numPad(d.getHours()) + ":" + _numPad(d.getMinutes()) + ":" + _numPad(d.getSeconds()) + "." + _numPad(d.getTime());
+      return d.getFullYear() + "-" + _numPad(d.getMonth() + 1) + "-" + _numPad(d.getDate()) + " " + _numPad(d.getHours()) + ":" + _numPad(d.getMinutes()) + ":" + _numPad(d.getSeconds()) + "." + Number(String(d.getMilliseconds()).slice(0,2));
     },
     formatDateParse: function(parse){
       function _numPad(str){
@@ -1867,6 +1867,11 @@ var socket, // socket.io
     socket.on('sendAutoChatMessage', function (d) {
       sinclo.sendAutoChatMessage(d);
     }); // socket-on: sendReqAutoChatMessages
+
+    // オートメッセージ
+    socket.on('resAutoChatMessage', function (d) {
+      sinclo.resAutoChatMessage(d);
+    }); // socket-on: resAutoChatMessage
 
     // 新着チャット
     socket.on('sendChatResult', function (d) {

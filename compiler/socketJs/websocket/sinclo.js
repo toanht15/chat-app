@@ -546,6 +546,15 @@
       var obj = common.jParse(d);
       emit("sendAutoChatMessages", {messages: sinclo.chatApi.autoMessages, sendTo: obj.sendTo});
     },
+    resAutoChatMessage: function(d){
+        var obj = JSON.parse(d);
+
+        sinclo.chatApi.autoMessages.push({
+            chatId:obj.chatId,
+            message: obj.message,
+            created: obj.created
+        });
+    },
     confirmVideochatStart: function(obj) {
       // ビデオチャット開始に必要な情報をオペレータ側から受信し、セットする
       if ( obj.toTabId !== userInfo.tabId ) return false;
@@ -691,10 +700,9 @@
                   historyId: sinclo.chatApi.historyId,
                   chatMessage:value,
                   mUserId: null,
-                  created: common.fullDateTime(),
                   messageType: sinclo.chatApi.messageType.customer
               });
-            }, 50);
+            }, 100);
 
         },
         sound: null,
@@ -892,11 +900,10 @@
 
             callback(key, ret);
         },
-        setAutoMessage: function(id, date, cond){
+        setAutoMessage: function(id, cond){
             var data = {
                 chatId:id,
-                message:cond.message,
-                created: date
+                message:cond.message
             };
 
             if ( sinclo.chatApi.saveFlg ) {
@@ -905,7 +912,6 @@
             }
             else {
                 emit('sendAutoChatMessage', data);
-                sinclo.chatApi.autoMessages.push(data);
             }
         },
         setAction: function(id, type, cond){
@@ -923,7 +929,7 @@
                     var date = common.fullDateTime();
                     if ( prev.length === 0 || (prev.length > 0 && prev[prev.length - 1].created !== date) ) {
                         clearInterval(setAutoMessageTimer);
-                        sinclo.trigger.setAutoMessage(id, date, cond);
+                        sinclo.trigger.setAutoMessage(id, cond);
                     }
                 }, 1);
 
