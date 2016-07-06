@@ -423,6 +423,9 @@ a {
   color: white;
   font-weight: bold;
   transition: background-color, border-color 0.1s linear;
+  cursor: default;
+
+  > img { transform: scale(1) }
 }
 
 .redBtn {

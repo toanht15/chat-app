@@ -80,7 +80,8 @@
 						);
 					?>
 					<?php
-						echo $this->Html->link(
+						if ( $userInfo['id'] === $val['MUser']['id'] ) {
+							echo $this->Html->link(
 								$this->Html->image(
 									'trash.png',
 									array(
@@ -91,11 +92,30 @@
 								),
 								'javascript:void(0)',
 								array(
-									'class' => 'btn-shadow redBtn fRight',
-									'onclick' => 'openConfirmDialog('.$val['MUser']['id'].')',
+									'class' => 'grayBtn fRight',
 									'escape' => false
 								)
-						);
+							);
+						}
+						else {
+							echo $this->Html->link(
+									$this->Html->image(
+										'trash.png',
+										array(
+											'alt' => '削除',
+											'width' => 30,
+											'height' => 30
+										)
+									),
+									'javascript:void(0)',
+									array(
+										'class' => 'btn-shadow redBtn fRight',
+										'onclick' => 'openConfirmDialog('.$val['MUser']['id'].')',
+										'escape' => false
+									)
+							);
+						}
+
 					?>
 
 				</td>
