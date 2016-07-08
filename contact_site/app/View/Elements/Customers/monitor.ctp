@@ -64,20 +64,20 @@
     <table>
         <thead>
                 <tr>
-                        <th ng-hide="labelHideList.accessId" >アクセスID</th>
+                        <th ng-hide="labelHideList.accessId" style="width: 4em">アクセスID</th>
                 <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
-                        <th>モニター</th>
+                        <th style="width: 7em">モニター</th>
                 <?php endif; ?>
                 <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
-                        <th>チャット</th>
+                        <th style="width: 7em">チャット</th>
                 <?php endif; ?>
-                        <th ng-hide="labelHideList.ipAddress" >訪問ユーザ</th>
-                        <th ng-hide="labelHideList.ua" >ユーザー環境</th>
-                        <th ng-hide="labelHideList.time" >アクセス日時</th>
-                        <th ng-hide="labelHideList.stayTime" >滞在時間</th>
-                        <th ng-hide="labelHideList.page" >閲覧ページ数</th>
-                        <th ng-hide="labelHideList.title" >閲覧中ページ</th>
-                        <th ng-hide="labelHideList.referrer" >参照元URL</th>
+                        <th ng-hide="labelHideList.ipAddress" style="width: 8em">訪問ユーザ</th>
+                        <th ng-hide="labelHideList.ua" style="width: 7em">ユーザー環境</th>
+                        <th ng-hide="labelHideList.time" style="width: 6em">アクセス日時</th>
+                        <th ng-hide="labelHideList.stayTime" style="width: 5em">滞在時間</th>
+                        <th ng-hide="labelHideList.page" style="width: 7em">閲覧ページ数</th>
+                        <th ng-hide="labelHideList.title">閲覧中ページ</th>
+                        <th ng-hide="labelHideList.referrer">参照元URL</th>
                 </tr>
         </thead>
         <tbody ng-cloak>
@@ -86,7 +86,7 @@
                     <td ng-hide="labelHideList.accessId" class="tCenter">{{monitor.accessId}}</td>
                 <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
                     <!-- /* モニター */ -->
-                    <td class='w10 tCenter'>
+                    <td class='tCenter'>
                         <?php if ( strcmp($userInfo['permission_level'], C_AUTHORITY_SUPER) !== 0) :?>
                             <span ng-if="monitor.widget">
                                 <span ng-if="!monitor.connectToken">
@@ -104,7 +104,7 @@
                 <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
 
                 <!-- /* チャット */ -->
-                <td class="w10 tCenter" id="chatTypeBtn">
+                <td class="tCenter" id="chatTypeBtn">
                     <?php if ( strcmp($userInfo['permission_level'], C_AUTHORITY_SUPER) !== 0) :?>
 
                         <span class="monitorOn" ng-if="monitor.chat === <?= h($muserId)?>"><span class="bold">対応中</span><br>（あなた）</span>
@@ -137,7 +137,7 @@
                     <!-- /* 閲覧中ページ */ -->
                     <td ng-hide="labelHideList.title" class="tCenter omit"><a href={{monitor.url}} target="monitor" class="underL" ng-if="monitor.title">{{monitor.title}}</a><span ng-if="!monitor.title">{{monitor.url}}</span></td>
                     <!-- /* 参照元URL */ -->
-                    <td ng-hide="labelHideList.referrer" class="tCenter omit"><span>{{monitor.referrer}}</span></td>
+                    <td ng-hide="labelHideList.referrer" class="tCenter omit">{{monitor.referrer}}</td>
             </tr>
         </tbody>
     </table>
