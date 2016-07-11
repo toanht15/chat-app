@@ -1899,6 +1899,30 @@ var socket, // socket.io
     });
   };
 
+  $.ajaxSetup({
+    cache: false
+  });
+
+  $.ajax({
+      type: 'get',
+      url: window.info.site.files + "/settings/",
+      cache: false,
+      data: {
+          'sitekey': window.info.site.key
+      },
+      dataType: "json",
+      success: function(json){
+          window.info.widget = json.widget;
+          window.info.messages = json.messages;
+          window.info.contract = json.contract;
+      },
+      error: function(XMLHttpRequest, textStatus, errorThrown) {
+          $("#XMLHttpRequest").html("XMLHttpRequest : " + XMLHttpRequest.status);
+          $("#textStatus").html("textStatus : " + textStatus);
+          $("#errorThrown").html("errorThrown : " + errorThrown.message);
+      }
+  });
+
   var timer = window.setInterval(function(){
     if ( io !== "" && sinclo !== "" && window.info.contract !== undefined ) {
       window.clearInterval(timer);
@@ -1958,27 +1982,3 @@ if (myTag.getAttribute('data-hide')) {
 if (myTag.getAttribute('data-form')) {
     info.dataset['form'] = myTag.getAttribute('data-form');
 }
-
-$.ajaxSetup({
-  cache: false
-});
-
-$.ajax({
-    type: 'get',
-    url: window.info.site.files + "/settings/",
-    cache: false,
-    data: {
-        'sitekey': window.info.site.key
-    },
-    dataType: "json",
-    success: function(json){
-        window.info.widget = json.widget;
-        window.info.messages = json.messages;
-        window.info.contract = json.contract;
-    },
-    error: function(XMLHttpRequest, textStatus, errorThrown) {
-        $("#XMLHttpRequest").html("XMLHttpRequest : " + XMLHttpRequest.status);
-        $("#textStatus").html("textStatus : " + textStatus);
-        $("#errorThrown").html("errorThrown : " + errorThrown.message);
-    }
-});
