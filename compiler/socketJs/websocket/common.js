@@ -10,8 +10,7 @@ var socket, // socket.io
     popup, // ポップアップ関連関数
     vcPopup, // ビデオ表示用ポップアップ関連関数
     sinclo, // リアルタイム通信補助関数
-    sincloVideo, // ビデオ通信補助関数
-    sincloJquery = $.noConflict(true);
+    sincloVideo; // ビデオ通信補助関数
 
 (function($){
   cnst = {
