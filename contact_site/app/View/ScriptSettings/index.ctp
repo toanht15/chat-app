@@ -38,7 +38,7 @@
             </p>
         </li>
         <li>
-            <h2>フォーム用表示タグ</h2>
+            <h2>フォーム用ウィジェット表示タグ</h2>
             <p>
               <?php $scriptName = "<script type='text/javascript' src='" . $fileName . "' data-form='1'></script>"; ?>
               <span class="copyBtn" data-clipboard-target="#formTag"><?=$this->Html->image('clipboard.png', array('alt' =>'コピー', 'width' => 25, 'height' => 25)) ?></span>
@@ -46,11 +46,11 @@
             </p>
         </li>
         <li>
-            <h2>フォーム用非表示タグ</h2>
+            <h2>フォーム用ウィジェット非表示タグ</h2>
             <p>
               <?php $scriptName = "<script type='text/javascript' src='" . $fileName . "' data-hide='1' data-form='1'></script>"; ?>
-              <span class="copyBtn" data-clipboard-target="#formTag"><?=$this->Html->image('clipboard.png', array('alt' =>'コピー', 'width' => 25, 'height' => 25)) ?></span>
-              <span class="copyArea"><?=$this->Form->input('formTag', array('type' => 'text', 'value' => $scriptName, 'label' => false, 'div' => false ))?></span>
+              <span class="copyBtn" data-clipboard-target="#formHideTag"><?=$this->Html->image('clipboard.png', array('alt' =>'コピー', 'width' => 25, 'height' => 25)) ?></span>
+              <span class="copyArea"><?=$this->Form->input('formHideTag', array('type' => 'text', 'value' => $scriptName, 'label' => false, 'div' => false ))?></span>
             </p>
         </li>
         <li>

@@ -1413,13 +1413,13 @@ ul.naviBtn {
 
         &.copyArea {
           height: 45px;
-          padding: 10px;
+          padding: 10px 0;
           width: $ssc-content-width - 40px!important;
 
           input {
             background-color: #E3E8E5;
             height: 25px;
-            // font-size: 15px;
+            font-size: 12px;
             border-bottom: none;
             width: 100%;
           }
