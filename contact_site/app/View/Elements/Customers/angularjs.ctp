@@ -971,18 +971,18 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           if (scope.chat.messageType === chatApi.messageType.customer) {
             cn = "sinclo_re";
             li.className = cn;
-            content = scope.chat.message;
+            content = createMessage(scope.chat.message, {radio: false});
           }
           // 企業側か、オートメッセージの場合
           else if (scope.chat.messageType === chatApi.messageType.company && Number(scope.chat.userId) in userList) {
             cn = "sinclo_se";
             content = "<span class='cName'>" + userList[Number(scope.chat.userId)] + "さん</span>";
-            content += createCompanyMessage(scope.chat.message);
+            content += createMessage(scope.chat.message);
           }
           else  {
             cn = "sinclo_auto";
             content = "<span class='cName'>自動応答</span>";
-            content += createCompanyMessage(scope.chat.message);
+            content += createMessage(scope.chat.message);
           }
 
         }
@@ -1001,17 +1001,17 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
         scDown();
 
-        function createCompanyMessage(message){
+        function createMessage(message, opt){
           var strings = message.split('\n');
           var custom = "";
           var linkReg = RegExp(/http(s)?:\/\/[!-~.a-z]*/);
           var radioName = "sinclo-radio" + Object.keys(scope.chat).length;
-
+          var option = ( typeof(opt) !== 'object' ) ? { radio: true } : opt;
           for (var i = 0; strings.length > i; i++) {
               var str = strings[i];
               // ラジオボタン
               var radio = str.indexOf('[]');
-              if ( radio > -1 ) {
+              if ( option.radio && radio > -1 ) {
                   var val = str.slice(radio+2);
                   str = "<input type='radio' name='" + radioName + "' id='" + radioName + "-" + i + "' class='sinclo-chat-radio' value='" + val + "' disabled=''>";
                   str += "<label for='" + radioName + "-" + i + "'>" + val + "</label>";
