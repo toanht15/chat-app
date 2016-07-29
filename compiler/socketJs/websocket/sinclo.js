@@ -14,17 +14,23 @@
         var elm = $('#sincloBox');
         if ( String(flg) === "false" ) {
           var height = 0;
-          height += $("#sincloBox #widgetHeader").outerHeight(true);
-          if ( $("#sincloBox").children().is("#navigation") ) {
-            height += $("#sincloBox > #navigation").outerHeight(true);
-            var tab = $("#navigation li.selected").data('tab');
-            height += $("#" + tab + "Tab").outerHeight(true);
+          sincloBox.setAttribute('data-openflg', true);
+
+          if ( check.smartphone() && window.info.contract.chat && ($(window).height() < $(window).width()) ) {
+            height = window.innerHeight;
           }
           else {
-            height += $("[id$='Tab']").outerHeight(true);
+            height += $("#sincloBox #widgetHeader").outerHeight(true);
+            if ( $("#sincloBox").children().is("#navigation") ) {
+              height += $("#sincloBox > #navigation").outerHeight(true);
+              var tab = $("#navigation li.selected").data('tab');
+              height += $("#" + tab + "Tab").outerHeight(true);
+            }
+            else {
+              height += $("[id$='Tab']").outerHeight(true);
+            }
+            height += $("#sincloBox > #fotter").outerHeight(true);
           }
-          height += $("#sincloBox > #fotter").outerHeight(true);
-          sincloBox.setAttribute('data-openflg', true);
           if ( window.info.contract.chat ) {
             sinclo.chatApi.showUnreadCnt();
             sinclo.chatApi.scDown();
@@ -37,6 +43,81 @@
         elm.animate({
           height: height + "px"
         }, 'first');
+      },
+      widgetHide: function() {
+        var sincloBox = document.getElementById('sincloBox');
+        if ( !sincloBox ) return false;
+        var openflg = sincloBox.getAttribute('data-openflg');
+
+        var height = document.getElementById('widgetTitle').clientHeight;
+        if ( height === 0 ) {
+          height = 60;
+        }
+        var enableArea = browserInfo.scrollSize().y - height;
+        if ( enableArea < window.scrollY && String(openflg) === "false" ) {
+          sincloBox.style.opacity = 0;
+        }
+        else {
+          sincloBox.style.opacity = 1;
+        }
+      },
+      reCreateWidgetTimer: null,
+      reCreateWidget: function(){
+        if (!check.smartphone()) return false; // 念のため
+        if ( sinclo.operatorInfo.reCreateWidgetTimer ) {
+          clearTimeout(sinclo.operatorInfo.reCreateWidgetTimer);
+        }
+        var current = document.activeElement;
+        if ( current.id === "sincloChatMessage" ) {
+          setTimeout(function(){
+            sinclo.operatorInfo.reCreateWidget();
+          }, 300);
+          return false;
+        }
+        var sincloBox = document.getElementById('sincloBox');
+        var openFlg = sincloBox.getAttribute('data-openflg');
+
+        if ( sincloBox ) {
+          sincloBox.style.display = "none";
+        }
+
+        var message = document.getElementById('sincloChatMessage').value;
+
+        sinclo.operatorInfo.reCreateWidgetTimer = setTimeout(function(){
+          var html = common.createWidget();
+          var chatTalk = $("#chatTalk").children();
+
+          $("#sincloBox").remove();
+          $("body").append(html);
+          $("#chatTalk").append(chatTalk);
+          var sincloBox = document.getElementById('sincloBox');
+          document.getElementById('sincloChatMessage').value = message;
+          sinclo.operatorInfo.widgetHide();
+
+          sincloBox.style.display = "block";
+          sinclo.operatorInfo.header = document.getElementById('widgetHeader');
+          if ( String(openFlg) === "true" ) {
+            sincloBox.setAttribute('data-openflg', true);
+
+            if ( $(window).height() < $(window).width() ) {
+              sincloBox.style.height = window.innerHeight + "px";
+            }
+            else {
+              var height = $("#widgetHeader").outerHeight(true);
+              height += $("#chatTab").outerHeight(true);
+              sincloBox.style.height = height;
+            }
+          }
+          else {
+            sincloBox.setAttribute('data-openflg', false);
+            sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
+          }
+
+
+          sinclo.chatApi.showUnreadCnt();
+          sinclo.chatApi.scDown();
+
+        }, 500);
       }
     },
     connect: function(){
