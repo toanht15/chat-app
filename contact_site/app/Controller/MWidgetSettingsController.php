@@ -180,8 +180,8 @@ class MWidgetSettingsController extends AppController {
                 $in = $this->_imageCreate($extension, $tmpFile); // 元画像ファイル読み込み
                 $width = ImageSx($in); // 画像の幅を取得
                 $height = ImageSy($in); // 画像の高さを取得
-                $save_width = 62; // 幅の最低サイズ
-                $save_height = 70; // 高さの最低サイズ
+                $save_width = 248; // 幅の最低サイズ
+                $save_height = 280; // 高さの最低サイズ
                 $image_type = exif_imagetype($tmpFile); // 画像タイプ判定用
                 $out = ImageCreateTrueColor($save_width , $save_height);
                 //ブレンドモードを無効にする
