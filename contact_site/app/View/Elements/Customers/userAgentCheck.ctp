@@ -1,4 +1,5 @@
 <script type="text/javascript">
+
 var userAgentChk = (function(){
     function _pc_chk_win(ua){
       /*if (ua.match(/Media Center PC/)) {
@@ -122,10 +123,10 @@ var userAgentChk = (function(){
 
     // http://www.red.oit-net.jp/tatsuya/java/indexof.htm
     // http://qiita.com/nightyknite/items/b2590a69f2e0135756dc
-    function _get_ver(ua, myKey, myEnd){
-      myStart = ua.indexOf( myKey ) + myKey.length;
-      myEnd = ua.indexOf( myEnd, myStart );
-      return " (var." + ua.substring( myStart, myEnd ) + ")";
+    function _get_ver(ua, myKey){
+      var reg = new RegExp(myKey + "[0-9.]*", "i");
+      var str = String(reg.exec(ua));
+      return " (var." + str.replace(myKey, "") + ")";
     }
 
     function _get_android_ver(ua){
@@ -151,48 +152,47 @@ var userAgentChk = (function(){
       var name = 'unknown', ua = ua.toLowerCase();
 
       if (ua.indexOf("msie") != -1 ) {
-          name = 'IE' + _get_ver(ua, "msie ", ";");
+          name = 'IE' + _get_ver(ua, "msie ");
       } else if ( ua.indexOf('sleipnir') != -1){
-          name = 'Sleipnir' + _get_ver(ua, "sleipnir/", ")");
+          name = 'Sleipnir' + _get_ver(ua, "sleipnir\/");
       } else if ( ua.indexOf('lunascape') != -1){
-          name = 'Lunascape' + _get_ver(ua, "lunascape ", ")");
+          name = 'Lunascape' + _get_ver(ua, "lunascape\ ");
       } else if ( ua.indexOf('trident/7') != -1){
-        var version_a = _get_ver(ua, "rv:", ")"),
-            version_b = _get_ver(ua, "rv:", ";"),
-            version = (version_a.length < version_b.length) ? version_a : version_b;
-        name = 'IE' + version;
+          var version_a = _get_ver(ua, "rv\:"),
+              version_b = _get_ver(ua, "rv\:"),
+              version = (version_a.length < version_b.length) ? version_a : version_b;
+          name = 'IE' + version;
       } else if (ua.indexOf('edge') != -1 ) {
-          name = 'Edge' + _get_ver(ua, "edge/", ";");
+          name = 'Edge' + _get_ver(ua, "edge\/");
       } else if (ua.indexOf('opera mini') != -1 ) {
-          name = 'Opera Mini' + _get_ver(ua, "opera mini/", ";");
+          name = 'Opera Mini' + _get_ver(ua, "opera mini\/");
       } else if (ua.indexOf('opera') != -1 ) {
-          name = 'Opera' + _get_ver(ua, "opera/", ";");
+          name = 'Opera' + _get_ver(ua, "opera\/");
       } else if (ua.indexOf('opr') != -1){
-          name = 'Opera' + _get_ver(ua, "opr/", ";");
+          name = 'Opera' + _get_ver(ua, "opr\/");
       } else if (ua.indexOf('vivaldi') != -1){
-          name = 'Vivaldi' + _get_ver(ua, "vivaldi/", ";");
+          name = 'Vivaldi' + _get_ver(ua, "vivaldi\/");
       } else if (ua.indexOf('chrome') != -1){
-          name = 'Chrome' + _get_ver(ua, "chrome/", " ");
+          name = 'Chrome' + _get_ver(ua, "chrome\/");
       } else if (ua.indexOf('crios') != -1){
-          name = 'Chrome' + _get_ver(ua, "crios/", " ");
+          name = 'Chrome' + _get_ver(ua, "crios\/");
       } else if (ua.indexOf('firefox') != -1){
-          name = 'Firefox' + _get_ver(ua, "firefox/", ";");
+          name = 'Firefox' + _get_ver(ua, "firefox\/");
       } else if (ua.indexOf('palemoon') != -1){
-          name = 'PaleMoon' + _get_ver(ua, "palemoon/", ";");
+          name = 'PaleMoon' + _get_ver(ua, "palemoon\/");
       } else if (ua.indexOf('jp.co.yahoo.ipn.appli') != -1) {
-          name = 'YahooJapanブラウザ' + _get_ver(ua, "jp.co.yahoo.ipn.appli/", ";");
+          name = 'YahooJapanブラウザ' + _get_ver(ua, "jp.co.yahoo.ipn.appli\/");
       } else if (ua.indexOf('jp.co.yahoo.ymail') != -1) {
-          name = 'YahooJapanブラウザ' + _get_ver(ua, "jp.co.yahoo.ymail/", ";");
+          name = 'YahooJapanブラウザ' + _get_ver(ua, "jp.co.yahoo.ymail\/");
       } else if (ua.indexOf('blackberry') != -1 || ua.indexOf('bb10') != -1){
-          name = '標準ブラウザ' + _get_ver(ua, "version/", " ");
+          name = '標準ブラウザ' + _get_ver(ua, "version\/");
       } else if (ua.indexOf('safari') != -1 && ua.indexOf('android') != -1){
           name = '標準ブラウザ';
       } else if (ua.indexOf('safari') != -1 && ua.indexOf('android') === -1){
-          name = 'Safari' + _get_ver(ua, "version/", " ");
+          name = 'Safari' + _get_ver(ua, "version\/");
       } else if (ua.indexOf('iphone') != -1 || ua.indexOf('ipad') != -1){ // ブラウザ情報が無いiPhoneの場合はSafariと表記する
           name = 'Safari';
       }
-
       return name;
     }
 
