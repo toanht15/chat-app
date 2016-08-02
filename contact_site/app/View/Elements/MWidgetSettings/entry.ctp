@@ -168,7 +168,7 @@
 						<label>文字</label>
 						<?= $this->ngForm->input('string_color', [
 							'type' => 'text',
-							'placeholder' => 'メインカラー',
+							'placeholder' => 'フォントカラー',
 							'div' => false,
 							'class' => 'jscolor {hash:true}',
 							'label' => false,

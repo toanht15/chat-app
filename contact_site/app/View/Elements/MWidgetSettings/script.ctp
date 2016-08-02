@@ -5,6 +5,14 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']);
 sincloApp.controller('WidgetCtrl', function($scope){
     $scope.main_image = "<?=$this->formEx->val($this->data['MWidgetSetting'], 'main_image')?>";
 
+    $scope.showWidgetType = 1; // デフォルト表示するウィジェット
+
+    $scope.switchWidget = function(num){
+      $scope.showWidgetType = num;
+      var sincloBox = document.getElementById("sincloBox");
+      sincloBox.setAttribute("data-openflg", true);
+    }
+
     $scope.showChooseImg = function(){
       return $scope.mainImageToggle == '1';
     }
@@ -77,19 +85,19 @@ sincloApp.controller('WidgetCtrl', function($scope){
     });
 
 
-    angular.element(".widgetCtrl").click(function(e){
+    angular.element(window).on("click", ".widgetCtrl", function(e){
         var clickTab = $(this).data('tab');
         if ( clickTab === $scope.widget.showTab ) return false;
         $scope.widget.showTab = clickTab;
         $scope.$apply();
     });
 
-    angular.element(".showChat").focus(function(e){
+    angular.element(window).on("focus", ".showChat", function(e){
         $scope.widget.showTab = "chat";
         $scope.$apply();
     });
 
-    angular.element(".showTel").focus(function(e){
+    angular.element(window).on("focus", ".showTel", function(e){
         $scope.widget.showTab = "call";
         $scope.$apply();
     });
@@ -100,27 +108,24 @@ sincloApp.controller('WidgetCtrl', function($scope){
         $('#MWidgetSettingIndexForm').submit();
     }
 
-    $(document).ready(function(){
-        var sincloBox = document.getElementById("sincloBox");
-        sincloBox.setAttribute("data-openflg", true);
-        $(".widgetOpener").bind("click", function(){
-          var target = document.getElementById("sincloBox");
-          var main = document.getElementById("miniTarget");
-          var flg = target.getAttribute("data-openflg");
-          var nextFlg = true;
-          if ( String(flg) === "true" ) {
-            nextFlg = false;
-            main.style.height = 0;
-          }
-          else {
-            var height = 0;
-            for(var i = 0; main.children.length > i; i++){
-                height += main.children[i].offsetHeight;
-            }
-            main.style.height = height + "px";
-          }
-          sincloBox.setAttribute("data-openflg", nextFlg);
-        });
+    $(window).on("click", ".widgetOpener", function(){
+      var sincloBox = document.getElementById("sincloBox");
+      var target = document.getElementById("sincloBox");
+      var main = document.getElementById("miniTarget");
+      var flg = target.getAttribute("data-openflg");
+      var nextFlg = true;
+      if ( String(flg) === "true" ) {
+        nextFlg = false;
+        main.style.height = 0;
+      }
+      else {
+        var height = 0;
+        for(var i = 0; main.children.length > i; i++){
+            height += main.children[i].offsetHeight;
+        }
+        main.style.height = height + "px";
+      }
+      sincloBox.setAttribute("data-openflg", nextFlg);
     });
 
 });

@@ -125,7 +125,7 @@ class MWidgetSettingsController extends AppController {
         $cssStyle = [];
 
         if (  isset($this->request->data['color']) ) {
-          $cssStyle['.p-show-gallary .bgOn, li:after'] = [
+          $cssStyle['.p-show-gallary .bgOn'] = [
             'background-color' => $this->request->data['color']
           ];
         }

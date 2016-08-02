@@ -510,6 +510,57 @@ a {
 
 }
 
+/* タブ */
+ul.ulTab {
+  height: 2.5em;
+  padding: 0;
+  user-select: none;
+
+  &[data-col="2"] li {
+    width: 50%;
+  }
+
+  li {
+    height: 2.5em;
+    padding: 0.5em;
+    float: left;
+    text-align: center;
+    border: 1px solid #c3d69b;
+    border-right-width: 0;
+    color: #c3d69b;
+    cursor: pointer;
+    font-weight: bold;
+
+    &.choose {
+      position: relative;
+      background-color: #c3d69b;
+      color: #FFF;
+
+      &:after {
+        content: " ";
+        position: absolute;
+        border: 10px solid transparent;
+        border-top: 10px solid #c3d69b;
+        width: 0;
+        height: 0;
+        bottom: -1.5em;
+        left: 50%;
+        margin-left: -10px;
+
+      }
+    }
+
+    &:last-child {
+      border-right-width: 1px;
+      border-radius: 0 5px 5px 0;
+    }
+
+    &:first-child {
+      border-radius: 5px 0 0 5px;
+    }
+  }
+}
+
 /* ヘッダー */
 
 #sys-icon {
@@ -1635,6 +1686,11 @@ ul.naviBtn {
       left: 60%;
       margin: 10px 0 0 30px;
       margin-left: 30px;
+
+
+      section#switch_widget {
+        margin-bottom: 0.5em;
+      }
     }
 
 
