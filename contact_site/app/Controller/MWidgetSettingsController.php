@@ -108,6 +108,14 @@ class MWidgetSettingsController extends AppController {
                   $inputData['MWidgetSetting']['time_text'] = $json['time_text'];
                 }
               }
+              if ( $this->coreSettings['chat'] ) {
+                if ( isset($json['chat_trigger']) ) {
+                  $inputData['MWidgetSetting']['chat_trigger'] = $json['chat_trigger'];
+                }
+                else {
+                  $inputData['MWidgetSetting']['chat_trigger'] = C_WIDGET_SEND_ACT_PUSH_KEY; // デフォルト値
+                }
+              }
               if ( isset($json['radius_ratio']) ) {
                 $inputData['MWidgetSetting']['radius_ratio'] = $json['radius_ratio'];
               }
@@ -139,6 +147,7 @@ class MWidgetSettingsController extends AppController {
     private function _viewElement() {
         $this->set('widgetDisplayType', Configure::read('WidgetDisplayType'));
         $this->set('widgetPositionType', Configure::read('widgetPositionType'));
+        $this->set('widgetSendActType', Configure::read('widgetSendActType'));
         $this->set('gallaryPath', C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT.'/img/widget/');
     }
 

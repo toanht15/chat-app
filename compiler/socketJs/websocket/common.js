@@ -206,7 +206,11 @@ var socket, // socket.io
         html += '      #sincloBox ul#chatTalk li.sinclo_re { ' + chatPosition.re + 'background-color:' + faintColor + ' }';
         html += '      #sincloBox ul#chatTalk li span.cName { display: block; color: ' + widget.mainColor + '; font-weight: bold; }';
         html += '      #sincloBox ul#chatTalk li.sinclo_etc { border: none; text-align: center; margin: 0 auto; font-weight: bold }';
-        html += '      #sincloBox #chatTab div #sincloChatMessage { resize: none; width: 80%; }';
+        html += '      #sincloBox section#chatTab div { box-sizing: content-box; }';
+        html += '      #sincloBox section#chatTab div #sincloChatMessage { resize: none; width: 80%; color: #8A8A8A; border-radius: 5px 0 0 5px; }';
+        html += '      #sincloBox section#chatTab div #sincloChatMessage:focus { outline: none; border-color: ' + widget.mainColor + ' }';
+        html += '      #sincloBox section#chatTab div #sincloChatSendBtn { width: 20%; border: 1px solid ' + widget.mainColor + '; border-radius: 0 5px 5px 0; cursor: pointer; margin: 0 auto; float: right; text-align: center; background-color: ' + widget.mainColor + '; color: ' + widget.stringColor + '; font-weight: bold; font-size: 1.2em;}';
+        html += '      #sincloBox section#chatTab div #sincloChatSendBtn span { color: ' + widget.stringColor + '; }';
       }
       html += '      #sincloBox section#navigation { position: relative; display: block; }';
       html += '      #sincloBox section#navigation ul { display: table; padding: 0; position: absolute; top: 0; left: 0; }';
@@ -218,10 +222,6 @@ var socket, // socket.io
       html += '      #sincloBox section#navigation ul li[data-tab="call"]::before{ background-image: url("' + window.info.site.files + '/img/widget/icon_tel.png"); }';
       html += '      #sincloBox section#navigation ul li[data-tab="chat"]::before{ background-image: url("' + window.info.site.files + '/img/widget/icon_chat.png"); }';
       html += '      #sincloBox section#navigation ul li.selected::before{ background-color: ' + widget.mainColor + '; }'
-      html += '      #sincloBox section#chatTab div { box-sizing: content-box; }';
-      html += '      #sincloBox section#chatTab #sincloChatMessage { width: 80%; color: #8A8A8A; border-radius: 5px 0 0 5px; }';
-      html += '      #sincloBox section#chatTab #sincloChatSendBtn{ width: 20%; border-radius: 0 5px 5px 0; cursor: pointer; margin: 0 auto; float: right; text-align: center; background-color: ' + widget.mainColor + '; color: ' + widget.stringColor + '; font-weight: bold; font-size: 1.2em;}';
-      html += '      #sincloBox section#chatTab #sincloChatSendBtn span { color: ' + widget.stringColor + '; }';
 
       /* iPhone/iPod/Androidの場合 */
       if ( check.smartphone() ) {
@@ -325,7 +325,7 @@ var socket, // socket.io
           html += '      #sincloBox ul#chatTalk li { border-radius: 5px; margin: 5px 0; padding: 5px; font-size: 12px; border: 1px solid #C9C9C9; }';
           html += '      #sincloBox ul#chatTalk li span.cName { font-size: 13px; margin: 0 0 5px 0 }';
           html += '      #sincloBox section#chatTab div { height: 50px!important }';
-          html += '      #sincloBox section#chatTab #sincloChatMessage { color: #8A8A8A; width:100%; padding: 5px; height: 50px; border: 1px solid #E4E4E4; }';
+          html += '      #sincloBox section#chatTab #sincloChatMessage { color: #8A8A8A; padding: 5px; height: 50px; border: 1px solid #E4E4E4; }';
           html += '      #sincloBox section#chatTab #sincloChatSendBtn { padding: 1em 0; }';
 
         }
@@ -446,7 +446,8 @@ var socket, // socket.io
     },
     chatWidgetTemplate: function(widget){
       var html = "", placeholder = "メッセージを入力してください（Shift+Enterで改行/Enterで送信）", spFlg = check.smartphone();
-      if ( spFlg ) {
+      // ボタンのみの場合
+      if ( ( 'chatTrigger' in window.info.widget && window.info.widget.chatTrigger === 2) ) {
         placeholder = "メッセージを入力してください";
       }
       html += '  <section id="chatTab">';
@@ -454,9 +455,7 @@ var socket, // socket.io
       html += '    <div style="border-top: 1px solid #E8E7E0; padding: 0.5em;">';
 
       html += '      <textarea name="sincloChat" id="sincloChatMessage" maxlength="300" placeholder=" ' + placeholder + ' "></textarea>';
-      if ( spFlg ) {
-        html += '      <a id="sincloChatSendBtn" onclick="sinclo.chatApi.push()">送信</a>';
-      }
+      html += '      <a id="sincloChatSendBtn" onclick="sinclo.chatApi.push()">送信</a>';
       html += '    </div>';
       html += '    <audio id="sinclo-sound">';
       html += '      <source src="' + window.info.site.files + '/sounds/decision.mp3" type="audio/mp3">';
@@ -526,6 +525,14 @@ var socket, // socket.io
         });
 
         if ( window.info.contract.chat && check.smartphone() ) {
+          // 初期の画面向き
+            if ( $(window).height() < $(window).width() ) {
+              sincloBox.setAttribute('data-screen', 'horizontal'); // 横向き
+            }
+            else {
+              sincloBox.setAttribute('data-screen', 'vertical'); // 縦向き
+            }
+
           sinclo.operatorInfo.widgetHide();// ページ下部でウィジェット生成した場合
 
           // スクロールをした時に、ページ下部であれば透過する

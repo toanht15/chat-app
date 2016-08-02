@@ -40,6 +40,10 @@ define('C_WIDGET_DISPLAY_CODE_HIDE', 3); // 表示しない
 define('C_WIDGET_POSITION_RIGHT_BOTTOM', 1); // 右下
 define('C_WIDGET_POSITION_LEFT_BOTTOM', 2); // 左下
 
+// チャット送信のアクション種別
+define('C_WIDGET_SEND_ACT_PUSH_KEY', 1); // キーアクション込み
+define('C_WIDGET_SEND_ACT_PUSH_BTN', 2); // ボタンのみ
+
 // 在籍/退席コード
 define('C_OPERATOR_PASSIVE', 0); // 退席
 define('C_OPERATOR_ACTIVE', 1); // 在籍
@@ -112,6 +116,12 @@ $config['WidgetDisplayType'] = [
 $config['widgetPositionType'] = [
     C_WIDGET_POSITION_RIGHT_BOTTOM => "右下",
     C_WIDGET_POSITION_LEFT_BOTTOM => "左下"
+];
+
+/* ウィジェット設定 － チャット送信アクション種別 */
+$config['widgetSendActType'] = [
+    C_WIDGET_SEND_ACT_PUSH_KEY => "送信ボタン及びEnterキー（スマホの場合改行ボタン）",
+    C_WIDGET_SEND_ACT_PUSH_BTN => "送信ボタンのみ"
 ];
 
 /* オートメッセージ － トリガー種別 */

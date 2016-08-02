@@ -10,6 +10,7 @@
 <section id="sample_widget_area" ng-cloak>
   <div id="sincloBox" data-openflg="true" ng-if="showWidgetType === 1" style="position: relative; z-index: 1; width: 285px; background-color: rgb(255, 255, 255);">
     <style>
+      #sincloBox * { font-size: 12px; }
       #sincloBox span, #sincloBox pre { font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana!important }
       #sincloBox span#mainImage { cursor: pointer; z-index: 2; position: absolute; top: 7px; left: 10px; }
       #sincloBox span#mainImage img { background-color: {{main_color}}; }
@@ -26,7 +27,7 @@
       #sincloBox section.noDisplay { display: none }
       #sincloBox div#miniTarget { overflow: hidden; transition: height 200ms linear; }
     <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
-      #sincloBox ul#chatTalk { width: 100%; height: 94px; padding: 5px; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0}
+      #sincloBox ul#chatTalk { width: 100%; height: 194px; padding: 5px; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0}
       #sincloBox ul#chatTalk li { border-radius: 5px; background-color: #FFF; margin: 5px 0; padding: 5px; font-size: 12px; border: 1px solid #C9C9C9; line-height: 1.8; white-space: pre; color: #5E614E; }
       #sincloBox ul#chatTalk li.chat_right { border-bottom-right-radius: 0; margin-left: 10px }
       #sincloBox ul#chatTalk li.chat_left { border-bottom-left-radius: 0; margin-right: 10px }
@@ -104,8 +105,9 @@
         <li class="sinclo_re" ng-class="{chat_right: show_position == 1, chat_left: show_position == 2 }" ng-style="{backgroundColor:makeFaintColor()}"><span class="cName">{{sub_title}}</span>こんにちは</li>
         <li class="sinclo_re" ng-class="{chat_right: show_position == 1, chat_left: show_position == 2 }" ng-style="{backgroundColor:makeFaintColor()}"><span class="cName">{{sub_title}}</span>○○についてですね<br>どのようなご質問でしょうか？</li>
         </ul>
-        <div style="border-top: 1px solid #E8E7E0; padding: 10px;">
-          <textarea name="sincloChat" id="sincloChatMessage" placeholder="ここにメッセージを入力してください"></textarea>
+        <div style="border-top: 1px solid #E8E7E0; padding: 0.5em;">
+          <textarea name="sincloChat" id="sincloChatMessage" ng-if="chat_trigger == '1'" placeholder="メッセージを入力してください（Shift+Enterで改行/Enterで送信）"></textarea>
+          <textarea name="sincloChat" id="sincloChatMessage" ng-if="chat_trigger == '2'" placeholder="ここにメッセージを入力してください"></textarea>
           <a id="sincloChatSendBtn"><span>送信</span></a>
         </div>
       </section>
@@ -145,6 +147,7 @@
 <!-- スマホ版 -->
   <div id="sincloBox" ng-if="showWidgetType === 2" data-openflg="true" style="position: relative; z-index: 1; width: 285px; background-color: rgb(255, 255, 255);">
     <style>
+      #sincloBox * { font-size: 12px; }
       #sincloBox span, #sincloBox pre { font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana!important }
       #sincloBox .pb07 { padding-bottom: 7px }
       #sincloBox p#widgetTitle { text-align: center!important; padding: 7px 30px!important; position:relative; z-index: 1; cursor:pointer; border-radius: 0; border: 1px solid {{main_color}}; border-bottom:none; background-color: {{main_color}};text-align: center; font-size: 14px; margin: 0;color: {{string_color}}; height: 32px }
@@ -159,9 +162,9 @@
       #sincloBox ul#chatTalk li.chat_right { border-bottom-right-radius: 0; margin-left: 10px }
       #sincloBox ul#chatTalk li.chat_left { border-bottom-left-radius: 0; margin-right: 10px }
       #sincloBox ul#chatTalk li span.cName { display: block; color: {{main_color}}!important; font-weight: bold; font-size: 12px }
-      #sincloBox section#chatTab div { height: 40px!important; box-sizing: content-box; }
+      #sincloBox section#chatTab div { height: 50px!important; box-sizing: content-box; }
       #sincloBox section#chatTab textarea#sincloChatMessage { width: 80%; height: 100%; font-size: 11px; color: #8A8A8A; border-radius: 5px 0 0 5px!important; resize: none; color: #8A8A8A; padding: 5px; border: 1px solid #C9C9C9!important; }
-      #sincloBox section#chatTab #sincloChatSendBtn{ width: 20%; height: 100%; padding: 0.8em 0; border-radius: 0 5px 5px 0; cursor: pointer; margin: 0 auto; float: right; text-align: center; background-color: {{main_color}}!important; color: {{string_color}}; font-weight: bold; font-size: 1.2em;}
+      #sincloBox section#chatTab #sincloChatSendBtn{ width: 20%; height: 100%; padding: 1em 0; border-radius: 0 5px 5px 0; cursor: pointer; margin: 0 auto; float: right; text-align: center; background-color: {{main_color}}!important; color: {{string_color}}; font-weight: bold; font-size: 1.2em;}
       #sincloBox section#chatTab #sincloChatSendBtn span { color: {{string_color}} }
     </style>
     <div>
@@ -176,8 +179,9 @@
         <li class="sinclo_re" ng-class="{chat_right: show_position == 1, chat_left: show_position == 2 }" ng-style="{backgroundColor:makeFaintColor()}"><span class="cName">{{sub_title}}</span>こんにちは</li>
         <li class="sinclo_re" ng-class="{chat_right: show_position == 1, chat_left: show_position == 2 }" ng-style="{backgroundColor:makeFaintColor()}"><span class="cName">{{sub_title}}</span>○○についてですね<br>どのようなご質問でしょうか？</li>
         </ul>
-        <div style="border-top: 1px solid #E8E7E0; padding: 10px;">
-          <textarea name="sincloChat" id="sincloChatMessage" placeholder="ここにメッセージを入力してください"></textarea>
+        <div style="border-top: 1px solid #E8E7E0; padding: 0.5em;">
+          <textarea name="sincloChat" id="sincloChatMessage" ng-if="chat_trigger == '1'" placeholder="メッセージを入力してください（Shift+Enterで改行/Enterで送信）"></textarea>
+          <textarea name="sincloChat" id="sincloChatMessage" ng-if="chat_trigger == '2'" placeholder="ここにメッセージを入力してください"></textarea>
           <a id="sincloChatSendBtn"><span>送信</span></a>
         </div>
       </section>

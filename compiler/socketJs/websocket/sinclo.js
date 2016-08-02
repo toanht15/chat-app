@@ -67,14 +67,16 @@
         if ( sinclo.operatorInfo.reCreateWidgetTimer ) {
           clearTimeout(sinclo.operatorInfo.reCreateWidgetTimer);
         }
+        var sincloBox = document.getElementById('sincloBox');
+
+        var screen = ( $(window).height() < $(window).width() ) ? 'horizontal' : 'vertical';
         var current = document.activeElement;
-        if ( current.id === "sincloChatMessage" ) {
+        if ( current.id === "sincloChatMessage" && screen === sincloBox.getAttribute('data-screen') ) {
           setTimeout(function(){
             sinclo.operatorInfo.reCreateWidget();
           }, 300);
           return false;
         }
-        var sincloBox = document.getElementById('sincloBox');
         var openFlg = sincloBox.getAttribute('data-openflg');
 
         if ( sincloBox ) {
@@ -113,6 +115,7 @@
             sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
           }
 
+          sincloBox.setAttribute('data-screen', screen); // 画面の向きを制御
 
           sinclo.chatApi.showUnreadCnt();
           sinclo.chatApi.scDown();
@@ -684,13 +687,17 @@
         },
         autoMessages: [],
         init: function(){
-            $("#sincloChatMessage").on("keydown", function(e){
-                if ( e.keyCode === 13 ) {
-                    if ( !e.shiftKey && !e.ctrlKey ) {
-                        sinclo.chatApi.push();
-                    }
+            if ( window.info.contract.chat ) {
+                if ( !( 'chatTrigger' in window.info.widget && window.info.widget.chatTrigger === 2) ) {
+                    $("#sincloChatMessage").on("keydown", function(e){
+                        if ( (e.which && e.which === 13) || (e.keyCode && e.keyCode === 13) ) {
+                            if ( !e.shiftKey && !e.ctrlKey ) {
+                                sinclo.chatApi.push();
+                            }
+                        }
+                    });
                 }
-            });
+            }
 
             this.sound = document.getElementById('sinclo-sound');
             if ( this.sound ) {
