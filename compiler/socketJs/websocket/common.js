@@ -209,7 +209,7 @@ var socket, // socket.io
         html += '      #sincloBox section#chatTab div { box-sizing: content-box; }';
         html += '      #sincloBox section#chatTab div #sincloChatMessage { resize: none; width: 80%; color: #8A8A8A; border-radius: 5px 0 0 5px; }';
         html += '      #sincloBox section#chatTab div #sincloChatMessage:focus { outline: none; border-color: ' + widget.mainColor + ' }';
-        html += '      #sincloBox section#chatTab div #sincloChatSendBtn { width: 20%; border: 1px solid ' + widget.mainColor + '; border-radius: 0 5px 5px 0; cursor: pointer; margin: 0 auto; float: right; text-align: center; background-color: ' + widget.mainColor + '; color: ' + widget.stringColor + '; font-weight: bold; font-size: 1.2em;}';
+        html += '      #sincloBox section#chatTab div #sincloChatSendBtn { width: 20%; border: 1px solid ' + widget.mainColor + '; text-decoration: none; border-radius: 0 5px 5px 0; cursor: pointer; margin: 0 auto; float: right; text-align: center; background-color: ' + widget.mainColor + '; color: ' + widget.stringColor + '; font-weight: bold; font-size: 1.2em;}';
         html += '      #sincloBox section#chatTab div #sincloChatSendBtn span { color: ' + widget.stringColor + '; }';
       }
       html += '      #sincloBox section#navigation { position: relative; display: block; }';
@@ -445,10 +445,18 @@ var socket, // socket.io
         document.body.appendChild(iframe);
     },
     chatWidgetTemplate: function(widget){
-      var html = "", placeholder = "メッセージを入力してください（Shift+Enterで改行/Enterで送信）", spFlg = check.smartphone();
+      var html = "", placeholder, spFlg = check.smartphone();
       // ボタンのみの場合
       if ( ( 'chatTrigger' in window.info.widget && window.info.widget.chatTrigger === 2) ) {
         placeholder = "メッセージを入力してください";
+      }
+      else {
+        if ( spFlg ) { // スマートフォンの場合
+          placeholder = "メッセージを入力してください（改行で送信）";
+        }
+        else {
+          placeholder = "メッセージを入力してください（Shift+Enterで改行/Enterで送信）";
+        }
       }
       html += '  <section id="chatTab">';
       html += '    <ul id="chatTalk"></ul>';

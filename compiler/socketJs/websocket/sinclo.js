@@ -60,6 +60,14 @@
         else {
           sincloBox.style.opacity = 1;
         }
+        setTimeout(function(){
+          if ( Number(sincloBox.style.opacity) === 0 ) {
+            sincloBox.style.display = "none";
+          }
+          else {
+            sincloBox.style.display = "block";
+          }
+        }, 500);
       },
       reCreateWidgetTimer: null,
       reCreateWidget: function(){
@@ -689,7 +697,7 @@
         init: function(){
             if ( window.info.contract.chat ) {
                 if ( !( 'chatTrigger' in window.info.widget && window.info.widget.chatTrigger === 2) ) {
-                    $("#sincloChatMessage").on("keydown", function(e){
+                    $(document).on("keydown", "#sincloChatMessage", function(e){
                         if ( (e.which && e.which === 13) || (e.keyCode && e.keyCode === 13) ) {
                             if ( !e.shiftKey && !e.ctrlKey ) {
                                 sinclo.chatApi.push();

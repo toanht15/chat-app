@@ -34,6 +34,7 @@
       #sincloBox ul#chatTalk li span.cName { display: block; color: {{main_color}}!important; font-weight: bold; font-size: 13px }
       #sincloBox section#chatTab div { height: 50px!important; box-sizing: content-box; }
       #sincloBox section#chatTab textarea#sincloChatMessage { width: 80%; height: 100%; color: #8A8A8A; border-radius: 5px 0 0 5px!important; resize: none; color: #8A8A8A; padding: 5px; border: 1px solid #C9C9C9!important; }
+      #sincloBox section#chatTab textarea#sincloChatMessage:focus { border-color: {{main_color}}!important; outline: none!important; }
       #sincloBox section#chatTab #sincloChatSendBtn{ width: 20%; height: 100%; padding: 1em 0; border-radius: 0 5px 5px 0; cursor: pointer; margin: 0 auto; float: right; text-align: center; background-color: {{main_color}}!important; color: {{string_color}}; font-weight: bold; font-size: 1.2em;}
       #sincloBox section#chatTab #sincloChatSendBtn span { color: {{string_color}} }
     <?php endif; ?>
@@ -107,7 +108,7 @@
         </ul>
         <div style="border-top: 1px solid #E8E7E0; padding: 0.5em;">
           <textarea name="sincloChat" id="sincloChatMessage" ng-if="chat_trigger == '1'" placeholder="メッセージを入力してください（Shift+Enterで改行/Enterで送信）"></textarea>
-          <textarea name="sincloChat" id="sincloChatMessage" ng-if="chat_trigger == '2'" placeholder="ここにメッセージを入力してください"></textarea>
+          <textarea name="sincloChat" id="sincloChatMessage" ng-if="chat_trigger == '2'" placeholder="メッセージを入力してください"></textarea>
           <a id="sincloChatSendBtn"><span>送信</span></a>
         </div>
       </section>
@@ -164,6 +165,7 @@
       #sincloBox ul#chatTalk li span.cName { display: block; color: {{main_color}}!important; font-weight: bold; font-size: 12px }
       #sincloBox section#chatTab div { height: 50px!important; box-sizing: content-box; }
       #sincloBox section#chatTab textarea#sincloChatMessage { width: 80%; height: 100%; font-size: 11px; color: #8A8A8A; border-radius: 5px 0 0 5px!important; resize: none; color: #8A8A8A; padding: 5px; border: 1px solid #C9C9C9!important; }
+      #sincloBox section#chatTab textarea#sincloChatMessage:focus { border-color: {{main_color}}!important; outline: none!important; }
       #sincloBox section#chatTab #sincloChatSendBtn{ width: 20%; height: 100%; padding: 1em 0; border-radius: 0 5px 5px 0; cursor: pointer; margin: 0 auto; float: right; text-align: center; background-color: {{main_color}}!important; color: {{string_color}}; font-weight: bold; font-size: 1.2em;}
       #sincloBox section#chatTab #sincloChatSendBtn span { color: {{string_color}} }
     </style>
@@ -180,8 +182,8 @@
         <li class="sinclo_re" ng-class="{chat_right: show_position == 1, chat_left: show_position == 2 }" ng-style="{backgroundColor:makeFaintColor()}"><span class="cName">{{sub_title}}</span>○○についてですね<br>どのようなご質問でしょうか？</li>
         </ul>
         <div style="border-top: 1px solid #E8E7E0; padding: 0.5em;">
-          <textarea name="sincloChat" id="sincloChatMessage" ng-if="chat_trigger == '1'" placeholder="メッセージを入力してください（Shift+Enterで改行/Enterで送信）"></textarea>
-          <textarea name="sincloChat" id="sincloChatMessage" ng-if="chat_trigger == '2'" placeholder="ここにメッセージを入力してください"></textarea>
+          <textarea name="sincloChat" id="sincloChatMessage" ng-if="chat_trigger == '1'" placeholder="メッセージを入力してください（改行で送信）"></textarea>
+          <textarea name="sincloChat" id="sincloChatMessage" ng-if="chat_trigger == '2'" placeholder="メッセージを入力してください"></textarea>
           <a id="sincloChatSendBtn"><span>送信</span></a>
         </div>
       </section>
