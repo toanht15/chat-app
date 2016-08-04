@@ -548,8 +548,6 @@ var socket, // socket.io
               sincloBox.setAttribute('data-screen', 'vertical'); // 縦向き
             }
 
-          sinclo.operatorInfo.widgetHide();// ページ下部でウィジェット生成した場合
-
           // スクロールをした時に、ページ下部であれば透過する
           window.addEventListener('scroll', sinclo.operatorInfo.widgetHide);
           // 画面を回転ときは、向きによってスタイルを変える

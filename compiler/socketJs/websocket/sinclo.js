@@ -102,10 +102,12 @@
           $("#chatTalk").append(chatTalk);
           var sincloBox = document.getElementById('sincloBox');
           document.getElementById('sincloChatMessage').value = message;
+          sincloBox.style.display = "block";
+          sincloBox.style.opacity = 0;
+          sinclo.operatorInfo.header = document.getElementById('widgetHeader');
+          sincloBox.setAttribute('data-openflg', openFlg);
           sinclo.operatorInfo.widgetHide();
 
-          sincloBox.style.display = "block";
-          sinclo.operatorInfo.header = document.getElementById('widgetHeader');
           if ( String(openFlg) === "true" ) {
             sincloBox.setAttribute('data-openflg', true);
 
@@ -266,8 +268,16 @@
             createStart = function(){
                 var sincloBox = document.getElementById('sincloBox');
                 var widgetOpen = storage.s.get('widgetOpen');
-                sincloBox.style.display = "block";
-                sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
+                if ( window.info.contract.chat && check.smartphone() ) {
+                  sincloBox.style.display = "block";
+                  sincloBox.style.opacity = 0;
+                  sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
+                  sinclo.operatorInfo.widgetHide();
+                }
+                else {
+                  sincloBox.style.display = "block";
+                  sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
+                }
                 // ウィジェット表示
                 if (!widgetOpen) {
                   if ( (('maxShowTime' in window.info.widget) && String(window.info.widget.maxShowTime).match(/^[0-9]{1,2}$/) !== null) && ('showTime' in window.info.widget) && String(window.info.widget.showTime) === "1" ) {
