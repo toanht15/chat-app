@@ -17,6 +17,17 @@ sincloApp.controller('WidgetCtrl', function($scope){
       return $scope.mainImageToggle == '1';
     }
 
+    $scope.$watch('chat_trigger', function(){
+      if ( Number($scope.chat_trigger) === 1 ) {
+        $scope.chat_area_placeholder_pc = "（Shift+Enterで改行/Enterで送信）";
+        $scope.chat_area_placeholder_sp = "（改行で送信）";
+      }
+      else {
+        $scope.chat_area_placeholder_pc = "";
+        $scope.chat_area_placeholder_sp = "";
+      }
+    });
+
     $scope.makeFaintColor = function(){
       var defColor = "#F1F5C8";
       if ( $scope.main_color.indexOf("#") >= 0 ) {
@@ -84,7 +95,6 @@ sincloApp.controller('WidgetCtrl', function($scope){
         }
     });
 
-
     angular.element(window).on("click", ".widgetCtrl", function(e){
         var clickTab = $(this).data('tab');
         if ( clickTab === $scope.widget.showTab ) return false;
@@ -108,7 +118,7 @@ sincloApp.controller('WidgetCtrl', function($scope){
         $('#MWidgetSettingIndexForm').submit();
     }
 
-    $(window).on("click", ".widgetOpener", function(){
+    angular.element(window).on("click", ".widgetOpener", function(){
       var sincloBox = document.getElementById("sincloBox");
       var target = document.getElementById("sincloBox");
       var main = document.getElementById("miniTarget");
@@ -127,6 +137,7 @@ sincloApp.controller('WidgetCtrl', function($scope){
       }
       sincloBox.setAttribute("data-openflg", nextFlg);
     });
+
 
 });
 
@@ -151,7 +162,8 @@ $(document).ready(function(){
 
     var content = document.getElementById('content');
     var widget = document.getElementById('m_widget_simulator');
-    var defaultTop = (content.offsetHeight - $("#m_widget_setting_form").offset().top - widget.offsetHeight) / 2;
+    var defaultTop = (($(window).height() - 180 - widget.clientHeight) /2);
+    defaultTop = (defaultTop > 0) ? defaultTop : 0;
     widget.style.top = defaultTop + "px";
 
     $("#content").scroll(function(e){
@@ -159,7 +171,7 @@ $(document).ready(function(){
         if (scrollTimer) {
           clearTimeout(scrollTimer);
         };
-        var position = (scrollTop < defaultTop ) ? defaultTop : scrollTop + defaultTop;
+        var position = (scrollTop <= defaultTop ) ? defaultTop : defaultTop + scrollTop - 120;
         scrollTimer = setTimeout(function(){
           $("#m_widget_simulator").animate({
             "top": position

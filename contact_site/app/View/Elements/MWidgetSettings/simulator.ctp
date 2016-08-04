@@ -15,6 +15,7 @@
       #sincloBox span#mainImage { cursor: pointer; z-index: 2; position: absolute; top: 7px; left: 10px; }
       #sincloBox span#mainImage img { background-color: {{main_color}}; }
       #sincloBox .pb07 { padding-bottom: 7px }
+      #sincloBox .notSelect { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
       #sincloBox .center { text-align: center!important; padding: 7px 30px!important }
       #sincloBox div#descriptionSet { cursor: pointer; }
       #sincloBox p#widgetTitle { position:relative; z-index: 1; cursor:pointer; border-radius: {{radius_ratio}}px {{radius_ratio}}px 0 0; border: 1px solid {{main_color}}; border-bottom:none; background-color: {{main_color}};text-align: center; font-size: 14px;padding: 7px 30px 7px 70px; margin: 0;color: {{string_color}}; height: 32px }
@@ -32,10 +33,10 @@
       #sincloBox ul#chatTalk li.chat_right { border-bottom-right-radius: 0; margin-left: 10px }
       #sincloBox ul#chatTalk li.chat_left { border-bottom-left-radius: 0; margin-right: 10px }
       #sincloBox ul#chatTalk li span.cName { display: block; color: {{main_color}}!important; font-weight: bold; font-size: 13px }
-      #sincloBox section#chatTab div { height: 50px!important; box-sizing: content-box; }
-      #sincloBox section#chatTab textarea#sincloChatMessage { width: 80%; height: 100%; color: #8A8A8A; border-radius: 5px 0 0 5px!important; resize: none; color: #8A8A8A; padding: 5px; border: 1px solid #C9C9C9!important; }
-      #sincloBox section#chatTab textarea#sincloChatMessage:focus { border-color: {{main_color}}!important; outline: none!important; }
-      #sincloBox section#chatTab #sincloChatSendBtn{ width: 20%; height: 100%; padding: 1em 0; border-radius: 0 5px 5px 0; cursor: pointer; margin: 0 auto; float: right; text-align: center; background-color: {{main_color}}!important; color: {{string_color}}; font-weight: bold; font-size: 1.2em;}
+      #sincloBox section#chatTab div { height: 75px!important; padding: 5px; }
+      #sincloBox section#chatTab textarea#sincloChatMessage { width: 80%; height: 100%; color: #8A8A8A; margin: 0; border-radius: 5px 0 0 5px!important; resize: none; color: #8A8A8A; padding: 5px; border: 1px solid #C9C9C9!important; border-right-color: transparent!important; }
+      #sincloBox section#chatTab textarea#sincloChatMessage:focus { border-color: {{main_color}}!important; outline: none!important; border-right-color: transparent!important; }
+      #sincloBox section#chatTab #sincloChatSendBtn{ width: 20%; height: 100%; padding: 20px 0; border-radius: 0 5px 5px 0; cursor: pointer; margin: 0 auto; float: right; text-align: center; background-color: {{main_color}}!important; color: {{string_color}}; font-weight: bold; font-size: 1.2em;}
       #sincloBox section#chatTab #sincloChatSendBtn span { color: {{string_color}} }
     <?php endif; ?>
     <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
@@ -76,10 +77,10 @@
     <!-- 画像 -->
     <div>
       <!-- タイトル -->
-      <p id="widgetTitle" class="widgetOpener" ng-class="{center: mainImageToggle == '2'}">{{title}}</p>
+      <p id="widgetTitle" class="widgetOpener notSelect" ng-class="{center: mainImageToggle == '2'}">{{title}}</p>
       <!-- タイトル -->
     </div>
-    <div id='descriptionSet' class="widgetOpener" ng-hide="mainImageToggle == '2' && subTitleToggle == '2' && descriptionToggle == '2'">
+    <div id='descriptionSet' class="widgetOpener notSelect" ng-hide="mainImageToggle == '2' && subTitleToggle == '2' && descriptionToggle == '2'">
       <!-- サブタイトル -->
       <p ng-if="subTitleToggle == '1'" id="widgetSubTitle">{{sub_title}}</p>
       <p ng-if="subTitleToggle == '2'" id="widgetSubTitle"></p>
@@ -94,8 +95,8 @@
     <?php if ( $coreSettings[C_COMPANY_USE_CHAT] && $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
       <section id="navigation">
         <ul>
-          <li data-tab="chat" class="widgetCtrl" ng-class="{selected: widget.showTab == 'chat'}">チャットでの受付</li>
-          <li data-tab="call" class="widgetCtrl" ng-class="{selected: widget.showTab == 'call'}" >電話での受付</li>
+          <li data-tab="chat" class="widgetCtrl notSelect" ng-class="{selected: widget.showTab == 'chat'}">チャットでの受付</li>
+          <li data-tab="call" class="widgetCtrl notSelect" ng-class="{selected: widget.showTab == 'call'}" >電話での受付</li>
         </ul>
       </section>
     <?php endif; ?>
@@ -107,9 +108,8 @@
         <li class="sinclo_re" ng-class="{chat_right: show_position == 1, chat_left: show_position == 2 }" ng-style="{backgroundColor:makeFaintColor()}"><span class="cName">{{sub_title}}</span>○○についてですね<br>どのようなご質問でしょうか？</li>
         </ul>
         <div style="border-top: 1px solid #E8E7E0; padding: 0.5em;">
-          <textarea name="sincloChat" id="sincloChatMessage" ng-if="chat_trigger == '1'" placeholder="メッセージを入力してください（Shift+Enterで改行/Enterで送信）"></textarea>
-          <textarea name="sincloChat" id="sincloChatMessage" ng-if="chat_trigger == '2'" placeholder="メッセージを入力してください"></textarea>
-          <a id="sincloChatSendBtn"><span>送信</span></a>
+          <textarea name="sincloChat" id="sincloChatMessage" placeholder="メッセージを入力してください{{chat_area_placeholder_pc}}"></textarea>
+          <a id="sincloChatSendBtn" class="notSelect"><span>送信</span></a>
         </div>
       </section>
     <?php endif; ?>
@@ -151,6 +151,7 @@
       #sincloBox * { font-size: 12px; }
       #sincloBox span, #sincloBox pre { font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana!important }
       #sincloBox .pb07 { padding-bottom: 7px }
+      #sincloBox .notSelect { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
       #sincloBox p#widgetTitle { text-align: center!important; padding: 7px 30px!important; position:relative; z-index: 1; cursor:pointer; border-radius: 0; border: 1px solid {{main_color}}; border-bottom:none; background-color: {{main_color}};text-align: center; font-size: 14px; margin: 0;color: {{string_color}}; height: 32px }
       #sincloBox p#widgetTitle:after { background-position-y: 3px; background-image: url('<?=$gallaryPath?>yajirushi.png'); top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear}
       #sincloBox[data-openflg='true'] p#widgetTitle:after { transform: rotate(0deg); }
@@ -163,9 +164,9 @@
       #sincloBox ul#chatTalk li.chat_right { border-bottom-right-radius: 0; margin-left: 10px }
       #sincloBox ul#chatTalk li.chat_left { border-bottom-left-radius: 0; margin-right: 10px }
       #sincloBox ul#chatTalk li span.cName { display: block; color: {{main_color}}!important; font-weight: bold; font-size: 12px }
-      #sincloBox section#chatTab div { height: 50px!important; box-sizing: content-box; }
-      #sincloBox section#chatTab textarea#sincloChatMessage { width: 80%; height: 100%; font-size: 11px; color: #8A8A8A; border-radius: 5px 0 0 5px!important; resize: none; color: #8A8A8A; padding: 5px; border: 1px solid #C9C9C9!important; }
-      #sincloBox section#chatTab textarea#sincloChatMessage:focus { border-color: {{main_color}}!important; outline: none!important; }
+      #sincloBox section#chatTab div { height: 65px!important;  padding: 10px; }
+      #sincloBox section#chatTab textarea#sincloChatMessage { width: 80%; height: 100%; margin: 0; font-size: 11px; color: #8A8A8A; border-radius: 5px 0 0 5px!important; resize: none; color: #8A8A8A; padding: 5px; border: 1px solid #C9C9C9!important; border-right-color: transparent!important; }
+      #sincloBox section#chatTab textarea#sincloChatMessage:focus { border-color: {{main_color}}!important; outline: none!important; border-right-color: transparent!important; }
       #sincloBox section#chatTab #sincloChatSendBtn{ width: 20%; height: 100%; padding: 1em 0; border-radius: 0 5px 5px 0; cursor: pointer; margin: 0 auto; float: right; text-align: center; background-color: {{main_color}}!important; color: {{string_color}}; font-weight: bold; font-size: 1.2em;}
       #sincloBox section#chatTab #sincloChatSendBtn span { color: {{string_color}} }
     </style>
@@ -182,9 +183,8 @@
         <li class="sinclo_re" ng-class="{chat_right: show_position == 1, chat_left: show_position == 2 }" ng-style="{backgroundColor:makeFaintColor()}"><span class="cName">{{sub_title}}</span>○○についてですね<br>どのようなご質問でしょうか？</li>
         </ul>
         <div style="border-top: 1px solid #E8E7E0; padding: 0.5em;">
-          <textarea name="sincloChat" id="sincloChatMessage" ng-if="chat_trigger == '1'" placeholder="メッセージを入力してください（改行で送信）"></textarea>
-          <textarea name="sincloChat" id="sincloChatMessage" ng-if="chat_trigger == '2'" placeholder="メッセージを入力してください"></textarea>
-          <a id="sincloChatSendBtn"><span>送信</span></a>
+          <textarea name="sincloChat" id="sincloChatMessage" placeholder="メッセージを入力してください{{chat_area_placeholder_sp}}"></textarea>
+          <a id="sincloChatSendBtn" class="notSelect"><span>送信</span></a>
         </div>
       </section>
     </div>

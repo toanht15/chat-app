@@ -33,6 +33,7 @@ $headerNo = 1;
               'ng-disabled' => 'showTime == "2"',
               'after' => '秒後に自動で最大化する',
               'maxlength' => 2,
+              'style' => 'width:5em',
               'max' => 60,
               'min' => 0,
               'error' => false
