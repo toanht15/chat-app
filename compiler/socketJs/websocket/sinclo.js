@@ -712,9 +712,26 @@
                 this.sound.volume = 0.3;
             }
 
-            $(document).on("change", "input[name^='sinclo-radio']", function(e){
+            $(document)
+              .on('focus', "#sincloChatMessage",function(e){
+                var message = document.getElementById('sincloChatMessage');
+                message.placeholder = "";
+              })
+              .on('blur', "#sincloChatMessage",function(e){
+                var message = document.getElementById('sincloChatMessage');
+                message.placeholder = "メッセージを入力してください";
+                if ( !( 'chatTrigger' in window.info.widget && window.info.widget.chatTrigger === 2) ) {
+                  if ( check.smartphone() ) {
+                    message.placeholder += "（改行で送信）";
+                  }
+                  else {
+                    message.placeholder += "（Shift+Enterで改行/Enterで送信）";
+                  }
+                }
+              })
+              .on("change", "input[name^='sinclo-radio']", function(e){
                 sinclo.chatApi.send(e.target.value);
-            });
+              });
 
             emit('getChatMessage', {});
         },
@@ -747,8 +764,8 @@
                     var radio = str.indexOf('[]');
                     if ( radio > -1 ) {
                         var val = str.slice(radio+2);
-                        str = "<input type='radio' name='" + radioName + "' id='" + radioName + "-" + i + "' class='sinclo-chat-radio' value='" + val + "'>";
-                        str += "<label for='" + radioName + "-" + i + "'>" + val + "</label>";
+                        str = "<sinclo-radio><input type='radio' name='" + radioName + "' id='" + radioName + "-" + i + "' class='sinclo-chat-radio' value='" + val + "'>";
+                        str += "<label for='" + radioName + "-" + i + "'>" + val + "</label></sinclo-radio>";
                     }
                 }
                 // リンク
