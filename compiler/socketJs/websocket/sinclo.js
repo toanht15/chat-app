@@ -622,7 +622,13 @@
       var obj = JSON.parse(d);
       if ( obj.tabId !== userInfo.tabId ) return false;
       var elm = document.getElementById('sincloChatMessage'), cn;
+
       if ( obj.ret ) {
+        // スマートフォンの場合はメッセージ送信時に、到達確認タイマーをリセットする
+        if ( sinclo.chatApi.sendErrCatchTimer !== null ) {
+          clearTimeout(sinclo.chatApi.sendErrCatchTimer);
+        }
+
         if (obj.messageType === sinclo.chatApi.messageType.company) {
           cn = "sinclo_re";
           sinclo.chatApi.call();
@@ -823,6 +829,11 @@
         send: function(value){
             storage.s.set('chatAct', true); // オートメッセージを表示しない
 
+            // タイマーが仕掛けられていたらリセット
+            if ( this.sendErrCatchTimer !== null ) {
+              clearTimeout(this.sendErrCatchTimer);
+            }
+
             setTimeout(function(){
               emit('sendChat', {
                   historyId: sinclo.chatApi.historyId,
@@ -832,6 +843,22 @@
               });
             }, 100);
 
+            // スマートフォンの場合、タイマーをセット。（メッセージ送信に失敗した場合にリロードを促す）
+            if ( check.smartphone() ) {
+              this.sendErrCatch();
+            }
+
+        },
+        sendErrCatchFlg: false,
+        sendErrCatchTimer: null,
+        sendErrCatch: function(){
+          if ( this.sendErrCatchTimer !== null ) {
+            clearTimeout(this.sendErrCatchTimer);
+          }
+          this.sendErrCatchTimer = setTimeout(function(){
+            $("sinclo-chat-alert").css('display', 'block');
+            sinclo.chatApi.sendErrCatchFlg = true;
+          }, 5000);
         },
         sound: null,
         call: function(){

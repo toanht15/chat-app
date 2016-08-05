@@ -232,6 +232,14 @@ var socket, // socket.io
         ratio = widgetWidth * (1/285);
 
         html += '#sincloBox { transition: opacity 100ms linear 0ms; }';
+        html += '#sincloBox section#chatTab div { position: relative }';
+        html += '#sincloBox section#chatTab sinclo-chat-alert { position: absolute; background-color: rgba(0,0,0,0.6); color: #FFF; text-align: center; }';
+        if ( sinclo.chatApi.sendErrCatchFlg ) {
+          html += '#sincloBox section#chatTab sinclo-chat-alert { display:block }';
+        }
+        else {
+          html += '#sincloBox section#chatTab sinclo-chat-alert { display:none }';
+        }
 
         /* 縦の場合 */
         if ( $(window).height() > $(window).width() ) {
@@ -263,6 +271,7 @@ var socket, // socket.io
           html += '#sincloBox section#chatTab div { height: ' + (60*ratio) + 'px; padding: ' + (5 * ratio) + 'px; }';
           html += '#sincloBox section#chatTab #sincloChatMessage { border-radius: ' + (5 * ratio) +'px 0 0 ' + (5 * ratio) +'px; font-size: 1em; padding: ' + (5 * ratio) + 'px; border: ' + (1 * ratio) + 'px solid #E4E4E4; }';
           html += '#sincloBox section#chatTab #sincloChatSendBtn { padding:  ' + (16.5 * ratio) + 'px 0; border: ' + ratio + 'px solid ' + widget.mainColor + '; }';
+          html += '#sincloBox section#chatTab div sinclo-chat-alert { top: ' + (5 * ratio) + 'px; left: ' + (5 * ratio) + 'px; right: ' + (5 * ratio) + 'px; bottom: ' + (5 * ratio) + 'px; border-radius: ' + (5 * ratio) + 'px; color: #FFF; padding: ' + (10 * ratio) + 'px 0; }';
           html += '#sincloBox section#navigation { border-width: 0 ' + (1 * ratio) + 'px; height: ' + (40 * ratio) + 'px; }';
           html += '#sincloBox section#navigation ul { margin: 0 0 0 -' + (1 * ratio) + 'px; height: ' + (40 * ratio) + 'px; }';
           html += '#sincloBox section#navigation ul li { padding: ' + (10 * ratio) + 'px 0; border-left: ' + (1 * ratio) + 'px solid #E8E7E0; height: ' + (40 * ratio) + 'px;  }';
@@ -301,6 +310,7 @@ var socket, // socket.io
             html += '#sincloBox #sincloChatMessage { height: 100%; border-radius: 5px 0 0 5px; font-size: 1.5em }';
           }
           html += '      #sincloBox section#chatTab #sincloChatSendBtn { padding: 0.6em 0; border: 1px solid ' + widget.mainColor + '; }';
+          html += '      #sincloBox section#chatTab div sinclo-chat-alert { top: 0.5em; left: 0.5em; right: 0.5em; bottom: 0.5em; border-radius: 5px; color: #FFF; text-align: center; padding: 0.25em 0; }';
 
           html += '#sincloBox section#navigation ul { width: 100% }';
           html += 'sinclo span#mainImage, sinclo #widgetSubTitle, sinclo #widgetDescription, sinclo #navigation, sinclo #navigation * { display:none!important; height: 0!important }';
@@ -468,9 +478,11 @@ var socket, // socket.io
       html += '  <section id="chatTab">';
       html += '    <ul id="chatTalk"></ul>';
       html += '    <div>';
-
       html += '      <textarea name="sincloChat" id="sincloChatMessage" maxlength="300" placeholder=" ' + placeholder + ' "></textarea>';
       html += '      <a id="sincloChatSendBtn" class="notSelect" onclick="sinclo.chatApi.push()">送信</a>';
+      if ( spFlg ) { // スマートフォンの場合
+        html += '      <sinclo-chat-alert onclick="return location.href = location.href;">通信が切断されました。<br>こちらをタップすると再接続します。</sinclo-chat-alert>';
+      }
       html += '    </div>';
       html += '    <audio id="sinclo-sound">';
       html += '      <source src="' + window.info.site.files + '/sounds/decision.mp3" type="audio/mp3">';
