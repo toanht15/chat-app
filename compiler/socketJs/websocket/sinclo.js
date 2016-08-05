@@ -16,8 +16,8 @@
           var height = 0;
           sincloBox.setAttribute('data-openflg', true);
 
-          if ( check.smartphone() && window.info.contract.chat && ($(window).height() < $(window).width()) ) {
-            height = window.innerHeight;
+          if ( check.smartphone() && window.info.contract.chat && (window.screen.availHeight < window.screen.availWidth) ) {
+            height = window.innerHeight * (document.body.clientWidth / window.innerWidth);
           }
           else {
             height += $("#sincloBox #widgetHeader").outerHeight(true);
@@ -69,6 +69,7 @@
           }
         }, 500);
       },
+      reCreateWidgetMessage: "",
       reCreateWidgetTimer: null,
       reCreateWidget: function(){
         if (!check.smartphone()) return false; // 念のため
@@ -77,12 +78,12 @@
         }
         var sincloBox = document.getElementById('sincloBox');
 
-        var screen = ( $(window).height() < $(window).width() ) ? 'horizontal' : 'vertical';
+        var screen = ( window.screen.availHeight < window.screen.availWidth ) ? 'horizontal' : 'vertical';
         var current = document.activeElement;
         if ( current.id === "sincloChatMessage" && screen === sincloBox.getAttribute('data-screen') ) {
           setTimeout(function(){
             sinclo.operatorInfo.reCreateWidget();
-          }, 300);
+          }, 500);
           return false;
         }
         var openFlg = sincloBox.getAttribute('data-openflg');
@@ -91,17 +92,17 @@
           sincloBox.style.display = "none";
         }
 
-        var message = document.getElementById('sincloChatMessage').value;
 
         sinclo.operatorInfo.reCreateWidgetTimer = setTimeout(function(){
           var html = common.createWidget();
           var chatTalk = $("#chatTalk").children();
+          sinclo.operatorInfo.reCreateWidgetMessage = document.getElementById('sincloChatMessage').value;
 
           $("#sincloBox").remove();
           $("body").append(html);
           $("#chatTalk").append(chatTalk);
           var sincloBox = document.getElementById('sincloBox');
-          document.getElementById('sincloChatMessage').value = message;
+          document.getElementById('sincloChatMessage').value = sinclo.operatorInfo.reCreateWidgetMessage;
           sincloBox.style.display = "block";
           sincloBox.style.opacity = 0;
           sinclo.operatorInfo.header = document.getElementById('widgetHeader');
@@ -111,8 +112,8 @@
           if ( String(openFlg) === "true" ) {
             sincloBox.setAttribute('data-openflg', true);
 
-            if ( $(window).height() < $(window).width() ) {
-              sincloBox.style.height = window.innerHeight + "px";
+            if ( window.screen.availHeight < window.screen.availWidth ) {
+              sincloBox.style.height = document.documentElement.clientHeight + "px";
             }
             else {
               var height = $("#widgetHeader").outerHeight(true);
@@ -812,6 +813,8 @@
             }, 500);
         },
         push: function(){
+            sinclo.operatorInfo.reCreateWidgetMessage = ""; // 送信したら空にする
+
             var elm = document.getElementById('sincloChatMessage');
             if ( check.isset(elm.value) ) {
                 this.send(elm.value);

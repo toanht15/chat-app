@@ -274,7 +274,7 @@ var socket, // socket.io
         }
         /* 横の場合 */
         else {
-          var chatAreaHeight = window.innerHeight;
+          var chatAreaHeight = window.innerHeight * (document.body.clientWidth / window.innerWidth);
           var hRatio = chatAreaHeight * 0.07;
           html += '#sincloBox { left:0; right:0; bottom: 0; }';
           html += '#sincloBox * { font-size: ' + hRatio + 'px }';
@@ -304,7 +304,7 @@ var socket, // socket.io
 
           html += '#sincloBox section#navigation ul { width: 100% }';
           html += 'sinclo span#mainImage, sinclo #widgetSubTitle, sinclo #widgetDescription, sinclo #navigation, sinclo #navigation * { display:none!important; height: 0!important }';
-          html += '#sincloBox #fotter { display: none; }';
+          html += '#sincloBox #fotter { display: none; height: 0!important }';
         }
       }
       /* PC版 */
@@ -373,7 +373,7 @@ var socket, // socket.io
     widgetHeaderTemplate: function(widget){
       var html = "", chatAndTitleOnly = false;
       // チャットとタイトルバーのみ表示するフラグ
-      if ( check.smartphone() && ( $(window).height() < $(window).width() ) ) {
+      if ( check.smartphone() && ( window.screen.availHeight < window.screen.availWidth ) ) {
         chatAndTitleOnly = true;
       }
       // 画像
@@ -541,7 +541,7 @@ var socket, // socket.io
 
         if ( window.info.contract.chat && check.smartphone() ) {
           // 初期の画面向き
-            if ( $(window).height() < $(window).width() ) {
+            if ( window.screen.availHeight < window.screen.availWidth ) {
               sincloBox.setAttribute('data-screen', 'horizontal'); // 横向き
             }
             else {
