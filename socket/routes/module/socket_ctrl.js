@@ -286,6 +286,12 @@ io.sockets.on('connection', function (socket) {
 
   // チャット用
   var chatApi = {
+    cnst: {
+      observeType: {
+        company: 1,
+        customer: 2
+      }
+    },
     set: function(d){ // メッセージが渡されてきたとき
       // 履歴idかメッセージがない
       if ( !getSessionId(d.siteKey, d.tabId, 'historyId') || !isset(d.chatMessage) ) {
@@ -893,6 +899,21 @@ io.sockets.on('connection', function (socket) {
         [obj.historyId], function(err, ret, fields){
         }
       );
+    }
+  });
+
+  // 入力ステータスを送信
+  socket.on("sendTypeCond", function(d){
+    var obj = JSON.parse(d);
+    // 送り主が企業の場合
+    if ( obj.type === chatApi.cnst.observeType.company ) {
+      // 消費者へ送る
+      emit.toUser('receiveTypeCond', d, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
+    }
+    // 送り主が消費者の場合
+    else {
+      // 企業へ送る
+      emit.toCompany('receiveTypeCond', d, obj.siteKey);
     }
   });
 

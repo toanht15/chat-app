@@ -1283,6 +1283,10 @@ ul.naviBtn {
               margin-right: 10px;
               border-radius: 5px 5px 5px 0;
               background-color: #F1F5C8;
+
+              &#typeing_message {
+                background-color: #e8e8e8!important;
+              }
           }
 
           &.sinclo_se, &.sinclo_auto {

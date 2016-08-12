@@ -206,9 +206,11 @@ var socket, // socket.io
         html += '      #sincloBox ul#chatTalk li { word-wrap: break-word; word-break: break-word; white-space: pre-wrap!important; background-color: #FFF; white-space: pre; color: #8A8A8A; }';
         html += '      #sincloBox ul#chatTalk li.sinclo_se { ' + chatPosition.se + 'background-color: #FFF; }';
         html += '      #sincloBox ul#chatTalk li.sinclo_re { ' + chatPosition.re + 'background-color:' + faintColor + ' }';
+        html += '      #sincloBox ul#chatTalk li#sinclo_typeing_message { color: #d5d5d5; border: none; text-align: center; }';
         html += '      #sincloBox ul#chatTalk li span.cName { display: block; color: ' + widget.mainColor + '; font-weight: bold; }';
         html += '      #sincloBox ul#chatTalk li.sinclo_etc { border: none; text-align: center; margin: 0 auto; font-weight: bold }';
         html += '      #sincloBox section#chatTab div { border-top: 1px solid #E8E7E0; }';
+        html += '      #sincloBox section#chatTab div #sincloChatMessage { height: 100%; margin: 0; width: 80%; float: left; resize: none; color: #8A8A8A; border-right-color: ' + widget.mainColor + '; }';
         html += '      #sincloBox section#chatTab div #sincloChatMessage { height: 100%; margin: 0; width: 80%; float: left; resize: none; color: #8A8A8A; border-right-color: ' + widget.mainColor + '; }';
         html += '      #sincloBox section#chatTab div #sincloChatMessage:focus { outline: none; border-color: ' + widget.mainColor + ' }';
         html += '      #sincloBox section#chatTab div #sincloChatSendBtn { height: 100%; width: 20%; text-decoration: none; border-radius: 0 5px 5px 0; cursor: pointer; margin: 0 auto; float: right; text-align: center; background-color: ' + widget.mainColor + '; color: ' + widget.stringColor + '; font-weight: bold; font-size: 1.2em;}';
@@ -2077,6 +2079,11 @@ var socket, // socket.io
     socket.on('sendChatResult', function (d) {
       sinclo.sendChatResult(d);
     }); // socket-on: sendChatResult
+
+    // チャット入力状況受信
+    socket.on('receiveTypeCond', function (d) {
+      sinclo.chatApi.createTypingMessage(d);
+    }); // socket-on: receiveTypeCond
 
     // 画面共有
     socket.on('confirmVideochatStart', function(d){

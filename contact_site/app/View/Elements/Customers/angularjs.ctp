@@ -58,15 +58,70 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       },
       init: function(){
         $("#sendMessage").keydown(function(e){
-           if ( e.keyCode === 13 ) {
+          if ( e.keyCode === 13 ) {
             if ( !(e.shiftKey || e.ctrlKey) ) {
               chatApi.pushMessage();
             }
           }
+        })
+        .blur(function(e){
+          chatApi.observeType.end();
+        })
+        .focus(function(e){
+          chatApi.observeType.start();
         });
+
         this.sound = document.getElementById('sinclo-sound');
         if ( this.sound ) {
             this.sound.volume = 0.3;
+        }
+      },
+      prevValue: "",
+      observeType: {
+        timer: null,
+        timeoutTimer: null,
+        prevMessage: "",
+        status: false,
+        cnst: {
+          company: 1,
+          client: 2
+        },
+        start: function(){
+          var sendMessage = document.getElementById('sendMessage');
+
+          // 300ミリ秒ごとに入力値をチェック
+          chatApi.observeType.timer = setInterval(function(){
+            if ( sendMessage.value === "" ) {
+              chatApi.observeType.prevMessage = "";
+              chatApi.observeType.send(false);
+            }
+            else if ( sendMessage.value !== chatApi.observeType.prevMessage ) {
+              chatApi.observeType.prevMessage = sendMessage.value;
+              chatApi.observeType.send(true);
+
+              if ( chatApi.observeType.timeoutTimer ) {
+                clearTimeout(chatApi.observeType.timeoutTimer);
+              }
+              chatApi.observeType.timeoutTimer = setTimeout(function(){
+                chatApi.observeType.prevMessage = sendMessage.value;
+                chatApi.observeType.send(false);
+              }, 5000);
+            }
+          }, 300);
+        },
+        end: function(){ // フォーカスを外した時に即時入力中をやめる場合は有効にする
+          // clearTimeout(chatApi.observeType.timer);
+          // chatApi.observeType.send(false);
+        },
+        send: function(status){
+          if ( chatApi.observeType.status !== status ) {
+            emit('sendTypeCond', {
+              type: chatApi.observeType.cnst.company, // company
+              tabId: chatApi.tabId,
+              status: status
+            });
+            chatApi.observeType.status = status;
+          }
         }
       },
       sound: null,
@@ -509,6 +564,12 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       }
     };
 
+    $scope.$watch('monitorList', function(){
+      if ( angular.isDefined($scope.detailId) && !($scope.detailId in $scope.monitorList) ) {
+        $scope.showDetail($scope.detailId);
+      }
+    });
+
     function pushToList(obj){
       $scope.monitorList[obj.tabId] = obj;
 
@@ -817,6 +878,30 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       $scope.monitorList[obj.tabId].chatUnreadCnt = 0;
     });
 
+    // チャット入力中ステータスの受信
+    socket.on('receiveTypeCond', function(d){
+      var obj = JSON.parse(d),
+          typeMessage = document.getElementById('typeing_message'),
+          li = document.createElement('li');
+
+      if ( typeMessage && obj.status === false ) {
+        typeMessage.parentNode.removeChild(typeMessage);
+      }
+      else {
+        if ( typeMessage ) {
+          typeMessage.textContent = obj.message;
+        }
+        else {
+          li.innerHTML = obj.message;
+          li.className = "sinclo_re";
+          li.id = "typeing_message";
+          $('#chatTalk').append(li);
+
+        }
+      }
+      scDown();
+    });
+
     // =======================================
     //   チャット関連受信ここまで
     // =======================================
@@ -997,7 +1082,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         }
         li.className = cn;
         li.innerHTML = content;
-        $(elem).append(li)
+        $(elem).append(li);
 
         scDown();
 

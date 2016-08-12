@@ -705,6 +705,7 @@
         online: false, // 現在の対応状況
         historyId: null,
         unread: 0,
+        opUser: "オペレーター",
         messageType: {
             customer: 1,
             company: 2,
@@ -722,6 +723,9 @@
                         }
                     });
                 }
+                $(document).on("focus", "#sincloChatMessage", function(e){
+                  sinclo.chatApi.observeType.start();
+                });
             }
 
             this.sound = document.getElementById('sinclo-sound');
@@ -758,6 +762,34 @@
             chatTalk.appendChild(li);
             li.className = "sinclo_etc";
             li.innerHTML = "－　" + val + "　－";
+            this.scDown();
+        },
+        createTypingTimer: null,
+        createTypingMessage: function(d){
+            var obj = JSON.parse(d),
+                chatTalk = document.getElementById('chatTalk'),
+                typeMessage = document.getElementById('sinclo_typeing_message'),
+                li = document.createElement('li');
+
+            if ( typeMessage ) {
+              typeMessage.parentNode.removeChild(typeMessage);
+            }
+
+            clearInterval(this.createTypingTimer);
+
+            if (!obj.status) return false;
+            chatTalk.appendChild(li);
+            li.id = "sinclo_typeing_message";
+            li.innerHTML = sinclo.chatApi.opUser + "が入力中";
+
+            this.createTypingTimer = setInterval(function(){
+              if (li.innerHTML.length > sinclo.chatApi.opUser.length + 6 ) {
+                li.innerHTML = sinclo.chatApi.opUser + "が入力中";
+              }
+              else {
+                li.innerHTML += ".";
+              }
+            }, 500);
             this.scDown();
         },
         createMessage: function(cs, val){
@@ -848,6 +880,37 @@
               this.sendErrCatch();
             }
 
+        },
+        observeType: {
+          timer: null,
+          prevMessage: "",
+          start: function(){
+            var sendMessage = document.getElementById('sincloChatMessage');
+            if ( this.timer !== null ) {
+              clearInterval(this.timer);
+            }
+            // 300ミリ秒ごとに入力値をチェック
+            this.timer = setInterval(function(){
+              if ( sendMessage.value === "" ) {
+                sinclo.chatApi.observeType.prevMessage = "";
+                sinclo.chatApi.observeType.send(false, sendMessage.value);
+              }
+              else if ( sendMessage.value !== sinclo.chatApi.observeType.prevMessage ) {
+                sinclo.chatApi.observeType.prevMessage = sendMessage.value;
+                sinclo.chatApi.observeType.send(true, sendMessage.value);
+              }
+            }, 300);
+          },
+          send: function(status, message){
+            if ( sinclo.chatApi.observeType.status !== status || (status === true && message !== "")  ) {
+              emit('sendTypeCond', {
+                type: 2, // customer
+                status: status,
+                message: message
+              });
+              sinclo.chatApi.observeType.status = status;
+            }
+          }
         },
         sendErrCatchFlg: false,
         sendErrCatchTimer: null,
