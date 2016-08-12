@@ -887,7 +887,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       if ( typeMessage && obj.status === false ) {
         typeMessage.parentNode.removeChild(typeMessage);
       }
-      else {
+      else if (obj.status !== false) {
         if ( typeMessage ) {
           typeMessage.textContent = obj.message;
         }

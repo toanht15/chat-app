@@ -769,7 +769,8 @@
             var obj = JSON.parse(d),
                 chatTalk = document.getElementById('chatTalk'),
                 typeMessage = document.getElementById('sinclo_typeing_message'),
-                li = document.createElement('li');
+                li = document.createElement('li'),
+                span = document.createElement('span');
 
             if ( typeMessage ) {
               typeMessage.parentNode.removeChild(typeMessage);
@@ -778,16 +779,18 @@
             clearInterval(this.createTypingTimer);
 
             if (!obj.status) return false;
+            li.appendChild(span);
             chatTalk.appendChild(li);
             li.id = "sinclo_typeing_message";
-            li.innerHTML = sinclo.chatApi.opUser + "が入力中";
+            span.textContent = sinclo.chatApi.opUser + "が入力中";
+            span.style = "margin-left: -" + span.textContent.length/2 + "em;";
 
             this.createTypingTimer = setInterval(function(){
-              if (li.innerHTML.length > sinclo.chatApi.opUser.length + 6 ) {
-                li.innerHTML = sinclo.chatApi.opUser + "が入力中";
+              if (span.textContent.length > sinclo.chatApi.opUser.length + 6 ) {
+                span.textContent = sinclo.chatApi.opUser + "が入力中";
               }
               else {
-                li.innerHTML += ".";
+                span.textContent += ".";
               }
             }, 500);
             this.scDown();
