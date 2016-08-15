@@ -40,6 +40,10 @@ define('C_WIDGET_DISPLAY_CODE_HIDE', 3); // 表示しない
 define('C_WIDGET_POSITION_RIGHT_BOTTOM', 1); // 右下
 define('C_WIDGET_POSITION_LEFT_BOTTOM', 2); // 左下
 
+// 表示名種別
+define('C_WIDGET_SHOW_NAME', 1); // 表示名
+define('C_WIDGET_SHOW_COMP', 2); // 企業名
+
 // チャット送信のアクション種別
 define('C_WIDGET_SEND_ACT_PUSH_KEY', 1); // キーアクション込み
 define('C_WIDGET_SEND_ACT_PUSH_BTN', 2); // ボタンのみ
@@ -116,6 +120,12 @@ $config['WidgetDisplayType'] = [
 $config['widgetPositionType'] = [
     C_WIDGET_POSITION_RIGHT_BOTTOM => "右下",
     C_WIDGET_POSITION_LEFT_BOTTOM => "左下"
+];
+
+/* ウィジェット設定 － 担当者表示名種別 */
+$config['widgetShowNameType'] = [
+    C_WIDGET_SHOW_NAME => "担当者名を表示する</br>　<s>※ユーザーマスタの「表示名」に設定された名称を表示します</s>",
+    C_WIDGET_SHOW_COMP=> "企業名を表示する</br>　<s>※こちらの画面の「企業名」に設定された名称を表示します</s>"
 ];
 
 /* ウィジェット設定 － チャット送信アクション種別 */

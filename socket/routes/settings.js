@@ -46,6 +46,7 @@ router.get("/", function(req, res, next) {
                 sendData['widget'] = {
                     display_type: isNumeric(rows[0].display_type),
                     showTime: isNumeric(settings.showTime),
+                    showName: isNumeric(settings.showName),
                     showPosition: isNumeric(settings.showPosition),
                     maxShowTime: isNumeric(settings.maxShowTime),
                     title: settings.title,
