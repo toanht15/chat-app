@@ -517,6 +517,19 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       }
     };
 
+    $scope.openDetailFlg = false;
+    $scope.openDetail = function(){
+      if ( angular.element('#customer_detail').is(".close") ) {
+        var height = $("#customer_detail ul").height() + 90;
+        angular.element('#customer_detail').removeClass("close").addClass("open").css('height', height);
+        $scope.openDetailFlg = true;
+      }
+      else {
+        angular.element('#customer_detail').removeClass("open").addClass("close");
+        $scope.openDetailFlg = false;
+      }
+    }
+
     $scope.isset = function(value){
       var result;
       if ( angular.isUndefined(value) ) {

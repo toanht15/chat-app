@@ -1156,11 +1156,43 @@ ul.naviBtn {
     }
 
     #customer_detail {
-      ul li {
-        word-break: break-all;
-        word-wrap: break-word;
+      position: relative;
+      transition: height 300ms linear 0s;
 
-        span { font-weight: bold; margin-left: -5px }
+      &.open {
+         height: auto;
+         ul { opacity: 1 }
+      }
+      &.close {
+         height: 90px!important;
+         overflow: hidden;
+         ul { opacity: 0 }
+      }
+
+      ul {
+        transition: opacity 300ms linear 300ms;
+
+        li {
+          word-break: break-all;
+          word-wrap: break-word;
+          span { font-weight: bold }
+        }
+      }
+
+      p {
+        display: block;
+        height: 2em;
+        text-align: center;
+        font-weight: bold;
+        font-size: 1.5em;
+        cursor: pointer;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: #FFF;
+        margin: 0;
+        padding: 0.5em 0;
       }
     }
 
