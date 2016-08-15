@@ -310,7 +310,14 @@ io.sockets.on('connection', function (socket) {
         var historyId = getSessionId(obj.siteKey, obj.tabId, 'historyId');
         if ( historyId ) {
             chatData.historyId = historyId;
-            pool.query('SELECT id, message, message_type as messageType, m_users_id as userId,  message_read_flg as messageReadFlg, created FROM t_history_chat_logs WHERE t_histories_id = ? ORDER BY created;', [chatData.historyId], function(err, rows){
+
+            var sql  = "SELECT";
+                sql += " chat.id, chat.message, chat.message_type as messageType, chat.m_users_id as userId, mu.display_name as userName, chat.message_read_flg as messageReadFlg, chat.created ";
+                sql += "FROM t_history_chat_logs AS chat ";
+                sql += "LEFT JOIN m_users AS mu ON ( mu.id = chat.m_users_id ) ";
+                sql += "WHERE t_histories_id = ? ORDER BY created";
+
+            pool.query(sql, [chatData.historyId], function(err, rows){
               var messages = ( isset(rows) ) ? rows : [];
               var setList = {};
               if ((obj.siteKey in c_connectList) && (obj.tabId in c_connectList[obj.siteKey])) {
@@ -319,6 +326,9 @@ io.sockets.on('connection', function (socket) {
               for (var i = 0; i < messages.length; i++) {
                 var date = messages[i].created;
                 date = new Date(date);
+                if ( ('userName' in messages[i]) && obj.showName !== 1 ) {
+                  delete messages[i]['userName'];
+                }
                 setList[fullDateTime(messages[i].created)] = messages[i];
               }
               chatData.messages = objectSort(setList);
@@ -814,6 +824,8 @@ io.sockets.on('connection', function (socket) {
     }
     else {
       emit.toCompany("chatStartResult", {ret: true, tabId: obj.tabId, created: now, siteKey: obj.siteKey, userId: obj.userId}, obj.siteKey);
+      var sendData = {ret: true, messageType: 99, hide:false, created: now};
+
       sincloCore[obj.siteKey][obj.tabId]['chat'] = obj.userId;
       // サイトとして初チャット開始
       if ( !(obj.siteKey in c_connectList) ) {
@@ -827,23 +839,38 @@ io.sockets.on('connection', function (socket) {
       else {
         var keys = Object.keys(c_connectList[obj.siteKey][obj.tabId]);
         // 横取り（最後のc_connectListが"start"でない）
-        if ( c_connectList[obj.siteKey][obj.tabId][keys[keys.length - 1]] === "start" ) {
-          return false;
+        if ( c_connectList[obj.siteKey][obj.tabId][keys[keys.length - 1]].type === "start" ) {
+          sendData['hide'] = true;
         }
       }
-      emit.toUser("chatStartResult", {ret: true, created: now}, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
-      c_connectList[obj.siteKey][obj.tabId][now] = "start";
+
+      pool.query('SELECT mu.id, mu.display_name, wid.style_settings FROM m_users as mu LEFT JOIN m_widget_settings AS wid ON ( wid.m_companies_id = mu.m_companies_id ) WHERE mu.id = ? AND mu.del_flg != 1 AND wid.del_flg != 1 AND wid.m_companies_id = ?', [obj.userId, companyList[obj.siteKey]], function(err, rows){
+        sendData['userName'] = "オペレーター";
+        if ( rows && rows[0] ) {
+          var settings = JSON.parse(rows[0].style_settings);
+          // 表示名をウィジェットで表示する場合
+          var userName = rows[0].display_name;
+          if ( isset(settings.showName) && Number(settings.showName) === 1 ) {
+            sendData['userName'] = userName;
+          }
+
+          emit.toUser("chatStartResult", sendData, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
+          c_connectList[obj.siteKey][obj.tabId][now] = {messageType: 99, type:"start", userName: userName, userId: obj.userId};
+        }
+      });
     }
   });
 
   // チャット終了
   socket.on("chatEnd", function(d){
     var obj = JSON.parse(d), now = fullDateTime();
-    c_connectList[obj.siteKey][obj.tabId][now] = "end";
+    var keys = Object.keys(c_connectList[obj.siteKey][obj.tabId]);
+    var userName = c_connectList[obj.siteKey][obj.tabId][keys[keys.length-1]].user;
+    c_connectList[obj.siteKey][obj.tabId][now] = {type:"end", userName: userName, userId: obj.userId, messageType: 99};
     if ( isset(sincloCore[obj.siteKey]) && isset(sincloCore[obj.siteKey][obj.tabId].chat) ) {
       sincloCore[obj.siteKey][obj.tabId].chat = null;
-      emit.toCompany("chatEndResult", {ret: true, created: now, tabId: obj.tabId, siteKey: obj.siteKey, userId: obj.userId}, obj.siteKey);
-      emit.toUser("chatEndResult", {ret: true}, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
+      emit.toCompany("chatEndResult", {ret: true, messageType: 99, created: now, tabId: obj.tabId, siteKey: obj.siteKey, userId: obj.userId}, obj.siteKey);
+      emit.toUser("chatEndResult", {ret: true, messageType: 99}, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
     }
   });
 

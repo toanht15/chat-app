@@ -785,10 +785,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           return (v !== this.t)
         }, {t: obj.tabId});
       }
-      if ( !isset(prev) && obj.tabId === chatApi.tabId ) {
+      if ( obj.tabId === chatApi.tabId ) {
         var chat = {
           sort: Number(obj.created),
-          text: "start"
+          userId: obj.userId,
+          type: "start"
         };
         $scope.messageList.push(chat);
       }
@@ -807,7 +808,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       if ( obj.tabId === chatApi.tabId ) {
         var chat = {
           sort: Number(obj.created),
-          text: "end"
+          userId: obj.userId,
+          type: "end"
         };
         $scope.messageList.push(chat);
       }
@@ -1064,7 +1066,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         var cn = "";
         var li = document.createElement('li');
         var content = "";
-        if ( !("text" in scope.chat) ) {
+
+        if ( !("type" in scope.chat) ) {
           // 消費者からのメッセージの場合
           if (scope.chat.messageType === chatApi.messageType.customer) {
             cn = "sinclo_re";
@@ -1086,11 +1089,15 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         }
         else {
           cn = "sinclo_etc";
-          if ( scope.chat.text === "start" ) {
-            content = "－　オペレーターが入室しました　－";
+          var userName = "オペレーター";
+          if ( "userId" in scope.chat ) {
+            userName = userList[Number(scope.chat.userId)];
           }
-          if ( scope.chat.text === "end" ) {
-            content = "－　オペレーターが退室しました　－";
+          if ( scope.chat.type === "start" ) {
+            content = "－　" + userName + "が入室しました　－";
+          }
+          if ( scope.chat.type === "end" ) {
+            content = "－　" + userName + "が退室しました　－";
           }
         }
         li.className = cn;
