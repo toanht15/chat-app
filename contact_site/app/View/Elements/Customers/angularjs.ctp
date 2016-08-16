@@ -115,13 +115,16 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         },
         send: function(status){
           if ( chatApi.observeType.status !== status ) {
-            emit('sendTypeCond', {
-              type: chatApi.observeType.cnst.company, // company
-              tabId: chatApi.tabId,
-              status: status
-            });
+            chatApi.observeType.emit(status);
             chatApi.observeType.status = status;
           }
+        },
+        emit: function(status){
+          emit('sendTypeCond', {
+            type: chatApi.observeType.cnst.company, // company
+            tabId: chatApi.tabId,
+            status: status
+          });
         }
       },
       sound: null,
@@ -484,6 +487,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         $scope.detailId = "";
         $scope.messageList = [];
         chatApi.userId = "";
+        chatApi.observeType.emit(false);
         $("#chatTalk").children().remove();
         $("#customer_list tr.on").removeClass('on');
         setTimeout(function(){
@@ -674,9 +678,16 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     socket.on('syncNewInfo', function (data) {
       var obj = JSON.parse(data);
+
       // 消費者
       if ( angular.isDefined($scope.monitorList[obj.tabId]) ) {
-        if ( 'widget' in obj ) { $scope.monitorList[obj.tabId].widget = obj.widget; }
+        if ( 'widget' in obj ) {
+          $scope.monitorList[obj.tabId].widget = obj.widget;
+          if ( chatApi.tabId === obj.tabId ) {
+            chatApi.observeType.emit(chatApi.observeType.status);
+
+          }
+        }
         if ( 'connectToken' in obj ) { $scope.monitorList[obj.tabId].connectToken = obj.connectToken; }
         if ( 'prev' in obj ) { $scope.monitorList[obj.tabId].prev = obj.prev; }
         if ( 'title' in obj ) { $scope.monitorList[obj.tabId].title = obj.title; }

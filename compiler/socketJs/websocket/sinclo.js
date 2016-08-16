@@ -155,6 +155,11 @@
           prevList: userInfo.prevList
         };
 
+      // チャットの契約をしている場合
+      if ( window.info.contract.chat ) {
+        sinclo.chatApi.observeType.emit(false, "");
+      }
+
       // モニタリング中であればスルー
       if ( check.isset(userInfo.connectToken) ) {
         common.load.start();
@@ -680,6 +685,8 @@
       // 自動メッセージの情報を渡す（保存の為）
       var obj = common.jParse(d);
       emit("sendAutoChatMessages", {messages: sinclo.chatApi.autoMessages, sendTo: obj.sendTo});
+      // 入力中のステータスを送る
+      sinclo.chatApi.observeType.emit(sinclo.chatApi.observeType.status, document.getElementById('sincloChatMessage').value);
     },
     resAutoChatMessage: function(d){
         var obj = JSON.parse(d);
@@ -781,7 +788,7 @@
             emit('getChatMessage', {showName: info.widget.showName});
         },
         createNotifyMessage: function(val){
-            var chatTalk = document.getElementById('chatTalk');
+            var chatTalk = document.getElementsByTagName('sinclo-chat')[0];
             var li = document.createElement('li');
             chatTalk.appendChild(li);
             li.className = "sinclo_etc";
@@ -791,18 +798,18 @@
         createTypingTimer: null,
         createTypingMessage: function(d){
             var obj = JSON.parse(d),
-                chatTalk = document.getElementById('chatTalk'),
+                chatTalk = document.getElementsByTagName('sinclo-typing')[0],
                 typeMessage = document.getElementById('sinclo_typeing_message'),
                 li = document.createElement('li'),
                 span = document.createElement('span');
 
+            clearInterval(this.createTypingTimer);
+
             if ( typeMessage ) {
               typeMessage.parentNode.removeChild(typeMessage);
             }
-
-            clearInterval(this.createTypingTimer);
-
             if (!obj.status) return false;
+
             li.appendChild(span);
             chatTalk.appendChild(li);
             li.id = "sinclo_typeing_message";
@@ -810,6 +817,8 @@
             span.style = "margin-left: -" + span.textContent.length/2 + "em;";
 
             this.createTypingTimer = setInterval(function(){
+              span.style = "margin-left: -" + (sinclo.chatApi.opUser.length + 4)/2 + "em;";
+
               if (span.textContent.length > sinclo.chatApi.opUser.length + 6 ) {
                 span.textContent = sinclo.chatApi.opUser + "が入力中";
               }
@@ -820,7 +829,7 @@
             this.scDown();
         },
         createMessage: function(cs, val, cName){
-            var chatTalk = document.getElementById('chatTalk');
+            var chatTalk = document.getElementsByTagName('sinclo-chat')[0];
             var li = document.createElement('li');
             chatTalk.appendChild(li);
             var strings = val.split('\n');
@@ -908,10 +917,11 @@
             }
 
         },
-        observeType: {
+        observeType: { // 入力中監視処理
           timer: null,
           prevMessage: "",
-          start: function(){
+          status: false,
+          start: function(){ // タイピング監視処理
             var sendMessage = document.getElementById('sincloChatMessage');
             if ( this.timer !== null ) {
               clearInterval(this.timer);
@@ -928,15 +938,14 @@
               }
             }, 300);
           },
-          send: function(status, message){
+          send: function(status, message){ // 状態の逐一送信処理
             if ( sinclo.chatApi.observeType.status !== status || (status === true && message !== "")  ) {
-              emit('sendTypeCond', {
-                type: 2, // customer
-                status: status,
-                message: message
-              });
+              sinclo.chatApi.observeType.emit(status, message);
               sinclo.chatApi.observeType.status = status;
             }
+          },
+          emit: function(status, message){ // 状態の送信処理
+            emit('sendTypeCond', { type: 2, status: status, message: message });
           }
         },
         sendErrCatchFlg: false,
