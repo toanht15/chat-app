@@ -934,8 +934,11 @@ io.sockets.on('connection', function (socket) {
     var obj = JSON.parse(d);
     // 送り主が企業の場合
     if ( obj.type === chatApi.cnst.observeType.company ) {
+      // 企業へ送る
+      emit.toCompany('receiveTypeCond', d, obj.siteKey);
       // 消費者へ送る
-      emit.toUser('receiveTypeCond', d, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
+      delete obj['message'];
+      emit.toUser('receiveTypeCond', obj, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
     }
     // 送り主が消費者の場合
     else {

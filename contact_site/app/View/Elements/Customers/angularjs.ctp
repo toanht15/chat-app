@@ -64,9 +64,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             }
           }
         })
-        .blur(function(e){
-          chatApi.observeType.end();
-        })
         .focus(function(e){
           chatApi.observeType.start();
         });
@@ -91,38 +88,46 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
           // 300ミリ秒ごとに入力値をチェック
           chatApi.observeType.timer = setInterval(function(){
+            // 空になった時
             if ( sendMessage.value === "" ) {
-              chatApi.observeType.prevMessage = "";
-              chatApi.observeType.send(false);
+              if ( chatApi.observeType.status !== false || chatApi.observeType.prevMessage !== "" ) {
+                chatApi.observeType.prevMessage = "";
+                chatApi.observeType.send(false);
+              }
             }
+            // 内容が変わった場合
             else if ( sendMessage.value !== chatApi.observeType.prevMessage ) {
+              // 現在のメッセージを保存
               chatApi.observeType.prevMessage = sendMessage.value;
+              // メッセージに変化が合った為、
               chatApi.observeType.send(true);
 
+              // タイマーリセット
               if ( chatApi.observeType.timeoutTimer ) {
                 clearTimeout(chatApi.observeType.timeoutTimer);
               }
+              // ５秒のタイマーセット
               chatApi.observeType.timeoutTimer = setTimeout(function(){
+                // 現在のメッセージを保存
                 chatApi.observeType.prevMessage = sendMessage.value;
+                // 入力が行われず、５秒たっているので、false
                 chatApi.observeType.send(false);
               }, 5000);
             }
           }, 300);
         },
-        end: function(){ // フォーカスを外した時に即時入力中をやめる場合は有効にする
-          // clearTimeout(chatApi.observeType.timer);
-          // chatApi.observeType.send(false);
+        end: function(){
+            chatApi.observeType.emit(false);
         },
         send: function(status){
-          if ( chatApi.observeType.status !== status ) {
-            chatApi.observeType.emit(status);
-            chatApi.observeType.status = status;
-          }
+          chatApi.observeType.emit(status);
+          chatApi.observeType.status = status;
         },
         emit: function(status){
           emit('sendTypeCond', {
             type: chatApi.observeType.cnst.company, // company
             tabId: chatApi.tabId,
+            message: document.getElementById('sendMessage').value,
             status: status
           });
         }
@@ -849,17 +854,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     // チャットメッセージ送信結果
     socket.on("sendChatResult", function(d){
       var obj = JSON.parse(d),
-          elm = document.getElementById('sendMessage'), cn;
+          elm = document.getElementById('sendMessage');
 
-      if ( !(obj.tabId in $scope.monitorList) ) return false;
+      if ( !(obj.tabId in $scope.monitorList) || obj.tabId !== chatApi.tabId ) return false;
       if ( obj.ret ) {
-        if (obj.messageType === chatApi.messageType.customer) {
-          cn = "sinclo_re";
-        }
-        else if (obj.messageType === chatApi.messageType.company) {
-          cn = "sinclo_se";
-          elm.value = "";
-        }
+
         // 対象のタブを開いている場合
         if ( obj.tabId === chatApi.tabId ){
           var chat = JSON.parse(JSON.stringify(obj));
@@ -868,8 +867,14 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           scDown(); // チャットのスクロール
         }
 
-        // 以降、受信時のみの処理
-        if (obj.messageType !== chatApi.messageType.customer) return false;
+        if (obj.messageType === chatApi.messageType.company) {
+          // 入力したメッセージを削除
+          if ( obj.userId === myUserId ) {
+            elm.value = "";
+          }
+          // 以降、受信時のみの処理
+          return false;
+        }
 
         // 着信音を鳴らす
         chatApi.call();
@@ -913,8 +918,17 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       // 対象のタブを開いていないとき
       if ( obj.tabId !== chatApi.tabId ) return false;
 
+      if ( Number(obj.type) === chatApi.observeType.cnst.company ) {
+        li.className = "sinclo_se";
+      }
+      else {
+        li.className = "sinclo_re";
+      }
+
       if ( typeMessage && obj.status === false ) {
-        typeMessage.parentNode.removeChild(typeMessage);
+        if ( Number(obj.type) === chatApi.observeType.cnst.company && obj.message === "" ) {
+          typeMessage.parentNode.removeChild(typeMessage);
+        }
       }
       else if (obj.status !== false) {
         if ( typeMessage ) {
@@ -922,7 +936,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         }
         else {
           li.innerHTML = obj.message;
-          li.className = "sinclo_re";
+          // li.className = "sinclo_re";
           li.id = "typeing_message";
           $('#chatTalk').append(li);
 
