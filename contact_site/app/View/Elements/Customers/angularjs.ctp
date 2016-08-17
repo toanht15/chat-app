@@ -910,6 +910,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           typeMessage = document.getElementById('typeing_message'),
           li = document.createElement('li');
 
+      // 対象のタブを開いていないとき
+      if ( obj.tabId !== chatApi.tabId ) return false;
+
       if ( typeMessage && obj.status === false ) {
         typeMessage.parentNode.removeChild(typeMessage);
       }
