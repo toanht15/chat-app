@@ -202,7 +202,8 @@ var socket, // socket.io
       // チャットを使用する際
       if ( window.info.contract.chat ) {
         html += '      #sincloBox #mainImage em { position: absolute; background-image: url("' + window.info.site.files + '/img/chat-bg.png");background-size: contain;background-repeat: no-repeat; color: #FFF; font-style: normal; text-align: center; font-weight: bold }';
-        html += '      #sincloBox ul#chatTalk { width: 100%; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0}';
+        html += '      #sincloBox ul#chatTalk { width: 100%; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0; clear: both!important; }';
+html += ' #sincloBox ul sinclo-chat { clear: both!important } ';
         html += '      #sincloBox ul#chatTalk li { word-wrap: break-word; word-break: break-word; white-space: pre-wrap!important; background-color: #FFF; white-space: pre; color: #8A8A8A; }';
         html += '      #sincloBox ul#chatTalk li.sinclo_se { ' + chatPosition.se + 'background-color: #FFF; }';
         html += '      #sincloBox ul#chatTalk li.sinclo_re { ' + chatPosition.re + 'background-color:' + faintColor + ' }';
@@ -226,6 +227,9 @@ var socket, // socket.io
       html += '      #sincloBox section#navigation ul li[data-tab="call"]::before{ background-image: url("' + window.info.site.files + '/img/widget/icon_tel.png"); }';
       html += '      #sincloBox section#navigation ul li[data-tab="chat"]::before{ background-image: url("' + window.info.site.files + '/img/widget/icon_chat.png"); }';
       html += '      #sincloBox section#navigation ul li.selected::before{ background-color: ' + widget.mainColor + '; }'
+
+// html += '    #sincloBox ul { clear: both; display: flex; flex-direction: column } ';
+// html += '    #sincloBox sinclo-chat, #sincloBox sinclo-typing { display: block; border-top: 1px solid #ddd; border-bottom: 1px solid #ddd; } ';
 
       /* iPhone/iPod/Androidの場合 */
       if ( check.smartphone() ) {

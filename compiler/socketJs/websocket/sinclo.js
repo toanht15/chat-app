@@ -95,12 +95,12 @@
 
         sinclo.operatorInfo.reCreateWidgetTimer = setTimeout(function(){
           var html = common.createWidget();
-          var chatTalk = $("#chatTalk").children();
+          var chatTalk = $("sinclo-chat").children();
           sinclo.operatorInfo.reCreateWidgetMessage = document.getElementById('sincloChatMessage').value;
 
           $("#sincloBox").remove();
           $("body").append(html);
-          $("#chatTalk").append(chatTalk);
+          $("sinclo-chat").append(chatTalk);
           var sincloBox = document.getElementById('sincloBox');
           document.getElementById('sincloChatMessage').value = sinclo.operatorInfo.reCreateWidgetMessage;
           sincloBox.style.display = "block";
@@ -788,9 +788,9 @@
             emit('getChatMessage', {showName: info.widget.showName});
         },
         createNotifyMessage: function(val){
-            var chatTalk = document.getElementsByTagName('sinclo-chat')[0];
+            var chatList = document.getElementsByTagName('sinclo-chat')[0];
             var li = document.createElement('li');
-            chatTalk.appendChild(li);
+            chatList.appendChild(li);
             li.className = "sinclo_etc";
             li.innerHTML = "－　" + val + "　－";
             this.scDown();
@@ -798,10 +798,23 @@
         createTypingTimer: null,
         createTypingMessage: function(d){
             var obj = JSON.parse(d),
-                chatTalk = document.getElementsByTagName('sinclo-typing')[0],
+                chatType = document.getElementsByTagName('sinclo-typing')[0],
                 typeMessage = document.getElementById('sinclo_typeing_message'),
                 li = document.createElement('li'),
                 span = document.createElement('span');
+
+            var mergin = 0;
+
+            var calcMergin = function(){
+              var mergin = (sinclo.chatApi.opUser.length + 4)/2;
+              if ( check.smartphone() ) {
+                ratio = ($(window).width() - 20) * (1/285);
+                if ( $(window).height() > $(window).width() ) {
+                  mergin *= ratio;
+                }
+              }
+              span.style = "margin-left: -" + mergin + "em;";
+            };
 
             clearInterval(this.createTypingTimer);
 
@@ -811,16 +824,16 @@
             if (!obj.status) return false;
 
             li.appendChild(span);
-            chatTalk.appendChild(li);
+            chatType.appendChild(li);
             li.id = "sinclo_typeing_message";
             span.textContent = sinclo.chatApi.opUser + "が入力中";
-            span.style = "margin-left: -" + span.textContent.length/2 + "em;";
+            calcMergin();
 
             this.createTypingTimer = setInterval(function(){
-              span.style = "margin-left: -" + (sinclo.chatApi.opUser.length + 4)/2 + "em;";
+              calcMergin();
 
               if (span.textContent.length > sinclo.chatApi.opUser.length + 6 ) {
-                span.textContent = sinclo.chatApi.opUser + "が入力中";
+                span.textContent = sinclo.chatApi.opUser + "が入力中("+ margin +")";
               }
               else {
                 span.textContent += ".";
@@ -829,13 +842,13 @@
             this.scDown();
         },
         createMessage: function(cs, val, cName){
-            var chatTalk = document.getElementsByTagName('sinclo-chat')[0];
+            var chatList = document.getElementsByTagName('sinclo-chat')[0];
             var li = document.createElement('li');
-            chatTalk.appendChild(li);
+            chatList.appendChild(li);
             var strings = val.split('\n');
             var radioCnt = 1;
             var linkReg = RegExp(/http(s)?:\/\/[!-~.a-z]*/);
-            var radioName = "sinclo-radio" + chatTalk.children.length;
+            var radioName = "sinclo-radio" + chatList.children.length;
             var content = "";
 
             if ( cs === "sinclo_re" ) {
