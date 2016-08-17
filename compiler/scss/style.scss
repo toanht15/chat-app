@@ -1328,10 +1328,6 @@ ul.naviBtn {
               margin-left: 10px;
               background-color: #FFF;
 
-              &#typeing_message {
-                background-color: #e8e8e8!important;
-              }
-
               span.cName {
                 display: block;
                 color: $main-color;
@@ -1353,6 +1349,10 @@ ul.naviBtn {
               text-align: center;
               margin: 0 auto;
               font-weight: bold;
+          }
+
+          &.typeing_message {
+            background-color: #e8e8e8!important;
           }
 
         }

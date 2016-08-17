@@ -579,24 +579,34 @@
       }
     },
     chatStartResult: function(d){
-      var obj = JSON.parse(d);
+      var obj = JSON.parse(d), opUser;
       this.chatApi.online = true;
       storage.s.set('chatAct', true); // オートメッセージを表示しない
 
       if ( info.widget.showName === 1 ) {
         sinclo.chatApi.opUser = obj.userName;
+        opUser = obj.userName;
       }
       else if ( info.widget.showName === 2 && String(obj.hide) === "true" ) {
         return false;
       }
-      sinclo.chatApi.createNotifyMessage(sinclo.chatApi.opUser + "が入室しました");
+
+      if ( opUser === "" ) {
+        opUser = "オペレーター";
+      }
+
+      sinclo.chatApi.createNotifyMessage(opUser + "が入室しました");
     },
     chatEndResult: function(d){
       var obj = JSON.parse(d);
       this.chatApi.online = false;
       storage.s.set('chatAct', false); // オートメッセージを表示してもいい
-      sinclo.chatApi.createNotifyMessage(sinclo.chatApi.opUser + "が退室しました");
-      sinclo.chatApi.opUser = "オペレーター";
+      var opUser = sinclo.chatApi.opUser;
+      if ( opUser === "" ) {
+        opUser = "オペレーター";
+      }
+      sinclo.chatApi.createNotifyMessage(opUser + "が退室しました");
+      sinclo.chatApi.opUser = "";
     },
     chatMessageData:function(d){
       var obj = JSON.parse(d);
@@ -622,20 +632,27 @@
           this.chatApi.createMessage(cn, chat.message, userName);
         }
         else {
+          if ( ('userName' in obj.chat.messages[key]) ) {
+            sinclo.chatApi.opUser = obj.chat.messages[key].userName;
+          }
           // 途中で設定が変更されたときの対策
           if ( info.widget.showName !== 1 ) {
-            sinclo.chatApi.opUser = "オペレーター";
-            chat.userName = "オペレーター";
+            sinclo.chatApi.opUser = "";
+          }
+
+          var opUser = sinclo.chatApi.opUser;
+
+          if ( sinclo.chatApi.opUser === "" ) {
+            opUser = "オペレーター";
           }
           if ( chat.type === "start" ) {
             this.chatApi.online = true;
-            sinclo.chatApi.opUser = chat.userName;
-            this.chatApi.createNotifyMessage(sinclo.chatApi.opUser + "が入室しました");
+            this.chatApi.createNotifyMessage(opUser + "が入室しました");
           }
           if ( chat.type === "end" ) {
             this.chatApi.online = false;
-            this.chatApi.createNotifyMessage(sinclo.chatApi.opUser + "が退室しました");
-            sinclo.chatApi.opUser = "オペレーター";
+            this.chatApi.createNotifyMessage(opUser + "が退室しました");
+            sinclo.chatApi.opUser = "";
           }
         }
       }
@@ -649,7 +666,7 @@
     sendChatResult: function(d){
       var obj = JSON.parse(d);
       if ( obj.tabId !== userInfo.tabId ) return false;
-      var elm = document.getElementById('sincloChatMessage'), cn, userName;
+      var elm = document.getElementById('sincloChatMessage'), cn, userName = "";
 
       if ( obj.ret ) {
         // スマートフォンの場合はメッセージ送信時に、到達確認タイマーをリセットする
@@ -736,7 +753,7 @@
         online: false, // 現在の対応状況
         historyId: null,
         unread: 0,
-        opUser: "オペレーター",
+        opUser: "",
         messageType: {
             customer: 1,
             company: 2,
@@ -792,12 +809,13 @@
             var li = document.createElement('li');
             chatList.appendChild(li);
             li.className = "sinclo_etc";
-            li.innerHTML = "－　" + val + "　－";
+            li.innerHTML = "－ " + val + " －";
             this.scDown();
         },
         createTypingTimer: null,
         createTypingMessage: function(d){
             var obj = JSON.parse(d),
+                opUser = sinclo.chatApi.opUser,
                 chatType = document.getElementsByTagName('sinclo-typing')[0],
                 typeMessage = document.getElementById('sinclo_typeing_message'),
                 li = document.createElement('li'),
@@ -805,8 +823,8 @@
 
             var mergin = 0;
 
-            var calcMergin = function(){
-              var mergin = (sinclo.chatApi.opUser.length + 4)/2;
+            var calcMergin = function(opUser){
+              var mergin = (opUser.length + 4)/2;
               if ( check.smartphone() ) {
                 ratio = ($(window).width() - 20) * (1/285);
                 if ( $(window).height() > $(window).width() ) {
@@ -816,24 +834,31 @@
               span.style = "margin-left: -" + mergin + "em;";
             };
 
-            clearInterval(this.createTypingTimer);
-
-            if ( typeMessage ) {
-              typeMessage.parentNode.removeChild(typeMessage);
+            if ( obj.status === false ) {
+              if ( typeMessage ) {
+                typeMessage.parentNode.removeChild(typeMessage);
+              }
+              clearInterval(this.createTypingTimer);
+              return false;
             }
-            if (!obj.status) return false;
 
-            li.appendChild(span);
-            chatType.appendChild(li);
-            li.id = "sinclo_typeing_message";
-            span.textContent = sinclo.chatApi.opUser + "が入力中";
-            calcMergin();
+            if ( check.isset(opUser) === false ) {
+              opUser = "オペレーター";
+            }
+
+            if ( !typeMessage ) {
+              li.appendChild(span);
+              chatType.appendChild(li);
+              li.id = "sinclo_typeing_message";
+              span.textContent = opUser + "が入力中";
+              calcMergin(opUser);
+            }
 
             this.createTypingTimer = setInterval(function(){
-              calcMergin();
+              calcMergin(opUser);
 
-              if (span.textContent.length > sinclo.chatApi.opUser.length + 6 ) {
-                span.textContent = sinclo.chatApi.opUser + "が入力中("+ margin +")";
+              if (span.textContent.length > opUser.length + 6 ) {
+                span.textContent = opUser + "が入力中";
               }
               else {
                 span.textContent += ".";
@@ -850,6 +875,10 @@
             var linkReg = RegExp(/http(s)?:\/\/[!-~.a-z]*/);
             var radioName = "sinclo-radio" + chatList.children.length;
             var content = "";
+
+            if ( check.isset(cName) === false ) {
+              cName = window.info.widget.subTitle;
+            }
 
             if ( cs === "sinclo_re" ) {
               content = "<span class='cName'>" + cName + "</span>";

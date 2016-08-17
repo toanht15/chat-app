@@ -3,6 +3,7 @@
 
 var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     userList = <?php echo json_encode($responderList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>,
+    widget = <?= $widgetSettings ?>,
     modalFunc, myUserId = <?= h($muserId)?>, chatApi, cameraApi, entryWordApi;
 
 (function(){
@@ -911,36 +912,20 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     // チャット入力中ステータスの受信
     socket.on('receiveTypeCond', function(d){
-      var obj = JSON.parse(d),
-          typeMessage = document.getElementById('typeing_message'),
-          li = document.createElement('li');
+      var obj = JSON.parse(d);
 
       // 対象のタブを開いていないとき
       if ( obj.tabId !== chatApi.tabId ) return false;
 
+      if ( obj.status === false ) {
+        obj.message = "";
+      }
+
       if ( Number(obj.type) === chatApi.observeType.cnst.company ) {
-        li.className = "sinclo_se";
+        $scope.typingMessageSe = obj.message;
       }
       else {
-        li.className = "sinclo_re";
-      }
-
-      if ( typeMessage && obj.status === false ) {
-        if ( Number(obj.type) === chatApi.observeType.cnst.company && obj.message === "" ) {
-          typeMessage.parentNode.removeChild(typeMessage);
-        }
-      }
-      else if (obj.status !== false) {
-        if ( typeMessage ) {
-          typeMessage.textContent = obj.message;
-        }
-        else {
-          li.innerHTML = obj.message;
-          // li.className = "sinclo_re";
-          li.id = "typeing_message";
-          $('#chatTalk').append(li);
-
-        }
+        $scope.typingMessageRe = obj.message;
       }
       scDown();
     });
@@ -1105,7 +1090,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           // 企業側か、オートメッセージの場合
           else if (scope.chat.messageType === chatApi.messageType.company && Number(scope.chat.userId) in userList) {
             cn = "sinclo_se";
-            content = "<span class='cName'>" + userList[Number(scope.chat.userId)] + "さん</span>";
+            var chatName = widget.subTitle;
+            if ( Number(widget.showName) === <?=C_WIDGET_SHOW_NAME?> ) {
+              chatName = userList[Number(scope.chat.userId)];
+            }
+            content = "<span class='cName'>" + chatName + "</span>";
             content += createMessage(scope.chat.message);
           }
           else  {
@@ -1118,7 +1107,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         else {
           cn = "sinclo_etc";
           var userName = "オペレーター";
-          if ( "userId" in scope.chat ) {
+          if ( Number(widget.showName) === <?=C_WIDGET_SHOW_NAME?> && "userId" in scope.chat ) {
             userName = userList[Number(scope.chat.userId)];
           }
           if ( scope.chat.type === "start" ) {

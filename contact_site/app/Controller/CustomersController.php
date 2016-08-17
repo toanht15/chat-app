@@ -4,7 +4,7 @@
  * モニタリング機能
  */
 class CustomersController extends AppController {
-    public $uses = array('THistory', 'THistoryChatLog', 'MUser', 'TDictionary');
+    public $uses = array('THistory', 'THistoryChatLog', 'MUser', 'MWidgetSetting', 'TDictionary');
 
     public function beforeRender(){
         $this->set('siteKey', $this->userInfo['MCompany']['company_key']);
@@ -44,6 +44,14 @@ class CustomersController extends AppController {
             ];
         }
 
+        $widgetSettings = $this->MWidgetSetting->coFind('first', null);
+        $styleSettings = [];
+        if ( isset($widgetSettings['MWidgetSetting']['style_settings']) ) {
+          $styleSettings = json_decode($widgetSettings['MWidgetSetting']['style_settings']);
+        }
+        $this->set('widgetSettings', $widgetSettings['MWidgetSetting']['style_settings']);
+
+
         $this->set('dictionaryList', $list);
         $this->set('responderList', $this->MUser->coFind('list',["fields" => ["MUser.id", "MUser.display_name"], "recursive" => -1]));
     }
@@ -67,7 +75,7 @@ class CustomersController extends AppController {
     }
 
     /* *
-     * モニタリング画面
+     * 表示項目名設定
      * @return void
      * */
     public function remoteCreateSetting() {
