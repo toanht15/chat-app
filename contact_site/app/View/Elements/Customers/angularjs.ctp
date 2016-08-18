@@ -320,6 +320,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     $scope.monitorList = {};
     $scope.messageList = [];
     $scope.chatList = [];
+    $scope.typingMessageSe = "";
+    $scope.typingMessageRe = {};
     $scope.search = function(array){
       var result = {};
       if ( $scope.searchText ) {
@@ -494,7 +496,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         $scope.messageList = [];
         chatApi.userId = "";
         chatApi.observeType.emit(false);
-        $("#chatTalk").children().remove();
+        $("#chatTalk message-list").children().remove();
         $("#customer_list tr.on").removeClass('on');
         setTimeout(function(){
           $("#customer_sub").css("display", "");
@@ -857,7 +859,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var obj = JSON.parse(d),
           elm = document.getElementById('sendMessage');
 
-      if ( !(obj.tabId in $scope.monitorList) || obj.tabId !== chatApi.tabId ) return false;
+      if ( !(obj.tabId in $scope.monitorList) ) return false;
       if ( obj.ret ) {
 
         // 対象のタブを開いている場合
@@ -868,9 +870,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           scDown(); // チャットのスクロール
         }
 
-        if (obj.messageType === chatApi.messageType.company) {
+        if (Number(obj.messageType) === chatApi.messageType.company) {
           // 入力したメッセージを削除
-          if ( obj.userId === myUserId ) {
+          if ( obj.tabId === chatApi.tabId && obj.userId === myUserId ) {
             elm.value = "";
           }
           // 以降、受信時のみの処理
@@ -913,7 +915,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     // チャット入力中ステータスの受信
     socket.on('receiveTypeCond', function(d){
       var obj = JSON.parse(d);
-
       // 対象のタブを開いていないとき
       if ( obj.tabId !== chatApi.tabId ) return false;
 
@@ -925,7 +926,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         $scope.typingMessageSe = obj.message;
       }
       else {
-        $scope.typingMessageRe = obj.message;
+        $scope.typingMessageRe[obj.tabId] = obj.message;
       }
       scDown();
     });

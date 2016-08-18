@@ -67,11 +67,13 @@
   </ul> -->
   <div id="chatContent">
     <ul id="chatTalk" >
-      <ng-create-message ng-repeat="chat in messageList | orderBy: 'sort'"></ng-create-message>
-      <ng-typing-message>
-        <li class="sinclo_se typeing_message" ng-init="typingMessageSe" ng-if="typingMessageSe">{{typingMessageSe}}</li>
-        <li class="sinclo_re typeing_message" ng-init="typingMessageRe" ng-if="typingMessageRe">{{typingMessageRe}}</li>
-      </ng-typing-message>
+      <message-list>
+        <ng-create-message ng-repeat="chat in messageList | orderBy: 'sort'"></ng-create-message>
+      </message-list>
+      <typing-message>
+        <li class="sinclo_se typeing_message" ng-if="typingMessageSe !== ''">{{typingMessageSe}}</li>
+        <li class="sinclo_re typeing_message" ng-if="typingMessageRe[detailId] !== ''">{{typingMessageRe[detailId]}}</li>
+      </typing-message>
     </ul>
     <div id="chatMenu" ng-class="{showOption: chatOptionDisabled(detailId)}">
       <span class="greenBtn btn-shadow" onclick="chatApi.addOption(1)">選択肢を追加する</span>
