@@ -797,6 +797,16 @@ io.sockets.on('connection', function (socket) {
     var sId = getSessionId(obj.siteKey, obj.tabId, 'sessionId');
     obj.sendTo = socket.id;
     emit.toUser('sendReqAutoChatMessages', obj, sId);
+
+    // ユーザーがチャット中の場合
+    if ( getSessionId(obj.siteKey, obj.tabId, 'chat') ) {
+      var userId = getSessionId(obj.siteKey, obj.tabId, 'chat');
+      if ( (obj.siteKey in company.info) && (userId in company.info[obj.siteKey]) && ('mUserId' in obj) ) {
+        for ( var sessionId in company.info[obj.siteKey][userId] ) {
+          emit.toUser('reqTypingMessage', {siteKey: obj.siteKey, from: obj.mUserId, tabId: obj.tabId }, sessionId);
+        }
+      }
+    }
   });
 
   // 一括：チャットデータ取得(オートメッセージのみ)
@@ -947,6 +957,16 @@ io.sockets.on('connection', function (socket) {
     }
   });
 
+  socket.on("retTypingMessage", function(d){
+    var obj = JSON.parse(d);
+    // 送り先がセットされている
+    if ( 'to' in obj ) {
+      if ( (obj.siteKey in company.info) && (obj.to in company.info[obj.siteKey]) ) {
+        emit.toUser('resTypingMessage', d, company.info[obj.siteKey][obj.to]);
+      }
+    }
+  })
+
   // -----------------------------------------------------------------------
   // ビデオチャット関連
   // ビデオチャットで利用している各値はプレフィックス（vc_）をつけている。
@@ -1052,11 +1072,27 @@ io.sockets.on('connection', function (socket) {
       }
 
       company.timeout[userInfo.siteKey][userInfo.userId] = setTimeout(function(){
+        var keys = {};
         // 同一ユーザーが完全にログアウトした場合はユーザーのオブジェクトごと削除
-        var keys = Object.keys(company.info[userInfo.siteKey][userInfo.userId]);
+        if ( (userInfo.siteKey in company.info) && (userInfo.userId in company.info[userInfo.siteKey]) ) {
+          keys = Object.keys(company.info[userInfo.siteKey][userInfo.userId]);
+        }
         if ( keys.length === 0 ) {
           delete company.info[userInfo.siteKey][userInfo.userId];
           delete company.timeout[userInfo.siteKey][userInfo.userId];
+
+          // チャット中ユーザーが居たら、入力終了フラグを送る
+          for ( var tabId in sincloCore[userInfo.siteKey] ) {
+            var tab = sincloCore[userInfo.siteKey][tabId];
+
+            if ( ('chat' in tab) && isset(tab.chat) && Number(tab.chat) === Number(userInfo.userId) ) {
+              // 企業へ送る
+              emit.toCompany('receiveTypeCond', {status: false, type: 1, tabId: tabId, message: ""}, userInfo.siteKey);
+              // 消費者へ送る
+              emit.toUser('receiveTypeCond', {status: false, type: 1, tabId: tabId, message: ""}, tab.sessionId);
+            }
+
+          }
 
           // 新しいユーザーの人数を送る
           var cnt = Object.keys(company.info[userInfo.siteKey]);

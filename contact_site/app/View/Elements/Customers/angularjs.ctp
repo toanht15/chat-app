@@ -146,7 +146,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       },
       getMessage: function(obj){
         // オートメッセージの取得
-        emit('getAutoChatMessages', {userId: obj.userId, tabId: obj.tabId});
+        emit('getAutoChatMessages', {userId: obj.userId, mUserId: myUserId, tabId: obj.tabId});
       },
       addOption: function(type){
         var sendMessage = document.getElementById('sendMessage');
@@ -493,6 +493,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       if ( $scope.customerMainClass !== "" ) {
         $scope.customerMainClass = "";
         $scope.detailId = "";
+        $scope.typingMessageSe = "";
         $scope.messageList = [];
         chatApi.userId = "";
         chatApi.observeType.emit(false);
@@ -912,19 +913,62 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       $scope.monitorList[obj.tabId].chatUnreadCnt = 0;
     });
 
+    // チャット入力中ステータスの要求リクエスト
+    socket.on('reqTypingMessage', function(d){
+      var obj = JSON.parse(d);
+      if (
+        $scope.monitorList[obj.tabId].chat === myUserId && // 自身が対応中
+        obj.tabId === chatApi.tabId && // 詳細画面を開いている
+        document.getElementById('sendMessage').value !== ""  // メッセージが入力されている
+      ) {
+        emit('retTypingMessage', {
+          type: chatApi.observeType.cnst.company, // company
+          to: obj.from,
+          tabId: chatApi.tabId,
+          message: document.getElementById('sendMessage').value,
+          status: $scope.isset(chatApi.observeType.timer)
+        });
+      }
+    });
+
+    // チャット入力中ステータスの要求リクエストの応答
+    socket.on('resTypingMessage', function(d){
+      var obj = JSON.parse(d);
+
+      // 対象のタブを開いていないとき
+      if ( obj.tabId !== chatApi.tabId ) return false;
+
+      if ( Number(obj.type) === chatApi.observeType.cnst.company ) {
+          $scope.typingMessageSe = obj.message;
+      }
+    });
+
     // チャット入力中ステータスの受信
     socket.on('receiveTypeCond', function(d){
       var obj = JSON.parse(d);
       // 対象のタブを開いていないとき
       if ( obj.tabId !== chatApi.tabId ) return false;
 
-      if ( obj.status === false ) {
+      if ( obj.status === false && Number(obj.type) !== chatApi.observeType.cnst.company ) {
         obj.message = "";
       }
 
+      // 企業側がメッセージ入力中
       if ( Number(obj.type) === chatApi.observeType.cnst.company ) {
-        $scope.typingMessageSe = obj.message;
+        // チャット対応者が自身であるが、メッセージが異なる場合
+        if (
+         ("chat" in $scope.monitorList[obj.tabId]) &&
+         $scope.monitorList[obj.tabId].chat === myUserId &&
+         obj.message !== document.getElementById('sendMessage').value
+        ) {
+          chatApi.observeType.emit(status);
+        }
+        else {
+          $scope.typingMessageSe = obj.message;
+        }
+
       }
+      // 消費者側がメッセージ入力中
       else {
         $scope.typingMessageRe[obj.tabId] = obj.message;
       }
