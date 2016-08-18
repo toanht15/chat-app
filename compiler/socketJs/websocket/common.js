@@ -196,8 +196,9 @@ var socket, // socket.io
       html += '      #sincloBox p#widgetTitle:after { background-image: url("' + window.info.site.files + '/img/widget/yajirushi.png"); content: " "; display: inline-block; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear}';
       html += '      #sincloBox[data-openflg="true"] p#widgetTitle:after { transform: rotate(0deg); }';
       html += '      #sincloBox[data-openflg="false"] p#widgetTitle:after { transform: rotate(180deg); }';
-      html += '      #sincloBox > section { display: inline-block; background-color: #FFF; border-top: none; }';
+      html += '      #sincloBox > section { background-color: #FFF; border-top: none; }';
       html += '      #sincloBox ul#chatTalk li a, #sincloBox #fotter a {  text-decoration: underline; }';
+      html += '      #sincloBox section { flex-direction: column; -ms-flex-direction: column }';
 
       // チャットを使用する際
       if ( window.info.contract.chat ) {
@@ -336,7 +337,7 @@ html += ' #sincloBox ul sinclo-chat { clear: both!important } ';
         html += '      #sincloBox p#widgetTitle:after { background-position-y: 3px; top: 6px; right: 10px; bottom: 6px; width: 20px; height: 20px; }';
         html += '      #sincloBox p#widgetSubTitle { background-color: #FFF; margin: 0; padding: 7px 0; text-align: left; border-width: 0 1px 0 1px; border-color: #E8E7E0; border-style: solid; padding-left: 77px; font-weight: bold; color: ' + widget.mainColor + '; height: 29px }';
         html += '      #sincloBox p#widgetDescription { background-color: #FFF; margin: 0; padding-bottom: 7px; text-align: left; border-width: 0 1px 1px 1px; border-color: #E8E7E0; border-style: solid; padding-left: 77px; height: 23px; color: #8A8A8A; }';
-        html += '      #sincloBox section { display: inline-block; background-color: #FFF; border: 1px solid #E8E7E0; border-top: none; }';
+        html += '      #sincloBox section { background-color: #FFF; border: 1px solid #E8E7E0; border-top: none; }';
         // 画像がセットされている場合のスタイル
         if ( String(widget.showMainImage) !== "2" ) {
           html += '      #sincloBox p#widgetTitle { padding-left: 70px; }';
@@ -358,10 +359,10 @@ html += ' #sincloBox ul sinclo-chat { clear: both!important } ';
           html += '      #sincloBox section#callTab #telIcon { color: ' + widget.mainColor + '; display: block; width: 50px; height: 50px; float: left; background-color: #3EA3DE; border-radius: 25px; padding: 3px }';
           html += '      #sincloBox section#callTab #telContent { display: block; overflow-y: auto; overflow-x: hidden; max-height: 119px }';
           if ( window.info.contract.chat ) {
-            html += '      #sincloBox section#callTab #telContent .tblBlock {  text-align: center;  margin: 0 auto;  width: 240px;  display: table;  flex-direction: column;  align-content: center;  height: 119px!important;  justify-content: center; }';
+            html += '      #sincloBox section#callTab #telContent .tblBlock {  text-align: center;  margin: 0 auto;  width: 240px;  display: table;  flex-direction: column; -ms-flex-direction: column;  align-content: center;  height: 119px!important;  justify-content: center; }';
           }
           else {
-            html += '      #sincloBox section#callTab #telContent .tblBlock { text-align: center; margin: 0 auto; width: 240px; display: table; flex-direction: column; align-content: center; justify-content: center; overflow-x: hidden; overflow-y: auto }';
+            html += '      #sincloBox section#callTab #telContent .tblBlock { text-align: center; margin: 0 auto; width: 240px; display: table; flex-direction: column; -ms-flex-direction: column; align-content: center; justify-content: center; overflow-x: hidden; overflow-y: auto }';
           }
           html += '      #sincloBox section#callTab #telContent span { word-wrap: break-word ;word-break: break-all; font-size: 11px; line-height: 1.5!important; color: #6B6B6B; white-space: pre-wrap; max-height: 119px; display: table-cell; vertical-align: middle; text-align: center }';
           html += '      #sincloBox section#callTab #accessIdArea { height: 50px; display: block; margin: 10px auto; width: 80%; padding: 7px;  color: #FFF; background-color: rgb(188, 188, 188); font-size: 25px; font-weight: bold; text-align: center; border-radius: 15px } ';
@@ -546,12 +547,14 @@ html += ' #sincloBox ul sinclo-chat { clear: both!important } ';
             $(this).addClass("selected");
 
             if ( clickTab === "call" ) {
-              $("#callTab").css('display', 'inline-block');
+              $("#callTab").css('display', 'flex');
+              $("#callTab").css('display', '-ms-flexbox');
               $("#chatTab").hide();
             }
             else {
               $("#callTab").hide();
-              $("#chatTab").css('display', 'inline-block');
+              $("#chatTab").css('display', 'flex');
+              $("#chatTab").css('display', '-ms-flexbox');
               sinclo.chatApi.showUnreadCnt();
               sinclo.chatApi.scDown();
             }

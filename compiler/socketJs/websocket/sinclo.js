@@ -591,9 +591,10 @@
         return false;
       }
 
-      if ( opUser === "" ) {
+      if ( check.isset(opUser) === false ) {
         opUser = "オペレーター";
       }
+
 
       sinclo.chatApi.createNotifyMessage(opUser + "が入室しました");
     },
@@ -602,7 +603,7 @@
       this.chatApi.online = false;
       storage.s.set('chatAct', false); // オートメッセージを表示してもいい
       var opUser = sinclo.chatApi.opUser;
-      if ( opUser === "" ) {
+      if ( check.isset(opUser) === false ) {
         opUser = "オペレーター";
       }
       sinclo.chatApi.createNotifyMessage(opUser + "が退室しました");
@@ -821,17 +822,9 @@
                 li = document.createElement('li'),
                 span = document.createElement('span');
 
-            var mergin = 0;
-
             var calcMergin = function(opUser){
-              var mergin = (opUser.length + 4)/2;
-              if ( check.smartphone() ) {
-                ratio = ($(window).width() - 20) * (1/285);
-                if ( $(window).height() > $(window).width() ) {
-                  mergin *= ratio;
-                }
-              }
-              span.style = "margin-left: -" + mergin + "em;";
+              var margin = (opUser.length + 4)/2;
+              span.style.marginLeft = "-" + margin + "em";
             };
 
             if ( obj.status === false ) {
