@@ -118,16 +118,17 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           }, 300);
         },
         end: function(){
-            chatApi.observeType.emit(false);
+            chatApi.observeType.emit(chatApi.tabId, false);
         },
         send: function(status){
-          chatApi.observeType.emit(status);
+          chatApi.observeType.emit(chatApi.tabId, status);
           chatApi.observeType.status = status;
         },
-        emit: function(status){
+        emit: function(tabId, status){
+          if ( tabId === "" ) return false;
           emit('sendTypeCond', {
             type: chatApi.observeType.cnst.company, // company
-            tabId: chatApi.tabId,
+            tabId: tabId,
             message: document.getElementById('sendMessage').value,
             status: status
           });
@@ -447,6 +448,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     $scope.customerMainClass = "";
 
+    $scope.confirmFlg = false;
     $scope.sendMessageConnectConfirm = function(detailId){
         var monitor = $scope.monitorList[detailId];
         if ( !(monitor.chat in userList) ) {
@@ -458,12 +460,17 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             chatApi.isReadMessage($scope.monitorList[detailId]);
         }
         else {
+            if ( $scope.confirmFlg ) return false;
+            $("#sendMessage").blur();
             var message = "現在 " + userList[monitor.chat] + "さん が対応中です。<br><br>";
             message += "対応者を切り替えますか？";
             modalOpen.call(window, message, 'p-confirm', 'メッセージ');
             popupEvent.closePopup = function(){
+                $scope.confirmFlg = true;
                 $scope.ngChatApi.connect();
+                $("#sendMessage").val("").focus();
                 popupEvent.close();
+                $scope.confirmFlg = false;
                 return true;
             };
 
@@ -496,7 +503,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         $scope.typingMessageSe = "";
         $scope.messageList = [];
         chatApi.userId = "";
-        chatApi.observeType.emit(false);
+        chatApi.observeType.emit(chatApi.tabId, false);
         $("#chatTalk message-list").children().remove();
         $("#customer_list tr.on").removeClass('on');
         setTimeout(function(){
@@ -693,7 +700,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         if ( 'widget' in obj ) {
           $scope.monitorList[obj.tabId].widget = obj.widget;
           if ( chatApi.tabId === obj.tabId ) {
-            chatApi.observeType.emit(chatApi.observeType.status);
+            chatApi.observeType.emit(chatApi.tabId, chatApi.observeType.status);
 
           }
         }
@@ -804,6 +811,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         $scope.chatList = $scope.chatList.filter(function(v){
           return (v !== this.t)
         }, {t: obj.tabId});
+
+        // 前回の担当が自分だった場合
+        if ( prev === myUserId && obj.ret ) {
+          $("#sendMessage").val("").blur();
+        }
       }
       if ( obj.tabId === chatApi.tabId ) {
         var chat = {
@@ -961,7 +973,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
          $scope.monitorList[obj.tabId].chat === myUserId &&
          obj.message !== document.getElementById('sendMessage').value
         ) {
-          chatApi.observeType.emit(status);
+          chatApi.observeType.emit(chatApi.tabId, status);
         }
         else {
           $scope.typingMessageSe = obj.message;
@@ -972,7 +984,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       else {
         $scope.typingMessageRe[obj.tabId] = obj.message;
       }
-      scDown();
+      var chatTalk = document.getElementById('chatTalk');
+      $('#chatTalk').animate({
+        scrollTop: chatTalk.scrollHeight - chatTalk.clientHeight
+      }, 300);
     });
 
     // =======================================

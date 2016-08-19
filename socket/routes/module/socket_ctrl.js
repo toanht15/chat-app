@@ -799,13 +799,9 @@ io.sockets.on('connection', function (socket) {
     emit.toUser('sendReqAutoChatMessages', obj, sId);
 
     // ユーザーがチャット中の場合
-    if ( getSessionId(obj.siteKey, obj.tabId, 'chat') ) {
-      var userId = getSessionId(obj.siteKey, obj.tabId, 'chat');
-      if ( (obj.siteKey in company.info) && (userId in company.info[obj.siteKey]) && ('mUserId' in obj) ) {
-        for ( var sessionId in company.info[obj.siteKey][userId] ) {
-          emit.toUser('reqTypingMessage', {siteKey: obj.siteKey, from: obj.mUserId, tabId: obj.tabId }, sessionId);
-        }
-      }
+    if ( getSessionId(obj.siteKey, obj.tabId, 'chatSessionId') ) {
+      var sessionId = getSessionId(obj.siteKey, obj.tabId, 'chatSessionId');
+      emit.toUser('reqTypingMessage', {siteKey: obj.siteKey, from: obj.mUserId, tabId: obj.tabId }, sessionId);
     }
   });
 
@@ -837,6 +833,7 @@ io.sockets.on('connection', function (socket) {
       var sendData = {ret: true, messageType: 99, hide:false, created: now};
 
       sincloCore[obj.siteKey][obj.tabId]['chat'] = obj.userId;
+      sincloCore[obj.siteKey][obj.tabId]['chatSessionId'] = socket.id;
       // サイトとして初チャット開始
       if ( !(obj.siteKey in c_connectList) ) {
         c_connectList[obj.siteKey] = {};
@@ -879,6 +876,7 @@ io.sockets.on('connection', function (socket) {
     c_connectList[obj.siteKey][obj.tabId][now] = {type:"end", userName: userName, userId: obj.userId, messageType: 99};
     if ( isset(sincloCore[obj.siteKey]) && isset(sincloCore[obj.siteKey][obj.tabId].chat) ) {
       sincloCore[obj.siteKey][obj.tabId].chat = null;
+      sincloCore[obj.siteKey][obj.tabId].chatSessionId = null;
       emit.toCompany("chatEndResult", {ret: true, messageType: 99, created: now, tabId: obj.tabId, siteKey: obj.siteKey, userId: obj.userId}, obj.siteKey);
       emit.toUser("chatEndResult", {ret: true, messageType: 99}, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
     }
@@ -944,6 +942,8 @@ io.sockets.on('connection', function (socket) {
     var obj = JSON.parse(d);
     // 送り主が企業の場合
     if ( obj.type === chatApi.cnst.observeType.company ) {
+      sincloCore[obj.siteKey][obj.tabId]['chatSessionId'] = socket.id; // 入力中ユーザーのsocketIdをセットする
+
       // 企業へ送る
       emit.toCompany('receiveTypeCond', d, obj.siteKey);
       // 消費者へ送る
@@ -960,9 +960,12 @@ io.sockets.on('connection', function (socket) {
   socket.on("retTypingMessage", function(d){
     var obj = JSON.parse(d);
     // 送り先がセットされている
-    if ( 'to' in obj ) {
-      if ( (obj.siteKey in company.info) && (obj.to in company.info[obj.siteKey]) ) {
-        emit.toUser('resTypingMessage', d, company.info[obj.siteKey][obj.to]);
+    if ( ('to' in obj) && (obj.siteKey in company.info) && (obj.to in company.info[obj.siteKey]) ) {
+      var toKeys = Object.keys(company.info[obj.siteKey][obj.to]).length;
+      if ( toKeys > 0 ) {
+        for ( var sessionId in company.info[obj.siteKey][obj.to] ) {
+          emit.toUser('resTypingMessage', d, sessionId);
+        }
       }
     }
   })
@@ -1071,6 +1074,19 @@ io.sockets.on('connection', function (socket) {
         company.timeout[userInfo.siteKey][userInfo.userId] = "";
       }
 
+      // チャット中ユーザーが居たら、入力終了フラグを送る
+      for ( var tabId in sincloCore[userInfo.siteKey] ) {
+        var tab = sincloCore[userInfo.siteKey][tabId];
+
+        if ( ('chatSessionId' in tab) && isset(tab.chatSessionId) && tab.chatSessionId === socket.id ) {
+          // 企業へ送る
+          emit.toCompany('receiveTypeCond', {status: false, type: 1, tabId: tabId, message: ""}, userInfo.siteKey);
+          // 消費者へ送る
+          emit.toUser('receiveTypeCond', {status: false, type: 1, tabId: tabId, message: ""}, tab.sessionId);
+        }
+
+      }
+
       company.timeout[userInfo.siteKey][userInfo.userId] = setTimeout(function(){
         var keys = {};
         // 同一ユーザーが完全にログアウトした場合はユーザーのオブジェクトごと削除
@@ -1080,19 +1096,6 @@ io.sockets.on('connection', function (socket) {
         if ( keys.length === 0 ) {
           delete company.info[userInfo.siteKey][userInfo.userId];
           delete company.timeout[userInfo.siteKey][userInfo.userId];
-
-          // チャット中ユーザーが居たら、入力終了フラグを送る
-          for ( var tabId in sincloCore[userInfo.siteKey] ) {
-            var tab = sincloCore[userInfo.siteKey][tabId];
-
-            if ( ('chat' in tab) && isset(tab.chat) && Number(tab.chat) === Number(userInfo.userId) ) {
-              // 企業へ送る
-              emit.toCompany('receiveTypeCond', {status: false, type: 1, tabId: tabId, message: ""}, userInfo.siteKey);
-              // 消費者へ送る
-              emit.toUser('receiveTypeCond', {status: false, type: 1, tabId: tabId, message: ""}, tab.sessionId);
-            }
-
-          }
 
           // 新しいユーザーの人数を送る
           var cnt = Object.keys(company.info[userInfo.siteKey]);

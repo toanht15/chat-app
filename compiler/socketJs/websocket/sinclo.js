@@ -909,17 +909,11 @@
             }
             sinclo.chatApi.createMessage(cs, val, name);
         },
-        scDownTimer: null,
         scDown: function(){
-            if ( this.scDownTimer ) {
-              clearTimeout(this.scDownTimer);
-            }
-            this.scDownTimer = setTimeout(function(){
-              var chatTalk = document.getElementById('chatTalk');
-              $('#chatTalk').animate({
-                scrollTop: chatTalk.scrollHeight - chatTalk.clientHeight
-              }, 300);
-            }, 500);
+            var chatTalk = document.getElementById('chatTalk');
+            $('#chatTalk').animate({
+              scrollTop: chatTalk.scrollHeight - chatTalk.clientHeight
+            }, 300);
         },
         push: function(){
             sinclo.operatorInfo.reCreateWidgetMessage = ""; // 送信したら空にする
