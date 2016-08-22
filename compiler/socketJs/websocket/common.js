@@ -198,13 +198,14 @@ var socket, // socket.io
       html += '      #sincloBox[data-openflg="false"] p#widgetTitle:after { transform: rotate(180deg); }';
       html += '      #sincloBox > section { background-color: #FFF; border-top: none; }';
       html += '      #sincloBox ul#chatTalk li a, #sincloBox #fotter a {  text-decoration: underline; }';
-      html += '      #sincloBox section { flex-direction: column; -ms-flex-direction: column; -webkit-flex-direction: flex }';
+      html += '      #sincloBox section { display: none }';
+      html += '      #sincloBox .flexBox { display: -ms-flexbox; display: -webkit-flex; display: flex; -ms-flex-direction: column; -webkit-flex-direction: column; flex-direction: column }';
 
       // チャットを使用する際
       if ( window.info.contract.chat ) {
         html += '      #sincloBox #mainImage em { position: absolute; background-image: url("' + window.info.site.files + '/img/chat-bg.png");background-size: contain;background-repeat: no-repeat; color: #FFF; font-style: normal; text-align: center; font-weight: bold }';
         html += '      #sincloBox ul#chatTalk { width: 100%; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0; clear: both!important; }';
-html += ' #sincloBox ul sinclo-chat { clear: both!important } ';
+        html += '      #sincloBox ul sinclo-chat { clear: both!important } ';
         html += '      #sincloBox ul#chatTalk li { word-wrap: break-word; word-break: break-word; white-space: pre-wrap!important; background-color: #FFF; white-space: pre; color: #8A8A8A; }';
         html += '      #sincloBox ul#chatTalk li.sinclo_se { ' + chatPosition.se + 'background-color: #FFF; }';
         html += '      #sincloBox ul#chatTalk li.sinclo_re { ' + chatPosition.re + 'background-color:' + faintColor + ' }';
@@ -213,8 +214,8 @@ html += ' #sincloBox ul sinclo-chat { clear: both!important } ';
         html += '      #sincloBox ul#chatTalk li span.cName { display: block; color: ' + widget.mainColor + '; font-weight: bold; }';
         html += '      #sincloBox ul#chatTalk li.sinclo_etc { border: none; text-align: center; margin: 0 auto; font-weight: bold }';
         html += '      #sincloBox section#chatTab div { border-top: 1px solid #E8E7E0; }';
-        html += '      #sincloBox section#chatTab div #sincloChatMessage { height: 100%; margin: 0; width: 80%; float: left; resize: none; color: #8A8A8A; border-right-color: ' + widget.mainColor + '; }';
-        html += '      #sincloBox section#chatTab div #sincloChatMessage:focus { outline: none; border-color: ' + widget.mainColor + ' }';
+        html += '      #sincloBox section#chatTab div #sincloChatMessage { height: 100%; margin: 0; width: 80%; float: left; resize: none; color: #8A8A8A!important; border-right-color: ' + widget.mainColor + '!important; }';
+        html += '      #sincloBox section#chatTab div #sincloChatMessage:focus { outline: none; border-color: ' + widget.mainColor + '!important }';
         html += '      #sincloBox section#chatTab div #sincloChatSendBtn { height: 100%; width: 20%; text-decoration: none; border-radius: 0 5px 5px 0; cursor: pointer; margin: 0 auto; float: right; text-align: center; background-color: ' + widget.mainColor + '; color: ' + widget.stringColor + '; font-weight: bold; font-size: 1.2em;}';
         html += '      #sincloBox section#chatTab div #sincloChatSendBtn span { color: ' + widget.stringColor + '; }';
       }
@@ -276,7 +277,7 @@ html += ' #sincloBox ul sinclo-chat { clear: both!important } ';
           html += '#sincloBox ul#chatTalk li.sinclo_re { margin-left: ' + (10 * ratio) + 'px; }';
           html += '#sincloBox ul#chatTalk li span.cName { font-size: ' + (13 * ratio) + 'px; margin: 0 0 ' + (5 * ratio) + 'px 0; }';
           html += '#sincloBox section#chatTab div { height: ' + (60*ratio) + 'px; padding: ' + (5 * ratio) + 'px; }';
-          html += '#sincloBox section#chatTab #sincloChatMessage { border-radius: ' + (5 * ratio) +'px 0 0 ' + (5 * ratio) +'px!important; font-size: 1em; padding: ' + (5 * ratio) + 'px; border: ' + (1 * ratio) + 'px solid #E4E4E4; }';
+          html += '#sincloBox section#chatTab #sincloChatMessage { border-radius: ' + (5 * ratio) +'px 0 0 ' + (5 * ratio) +'px!important; font-size: 1em; padding: ' + (5 * ratio) + 'px; border: ' + (1 * ratio) + 'px solid #E4E4E4!important; }';
           html += '#sincloBox section#chatTab #sincloChatSendBtn { padding:  ' + (16.5 * ratio) + 'px 0; border: ' + ratio + 'px solid ' + widget.mainColor + '; }';
           html += '#sincloBox section#chatTab div sinclo-chat-alert { top: ' + (5 * ratio) + 'px; left: ' + (5 * ratio) + 'px; right: ' + (5 * ratio) + 'px; bottom: ' + (5 * ratio) + 'px; border-radius: ' + (5 * ratio) + 'px; color: #FFF; padding: ' + (10 * ratio) + 'px 0; }';
           html += '#sincloBox section#navigation { border-width: 0 ' + (1 * ratio) + 'px; height: ' + (40 * ratio) + 'px; }';
@@ -349,7 +350,7 @@ html += ' #sincloBox ul sinclo-chat { clear: both!important } ';
           html += '      #sincloBox ul#chatTalk li { border-radius: 5px; margin: 5px 0; padding: 5px; font-size: 12px; border: 1px solid #C9C9C9; }';
           html += '      #sincloBox ul#chatTalk li span.cName { font-size: 13px; margin: 0 0 5px 0 }';
           html += '      #sincloBox section#chatTab div { height: 75px!important; padding: 5px }';
-          html += '      #sincloBox section#chatTab #sincloChatMessage { color: #8A8A8A; padding: 5px; height: 100%; border: 1px solid #E4E4E4; border-radius: 5px 0 0 5px!important; }';
+          html += '      #sincloBox section#chatTab #sincloChatMessage { color: #8A8A8A!important; padding: 5px; height: 100%; border: 1px solid #E4E4E4!important; border-radius: 5px 0 0 5px!important; }';
           html += '      #sincloBox section#chatTab #sincloChatSendBtn { padding: 20px 0; height: 100%; border: 1px solid ' + widget.mainColor + '; }';
 
         }
@@ -359,17 +360,13 @@ html += ' #sincloBox ul sinclo-chat { clear: both!important } ';
           html += '      #sincloBox section#callTab #telIcon { color: ' + widget.mainColor + '; display: block; width: 50px; height: 50px; float: left; background-color: #3EA3DE; border-radius: 25px; padding: 3px }';
           html += '      #sincloBox section#callTab #telContent { display: block; overflow-y: auto; overflow-x: hidden; max-height: 119px }';
           if ( window.info.contract.chat ) {
-            html += '      #sincloBox section#callTab #telContent .tblBlock {  text-align: center;  margin: 0 auto;  width: 240px;  display: table;  flex-direction: column; -ms-flex-direction: column; -webkit-flex-direction: flex;  align-content: center;  height: 119px!important;  justify-content: center; }';
+            html += '      #sincloBox section#callTab #telContent .tblBlock {  text-align: center;  margin: 0 auto;  width: 240px;  display: table; align-content: center;  height: 119px!important;  justify-content: center; }';
           }
           else {
-            html += '      #sincloBox section#callTab #telContent .tblBlock { text-align: center; margin: 0 auto; width: 240px; display: table; flex-direction: column; -ms-flex-direction: column; -webkit-flex-direction: flex; align-content: center; justify-content: center; overflow-x: hidden; overflow-y: auto }';
+            html += '      #sincloBox section#callTab #telContent .tblBlock { text-align: center; margin: 0 auto; width: 240px; display: table; align-content: center; justify-content: center; overflow-x: hidden; overflow-y: auto }';
           }
           html += '      #sincloBox section#callTab #telContent span { word-wrap: break-word ;word-break: break-all; font-size: 11px; line-height: 1.5!important; color: #6B6B6B; white-space: pre-wrap; max-height: 119px; display: table-cell; vertical-align: middle; text-align: center }';
           html += '      #sincloBox section#callTab #accessIdArea { height: 50px; display: block; margin: 10px auto; width: 80%; padding: 7px;  color: #FFF; background-color: rgb(188, 188, 188); font-size: 25px; font-weight: bold; text-align: center; border-radius: 15px } ';
-        }
-        // チャットも画面同期も使用する際にはデフォルトで画面同期ウィジェットの表示をnoneにする
-        if ( window.info.contract.chat && window.info.contract.synclo ) {
-          html += '      #sincloBox section#callTab { display: none; }';
         }
         html += '      #sincloBox section#navigation { border-width: 0 1px; height: 40px; }';
         html += '      #sincloBox section#navigation ul { margin: 0 0 0 -1px; height: 40px;}';
@@ -435,7 +432,16 @@ html += ' #sincloBox ul sinclo-chat { clear: both!important } ';
     },
     widgetTemplate: function(widget){
       var html = "";
-      html += '<section id="callTab">';
+
+      // 電話・チャットプランの場合
+      if ( window.info.contract.chat && window.info.contract.synclo && !check.smartphone() ) {
+        html += '<section id="callTab">';
+      }
+      // 電話のみプランの場合
+      else {
+        html += '<section id="callTab" class="flexBox">';
+      }
+
       html += '    <div style="height: 50px;margin: 15px 25px">';
       // アイコン
       html += '    <span style="display: block; width: 50px; height: 50px; float: left; background-color: ' + widget.mainColor + '; border-radius: 25px; padding: 3px;"><img width="19.5" height="33" src="' + window.info.site.files + '/img/call.png" style="margin: 6px 12px"></span>';
@@ -482,7 +488,7 @@ html += ' #sincloBox ul sinclo-chat { clear: both!important } ';
           placeholder = "メッセージを入力してください（Shift+Enterで改行/Enterで送信）";
         }
       }
-      html += '  <section id="chatTab">';
+      html += '  <section id="chatTab" class="flexBox">';
       html += '    <ul id="chatTalk"><sinclo-chat></sinclo-chat><sinclo-typing></sinclo-typing></ul>';
       html += '    <div>';
       html += '      <textarea name="sincloChat" id="sincloChatMessage" maxlength="300" placeholder=" ' + placeholder + ' "></textarea>';
@@ -547,12 +553,12 @@ html += ' #sincloBox ul sinclo-chat { clear: both!important } ';
             $(this).addClass("selected");
 
             if ( clickTab === "call" ) {
-              $("#callTab").css('display', 'flex').css('display', '-ms-flexbox').css('display', '-webkit-flex');
-              $("#chatTab").hide();
+              $("#chatTab").removeClass('flexBox');
+              $("#callTab").addClass('flexBox');
             }
             else {
-              $("#callTab").hide();
-              $("#chatTab").css('display', 'flex').css('display', '-ms-flexbox').css('display', '-webkit-flex');
+              $("#callTab").removeClass('flexBox');
+              $("#chatTab").addClass('flexBox');
               sinclo.chatApi.showUnreadCnt();
               sinclo.chatApi.scDown();
             }
