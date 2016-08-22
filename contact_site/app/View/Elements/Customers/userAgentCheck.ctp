@@ -172,10 +172,6 @@ var userAgentChk = (function(){
           name = 'Opera' + _get_ver(ua, "opr\/");
       } else if (ua.indexOf('vivaldi') != -1){
           name = 'Vivaldi' + _get_ver(ua, "vivaldi\/");
-      } else if (ua.indexOf('chrome') != -1){
-          name = 'Chrome' + _get_ver(ua, "chrome\/");
-      } else if (ua.indexOf('crios') != -1){
-          name = 'Chrome' + _get_ver(ua, "crios\/");
       } else if (ua.indexOf('firefox') != -1){
           name = 'Firefox' + _get_ver(ua, "firefox\/");
       } else if (ua.indexOf('palemoon') != -1){
@@ -184,9 +180,15 @@ var userAgentChk = (function(){
           name = 'YahooJapanブラウザ' + _get_ver(ua, "jp.co.yahoo.ipn.appli\/");
       } else if (ua.indexOf('jp.co.yahoo.ymail') != -1) {
           name = 'YahooJapanブラウザ' + _get_ver(ua, "jp.co.yahoo.ymail\/");
+      } else if (ua.indexOf('chrome') != -1 && ua.indexOf('samsungbrowser') === -1){
+          name = 'Chrome' + _get_ver(ua, "chrome\/");
+      } else if (ua.indexOf('crios') != -1 && ua.indexOf('samsungbrowser') === -1){
+          name = 'Chrome' + _get_ver(ua, "crios\/");
       } else if (ua.indexOf('blackberry') != -1 || ua.indexOf('bb10') != -1){
           name = '標準ブラウザ' + _get_ver(ua, "version\/");
       } else if (ua.indexOf('safari') != -1 && ua.indexOf('android') != -1){
+          name = '標準ブラウザ';
+      } else if (ua.indexOf('samsungbrowser') != -1 && ua.indexOf('android') != -1){
           name = '標準ブラウザ';
       } else if (ua.indexOf('safari') != -1 && ua.indexOf('android') === -1){
           name = 'Safari' + _get_ver(ua, "version\/");
@@ -196,12 +198,36 @@ var userAgentChk = (function(){
       return name;
     }
 
+    function _bot_chk(ua){
+      var name = "bot";
+      if ( ua.indexOf("onpagebot") != -1 ) {
+        name = "OnPageBot";
+      }
+      else if ( ua.indexOf("privacyawarebot") != -1 ) {
+        name = "PrivacyAwareBot";
+      }
+      else if ( ua.indexOf("bingpreview") != -1 ) {
+        name = "BingPreview";
+      }
+      else if ( ua.indexOf("google") != -1 ) {
+        name = "Google Bot";
+        if ( ua.indexOf("adsbot") != -1 ) {
+          name += "(adsbot)";
+        }
+      }
+      else if ( ua.indexOf("applebot") != -1 ) {
+        name = "Apple Bot";
+      }
+      return name;
+    }
+
     return {
       init: function(ua){
         ua = ua + ";";
+        var lowUa = ua.toLowerCase();
         // bot
-        if ( ua.match(/Googlebot/) || ua.match(/BingPreview/) ) {
-          return "bot";
+        if ( lowUa.match(/bot/) || lowUa.match(/bingpreview/) ) {
+          return _bot_chk(lowUa);
         }
         else {
           return _pc_chk(ua) + ", " + _browser_chk(ua);
