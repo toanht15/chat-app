@@ -193,9 +193,9 @@ var socket, // socket.io
       html += '      #sincloBox span#mainImage img { background-color: ' + widget.mainColor + ' }';
       html += '      #sincloBox p#widgetTitle { position:relative; cursor:pointer; border-bottom:none; background-color: ' + widget.mainColor + ';text-align: center; margin: 0; color: ' + widget.stringColor + ' }';
       html += '      #sincloBox p#widgetTitle #sincloChatUnread { position: absolute; top: 0; left: 0; color: #FFF; font-style: normal; text-align: center; font-weight: bold; background-color: #FF5C5C; }';
-      html += '      #sincloBox p#widgetTitle:after { background-image: url("' + window.info.site.files + '/img/widget/yajirushi.png"); content: " "; display: inline-block; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear}';
-      html += '      #sincloBox[data-openflg="true"] p#widgetTitle:after { transform: rotate(0deg); }';
-      html += '      #sincloBox[data-openflg="false"] p#widgetTitle:after { transform: rotate(180deg); }';
+      html += '      #sincloBox p#widgetTitle:after { background-image: url("' + window.info.site.files + '/img/widget/yajirushi.png"); content: " "; display: inline-block; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; -webkit-transition: 200ms linear; transition: transform 200ms linear}';
+      html += '      #sincloBox[data-openflg="true"] p#widgetTitle:after { -ms-transform: rotate(0deg); -moz-transform: rotate(0deg); -webkit-transform: rotate(0deg); -o-transform: rotate(0deg); transform: rotate(0deg); }';
+      html += '      #sincloBox[data-openflg="false"] p#widgetTitle:after { -ms-transform: rotate(180deg); -moz-transform: rotate(180deg); -webkit-transform: rotate(180deg); -o-transform: rotate(180deg); transform: rotate(180deg); }';
       html += '      #sincloBox > section { background-color: #FFF; border-top: none; }';
       html += '      #sincloBox ul#chatTalk li a, #sincloBox #fotter a {  text-decoration: underline; }';
       html += '      #sincloBox section { display: none }';
@@ -239,7 +239,7 @@ var socket, // socket.io
         widgetWidth = $(window).width() - 20;
         ratio = widgetWidth * (1/285);
 
-        html += '#sincloBox { transition: opacity 100ms linear 0ms; }';
+        html += '#sincloBox { -webkit-transition: 100ms linear 0ms;  transition: opacity 100ms linear 0ms; }';
         html += '#sincloBox section#chatTab div { position: relative }';
         html += '#sincloBox section#chatTab sinclo-chat-alert { position: absolute; background-color: rgba(0,0,0,0.6); color: #FFF; text-align: center; }';
         if ( sinclo.chatApi.sendErrCatchFlg ) {
