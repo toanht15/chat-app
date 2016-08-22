@@ -987,7 +987,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var chatTalk = document.getElementById('chatTalk');
       $('#chatTalk').animate({
         scrollTop: chatTalk.scrollHeight - chatTalk.clientHeight
-      }, 300);
+      }, 100);
     });
 
     // =======================================

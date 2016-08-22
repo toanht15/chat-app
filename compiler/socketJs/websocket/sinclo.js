@@ -857,7 +857,10 @@
                 span.textContent += ".";
               }
             }, 500);
-            this.scDown();
+            var chatTalk = document.getElementById('chatTalk');
+            $('#chatTalk').animate({
+              scrollTop: chatTalk.scrollHeight - chatTalk.clientHeight
+            }, 300);
         },
         createMessage: function(cs, val, cName){
             var chatList = document.getElementsByTagName('sinclo-chat')[0];
@@ -909,11 +912,17 @@
             }
             sinclo.chatApi.createMessage(cs, val, name);
         },
+        scDownTimer: null,
         scDown: function(){
+          if ( this.scDownTimer ) {
+            clearTimeout(this.scDownTimer);
+          }
+          this.scDownTimer = setTimeout(function(){
             var chatTalk = document.getElementById('chatTalk');
             $('#chatTalk').animate({
               scrollTop: chatTalk.scrollHeight - chatTalk.clientHeight
             }, 300);
+          }, 500);
         },
         push: function(){
             sinclo.operatorInfo.reCreateWidgetMessage = ""; // 送信したら空にする
