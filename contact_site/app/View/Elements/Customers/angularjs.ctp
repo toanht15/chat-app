@@ -303,7 +303,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     };
   });
 
-  sincloApp.controller('MainCtrl', ['$scope', 'angularSocket', function($scope, socket) {
+  sincloApp.controller('MainCtrl', ['$scope', 'angularSocket', '$timeout', function($scope, socket, $timeout) {
     $scope.searchText = "";
     $scope.chatMessage = "";
     $scope.oprCnt = 0; // 待機中のオペレーター人数
@@ -323,6 +323,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     $scope.chatList = [];
     $scope.typingMessageSe = "";
     $scope.typingMessageRe = {};
+
     $scope.search = function(array){
       var result = {};
       if ( $scope.searchText ) {
@@ -1272,6 +1273,45 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       }
     }
   }]);
+
+  /* 固定ヘッダ */
+  sincloApp.directive('fixedHeader', function(){
+    return {
+      restrict: 'A',
+      link: function(scope, elems, attrs, ctrl){
+        var timer = [];
+        function colResize(tblWidth, idx, width){
+          clearTimeout(timer[idx]);
+
+          timer[idx] = setTimeout(function(){
+            var headerElem = document.getElementById("list_header");
+            var col = document.querySelectorAll("#list_header tr th")[idx];
+            headerElem.style.width = tblWidth;
+            col.style.width = width;
+          }, 5);
+        }
+
+        var width = [];
+        setInterval(function(){
+          var ths = document.querySelectorAll("#list_body th");
+          var tblStyle = window.getComputedStyle(elems[0], null);
+          ths.forEach(function(elem){
+            var style = window.getComputedStyle(elem, null);
+            if ( (elem.cellIndex in width) ) {
+              if ( width[elem.cellIndex] !== style.width ) {
+                colResize(tblStyle.width, elem.cellIndex, style.width);
+                width[elem.cellIndex] = style.width;
+              }
+            }
+            else {
+              width[elem.cellIndex] = style.width;
+              colResize(tblStyle.width, elem.cellIndex, style.width);
+            }
+          });
+        }, 5);
+      }
+    }
+  });
 
 }());
 </script>

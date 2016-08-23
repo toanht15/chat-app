@@ -38,9 +38,9 @@ var _access_type_guest = 1, _access_type_host = 2, userAgentChk, notificationSta
           token += str[Math.floor(Math.random()*strLen)];
         }
         return token;
-  }
+  };
 
- isset = function(a){
+  isset = function(a){
     return ( a !== undefined && a !== null && a !== "" );
   };
 
@@ -116,6 +116,9 @@ var _access_type_guest = 1, _access_type_host = 2, userAgentChk, notificationSta
 
 $(document).ready(function(){
   chatApi.init();
+
+  // リアルタイムモニタの高さを指定
+  $("#list_body").height($(window).height() - $("#customer_list").offset().top - 60);
 });
 
 // -->

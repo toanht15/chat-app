@@ -60,88 +60,111 @@
 
 <!-- リスト -->
 <div id='customer_list'>
-
+  <div id="list_header">
     <table>
-        <thead>
-                <tr>
-                        <th ng-hide="labelHideList.accessId" style="width: 4em">アクセスID</th>
-                <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
-                        <th style="width: 7em">モニター</th>
-                <?php endif; ?>
-                <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
-                        <th style="width: 7em">チャット</th>
-                <?php endif; ?>
-                        <th ng-hide="labelHideList.ipAddress" style="width: 8em">訪問ユーザ</th>
-                        <th ng-hide="labelHideList.ua" style="width: 7em">ユーザー環境</th>
-                        <th ng-hide="labelHideList.time" style="width: 6em">アクセス日時</th>
-                        <th ng-hide="labelHideList.stayTime" style="width: 5em">滞在時間</th>
-                        <th ng-hide="labelHideList.page" style="width: 7em">閲覧ページ数</th>
-                        <th ng-hide="labelHideList.title">閲覧中ページ</th>
-                        <th ng-hide="labelHideList.referrer">参照元URL</th>
-                </tr>
-        </thead>
-        <tbody ng-cloak>
-                <tr ng-repeat="monitor in search(monitorList) | orderObjectBy : '-chatUnreadId'" ng-dblclick="showDetail(monitor.tabId)" id="monitor_{{monitor.tabId}}">
-                    <!-- /* アクセスID */ -->
-                    <td ng-hide="labelHideList.accessId" class="tCenter">{{monitor.accessId}}</td>
-                <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
-                    <!-- /* モニター */ -->
-                    <td class='tCenter'>
-                        <?php if ( strcmp($userInfo['permission_level'], C_AUTHORITY_SUPER) !== 0) :?>
-                            <span ng-if="monitor.widget">
-                                <span ng-if="!monitor.connectToken">
-                                    <a class='monitorBtn blueBtn btn-shadow' href='javascript:void(0)' ng-click='windowOpen(monitor.tabId, monitor.accessId)' ng-confirm-click='アクセスID【{{monitor.accessId}}】のユーザーに接続しますか？'>接続する</a>
-                                </span>
-                            </span>
-                            <span ng-if="monitor.connectToken">
-                                <span class="monitorOn" ng-if="!monitor.responderId">対応中...</span>
-                                <span class="monitorOn" ng-if="monitor.responderId"><span class="bold">対応中</span><br>（{{setName(monitor.responderId)}}）</span>
-                            </span>
-                        <?php endif; ?>
-                    </td>
-                <?php endif; ?>
-
-                <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
-
-                <!-- /* チャット */ -->
-                <td class="tCenter" id="chatTypeBtn">
-                    <?php if ( strcmp($userInfo['permission_level'], C_AUTHORITY_SUPER) !== 0) :?>
-
-                        <span class="monitorOn" ng-if="monitor.chat === <?= h($muserId)?>"><span class="bold">対応中</span><br>（あなた）</span>
-                        <span class="monitorOn" ng-if="isset(monitor.chat) && monitor.chat !== <?= h($muserId)?>"><span class="bold">対応中</span><br>（{{setName(monitor.chat)}}）</span>
-
-                        <span ng-if="monitor.widget">
-                          <span ng-if="monitor.tabId != detailId" ng-click="showDetail(monitor.tabId)" class="btn-shadow blueBtn ">
-                            詳細を開く
-                            <div class="unread" ng-if="monitor.chatUnreadCnt > 0">{{monitor.chatUnreadCnt}}</div>
-                          </span>
-                          <span ng-if="monitor.tabId == detailId" ng-click="showDetail(monitor.tabId)" class="btn-shadow redBtn ">
-                            詳細を閉じる
-                            <div class="unread" ng-if="monitor.chatUnreadCnt > 0">{{monitor.chatUnreadCnt}}</div>
-                          </span>
-                        </span>
-                    <?php endif; ?>
-                </td>
-                <?php endif; ?>
-
-                    <!-- /* 訪問ユーザ */ -->
-                    <td ng-hide="labelHideList.ipAddress" class="tCenter">{{monitor.ipAddress}}</td>
-                    <!-- /* ユーザー環境 */ -->
-                    <td ng-hide="labelHideList.ua" class="tCenter">{{ua(monitor.userAgent)}}</td>
-                    <!-- /* アクセス日時 */ -->
-                    <td ng-hide="labelHideList.time" class="tCenter">{{monitor.time | customDate}}</td>
-                    <!-- /* 滞在時間 */ -->
-                    <td ng-hide="labelHideList.stayTime" class="tCenter" cal-stay-time></td>
-                    <!-- /* 閲覧ページ数 */ -->
-                    <td ng-hide="labelHideList.page" class="tCenter">{{monitor.prev.length}}（<a href="javascript:void(0)" class="underL" ng-click="openHistory(monitor)" >移動履歴</a>）</td>
-                    <!-- /* 閲覧中ページ */ -->
-                    <td ng-hide="labelHideList.title" class="tCenter omit"><a href={{monitor.url}} target="monitor" class="underL" ng-if="monitor.title">{{monitor.title}}</a><span ng-if="!monitor.title">{{monitor.url}}</span></td>
-                    <!-- /* 参照元URL */ -->
-                    <td ng-hide="labelHideList.referrer" class="tCenter omit">{{monitor.referrer}}</td>
-            </tr>
-        </tbody>
+      <thead>
+        <tr>
+                <th ng-hide="labelHideList.accessId">アクセスID</th>
+        <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
+                <th>モニター</th>
+        <?php endif; ?>
+        <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
+                <th>チャット</th>
+        <?php endif; ?>
+                <th ng-hide="labelHideList.ipAddress">訪問ユーザ</th>
+                <th ng-hide="labelHideList.ua">ユーザー環境</th>
+                <th ng-hide="labelHideList.time">アクセス日時</th>
+                <th ng-hide="labelHideList.stayTime">滞在時間</th>
+                <th ng-hide="labelHideList.page">閲覧ページ数</th>
+                <th ng-hide="labelHideList.title">閲覧中ページ</th>
+                <th ng-hide="labelHideList.referrer">参照元URL</th>
+        </tr>
+      </thead>
     </table>
-    <a href="javascript:void(0)" style="display:none" id="modalCtrl"></a>
+  </div>
+  <div id="list_body">
+    <table fixed-header>
+      <thead>
+        <tr>
+                <th ng-hide="labelHideList.accessId" style="width: 4em">アクセスID</th>
+        <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
+                <th style="width: 7em">モニター</th>
+        <?php endif; ?>
+        <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
+                <th style="width: 7em">チャット</th>
+        <?php endif; ?>
+                <th ng-hide="labelHideList.ipAddress" style="width: 8em">訪問ユーザ</th>
+                <th ng-hide="labelHideList.ua" style="width: 7em">ユーザー環境</th>
+                <th ng-hide="labelHideList.time" style="width: 6em">アクセス日時</th>
+                <th ng-hide="labelHideList.stayTime" style="width: 5em">滞在時間</th>
+                <th ng-hide="labelHideList.page" style="width: 7em">閲覧ページ数</th>
+                <th ng-hide="labelHideList.title">閲覧中ページ</th>
+                <th ng-hide="labelHideList.referrer">参照元URL</th>
+        </tr>
+      </thead>
+      <tbody ng-cloak>
+        <tr ng-repeat="monitor in search(monitorList) | orderObjectBy : '-chatUnreadId'" ng-dblclick="showDetail(monitor.tabId)" id="monitor_{{monitor.tabId}}">
+          <!-- /* アクセスID */ -->
+          <td ng-hide="labelHideList.accessId" class="tCenter">{{monitor.accessId}}</td>
+        <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
+          <!-- /* モニター */ -->
+          <td class='tCenter'>
+            <?php if ( strcmp($userInfo['permission_level'], C_AUTHORITY_SUPER) !== 0) :?>
+              <span ng-if="monitor.widget">
+                <span ng-if="!monitor.connectToken">
+                  <a class='monitorBtn blueBtn btn-shadow' href='javascript:void(0)' ng-click='windowOpen(monitor.tabId, monitor.accessId)' ng-confirm-click='アクセスID【{{monitor.accessId}}】のユーザーに接続しますか？'>接続する</a>
+                </span>
+              </span>
+              <span ng-if="monitor.connectToken">
+                <span class="monitorOn" ng-if="!monitor.responderId">対応中...</span>
+                <span class="monitorOn" ng-if="monitor.responderId"><span class="bold">対応中</span><br>（{{setName(monitor.responderId)}}）</span>
+              </span>
+            <?php endif; ?>
+          </td>
+        <?php endif; ?>
+
+        <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
+
+          <!-- /* チャット */ -->
+          <td class="tCenter" id="chatTypeBtn">
+            <?php if ( strcmp($userInfo['permission_level'], C_AUTHORITY_SUPER) !== 0) :?>
+
+              <span class="monitorOn" ng-if="monitor.chat === <?= h($muserId)?>"><span class="bold">対応中</span><br>（あなた）</span>
+              <span class="monitorOn" ng-if="isset(monitor.chat) && monitor.chat !== <?= h($muserId)?>"><span class="bold">対応中</span><br>（{{setName(monitor.chat)}}）</span>
+
+              <span ng-if="monitor.widget">
+                <span ng-if="monitor.tabId != detailId" ng-click="showDetail(monitor.tabId)" class="btn-shadow blueBtn ">
+                  詳細を開く
+                  <div class="unread" ng-if="monitor.chatUnreadCnt > 0">{{monitor.chatUnreadCnt}}</div>
+                </span>
+                <span ng-if="monitor.tabId == detailId" ng-click="showDetail(monitor.tabId)" class="btn-shadow redBtn ">
+                  詳細を閉じる
+                  <div class="unread" ng-if="monitor.chatUnreadCnt > 0">{{monitor.chatUnreadCnt}}</div>
+                </span>
+              </span>
+            <?php endif; ?>
+          </td>
+        <?php endif; ?>
+
+          <!-- /* 訪問ユーザ */ -->
+          <td ng-hide="labelHideList.ipAddress" class="tCenter">{{monitor.ipAddress}}</td>
+          <!-- /* ユーザー環境 */ -->
+          <td ng-hide="labelHideList.ua" class="tCenter">{{ua(monitor.userAgent)}}</td>
+          <!-- /* アクセス日時 */ -->
+          <td ng-hide="labelHideList.time" class="tCenter">{{monitor.time | customDate}}</td>
+          <!-- /* 滞在時間 */ -->
+          <td ng-hide="labelHideList.stayTime" class="tCenter" cal-stay-time></td>
+          <!-- /* 閲覧ページ数 */ -->
+          <td ng-hide="labelHideList.page" class="tCenter">{{monitor.prev.length}}（<a href="javascript:void(0)" class="underL" ng-click="openHistory(monitor)" >移動履歴</a>）</td>
+          <!-- /* 閲覧中ページ */ -->
+          <td ng-hide="labelHideList.title" class="tCenter omit"><a href={{monitor.url}} target="monitor" class="underL" ng-if="monitor.title">{{monitor.title}}</a><span ng-if="!monitor.title">{{monitor.url}}</span></td>
+          <!-- /* 参照元URL */ -->
+          <td ng-hide="labelHideList.referrer" class="tCenter omit">{{monitor.referrer}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <a href="javascript:void(0)" style="display:none" id="modalCtrl"></a>
 
 </div>
 <!-- リスト -->
