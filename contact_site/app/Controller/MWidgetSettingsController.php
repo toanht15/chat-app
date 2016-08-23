@@ -289,7 +289,7 @@ class MWidgetSettingsController extends AppController {
             $settings['mainImage'] = C_PATH_WIDGET_CUSTOM_IMG.'/'.$objData['main_custom_image'];
           }
         }
-        return json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_FORCE_OBJECT );
+        return $this->jsonEncode($settings);
     }
 
     /**
