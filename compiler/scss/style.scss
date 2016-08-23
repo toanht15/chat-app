@@ -343,6 +343,10 @@ a {
   padding-left: 30px!important;
 }
 
+.p05tb {
+  padding: 5px 0;
+}
+
 .p20trl {
   padding: 20px 20px 0 20px;
 }
@@ -1230,7 +1234,6 @@ ul.naviBtn {
       margin: 0 5px;
 
       #chatMenu {
-        padding: 5px 0;
         visibility: hidden;
 
         &.showOption {
@@ -1250,6 +1253,8 @@ ul.naviBtn {
         border-radius: 5px!important;
         border: 1px solid $line-color!important;
         padding: 5px;
+        margin-top: 0;
+
         &:focus {
             outline: none!important;
             border-color: $main-color!important;

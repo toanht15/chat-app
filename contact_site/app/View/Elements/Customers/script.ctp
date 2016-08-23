@@ -29,6 +29,7 @@ var _access_type_guest = 1, _access_type_host = 2, userAgentChk, notificationSta
     return JSON.parse(data);
   }
 
+
   var makeToken = function(){
     var n = 20,
         str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQESTUVWXYZ1234567890",
@@ -115,8 +116,6 @@ var _access_type_guest = 1, _access_type_host = 2, userAgentChk, notificationSta
 })();
 
 $(document).ready(function(){
-  chatApi.init();
-
   // リアルタイムモニタの高さを指定
   $("#list_body").height($(window).height() - $("#customer_list").offset().top - 60);
 });

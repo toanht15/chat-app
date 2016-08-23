@@ -57,18 +57,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         customer: 1,
         company: 2
       },
-      init: function(){
-        $("#sendMessage").keydown(function(e){
-          if ( e.keyCode === 13 ) {
-            if ( !(e.shiftKey || e.ctrlKey) ) {
-              chatApi.pushMessage();
-            }
-          }
-        })
-        .focus(function(e){
-          chatApi.observeType.start();
-        });
-
+      init: function(sendPattern){
         this.sound = document.getElementById('sinclo-sound');
         if ( this.sound ) {
             this.sound.volume = 0.3;
@@ -538,6 +527,24 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       }
     };
 
+
+    $scope.changeSetting = function(type){
+      var settings = {
+        type: type,
+        value : ''
+      };
+      settings.value = $scope.settings[type];
+      $.ajax({
+        type: 'post',
+        data: settings, // type:1 => type, type:2 => type, id
+        dataType: 'json',
+        cache: false,
+        url: "<?= $this->Html->url('/Customers/remoteChageSetting') ?>",
+        success: function(json){
+        }
+      });
+    };
+
     $scope.openDetailFlg = false;
     $scope.openDetail = function(){
       if ( angular.element('#customer_detail').is(".close") ) {
@@ -566,6 +573,19 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     };
 
     $scope.ngChatApi = {
+      init: function(){
+        $("#sendMessage").keydown(function(e){
+          if ( $scope.settings.sendPattarn && e.keyCode === 13 ) {
+            if ( !(e.shiftKey || e.ctrlKey) ) {
+              chatApi.pushMessage();
+            }
+          }
+        })
+        .focus(function(e){
+          chatApi.observeType.start();
+        });
+        chatApi.init();
+      },
       connect: function(obj){
         chatApi.connection(obj);
       },
@@ -1128,6 +1148,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     // ドキュメントオブジェクト内
     $(document).on('click', function(e){
       entryWordApi.close();
+    });
+
+    $(document).ready(function(){
+      $scope.ngChatApi.init();
     });
 
 

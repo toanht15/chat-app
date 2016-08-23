@@ -45,6 +45,22 @@ class CustomersController extends AppController {
         }
 
         $widgetSettings = $this->MWidgetSetting->coFind('first', null);
+
+        // ユーザーの最新情報を取得
+        $mUser = $this->MUser->coFind('first', ['fields', '*', 'recursive' => -1]);
+
+        $this->request->data['settings'] = [];
+
+        if ( !empty($mUser['MUser']['settings']) ) {
+          $mySettings = json_decode($mUser['MUser']['settings']);
+          if ( isset($mySettings->sendPattarn) && strcmp($mySettings->sendPattarn, "true") === 0 ) {
+            $this->request->data['settings']['sendPattarn'] = true;
+          }
+          else if ( isset($mySettings->sendPattarn) && strcmp($mySettings->sendPattarn, "false" === 0) ) {
+            $this->request->data['settings']['sendPattarn'] = false;
+          }
+        }
+
         $styleSettings = [];
         if ( isset($widgetSettings['MWidgetSetting']['style_settings']) ) {
           $styleSettings = json_decode($widgetSettings['MWidgetSetting']['style_settings']);
@@ -108,6 +124,38 @@ class CustomersController extends AppController {
         $this->set('labelHideList', $labelHideList);
         $this->set('selectedLabelList', $selectedLabelList);
         return $this->render('/Customers/remoteCreateSetting');
+    }
+
+    /* ユーザーの個別設定を保存する */
+    public function remoteChageSetting() {
+        Configure::write('debug', 0);
+        $this->autoRender = FALSE;
+        $this->layout = null;
+        $ret = false;
+
+        if ( isset($this->params->data['type']) && isset($this->params->data['value']) ) {
+          $newSetting = $this->params->data;
+
+          // データーベースより取得
+          $mUser = $this->MUser->coFind('first', ['fields', '*', 'recursive' => -1]);
+          $mySettings = [];
+          if ( !empty($mUser['MUser']['settings']) ) {
+            $mySettings = (array)json_decode($mUser['MUser']['settings']);
+          }
+          $mySettings[$newSetting['type']] = $newSetting['value'];
+          $mUser['MUser']["settings"] = $this->jsonEncode($mySettings);
+          // データーベースへ保存
+          $this->MUser->begin();
+
+          if ($this->MUser->save($mUser)) {
+            $this->MUser->commit();
+            $ret = true;
+          }
+          else {
+            $this->MUser->rollback();
+          }
+        }
+        return new CakeResponse(array('body' => json_encode($ret)));
     }
 
     public function remoteSaveSetting() {
