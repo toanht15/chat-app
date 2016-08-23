@@ -1458,7 +1458,7 @@ ul.naviBtn {
 
       &:before {
         content: " ";
-        border: 2px solid #C3D69B;
+        border: 2px solid $main-color;
         background-color: #FFF;
         width: 13px;
         height: 13px;
@@ -1488,8 +1488,8 @@ ul.naviBtn {
 
       &.checked {
         &:before {
-          border: 2px solid #C3D69B;
-          background-color: #C3D69B;
+          border: 2px solid $main-color;
+          background-color: $main-color;
         }
 
         &:after {
@@ -1526,44 +1526,66 @@ ul.naviBtn {
 }
 
 #script_setting_content {
-  width: 90%;
   $ssc-border-color: #9A9A9A;
   $ssc-content-width: 700px;
 
-  li {
-    p {
-      background-color: #E3E8E5;
-      border: 1px solid $ssc-border-color;
-      border-radius: 5px;
-      overflow: hidden;
-      width: $ssc-content-width;
+  h2 {
+    border-bottom: 3px solid $main-color;
+    padding-left: 5px;
+    font-size: 15px;
+  }
 
-      span {
-        height: 45px;
-        float: left;
+  section {
+    padding-left: 1em;
+  }
 
-        &.copyBtn {
-          display: inline-block;
-          padding: 10px 5px;
-          background-color: #FFF;
-          border-right: 1px solid $ssc-border-color;
-          width: 36px!important;
-        }
+  dl {
+    padding: 0!important;
+    dt {
+        font-weight: bold;
+        margin: 0.5em 0;
+        font-size: 13px;
+    }
+    dd {
+      margin: 0.5em 0 0.5em 40px;
+      pre {
+        margin: 6px 0;
+        line-height: 2;
+      }
+      p {
+        background-color: #E3E8E5;
+        border: 1px solid $ssc-border-color;
+        border-radius: 5px;
+        overflow: hidden;
+        width: $ssc-content-width;
 
-        &.copyArea {
+        span {
           height: 45px;
-          padding: 10px 0;
-          width: $ssc-content-width - 40px!important;
+          float: left;
 
-          input {
-            background-color: #E3E8E5;
-            height: 25px;
-            font-size: 12px;
-            border-bottom: none;
-            width: 100%;
+          &.copyBtn {
+            display: inline-block;
+            padding: 10px 5px;
+            background-color: #FFF;
+            border-right: 1px solid $ssc-border-color;
+            width: 36px!important;
           }
-        }
 
+          &.copyArea {
+            height: 45px;
+            padding: 10px 0;
+            width: $ssc-content-width - 40px!important;
+
+            input {
+              background-color: #E3E8E5;
+              height: 25px;
+              font-size: 12px;
+              border-bottom: none;
+              width: 100%;
+            }
+          }
+
+        }
       }
     }
   }
@@ -1642,7 +1664,7 @@ ul.naviBtn {
       max-width: 60%;
 
       h3 {
-        border-bottom: 3px solid #C3D69B;
+        border-bottom: 3px solid $main-color;
         padding-left: 5px;
       }
       .form01 {
@@ -1679,7 +1701,7 @@ ul.naviBtn {
             > div {
                 cursor: pointer!important;
                 height: 30px;
-                background-color: #C3D69B;
+                background-color: $main-color;
                 color: #FFF;
                 font-weight: bold;
                 vertical-align: middle;
@@ -1900,8 +1922,8 @@ ul.naviBtn {
         display: none;
 
         &:checked + label {
-            background-color: #C3D69B;
-            border: 1px solid #C3D69B;
+            background-color: $main-color;
+            border: 1px solid $main-color;
             position: relative;
             cursor: pointer;
 
@@ -1999,7 +2021,7 @@ ul.naviBtn {
     padding-bottom: 50px;
 
     h3 {
-      border-bottom: 3px solid #C3D69B;
+      border-bottom: 3px solid $main-color;
       padding-left: 5px;
     }
     ul { padding: 0 }
