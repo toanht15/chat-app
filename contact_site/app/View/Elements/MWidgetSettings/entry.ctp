@@ -354,7 +354,7 @@ $headerNo = 1;
 
   <!-- /* 操作 */ -->
   <section>
-    <div id="m_widget_setting_action">
-    <?= $this->Html->link('更新', 'javascript:void(0)', ['ng-click' => 'saveAct()', 'class' => 'greenBtn btn-shadow']) ?>
+    <div id="m_widget_setting_action" class="fotterBtnArea">
+      <?= $this->Html->link('更新', 'javascript:void(0)', ['ng-click' => 'saveAct()', 'class' => 'greenBtn btn-shadow']) ?>
     </div>
   </section>

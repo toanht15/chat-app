@@ -131,7 +131,7 @@
 
 	<section>
 		<?=$this->Form->hidden('id')?>
-		<div id="tautomessages_actions">
+		<div id="tautomessages_actions" class="fotterBtnArea">
 			<?=$this->Html->link('戻る','/TAutoMessages/index', ['class'=>'whiteBtn btn-shadow'])?>
 			<a href="javascript:void(0)" ng-click="main.saveAct()" class="greenBtn btn-shadow">保存</a>
 			<?php

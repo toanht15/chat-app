@@ -493,6 +493,27 @@ a {
   text-align: center;
 }
 
+/* フッター固定ボタンエリア */
+.fotterBtnArea {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: row;
+  margin: 0 auto;
+  padding: 10px 0;
+  background-color: rgba(77, 77, 77, 0.24);
+
+  > a[class*='Btn'] {
+    width: 10em;
+    padding: 10px;
+    display: block;
+    margin: 0 auto;
+    text-align: center;
+  }
+}
+
 /* フォーム部品 */
 .form01 {
   position: relative;
@@ -1615,6 +1636,7 @@ ul.naviBtn {
 #m_widget_setting_idx {
   #m_widget_setting_form {
     position: relative;
+    padding-bottom: 50px;
 
     #m_widget_setting_entry {
       max-width: 60%;
@@ -2222,28 +2244,6 @@ ul.naviBtn {
           }
         }
       }
-
-      #tautomessages_actions {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        display: flex;
-        flex-direction: row;
-        margin: 0 auto;
-        padding: 10px 0;
-        background-color: rgba(77, 77, 77, 0.24);
-
-        > a[class*='Btn'] {
-          width: 10em;
-          padding: 10px;
-          display: block;
-          margin: 0 auto;
-          text-align: center;
-        }
-
-      }
-
     }
   }
 
