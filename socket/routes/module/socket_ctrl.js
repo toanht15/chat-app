@@ -289,12 +289,15 @@ io.sockets.on('connection', function (socket) {
     cnst: {
       observeType: {
         company: 1,
-        customer: 2
+        customer: 2,
+        auto: 3,
+        start: 98,
+        end: 99,
       }
     },
     set: function(d){ // メッセージが渡されてきたとき
-      // 履歴idかメッセージがない
-      if ( !getSessionId(d.siteKey, d.tabId, 'historyId') || !isset(d.chatMessage) ) {
+      // 履歴idか(入退室以外に)メッセージがない
+      if ( !getSessionId(d.siteKey, d.tabId, 'historyId') || (!isset(d.chatMessage) && !(chatApi.cnst.observeType.start && d.messageType || chatApi.cnst.observeType.end && d.messageType)) ) {
         // エラーを渡す
         return emit.toUser('sendChatResult', {ret: false, messageType: d.messageType, tabId: d.tabId, siteKey: d.siteKey}, d.siteKey);
       }
@@ -320,9 +323,6 @@ io.sockets.on('connection', function (socket) {
             pool.query(sql, [chatData.historyId], function(err, rows){
               var messages = ( isset(rows) ) ? rows : [];
               var setList = {};
-              if ((obj.siteKey in c_connectList) && (obj.tabId in c_connectList[obj.siteKey])) {
-                setList = JSON.parse(JSON.stringify(c_connectList[obj.siteKey][obj.tabId]));
-              }
               for (var i = 0; i < messages.length; i++) {
                 var date = messages[i].created;
                 date = new Date(date);
@@ -374,6 +374,32 @@ io.sockets.on('connection', function (socket) {
             else {
               // 書き込みが失敗したらエラーを渡す
               return emit.toUser('sendChatResult', {tabId: d.tabId, messageType: d.messageType, ret: false, siteKey: d.siteKey}, d.siteKey);
+            }
+          });
+        }
+      );
+
+    },
+    notifyCommit: function(d){ // DBに書き込むとき
+
+      var insertData = {
+        t_histories_id: sincloCore[d.siteKey][d.tabId].historyId,
+        visitors_id: d.userId,
+        m_users_id: d.mUserId,
+        message: d.chatMessage,
+        message_type: d.messageType,
+        message_read_flg: 1,
+        created: new Date(d.created)
+      };
+
+      pool.query('SELECT * FROM t_history_stay_logs WHERE t_histories_id = ? ORDER BY id DESC LIMIT 1;', insertData.t_histories_id,
+        function(err, rows){
+          if ( rows && rows[0] ) {
+            insertData['t_history_stay_logs_id'] = rows[0].id;
+          }
+          pool.query('INSERT INTO t_history_chat_logs SET ?', insertData, function(error,results,fields){
+            if ( isset(error) ) {
+              console.log("RECORD INSERT ERROR: notifyCommit-func:" + error);
             }
           });
         }
@@ -784,6 +810,7 @@ io.sockets.on('connection', function (socket) {
   socket.on("sendAutoChatMessage", function(d){
     var obj = JSON.parse(d);
     var chat = JSON.parse(JSON.stringify(obj));
+    chat.messageType = chatApi.cnst.observeType.auto;
     chat.created = new Date();
     chat.sort = fullDateTime(chat.created);
     emit.toCompany('resAutoChatMessage', chat, chat.siteKey);
@@ -795,6 +822,7 @@ io.sockets.on('connection', function (socket) {
     var obj = JSON.parse(d);
     if (!getSessionId(obj.siteKey, obj.tabId, 'sessionId')) return false;
     var sId = getSessionId(obj.siteKey, obj.tabId, 'sessionId');
+    obj['messageType'] = chatApi.cnst.observeType.auto;
     obj.sendTo = socket.id;
     emit.toUser('sendReqAutoChatMessages', obj, sId);
 
@@ -812,6 +840,7 @@ io.sockets.on('connection', function (socket) {
     var setList = {};
     for (var i = 0; i < obj.messages.length; i++) {
       var created = new Date(obj.messages[i].created);
+      obj.messages[i]['messageType'] = chatApi.cnst.observeType.auto;
       setList[fullDateTime(Date.parse(created))] = obj.messages[i];
     }
     var ret = {};
@@ -824,13 +853,14 @@ io.sockets.on('connection', function (socket) {
 
   // チャット開始
   socket.on("chatStart", function(d){
-    var obj = JSON.parse(d), now = fullDateTime();
+    var obj = JSON.parse(d), date = new Date(), now = fullDateTime(date), type = chatApi.cnst.observeType.start;
     if ( sincloCore[obj.siteKey][obj.tabId] === null ) {
       emit.toMine("chatStartResult", {ret: false, siteKey: obj.siteKey, userId: sincloCore[obj.siteKey][obj.tabId].chat}, socket);
     }
     else {
-      emit.toCompany("chatStartResult", {ret: true, tabId: obj.tabId, created: now, siteKey: obj.siteKey, userId: obj.userId}, obj.siteKey);
-      var sendData = {ret: true, messageType: 99, hide:false, created: now};
+      // var sendData = {ret: true, messageType: type, hide:false, created: now};
+      var sendData = {ret: true, messageType: type, tabId: obj.tabId, siteKey: obj.siteKey, userId: obj.userId, hide:false, created: now};
+      emit.toCompany("chatStartResult", sendData, obj.siteKey);
 
       sincloCore[obj.siteKey][obj.tabId]['chat'] = obj.userId;
       sincloCore[obj.siteKey][obj.tabId]['chatSessionId'] = socket.id;
@@ -862,7 +892,22 @@ io.sockets.on('connection', function (socket) {
           }
 
           emit.toUser("chatStartResult", sendData, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
-          c_connectList[obj.siteKey][obj.tabId][now] = {messageType: 99, type:"start", userName: userName, userId: obj.userId};
+          c_connectList[obj.siteKey][obj.tabId][now] = {messageType: type, type:"start", userName: userName, userId: obj.userId};
+
+          // DBに書き込み
+          var ids = obj.tabId.split("_");
+          var insertData = {
+            siteKey: obj.siteKey,
+            tabId: obj.tabId,
+            t_histories_id: getSessionId(obj.siteKey, obj.tabId, 'historyId'),
+            userId: (ids.length > 1) ? ids[0] : "",
+            mUserId: obj.userId,
+            chatMessage: "入室",
+            messageType: type,
+            created: date
+          };
+          chatApi.notifyCommit(insertData);
+
         }
       });
     }
@@ -870,15 +915,29 @@ io.sockets.on('connection', function (socket) {
 
   // チャット終了
   socket.on("chatEnd", function(d){
-    var obj = JSON.parse(d), now = fullDateTime();
+    var obj = JSON.parse(d), date = new Date, now = fullDateTime(), type = chatApi.cnst.observeType.end;
     var keys = Object.keys(c_connectList[obj.siteKey][obj.tabId]);
     var userName = c_connectList[obj.siteKey][obj.tabId][keys[keys.length-1]].user;
-    c_connectList[obj.siteKey][obj.tabId][now] = {type:"end", userName: userName, userId: obj.userId, messageType: 99};
+    c_connectList[obj.siteKey][obj.tabId][now] = {type:"end", userName: userName, userId: obj.userId, messageType: type};
     if ( isset(sincloCore[obj.siteKey]) && isset(sincloCore[obj.siteKey][obj.tabId].chat) ) {
       sincloCore[obj.siteKey][obj.tabId].chat = null;
       sincloCore[obj.siteKey][obj.tabId].chatSessionId = null;
-      emit.toCompany("chatEndResult", {ret: true, messageType: 99, created: now, tabId: obj.tabId, siteKey: obj.siteKey, userId: obj.userId}, obj.siteKey);
-      emit.toUser("chatEndResult", {ret: true, messageType: 99}, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
+      emit.toCompany("chatEndResult", {ret: true, messageType: type, created: now, tabId: obj.tabId, siteKey: obj.siteKey, userId: obj.userId}, obj.siteKey);
+      emit.toUser("chatEndResult", {ret: true, messageType: type}, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
+
+      // DBに書き込み
+      var ids = obj.tabId.split("_");
+      var insertData = {
+        siteKey: obj.siteKey,
+        tabId: obj.tabId,
+        t_histories_id: getSessionId(obj.siteKey, obj.tabId, 'historyId'),
+        userId: (ids.length > 1) ? ids[0] : "",
+        mUserId: obj.userId,
+        chatMessage: "退室",
+        messageType: type,
+        created: date
+      };
+      chatApi.notifyCommit(insertData);
     }
   });
 
@@ -1053,6 +1112,9 @@ io.sockets.on('connection', function (socket) {
             }
             console.log("-------------------------------------------------------------------------");
           }
+          break;
+        case 4: // del company ( sample: socket.emit('settingReload', JSON.stringify({type:4, siteKey: "master"})); )
+          console.log('info', company.info);
           break;
         default:
       }

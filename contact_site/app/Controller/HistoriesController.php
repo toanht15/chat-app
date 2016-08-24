@@ -5,6 +5,7 @@
  * 履歴一覧画面
  */
 class HistoriesController extends AppController {
+    public $helpers = ['Time'];
     public $uses = ['MUser', 'THistory', 'THistoryChatLog', 'THistoryStayLog', 'THistoryShareDisplay'];
     public $paginate = [
             'THistory' => [

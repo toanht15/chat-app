@@ -55,7 +55,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       token: null,
       messageType: {
         customer: 1,
-        company: 2
+        company: 2,
+        auto: 3,
+        start: 98,
+        end: 99,
       },
       init: function(sendPattern){
         this.sound = document.getElementById('sinclo-sound');
@@ -684,7 +687,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           for (var key in obj.messages) {
             var chat = obj.messages[key];
             chat.sort = Number(key);
-            $scope.messageList.push(obj.messages[key]);
+            $scope.messageList.push(chat);
           }
         }
 
@@ -841,8 +844,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       if ( obj.tabId === chatApi.tabId ) {
         var chat = {
           sort: Number(obj.created),
-          userId: obj.userId,
-          type: "start"
+          messageType: Number(obj.messageType),
+          userId: obj.userId
         };
         $scope.messageList.push(chat);
       }
@@ -861,8 +864,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       if ( obj.tabId === chatApi.tabId ) {
         var chat = {
           sort: Number(obj.created),
-          userId: obj.userId,
-          type: "end"
+          userId: obj.userId
         };
         $scope.messageList.push(chat);
       }
@@ -1165,40 +1167,37 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         var li = document.createElement('li');
         var content = "";
 
-        if ( !("type" in scope.chat) ) {
-          // 消費者からのメッセージの場合
-          if (scope.chat.messageType === chatApi.messageType.customer) {
-            cn = "sinclo_re";
-            li.className = cn;
-            content = createMessage(scope.chat.message, {radio: false});
-          }
-          // 企業側か、オートメッセージの場合
-          else if (scope.chat.messageType === chatApi.messageType.company && Number(scope.chat.userId) in userList) {
-            cn = "sinclo_se";
-            var chatName = widget.subTitle;
-            if ( Number(widget.showName) === <?=C_WIDGET_SHOW_NAME?> ) {
-              chatName = userList[Number(scope.chat.userId)];
-            }
-            content = "<span class='cName'>" + chatName + "</span>";
-            content += createMessage(scope.chat.message);
-          }
-          else  {
-            cn = "sinclo_auto";
-            content = "<span class='cName'>自動応答</span>";
-            content += createMessage(scope.chat.message);
-          }
-
+        // 消費者からのメッセージの場合
+        if (scope.chat.messageType === chatApi.messageType.customer) {
+          cn = "sinclo_re";
+          li.className = cn;
+          content = createMessage(scope.chat.message, {radio: false});
         }
-        else {
+        // オートメッセージの場合
+        else if (scope.chat.messageType === chatApi.messageType.company) {
+          cn = "sinclo_se";
+          var chatName = widget.subTitle;
+          if ( Number(widget.showName) === <?=C_WIDGET_SHOW_NAME?> ) {
+            chatName = userList[Number(scope.chat.userId)];
+          }
+          content = "<span class='cName'>" + chatName + "</span>";
+          content += createMessage(scope.chat.message);
+        }
+        else if (scope.chat.messageType === chatApi.messageType.auto) {
+          cn = "sinclo_auto";
+          content = "<span class='cName'>自動応答</span>";
+          content += createMessage(scope.chat.message);
+        }
+        else  {
           cn = "sinclo_etc";
           var userName = "オペレーター";
           if ( Number(widget.showName) === <?=C_WIDGET_SHOW_NAME?> && "userId" in scope.chat ) {
             userName = userList[Number(scope.chat.userId)];
           }
-          if ( scope.chat.type === "start" ) {
+          if ( scope.chat.messageType === chatApi.messageType.start ) {
             content = "－　" + userName + "が入室しました　－";
           }
-          if ( scope.chat.type === "end" ) {
+          if ( scope.chat.messageType === chatApi.messageType.end ) {
             content = "－　" + userName + "が退室しました　－";
           }
         }

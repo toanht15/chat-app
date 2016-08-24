@@ -617,7 +617,7 @@
       for (var key in obj.chat.messages) {
         if ( !obj.chat.messages.hasOwnProperty(key) ) return false;
         var chat = obj.chat.messages[key], userName;
-        if ( Number(chat.messageType) !== 99 ) {
+        if ( Number(chat.messageType) < 90 ) {
           var cn = (Number(chat.messageType) === 1) ? "sinclo_se" : "sinclo_re";
           if (Number(chat.messageReadFlg) === 0 && chat.messageType === sinclo.chatApi.messageType.company) {
               this.chatApi.unread++;
@@ -640,17 +640,16 @@
           if ( info.widget.showName !== 1 ) {
             sinclo.chatApi.opUser = "";
           }
-
           var opUser = sinclo.chatApi.opUser;
 
           if ( sinclo.chatApi.opUser === "" ) {
             opUser = "オペレーター";
           }
-          if ( chat.type === "start" ) {
+          if ( Number(chat.messageType) === sinclo.chatApi.messageType.start ) {
             this.chatApi.online = true;
             this.chatApi.createNotifyMessage(opUser + "が入室しました");
           }
-          if ( chat.type === "end" ) {
+          if ( Number(chat.messageType) === sinclo.chatApi.messageType.end ) {
             this.chatApi.online = false;
             this.chatApi.createNotifyMessage(opUser + "が退室しました");
             sinclo.chatApi.opUser = "";
@@ -758,7 +757,9 @@
         messageType: {
             customer: 1,
             company: 2,
-            auto: 3
+            auto: 3,
+            start: 98,
+            end: 99
         },
         autoMessages: [],
         init: function(){

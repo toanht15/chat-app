@@ -260,17 +260,28 @@
             padding-top: 5px;
             background-color: #FDFDFD;
 
+            * {
+              color: #929292;
+            }
+
 
             li {
-              width: 280px;
-              text-align: left;
-              border: 1px solid #C9C9C9;
-              padding: 5px;
-              border-radius: 5px;
-              white-space: pre-wrap;
-              color: #8A8A8A;
-              word-break: break-all;
-              word-wrap: break-word;
+
+              &.sinclo_re, &.sinclo_se, &.sinclo_auto {
+                width: 280px;
+                text-align: left;
+                border: 1px solid #C9C9C9;
+                padding: 5px;
+                border-radius: 5px;
+                white-space: pre-wrap;
+                word-break: break-all;
+                word-wrap: break-word;
+              }
+
+              &.sinclo_etc {
+                margin: 0 55px 10px 20px;
+                margin: 0 auto 10px auto;
+              }
 
               p {
                 margin: 0 0 5px 0;
@@ -287,22 +298,13 @@
                 margin: 0 20px 10px 55px;
                 border-bottom-right-radius: 0;
                 background-color: #FFF;
-                span {
-                  display: block;
-                  font-weight: bold;
-                  font-size: 13px;
-                  margin: 0 0 5px 0;
-                }
               }
-              &.sinclo_se {
-                span {
-                  color: #c3d69b;
-                }
-              }
-              &.sinclo_auto {
-                span {
-                  color: #C9C9C9;
-                }
+
+              span {
+                display: block;
+                font-weight: bold;
+                font-size: 13px;
+                margin: 0 0 5px 0;
               }
             }
 
