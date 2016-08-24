@@ -175,7 +175,7 @@ $(document).ready(function(){
         scrollTimer = setTimeout(function(){
           $("#m_widget_simulator").animate({
             "top": position
-          }, 'slow');
+          }, 300);
         }, 200);
     });
 

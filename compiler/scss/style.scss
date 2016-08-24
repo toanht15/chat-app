@@ -8,8 +8,8 @@ $line-color: #909090;
 $shadow-color: rgba(0, 0, 0, 0.3);
 $header-btn-hover-color: #D6E8B0;
 $content-min-width: 800px;
-$sidebar-z-index: 3;
-$sub-sidebar-z-index: 2;
+$sidebar-z-index: 4;
+$sub-sidebar-z-index: 3;
 
 * {
   -webkit-box-sizing: border-box;
@@ -504,6 +504,7 @@ a {
   margin: 0 auto;
   padding: 10px 0;
   background-color: rgba(77, 77, 77, 0.24);
+  z-index: $sub-sidebar-z-index-1;
 
   > a[class*='Btn'] {
     width: 10em;
