@@ -999,6 +999,11 @@ io.sockets.on('connection', function (socket) {
   // 入力ステータスを送信
   socket.on("sendTypeCond", function(d){
     var obj = JSON.parse(d);
+    // 存在チェック
+    if ( !((obj.siteKey in sincloCore) && (obj.tabId in sincloCore[obj.siteKey])) ) {
+      return false;
+    }
+
     // 送り主が企業の場合
     if ( obj.type === chatApi.cnst.observeType.company ) {
       sincloCore[obj.siteKey][obj.tabId]['chatSessionId'] = socket.id; // 入力中ユーザーのsocketIdをセットする
