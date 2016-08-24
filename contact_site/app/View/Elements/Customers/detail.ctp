@@ -93,11 +93,8 @@
     </div>
     <div style="position: relative">
       <?php if ( strcmp($userInfo['permission_level'], C_AUTHORITY_SUPER) !== 0) :?>
-        <textarea rows="5" id="sendMessage" ng-if="settings.sendPattarn" ng-focus="sendMessageConnectConfirm(detailId)" maxlength="300" placeholder="ここにメッセージ入力してください。
-・Shift + Enterで改行されます
-・下矢印キー(↓)で簡易入力が開きます"></textarea>
-        <textarea rows="5" id="sendMessage" ng-if="!settings.sendPattarn" ng-focus="sendMessageConnectConfirm(detailId)" maxlength="300" placeholder="ここにメッセージ入力してください。
-・Enterで改行されます
+        <textarea rows="5" id="sendMessage" ng-focus="sendMessageConnectConfirm(detailId)" maxlength="300" placeholder="ここにメッセージ入力してください。
+・{{chatPs()}}で改行されます
 ・下矢印キー(↓)で簡易入力が開きます"></textarea>
         <div id="wordListArea" ng-keydown="searchKeydown($event)">
           <input type="text" ng-model="searchWord" id="wordSearchCond" />
@@ -106,8 +103,7 @@
             <li style="border:none; color:#ff7b7b" ng-if="entryWordList.length === 0">[設定] > [簡易入力] から<br>メッセージを登録してください</li>
           </ul>
         </div>
-        <span id="sinclo_sendbtn" class="btn-shadow" ng-if="settings.sendPattarn" onclick="chatApi.pushMessage()">送信（Enter）</span>
-        <span id="sinclo_sendbtn" class="btn-shadow" ng-if="!settings.sendPattarn" onclick="chatApi.pushMessage()">送信</span>
+        <span id="sinclo_sendbtn" class="btn-shadow" onclick="chatApi.pushMessage()">{{chatSendBtnName()}}</span>
       <?php endif; ?>
     </div>
   </div>

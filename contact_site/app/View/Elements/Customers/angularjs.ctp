@@ -530,6 +530,15 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       }
     };
 
+    // プレースホルダーの動的変更
+    $scope.chatPs = function(){
+      return ( $scope.settings.sendPattarn ) ? "Shift + Enter": "Enter";
+    }
+
+    // ボタン名ーの動的変更
+    $scope.chatSendBtnName = function(){
+      return ( $scope.settings.sendPattarn ) ? "送信（Enter）": "送信";
+    }
 
     $scope.changeSetting = function(type){
       var settings = {
