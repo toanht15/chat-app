@@ -504,7 +504,7 @@ a {
   margin: 0 auto;
   padding: 10px 0;
   background-color: rgba(77, 77, 77, 0.24);
-  z-index: $sub-sidebar-z-index-1;
+  z-index: $sub-sidebar-z-index - 1;
 
   > a[class*='Btn'] {
     width: 10em;
@@ -1536,6 +1536,11 @@ ul.naviBtn {
     font-size: 15px;
   }
 
+  pre {
+    margin: 6px 0;
+    line-height: 2;
+  }
+
   section {
     padding-left: 1em;
   }
@@ -1549,10 +1554,6 @@ ul.naviBtn {
     }
     dd {
       margin: 0.5em 0 0.5em 40px;
-      pre {
-        margin: 6px 0;
-        line-height: 2;
-      }
       p {
         background-color: #E3E8E5;
         border: 1px solid $ssc-border-color;
