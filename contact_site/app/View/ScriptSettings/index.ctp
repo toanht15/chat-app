@@ -16,8 +16,8 @@
 <div id='script_setting_idx' class="card-shadow">
 
 <div id='script_setting_title'>
-  <div class="fLeft"><?= $this->Html->image('script_g.png', array('alt' => 'コード設置・デモ画面', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?></div>
-  <h1>コード設置・デモ画面</h1>
+  <div class="fLeft"><?= $this->Html->image('script_g.png', array('alt' => 'コード設置・デモサイト', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?></div>
+  <h1>コード設置・デモサイト</h1>
 </div>
 <div id='script_setting_content' class="p20x">
   <h2>１．コード設置</h2>

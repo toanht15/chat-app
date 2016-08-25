@@ -1,7 +1,7 @@
 <?php
 /**
  * ScriptSettingController controller
- * コード設置・デモ画面
+ * コード設置・デモサイト
  */
 class ScriptSettingsController extends AppController {
 
@@ -18,11 +18,11 @@ class ScriptSettingsController extends AppController {
   }
 
   public function index(){
-    $this->set('title_for_layout', 'コード設置・デモ画面');
+    $this->set('title_for_layout', 'コード設置・デモサイト');
   }
 
   public function demopage(){
-    $this->set('title_for_layout', 'デモ画面');
+    $this->set('title_for_layout', 'デモサイト');
     $this->layout = "frame";
   }
 
