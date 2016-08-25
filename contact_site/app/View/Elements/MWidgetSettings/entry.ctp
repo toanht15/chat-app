@@ -66,24 +66,6 @@ $headerNo = 1;
         </li>
         <?php if ( $this->Form->isFieldError('show_position') ) echo $this->Form->error('show_position', null, ['wrap' => 'li']); ?>
         <!-- 表示位置 -->
-        <!-- 担当者表示 -->
-        <li>
-          <span class="require"><label>担当者表示</label></span>
-          <pre><label><?= $this->ngForm->input('show_name', [
-              'type' => 'radio',
-              'options' => $widgetShowNameType,
-              'legend' => false,
-              'separator' => '</label><br><label>',
-              'div' => false,
-              'label' => false,
-              'error' => false
-            ],
-            [
-              'entity' => 'MWidgetSetting.show_name'
-            ]) ?></label></pre>
-        </li>
-        <?php if ( $this->Form->isFieldError('show_name') ) echo $this->Form->error('show_name', null, ['wrap' => 'li']); ?>
-        <!-- 担当者表示 -->
       </ul>
       </section>
 
@@ -344,6 +326,24 @@ $headerNo = 1;
         </li>
         <?php if ( $this->Form->isFieldError('chat_trigger') ) echo $this->Form->error('chat_trigger', null, ['wrap' => 'li']); ?>
         <!-- チャット送信アクション -->
+        <!-- 担当者表示 -->
+        <li>
+          <span class="require"><label>担当者表示</label></span>
+          <pre><label><?= $this->ngForm->input('show_name', [
+              'type' => 'radio',
+              'options' => $widgetShowNameType,
+              'legend' => false,
+              'separator' => '</label><br><label>',
+              'div' => false,
+              'label' => false,
+              'error' => false
+            ],
+            [
+              'entity' => 'MWidgetSetting.show_name'
+            ]) ?></label></pre>
+        </li>
+        <?php if ( $this->Form->isFieldError('show_name') ) echo $this->Form->error('show_name', null, ['wrap' => 'li']); ?>
+        <!-- 担当者表示 -->
       </ul>
       </section>
       <?php endif; ?>
