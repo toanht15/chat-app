@@ -399,7 +399,7 @@
       common.load.start();
       userInfo.setConnect(obj.connectToken);
       if ( !check.isset(userInfo.sendTabId) ) {
-        userInfo.sendTabId = obj.from;
+        userInfo.sendTabId = obj.tabId;
         userInfo.syncInfo.set();
       }
       else {
@@ -482,7 +482,7 @@
     },
     syncEvStart: function(d){
       var obj = common.jParse(d);
-      if ( obj.to !== userInfo.tabId && obj.from !== userInfo.tabId ) return false;
+      if ( obj.to !== userInfo.tabId && obj.tabId !== userInfo.tabId ) return false;
       syncEvent.start(true);
       window.clearTimeout(sinclo.syncTimeout);
       common.load.finish();

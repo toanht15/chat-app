@@ -1057,7 +1057,7 @@ io.sockets.on('connection', function (socket) {
   socket.on('videoChatConnected', function (data) {
     console.log('VIDEOCHAT CONNECTED : ' + data);
     var obj = JSON.parse(data);
-    vc_connectList[obj.from] = socket.id;
+    vc_connectList[obj.tabId] = socket.id;
     if(vc_connectList[obj.to]) {
       console.log('VIDEOCHAT TO FOUND!');
       emit.toUser('videoChatConnected', data, vc_connectList[obj.to]);

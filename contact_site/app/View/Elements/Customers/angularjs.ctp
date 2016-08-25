@@ -967,7 +967,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       ) {
         emit('retTypingMessage', {
           type: chatApi.observeType.cnst.company, // company
-          to: obj.from,
+          to: obj.tabId,
           tabId: chatApi.tabId,
           message: document.getElementById('sendMessage').value,
           status: $scope.isset(chatApi.observeType.timer)
