@@ -171,13 +171,12 @@ class CustomersController extends AppController {
         $this->layout = 'ajax';
 
         $ret = array();
-        if ( isset($this->params->query['visitorsId']) && isset($this->params->query['tabId']) ) {
+        if ( isset($this->params->query['tabId']) ) {
             $params = array(
                 'fields' => '*',
                 'conditions' => array(
                     'THistory.del_flg !=' => 1,
                     'THistory.m_companies_id' => $this->userInfo['MCompany']['id'],
-                    'THistory.visitors_id' => $this->params->query['visitorsId'],
                     'THistory.tab_id' => $this->params->query['tabId']
                 ),
                 'joins' => array(
