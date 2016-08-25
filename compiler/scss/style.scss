@@ -1537,7 +1537,7 @@ ul.naviBtn {
   }
 
   pre {
-    margin: 6px 0;
+    margin: 6px 0 0 0;
     line-height: 2;
   }
 
@@ -1553,13 +1553,14 @@ ul.naviBtn {
         font-size: 13px;
     }
     dd {
-      margin: 0.5em 0 0.5em 40px;
+      margin: 0.5em 0 2.25em 40px;
       p {
         background-color: #E3E8E5;
         border: 1px solid $ssc-border-color;
         border-radius: 5px;
         overflow: hidden;
         width: $ssc-content-width;
+        margin-top: 0;
 
         span {
           height: 45px;
