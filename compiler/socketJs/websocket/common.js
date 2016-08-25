@@ -2159,30 +2159,60 @@ function f_url(url){
 }
 
 function emit(evName, data){
-  data.userId = userInfo.userId;
-  data.accessId = userInfo.accessId;
-  data.token = common.token;
-  data.title = common.title();
-  data.siteKey = info.site.key; // 必須
-  data.url= f_url(browserInfo.href);
-  data.subWindow = false; // 必須
-  data.tabId = userInfo.tabId;
-  data.prevList = browserInfo.prevList;
-  data.accessType = userInfo.accessType;
-  data.chat = null;
-  data.connectToken = userInfo.get(cnst.info_type.connect);
-  if ( check.isset(storage.s.get('params')) || userInfo.accessType === cnst.access_type.host ) {
-    data.subWindow = true; // 必須
-    data.responderId = common.params.responderId;
+  /* ここから：イベント名指定なし */
+  data.siteKey = info.site.key; // サイトの識別キー
+  data.tabId = userInfo.tabId; // タブの識別ID
+  if ( check.isset(userInfo.sendTabId) ) {
+    data.to = userInfo.sendTabId; // 送信先ID
+  }
+  /* ここまで：イベント名指定なし */
+  /* ここから：イベント名指定あり */
+  if (evName === "customerInfo" || evName === "sendAccessInfo") {
+    data.accessId = userInfo.accessId;
+    data.userId = userInfo.userId;
+  }
+  if (evName === "connected" || evName === "getChatMessage") {
+    data.token = common.token;
+  }
+  if (evName === "syncReady" || evName === "connectSuccess" || evName === "customerInfo" || evName === "sendAccessInfo") {
+    data.subWindow = false;
+    if ( check.isset(storage.s.get('params')) || userInfo.accessType === cnst.access_type.host ) {
+      data.responderId = common.params.responderId;
+      data.subWindow = true;
+    }
+  }
+  if (evName === "syncReady" || evName === "connectSuccess" || evName === "sendAccessInfo" || evName === "customerInfo") {
+    data.title = common.title();
+  }
+  if (evName === "connectSuccess" || evName === "sendWindowInfo" || evName === "sendAutoChat" || evName === "sendChat") {
+    data.userId = userInfo.userId;
+  }
+  if (   evName === "connectSuccess" || evName === "sendWindowInfo" || evName === "sendAutoChatMessages"
+      || evName === "getChatMessage" || evName === "sendChat" || evName === "sendAutoChatMessage"
+  ) {
+    data.chat = null;
+  }
+  if (   evName === "syncBrowserInfo" || evName === "syncChangeEv" || evName === "requestSyncStop"
+      || evName === "requestSyncStart" || evName === "connectContinue" || evName === "sendConfirmConnect"
+  ) {
+    data.accessType = userInfo.accessType;
+  }
+  if (   evName === "syncReady" || evName === "connectSuccess" || evName === "reqUrlChecker"  || evName === "customerInfo"
+      || evName === "requestSyncStart" || evName === "connectContinue" || evName === "sendAccessInfo" || evName === "sendWindowInfo"
+  ) {
+    data.url= f_url(browserInfo.href);
+  }
+  // connectToken
+  if (   evName === "syncReady" || evName === "connectSuccess" || evName === "requestSyncStop"  || evName === "customerInfo"
+      || evName === "requestSyncStart" || evName === "connectContinue" || evName === "sendAccessInfo" || evName === "sendConfirmConnect"
+  ) {
+    data.connectToken = userInfo.get(cnst.info_type.connect);
   }
   if ( evName == "sendWindowInfo" ) {
     data.connectToken = userInfo.connectToken;
   }
-  if ( check.isset(userInfo.sendTabId) ) {
-    data.from = userInfo.tabId;
-    data.to = userInfo.sendTabId;
-    data.prevList = browserInfo.prevList;
-  }
+  /* ここまで：イベント名指定あり */
+
   socket.emit(evName, JSON.stringify(data));
 }
 
