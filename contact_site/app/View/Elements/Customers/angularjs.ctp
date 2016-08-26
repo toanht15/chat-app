@@ -537,7 +537,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     // ボタン名ーの動的変更
     $scope.chatSendBtnName = function(){
-      return ( $scope.settings.sendPattarn ) ? "送信（Enter）": "送信";
+      return ( $scope.settings.sendPattarn ) ? "送信（Enter）": "送信（Shift+Enter）";
     }
 
     $scope.changeSetting = function(type){
@@ -587,8 +587,12 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     $scope.ngChatApi = {
       init: function(){
         $("#sendMessage").keydown(function(e){
-          if ( $scope.settings.sendPattarn && e.keyCode === 13 ) {
-            if ( !(e.shiftKey || e.ctrlKey) ) {
+          if ( e.keyCode === 13 ) {
+            if ( e.ctrlKey ) return false;
+            if ( $scope.settings.sendPattarn && !e.shiftKey ) {
+              chatApi.pushMessage();
+            }
+            if ( !$scope.settings.sendPattarn && e.shiftKey ) {
               chatApi.pushMessage();
             }
           }
