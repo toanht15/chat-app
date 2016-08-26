@@ -531,8 +531,15 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     };
 
     // プレースホルダーの動的変更
+    $scope.chatPsFlg = true;
     $scope.chatPs = function(){
-      return ( $scope.settings.sendPattarn ) ? "Shift + Enter": "Enter";
+      var sendPattarnStr = ( $scope.settings.sendPattarn ) ? "Shift + Enter": "Enter";
+      if ( $scope.chatPsFlg ) {
+        return "ここにメッセージ入力してください。\n・" + sendPattarnStr + "で改行されます\n・下矢印キー(↓)で簡易入力が開きます";
+      }
+      else {
+        return "";
+      }
     }
 
     // ボタン名ーの動的変更
@@ -599,6 +606,12 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         })
         .focus(function(e){
           chatApi.observeType.start();
+          // フォーカスが当たった時にPlaceholderを消す（Edge対応）
+          $scope.chatPsFlg = false;
+        })
+        .blur(function(e){
+          // フォーカスが当たった時にPlaceholderを消す（Edge対応）
+          $scope.chatPsFlg = true;
         });
         chatApi.init();
       },
@@ -609,6 +622,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         emit("chatEnd", {tabId: tabId, userId: myUserId});
       },
       notification: function(tabId, accessId, chatMessage){
+        if (!('Notification' in window)) return false;
         var nInstance = new Notification(
           '【' + accessId + '】新着チャットが届きました',
           {
@@ -1331,7 +1345,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         setInterval(function(){
           var ths = document.querySelectorAll("#list_body th");
           var tblStyle = window.getComputedStyle(elems[0], null);
-          ths.forEach(function(elem){
+          angular.forEach(ths, function(elem){
             var style = window.getComputedStyle(elem, null);
             if ( (elem.cellIndex in width) ) {
               if ( width[elem.cellIndex] !== style.width ) {
