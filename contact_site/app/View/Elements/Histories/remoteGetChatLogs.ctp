@@ -32,3 +32,8 @@
   <?php } ?>
 <?php endforeach; ?>
 </ul>
+<?php echo $this->Html->link(
+    $this->Html->image('download.png', array('alt' => 'CSV出力', 'width'=>20, 'height'=>20)),
+    ['controller'=>'Histories', 'action' => 'outputCSVOfChat'],
+    array('escape' => false, 'class'=>'skyBlueBtn btn-shadow', 'id' => 'popupCloseBtn'));
+?>

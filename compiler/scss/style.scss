@@ -450,6 +450,16 @@ a {
   transition: background-color, border-color 0.1s linear;
 }
 
+.skyBlueBtn {
+  cursor: pointer!important;
+  background-color: #9DCCD0;
+  border: 1px solid #9DCCD0;
+  display: block;
+  color: white;
+  font-weight: bold;
+  transition: background-color, border-color 0.1s linear;
+}
+
 .blueBtn {
   cursor: pointer!important;
   background-color: #788DCA;

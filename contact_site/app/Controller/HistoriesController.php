@@ -1,4 +1,3 @@
-
 <?php
 /**
  * HistoriesController controller.
@@ -66,7 +65,7 @@ class HistoriesController extends AppController {
   }
 
   public function remoteGetChatLogs() {
-    Configure::write('debug', 2);
+    Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
 
@@ -117,6 +116,45 @@ class HistoriesController extends AppController {
     $ret = $this->THistoryStayLog->find('all', $params);
     $this->set('THistoryStayLog', $ret);
     return $this->render('/Elements/Histories/remoteGetStayLogs');
+  }
+
+  public function outputCSVOfChat(){
+    $this->layout = null;
+    //メモリ上に領域確保
+    $fp = fopen('php://temp/maxmemory:'.(5*1024*1024),'a');
+
+    $user_list = [
+      ["あ", "hogehoge"],
+      ["huga", "hugahuga"],
+      ["hoge", "hogehoge"],
+      ["huga", "hugahuga"]
+    ];
+
+    foreach($user_list as $user){
+      fputcsv($fp, $user);
+    }
+
+    //ビューを使わない
+    $this->autoRender = false;
+
+    //download()内ではheader("Content-Disposition: attachment; filename=hoge.csv")を行っている
+    $this->response->download("hoge.csv");
+
+    //ファイルポインタを先頭へ
+    rewind($fp);
+
+    //リソースを読み込み文字列を取得する
+    $csv = stream_get_contents($fp);
+
+    //Content-Typeを指定
+    $this->response->type('csv');
+
+    //CSVをエクセルで開くことを想定して文字コードをSJIS-win
+    $csv = mb_convert_encoding($csv,'SJIS-win','utf8');
+
+    $this->response->body($csv);
+
+    fclose($fp);
   }
 
   private function _setList($type=true){
