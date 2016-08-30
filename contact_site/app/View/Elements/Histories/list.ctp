@@ -3,7 +3,7 @@
         <tr>
             <th width="10%">日時</th>
             <th width="10%">IPアドレス</th>
-            <th width="20%">OS<br>ブラウザ</th>
+            <th width="20%">プラットフォーム<br>ブラウザ</th>
             <th width="25%">参照元URL</th>
             <th width=" 5%">閲覧<br>ページ数</th>
             <th width="10%">滞在時間</th>

@@ -69,31 +69,7 @@ class HistoriesController extends AppController {
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
 
-    $historyId = $this->params->query['historyId'];
-
-    $params = [
-      'fields' => [
-        'MUser.display_name',
-        'THistoryChatLog.*'
-      ],
-      'conditions' => [
-        'THistoryChatLog.t_histories_id' => $historyId
-      ],
-      'joins' => [
-        [
-          'type' => 'LEFT',
-          'table' => 'm_users',
-          'alias' => 'MUser',
-          'conditions' => [
-          'THistoryChatLog.m_users_id = MUser.id',
-          'MUser.m_companies_id' => $this->userInfo['MCompany']['id']
-          ]
-        ]
-      ],
-      'order' => 'THistoryChatLog.created',
-      'recursive' => -1
-    ];
-    $ret = $this->THistoryChatLog->find('all', $params);
+    $ret = $this->_getChatLog($this->params->query['historyId']);
     $this->set('THistoryChatLog', $ret);
     return $this->render('/Elements/Histories/remoteGetChatLogs');
   }
@@ -118,27 +94,112 @@ class HistoriesController extends AppController {
     return $this->render('/Elements/Histories/remoteGetStayLogs');
   }
 
-  public function outputCSVOfChat(){
+  public function outputCSVOfHistory(){
+    Configure::write('debug', 0);
+    if ( !isset($this->request->data['History']['outputData'] ) ) return false;
+
+    $name = "sinclo-history";
+    $ret = (array) json_decode($this->request->data['History']['outputData'] );
+
+    // ラベル
+
+    // ヘッダー
+    $csv[] = [
+      "日時",
+      "IPアドレス",
+      "プラットフォーム",
+      "ブラウザ",
+      "参照元URL",
+      "閲覧ページ数",
+      "滞在時間",
+      "チャット担当者"
+     ];
+
+    foreach($ret as $val){
+      $row = [];
+
+      // 日時
+      $dateTime = preg_replace("/[\n,]+/", " ", $val->date);
+      $row['date'] = $dateTime;
+      // IPアドレス
+      $row['ip'] = $val->ip;
+      // OS
+      $ua = preg_split("/[\n,]+/", $val->useragent);
+      $row['os'] = $ua[0];
+      // ブラウザ
+      $row['browser'] = $ua[1];
+      // 参照元URL
+      $row['referrer'] = $val->referrer;
+      // 閲覧ページ数
+      $row['pageCnt'] = $val->pageCnt;
+      // 滞在時間
+      $row['visitTime'] = $val->visitTime;
+      // チャット担当者
+      $users = preg_replace("/[\n,]+/", ", ", $val->user);
+      $row['user'] = $users;
+      $csv[] = $row;
+    }
+
+    $this->_outputCSV($name, $csv);
+  }
+
+  public function outputCSVOfChat($id = null){
+    Configure::write('debug', 0);
+
+    if (empty($id)) return false;
+    $name = "sinclo-chat-history";
+    $ret = $this->_getChatLog($id);
+
+    // ヘッダー
+    $csv[] = [
+      "発行日時",
+      "送信種別",
+      "送信者",
+      "メッセージ"
+     ];
+
+    foreach($ret as $val){
+      $row = [];
+      $date = date('Y/m/d H:i:s', strtotime($val['THistoryChatLog']['created'])); // 発行日時
+      // $date = date('Y年m月d日 H時i分s秒', strtotime($val['THistoryChatLog']['created'])); // 発行日時
+      $message = $val['THistoryChatLog']['message'];
+      switch($val['THistoryChatLog']['message_type']){
+        case 1: // 企業側からの送信
+          $row = $this->_setData($date, "オペレーター", "", $message);
+          break;
+        case 2: // 訪問者側からの送信
+          $row = $this->_setData($date, "訪問者", $val['MUser']['display_name'], $message);
+          break;
+        case 3: // オートメッセージ
+          $row = $this->_setData($date, "オートメッセージ", $this->userInfo['MCompany']['company_name'], $message);
+          break;
+        case 98: // 入室メッセージ
+        case 99: // 退室メッセージ
+          $row = $this->_setData($date, "通知メッセージ", "", " - ".$val['MUser']['display_name']."が".$message."しました - ");
+          break;
+      }
+      $csv[] = $row;
+    }
+    $this->_outputCSV($name, $csv);
+  }
+
+  private function _outputCSV($name, $csv = []){
     $this->layout = null;
+
     //メモリ上に領域確保
     $fp = fopen('php://temp/maxmemory:'.(5*1024*1024),'a');
 
-    $user_list = [
-      ["あ", "hogehoge"],
-      ["huga", "hugahuga"],
-      ["hoge", "hogehoge"],
-      ["huga", "hugahuga"]
-    ];
-
-    foreach($user_list as $user){
-      fputcsv($fp, $user);
+    foreach($csv as $row){
+      fputcsv($fp, $row);
     }
 
     //ビューを使わない
     $this->autoRender = false;
 
+    $filename = date("YmdHis")."_".$name;
+
     //download()内ではheader("Content-Disposition: attachment; filename=hoge.csv")を行っている
-    $this->response->download("hoge.csv");
+    $this->response->download($filename.".csv");
 
     //ファイルポインタを先頭へ
     rewind($fp);
@@ -155,6 +216,23 @@ class HistoriesController extends AppController {
     $this->response->body($csv);
 
     fclose($fp);
+  }
+
+  /**
+   * CSVデータのセット
+   * @param $date date
+   * @param $type string
+   * @param $name string
+   * @param $message string
+   * @return array
+   * */
+  private function _setData($date = "", $type = "", $name = "", $message = "") {
+    return [
+      $date, // 発行日時
+      $type, // 送信種別
+      $name, // 送信者
+      $message // メッセージ
+    ];
   }
 
   private function _setList($type=true){
@@ -220,6 +298,32 @@ class HistoriesController extends AppController {
     $this->set('historyList', $historyList);
     $this->set('chatUserList', $chat);
     $this->set('groupByChatChecked', $type);
+  }
+
+  private function _getChatLog($historyId){
+    $params = [
+      'fields' => [
+        'MUser.display_name',
+        'THistoryChatLog.*'
+      ],
+      'conditions' => [
+        'THistoryChatLog.t_histories_id' => $historyId
+      ],
+      'joins' => [
+        [
+          'type' => 'LEFT',
+          'table' => 'm_users',
+          'alias' => 'MUser',
+          'conditions' => [
+          'THistoryChatLog.m_users_id = MUser.id',
+          'MUser.m_companies_id' => $this->userInfo['MCompany']['id']
+          ]
+        ]
+      ],
+      'order' => 'THistoryChatLog.created',
+      'recursive' => -1
+    ];
+    return $this->THistoryChatLog->find('all', $params);
   }
 
 }
