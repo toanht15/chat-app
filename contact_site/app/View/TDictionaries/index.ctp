@@ -1,3 +1,4 @@
+<?php echo $this->Html->script("jquery-ui.min.js"); ?>
 <?php echo $this->element('TDictionaries/script'); ?>
 
 <div id='tdictionaries_idx' class="card-shadow">
@@ -40,21 +41,23 @@
 				<th>No</th>
 				<th>使用範囲</th>
 				<th>ワード</th>
-				<th width="150">操作</th>
+				<th>表示順</th>
+				<th>操作</th>
 			</tr>
 		</thead>
-		<tbody>
+		<tbody class="sortable">
 		<?php foreach((array)$dictionaryList as $key => $val): ?>
 			<?php
 			$params = $this->Paginator->params();
 			$prevCnt = ($params['page'] - 1) * $params['limit'];
 			$no = $prevCnt + h($key+1);
 			?>
-			<tr>
-				<td class="tCenter"><?=$no?></td>
-				<td class="tCenter"><?=$dictionaryTypeList[$val['TDictionary']['type']]?></td>
-				<td class="tLeft pre"><?=$val['TDictionary']['word']?></td>
-				<td class="tCenter ctrlBtnArea">
+			<tr data-id="<?=$val['TDictionary']['id']?>" data-sort="<?=$val['TDictionary']['sort']?>">
+				<td width="8%" class="tCenter"><?=$no?></td>
+				<td width="26%" class="tCenter"><?=$dictionaryTypeList[$val['TDictionary']['type']]?></td>
+				<td width="40%" class="tLeft pre"><?=$val['TDictionary']['word']?></td>
+				<td width="8%" class="tRight pre"><?=$val['TDictionary']['sort']?></td>
+				<td width="20%" class="tCenter ctrlBtnArea">
 					<?php
 						echo $this->Html->link(
 							$this->Html->image(

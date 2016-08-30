@@ -9,6 +9,7 @@ class TDictionariesController extends AppController {
     'TDictionary' => [
       'limit' => 10,
       'order' => [
+        'TDictionary.sort' => 'asc',
         'TDictionary.id' => 'asc'
       ],
       'fields' => [
@@ -36,8 +37,7 @@ class TDictionariesController extends AppController {
    * @return void
    * */
   public function index() {
-    $this->paginate['TDictionary']['conditions']['TDictionary.m_companies_id'] = $this->userInfo['MCompany']['id'];
-    $this->paginate['TDictionary']['conditions']['OR'][0]['TDictionary.m_users_id'] = $this->userInfo['id'];
+    $this->_setParams();
     $this->set('dictionaryList', $this->paginate('TDictionary'));
     $this->_viewElement();
   }
@@ -60,7 +60,7 @@ class TDictionariesController extends AppController {
   }
 
   /* *
-   * 登録画面
+   * 保存処理
    * @return void
    * */
   public function remoteSaveEntryForm() {
@@ -70,7 +70,7 @@ class TDictionariesController extends AppController {
     $saveData = [];
     $errorMessage = [];
 
-    if ( !$this->request->is('ajax') ) return false;
+    // if ( !$this->request->is('ajax') ) return false;
     if (!empty($this->request->data['dictionaryId'])) {
       $this->TDictionary->recursive = -1;
       $saveData = $this->TDictionary->read(null, $this->request->data['dictionaryId']);
@@ -81,6 +81,23 @@ class TDictionariesController extends AppController {
 
     $saveData['TDictionary']['m_companies_id'] = $this->userInfo['MCompany']['id'];
     $saveData['TDictionary']['word'] = $this->request->data['word'];
+    if ( !empty($this->request->data['sort']) || $this->request->data['sort'] === 0 ) {
+      $saveData['TDictionary']['sort'] = $this->request->data['sort'];
+    }
+    else {
+      $this->_setParams();
+      $params = $this->paginate['TDictionary'];
+      if (!empty($this->request->data['dictionaryId'])) {
+        $params['conditions']['TDictionary.id != '] = $this->request->data['dictionaryId'];
+      }
+
+      $params['order'] = [
+        'TDictionary.sort' => 'desc',
+        'TDictionary.id' => 'desc'
+      ];
+      $lastData = $this->TDictionary->find('first', $params);
+      $saveData['TDictionary']['sort'] = $lastData['TDictionary']['sort'];
+    }
     $saveData['TDictionary']['type'] = $this->request->data['type'];
     if ( strcmp($saveData['TDictionary']['type'], C_AUTHORITY_NORMAL) === 0 ) {
       $saveData['TDictionary']['m_users_id'] = $this->userInfo['id'];
@@ -121,6 +138,10 @@ class TDictionariesController extends AppController {
     }
   }
 
+  private function _setParams(){
+    $this->paginate['TDictionary']['conditions']['TDictionary.m_companies_id'] = $this->userInfo['MCompany']['id'];
+    $this->paginate['TDictionary']['conditions']['OR'][0]['TDictionary.m_users_id'] = $this->userInfo['id'];
+  }
   private function _viewElement(){
     $this->set('dictionaryTypeList', Configure::read("dictionaryType"));
   }

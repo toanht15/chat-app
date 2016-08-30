@@ -58,6 +58,10 @@ table {
   border-collapse: collapse;
   border: none;
 
+  tbody.sortable {
+    position: relative;
+  }
+
   tr:hover, tr.on {
     background-color: rgba(195, 214, 155, 0.1);
   }
@@ -2300,6 +2304,9 @@ ul.naviBtn {
           a {
             margin: 5px;
           }
+      }
+      .ui-sortable-helper {
+          display: table;
       }
   }
 }

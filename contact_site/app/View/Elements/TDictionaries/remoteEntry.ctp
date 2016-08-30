@@ -2,6 +2,7 @@
     popupEvent.closePopup = function(){
         var dictionaryId = document.getElementById('TDictionaryId').value;
         var word = document.getElementById('TDictionaryWord').value;
+        var sort = document.getElementById('TDictionarySort').value;
         var type = document.getElementById('TDictionaryType').value;
         $.ajax({
             type: "post",
@@ -9,6 +10,7 @@
             data: {
                 dictionaryId: dictionaryId,
                 word: word,
+                sort: sort,
                 type: type
             },
             cache: false,
@@ -70,6 +72,10 @@
         <div>
             <label class="require">使用範囲</label>
             <?= $this->Form->input('type', array('type' => 'select', 'options' => $dictionaryTypeList, 'empty' => '-- 使用範囲を選択してください --', 'div' => false, 'label' => false)) ?>
+        </div>
+        <div>
+            <label>表示順</label>
+            <?= $this->Form->input('sort', array('type' => 'number', 'div' => false, 'class' => 'tRight', 'label' => false)) ?>
         </div>
     </div>
 <?= $this->Form->end(); ?>
