@@ -1002,28 +1002,358 @@ ul.naviBtn {
 
   #customer_main {
     width: 100%;
-    float: left;
-    transition: width 500ms linear 0s;
+    // float: left;
+    // transition: width 500ms linear 0s;
   }
 
-  #customer_sub  {
-    float: right;
-    width: 0%;
-    opacity: 0;
+  #customer_sub_pop  {
     display: none;
-    transition: width 500ms linear 0ms, opacity 400ms linear 100ms;
 
-    div.card-shadow * {
-      opacity: 0;
-      transition: opacity 100ms linear 40ms;
+    #bk-ground {
+      position: fixed;
+      top:0;
+      left:0;
+      right:0;
+      bottom: 0;
+      z-index:3;
+      background-color: rgba(0,0,0,0.7);
     }
 
-    a.customer_detail_btn {
-      border-radius: 15px;
-      height: 25px;
-      width: 25px;
-      margin: 5px 2px;
-      text-align: center;
+    #customer_sub {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      z-index: 4;
+      font-size: 16px;
+
+      @mixin dl2column {
+        dl {
+          font-size: 0.9em;
+          display: inline-block;
+          dt,dd {
+            float: left;
+            margin: 0;
+            height: 2em;
+          }
+          dt {
+            width: 40%;
+            font-size: 0.8em;
+          }
+          dd {
+            width: 60%;
+            font-weight: bold;
+          }
+        }
+      }
+
+      .flexBoxCol {
+        display: flex;
+      }
+
+      ul {
+        padding: 0;
+        margin: 0;
+        li { list-style:none }
+      }
+
+      #sub_contents {
+        $content-width: 20em;
+        width: $content-width*2;
+        background-color: #EFEFEF;
+        margin: 0 auto;
+        position: absolute;
+        top: 100px;
+        left: 0;
+        right: 0;
+
+        .flexBoxCol div {
+          margin-bottom: 0.5em;
+        }
+        .card {
+          background-color: #FFF;
+          padding: 0.5em;
+        }
+
+        #cus_info_header {
+          * {
+            font-size: 1.2em;
+          }
+          h2 {
+            margin: 0;
+            padding: 0.5em;
+            background-color: $main-color;
+            color: #FFF;
+            display: block;
+          }
+
+          div {
+            position: absolute;
+            top: 0;
+            right: 0;
+            padding: 0.25em;
+
+            a {
+              margin-left: 0.5em;
+              border-radius: 15px;
+              width: 1.25em;
+              height: 1.25em;
+            }
+          }
+
+        }
+
+
+
+        [id$='Contents'] {
+          padding: 1em;
+          * {
+            font-size: 0.95em;
+          }
+        }
+
+        #leftContents {
+          width: $content-width;
+
+          ul.tabStyle {
+            li {
+              color: #FFF;
+              padding: 3px 10px 2px 10px;
+              margin-right: 3px;
+              border-radius: 5px 5px 0 0;
+              background-color: #ADADAD;
+              &.on {
+                background-color: $main-color;
+              }
+            }
+          }
+
+          > div {
+            border: 5px solid $main-color;
+            background-color: #FFF;
+            padding: 3px 2px;
+          }
+
+          #chatContent {
+            ul {
+              overflow-y: auto;
+              overflow-x: hidden;
+              height: 20em;
+              width: 100%;
+              border: 1px solid #909090;
+              margin-bottom: 0.5em;
+
+            }
+
+
+            textarea#sendMessage {
+              border-radius: 5px!important;
+              border: 1px solid $line-color!important;
+              padding: 0.5em;
+              margin-top: 0;
+
+              &:focus {
+                  outline: none!important;
+                  border-color: $main-color!important;
+              }
+              &.form-error:focus {
+                  border-color: $error-color!important;
+              }
+            }
+
+            div#wordListArea {
+                display: none;
+                position: absolute;
+                top: -175px;
+                left: 8px;
+                width: 200px;
+                background-color: #FFF;
+                margin-top: 5px;
+                padding: 0.5em;
+                box-sizing: border-box;
+                border-radius: 5px 5px 0 0;
+                box-shadow: 0 0 2px 0px rgba(0, 0, 0, 0.8);
+
+              select#entryWordList {
+                opacity: 0;
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 0;
+                height: 0;
+              }
+
+              input {
+                border-width: 0;
+                border-bottom: 1px solid #949494;
+                padding: 5px 10px;
+                width: 170px;
+                background-color: #ececec;
+                font-size: 12px;
+              }
+
+              ul {
+                padding: 0;
+                list-style-type: none;
+                background-color: #FFF;
+                height: 120px;
+                overflow-y: auto;
+                overflow-x: hidden;
+                margin: 5px 0;
+
+                li {
+                  padding: 3px;
+                  border: 1px solid #909090;
+                  border-top-width: 0;
+                  white-space: pre-wrap;
+                  word-break: break-all;
+                  word-wrap: break-word;
+
+                  &.selected {
+                    background-color: #e8ffee;
+                  }
+
+                  &:first-child {
+                      border-top: 1px solid #909090;
+                  }
+                }
+              }
+            }
+
+
+            #chatTalk {
+              height: 300px;
+              padding: 5px;
+              border: 1px solid #8F8F8F;
+              overflow-x: hidden;
+              overflow-y: scroll;
+              background-color: #FDFDFD;
+              margin: 0;
+
+              * {
+                color: #8A8A8A;
+              }
+
+              li {
+                margin: 10px 0;
+                padding: 5px;
+                font-size: 12px;
+                border: 1px solid #C9C9C9;
+                color: #8A8A8A;
+                white-space: pre-wrap!important;
+                word-break: break-all!important;
+
+                :last-child {
+                    margin-bottom: 20px;
+                }
+
+                &.sinclo_re {
+                    margin-right: 10px;
+                    border-radius: 5px 5px 5px 0;
+                    background-color: #F1F5C8;
+                }
+
+                &.sinclo_se, &.sinclo_auto {
+                    border-radius: 5px 5px 0;
+                    margin-left: 10px;
+                    background-color: #FFF;
+
+                    span.cName {
+                      display: block;
+                      color: $main-color;
+                      font-weight: bold;
+                      font-size: 13px;
+                      margin: 0 0 5px 0;
+                    }
+                }
+                &.sinclo_se span.cName{
+                  color: #c3d69b!important;
+                }
+
+                &.sinclo_auto span.cName{
+                  color: #C9C9C9!important;
+                }
+
+                &.sinclo_etc {
+                    border: none;
+                    text-align: center;
+                    margin: 0 auto;
+                    font-weight: bold;
+                }
+
+                &.typeing_message {
+                  background-color: #e8e8e8!important;
+                }
+
+              }
+            }
+
+            #sinclo_sendbtn {
+              background-color: #aeca74;
+              border-radius: 5px;
+              padding: 5px;
+              font-size: 15px;
+              color: #FFF;
+              height: 30px;
+              user-select: none;
+              box-shadow: 0 0 2px rgba(0,0,0,0.5);
+              display: block;
+              text-align: center;
+              margin: 5px 3px;
+
+              &:hover, &.on {
+                background-color: #9ab562;
+                cursor: pointer;
+              }
+            }
+          }
+        }
+
+        #rightContents {
+          width: $content-width;
+
+          .detailForm {
+            li {
+              margin-bottom: 5px;
+              label {
+                width: 8em;
+                display: block;
+                float: left;
+                clear: both;
+              }
+              textarea {
+                width: 100%;
+                resize: none;
+                margin-top: 0.5em;
+              }
+            }
+          }
+
+          .nowInfo  {
+            @include dl2column;
+          }
+
+          .connectionBtn {
+            text-align:center;
+
+            a {
+              border-radius: 5px;
+              text-decoration: none;
+              background-color: #788DCA;
+              color: #FFF;
+              font-weight: normal;
+              width: 100%;
+              padding: 5px;
+              display: block;
+            }
+
+          }
+          .hardInfo {
+            @include dl2column;
+          }
+        }
+      }
     }
   }
 
@@ -1058,48 +1388,6 @@ ul.naviBtn {
     }
   }
 
-  &.showDetail {
-    #customer_main {
-      width: 73%;
-      float: left;
-      transition: width 300ms linear 0ms;
-    }
-
-
-    #customer_sub  {
-      float: right;
-      width: 25%;
-      opacity: 1;
-      transition: width 300ms linear 0ms, opacity 300ms linear 200ms;
-
-      div.card-shadow * {
-        opacity: 1;
-        transition: opacity 100ms linear 50ms;
-      }
-
-      #customer_subtitle {
-          position: relative;
-
-          &:before {
-              content: "";
-              background-image: url('/img/sub_icon.png');
-              background-size: 20px;
-              width: 20px;
-              height: 50px;
-              background-position: 0;
-              display: block;
-              transform: rotate(45deg);
-              position: absolute;
-              top: 0;
-              bottom: 0;
-              left: 10px;
-              background-repeat: no-repeat;
-          }
-
-          h1 { padding-left: 20px }
-      }
-    }
-  }
   .monitorOn, .monitorOn * {
     color: #788DCA;
   }
@@ -1213,7 +1501,7 @@ ul.naviBtn {
 
   }
 
-  #customer_sub  {
+  #customer_sub_pop  {
 
     h2 {
       font-size: 15px;
@@ -1263,7 +1551,6 @@ ul.naviBtn {
     }
 
     #chatContent {
-      margin: 0 5px;
 
       #chatMenu {
         visibility: hidden;
@@ -1281,147 +1568,6 @@ ul.naviBtn {
         }
       }
 
-      textarea#sendMessage {
-        border-radius: 5px!important;
-        border: 1px solid $line-color!important;
-        padding: 5px;
-        margin-top: 0;
-
-        &:focus {
-            outline: none!important;
-            border-color: $main-color!important;
-        }
-        &.form-error:focus {
-            border-color: $error-color!important;
-        }
-      }
-
-      div#wordListArea {
-          display: none;
-          position: absolute;
-          top: -175px;
-          left: 8px;
-          width: 200px;
-          background-color: #FFF;
-          margin-top: 5px;
-          padding: 0.5em;
-          box-sizing: border-box;
-          border-radius: 5px 5px 0 0;
-          box-shadow: 0 0 2px 0px rgba(0, 0, 0, 0.8);
-
-        select#entryWordList {
-          opacity: 0;
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 0;
-          height: 0;
-        }
-
-        input {
-          border-width: 0;
-          border-bottom: 1px solid #949494;
-          padding: 5px 10px;
-          width: 170px;
-          background-color: #ececec;
-          font-size: 12px;
-        }
-
-        ul {
-          padding: 0;
-          list-style-type: none;
-          background-color: #FFF;
-          height: 120px;
-          overflow-y: auto;
-          overflow-x: hidden;
-          margin: 5px 0;
-
-          li {
-            padding: 3px;
-            border: 1px solid #909090;
-            border-top-width: 0;
-            white-space: pre-wrap;
-            word-break: break-all;
-            word-wrap: break-word;
-
-            &.selected {
-              background-color: #e8ffee;
-            }
-
-            &:first-child {
-                border-top: 1px solid #909090;
-            }
-          }
-        }
-      }
-
-
-      #chatTalk {
-        height: 300px;
-        padding: 5px;
-        border: 1px solid #8F8F8F;
-        overflow-x: hidden;
-        overflow-y: scroll;
-        background-color: #FDFDFD;
-        margin: 0;
-
-        * {
-          color: #8A8A8A;
-        }
-
-        li {
-          margin: 10px 0;
-          padding: 5px;
-          font-size: 12px;
-          border: 1px solid #C9C9C9;
-          color: #8A8A8A;
-          white-space: pre-wrap!important;
-          word-break: break-all!important;
-
-          :last-child {
-              margin-bottom: 20px;
-          }
-
-          &.sinclo_re {
-              margin-right: 10px;
-              border-radius: 5px 5px 5px 0;
-              background-color: #F1F5C8;
-          }
-
-          &.sinclo_se, &.sinclo_auto {
-              border-radius: 5px 5px 0;
-              margin-left: 10px;
-              background-color: #FFF;
-
-              span.cName {
-                display: block;
-                color: $main-color;
-                font-weight: bold;
-                font-size: 13px;
-                margin: 0 0 5px 0;
-              }
-          }
-          &.sinclo_se span.cName{
-            color: #c3d69b!important;
-          }
-
-          &.sinclo_auto span.cName{
-            color: #C9C9C9!important;
-          }
-
-          &.sinclo_etc {
-              border: none;
-              text-align: center;
-              margin: 0 auto;
-              font-weight: bold;
-          }
-
-          &.typeing_message {
-            background-color: #e8e8e8!important;
-          }
-
-        }
-      }
 
       textarea {
         margin: 5px 1%;
@@ -1432,26 +1578,6 @@ ul.naviBtn {
         background-color: #FFF;
         display: block;
       }
-
-      #sinclo_sendbtn {
-        background-color: #FF7B7B;
-        border-radius: 15px;
-        padding: 5px;
-        font-size: 15px;
-        color: #FFF;
-        height: 30px;
-        user-select: none;
-        box-shadow: 0 0 2px rgba(0,0,0,0.5);
-        display: block;
-        text-align: center;
-        margin: 5px 3px;
-
-        &:hover, &.on {
-          background-color: #D55555;
-          cursor: pointer;
-        }
-      }
-
     }
   }
 }

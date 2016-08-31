@@ -8,7 +8,7 @@
         <?php echo $this->element('Customers/monitor') ?>
     </div>
 
-    <div id='customer_sub' ng-cloak><?php echo $this->element('Customers/detail') ?></div>
+    <div id='customer_sub_pop' ng-cloak><?php echo $this->element('Customers/detail') ?></div>
 
     <div id='customer_tab' ng-cloak>
       <ul>

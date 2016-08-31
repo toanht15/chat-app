@@ -500,7 +500,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         $("#chatTalk message-list").children().remove();
         $("#customer_list tr.on").removeClass('on');
         setTimeout(function(){
-          $("#customer_sub").css("display", "");
+          $("#customer_sub_pop").css("display", "");
         }, 200);
 
         if ( chatApi.tabId !== tabId ) {
@@ -525,7 +525,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           $("#chatContent").removeClass("connectChat");
         }
         setTimeout(function(){
-          $("#customer_sub").css("display", "block");
+          $("#customer_sub_pop").css("display", "block");
         }, 400);
       }
     };
