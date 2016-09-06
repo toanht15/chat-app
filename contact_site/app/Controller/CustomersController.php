@@ -40,10 +40,9 @@ class CustomersController extends AppController {
     foreach ( (array)$dictionaryList as $key => $val ) {
       $list[] = [
         'id' => $key,
-        'label' => $val
+        'label' => $this->setChatValiable($val)
       ];
     }
-
     $widgetSettings = $this->MWidgetSetting->coFind('first', null);
 
     // ユーザーの最新情報を取得

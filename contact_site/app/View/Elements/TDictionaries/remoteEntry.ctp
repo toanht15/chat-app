@@ -51,12 +51,19 @@
       var textArea = document.getElementById('TDictionaryWord');
       switch(type){
           case 1:
-          if (textArea.value.length > 0) {
-              textArea.value += "\n";
-          }
-          textArea.value += "[] ";
-          textArea.focus();
+            if (textArea.value.length > 0) {
+                textArea.value += "\n";
+            }
+            textArea.value += "[] ";
+            break;
+          case 2:
+            textArea.value += "{!company}";
+            break;
+          case 3:
+            textArea.value += "{!user}";
+            break;
       }
+      textArea.focus();
     }
 </script>
 <?= $this->Form->create('TDictionary', array('action' => 'add')); ?>
@@ -65,7 +72,11 @@
         <div>
             <div id="inputStr">
               <label class="require">入力文字</label>
-              <span class="greenBtn btn-shadow" onclick="addOption(1)">選択肢を追加する</span>
+              <menu class="w100">
+                <span class="greenBtn btn-shadow" onclick="addOption(1)">選択肢</span>
+                <span class="greenBtn btn-shadow" onclick="addOption(2)">企業名</span>
+                <span class="greenBtn btn-shadow" onclick="addOption(3)">表示名</span>
+              </menu>
             </div>
             <?= $this->Form->textarea('word', array('placeholder' => '入力文字', 'div' => false, 'label' => false, 'maxlength' => 200)) ?>
         </div>

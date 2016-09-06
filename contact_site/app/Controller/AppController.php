@@ -228,6 +228,18 @@ class AppController extends Controller {
     $this->Session->write('global.message', ['type'=>$type, 'text' => $text]);
   }
 
+  public function setChatValiable($val) {
+    $ret = $val;
+    // 企業名
+    $ret = str_replace("{!company}", $this->userInfo['MCompany']['company_name'], $ret);
+    // 表示名
+    $ret = str_replace("{!user}", $this->userInfo['display_name'], $ret);
+    return $ret;
+  }
+
+  /**
+   * jsonエンコード
+   */
   public function jsonEncode($val) {
     return json_encode($val, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_FORCE_OBJECT );
   }

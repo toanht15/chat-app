@@ -8,8 +8,8 @@ $line-color: #909090;
 $shadow-color: rgba(0, 0, 0, 0.3);
 $header-btn-hover-color: #D6E8B0;
 $content-min-width: 800px;
-$sidebar-z-index: 4;
-$sub-sidebar-z-index: 3;
+$sidebar-z-index: 6;
+$sub-sidebar-z-index: 5;
 
 * {
   -webkit-box-sizing: border-box;
@@ -100,6 +100,12 @@ table {
     }
 
   }
+
+}
+
+menu {
+  display: flex;
+  flex-direction: row;
 
 }
 
@@ -1025,11 +1031,12 @@ ul.naviBtn {
     #customer_sub {
       position: fixed;
       top: 0;
-      left: 0;
+      left: 60px;
       bottom: 0;
       right: 0;
       z-index: 4;
       font-size: 16px;
+      overflow: auto;
 
       @mixin dl2column {
         dl {
@@ -1246,7 +1253,7 @@ ul.naviBtn {
                 cursor: pointer;
                 width: 10em;
                 font-weight: normal;
-                font-size: 1em;
+                font-size: 0.8em;
                 padding: 0.25em 0.8em;
               }
             }
@@ -1516,7 +1523,7 @@ ul.naviBtn {
         left: 0;
         right: 0;
         margin: 10px 20px 20px 20px;
-        z-index: $sub-sidebar-z-index - 1;
+        z-index: $sub-sidebar-z-index - 2;
         th {
           transition: width 200ms cubic-bezier(0, 1, 0, 1);
         }
