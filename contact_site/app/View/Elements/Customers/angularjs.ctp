@@ -376,7 +376,15 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       $scope.labelHideList = retList;
     };
 
-    $scope.ua = function(str){
+    $scope.os = function(str){
+      return userAgentChk.os(str);
+    };
+
+    $scope.browser = function(str){
+      return userAgentChk.browser(str);
+    };
+
+    $scope.us = function(str){
       return userAgentChk.init(str);
     };
 
@@ -491,6 +499,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     $scope.showDetail = function(tabId){
       $("#sendMessage").attr('value', '');
       if ( $scope.customerMainClass !== "" ) {
+        $("#customer_sub_pop").css("display", "");
         $scope.customerMainClass = "";
         $scope.detailId = "";
         $scope.typingMessageSe = "";
@@ -499,9 +508,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         chatApi.observeType.emit(chatApi.tabId, false);
         $("#chatTalk message-list").children().remove();
         $("#customer_list tr.on").removeClass('on');
-        setTimeout(function(){
-          $("#customer_sub_pop").css("display", "");
-        }, 200);
 
         if ( chatApi.tabId !== tabId ) {
           window.setTimeout(function(){
@@ -1359,6 +1365,62 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             }
           });
         }, 5);
+      }
+    }
+  });
+
+  sincloApp.directive('ngCustomer', function(){
+    return {
+      restrict: 'A',
+      link: function(scope, elems, attrs, ctrl){
+        scope.getCustomerInfo = function(userId){
+          $.ajax({
+            type: "POST",
+            url: "<?=$this->Html->url(['controller'=>'Customers', 'action' => 'remoteGetCusInfo'])?>",
+            data: {
+              v:  userId
+            },
+            dataType: "json",
+            success: function(json){
+              if ( typeof(json) !== "string" ) {
+                scope.customData = json;
+                scope.customPrevData = angular.copy(json);
+              }
+              else {
+                scope.customData = {};
+                scope.customPrevData = {};
+              }
+            }
+          });
+        };
+        scope.saveCusInfo = function(key, value){
+          if ( ((key in scope.customData) !== (key in scope.customPrevData)) || ((key in scope.customData) && (key in scope.customPrevData) && scope.customData[key] !== scope.customPrevData[key]) ) {
+            var data = {
+                v: scope.monitorList[scope.detailId].userId,
+                i: value
+              };
+            $.ajax({
+              type: "POST",
+              url: "<?=$this->Html->url(['controller'=>'Customers', 'action' => 'remoteSaveCusInfo'])?>",
+              data: data,
+              dataType: "json",
+              success: function(json){
+                if ( json.ret ) {
+                  scope.customPrevData = value;
+                }
+              }
+            });
+          }
+        }
+        scope.$watch('detailId', function(){
+          scope.detail = {};
+          scope.customData = {};
+          scope.customPrevData = {};
+          if ( scope.detailId !== "" && (scope.detailId in scope.monitorList) ) {
+            scope.detail = scope.monitorList[scope.detailId];
+            scope.getCustomerInfo(scope.monitorList[scope.detailId].userId);
+          }
+        });
       }
     }
   });

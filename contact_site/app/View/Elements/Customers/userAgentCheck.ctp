@@ -239,10 +239,23 @@ var userAgentChk = (function(){
       },
       os: function(ua){
         ua = ua + ";";
-        return _pc_chk(ua);
+        var lowUa = ua.toLowerCase();
+        // bot
+        if ( lowUa.match(/bot/) || lowUa.match(/bingpreview/) ) {
+          return _bot_chk(lowUa);
+        }
+        else {
+          return _pc_chk(ua);
+        }
       },
       browser: function(ua){
         ua = ua + ";";
+        var lowUa = ua.toLowerCase();
+        // bot
+        if ( lowUa.match(/bot/) || lowUa.match(/bingpreview/) ) {
+          return "";
+        }
+
         return _browser_chk(ua);
       }
     };

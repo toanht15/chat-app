@@ -4,7 +4,7 @@
  * モニタリング機能
  */
 class CustomersController extends AppController {
-  public $uses = ['THistory', 'THistoryChatLog', 'MUser', 'MWidgetSetting', 'TDictionary'];
+  public $uses = ['THistory', 'THistoryChatLog', 'MUser', 'MCustomer', 'MWidgetSetting', 'TDictionary'];
 
   public function beforeRender(){
     $this->set('siteKey', $this->userInfo['MCompany']['company_key']);
@@ -162,7 +162,73 @@ class CustomersController extends AppController {
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = null;
-    // データーベースへ保存
+  }
+
+  public function remoteGetCusInfo() {
+    Configure::write('debug', 0);
+    $this->autoRender = FALSE;
+    $this->layout = null;
+    $data = "";
+    // 空チェック
+    if ( !empty($this->request->data['v']) ) {
+      // データーベースへ保存
+      $visitorId = $this->request->data['v'];
+
+      $mCustomer = $this->MCustomer->find('first',
+                [
+                  'conditions' => [
+                    'visitors_id' => $visitorId,
+                    'm_companies_id' => $this->userInfo['MCompany']['id']
+                  ],
+                  'order' => ['id' => 'desc']
+                ]
+              );
+
+      if ( !empty($mCustomer) ) {
+        $data = json_decode($mCustomer['MCustomer']['informations']);
+      }
+    }
+    return new CakeResponse(['body' => json_encode($data)]);
+  }
+
+  public function remoteSaveCusInfo() {
+    Configure::write('debug', 0);
+    $this->autoRender = FALSE;
+    $this->layout = null;
+    $ret = false;
+    // 空チェック
+    if ( !empty($this->request->data['v']) && !empty($this->request->data['i'])) {
+      // データーベースへ保存
+      $visitorId = $this->request->data['v'];
+      $value = $this->jsonEncode($this->request->data['i']);
+
+      $saveData = $this->MCustomer->find('first',
+                [
+                  'conditions' => ['visitors_id' => $visitorId],
+                  'order' => ['id' => 'desc']
+                ]
+              );
+
+      $this->MCustomer->begin();
+      if ( empty($saveData) ) {
+        $this->MCustomer->create();
+        $saveData['MCustomer'] = [
+          'visitors_id' => $visitorId
+        ];
+      }
+      $saveData['MCustomer']['m_companies_id'] = $this->userInfo['MCompany']['id'];
+      $saveData['MCustomer']['informations'] = $value;
+
+      if ( $this->MCustomer->save($saveData) ) {
+        $this->MCustomer->commit();
+        $ret = true;
+      }
+      else {
+        $this->MCustomer->rollback();
+      }
+
+    }
+    return new CakeResponse(['body' => json_encode($ret)]);
   }
 
   public function remoteGetStayLogs() {
