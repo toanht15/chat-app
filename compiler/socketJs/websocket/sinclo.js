@@ -257,6 +257,7 @@
       }
 
       obj['prev'] = userInfo.prev;
+      obj.stayCount = userInfo.getStayCount();
 
       emit('customerInfo', obj);
       emit('connectSuccess', {
@@ -319,6 +320,7 @@
       var emitData = userInfo.getSendList();
       emitData.receiveAccessInfoToken = obj.token;
       emitData.widget = window.info.widgetDisplay;
+      emitData.stayCount = userInfo.getStayCount();
       emit('sendAccessInfo', emitData);
     },
     confirmCustomerInfo: function(d) {
@@ -327,6 +329,7 @@
       if ( userInfo.accessType !== cnst.access_type.guest ) return false;
       var emitData = userInfo.getSendList();
       emitData.receiveAccessInfoToken = obj.token;
+      emitData.stayCount = userInfo.getStayCount();
       emit('customerInfo', emitData);
     },
     getConnectInfo: function(d) {

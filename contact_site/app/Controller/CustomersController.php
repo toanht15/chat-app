@@ -102,6 +102,7 @@ class CustomersController extends AppController {
       'ipAddress' => '訪問ユーザ',
       'ua' => 'ユーザー環境',
       'time' => 'アクセス日時',
+      'stayCount' => '訪問回数',
       'stayTime' => '滞在時間',
       'page' => '閲覧ページ数',
       'title' => '閲覧中ページ',

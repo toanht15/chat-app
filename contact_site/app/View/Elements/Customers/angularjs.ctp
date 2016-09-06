@@ -305,6 +305,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       ipAddress : false,
       ua : false,
       time : false,
+      stayCount : false,
       stayTime : false,
       page : false,
       title : false,
@@ -384,7 +385,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       return userAgentChk.browser(str);
     };
 
-    $scope.us = function(str){
+    $scope.ua = function(str){
       return userAgentChk.init(str);
     };
 

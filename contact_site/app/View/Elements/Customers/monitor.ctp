@@ -73,6 +73,7 @@
         <?php endif; ?>
                 <th ng-hide="labelHideList.ipAddress">訪問ユーザ</th>
                 <th ng-hide="labelHideList.ua">ユーザー環境</th>
+                <th ng-hide="labelHideList.stayCount">訪問回数</th>
                 <th ng-hide="labelHideList.time">アクセス日時</th>
                 <th ng-hide="labelHideList.stayTime">滞在時間</th>
                 <th ng-hide="labelHideList.page">閲覧ページ数</th>
@@ -95,6 +96,7 @@
         <?php endif; ?>
                 <th ng-hide="labelHideList.ipAddress" style="width: 8em">訪問ユーザ</th>
                 <th ng-hide="labelHideList.ua" style="width: 7em">ユーザー環境</th>
+                <th ng-hide="labelHideList.stayCount" style="width: 4em">訪問回数</th>
                 <th ng-hide="labelHideList.time" style="width: 6em">アクセス日時</th>
                 <th ng-hide="labelHideList.stayTime" style="width: 5em">滞在時間</th>
                 <th ng-hide="labelHideList.page" style="width: 7em">閲覧ページ数</th>
@@ -150,6 +152,8 @@
           <td ng-hide="labelHideList.ipAddress" class="tCenter">{{monitor.ipAddress}}</td>
           <!-- /* ユーザー環境 */ -->
           <td ng-hide="labelHideList.ua" class="tCenter">{{ua(monitor.userAgent)}}</td>
+          <!-- /* 訪問回数 */ -->
+          <td ng-hide="labelHideList.stayCount" class="tCenter">{{monitor.stayCount}}</td>
           <!-- /* アクセス日時 */ -->
           <td ng-hide="labelHideList.time" class="tCenter">{{monitor.time | customDate}}</td>
           <!-- /* 滞在時間 */ -->
