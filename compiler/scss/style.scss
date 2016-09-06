@@ -2502,9 +2502,11 @@ ul.naviBtn {
 
 #tdictionaries_idx {
   #tdictionaries_menu {
+    :not(#paging){
       .greenBtn {
           border-radius: 15px;
       }
+    }
   }
   #tdictionaries_list {
       .ctrlBtnArea {
