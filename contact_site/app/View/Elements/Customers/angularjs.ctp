@@ -386,7 +386,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     };
 
     $scope.ua = function(str){
-      return userAgentChk.init(str);
+      return userAgentChk.pre(str);
     };
 
     var makeToken = function(){
