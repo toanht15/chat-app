@@ -113,12 +113,22 @@ var _access_type_guest = 1, _access_type_host = 2, userAgentChk, notificationSta
     emit('connected', data);
   });
 
+  function changeSizeOfTbl(){
+    // リアルタイムモニタの高さを指定
+    $("#list_body").height($(window).height() - $("#customer_list").offset().top - 60);
+  }
+
+
+  $(document).ready(function(){
+    changeSizeOfTbl();
+  });
+
+  $(window).resize(function(){
+    changeSizeOfTbl();
+  });
+
 })();
 
-$(document).ready(function(){
-  // リアルタイムモニタの高さを指定
-  $("#list_body").height($(window).height() - $("#customer_list").offset().top - 60);
-});
 
 // -->
 </script>
