@@ -552,16 +552,53 @@
       div#inputStr {
         display: flex;
         flex-direction: column;
-        margin-bottom: 5px;
 
-        span {
-          cursor: pointer;
+        .balloon {
+          display: none;
+          position: fixed;
+          background-color: #FFF;
+          box-shadow: 0 0 1px rgba(0,0,0,0.85);
+          padding: 0.5em 1em;
+          border-radius: 10px!important;
+
+          span{
+            position: relative;
+            cursor: pointer;
+
+            &:before {
+              content: "";
+              border-top: 4px solid rgba(0, 0, 0, 0.13);
+              border-left: 10px solid transparent;
+              border-right: 10px solid transparent;
+              position: absolute;
+              bottom: -1em;
+              left: -0.5em;
+            }
+            &:after {
+              content: "";
+              border-top: 10px solid #fff;
+              border-left: 10px solid transparent;
+              border-right: 10px solid transparent;
+              position: absolute;
+              bottom: -1em;
+              left: -0.5em;
+            }
+          }
+
         }
+      }
+
+      textarea {
+        border-radius: 0 0 5px 5px !important;
+        border: 1px solid #909090 !important;
+        padding: 5px;
+        border-top: none;
       }
 
       label {
         width: 5em!important;
         display: block;
+        font-weight: bold;
       }
 
       textarea {

@@ -1,4 +1,9 @@
 <script type="text/javascript">
+    balloonMessages = {
+      1: "選択肢を追加します",
+      2: "企業名を代入する文字列を挿入します",
+      3: "表示名を代入する文字列を挿入します"
+    };
     popupEvent.closePopup = function(){
         var dictionaryId = document.getElementById('TDictionaryId').value;
         var word = document.getElementById('TDictionaryWord').value;
@@ -65,6 +70,15 @@
       }
       textArea.focus();
     }
+    $('menu span').on("mouseover", function(){
+      $('.balloon').children('span').text(balloonMessages[$(this).data('type')]);
+      $('.balloon').css('top', ($(this).offset().top - $(this).outerHeight() - 10) + "px")
+                   .css('display', "block")
+                   .css('left', $(this).offset().left + "px");
+    })
+    .on("mouseout", function(){
+      $('.balloon').css('display', "none");
+    });
 </script>
 <?= $this->Form->create('TDictionary', array('action' => 'add')); ?>
     <div class="form01">
@@ -73,10 +87,11 @@
             <div id="inputStr">
               <label class="require">入力文字</label>
               <menu class="w100">
-                <span class="greenBtn btn-shadow" onclick="addOption(1)">選択肢</span>
-                <span class="greenBtn btn-shadow" onclick="addOption(2)">企業名</span>
-                <span class="greenBtn btn-shadow" onclick="addOption(3)">表示名</span>
+                <span class="btn-shadow" data-type="1" onclick="addOption(1)">選択肢</span>
+                <span class="btn-shadow" data-type="2" onclick="addOption(2)">企業名</span>
+                <span class="btn-shadow" data-type="3" onclick="addOption(3)">表示名</span>
               </menu>
+              <div class="balloon"><span>ほげほげ</span></div>
             </div>
             <?= $this->Form->textarea('word', array('placeholder' => '入力文字', 'div' => false, 'label' => false, 'maxlength' => 200)) ?>
         </div>
