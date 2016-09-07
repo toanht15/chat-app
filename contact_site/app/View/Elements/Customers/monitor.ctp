@@ -161,9 +161,9 @@
           <!-- /* 閲覧ページ数 */ -->
           <td ng-hide="labelHideList.page" class="tCenter">{{monitor.prev.length}}（<a href="javascript:void(0)" class="underL" ng-click="openHistory(monitor)" >移動履歴</a>）</td>
           <!-- /* 閲覧中ページ */ -->
-          <td ng-hide="labelHideList.title" class="tCenter omit"><a href={{monitor.url}} target="_blank" class="underL" ng-if="monitor.title">{{monitor.title}}</a><span ng-if="!monitor.title">{{monitor.url}}</span></td>
+          <td ng-hide="labelHideList.title" class="tLeft omit"><a href={{monitor.url}} target="_blank" class="underL" ng-if="monitor.title">{{monitor.title}}</a><span ng-if="!monitor.title">{{monitor.url}}</span></td>
           <!-- /* 参照元URL */ -->
-          <td ng-hide="labelHideList.referrer" class="tCenter omit"><a href={{monitor.referrer}} target="_blank" class="underL" ng-if="monitor.referrer">{{monitor.referrer}}</a></td>
+          <td ng-hide="labelHideList.referrer" class="tLeft omit"><a href={{monitor.referrer}} target="_blank" class="underL" ng-if="monitor.referrer">{{monitor.referrer}}</a></td>
         </tr>
       </tbody>
     </table>
