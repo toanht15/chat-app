@@ -2,8 +2,8 @@
     <thead>
         <tr>
             <th width="10%">日時</th>
-            <th width="10%">IPアドレス</th>
-            <th width="20%">プラットフォーム<br>ブラウザ</th>
+            <th width="15%">訪問ユーザ</th>
+            <th width="15%">プラットフォーム<br>ブラウザ</th>
             <th width="25%">参照元URL</th>
             <th width=" 5%">閲覧<br>ページ数</th>
             <th width="10%">滞在時間</th>
@@ -15,7 +15,7 @@
 <?php foreach($historyList as $key => $history): ?>
         <tr>
             <td class="tRight pre"><?=date_format(date_create($history['THistory']['access_date']), "Y/m/d\nH:i:s")?></td>
-            <td class="tLeft"><?=h($history['THistory']['ip_address'])?></td>
+            <td class="tLeft pre">{{ ui('<?=h($history['THistory']['ip_address'])?>', <?=json_encode($history['MCustomer']['informations'])?>) }}</td>
             <td class="tLeft pre">{{ ua('<?=h($history['THistory']['user_agent'])?>') }}</td>
             <td class="tLeft omit"><a href="<?=h($history['THistory']['referrer_url'])?>" target="history"><?=h($history['THistory']['referrer_url'])?></a></td>
             <td class="tCenter">

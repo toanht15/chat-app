@@ -149,7 +149,7 @@
         <?php endif; ?>
 
           <!-- /* 訪問ユーザ */ -->
-          <td ng-hide="labelHideList.ipAddress" class="tCenter">{{monitor.ipAddress}}</td>
+          <td ng-hide="labelHideList.ipAddress" class="tCenter pre">{{ui(monitor)}}</td>
           <!-- /* ユーザー環境 */ -->
           <td ng-hide="labelHideList.ua" class="tCenter pre">{{ua(monitor.userAgent)}}</td>
           <!-- /* 訪問回数 */ -->

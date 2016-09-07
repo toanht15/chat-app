@@ -312,6 +312,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       referrer : false
     };
     $scope.monitorList = {};
+    $scope.customerList = {};
     $scope.messageList = [];
     $scope.chatList = [];
     $scope.typingMessageSe = "";
@@ -387,6 +388,22 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     $scope.ua = function(str){
       return userAgentChk.pre(str);
+    };
+
+    $scope.ui = function(m){
+      var showData = [];
+
+      if ( (m.userId in $scope.customerList) && Object.keys($scope.customerList[m.userId]).length > 0 ) {
+        var c = $scope.customerList[m.userId];
+        if ( ('company' in c) && c.company.length > 0 ) {
+          showData.push(c.company); // 会社名
+        }
+        if ( ('name' in c) && c.name.length > 0 ) {
+          showData.push(c.name); // 名前
+        }
+      }
+      showData.push(m.ipAddress); // IPアドレス
+      return showData.join("\n");
     };
 
     var makeToken = function(){
@@ -585,6 +602,31 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       }
     }
 
+    $scope.getCustomerInfoFromMonitor = function(m){
+      $scope.getCustomerInfo(m.userId, function(ret){
+        $scope.customerList[m.userId] = ret;
+      });
+    };
+
+    // 顧客の詳細情報を取得する
+    $scope.getCustomerInfo = function(userId, callback){
+      $.ajax({
+        type: "POST",
+        url: "<?=$this->Html->url(['controller'=>'Customers', 'action' => 'remoteGetCusInfo'])?>",
+        data: {
+          v:  userId
+        },
+        dataType: "json",
+        success: function(json){
+          var ret = {};
+          if ( typeof(json) !== "string" ) {
+            ret = json;
+          }
+          callback(ret);
+        }
+      });
+    };
+
     $scope.isset = function(value){
       var result;
       if ( angular.isUndefined(value) ) {
@@ -664,6 +706,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     function pushToList(obj){
       $scope.monitorList[obj.tabId] = obj;
+
+      $scope.getCustomerInfoFromMonitor(obj);
 
       if ( 'connectToken' in obj && 'responderId' in obj) {
         $scope.monitorList[obj.tabId].connectToken = obj.connectToken;
@@ -1381,26 +1425,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     return {
       restrict: 'A',
       link: function(scope, elems, attrs, ctrl){
-        scope.getCustomerInfo = function(userId){
-          $.ajax({
-            type: "POST",
-            url: "<?=$this->Html->url(['controller'=>'Customers', 'action' => 'remoteGetCusInfo'])?>",
-            data: {
-              v:  userId
-            },
-            dataType: "json",
-            success: function(json){
-              if ( typeof(json) !== "string" ) {
-                scope.customData = json;
-                scope.customPrevData = angular.copy(json);
-              }
-              else {
-                scope.customData = {};
-                scope.customPrevData = {};
-              }
-            }
-          });
-        };
         scope.saveCusInfo = function(key, value){
           if ( ((key in scope.customData) !== (key in scope.customPrevData)) || ((key in scope.customData) && (key in scope.customPrevData) && scope.customData[key] !== scope.customPrevData[key]) ) {
             var data = {
@@ -1413,8 +1437,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
               data: data,
               dataType: "json",
               success: function(json){
-                if ( json.ret ) {
+                if ( json ) {
                   scope.customPrevData = value;
+                  scope.customerList[scope.monitorList[scope.detailId].userId] = angular.copy(value);
                 }
               }
             });
@@ -1426,7 +1451,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           scope.customPrevData = {};
           if ( scope.detailId !== "" && (scope.detailId in scope.monitorList) ) {
             scope.detail = scope.monitorList[scope.detailId];
-            scope.getCustomerInfo(scope.monitorList[scope.detailId].userId);
+            scope.getCustomerInfo(scope.monitorList[scope.detailId].userId, function(ret){
+              scope.customData = ret;
+              scope.customPrevData = angular.copy(ret);
+              scope.customerList[scope.monitorList[scope.detailId].userId] = angular.copy(scope.customData);
+            });
           }
         });
       }

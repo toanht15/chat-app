@@ -15,7 +15,8 @@ class HistoriesController extends AppController {
       'fields' => [
         'THistory.*',
         'THistoryChatLog.*',
-        'THistoryStayLog.*'
+        'THistoryStayLog.*',
+        'MCustomer.*'
       ],
       'joins' => [
         [
@@ -236,6 +237,16 @@ class HistoriesController extends AppController {
   }
 
   private function _setList($type=true){
+    // ユーザー情報の取得
+    $this->paginate['THistory']['joins'][] = [
+      'type' => 'LEFT',
+      'table' => '(SELECT visitors_id, informations FROM m_customers WHERE m_customers.m_companies_id = ' . $this->userInfo['MCompany']['id'] . ')',
+      'alias' => 'MCustomer',
+      'conditions' => [
+        'MCustomer.visitors_id = THistory.visitors_id'
+      ]
+    ];
+    // チャットのみ表示との切り替え
     if ( !$this->coreSettings[C_COMPANY_USE_CHAT] || strcmp($type, 'false') === 0 ) {
       $this->paginate['THistory']['joins'][0]['type'] = "LEFT";
     }
@@ -247,7 +258,6 @@ class HistoriesController extends AppController {
     $historyList = $this->paginate('THistory');
 
     // チャット担当者リスト
-    // select * from t_history_chat_logs WHERE  GROUP BY t_histories_id, m_users_id
     $chat = [];
     if ( !empty($historyList) ) {
       $params = [

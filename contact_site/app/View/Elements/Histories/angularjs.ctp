@@ -7,6 +7,22 @@
       return userAgentChk.pre(str);
     };
 
+    $scope.ui = function(ip, customerList){
+      var showData = [];
+
+      if ( customerList !== "" && customerList != null && customerList !== undefined ) {
+        var c = JSON.parse(customerList);
+        if ( ('company' in c) && c.company.length > 0 ) {
+          showData.push(c.company); // 会社名
+        }
+        if ( ('name' in c) && c.name.length > 0 ) {
+          showData.push(c.name); // 名前
+        }
+      }
+      showData.push(ip); // IPアドレス
+      return showData.join("\n");
+    };
+
   <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
     angular.element('label[for="g_chat"]').on('change', function(e){
       var url = "<?=$this->Html->url(['controller' => 'Histories', 'action'=>'index'])?>?isChat=" + e.target.checked;
