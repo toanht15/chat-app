@@ -1426,7 +1426,16 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       restrict: 'A',
       link: function(scope, elems, attrs, ctrl){
         scope.saveCusInfo = function(key, value){
-          if ( ((key in scope.customData) !== (key in scope.customPrevData)) || ((key in scope.customData) && (key in scope.customPrevData) && scope.customData[key] !== scope.customPrevData[key]) ) {
+          if ( !(key in scope.customData) ) return false;
+          var ret = true;
+          // 新規記入でない場合
+          if ( (key in scope.customPrevData) ) {
+            // 変わっていない場合
+            if ( scope.customData[key] === scope.customPrevData[key] ) {
+              ret = false;
+            }
+          }
+          if ( ret ) {
             var data = {
                 v: scope.monitorList[scope.detailId].userId,
                 i: value
@@ -1438,7 +1447,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
               dataType: "json",
               success: function(json){
                 if ( json ) {
-                  scope.customPrevData = value;
+                  scope.customPrevData = angular.copy(value);
                   scope.customerList[scope.monitorList[scope.detailId].userId] = angular.copy(value);
                 }
               }
