@@ -1,7 +1,7 @@
 <div id="bk-ground"></div>
 <div id="customer_sub" ng-customer>
   <div id="sub_contents">
-    <div id="cus_info_header">
+    <div id="cus_info_header" class="noSelect">
       <h2>{{detail.accessId}}</h2>
       <div>
         <!-- 閉じる -->
@@ -19,9 +19,9 @@
         <!-- 最小化 -->
       </div>
     </div>
-    <div class="flexBoxCol">
+    <div id="cus_info_contents" class="flexBoxCol">
       <div id="leftContents">
-        <ul class="tabStyle flexBoxCol">
+        <ul class="tabStyle flexBoxCol noSelect">
           <li class="on">現在のチャット</li>
           <!-- <li>過去のチャット</li> -->
         </ul>

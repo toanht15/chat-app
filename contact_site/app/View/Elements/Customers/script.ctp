@@ -113,6 +113,47 @@ var _access_type_guest = 1, _access_type_host = 2, userAgentChk, notificationSta
     emit('connected', data);
   });
 
+  function changePositionOfPopup(){
+    // スクロールを使用するか
+    var subCon = document.getElementById('sub_contents');
+    // 詳細画面が表示されている場合
+    if ( document.getElementById('customer_sub_pop').style.display === "block" ) {
+
+      /* position-top */
+      if ( $("#sub_contents").css("top").indexOf('px') < 0 ) return false;
+      var subConTop = Number($("#sub_contents").css("top").replace("px", ""));
+
+      // ポップアップが画面外（上）に潜った場合の対処
+      var calc = subConTop - 60;
+      if ( calc < 0 ) {
+        subCon.style.top = "60px";
+      }
+
+      // ポップアップが画面外（下）に潜った場合の対処
+      var subHeader = document.getElementById('cus_info_header'); // モーダル内のヘッダー
+      var calc = window.innerHeight - (subConTop + Number(subHeader.offsetHeight));
+      if ( calc < 0 ) {
+        subCon.style.top = window.innerHeight - Number(subHeader.offsetHeight) + "px";
+      }
+
+      /* position-left */
+      if ( $("#sub_contents").css("left").indexOf('px') < 0 ) return false;
+
+      var subConLeft = Number($("#sub_contents").css("left").replace("px", ""));
+      // ポップアップが画面外（左）に潜った場合の対処
+      if ( subConLeft < 0 ) {
+        subCon.style.left = "0";
+      }
+
+      // ポップアップが画面外（右）に潜った場合の対処
+      var sideBar = document.getElementById('sidebar-main');
+      var widthArea = window.innerWidth - Number(sideBar.offsetWidth); // 有効横幅
+      if ( (widthArea - subConLeft) < 50 ) {
+        subCon.style.left = widthArea - 80 + "px";
+      }
+    }
+  }
+
   function changeSizeOfTbl(){
     // リアルタイムモニタの高さを指定
     $("#list_body").height($(window).height() - $("#customer_list").offset().top - 60);
@@ -121,10 +162,22 @@ var _access_type_guest = 1, _access_type_host = 2, userAgentChk, notificationSta
 
   $(document).ready(function(){
     changeSizeOfTbl();
+    changePositionOfPopup();
+
+    $("#sub_contents").draggable({
+      // containment: "#content",
+      scroll: false,
+      cancel: "#cus_info_contents",
+      stop:function(event, ui) {
+        changePositionOfPopup();
+      }
+    });
+
   });
 
   $(window).resize(function(){
     changeSizeOfTbl();
+    changePositionOfPopup();
   });
 
 })();

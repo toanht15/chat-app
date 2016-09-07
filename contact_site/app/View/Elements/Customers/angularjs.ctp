@@ -518,6 +518,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         chatApi.tabId = "";
       }
       else {
+        setPositionOfPopup();
         $scope.customerMainClass = "showDetail";
         chatApi.token = makeToken();
         $scope.detailId = tabId;
@@ -1190,6 +1191,12 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       $scope.ngChatApi.init();
     });
 
+    // ポップアップをセンターに表示
+    function setPositionOfPopup(){
+      var subContent = document.getElementById("sub_contents");
+      subContent.style.left = ((window.innerWidth-$("#sidebar-main").outerWidth()) - $("#sub_contents").outerWidth())/2 + "px";
+      subContent.style.top = "100px";
+    }
 
   }]);
 

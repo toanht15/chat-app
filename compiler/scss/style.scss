@@ -54,6 +54,11 @@ li {
   font-weight: bold;
 }
 
+.noSelect {
+  user-select: none;
+  cursor: default;
+}
+
 table {
   border-collapse: collapse;
   border: none;
@@ -1046,7 +1051,6 @@ ul.naviBtn {
       right:0;
       bottom: 0;
       z-index:3;
-      background-color: rgba(0,0,0,0.7);
     }
 
     #customer_sub {
@@ -1057,7 +1061,10 @@ ul.naviBtn {
       right: 0;
       z-index: 4;
       font-size: 16px;
-      overflow: auto;
+
+      .scroll {
+        overflow: auto;
+      }
 
       @mixin dl2column {
         dl {
@@ -1105,11 +1112,15 @@ ul.naviBtn {
         $content-width: 25em;
         width: $content-width*2;
         background-color: #EFEFEF;
-        margin: 0 auto;
         position: absolute;
         top: 100px;
-        left: 0;
-        right: 0;
+        box-shadow: 0 0 30px rgba(0,0,0,0.5);
+
+        &.move {
+          position: absolute;
+          top: 100px;
+          left: 0;
+        }
 
         .flexBoxCol div {
           margin-bottom: 0.5em;
@@ -1131,6 +1142,7 @@ ul.naviBtn {
             background-color: $main-color;
             color: #FFF;
             display: block;
+            cursor: move;
           }
 
           div {
@@ -1160,6 +1172,7 @@ ul.naviBtn {
           width: $content-width;
 
           ul.tabStyle {
+
             li {
               color: #FFF;
               padding: 3px 10px 2px 10px;
@@ -1556,7 +1569,6 @@ ul.naviBtn {
 
       td, td * {
         cursor: default;
-        user-select: none;
       }
 
       #chatTypeBtn {

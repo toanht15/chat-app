@@ -1,3 +1,4 @@
+<?php echo $this->Html->script("jquery-ui.min.js"); ?>
 <?php echo $this->element('Customers/userAgentCheck') ?>
 <?php echo $this->element('Customers/script') ?>
 <?php echo $this->element('Customers/angularjs') ?>
