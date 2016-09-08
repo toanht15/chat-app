@@ -1,14 +1,22 @@
-<dl>
-  <dt>ユーザーID</dt>
-  <dd><?=$data['THistory']['visitors_id']?></dd>
-  <dt>訪問回数</dt>
-  <dd><?=$data['THistoryCount']['cnt']?> 回</dd>
-  <dt>ユーザーエージェント</dt>
-  <dd><?=$data['THistory']['user_agent']?></dd>
+<ul>
+  <li>
+    <p><span>ユーザーID</span></p>
+    <span><?=$data['THistory']['visitors_id']?></span>
+  </li>
+  <li>
+    <p><span>訪問回数</span></p>
+    <span><?=$data['THistoryCount']['cnt']?> 回</span>
+  </li>
+  <li>
+    <p><span>ユーザーエージェント</span></p>
+    <span><?=$data['THistory']['user_agent']?></span>
+  </li>
   <?php foreach($data['informations'] as $key => $val): ?>
     <?php if( isset($notification[$key]) ): ?>
-      <dt><?=$notification[$key]?></dt>
-      <dd class="pre"><?=$val?></dd>
+      <li>
+        <p><span><?=$notification[$key]?></span></p>
+        <span class="pre"><?=$val?></span>
+      </li>
     <?php endif; ?>
   <?php endforeach; ?>
-</dl>
+</ul>
