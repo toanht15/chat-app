@@ -64,7 +64,7 @@ class TDictionariesController extends AppController {
    * @return void
    * */
   public function remoteSaveEntryForm() {
-    Configure::write('debug', 2);
+    Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
     $saveData = [];
@@ -118,6 +118,23 @@ class TDictionariesController extends AppController {
     }
     $errorMessage = $this->TDictionary->validationErrors;
     return new CakeResponse(['body' => json_encode($errorMessage)]);
+  }
+
+  /**
+   * ソート順更新
+   *
+   * */
+  public function remoteSaveSort(){
+    Configure::write('debug', 2);
+    $this->autoRender = FALSE;
+    $this->layout = 'ajax';
+
+    if ( !empty($this->params->data['list']) ) {
+      $list = $this->params->data['list'];
+
+    }
+
+    exit();
   }
 
 

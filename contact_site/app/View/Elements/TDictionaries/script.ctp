@@ -35,24 +35,48 @@ function openConfirmDialog(id){
   };
 }
 
+function toggleSort(){
+  if ( $(".sortable").is(".move") ) {
+    $(".sortable").removeClass("move").sortable("disable");
+    $("#sortMessage").text("");
+    $("#sortToggleBtn").removeClass("redBtn").addClass("greenBtn");
+    var list = getSort();
+    $.ajax({
+      type: "POST",
+      url: "<?= $this->Html->url(['controller' => 'TDictionaries', 'action' => 'remoteSaveSort']) ?>",
+      data: {
+        list : list
+      },
+      dataType: "html",
+      success: function(){
+
+      }
+    });
+  }
+  else {
+    $(".sortable").addClass("move").sortable("enable");
+    $("#sortMessage").text("　(！) 並び順修正中（保存する際は再びチェックボックスをクリックしてください）");
+    $("#sortToggleBtn").removeClass("greenBtn").addClass("redBtn");
+  }
+}
+
 var getSort = function(){
   var list = [];
   $(".sortable tr").each(function(e){
     list.push($(this).data('id'));
   });
-  return list;
+  return JSON.parse(JSON.stringify(list));
 };
 
 $(document).ready(function(){
-  $(".sortable").sortable({
-    axis: "y",
-    tolerance: "pointer",
-    revert: 100,
-    update: function(e, elem){
-      var nextSortList = getSort();
-console.log('nextSortList', nextSortList);
-console.log('elem', $(elem.item[0]).data('id'));
-    }
-  });
+
+$(".sortable").sortable({
+  axis: "y",
+  tolerance: "pointer",
+  containment: "parent",
+  revert: 100
+});
+$(".sortable").sortable("disable");
+
 });
 </script>

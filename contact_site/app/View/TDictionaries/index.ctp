@@ -5,33 +5,19 @@
 
 <div id='tdictionaries_add_title'>
 	<div class="fLeft"><?= $this->Html->image('dictionary_g.png', array('alt' => '簡易入力メッセージ管理', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?></div>
-	<h1>簡易入力メッセージ管理</h1>
+	<h1>簡易入力メッセージ管理<span id="sortMessage"></span></h1>
 </div>
 
 <div id='tdictionaries_menu' class="p20trl">
 	<div class="fLeft" >
 		<?= $this->Html->image('add.png', array('alt' => '登録', 'class' => 'btn-shadow greenBtn', 'width' => 30, 'height' => 30, 'onclick' => 'openAddDialog()')) ?>
 	</div>
-	<!-- 検索窓 -->
-	<div id="paging" class="fRight">
-		<?php
-			echo $this->Paginator->prev(
-				$this->Html->image('paging.png', array('alt' => '前のページへ', 'width'=>25, 'height'=>25)),
-				array('escape' => false, 'class' => 'btn-shadow greenBtn tr180'),
-				null,
-				array('class' => 'grayBtn tr180')
-			);
-		?>
-		<span style="width: auto!important;padding: 10px 0 0;"> <?php echo $this->Paginator->counter('{:page} / {:pages}'); ?> </span>
-		<?php
-			echo $this->Paginator->next(
-				$this->Html->image('paging.png', array('alt' => '次のページへ', 'width'=>25, 'height'=>25)),
-				array('escape' => false, 'class' => 'btn-shadow greenBtn'),
-				null,
-				array('escape' => false, 'class' => 'grayBtn')
-			);
-		?>
+	<!-- 並び替えモード -->
+	<div class="fRight">
+		<?= $this->Form->checkbox('sort', array('onchange' => 'toggleSort()')) ?>
+		<label for="sort">並び替え／保存</label>
 	</div>
+	<!-- 並び替えモード -->
 </div>
 
 <div id='tdictionaries_list' class="p20x">

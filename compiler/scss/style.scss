@@ -65,6 +65,10 @@ table {
 
   tbody.sortable {
     position: relative;
+
+    &.move tr {
+      cursor: move;
+    }
   }
 
   tr:hover, tr.on {
@@ -2512,10 +2516,15 @@ ul.naviBtn {
 }
 
 #tdictionaries_idx {
+  #sortMessage {
+    color: #E91E63;
+    font-weight: normal;
+  }
   #tdictionaries_menu {
-    :not(#paging){
-      .greenBtn {
-          border-radius: 15px;
+    > .fLeft {
+      img {
+        margin-right: 10px;
+        border-radius: 15px;
       }
     }
   }
