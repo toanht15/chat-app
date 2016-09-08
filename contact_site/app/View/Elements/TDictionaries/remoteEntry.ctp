@@ -2,7 +2,7 @@
     balloonMessages = {
       1: "選択肢を追加します",
       2: "企業名を代入する文字列を挿入します",
-      3: "表示名を代入する文字列を挿入します"
+      3: "表示名（担当者名）を代入する文字列を挿入します"
     };
     popupEvent.closePopup = function(){
         var dictionaryId = document.getElementById('TDictionaryId').value;
