@@ -5,7 +5,7 @@
  */
 class HistoriesController extends AppController {
   public $helpers = ['Time'];
-  public $uses = ['MUser', 'THistory', 'THistoryChatLog', 'THistoryStayLog', 'THistoryShareDisplay'];
+  public $uses = ['MUser', 'MCustomer', 'THistory', 'THistoryChatLog', 'THistoryStayLog', 'THistoryShareDisplay'];
   public $paginate = [
     'THistory' => [
       'limit' => 100,
@@ -65,6 +65,64 @@ class HistoriesController extends AppController {
     $this->_setList($isChat);
   }
 
+  public function remoteGetCustomerInfo() {
+    Configure::write('debug', 2);
+    $this->autoRender = FALSE;
+    $this->layout = 'ajax';
+    $data = [];
+
+    if ( !empty($this->params->query['historyId']) ) {
+      $params = [
+        'fields' => '*',
+        'conditions' => [
+          'id' => $this->params->query['historyId']
+        ]
+      ];
+      $tHistoryData = $this->THistory->coFind('first', $params);
+
+      $params = [
+        'fields' => [
+          'count(*) as cnt'
+        ],
+        'conditions' => [
+          'visitors_id = '.$tHistoryData['THistory']['visitors_id'],
+          'id <= '.$tHistoryData['THistory']['id']
+        ]
+      ];
+      $tHistoryCountData = $this->THistory->coFind('first', $params);
+
+      $mCusData = ['MCustomer' => []];
+      if ( !empty($tHistoryData['THistory']['visitors_id']) ) {
+        $params = [
+          'fields' => [
+            '*',
+          ],
+          'conditions' => [
+            'MCustomer.m_companies_id' => $this->userInfo['MCompany']['id'],
+            'MCustomer.visitors_id' => $tHistoryData['THistory']['visitors_id']
+          ]
+        ];
+        $mCusData = $this->MCustomer->find('first', $params);
+
+        if ( isset($mCusData['MCustomer']['informations']) ) {
+          $mCusData['informations'] = (array)json_decode($mCusData['MCustomer']['informations']);
+        }
+      }
+
+      $data = am($tHistoryData, ['THistoryCount' => $tHistoryCountData[0]], $mCusData);
+    }
+    $this->set('data', $data);
+    // MEMO 動的に項目を変える可能性がある為、べた書きしております。
+    $this->set('notification', [
+      'name' => '名前',
+      'company' => '会社名',
+      'tel' => '電話番号',
+      'mail' => 'メールアドレス',
+      'memo' => 'メモ'
+    ]);
+    return $this->render('/Elements/Histories/remoteGetCustomerInfo');
+  }
+
   public function remoteGetChatLogs() {
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
@@ -107,7 +165,7 @@ class HistoriesController extends AppController {
     // ヘッダー
     $csv[] = [
       "日時",
-      "IPアドレス",
+      "訪問ユーザ",
       "プラットフォーム",
       "ブラウザ",
       "参照元URL",
