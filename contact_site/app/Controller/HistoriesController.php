@@ -10,7 +10,8 @@ class HistoriesController extends AppController {
     'THistory' => [
       'limit' => 100,
       'order' => [
-        'THistory.created' => 'desc'
+        'THistory.created' => 'desc',
+        'THistory.id' => 'desc'
       ],
       'fields' => [
         'THistory.*',
