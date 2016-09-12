@@ -671,18 +671,40 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       disConnect: function(tabId){
         emit("chatEnd", {tabId: tabId, userId: myUserId});
       },
-      notification: function(tabId, accessId, chatMessage){
+      notification: function(monitor){
         if (!('Notification' in window)) return false;
-        var nInstance = new Notification(
-          '【' + accessId + '】新着チャットが届きました',
-          {
-            body: chatMessage,
-            icon: "<?=C_PATH_NODE_FILE_SERVER?>/img/mark.png"
-        });
+        var m = monitor;
+        function getBody(){
+          var options = {
+              body: "",
+              icon: "<?=C_PATH_NODE_FILE_SERVER?>/img/mark.png"
+          };
+
+          var settings = <?=$notificationList?>;
+
+          for(var key in settings){
+            var target = "", opt = settings[key];
+            // タイトル
+            if (Number(opt.type) === Number(<?=C_NOTIFICATION_TYPE_TITLE?>)) {
+              target = m.title;
+            }
+            // URL
+            else if (Number(opt.type) === Number(<?=C_NOTIFICATION_TYPE_URL?>)) {
+              target = m.url;
+            }
+            if (target.indexOf(opt.keyword) > 0) {
+              options.body = opt.name;
+              options.icon = "/img/<?=C_PATH_NOTIFICATION_IMG_DIR?>"+opt.image;
+            }
+          }
+
+          return options;
+        }
+        var nInstance = new Notification('【' + monitor.accessId + '】新着チャットが届きました', getBody());
         nInstance.onclick = function(){
           window.focus(); // 現在のタブにフォーカスを当てる
-          if ( chatApi.tabId !== tabId ) {
-            $scope.showDetail(tabId); // 詳細を開く
+          if ( chatApi.tabId !== monitor.tabId ) {
+            $scope.showDetail(monitor.tabId); // 詳細を開く
           }
           nInstance.close();
         };
@@ -1000,7 +1022,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         // 未読数加算（自分が対応していないとき）
         $scope.monitorList[obj.tabId].chatUnreadCnt++;
         $scope.monitorList[obj.tabId].chatUnreadId = obj.chatId;
-        $scope.ngChatApi.notification(obj.tabId, $scope.monitorList[obj.tabId].accessId, obj.chatMessage);
+        $scope.ngChatApi.notification($scope.monitorList[obj.tabId]);
 
         // 既読にする(対象のタブを開いている、且つ自分が対応しており、フォーカスが当たっているとき)
         if (  obj.tabId === chatApi.tabId && $scope.monitorList[obj.tabId].chat === myUserId && $("#sendMessage").is(":focus") ) {

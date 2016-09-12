@@ -4,7 +4,7 @@
  * モニタリング機能
  */
 class CustomersController extends AppController {
-  public $uses = ['THistory', 'THistoryChatLog', 'MUser', 'MCustomer', 'MWidgetSetting', 'TDictionary'];
+  public $uses = ['THistory', 'THistoryChatLog', 'MUser', 'MCustomer', 'MWidgetSetting', 'MChatNotification', 'TDictionary'];
 
   public function beforeRender(){
     $this->set('siteKey', $this->userInfo['MCompany']['company_key']);
@@ -69,6 +69,15 @@ class CustomersController extends AppController {
 
     $this->set('dictionaryList', $list);
     $this->set('responderList', $this->MUser->coFind('list',["fields" => ["MUser.id", "MUser.display_name"], "recursive" => -1]));
+    $params = [
+      "fields" => ["type", "name", "keyword", "image"], "recursive" => -1
+    ];
+    $ret = $this->MChatNotification->coFind('all',$params);
+    $notificationSettings = [];
+    foreach($ret as $key => $val){
+      $notificationSettings[$key] = $val['MChatNotification'];
+    }
+    $this->set('notificationList', $this->jsonEncode($notificationSettings));
   }
 
   /* *

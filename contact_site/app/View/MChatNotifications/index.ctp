@@ -40,9 +40,9 @@
     <tbody class="sortable">
     <?php foreach((array)$settingList as $key => $val): ?>
       <tr>
-        <td width="26%" class="tLeft"><?=$val['MChatNotification']['name']?></td>
-        <td width="8%" class="tCenter"><?=$this->Html->image("notification/".$val['MChatNotification']['image'], ['width'=>50, 'height'=>50])?></td>
-        <td width="40%" class="tLeft"><?=$val['MChatNotification']['keyword']?></td>
+        <td width="20%" class="tLeft"><?=$val['MChatNotification']['keyword']?></td>
+        <td width="20%" class="tCenter"><?=$this->Html->image("notification/".$val['MChatNotification']['image'], ['width'=>50, 'height'=>50])?></td>
+        <td width="40%" class="tLeft"><?=$val['MChatNotification']['name']?></td>
         <td width="20%" class="tCenter ctrlBtnArea">
           <?php
             echo $this->Html->link(
