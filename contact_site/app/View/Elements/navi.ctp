@@ -2,6 +2,7 @@
 $monitorSelected = "";
 $historySelected = "";
 $settingSelected = "";
+$chatSettingSelected = "";
 switch ($this->name) {
     case 'Customers':
         $monitorSelected = "selected";
@@ -38,8 +39,11 @@ switch ($this->name) {
         <div class="icon <?=$historySelected?>">
             <?= $this->htmlEx->naviLink('履歴', 'history.png', ['href' => ['controller' => 'Histories', 'action' => 'index']]) ?>
         </div>
-        <div class="icon <?=$settingSelected?>" id="setting-icon">
+        <div class="icon <?=$settingSelected?> setting-icon" data-type="common">
             <?= $this->htmlEx->naviLink('設定', 'setting.png') ?>
+        </div>
+        <div class="icon <?=$chatSettingSelected?> setting-icon" data-type="chat">
+            <?= $this->htmlEx->naviLink('チャット設定', 'chat_setting.png') ?>
         </div>
     </div>
 </div>
@@ -47,7 +51,8 @@ switch ($this->name) {
 
 <!-- /* サイドバー２（ここから） */ -->
 <div id="sidebar-sub" class="card-shadow">
-    <div>
+    <!-- /* 共通 */ -->
+    <div data-sidebar-type="common" class="hide">
         <div class="icon">
             <?= $this->htmlEx->naviLink('個人設定', 'personal.png', ['href' => ['controller' => 'PersonalSettings', 'action' => 'index']]) ?>
         </div>
@@ -66,30 +71,57 @@ switch ($this->name) {
         <div class="icon">
             <?= $this->htmlEx->naviLink('ウィジェット', 'widget.png', ['href' => ['controller' => 'MWidgetSettings', 'action' => 'index']]) ?>
         </div>
-        <?php if ($coreSettings[C_COMPANY_USE_CHAT] || strcmp($userInfo['MCompany']['company_key'], "medialink") === 0): ?>
-            <div class="icon">
-                <?= $this->htmlEx->naviLink('メッセージ', 'auto_message.png', ['href' => ['controller' => 'TAutoMessages', 'action' => 'index']]) ?>
-            </div>
-        <?php endif; ?>
-    <?php endif; ?>
-    <?php if ($coreSettings[C_COMPANY_USE_CHAT] || strcmp($userInfo['MCompany']['company_key'], "medialink") === 0): ?>
-        <div class="icon">
-            <?= $this->htmlEx->naviLink('簡易入力', 'dictionary.png', ['href' => ['controller' => 'TDictionaries', 'action' => 'index']]) ?>
-        </div>
-        <div class="icon">
-            <?= $this->htmlEx->naviLink('チャット通知', 'notification.png', ['href' => ['controller' => 'MChatNotifications', 'action' => 'index']]) ?>
-        </div>
     <?php endif; ?>
     </div>
+    <!-- /* 共通 */ -->
+
+    <!-- /* チャット */ -->
+    <?php if ($coreSettings[C_COMPANY_USE_CHAT] || strcmp($userInfo['MCompany']['company_key'], "medialink") === 0): ?>
+      <div data-sidebar-type="chat" class="hide">
+      <?php if ( strcmp($userInfo['permission_level'], C_AUTHORITY_SUPER) === 0 || strcmp($userInfo['permission_level'], C_AUTHORITY_ADMIN) === 0 ): ?>
+        <div class="icon">
+          <?= $this->htmlEx->naviLink('メッセージ', 'auto_message.png', ['href' => ['controller' => 'TAutoMessages', 'action' => 'index']]) ?>
+        </div>
+      <?php endif; ?>
+      <?php if ($coreSettings[C_COMPANY_USE_CHAT] || strcmp($userInfo['MCompany']['company_key'], "medialink") === 0): ?>
+        <div class="icon">
+          <?= $this->htmlEx->naviLink('簡易入力', 'dictionary.png', ['href' => ['controller' => 'TDictionaries', 'action' => 'index']]) ?>
+        </div>
+        <div class="icon">
+          <?= $this->htmlEx->naviLink('チャット通知', 'notification.png', ['href' => ['controller' => 'MChatNotifications', 'action' => 'index']]) ?>
+        </div>
+      <?php endif; ?>
+      </div>
+    <?php endif; ?>
+    <!-- /* チャット */ -->
 </div>
 <!-- /* サイドバー２（ここまで） */ -->
 <script type="text/javascript">
-    $("#setting-icon").toggle(
-        function(){
+  var nowOpenType = "";
+    $(".setting-icon").click(function(){
+      var type = $(this).data("type");
+      if (nowOpenType === type) {
+        $("#sidebar-sub").removeClass('open');
+        $("#sidebar-sub > div").addClass("hide");
+        nowOpenType = "";
+      }
+      else {
+        if ( $("#sidebar-sub").is(".open") ) {
+          $("#sidebar-sub").removeClass('open');
+          $("#sidebar-sub > div").addClass("hide");
+          setTimeout(function(){
+            $("#sidebar-sub div[data-sidebar-type='"+type+"']").removeClass("hide");
             $("#sidebar-sub").addClass('open');
-        },
-        function(){
-            $("#sidebar-sub").removeClass('open');
+            nowOpenType = type;
+          }, 100);
         }
-    );
+        else {
+          $("#sidebar-sub div[data-sidebar-type='"+type+"']").removeClass("hide");
+          $("#sidebar-sub").addClass('open');
+          nowOpenType = type;
+        }
+
+      }
+
+  });
 </script>
