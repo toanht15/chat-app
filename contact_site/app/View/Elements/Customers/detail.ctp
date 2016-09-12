@@ -95,7 +95,7 @@
           <dl>
             <dt>閲覧中ページ</dt>
               <dd class="w100"><a href={{detail.url}} target="_blank" class="underL" ng-if="detail.title">{{detail.title}}</a><span ng-if="!detail.title">{{detail.url}}</span></dd>
-            <dt>閲覧回数</dt>
+            <dt>訪問回数</dt>
               <dd>{{detail.stayCount}} 回</dd>
             <dt>閲覧ページ数</dt>
               <dd>{{detail.prev.length}}（<a href="javascript:void(0)" ng-click="openHistory(detail)">移動履歴</a>）</dd>
