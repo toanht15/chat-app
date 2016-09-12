@@ -402,7 +402,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           showData.push(c.name); // 名前
         }
       }
-      showData.push(m.ipAddress); // IPアドレス
+      // 顧客情報未登録の場合
+      if ( showData.length === 0 ) {
+        showData.push(m.ipAddress); // IPアドレス
+      }
       return showData.join("\n");
     };
 

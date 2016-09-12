@@ -67,7 +67,7 @@ class HistoriesController extends AppController {
   }
 
   public function remoteGetCustomerInfo() {
-    Configure::write('debug', 2);
+    Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
     $data = [];
@@ -115,8 +115,8 @@ class HistoriesController extends AppController {
     $this->set('data', $data);
     // MEMO 動的に項目を変える可能性がある為、べた書きしております。
     $this->set('notification', [
-      'name' => '名前',
       'company' => '会社名',
+      'name' => '名前',
       'tel' => '電話番号',
       'mail' => 'メールアドレス',
       'memo' => 'メモ'

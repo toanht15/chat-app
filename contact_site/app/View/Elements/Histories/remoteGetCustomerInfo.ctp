@@ -11,14 +11,10 @@
     <p><span>ユーザーエージェント</span></p>
     <span><?=$data['THistory']['user_agent']?></span>
   </li>
-  <?php if ( isset($data['informations']) ) : ?>
-    <?php foreach((array)$data['informations'] as $key => $val): ?>
-      <?php if( isset($notification[$key]) ): ?>
-        <li>
-          <p><span><?=$notification[$key]?></span></p>
-          <span class="pre"><?=$val?></span>
-        </li>
-      <?php endif; ?>
-    <?php endforeach; ?>
-  <?php endif; ?>
+  <?php foreach($notification as $key => $val): ?>
+    <li>
+      <p><span><?=$val?></span></p>
+      <span class="pre"><?php if( isset($data['informations'][$key]) ) { echo $data['informations'][$key]; } ?></span>
+    </li>
+  <?php endforeach; ?>
 </ul>

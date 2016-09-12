@@ -5,10 +5,10 @@
             <th width=" 6%" class="noOutCsv">操作</th>
             <th width="15%">訪問ユーザ</th>
             <th width="20%">プラットフォーム<br>ブラウザ</th>
-            <th width="20%">参照元URL</th>
+            <th width="17%">参照元URL</th>
             <th width=" 5%">閲覧<br>ページ数</th>
             <th width=" 8%">滞在時間</th>
-            <th width=" 7%">ステータス</th>
+            <th width="10%">ステータス</th>
             <th width="10%">担当者</th>
         </tr>
     </thead>
