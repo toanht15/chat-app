@@ -40,7 +40,7 @@
       }
 
       /* ウィジェット設定-ギャラリー用 */
-      &.p-show-gallary {
+      &.p-show-gallary, &.p-show-notification-gallary {
         width: 290px;
         max-height: 80%;
 
@@ -664,4 +664,8 @@
 
   }
 
+}
+
+.p-show-notification-gallary {
+  width: 480px!important;
 }

@@ -244,4 +244,28 @@ class AppController extends Controller {
     return json_encode($val, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_FORCE_OBJECT );
   }
 
+  /* *
+   * imagecreatefrom**
+   * */
+  public function imageCreate($extension, $file){
+    if ( preg_match('/^png$/i', $extension) ) {
+      return imagecreatefrompng($file);
+    }
+    if ( preg_match('/^jpeg|jpg$/i', $extension) ) {
+      return imagecreatefromjpeg($file);
+    }
+  }
+
+  /* *
+   * image**
+   * */
+  public function imageOut($extension, $file, $saveFile){
+    if ( preg_match('/^png$/i', $extension) ) {
+      return imagepng($file, $saveFile);
+    }
+    if ( preg_match('/^jpeg|jpg$/i', $extension) ) {
+      return imagejpeg($file, $saveFile);
+    }
+  }
+
 }

@@ -1813,6 +1813,7 @@ ul.naviBtn {
             background-color: #FFF;
             border-right: 1px solid $ssc-border-color;
             width: 36px!important;
+            cursor: pointer;
           }
 
           &.copyArea {
@@ -2538,5 +2539,109 @@ ul.naviBtn {
       .ui-sortable-helper {
           display: table;
       }
+  }
+}
+#chat_notifications_idx {
+  #sortMessage {
+    color: #E91E63;
+    font-weight: normal;
+  }
+  #chat_notifications_menu {
+    > .fLeft {
+      a {
+        width: 30px;
+        height: 30px;
+        margin-right: 10px;
+        border-radius: 15px;
+      }
+    }
+  }
+  #chat_notifications_list {
+      .ctrlBtnArea {
+          padding: 0 25px;
+          a {
+            margin: 5px;
+          }
+      }
+      .ui-sortable-helper {
+          display: table;
+      }
+  }
+  #chat_notifications_entry {
+    li {
+      span {
+        width: 15em;
+        padding-top: 5px;
+        display: block;
+      }
+
+      &.error-message {
+        padding-left: 15em!important;
+      }
+    }
+
+    // TODO 共通化
+    #imageSelectBtns {
+      display: flex;
+
+      &.chooseImg {
+          display: flex;
+          flex-direction: row;
+      }
+
+      div#picDiv {
+          margin-right: 10px;
+          border: 1px solid #444;
+          width: 72px;
+          height: 72px;
+      }
+
+      div#picChooseDiv {
+          > div {
+              cursor: pointer!important;
+              height: 30px;
+              background-color: $main-color;
+              color: #FFF;
+              font-weight: bold;
+              vertical-align: middle;
+              padding: 8px 10px;
+              display: block;
+              border-radius: 5px;
+              text-decoration: none;
+              margin: 3.5px 0;
+
+              &#fileTagWrap {
+                  position: relative;
+                  overflow: hidden;
+
+                  input[type='file'] {
+                      cursor: pointer!important;
+                      opacity: 0;
+                      position: absolute;
+                      top: 0px;
+                      right: 0px;
+                      height: 30px;
+                      display: block;
+                      font-size: 300px;
+                  }
+
+              }
+          }
+
+      }
+    }
+
+    #action_btn_area {
+      padding: 10px;
+      display: flex;
+
+      a {
+        width: 100px;
+        padding: 10px;
+        display: block;
+        margin: 0 auto;
+        text-align: center;
+      }
+    }
   }
 }

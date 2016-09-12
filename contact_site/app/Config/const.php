@@ -22,6 +22,10 @@ else {
   define('C_PATH_WIDGET_IMG_DIR', ROOT.DS.APP_DIR.DS.WEBROOT_DIR.DS.'files'); // ウィジェット用画像保存先
 }
 
+// 通知機能
+define('C_PATH_NOTIFICATION_IMG_DIR', 'notification/'); // デスクトップ通知用画像参照先
+define('C_PATH_NOTIFICATION_IMG_SAVE_DIR', ROOT.DS.APP_DIR.DS.WEBROOT_DIR.DS.'img'.DS.'notification'.DS); // デスクトップ通知用画像保存先
+
 // 使用機能
 define('C_COMPANY_USE_SYNCLO', 'synclo'); // 画面同期
 define('C_COMPANY_USE_CHAT', 'chat'); // オペレーターが待機中の時のみ表示する
@@ -47,6 +51,10 @@ define('C_WIDGET_SHOW_COMP', 2); // 企業名
 // チャット送信のアクション種別
 define('C_WIDGET_SEND_ACT_PUSH_KEY', 1); // キーアクション込み
 define('C_WIDGET_SEND_ACT_PUSH_BTN', 2); // ボタンのみ
+
+// チャット通知の種別
+define('C_NOTIFICATION_TYPE_TITLE', 1); // タイトル
+define('C_NOTIFICATION_TYPE_URL', 2); // URL
 
 // 在籍/退席コード
 define('C_OPERATOR_PASSIVE', 0); // 退席
@@ -132,6 +140,12 @@ $config['widgetShowNameType'] = [
 $config['widgetSendActType'] = [
     C_WIDGET_SEND_ACT_PUSH_KEY => "送信ボタン及びEnterキー（スマホの場合改行ボタン）",
     C_WIDGET_SEND_ACT_PUSH_BTN => "送信ボタンのみ"
+];
+
+/* オートメッセージ － トリガー種別 */
+$config['chatNotificationType'] = [
+    C_NOTIFICATION_TYPE_TITLE => "タイトル",
+    C_NOTIFICATION_TYPE_URL => "URL"
 ];
 
 /* オートメッセージ － トリガー種別 */

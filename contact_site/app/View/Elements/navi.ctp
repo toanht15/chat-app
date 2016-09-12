@@ -66,15 +66,18 @@ switch ($this->name) {
         <div class="icon">
             <?= $this->htmlEx->naviLink('ウィジェット', 'widget.png', ['href' => ['controller' => 'MWidgetSettings', 'action' => 'index']]) ?>
         </div>
-        <?php if ($coreSettings[C_COMPANY_USE_CHAT] || strcmp($userInfo['MCompany']['company_key'], "medialink") === 0): ?><!-- // TODO メディアリンク -->
+        <?php if ($coreSettings[C_COMPANY_USE_CHAT] || strcmp($userInfo['MCompany']['company_key'], "medialink") === 0): ?>
             <div class="icon">
                 <?= $this->htmlEx->naviLink('メッセージ', 'auto_message.png', ['href' => ['controller' => 'TAutoMessages', 'action' => 'index']]) ?>
             </div>
         <?php endif; ?>
     <?php endif; ?>
-    <?php if ($coreSettings[C_COMPANY_USE_CHAT] || strcmp($userInfo['MCompany']['company_key'], "medialink") === 0): ?><!-- // TODO メディアリンク -->
+    <?php if ($coreSettings[C_COMPANY_USE_CHAT] || strcmp($userInfo['MCompany']['company_key'], "medialink") === 0): ?>
         <div class="icon">
             <?= $this->htmlEx->naviLink('簡易入力', 'dictionary.png', ['href' => ['controller' => 'TDictionaries', 'action' => 'index']]) ?>
+        </div>
+        <div class="icon">
+            <?= $this->htmlEx->naviLink('チャット通知', 'notification.png', ['href' => ['controller' => 'MChatNotifications', 'action' => 'index']]) ?>
         </div>
     <?php endif; ?>
     </div>

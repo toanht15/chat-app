@@ -193,7 +193,7 @@ class MWidgetSettingsController extends AppController {
         $tmpFile = $uploadImage['tmp_name'];
         // ファイルの保存先フルパス＋ファイル名
         $saveFile = C_PATH_WIDGET_IMG_DIR.DS.$filename;
-        $in = $this->_imageCreate($extension, $tmpFile); // 元画像ファイル読み込み
+        $in = $this->imageCreate($extension, $tmpFile); // 元画像ファイル読み込み
         $width = ImageSx($in); // 画像の幅を取得
         $height = ImageSy($in); // 画像の高さを取得
         $save_width = 248; // 幅の最低サイズ
@@ -205,7 +205,7 @@ class MWidgetSettingsController extends AppController {
         //完全なアルファチャネル情報を保存するフラグをonにする
         imagesavealpha($out, true);
         ImageCopyResampled($out, $in,0,0,0,0, $save_width, $save_height, $width, $height);
-        $this->_imageOut($extension, $out, $saveFile);
+        $this->imageOut($extension, $out, $saveFile);
         $inputData['MWidgetSetting']['main_custom_image'] = $filename;
       }
       // ウィジェットのスタイル設定周りをJSON化
@@ -247,24 +247,6 @@ class MWidgetSettingsController extends AppController {
       $errors = $this->MWidgetSetting->validationErrors;
     }
     return $errors;
-  }
-
-  private function _imageCreate($extension, $file){
-    if ( preg_match('/^png$/i', $extension) ) {
-      return imagecreatefrompng($file);
-    }
-    if ( preg_match('/^jpeg|jpg$/i', $extension) ) {
-      return imagecreatefromjpeg($file);
-    }
-  }
-
-  private function _imageOut($extension, $file, $saveFile){
-    if ( preg_match('/^png$/i', $extension) ) {
-      return imagepng($file, $saveFile);
-    }
-    if ( preg_match('/^jpeg|jpg$/i', $extension) ) {
-      return imagejpeg($file, $saveFile);
-    }
   }
 
   /**

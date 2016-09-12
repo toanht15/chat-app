@@ -12,6 +12,8 @@
 /app/webroot/css/style.css
 /app/webroot/css/modal.css
 /app/webroot/files/*
+/app/webroot/img/notification/*
+!/app/webroot/img/notification/popup_icon_*
 
 # IDE and editor specific files #
 #################################
