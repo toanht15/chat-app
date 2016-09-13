@@ -43,8 +43,8 @@
       <tr>
         <td width="20%" class="tLeft"><?=$val['MChatNotification']['keyword']?></td>
         <td width="20%" class="tCenter"><?=$this->Html->image("notification/".$val['MChatNotification']['image'], ['width'=>30, 'height'=>30])?></td>
-        <td width="40%" class="tLeft"><?=$val['MChatNotification']['name']?></td>
-        <td width="20%" class="tCenter ctrlBtnArea">
+        <td class="tLeft"><?=$val['MChatNotification']['name']?></td>
+        <td class="tCenter ctrlBtnArea">
           <?php
             echo $this->Html->link(
               $this->Html->image(

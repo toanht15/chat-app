@@ -13,7 +13,13 @@ switch ($this->name) {
     case 'MUsers':
     case 'PersonalSettings':
     case 'MWidgetSettings':
+    case 'ScriptSettings':
         $settingSelected = "selected";
+        break;
+    case 'MChatNotifications':
+    case 'TAutoMessages':
+    case 'TDictionaries':
+        $chatSettingSelected = "selected";
         break;
 };
 ?>

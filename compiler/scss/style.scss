@@ -2589,9 +2589,12 @@ ul.naviBtn {
   }
   #chat_notifications_list {
       .ctrlBtnArea {
-          padding: 0 25px;
+          width: 120px;
           a {
+            width: 35px;
+            height: 35px;
             margin: 5px;
+            padding: 2px;
           }
       }
       .ui-sortable-helper {
