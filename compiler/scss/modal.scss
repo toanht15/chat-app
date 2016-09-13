@@ -670,5 +670,21 @@
 }
 
 .p-show-notification-gallary {
-  width: 480px!important;
+  width: 375px!important;
+  #popup-title {
+    font-size: 23px!important;
+    padding: 15px 0!important;
+  }
+  #popup-main {
+    padding: 5px!important;
+  }
+  ul {
+    margin: 0;
+
+    li {
+      margin: 0 !important;
+      box-shadow: 0 0 0 transparent!important;
+      background-color: transparent!important;
+    }
+  }
 }

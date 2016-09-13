@@ -142,6 +142,7 @@ class AppController extends Controller {
     switch($this->name){
       case "TDictionaries":
       case "TAutoMessages":
+      case "MChatNotifications":
         // TODO メディアリンクのみ対応
         if (!$this->coreSettings["chat"] && strcmp($this->userInfo['MCompany']['company_key'], "medialink") !== 0 ) {
           $this->redirect("/");

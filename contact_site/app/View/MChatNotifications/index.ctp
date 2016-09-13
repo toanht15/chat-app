@@ -7,8 +7,9 @@
   <h1>チャット通知設定<span id="sortMessage"></span></h1>
 </div>
 
-<div id='chat_notifications_menu' class="p20trl">
-  <div class="fLeft" >
+<div id='chat_notifications_menu'>
+  <span class="pre">サイト閲覧者がどのページからチャット送信したかを直観的に把握できるよう、企業側にチャット受信時に通知するデスクトップ通知のアイコンをカスタマイズすることができます。&#x0A;※本画面にて指定されていないページからのチャット受信時は、デフォルト（ライトグリーン）の通知となります。</span>
+  <div>
     <?= $this->Html->link(
                 $this->Html->image(
                   'add.png',
@@ -31,17 +32,17 @@
   <table>
     <thead>
       <tr>
-        <th>対象ページ</th>
-        <th>通知アイコン</th>
-        <th>通知名</th>
-        <th>操作</th>
+        <th class="tLeft">対象ページ</th>
+        <th class="tLeft">通知アイコン</th>
+        <th class="tLeft">通知名</th>
+        <th class="tCenter">操作</th>
       </tr>
     </thead>
     <tbody class="sortable">
     <?php foreach((array)$settingList as $key => $val): ?>
       <tr>
         <td width="20%" class="tLeft"><?=$val['MChatNotification']['keyword']?></td>
-        <td width="20%" class="tCenter"><?=$this->Html->image("notification/".$val['MChatNotification']['image'], ['width'=>50, 'height'=>50])?></td>
+        <td width="20%" class="tCenter"><?=$this->Html->image("notification/".$val['MChatNotification']['image'], ['width'=>30, 'height'=>30])?></td>
         <td width="40%" class="tLeft"><?=$val['MChatNotification']['name']?></td>
         <td width="20%" class="tCenter ctrlBtnArea">
           <?php

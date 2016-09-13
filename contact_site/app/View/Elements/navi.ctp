@@ -42,9 +42,11 @@ switch ($this->name) {
         <div class="icon <?=$settingSelected?> setting-icon" data-type="common">
             <?= $this->htmlEx->naviLink('設定', 'setting.png') ?>
         </div>
+        <?php if ($coreSettings[C_COMPANY_USE_CHAT]): ?>
         <div class="icon <?=$chatSettingSelected?> setting-icon" data-type="chat">
             <?= $this->htmlEx->naviLink('チャット設定', 'chat_setting.png') ?>
         </div>
+      <?php endif; ?>
     </div>
 </div>
 <!-- /* サイドバー１（ここまで） */ -->

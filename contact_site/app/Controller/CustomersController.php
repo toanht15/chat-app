@@ -32,6 +32,10 @@ class CustomersController extends AppController {
           ],
           'TDictionary.m_companies_id' => $this->userInfo['MCompany']['id']
         ],
+        'order' => [
+          'sort' => 'asc',
+          'id' => 'asc'
+        ],
         "recursive" => -1
       ]
     );
@@ -78,6 +82,16 @@ class CustomersController extends AppController {
       $notificationSettings[$key] = $val['MChatNotification'];
     }
     $this->set('notificationList', $this->jsonEncode($notificationSettings));
+
+    // 契約状態
+    $cType = "full";
+    if ( !$this->coreSettings[C_COMPANY_USE_SYNCLO] && $this->coreSettings[C_COMPANY_USE_CHAT] ) {
+      $cType = "chatOnly";
+    }
+    else if ( $this->coreSettings[C_COMPANY_USE_SYNCLO] && !$this->coreSettings[C_COMPANY_USE_CHAT] ) {
+      $cType = "syncOnly";
+    }
+    $this->set('cType', $cType);
   }
 
   /* *

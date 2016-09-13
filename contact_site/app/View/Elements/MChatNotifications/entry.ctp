@@ -1,18 +1,19 @@
 <?= $this->element('MChatNotifications/script') ?>
 
 <div class="form01">
-  <!-- /* 表示設定 */ -->
-  <h3>１．表示設定</h3>
+  <span class="pre">特定キーワードを含む（部分一致）ページからチャットを受信した際にデスクトップ通知するアイコン画像を選択してください。</span>
+  <!-- /* 対象ページ設定 */ -->
+  <h3>１．対象ページ設定</h3>
   <section>
   <?= $this->Form->input('id', ['type' => 'hidden']); ?>
   <ul class="settingList">
-    <!-- 表示設定 -->
+    <!-- 対象 -->
     <li>
-      <span class="require"><label>表示する条件</label></span>
+      <span class="require"><label>対象</label></span>
       <pre><label><?= $this->Form->input('type', ['type' => 'radio',  'options' => $chatNotificationType, 'default' => C_NOTIFICATION_TYPE_TITLE, 'legend' => false, 'separator' => '</label>　<label>', 'label' => false, 'error' => false, 'div' => false]) ?></label></pre>
     </li>
     <?php if ( $this->Form->isFieldError('type') ) echo $this->Form->error('type', null, ['wrap' => 'li']); ?>
-    <!-- 表示設定 -->
+    <!-- 対象 -->
     <!-- キーワード -->
     <li>
       <span class="require"><label>キーワード</label></span>
@@ -30,8 +31,9 @@
     <!-- キーワード -->
   </ul>
   </section>
-  <!-- /* 表示設定 */ -->
+  <!-- /* 対象ページ設定 */ -->
 
+  <!-- /* 通知設定 */ -->
   <h3>２．通知設定</h3>
   <section>
   <?= $this->Form->input('id', ['type' => 'hidden']); ?>
@@ -74,6 +76,8 @@
     <!-- 通知名 -->
   </ul>
   </section>
+  <!-- /* 通知設定 */ -->
+
   <!-- /* 操作 */ -->
   <section>
       <div id="action_btn_area">
@@ -81,4 +85,5 @@
           <?= $this->Html->link('保存', 'javascript:void(0)', ['onclick' => 'loading.ev(saveAct)', 'class' => 'greenBtn btn-shadow']) ?>
       </div>
   </section>
+  <!-- /* 操作 */ -->
 </div>

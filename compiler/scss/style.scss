@@ -1044,25 +1044,38 @@ ul.naviBtn {
     // transition: width 500ms linear 0s;
   }
 
-  #customer_sub_pop  {
+  #customer_sub_pop {
     display: none;
+    $content-width: 25em;
 
-    #bk-ground {
-      position: fixed;
-      top:0;
-      left:0;
-      right:0;
-      bottom: 0;
-      z-index:3;
+    &[data-contract='full'], &[data-contract='chatOnly'] {
+      $content-col: 2;
+      #sub_contents {
+        width: $content-width * $content-col;
+        #rightContents {
+          width: $content-width;
+        }
+        #leftContents {
+          width: $content-width;
+        }
+      }
+    }
+
+    &[data-contract='syncOnly'] {
+      $content-col: 1;
+      #sub_contents {
+        width: $content-width;
+        #rightContents {
+          width: $content-width;
+        }
+      }
     }
 
     #customer_sub {
       position: fixed;
       top: 0;
       left: 60px;
-      bottom: 0;
-      right: 0;
-      z-index: 4;
+      z-index: $sub-sidebar-z-index - 1;
       font-size: 16px;
 
       .scroll {
@@ -1112,8 +1125,6 @@ ul.naviBtn {
       }
 
       #sub_contents {
-        $content-width: 25em;
-        width: $content-width*2;
         background-color: #EFEFEF;
         position: absolute;
         top: 100px;
@@ -1172,7 +1183,6 @@ ul.naviBtn {
         }
 
         #leftContents {
-          width: $content-width;
 
           ul.tabStyle {
 
@@ -1401,7 +1411,6 @@ ul.naviBtn {
         }
 
         #rightContents {
-          width: $content-width;
 
           .detailForm {
             ul {
@@ -1586,7 +1595,7 @@ ul.naviBtn {
             text-align: center;
             cursor: pointer;
             position: relative;
-            z-index: 5;
+            z-index: $sub-sidebar-z-index - 3;
 
             .unread {
               position: absolute;
@@ -2555,12 +2564,23 @@ ul.naviBtn {
     font-weight: normal;
   }
   #chat_notifications_menu {
-    > .fLeft {
+    height: auto!important;
+    padding: 0.5em 20px 0 20px;
+
+    span {
+      padding: 1em;
+      display: block;
+      line-height: 2em;
+    }
+    > div {
       a {
         width: 30px;
         height: 30px;
         margin-right: 10px;
         border-radius: 15px;
+        img {
+          margin: -1px 0 0px -1px; /* TODO: 綺麗な画像を頂ければ削除予定 */
+        }
       }
     }
   }
@@ -2574,8 +2594,22 @@ ul.naviBtn {
       .ui-sortable-helper {
           display: table;
       }
+      table {
+        th, td {
+          padding: 0 1em;
+        }
+        td {
+          height: 45px!important;
+        }
+      }
   }
   #chat_notifications_entry {
+    section {
+      margin-bottom: 30px;
+    }
+    h3 {
+      border-bottom: 3px solid #c3d69b;
+    }
     li {
       span {
         width: 15em;
@@ -2599,7 +2633,6 @@ ul.naviBtn {
 
       div#picDiv {
           margin-right: 10px;
-          border: 1px solid #444;
           width: 72px;
           height: 72px;
       }

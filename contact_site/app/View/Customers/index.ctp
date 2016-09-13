@@ -9,7 +9,17 @@
         <?php echo $this->element('Customers/monitor') ?>
     </div>
 
-    <div id='customer_sub_pop' ng-cloak><?php echo $this->element('Customers/detail') ?></div>
+<?php
+$cName = "full";
+if ( !$coreSettings[C_COMPANY_USE_SYNCLO] && $coreSettings[C_COMPANY_USE_CHAT] ) {
+  $cName = "chatOnly";
+}
+else if ( $coreSettings[C_COMPANY_USE_SYNCLO] && !$coreSettings[C_COMPANY_USE_CHAT] ) {
+  $cName = "syncOnly";
+}
+?>
+
+    <div id='customer_sub_pop' data-contract='<?=$cName?>' ng-cloak><?php echo $this->element('Customers/detail') ?></div>
 
     <div id='customer_tab' ng-cloak>
       <ul>

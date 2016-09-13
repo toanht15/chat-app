@@ -1,4 +1,3 @@
-<div id="bk-ground"></div>
 <div id="customer_sub" ng-customer>
   <div id="sub_contents">
     <div id="cus_info_header" class="noSelect">
@@ -20,52 +19,54 @@
       </div>
     </div>
     <div id="cus_info_contents" class="flexBoxCol">
-      <div id="leftContents">
-        <ul class="tabStyle flexBoxCol noSelect">
-          <li class="on">現在のチャット</li>
-          <!-- <li>過去のチャット</li> -->
-        </ul>
-        <div id="chatContent">
-          <ul id="chatTalk" >
-            <message-list>
-              <ng-create-message ng-repeat="chat in messageList | orderBy: 'sort'"></ng-create-message>
-            </message-list>
-            <typing-message>
-              <li class="sinclo_se typeing_message" ng-if="typingMessageSe !== ''">{{typingMessageSe}}</li>
-              <li class="sinclo_re typeing_message" ng-if="typingMessageRe[detailId] !== ''">{{typingMessageRe[detailId]}}</li>
-            </typing-message>
+      <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
+        <div id="leftContents">
+          <ul class="tabStyle flexBoxCol noSelect">
+            <li class="on">現在のチャット</li>
+            <!-- <li>過去のチャット</li> -->
           </ul>
-          <div id="chatMenu" class="p05tb" ng-class="{showOption: chatOptionDisabled(detailId)}">
-            <span class="greenBtn btn-shadow" onclick="chatApi.addOption(1)">選択肢を追加する</span>
-          </div>
-          <div id="sendMenu" class="p05tb">
-            <?=$this->ngForm->input('settings.sendPattarn',
-                [
-                  'type' => 'checkbox',
-                  'div' => false,
-                  'label' => false
-                ],
-                [
-                  'default' => false,
-                  'entity' => 'settings.sendPattarn',
-                  'change' => 'changeSetting("sendPattarn")'
-                ])?><label for="settingsSendPattarn">Enterキーで送信する</label>
-          </div>
-          <div id="sendMessageArea" style="position: relative">
-            <?php if ( strcmp($userInfo['permission_level'], C_AUTHORITY_SUPER) !== 0) :?>
-              <textarea rows="5" id="sendMessage" ng-focus="sendMessageConnectConfirm(detailId)" maxlength="300" placeholder="{{chatPs()}}"></textarea>
-              <div id="wordListArea" ng-keydown="searchKeydown($event)">
-                <input type="text" ng-model="searchWord" id="wordSearchCond" />
-                <ul id="wordList">
-                  <li ng-repeat="item in entryWordSearch(entryWordList)" id="item{{$index}}" ng-class="{selected: $index === entryWord}">{{item.label}}</li>
-                  <li style="border:none; color:#ff7b7b" ng-if="entryWordList.length === 0">[設定] > [簡易入力] から<br>メッセージを登録してください</li>
-                </ul>
-              </div>
-              <span id="sinclo_sendbtn" class="btn-shadow" onclick="chatApi.pushMessage()">{{chatSendBtnName()}}</span>
-            <?php endif; ?>
+          <div id="chatContent">
+            <ul id="chatTalk" >
+              <message-list>
+                <ng-create-message ng-repeat="chat in messageList | orderBy: 'sort'"></ng-create-message>
+              </message-list>
+              <typing-message>
+                <li class="sinclo_se typeing_message" ng-if="typingMessageSe !== ''">{{typingMessageSe}}</li>
+                <li class="sinclo_re typeing_message" ng-if="typingMessageRe[detailId] !== ''">{{typingMessageRe[detailId]}}</li>
+              </typing-message>
+            </ul>
+            <div id="chatMenu" class="p05tb" ng-class="{showOption: chatOptionDisabled(detailId)}">
+              <span class="greenBtn btn-shadow" onclick="chatApi.addOption(1)">選択肢を追加する</span>
+            </div>
+            <div id="sendMenu" class="p05tb">
+              <?=$this->ngForm->input('settings.sendPattarn',
+                  [
+                    'type' => 'checkbox',
+                    'div' => false,
+                    'label' => false
+                  ],
+                  [
+                    'default' => false,
+                    'entity' => 'settings.sendPattarn',
+                    'change' => 'changeSetting("sendPattarn")'
+                  ])?><label for="settingsSendPattarn">Enterキーで送信する</label>
+            </div>
+            <div id="sendMessageArea" style="position: relative">
+              <?php if ( strcmp($userInfo['permission_level'], C_AUTHORITY_SUPER) !== 0) :?>
+                <textarea rows="5" id="sendMessage" ng-focus="sendMessageConnectConfirm(detailId)" maxlength="300" placeholder="{{chatPs()}}"></textarea>
+                <div id="wordListArea" ng-keydown="searchKeydown($event)">
+                  <input type="text" ng-model="searchWord" id="wordSearchCond" />
+                  <ul id="wordList">
+                    <li ng-repeat="item in entryWordSearch(entryWordList)" id="item{{$index}}" ng-class="{selected: $index === entryWord}">{{item.label}}</li>
+                    <li style="border:none; color:#ff7b7b" ng-if="entryWordList.length === 0">[設定] > [簡易入力] から<br>メッセージを登録してください</li>
+                  </ul>
+                </div>
+                <span id="sinclo_sendbtn" class="btn-shadow" onclick="chatApi.pushMessage()">{{chatSendBtnName()}}</span>
+              <?php endif; ?>
+            </div>
           </div>
         </div>
-      </div>
+      <?php endif; ?>
       <div id="rightContents">
         <div class="detailForm card">
           <ul>
@@ -101,9 +102,11 @@
               <dd>{{detail.prev.length}}（<a href="javascript:void(0)" ng-click="openHistory(detail)">移動履歴</a>）</dd>
           </dl>
         </div>
+        <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
         <div class="connectionBtn">
           <a href="javascript:void(0)" ng-click="windowOpen(detailId, detail.accessId)">接続する</a>
         </div>
+        <?php endif; ?>
         <div class="hardInfo card">
           <dl>
             <dt>プラットフォーム</dt><dd>{{os(detail.userAgent)}}</dd>
