@@ -37,8 +37,7 @@ class TDictionariesController extends AppController {
    * @return void
    * */
   public function index() {
-    $this->_setParams();
-    $this->set('dictionaryList', $this->paginate('TDictionary'));
+    $this->set('dictionaryList', $this->TDictionary->find('all', $this->_setParams()));
     $this->_viewElement();
   }
 
@@ -140,8 +139,7 @@ class TDictionariesController extends AppController {
       $this->TDictionary->begin();
       $list = $this->params->data['list'];
       /* 現在の並び順を取得 */
-      $this->_setParams();
-      $params = $this->paginate['TDictionary'];
+      $params = $this->_setParams();
       $params['fields'] = [
         'TDictionary.id',
         'TDictionary.sort'
@@ -202,8 +200,27 @@ class TDictionariesController extends AppController {
   }
 
   private function _setParams(){
-    $this->paginate['TDictionary']['conditions']['TDictionary.m_companies_id'] = $this->userInfo['MCompany']['id'];
-    $this->paginate['TDictionary']['conditions']['OR'][0]['TDictionary.m_users_id'] = $this->userInfo['id'];
+    $params = [
+      'order' => [
+        'TDictionary.sort' => 'asc',
+        'TDictionary.id' => 'asc'
+      ],
+      'fields' => [
+        'TDictionary.*'
+      ],
+      'conditions' => [
+        'TDictionary.m_companies_id' => $this->userInfo['MCompany']['id'],
+        'OR' => [
+          'TDictionary.type' => C_DICTIONARY_TYPE_COMP,
+          [
+          'TDictionary.m_users_id' => $this->userInfo['id'],
+          'TDictionary.type' => C_DICTIONARY_TYPE_PERSON
+          ]
+        ]
+      ],
+      'recursive' => -1
+    ];
+    return $params;
   }
   private function _viewElement(){
     $this->set('dictionaryTypeList', Configure::read("dictionaryType"));

@@ -35,54 +35,48 @@
     </thead>
     <tbody class="sortable">
     <?php foreach((array)$dictionaryList as $key => $val): ?>
-      <?php
-      $params = $this->Paginator->params();
-      $prevCnt = ($params['page'] - 1) * $params['limit'];
-      $no = $prevCnt + h($key+1);
-      ?>
       <tr data-id="<?=$val['TDictionary']['id']?>" data-sort="<?=$val['TDictionary']['sort']?>">
-        <td width="8%" class="tCenter"><?=$no?></td>
-        <td width="26%" class="tCenter"><?=$dictionaryTypeList[$val['TDictionary']['type']]?></td>
-        <td width="40%" class="tLeft pre"><?=$val['TDictionary']['word']?></td>
+        <td width="8%" class="tCenter"><?=$key+1?></td>
+        <td style="width:8em;" class="tCenter"><?=$dictionaryTypeList[$val['TDictionary']['type']]?></td>
+        <td class="tLeft pre"><?=$val['TDictionary']['word']?></td>
         <td width="8%" class="tRight pre"><?=$val['TDictionary']['sort']?></td>
-        <td width="20%" class="tCenter ctrlBtnArea">
-          <?php
-            echo $this->Html->link(
+        <td class="tCenter ctrlBtnArea">
+        <?php
+          echo $this->Html->link(
+            $this->Html->image(
+              'edit.png',
+              array(
+                'alt' => '更新',
+                'width' => 30,
+                'height' => 30,
+              )
+            ),
+            'javascript:void(0)',
+            array(
+              'class' => 'btn-shadow greenBtn fLeft',
+              'onclick' => 'openEditDialog('.$val['TDictionary']['id'].')',
+              'escape' => false
+            )
+          );
+        ?>
+        <?php
+          echo $this->Html->link(
               $this->Html->image(
-                'edit.png',
+                'trash.png',
                 array(
-                  'alt' => '更新',
+                  'alt' => '削除',
                   'width' => 30,
-                  'height' => 30,
+                  'height' => 30
                 )
               ),
               'javascript:void(0)',
               array(
-                'class' => 'btn-shadow greenBtn fLeft',
-                'onclick' => 'openEditDialog('.$val['TDictionary']['id'].')',
+                'class' => 'btn-shadow redBtn fRight',
+                'onclick' => 'openConfirmDialog('.$val['TDictionary']['id'].')',
                 'escape' => false
               )
-            );
-          ?>
-          <?php
-            echo $this->Html->link(
-                $this->Html->image(
-                  'trash.png',
-                  array(
-                    'alt' => '削除',
-                    'width' => 30,
-                    'height' => 30
-                  )
-                ),
-                'javascript:void(0)',
-                array(
-                  'class' => 'btn-shadow redBtn fRight',
-                  'onclick' => 'openConfirmDialog('.$val['TDictionary']['id'].')',
-                  'escape' => false
-                )
-            );
-          ?>
-
+          );
+        ?>
         </td>
       </tr>
     <?php endforeach; ?>

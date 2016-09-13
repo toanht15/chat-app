@@ -50,23 +50,40 @@
             }
         });
     };
+
+    var CaretPosition = 0;
+    $('#TDictionaryWord').on('blur', function(e){
+      CaretPosition = this.selectionStart;
+    });
     function addOption(type){
       var textArea = document.getElementById('TDictionaryWord');
+      var newCaretPosition = 0;
       switch(type){
           case 1:
             if (textArea.value.length > 0) {
                 textArea.value += "\n";
             }
             textArea.value += "[] ";
+            newCaretPosition = textArea.value.length;
             break;
           case 2:
-            textArea.value += "{!company}";
+            var str = "{!company}";
+            textArea.value = inputString(textArea.value, str);
+            newCaretPosition = CaretPosition + str.length;
             break;
           case 3:
-            textArea.value += "{!user}";
+            var str = "{!user}";
+            textArea.value = inputString(textArea.value, str);
+            newCaretPosition = CaretPosition + str.length;
             break;
       }
       textArea.focus();
+      textArea.setSelectionRange(newCaretPosition, newCaretPosition);
+    }
+    function inputString(val, string){
+      var startVal = val.slice(0,CaretPosition);
+      var endVal = val.slice(CaretPosition);
+      return startVal + string + endVal;
     }
     $('menu span').on("mouseover", function(){
       $('.balloon').children('span').text(balloonMessages[$(this).data('type')]);
