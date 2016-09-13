@@ -40,17 +40,17 @@ switch ($this->name) {
 <div id="sidebar-main" class="card-shadow">
     <div>
         <div class="icon <?=$monitorSelected?>">
-            <?= $this->htmlEx->naviLink('モニター', 'monitor.png', ['href' => ['controller' => 'Customers', 'action' => 'index']]) ?>
+            <?= $this->htmlEx->naviLink('ﾘｱﾙﾀｲﾑﾓﾆﾀ', 'monitor.png', ['href' => ['controller' => 'Customers', 'action' => 'index']]) ?>
         </div>
         <div class="icon <?=$historySelected?>">
-            <?= $this->htmlEx->naviLink('履歴', 'history.png', ['href' => ['controller' => 'Histories', 'action' => 'index']]) ?>
+            <?= $this->htmlEx->naviLink('履歴一覧', 'history.png', ['href' => ['controller' => 'Histories', 'action' => 'index']]) ?>
         </div>
         <div class="icon <?=$settingSelected?> setting-icon" data-type="common">
             <?= $this->htmlEx->naviLink('設定', 'setting.png') ?>
         </div>
         <?php if ($coreSettings[C_COMPANY_USE_CHAT]): ?>
         <div class="icon <?=$chatSettingSelected?> setting-icon" data-type="chat">
-            <?= $this->htmlEx->naviLink('チャット設定', 'chat_setting.png') ?>
+            <?= $this->htmlEx->naviLink('ﾁｬｯﾄ設定', 'chat_setting.png') ?>
         </div>
       <?php endif; ?>
     </div>
@@ -69,7 +69,7 @@ switch ($this->name) {
             <?= $this->htmlEx->naviLink('企業設定', 'company.png', ['href' => ['controller' => 'Customers', 'action' => 'index']]) ?>
         </div>
         <div class="icon">
-            <?= $this->htmlEx->naviLink('ユーザーマスタ', 'users.png', ['href' => ['controller' => 'MUsers', 'action' => 'index']]) ?>
+            <?= $this->htmlEx->naviLink('ユーザー管理', 'users.png', ['href' => ['controller' => 'MUsers', 'action' => 'index']]) ?>
         </div>
     <?php endif; ?>
         <div class="icon">

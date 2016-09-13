@@ -2,7 +2,7 @@
     <thead>
         <tr>
             <th width=" 9%">日時</th>
-            <th width=" 6%" class="noOutCsv">操作</th>
+            <th width=" 6%" class="noOutCsv">詳細</th>
             <th width="15%">訪問ユーザ</th>
             <th width="20%">プラットフォーム<br>ブラウザ</th>
             <th width="17%">参照元URL</th>

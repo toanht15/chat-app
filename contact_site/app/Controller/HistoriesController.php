@@ -171,9 +171,15 @@ class HistoriesController extends AppController {
       "ブラウザ",
       "参照元URL",
       "閲覧ページ数",
-      "滞在時間",
-      "チャット担当者"
+      "滞在時間"
      ];
+
+     if ( $this->coreSettings[C_COMPANY_USE_CHAT] ) {
+      $csv[0][] = "チャット担当者";
+     }
+     else {
+      $csv[0][] = "担当者";
+    }
 
     foreach($ret as $val){
       $row = [];

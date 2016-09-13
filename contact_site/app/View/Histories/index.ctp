@@ -7,7 +7,7 @@
   <div class="fLeft"><?= $this->Html->image('history_g.png', array('alt' => '履歴一覧', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?></div>
   <h1>履歴一覧</h1>
   <?php echo $this->Html->link(
-      $this->Html->image('download.png', array('alt' => 'CSV出力', 'width'=>20, 'height'=>20)),
+      'ＣＳＶ出力',
       'javascript:void(0)',
       array('escape' => false, 'class'=>'skyBlueBtn btn-shadow', 'id' => 'outputCSV'));
   ?>

@@ -68,9 +68,7 @@
         <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
                 <th>モニター</th>
         <?php endif; ?>
-        <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
-                <th>チャット</th>
-        <?php endif; ?>
+                <th>詳細</th>
                 <th ng-hide="labelHideList.ipAddress">訪問ユーザ</th>
                 <th ng-hide="labelHideList.ua">プラットフォーム<br>ブラウザ</th>
                 <th ng-hide="labelHideList.stayCount">訪問回数</th>
@@ -91,9 +89,7 @@
         <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
                 <th style="width: 7em">モニター</th>
         <?php endif; ?>
-        <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
-                <th style="width: 7em">チャット</th>
-        <?php endif; ?>
+                <th style="width: 7em">詳細</th>
                 <th ng-hide="labelHideList.ipAddress" style="width: 8em">訪問ユーザ</th>
                 <th ng-hide="labelHideList.ua" style="width: 9em">プラットフォーム<br>ブラウザ</th>
                 <th ng-hide="labelHideList.stayCount" style="width: 4em">訪問回数</th>
@@ -125,14 +121,15 @@
           </td>
         <?php endif; ?>
 
-        <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
 
           <!-- /* チャット */ -->
           <td class="tCenter" id="chatTypeBtn">
             <?php if ( strcmp($userInfo['permission_level'], C_AUTHORITY_SUPER) !== 0) :?>
 
+              <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
               <span class="monitorOn" ng-if="monitor.chat === <?= h($muserId)?>"><span class="bold">対応中</span><br>（あなた）</span>
               <span class="monitorOn" ng-if="isset(monitor.chat) && monitor.chat !== <?= h($muserId)?>"><span class="bold">対応中</span><br>（{{setName(monitor.chat)}}）</span>
+              <?php endif; ?>
 
               <span ng-if="monitor.widget">
                 <span ng-if="monitor.tabId != detailId" ng-click="showDetail(monitor.tabId)" class="btn-shadow blueBtn ">
@@ -146,7 +143,6 @@
               </span>
             <?php endif; ?>
           </td>
-        <?php endif; ?>
 
           <!-- /* 訪問ユーザ */ -->
           <td ng-hide="labelHideList.ipAddress" class="tCenter pre">{{ui(monitor)}}</td>

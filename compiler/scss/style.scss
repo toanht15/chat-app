@@ -532,6 +532,12 @@ a {
     transition: background-color, border-color 0.1s linear;
     color: #fff;
   }
+  &.skyBlueBtn:hover, &.skyBlueBtn.on {
+    background-color: #86B4B8;
+    border: 1px solid #86B4B8;
+    transition: background-color, border-color 0.1s linear;
+    color: #FFF;
+  }
   &.blueBtn:hover, &.blueBtn.on {
     background-color: #6A80BE;
     border: 1px solid #6A80BE;
@@ -723,7 +729,7 @@ div[id^="sidebar-"] .icon {
   }
   p {
     height: 15px !important;
-    font-size: 9px;
+    font-size: 11px;
     text-align: center;
     margin: 0 auto;
     color: #FFF;
@@ -1690,10 +1696,9 @@ ul.naviBtn {
       position: absolute;
       top: 10px;
       right: 20px;
-      margin-right: 5px;
-      width: 25px;
-      height: 25px;
-      padding: 2px 0 0 2px;
+      width: 7em;
+      padding: 0.25em 0.5em;
+      text-align: center;
     }
   }
   #history_menu {

@@ -33,7 +33,7 @@
 <?php endforeach; ?>
 </ul>
 <?php echo $this->Html->link(
-    $this->Html->image('download.png', array('alt' => 'CSV出力', 'width'=>20, 'height'=>20)),
+    "ＣＳＶ出力",
     ['controller'=>'Histories', 'action' => 'outputCSVOfChat', h($val['THistoryChatLog']['t_histories_id'])],
     array('escape' => false, 'class'=>'skyBlueBtn btn-shadow', 'id' => 'popupCloseBtn'));
 ?>

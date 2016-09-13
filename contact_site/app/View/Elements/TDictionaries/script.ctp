@@ -49,7 +49,7 @@ function toggleSort(){
       },
       dataType: "html",
       success: function(){
-
+        location.reload();
       }
     });
   }
