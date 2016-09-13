@@ -2526,10 +2526,14 @@ ul.naviBtn {
     font-weight: normal;
   }
   #tdictionaries_menu {
-    > .fLeft {
-      img {
-        margin-right: 10px;
-        border-radius: 15px;
+    ul {
+      margin: 0;
+      padding: 0;
+      li {
+        padding: 5px 0;
+        img {
+          border-radius: 15px;
+        }
       }
     }
   }

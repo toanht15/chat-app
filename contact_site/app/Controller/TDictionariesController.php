@@ -81,22 +81,27 @@ class TDictionariesController extends AppController {
 
     $saveData['TDictionary']['m_companies_id'] = $this->userInfo['MCompany']['id'];
     $saveData['TDictionary']['word'] = $this->request->data['word'];
-    if ( !empty($this->request->data['sort']) || $this->request->data['sort'] === 0 ) {
-      $saveData['TDictionary']['sort'] = $this->request->data['sort'];
-    }
-    else {
-      $this->_setParams();
-      $params = $this->paginate['TDictionary'];
-      if (!empty($this->request->data['dictionaryId'])) {
-        $params['conditions']['TDictionary.id != '] = $this->request->data['dictionaryId'];
-      }
-
-      $params['order'] = [
-        'TDictionary.sort' => 'desc',
-        'TDictionary.id' => 'desc'
+    if (empty($this->request->data['dictionaryId'])) {
+      $params = [
+        'fields' => [
+          'TDictionary.sort'
+        ],
+        'conditions' => [
+          'TDictionary.m_companies_id' => $this->userInfo['MCompany']['id']
+        ],
+        'order' => [
+          'TDictionary.sort' => 'desc',
+          'TDictionary.id' => 'desc'
+        ],
+        'limit' => 1,
+        'recursive' => -1
       ];
       $lastData = $this->TDictionary->find('first', $params);
-      $saveData['TDictionary']['sort'] = $lastData['TDictionary']['sort'];
+      $nextSort = 1;
+      if (!empty($lastData)) {
+        $nextSort = intval($lastData['TDictionary']['sort']) + 1;
+      }
+      $saveData['TDictionary']['sort'] = $nextSort;
     }
     $saveData['TDictionary']['type'] = $this->request->data['type'];
     if ( strcmp($saveData['TDictionary']['type'], C_AUTHORITY_NORMAL) === 0 ) {
@@ -129,12 +134,53 @@ class TDictionariesController extends AppController {
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
 
+    if ( !$this->request->is('ajax') ) return false;
+
     if ( !empty($this->params->data['list']) ) {
+      $this->TDictionary->begin();
       $list = $this->params->data['list'];
+      /* 現在の並び順を取得 */
+      $this->_setParams();
+      $params = $this->paginate['TDictionary'];
+      $params['fields'] = [
+        'TDictionary.id',
+        'TDictionary.sort'
+      ];
+      unset($params['limit']);
+      $prevSort = $this->TDictionary->find('list', $params);
+      $prevSortKeys = am($prevSort);
 
+      /* アップデート分の並び順を設定 */
+      $ret = true;
+      for ($i = 0; count($list) > $i; $i++) {
+        $id = $list[$i];
+        if ( isset($prevSort[$id]) ) {
+          $saveData = [
+            'TDictionary' => [
+              'id' => $id,
+              'sort' => $prevSortKeys[$i]
+            ]
+          ];
+          if (!$this->TDictionary->validates()) {
+            $ret = false;
+            break;
+          }
+          if (!$this->TDictionary->save($saveData)) {
+            $ret = false;
+            break;
+          }
+        }
+      }
+      if ($ret) {
+        $this->TDictionary->commit();
+        $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
+      }
+      else {
+        $this->TDictionary->rollback();
+        $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.saveFailed'));
+      }
+      $this->redirect('/TDictionaries/index');
     }
-
-    exit();
   }
 
 

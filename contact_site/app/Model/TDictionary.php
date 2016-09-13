@@ -23,23 +23,6 @@ class TDictionary extends AppModel {
         'message' => '１００文字以内で設定してください'
       ]
     ],
-    'sort' => [
-      'numeric' => [
-          'rule' => 'numeric',
-          'allowEmpty' => true,
-          'message' => '1～999までの整数値で入力してください'
-      ],
-      'naturalNumber' => [
-          'rule' => 'naturalNumber',
-          'allowEmpty' => true,
-          'message' => '1～999までの整数値で入力してください'
-      ],
-      'range' => [
-          'rule' => ['range', 0, 999],
-          'allowEmpty' => true,
-          'message' => '1～999までの整数値で設定してください'
-      ]
-    ],
     'type' => [
       'inList' => [
           'rule' => ['inList', [C_AUTHORITY_ADMIN, C_AUTHORITY_NORMAL]],
