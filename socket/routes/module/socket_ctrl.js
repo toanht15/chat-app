@@ -1129,7 +1129,16 @@ io.sockets.on('connection', function (socket) {
           }
           break;
         case 4: // del company ( sample: socket.emit('settingReload', JSON.stringify({type:4, siteKey: "master"})); )
-          console.log('info', company.info);
+          if ( !((socket.id in company.user) && ('siteKey' in company.user[socket.id])) ) return false;
+          var targetKey = company.user[socket.id].siteKey;
+          if ( targetKey in company.info ) {
+            var activeList = [];
+            if ( targetKey in activeOperator ) {
+              activeList = activeOperator[targetKey];
+            }
+            console.log('info', company.info[targetKey]);
+            emit.toMine('consoleLogInfo', {u: company.info[targetKey], a: activeList}, socket);
+          }
           break;
         default:
       }
