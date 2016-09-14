@@ -19,7 +19,7 @@ else if ( $coreSettings[C_COMPANY_USE_SYNCLO] && !$coreSettings[C_COMPANY_USE_CH
 }
 ?>
 
-    <div id='customer_sub_pop' data-contract='<?=$cName?>' ng-cloak><?php echo $this->element('Customers/detail') ?></div>
+    <div id='customer_sub_pop' data-contract='<?=$cName?>' ng-show="detailId" ng-cloak><?php echo $this->element('Customers/detail') ?></div>
 
     <div id='customer_tab' ng-cloak>
       <ul>

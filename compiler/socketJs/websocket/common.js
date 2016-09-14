@@ -504,10 +504,7 @@ var socket, // socket.io
       html += '  </section>';
       return html;
     },
-    makeAccessIdTag: function(){
-
-      if ( !check.browser() ) return false;
-      if ( !('widget' in window.info) ) return false;
+    judgeShowWidget: function(){
       window.info.widgetDisplay = null; // デフォルト表示しない
       // チャット契約、画面同期中であれば表示
       if ( check.isset(userInfo.connectToken) && window.info.contract.chat ) {
@@ -523,12 +520,17 @@ var socket, // socket.io
           window.info.widgetDisplay = true;
         }
       }
-      if (!window.info.widgetDisplay) {
-        return false;
-      }
       // 同期対象とするが、ウィジェットは表示しない
       if (check.isset(window.info['dataset']) && (check.isset(window.info.dataset['hide']) && window.info.dataset.hide === "1")) {
         window.info.widgetDisplay = false;
+      }
+      return window.info.widgetDisplay;
+    },
+    makeAccessIdTag: function(){
+
+      if ( !check.browser() ) return false;
+      if ( !('widget' in window.info) ) return false;
+      if (!this.judgeShowWidget()) {
         return false;
       }
       common.load.finish();
@@ -1138,9 +1140,6 @@ var socket, // socket.io
         case cnst.info_type.time:
           return "time";
           break;
-        case cnst.info_type.page:
-          return "page";
-          break;
         case cnst.info_type.referrer:
           return "referrer";
           break;
@@ -1204,7 +1203,6 @@ var socket, // socket.io
         cnst.info_type.access,
         cnst.info_type.ip,
         cnst.info_type.time,
-        cnst.info_type.page,
         cnst.info_type.referrer,
         cnst.info_type.connect,
         cnst.info_type.tab,
@@ -1227,21 +1225,12 @@ var socket, // socket.io
     getTime: function(){
       return this.get(cnst.info_type.time);
     },
-    getPage: function(){
-      return this.get(cnst.info_type.page);
-    },
     getConnect: function(){
       return this.get(cnst.info_type.connect);
     },
     getStayCount: function(){
       var code = this.getCode(cnst.info_type.staycount);
       return Number(storage.l.get(code));
-    },
-    setPage: function(){
-      var p = this.get(cnst.info_type.page),
-      n = ( isNaN(p) ) ? 1 : Number(p) + 1;
-      this.set(cnst.info_type.page, n, true);
-      return n;
     },
     setStayCount: function(){
       var code = this.getCode(cnst.info_type.staycount),
@@ -1271,7 +1260,6 @@ var socket, // socket.io
         }
         userInfo.prev.push({url: location.href, title: common.title()});
         storage.s.set(code, JSON.stringify(userInfo.prev));
-        userInfo.setPage();
       }
     },
     setConnect: function(val){
@@ -1291,13 +1279,13 @@ var socket, // socket.io
       return {
         ipAddress: this.getIp(),
         time: this.getTime(),
-        page: this.getPage(),
         prev: this.prev,
         referrer: this.referrer,
         userAgent: window.navigator.userAgent,
         chatCnt: document.getElementsByClassName('sinclo_se').length,
         chatUnread: {id: null, cnt: 0},
-        service: check.browser()
+        service: check.browser(),
+        widget: window.info.widgetDisplay
       };
     }
   };
@@ -1962,7 +1950,7 @@ var socket, // socket.io
         var emitData = userInfo.getSendList();
         emitData.widget = window.info.widgetDisplay;
         emit('customerInfo', emitData);
-        emit('connectSuccess', {confirm: false, reconnect: true});
+        emit('connectSuccess', {confirm: false, reconnect: true, widget: window.info.widgetDisplay});
         sincloBox.style.display = "block";
       }
       else {
@@ -2175,6 +2163,12 @@ function emit(evName, data){
   if (evName === "connected" || evName === "getChatMessage") {
     data.token = common.token;
   }
+  if (evName === "connectSuccess") {
+    data.widget = window.info.widgetDisplay;
+  }
+  if (evName === "customerInfo" || evName === "sendAccessInfo") {
+    data.contract = window.info.contract;
+  }
   if (evName === "syncReady" || evName === "connectSuccess" || evName === "customerInfo" || evName === "sendAccessInfo") {
     data.subWindow = false;
     if ( check.isset(storage.s.get('params')) || userInfo.accessType === cnst.access_type.host ) {
@@ -2213,7 +2207,7 @@ function emit(evName, data){
     data.connectToken = userInfo.connectToken;
   }
   /* ここまで：イベント名指定あり */
-
+// console.log(evName, data);
   socket.emit(evName, JSON.stringify(data));
 }
 

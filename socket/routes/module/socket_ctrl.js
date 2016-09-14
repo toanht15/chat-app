@@ -147,6 +147,15 @@ function syncStopCtrl(siteKey, tabId){
   }
 }
 
+function getOperatorCnt(siteKey) {
+  var cnt = 0;
+  if ( isset(activeOperator[siteKey]) ) {
+    var key = Object.keys(activeOperator[siteKey]);
+    cnt = key.length;
+  }
+  return cnt;
+}
+
 function objectSort(object) {
   //戻り値用新オブジェクト生成
   var sorted = {};
@@ -516,12 +525,7 @@ io.sockets.on('connection', function (socket) {
         emit.toCompany('getAccessInfo', data, res.siteKey);
       }
       else {
-        var cnt = 0;
-        if ( isset(activeOperator[res.siteKey]) ) {
-          var key = Object.keys(activeOperator[res.siteKey]);
-          cnt = key.length;
-        }
-        send['activeOperatorCnt'] = cnt;
+        send['activeOperatorCnt'] = getOperatorCnt(res.siteKey);
         socket.join(res.siteKey + emit.roomKey.client);
         emit.toMine('accessInfo', send, socket);
       }
@@ -529,10 +533,14 @@ io.sockets.on('connection', function (socket) {
     }
   });
 
-  socket.on("connectedForSync", function () {
+  socket.on("connectedForSync", function (data) {
     // ページ表示開始時間
     var d = new Date();
-    emit.toMine("retConnectedForSync", {pagetime: Date.parse(d)}, socket);
+    // 待機オペレーター人数
+    var obj = JSON.parse(data);
+    var actOpCnt = getOperatorCnt(obj.siteKey);
+
+    emit.toMine("retConnectedForSync", {pagetime: Date.parse(d), activeOperatorCnt: actOpCnt}, socket);
   });
 
   socket.on("customerInfo", function (data) {
@@ -543,6 +551,7 @@ io.sockets.on('connection', function (socket) {
     }
 
     emit.toCompany("sendCustomerInfo", obj, obj.siteKey);
+    if ( ('contract' in obj) && ('chat' in obj.contract) && obj.contract.chat === false) return false;
     chatApi.sendUnreadCnt("sendChatInfo", obj, false);
   });
 
@@ -606,6 +615,7 @@ io.sockets.on('connection', function (socket) {
     }
     // TODO ここを要求したユーザのみに送るようにする
     emit.toCompany("receiveAccessInfo", obj, obj.siteKey);
+    if ( ('contract' in obj) && ('chat' in obj.contract) && obj.contract.chat === false) return false;
     chatApi.sendUnreadCnt("sendChatInfo", obj, false);
   });
   // -----------------------------------------------------------------------

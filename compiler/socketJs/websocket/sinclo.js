@@ -148,7 +148,6 @@
       var emitData = {
           referrer: userInfo.referrer,
           time: userInfo.getTime(),
-          page: userInfo.getPage(),
           firstConnection: userInfo.firstConnection,
           userAgent: window.navigator.userAgent,
           service: check.browser(),
@@ -166,6 +165,7 @@
         if ( Number(userInfo.accessType) === Number(cnst.access_type.guest) ) {
           emitData.connectToken = userInfo.connectToken;
           userInfo.syncInfo.get();
+          common.judgeShowWidget();
           emit('connectSuccess', {prevList: userInfo.prevList, prev: userInfo.prev});
           emit('connectedForSync', {});
 
@@ -215,6 +215,9 @@
       var obj = common.jParse(d);
       if ( ('pagetime' in obj) ) {
         userInfo.pageTime = obj['pagetime'];
+      }
+      if ( ('activeOperatorCnt' in obj) ) {
+        window.info.activeOperatorCnt = obj['activeOperatorCnt'];
       }
     },
     accessInfo: function(d){
@@ -705,8 +708,12 @@
       // 自動メッセージの情報を渡す（保存の為）
       var obj = common.jParse(d);
       emit("sendAutoChatMessages", {messages: sinclo.chatApi.autoMessages, sendTo: obj.sendTo});
+      var value = "";
+      if (window.info.widgetDisplay) {
+        value = document.getElementById('sincloChatMessage').value;
+      }
       // 入力中のステータスを送る
-      sinclo.chatApi.observeType.emit(sinclo.chatApi.observeType.status, document.getElementById('sincloChatMessage').value);
+      sinclo.chatApi.observeType.emit(sinclo.chatApi.observeType.status, value);
     },
     resAutoChatMessage: function(d){
         var obj = JSON.parse(d);

@@ -32,7 +32,7 @@
               </message-list>
               <typing-message>
                 <li class="sinclo_se typeing_message" ng-if="typingMessageSe !== ''">{{typingMessageSe}}</li>
-                <li class="sinclo_re typeing_message" ng-if="typingMessageRe[detailId] !== ''">{{typingMessageRe[detailId]}}</li>
+                <li class="sinclo_re typeing_message" ng-if="typingMessageRe[detailId] && typingMessageRe[detailId] !== ''">{{typingMessageRe[detailId]}}</li>
               </typing-message>
             </ul>
             <div id="chatMenu" class="p05tb" ng-class="{showOption: chatOptionDisabled(detailId)}">
@@ -102,8 +102,14 @@
               <dd>{{detail.prev.length}}（<a href="javascript:void(0)" ng-click="openHistory(detail)">移動履歴</a>）</dd>
           </dl>
         </div>
-        <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
-        <div class="connectionBtn">
+        <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] && strcmp($userInfo['permission_level'], C_AUTHORITY_SUPER) !== 0 ) :?>
+
+        <div class="tCenter" ng-if="detail.connectToken">
+          <span class="monitorOn" ng-if="!detail.responderId">対応中...</span>
+          <span class="monitorOn" ng-if="detail.responderId"><span class="bold">対応中</span>（{{setName(detail.responderId)}}）</span>
+        </div>
+
+        <div class="connectionBtn" ng-if="showConnectionBtn()">
           <a href="javascript:void(0)" ng-click="windowOpen(detailId, detail.accessId)">接続する</a>
         </div>
         <?php endif; ?>
