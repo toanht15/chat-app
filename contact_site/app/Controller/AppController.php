@@ -230,9 +230,12 @@ class AppController extends Controller {
   }
 
   public function setChatValiable($val) {
+    // 企業名取得
+    $widgetSettings = $this->MWidgetSetting->find('first', ['conditions' => ['m_companies_id' => $this->userInfo['MCompany']['id']]]);
+    $styleSettings = (array)json_decode($widgetSettings['MWidgetSetting']['style_settings']);
     $ret = $val;
     // 企業名
-    $ret = str_replace("{!company}", $this->userInfo['MCompany']['company_name'], $ret);
+    $ret = str_replace("{!company}", $styleSettings['subTitle'], $ret);
     // 表示名
     $ret = str_replace("{!user}", $this->userInfo['display_name'], $ret);
     return $ret;

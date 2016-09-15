@@ -685,7 +685,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             else if (Number(opt.type) === Number(<?=C_NOTIFICATION_TYPE_URL?>)) {
               target = m.url;
             }
-            if (target.indexOf(opt.keyword) > 0) {
+            if (target.indexOf(opt.keyword) >= 0) {
               options.body = opt.name;
               options.icon = "/img/<?=C_PATH_NOTIFICATION_IMG_DIR?>"+opt.image;
             }

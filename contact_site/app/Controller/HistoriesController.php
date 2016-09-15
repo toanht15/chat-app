@@ -231,10 +231,10 @@ class HistoriesController extends AppController {
       $message = $val['THistoryChatLog']['message'];
       switch($val['THistoryChatLog']['message_type']){
         case 1: // 企業側からの送信
-          $row = $this->_setData($date, "オペレーター", "", $message);
+          $row = $this->_setData($date, "訪問者", "", $message);
           break;
         case 2: // 訪問者側からの送信
-          $row = $this->_setData($date, "訪問者", $val['MUser']['display_name'], $message);
+          $row = $this->_setData($date, "オペレーター", $val['MUser']['display_name'], $message);
           break;
         case 3: // オートメッセージ
           $row = $this->_setData($date, "オートメッセージ", $this->userInfo['MCompany']['company_name'], $message);
