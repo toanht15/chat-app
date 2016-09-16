@@ -871,9 +871,9 @@ ul#color-bar-right {
 }
 
 [id$=_idx] {
-  width: 90%;
+  width: auto;
+  margin: 15px 15px 0 15px;
   min-width: $content-min-width!important;
-  margin: 50px 50px 0 50px;
 }
 
 [id$=_menu] {
@@ -1356,6 +1356,8 @@ ul.naviBtn {
                   overflow-y: auto;
                   overflow-x: hidden;
                   margin: 5px 0;
+                  font-size: 0.8em !important;
+
                   li {
                     padding: 3px;
                     border-bottom: 1px solid #909090;
