@@ -124,3 +124,8 @@
     </div>
   </div>
 </div>
+<?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
+  <audio id="sinclo-sound">
+    <source src="<?=C_PATH_NODE_FILE_SERVER?>/sounds/decision.mp3" type="audio/mp3">';
+  </audio>
+<?php endif; ?>
