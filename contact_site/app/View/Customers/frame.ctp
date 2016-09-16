@@ -221,7 +221,7 @@ window.onload = function(){
   socket.on('unsetUser', function(d){
     var obj = JSON.parse(d);
     if ( obj.tabId !== tabId ) return false;
-      modalOpen.call(window, '再接続しますか？', 'p-confirm', 'メッセージ');
+      modalOpen.call(window, '切断を検知しました。再接続をしますか？', 'p-confirm', 'メッセージ');
       popupEvent.closePopup = function(){
         emit('syncReconnectConfirm', {to: tabId});
         popupEvent.close();
