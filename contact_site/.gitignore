@@ -14,6 +14,9 @@
 /app/webroot/files/*
 /app/webroot/img/notification/*
 !/app/webroot/img/notification/popup_icon_*
+!/app/webroot/img/notification/tmp/
+/app/webroot/img/notification/tmp/*
+!/app/webroot/img/notification/tmp/.gitkeep
 
 # IDE and editor specific files #
 #################################
