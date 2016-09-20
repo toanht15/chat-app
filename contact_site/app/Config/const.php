@@ -93,6 +93,10 @@ define('C_AUTO_TRIGGER_SEARCH_KEY', 6); // 検索キーワード
 // オートメッセージ機能－アクション種別コード
 define('C_AUTO_ACTION_TYPE_SENDMESSAGE', 1); // チャットメッセージを送る
 
+// オートメッセージ機能－ウィジェット種別コード
+define('C_AUTO_WIDGET_TYPE_OPEN', 1); // 自動で最大化する
+define('C_AUTO_WIDGET_TYPE_CLOSE', 2); // 自動で最大化しない
+
 // する/しない設定
 define('C_SELECT_CAN', 1); // する
 define('C_SELECT_CAN_NOT', 2); // しない
@@ -240,4 +244,10 @@ $config['outMessageTriggerList'] = [
 /* オートメッセージ － アクション種別 */
 $config['outMessageActionType'] = [
     C_AUTO_ACTION_TYPE_SENDMESSAGE => "チャットメッセージを送る"
+];
+
+/* オートメッセージ － ウィジェット種別 */
+$config['outMessageWidgetOpenType'] = [
+    C_AUTO_WIDGET_TYPE_OPEN => "自動で最大化する",
+    C_AUTO_WIDGET_TYPE_CLOSE => "自動で最大化しない"
 ];

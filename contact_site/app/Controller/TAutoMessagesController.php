@@ -69,6 +69,7 @@ class TAutoMessagesController extends AppController {
       $this->request->data = $editData[0];
       $this->request->data['TAutoMessage']['condition_type'] = (!empty($json['conditionType'])) ? $json['conditionType'] : "";
       $this->request->data['TAutoMessage']['action'] = (!empty($json['message'])) ? $json['message'] : "";
+      $this->request->data['TAutoMessage']['widget_open'] = (!empty($json['widgetOpen'])) ? $json['widgetOpen'] : "";
     }
 
     $this->_viewElement();
@@ -175,6 +176,7 @@ class TAutoMessagesController extends AppController {
    * @return void
    * */
   private function _viewElement() {
+    // TODO out -> auto に変更
     // トリガー種別
     $this->set('outMessageTriggerType', Configure::read('outMessageTriggerType'));
     // 条件設定種別
@@ -183,6 +185,8 @@ class TAutoMessagesController extends AppController {
     $this->set('outMessageTriggerList', $this->outMessageTriggerList);
     // アクション種別
     $this->set('outMessageActionType', Configure::read('outMessageActionType'));
+    // ウィジェット種別
+    $this->set('outMessageWidgetOpenType', Configure::read('outMessageWidgetOpenType'));
     // 有効無効
     $this->set('outMessageAvailableType', Configure::read('outMessageAvailableType'));
   }

@@ -8,7 +8,6 @@ sincloApp.controller('MainCtrl', function($scope) {
     var self = this;
 
     var setActivity = <?=( !empty($this->data['TAutoMessage']['activity']) ) ? json_encode($this->data['TAutoMessage']['activity'], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) : "{}" ?>;
-
     this.setItemList = {};
     var setItemListTmp = (typeof(setActivity) === "string") ? JSON.parse(setActivity) : setActivity;
     if ( 'conditions' in setItemListTmp ) {
@@ -86,6 +85,7 @@ sincloApp.controller('MainCtrl', function($scope) {
         var setList = {
                 'conditionType': Number(this.condition_type),
                 'conditions': angular.copy(this.setItemList),
+                'widgetOpen': Number(this.widget_open),
                  // TODO 後々動的に
                 'message': angular.element("#TAutoMessageAction").val()
         };

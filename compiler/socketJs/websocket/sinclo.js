@@ -1233,6 +1233,12 @@
                     if ( prev.length === 0 || (prev.length > 0 && prev[prev.length - 1].created !== date) ) {
                         clearInterval(setAutoMessageTimer);
                         sinclo.trigger.setAutoMessage(id, cond);
+                        // 自動最大化
+                        if ( !('widgetOpen' in cond) ) return false;
+                        var flg = sincloBox.getAttribute('data-openflg');
+                        if ( Number(cond.widgetOpen) === 1 && String(flg) === "false" ) {
+                          sinclo.operatorInfo.ev();
+                        }
                     }
                 }, 1);
 
