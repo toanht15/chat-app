@@ -201,6 +201,7 @@ var socket, // socket.io
       html += '      #sincloBox ul#chatTalk li a, #sincloBox #fotter a {  text-decoration: underline; }';
       html += '      #sincloBox section { display: none }';
       html += '      #sincloBox .flexBox { display: -ms-flexbox; display: -webkit-flex; display: flex; -ms-flex-direction: column; -webkit-flex-direction: column; flex-direction: column }';
+      html += '      #sincloBox .flexBoxRow { display: -ms-flexbox; display: -webkit-flex; display: flex; -ms-flex-direction: row; -webkit-flex-direction: row; flex-direction: row }';
 
       // チャットを使用する際
       if ( window.info.contract.chat ) {
@@ -215,9 +216,9 @@ var socket, // socket.io
         html += '      #sincloBox ul#chatTalk li span.cName { display: block; color: ' + widget.mainColor + '; font-weight: bold; }';
         html += '      #sincloBox ul#chatTalk li.sinclo_etc { border: none; text-align: center; margin: 0 auto; font-weight: bold }';
         html += '      #sincloBox section#chatTab div { border-top: 1px solid #E8E7E0; }';
-        html += '      #sincloBox section#chatTab div #sincloChatMessage { height: 100%; margin: 0; width: 80%; float: left; resize: none; color: #8A8A8A!important; border-right-color: ' + widget.mainColor + '!important; }';
+        html += '      #sincloBox section#chatTab div #sincloChatMessage { display: block; height: 100%; margin: 0; width: 80%; resize: none; color: #8A8A8A!important; border-right-color: ' + widget.mainColor + '!important; }';
         html += '      #sincloBox section#chatTab div #sincloChatMessage:focus { outline: none; border-color: ' + widget.mainColor + '!important }';
-        html += '      #sincloBox section#chatTab div #sincloChatSendBtn { height: 100%; width: 20%; text-decoration: none; border-radius: 0 5px 5px 0; cursor: pointer; margin: 0 auto; float: right; text-align: center; background-color: ' + widget.mainColor + '; color: ' + widget.stringColor + '; font-weight: bold; font-size: 1.2em;}';
+        html += '      #sincloBox section#chatTab div #sincloChatSendBtn { display: block; height: 100%; width: 20%; text-decoration: none; border-radius: 0 5px 5px 0; cursor: pointer; margin: 0; text-align: center; background-color: ' + widget.mainColor + '; color: ' + widget.stringColor + '; font-weight: bold; font-size: 1.2em;}';
         html += '      #sincloBox section#chatTab div #sincloChatSendBtn span { color: ' + widget.stringColor + '; }';
       }
       html += '      #sincloBox section#navigation { position: relative; display: block; }';
@@ -491,7 +492,7 @@ var socket, // socket.io
       }
       html += '  <section id="chatTab" class="flexBox">';
       html += '    <ul id="chatTalk"><sinclo-chat></sinclo-chat><sinclo-typing></sinclo-typing></ul>';
-      html += '    <div>';
+      html += '    <div class="flexBoxRow">';
       html += '      <textarea name="sincloChat" id="sincloChatMessage" maxlength="300" placeholder=" ' + placeholder + ' "></textarea>';
       html += '      <a id="sincloChatSendBtn" class="notSelect" onclick="sinclo.chatApi.push()">送信</a>';
       if ( spFlg ) { // スマートフォンの場合
