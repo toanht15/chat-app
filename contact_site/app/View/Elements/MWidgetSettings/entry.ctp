@@ -17,20 +17,14 @@ $headerNo = 1;
         <!-- 表示設定 -->
         <!-- 最大化時間設定 -->
         <li>
-          <?php
-          // 最大化時間入力欄のdisabled制御
-          $isDisableMaxShowTime = false;
-          if ( isset($this->data['MWidgetSetting']['max_show_time']) ) {
-            $isDisableMaxShowTime = true;
-          }
-          ?>
           <span><label>最大化する条件</label></span>
           <div>
-            <?php $maxShowTimeTag = $this->Form->input('max_show_time', [
+            <?php $maxShowTimeTagBySite = $this->Form->input('max_show_time_site', [
               'type' => 'number',
               'div' => false,
               'label' => false,
-              'ng-disabled' => 'showTime == "2"',
+              'ng-disabled' => 'showTime !== "'.C_WIDGET_AUTO_OPEN_TYPE_SITE.'"',
+              'before' => 'サイト訪問後',
               'after' => '秒後に自動で最大化する',
               'maxlength' => 2,
               'style' => 'width:5em',
@@ -38,15 +32,33 @@ $headerNo = 1;
               'min' => 0,
               'error' => false
             ],[
-              'entity' => 'MWidgetSetting.max_show_time'
+              'entity' => 'MWidgetSetting.max_show_time_site'
+            ]); ?>
+            <?php $maxShowTimeTagByPage = $this->Form->input('max_show_time_page', [
+              'type' => 'number',
+              'div' => false,
+              'label' => false,
+              'ng-disabled' => 'showTime !== "'.C_WIDGET_AUTO_OPEN_TYPE_PAGE.'"',
+              'before' => 'ページ訪問後',
+              'after' => '秒後に自動で最大化する',
+              'maxlength' => 2,
+              'style' => 'width:5em',
+              'max' => 60,
+              'min' => 0,
+              'error' => false
+            ],[
+              'entity' => 'MWidgetSetting.max_show_time_page'
             ]); ?>
             <div ng-init="showTime='<?=$this->formEx->val($this->data['MWidgetSetting'], 'show_time')?>'">
-              <label for="showTime1"><input type="radio" name="data[MWidgetSetting][show_time]" ng-model="showTime" id="showTime1" value="1" ><?=$maxShowTimeTag?></label><br>
-              <label for="showTime2"><input type="radio" name="data[MWidgetSetting][show_time]" ng-model="showTime" id="showTime2" value="2">自動で最大化しない</label>
+              <label for="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_ON?>"><input type="radio" name="data[MWidgetSetting][show_time]" ng-model="showTime" id="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_ON?>" value="<?=C_WIDGET_AUTO_OPEN_TYPE_ON?>">常に自動で最大化する</label><br>
+              <label for="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_SITE?>"><input type="radio" name="data[MWidgetSetting][show_time]" ng-model="showTime" id="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_SITE?>" value="<?=C_WIDGET_AUTO_OPEN_TYPE_SITE?>" ><?=$maxShowTimeTagBySite?></label><br>
+              <label for="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_PAGE?>"><input type="radio" name="data[MWidgetSetting][show_time]" ng-model="showTime" id="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_PAGE?>" value="<?=C_WIDGET_AUTO_OPEN_TYPE_PAGE?>" ><?=$maxShowTimeTagByPage?></label><br>
+              <label for="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_OFF?>"><input type="radio" name="data[MWidgetSetting][show_time]" ng-model="showTime" id="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_OFF?>" value="<?=C_WIDGET_AUTO_OPEN_TYPE_OFF?>">常に最大化しない</label>
             </div>
           </div>
         </li>
-        <?php if ( $this->Form->isFieldError('max_show_time') ) echo $this->Form->error('max_show_time', null, ['wrap' => 'li']); ?>
+        <?php if ( $this->Form->isFieldError('max_show_time_site') ) echo $this->Form->error('max_show_time_site', null, ['wrap' => 'li']); ?>
+        <?php if ( $this->Form->isFieldError('max_show_time_page') ) echo $this->Form->error('max_show_time_page', null, ['wrap' => 'li']); ?>
         <!-- 最大化時間設定 -->
         <!-- 表示位置 -->
         <li>

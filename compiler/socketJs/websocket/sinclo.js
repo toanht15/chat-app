@@ -289,20 +289,23 @@
                   sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
                 }
                 // ウィジェット表示
-                if (!widgetOpen) {
-                  if ( (('maxShowTime' in window.info.widget) && String(window.info.widget.maxShowTime).match(/^[0-9]{1,2}$/) !== null) && ('showTime' in window.info.widget) && String(window.info.widget.showTime) === "1" ) {
-                    window.setTimeout(function(){
-                      var flg = sincloBox.getAttribute('data-openflg');
-                      if ( String(flg) === "false" ) {
-                        storage.s.set('widgetOpen', true);
-                        sinclo.operatorInfo.ev();
-                      }
-                    }, Number(window.info.widget.maxShowTime) * 1000);
-                  }
-                  else {
-                      storage.s.set('widgetOpen', true);
-                  }
+                if ( !(('showTime' in window.info.widget) && ('maxShowTime' in window.info.widget) && String(window.info.widget.maxShowTime).match(/^[0-9]{1,2}$/) !== null) ) return false;
+                var showTime = String(window.info.widget.showTime);
+                var maxShowTime = Number(window.info.widget.maxShowTime) * 1000;
+                if ( showTime === "2" ) return false; // 常に最大化しない
+                if ( showTime === "1" ) { // サイト訪問後
+                  if (widgetOpen) return false;
                 }
+                // 常に最大化する、ページ訪問時（showTime === 3,4）
+                window.setTimeout(function(){
+                  var flg = sincloBox.getAttribute('data-openflg');
+                  if ( String(flg) === "false" ) {
+                    storage.s.set('widgetOpen', true);
+                    sinclo.operatorInfo.ev();
+                  }
+                }, maxShowTime);
+
+
                 if ( window.info.contract.chat ) {
                     // チャット情報読み込み
                     sinclo.chatApi.init();

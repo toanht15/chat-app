@@ -8,6 +8,14 @@ class MWidgetSettingsController extends AppController {
   public $helpers = ['ngForm'];
 
   public $coreSettings = null;
+  public $styleSetting = [
+    'common' => [
+      'show_time', 'max_show_time_site', 'max_show_time_page', 'show_position', 'title', 'show_subtitle', 'sub_title', 'show_description', 'description',
+      'main_color', 'string_color', 'show_main_image', 'main_image', 'radius_ratio'
+    ],
+    'synclo' => ['tel', 'content', 'display_time_flg', 'time_text'],
+    'chat' => ['chat_trigger', 'show_name'],
+  ];
 
   public function beforeRender(){
     $this->set('title_for_layout', 'ウィジェット設定');
@@ -39,93 +47,15 @@ class MWidgetSettingsController extends AppController {
         $this->redirect("/");
       }
 
-      // チャットのみ
-      if ( $this->coreSettings[C_COMPANY_USE_CHAT] && !$this->coreSettings[C_COMPANY_USE_SYNCLO] ) {
-        $inputData['widget']['showTab'] = "chat";
-      }
-      // 画面同期のみ
-      else if ( $this->coreSettings[C_COMPANY_USE_SYNCLO] && !$this->coreSettings[C_COMPANY_USE_CHAT] ) {
-        $inputData['widget']['showTab'] = "call";
-      }
-      // どちらも
-      else {
-        // チャットがデフォルト
-        $inputData['widget']['showTab'] = "chat";
-        if ( isset($this->request->params['named']['showTab']) && strcmp($this->request->params['named']['showTab'], "call") === 0 ) {
-        $inputData['widget']['showTab'] = "call";
-        }
-      }
+      // 表示ウィジェットのセット
+      $inputData = $this->_setShowTab($inputData);
 
+      // 詳細設定
       if ( isset($ret['MWidgetSetting']['style_settings']) ) {
         $json = $this->_settingToObj($ret['MWidgetSetting']['style_settings']);
-        if ( isset($json['show_time']) ) {
-        $inputData['MWidgetSetting']['show_time'] = $json['show_time'];
-        }
-        if ( isset($json['max_show_time']) ) {
-        $inputData['MWidgetSetting']['max_show_time'] = $json['max_show_time'];
-        }
-        if ( isset($json['show_position']) ) {
-        $inputData['MWidgetSetting']['show_position'] = $json['show_position'];
-        }
-        if ( isset($json['title']) ) {
-        $inputData['MWidgetSetting']['title'] = $json['title'];
-        }
-        if ( isset($json['show_subtitle']) ) {
-        $inputData['MWidgetSetting']['show_subtitle'] = $json['show_subtitle'];
-        }
-        if ( isset($json['sub_title']) ) {
-        $inputData['MWidgetSetting']['sub_title'] = $json['sub_title'];
-        }
-        if ( isset($json['show_description']) ) {
-        $inputData['MWidgetSetting']['show_description'] = $json['show_description'];
-        }
-        if ( isset($json['description']) ) {
-        $inputData['MWidgetSetting']['description'] = $json['description'];
-        }
-        if ( isset($json['main_color']) ) {
-        $inputData['MWidgetSetting']['main_color'] = $json['main_color'];
-        }
-        if ( isset($json['string_color']) ) {
-        $inputData['MWidgetSetting']['string_color'] = $json['string_color'];
-        }
-        if ( isset($json['show_main_image']) ) {
-        $inputData['MWidgetSetting']['show_main_image'] = $json['show_main_image'];
-        }
-        if ( isset($json['main_image']) ) {
-        $inputData['MWidgetSetting']['main_image'] = $json['main_image'];
-        }
-        if ( $this->coreSettings['synclo'] ) {
-        if ( isset($json['tel']) ) {
-          $inputData['MWidgetSetting']['tel'] = $json['tel'];
-        }
-        if ( isset($json['content']) ) {
-          $inputData['MWidgetSetting']['content'] = $json['content'];
-        }
-        if ( isset($json['display_time_flg']) ) {
-          $inputData['MWidgetSetting']['display_time_flg'] = $json['display_time_flg'];
-        }
-        if ( isset($json['time_text']) ) {
-          $inputData['MWidgetSetting']['time_text'] = $json['time_text'];
-        }
-        }
-        if ( $this->coreSettings['chat'] ) {
-        if ( isset($json['chat_trigger']) ) {
-          $inputData['MWidgetSetting']['chat_trigger'] = $json['chat_trigger'];
-        }
-        else {
-          $inputData['MWidgetSetting']['chat_trigger'] = C_WIDGET_SEND_ACT_PUSH_KEY; // デフォルト値
-        }
-        if ( isset($json['show_name']) ) {
-          $inputData['MWidgetSetting']['show_name'] = $json['show_name'];
-        }
-        else {
-          $inputData['MWidgetSetting']['show_name'] = C_WIDGET_SHOW_COMP; // デフォルト値
-        }
-        }
-        if ( isset($json['radius_ratio']) ) {
-        $inputData['MWidgetSetting']['radius_ratio'] = $json['radius_ratio'];
-        }
+        $inputData['MWidgetSetting'] = $this->_setStyleSetting($inputData['MWidgetSetting'], $json);
       }
+
       $this->data = $inputData;
     }
     $this->_viewElement();
@@ -271,6 +201,7 @@ class MWidgetSettingsController extends AppController {
       $settings['mainImage'] = C_PATH_WIDGET_CUSTOM_IMG.'/'.$objData['main_custom_image'];
       }
     }
+
     return $this->jsonEncode($settings);
   }
 
@@ -299,6 +230,77 @@ class MWidgetSettingsController extends AppController {
       }
     }
     return $settings;
+  }
+
+  /**
+   * デフォルトで表示するタブを選定
+   * @param $d ($inputData)
+   * @return $d ($inputData)
+   * */
+  private function _setShowTab($d){
+    // チャットのみ
+    if ( $this->coreSettings[C_COMPANY_USE_CHAT] && !$this->coreSettings[C_COMPANY_USE_SYNCLO] ) {
+      $d['widget']['showTab'] = "chat";
+    }
+    // 画面同期のみ
+    else if ( $this->coreSettings[C_COMPANY_USE_SYNCLO] && !$this->coreSettings[C_COMPANY_USE_CHAT] ) {
+      $d['widget']['showTab'] = "call";
+    }
+    // どちらも
+    else {
+      // チャットがデフォルト
+      $d['widget']['showTab'] = "chat";
+      if ( isset($this->request->params['named']['showTab']) && strcmp($this->request->params['named']['showTab'], "call") === 0 ) {
+      $d['widget']['showTab'] = "call";
+      }
+    }
+    return $d;
+  }
+
+  /**
+   * jsonデータとして纏めていた設定値を配列に直す
+   * @param $d ($inputData)
+   * @param $json ($inputData['MWidgetSetting']['style_settings']をjson_decodeしたもの)
+   * @return $d ($inputData)
+   * */
+  private function _setStyleSetting($d, $json) {
+    foreach($this->styleSetting as $key => $val) {
+      switch ($key) {
+        case 'chat':
+          if ( !$this->coreSettings['chat'] ) { continue; }
+          if ( strcmp($v, 'chat_trigger') === 0 ) {
+            $d['chat_trigger'] = C_WIDGET_SEND_ACT_PUSH_KEY; // デフォルト値
+            break;
+          }
+          if ( strcmp($v, 'show_name') === 0 ) {
+            $d['show_name'] = C_WIDGET_SHOW_COMP; // デフォルト値
+            break;
+          }
+        case 'synclo':
+          if ( !$this->coreSettings['synclo'] ) { continue; }
+        case 'common':
+          foreach($val as $v) {
+            if ( strcmp($v, "max_show_time_site") === 0 || strcmp($v, "max_show_time_page") === 0 ) { continue; }
+            if ( strcmp($v, "show_time") === 0 && isset($json[$v]) ) {
+              if ( strcmp($json[$v], C_WIDGET_AUTO_OPEN_TYPE_SITE) === 0 ) {
+                if ( isset($json["max_show_time_site"]) ) {
+                  $d["max_show_time_site"] = $json["max_show_time_site"];
+                }
+              }
+              else if ( strcmp($json[$v], C_WIDGET_AUTO_OPEN_TYPE_PAGE) === 0 ) {
+                if ( isset($json["max_show_time_page"]) ) {
+                  $d["max_show_time_page"] = $json["max_show_time_page"];
+                }
+              }
+            }
+            if ( isset($json[$v]) ) {
+              $d[$v] = $json[$v];
+            }
+          }
+          break;
+      }
+    }
+    return $d;
   }
 
 }

@@ -40,6 +40,12 @@ define('C_WIDGET_DISPLAY_CODE_SHOW', 1); // 常に表示する
 define('C_WIDGET_DISPLAY_CODE_OPER', 2); // オペレーターが待機中の時のみ表示する
 define('C_WIDGET_DISPLAY_CODE_HIDE', 3); // 表示しない
 
+// 自動表示条件種別
+define('C_WIDGET_AUTO_OPEN_TYPE_ON', 3); // 常に自動で最大化する
+define('C_WIDGET_AUTO_OPEN_TYPE_SITE', 1); // サイト訪問後
+define('C_WIDGET_AUTO_OPEN_TYPE_PAGE', 4); // ページ訪問後
+define('C_WIDGET_AUTO_OPEN_TYPE_OFF', 2); // 常に最大化しない
+
 // 表示位置種別
 define('C_WIDGET_POSITION_RIGHT_BOTTOM', 1); // 右下
 define('C_WIDGET_POSITION_LEFT_BOTTOM', 2); // 左下
