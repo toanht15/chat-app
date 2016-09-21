@@ -26,9 +26,9 @@
 
   ?>
   <?php if ( intval($val['THistoryChatLog']['message_type']) < 90 ) { ?>
-    <li class="<?=$className?>"><span><?= $this->Time->format($val['THistoryChatLog']['created'], "%Y/%m/%d %H:%M:%S")?></span><span><?=$name?></span><?=$this->htmlEx->makeChatView(h($val['THistoryChatLog']['message']))?></li>
+    <li class="<?=$className?>"><span><?= $this->Time->format($val['THistoryChatLog']['created'], "%Y/%m/%d %H:%M:%S")?></span><span><?=h($name)?></span><?=$this->htmlEx->makeChatView($val['THistoryChatLog']['message'])?></li>
   <?php } else { ?>
-    <li class="<?=$className?>"><span><?= $this->Time->format($val['THistoryChatLog']['created'], "%Y/%m/%d %H:%M:%S")?></span><?=$message?></li>
+    <li class="<?=$className?>"><span><?= $this->Time->format($val['THistoryChatLog']['created'], "%Y/%m/%d %H:%M:%S")?></span><?=h($message)?></li>
   <?php } ?>
 <?php endforeach; ?>
 </ul>

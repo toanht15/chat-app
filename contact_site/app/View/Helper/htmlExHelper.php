@@ -66,7 +66,7 @@ class htmlExHelper extends AppHelper {
         $content = null;
 
         foreach(explode("\n", $value) as $key => $tmp){
-            $str = $tmp;
+            $str = h($tmp);
             if ( preg_match("/^\[\]/", $tmp) ) {
                 $str = "<input type='radio' id='radio".$key."' disabled=''>";
                 $str .= "<label for='radio".$key."'>".trim(preg_replace("/^\[\]/", "", $tmp))."</label>";

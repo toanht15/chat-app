@@ -26,6 +26,24 @@
 
   }
 
+  // エスケープ用
+  // http://qiita.com/saekis/items/c2b41cd8940923863791
+  function escape_html (string) {
+    if(typeof string !== 'string') {
+      return string;
+    }
+    return string.replace(/[&'`"<>]/g, function(match) {
+      return {
+        '&': '&amp;',
+        "'": '&#x27;',
+        '`': '&#x60;',
+        '"': '&quot;',
+        '<': '&lt;',
+        '>': '&gt;',
+      }[match]
+    });
+  }
+
   function ajaxTimeout(){
 	modalOpen.call(window, "タイムアウトしました", 'p-alert', 'アラート');
 	popupEvent.closeNoPopup = function(){

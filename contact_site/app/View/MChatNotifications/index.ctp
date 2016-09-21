@@ -42,9 +42,9 @@
     <tbody class="sortable">
     <?php foreach((array)$settingList as $key => $val): ?>
       <tr>
-        <td width="20%" class="tLeft"><?=$val['MChatNotification']['keyword']?></td>
+        <td width="20%" class="tLeft"><?=h($val['MChatNotification']['keyword'])?></td>
         <td width="20%" class="tCenter"><?=$this->Html->image("notification/".$val['MChatNotification']['image'], ['width'=>30, 'height'=>30])?></td>
-        <td class="tLeft"><?=$val['MChatNotification']['name']?></td>
+        <td class="tLeft"><?=h($val['MChatNotification']['name'])?></td>
         <td class="tCenter ctrlBtnArea">
           <?php
             echo $this->Html->link(
@@ -56,7 +56,7 @@
                   'height' => 30,
                 )
               ),
-              ['controller'=>'MChatNotifications', 'action' => 'edit', $val['MChatNotification']['id']],
+              ['controller'=>'MChatNotifications', 'action' => 'edit', h($val['MChatNotification']['id'])],
               array(
                 'class' => 'btn-shadow greenBtn fLeft',
                 'escape' => false
@@ -76,7 +76,7 @@
                 'javascript:void(0)',
                 array(
                   'class' => 'btn-shadow redBtn fRight',
-                  'onclick' => 'openConfirmDialog('.$val['MChatNotification']['id'].')',
+                  'onclick' => 'openConfirmDialog('.h($val['MChatNotification']['id']).')',
                   'escape' => false
                 )
             );

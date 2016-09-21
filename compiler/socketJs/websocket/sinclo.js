@@ -603,7 +603,7 @@
       if ( check.isset(opUser) === false ) {
         opUser = "オペレーター";
       }
-
+      check.escape_html(opUser); // エスケープ
 
       sinclo.chatApi.createNotifyMessage(opUser + "が入室しました");
     },
@@ -615,6 +615,7 @@
       if ( check.isset(opUser) === false ) {
         opUser = "オペレーター";
       }
+      check.escape_html(opUser); // エスケープ
       sinclo.chatApi.createNotifyMessage(opUser + "が退室しました");
       sinclo.chatApi.opUser = "";
     },
@@ -654,6 +655,8 @@
           if ( sinclo.chatApi.opUser === "" ) {
             opUser = "オペレーター";
           }
+          check.escape_html(opUser); // エスケープ
+
           if ( Number(chat.messageType) === sinclo.chatApi.messageType.start ) {
             this.chatApi.online = true;
             this.chatApi.createNotifyMessage(opUser + "が入室しました");
@@ -832,7 +835,7 @@
             var li = document.createElement('li');
             chatList.appendChild(li);
             li.className = "sinclo_etc";
-            li.innerHTML = "－ " + val + " －";
+            li.innerHTML = "－ " + check.escape_html(val) + " －";
             this.scDown();
         },
         createTypingTimer: null,
@@ -860,6 +863,8 @@
             if ( check.isset(opUser) === false ) {
               opUser = "オペレーター";
             }
+
+            opUser = check.escape_html(opUser); // エスケープ
 
             if ( !typeMessage ) {
               li.appendChild(span);
@@ -897,12 +902,13 @@
             if ( check.isset(cName) === false ) {
               cName = window.info.widget.subTitle;
             }
+            check.escape_html(cName); // エスケープ
 
             if ( cs === "sinclo_re" ) {
               content = "<span class='cName'>" + cName + "</span>";
             }
             for (var i = 0; strings.length > i; i++) {
-                var str = strings[i];
+                var str = check.escape_html(strings[i]);
 
                 if ( cs === "sinclo_re" ) {
                     // ラジオボタン

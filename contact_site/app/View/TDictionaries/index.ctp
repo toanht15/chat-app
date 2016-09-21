@@ -38,7 +38,7 @@
       <tr data-id="<?=$val['TDictionary']['id']?>" data-sort="<?=$val['TDictionary']['sort']?>">
         <td width="8%" class="tCenter"><?=$key+1?></td>
         <td style="width:8em;" class="tCenter"><?=$dictionaryTypeList[$val['TDictionary']['type']]?></td>
-        <td class="tLeft pre"><?=$val['TDictionary']['word']?></td>
+        <td class="tLeft pre"><?=h($val['TDictionary']['word'])?></td>
         <td width="8%" class="tRight pre"><?=$val['TDictionary']['sort']?></td>
         <td class="tCenter ctrlBtnArea">
         <?php

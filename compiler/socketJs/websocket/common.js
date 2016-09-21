@@ -402,21 +402,21 @@ var socket, // socket.io
       }
       html += '  <div id="widgetHeader" class="notSelect" onclick="sinclo.operatorInfo.ev()">';
       // タイトル
-      html += '    <p id="widgetTitle">' + widget.title + '</p>';
+      html += '    <p id="widgetTitle">' + check.escape_html(widget.title) + '</p>';
       var subTitle = (widget.subTitle === undefined && Number(widget.showSubtitle) === 1 ) ? "" : widget.subTitle;
       var description = (widget.description === undefined) ? "" : widget.description;
       if ( !chatAndTitleOnly && (Number(widget.showMainImage) === 1 || Number(widget.showSubtitle) === 1 || Number(widget.showDescription) === 1) ) {
 
         // サブタイトル
         if ( Number(widget.showSubtitle) === 1 ) {
-          html += '    <p id="widgetSubTitle">' + subTitle + '</p>';
+          html += '    <p id="widgetSubTitle">' + check.escape_html(subTitle) + '</p>';
         }
         else {
           html += '    <p id="widgetSubTitle"></p>';
         }
 
         // 説明文
-        html += '    <p id="widgetDescription">' + description + '</p>';
+        html += '    <p id="widgetDescription">' + check.escape_html(description) + '</p>';
       }
 
       html += '  </div>';
@@ -449,10 +449,10 @@ var socket, // socket.io
       html += '    <span style="display: block; width: 50px; height: 50px; float: left; background-color: ' + widget.mainColor + '; border-radius: 25px; padding: 3px;"><img width="19.5" height="33" src="' + window.info.site.files + '/img/call.png" style="margin: 6px 12px"></span>';
       // 受付電話番号
       if ( Number(widget.display_time_flg) === 1 ) {
-          html += '    <pre id="telNumber" style="font-size: 18px; padding: 5px 0px 0px; height: 30px">' + widget.tel + '</pre>';
+          html += '    <pre id="telNumber" style="font-size: 18px; padding: 5px 0px 0px; height: 30px">' + check.escape_html(widget.tel) + '</pre>';
       }
       else {
-          html += '    <pre id="telNumber" style="font-size: 20px; padding: 10px 0px 0px; height: 45px;">' + widget.tel + '</pre>';
+          html += '    <pre id="telNumber" style="font-size: 20px; padding: 10px 0px 0px; height: 45px;">' + check.escape_html(widget.tel) + '</pre>';
       }
       // 受付時間
       if ( Number(widget.display_time_flg) === 1 ) {
@@ -460,7 +460,7 @@ var socket, // socket.io
       }
       html += '    </div>';
       // テキスト
-      html += '    <div id="telContent"><div class="tblBlock"><span>' + widget.content + '</span></div></div>';
+      html += '    <div id="telContent"><div class="tblBlock"><span>' + check.escape_html(widget.content) + '</span></div></div>';
       html += '    <span id="accessIdArea">' + userInfo.accessId + '</span>';
       html += '</section>';
       return html;
@@ -1041,6 +1041,23 @@ var socket, // socket.io
         return ( Object.keys(a).length !== 0 );
       }
       return true;
+    },
+    // エスケープ用
+    // http://qiita.com/saekis/items/c2b41cd8940923863791
+    escape_html: function(string) {
+      if(typeof string !== 'string') {
+        return string;
+      }
+      return string.replace(/[&'`"<>]/g, function(match) {
+        return {
+          '&': '&amp;',
+          "'": '&#x27;',
+          '`': '&#x60;',
+          '"': '&quot;',
+          '<': '&lt;',
+          '>': '&gt;',
+        }[match]
+      });
     },
     firstUrl: function(){
       if ( location.href.match('/sincloData\=/') ) {

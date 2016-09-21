@@ -27,10 +27,9 @@ class ngFormHelper extends AppHelper {
 						$options['ng-init'] = $fieldName .'=' . var_export($value, TRUE) . ';';
 					}
 					else {
-						$options['ng-init'] = $fieldName .'="' . $value . '";';
-					}
-				}
-
+            $options['ng-init'] = $fieldName .'="' . addslashes($value) . '";';
+          }
+        }
 			}
 			// set: ng-change
 			if ( !empty($ngOptions['change']) ) {
