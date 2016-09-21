@@ -156,29 +156,4 @@ sincloApp.directive('errSrc', function(){
 	};
 });
 
-
-$(document).ready(function(){
-    var scrollTimer = null;
-
-    var content = document.getElementById('content');
-    var widget = document.getElementById('m_widget_simulator');
-    var defaultTop = (($(window).height() - 180 - widget.clientHeight) /2);
-    defaultTop = (defaultTop > 0) ? defaultTop : 0;
-    widget.style.top = defaultTop + "px";
-
-    $("#content").scroll(function(e){
-        var scrollTop = this.scrollTop;
-        if (scrollTimer) {
-          clearTimeout(scrollTimer);
-        };
-        var position = (scrollTop <= defaultTop ) ? defaultTop : defaultTop + scrollTop - 120;
-        scrollTimer = setTimeout(function(){
-          $("#m_widget_simulator").animate({
-            "top": position
-          }, 300);
-        }, 200);
-    });
-
-});
-
 </script>
