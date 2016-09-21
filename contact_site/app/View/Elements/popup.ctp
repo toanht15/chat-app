@@ -94,6 +94,7 @@ var popupEvent = {
                         return popupEvent.closePopup();
                     };
                     break;
+                case 'p-history-cus':
                 case 'p-muser-entry':
                 case 'p-tdictionary-entry':
                     var entryBtn = _button("保存");

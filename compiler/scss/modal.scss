@@ -440,6 +440,11 @@
                   background-color: #F0F0F0;
                   width: 33em;
                   display: block;
+
+                  textarea, input[type='text'] {
+                    width: 100%;
+                    resize: none;
+                  }
                 }
 
 
@@ -448,9 +453,14 @@
           }
         }
 
-        #popup-button a {
-          width: 75px;
-          margin: 0 auto;
+        #popup-button {
+          display: flex;
+          padding-bottom: 25px;
+
+          a {
+            width: 75px;
+            margin: 0 auto;
+          }
         }
       }
 

@@ -94,34 +94,61 @@ class HistoriesController extends AppController {
 
       $mCusData = ['MCustomer' => []];
       if ( !empty($tHistoryData['THistory']['visitors_id']) ) {
-        $params = [
-          'fields' => [
-            '*',
-          ],
-          'conditions' => [
-            'MCustomer.m_companies_id' => $this->userInfo['MCompany']['id'],
-            'MCustomer.visitors_id' => $tHistoryData['THistory']['visitors_id']
-          ]
-        ];
-        $mCusData = $this->MCustomer->find('first', $params);
-
-        if ( isset($mCusData['MCustomer']['informations']) ) {
-          $mCusData['informations'] = (array)json_decode($mCusData['MCustomer']['informations']);
-        }
+        $mCusData = $this->MCustomer->getCustomerInfoForVisitorId($this->userInfo['MCompany']['id'], $tHistoryData['THistory']['visitors_id']);
       }
 
       $data = am($tHistoryData, ['THistoryCount' => $tHistoryCountData[0]], $mCusData);
     }
     $this->set('data', $data);
-    // MEMO 動的に項目を変える可能性がある為、べた書きしております。
-    $this->set('notification', [
-      'company' => '会社名',
-      'name' => '名前',
-      'tel' => '電話番号',
-      'mail' => 'メールアドレス',
-      'memo' => 'メモ'
-    ]);
+    // 顧客情報のテンプレート
+    $this->set('infoList', $this->_getInfomationList());
     return $this->render('/Elements/Histories/remoteGetCustomerInfo');
+  }
+
+  public function remoteSaveCustomerInfo() {
+    Configure::write('debug', 0);
+    $this->autoRender = FALSE;
+    $this->layout = 'ajax';
+    $ret = true;
+    $data = $this->params->query;
+    if ( !isset($data['visitorsId']) ) return false;
+
+    $inputData = []; // 顧客情報リスト
+    $saveData = [
+      'MCustomer' => [
+        'visitors_id' => $data['visitorsId'],
+        'm_companies_id' => $this->userInfo['MCompany']['id']
+      ]
+    ]; // 保存データ
+
+    if ( isset($data['customerId']) ) {
+      $saveData['MCustomer']['id'] = $data['customerId'];
+    }
+    else {
+      $this->MCustomer->create();
+    }
+
+    // 顧客情報のテンプレートを取得
+    $infoList = $this->_getInfomationList();
+    foreach($infoList as $key => $val) {
+      $inputData[$key] = ( isset($data['saveData'][$key]) ) ? $data['saveData'][$key] : "";
+    }
+
+    $saveData['MCustomer']['informations'] = $this->jsonEncode($inputData);
+
+    $this->MCustomer->begin();
+    $this->MCustomer->set($saveData);
+
+    if ( $this->MCustomer->save() ) {
+      $this->MCustomer->commit();
+      $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
+    }
+    else {
+      $this->MCustomer->rollback();
+      $ret = false;
+      $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.saveFailed'));
+    }
+    return new CakeResponse(['body' => json_encode($ret)]);
   }
 
   public function remoteGetChatLogs() {
@@ -298,6 +325,20 @@ class HistoriesController extends AppController {
       $type, // 送信種別
       $name, // 送信者
       $message // メッセージ
+    ];
+  }
+
+  /**
+   * 顧客情報のデータリスト
+   * @return array
+   * */
+  private function _getInfomationList(){
+    return [
+      'company' => '会社名',
+      'name' => '名前',
+      'tel' => '電話番号',
+      'mail' => 'メールアドレス',
+      'memo' => 'メモ'
     ];
   }
 
