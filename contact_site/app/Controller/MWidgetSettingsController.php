@@ -55,7 +55,6 @@ class MWidgetSettingsController extends AppController {
         $json = $this->_settingToObj($ret['MWidgetSetting']['style_settings']);
         $inputData['MWidgetSetting'] = $this->_setStyleSetting($inputData['MWidgetSetting'], $json);
       }
-
       $this->data = $inputData;
     }
     $this->_viewElement();
@@ -264,22 +263,22 @@ class MWidgetSettingsController extends AppController {
    * @return $d ($inputData)
    * */
   private function _setStyleSetting($d, $json) {
-    foreach($this->styleSetting as $key => $val) {
-      switch ($key) {
-        case 'chat':
-          if ( !$this->coreSettings['chat'] ) { continue; }
-          if ( strcmp($v, 'chat_trigger') === 0 ) {
-            $d['chat_trigger'] = C_WIDGET_SEND_ACT_PUSH_KEY; // デフォルト値
-            break;
-          }
-          if ( strcmp($v, 'show_name') === 0 ) {
-            $d['show_name'] = C_WIDGET_SHOW_COMP; // デフォルト値
-            break;
-          }
-        case 'synclo':
-          if ( !$this->coreSettings['synclo'] ) { continue; }
-        case 'common':
-          foreach($val as $v) {
+    foreach($this->styleSetting as $key => $list) {
+      foreach($list as $v) {
+        switch ($key) {
+          case 'chat':
+            if ( !$this->coreSettings['chat'] ) { continue; }
+            if ( strcmp($v, 'chat_trigger') === 0 ) {
+              $d['chat_trigger'] = C_WIDGET_SEND_ACT_PUSH_KEY; // デフォルト値
+              break;
+            }
+            if ( strcmp($v, 'show_name') === 0 ) {
+              $d['show_name'] = C_WIDGET_SHOW_COMP; // デフォルト値
+              break;
+            }
+          case 'synclo':
+            if ( !$this->coreSettings['synclo'] ) { continue; }
+          case 'common':
             if ( strcmp($v, "max_show_time_site") === 0 || strcmp($v, "max_show_time_page") === 0 ) { continue; }
             if ( strcmp($v, "show_time") === 0 && isset($json[$v]) ) {
               if ( strcmp($json[$v], C_WIDGET_AUTO_OPEN_TYPE_SITE) === 0 ) {
@@ -296,8 +295,8 @@ class MWidgetSettingsController extends AppController {
             if ( isset($json[$v]) ) {
               $d[$v] = $json[$v];
             }
-          }
-          break;
+            break;
+        }
       }
     }
     return $d;
