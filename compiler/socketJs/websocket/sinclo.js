@@ -360,17 +360,30 @@
         userInfo.connectToken = obj.connectToken;
         browserInfo.resetPrevList();
 
-        emit('sendWindowInfo', {
-          userId: userInfo.userId,
-          tabId: userInfo.tabId,
-          connectToken: userInfo.connectToken,
-          // 解像度
-          screen: browserInfo.windowScreen(),
-          // ブラウザのサイズ
-          windowSize: browserInfo.windowSize(),
-          // スクロール位置の取得
-          scrollPosition: browserInfo.windowScroll()
-        });
+        var size = browserInfo.windowSize();
+        var params = {
+          data: {
+            url: location.href,
+            userId: userInfo.userId,
+            tabId: userInfo.tabId,
+            connectToken: userInfo.connectToken
+          },
+          site: window.info.site
+        }
+        var url = window.info.site.files + "/frame/" + encodeURIComponent(JSON.stringify(params));
+        window.open(url, "_blank", "width=" + size.width + ", height=" + size.height + ", resizable=no,scrollbars=yes,status=no");
+
+        // emit('sendWindowInfo', {
+        //   userId: userInfo.userId,
+        //   tabId: userInfo.tabId,
+        //   connectToken: userInfo.connectToken,
+        //   // 解像度
+        //   screen: browserInfo.windowScreen(),
+        //   // ブラウザのサイズ
+        //   windowSize: browserInfo.windowSize(),
+        //   // スクロール位置の取得
+        //   scrollPosition: browserInfo.windowScroll()
+        // });
 
 /*        vcPopup.set(userInfo.tabId, userInfo.vc_receiverID);
 

@@ -1,0 +1,28 @@
+extends layout
+
+block content
+  script(type='text/javascript').
+    'use strict';
+    window.$site = JSON.parse('!{site}');
+    window.$params = JSON.parse('!{params}');
+    var b = document.getElementsByTagName('body')[0],
+        l = [
+          $site.socket + '/socket.io/socket.io.js',
+          $site.files + '/websocket/jquery-2.2.0.min.js',
+          $site.files + '/websocket/sync.js'
+        ],
+        i = 0,
+        createElm = function (u){
+        var s = document.createElement("script");
+        s.type = 'text/javascript';
+        s.src = u;
+        b.appendChild(s);
+        i ++;
+        s.onload = function(){
+          if ( l[i] !== undefined ) createElm(l[i]);
+        }
+      };
+    createElm(l[i]);
+
+    var iframe = document.createElement('iframe');
+    iframe.url = $params.url;
