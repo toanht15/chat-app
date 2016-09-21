@@ -600,6 +600,11 @@ io.sockets.on('connection', function (socket) {
     var obj = JSON.parse(data);
     emit.toCompany('syncNewInfo', obj, obj.siteKey);
   });
+  // アクティブ状態を送る
+  socket.on("sendTabInfo", function(d){
+    var obj = JSON.parse(d);
+    emit.toCompany('retTabInfo', d, obj.siteKey);
+  });
 
   // -----------------------------------------------------------------------
   //  モニタリング通信接続前

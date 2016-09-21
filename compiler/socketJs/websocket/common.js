@@ -1383,6 +1383,9 @@ var socket, // socket.io
         document.documentElement.scrollLeft = scrollSize.x * obj.x;
         document.documentElement.scrollTop  = scrollSize.y * obj.y;
       }
+    },
+    getActiveWindow: function(){
+      return document.hasFocus();
     }
   };
 
@@ -1999,6 +2002,18 @@ var socket, // socket.io
         sinclo.trigger.flg = false;
         sinclo.connect();
       }
+
+      // 定期的にタブのアクティブ状態を送る
+      var tabState = browserInfo.getActiveWindow();
+      setInterval(function(){
+        var newState = browserInfo.getActiveWindow();
+        if ( tabState !== newState ) {
+          tabState = newState;
+          emit('sendTabInfo', {
+            flg: tabState
+          });
+        }
+      }, 1000);
     }); // socket-on: connect
 
     // 接続直後（ユーザＩＤ、アクセスコード発番等）
@@ -2201,6 +2216,7 @@ function emit(evName, data){
   if (evName === "customerInfo" || evName === "sendAccessInfo") {
     data.accessId = userInfo.accessId;
     data.userId = userInfo.userId;
+    data.activeFlg = browserInfo.getActiveWindow();
   }
   if (evName === "connected" || evName === "getChatMessage") {
     data.token = common.token;

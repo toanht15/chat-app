@@ -801,6 +801,12 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       pushToList(obj);
     });
 
+    // タブ状態を取得
+    socket.on('retTabInfo', function (d) {
+      var obj = JSON.parse(d);
+      $scope.monitorList[obj.tabId].activeFlg = obj.flg;
+    });
+
     $scope.setName = function(uId){
       if ( String(uId) === "<?=$muserId?>" ) {
         return "あなた";

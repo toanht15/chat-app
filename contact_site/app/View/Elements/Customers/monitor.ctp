@@ -64,6 +64,7 @@
     <table>
       <thead>
         <tr>
+                <th>アクティブ</th>
                 <th ng-hide="labelHideList.accessId">アクセスID</th>
         <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
                 <th>モニター</th>
@@ -85,6 +86,7 @@
     <table fixed-header>
       <thead>
         <tr>
+                <th style="width: 4em">アクティブ</th>
                 <th ng-hide="labelHideList.accessId" style="width: 4em">アクセスID</th>
         <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
                 <th style="width: 7em">モニター</th>
@@ -102,6 +104,8 @@
       </thead>
       <tbody ng-cloak>
         <tr ng-repeat="monitor in search(monitorList) | orderObjectBy : '-chatUnreadId'" ng-dblclick="showDetail(monitor.tabId)" id="monitor_{{monitor.tabId}}">
+          <!-- /* アクティブ */ -->
+          <td>{{monitor.activeFlg}}</td>
           <!-- /* アクセスID */ -->
           <td ng-hide="labelHideList.accessId" class="tCenter">{{monitor.accessId}}</td>
         <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
