@@ -745,6 +745,14 @@
         common.makeAccessIdTag();
       }
 
+      // 終了通知
+      var title = location.host + 'の内容';
+      var content = location.host + 'との画面共有を終了しました';
+      popup.ok = function(){
+        this.remove();
+      };
+      popup.set(title, content, popup.const.action.alert);
+
       var timer = setInterval(function(){
         if (window.info.widgetDisplay === false) {
           clearInterval(timer);
