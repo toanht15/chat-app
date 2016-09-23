@@ -560,6 +560,21 @@
       };
       syncEvent.receiveEvInfo = { nodeName: null, type: null };
     },
+    syncBrowserCtrl: function(d){
+      var obj = JSON.parse(d);
+
+      if ( userInfo.accessType !== Number(cnst.access_type.guest) ) return false;
+      if ( !obj.state ) return false;
+
+      // 進む
+      if ( Number(obj.state) > 0 ) {
+        history.forward();
+      }
+      // 戻る
+      else if ( Number(obj.state) < 0 ) {
+        history.back();
+      }
+    },
     receiveConnectEv: function(d){
       var obj = JSON.parse(d);
       if ( obj.to !== userInfo.tabId ) return false;

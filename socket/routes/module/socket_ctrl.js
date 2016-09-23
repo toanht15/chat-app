@@ -773,6 +773,11 @@ io.sockets.on('connection', function (socket) {
     }
   });
 
+  socket.on('reqSyncBrowserCtrl', function(data){
+    var obj = JSON.parse(data);
+    emit.toUser('syncBrowserCtrl', data, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
+  })
+
   socket.on('sendConnectInfo', function (data) {
     var obj = JSON.parse(data);
     obj.term = timeCalculator(obj);

@@ -7,9 +7,6 @@ if ( APP_MODE_DEV ) {
   define('C_NODE_SERVER_FILE_PORT', ":8080"); // NodeサーバーのHTTP通信ポート
   define('C_NODE_SERVER_WS_PORT', ":9090"); // WS通信ポート
   define('C_PATH_NODE_FILE_SERVER', C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT); // Nodeサーバーの公開ファイルパス
-  define('C_PATH_WIDGET_GALLERY_IMG', C_PATH_NODE_FILE_SERVER.'/img/widget/'); // ウィジェット用画像保存先
-  define('C_PATH_WIDGET_CUSTOM_IMG', C_NODE_SERVER_ADDR.'/widget'); // ウィジェット用画像保存先
-  define('C_PATH_WIDGET_IMG_DIR', ROOT.DS.APP_DIR.DS.WEBROOT_DIR.DS.'files'); // ウィジェット用画像保存先
 }
  // 本番(今後動的になる)
 else {
@@ -17,10 +14,13 @@ else {
   define('C_NODE_SERVER_FILE_PORT', ""); // NodeサーバーのHTTP通信ポート
   define('C_NODE_SERVER_WS_PORT', ""); // WS通信ポート
   define('C_PATH_NODE_FILE_SERVER', C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT); // Nodeサーバーの公開ファイルパス
-  define('C_PATH_WIDGET_GALLERY_IMG', C_PATH_NODE_FILE_SERVER.'/img/widget/'); // ウィジェット用画像保存先
-  define('C_PATH_WIDGET_CUSTOM_IMG', C_NODE_SERVER_ADDR.'/widget'); // ウィジェット用画像保存先
-  define('C_PATH_WIDGET_IMG_DIR', ROOT.DS.APP_DIR.DS.WEBROOT_DIR.DS.'files'); // ウィジェット用画像保存先
 }
+
+// 画像関連
+define('C_PATH_WIDGET_GALLERY_IMG', C_PATH_NODE_FILE_SERVER.'/img/widget/'); // ウィジェット用参照先
+define('C_PATH_SYNC_TOOL_IMG', C_PATH_NODE_FILE_SERVER.'/img/sync/'); // 画面同期用参照先
+define('C_PATH_WIDGET_CUSTOM_IMG', C_NODE_SERVER_ADDR.'/widget'); // ウィジェット用保存先
+define('C_PATH_WIDGET_IMG_DIR', ROOT.DS.APP_DIR.DS.WEBROOT_DIR.DS.'files'); // ウィジェット用保存先
 
 // 通知機能
 define('C_PATH_NOTIFICATION_IMG_DIR', 'notification/'); // デスクトップ通知用画像参照先
