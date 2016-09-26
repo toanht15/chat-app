@@ -677,6 +677,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       },
       notification: function(monitor){
         if (!('Notification' in window)) return false;
+        // 詳細を開いてる且つ、企業がアクティブタブの場合は、通知を出さない
+        if ( $scope.detailId !== "" && document.hasFocus() ) return false;
         var m = monitor;
         function getBody(){
           var options = {
