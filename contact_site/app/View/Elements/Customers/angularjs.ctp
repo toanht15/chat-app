@@ -1419,8 +1419,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           timer[idx] = setTimeout(function(){
             var headerElem = document.getElementById("list_header");
             var col = document.querySelectorAll("#list_header tr th")[idx];
-            headerElem.style.width = tblWidth;
-            col.style.width = width;
+
+            headerElem.style.width = tblWidth + "px";
+            col.style.width = width + "px";
           }, 5);
         }
 

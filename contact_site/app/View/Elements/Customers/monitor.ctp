@@ -64,18 +64,18 @@
     <table>
       <thead>
         <tr>
-                <th>アクティブ</th>
-                <th ng-hide="labelHideList.accessId">アクセスID</th>
-        <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
-                <th>モニター</th>
-        <?php endif; ?>
-                <th>詳細</th>
-                <th ng-hide="labelHideList.ipAddress">訪問ユーザ</th>
-                <th ng-hide="labelHideList.ua">プラットフォーム<br>ブラウザ</th>
-                <th ng-hide="labelHideList.stayCount">訪問回数</th>
-                <th ng-hide="labelHideList.time">アクセス日時</th>
-                <th ng-hide="labelHideList.stayTime">滞在時間</th>
-                <th ng-hide="labelHideList.page">閲覧<br>ページ数</th>
+                <th style="width: 4em">アクティブ</th>
+                <th style="width: 4em" ng-hide="labelHideList.accessId">アクセスID</th>
+        <?php if (  $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
+                <th style="width: 7em">モニター</th>
+        <?php endif ; ?>
+                <th style="width: 7em">詳細</th>
+                <th style="width: 8em" ng-hide="labelHideList.ipAddress">訪問ユーザ</th>
+                <th style="width: 9em" ng-hide="labelHideList.ua">プラットフォーム<br>ブラウザ</th>
+                <th style="width: 4em" ng-hide="labelHideList.stayCount">訪問回数</th>
+                <th style="width: 6em" ng-hide="labelHideList.time">アクセス日時</th>
+                <th style="width: 5em" ng-hide="labelHideList.stayTime">滞在時間</th>
+                <th style="width: 7em" ng-hide="labelHideList.page">閲覧<br>ページ数</th>
                 <th ng-hide="labelHideList.title">閲覧中ページ</th>
                 <th ng-hide="labelHideList.referrer">参照元URL</th>
         </tr>
