@@ -13,14 +13,19 @@
   });
   });
 </script>
+<?php
+$headerNo = 1;
+$mainTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デモサイト" ;
+?>
 <div id='script_setting_idx' class="card-shadow">
 
 <div id='script_setting_title'>
-  <div class="fLeft"><?= $this->Html->image('script_g.png', array('alt' => 'コード設置・デモサイト', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?></div>
-  <h1>コード設置・デモサイト</h1>
+  <div class="fLeft"><?= $this->Html->image('script_g.png', array('alt' => $mainTitle, 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?></div>
+    <h1><?=$mainTitle?></h1>
 </div>
 <div id='script_setting_content' class="p20x">
-  <h2>１．コード設置</h2>
+  <?php if ( $adminFlg ): ?>
+  <h2><?= mb_convert_kana($headerNo, "N", "utf-8"); $headerNo++ ?>．コード設置</h2>
   <section>
     <pre>下記いずれか１つのコードをWEBページの&lt;body&gt;タグの最後（&lt;/body&gt;の直前）に埋め込んでください。
 ※１つのWEBページにsincloのタグ（下記いずれかのタグ）は1つだけ埋め込んでください。</pre>
@@ -68,7 +73,8 @@
 　　　埋め込まないでください。
     </pre>
   </section>
-  <h2>２．デモサイト</h2>
+  <?php endif; ?>
+  <h2><?= mb_convert_kana($headerNo, "N", "utf-8"); $headerNo++ ?>．デモサイト</h2>
   <section>
     <pre>下記サイトにてウィジェットの確認やsincloの動作確認、事前トレーニングを行うことができます。</pre>
     【 <?= $this->Html->link('デモサイトへ', array('controller' => 'ScriptSettings', 'action' => 'testpage'), array('target' => '_demo', 'class' => 'underL')) ?> 】

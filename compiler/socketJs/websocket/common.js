@@ -18,6 +18,11 @@ var socket, // socket.io
       guest: 1,
       host: 2
     },
+    tab_type: {
+      open: 1,
+      close: 2,
+      none:3
+    },
     info_type: {
       user: 1,
       access: 2,
@@ -1385,7 +1390,27 @@ var socket, // socket.io
       }
     },
     getActiveWindow: function(){
-      return document.hasFocus();
+      var tabFlg = document.hasFocus(), widgetFlg = false, tabStatus;
+      if ( document.getElementById('sincloBox') ) {
+        var tmp = document.getElementById('sincloBox').getAttribute('data-openflg');
+        if ( String(tmp) === "true" ) {
+          widgetFlg = true;
+        }
+      }
+      // タブがアクティブ
+      if ( tabFlg ) {
+        // ウィジェットが開いている
+        if ( widgetFlg ) {
+          tabStatus = cnst.tab_type.open;
+        }
+        else {
+          tabStatus = cnst.tab_type.close;
+        }
+      }
+      else {
+        tabStatus = cnst.tab_type.none;
+      }
+      return tabStatus;
     }
   };
 
@@ -2004,7 +2029,7 @@ var socket, // socket.io
         sinclo.connect();
       }
 
-      if ( userInfo.accessType !== Number(cnst.access_type.guest) ) return false;
+      if ( sincloBox && userInfo.accessType === Number(cnst.access_type.host) ) return false;
 
       // 定期的にタブのアクティブ状態を送る
       var tabState = browserInfo.getActiveWindow();
@@ -2012,11 +2037,9 @@ var socket, // socket.io
         var newState = browserInfo.getActiveWindow();
         if ( tabState !== newState ) {
           tabState = newState;
-          emit('sendTabInfo', {
-            flg: tabState
-          });
+          emit('sendTabInfo', { status: tabState });
         }
-      }, 1000);
+      }, 700);
     }); // socket-on: connect
 
     // 接続直後（ユーザＩＤ、アクセスコード発番等）
@@ -2224,7 +2247,7 @@ function emit(evName, data){
   if (evName === "customerInfo" || evName === "sendAccessInfo") {
     data.accessId = userInfo.accessId;
     data.userId = userInfo.userId;
-    data.activeFlg = browserInfo.getActiveWindow();
+    data.status = browserInfo.getActiveWindow();
   }
   if (evName === "connected" || evName === "getChatMessage") {
     data.token = common.token;
@@ -2264,7 +2287,7 @@ function emit(evName, data){
     data.url= f_url(browserInfo.href);
   }
   // connectToken
-  if (   evName === "syncReady" || evName === "connectSuccess" || evName === "requestSyncStop"  || evName === "customerInfo"
+  if (   evName === "syncReady" || evName === "connectSuccess" || evName === "requestSyncStop"  || evName === "customerInfo" || evName === "sendTabInfo"
       || evName === "requestSyncStart" || evName === "connectContinue" || evName === "sendAccessInfo" || evName === "sendConfirmConnect"
   ) {
     data.connectToken = userInfo.get(cnst.info_type.connect);

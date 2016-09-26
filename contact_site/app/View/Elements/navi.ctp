@@ -22,6 +22,8 @@ switch ($this->name) {
         $chatSettingSelected = "selected";
         break;
 };
+$codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
+
 ?>
 <!-- /* 上部カラーバー(ここから) */ -->
 <div id="color-bar" class="card-shadow">
@@ -64,7 +66,7 @@ switch ($this->name) {
         <div class="icon">
             <?= $this->htmlEx->naviLink('個人設定', 'personal.png', ['href' => ['controller' => 'PersonalSettings', 'action' => 'index']]) ?>
         </div>
-    <?php if ( strcmp($userInfo['permission_level'], C_AUTHORITY_SUPER) === 0 || strcmp($userInfo['permission_level'], C_AUTHORITY_ADMIN) === 0 ): ?>
+    <?php if ( $adminFlg ): ?>
         <div class="icon" style="display:none">
             <?= $this->htmlEx->naviLink('企業設定', 'company.png', ['href' => ['controller' => 'Customers', 'action' => 'index']]) ?>
         </div>
@@ -73,9 +75,9 @@ switch ($this->name) {
         </div>
     <?php endif; ?>
         <div class="icon">
-            <?= $this->htmlEx->naviLink('コード・デモ', 'script.png', ['href' => ['controller' => 'ScriptSettings', 'action' => 'index']]) ?>
+            <?= $this->htmlEx->naviLink($codeAndDemoTitle, 'script.png', ['href' => ['controller' => 'ScriptSettings', 'action' => 'index']]) ?>
         </div>
-    <?php if ( strcmp($userInfo['permission_level'], C_AUTHORITY_SUPER) === 0 || strcmp($userInfo['permission_level'], C_AUTHORITY_ADMIN) === 0 ): ?>
+    <?php if ( $adminFlg ): ?>
         <div class="icon">
             <?= $this->htmlEx->naviLink('ウィジェット', 'widget.png', ['href' => ['controller' => 'MWidgetSettings', 'action' => 'index']]) ?>
         </div>
@@ -86,7 +88,7 @@ switch ($this->name) {
     <!-- /* チャット */ -->
     <?php if ($coreSettings[C_COMPANY_USE_CHAT] || strcmp($userInfo['MCompany']['company_key'], "medialink") === 0): ?>
       <div data-sidebar-type="chat" class="hide">
-      <?php if ( strcmp($userInfo['permission_level'], C_AUTHORITY_SUPER) === 0 || strcmp($userInfo['permission_level'], C_AUTHORITY_ADMIN) === 0 ): ?>
+      <?php if ( $adminFlg ): ?>
         <div class="icon">
           <?= $this->htmlEx->naviLink('メッセージ', 'auto_message.png', ['href' => ['controller' => 'TAutoMessages', 'action' => 'index']]) ?>
         </div>

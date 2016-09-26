@@ -181,6 +181,18 @@ window.onload = function(){
     emit('connectFrame', {tabId: tabId, responderId: "<?= $muserId?>"});
   });
 
+  socket.on('retTabInfo', function(d){
+    var obj = JSON.parse(d);
+    // 別の作業をしている場合
+    if ( Number(obj.status) === <?=C_WIDGET_TAB_STATUS_CODE_NONE?> ) {
+      document.getElementById('tabStatusMessage').style.opacity = 1;
+    }
+    // タブがアクティブの場合
+    else {
+      document.getElementById('tabStatusMessage').style.opacity = 0;
+    }
+  });
+
   socket.on('syncResponce', function(data){
     var obj = JSON.parse(data);
     resizeApi.cuResize(obj.windowSize);
@@ -276,3 +288,4 @@ window.onload = function(){
 </ul>
 <div id="customer_flame">
 </div>
+<div id="tabStatusMessage">別の作業をしています</div>

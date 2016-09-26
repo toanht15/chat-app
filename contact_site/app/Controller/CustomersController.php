@@ -92,6 +92,8 @@ class CustomersController extends AppController {
       $cType = "syncOnly";
     }
     $this->set('cType', $cType);
+    $this->set('tabStatusList', Configure::read('tabStatusList'));
+    $this->set('tabStatusStrList', Configure::read('tabStatusStrList'));
   }
 
   /* *

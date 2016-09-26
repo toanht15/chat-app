@@ -319,6 +319,12 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     $scope.chatList = [];
     $scope.typingMessageSe = "";
     $scope.typingMessageRe = {};
+    /* 定数 */
+    $scope.jsConst = {
+      tabInfo: <?php echo json_encode($tabStatusList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>,  // タブ状態の定数
+      tabInfoStr: <?php echo json_encode($tabStatusStrList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?> // タブ状態の定数
+
+    };
 
     $scope.search = function(array){
       var result = {};
@@ -620,6 +626,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       });
     };
 
+    /* タブ状態を文字列で返す */
+    $scope.tabStatusStr = function (n){
+      return $scope.jsConst.tabInfoStr[n];
+    }
+
     $scope.isset = function(value){
       var result;
       if ( angular.isUndefined(value) ) {
@@ -666,6 +677,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       },
       notification: function(monitor){
         if (!('Notification' in window)) return false;
+        // 詳細を開いてる且つ、企業がアクティブタブの場合は、通知を出さない
+        if ( $scope.detailId !== "" && document.hasFocus() ) return false;
         var m = monitor;
         function getBody(){
           var options = {
@@ -801,10 +814,13 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       pushToList(obj);
     });
 
+
+    /* タブ状態受け渡し */
     // タブ状態を取得
     socket.on('retTabInfo', function (d) {
       var obj = JSON.parse(d);
-      $scope.monitorList[obj.tabId].activeFlg = obj.flg;
+
+      $scope.monitorList[obj.tabId].status = obj.status;
     });
 
     $scope.setName = function(uId){
@@ -1419,8 +1435,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           timer[idx] = setTimeout(function(){
             var headerElem = document.getElementById("list_header");
             var col = document.querySelectorAll("#list_header tr th")[idx];
-            headerElem.style.width = tblWidth;
-            col.style.width = width;
+
+            headerElem.style.width = tblWidth + "px";
+            col.style.width = width + "px";
           }, 5);
         }
 

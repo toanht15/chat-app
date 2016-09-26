@@ -94,6 +94,8 @@
         </div>
         <div class="nowInfo card">
           <dl>
+            <dt>状態</dt>
+              <dd>{{tabStatusStr(detail.status)}}</dd>
             <dt>閲覧中ページ</dt>
               <dd class="w100"><a href={{detail.url}} target="_blank" class="underL" ng-if="detail.title">{{detail.title}}</a><span ng-if="!detail.title">{{detail.url}}</span></dd>
             <dt>訪問回数</dt>

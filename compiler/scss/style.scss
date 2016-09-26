@@ -454,67 +454,62 @@ a {
   color: #F57E7E;
 }
 
-.greenBtn {
-
+@mixin defaultBtnStyle {
   cursor: pointer!important;
-  background-color: #C3D69B;
-  border: 1px solid #C3D69B;
   display: block;
-  color: white;
   font-weight: bold;
   transition: background-color, border-color 0.1s linear;
+}
+
+.greenBtn {
+  @include defaultBtnStyle;
+  background-color: #C3D69B;
+  color: white;
+  border: 1px solid #C3D69B;
 }
 
 .whiteBtn {
-  cursor: pointer!important;
+  @include defaultBtnStyle;
   background-color: #FFF!important  ;
   border: 1px solid #FFF!important;
   color: $main-color!important;
-  display: block;
-  font-weight: bold;
-  transition: background-color, border-color 0.1s linear;
 }
 
 .grayBtn {
+  @include defaultBtnStyle;
   background-color: #DADADA;
   border: 1px solid #DADADA;
-  display: block;
   color: white;
-  font-weight: bold;
-  transition: background-color, border-color 0.1s linear;
-  cursor: default;
 
   > img { transform: scale(1) }
 }
 
 .redBtn {
-  cursor: pointer!important;
+  @include defaultBtnStyle;
   background-color: #D69B9B;
   border: 1px solid #D69B9B;
-  display: block;
   color: white;
-  font-weight: bold;
-  transition: background-color, border-color 0.1s linear;
 }
 
 .skyBlueBtn {
-  cursor: pointer!important;
+  @include defaultBtnStyle;
   background-color: #9DCCD0;
   border: 1px solid #9DCCD0;
-  display: block;
   color: white;
-  font-weight: bold;
-  transition: background-color, border-color 0.1s linear;
 }
 
 .blueBtn {
-  cursor: pointer!important;
+  @include defaultBtnStyle;
   background-color: #788DCA;
   border: 1px solid #788DCA;
-  display: block;
   color: white;
-  font-weight: bold;
-  transition: background-color, border-color 0.1s linear;
+}
+
+.questionBtn {
+  @include defaultBtnStyle;
+  background-color: #FFF;
+  border: 1px solid #9e9e9e;
+  color: #9e9e9e;
 }
 
 .btn-shadow {
@@ -1575,6 +1570,79 @@ ul.naviBtn {
       padding: 10px 20px 20px 20px;
       position: relative;
 
+      .questionBalloon {
+        position: relative;
+
+        icon {
+          border-radius: 20px;
+          padding: 0.1em;
+          width: 1.6em;
+          height: 1.6em;
+          font-size: 9.5px;
+        }
+
+        &:hover icon-annotation { display: block!important; }
+
+        icon-annotation {
+          position: absolute;
+          top: -5.5em;
+          left: -0.8em;
+          width: 16em;
+          height: 5em;
+          z-index: 2;
+          display: none;
+
+
+          /* 矢印 */
+          &:before {
+            content: " ";
+            border: none;
+            border-top: 10px solid rgba(0, 0, 0, 0.13);
+            border-left: 9px solid transparent;
+            border-right: 9px solid transparent;
+            position: absolute;
+            bottom: -0.5em;
+            left: 10px;
+            z-index: 1;
+          }
+
+          &:after {
+            content: " ";
+            border: none;
+            border-top: 10px solid white;
+            border-left: 9px solid transparent;
+            border-right: 9px solid transparent;
+            position: absolute;
+            bottom: -0.3em;
+            left: 10px;
+            z-index: 3;
+          }
+
+
+          ul {
+            margin: 0;
+            padding: 0;
+            text-align: left;
+            background-color: #FFF;
+            box-shadow: 0 0 2px rgba(0,0,0,0.8);
+            padding: 0.5em;
+            font-weight: normal;
+            border-radius: 5px;
+
+            img {
+              margin-bottom: -0.2em;
+              width:1em;
+              height:1em;
+            }
+
+            span {
+              font-size: 0.9em;
+            }
+          }
+        }
+
+      }
+
       #list_header {
         position: absolute;
         top: 0;
@@ -1740,6 +1808,18 @@ ul.naviBtn {
   top: 0;
   left: 100px;
 }
+#tabStatusMessage {
+  opacity: 0;
+  position: fixed;
+  right: 20px;
+  top: 10px;
+  background-color: #ff8383;
+  font-size: 2em;
+  color: #FFF;
+  padding: 0.25em 0.5em;
+  border-radius: 15px;
+}
+/* 画面同期 */
 
 /* 履歴一覧 */
 
@@ -1833,12 +1913,6 @@ ul.naviBtn {
 }
 
 /* コード設置・デモ */
-
-#script_setting_idx {
-  width: 90%;
-  margin: 50px 50px;
-}
-
 #script_setting_content {
   $ssc-border-color: #9A9A9A;
   $ssc-content-width: 700px;
