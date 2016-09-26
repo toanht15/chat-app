@@ -106,7 +106,7 @@
                 <span class="btn-shadow" data-type="2" onclick="addOption(2)">企業名</span>
                 <span class="btn-shadow" data-type="3" onclick="addOption(3)">表示名</span>
               </menu>
-              <div class="balloon"><span>ほげほげ</span></div>
+              <div class="balloon"><span></span></div>
             </div>
             <?= $this->Form->textarea('word', array('placeholder' => '入力文字', 'div' => false, 'label' => false, 'maxlength' => 200)) ?>
         </div>

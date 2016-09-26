@@ -64,7 +64,18 @@
     <table>
       <thead>
         <tr>
-                <th style="width: 4em">アクティブ</th>
+                <th style="width: 5em">状態
+                  <div class="questionBalloon fRight">
+                    <icon class="questionBtn">？</icon>
+                    <icon-annotation>
+                      <ul>
+                        <li><?=$this->Html->image('tab_status_open.png', ['alt'=>'ウィジェットが開いている'])?>&emsp;<span>{{tabStatusStr(jsConst.tabInfo.open)}}</span></li>
+                        <li><?=$this->Html->image('tab_status_close.png', ['alt'=>'ウィジェットが閉じている'])?>&emsp;<span>{{tabStatusStr(jsConst.tabInfo.close)}}</span></li>
+                        <li><?=$this->Html->image('tab_status_none.png', ['alt'=>'非アクティブ'])?>&emsp;<span>{{tabStatusStr(jsConst.tabInfo.none)}}</span></li>
+                      </ul>
+                    </icon-annotation>
+                  </div>
+                </th>
                 <th style="width: 4em" ng-hide="labelHideList.accessId">アクセスID</th>
         <?php if (  $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
                 <th style="width: 7em">モニター</th>
@@ -86,7 +97,7 @@
     <table fixed-header>
       <thead>
         <tr>
-                <th style="width: 4em">アクティブ</th>
+                <th style="width: 5em">状態</th>
                 <th ng-hide="labelHideList.accessId" style="width: 4em">アクセスID</th>
         <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
                 <th style="width: 7em">モニター</th>
@@ -104,8 +115,12 @@
       </thead>
       <tbody ng-cloak>
         <tr ng-repeat="monitor in search(monitorList) | orderObjectBy : '-chatUnreadId'" ng-dblclick="showDetail(monitor.tabId)" id="monitor_{{monitor.tabId}}">
-          <!-- /* アクティブ */ -->
-          <td>{{monitor.activeFlg}}</td>
+          <!-- /* 状態 */ -->
+          <td class="tCenter">
+            <span ng-if="monitor.status === jsConst.tabInfo.open"><?=$this->Html->image('tab_status_open.png', ['alt'=>'', 'width'=>25, 'height'=>25])?></span>
+            <span ng-if="monitor.status === jsConst.tabInfo.close"><?=$this->Html->image('tab_status_close.png', ['alt'=>'', 'width'=>25, 'height'=>25])?></span>
+            <span ng-if="monitor.status === jsConst.tabInfo.none"><?=$this->Html->image('tab_status_none.png', ['alt'=>'', 'width'=>25, 'height'=>25])?></span>
+          </td>
           <!-- /* アクセスID */ -->
           <td ng-hide="labelHideList.accessId" class="tCenter">{{monitor.accessId}}</td>
         <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>

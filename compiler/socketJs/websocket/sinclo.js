@@ -447,6 +447,7 @@
         // スクロール位置の取得
         scrollPosition: browserInfo.windowScroll()
       });
+      emit('sendTabInfo', { status: browserInfo.getActiveWindow() });
     },
     syncElement: function(d){
       var obj = common.jParse(d);

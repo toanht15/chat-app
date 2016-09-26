@@ -604,6 +604,10 @@ io.sockets.on('connection', function (socket) {
   socket.on("sendTabInfo", function(d){
     var obj = JSON.parse(d);
     emit.toCompany('retTabInfo', d, obj.siteKey);
+    // 画面同期中は同期フレーム本体に送る
+    if ( ('connectToken' in obj) && isset(obj.connectToken) ) {
+      emit.toUser('retTabInfo', obj, getSessionId(obj.siteKey, obj.tabId, 'syncFrameSessionId'));
+    }
   });
 
   // -----------------------------------------------------------------------

@@ -22,6 +22,11 @@ else {
   define('C_PATH_WIDGET_IMG_DIR', ROOT.DS.APP_DIR.DS.WEBROOT_DIR.DS.'files'); // ウィジェット用画像保存先
 }
 
+// タブステータス
+define('C_WIDGET_TAB_STATUS_CODE_OPEN', 1); // ウィジェットが開いている状態
+define('C_WIDGET_TAB_STATUS_CODE_CLOSE', 2); // ウィジェットが閉じている状態
+define('C_WIDGET_TAB_STATUS_CODE_NONE', 3); // 非アクティブ状態
+
 // 通知機能
 define('C_PATH_NOTIFICATION_IMG_DIR', 'notification/'); // デスクトップ通知用画像参照先
 define('C_PATH_NOTIFICATION_IMG_SAVE_DIR', ROOT.DS.APP_DIR.DS.WEBROOT_DIR.DS.'img'.DS.'notification'.DS); // デスクトップ通知用画像保存先
@@ -119,6 +124,19 @@ define('C_STATUS_UNAVAILABLE', 1); // 無効
 $config['Authority'] = [
     C_AUTHORITY_ADMIN => "管理者",
     C_AUTHORITY_NORMAL => "一般"
+];
+
+/* タブステータス(js-const用) */
+$config['tabStatusList'] = [
+    'open' => C_WIDGET_TAB_STATUS_CODE_OPEN,
+    'close' => C_WIDGET_TAB_STATUS_CODE_CLOSE,
+    'none' => C_WIDGET_TAB_STATUS_CODE_NONE
+];
+/* タブステータス(メッセージ用) */
+$config['tabStatusStrList'] = [
+    C_WIDGET_TAB_STATUS_CODE_OPEN => "ウィジェットが開いている状態",
+    C_WIDGET_TAB_STATUS_CODE_CLOSE => "ウィジェットが閉じている状態",
+    C_WIDGET_TAB_STATUS_CODE_NONE => "非アクティブ状態"
 ];
 
 /* ユーザー権限（単体あり：C_AUTHORITY_%） */
