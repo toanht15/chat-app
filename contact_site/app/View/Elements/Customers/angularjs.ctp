@@ -292,7 +292,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
               callback.apply(socket, args);
             }
           });
-        })
+        });
       }
     };
   });
@@ -914,7 +914,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         if ( obj.accessType !== _access_type_host ) {
           delete $scope.monitorList[obj.tabId];
           $scope.chatList = $scope.chatList.filter(function(v){
-            return (v !== this.t)
+            return (v !== this.t);
           }, {t: obj.tabId});
           if ( obj.tabId === chatApi.tabId ){
             $scope.showDetail(obj.tabId);
@@ -949,7 +949,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       }
       else {
         $scope.chatList = $scope.chatList.filter(function(v){
-          return (v !== this.t)
+          return (v !== this.t);
         }, {t: obj.tabId});
 
         // 前回の担当が自分だった場合
@@ -973,7 +973,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
       if ( 'tabId' in obj && obj.tabId in $scope.monitorList && 'chat' in $scope.monitorList[obj.tabId] ) {
         $scope.chatList = $scope.chatList.filter(function(v){
-          return (v !== this.t)
+          return (v !== this.t);
         }, {t: obj.tabId});
         $scope.monitorList[obj.tabId].chat = null;
       }
