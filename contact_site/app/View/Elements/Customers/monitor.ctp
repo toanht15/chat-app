@@ -40,7 +40,7 @@
            */
           $nowCntClass = "";
           if ( $widgetCheck && strcmp($userInfo['permission_level'], C_AUTHORITY_SUPER) !== 0 ) {
-            $nowCntClass = "m40t";
+            $nowCntClass = "m20t";
             echo '<li id="opStatus">現在のステータス</li>';
             if ( $opStatus ) {
               echo "<li id='operatorStatus' class='opWait'><span>待機中</span></li>";
