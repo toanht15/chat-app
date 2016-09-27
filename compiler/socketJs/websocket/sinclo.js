@@ -277,7 +277,6 @@
         var createStartTimer,
             createStart = function(){
                 var sincloBox = document.getElementById('sincloBox');
-                var widgetOpen = storage.s.get('widgetOpen');
                 if ( window.info.contract.chat && check.smartphone() ) {
                   sincloBox.style.display = "block";
                   sincloBox.style.opacity = 0;
@@ -289,22 +288,7 @@
                   sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
                 }
                 // ウィジェット表示
-                if ( !(('showTime' in window.info.widget) && ('maxShowTime' in window.info.widget) && String(window.info.widget.maxShowTime).match(/^[0-9]{1,2}$/) !== null) ) return false;
-                var showTime = String(window.info.widget.showTime);
-                var maxShowTime = Number(window.info.widget.maxShowTime) * 1000;
-                if ( showTime === "2" ) return false; // 常に最大化しない
-                if ( showTime === "1" ) { // サイト訪問後
-                  if (widgetOpen) return false;
-                }
-                // 常に最大化する、ページ訪問時（showTime === 3,4）
-                window.setTimeout(function(){
-                  var flg = sincloBox.getAttribute('data-openflg');
-                  if ( String(flg) === "false" ) {
-                    storage.s.set('widgetOpen', true);
-                    sinclo.operatorInfo.ev();
-                  }
-                }, maxShowTime);
-
+                sinclo.chatApi.widgetOpen();
 
                 if ( window.info.contract.chat ) {
                     // チャット情報読み込み
@@ -830,6 +814,24 @@
               });
 
             emit('getChatMessage', {showName: info.widget.showName});
+        },
+        widgetOpen: function(){
+          var widgetOpen = storage.s.get('widgetOpen');
+          if ( !(('showTime' in window.info.widget) && ('maxShowTime' in window.info.widget) && String(window.info.widget.maxShowTime).match(/^[0-9]{1,2}$/) !== null) ) return false;
+          var showTime = String(window.info.widget.showTime);
+          var maxShowTime = Number(window.info.widget.maxShowTime) * 1000;
+          if ( showTime === "2" ) return false; // 常に最大化しない
+          if ( showTime === "1" ) { // サイト訪問後
+            if (widgetOpen) return false;
+          }
+          // 常に最大化する、ページ訪問時（showTime === 3,4）
+          window.setTimeout(function(){
+            var flg = sincloBox.getAttribute('data-openflg');
+            if ( String(flg) === "false" ) {
+              storage.s.set('widgetOpen', true);
+              sinclo.operatorInfo.ev();
+            }
+          }, maxShowTime);
         },
         createNotifyMessage: function(val){
             var chatList = document.getElementsByTagName('sinclo-chat')[0];
