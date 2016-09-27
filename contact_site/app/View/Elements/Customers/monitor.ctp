@@ -16,7 +16,7 @@
         <div class="form01 fLeft">
             <?php if ($coreSettings[C_COMPANY_USE_SYNCLO]) : ?>
                 <i>
-                    <?= $this->Html->image('search_g.png', array('alt' => 'アクセスID', 'width'=>20, 'height'=>20, 'class'=>'fLeft')); ?>
+                    <?= $this->Html->image('search_g.png', array('alt' => 'アクセスID', 'width'=>15, 'height'=>15, 'class'=>'fLeft')); ?>
                 </i>
                 <?= $this->Form->input('searchText', array('type'=>'text', 'label' => false, 'ng-model' => 'searchText', 'placeholder' => 'アクセスID')); ?>
             <?php endif; ?>
@@ -76,15 +76,15 @@
                     </icon-annotation>
                   </div>
                 </th>
-                <th style="width: 4em" ng-hide="labelHideList.accessId">アクセスID</th>
+                <th style="width: 6em" ng-hide="labelHideList.accessId">アクセスID</th>
         <?php if (  $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
                 <th style="width: 7em">モニター</th>
         <?php endif ; ?>
                 <th style="width: 7em">詳細</th>
                 <th style="width: 8em" ng-hide="labelHideList.ipAddress">訪問ユーザ</th>
                 <th style="width: 9em" ng-hide="labelHideList.ua">プラットフォーム<br>ブラウザ</th>
-                <th style="width: 4em" ng-hide="labelHideList.stayCount">訪問回数</th>
-                <th style="width: 6em" ng-hide="labelHideList.time">アクセス日時</th>
+                <th style="width: 5em" ng-hide="labelHideList.stayCount">訪問回数</th>
+                <th style="width: 6em" ng-hide="labelHideList.time">アクセス<br>日時</th>
                 <th style="width: 5em" ng-hide="labelHideList.stayTime">滞在時間</th>
                 <th style="width: 7em" ng-hide="labelHideList.page">閲覧<br>ページ数</th>
                 <th ng-hide="labelHideList.title">閲覧中ページ</th>
@@ -98,14 +98,14 @@
       <thead>
         <tr>
                 <th style="width: 5em">状態</th>
-                <th ng-hide="labelHideList.accessId" style="width: 4em">アクセスID</th>
+                <th ng-hide="labelHideList.accessId" style="width: 6em">アクセスID</th>
         <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
                 <th style="width: 7em">モニター</th>
         <?php endif; ?>
                 <th style="width: 7em">詳細</th>
                 <th ng-hide="labelHideList.ipAddress" style="width: 8em">訪問ユーザ</th>
                 <th ng-hide="labelHideList.ua" style="width: 9em">プラットフォーム<br>ブラウザ</th>
-                <th ng-hide="labelHideList.stayCount" style="width: 4em">訪問回数</th>
+                <th ng-hide="labelHideList.stayCount" style="width: 5em">訪問回数</th>
                 <th ng-hide="labelHideList.time" style="width: 6em">アクセス日時</th>
                 <th ng-hide="labelHideList.stayTime" style="width: 5em">滞在時間</th>
                 <th ng-hide="labelHideList.page" style="width: 7em">閲覧<br>ページ数</th>
@@ -117,9 +117,9 @@
         <tr ng-repeat="monitor in search(monitorList) | orderObjectBy : '-chatUnreadId'" ng-dblclick="showDetail(monitor.tabId)" id="monitor_{{monitor.tabId}}">
           <!-- /* 状態 */ -->
           <td class="tCenter">
-            <span ng-if="monitor.status === jsConst.tabInfo.open"><?=$this->Html->image('tab_status_open.png', ['alt'=>'', 'width'=>25, 'height'=>25])?></span>
-            <span ng-if="monitor.status === jsConst.tabInfo.close"><?=$this->Html->image('tab_status_close.png', ['alt'=>'', 'width'=>25, 'height'=>25])?></span>
-            <span ng-if="monitor.status === jsConst.tabInfo.none"><?=$this->Html->image('tab_status_none.png', ['alt'=>'', 'width'=>25, 'height'=>25])?></span>
+            <span ng-if="monitor.status === jsConst.tabInfo.open"><?=$this->Html->image('tab_status_open.png', ['alt'=>'', 'width'=>20, 'height'=>20])?></span>
+            <span ng-if="monitor.status === jsConst.tabInfo.close"><?=$this->Html->image('tab_status_close.png', ['alt'=>'', 'width'=>20, 'height'=>20])?></span>
+            <span ng-if="monitor.status === jsConst.tabInfo.none"><?=$this->Html->image('tab_status_none.png', ['alt'=>'', 'width'=>20, 'height'=>20])?></span>
           </td>
           <!-- /* アクセスID */ -->
           <td ng-hide="labelHideList.accessId" class="tCenter">{{monitor.accessId}}</td>
