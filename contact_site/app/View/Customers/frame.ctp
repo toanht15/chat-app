@@ -174,11 +174,11 @@ window.onload = function(){
     var obj = JSON.parse(d);
     // 別の作業をしている場合
     if ( Number(obj.status) === <?=C_WIDGET_TAB_STATUS_CODE_NONE?> ) {
-      document.getElementById('tabStatusMessage').style.opacity = 1;
+      document.getElementById('tabStatusMessage').style.display = "block";
     }
     // タブがアクティブの場合
     else {
-      document.getElementById('tabStatusMessage').style.opacity = 0;
+      document.getElementById('tabStatusMessage').style.display = "none";
     }
   });
 

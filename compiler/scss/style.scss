@@ -1759,7 +1759,7 @@ ul.naviBtn {
 
 /* 画面同期画面 */
 #tabStatusMessage {
-  opacity: 0;
+  display: none;
   position: fixed;
   right: 20px;
   top: 10px;
