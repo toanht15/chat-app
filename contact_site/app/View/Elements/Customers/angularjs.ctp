@@ -1431,34 +1431,33 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         var timer = [];
         function colResize(tblWidth, idx, width){
           clearTimeout(timer[idx]);
+          var headerList = document.querySelectorAll("#list_header tr th");
 
           timer[idx] = setTimeout(function(){
-            var headerElem = document.getElementById("list_header");
-            var col = document.querySelectorAll("#list_header tr th")[idx];
-
-            headerElem.style.width = tblWidth + "px";
-            col.style.width = width + "px";
+            $("#list_header").outerWidth(tblWidth);
+            $("#list_header tr th").eq(idx).outerWidth(width);
           }, 5);
         }
 
         var width = [];
         setInterval(function(){
           var ths = document.querySelectorAll("#list_body th");
-          var tblStyle = window.getComputedStyle(elems[0], null);
+          var tblStyle = document.querySelectorAll("#list_body thead")[0];
           angular.forEach(ths, function(elem){
+
             var style = window.getComputedStyle(elem, null);
             if ( (elem.cellIndex in width) ) {
-              if ( width[elem.cellIndex] !== style.width ) {
-                colResize(tblStyle.width, elem.cellIndex, style.width);
-                width[elem.cellIndex] = style.width;
+              if ( width[elem.cellIndex] !== elem.offsetWidth ) {
+                colResize(tblStyle.offsetWidth, elem.cellIndex, elem.offsetWidth);
+                width[elem.cellIndex] = elem.offsetWidth;
               }
             }
             else {
-              width[elem.cellIndex] = style.width;
-              colResize(tblStyle.width, elem.cellIndex, style.width);
+              width[elem.cellIndex] = elem.offsetWidth;
+              colResize(tblStyle.offsetWidth, elem.cellIndex, elem.offsetWidth);
             }
           });
-        }, 5);
+        }, 100);
       }
     }
   });
