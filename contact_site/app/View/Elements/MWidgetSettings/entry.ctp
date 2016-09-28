@@ -19,7 +19,7 @@ $headerNo = 1;
         <li>
           <span><label>最大化する条件</label></span>
           <div>
-            <?php $maxShowTimeTagBySite = $this->Form->input('max_show_time_site', [
+            <?php $maxShowTimeTagBySite = $this->Form->input('max_show_time', [
               'type' => 'number',
               'div' => false,
               'label' => false,
@@ -32,7 +32,7 @@ $headerNo = 1;
               'min' => 0,
               'error' => false
             ],[
-              'entity' => 'MWidgetSetting.max_show_time_site'
+              'entity' => 'MWidgetSetting.max_show_time'
             ]); ?>
             <?php $maxShowTimeTagByPage = $this->Form->input('max_show_time_page', [
               'type' => 'number',
@@ -57,7 +57,7 @@ $headerNo = 1;
             </div>
           </div>
         </li>
-        <?php if ( $this->Form->isFieldError('max_show_time_site') ) echo $this->Form->error('max_show_time_site', null, ['wrap' => 'li']); ?>
+        <?php if ( $this->Form->isFieldError('max_show_time') ) echo $this->Form->error('max_show_time', null, ['wrap' => 'li']); ?>
         <?php if ( $this->Form->isFieldError('max_show_time_page') ) echo $this->Form->error('max_show_time_page', null, ['wrap' => 'li']); ?>
         <!-- 最大化時間設定 -->
         <!-- 表示位置 -->

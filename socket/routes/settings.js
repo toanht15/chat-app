@@ -64,8 +64,8 @@ router.get("/", function(req, res, next) {
                 actionTypeList = [];
                 // ウィジェット表示設定
                 if ( Number(sendData.widget.showTime) === 1 ) { // サイト訪問時
-                  if (('maxShowTimeSite' in settings) && settings['maxShowTimeSite']) {
-                      sendData.widget['maxShowTime'] = settings['maxShowTimeSite'];
+                  if (('maxShowTime' in settings) && settings['maxShowTime']) {
+                      sendData.widget['maxShowTime'] = settings['maxShowTime'];
                   }
                 }
                 else if ( Number(sendData.widget.showTime) === 4 ) { // ページ訪問時

@@ -16,9 +16,9 @@
         <div class="form01 fLeft">
             <?php if ($coreSettings[C_COMPANY_USE_SYNCLO]) : ?>
                 <i>
-                    <?= $this->Html->image('search_g.png', array('alt' => 'アクセスID', 'width'=>15, 'height'=>15, 'class'=>'fLeft')); ?>
+                    <?= $this->Html->image('search_g.png', array('alt' => 'ID', 'width'=>15, 'height'=>15, 'class'=>'fLeft')); ?>
                 </i>
-                <?= $this->Form->input('searchText', array('type'=>'text', 'label' => false, 'ng-model' => 'searchText', 'placeholder' => 'アクセスID')); ?>
+                <?= $this->Form->input('searchText', array('type'=>'text', 'label' => false, 'ng-model' => 'searchText', 'placeholder' => 'ID')); ?>
             <?php endif; ?>
         </div>
         <!-- 検索窓 -->
@@ -40,7 +40,7 @@
            */
           $nowCntClass = "";
           if ( $widgetCheck && strcmp($userInfo['permission_level'], C_AUTHORITY_SUPER) !== 0 ) {
-            $nowCntClass = "m40t";
+            $nowCntClass = "m20t";
             echo '<li id="opStatus">現在のステータス</li>';
             if ( $opStatus ) {
               echo "<li id='operatorStatus' class='opWait'><span>待機中</span></li>";
@@ -76,7 +76,7 @@
                     </icon-annotation>
                   </div>
                 </th>
-                <th style="width: 6em" ng-hide="labelHideList.accessId">アクセスID</th>
+                <th style="width: 3em" ng-hide="labelHideList.accessId">ID</th>
         <?php if (  $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
                 <th style="width: 7em">モニター</th>
         <?php endif ; ?>
@@ -98,7 +98,7 @@
       <thead>
         <tr>
                 <th style="width: 5em">状態</th>
-                <th ng-hide="labelHideList.accessId" style="width: 6em">アクセスID</th>
+                <th ng-hide="labelHideList.accessId" style="width: 3em">ID</th>
         <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
                 <th style="width: 7em">モニター</th>
         <?php endif; ?>
@@ -121,7 +121,7 @@
             <span ng-if="monitor.status === jsConst.tabInfo.close"><?=$this->Html->image('tab_status_close.png', ['alt'=>'', 'width'=>20, 'height'=>20])?></span>
             <span ng-if="monitor.status === jsConst.tabInfo.none"><?=$this->Html->image('tab_status_none.png', ['alt'=>'', 'width'=>20, 'height'=>20])?></span>
           </td>
-          <!-- /* アクセスID */ -->
+          <!-- /* ID */ -->
           <td ng-hide="labelHideList.accessId" class="tCenter">{{monitor.accessId}}</td>
         <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
           <!-- /* モニター */ -->
@@ -129,7 +129,7 @@
             <?php if ( strcmp($userInfo['permission_level'], C_AUTHORITY_SUPER) !== 0) :?>
               <span ng-if="monitor.widget">
                 <span ng-if="!monitor.connectToken">
-                  <a class='monitorBtn blueBtn btn-shadow' href='javascript:void(0)' ng-click='windowOpen(monitor.tabId, monitor.accessId)' ng-confirm-click='アクセスID【{{monitor.accessId}}】のユーザーに接続しますか？'>接続する</a>
+                  <a class='monitorBtn blueBtn btn-shadow' href='javascript:void(0)' ng-click='windowOpen(monitor.tabId, monitor.accessId)' ng-confirm-click='ID【{{monitor.accessId}}】のユーザーに接続しますか？'>接続する</a>
                 </span>
               </span>
               <span ng-if="monitor.connectToken">

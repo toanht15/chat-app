@@ -11,7 +11,7 @@ class MWidgetSetting extends AppModel {
 
     public $styleColumns = [
       'show_time' => "showTime",
-      'max_show_time_site' => "maxShowTimeSite",
+      'max_show_time' => "maxShowTime",
       'max_show_time_page' => "maxShowTimePage",
       'show_position' => "showPosition",
       'title' => "title",
@@ -38,7 +38,7 @@ class MWidgetSetting extends AppModel {
      * @var array
      */
     public $validate = [
-        'max_show_time_site' => [
+        'max_show_time' => [
             'isMaxShowTime' => [
               'rule' => 'isMaxShowTime',
               'message' => '数値を入力してください'
@@ -157,7 +157,7 @@ class MWidgetSetting extends AppModel {
       if ( !isset($this->data['MWidgetSetting']['show_time']) ) return false;
       switch (intval($this->data['MWidgetSetting']['show_time'])) {
         case C_WIDGET_AUTO_OPEN_TYPE_SITE:
-          if ( isset($value['max_show_time_site']) ) {
+          if ( isset($value['max_show_time']) ) {
             return true;
           }
         case C_WIDGET_AUTO_OPEN_TYPE_PAGE:
