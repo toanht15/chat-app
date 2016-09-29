@@ -177,7 +177,6 @@ class TDictionariesController extends AppController {
         $this->TDictionary->rollback();
         $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.saveFailed'));
       }
-      $this->redirect('/TDictionaries/index');
     }
   }
 
