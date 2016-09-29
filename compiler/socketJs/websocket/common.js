@@ -1053,7 +1053,8 @@ var socket, // socket.io
       if(typeof string !== 'string') {
         return string;
       }
-      return string.replace(/[&'`"<>]/g, function(match) {
+      var str = string.replace(/(<br>|<br \/>)/gi, '\n');
+      str = str.replace(/[&'`"<>]/g, function(match) {
         return {
           '&': '&amp;',
           "'": '&#x27;',
@@ -1063,6 +1064,7 @@ var socket, // socket.io
           '>': '&gt;',
         }[match]
       });
+      return str;
     },
     firstUrl: function(){
       if ( location.href.match('/sincloData\=/') ) {
