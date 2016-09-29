@@ -21,7 +21,8 @@ var socket, // socket.io
     tab_type: {
       open: 1,
       close: 2,
-      none:3
+      none:3,
+      disable:4
     },
     info_type: {
       user: 1,
@@ -1053,7 +1054,8 @@ var socket, // socket.io
       if(typeof string !== 'string') {
         return string;
       }
-      return string.replace(/[&'`"<>]/g, function(match) {
+      var str = string.replace(/(<br>|<br \/>)/gi, '\n');
+      str = str.replace(/[&'`"<>]/g, function(match) {
         return {
           '&': '&amp;',
           "'": '&#x27;',
@@ -1063,6 +1065,7 @@ var socket, // socket.io
           '>': '&gt;',
         }[match]
       });
+      return str;
     },
     firstUrl: function(){
       if ( location.href.match('/sincloData\=/') ) {
@@ -1392,7 +1395,8 @@ var socket, // socket.io
     getActiveWindow: function(){
       var tabFlg = document.hasFocus(), widgetFlg = false, tabStatus;
       if ( document.getElementById('sincloBox') ) {
-        var tmp = document.getElementById('sincloBox').getAttribute('data-openflg');
+        var sincloBox = document.getElementById('sincloBox');
+        var tmp = sincloBox.getAttribute('data-openflg');
         if ( String(tmp) === "true" ) {
           widgetFlg = true;
         }
@@ -1406,9 +1410,14 @@ var socket, // socket.io
         else {
           tabStatus = cnst.tab_type.close;
         }
+        // ウィジェット非表示中
+        if ( !sincloBox || ( sincloBox && sincloBox.style.display !== "block" ) ) {
+          tabStatus = cnst.tab_type.none;
+        }
+
       }
       else {
-        tabStatus = cnst.tab_type.none;
+        tabStatus = cnst.tab_type.disable;
       }
       return tabStatus;
     }
