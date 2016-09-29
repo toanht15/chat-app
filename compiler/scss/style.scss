@@ -991,6 +991,7 @@ ul.naviBtn {
       $stop-color: #d99694;
 
       &#color-bar-left {
+        font-size: 12px!important;
         display: flex;
         flex-direction: row;
         align-items: center;
@@ -1002,7 +1003,7 @@ ul.naviBtn {
         text-align: center;
 
         &#opStatus {
-          // font-size: 13px;
+          font-size: 13px!important;
           width: 10em;
           text-align: right;
         }
@@ -1016,7 +1017,7 @@ ul.naviBtn {
               text-align: left;
               padding: 0.3em 0;
               font-weight: bold;
-              font-size: 1.4em!important;
+              font-size: 21px!important;
             }
 
             &.opWait span{
@@ -1042,13 +1043,13 @@ ul.naviBtn {
               background-repeat: no-repeat;
               background-position: 1px 0px;
               margin: 2px 0px 0 1px;
-              font-size: 1.4em!important;
+              font-size: 22px !important;
             }
         }
 
         &#changeOpStatus {
           padding: 0.3em 1.3em;
-          // font-size: 14px;
+          font-size: 14px!important;
           font-weight: normal;
           border-radius: 5px;
 
@@ -1560,7 +1561,7 @@ ul.naviBtn {
 #customer_idx {
   #customer_main {
 
-    #customer_list *,#customer_menu * { font-size: 11px!important }
+    #customer_list *,#customer_menu * { font-size: 11px }
 
     #customer_list {
       padding: 10px 20px 20px 20px;
