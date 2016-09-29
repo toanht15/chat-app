@@ -156,4 +156,15 @@ sincloApp.directive('errSrc', function(){
 	};
 });
 
+/* [ #2243 ] IE緊急対応 */
+// TODO 仮対応のため正式な対応をする
+var sincloChatMessagefocusFlg = true;
+$("body").on('focus', '#sincloChatMessage', function(e){
+  if ( sincloChatMessagefocusFlg ) {
+    e.target.value = "";
+    sincloChatMessagefocusFlg = false;
+  }
+});
+/* [ #2243 ] IE緊急対応 */
+
 </script>

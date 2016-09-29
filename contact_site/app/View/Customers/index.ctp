@@ -28,6 +28,9 @@ else if ( $coreSettings[C_COMPANY_USE_SYNCLO] && !$coreSettings[C_COMPANY_USE_CH
           if ( angular.element('#customer_tab[ng-cloak]').length > 0 ) {
             // 描画し直す
             angular.bootstrap(document, ['sincloApp']);
+            // 再接続
+            socket.disconnect();
+            socket.connect();
           }
         }, 500);
       });

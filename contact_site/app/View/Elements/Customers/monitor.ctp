@@ -71,7 +71,8 @@
                       <ul>
                         <li><?=$this->Html->image('tab_status_open.png', ['alt'=>'ウィジェットが開いている'])?>&emsp;<span>{{tabStatusStr(jsConst.tabInfo.open)}}</span></li>
                         <li><?=$this->Html->image('tab_status_close.png', ['alt'=>'ウィジェットが閉じている'])?>&emsp;<span>{{tabStatusStr(jsConst.tabInfo.close)}}</span></li>
-                        <li><?=$this->Html->image('tab_status_none.png', ['alt'=>'非アクティブ'])?>&emsp;<span>{{tabStatusStr(jsConst.tabInfo.none)}}</span></li>
+                        <li><?=$this->Html->image('tab_status_none.png', ['alt'=>'ウィジェット非表示'])?>&emsp;<span>{{tabStatusStr(jsConst.tabInfo.none)}}</span></li>
+                        <li><?=$this->Html->image('tab_status_disable.png', ['alt'=>'非アクティブ'])?>&emsp;<span>{{tabStatusStr(jsConst.tabInfo.disable)}}</span></li>
                       </ul>
                     </icon-annotation>
                   </div>
@@ -120,6 +121,7 @@
             <span ng-if="monitor.status === jsConst.tabInfo.open"><?=$this->Html->image('tab_status_open.png', ['alt'=>'', 'width'=>20, 'height'=>20])?></span>
             <span ng-if="monitor.status === jsConst.tabInfo.close"><?=$this->Html->image('tab_status_close.png', ['alt'=>'', 'width'=>20, 'height'=>20])?></span>
             <span ng-if="monitor.status === jsConst.tabInfo.none"><?=$this->Html->image('tab_status_none.png', ['alt'=>'', 'width'=>20, 'height'=>20])?></span>
+            <span ng-if="monitor.status === jsConst.tabInfo.disable"><?=$this->Html->image('tab_status_disable.png', ['alt'=>'', 'width'=>20, 'height'=>20])?></span>
           </td>
           <!-- /* ID */ -->
           <td ng-hide="labelHideList.accessId" class="tCenter">{{monitor.accessId}}</td>
