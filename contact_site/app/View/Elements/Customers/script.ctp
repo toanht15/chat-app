@@ -4,9 +4,13 @@
 // -----------------------------------------------------------------------------
 //  定数
 // -----------------------------------------------------------------------------
-var _access_type_guest = 1, _access_type_host = 2, userAgentChk, notificationStatus = false,
-    socket = io.connect("<?=C_NODE_SERVER_ADDR.C_NODE_SERVER_WS_PORT?>"),
+var _access_type_guest = 1, _access_type_host = 2, userAgentChk, notificationStatus = false, socket,
     connectToken = null, receiveAccessInfoToken = null, isset, myUserId = <?= h($muserId)?>;
+
+if ( window.hasOwnProperty('io') ) {
+  socket = io.connect("<?=C_NODE_SERVER_ADDR.C_NODE_SERVER_WS_PORT?>");
+}
+
 
 (function(){
   // -----------------------------------------------------------------------------
