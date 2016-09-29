@@ -160,8 +160,8 @@ $config['widgetPositionType'] = [
 
 /* ウィジェット設定 － 担当者表示名種別 */
 $config['widgetShowNameType'] = [
-    C_WIDGET_SHOW_NAME => "担当者名を表示する</br>　<s>※ユーザーマスタの「表示名」に設定された名称を表示します</s>",
-    C_WIDGET_SHOW_COMP=> "企業名を表示する</br>　<s>※こちらの画面の「企業名」に設定された名称を表示します</s>"
+    C_WIDGET_SHOW_NAME => "担当者名を表示する<br>　<s>※ユーザーマスタの「表示名」に設定された名称を表示します</s>",
+    C_WIDGET_SHOW_COMP=> "企業名を表示する<br>　<s>※こちらの画面の「企業名」に設定された名称を表示します</s>"
 ];
 
 /* ウィジェット設定 － チャット送信アクション種別 */

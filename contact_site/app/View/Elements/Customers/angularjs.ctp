@@ -268,6 +268,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
   sincloApp.factory('angularSocket', function ($rootScope) {
     return {
       on: function (eventName, callback) {
+        if ( !window.hasOwnProperty('socket') ) return false;
         socket.on(eventName, function () {
           var args = arguments;
           $rootScope.$apply(function () {
@@ -277,6 +278,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       },
       emit: function (eventName, d, callback) {
         var obj = {};
+        if ( !window.hasOwnProperty('socket') ) return false;
         if ( typeof(d) !== "object" ) {
           obj = JSON.parse(d);
         }
@@ -1552,6 +1554,5 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       }
     }
   });
-
 }());
 </script>
