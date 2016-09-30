@@ -123,11 +123,11 @@ class CustomersController extends AppController {
     $this->autoRender = FALSE;
     $this->layout = null;
     $labelList = [
-      'accessId' => 'アクセスID',
+      'accessId' => 'ID',
       'ipAddress' => '訪問ユーザ',
-      'ua' => 'ユーザー環境',
-      'time' => 'アクセス日時',
+      'ua' => 'プラットフォーム／ブラウザ',
       'stayCount' => '訪問回数',
+      'time' => 'アクセス日時',
       'stayTime' => '滞在時間',
       'page' => '閲覧ページ数',
       'title' => '閲覧中ページ',

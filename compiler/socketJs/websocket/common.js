@@ -21,7 +21,8 @@ var socket, // socket.io
     tab_type: {
       open: 1,
       close: 2,
-      none:3
+      none:3,
+      disable:4
     },
     info_type: {
       user: 1,
@@ -213,13 +214,13 @@ var socket, // socket.io
         html += '      #sincloBox #mainImage em { position: absolute; background-image: url("' + window.info.site.files + '/img/chat-bg.png");background-size: contain;background-repeat: no-repeat; color: #FFF; font-style: normal; text-align: center; font-weight: bold }';
         html += '      #sincloBox ul#chatTalk { width: 100%; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0; clear: both!important; }';
         html += '      #sincloBox ul sinclo-chat { clear: both!important } ';
-        html += '      #sincloBox ul#chatTalk li { word-wrap: break-word; word-break: break-word; white-space: pre-wrap!important; background-color: #FFF; white-space: pre; color: #8A8A8A; }';
+        html += '      #sincloBox ul#chatTalk li { text-align: left!important; word-wrap: break-word; word-break: break-word; white-space: pre-wrap!important; background-color: #FFF; white-space: pre; color: #8A8A8A; }';
         html += '      #sincloBox ul#chatTalk li.sinclo_se { ' + chatPosition.se + 'background-color: #FFF; }';
         html += '      #sincloBox ul#chatTalk li.sinclo_re { ' + chatPosition.re + 'background-color:' + faintColor + ' }';
         html += '      #sincloBox ul#chatTalk li#sinclo_typeing_message { position: relative; color: #d5d5d5; border: none; text-align: center; }';
         html += '      #sincloBox ul#chatTalk li#sinclo_typeing_message span { position: absolute; top: 0; bottom: 0; left: 50%; display: block; }';
         html += '      #sincloBox ul#chatTalk li span.cName { display: block; color: ' + widget.mainColor + '; font-weight: bold; }';
-        html += '      #sincloBox ul#chatTalk li.sinclo_etc { border: none; text-align: center; margin: 0 auto; font-weight: bold }';
+        html += '      #sincloBox ul#chatTalk li.sinclo_etc { border: none; text-align: center!important; margin: 0 auto; font-weight: bold }';
         html += '      #sincloBox section#chatTab div { border-top: 1px solid #E8E7E0; }';
         html += '      #sincloBox section#chatTab div #sincloChatMessage { display: block; height: 100%; margin: 0; width: 80%; resize: none; color: #8A8A8A!important; border-right-color: ' + widget.mainColor + '!important; }';
         html += '      #sincloBox section#chatTab div #sincloChatMessage:focus { outline: none; border-color: ' + widget.mainColor + '!important }';
@@ -1053,7 +1054,8 @@ var socket, // socket.io
       if(typeof string !== 'string') {
         return string;
       }
-      return string.replace(/[&'`"<>]/g, function(match) {
+      var str = string.replace(/(<br>|<br \/>)/gi, '\n');
+      str = str.replace(/[&'`"<>]/g, function(match) {
         return {
           '&': '&amp;',
           "'": '&#x27;',
@@ -1063,6 +1065,7 @@ var socket, // socket.io
           '>': '&gt;',
         }[match]
       });
+      return str;
     },
     firstUrl: function(){
       if ( location.href.match('/sincloData\=/') ) {
@@ -1392,7 +1395,8 @@ var socket, // socket.io
     getActiveWindow: function(){
       var tabFlg = document.hasFocus(), widgetFlg = false, tabStatus;
       if ( document.getElementById('sincloBox') ) {
-        var tmp = document.getElementById('sincloBox').getAttribute('data-openflg');
+        var sincloBox = document.getElementById('sincloBox');
+        var tmp = sincloBox.getAttribute('data-openflg');
         if ( String(tmp) === "true" ) {
           widgetFlg = true;
         }
@@ -1406,9 +1410,14 @@ var socket, // socket.io
         else {
           tabStatus = cnst.tab_type.close;
         }
+        // ウィジェット非表示中
+        if ( !sincloBox || ( sincloBox && sincloBox.style.display !== "block" ) ) {
+          tabStatus = cnst.tab_type.none;
+        }
+
       }
       else {
-        tabStatus = cnst.tab_type.none;
+        tabStatus = cnst.tab_type.disable;
       }
       return tabStatus;
     }

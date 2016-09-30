@@ -5,7 +5,7 @@ $(document).ready(function(){
         customerId = document.getElementById('customerId').value;
         visitorsId = document.getElementById('visitorsId').value;
     $(".infoData").each(function(){
-      dataList[this.dataset.key] = this.value;
+      dataList[$(this).data('key')] = this.value;
     });
     $.ajax({
       type: 'GET',

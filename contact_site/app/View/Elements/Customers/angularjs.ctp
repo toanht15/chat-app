@@ -268,6 +268,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
   sincloApp.factory('angularSocket', function ($rootScope) {
     return {
       on: function (eventName, callback) {
+        if ( !window.hasOwnProperty('socket') ) return false;
         socket.on(eventName, function () {
           var args = arguments;
           $rootScope.$apply(function () {
@@ -277,6 +278,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       },
       emit: function (eventName, d, callback) {
         var obj = {};
+        if ( !window.hasOwnProperty('socket') ) return false;
         if ( typeof(d) !== "object" ) {
           obj = JSON.parse(d);
         }
@@ -292,7 +294,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
               callback.apply(socket, args);
             }
           });
-        })
+        });
       }
     };
   });
@@ -306,8 +308,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       accessId : false,
       ipAddress : false,
       ua : false,
-      time : false,
       stayCount : false,
+      time : false,
       stayTime : false,
       page : false,
       title : false,
@@ -631,6 +633,15 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       return $scope.jsConst.tabInfoStr[n];
     }
 
+    /* パラメーターを取り除く */
+    $scope.trimToURL = function (url){
+      var position = url.indexOf('?');
+      if ( position > 0 ) {
+        url = url.substr(0, position);
+      }
+      return url;
+    }
+
     $scope.isset = function(value){
       var result;
       if ( angular.isUndefined(value) ) {
@@ -914,7 +925,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         if ( obj.accessType !== _access_type_host ) {
           delete $scope.monitorList[obj.tabId];
           $scope.chatList = $scope.chatList.filter(function(v){
-            return (v !== this.t)
+            return (v !== this.t);
           }, {t: obj.tabId});
           if ( obj.tabId === chatApi.tabId ){
             $scope.showDetail(obj.tabId);
@@ -949,7 +960,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       }
       else {
         $scope.chatList = $scope.chatList.filter(function(v){
-          return (v !== this.t)
+          return (v !== this.t);
         }, {t: obj.tabId});
 
         // 前回の担当が自分だった場合
@@ -973,7 +984,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
       if ( 'tabId' in obj && obj.tabId in $scope.monitorList && 'chat' in $scope.monitorList[obj.tabId] ) {
         $scope.chatList = $scope.chatList.filter(function(v){
-          return (v !== this.t)
+          return (v !== this.t);
         }, {t: obj.tabId});
         $scope.monitorList[obj.tabId].chat = null;
       }
@@ -1431,34 +1442,33 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         var timer = [];
         function colResize(tblWidth, idx, width){
           clearTimeout(timer[idx]);
+          var headerList = document.querySelectorAll("#list_header tr th");
 
           timer[idx] = setTimeout(function(){
-            var headerElem = document.getElementById("list_header");
-            var col = document.querySelectorAll("#list_header tr th")[idx];
-
-            headerElem.style.width = tblWidth + "px";
-            col.style.width = width + "px";
+            $("#list_header").outerWidth(tblWidth);
+            $("#list_header tr th").eq(idx).outerWidth(width);
           }, 5);
         }
 
         var width = [];
         setInterval(function(){
           var ths = document.querySelectorAll("#list_body th");
-          var tblStyle = window.getComputedStyle(elems[0], null);
+          var tblStyle = document.querySelectorAll("#list_body thead")[0];
           angular.forEach(ths, function(elem){
+
             var style = window.getComputedStyle(elem, null);
             if ( (elem.cellIndex in width) ) {
-              if ( width[elem.cellIndex] !== style.width ) {
-                colResize(tblStyle.width, elem.cellIndex, style.width);
-                width[elem.cellIndex] = style.width;
+              if ( width[elem.cellIndex] !== elem.offsetWidth ) {
+                colResize(tblStyle.offsetWidth, elem.cellIndex, elem.offsetWidth);
+                width[elem.cellIndex] = elem.offsetWidth;
               }
             }
             else {
-              width[elem.cellIndex] = style.width;
-              colResize(tblStyle.width, elem.cellIndex, style.width);
+              width[elem.cellIndex] = elem.offsetWidth;
+              colResize(tblStyle.offsetWidth, elem.cellIndex, elem.offsetWidth);
             }
           });
-        }, 5);
+        }, 100);
       }
     }
   });
@@ -1553,6 +1563,5 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       }
     }
   });
-
 }());
 </script>

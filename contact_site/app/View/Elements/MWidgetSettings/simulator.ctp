@@ -103,9 +103,9 @@
     <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
       <section id="chatTab" ng-hide="widget.showTab !== 'chat'">
         <ul id="chatTalk">
-        <li class="sinclo_se" ng-class="{chat_right: show_position == 2, chat_left: show_position == 1 }">○○について質問したいのですが</li>
-        <li class="sinclo_re" ng-class="{chat_right: show_position == 1, chat_left: show_position == 2 }" ng-style="{backgroundColor:makeFaintColor()}"><span class="cName" ng-if="show_name == 1"><?=$userInfo['display_name']?></span><span class="cName" ng-if="show_name == 2">{{sub_title}}</span>こんにちは</li>
-        <li class="sinclo_re" ng-class="{chat_right: show_position == 1, chat_left: show_position == 2 }" ng-style="{backgroundColor:makeFaintColor()}"><span class="cName" ng-if="show_name == 1"><?=$userInfo['display_name']?></span><span class="cName" ng-if="show_name == 2">{{sub_title}}</span>○○についてですね<br>どのようなご質問でしょうか？</li>
+          <li class="sinclo_se" ng-class="{chat_right: show_position == 2, chat_left: show_position == 1 }">○○について質問したいのですが</li>
+          <li class="sinclo_re" ng-class="{chat_right: show_position == 1, chat_left: show_position == 2 }" ng-style="{backgroundColor:makeFaintColor()}"><span class="cName" ng-if="show_name == 1"><?=$userInfo['display_name']?></span><span class="cName" ng-if="show_name == 2">{{sub_title}}</span>こんにちは</li>
+          <li class="sinclo_re" ng-class="{chat_right: show_position == 1, chat_left: show_position == 2 }" ng-style="{backgroundColor:makeFaintColor()}"><span class="cName" ng-if="show_name == 1"><?=$userInfo['display_name']?></span><span class="cName" ng-if="show_name == 2">{{sub_title}}</span>○○についてですね<br>どのようなご質問でしょうか？</li>
         </ul>
         <div style="border-top: 1px solid #E8E7E0; padding: 0.5em;">
           <textarea name="sincloChat" id="sincloChatMessage" placeholder="メッセージを入力してください{{chat_area_placeholder_pc}}"></textarea>

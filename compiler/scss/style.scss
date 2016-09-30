@@ -401,6 +401,9 @@ a {
 .m10r10l {
   margin: 0 10px;
 }
+.m20t {
+  margin-top: 20px!important;
+}
 .m40t {
   margin-top: 40px!important;
 }
@@ -944,6 +947,7 @@ ul.naviBtn {
 #customer_idx {
 
   #customer_menu {
+    width: 100%;
     margin: 0;
     padding: 0;
     display: flex;
@@ -957,8 +961,31 @@ ul.naviBtn {
         height: auto;
         float: right;
         margin: 0 20px 0 0;
-        font-size: 14px;
       }
+    }
+
+    a {
+      border-radius: 15px;
+      padding: 4px;
+      display: inline-block;
+      height: 30px;
+    }
+
+    i {
+      border-radius: 15px;
+      padding: 4px;
+      display: inline-block;
+      height: 25px;
+      position: absolute;
+      left: 2px;
+      bottom: 0;
+    }
+
+    input {
+      padding-left: 25px;
+      height: 20px;
+      // font-size: 10px;
+      margin: 2px;
     }
 
     ul {
@@ -968,6 +995,7 @@ ul.naviBtn {
       $stop-color: #d99694;
 
       &#color-bar-left {
+        font-size: 12px!important;
         display: flex;
         flex-direction: row;
         align-items: center;
@@ -979,7 +1007,7 @@ ul.naviBtn {
         text-align: center;
 
         &#opStatus {
-          font-size: 13px;
+          font-size: 13px!important;
           width: 10em;
           text-align: right;
         }
@@ -993,7 +1021,7 @@ ul.naviBtn {
               text-align: left;
               padding: 0.3em 0;
               font-weight: bold;
-              font-size: 21px;
+              font-size: 21px!important;
             }
 
             &.opWait span{
@@ -1019,13 +1047,13 @@ ul.naviBtn {
               background-repeat: no-repeat;
               background-position: 1px 0px;
               margin: 2px 0px 0 1px;
-              font-size: 22px;
+              font-size: 22px !important;
             }
         }
 
         &#changeOpStatus {
           padding: 0.3em 1.3em;
-          font-size: 14px;
+          font-size: 14px!important;
           font-weight: normal;
           border-radius: 5px;
 
@@ -1040,13 +1068,6 @@ ul.naviBtn {
         }
       }
     }
-
-  }
-
-  #customer_main {
-    width: 100%;
-    // float: left;
-    // transition: width 500ms linear 0s;
   }
 
   #customer_sub_pop {
@@ -1081,7 +1102,7 @@ ul.naviBtn {
       top: 0;
       left: 60px;
       z-index: $sub-sidebar-z-index - 1;
-      font-size: 16px;
+      font-size: 14px;
 
       .scroll {
         overflow: auto;
@@ -1185,6 +1206,8 @@ ul.naviBtn {
 
         [id$='Contents'] {
           padding: 1em;
+
+          &#leftContents { padding-right: 0; }
         }
 
         #leftContents {
@@ -1226,7 +1249,7 @@ ul.naviBtn {
             }
 
             #chatTalk {
-              height: 300px;
+              height: 250px;
               padding: 5px;
               border: 1px solid #8F8F8F;
               overflow-x: hidden;
@@ -1542,29 +1565,7 @@ ul.naviBtn {
 #customer_idx {
   #customer_main {
 
-    #customer_menu {
-      a {
-        border-radius: 15px;
-        padding: 4px;
-        display: inline-block;
-        height: 30px;
-      }
-      i {
-        border-radius: 15px;
-        padding: 4px;
-        display: inline-block;
-        height: 30px;
-        position: absolute;
-        left: 2px;
-        bottom: 0;
-      }
-      input {
-        padding-left: 25px;
-        height: 26px;
-        font-size: 12px;
-        margin: 2px 5px;
-      }
-    }
+    #customer_list *,#customer_menu * { font-size: 11px }
 
     #customer_list {
       padding: 10px 20px 20px 20px;
@@ -1576,22 +1577,21 @@ ul.naviBtn {
         icon {
           border-radius: 20px;
           padding: 0.1em;
-          width: 1.6em;
-          height: 1.6em;
-          font-size: 9.5px;
+          width: 1.5em;
+          height: 1.5em;
+          font-size: 0.9em!important;
         }
 
         &:hover icon-annotation { display: block!important; }
 
         icon-annotation {
           position: absolute;
-          top: -5.5em;
-          left: -0.8em;
-          width: 16em;
-          height: 5em;
+          top: -7.1em;
+          left: -0.9em;
+          width: 18em;
+          height: 6.3em;
           z-index: 2;
           display: none;
-
 
           /* 矢印 */
           &:before {
@@ -1601,7 +1601,7 @@ ul.naviBtn {
             border-left: 9px solid transparent;
             border-right: 9px solid transparent;
             position: absolute;
-            bottom: -0.5em;
+            bottom: -0.7em;
             left: 10px;
             z-index: 1;
           }
@@ -1613,7 +1613,7 @@ ul.naviBtn {
             border-left: 9px solid transparent;
             border-right: 9px solid transparent;
             position: absolute;
-            bottom: -0.3em;
+            bottom: -0.5em;
             left: 10px;
             z-index: 3;
           }
@@ -1643,6 +1643,8 @@ ul.naviBtn {
 
       }
 
+      th, td { height: 55px!important; }
+
       #list_header {
         position: absolute;
         top: 0;
@@ -1657,6 +1659,8 @@ ul.naviBtn {
       #list_body {
         overflow-y: auto;
         overflow-x: hidden;
+
+        td:first-child span img { background-color: #FFF }
       }
 
       td, td * {
@@ -1667,7 +1671,7 @@ ul.naviBtn {
         .blueBtn, .redBtn {
             text-decoration: none!important;
             font-weight: bold;
-            padding: 5px;
+            padding: 5px 2.5px;;
             border-radius: 5px;
             margin: 0 auto;
             display: block;
@@ -1679,15 +1683,14 @@ ul.naviBtn {
 
             .unread {
               position: absolute;
-              top: -15px;
+              top: -13px;
               right: -5px;
-              background-image: url('/img/chat-bg.png');
+              background-image: url(/img/chat-bg.png);
               background-size: contain;
               background-repeat: no-repeat;
-              width: 25px;
-              height: 20px;
-              padding: 2px 1px;
-              font-size: 11px;
+              width: 22px;
+              height: 19px;
+              padding: 1px;
               color: #FFF;
 
             }
@@ -1703,7 +1706,7 @@ ul.naviBtn {
       border-radius: 5px;
       margin: 0 auto;
       display: block;
-      width: 5em;
+      width: 6em;
       text-align: center;
 
     }
@@ -1809,7 +1812,7 @@ ul.naviBtn {
   left: 100px;
 }
 #tabStatusMessage {
-  opacity: 0;
+  display: none;
   position: fixed;
   right: 20px;
   top: 10px;

@@ -113,8 +113,12 @@ CakeLog::config('error', array(
 	'file' => 'error',
 ));
 
-define('SERVER_NAME', $_SERVER['SERVER_NAME']);
+if (!isset($_SERVER['SERVER_NAME'])) {
+    $_SERVER['SERVER_NAME'] = php_uname("n");
+}
+
 CakePlugin::load('WebSocket');
+CakePlugin::load('Migrations');
 
 Configure::load("const");
 Configure::load("messageConst");

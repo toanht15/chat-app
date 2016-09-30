@@ -101,7 +101,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
 					<label for="selectTab<?=h($id)?>"></label>
 				</td>
 				<td class="tCenter"><?=$no?></td>
-				<td class="tCenter noClick"><?=$this->Html->link(h($val['TAutoMessage']['name']), ['controller'=>'TAutoMessages', 'action'=>'edit', $id])?></td>
+				<td class="tCenter noClick"><?=$this->Html->link($val['TAutoMessage']['name'], ['controller'=>'TAutoMessages', 'action'=>'edit', $id])?></td>
 				<td class="targetBalloon">
 					<span class="conditionTypeLabel m10b">条件</span><span class="m10b actionValue"><?=h($conditionType)?></span>
 					<span class="conditionValueLabel m10b">設定</span><span class="m10b actionValue"><?=h($conditions)?></span>

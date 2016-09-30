@@ -26,6 +26,7 @@ define('C_PATH_WIDGET_IMG_DIR', ROOT.DS.APP_DIR.DS.WEBROOT_DIR.DS.'files'); // �
 define('C_WIDGET_TAB_STATUS_CODE_OPEN', 1); // ウィジェットが開いている状態
 define('C_WIDGET_TAB_STATUS_CODE_CLOSE', 2); // ウィジェットが閉じている状態
 define('C_WIDGET_TAB_STATUS_CODE_NONE', 3); // 非アクティブ状態
+define('C_WIDGET_TAB_STATUS_CODE_DISABLE', 4); // ウィジェット非表示の状態
 
 // 通知機能
 define('C_PATH_NOTIFICATION_IMG_DIR', 'notification/'); // デスクトップ通知用画像参照先
@@ -130,14 +131,16 @@ $config['Authority'] = [
 $config['tabStatusList'] = [
     'open' => C_WIDGET_TAB_STATUS_CODE_OPEN,
     'close' => C_WIDGET_TAB_STATUS_CODE_CLOSE,
-    'none' => C_WIDGET_TAB_STATUS_CODE_NONE
+    'none' => C_WIDGET_TAB_STATUS_CODE_NONE,
+    'disable' => C_WIDGET_TAB_STATUS_CODE_DISABLE
 ];
 
 /* タブステータス(メッセージ用) */
 $config['tabStatusStrList'] = [
     C_WIDGET_TAB_STATUS_CODE_OPEN => "ウィジェットが開いている状態",
     C_WIDGET_TAB_STATUS_CODE_CLOSE => "ウィジェットが閉じている状態",
-    C_WIDGET_TAB_STATUS_CODE_NONE => "非アクティブ状態"
+    C_WIDGET_TAB_STATUS_CODE_NONE => "ウィジェットが非表示の状態",
+    C_WIDGET_TAB_STATUS_CODE_DISABLE => "非アクティブ状態"
 ];
 
 /* ユーザー権限（単体あり：C_AUTHORITY_%） */
@@ -161,8 +164,8 @@ $config['widgetPositionType'] = [
 
 /* ウィジェット設定 － 担当者表示名種別 */
 $config['widgetShowNameType'] = [
-    C_WIDGET_SHOW_NAME => "担当者名を表示する</br>　<s>※ユーザーマスタの「表示名」に設定された名称を表示します</s>",
-    C_WIDGET_SHOW_COMP=> "企業名を表示する</br>　<s>※こちらの画面の「企業名」に設定された名称を表示します</s>"
+    C_WIDGET_SHOW_NAME => "担当者名を表示する<br>　<s>※ユーザーマスタの「表示名」に設定された名称を表示します</s>",
+    C_WIDGET_SHOW_COMP=> "企業名を表示する<br>　<s>※こちらの画面の「企業名」に設定された名称を表示します</s>"
 ];
 
 /* ウィジェット設定 － チャット送信アクション種別 */
