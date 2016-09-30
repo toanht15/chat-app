@@ -86,6 +86,7 @@
                 <th style="width: 9em" ng-hide="labelHideList.ua">プラットフォーム<br>ブラウザ</th>
                 <th style="width: 5em" ng-hide="labelHideList.stayCount">訪問回数</th>
                 <th style="width: 6em" ng-hide="labelHideList.time">アクセス日時</th>
+                <th style="width: 5em" ng-hide="labelHideList.campaign">キャンペーン</th>
                 <th style="width: 5em" ng-hide="labelHideList.stayTime">滞在時間</th>
                 <th style="width: 7em" ng-hide="labelHideList.page">閲覧<br>ページ数</th>
                 <th ng-hide="labelHideList.title">閲覧中ページ</th>
@@ -108,6 +109,7 @@
                 <th ng-hide="labelHideList.ua" style="width: 9em">プラットフォーム<br>ブラウザ</th>
                 <th ng-hide="labelHideList.stayCount" style="width: 5em">訪問回数</th>
                 <th ng-hide="labelHideList.time" style="width: 6em">アクセス日時</th>
+                <th ng-hide="labelHideList.campaign" style="width: 5em">キャンペーン</th>
                 <th ng-hide="labelHideList.stayTime" style="width: 5em">滞在時間</th>
                 <th ng-hide="labelHideList.page" style="width: 7em">閲覧<br>ページ数</th>
                 <th ng-hide="labelHideList.title">閲覧中ページ</th>
@@ -171,6 +173,8 @@
           <td ng-hide="labelHideList.stayCount" class="tCenter">{{monitor.stayCount}}</td>
           <!-- /* アクセス日時 */ -->
           <td ng-hide="labelHideList.time" class="tCenter">{{monitor.time | customDate}}</td>
+          <!-- /* キャンペーン */ -->
+          <td ng-hide="labelHideList.campaign" class="tCenter pre">{{::getCampaign(monitor.referrer)}}</td>
           <!-- /* 滞在時間 */ -->
           <td ng-hide="labelHideList.stayTime" class="tCenter" cal-stay-time></td>
           <!-- /* 閲覧ページ数 */ -->

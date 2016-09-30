@@ -3,6 +3,7 @@
 
 var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     userList = <?php echo json_encode($responderList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>,
+    campaignList = <?= $campaignList ?>,
     widget = <?= $widgetSettings ?>, contract = <?= json_encode($coreSettings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>,
     modalFunc, myUserId = <?= h($muserId)?>, chatApi, cameraApi, entryWordApi;
 
@@ -631,6 +632,22 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     /* タブ状態を文字列で返す */
     $scope.tabStatusStr = function (n){
       return $scope.jsConst.tabInfoStr[n];
+    }
+
+    /* キャンペーン情報を取得する */
+    $scope.getCampaign = function (url){
+      var str = "";
+      if ( url === null ) return "";
+      angular.forEach(campaignList, function(keyword){
+        var position = url.indexOf(keyword.parameter);
+        if ( position > 0 ) {
+          if ( str !== "" ) {
+            str += "\n";
+          }
+          str += keyword.name;
+        }
+      });
+      return str;
     }
 
     /* パラメーターを取り除く */
@@ -1551,7 +1568,13 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             scope.getCustomerInfo(scope.monitorList[scope.detailId].userId, function(ret){
               scope.customData = ret;
               scope.customPrevData = angular.copy(ret);
-              scope.customerList[scope.monitorList[scope.detailId].userId] = angular.copy(scope.customData);
+              if ( scope.detailId !== "" ) {
+                scope.customerList[scope.monitorList[scope.detailId].userId] = angular.copy(scope.customData);
+              }
+              else {
+                console.error('Please Tab Close.');
+                return false;
+              }
             });
           }
           else {

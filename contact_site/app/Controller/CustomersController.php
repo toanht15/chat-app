@@ -17,83 +17,32 @@ class CustomersController extends AppController {
    * @return void
    * */
   public function index() {
-    $dictionaryList = $this->TDictionary->find('list',
-      [
-        "fields" => [
-          "TDictionary.id", "TDictionary.word"
-        ],
-        "conditions" => [
-          'OR' => [
-            'TDictionary.type' => C_DICTIONARY_TYPE_COMP,
-            [
-            'TDictionary.type' => C_DICTIONARY_TYPE_PERSON,
-            'TDictionary.m_users_id' => $this->userInfo['id']
-            ]
-          ],
-          'TDictionary.m_companies_id' => $this->userInfo['MCompany']['id']
-        ],
-        'order' => [
-          'sort' => 'asc',
-          'id' => 'asc'
-        ],
-        "recursive" => -1
-      ]
-    );
-
-    $list = [];
-    foreach ( (array)$dictionaryList as $key => $val ) {
-      $list[] = [
-        'id' => $key,
-        'label' => $this->setChatValiable($val)
-      ];
-    }
-    $widgetSettings = $this->MWidgetSetting->coFind('first', null);
-
-    // ユーザーの最新情報を取得
-    $mUser = $this->MUser->coFind('first', ['fields', '*', 'recursive' => -1]);
 
     $this->request->data['settings'] = [];
 
+    /* 個人設定を読み込む */
+    // ユーザーの最新情報を取得
+    $mUser = $this->MUser->coFind('first', ['fields', '*', 'recursive' => -1]);
     if ( !empty($mUser['MUser']['settings']) ) {
       $mySettings = json_decode($mUser['MUser']['settings']);
       if ( isset($mySettings->sendPattarn) && strcmp($mySettings->sendPattarn, "true") === 0 ) {
-      $this->request->data['settings']['sendPattarn'] = true;
+        $this->request->data['settings']['sendPattarn'] = true;
       }
       else if ( isset($mySettings->sendPattarn) && strcmp($mySettings->sendPattarn, "false" === 0) ) {
-      $this->request->data['settings']['sendPattarn'] = false;
+        $this->request->data['settings']['sendPattarn'] = false;
       }
     }
 
-    $styleSettings = [];
-    if ( isset($widgetSettings['MWidgetSetting']['style_settings']) ) {
-      $styleSettings = json_decode($widgetSettings['MWidgetSetting']['style_settings']);
-    }
+    /* ウィジェットの設定を読み込む */
+    // ウィジェット設定を取得
+    $widgetSettings = $this->MWidgetSetting->coFind('first', null);
     $this->set('widgetSettings', $widgetSettings['MWidgetSetting']['style_settings']);
 
-
-    $this->set('dictionaryList', $list);
+    /* 企業ユーザーリストを取得 */
     $this->set('responderList', $this->MUser->coFind('list',["fields" => ["MUser.id", "MUser.display_name"], "recursive" => -1]));
-    $params = [
-      "fields" => ["type", "name", "keyword", "image"], "recursive" => -1
-    ];
-    $ret = $this->MChatNotification->coFind('all',$params);
-    $notificationSettings = [];
-    foreach($ret as $key => $val){
-      $notificationSettings[$key] = $val['MChatNotification'];
-    }
-    $this->set('notificationList', $this->jsonEncode($notificationSettings));
 
-    // 契約状態
-    $cType = "full";
-    if ( !$this->coreSettings[C_COMPANY_USE_SYNCLO] && $this->coreSettings[C_COMPANY_USE_CHAT] ) {
-      $cType = "chatOnly";
-    }
-    else if ( $this->coreSettings[C_COMPANY_USE_SYNCLO] && !$this->coreSettings[C_COMPANY_USE_CHAT] ) {
-      $cType = "syncOnly";
-    }
-    $this->set('cType', $cType);
-    $this->set('tabStatusList', Configure::read('tabStatusList'));
-    $this->set('tabStatusStrList', Configure::read('tabStatusStrList'));
+    $this->_viewElement();
+
   }
 
   /* *
@@ -313,4 +262,103 @@ class CustomersController extends AppController {
     }
     return new CakeResponse(['body' => json_encode($ret)]);
   }
+
+  /**
+   * ビュー表示用
+   * @return void
+   * */
+  private function _viewElement(){
+    /* キャンペーン情報取得 */
+    $this->_getCampaignSettingList();
+    /* 通知設定取得 */
+    $this->_getNotificationSettingList();
+    /* 簡易入力情報取得 */
+    $this->_getDictionaryList();
+    /* 契約状態取得 */
+    $cType = "full";
+    if ( !$this->coreSettings[C_COMPANY_USE_SYNCLO] && $this->coreSettings[C_COMPANY_USE_CHAT] ) {
+      $cType = "chatOnly";
+    }
+    else if ( $this->coreSettings[C_COMPANY_USE_SYNCLO] && !$this->coreSettings[C_COMPANY_USE_CHAT] ) {
+      $cType = "syncOnly";
+    }
+    $this->set('cType', $cType);
+    $this->set('tabStatusList', Configure::read('tabStatusList'));
+    $this->set('tabStatusStrList', Configure::read('tabStatusStrList'));
+  }
+
+  /**
+   * 簡易入力情報取得
+   * @return void
+   * */
+  private function _getDictionaryList(){
+    $dictionaryList = $this->TDictionary->find('list',
+      [
+        "fields" => [
+          "TDictionary.id", "TDictionary.word"
+        ],
+        "conditions" => [
+          'OR' => [
+            'TDictionary.type' => C_DICTIONARY_TYPE_COMP,
+            [
+            'TDictionary.type' => C_DICTIONARY_TYPE_PERSON,
+            'TDictionary.m_users_id' => $this->userInfo['id']
+            ]
+          ],
+          'TDictionary.m_companies_id' => $this->userInfo['MCompany']['id']
+        ],
+        'order' => [
+          'sort' => 'asc',
+          'id' => 'asc'
+        ],
+        "recursive" => -1
+      ]
+    );
+
+    $list = [];
+    foreach ( (array)$dictionaryList as $key => $val ) {
+      $list[] = [
+        'id' => $key,
+        'label' => $this->setChatValiable($val)
+      ];
+    }
+    $this->set('dictionaryList', $list);
+  }
+
+  /**
+   * キャンペーン設定を取得
+   * @return void
+   * */
+  private function _getCampaignSettingList(){
+    // TODO DBから取得
+    // $ret = $this->TCampaign->coFind('list',[
+    //   "fields" => ["parameter", "name"], "recursive" => -1
+    // ]);
+    $ret = [
+      [
+        "parameter" => "hoge=one",
+        "name" => "one"
+      ],
+      [
+        "parameter" => "hoge=two",
+        "name" => "two"
+      ]
+    ];
+    $this->set('campaignList', $this->jsonEncode($ret));
+  }
+  /**
+   * 通知設定を取得
+   * @return void
+   * */
+  private function _getNotificationSettingList(){
+    $ret = $this->MChatNotification->coFind('all',[
+      "fields" => ["type", "name", "keyword", "image"], "recursive" => -1
+    ]);
+    $settings = [];
+    foreach($ret as $key => $val){
+      $settings[$key] = $val['MChatNotification'];
+    }
+    $this->set('notificationList', $this->jsonEncode($settings));
+  }
+
 }
