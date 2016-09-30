@@ -445,7 +445,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           // モニター開始時にビデオ表示
           // TODO: ビデオ表示可能な条件をつける。（オプションでビデオチャット可能で、かつユーザーがカメラONにしているとき）
         <?php if (isset($coreSettings[C_COMPANY_USE_VIDEO_CHAT]) && $coreSettings[C_COMPANY_USE_VIDEO_CHAT]) : ?>
-          socket.emit('confirmVideochatStart', {toTabId: tabId, connectToken: connectToken, receiverID: connectToken+'_vc'});
+          // socket.emit('confirmVideochatStart', {toTabId: tabId, connectToken: connectToken, receiverID: connectToken+'_vc'});
         <?php endif; ?>
        };
     };
@@ -869,6 +869,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     });
 
     socket.on('windowSyncInfo', function (data) {
+console.log('A');
       // 担当しているユーザーかチェック
       var obj = JSON.parse(data), url;
       if (connectToken !== obj.connectToken) return false;
