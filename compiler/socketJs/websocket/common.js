@@ -2020,6 +2020,7 @@ var socket, // socket.io
 
   var init = function(){
     socket = io.connect(info.site.socket, {port: 9090, rememberTransport : false});
+
     // 接続時
     socket.on("connect", function(){
       // ウィジェットがある状態での再接続があった場合
@@ -2037,8 +2038,8 @@ var socket, // socket.io
         sinclo.connect();
       }
 
-
       if ( sincloBox && userInfo.accessType === Number(cnst.access_type.host) ) return false;
+
       // 定期的にタブのアクティブ状態を送る
       var tabState = browserInfo.getActiveWindow();
       setInterval(function(){
@@ -2114,6 +2115,11 @@ var socket, // socket.io
     socket.on('syncResponceEv', function (d) {
       sinclo.syncResponceEv(d);
     }); // socket-on: syncResponceEv
+
+    // ブラウザ「次へ」「前へ」の操作
+    socket.on('syncBrowserCtrl', function (d) {
+      sinclo.syncBrowserCtrl(d);
+    });
 
     socket.on('userDissconnection', function (d) {
       sinclo.userDissconnectionEv(d);

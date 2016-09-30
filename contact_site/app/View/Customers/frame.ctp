@@ -1,7 +1,7 @@
 <script type="text/javascript">
 <!--
 'use strict';
-var socket, userId, tabId, iframe, windowSize, connectToken, url, emit, resizeApi, arg = new Object;
+var socket, userId, tabId, iframe, windowSize, connectToken, url, emit, resizeApi, syncToolAct, arg = new Object;
 
 (function(){
   // -----------------------------------------------------------------------------
@@ -49,22 +49,24 @@ var socket, userId, tabId, iframe, windowSize, connectToken, url, emit, resizeAp
       }));
       resizeApi.change();
     },
+    toolsWidth: 100,
     frameSize: {
-      width: window.outerWidth - window.innerWidth,
+      width: window.outerWidth - window.innerWidth + 80,
       height: window.outerHeight - window.innerHeight
     },
     change: function () {
       var wsInfo = JSON.parse(sessionStorage.getItem('window'));
 
+       // ウィンドウ枠幅
       if ( !('width' in this.frameSize) || !('height' in this.frameSize)  ) {
         this.frameSize = {
-          width: window.outerWidth - window.innerWidth,
+          width: window.outerWidth - window.innerWidth + this.toolsWidth,
           height: window.outerHeight - window.innerHeight
         };
       }
 
-      var cal = 1;
-      var frame = {width:null, height:null};
+      var cal = 1; // 縮尺
+      var frame = {width:null, height:null}; // iframeサイズ
       var comScreen = {width:(screen.availWidth - this.frameSize.width), height:(screen.availHeight - this.frameSize.height)};
       var ratio = {
         w: wsInfo.width / comScreen.width,
@@ -112,6 +114,15 @@ var socket, userId, tabId, iframe, windowSize, connectToken, url, emit, resizeAp
 
   window.addEventListener('resize', resizeApi.adResizeChk, false);
   window.focus();
+
+  syncToolAct = {
+    forward: function(){
+      emit('reqSyncBrowserCtrl', {tabId: tabId, state: 1});
+    },
+    back: function(){
+      emit('reqSyncBrowserCtrl', {tabId: tabId, state: -1});
+    }
+  };
 
 })();
 
@@ -202,12 +213,13 @@ window.onload = function(){
     re = new RegExp("[?|&]{1}\sincloData=", "g");
     array = re.exec(str);
 
+    var saveUrl = obj.url;
     if ( (array !== null) && ('index' in array) ) {
-      sessionStorage.setItem('url', str.substring(0, array.index));
+      saveUrl = str.substring(0, array.index);
     }
-    else {
-      sessionStorage.setItem('url', obj.url);
-    }
+    sessionStorage.setItem('url', saveUrl);
+
+    var accessList = sessionStorage.getItem('accessList');
   });
 
   socket.on('syncStop', function(d){
@@ -248,7 +260,32 @@ window.onload = function(){
 // -->
 </script>
 
+<ul id="sync_tools">
+  <li onclick="syncToolAct.back(); return false;">
+    <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_back.png" width="40" height="40" alt=""></span>
+    <p>戻る</p>
+  </li>
+  <li onclick="syncToolAct.forward(); return false;">
+    <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_next.png" width="40" height="40" alt=""></span>
+    <p>進む</p>
+  </li>
+  <li class="mt20" onclick="location.reload(true); return false;">
+    <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_reconnect.png" width="40" height="40" alt=""></span>
+    <p>再接続</p>
+  </li>
+  <li class="mt20">
+    <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_link.png" width="40" height="40" alt=""></span>
+    <p>ﾀﾞｲﾚｸﾄﾘﾝｸ</p>
+  </li>
+  <li class="invisibility">
+    <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_document.png" width="40" height="40" alt=""></span>
+    <p>資料共有</p>
+  </li>
+  <li class="mt20" onclick="window.close(); return false;">
+    <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_disconnect.png" width="40" height="40" alt=""></span>
+    <p>終了</p>
+  </li>
+</ul>
 <div id="customer_flame">
-
 </div>
 <div id="tabStatusMessage">別の作業をしています</div>

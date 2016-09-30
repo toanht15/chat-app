@@ -644,6 +644,10 @@ io.sockets.on('connection', function (socket) {
   // 同形ウィンドウを作成するための情報受け取り
   socket.on('sendWindowInfo', function (data) {
     var obj = JSON.parse(data);
+console.log('- obj -');
+console.log(obj);
+console.log('- sincloCore -');
+console.log(sincloCore);
     // 同形ウィンドウを作成するための情報渡し
     emit.toUser('windowSyncInfo', data, getSessionId(obj.siteKey, obj.tabId, 'syncHostSessionId'));
   });
@@ -776,6 +780,11 @@ io.sockets.on('connection', function (socket) {
       emit.toUser('getConnectInfo', data, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
     }
   });
+
+  socket.on('reqSyncBrowserCtrl', function(data){
+    var obj = JSON.parse(data);
+    emit.toUser('syncBrowserCtrl', data, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
+  })
 
   socket.on('sendConnectInfo', function (data) {
     var obj = JSON.parse(data);
@@ -1152,6 +1161,12 @@ io.sockets.on('connection', function (socket) {
         default:
       }
     }
+  });
+
+  socket.on('connectFromSync', function (d) {
+    var obj = JSON.parse(d);
+    socket.join(obj.siteKey + emit.roomKey.client);
+    emit.toMine('connectedFromSync', d, socket);
   });
 
   // ユーザーのアウトを感知
