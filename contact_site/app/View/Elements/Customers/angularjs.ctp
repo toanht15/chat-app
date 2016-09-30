@@ -633,6 +633,15 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       return $scope.jsConst.tabInfoStr[n];
     }
 
+    /* パラメーターを取り除く */
+    $scope.trimToURL = function (url){
+      var position = url.indexOf('?');
+      if ( position > 0 ) {
+        url = url.substr(0, position);
+      }
+      return url;
+    }
+
     $scope.isset = function(value){
       var result;
       if ( angular.isUndefined(value) ) {
