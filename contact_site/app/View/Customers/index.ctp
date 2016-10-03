@@ -20,22 +20,6 @@ else if ( $coreSettings[C_COMPANY_USE_SYNCLO] && !$coreSettings[C_COMPANY_USE_CH
 ?>
 
     <div id='customer_sub_pop' data-contract='<?=$cName?>' ng-show="detailId" ng-cloak><?php echo $this->element('Customers/detail') ?></div>
-    <script type="text/javascript">
-    (function(){
-      angular.element(document).ready(function () {
-        // 500ミリ秒後、描画が正常に行われていなかった場合
-        setTimeout(function(){
-          if ( angular.element('#customer_tab[ng-cloak]').length > 0 ) {
-            // 描画し直す
-            angular.bootstrap(document, ['sincloApp']);
-            // 再接続
-            socket.disconnect();
-            socket.connect();
-          }
-        }, 500);
-      });
-    }());
-    </script>
 
     <div id='customer_tab' ng-cloak>
       <ul>

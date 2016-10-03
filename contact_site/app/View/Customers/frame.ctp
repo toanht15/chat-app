@@ -184,7 +184,7 @@ window.onload = function(){
   socket.on('retTabInfo', function(d){
     var obj = JSON.parse(d);
     // 別の作業をしている場合
-    if ( Number(obj.status) === <?=C_WIDGET_TAB_STATUS_CODE_NONE?> ) {
+    if ( Number(obj.status) === <?=C_WIDGET_TAB_STATUS_CODE_DISABLE?> ) {
       document.getElementById('tabStatusMessage').style.display = "block";
     }
     // タブがアクティブの場合

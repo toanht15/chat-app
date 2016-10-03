@@ -9,6 +9,7 @@ sincloApp.controller('WidgetCtrl', function($scope){
 
     $scope.switchWidget = function(num){
       $scope.showWidgetType = num;
+      sincloChatMessagefocusFlg = true;
       var sincloBox = document.getElementById("sincloBox");
       sincloBox.setAttribute("data-openflg", true);
     }
