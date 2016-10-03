@@ -32,8 +32,7 @@ class CampaignsController extends AppController {
     $this->_viewElement();
     // const
     if ( strcmp($this->request->data['type'], 2) === 0 ) {
-      $this->Campaigns->recursive = -1;
-      $this->request->data = $this->Campaigns->read(null, $this->request->data['id']);
+      $this->request->data = $this->Campaign->read(null, $this->request->data['id']);
     }
     $this->render('/Elements/Campaigns/remoteEntry');
   }
@@ -47,6 +46,7 @@ class CampaignsController extends AppController {
    * @return void
    * */
   public function remoteSaveEntryForm() {
+    //$this->log($this->params, LOG_DEBUG);
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
@@ -67,29 +67,15 @@ class CampaignsController extends AppController {
     $saveData['Campaign']['parameter'] = $this->request->data['parameter'];
     $saveData['Campaign']['comment'] = $this->request->data['comment'];
     if (empty($this->request->data['campaignId'])) {
-      $params = [
+       $this->Campaign->recursive = -1;
+       $saveData = $this->Campaign->read(null, $this->request->data['campaignId']);
+      $insertFlg = false;
+    }
 
-        'conditions' => [
-          'Campaign.m_companies_id' => $this->userInfo['MCompany']['id']
-        ],
-        'order' => [
-          'Campaign.sort' => 'desc',
-          'Campaign.id' => 'desc'
-        ],
-        'limit' => 1,
-        'recursive' => -1
-      ];
-      $lastData = $this->Campaign->find('first', $params);
-      $nextSort = 1;
-      if (!empty($lastData)) {
-        $nextSort = intval($lastData['Campaign']['sort']) + 1;
-      }
-      $saveData['Campaign']['sort'] = $nextSort;
-    }
-    $saveData['Campaign']['type'] = $this->request->data['type'];
-    if ( strcmp($saveData['Campaign']['type'], C_AUTHORITY_NORMAL) === 0 ) {
-      $saveData['Campaign']['m_users_id'] = $this->userInfo['id'];
-    }
+      $saveData['Campaign']['m_companies_id'] = $this->userInfo['MCompany']['id'];
+      $saveData['Campaign']['name'] = $this->request->data['name'];
+      $saveData['Campaign']['parameter'] = $this->request->data['parameter'];
+      $saveData['Campaign']['comment'] = $this->request->data['comment'];
 
     // const
     $this->Campaign->set($saveData);
@@ -107,5 +93,23 @@ class CampaignsController extends AppController {
     $errorMessage = $this->Campaign->validationErrors;
     return new CakeResponse(['body' => json_encode($errorMessage)]);
   }
+
+  /* *
+   * 削除
+   * @return void
+   * */
+  public function remoteDeleteUser() {
+    Configure::write('debug', 0);
+    $this->autoRender = FALSE;
+    $this->layout = 'ajax';
+    $this->Campaign->recursive = -1;
+    if ( $this->Campaign->delete($this->request->data['id']) ) {
+      $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
+    }
+    else {
+      $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
+    }
+  }
+
 
 }
