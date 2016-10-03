@@ -1,12 +1,10 @@
-
-
-    <?php
+<?php
 App::uses('AppModel','Model');
 class TCampaign extends AppModel {
 
   public $name = "TCampaigns";
 
-    /**
+   /**
    * Validation rules
    *
    * @var array
@@ -27,6 +25,5 @@ class TCampaign extends AppModel {
       ]
     ],
   ];
-
 }
 ?>

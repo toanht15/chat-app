@@ -23,7 +23,7 @@ function openConfirmDialog(id){
   popupEvent.closePopup = function(){
     $.ajax({
       type: 'post',
-            cache: false,
+      cache: false,
       data: {
         id: id
       },

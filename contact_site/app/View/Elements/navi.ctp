@@ -83,11 +83,11 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
             <?= $this->htmlEx->naviLink('ウィジェット', 'widget.png', ['href' => ['controller' => 'MWidgetSettings', 'action' => 'index']]) ?>
         </div>
     <?php endif; ?>
-     <?php if ( $adminFlg ): ?>
-        <div class="icon">
-            <?= $this->htmlEx->naviLink('キャンペーン', 'widget.png', ['href' => ['controller' => 'TCampaigns', 'action' => 'index']]) ?>
-        </div>
-            <?php endif; ?>
+    <?php if ( $adminFlg ): ?>
+      <div class="icon">
+        <?= $this->htmlEx->naviLink('キャンペーン', 'widget.png', ['href' => ['controller' => 'TCampaigns', 'action' => 'index']]) ?>
+      </div>
+    <?php endif; ?>
     </div>
     <!-- /* 共通 */ -->
 
