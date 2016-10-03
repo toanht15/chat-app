@@ -7,19 +7,6 @@
   </div>
 
   <div id='m_widget_setting_form' class="p20x" ng-app="sincloApp" ng-controller="WidgetCtrl">
-    <script type="text/javascript">
-    (function(){
-      angular.element(document).ready(function () {
-        // 500ミリ秒後、描画が正常に行われていなかった場合
-        setTimeout(function(){
-          if ( angular.element('#sample_widget_area[ng-cloak]').length > 0 ) {
-            // 描画し直す
-            angular.bootstrap(document, ['sincloApp']);
-          }
-        }, 500);
-      });
-    }());
-    </script>
     <?= $this->element('MWidgetSettings/script'); ?>
     <div id="m_widget_setting_entry">
       <?= $this->element('MWidgetSettings/entry'); ?>

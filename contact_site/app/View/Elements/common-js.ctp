@@ -45,15 +45,35 @@
   }
 
   function ajaxTimeout(){
-	modalOpen.call(window, "タイムアウトしました", 'p-alert', 'アラート');
-	popupEvent.closeNoPopup = function(){
-		location.href = "<?=$this->Html->url(['controller' => 'Login', 'action'=>'logout'])?>";
-	};
-
+    modalOpen.call(window, "タイムアウトしました", 'p-alert', 'アラート');
+    popupEvent.closeNoPopup = function(){
+      location.href = "<?=$this->Html->url(['controller' => 'Login', 'action'=>'logout'])?>";
+    };
   }
 
-  /* フッター設置ボタンの位置調整 */
+  /* Angularの描画 */
+  !function(){
+    var bootTimer = null;
+    if ( 'angular' in window ) {
+      // 500ミリ秒後、描画が正常に行われていなかった場合
+      bootTimer = setInterval(function(){
+        if ( angular.element('*[ng-cloak]').length > 0 ) {
+          // 描画し直す
+          angular.bootstrap(document, ['sincloApp']);
+          // 再接続
+          socket.disconnect();
+          socket.connect();
+        }
+        else {
+          clearInterval(bootTimer);
+          bootTimer = null;
+        }
+      }, 500);
+    }
+  }();
+
   $(document).ready(function(){
+    /* フッター設置ボタンの位置調整 */
     var target = document.getElementsByClassName("fotterBtnArea");
     if ( target.length === 0 ) return false;
     $(window).resize(function(){
