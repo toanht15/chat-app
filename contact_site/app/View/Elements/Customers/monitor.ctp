@@ -133,7 +133,8 @@
             <?php if ( strcmp($userInfo['permission_level'], C_AUTHORITY_SUPER) !== 0) :?>
               <span ng-if="monitor.widget">
                 <span ng-if="!monitor.connectToken">
-                  <a class='monitorBtn blueBtn btn-shadow' href='javascript:void(0)' ng-click='windowOpen(monitor.tabId, monitor.accessId)' ng-confirm-click='ID【{{monitor.accessId}}】のユーザーに接続しますか？'>接続する</a>
+                  <a class='monitorBtn blueBtn btn-shadow' href='javascript:void(0)' ng-click='windowOpen(monitor.tabId, monitor.accessId, 1)' >通常接続</a>
+                  <a class='monitorBtn blueBtn btn-shadow' href='javascript:void(0)' ng-click='windowOpen(monitor.tabId, monitor.accessId, 2)' >外部接続</a>
                 </span>
               </span>
               <span ng-if="monitor.connectToken">

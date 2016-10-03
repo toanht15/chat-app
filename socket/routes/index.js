@@ -7,7 +7,8 @@ router.get('/frame/:cond', function(req, res, next) {
   res.render('frame', {
     title: "フレーム",
     params: JSON.stringify(cond.data),
-    site: JSON.stringify(cond.site)
+    site: JSON.stringify(cond.site),
+    img: cond.site.files + "/img/sync/"
   });
 });
 

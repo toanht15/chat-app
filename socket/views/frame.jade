@@ -9,7 +9,6 @@ block content
         l = [
           site.socket + '/socket.io/socket.io.js',
           site.files + '/websocket/jquery-2.2.0.min.js',
-          site.files + '/websocket/sinclo.min.js',
           site.files + '/websocket/sync.js',
         ],
         i = 0,
@@ -25,3 +24,25 @@ block content
       };
     createElm(l[i]);
 
+  ul#sync_tools
+    li
+      span
+        img(src="#{img}icon_back.png", width="40", height="40", alt="")
+      p 戻る
+    li
+      span
+        img(src="#{img}icon_next.png", width="40", height="40", alt="")
+      p 進む
+    li
+      span
+        img(src="#{img}icon_reconnect.png", width="40", height="40", alt="")
+      p 再接続
+    li
+      span
+        img(src="#{img}icon_link.png", width="40", height="40", alt="")
+      p ﾀﾞｲﾚｸﾄﾘﾝｸ
+    li
+      span
+        img(src="#{img}icon_disconnect.png", width="40", height="40", alt="")
+      p 終了
+  div#customer_flame

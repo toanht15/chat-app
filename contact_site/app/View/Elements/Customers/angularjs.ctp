@@ -431,7 +431,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       return token;
     };
 
-    $scope.windowOpen = function(tabId, accessId){
+    $scope.windowOpen = function(tabId, accessId, type){
       var message = "アクセスID【" + accessId + "】のユーザーに接続しますか？<br><br>";
       message += "<span style='color: #FF7B7B'><?=Configure::read('message.const.chatStartConfirm')?></span>";
       modalOpen.call(window, message, 'p-confirm', 'メッセージ');
@@ -441,6 +441,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           connectToken = makeToken();
           socket.emit('requestWindowSync', {
             tabId: tabId,
+            type: type,
             connectToken: connectToken
           });
           // モニター開始時にビデオ表示
@@ -637,7 +638,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     /* キャンペーン情報を取得する */
     $scope.getCampaign = function (url){
       var str = "";
-      if ( url === null ) return "";
+      if ( url === null || url === undefined ) return "";
       angular.forEach(campaignList, function(keyword){
         var position = url.indexOf(keyword.parameter);
         if ( position > 0 ) {
@@ -847,7 +848,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     // タブ状態を取得
     socket.on('retTabInfo', function (d) {
       var obj = JSON.parse(d);
-
+      if ( !(obj.tabId in $scope.monitorList) ) return false;
       $scope.monitorList[obj.tabId].status = obj.status;
     });
 
@@ -886,7 +887,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     });
 
     socket.on('windowSyncInfo', function (data) {
-console.log('A');
       // 担当しているユーザーかチェック
       var obj = JSON.parse(data), url;
       if (connectToken !== obj.connectToken) return false;

@@ -35,7 +35,8 @@ var socket, // socket.io
       tab: 8,
       prev: 9,
       staycount: 10,
-    }
+    },
+    sync_type: { inner: 1, outer: 2 }
   };
 
   common = {
@@ -54,6 +55,10 @@ var socket, // socket.io
         if ( param[1] ) {
           this.tmpParams = JSON.parse(decodeURIComponent(param[1]));
         }
+      }
+
+      if ( ('gFrame' && this.tmpParams) ) {
+        storage.s.set('gFrame', this.tmpParams.gFrame);
       }
     },
     fullDateTime: function(parse){
@@ -1090,6 +1095,7 @@ var socket, // socket.io
     accessId: null,
     ipAddress: null,
     pageTime: null,
+    gFrame: false, // 外部接続
     firstConnection: false,
     searchKeyword: null,
     userAgent: window.navigator.userAgent,
@@ -1102,6 +1108,9 @@ var socket, // socket.io
       this.setPrevpage();
 
       common.getParams();
+      if ( check.isset(storage.s.get('params')) ) {
+        userInfo.gFrame = storage.s.get('gFrame');
+      }
       if ( check.isset(storage.s.get('params')) ) {
         common.setParams();
       }
@@ -1429,7 +1438,7 @@ var socket, // socket.io
       {
         type: "mousemove",
         ev: function(e){
-          emit('syncBrowserInfo', {
+          emit('syncBrowserInfoFrame', {
             accessType: userInfo.accessType,
             mousePoint: {x: e.clientX, y: e.clientY}
           });
@@ -1441,7 +1450,7 @@ var socket, // socket.io
           if ( socket === undefined ) return false;
           if ( "body" === syncEvent.receiveEvInfo.nodeName && "scroll" === syncEvent.receiveEvInfo.type ) return false;
           // スクロール用
-          emit('syncBrowserInfo', {
+          emit('syncScrollInfo', {
             accessType: userInfo.accessType,
             mousePoint: {x: e.clientX, y: e.clientY},
             scrollPosition: browserInfo.windowScroll()
@@ -1462,7 +1471,7 @@ var socket, // socket.io
         clearTimeout(syncEvent.resizeTimer);
       }
       syncEvent.resizeTimer = setTimeout(function () {
-        emit('syncBrowserInfo', {
+        emit('syncBrowserInfoFrame', {
           accessType: userInfo.accessType,
           // ブラウザのサイズ
           windowSize: browserInfo.windowSize(),
@@ -1479,7 +1488,7 @@ var socket, // socket.io
       };
       var scroll = browserInfo.windowScroll();
 
-      emit('syncBrowserInfo', {
+      emit('syncBrowserInfoFrame', {
         accessType: userInfo.accessType,
         // ブラウザのサイズ
         windowSize: size,
@@ -2087,6 +2096,12 @@ var socket, // socket.io
       sinclo.getWindowInfo(obj);
     }); // socket-on: getWindowInfo
 
+    // 画面共有(iframeバージョン)
+    socket.on('startWindowSync', function(d){
+      var obj = common.jParse(d);
+      sinclo.startWindowSync(obj);
+    }); // socket-on: startWindowSync
+
     // スクロール位置のセット
     socket.on('windowSyncInfo', function (d) {
       sinclo.windowSyncInfo(d);
@@ -2121,9 +2136,9 @@ var socket, // socket.io
       sinclo.syncBrowserCtrl(d);
     });
 
-    socket.on('userDissconnection', function (d) {
-      sinclo.userDissconnectionEv(d);
-    });
+    // socket.on('userDissconnection', function (d) {
+    //   sinclo.userDissconnectionEv(d);
+    // });
 
     // 継続接続
     socket.on('syncContinue', function (d) {
@@ -2134,9 +2149,9 @@ var socket, // socket.io
       sinclo.setInitInfo(d);
     }); // socket-on: setInitInfo
 
-    socket.on('receiveConnect', function (d) {
-      sinclo.receiveConnectEv(d);
-    }); // socket-on: receiveConnectEV
+    // socket.on('receiveConnect', function (d) {
+    //   sinclo.receiveConnectEv(d);
+    // }); // socket-on: receiveConnectEV
 
     socket.on('resUrlChecker', function (d) {
       sinclo.resUrlChecker(d);

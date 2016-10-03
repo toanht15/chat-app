@@ -144,7 +144,6 @@
         userInfo.setStayCount();
       }
       userInfo.init();
-
       var emitData = {
           referrer: userInfo.referrer,
           time: userInfo.getTime(),
@@ -302,7 +301,6 @@
             createStart();
           }
         }, 500);
-
     },
     getAccessInfo: function(d) { // guest only
       var obj = common.jParse(d);
@@ -322,20 +320,20 @@
       emitData.stayCount = userInfo.getStayCount();
       emit('customerInfo', emitData);
     },
-    getConnectInfo: function(d) {
-      var obj = common.jParse(d);
-      if ( userInfo.tabId !== obj.tabId ) return false;
-      if ( userInfo.accessType !== Number(cnst.access_type.guest) ) return false;
-      if ( userInfo.connectToken !== obj.connectToken ) return false;
-      emit('sendConnectInfo', {
-        accessType: userInfo.accessType,
-        tabId: userInfo.getTabId(),
-        userId: userInfo.userId,
-        accessId: userInfo.accessId,
-        connectToken: userInfo.connectToken
-      });
-    },
-    getWindowInfo: function(obj) {
+    // getConnectInfo: function(d) {
+    //   var obj = common.jParse(d);
+    //   if ( userInfo.tabId !== obj.tabId ) return false;
+    //   if ( userInfo.accessType !== Number(cnst.access_type.guest) ) return false;
+    //   if ( userInfo.connectToken !== obj.connectToken ) return false;
+    //   emit('sendConnectInfo', {
+    //     accessType: userInfo.accessType,
+    //     tabId: userInfo.getTabId(),
+    //     userId: userInfo.userId,
+    //     accessId: userInfo.accessId,
+    //     connectToken: userInfo.connectToken
+    //   });
+    // },
+    createShareWindow: function(obj) {
       if ( obj.tabId !== userInfo.tabId ) return false;
       if ( userInfo.accessType !== Number(cnst.access_type.guest) ) return false;
       var title = location.host + 'の内容';
@@ -356,6 +354,56 @@
         }
         var url = window.info.site.files + "/frame/" + encodeURIComponent(JSON.stringify(params));
         window.open(url, "_blank", "width=" + size.width + ", height=" + size.height + ", resizable=no,scrollbars=yes,status=no");
+      };
+      popup.set(title, content);
+    },
+    getWindowInfo: function(obj) {
+      if ( obj.tabId !== userInfo.tabId ) return false;
+      if ( userInfo.accessType !== Number(cnst.access_type.guest) ) return false;
+      var title = location.host + 'の内容';
+      var content = location.host + 'が閲覧ページへのアクセスを求めています。<br>許可しますか';
+      popup.ok = function(){
+        userInfo.connectToken = obj.connectToken;
+        browserInfo.resetPrevList();
+
+        emit('sendWindowInfo', {
+          userId: userInfo.userId,
+          tabId: userInfo.tabId,
+          connectToken: userInfo.connectToken,
+          // 解像度
+          screen: browserInfo.windowScreen(),
+          // ブラウザのサイズ
+          windowSize: browserInfo.windowSize(),
+          // スクロール位置の取得
+          scrollPosition: browserInfo.windowScroll()
+        });
+        this.remove();
+      };
+      popup.set(title, content);
+    },
+    startWindowSync: function(obj) {
+      if ( userInfo.accessType !== Number(cnst.access_type.guest) ) return false;
+      var title = location.host + 'の内容';
+      var content = location.host + 'が閲覧ページへのアクセスを求めています。<br>許可しますか';
+      popup.ok = function(){
+        userInfo.connectToken = obj.connectToken;
+        browserInfo.resetPrevList();
+        var params = {
+          site: window.info.site,
+          data: {
+            userId: userInfo.userId,
+            tabId: userInfo.tabId,
+            url: location.href,
+            screen: browserInfo.windowScreen(), // 解像度
+            connectToken: userInfo.connectToken
+          }
+        };
+        var url = window.info.site.files + "/frame/" + encodeURIComponent(JSON.stringify(params));
+        window.open(url,
+                    "sinclo",
+                    "width=" + screen.availWidth/2 + ",height=" + screen.availHeight/2 +
+                    ",dialog=no,toolbar=no,location=no,status=no,menubar=no,directories=no,resizable=no,scrollbars=no"
+        );
 
         // emit('sendWindowInfo', {
         //   userId: userInfo.userId,
@@ -364,25 +412,8 @@
         //   // 解像度
         //   screen: browserInfo.windowScreen(),
         //   // ブラウザのサイズ
-        //   windowSize: browserInfo.windowSize(),
-        //   // スクロール位置の取得
-        //   scrollPosition: browserInfo.windowScroll()
+        //   windowSize: browserInfo.windowSize()
         // });
-
-/*        vcPopup.set(userInfo.tabId, userInfo.vc_receiverID);
-
-        // sendWindowInfoとほぼ同時にメッセージを送信してしまうと
-        // 企業側がFireFoxの場合windowを開くタイミングでapplyができないためウェイトを挟む
-        setTimeout(function(){
-          emit('videochatConfirmOK', {
-            userId: userInfo.userId,
-            fromTabId: userInfo.tabId,
-            fromConnectToken: userInfo.connectToken,
-            receiverID: userInfo.vc_receiverID
-          });
-        }, 300);
-        // 開始したタイミングでビデオチャット情報をセッションストレージに保存
-        common.saveVcInfo();*/
         this.remove();
       };
       popup.set(title, content);
@@ -398,11 +429,13 @@
         return false;
       }
       var sincloBox = document.getElementById('sincloBox');
-      // チャット未契約のときはウィジェットを非表示
-      if (sincloBox && !window.info.contract.chat) {
+      // チャット未契約か、外部接続のときはウィジェットを非表示
+      if (sincloBox && (!window.info.contract.chat || userInfo.gFrame)) {
         sincloBox.style.display = "none";
       }
-      common.load.start();
+      if (!userInfo.gFrame) {
+        common.load.start();
+      }
       userInfo.setConnect(obj.connectToken);
       if ( !check.isset(userInfo.sendTabId) ) {
         userInfo.sendTabId = obj.tabId;
@@ -527,7 +560,6 @@
         cursor.style.left = obj.mousePoint.x + "px";
         cursor.style.top  = obj.mousePoint.y + "px";
       }
-
     },
     syncResponceEv: function (d) {
       var obj = common.jParse(d), elm;
@@ -573,16 +605,16 @@
         history.back();
       }
     },
-    receiveConnectEv: function(d){
-      var obj = JSON.parse(d);
-      if ( obj.to !== userInfo.tabId ) return false;
-    },
-    userDissconnectionEv: function(d){
-      var obj = JSON.parse(d);
-      if ( obj.connectToken !== userInfo.connectToken ) return false;
-      if ( obj.to !== userInfo.tabId ) return false;
-      emit('sendConfirmConnect', obj);
-    },
+    // receiveConnectEv: function(d){
+    //   var obj = JSON.parse(d);
+    //   if ( obj.to !== userInfo.tabId ) return false;
+    // },
+    // userDissconnectionEv: function(d){
+    //   var obj = JSON.parse(d);
+    //   if ( obj.connectToken !== userInfo.connectToken ) return false;
+    //   if ( obj.to !== userInfo.tabId ) return false;
+    //   emit('sendConfirmConnect', obj);
+    // },
     syncContinue:function (d) {
       var obj = JSON.parse(d);
       if ( obj.connectToken !== userInfo.connectToken ) return false;
@@ -784,6 +816,72 @@
         }
 
       }, 500);
+    },
+    syncApi: {
+      init : function(type){
+        if ( type === cnst.sync_type.outer ) {
+          sinclo.syncApi.func = sinclo.syncApi._func['outer'];
+        }
+        else {
+          sinclo.syncApi.func = sinclo.syncApi._func['inner'];
+        }
+      },
+      func: {
+        formSync: null,
+        mouseSync: null,
+        scrollSync: null,
+        resizeSync: null,
+        pageSync: null,
+      },
+      _func: {
+        inner: {
+          formSync: {
+            send: function(){
+            },
+            receive: function(){
+            }
+          },
+          mouseSync: {
+            send: function(){
+            },
+            receive: function(){
+            }
+          },
+          scrollSync: {
+            send: function(){
+            },
+            receive: function(){
+            }
+          },
+          resizeSync: {
+            send: function(){
+            },
+            receive: function(){
+            }
+          },
+          pageSync: {
+            send: function(){
+            },
+            receive: function(){
+            }
+          },
+        },
+        outer: {
+          formSync: {
+            send: function(){
+            },
+            receive: function(){
+            }
+          },
+          mouseSync: {
+            send: function(){
+            },
+            receive: function(){
+            }
+          },
+
+        }
+      }
     },
     chatApi: {
         saveFlg: false,
