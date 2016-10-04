@@ -54,13 +54,17 @@
     <?= $this->Form->input('id', array('type' => 'hidden')); ?>
     <div>
       <span>
-        キャンペーン名
+        <label class="require">
+          キャンペーン名
+        </label>
         <?= $this->Form->input('name', array('placeholder' => 'キャンペーン名', 'div' => false, 'label' => false, 'maxlength' => 100,'style' => 'margin-left: 15px;')) ?>
       </span>
     </div>
     <div>
       <span>
-        URLパラメータ
+        <label class="require">
+          URLパラメータ
+        </label>
         <?= $this->Form->input('parameter', array('placeholder' => 'URLパラメータ', 'div' => false, 'label' => false, 'maxlength' => 100,'style' => 'margin-left: 15px;')) ?>
       </span>
     </div>
