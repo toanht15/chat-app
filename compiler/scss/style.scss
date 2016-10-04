@@ -167,7 +167,6 @@ input[type='text'], input[type='number'], input[type='password']{
       border-bottom-color: $error-color;
   }
 
-
   &[type='number'] {
     width: auto;
     text-align: right;
@@ -362,13 +361,14 @@ a {
   padding-left: 15px;
 }
 
-.p20l {
-  padding-left: 20px;
-}
-
 .p10x {
   padding: 10px;
 }
+
+.p20tl {
+  padding: 20px 0 0 20px;
+}
+
 
 .p20x {
   padding: 20px;
@@ -388,10 +388,6 @@ a {
 
 .p20trl {
   padding: 20px 20px 0 20px;
-}
-
-.p20tl {
-  padding: 20px 0 0 20px;
 }
 
 .m0 {
@@ -2825,3 +2821,46 @@ ul.naviBtn {
     }
   }
 }
+
+/* キャンペーン　*/
+#tcampaigns_idx {
+
+  #tcampaigns_menu ul {
+    margin: 0;
+    padding: 0;
+
+    li {
+      padding: 5px 0;
+
+      img {
+        border-radius: 15px;
+      }
+    }
+  }
+
+  #tcampaigns_list .ctrlBtnArea {
+    width: 100px;
+
+    a {
+      width: 35px;
+      height: 35px;
+      margin: 5px;
+      padding: 2px;
+    }
+  }
+
+  #tcampaigns_description {
+    height: auto !important;
+    padding: 0.5em 20px 0 20px;
+
+    span {
+      padding: 1em;
+      display: block;
+      line-height: 2em;
+    }
+  }
+}
+
+
+
+

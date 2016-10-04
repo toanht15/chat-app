@@ -700,3 +700,38 @@
     }
   }
 }
+
+/*キャンペーン */
+.p-tcampaign-entry {
+  width: 350px;
+
+  .form01 > div {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+    margin: 5px 0;
+
+    textarea {
+      margin: 0px;
+      height: 120px;
+      resize: none;
+      border-radius: 15px!important;
+      overflow: auto;
+    }
+  }
+
+  #popup-button {
+    width: 15em;
+    margin: 0 auto;
+
+    .textBtn {
+      width: 5em;
+      margin: 0 0.5em;
+      float: left;
+    }
+  }
+}
