@@ -639,13 +639,13 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     $scope.getCampaign = function (url){
       var str = "";
       if ( url === null || url === undefined ) return "";
-      angular.forEach(campaignList, function(keyword){
-        var position = url.indexOf(keyword.parameter);
+      angular.forEach(campaignList, function(name, parameter){
+        var position = url.indexOf(parameter);
         if ( position > 0 ) {
           if ( str !== "" ) {
             str += "\n";
           }
-          str += keyword.name;
+          str += name;
         }
       });
       return str;

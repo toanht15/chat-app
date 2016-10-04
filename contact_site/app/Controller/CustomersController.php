@@ -4,7 +4,7 @@
  * モニタリング機能
  */
 class CustomersController extends AppController {
-  public $uses = ['THistory', 'THistoryChatLog', 'MUser', 'MCustomer', 'MWidgetSetting', 'MChatNotification', 'TDictionary'];
+  public $uses = ['THistory', 'THistoryChatLog', 'TCampaign', 'MUser', 'MCustomer', 'MWidgetSetting', 'MChatNotification', 'TDictionary'];
 
   public function beforeRender(){
     $this->set('siteKey', $this->userInfo['MCompany']['company_key']);
@@ -269,7 +269,7 @@ class CustomersController extends AppController {
    * */
   private function _viewElement(){
     /* キャンペーン情報取得 */
-    $this->_getCampaignSettingList();
+    $this->set('campaignList', $this->jsonEncode($this->TCampaign->getList()));
     /* 通知設定取得 */
     $this->_getNotificationSettingList();
     /* 簡易入力情報取得 */
@@ -325,27 +325,6 @@ class CustomersController extends AppController {
     $this->set('dictionaryList', $list);
   }
 
-  /**
-   * キャンペーン設定を取得
-   * @return void
-   * */
-  private function _getCampaignSettingList(){
-    // TODO DBから取得
-    // $ret = $this->TCampaign->coFind('list',[
-    //   "fields" => ["parameter", "name"], "recursive" => -1
-    // ]);
-    $ret = [
-      [
-        "parameter" => "hoge=one",
-        "name" => "one"
-      ],
-      [
-        "parameter" => "hoge=two",
-        "name" => "two"
-      ]
-    ];
-    $this->set('campaignList', $this->jsonEncode($ret));
-  }
   /**
    * 通知設定を取得
    * @return void
