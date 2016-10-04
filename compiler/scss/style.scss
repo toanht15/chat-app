@@ -173,19 +173,6 @@ input[type='text'], input[type='number'], input[type='password']{
   }
 }
 
-input#TCampaignName {
-  margin-left: 15px;
-}
-
-input#TCampaignParameter {
-  margin-left: 15px;
-}
-
-textarea#TCampaignComment {
-  margin-top: 8px;
-  padding: 10px;
-}
-
 textarea {
   border-radius: 5px!important;
   border: 1px solid $line-color!important;
@@ -374,13 +361,14 @@ a {
   padding-left: 15px;
 }
 
-.p20l {
-  padding-left: 20px;
-}
-
 .p10x {
   padding: 10px;
 }
+
+.p20tl {
+  padding: 20px 0 0 20px;
+}
+
 
 .p20x {
   padding: 20px;
@@ -402,13 +390,6 @@ a {
   padding: 20px 20px 0 20px;
 }
 
-.p20tl {
-  padding: 20px 0 0 20px;
-}
-
-.p20xlrt {
-  padding: 5px 20px 20px 20px;
-}
 .m0 {
   margin: 0;
 }
@@ -2792,11 +2773,6 @@ ul.naviBtn {
 
 /* キャンペーン　*/
 #tcampaigns_idx {
-  #sortMessage {
-    color: #E91E63;
-    font-weight: normal;
-    font-size: 0.9em;
-  }
 
   #tcampaigns_menu ul {
     margin: 0;
@@ -2820,10 +2796,6 @@ ul.naviBtn {
       margin: 5px;
       padding: 2px;
     }
-
-    .ui-sortable-helper {
-      display: table;
-    }
   }
 
   #tcampaigns_description {
@@ -2838,7 +2810,6 @@ ul.naviBtn {
   }
 }
 
-span.pre2 {
-  margin-top: 8px;
-}
+
+
 

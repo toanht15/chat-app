@@ -118,7 +118,7 @@ if (!isset($_SERVER['SERVER_NAME'])) {
 }
 
 CakePlugin::load('WebSocket');
-//CakePlugin::load('Migrations');
+CakePlugin::load('Migrations');
 
 Configure::load("const");
 Configure::load("messageConst");
