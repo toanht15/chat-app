@@ -92,6 +92,7 @@ var popupEvent = {
                     break;
                 case 'p-history-cus':
                 case 'p-muser-entry':
+                case 'p-tcampaign-entry':
                 case 'p-tdictionary-entry':
                     var entryBtn = _button("保存");
                     entryBtn.onclick = function(){
