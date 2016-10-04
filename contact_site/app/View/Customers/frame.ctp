@@ -51,7 +51,7 @@ var socket, userId, tabId, iframe, windowSize, connectToken, url, emit, resizeAp
     },
     toolsWidth: 100,
     frameSize: {
-      width: window.outerWidth - window.innerWidth + 80,
+      width: window.outerWidth - window.innerWidth + 100,
       height: window.outerHeight - window.innerHeight
     },
     change: function () {

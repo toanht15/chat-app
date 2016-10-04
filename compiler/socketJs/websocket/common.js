@@ -35,6 +35,7 @@ var socket, // socket.io
       tab: 8,
       prev: 9,
       staycount: 10,
+      gFrame: 11,
     },
     sync_type: { inner: 1, outer: 2 }
   };
@@ -1138,6 +1139,9 @@ var socket, // socket.io
         userInfo.setConnect(common.params.connectToken);
         emit('connectSuccess', {confirm: false});
       }
+      if ( Number(common.params.type) === Number(cnst.access_type.guest) && userInfo.gFrame ) {
+          userInfo.setTabId();
+      }
 
     },
     syncInfo: {
@@ -1189,6 +1193,9 @@ var socket, // socket.io
           break;
         case cnst.info_type.staycount:
           return "stayCount";
+          break;
+        case cnst.info_type.gFrame:
+          return "gFrame";
           break;
       }
     },
@@ -2046,8 +2053,8 @@ var socket, // socket.io
         sinclo.trigger.flg = false;
         sinclo.connect();
       }
-
-      if ( sincloBox && userInfo.accessType === Number(cnst.access_type.host) ) return false;
+console.log(sincloBox);
+      if ( sincloBox === null || userInfo.accessType === Number(cnst.access_type.host) ) return false;
 
       // 定期的にタブのアクティブ状態を送る
       var tabState = browserInfo.getActiveWindow();

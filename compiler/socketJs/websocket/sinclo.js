@@ -154,7 +154,7 @@
         };
 
       // チャットの契約をしている場合
-      if ( window.info.contract.chat ) {
+      if ( window.info.contract.chat && !userInfo.gFrame ) {
         sinclo.chatApi.observeType.emit(false, "");
       }
 
@@ -167,6 +167,7 @@
           common.judgeShowWidget();
           emit('connectSuccess', {prevList: userInfo.prevList, prev: userInfo.prev});
           emit('connectedForSync', {});
+console.log('syncStop');
 
           // チャットの契約をしている場合はウィジェット表示
           if ( window.info.contract.chat ) {
@@ -294,6 +295,8 @@
                     sinclo.chatApi.init();
                 }
         };
+
+        if ( document.getElementById('sincloBox') === null ) return false;
 
         createStartTimer = window.setInterval(function(){
           if (window.info.widgetDisplay && !sinclo.trigger.flg) {
@@ -787,7 +790,6 @@
       var obj = common.jParse(d);
       syncEvent.stop(false);
       window.clearTimeout(sinclo.syncTimeout);
-
       userInfo.syncInfo.unset();
       if (!document.getElementById('sincloBox')) {
         common.makeAccessIdTag();

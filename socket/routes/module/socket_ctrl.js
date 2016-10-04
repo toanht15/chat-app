@@ -775,6 +775,21 @@ io.sockets.on('connection', function (socket) {
     }
   });
 
+  /* スクロール位置 */
+  socket.on('syncScrollInfo', function (data) {
+    var obj = JSON.parse(data);
+console.log("obj", obj);
+console.log("sincloCore", sincloCore);
+
+    if ( getSessionId(obj.siteKey, obj.to, 'shareWindowFlg') && sincloCore[obj.siteKey][obj.to].shareWindowFlg ) {
+      // 外部接続の場合
+      emit.toUser('syncResponce', data, getSessionId(obj.siteKey, obj.to, 'shareWindowId'));
+    }
+    else {
+      emit.toUser('syncResponce', data, getSessionId(obj.siteKey, obj.to, 'sessionId'));
+    }
+  });
+
   socket.on('syncBrowserInfo', function (data) {
     var obj = JSON.parse(data);
     if ( isset(obj.windowSize) ) {
@@ -1276,7 +1291,6 @@ io.sockets.on('connection', function (socket) {
     // タグ入りページからのアクセスの場合
     if ( !(socket.id in connectList) ) return false;
     var info = connectList[socket.id];
-console.log("disconnect", info);
     if (getSessionId(info.siteKey, info.tabId, 'sessionId')) {
       var core = sincloCore[info.siteKey][info.tabId];
       var siteId = companyList[info.siteKey];
