@@ -178,7 +178,11 @@ window.onload = function(){
 
     iframe.src = url + "sincloData=" + encodeURIComponent(JSON.stringify(data));
     resizeApi.cuResize(ws);
-    emit('connectFrame', {tabId: tabId, responderId: "<?= $muserId?>"});
+    emit('connectFrame', {
+      tabId: tabId,
+      connectToken: arg.connectToken,
+      responderId: "<?= $muserId?>"
+    });
   });
 
   socket.on('retTabInfo', function(d){
