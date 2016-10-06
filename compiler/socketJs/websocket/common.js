@@ -57,10 +57,6 @@ var socket, // socket.io
           this.tmpParams = JSON.parse(decodeURIComponent(param[1]));
         }
       }
-
-      if ( ('gFrame' && this.tmpParams) ) {
-        storage.s.set('gFrame', this.tmpParams.gFrame);
-      }
     },
     fullDateTime: function(parse){
       function _numPad(str){
@@ -540,7 +536,6 @@ var socket, // socket.io
       return window.info.widgetDisplay;
     },
     makeAccessIdTag: function(){
-
       if ( !check.browser() ) return false;
       if ( !('widget' in window.info) ) return false;
       if (!this.judgeShowWidget()) {
@@ -1109,9 +1104,7 @@ var socket, // socket.io
       this.setPrevpage();
 
       common.getParams();
-      if ( check.isset(storage.s.get('params')) ) {
-        userInfo.gFrame = storage.s.get('gFrame');
-      }
+
       if ( check.isset(storage.s.get('params')) ) {
         common.setParams();
       }
@@ -1131,6 +1124,7 @@ var socket, // socket.io
           }
         }
       }
+
       // 複製したウィンドウの場合
       if ( Number(common.params.type) === Number(cnst.access_type.host) ) {
         userInfo.accessType = cnst.access_type.host;
@@ -1139,10 +1133,24 @@ var socket, // socket.io
         userInfo.setConnect(common.params.connectToken);
         emit('connectSuccess', {confirm: false});
       }
-      if ( Number(common.params.type) === Number(cnst.access_type.guest) && userInfo.gFrame ) {
-          userInfo.setTabId();
-      }
+      else {
+        // 消費者がフレームの場合
+        if ( common.tmpParams.hasOwnProperty('gFrame') && !check.isset(storage.s.get('gFrame')) ) {
+          storage.s.set('gFrame', common.tmpParams.gFrame);
+          storage.s.set('parentId', common.tmpParams.parentId);
+          storage.s.set('tabId', common.tmpParams.tabId);
+        }
+        if ( check.isset(storage.s.get('gFrame')) && check.isset(storage.s.get('parentId')) ) {
+          userInfo.gFrame = storage.s.get('gFrame');
+          userInfo.tabId = storage.s.get('tabId');
+          userInfo.parentId = storage.s.get('parentId');
 
+          emit('startSyncToFrame', {
+            parentId: userInfo.parentId,
+            tabId: userInfo.tabId
+          });
+        }
+      }
     },
     syncInfo: {
       code: 'syncInfo',
@@ -2053,7 +2061,7 @@ var socket, // socket.io
         sinclo.trigger.flg = false;
         sinclo.connect();
       }
-console.log(sincloBox);
+
       if ( sincloBox === null || userInfo.accessType === Number(cnst.access_type.host) ) return false;
 
       // 定期的にタブのアクティブ状態を送る

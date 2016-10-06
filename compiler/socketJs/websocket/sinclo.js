@@ -167,10 +167,9 @@
           common.judgeShowWidget();
           emit('connectSuccess', {prevList: userInfo.prevList, prev: userInfo.prev});
           emit('connectedForSync', {});
-console.log('syncStop');
 
           // チャットの契約をしている場合はウィジェット表示
-          if ( window.info.contract.chat ) {
+          if ( window.info.contract.chat && !userInfo.gFrame ) {
             common.makeAccessIdTag();
           }
         }
@@ -810,7 +809,7 @@ console.log('syncStop');
         }
         var sincloBox = document.getElementById('sincloBox');
         // チャット未契約のときはウィジェットを非表示
-        if (sincloBox && !window.info.contract.chat) {
+        if (sincloBox && (window.info.contract.chat || window.info.contract.synclo) ) {
           sincloBox.style.display = "block";
           sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
           sincloBox.setAttribute('data-openflg', false);

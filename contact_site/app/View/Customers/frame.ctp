@@ -1,7 +1,7 @@
 <script type="text/javascript">
 <!--
 'use strict';
-var socket, userId, tabId, iframe, windowSize, connectToken, url, emit, resizeApi, syncToolAct, arg = new Object;
+var socket, userId, tabId, iframe, windowSize, connectToken, url, emit, resizeApi, iframeLocation, arg = new Object;
 
 (function(){
   // -----------------------------------------------------------------------------
@@ -115,12 +115,37 @@ var socket, userId, tabId, iframe, windowSize, connectToken, url, emit, resizeAp
   window.addEventListener('resize', resizeApi.adResizeChk, false);
   window.focus();
 
-  syncToolAct = {
+  iframeLocation = {
+    sessionName: 'location',
+    list: [],
+    position: 0,
+    status: null,
     forward: function(){
-      emit('reqSyncBrowserCtrl', {tabId: tabId, state: 1});
+      if ( this.position < (this.list.length - 1) ) {
+        this.status = "forward";
+        this.position++;
+        iframe.src = iframeLocation.list[this.position];
+      }
     },
     back: function(){
-      emit('reqSyncBrowserCtrl', {tabId: tabId, state: -1});
+      if ( this.position > 0 ) {
+        this.status = "back";
+        this.position--;
+        iframe.src = iframeLocation.list[this.position];
+      }
+    },
+    get: function(){
+      var location = JSON.parse(sessionStorage.getItem(this.sessionName));
+      this.status = location.status;
+      this.list = location.list;
+      this.position = location.position;
+    },
+    save: function(){
+      sessionStorage.setItem(this.sessionName, JSON.stringify({
+        status: iframeLocation.status,
+        list: iframeLocation.list,
+        position: iframeLocation.position
+      }));
     }
   };
 
@@ -143,15 +168,19 @@ window.onload = function(){
   socket.on('connect', function(){
     userId = arg.userId;
     tabId = arg.id;
-    if ( sessionStorage.getItem('url') && sessionStorage.getItem('window') ) {
-      url = sessionStorage.getItem('url');
+    if ( sessionStorage.getItem(iframeLocation.sessionName) && sessionStorage.getItem('window') ) {
+      iframeLocation.get();
       var ws = JSON.parse(sessionStorage.getItem('window'));
     }
     else {
-      url = arg.url;
+      iframeLocation.list = [arg.url];
+      iframeLocation.position = 0;
+      iframeLocation.save();
 
       var ws = {'width':arg.width, 'height':arg.height};
     }
+
+    url = iframeLocation.list[iframeLocation.position];
 
     var content = document.getElementById('customer_flame');
     var html  = "<iframe src='' style='transform-origin: 0 0' ";
@@ -178,7 +207,11 @@ window.onload = function(){
 
     iframe.src = url + "sincloData=" + encodeURIComponent(JSON.stringify(data));
     resizeApi.cuResize(ws);
-    emit('connectFrame', {tabId: tabId, responderId: "<?= $muserId?>"});
+    emit('connectFrame', {
+      tabId: tabId,
+      connectToken: arg.connectToken,
+      responderId: "<?= $muserId?>"
+    });
   });
 
   socket.on('retTabInfo', function(d){
@@ -191,6 +224,25 @@ window.onload = function(){
     else {
       document.getElementById('tabStatusMessage').style.display = "none";
     }
+  });
+
+  socket.on('resUrlChecker', function(d){
+    var obj = JSON.parse(d);
+    // 戻る & 進む以外でのアクションの場合
+    if ( iframeLocation.status !== 'back' && iframeLocation.status !== 'forward') {
+      // Positionが移動履歴とかみ合わない場合、上書きする
+      if ( ((iframeLocation.list.length - 1) !== iframeLocation.position) ) {
+        iframeLocation.list = iframeLocation.list.splice(0, iframeLocation.position + 1);
+      }
+      // Positionが移動履歴と一致しない場合、書き込む
+      if ( iframeLocation.list[iframeLocation.list.length - 1] !== obj.url ) {
+        iframeLocation.list.push(obj.url);
+      }
+      iframeLocation.position = iframeLocation.list.length - 1;
+    }
+
+    iframeLocation.status = null;
+    iframeLocation.save();
   });
 
   socket.on('syncResponce', function(data){
@@ -261,27 +313,27 @@ window.onload = function(){
 </script>
 
 <ul id="sync_tools">
-  <li onclick="syncToolAct.back(); return false;">
+  <li onclick="iframeLocation.back(); return false;">
     <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_back.png" width="40" height="40" alt=""></span>
     <p>戻る</p>
   </li>
-  <li onclick="syncToolAct.forward(); return false;">
+  <li onclick="iframeLocation.forward(); return false;">
     <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_next.png" width="40" height="40" alt=""></span>
     <p>進む</p>
   </li>
-  <li class="mt20" onclick="location.reload(true); return false;">
+  <li onclick="location.reload(true); return false;">
     <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_reconnect.png" width="40" height="40" alt=""></span>
     <p>再接続</p>
   </li>
-  <li class="mt20">
+  <li>
     <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_link.png" width="40" height="40" alt=""></span>
     <p>ﾀﾞｲﾚｸﾄﾘﾝｸ</p>
   </li>
-  <li class="invisibility">
-    <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_document.png" width="40" height="40" alt=""></span>
-    <p>資料共有</p>
-  </li>
-  <li class="mt20" onclick="window.close(); return false;">
+<!--   <li class="invisibility">
+  <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_document.png" width="40" height="40" alt=""></span>
+  <p>資料共有</p>
+</li> -->
+  <li onclick="window.close(); return false;">
     <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_disconnect.png" width="40" height="40" alt=""></span>
     <p>終了</p>
   </li>
