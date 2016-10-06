@@ -125,6 +125,7 @@ var socket, userId, tabId, iframe, windowSize, connectToken, url, emit, resizeAp
         this.status = "forward";
         this.position++;
         iframe.src = iframeLocation.list[this.position];
+        this.send(this.status, this.position);
       }
     },
     back: function(){
@@ -132,13 +133,29 @@ var socket, userId, tabId, iframe, windowSize, connectToken, url, emit, resizeAp
         this.status = "back";
         this.position--;
         iframe.src = iframeLocation.list[this.position];
+        this.send(this.status, this.position);
       }
+    },
+    send:  function(s, p){
+      emit('syncLocationOfFrame', {
+        status: s,
+        position: p
+      });
+    },
+    syncLocationOfFrame: function(d){
+      var obj = JSON.parse(d);
+      iframeLocation.status = obj.status;
+      iframeLocation.position = obj.position;
+  console.log("syncLocationOfFrame", obj);
     },
     get: function(){
       var location = JSON.parse(sessionStorage.getItem(this.sessionName));
       this.status = location.status;
       this.list = location.list;
       this.position = location.position;
+      if ( !this.list[this.position] ) {
+        this.position = ( this.list.length > 0 ) ? this.list.length - 1 : 0;
+      }
     },
     save: function(){
       sessionStorage.setItem(this.sessionName, JSON.stringify({
@@ -228,21 +245,28 @@ window.onload = function(){
 
   socket.on('resUrlChecker', function(d){
     var obj = JSON.parse(d);
-    // 戻る & 進む以外でのアクションの場合
-    if ( iframeLocation.status !== 'back' && iframeLocation.status !== 'forward') {
-      // Positionが移動履歴とかみ合わない場合、上書きする
-      if ( ((iframeLocation.list.length - 1) !== iframeLocation.position) ) {
-        iframeLocation.list = iframeLocation.list.splice(0, iframeLocation.position + 1);
+    setTimeout(function(){
+      // 戻る & 進む以外でのアクションの場合
+      if ( iframeLocation.status !== 'back' && iframeLocation.status !== 'forward') {
+console.log(iframeLocation);
+        // Positionが移動履歴とかみ合わない場合、上書きする
+        if ( ((iframeLocation.list.length - 1) !== iframeLocation.position) ) {
+          iframeLocation.list = iframeLocation.list.splice(0, iframeLocation.position + 1);
+        }
+        // Positionが移動履歴と一致しない場合、書き込む
+        if ( iframeLocation.list[iframeLocation.list.length - 1] !== obj.url ) {
+          iframeLocation.list.push(obj.url);
+        }
+        iframeLocation.position = iframeLocation.list.length - 1;
       }
-      // Positionが移動履歴と一致しない場合、書き込む
-      if ( iframeLocation.list[iframeLocation.list.length - 1] !== obj.url ) {
-        iframeLocation.list.push(obj.url);
-      }
-      iframeLocation.position = iframeLocation.list.length - 1;
-    }
 
-    iframeLocation.status = null;
-    iframeLocation.save();
+      iframeLocation.status = null;
+      iframeLocation.save();
+    }, 500);
+  });
+
+  socket.on('syncLocationOfFrame', function(d){
+    iframeLocation.syncLocationOfFrame(d);
   });
 
   socket.on('syncResponce', function(data){

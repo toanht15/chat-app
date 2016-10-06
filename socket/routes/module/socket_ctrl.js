@@ -886,6 +886,20 @@ io.sockets.on('connection', function (socket) {
     }
   });
 
+  socket.on('syncLocationOfFrame', function (data){
+    var obj = JSON.parse(data), shareWindowId, companyFrameId;
+    // 外部接続中であれば、ページ遷移履歴として遷移先をフレームに送る
+    shareWindowId = getSessionId(obj.siteKey, obj.tabId, 'shareWindowId');
+    if (shareWindowId ) {
+      emit.toUser('syncLocationOfFrame', data, shareWindowId);
+    }
+    // 企業側フレームへも送る
+    companyFrameId = getSessionId(obj.siteKey, obj.tabId, 'syncFrameSessionId');
+    if ( companyFrameId ) {
+      emit.toUser('syncLocationOfFrame', data, companyFrameId);
+    }
+  });
+
   // -----------------------------------------------------------------------
   //  チャット関連
   // -----------------------------------------------------------------------
