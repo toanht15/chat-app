@@ -157,7 +157,6 @@
       if ( window.info.contract.chat && !userInfo.gFrame ) {
         sinclo.chatApi.observeType.emit(false, "");
       }
-
       // モニタリング中であればスルー
       if ( check.isset(userInfo.connectToken) ) {
         common.load.start();
@@ -324,27 +323,14 @@
       emitData.stayCount = userInfo.getStayCount();
       emit('customerInfo', emitData);
     },
-    // getConnectInfo: function(d) {
-    //   var obj = common.jParse(d);
-    //   if ( userInfo.tabId !== obj.tabId ) return false;
-    //   if ( userInfo.accessType !== Number(cnst.access_type.guest) ) return false;
-    //   if ( userInfo.connectToken !== obj.connectToken ) return false;
-    //   emit('sendConnectInfo', {
-    //     accessType: userInfo.accessType,
-    //     tabId: userInfo.getTabId(),
-    //     userId: userInfo.userId,
-    //     accessId: userInfo.accessId,
-    //     connectToken: userInfo.connectToken
-    //   });
-    // },
-    createShareWindow: function(obj) {
+    createShareWindow: function(obj) { // 外部接続
       if ( obj.tabId !== userInfo.tabId ) return false;
       if ( userInfo.accessType !== Number(cnst.access_type.guest) ) return false;
       var title = location.host + 'の内容';
       var content = location.host + 'が閲覧ページへのアクセスを求めています。<br>許可しますか';
       popup.ok = function(){
-        userInfo.connectToken = obj.connectToken;
         browserInfo.resetPrevList();
+        userInfo.setConnect(obj.connectToken);
 
         var size = browserInfo.windowSize();
         var params = {
@@ -352,11 +338,12 @@
             url: location.href,
             userId: userInfo.userId,
             tabId: userInfo.tabId,
-            connectToken: userInfo.connectToken
+            connectToken: obj.connectToken
           },
           site: window.info.site
         }
         var url = window.info.site.files + "/frame/" + encodeURIComponent(JSON.stringify(params));
+
         window.open(url, "_blank", "width=" + size.width + ", height=" + size.height + ", resizable=no,scrollbars=yes,status=no");
       };
       popup.set(title, content);
@@ -369,6 +356,7 @@
       popup.ok = function(){
         userInfo.connectToken = obj.connectToken;
         browserInfo.resetPrevList();
+        userInfo.setConnect(obj.connectToken);
 
         emit('sendWindowInfo', {
           userId: userInfo.userId,
@@ -440,7 +428,6 @@
       if (!userInfo.gFrame) {
         common.load.start();
       }
-      userInfo.setConnect(obj.connectToken);
       if ( !check.isset(userInfo.sendTabId) ) {
         userInfo.sendTabId = obj.tabId;
         userInfo.syncInfo.set();
@@ -469,7 +456,6 @@
       $('select').each(function(){
         selectInfo.push(this.value);
       });
-
       emit('getSyncInfo', {
         userId: userInfo.userId,
         connectToken: userInfo.connectToken,
@@ -535,7 +521,7 @@
     syncResponce: function(d){
       var obj = common.jParse(d), cursor = common.cursorTag;
       // 画面共有用トークンでの認証に変更する？
-      if ( obj.to !== userInfo.tabId ) return false;
+      if ( check.isset(obj.to) && obj.to !== userInfo.tabId ) return false;
       if ( Number(obj.accessType) === Number(userInfo.accessType) ) return false;
       // カーソルを作成していなければ作成する
       if ( !document.getElementById('cursorImg') ) {
@@ -790,6 +776,11 @@
     syncStop: function(d){
       var obj = common.jParse(d);
       syncEvent.stop(false);
+      if ( userInfo.gFrame ) {
+        window.parent.close();
+        return false;
+      }
+
       window.clearTimeout(sinclo.syncTimeout);
       userInfo.syncInfo.unset();
       if (!document.getElementById('sincloBox')) {

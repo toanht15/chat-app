@@ -1138,11 +1138,13 @@ var socket, // socket.io
         if ( common.tmpParams.hasOwnProperty('gFrame') && !check.isset(storage.s.get('gFrame')) ) {
           storage.s.set('gFrame', common.tmpParams.gFrame);
           storage.s.set('parentId', common.tmpParams.parentId);
+          storage.s.set('connectToken', common.tmpParams.connectToken);
           storage.s.set('tabId', common.tmpParams.tabId);
         }
         if ( check.isset(storage.s.get('gFrame')) && check.isset(storage.s.get('parentId')) ) {
           userInfo.gFrame = storage.s.get('gFrame');
           userInfo.tabId = storage.s.get('tabId');
+          userInfo.connectToken = storage.s.get('connectToken');
           userInfo.parentId = storage.s.get('parentId');
 
           emit('startSyncToFrame', {
@@ -1851,8 +1853,6 @@ var socket, // socket.io
             type = popup.const.action.confirm;
           }
           popup.remove();
-          var maincolor = ( window.info.widget.mainColor !== undefined ) ? window.info.widget.mainColor : "#ABCD05";
-          var hovercolor = ( window.info.site.hovercolor !== undefined ) ? window.info.site.hovercolor : "#9CB90E";
           var html = '';
           html += this.getCss();
           html += '  <sinclo-div id="sincloPopupFrame">';
@@ -1893,8 +1893,6 @@ var socket, // socket.io
       dragging: false,
       set: function(fromID, toID){
           vcPopup.remove();
-          var maincolor = ( window.info.widget.mainColor !== undefined ) ? window.info.widget.mainColor : "#ABCD05";
-          var hovercolor = ( window.info.site.hovercolor !== undefined ) ? window.info.site.hovercolor : "#9CB90E";
           var html = '';
           var sincloData = {
             from: fromID,
@@ -2099,11 +2097,6 @@ var socket, // socket.io
     socket.on("confirmCustomerInfo", function(d) {
       sinclo.confirmCustomerInfo(d);
     }); // socket-on: confirmCustomerInfo
-
-    // 接続確認
-    socket.on('getConnectInfo', function(d){
-      sinclo.getConnectInfo(d);
-    }); // socket-on: getConnectInfo
 
     // 画面共有
     socket.on('getWindowInfo', function(d){
