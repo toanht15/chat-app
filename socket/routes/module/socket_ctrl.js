@@ -678,9 +678,15 @@ io.sockets.on('connection', function (socket) {
   socket.on('connectFrame', function (data) {
     var obj = JSON.parse(data);
     if ( obj.siteKey ) {
-            // 外部接続フレームの場合
-      if ( getSessionId(obj.siteKey, obj.tabId, 'parentId') ) {
+      // 外部接続フレームの場合
+      var parentId = getSessionId(obj.siteKey, obj.tabId, 'parentId');
+      if ( parentId ) {
         socket.join(obj.siteKey + emit.roomKey.frame);
+        if ( ('responderId' in obj) && ('connectToken' in obj) && ((parentId in connectList) && ('tabId' in connectList[parentId])) ) {
+          var pTabId = connectList[parentId].tabId;
+          sincloCore[obj.siteKey][pTabId]['responderId'] = obj.responderId; // 対応ユーザーID
+          sincloCore[obj.siteKey][pTabId]['connectToken'] = obj.connectToken; // 接続トークン
+        }
       }
       else {
         socket.join(obj.siteKey + emit.roomKey.client);
@@ -690,12 +696,11 @@ io.sockets.on('connection', function (socket) {
       sincloCore[obj.siteKey][obj.tabId]['syncFrameSessionId'] = socket.id; // フレームのセッションID
       if ( ('responderId' in obj) && ('connectToken' in obj) ) {
         sincloCore[obj.siteKey][obj.tabId]['responderId'] = obj.responderId; // 対応ユーザーID
-        sincloCore[obj.siteKey][obj.tabId]['connectToken'] = obj.connectToken; // 対応ユーザーID
+        sincloCore[obj.siteKey][obj.tabId]['connectToken'] = obj.connectToken; // 接続トークン
       }
       if ( getSessionId(obj.siteKey, obj.tabId, 'connectToken') ) {
         obj.connectToken = getSessionId(obj.siteKey, obj.tabId, 'connectToken'); // 接続トークンを企業側へ
       }
-
 
       emit.toCompany('syncNewInfo', obj, obj.siteKey);
     }

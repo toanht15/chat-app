@@ -2335,7 +2335,6 @@ function emit(evName, data){
     data.connectToken = userInfo.connectToken;
   }
   /* ここまで：イベント名指定あり */
-// console.log(evName, data);
   socket.emit(evName, JSON.stringify(data));
 }
 

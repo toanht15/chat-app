@@ -138,6 +138,7 @@ var socket, userId, tabId, iframe, windowSize, connectToken, url, emit, resizeAp
     },
     send:  function(s, p){
       emit('syncLocationOfFrame', {
+        tabId: tabId,
         status: s,
         position: p
       });
@@ -146,7 +147,6 @@ var socket, userId, tabId, iframe, windowSize, connectToken, url, emit, resizeAp
       var obj = JSON.parse(d);
       iframeLocation.status = obj.status;
       iframeLocation.position = obj.position;
-  console.log("syncLocationOfFrame", obj);
     },
     get: function(){
       var location = JSON.parse(sessionStorage.getItem(this.sessionName));
@@ -248,7 +248,6 @@ window.onload = function(){
     setTimeout(function(){
       // 戻る & 進む以外でのアクションの場合
       if ( iframeLocation.status !== 'back' && iframeLocation.status !== 'forward') {
-console.log(iframeLocation);
         // Positionが移動履歴とかみ合わない場合、上書きする
         if ( ((iframeLocation.list.length - 1) !== iframeLocation.position) ) {
           iframeLocation.list = iframeLocation.list.splice(0, iframeLocation.position + 1);

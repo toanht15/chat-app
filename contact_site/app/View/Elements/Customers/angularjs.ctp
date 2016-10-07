@@ -864,25 +864,26 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     socket.on('syncNewInfo', function (data) {
       var obj = JSON.parse(data);
 
+      var tabId = ( obj.subWindow ) ? obj.to : obj.tabId;
+      if ( tabId.indexOf('_frame') > 0 ) {
+        tabId = tabId.substr(0, tabId.indexOf('_frame'));
+      }
+
       // 消費者
-      if ( angular.isDefined($scope.monitorList[obj.tabId]) ) {
+      if ( angular.isDefined($scope.monitorList[tabId]) ) {
+
         if ( 'widget' in obj ) {
-          $scope.monitorList[obj.tabId].widget = obj.widget;
-          if ( chatApi.tabId === obj.tabId ) {
+          $scope.monitorList[tabId].widget = obj.widget;
+          if ( chatApi.tabId === tabId ) {
             chatApi.observeType.emit(chatApi.tabId, chatApi.observeType.status);
 
           }
         }
-        if ( 'connectToken' in obj ) { $scope.monitorList[obj.tabId].connectToken = obj.connectToken; }
-        if ( 'prev' in obj ) { $scope.monitorList[obj.tabId].prev = obj.prev; }
-        if ( 'title' in obj ) { $scope.monitorList[obj.tabId].title = obj.title; }
-        if ( 'url' in obj ) { $scope.monitorList[obj.tabId].url = obj.url; }
-        if ( 'responderId' in obj ) { $scope.monitorList[obj.tabId].responderId = obj.responderId; }
-      }
-
-      var tabId = ( obj.subWindow ) ? obj.to : obj.tabId;
-      if ( ('connectToken' in obj) && ('responderId' in obj) ) {
-        $scope.monitorList[tabId].connectToken = obj.connectToken;
+        if ( 'connectToken' in obj ) { $scope.monitorList[tabId].connectToken = obj.connectToken; }
+        if ( 'prev' in obj ) { $scope.monitorList[tabId].prev = obj.prev; }
+        if ( 'title' in obj ) { $scope.monitorList[tabId].title = obj.title; }
+        if ( 'url' in obj ) { $scope.monitorList[tabId].url = obj.url; }
+        if ( 'responderId' in obj ) { $scope.monitorList[tabId].responderId = obj.responderId; }
       }
     });
 

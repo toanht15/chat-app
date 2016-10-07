@@ -234,7 +234,6 @@ iframeLocation = {
     var obj = JSON.parse(d);
     iframeLocation.status = obj.status;
     iframeLocation.position = obj.position;
-console.log("syncLocationOfFrame", obj);
   },
   get: function(){
     var location = JSON.parse(sessionStorage.getItem(this.sessionName));

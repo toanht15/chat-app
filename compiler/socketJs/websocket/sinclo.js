@@ -260,8 +260,10 @@
 
       obj['prev'] = userInfo.prev;
       obj.stayCount = userInfo.getStayCount();
+      if ( userInfo.gFrame === false ) {
+        emit('customerInfo', obj);
+      }
 
-      emit('customerInfo', obj);
       emit('connectSuccess', {
         confirm: false,
         widget: window.info.widgetDisplay,
