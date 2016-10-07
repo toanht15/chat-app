@@ -1,7 +1,7 @@
 <script type="text/javascript">
 <!--
 'use strict';
-var socket, userId, tabId, iframe, windowSize, connectToken, url, emit, resizeApi, iframeLocation, arg = new Object;
+var socket, userId, tabId, iframe, windowSize, windowClose, connectToken, url, emit, resizeApi, iframeLocation, arg = new Object;
 
 (function(){
   // -----------------------------------------------------------------------------
@@ -20,6 +20,12 @@ var socket, userId, tabId, iframe, windowSize, connectToken, url, emit, resizeAp
     obj.siteKey = "<?=$siteKey?>";
     var data = JSON.stringify(obj);
     socket.emit(ev, data);
+  };
+
+  windowClose = function(){
+    emit('requestSyncStop', {tabId: tabId, connectToken: connectToken});
+    window.close();
+    return false;
   };
 
 // TODO 消費者と画面サイズを合わせるためのコードと、
@@ -356,7 +362,7 @@ window.onload = function(){
   <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_document.png" width="40" height="40" alt=""></span>
   <p>資料共有</p>
 </li> -->
-  <li onclick="window.close(); return false;">
+  <li onclick="windowClose()">
     <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_disconnect.png" width="40" height="40" alt=""></span>
     <p>終了</p>
   </li>

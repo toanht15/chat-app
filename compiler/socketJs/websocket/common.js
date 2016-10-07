@@ -1040,7 +1040,7 @@ var socket, // socket.io
       return (ua.indexOf('iphone') > 0 || ua.indexOf('ipod') > 0 || ua.indexOf('android') > 0);
     },
     isset: function(a){
-      if ( a === null || a === '' || a === undefined ) {
+      if ( a === null || a === '' || a === undefined || String(a) === "null" || String(a) === "undefined" ) {
          return false;
       }
       if ( typeof a === "object" ) {
@@ -1139,12 +1139,14 @@ var socket, // socket.io
           storage.s.set('gFrame', common.tmpParams.gFrame);
           storage.s.set('parentId', common.tmpParams.parentId);
           storage.s.set('connectToken', common.tmpParams.connectToken);
+          storage.s.set('sendTabId', common.tmpParams.sendTabId);
           storage.s.set('tabId', common.tmpParams.tabId);
         }
         if ( check.isset(storage.s.get('gFrame')) && check.isset(storage.s.get('parentId')) ) {
           userInfo.gFrame = storage.s.get('gFrame');
           userInfo.tabId = storage.s.get('tabId');
           userInfo.connectToken = storage.s.get('connectToken');
+          userInfo.sendTabId = storage.s.get('sendTabId');
           userInfo.parentId = storage.s.get('parentId');
 
           emit('startSyncToFrame', {
@@ -2060,13 +2062,12 @@ var socket, // socket.io
         sinclo.connect();
       }
 
-      if ( sincloBox === null || userInfo.accessType === Number(cnst.access_type.host) ) return false;
-
+      if ( userInfo.accessType === Number(cnst.access_type.host) ) return false;
       // 定期的にタブのアクティブ状態を送る
       var tabState = browserInfo.getActiveWindow();
       setInterval(function(){
         var newState = browserInfo.getActiveWindow();
-        if ( tabState !== newState ) {
+        if ( document.getElementById('sincloBox') !== null && tabState !== newState ) {
           tabState = newState;
           emit('sendTabInfo', { status: tabState });
         }
@@ -2326,6 +2327,9 @@ function emit(evName, data){
   }
   if ( evName == "sendWindowInfo" ) {
     data.connectToken = userInfo.connectToken;
+  }
+  if ( evName == "requestSyncStart" ) {
+console.trace("requestSyncStart", data);
   }
   /* ここまで：イベント名指定あり */
   socket.emit(evName, JSON.stringify(data));

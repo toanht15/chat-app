@@ -189,6 +189,7 @@ common = {
     var data = {
       gFrame: true, // access_type.gFrame
       tabId: userInfo.tabId, // access_type.gFrame
+      connectToken: params.connectToken, // access_type.gFrame
       parentId: userInfo.parentId, // access_type.gFrame
     };
     if ( url.match(/\?/) ) {
@@ -256,10 +257,10 @@ syncEvent = {
     {
       type: "mousemove",
       ev: function(e){
-        emit('syncBrowserInfoFrame', {
-          accessType: userInfo.accessType,
-          mousePoint: {x: e.clientX, y: e.clientY}
-        });
+        // emit('syncBrowserInfoFrame', {
+        //   accessType: userInfo.accessType,
+        //   mousePoint: {x: e.clientX, y: e.clientY}
+        // });
       }
     },
     {
@@ -510,6 +511,11 @@ sinclo = {
     }, 500);
   },
   syncStop: function(d){
+    emit('requestSyncStop', {
+      tabId: userInfo.tabId,
+      parentId: userInfo.parentId,
+      connectToken: params.connectToken
+    });
     window.close();
   }
 };

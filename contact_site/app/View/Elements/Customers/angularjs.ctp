@@ -784,6 +784,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     socket.on('getAccessInfo', function (data) {
       var obj = JSON.parse(data);
+console.log(obj);
 <?php if($widgetCheck): ?>
       if ( Number(obj.userId) === Number(myUserId) ) {
         if ( String(obj.status) == "<?=C_OPERATOR_ACTIVE?>") {

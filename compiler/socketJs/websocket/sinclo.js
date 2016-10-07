@@ -173,7 +173,7 @@
           }
         }
 
-        if ( check.isset(common.tmpParams) ) {
+        if ( check.isset(common.tmpParams) && Number(userInfo.accessType) === Number(cnst.access_type.host) ) {
           browserInfo.resetPrevList();
           emit('requestSyncStart', {
             accessType: common.params.type
@@ -780,6 +780,7 @@
         window.parent.close();
         return false;
       }
+      if ( !check.isset(userInfo.connectToken) ) return false;
 
       window.clearTimeout(sinclo.syncTimeout);
       userInfo.syncInfo.unset();
