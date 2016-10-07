@@ -589,6 +589,12 @@ init = function(){
 
 };
 
+$(window).on("resize", function(e){
+  var windowSize = common.windowSize();
+  iframe.width = windowSize.width;
+  iframe.height = windowSize.height;
+});
+
 (function(){
   var timer = window.setInterval(function(){
     if ( io !== "" ) {
@@ -596,6 +602,5 @@ init = function(){
       init();
     }
   }, 200);
-
 
 })();
