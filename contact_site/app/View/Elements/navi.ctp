@@ -15,6 +15,7 @@ switch ($this->name) {
     case 'MWidgetSettings':
     case 'ScriptSettings':
     case 'TCampaigns':
+    case 'MShareDisplaySettings':
         $settingSelected = "selected";
         break;
     case 'MChatNotifications':
@@ -88,6 +89,9 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
         <?= $this->htmlEx->naviLink('キャンペーン', 'widget.png', ['href' => ['controller' => 'TCampaigns', 'action' => 'index']]) ?>
       </div>
     <?php endif; ?>
+    <div class="icon">
+        <?= $this->htmlEx->naviLink('表示除外設定', 'widget.png', ['href' => ['controller' => 'MShareDisplaySettings', 'action' => 'index']]) ?>
+      </div>
     </div>
     <!-- /* 共通 */ -->
 
