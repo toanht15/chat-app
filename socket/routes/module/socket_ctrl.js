@@ -1,3 +1,5 @@
+var database = require('../database');
+
 // mysql
 var mysql = require('mysql'),
     pool = mysql.createPool({
