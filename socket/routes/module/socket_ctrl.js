@@ -1344,7 +1344,16 @@ io.sockets.on('connection', function (socket) {
   socket.on('startSyncToFrame', function (d) {
     var obj = JSON.parse(d);
     socket.join(obj.siteKey + emit.roomKey.frame);
-
+    if ( !getSessionId(obj.siteKey, obj.tabId, 'shareWindowId') ) {
+      sincloCore[obj.siteKey][obj.tabId] = {
+        sessionId: null,
+        parentId: null,
+        connectToken: null,
+        syncFrameSessionId: getSessionId(obj.siteKey, obj.tabId.replace("_frame", ""), "syncFrameSessionId"),
+        shareWindowId: socket.id,
+        shareWindowFlg: true
+      };
+    }
     sincloCore[obj.siteKey][obj.tabId]['sessionId'] = socket.id;
     sincloCore[obj.siteKey][obj.tabId]['parentTabId'] = obj.parentId;
     var hostFrameId = getSessionId(obj.siteKey, obj.parentId, "syncFrameSessionId");
@@ -1458,7 +1467,7 @@ io.sockets.on('connection', function (socket) {
           if ( ('parentTabId' in core) ) {
             var tabId = info.tabId.replace("_frame", "");
             if ( getSessionId(info.siteKey, tabId, 'sessionId') ) {
-              if ( getSessionId(info.siteKey, obj.tabId, "connectToken") ===  getSessionId(info.siteKey, tabId, "connectToken") ) {
+              if ( ('connectToken' in core) && core.connectToken ===  getSessionId(info.siteKey, tabId, "connectToken") ) {
                 syncStopCtrl(info.siteKey, tabId);
                 emit.toUser('syncStop', {}, getSessionId(info.siteKey, tabId, 'sessionId'));
                 emit.toCompany('syncStop', {siteKey: info.siteKey, tabId: tabId}, info.siteKey);

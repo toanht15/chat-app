@@ -154,7 +154,7 @@
         };
 
       // チャットの契約をしている場合
-      if ( window.info.contract.chat && !userInfo.gFrame ) {
+      if ( window.info.contract.chat && !(userInfo.gFrame && Number(userInfo.accessType) === Number(cnst.access_type.guest)) ) {
         sinclo.chatApi.observeType.emit(false, "");
       }
       // モニタリング中であればスルー
@@ -168,7 +168,7 @@
           emit('connectedForSync', {});
 
           // チャットの契約をしている場合はウィジェット表示
-          if ( window.info.contract.chat && !userInfo.gFrame ) {
+          if ( window.info.contract.chat && !(userInfo.gFrame && Number(userInfo.accessType) === Number(cnst.access_type.guest)) ) {
             common.makeAccessIdTag();
           }
         }
@@ -259,7 +259,7 @@
 
       obj['prev'] = userInfo.prev;
       obj.stayCount = userInfo.getStayCount();
-      if ( userInfo.gFrame === false ) {
+      if ( (userInfo.gFrame && Number(userInfo.accessType) === Number(cnst.access_type.guest)) === false ) {
         emit('customerInfo', obj);
       }
 
@@ -422,10 +422,10 @@
       }
       var sincloBox = document.getElementById('sincloBox');
       // チャット未契約か、外部接続のときはウィジェットを非表示
-      if (sincloBox && (!window.info.contract.chat || userInfo.gFrame)) {
+      if (sincloBox && (!window.info.contract.chat || (userInfo.gFrame && Number(userInfo.accessType) === Number(cnst.access_type.guest)) )) {
         sincloBox.style.display = "none";
       }
-      if (!userInfo.gFrame) {
+      if (!(userInfo.gFrame && Number(userInfo.accessType) === Number(cnst.access_type.guest))) {
         common.load.start();
       }
       if ( !check.isset(userInfo.sendTabId) ) {
@@ -776,7 +776,7 @@
     syncStop: function(d){
       var obj = common.jParse(d);
       syncEvent.stop(false);
-      if ( userInfo.gFrame ) {
+      if ( (userInfo.gFrame && Number(userInfo.accessType) === Number(cnst.access_type.guest)) ) {
         window.parent.close();
         return false;
       }
