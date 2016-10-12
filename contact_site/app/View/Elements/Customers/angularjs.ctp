@@ -866,7 +866,7 @@ console.log(obj);
       var obj = JSON.parse(data);
 
       var tabId = ( obj.subWindow ) ? obj.to : obj.tabId;
-      if ( tabId.indexOf('_frame') > 0 ) {
+      if ( tabId.length > 0 && tabId.indexOf('_frame') > -1 ) {
         tabId = tabId.substr(0, tabId.indexOf('_frame'));
       }
 

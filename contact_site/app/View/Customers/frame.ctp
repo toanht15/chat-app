@@ -23,7 +23,7 @@ var socket, userId, tabId, iframe, windowSize, windowClose, connectToken, url, e
   };
 
   windowClose = function(){
-    emit('requestSyncStop', {tabId: tabId, connectToken: connectToken});
+    emit('requestSyncStop', {type: 1, tabId: tabId, connectToken: arg.connectToken});
     window.close();
     return false;
   };

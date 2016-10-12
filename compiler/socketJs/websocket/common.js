@@ -2328,8 +2328,11 @@ function emit(evName, data){
   if ( evName == "sendWindowInfo" ) {
     data.connectToken = userInfo.connectToken;
   }
-  if ( evName == "requestSyncStart" ) {
-console.trace("requestSyncStart", data);
+  if ( evName == "requestSyncStop" && userInfo.accessType === cnst.access_type.host ) {
+    data['type'] = 3;
+  }
+  if ( evName == "requestSyncStop" && userInfo.accessType === cnst.access_type.guest ) {
+    data['type'] = 4;
   }
   /* ここまで：イベント名指定あり */
   socket.emit(evName, JSON.stringify(data));

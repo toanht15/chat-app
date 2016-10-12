@@ -254,23 +254,14 @@ iframeLocation = {
 syncEvent = {
   resizeTimer: false,
   evList: [
-    {
-      type: "mousemove",
-      ev: function(e){
-        // emit('syncBrowserInfoFrame', {
-        //   accessType: userInfo.accessType,
-        //   mousePoint: {x: e.clientX, y: e.clientY}
-        // });
-      }
-    },
-    {
-      type: "hashchange",
-      ev: function(e){
-        if ( socket === undefined ) return false;
-        browserInfo.href = location.href;
-        emit('reqUrlChecker', {});
-      }
-    }
+    // {
+    //   type: "hashchange",
+    //   ev: function(e){
+    //     if ( socket === undefined ) return false;
+    //     browserInfo.href = location.href;
+    //     emit('reqUrlChecker', {});
+    //   }
+    // }
   ],
   pcResize: function(e){
     if (syncEvent.resizeTimer !== false) {
@@ -512,6 +503,7 @@ sinclo = {
   },
   syncStop: function(d){
     emit('requestSyncStop', {
+      type: 2,
       tabId: userInfo.tabId,
       parentId: userInfo.parentId,
       connectToken: params.connectToken
