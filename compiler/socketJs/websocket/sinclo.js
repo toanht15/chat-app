@@ -136,7 +136,7 @@
     },
     connect: function(){
       // 新規アクセスの場合
-      if ( !check.isset(userInfo.getTabId()) ) {
+      if ( !check.isset(userInfo.getTabId()) || (window.opener !== null && ('userInfo' in window.opener)) ) {
         userInfo.firstConnection = true;
         window.opener = null;
         userInfo.strageReset();
