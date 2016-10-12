@@ -545,15 +545,11 @@ init = function(){
 
     url = iframeLocation.list[iframeLocation.position];
 
-
-    var html  = "<iframe src='' style='transform-origin: 0 0' ";
-        html += "        width='300' height='300' sandbox=\"allow-scripts allow-top-navigation allow-forms allow-same-origin allow-modals\"></iframe>";
-
     var frameDiv = document.getElementById('customer_flame');
     iframe = document.createElement('iframe');
     iframe.width = window.innerWidth - 100;
     iframe.height = window.innerHeight;
-    iframe.sandbox = "allow-scripts allow-top-navigation allow-forms allow-same-origin allow-modals";
+    iframe.sandbox = "allow-scripts allow-top-navigation allow-forms allow-popups allow-same-origin allow-modals";
 
     iframe.src = common.setUrl(url);
     frameDiv.appendChild(iframe);

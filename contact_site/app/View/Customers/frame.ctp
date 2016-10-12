@@ -206,11 +206,11 @@ window.onload = function(){
     url = iframeLocation.list[iframeLocation.position];
 
     var content = document.getElementById('customer_flame');
-    var html  = "<iframe src='' style='transform-origin: 0 0' ";
-        html += "        width='300' height='300' sandbox=\"allow-scripts allow-top-navigation allow-forms allow-same-origin allow-modals\"></iframe>";
+    var html  = "<iframe src='' style='transform-origin: 0 0' width='300' height='300'></iframe>";
 
     content.innerHTML = html;
     iframe = document.getElementsByTagName('iframe')[0];
+    iframe.sandbox = "allow-scripts allow-top-navigation allow-forms allow-popups allow-same-origin allow-modals";
 
     if ( url.match(/\?/) ) {
       url += "&";
@@ -221,6 +221,7 @@ window.onload = function(){
 
     var data = {
       type:2,
+      shareType: arg.type,
       responderId: "<?= $muserId?>",
       userId: userId,
       sendTabId: tabId,

@@ -135,13 +135,43 @@
       }
     },
     connect: function(){
+      function newAccessCheck(){
+        if ( !check.isset(window.opener) ) return false;
+        if ( typeof(window.opener) !== "object" ) return false;
+        if ( !('userInfo' in window.opener) ) return false;
+        return true;
+      }
+      function opCheck(){
+        if ( !newAccessCheck() ) return false;
+        if ( !('connectToken' in window.opener.userInfo) ) return false;
+        if ( !check.isset(window.opener.userInfo.connectToken) ) return false;
+        return true;
+      }
+      // 別タブ対応
+      if ( opCheck() ) {
+        window.opener.blur();
+        window.blur();
+        socket.emit("sendOtherTabURL", JSON.stringify({
+          siteKey: info.site.key,
+          tabId: userInfo.getTabId(),
+          subWindow: userInfo.accessType,
+          url: f_url(browserInfo.href)
+        }));
+        window.opener.focus();
+        parent.opener.focus();
+        setTimeout(function(){
+          window.close();
+        }, 10);
+        return false;
+      }
       // 新規アクセスの場合
-      if ( !check.isset(userInfo.getTabId()) || (window.opener !== null && ('userInfo' in window.opener)) ) {
+      if ( !check.isset(userInfo.getTabId()) || newAccessCheck() ) {
         userInfo.firstConnection = true;
         window.opener = null;
         userInfo.strageReset();
         userInfo.setReferrer();
         userInfo.setStayCount();
+        userInfo.gFrame = false;
       }
       userInfo.init();
       var emitData = {
@@ -221,7 +251,6 @@
     accessInfo: function(d){
       var obj = common.jParse(d);
       if ( obj.token !== common.token ) return false;
-
       if ( ('activeOperatorCnt' in obj) ) {
         window.info.activeOperatorCnt = obj['activeOperatorCnt'];
       }
@@ -262,7 +291,6 @@
       if ( (userInfo.gFrame && Number(userInfo.accessType) === Number(cnst.access_type.guest)) === false ) {
         emit('customerInfo', obj);
       }
-
       emit('connectSuccess', {
         confirm: false,
         widget: window.info.widgetDisplay,

@@ -198,6 +198,16 @@ function objectSort(object) {
   return sorted;
 }
 
+function getConnectInfo(o){
+  var connectToken = getSessionId(o.siteKey, o.tabId, 'connectToken');
+  var responderId = getSessionId(o.siteKey, o.tabId, 'responderId');
+  if ( isset(responderId) && isset(connectToken) ) {
+    o.responderId = responderId;
+    o.connectToken = connectToken;
+  }
+  return o;
+}
+
 // emit用
 var emit = {
   roomKey: {
@@ -564,6 +574,7 @@ io.sockets.on('connection', function (socket) {
       obj.chat = getSessionId(obj.siteKey, obj.tabId, 'chat');
     }
 
+    obj = getConnectInfo(obj);
     emit.toCompany("sendCustomerInfo", obj, obj.siteKey);
     if ( ('contract' in obj) && ('chat' in obj.contract) && obj.contract.chat === false) return false;
     chatApi.sendUnreadCnt("sendChatInfo", obj, false);
@@ -635,12 +646,8 @@ io.sockets.on('connection', function (socket) {
   socket.on("sendAccessInfo", function (data) {
     var obj = JSON.parse(data);
     obj.term = timeCalculator(obj);
-    var connectToken = getSessionId(obj.siteKey, obj.tabId, 'connectToken');
-    var responderId = getSessionId(obj.siteKey, obj.tabId, 'responderId');
-    if ( isset(responderId) && isset(connectToken) ) {
-      obj.responderId = responderId;
-      obj.connectToken = connectToken;
-    }
+
+    obj = getConnectInfo(obj);
 
     if ( getSessionId(obj.siteKey, obj.tabId, 'chat') ) {
       obj.chat = getSessionId(obj.siteKey, obj.tabId, 'chat');
@@ -935,6 +942,13 @@ io.sockets.on('connection', function (socket) {
       active: obj.active,
       count: keys.length
     }, obj.siteKey);
+  });
+
+  socket.on('sendOtherTabURL', function (d){
+    var obj = JSON.parse(d), tabId;
+
+    // インラインフレームに送る
+    emit.toUser('receiveOtherTabURL', obj, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
   });
 
   socket.on('reqUrlChecker', function (d){
@@ -1344,7 +1358,7 @@ io.sockets.on('connection', function (socket) {
   socket.on('startSyncToFrame', function (d) {
     var obj = JSON.parse(d);
     socket.join(obj.siteKey + emit.roomKey.frame);
-    if ( !getSessionId(obj.siteKey, obj.tabId, 'shareWindowId') ) {
+    if ( !getSessionId(obj.siteKey, obj.tabId, 'shareWindowId') && obj.tabId.match("/\_frame$/") ) {
       sincloCore[obj.siteKey][obj.tabId] = {
         sessionId: null,
         parentId: null,

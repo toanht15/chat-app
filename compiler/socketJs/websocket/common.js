@@ -36,6 +36,8 @@ var socket, // socket.io
       prev: 9,
       staycount: 10,
       gFrame: 11,
+      sendTabId: 12,
+      parentId: 13,
     },
     sync_type: { inner: 1, outer: 2 }
   };
@@ -1136,11 +1138,14 @@ var socket, // socket.io
       else {
         // 消費者がフレームの場合
         if ( common.tmpParams.hasOwnProperty('gFrame') && !check.isset(storage.s.get('gFrame')) ) {
-          storage.s.set('gFrame', common.tmpParams.gFrame);
-          storage.s.set('parentId', common.tmpParams.parentId);
-          storage.s.set('connectToken', common.tmpParams.connectToken);
-          storage.s.set('sendTabId', common.tmpParams.sendTabId);
-          storage.s.set('tabId', common.tmpParams.tabId);
+          var gFrameCode = userInfo.getCode(cnst.info_type.gFrame);
+          storage.s.set(gFrameCode, common.tmpParams.gFrame);
+          var connectCode = userInfo.getCode(cnst.info_type.connect);
+          storage.s.set(connectCode, common.tmpParams.connectToken);
+          var tabIdCode = userInfo.getCode(cnst.info_type.tab);
+          storage.s.set(tabIdCode, common.tmpParams.tabId);
+          var parentIdCode = userInfo.getCode(cnst.info_type.parentId);
+          storage.s.set(parentIdCode, common.tmpParams.parentId);
         }
         if ( check.isset(storage.s.get('gFrame')) && check.isset(storage.s.get('parentId')) ) {
           userInfo.gFrame = storage.s.get('gFrame');
@@ -1148,7 +1153,6 @@ var socket, // socket.io
           userInfo.connectToken = storage.s.get('connectToken');
           userInfo.sendTabId = storage.s.get('sendTabId');
           userInfo.parentId = storage.s.get('parentId');
-
           emit('startSyncToFrame', {
             parentId: userInfo.parentId,
             tabId: userInfo.tabId
@@ -1209,6 +1213,12 @@ var socket, // socket.io
         case cnst.info_type.gFrame:
           return "gFrame";
           break;
+        case cnst.info_type.sendTabId:
+          return "sendTabId";
+          break;
+        case cnst.info_type.parentId:
+          return "parentId";
+          break;
       }
     },
     set: function(type, val, session){
@@ -1260,7 +1270,9 @@ var socket, // socket.io
         cnst.info_type.referrer,
         cnst.info_type.connect,
         cnst.info_type.tab,
-        cnst.info_type.prev
+        cnst.info_type.prev,
+        cnst.info_type.gFrame,
+        cnst.info_type.parentId
       ];
       for ( var i in array ) { userInfo.unset(array[i]) }
     },
@@ -2043,6 +2055,7 @@ var socket, // socket.io
   };
 
   var init = function(){
+    var tabStateTimer = null;
     socket = io.connect(info.site.socket, {port: 9090, rememberTransport : false});
 
     // 接続時
@@ -2065,7 +2078,8 @@ var socket, // socket.io
       if ( userInfo.accessType === Number(cnst.access_type.host) ) return false;
       // 定期的にタブのアクティブ状態を送る
       var tabState = browserInfo.getActiveWindow();
-      setInterval(function(){
+      if ( tabStateTimer ) { clearInterval(tabStateTimer); }
+      tabStateTimer = setInterval(function(){
         var newState = browserInfo.getActiveWindow();
         if ( document.getElementById('sincloBox') !== null && tabState !== newState ) {
           tabState = newState;
@@ -2145,10 +2159,6 @@ var socket, // socket.io
       sinclo.syncBrowserCtrl(d);
     });
 
-    // socket.on('userDissconnection', function (d) {
-    //   sinclo.userDissconnectionEv(d);
-    // });
-
     // 継続接続
     socket.on('syncContinue', function (d) {
       sinclo.syncContinue(d);
@@ -2158,13 +2168,16 @@ var socket, // socket.io
       sinclo.setInitInfo(d);
     }); // socket-on: setInitInfo
 
-    // socket.on('receiveConnect', function (d) {
-    //   sinclo.receiveConnectEv(d);
-    // }); // socket-on: receiveConnectEV
-
+    // 同期確認
     socket.on('resUrlChecker', function (d) {
       sinclo.resUrlChecker(d);
     }); // socket-on: resUrlChecker
+
+    // 別タブ同期
+    socket.on('receiveOtherTabURL', function (d) {
+      window.focus();
+      sinclo.resUrlChecker(d);
+    }); // socket-on: receiveOtherTabURL
 
     // チャット対応開始結果
     socket.on('chatStartResult', function (d) {
