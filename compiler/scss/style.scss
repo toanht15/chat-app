@@ -2810,6 +2810,15 @@ ul.naviBtn {
   }
 }
 
+/*　表示除外設定 */
+  #MShareDisplaySettingIndexForm{
+    textarea {
+      border-radius: 0 !important;
+      border: 1px solid #909090 !important;
+      padding: 5px;
+      margin: 10px 0 0 10px;
+    }
+  }
 
 
 
