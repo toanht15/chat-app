@@ -68,6 +68,20 @@ var popupEvent = {
                         return popupEvent.closeNoPopup();
                     };
                     break;
+                case 'p-cus-connection':
+                    var closeBtn = _button("ダイレクト接続");
+                    closeBtn.onclick = function(){
+                        return popupEvent.closePopup(1);
+                    };
+                    var closeBtn = _button("別ウィンドウ接続");
+                    closeBtn.onclick = function(){
+                        return popupEvent.closePopup(2);
+                    };
+                    var closeBtn = _button("接続しない");
+                    closeBtn.onclick = function(){
+                        return popupEvent.closeNoPopup();
+                    };
+                    break;
                 case 'p-cus-detail':
                     var closeBtn = _button("チャットを終了する");
                     closeBtn.onclick = function(){

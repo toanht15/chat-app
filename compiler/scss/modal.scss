@@ -214,6 +214,21 @@
         }
       }
 
+      &.p-cus-connection {
+        width: 500px;
+
+        div#popup-button {
+          display: flex;
+          padding: 0 20px;
+
+          a {
+              width: 150px;
+              height: 25px;
+              margin: 0 5px;
+          }
+        }
+      }
+
       &.p-cus-detail {
         width: 400px;
 

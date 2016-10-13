@@ -431,11 +431,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       return token;
     };
 
-    $scope.windowOpen = function(tabId, accessId, type){
+    $scope.windowOpen = function(tabId, accessId){
       var message = "アクセスID【" + accessId + "】のユーザーに接続しますか？<br><br>";
       message += "<span style='color: #FF7B7B'><?=Configure::read('message.const.chatStartConfirm')?></span>";
-      modalOpen.call(window, message, 'p-confirm', 'メッセージ');
-       popupEvent.closePopup = function(){
+      modalOpen.call(window, message, 'p-cus-connection', 'メッセージ');
+       popupEvent.closePopup = function(type){
           sessionStorage.clear();
           popupEvent.close();
           connectToken = makeToken();
