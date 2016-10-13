@@ -68,7 +68,7 @@
                 'javascript:void(0)',
                 array(
                   'class' => 'btn-shadow redBtn fRight',
-                  'onclick' => 'openConfirmDialog' ,
+                  'onclick' => 'openConfirmDialog('.$val['TCampaign']['id'].')',
                   'escape' => false
                 )
             );
