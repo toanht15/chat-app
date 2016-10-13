@@ -19,8 +19,7 @@
           'div' => false,
           'cols' => 55,
           'rows' => 15,
-          'label' => false,
-          'error' => false
+          'label' => false
         ]) ?>
       </div>
 
@@ -33,8 +32,7 @@
           'div' => false,
           'cols' => 55,
           'rows' => 15,
-          'label' => false,
-          'error' => false
+          'label' => false
         ]) ?>
       </div>
     <?= $this->Form->end(); ?>

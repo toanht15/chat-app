@@ -36,7 +36,7 @@ if ( $tmp !== "" ) {
             <td class="tLeft pre">{{ ui('<?=h($history['THistory']['ip_address'])?>', <?=json_encode($history['MCustomer']['informations'])?>) }}</td>
             <td class="tLeft pre">{{ ua('<?=h($history['THistory']['user_agent'])?>') }}</td>
             <td class="tCenter pre"><?=$campaignParam?></td>
-            <td class="tLeft omit"><a href="<?=h($history['THistory']['referrer_url'])?>" target="history"><?=h($history['THistory']['referrer_url'])?></a></td>
+            <td class="tLeft omit"><a href="{{::trimToURL("<?=h($history['THistory']['referrer_url'])?>")}}" target="history">{{::trimToURL("<?=h($history['THistory']['referrer_url'])?>")}}</a></td>
             <td class="tCenter">
                 <?php if( is_numeric($history['THistoryStayLog']['count']) ): ?>
                     <a class="underL" href="javascript:void(0)" onclick="openHistoryById('<?=h($history['THistory']['id'])?>')" ><?=h($history['THistoryStayLog']['count'])?></a>

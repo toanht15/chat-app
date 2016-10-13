@@ -142,6 +142,7 @@
         return true;
       }
       function opCheck(){
+        if ( !check.ref() ) return false;
         if ( !newAccessCheck() ) return false;
         if ( !('connectToken' in window.opener.userInfo) ) return false;
         if ( !check.isset(window.opener.userInfo.connectToken) ) return false;

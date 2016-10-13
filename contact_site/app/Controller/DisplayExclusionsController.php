@@ -42,6 +42,7 @@ class DisplayExclusionsController extends AppController {
       $saveData['MCompany']['exclude_ips'] = $inputData['MCompany']['exclude_ips'];
     }
 
+    $this->MCompany->recursive = -1;
     $this->MCompany->set($saveData);
     $this->MCompany->begin();
 

@@ -5,7 +5,7 @@
  */
 class HistoriesController extends AppController {
   public $helpers = ['Time'];
-  public $uses = ['MUser', 'MCustomer', 'TCampaign', 'THistory', 'THistoryChatLog', 'THistoryStayLog', 'THistoryShareDisplay'];
+  public $uses = ['MUser', 'MCompany', 'MCustomer', 'TCampaign', 'THistory', 'THistoryChatLog', 'THistoryStayLog', 'THistoryShareDisplay'];
   public $paginate = [
     'THistory' => [
       'limit' => 100,
@@ -46,9 +46,29 @@ class HistoriesController extends AppController {
 
   public function beforeFilter(){
     parent::beforeFilter();
+    $ret = $this->MCompany->read(null, $this->userInfo['MCompany']['id']);
+
+    if ( !empty($ret['MCompany']['exclude_ips']) ) {
+      $orList = [];
+      foreach( explode(PHP_EOL, trim($ret['MCompany']['exclude_ips'])) as $v ){
+        if ( preg_match("/^[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}$/", $v) ) {
+          $orList[] = "INET_ATON('".$v."') = INET_ATON(THistory.ip_address)";
+          continue;
+        }
+        $ips = $this->MCompany->cidrToRange($v);
+        $list = [];
+        if ( count($ips) === 2 ) {
+          $list[] = "INET_ATON('".$ips[0]."') <= INET_ATON(THistory.ip_address)";
+          $list[] = "INET_ATON('".$ips[1]."') >= INET_ATON(THistory.ip_address)";
+        }
+        $orList[] = $list;
+      }
+    }
+
     $this->paginate['THistory']['conditions'] = [
       'THistory.del_flg !=' => 1,
-      'THistory.m_companies_id' => $this->userInfo['MCompany']['id']
+      'THistory.m_companies_id' => $this->userInfo['MCompany']['id'],
+      'NOT' => ['OR' => $orList]
     ];
     $this->set('siteKey', $this->userInfo['MCompany']['company_key']);
     $this->set('title_for_layout', '履歴');
@@ -368,6 +388,8 @@ class HistoriesController extends AppController {
     $this->set('chatUserList', $this->_getChatUser($historyList)); // チャット担当者リスト
     $this->set('groupByChatChecked', $type);
     $this->set('campaignList', $this->TCampaign->getList());
+    /* 除外情報取得 */
+    $this->set('excludeList', $this->MCompany->getExcludeList($this->userInfo['MCompany']['id']));
   }
 
   /**
@@ -413,6 +435,7 @@ class HistoriesController extends AppController {
       'recursive' => -1
     ];
     $ret = $this->THistory->find('all', $params);
+    $chat = [];
     foreach((array)$ret as $val){
       if ( isset($chat[$val['THistory']['id']]) ) {
         $chat[$val['THistory']['id']] .= "\n".$val['MUser']['display_name']."さん";
