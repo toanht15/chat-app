@@ -5,12 +5,12 @@ block content
     'use strict';
     window.site = JSON.parse('!{site}');
     window.params = JSON.parse('!{params}');
-    var b = document.getElementsByTagName('body')[0],
+    var iframeLocation,
+        b = document.getElementsByTagName('body')[0],
         l = [
           site.socket + '/socket.io/socket.io.js',
           site.files + '/websocket/jquery-2.2.0.min.js',
-          site.files + '/websocket/sinclo.min.js',
-          site.files + '/websocket/sync.js',
+          site.files + '/websocket/sync.min.js',
         ],
         i = 0,
         createElm = function (u){
@@ -25,3 +25,25 @@ block content
       };
     createElm(l[i]);
 
+  ul#sync_tools
+    li(onclick="iframeLocation.back(); return false;")
+      span
+        img(src="#{img}icon_back.png", width="40", height="40", alt="")
+      p 戻る
+    li(onclick="iframeLocation.forward(); return false;")
+      span
+        img(src="#{img}icon_next.png", width="40", height="40", alt="")
+      p 進む
+    li(onclick="location.reload(true); return false;")
+      span
+        img(src="#{img}icon_reconnect.png", width="40", height="40", alt="")
+      p 再接続
+    li
+      span
+        img(src="#{img}icon_link.png", width="40", height="40", alt="")
+      p ﾀﾞｲﾚｸﾄﾘﾝｸ
+    li(onclick="sinclo.syncStop()")
+      span
+        img(src="#{img}icon_disconnect.png", width="40", height="40", alt="")
+      p 終了
+  div#customer_flame

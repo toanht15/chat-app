@@ -3,6 +3,7 @@
 
 var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     userList = <?php echo json_encode($responderList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>,
+    campaignList = <?= $campaignList ?>,
     widget = <?= $widgetSettings ?>, contract = <?= json_encode($coreSettings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>,
     modalFunc, myUserId = <?= h($muserId)?>, chatApi, cameraApi, entryWordApi;
 
@@ -433,13 +434,14 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     $scope.windowOpen = function(tabId, accessId){
       var message = "アクセスID【" + accessId + "】のユーザーに接続しますか？<br><br>";
       message += "<span style='color: #FF7B7B'><?=Configure::read('message.const.chatStartConfirm')?></span>";
-      modalOpen.call(window, message, 'p-confirm', 'メッセージ');
-       popupEvent.closePopup = function(){
+      modalOpen.call(window, message, 'p-cus-connection', 'メッセージ');
+       popupEvent.closePopup = function(type){
           sessionStorage.clear();
           popupEvent.close();
           connectToken = makeToken();
           socket.emit('requestWindowSync', {
             tabId: tabId,
+            type: type,
             connectToken: connectToken
           });
           // モニター開始時にビデオ表示
@@ -633,6 +635,22 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       return $scope.jsConst.tabInfoStr[n];
     }
 
+    /* キャンペーン情報を取得する */
+    $scope.getCampaign = function (url){
+      var str = "";
+      if ( url === null || url === undefined ) return "";
+      angular.forEach(campaignList, function(name, parameter){
+        var position = url.indexOf(parameter);
+        if ( position > 0 ) {
+          if ( str !== "" ) {
+            str += "\n";
+          }
+          str += name;
+        }
+      });
+      return str;
+    }
+
     /* パラメーターを取り除く */
     $scope.trimToURL = function (url){
       var position = url.indexOf('?');
@@ -766,6 +784,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     socket.on('getAccessInfo', function (data) {
       var obj = JSON.parse(data);
+console.log(obj);
 <?php if($widgetCheck): ?>
       if ( Number(obj.userId) === Number(myUserId) ) {
         if ( String(obj.status) == "<?=C_OPERATOR_ACTIVE?>") {
@@ -830,7 +849,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     // タブ状態を取得
     socket.on('retTabInfo', function (d) {
       var obj = JSON.parse(d);
-
+      if ( !(obj.tabId in $scope.monitorList) ) return false;
       $scope.monitorList[obj.tabId].status = obj.status;
     });
 
@@ -846,30 +865,30 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     socket.on('syncNewInfo', function (data) {
       var obj = JSON.parse(data);
 
+      var tabId = ( obj.subWindow ) ? obj.to : obj.tabId;
+      if ( tabId.length > 0 && tabId.indexOf('_frame') > -1 ) {
+        tabId = tabId.substr(0, tabId.indexOf('_frame'));
+      }
+
       // 消費者
-      if ( angular.isDefined($scope.monitorList[obj.tabId]) ) {
+      if ( angular.isDefined($scope.monitorList[tabId]) ) {
+
         if ( 'widget' in obj ) {
-          $scope.monitorList[obj.tabId].widget = obj.widget;
-          if ( chatApi.tabId === obj.tabId ) {
+          $scope.monitorList[tabId].widget = obj.widget;
+          if ( chatApi.tabId === tabId ) {
             chatApi.observeType.emit(chatApi.tabId, chatApi.observeType.status);
 
           }
         }
-        if ( 'connectToken' in obj ) { $scope.monitorList[obj.tabId].connectToken = obj.connectToken; }
-        if ( 'prev' in obj ) { $scope.monitorList[obj.tabId].prev = obj.prev; }
-        if ( 'title' in obj ) { $scope.monitorList[obj.tabId].title = obj.title; }
-        if ( 'url' in obj ) { $scope.monitorList[obj.tabId].url = obj.url; }
-        if ( 'responderId' in obj ) { $scope.monitorList[obj.tabId].responderId = obj.responderId; }
-      }
-
-      var tabId = ( obj.subWindow ) ? obj.to : obj.tabId;
-      if ( 'connectToken' in obj && 'responderId' in obj) {
-        $scope.monitorList[tabId].connectToken = obj.connectToken;
+        if ( 'connectToken' in obj ) { $scope.monitorList[tabId].connectToken = obj.connectToken; }
+        if ( 'prev' in obj ) { $scope.monitorList[tabId].prev = obj.prev; }
+        if ( 'title' in obj ) { $scope.monitorList[tabId].title = obj.title; }
+        if ( 'url' in obj ) { $scope.monitorList[tabId].url = obj.url; }
+        if ( 'responderId' in obj ) { $scope.monitorList[tabId].responderId = obj.responderId; }
       }
     });
 
     socket.on('windowSyncInfo', function (data) {
-console.log('A');
       // 担当しているユーザーかチェック
       var obj = JSON.parse(data), url;
       if (connectToken !== obj.connectToken) return false;
@@ -1552,7 +1571,13 @@ console.log('A');
             scope.getCustomerInfo(scope.monitorList[scope.detailId].userId, function(ret){
               scope.customData = ret;
               scope.customPrevData = angular.copy(ret);
-              scope.customerList[scope.monitorList[scope.detailId].userId] = angular.copy(scope.customData);
+              if ( scope.detailId !== "" ) {
+                scope.customerList[scope.monitorList[scope.detailId].userId] = angular.copy(scope.customData);
+              }
+              else {
+                console.error('Please Tab Close.');
+                return false;
+              }
             });
           }
           else {

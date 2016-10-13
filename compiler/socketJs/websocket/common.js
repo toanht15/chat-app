@@ -35,7 +35,11 @@ var socket, // socket.io
       tab: 8,
       prev: 9,
       staycount: 10,
-    }
+      gFrame: 11,
+      sendTabId: 12,
+      parentId: 13,
+    },
+    sync_type: { inner: 1, outer: 2 }
   };
 
   common = {
@@ -534,7 +538,6 @@ var socket, // socket.io
       return window.info.widgetDisplay;
     },
     makeAccessIdTag: function(){
-
       if ( !check.browser() ) return false;
       if ( !('widget' in window.info) ) return false;
       if (!this.judgeShowWidget()) {
@@ -1039,7 +1042,7 @@ var socket, // socket.io
       return (ua.indexOf('iphone') > 0 || ua.indexOf('ipod') > 0 || ua.indexOf('android') > 0);
     },
     isset: function(a){
-      if ( a === null || a === '' || a === undefined ) {
+      if ( a === null || a === '' || a === undefined || String(a) === "null" || String(a) === "undefined" ) {
          return false;
       }
       if ( typeof a === "object" ) {
@@ -1090,6 +1093,7 @@ var socket, // socket.io
     accessId: null,
     ipAddress: null,
     pageTime: null,
+    gFrame: false, // 外部接続
     firstConnection: false,
     searchKeyword: null,
     userAgent: window.navigator.userAgent,
@@ -1102,6 +1106,7 @@ var socket, // socket.io
       this.setPrevpage();
 
       common.getParams();
+
       if ( check.isset(storage.s.get('params')) ) {
         common.setParams();
       }
@@ -1121,6 +1126,7 @@ var socket, // socket.io
           }
         }
       }
+
       // 複製したウィンドウの場合
       if ( Number(common.params.type) === Number(cnst.access_type.host) ) {
         userInfo.accessType = cnst.access_type.host;
@@ -1129,7 +1135,30 @@ var socket, // socket.io
         userInfo.setConnect(common.params.connectToken);
         emit('connectSuccess', {confirm: false});
       }
-
+      else {
+        // 消費者がフレームの場合
+        if ( common.tmpParams.hasOwnProperty('gFrame') && !check.isset(storage.s.get('gFrame')) ) {
+          var gFrameCode = userInfo.getCode(cnst.info_type.gFrame);
+          storage.s.set(gFrameCode, common.tmpParams.gFrame);
+          var connectCode = userInfo.getCode(cnst.info_type.connect);
+          storage.s.set(connectCode, common.tmpParams.connectToken);
+          var tabIdCode = userInfo.getCode(cnst.info_type.tab);
+          storage.s.set(tabIdCode, common.tmpParams.tabId);
+          var parentIdCode = userInfo.getCode(cnst.info_type.parentId);
+          storage.s.set(parentIdCode, common.tmpParams.parentId);
+        }
+        if ( check.isset(storage.s.get('gFrame')) && check.isset(storage.s.get('parentId')) ) {
+          userInfo.gFrame = storage.s.get('gFrame');
+          userInfo.tabId = storage.s.get('tabId');
+          userInfo.connectToken = storage.s.get('connectToken');
+          userInfo.sendTabId = storage.s.get('sendTabId');
+          userInfo.parentId = storage.s.get('parentId');
+          emit('startSyncToFrame', {
+            parentId: userInfo.parentId,
+            tabId: userInfo.tabId
+          });
+        }
+      }
     },
     syncInfo: {
       code: 'syncInfo',
@@ -1180,6 +1209,15 @@ var socket, // socket.io
           break;
         case cnst.info_type.staycount:
           return "stayCount";
+          break;
+        case cnst.info_type.gFrame:
+          return "gFrame";
+          break;
+        case cnst.info_type.sendTabId:
+          return "sendTabId";
+          break;
+        case cnst.info_type.parentId:
+          return "parentId";
           break;
       }
     },
@@ -1232,7 +1270,9 @@ var socket, // socket.io
         cnst.info_type.referrer,
         cnst.info_type.connect,
         cnst.info_type.tab,
-        cnst.info_type.prev
+        cnst.info_type.prev,
+        cnst.info_type.gFrame,
+        cnst.info_type.parentId
       ];
       for ( var i in array ) { userInfo.unset(array[i]) }
     },
@@ -1429,7 +1469,7 @@ var socket, // socket.io
       {
         type: "mousemove",
         ev: function(e){
-          emit('syncBrowserInfo', {
+          emit('syncBrowserInfoFrame', {
             accessType: userInfo.accessType,
             mousePoint: {x: e.clientX, y: e.clientY}
           });
@@ -1441,7 +1481,7 @@ var socket, // socket.io
           if ( socket === undefined ) return false;
           if ( "body" === syncEvent.receiveEvInfo.nodeName && "scroll" === syncEvent.receiveEvInfo.type ) return false;
           // スクロール用
-          emit('syncBrowserInfo', {
+          emit('syncScrollInfo', {
             accessType: userInfo.accessType,
             mousePoint: {x: e.clientX, y: e.clientY},
             scrollPosition: browserInfo.windowScroll()
@@ -1462,7 +1502,7 @@ var socket, // socket.io
         clearTimeout(syncEvent.resizeTimer);
       }
       syncEvent.resizeTimer = setTimeout(function () {
-        emit('syncBrowserInfo', {
+        emit('syncBrowserInfoFrame', {
           accessType: userInfo.accessType,
           // ブラウザのサイズ
           windowSize: browserInfo.windowSize(),
@@ -1479,7 +1519,7 @@ var socket, // socket.io
       };
       var scroll = browserInfo.windowScroll();
 
-      emit('syncBrowserInfo', {
+      emit('syncBrowserInfoFrame', {
         accessType: userInfo.accessType,
         // ブラウザのサイズ
         windowSize: size,
@@ -1827,8 +1867,6 @@ var socket, // socket.io
             type = popup.const.action.confirm;
           }
           popup.remove();
-          var maincolor = ( window.info.widget.mainColor !== undefined ) ? window.info.widget.mainColor : "#ABCD05";
-          var hovercolor = ( window.info.site.hovercolor !== undefined ) ? window.info.site.hovercolor : "#9CB90E";
           var html = '';
           html += this.getCss();
           html += '  <sinclo-div id="sincloPopupFrame">';
@@ -1869,8 +1907,6 @@ var socket, // socket.io
       dragging: false,
       set: function(fromID, toID){
           vcPopup.remove();
-          var maincolor = ( window.info.widget.mainColor !== undefined ) ? window.info.widget.mainColor : "#ABCD05";
-          var hovercolor = ( window.info.site.hovercolor !== undefined ) ? window.info.site.hovercolor : "#9CB90E";
           var html = '';
           var sincloData = {
             from: fromID,
@@ -2019,6 +2055,7 @@ var socket, // socket.io
   };
 
   var init = function(){
+    var tabStateTimer = null;
     socket = io.connect(info.site.socket, {port: 9090, rememberTransport : false});
 
     // 接続時
@@ -2038,13 +2075,13 @@ var socket, // socket.io
         sinclo.connect();
       }
 
-      if ( sincloBox && userInfo.accessType === Number(cnst.access_type.host) ) return false;
-
+      if ( userInfo.accessType === Number(cnst.access_type.host) ) return false;
       // 定期的にタブのアクティブ状態を送る
       var tabState = browserInfo.getActiveWindow();
-      setInterval(function(){
+      if ( tabStateTimer ) { clearInterval(tabStateTimer); }
+      tabStateTimer = setInterval(function(){
         var newState = browserInfo.getActiveWindow();
-        if ( tabState !== newState ) {
+        if ( document.getElementById('sincloBox') !== null && tabState !== newState ) {
           tabState = newState;
           emit('sendTabInfo', { status: tabState });
         }
@@ -2076,16 +2113,17 @@ var socket, // socket.io
       sinclo.confirmCustomerInfo(d);
     }); // socket-on: confirmCustomerInfo
 
-    // 接続確認
-    socket.on('getConnectInfo', function(d){
-      sinclo.getConnectInfo(d);
-    }); // socket-on: getConnectInfo
-
     // 画面共有
     socket.on('getWindowInfo', function(d){
       var obj = common.jParse(d);
       sinclo.getWindowInfo(obj);
     }); // socket-on: getWindowInfo
+
+    // 画面共有(iframeバージョン)
+    socket.on('startWindowSync', function(d){
+      var obj = common.jParse(d);
+      sinclo.startWindowSync(obj);
+    }); // socket-on: startWindowSync
 
     // スクロール位置のセット
     socket.on('windowSyncInfo', function (d) {
@@ -2121,10 +2159,6 @@ var socket, // socket.io
       sinclo.syncBrowserCtrl(d);
     });
 
-    socket.on('userDissconnection', function (d) {
-      sinclo.userDissconnectionEv(d);
-    });
-
     // 継続接続
     socket.on('syncContinue', function (d) {
       sinclo.syncContinue(d);
@@ -2134,13 +2168,16 @@ var socket, // socket.io
       sinclo.setInitInfo(d);
     }); // socket-on: setInitInfo
 
-    socket.on('receiveConnect', function (d) {
-      sinclo.receiveConnectEv(d);
-    }); // socket-on: receiveConnectEV
-
+    // 同期確認
     socket.on('resUrlChecker', function (d) {
       sinclo.resUrlChecker(d);
     }); // socket-on: resUrlChecker
+
+    // 別タブ同期
+    socket.on('receiveOtherTabURL', function (d) {
+      window.focus();
+      sinclo.resUrlChecker(d);
+    }); // socket-on: receiveOtherTabURL
 
     // チャット対応開始結果
     socket.on('chatStartResult', function (d) {
@@ -2304,8 +2341,13 @@ function emit(evName, data){
   if ( evName == "sendWindowInfo" ) {
     data.connectToken = userInfo.connectToken;
   }
+  if ( evName == "requestSyncStop" && userInfo.accessType === cnst.access_type.host ) {
+    data['type'] = 3;
+  }
+  if ( evName == "requestSyncStop" && userInfo.accessType === cnst.access_type.guest ) {
+    data['type'] = 4;
+  }
   /* ここまで：イベント名指定あり */
-// console.log(evName, data);
   socket.emit(evName, JSON.stringify(data));
 }
 

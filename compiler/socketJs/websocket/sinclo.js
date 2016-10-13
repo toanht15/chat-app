@@ -135,16 +135,45 @@
       }
     },
     connect: function(){
+      function newAccessCheck(){
+        if ( !check.isset(window.opener) ) return false;
+        if ( typeof(window.opener) !== "object" ) return false;
+        if ( !('userInfo' in window.opener) ) return false;
+        return true;
+      }
+      function opCheck(){
+        if ( !newAccessCheck() ) return false;
+        if ( !('connectToken' in window.opener.userInfo) ) return false;
+        if ( !check.isset(window.opener.userInfo.connectToken) ) return false;
+        return true;
+      }
+      // 別タブ対応
+      if ( opCheck() ) {
+        window.opener.blur();
+        window.blur();
+        socket.emit("sendOtherTabURL", JSON.stringify({
+          siteKey: info.site.key,
+          tabId: userInfo.getTabId(),
+          subWindow: userInfo.accessType,
+          url: f_url(browserInfo.href)
+        }));
+        window.opener.focus();
+        parent.opener.focus();
+        setTimeout(function(){
+          window.close();
+        }, 10);
+        return false;
+      }
       // 新規アクセスの場合
-      if ( !check.isset(userInfo.getTabId()) ) {
+      if ( !check.isset(userInfo.getTabId()) || newAccessCheck() ) {
         userInfo.firstConnection = true;
         window.opener = null;
         userInfo.strageReset();
         userInfo.setReferrer();
         userInfo.setStayCount();
+        userInfo.gFrame = false;
       }
       userInfo.init();
-
       var emitData = {
           referrer: userInfo.referrer,
           time: userInfo.getTime(),
@@ -155,10 +184,9 @@
         };
 
       // チャットの契約をしている場合
-      if ( window.info.contract.chat ) {
+      if ( window.info.contract.chat && !(userInfo.gFrame && Number(userInfo.accessType) === Number(cnst.access_type.guest)) ) {
         sinclo.chatApi.observeType.emit(false, "");
       }
-
       // モニタリング中であればスルー
       if ( check.isset(userInfo.connectToken) ) {
         common.load.start();
@@ -170,12 +198,12 @@
           emit('connectedForSync', {});
 
           // チャットの契約をしている場合はウィジェット表示
-          if ( window.info.contract.chat ) {
+          if ( window.info.contract.chat && !(userInfo.gFrame && Number(userInfo.accessType) === Number(cnst.access_type.guest)) ) {
             common.makeAccessIdTag();
           }
         }
 
-        if ( check.isset(common.tmpParams) ) {
+        if ( check.isset(common.tmpParams) && Number(userInfo.accessType) === Number(cnst.access_type.host) ) {
           browserInfo.resetPrevList();
           emit('requestSyncStart', {
             accessType: common.params.type
@@ -223,7 +251,6 @@
     accessInfo: function(d){
       var obj = common.jParse(d);
       if ( obj.token !== common.token ) return false;
-
       if ( ('activeOperatorCnt' in obj) ) {
         window.info.activeOperatorCnt = obj['activeOperatorCnt'];
       }
@@ -261,8 +288,9 @@
 
       obj['prev'] = userInfo.prev;
       obj.stayCount = userInfo.getStayCount();
-
-      emit('customerInfo', obj);
+      if ( (userInfo.gFrame && Number(userInfo.accessType) === Number(cnst.access_type.guest)) === false ) {
+        emit('customerInfo', obj);
+      }
       emit('connectSuccess', {
         confirm: false,
         widget: window.info.widgetDisplay,
@@ -296,13 +324,14 @@
                 }
         };
 
+        if ( document.getElementById('sincloBox') === null ) return false;
+
         createStartTimer = window.setInterval(function(){
           if (window.info.widgetDisplay && !sinclo.trigger.flg) {
             window.clearInterval(createStartTimer);
             createStart();
           }
         }, 500);
-
     },
     getAccessInfo: function(d) { // guest only
       var obj = common.jParse(d);
@@ -322,18 +351,30 @@
       emitData.stayCount = userInfo.getStayCount();
       emit('customerInfo', emitData);
     },
-    getConnectInfo: function(d) {
-      var obj = common.jParse(d);
-      if ( userInfo.tabId !== obj.tabId ) return false;
+    createShareWindow: function(obj) { // 外部接続
+      if ( obj.tabId !== userInfo.tabId ) return false;
       if ( userInfo.accessType !== Number(cnst.access_type.guest) ) return false;
-      if ( userInfo.connectToken !== obj.connectToken ) return false;
-      emit('sendConnectInfo', {
-        accessType: userInfo.accessType,
-        tabId: userInfo.getTabId(),
-        userId: userInfo.userId,
-        accessId: userInfo.accessId,
-        connectToken: userInfo.connectToken
-      });
+      var title = location.host + 'の内容';
+      var content = location.host + 'が閲覧ページへのアクセスを求めています。<br>許可しますか';
+      popup.ok = function(){
+        browserInfo.resetPrevList();
+        userInfo.setConnect(obj.connectToken);
+
+        var size = browserInfo.windowSize();
+        var params = {
+          data: {
+            url: location.href,
+            userId: userInfo.userId,
+            tabId: userInfo.tabId,
+            connectToken: obj.connectToken
+          },
+          site: window.info.site
+        }
+        var url = window.info.site.files + "/frame/" + encodeURIComponent(JSON.stringify(params));
+
+        window.open(url, "_blank", "width=" + size.width + ", height=" + size.height + ", resizable=no,scrollbars=yes,status=no");
+      };
+      popup.set(title, content);
     },
     getWindowInfo: function(obj) {
       if ( obj.tabId !== userInfo.tabId ) return false;
@@ -343,19 +384,46 @@
       popup.ok = function(){
         userInfo.connectToken = obj.connectToken;
         browserInfo.resetPrevList();
+        userInfo.setConnect(obj.connectToken);
 
-        var size = browserInfo.windowSize();
+        emit('sendWindowInfo', {
+          userId: userInfo.userId,
+          tabId: userInfo.tabId,
+          connectToken: userInfo.connectToken,
+          // 解像度
+          screen: browserInfo.windowScreen(),
+          // ブラウザのサイズ
+          windowSize: browserInfo.windowSize(),
+          // スクロール位置の取得
+          scrollPosition: browserInfo.windowScroll()
+        });
+        this.remove();
+      };
+      popup.set(title, content);
+    },
+    startWindowSync: function(obj) {
+      if ( userInfo.accessType !== Number(cnst.access_type.guest) ) return false;
+      var title = location.host + 'の内容';
+      var content = location.host + 'が閲覧ページへのアクセスを求めています。<br>許可しますか';
+      popup.ok = function(){
+        userInfo.connectToken = obj.connectToken;
+        browserInfo.resetPrevList();
         var params = {
+          site: window.info.site,
           data: {
-            url: location.href,
             userId: userInfo.userId,
             tabId: userInfo.tabId,
+            url: location.href,
+            screen: browserInfo.windowScreen(), // 解像度
             connectToken: userInfo.connectToken
-          },
-          site: window.info.site
-        }
+          }
+        };
         var url = window.info.site.files + "/frame/" + encodeURIComponent(JSON.stringify(params));
-        window.open(url, "_blank", "width=" + size.width + ", height=" + size.height + ", resizable=no,scrollbars=yes,status=no");
+        window.open(url,
+                    "sinclo",
+                    "width=" + screen.availWidth/2 + ",height=" + screen.availHeight/2 +
+                    ",dialog=no,toolbar=no,location=no,status=no,menubar=no,directories=no,resizable=no,scrollbars=no"
+        );
 
         // emit('sendWindowInfo', {
         //   userId: userInfo.userId,
@@ -364,25 +432,8 @@
         //   // 解像度
         //   screen: browserInfo.windowScreen(),
         //   // ブラウザのサイズ
-        //   windowSize: browserInfo.windowSize(),
-        //   // スクロール位置の取得
-        //   scrollPosition: browserInfo.windowScroll()
+        //   windowSize: browserInfo.windowSize()
         // });
-
-/*        vcPopup.set(userInfo.tabId, userInfo.vc_receiverID);
-
-        // sendWindowInfoとほぼ同時にメッセージを送信してしまうと
-        // 企業側がFireFoxの場合windowを開くタイミングでapplyができないためウェイトを挟む
-        setTimeout(function(){
-          emit('videochatConfirmOK', {
-            userId: userInfo.userId,
-            fromTabId: userInfo.tabId,
-            fromConnectToken: userInfo.connectToken,
-            receiverID: userInfo.vc_receiverID
-          });
-        }, 300);
-        // 開始したタイミングでビデオチャット情報をセッションストレージに保存
-        common.saveVcInfo();*/
         this.remove();
       };
       popup.set(title, content);
@@ -398,12 +449,13 @@
         return false;
       }
       var sincloBox = document.getElementById('sincloBox');
-      // チャット未契約のときはウィジェットを非表示
-      if (sincloBox && !window.info.contract.chat) {
+      // チャット未契約か、外部接続のときはウィジェットを非表示
+      if (sincloBox && (!window.info.contract.chat || (userInfo.gFrame && Number(userInfo.accessType) === Number(cnst.access_type.guest)) )) {
         sincloBox.style.display = "none";
       }
-      common.load.start();
-      userInfo.setConnect(obj.connectToken);
+      if (!(userInfo.gFrame && Number(userInfo.accessType) === Number(cnst.access_type.guest))) {
+        common.load.start();
+      }
       if ( !check.isset(userInfo.sendTabId) ) {
         userInfo.sendTabId = obj.tabId;
         userInfo.syncInfo.set();
@@ -432,7 +484,6 @@
       $('select').each(function(){
         selectInfo.push(this.value);
       });
-
       emit('getSyncInfo', {
         userId: userInfo.userId,
         connectToken: userInfo.connectToken,
@@ -498,7 +549,7 @@
     syncResponce: function(d){
       var obj = common.jParse(d), cursor = common.cursorTag;
       // 画面共有用トークンでの認証に変更する？
-      if ( obj.to !== userInfo.tabId ) return false;
+      if ( check.isset(obj.to) && obj.to !== userInfo.tabId ) return false;
       if ( Number(obj.accessType) === Number(userInfo.accessType) ) return false;
       // カーソルを作成していなければ作成する
       if ( !document.getElementById('cursorImg') ) {
@@ -527,7 +578,6 @@
         cursor.style.left = obj.mousePoint.x + "px";
         cursor.style.top  = obj.mousePoint.y + "px";
       }
-
     },
     syncResponceEv: function (d) {
       var obj = common.jParse(d), elm;
@@ -573,16 +623,16 @@
         history.back();
       }
     },
-    receiveConnectEv: function(d){
-      var obj = JSON.parse(d);
-      if ( obj.to !== userInfo.tabId ) return false;
-    },
-    userDissconnectionEv: function(d){
-      var obj = JSON.parse(d);
-      if ( obj.connectToken !== userInfo.connectToken ) return false;
-      if ( obj.to !== userInfo.tabId ) return false;
-      emit('sendConfirmConnect', obj);
-    },
+    // receiveConnectEv: function(d){
+    //   var obj = JSON.parse(d);
+    //   if ( obj.to !== userInfo.tabId ) return false;
+    // },
+    // userDissconnectionEv: function(d){
+    //   var obj = JSON.parse(d);
+    //   if ( obj.connectToken !== userInfo.connectToken ) return false;
+    //   if ( obj.to !== userInfo.tabId ) return false;
+    //   emit('sendConfirmConnect', obj);
+    // },
     syncContinue:function (d) {
       var obj = JSON.parse(d);
       if ( obj.connectToken !== userInfo.connectToken ) return false;
@@ -754,8 +804,13 @@
     syncStop: function(d){
       var obj = common.jParse(d);
       syncEvent.stop(false);
-      window.clearTimeout(sinclo.syncTimeout);
+      if ( (userInfo.gFrame && Number(userInfo.accessType) === Number(cnst.access_type.guest)) ) {
+        window.parent.close();
+        return false;
+      }
+      if ( !check.isset(userInfo.connectToken) ) return false;
 
+      window.clearTimeout(sinclo.syncTimeout);
       userInfo.syncInfo.unset();
       if (!document.getElementById('sincloBox')) {
         common.makeAccessIdTag();
@@ -776,7 +831,7 @@
         }
         var sincloBox = document.getElementById('sincloBox');
         // チャット未契約のときはウィジェットを非表示
-        if (sincloBox && !window.info.contract.chat) {
+        if (sincloBox && (window.info.contract.chat || window.info.contract.synclo) ) {
           sincloBox.style.display = "block";
           sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
           sincloBox.setAttribute('data-openflg', false);
@@ -784,6 +839,72 @@
         }
 
       }, 500);
+    },
+    syncApi: {
+      init : function(type){
+        if ( type === cnst.sync_type.outer ) {
+          sinclo.syncApi.func = sinclo.syncApi._func['outer'];
+        }
+        else {
+          sinclo.syncApi.func = sinclo.syncApi._func['inner'];
+        }
+      },
+      func: {
+        formSync: null,
+        mouseSync: null,
+        scrollSync: null,
+        resizeSync: null,
+        pageSync: null,
+      },
+      _func: {
+        inner: {
+          formSync: {
+            send: function(){
+            },
+            receive: function(){
+            }
+          },
+          mouseSync: {
+            send: function(){
+            },
+            receive: function(){
+            }
+          },
+          scrollSync: {
+            send: function(){
+            },
+            receive: function(){
+            }
+          },
+          resizeSync: {
+            send: function(){
+            },
+            receive: function(){
+            }
+          },
+          pageSync: {
+            send: function(){
+            },
+            receive: function(){
+            }
+          },
+        },
+        outer: {
+          formSync: {
+            send: function(){
+            },
+            receive: function(){
+            }
+          },
+          mouseSync: {
+            send: function(){
+            },
+            receive: function(){
+            }
+          },
+
+        }
+      }
     },
     chatApi: {
         saveFlg: false,
