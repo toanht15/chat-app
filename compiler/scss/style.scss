@@ -2811,7 +2811,7 @@ ul.naviBtn {
 }
 
 /*　表示除外設定 */
-#MShareDisplaySettingIndexForm {
+#display_exclusion_index_form {
   textarea {
     border-radius: 0 !important;
     border: 1px solid #909090 !important;
@@ -2820,8 +2820,22 @@ ul.naviBtn {
   }
 }
 
-#MShareDisplaySettings_idx #script_setting_content {
-  padding-bottom:50px;
+#display_exclusions_form {
+  padding-bottom: 62px;
+
+  h3 {
+      border-bottom: 3px solid #C3D69B;
+      padding-left: 5px;
+      font-size: 13px;
+  }
+
+  .content {
+    margin-left: 1em;
+
+    pre {
+      line-height: 2em;
+    }
+  }
 }
 
 

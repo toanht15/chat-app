@@ -6,6 +6,11 @@
 class TCampaignsController extends AppController {
   public $uses = ['TCampaign'];
 
+  public function beforeFilter(){
+    parent::beforeFilter();
+    $this->set('title_for_layout', 'キャンペーン設定');
+  }
+
   /* *
    * 一覧画面
    * @return void
