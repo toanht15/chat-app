@@ -4,7 +4,7 @@
  * モニタリング機能
  */
 class CustomersController extends AppController {
-  public $uses = ['THistory', 'THistoryChatLog', 'TCampaign', 'MUser', 'MCustomer', 'MWidgetSetting', 'MChatNotification', 'TDictionary'];
+  public $uses = ['THistory', 'THistoryChatLog', 'TCampaign', 'MCompany', 'MUser', 'MCustomer', 'MWidgetSetting', 'MChatNotification', 'TDictionary'];
 
   public function beforeRender(){
     $this->set('siteKey', $this->userInfo['MCompany']['company_key']);
@@ -274,6 +274,8 @@ class CustomersController extends AppController {
     $this->_getNotificationSettingList();
     /* 簡易入力情報取得 */
     $this->_getDictionaryList();
+    /* 除外情報取得 */
+    $this->set('excludeList', $this->MCompany->getExcludeList($this->userInfo['MCompany']['id']));
     /* 契約状態取得 */
     $cType = "full";
     if ( !$this->coreSettings[C_COMPANY_USE_SYNCLO] && $this->coreSettings[C_COMPANY_USE_CHAT] ) {

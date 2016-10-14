@@ -651,14 +651,56 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       return str;
     }
 
+    $scope.checkToIP = function (ip){
+      var targetIps = <?php echo json_encode($excludeList['ips'], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
+      for( var n in targetIps ){
+        if ( targetIps[n].indexOf('/') > -1 ) {
+          var req = cidr2regex(targetIps[n]);
+          if ( ip.match(req) ) {
+            return false;
+          }
+        }
+        else {
+          if ( ip === targetIps[n] ) {
+            return false;
+          }
+        }
+      }
+      return true;
+    };
+
     /* パラメーターを取り除く */
     $scope.trimToURL = function (url){
-      var position = url.indexOf('?');
-      if ( position > 0 ) {
-        url = url.substr(0, position);
+      if ( typeof(url) !== 'string' ) return "";
+      var targetParams = <?php echo json_encode($excludeList['params'], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
+      var newUrl = url;
+      // パラメータの取得
+      var params = url.split('?'), param, targetParams;
+      newUrl = params[0];
+      if ( params[1] !== undefined) {
+        var param = params[1];
+        var paramList = params[1].split('&');
+        for ( var i in targetParams ) {
+          var target = targetParams[i];
+          var a = param.split(target + "=");
+          if ( a.length > 1 ) {
+            if ( a[1].indexOf('&') > -1 ) {
+              var set = target + "=" + a[1].slice(0, a[1].indexOf('&') + 1);
+            }
+            else {
+              var set = target + "=" + a[1];
+              a[0] = a[0].slice(0, -1);
+            }
+            param = param.replace(set, "");
+            param = param.slice(0, -1);
+          }
+        }
+        if ( param.length > 0 ) {
+          newUrl += "?" + param;
+        }
       }
-      return url;
-    }
+      return newUrl;
+    };
 
     $scope.isset = function(value){
       var result;
@@ -762,9 +804,17 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     });
 
     function pushToList(obj){
-      $scope.monitorList[obj.tabId] = obj;
 
+      if ( 'ipAddress' in obj && 'ipAddress' in obj) {
+        if (!$scope.checkToIP(obj.ipAddress)) return false;
+      }
+
+      $scope.monitorList[obj.tabId] = obj;
       $scope.getCustomerInfoFromMonitor(obj);
+
+      if ( 'referrer' in obj && 'referrer' in obj) {
+        $scope.monitorList[obj.tabId].referrer = $scope.trimToURL(obj.referrer);
+      }
 
       if ( 'connectToken' in obj && 'responderId' in obj) {
         $scope.monitorList[obj.tabId].connectToken = obj.connectToken;
@@ -784,7 +834,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     socket.on('getAccessInfo', function (data) {
       var obj = JSON.parse(data);
-console.log(obj);
 <?php if($widgetCheck): ?>
       if ( Number(obj.userId) === Number(myUserId) ) {
         if ( String(obj.status) == "<?=C_OPERATOR_ACTIVE?>") {
@@ -1084,6 +1133,7 @@ console.log(obj);
     // チャット情報取得関数
     socket.on('sendChatInfo', function(d){
       var obj = JSON.parse(d);
+      if ( !(obj.tabId in $scope.monitorList) ) return false;
       if ('chatUnreadId' in obj) {
         $scope.monitorList[obj.tabId].chatUnreadId  = obj.chatUnreadId;
       }
