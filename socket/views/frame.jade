@@ -26,11 +26,11 @@ block content
     createElm(l[i]);
 
   ul#sync_tools
-    li(onclick="iframeLocation.back(); return false;")
+    li(id="prevBtn", class="unlight", onclick="iframeLocation.back(); return false;")
       span
         img(src="#{img}icon_back.png", width="40", height="40", alt="")
       p 戻る
-    li(onclick="iframeLocation.forward(); return false;")
+    li(id="nextBtn", class="unlight", onclick="iframeLocation.forward(); return false;")
       span
         img(src="#{img}icon_next.png", width="40", height="40", alt="")
       p 進む
@@ -38,10 +38,6 @@ block content
       span
         img(src="#{img}icon_reconnect.png", width="40", height="40", alt="")
       p 再接続
-    li
-      span
-        img(src="#{img}icon_link.png", width="40", height="40", alt="")
-      p ﾀﾞｲﾚｸﾄﾘﾝｸ
     li(onclick="sinclo.syncStop()")
       span
         img(src="#{img}icon_disconnect.png", width="40", height="40", alt="")

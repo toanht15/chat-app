@@ -148,11 +148,28 @@ var socket, userId, tabId, iframe, windowSize, windowClose, connectToken, url, e
         status: s,
         position: p
       });
+      this.setBtnColor();
     },
     syncLocationOfFrame: function(d){
       var obj = JSON.parse(d);
-      iframeLocation.status = obj.status;
-      iframeLocation.position = obj.position;
+      this.status = obj.status;
+      this.position = obj.position;
+      this.setBtnColor();
+    },
+    setBtnColor: function(){
+      if ( this.position === 0 ) {
+        $("#prevBtn:not(.unlight)").addClass('unlight');
+      }
+      else {
+        $("#prevBtn.unlight").removeClass('unlight');
+      }
+
+      if ( this.position < (this.list.length - 1) ) {
+        $("#nextBtn.unlight").removeClass('unlight');
+      }
+      else {
+        $("#nextBtn:not(.unlight)").addClass('unlight');
+      }
     },
     get: function(){
       var location = JSON.parse(sessionStorage.getItem(this.sessionName));
@@ -162,6 +179,7 @@ var socket, userId, tabId, iframe, windowSize, windowClose, connectToken, url, e
       if ( !this.list[this.position] ) {
         this.position = ( this.list.length > 0 ) ? this.list.length - 1 : 0;
       }
+      this.setBtnColor();
     },
     save: function(){
       sessionStorage.setItem(this.sessionName, JSON.stringify({
@@ -204,6 +222,7 @@ window.onload = function(){
     }
 
     url = iframeLocation.list[iframeLocation.position];
+    iframeLocation.setBtnColor();
 
     var content = document.getElementById('customer_flame');
     var html  = "<iframe src='' style='transform-origin: 0 0' width='300' height='300'></iframe>";
@@ -264,6 +283,7 @@ window.onload = function(){
           iframeLocation.list.push(obj.url);
         }
         iframeLocation.position = iframeLocation.list.length - 1;
+        iframeLocation.setBtnColor();
       }
 
       iframeLocation.status = null;
@@ -343,11 +363,11 @@ window.onload = function(){
 </script>
 
 <ul id="sync_tools">
-  <li onclick="iframeLocation.back(); return false;">
+  <li id="prevBtn" class="unlight" onclick="iframeLocation.back(); return false;">
     <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_back.png" width="40" height="40" alt=""></span>
     <p>戻る</p>
   </li>
-  <li onclick="iframeLocation.forward(); return false;">
+  <li id="nextBtn" class="unlight" onclick="iframeLocation.forward(); return false;">
     <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_next.png" width="40" height="40" alt=""></span>
     <p>進む</p>
   </li>
@@ -355,14 +375,6 @@ window.onload = function(){
     <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_reconnect.png" width="40" height="40" alt=""></span>
     <p>再接続</p>
   </li>
-  <li>
-    <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_link.png" width="40" height="40" alt=""></span>
-    <p>ﾀﾞｲﾚｸﾄﾘﾝｸ</p>
-  </li>
-<!--   <li class="invisibility">
-  <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_document.png" width="40" height="40" alt=""></span>
-  <p>資料共有</p>
-</li> -->
   <li onclick="windowClose()">
     <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_disconnect.png" width="40" height="40" alt=""></span>
     <p>終了</p>

@@ -16,79 +16,79 @@
 $naviElm = "";
 $contentStyle = "";
 if( strcmp($this->name, 'Login') !== 0 ) {
-	$naviElm = $this->element('navi');
-	$contentStyle = "position: absolute; top: 60px; left: 60px; right: 0; bottom: 0";
+  $naviElm = $this->element('navi');
+  $contentStyle = "position: absolute; top: 60px; left: 60px; right: 0; bottom: 0";
 }
 
 ?>
 <!DOCTYPE html>
 <html>
 <head>
-	<?php echo $this->Html->charset(); ?>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>
-		<?php echo $this->fetch('title'); ?> | sinclo
-	</title>
-	<?php
-		echo $this->Html->meta('icon');
-		// TODO 後程検討
-		// キャッシュ無効
-		echo $this->Html->meta(array('http-equiv' => "Pragma", 'content' => "no-cache"));
-		echo $this->Html->meta(array('http-equiv' => "Cache-Control", 'content' => "no-cache"));
-		echo $this->fetch('meta');
-		echo $this->fetch('css');
-		echo $this->fetch('script');
-		echo $this->Html->css("multi-select.css");
-		echo $this->Html->css("clockpicker.css");
-		echo $this->Html->css("standalone.css");
-		echo $this->Html->css("style.css");
-		echo $this->Html->css("modal.css");
-		echo $this->Html->script("//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js");
-		if (strcmp($this->name, "Customers") === 0) {
-			echo $this->Html->script(C_NODE_SERVER_ADDR.C_NODE_SERVER_WS_PORT."/socket.io/socket.io.js");
-		}
-		echo $this->Html->script("jquery.multi-select.js");
-		echo $this->Html->script("clockpicker.js");
-		echo $this->Html->script("common.js");
-		echo $this->Html->script("//ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js");
-		echo $this->Html->script("//ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-sanitize.js");
-		echo $this->Html->script("angular.validate.js");
-		echo $this->Html->script("cidr2regex.js");
-		echo $this->element("common-js");
-	?>
+  <?php echo $this->Html->charset(); ?>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>
+    <?php echo $this->fetch('title'); ?> | sinclo
+  </title>
+  <?php
+    echo $this->Html->meta('icon');
+    // TODO 後程検討
+    // キャッシュ無効
+    echo $this->Html->meta(array('http-equiv' => "Pragma", 'content' => "no-cache"));
+    echo $this->Html->meta(array('http-equiv' => "Cache-Control", 'content' => "no-cache"));
+    echo $this->fetch('meta');
+    echo $this->fetch('css');
+    echo $this->fetch('script');
+    echo $this->Html->css("multi-select.css");
+    echo $this->Html->css("clockpicker.css");
+    echo $this->Html->css("standalone.css");
+    echo $this->Html->css("style.css");
+    echo $this->Html->css("modal.css");
+    echo $this->Html->script("//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js");
+    if (strcmp($this->name, "Customers") === 0) {
+      echo $this->Html->script(C_NODE_SERVER_ADDR.C_NODE_SERVER_WS_PORT."/socket.io/socket.io.js");
+    }
+    echo $this->Html->script("jquery.multi-select.js");
+    echo $this->Html->script("clockpicker.js");
+    echo $this->Html->script("common.js");
+    echo $this->Html->script("//ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js");
+    echo $this->Html->script("//ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-sanitize.js");
+    echo $this->Html->script("angular.validate.js");
+    echo $this->Html->script("cidr2regex.js");
+    echo $this->element("common-js");
+  ?>
 </head>
 <body>
-	<div id="container">
-		<div id="header">
-			<?php if( strcmp($this->name, 'Login') !== 0 ): ?>
-				<?= $this->element('navi') ?>
-			<?php endif ;?>
-		</div>
-		<div id="content" style="<?=$contentStyle?>">
-			<?= $this->element('popup') ?>
-			<?php echo $this->Flash->render(); ?>
+  <div id="container">
+    <div id="header">
+      <?php if( strcmp($this->name, 'Login') !== 0 ): ?>
+        <?= $this->element('navi') ?>
+      <?php endif ;?>
+    </div>
+    <div id="content" style="<?=$contentStyle?>">
+      <?= $this->element('popup') ?>
+      <?php echo $this->Flash->render(); ?>
 
-			<?php echo $this->fetch('content'); ?>
-		</div>
-		<div id="footer">
-		</div>
-	</div>
+      <?php echo $this->fetch('content'); ?>
+    </div>
+    <div id="footer">
+    </div>
+  </div>
 
 <?php if ( Configure::read("debug") != 0 ): ?>
-	<section>
-		<div id="debug-area-toggle">Debug</div>
-		<div id="debug-area">
-			<?php echo $this->element('sql_dump'); ?>
-		</div>
-		<script type="text/javascript">
-			$("#debug-area-toggle").on('click', function(){
-				$("#debug-area").animate(
-					{opacity: "toggle"},
-					"slow"
-				);
-			});
-		</script>
-	</section>
+  <section>
+    <div id="debug-area-toggle">Debug</div>
+    <div id="debug-area">
+      <?php echo $this->element('sql_dump'); ?>
+    </div>
+    <script type="text/javascript">
+      $("#debug-area-toggle").on('click', function(){
+        $("#debug-area").animate(
+          {opacity: "toggle"},
+          "slow"
+        );
+      });
+    </script>
+  </section>
 <?php endif; ?>
 
 </body>
