@@ -50,16 +50,16 @@ class HistoriesController extends AppController {
     $orList = [];
 
     if ( !empty($ret['MCompany']['exclude_ips']) ) {
-      foreach( explode(PHP_EOL, trim($ret['MCompany']['exclude_ips'])) as $v ){
-        if ( preg_match("/^[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}$/", $v) ) {
-          $orList[] = "INET_ATON('".$v."') = INET_ATON(THistory.ip_address)";
+      foreach( explode("\n", trim($ret['MCompany']['exclude_ips'])) as $v ){
+        if ( preg_match("/^[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}$/", trim($v)) ) {
+          $orList[] = "INET_ATON('".trim($v)."') = INET_ATON(THistory.ip_address)";
           continue;
         }
-        $ips = $this->MCompany->cidrToRange($v);
+        $ips = $this->MCompany->cidrToRange(trim($v));
         $list = [];
         if ( count($ips) === 2 ) {
-          $list[] = "INET_ATON('".$ips[0]."') <= INET_ATON(THistory.ip_address)";
-          $list[] = "INET_ATON('".$ips[1]."') >= INET_ATON(THistory.ip_address)";
+          $list[] = "INET_ATON('".trim($ips[0])."') <= INET_ATON(THistory.ip_address)";
+          $list[] = "INET_ATON('".trim($ips[1])."') >= INET_ATON(THistory.ip_address)";
         }
         $orList[] = $list;
       }

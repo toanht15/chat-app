@@ -28,7 +28,7 @@ class MCompany extends AppModel {
 
   static function checkParams($v){
     if ( !empty($v['exclude_params']) ) {
-      $list = explode(PHP_EOL, $v['exclude_params']);
+      $list = explode("\n", $v['exclude_params']);
       foreach( $list as $val ){
         if ( empty($val) ) { continue; }
         if ( preg_match('/[\?|\=|\&]/', $val) ) {
@@ -41,10 +41,10 @@ class MCompany extends AppModel {
 
   static function checkIps($v){
     if ( !empty($v['exclude_ips']) ) {
-      $list = explode(PHP_EOL, $v['exclude_ips']);
+      $list = explode("\n", $v['exclude_ips']);
       foreach( $list as $val ){
         if ( empty($val) ) { continue; }
-        if ( !preg_match('/^(25\d|2[0-4]\d|1\d{2}|\d{1,2}).(25\d|2[0-4]\d|1\d{2}|\d{1,2}).(25\d|2[0-4]\d|1\d{2}|\d{1,2}).(25\d|2[0-4]\d|1\d{2}|\d{1,2})(\/3[0-2]|\/[1|2]\d|\/\d)?$/', $val) ) {
+        if ( !preg_match('/^(25\d|2[0-4]\d|1\d{2}|\d{1,2}).(25\d|2[0-4]\d|1\d{2}|\d{1,2}).(25\d|2[0-4]\d|1\d{2}|\d{1,2}).(25\d|2[0-4]\d|1\d{2}|\d{1,2})(\/3[0-2]|\/[1|2]\d|\/\d)?$/', trim($val)) ) {
           return false;
         }
       }
@@ -57,13 +57,13 @@ class MCompany extends AppModel {
     $paramList = [];
     $ipList = [];
     if ( !empty($ret['MCompany']['exclude_params']) ) {
-      $paramList = explode(PHP_EOL, trim($ret['MCompany']['exclude_params']));
+      $paramList = explode("\n", trim($ret['MCompany']['exclude_params']));
     }
     if ( !empty($ret['MCompany']['exclude_ips']) ) {
-      $ipList = explode(PHP_EOL, trim($ret['MCompany']['exclude_ips']));
+      $ipList = explode("\n", trim($ret['MCompany']['exclude_ips']));
     }
 
-    return ['params' => $paramList, 'ips' => $ipList];
+    return ['params' => array_map('trim', $paramList), 'ips' => array_map('trim', $ipList)];
   }
 
   /**
