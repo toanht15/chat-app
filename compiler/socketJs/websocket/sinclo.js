@@ -419,7 +419,8 @@
             connectToken: userInfo.connectToken
           }
         };
-        var url = window.info.site.files + "/frame/" + encodeURIComponent(JSON.stringify(params));
+        var filePath = window.info.site.files.replace("https://", "http://");
+        var url = filePath + "/frame/" + encodeURIComponent(JSON.stringify(params));
         window.open(url,
                     "sinclo",
                     "width=" + screen.availWidth/2 + ",height=" + screen.availHeight/2 +
