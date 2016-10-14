@@ -813,7 +813,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       $scope.getCustomerInfoFromMonitor(obj);
 
       if ( 'referrer' in obj && 'referrer' in obj) {
-        $scope.monitorList[obj.tabId].referrer = $scope.trimToURL(obj.referrer);
+        $scope.monitorList[obj.tabId].ref = $scope.trimToURL(obj.referrer);
       }
 
       if ( 'connectToken' in obj && 'responderId' in obj) {
