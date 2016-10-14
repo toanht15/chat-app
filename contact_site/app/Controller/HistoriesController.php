@@ -47,9 +47,9 @@ class HistoriesController extends AppController {
   public function beforeFilter(){
     parent::beforeFilter();
     $ret = $this->MCompany->read(null, $this->userInfo['MCompany']['id']);
+    $orList = [];
 
     if ( !empty($ret['MCompany']['exclude_ips']) ) {
-      $orList = [];
       foreach( explode(PHP_EOL, trim($ret['MCompany']['exclude_ips'])) as $v ){
         if ( preg_match("/^[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}$/", $v) ) {
           $orList[] = "INET_ATON('".$v."') = INET_ATON(THistory.ip_address)";
