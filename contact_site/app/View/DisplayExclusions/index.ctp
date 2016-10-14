@@ -4,7 +4,7 @@
 
   <div id='display_exclusions_add_title'>
       <div class="fLeft">
-        <?= $this->Html->image('dictionary_g.png', array('alt' => 'キャンペーン管理', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?>
+        <?= $this->Html->image('exclusion_g.png', array('alt' => 'キャンペーン管理', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?>
       </div>
       <h1>表示除外設定<span id="sortMessage"></span></h1>
   </div>

@@ -86,11 +86,11 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
     <?php endif; ?>
     <?php if ( $adminFlg ): ?>
       <div class="icon">
-        <?= $this->htmlEx->naviLink('キャンペーン', 'widget.png', ['href' => ['controller' => 'TCampaigns', 'action' => 'index']]) ?>
+        <?= $this->htmlEx->naviLink('キャンペーン', 'campaign.png', ['href' => ['controller' => 'TCampaigns', 'action' => 'index']]) ?>
       </div>
     <?php endif; ?>
     <div class="icon">
-        <?= $this->htmlEx->naviLink('表示除外設定', 'widget.png', ['href' => ['controller' => 'DisplayExclusions', 'action' => 'index']]) ?>
+        <?= $this->htmlEx->naviLink('表示除外設定', 'exclusion.png', ['href' => ['controller' => 'DisplayExclusions', 'action' => 'index']]) ?>
       </div>
     </div>
     <!-- /* 共通 */ -->
