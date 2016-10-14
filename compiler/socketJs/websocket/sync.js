@@ -230,17 +230,35 @@ iframeLocation = {
       status: s,
       position: p
     });
+    this.setBtnColor();
   },
   syncLocationOfFrame: function(d){
     var obj = JSON.parse(d);
     iframeLocation.status = obj.status;
     iframeLocation.position = obj.position;
+    this.setBtnColor();
+  },
+  setBtnColor: function(){
+    if ( this.position === 0 ) {
+      $("#prevBtn:not(.unlight)").addClass('unlight');
+    }
+    else {
+      $("#prevBtn.unlight").removeClass('unlight');
+    }
+
+    if ( this.position < (this.list.length - 1) ) {
+      $("#nextBtn.unlight").removeClass('unlight');
+    }
+    else {
+      $("#nextBtn:not(.unlight)").addClass('unlight');
+    }
   },
   get: function(){
     var location = JSON.parse(sessionStorage.getItem(this.sessionName));
     this.status = location.status;
     this.list = location.list;
     this.position = location.position;
+    this.setBtnColor();
   },
   save: function(){
     sessionStorage.setItem(this.sessionName, JSON.stringify({
@@ -495,6 +513,7 @@ sinclo = {
           iframeLocation.list.push(obj.url);
         }
         iframeLocation.position = iframeLocation.list.length - 1;
+        iframeLocation.setBtnColor();
       }
 
       iframeLocation.status = null;
@@ -544,6 +563,7 @@ init = function(){
     }
 
     url = iframeLocation.list[iframeLocation.position];
+    iframeLocation.setBtnColor();
 
     var frameDiv = document.getElementById('customer_flame');
     iframe = document.createElement('iframe');
@@ -587,6 +607,9 @@ $(window).on("resize", function(e){
   var windowSize = common.windowSize();
   iframe.width = windowSize.width;
   iframe.height = windowSize.height;
+  if ( iframe.height < 310 ) {
+    window.resizeTo(window.outerWidth, 310 + (window.outerHeight - window.innerHeight));
+  }
 });
 
 (function(){

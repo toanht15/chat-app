@@ -1787,6 +1787,10 @@ ul.naviBtn {
       background-color: #353535;
     }
 
+    &.unlight {
+      background-color: #bdbdbd!important;
+    }
+
     span {
       padding: 0 20px;
       display: inline-block;

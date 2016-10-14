@@ -41,6 +41,10 @@ iframe {
   background-color: #353535;
 }
 
+#sync_tools li.unlight {
+  background-color: #bdbdbd !important;
+}
+
 #sync_tools li span {
   padding: 0 20px;
   display: inline-block;
