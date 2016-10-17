@@ -1468,11 +1468,18 @@ var socket, // socket.io
     evList: [
       {
         type: "mousemove",
+        timer : null,
         ev: function(e){
-          emit('syncBrowserInfoFrame', {
-            accessType: userInfo.accessType,
-            mousePoint: {x: e.clientX, y: e.clientY}
-          });
+          if ( this.timer ) {
+            return false;
+          }
+          this.timer = setTimeout(function(){
+            this.timer = null;
+            emit('syncBrowserInfoFrame', {
+              accessType: userInfo.accessType,
+              mousePoint: {x: e.clientX, y: e.clientY}
+            });
+          }, 10);
         }
       },
       {
