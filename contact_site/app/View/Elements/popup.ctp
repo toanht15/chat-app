@@ -73,7 +73,8 @@ var popupEvent = {
                     closeBtn.onclick = function(){
                         return popupEvent.closePopup(1);
                     };
-                    var closeBtn = _button("別ウィンドウ接続");
+                    var closeBtn = _button("別ウィンドウ接続（ベータ版）");
+                    closeBtn.classList.add('betaBtn');
                     closeBtn.onclick = function(){
                         return popupEvent.closePopup(2);
                     };

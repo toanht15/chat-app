@@ -439,11 +439,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var popupClass = "p-cus-connection-full";
       if ( smartphone ) {
         popupClass = "p-cus-connection";
-        message += "<span style='color: #FF7B7B'><?=Configure::read('message.const.chatStartConfirm')?></span>";
       }
-      else {
-        message += "<span style='color: #FF7B7B'><?php echo Configure::read('message.const.chatStartConfirm').Configure::read('message.const.chatStartConfirmBeta')?></span>";
-      }
+      message += "<span style='color: #FF7B7B'><?=Configure::read('message.const.chatStartConfirm')?></span>";
       modalOpen.call(window, message, popupClass, 'メッセージ');
        popupEvent.closePopup = function(type){
           sessionStorage.clear();

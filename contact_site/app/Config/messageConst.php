@@ -12,7 +12,6 @@ $const['doubleLoginFailed'] = "他のブラウザでログインされたため�
 $const['notFoundId'] = "対象のIDは削除されたか、アクセスできません";
 
 $const['chatStartConfirm'] = "※ お客様に「許可しますか？」のダイアログが表示されるので、<br>　「許可する」をクリックするよう誘導してください<br>";
-$const['chatStartConfirmBeta'] = "※ 「別ウィンドウ接続」はβ版になります。";
 
 $message['const'] = $const;
 
