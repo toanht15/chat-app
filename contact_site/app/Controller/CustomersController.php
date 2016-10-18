@@ -77,6 +77,7 @@ class CustomersController extends AppController {
       'ua' => 'プラットフォーム／ブラウザ',
       'stayCount' => '訪問回数',
       'time' => 'アクセス日時',
+      'campaign' => 'キャンペーン',
       'stayTime' => '滞在時間',
       'page' => '閲覧ページ数',
       'title' => '閲覧中ページ',
