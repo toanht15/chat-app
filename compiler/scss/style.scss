@@ -2886,10 +2886,14 @@ ul.naviBtn {
 
   .content {
     margin-left: 1em;
-
     pre {
       line-height: 2em;
     }
+
+    div {
+      display: flex;
+    }
+
   }
 }
 

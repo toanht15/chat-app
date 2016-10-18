@@ -10,13 +10,14 @@
   </div>
   <div id='display_exclusions_form' class="p20x">
     <?= $this->Form->create('MCompany', ['type' => 'post', 'url' => ['controller' => 'DisplayExclusions', 'action' => 'index']]); ?>
+      <?= $this->Form->input('id', array('type' => 'hidden')); ?>
+
       <h3>１．除外パラメータ設定</h3>
       <div class="content">
         <pre>リアルタイムモニタや履歴にて表示不要なURLパラメータ名を指定します。&#10;複数指定する場合は改行して入力してください。</pre>
-        <?= $this->Form->input('id', array('type' => 'hidden')); ?>
         <?= $this->Form->input('exclude_params', [
           'type' => 'textarea',
-          'div' => false,
+          'div' => true,
           'cols' => 55,
           'rows' => 15,
           'label' => false
@@ -27,10 +28,9 @@
       <div class="content">
         <pre>リアルタイムモニタや履歴にて表示不要なIPアドレスを指定します。&#10;なお、CIDRを用いたIPアドレスの範囲指定も可能です。&#10; 例：「192.192.192.0/24」と入力した場合、192.192.192.0～192.192.192.255が一括で除外されます。
 複数指定する場合は改行して入力してください。</pre>
-        <?= $this->Form->input('id', array('type' => 'hidden')); ?>
         <?= $this->Form->input('exclude_ips', [
           'type' => 'textarea',
-          'div' => false,
+          'div' => true,
           'cols' => 55,
           'rows' => 15,
           'label' => false

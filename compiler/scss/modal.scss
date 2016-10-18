@@ -214,15 +214,17 @@
         }
       }
 
-      &.p-cus-connection {
+      &.p-cus-connection, &.p-cus-connection-full {
         width: 500px;
 
         div#popup-button {
           display: flex;
+          flex-direction: row;
+          justify-content: space-around;
           margin: 0 25px;
 
           a {
-              width: 140px;
+              flex-basis: 140px;
               height: 25px;
               margin: 0 5px;
           }

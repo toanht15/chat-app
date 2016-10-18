@@ -11,7 +11,8 @@ $const['deleteFailed'] = "削除処理に失敗しました";
 $const['doubleLoginFailed'] = "他のブラウザでログインされたため、自動ログアウトを行いました";
 $const['notFoundId'] = "対象のIDは削除されたか、アクセスできません";
 
-$const['chatStartConfirm'] = "※ お客様に「許可しますか？」のダイアログが表示されるので、<br>「許可する」をクリックするよう誘導してください";
+$const['chatStartConfirm'] = "※ お客様に「許可しますか？」のダイアログが表示されるので、<br>　「許可する」をクリックするよう誘導してください<br>";
+$const['chatStartConfirmBeta'] = "※ 「別ウィンドウ接続」はβ版になります。";
 
 $message['const'] = $const;
 
