@@ -1744,10 +1744,9 @@ var socket, // socket.io
         // フォーム制御
         $(document).submit(function(e){
           if ( userInfo.accessType !== cnst.access_type.host ) {
-            emit('requestSyncStop', {message: "お客様がsubmitボタンをクリックしましたので、\n画面共有を終了します。"});
+            emit('requestSyncStopForSubmit', {message: "お客様がsubmitボタンをクリックしましたので、\n画面共有を終了します。"});
           }
           else {
-            emit('requestSyncStop', {});
             e.preventDefault();
             e.stopPropagation();
             return false;
@@ -2345,7 +2344,7 @@ function emit(evName, data){
   ) {
     data.connectToken = userInfo.get(cnst.info_type.connect);
   }
-  if ( evName == "sendWindowInfo" ) {
+  if ( evName == "sendWindowInfo" || evName == "requestSyncStopForSubmit" ) {
     data.connectToken = userInfo.connectToken;
   }
   if ( evName == "requestSyncStop" && userInfo.accessType === cnst.access_type.host ) {

@@ -520,6 +520,14 @@ sinclo = {
       iframeLocation.save();
     }, 500);
   },
+  syncStopForSubmit: function(d){
+    var obj = JSON.parse(d);
+    if ( common.cursorTag ) {
+      common.cursorTag.parentNode.removeChild(cursorImg);
+    }
+    common.cursorTag = undefined;
+    // TODO 閉じる？
+  },
   syncStop: function(d){
     emit('requestSyncStop', {
       type: 2,
@@ -599,6 +607,10 @@ init = function(){
 
   st.on("resUrlChecker", function(d){
     sinclo.resUrlChecker(d);
+  }); // socket-on: syncResponce
+
+  st.on("syncStopForSubmit", function(d){
+    sinclo.syncStopForSubmit(d);
   }); // socket-on: syncResponce
 
 };

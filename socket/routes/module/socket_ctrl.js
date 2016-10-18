@@ -793,6 +793,19 @@ io.sockets.on('connection', function (socket) {
   });
 
   /**
+   * サブミットを使った、画面同期停止
+   * */
+  socket.on('requestSyncStopForSubmit', function (data) {
+    var obj = JSON.parse(data);
+    if ( isset(obj.connectToken) ) {
+      emit.toUser('syncStop', obj, getSessionId(obj.siteKey, obj.tabId, 'syncFrameSessionId'));
+      emit.toUser('syncStopForSubmit', obj, getSessionId(obj.siteKey, obj.tabId, 'shareWindowId'));
+      // 企業一括
+      emit.toCompany('syncStop', data, obj.siteKey); // リアルタイムモニタを更新する為
+    }
+  });
+
+  /**
    * 企業フレーム:1, 消費者フレーム:2,企業インライン:3, 消費者インライン:4
    * */
   socket.on('requestSyncStop', function (data) {
@@ -812,13 +825,13 @@ io.sockets.on('connection', function (socket) {
 
           if ( getSessionId(obj.siteKey, obj.tabId, 'shareWindowFlg') ) {
             // 企業フレーム
-            emit.toUser('syncStop', obj, getSessionId(obj.siteKey, obj.tabId, 'syncFrameSessionId'));
+            emit.toUser('syncStop', obj, getSessionId(obj.siteKey, obj.tabId, 'shareWindowFlg'));
             // 企業インライン
             // emit.toUser('syncStop', obj, getSessionId(obj.siteKey, obj.tabId, 'syncSessionId'));
             // 消費者フレーム
-            emit.toUser('syncStop', obj, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
-            // 消費者インライン
             emit.toUser('syncStop', obj, getSessionId(obj.siteKey, obj.tabId, 'syncFrameSessionId'));
+            // 消費者インライン
+            emit.toUser('syncStop', obj, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
             syncStopCtrl(obj.siteKey, obj.tabId, true);
           }
           else {
@@ -1223,7 +1236,7 @@ io.sockets.on('connection', function (socket) {
   // ビデオチャット関連
   // ビデオチャットで利用している各値はプレフィックス（vc_）をつけている。
   // -----------------------------------------------------------------------
-  socket.on('confirmVideochatStart', function (data) {
+/*  socket.on('confirmVideochatStart', function (data) {
     var obj = JSON.parse(data);
     // 同形ウィンドウを作成するための情報取得依頼
     if ( !getSessionId(obj.siteKey, obj.toTabId, 'sessionId') ) return false;
@@ -1256,7 +1269,7 @@ io.sockets.on('connection', function (socket) {
       emit.toUser('askMakeOffer', data, vc_connectList[obj.to]);
     }
   });
-
+*/
   socket.on('sendMessage', function(d){
     var obj = JSON.parse(d);
     var host = (obj.host !== "true") ? "host" : "guest";
