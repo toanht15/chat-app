@@ -559,19 +559,19 @@ var socket, // socket.io
         sincloBox.setAttribute('data-openflg', false);
         sinclo.operatorInfo.header = document.querySelector('#sincloBox #widgetHeader');
 
-        $(".widgetCtrl").click(function(){
-            var target = $(".widgetCtrl.selected"), clickTab = $(this).data('tab');
+        $("#sincloBox .widgetCtrl").click(function(){
+            var target = $("#sincloBox .widgetCtrl.selected"), clickTab = $(this).data('tab');
             target.removeClass("selected");
             $("#sincloBox").height("");
             $(this).addClass("selected");
 
             if ( clickTab === "call" ) {
-              $("#chatTab").removeClass('flexBox');
-              $("#callTab").addClass('flexBox');
+              $("#sincloBox #chatTab").removeClass('flexBox');
+              $("#sincloBox #callTab").addClass('flexBox');
             }
             else {
-              $("#callTab").removeClass('flexBox');
-              $("#chatTab").addClass('flexBox');
+              $("#sincloBox #callTab").removeClass('flexBox');
+              $("#sincloBox #chatTab").addClass('flexBox');
               sinclo.chatApi.showUnreadCnt();
               sinclo.chatApi.scDown();
             }

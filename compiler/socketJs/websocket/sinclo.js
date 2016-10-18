@@ -23,11 +23,11 @@
             height += $("#sincloBox #widgetHeader").outerHeight(true);
             if ( $("#sincloBox").children().is("#navigation") ) {
               height += $("#sincloBox > #navigation").outerHeight(true);
-              var tab = $("#navigation li.selected").data('tab');
-              height += $("#" + tab + "Tab").outerHeight(true);
+              var tab = $("#sincloBox #navigation li.selected").data('tab');
+              height += $("#sincloBox #" + tab + "Tab").outerHeight(true);
             }
             else {
-              height += $("[id$='Tab']").outerHeight(true);
+              height += $("#sincloBox [id$='Tab']").outerHeight(true);
             }
             height += $("#sincloBox > #fotter").outerHeight(true);
           }
@@ -116,8 +116,8 @@
               sincloBox.style.height = document.documentElement.clientHeight + "px";
             }
             else {
-              var height = $("#widgetHeader").outerHeight(true);
-              height += $("#chatTab").outerHeight(true);
+              var height = $("#sincloBox #widgetHeader").outerHeight(true);
+              height += $("#sincloBox #chatTab").outerHeight(true);
               sincloBox.style.height = height;
             }
           }
@@ -1039,7 +1039,7 @@
               }
             }, 500);
             var chatTalk = document.getElementById('chatTalk');
-            $('#chatTalk').animate({
+            $('#sincloBox #chatTalk').animate({
               scrollTop: chatTalk.scrollHeight - chatTalk.clientHeight
             }, 300);
         },
@@ -1101,7 +1101,7 @@
           }
           this.scDownTimer = setTimeout(function(){
             var chatTalk = document.getElementById('chatTalk');
-            $('#chatTalk').animate({
+            $('#sincloBox #chatTalk').animate({
               scrollTop: chatTalk.scrollHeight - chatTalk.clientHeight
             }, 300);
           }, 500);
@@ -1195,7 +1195,7 @@
                 unreadIcon.parentNode.removeChild(unreadIcon);
             }
             if ( Number(sinclo.chatApi.unread) > 0 ) {
-                if ($("#chatTab").css("display") !== "none" && String(flg) === "true") {
+                if ($("#sincloBox #chatTab").css("display") !== "none" && String(flg) === "true") {
                     emit("isReadFromCustomer", {});
                     sinclo.chatApi.unread = 0;
                     return false;
