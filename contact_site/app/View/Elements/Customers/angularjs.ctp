@@ -331,10 +331,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     };
 
     $scope.search = function(array){
-      var result = {};
+      var result = {}, targetField;
+      targetField = ( Number($scope.fillterTypeId) === 2 ) ? 'ipAddress' : 'accessId';
       if ( $scope.searchText ) {
         angular.forEach(array, function(value, key) {
-          if ( value.accessId.indexOf($scope.searchText) === 0) {
+          if ( value[targetField].indexOf($scope.searchText) === 0) {
             result[key] = value;
           }
         });

@@ -13,12 +13,27 @@
 <div id='customer_menu'>
     <div>
         <!-- 検索窓 -->
-        <div class="form01 fLeft">
-            <?php if ($coreSettings[C_COMPANY_USE_SYNCLO]) : ?>
-                <i>
-                    <?= $this->Html->image('search_g.png', array('alt' => 'ID', 'width'=>15, 'height'=>15, 'class'=>'fLeft')); ?>
-                </i>
-                <?= $this->Form->input('searchText', array('type'=>'text', 'label' => false, 'ng-model' => 'searchText', 'placeholder' => 'ID')); ?>
+        <?php if ($coreSettings[C_COMPANY_USE_SYNCLO]) : ?>
+          <div class="form01 fLeft">
+            <ul class="switch" ng-init="fillterTypeId=1">
+              <li ng-class="{on:fillterTypeId===1}" ng-click="fillterTypeId = 1">
+                <svg width="15" height="15">
+                  <path d="M 4 9 C 4 8 3 2 9 4" stroke-width="1" fill="none"></path>
+                  <circle cx="7" cy="7" r="6" fill="none" stroke-width="2"></circle>
+                  <line x1="11" y1="11" x2="15" y2="15" stroke-width="2"></line>
+                </svg>ID
+              </li>
+              <li ng-class="{on:fillterTypeId===2}" ng-click="fillterTypeId = 2">
+                <svg width="15" height="15">
+                  <path d="M 4 9 C 4 8 3 2 9 4" stroke-width="1" fill="none"></path>
+                  <circle cx="7" cy="7" r="6" fill="none" stroke-width="2"></circle>
+                  <line x1="11" y1="11" x2="15" y2="15" stroke-width="2"></line>
+                </svg>訪問ユーザ
+              </li>
+            </ul>
+            <?= $this->Form->input('searchText', array('type'=>'text', 'label' => false, 'ng-model' => 'searchText', 'placeholder' => 'ID')); ?>
+            <div id="userFilter" style="display: flex;">
+            </div>
             <?php endif; ?>
         </div>
         <!-- 検索窓 -->
