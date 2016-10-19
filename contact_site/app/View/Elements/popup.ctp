@@ -73,7 +73,8 @@ var popupEvent = {
                     closeBtn.onclick = function(){
                         return popupEvent.closePopup(1);
                     };
-                    var closeBtn = _button("別ウィンドウ接続（ベータ版）");
+                    var closeBtn = _button();
+                    closeBtn.innerHTML  = "別ウィンドウ接続\n<span class='font-red'>（β版）</span>";
                     closeBtn.classList.add('betaBtn');
                     closeBtn.onclick = function(){
                         return popupEvent.closePopup(2);
