@@ -31,7 +31,7 @@
                 </svg>訪問ユーザ
               </li>
             </ul>
-            <?= $this->Form->input('searchText', array('type'=>'text', 'label' => false, 'ng-model' => 'searchText', 'placeholder' => 'ID')); ?>
+            <?= $this->Form->input('searchText', array('type'=>'text', 'label' => false, 'ng-model' => 'searchText', 'ng-attr-placeholder' => '{{searchTextPlaceholder()}}')); ?>
             <div id="userFilter" style="display: flex;">
             </div>
             <?php endif; ?>

@@ -352,6 +352,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       }
     });
 
+    $scope.searchTextPlaceholder = function(){
+      return (Number($scope.fillterTypeId) === 1) ? "ID" : "訪問ユーザ";
+    };
+
     $scope.openSetting = function(){
       $.ajax({
         type: 'GET',
