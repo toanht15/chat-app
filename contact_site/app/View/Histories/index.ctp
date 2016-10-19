@@ -1,6 +1,12 @@
 <?php echo $this->element('Customers/userAgentCheck') ?>
 <?php echo $this->element('Histories/angularjs') ?>
 
+<script type="text/javascript">
+function get(){
+  console.log('seikoudane');
+   document.getElementById('search').submit();
+}
+</script>
 <div id='history_idx' class="card-shadow" ng-app="sincloApp" ng-controller="MainCtrl">
 
 <div id='history_title'>
@@ -34,6 +40,12 @@
       <?=$this->Form->hidden('outputData')?>
     <?=$this->Form->end();?>
   </div>
+  <form method="post" action="./Histories" id="search">
+    <input type="date" name="start" class="textarea" placeholder="開始日">
+    <input type="date" name="finish" class="textarea1" placeholder="終了日">
+    <input type="button" value="検索" onclick="get()">
+  </form>
+
   <div id="paging" class="fRight">
     <?php
       echo $this->Paginator->prev(

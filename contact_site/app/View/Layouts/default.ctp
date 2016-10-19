@@ -57,6 +57,7 @@ if( strcmp($this->name, 'Login') !== 0 ) {
 	?>
 </head>
 <body>
+
 	<div id="container">
 		<div id="header">
 			<?php if( strcmp($this->name, 'Login') !== 0 ): ?>

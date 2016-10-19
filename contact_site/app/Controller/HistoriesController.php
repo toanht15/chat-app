@@ -38,7 +38,7 @@ class HistoriesController extends AppController {
         ]
       ],
       'conditions' => [
-        'THistory.del_flg !=' => 1
+        'THistory.del_flg !=' => 1,
       ]
     ],
     'THistoryStayLog' => []
@@ -64,6 +64,12 @@ class HistoriesController extends AppController {
       $isChat = $this->params->query['isChat'];
     }
     $this->_setList($isChat);
+
+    if($this->request->is('post')) {
+      $this->log('eee', LOG_DEBUG);
+
+      $this->_setList2($isChat);
+    }
   }
 
   public function remoteGetCustomerInfo() {
@@ -400,6 +406,8 @@ class HistoriesController extends AppController {
         ],
         'recursive' => -1
       ];
+
+
       $ret = $this->THistory->find('all', $params);
       foreach((array)$ret as $val){
         if ( isset($chat[$val['THistory']['id']]) ) {
@@ -416,6 +424,87 @@ class HistoriesController extends AppController {
     $this->set('groupByChatChecked', $type);
   }
 
+private function _setList2($type=true){
+      $start = $this->data['start'];
+      $finish = $this->data['finish'];
+    // ユーザー情報の取得
+    $this->paginate['THistory']['joins'][] = [
+      'type' => 'LEFT',
+      'table' => '(SELECT visitors_id, informations FROM m_customers WHERE m_customers.m_companies_id = ' . $this->userInfo['MCompany']['id'] . ')',
+      'alias' => 'MCustomer',
+      'conditions' => [
+        'MCustomer.visitors_id = THistory.visitors_id',
+      ]
+    ];
+    // チャットのみ表示との切り替え
+    if ( !$this->coreSettings[C_COMPANY_USE_CHAT] || strcmp($type, 'false') === 0 ) {
+      $this->paginate['THistory']['joins'][0]['type'] = "LEFT";
+    }
+    else {
+      $this->paginate['THistory']['joins'][0]['type'] = "INNER";
+    }
+
+    $this->Session->write("histories.joins", $this->paginate['THistory']['joins'][0]['type']);
+    $conditions = [
+          'THistory.access_date <=' => $finish,
+          'THistory.access_date >=' => $start,
+      ];
+    $historyList = $this->paginate('THistory',$conditions);
+
+    // チャット担当者リスト
+    $chat = [];
+    if ( !empty($historyList) ) {
+      $params = [
+        'fields' => [
+          'THistory.id',
+          'MUser.display_name'
+        ],
+        'joins' => [
+          [
+            'type' => 'INNER',
+            'table' => '(SELECT * FROM t_history_chat_logs '.
+                 ' WHERE m_users_id IS NOT NULL '.
+                 '   AND t_histories_id <= ' . $historyList[0]['THistory']['id'].
+                 '   AND t_histories_id >= ' . $historyList[count($historyList) - 1]['THistory']['id'].
+                 ' GROUP BY t_histories_id, m_users_id'.
+                 ')',
+            'alias' => 'THistoryChatLog',
+            'conditions' => [
+              'THistoryChatLog.t_histories_id = THistory.id'
+            ]
+          ],
+          [
+            'type' => 'INNER',
+            'table' => 'm_users',
+            'alias' => 'MUser',
+            'conditions' => [
+              'THistoryChatLog.m_users_id = MUser.id'
+            ]
+          ]
+        ],
+        'conditions' => [
+          'THistory.m_companies_id' => $this->userInfo['MCompany']['id'],
+          'THistory.del_flg !=' => 1
+        ],
+        'recursive' => -1
+      ];
+
+
+      $ret = $this->THistory->find('all', $params);
+      foreach((array)$ret as $val){
+        if ( isset($chat[$val['THistory']['id']]) ) {
+          $chat[$val['THistory']['id']] .= "\n".$val['MUser']['display_name']."さん";
+        }
+        else {
+          $chat[$val['THistory']['id']] = $val['MUser']['display_name']."さん";
+        }
+      }
+    }
+    $this->set('userList', $historyList);
+    $this->set('historyList', $historyList);
+    $this->set('chatUserList', $chat);
+    $this->set('groupByChatChecked', $type);
+  }
   private function _getChatLog($historyId){
     $params = [
       'fields' => [
@@ -429,7 +518,7 @@ class HistoriesController extends AppController {
         [
           'type' => 'LEFT',
           'table' => 'm_users',
-          'alias' => 'MUser',
+          'alias' => 'MUser'  ,
           'conditions' => [
           'THistoryChatLog.m_users_id = MUser.id',
           'MUser.m_companies_id' => $this->userInfo['MCompany']['id']
