@@ -423,7 +423,7 @@
         var url = filePath + "/frame/" + encodeURIComponent(JSON.stringify(params));
         window.open(url,
                     "sinclo",
-                    "width=" + screen.availWidth/2 + ",height=" + screen.availHeight/2 +
+                    "width=" + screen.availWidth * (2/3) + ",height=" + screen.availHeight * (2/3) +
                     ",dialog=no,toolbar=no,location=no,status=no,menubar=no,directories=no,resizable=no,scrollbars=no"
         );
 
