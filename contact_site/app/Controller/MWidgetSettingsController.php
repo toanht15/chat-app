@@ -42,7 +42,6 @@ class MWidgetSettingsController extends AppController {
       $inputData = [];
       $ret = $this->MWidgetSetting->coFind('first');
       $inputData = $ret;
-
       if ( empty($this->userInfo['MCompany']['core_settings']) ) {
         $this->redirect("/");
       }
@@ -96,6 +95,7 @@ class MWidgetSettingsController extends AppController {
   private function _update($inputData) {
     $errors = [];
     $filename = null;
+
     $uploadImage = $inputData['MWidgetSetting']['uploadImage'];
 
     $prevFileInfo = mb_split("/", $inputData['MWidgetSetting']['main_image']);
@@ -268,11 +268,11 @@ class MWidgetSettingsController extends AppController {
         switch ($key) {
           case 'chat':
             if ( !$this->coreSettings['chat'] ) { continue; }
-            if ( strcmp($v, 'chat_trigger') === 0 ) {
+            if ( strcmp($v, 'chatTrigger') === 0 ) {
               $d['chat_trigger'] = C_WIDGET_SEND_ACT_PUSH_KEY; // デフォルト値
               break;
             }
-            if ( strcmp($v, 'show_name') === 0 ) {
+            if ( strcmp($v, 'showName') === 0 ) {
               $d['show_name'] = C_WIDGET_SHOW_COMP; // デフォルト値
               break;
             }
