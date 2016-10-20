@@ -58,6 +58,7 @@ router.get("/", function(req, res, next) {
                     stringColor: settings.stringColor,
                     showMainImage: settings.showMainImage,
                     mainImage: settings.mainImage,
+                    chatRadioBehavior: isNumeric(settings.chatRadioBehavior),
                     chatTrigger: isNumeric(settings.chatTrigger),
                     radiusRatio: isNumeric(settings.radiusRatio)
                 };

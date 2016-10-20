@@ -28,6 +28,7 @@ class MWidgetSetting extends AppModel {
       'show_description' => "showDescription",
       'display_time_flg' => "displayTimeFlg",
       'time_text' => "timeText",
+      'chat_radio_behavior' => "chatRadioBehavior",
       'chat_trigger' => "chatTrigger",
       'content' => "content"
     ];

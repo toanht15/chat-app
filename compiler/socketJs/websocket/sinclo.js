@@ -960,8 +960,17 @@
                   }
                 }
               })
-              .on("change", "input[name^='sinclo-radio']", function(e){
-                sinclo.chatApi.send(e.target.value);
+              .on("click", "input[name^='sinclo-radio']", function(e){
+                if ( !(window.info.widget.hasOwnProperty('chatRadioBehavior') && window.info.widget.chatRadioBehavior === 2) ) {
+                  sinclo.chatApi.send(e.target.value.trim());
+                }
+                else {
+                  var message = document.getElementById('sincloChatMessage');
+                  if ( check.isset(message.value) ) {
+                    message.value += "\n";
+                  }
+                  message.value += e.target.value.trim();
+                }
               });
 
             emit('getChatMessage', {showName: info.widget.showName});
