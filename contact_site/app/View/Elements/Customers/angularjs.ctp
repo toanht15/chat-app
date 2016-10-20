@@ -648,9 +648,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     }
 
     /* キャンペーン情報を取得する */
-    $scope.getCampaign = function (url){
+    $scope.getCampaign = function (prev){
       var str = "";
-      if ( url === null || url === undefined ) return "";
+      if ( !(prev.hasOwnProperty('length') && angular.isDefined(prev[0]) && prev[0].hasOwnProperty('url'))  ) return "";
+      var url = prev[0].url;
+      if ( !angular.isDefined(url) ) return "";
       angular.forEach(campaignList, function(name, parameter){
         var position = url.indexOf(parameter);
         if ( position > 0 ) {

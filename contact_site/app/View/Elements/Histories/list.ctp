@@ -18,7 +18,7 @@
 <?php
 /* キャンペーン名の取得 */
 $campaignParam = "";
-$tmp = mb_strstr($history['THistory']['referrer_url'], '?');
+$tmp = mb_strstr($history['THistoryStayLog']['firstURL'], '?');
 if ( $tmp !== "" ) {
   foreach($campaignList as $k => $v){
     if ( strpos($tmp, $k) !== false ) {

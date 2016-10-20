@@ -189,7 +189,7 @@
           <!-- /* アクセス日時 */ -->
           <td ng-hide="labelHideList.time" class="tCenter">{{monitor.time | customDate}}</td>
           <!-- /* キャンペーン */ -->
-          <td ng-hide="labelHideList.campaign" class="tCenter pre">{{::getCampaign(monitor.referrer)}}</td>
+          <td ng-hide="labelHideList.campaign" class="tCenter pre">{{::getCampaign(monitor.prev)}}</td>
           <!-- /* 滞在時間 */ -->
           <td ng-hide="labelHideList.stayTime" class="tCenter" cal-stay-time></td>
           <!-- /* 閲覧ページ数 */ -->

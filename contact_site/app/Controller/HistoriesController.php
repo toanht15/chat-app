@@ -30,7 +30,7 @@ class HistoriesController extends AppController {
         ],
         [
           'type' => 'LEFT',
-          'table' => '(SELECT t_histories_id, COUNT(t_histories_id) AS count FROM t_history_stay_logs WHERE del_flg != 1 GROUP BY t_histories_id)',
+          'table' => '(SELECT t_histories_id, url AS firstURL, COUNT(t_histories_id) AS count FROM t_history_stay_logs WHERE del_flg != 1 GROUP BY t_histories_id ORDER BY created)',
           'alias' => 'THistoryStayLog',
           'conditions' => [
             'THistoryStayLog.t_histories_id = THistory.id'
