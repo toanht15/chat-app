@@ -208,6 +208,15 @@ function getConnectInfo(o){
   return o;
 }
 
+// IPアドレスの取得
+function getIp(socket){
+  var ip = "0.0.0.0";
+  if ( isset(socket.handshake.headers['x-forwarded-for']) ) {
+    ip = socket.handshake.headers['x-forwarded-for'];
+  }
+  return ip;
+}
+
 // emit用
 var emit = {
   roomKey: {
@@ -488,12 +497,7 @@ io.sockets.on('connection', function (socket) {
         send.time = send.pagetime;
       }
 
-      if ( isset(socket.handshake.headers['x-forwarded-for']) ) {
-        send.ipAddress = socket.handshake.headers['x-forwarded-for'];
-      }
-      else {
-        send.ipAddress = "0.0.0.0";
-      }
+      send.ipAddress = getIp(socket);
 
     }
     // 企業キーが取得できなければスルー
@@ -575,6 +579,12 @@ io.sockets.on('connection', function (socket) {
     }
 
     obj = getConnectInfo(obj);
+
+    // IPアドレスの取得
+    if ( !(('ipAddress' in obj) && isset(obj.ipAddress)) ) {
+      obj.ipAddress = getIp(socket);
+    }
+
     emit.toCompany("sendCustomerInfo", obj, obj.siteKey);
     if ( ('contract' in obj) && ('chat' in obj.contract) && obj.contract.chat === false) return false;
     chatApi.sendUnreadCnt("sendChatInfo", obj, false);
@@ -622,6 +632,12 @@ io.sockets.on('connection', function (socket) {
       }
       // 履歴作成
       db.addHistory(obj, socket);
+
+      // IPアドレスの取得
+      if ( !(('ipAddress' in obj) && isset(obj.ipAddress)) ) {
+        obj.ipAddress = getIp(socket);
+      }
+
       emit.toCompany('syncNewInfo', obj, obj.siteKey);
     }
   });
@@ -652,6 +668,12 @@ io.sockets.on('connection', function (socket) {
     if ( getSessionId(obj.siteKey, obj.tabId, 'chat') ) {
       obj.chat = getSessionId(obj.siteKey, obj.tabId, 'chat');
     }
+
+    // IPアドレスの取得
+    if ( !(('ipAddress' in obj) && isset(obj.ipAddress)) ) {
+      obj.ipAddress = getIp(socket);
+    }
+
     // TODO ここを要求したユーザのみに送るようにする
     emit.toCompany("receiveAccessInfo", obj, obj.siteKey);
     if ( ('contract' in obj) && ('chat' in obj.contract) && obj.contract.chat === false) return false;
@@ -1172,6 +1194,7 @@ io.sockets.on('connection', function (socket) {
   // 既読操作
   socket.on("isReadChatMessage", function(d){
     var obj = JSON.parse(d);
+    // TODO 履歴IDチェック
     if ( isset(sincloCore[obj.siteKey][obj.tabId].historyId) ) {
       obj.historyId = sincloCore[obj.siteKey][obj.tabId].historyId;
       pool.query("UPDATE t_history_chat_logs SET message_read_flg = 1 WHERE t_histories_id = ? AND message_type = 1 AND id <= ?;",

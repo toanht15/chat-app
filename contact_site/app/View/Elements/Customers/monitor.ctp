@@ -185,7 +185,7 @@
           <!-- /* ユーザー環境 */ -->
           <td ng-hide="labelHideList.ua" class="tCenter pre">{{ua(monitor.userAgent)}}</td>
           <!-- /* 訪問回数 */ -->
-          <td ng-hide="labelHideList.stayCount" class="tCenter">{{monitor.stayCount}}</td>
+          <td ng-hide="labelHideList.stayCount" class="tCenter">{{nn(monitor.tabId)}}</td>
           <!-- /* アクセス日時 */ -->
           <td ng-hide="labelHideList.time" class="tCenter">{{monitor.time | customDate}}</td>
           <!-- /* キャンペーン */ -->

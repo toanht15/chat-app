@@ -391,6 +391,15 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       });
     };
 
+    $scope.nn = function(tabId){
+      var res = 1, num = $scope.monitorList[tabId].stayCount;
+      if ( angular.isNumber(num) && Number(num) > 0 ) {
+        res = num;
+      }
+      $scope.monitorList[tabId].stayCount = res;
+      return res;
+    };
+
     $scope.updateList = function(retList){
       $scope.labelHideList = retList;
     };
@@ -1489,6 +1498,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
   sincloApp.filter('customDate', function(){
     return function(input) {
+      if ( angular.isUndefined(input) ) return "";
       var d = new Date(Number(input)),
           date = d.getFullYear() + '-' + _numPad(d.getMonth() + 1) + '-' + _numPad(d.getDate()),
           time = _numPad(d.getHours()) + ':' + _numPad(d.getMinutes()) + ':' + _numPad(d.getSeconds());
