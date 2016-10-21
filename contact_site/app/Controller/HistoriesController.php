@@ -64,12 +64,6 @@ class HistoriesController extends AppController {
       $isChat = $this->params->query['isChat'];
     }
     $this->_setList($isChat);
-
-    if($this->request->is('post')) {
-      $this->log('eee', LOG_DEBUG);
-
-      $this->_setList2($isChat);
-    }
   }
 
   public function remoteGetCustomerInfo() {
@@ -349,6 +343,23 @@ class HistoriesController extends AppController {
   }
 
   private function _setList($type=true){
+   // $alluser = $this->MCustomer->find('all');
+    //$this->log( $alluser['MCustomer']['informations'],LOG_DEBUG);
+    //$this->log( $alluser['MCustomer']['visitors_id'],LOG_DEBUG);
+    //$mySettings = json_decode($alluser[0]['MCustomer']['informations'] );
+     //$this->log( $mySettings,LOG_DEBUG);
+    /*$ret=[];
+      foreach($alluser as $allusers) {
+        $this->log( $allusers['MCustomer']['informations'],LOG_DEBUG);
+        $Settings = json_decode($allusers['MCustomer']['informations'] );
+        if(strcmp($settings->'company',$company)===0){
+          $ret[]=$allusers['MCustomer']['informations'];
+        }
+      }*/
+
+    //$reta = json_decode($allAritcles[0]['MCustomer']['informations'] );
+    //$this->log($mySettings,LOG_DEBUG);
+
     // ユーザー情報の取得
     $this->paginate['THistory']['joins'][] = [
       'type' => 'LEFT',
@@ -358,6 +369,7 @@ class HistoriesController extends AppController {
         'MCustomer.visitors_id = THistory.visitors_id'
       ]
     ];
+     //['MCustomer']['informations'] = $this->json_decode($inputData);
     // チャットのみ表示との切り替え
     if ( !$this->coreSettings[C_COMPANY_USE_CHAT] || strcmp($type, 'false') === 0 ) {
       $this->paginate['THistory']['joins'][0]['type'] = "LEFT";
@@ -367,90 +379,59 @@ class HistoriesController extends AppController {
     }
 
     $this->Session->write("histories.joins", $this->paginate['THistory']['joins'][0]['type']);
-    $historyList = $this->paginate('THistory');
-
-    // チャット担当者リスト
-    $chat = [];
-    if ( !empty($historyList) ) {
-      $params = [
-        'fields' => [
-          'THistory.id',
-          'MUser.display_name'
-        ],
-        'joins' => [
-          [
-            'type' => 'INNER',
-            'table' => '(SELECT * FROM t_history_chat_logs '.
-                 ' WHERE m_users_id IS NOT NULL '.
-                 '   AND t_histories_id <= ' . $historyList[0]['THistory']['id'].
-                 '   AND t_histories_id >= ' . $historyList[count($historyList) - 1]['THistory']['id'].
-                 ' GROUP BY t_histories_id, m_users_id'.
-                 ')',
-            'alias' => 'THistoryChatLog',
-            'conditions' => [
-              'THistoryChatLog.t_histories_id = THistory.id'
-            ]
-          ],
-          [
-            'type' => 'INNER',
-            'table' => 'm_users',
-            'alias' => 'MUser',
-            'conditions' => [
-              'THistoryChatLog.m_users_id = MUser.id'
-            ]
-          ]
-        ],
-        'conditions' => [
-          'THistory.m_companies_id' => $this->userInfo['MCompany']['id'],
-          'THistory.del_flg !=' => 1
-        ],
-        'recursive' => -1
-      ];
-
-
-      $ret = $this->THistory->find('all', $params);
-      foreach((array)$ret as $val){
-        if ( isset($chat[$val['THistory']['id']]) ) {
-          $chat[$val['THistory']['id']] .= "\n".$val['MUser']['display_name']."さん";
-        }
-        else {
-          $chat[$val['THistory']['id']] = $val['MUser']['display_name']."さん";
-        }
-      }
-    }
-    $this->set('userList', $historyList);
-    $this->set('historyList', $historyList);
-    $this->set('chatUserList', $chat);
-    $this->set('groupByChatChecked', $type);
-  }
-
-private function _setList2($type=true){
+     //$this->log($mySettings,LOG_DEBUG);
+      if($this->request->is('post')) {
       $start = $this->data['start'];
       $finish = $this->data['finish'];
-    // ユーザー情報の取得
-    $this->paginate['THistory']['joins'][] = [
-      'type' => 'LEFT',
-      'table' => '(SELECT visitors_id, informations FROM m_customers WHERE m_customers.m_companies_id = ' . $this->userInfo['MCompany']['id'] . ')',
-      'alias' => 'MCustomer',
-      'conditions' => [
-        'MCustomer.visitors_id = THistory.visitors_id',
-      ]
-    ];
-    // チャットのみ表示との切り替え
-    if ( !$this->coreSettings[C_COMPANY_USE_CHAT] || strcmp($type, 'false') === 0 ) {
-      $this->paginate['THistory']['joins'][0]['type'] = "LEFT";
-    }
-    else {
-      $this->paginate['THistory']['joins'][0]['type'] = "INNER";
+      $ip = $this->data['ipaddress'];
+      $company = $this->data['company_name'];
+      $customer = $this->data['customer_name'];
+      $telephone = $this->data['telephone_number'];
+      $conditions = ['THistory.ip_address like' =>'%'.$ip.'%'];
+
+      if($start != '' ) {
+        $conditions += ['THistory.access_date >=' => $start];
+      }
+
+      if($finish != '' ) {
+      $conditions += ['THistory.access_date <=' => $finish];
+      }
+        $alluser = $this->MCustomer->find('all');
+        $ret=[];
+          foreach($alluser as $allusers) {
+        $Settings = json_decode($allusers['MCustomer']['informations']);
+        if($company != '') {
+          if ( strcmp($Settings->company,$company) === 0){
+            $ret[]=$allusers['MCustomer']['visitors_id'];
+            $conditions['THistory.visitors_id'] = $ret;
+          }
+      }
+            if($customer != '') {
+          if ( strcmp($Settings->name,$customer) === 0){
+            $ret[]=$allusers['MCustomer']['visitors_id'];
+            $conditions['THistory.visitors_id'] = $ret;
+          }
+        }
+         if($telephone != '') {
+          if ( strcmp($Settings->tel,$telephone) === 0){
+            $ret[]=$allusers['MCustomer']['visitors_id'];
+            $conditions['THistory.visitors_id'] = $ret;
+          }
+        }
+//$array = [];
+//$array['key1'] = "A";
+//pr($array);
+//exit();
     }
 
-    $this->Session->write("histories.joins", $this->paginate['THistory']['joins'][0]['type']);
-    $conditions = [
-          'THistory.access_date <=' => $finish,
-          'THistory.access_date >=' => $start,
-      ];
-    $historyList = $this->paginate('THistory',$conditions);
-
+        //$conditions += ['THistory.visitors_id' => $ret];
+pr($conditions);exit();
+      //pr($conditions);exit();
+          $historyList = $this->paginate('THistory',$conditions);
+}
+  else {
+    $historyList = $this->paginate('THistory');
+  }
     // チャット担当者リスト
     $chat = [];
     if ( !empty($historyList) ) {
@@ -505,6 +486,7 @@ private function _setList2($type=true){
     $this->set('chatUserList', $chat);
     $this->set('groupByChatChecked', $type);
   }
+
   private function _getChatLog($historyId){
     $params = [
       'fields' => [

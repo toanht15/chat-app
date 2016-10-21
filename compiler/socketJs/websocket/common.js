@@ -2316,4 +2316,3 @@ if (myTag.getAttribute('data-hide')) {
 if (myTag.getAttribute('data-form')) {
     info.dataset['form'] = myTag.getAttribute('data-form');
 }
-

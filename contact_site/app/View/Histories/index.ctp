@@ -43,10 +43,14 @@ function get(){
   <form method="post" action="./Histories" id="search">
     <input type="date" name="start" class="textarea" placeholder="開始日">
     <input type="date" name="finish" class="textarea1" placeholder="終了日">
+    <input type="text" name="ipaddress" class="textarea" placeholder="ipアドレス">
+    <input type="text" name="company_name" class="textarea" placeholder="会社名">
+    <input type="text" name="customer_name" class="textarea" placeholder="顧客名">
+    <input type="text" name="telephone_number" class="textarea" placeholder="電話番号">
     <input type="button" value="検索" onclick="get()">
   </form>
 
-  <div id="paging" class="fRight">
+  <div id="paging" class="" s="fRight">
     <?php
       echo $this->Paginator->prev(
         $this->Html->image('paging.png', array('alt' => '前のページへ', 'width'=>25, 'height'=>25)),
