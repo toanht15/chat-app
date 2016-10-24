@@ -1,12 +1,6 @@
 <?php echo $this->element('Customers/userAgentCheck') ?>
 <?php echo $this->element('Histories/angularjs') ?>
 
-<script type="text/javascript">
-function get(){
-  console.log('seikoudane');
-   document.getElementById('search').submit();
-}
-</script>
 <div id='history_idx' class="card-shadow" ng-app="sincloApp" ng-controller="MainCtrl">
 
 <div id='history_title'>
@@ -40,14 +34,16 @@ function get(){
       <?=$this->Form->hidden('outputData')?>
     <?=$this->Form->end();?>
   </div>
-  <form method="post" action="./Histories" id="search">
-    <input type="date" name="start" class="textarea" placeholder="開始日">
-    <input type="date" name="finish" class="textarea1" placeholder="終了日">
-    <input type="text" name="ipaddress" class="textarea" placeholder="ipアドレス">
-    <input type="text" name="company_name" class="textarea" placeholder="会社名">
-    <input type="text" name="customer_name" class="textarea" placeholder="顧客名">
-    <input type="text" name="telephone_number" class="textarea" placeholder="電話番号">
-    <input type="button" value="検索" onclick="get()">
+
+ <form method="post" action="./Histories" id="search">
+    <input type="date" name="start" placeholder="開始日">
+    <input type="date" name="finish" placeholder="終了日">
+    <input type="text" name="ipaddress" placeholder="ipアドレス">
+    <input type="text" name="company_name" placeholder="会社名">
+    <input type="text" name="customer_name" placeholder="顧客名">
+    <input type="text" name="telephone_number" placeholder="電話番号">
+    <input type="text" name="mail_address" placeholder="メールアドレス">
+    <input type="button" value="検索" onclick="searchRefine()">
   </form>
 
   <div id="paging" class="" s="fRight">

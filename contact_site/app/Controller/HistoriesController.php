@@ -1,4 +1,4 @@
-<?php
+  <?php
 /**
  * HistoriesController controller.
  * 履歴一覧画面
@@ -343,23 +343,6 @@ class HistoriesController extends AppController {
   }
 
   private function _setList($type=true){
-   // $alluser = $this->MCustomer->find('all');
-    //$this->log( $alluser['MCustomer']['informations'],LOG_DEBUG);
-    //$this->log( $alluser['MCustomer']['visitors_id'],LOG_DEBUG);
-    //$mySettings = json_decode($alluser[0]['MCustomer']['informations'] );
-     //$this->log( $mySettings,LOG_DEBUG);
-    /*$ret=[];
-      foreach($alluser as $allusers) {
-        $this->log( $allusers['MCustomer']['informations'],LOG_DEBUG);
-        $Settings = json_decode($allusers['MCustomer']['informations'] );
-        if(strcmp($settings->'company',$company)===0){
-          $ret[]=$allusers['MCustomer']['informations'];
-        }
-      }*/
-
-    //$reta = json_decode($allAritcles[0]['MCustomer']['informations'] );
-    //$this->log($mySettings,LOG_DEBUG);
-
     // ユーザー情報の取得
     $this->paginate['THistory']['joins'][] = [
       'type' => 'LEFT',
@@ -379,59 +362,57 @@ class HistoriesController extends AppController {
     }
 
     $this->Session->write("histories.joins", $this->paginate['THistory']['joins'][0]['type']);
-     //$this->log($mySettings,LOG_DEBUG);
-      if($this->request->is('post')) {
+
+    if($this->request->is('post')) {
       $start = $this->data['start'];
       $finish = $this->data['finish'];
       $ip = $this->data['ipaddress'];
       $company = $this->data['company_name'];
-      $customer = $this->data['customer_name'];
-      $telephone = $this->data['telephone_number'];
+      $name = $this->data['customer_name'];
+      $tel = $this->data['telephone_number'];
+      $mail = $this->data['mail_address'];
       $conditions = ['THistory.ip_address like' =>'%'.$ip.'%'];
 
       if($start != '' ) {
         $conditions += ['THistory.access_date >=' => $start];
       }
-
       if($finish != '' ) {
       $conditions += ['THistory.access_date <=' => $finish];
       }
-        $alluser = $this->MCustomer->find('all');
-        $ret=[];
-          foreach($alluser as $allusers) {
-        $Settings = json_decode($allusers['MCustomer']['informations']);
-        if($company != '') {
-          if ( strcmp($Settings->company,$company) === 0){
-            $ret[]=$allusers['MCustomer']['visitors_id'];
-            $conditions['THistory.visitors_id'] = $ret;
+
+      $allusers = $this->MCustomer->find('all');
+      $ret=[];
+      foreach($allusers as $alluser) {
+          $Settings = json_decode($alluser['MCustomer']['informations']);
+          if($company != '') {
+            if(!strstr($Settings->company,$company)){
+              continue;
+            }
           }
+          if($name != '') {
+            if(!strstr($Settings->name,$name)){
+              continue;
+            }
+          }
+          if($tel != '') {
+            if(!strstr($Settings->tel,$tel)){
+              continue;
+            }
+          }
+          if($mail != '') {
+            if(!strstr($Settings->mail,$mail)){
+              continue;
+            }
+          }
+          $ret[]=$alluser['MCustomer']['visitors_id'];
       }
-            if($customer != '') {
-          if ( strcmp($Settings->name,$customer) === 0){
-            $ret[]=$allusers['MCustomer']['visitors_id'];
-            $conditions['THistory.visitors_id'] = $ret;
-          }
-        }
-         if($telephone != '') {
-          if ( strcmp($Settings->tel,$telephone) === 0){
-            $ret[]=$allusers['MCustomer']['visitors_id'];
-            $conditions['THistory.visitors_id'] = $ret;
-          }
-        }
-//$array = [];
-//$array['key1'] = "A";
-//pr($array);
-//exit();
+      $conditions['THistory.visitors_id'] = $ret;
+      $historyList = $this->paginate('THistory',$conditions);
+    }
+    else {
+    $historyList = $this->paginate('THistory');
     }
 
-        //$conditions += ['THistory.visitors_id' => $ret];
-pr($conditions);exit();
-      //pr($conditions);exit();
-          $historyList = $this->paginate('THistory',$conditions);
-}
-  else {
-    $historyList = $this->paginate('THistory');
-  }
     // チャット担当者リスト
     $chat = [];
     if ( !empty($historyList) ) {

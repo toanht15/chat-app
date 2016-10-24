@@ -137,4 +137,9 @@ $(document).ready(function(){
 
 });
 
+function searchRefine(){
+  console.log('seikoudane');
+   document.getElementById('search').submit();
+}
+
 </script>
