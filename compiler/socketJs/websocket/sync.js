@@ -68,7 +68,7 @@ browserInfo = {
     return {
       x: document.body.scrollWidth - window.innerWidth,
       y: document.body.scrollHeight - window.innerHeight
-    }
+    };
   },
   // TODO 画面同期時セットするようにする
   sc: function(){ // スクロール量を取得する先
@@ -136,7 +136,7 @@ userInfo = {
     },
     unset: function(){
       storage.s.unset(this.code);
-      delete userInfo['sendTabId'];
+      delete userInfo.sendTabId;
       // TODO minify
       userInfo.unsetConnect();
     }
@@ -152,7 +152,7 @@ common = {
     return {
       x: document.body.scrollWidth - window.innerWidth,
       y: document.body.scrollHeight - window.innerHeight
-    }
+    };
   },
   // TODO 画面同期時セットするようにする
   sc: function(){ // スクロール量を取得する先
@@ -183,7 +183,7 @@ common = {
     return {
       height: window.innerHeight,
       width: window.innerWidth - 100
-    }
+    };
   },
   setUrl: function(url){
     var data = {
@@ -312,16 +312,16 @@ syncEvent = {
   },
   ctrlEventListener: function(eventFlg, evList){ // ウィンドウに対してのイベント操作
 
-    var attachFlg = false;
+    var attachFlg = false, evListener;
     if ( eventFlg ) {
-      var evListener = window.addEventListener;
+      evListener = window.addEventListener;
       if ( !window.addEventListener ) {
         evListener = window.attachEvent;
         attachFlg = true;
       }
     }
     else {
-      var evListener = window.removeEventListener;
+      evListener = window.removeEventListener;
       if ( !window.removeEventListener ) {
         evListener = window.detachEvent;
         attachFlg = true;
@@ -391,15 +391,15 @@ syncEvent = {
     // ウィンドウリサイズは消費者の状態のみ反映
     if ( Number(userInfo.accessType) !== Number(cnst.access_type.guest) ) return false;
     if (
-        ( (ua.indexOf("windows") != -1 && ua.indexOf("touch") != -1)
-          ||  ua.indexOf("ipad") != -1
-          || (ua.indexOf("android") != -1 && ua.indexOf("mobile") == -1)
-          || (ua.indexOf("firefox") != -1 && ua.indexOf("tablet") != -1)
-          ||  ua.indexOf("kindle") != -1
-          ||  ua.indexOf("silk") != -1
-          ||  ua.indexOf("playbook") != -1
-        )
-        && 'orientationchange' in window
+        ( (ua.indexOf("windows") != -1 && ua.indexOf("touch") != -1) ||
+          ua.indexOf("ipad") != -1 ||
+          (ua.indexOf("android") != -1 && ua.indexOf("mobile") == -1) ||
+          (ua.indexOf("firefox") != -1 && ua.indexOf("tablet") != -1) ||
+          ua.indexOf("kindle") != -1 ||
+          ua.indexOf("silk") != -1 ||
+          ua.indexOf("playbook") != -1
+        ) &&
+        'orientationchange' in window
       )
     {
       window.addEventListener("orientationchange", syncEvent.tabletResize, false);

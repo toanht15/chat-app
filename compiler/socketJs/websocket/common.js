@@ -1,4 +1,3 @@
-'use strict';
 var socket, // socket.io
     cnst, // 定数
     common, // 共通関数
@@ -13,6 +12,7 @@ var socket, // socket.io
     sincloVideo; // ビデオ通信補助関数
 
 (function($){
+  'use strict';
   cnst = {
     access_type: {
       guest: 1,
@@ -240,7 +240,7 @@ var socket, // socket.io
       html += '      #sincloBox section#navigation ul li.selected::after{ content: " "; position: absolute; bottom: 0px; }';
       html += '      #sincloBox section#navigation ul li[data-tab="call"]::before{ background-image: url("' + window.info.site.files + '/img/widget/icon_tel.png"); }';
       html += '      #sincloBox section#navigation ul li[data-tab="chat"]::before{ background-image: url("' + window.info.site.files + '/img/widget/icon_chat.png"); }';
-      html += '      #sincloBox section#navigation ul li.selected::before{ background-color: ' + widget.mainColor + '; }'
+      html += '      #sincloBox section#navigation ul li.selected::before{ background-color: ' + widget.mainColor + '; }';
 
 // html += '    #sincloBox ul { clear: both; display: flex; flex-direction: column } ';
 // html += '    #sincloBox sinclo-chat, #sincloBox sinclo-typing { display: block; border-top: 1px solid #ddd; border-bottom: 1px solid #ddd; } ';
@@ -532,7 +532,7 @@ var socket, // socket.io
         }
       }
       // 同期対象とするが、ウィジェットは表示しない
-      if (check.isset(window.info['dataset']) && (check.isset(window.info.dataset['hide']) && window.info.dataset.hide === "1")) {
+      if (check.isset(window.info.dataset) && (check.isset(window.info.dataset.hide) && window.info.dataset.hide === "1")) {
         window.info.widgetDisplay = false;
       }
       return window.info.widgetDisplay;
@@ -555,7 +555,7 @@ var socket, // socket.io
         var html = common.createWidget();
         $('body').append(html);
         emit('syncReady', {widget: window.info.widgetDisplay});
-        var sincloBox = document.getElementById('sincloBox');
+        sincloBox = document.getElementById('sincloBox');
         sincloBox.setAttribute('data-openflg', false);
         sinclo.operatorInfo.header = document.querySelector('#sincloBox #widgetHeader');
 
@@ -1066,7 +1066,7 @@ var socket, // socket.io
           '"': '&quot;',
           '<': '&lt;',
           '>': '&gt;',
-        }[match]
+        }[match];
       });
       return str;
     },
@@ -1176,7 +1176,7 @@ var socket, // socket.io
       },
       unset: function(){
         storage.s.unset(this.code);
-        delete userInfo['sendTabId'];
+        delete userInfo.sendTabId;
         // TODO minify
         userInfo.unsetConnect();
       }
@@ -1185,40 +1185,28 @@ var socket, // socket.io
       switch(type) {
         case cnst.info_type.user:
           return "userId";
-          break;
         case cnst.info_type.access:
           return "accessId";
-          break;
         case cnst.info_type.ip:
           return "ipAddress";
-          break;
         case cnst.info_type.time:
           return "time";
-          break;
         case cnst.info_type.referrer:
           return "referrer";
-          break;
         case cnst.info_type.connect:
           return "connectToken";
-          break;
         case cnst.info_type.tab:
           return "tabId";
-          break;
         case cnst.info_type.prev:
           return "prev";
-          break;
         case cnst.info_type.staycount:
           return "stayCount";
-          break;
         case cnst.info_type.gFrame:
           return "gFrame";
-          break;
         case cnst.info_type.sendTabId:
           return "sendTabId";
-          break;
         case cnst.info_type.parentId:
           return "parentId";
-          break;
       }
     },
     set: function(type, val, session){
@@ -1274,7 +1262,7 @@ var socket, // socket.io
         cnst.info_type.gFrame,
         cnst.info_type.parentId
       ];
-      for ( var i in array ) { userInfo.unset(array[i]) }
+      for ( var i in array ) { userInfo.unset(array[i]); }
     },
     getUserId: function(){
       return this.get(cnst.info_type.user);
@@ -1365,7 +1353,7 @@ var socket, // socket.io
       return {
         x: document.body.scrollWidth - window.innerWidth,
         y: document.body.scrollHeight - window.innerHeight
-      }
+      };
     },
     // TODO 画面同期時セットするようにする
     sc: function(){ // スクロール量を取得する先
@@ -1412,14 +1400,14 @@ var socket, // socket.io
         return {
           height: null,
           width: null
-        }
+        };
       }
     },
     windowSize : function(){
       return {
         height: window.innerHeight,
         width: window.innerWidth
-      }
+      };
     },
     interval: Math.floor(1000 / 60 * 10),
     set: {
@@ -1433,9 +1421,9 @@ var socket, // socket.io
       }
     },
     getActiveWindow: function(){
-      var tabFlg = document.hasFocus(), widgetFlg = false, tabStatus;
+      var tabFlg = document.hasFocus(), widgetFlg = false, tabStatus, sincloBox;
       if ( document.getElementById('sincloBox') ) {
-        var sincloBox = document.getElementById('sincloBox');
+        sincloBox = document.getElementById('sincloBox');
         var tmp = sincloBox.getAttribute('data-openflg');
         if ( String(tmp) === "true" ) {
           widgetFlg = true;
@@ -1535,16 +1523,16 @@ var socket, // socket.io
     },
     ctrlEventListener: function(eventFlg, evList){ // ウィンドウに対してのイベント操作
 
-      var attachFlg = false;
+      var attachFlg = false, evListener;
       if ( eventFlg ) {
-        var evListener = window.addEventListener;
+        evListener = window.addEventListener;
         if ( !window.addEventListener ) {
           evListener = window.attachEvent;
           attachFlg = true;
         }
       }
       else {
-        var evListener = window.removeEventListener;
+        evListener = window.removeEventListener;
         if ( !window.removeEventListener ) {
           evListener = window.detachEvent;
           attachFlg = true;
@@ -1615,15 +1603,15 @@ var socket, // socket.io
       // ウィンドウリサイズは消費者の状態のみ反映
       if ( Number(userInfo.accessType) !== Number(cnst.access_type.guest) ) return false;
       if (
-          ( (ua.indexOf("windows") != -1 && ua.indexOf("touch") != -1)
-            ||  ua.indexOf("ipad") != -1
-            || (ua.indexOf("android") != -1 && ua.indexOf("mobile") == -1)
-            || (ua.indexOf("firefox") != -1 && ua.indexOf("tablet") != -1)
-            ||  ua.indexOf("kindle") != -1
-            ||  ua.indexOf("silk") != -1
-            ||  ua.indexOf("playbook") != -1
-          )
-          && 'orientationchange' in window
+          ( (ua.indexOf("windows") != -1 && ua.indexOf("touch") != -1) ||
+             ua.indexOf("ipad") != -1 ||
+            (ua.indexOf("android") != -1 && ua.indexOf("mobile") == -1) ||
+            (ua.indexOf("firefox") != -1 && ua.indexOf("tablet") != -1) ||
+             ua.indexOf("kindle") != -1 ||
+             ua.indexOf("silk") != -1 ||
+             ua.indexOf("playbook") != -1
+          ) &&
+          'orientationchange' in window
         )
       {
         window.addEventListener("orientationchange", syncEvent.tabletResize, false);
@@ -1682,12 +1670,13 @@ var socket, // socket.io
       // resizeCall
       this.resizeCall(window.navigator.userAgent.toLowerCase(), eventFlg);
 
+      var els;
       // 要素に対してのイベント操作
-      var els = document.getElementsByTagName('input');
+      els = document.getElementsByTagName('input');
       this.ctrlElmEventListener(eventFlg, els, "focus", syncEvent.focusCall);
         // checkbox, radioボタンのイベント操作
         this.ctrlElmEventListener(eventFlg, els, "change", syncEvent.changeCall);
-      var els = document.getElementsByTagName('textarea');
+      els = document.getElementsByTagName('textarea');
       this.ctrlElmEventListener(eventFlg, els, "focus", syncEvent.focusCall);
 
       var $textarea = document.getElementsByTagName("textarea")[0];
@@ -1702,39 +1691,39 @@ var socket, // socket.io
       }
 
       // プルダウンに対してのイベント操作
-      var els = document.getElementsByTagName("select");
+      els = document.getElementsByTagName("select");
       this.ctrlElmEventListener(eventFlg, els, "change", syncEvent.changeCall);
 
       // 要素スクロール
-      var scEls = [];
-      var els = document.getElementsByTagName("ul");
-      for ( var i in els ) {
-        var cHeight = els[i].clientHeight;
-        var sHeight = els[i].scrollHeight;
+      var scEls = [], cHeight, sHeight, i;
+      els = document.getElementsByTagName("ul");
+      for ( i in els ) {
+        cHeight = els[i].clientHeight;
+        sHeight = els[i].scrollHeight;
         if ( (sHeight-cHeight)>0 ) {
           scEls.push(els[i]);
         }
       }
-      var els = document.getElementsByTagName("textarea");
-      for ( var i in els ) {
-        var cHeight = els[i].clientHeight;
-        var sHeight = els[i].scrollHeight;
+      els = document.getElementsByTagName("textarea");
+      for ( i in els ) {
+        cHeight = els[i].clientHeight;
+        sHeight = els[i].scrollHeight;
         if ( (sHeight-cHeight)>0 ) {
           scEls.push(els[i]);
         }
       }
-      var els = document.getElementsByTagName("div");
-      for ( var i in els ) {
-        var cHeight = els[i].clientHeight;
-        var sHeight = els[i].scrollHeight;
+      els = document.getElementsByTagName("div");
+      for ( i in els ) {
+        cHeight = els[i].clientHeight;
+        sHeight = els[i].scrollHeight;
         if ( (sHeight-cHeight)>0 ) {
           scEls.push(els[i]);
         }
       }
-      var els = document.getElementsByTagName("dl");
-      for ( var i in els ) {
-        var cHeight = els[i].clientHeight;
-        var sHeight = els[i].scrollHeight;
+      els = document.getElementsByTagName("dl");
+      for ( i in els ) {
+        cHeight = els[i].clientHeight;
+        sHeight = els[i].scrollHeight;
         if ( (sHeight-cHeight)>0 ) {
           scEls.push(els[i]);
         }
@@ -1906,7 +1895,7 @@ var socket, // socket.io
           }
       },
       ok: function(){ return true; },
-      no: function(){ this.remove() }
+      no: function(){ this.remove(); }
   };
 
   vcPopup = {
@@ -2033,7 +2022,7 @@ var socket, // socket.io
           }
       },
       ok: function(){ return true; },
-      no: function(){ this.remove() },
+      no: function(){ this.remove(); },
       // ドラッグ用プロパティ・メソッド群
       startDragX: 0,
       startDragY: 0,
@@ -2323,24 +2312,24 @@ function emit(evName, data){
   if (evName === "connectSuccess" || evName === "sendWindowInfo" || evName === "sendAutoChat" || evName === "sendChat") {
     data.userId = userInfo.userId;
   }
-  if (   evName === "connectSuccess" || evName === "sendWindowInfo" || evName === "sendAutoChatMessages"
-      || evName === "getChatMessage" || evName === "sendChat" || evName === "sendAutoChatMessage"
+  if (   evName === "connectSuccess" || evName === "sendWindowInfo" || evName === "sendAutoChatMessages" ||
+         evName === "getChatMessage" || evName === "sendChat" || evName === "sendAutoChatMessage"
   ) {
     data.chat = null;
   }
-  if (   evName === "syncBrowserInfo" || evName === "syncChangeEv" || evName === "requestSyncStop"
-      || evName === "requestSyncStart" || evName === "connectContinue" || evName === "sendConfirmConnect"
+  if (   evName === "syncBrowserInfo" || evName === "syncChangeEv" || evName === "requestSyncStop" ||
+         evName === "requestSyncStart" || evName === "connectContinue" || evName === "sendConfirmConnect"
   ) {
     data.accessType = userInfo.accessType;
   }
-  if (   evName === "syncReady" || evName === "connectSuccess" || evName === "reqUrlChecker"  || evName === "customerInfo"
-      || evName === "requestSyncStart" || evName === "connectContinue" || evName === "sendAccessInfo" || evName === "sendWindowInfo"
+  if (   evName === "syncReady" || evName === "connectSuccess" || evName === "reqUrlChecker"  || evName === "customerInfo" ||
+         evName === "requestSyncStart" || evName === "connectContinue" || evName === "sendAccessInfo" || evName === "sendWindowInfo"
   ) {
     data.url= f_url(browserInfo.href);
   }
   // connectToken
-  if (   evName === "syncReady" || evName === "connectSuccess" || evName === "requestSyncStop"  || evName === "customerInfo" || evName === "sendTabInfo"
-      || evName === "requestSyncStart" || evName === "connectContinue" || evName === "sendAccessInfo" || evName === "sendConfirmConnect"
+  if (   evName === "syncReady" || evName === "connectSuccess" || evName === "requestSyncStop"  || evName === "customerInfo" || evName === "sendTabInfo" ||
+         evName === "requestSyncStart" || evName === "connectContinue" || evName === "sendAccessInfo" || evName === "sendConfirmConnect"
   ) {
     data.connectToken = userInfo.get(cnst.info_type.connect);
   }
@@ -2348,10 +2337,10 @@ function emit(evName, data){
     data.connectToken = userInfo.connectToken;
   }
   if ( evName == "requestSyncStop" && userInfo.accessType === cnst.access_type.host ) {
-    data['type'] = 3;
+    data.type = 3;
   }
   if ( evName == "requestSyncStop" && userInfo.accessType === cnst.access_type.guest ) {
-    data['type'] = 4;
+    data.type = 4;
   }
   /* ここまで：イベント名指定あり */
   socket.emit(evName, JSON.stringify(data));
@@ -2365,8 +2354,8 @@ function now(){
 // get type
 var myTag = document.querySelector("script[src='" + info.site.files + "/client/" + info.site.key + ".js']");
 if (myTag.getAttribute('data-hide')) {
-    info.dataset['hide'] = myTag.getAttribute('data-hide');
+    info.dataset.hide = myTag.getAttribute('data-hide');
 }
 if (myTag.getAttribute('data-form')) {
-    info.dataset['form'] = myTag.getAttribute('data-form');
+    info.dataset.form = myTag.getAttribute('data-form');
 }

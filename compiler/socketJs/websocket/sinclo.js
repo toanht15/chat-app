@@ -13,7 +13,7 @@
         var flg = sincloBox.getAttribute('data-openflg');
         var elm = $('#sincloBox');
         if ( String(flg) === "false" ) {
-          var height = 0;
+          height = 0;
           sincloBox.setAttribute('data-openflg', true);
 
           if ( check.smartphone() && window.info.contract.chat && (window.screen.availHeight < window.screen.availWidth) ) {
@@ -243,20 +243,20 @@
     retConnectedForSync: function (d) {
       var obj = common.jParse(d);
       if ( ('pagetime' in obj) ) {
-        userInfo.pageTime = obj['pagetime'];
+        userInfo.pageTime = obj.pagetime;
       }
       if ( ('activeOperatorCnt' in obj) ) {
-        window.info.activeOperatorCnt = obj['activeOperatorCnt'];
+        window.info.activeOperatorCnt = obj.activeOperatorCnt;
       }
     },
     accessInfo: function(d){
       var obj = common.jParse(d);
       if ( obj.token !== common.token ) return false;
       if ( ('activeOperatorCnt' in obj) ) {
-        window.info.activeOperatorCnt = obj['activeOperatorCnt'];
+        window.info.activeOperatorCnt = obj.activeOperatorCnt;
       }
       if ( ('pagetime' in obj) ) {
-        userInfo.pageTime = obj['pagetime'];
+        userInfo.pageTime = obj.pagetime;
       }
 
       if ( check.isset(obj.accessId) && !check.isset(obj.connectToken)) {
@@ -287,7 +287,7 @@
         userInfo.setTabId();
       }
 
-      obj['prev'] = userInfo.prev;
+      obj.prev = userInfo.prev;
       obj.stayCount = userInfo.getStayCount();
       if ( (userInfo.gFrame && Number(userInfo.accessType) === Number(cnst.access_type.guest)) === false ) {
         emit('customerInfo', obj);
@@ -370,7 +370,7 @@
             connectToken: obj.connectToken
           },
           site: window.info.site
-        }
+        };
         var url = window.info.site.files + "/frame/" + encodeURIComponent(JSON.stringify(params));
 
         window.open(url, "_blank", "width=" + size.width + ", height=" + size.height + ", resizable=no,scrollbars=yes,status=no");
@@ -512,24 +512,25 @@
             duration: 'first',
             easing: 'swing',
             complete: function(){
-              for ( var i in obj.inputInfo ) {
-                var n = Number(i);
+              var i, n;
+              for ( i in obj.inputInfo ) {
+                n = Number(i);
                 $('input').eq(n).val(obj.inputInfo[n]);
               }
-              for ( var i in obj.checkboxInfo ) {
-                var n = Number(i);
+              for ( i in obj.checkboxInfo ) {
+                n = Number(i);
                 $('input[type="checkbox"]').eq(n).prop("checked", obj.checkboxInfo[n]);
               }
-              for ( var i in obj.radioInfo ) {
-                var n = Number(i);
+              for ( i in obj.radioInfo ) {
+                n = Number(i);
                 $('input[type="radio"]').eq(n).prop("checked", obj.radioInfo[n]);
               }
-              for ( var i in obj.textareaInfo ) {
-                var n = Number(i);
+              for ( i in obj.textareaInfo ) {
+                n = Number(i);
                 $('textarea').eq(n).val(obj.textareaInfo[n]);
               }
-              for ( var i in obj.selectInfo ) {
-                var n = Number(i);
+              for ( i in obj.selectInfo ) {
+                n = Number(i);
                 $('select').eq(n).val(obj.selectInfo[n]);
               }
               emit('syncCompleate', {
@@ -594,11 +595,13 @@
           if ( String(obj.nodeType) === "radio" || String(obj.nodeType) === "checkbox" ) {
             elm.prop('checked', obj.checked);
           }
+          elm.val(obj.value);
+          break;
         case "keyup":
           elm.val(obj.value);
           break;
         case "scroll":
-          var elm = $(obj.nodeName).eq(Number(obj.idx));
+          elm = $(obj.nodeName).eq(Number(obj.idx));
           if ( elm.length > 0 ) {
             var scrollBarSize = {
                   height: elm[0].scrollHeight - elm[0].clientHeight,
@@ -607,7 +610,8 @@
                 elm.stop(false, false).scrollTop(scrollBarSize.height * Number(obj.value.topRatio));
                 elm.stop(false, false).scrollLeft(scrollBarSize.width * Number(obj.value.leftRatio));
           }
-      };
+          break;
+      }
       syncEvent.receiveEvInfo = { nodeName: null, type: null };
     },
     syncBrowserCtrl: function(d){
@@ -845,10 +849,10 @@
     syncApi: {
       init : function(type){
         if ( type === cnst.sync_type.outer ) {
-          sinclo.syncApi.func = sinclo.syncApi._func['outer'];
+          sinclo.syncApi.func = sinclo.syncApi._func.outer;
         }
         else {
-          sinclo.syncApi.func = sinclo.syncApi._func['inner'];
+          sinclo.syncApi.func = sinclo.syncApi._func.inner;
         }
       },
       func: {
@@ -1231,29 +1235,31 @@
             if ( !('messages' in window.info) || (('messages' in window.info) && typeof(window.info.messages) !== "object" ) ) return false;
             this.flg = true;
             var messages = window.info.messages;
+            var andFunc = function(key, ret){
+                var message = messages[key];
+                if (typeof(ret) === 'number') {
+                    setTimeout(function(){
+                        sinclo.trigger.setAction(message.id, message.action_type, message.activity);
+                    }, ret);
+                }
+            };
+            var orFunc = function(key, ret){
+                var message = messages[key];
+                if (typeof(ret) === 'number') {
+                    setTimeout(function(){
+                        sinclo.trigger.setAction(message.id, message.action_type, message.activity);
+                    }, ret);
+                }
+            };
             // 設定ごと
             for( var i = 0; messages.length > i; i++ ){
                 // AND
-                if ( Number(messages[i]['activity']['conditionType']) === 1 ) {
-                    this.setAndSetting(i, messages[i]['activity'], function(key, ret){
-                        var message = messages[key];
-                        if (typeof(ret) === 'number') {
-                            setTimeout(function(){
-                                sinclo.trigger.setAction(message['id'], message['action_type'], message['activity']);
-                            }, ret);
-                        }
-                    });
+                if ( Number(messages[i].activity.conditionType) === 1 ) {
+                    this.setAndSetting(i, messages[i].activity, andFunc);
                 }
                 // OR
                 else {
-                    this.setOrSetting(i, messages[i]['activity'], function(key, ret){
-                        var message = messages[key];
-                        if (typeof(ret) === 'number') {
-                            setTimeout(function(){
-                                sinclo.trigger.setAction(message['id'], message['action_type'], message['activity']);
-                            }, ret);
-                        }
-                    });
+                    this.setOrSetting(i, messages[i].activity, orFunc);
                 }
             }
         },
@@ -1261,11 +1267,11 @@
          * return 即時実行(0)、タイマー実行(ミリ秒)、非実行(null)
          */
         setAndSetting: function(key, setting, callback) {
-            var keys = Object.keys(setting['conditions']);
+            var keys = Object.keys(setting.conditions);
             var ret = 0;
             for(var i = 0; keys.length > i; i++){
 
-                var conditions = setting['conditions'][keys[i]];
+                var conditions = setting.conditions[keys[i]];
                 var last = (keys.length === Number(i+1)) ? true : false;
                 switch(Number(keys[i])) {
                     case 1: // 滞在時間
@@ -1316,14 +1322,14 @@
          * return 即時実行(0)、タイマー実行(ミリ秒)、非実行(null)
          */
         setOrSetting: function(key, setting, callback) {
-            var keys = Object.keys(setting['conditions']);
+            var keys = Object.keys(setting.conditions);
             var ret = null;
             for(var i = 0; keys.length > i; i++){
-                var conditions = setting['conditions'][keys[i]];
+                var conditions = setting.conditions[keys[i]], u;
                 var last = (keys.length === Number(i+1)) ? true : false;
                 switch(Number(keys[i])) {
                     case 1: // 滞在時間
-                        for (var u = 0; u < conditions.length; u++) {
+                        for (u = 0; u < conditions.length; u++) {
                           this.judge.stayTime(conditions[u], function(err, timer){
                               if ( !err && (typeof(timer) === "number" && ret <= timer) ) {
                                   ret = Number(timer);
@@ -1332,7 +1338,7 @@
                         }
                         break;
                     case 2: // 訪問回数
-                        for (var u = 0; u < conditions.length; u++) {
+                        for (u = 0; u < conditions.length; u++) {
                           this.judge.stayCount(conditions[u], function(err, timer){
                               if ( !err ) {
                                   ret = 0;
@@ -1341,7 +1347,7 @@
                         }
                         break;
                     case 3: // ページ
-                        for (var u = 0; u < conditions.length; u++) {
+                        for (u = 0; u < conditions.length; u++) {
                           this.judge.page(conditions[u], function(err, timer){
                               if ( !err ) {
                                   ret = 0;
@@ -1350,7 +1356,7 @@
                         }
                         break;
                     case 4: // 曜日・時間
-                        for (var u = 0; u < conditions.length; u++) {
+                        for (u = 0; u < conditions.length; u++) {
                           this.judge.dayTime(conditions[u], function(err, timer){
                               if ( !err && (typeof(timer) === "number" && ret <= timer) ) {
                                   ret = Number(timer);
@@ -1359,7 +1365,7 @@
                         }
                         break;
                     case 5: // リファラー
-                        for (var u = 0; u < conditions.length; u++) {
+                        for (u = 0; u < conditions.length; u++) {
                           this.judge.referrer(conditions[u], function(err, timer){
                               if ( !err ) {
                                   ret = 0;
@@ -1368,7 +1374,7 @@
                         }
                         break;
                     case 6: // 検索ワード
-                        for (var u = 0; u < conditions.length; u++) {
+                        for (u = 0; u < conditions.length; u++) {
                           this.judge.searchWord(conditions[u], function(err, timer){
                               if ( !err ) {
                                   ret = 0;
@@ -1457,15 +1463,12 @@
                     case 1: // 一致
                       preg = new RegExp("^" + a + "$");
                       return preg.test(b);
-                      break;
                     case 2: // 部分一致
                       preg = new RegExp(a);
                       return preg.test(b);
-                      break;
                     case 3: // 不一致
                       preg = new RegExp("^" + a + "$");
                       return !preg.test(b);
-                      break;
                 }
                 return false;
             }
