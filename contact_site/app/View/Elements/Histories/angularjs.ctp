@@ -137,9 +137,10 @@ $(document).ready(function(){
 
 });
 
+$('input[name="daterange"]').daterangepicker();
+
 function searchRefine(){
-  console.log('seikoudane');
-   document.getElementById('search').submit();
+   document.getElementById('historySearch').submit();
 }
 
 </script>

@@ -31,22 +31,72 @@
       </label>
     <?php endif; ?>
     <?=$this->Form->create('History', ['action' => 'index']);?>
-      <?=$this->Form->hidden('outputData')?>
+        <?=$this->Form->hidden('outputData')?>
     <?=$this->Form->end();?>
+    <?=  $this->Form->create('History',[
+      'id' => 'historySearch',
+      'type' => 'post',
+      'url' => '/Histories'
+    ]); ?>
+      <?=
+      $this->Form->input('start_day',[
+        'label'=> false,
+        'div' => false,
+        'placeholder' => '開始日'
+      ]); ?>
+      <?=
+      $this->Form->input('finish_day',[
+        'label'=> false,
+        'div' => false,
+        'placeholder' => '終了日'
+      ]);
+      ?>
+      <?=
+      $this->Form->input('ip_address',[
+        'label'=>false,
+        'div' => false,
+        'placeholder' => 'ipアドレス'
+      ]) ?>
+      <div>
+        <?=
+        $this->Form->input('company_name',[
+          'label'=>false,
+          'div' => false,
+          'placeholder' => '会社名'
+        ]) ?>
+        <?=
+        $this->Form->input('customer_name',[
+          'label'=>false,
+          'div' => false,
+          'placeholder' => '顧客名'
+        ]) ?>
+        <?=
+        $this->Form->input('telephone_number',[
+          'label'=>false,
+          'div' => false,
+          'placeholder' => '電話番号'
+        ]) ?>
+        <?=
+        $this->Form->input('mail_address',[
+          'label'=>false,
+          'div' => false,
+          'placeholder' => 'メールアドレス'
+        ]) ?>
+      </div>
+      <div>
+        <?=
+        $this->Form->button('検索',[
+          'label'=>false,
+          'div' => false,
+          'onclick' => 'searchRefine()'
+        ]) ?>
+      </div>
+    <?=
+    $this->Form->end();
+    ?>
   </div>
 
- <form method="post" action="./Histories" id="search">
-    <input type="date" name="start" placeholder="開始日">
-    <input type="date" name="finish" placeholder="終了日">
-    <input type="text" name="ipaddress" placeholder="ipアドレス">
-    <input type="text" name="company_name" placeholder="会社名">
-    <input type="text" name="customer_name" placeholder="顧客名">
-    <input type="text" name="telephone_number" placeholder="電話番号">
-    <input type="text" name="mail_address" placeholder="メールアドレス">
-    <input type="button" value="検索" onclick="searchRefine()">
-  </form>
-
-  <div id="paging" class="" s="fRight">
+  <div id="paging" class="fRight">
     <?php
       echo $this->Paginator->prev(
         $this->Html->image('paging.png', array('alt' => '前のページへ', 'width'=>25, 'height'=>25)),
