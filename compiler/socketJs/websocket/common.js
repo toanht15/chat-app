@@ -2070,7 +2070,7 @@ var socket, // socket.io
         sinclo.connect();
       }
 
-      if ( userInfo.accessType === Number(cnst.access_type.host) ) return false;
+      if ( userInfo.accessType === Number(cnst.access_type.host) || String(userInfo.gFrame) === "true") return false;
       // 定期的にタブのアクティブ状態を送る
       var tabState = browserInfo.getActiveWindow();
       if ( tabStateTimer ) { clearInterval(tabStateTimer); }
