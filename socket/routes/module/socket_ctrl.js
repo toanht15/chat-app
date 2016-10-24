@@ -1509,10 +1509,16 @@ io.sockets.on('connection', function (socket) {
           if ( ('toTabId' in core) && getSessionId(info.siteKey, core.toTabId, 'sessionId') ) {
             if ( ('connectToken' in core) && getSessionId(info.siteKey, core.toTabId, 'connectToken') && core.connectToken !== getSessionId(info.siteKey, core.toTabId, 'connectToken') ) return false;
             emit.toUser('syncStop', {siteKey: info.siteKey, tabId: core.toTabId, connectToken: core.connectToken}, getSessionId(info.siteKey, core.toTabId, 'sessionId'));
-            emit.toCompany('syncStop', {siteKey: info.siteKey, tabId: core.toTabId}, info.siteKey);
+            if ( getSessionId(info.siteKey, core.toTabId, 'parentTabId') ) {
+              var parentTabId = getSessionId(info.siteKey, core.toTabId, 'parentTabId');
+              emit.toUser('syncStop', {siteKey: info.siteKey, tabId: core.toTabId, connectToken: core.connectToken}, getSessionId(info.siteKey, parentTabId, "sessionId"));
+              emit.toCompany('syncStop', {siteKey: info.siteKey, tabId: parentTabId}, info.siteKey);
+            }
+            else {
+              emit.toCompany('syncStop', {siteKey: info.siteKey, tabId: core.toTabId}, info.siteKey);
+            }
             syncStopCtrl(info.siteKey, core.toTabId);
           }
-          // syncStopCtrl(info.siteKey, info.tabId);
         }
         else {
 
