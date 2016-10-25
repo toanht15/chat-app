@@ -2824,5 +2824,18 @@ ul.naviBtn {
   padding-bottom:50px;
 }
 
+input#dateperiod {
+    background-image: url(/img/calender.png);
+    background-repeat: no-repeat;
+    background-position: right;
+    background-size: 15px;
+}
 
-
+a#searchRefine {
+    position: absolute;
+    top: 10px;
+    right: 120px;
+    width: 8em;
+    padding: 0.25em 0.5em;
+    text-align: center;
+}
