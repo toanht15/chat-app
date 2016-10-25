@@ -451,8 +451,6 @@ class HistoriesController extends AppController {
         ],
         'recursive' => -1
       ];
-
-
       $ret = $this->THistory->find('all', $params);
       foreach((array)$ret as $val){
         if ( isset($chat[$val['THistory']['id']]) ) {
@@ -482,7 +480,7 @@ class HistoriesController extends AppController {
         [
           'type' => 'LEFT',
           'table' => 'm_users',
-          'alias' => 'MUser'  ,
+          'alias' => 'MUser',
           'conditions' => [
           'THistoryChatLog.m_users_id = MUser.id',
           'MUser.m_companies_id' => $this->userInfo['MCompany']['id']
