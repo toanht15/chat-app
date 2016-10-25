@@ -120,13 +120,15 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         prevStatus: false,
         emit: function(tabId, status){
           if ( tabId === "" ) return false;
-          if ( this.prevStatus === status ) return false;
+          var sendToCustomer = true;
+          if ( this.prevStatus === status ) {sendToCustomer = false};
           this.prevStatus = status;
           if ( document.getElementById('sendMessage') === undefined ) return false;
           var value = document.getElementById('sendMessage').value;
           emit('sendTypeCond', {
             type: chatApi.observeType.cnst.company, // company
             tabId: tabId,
+            sendToCustomer: sendToCustomer,
             message: value,
             status: status
           });

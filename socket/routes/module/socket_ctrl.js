@@ -1236,6 +1236,7 @@ io.sockets.on('connection', function (socket) {
       emit.toCompany('receiveTypeCond', d, obj.siteKey);
       // 消費者へ送る
       delete obj.message;
+      if ( ('sendToCustomer' in obj) && String(obj.sendToCustomer) === "false" ) return false;
       emit.toUser('receiveTypeCond', obj, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
     }
     // 送り主が消費者の場合
