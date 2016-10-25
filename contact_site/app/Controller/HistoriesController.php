@@ -352,7 +352,6 @@ class HistoriesController extends AppController {
         'MCustomer.visitors_id = THistory.visitors_id'
       ]
     ];
-     //['MCustomer']['informations'] = $this->json_decode($inputData);
     // チャットのみ表示との切り替え
     if ( !$this->coreSettings[C_COMPANY_USE_CHAT] || strcmp($type, 'false') === 0 ) {
       $this->paginate['THistory']['joins'][0]['type'] = "LEFT";
@@ -365,8 +364,8 @@ class HistoriesController extends AppController {
 
     //履歴検索機能
     if($this->request->is('post')) {
-      $start = $this->data['History']['start_day'];
-      $finish = $this->data['History']['finish_day'];
+      $start = $this->data['start_day'];
+      $finish = $this->data['finish_day'];
       $ip = $this->data['History']['ip_address'];
       $company = $this->data['History']['company_name'];
       $name = $this->data['History']['customer_name'];
@@ -384,28 +383,20 @@ class HistoriesController extends AppController {
       $allusers = $this->MCustomer->find('all');
       $ret=[];
       foreach($allusers as $alluser) {
-          $Settings = json_decode($alluser['MCustomer']['informations']);
-          if($company != '') {
-            if(!strstr($Settings->company,$company)){
-              continue;
-            }
-          }
-          if($name != '') {
-            if(!strstr($Settings->name,$name)){
-              continue;
-            }
-          }
-          if($tel != '') {
-            if(!strstr($Settings->tel,$tel)){
-              continue;
-            }
-          }
-          if($mail != '') {
-            if(!strstr($Settings->mail,$mail)){
-              continue;
-            }
-          }
-          $ret[]=$alluser['MCustomer']['visitors_id'];
+        $settings = json_decode($alluser['MCustomer']['informations']);
+        if($company != '' && !strstr($settings->company,$company)) {
+          continue;
+        }
+        if($name != '' && !strstr($settings->name,$name)) {
+          continue;
+        }
+        if($tel != '' && !strstr($settings->tel,$tel)) {
+          continue;
+        }
+        if($mail != '' && !strstr($settings->mail,$mail)) {
+          continue;
+        }
+        $ret[]=$alluser['MCustomer']['visitors_id'];
       }
       $conditions['THistory.visitors_id'] = $ret;
       $historyList = $this->paginate('THistory',$conditions);

@@ -33,69 +33,26 @@
     <?=$this->Form->create('History', ['action' => 'index']);?>
       <?=$this->Form->hidden('outputData')?>
     <?=$this->Form->end();?>
-    <?=  $this->Form->create('History',[
-      'id' => 'historySearch',
-      'type' => 'post',
-      'url' => '/Histories'
-    ]); ?>
-      <?=
-      $this->Form->input('start_day',[
-        'label'=> false,
-        'div' => false,
-        'placeholder' => '開始日'
-      ]); ?>
-      <?=
-      $this->Form->input('finish_day',[
-        'label'=> false,
-        'div' => false,
-        'placeholder' => '終了日'
-      ]);
-      ?>
-      <?=
-      $this->Form->input('ip_address',[
-        'label'=>false,
-        'div' => false,
-        'placeholder' => 'ipアドレス'
-      ]) ?>
+    <?=  $this->Form->create('History',['id' => 'historySearch','type' => 'post','url' => '/Histories']); ?>
+      <?= $this->Form->input('datefilter',['label'=> false,'div' => false,'name'=> 'datefilter','id' => 'dateperiod','class' => 'form-control']); ?>
+      <?= $this->Form->input('start_day',['label'=> false,'div' => false,'name'=> 'start_day','placeholder' => '開始日']); ?>
+      <?= $this->Form->input('finish_day',['label'=> false,'div' => false,'name' => 'finish_day','placeholder' => '終了日']);?>
+      <?= $this->Form->input('ip_address',['label'=>false,'div' => false,'placeholder' => 'ipアドレス']) ?>
       <div>
-        <?=
-        $this->Form->input('company_name',[
-          'label'=>false,
-          'div' => false,
-          'placeholder' => '会社名'
-        ]) ?>
-        <?=
-        $this->Form->input('customer_name',[
-          'label'=>false,
-          'div' => false,
-          'placeholder' => '顧客名'
-        ]) ?>
-        <?=
-        $this->Form->input('telephone_number',[
-          'label'=>false,
-          'div' => false,
-          'placeholder' => '電話番号'
-        ]) ?>
-        <?=
-        $this->Form->input('mail_address',[
-          'label'=>false,
-          'div' => false,
-          'placeholder' => 'メールアドレス'
-        ]) ?>
+        <?= $this->Form->input('company_name',['label'=>false,'div' => false,'placeholder' => '会社名']) ?>
+        <?= $this->Form->input('customer_name',['label'=>false,'div' => false,'placeholder' => '顧客名']) ?>
+        <?= $this->Form->input('telephone_number',['label'=>false,'div' => false,'placeholder' => '電話番号']) ?>
+        <?= $this->Form->input('mail_address',['label'=>false,'div' => false,'placeholder' => 'メールアドレス']) ?>
       </div>
       <div>
-        <?=
-        $this->Form->button('検索',[
-          'label'=>false,
-          'div' => false,
-          'onclick' => 'searchRefine()'
-        ]) ?>
+        <?= $this->Form->button('検索',['label'=>false,'div' => false,'onclick' => 'searchRefine()']) ?>
       </div>
-    <?=
-    $this->Form->end();
-    ?>
+    <?= $this->Form->end(); ?>
   </div>
+<script type="text/javascript">
 
+
+</script>
   <div id="paging" class="fRight">
     <?php
       echo $this->Paginator->prev(
