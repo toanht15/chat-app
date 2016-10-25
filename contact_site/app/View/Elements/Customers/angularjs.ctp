@@ -3,7 +3,7 @@
 
 var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     userList = <?php echo json_encode($responderList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>,
-    widget = <?= $widgetSettings ?>,
+    widget = <?= $widgetSettings ?>, contract = <?= json_encode($coreSettings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>,
     modalFunc, myUserId = <?= h($muserId)?>, chatApi, cameraApi, entryWordApi;
 
 (function(){
@@ -55,20 +55,12 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       token: null,
       messageType: {
         customer: 1,
-        company: 2
+        company: 2,
+        auto: 3,
+        start: 98,
+        end: 99,
       },
-      init: function(){
-        $("#sendMessage").keydown(function(e){
-          if ( e.keyCode === 13 ) {
-            if ( !(e.shiftKey || e.ctrlKey) ) {
-              chatApi.pushMessage();
-            }
-          }
-        })
-        .focus(function(e){
-          chatApi.observeType.start();
-        });
-
+      init: function(sendPattern){
         this.sound = document.getElementById('sinclo-sound');
         if ( this.sound ) {
             this.sound.volume = 0.3;
@@ -126,10 +118,12 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         },
         emit: function(tabId, status){
           if ( tabId === "" ) return false;
+          if ( document.getElementById('sendMessage') === undefined ) return false;
+          var value = document.getElementById('sendMessage').value;
           emit('sendTypeCond', {
             type: chatApi.observeType.cnst.company, // company
             tabId: tabId,
-            message: document.getElementById('sendMessage').value,
+            message: value,
             status: status
           });
         }
@@ -274,6 +268,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
   sincloApp.factory('angularSocket', function ($rootScope) {
     return {
       on: function (eventName, callback) {
+        if ( !window.hasOwnProperty('socket') ) return false;
         socket.on(eventName, function () {
           var args = arguments;
           $rootScope.$apply(function () {
@@ -283,6 +278,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       },
       emit: function (eventName, d, callback) {
         var obj = {};
+        if ( !window.hasOwnProperty('socket') ) return false;
         if ( typeof(d) !== "object" ) {
           obj = JSON.parse(d);
         }
@@ -298,12 +294,12 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
               callback.apply(socket, args);
             }
           });
-        })
+        });
       }
     };
   });
 
-  sincloApp.controller('MainCtrl', ['$scope', 'angularSocket', function($scope, socket) {
+  sincloApp.controller('MainCtrl', ['$scope', 'angularSocket', '$timeout', function($scope, socket, $timeout) {
     $scope.searchText = "";
     $scope.chatMessage = "";
     $scope.oprCnt = 0; // 待機中のオペレーター人数
@@ -312,6 +308,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       accessId : false,
       ipAddress : false,
       ua : false,
+      stayCount : false,
       time : false,
       stayTime : false,
       page : false,
@@ -319,10 +316,18 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       referrer : false
     };
     $scope.monitorList = {};
+    $scope.customerList = {};
     $scope.messageList = [];
     $scope.chatList = [];
     $scope.typingMessageSe = "";
     $scope.typingMessageRe = {};
+    /* 定数 */
+    $scope.jsConst = {
+      tabInfo: <?php echo json_encode($tabStatusList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>,  // タブ状態の定数
+      tabInfoStr: <?php echo json_encode($tabStatusStrList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?> // タブ状態の定数
+
+    };
+
     $scope.search = function(array){
       var result = {};
       if ( $scope.searchText ) {
@@ -383,8 +388,35 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       $scope.labelHideList = retList;
     };
 
+    $scope.os = function(str){
+      return userAgentChk.os(str);
+    };
+
+    $scope.browser = function(str){
+      return userAgentChk.browser(str);
+    };
+
     $scope.ua = function(str){
-      return userAgentChk.init(str);
+      return userAgentChk.pre(str);
+    };
+
+    $scope.ui = function(m){
+      var showData = [];
+
+      if ( (m.userId in $scope.customerList) && Object.keys($scope.customerList[m.userId]).length > 0 ) {
+        var c = $scope.customerList[m.userId];
+        if ( ('company' in c) && c.company.length > 0 ) {
+          showData.push(c.company); // 会社名
+        }
+        if ( ('name' in c) && c.name.length > 0 ) {
+          showData.push(c.name); // 名前
+        }
+      }
+      // 顧客情報未登録の場合
+      if ( showData.length === 0 ) {
+        showData.push(m.ipAddress); // IPアドレス
+      }
+      return showData.join("\n");
     };
 
     var makeToken = function(){
@@ -498,17 +530,18 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     $scope.showDetail = function(tabId){
       $("#sendMessage").attr('value', '');
       if ( $scope.customerMainClass !== "" ) {
+        $("#customer_sub_pop").css("display", "none");
         $scope.customerMainClass = "";
         $scope.detailId = "";
-        $scope.typingMessageSe = "";
-        $scope.messageList = [];
-        chatApi.userId = "";
-        chatApi.observeType.emit(chatApi.tabId, false);
-        $("#chatTalk message-list").children().remove();
+        if ( contract.chat ) {
+          $scope.typingMessageSe = "";
+          $scope.messageList = [];
+          chatApi.userId = "";
+          chatApi.observeType.emit(chatApi.tabId, false);
+          $("#chatTalk message-list").children().remove();
+        }
+
         $("#customer_list tr.on").removeClass('on');
-        setTimeout(function(){
-          $("#customer_sub").css("display", "");
-        }, 200);
 
         if ( chatApi.tabId !== tabId ) {
           window.setTimeout(function(){
@@ -518,23 +551,43 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         chatApi.tabId = "";
       }
       else {
+        setPositionOfPopup();
         $scope.customerMainClass = "showDetail";
-        chatApi.token = makeToken();
         $scope.detailId = tabId;
-        chatApi.getMessage($scope.monitorList[tabId]);
-        chatApi.userId = $scope.monitorList[tabId].userId;
         chatApi.tabId = tabId;
-        $("#monitor_" + tabId).addClass('on');
-        if ( isset($scope.monitorList[tabId].chat) && $scope.monitorList[tabId].chat === myUserId ) {
-          $("#chatContent").addClass("connectChat");
-        }
-        else {
-          $("#chatContent").removeClass("connectChat");
+        if ( contract.chat ) {
+          chatApi.token = makeToken();
+          chatApi.getMessage($scope.monitorList[tabId]);
+          chatApi.userId = $scope.monitorList[tabId].userId;
+          $("#monitor_" + tabId).addClass('on');
+          if ( isset($scope.monitorList[tabId].chat) && $scope.monitorList[tabId].chat === myUserId ) {
+            $("#chatContent").addClass("connectChat");
+          }
+          else {
+            $("#chatContent").removeClass("connectChat");
+          }
         }
         setTimeout(function(){
-          $("#customer_sub").css("display", "block");
-        }, 400);
+          $("#customer_sub_pop").css("display", "block");
+        }, 10);
       }
+    };
+
+    $scope.changeSetting = function(type){
+      var settings = {
+        type: type,
+        value : ''
+      };
+      settings.value = $scope.settings[type];
+      $.ajax({
+        type: 'post',
+        data: settings, // type:1 => type, type:2 => type, id
+        dataType: 'json',
+        cache: false,
+        url: "<?= $this->Html->url('/Customers/remoteChageSetting') ?>",
+        success: function(json){
+        }
+      });
     };
 
     $scope.openDetailFlg = false;
@@ -548,6 +601,45 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         angular.element('#customer_detail').removeClass("open").addClass("close");
         $scope.openDetailFlg = false;
       }
+    }
+
+    $scope.getCustomerInfoFromMonitor = function(m){
+      $scope.getCustomerInfo(m.userId, function(ret){
+        $scope.customerList[m.userId] = ret;
+      });
+    };
+
+    // 顧客の詳細情報を取得する
+    $scope.getCustomerInfo = function(userId, callback){
+      $.ajax({
+        type: "POST",
+        url: "<?=$this->Html->url(['controller'=>'Customers', 'action' => 'remoteGetCusInfo'])?>",
+        data: {
+          v:  userId
+        },
+        dataType: "json",
+        success: function(json){
+          var ret = {};
+          if ( typeof(json) !== "string" ) {
+            ret = json;
+          }
+          callback(ret);
+        }
+      });
+    };
+
+    /* タブ状態を文字列で返す */
+    $scope.tabStatusStr = function (n){
+      return $scope.jsConst.tabInfoStr[n];
+    }
+
+    /* パラメーターを取り除く */
+    $scope.trimToURL = function (url){
+      var position = url.indexOf('?');
+      if ( position > 0 ) {
+        url = url.substr(0, position);
+      }
+      return url;
     }
 
     $scope.isset = function(value){
@@ -565,23 +657,71 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     };
 
     $scope.ngChatApi = {
+      init: function(){
+        $("#sendMessage").keydown(function(e){
+          if ( e.keyCode === 13 ) {
+            if ( e.ctrlKey ) return false;
+            if ( $scope.settings.sendPattarn && !e.shiftKey ) {
+              chatApi.pushMessage();
+            }
+            if ( !$scope.settings.sendPattarn && e.shiftKey ) {
+              chatApi.pushMessage();
+            }
+          }
+        })
+        .focus(function(e){
+          chatApi.observeType.start();
+          // フォーカスが当たった時にPlaceholderを消す（Edge対応）
+          $scope.chatPsFlg = false;
+        })
+        .blur(function(e){
+          // フォーカスが当たった時にPlaceholderを消す（Edge対応）
+          $scope.chatPsFlg = true;
+        });
+        chatApi.init();
+      },
       connect: function(obj){
         chatApi.connection(obj);
       },
       disConnect: function(tabId){
         emit("chatEnd", {tabId: tabId, userId: myUserId});
       },
-      notification: function(tabId, accessId, chatMessage){
-        var nInstance = new Notification(
-          '【' + accessId + '】新着チャットが届きました',
-          {
-            body: chatMessage,
-            icon: "<?=C_PATH_NODE_FILE_SERVER?>/img/mark.png"
-        });
+      notification: function(monitor){
+        if (!('Notification' in window)) return false;
+        // 詳細を開いてる且つ、企業がアクティブタブの場合は、通知を出さない
+        if ( $scope.detailId !== "" && document.hasFocus() ) return false;
+        var m = monitor;
+        function getBody(){
+          var options = {
+              body: "",
+              icon: "<?=C_PATH_NODE_FILE_SERVER?>/img/mark.png"
+          };
+
+          var settings = <?=$notificationList?>;
+
+          for(var key in settings){
+            var target = "", opt = settings[key];
+            // タイトル
+            if (Number(opt.type) === Number(<?=C_NOTIFICATION_TYPE_TITLE?>)) {
+              target = m.title;
+            }
+            // URL
+            else if (Number(opt.type) === Number(<?=C_NOTIFICATION_TYPE_URL?>)) {
+              target = m.url;
+            }
+            if (target.indexOf(opt.keyword) >= 0) {
+              options.body = opt.name;
+              options.icon = "/img/<?=C_PATH_NOTIFICATION_IMG_DIR?>"+opt.image;
+            }
+          }
+
+          return options;
+        }
+        var nInstance = new Notification('【' + monitor.accessId + '】新着チャットが届きました', getBody());
         nInstance.onclick = function(){
           window.focus(); // 現在のタブにフォーカスを当てる
-          if ( chatApi.tabId !== tabId ) {
-            $scope.showDetail(tabId); // 詳細を開く
+          if ( chatApi.tabId !== monitor.tabId ) {
+            $scope.showDetail(monitor.tabId); // 詳細を開く
           }
           nInstance.close();
         };
@@ -605,6 +745,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     function pushToList(obj){
       $scope.monitorList[obj.tabId] = obj;
+
+      $scope.getCustomerInfoFromMonitor(obj);
 
       if ( 'connectToken' in obj && 'responderId' in obj) {
         $scope.monitorList[obj.tabId].connectToken = obj.connectToken;
@@ -663,7 +805,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           for (var key in obj.messages) {
             var chat = obj.messages[key];
             chat.sort = Number(key);
-            $scope.messageList.push(obj.messages[key]);
+            $scope.messageList.push(chat);
           }
         }
 
@@ -681,6 +823,15 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     socket.on('sendCustomerInfo', function (data) {
       var obj = JSON.parse(data);
       pushToList(obj);
+    });
+
+
+    /* タブ状態受け渡し */
+    // タブ状態を取得
+    socket.on('retTabInfo', function (d) {
+      var obj = JSON.parse(d);
+
+      $scope.monitorList[obj.tabId].status = obj.status;
     });
 
     $scope.setName = function(uId){
@@ -774,7 +925,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         if ( obj.accessType !== _access_type_host ) {
           delete $scope.monitorList[obj.tabId];
           $scope.chatList = $scope.chatList.filter(function(v){
-            return (v !== this.t)
+            return (v !== this.t);
           }, {t: obj.tabId});
           if ( obj.tabId === chatApi.tabId ){
             $scope.showDetail(obj.tabId);
@@ -809,7 +960,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       }
       else {
         $scope.chatList = $scope.chatList.filter(function(v){
-          return (v !== this.t)
+          return (v !== this.t);
         }, {t: obj.tabId});
 
         // 前回の担当が自分だった場合
@@ -820,8 +971,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       if ( obj.tabId === chatApi.tabId ) {
         var chat = {
           sort: Number(obj.created),
-          userId: obj.userId,
-          type: "start"
+          messageType: Number(obj.messageType),
+          userId: obj.userId
         };
         $scope.messageList.push(chat);
       }
@@ -833,15 +984,14 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
       if ( 'tabId' in obj && obj.tabId in $scope.monitorList && 'chat' in $scope.monitorList[obj.tabId] ) {
         $scope.chatList = $scope.chatList.filter(function(v){
-          return (v !== this.t)
+          return (v !== this.t);
         }, {t: obj.tabId});
         $scope.monitorList[obj.tabId].chat = null;
       }
       if ( obj.tabId === chatApi.tabId ) {
         var chat = {
           sort: Number(obj.created),
-          userId: obj.userId,
-          type: "end"
+          userId: obj.userId
         };
         $scope.messageList.push(chat);
       }
@@ -898,7 +1048,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         // 未読数加算（自分が対応していないとき）
         $scope.monitorList[obj.tabId].chatUnreadCnt++;
         $scope.monitorList[obj.tabId].chatUnreadId = obj.chatId;
-        $scope.ngChatApi.notification(obj.tabId, $scope.monitorList[obj.tabId].accessId, obj.chatMessage);
+        $scope.ngChatApi.notification($scope.monitorList[obj.tabId]);
 
         // 既読にする(対象のタブを開いている、且つ自分が対応しており、フォーカスが当たっているとき)
         if (  obj.tabId === chatApi.tabId && $scope.monitorList[obj.tabId].chat === myUserId && $("#sendMessage").is(":focus") ) {
@@ -914,8 +1064,12 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     // チャット情報取得関数
     socket.on('sendChatInfo', function(d){
       var obj = JSON.parse(d);
-      $scope.monitorList[obj.tabId].chatUnreadId  = obj.chatUnreadId;
-      $scope.monitorList[obj.tabId].chatUnreadCnt = obj.chatUnreadCnt;
+      if ('chatUnreadId' in obj) {
+        $scope.monitorList[obj.tabId].chatUnreadId  = obj.chatUnreadId;
+      }
+      if ('chatUnreadCnt' in obj) {
+        $scope.monitorList[obj.tabId].chatUnreadCnt = obj.chatUnreadCnt;
+      }
     });
 
     // チャットメッセージ既読処理結果関数
@@ -935,7 +1089,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       ) {
         emit('retTypingMessage', {
           type: chatApi.observeType.cnst.company, // company
-          to: obj.from,
+          to: obj.tabId,
           tabId: chatApi.tabId,
           message: document.getElementById('sendMessage').value,
           status: $scope.isset(chatApi.observeType.timer)
@@ -1129,26 +1283,35 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       entryWordApi.close();
     });
 
+    $(document).ready(function(){
+      $scope.ngChatApi.init();
+    });
+
+    // ポップアップをセンターに表示
+    function setPositionOfPopup(){
+      var subContent = document.getElementById("sub_contents");
+      subContent.style.left = ((window.innerWidth-$("#sidebar-main").outerWidth()) - $("#sub_contents").outerWidth())/2 + "px";
+      subContent.style.top = "100px";
+    }
 
   }]);
 
-  sincloApp.directive('ngCreateMessage', function(){
-    return {
-      restrict: 'E',
-      link: function(scope, elem, attr) {
-        var cn = "";
-        var li = document.createElement('li');
-        var content = "";
+  sincloApp.directive('ngCreateMessage', ['$sce', function(sce){
+      return {
+        restrict: 'E',
+        link: function(scope, elem, attr) {
+          var cn = "";
+          var li = document.createElement('li');
+          var content = "";
 
-        if ( !("type" in scope.chat) ) {
           // 消費者からのメッセージの場合
           if (scope.chat.messageType === chatApi.messageType.customer) {
             cn = "sinclo_re";
             li.className = cn;
             content = createMessage(scope.chat.message, {radio: false});
           }
-          // 企業側か、オートメッセージの場合
-          else if (scope.chat.messageType === chatApi.messageType.company && Number(scope.chat.userId) in userList) {
+          // オートメッセージの場合
+          else if (scope.chat.messageType === chatApi.messageType.company) {
             cn = "sinclo_se";
             var chatName = widget.subTitle;
             if ( Number(widget.showName) === <?=C_WIDGET_SHOW_NAME?> ) {
@@ -1157,62 +1320,60 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             content = "<span class='cName'>" + chatName + "</span>";
             content += createMessage(scope.chat.message);
           }
-          else  {
+          else if (scope.chat.messageType === chatApi.messageType.auto) {
             cn = "sinclo_auto";
             content = "<span class='cName'>自動応答</span>";
             content += createMessage(scope.chat.message);
           }
+          else  {
+            cn = "sinclo_etc";
+            var userName = "オペレーター";
+            if ( Number(widget.showName) === <?=C_WIDGET_SHOW_NAME?> && "userId" in scope.chat ) {
+              userName = userList[Number(scope.chat.userId)];
+            }
+            if ( scope.chat.messageType === chatApi.messageType.start ) {
+              content = "－　" + userName + "が入室しました　－";
+            }
+            if ( scope.chat.messageType === chatApi.messageType.end ) {
+              content = "－　" + userName + "が退室しました　－";
+            }
+          }
+          li.className = cn;
+          li.innerHTML = content;
+          $(elem).append(li);
 
+          scDown();
+
+          function createMessage(message, opt){
+            var strings = message.split('\n');
+            var custom = "";
+            var linkReg = RegExp(/http(s)?:\/\/[!-~.a-z]*/);
+            var radioName = "sinclo-radio" + Object.keys(scope.chat).length;
+            var option = ( typeof(opt) !== 'object' ) ? { radio: true } : opt;
+            for (var i = 0; strings.length > i; i++) {
+                var str = escape_html(strings[i]);
+                // ラジオボタン
+                var radio = str.indexOf('[]');
+                if ( option.radio && radio > -1 ) {
+                    var val = str.slice(radio+2);
+                    str = "<input type='radio' name='" + radioName + "' id='" + radioName + "-" + i + "' class='sinclo-chat-radio' value='" + val + "' disabled=''>";
+                    str += "<label for='" + radioName + "-" + i + "'>" + val + "</label>";
+                }
+                // リンク
+                var link = str.match(linkReg);
+                if ( link !== null ) {
+                    var url = link[0];
+                    var a = "<a href='" + url + "' target='_blank'>"  + url + "</a>";
+                    str = str.replace(url, a);
+                }
+                custom += str + "\n";
+
+            }
+            return custom;
+          }
         }
-        else {
-          cn = "sinclo_etc";
-          var userName = "オペレーター";
-          if ( Number(widget.showName) === <?=C_WIDGET_SHOW_NAME?> && "userId" in scope.chat ) {
-            userName = userList[Number(scope.chat.userId)];
-          }
-          if ( scope.chat.type === "start" ) {
-            content = "－　" + userName + "が入室しました　－";
-          }
-          if ( scope.chat.type === "end" ) {
-            content = "－　" + userName + "が退室しました　－";
-          }
-        }
-        li.className = cn;
-        li.innerHTML = content;
-        $(elem).append(li);
-
-        scDown();
-
-        function createMessage(message, opt){
-          var strings = message.split('\n');
-          var custom = "";
-          var linkReg = RegExp(/http(s)?:\/\/[!-~.a-z]*/);
-          var radioName = "sinclo-radio" + Object.keys(scope.chat).length;
-          var option = ( typeof(opt) !== 'object' ) ? { radio: true } : opt;
-          for (var i = 0; strings.length > i; i++) {
-              var str = strings[i];
-              // ラジオボタン
-              var radio = str.indexOf('[]');
-              if ( option.radio && radio > -1 ) {
-                  var val = str.slice(radio+2);
-                  str = "<input type='radio' name='" + radioName + "' id='" + radioName + "-" + i + "' class='sinclo-chat-radio' value='" + val + "' disabled=''>";
-                  str += "<label for='" + radioName + "-" + i + "'>" + val + "</label>";
-              }
-              // リンク
-              var link = str.match(linkReg);
-              if ( link !== null ) {
-                  var url = link[0];
-                  var a = "<a href='" + url + "' target='_blank'>"  + url + "</a>";
-                  str = str.replace(url, a);
-              }
-              custom += str + "\n";
-
-          }
-          return custom;
-        }
-      }
-    };
-  });
+      };
+    }]);
 
   // 参考 http://stackoverflow.com/questions/14478106/angularjs-sorting-by-property
   sincloApp.filter('orderObjectBy', function(){
@@ -1273,5 +1434,134 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     }
   }]);
 
+  /* 固定ヘッダ */
+  sincloApp.directive('fixedHeader', function(){
+    return {
+      restrict: 'A',
+      link: function(scope, elems, attrs, ctrl){
+        var timer = [];
+        function colResize(tblWidth, idx, width){
+          clearTimeout(timer[idx]);
+          var headerList = document.querySelectorAll("#list_header tr th");
+
+          timer[idx] = setTimeout(function(){
+            $("#list_header").outerWidth(tblWidth);
+            $("#list_header tr th").eq(idx).outerWidth(width);
+          }, 5);
+        }
+
+        var width = [];
+        setInterval(function(){
+          var ths = document.querySelectorAll("#list_body th");
+          var tblStyle = document.querySelectorAll("#list_body thead")[0];
+          angular.forEach(ths, function(elem){
+
+            var style = window.getComputedStyle(elem, null);
+            if ( (elem.cellIndex in width) ) {
+              if ( width[elem.cellIndex] !== elem.offsetWidth ) {
+                colResize(tblStyle.offsetWidth, elem.cellIndex, elem.offsetWidth);
+                width[elem.cellIndex] = elem.offsetWidth;
+              }
+            }
+            else {
+              width[elem.cellIndex] = elem.offsetWidth;
+              colResize(tblStyle.offsetWidth, elem.cellIndex, elem.offsetWidth);
+            }
+          });
+        }, 100);
+      }
+    }
+  });
+
+  sincloApp.directive('ngCustomer', function(){
+    return {
+      restrict: 'A',
+      link: function(scope, elems, attrs, ctrl){
+        scope.saveCusInfo = function(key, value){
+          if ( !(key in scope.customData) ) return false;
+          var ret = true;
+          // 新規記入でない場合
+          if ( (key in scope.customPrevData) ) {
+            // 変わっていない場合
+            if ( scope.customData[key] === scope.customPrevData[key] ) {
+              ret = false;
+            }
+          }
+          if ( ret ) {
+            var data = {
+                v: scope.monitorList[scope.detailId].userId,
+                i: value
+              };
+            $.ajax({
+              type: "POST",
+              url: "<?=$this->Html->url(['controller'=>'Customers', 'action' => 'remoteSaveCusInfo'])?>",
+              data: data,
+              dataType: "json",
+              success: function(json){
+                if ( json ) {
+                  scope.customPrevData = angular.copy(value);
+                  scope.customerList[scope.monitorList[scope.detailId].userId] = angular.copy(value);
+                }
+              }
+            });
+          }
+        };
+        scope.showConnectionBtn = function(){
+          if (scope.detail === undefined || scope.detail === {}) return false;
+          if (!('widget' in scope.detail) || (('widget' in scope.detail) && !scope.detail.widget)) return false;
+          if (!('connectToken' in scope.detail)) return true;
+          if (('connectToken' in scope.detail) && scope.detail.connectToken === '') {
+            return true;
+          }
+          return false;
+        };
+
+        // プレースホルダーの動的変更
+        scope.chatPsFlg = true;
+        scope.chatPs = function(){
+          var sendPattarnStr = ( scope.settings.sendPattarn ) ? "Shift + Enter": "Enter";
+          if ( scope.chatPsFlg ) {
+            return "ここにメッセージ入力してください。\n・" + sendPattarnStr + "で改行されます\n・下矢印キー(↓)で簡易入力が開きます";
+          }
+          else {
+            return "";
+          }
+        }
+
+        // ボタン名ーの動的変更
+        scope.chatSendBtnName = function(){
+          return ( scope.settings.sendPattarn ) ? "送信（Enter）": "送信（Shift+Enter）";
+        }
+
+        scope.$watch(function(){
+          if ( scope.detailId !== "" && (scope.detailId in scope.monitorList) ) {
+            return scope.monitorList[scope.detailId];
+          }
+          else {
+            return scope.detailId;
+          }
+        }, function(){
+          // 変わった場合
+          if ( !(scope.detail === undefined || scope.detail === {}) && scope.detail.tabId !== scope.detailId ) {
+            scope.customData = {};
+            scope.customPrevData = {};
+          }
+          if ( scope.detailId !== "" && (scope.detailId in scope.monitorList) ) {
+            scope.detail = scope.monitorList[scope.detailId];
+            scope.getCustomerInfo(scope.monitorList[scope.detailId].userId, function(ret){
+              scope.customData = ret;
+              scope.customPrevData = angular.copy(ret);
+              scope.customerList[scope.monitorList[scope.detailId].userId] = angular.copy(scope.customData);
+            });
+          }
+          else {
+            scope.detail = {};
+            scope.customData = {};
+            scope.customPrevData = {};
+          }
+        });
+      }
+    }
+  });
 }());
 </script>

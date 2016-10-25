@@ -67,7 +67,7 @@
         </div>
         <div>
             <span class="require"><?= $this->Html->image('mail_g.png', array('alt' => 'メールアドレス', 'width' => 30, 'height' => 30)) ?></span>
-            <?= $this->Form->input('mail_address', array('placeholder' => 'メールアドレス', 'div' => false, 'label' => false, 'maxlength' => 200)) ?>
+            <?= $this->Form->input('mail_address', array('placeholder' => 'メールアドレス', 'div' => false, 'label' => false, 'maxlength' => 200, 'autocomplete' => 'email')) ?>
         </div>
         <div>
 <?php
@@ -77,10 +77,10 @@ if ( empty($this->params->data['MUser']['id']) ) {
 }
 
 ?>
-            <input type="text" style="display: none">
-            <input type="password" style="display: none">
+            <input type="text" style="display:block; position: fixed; top: -500px; left: -500px; z-index: 0;">
+            <input type="password" style="display:block; position: fixed; top: -500px; left: -500px; z-index: 0;">
             <span <?=$pwReq?>><?= $this->Html->image('password.png', array('alt' => 'パスワード', 'width' => 30, 'height' => 30)) ?></span>
-            <?= $this->Form->input('new_password', array('type' => 'password', 'placeholder' => 'パスワード', 'div' => false, 'label' => false, 'maxlength' => 12)) ?>
+            <?= $this->Form->input('new_password', array('type' => 'password', 'placeholder' => 'パスワード', 'div' => false, 'label' => false, 'maxlength' => 12, 'autocomplete' => 'off')) ?>
         </div>
         <div>
             <span class="require"><?= $this->Html->image('permission.png', array('alt' => '権限', 'width' => 30, 'height' => 30)) ?></span>

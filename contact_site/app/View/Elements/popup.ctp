@@ -17,10 +17,6 @@
 <script type="text/javascript">
 'use strict';
 
-$(window).ready(function(){
-  popupEvent._setEvent();
-});
-
 var popupEvent = {
         id: null,
         title: null,
@@ -94,6 +90,7 @@ var popupEvent = {
                         return popupEvent.closePopup();
                     };
                     break;
+                case 'p-history-cus':
                 case 'p-muser-entry':
                 case 'p-tdictionary-entry':
                     var entryBtn = _button("保存");
@@ -256,7 +253,7 @@ if ( isset($alertMessage) && !empty($alertMessage) ) {
       echo "showMessage(". $alertMessage['type'] .", '" . $alertMessage['text'] . "');";
 }
 ?>
-
+      popupEvent._setEvent();
     });
 }(popupEvent, shortMessage);
 

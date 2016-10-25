@@ -25,6 +25,7 @@ if( strcmp($this->name, 'Login') !== 0 ) {
 <html>
 <head>
 	<?php echo $this->Html->charset(); ?>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>
 		<?php echo $this->fetch('title'); ?> | sinclo
 	</title>

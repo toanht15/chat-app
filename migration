@@ -1,0 +1,3 @@
+#!/bin/sh
+
+contact_site/app/Console/cake Migrations.migration $1 $2 $3

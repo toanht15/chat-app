@@ -148,7 +148,6 @@
       var emitData = {
           referrer: userInfo.referrer,
           time: userInfo.getTime(),
-          page: userInfo.getPage(),
           firstConnection: userInfo.firstConnection,
           userAgent: window.navigator.userAgent,
           service: check.browser(),
@@ -166,6 +165,7 @@
         if ( Number(userInfo.accessType) === Number(cnst.access_type.guest) ) {
           emitData.connectToken = userInfo.connectToken;
           userInfo.syncInfo.get();
+          common.judgeShowWidget();
           emit('connectSuccess', {prevList: userInfo.prevList, prev: userInfo.prev});
           emit('connectedForSync', {});
 
@@ -216,6 +216,9 @@
       if ( ('pagetime' in obj) ) {
         userInfo.pageTime = obj['pagetime'];
       }
+      if ( ('activeOperatorCnt' in obj) ) {
+        window.info.activeOperatorCnt = obj['activeOperatorCnt'];
+      }
     },
     accessInfo: function(d){
       var obj = common.jParse(d);
@@ -257,6 +260,7 @@
       }
 
       obj['prev'] = userInfo.prev;
+      obj.stayCount = userInfo.getStayCount();
 
       emit('customerInfo', obj);
       emit('connectSuccess', {
@@ -273,7 +277,6 @@
         var createStartTimer,
             createStart = function(){
                 var sincloBox = document.getElementById('sincloBox');
-                var widgetOpen = storage.s.get('widgetOpen');
                 if ( window.info.contract.chat && check.smartphone() ) {
                   sincloBox.style.display = "block";
                   sincloBox.style.opacity = 0;
@@ -285,20 +288,8 @@
                   sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
                 }
                 // ウィジェット表示
-                if (!widgetOpen) {
-                  if ( (('maxShowTime' in window.info.widget) && String(window.info.widget.maxShowTime).match(/^[0-9]{1,2}$/) !== null) && ('showTime' in window.info.widget) && String(window.info.widget.showTime) === "1" ) {
-                    window.setTimeout(function(){
-                      var flg = sincloBox.getAttribute('data-openflg');
-                      if ( String(flg) === "false" ) {
-                        storage.s.set('widgetOpen', true);
-                        sinclo.operatorInfo.ev();
-                      }
-                    }, Number(window.info.widget.maxShowTime) * 1000);
-                  }
-                  else {
-                      storage.s.set('widgetOpen', true);
-                  }
-                }
+                sinclo.chatApi.widgetOpen();
+
                 if ( window.info.contract.chat ) {
                     // チャット情報読み込み
                     sinclo.chatApi.init();
@@ -319,6 +310,7 @@
       var emitData = userInfo.getSendList();
       emitData.receiveAccessInfoToken = obj.token;
       emitData.widget = window.info.widgetDisplay;
+      emitData.stayCount = userInfo.getStayCount();
       emit('sendAccessInfo', emitData);
     },
     confirmCustomerInfo: function(d) {
@@ -327,6 +319,7 @@
       if ( userInfo.accessType !== cnst.access_type.guest ) return false;
       var emitData = userInfo.getSendList();
       emitData.receiveAccessInfoToken = obj.token;
+      emitData.stayCount = userInfo.getStayCount();
       emit('customerInfo', emitData);
     },
     getConnectInfo: function(d) {
@@ -399,7 +392,7 @@
       common.load.start();
       userInfo.setConnect(obj.connectToken);
       if ( !check.isset(userInfo.sendTabId) ) {
-        userInfo.sendTabId = obj.from;
+        userInfo.sendTabId = obj.tabId;
         userInfo.syncInfo.set();
       }
       else {
@@ -438,6 +431,7 @@
         // スクロール位置の取得
         scrollPosition: browserInfo.windowScroll()
       });
+      emit('sendTabInfo', { status: browserInfo.getActiveWindow() });
     },
     syncElement: function(d){
       var obj = common.jParse(d);
@@ -482,7 +476,7 @@
     },
     syncEvStart: function(d){
       var obj = common.jParse(d);
-      if ( obj.to !== userInfo.tabId && obj.from !== userInfo.tabId ) return false;
+      if ( obj.to !== userInfo.tabId && obj.tabId !== userInfo.tabId ) return false;
       syncEvent.start(true);
       window.clearTimeout(sinclo.syncTimeout);
       common.load.finish();
@@ -594,7 +588,7 @@
       if ( check.isset(opUser) === false ) {
         opUser = "オペレーター";
       }
-
+      check.escape_html(opUser); // エスケープ
 
       sinclo.chatApi.createNotifyMessage(opUser + "が入室しました");
     },
@@ -606,6 +600,7 @@
       if ( check.isset(opUser) === false ) {
         opUser = "オペレーター";
       }
+      check.escape_html(opUser); // エスケープ
       sinclo.chatApi.createNotifyMessage(opUser + "が退室しました");
       sinclo.chatApi.opUser = "";
     },
@@ -617,7 +612,7 @@
       for (var key in obj.chat.messages) {
         if ( !obj.chat.messages.hasOwnProperty(key) ) return false;
         var chat = obj.chat.messages[key], userName;
-        if ( Number(chat.messageType) !== 99 ) {
+        if ( Number(chat.messageType) < 90 ) {
           var cn = (Number(chat.messageType) === 1) ? "sinclo_se" : "sinclo_re";
           if (Number(chat.messageReadFlg) === 0 && chat.messageType === sinclo.chatApi.messageType.company) {
               this.chatApi.unread++;
@@ -640,17 +635,18 @@
           if ( info.widget.showName !== 1 ) {
             sinclo.chatApi.opUser = "";
           }
-
           var opUser = sinclo.chatApi.opUser;
 
           if ( sinclo.chatApi.opUser === "" ) {
             opUser = "オペレーター";
           }
-          if ( chat.type === "start" ) {
+          check.escape_html(opUser); // エスケープ
+
+          if ( Number(chat.messageType) === sinclo.chatApi.messageType.start ) {
             this.chatApi.online = true;
             this.chatApi.createNotifyMessage(opUser + "が入室しました");
           }
-          if ( chat.type === "end" ) {
+          if ( Number(chat.messageType) === sinclo.chatApi.messageType.end ) {
             this.chatApi.online = false;
             this.chatApi.createNotifyMessage(opUser + "が退室しました");
             sinclo.chatApi.opUser = "";
@@ -703,8 +699,12 @@
       // 自動メッセージの情報を渡す（保存の為）
       var obj = common.jParse(d);
       emit("sendAutoChatMessages", {messages: sinclo.chatApi.autoMessages, sendTo: obj.sendTo});
+      var value = "";
+      if (window.info.widgetDisplay) {
+        value = document.getElementById('sincloChatMessage').value;
+      }
       // 入力中のステータスを送る
-      sinclo.chatApi.observeType.emit(sinclo.chatApi.observeType.status, document.getElementById('sincloChatMessage').value);
+      sinclo.chatApi.observeType.emit(sinclo.chatApi.observeType.status, value);
     },
     resAutoChatMessage: function(d){
         var obj = JSON.parse(d);
@@ -733,6 +733,14 @@
         common.makeAccessIdTag();
       }
 
+      // 終了通知
+      var title = location.host + 'の内容';
+      var content = location.host + 'との画面共有を終了しました';
+      popup.ok = function(){
+        this.remove();
+      };
+      popup.set(title, content, popup.const.action.alert);
+
       var timer = setInterval(function(){
         if (window.info.widgetDisplay === false) {
           clearInterval(timer);
@@ -758,7 +766,9 @@
         messageType: {
             customer: 1,
             company: 2,
-            auto: 3
+            auto: 3,
+            start: 98,
+            end: 99
         },
         autoMessages: [],
         init: function(){
@@ -805,12 +815,30 @@
 
             emit('getChatMessage', {showName: info.widget.showName});
         },
+        widgetOpen: function(){
+          var widgetOpen = storage.s.get('widgetOpen');
+          if ( !(('showTime' in window.info.widget) && ('maxShowTime' in window.info.widget) && String(window.info.widget.maxShowTime).match(/^[0-9]{1,2}$/) !== null) ) return false;
+          var showTime = String(window.info.widget.showTime);
+          var maxShowTime = Number(window.info.widget.maxShowTime) * 1000;
+          if ( showTime === "2" ) return false; // 常に最大化しない
+          if ( showTime === "1" ) { // サイト訪問後
+            if (widgetOpen) return false;
+          }
+          // 常に最大化する、ページ訪問時（showTime === 3,4）
+          window.setTimeout(function(){
+            var flg = sincloBox.getAttribute('data-openflg');
+            if ( String(flg) === "false" ) {
+              storage.s.set('widgetOpen', true);
+              sinclo.operatorInfo.ev();
+            }
+          }, maxShowTime);
+        },
         createNotifyMessage: function(val){
             var chatList = document.getElementsByTagName('sinclo-chat')[0];
             var li = document.createElement('li');
             chatList.appendChild(li);
             li.className = "sinclo_etc";
-            li.innerHTML = "－ " + val + " －";
+            li.innerHTML = "－ " + check.escape_html(val) + " －";
             this.scDown();
         },
         createTypingTimer: null,
@@ -838,6 +866,8 @@
             if ( check.isset(opUser) === false ) {
               opUser = "オペレーター";
             }
+
+            opUser = check.escape_html(opUser); // エスケープ
 
             if ( !typeMessage ) {
               li.appendChild(span);
@@ -875,12 +905,13 @@
             if ( check.isset(cName) === false ) {
               cName = window.info.widget.subTitle;
             }
+            check.escape_html(cName); // エスケープ
 
             if ( cs === "sinclo_re" ) {
               content = "<span class='cName'>" + cName + "</span>";
             }
             for (var i = 0; strings.length > i; i++) {
-                var str = strings[i];
+                var str = check.escape_html(strings[i]);
 
                 if ( cs === "sinclo_re" ) {
                     // ラジオボタン
@@ -1222,6 +1253,12 @@
                     if ( prev.length === 0 || (prev.length > 0 && prev[prev.length - 1].created !== date) ) {
                         clearInterval(setAutoMessageTimer);
                         sinclo.trigger.setAutoMessage(id, cond);
+                        // 自動最大化
+                        if ( !('widgetOpen' in cond) ) return false;
+                        var flg = sincloBox.getAttribute('data-openflg');
+                        if ( Number(cond.widgetOpen) === 1 && String(flg) === "false" ) {
+                          sinclo.operatorInfo.ev();
+                        }
                     }
                 }, 1);
 

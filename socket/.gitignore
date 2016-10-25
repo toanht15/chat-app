@@ -1,4 +1,6 @@
 node_modules/
+webroot/*.html
+!webroot/webcam.html
 routes/module/database.js
 webroot/client/*
 webroot/websocket/*

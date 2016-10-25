@@ -27,205 +27,252 @@ App::uses('Controller', 'Controller');
  * Add your application-wide methods in the class below, your controllers
  * will inherit them.
  *
- * @package		app.Controller
- * @link		http://book.cakephp.org/2.0/en/controllers.html#the-app-controller
+ * @package   app.Controller
+ * @link    http://book.cakephp.org/2.0/en/controllers.html#the-app-controller
  */
 class AppController extends Controller {
-    public $components = [
-        'Session',
-        'Auth' => [
-            'loginAction' => [
-                'controller' => 'Login',
-                'action' => 'login'
-            ],
-            'authError' => 'ログインに失敗しました。',
-            'authenticate' => [
-                'Form' => [
-                    'userModel' => 'MUser',
-                    'fields' => ['username' => 'mail_address'],
-                    'scope' => [
-                        'MUser.del_flg' => 0
-                    ]
-                ]
-            ]
+  public $components = [
+    'Session',
+    'Auth' => [
+      'loginAction' => [
+        'controller' => 'Login',
+        'action' => 'login'
+      ],
+      'authError' => 'ログインに失敗しました。',
+      'authenticate' => [
+        'Form' => [
+          'userModel' => 'MUser',
+          'fields' => ['username' => 'mail_address'],
+          'scope' => [
+            'MUser.del_flg' => 0
+          ]
         ]
-    ];
+      ]
+    ]
+  ];
 
-    public $helpers = array('formEx');
-    public $uses = array('MUser', 'MWidgetSetting');
+  public $helpers = ['formEx'];
+  public $uses = ['MUser', 'MWidgetSetting'];
 
-    public $userInfo;
-    public $coreSettings;
+  public $userInfo;
+  public $coreSettings;
 
-    public function beforeFilter(){
-        // プロトコルチェック(本番のみ)
-        if ( APP_MODE_DEV === false ) {
-            $this->checkPort();
+  public function beforeFilter(){
+    // プロトコルチェック(本番のみ)
+    if ( APP_MODE_DEV === false ) {
+      $this->checkPort();
+    }
+
+    // 通知メッセージをセット
+    if ($this->Session->check('global.message')) {
+      $this->set('alertMessage', $this->Session->read('global.message'));
+      $this->Session->delete('global.message');
+    }
+
+    // 未ログインの場合は以降の処理を通さない
+    if (!$this->Auth->user()) return false;
+
+    // ログイン情報をオブジェクトに格納
+    if ( $this->Session->check('global.userInfo') ) {
+      $this->userInfo = $this->Session->read('global.userInfo');
+      $this->set('userInfo', $this->userInfo);
+    }
+    // 多重ログインチェック
+    if ( isset($this->userInfo['id']) && isset($this->userInfo['session_rand_str']) ) {
+      $newInfo = $this->MUser->read(null, $this->userInfo['id']);
+      if ( strcmp($this->userInfo['session_rand_str'], $newInfo['MUser']['session_rand_str']) !== 0 ) {
+        $this->userInfo = [];
+        $this->Session->destroy();
+        $this->renderMessage(C_MESSAGE_TYPE_ALERT, Configure::read('message.const.doubleLoginFailed'));
+        return $this->redirect(['controller'=>'Login', 'action' => 'index']);
+      }
+    }
+
+    // 使用機能のセット
+    if ( empty($this->userInfo['MCompany']['core_settings']) ) {
+      $this->userInfo = [];
+      $this->Session->destroy();
+      return $this->redirect(['controller'=>'Login', 'action' => 'index']);
+    }
+    $this->coreSettings = json_decode($this->userInfo['MCompany']['core_settings'], true);
+    $this->set('coreSettings', $this->coreSettings);
+
+
+    // コンフィグにユーザーIDを設定
+    Configure::write('logged_user_id', $this->Auth->user('id'));
+    // コンフィグに企業IDを設定
+    Configure::write('logged_company_id', $this->userInfo['MCompany']['id']);
+    // ウィジェットの情報をビューへ渡す
+    $widgetInfo = $this->MWidgetSetting->coFind('first', []);
+
+    /* オペレーター待ち状態 */
+    // 在籍/退席
+    $opStatus = C_OPERATOR_PASSIVE; // 退席（デフォルト）
+    if ( !empty($widgetInfo['MWidgetSetting']['display_type']) && strcmp($widgetInfo['MWidgetSetting']['display_type'], C_WIDGET_DISPLAY_CODE_OPER) === 0 ) {
+      // セッションから
+      if ( $this->Session->check('widget.operator.status') ) {
+      $opStatus = $this->Session->read('widget.operator.status');
+      }
+      else {
+      $this->Session->write('widget.operator.status', C_OPERATOR_PASSIVE);
+      }
+
+      $this->set('widgetCheck', C_OPERATOR_ACTIVE); // オペレーターの在籍/退席を使用するか
+      $this->set('opStatus', $opStatus);
+    }
+    else {
+      $this->set('widgetCheck', C_OPERATOR_PASSIVE);
+    }
+
+    /* 権限 */
+    if ( !(strcmp($this->userInfo['permission_level'], C_AUTHORITY_SUPER) === 0 || strcmp($this->userInfo['permission_level'], C_AUTHORITY_ADMIN) === 0) ) {
+      switch($this->name){
+        // 管理者権限のみのページ
+        case "MUsers":
+        case "MWidgetSettings":
+        case "TAutoMessages":
+        // 一先ずトップ画面へ
+        $this->redirect("/");
+        default:
+        break;
+      }
+    }
+
+    /* 管理者権限かどうかを渡す */
+    $this->set('adminFlg', (strcmp($this->userInfo['permission_level'], C_AUTHORITY_SUPER) === 0 || strcmp($this->userInfo['permission_level'], C_AUTHORITY_ADMIN) === 0 ));
+
+    /* 契約ごと使用可能ページ */
+    switch($this->name){
+      case "TDictionaries":
+      case "TAutoMessages":
+      case "MChatNotifications":
+        // TODO メディアリンクのみ対応
+        if (!$this->coreSettings["chat"] && strcmp($this->userInfo['MCompany']['company_key'], "medialink") !== 0 ) {
+          $this->redirect("/");
         }
+    }
+  }
 
-        // 通知メッセージをセット
-        if ($this->Session->check('global.message')) {
-            $this->set('alertMessage', $this->Session->read('global.message'));
-            $this->Session->delete('global.message');
-        }
+  /**
+   * checkPort プロトコルチェック
+   * @return void
+   * */
+  public function checkPort(){
+    $params = $this->request->params;
+    $query = $this->request->query;
 
-        // 未ログインの場合は以降の処理を通さない
-        if (!$this->Auth->user()) return false;
+    switch($params['controller'] . "/" . $params['action']){
+      case "Customers/frame":
+        $port = 80;
+        $protocol = "http";
+        break;
+      default:
+        $port = 443;
+        $protocol = "https";
+    }
 
-        // ログイン情報をオブジェクトに格納
-        if ( $this->Session->check('global.userInfo') ) {
-            $this->userInfo = $this->Session->read('global.userInfo');
-            $this->set('userInfo', $this->userInfo);
-        }
-        // 多重ログインチェック
-        if ( isset($this->userInfo['id']) && isset($this->userInfo['session_rand_str']) ) {
-            $newInfo = $this->MUser->read(null, $this->userInfo['id']);
-            if ( strcmp($this->userInfo['session_rand_str'], $newInfo['MUser']['session_rand_str']) !== 0 ) {
-                $this->userInfo = [];
-                $this->Session->destroy();
-                $this->renderMessage(C_MESSAGE_TYPE_ALERT, Configure::read('message.const.doubleLoginFailed'));
-                return $this->redirect(['controller'=>'Login', 'action' => 'index']);
-            }
-        }
-
-        // 使用機能のセット
-        if ( empty($this->userInfo['MCompany']['core_settings']) ) {
-            $this->userInfo = [];
-            $this->Session->destroy();
-            return $this->redirect(['controller'=>'Login', 'action' => 'index']);
-        }
-        $this->coreSettings = json_decode($this->userInfo['MCompany']['core_settings'], true);
-        $this->set('coreSettings', $this->coreSettings);
-
-
-        // コンフィグにユーザーIDを設定
-        Configure::write('logged_user_id', $this->Auth->user('id'));
-        // コンフィグに企業IDを設定
-        Configure::write('logged_company_id', $this->userInfo['MCompany']['id']);
-        // ウィジェットの情報をビューへ渡す
-        $widgetInfo = $this->MWidgetSetting->coFind('first', []);
-
-        /* オペレーター待ち状態 */
-        // 在籍/退席
-        $opStatus = C_OPERATOR_PASSIVE; // 退席（デフォルト）
-        if ( !empty($widgetInfo['MWidgetSetting']['display_type']) && strcmp($widgetInfo['MWidgetSetting']['display_type'], C_WIDGET_DISPLAY_CODE_OPER) === 0 ) {
-          // セッションから
-          if ( $this->Session->check('widget.operator.status') ) {
-            $opStatus = $this->Session->read('widget.operator.status');
-          }
-          else {
-            $this->Session->write('widget.operator.status', C_OPERATOR_PASSIVE);
-          }
-
-          $this->set('widgetCheck', C_OPERATOR_ACTIVE); // オペレーターの在籍/退席を使用するか
-          $this->set('opStatus', $opStatus);
+    // 推奨のプロトコルではなかった場合
+    if(strcmp($_SERVER['HTTP_X_FORWARDED_PORT'],$port) !== 0){
+      $queryStr = "";
+      $url = $protocol . "://".env('SERVER_NAME').$this->here;
+      foreach((array)$query as $key => $val){
+        if ( empty($queryStr) ) {
+          $queryStr = "?";
         }
         else {
-          $this->set('widgetCheck', C_OPERATOR_PASSIVE);
+          $queryStr .= "&";
         }
-
-        /* 権限 */
-        if ( !(strcmp($this->userInfo['permission_level'], C_AUTHORITY_SUPER) === 0 || strcmp($this->userInfo['permission_level'], C_AUTHORITY_ADMIN) === 0) ) {
-            switch($this->name){
-              // 管理者権限のみのページ
-              case "MUsers":
-              case "MWidgetSettings":
-              case "TAutoMessages":
-                // 一先ずトップ画面へ
-                $this->redirect("/");
-              default:
-                break;
-            }
-        }
-
-        /* 契約ごと使用可能ページ */
-        switch($this->name){
-            case "TDictionaries":
-            case "TAutoMessages":
-                // TODO メディアリンクのみ対応
-                if (!$this->coreSettings["chat"] && strcmp($this->userInfo['MCompany']['company_key'], "medialink") !== 0 ) {
-                    $this->redirect("/");
-                }
-        }
-    }
-
-    /**
-     * checkPort プロトコルチェック
-     * @return void
-     * */
-    public function checkPort(){
-        $params = $this->request->params;
-        $query = $this->request->query;
-
-        switch($params['controller'] . "/" . $params['action']){
-            case "Customers/frame":
-                $port = 80;
-                $protocol = "http";
-                break;
-            default:
-                $port = 443;
-                $protocol = "https";
-        }
-
-        // 推奨のプロトコルではなかった場合
-        if(strcmp($_SERVER['HTTP_X_FORWARDED_PORT'],$port) !== 0){
-            $queryStr = "";
-            $url = $protocol . "://".env('SERVER_NAME').$this->here;
-            foreach((array)$query as $key => $val){
-                if ( empty($queryStr) ) {
-                  $queryStr = "?";
-                }
-                else {
-                  $queryStr .= "&";
-                }
-                if ( strcmp('url', $key) === 0 ) {
-                  $queryStr .= $key . "=" . urlencode($val);
-                }
-                else {
-                  $queryStr .= $key . "=" . $val;
-                }
-            }
-
-            // 推奨のプロトコルでリダイレクト
-            $this->redirect($url.$queryStr);
-        }
-
-    }
-
-    public function setUserInfo($info){
-        $this->userInfo = $info;
-        $this->Session->write('global.userInfo', $info);
-    }
-
-    /**
-     * オペレーターの在籍状況を変更する
-     * */
-    public function remoteChangeOperatorStatus(){
-        Configure::write('debug', 0);
-        $this->autoRender = FALSE;
-        $this->layout = 'ajax';
-        $status = C_OPERATOR_PASSIVE;
-        if ( $this->Session->check('widget.operator.status') ) {
-          $status = $this->Session->read('widget.operator.status');
-        }
-        if ( $status == C_OPERATOR_ACTIVE ) {
-            $status = C_OPERATOR_PASSIVE;
+        if ( strcmp('url', $key) === 0 ) {
+          $queryStr .= $key . "=" . urlencode($val);
         }
         else {
-            $status = C_OPERATOR_ACTIVE;
+          $queryStr .= $key . "=" . $val;
         }
-        $this->Session->write('widget.operator.status', $status);
-		return new CakeResponse(array('body' => json_encode(['status' => $status])));
+      }
 
+      // 推奨のプロトコルでリダイレクト
+      $this->redirect($url.$queryStr);
     }
 
-    /**
-     * 通知メッセージをセッションに保存
-     * @param $type int (1:success, 2:error, 3:notice) 通知の種類
-     * @param $text string メッセージ本文
-     * */
-    public function renderMessage($type, $text){
-        $this->Session->write('global.message', ['type'=>$type, 'text' => $text]);
+  }
+
+  public function setUserInfo($info){
+    $this->userInfo = $info;
+    $this->Session->write('global.userInfo', $info);
+  }
+
+  /**
+   * オペレーターの在籍状況を変更する
+   * */
+  public function remoteChangeOperatorStatus(){
+    Configure::write('debug', 0);
+    $this->autoRender = FALSE;
+    $this->layout = 'ajax';
+    $status = C_OPERATOR_PASSIVE;
+    if ( $this->Session->check('widget.operator.status') ) {
+      $status = $this->Session->read('widget.operator.status');
     }
+    if ( $status == C_OPERATOR_ACTIVE ) {
+      $status = C_OPERATOR_PASSIVE;
+    }
+    else {
+      $status = C_OPERATOR_ACTIVE;
+    }
+    $this->Session->write('widget.operator.status', $status);
+    return new CakeResponse(['body' => json_encode(['status' => $status])]);
+
+  }
+
+  /**
+   * 通知メッセージをセッションに保存
+   * @param $type int (1:success, 2:error, 3:notice) 通知の種類
+   * @param $text string メッセージ本文
+   * */
+  public function renderMessage($type, $text){
+    $this->Session->write('global.message', ['type'=>$type, 'text' => $text]);
+  }
+
+  public function setChatValiable($val) {
+    // 企業名取得
+    $widgetSettings = $this->MWidgetSetting->find('first', ['conditions' => ['m_companies_id' => $this->userInfo['MCompany']['id']]]);
+    $styleSettings = (array)json_decode($widgetSettings['MWidgetSetting']['style_settings']);
+    $ret = $val;
+    // 企業名
+    $ret = str_replace("{!company}", $styleSettings['subTitle'], $ret);
+    // 表示名
+    $ret = str_replace("{!user}", $this->userInfo['display_name'], $ret);
+    return $ret;
+  }
+
+  /**
+   * jsonエンコード
+   */
+  public function jsonEncode($val) {
+    return json_encode($val, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_FORCE_OBJECT );
+  }
+
+  /* *
+   * imagecreatefrom**
+   * */
+  public function imageCreate($extension, $file){
+    if ( preg_match('/^png$/i', $extension) ) {
+      return imagecreatefrompng($file);
+    }
+    if ( preg_match('/^jpeg|jpg$/i', $extension) ) {
+      return imagecreatefromjpeg($file);
+    }
+  }
+
+  /* *
+   * image**
+   * */
+  public function imageOut($extension, $file, $saveFile){
+    if ( preg_match('/^png$/i', $extension) ) {
+      return imagepng($file, $saveFile);
+    }
+    if ( preg_match('/^jpeg|jpg$/i', $extension) ) {
+      return imagejpeg($file, $saveFile);
+    }
+  }
 
 }

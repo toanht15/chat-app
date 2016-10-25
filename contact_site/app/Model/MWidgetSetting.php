@@ -12,6 +12,7 @@ class MWidgetSetting extends AppModel {
     public $styleColumns = [
       'show_time' => "showTime",
       'max_show_time' => "maxShowTime",
+      'max_show_time_page' => "maxShowTimePage",
       'show_position' => "showPosition",
       'title' => "title",
       'sub_title' => "subTitle",
@@ -38,14 +39,22 @@ class MWidgetSetting extends AppModel {
      */
     public $validate = [
         'max_show_time' => [
-            'numeric' => [
-              'rule' => 'numeric',
-              'allowEmpty' => false,
+            'isMaxShowTime' => [
+              'rule' => 'isMaxShowTime',
               'message' => '数値を入力してください'
             ],
             'numberRange' => [
               'rule' => '/^(0[1-9]|[1-9]|[1-5][0-9]|60)$/',
-              'allowEmpty' => false,
+              'message' => '１～６０秒の間で設定してください'
+            ]
+        ],
+        'max_show_time_page' => [
+            'isMaxShowTime' => [
+              'rule' => 'isMaxShowTime',
+              'message' => '数値を入力してください'
+            ],
+            'numberRange' => [
+              'rule' => '/^(0[1-9]|[1-9]|[1-5][0-9]|60)$/',
               'message' => '１～６０秒の間で設定してください'
             ]
         ],
@@ -143,6 +152,21 @@ class MWidgetSetting extends AppModel {
             ]
         ]
     ];
+
+    public function isMaxShowTime($value){
+      if ( !isset($this->data['MWidgetSetting']['show_time']) ) return false;
+      switch (intval($this->data['MWidgetSetting']['show_time'])) {
+        case C_WIDGET_AUTO_OPEN_TYPE_SITE:
+          if ( isset($value['max_show_time']) ) {
+            return true;
+          }
+        case C_WIDGET_AUTO_OPEN_TYPE_PAGE:
+          if ( isset($value['max_show_time_page']) ) {
+            return true;
+          }
+      }
+      return false;
+    }
 
     public function setImage($value=['main_image' => '']){
         if (isset($this->data['MWidgetSetting']['show_main_image']) && strcmp($this->data['MWidgetSetting']['show_main_image'], 1) === 0) {

@@ -40,7 +40,7 @@
       }
 
       /* ウィジェット設定-ギャラリー用 */
-      &.p-show-gallary {
+      &.p-show-gallary, &.p-show-notification-gallary {
         width: 290px;
         max-height: 80%;
 
@@ -108,10 +108,10 @@
         position: relative;
 
         #popup-title {
-          padding: 18px 0 5px;
+          padding: 12px 0 5px;
           text-align: center;
           border-bottom: 1px solid #909090;
-          font-size: 23px;
+          font-size: 18px;
           color: #555;
         }
 
@@ -141,9 +141,6 @@
 
       /* リアルタイムモニタ-表示項目選択ダイアログ用 */
       &.p-cus-menu {
-        #popup-title {
-          height: 50px;
-        }
         #popup-main {
           display: inline-block;
           width: 100%;
@@ -167,9 +164,6 @@
         #popup-button .textBtn {
           width: 5em;
           margin: 0 auto;
-        }
-        #popup-title {
-          height: 50px;
         }
         #popup-main #frame {
           height: 160px;
@@ -260,17 +254,28 @@
             padding-top: 5px;
             background-color: #FDFDFD;
 
+            * {
+              color: #929292;
+            }
+
 
             li {
-              width: 280px;
-              text-align: left;
-              border: 1px solid #C9C9C9;
-              padding: 5px;
-              border-radius: 5px;
-              white-space: pre-wrap;
-              color: #8A8A8A;
-              word-break: break-all;
-              word-wrap: break-word;
+
+              &.sinclo_re, &.sinclo_se, &.sinclo_auto {
+                width: 280px;
+                text-align: left;
+                border: 1px solid #C9C9C9;
+                padding: 5px;
+                border-radius: 5px;
+                white-space: pre-wrap;
+                word-break: break-all;
+                word-wrap: break-word;
+              }
+
+              &.sinclo_etc {
+                margin: 0 55px 10px 20px;
+                margin: 0 auto 10px auto;
+              }
 
               p {
                 margin: 0 0 5px 0;
@@ -287,27 +292,22 @@
                 margin: 0 20px 10px 55px;
                 border-bottom-right-radius: 0;
                 background-color: #FFF;
-                span {
-                  display: block;
-                  font-weight: bold;
-                  font-size: 13px;
-                  margin: 0 0 5px 0;
-                }
               }
-              &.sinclo_se {
-                span {
-                  color: #c3d69b;
-                }
-              }
-              &.sinclo_auto {
-                span {
-                  color: #C9C9C9;
-                }
+
+              span {
+                display: block;
+                font-weight: bold;
+                font-size: 13px;
+                margin: 0 0 5px 0;
               }
             }
 
           }
 
+          #popupCloseBtn {
+            padding: 0.25em 0;
+            text-align: center;
+          }
         }
 
         #popup-button {
@@ -330,9 +330,6 @@
         #popup-button .textBtn {
           width: 5em;
           margin: 0 auto;
-        }
-        #popup-title {
-          height: 50px;
         }
         #popup-main #frame {
           height: 160px;
@@ -402,6 +399,67 @@
             display: block;
             overflow: hidden;
             padding: 2px;
+          }
+        }
+      }
+
+      /* 履歴一覧-詳細情報ダイアログ用 */
+      &.p-history-cus {
+        width: 48em;
+
+        #popup-main {
+          padding: 1.5em;
+
+          ul {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            width: 45em;
+
+            li {
+                display: flex;
+                flex-direction: row;
+                border-bottom: 1px solid #FFF;
+
+                > * {
+                  padding: 0.5em;
+                  margin: 0;
+                }
+
+                p {
+                  width: 12em;
+                  background-color: #AFAFAF;
+
+                  span {
+                    color: #FFF;
+                  }
+                }
+
+                > span {
+                  background-color: #F0F0F0;
+                  width: 33em;
+                  display: block;
+
+                  textarea, input[type='text'] {
+                    width: 100%;
+                    resize: none;
+                  }
+                }
+
+
+            }
+
+          }
+        }
+
+        #popup-button {
+          display: flex;
+          padding-bottom: 25px;
+
+          a {
+            width: 75px;
+            margin: 0 auto;
           }
         }
       }
@@ -539,7 +597,7 @@
   display: none;
 }
 .p-tdictionary-entry {
-  width: 300px;
+  width: 350px;
 
   .form01 {
     > div {
@@ -549,17 +607,54 @@
 
       div#inputStr {
         display: flex;
-        flex-direction: row;
-        margin-bottom: 5px;
+        flex-direction: column;
 
-        span {
-          cursor: pointer;
+        .balloon {
+          display: none;
+          position: fixed;
+          background-color: #FFF;
+          box-shadow: 0 0 1px rgba(0,0,0,0.85);
+          padding: 0.5em 1em;
+          border-radius: 10px!important;
+
+          span{
+            position: relative;
+            cursor: pointer;
+
+            &:before {
+              content: "";
+              border-top: 4px solid rgba(0, 0, 0, 0.13);
+              border-left: 10px solid transparent;
+              border-right: 10px solid transparent;
+              position: absolute;
+              bottom: -1em;
+              left: -0.5em;
+            }
+            &:after {
+              content: "";
+              border-top: 10px solid #fff;
+              border-left: 10px solid transparent;
+              border-right: 10px solid transparent;
+              position: absolute;
+              bottom: -1em;
+              left: -0.5em;
+            }
+          }
+
         }
+      }
+
+      textarea {
+        border-radius: 0 0 5px 5px !important;
+        border: 1px solid #909090 !important;
+        padding: 5px;
+        border-top: none;
       }
 
       label {
         width: 5em!important;
         display: block;
+        font-weight: bold;
       }
 
       textarea {
@@ -584,4 +679,24 @@
 
   }
 
+}
+
+.p-show-notification-gallary {
+  width: 375px!important;
+  #popup-title {
+    font-size: 23px!important;
+    padding: 15px 0!important;
+  }
+  #popup-main {
+    padding: 5px!important;
+  }
+  ul {
+    margin: 0;
+
+    li {
+      margin: 0 !important;
+      box-shadow: 0 0 0 transparent!important;
+      background-color: transparent!important;
+    }
+  }
 }

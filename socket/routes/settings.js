@@ -48,7 +48,6 @@ router.get("/", function(req, res, next) {
                     showTime: isNumeric(settings.showTime),
                     showName: isNumeric(settings.showName),
                     showPosition: isNumeric(settings.showPosition),
-                    maxShowTime: isNumeric(settings.maxShowTime),
                     title: settings.title,
                     showSubtitle: isNumeric(settings.showSubtitle),
                     subTitle: settings.subTitle,
@@ -63,6 +62,21 @@ router.get("/", function(req, res, next) {
                 };
 
                 actionTypeList = [];
+                // ウィジェット表示設定
+                if ( Number(sendData.widget.showTime) === 1 ) { // サイト訪問時
+                  if (('maxShowTime' in settings) && settings['maxShowTime']) {
+                      sendData.widget['maxShowTime'] = settings['maxShowTime'];
+                  }
+                }
+                else if ( Number(sendData.widget.showTime) === 4 ) { // ページ訪問時
+                  if (('maxShowTimePage' in settings) && settings['maxShowTimePage']) {
+                      sendData.widget['maxShowTime'] = settings['maxShowTimePage'];
+                  }
+                }
+                else if ( Number(sendData.widget.showTime) === 3 ) { // 常に最大化
+                      sendData.widget['maxShowTime'] = 0;
+                }
+
                 // チャット
                 if (('chat' in core_settings) && core_settings['chat']) {
                     actionTypeList.push('1');

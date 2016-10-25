@@ -147,6 +147,15 @@ function syncStopCtrl(siteKey, tabId){
   }
 }
 
+function getOperatorCnt(siteKey) {
+  var cnt = 0;
+  if ( isset(activeOperator[siteKey]) ) {
+    var key = Object.keys(activeOperator[siteKey]);
+    cnt = key.length;
+  }
+  return cnt;
+}
+
 function objectSort(object) {
   //戻り値用新オブジェクト生成
   var sorted = {};
@@ -289,12 +298,15 @@ io.sockets.on('connection', function (socket) {
     cnst: {
       observeType: {
         company: 1,
-        customer: 2
+        customer: 2,
+        auto: 3,
+        start: 98,
+        end: 99,
       }
     },
     set: function(d){ // メッセージが渡されてきたとき
-      // 履歴idかメッセージがない
-      if ( !getSessionId(d.siteKey, d.tabId, 'historyId') || !isset(d.chatMessage) ) {
+      // 履歴idか(入退室以外に)メッセージがない
+      if ( !getSessionId(d.siteKey, d.tabId, 'historyId') || (!isset(d.chatMessage) && !(chatApi.cnst.observeType.start && d.messageType || chatApi.cnst.observeType.end && d.messageType)) ) {
         // エラーを渡す
         return emit.toUser('sendChatResult', {ret: false, messageType: d.messageType, tabId: d.tabId, siteKey: d.siteKey}, d.siteKey);
       }
@@ -320,9 +332,6 @@ io.sockets.on('connection', function (socket) {
             pool.query(sql, [chatData.historyId], function(err, rows){
               var messages = ( isset(rows) ) ? rows : [];
               var setList = {};
-              if ((obj.siteKey in c_connectList) && (obj.tabId in c_connectList[obj.siteKey])) {
-                setList = JSON.parse(JSON.stringify(c_connectList[obj.siteKey][obj.tabId]));
-              }
               for (var i = 0; i < messages.length; i++) {
                 var date = messages[i].created;
                 date = new Date(date);
@@ -374,6 +383,32 @@ io.sockets.on('connection', function (socket) {
             else {
               // 書き込みが失敗したらエラーを渡す
               return emit.toUser('sendChatResult', {tabId: d.tabId, messageType: d.messageType, ret: false, siteKey: d.siteKey}, d.siteKey);
+            }
+          });
+        }
+      );
+
+    },
+    notifyCommit: function(d){ // DBに書き込むとき
+
+      var insertData = {
+        t_histories_id: sincloCore[d.siteKey][d.tabId].historyId,
+        visitors_id: d.userId,
+        m_users_id: d.mUserId,
+        message: d.chatMessage,
+        message_type: d.messageType,
+        message_read_flg: 1,
+        created: new Date(d.created)
+      };
+
+      pool.query('SELECT * FROM t_history_stay_logs WHERE t_histories_id = ? ORDER BY id DESC LIMIT 1;', insertData.t_histories_id,
+        function(err, rows){
+          if ( rows && rows[0] ) {
+            insertData['t_history_stay_logs_id'] = rows[0].id;
+          }
+          pool.query('INSERT INTO t_history_chat_logs SET ?', insertData, function(error,results,fields){
+            if ( isset(error) ) {
+              console.log("RECORD INSERT ERROR: notifyCommit-func:" + error);
             }
           });
         }
@@ -490,12 +525,7 @@ io.sockets.on('connection', function (socket) {
         emit.toCompany('getAccessInfo', data, res.siteKey);
       }
       else {
-        var cnt = 0;
-        if ( isset(activeOperator[res.siteKey]) ) {
-          var key = Object.keys(activeOperator[res.siteKey]);
-          cnt = key.length;
-        }
-        send['activeOperatorCnt'] = cnt;
+        send['activeOperatorCnt'] = getOperatorCnt(res.siteKey);
         socket.join(res.siteKey + emit.roomKey.client);
         emit.toMine('accessInfo', send, socket);
       }
@@ -503,10 +533,14 @@ io.sockets.on('connection', function (socket) {
     }
   });
 
-  socket.on("connectedForSync", function () {
+  socket.on("connectedForSync", function (data) {
     // ページ表示開始時間
     var d = new Date();
-    emit.toMine("retConnectedForSync", {pagetime: Date.parse(d)}, socket);
+    // 待機オペレーター人数
+    var obj = JSON.parse(data);
+    var actOpCnt = getOperatorCnt(obj.siteKey);
+
+    emit.toMine("retConnectedForSync", {pagetime: Date.parse(d), activeOperatorCnt: actOpCnt}, socket);
   });
 
   socket.on("customerInfo", function (data) {
@@ -517,6 +551,7 @@ io.sockets.on('connection', function (socket) {
     }
 
     emit.toCompany("sendCustomerInfo", obj, obj.siteKey);
+    if ( ('contract' in obj) && ('chat' in obj.contract) && obj.contract.chat === false) return false;
     chatApi.sendUnreadCnt("sendChatInfo", obj, false);
   });
 
@@ -565,6 +600,15 @@ io.sockets.on('connection', function (socket) {
     var obj = JSON.parse(data);
     emit.toCompany('syncNewInfo', obj, obj.siteKey);
   });
+  // アクティブ状態を送る
+  socket.on("sendTabInfo", function(d){
+    var obj = JSON.parse(d);
+    emit.toCompany('retTabInfo', d, obj.siteKey);
+    // 画面同期中は同期フレーム本体に送る
+    if ( ('connectToken' in obj) && isset(obj.connectToken) ) {
+      emit.toUser('retTabInfo', obj, getSessionId(obj.siteKey, obj.tabId, 'syncFrameSessionId'));
+    }
+  });
 
   // -----------------------------------------------------------------------
   //  モニタリング通信接続前
@@ -580,6 +624,7 @@ io.sockets.on('connection', function (socket) {
     }
     // TODO ここを要求したユーザのみに送るようにする
     emit.toCompany("receiveAccessInfo", obj, obj.siteKey);
+    if ( ('contract' in obj) && ('chat' in obj.contract) && obj.contract.chat === false) return false;
     chatApi.sendUnreadCnt("sendChatInfo", obj, false);
   });
   // -----------------------------------------------------------------------
@@ -784,6 +829,7 @@ io.sockets.on('connection', function (socket) {
   socket.on("sendAutoChatMessage", function(d){
     var obj = JSON.parse(d);
     var chat = JSON.parse(JSON.stringify(obj));
+    chat.messageType = chatApi.cnst.observeType.auto;
     chat.created = new Date();
     chat.sort = fullDateTime(chat.created);
     emit.toCompany('resAutoChatMessage', chat, chat.siteKey);
@@ -795,6 +841,7 @@ io.sockets.on('connection', function (socket) {
     var obj = JSON.parse(d);
     if (!getSessionId(obj.siteKey, obj.tabId, 'sessionId')) return false;
     var sId = getSessionId(obj.siteKey, obj.tabId, 'sessionId');
+    obj['messageType'] = chatApi.cnst.observeType.auto;
     obj.sendTo = socket.id;
     emit.toUser('sendReqAutoChatMessages', obj, sId);
 
@@ -812,6 +859,7 @@ io.sockets.on('connection', function (socket) {
     var setList = {};
     for (var i = 0; i < obj.messages.length; i++) {
       var created = new Date(obj.messages[i].created);
+      obj.messages[i]['messageType'] = chatApi.cnst.observeType.auto;
       setList[fullDateTime(Date.parse(created))] = obj.messages[i];
     }
     var ret = {};
@@ -824,13 +872,14 @@ io.sockets.on('connection', function (socket) {
 
   // チャット開始
   socket.on("chatStart", function(d){
-    var obj = JSON.parse(d), now = fullDateTime();
+    var obj = JSON.parse(d), date = new Date(), now = fullDateTime(date), type = chatApi.cnst.observeType.start;
     if ( sincloCore[obj.siteKey][obj.tabId] === null ) {
       emit.toMine("chatStartResult", {ret: false, siteKey: obj.siteKey, userId: sincloCore[obj.siteKey][obj.tabId].chat}, socket);
     }
     else {
-      emit.toCompany("chatStartResult", {ret: true, tabId: obj.tabId, created: now, siteKey: obj.siteKey, userId: obj.userId}, obj.siteKey);
-      var sendData = {ret: true, messageType: 99, hide:false, created: now};
+      // var sendData = {ret: true, messageType: type, hide:false, created: now};
+      var sendData = {ret: true, messageType: type, tabId: obj.tabId, siteKey: obj.siteKey, userId: obj.userId, hide:false, created: now};
+      emit.toCompany("chatStartResult", sendData, obj.siteKey);
 
       sincloCore[obj.siteKey][obj.tabId]['chat'] = obj.userId;
       sincloCore[obj.siteKey][obj.tabId]['chatSessionId'] = socket.id;
@@ -862,7 +911,22 @@ io.sockets.on('connection', function (socket) {
           }
 
           emit.toUser("chatStartResult", sendData, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
-          c_connectList[obj.siteKey][obj.tabId][now] = {messageType: 99, type:"start", userName: userName, userId: obj.userId};
+          c_connectList[obj.siteKey][obj.tabId][now] = {messageType: type, type:"start", userName: userName, userId: obj.userId};
+
+          // DBに書き込み
+          var ids = obj.tabId.split("_");
+          var insertData = {
+            siteKey: obj.siteKey,
+            tabId: obj.tabId,
+            t_histories_id: getSessionId(obj.siteKey, obj.tabId, 'historyId'),
+            userId: (ids.length > 1) ? ids[0] : "",
+            mUserId: obj.userId,
+            chatMessage: "入室",
+            messageType: type,
+            created: date
+          };
+          chatApi.notifyCommit(insertData);
+
         }
       });
     }
@@ -870,15 +934,29 @@ io.sockets.on('connection', function (socket) {
 
   // チャット終了
   socket.on("chatEnd", function(d){
-    var obj = JSON.parse(d), now = fullDateTime();
+    var obj = JSON.parse(d), date = new Date, now = fullDateTime(), type = chatApi.cnst.observeType.end;
     var keys = Object.keys(c_connectList[obj.siteKey][obj.tabId]);
     var userName = c_connectList[obj.siteKey][obj.tabId][keys[keys.length-1]].user;
-    c_connectList[obj.siteKey][obj.tabId][now] = {type:"end", userName: userName, userId: obj.userId, messageType: 99};
+    c_connectList[obj.siteKey][obj.tabId][now] = {type:"end", userName: userName, userId: obj.userId, messageType: type};
     if ( isset(sincloCore[obj.siteKey]) && isset(sincloCore[obj.siteKey][obj.tabId].chat) ) {
       sincloCore[obj.siteKey][obj.tabId].chat = null;
       sincloCore[obj.siteKey][obj.tabId].chatSessionId = null;
-      emit.toCompany("chatEndResult", {ret: true, messageType: 99, created: now, tabId: obj.tabId, siteKey: obj.siteKey, userId: obj.userId}, obj.siteKey);
-      emit.toUser("chatEndResult", {ret: true, messageType: 99}, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
+      emit.toCompany("chatEndResult", {ret: true, messageType: type, created: now, tabId: obj.tabId, siteKey: obj.siteKey, userId: obj.userId}, obj.siteKey);
+      emit.toUser("chatEndResult", {ret: true, messageType: type}, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
+
+      // DBに書き込み
+      var ids = obj.tabId.split("_");
+      var insertData = {
+        siteKey: obj.siteKey,
+        tabId: obj.tabId,
+        t_histories_id: getSessionId(obj.siteKey, obj.tabId, 'historyId'),
+        userId: (ids.length > 1) ? ids[0] : "",
+        mUserId: obj.userId,
+        chatMessage: "退室",
+        messageType: type,
+        created: date
+      };
+      chatApi.notifyCommit(insertData);
     }
   });
 
@@ -940,6 +1018,11 @@ io.sockets.on('connection', function (socket) {
   // 入力ステータスを送信
   socket.on("sendTypeCond", function(d){
     var obj = JSON.parse(d);
+    // 存在チェック
+    if ( !((obj.siteKey in sincloCore) && (obj.tabId in sincloCore[obj.siteKey])) ) {
+      return false;
+    }
+
     // 送り主が企業の場合
     if ( obj.type === chatApi.cnst.observeType.company ) {
       sincloCore[obj.siteKey][obj.tabId]['chatSessionId'] = socket.id; // 入力中ユーザーのsocketIdをセットする
@@ -993,7 +1076,7 @@ io.sockets.on('connection', function (socket) {
   socket.on('videoChatConnected', function (data) {
     console.log('VIDEOCHAT CONNECTED : ' + data);
     var obj = JSON.parse(data);
-    vc_connectList[obj.from] = socket.id;
+    vc_connectList[obj.tabId] = socket.id;
     if(vc_connectList[obj.to]) {
       console.log('VIDEOCHAT TO FOUND!');
       emit.toUser('videoChatConnected', data, vc_connectList[obj.to]);
@@ -1052,6 +1135,18 @@ io.sockets.on('connection', function (socket) {
               console.log('sincloCore', sincloCore[targetKey]);
             }
             console.log("-------------------------------------------------------------------------");
+          }
+          break;
+        case 4: // del company ( sample: socket.emit('settingReload', JSON.stringify({type:4, siteKey: "master"})); )
+          if ( !((socket.id in company.user) && ('siteKey' in company.user[socket.id])) ) return false;
+          var targetKey = company.user[socket.id].siteKey;
+          if ( targetKey in company.info ) {
+            var activeList = [];
+            if ( targetKey in activeOperator ) {
+              activeList = activeOperator[targetKey];
+            }
+            console.log('info', company.info[targetKey]);
+            emit.toMine('consoleLogInfo', {u: company.info[targetKey], a: activeList}, socket);
           }
           break;
         default:

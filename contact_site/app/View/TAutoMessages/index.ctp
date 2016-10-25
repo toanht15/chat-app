@@ -76,7 +76,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
 							'type' => $val['TAutoMessage']['action_type'],
 							'detail' => $activity['message']
 						];
-						$activity_detail = "<span class='actionValueLabel'>メッセージ</span><span class='actionValue'>" . $activity['message'] . "</span>";
+						$activity_detail = "<span class='actionValueLabel'>メッセージ</span><span class='actionValue'>" . h($activity['message']) . "</span>";
 					}
 					break;
 			}
@@ -101,10 +101,10 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
 					<label for="selectTab<?=h($id)?>"></label>
 				</td>
 				<td class="tCenter"><?=$no?></td>
-				<td class="tCenter noClick"><?=$this->Html->link(h($val['TAutoMessage']['name']), ['controller'=>'TAutoMessages', 'action'=>'edit', $id])?></td>
+				<td class="tCenter noClick"><?=$this->Html->link($val['TAutoMessage']['name'], ['controller'=>'TAutoMessages', 'action'=>'edit', $id])?></td>
 				<td class="targetBalloon">
 					<span class="conditionTypeLabel m10b">条件</span><span class="m10b actionValue"><?=h($conditionType)?></span>
-					<span class="conditionValueLabel m10b">設定</span><span class="m10b actionValue"><?=$conditions?></span>
+					<span class="conditionValueLabel m10b">設定</span><span class="m10b actionValue"><?=h($conditions)?></span>
 				</td>
 				<td class="p10x">
 					<span class="actionTypeLabel m10b">対象</span><span class="m10b actionValue"><?=h($outMessageActionType[$val['TAutoMessage']['action_type']])?></span>

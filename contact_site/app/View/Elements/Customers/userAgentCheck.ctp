@@ -69,7 +69,7 @@ var userAgentChk = (function(){
           var myKey = "iPhone OS ", myEnd = " like";
           myStart = ua.indexOf( myKey ) + myKey.length;
           myEnd = ua.indexOf( myEnd, myStart );
-          os += " (var." + ua.substring( myStart, myEnd ).replace(/_/g, '.') + ")";
+          os += " (ver." + ua.substring( myStart, myEnd ).replace(/_/g, '.') + ")";
         }
       }
       else if (ua.match(/iPad/)) {
@@ -78,7 +78,7 @@ var userAgentChk = (function(){
           var myKey = " OS ", myEnd = " like";
           myStart = ua.indexOf( myKey ) + myKey.length;
           myEnd = ua.indexOf( myEnd, myStart );
-          os += " (var." + ua.substring( myStart, myEnd ).replace(/_/g, '.') + ")";
+          os += " (ver." + ua.substring( myStart, myEnd ).replace(/_/g, '.') + ")";
         }
       }
       else if (ua.match(/iPod/)) {
@@ -126,7 +126,7 @@ var userAgentChk = (function(){
     function _get_ver(ua, myKey){
       var reg = new RegExp(myKey + "[0-9.]*", "i");
       var str = String(reg.exec(ua));
-      return " (var." + str.replace(myKey, "") + ")";
+      return " (ver." + str.replace(myKey, "") + ")";
     }
 
     function _get_android_ver(ua){
@@ -239,10 +239,23 @@ var userAgentChk = (function(){
       },
       os: function(ua){
         ua = ua + ";";
-        return _pc_chk(ua);
+        var lowUa = ua.toLowerCase();
+        // bot
+        if ( lowUa.match(/bot/) || lowUa.match(/bingpreview/) ) {
+          return _bot_chk(lowUa);
+        }
+        else {
+          return _pc_chk(ua);
+        }
       },
       browser: function(ua){
         ua = ua + ";";
+        var lowUa = ua.toLowerCase();
+        // bot
+        if ( lowUa.match(/bot/) || lowUa.match(/bingpreview/) ) {
+          return "";
+        }
+
         return _browser_chk(ua);
       }
     };

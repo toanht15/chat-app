@@ -1,21 +1,26 @@
 <table>
     <thead>
         <tr>
-            <th width="10%">日時</th>
-            <th width="10%">IPアドレス</th>
-            <th width="20%">OS<br>ブラウザ</th>
-            <th width="25%">参照元URL</th>
+            <th width=" 9%">日時</th>
+            <th width=" 6%" class="noOutCsv">詳細</th>
+            <th width="15%">訪問ユーザ</th>
+            <th width="20%">プラットフォーム<br>ブラウザ</th>
+            <th width="17%">参照元URL</th>
             <th width=" 5%">閲覧<br>ページ数</th>
-            <th width="10%">滞在時間</th>
+            <th width=" 8%">滞在時間</th>
             <th width="10%">ステータス</th>
             <th width="10%">担当者</th>
         </tr>
     </thead>
     <tbody ng-cloak>
+
+<!-- <a href="javascript:void(0)" onclick="showDetail()" class="detailBtn blueBtn btn-shadow">詳細</a> -->
+
 <?php foreach($historyList as $key => $history): ?>
         <tr>
             <td class="tRight pre"><?=date_format(date_create($history['THistory']['access_date']), "Y/m/d\nH:i:s")?></td>
-            <td class="tLeft"><?=h($history['THistory']['ip_address'])?></td>
+            <td class="tCenter"><ng-show-detail data-id="<?=h($history['THistory']['id'])?>"></ng-show-detail></td>
+            <td class="tLeft pre">{{ ui('<?=h($history['THistory']['ip_address'])?>', <?=json_encode($history['MCustomer']['informations'])?>) }}</td>
             <td class="tLeft pre">{{ ua('<?=h($history['THistory']['user_agent'])?>') }}</td>
             <td class="tLeft omit"><a href="<?=h($history['THistory']['referrer_url'])?>" target="history"><?=h($history['THistory']['referrer_url'])?></a></td>
             <td class="tCenter">
