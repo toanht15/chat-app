@@ -12,8 +12,9 @@
 /* DataBase Settings */
 process.env.DB_HOST = 'localhost';
 process.env.DB_USER = 'root';
-process.env.DB_PASS = 'password',
-process.env.DB_NAME = 'sinclo_db'
+process.env.DB_PASS = 'password';
+process.env.DB_NAME = 'sinclo_db';
+process.env.WS_PORT = '9090';
 ```
 
 ### 企業管理画面
@@ -35,4 +36,29 @@ process.env.DB_NAME = 'sinclo_db'
 	);
 ```
 
+## マイグレーションの設定
+
+### マイグレーションのサブモジュールをダウンロード
+
+`sinclo/contact_site/`直下に移動し、下記コマンドでGitのサブモジュールをダウンロードする
+
+```
+$ git submodule add git://github.com/CakeDC/migrations.git app/Plugin/Migrations
+```
+
+### マイグレーション管理用のテーブルを作成
+
+```
+$ Console/cake Migrations.migration run all -p
+```
+
+### マイグレーションコマンド
+
+`sinclo`直下に、`migration`エイリアスを用意しています。
+
+```
+$ ./migration status
+$ ./migration run up
+$ ./migration run down
+```
 

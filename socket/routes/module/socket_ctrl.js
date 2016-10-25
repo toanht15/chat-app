@@ -19,7 +19,7 @@ var errlogger = log4js.getLogger('error'); // エラー用のロガー取得
 var deblogger = log4js.getLogger('debug'); // デバッグ用のロガー取得
 
 //サーバインスタンス作成
-var io = require('socket.io')(9090),
+var io = require('socket.io')(process.env.WS_PORT),
     activeOperator = {}, // 待機中オペレーター
     sincloCore = {}, // socketIDの管理
     connectList = {}, // socketIDをキーとした管理
