@@ -136,14 +136,18 @@
     },
     connect: function(){
       function newAccessCheck(){
-        if ( !check.isset(window.opener) ) return false;
-        if ( typeof(window.opener) !== "object" ) return false;
-        if ( !('userInfo' in window.opener) ) return false;
-        return true;
+        if (document.referrer) {
+            return (history.length == 1) ? true : false;
+        }
+        else {
+          return true;
+        }
       }
       function opCheck(){
         if ( !check.ref() ) return false;
         if ( !newAccessCheck() ) return false;
+        if ( window.opener === null ) return false;
+        if ( window.opener !== null && !('userInfo' in window.opener) ) return false;
         if ( !('connectToken' in window.opener.userInfo) ) return false;
         if ( !check.isset(window.opener.userInfo.connectToken) ) return false;
         return true;
