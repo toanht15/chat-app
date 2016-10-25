@@ -1,5 +1,4 @@
 <script type="text/javascript">
-
 $(document).ready(function(){
   function customerInfoSave() {
     var dataList = {},

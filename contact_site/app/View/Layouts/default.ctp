@@ -38,7 +38,7 @@ if( strcmp($this->name, 'Login') !== 0 ) {
     echo $this->fetch('meta');
     echo $this->fetch('css');
     echo $this->fetch('script');
-    echo $this->Html->css("//cdn.jsdelivr.net/bootstrap/latest/css/bootstrap.css");
+    echo $this->Html->css("bootstrap.css");
     echo $this->Html->css("multi-select.css");
     echo $this->Html->css("clockpicker.css");
     echo $this->Html->css("standalone.css");

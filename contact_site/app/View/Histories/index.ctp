@@ -31,7 +31,7 @@
       </label>
     <?php endif; ?>
     <?=$this->Form->create('History', ['action' => 'index']);?>
-        <?=$this->Form->hidden('outputData')?>
+      <?=$this->Form->hidden('outputData')?>
     <?=$this->Form->end();?>
     <?=  $this->Form->create('History',[
       'id' => 'historySearch',

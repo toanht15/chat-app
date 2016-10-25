@@ -1,4 +1,4 @@
-  <?php
+<?php
 /**
  * HistoriesController controller.
  * 履歴一覧画面
@@ -38,7 +38,7 @@ class HistoriesController extends AppController {
         ]
       ],
       'conditions' => [
-        'THistory.del_flg !=' => 1,
+        'THistory.del_flg !=' => 1
       ]
     ],
     'THistoryStayLog' => []

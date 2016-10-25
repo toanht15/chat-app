@@ -137,8 +137,6 @@ $(document).ready(function(){
 
 });
 
-$('input[name="daterange"]').daterangepicker();
-
 function searchRefine(){
    document.getElementById('historySearch').submit();
 }
