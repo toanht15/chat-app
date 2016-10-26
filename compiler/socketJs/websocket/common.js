@@ -1345,6 +1345,7 @@ var socket, // socket.io
   };
 
   browserInfo = {
+    connectFlg: false,
     referrer: "",
     href: location.href,
     prevList: [],
@@ -2333,7 +2334,7 @@ function emit(evName, data){
   ) {
     data.connectToken = userInfo.get(cnst.info_type.connect);
   }
-  if ( evName == "sendWindowInfo" || evName == "requestSyncStopForSubmit" ) {
+  if ( evName == "sendWindowInfo" || evName == "requestSyncStopForSubmit"  || evName == "startSyncToFrame" ) {
     data.connectToken = userInfo.connectToken;
   }
   if ( evName == "requestSyncStop" && userInfo.accessType === cnst.access_type.host ) {

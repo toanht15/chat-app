@@ -214,7 +214,12 @@
             accessType: common.params.type
           });
         }
-        emit('reqUrlChecker', {});
+
+        emit('reqUrlChecker', {reconnectFlg: browserInfo.connectFlg});
+
+        // connectフラグ
+        browserInfo.connectFlg = true;
+
 
         browserInfo.setPrevList();
 
@@ -239,6 +244,9 @@
         }
         return false;
       }
+      // connectフラグ
+      browserInfo.connectFlg = true;
+
       emit('connected', {
         type: 'user',
         data: emitData
