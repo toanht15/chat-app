@@ -2824,6 +2824,25 @@ ul.naviBtn {
   padding-bottom:50px;
 }
 
+/* 履歴検索絞り込み画面 */
+
+.p-thistory-entry #popup-button .textBtn {
+    width: 5em;
+    margin: 0 0.5em;
+    float: left;
+}
+.p-thistory-entry {
+    width: 450px;
+}
+.p-thistory-entry #popup-button .textBtn {
+    width: 5em;
+    margin: 0 0.5em;
+    float: left;
+}
+.p-thistory-entry #popup-button {
+    width: 15em;
+    margin: 0 auto;
+}
 input#dateperiod {
     background-image: url(/img/calender.png);
     background-repeat: no-repeat;

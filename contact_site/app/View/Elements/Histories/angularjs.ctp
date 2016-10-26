@@ -179,7 +179,7 @@ $(document).ready(function(){
       "firstDay": 1
     },
     "alwaysShowCalendars": true,
-    "opens": "right"
+    "opens": "left"
   },
   function(start, end, label) {
 console.log("start", start);
@@ -192,10 +192,11 @@ console.log("label", label);
     $('input[name="start_day"]').val(picker.startDate.format('YYYY/MM/DD'));
     $('input[name="finish_day"]').val(picker.endDate.format('YYYY/MM/DD'));
   });
+
 });
 
 function searchRefine(){
-   document.getElementById('historySearch').submit();
+   document.getElementById('searchRefine()').submit();
 }
 
 </script>

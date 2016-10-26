@@ -90,6 +90,16 @@ var popupEvent = {
                         return popupEvent.closePopup();
                     };
                     break;
+                case 'p-thistory-entry':
+                    var entryBtn = _button("検索する");
+                    entryBtn.onclick = function(){
+                        return popupEvent.closePopup();
+                    };
+                    var closeBtn = _button("条件クリア");
+                    closeBtn.onclick = function(){
+                        return popupEvent.customizeBtn();
+                    };
+                    break;
                 case 'p-history-cus':
                 case 'p-muser-entry':
                 case 'p-tcampaign-entry':
