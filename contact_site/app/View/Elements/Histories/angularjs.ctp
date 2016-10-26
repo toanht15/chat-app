@@ -179,12 +179,11 @@ $(document).ready(function(){
       "firstDay": 1
     },
     "alwaysShowCalendars": true,
+    "startDate": $('input[name="start_day"]').val(),
+    "endDate": $('input[name="finish_day"]').val(),
     "opens": "left"
   },
   function(start, end, label) {
-console.log("start", start);
-console.log("end", end);
-console.log("label", label);
     console.log("New date range selected:   ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')");
   });
 

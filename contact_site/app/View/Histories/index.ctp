@@ -20,6 +20,14 @@
   </div>
 
   <div id='history_menu' class="p20trl">
+        <div>
+          日時:<?= $this->data['start_day'] ?>-<?= $this->data['finish_day'] ?>　
+          ipアドレス:<?= $this->data['ip_address'] ?>　
+          会社名:<?= $this->data['company_name'] ?>　
+          顧客名:<?= $this->data['customer_name'] ?>　
+          電話番号:<?= $this->data['telephone_number'] ?>　
+          メールアドレス:<?= $this->data['mail_address'] ?>　
+        </div>
     <!-- 検索窓 -->
     <div class="fLeft">
       <?php
@@ -40,19 +48,6 @@
         <?=$this->Form->hidden('outputData')?>
       <?=$this->Form->end();?>
       <?=  $this->Form->create('History',['id' => 'historySearch','type' => 'post','url' => '/Histories']); ?>
-        <div>
-          <?= $this->Form->input('start_day',['label'=> false,'name'=>'start_day','div' => false,'placeholder' => '開始日','value'=>$this->data['start_day']]); ?>
-          <?= $this->Form->input('finish_day',['label'=> false,'div' => false,'placeholder' => '終了日','value'=>$this->data['finish_day']]);?>
-          <?= $this->Form->input('ip_address',['label'=>false,'div' => false,'placeholder' => 'ipアドレス','value'=>$this->data['ip_address']]) ?>
-        </div>
-        <div>
-          <?= $this->Form->input('company_name',['label'=>false,'div' => false,'placeholder' => '会社名','value'=>$this->data['company_name']]) ?>
-          <?= $this->Form->input('customer_name',['label'=>false,'div' => false,'placeholder' => '顧客名','value'=>$this->data['customer_name']]) ?>
-          <?= $this->Form->input('telephone_number',['label'=>false,'div' => false,'placeholder' => '電話番号','value'=>$this->data['telephone_number']]) ?>
-          <?= $this->Form->input('mail_address',['label'=>false,'div' => false,'placeholder' => 'メールアドレス','value'=>$this->data['mail_address']]) ?>
-        </div>
-
-      <?= $this->Form->end(); ?>
     </div>
 
     <div id="paging" class="fRight">

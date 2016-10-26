@@ -580,7 +580,7 @@ class HistoriesController extends AppController {
    * @return void
    * */
   public function remoteClearEntryForm() {
-    $this->Session->delete('remotestart');
+    $this->Session->delete('thistory');
     $this->redirect(['controller' => 'Histories', 'action' => 'index']);
   }
 }

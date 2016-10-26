@@ -46,8 +46,8 @@ popupEvent.customizeBtn = function(){
     <?=  $this->Form->create('History',['id' => 'historySearch','type' => 'post','url' => '/Histories']); ?>
         <?= $this->Form->input('datefilter',['label'=> false,'div' => false,'id' => 'dateperiod','name'=> 'datefilter']); ?>
         <div>
-          <?= $this->Form->input('start_day',['label'=> false,'div' => false,'name'=> 'start_day','placeholder' => '開始日','value'=>$this->data[start_day]]); ?>
-          <?= $this->Form->input('finish_day',['label'=> false,'div' => false,'name' => 'finish_day','placeholder' => '終了日','value'=>$this->data[finish_day]]); ?>
+          <?= $this->Form->hidden('start_day',['label'=> false,'div' => false,'name'=> 'start_day','placeholder' => '開始日','value'=>$this->data[start_day]]); ?>
+          <?= $this->Form->hidden('finish_day',['label'=> false,'div' => false,'name' => 'finish_day','placeholder' => '終了日','value'=>$this->data[finish_day]]); ?>
           <?= $this->Form->input('ip_address',['label'=>false,'div' => false,'placeholder' => 'ipアドレス','value'=>$this->data[ip_address]]) ?>
           <?= $this->Form->input('company_name',['label'=>false,'div' => false,'placeholder' => '会社名','value'=>$this->data[company_name]]) ?>
           <?= $this->Form->input('customer_name',['label'=>false,'div' => false,'placeholder' => '顧客名','value'=>$this->data[customer_name]]) ?>
