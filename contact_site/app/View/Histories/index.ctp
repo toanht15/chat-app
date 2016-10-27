@@ -8,11 +8,6 @@
     <div class="fLeft"><?= $this->Html->image('history_g.png', array('alt' => '履歴一覧', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?></div>
       <h1>履歴一覧</h1>
       <?php echo $this->Html->link(
-        '検索絞り込み',
-        'javascript:void(0)',
-        array('escape' => false, 'class'=>'skyBlueBtn btn-shadow','id' => 'searchRefine','onclick' => 'openSearchRefine()'));
-      ?>
-      <?php echo $this->Html->link(
         'ＣＳＶ出力',
         'javascript:void(0)',
         array('escape' => false, 'class'=>'skyBlueBtn btn-shadow', 'id' => 'outputCSV'));
@@ -20,6 +15,11 @@
     </div>
 
     <div id='history_menu' class="p20trl">
+     <?php echo $this->Html->link(
+        '検索絞り込み',
+        'javascript:void(0)',
+        array('escape' => false, 'class'=>'skyBlueBtn btn-shadow','id' => 'searchRefine','onclick' => 'openSearchRefine()'));
+      ?>
       <label class='searchConditions'>検索条件</label>
       <?php if(!empty($this->data['start_day'])||!empty($this->data['finish_day'])) { ?>
         <label class="label">日付</label>
@@ -34,7 +34,7 @@
         <label class="value"><?= $this->data['company_name'] ?></label>
       <?php } ?>
       <?php if(!empty($this->data['customer_name'])) { ?>
-        <label class="label">名前</li>
+        <label class="label">名前</label>
         <label class="value"><?= $this->data['customer_name'] ?></label>
       <?php } ?>
       <?php if(!empty($this->data['telephone_number'])) { ?>
@@ -45,9 +45,8 @@
         <label class="label">メールアドレス</label>
         <label class="value"><?= $this->data['mail_address'] ?></label>
       <?php } ?>
-
     <!-- 検索窓 -->
-    <div id='fLeft'>
+    <div class='fLeft'>
       <?php
         if ($coreSettings[C_COMPANY_USE_CHAT]) :
         $checked = "";
@@ -94,4 +93,4 @@
     <a href="javascript:void(0)" style="display:none" id="modalCtrl"></a>
   </div>
 
-  </div>
+</div>

@@ -367,11 +367,13 @@ class HistoriesController extends AppController {
     if($this->request->is('post')) {
       $start = $this->data['start_day'];
       $finish = $this->data['finish_day'];
-      $ip = $this->data['History']['ip_address'];
-      $company = $this->data['History']['company_name'];
-      $name = $this->data['History']['customer_name'];
-      $tel = $this->data['History']['telephone_number'];
-      $mail = $this->data['History']['mail_address'];
+      $ip = $this->data['ip_address'];
+      $company = $this->data['company_name'];
+      $name = $this->data['customer_name'];
+      $tel = $this->data['telephone_number'];
+      $mail = $this->data['mail_address'];
+
+      $this->Session->write('thistory', $this->data);
 
       $conditions = ['THistory.ip_address like' =>'%'.$ip.'%'];
       if($start != '' ) {
@@ -503,77 +505,11 @@ class HistoriesController extends AppController {
     $this->render('/Elements/Histories/remoteSearchCustomerInfo');
   }
 
-    /* *
-   * 検索処理
-   * @return void
-   * */
-  public function remoteSearchForm() {
-    Configure::write('debug', 0);
-    $this->autoRender = FALSE;
-    $this->layout = 'ajax';
-    $saveData = [];
-    $errorMessage = [];
-
-     $this->paginate['THistory']['joins'][] = [
-      'type' => 'LEFT',
-      'table' => '(SELECT visitors_id, informations FROM m_customers WHERE m_customers.m_companies_id = ' . $this->userInfo['MCompany']['id'] . ')',
-      'alias' => 'MCustomer',
-      'conditions' => [
-        'MCustomer.visitors_id = THistory.visitors_id'
-      ]
-    ];
-
-        if($this->request->is('ajax')) {
-      $start = $this->data['start_day'];
-      $finish = $this->data['finish_day'];
-      $ip = $this->data['ip_address'];
-      $company = $this->data['company_name'];
-      $name = $this->data['customer_name'];
-      $tel = $this->data['telephone_number'];
-      $mail = $this->data['mail_address'];
-
-      $this->Session->write('thistory', $this->data);
-
-
-      $conditions = ['THistory.ip_address like' =>'%'.$ip.'%'];
-      if($start != '' ) {
-        $conditions += ['THistory.access_date >=' => $start];
-      }
-      if($finish != '' ) {
-      $conditions += ['THistory.access_date <=' => $finish];
-      }
-
-      $allusers = $this->MCustomer->find('all');
-      $ret=[];
-      foreach($allusers as $alluser) {
-        $settings = json_decode($alluser['MCustomer']['informations']);
-        if($company != '' && !strstr($settings->company,$company)) {
-          continue;
-        }
-        if($name != '' && !strstr($settings->name,$name)) {
-          continue;
-        }
-        if($tel != '' && !strstr($settings->tel,$tel)) {
-          continue;
-        }
-        if($mail != '' && !strstr($settings->mail,$mail)) {
-          continue;
-        }
-        $ret[]=$alluser['MCustomer']['visitors_id'];
-      }
-      $this->log($conditions,LOG_DEBUG);
-      $conditions['THistory.visitors_id'] = $ret;
-      $historyList = $this->paginate('THistory',$conditions);
-    }
-    else {
-    $historyList = $this->paginate('THistory');
-    }
-  }
  /* *
    * Session削除
    * @return void
    * */
-  public function remoteClearSession() {
+  public function ClearSession() {
     $this->Session->delete('thistory');
     $this->redirect(['controller' => 'Histories', 'action' => 'index']);
   }

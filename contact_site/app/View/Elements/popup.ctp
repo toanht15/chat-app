@@ -99,6 +99,10 @@ var popupEvent = {
                     closeBtn.onclick = function(){
                         return popupEvent.customizeBtn();
                     };
+                    var closeBtn = _button("閉じる");
+                    closeBtn.onclick = function(){
+                        return popupEvent.close();
+                    };
                     break;
                 case 'p-history-cus':
                 case 'p-muser-entry':

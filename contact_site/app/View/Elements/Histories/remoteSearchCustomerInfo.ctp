@@ -1,45 +1,15 @@
 <script type="text/javascript">
   popupEvent.closePopup = function(){
-    var start_day = document.getElementById('HistoryStartDay').value;
-    var finish_day = document.getElementById('HistoryFinishDay').value;
-    var ip_address = document.getElementById('HistoryIpAddress').value;
-    var company_name = document.getElementById('HistoryCompanyName').value;
-    var customer_name = document.getElementById('HistoryCustomerName').value;
-    var telephone_number = document.getElementById('HistoryTelephoneNumber').value;
-    var mail_address = document.getElementById('HistoryMailAddress').value;
-    console.log(start_day);
-    $.ajax({
-      type: "post",
-      url: "<?=$this->Html->url('/Histories/remoteSearchForm')?>",
-      data: {
-        start_day: start_day,
-        finish_day: finish_day,
-        ip_address: ip_address,
-        company_name: company_name,
-        customer_name: customer_name,
-        telephone_number: telephone_number,
-        mail_address: mail_address,
-      },
-      cache: false,
-      dataType: "json",
-      success: function(data){
-        $('#historySearch').submit();
-      }
-    });
-  };
+  $('#historySearch').submit();
+    };
 
 popupEvent.customizeBtn = function(){
-  location.href = "<?=$this->Html->url(array('controller' => 'Histories', 'action' => 'index'))?>";
-  $.ajax({
-   type: "post",
-   url: "<?=$this->Html->url('/Histories/remoteClearSession')?>",
-   cache: false,
-  });
+  location.href = "<?=$this->Html->url(array('controller' => 'Histories', 'action' => 'ClearSession'))?>";
 };
 
 </script>
 <?php echo $this->element('Histories/angularjs') ?>
-<?=  $this->Form->create('History',['id' => 'historySearch','type' => 'post','url' => '/Histories']); ?>
+<?=  $this->Form->create('History',['id' => 'historySearch','type' => 'post','url' => ['controller' => 'Histories','action' => 'index']]); ?>
   <ul>
     <li>
       <p><span>日付</span></p>
@@ -49,23 +19,23 @@ popupEvent.customizeBtn = function(){
     <?= $this->Form->hidden('finish_day',['label'=> false,'div' => false,'name' => 'finish_day','value'=>$this->data['finish_day']]); ?>
     <li>
       <p><span>ipアドレス</span></p>
-      <span><?= $this->Form->input('ip_address',['label'=>false,'div' => false,'value'=>$this->data[ip_address]]) ?></span>
+      <span><?= $this->Form->input('ip_address',['label'=>false,'div' => false,'name' => 'ip_address','value'=>$this->data[ip_address]]) ?></span>
     </li>
     <li>
       <p><span>会社名</span></p>
-      <span><?= $this->Form->input('company_name',['label'=>false,'div' => false,'value'=>$this->data[company_name]]) ?></span>
+      <span><?= $this->Form->input('company_name',['label'=>false,'div' => false,'name' => 'company_name','value'=>$this->data[company_name]]) ?></span>
     </li>
     <li>
     <p><span>名前</span></p>
-      <span><?= $this->Form->input('customer_name',['label'=>false,'div' => false,'value'=>$this->data[customer_name]]) ?></span>
+      <span><?= $this->Form->input('customer_name',['label'=>false,'div' => false,'name' => 'customer_name','value'=>$this->data[customer_name]]) ?></span>
     </li>
     <li>
       <p><span>電話番号</span></p>
-      <span><?= $this->Form->input('telephone_number',['label'=>false,'div' => false,'value'=>$this->data[telephone_number]]) ?></span>
+      <span><?= $this->Form->input('telephone_number',['label'=>false,'div' => false,'name' => 'telephone_number','value'=>$this->data[telephone_number]]) ?></span>
     </li>
     <li>
       <p><span>メールアドレス</span></p>
-      <span><?= $this->Form->input('mail_address',['label'=>false,'div' => false,'value'=>$this->data[mail_address]]) ?></span>
+      <span><?= $this->Form->input('mail_address',['label'=>false,'div' => false,'name' => 'mail_address','value'=>$this->data[mail_address]]) ?></span>
     </li>
   </ul>
 <?= $this->Form->end(); ?>
