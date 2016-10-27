@@ -486,7 +486,7 @@ class HistoriesController extends AppController {
   }
 
   /* *
-   * 登録,更新画面
+   * 検索画面
    * @return void
    * */
   public function remoteOpenEntryForm() {
@@ -500,14 +500,14 @@ class HistoriesController extends AppController {
       $this->request->data['finish_day'] = $today;
     }
     // const
-    $this->render('/Elements/Histories/remoteEntry');
+    $this->render('/Elements/Histories/remoteSearchCustomerInfo');
   }
 
     /* *
-   * 保存処理
+   * 検索処理
    * @return void
    * */
-  public function remoteSearchEntryForm() {
+  public function remoteSearchForm() {
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
@@ -568,24 +568,12 @@ class HistoriesController extends AppController {
     else {
     $historyList = $this->paginate('THistory');
     }
-
-    // バリデーションチェックでエラーが出た場合
-    /*if ( $this->TCampaign->save() ) {
-      $this->TCampaign->commit();
-      $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
-    }
-    else {
-      $this->TCampaign->rollback();
-    }
-    $errorMessage = $this->TCampaign->validationErrors;
-    return new CakeResponse(['body' => json_encode($errorMessage)]);
-  }*/
-}
+  }
  /* *
-   * 登録,更新画面
+   * Session削除
    * @return void
    * */
-  public function remoteClearEntryForm() {
+  public function remoteClearSession() {
     $this->Session->delete('thistory');
     $this->redirect(['controller' => 'Histories', 'action' => 'index']);
   }

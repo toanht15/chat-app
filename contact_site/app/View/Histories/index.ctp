@@ -20,33 +20,34 @@
   </div>
 
   <div id='history_menu' class="p20trl">
-  <div id='ToggleArea_sa'>
-        <label class='search'>検索条件</label>
-          <?php if(!empty($this->data['start_day'])||!empty($this->data['finish_day'])) { ?>
-          <label class="label">日付</label>
-          <label class="value w100R big" id="sa_pv"><?= $this->data['start_day'] ?>-<?= $this->data['finish_day'] ?></label>
-          <?php } ?>
-          <?php if(!empty($this->data['ip_address'])) { ?>
-            <label class="label">ipアドレス</label>
-            <label class="value w100R big" id="sa_pv"><?= $this->data['ip_address'] ?></label>
-          <?php } ?>　
-          <?php if(!empty($this->data['company_name'])) { ?>
-          <label class="label">会社名</label>
-           <label class="value w100R big" id="sa_pv"><?= $this->data['company_name'] ?></label>
-          <?php } ?>
-           <?php if(!empty($this->data['customer_name'])) { ?>
-           <li class="label">名前</li>
-           <li class="value w100R big" id="sa_pv"><?= $this->data['customer_name']?></li>
-          <li class="value w50"></li>
-          <?php } ?>
-          <?php if(!empty($this->data['telephone_number'])) { ?>
-          電話番号:<?= $this->data['telephone_number'] ?>　
-          <?php } ?>
-          <?php if(!empty($this->data['mail_address'])) { ?>
-          メールアドレス:<?= $this->data['mail_address'] ?>　
-          <?php } ?>
+      <label class='searchConditions'>検索条件</label>
+      <?php if(!empty($this->data['start_day'])||!empty($this->data['finish_day'])) { ?>
+        <label class="label">日付</label>
+        <label class="value"><?= $this->data['start_day'] ?>-<?= $this->data['finish_day'] ?></label>
+      <?php } ?>
+      <?php if(!empty($this->data['ip_address'])) { ?>
+        <label class="label">ipアドレス</label>
+        <label class="value"><?= $this->data['ip_address'] ?></label>
+      <?php } ?>　
+      <?php if(!empty($this->data['company_name'])) { ?>
+        <label class="label">会社名</label>
+        <label class="value"><?= $this->data['company_name'] ?></label>
+      <?php } ?>
+      <?php if(!empty($this->data['customer_name'])) { ?>
+        <label class="label">名前</li>
+        <label class="value"><?= $this->data['customer_name'] ?></label>
+      <?php } ?>
+      <?php if(!empty($this->data['telephone_number'])) { ?>
+        <label class="label">電話番号</label>
+        <label class="value"><?= $this->data['telephone_number'] ?></label>
+      <?php } ?>
+      <?php if(!empty($this->data['mail_address'])) { ?>
+        <label class="label">メールアドレス</label>
+        <label class="value"><?= $this->data['mail_address'] ?></label>
+      <?php } ?>
 
     <!-- 検索窓 -->
+    <div id='fLeft'>
       <?php
         if ($coreSettings[C_COMPANY_USE_CHAT]) :
         $checked = "";
