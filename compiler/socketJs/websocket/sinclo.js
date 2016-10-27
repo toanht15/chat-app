@@ -4,18 +4,28 @@
   // -----------------------------------------------------------------------------
 
   sinclo = {
+    widget: {
+      condifiton: {
+        get: function(){
+          var sincloBox = document.getElementById('sincloBox');
+          return sincloBox.getAttribute('data-openflg');
+        },
+        set: function(flg){
+          var sincloBox = document.getElementById('sincloBox');
+          sincloBox.setAttribute('data-openflg', flg);
+        }
+      }
+    },
     syncTimeout: "",
     operatorInfo: {
       header: null,
       ev: function() {
         var height = 0;
         var sincloBox = document.getElementById('sincloBox');
-        var flg = sincloBox.getAttribute('data-openflg');
+        var flg = sinclo.widget.condifiton.get();
         var elm = $('#sincloBox');
         if ( String(flg) === "false" ) {
-          height = 0;
-          sincloBox.setAttribute('data-openflg', true);
-
+          sinclo.widget.condifiton.set(true);
           if ( check.smartphone() && window.info.contract.chat && (window.screen.availHeight < window.screen.availWidth) ) {
             height = window.innerHeight * (document.body.clientWidth / window.innerWidth);
           }
@@ -38,7 +48,7 @@
         }
         else {
           height = this.header.offsetHeight;
-          sincloBox.setAttribute('data-openflg', false);
+          sinclo.widget.condifiton.set(false);
         }
         elm.animate({
           height: height + "px"
@@ -47,7 +57,7 @@
       widgetHide: function() {
         var sincloBox = document.getElementById('sincloBox');
         if ( !sincloBox ) return false;
-        var openflg = sincloBox.getAttribute('data-openflg');
+        var openflg = sinclo.widget.condifiton.get();
 
         var height = document.getElementById('widgetTitle').clientHeight;
         if ( height === 0 ) {
@@ -86,7 +96,7 @@
           }, 500);
           return false;
         }
-        var openFlg = sincloBox.getAttribute('data-openflg');
+        var openFlg = sinclo.widget.condifiton.get();
 
         if ( sincloBox ) {
           sincloBox.style.display = "none";
@@ -106,11 +116,11 @@
           sincloBox.style.display = "block";
           sincloBox.style.opacity = 0;
           sinclo.operatorInfo.header = document.getElementById('widgetHeader');
-          sincloBox.setAttribute('data-openflg', openFlg);
+          sinclo.widget.condifiton.set(openFlg);
           sinclo.operatorInfo.widgetHide();
 
           if ( String(openFlg) === "true" ) {
-            sincloBox.setAttribute('data-openflg', true);
+            sinclo.widget.condifiton.set(true);
 
             if ( window.screen.availHeight < window.screen.availWidth ) {
               sincloBox.style.height = document.documentElement.clientHeight + "px";
@@ -122,7 +132,7 @@
             }
           }
           else {
-            sincloBox.setAttribute('data-openflg', false);
+            sinclo.widget.condifiton.set(false);
             sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
           }
 
@@ -135,14 +145,23 @@
       }
     },
     connect: function(){
-      function newAccessCheck(){
-        if (document.referrer) {
-            return (history.length == 1) ? true : false;
-        }
-        else {
-          return true;
-        }
+      function reloaded() {
+        return window.name == window.location.href ? true : false;
       }
+
+      function newAccessCheck(){
+        var ret = true;
+        if (document.referrer) {
+          if (history.length !== 1) {
+            ret = false;
+          }
+        }
+        if ( ret && reloaded() ) {
+          ret = false;
+        }
+        return ret;
+      }
+
       function opCheck(){
         if ( !check.ref() ) return false;
         if ( !newAccessCheck() ) return false;
@@ -179,6 +198,7 @@
         userInfo.gFrame = false;
       }
       userInfo.init();
+      window.name = window.location.href; // リロード検知に使う
       var emitData = {
           referrer: userInfo.referrer,
           time: userInfo.getTime(),
@@ -642,16 +662,6 @@
         history.back();
       }
     },
-    // receiveConnectEv: function(d){
-    //   var obj = JSON.parse(d);
-    //   if ( obj.to !== userInfo.tabId ) return false;
-    // },
-    // userDissconnectionEv: function(d){
-    //   var obj = JSON.parse(d);
-    //   if ( obj.connectToken !== userInfo.connectToken ) return false;
-    //   if ( obj.to !== userInfo.tabId ) return false;
-    //   emit('sendConfirmConnect', obj);
-    // },
     syncContinue:function (d) {
       var obj = JSON.parse(d);
       if ( obj.connectToken !== userInfo.connectToken ) return false;
@@ -853,7 +863,7 @@
         if (sincloBox && (window.info.contract.chat || window.info.contract.synclo) ) {
           sincloBox.style.display = "block";
           sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
-          sincloBox.setAttribute('data-openflg', false);
+          sinclo.widget.condifiton.set(false);
           clearInterval(timer);
         }
 
@@ -1003,7 +1013,7 @@
           }
           // 常に最大化する、ページ訪問時（showTime === 3,4）
           window.setTimeout(function(){
-            var flg = sincloBox.getAttribute('data-openflg');
+            var flg = sinclo.widget.condifiton.get();
             if ( String(flg) === "false" ) {
               storage.s.set('widgetOpen', true);
               sinclo.operatorInfo.ev();
@@ -1078,7 +1088,6 @@
             var linkReg = RegExp(/http(s)?:\/\/[!-~.a-z]*/);
             var radioName = "sinclo-radio" + chatList.children.length;
             var content = "";
-
             if ( check.isset(cName) === false ) {
               cName = window.info.widget.subTitle;
             }
@@ -1094,9 +1103,9 @@
                     // ラジオボタン
                     var radio = str.indexOf('[]');
                     if ( radio > -1 ) {
-                        var val = str.slice(radio+2);
-                        str = "<sinclo-radio><input type='radio' name='" + radioName + "' id='" + radioName + "-" + i + "' class='sinclo-chat-radio' value='" + val + "'>";
-                        str += "<label for='" + radioName + "-" + i + "'>" + val + "</label></sinclo-radio>";
+                        var name = str.slice(radio+2);
+                        str = "<sinclo-radio><input type='radio' name='" + radioName + "' id='" + radioName + "-" + i + "' class='sinclo-chat-radio' value='" + name + "'>";
+                        str += "<label for='" + radioName + "-" + i + "'>" + name + "</label></sinclo-radio>";
                     }
                 }
                 // リンク
@@ -1126,10 +1135,10 @@
             clearTimeout(this.scDownTimer);
           }
           this.scDownTimer = setTimeout(function(){
-            var chatTalk = document.getElementById('chatTalk');
+          var chatTalk = document.getElementById('chatTalk');
             $('#sincloBox #chatTalk').animate({
               scrollTop: chatTalk.scrollHeight - chatTalk.clientHeight
-            }, 300);
+          }, 300);
           }, 500);
         },
         push: function(){
@@ -1216,7 +1225,7 @@
             var elmId = "sincloChatUnread",
                 unreadIcon = document.getElementById(elmId);
             var sincloBox = document.getElementById('sincloBox');
-            var flg = sincloBox.getAttribute('data-openflg');
+            var flg = sinclo.widget.condifiton.get();
             if ( unreadIcon ) {
                 unreadIcon.parentNode.removeChild(unreadIcon);
             }
@@ -1434,7 +1443,7 @@
                         sinclo.trigger.setAutoMessage(id, cond);
                         // 自動最大化
                         if ( !('widgetOpen' in cond) ) return false;
-                        var flg = sincloBox.getAttribute('data-openflg');
+                        var flg = sinclo.widget.condifiton.get();
                         if ( Number(cond.widgetOpen) === 1 && String(flg) === "false" ) {
                           sinclo.operatorInfo.ev();
                         }
