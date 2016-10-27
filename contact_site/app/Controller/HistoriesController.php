@@ -494,6 +494,11 @@ class HistoriesController extends AppController {
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
     $this->data = $this->Session->read('thistory');
+    if(empty($this->data['start_day']) || empty($this->data['finish_day'])) {
+      $today = date("Y/m/d");
+      $this->request->data['start_day'] = $today;
+      $this->request->data['finish_day'] = $today;
+    }
     // const
     $this->render('/Elements/Histories/remoteEntry');
   }
@@ -556,6 +561,7 @@ class HistoriesController extends AppController {
         }
         $ret[]=$alluser['MCustomer']['visitors_id'];
       }
+      $this->log($conditions,LOG_DEBUG);
       $conditions['THistory.visitors_id'] = $ret;
       $historyList = $this->paginate('THistory',$conditions);
     }

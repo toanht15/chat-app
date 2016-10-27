@@ -344,6 +344,7 @@
                 list += '<li data-range-key="' + range + '">' + range + '</li>';
             }
             if (this.showCustomRangeLabel) {
+              console.log('kokoda');
                 list += '<li data-range-key="' + this.locale.customRangeLabel + '">' + this.locale.customRangeLabel + '</li>';
             }
             list += '</ul>';
@@ -442,13 +443,24 @@
         //
         // if attached to a text input, set the initial value
         //
-
+        //1016/10/27 カレンダーの条件をクリアしたときにその日の日付が出るように変更 henmi
         if (this.element.is('input') && !this.singleDatePicker && this.autoUpdateInput) {
-            this.element.val(this.startDate.format(this.locale.format) + this.locale.separator + this.endDate.format(this.locale.format));
-            this.element.trigger('change');
+          console.log('eraikoccha');
+          this.element.val(this.startDate.format(this.locale.format) + this.locale.separator + this.endDate.format(this.locale.format));
+          if (this.element.val()=='Invalid date - Invalid date') {
+            console.log('eraikoccha2');
+            var start = moment();
+            var end = moment();
+            //$('input[name="start_day"]').val('2016/09/05');
+            //$('input[name="end_day"]').val('2016/09/06');
+            //this.element.val(start.format('YYYY/MM/DD') + ' - ' + end.format('YYYY/MM/DD'));
+
+            console.log(this.element.val());
+          }
+          this.element.trigger('change');
         } else if (this.element.is('input') && this.autoUpdateInput) {
-            this.element.val(this.startDate.format(this.locale.format));
-            this.element.trigger('change');
+          this.element.val(this.startDate.format(this.locale.format));
+          this.element.trigger('change');
         }
 
     };
@@ -1020,11 +1032,16 @@
             //ignore mouse movements while an above-calendar text input has focus
             if (this.container.find('input[name=daterangepicker_start]').is(":focus") || this.container.find('input[name=daterangepicker_end]').is(":focus"))
                 return;
-
+              console.log('mousukosi');
+              //var start = moment();
+              //var end = moment();
+            //this.element.val(start.format('YYYY/MM/DD') + ' - ' + end.format('YYYY/MM/DD'));
+              //this.container.find('input[name=daterangepicker_start]').val(start.format('YYYY/MM/DD'));
+              //this.container.find('input[name=daterangepicker_end]').val(end.format('YYYY/MM/DD'));
             this.container.find('input[name=daterangepicker_start]').val(this.startDate.format(this.locale.format));
             if (this.endDate)
                 this.container.find('input[name=daterangepicker_end]').val(this.endDate.format(this.locale.format));
-
+                //this.container.find('input[name=daterangepicker_end]').val(end.format('YYYY/MM/DD'));
             if (this.singleDatePicker || (this.endDate && (this.startDate.isBefore(this.endDate) || this.startDate.isSame(this.endDate)))) {
                 this.container.find('button.applyBtn').removeAttr('disabled');
             } else {
