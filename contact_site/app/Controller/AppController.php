@@ -77,7 +77,6 @@ class AppController extends Controller {
       $this->userInfo = $this->Session->read('global.userInfo');
       $this->set('userInfo', $this->userInfo);
     }
-
     // 多重ログインチェック
     if ( isset($this->userInfo['id']) && isset($this->userInfo['session_rand_str']) ) {
       $newInfo = $this->MUser->read(null, $this->userInfo['id']);

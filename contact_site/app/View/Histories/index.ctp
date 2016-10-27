@@ -1,25 +1,25 @@
-  <?php echo $this->element('Customers/userAgentCheck') ?>
-  <?php echo $this->element('Histories/angularjs') ?>
-  <?php echo $this->element('Histories/script') ?>
+<?php echo $this->element('Customers/userAgentCheck') ?>
+<?php echo $this->element('Histories/angularjs') ?>
+<?php echo $this->element('Histories/script') ?>
 
-  <div id='history_idx' class="card-shadow" ng-app="sincloApp" ng-controller="MainCtrl">
+<div id='history_idx' class="card-shadow" ng-app="sincloApp" ng-controller="MainCtrl">
 
   <div id='history_title'>
     <div class="fLeft"><?= $this->Html->image('history_g.png', array('alt' => '履歴一覧', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?></div>
-    <h1>履歴一覧</h1>
-    <?php echo $this->Html->link(
+      <h1>履歴一覧</h1>
+      <?php echo $this->Html->link(
         '検索絞り込み',
         'javascript:void(0)',
         array('escape' => false, 'class'=>'skyBlueBtn btn-shadow','id' => 'searchRefine','onclick' => 'openSearchRefine()'));
-    ?>
-    <?php echo $this->Html->link(
+      ?>
+      <?php echo $this->Html->link(
         'ＣＳＶ出力',
         'javascript:void(0)',
         array('escape' => false, 'class'=>'skyBlueBtn btn-shadow', 'id' => 'outputCSV'));
-    ?>
-  </div>
+      ?>
+    </div>
 
-  <div id='history_menu' class="p20trl">
+    <div id='history_menu' class="p20trl">
       <label class='searchConditions'>検索条件</label>
       <?php if(!empty($this->data['start_day'])||!empty($this->data['finish_day'])) { ?>
         <label class="label">日付</label>
