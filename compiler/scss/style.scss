@@ -2888,6 +2888,27 @@ ul.naviBtn {
   }
 }
 
+#history_menu ul {
+  display: flex;
+  flex-direction: row;
+  padding: 0;
+  flex-wrap: wrap;
+
+  li {
+    display: flex;
+  }
+}
+
+#history_idx #history_menu {
+  height: 139px;
+
+  label[for='g_chat'] {
+    display: block;
+    position: relative;
+    padding: 1px 0 15px 20px;
+    margin-top: 7px;
+  }
+}
 input#dateperiod {
   background-image: url('/img/calender.png');
   background-repeat: no-repeat;
@@ -2897,56 +2918,11 @@ input#dateperiod {
 
 a#searchRefine {
   position: absolute;
-  top: 70px;
-  left: 92px;
+  top: 91px;
+  left: 37px;
   width: 8em;
   padding: 0.25em 0.5em;
   text-align: center;
-}
-
-label.label {
-  display: block;
-  float: left;
-  width: 95px;
-  padding: 4px 0 4px 5px;
-  color: #224;
-  font-size: 13px;
-  background: #eee;
-  margin-bottom: 4px;
-  border-bottom: #eee 1px solid;
-  border-right: #eee 1px solid;
-  min-height: 16px;
-  margin-left: 25px;
-}
-
-label.labels {
-  display: block;
-  float: left;
-  width: 95px;
-  padding: 4px 0 4px 5px;
-  color: #224;
-  font-size: 13px;
-  margin-bottom: 4px;
-  min-height: 16px;
-  margin-left: 25px;
-}
-
-label.seachHistory {
-  font-size:14px;
-  font-weight:bold;
-}
-
-label.searchthing {
-  font-size:14px;
-}
-
-label.value {
-  display: block;
-  float: left;
-  padding: 3px 3px 0 3px;
-  margin-bottom: 4px;
-  margin-left: 22px;
-  font-size: 14px;
 }
 
 .searchConditions{
@@ -2957,13 +2933,31 @@ label.value {
   float: left;
 }
 
-#history_idx #history_menu {
-  height: 66px;
+.seach_menu {
+  /*  display: inline-block; */
+  margin-top:48px;
 }
 
-#history_idx #history_menu label[for='g_chat'] {
+label.label {
   display: block;
-  position: relative;
-  padding: 1px 0 1px 20px;
-  margin-top: 32px;
+  padding: 0.5em 1em 0em 1em;
+  color: #224;
+  text-align: center;
+  font-size: 13px;
+  background: #eee;
+  margin-bottom: 4px;
+  border-bottom: #eee 1px solid;
+  border-right: #eee 1px solid;
+  min-height: 16px;
+  margin-left: 25px;
+  width: 7em;
 }
+
+span.value {
+  display: block;
+  padding: 5px 10px;
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+
