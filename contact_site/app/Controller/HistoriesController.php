@@ -84,6 +84,7 @@ class HistoriesController extends AppController {
       $isChat = $this->params->query['isChat'];
     }
     $this->_setList($isChat);
+    $this->data = $this->Session->read('thistory');
   }
 
   public function remoteGetCustomerInfo() {
@@ -381,7 +382,51 @@ class HistoriesController extends AppController {
     }
 
     $this->Session->write("histories.joins", $this->paginate['THistory']['joins'][0]['type']);
+
+    //履歴検索機能
+    if($this->request->is('post')) {
+      $start = $this->data['start_day'];
+      $finish = $this->data['finish_day'];
+      $ip = $this->data['ip_address'];
+      $company = $this->data['company_name'];
+      $name = $this->data['customer_name'];
+      $tel = $this->data['telephone_number'];
+      $mail = $this->data['mail_address'];
+
+      $this->Session->write('thistory', $this->data);
+
+      $conditions = ['THistory.ip_address like' =>'%'.$ip.'%'];
+      if($start != '' ) {
+        $conditions += ['THistory.access_date >=' => $start];
+      }
+      if($finish != '' ) {
+      $conditions += ['THistory.access_date <=' => $finish];
+      }
+
+      $allusers = $this->MCustomer->find('all');
+      $ret=[];
+      foreach($allusers as $alluser) {
+        $settings = json_decode($alluser['MCustomer']['informations']);
+        if($company != '' && !strstr($settings->company,$company)) {
+          continue;
+        }
+        if($name != '' && !strstr($settings->name,$name)) {
+          continue;
+        }
+        if($tel != '' && !strstr($settings->tel,$tel)) {
+          continue;
+        }
+        if($mail != '' && !strstr($settings->mail,$mail)) {
+          continue;
+        }
+        $ret[]=$alluser['MCustomer']['visitors_id'];
+      }
+      $conditions['THistory.visitors_id'] = $ret;
+      $historyList = $this->paginate('THistory',$conditions);
+    }
+    else {
     $historyList = $this->paginate('THistory');
+    }
 
     $this->set('userList', $historyList);
     $this->set('historyList', $historyList);
@@ -473,4 +518,30 @@ class HistoriesController extends AppController {
     return $this->THistoryChatLog->find('all', $params);
   }
 
+  /* *
+   * 検索画面
+   * @return void
+   * */
+  public function remoteOpenEntryForm() {
+    Configure::write('debug', 0);
+    $this->autoRender = FALSE;
+    $this->layout = 'ajax';
+    $this->data = $this->Session->read('thistory');
+    if(empty($this->data['start_day']) || empty($this->data['finish_day'])) {
+      $today = date("Y/m/d");
+      $this->request->data['start_day'] = $today;
+      $this->request->data['finish_day'] = $today;
+    }
+    // const
+    $this->render('/Elements/Histories/remoteSearchCustomerInfo');
+  }
+
+ /* *
+   * Session削除
+   * @return void
+   * */
+  public function ClearSession() {
+    $this->Session->delete('thistory');
+    $this->redirect(['controller' => 'Histories', 'action' => 'index']);
+  }
 }

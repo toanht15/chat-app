@@ -170,6 +170,67 @@ $(document).ready(function(){
     document.getElementById('HistoryIndexForm').submit();
   });
 
+  $('#dateperiod').daterangepicker({
+    "ranges": {
+      '今日': [moment(), moment()],
+      '昨日': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+      '過去一週間': [moment().subtract(6, 'days'), moment()],
+      '過去一か月間': [moment().subtract(29, 'days'), moment()],
+      '今月': [moment().startOf('month'), moment().endOf('month')],
+      '先月': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+    },
+    "locale": {
+      "format": "YYYY/MM/DD",
+      "separator": " - ",
+      "applyLabel": "適用",
+      "cancelLabel": "Cancel",
+      "fromLabel": "From",
+      "toLabel": "To",
+      "customRangeLabel": "カスタム",
+      "weekLabel": "W",
+      "daysOfWeek": [
+        "日",
+        "月",
+        "火",
+        "水",
+        "木",
+        "金",
+        "土"
+      ],
+      "monthNames": [
+        "1月",
+        "2月",
+        "3月",
+        "4月",
+        "5月",
+        "6月",
+        "7月",
+        "8月",
+        "9月",
+        "10月",
+        "11月",
+        "12月"
+      ],
+      "firstDay": 1
+    },
+    "alwaysShowCalendars": true,
+    "startDate": $('input[name="start_day"]').val(),
+    "endDate": $('input[name="finish_day"]').val(),
+    "opens": "left"
+  },
+  function(start, end, label) {
+    console.log("New date range selected:   ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')");
+  });
+
+  $('input[name="datefilter"]').on('apply.daterangepicker', function(ev, picker) {
+    $('input[name="start_day"]').val(picker.startDate.format('YYYY/MM/DD'));
+    $('input[name="finish_day"]').val(picker.endDate.format('YYYY/MM/DD'));
+  });
+
 });
+
+function searchRefine(){
+   document.getElementById('searchRefine()').submit();
+}
 
 </script>
