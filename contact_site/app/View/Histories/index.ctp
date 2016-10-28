@@ -45,38 +45,38 @@
       <ul>
         <?php if(!empty($this->data['start_day'])||!empty($this->data['finish_day'])) { ?>
           <li>
-            <label class="label">日付</label>
-            <span class="value"><?= $this->data['start_day'] ?>-<?= $this->data['finish_day'] ?></span>
+            <label>日付</label>
+            <span class="value"><?= h($this->data['start_day']) ?>-<?= h($this->data['finish_day']) ?></span>
           </li>
         <?php } ?>
         <?php if(!empty($this->data['ip_address'])) { ?>
           <li>
-            <label class="label">IPｱﾄﾞﾚｽ</label>
-            <span class="value"><?= $this->data['ip_address'] ?></span>
+            <label>IPｱﾄﾞﾚｽ</label>
+            <span class="value"><?= h($this->data['ip_address']) ?></span>
           </li>
         <?php } ?>　
         <?php if(!empty($this->data['company_name'])) { ?>
           <li>
-            <label class="label">会社名</label>
-            <span class="value"><?= $this->data['company_name'] ?></span>
+            <label>会社名</label>
+            <span class="value"><?= h($this->data['company_name']) ?></span>
           </li>
         <?php } ?>
         <?php if(!empty($this->data['customer_name'])) { ?>
           <li>
             <label class="label">名前</label>
-            <span class="value"><?= $this->data['customer_name'] ?></span>
+            <span class="value"><?= h($this->data['customer_name']) ?></span>
           </li>
         <?php } ?>
         <?php if(!empty($this->data['telephone_number'])) { ?>
           <li>
-            <label class="label">電話番号</label>
-            <span class="value"><?= $this->data['telephone_number'] ?></span>
+            <label>電話番号</label>
+            <span class="value"><?= h($this->data['telephone_number']) ?></span>
           </li>
         <?php } ?>
         <?php if(!empty($this->data['mail_address'])) { ?>
           <li>
-            <label class="label">ﾒｰﾙｱﾄﾞﾚｽ</label>
-            <span class="value"><?= $this->data['mail_address'] ?></span>
+            <label>ﾒｰﾙｱﾄﾞﾚｽ</label>
+            <span class="value"><?= h($this->data['mail_address']) ?></span>
           </li>
         <?php } ?>
       </ul>
