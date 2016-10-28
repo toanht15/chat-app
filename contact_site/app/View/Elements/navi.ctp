@@ -15,7 +15,7 @@ switch ($this->name) {
     case 'MWidgetSettings':
     case 'ScriptSettings':
     case 'TCampaigns':
-    case 'MShareDisplaySettings':
+    case 'DisplayExclusions':
         $settingSelected = "selected";
         break;
     case 'MChatNotifications':
@@ -86,11 +86,11 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
     <?php endif; ?>
     <?php if ( $adminFlg ): ?>
       <div class="icon">
-        <?= $this->htmlEx->naviLink('キャンペーン', 'widget.png', ['href' => ['controller' => 'TCampaigns', 'action' => 'index']]) ?>
+        <?= $this->htmlEx->naviLink('キャンペーン', 'campaign.png', ['href' => ['controller' => 'TCampaigns', 'action' => 'index']]) ?>
       </div>
     <?php endif; ?>
     <div class="icon">
-        <?= $this->htmlEx->naviLink('表示除外設定', 'widget.png', ['href' => ['controller' => 'MShareDisplaySettings', 'action' => 'index']]) ?>
+        <?= $this->htmlEx->naviLink('表示除外設定', 'exclusion.png', ['href' => ['controller' => 'DisplayExclusions', 'action' => 'index']]) ?>
       </div>
     </div>
     <!-- /* 共通 */ -->
@@ -100,7 +100,7 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
       <div data-sidebar-type="chat" class="hide">
       <?php if ( $adminFlg ): ?>
         <div class="icon">
-          <?= $this->htmlEx->naviLink('メッセージ', 'auto_message.png', ['href' => ['controller' => 'TAutoMessages', 'action' => 'index']]) ?>
+          <?= $this->htmlEx->naviLink('ｵｰﾄﾒｯｾｰｼﾞ', 'auto_message.png', ['href' => ['controller' => 'TAutoMessages', 'action' => 'index']]) ?>
         </div>
       <?php endif; ?>
       <?php if ($coreSettings[C_COMPANY_USE_CHAT] || strcmp($userInfo['MCompany']['company_key'], "medialink") === 0): ?>

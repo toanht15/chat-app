@@ -319,7 +319,27 @@ $headerNo = 1;
       <h3><?php echo mb_convert_kana($headerNo, "N", "utf-8"); $headerNo++ ?>．チャット設定</h3>
       <section>
       <ul class="settingList">
-        <!-- チャット送信アクション -->
+        <!-- ラジオボタン操作時の動作種別 -->
+        <li>
+          <span class="require"><label>ラジオボタン選択動作</label></span>
+          <pre><label><?= $this->ngForm->input('chat_radio_behavior', [
+              'type' => 'radio',
+              'options' => $widgetRadioBtnBehaviorType,
+              'legend' => false,
+              'separator' => '</label><br><label>',
+              'class' => 'showChat',
+              'div' => false,
+              'label' => false,
+              'error' => false
+            ],
+            [
+              'entity' => 'MWidgetSetting.chat_radio_behavior'
+            ]) ?></label></pre>
+        </li>
+        <?php if ( $this->Form->isFieldError('chat_radio_behavior') ) echo $this->Form->error('chat_radio_behavior', null, ['wrap' => 'li']); ?>
+        <!-- ラジオボタン操作時の動作種別 -->
+
+        <!-- 消費者側送信アクション -->
         <li>
           <span class="require"><label>消費者側送信アクション</label></span>
           <pre><label><?= $this->ngForm->input('chat_trigger', [
@@ -337,7 +357,7 @@ $headerNo = 1;
             ]) ?></label></pre>
         </li>
         <?php if ( $this->Form->isFieldError('chat_trigger') ) echo $this->Form->error('chat_trigger', null, ['wrap' => 'li']); ?>
-        <!-- チャット送信アクション -->
+        <!-- 消費者側送信アクション -->
         <!-- 担当者表示 -->
         <li>
           <span class="require"><label>担当者表示</label></span>

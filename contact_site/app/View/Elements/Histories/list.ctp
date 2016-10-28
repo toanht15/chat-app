@@ -5,7 +5,8 @@
             <th width=" 6%" class="noOutCsv">詳細</th>
             <th width="15%">訪問ユーザ</th>
             <th width="20%">プラットフォーム<br>ブラウザ</th>
-            <th width="17%">参照元URL</th>
+            <th width=" 7%">キャンペーン</th>
+            <th width="10%">参照元URL</th>
             <th width=" 5%">閲覧<br>ページ数</th>
             <th width=" 8%">滞在時間</th>
             <th width="10%">ステータス</th>
@@ -13,16 +14,29 @@
         </tr>
     </thead>
     <tbody ng-cloak>
-
-<!-- <a href="javascript:void(0)" onclick="showDetail()" class="detailBtn blueBtn btn-shadow">詳細</a> -->
-
 <?php foreach($historyList as $key => $history): ?>
+<?php
+/* キャンペーン名の取得 */
+$campaignParam = "";
+$tmp = mb_strstr($history['THistoryStayLog']['firstURL'], '?');
+if ( $tmp !== "" ) {
+  foreach($campaignList as $k => $v){
+    if ( strpos($tmp, $k) !== false ) {
+      if ( $campaignParam !== "" ) {
+        $campaignParam .= "\n";
+      }
+      $campaignParam .= $v;
+    }
+  }
+}
+?>
         <tr>
             <td class="tRight pre"><?=date_format(date_create($history['THistory']['access_date']), "Y/m/d\nH:i:s")?></td>
             <td class="tCenter"><ng-show-detail data-id="<?=h($history['THistory']['id'])?>"></ng-show-detail></td>
             <td class="tLeft pre">{{ ui('<?=h($history['THistory']['ip_address'])?>', <?=json_encode($history['MCustomer']['informations'])?>) }}</td>
             <td class="tLeft pre">{{ ua('<?=h($history['THistory']['user_agent'])?>') }}</td>
-            <td class="tLeft omit"><a href="<?=h($history['THistory']['referrer_url'])?>" target="history"><?=h($history['THistory']['referrer_url'])?></a></td>
+            <td class="tCenter pre"><?=$campaignParam?></td>
+            <td class="tLeft omit"><a href="{{::trimToURL('<?=h($history['THistory']['referrer_url'])?>')}}" target="history">{{::trimToURL("<?=h($history['THistory']['referrer_url'])?>")}}</a></td>
             <td class="tCenter">
                 <?php if( is_numeric($history['THistoryStayLog']['count']) ): ?>
                     <a class="underL" href="javascript:void(0)" onclick="openHistoryById('<?=h($history['THistory']['id'])?>')" ><?=h($history['THistoryStayLog']['count'])?></a>

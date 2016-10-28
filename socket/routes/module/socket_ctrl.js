@@ -1,3 +1,5 @@
+var database = require('../database');
+
 // mysql
 var mysql = require('mysql'),
     pool = mysql.createPool({
@@ -17,7 +19,7 @@ var errlogger = log4js.getLogger('error'); // エラー用のロガー取得
 var deblogger = log4js.getLogger('debug'); // デバッグ用のロガー取得
 
 //サーバインスタンス作成
-var io = require('socket.io')(9090),
+var io = require('socket.io')(process.env.WS_PORT),
     activeOperator = {}, // 待機中オペレーター
     sincloCore = {}, // socketIDの管理
     connectList = {}, // socketIDをキーとした管理
@@ -56,7 +58,7 @@ var timeCalculator = function(obj){
         start = new Date(Number(obj.time)),
         req = parseInt((now.getTime() - start.getTime()) / 1000);
   return Number(req);
-}
+};
 
 function timeUpdate(historyId, obj, time){
   var insertStayData = {
@@ -137,14 +139,25 @@ function formatDateParse(parse){
   return d.getFullYear() + "/" + _numPad(d.getMonth() + 1) + "/" + _numPad(d.getDate()) + " " + _numPad(d.getHours()) + ":" + _numPad(d.getMinutes()) + ":" + _numPad(d.getSeconds());
 }
 
-function syncStopCtrl(siteKey, tabId){
-  var keys = ['connectToken', 'syncSessionId', 'syncHostSessionId', 'syncFrameSessionId'];
+function syncStopCtrl(siteKey, tabId, unsetFlg){
+  var keys = [
+    'connectToken', 'syncSessionId', 'syncHostSessionId',
+    'syncFrameSessionId', 'shareWindowId', 'shareWindowFlg'
+  ];
+  if ( unsetFlg ) { // unsetTarget
+    var sessionId = getSessionId(siteKey, tabId, "sessionId");
+    clearTimeout(sincloCore[siteKey][tabId].timeoutTimer);
+    delete sincloCore[siteKey][tabId];
+    delete connectList[sessionId];
+    return false;
+  }
 
-  for (var i; keys.length > i; i++) {
+  for (var i = 0; keys.length > i; i++) {
     if ( getSessionId(siteKey, tabId, keys[i]) ) {
       delete sincloCore[siteKey][tabId][keys[i]];
     }
   }
+
 }
 
 function getOperatorCnt(siteKey) {
@@ -162,7 +175,7 @@ function objectSort(object) {
   //キーだけ格納し，ソートするための配列生成
   var array = [];
   //for in文を使用してオブジェクトのキーだけ配列に格納
-  for (key in object) {
+  for (var key in object) {
     //指定された名前のプロパティがオブジェクトにあるかどうかチェック
     if (object.hasOwnProperty(key)) {
       //if条件がtrueならば，配列の最後にキーを追加する
@@ -185,11 +198,31 @@ function objectSort(object) {
   return sorted;
 }
 
+function getConnectInfo(o){
+  var connectToken = getSessionId(o.siteKey, o.tabId, 'connectToken');
+  var responderId = getSessionId(o.siteKey, o.tabId, 'responderId');
+  if ( isset(responderId) && isset(connectToken) ) {
+    o.responderId = responderId;
+    o.connectToken = connectToken;
+  }
+  return o;
+}
+
+// IPアドレスの取得
+function getIp(socket){
+  var ip = "0.0.0.0";
+  if ( isset(socket.handshake.headers['x-forwarded-for']) ) {
+    ip = socket.handshake.headers['x-forwarded-for'];
+  }
+  return ip;
+}
+
 // emit用
 var emit = {
   roomKey: {
     client: 'cl001',
-    company: 'cm001'
+    company: 'cm001',
+    frame: 'cf001',
   },
   _convert: function(d){
     if ( typeof(d) === "object" ) {
@@ -232,7 +265,7 @@ var db = {
         }
 
         if ( isset(rows) && isset(rows[0]) ) {
-          sincloCore[obj.siteKey][obj.tabId]['historyId'] = rows[0].id;
+          sincloCore[obj.siteKey][obj.tabId].historyId = rows[0].id;
           timeUpdate(rows[0].id, obj, now);
           obj.historyId = rows[0].id;
           emit.toMine('setHistoryId', obj, s);
@@ -263,7 +296,7 @@ var db = {
               emit.toMine('setHistoryId', obj, s);
             }
           );
-        };
+        }
       });
     }
   }
@@ -336,7 +369,7 @@ io.sockets.on('connection', function (socket) {
                 var date = messages[i].created;
                 date = new Date(date);
                 if ( ('userName' in messages[i]) && obj.showName !== 1 ) {
-                  delete messages[i]['userName'];
+                  delete messages[i].userName;
                 }
                 setList[fullDateTime(messages[i].created)] = messages[i];
               }
@@ -363,20 +396,20 @@ io.sockets.on('connection', function (socket) {
       pool.query('SELECT * FROM t_history_stay_logs WHERE t_histories_id = ? ORDER BY id DESC LIMIT 1;', insertData.t_histories_id,
         function(err, rows){
           if ( rows && rows[0] ) {
-            insertData['t_history_stay_logs_id'] = rows[0].id;
+            insertData.t_history_stay_logs_id = rows[0].id;
           }
-          insertData['created'] = (('created' in d)) ? new Date(d.created) : new Date();
+          insertData.created = (('created' in d)) ? new Date(d.created) : new Date();
           // オートメッセージの場合は既読
-          if (Number(insertData['message_type'] === 3) ) {
-              insertData['message_read_flg'] = 1;
+          if (Number(insertData.message_type === 3) ) {
+              insertData.message_read_flg = 1;
           }
           pool.query('INSERT INTO t_history_chat_logs SET ?', insertData, function(error,results,fields){
             if ( !isset(error) ) {
-              if ( !isset(sincloCore[d.siteKey][d.tabId]['sessionId'])) return false;
+              if ( !isset(sincloCore[d.siteKey][d.tabId].sessionId)) return false;
               var sId = sincloCore[d.siteKey][d.tabId].sessionId;
               // 書き込みが成功したら顧客側に結果を返す
               emit.toUser('sendChatResult', {tabId: d.tabId, chatId: results.insertId, messageType: d.messageType, created: insertData.created, ret: true, chatMessage: d.chatMessage, siteKey: d.siteKey}, sId);
-              if (Number(insertData['message_type']) === 3) return false;
+              if (Number(insertData.message_type) === 3) return false;
               // 書き込みが成功したら企業側に結果を返す
               emit.toCompany('sendChatResult', {tabId: d.tabId, chatId: results.insertId, sort: fullDateTime(insertData.created), created: insertData.created, userId: insertData.m_users_id, messageType: d.messageType, ret: true, message: d.chatMessage, siteKey: d.siteKey}, d.siteKey);
             }
@@ -404,7 +437,7 @@ io.sockets.on('connection', function (socket) {
       pool.query('SELECT * FROM t_history_stay_logs WHERE t_histories_id = ? ORDER BY id DESC LIMIT 1;', insertData.t_histories_id,
         function(err, rows){
           if ( rows && rows[0] ) {
-            insertData['t_history_stay_logs_id'] = rows[0].id;
+            insertData.t_history_stay_logs_id = rows[0].id;
           }
           pool.query('INSERT INTO t_history_chat_logs SET ?', insertData, function(error,results,fields){
             if ( isset(error) ) {
@@ -464,12 +497,7 @@ io.sockets.on('connection', function (socket) {
         send.time = send.pagetime;
       }
 
-      if ( isset(socket.handshake.headers['x-forwarded-for']) ) {
-        send.ipAddress = socket.handshake.headers['x-forwarded-for'];
-      }
-      else {
-        send.ipAddress = "0.0.0.0";
-      }
+      send.ipAddress = getIp(socket);
 
     }
     // 企業キーが取得できなければスルー
@@ -525,7 +553,7 @@ io.sockets.on('connection', function (socket) {
         emit.toCompany('getAccessInfo', data, res.siteKey);
       }
       else {
-        send['activeOperatorCnt'] = getOperatorCnt(res.siteKey);
+        send.activeOperatorCnt = getOperatorCnt(res.siteKey);
         socket.join(res.siteKey + emit.roomKey.client);
         emit.toMine('accessInfo', send, socket);
       }
@@ -550,6 +578,13 @@ io.sockets.on('connection', function (socket) {
       obj.chat = getSessionId(obj.siteKey, obj.tabId, 'chat');
     }
 
+    obj = getConnectInfo(obj);
+
+    // IPアドレスの取得
+    if ( !(('ipAddress' in obj) && isset(obj.ipAddress)) ) {
+      obj.ipAddress = getIp(socket);
+    }
+
     emit.toCompany("sendCustomerInfo", obj, obj.siteKey);
     if ( ('contract' in obj) && ('chat' in obj.contract) && obj.contract.chat === false) return false;
     chatApi.sendUnreadCnt("sendChatInfo", obj, false);
@@ -558,6 +593,11 @@ io.sockets.on('connection', function (socket) {
   socket.on("getCustomerInfo", function(data) {
     var obj = JSON.parse(data);
     emit.toClient('confirmCustomerInfo', obj, obj.siteKey);
+  });
+
+  socket.on("connectSuccessForClient", function (data) {
+    var obj = JSON.parse(data);
+    // sincloCore[obj.siteKey][obj.tabId].sessionId = socket.id;
   });
 
   socket.on("connectSuccess", function (data) {
@@ -569,29 +609,35 @@ io.sockets.on('connection', function (socket) {
       sincloCore[obj.siteKey][obj.tabId] = {sessionId: null, subWindow: false};
     }
     if ('timeoutTimer' in sincloCore[obj.siteKey][obj.tabId]) {
-      clearTimeout(sincloCore[obj.siteKey][obj.tabId]['timeoutTimer']);
-      sincloCore[obj.siteKey][obj.tabId]['timeoutTimer'] = null;
+      clearTimeout(sincloCore[obj.siteKey][obj.tabId].timeoutTimer);
+      sincloCore[obj.siteKey][obj.tabId].timeoutTimer = null;
     }
 
     connectList[socket.id] = {siteKey: obj.siteKey, tabId: obj.tabId, userId: null};
     sincloCore[obj.siteKey][obj.tabId].sessionId = socket.id;
     if ( obj.subWindow ) {
-      sincloCore[obj.siteKey][obj.tabId]['toTabId'] = obj.to;
+      sincloCore[obj.siteKey][obj.tabId].toTabId = obj.to;
+      sincloCore[obj.siteKey][obj.tabId].connectToken = obj.connectToken;
       sincloCore[obj.siteKey][obj.tabId].subWindow = true;
-      obj['responderId'] = getSessionId(obj.siteKey, obj.to, 'responderId');
+      obj.responderId = getSessionId(obj.siteKey, obj.to, 'responderId');
       if ( getSessionId(obj.siteKey, obj.to, 'syncSessionId') ) {
-        sincloCore[obj.siteKey][obj.to]['syncSessionId'] = socket.id; // 同期先配列に、セッションIDを格納
+        sincloCore[obj.siteKey][obj.to].syncSessionId = socket.id; // 同期先配列に、セッションIDを格納
       }
     }
-    else {
+    else if ( !getSessionId(obj.siteKey, obj.tabId, 'parentTabId') ) {
       connectList[socket.id] = {siteKey: obj.siteKey, tabId: obj.tabId, userId: obj.userId};
 
       if ( ('reconnect' in obj) && obj.reconnect ) {
         socket.join(obj.siteKey + emit.roomKey.client);
       }
-
       // 履歴作成
       db.addHistory(obj, socket);
+
+      // IPアドレスの取得
+      if ( !(('ipAddress' in obj) && isset(obj.ipAddress)) ) {
+        obj.ipAddress = getIp(socket);
+      }
+
       emit.toCompany('syncNewInfo', obj, obj.siteKey);
     }
   });
@@ -616,12 +662,18 @@ io.sockets.on('connection', function (socket) {
   socket.on("sendAccessInfo", function (data) {
     var obj = JSON.parse(data);
     obj.term = timeCalculator(obj);
-    if ( getSessionId(obj.siteKey, obj.tabId, 'responderId') ) {
-      obj.responderId = getSessionId(obj.siteKey, obj.tabId, 'responderId');
-    }
+
+    obj = getConnectInfo(obj);
+
     if ( getSessionId(obj.siteKey, obj.tabId, 'chat') ) {
       obj.chat = getSessionId(obj.siteKey, obj.tabId, 'chat');
     }
+
+    // IPアドレスの取得
+    if ( !(('ipAddress' in obj) && isset(obj.ipAddress)) ) {
+      obj.ipAddress = getIp(socket);
+    }
+
     // TODO ここを要求したユーザのみに送るようにする
     emit.toCompany("receiveAccessInfo", obj, obj.siteKey);
     if ( ('contract' in obj) && ('chat' in obj.contract) && obj.contract.chat === false) return false;
@@ -633,35 +685,60 @@ io.sockets.on('connection', function (socket) {
   // [管理]モニタリング開始
   socket.on('requestWindowSync', function (data) {
     var obj = JSON.parse(data);
-    // 同形ウィンドウを作成するための情報取得依頼
-    if ( !getSessionId(obj.siteKey, obj.tabId, 'sessionId') ) return false;
-    sincloCore[obj.siteKey][obj.tabId].connectToken = obj.connectToken;
-    sincloCore[obj.siteKey][obj.tabId].syncSessionId = null;
-    sincloCore[obj.siteKey][obj.tabId].syncHostSessionId = socket.id; // 企業画面側のセッションID
-    emit.toUser('getWindowInfo', data, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
+    // 外部接続可能
+    if ( Number(obj.type) === 2 ) {
+      // 同形ウィンドウを作成するための情報取得依頼
+      if ( !getSessionId(obj.siteKey, obj.tabId, 'sessionId') ) return false;
+      sincloCore[obj.siteKey][obj.tabId].shareWindowFlg = true;
+      sincloCore[obj.siteKey][obj.tabId].syncHostSessionId = socket.id; // 企業画面側のセッションID
+      emit.toUser('startWindowSync', data, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
+    }
+    // 今まで通り
+    else {
+      // 同形ウィンドウを作成するための情報取得依頼
+      if ( !getSessionId(obj.siteKey, obj.tabId, 'sessionId') ) return false;
+      sincloCore[obj.siteKey][obj.tabId].shareWindowFlg = false;
+      sincloCore[obj.siteKey][obj.tabId].connectToken = obj.connectToken;
+      sincloCore[obj.siteKey][obj.tabId].syncSessionId = null;
+      sincloCore[obj.siteKey][obj.tabId].syncHostSessionId = socket.id; // 企業画面側のセッションID
+      emit.toUser('getWindowInfo', data, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
+    }
 
   });
+
   // 同形ウィンドウを作成するための情報受け取り
   socket.on('sendWindowInfo', function (data) {
     var obj = JSON.parse(data);
     // 同形ウィンドウを作成するための情報渡し
-    emit.toUser('windowSyncInfo', data, getSessionId(obj.siteKey, obj.tabId, 'syncHostSessionId'));
+    emit.toUser('windowSyncInfo', obj, getSessionId(obj.siteKey, obj.tabId, 'syncHostSessionId'));
   });
+
   // iframe用（接続直後と企業側リロード時）
   socket.on('connectFrame', function (data) {
     var obj = JSON.parse(data);
     if ( obj.siteKey ) {
-      socket.join(obj.siteKey + emit.roomKey.client);
+      // 外部接続フレームの場合
+      var parentTabId = getSessionId(obj.siteKey, obj.tabId, 'parentTabId');
+      if ( parentTabId ) {
+        socket.join(obj.siteKey + emit.roomKey.frame);
+        if ( ('responderId' in obj) && ('connectToken' in obj) ) {
+          sincloCore[obj.siteKey][parentTabId].responderId = obj.responderId; // 対応ユーザーID
+          sincloCore[obj.siteKey][parentTabId].connectToken = obj.connectToken; // 接続トークン
+        }
+      }
+      else {
+        socket.join(obj.siteKey + emit.roomKey.client);
+      }
     }
     if ( (obj.tabId in sincloCore[obj.siteKey]) ) {
-      sincloCore[obj.siteKey][obj.tabId]['syncFrameSessionId'] = socket.id; // フレームのセッションID
-      if ( 'responderId' in obj ) {
-        sincloCore[obj.siteKey][obj.tabId]['responderId'] = obj.responderId; // 対応ユーザーID
+      sincloCore[obj.siteKey][obj.tabId].syncFrameSessionId = socket.id; // フレームのセッションID
+      if ( ('responderId' in obj) && ('connectToken' in obj) ) {
+        sincloCore[obj.siteKey][obj.tabId].responderId = obj.responderId; // 対応ユーザーID
+        sincloCore[obj.siteKey][obj.tabId].connectToken = obj.connectToken; // 接続トークン
       }
       if ( getSessionId(obj.siteKey, obj.tabId, 'connectToken') ) {
         obj.connectToken = getSessionId(obj.siteKey, obj.tabId, 'connectToken'); // 接続トークンを企業側へ
       }
-
 
       emit.toCompany('syncNewInfo', obj, obj.siteKey);
     }
@@ -677,7 +754,15 @@ io.sockets.on('connection', function (socket) {
 
     // 企業キーが取得できなければスルー
     if ( obj.siteKey ) {
-      socket.join(obj.siteKey + emit.roomKey.client);
+
+      // 外部接続フレームの場合
+      if ( getSessionId(obj.siteKey, obj.tabId, 'parentTabId') ) {
+        socket.join(obj.siteKey + emit.roomKey.frame);
+      }
+      else {
+        socket.join(obj.siteKey + emit.roomKey.client);
+      }
+
       data.siteKey = obj.siteKey;
       emit.toUser('syncContinue', data, obj.to);
     }
@@ -691,20 +776,26 @@ io.sockets.on('connection', function (socket) {
     var obj = JSON.parse(data), tabId;
     // 企業キーが取得できなければスルー
     if ( obj.siteKey ) {
-      socket.join(obj.siteKey + emit.roomKey.client);
+      // 外部接続フレームの場合
+      if ( getSessionId(obj.siteKey, obj.tabId, 'parentTabId') ) {
+        socket.join(obj.siteKey + emit.roomKey.frame);
+      }
+      else {
+        socket.join(obj.siteKey + emit.roomKey.client);
+      }
+
       data.siteKey = obj.siteKey;
     }
     if ( obj.accessType !== 1 ) {
       tabId = obj.to; // host
       if ( (obj.to in sincloCore[obj.siteKey]) ) {
-        sincloCore[obj.siteKey][obj.to]['syncSessionId'] = socket.id;
+        sincloCore[obj.siteKey][obj.to].syncSessionId = socket.id;
       }
     }
     else {
       tabId = obj.tabId; // guest
     }
 
-// FIX ME !!! | Change to 'toMine'
     emit.toUser('syncStart', data, getSessionId(obj.siteKey, tabId, 'sessionId'));
     emit.toUser('syncStart', data, getSessionId(obj.siteKey, tabId, 'syncSessionId'));
     emit.toUser('syncStart', data, getSessionId(obj.siteKey, tabId, 'syncFrameSessionId'));
@@ -719,20 +810,111 @@ io.sockets.on('connection', function (socket) {
   // 初期同期処理完了
   socket.on('syncCompleate', function (data) {
     var obj = JSON.parse(data);
-    // マウス・スクロールバーの位置監視
     emit.toUser('syncEvStart', data, getSessionId(obj.siteKey, obj.to, 'sessionId'));
     emit.toUser('syncEvStart', data, getSessionId(obj.siteKey, obj.to, 'syncSessionId'));
   });
 
+  /**
+   * サブミットを使った、画面同期停止
+   * */
+  socket.on('requestSyncStopForSubmit', function (data) {
+    var obj = JSON.parse(data);
+    if ( isset(obj.connectToken) ) {
+      emit.toUser('syncStop', obj, getSessionId(obj.siteKey, obj.tabId, 'syncFrameSessionId'));
+      emit.toUser('syncStopForSubmit', obj, getSessionId(obj.siteKey, obj.tabId, 'shareWindowId'));
+      // 企業一括
+      emit.toCompany('syncStop', data, obj.siteKey); // リアルタイムモニタを更新する為
+    }
+  });
+
+  /**
+   * 企業フレーム:1, 消費者フレーム:2,企業インライン:3, 消費者インライン:4
+   * */
   socket.on('requestSyncStop', function (data) {
     var obj = JSON.parse(data);
     if ( isset(obj.connectToken) ) {
-      emit.toUser('syncStop', data, getSessionId(obj.siteKey, obj.tabId, 'syncFrameSessionId'));
-      syncStopCtrl(obj.siteKey, obj.tabId);
+      var parentId = false;
+      obj.message = "切断を検知しました。";
+
+      // 企業フレーム
+      switch(Number(obj.type)){
+        case 1: // 企業フレーム
+        case 2: // 消費者フレーム
+          if ( Number(obj.type) === 1 ) { // Was angry JS Lint
+            parentId = obj.tabId.replace("_frame", "");
+          }
+          if ( 'parentId' in obj ) {
+            parentId = obj.parentId;
+          }
+
+          if ( getSessionId(obj.siteKey, obj.tabId, 'shareWindowFlg') ) {
+            // 企業フレーム
+            emit.toUser('syncStop', obj, getSessionId(obj.siteKey, obj.tabId, 'shareWindowFlg'));
+            // 企業インライン
+            // emit.toUser('syncStop', obj, getSessionId(obj.siteKey, obj.tabId, 'syncSessionId'));
+            // 消費者フレーム
+            emit.toUser('syncStop', obj, getSessionId(obj.siteKey, obj.tabId, 'syncFrameSessionId'));
+            // 消費者インライン
+            emit.toUser('syncStop', obj, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
+            syncStopCtrl(obj.siteKey, obj.tabId, true);
+          }
+          else {
+            syncStopCtrl(obj.siteKey, obj.tabId);
+          }
+          break;
+        case 3: // 企業インライン
+        case 4: // 消費者インライン
+          // 相手先インラインフレーム
+          emit.toUser('syncStop', obj, getSessionId(obj.siteKey, obj.to, 'sessionId'));
+          // 消費者インライン
+          break;
+      }
+
+      // 消費者親タブ
+      var compData = obj;
+      if ( parentId ) {
+        emit.toUser('syncStop', data, getSessionId(obj.siteKey, parentId, 'sessionId')); // 消費者の親フレーム
+        syncStopCtrl(obj.siteKey, parentId);
+        compData.tabId = parentId;
+      }
+
+      // 企業一括
+      emit.toCompany('syncStop', compData, obj.siteKey); // リアルタイムモニタを更新する為
     }
     else {
       emit.toCompany('unsetUser', data, obj.siteKey);
     }
+  });
+
+  /* ウィンドウリサイズとマウス位置 */
+  socket.on('syncBrowserInfoFrame', function (data) {
+    var obj = JSON.parse(data);
+
+    if ( isset(obj.windowSize) ) {
+      emit.toUser('syncResponce', data, getSessionId(obj.siteKey, obj.tabId, 'syncFrameSessionId'));
+    }
+    else {
+
+      if ( getSessionId(obj.siteKey, obj.to, 'parentTabId') ) {
+        // 外部接続の場合（企業 -> 消費者）
+        emit.toUser('syncResponce', data, getSessionId(obj.siteKey, obj.to, 'shareWindowId'));
+      }
+      else {
+        if ( 'to' in obj ) {
+          emit.toUser('syncResponce', data, getSessionId(obj.siteKey, obj.to, 'sessionId'));
+        }
+        else {
+          // 外部接続の場合（消費者 -> 企業）
+          emit.toUser('syncResponce', data, getSessionId(obj.siteKey, obj.tabId, 'syncFrameSessionId'));
+        }
+      }
+    }
+  });
+
+  /* スクロール位置 */
+  socket.on('syncScrollInfo', function (data) {
+    var obj = JSON.parse(data);
+    emit.toUser('syncResponce', data, getSessionId(obj.siteKey, obj.to, 'sessionId'));
   });
 
   socket.on('syncBrowserInfo', function (data) {
@@ -758,6 +940,9 @@ io.sockets.on('connection', function (socket) {
         emit.toUser('syncStart', data, getSessionId(obj.siteKey, obj.to, 'sessionId'));
         emit.toUser('syncStart', data, getSessionId(obj.siteKey, obj.to, 'syncSessionId'));
         clearInterval(timer);
+
+        // sessionIdが消えてる可能性があるため、企業側フレームのsocket.idを再セット
+        sincloCore[obj.siteKey][obj.to].syncFrameSessionId = socket.id;
       }
       if ( i === 5 ) {
         clearInterval(timer);
@@ -767,20 +952,9 @@ io.sockets.on('connection', function (socket) {
     }, 1000);
   });
 
-  socket.on('sendConfirmConnect', function (data) {
+  socket.on('reqSyncBrowserCtrl', function(data){
     var obj = JSON.parse(data);
-    if ( obj.accessType === 1 ) { // to host
-      emit.toUser('getConnectInfo', data, getSessionId(obj.siteKey, obj.tabId, 'syncSessionId'));
-    }
-    else {
-      emit.toUser('getConnectInfo', data, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
-    }
-  });
-
-  socket.on('sendConnectInfo', function (data) {
-    var obj = JSON.parse(data);
-    obj.term = timeCalculator(obj);
-    emit.toUser('receiveConnect', data, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
+    emit.toUser('syncBrowserCtrl', data, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
   });
 
   socket.on('sendOperatorStatus', function(data){
@@ -808,11 +982,42 @@ io.sockets.on('connection', function (socket) {
       active: obj.active,
       count: keys.length
     }, obj.siteKey);
-  })
+  });
 
-  socket.on('reqUrlChecker', function (data){
-    var obj = JSON.parse(data);
-    emit.toUser('resUrlChecker', data, getSessionId(obj.siteKey, obj.to, 'sessionId'));
+  socket.on('sendOtherTabURL', function (d){
+    var obj = JSON.parse(d), tabId;
+
+    // インラインフレームに送る
+    emit.toUser('receiveOtherTabURL', obj, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
+  });
+
+  socket.on('reqUrlChecker', function (d){
+    var obj = JSON.parse(d), shareWindowId, toTabId;
+    emit.toUser('resUrlChecker', d, getSessionId(obj.siteKey, obj.to, 'sessionId'));
+    // 外部接続中であれば、ページ遷移履歴として遷移先をフレームに送る(再接続の場合を除く)
+    shareWindowId = getSessionId(obj.siteKey, obj.to, 'shareWindowId');
+    if (shareWindowId && !obj.reconnectFlg) {
+      emit.toUser('resUrlChecker', d, shareWindowId);
+    }
+    // 企業側フレームへも送る(再接続の場合を除く)
+    toTabId = getSessionId(obj.siteKey, obj.tabId, 'toTabId') || obj.tabId;
+    if (toTabId === obj.tabId  && !obj.reconnectFlg) {
+      emit.toUser('resUrlChecker', d, getSessionId(obj.siteKey, toTabId, 'syncFrameSessionId'));
+    }
+  });
+
+  socket.on('syncLocationOfFrame', function (d){
+    var obj = JSON.parse(d), shareWindowId, companyFrameId;
+    // 外部接続中であれば、ページ遷移履歴として遷移先をフレームに送る
+    shareWindowId = getSessionId(obj.siteKey, obj.tabId, 'shareWindowId');
+    if (shareWindowId ) {
+      emit.toUser('syncLocationOfFrame', d, shareWindowId);
+    }
+    // 企業側フレームへも送る
+    companyFrameId = getSessionId(obj.siteKey, obj.tabId, 'syncFrameSessionId');
+    if ( companyFrameId ) {
+      emit.toUser('syncLocationOfFrame', d, companyFrameId);
+    }
   });
 
   // -----------------------------------------------------------------------
@@ -841,7 +1046,7 @@ io.sockets.on('connection', function (socket) {
     var obj = JSON.parse(d);
     if (!getSessionId(obj.siteKey, obj.tabId, 'sessionId')) return false;
     var sId = getSessionId(obj.siteKey, obj.tabId, 'sessionId');
-    obj['messageType'] = chatApi.cnst.observeType.auto;
+    obj.messageType = chatApi.cnst.observeType.auto;
     obj.sendTo = socket.id;
     emit.toUser('sendReqAutoChatMessages', obj, sId);
 
@@ -859,14 +1064,14 @@ io.sockets.on('connection', function (socket) {
     var setList = {};
     for (var i = 0; i < obj.messages.length; i++) {
       var created = new Date(obj.messages[i].created);
-      obj.messages[i]['messageType'] = chatApi.cnst.observeType.auto;
+      obj.messages[i].messageType = chatApi.cnst.observeType.auto;
       setList[fullDateTime(Date.parse(created))] = obj.messages[i];
     }
     var ret = {};
-        ret['messages'] = objectSort(setList);
-        ret['chatToken'] = obj['chatToken'];
-        ret['tabId'] = obj['tabId'];
-        ret['historyId'] = getSessionId(obj.siteKey, obj.tabId, 'historyId');
+        ret.messages = objectSort(setList);
+        ret.chatToken = obj.chatToken;
+        ret.tabId = obj.tabId;
+        ret.historyId = getSessionId(obj.siteKey, obj.tabId, 'historyId');
     emit.toUser('resAutoChatMessages', ret, obj.sendTo);
   });
 
@@ -881,8 +1086,8 @@ io.sockets.on('connection', function (socket) {
       var sendData = {ret: true, messageType: type, tabId: obj.tabId, siteKey: obj.siteKey, userId: obj.userId, hide:false, created: now};
       emit.toCompany("chatStartResult", sendData, obj.siteKey);
 
-      sincloCore[obj.siteKey][obj.tabId]['chat'] = obj.userId;
-      sincloCore[obj.siteKey][obj.tabId]['chatSessionId'] = socket.id;
+      sincloCore[obj.siteKey][obj.tabId].chat = obj.userId;
+      sincloCore[obj.siteKey][obj.tabId].chatSessionId = socket.id;
       // サイトとして初チャット開始
       if ( !(obj.siteKey in c_connectList) ) {
         c_connectList[obj.siteKey] = {};
@@ -896,18 +1101,18 @@ io.sockets.on('connection', function (socket) {
         var keys = Object.keys(c_connectList[obj.siteKey][obj.tabId]);
         // 横取り（最後のc_connectListが"start"でない）
         if ( c_connectList[obj.siteKey][obj.tabId][keys[keys.length - 1]].type === "start" ) {
-          sendData['hide'] = true;
+          sendData.hide = true;
         }
       }
 
       pool.query('SELECT mu.id, mu.display_name, wid.style_settings FROM m_users as mu LEFT JOIN m_widget_settings AS wid ON ( wid.m_companies_id = mu.m_companies_id ) WHERE mu.id = ? AND mu.del_flg != 1 AND wid.del_flg != 1 AND wid.m_companies_id = ?', [obj.userId, companyList[obj.siteKey]], function(err, rows){
-        sendData['userName'] = "オペレーター";
+        sendData.userName = "オペレーター";
         if ( rows && rows[0] ) {
           var settings = JSON.parse(rows[0].style_settings);
           // 表示名をウィジェットで表示する場合
           var userName = rows[0].display_name;
           if ( isset(settings.showName) && Number(settings.showName) === 1 ) {
-            sendData['userName'] = userName;
+            sendData.userName = userName;
           }
 
           emit.toUser("chatStartResult", sendData, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
@@ -934,7 +1139,7 @@ io.sockets.on('connection', function (socket) {
 
   // チャット終了
   socket.on("chatEnd", function(d){
-    var obj = JSON.parse(d), date = new Date, now = fullDateTime(), type = chatApi.cnst.observeType.end;
+    var obj = JSON.parse(d), date = new Date(), now = fullDateTime(), type = chatApi.cnst.observeType.end;
     var keys = Object.keys(c_connectList[obj.siteKey][obj.tabId]);
     var userName = c_connectList[obj.siteKey][obj.tabId][keys[keys.length-1]].user;
     c_connectList[obj.siteKey][obj.tabId][now] = {type:"end", userName: userName, userId: obj.userId, messageType: type};
@@ -969,23 +1174,24 @@ io.sockets.on('connection', function (socket) {
   // オートチャット
   socket.on("sendAutoChat", function(d){
     var obj = JSON.parse(d);
+    var loop = function(err, rows){
+      if ( !err && (rows && rows[0]) ) {
+          var activity = JSON.parse(rows[0].activity);
+          var ret = {
+              siteKey: obj.siteKey,
+              tabId: obj.tabId,
+              userId: obj.userId,
+              mUserId: null,
+              chatMessage: activity.message,
+              messageType: 3,
+              created: rows[0].inputed
+          };
+          chatApi.set(ret);
+      }
+    };
     for (var i = 0; obj.messageList.length > i; i++) {
         var message = obj.messageList[i];
-        pool.query("SELECT *, ? as inputed FROM t_auto_messages WHERE id = ?  AND m_companies_id = ? AND del_flg = 0 AND active_flg = 0 AND action_type = 1", [message.created, message.chatId, companyList[obj.siteKey]], function(err, rows){
-            if ( !err && (rows && rows[0]) ) {
-                var activity = JSON.parse(rows[0].activity);
-                var ret = {
-                    siteKey: obj.siteKey,
-                    tabId: obj.tabId,
-                    userId: obj.userId,
-                    mUserId: null,
-                    chatMessage: activity.message,
-                    messageType: 3,
-                    created: rows[0].inputed
-                };
-                chatApi.set(ret);
-            }
-        });
+        pool.query("SELECT *, ? as inputed FROM t_auto_messages WHERE id = ?  AND m_companies_id = ? AND del_flg = 0 AND active_flg = 0 AND action_type = 1", [message.created, message.chatId, companyList[obj.siteKey]], loop);
     }
 
   });
@@ -993,6 +1199,7 @@ io.sockets.on('connection', function (socket) {
   // 既読操作
   socket.on("isReadChatMessage", function(d){
     var obj = JSON.parse(d);
+    // TODO 履歴IDチェック
     if ( isset(sincloCore[obj.siteKey][obj.tabId].historyId) ) {
       obj.historyId = sincloCore[obj.siteKey][obj.tabId].historyId;
       pool.query("UPDATE t_history_chat_logs SET message_read_flg = 1 WHERE t_histories_id = ? AND message_type = 1 AND id <= ?;",
@@ -1006,7 +1213,7 @@ io.sockets.on('connection', function (socket) {
   // 既読操作（消費者）
   socket.on("isReadFromCustomer", function(d){
     var obj = JSON.parse(d);
-    if ( isset(sincloCore[obj.siteKey][obj.tabId].historyId) ) {
+    if ( getSessionId(obj.siteKey, obj.tabId, 'historyId') ) {
       obj.historyId = sincloCore[obj.siteKey][obj.tabId].historyId;
       pool.query("UPDATE t_history_chat_logs SET message_read_flg = 1 WHERE t_histories_id = ? AND message_type != 1;",
         [obj.historyId], function(err, ret, fields){
@@ -1025,12 +1232,13 @@ io.sockets.on('connection', function (socket) {
 
     // 送り主が企業の場合
     if ( obj.type === chatApi.cnst.observeType.company ) {
-      sincloCore[obj.siteKey][obj.tabId]['chatSessionId'] = socket.id; // 入力中ユーザーのsocketIdをセットする
+      sincloCore[obj.siteKey][obj.tabId].chatSessionId = socket.id; // 入力中ユーザーのsocketIdをセットする
 
       // 企業へ送る
       emit.toCompany('receiveTypeCond', d, obj.siteKey);
       // 消費者へ送る
-      delete obj['message'];
+      delete obj.message;
+      if ( ('sendToCustomer' in obj) && String(obj.sendToCustomer) === "false" ) return false;
       emit.toUser('receiveTypeCond', obj, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
     }
     // 送り主が消費者の場合
@@ -1051,13 +1259,13 @@ io.sockets.on('connection', function (socket) {
         }
       }
     }
-  })
+  });
 
   // -----------------------------------------------------------------------
   // ビデオチャット関連
   // ビデオチャットで利用している各値はプレフィックス（vc_）をつけている。
   // -----------------------------------------------------------------------
-  socket.on('confirmVideochatStart', function (data) {
+/*  socket.on('confirmVideochatStart', function (data) {
     var obj = JSON.parse(data);
     // 同形ウィンドウを作成するための情報取得依頼
     if ( !getSessionId(obj.siteKey, obj.toTabId, 'sessionId') ) return false;
@@ -1090,7 +1298,7 @@ io.sockets.on('connection', function (socket) {
       emit.toUser('askMakeOffer', data, vc_connectList[obj.to]);
     }
   });
-
+*/
   socket.on('sendMessage', function(d){
     var obj = JSON.parse(d);
     var host = (obj.host !== "true") ? "host" : "guest";
@@ -1105,7 +1313,7 @@ io.sockets.on('connection', function (socket) {
   });
 
   socket.on('settingReload', function (data) {
-    var obj = JSON.parse(data);
+    var obj = JSON.parse(data), targetKey;
     if ( isset(obj.type) && String(obj.siteKey) === "master") {
       switch (obj.type) {
         case 1: // get new company ( sample: socket.emit('settingReload', JSON.stringify({type:1, siteKey: "master"})); )
@@ -1130,7 +1338,7 @@ io.sockets.on('connection', function (socket) {
           else {
             var keys = Object.keys(sincloCore);
             for( var i = 0; i < keys.length; i++ ){
-              var targetKey = keys[i];
+              targetKey = keys[i];
               console.log("--------------------------------" + targetKey + "--------------------------------");
               console.log('sincloCore', sincloCore[targetKey]);
             }
@@ -1139,7 +1347,7 @@ io.sockets.on('connection', function (socket) {
           break;
         case 4: // del company ( sample: socket.emit('settingReload', JSON.stringify({type:4, siteKey: "master"})); )
           if ( !((socket.id in company.user) && ('siteKey' in company.user[socket.id])) ) return false;
-          var targetKey = company.user[socket.id].siteKey;
+          targetKey = company.user[socket.id].siteKey;
           if ( targetKey in company.info ) {
             var activeList = [];
             if ( targetKey in activeOperator ) {
@@ -1149,9 +1357,70 @@ io.sockets.on('connection', function (socket) {
             emit.toMine('consoleLogInfo', {u: company.info[targetKey], a: activeList}, socket);
           }
           break;
+        case 5: // del company ( sample: socket.emit('settingReload', JSON.stringify({type:5, siteKey: "master", str: ">>>>>>>>>>>>>>>>>>>>>"})); )
+          var str = ">>>>>>>>>>>>>>>>>>>>>";
+          if (('str' in obj)) {
+            str = obj.str;
+          }
+          console.log(str);
+          break;
         default:
       }
     }
+  });
+
+  // [消費者：外部接続フレーム] 外部接続フレームからの初期message
+  socket.on('connectFromSyncInit', function (d) {
+    var obj = JSON.parse(d);
+    socket.join(obj.siteKey + emit.roomKey.frame);
+    sincloCore[obj.siteKey][obj.parentId].shareWindowId = socket.id;
+    if ( getSessionId(obj.siteKey, obj.tabId, "sessionId") ) {
+      sincloCore[obj.siteKey][obj.tabId].shareWindowId = socket.id;
+    }
+    else {
+      sincloCore[obj.siteKey][obj.tabId] = {
+        sessionId: null,
+        parentId: null,
+        connectToken: null,
+        syncFrameSessionId: getSessionId(obj.siteKey, obj.parentId, "syncFrameSessionId"),
+        shareWindowId: socket.id,
+        shareWindowFlg: true
+      };
+    }
+  });
+
+  // [消費者：外部接続フレーム] 同形ウィンドウを作成するための情報受け取り
+  socket.on('sendWindowInfoFromFrame', function (data) {
+    var obj = JSON.parse(data);
+    if ( 'connectToken' in obj ) {
+      sincloCore[obj.siteKey][obj.tabId].connectToken = obj.connectToken;
+    }
+    // 同形ウィンドウを作成するための情報渡し
+    emit.toUser('windowSyncInfo', obj, getSessionId(obj.siteKey, obj.parentId, 'syncHostSessionId'));
+  });
+
+  // iFrame内からの初期message
+  socket.on('startSyncToFrame', function (d) {
+    var obj = JSON.parse(d);
+    socket.join(obj.siteKey + emit.roomKey.frame);
+    if ( !getSessionId(obj.siteKey, obj.tabId, 'shareWindowId') && obj.tabId.match(/\_frame$/) ) {
+      sincloCore[obj.siteKey][obj.tabId] = {
+        sessionId: null,
+        parentId: null,
+        connectToken: null,
+        syncFrameSessionId: getSessionId(obj.siteKey, obj.tabId.replace("_frame", ""), "syncFrameSessionId"),
+        shareWindowId: getSessionId(obj.siteKey, obj.tabId.replace("_frame", ""), "shareWindowId"),
+        shareWindowFlg: true
+      };
+    }
+    sincloCore[obj.siteKey][obj.tabId].sessionId = socket.id;
+    sincloCore[obj.siteKey][obj.tabId].parentTabId = obj.parentId;
+    var hostFrameId = getSessionId(obj.siteKey, obj.parentId, "syncFrameSessionId");
+    if ( hostFrameId ) {
+      sincloCore[obj.siteKey][obj.tabId].syncFrameSessionId = hostFrameId;
+    }
+    sincloCore[obj.siteKey][obj.parentId].syncSessionId = socket.id;
+    emit.toUser('connectFromSync', d, getSessionId(obj.siteKey, obj.tabId, "shareWindowId"));
   });
 
   // ユーザーのアウトを感知
@@ -1213,13 +1482,12 @@ io.sockets.on('connection', function (socket) {
     // タグ入りページからのアクセスの場合
     if ( !(socket.id in connectList) ) return false;
     var info = connectList[socket.id];
-
     if (getSessionId(info.siteKey, info.tabId, 'sessionId')) {
       var core = sincloCore[info.siteKey][info.tabId];
       var siteId = companyList[info.siteKey];
       var timeout = ('connectToken' in core) ? 10000 : 5000;
       // 消費者側の履歴更新
-      if ( !('subWindow' in core) || ('subWindow' in core) && !core.subWindow ) {
+      if ( !('subWindow' in core) || ('subWindow' in core) && !core.subWindow && !core.shareWindowFlg ) {
         // 履歴の更新
         pool.query('SELECT * FROM t_histories WHERE m_companies_id = ? AND tab_id = ? AND visitors_id = ? ORDER BY id DESC LIMIT 1;', [siteId, info.tabId, info.userId], function(err, rows){
           if ( isset(rows) && isset(rows[0]) ) {
@@ -1231,10 +1499,10 @@ io.sockets.on('connection', function (socket) {
       }
 
       if ( 'timeoutTimer' in sincloCore[info.siteKey][info.tabId] ) {
-        clearTimeout(sincloCore[info.siteKey][info.tabId]['timeoutTimer']);
+        clearTimeout(sincloCore[info.siteKey][info.tabId].timeoutTimer);
       }
 
-      sincloCore[info.siteKey][info.tabId]['timeoutTimer'] = setTimeout(function(){
+      sincloCore[info.siteKey][info.tabId].timeoutTimer = setTimeout(function(){
         var historyId = sincloCore[info.siteKey][info.tabId].historyId;
         // sincloCoreから情報削除
         delete sincloCore[info.siteKey][info.tabId];
@@ -1244,11 +1512,19 @@ io.sockets.on('connection', function (socket) {
         }
         if ( core.subWindow ) {
           // 企業側
-          if ( 'toTabId' in core ) {
+          if ( ('toTabId' in core) && getSessionId(info.siteKey, core.toTabId, 'sessionId') ) {
+            if ( ('connectToken' in core) && getSessionId(info.siteKey, core.toTabId, 'connectToken') && core.connectToken !== getSessionId(info.siteKey, core.toTabId, 'connectToken') ) return false;
             emit.toUser('syncStop', {siteKey: info.siteKey, tabId: core.toTabId, connectToken: core.connectToken}, getSessionId(info.siteKey, core.toTabId, 'sessionId'));
-            emit.toCompany('syncStop', {siteKey: info.siteKey, tabId: core.toTabId}, info.siteKey);
+            if ( getSessionId(info.siteKey, core.toTabId, 'parentTabId') ) {
+              var parentTabId = getSessionId(info.siteKey, core.toTabId, 'parentTabId');
+              emit.toUser('syncStop', {siteKey: info.siteKey, tabId: core.toTabId, connectToken: core.connectToken}, getSessionId(info.siteKey, parentTabId, "sessionId"));
+              emit.toCompany('syncStop', {siteKey: info.siteKey, tabId: parentTabId}, info.siteKey);
+            }
+            else {
+              emit.toCompany('syncStop', {siteKey: info.siteKey, tabId: core.toTabId}, info.siteKey);
+            }
+            syncStopCtrl(info.siteKey, core.toTabId);
           }
-          syncStopCtrl(info.siteKey, info.tabId);
         }
         else {
           // 消費者側

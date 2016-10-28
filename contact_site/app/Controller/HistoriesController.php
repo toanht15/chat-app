@@ -5,7 +5,7 @@
  */
 class HistoriesController extends AppController {
   public $helpers = ['Time'];
-  public $uses = ['MUser', 'MCustomer', 'THistory', 'THistoryChatLog', 'THistoryStayLog', 'THistoryShareDisplay'];
+  public $uses = ['MUser', 'MCompany', 'MCustomer', 'TCampaign', 'THistory', 'THistoryChatLog', 'THistoryStayLog', 'THistoryShareDisplay'];
   public $paginate = [
     'THistory' => [
       'limit' => 100,
@@ -30,7 +30,7 @@ class HistoriesController extends AppController {
         ],
         [
           'type' => 'LEFT',
-          'table' => '(SELECT t_histories_id, COUNT(t_histories_id) AS count FROM t_history_stay_logs WHERE del_flg != 1 GROUP BY t_histories_id)',
+          'table' => '(SELECT t_histories_id, url AS firstURL, COUNT(t_histories_id) AS count FROM t_history_stay_logs WHERE del_flg != 1 GROUP BY t_histories_id ORDER BY created)',
           'alias' => 'THistoryStayLog',
           'conditions' => [
             'THistoryStayLog.t_histories_id = THistory.id'
@@ -46,9 +46,29 @@ class HistoriesController extends AppController {
 
   public function beforeFilter(){
     parent::beforeFilter();
+    $ret = $this->MCompany->read(null, $this->userInfo['MCompany']['id']);
+    $orList = [];
+
+    if ( !empty($ret['MCompany']['exclude_ips']) ) {
+      foreach( explode("\n", trim($ret['MCompany']['exclude_ips'])) as $v ){
+        if ( preg_match("/^[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}$/", trim($v)) ) {
+          $orList[] = "INET_ATON('".trim($v)."') = INET_ATON(THistory.ip_address)";
+          continue;
+        }
+        $ips = $this->MCompany->cidrToRange(trim($v));
+        $list = [];
+        if ( count($ips) === 2 ) {
+          $list[] = "INET_ATON('".trim($ips[0])."') <= INET_ATON(THistory.ip_address)";
+          $list[] = "INET_ATON('".trim($ips[1])."') >= INET_ATON(THistory.ip_address)";
+        }
+        $orList[] = $list;
+      }
+    }
+
     $this->paginate['THistory']['conditions'] = [
       'THistory.del_flg !=' => 1,
-      'THistory.m_companies_id' => $this->userInfo['MCompany']['id']
+      'THistory.m_companies_id' => $this->userInfo['MCompany']['id'],
+      'NOT' => ['OR' => $orList]
     ];
     $this->set('siteKey', $this->userInfo['MCompany']['company_key']);
     $this->set('title_for_layout', '履歴');
@@ -408,57 +428,68 @@ class HistoriesController extends AppController {
     $historyList = $this->paginate('THistory');
     }
 
-    // チャット担当者リスト
-    $chat = [];
-    if ( !empty($historyList) ) {
-      $params = [
-        'fields' => [
-          'THistory.id',
-          'MUser.display_name'
-        ],
-        'joins' => [
-          [
-            'type' => 'INNER',
-            'table' => '(SELECT * FROM t_history_chat_logs '.
-                 ' WHERE m_users_id IS NOT NULL '.
-                 '   AND t_histories_id <= ' . $historyList[0]['THistory']['id'].
-                 '   AND t_histories_id >= ' . $historyList[count($historyList) - 1]['THistory']['id'].
-                 ' GROUP BY t_histories_id, m_users_id'.
-                 ')',
-            'alias' => 'THistoryChatLog',
-            'conditions' => [
-              'THistoryChatLog.t_histories_id = THistory.id'
-            ]
-          ],
-          [
-            'type' => 'INNER',
-            'table' => 'm_users',
-            'alias' => 'MUser',
-            'conditions' => [
-              'THistoryChatLog.m_users_id = MUser.id'
-            ]
-          ]
-        ],
-        'conditions' => [
-          'THistory.m_companies_id' => $this->userInfo['MCompany']['id'],
-          'THistory.del_flg !=' => 1
-        ],
-        'recursive' => -1
-      ];
-      $ret = $this->THistory->find('all', $params);
-      foreach((array)$ret as $val){
-        if ( isset($chat[$val['THistory']['id']]) ) {
-          $chat[$val['THistory']['id']] .= "\n".$val['MUser']['display_name']."さん";
-        }
-        else {
-          $chat[$val['THistory']['id']] = $val['MUser']['display_name']."さん";
-        }
-      }
-    }
     $this->set('userList', $historyList);
     $this->set('historyList', $historyList);
-    $this->set('chatUserList', $chat);
+    $this->set('chatUserList', $this->_getChatUser($historyList)); // チャット担当者リスト
     $this->set('groupByChatChecked', $type);
+    $this->set('campaignList', $this->TCampaign->getList());
+    /* 除外情報取得 */
+    $this->set('excludeList', $this->MCompany->getExcludeList($this->userInfo['MCompany']['id']));
+  }
+
+  /**
+   * // TODO ブラッシュアップできそう
+   *  チャット応対リストの取得
+   * @param　array $historyList // 履歴リスト
+   * @return array $ret 結果
+   * */
+  private function _getChatUser($historyList){
+    if ( empty($historyList) ) return []; // 履歴が取得できなかったら
+    $params = [
+      'fields' => [
+        'THistory.id',
+        'MUser.display_name'
+      ],
+      'joins' => [
+        [
+          'type' => 'INNER',
+          'table' => '(SELECT * FROM t_history_chat_logs '.
+               ' WHERE m_users_id IS NOT NULL '.
+               '   AND t_histories_id <= ' . $historyList[0]['THistory']['id'].
+               '   AND t_histories_id >= ' . $historyList[count($historyList) - 1]['THistory']['id'].
+               ' GROUP BY t_histories_id, m_users_id'.
+               ')',
+          'alias' => 'THistoryChatLog',
+          'conditions' => [
+            'THistoryChatLog.t_histories_id = THistory.id'
+          ]
+        ],
+        [
+          'type' => 'INNER',
+          'table' => 'm_users',
+          'alias' => 'MUser',
+          'conditions' => [
+            'THistoryChatLog.m_users_id = MUser.id'
+          ]
+        ]
+      ],
+      'conditions' => [
+        'THistory.m_companies_id' => $this->userInfo['MCompany']['id'],
+        'THistory.del_flg !=' => 1
+      ],
+      'recursive' => -1
+    ];
+    $ret = $this->THistory->find('all', $params);
+    $chat = [];
+    foreach((array)$ret as $val){
+      if ( isset($chat[$val['THistory']['id']]) ) {
+        $chat[$val['THistory']['id']] .= "\n".$val['MUser']['display_name']."さん";
+      }
+      else {
+        $chat[$val['THistory']['id']] = $val['MUser']['display_name']."さん";
+      }
+    }
+    return $chat;
   }
 
   private function _getChatLog($historyId){

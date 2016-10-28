@@ -44,11 +44,31 @@
     });
   }
 
-  function ajaxTimeout(){
-    modalOpen.call(window, "タイムアウトしました", 'p-alert', 'アラート');
-    popupEvent.closeNoPopup = function(){
-      location.href = "<?=$this->Html->url(['controller' => 'Login', 'action'=>'logout'])?>";
+  function ajaxTimeout(ev, jqxhr, set, excep){
+    var log = {
+      user: "<?php if ( isset($userInfo['id']) ) { echo $userInfo['id']; } ?>",
+      currentUrl: "",
+      currentTitle: "",
+      errorType: "",
+      status: "",
+      statusText: excep,
+      requestType: "",
+      requestUrl: "",
+      requestDataType: "",
+      requestData: "",
     };
+
+    if ( 'target' in ev ) {
+      log.currentUrl    = ( 'URL'   in ev.target ) ? ev.target.URL   : "";
+      log.currentTitle  = ( 'title' in ev.target ) ? ev.target.title : "";
+    }
+    log.errorType       = ( 'type'     in ev    ) ? ev.type      : "";
+    log.status          = ( 'status'   in jqxhr ) ? jqxhr.status : "";
+    log.requestType     = ( 'type'     in set   ) ? set.type     : "";
+    log.requestUrl      = ( 'url'      in set   ) ? set.url      : "";
+    log.requestDataType = ( 'dataType' in set   ) ? set.dataType : "";
+    log.requestData     = ( 'data'     in set   ) ? set.data     : "";
+    location.href = "<?=$this->Html->url(['controller' => 'Login', 'action'=>'loginCheck'])?>" + "?error=" + JSON.stringify(log);
   }
 
   /* Angularの描画 */
@@ -60,9 +80,13 @@
         if ( angular.element('*[ng-cloak]').length > 0 ) {
           // 描画し直す
           angular.bootstrap(document, ['sincloApp']);
-          // 再接続
-          socket.disconnect();
-          socket.connect();
+
+          // 接続し直す
+          if ( 'socket' in window ) {
+            // 再接続
+            socket.disconnect();
+            socket.connect();
+          }
         }
         else {
           clearInterval(bootTimer);
@@ -96,11 +120,10 @@
 
   $.ajaxSetup({
     cache: false,
-    error: function(XMLHttpRequest, textStatus, errorThrown){
-      if ( textStatus ) {
-        ajaxTimeout();
-      }
-    }
+  });
+
+  $(document).ajaxError(function(event, jqxhr, settings, exception){
+    ajaxTimeout(event, jqxhr, settings, exception);
   });
 
 

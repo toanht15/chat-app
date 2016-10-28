@@ -3,6 +3,7 @@
 
 var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     userList = <?php echo json_encode($responderList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>,
+    campaignList = <?= $campaignList ?>,
     widget = <?= $widgetSettings ?>, contract = <?= json_encode($coreSettings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>,
     modalFunc, myUserId = <?= h($muserId)?>, chatApi, cameraApi, entryWordApi;
 
@@ -116,13 +117,18 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           chatApi.observeType.emit(chatApi.tabId, status);
           chatApi.observeType.status = status;
         },
+        prevStatus: false,
         emit: function(tabId, status){
           if ( tabId === "" ) return false;
+          var sendToCustomer = true;
+          if ( this.prevStatus === status ) {sendToCustomer = false};
+          this.prevStatus = status;
           if ( document.getElementById('sendMessage') === undefined ) return false;
           var value = document.getElementById('sendMessage').value;
           emit('sendTypeCond', {
             type: chatApi.observeType.cnst.company, // company
             tabId: tabId,
+            sendToCustomer: sendToCustomer,
             message: value,
             status: status
           });
@@ -310,6 +316,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       ua : false,
       stayCount : false,
       time : false,
+      campaign : false,
       stayTime : false,
       page : false,
       title : false,
@@ -329,10 +336,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     };
 
     $scope.search = function(array){
-      var result = {};
+      var result = {}, targetField;
+      targetField = ( Number($scope.fillterTypeId) === 2 ) ? 'ipAddress' : 'accessId';
       if ( $scope.searchText ) {
         angular.forEach(array, function(value, key) {
-          if ( value.accessId.indexOf($scope.searchText) === 0) {
+          if ( value[targetField].indexOf($scope.searchText) === 0) {
             result[key] = value;
           }
         });
@@ -348,6 +356,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         $scope.entryWord = 0;
       }
     });
+
+    $scope.searchTextPlaceholder = function(){
+      return (Number($scope.fillterTypeId) === 1) ? "ID" : "訪問ユーザ";
+    };
 
     $scope.openSetting = function(){
       $.ajax({
@@ -382,6 +394,15 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           };
         }
       });
+    };
+
+    $scope.nn = function(tabId){
+      var res = 1, num = $scope.monitorList[tabId].stayCount;
+      if ( angular.isNumber(num) && Number(num) > 0 ) {
+        res = num;
+      }
+      $scope.monitorList[tabId].stayCount = res;
+      return res;
     };
 
     $scope.updateList = function(retList){
@@ -432,20 +453,27 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     $scope.windowOpen = function(tabId, accessId){
       var message = "アクセスID【" + accessId + "】のユーザーに接続しますか？<br><br>";
+      var ua = $scope.monitorList[tabId].userAgent.toLowerCase();
+      var smartphone = (ua.indexOf('iphone') > 0 || ua.indexOf('ipod') > 0 || ua.indexOf('android') > 0);
+      var popupClass = "p-cus-connection-full";
+      if ( smartphone ) {
+        popupClass = "p-cus-connection";
+      }
       message += "<span style='color: #FF7B7B'><?=Configure::read('message.const.chatStartConfirm')?></span>";
-      modalOpen.call(window, message, 'p-confirm', 'メッセージ');
-       popupEvent.closePopup = function(){
+      modalOpen.call(window, message, popupClass, 'メッセージ');
+       popupEvent.closePopup = function(type){
           sessionStorage.clear();
           popupEvent.close();
           connectToken = makeToken();
           socket.emit('requestWindowSync', {
             tabId: tabId,
+            type: type,
             connectToken: connectToken
           });
           // モニター開始時にビデオ表示
           // TODO: ビデオ表示可能な条件をつける。（オプションでビデオチャット可能で、かつユーザーがカメラONにしているとき）
         <?php if (isset($coreSettings[C_COMPANY_USE_VIDEO_CHAT]) && $coreSettings[C_COMPANY_USE_VIDEO_CHAT]) : ?>
-          socket.emit('confirmVideochatStart', {toTabId: tabId, connectToken: connectToken, receiverID: connectToken+'_vc'});
+          // socket.emit('confirmVideochatStart', {toTabId: tabId, connectToken: connectToken, receiverID: connectToken+'_vc'});
         <?php endif; ?>
        };
     };
@@ -633,14 +661,74 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       return $scope.jsConst.tabInfoStr[n];
     }
 
+    /* キャンペーン情報を取得する */
+    $scope.getCampaign = function (prev){
+      var str = "";
+      if ( !(prev.hasOwnProperty('length') && angular.isDefined(prev[0]) && prev[0].hasOwnProperty('url'))  ) return "";
+      var url = prev[0].url;
+      if ( !angular.isDefined(url) ) return "";
+      angular.forEach(campaignList, function(name, parameter){
+        var position = url.indexOf(parameter);
+        if ( position > 0 ) {
+          if ( str !== "" ) {
+            str += "\n";
+          }
+          str += name;
+        }
+      });
+      return str;
+    }
+
+    $scope.checkToIP = function (ip){
+      var targetIps = <?php echo json_encode($excludeList['ips'], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
+      for( var n in targetIps ){
+        if ( targetIps[n].indexOf('/') > -1 ) {
+          var req = cidr2regex(targetIps[n]);
+          if ( ip.match(req) ) {
+            return false;
+          }
+        }
+        else {
+          if ( ip === targetIps[n] ) {
+            return false;
+          }
+        }
+      }
+      return true;
+    };
+
     /* パラメーターを取り除く */
     $scope.trimToURL = function (url){
-      var position = url.indexOf('?');
-      if ( position > 0 ) {
-        url = url.substr(0, position);
+      if ( typeof(url) !== 'string' ) return "";
+      var targetParams = <?php echo json_encode($excludeList['params'], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
+      var newUrl = url;
+      // パラメータの取得
+      var params = url.split('?'), param, targetParams;
+      newUrl = params[0];
+      if ( params[1] !== undefined) {
+        var param = params[1];
+        var paramList = params[1].split('&');
+        for ( var i in targetParams ) {
+          var target = targetParams[i];
+          var a = param.split(target + "=");
+          if ( a.length > 1 ) {
+            if ( a[1].indexOf('&') > -1 ) {
+              var set = target + "=" + a[1].slice(0, a[1].indexOf('&') + 1);
+            }
+            else {
+              var set = target + "=" + a[1];
+              a[0] = a[0].slice(0, -1);
+            }
+            param = param.replace(set, "");
+            param = param.slice(0, -1);
+          }
+        }
+        if ( param.length > 0 ) {
+          newUrl += "?" + param;
+        }
       }
-      return url;
-    }
+      return newUrl;
+    };
 
     $scope.isset = function(value){
       var result;
@@ -744,9 +832,17 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     });
 
     function pushToList(obj){
-      $scope.monitorList[obj.tabId] = obj;
 
+      if ( 'ipAddress' in obj && 'ipAddress' in obj) {
+        if (!$scope.checkToIP(obj.ipAddress)) return false;
+      }
+
+      $scope.monitorList[obj.tabId] = obj;
       $scope.getCustomerInfoFromMonitor(obj);
+
+      if ( 'referrer' in obj && 'referrer' in obj) {
+        $scope.monitorList[obj.tabId].ref = $scope.trimToURL(obj.referrer);
+      }
 
       if ( 'connectToken' in obj && 'responderId' in obj) {
         $scope.monitorList[obj.tabId].connectToken = obj.connectToken;
@@ -830,7 +926,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     // タブ状態を取得
     socket.on('retTabInfo', function (d) {
       var obj = JSON.parse(d);
-
+      if ( !(obj.tabId in $scope.monitorList) ) return false;
       $scope.monitorList[obj.tabId].status = obj.status;
     });
 
@@ -846,25 +942,26 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     socket.on('syncNewInfo', function (data) {
       var obj = JSON.parse(data);
 
+      var tabId = ( obj.subWindow ) ? obj.to : obj.tabId;
+      if ( tabId.length > 0 && tabId.indexOf('_frame') > -1 ) {
+        tabId = tabId.substr(0, tabId.indexOf('_frame'));
+      }
+
       // 消費者
-      if ( angular.isDefined($scope.monitorList[obj.tabId]) ) {
+      if ( angular.isDefined($scope.monitorList[tabId]) ) {
+
         if ( 'widget' in obj ) {
-          $scope.monitorList[obj.tabId].widget = obj.widget;
-          if ( chatApi.tabId === obj.tabId ) {
+          $scope.monitorList[tabId].widget = obj.widget;
+          if ( chatApi.tabId === tabId ) {
             chatApi.observeType.emit(chatApi.tabId, chatApi.observeType.status);
 
           }
         }
-        if ( 'connectToken' in obj ) { $scope.monitorList[obj.tabId].connectToken = obj.connectToken; }
-        if ( 'prev' in obj ) { $scope.monitorList[obj.tabId].prev = obj.prev; }
-        if ( 'title' in obj ) { $scope.monitorList[obj.tabId].title = obj.title; }
-        if ( 'url' in obj ) { $scope.monitorList[obj.tabId].url = obj.url; }
-        if ( 'responderId' in obj ) { $scope.monitorList[obj.tabId].responderId = obj.responderId; }
-      }
-
-      var tabId = ( obj.subWindow ) ? obj.to : obj.tabId;
-      if ( 'connectToken' in obj && 'responderId' in obj) {
-        $scope.monitorList[tabId].connectToken = obj.connectToken;
+        if ( 'connectToken' in obj ) { $scope.monitorList[tabId].connectToken = obj.connectToken; }
+        if ( 'prev' in obj ) { $scope.monitorList[tabId].prev = obj.prev; }
+        if ( 'title' in obj ) { $scope.monitorList[tabId].title = obj.title; }
+        if ( 'url' in obj ) { $scope.monitorList[tabId].url = obj.url; }
+        if ( 'responderId' in obj ) { $scope.monitorList[tabId].responderId = obj.responderId; }
       }
     });
 
@@ -1064,6 +1161,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     // チャット情報取得関数
     socket.on('sendChatInfo', function(d){
       var obj = JSON.parse(d);
+      if ( !(obj.tabId in $scope.monitorList) ) return false;
       if ('chatUnreadId' in obj) {
         $scope.monitorList[obj.tabId].chatUnreadId  = obj.chatUnreadId;
       }
@@ -1405,6 +1503,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
   sincloApp.filter('customDate', function(){
     return function(input) {
+      if ( angular.isUndefined(input) ) return "";
       var d = new Date(Number(input)),
           date = d.getFullYear() + '-' + _numPad(d.getMonth() + 1) + '-' + _numPad(d.getDate()),
           time = _numPad(d.getHours()) + ':' + _numPad(d.getMinutes()) + ':' + _numPad(d.getSeconds());
@@ -1551,7 +1650,13 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             scope.getCustomerInfo(scope.monitorList[scope.detailId].userId, function(ret){
               scope.customData = ret;
               scope.customPrevData = angular.copy(ret);
-              scope.customerList[scope.monitorList[scope.detailId].userId] = angular.copy(scope.customData);
+              if ( scope.detailId !== "" ) {
+                scope.customerList[scope.monitorList[scope.detailId].userId] = angular.copy(scope.customData);
+              }
+              else {
+                console.error('Please Tab Close.');
+                return false;
+              }
             });
           }
           else {

@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var database = require('./database');
 
 // mysql
 var mysql = require('mysql'),
@@ -57,6 +58,7 @@ router.get("/", function(req, res, next) {
                     stringColor: settings.stringColor,
                     showMainImage: settings.showMainImage,
                     mainImage: settings.mainImage,
+                    chatRadioBehavior: isNumeric(settings.chatRadioBehavior),
                     chatTrigger: isNumeric(settings.chatTrigger),
                     radiusRatio: isNumeric(settings.radiusRatio)
                 };

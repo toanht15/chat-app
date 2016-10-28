@@ -14,7 +14,7 @@ class MWidgetSettingsController extends AppController {
       'main_color', 'string_color', 'show_main_image', 'main_image', 'radius_ratio'
     ],
     'synclo' => ['tel', 'content', 'display_time_flg', 'time_text'],
-    'chat' => ['chat_trigger', 'show_name'],
+    'chat' => ['chat_radio_behavior', 'chat_trigger', 'show_name'],
   ];
 
   public function beforeRender(){
@@ -42,7 +42,6 @@ class MWidgetSettingsController extends AppController {
       $inputData = [];
       $ret = $this->MWidgetSetting->coFind('first');
       $inputData = $ret;
-
       if ( empty($this->userInfo['MCompany']['core_settings']) ) {
         $this->redirect("/");
       }
@@ -84,6 +83,7 @@ class MWidgetSettingsController extends AppController {
     $this->set('widgetPositionType', Configure::read('widgetPositionType'));
     $this->set('widgetShowNameType', Configure::read('widgetShowNameType'));
     $this->set('widgetSendActType', Configure::read('widgetSendActType'));
+    $this->set('widgetRadioBtnBehaviorType', Configure::read('widgetRadioBtnBehaviorType'));
     $this->set('gallaryPath', C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT.'/img/widget/');
   }
 
@@ -96,6 +96,7 @@ class MWidgetSettingsController extends AppController {
   private function _update($inputData) {
     $errors = [];
     $filename = null;
+
     $uploadImage = $inputData['MWidgetSetting']['uploadImage'];
 
     $prevFileInfo = mb_split("/", $inputData['MWidgetSetting']['main_image']);
@@ -139,7 +140,6 @@ class MWidgetSettingsController extends AppController {
       }
       // ウィジェットのスタイル設定周りをJSON化
       $widgetStyle = $this->_settingToJson($inputData['MWidgetSetting']);
-
       $saveData = [
         'MWidgetSetting' => [
         'id' => $inputData['MWidgetSetting']['id'],
@@ -147,7 +147,6 @@ class MWidgetSettingsController extends AppController {
         'style_settings' => $widgetStyle
         ]
       ];
-
 
       // 保存処理
       if ( $this->MWidgetSetting->save($saveData, false) ) {
@@ -228,6 +227,7 @@ class MWidgetSettingsController extends AppController {
       $settings[$styleColumns[$key]] = $val;
       }
     }
+
     return $settings;
   }
 
@@ -268,11 +268,15 @@ class MWidgetSettingsController extends AppController {
         switch ($key) {
           case 'chat':
             if ( !$this->coreSettings['chat'] ) { continue; }
-            if ( strcmp($v, 'chat_trigger') === 0 ) {
+            if ( strcmp($v, 'chat_radio_behavior') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['chat_radio_behavior'] = C_WIDGET_RADIO_CLICK_SEND; // デフォルト値
+              break;
+            }
+            if ( strcmp($v, 'chat_trigger') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['chat_trigger'] = C_WIDGET_SEND_ACT_PUSH_KEY; // デフォルト値
               break;
             }
-            if ( strcmp($v, 'show_name') === 0 ) {
+            if ( strcmp($v, 'show_name') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['show_name'] = C_WIDGET_SHOW_COMP; // デフォルト値
               break;
             }
@@ -292,6 +296,7 @@ class MWidgetSettingsController extends AppController {
                 }
               }
             }
+
             if ( isset($json[$v]) ) {
               $d[$v] = $json[$v];
             }

@@ -13,12 +13,27 @@
 <div id='customer_menu'>
     <div>
         <!-- 検索窓 -->
-        <div class="form01 fLeft">
-            <?php if ($coreSettings[C_COMPANY_USE_SYNCLO]) : ?>
-                <i>
-                    <?= $this->Html->image('search_g.png', array('alt' => 'ID', 'width'=>15, 'height'=>15, 'class'=>'fLeft')); ?>
-                </i>
-                <?= $this->Form->input('searchText', array('type'=>'text', 'label' => false, 'ng-model' => 'searchText', 'placeholder' => 'ID')); ?>
+        <?php if ($coreSettings[C_COMPANY_USE_SYNCLO]) : ?>
+          <div class="form01 fLeft">
+            <ul class="switch" ng-init="fillterTypeId=1">
+              <li ng-class="{on:fillterTypeId===1}" ng-click="fillterTypeId = 1">
+                <svg width="15" height="15">
+                  <path d="M 4 9 C 4 8 3 2 9 4" stroke-width="1" fill="none"></path>
+                  <circle cx="7" cy="7" r="6" fill="none" stroke-width="2"></circle>
+                  <line x1="11" y1="11" x2="15" y2="15" stroke-width="2"></line>
+                </svg>ID
+              </li>
+              <li ng-class="{on:fillterTypeId===2}" ng-click="fillterTypeId = 2">
+                <svg width="15" height="15">
+                  <path d="M 4 9 C 4 8 3 2 9 4" stroke-width="1" fill="none"></path>
+                  <circle cx="7" cy="7" r="6" fill="none" stroke-width="2"></circle>
+                  <line x1="11" y1="11" x2="15" y2="15" stroke-width="2"></line>
+                </svg>訪問ユーザ
+              </li>
+            </ul>
+            <?= $this->Form->input('searchText', array('type'=>'text', 'label' => false, 'ng-model' => 'searchText', 'ng-attr-placeholder' => '{{searchTextPlaceholder()}}')); ?>
+            <div id="userFilter" style="display: flex;">
+            </div>
             <?php endif; ?>
         </div>
         <!-- 検索窓 -->
@@ -86,6 +101,7 @@
                 <th style="width: 9em" ng-hide="labelHideList.ua">プラットフォーム<br>ブラウザ</th>
                 <th style="width: 5em" ng-hide="labelHideList.stayCount">訪問回数</th>
                 <th style="width: 6em" ng-hide="labelHideList.time">アクセス日時</th>
+                <th style="width: 5em" ng-hide="labelHideList.campaign">キャンペーン</th>
                 <th style="width: 5em" ng-hide="labelHideList.stayTime">滞在時間</th>
                 <th style="width: 7em" ng-hide="labelHideList.page">閲覧<br>ページ数</th>
                 <th ng-hide="labelHideList.title">閲覧中ページ</th>
@@ -108,6 +124,7 @@
                 <th ng-hide="labelHideList.ua" style="width: 9em">プラットフォーム<br>ブラウザ</th>
                 <th ng-hide="labelHideList.stayCount" style="width: 5em">訪問回数</th>
                 <th ng-hide="labelHideList.time" style="width: 6em">アクセス日時</th>
+                <th ng-hide="labelHideList.campaign" style="width: 5em">キャンペーン</th>
                 <th ng-hide="labelHideList.stayTime" style="width: 5em">滞在時間</th>
                 <th ng-hide="labelHideList.page" style="width: 7em">閲覧<br>ページ数</th>
                 <th ng-hide="labelHideList.title">閲覧中ページ</th>
@@ -131,7 +148,7 @@
             <?php if ( strcmp($userInfo['permission_level'], C_AUTHORITY_SUPER) !== 0) :?>
               <span ng-if="monitor.widget">
                 <span ng-if="!monitor.connectToken">
-                  <a class='monitorBtn blueBtn btn-shadow' href='javascript:void(0)' ng-click='windowOpen(monitor.tabId, monitor.accessId)' ng-confirm-click='ID【{{monitor.accessId}}】のユーザーに接続しますか？'>接続する</a>
+                  <a class='monitorBtn blueBtn btn-shadow' href='javascript:void(0)' ng-click='windowOpen(monitor.tabId, monitor.accessId)' >接続する</a>
                 </span>
               </span>
               <span ng-if="monitor.connectToken">
@@ -168,9 +185,11 @@
           <!-- /* ユーザー環境 */ -->
           <td ng-hide="labelHideList.ua" class="tCenter pre">{{ua(monitor.userAgent)}}</td>
           <!-- /* 訪問回数 */ -->
-          <td ng-hide="labelHideList.stayCount" class="tCenter">{{monitor.stayCount}}</td>
+          <td ng-hide="labelHideList.stayCount" class="tCenter">{{nn(monitor.tabId)}}</td>
           <!-- /* アクセス日時 */ -->
           <td ng-hide="labelHideList.time" class="tCenter">{{monitor.time | customDate}}</td>
+          <!-- /* キャンペーン */ -->
+          <td ng-hide="labelHideList.campaign" class="tCenter pre">{{::getCampaign(monitor.prev)}}</td>
           <!-- /* 滞在時間 */ -->
           <td ng-hide="labelHideList.stayTime" class="tCenter" cal-stay-time></td>
           <!-- /* 閲覧ページ数 */ -->
@@ -178,7 +197,7 @@
           <!-- /* 閲覧中ページ */ -->
           <td ng-hide="labelHideList.title" class="tLeft omit"><a href={{monitor.url}} target="_blank" class="underL" ng-if="monitor.title">{{monitor.title}}</a><span ng-if="!monitor.title">{{monitor.url}}</span></td>
           <!-- /* 参照元URL */ -->
-          <td ng-hide="labelHideList.referrer" class="tLeft omit"><a href={{trimToURL(monitor.referrer)}} target="_blank" class="underL" ng-if="monitor.referrer">{{trimToURL(monitor.referrer)}}</a></td>
+          <td ng-hide="labelHideList.referrer" class="tLeft omit"><a href="{{::monitor.ref}}" target="_blank" class="underL" ng-if="monitor.ref">{{::monitor.ref}}</a></td>
         </tr>
       </tbody>
     </table>

@@ -214,6 +214,34 @@
         }
       }
 
+      &.p-cus-connection {
+        width: 500px;
+      }
+
+      &.p-cus-connection-full {
+        width: 550px;
+      }
+
+      &.p-cus-connection, &.p-cus-connection-full {
+
+        div#popup-button {
+          display: flex;
+          flex-direction: row;
+          justify-content: space-around;
+
+          a {
+            flex-basis: 140px;
+            height: 3em;
+            margin: 0 5px;
+            padding: 0.75em 0;
+
+            &.betaBtn {
+              padding-top: 0.25em;
+            }
+          }
+        }
+      }
+
       &.p-cus-detail {
         width: 400px;
 

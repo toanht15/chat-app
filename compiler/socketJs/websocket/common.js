@@ -1,4 +1,3 @@
-'use strict';
 var socket, // socket.io
     cnst, // 定数
     common, // 共通関数
@@ -13,6 +12,7 @@ var socket, // socket.io
     sincloVideo; // ビデオ通信補助関数
 
 (function($){
+  'use strict';
   cnst = {
     access_type: {
       guest: 1,
@@ -35,7 +35,11 @@ var socket, // socket.io
       tab: 8,
       prev: 9,
       staycount: 10,
-    }
+      gFrame: 11,
+      sendTabId: 12,
+      parentId: 13,
+    },
+    sync_type: { inner: 1, outer: 2 }
   };
 
   common = {
@@ -236,7 +240,7 @@ var socket, // socket.io
       html += '      #sincloBox section#navigation ul li.selected::after{ content: " "; position: absolute; bottom: 0px; }';
       html += '      #sincloBox section#navigation ul li[data-tab="call"]::before{ background-image: url("' + window.info.site.files + '/img/widget/icon_tel.png"); }';
       html += '      #sincloBox section#navigation ul li[data-tab="chat"]::before{ background-image: url("' + window.info.site.files + '/img/widget/icon_chat.png"); }';
-      html += '      #sincloBox section#navigation ul li.selected::before{ background-color: ' + widget.mainColor + '; }'
+      html += '      #sincloBox section#navigation ul li.selected::before{ background-color: ' + widget.mainColor + '; }';
 
 // html += '    #sincloBox ul { clear: both; display: flex; flex-direction: column } ';
 // html += '    #sincloBox sinclo-chat, #sincloBox sinclo-typing { display: block; border-top: 1px solid #ddd; border-bottom: 1px solid #ddd; } ';
@@ -528,13 +532,12 @@ var socket, // socket.io
         }
       }
       // 同期対象とするが、ウィジェットは表示しない
-      if (check.isset(window.info['dataset']) && (check.isset(window.info.dataset['hide']) && window.info.dataset.hide === "1")) {
+      if (check.isset(window.info.dataset) && (check.isset(window.info.dataset.hide) && window.info.dataset.hide === "1")) {
         window.info.widgetDisplay = false;
       }
       return window.info.widgetDisplay;
     },
     makeAccessIdTag: function(){
-
       if ( !check.browser() ) return false;
       if ( !('widget' in window.info) ) return false;
       if (!this.judgeShowWidget()) {
@@ -552,23 +555,23 @@ var socket, // socket.io
         var html = common.createWidget();
         $('body').append(html);
         emit('syncReady', {widget: window.info.widgetDisplay});
-        var sincloBox = document.getElementById('sincloBox');
+        sincloBox = document.getElementById('sincloBox');
         sincloBox.setAttribute('data-openflg', false);
         sinclo.operatorInfo.header = document.querySelector('#sincloBox #widgetHeader');
 
-        $(".widgetCtrl").click(function(){
-            var target = $(".widgetCtrl.selected"), clickTab = $(this).data('tab');
+        $("#sincloBox .widgetCtrl").click(function(){
+            var target = $("#sincloBox .widgetCtrl.selected"), clickTab = $(this).data('tab');
             target.removeClass("selected");
             $("#sincloBox").height("");
             $(this).addClass("selected");
 
             if ( clickTab === "call" ) {
-              $("#chatTab").removeClass('flexBox');
-              $("#callTab").addClass('flexBox');
+              $("#sincloBox #chatTab").removeClass('flexBox');
+              $("#sincloBox #callTab").addClass('flexBox');
             }
             else {
-              $("#callTab").removeClass('flexBox');
-              $("#chatTab").addClass('flexBox');
+              $("#sincloBox #callTab").removeClass('flexBox');
+              $("#sincloBox #chatTab").addClass('flexBox');
               sinclo.chatApi.showUnreadCnt();
               sinclo.chatApi.scDown();
             }
@@ -1039,7 +1042,7 @@ var socket, // socket.io
       return (ua.indexOf('iphone') > 0 || ua.indexOf('ipod') > 0 || ua.indexOf('android') > 0);
     },
     isset: function(a){
-      if ( a === null || a === '' || a === undefined ) {
+      if ( a === null || a === '' || a === undefined || String(a) === "null" || String(a) === "undefined" ) {
          return false;
       }
       if ( typeof a === "object" ) {
@@ -1063,7 +1066,7 @@ var socket, // socket.io
           '"': '&quot;',
           '<': '&lt;',
           '>': '&gt;',
-        }[match]
+        }[match];
       });
       return str;
     },
@@ -1090,6 +1093,7 @@ var socket, // socket.io
     accessId: null,
     ipAddress: null,
     pageTime: null,
+    gFrame: false, // 外部接続
     firstConnection: false,
     searchKeyword: null,
     userAgent: window.navigator.userAgent,
@@ -1102,6 +1106,7 @@ var socket, // socket.io
       this.setPrevpage();
 
       common.getParams();
+
       if ( check.isset(storage.s.get('params')) ) {
         common.setParams();
       }
@@ -1121,6 +1126,7 @@ var socket, // socket.io
           }
         }
       }
+
       // 複製したウィンドウの場合
       if ( Number(common.params.type) === Number(cnst.access_type.host) ) {
         userInfo.accessType = cnst.access_type.host;
@@ -1129,7 +1135,30 @@ var socket, // socket.io
         userInfo.setConnect(common.params.connectToken);
         emit('connectSuccess', {confirm: false});
       }
-
+      else {
+        // 消費者がフレームの場合
+        if ( common.tmpParams.hasOwnProperty('gFrame') && !check.isset(storage.s.get('gFrame')) ) {
+          var gFrameCode = userInfo.getCode(cnst.info_type.gFrame);
+          storage.s.set(gFrameCode, common.tmpParams.gFrame);
+          var connectCode = userInfo.getCode(cnst.info_type.connect);
+          storage.s.set(connectCode, common.tmpParams.connectToken);
+          var tabIdCode = userInfo.getCode(cnst.info_type.tab);
+          storage.s.set(tabIdCode, common.tmpParams.tabId);
+          var parentIdCode = userInfo.getCode(cnst.info_type.parentId);
+          storage.s.set(parentIdCode, common.tmpParams.parentId);
+        }
+        if ( check.isset(storage.s.get('gFrame')) && check.isset(storage.s.get('parentId')) ) {
+          userInfo.gFrame = storage.s.get('gFrame');
+          userInfo.tabId = storage.s.get('tabId');
+          userInfo.connectToken = storage.s.get('connectToken');
+          userInfo.sendTabId = storage.s.get('sendTabId');
+          userInfo.parentId = storage.s.get('parentId');
+          emit('startSyncToFrame', {
+            parentId: userInfo.parentId,
+            tabId: userInfo.tabId
+          });
+        }
+      }
     },
     syncInfo: {
       code: 'syncInfo',
@@ -1147,7 +1176,7 @@ var socket, // socket.io
       },
       unset: function(){
         storage.s.unset(this.code);
-        delete userInfo['sendTabId'];
+        delete userInfo.sendTabId;
         // TODO minify
         userInfo.unsetConnect();
       }
@@ -1156,31 +1185,28 @@ var socket, // socket.io
       switch(type) {
         case cnst.info_type.user:
           return "userId";
-          break;
         case cnst.info_type.access:
           return "accessId";
-          break;
         case cnst.info_type.ip:
           return "ipAddress";
-          break;
         case cnst.info_type.time:
           return "time";
-          break;
         case cnst.info_type.referrer:
           return "referrer";
-          break;
         case cnst.info_type.connect:
           return "connectToken";
-          break;
         case cnst.info_type.tab:
           return "tabId";
-          break;
         case cnst.info_type.prev:
           return "prev";
-          break;
         case cnst.info_type.staycount:
           return "stayCount";
-          break;
+        case cnst.info_type.gFrame:
+          return "gFrame";
+        case cnst.info_type.sendTabId:
+          return "sendTabId";
+        case cnst.info_type.parentId:
+          return "parentId";
       }
     },
     set: function(type, val, session){
@@ -1232,9 +1258,11 @@ var socket, // socket.io
         cnst.info_type.referrer,
         cnst.info_type.connect,
         cnst.info_type.tab,
-        cnst.info_type.prev
+        cnst.info_type.prev,
+        cnst.info_type.gFrame,
+        cnst.info_type.parentId
       ];
-      for ( var i in array ) { userInfo.unset(array[i]) }
+      for ( var i in array ) { userInfo.unset(array[i]); }
     },
     getUserId: function(){
       return this.get(cnst.info_type.user);
@@ -1317,6 +1345,7 @@ var socket, // socket.io
   };
 
   browserInfo = {
+    connectFlg: false,
     referrer: "",
     href: location.href,
     prevList: [],
@@ -1325,7 +1354,7 @@ var socket, // socket.io
       return {
         x: document.body.scrollWidth - window.innerWidth,
         y: document.body.scrollHeight - window.innerHeight
-      }
+      };
     },
     // TODO 画面同期時セットするようにする
     sc: function(){ // スクロール量を取得する先
@@ -1372,14 +1401,14 @@ var socket, // socket.io
         return {
           height: null,
           width: null
-        }
+        };
       }
     },
     windowSize : function(){
       return {
         height: window.innerHeight,
         width: window.innerWidth
-      }
+      };
     },
     interval: Math.floor(1000 / 60 * 10),
     set: {
@@ -1393,9 +1422,9 @@ var socket, // socket.io
       }
     },
     getActiveWindow: function(){
-      var tabFlg = document.hasFocus(), widgetFlg = false, tabStatus;
+      var tabFlg = document.hasFocus(), widgetFlg = false, tabStatus, sincloBox;
       if ( document.getElementById('sincloBox') ) {
-        var sincloBox = document.getElementById('sincloBox');
+        sincloBox = document.getElementById('sincloBox');
         var tmp = sincloBox.getAttribute('data-openflg');
         if ( String(tmp) === "true" ) {
           widgetFlg = true;
@@ -1428,11 +1457,18 @@ var socket, // socket.io
     evList: [
       {
         type: "mousemove",
+        timer : null,
         ev: function(e){
-          emit('syncBrowserInfo', {
-            accessType: userInfo.accessType,
-            mousePoint: {x: e.clientX, y: e.clientY}
-          });
+          if ( this.timer ) {
+            return false;
+          }
+          this.timer = setTimeout(function(){
+            this.timer = null;
+            emit('syncBrowserInfoFrame', {
+              accessType: userInfo.accessType,
+              mousePoint: {x: e.clientX, y: e.clientY}
+            });
+          }, 10);
         }
       },
       {
@@ -1441,7 +1477,7 @@ var socket, // socket.io
           if ( socket === undefined ) return false;
           if ( "body" === syncEvent.receiveEvInfo.nodeName && "scroll" === syncEvent.receiveEvInfo.type ) return false;
           // スクロール用
-          emit('syncBrowserInfo', {
+          emit('syncScrollInfo', {
             accessType: userInfo.accessType,
             mousePoint: {x: e.clientX, y: e.clientY},
             scrollPosition: browserInfo.windowScroll()
@@ -1462,7 +1498,7 @@ var socket, // socket.io
         clearTimeout(syncEvent.resizeTimer);
       }
       syncEvent.resizeTimer = setTimeout(function () {
-        emit('syncBrowserInfo', {
+        emit('syncBrowserInfoFrame', {
           accessType: userInfo.accessType,
           // ブラウザのサイズ
           windowSize: browserInfo.windowSize(),
@@ -1479,7 +1515,7 @@ var socket, // socket.io
       };
       var scroll = browserInfo.windowScroll();
 
-      emit('syncBrowserInfo', {
+      emit('syncBrowserInfoFrame', {
         accessType: userInfo.accessType,
         // ブラウザのサイズ
         windowSize: size,
@@ -1488,16 +1524,16 @@ var socket, // socket.io
     },
     ctrlEventListener: function(eventFlg, evList){ // ウィンドウに対してのイベント操作
 
-      var attachFlg = false;
+      var attachFlg = false, evListener;
       if ( eventFlg ) {
-        var evListener = window.addEventListener;
+        evListener = window.addEventListener;
         if ( !window.addEventListener ) {
           evListener = window.attachEvent;
           attachFlg = true;
         }
       }
       else {
-        var evListener = window.removeEventListener;
+        evListener = window.removeEventListener;
         if ( !window.removeEventListener ) {
           evListener = window.detachEvent;
           attachFlg = true;
@@ -1568,15 +1604,15 @@ var socket, // socket.io
       // ウィンドウリサイズは消費者の状態のみ反映
       if ( Number(userInfo.accessType) !== Number(cnst.access_type.guest) ) return false;
       if (
-          ( (ua.indexOf("windows") != -1 && ua.indexOf("touch") != -1)
-            ||  ua.indexOf("ipad") != -1
-            || (ua.indexOf("android") != -1 && ua.indexOf("mobile") == -1)
-            || (ua.indexOf("firefox") != -1 && ua.indexOf("tablet") != -1)
-            ||  ua.indexOf("kindle") != -1
-            ||  ua.indexOf("silk") != -1
-            ||  ua.indexOf("playbook") != -1
-          )
-          && 'orientationchange' in window
+          ( (ua.indexOf("windows") != -1 && ua.indexOf("touch") != -1) ||
+             ua.indexOf("ipad") != -1 ||
+            (ua.indexOf("android") != -1 && ua.indexOf("mobile") == -1) ||
+            (ua.indexOf("firefox") != -1 && ua.indexOf("tablet") != -1) ||
+             ua.indexOf("kindle") != -1 ||
+             ua.indexOf("silk") != -1 ||
+             ua.indexOf("playbook") != -1
+          ) &&
+          'orientationchange' in window
         )
       {
         window.addEventListener("orientationchange", syncEvent.tabletResize, false);
@@ -1635,12 +1671,13 @@ var socket, // socket.io
       // resizeCall
       this.resizeCall(window.navigator.userAgent.toLowerCase(), eventFlg);
 
+      var els;
       // 要素に対してのイベント操作
-      var els = document.getElementsByTagName('input');
+      els = document.getElementsByTagName('input');
       this.ctrlElmEventListener(eventFlg, els, "focus", syncEvent.focusCall);
         // checkbox, radioボタンのイベント操作
         this.ctrlElmEventListener(eventFlg, els, "change", syncEvent.changeCall);
-      var els = document.getElementsByTagName('textarea');
+      els = document.getElementsByTagName('textarea');
       this.ctrlElmEventListener(eventFlg, els, "focus", syncEvent.focusCall);
 
       var $textarea = document.getElementsByTagName("textarea")[0];
@@ -1655,39 +1692,39 @@ var socket, // socket.io
       }
 
       // プルダウンに対してのイベント操作
-      var els = document.getElementsByTagName("select");
+      els = document.getElementsByTagName("select");
       this.ctrlElmEventListener(eventFlg, els, "change", syncEvent.changeCall);
 
       // 要素スクロール
-      var scEls = [];
-      var els = document.getElementsByTagName("ul");
-      for ( var i in els ) {
-        var cHeight = els[i].clientHeight;
-        var sHeight = els[i].scrollHeight;
+      var scEls = [], cHeight, sHeight, i;
+      els = document.getElementsByTagName("ul");
+      for ( i in els ) {
+        cHeight = els[i].clientHeight;
+        sHeight = els[i].scrollHeight;
         if ( (sHeight-cHeight)>0 ) {
           scEls.push(els[i]);
         }
       }
-      var els = document.getElementsByTagName("textarea");
-      for ( var i in els ) {
-        var cHeight = els[i].clientHeight;
-        var sHeight = els[i].scrollHeight;
+      els = document.getElementsByTagName("textarea");
+      for ( i in els ) {
+        cHeight = els[i].clientHeight;
+        sHeight = els[i].scrollHeight;
         if ( (sHeight-cHeight)>0 ) {
           scEls.push(els[i]);
         }
       }
-      var els = document.getElementsByTagName("div");
-      for ( var i in els ) {
-        var cHeight = els[i].clientHeight;
-        var sHeight = els[i].scrollHeight;
+      els = document.getElementsByTagName("div");
+      for ( i in els ) {
+        cHeight = els[i].clientHeight;
+        sHeight = els[i].scrollHeight;
         if ( (sHeight-cHeight)>0 ) {
           scEls.push(els[i]);
         }
       }
-      var els = document.getElementsByTagName("dl");
-      for ( var i in els ) {
-        var cHeight = els[i].clientHeight;
-        var sHeight = els[i].scrollHeight;
+      els = document.getElementsByTagName("dl");
+      for ( i in els ) {
+        cHeight = els[i].clientHeight;
+        sHeight = els[i].scrollHeight;
         if ( (sHeight-cHeight)>0 ) {
           scEls.push(els[i]);
         }
@@ -1697,10 +1734,9 @@ var socket, // socket.io
         // フォーム制御
         $(document).submit(function(e){
           if ( userInfo.accessType !== cnst.access_type.host ) {
-            emit('requestSyncStop', {message: "お客様がsubmitボタンをクリックしましたので、\n画面共有を終了します。"});
+            emit('requestSyncStopForSubmit', {message: "お客様がsubmitボタンをクリックしましたので、\n画面共有を終了します。"});
           }
           else {
-            emit('requestSyncStop', {});
             e.preventDefault();
             e.stopPropagation();
             return false;
@@ -1827,8 +1863,6 @@ var socket, // socket.io
             type = popup.const.action.confirm;
           }
           popup.remove();
-          var maincolor = ( window.info.widget.mainColor !== undefined ) ? window.info.widget.mainColor : "#ABCD05";
-          var hovercolor = ( window.info.site.hovercolor !== undefined ) ? window.info.site.hovercolor : "#9CB90E";
           var html = '';
           html += this.getCss();
           html += '  <sinclo-div id="sincloPopupFrame">';
@@ -1862,15 +1896,13 @@ var socket, // socket.io
           }
       },
       ok: function(){ return true; },
-      no: function(){ this.remove() }
+      no: function(){ this.remove(); }
   };
 
   vcPopup = {
       dragging: false,
       set: function(fromID, toID){
           vcPopup.remove();
-          var maincolor = ( window.info.widget.mainColor !== undefined ) ? window.info.widget.mainColor : "#ABCD05";
-          var hovercolor = ( window.info.site.hovercolor !== undefined ) ? window.info.site.hovercolor : "#9CB90E";
           var html = '';
           var sincloData = {
             from: fromID,
@@ -1991,7 +2023,7 @@ var socket, // socket.io
           }
       },
       ok: function(){ return true; },
-      no: function(){ this.remove() },
+      no: function(){ this.remove(); },
       // ドラッグ用プロパティ・メソッド群
       startDragX: 0,
       startDragY: 0,
@@ -2019,7 +2051,9 @@ var socket, // socket.io
   };
 
   var init = function(){
+    var tabStateTimer = null;
     socket = io.connect(info.site.socket, {port: 9090, rememberTransport : false});
+
     // 接続時
     socket.on("connect", function(){
       // ウィジェットがある状態での再接続があった場合
@@ -2037,13 +2071,13 @@ var socket, // socket.io
         sinclo.connect();
       }
 
-
-      if ( sincloBox && userInfo.accessType === Number(cnst.access_type.host) ) return false;
+      if ( userInfo.accessType === Number(cnst.access_type.host) || String(userInfo.gFrame) === "true") return false;
       // 定期的にタブのアクティブ状態を送る
       var tabState = browserInfo.getActiveWindow();
-      setInterval(function(){
+      if ( tabStateTimer ) { clearInterval(tabStateTimer); }
+      tabStateTimer = setInterval(function(){
         var newState = browserInfo.getActiveWindow();
-        if ( tabState !== newState ) {
+        if ( document.getElementById('sincloBox') !== null && tabState !== newState ) {
           tabState = newState;
           emit('sendTabInfo', { status: tabState });
         }
@@ -2075,16 +2109,17 @@ var socket, // socket.io
       sinclo.confirmCustomerInfo(d);
     }); // socket-on: confirmCustomerInfo
 
-    // 接続確認
-    socket.on('getConnectInfo', function(d){
-      sinclo.getConnectInfo(d);
-    }); // socket-on: getConnectInfo
-
     // 画面共有
     socket.on('getWindowInfo', function(d){
       var obj = common.jParse(d);
       sinclo.getWindowInfo(obj);
     }); // socket-on: getWindowInfo
+
+    // 画面共有(iframeバージョン)
+    socket.on('startWindowSync', function(d){
+      var obj = common.jParse(d);
+      sinclo.startWindowSync(obj);
+    }); // socket-on: startWindowSync
 
     // スクロール位置のセット
     socket.on('windowSyncInfo', function (d) {
@@ -2115,8 +2150,9 @@ var socket, // socket.io
       sinclo.syncResponceEv(d);
     }); // socket-on: syncResponceEv
 
-    socket.on('userDissconnection', function (d) {
-      sinclo.userDissconnectionEv(d);
+    // ブラウザ「次へ」「前へ」の操作
+    socket.on('syncBrowserCtrl', function (d) {
+      sinclo.syncBrowserCtrl(d);
     });
 
     // 継続接続
@@ -2128,13 +2164,16 @@ var socket, // socket.io
       sinclo.setInitInfo(d);
     }); // socket-on: setInitInfo
 
-    socket.on('receiveConnect', function (d) {
-      sinclo.receiveConnectEv(d);
-    }); // socket-on: receiveConnectEV
-
+    // 同期確認
     socket.on('resUrlChecker', function (d) {
       sinclo.resUrlChecker(d);
     }); // socket-on: resUrlChecker
+
+    // 別タブ同期
+    socket.on('receiveOtherTabURL', function (d) {
+      window.focus();
+      sinclo.resUrlChecker(d);
+    }); // socket-on: receiveOtherTabURL
 
     // チャット対応開始結果
     socket.on('chatStartResult', function (d) {
@@ -2274,32 +2313,37 @@ function emit(evName, data){
   if (evName === "connectSuccess" || evName === "sendWindowInfo" || evName === "sendAutoChat" || evName === "sendChat") {
     data.userId = userInfo.userId;
   }
-  if (   evName === "connectSuccess" || evName === "sendWindowInfo" || evName === "sendAutoChatMessages"
-      || evName === "getChatMessage" || evName === "sendChat" || evName === "sendAutoChatMessage"
+  if (   evName === "connectSuccess" || evName === "sendWindowInfo" || evName === "sendAutoChatMessages" ||
+         evName === "getChatMessage" || evName === "sendChat" || evName === "sendAutoChatMessage"
   ) {
     data.chat = null;
   }
-  if (   evName === "syncBrowserInfo" || evName === "syncChangeEv" || evName === "requestSyncStop"
-      || evName === "requestSyncStart" || evName === "connectContinue" || evName === "sendConfirmConnect"
+  if (   evName === "syncBrowserInfo" || evName === "syncChangeEv" || evName === "requestSyncStop" ||
+         evName === "requestSyncStart" || evName === "connectContinue" || evName === "sendConfirmConnect"
   ) {
     data.accessType = userInfo.accessType;
   }
-  if (   evName === "syncReady" || evName === "connectSuccess" || evName === "reqUrlChecker"  || evName === "customerInfo"
-      || evName === "requestSyncStart" || evName === "connectContinue" || evName === "sendAccessInfo" || evName === "sendWindowInfo"
+  if (   evName === "syncReady" || evName === "connectSuccess" || evName === "reqUrlChecker"  || evName === "customerInfo" ||
+         evName === "requestSyncStart" || evName === "connectContinue" || evName === "sendAccessInfo" || evName === "sendWindowInfo"
   ) {
     data.url= f_url(browserInfo.href);
   }
   // connectToken
-  if (   evName === "syncReady" || evName === "connectSuccess" || evName === "requestSyncStop"  || evName === "customerInfo" || evName === "sendTabInfo"
-      || evName === "requestSyncStart" || evName === "connectContinue" || evName === "sendAccessInfo" || evName === "sendConfirmConnect"
+  if (   evName === "syncReady" || evName === "connectSuccess" || evName === "requestSyncStop"  || evName === "customerInfo" || evName === "sendTabInfo" ||
+         evName === "requestSyncStart" || evName === "connectContinue" || evName === "sendAccessInfo" || evName === "sendConfirmConnect"
   ) {
     data.connectToken = userInfo.get(cnst.info_type.connect);
   }
-  if ( evName == "sendWindowInfo" ) {
+  if ( evName == "sendWindowInfo" || evName == "requestSyncStopForSubmit"  || evName == "startSyncToFrame" ) {
     data.connectToken = userInfo.connectToken;
   }
+  if ( evName == "requestSyncStop" && userInfo.accessType === cnst.access_type.host ) {
+    data.type = 3;
+  }
+  if ( evName == "requestSyncStop" && userInfo.accessType === cnst.access_type.guest ) {
+    data.type = 4;
+  }
   /* ここまで：イベント名指定あり */
-// console.log(evName, data);
   socket.emit(evName, JSON.stringify(data));
 }
 
@@ -2311,8 +2355,8 @@ function now(){
 // get type
 var myTag = document.querySelector("script[src='" + info.site.files + "/client/" + info.site.key + ".js']");
 if (myTag.getAttribute('data-hide')) {
-    info.dataset['hide'] = myTag.getAttribute('data-hide');
+    info.dataset.hide = myTag.getAttribute('data-hide');
 }
 if (myTag.getAttribute('data-form')) {
-    info.dataset['form'] = myTag.getAttribute('data-form');
+    info.dataset.form = myTag.getAttribute('data-form');
 }

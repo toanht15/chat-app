@@ -25,5 +25,21 @@ class TCampaign extends AppModel {
       ]
     ],
   ];
+
+
+  /**
+   * キャンペーン設定を取得
+   * @return void
+   * */
+  public function getList(){
+    $ret = $this->find('list',[
+      "fields" => ["parameter", "name"],
+      "conditions" => [
+        "m_companies_id" => Configure::read('logged_company_id')
+      ],
+      "recursive" => -1
+    ]);
+    return $ret;
+  }
 }
 ?>
