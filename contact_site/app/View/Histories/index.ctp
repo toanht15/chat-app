@@ -12,42 +12,42 @@
         'javascript:void(0)',
         array('escape' => false, 'class'=>'skyBlueBtn btn-shadow', 'id' => 'outputCSV'));
       ?>
+  </div>
+
+  <div id='history_menu' class="p20trl">
+    <div id="paging" class="fRight">
+      <?php
+        echo $this->Paginator->prev(
+          $this->Html->image('paging.png', array('alt' => '前のページへ', 'width'=>25, 'height'=>25)),
+          array('escape' => false, 'class' => 'btn-shadow greenBtn tr180'),
+          null,
+          array('class' => 'grayBtn tr180')
+        );
+      ?>
+      <span style="width: auto!important;padding: 10px 0 0;"> <?php echo $this->Paginator->counter('{:page} / {:pages}'); ?> </span>
+      <?php
+        echo $this->Paginator->next(
+          $this->Html->image('paging.png', array('alt' => '次のページへ', 'width'=>25, 'height'=>25)),
+          array('escape' => false, 'class' => 'btn-shadow greenBtn'),
+          null,
+          array('escape' => false, 'class' => 'grayBtn')
+        );
+      ?>
     </div>
 
-    <div id='history_menu' class="p20trl">
-      <div id="paging" class="fRight">
-        <?php
-          echo $this->Paginator->prev(
-            $this->Html->image('paging.png', array('alt' => '前のページへ', 'width'=>25, 'height'=>25)),
-            array('escape' => false, 'class' => 'btn-shadow greenBtn tr180'),
-            null,
-            array('class' => 'grayBtn tr180')
-          );
-        ?>
-        <span style="width: auto!important;padding: 10px 0 0;"> <?php echo $this->Paginator->counter('{:page} / {:pages}'); ?> </span>
-        <?php
-          echo $this->Paginator->next(
-            $this->Html->image('paging.png', array('alt' => '次のページへ', 'width'=>25, 'height'=>25)),
-            array('escape' => false, 'class' => 'btn-shadow greenBtn'),
-            null,
-            array('escape' => false, 'class' => 'grayBtn')
-          );
-        ?>
-      </div>
-
-     <?php echo $this->Html->link(
-        '検索絞り込み',
-        'javascript:void(0)',
-        array('escape' => false, 'class'=>'skyBlueBtn btn-shadow','id' => 'searchRefine','onclick' => 'openSearchRefine()'));
-      ?>
-      <div class='seach_menu'>
+    <?php echo $this->Html->link(
+      '検索絞り込み',
+      'javascript:void(0)',
+      array('escape' => false, 'class'=>'skyBlueBtn btn-shadow','id' => 'searchRefine','onclick' => 'openSearchRefine()'));
+    ?>
+    <div class='seach_menu'>
       <label class='searchConditions'>検索条件</label>
       <ul>
         <?php if(!empty($this->data['start_day'])||!empty($this->data['finish_day'])) { ?>
-          <li>
-            <label>日付</label>
-            <span class="value"><?= h($this->data['start_day']) ?>-<?= h($this->data['finish_day']) ?></span>
-          </li>
+        <li>
+          <label>日付</label>
+          <span class="value"><?= h($this->data['start_day']) ?>-<?= h($this->data['finish_day']) ?></span>
+        </li>
         <?php } ?>
         <?php if(!empty($this->data['ip_address'])) { ?>
           <li>
@@ -80,7 +80,7 @@
           </li>
         <?php } ?>
       </ul>
-      </div>
+    </div>
     <!-- 検索窓 -->
     <div class='fLeft'>
       <?php
@@ -102,12 +102,10 @@
       <?=$this->Form->end();?>
       <?=  $this->Form->create('History',['id' => 'historySearch','type' => 'post','url' => '/Histories']); ?>
     </div>
-
   </div>
 
   <div id='history_list' class="p20x">
     <?=$this->element('Histories/list')?>
     <a href="javascript:void(0)" style="display:none" id="modalCtrl"></a>
   </div>
-
 </div>
