@@ -496,6 +496,14 @@
       &.p-thistory-entry {
         width: 48em;
 
+
+        input#dateperiod {
+          background-image: url('/img/calender.png');
+          background-repeat: no-repeat;
+          background-position: right 10pt bottom 4pt;
+          background-size: 15px;
+        }
+
         #popup-main ul {
           margin: 0;
           padding: 0;
