@@ -1,4 +1,4 @@
-  <script type="text/javascript">
+<script type="text/javascript">
 'use strict';
 
   var sincloApp = angular.module('sincloApp', ['ngSanitize']);

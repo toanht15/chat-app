@@ -19,7 +19,7 @@ popupEvent.customizeBtn = function(){
     <?= $this->Form->hidden('finish_day',['label'=> false,'div' => false,'name' => 'finish_day','value'=>$this->data['finish_day']]); ?>
     <li>
       <p><span>ipアドレス</span></p>
-      <span><?= $this->Form->input('ip_address',['label'=>false,'div' => false,'name' => 'ip_address','value'=>h($this->data[ip_address])]) ?></span>
+      <span><?= $this->Form->input('ip_address',['label'=>false,'div' => false,'name' => 'ip_address','value'=>$this->data[ip_address]]) ?></span>
     </li>
     <li>
       <p><span>会社名</span></p>
