@@ -492,6 +492,82 @@
         }
       }
 
+      /* 履歴-検索ダイアログ用　*/
+      &.p-thistory-entry {
+        width: 48em;
+
+
+        input#dateperiod {
+          background-image: url('/img/calender.png');
+          background-repeat: no-repeat;
+          background-position: right 10pt bottom 4pt;
+          background-size: 15px;
+        }
+
+        #popup-main ul {
+          margin: 0;
+          padding: 0;
+          display: -webkit-box;
+          display: -ms-flexbox;
+          display: flex;
+          -webkit-box-orient: vertical;
+          -webkit-box-direction: normal;
+          -ms-flex-direction: column;
+          flex-direction: column;
+          width: 45em;
+
+          li {
+            display: -webkit-box;
+            display: flex;
+            -webkit-box-orient: horizontal;
+            -webkit-box-direction: normal;
+            flex-direction: row;
+            border-bottom: 1px solid #FFF;
+
+            p {
+              width: 12em;
+              background-color: #AFAFAF;
+
+              span {
+                color: #FFF;
+
+                #day_search{
+                margin-left: 89px;
+                }
+              }
+            }
+
+            & > span {
+              background-color: #F0F0F0;
+              width: 33em;
+              display: block;
+
+              input[type='text'] {
+                width: 100%;
+                resize: none;
+              }
+            }
+
+            & > * {
+              padding: 0.5em;
+              margin: 0;
+            }
+          }
+        }
+
+        & #popup-button {
+          width: 27em;
+          margin: 0 auto;
+
+          .textBtn {
+            width: 6em;
+            margin: 0 0.5em;
+            float: left;
+          }
+        }
+      }
+
+
       /* ユーザーマスタ-登録ダイアログ用 */
       &.p-muser-entry {
         width: 350px;
