@@ -41,7 +41,7 @@
         this.showDropdowns = false;
         this.showWeekNumbers = false;
         this.showISOWeekNumbers = false;
-        this.showCustomRangeLabel = true;
+        this.showCustomRangeLabel = false;
         this.timePicker = false;
         this.timePicker24Hour = false;
         this.timePickerIncrement = 1;
@@ -90,7 +90,6 @@
         //allow setting options with data attributes
         //data-api options will be overwritten with custom javascript options
         options = $.extend(this.element.data(), options);
-        console.log(this);
 
         //html template for the picker UI
         if (typeof options.template !== 'string' && !(options.template instanceof $))
@@ -344,7 +343,6 @@
                 list += '<li data-range-key="' + range + '">' + range + '</li>';
             }
             if (this.showCustomRangeLabel) {
-              console.log('kokoda');
                 list += '<li data-range-key="' + this.locale.customRangeLabel + '">' + this.locale.customRangeLabel + '</li>';
             }
             list += '</ul>';
@@ -1207,7 +1205,6 @@
                     this.startDate.startOf('day');
                     this.endDate.endOf('day');
                 }
-                console.log('mituketaze4');
                 if (!this.alwaysShowCalendars)
                     this.hideCalendars();
 
