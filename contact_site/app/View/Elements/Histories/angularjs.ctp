@@ -216,8 +216,6 @@ $(document).ready(function(){
     "startDate": $('input[name="start_day"]').val(),
     "endDate": $('input[name="finish_day"]').val(),
     "opens": "left"
-  },
-  function(start, end, label) {
   });
 
   $('input[name="datefilter"]').on('apply.daterangepicker', function(ev, picker) {
@@ -234,7 +232,7 @@ $(document).ready(function(){
       var endDate = d2.getFullYear() + '/' + (d2.getMonth() + 1) + '/' + d2.getDate();
       $('input[name="start_day"]').val(startDate);
       $('input[name="finish_day"]').val(endDate);
-        $("#dateperiod").removeClass('extinguish');
+      $("#dateperiod").removeClass('extinguish');
     }
     else {
       $("#dateperiod").prop("disabled", true);
