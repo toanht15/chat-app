@@ -408,7 +408,9 @@ var socket, // socket.io
         if ( check.smartphone() ) {
           ratio = ($(window).width() - 20) * (1/285);
         }
-        html += '  <span id="mainImage" onclick="sinclo.operatorInfo.ev()"><img src="' + widget.mainImage + '" width="' + (ratio * 62) + '" height="' + (ratio * 70) + '" alt="チャット画像"></span>';
+        html += '  <span id="mainImage" onclick="sinclo.operatorInfo.ev()">';
+        html += '    <img src="' + widget.mainImage + '" width="' + (ratio * 62) + '" height="' + (ratio * 70) + '" style="width:' + (ratio * 62) + '!important; height:' + (ratio * 70) + '!important;" alt="チャット画像">';
+        html += '  </span>';
       }
       html += '  <div id="widgetHeader" class="notSelect" onclick="sinclo.operatorInfo.ev()">';
       // タイトル
@@ -2239,18 +2241,32 @@ var socket, // socket.io
     cache: false
   });
 
+  if ( check.isset(storage.s.get('params')) ) {
+    common.params = common.jParse(storage.s.get('params'));
+    userInfo.accessType = common.params.type;
+  }
+  else {
+    common.getParams();
+    if ( Number(common.tmpParams.type) === Number(cnst.access_type.host) ) {
+      userInfo.accessType = cnst.access_type.host;
+    }
+  }
+
   $.ajax({
       type: 'get',
       url: window.info.site.files + "/settings/",
       cache: false,
       data: {
-          'sitekey': window.info.site.key
+          'sitekey': window.info.site.key,
+          accessType: userInfo.accessType
       },
       dataType: "json",
       success: function(json){
+        if ( String(json.status) === "true" ) {
           window.info.widget = json.widget;
           window.info.messages = json.messages;
           window.info.contract = json.contract;
+        }
       },
       error: function(XMLHttpRequest, textStatus, errorThrown) {
           $("#XMLHttpRequest").html("XMLHttpRequest : " + XMLHttpRequest.status);
