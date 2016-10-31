@@ -383,8 +383,21 @@ class HistoriesController extends AppController {
 
     $this->Session->write("histories.joins", $this->paginate['THistory']['joins'][0]['type']);
 
+    $start = '';
+    $finish = '';
+    $ip = '';
+    $company = '';
+    $name = '';
+    $tel = '';
+    $mail = '';
+
     //履歴検索機能
     if($this->request->is('post')) {
+      $this->Session->write('Thistory', $this->data);
+    }
+
+    if (isset( $_SESSION["Thistory"])) {
+      $this->data = $this->Session->read('Thistory');
       $start = $this->data['start_day'];
       $finish = $this->data['finish_day'];
       $ip = $this->data['ip_address'];
@@ -392,8 +405,6 @@ class HistoriesController extends AppController {
       $name = $this->data['customer_name'];
       $tel = $this->data['telephone_number'];
       $mail = $this->data['mail_address'];
-
-      $this->Session->write('Thistory', $this->data);
 
       $conditions = ['THistory.ip_address like' =>'%'.$ip.'%'];
       if($start != '' ) {
