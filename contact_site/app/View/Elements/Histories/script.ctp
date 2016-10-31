@@ -6,7 +6,7 @@ function openSearchRefine(){
     cache: false,
     url: "<?= $this->Html->url('/Histories/remoteOpenEntryForm') ?>",
     success: function(html){
-      modalOpen.call(window, html, 'p-thistory-entry', '検索絞り込み', 'moment');
+      modalOpen.call(window, html, 'p-thistory-entry', '絞り込み検索', 'moment');
     }
   });
 }

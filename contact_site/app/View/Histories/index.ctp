@@ -36,7 +36,7 @@
     </div>
 
     <?php echo $this->Html->link(
-      '検索絞り込み',
+      '絞り込み検索',
       'javascript:void(0)',
       array('escape' => false, 'class'=>'skyBlueBtn btn-shadow','id' => 'searchRefine','onclick' => 'openSearchRefine()'));
     ?>
