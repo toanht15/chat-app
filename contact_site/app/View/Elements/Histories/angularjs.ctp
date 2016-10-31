@@ -176,7 +176,7 @@ $(document).ready(function(){
       '過去一週間': [moment().subtract(6, 'days'), moment()],
       '過去一ヶ月間': [moment().subtract(29, 'days'), moment()],
       '今月': [moment().startOf('month'), moment().endOf('month')],
-      '先月': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+      '先月': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
     },
     "locale": {
       "format": "YYYY/MM/DD",
