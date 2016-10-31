@@ -174,9 +174,9 @@ $(document).ready(function(){
       '今日': [moment(), moment()],
       '昨日': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
       '過去一週間': [moment().subtract(6, 'days'), moment()],
-      '過去一か月間': [moment().subtract(29, 'days'), moment()],
+      '過去一ヶ月間': [moment().subtract(29, 'days'), moment()],
       '今月': [moment().startOf('month'), moment().endOf('month')],
-      '先月': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+      '先月': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
     },
     "locale": {
       "format": "YYYY/MM/DD",
@@ -218,7 +218,6 @@ $(document).ready(function(){
     "opens": "left"
   },
   function(start, end, label) {
-    console.log("New date range selected:   ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')");
   });
 
   $('input[name="datefilter"]').on('apply.daterangepicker', function(ev, picker) {
@@ -228,11 +227,6 @@ $(document).ready(function(){
 
   $('#day_search').on('click', function() {
     if ($(this).prop('checked')) {
-      $("#dateperiod").prop("disabled", true);
-      $('input[name="start_day"]').val("");
-      $('input[name="finish_day"]').val("");
-    }
-    else {
       $("#dateperiod").prop("disabled", false);
       var d = new Date($('#dateperiod').data('daterangepicker').startDate);
       var startDate = d.getFullYear() + '/' + (d.getMonth() + 1) + '/' + d.getDate();
@@ -240,6 +234,13 @@ $(document).ready(function(){
       var endDate = d2.getFullYear() + '/' + (d2.getMonth() + 1) + '/' + d2.getDate();
       $('input[name="start_day"]').val(startDate);
       $('input[name="finish_day"]').val(endDate);
+        $("#dateperiod").removeClass('extinguish');
+    }
+    else {
+      $("#dateperiod").prop("disabled", true);
+      $('input[name="start_day"]').val("");
+      $('input[name="finish_day"]').val("");
+      $("#dateperiod").addClass('extinguish');
     }
   });
 });

@@ -504,6 +504,11 @@
           background-size: 15px;
         }
 
+        & input.extinguish {
+          visibility: hidden;
+        }
+
+
         #popup-main ul {
           margin: 0;
           padding: 0;
@@ -530,11 +535,10 @@
 
               span {
                 color: #FFF;
-
-                #day_search{
-                margin-left: 89px;
-                }
-              }
+                  }
+                 input#day_search {
+                   margin-left: 32px;
+                  }
             }
 
             & > span {
@@ -566,7 +570,6 @@
           }
         }
       }
-
 
       /* ユーザーマスタ-登録ダイアログ用 */
       &.p-muser-entry {
@@ -839,3 +842,4 @@
     }
   }
 }
+
