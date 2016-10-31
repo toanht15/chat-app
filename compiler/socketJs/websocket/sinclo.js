@@ -165,16 +165,17 @@
       function opCheck(){
         if ( !check.ref() ) return false;
         if ( !newAccessCheck() ) return false;
-        if ( window.opener === null ) return false;
-        if ( window.opener !== null && !('userInfo' in window.opener) ) return false;
-        if ( !('connectToken' in window.opener.userInfo) ) return false;
+        if ( !check.isset(window.opener) ) return false;
+        if ( !check.isset(window.opener.userInfo) ) return false;
         if ( !check.isset(window.opener.userInfo.connectToken) ) return false;
         return true;
       }
       // 別タブ対応
       if ( opCheck() ) {
         window.opener.blur();
-        window.blur();
+        if ( window.hasOwnProperty('blur') ) {
+          window.blur();
+        }
         socket.emit("sendOtherTabURL", JSON.stringify({
           siteKey: info.site.key,
           tabId: userInfo.getTabId(),
@@ -182,7 +183,9 @@
           url: f_url(browserInfo.href)
         }));
         window.opener.focus();
-        parent.opener.focus();
+        if ( check.isset(parent.opener) ) {
+          parent.opener.focus();
+        }
         setTimeout(function(){
           window.close();
         }, 10);
