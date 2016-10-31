@@ -12,75 +12,75 @@
         'javascript:void(0)',
         array('escape' => false, 'class'=>'skyBlueBtn btn-shadow', 'id' => 'outputCSV'));
       ?>
+  </div>
+
+  <div id='history_menu' class="p20trl">
+    <div id="paging" class="fRight">
+      <?php
+        echo $this->Paginator->prev(
+          $this->Html->image('paging.png', array('alt' => '前のページへ', 'width'=>25, 'height'=>25)),
+          array('escape' => false, 'class' => 'btn-shadow greenBtn tr180'),
+          null,
+          array('class' => 'grayBtn tr180')
+        );
+      ?>
+      <span style="width: auto!important;padding: 10px 0 0;"> <?php echo $this->Paginator->counter('{:page} / {:pages}'); ?> </span>
+      <?php
+        echo $this->Paginator->next(
+          $this->Html->image('paging.png', array('alt' => '次のページへ', 'width'=>25, 'height'=>25)),
+          array('escape' => false, 'class' => 'btn-shadow greenBtn'),
+          null,
+          array('escape' => false, 'class' => 'grayBtn')
+        );
+      ?>
     </div>
 
-    <div id='history_menu' class="p20trl">
-      <div id="paging" class="fRight">
-        <?php
-          echo $this->Paginator->prev(
-            $this->Html->image('paging.png', array('alt' => '前のページへ', 'width'=>25, 'height'=>25)),
-            array('escape' => false, 'class' => 'btn-shadow greenBtn tr180'),
-            null,
-            array('class' => 'grayBtn tr180')
-          );
-        ?>
-        <span style="width: auto!important;padding: 10px 0 0;"> <?php echo $this->Paginator->counter('{:page} / {:pages}'); ?> </span>
-        <?php
-          echo $this->Paginator->next(
-            $this->Html->image('paging.png', array('alt' => '次のページへ', 'width'=>25, 'height'=>25)),
-            array('escape' => false, 'class' => 'btn-shadow greenBtn'),
-            null,
-            array('escape' => false, 'class' => 'grayBtn')
-          );
-        ?>
-      </div>
-
-     <?php echo $this->Html->link(
-        '検索絞り込み',
-        'javascript:void(0)',
-        array('escape' => false, 'class'=>'skyBlueBtn btn-shadow','id' => 'searchRefine','onclick' => 'openSearchRefine()'));
-      ?>
-      <div class='seach_menu'>
+    <?php echo $this->Html->link(
+      '検索絞り込み',
+      'javascript:void(0)',
+      array('escape' => false, 'class'=>'skyBlueBtn btn-shadow','id' => 'searchRefine','onclick' => 'openSearchRefine()'));
+    ?>
+    <div class='seach_menu'>
       <label class='searchConditions'>検索条件</label>
       <ul>
         <?php if(!empty($this->data['start_day'])||!empty($this->data['finish_day'])) { ?>
-          <li>
-            <label class="label">日付</label>
-            <span class="value"><?= $this->data['start_day'] ?>-<?= $this->data['finish_day'] ?></span>
-          </li>
+        <li>
+          <label>日付</label>
+          <span class="value"><?= h($this->data['start_day']) ?>-<?= h($this->data['finish_day']) ?></span>
+        </li>
         <?php } ?>
         <?php if(!empty($this->data['ip_address'])) { ?>
           <li>
-            <label class="label">IPｱﾄﾞﾚｽ</label>
-            <span class="value"><?= $this->data['ip_address'] ?></span>
+            <label>IPｱﾄﾞﾚｽ</label>
+            <span class="value"><?= h($this->data['ip_address']) ?></span>
           </li>
         <?php } ?>　
         <?php if(!empty($this->data['company_name'])) { ?>
           <li>
-            <label class="label">会社名</label>
-            <span class="value"><?= $this->data['company_name'] ?></span>
+            <label>会社名</label>
+            <span class="value"><?= h($this->data['company_name']) ?></span>
           </li>
         <?php } ?>
         <?php if(!empty($this->data['customer_name'])) { ?>
           <li>
             <label class="label">名前</label>
-            <span class="value"><?= $this->data['customer_name'] ?></span>
+            <span class="value"><?= h($this->data['customer_name']) ?></span>
           </li>
         <?php } ?>
         <?php if(!empty($this->data['telephone_number'])) { ?>
           <li>
-            <label class="label">電話番号</label>
-            <span class="value"><?= $this->data['telephone_number'] ?></span>
+            <label>電話番号</label>
+            <span class="value"><?= h($this->data['telephone_number']) ?></span>
           </li>
         <?php } ?>
         <?php if(!empty($this->data['mail_address'])) { ?>
           <li>
-            <label class="label">ﾒｰﾙｱﾄﾞﾚｽ</label>
-            <span class="value"><?= $this->data['mail_address'] ?></span>
+            <label>ﾒｰﾙｱﾄﾞﾚｽ</label>
+            <span class="value"><?= h($this->data['mail_address']) ?></span>
           </li>
         <?php } ?>
       </ul>
-      </div>
+    </div>
     <!-- 検索窓 -->
     <div class='fLeft'>
       <?php
@@ -102,12 +102,10 @@
       <?=$this->Form->end();?>
       <?=  $this->Form->create('History',['id' => 'historySearch','type' => 'post','url' => '/Histories']); ?>
     </div>
-
   </div>
 
   <div id='history_list' class="p20x">
     <?=$this->element('Histories/list')?>
     <a href="javascript:void(0)" style="display:none" id="modalCtrl"></a>
   </div>
-
 </div>

@@ -4,7 +4,7 @@
     };
 
 popupEvent.customizeBtn = function(){
-  location.href = "<?=$this->Html->url(array('controller' => 'Histories', 'action' => 'ClearSession'))?>";
+  location.href = "<?=$this->Html->url(array('controller' => 'Histories', 'action' => 'clearSession'))?>";
 };
 
 </script>
@@ -12,7 +12,7 @@ popupEvent.customizeBtn = function(){
 <?=  $this->Form->create('History',['id' => 'historySearch','type' => 'post','url' => ['controller' => 'Histories','action' => 'index']]); ?>
   <ul>
     <li>
-      <p><span>日付</span></p>
+      <p><span>日付 <input type="checkbox" id="day_search" 'onclick'></span></p>
       <span><?= $this->Form->input('datefilter',['label'=> false,'div' => false,'id' => 'dateperiod','name'=> 'datefilter']); ?></span>
     </li>
     <?= $this->Form->hidden('start_day',['label'=> false,'div' => false,'name'=> 'start_day','value'=>$this->data['start_day']]); ?>

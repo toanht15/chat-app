@@ -84,7 +84,7 @@ class HistoriesController extends AppController {
       $isChat = $this->params->query['isChat'];
     }
     $this->_setList($isChat);
-    $this->data = $this->Session->read('thistory');
+    $this->data = $this->Session->read('Thistory');
   }
 
   public function remoteGetCustomerInfo() {
@@ -393,7 +393,7 @@ class HistoriesController extends AppController {
       $tel = $this->data['telephone_number'];
       $mail = $this->data['mail_address'];
 
-      $this->Session->write('thistory', $this->data);
+      $this->Session->write('Thistory', $this->data);
 
       $conditions = ['THistory.ip_address like' =>'%'.$ip.'%'];
       if($start != '' ) {
@@ -526,7 +526,7 @@ class HistoriesController extends AppController {
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
-    $this->data = $this->Session->read('thistory');
+    $this->data = $this->Session->read('Thistory');
     if(empty($this->data['start_day']) || empty($this->data['finish_day'])) {
       $today = date("Y/m/d");
       $this->request->data['start_day'] = $today;
@@ -540,8 +540,8 @@ class HistoriesController extends AppController {
    * Session削除
    * @return void
    * */
-  public function ClearSession() {
-    $this->Session->delete('thistory');
+  public function clearSession() {
+    $this->Session->delete('Thistory');
     $this->redirect(['controller' => 'Histories', 'action' => 'index']);
   }
 }
