@@ -155,3 +155,27 @@ caption {
           box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
 }
 /*# sourceMappingURL=bootstrap.css.map */
+
+/* 20161101新しく追加　カレンダー矢印、下線　*/
+table.table-condensed thead tr:first-child th {
+    border-bottom: 1px solid #595959!important;
+}
+
+i.fa.fa-chevron-left.glyphicon.glyphicon-chevron-left {
+    background-image: url(/img/paging_g.png);
+    background-size: 20px;
+    background-repeat: no-repeat;
+    display: block;
+    width: 20px;
+    height: 20px;
+    transform: rotate(180deg);
+}
+
+i.fa.fa-chevron-right.glyphicon.glyphicon-chevron-right {
+    background-image: url(/img/paging_g.png);
+    background-size: 20px;
+    background-repeat: no-repeat;
+    display: block;
+    width: 20px;
+    height: 20px;
+}

@@ -408,31 +408,33 @@ class HistoriesController extends AppController {
 
       $conditions = ['THistory.ip_address like' =>'%'.$ip.'%'];
       if($start != '' ) {
-        $conditions += ['THistory.access_date >=' => $start];
+        $conditions += ['THistory.access_date >=' => $start.' 00:00:00'];
       }
       if($finish != '' ) {
-      $conditions += ['THistory.access_date <=' => $finish];
+        $conditions += ['THistory.access_date <=' => $finish.' 23:59:59'];
       }
 
-      $allusers = $this->MCustomer->find('all');
-      $ret=[];
-      foreach($allusers as $alluser) {
-        $settings = json_decode($alluser['MCustomer']['informations']);
-        if($company != '' && !strstr($settings->company,$company)) {
-          continue;
+        if(!empty($company) || !empty($name) || !empty($tel) || !empty($mail)) {
+        $allusers = $this->MCustomer->find('all');
+        $ret=[];
+        foreach($allusers as $alluser) {
+          $settings = json_decode($alluser['MCustomer']['informations']);
+          if($company != '' && isset($settings->company) && !strstr($settings->company,$company)) {
+            continue;
+          }
+          if($name != '' && isset($settings->name) && !strstr($settings->name,$name)) {
+            continue;
+          }
+          if($tel != '' && isset($settings->tel) && !strstr($settings->tel,$tel)) {
+            continue;
+          }
+          if($mail != '' && isset($settings->mail) && !strstr($settings->mail,$mail)) {
+            continue;
+          }
+          $ret[]=$alluser['MCustomer']['visitors_id'];
         }
-        if($name != '' && !strstr($settings->name,$name)) {
-          continue;
-        }
-        if($tel != '' && !strstr($settings->tel,$tel)) {
-          continue;
-        }
-        if($mail != '' && !strstr($settings->mail,$mail)) {
-          continue;
-        }
-        $ret[]=$alluser['MCustomer']['visitors_id'];
+        $conditions['THistory.visitors_id'] = $ret;
       }
-      $conditions['THistory.visitors_id'] = $ret;
       $historyList = $this->paginate('THistory',$conditions);
     }
     else {
