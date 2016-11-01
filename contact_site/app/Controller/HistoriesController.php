@@ -84,7 +84,6 @@ class HistoriesController extends AppController {
       $isChat = $this->params->query['isChat'];
     }
     $this->_setList($isChat);
-    $this->data = $this->Session->read('Thistory');
   }
 
   public function remoteGetCustomerInfo() {
@@ -383,17 +382,29 @@ class HistoriesController extends AppController {
 
     $this->Session->write("histories.joins", $this->paginate['THistory']['joins'][0]['type']);
 
+    $data = '';
+    $start = '';
+    $finish = '';
+    $ip = '';
+    $company = '';
+    $name = '';
+    $tel = '';
+    $mail = '';
+
     //履歴検索機能
     if($this->request->is('post')) {
-      $start = $this->data['start_day'];
-      $finish = $this->data['finish_day'];
-      $ip = $this->data['ip_address'];
-      $company = $this->data['company_name'];
-      $name = $this->data['customer_name'];
-      $tel = $this->data['telephone_number'];
-      $mail = $this->data['mail_address'];
-
       $this->Session->write('Thistory', $this->data);
+    }
+
+    if ($this->Session->check('Thistory')) {
+      $data = $this->Session->read('Thistory');
+      $start = $data['start_day'];
+      $finish = $data['finish_day'];
+      $ip = $data['ip_address'];
+      $company = $data['company_name'];
+      $name = $data['customer_name'];
+      $tel = $data['telephone_number'];
+      $mail = $data['mail_address'];
 
       $conditions = ['THistory.ip_address like' =>'%'.$ip.'%'];
       if($start != '' ) {
@@ -428,6 +439,7 @@ class HistoriesController extends AppController {
     $historyList = $this->paginate('THistory');
     }
 
+    $this->set('data', $data);
     $this->set('userList', $historyList);
     $this->set('historyList', $historyList);
     $this->set('chatUserList', $this->_getChatUser($historyList)); // チャット担当者リスト

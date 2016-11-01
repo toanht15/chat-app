@@ -1,7 +1,18 @@
 <script type="text/javascript">
-  popupEvent.closePopup = function(){
+popupEvent.closePopup = function(){
+  if (!$("#day_search").prop('checked')) {
+    $("#dateperiod").prop("disabled", true);
+    $('input[name="start_day"]').val("");
+    $('input[name="finish_day"]').val("");
+  }
+  if ($("#g_chat").prop("checked")) {
+    document.getElementById('historySearch').action = "Histories?isChat=true";
+  }
+  else {
+    document.getElementById('historySearch').action = "Histories?isChat=false";
+  }
   $('#historySearch').submit();
-    };
+};
 
 popupEvent.customizeBtn = function(){
   location.href = "<?=$this->Html->url(array('controller' => 'Histories', 'action' => 'clearSession'))?>";
