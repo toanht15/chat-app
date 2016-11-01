@@ -64,7 +64,8 @@ router.get("/", function(req, res, next) {
             }
 
             // IPアドレス制限
-            if ( Number(accessType) === 1 && rows.length > 0 && ('exclude_ips' in rows[0]) && rows[0].exclude_ips.length > 0 ) {
+
+            if ( Number(accessType) === 1 && rows.length > 0 && ('exclude_ips' in rows[0]) && rows[0].exclude_ips !== "" && rows[0].exclude_ips !== null && rows[0].exclude_ips !== undefined ) {
               var ips = rows[0].exclude_ips.split("\r\n");
               for( var i in ips ){
                 var range = getIpRange(ips[i]);
