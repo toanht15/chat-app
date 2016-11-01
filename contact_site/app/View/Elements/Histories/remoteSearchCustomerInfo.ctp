@@ -1,6 +1,7 @@
 <script type="text/javascript">
 popupEvent.closePopup = function(){
   if (!$("#day_search").prop('checked')) {
+    $("#dateperiod").prop("disabled", true);
     $('input[name="start_day"]').val("");
     $('input[name="finish_day"]').val("");
   }
