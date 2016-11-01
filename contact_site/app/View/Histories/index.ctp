@@ -43,40 +43,40 @@
     <div class='seach_menu'>
       <label class='searchConditions'>検索条件</label>
       <ul>
-        <?php if(!empty($this->data['start_day'])||!empty($this->data['finish_day'])) { ?>
+        <?php if(!empty($data['start_day'])||!empty($data['finish_day'])) { ?>
         <li>
           <label>日付</label>
-          <span class="value"><?= h($this->data['start_day']) ?>-<?= h($this->data['finish_day']) ?></span>
+          <span class="value"><?= h($data['start_day']) ?>-<?= h($data['finish_day']) ?></span>
         </li>
         <?php } ?>
-        <?php if(!empty($this->data['ip_address'])) { ?>
+        <?php if(!empty($data['ip_address'])) { ?>
           <li>
             <label>IPｱﾄﾞﾚｽ</label>
-            <span class="value"><?= h($this->data['ip_address']) ?></span>
+            <span class="value"><?= h($data['ip_address']) ?></span>
           </li>
         <?php } ?>　
-        <?php if(!empty($this->data['company_name'])) { ?>
+        <?php if(!empty($data['company_name'])) { ?>
           <li>
             <label>会社名</label>
-            <span class="value"><?= h($this->data['company_name']) ?></span>
+            <span class="value"><?= h($data['company_name']) ?></span>
           </li>
         <?php } ?>
-        <?php if(!empty($this->data['customer_name'])) { ?>
+        <?php if(!empty($data['customer_name'])) { ?>
           <li>
             <label class="label">名前</label>
-            <span class="value"><?= h($this->data['customer_name']) ?></span>
+            <span class="value"><?= h($data['customer_name']) ?></span>
           </li>
         <?php } ?>
-        <?php if(!empty($this->data['telephone_number'])) { ?>
+        <?php if(!empty($data['telephone_number'])) { ?>
           <li>
             <label>電話番号</label>
-            <span class="value"><?= h($this->data['telephone_number']) ?></span>
+            <span class="value"><?= h($data['telephone_number']) ?></span>
           </li>
         <?php } ?>
-        <?php if(!empty($this->data['mail_address'])) { ?>
+        <?php if(!empty($data['mail_address'])) { ?>
           <li>
             <label>ﾒｰﾙｱﾄﾞﾚｽ</label>
-            <span class="value"><?= h($this->data['mail_address']) ?></span>
+            <span class="value"><?= h($data['mail_address']) ?></span>
           </li>
         <?php } ?>
       </ul>
