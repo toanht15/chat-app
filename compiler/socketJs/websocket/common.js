@@ -11,8 +11,10 @@ var socket, // socket.io
     sinclo, // リアルタイム通信補助関数
     sincloVideo; // ビデオ通信補助関数
 
-(function($){
+(function(jquery){
   'use strict';
+  var $ = jquery;
+
   cnst = {
     access_type: {
       guest: 1,

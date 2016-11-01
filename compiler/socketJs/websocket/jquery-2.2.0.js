@@ -9829,7 +9829,7 @@ jQuery.noConflict = function( deep ) {
 // if ( !noGlobal ) {
 //     window.jQuery = window.$ = jQuery;
 // }
-window.sincloJquery = window.$ = jQuery;
+window.sincloJquery = jQuery;
 
 
 return jQuery;
