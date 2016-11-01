@@ -32,7 +32,7 @@ popupEvent.customizeBtn = function(){
           $checked = '';
         }
       ?>
-      <span><?= $this->Form->input('datefilter',['label'=> false,'class'=> $extinguish,'div' => false,'id' => 'dateperiod','name'=> 'datefilter']); ?><input type="checkbox" id="day_search" <?= $checked ?>><span>指定する</span>
+      <span><?= $this->Form->input('datefilter',['label'=> false,'class'=> $extinguish,'div' => false,'id' => 'dateperiod','name'=> 'datefilter']); ?><label><input type="checkbox" id="day_search" <?= $checked ?>><span>指定する</span></label>
     </li>
     <?= $this->Form->hidden('start_day',['label'=> false,'div' => false,'name'=> 'start_day','value'=>$this->data['start_day']]); ?>
     <?= $this->Form->hidden('finish_day',['label'=> false,'div' => false,'name' => 'finish_day','value'=>$this->data['finish_day']]); ?>
