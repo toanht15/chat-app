@@ -85,12 +85,15 @@
     text-align: center;
     width: 20px;
     height: 20px;
-    border-radius: 4px;
     border: 1px solid transparent;
     white-space: nowrap;
     cursor: pointer; }
-    .daterangepicker td.available:hover, .daterangepicker th.available:hover {
+    .daterangepicker td.available:hover{
       background-color: #eee;
+      border-color: transparent;
+      color: inherit; }
+    .daterangepicker th.available:hover {
+      background-color: #a7bb7c;;
       border-color: transparent;
       color: inherit; }
     .daterangepicker td.week, .daterangepicker th.week {

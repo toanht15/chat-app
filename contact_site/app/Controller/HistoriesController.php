@@ -408,11 +408,12 @@ class HistoriesController extends AppController {
 
       $conditions = ['THistory.ip_address like' =>'%'.$ip.'%'];
       if($start != '' ) {
-        $conditions += ['THistory.access_date >=' => $start];
+        $conditions += ['THistory.access_date >=' => $start.' 00:00:00'];
       }
       if($finish != '' ) {
-      $conditions += ['THistory.access_date <=' => $finish];
+        $conditions += ['THistory.access_date <=' => $finish.' 23:59:59'];
       }
+            //pr($conditions); exit();
 
       $allusers = $this->MCustomer->find('all');
       $ret=[];
