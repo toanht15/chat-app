@@ -396,7 +396,7 @@ class HistoriesController extends AppController {
       $this->Session->write('Thistory', $this->data);
     }
 
-    if (isset( $_SESSION["Thistory"])) {
+    if ($this->Session->check('Thistory')) {
       $this->data = $this->Session->read('Thistory');
       $start = $this->data['start_day'];
       $finish = $this->data['finish_day'];
