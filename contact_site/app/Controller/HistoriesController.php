@@ -418,16 +418,16 @@ class HistoriesController extends AppController {
       $ret=[];
       foreach($allusers as $alluser) {
         $settings = json_decode($alluser['MCustomer']['informations']);
-        if($company != '' && !strstr($settings->company,$company)) {
+        if($company != '' && isset($settings->company) && !strstr($settings->company,$company)) {
           continue;
         }
-        if($name != '' && !strstr($settings->name,$name)) {
+        if($name != '' && isset($settings->name) && !strstr($settings->name,$name)) {
           continue;
         }
-        if($tel != '' && !strstr($settings->tel,$tel)) {
+        if($tel != '' && isset($settings->tel) && !strstr($settings->tel,$tel)) {
           continue;
         }
-        if($mail != '' && !strstr($settings->mail,$mail)) {
+        if($mail != '' && isset($settings->mail) && !strstr($settings->mail,$mail)) {
           continue;
         }
         $ret[]=$alluser['MCustomer']['visitors_id'];
