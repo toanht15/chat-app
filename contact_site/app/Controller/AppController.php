@@ -131,6 +131,8 @@ class AppController extends Controller {
         case "MUsers":
         case "MWidgetSettings":
         case "TAutoMessages":
+        case "TCampaigns":
+        case "DisplayExclusions":
         // 一先ずトップ画面へ
         $this->redirect("/");
         default:
@@ -146,8 +148,7 @@ class AppController extends Controller {
       case "TDictionaries":
       case "TAutoMessages":
       case "MChatNotifications":
-        // TODO メディアリンクのみ対応
-        if (!$this->coreSettings["chat"] && strcmp($this->userInfo['MCompany']['company_key'], "medialink") !== 0 ) {
+        if ( !$this->coreSettings["chat"] ) {
           $this->redirect("/");
         }
     }
