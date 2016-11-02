@@ -777,7 +777,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       notification: function(monitor){
         if (!('Notification' in window)) return false;
         // 詳細を開いてる且つ、企業がアクティブタブの場合は、通知を出さない
-        if ( $scope.detailId !== "" && document.hasFocus() ) return false;
+        if ( angular.isDefined($scope.detailId) && $scope.detailId !== "" && document.hasFocus() ) return false;
         var m = monitor;
         function getBody(){
           var options = {
@@ -943,7 +943,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var obj = JSON.parse(data);
 
       var tabId = ( obj.subWindow ) ? obj.to : obj.tabId;
-      if ( tabId.length > 0 && tabId.indexOf('_frame') > -1 ) {
+      if ( $scope.isset(tabId) && tabId.length > 0 && tabId.indexOf('_frame') > -1 ) {
         tabId = tabId.substr(0, tabId.indexOf('_frame'));
       }
 
@@ -1121,7 +1121,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
       if ( !(obj.tabId in $scope.monitorList) ) return false;
       if ( obj.ret ) {
-
         // 対象のタブを開いている場合
         if ( obj.tabId === chatApi.tabId ){
           var chat = JSON.parse(JSON.stringify(obj));
@@ -1633,7 +1632,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         }
 
         scope.$watch(function(){
-          if ( scope.detailId !== "" && (scope.detailId in scope.monitorList) ) {
+          if ( angular.isDefined(scope.detailId) && scope.detailId !== "" && (scope.detailId in scope.monitorList) ) {
             return scope.monitorList[scope.detailId];
           }
           else {
@@ -1645,12 +1644,12 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             scope.customData = {};
             scope.customPrevData = {};
           }
-          if ( scope.detailId !== "" && (scope.detailId in scope.monitorList) ) {
+          if ( angular.isDefined(scope.detailId) && scope.detailId !== "" && (scope.detailId in scope.monitorList) ) {
             scope.detail = scope.monitorList[scope.detailId];
             scope.getCustomerInfo(scope.monitorList[scope.detailId].userId, function(ret){
               scope.customData = ret;
               scope.customPrevData = angular.copy(ret);
-              if ( scope.detailId !== "" ) {
+              if ( angular.isDefined(scope.detailId) && scope.detailId !== "" ) {
                 scope.customerList[scope.monitorList[scope.detailId].userId] = angular.copy(scope.customData);
               }
               else {

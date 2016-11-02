@@ -30,41 +30,40 @@
     });
   <?php endif; ?>
 
-    /* パラメーターを取り除く */
-    $scope.trimToURL = function (url){
-      if ( typeof(url) !== 'string' ) return "";
-      var targetParams = <?php echo json_encode($excludeList['params'], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
-      var newUrl = url;
+      /* パラメーターを取り除く */
+      $scope.trimToURL = function (url){
+        if ( typeof(url) !== 'string' ) return "";
+        var targetParams = <?php echo json_encode($excludeList['params'], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
+        var newUrl = url;
 
-      // パラメータの取得
-      var params = url.split('?'), param, targetParams;
-      newUrl = params[0];
-      if ( params[1] !== undefined) {
-        var param = params[1];
-        var paramList = params[1].split('&');
-        for ( var i in targetParams ) {
-          var target = targetParams[i];
-          var a = param.split(target + "=");
-          if ( a.length > 1 ) {
-            if ( a[1].indexOf('&') > -1 ) {
-              var set = target + "=" + a[1].slice(0, a[1].indexOf('&') + 1);
+        // パラメータの取得
+        var params = url.split('?'), param, targetParams;
+        newUrl = params[0];
+        if ( params[1] !== undefined) {
+          var param = params[1];
+          var paramList = params[1].split('&');
+          for ( var i in targetParams ) {
+            var target = targetParams[i];
+            var a = param.split(target + "=");
+            if ( a.length > 1 ) {
+              if ( a[1].indexOf('&') > -1 ) {
+                var set = target + "=" + a[1].slice(0, a[1].indexOf('&') + 1);
+              }
+              else {
+                var set = target + "=" + a[1];
+                a[0] = a[0].slice(0, -1);
+              }
+              param = param.replace(set, "");
+              param = param.slice(0, -1);
             }
-            else {
-              var set = target + "=" + a[1];
-              a[0] = a[0].slice(0, -1);
-            }
-            param = param.replace(set, "");
-            param = param.slice(0, -1);
+          }
+          if ( param.length > 0 ) {
+            newUrl += "?" + param;
           }
         }
-        if ( param.length > 0 ) {
-          newUrl += "?" + param;
-        }
-      }
-      return newUrl;
-    };
+        return newUrl;
+      };
   });
-
 
   sincloApp.directive('ngShowDetail', function(){
     return {
@@ -170,6 +169,81 @@ $(document).ready(function(){
     document.getElementById('HistoryIndexForm').submit();
   });
 
+  $('#dateperiod').daterangepicker({
+    "ranges": {
+      '今日': [moment(), moment()],
+      '昨日': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+      '過去一週間': [moment().subtract(6, 'days'), moment()],
+      '過去一ヶ月間': [moment().subtract(29, 'days'), moment()],
+      '今月': [moment().startOf('month'), moment().endOf('month')],
+      '先月': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+    },
+    "locale": {
+      "format": "YYYY/MM/DD",
+      "separator": " - ",
+      "applyLabel": "適用",
+      "cancelLabel": "Cancel",
+      "fromLabel": "From",
+      "toLabel": "To",
+      "customRangeLabel": "カスタム",
+      "weekLabel": "W",
+      "daysOfWeek": [
+        "日",
+        "月",
+        "火",
+        "水",
+        "木",
+        "金",
+        "土"
+      ],
+      "monthNames": [
+        "1月",
+        "2月",
+        "3月",
+        "4月",
+        "5月",
+        "6月",
+        "7月",
+        "8月",
+        "9月",
+        "10月",
+        "11月",
+        "12月"
+      ],
+      "firstDay": 1
+    },
+    "alwaysShowCalendars": true,
+    "startDate": $('input[name="start_day"]').val(),
+    "endDate": $('input[name="finish_day"]').val(),
+    "opens": "left"
+  });
+
+  $('input[name="datefilter"]').on('apply.daterangepicker', function(ev, picker) {
+    $('input[name="start_day"]').val(picker.startDate.format('YYYY/MM/DD'));
+    $('input[name="finish_day"]').val(picker.endDate.format('YYYY/MM/DD'));
+  });
+
+  $('#day_search').on('click', function() {
+    if ($(this).prop('checked')) {
+      $("#dateperiod").prop("disabled", false);
+      var d = new Date($('#dateperiod').data('daterangepicker').startDate);
+      var startDate = d.getFullYear() + '/' + (d.getMonth() + 1) + '/' + d.getDate();
+      var d2 = new Date($('#dateperiod').data('daterangepicker').endDate);
+      var endDate = d2.getFullYear() + '/' + (d2.getMonth() + 1) + '/' + d2.getDate();
+      $('input[name="start_day"]').val(startDate);
+      $('input[name="finish_day"]').val(endDate);
+      $("#dateperiod").removeClass('extinguish');
+    }
+    else {
+      $("#dateperiod").prop("disabled", true);
+      $('input[name="start_day"]').val("");
+      $('input[name="finish_day"]').val("");
+      $("#dateperiod").addClass('extinguish');
+    }
+  });
 });
 
+function searchRefine(){
+  document.getElementById('searchRefine()').submit();
+}
 </script>

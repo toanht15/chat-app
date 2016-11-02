@@ -34,8 +34,8 @@
             <?= $this->Form->input('searchText', array('type'=>'text', 'label' => false, 'ng-model' => 'searchText', 'ng-attr-placeholder' => '{{searchTextPlaceholder()}}')); ?>
             <div id="userFilter" style="display: flex;">
             </div>
-            <?php endif; ?>
-        </div>
+          </div>
+        <?php endif; ?>
         <!-- 検索窓 -->
         <!-- 機能 -->
         <div class="w50 fRight tRight p20r">
