@@ -1,3 +1,6 @@
 [submodule "contact_site/app/webroot/app/Plugin/Migrations"]
 	path = contact_site/app/webroot/app/Plugin/Migrations
 	url = git://github.com/CakeDC/migrations.git
+[submodule "admin_site/app/Plugin/Migrations"]
+	path = admin_site/app/Plugin/Migrations
+	url = git://github.com/CakeDC/migrations.git
