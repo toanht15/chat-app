@@ -414,21 +414,21 @@ class HistoriesController extends AppController {
         $conditions += ['THistory.access_date <=' => $finish.' 23:59:59'];
       }
 
-        if(!empty($company) || !empty($name) || !empty($tel) || !empty($mail)) {
+        if(isset($company) || isset($name) || isset($tel) || isset($mail)) {
         $allusers = $this->MCustomer->find('all');
         $ret=[];
         foreach($allusers as $alluser) {
           $settings = json_decode($alluser['MCustomer']['informations']);
-          if($company != '' && isset($settings->company) && !strstr($settings->company,$company)) {
+          if($company != '' && !(isset($settings->company) && strstr($settings->company,$company))) {
             continue;
           }
-          if($name != '' && isset($settings->name) && !strstr($settings->name,$name)) {
+          if($name != '' && !(isset($settings->name) && strstr($settings->name,$name))) {
             continue;
           }
-          if($tel != '' && isset($settings->tel) && !strstr($settings->tel,$tel)) {
+          if($tel != '' && !(isset($settings->tel) && strstr($settings->tel,$tel))) {
             continue;
           }
-          if($mail != '' && isset($settings->mail) && !strstr($settings->mail,$mail)) {
+          if($mail != '' && !(isset($settings->mail) && strstr($settings->mail,$mail))) {
             continue;
           }
           $ret[]=$alluser['MCustomer']['visitors_id'];
