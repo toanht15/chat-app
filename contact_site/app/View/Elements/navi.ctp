@@ -83,34 +83,30 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
         <div class="icon">
             <?= $this->htmlEx->naviLink('ウィジェット', 'widget.png', ['href' => ['controller' => 'MWidgetSettings', 'action' => 'index']]) ?>
         </div>
-    <?php endif; ?>
-    <?php if ( $adminFlg ): ?>
       <div class="icon">
         <?= $this->htmlEx->naviLink('キャンペーン', 'campaign.png', ['href' => ['controller' => 'TCampaigns', 'action' => 'index']]) ?>
       </div>
-    <?php endif; ?>
-    <div class="icon">
+      <div class="icon">
         <?= $this->htmlEx->naviLink('表示除外設定', 'exclusion.png', ['href' => ['controller' => 'DisplayExclusions', 'action' => 'index']]) ?>
       </div>
+    <?php endif; ?>
     </div>
     <!-- /* 共通 */ -->
 
     <!-- /* チャット */ -->
-    <?php if ($coreSettings[C_COMPANY_USE_CHAT] || strcmp($userInfo['MCompany']['company_key'], "medialink") === 0): ?>
+    <?php if ($coreSettings[C_COMPANY_USE_CHAT]): ?>
       <div data-sidebar-type="chat" class="hide">
       <?php if ( $adminFlg ): ?>
         <div class="icon">
           <?= $this->htmlEx->naviLink('ｵｰﾄﾒｯｾｰｼﾞ', 'auto_message.png', ['href' => ['controller' => 'TAutoMessages', 'action' => 'index']]) ?>
         </div>
       <?php endif; ?>
-      <?php if ($coreSettings[C_COMPANY_USE_CHAT] || strcmp($userInfo['MCompany']['company_key'], "medialink") === 0): ?>
         <div class="icon">
           <?= $this->htmlEx->naviLink('簡易入力', 'dictionary.png', ['href' => ['controller' => 'TDictionaries', 'action' => 'index']]) ?>
         </div>
         <div class="icon">
           <?= $this->htmlEx->naviLink('チャット通知', 'notification.png', ['href' => ['controller' => 'MChatNotifications', 'action' => 'index']]) ?>
         </div>
-      <?php endif; ?>
       </div>
     <?php endif; ?>
     <!-- /* チャット */ -->
