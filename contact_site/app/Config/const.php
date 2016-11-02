@@ -175,7 +175,7 @@ $config['widgetShowNameType'] = [
 /* ウィジェット設定 － ラジオボタン操作時の動作種別 */
 $config['widgetRadioBtnBehaviorType'] = [
     C_WIDGET_RADIO_CLICK_SEND => "選択された文字列が即時送信されます",
-    C_WIDGET_RADIO_CLICK_TEXT => "選択された文字列がチャットエリアに入力されます"
+    C_WIDGET_RADIO_CLICK_TEXT => "選択された文字列がテキストエリアに入力されます"
 ];
 
 /* ウィジェット設定 － チャット送信アクション種別 */
