@@ -36,6 +36,9 @@ class LoginController extends AppController {
       parent::setUserInfo($userInfo);
       return $this->redirect(['controller' => 'Customers', 'action' => 'index']);
     }
+    else {
+     $this->redirect(['controller' => 'Logins', 'action' => 'login']);
+      }
     }
     $this->render('index');
   }

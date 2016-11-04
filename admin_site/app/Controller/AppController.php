@@ -27,8 +27,60 @@ App::uses('Controller', 'Controller');
  * Add your application-wide methods in the class below, your controllers
  * will inherit them.
  *
- * @package		app.Controller
- * @link		http://book.cakephp.org/2.0/en/controllers.html#the-app-controller
+ * @package   app.Controller
+ * @link    http://book.cakephp.org/2.0/en/controllers.html#the-app-controller
  */
 class AppController extends Controller {
-}
+  public $uses = ['MAdministrator'];
+  public $userInfo;
+
+  public $components = [
+     'Session',
+     'Auth' => [
+        //ログイン後の遷移先
+        'loginRedirect' => [
+        'controller' => 'Tops',
+        'action' => 'index'
+        ],
+        //ログインしていない時に他ページへアクセスした場合
+        'loginAction' => [
+        'controller' => 'Login',
+        'action' => 'login'
+            ],
+        //パスワードハッシュ化
+          'authenticate' => [
+          'Form' => [
+            'userModel' => 'MAdministrator',
+            'fields' => ['username' => 'mail_address'],
+            'scope' => [
+              'MAdministrator.del_flg' => 0
+            ]
+          ]
+        ]
+     ]
+  ];
+   /**
+   *どのアクションが呼ばれてもはじめに実行される関数
+   *@return void
+   */
+  public function beforeFilter(){
+   //viewとindexとaddは認証不要
+    $this->Auth->allow('login');
+    // 未ログインの場合は以降の処理を通さない
+    if (!$this->Auth->user()) return false;
+
+    // ログイン情報をオブジェクトに格納
+    if ( $this->Session->check('global.userInfo') ) {
+      $this->userInfo = $this->Session->read('global.userInfo');
+      $this->set('userInfo', $this->userInfo);
+    }
+    //他のクラスでもbeforeFilterを使えるようにする
+    parent::beforeFilter();
+    //Authの情報をセット
+    $this->set('auth',$this->Auth);
+  }
+
+   public function setUserInfo($info){
+    $this->Session->write('global.userInfo', $info);
+   }
+ }

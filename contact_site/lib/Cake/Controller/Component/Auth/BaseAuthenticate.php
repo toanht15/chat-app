@@ -128,6 +128,11 @@ abstract class BaseAuthenticate implements CakeEventListener {
 			'fields' => $userFields,
 			'contain' => $this->settings['contain'],
 		));
+		pr($conditions);
+		pr($this->settings);
+		pr($userFields);
+		pr($result);
+		exit();
 		if (empty($result[$model])) {
 			$this->passwordHasher()->hash($password);
 			return false;
