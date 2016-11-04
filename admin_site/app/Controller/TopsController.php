@@ -9,14 +9,10 @@ public $uses = ['MAdministrator'];
   public function index() {
     if($this->request->is('post')) {
       $this->MAdministrator->create();
-      //pr($this->request->data); //exit();
       if($this->MAdministrator->save($this->request->data)) {
         $this->redirect(['action' => 'index']);
       }
       return;
     }
-
-
-}
-
+  }
 }
