@@ -18,7 +18,7 @@
 <?php
 /* キャンペーン名の取得 */
 $campaignParam = "";
-$tmp = mb_strstr($history['THistoryStayLog']['firstURL'], '?');
+$tmp = mb_strstr($stayList[$history['THistory']['id']]['THistoryStayLog']['firstURL'], '?');
 if ( $tmp !== "" ) {
   foreach($campaignList as $k => $v){
     if ( strpos($tmp, $k) !== false ) {
@@ -29,17 +29,21 @@ if ( $tmp !== "" ) {
     }
   }
 }
+$visitorInfo = "";
+if ( isset($mCustomerList[$history['THistory']['visitors_id']]) ) {
+  $visitorInfo = $mCustomerList[$history['THistory']['visitors_id']];
+}
 ?>
         <tr>
             <td class="tRight pre"><?=date_format(date_create($history['THistory']['access_date']), "Y/m/d\nH:i:s")?></td>
             <td class="tCenter"><ng-show-detail data-id="<?=h($history['THistory']['id'])?>"></ng-show-detail></td>
-            <td class="tLeft pre">{{ ui('<?=h($history['THistory']['ip_address'])?>', <?=json_encode($history['MCustomer']['informations'])?>) }}</td>
+            <td class="tLeft pre">{{ ui('<?=h($history['THistory']['ip_address'])?>', <?=json_encode($visitorInfo)?>) }}</td>
             <td class="tLeft pre">{{ ua('<?=h($history['THistory']['user_agent'])?>') }}</td>
             <td class="tCenter pre"><?=$campaignParam?></td>
             <td class="tLeft omit"><a href="{{::trimToURL('<?=h($history['THistory']['referrer_url'])?>')}}" target="history">{{::trimToURL("<?=h($history['THistory']['referrer_url'])?>")}}</a></td>
             <td class="tCenter">
-                <?php if( is_numeric($history['THistoryStayLog']['count']) ): ?>
-                    <a class="underL" href="javascript:void(0)" onclick="openHistoryById('<?=h($history['THistory']['id'])?>')" ><?=h($history['THistoryStayLog']['count'])?></a>
+                <?php if( is_numeric($stayList[$history['THistory']['id']]['THistoryStayLog']['count']) ): ?>
+                    <a class="underL" href="javascript:void(0)" onclick="openHistoryById('<?=h($history['THistory']['id'])?>')" ><?=h($stayList[$history['THistory']['id']]['THistoryStayLog']['count'])?></a>
                 <?php endif; ?>
             </td>
             <td class="tRight"><?=$this->htmlEx->calcTime($history['THistory']['access_date'], $history['THistory']['out_date']) ?></td>

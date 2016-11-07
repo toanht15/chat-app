@@ -146,54 +146,8 @@
       }
     },
     connect: function(){
-      function reloaded() {
-        return window.name == window.location.href ? true : false;
-      }
-
-      function newAccessCheck(){
-        var ret = true;
-        if (document.referrer) {
-          if (history.length !== 1) {
-            ret = false;
-          }
-        }
-        if ( ret && reloaded() ) {
-          ret = false;
-        }
-        return ret;
-      }
-
-      function opCheck(){
-        if ( !check.ref() ) return false;
-        if ( !newAccessCheck() ) return false;
-        if ( !check.isset(window.opener) ) return false;
-        if ( !check.isset(window.opener.userInfo) ) return false;
-        if ( !check.isset(window.opener.userInfo.connectToken) ) return false;
-        return true;
-      }
-      // 別タブ対応
-      if ( opCheck() ) {
-        window.opener.blur();
-        if ( window.hasOwnProperty('blur') ) {
-          window.blur();
-        }
-        socket.emit("sendOtherTabURL", JSON.stringify({
-          siteKey: info.site.key,
-          tabId: userInfo.getTabId(),
-          subWindow: userInfo.accessType,
-          url: f_url(browserInfo.href)
-        }));
-        window.opener.focus();
-        if ( check.isset(parent.opener) ) {
-          parent.opener.focus();
-        }
-        setTimeout(function(){
-          window.close();
-        }, 10);
-        return false;
-      }
       // 新規アクセスの場合
-      if ( !check.isset(userInfo.getTabId()) || newAccessCheck() ) {
+      if ( !check.isset(userInfo.getTabId()) ) {
         userInfo.firstConnection = true;
         window.opener = null;
         userInfo.strageReset();
@@ -202,7 +156,6 @@
         userInfo.gFrame = false;
       }
       userInfo.init();
-      window.name = window.location.href; // リロード検知に使う
       var emitData = {
           referrer: userInfo.referrer,
           time: userInfo.getTime(),

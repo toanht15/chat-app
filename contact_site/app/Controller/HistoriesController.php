@@ -10,36 +10,24 @@ class HistoriesController extends AppController {
     'THistory' => [
       'limit' => 100,
       'order' => [
-        'THistory.created' => 'desc',
+        'THistory.access_date' => 'desc',
         'THistory.id' => 'desc'
       ],
       'fields' => [
         'THistory.*',
-        'THistoryChatLog.*',
-        'THistoryStayLog.*',
-        'MCustomer.*'
+        'THistoryChatLog.*'
       ],
       'joins' => [
         [
           'type' => 'INNER',
-          'table' => '(SELECT t_histories_id, COUNT(t_histories_id) AS count FROM t_history_chat_logs GROUP BY t_histories_id)',
+          'table' => '(SELECT t_histories_id, COUNT(*) AS count FROM t_history_chat_logs GROUP BY t_histories_id)',
           'alias' => 'THistoryChatLog',
           'conditions' => [
             'THistoryChatLog.t_histories_id = THistory.id'
           ]
-        ],
-        [
-          'type' => 'LEFT',
-          'table' => '(SELECT t_histories_id, url AS firstURL, COUNT(t_histories_id) AS count FROM t_history_stay_logs WHERE del_flg != 1 GROUP BY t_histories_id ORDER BY created)',
-          'alias' => 'THistoryStayLog',
-          'conditions' => [
-            'THistoryStayLog.t_histories_id = THistory.id'
-          ]
         ]
       ],
-      'conditions' => [
-        'THistory.del_flg !=' => 1
-      ]
+      'conditions' => []
     ],
     'THistoryStayLog' => []
   ];
@@ -48,7 +36,6 @@ class HistoriesController extends AppController {
     parent::beforeFilter();
     $ret = $this->MCompany->read(null, $this->userInfo['MCompany']['id']);
     $orList = [];
-
     if ( !empty($ret['MCompany']['exclude_ips']) ) {
       foreach( explode("\n", trim($ret['MCompany']['exclude_ips'])) as $v ){
         if ( preg_match("/^[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}$/", trim($v)) ) {
@@ -66,10 +53,13 @@ class HistoriesController extends AppController {
     }
 
     $this->paginate['THistory']['conditions'] = [
-      'THistory.del_flg !=' => 1,
-      'THistory.m_companies_id' => $this->userInfo['MCompany']['id'],
-      'NOT' => ['OR' => $orList]
+      'THistory.m_companies_id' => $this->userInfo['MCompany']['id']
     ];
+
+    if ( !empty($orList) ) {
+      $this->paginate['THistory']['conditions']['NOT'] = ['OR' => $orList];
+    }
+
     $this->set('siteKey', $this->userInfo['MCompany']['company_key']);
     $this->set('title_for_layout', '履歴');
   }
@@ -96,10 +86,11 @@ class HistoriesController extends AppController {
       $params = [
         'fields' => '*',
         'conditions' => [
-          'id' => $this->params->query['historyId']
+          'id' => $this->params->query['historyId'],
+          'm_companies_id' => $this->userInfo['MCompany']['id']
         ]
       ];
-      $tHistoryData = $this->THistory->coFind('first', $params);
+      $tHistoryData = $this->THistory->find('first', $params);
 
       $params = [
         'fields' => [
@@ -107,10 +98,11 @@ class HistoriesController extends AppController {
         ],
         'conditions' => [
           'visitors_id = '.$tHistoryData['THistory']['visitors_id'],
+          'm_companies_id' => $this->userInfo['MCompany']['id'],
           'id <= '.$tHistoryData['THistory']['id']
         ]
       ];
-      $tHistoryCountData = $this->THistory->coFind('first', $params);
+      $tHistoryCountData = $this->THistory->find('first', $params);
 
       $mCusData = ['MCustomer' => []];
       if ( !empty($tHistoryData['THistory']['visitors_id']) ) {
@@ -191,8 +183,7 @@ class HistoriesController extends AppController {
     $params = [
       'fields' => '*',
       'conditions' => [
-      'THistoryStayLog.t_histories_id' => $historyId,
-      'THistoryStayLog.del_flg !=' => 1
+      'THistoryStayLog.t_histories_id' => $historyId
       ],
       'recursive' => -1
     ];
@@ -363,15 +354,7 @@ class HistoriesController extends AppController {
   }
 
   private function _setList($type=true){
-    // ユーザー情報の取得
-    $this->paginate['THistory']['joins'][] = [
-      'type' => 'LEFT',
-      'table' => '(SELECT visitors_id, informations FROM m_customers WHERE m_customers.m_companies_id = ' . $this->userInfo['MCompany']['id'] . ')',
-      'alias' => 'MCustomer',
-      'conditions' => [
-        'MCustomer.visitors_id = THistory.visitors_id'
-      ]
-    ];
+
     // チャットのみ表示との切り替え
     if ( !$this->coreSettings[C_COMPANY_USE_CHAT] || strcmp($type, 'false') === 0 ) {
       $this->paginate['THistory']['joins'][0]['type'] = "LEFT";
@@ -379,8 +362,6 @@ class HistoriesController extends AppController {
     else {
       $this->paginate['THistory']['joins'][0]['type'] = "INNER";
     }
-
-    $this->Session->write("histories.joins", $this->paginate['THistory']['joins'][0]['type']);
 
     $data = '';
     $start = '';
@@ -398,24 +379,37 @@ class HistoriesController extends AppController {
 
     if ($this->Session->check('Thistory')) {
       $data = $this->Session->read('Thistory');
-      $start = $data['start_day'];
-      $finish = $data['finish_day'];
-      $ip = $data['ip_address'];
-      $company = $data['company_name'];
-      $name = $data['customer_name'];
-      $tel = $data['telephone_number'];
-      $mail = $data['mail_address'];
+      $start = $data['History']['start_day'];
+      $finish = $data['History']['finish_day'];
+      $ip = $data['History']['ip_address'];
+      $company = $data['History']['company_name'];
+      $name = $data['History']['customer_name'];
+      $tel = $data['History']['telephone_number'];
+      $mail = $data['History']['mail_address'];
 
-      $conditions = ['THistory.ip_address like' =>'%'.$ip.'%'];
+      if($ip != '' ) {
+        $this->paginate['THistory']['conditions'][] = ['THistory.ip_address like' =>'%'.$ip.'%'];
+      }
       if($start != '' ) {
-        $conditions += ['THistory.access_date >=' => $start.' 00:00:00'];
+        $this->paginate['THistory']['conditions'][] = ['THistory.access_date >=' => $start.' 00:00:00'];
       }
       if($finish != '' ) {
-        $conditions += ['THistory.access_date <=' => $finish.' 23:59:59'];
+        $this->paginate['THistory']['conditions'][] = ['THistory.access_date <=' => $finish.' 23:59:59'];
       }
 
-        if(isset($company) || isset($name) || isset($tel) || isset($mail)) {
-        $allusers = $this->MCustomer->find('all');
+      if( $company !== "" || $name !== "" || $tel !== "" || $mail !== "" ) {
+        $userCond = [];
+        if (isset($company)) { $userCond[] = ['MCustomer.informations LIKE' => '%'.$company.'%']; }
+        if (isset($name)) { $userCond[] = [' MCustomer.informations LIKE' => '%'.$name.'%']; }
+        if (isset($tel)) { $userCond[] = ['MCustomer.informations LIKE' => '%'.$tel.'%']; }
+        if (isset($mail)) { $userCond[] = [' MCustomer.informations LIKE' => '%'.$mail.'%']; }
+        $allusers = $this->MCustomer->find('all', [
+          'fields' => '*',
+          'conditions' => [
+            'MCustomer.m_companies_id' => $this->userInfo['MCompany']['id'],
+            'OR' => $userCond
+          ]
+        ]);
         $ret=[];
         foreach($allusers as $alluser) {
           $settings = json_decode($alluser['MCustomer']['informations']);
@@ -433,17 +427,53 @@ class HistoriesController extends AppController {
           }
           $ret[]=$alluser['MCustomer']['visitors_id'];
         }
-        $conditions['THistory.visitors_id'] = $ret;
+
+        $this->paginate['THistory']['conditions'][] = ['THistory.visitors_id' => $ret];
       }
-      $historyList = $this->paginate('THistory',$conditions);
+
     }
-    else {
-    $historyList = $this->paginate('THistory');
+      $historyList = $this->paginate('THistory');
+    // TODO 良いやり方が無いか模索する
+    $historyIdList = [];
+    $customerIdList = [];
+    foreach($historyList as $val){
+      $historyIdList[] = $val['THistory']['id'];
+      $customerIdList[$val['THistory']['visitors_id']] = true;
+    }
+    $tHistoryStayLogList = $this->THistoryStayLog->find('all', [
+      'fields' => [
+        't_histories_id',
+        'url AS firstURL',
+        'COUNT(t_histories_id) AS count '
+      ],
+      'conditions' => [
+        't_histories_id' => $historyIdList
+      ],
+      'group' => 't_histories_id'
+    ]);
+
+    $stayList = [];
+    foreach($tHistoryStayLogList as $val){
+      $stayList[$val['THistoryStayLog']['t_histories_id']] = [
+        'THistoryStayLog' => [
+          'firstURL' => $val['THistoryStayLog']['firstURL'],
+          'count' => $val[0]['count']
+        ]
+      ];
     }
 
+    $mCustomerList = $this->MCustomer->find('list', [
+      'fields' => ['visitors_id', 'informations'],
+      'conditions' => [
+        'm_companies_id' => $this->userInfo['MCompany']['id'],
+        'visitors_id' => array_keys($customerIdList),
+      ]
+    ]);
+
     $this->set('data', $data);
-    $this->set('userList', $historyList);
     $this->set('historyList', $historyList);
+    $this->set('stayList', $stayList);
+    $this->set('mCustomerList', $mCustomerList);
     $this->set('chatUserList', $this->_getChatUser($historyList)); // チャット担当者リスト
     $this->set('groupByChatChecked', $type);
     $this->set('campaignList', $this->TCampaign->getList());
@@ -488,8 +518,7 @@ class HistoriesController extends AppController {
         ]
       ],
       'conditions' => [
-        'THistory.m_companies_id' => $this->userInfo['MCompany']['id'],
-        'THistory.del_flg !=' => 1
+        'THistory.m_companies_id' => $this->userInfo['MCompany']['id']
       ],
       'recursive' => -1
     ];
@@ -541,10 +570,10 @@ class HistoriesController extends AppController {
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
     $this->data = $this->Session->read('Thistory');
-    if(empty($this->data['start_day']) || empty($this->data['finish_day'])) {
+    if(empty($this->data['History']['start_day']) || empty($this->data['History']['finish_day'])) {
       $today = date("Y/m/d");
-      $this->request->data['start_day'] = $today;
-      $this->request->data['finish_day'] = $today;
+      $this->request->data['History']['start_day'] = $today;
+      $this->request->data['History']['finish_day'] = $today;
     }
     // const
     $this->render('/Elements/Histories/remoteSearchCustomerInfo');

@@ -581,7 +581,7 @@ var cnst, init, check, userInfo, browserInfo, url, syncEvent, sinclo, common, st
       iframe = document.createElement('iframe');
       iframe.width = window.innerWidth - 100;
       iframe.height = window.innerHeight;
-      iframe.sandbox = "allow-scripts allow-top-navigation allow-forms allow-popups allow-same-origin allow-modals";
+      iframe.sandbox = "allow-scripts allow-top-navigation allow-forms allow-same-origin allow-modals";
 
       iframe.src = common.setUrl(url);
       frameDiv.appendChild(iframe);
