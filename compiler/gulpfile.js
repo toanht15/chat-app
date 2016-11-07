@@ -5,6 +5,8 @@ var gulp = require('gulp'),
     path = {
       css: '../contact_site/app/webroot/css/',
       scss: './scss/',
+      adCss: '../admin_site/app/webroot/css/',
+      adScss: './admin_scss/',
       js: 'socketJs/websocket/*.js',
       minjs: '../socket/webroot/websocket/',
       jade: '../socket/views/*.jade',
@@ -18,14 +20,24 @@ var uglify = require('gulp-uglify'),
       comments: false
     };
 
-gulp.task('scss-compile', function(){
+gulp.task('admin-scss-compile', function(){
+  return gulp.src(path.adScss + '**/*.scss')
+    .pipe(sass({outputStyle: 'expanded'}))
+    .on('error', function(err) {
+      console.log(err.message);
+    })
+    .pipe(cssnext())
+    .pipe(gulp.dest(path.adCss));
+});
+
+gulp.task('contact-scss-compile', function(){
   return gulp.src(path.scss + '**/*.scss')
     .pipe(sass({outputStyle: 'expanded'}))
     .on('error', function(err) {
       console.log(err.message);
     })
     .pipe(cssnext())
-    .pipe(gulp.dest(path.css))
+    .pipe(gulp.dest(path.css));
 });
 
 gulp.task('js-minify', function(){
@@ -34,19 +46,22 @@ gulp.task('js-minify', function(){
     .pipe(rename({
       extname: '.min.js'
     }))
-    .pipe(gulp.dest(path.minjs))
+    .pipe(gulp.dest(path.minjs));
 });
+
+gulp.task('scss-compile', ['admin-scss-compile','contact-scss-compile'] );
 
 gulp.task('jade-compile', function(){
   return gulp.src(path.jade)
     .pipe(jade({
       extname: '.min.js'
     }))
-    .pipe(gulp.dest(path.outOfJs))
+    .pipe(gulp.dest(path.outOfJs));
 });
 
 gulp.task('watch', function(){
-  gulp.watch([path.scss + '**/*.scss'], ['scss-compile']);
+  gulp.watch([path.adScss + '**/*.scss'], ['admin-scss-compile']);
+  gulp.watch([path.scss + '**/*.scss'], ['contact-scss-compile']);
   gulp.watch([path.js], ['js-minify']);
   gulp.watch([path.jade], ['jade-compile']);
 });

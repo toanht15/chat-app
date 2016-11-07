@@ -1,0 +1,209 @@
+@charset "UTF-8";
+
+/* color list */
+$main-color: #3a485f;
+$shadow-color: #253144;
+$high-light-color: #5596d2;
+$font-color: #656565;
+$success-color: #26a69a;
+$notification-color: #E57373;
+
+
+* {
+  color: $font-color;
+  box-sizing: content-box;
+  cursor: default;
+}
+
+html {
+  font-size: 11px;
+}
+
+body {
+  font-family: 'Helvetica Neue', Helvetica, Arial, Verdana, 'ヒラギノ角ゴ ProN W3', 'Hiragino Kaku Gothic ProN', 'メイリオ', Meiryo, 'ＭＳ Ｐゴシック', 'MS PGothic', sans-serif;
+  line-height: 1.3;
+  font-weight: normal;
+  overflow: hidden;
+}
+
+section {
+  margin-bottom: 1.5em;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+h1 {
+  color: $main-color;
+  font-size: 1.5rem;
+  border-bottom: 2px solid $main-color;
+  padding: 0.25rem 0.5rem;
+  margin: 0 0 0.5rem 0;
+}
+
+h2 {
+  color: #FFF;
+  font-size: 1.25rem;
+  background-color: $main-color;
+  padding: 0.25rem 0.5rem;
+  margin: 0 0 0.5rem 0;
+}
+
+a {
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* 独自クラス */
+
+// ボタン
+[class$='_btn'] {
+  font-size: 1.1rem;
+  border: 1px solid $font-color;
+  border-radius: 5px;
+  padding: 0.25em 0.5em;
+  display: block;
+  margin: 0.25em;
+  text-align: center;
+  cursor: pointer;
+
+  &.normal_btn {
+    color: $font-color;
+    border-color: $font-color;
+    &:hover {
+      color: #FFF;
+      background-color: $font-color;
+    }
+  }
+  &.success_btn {
+    color: $success-color;
+    border-color: $success-color;
+    &:hover {
+      color: #FFF;
+      background-color: $success-color;
+    }
+  }
+  &.notification_btn {
+    color: $notification-color;
+    border-color: $notification-color;
+    &:hover {
+      color: #FFF;
+      background-color: $notification-color;
+    }
+  }
+}
+
+[class$='_message'] {
+  &.notification_message {
+    color: #26a69a;
+  }
+  &.error_message {
+    color: #E57373;
+  }
+}
+
+div#sidebar {
+  background-color: $main-color;
+  width: 12em;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+
+  * {
+    color: #FFF;
+  }
+
+  div#logo {
+    text-align: center;
+    border-right: 1px solid $main-color;
+    background-color: #FFF;
+    color: $font-color;
+    height: 60px;
+    padding: 6px 0;
+  }
+
+  nav {
+    flex-shrink: 0;
+    align-self: stretch;
+    color: #FFF;
+    height: 90%;
+    height: calc(100% - 2em - 60px);
+    display: block;
+
+    li {
+      padding: 0.5em 0;
+      padding-left: 2.5em;
+
+      &.nav-group {
+        padding-left: 1.5em;
+      }
+
+      &.on {
+        position: relative;
+        background-color: $shadow-color;
+
+        &:after {
+          content: " ";
+          width: 0;
+          position: absolute;
+          right: 0;
+          height: 0;
+          border: 0.8em solid transparent;
+          border-right: 0.8em solid #ffffff;
+          top: 0.5em;
+        }
+      }
+
+    }
+  }
+
+  a {
+    background-color: $main-color;
+    display: block;
+    height: 2em;
+    color: #FFF;
+    padding: 0 0.5em;
+    text-align: center;
+  }
+
+}
+
+#content {
+  margin-left: 12em;
+  .formArea {
+    > * {
+      margin: 0.5em;
+      display: flex;
+    }
+    label {
+      color: $font-color;
+      width: 10em;
+    }
+    input, textarea {
+      padding: 0.25em 0.5em;
+      border-color: $font-color;
+      border-style: solid;
+      font-size: 0.98em;
+
+      &:focus {
+        outline: none;
+        border-color: $high-light-color;
+      }
+    }
+
+    input {
+      border-width: 0 0 1px 0;
+    }
+  }
+}
