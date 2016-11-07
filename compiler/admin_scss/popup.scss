@@ -1,0 +1,151 @@
+@charset "UTF-8";
+
+/* color list */
+$main-color: #3a485f;
+$shadow-color: #253144;
+$high-light-color: #5596d2;
+$font-color: #656565;
+$success-color: #26a69a;
+$notification-color: #E57373;
+
+/* ポップアップ */
+
+#popup {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  &.popup-off { display: none; }
+
+  #popup-frame-base {
+    position:relative;
+    width: 100%;
+    height: 100%;
+
+    #popup-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.7);
+      z-index: 50;
+    }
+
+    #popup-frame {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: white;
+      margin: auto;
+      z-index: 51;
+
+      &.p-confirm {
+        width: 400px;
+      }
+
+      &.p-alert {
+        width: 400px;
+      }
+
+      #popup-content{
+
+        #popup-title {
+          display: flex;
+          background-color: $main-color;
+          height: 2.5rem;
+
+          h2 {
+            margin-bottom: 0;
+            padding: 0.3em 1rem;
+            width: calc(100% - 2rem);
+          }
+          #popup-close-btn {
+            padding: 0.25rem 0.5rem;
+            font-size: 1.5rem;
+            color: #FFF;
+            border-left: 1px solid #FFF;
+            display: block;
+            width: 1em;
+            text-align: center;
+
+            &:hover {
+              background-color: $shadow-color;
+            }
+          }
+        }
+
+        #popup-main {
+          padding: 1rem 1.5rem;
+        }
+
+        #popup-button {
+          display: flex;
+          padding: 0.5rem;
+          justify-content: space-around;
+        }
+      }
+    }
+  }
+}
+
+/* フラッシュメッセージ用スタイル */
+#shortMessage {
+  width: 70%;
+  font-size: 15px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin: 5px auto;
+  z-index: 50;
+  padding: 15px;
+  border-radius: 10px;
+  color: #FFF;
+  font-weight: bold;
+  opacity: 1;
+
+  &:after {
+    content: "";
+    position: absolute;
+    bottom: -20px;
+    left: 15px;
+    border: 12px solid transparent;
+  }
+
+  &.success {
+    background-color: #86C18D;
+
+    &:after {
+      border-top: 12px solid #86C18D;
+    }
+  }
+
+  &.failure {
+    background-color: #C18686;
+
+    &:after {
+      border-top: 12px solid #C18686;
+    }
+  }
+}
+
+/* ポップアップ用:バックグラウンド */
+#popup-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 50;
+}
+
+/* ポップアップ用非表示クラス */
+.popup-off {
+  display: none;
+}

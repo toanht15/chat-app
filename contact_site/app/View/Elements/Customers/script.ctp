@@ -181,6 +181,32 @@ if ( window.hasOwnProperty('io') ) {
       }
     });
 
+    $(document).on("click", "#showChatTab > li", function(e){
+      var className = $(this).data('type');
+      $("#showChatTab > li").removeClass("on");
+      if ( className === "oldChat" ) {
+        $.ajax({
+          type: 'GET',
+          url: "<?= $this->Html->url(array('controller' => 'Histories', 'action' => 'remoteGetChatLogs')) ?>",
+          cache: false,
+          data: {
+            tabId: $scope.detail.tabId,
+            userId: $scope.detail.userId,
+          },
+          dataType: 'html',
+          success: function(html){
+            modalOpen.call(window, html, 'p-chat-logs', 'チャット履歴');
+          }
+        });
+      }
+      else {
+        className = "currentChat";
+      }
+      $("#showChatTab > li[data='" + className + "']").addClass("on");
+      $("#chatContent > section").removeClass("on");
+      $("#chatContent > #" + className).addClass("on");
+    });
+
   });
 
   $(window).resize(function(){
