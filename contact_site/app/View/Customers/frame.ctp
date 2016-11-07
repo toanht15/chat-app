@@ -229,7 +229,7 @@ window.onload = function(){
 
     content.innerHTML = html;
     iframe = document.getElementsByTagName('iframe')[0];
-    iframe.sandbox = "allow-scripts allow-top-navigation allow-forms allow-popups allow-same-origin allow-modals";
+    iframe.sandbox = "allow-scripts allow-top-navigation allow-forms allow-same-origin allow-modals";
 
     if ( url.match(/\?/) ) {
       url += "&";
