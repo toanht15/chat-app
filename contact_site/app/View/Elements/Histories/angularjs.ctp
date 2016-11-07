@@ -213,14 +213,14 @@ $(document).ready(function(){
       "firstDay": 1
     },
     "alwaysShowCalendars": true,
-    "startDate": $('input[name="start_day"]').val(),
-    "endDate": $('input[name="finish_day"]').val(),
+    "startDate": $('#HistoryStartDay').val(),
+    "endDate": $('#HistoryFinishDay').val(),
     "opens": "left"
   });
 
   $('input[name="datefilter"]').on('apply.daterangepicker', function(ev, picker) {
-    $('input[name="start_day"]').val(picker.startDate.format('YYYY/MM/DD'));
-    $('input[name="finish_day"]').val(picker.endDate.format('YYYY/MM/DD'));
+    $('#HistoryStartDay').val(picker.startDate.format('YYYY/MM/DD'));
+    $('#HistoryFinishDay').val(picker.endDate.format('YYYY/MM/DD'));
   });
 
   $('#day_search').on('click', function() {
@@ -230,14 +230,14 @@ $(document).ready(function(){
       var startDate = d.getFullYear() + '/' + (d.getMonth() + 1) + '/' + d.getDate();
       var d2 = new Date($('#dateperiod').data('daterangepicker').endDate);
       var endDate = d2.getFullYear() + '/' + (d2.getMonth() + 1) + '/' + d2.getDate();
-      $('input[name="start_day"]').val(startDate);
-      $('input[name="finish_day"]').val(endDate);
+      $('#HistoryStartDay').val(startDate);
+      $('#HistoryFinishDay').val(endDate);
       $("#dateperiod").removeClass('extinguish');
     }
     else {
       $("#dateperiod").prop("disabled", true);
-      $('input[name="start_day"]').val("");
-      $('input[name="finish_day"]').val("");
+      $('#HistoryStartDay').val("");
+      $('#HistoryFinishDay').val("");
       $("#dateperiod").addClass('extinguish');
     }
   });
