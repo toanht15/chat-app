@@ -19,7 +19,6 @@ popupEvent.customizeBtn = function(){
 };
 
 </script>
-<?php var_dump($this->data)?>
 <?php echo $this->element('Histories/angularjs') ?>
 <?=  $this->Form->create('History',['id' => 'historySearch','type' => 'post','url' => ['controller' => 'Histories','action' => 'index']]); ?>
   <ul>

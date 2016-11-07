@@ -15,10 +15,6 @@ class AddIndexKindOfHistory extends CakeMigration {
  */
 	public $migration = array(
 		'up' => array(
-			'drop_field' => array(
-				'm_companies' => array('exclude_params', 'exclude_ips'),
-				't_history_chat_logs' => array('indexes' => array('t_histories_id')),
-			),
 			'alter_field' => array(
 				'm_customers' => array(
 					'm_companies_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'index', 'comment' => '企業ID'),
@@ -58,10 +54,10 @@ class AddIndexKindOfHistory extends CakeMigration {
 		),
 		'down' => array(
 			'create_field' => array(
-				'm_companies' => array(
-					'exclude_params' => array('type' => 'text', 'null' => true, 'default' => null, 'collate' => 'utf8_general_ci', 'comment' => '除外パラメータ', 'charset' => 'utf8'),
-					'exclude_ips' => array('type' => 'text', 'null' => true, 'default' => null, 'collate' => 'utf8_general_ci', 'comment' => '除外IPアドレス', 'charset' => 'utf8'),
-				),
+        'm_companies' => array(
+          'exclude_params' => array('type' => 'text', 'null' => true, 'default' => null, 'collate' => 'utf8_general_ci', 'comment' => '除外パラメータ', 'charset' => 'utf8'),
+          'exclude_ips' => array('type' => 'text', 'null' => true, 'default' => null, 'collate' => 'utf8_general_ci', 'comment' => '除外IPアドレス', 'charset' => 'utf8'),
+        ),
 				't_history_chat_logs' => array(
 					'indexes' => array(
 						't_histories_id' => array('column' => 't_histories_id', 'unique' => 0),
