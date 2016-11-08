@@ -18,6 +18,9 @@ class MCustomer extends AppModel {
       'conditions' => [
         'MCustomer.m_companies_id' => $companyId,
         'MCustomer.visitors_id' => $vId
+      ],
+      'order' => [
+        'MCustomer.modified' => 'desc'
       ]
     ];
     $ret = $this->find('first', $params);
