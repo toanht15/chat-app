@@ -207,6 +207,7 @@ class HistoriesController extends AppController {
       "訪問ユーザ",
       "プラットフォーム",
       "ブラウザ",
+      "キャンペーン",
       "参照元URL",
       "閲覧ページ数",
       "滞在時間"
@@ -232,6 +233,8 @@ class HistoriesController extends AppController {
       $row['os'] = $ua[0];
       // ブラウザ
       $row['browser'] = $ua[1];
+      // キャンペーン
+      $row['campaign'] = $val->campaign;
       // 参照元URL
       $row['referrer'] = $val->referrer;
       // 閲覧ページ数
@@ -474,7 +477,7 @@ class HistoriesController extends AppController {
     $this->set('historyList', $historyList);
     $this->set('stayList', $stayList);
     $this->set('mCustomerList', $mCustomerList);
-    $this->set('chatUserList', $this->_getChatUser($historyList)); // チャット担当者リスト
+    $this->set('chatUserList', $this->_getChatUser(array_keys($stayList))); // チャット担当者リスト
     $this->set('groupByChatChecked', $type);
     $this->set('campaignList', $this->TCampaign->getList());
     /* 除外情報取得 */
@@ -499,8 +502,7 @@ class HistoriesController extends AppController {
           'type' => 'INNER',
           'table' => '(SELECT * FROM t_history_chat_logs '.
                ' WHERE m_users_id IS NOT NULL '.
-               '   AND t_histories_id <= ' . $historyList[0]['THistory']['id'].
-               '   AND t_histories_id >= ' . $historyList[count($historyList) - 1]['THistory']['id'].
+               '   AND t_histories_id IN (' . implode(",", $historyList) .')'.
                ' GROUP BY t_histories_id, m_users_id'.
                ')',
           'alias' => 'THistoryChatLog',

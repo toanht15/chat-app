@@ -216,7 +216,6 @@ class CustomersController extends AppController {
       $params = [
         'fields' => '*',
         'conditions' => [
-          'THistory.del_flg !=' => 1,
           'THistory.m_companies_id' => $this->userInfo['MCompany']['id'],
           'THistory.tab_id' => $this->params->query['tabId']
         ],
@@ -226,8 +225,7 @@ class CustomersController extends AppController {
             'table' => 't_history_stay_logs',
             'alias' => 'THistoryStayLog',
             'conditions' => [
-              'THistoryStayLog.t_histories_id = THistory.id',
-              'THistoryStayLog.del_flg !=' => 1
+              'THistoryStayLog.t_histories_id = THistory.id'
             ]
           ]
         ],

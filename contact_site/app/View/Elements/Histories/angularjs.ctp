@@ -133,8 +133,7 @@ $(document).ready(function(){
     var tbody = document.querySelector('#history_list tbody');
     var data = [];
     // CSVに不要な列が追加されたら空をセット
-    var label = ["date","","ip","useragent","referrer","pageCnt","visitTime","status", "user"];
-
+    var label = ["date","","ip","useragent","campaign","referrer","pageCnt","visitTime","status", "user"];
     var noCsvData = {};
 
     for (var a = 0; a < thead.children[0].children.length; a++) {
