@@ -262,6 +262,58 @@ class CustomersController extends AppController {
     return new CakeResponse(['body' => json_encode($ret)]);
   }
 
+  public function remoteGetChatList(){
+    Configure::write('debug', 0);
+    $this->autoRender = FALSE;
+    $this->layout = null;
+    $ret = [];
+    if ( !empty($this->params->query['userId'] ) ) {
+
+      $params = [
+        'fields' => [
+          'THistoryChatLog.t_histories_id',
+          'THistoryChatLog.created',
+        ],
+        'conditions' => [
+          'THistoryChatLog.visitors_id' => $this->params->query['userId']
+        ],
+        'order' => ['created' => 'desc'],
+        'group' => 't_histories_id',
+          'recursive' => -1
+      ];
+      $ret = $this->THistoryChatLog->find('list', $params);
+    }
+    return new CakeResponse(['body' => json_encode($ret)]);
+  }
+
+  public function remoteGetOldChat(){
+    Configure::write('debug', 0);
+    $this->autoRender = FALSE;
+    $this->layout = null;
+    $ret = [];
+    if ( !empty($this->params->query['historyId'] ) ) {
+
+      $params = [
+        'fields' => [
+          'THistoryChatLog.message',
+          'THistoryChatLog.message_type AS messageType',
+          'THistoryChatLog.m_users_id AS userId',
+          'THistoryChatLog.created'
+        ],
+        'conditions' => [
+          'THistoryChatLog.t_histories_id' => $this->params->query['historyId']
+        ],
+        'order' => 'created',
+        'recursive' => -1
+      ];
+      $chatLog = $this->THistoryChatLog->find('all', $params);
+      foreach($chatLog as $val){
+        $ret[] = $val['THistoryChatLog'];
+      }
+    }
+    return new CakeResponse(['body' => json_encode($ret)]);
+  }
+
   /**
    * ビュー表示用
    * @return void
