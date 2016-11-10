@@ -30,6 +30,7 @@
     echo $this->Html->css('style');
     echo $this->Html->script("//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js");
     echo $this->Html->css('popup');
+    echo $this->Html->css('font-awesome.min');
   ?>
 </head>
 <body>
@@ -37,13 +38,13 @@
     <div id="logo" ><?=$this->Html->image('sinclo_square_logo.png', ['width'=>54, 'height'=>48])?></div>
     <nav>
       <ul>
-        <li class="nav-group">トップ</li>
-        <li class="nav-group on">契約管理</li>
+        <li class="nav-group"><i class="fa fa-home fa-lg" aria-hidden="true"></i> トップ</li>
+        <li class="nav-group on"><i class="fa fa-building fa-lg" aria-hidden="true"></i> 契約管理</li>
         <li>契約一覧</li>
-        <li class="nav-group">設定</li>
+        <li class="nav-group"><i class="fa fa-cog fa-lg" aria-hidden="true"></i> 設定</li>
         <li>アカウント設定</li>
         <li>テンプレート設定</li>
-        <li class="nav-group">個人設定</li>
+        <li class="nav-group"><i class="fa fa-user fa-lg" aria-hidden="true"></i> 個人設定</li>
         <li>個人設定</li>
       </ul>
     </nav>

@@ -53,24 +53,23 @@ $notification-color: #E57373;
       }
 
       #popup-content{
-
         #popup-title {
           display: flex;
           background-color: $main-color;
-          height: 2.5rem;
+          height: 3rem;
 
           h2 {
             margin-bottom: 0;
-            padding: 0.3em 1rem;
+            padding: 0.5em 1rem;
             width: calc(100% - 2rem);
           }
           #popup-close-btn {
-            padding: 0.25rem 0.5rem;
-            font-size: 1.5rem;
+            padding: 0.25em 0;
+            font-size: 1.5em;
             color: #FFF;
             border-left: 1px solid #FFF;
             display: block;
-            width: 1em;
+            width: 2em;
             text-align: center;
 
             &:hover {
