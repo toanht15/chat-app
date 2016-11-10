@@ -1,6 +1,6 @@
 <section>
 	<h1>◆ 通常系</h1>
-	<h1>ｈ１</h1>
+	<h1><i class="fa fa-bell" aria-hidden="true"></i> ｈ１</h1>
 	<h2>ｈ２</h2>
 	<ul class="formArea">
 		<li>
@@ -12,6 +12,35 @@
 			<textarea name="" id="" cols="30" rows="10"></textarea>
 		</li>
 	</ul>
+	<a class="underLine" href="javascript:void(0)">リンク</a>
+</section>
+
+<section>
+	<h1>◆ テーブル</h1>
+	<table>
+		<thead>
+			<th>カラム１</th>
+			<th>カラム２</th>
+			<th>カラム３</th>
+		</thead>
+		<tbody>
+			<tr>
+				<td>データ１</td>
+				<td>データ２</td>
+				<td>データ３</td>
+			</tr>
+			<tr>
+				<td>データ１</td>
+				<td>データ２</td>
+				<td>データ３</td>
+			</tr>
+			<tr>
+				<td>データ１</td>
+				<td>データ２</td>
+				<td>データ３</td>
+			</tr>
+		</tbody>
+	</table>
 </section>
 
 <section>
@@ -23,6 +52,7 @@
 <section>
 	<h1>◆ ボタンの使い方</h1>
 	<a href="javascript:void(0)" style="width: 6em" class="normal_btn">normal</a>
+	<a href="javascript:void(0)" style="width: 6em" class="action_btn">action</a>
 	<a href="javascript:void(0)" style="width: 6em" class="success_btn">success</a>
 	<a href="javascript:void(0)" style="width: 6em" class="notification_btn">notification</a>
 </section>

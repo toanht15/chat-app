@@ -62,3 +62,10 @@ $ ./migration run up
 $ ./migration run down
 ```
 
+## その他
+
+### 企業側管理画面について
+
+こちらでは「fontawesome」を利用させて頂いております。
+アイコンを追加で試用したい場合は[こちら](http://fontawesome.io/)より確認、利用してください。
+ライセンスは *MITライセンス* になっております。

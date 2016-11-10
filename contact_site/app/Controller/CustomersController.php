@@ -6,6 +6,8 @@
 class CustomersController extends AppController {
   public $uses = ['THistory', 'THistoryChatLog', 'TCampaign', 'MCompany', 'MUser', 'MCustomer', 'MWidgetSetting', 'MChatNotification', 'TDictionary'];
 
+  public $tmpLabelHideList = ["accessId", "ipAddress", "ua", "stayCount", "time", "campaign", "stayTime", "page", "title", "referrer"];
+
   public function beforeRender(){
     $this->set('siteKey', $this->userInfo['MCompany']['company_key']);
     $this->set('muserId', $this->userInfo['id']);
@@ -137,6 +139,38 @@ class CustomersController extends AppController {
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = null;
+    $tmpLabelHideList = [];
+    $labelHideList = [];
+    if (!empty($this->params->query['labelHideList'])) {
+      foreach ( (array)json_decode($this->params->query['labelHideList'] ) as $key => $value ) {
+        if ( $value ) {
+          $tmpLabelHideList[$key] = $value;
+        }
+      }
+    }
+
+    $labelHideList = $this->jsonEncode($tmpLabelHideList);
+
+    $saveData = [
+      'MUser' => [
+        'id' => $this->userInfo['id'],
+        'operation_list_columns' => $labelHideList
+      ]
+    ];
+
+    $this->MUser->begin();
+    if ( $this->MUser->save($saveData) ) {
+      $this->MUser->commit();
+      $this->userInfo['operation_list_columns'] = $labelHideList;
+      $this->Session->write('global.userInfo', $this->userInfo);
+    }
+    else {
+      $labelHideList = [];
+      $this->MUser->rollback();
+    }
+
+    return new CakeResponse(['body' => $labelHideList]);
+
   }
 
   public function remoteGetCusInfo() {
@@ -262,6 +296,58 @@ class CustomersController extends AppController {
     return new CakeResponse(['body' => json_encode($ret)]);
   }
 
+  public function remoteGetChatList(){
+    Configure::write('debug', 0);
+    $this->autoRender = FALSE;
+    $this->layout = null;
+    $ret = [];
+    if ( !empty($this->params->query['userId'] ) ) {
+
+      $params = [
+        'fields' => [
+          'THistoryChatLog.t_histories_id',
+          'THistoryChatLog.created',
+        ],
+        'conditions' => [
+          'THistoryChatLog.visitors_id' => $this->params->query['userId']
+        ],
+        'order' => ['created' => 'desc'],
+        'group' => 't_histories_id',
+          'recursive' => -1
+      ];
+      $ret = $this->THistoryChatLog->find('list', $params);
+    }
+    return new CakeResponse(['body' => json_encode($ret)]);
+  }
+
+  public function remoteGetOldChat(){
+    Configure::write('debug', 0);
+    $this->autoRender = FALSE;
+    $this->layout = null;
+    $ret = [];
+    if ( !empty($this->params->query['historyId'] ) ) {
+
+      $params = [
+        'fields' => [
+          'THistoryChatLog.message',
+          'THistoryChatLog.message_type AS messageType',
+          'THistoryChatLog.m_users_id AS userId',
+          'THistoryChatLog.created'
+        ],
+        'conditions' => [
+          'THistoryChatLog.t_histories_id' => $this->params->query['historyId']
+        ],
+        'order' => 'created',
+        'recursive' => -1
+      ];
+      $chatLog = $this->THistoryChatLog->find('all', $params);
+      foreach($chatLog as $val){
+        $ret[] = $val['THistoryChatLog'];
+      }
+    }
+    return new CakeResponse(['body' => json_encode($ret)]);
+  }
+
   /**
    * ビュー表示用
    * @return void
@@ -283,6 +369,14 @@ class CustomersController extends AppController {
     else if ( $this->coreSettings[C_COMPANY_USE_SYNCLO] && !$this->coreSettings[C_COMPANY_USE_CHAT] ) {
       $cType = "syncOnly";
     }
+    /* 表示項目設定 */
+    $labelHideList = [];
+    $userSetting = json_decode($this->userInfo['operation_list_columns'], true);
+    foreach( $this->tmpLabelHideList as $val ){
+      $labelHideList[$val] = ( isset($userSetting[$val]) ) ? true : false;
+    }
+
+    $this->set('labelHideList', $labelHideList);
     $this->set('cType', $cType);
     $this->set('tabStatusList', Configure::read('tabStatusList'));
     $this->set('tabStatusStrList', Configure::read('tabStatusStrList'));

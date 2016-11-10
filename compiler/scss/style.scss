@@ -1292,13 +1292,9 @@ ul.naviBtn {
               border-radius: 5px 5px 0 0;
               background-color: #ADADAD;
               font-size: 0.8em;
-              padding: 0.75em 3em 0em 3em;
+              padding: 0.72em 3em 0.3em 3em;
               box-shadow: 0px -1px 1px rgba(0,0,0,0.2);
-
-              &:hover {
-                  padding-top: 0.45em;
-                  padding-bottom: 0.3em;
-              }
+              cursor: pointer;
 
               &.on {
                 background-color: $main-color;
@@ -1331,13 +1327,14 @@ ul.naviBtn {
                 .historyList {
                     height: 10em!important;
                     li {
-                        border-bottom: 1px solid #bababa;
-                        padding: 0.5em;
-                        background-color: #FFF;
+                      border-bottom: 1px solid #bababa;
+                      padding: 0.5em;
+                      background-color: #FFF;
+                      cursor: pointer;
 
-                        &:hover, &.on {
-                            background-color: #f6fee6;
-                        }
+                      &:hover, &.on {
+                          background-color: #f6fee6;
+                      }
                     }
                 }
 
@@ -1379,7 +1376,18 @@ ul.naviBtn {
 
             .chatView {
               padding: 0.5em;
-                li {
+              display: flex;
+              flex-direction: column;
+
+              message-list-descript {
+                font-size: 0.85em;
+                color: #a5a5a5;
+
+                &.on { display: block }
+                &.off { display: none }
+              }
+
+              li {
                   margin: 10px 0;
                   padding: 5px;
                   font-size: 12px;

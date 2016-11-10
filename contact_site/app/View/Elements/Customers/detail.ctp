@@ -73,12 +73,15 @@
             <!-- 過去のチャット -->
             <section id="oldChat">
               <ul class="historyList">
-                <li><span>2016/10/16</span></li>
+                <li ng-click="getOldChat(historyId)" ng-repeat="(historyId, firstDate) in chatLogList"><span>{{firstDate | date:'yyyy年M月d日（EEE）a hh時mm分ss秒' }}</span></li>
               </ul>
               <div class="chatList">
-                <ul class="chatView">
-                  <li class="sinclo_re"><span>2016/10/16 14:00</span>sinclo_re</li>
-                  <li class="sinclo_se"><span>2016/10/16 14:12</span>sinclo_se</li>
+                <ul>
+                  <message-list class="chatView">
+                    <message-list-descript>上から、表示したいチャット対応日時をクリックしてください</message-list-descript>
+                    <ng-create-message ng-repeat="chat in chatLogMessageList | orderBy: 'sort'">
+                    </ng-create-message>
+                  </message-list>
                 </ul>
               </div>
             </section>
