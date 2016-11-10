@@ -56,16 +56,28 @@ var popupEvent = {
                 area.removeChild(area.childNodes[i]);
             }
             switch ( popupEvent.id ) {
-                case 'p-confirm':
-                    var closeBtn = _button("はい");
+                case 'p-muser-entry':
+                    var closeBtn = _button("一覧");
+                    closeBtn.classList.add("normal_btn");
+                    closeBtn.onclick = function(){
+                        return popupEvent.closeNoPopup();
+                    };
+                    var closeBtn = _button("登録");
                     closeBtn.classList.add("normal_btn");
                     closeBtn.onclick = function(){
                         return popupEvent.closePopup();
                     };
-                    var closeBtn = _button("いいえ");
+                    break;
+                case 'p-confirm':
+                    var closeBtn = _button("削除");
                     closeBtn.classList.add("normal_btn");
                     closeBtn.onclick = function(){
-                        return popupEvent.closeNoPopup();
+                        return popupEvent.closeDeletePopup();
+                    };
+                    var closeBtn = _button("登録");
+                    closeBtn.classList.add("normal_btn");
+                    closeBtn.onclick = function(){
+                        return popupEvent.closePopup();
                     };
                     break;
                 case 'p-alert':
@@ -85,6 +97,15 @@ var popupEvent = {
             }
             function _button(text){
                 var a = document.createElement('a');
+                //a.classList.add("whiteBtn");
+                a.href = "javascript:void(0)";
+                a.textContent = text;
+                area.appendChild(a);
+                return a;
+            }
+            function _button2(text){
+                var a = document.createElement('a');
+                a.classList.add("normal_btn");
                 a.href = "javascript:void(0)";
                 a.textContent = text;
                 area.appendChild(a);
@@ -115,7 +136,7 @@ var popupEvent = {
                 // ポップアップを表示状態にする
                 $(".popup-off").addClass('popup-on').removeClass('popup-off');
                 var contHeight = $('#popup-content').height();
-                $('#popup-frame').css('top', 0).css('height', contHeight);
+                //$('#popup-frame').css('top', 0).css('height', contHeight);
             }
             else {
                 // 一時的にスクロール非表示に

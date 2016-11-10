@@ -22,8 +22,21 @@ class LoginController extends AppController {
       if ($this->Auth->login()) {
         $userInfo = $this->Auth->user();
         parent::setUserInfo($userInfo);
-        $this->redirect(['controller' => 'Tops', 'action' => 'index']);
+        $this->redirect(['controller' => 'Tops', 'action' => 'sample']);
       }
+      else{
+  }
+    }
+  }
+
+    public function logout(){
+    $this->userInfo = [];
+    $this->Session->destroy();
+    if ( $this->Auth->logout() ) {
+    $this->redirect($this->Auth->logout());
+    }
+    else {
+    $this->redirect(['action' => 'index']);
     }
   }
 }

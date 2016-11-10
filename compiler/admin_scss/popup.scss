@@ -48,6 +48,10 @@ $notification-color: #E57373;
         width: 400px;
       }
 
+      &.p-muser-entry {
+        width: 400px;
+      }
+
       &.p-alert {
         width: 400px;
       }
@@ -59,9 +63,19 @@ $notification-color: #E57373;
           height: 3rem;
 
           h2 {
+            font-size: 17px;
             margin-bottom: 0;
             padding: 0.5em 1rem;
             width: calc(100% - 2rem);
+            border-bottom: 1px solid #fff;
+            color: #fff;
+            height:30px;
+            padding-top:12px;
+            padding-left:44px;
+            background-image: url(/img/personal_g.png);
+            background-repeat: no-repeat;
+            background-position: left 10pt bottom 10pt;
+            background-size: 24px;
           }
           #popup-close-btn {
             padding: 0.25em 0;
@@ -79,7 +93,7 @@ $notification-color: #E57373;
         }
 
         #popup-main {
-          padding: 1rem 1.5rem;
+          padding: 20px;
         }
 
         #popup-button {
@@ -148,3 +162,78 @@ $notification-color: #E57373;
 .popup-off {
   display: none;
 }
+
+/*アカウント設定*/
+
+input[type='text'], input[type='number'], input[type='password'] {
+    padding: 5px 10px;
+    border: none;
+    border-bottom: 1px solid #909090;
+}
+
+input[type='text'], input[type='number'], input[type='password']:focus {
+  outline: 0;
+  border-color: #909090;
+}
+
+input#MAdministratorUserName {
+    margin-left: 97px;
+}
+
+input#MAdministratorMailAddress {
+    margin-left: 27px;
+}
+
+
+input#MAdministratorNewPassword {
+    margin-left: 55px;
+}
+
+p.error-message {
+    color: #E57373;
+    margin-left: 30px;
+    width: 336px;
+    font-size: 14px;
+    margin-bottom: 0px;
+}
+
+/* もしかしたら使うかも
+.grayBtn {
+    cursor: pointer !important;
+    display: block;
+    -webkit-transition: background-color, border-color 0.1s linear;
+    transition: background-color, border-color 0.1s linear;
+    background-color: #647388;
+    color: white;
+    border: 1px solid #647388;
+}
+
+.whiteBtn {
+    cursor: pointer !important;
+    display: block;
+    -webkit-transition: background-color, border-color 0.1s linear;
+    transition: background-color, border-color 0.1s linear;
+    background-color: #fff;
+    color: #656565;
+    border: 1px solid #fff;
+}
+
+.textBtn {
+    padding: 2px 5px;
+    font-size: 14px;
+    text-align: center;
+    border-radius: 15px;
+    height: 22px;
+    width: 74px;
+    padding-top: 3px;
+}
+
+.textBtn2 {
+    padding: 2px 5px;
+    font-size: 14px;
+    text-align: center;
+    border-radius: 15px;
+    height: 22px;
+    width: 74px;
+    padding-top: 3px;
+}*/
