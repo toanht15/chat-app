@@ -3,6 +3,7 @@
 /app/Config/database.php
 /app/tmp
 /app/webroot/css/*.css
+!/app/webroot/css/font-awesome.min.css
 /lib/Cake/Console/Templates/skel/tmp/
 /plugins
 /vendors
