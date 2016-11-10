@@ -252,6 +252,13 @@ class AppController extends Controller {
     return json_encode($val, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_FORCE_OBJECT );
   }
 
+  /**
+   * カラフルなvar_dump出力
+   */
+  public function hdump($var) {
+      highlight_string("<?php\n" . var_export($var, true));
+  }
+
   /* *
    * imagecreatefrom**
    * */

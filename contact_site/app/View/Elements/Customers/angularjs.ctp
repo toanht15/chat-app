@@ -310,18 +310,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     $scope.chatMessage = "";
     $scope.oprCnt = 0; // 待機中のオペレーター人数
     $scope.oprWaitCnt = 0; // 総オペレーター人数
-    $scope.labelHideList = {
-      accessId : false,
-      ipAddress : false,
-      ua : false,
-      stayCount : false,
-      time : false,
-      campaign : false,
-      stayTime : false,
-      page : false,
-      title : false,
-      referrer : false
-    };
+    $scope.labelHideList = <?php echo json_encode($labelHideList) ?>;
     $scope.monitorList = {};
     $scope.customerList = {};
     $scope.messageList = [];
@@ -388,8 +377,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
               data: {
                 labelHideList: JSON.stringify(retList)
               },
-              dataType: 'html',
-              success: function(html){
+              dataType: 'json',
+              success: function(json){
                 $scope.updateList(retList);
                 modalClose();
               }
@@ -410,6 +399,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     $scope.updateList = function(retList){
       $scope.labelHideList = retList;
+      $scope.$apply();
     };
 
     $scope.os = function(str){

@@ -6,6 +6,8 @@
 class CustomersController extends AppController {
   public $uses = ['THistory', 'THistoryChatLog', 'TCampaign', 'MCompany', 'MUser', 'MCustomer', 'MWidgetSetting', 'MChatNotification', 'TDictionary'];
 
+  public $tmpLabelHideList = ["accessId", "ipAddress", "ua", "stayCount", "time", "campaign", "stayTime", "page", "title", "referrer"];
+
   public function beforeRender(){
     $this->set('siteKey', $this->userInfo['MCompany']['company_key']);
     $this->set('muserId', $this->userInfo['id']);
@@ -137,6 +139,38 @@ class CustomersController extends AppController {
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = null;
+    $tmpLabelHideList = [];
+    $labelHideList = [];
+    if (!empty($this->params->query['labelHideList'])) {
+      foreach ( (array)json_decode($this->params->query['labelHideList'] ) as $key => $value ) {
+        if ( $value ) {
+          $tmpLabelHideList[$key] = $value;
+        }
+      }
+    }
+
+    $labelHideList = $this->jsonEncode($tmpLabelHideList);
+
+    $saveData = [
+      'MUser' => [
+        'id' => $this->userInfo['id'],
+        'operation_list_columns' => $labelHideList
+      ]
+    ];
+
+    $this->MUser->begin();
+    if ( $this->MUser->save($saveData) ) {
+      $this->MUser->commit();
+      $this->userInfo['operation_list_columns'] = $labelHideList;
+      $this->Session->write('global.userInfo', $this->userInfo);
+    }
+    else {
+      $labelHideList = [];
+      $this->MUser->rollback();
+    }
+
+    return new CakeResponse(['body' => $labelHideList]);
+
   }
 
   public function remoteGetCusInfo() {
@@ -335,6 +369,14 @@ class CustomersController extends AppController {
     else if ( $this->coreSettings[C_COMPANY_USE_SYNCLO] && !$this->coreSettings[C_COMPANY_USE_CHAT] ) {
       $cType = "syncOnly";
     }
+    /* 表示項目設定 */
+    $labelHideList = [];
+    $userSetting = json_decode($this->userInfo['operation_list_columns'], true);
+    foreach( $this->tmpLabelHideList as $val ){
+      $labelHideList[$val] = ( isset($userSetting[$val]) ) ? true : false;
+    }
+
+    $this->set('labelHideList', $labelHideList);
     $this->set('cType', $cType);
     $this->set('tabStatusList', Configure::read('tabStatusList'));
     $this->set('tabStatusStrList', Configure::read('tabStatusStrList'));
