@@ -7,7 +7,6 @@
 App::uses('AppModel', 'Model');
 App::uses('SimplePasswordHasher', 'Controller/Component/Auth');
 class MAdministrator extends AppModel {
-
   public $name = "MAdministrator";
 
   /**
