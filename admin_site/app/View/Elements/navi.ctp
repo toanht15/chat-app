@@ -2,7 +2,7 @@
 $settingSelected = "";
 
 switch ($this->name) {
-  case 'MUsers':
+  case 'MAdministrators':
     $settingSelected = "on";
   break;
 };
@@ -15,7 +15,7 @@ switch ($this->name) {
       <li class="nav-group"><i class="fa fa-building fa-lg" aria-hidden="true"></i> 契約管理</li>
       <li>契約一覧</li>
       <li class="nav-group <?=$settingSelected?>"><i class="fa fa-cog fa-lg" aria-hidden="true"></i> 設定</li>
-      <li class="<?=$settingSelected?>"><a href="/MUsers" style="text-decoration: none;">アカウント設定</a></li>
+      <li class="<?=$settingSelected?>"><a href="/MAdministrators" style="text-decoration: none;">アカウント設定</a></li>
       <li>テンプレート設定</li>
       <li class="nav-group"><i class="fa fa-user fa-lg" aria-hidden="true"></i> 個人設定</li>
       <li>個人設定</li>

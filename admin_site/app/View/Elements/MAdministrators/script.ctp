@@ -13,7 +13,7 @@ function openEntryDialog(setting){
     data: setting, // type:1 => type, type:2 => type, id
     dataType: 'html',
     cache: false,
-    url: "<?= $this->Html->url('/MUsers/remoteOpenEntryForm') ?>",
+    url: "<?= $this->Html->url('/MAdministrators/remoteOpenEntryForm') ?>",
     success: function(html){
       modalOpen.call(window, html, 'p-muser-entry', 'アカウント登録');
     }
@@ -27,7 +27,7 @@ function openEntryDialogUpdate(setting){
     data: setting, // type:1 => type, type:2 => type, id
     dataType: 'html',
     cache: false,
-    url: "<?= $this->Html->url('/MUsers/remoteOpenEntryForm') ?>",
+    url: "<?= $this->Html->url('/MAdministrators/remoteOpenEntryForm') ?>",
     success: function(html){
       modalOpen.call(window, html, 'p-muser-update', 'アカウント更新');
     }

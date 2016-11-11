@@ -1,4 +1,4 @@
-<?php echo $this->element('MUsers/script'); ?>
+<?php echo $this->element('MAdministrators/script'); ?>
 
 <div id='muser_idx'>
   <div id='muser_add_title'>

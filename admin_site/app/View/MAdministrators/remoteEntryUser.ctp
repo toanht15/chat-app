@@ -6,7 +6,7 @@
     var password = document.getElementById('MAdministratorNewPassword').value;
     $.ajax({
       type: "post",
-      url: "<?=$this->Html->url('/MUsers/remoteSaveEntryForm')?>",
+      url: "<?=$this->Html->url('/MAdministrators/remoteSaveEntryForm')?>",
       data: {
         userId: userId,
         userName: userName,
@@ -19,7 +19,7 @@
         var keys = Object.keys(data), num = 0;
         $(".error-message").remove();
           if (keys.length === 0 ) {
-            location.href = "<?=$this->Html->url(array('controller' => 'MUsers', 'action' => 'index'))?>";
+            location.href = "<?=$this->Html->url(array('controller' => 'MAdministrators', 'action' => 'index'))?>";
             return false;
           }
           for (var i = 0; i < keys.length; i++) {
@@ -56,9 +56,9 @@
       data: {
         id: id
       },
-      url: "<?= $this->Html->url('/MUsers/remoteDeleteUser') ?>",
+      url: "<?= $this->Html->url('/MAdministrators/remoteDeleteUser') ?>",
       success: function(){
-        location.href = "<?= $this->Html->url('/MUsers/index') ?>";
+        location.href = "<?= $this->Html->url('/MAdministrators/index') ?>";
       }
     });
   };
