@@ -3,12 +3,10 @@ function openAddDialog(){
   openEntryDialog({type: 1});
 }
 function openEditDialog(id){
-	console.log(id);
   openEntryDialog({type: 2, id: id});
 }
 function openEntryDialog(setting){
   var type = setting.type;
-  //console.log(setting.id);
   $.ajax({
     type: 'post',
     data: setting, // type:1 => type, type:2 => type, id

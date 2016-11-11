@@ -14,6 +14,7 @@ public $uses = ['MAdministrator'];
   *@return void
   */
   public function index() {
+
   }
 
   // TODO 初回テナントリリース時に削除
@@ -22,5 +23,6 @@ public $uses = ['MAdministrator'];
   *@return void
   */
   public function sample(){
+
   }
 }

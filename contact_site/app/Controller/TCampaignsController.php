@@ -30,7 +30,6 @@ class TCampaignsController extends AppController {
     // const
     if ( strcmp($this->request->data['type'], 2) === 0 ) {
       $this->request->data = $this->TCampaign->read(null, $this->request->data['id']);
-      $this->log($this->request->data,LOG_DEBUG); exit();
     }
     $this->render('/Elements/TCampaigns/remoteEntry');
   }

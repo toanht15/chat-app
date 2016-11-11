@@ -61,38 +61,38 @@ class MUsersController extends AppController {
     if ( !$this->request->is('ajax') ) return false;
 
     if (!empty($this->request->data['userId'])) {
-      $tmpData = $this->MUser->read(null, $this->request->data['userId']);
+      $tmpData = $this->MAdministrator->read(null, $this->request->data['userId']);
       $insertFlg = false;
     }
     else {
-      $this->MUser->create();
+      $this->MAdministrator->create();
     }
 
-    $tmpData['MUser']['user_name'] = $this->request->data['userName'];
-    $tmpData['MUser']['mail_address'] = $this->request->data['mailAddress'];
+    $tmpData['MAdministrator']['user_name'] = $this->request->data['userName'];
+    $tmpData['MAdministrator']['mail_address'] = $this->request->data['mailAddress'];
 
     if ( !$insertFlg && empty($this->request->data['password']) ) {
       unset($this->MUser->validate['password']);
     }
     else {
-      $tmpData['MUser']['new_password'] = $this->request->data['password'];
+      $tmpData['MAdministrator']['new_password'] = $this->request->data['password'];
     }
     // const
-    $this->MUser->set($tmpData);
-    $this->MUser->begin();
+    $this->MAdministrator->set($tmpData);
+    $this->MAdministrator->begin();
     //　バリデーションチェックでエラーが出た場合
-    if ( empty($errorMessage) && $this->MUser->validates() ) {
+    if ( empty($errorMessage) && $this->MAdministrator->validates() ) {
       $saveData = $tmpData;
-      if ( $this->MUser->save($saveData, false) ) {
-        $this->MUser->commit();
+      if ( $this->MAdministrator->save($saveData, false) ) {
+        $this->MAdministrator->commit();
         $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
       }
       else {
-        $this->MUser->rollback();
+        $this->MAdministrator->rollback();
       }
     }
     if ( empty($errorMessage) ) {
-      $errorMessage = $this->MUser->validationErrors;
+      $errorMessage = $this->MAdministrator->validationErrors;
     }
     return new CakeResponse(['body' => json_encode($errorMessage)]);
   }

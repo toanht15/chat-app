@@ -1,12 +1,12 @@
 <?php
 /**
- * MUsersController controller.
+ * MAdministratorsController controller.
  * ユーザーマスタ
  */
 
 App::uses('AppModel', 'Model');
 App::uses('SimplePasswordHasher', 'Controller/Component/Auth');
-class MUser extends AppModel {
+class MAdministrator extends AppModel {
 
   public $name = "MAdministrator";
 
@@ -77,12 +77,12 @@ class MUser extends AppModel {
 
   //パスワードHASH化
   public function beforeSave($options = []) {
-    if ( empty($this->data['MUser']) ) return true;
-    $data = $this->data['MUser'];
+    if ( empty($this->data['MAdministrator']) ) return true;
+    $data = $this->data['MAdministrator'];
     if ( !empty($data['new_password']) ) {
       $data['password'] = $this->makePassword($data['new_password']);
     }
-    $this->data['MUser'] = $data;
+    $this->data['MAdministrator'] = $data;
     return true;
   }
 
@@ -93,11 +93,11 @@ class MUser extends AppModel {
 
   //メールアドレスチェック
   public function isUniqueChk($str){
-    $str['MUser' . '.del_flg'] = 0;
+    $str['MAdministrator' . '.del_flg'] = 0;
     if ( !empty($this->id) ) {
-      $str['MUser' . '.id !='] = $this->id;
+      $str['MAdministrator' . '.id !='] = $this->id;
     }
-    $ret = $this->find('all', ['fields' => 'MUser' . '.*', 'conditions' => $str]);
+    $ret = $this->find('all', ['fields' => 'MAdministrator' . '.*', 'conditions' => $str]);
     if ( !empty($ret) ) {
       return false;
     }
