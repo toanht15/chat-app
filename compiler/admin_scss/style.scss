@@ -50,7 +50,7 @@ table {
 
     th {
       color: #FFF;
-      text-align: center;
+      text-align: left;
       font-weight: bold;
     }
   }
@@ -201,27 +201,26 @@ div#sidebar {
         padding-left: 0.5em;
       }
 
-      /* 右端の△を消すため変更 11/10 */
-      &.select{
-        position: relative;
-        background-color: $shadow-color;
-      }
-      /* 変更終了 */
+      /* 変更 */
       &.on {
         position: relative;
         background-color: $shadow-color;
 
-        &:after {
-          content: " ";
-          width: 0;
-          position: absolute;
-          right: 0;
-          height: 0;
-          border: 0.8em solid transparent;
-          border-right: 0.8em solid #ffffff;
-          top: 0.5em;
+        &:not(.nav-group) {
+          &:after {
+            content: " ";
+            width: 0;
+            position: absolute;
+            right: 0;
+            height: 0;
+            border: 0.8em solid transparent;
+            border-right: 0.8em solid #ffffff;
+            top: 0.5em;
+          }
         }
+
       }
+
 
     }
   }
@@ -274,7 +273,7 @@ div#sidebar {
 }
 
 [id$="_title"] {
-  border-bottom: 2px solid #3a485f;
+  border-bottom: 2px solid $main-color;
   padding: 10px 0px;
   height: 19px;
 }
@@ -285,44 +284,8 @@ div#sidebar {
 }
 
 div[id$='_list'] table {
-    width: 100%;
+  width: 100%;
 }
-
-/*div[id$='_list'] th, div[id$='_list'] td {
-    height: 45px;
-}
-
-table {
-  border-collapse: collapse;
-  border: none;
-
-  th, td {
-    font-size: 14px;
-    border: 1px solid #bfbfbf;
-    border-left: none !important;
-    border-top: none !important;
-    word-break: break-all;
-  }
-
-  th {
-    background-color: #647388;
-    color: #fff;
-    font-weight: bold;
-    padding-left:10px;
-  }
-
-  caption, th {
-  text-align: left;
-  }
-
-td {
-    border: 1px solid #BFBFBF;
-    border-right-color: transparent;
-    padding-left:12px;
-    color:#484343
-  }
-}
-*/
 
 .fLeft {
   float: left;
@@ -335,7 +298,7 @@ td {
   }
 
   i.fa.fa-cog.fa-2x{
-    color: #596d8f;
+    color: $normal-color;
     margin-top: 6px;
   }
 
@@ -346,23 +309,19 @@ td {
 
   table{
     margin-top: 7px;
-
-    caption, th {
-      text-align: left;
-    }
   }
 }
 
 /* ログイン画面 */
 #login_idx_bg {
-    background-color: #bfbfbf;
-    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#A0BDD2', endColorstr='#7B8F9E', GradientType=0)";
-    position: absolute;
-    top: 0;
-    right: 0;
-    left: 0;
-    bottom: 0;
-    z-index: -1;
+  background-color: #bfbfbf;
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#A0BDD2', endColorstr='#7B8F9E', GradientType=0)";
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  z-index: -1;
 }
 
 #login_idx {
@@ -386,8 +345,8 @@ td {
 
     .user_add_title {
       border-bottom: solid;
-      background-color: #3a485f;
-      border-color: #3a485f;
+      background-color: $main-color;
+      border-color: $main-color;
       color: #fff;
       padding: 10px 20px 0 20px;
       margin-top: -2px;
@@ -430,8 +389,9 @@ td {
   }
 }
 
+/* サイドバー　*/
 div#sidebar{
   .on a{
-    background-color: #253144;
+    background-color: $shadow-color;
   }
 }

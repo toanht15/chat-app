@@ -181,20 +181,22 @@ $notification-color: #E57373;
       content: "\f013";
     }
   }
-.fa-cog {
+
+  .fa-cog {
   color: #fff;
   margin-left: 6px;
-}
+  }
+
   input#MAdministratorUserName {
     margin-left: 88px;
   }
 
   input#MAdministratorMailAddress {
-      margin-left: 33px;
+    margin-left: 33px;
   }
 
   input#MAdministratorNewPassword {
-      margin-left: 55px;
+    margin-left: 55px;
   }
 }
 
@@ -205,10 +207,12 @@ $notification-color: #E57373;
       content: "\f013";
     }
   }
-.fa-cog {
-  color: #fff;
-  margin-left: 6px;
-}
+
+  .fa-cog {
+    color: #fff;
+    margin-left: 6px;
+  }
+
   input#MAdministratorUserName {
     margin-left: 88px;
   }
@@ -217,28 +221,15 @@ $notification-color: #E57373;
       margin-left: 33px;
   }
 
-
   input#MAdministratorNewPassword {
       margin-left: 55px;
   }
-
-}
-
-input[type='text'], input[type='number'], input[type='password'] {
-    padding: 5px 10px;
-    border: none;
-    border-bottom: 1px solid #909090;
-}
-
-input[type='text'], input[type='number'], input[type='password']:focus {
-  outline: 0;
-  border-color: #909090;
 }
 
 p.error-message {
-    color: #E57373;
+    color: $notification-color;
     margin-left: 30px;
     width: 336px;
-    font-size: 14px;
+    font-size: 12px;
     margin-bottom: 0px;
 }

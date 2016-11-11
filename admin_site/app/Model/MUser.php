@@ -90,5 +90,20 @@ class MUser extends AppModel {
     $passwordHasher = new SimplePasswordHasher();
     return $passwordHasher->hash($str);
   }
+
+  //メールアドレスチェック
+  public function isUniqueChk($str){
+    $str['MUser' . '.del_flg'] = 0;
+    if ( !empty($this->id) ) {
+      $str['MUser' . '.id !='] = $this->id;
+    }
+    $ret = $this->find('all', ['fields' => 'MUser' . '.*', 'conditions' => $str]);
+    if ( !empty($ret) ) {
+      return false;
+    }
+    else {
+      return true;
+    }
+  }
 }
 ?>

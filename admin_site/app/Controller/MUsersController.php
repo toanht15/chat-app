@@ -80,9 +80,8 @@ class MUsersController extends AppController {
     // const
     $this->MUser->set($tmpData);
     $this->MUser->begin();
-
     //　バリデーションチェックでエラーが出た場合
-    if (empty($errorMessage) && empty($this->request->data['userId']) && $this->MUser->validates()) {
+    if ( empty($errorMessage) && $this->MUser->validates() ) {
       $saveData = $tmpData;
       if ( $this->MUser->save($saveData, false) ) {
         $this->MUser->commit();
@@ -92,19 +91,6 @@ class MUsersController extends AppController {
         $this->MUser->rollback();
       }
     }
-
-    $this->MUser->validate = $this->MUser->updateValidate;
-    if (empty($errorMessage) && !empty($this->request->data['userId']) && $this->MUser->validates()) {
-      $saveData = $tmpData;
-      if ( $this->MUser->save($saveData, false) ) {
-        $this->MUser->commit();
-        $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
-      }
-      else {
-        $this->MUser->rollback();
-      }
-    }
-
     if ( empty($errorMessage) ) {
       $errorMessage = $this->MUser->validationErrors;
     }
