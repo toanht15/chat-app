@@ -1,0 +1,92 @@
+<script type="text/javascript">
+  popupEvent.closePopup = function(){
+    var userId = document.getElementById('MAdministratorId').value;
+    var userName = document.getElementById('MAdministratorUserName').value;
+    var mailAddress = document.getElementById('MAdministratorMailAddress').value;
+    var password = document.getElementById('MAdministratorNewPassword').value;
+    $.ajax({
+      type: "post",
+      url: "<?=$this->Html->url('/MUsers/remoteSaveEntryForm')?>",
+      data: {
+        userId: userId,
+        userName: userName,
+        mailAddress: mailAddress,
+        password: password,
+      },
+      cache: false,
+      dataType: "JSON",
+      success: function(data){
+        var keys = Object.keys(data), num = 0;
+        $(".error-message").remove();
+          if (keys.length === 0 ) {
+            location.href = "<?=$this->Html->url(array('controller' => 'MUsers', 'action' => 'index'))?>";
+            return false;
+          }
+          for (var i = 0; i < keys.length; i++) {
+            if ( data[keys[i]].length > 0 ) {
+              var target = $("[name='data[MAdministrator][" + keys[i] + "]']");
+              for (var u = 0; u < data[keys[i]].length; u++) {
+                target.after("<p class='error-message hide'>" + data[keys[i]][u] + "</p>");
+                num ++;
+              }
+            }
+          }
+          if ( num > 0 ) {
+            var newHeight = $("#popup-content").height() + (num * 15);
+            $("#popup-frame").animate({
+            height: newHeight + "px"
+          },
+          {
+            duration: 500,
+            complete: function(){
+              $(".error-message.hide").removeClass("hide");
+              $(this).css("overflow", "");
+            }
+          });
+        }
+      }
+    });
+  };
+
+  popupEvent.closeDeletePopup = function(){
+    var id = document.getElementById('MAdministratorId').value;
+    $.ajax({
+      type: 'post',
+      cache: false,
+      data: {
+        id: id
+      },
+      url: "<?= $this->Html->url('/MUsers/remoteDeleteUser') ?>",
+      success: function(){
+        location.href = "<?= $this->Html->url('/MUsers/index') ?>";
+      }
+    });
+  };
+</script>
+<?=$this->Form->create('MAdministrator', array('action' => 'add')); ?>
+  <div class='form01'>
+    <?= $this->Form->input('id', array('type' => 'hidden')); ?>
+    <ul class="formArea">
+      <li>
+        <span>
+           <label for="">名前</label>
+          <?= $this->Form->input('user_name', array('div' => false,'label' => false, 'maxlength' => 50)) ?>
+        </span>
+      </li>
+      <li>
+        <span>
+          <label for="">メールアドレス</label>
+          <?= $this->Form->input('mail_address', array('div' => false, 'label' => false, 'maxlength' => 200,'autocomplete' => 'email')) ?>
+        </span>
+      </li>
+      <li>
+        <input type="text" style="display:block; position: fixed; top: -500px; left: -500px; z-index: 0;">
+        <input type="password" style="display:block; position: fixed; top: -500px; left: -500px; z-index: 0;">
+        <span>
+          <label for="">パスワード</label>
+          <?= $this->Form->input('new_password', array('type' => 'password','div' => false, 'autocomplete' => 'off','label' => false, 'maxlength' => 12)) ?>
+        </span>
+      </li>
+    </ul>
+  </div>
+<?= $this->Form->end(); ?>

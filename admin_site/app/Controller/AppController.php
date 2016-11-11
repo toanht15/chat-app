@@ -65,8 +65,6 @@ class AppController extends Controller {
   *@return void
   */
   public function beforeFilter(){
-    //viewとindexとaddは認証不要
-    $this->Auth->allow('login');
     // 未ログインの場合は以降の処理を通さない
     if (!$this->Auth->user()) return false;
 

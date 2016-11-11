@@ -34,7 +34,9 @@
   ?>
 </head>
 <body>
-  <?php echo $this->element('navi'); ?>
+  <?php if(strcmp($this->name,'Login') !== 0): ?>
+    <?= $this->element('navi'); ?>
+  <?php endif ;?>
   <div id="content">
     <?= $this->element('popup') ?>
     <?php echo $this->Flash->render(); ?>

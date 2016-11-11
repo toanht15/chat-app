@@ -78,6 +78,7 @@ ul {
 h1 {
   color: $main-color;
   font-size: 1.5rem;
+  border-bottom: 2px solid $main-color;
   padding: 0.25rem 0.5rem;
   margin: 0 0 0.5rem 0;
   * {
@@ -104,12 +105,11 @@ a {
 [class$='_btn'] {
   font-size: 1.1rem;
   border: 1px solid $font-color;
-  border-radius: 15px;
+  border-radius: 5px;
   padding: 0.25em 0.5em;
   display: block;
   margin: 0.25em;
   text-align: center;
-  width: 6em;
   cursor: pointer;
 
   &.normal_btn {
@@ -179,7 +179,7 @@ div#sidebar {
   div#logo {
     text-align: center;
     border-right: 1px solid $main-color;
-    background-color: #FFF;
+    background-color: $main-color;
     color: $font-color;
     height: 60px;
     padding: 6px 0;
@@ -201,12 +201,13 @@ div#sidebar {
         padding-left: 0.5em;
       }
 
+      /* 右端の△を消すため変更 11/10 */
       &.select{
         position: relative;
         background-color: $shadow-color;
       }
-
-      &.selected {
+      /* 変更終了 */
+      &.on {
         position: relative;
         background-color: $shadow-color;
 
@@ -225,14 +226,14 @@ div#sidebar {
     }
   }
 
- /* a {
+  a {
     background-color: $main-color;
     display: block;
     height: 2em;
     color: #FFF;
     padding: 0 0.5em;
     text-align: center;
-  }*/
+  }
 
 }
 
@@ -244,18 +245,14 @@ div#sidebar {
       display: flex;
     }
     label {
-      /*color: $font-color;*/
+      color: $font-color;
       width: 10em;
-      color: #656565;
-      font-weight:bold;
-      font-size: 14px;
-      color: #3a485f;
     }
     input, textarea {
       padding: 0.25em 0.5em;
       border-color: $font-color;
       border-style: solid;
-      /*font-size: 0.98em;*/
+      font-size: 0.98em;
 
       &:focus {
         outline: none;
@@ -291,7 +288,7 @@ div[id$='_list'] table {
     width: 100%;
 }
 
-div[id$='_list'] th, div[id$='_list'] td {
+/*div[id$='_list'] th, div[id$='_list'] td {
     height: 45px;
 }
 
@@ -318,13 +315,14 @@ table {
   text-align: left;
   }
 
-  td {
+td {
     border: 1px solid #BFBFBF;
     border-right-color: transparent;
     padding-left:12px;
     color:#484343
   }
 }
+*/
 
 .fLeft {
   float: left;
@@ -332,8 +330,26 @@ table {
 
 /*　アカウント設定 */
 #muser_idx {
+  .action_btn{
+    width:6em;
+  }
+
+  i.fa.fa-cog.fa-2x{
+    color: #596d8f;
+    margin-top: 6px;
+  }
+
+  a#searchRefine {
+    margin-top: 23px;
+    border-radius: 17px;
+  }
+
   table{
-    margin-top: 13px;
+    margin-top: 7px;
+
+    caption, th {
+      text-align: left;
+    }
   }
 }
 
@@ -413,22 +429,9 @@ table {
     }
   }
 }
-/* もしかしたら使うかも
-  .graytextBtn {
-    cursor: pointer !important;
-  display: block;
-  -webkit-transition: background-color, border-color 0.1s linear;
-  transition: background-color, border-color 0.1s linear;
-  background-color: #647388;
-  color: white;
-  border: 1px solid #647388;
-  width:40px;
-  text-align: center;
-  border-radius: 14px;
-  width: 59px;
-  font-size: 13px;
-  padding: 2px 5px;
-  margin-top:20px;
-  height: 20px;
-  padding-top: 7px;
-} */
+
+div#sidebar{
+  .on a{
+    background-color: #253144;
+  }
+}

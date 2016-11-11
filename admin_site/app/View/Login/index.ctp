@@ -1,8 +1,4 @@
-<script type="text/javascript">
-function muserFormButton(){
- document.getElementById('MAdministratorLoginForm').submit();
-}
-</script>
+<?php echo $this->element('Login/script'); ?>
 <div id="login_idx_bg"></div>
 <div id="login_idx">
   <div id="content-area">
@@ -12,8 +8,8 @@ function muserFormButton(){
     <ul class="formArea">
       <li>
         <?= $this->Form->create('MAdministrator'); ?>
-        <?= $this->Form->input('mail_address', array('label' => false, 'placeholder' => 'メールアドレス')); ?>
-        <?= $this->Form->input('password', array('label' => false, 'placeholder' => 'パスワード')); ?>
+          <?= $this->Form->input('mail_address', array('label' => false, 'placeholder' => 'メールアドレス')); ?>
+          <?= $this->Form->input('password', array('label' => false, 'placeholder' => 'パスワード')); ?>
         <?= $this->Form->end(); ?>
       </li>
       <li>

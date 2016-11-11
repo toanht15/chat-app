@@ -1,0 +1,192 @@
+/* もしかしたら使うかも
+.grayBtn {
+    cursor: pointer !important;
+    display: block;
+    -webkit-transition: background-color, border-color 0.1s linear;
+    transition: background-color, border-color 0.1s linear;
+    background-color: #647388;
+    color: white;
+    border: 1px solid #647388;
+}
+
+.whiteBtn {
+    cursor: pointer !important;
+    display: block;
+    -webkit-transition: background-color, border-color 0.1s linear;
+    transition: background-color, border-color 0.1s linear;
+    background-color: #fff;
+    color: #656565;
+    border: 1px solid #fff;
+}
+
+.textBtn {
+    padding: 2px 5px;
+    font-size: 14px;
+    text-align: center;
+    border-radius: 15px;
+    height: 22px;
+    width: 74px;
+    padding-top: 3px;
+}
+
+.textBtn2 {
+    padding: 2px 5px;
+    font-size: 14px;
+    text-align: center;
+    border-radius: 15px;
+    height: 22px;
+    width: 74px;
+    padding-top: 3px;
+}
+
+#popup {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  &.popup-off { display: none; }
+
+  #popup-frame-base {
+    position:relative;
+    width: 100%;
+    height: 100%;
+
+    #popup-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.7);
+      z-index: 50;
+    }
+
+    #popup-frame {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: white;
+      margin: auto;
+      z-index: 51;
+
+      &.p-confirm {
+        width: 400px;
+      }
+
+      &.p-muser-entry {
+        width: 400px;
+      }
+
+      &.p-alert {
+        width: 400px;
+      }
+
+      #popup-content{
+        #popup-title {
+          display: flex;
+          background-color: $main-color;
+          height: 3rem;
+
+          h2 {
+            font-size: 17px;
+            margin-bottom: 0;
+            padding: 0.5em 1rem;
+            width: calc(100% - 2rem);
+            border-bottom: 1px solid #fff;
+            color: #fff;
+            height:30px;
+            padding-top:12px;
+            padding-left:44px;
+            background-image: url(/img/personal_g.png);
+            background-repeat: no-repeat;
+            background-position: left 10pt bottom 10pt;
+            background-size: 24px;
+          }
+          #popup-close-btn {
+            padding: 0.25em 0;
+            font-size: 1.5em;
+            color: #FFF;
+            border-left: 1px solid #FFF;
+            display: block;
+            width: 2em;
+            text-align: center;
+
+            &:hover {
+              background-color: $shadow-color;
+            }
+          }
+        }
+
+        #popup-main {
+          padding: 20px;
+        }
+
+        #popup-button {
+          display: flex;
+          padding: 0.5rem;
+          justify-content: space-around;
+        }
+      }
+    }
+  }
+}
+
+フラッシュメッセージ用スタイル
+#shortMessage {
+  width: 70%;
+  font-size: 15px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin: 5px auto;
+  z-index: 50;
+  padding: 15px;
+  border-radius: 10px;
+  color: #FFF;
+  font-weight: bold;
+  opacity: 1;
+
+  &:after {
+    content: "";
+    position: absolute;
+    bottom: -20px;
+    left: 15px;
+    border: 12px solid transparent;
+  }
+
+  &.success {
+    background-color: #86C18D;
+
+    &:after {
+      border-top: 12px solid #86C18D;
+    }
+  }
+
+  &.failure {
+    background-color: #C18686;
+
+    &:after {
+      border-top: 12px solid #C18686;
+    }
+  }
+}
+
+ポップアップ用:バックグラウンド
+#popup-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 50;
+}
+ポップアップ用非表示クラス
+.popup-off {
+  display: none;
+}*/
