@@ -80,7 +80,7 @@ class MAdministratorsController extends AppController {
     // const
     $this->MAdministrator->set($tmpData);
     $this->MAdministrator->begin();
-    //　バリデーションチェックでエラーが出た場合
+    //　バリデーションチェックが成功した場合
     if ( empty($errorMessage) && $this->MAdministrator->validates() ) {
       $saveData = $tmpData;
       if ( $this->MAdministrator->save($saveData, false) ) {

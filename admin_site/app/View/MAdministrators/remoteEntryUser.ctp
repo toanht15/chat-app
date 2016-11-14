@@ -69,13 +69,13 @@
     <ul class="formArea">
       <li>
         <span>
-           <label for="">名前</label>
+           <label class='require'>名前</label>
           <?= $this->Form->input('user_name', array('div' => false,'label' => false, 'maxlength' => 50)) ?>
         </span>
       </li>
       <li>
         <span>
-          <label for="">メールアドレス</label>
+          <label class='require'>メールアドレス</label>
           <?= $this->Form->input('mail_address', array('div' => false, 'label' => false, 'maxlength' => 200,'autocomplete' => 'email')) ?>
         </span>
       </li>
@@ -83,7 +83,7 @@
         <input type="text" style="display:block; position: fixed; top: -500px; left: -500px; z-index: 0;">
         <input type="password" style="display:block; position: fixed; top: -500px; left: -500px; z-index: 0;">
         <span>
-          <label for="">パスワード</label>
+          <label class='require'>パスワード</label>
           <?= $this->Form->input('new_password', array('type' => 'password','div' => false, 'autocomplete' => 'off','label' => false, 'maxlength' => 12)) ?>
         </span>
       </li>

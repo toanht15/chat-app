@@ -59,6 +59,10 @@ class MAdministrator extends AppModel {
       'email' => [
         'rule' => 'email',
         'message' => 'メールアドレスの形式が不正です。'
+      ],
+      'isUniqueChk' => [
+        'rule' => 'isUniqueChk',
+        'message' => '既に登録されているアドレスです。'
       ]
     ],
     'new_password' => [
@@ -72,7 +76,53 @@ class MAdministrator extends AppModel {
         'message' => 'パスワードは英数字で設定してください。'
       ]
     ],
+    'current_password' => [
+      'checkCurrentPw' => [
+        'rule' => 'isCurrentPw',
+        'allowEmpty' => false,
+        'message' => '現在のパスワードが一致しません。'
+      ]
+    ],
+    'confirm_password' => [
+      'checkConfirmPw' => [
+        'rule' => 'canMatchConfirmPw',
+        'allowEmpty' => false,
+        'message' => '新しいパスワードが一致しません。'
+      ]
+    ]
   ];
+
+  //現在のパスワードチェック
+  public function isCurrentPw($currentPw){
+    $data = $this->data['MAdministrator'];
+    if ( empty($currentPw['current_password']) ) return false;
+
+    $params = [
+      'fields' => '*',
+      'conditions' => [
+        'id' => $data['id'],
+        'del_flg' => 0,
+        'password' => $this->makePassword($currentPw['current_password'])
+      ],
+      'limit' => 1
+    ];
+    $ret = $this->find('all', $params);
+    if ( !empty($ret) ) {
+      return true;
+    }
+    return false;
+  }
+
+  //新しいパスワードチェック
+  public function canMatchConfirmPw(){
+    $data = $this->data['MAdministrator'];
+    if ( !empty($data['new_password']) && !empty($data['confirm_password']) ) {
+      if ( strcmp($data['new_password'], $data['confirm_password']) === 0 ) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   //パスワードHASH化
   public function beforeSave($options = []) {

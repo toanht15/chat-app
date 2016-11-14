@@ -1,9 +1,13 @@
 <?php
 $settingSelected = "";
+$personalSettingsSelected="";
 
 switch ($this->name) {
   case 'MAdministrators':
     $settingSelected = "on";
+  break;
+  case 'PersonalSettings':
+    $personalSettingsSelected = "on";
   break;
 };
 ?>
@@ -17,8 +21,8 @@ switch ($this->name) {
       <li class="nav-group <?=$settingSelected?>"><i class="fa fa-cog fa-lg" aria-hidden="true"></i> 設定</li>
       <li class="<?=$settingSelected?>"><a href="/MAdministrators" style="text-decoration: none;">アカウント設定</a></li>
       <li>テンプレート設定</li>
-      <li class="nav-group"><i class="fa fa-user fa-lg" aria-hidden="true"></i> 個人設定</li>
-      <li>個人設定</li>
+      <li class="nav-group <?=$personalSettingsSelected?>"><i class="fa fa-user fa-lg" aria-hidden="true"></i> 個人設定</li>
+      <li class="<?=$personalSettingsSelected?>"><a href="/PersonalSettings" style="text-decoration: none;">個人設定</a></li>
     </ul>
   </nav>
   <a href="/login/logout">ログアウト</a>

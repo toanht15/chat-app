@@ -291,7 +291,7 @@ div[id$='_list'] table {
   float: left;
 }
 
-/*　アカウント設定 */
+/*　ユーザーアカウント設定 */
 #muser_idx {
   .action_btn{
     width:6em;
@@ -310,6 +310,11 @@ div[id$='_list'] table {
   table{
     margin-top: 7px;
   }
+}
+
+/* 個人設定 */
+#personal_idx {
+
 }
 
 /* ログイン画面 */
@@ -393,5 +398,83 @@ div[id$='_list'] table {
 div#sidebar{
   .on a{
     background-color: $shadow-color;
+  }
+}
+
+/* 個人アカウント設定 */
+#personal_idx {
+
+  i.fa.fa-user.fa-2x {
+    color: $normal-color;
+    margin-top: 6px;
+  }
+
+  .p20x {
+    padding: 20px;
+  }
+
+  #personal_form {
+
+    .form01{
+      width: 600px;
+      margin: 0 auto;
+
+      li {
+        margin: 15px 0;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+      }
+
+      .error-message {
+        color: $notification-color;
+        padding-left: 190px;
+      }
+
+      div.labelArea{
+        width: 15em;
+        text-align: right;
+        height: 30px;
+        padding: 10px 0 0 0;
+        margin-right: 20px;
+      }
+
+      .m40l {
+        margin-left: 40px;
+      }
+
+      #set_password_area {
+        border: 1px solid $main-color;
+        border-radius: 10px;
+        margin-left: 0px;
+      }
+
+      input {
+        height: 26px;
+        font-size: 12px;
+        margin: 2px 5px;
+        width: 270px;
+        padding-left: 4px;
+      }
+
+      input[type='checkbox'] {
+        width: auto;
+      }
+
+      #personal_action a {
+        width: 100px;
+        padding: 10px;
+        display: block;
+        margin: 0 auto;
+        text-align: center;
+      }
+    }
+  }
+}
+
+.require {
+  &:after {
+    content: "*";
+    color: red;
   }
 }
