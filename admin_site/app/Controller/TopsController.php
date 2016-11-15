@@ -15,7 +15,7 @@ public $uses = ['MCompany','MUser'];
       'joins' => [
         [
           'type' => 'inner',    // もしくは left
-          'table' => '(SELECT m_companies_id,count(*) AS del_flg FROM  m_users WHERE del_flg != 0)',
+          'table' => '(SELECT m_companies_id,count(*) AS user_account FROM  m_users WHERE del_flg != 0)',
           'alias' => 'MUser',
           'conditions' => [
           'MUser.m_companies_id = MCompany.id',
