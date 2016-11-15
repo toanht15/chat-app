@@ -195,10 +195,14 @@ div#sidebar {
 
     li {
       padding: 0.5em 0;
-      padding-left: 2.5em;
+      padding-left: 1.1em;
 
       &.nav-group {
         padding-left: 0.5em;
+      }
+
+      &.link{
+        cursor:pointer;
       }
 
       /* 変更 */
@@ -218,13 +222,9 @@ div#sidebar {
             top: 0.5em;
           }
         }
-
       }
-
-
     }
   }
-
   a {
     background-color: $main-color;
     display: block;
@@ -233,7 +233,6 @@ div#sidebar {
     padding: 0 0.5em;
     text-align: center;
   }
-
 }
 
 #content {
@@ -312,10 +311,6 @@ div[id$='_list'] table {
   }
 }
 
-/* 個人設定 */
-#personal_idx {
-
-}
 
 /* ログイン画面 */
 #login_idx_bg {
@@ -401,6 +396,91 @@ div#sidebar{
   }
 }
 
+/* Top画面 */
+#top_idx {
+
+  i.fa.fa-home.fa-2x {
+    color: $normal-color;
+    margin-top: 6px;
+  }
+
+  .p20x {
+    padding: 20px;
+  }
+
+  table{
+    margin-top:28px;
+  }
+
+  #agreement_button{
+    display:flex;
+    margin-top:21px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+
+    a {
+      position: relative;
+      font-color:black;
+
+      &.on:before,&:not(.on):before {
+        content: "\f111";
+        display: block;
+        font: normal normal normal 14px/1 FontAwesome;
+        font-size: 0.5em;
+        text-rendering: auto;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        position: absolute;
+        top: 0.35em;
+        bottom: 0;
+        left: 1em;
+        color: #FFF;
+      }
+
+      &.on:hover:before,&:not(.on):hover:before {
+        color:#596d8f;
+      }
+    }
+
+    .action_btn {
+      font-size: 12px;
+      font-size: 1.1rem;
+      border: 1px solid #656565;
+      border-radius: 5px;
+      padding: 0.25em 0.5em;
+      display: block;
+      margin:0;
+      text-align: center;
+      cursor: pointer;
+      border-radius: 5px 0 0 5px;
+    }
+
+    .normal_btn {
+      font-size: 12px;
+      font-size: 1.1rem;
+      border: 1px solid #656565;
+      border-radius: 5px;
+      padding: 0.25em 0.5em;
+      display: block;
+      margin:0;
+      text-align: center;
+      cursor: pointer;
+      border-radius: 0 5px 5px 0;
+    }
+
+    .on{
+      color: #FFF;
+      background-color: $normal-color;
+      border-color: #596d8f;
+    }
+  }
+
+  #top_form {
+  }
+}
+
+
+
 /* 個人アカウント設定 */
 #personal_idx {
 
@@ -476,5 +556,20 @@ div#sidebar{
   &:after {
     content: "*";
     color: red;
+  }
+}
+
+#agreementList_idx {
+  .action_btn {
+    width: 6em;
+  }
+
+  a#searchRefine {
+    margin-top: 23px;
+    border-radius: 17px;
+  }
+
+  table {
+    margin-top: 15px;
   }
 }

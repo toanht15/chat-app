@@ -1,13 +1,10 @@
 <?php
 /**
- * TopsController controller.
- * ホーム
+ * PersonalSettingsController controller.
+ * ユーザーマスタ
  */
-
-App::uses('AppController', 'Controller');
-class TopsController extends AppController {
-
-public $uses = ['MCompany','MUser'];
+class AgreementListsController extends AppController {
+  public $uses = ['MCompany','MUser'];
 
   public $paginate = [
     'MCompany' => [
@@ -30,24 +27,16 @@ public $uses = ['MCompany','MUser'];
     ]
   ];
 
-    public function beforeFilter() {
+  public function beforeFilter(){
     parent::beforeFilter();
-    $this->set('title_for_layout', 'トップ');
+    $this->set('title_for_layout', '契約管理');
   }
-  /**
-  *初期画面
-  *@return void
-  */
+
+  /* *
+   * 一覧画面
+   * @return void
+   * */
   public function index() {
     $this->set('userList', $this->paginate('MCompany'));
-  }
-
-  // TODO 初回テナントリリース時に削除
-  /**
-  *デザインサンプル画面
-  *@return void
-  */
-  public function sample(){
-
   }
 }
