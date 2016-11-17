@@ -41,7 +41,7 @@ class MAdministrator extends AppModel {
       ],
       'alphaNumeric' => [
         'rule' => 'alphaNumeric',
-        'message' => 'パスワードは英数字で設定してください。'
+        'message' => 'パスワードは半角英数字で設定してください。'
       ]
     ],
   ];
@@ -73,7 +73,7 @@ class MAdministrator extends AppModel {
       ],
       'alphaNumeric' => [
         'rule' => 'alphaNumeric',
-        'message' => 'パスワードは英数字で設定してください。'
+        'message' => 'パスワードは半角英数字で設定してください。'
       ]
     ],
     'current_password' => [

@@ -1,5 +1,5 @@
 <script type="text/javascript">
-function muserFormButton(){
+function loginBtn(){
  document.getElementById('MAdministratorLoginForm').submit();
 }
 </script>

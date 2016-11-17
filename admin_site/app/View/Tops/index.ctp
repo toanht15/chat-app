@@ -42,7 +42,7 @@
             <?php if(h($val['MCompany']['m_contact_types_id']) == 3){ ?>
               <td>チャットのみプラン</td>
             <?php } ?>
-            <td><?=h($val['MUser']['del_flg'])?>/<?=h($val['MCompany']['limit_users'])?></td>
+            <td><?=h($val['MUser']['user_account'])?>/<?=h($val['MCompany']['limit_users'])?></td>
           </tr>
         <?php } ?>
       </tbody>

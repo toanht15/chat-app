@@ -41,7 +41,7 @@ class InsertUser extends CakeMigration {
     if ($direction === 'up') {
          /* ユーザー情報 */
         $data['MAdministrator']['user_name'] = 'テスト';
-        $data['MAdministrator']['mail_address'] = 'defalt.com';
+        $data['MAdministrator']['mail_address'] = 'defalt@gmail.com';
         $data['MAdministrator']['password'] = 'b5fc0ef78be07f3d428666baf0ee51fc353f0a15';
         $MAdministrator->create();
 

@@ -13,7 +13,7 @@
         <?= $this->Form->end(); ?>
       </li>
       <li>
-        <?= $this->Form->input('Go →', array('label'=> false,'type' => 'button', 'class' => 'loginForm','onClick' => 'muserFormButton()')); ?>
+        <?= $this->Form->input('Go →', array('label'=> false,'type' => 'button', 'class' => 'loginForm','onClick' => 'loginBtn()')); ?>
       </li>
     </ul>
   </div>
