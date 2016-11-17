@@ -411,7 +411,7 @@ var socket, // socket.io
           ratio = ($(window).width() - 20) * (1/285);
         }
         html += '  <span id="mainImage" onclick="sinclo.operatorInfo.ev()">';
-        html += '    <img src="' + widget.mainImage + '" width="' + (ratio * 62) + '" height="' + (ratio * 70) + '" style="width:' + (ratio * 62) + '!important; height:' + (ratio * 70) + '!important;" alt="チャット画像">';
+        html += '    <img src="' + widget.mainImage + '" width="' + (ratio * 62) + '" height="' + (ratio * 70) + '" style="width:' + (ratio * 62) + 'px!important; height:' + (ratio * 70) + 'px!important;" alt="チャット画像">';
         html += '  </span>';
       }
       html += '  <div id="widgetHeader" class="notSelect" onclick="sinclo.operatorInfo.ev()">';
