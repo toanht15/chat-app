@@ -135,11 +135,16 @@
 
   $(document).ready(function(){
     /* フッター設置ボタンの位置調整 */
-    var target = document.getElementsByClassName("fotterBtnArea");
+    var target = document.getElementsByClassName("fotterBtnArea"), fotterBtnAreaResizeTimer = null;
     if ( target.length === 0 ) return false;
-    $(window).resize(function(){
-      setCtrlArea(target[0].id);
-    });
+    if ( target.length === 0 ) return false;
+      $(window).resize(function(){
+        if ( fotterBtnAreaResizeTimer ) return false;
+        fotterBtnAreaResizeTimer = setTimeout(function(){
+          fotterBtnAreaResizeTimer = null;
+          setCtrlArea(target[0].id);
+        }, 300);
+      });
     setCtrlArea(target[0].id);
   });
 
