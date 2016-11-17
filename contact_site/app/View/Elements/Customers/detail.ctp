@@ -120,7 +120,7 @@
             <dt>状態</dt>
               <dd>{{tabStatusStr(detail.status)}}</dd>
             <dt>閲覧中ページ</dt>
-              <dd class="w100"><a href={{detail.url}} target="_blank" class="underL" ng-if="detail.title">{{detail.title}}</a><span ng-if="!detail.title">{{detail.url}}</span></dd>
+              <dd class="w100"><a href={{trimToURL(detail.url)}} target="_blank" class="underL" ng-if="detail.title">{{detail.title}}</a><span ng-if="!detail.title">{{trimToURL(detail.url)}}</span></dd>
             <dt>訪問回数</dt>
               <dd>{{detail.stayCount}} 回</dd>
             <dt>閲覧ページ数</dt>

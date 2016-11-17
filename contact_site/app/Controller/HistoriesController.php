@@ -189,6 +189,8 @@ class HistoriesController extends AppController {
     ];
     $ret = $this->THistoryStayLog->find('all', $params);
     $this->set('THistoryStayLog', $ret);
+    /* 除外情報取得 */
+    $this->set('excludeList', $this->MCompany->getExcludeList($this->userInfo['MCompany']['id']));
     return $this->render('/Elements/Histories/remoteGetStayLogs');
   }
 

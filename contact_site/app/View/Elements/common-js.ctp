@@ -26,6 +26,43 @@
 
   }
 
+  function trimToURL(excludes, url){
+    var builder = { search: '', hash: '' }, baseUrl = url;
+
+    if ( !url ) return url;
+
+    if ( typeof(URL) === "function" ) {
+      var builder = new URL(url);
+      baseUrl = builder.origin + builder.port + builder.pathname;
+    }
+    // URLインターフェースがないブラウザへの救済処置
+    else {
+      var tmpURL = url.split('?'), search = '', num = '', hash = '';
+      // パラメーターを含んでいる場合
+      if ( tmpURL[1] !== undefined ) {
+        search = tmpURL[1]; // ? 以降を変数に格納
+        /* ハッシュの為の処理 */
+        num = url.indexOf('#'); // # の位置を確認
+        hash = (num) ? url.substr(num) : ""; // # があった場合は、それ以降の文字列を変数に格納
+        search = url.replace(hash, ""); // # 以降の文字列をもとのURLから取り除き、変数に格納
+        builder = { // エセURLインターフェースの戻り値作成
+          search: '?' + search,
+          hash: '#' + hash,
+        };
+      }
+    }
+
+    if (builder.search) {
+      builder.search = '?' + builder.search.substr(1).split('&').filter(function (item) {
+          return !excludes.hasOwnProperty(item.split('=', 2)[0]);
+      }).join('&');
+      return baseUrl + builder.search + builder.hash; // builder.toString()できるといいなぁ
+    }
+    else {
+      return url;
+    }
+  }
+
   // エスケープ用
   // http://qiita.com/saekis/items/c2b41cd8940923863791
   function escape_html (string) {

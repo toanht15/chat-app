@@ -31,37 +31,10 @@
   <?php endif; ?>
 
       /* パラメーターを取り除く */
+      var targetParams = <?php echo json_encode(array_flip($excludeList['params']), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
       $scope.trimToURL = function (url){
         if ( typeof(url) !== 'string' ) return "";
-        var targetParams = <?php echo json_encode($excludeList['params'], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
-        var newUrl = url;
-
-        // パラメータの取得
-        var params = url.split('?'), param, targetParams;
-        newUrl = params[0];
-        if ( params[1] !== undefined) {
-          var param = params[1];
-          var paramList = params[1].split('&');
-          for ( var i in targetParams ) {
-            var target = targetParams[i];
-            var a = param.split(target + "=");
-            if ( a.length > 1 ) {
-              if ( a[1].indexOf('&') > -1 ) {
-                var set = target + "=" + a[1].slice(0, a[1].indexOf('&') + 1);
-              }
-              else {
-                var set = target + "=" + a[1];
-                a[0] = a[0].slice(0, -1);
-              }
-              param = param.replace(set, "");
-              param = param.slice(0, -1);
-            }
-          }
-          if ( param.length > 0 ) {
-            newUrl += "?" + param;
-          }
-        }
-        return newUrl;
+        return trimToURL(targetParams, url);
       };
   });
 
