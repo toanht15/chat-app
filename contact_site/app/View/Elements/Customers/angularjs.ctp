@@ -1026,12 +1026,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var obj = JSON.parse(data);
 
       var tabId = ( obj.subWindow ) ? obj.to : obj.tabId;
-      if ( $scope.isset(tabId) && tabId.length > 0 && tabId.indexOf('_frame') > -1 ) {
+      if ( angular.isDefined(tabId) && tabId.length > 0 && tabId.indexOf('_frame') > -1 ) {
         tabId = tabId.substr(0, tabId.indexOf('_frame'));
       }
-
       // 消費者
-      if ( angular.isDefined($scope.monitorList[tabId]) ) {
+      if ( $scope.monitorList.hasOwnProperty(tabId) ) {
 
         if ( 'widget' in obj ) {
           $scope.monitorList[tabId].widget = obj.widget;
