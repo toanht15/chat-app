@@ -1068,6 +1068,13 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       });
     });
 
+    socket.on('cngOpStatus', function(data){
+      var obj = JSON.parse(data);
+      var opState = $('#changeOpStatus');
+      var status = opState.data('status', obj.status);
+
+    });
+
     socket.on('connectConfirm', function(data){
       var obj = JSON.parse(data);
     });

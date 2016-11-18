@@ -529,11 +529,15 @@ io.sockets.on('connection', function (socket) {
             company.info[res.siteKey][data.userId][socket.id] = null;
 
             if ( ('status' in data) && String(data.status) === '1' ) {
-              activeOperator[res.siteKey][data.userId] = data.status;
+              activeOperator[res.siteKey][data.userId] = socket.id;
             }
             else {
+              if ( data.userId in activeOperator[res.siteKey] ) {
+                delete activeOperator[res.siteKey][data.userId];
+              }
               data.status =  0;
             }
+              emit.toUser('cngOpStatus', {status: data.status}, activeOperator[res.siteKey][data.userId]);
 
         }
         if ( res.siteKey in company.info ) {
@@ -972,7 +976,7 @@ io.sockets.on('connection', function (socket) {
     // 在席中
     if ( obj.active ) {
       if ( !isset(activeOperator[obj.siteKey][obj.userId]) ) {
-        activeOperator[obj.siteKey][obj.userId] = true;
+        activeOperator[obj.siteKey][obj.userId] = socket.id;
       }
     }
     // 退席中
