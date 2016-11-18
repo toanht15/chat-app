@@ -847,7 +847,6 @@ io.sockets.on('connection', function (socket) {
     if ( isset(obj.connectToken) ) {
       var parentId = false;
       obj.message = "切断を検知しました。";
-
       // 企業フレーム
       switch(Number(obj.type)){
         case 1: // 企業フレーム
@@ -1530,6 +1529,7 @@ io.sockets.on('connection', function (socket) {
               var parentTabId = getSessionId(info.siteKey, core.toTabId, 'parentTabId');
               emit.toUser('syncStop', {siteKey: info.siteKey, tabId: core.toTabId, connectToken: core.connectToken}, getSessionId(info.siteKey, parentTabId, "sessionId"));
               emit.toCompany('syncStop', {siteKey: info.siteKey, tabId: parentTabId}, info.siteKey);
+              syncStopCtrl(info.siteKey, parentTabId);
             }
             else {
               emit.toCompany('syncStop', {siteKey: info.siteKey, tabId: core.toTabId}, info.siteKey);
@@ -1541,6 +1541,7 @@ io.sockets.on('connection', function (socket) {
             if ( 'connectTab' in core ) {
               emit.toUser('syncStop', {siteKey: info.siteKey, tabId: core.connectTab, connectToken: core.connectToken}, getSessionId(info.siteKey, core.connectTab, "sessionId"));
               emit.toCompany('syncStop', {siteKey: info.siteKey, tabId: core.connectTab}, info.siteKey);
+              syncStopCtrl(info.siteKey, core.connectTab);
             }
             else {
               emit.toCompany('syncStop', {siteKey: info.siteKey, tabId: core.toTabId}, info.siteKey);
