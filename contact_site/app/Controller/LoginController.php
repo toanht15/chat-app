@@ -88,6 +88,7 @@ class LoginController extends AppController {
       $url = ['controller'=>'Login', 'action' => 'index'];
     }
     foreach($jsonData as $k => $v){
+      $v = ( is_object($v) ) ? json_encode($v) : $v;
       fwrite($handle, " [".$k."]: ".$v.PHP_EOL);
     }
     fwrite($handle, "----------------------------------------------------".PHP_EOL.PHP_EOL);

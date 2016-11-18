@@ -96,16 +96,16 @@
     };
 
     if ( 'target' in ev ) {
-      log.currentUrl    = ( 'URL'   in ev.target ) ? ev.target.URL   : "";
-      log.currentTitle  = ( 'title' in ev.target ) ? ev.target.title : "";
+      log.currentUrl    = ( ev.target.hasOwnProperty('URL') ) ? ev.target.URL   : "";
+      log.currentTitle  = ( ev.target.hasOwnProperty('title') ) ? ev.target.title : "";
     }
-    log.errorType       = ( 'type'     in ev    ) ? ev.type      : "";
-    log.status          = ( 'status'   in jqxhr ) ? jqxhr.status : "";
-    log.requestType     = ( 'type'     in set   ) ? set.type     : "";
-    log.requestUrl      = ( 'url'      in set   ) ? set.url      : "";
-    log.requestDataType = ( 'dataType' in set   ) ? set.dataType : "";
-    log.requestData     = ( 'data'     in set   ) ? set.data     : "";
-    location.href = "<?=$this->Html->url(['controller' => 'Login', 'action'=>'loginCheck'])?>" + "?error=" + JSON.stringify(log);
+    log.errorType       = ( ev.hasOwnProperty('type') ) ? ev.type      : "";
+    log.status          = ( jqxhr.hasOwnProperty('status') ) ? jqxhr.status : "";
+    log.requestType     = ( set.hasOwnProperty('type') ) ? set.type     : "";
+    log.requestUrl      = ( set.hasOwnProperty('url') ) ? set.url      : "";
+    log.requestDataType = ( set.hasOwnProperty('dataType') ) ? set.dataType : "";
+    log.requestData     = ( set.hasOwnProperty('data') ) ? set.data     : "";
+    location.href = "<?=$this->Html->url(['controller' => 'Login', 'action'=>'loginCheck'])?>" + "?error=" + encodeURIComponent(JSON.stringify(log));
   }
 
   /* Angularの描画 */
