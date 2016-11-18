@@ -30,6 +30,9 @@ class MWidgetSetting extends AppModel {
       'time_text' => "timeText",
       'chat_radio_behavior' => "chatRadioBehavior",
       'chat_trigger' => "chatTrigger",
+      'sp_show_flg' => "spShowFlg",
+      'sp_header_light_flg' => "spHeaderLightFlg",
+      'sp_auto_open_flg' => "spAutoOpenFlg",
       'content' => "content"
     ];
 

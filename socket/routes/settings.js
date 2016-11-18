@@ -98,7 +98,10 @@ router.get("/", function(req, res, next) {
                     mainImage: settings.mainImage,
                     chatRadioBehavior: isNumeric(settings.chatRadioBehavior),
                     chatTrigger: isNumeric(settings.chatTrigger),
-                    radiusRatio: isNumeric(settings.radiusRatio)
+                    radiusRatio: isNumeric(settings.radiusRatio),
+                    spShowFlg: isNumeric(settings.spShowFlg),
+                    spHeaderLightFlg: isNumeric(settings.spHeaderLightFlg),
+                    spAutoOpenFlg: isNumeric(settings.spAutoOpenFlg)
                 };
 
                 actionTypeList = [];

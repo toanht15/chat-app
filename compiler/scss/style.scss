@@ -610,6 +610,7 @@ ul.ulTab {
   height: 2.5em;
   padding: 0;
   user-select: none;
+  display: flex;
 
   &[data-col="2"] li {
     width: 50%;
@@ -618,13 +619,14 @@ ul.ulTab {
   li {
     height: 2.5em;
     padding: 0.5em;
-    float: left;
     text-align: center;
     border: 1px solid #c3d69b;
     border-right-width: 0;
     color: #c3d69b;
     cursor: pointer;
     font-size: 11px;
+    flex: 1;
+    background-color: #FFF;
 
     &.choose {
       position: relative;

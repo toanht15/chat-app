@@ -11,6 +11,25 @@ sincloApp.controller('WidgetCtrl', function($scope){
       $scope.showWidgetType = num;
       sincloChatMessagefocusFlg = true;
       var sincloBox = document.getElementById("sincloBox");
+
+      if ( Number(num) === 3 ) { // ｽﾏｰﾄﾌｫﾝ（縦）の表示
+        $scope.widget.showTab = 'chat'; // 強制でチャットにする
+      }
+
+      if ( Number(num) !== 2 ) { // ｽﾏｰﾄﾌｫﾝ（横）以外は最大化する
+        /* ウィジェットが最小化されていたら最大化する */
+        var flg = sincloBox.getAttribute("data-openflg");
+        if ( String(flg) !== "true" ) { // 最小化されている場合
+          var main = document.getElementById("miniTarget");  // 非表示対象エリア
+          var height = 0;
+          for(var i = 0; main.children.length > i; i++){ // 非表示エリアのサイズを計測する
+            if ( Number(num) === 3 && main.children[i].id === 'navigation' ) continue; // SPの場合はナビゲーションは基本表示しない
+            height += main.children[i].offsetHeight;
+          }
+          main.style.height = height + "px";
+        }
+      }
+
       sincloBox.setAttribute("data-openflg", true);
     }
 
@@ -50,6 +69,10 @@ sincloApp.controller('WidgetCtrl', function($scope){
 
     $scope.inputInitToggle = function(item){
       return (item) ? 1 : 2;
+    };
+
+    $scope.spHeaderLightToggle = function(){
+      return ( $scope.showWidgetType === 3 && $scope.sp_header_light_flg === '<?=C_SELECT_CAN?>' );
     };
 
     $scope.showGallary = function(){
@@ -103,13 +126,29 @@ sincloApp.controller('WidgetCtrl', function($scope){
         $scope.$apply();
     });
 
+    angular.element(window).on("focus", ".showSp", function(e){
+        $scope.switchWidget(3);
+    });
+
+    angular.element(window).on("focus", ".showHeader", function(e){
+        if ( $scope.showWidgetType === 1 ) return false;
+        if ( $scope.showWidgetType === 3 ) {
+          if ( !$scope.spHeaderLightToggle() ) return false;
+        }
+        $scope.switchWidget(1);
+        $scope.$apply();
+    });
     angular.element(window).on("focus", ".showChat", function(e){
         $scope.widget.showTab = "chat";
+        if ( $scope.spHeaderLightToggle() ) {
+          $scope.switchWidget(1);
+        }
         $scope.$apply();
     });
 
     angular.element(window).on("focus", ".showTel", function(e){
         $scope.widget.showTab = "call";
+        $scope.switchWidget(1);
         $scope.$apply();
     });
 

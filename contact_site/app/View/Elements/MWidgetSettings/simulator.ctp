@@ -1,14 +1,15 @@
 <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
 <section id="switch_widget" ng-cloak>
-  <ul class="ulTab" data-col=2>
+  <ul class="ulTab" data-col=3>
     <li ng-class="{choose: showWidgetType === 1}" ng-click="switchWidget(1)">通常</li>
-    <li ng-class="{choose: showWidgetType === 2}" ng-click="switchWidget(2)">スマートフォン（横）</li>
+    <li ng-class="{choose: showWidgetType === 3}" ng-click="switchWidget(3)">ｽﾏｰﾄﾌｫﾝ(縦)</li>
+    <li ng-class="{choose: showWidgetType === 2}" ng-click="switchWidget(2)">ｽﾏｰﾄﾌｫﾝ(横)</li>
   </ul>
 </section>
 <?php endif; ?>
 
 <section id="sample_widget_area" ng-cloak>
-  <div id="sincloBox" data-openflg="true" ng-if="showWidgetType === 1" style="position: relative; z-index: 1; width: 285px; background-color: rgb(255, 255, 255);">
+  <div id="sincloBox" data-openflg="true" ng-if="showWidgetType !== 2" style="position: relative; z-index: 1; width: 285px; background-color: rgb(255, 255, 255);">
     <style>
       #sincloBox * { font-size: 12px; }
       #sincloBox span, #sincloBox pre { font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana!important }
@@ -69,18 +70,16 @@
     <?php endif; ?>
     </style>
     <!-- 画像 -->
-    <span id="mainImage" class="widgetOpener" ng-if="mainImageToggle == '1'">
-    <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
-    <?php endif; ?>
+    <span id="mainImage" class="widgetOpener" ng-hide="spHeaderLightToggle() || mainImageToggle !== '1'">
       <img ng-src="{{main_image}}" err-src="<?=$gallaryPath?>chat_sample_picture.png" width="62" height="70" alt="チャット画像">
     </span>
     <!-- 画像 -->
     <div>
       <!-- タイトル -->
-      <p id="widgetTitle" class="widgetOpener notSelect" ng-class="{center: mainImageToggle == '2'}">{{title}}</p>
+      <p id="widgetTitle" class="widgetOpener notSelect" ng-class="{center: spHeaderLightToggle() || mainImageToggle !== '1'}">{{title}}</p>
       <!-- タイトル -->
     </div>
-    <div id='descriptionSet' class="widgetOpener notSelect" ng-hide="mainImageToggle == '2' && subTitleToggle == '2' && descriptionToggle == '2'">
+    <div id='descriptionSet' class="widgetOpener notSelect" ng-hide=" spHeaderLightToggle() || mainImageToggle == '2' && subTitleToggle == '2' && descriptionToggle == '2'">
       <!-- サブタイトル -->
       <p ng-if="subTitleToggle == '1'" id="widgetSubTitle">{{sub_title}}</p>
       <p ng-if="subTitleToggle == '2'" id="widgetSubTitle"></p>
@@ -93,7 +92,7 @@
     </div>
     <div id="miniTarget" ng-style="miniTargetCss">
     <?php if ( $coreSettings[C_COMPANY_USE_CHAT] && $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
-      <section id="navigation">
+      <section id="navigation" ng-hide="showWidgetType === 3">
         <ul>
           <li data-tab="chat" class="widgetCtrl notSelect" ng-class="{selected: widget.showTab == 'chat'}">チャットでの受付</li>
           <li data-tab="call" class="widgetCtrl notSelect" ng-class="{selected: widget.showTab == 'call'}" >電話での受付</li>

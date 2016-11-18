@@ -14,7 +14,7 @@ class MWidgetSettingsController extends AppController {
       'main_color', 'string_color', 'show_main_image', 'main_image', 'radius_ratio'
     ],
     'synclo' => ['tel', 'content', 'display_time_flg', 'time_text'],
-    'chat' => ['chat_radio_behavior', 'chat_trigger', 'show_name'],
+    'chat' => ['chat_radio_behavior', 'chat_trigger', 'show_name', 'sp_show_flg', 'sp_header_light_flg', 'sp_auto_open_flg',],
   ];
 
   public function beforeRender(){
@@ -83,6 +83,8 @@ class MWidgetSettingsController extends AppController {
     $this->set('widgetPositionType', Configure::read('widgetPositionType'));
     $this->set('widgetShowNameType', Configure::read('widgetShowNameType'));
     $this->set('widgetSendActType', Configure::read('widgetSendActType'));
+    $this->set('widgetSpAutoType', Configure::read('widgetSpAutoType')); // 常に無効化する・いいえ
+    $this->set('normalChoices', Configure::read('normalChoices')); // はい・いいえ
     $this->set('widgetRadioBtnBehaviorType', Configure::read('widgetRadioBtnBehaviorType'));
     $this->set('gallaryPath', C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT.'/img/widget/');
   }
@@ -276,6 +278,18 @@ class MWidgetSettingsController extends AppController {
             }
             if ( strcmp($v, 'show_name') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['show_name'] = C_WIDGET_SHOW_COMP; // デフォルト値
+            }
+
+            if ( strcmp($v, 'sp_show_flg') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['sp_show_flg'] = C_SELECT_CAN; // デフォルト値
+            }
+
+            if ( strcmp($v, 'sp_header_light_flg') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['sp_header_light_flg'] = C_SELECT_CAN_NOT; // デフォルト値
+            }
+
+            if ( strcmp($v, 'sp_auto_open_flg') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['sp_auto_open_flg'] = C_SELECT_CAN_NOT; // デフォルト値
             }
 
             if ( isset($json[$v]) ) {

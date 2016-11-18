@@ -106,20 +106,14 @@ $headerNo = 1;
           <!-- 企業名 -->
           <li>
             <span class='require'><label>企業名</label></span>
-
             <?php
-            $subTitleClass = '';
-            if($coreSettings[C_COMPANY_USE_CHAT]){
-              $subTitleClass = 'showChat';
-            }
-
             $subTitleOpt = [
                 'type' => 'text',
                 'placeholder' => '企業名',
                 'div' => false,
                 'style' => 'margin:10px 0 10px 20px;',
                 'label' => false,
-                'class' => $subTitleClass,
+                'class' => 'showHeader',
                 'required' => false,
                 'maxlength' => 15,
                 'error' => false
@@ -132,8 +126,8 @@ $headerNo = 1;
             ]);
             ?>
             <div ng-init="subTitleToggle='<?=$this->formEx->val($this->data['MWidgetSetting'], 'show_subtitle')?>'">
-              <label for="showSubtitle1"><input type="radio" name="data[MWidgetSetting][show_subtitle]" ng-model="subTitleToggle" id="showSubtitle1" value="1" >企業名を表示する</label><br>
-              <label for="showSubtitle2"><input type="radio" name="data[MWidgetSetting][show_subtitle]" ng-model="subTitleToggle" id="showSubtitle2" value="2" >企業名を表示しない</label><br>
+              <label for="showSubtitle1"><input type="radio" name="data[MWidgetSetting][show_subtitle]" ng-model="subTitleToggle" id="showSubtitle1" class="showHeader" value="1" >企業名を表示する</label><br>
+              <label for="showSubtitle2"><input type="radio" name="data[MWidgetSetting][show_subtitle]" ng-model="subTitleToggle" id="showSubtitle2" class="showHeader" value="2" >企業名を表示しない</label><br>
               <?=$subTitle?>
             </div>
           </li>
@@ -149,6 +143,7 @@ $headerNo = 1;
               'ng-disabled' => 'descriptionToggle == "2"',
               'style' => 'margin:10px 0 10px 20px;',
               'div' => false,
+              'class' => 'showHeader',
               'label' => false,
               'maxlength' => 15,
               'error' => false
@@ -157,8 +152,8 @@ $headerNo = 1;
               'entity' => 'MWidgetSetting.description'
             ]) ?>
             <div ng-init="descriptionToggle='<?=$this->formEx->val($this->data['MWidgetSetting'], 'show_description')?>'">
-              <label for="showDescription1"><input type="radio" name="data[MWidgetSetting][show_description]" ng-model="descriptionToggle" id="showDescription1" value="1" >説明文を表示する</label><br><?=$description?><br>
-              <label for="showDescription2"><input type="radio" name="data[MWidgetSetting][show_description]" ng-model="descriptionToggle" id="showDescription2" value="2" >説明文を表示しない</label>
+              <label for="showDescription1"><input type="radio" class="showHeader" name="data[MWidgetSetting][show_description]" ng-model="descriptionToggle" id="showDescription1" value="1" >説明文を表示する</label><br><?=$description?><br>
+              <label for="showDescription2"><input type="radio" class="showHeader" name="data[MWidgetSetting][show_description]" ng-model="descriptionToggle" id="showDescription2" value="2" >説明文を表示しない</label>
             </div>
           </li>
           <?php if ($this->Form->isFieldError('description')) echo $this->Form->error('description', null, ['wrap' => 'li']); ?>
@@ -366,6 +361,7 @@ $headerNo = 1;
                 'options' => $widgetShowNameType,
                 'legend' => false,
                 'separator' => '</label><br><label>',
+                'class' => 'showChat',
                 'div' => false,
                 'label' => false,
                 'error' => false
@@ -376,6 +372,73 @@ $headerNo = 1;
           </li>
           <?php if ( $this->Form->isFieldError('show_name') ) echo $this->Form->error('show_name', null, ['wrap' => 'li']); ?>
           <!-- 担当者表示 -->
+        </ul>
+      </section>
+      <h3><?php echo mb_convert_kana($headerNo, "N", "utf-8"); $headerNo++ ?>．チャット設定（スマートフォン用）</h3>
+      <section>
+
+        <ul class="settingList">
+
+          <!-- ウィジェットの表示   -->
+          <li>
+            <span class="require"><label>ウィジェットの表示</label></span>
+            <pre><label><?= $this->ngForm->input('sp_show_flg', [
+                'type' => 'radio',
+                'options' => $normalChoices,
+                'legend' => false,
+                'separator' => '</label><br><label>',
+                'class' => 'showSp',
+                'div' => false,
+                'label' => false,
+                'error' => false
+              ],
+              [
+                'entity' => 'MWidgetSetting.sp_show_flg'
+              ]) ?></label></pre>
+          </li>
+          <?php if ( $this->Form->isFieldError('sp_show_flg') ) echo $this->Form->error('sp_show_flg', null, ['wrap' => 'li']); ?>
+          <!-- ウィジェットの表示   -->
+
+          <!-- ヘッダー部分の簡易表示 -->
+          <li>
+            <span class="require"><label>ヘッダー部分の簡易表示</label></span>
+            <pre><label><?= $this->ngForm->input('sp_header_light_flg', [
+                'type' => 'radio',
+                'options' => $normalChoices,
+                'ng-disabled' => 'sp_show_flg !== "'.C_SELECT_CAN.'"',
+                'legend' => false,
+                'separator' => '</label><br><label>',
+                'class' => 'showSp',
+                'div' => false,
+                'label' => false,
+                'error' => false
+              ],
+              [
+                'entity' => 'MWidgetSetting.sp_header_light_flg'
+              ]) ?></label></pre>
+          </li>
+          <?php if ( $this->Form->isFieldError('sp_header_light_flg') ) echo $this->Form->error('sp_header_light_flg', null, ['wrap' => 'li']); ?>
+          <!-- ヘッダー部分の簡易表示 -->
+
+          <!-- 自動最大化の無効設定 -->
+          <li>
+            <span class="require"><label>ウィジェットの自動最大化</label></span>
+            <pre><label><?= $this->ngForm->input('sp_auto_open_flg', [
+                'type' => 'radio',
+                'options' => $widgetSpAutoType,
+                'ng-disabled' => 'sp_show_flg !== "'.C_SELECT_CAN.'"',
+                'legend' => false,
+                'separator' => '</label><br><label>',
+                'div' => false,
+                'label' => false,
+                'error' => false
+              ],
+              [
+                'entity' => 'MWidgetSetting.sp_auto_open_flg'
+              ]) ?></label></pre>
+          </li>
+          <?php if ( $this->Form->isFieldError('sp_auto_open_flg') ) echo $this->Form->error('sp_auto_open_flg', null, ['wrap' => 'li']); ?>
+          <!-- 自動最大化の無効設定 -->
         </ul>
       </section>
       <?php endif; ?>

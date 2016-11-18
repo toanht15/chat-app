@@ -153,6 +153,18 @@ $config['dictionaryType'] = [
     C_DICTIONARY_TYPE_PERSON => "個人設定"
 ];
 
+/* 通常選択肢 */
+$config['normalChoices'] = [
+    C_SELECT_CAN => "する",
+    C_SELECT_CAN_NOT => "しない"
+];
+
+/* ウィジェット設定 － 自動最大化無効設定 */
+$config['widgetSpAutoType'] = [
+    C_SELECT_CAN => "常に無効にする",
+    C_SELECT_CAN_NOT => "しない"
+];
+
 /* ウィジェット設定 － 表示設定種別 */
 $config['WidgetDisplayType'] = [
     1 => "常に表示する",
