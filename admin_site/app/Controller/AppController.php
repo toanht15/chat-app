@@ -35,52 +35,74 @@ class AppController extends Controller {
   public $userInfo;
 
   public $components = [
-     'Session',
-     'Auth' => [
-        //ログイン後の遷移先
-        'loginRedirect' => [
+    'Session',
+    'Auth' => [
+      //ログイン後の遷移先
+      'loginRedirect' => [
         'controller' => 'Tops',
         'action' => 'index'
-        ],
-        //ログインしていない時に他ページへアクセスした場合
-        'loginAction' => [
+      ],
+      //ログインしていない時に他ページへアクセスした場合
+      'loginAction' => [
         'controller' => 'Login',
         'action' => 'login'
-            ],
-        //パスワードハッシュ化
-          'authenticate' => [
-          'Form' => [
-            'userModel' => 'MAdministrator',
-            'fields' => ['username' => 'mail_address'],
-            'scope' => [
-              'MAdministrator.del_flg' => 0
-            ]
+      ],
+      //パスワードハッシュ化
+      'authenticate' => [
+        'Form' => [
+          'userModel' => 'MAdministrator',
+          'fields' => ['username' => 'mail_address'],
+          'scope' => [
+            'MAdministrator.del_flg' => 0
           ]
         ]
-     ]
+      ]
+    ]
   ];
-   /**
-   *どのアクションが呼ばれてもはじめに実行される関数
-   *@return void
-   */
+
+  /**
+  *どのアクションが呼ばれてもはじめに実行される関数
+  *@return void
+  */
   public function beforeFilter(){
-   //viewとindexとaddは認証不要
-    $this->Auth->allow('login');
     // 未ログインの場合は以降の処理を通さない
     if (!$this->Auth->user()) return false;
+
+    // 通知メッセージをセット
+    if ($this->Session->check('global.message')) {
+      $this->set('alertMessage', $this->Session->read('global.message'));
+      $this->Session->delete('global.message');
+    }
 
     // ログイン情報をオブジェクトに格納
     if ( $this->Session->check('global.userInfo') ) {
       $this->userInfo = $this->Session->read('global.userInfo');
       $this->set('userInfo', $this->userInfo);
     }
+
     //他のクラスでもbeforeFilterを使えるようにする
     parent::beforeFilter();
     //Authの情報をセット
     $this->set('auth',$this->Auth);
   }
 
-   public function setUserInfo($info){
+  public function setUserInfo($info){
     $this->Session->write('global.userInfo', $info);
-   }
- }
+  }
+
+  /**
+  * 通知メッセージをセッションに保存
+  * @param $type int (1:success, 2:error, 3:notice) 通知の種類
+  * @param $text string メッセージ本文
+  * */
+  public function renderMessage($type, $text){
+    $this->Session->write('global.message', ['type'=>$type, 'text' => $text]);
+  }
+
+  /**
+  * jsonエンコード
+  */
+  public function jsonEncode($val) {
+    return json_encode($val, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_FORCE_OBJECT );
+  }
+}

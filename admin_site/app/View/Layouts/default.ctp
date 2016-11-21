@@ -34,22 +34,9 @@
   ?>
 </head>
 <body>
-  <div id="sidebar">
-    <div id="logo" ><?=$this->Html->image('sinclo_square_logo.png', ['width'=>54, 'height'=>48])?></div>
-    <nav>
-      <ul>
-        <li class="nav-group"><i class="fa fa-home fa-lg" aria-hidden="true"></i> トップ</li>
-        <li class="nav-group on"><i class="fa fa-building fa-lg" aria-hidden="true"></i> 契約管理</li>
-        <li>契約一覧</li>
-        <li class="nav-group"><i class="fa fa-cog fa-lg" aria-hidden="true"></i> 設定</li>
-        <li>アカウント設定</li>
-        <li>テンプレート設定</li>
-        <li class="nav-group"><i class="fa fa-user fa-lg" aria-hidden="true"></i> 個人設定</li>
-        <li>個人設定</li>
-      </ul>
-    </nav>
-    <a href="javascript:void(0)">ログアウト</a>
-  </div>
+  <?php if(strcmp($this->name,'Login') !== 0): ?>
+    <?= $this->element('navi'); ?>
+  <?php endif ;?>
   <div id="content">
     <?= $this->element('popup') ?>
     <?php echo $this->Flash->render(); ?>

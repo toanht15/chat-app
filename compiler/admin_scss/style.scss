@@ -50,7 +50,7 @@ table {
 
     th {
       color: #FFF;
-      text-align: center;
+      text-align: left;
       font-weight: bold;
     }
   }
@@ -179,7 +179,7 @@ div#sidebar {
   div#logo {
     text-align: center;
     border-right: 1px solid $main-color;
-    background-color: #FFF;
+    background-color: $main-color;
     color: $font-color;
     height: 60px;
     padding: 6px 0;
@@ -195,31 +195,36 @@ div#sidebar {
 
     li {
       padding: 0.5em 0;
-      padding-left: 2.5em;
+      padding-left: 1.1em;
 
       &.nav-group {
         padding-left: 0.5em;
       }
 
+      &.link{
+        cursor:pointer;
+      }
+
+      /* 変更 */
       &.on {
         position: relative;
         background-color: $shadow-color;
 
-        &:after {
-          content: " ";
-          width: 0;
-          position: absolute;
-          right: 0;
-          height: 0;
-          border: 0.8em solid transparent;
-          border-right: 0.8em solid #ffffff;
-          top: 0.5em;
+        &:not(.nav-group) {
+          &:after {
+            content: " ";
+            width: 0;
+            position: absolute;
+            right: 0;
+            height: 0;
+            border: 0.8em solid transparent;
+            border-right: 0.8em solid #ffffff;
+            top: 0.5em;
+          }
         }
       }
-
     }
   }
-
   a {
     background-color: $main-color;
     display: block;
@@ -228,7 +233,6 @@ div#sidebar {
     padding: 0 0.5em;
     text-align: center;
   }
-
 }
 
 #content {
@@ -257,5 +261,316 @@ div#sidebar {
     input {
       border-width: 0 0 1px 0;
     }
+  }
+}
+
+/* id共通化 */
+
+[id$=_idx] {
+  width: auto;
+  margin: 15px 15px 0 15px;
+}
+
+[id$="_title"] {
+  border-bottom: 2px solid $main-color;
+  padding: 10px 0px;
+  height: 19px;
+}
+
+[id$="_title"] > div {
+  margin-right: 5px;
+  margin-top:-5px;
+}
+
+div[id$='_list'] table {
+  width: 100%;
+}
+
+.fLeft {
+  float: left;
+}
+
+/*　ユーザーアカウント設定 */
+#madmin_idx {
+  .action_btn{
+    width:6em;
+  }
+
+  i.fa.fa-cog.fa-2x{
+    color: $normal-color;
+    margin-top: 6px;
+  }
+
+  a#searchRefine {
+    margin-top: 23px;
+    border-radius: 17px;
+  }
+
+  table{
+    margin-top: 7px;
+  }
+}
+
+
+/* ログイン画面 */
+#login_idx_bg {
+  background-color: #bfbfbf;
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#A0BDD2', endColorstr='#7B8F9E', GradientType=0)";
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  z-index: -1;
+}
+
+#login_idx {
+  position: absolute;
+  margin: auto;
+  min-width: 300px !important;
+  width: 600px !important;
+  height: 475px;
+  right: 0;
+  left: 0;
+  top: 0;
+  bottom: 0;
+
+  #content-area {
+    margin: auto;
+    height: 290px;
+    border: none;
+    border-radius: 5px;
+    background-color:#fff;
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#F8FCFD', endColorstr='#EEF2F3', GradientType=0)";
+
+    .user_add_title {
+      border-bottom: solid;
+      background-color: $main-color;
+      border-color: $main-color;
+      color: #fff;
+      padding: 10px 20px 0 20px;
+      margin-top: -2px;
+      text-align: center;
+      font-size: 20px;
+      height:40px;
+    }
+
+    form#MAdministratorLoginForm {
+      display: flex;
+    }
+
+    input#MAdministratorMailAddress{
+      margin-left: 25px;
+      margin-top: 70px;
+      font-size: 18px;
+    }
+
+    input#MAdministratorPassword{
+      margin-left: 60px;
+      margin-top: 70px;
+      font-size: 18px;
+    }
+
+    .loginForm {
+      cursor: pointer !important;
+      background-color: #3c7a8e;
+      border: 1px solid #3c7a8e;
+      display: block;
+      color: #FFF;
+      font-weight: bold;
+      transition: background-color, border-color 0.1s linear;
+      margin-top: 60px;
+      margin-left: 500px;
+      margin-bottom: -20px;
+      width: 70px;
+      height: 33px;
+      font-size: 20px;
+    }
+  }
+}
+
+/* サイドバー　*/
+div#sidebar{
+  .on a{
+    background-color: $shadow-color;
+  }
+}
+
+/* Top画面 */
+#top_idx {
+
+  i.fa.fa-home.fa-2x {
+    color: $normal-color;
+    margin-top: 6px;
+  }
+
+  .p20x {
+    padding: 20px;
+  }
+
+  table{
+    margin-top:28px;
+  }
+
+  #agreement_button{
+    display:flex;
+    margin-top:21px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+
+    a {
+      position: relative;
+      font-color:black;
+
+      &.on:before,&:not(.on):before {
+        content: "\f111";
+        display: block;
+        font: normal normal normal 14px/1 FontAwesome;
+        font-size: 0.5em;
+        text-rendering: auto;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        position: absolute;
+        top: 0.35em;
+        bottom: 0;
+        left: 1em;
+        color: #FFF;
+      }
+
+      &.on:hover:before,&:not(.on):hover:before {
+        color:#596d8f;
+      }
+    }
+
+    .action_btn {
+      font-size: 12px;
+      font-size: 1.1rem;
+      border: 1px solid #656565;
+      border-radius: 5px;
+      padding: 0.25em 0.5em;
+      display: block;
+      margin:0;
+      text-align: center;
+      cursor: pointer;
+      border-radius: 5px 0 0 5px;
+    }
+
+    .normal_btn {
+      font-size: 12px;
+      font-size: 1.1rem;
+      border: 1px solid #656565;
+      border-radius: 5px;
+      padding: 0.25em 0.5em;
+      display: block;
+      margin:0;
+      text-align: center;
+      cursor: pointer;
+      border-radius: 0 5px 5px 0;
+    }
+
+    .on{
+      color: #FFF;
+      background-color: $normal-color;
+      border-color: #596d8f;
+    }
+  }
+
+  #top_form {
+  }
+}
+
+
+
+/* 個人アカウント設定 */
+#personal_idx {
+
+  i.fa.fa-user.fa-2x {
+    color: $normal-color;
+    margin-top: 6px;
+  }
+
+  .p20x {
+    padding: 20px;
+  }
+
+  #personal_form {
+
+    .form01{
+      width: 600px;
+      margin: 0 auto;
+
+      li {
+        margin: 15px 0;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+      }
+
+      .error-message {
+        color: $notification-color;
+        padding-left: 190px;
+      }
+
+      div.labelArea{
+        width: 15em;
+        text-align: right;
+        height: 30px;
+        padding: 10px 0 0 0;
+        margin-right: 20px;
+      }
+
+      .m40l {
+        margin-left: 40px;
+      }
+
+      #set_password_area {
+        border: 1px solid $main-color;
+        border-radius: 10px;
+        margin-left: 0px;
+      }
+
+      input {
+        height: 26px;
+        font-size: 12px;
+        margin: 2px 5px;
+        width: 270px;
+        padding-left: 4px;
+      }
+
+      input[type='checkbox'] {
+        width: auto;
+      }
+
+      #personal_action a {
+        width: 100px;
+        padding: 10px;
+        display: block;
+        margin: 0 auto;
+        text-align: center;
+      }
+    }
+  }
+}
+
+.require {
+  &:after {
+    content: "*";
+    color: red;
+  }
+}
+
+/* 契約管理画面 */
+#agreementList_idx {
+  .action_btn {
+    width: 6em;
+  }
+
+  a#searchRefine {
+    margin-top: 23px;
+    border-radius: 17px;
+  }
+
+  table {
+    margin-top: 15px;
   }
 }

@@ -1,13 +1,20 @@
-<script type="text/javascript">
-function MUserFormButton(){
-  console.log('eeee');
- document.getElementById('MUserIndexForm').submit();
-}
-</script>
-<div>
-<?= $this->Form->create('Login', array('id' => 'MUserIndexForm')); ?>
-<?= $this->Form->input('mail_address', array('label' => false, 'placeholder' => 'Mail Address')); ?>
-<?= $this->Form->input('password', array('label' => false, 'placeholder' => 'Password')); ?>
-<?= $this->Form->end(); ?>
-<?= $this->Form->input('Sign In', array('label'=> false,'type' => 'button',  'class'=>'add-submit','onClick' => 'MUserFormButton()')); ?>
+<?php echo $this->element('Login/script'); ?>
+<div id="login_idx_bg"></div>
+<div id="login_idx">
+  <div id="content-area">
+    <div class="user_add_title">
+      SIGN IN
+    </div>
+    <ul class="formArea">
+      <li>
+        <?= $this->Form->create('MAdministrator'); ?>
+          <?= $this->Form->input('mail_address', array('label' => false, 'placeholder' => 'メールアドレス')); ?>
+          <?= $this->Form->input('password', array('label' => false, 'placeholder' => 'パスワード')); ?>
+        <?= $this->Form->end(); ?>
+      </li>
+      <li>
+        <?= $this->Form->input('Go →', array('label'=> false,'type' => 'button', 'class' => 'loginForm','onClick' => 'loginBtn()')); ?>
+      </li>
+    </ul>
+  </div>
 </div>

@@ -30,4 +30,20 @@ App::uses('Model', 'Model');
  * @package       app.Model
  */
 class AppModel extends Model {
+
+  /**
+  * logicalDelete: 論理削除関数
+  * @param int $id: ターゲットのID
+  * @return boolean true/false: 処理に成功したか、失敗したか
+  * */
+  public function logicalDelete($id) {
+    $ret = $this->read(null, $id);
+    if ( !empty($ret) && !empty($ret[$this->name]) && isset($ret[$this->name]['del_flg']) ) {
+      $ret[$this->name]['del_flg'] = 1;
+      if ( $this->save($ret, false) ) {
+        return true;
+      }
+    }
+    return false;
+  }
 }
