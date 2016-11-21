@@ -10,13 +10,13 @@ function ChangeTab(tabname) {
 }
 
 $(function(){
-  $('#agreement').click(function(){
+  $('#agreement_tag').click(function(){
     $(this).addClass("on");
-    $('#trial').removeClass("on");
+    $('#trial_tag').removeClass("on");
   });
-  $('#trial').click(function(){
+  $('#trial_tag').click(function(){
     $(this).addClass("on");
-    $('#agreement').removeClass("on");
+    $('#agreement_tag').removeClass("on");
   });
 });
 </script>

@@ -9,12 +9,12 @@
     <?php echo $this->Html->link(
       '契約',
       '#tab1',
-      array('escape' => false,'class' => 'action_btn tab1 on','id' => 'agreement','style'=> 'width:6em','onclick' => "ChangeTab('tab1')"));
+      array('escape' => false,'class' => 'action_btn tab1 on','id' => 'agreement_tag','style'=> 'width:6em','onclick' => "ChangeTab('tab1')"));
     ?>
     <?php echo $this->Html->link(
       '試用',
       '#tab2',
-      array('escape' => false,'class' => 'normal_btn tab2','id' => 'trial','style'=> 'width:6em','onclick' => "ChangeTab('tab2')"));
+      array('escape' => false,'class' => 'normal_btn tab2','id' => 'trial_tag','style'=> 'width:6em','onclick' => "ChangeTab('tab2')"));
     ?>
   </div>
 
