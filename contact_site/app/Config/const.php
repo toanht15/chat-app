@@ -125,6 +125,10 @@ define('C_SOME_EITHER', 2); // いずれかが一致
 define('C_STATUS_AVAILABLE', 0); // 有効
 define('C_STATUS_UNAVAILABLE', 1); // 無効
 
+// ダウンロード設定
+define('C_YES', 1); // 可
+define('C_IMPROPER', 2); // 不可
+
 /* ユーザー権限（単体あり：C_AUTHORITY_%） */
 $config['Authority'] = [
     C_AUTHORITY_ADMIN => "管理者",
