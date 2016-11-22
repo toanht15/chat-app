@@ -117,6 +117,10 @@ define('C_AUTO_WIDGET_TYPE_CLOSE', 2); // 自動で最大化しない
 define('C_SELECT_CAN', 1); // する
 define('C_SELECT_CAN_NOT', 2); // しない
 
+// TRUE/FALSE
+define("C_CHECK_OFF", 0);
+define("C_CHECK_ON", 1);
+
 // 条件設定
 define('C_COINCIDENT', 1); // 全て一致
 define('C_SOME_EITHER', 2); // いずれかが一致
@@ -156,12 +160,6 @@ $config['dictionaryType'] = [
 /* 通常選択肢 */
 $config['normalChoices'] = [
     C_SELECT_CAN => "する",
-    C_SELECT_CAN_NOT => "しない"
-];
-
-/* ウィジェット設定 － 自動最大化無効設定 */
-$config['widgetSpAutoType'] = [
-    C_SELECT_CAN => "常に無効にする",
     C_SELECT_CAN_NOT => "しない"
 ];
 
