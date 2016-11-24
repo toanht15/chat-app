@@ -18,8 +18,8 @@ function removeAct(id){
 }
 
 function tagAdd(){
-  var tag = $('#TDocumentEntryForm [name=new_tag]').val();
-  $('#MDocumentTagAddForm [name=name]').val(tag);
+  var tag = $('#TDocumentNewTag').val();
+  $('#MDocumentTagName').val(tag);
   document.getElementById('MDocumentTagAddForm').submit();
 }
 

@@ -29,7 +29,7 @@ $prevCnt = ($params['page'] - 1);
       </thead>
       <tbody>
         <?php
-          foreach((array)$userList as $key => $val):
+          foreach((array)$documentList as $key => $val):
           $id = "";
           if ($val['TDocument']['id']) {
             $id = $val['TDocument']['id'];

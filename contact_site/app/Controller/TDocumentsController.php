@@ -6,19 +6,9 @@
 class TDocumentsController extends AppController {
   public $uses = ['TDocument','MDocumentTag'];
   public $paginate = [
-    'MDocumentTag' => [
+    'TDocument' => [
       'limit' => 10,
       'order' => ['TDocument.id' => 'asc'],
-      'joins' => [
-        [
-          'type' => 'inner',    // もしくは left
-          'table' => 'm_document_tags',
-          'alias' => 'MDocumentTag',
-          'conditions' => [
-            'MDocumentTag.m_companies_id = TDocument.m_companies_id'
-          ],
-        ],
-      ],
       'fields' => ['*'],
     ]
   ];
@@ -33,36 +23,29 @@ class TDocumentsController extends AppController {
    * @return void
    * */
   public function index() {
-    $users = $this->TDocument->find('all');
+    $documents =  $this->paginate('TDocument');
     $labelList = $this->MDocumentTag->find('list', ['fields'=> ['id','name']]);
     $documentList = [];
-    foreach ($users as $key => $user){
+    foreach ($documents as $key => $document){
       $tags = [];
-      foreach((array)json_decode($user['TDocument']['tag'],true) as $id){
+      foreach((array)json_decode($document['TDocument']['tag'],true) as $id){
         if ( !empty($labelList[$id]) ) {
           $tags[] = $labelList[$id];
         }
       }
-      $user['TDocument']['tag'] = $tags;
-      $documentList[$key] = $user;
+      $document['TDocument']['tag'] = $tags;
+      $documentList[$key] = $document;
     }
-    $this->set('userList', $documentList);
+    $this->set('documentList', $documentList);
   }
 
+  /* *
+   * 登録画面
+   * @return void
+   * */
   public function add() {
 
-    $radio = array(
-      '1' => '可',
-      '2' => '不可',
-    );
-
-    $radio2 = array(
-      '1' => 'する',
-      '2' => 'しない'
-    );
-
-    $this->set('radio', $radio);
-    $this->set('radio2', $radio2);
+    $this->_radioConfiguration();
 
     if($this->request->is('post')) {
       $this->_entry($this->request->data);
@@ -74,20 +57,13 @@ class TDocumentsController extends AppController {
     $this->set('labelHideList',$labelList);
   }
 
+  /* *
+   * 更新画面
+   * @return void
+   * */
   public function edit($id) {
 
-    $radio = array(
-      '1' => '可',
-      '2' => '不可',
-    );
-
-    $radio2 = array(
-      '1' => 'する',
-      '2' => 'しない'
-    );
-
-    $this->set('radio', $radio);
-    $this->set('radio2', $radio2);
+    $this->_radioConfiguration();
 
     if($this->request->is('post') || $this->request->is('put')) {
        $this->_entry($this->request->data);
@@ -100,7 +76,7 @@ class TDocumentsController extends AppController {
     }
     else {
       $this->TDocument->id = $id;
-      $tags =   json_decode($this->TDocument->read(null,$id)['TDocument'] ['tag'],true);
+      $tags = json_decode($this->TDocument->read(null,$id)['TDocument'] ['tag'],true);
       $this->request->data = $this->TDocument->read(null,$id);
       $labelList = $this->MDocumentTag->find('list', ['fields'=> ['id','name']]);
       $documentList = [];
@@ -119,16 +95,24 @@ class TDocumentsController extends AppController {
     }
   }
 
+  /* *
+   * タグ登録
+   * @return void
+   * */
   public function addTag() {
     $this->autoRender = false;
     if($this->request->is('post')) {
-      $this->request->data['m_companies_id'] = $this->userInfo['MCompany']['id'];
+      $this->request->data['MDocumentTag']['m_companies_id'] = $this->userInfo['MCompany']['id'];
       if($this->MDocumentTag->save($this->request->data,false)) {
         $this->redirect($this->referer());
       }
     }
   }
 
+  /* *
+   * 削除機能
+   * @return void
+   * */
   public function remoteDelete(){
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
@@ -181,5 +165,24 @@ class TDocumentsController extends AppController {
         $this->TDocument->rollback();
         $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
     }
+  }
+
+   /**
+   * radioボタン設定
+   * @return void
+   * */
+  public function _radioConfiguration() {
+    $radio = array(
+      '1' => '可',
+      '2' => '不可',
+    );
+
+    $radio2 = array(
+      '1' => 'する',
+      '2' => 'しない'
+    );
+
+    $this->set('radio', $radio);
+    $this->set('radio2', $radio2);
   }
 }

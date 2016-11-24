@@ -11,10 +11,7 @@
       <?php echo $this->element('TDocuments/entry'); ?>
     <?=$this->Form->end();?>
     <?=$this->Form->create('MDocumentTag', ['url'=>['controller' =>'TDocuments', 'action'=>'addTag'], 'id' => 'MDocumentTagAddForm']) ?>
-      <?= $this->Form->input('name', [
-        'type' => 'hidden',
-        'name' => 'name'
-      ]) ?>
+      <?= $this->Form->input('name', ['type' => 'hidden']) ?>
     <?=$this->Form->end();?>
   </div>
 </div>
