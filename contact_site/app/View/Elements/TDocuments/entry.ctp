@@ -38,10 +38,13 @@
         <?=
         $this->Form->input('pagenation_flg', ['legend' => false,'type' => 'radio','options' => $radio2,'default' => C_SELECT_CAN]); ?>
       </li>
-
+      <?php if ($this->params->action = 'add') { ?>
+        <input type="text" style="display:block; position: fixed; top: -500px; left: -500px; z-index: 0;">
+        <input type="password" style="display:block; position: fixed; top: -500px; left: -500px; z-index: 0;">
+      <?php } ?>
       <li>
         <span><label>パスワード</label></span>
-        <?= $this->Form->input('password', ['type' => 'text','placeholder' => 'パスワード','maxlength' => 30,'label' => false,'div' => false]) ?>
+        <?= $this->Form->input('password', ['type' => 'password','placeholder' => 'パスワード','maxlength' => 30,'label' => false,'div' => false,'autocomplete' => 'off']) ?>
       </li>
     </ul>
   </section>

@@ -3092,7 +3092,6 @@ ul.naviBtn {
 
 /* 資料設定画面 */
 #tdocument_idx {
-  $list-color: #ECF4DA;
 
   .ms-selectable{
     float:right;
@@ -3109,14 +3108,6 @@ ul.naviBtn {
   }
 
   #tdocument_list {
-    td:not(.noClick) {
-      cursor: pointer;
-    }
-
-    .bgGrey {
-      background-color: #DEDEDE;
-    }
-
     .lineCtrl {
       text-align: center;
 
@@ -3134,45 +3125,12 @@ ul.naviBtn {
 
     span {
       color:#67d4c6;
-      &[class*='Label'] {
-        padding: 4px 2%;
-        margin-right: 1%;
-        margin-bottom: 5px;
-        border-radius: 5px;
-        color: #FFF;
-        font-weight: bold;
-        display: block;
-        float: left;
-        width: 25%;
-        text-align: center;
-      }
-
-      &.actionValue {
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        display: block;
-        padding: 4px 8px;
-        margin-bottom: 5px;
-        width: 16em;
-      }
-
-      &.conditionTypeLabel, &.actionTypeLabel {
-        background-color: #9BBBD6;
-      }
-      &.conditionValueLabel, &.actionValueLabel {
-        background-color: #9BD6D1;
-      }
     }
   }
 
   #tdocument_form {
     padding-bottom: 50px;
 
-    h3 {
-      border-bottom: 3px solid $main-color;
-      padding-left: 5px;
-    }
     ul { padding: 0 }
     li { margin: 0 }
     section {
@@ -3196,13 +3154,6 @@ ul.naviBtn {
 
           .input.select {
             margin-top: -10px;
-          }
-
-          .actBtn {
-            width: 10em;
-            text-align: center;
-            margin: 1em 0 0 1em;
-            cursor: pointer;
           }
 
           > span:first-child {
