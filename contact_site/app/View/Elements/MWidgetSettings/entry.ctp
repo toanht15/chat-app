@@ -399,9 +399,9 @@ $headerNo = 1;
           <?php if ( $this->Form->isFieldError('sp_show_flg') ) echo $this->Form->error('sp_show_flg', null, ['wrap' => 'li']); ?>
           <!-- ウィジェットの表示   -->
 
-          <!-- ヘッダー部分の簡易表示 -->
+          <!-- シンプル表示 -->
           <li>
-            <span class="require"><label>ヘッダー部分の簡易表示</label></span>
+            <span class="require"><label>シンプル表示</label></span>
             <pre><label><?= $this->ngForm->input('sp_header_light_flg', [
                 'type' => 'radio',
                 'options' => $normalChoices,
@@ -418,19 +418,20 @@ $headerNo = 1;
               ]) ?></label></pre>
           </li>
           <?php if ( $this->Form->isFieldError('sp_header_light_flg') ) echo $this->Form->error('sp_header_light_flg', null, ['wrap' => 'li']); ?>
-          <!-- ヘッダー部分の簡易表示 -->
+          <!-- シンプル表示 -->
 
-          <!-- 自動最大化の無効設定 -->
+          <!-- 自動最大化の制御 -->
           <li>
-            <span class="require"><label>ウィジェットの自動最大化</label></span>
+            <span class="require"><label>自動最大化の制御</label></span>
             <pre><label><?= $this->ngForm->input('sp_auto_open_flg', [
-                'type' => 'radio',
-                'options' => $widgetSpAutoType,
+                'type' => 'checkbox',
                 'ng-disabled' => 'sp_show_flg !== "'.C_SELECT_CAN.'"',
                 'legend' => false,
+                'ng-checked' => 'sp_auto_open_flg === "'.C_CHECK_ON.'"',
                 'separator' => '</label><br><label>',
                 'div' => false,
-                'label' => false,
+                'class' => 'showSp',
+                'label' => "常に最大化しない",
                 'error' => false
               ],
               [
@@ -438,7 +439,7 @@ $headerNo = 1;
               ]) ?></label></pre>
           </li>
           <?php if ( $this->Form->isFieldError('sp_auto_open_flg') ) echo $this->Form->error('sp_auto_open_flg', null, ['wrap' => 'li']); ?>
-          <!-- 自動最大化の無効設定 -->
+          <!-- 自動最大化の制御 -->
         </ul>
       </section>
       <?php endif; ?>

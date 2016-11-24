@@ -83,7 +83,6 @@ class MWidgetSettingsController extends AppController {
     $this->set('widgetPositionType', Configure::read('widgetPositionType'));
     $this->set('widgetShowNameType', Configure::read('widgetShowNameType'));
     $this->set('widgetSendActType', Configure::read('widgetSendActType'));
-    $this->set('widgetSpAutoType', Configure::read('widgetSpAutoType')); // 常に無効化する・いいえ
     $this->set('normalChoices', Configure::read('normalChoices')); // はい・いいえ
     $this->set('widgetRadioBtnBehaviorType', Configure::read('widgetRadioBtnBehaviorType'));
     $this->set('gallaryPath', C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT.'/img/widget/');
@@ -289,7 +288,7 @@ class MWidgetSettingsController extends AppController {
             }
 
             if ( strcmp($v, 'sp_auto_open_flg') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
-              $d['sp_auto_open_flg'] = C_SELECT_CAN_NOT; // デフォルト値
+              $d['sp_auto_open_flg'] = C_CHECK_OFF; // デフォルト値
             }
 
             if ( isset($json[$v]) ) {
