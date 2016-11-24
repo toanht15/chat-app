@@ -4,7 +4,7 @@
     var editCheck = document.getElementById('MUserEditPassword');
     var pwArea = $('#set_password_area span');
     editCheck.addEventListener('click', function(e){
-      if ( event.target.checked ) {
+      if ( e.target.checked ) {
         passwordElm.prop('disabled', '');
         pwArea.addClass('require');
       }
