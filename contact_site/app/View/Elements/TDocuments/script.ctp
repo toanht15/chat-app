@@ -1,5 +1,15 @@
 <script type="text/javascript">
 
+function tagAdd(){
+  var tag = $('#TDocumentNewTag').val();
+  $('#MDocumentTagName').val(tag);
+  document.getElementById('MDocumentTagAddForm').submit();
+}
+
+function saveAct(){
+ document.getElementById('TDocumentEntryForm').submit();
+}
+
 function removeAct(id){
   modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', 'オートメッセージ設定', 'moment');
   popupEvent.closePopup = function(){
@@ -15,16 +25,6 @@ function removeAct(id){
       }
     });
   };
-}
-
-function tagAdd(){
-  var tag = $('#TDocumentNewTag').val();
-  $('#MDocumentTagName').val(tag);
-  document.getElementById('MDocumentTagAddForm').submit();
-}
-
-function saveAct(){
- document.getElementById('TDocumentEntryForm').submit();
 }
 
 function removeActEdit(){

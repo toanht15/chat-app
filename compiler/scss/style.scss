@@ -1331,16 +1331,16 @@ ul.naviBtn {
                 }
 
                 .historyList {
-                    height: 10em!important;
-                    li {
-                        border-bottom: 1px solid #bababa;
-                        padding: 0.5em;
-                        background-color: #FFF;
+                  height: 10em!important;
+                  li {
+                    border-bottom: 1px solid #bababa;
+                    padding: 0.5em;
+                    background-color: #FFF;
 
-                        &:hover, &.on {
-                            background-color: #f6fee6;
-                        }
+                    &:hover, &.on {
+                      background-color: #f6fee6;
                     }
+                  }
                 }
 
                 .chatList ul {
@@ -3048,9 +3048,9 @@ ul.naviBtn {
   padding-bottom: 62px;
 
   h3 {
-      border-bottom: 3px solid #C3D69B;
-      padding-left: 5px;
-      font-size: 13px;
+    border-bottom: 3px solid #C3D69B;
+    padding-left: 5px;
+    font-size: 13px;
   }
 
   .content {
@@ -3062,24 +3062,24 @@ ul.naviBtn {
     div {
       display: flex;
     }
-
   }
 }
 
 .ms-list{
  .on{
-  display:none;
+    display:none;
+  }
 }
-}
+
 #pushImg {
-    background-image: url(/img/push.png);
-    width: 50px;
-    display: block;
-    height: 100px;
-    background-size: 100%;
-    background-repeat: no-repeat;
-    float: left;
-    margin: 50px 3em;
+  background-image: url(/img/push.png);
+  width: 50px;
+  display: block;
+  height: 100px;
+  background-size: 100%;
+  background-repeat: no-repeat;
+  float: left;
+  margin: 50px 3em;
 }
 
 /* 資料設定画面 */
@@ -3087,21 +3087,20 @@ ul.naviBtn {
   $list-color: #ECF4DA;
 
   .ms-selectable{
-          float:right;
-        }
+    float:right;
+  }
 
-        .ms-selection{
-          float:left;
-        }
+  .ms-selection{
+    float:left;
+  }
 
   #tdocument_menu {
     img[class$='Btn'] {
-        border-radius: 15px;
+      border-radius: 15px;
     }
   }
 
   #tdocument_list {
-
     td:not(.noClick) {
       cursor: pointer;
     }
@@ -3125,9 +3124,7 @@ ul.naviBtn {
 
     :not(.lineCtrl) a { text-decoration: underline; }
 
-
     span {
-
       color:#67d4c6;
       &[class*='Label'] {
         padding: 4px 2%;
@@ -3158,7 +3155,6 @@ ul.naviBtn {
       &.conditionValueLabel, &.actionValueLabel {
         background-color: #9BD6D1;
       }
-
     }
   }
 
