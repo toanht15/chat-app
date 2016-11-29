@@ -973,7 +973,7 @@
             var flg = sinclo.widget.condifiton.get();
             if ( String(flg) === "false" ) {
               storage.s.set('widgetOpen', true);
-              if (info.widget.hasOwnProperty('spAutoOpenFlg') && Number(info.widget.spAutoOpenFlg) !== 1) {
+              if ( !(check.smartphone() && info.widget.hasOwnProperty('spAutoOpenFlg') && Number(info.widget.spAutoOpenFlg) === 1) ) {
                 sinclo.operatorInfo.ev();
               }
             }
@@ -1401,7 +1401,7 @@
                         clearInterval(setAutoMessageTimer);
                         sinclo.trigger.setAutoMessage(id, cond);
                         // 自動最大化
-                        if ( !('widgetOpen' in cond) || (info.widget.hasOwnProperty('spAutoOpenFlg') && Number(info.widget.spAutoOpenFlg) === 1) ) return false;
+                        if ( !('widgetOpen' in cond) || (check.smartphone() && info.widget.hasOwnProperty('spAutoOpenFlg') && Number(info.widget.spAutoOpenFlg) === 1) ) return false;
                         var flg = sinclo.widget.condifiton.get();
                         if ( Number(cond.widgetOpen) === 1 && String(flg) === "false" ) {
                           sinclo.operatorInfo.ev();
