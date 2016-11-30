@@ -4,6 +4,7 @@ function saveFile(){
   location.href = "<?=$this->Html->url(array('controller' => 'Agreements', 'action' => 'add'))?>";
 }
 
+//パスワード自動生成
 function createPassword(){
   var str = random();
   $('#AgreementPassword').val(str);
