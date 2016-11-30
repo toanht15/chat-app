@@ -1,4 +1,3 @@
-<script type="text/javascript">
 var sincloApp = angular.module('sincloApp', []);
 sincloApp.controller('MainCtrl', function($scope){
   $scope.documentList = [];
@@ -55,6 +54,14 @@ sincloApp.controller('MainCtrl', function($scope){
         $scope.$apply();
       }
     });
+  };
+
+  $scope.shareDocument = function(doc) {
+    window.open(
+      "<?= $this->Html->url(['controller' => 'Customers', 'action' => 'docFrame']) ?>?tabInfo=" + encodeURIComponent(tabId) + "&docId=" + doc.id,
+      "doc_monitor_" + tabId,
+      "width=480,height=400,dialog=no,toolbar=no,location=no,status=no,menubar=no,directories=no,resizable=no, scrollbars=no"
+    );
   };
 
   $scope.closeDocumentList = function() {
@@ -138,4 +145,3 @@ sincloApp.directive('ngMultiSelector', function(){
     }
   };
 });
-</script>

@@ -62,6 +62,8 @@ class CustomersController extends AppController {
    * */
   public function docFrame() {
     $this->layout = 'frame';
+    $docId = $this->params->query['docId'];
+    $this->set('tabInfo', $this->params->query['tabInfo']);
     return $this->render('/Customers/docFrame');
   }
 

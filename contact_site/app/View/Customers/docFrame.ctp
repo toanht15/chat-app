@@ -1,17 +1,15 @@
 <?=$this->Html->script("//ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js");?>
-<?php echo $this->element('Customers/documentLists') ?>
 
 <script type="text/javascript">
 <!--
 'use strict';
-var socket, userId, tabId, iframe, windowSize, windowClose, connectToken, url, emit, pdfjsApi, arg = new Object;
+var socket, tabId = '<?=$tabInfo?>', windowSize, windowClose, url, emit, pdfjsApi;
 
 (function(){
   // -----------------------------------------------------------------------------
   //  関数
   // -----------------------------------------------------------------------------
 
-  arg = <?php echo json_encode('[]', JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   emit = function(ev, d){
     var obj = {};
     if ( typeof(d) !== "object" ) {
@@ -26,7 +24,6 @@ var socket, userId, tabId, iframe, windowSize, windowClose, connectToken, url, e
   };
 
   windowClose = function(){
-    emit('requestSyncStop', {type: 1, tabId: tabId, connectToken: arg.connectToken});
     window.close();
     return false;
   };
@@ -47,42 +44,7 @@ window.onload = function(){
 
   // WebSocketサーバ接続イベント
   socket.on('connect', function(){
-    userId = arg.userId;
-    tabId = arg.id;
-    if ( sessionStorage.getItem('window') ) {
-      var ws = JSON.parse(sessionStorage.getItem('window'));
-    }
-    else {
-      var ws = {'width':arg.width, 'height':arg.height};
-    }
-
-    var content = document.getElementById('customer_flame');
-    var data = {
-      type:2,
-      shareType: arg.type,
-      responderId: "<?= $muserId?>",
-      userId: userId,
-      sendTabId: tabId,
-      connectToken: arg.connectToken,
-      first: true
-    };
-    emit('connectFrame', {
-      tabId: tabId,
-      connectToken: arg.connectToken,
-      responderId: "<?= $muserId?>"
-    });
-  });
-
-  socket.on('retTabInfo', function(d){
-    var obj = JSON.parse(d);
-    // 別の作業をしている場合
-    if ( Number(obj.status) === <?=C_WIDGET_TAB_STATUS_CODE_DISABLE?> ) {
-      document.getElementById('tabStatusMessage').style.display = "block";
-    }
-    // タブがアクティブの場合
-    else {
-      document.getElementById('tabStatusMessage').style.display = "none";
-    }
+    emit('docShareConnect', {tabId: tabId, responderId: '<?=$userInfo["id"]?>'}); // 資料共有開始
   });
 
   socket.on('syncResponce', function(data){
@@ -129,6 +91,8 @@ window.onload = function(){
   });
 };
 
+<?php echo $this->element('Customers/documentLists') ?>
+
 var pdfjsCNST = function(){
   return {
     FIRST_PAGE: "最初のページ",
@@ -145,7 +109,6 @@ var pdfjsCNST = function(){
       pdfUrl: "http://contact.localhost/files/test.pdf",
       currentPage: 1,
       currentScale: 1,
-      canvas: document.getElementById('document_canvas'),
       init: function(){
         this.showpage();
 
@@ -162,11 +125,29 @@ var pdfjsCNST = function(){
 
         // キープレス
         window.addEventListener('keydown',function(e){
-          if ( e.keyCode === 39 ) {
+          if ( e.keyCode === 37 || e.keyCode === 38 ) {
+            pdfjsApi.prevPage();
+          }
+          else if ( e.keyCode === 39 || e.keyCode === 40 ) {
             pdfjsApi.nextPage();
           }
-          else if ( e.keyCode === 37 ) {
-            pdfjsApi.prevPage();
+        });
+
+        // Ctrl + ホイール
+        window.addEventListener('wheel', function(e){
+          if ( e.ctrlKey ) {
+            if (e.preventDefault) {
+              e.preventDefault();
+            }
+            // 拡大
+            if ( e.deltaY < 0 ) {
+              pdfjsApi.zoomIn(0.1);
+            }
+            // 縮小
+            else {
+              pdfjsApi.zoomOut(0.1);
+            }
+            return false;
           }
         });
       },
@@ -180,6 +161,32 @@ var pdfjsCNST = function(){
         this.currentPage++;
         this.showpage();
       },
+      cngScale: function(){
+        var type = document.getElementById('scaleType').value;
+        if ( type && !isNaN(Number(type)) ) {
+          this.zoom(type);
+        }
+      },
+      zoom: function(num){
+        this.currentScale = num;
+        this.showpage();
+      },
+      zoomIn: function(num){
+        if ( this.currentScale >= 4 ) return false;
+        this.currentScale+=num;
+        if ( this.currentScale > 4 ) {
+          this.currentScale = 4;
+        }
+        this.showpage();
+      },
+      zoomOut: function(num){
+        if ( this.currentScale <= 0 ) return false;
+        this.currentScale-=num;
+        if ( this.currentScale <= num ) {
+          this.currentScale = num;
+        }
+        this.showpage();
+      },
       showpage: function(){
         // Asynchronous download PDF
         PDFJS.getDocument(pdfjsApi.pdfUrl)
@@ -188,32 +195,40 @@ var pdfjsCNST = function(){
             return pdf.getPage(pdfjsApi.currentPage);
           })
           .then(function(page) {
+            var canvasFrame = document.getElementById('document_canvas');
+
             function fitWindow(page) {
               var viewport = page.getViewport(1);
-              if ( !pdfjsApi.canvas ) {
-                pdfjsApi.canvas = document.getElementById('document_canvas');
-              }
-              var widthScale = pdfjsApi.canvas.clientWidth/viewport.width;
-              var heightScale = pdfjsApi.canvas.clientHeight/viewport.height;
+              var widthScale = canvasFrame.clientWidth/viewport.width;
+              var heightScale = canvasFrame.clientHeight/viewport.height;
               var scale = ( widthScale > heightScale ) ? heightScale : widthScale;
               return page.getViewport(scale * pdfjsApi.currentScale);
             }
 
             // Get canvas#the-canvas
-            var canvas = document.getElementById('the-canvas');
+            var canvas = document.createElement('canvas');
+            canvas.setAttribute('id', 'the-canvas');
+            $(canvasFrame).html(canvas);
             // Fetch canvas' 2d context
             var context = canvas.getContext('2d');
             var viewport = fitWindow(page);
             // Set dimensions to Canvas
             canvas.height = viewport.height;
             canvas.width = viewport.width;
+            // Set Margin
+            var calc = ((window.innerHeight - 40 - viewport.height) > 0) ? (window.innerHeight - 40 - viewport.height)/2 : 0;
+            canvasFrame.style.paddingTop = String(calc) + "px";
             // Prepare object needed by render method
             var renderContext = {
               canvasContext: context,
               viewport: viewport
             };
             // Render PDF page
-            page.render(renderContext);
+            page.render(renderContext)
+              .then(function(){
+                document.getElementById('pages').textContent = pdfjsApi.currentPage + "/ " + pdfjsApi.pdf.pdfInfo.numPages;
+                canvas.style.opacity = 1;
+              });
           });
       },
       notificate: function(code){
@@ -259,23 +274,47 @@ var pdfjsCNST = function(){
 
   <!-- /* ツールバー */ -->
   <ul id="document_ctrl_tools">
-    <li onclick="pdfjsApi.prevPage(); return false;">
-      <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_back.png" width="30" height="30" alt=""></span>
-    </li>
-    <li onclick="pdfjsApi.nextPage(); return false;">
-      <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_next.png" width="30" height="30" alt=""></span>
-    </li>
-    <li onclick="windowClose()">
-      <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_plus.png" width="30" height="30" alt=""></span>
-    </li>
+    <li-left>
+      <li onclick="pdfjsApi.prevPage(); return false;">
+        <span class="btn"><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_back.png" width="30" height="30" alt=""></span>
+      </li>
+      <li onclick="pdfjsApi.nextPage(); return false;">
+        <span class="btn"><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_next.png" width="30" height="30" alt=""></span>
+      </li>
+    </li-left>
+    <li-center>
+      <li>
+        <span id="pages"></span>
+      </li>
+    </li-center>
+    <li-right>
+      <li id="scaleChoose">
+        <label dir="scaleType">拡大率</label>
+        <select name="scale_type" id="scaleType" onchange="pdfjsApi.cngScale()">
+          <option value=""   > - </option>
+          <option value="0.5"   >50%</option>
+          <option value="0.75"  >75%</option>
+          <option value="1"     selected>100%</option>
+          <option value="1.5"   >150%</option>
+          <option value="2"     >200%</option>
+          <option value="2.5"   >250%</option>
+          <option value="3"     >300%</option>
+          <option value="4"     >400%</option>
+        </select>
+      </li>
+      <li onclick="pdfjsApi.zoomIn(0.25); return false;">
+        <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_plus.png" width="30" height="30" alt=""></span>
+      </li>
+      <li onclick="pdfjsApi.zoomOut(0.25); return false;">
+        <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_minus.png" width="30" height="30" alt=""></span>
+      </li>
+    </li-right>
   </ul>
   <!-- /* ツールバー */ -->
 
   <div id="tabStatusMessage">別の作業をしています</div>
 
-  <div id="document_canvas">
-    <canvas id="the-canvas"></canvas>
-  </div>
+  <div id="document_canvas"></div>
 
   <div id="ang-popup">
     <div id="ang-base">

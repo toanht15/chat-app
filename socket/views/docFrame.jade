@@ -1,0 +1,72 @@
+extends layout
+
+block content
+  script(type='text/javascript').
+    'use strict';
+    window.site = JSON.parse('!{site}');
+    window.params = JSON.parse('!{params}');
+    var iframeLocation,
+        b = document.getElementsByTagName('body')[0],
+        l = [
+          site.socket + '/socket.io/socket.io.js',
+          site.files + '/websocket/jquery-2.2.0.min.js',
+          site.files + '/websocket/compatibility.js',
+          site.files + '/websocket/pdf.js',
+          site.files + '/websocket/pdf-sync.min.js',
+        ],
+        i = 0,
+        createElm = function (u){
+        var s = document.createElement("script");
+        s.type = 'text/javascript';
+        s.src = u;
+        b.appendChild(s);
+        i ++;
+        s.onload = function(){
+          if ( l[i] !== undefined ) createElm(l[i]);
+        }
+      };
+    createElm(l[i]);
+
+  section#document_share
+    ul#document_share_tools<!-- /* サイドバー */ -->
+      li(onclick="location.reload(true); return false;")
+        span
+          img(src="#{img}icon_reconnect.png", width="40", height="40", alt="")
+        p ダウンロード
+      li(onclick="windowClose()")
+        span
+          img(src="#{img}icon_disconnect.png", width="40", height="40", alt="")
+        p 閉じる
+
+    ul#document_ctrl_tools
+      li-left
+        li(onclick="pdfjsApi.prevPage(); return false;")
+          span.btn
+            img(src="#{img}icon_back.png", width="30", height="30")
+        li(onclick="pdfjsApi.nextPage(); return false;")
+          span.btn
+            img(src="#{img}icon_next.png", width="30", height="30")
+      li-center
+        li
+          span#pages 1/ 29
+      li-right
+        li#scaleChoose
+          label(for="scaleType") 拡大率
+          select(name="scale_type", id="scaleType", onchange="pdfjsApi.cngScale()")
+            option(value="") -
+            option(value="0.5" ) 50%
+            option(value="0.75") 75%
+            option(value="1", selected) 100%
+            option(value="1.5" ) 150%
+            option(value="2"   ) 200%
+            option(value="2.5" ) 250%
+            option(value="3"   ) 300%
+            option(value="4"   ) 400%
+        li(onclick="pdfjsApi.zoomIn(0.25); return false;")
+          span
+            img(src="#{img}icon_plus.png", width="30", height="30")
+        li(onclick="pdfjsApi.zoomOut(0.25); return false;")
+          span
+            img(src="#{img}icon_minus.png", width="30", height="30")
+
+  div#document_canvas

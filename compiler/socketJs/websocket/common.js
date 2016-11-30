@@ -2226,6 +2226,12 @@ var socket, // socket.io
       sinclo.confirmVideochatStart(obj);
     }); // socket-on: confirmVideochatStart
 
+    // 資料共有依頼受信
+    socket.on('docShareConnect', function(d){
+      var obj = common.jParse(d);
+      sinclo.docShareConnect(obj);
+    }); // socket-on: confirmVideochatStart
+
     socket.on('syncStop', function(d){
       sinclo.syncStop(d);
     }); // socket-on: syncStop

@@ -25,6 +25,7 @@ var io = require('socket.io')(process.env.WS_PORT),
     connectList = {}, // socketIDをキーとした管理
     c_connectList = {}, // socketIDをキーとしたチャット管理
     vc_connectList = {}, // tabId: socketID
+    doc_connectList = {}, // tabId: tabId
     company = {
         info : {}, // siteKeyをキーとした企業側ユーザー人数管理
         user : {}, // socket.idをキーとした企業側ユーザー管理
@@ -1431,6 +1432,24 @@ io.sockets.on('connection', function (socket) {
     }
     sincloCore[obj.siteKey][obj.parentId].syncSessionId = socket.id;
     emit.toUser('connectFromSync', d, getSessionId(obj.siteKey, obj.tabId, "shareWindowId"));
+  });
+
+ // 資料共有開始(企業から)
+  socket.on('docShareConnect', function(d) {
+    var obj = JSON.parse(d);
+    if ( getSessionId(obj.siteKey, obj.tabId, "sessionId") && getSessionId(obj.siteKey, obj.tabId, "responderId") == obj.responderId ) {
+      doc_connectList[obj.tabId] = {
+        company: socket.id
+      };
+      emit.toUser('docShareConnect', d, getSessionId(obj.siteKey, obj.tabId, "sessionId"));
+    }
+    else {
+      // TODO 接続失敗
+    }
+  });
+
+  socket.on('docSendAction', function(d){
+    var obj = JSON.parse(d);
   });
 
   // ユーザーのアウトを感知

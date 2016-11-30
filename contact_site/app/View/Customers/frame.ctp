@@ -1,5 +1,4 @@
 <?=$this->Html->script("//ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js");?>
-<?php echo $this->element('Customers/documentLists') ?>
 
 <script type="text/javascript">
 <!--
@@ -363,6 +362,8 @@ window.onload = function(){
   });
 };
 
+<?php echo $this->element('Customers/documentLists') ?>
+
 // -->
 </script>
 
@@ -406,7 +407,7 @@ window.onload = function(){
           </div>
           <div id="list_area">
             <ol>
-              <li ng-repeat="document in searchFunc(documentList)">
+              <li ng-repeat="document in searchFunc(documentList)" ng-click="shareDocument(document)">
                 <div class="document_image">
                   <?=$this->Html->image("tab_status_disable.png", ["style"=>"width:10em;height:7em"])?>
                 </div>
