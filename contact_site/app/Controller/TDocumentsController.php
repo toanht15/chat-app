@@ -44,17 +44,17 @@ class TDocumentsController extends AppController {
    * @return void
    * */
   public function add() {
-
     $this->_radioConfiguration();
 
     if($this->request->is('post')) {
       $this->_entry($this->request->data);
-        $errors = $this->TDocument->validationErrors;
-        $this->set('errors', $errors);
+      $errors = $this->TDocument->validationErrors;
+      $this->set('errors', $errors);
     }
+    /*　タグリスト　*/
     $status = ['fields'=> ['id','name']];
-    $labelList = $this->MDocumentTag->find('list',$status);
-    $this->set('labelHideList',$labelList);
+    $tagList = $this->MDocumentTag->find('list',$status);
+    $this->set('tagList',$tagList);
   }
 
   /* *
@@ -66,32 +66,33 @@ class TDocumentsController extends AppController {
     $this->_radioConfiguration();
 
     if($this->request->is('post') || $this->request->is('put')) {
-       $this->_entry($this->request->data);
-
-        $errors = $this->TDocument->validationErrors;
-        $this->set('errors', $errors);
-        $status = ['fields'=> ['id','name']];
-        $labelList = $this->MDocumentTag->find('list',$status);
-        $this->set('labelHideList',$labelList);
+      $this->_entry($this->request->data);
+      $errors = $this->TDocument->validationErrors;
+      $this->set('errors', $errors);
+      /*　タグリスト　*/
+      $status = ['fields'=> ['id','name']];
+      $tagList = $this->MDocumentTag->find('list',$status);
+      $this->set('tagList',$tagList);
     }
     else {
+      /* 更新画面　タグリスト表示 */
       $this->TDocument->id = $id;
       $tags = json_decode($this->TDocument->read(null,$id)['TDocument'] ['tag'],true);
       $this->request->data = $this->TDocument->read(null,$id);
-      $labelList = $this->MDocumentTag->find('list', ['fields'=> ['id','name']]);
+      $tagList = $this->MDocumentTag->find('list', ['fields'=> ['id','name']]);
       $documentList = [];
       $tags = [];
       foreach((array)json_decode($this->request->data['TDocument']['tag'],true) as $id){
-        if ( !empty($labelList[$id]) ) {
+        if ( !empty($tagList[$id]) ) {
           $tags[] = $id;
-          }
         }
+      }
       $this->request->data['TDocument']['tag'] = $tags;
       $status = ['fields'=> ['id','name']];
-      $labelList = $this->MDocumentTag->find('list',$status);
-      $selectedLabelList = $tags;
-      $this->set('selectedLabelList', $selectedLabelList);
-      $this->set('labelHideList',$labelList);
+      $tagList = $this->MDocumentTag->find('list',$status);
+      $selectedTagList = $tags;
+      $this->set('selectedTagList', $selectedTagList);
+      $this->set('tagList',$tagList);
     }
   }
 
@@ -117,7 +118,7 @@ class TDocumentsController extends AppController {
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
-    $id =  $this->request->data['id'];
+    $id = $this->request->data['id'];
     $ret = $this->TDocument->find('first', [
       'fields' => 'TDocument.*',
       'conditions' => [
@@ -137,33 +138,33 @@ class TDocumentsController extends AppController {
     }
   }
 
-    /**
+  /**
    * 保存機能
    * @param array $inputData
    * @return void
    * */
   private function _entry($saveData) {
     $saveData = $this->request->data;
-      if(!empty($this->request->data['TDocument']['tag'])) {
+    if(!empty($this->request->data['TDocument']['tag'])) {
       $inputData = $this->request->data['TDocument']['tag'];
       $saveData['TDocument']['tag'] = $this->jsonEncode($inputData);
-      }
-      $saveData['TDocument']['m_companies_id'] = $this->userInfo['MCompany']['id'];
+    }
+    $saveData['TDocument']['m_companies_id'] = $this->userInfo['MCompany']['id'];
 
-      $this->TDocument->begin();
-      if ( empty($saveData['TDocument']['id']) ) {
+    $this->TDocument->begin();
+    if ( empty($saveData['TDocument']['id']) ) {
       $this->TDocument->create();
-      }
-      $this->TDocument->set($saveData);
+    }
+    $this->TDocument->set($saveData);
 
-       if($this->TDocument->validates() && $this->TDocument->save($saveData,false)) {
-        $this->TDocument->commit();
-        $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
-        $this->redirect(['controller' => 'TDocuments', 'action' => 'index']);
-      }
-      else {
-        $this->TDocument->rollback();
-        $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
+    if($this->TDocument->validates() && $this->TDocument->save($saveData,false)) {
+      $this->TDocument->commit();
+      $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
+      $this->redirect(['controller' => 'TDocuments', 'action' => 'index']);
+    }
+    else {
+      $this->TDocument->rollback();
+      $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
     }
   }
 
@@ -172,17 +173,17 @@ class TDocumentsController extends AppController {
    * @return void
    * */
   public function _radioConfiguration() {
-    $radio = array(
+    $download = array(
       '1' => '可',
       '2' => '不可',
     );
 
-    $radio2 = array(
+    $pagenation = array(
       '1' => 'する',
       '2' => 'しない'
     );
 
-    $this->set('radio', $radio);
-    $this->set('radio2', $radio2);
+    $this->set('download', $download);
+    $this->set('pagenation', $pagenation);
   }
 }

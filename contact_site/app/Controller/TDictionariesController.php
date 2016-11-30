@@ -138,6 +138,7 @@ class TDictionariesController extends AppController {
     if ( !empty($this->params->data['list']) ) {
       $this->TDictionary->begin();
       $list = $this->params->data['list'];
+      $this->log($list,LOG_DEBUG);
       /* 現在の並び順を取得 */
       $params = $this->_setParams();
       $params['fields'] = [
@@ -147,6 +148,7 @@ class TDictionariesController extends AppController {
       unset($params['limit']);
       $prevSort = $this->TDictionary->find('list', $params);
       $prevSortKeys = am($prevSort);
+      $this->log($prevSortKeys,LOG_DEBUG);
 
       /* アップデート分の並び順を設定 */
       $ret = true;

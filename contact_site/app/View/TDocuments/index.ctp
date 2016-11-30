@@ -1,7 +1,7 @@
-<?php echo $this->element('TDocuments/script'); ?>
+<?= $this->element('TDocuments/script'); ?>
 <?php
-$params = $this->Paginator->params();
-$prevCnt = ($params['page'] - 1);
+  $params = $this->Paginator->params();
+  $prevCnt = ($params['page'] - 1);
 ?>
 <div id='tdocument_idx' class="card-shadow">
   <div id='tdocument_add_title'>
@@ -36,18 +36,18 @@ $prevCnt = ($params['page'] - 1);
           }
           $no = $prevCnt + h($key+1);
         ?>
-          <tr data-id="<?=h($id)?>">
-            <td class="tCenter"><?=$no?></td>
-            <td class="tCenter"><?=h($val['TDocument']['name'])?></td>
-            <td class="tCenter"><?=h($val['TDocument']['overview'])?></td>
-            <td class="tCenter"><span><?=implode("</span>、<span>",$val['TDocument']['tag'])?></span></td>
-            <td class="p10x noClick lineCtrl">
-              <div>
-                <a href="<?=$this->Html->url(['controller'=>'TDocuments', 'action'=>'edit', $id])?>" class="btn-shadow greenBtn fLeft"><img src="/img/edit.png" alt="更新" width="30" height="30"></a>
-                <a href="javascript:void(0)" class="btn-shadow redBtn m10r10l fRight" onclick="removeAct('<?=$id?>')"><img src="/img/trash.png" alt="削除" width="30" height="30"></a>
-              </div>
-            </td>
-          </tr>
+        <tr data-id="<?=h($id)?>">
+          <td class="tCenter"><?=$no?></td>
+          <td class="tCenter"><?=h($val['TDocument']['name'])?></td>
+          <td class="tCenter"><?=h($val['TDocument']['overview'])?></td>
+          <td class="tCenter"><span><?=implode("</span>、<span>",$val['TDocument']['tag'])?></span></td>
+          <td class="p10x noClick lineCtrl">
+            <div>
+              <a href="<?=$this->Html->url(['controller'=>'TDocuments', 'action'=>'edit', $id])?>" class="btn-shadow greenBtn fLeft"><img src="/img/edit.png" alt="更新" width="30" height="30"></a>
+              <a href="javascript:void(0)" class="btn-shadow redBtn m10r10l fRight" onclick="removeAct('<?=$id?>')"><img src="/img/trash.png" alt="削除" width="30" height="30"></a>
+            </div>
+          </td>
+        </tr>
         <?php endforeach; ?>
       </tbody>
     </table>

@@ -1,7 +1,7 @@
 <?php
 App::uses('AppModel', 'Model');
 /**
- * MCompany Model
+ * MDocumentTag Model
  *
  */
 class MDocumentTag extends AppModel {

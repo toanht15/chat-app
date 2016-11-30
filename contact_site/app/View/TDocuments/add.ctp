@@ -7,9 +7,11 @@
     <h1>資料設定</h1>
   </div>
   <div id='tdocument_form' class="p20x">
+    <!-- 登録フォーム -->
     <?=$this->Form->create('TDocument', ['id'=>'TDocumentEntryForm'])?>
       <?php echo $this->element('TDocuments/entry'); ?>
     <?=$this->Form->end();?>
+    <!-- タグ登録フォーム -->
     <?=$this->Form->create('MDocumentTag', ['url'=>['controller' =>'TDocuments', 'action'=>'addTag']]) ?>
       <?= $this->Form->input('name', ['type' => 'hidden']) ?>
     <?=$this->Form->end();?>
