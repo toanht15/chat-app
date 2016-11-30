@@ -6,6 +6,7 @@ sincloApp.controller('WidgetCtrl', function($scope){
     $scope.main_image = "<?=$this->formEx->val($this->data['MWidgetSetting'], 'main_image')?>";
 
     $scope.showWidgetType = 1; // デフォルト表示するウィジェット
+    $scope.openFlg = true;
 
     $scope.switchWidget = function(num){
       $scope.showWidgetType = num;
@@ -18,8 +19,7 @@ sincloApp.controller('WidgetCtrl', function($scope){
 
       if ( Number(num) !== 2 ) { // ｽﾏｰﾄﾌｫﾝ（横）以外は最大化する
         /* ウィジェットが最小化されていたら最大化する */
-        var flg = sincloBox.getAttribute("data-openflg");
-        if ( String(flg) !== "true" ) { // 最小化されている場合
+        if ( !$scope.openFlg ) { // 最小化されている場合
           var main = document.getElementById("miniTarget");  // 非表示対象エリア
           var height = 0;
           for(var i = 0; main.children.length > i; i++){ // 非表示エリアのサイズを計測する
@@ -30,7 +30,7 @@ sincloApp.controller('WidgetCtrl', function($scope){
         }
       }
 
-      sincloBox.setAttribute("data-openflg", true);
+      $scope.openFlg = true;
     }
 
     $scope.showChooseImg = function(){
@@ -152,6 +152,28 @@ sincloApp.controller('WidgetCtrl', function($scope){
         $scope.$apply();
     });
 
+    $scope.$watch(function(){
+      return {'openFlg': $scope.openFlg, 'showWidgetType': $scope.showWidgetType};
+    },
+    function(){
+      var main = document.getElementById("miniTarget");
+      if ( !main ) return false;
+      if ( $scope.openFlg ) {
+        setTimeout(function(){
+          angular.element("#sincloBox").addClass("open");
+          var height = 0;
+          for(var i = 0; main.children.length > i; i++){
+              height += main.children[i].offsetHeight;
+          }
+          main.style.height = height + "px";
+        }, 0);
+      }
+      else {
+        angular.element("#sincloBox").removeClass("open");
+        main.style.height = "0";
+      }
+    }, true);
+
     $scope.saveAct = function (){
         $('#widgetShowTab').val($scope.widget.showTab);
         $('#MWidgetSettingMainImage').val($scope.main_image);
@@ -160,22 +182,12 @@ sincloApp.controller('WidgetCtrl', function($scope){
 
     angular.element(window).on("click", ".widgetOpener", function(){
       var sincloBox = document.getElementById("sincloBox");
-      var target = document.getElementById("sincloBox");
-      var main = document.getElementById("miniTarget");
-      var flg = target.getAttribute("data-openflg");
       var nextFlg = true;
-      if ( String(flg) === "true" ) {
+      if ( $scope.openFlg ) {
         nextFlg = false;
-        main.style.height = 0;
       }
-      else {
-        var height = 0;
-        for(var i = 0; main.children.length > i; i++){
-            height += main.children[i].offsetHeight;
-        }
-        main.style.height = height + "px";
-      }
-      sincloBox.setAttribute("data-openflg", nextFlg);
+      $scope.openFlg = nextFlg;
+      $scope.$apply();
     });
 
 
