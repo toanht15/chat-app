@@ -8,12 +8,12 @@
     <ul class="formArea">
       <li>
         <?= $this->Form->create('MAdministrator'); ?>
-          <?= $this->Form->input('mail_address', array('label' => false, 'placeholder' => 'メールアドレス')); ?>
-          <?= $this->Form->input('password', array('label' => false, 'placeholder' => 'パスワード')); ?>
+          <?= $this->Form->input('mail_address', ['label' => false, 'placeholder' => 'メールアドレス']); ?>
+          <?= $this->Form->input('password', ['label' => false, 'placeholder' => 'パスワード']); ?>
         <?= $this->Form->end(); ?>
       </li>
       <li>
-        <?= $this->Form->input('Go →', array('label'=> false,'type' => 'button', 'class' => 'loginForm','onClick' => 'loginBtn()')); ?>
+        <?= $this->Form->input('Go →', ['label'=> false,'type' => 'button', 'class' => 'loginForm','onClick' => 'loginBtn()']); ?>
       </li>
     </ul>
   </div>

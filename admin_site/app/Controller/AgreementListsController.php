@@ -37,6 +37,6 @@ class AgreementListsController extends AppController {
    * @return void
    * */
   public function index() {
-    $this->set('userList', $this->paginate('MCompany'));
+    $this->set('companyList', $this->paginate('MCompany'));
   }
 }

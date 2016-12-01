@@ -19,6 +19,8 @@ define('C_AUTHORITY_ADMIN', 1); // 管理者
 define('C_AUTHORITY_NORMAL', 2); // 一般
 define('C_AUTHORITY_SUPER', 99); // ML管理者
 
+define('C_DEFALT_MCOMPANY_KEY', 2); // template key
+
 /* ユーザー権限（単体あり：C_AUTHORITY_%） */
 $config['Authority'] = [
     C_AUTHORITY_ADMIN => "管理者",

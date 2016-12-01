@@ -57,7 +57,7 @@ var popupEvent = {
     }
     switch ( popupEvent.id ) {
       case 'p-muser-entry':
-        var closeBtn = _button("一覧");
+        var closeBtn = _button("閉じる");
         closeBtn.classList.add("normal_btn");
         closeBtn.onclick = function(){
           return popupEvent.closeNoPopup();
@@ -87,9 +87,21 @@ var popupEvent = {
             return popupEvent.closePopup();
         };
         var closeBtn = _button("いいえ");
-        closeBtn.classList.add("normal_btn");
+        closeBtn.classList.add("action_btn");
         closeBtn.onclick = function(){
             return popupEvent.closeNoPopup();
+        };
+      break;
+      case 'p-tdictionary-entry':
+        var closeBtn = _button("閉じる");
+        closeBtn.classList.add("normal_btn");
+        closeBtn.onclick = function(){
+          return popupEvent.closeNoPopup();
+        };
+        var closeBtn = _button("登録");
+        closeBtn.classList.add("action_btn");
+        closeBtn.onclick = function(){
+          return popupEvent.closePopup();
         };
       break;
       case 'p-alert':
@@ -250,10 +262,10 @@ shortMessage = {
 <div id="popup" class="popup-off">
   <div id="popup-frame-base">
     <div id="popup-bg"></div>
-    <div id="popup-frame" style="width: 400px; height: 170px">
+    <div id="popup-frame">
       <div id="popup-content">
         <div id ="popup-title">
-          <i class="fa fa-lg" aria-hidden="true"></i>
+          <i class="fa fa-lg fa-2x" aria-hidden="true"></i>
           <h2></h2>
           <a id="popup-close-btn" href="javascript:void(0)">×</a>
         </div>

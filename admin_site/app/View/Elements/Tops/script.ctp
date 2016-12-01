@@ -1,4 +1,5 @@
 <script type="text/javascript">
+//契約・使用表示
 function ChangeTab(tabname) {
   // 全部消す
   document.getElementById('tab1').style.display = 'none';
@@ -9,6 +10,7 @@ function ChangeTab(tabname) {
   }
 }
 
+//契約・使用表示
 $(function(){
   $('#agreement_tag').click(function(){
     $(this).addClass("on");

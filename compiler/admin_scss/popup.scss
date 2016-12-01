@@ -49,21 +49,21 @@ $notification-color: #E57373;
         #popup-title {
           display: flex;
           background-color: $main-color;
-          height: 2.5rem;
+          height: 3.5rem;
 
           i {
-            margin: 0.6rem 1rem;
+            margin: 1.1rem 1rem;
             color: #FFF;
           }
 
           h2 {
             margin-bottom: 0;
-            padding: 0.3em 1rem 0.3em 0;
+            padding: 0.7em 1rem 0.3em 0;
             width: calc(100% - 2rem);
           }
           #popup-close-btn {
-            padding: 0.25rem 0.5rem;
-            font-size: 1.5rem;
+            padding: 0rem 1.1rem;
+            font-size: 33px;
             color: #FFF;
             border-left: 1px solid #FFF;
             display: block;
@@ -150,10 +150,20 @@ $notification-color: #E57373;
 /*確認ダイアログ*/
 .p-confirm {
   width: 400px;
+  font-size: 13px;
+
   i {
     &:before {
       content: "\f013";
     }
+  }
+
+  .action_btn {
+    width: 5.5em;
+  }
+
+  .normal_btn {
+    width: 5.5em;
   }
 }
 
@@ -194,10 +204,142 @@ $notification-color: #E57373;
   input#MAdministratorNewPassword {
     margin-left: 55px;
   }
+
+  .action_btn {
+    width: 5.5em;
+  }
+
+  .normal_btn {
+    width: 5.5em;
+  }
 }
 
+/*アカウント設定*/
 .p-muser-entry {
-  width: 400px;
+  width: 532px;
+  i {
+    &:before {
+      content: "\f013";
+    }
+  }
+
+label {
+    font-weight: bold;
+}
+
+#popup-main {
+    padding: 3rem 1.5rem;
+}
+
+  .fa-cog {
+    color: #fff;
+    margin-left: 6px;
+  }
+
+  input#MAdministratorUserName {
+    margin-left: 98px;
+  }
+
+  input#MAdministratorMailAddress {
+    margin-left: 33px;
+  }
+
+  input#MAdministratorNewPassword {
+    margin-left: 59px;
+  }
+
+  .action_btn {
+    width: 5.5em;
+  }
+
+  .normal_btn {
+    width: 5.5em;
+  }
+}
+
+span {
+    margin-top: 4px;
+    font-size: 13px;
+}
+
+p.error-message {
+  color: $notification-color;
+  margin-left: 30px;
+  width: 336px;
+  font-size: 12px;
+  margin-bottom: 0px;
+}
+
+/*簡易入力メッセージ設定*/
+.p-tdictionary-entry {
+  width: 532px;
+
+  .form01 {
+    > div {
+      display: flex;
+      flex-direction: column;
+      margin: 5px 0;
+
+      div#inputStr {
+        display: flex;
+        flex-direction: column;
+
+        .balloon {
+          display: none;
+          position: fixed;
+          background-color: #FFF;
+          box-shadow: 0 0 1px rgba(0,0,0,0.85);
+          padding: 0.5em 1em;
+          border-radius: 10px!important;
+
+          span{
+            position: relative;
+            cursor: pointer;
+
+            &:before {
+              content: "";
+              border-top: 4px solid rgba(0, 0, 0, 0.13);
+              border-left: 10px solid transparent;
+              border-right: 10px solid transparent;
+              position: absolute;
+              bottom: -1em;
+              left: -0.5em;
+            }
+            &:after {
+              content: "";
+              border-top: 10px solid #fff;
+              border-left: 10px solid transparent;
+              border-right: 10px solid transparent;
+              position: absolute;
+              bottom: -1em;
+              left: -0.5em;
+            }
+          }
+        }
+      }
+
+      textarea {
+        border-radius: 0 0 5px 5px !important;
+        border: 1px solid #909090 !important;
+        padding: 5px;
+        border-top: none;
+      }
+
+      label {
+        width: 5em!important;
+        display: block;
+        font-weight: bold;
+        font-size: 13px;
+      }
+
+      textarea {
+        margin: 0px;
+        height: 120px;
+        resize: none;
+      }
+    }
+  }
+
   i {
     &:before {
       content: "\f013";
@@ -209,23 +351,51 @@ $notification-color: #E57373;
     margin-left: 6px;
   }
 
-  input#MAdministratorUserName {
-    margin-left: 88px;
+  #TDictionaryAddForm{
+    menu {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-orient: horizontal;
+      -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+      flex-direction: row;
+      -ms-flex-direction: row;
+      flex-direction: row;
+      -ms-flex-pack: distribute;
+      justify-content: space-around;
+      margin-bottom: 0;
+      border: 1px solid #3a485f;;
+      border-radius: 5px 5px 0 0;
+      background-color: #3a485f;;
+      border-bottom: none;
+      padding: 0.5em 0;
+
+      > span {
+        padding: 0.25em 1em;
+        font-size: 1.15em;
+        background-color: #ffffff !important;
+        color: #868686 !important;
+        border: none !important;
+        cursor: pointer !important;
+        color: #888;
+      }
+
+      > span:hover {
+        color: #3a485f !important;
+      }
+    }
   }
 
-  input#MAdministratorMailAddress {
-      margin-left: 33px;
+  .action_btn {
+    width: 5.5em;
   }
 
-  input#MAdministratorNewPassword {
-      margin-left: 55px;
+  .normal_btn {
+    width: 5.5em;
   }
 }
 
-p.error-message {
-    color: $notification-color;
-    margin-left: 30px;
-    width: 336px;
-    font-size: 12px;
-    margin-bottom: 0px;
+.w100 {
+  width: 100% !important;
 }
