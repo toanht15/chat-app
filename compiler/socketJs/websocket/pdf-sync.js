@@ -1,5 +1,5 @@
+var pdfjsCNST, pdfjsApi, frameSize, docDownload;
 (function($){
-  var pdfjsCNST, pdfjsApi;
 
   pdfjsCNST = function(){
     return {
@@ -16,6 +16,34 @@
     currentScale: 1,
     init: function(){
       this.showpage();
+      var canvas = document.getElementById('document_canvas');
+
+      emit("docSendAction", {
+        to: 'company',
+        scroll: {
+          top: canvas.scrollTop,
+          left: canvas.scrollLeft
+        },
+        offset: {
+          width: window.innerWidth,
+          height: window.innerHeight
+        },
+        page: pdfjsApi.currentPage,
+        scale: pdfjsApi.currentScale
+      });
+
+      // マウス位置
+      window.addEventListener('mousemove', function(e){
+        var canvas = document.getElementById('document_canvas');
+        emit("docSendAction", {
+          to: 'company',
+          mouse: {
+            x: e.clientX,
+            y: e.clientY
+          }
+        });
+      });
+
       // ウィンドウリサイズ
       var resizeTimer = null;
       window.addEventListener('resize', function(){
@@ -23,6 +51,7 @@
           clearTimeout(resizeTimer);
         }
         resizeTimer = setTimeout(function(){
+          pdfjsApi.sendPositionAction();
           pdfjsApi.showpage();
         }, 300);
       });
@@ -52,15 +81,31 @@
           return false;
         }
       });
+
+      // スクロール位置
+      $("#document_canvas").stop().on('scroll', function(e){
+        emit("docSendAction", {
+          to: 'company',
+          scroll: {
+            top: e.target.scrollTop,
+            left: e.target.scrollLeft
+          }
+        });
+      });
+    },
+    docDownload: function(){
+
     },
     prevPage: function(){
       if ( this.currentPage < 2 ) return this.notificate('FIRST_PAGE');
       this.currentPage--;
       this.showpage();
+      pdfjsApi.sendCtrlAction();
     },
     nextPage: function(){
       if ( this.currentPage >= this.pdf.pdfInfo.numPages ) return this.notificate('LAST_PAGE');
       this.currentPage++;
+      pdfjsApi.sendCtrlAction();
       this.showpage();
     },
     cngScale: function(){
@@ -71,7 +116,8 @@
     },
     zoom: function(num){
       this.currentScale = num;
-      this.showpage();
+      pdfjsApi.sendCtrlAction();
+      this.render();
     },
     zoomIn: function(num){
       if ( this.currentScale >= 4 ) return false;
@@ -79,7 +125,8 @@
       if ( this.currentScale > 4 ) {
         this.currentScale = 4;
       }
-      this.showpage();
+      pdfjsApi.sendCtrlAction();
+      pdfjsApi.render();
     },
     zoomOut: function(num){
       if ( this.currentScale <= 0 ) return false;
@@ -87,15 +134,23 @@
       if ( this.currentScale <= num ) {
         this.currentScale = num;
       }
-      this.showpage();
+      pdfjsApi.sendCtrlAction();
+      pdfjsApi.render();
     },
-    sendAction: function(){
+    sendPositionAction: function(){
       var canvas = document.getElementById('document_canvas');
       emit("docSendAction", {
-        scroll: {
-          top: pdfjsApi.scrollTop,
-          left: pdfjsApi.scrollLeft
-        },
+        to: 'company',
+        offset: {
+          width: window.innerWidth,
+          height: window.innerHeight
+        }
+      });
+    },
+    sendCtrlAction: function(){
+      var canvas = document.getElementById('document_canvas');
+      emit("docSendAction", {
+        to: 'company',
         page: pdfjsApi.currentPage,
         scale: pdfjsApi.currentScale
       });
@@ -109,38 +164,48 @@
         })
         .then(function(page) {
           var canvasFrame = document.getElementById('document_canvas');
-          function fitWindow(page) {
-            var viewport = page.getViewport(1);
-            var widthScale = canvasFrame.clientWidth/viewport.width;
-            var heightScale = canvasFrame.clientHeight/viewport.height;
-            var scale = ( widthScale > heightScale ) ? heightScale : widthScale;
-            return page.getViewport(scale * pdfjsApi.currentScale);
-          }
           // Get canvas#the-canvas
-          var canvas = document.createElement('canvas');
-          canvas.setAttribute('id', 'the-canvas');
-          $(canvasFrame).html(canvas);
-          // Fetch canvas' 2d context
-          var context = canvas.getContext('2d');
-          var viewport = fitWindow(page);
-          // Set dimensions to Canvas
-          canvas.height = viewport.height;
-          canvas.width = viewport.width;
-          // Set Margin
-          var calc = ((window.innerHeight - 40 - viewport.height) > 0) ? (window.innerHeight - 40 - viewport.height)/2 : 0;
-          canvasFrame.style.paddingTop = String(calc) + "px";
-          // Prepare object needed by render method
-          var renderContext = {
-            canvasContext: context,
-            viewport: viewport
-          };
-          // Render PDF page
-          page.render(renderContext)
-            .then(function(){
-              document.getElementById('pages').textContent = pdfjsApi.currentPage + "/ " + pdfjsApi.pdf.pdfInfo.numPages;
-              canvas.style.opacity = 1;
-            });
+          if ( !pdfjsApi.canvas ) {
+            pdfjsApi.canvas = document.createElement('canvas');
+            pdfjsApi.canvas.setAttribute('id', 'the-canvas');
+            $(canvasFrame).html(pdfjsApi.canvas);
+            pdfjsApi.context = pdfjsApi.canvas.getContext('2d');
+          }
+
+          pdfjsApi.page = page;
+          pdfjsApi.render();
         });
+    },
+    render: function(){
+      var canvasFrame = document.getElementById('document_canvas');
+
+      function fitWindow(page) {
+        var viewport = page.getViewport(1);
+        var widthScale = canvasFrame.clientWidth/viewport.width;
+        var heightScale = canvasFrame.clientHeight/viewport.height;
+        var scale = ( widthScale > heightScale ) ? heightScale : widthScale;
+        return page.getViewport(scale * pdfjsApi.currentScale);
+      }
+      var page = pdfjsApi.page;
+      // Fetch canvas' 2d context
+      var viewport = fitWindow(page);
+      // Set dimensions to Canvas
+      pdfjsApi.canvas.height = viewport.height;
+      pdfjsApi.canvas.width = viewport.width;
+      // Set Margin
+      var calc = ((window.innerHeight - 40 - viewport.height) > 0) ? (window.innerHeight - 40 - viewport.height)/2 : 0;
+      canvasFrame.style.paddingTop = String(calc) + "px";
+
+      setTimeout(function(){
+        // Render PDF page
+        page.render({
+          canvasContext: pdfjsApi.canvas.getContext('2d'),
+          viewport: viewport
+        }).then(function(){
+            document.getElementById('pages').textContent = pdfjsApi.currentPage + "/ " + pdfjsApi.pdf.pdfInfo.numPages;
+            pdfjsApi.canvas.style.opacity = 1;
+        });
+      }, 0);
     },
     notificate: function(code){
       if ( this.cnst.hasOwnProperty(code) ) {
@@ -153,16 +218,49 @@
 
   var emit = function(key, data){
     data.siteKey = site.key;
-    data.parentId = userInfo.parentId;
-    data.tabId = userInfo.tabId;
+    data.tabId = params.tabId;
     data.userId = params.userId;
     st.emit(key, JSON.stringify(data));
   };
 
   st.on("connect", function(d){
-console.log(d);
+    emit('docShareConnect', {from: 'customer'}); // 資料共有開始
+
+    frameSize = {
+      height: window.outerHeight - window.innerHeight,
+      width: window.outerWidth - window.innerWidth
+    };
+
   });
 
+  // 同期イベント
+  st.on('docSendAction', function(d){
+    var obj = JSON.parse(d), cursor;
+    if ( obj.hasOwnProperty('scroll') ) {
+      var canvasFrame = document.getElementById('document_canvas');
+      canvasFrame.scrollTop = obj.scroll.top;
+      canvasFrame.scrollLeft = obj.scroll.left;
+      return false;
+    }
+    if ( obj.hasOwnProperty('mouse') ) {
+      cursor = document.getElementById('cursorImg');
+      // カーソルを作成していなければ作成する
+      if ( !cursor ) {
+        $('body').append('<div id="cursorImg" style="position:fixed; top:' + obj.mouse.x + '; left:' + obj.mouse.y + '; z-index: 1"><img width="50px" src="' + site.files + '/img/pointer.png"></div>');
+        cursor = document.getElementById("cursorImg");
+      }
+      cursor.style.left = obj.mouse.x + "px";
+      cursor.style.top  = obj.mouse.y + "px";
+      return false;
+    }
+    if ( obj.hasOwnProperty('page') ) {
+      pdfjsApi.currentPage = obj.page;
+    }
+    if ( obj.hasOwnProperty('scale') ) {
+      pdfjsApi.currentScale = obj.scale;
+    }
+    pdfjsApi.showpage();
+  });
 
   pdfjsApi.init();
   window.focus();

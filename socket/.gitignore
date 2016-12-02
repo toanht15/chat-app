@@ -8,3 +8,4 @@ logs/*
 !logs/.gitkeep
 npm-debug.log
 webroot/*.html
+webroot/css/*.css
