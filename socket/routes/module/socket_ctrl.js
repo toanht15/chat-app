@@ -1445,7 +1445,9 @@ io.sockets.on('connection', function (socket) {
       doc_connectList[obj.tabId] = {};
     }
     doc_connectList[obj.tabId][obj.from] = socket.id;
-    emit.toUser('docShareConnect', d, getSessionId(obj.siteKey, obj.tabId, "sessionId"));
+    if ( obj.from === "company" ) {
+      emit.toUser('docShareConnect', d, getSessionId(obj.siteKey, obj.tabId, "sessionId"));
+    }
   });
 
   socket.on('docShareConnectToCustomer', function(d) {

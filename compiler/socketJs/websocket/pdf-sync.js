@@ -11,7 +11,7 @@ var pdfjsCNST, pdfjsApi, frameSize, docDownload;
   pdfjsApi = {
     cnst: new pdfjsCNST(),
     pdf: null,
-    pdfUrl: site.files + "/files/test.pdf",
+    pdfUrl: null,
     currentPage: 1,
     currentScale: 1,
     init: function(){
@@ -262,7 +262,19 @@ var pdfjsCNST, pdfjsApi, frameSize, docDownload;
     pdfjsApi.showpage();
   });
 
-  pdfjsApi.init();
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', "https://s3-ap-northeast-1.amazonaws.com/medialink.sinclo.jp/medialink/%E3%83%86%E3%82%B9%E3%83%88PDF.pdf", true);
+  xhr.responseType = 'arraybuffer';
+  xhr.onload = function(e) {
+      if (this.status == 200) {
+        // Note: .response instead of .responseText
+        var blob = new Blob([this.response], {type: 'application/pdf'});
+        pdfjsApi.pdfUrl = URL.createObjectURL(blob);
+        pdfjsApi.init();
+
+      }
+  };
+  xhr.send();
   window.focus();
 
 // -->
