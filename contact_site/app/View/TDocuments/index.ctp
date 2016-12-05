@@ -11,7 +11,7 @@
 
   <div id='tdocument_menu' class="p20trl">
     <div class="fLeft" >
-      <?= $this->Html->image('add.png', array('alt' => '登録', 'class' => 'btn-shadow greenBtn', 'width' => 30, 'height' => 30, 'onclick' => "location.href = 'http://sinclo.localhost/TDocuments/add';")) ?>
+      <?= $this->Html->image('add.png', ['url' => ['controller'=>'TDocuments', 'action' => 'add'], 'alt' => '登録', 'class' => 'btn-shadow greenBtn', 'width' => 30, 'height' => 30]) ?>
     </div>
   </div>
 

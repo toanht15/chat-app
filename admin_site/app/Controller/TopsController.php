@@ -7,10 +7,12 @@
 App::uses('AppController', 'Controller');
 class TopsController extends AppController {
 
-public $uses = ['MCompany','MUser'];
+  public $uses = ['MCompany','MUser'];
 
   public $paginate = [
     'MCompany' => [
+      'limit' => 10,
+      'order' => ['MCompany.id' => 'asc'],
       'fields' => ['*'],
       'joins' => [
         [
@@ -25,12 +27,10 @@ public $uses = ['MCompany','MUser'];
       'conditions' => [
         'MCompany.del_flg != ' => 1,
       ],
-      'order' => ['MCompany.id' => 'asc'],
-      'limit' => 10,
     ]
   ];
 
-    public function beforeFilter() {
+  public function beforeFilter() {
     parent::beforeFilter();
     $this->set('title_for_layout', 'トップ');
   }

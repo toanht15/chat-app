@@ -8,6 +8,8 @@ class AgreementListsController extends AppController {
 
   public $paginate = [
     'MCompany' => [
+      'limit' => 10,
+      'order' => ['MCompany.id' => 'asc'],
       'fields' => ['*'],
       'joins' => [
         [
@@ -22,8 +24,6 @@ class AgreementListsController extends AppController {
       'conditions' => [
         'MCompany.del_flg != ' => 1,
       ],
-      'order' => ['MCompany.id' => 'asc'],
-      'limit' => 10,
     ]
   ];
 
