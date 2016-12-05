@@ -39,7 +39,7 @@ public $uses = ['MCompany','MUser'];
   *@return void
   */
   public function index() {
-    $this->set('userList', $this->paginate('MCompany'));
+    $this->set('companyList', $this->paginate('MCompany'));
   }
 
   // TODO 初回テナントリリース時に削除

@@ -31,7 +31,7 @@ App::uses('Controller', 'Controller');
  * @link    http://book.cakephp.org/2.0/en/controllers.html#the-app-controller
  */
 class AppController extends Controller {
-  public $uses = ['MAdministrator'];
+  public $uses = ['MAdministrator','MCompany'];
   public $userInfo;
 
   public $components = [
@@ -77,8 +77,12 @@ class AppController extends Controller {
     // ログイン情報をオブジェクトに格納
     if ( $this->Session->check('global.userInfo') ) {
       $this->userInfo = $this->Session->read('global.userInfo');
+      //pr($this->userInfo); exit();
       $this->set('userInfo', $this->userInfo);
     }
+
+    // コンフィグに企業IDを設定
+    //Configure::write('logged_company_id', $this->userInfo['MCompany']['id']);
 
     //他のクラスでもbeforeFilterを使えるようにする
     parent::beforeFilter();
@@ -87,7 +91,14 @@ class AppController extends Controller {
   }
 
   public function setUserInfo($info){
+    $this->userInfo = $info;
     $this->Session->write('global.userInfo', $info);
+    $this->Session->write('global.tmpdata', $this->MCompany->find('all',array(
+    'conditions'=>array(
+        'MCompany.company_key' => 'template'
+    ),
+    'fields'=>array('id','company_key'))
+  ));
   }
 
   /**

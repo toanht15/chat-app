@@ -256,6 +256,7 @@ class CreateDb extends CakeMigration {
         $data['MCompany']['company_key'] = 'medialink';
         $data['MCompany']['company_name'] = 'メディアリンク株式会社';
         $data['MCompany']['admin_mail_address'] = 'hoge@gmail.com';
+        //パスワード:12345678
         $data['MCompany']['admin_password'] = '6f364de0b69b7279a296c5b7075335ea00452009';
         $data['MCompany']['m_contact_types_id'] = 1;
         $data['MCompany']['limit_users'] = 99;
@@ -275,6 +276,7 @@ class CreateDb extends CakeMigration {
         $data['MUser']['user_name'] = 'ほげ';
         $data['MUser']['display_name'] = 'ほげ';
         $data['MUser']['mail_address'] = 'hoge@gmail.com';
+        //パスワード:12345678
         $data['MUser']['password'] = '6f364de0b69b7279a296c5b7075335ea00452009';
         $data['MUser']['permission_level'] = 1;
         $data['MUser']['settings'] = '{"sendPattarn":"false"}';

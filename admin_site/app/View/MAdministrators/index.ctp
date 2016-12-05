@@ -1,4 +1,4 @@
-<?php echo $this->element('MAdministrators/script'); ?>
+<?= $this->element('MAdministrators/script'); ?>
 
 <div id='madmin_idx'>
   <div id='madmin_add_title'>
@@ -6,11 +6,7 @@
     <h1>アカウント設定</h1>
   </div>
 
-  <?php echo $this->Html->link(
-    '登録',
-    'javascript:void(0)',
-    array('escape' => false, 'id' => 'searchRefine','class' => 'action_btn','onclick' => 'openConfirm()'));
-  ?>
+  <?= $this->Html->link('登録','javascript:void(0)',['escape' => false, 'id' => 'searchRefine','class' => 'action_btn','onclick' => 'openConfirm()']);?>
   <div id='madmin_list' style = 'padding: 5px 20px 20px 0px;'>
     <table>
       <thead>

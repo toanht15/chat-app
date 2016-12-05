@@ -3060,9 +3060,9 @@ ul.naviBtn {
   padding-bottom: 62px;
 
   h3 {
-      border-bottom: 3px solid #C3D69B;
-      padding-left: 5px;
-      font-size: 13px;
+    border-bottom: 3px solid #C3D69B;
+    padding-left: 5px;
+    font-size: 13px;
   }
 
   .content {
@@ -3074,7 +3074,98 @@ ul.naviBtn {
     div {
       display: flex;
     }
-
   }
 }
 
+.ms-list{
+ .on{
+    display:none;
+  }
+}
+
+#pushImg {
+  background-image: url(/img/push.png);
+  width: 50px;
+  display: block;
+  height: 100px;
+  background-size: 100%;
+  background-repeat: no-repeat;
+  float: left;
+  margin: 50px 3em;
+}
+
+/* 資料設定画面 */
+#tdocument_idx {
+
+  .ms-selectable{
+    float:right;
+  }
+
+  .ms-selection{
+    float:left;
+  }
+
+  #tdocument_menu {
+    img[class$='Btn'] {
+      border-radius: 15px;
+    }
+  }
+
+  #tdocument_list {
+    .lineCtrl {
+      text-align: center;
+
+      div {
+        display: inline-block;
+        a {
+          float: left;
+          margin-bottom: 5px;
+          margin-top: 5px;
+        }
+      }
+    }
+
+    :not(.lineCtrl) a { text-decoration: underline; }
+
+    span {
+      color:#67d4c6;
+    }
+  }
+
+  #tdocument_form {
+    padding-bottom: 50px;
+
+    ul { padding: 0 }
+    li { margin: 0 }
+    section {
+
+      ul.settingList {
+        img.btn-shadow.greenBtn {
+          border-radius: 11px;
+          margin-left: -24px;
+        }
+
+        > li {
+          padding: 15px 0;
+
+          &:first-child {
+            border-top: none;
+          }
+
+          input#TDocumentNewTag {
+            margin-left: 205px;
+          }
+
+          .input.select {
+            margin-top: -10px;
+          }
+
+          > span:first-child {
+            width: 15em;
+            display: block;
+          }
+        }
+      }
+    }
+  }
+}

@@ -11,16 +11,17 @@
     array('escape' => false, 'id' => 'searchRefine','class' => 'action_btn','onclick' => 'openConfirm()'));
   ?>
 
+<div id='agreementList_list' class="p20trl">
   <table>
     <thead>
       <tr>
-        <th style="width:30em;">会社名</th>
-        <th style="width:12em;">キー</th>
-        <th style="width:12em;">プラン</th>
-        <th>ID数</th>
+        <th style="width:25em;">会社名</th>
+        <th style="width:25em;">キー</th>
+        <th style="width:25em;">プラン</th>
+        <th style="width:25em;">ID数</th>
       </tr>
     </thead>
-    <?php foreach((array)$userList as $key => $val): ?>
+    <?php foreach((array)$companyList as $key => $val): ?>
       <tbody>
         <?php if(h($val['MCompany']['trial_flg']) == 0) { ?>
           <tr>
@@ -41,4 +42,5 @@
       </tbody>
     <?php endforeach; ?>
   </table>
+  </div>
 </div>

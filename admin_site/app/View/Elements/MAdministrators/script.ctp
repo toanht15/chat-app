@@ -15,7 +15,7 @@ function openEntryDialog(setting){
     cache: false,
     url: "<?= $this->Html->url('/MAdministrators/remoteOpenEntryForm') ?>",
     success: function(html){
-      modalOpen.call(window, html, 'p-muser-entry', 'アカウント登録');
+      modalOpen.call(window, html, 'p-muser-entry', 'アカウント設定');
     }
   });
 }
