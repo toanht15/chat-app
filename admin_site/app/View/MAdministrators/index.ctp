@@ -18,7 +18,7 @@
       </thead>
       <tbody>
         <?php foreach((array)$userList as $key => $val): ?>
-        <?php
+          <?php
             $id = "";
             if ($val['MAdministrator']['id']) {
               $id = $val['MAdministrator']['id'];
