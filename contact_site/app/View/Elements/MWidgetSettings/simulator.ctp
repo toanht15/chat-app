@@ -9,7 +9,7 @@
 <?php endif; ?>
 
 <section id="sample_widget_area" ng-cloak>
-  <div id="sincloBox" data-openflg="true" ng-if="showWidgetType !== 2" style="position: relative; z-index: 1; width: 285px; background-color: rgb(255, 255, 255);">
+  <div id="sincloBox" ng-if="showWidgetType !== 2" style="position: relative; z-index: 1; width: 285px; background-color: rgb(255, 255, 255);">
     <style>
       #sincloBox * { font-size: 12px; }
       #sincloBox span, #sincloBox pre { font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana!important }
@@ -21,8 +21,8 @@
       #sincloBox div#descriptionSet { cursor: pointer; }
       #sincloBox p#widgetTitle { position:relative; z-index: 1; cursor:pointer; border-radius: {{radius_ratio}}px {{radius_ratio}}px 0 0; border: 1px solid {{main_color}}; border-bottom:none; background-color: {{main_color}};text-align: center; font-size: 14px;padding: 7px 30px 7px 70px; margin: 0;color: {{string_color}}; height: 32px }
       #sincloBox p#widgetTitle:after { background-position-y: 3px; background-image: url('<?=$gallaryPath?>yajirushi.png'); top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear}
-      #sincloBox[data-openflg='true'] p#widgetTitle:after { transform: rotate(0deg); }
-      #sincloBox[data-openflg='false'] p#widgetTitle:after { transform: rotate(180deg); }
+      #sincloBox.open p#widgetTitle:after { transform: rotate(0deg); }
+      #sincloBox:not(.open) p#widgetTitle:after { transform: rotate(180deg); }
       #sincloBox p#widgetSubTitle { background-color: #FFF; margin: 0; padding: 7px 0; text-align: left; border-width: 0 1px 0 1px; border-color: #E8E7E0; border-style: solid; padding-left: 77px; font-weight: bold; color: {{main_color}}; height: 29px; }
       #sincloBox p#widgetDescription { background-color: #FFF; margin: 0; padding-bottom: 7px; text-align: left; border-width: 0 1px 1px 1px; border-color: #E8E7E0; border-style: solid; padding-left: 77px; height: 23px; color: #8A8A8A; }
       #sincloBox section { display: inline-block; width: 285px; border: 1px solid #E8E7E0; border-top: none; }
@@ -90,7 +90,7 @@
       <p ng-if="descriptionToggle == '2'" id="widgetDescription"></p>
       <!-- 説明文 -->
     </div>
-    <div id="miniTarget" ng-style="miniTargetCss">
+    <div id="miniTarget">
     <?php if ( $coreSettings[C_COMPANY_USE_CHAT] && $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
       <section id="navigation" ng-hide="showWidgetType === 3">
         <ul>
@@ -145,7 +145,7 @@
 
 <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
 <!-- スマホ版 -->
-  <div id="sincloBox" ng-if="showWidgetType === 2" data-openflg="true" style="position: relative; z-index: 1; width: 285px; background-color: rgb(255, 255, 255);">
+  <div id="sincloBox" ng-if="showWidgetType === 2" style="position: relative; z-index: 1; width: 285px; background-color: rgb(255, 255, 255);">
     <style>
       #sincloBox * { font-size: 12px; }
       #sincloBox span, #sincloBox pre { font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana!important }
@@ -153,8 +153,8 @@
       #sincloBox .notSelect { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
       #sincloBox p#widgetTitle { text-align: center!important; padding: 7px 30px!important; position:relative; z-index: 1; cursor:pointer; border-radius: 0; border: 1px solid {{main_color}}; border-bottom:none; background-color: {{main_color}};text-align: center; font-size: 14px; margin: 0;color: {{string_color}}; height: 32px }
       #sincloBox p#widgetTitle:after { background-position-y: 3px; background-image: url('<?=$gallaryPath?>yajirushi.png'); top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear}
-      #sincloBox[data-openflg='true'] p#widgetTitle:after { transform: rotate(0deg); }
-      #sincloBox[data-openflg='false'] p#widgetTitle:after { transform: rotate(180deg); }
+      #sincloBox.open p#widgetTitle:after { transform: rotate(0deg); }
+      #sincloBox:not(.open) p#widgetTitle:after { transform: rotate(180deg); }
       #sincloBox section { display: inline-block; width: 285px; border: 1px solid #E8E7E0; border-top: none; }
       #sincloBox section.noDisplay { display: none }
       #sincloBox div#miniTarget { overflow: hidden; transition: height 200ms linear; }
@@ -174,7 +174,7 @@
       <p id="widgetTitle" class="widgetOpener" ng-class="{center: mainImageToggle == '2'}">{{title}}</p>
       <!-- タイトル -->
     </div>
-    <div id="miniTarget" ng-style="miniTargetCss">
+    <div id="miniTarget">
       <section id="chatTab">
         <ul id="chatTalk">
         <li class="sinclo_se" ng-class="{chat_right: show_position == 2, chat_left: show_position == 1 }">○○について質問したいのですが</li>
