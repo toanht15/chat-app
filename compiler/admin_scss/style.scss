@@ -320,7 +320,6 @@ div[id$='_list'] table {
   width: 100%;
 }
 
-
 .fLeft {
   float: left;
 }
@@ -359,6 +358,14 @@ div[id$='_list'] table {
         text-align: left;
       }
     }
+
+    tr:hover #delete {
+      visibility: visible;
+    }
+  }
+  #delete {
+    visibility: hidden;
+    cursor: pointer;
   }
 }
 
