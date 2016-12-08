@@ -1,5 +1,5 @@
 <?php
-require 'C:\Project\public_html_git\aws-php-sample\vendor\autoload.php';
+require APP_DIR . DS .'Plugin/autoload.php';
 use Aws\S3\S3Client;
 use Aws\Credentials\Credentials;
 
