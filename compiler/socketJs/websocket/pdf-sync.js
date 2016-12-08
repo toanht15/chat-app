@@ -1,5 +1,6 @@
 var pdfjsCNST, pdfjsApi, frameSize, docDownload;
 (function($){
+  PDFJS.workerSrc = site.files + "/websocket/pdf.worker.min.js";
 
   pdfjsCNST = function(){
     return {

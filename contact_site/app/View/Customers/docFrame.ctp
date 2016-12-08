@@ -39,7 +39,7 @@ var socket, emit, tabId = '<?=$tabInfo?>', windowSize, url, emit, pdfjsApi, fram
   };
 
 
-  PDFJS.workerSrc = "http://socket.localhost:8080/websocket/pdf.worker.js";
+  PDFJS.workerSrc = "<?=C_PATH_NODE_FILE_SERVER?>/websocket/pdf.worker.min.js";
 
     pdfjsApi = {
     cnst: new pdfjsCNST(),
