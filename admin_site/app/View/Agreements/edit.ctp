@@ -40,9 +40,6 @@ function　passwordLoad() {
 
 window.onload = passwordLoad;
 
-$(function(){
-  $("#mailaddress").prop("disabled", true);
-});
 </script>
 
 <div id='agreement_idx'>

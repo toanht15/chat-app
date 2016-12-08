@@ -37,7 +37,7 @@ switch ($this->name) {
     <ul>
       <li class="link nav-group <?=$topSelected?>" onclick= "location.href = '<?=$this->Html->url(array('controller' => 'Tops', 'action' => 'index'))?>';"><i class="fa fa-home fa-lg" aria-hidden="true"></i> トップ</li>
       <li class="nav-group <?=$agreementLists?>"><i class="fa fa-building fa-lg" aria-hidden="true"></i> 契約管理</li>
-      <li class="link <?=$agreementLists?>" onclick= "location.href = '<?=$this->Html->url(array('controller' => 'AgreementLists', 'action' => 'index'))?>';">契約一覧</li>
+      <li class="link <?=$agreementLists?>" onclick= "location.href = '<?=$this->Html->url(array('controller' => 'MAgreementLists', 'action' => 'index'))?>';">契約一覧</li>
       <li class="nav-group <?=$settingSelected?>"><i class="fa fa-cog fa-lg" aria-hidden="true"></i> 設定</li>
       <li class="link <?=$madministratorsLists?>" onclick= "location.href = '<?=$this->Html->url(array('controller' => 'MAdministrators', 'action' => 'index'))?>';">アカウント設定</a></li>
       <li>テンプレート設定</li>

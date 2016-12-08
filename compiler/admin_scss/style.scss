@@ -637,6 +637,45 @@ div#sidebar{
       }
     }
   }
+    table tr:hover #delete {
+    visibility: visible;
+  }
+
+  #delete {
+    visibility: hidden;
+    cursor: pointer;
+  }
+
+}
+
+/* 契約登録画面 */
+#agreement_idx {
+  .action_btn {
+    width: 6em;
+  }
+
+  .error-message {
+    color: $notification-color;
+    padding-left: 30px;
+  }
+
+  .normal_btn {
+    width: 6em;
+  }
+
+  i.fa.fa-cog.fa-2x{
+    color: $normal-color;
+    margin-top: 6px;
+  }
+
+  a#searchRefine {
+    margin-top: 15px;
+  }
+
+  #agreement-button{
+    position: fixed;
+    display: flex;
+  }
 }
 
 /* 簡易入力画面 */

@@ -143,10 +143,13 @@ class MAdministrator extends AppModel {
   //メールアドレスチェック
   public function isUniqueChk($str){
     $str['MAdministrator' . '.del_flg'] = 0;
+    pr($this->id); exit();
     if ( !empty($this->id) ) {
       $str['MAdministrator' . '.id !='] = $this->id;
+      pr($str); exit();
     }
     $ret = $this->find('all', ['fields' => 'MAdministrator' . '.*', 'conditions' => $str]);
+    pr($ret);
     if ( !empty($ret) ) {
       return false;
     }
