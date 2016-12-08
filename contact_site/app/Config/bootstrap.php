@@ -122,3 +122,4 @@ CakePlugin::load('Migrations');
 
 Configure::load("const");
 Configure::load("messageConst");
+Configure::load("myConst");
