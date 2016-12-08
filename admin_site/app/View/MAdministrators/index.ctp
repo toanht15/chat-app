@@ -13,13 +13,23 @@
         <tr>
           <th style="width:30em;">名前</th>
           <th>メールアドレス </th>
+          <th width="1%"></th>
         </tr>
       </thead>
       <tbody>
         <?php foreach((array)$userList as $key => $val): ?>
-          <tr onclick = <?= 'openEditDialog('.$val['MAdministrator']['id'].')'?>>
+          <?php
+            $id = "";
+            if ($val['MAdministrator']['id']) {
+              $id = $val['MAdministrator']['id'];
+            }
+          ?>
+          <tr ondblclick = <?= 'openEditDialog('.$val['MAdministrator']['id'].')'?>>
             <td><?=h($val['MAdministrator']['user_name'])?></td>
             <td><?=h($val['MAdministrator']['mail_address'])?></td>
+            <td>
+            <i class="fa fa-times fa-2x" aria-hidden="true" a href="javascript:void(0)" id="delete" onclick="remoteDeleteUser('<?=$id?>')"></i>
+            </td>
           </tr>
         <?php endforeach; ?>
       </tbody>

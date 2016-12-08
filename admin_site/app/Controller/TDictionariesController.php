@@ -23,7 +23,6 @@ class TDictionariesController extends AppController {
     $this->set('dictionaryList', $this->TDictionary->find('all', $this->_setParams()));
   }
 
-
   /* *
   * 登録画面
   * @return void
@@ -69,17 +68,17 @@ class TDictionariesController extends AppController {
     //登録の場合sort番号振り分け
     if (empty($this->request->data['dictionaryId'])) {
       $params = [
+        'limit' => 1,
+        'order' => [
+          'TDictionary.sort' => 'desc',
+          'TDictionary.id' => 'desc'
+        ],
         'fields' => [
           'TDictionary.sort'
         ],
         'conditions' => [
           'TDictionary.m_companies_id' => $mcompanyData['MCompany']['id']
         ],
-        'order' => [
-          'TDictionary.sort' => 'desc',
-          'TDictionary.id' => 'desc'
-        ],
-        'limit' => 1,
         'recursive' => -1
       ];
       $lastData = $this->TDictionary->find('first', $params);

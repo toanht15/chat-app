@@ -181,20 +181,28 @@ $notification-color: #E57373;
 /*アカウント設定*/
 
 .p-muser-update {
-  width: 400px;
+  width: 532px;
   i {
     &:before {
       content: "\f013";
     }
   }
 
+  label {
+    font-weight: bold;
+  }
+
+  #popup-main {
+    padding: 3rem 1.5rem;
+  }
+
   .fa-cog {
-  color: #fff;
-  margin-left: 6px;
+    color: #fff;
+    margin-left: 6px;
   }
 
   input#MAdministratorUserName {
-    margin-left: 88px;
+    margin-left: 98px;
   }
 
   input#MAdministratorMailAddress {
@@ -202,7 +210,7 @@ $notification-color: #E57373;
   }
 
   input#MAdministratorNewPassword {
-    margin-left: 55px;
+    margin-left: 59px;
   }
 
   .action_btn {
@@ -223,13 +231,13 @@ $notification-color: #E57373;
     }
   }
 
-label {
+  label {
     font-weight: bold;
-}
+  }
 
-#popup-main {
-    padding: 3rem 1.5rem;
-}
+  #popup-main {
+      padding: 3rem 1.5rem;
+  }
 
   .fa-cog {
     color: #fff;
@@ -258,8 +266,8 @@ label {
 }
 
 span {
-    margin-top: 4px;
-    font-size: 13px;
+  margin-top: 4px;
+  font-size: 13px;
 }
 
 p.error-message {
