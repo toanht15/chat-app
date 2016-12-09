@@ -57,6 +57,17 @@ class CustomersController extends AppController {
   }
 
   /* *
+   * モニタリング画面(資料共有用)
+   * @return void
+   * */
+  public function docFrame() {
+    $this->layout = 'frame';
+    $docId = $this->params->query['docId'];
+    $this->set('tabInfo', $this->params->query['tabInfo']);
+    return $this->render('/Customers/docFrame');
+  }
+
+  /* *
    * モニタリング画面
    * @return void
    * */
@@ -347,6 +358,50 @@ class CustomersController extends AppController {
         $ret[] = $val['THistoryChatLog'];
       }
     }
+    return new CakeResponse(['body' => json_encode($ret)]);
+  }
+
+  /**
+   * remoteOpenDocumentList
+   * 共有する資料リストを表示
+   * @return string html
+   * */
+  public function remoteOpenDocumentLists(){
+    $this->layout = "ajax";
+    $ret = [];
+    $ret['tagList'] = $this->jsonEncode([1 => 'メイン', 2 => '紹介用', 3 => '営業用', 4 => '製品A', 5 => '製品B']);
+
+    $ret['documentList'] = json_encode([
+      [
+        'id' => 1,
+        'name' => '商品概要資料',
+        'overview' => '製品Aの紹介用資料：hogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehoge',
+        'tag' => '[1,2,4]',
+        'file_name' => ''
+      ],
+      [
+        'id' => 2,
+        'name' => '提案資料',
+        'overview' => '製品Aの営業用資料：hogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehoge',
+        'tag' => '[1,3,4]',
+        'file_name' => ''
+      ],
+      [
+        'id' => 3,
+        'name' => '商品概要資料',
+        'overview' => '製品Bの紹介用資料：hogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehoge',
+        'tag' => '[1,2,5]',
+        'file_name' => ''
+      ],
+      [
+        'id' => 4,
+        'name' => '提案資料',
+        'overview' => '製品Bの営業用資料：hogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehoge',
+        'tag' => '[1,3,5]',
+        'file_name' => ''
+      ]
+    ], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+
     return new CakeResponse(['body' => json_encode($ret)]);
   }
 

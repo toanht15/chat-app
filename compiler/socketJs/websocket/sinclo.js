@@ -787,6 +787,24 @@
       userInfo.vc_toTabId = obj.toTabId;
       common.setVcInfo({receiverID: obj.receiverID, toTabId: obj.toTabId});
     },
+    docShareConnect: function(obj){
+      // 終了通知
+      var title = location.host + 'の内容';
+      var content = location.host + 'が資料共有を求めています。<br>許可しますか';
+      popup.ok = function(){
+        var size = browserInfo.windowSize();
+        var params = {
+          data: obj,
+          site: window.info.site
+        };
+        var url = window.info.site.files + "/docFrame/" + encodeURIComponent(JSON.stringify(params));
+
+        window.open(url, "_blank", "width=" + size.width + ", height=" + size.height + ", resizable=no,scrollbars=yes,status=no");
+        this.remove();
+      };
+      popup.set(title, content);
+
+    },
     syncStop: function(d){
       var obj = common.jParse(d);
       syncEvent.stop(false);
