@@ -1,5 +1,5 @@
 <?php
-require APP_DIR . DS .'Plugin/autoload.php';
+require ROOT. DS . APP_DIR . DS .'Plugin/AmazonSDK/vendor/autoload.php';
 use Aws\S3\S3Client;
 use Aws\Credentials\Credentials;
 

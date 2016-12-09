@@ -1,20 +1,7 @@
 <?php
 /* 定数定義 */
 define('APP_MODE_DEV', true);
-// Nodeサーバー
-if ( APP_MODE_DEV ) {
-  define('C_NODE_SERVER_ADDR', "//socket.localhost"); // Nodeサーバー
-  define('C_NODE_SERVER_FILE_PORT', ":8080"); // NodeサーバーのHTTP通信ポート
-  define('C_NODE_SERVER_WS_PORT', ":9090"); // WS通信ポート
-  define('C_PATH_NODE_FILE_SERVER', C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT); // Nodeサーバーの公開ファイルパス
-}
- // 本番(今後動的になる)
-else {
-  define('C_NODE_SERVER_ADDR', "//ws1.sinclo.jp"); // Nodeサーバー
-  define('C_NODE_SERVER_FILE_PORT', ""); // NodeサーバーのHTTP通信ポート
-  define('C_NODE_SERVER_WS_PORT', ""); // WS通信ポート
-  define('C_PATH_NODE_FILE_SERVER', C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT); // Nodeサーバーの公開ファイルパス
-}
+define('C_PATH_NODE_FILE_SERVER', C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT); // Nodeサーバーの公開ファイルパス
 
 // AWS: S3
 define('C_AWS_S3_VERSION', 'latest'); // ウィジェット用参照先
