@@ -3,8 +3,8 @@
  * PersonalSettingsController controller.
  * ユーザーマスタ
  */
-class MAgreementListsController extends AppController {
-  public $uses = ['MCompany','MUser','MAgreementList'];
+class MAgreementsController extends AppController {
+  public $uses = ['MCompany','MUser','MAgreement','TransactionManager'];
 
   public $paginate = [
     'MCompany' => [
@@ -14,10 +14,10 @@ class MAgreementListsController extends AppController {
       'joins' => [
         [
           'type' => 'inner',    // もしくは left
-          'table' => 'm_agreement_lists',
-          'alias' => 'MAgreementList',
+          'table' => 'm_agreements',
+          'alias' => 'MAgreement',
           'conditions' => [
-          'MAgreementList .m_companies_id = MCompany.id',
+          'MAgreement.m_companies_id = MCompany.id',
           ],
         ],
         [
@@ -56,39 +56,40 @@ class MAgreementListsController extends AppController {
 
     if($this->request->is('post')) {
       $saveData = $this->request->data;
-      $saveData['MCompany']['company_name'] = $saveData['MAgreementList']['company_name'];
-      $saveData['MCompany']['company_key'] = $saveData['MAgreementList']['company_key'];
-      $saveData['MCompany']['limit_users'] = $saveData['MAgreementList']['limit_users'];
-      $saveData['MCompany']['m_contact_types_id'] = $saveData['MAgreementList']['m_contact_types_id'];
-      $saveData['MCompany']['trial_flg'] = $saveData['MAgreementList']['trial_flg'];
+      $saveData['MCompany']['company_name'] = $saveData['MAgreement']['company_name'];
+      $saveData['MCompany']['company_key'] = $saveData['MAgreement']['company_key'];
+      $saveData['MCompany']['limit_users'] = $saveData['MAgreement']['limit_users'];
+      $saveData['MCompany']['m_contact_types_id'] = $saveData['MAgreement']['m_contact_types_id'];
+      $saveData['MCompany']['trial_flg'] = $saveData['MAgreement']['trial_flg'];
       $this->_mcompany($saveData);
 
       $saveData2 = $this->request->data;
       $saveData2['MUser']['user_name'] = 'ML用アカウント';
       $saveData2['MUser']['display_name'] = 'ML用アカウント';
-      $saveData2['MUser']['mail_address'] = $saveData2['MAgreementList']['mail_address'];
-      $saveData2['MUser']['password'] = $saveData2['MAgreementList']['admin_password'];
+      $saveData2['MUser']['mail_address'] = $saveData2['MAgreement']['mail_address'];
+      $saveData2['MUser']['password'] = $saveData2['MAgreement']['admin_password'];
       $saveData2['MUser']['permission_level'] = 99;
       $saveData2['MUser']['del_flg'] = 0;
       $this->_muser($saveData2);
 
       $saveData3 = $this->request->data;
-      $saveData3['MAgreementList']['del_flg'] = 0;
+      $saveData3['MAgreement']['del_flg'] = 0;
       $this->_magreement($saveData3);
 
       if($this->_mcompany($saveData)==true && $this->_muser($saveData2) == true && $this->_magreement($saveData3)==true) {
         if($this->MCompany->save($saveData)){
           $last_id = $this->MCompany->getLastInsertID();
           $saveData2['MUser']['m_companies_id'] = $last_id;
-          $saveData3['MAgreementList']['m_companies_id'] = $last_id;
+          $saveData3['MAgreement']['m_companies_id'] = $last_id;
           $this->MUser->set($saveData2);
-          $this->MAgreementList->set($saveData3);
-          if($this->MUser->save($saveData2) && $this->MAgreementList->save($saveData3)) {
+          $this->MAgreement->set($saveData3);
+          if($this->MUser->save($saveData2) && $this->MAgreement->save($saveData3)) {
             $this->MCompany->commit();
             $this->MUser->commit();
-            $this->MAgreementList->commit();
+            $this->MAgreement->commit();
             $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
-            $this->redirect(['controller' => 'MAgreementLists', 'action' => 'index']);
+            $this->_addFile($saveData);
+            $this->redirect(['controller' => 'MAgreements', 'action' => 'index']);
           }
         }
       }
@@ -100,88 +101,90 @@ class MAgreementListsController extends AppController {
    * @return void
    * */
   public function edit($id) {
-    $this->MAgreementList->id = $id;
+    $this->MAgreement->id = $id;
 
     if($this->request->is('post') || $this->request->is('put')) {
-      $editData = $this->MAgreementList->read(null,$id);
+      $editData = $this->MAgreement->read(null,$id);
       $data = $this->MUser->find('all',[
-        'conditions' => array('m_companies_id' => $editData['MAgreementList']['m_companies_id'])
+        'conditions' => array('m_companies_id' => $editData['MAgreement']['m_companies_id'])
       ]);
 
-      $m_companies_id = $editData['MCompany']['id'];
-      $m_user_id = $data[0]['MUser']['id'];
-      $this->set('m_companies_id', $m_companies_id);
-      $this->set('m_user_id', $m_user_id);
+      $companyId = $editData['MCompany']['id'];
+      $userId = $data[0]['MUser']['id'];
+      $this->set('companyId', $companyId);
+      $this->set('userId', $userId);
       $saveData = $this->request->data;
-      $saveData['MCompany']['id'] = $m_companies_id;
-      $saveData['MCompany']['company_name'] = $saveData['MAgreementList']['company_name'];
-      $saveData['MCompany']['company_key'] = $saveData['MAgreementList']['company_key'];
-      $saveData['MCompany']['limit_users'] = $saveData['MAgreementList']['limit_users'];
-      $saveData['MCompany']['m_contact_types_id'] = $saveData['MAgreementList']['m_contact_types_id'];
-      $saveData['MCompany']['trial_flg'] = $saveData['MAgreementList']['trial_flg'];
+      $saveData['MCompany']['id'] = $companyId;
+      $saveData['MCompany']['company_name'] = $saveData['MAgreement']['company_name'];
+      $saveData['MCompany']['company_key'] = $saveData['MAgreement']['company_key'];
+      $saveData['MCompany']['limit_users'] = $saveData['MAgreement']['limit_users'];
+      $saveData['MCompany']['m_contact_types_id'] = $saveData['MAgreement']['m_contact_types_id'];
+      $saveData['MCompany']['trial_flg'] = $saveData['MAgreement']['trial_flg'];
       $this->_mcompany($saveData);
 
       $saveData2 = $this->request->data;
-      $saveData2['MUser']['id'] = $m_user_id;
+      $saveData2['MUser']['id'] = $userId;
       $saveData2['MUser']['user_name'] = 'ML用アカウント';
       $saveData2['MUser']['display_name'] = 'ML用アカウント';
-      $saveData2['MUser']['mail_address'] = $saveData2['MAgreementList']['mail_address'];
-      $saveData2['MUser']['password'] = $saveData2['MAgreementList']['admin_password'];
+      $saveData2['MUser']['mail_address'] = $saveData2['MAgreement']['mail_address'];
+      $saveData2['MUser']['password'] = $saveData2['MAgreement']['admin_password'];
       $saveData2['MUser']['permission_level'] = 99;
       $saveData2['MUser']['del_flg'] = 0;
       $this->_muser($saveData2);
 
       $saveData3 = $this->request->data;
-      $saveData3['MAgreementList']['del_flg'] = 0;
+      $saveData3['MAgreement']['del_flg'] = 0;
       $this->_magreement($saveData3);
 
       if($this->_mcompany($saveData)==true && $this->_muser($saveData2) == true && $this->_magreement($saveData3)==true) {
         if($this->MCompany->save($saveData)){
-          if ( empty($saveData['MAgreementList']['id']) ) {
+          if ( empty($saveData['MAgreement']['id']) ) {
             $last_id = $this->MCompany->getLastInsertID();
             $saveData2['MUser']['m_companies_id'] = $last_id;
-            $saveData3['MAgreementList']['m_companies_id'] = $last_id;
+            $saveData3['MAgreement']['m_companies_id'] = $last_id;
           }
           $this->MUser->set($saveData2);
-          $this->MAgreementList->set($saveData3);
-          if($this->MUser->save($saveData2) && $this->MAgreementList->save($saveData3)) {
+          $this->MAgreement->set($saveData3);
+          if($this->MUser->save($saveData2) && $this->MAgreement->save($saveData3)) {
             $this->MCompany->commit();
             $this->MUser->commit();
-            $this->MAgreementList->commit();
+            $this->MAgreement->commit();
             $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
-            $this->redirect(['controller' => 'MAgreementLists', 'action' => 'index']);
+            $this->_editFile($saveData,$editData);
+            $this->redirect(['controller' => 'MAgreements', 'action' => 'index']);
           }
         }
       }
     }
     else{
-      $this->request->data = $this->MAgreementList->read(null,$id);
+      $this->request->data = $this->MAgreement->read(null,$id);
       $data = $this->MUser->find('all',[
-        'conditions' => array('m_companies_id' => $this->request->data['MAgreementList']['m_companies_id'])
+        'conditions' => array('m_companies_id' => $this->request->data['MAgreement']['m_companies_id'])
       ]);
 
-      $m_companies_id = $this->request->data['MCompany']['id'];
+      $companyId = $this->request->data['MCompany']['id'];
+      $companyKey = $this->request->data['MCompany']['company_key'];
       $this->request->data['MUser']['id'] = $data[0]['MUser']['id'];
-      $m_user_id = $data[0]['MUser']['id'];
-      $this->set('m_companies_id', $m_companies_id);
-      $this->set('m_user_id', $m_user_id);
-      $this->request->data['MAgreementList']['company_name'] = $this->request->data['MCompany']['company_name'];
-      $this->request->data['MAgreementList']['company_key'] = $this->request->data['MCompany']['company_key'];
-      $this->request->data['MAgreementList']['limit_users'] = $this->request->data['MCompany']['limit_users'];
-      $this->request->data['MAgreementList']['m_contact_types_id'] = $this->request->data['MCompany']['m_contact_types_id'];
-      $this->request->data['MAgreementList']['trial_flg'] = $this->request->data['MCompany']['trial_flg'];
-      $this->request->data['MAgreementList']['mail_address'] = $data[0]['MUser']['mail_address'];
+      $userId = $data[0]['MUser']['id'];
+      $this->set('companyId', $companyId);
+      $this->set('userId', $userId);
+      $this->set('companyKey',$companyKey);
+      $this->request->data['MAgreement']['company_name'] = $this->request->data['MCompany']['company_name'];
+      $this->request->data['MAgreement']['company_key'] = $this->request->data['MCompany']['company_key'];
+      $this->request->data['MAgreement']['limit_users'] = $this->request->data['MCompany']['limit_users'];
+      $this->request->data['MAgreement']['m_contact_types_id'] = $this->request->data['MCompany']['m_contact_types_id'];
+      $this->request->data['MAgreement']['trial_flg'] = $this->request->data['MCompany']['trial_flg'];
+      $this->request->data['MAgreement']['mail_address'] = $data[0]['MUser']['mail_address'];
     }
   }
 
-   /**
-   * 保存機能
-   * @param array $inputData
+  /* *
+   * 保存画面
    * @return void
    * */
   private function _mcompany($saveData) {
     $this->MCompany->begin();
-    if ( empty($saveData['MAgreementList']['id']) ) {
+    if ( empty($saveData['MAgreement']['id']) ) {
       $this->MCompany->create();
     }
     $this->MCompany->set($saveData);
@@ -203,7 +206,7 @@ class MAgreementListsController extends AppController {
    * */
   private function _muser($saveData2) {
     $this->MUser->begin();
-    if ( empty($saveData2['MAgreementList']['id']) ) {
+    if ( empty($saveData2['MAgreement']['id']) ) {
       $this->MUser->create();
     }
     $this->MUser->set($saveData2);
@@ -224,17 +227,17 @@ class MAgreementListsController extends AppController {
    * @return void
    * */
   private function _magreement($saveData3) {
-    $this->MAgreementList->begin();
-    if ( empty($saveData3['MAgreementList']['id']) ) {
-      $this->MAgreementList->create();
+    $this->MAgreement->begin();
+    if ( empty($saveData3['MAgreement']['id']) ) {
+      $this->MAgreement->create();
     }
 
-    $this->MAgreementList->set($saveData3);
-    if($this->MAgreementList->validates()) {
+    $this->MAgreement->set($saveData3);
+    if($this->MAgreement->validates()) {
       return true;
     }
     else {
-      $this->MAgreementList->rollback();
+      $this->MAgreement->rollback();
       $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
       $errors = $this->MUser->validationErrors;
       $this->set('errors', $errors);
@@ -248,26 +251,51 @@ class MAgreementListsController extends AppController {
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
-    if ( $this->MUser->logicalDelete($this->request->data['m_user_id']) ) {
-      if ( $this->MCompany->logicalDelete($this->request->data['m_companies_id']) ) {
-        if ( $this->MAgreementList->logicalDelete($this->request->data['id']) ) {
-          $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
+    $name = $this->request->data['companyKey'];
+    if(!empty($this->request->data['userId']) && ($this->request->data['companyId']) && ($this->request->data['id'])) {
+
+      $transactions = $this->TransactionManager->begin();
+      if ( $this->MUser->logicalDelete($this->request->data['userId']) && $this->MCompany->logicalDelete($this->request->data['companyId']) && $this->MAgreement->logicalDelete($this->request->data['id'])) {
+        $this->TransactionManager->commit($transactions);
+        // 作成するファイル名の指定
+        $file_name ="C:/Project/sinclo/socket/webroot/client/{$name}.js";
+        // ファイルの存在確認
+        if( file_exists($file_name) ){
+        // ファイル削除
+        unlink($file_name);
         }
+        $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
       }
-    }
-    else {
-      $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
+      else {
+        $this->TransactionManager->rollback($transactions);
+      }
     }
   }
 
+  public function _editFile($saveData,$editData) {
+    $this->autoRender = FALSE;
+    $name = $saveData['MCompany']['company_key'];
+    //pr($saveData); exit();
+    // 作成するファイル名の指定
+    $file_name ="C:/Project/sinclo/socket/webroot/client/{$name}.js";
+    // ファイルの存在確認
+    if( !file_exists($file_name) ){
+      $beforename = $editData['MCompany']['company_key'];
+      $before_file = "C:/Project/sinclo/socket/webroot/client/{$beforename}.js";
+      // ファイル削除、作成
+      unlink($before_file);
+      touch($file_name);
+    }
+  }
 
   /* *
    * jsfile登録画面
    * @return void
    * */
-  public function _addFile() {
+  public function _addFile($saveData) {
     $this->autoRender = FALSE;
-    $name = $this->name;
+    $name = $saveData['MCompany']['company_key'];
+    //pr($saveData); exit();
     // 作成するファイル名の指定
     $file_name ="C:/Project/sinclo/socket/webroot/client/{$name}.js";
     // ファイルの存在確認
@@ -326,6 +354,6 @@ class MAgreementListsController extends AppController {
     ");
     fclose($fp);
 
-    $this->render('/MAgreementLists/index');
+    $this->render('/MAgreements/index');
   }
 }

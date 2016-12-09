@@ -14,9 +14,9 @@ function remoteDeleteCompany(id,companyId,userId,companyKey){
         companyKey:companyKey
       },
       cache: false,
-      url: "<?= $this->Html->url('/MAgreementLists/remoteDeleteCompany') ?>",
+      url: "<?= $this->Html->url('/MAgreements/remoteDeleteCompany') ?>",
       success: function(){
-        location.href = "<?= $this->Html->url('/MAgreementLists/index') ?>";
+        location.href = "<?= $this->Html->url('/MAgreements/index') ?>";
       }
     });
   };
@@ -29,7 +29,7 @@ function remoteDeleteCompany(id,companyId,userId,companyKey){
     <div class="fLeft"><i class="fa fa-home fa-2x" aria-hidden="true"></i></div>
     <h1>契約状況</h1>
   </div>
-  <?= $this->Html->link('登録',['controller'=>'MAgreementLists', 'action' => 'add'],['escape' => false, 'id' => 'searchRefine','class' => 'action_btn']); ?>
+  <?= $this->Html->link('登録',['controller'=>'MAgreements', 'action' => 'add'],['escape' => false, 'id' => 'searchRefine','class' => 'action_btn']); ?>
 <div id='agreementList_list' class="p20trl">
   <table>
     <thead>
@@ -44,8 +44,8 @@ function remoteDeleteCompany(id,companyId,userId,companyKey){
     <?php foreach((array)$companyList as $key => $val): ?>
       <?php
             $id = "";
-            if ($val['MAgreementList']['id']) {
-              $id = $val['MAgreementList']['id'];
+            if ($val['MAgreement']['id']) {
+              $id = $val['MAgreement']['id'];
             }
             $companyId = $val['MCompany']['id'];
             $userId = $val['MUser']['id'];
@@ -53,7 +53,7 @@ function remoteDeleteCompany(id,companyId,userId,companyKey){
           ?>
       <tbody>
         <?php if(h($val['MCompany']['trial_flg']) == 0) { ?>
-          <tr ondblclick= "location.href = '<?=$this->Html->url(array('controller' => 'MAgreementLists', 'action' => 'edit',$val['MAgreementList']['id']))?>';">
+          <tr ondblclick= "location.href = '<?=$this->Html->url(array('controller' => 'MAgreements', 'action' => 'edit',$val['MAgreement']['id']))?>';">
             <td><?=h($val['MCompany']['company_name'])?></td>
             <td><?=h($val['MCompany']['company_key'])?></td>
             <?php if(h($val['MCompany']['m_contact_types_id']) == 1){ ?>

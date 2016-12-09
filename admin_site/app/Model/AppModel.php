@@ -40,6 +40,7 @@ class AppModel extends Model {
     $ret = $this->read(null, $id);
     if ( !empty($ret) && !empty($ret[$this->name]) && isset($ret[$this->name]['del_flg']) ) {
       $ret[$this->name]['del_flg'] = 1;
+      $ret[$this->name]['deleted'] = date('Y-m-d H:i:s');
       if ( $this->save($ret, false) ) {
         return true;
       }

@@ -5,9 +5,9 @@ App::uses('SimplePasswordHasher', 'Controller/Component/Auth');
  * AgreementList Model
  *
  */
-class MAgreementList extends AppModel {
+class MAgreement extends AppModel {
 
-  public $name = 'MAgreementList';
+  public $name = 'MAgreement';
   //アソシエーション
   public $belongsTo = ['MCompany' =>
     ['className' => 'Mcompany',
