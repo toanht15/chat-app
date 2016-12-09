@@ -6,17 +6,53 @@
         <span class="require"><label>資料名</label></span>
         <?= $this->Form->input('name', ['type' => 'text','placeholder' => '資料名','maxlength' => 30,'label' => false,'div' => false,]) ?>
       </li>
+      <!-- 資料名 -->
+
       <!-- 概要 -->
       <li>
         <span class="require"><label>概要</label></span>
         <?=$this->Form->input('overview', ['type'=>'textarea','placeholder' => '概要','label' => false,'div' => false,'maxlength'=>300,'cols' => 25,'rows' => 5])?>
       </li>
+      <!-- 概要 -->
+
+      <!-- 資料 -->
+      <li>
+        <span class="require"><label>資料</label></span>
+        <documentArea>
+          <content>
+            <preview>
+              <div id="document_canvas"></div>
+              <paging>
+                <span onclick="pdfjsApi.prevPage(); return false;"><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_back.png" width="30" height="30" alt=""></span>
+                <span class="pages"></span>
+                <span onclick="pdfjsApi.nextPage(); return false;"><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_next.png" width="30" height="30" alt=""></span>
+              </paging>
+            </preview>
+            <controller>
+              <upload class="btn-shadow greenBtn">
+                <?=$this->Form->input('files', ['type'=>'file','placeholder' => '資料','label' => false,'div' => false])?>
+                <?=$this->Form->input('file_name', ['type'=>'hidden'])?>
+              </upload>
+              <rotate class="btn-shadow greenBtn">
+                <?=$this->Html->image('rotate90_w.png', ['alt' => '90度資料を回転する']);?>
+              </rotate>
+            </controller>
+          </content>
+          <content>
+            <p>原稿（<span class="pages"></span>）</p>
+            <textarea></textarea>
+          </content>
+        </documentArea>
+      </li>
+      <!-- 資料 -->
+
       <!-- タグ -->
       <li>
         <span><label>タグ</label></span>
         <?= $this->Form->input('new_tag', ['type' => 'text','placeholder' => '新しいタグ','maxlength' => 30,'label' => false,'div' => false]) ?>
         <?= $this->Html->image('add.png', array('alt' => '登録', 'class' => 'btn-shadow greenBtn', 'width' => 22, 'height' => 22, 'onclick' => 'tagAdd()')) ?>
       </li>
+      <!-- タグ -->
 
       <!-- タグリスト -->
       <li>

@@ -1,6 +1,4 @@
 <?=$this->Html->script("//ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js");?>
-<?=$this->Html->script("http://localhost:8888/node_modules/requirejs/require.js");?>
-<?=$this->Html->script("http://localhost:8888/web/viewer.js");?>
 
 <script type="text/javascript">
 <!--
@@ -14,7 +12,6 @@ var socket, emit, tabId = '<?=$tabInfo?>', windowSize, url, emit, pdfjsApi, fram
 
   // WebSocketサーバに接続
   socket = io.connect("<?=C_NODE_SERVER_ADDR.C_NODE_SERVER_WS_PORT?>");
-  var first = true;
 
   // -----------------------------------------------------------------------------
   //  関数
@@ -33,9 +30,6 @@ var socket, emit, tabId = '<?=$tabInfo?>', windowSize, url, emit, pdfjsApi, fram
     var data = JSON.stringify(obj);
     socket.emit(ev, data);
   };
-})();
-
-window.onload = function(){
 
   var pdfjsCNST = function(){
     return {
@@ -45,12 +39,12 @@ window.onload = function(){
   };
 
 
-  PDFJS.workerSrc = "http://socket.localhost:8080/websocket/pdf.worker.js";
+  PDFJS.workerSrc = "<?=C_PATH_NODE_FILE_SERVER?>/websocket/pdf.worker.min.js";
 
     pdfjsApi = {
     cnst: new pdfjsCNST(),
     pdf: null,
-    pdfUrl: "http://contact.localhost/files/test.pdf",
+    pdfUrl: null,
     currentPage: 1,
     currentScale: 1,
     init: function(){
@@ -215,15 +209,30 @@ window.onload = function(){
     }
   };
 
+
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', "https://s3-ap-northeast-1.amazonaws.com/medialink.sinclo.jp/medialink/%E3%83%86%E3%82%B9%E3%83%88PDF.pdf", true);
+  xhr.responseType = 'arraybuffer';
+  xhr.onload = function(e) {
+    if (this.status == 200) {
+      // Note: .response instead of .responseText
+      var blob = new Blob([this.response], {type: 'application/pdf'});
+      pdfjsApi.pdfUrl = URL.createObjectURL(blob);
+      pdfjsApi.init();
+    }
+  };
+  xhr.send();
+
+  window.focus();
+})();
+
+window.onload = function(){
+
   // スクロール禁止
   $(window).scroll(function(e) {
     $(this).scrollTop(0);
     $(this).scrollLeft(0);
   });
-
-
-  pdfjsApi.init();
-  window.focus();
 
   // WebSocketサーバ接続イベント
   socket.on('connect', function(){
