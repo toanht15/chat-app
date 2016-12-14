@@ -198,6 +198,7 @@ var socket, // socket.io
       html += '      #sincloBox * { color: #8A8A8A; line-height: 1.3; box-sizing: border-box; font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana;}';
       html += '      #sincloBox .notSelect { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }';
       html += '      #sincloBox a { color: #8a8a8a }';
+      html += '      #sincloBox div { width: 100%; margin: 0; }';
       html += '      #sincloBox label { display: inline; max-width: 100%; margin-bottom: 0; font-weight: normal;}';
       html += '      #sincloBox a:hover { color: ' + widget.mainColor + '; }';
       html += '      #sincloBox div#widgetHeader { cursor:pointer; position: relative;}';
