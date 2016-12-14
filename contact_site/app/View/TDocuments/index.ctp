@@ -21,9 +21,9 @@
       <thead>
         <tr>
           <th width="10%">No</th>
+          <th width="20%">資料</th>
           <th width="20%">資料名</th>
-          <th width="30%">概要</th>
-          <th width="25%">タグ</th>
+          <th width="35%">概要</th>
           <th width="15%">操作</th>
         </tr>
       </thead>
@@ -38,9 +38,12 @@
         ?>
         <tr data-id="<?=h($id)?>">
           <td class="tCenter"><?=$no?></td>
+          <td class="tCenter">
+            <?= $this->Html->image(C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/".C_PREFIX_DOCUMENT.pathinfo(h($val['TDocument']['file_name']), PATHINFO_FILENAME).".jpg", ["width" => 210, "height" => 180]);?>
+          </td>
           <td class="tCenter"><?=h($val['TDocument']['name'])?></td>
           <td class="tCenter"><?=h($val['TDocument']['overview'])?></td>
-          <td class="tCenter"><span><?=implode("</span>、<span>",$val['TDocument']['tag'])?></span></td>
+          <!-- <td class="tCenter"><span><?=implode("</span>、<span>",$val['TDocument']['tag'])?></span></td> -->
           <td class="p10x noClick lineCtrl">
             <div>
               <a href="<?=$this->Html->url(['controller'=>'TDocuments', 'action'=>'edit', $id])?>" class="btn-shadow greenBtn fLeft"><img src="/img/edit.png" alt="更新" width="30" height="30"></a>

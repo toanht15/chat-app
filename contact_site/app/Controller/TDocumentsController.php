@@ -64,7 +64,6 @@ class TDocumentsController extends AppController {
    * @return void
    * */
   public function edit($id) {
-
     $this->_radioConfiguration();
 
     if($this->request->is('post') || $this->request->is('put')) {
@@ -129,9 +128,12 @@ class TDocumentsController extends AppController {
         'TDocument.m_companies_id' => $this->userInfo['MCompany']['id']
       ],
       'recursive' => -1
-    ]);;
-    if ( count($ret) === 1 ) {
+    ]);
+    if ( !empty($ret) ) {
       if ( $this->TDocument->delete($id) ) {
+        $this->Amazon->removeObject("medialink/".$ret['TDocument']['file_name']);
+        $this->Amazon->removeObject("medialink/".C_PREFIX_DOCUMENT.pathinfo($ret['TDocument']['file_name'], PATHINFO_FILENAME).".jpg");
+
         $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
       }
       else {
@@ -146,23 +148,27 @@ class TDocumentsController extends AppController {
    * @return void
    * */
   private function _entry($saveData) {
-    if(!empty($this->request->data['TDocument']['tag'])) {
-      $inputData = $this->request->data['TDocument']['tag'];
+    $nowData = [];
+    if(!empty($saveData['TDocument']['tag'])) {
+      $inputData = $saveData['TDocument']['tag'];
       $saveData['TDocument']['tag'] = $this->jsonEncode($inputData);
     }
     $saveData['TDocument']['m_companies_id'] = $this->userInfo['MCompany']['id'];
-
     $this->TDocument->begin();
     if ( empty($saveData['TDocument']['id']) ) {
       $this->TDocument->create();
     }
 
+    if ( isset($saveData['TDocument']['files']['name']) && empty($saveData['TDocument']['files']['name']) ) {
+      unset($saveData['TDocument']['files']);
+    }
     $this->TDocument->set($saveData);
 
     // バリデーションチェックに失敗したら
     if ( !$this->TDocument->validates() ) return false;
 
     // ファイルが添付されたら
+    $fileName = "";
     if ( !empty($saveData['TDocument']['files']) ) {
       $file = $saveData['TDocument']['files'];
       $fileName = $this->userInfo['MCompany']['company_key']."_".date("YmdHis").".".pathinfo($file['name'], PATHINFO_EXTENSION);
@@ -174,18 +180,59 @@ class TDocumentsController extends AppController {
         return false;
       }
 
+      if ( !empty($saveData['TDocument']['id']) ) { // ファイル添付＆更新の場合
+        $nowData = $this->TDocument->read(null, $saveData['TDocument']['id']);
+      }
       unset($saveData['TDocument']['files']);
       $saveData['TDocument']['file_name'] = $fileName;
     }
 
     if($this->TDocument->save($saveData, false)) {
+      // 昔のファイルを削除する
+      if ( !empty($nowData['TDocument']) ) {
+        $this->_createThumnail($saveData['TDocument']['file_name']);
+        $this->Amazon->removeObject("medialink/".$nowData['TDocument']['file_name']);
+        $this->Amazon->removeObject("medialink/".C_PREFIX_DOCUMENT.pathinfo($nowData['TDocument']['file_name'], PATHINFO_FILENAME).".jpg");
+      }
       $this->TDocument->commit();
       $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
       $this->redirect(['controller' => 'TDocuments', 'action' => 'index']);
     }
     else {
       $this->TDocument->rollback();
+      if ( !empty($fileName) ) {
+        $this->Amazon->removeObject("medialink/".$fileName);
+      }
       $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
+    }
+  }
+
+  /**
+   *  資料のサムネイルを作成する
+   *  @param string $fileName 資料の保存先パス
+   *  @return void
+   * */
+  private function _createThumnail($fileName){
+    $name = C_PREFIX_DOCUMENT.pathinfo($fileName, PATHINFO_FILENAME).".jpg"; //サムネイルのファイル名
+    $thumbname = C_PATH_TMP_IMG_DIR.DS.$name; //サムネイルのパス名
+    /* 画像の読み込み */
+    $thumbImg = new Imagick();
+    /* サムネイルの作成 */
+    $thumbImg->readImage(C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/".$fileName);
+    $thumbImg->setImageIndex(0);
+    $thumbImg->setImageFormat ("jpeg");
+    /* リサイズした画像を保存する */
+    try {
+      $thumbImg->writeImage($thumbname);
+      $ret = $this->Amazon->putObject("medialink/".$name, $thumbname);
+
+      if ( $ret !== "" ) {
+        unlink($thumbname);
+      }
+
+      $thumbImg->destroy();
+    } catch (Exception $e) {
+      echo $e->getMessage();
     }
   }
 

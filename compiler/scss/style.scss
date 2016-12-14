@@ -3166,11 +3166,26 @@ ul.naviBtn {
   }
 }
 
-.ms-list{
- .on{
-    display:none;
+#tdocument_idx {
+  .ms-list{
+    .ms-hover {
+      background-color: rgba(195, 214, 155, 0.1);
+    }
+    .on{
+      display:none;
+    }
+  }
+  #tagTools {
+    position: absolute;
+    right: 0;
+    padding-top: 0.25em;
+
+    > img {
+        margin: 0 0.25em;
+    }
   }
 }
+
 
 /*資料一覧*/
 #ang-popup {
@@ -3549,6 +3564,7 @@ ul.naviBtn {
               height:15em;
               border: 1px solid #bdbdbd;
               position: relative;
+              display: block;
 
               #document_canvas {
                 position: absolute;
@@ -3655,7 +3671,7 @@ ul.naviBtn {
         }
 
         > li {
-          padding: 15px 0;
+          padding: 0 0 15px 0;
 
           &:first-child {
             border-top: none;
@@ -3663,10 +3679,6 @@ ul.naviBtn {
 
           input#TDocumentNewTag {
             margin-left: 205px;
-          }
-
-          .input.select {
-            margin-top: -10px;
           }
 
           > span:first-child {

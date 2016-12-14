@@ -33,32 +33,20 @@
                 <?=$this->Form->input('files', ['type'=>'file','placeholder' => '資料','label' => false,'div' => false])?>
                 <?=$this->Form->input('file_name', ['type'=>'hidden'])?>
               </upload>
-              <rotate class="btn-shadow greenBtn">
+              <rotate class="btn-shadow greenBtn" onclick="pdfjsApi.rotate(); return false;">
                 <?=$this->Html->image('rotate90_w.png', ['alt' => '90度資料を回転する']);?>
               </rotate>
             </controller>
           </content>
           <content>
             <p>原稿（<span class="pages"></span>）</p>
-            <textarea></textarea>
+            <textarea id="pages-text"></textarea>
+            <?=$this->Form->hidden('manuscript')?>
           </content>
         </documentArea>
       </li>
       <!-- 資料 -->
 
-      <!-- タグ -->
-      <li>
-        <span><label>タグ</label></span>
-        <?= $this->Form->input('new_tag', ['type' => 'text','placeholder' => '新しいタグ','maxlength' => 30,'label' => false,'div' => false]) ?>
-        <?= $this->Html->image('add.png', array('alt' => '登録', 'class' => 'btn-shadow greenBtn', 'width' => 22, 'height' => 22, 'onclick' => 'tagAdd()')) ?>
-      </li>
-      <!-- タグ -->
-
-      <!-- タグリスト -->
-      <li>
-        <span></span>
-        <?= $this->Form->input('tag', array('type' => 'select','multiple' => true, 'label' => false,'id' => 'tagList','options' => $tagList)); ?>
-      </li>
       <!-- ダウンロードフラグ -->
       <li>
         <span class="require"><label>ダウンロード</label></span>

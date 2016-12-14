@@ -7,12 +7,17 @@ define('C_PATH_NODE_FILE_SERVER', C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT); /
 define('C_AWS_S3_VERSION', 'latest'); // ウィジェット用参照先
 define('C_AWS_S3_REGION', 'ap-northeast-1'); // ウィジェット用参照先
 define('C_AWS_S3_STORAGE', 'STANDARD'); // ウィジェット用参照先
+define('C_AWS_S3_HOSTNAME', 'https://s3-'.C_AWS_S3_REGION.'.amazonaws.com/'); // S3パス
+
+// サムネイル用接頭辞
+define('C_PREFIX_DOCUMENT', 'thumb_'); // 資料
 
 // 画像関連
 define('C_PATH_WIDGET_GALLERY_IMG', C_PATH_NODE_FILE_SERVER.'/img/widget/'); // ウィジェット用参照先
 define('C_PATH_SYNC_TOOL_IMG', C_PATH_NODE_FILE_SERVER.'/img/sync/'); // 画面同期用参照先
 define('C_PATH_WIDGET_CUSTOM_IMG', C_NODE_SERVER_ADDR.'/widget'); // ウィジェット用保存先
 define('C_PATH_WIDGET_IMG_DIR', ROOT.DS.APP_DIR.DS.WEBROOT_DIR.DS.'files'); // ウィジェット用保存先
+define('C_PATH_TMP_IMG_DIR', ROOT.DS.APP_DIR.DS.WEBROOT_DIR.DS.'files/tmp'); // ウィジェット用保存先
 
 // タブステータス
 define('C_WIDGET_TAB_STATUS_CODE_OPEN', 1); // ウィジェットが開いている状態
