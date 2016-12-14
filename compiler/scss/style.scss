@@ -3389,7 +3389,6 @@ ul.naviBtn {
             width: $p-document-list-width - 5em;
             display: flex;
             border-bottom: 1px solid $main-color;
-            &:last-child { border-bottom: none; }
 
             &:hover .document_image:before {
               content: " ";

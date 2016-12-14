@@ -9,7 +9,9 @@ sincloApp.controller('MainCtrl', function($scope){
 
     function check(elem, index, array){
       var flg = true;
-      elem.tags = $scope.jParse(elem.tag);
+      if ( elem.tag !== "" && elem.tag !== null ) {
+        elem.tags = $scope.jParse(elem.tag);
+      }
       if ( $scope.searchName === "" && targetTagNum === 0 ) {
         return elem;
       }
@@ -56,6 +58,11 @@ sincloApp.controller('MainCtrl', function($scope){
     });
   };
 
+  /**
+   * [shareDocument description]
+   * @param  {object} doc documentInfo
+   * @return {void}     open new Window.
+   */
   $scope.shareDocument = function(doc) {
     window.open(
       "<?= $this->Html->url(['controller' => 'Customers', 'action' => 'docFrame']) ?>?tabInfo=" + encodeURIComponent(tabId) + "&docId=" + doc.id,
@@ -64,18 +71,30 @@ sincloApp.controller('MainCtrl', function($scope){
     );
   };
 
+  /**
+   * [changeDocument description]
+   * @param  {string} file document's path
+   * @return {void}     send new docURL
+   */
+  $scope.changeDocument = function(file){
+    var filePath = "<?=C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/"?>" + file;
+    pdfjsApi.readFile(filePath);
+    emit("changeDocument", {file: filePath});
+    $scope.closeDocumentList();
+  };
+
   $scope.closeDocumentList = function() {
     $("#ang-popup").removeClass("show");
   };
 
-  angular.element(document).on("click", function(evt){
+  /*angular.element(document).on("click", function(evt){
     if ( evt.target.getAttribute('data-elem-type') !== 'selector' ) {
       var e = document.querySelector('ng-multi-selector');
       if ( e.classList.contains('show') ) {
         e.classList.remove('show');
       }
     }
-  });
+  });*/
 });
 
 sincloApp.directive('ngOverView', function(){
@@ -99,9 +118,9 @@ sincloApp.directive('ngOverView', function(){
         ballon.style.top = p.top + "px";
         ballon.style.left = p.left + "px";
         ballon.classList.toggle("hide");
-      }
+      };
     }
-  }
+  };
 });
 
 sincloApp.directive('ngMultiSelector', function(){

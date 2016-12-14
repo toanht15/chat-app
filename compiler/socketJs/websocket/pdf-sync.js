@@ -212,6 +212,24 @@ var pdfjsCNST, pdfjsApi, frameSize, docDownload;
       if ( this.cnst.hasOwnProperty(code) ) {
         console.log(this.cnst[code]);
       }
+    },
+    readFile: function(file){
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', file, true);
+      xhr.responseType = 'arraybuffer';
+      xhr.onload = function(e) {
+          if (this.status == 200) {
+            sessionStorage.setItem('pdfUrl', file);
+            // Note: .response instead of .responseText
+            var blob = new Blob([this.response], {type: 'application/pdf'});
+            pdfjsApi.pdfUrl = URL.createObjectURL(blob);
+            pdfjsApi.currentPage = 1;
+            pdfjsApi.currentScale = 1;
+            pdfjsApi.init();
+
+          }
+      };
+      xhr.send();
     }
   };
 
@@ -225,6 +243,12 @@ var pdfjsCNST, pdfjsApi, frameSize, docDownload;
   };
 
   st.on("connect", function(d){
+    var path = params.url;
+    if ( sessionStorage.getItem("pdfUrl") !== null ) {
+      path = sessionStorage.getItem("pdfUrl");
+    }
+    pdfjsApi.readFile(path);
+
     emit('docShareConnect', {from: 'customer'}); // 資料共有開始
 
     frameSize = {
@@ -232,6 +256,12 @@ var pdfjsCNST, pdfjsApi, frameSize, docDownload;
       width: window.outerWidth - window.innerWidth
     };
 
+  });
+
+  // 資料変更
+  st.on("changeDocument", function(d){
+    var obj = JSON.parse(d);
+    pdfjsApi.readFile(obj.file);
   });
 
   // 同期イベント
@@ -262,20 +292,6 @@ var pdfjsCNST, pdfjsApi, frameSize, docDownload;
     }
     pdfjsApi.showpage();
   });
-
-  var xhr = new XMLHttpRequest();
-  xhr.open('GET', "https://s3-ap-northeast-1.amazonaws.com/medialink.sinclo.jp/medialink/%E3%83%86%E3%82%B9%E3%83%88PDF.pdf", true);
-  xhr.responseType = 'arraybuffer';
-  xhr.onload = function(e) {
-      if (this.status == 200) {
-        // Note: .response instead of .responseText
-        var blob = new Blob([this.response], {type: 'application/pdf'});
-        pdfjsApi.pdfUrl = URL.createObjectURL(blob);
-        pdfjsApi.init();
-
-      }
-  };
-  xhr.send();
   window.focus();
 
 // -->

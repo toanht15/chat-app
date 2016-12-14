@@ -1,5 +1,3 @@
-<?=$this->Html->script("//ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js");?>
-
 <script type="text/javascript">
 <!--
 'use strict';
@@ -206,23 +204,25 @@ var socket, emit, tabId = '<?=$tabInfo?>', windowSize, url, emit, pdfjsApi, fram
       if ( this.cnst.hasOwnProperty(code) ) {
         console.log(this.cnst[code]);
       }
+    },
+    readFile: function(file){
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', file, true);
+      xhr.responseType = 'arraybuffer';
+      xhr.onload = function(e) {
+        if (this.status == 200) {
+          sessionStorage.setItem('pdfUrl', file);
+          // Note: .response instead of .responseText
+          var blob = new Blob([this.response], {type: 'application/pdf'});
+          pdfjsApi.pdfUrl = URL.createObjectURL(blob);
+          pdfjsApi.currentPage = 1;
+          pdfjsApi.currentScale = 1;
+          pdfjsApi.init();
+        }
+      };
+      xhr.send();
     }
   };
-
-
-  var xhr = new XMLHttpRequest();
-  xhr.open('GET', "https://s3-ap-northeast-1.amazonaws.com/medialink.sinclo.jp/medialink/%E3%83%86%E3%82%B9%E3%83%88PDF.pdf", true);
-  xhr.responseType = 'arraybuffer';
-  xhr.onload = function(e) {
-    if (this.status == 200) {
-      // Note: .response instead of .responseText
-      var blob = new Blob([this.response], {type: 'application/pdf'});
-      pdfjsApi.pdfUrl = URL.createObjectURL(blob);
-      pdfjsApi.init();
-    }
-  };
-  xhr.send();
-
   window.focus();
 })();
 
@@ -236,7 +236,16 @@ window.onload = function(){
 
   // WebSocketサーバ接続イベント
   socket.on('connect', function(){
-    emit('docShareConnect', {from: 'company', responderId: '<?=$userInfo["id"]?>'}); // 資料共有開始
+    var path = "<?=C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/".$docData['TDocument']['file_name']?>";
+    if ( sessionStorage.getItem("pdfUrl") !== null ) {
+      path = sessionStorage.getItem("pdfUrl");
+    }
+    pdfjsApi.readFile(path);
+    emit('docShareConnect', {
+      from: 'company',
+      responderId: '<?=$userInfo["id"]?>',
+      url: path,
+    }); // 資料共有開始
 
     frameSize = {
       height: window.outerHeight - window.innerHeight,
@@ -362,13 +371,13 @@ window.onload = function(){
           <div id="title_area">資料一覧</div>
           <div id="search_area">
             <?=$this->Form->input('name', ['label' => 'フィルター：', 'ng-model' => 'searchName']);?>
-            <ng-multi-selector></ng-multi-selector>
+            <!-- <ng-multi-selector></ng-multi-selector> -->
           </div>
           <div id="list_area">
             <ol>
-              <li ng-repeat="document in searchFunc(documentList)">
+              <li ng-repeat="document in searchFunc(documentList)" ng-click="changeDocument(document.file_name)">
                 <div class="document_image">
-                  <?=$this->Html->image("tab_status_disable.png", ["style"=>"width:10em;height:7em"])?>
+                  <img src="{{::document.thumnail}}" style="width:10em;height:7em">
                 </div>
                 <div class="document_content">
                   <h3>{{::document.name}}</h3>

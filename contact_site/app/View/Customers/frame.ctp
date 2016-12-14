@@ -1,5 +1,3 @@
-<?=$this->Html->script("//ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js");?>
-
 <script type="text/javascript">
 <!--
 'use strict';
@@ -403,13 +401,13 @@ window.onload = function(){
           <div id="title_area">資料一覧</div>
           <div id="search_area">
             <?=$this->Form->input('name', ['label' => 'フィルター：', 'ng-model' => 'searchName']);?>
-            <ng-multi-selector></ng-multi-selector>
+            <!-- <ng-multi-selector></ng-multi-selector> -->
           </div>
           <div id="list_area">
             <ol>
               <li ng-repeat="document in searchFunc(documentList)" ng-click="shareDocument(document)">
                 <div class="document_image">
-                  <?=$this->Html->image("tab_status_disable.png", ["style"=>"width:10em;height:7em"])?>
+                  <img src="{{::document.thumnail}}" style="width:10em;height:7em">
                 </div>
                 <div class="document_content">
                   <h3>{{::document.name}}</h3>

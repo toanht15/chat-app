@@ -1450,6 +1450,12 @@ io.sockets.on('connection', function (socket) {
     }
   });
 
+  // 共有する資料を変更
+  socket.on('changeDocument', function(d){
+    var obj = JSON.parse(d);
+    emit.toUser('changeDocument', d, doc_connectList[obj.tabId].customer);
+  });
+
   socket.on('docShareConnectToCustomer', function(d) {
     var obj = JSON.parse(d);
     if ( !getSessionId(obj.siteKey, obj.tabId, "sessionId") ) {
