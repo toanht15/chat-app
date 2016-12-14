@@ -91,7 +91,7 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
         <?= $this->htmlEx->naviLink('表示除外設定', 'exclusion.png', ['href' => ['controller' => 'DisplayExclusions', 'action' => 'index']]) ?>
       </div>
       <div class="icon">
-        <?= $this->htmlEx->naviLink('資料設定', 'exclusion.png', ['href' => ['controller' => 'TDocuments', 'action' => 'index']]) ?>
+        <?= $this->htmlEx->naviLink('資料設定', 'document.png', ['href' => ['controller' => 'TDocuments', 'action' => 'index']]) ?>
       </div>
     <?php endif; ?>
     </div>

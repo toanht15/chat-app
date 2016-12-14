@@ -30,9 +30,10 @@ block content
   section#document_share
     ul#document_share_tools<!-- /* サイドバー */ -->
       li(onclick="docDownload(); return false;")
-        span
-          img(src="#{img}icon_reconnect.png", width="40", height="40", alt="")
-        p ダウンロード
+        a#downloadFilePath
+          span
+            img(src="#{img}icon_download.png", width="40", height="40", alt="")
+          p ダウンロード
       li(onclick="window.close(); return false;")
         span
           img(src="#{img}icon_disconnect.png", width="40", height="40", alt="")

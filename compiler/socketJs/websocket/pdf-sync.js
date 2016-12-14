@@ -180,6 +180,9 @@ var pdfjsCNST, pdfjsApi, frameSize, docDownload;
     render: function(){
       var canvasFrame = document.getElementById('document_canvas');
 
+      sessionStorage.setItem('page', pdfjsApi.currentPage);
+      sessionStorage.setItem('scale', pdfjsApi.currentScale);
+
       function fitWindow(page) {
         var viewport = page.getViewport(1);
         var widthScale = canvasFrame.clientWidth/viewport.width;
@@ -213,21 +216,23 @@ var pdfjsCNST, pdfjsApi, frameSize, docDownload;
         console.log(this.cnst[code]);
       }
     },
-    readFile: function(file){
+    readFile: function(doc){
       var xhr = new XMLHttpRequest();
-      xhr.open('GET', file, true);
+      xhr.open('GET', doc.url, true);
       xhr.responseType = 'arraybuffer';
       xhr.onload = function(e) {
-          if (this.status == 200) {
-            sessionStorage.setItem('pdfUrl', file);
-            // Note: .response instead of .responseText
-            var blob = new Blob([this.response], {type: 'application/pdf'});
-            pdfjsApi.pdfUrl = URL.createObjectURL(blob);
-            pdfjsApi.currentPage = 1;
-            pdfjsApi.currentScale = 1;
-            pdfjsApi.init();
+        if (this.status == 200) {
+          sessionStorage.setItem('doc', JSON.stringify(doc));
+          pdfjsApi.doc = doc;
 
-          }
+          // Note: .response instead of .responseText
+          var blob = new Blob([this.response], {type: 'application/pdf'});
+          pdfjsApi.pdfUrl = URL.createObjectURL(blob);
+          pdfjsApi.currentPage = (sessionStorage.getItem('page') !== null) ? Number(sessionStorage.getItem('page')) : 1;
+          pdfjsApi.currentScale = (sessionStorage.getItem('scale') !== null) ? Number(sessionStorage.getItem('scale')) : 1;
+          pdfjsApi.init();
+          document.getElementById('downloadFilePath').href = doc.url;
+        }
       };
       xhr.send();
     }
@@ -243,11 +248,14 @@ var pdfjsCNST, pdfjsApi, frameSize, docDownload;
   };
 
   st.on("connect", function(d){
-    var path = params.url;
-    if ( sessionStorage.getItem("pdfUrl") !== null ) {
-      path = sessionStorage.getItem("pdfUrl");
+    var doc = {
+      url: params.url,
+      settings: params.settings
+    };
+    if ( sessionStorage.getItem("doc") !== null ) {
+      doc = JSON.parse(sessionStorage.getItem("doc"));
     }
-    pdfjsApi.readFile(path);
+    pdfjsApi.readFile(doc);
 
     emit('docShareConnect', {from: 'customer'}); // 資料共有開始
 
@@ -261,7 +269,7 @@ var pdfjsCNST, pdfjsApi, frameSize, docDownload;
   // 資料変更
   st.on("changeDocument", function(d){
     var obj = JSON.parse(d);
-    pdfjsApi.readFile(obj.file);
+    pdfjsApi.readFile(obj);
   });
 
   // 同期イベント

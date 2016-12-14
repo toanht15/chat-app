@@ -1,4 +1,5 @@
 <?= $this->Html->script(C_PATH_NODE_FILE_SERVER."/websocket/pdf.js"); ?>
+<?= $this->Html->script(C_PATH_NODE_FILE_SERVER."/websocket/compatibility.min.js"); ?>
 
 <script type="text/javascript">
 <?php if ( $this->action !== "index" ) : ?>
@@ -109,7 +110,9 @@ var pdfjsApi, pdfjsCNST;
     init: function(){
       // 原稿
       var textarea = document.getElementById('pages-text');
-      textarea.value = pdfjsApi.manuscript[pdfjsApi.currentPage]
+      if ( pdfjsApi.currentPage in pdfjsApi.manuscript ) {
+        textarea.value = pdfjsApi.manuscript[pdfjsApi.currentPage];
+      }
       this.showpage();
 
       textarea.addEventListener('blur',function(e){
@@ -202,8 +205,8 @@ var pdfjsApi, pdfjsCNST;
           canvasContext: pdfjsApi.canvas.getContext('2d'),
           viewport: viewport
         }).then(function(){
-            $('.pages').text(pdfjsApi.currentPage + "/ " + pdfjsApi.pdf.pdfInfo.numPages);
-            pdfjsApi.canvas.style.opacity = 1;
+          $('.pages').text(pdfjsApi.currentPage + "/ " + pdfjsApi.pdf.pdfInfo.numPages);
+          pdfjsApi.canvas.style.opacity = 1;
         });
       }, 0);
     },

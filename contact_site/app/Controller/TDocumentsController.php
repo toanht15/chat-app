@@ -190,9 +190,11 @@ class TDocumentsController extends AppController {
     if($this->TDocument->save($saveData, false)) {
       // 昔のファイルを削除する
       if ( !empty($nowData['TDocument']) ) {
-        $this->_createThumnail($saveData['TDocument']['file_name']);
         $this->Amazon->removeObject("medialink/".$nowData['TDocument']['file_name']);
         $this->Amazon->removeObject("medialink/".C_PREFIX_DOCUMENT.pathinfo($nowData['TDocument']['file_name'], PATHINFO_FILENAME).".jpg");
+      }
+      if ( !empty($saveData['TDocument']['file_name']) ) {
+        $this->_createThumnail($saveData['TDocument']['file_name']);
       }
       $this->TDocument->commit();
       $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));

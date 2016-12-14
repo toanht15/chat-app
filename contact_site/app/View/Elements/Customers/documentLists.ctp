@@ -73,13 +73,15 @@ sincloApp.controller('MainCtrl', function($scope){
 
   /**
    * [changeDocument description]
-   * @param  {string} file document's path
+   * @param  {object} doc document's info
    * @return {void}     send new docURL
    */
-  $scope.changeDocument = function(file){
-    var filePath = "<?=C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/"?>" + file;
-    pdfjsApi.readFile(filePath);
-    emit("changeDocument", {file: filePath});
+  $scope.changeDocument = function(doc){
+    pdfjsApi.readFile(doc);
+    emit("changeDocument", {
+      url: "<?=C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/"?>" + doc.file_name,
+      settings: pdfjsApi.settings
+    });
     $scope.closeDocumentList();
   };
 

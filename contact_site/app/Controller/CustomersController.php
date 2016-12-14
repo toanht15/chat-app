@@ -374,7 +374,7 @@ class CustomersController extends AppController {
     $ret['tagList'] = $this->jsonEncode([1 => 'メイン', 2 => '紹介用', 3 => '営業用', 4 => '製品A', 5 => '製品B']);
     $tDocumentList = $this->TDocument->find('all', [
       'fields' => [
-        'id', 'name', 'file_name', 'overview', 'tag', 'manuscript', 'pagenation_flg', 'password'
+        'id', 'name', 'file_name', 'overview', 'tag', 'manuscript', 'pagenation_flg', 'download_flg', 'password'
       ],
       'conditions' => [
         'm_companies_id' => $this->userInfo['MCompany']['id']

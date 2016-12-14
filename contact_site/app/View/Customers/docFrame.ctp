@@ -45,7 +45,9 @@ var socket, emit, tabId = '<?=$tabInfo?>', windowSize, url, emit, pdfjsApi, fram
     pdfUrl: null,
     currentPage: 1,
     currentScale: 1,
+    settings: {},
     init: function(){
+      this.cngPage();
       this.showpage();
       var canvas = document.getElementById('document_canvas');
 
@@ -103,6 +105,7 @@ var socket, emit, tabId = '<?=$tabInfo?>', windowSize, url, emit, pdfjsApi, fram
       if ( this.currentPage < 2 ) return this.notificate('FIRST_PAGE');
       this.currentPage--;
       this.showpage();
+      this.cngPage();
       pdfjsApi.sendCtrlAction();
     },
     nextPage: function(){
@@ -110,6 +113,37 @@ var socket, emit, tabId = '<?=$tabInfo?>', windowSize, url, emit, pdfjsApi, fram
       this.currentPage++;
       pdfjsApi.sendCtrlAction();
       this.showpage();
+      this.cngPage();
+    },
+    toggleManuScript: function(){
+      if ( document.getElementById('manuscript').textContent !== "" ) {
+        $("#manuscript").toggle();
+        sessionStorage.setItem('manuscript', $("#manuscript").css('display'));
+      }
+      if ( document.getElementById('manuscript').style.display === "none" ) {
+        document.getElementById('scriptToggleBtn').classList.remove('on');
+      }
+      else {
+        document.getElementById('scriptToggleBtn').classList.add('on');
+      }
+
+    },
+    cngPage: function(){
+      var script = "", type = sessionStorage.getItem('manuscript');
+      if ( pdfjsApi.manuscript.hasOwnProperty(Number(pdfjsApi.currentPage)) ) {
+        script = pdfjsApi.manuscript[pdfjsApi.currentPage];
+        $("#manuscript").css({ 'display': type });
+      }
+      else {
+        $("#manuscript").css({'display': 'none'});
+      }
+      if ( document.getElementById('manuscript').style.display === "none" ) {
+        document.getElementById('scriptToggleBtn').classList.remove('on');
+      }
+      else {
+        document.getElementById('scriptToggleBtn').classList.add('on');
+      }
+      document.getElementById('manuscript').textContent = script;
     },
     cngScale: function(){
       var type = document.getElementById('scaleType').value;
@@ -172,6 +206,9 @@ var socket, emit, tabId = '<?=$tabInfo?>', windowSize, url, emit, pdfjsApi, fram
     render: function(){
       var canvasFrame = document.getElementById('document_canvas');
 
+      sessionStorage.setItem('page', pdfjsApi.currentPage);
+      sessionStorage.setItem('scale', pdfjsApi.currentScale);
+
       function fitWindow(page) {
         var viewport = page.getViewport(1);
         var widthScale = canvasFrame.clientWidth/viewport.width;
@@ -180,6 +217,7 @@ var socket, emit, tabId = '<?=$tabInfo?>', windowSize, url, emit, pdfjsApi, fram
         return page.getViewport(scale * pdfjsApi.currentScale);
       }
       var page = pdfjsApi.page;
+
       // Fetch canvas' 2d context
       var viewport = fitWindow(page);
       // Set dimensions to Canvas
@@ -205,19 +243,28 @@ var socket, emit, tabId = '<?=$tabInfo?>', windowSize, url, emit, pdfjsApi, fram
         console.log(this.cnst[code]);
       }
     },
-    readFile: function(file){
+    readFile: function(doc){
+      var settings = {
+        pg: doc.pagenation_flg,
+        dl: doc.download_flg
+      };
+      var file = "<?=C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/"?>" + doc.file_name;
       var xhr = new XMLHttpRequest();
       xhr.open('GET', file, true);
       xhr.responseType = 'arraybuffer';
       xhr.onload = function(e) {
         if (this.status == 200) {
-          sessionStorage.setItem('pdfUrl', file);
+          sessionStorage.setItem('doc', JSON.stringify(doc));
+          pdfjsApi.doc = doc;
           // Note: .response instead of .responseText
           var blob = new Blob([this.response], {type: 'application/pdf'});
           pdfjsApi.pdfUrl = URL.createObjectURL(blob);
-          pdfjsApi.currentPage = 1;
-          pdfjsApi.currentScale = 1;
+          pdfjsApi.currentPage = (sessionStorage.getItem('page') !== null) ? Number(sessionStorage.getItem('page')) : 1;
+          pdfjsApi.currentScale = (sessionStorage.getItem('scale') !== null) ? Number(sessionStorage.getItem('scale')) : 1;
+          pdfjsApi.manuscript = JSON.parse(doc.manuscript);
+          pdfjsApi.settings = settings;
           pdfjsApi.init();
+          document.getElementById('downloadFilePath').href = file;
         }
       };
       xhr.send();
@@ -236,15 +283,20 @@ window.onload = function(){
 
   // WebSocketサーバ接続イベント
   socket.on('connect', function(){
-    var path = "<?=C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/".$docData['TDocument']['file_name']?>";
-    if ( sessionStorage.getItem("pdfUrl") !== null ) {
-      path = sessionStorage.getItem("pdfUrl");
+    var doc = <?=json_encode($docData['TDocument'], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_FORCE_OBJECT )?>;
+    if ( sessionStorage.getItem("doc") !== null ) {
+      doc = JSON.parse(sessionStorage.getItem("doc"));
     }
-    pdfjsApi.readFile(path);
+    var settings = {
+      pg: doc.pagenation_flg,
+      dl: doc.download_flg
+    };
+    pdfjsApi.readFile(doc);
     emit('docShareConnect', {
       from: 'company',
       responderId: '<?=$userInfo["id"]?>',
-      url: path,
+      url: "<?=C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/"?>" + doc.file_name,
+      settings: pdfjsApi.settings
     }); // 資料共有開始
 
     frameSize = {
@@ -285,6 +337,17 @@ window.onload = function(){
     }
     pdfjsApi.showpage();
   });
+
+  $("#manuscript").draggable({
+    scroll: false,
+    cancel: "#document_canvas"
+  })
+  .css({
+    'display': 'block',
+    'width': "calc(100% - 150px)",
+    'left': "125px",
+    'top': "65px"
+  });
 };
 
 
@@ -297,7 +360,7 @@ window.onload = function(){
   <ul id="document_share_tools">
     <li-top>
       <p>ID:1234</p>
-      <li id=""onclick="">
+      <li>
         <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_user.png" width="40" height="40" alt=""></span>
         <p>顧客情報</p>
       </li>
@@ -307,9 +370,11 @@ window.onload = function(){
         <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_document.png" width="40" height="40" alt=""></span>
         <p>資料切り替え</p>
       </li>
-      <li onclick="return false;">
-        <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_reconnect.png" width="40" height="40" alt=""></span>
+      <li>
+        <a id="downloadFilePath" href="">
+        <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_download.png" width="40" height="40" alt=""></span>
         <p>ダウンロード</p>
+        </a>
       </li>
       <li onclick="window.close(); return false;">
         <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_disconnect.png" width="40" height="40" alt=""></span>
@@ -326,7 +391,10 @@ window.onload = function(){
         <span class="btn"><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_back.png" width="30" height="30" alt=""></span>
       </li>
       <li onclick="pdfjsApi.nextPage(); return false;">
-        <span class="btn"><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_next.png" width="30" height="30" alt=""></span>
+        <span class="btn" ng-class="{{manuscriptType}}" ><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_next.png" width="30" height="30" alt=""></span>
+      </li>
+      <li onclick="pdfjsApi.toggleManuScript(); return false;">
+        <span id="scriptToggleBtn" class="btn"><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_talkscript.png" width="30" height="30" alt=""></span>
       </li>
     </li-left>
     <li-center>
@@ -358,6 +426,7 @@ window.onload = function(){
     </li-right>
   </ul>
   <!-- /* ツールバー */ -->
+  <pre id="manuscript" style="display:none;"></pre>
 
   <div id="tabStatusMessage">別の作業をしています</div>
 
@@ -375,7 +444,7 @@ window.onload = function(){
           </div>
           <div id="list_area">
             <ol>
-              <li ng-repeat="document in searchFunc(documentList)" ng-click="changeDocument(document.file_name)">
+              <li ng-repeat="document in searchFunc(documentList)" ng-click="changeDocument(document)">
                 <div class="document_image">
                   <img src="{{::document.thumnail}}" style="width:10em;height:7em">
                 </div>

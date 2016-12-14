@@ -5,7 +5,7 @@
 ?>
 <div id='tdocument_idx' class="card-shadow">
   <div id='tdocument_add_title'>
-    <div class="fLeft"><?= $this->Html->image('users_g.png', array('alt' => 'ユーザー管理', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?></div>
+    <div class="fLeft"><?= $this->Html->image('document_g.png', array('alt' => 'ユーザー管理', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?></div>
     <h1>資料設定<span id="sortMessage"></span></h1>
   </div>
 
@@ -20,10 +20,10 @@
     <table>
       <thead>
         <tr>
-          <th width="10%">No</th>
-          <th width="20%">資料</th>
-          <th width="20%">資料名</th>
-          <th width="35%">概要</th>
+          <th width="5%">No</th>
+          <th width="15%">資料</th>
+          <th width="25%">資料名</th>
+          <th width="40%">概要</th>
           <th width="15%">操作</th>
         </tr>
       </thead>
