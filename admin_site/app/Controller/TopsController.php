@@ -7,17 +7,24 @@
 App::uses('AppController', 'Controller');
 class TopsController extends AppController {
 
-  public $uses = ['MCompany','MUser'];
+  public $uses = ['MCompany','MUser','MAgreement'];
 
   public $paginate = [
     'MCompany' => [
-      'limit' => 10,
       'order' => ['MCompany.id' => 'asc'],
       'fields' => ['*'],
       'joins' => [
         [
           'type' => 'inner',    // もしくは left
-          'table' => '(SELECT m_companies_id,count(*) AS user_account FROM  m_users WHERE del_flg != 0)',
+          'table' => 'm_agreements',
+          'alias' => 'MAgreement',
+          'conditions' => [
+          'MAgreement.m_companies_id = MCompany.id',
+          ],
+        ],
+        [
+          'type' => 'inner',    // もしくは left
+          'table' => '(SELECT id,m_companies_id,count(m_companies_id) AS user_account FROM  m_users WHERE del_flg != 1 GROUP BY m_companies_id)',
           'alias' => 'MUser',
           'conditions' => [
           'MUser.m_companies_id = MCompany.id',
@@ -26,6 +33,7 @@ class TopsController extends AppController {
       ],
       'conditions' => [
         'MCompany.del_flg != ' => 1,
+        //'trial_flg =' => 1
       ],
     ]
   ];
@@ -39,6 +47,7 @@ class TopsController extends AppController {
   *@return void
   */
   public function index() {
+  	// /pr($this->paginate('MCompany')); exit();
     $this->set('companyList', $this->paginate('MCompany'));
   }
 

@@ -23,6 +23,7 @@
     <?php foreach((array)$companyList as $key => $val): ?>
       <tbody id='tab1'　class='tab'>
         <?php if(h($val['MCompany']['trial_flg']) == 0) { ?>
+
           <tr>
             <td><?=h($val['MCompany']['company_name'])?></td>
             <td><?=h($val['MCompany']['company_key'])?></td>
@@ -43,6 +44,7 @@
 
       <tbody id='tab2'　class='tab'>
         <?php if(h($val['MCompany']['trial_flg']) == 1) { ?>
+
           <tr>
             <td><?=h($val['MCompany']['company_name'])?></td>
             <td><?=h($val['MCompany']['company_key'])?></td>

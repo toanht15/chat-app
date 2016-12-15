@@ -20,22 +20,22 @@ class MUser extends AppModel {
         'rule' => 'email',
         'message' => 'メールアドレスの形式が不正です。'
       ],
-      'isUniqueChk' => [
+      /*'isUniqueChk' => [
         'rule' => 'isUniqueChk',
         'message' => '既に登録されているアドレスです。'
-      ]
+      ]*/
     ],
   ];
 
     //パスワードHASH化
-  public function beforeSave($options = []) {
+/*  public function beforeSave($options = []) {
     if ( empty($this->data['MUser']) ) return true;
 
     $data = $this->data['MUser'];
     if ( !empty($data['password']) ) {
       $data['password'] = $this->makePassword($data['password']);
     }
-    $this->data['MUser']['password'] = $data['password'];
+    $this->data['MUser'] = $data;
     return true;
   }
 
@@ -43,7 +43,7 @@ class MUser extends AppModel {
     $passwordHasher = new SimplePasswordHasher();
     return $passwordHasher->hash($str);
   }
-
+*/
     //メールアドレスチェック
   public function isUniqueChk($str){
     $str['MUser' . '.del_flg'] = 0;

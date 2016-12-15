@@ -1,6 +1,5 @@
 <?php
 App::uses('AppModel', 'Model');
-App::uses('SimplePasswordHasher', 'Controller/Component/Auth');
 /**
  * AgreementList Model
  *
@@ -10,7 +9,7 @@ class MAgreement extends AppModel {
   public $name = 'MAgreement';
   //アソシエーション
   public $belongsTo = ['MCompany' =>
-    ['className' => 'Mcompany',
+    ['className' => 'M_company',
       'conditions' => '',
       'order' => '',
       'dependent' => true,

@@ -23,6 +23,8 @@ class MUsersController extends AppController {
     $this->set('title_for_layout', 'ユーザー管理');
     $this->set('siteKey', $this->userInfo['MCompany']['company_key']);
     $this->set('limitUserNum', $this->userInfo['MCompany']['limit_users']);
+    $this->Auth->allow('index');
+    header('Access-Control-Allow-Origin: *');
   }
 
   /* *
@@ -37,7 +39,7 @@ class MUsersController extends AppController {
       'conditions' => [
       'MUser.del_flg != ' => 1,
       'MUser.permission_level !=' => C_AUTHORITY_SUPER,
-      'MUser.m_companies_id' => $this->userInfo['MCompany']['id']
+      //'MUser.m_companies_id' => $this->userInfo['MCompany']['id']
       ]
     ]));
   }
@@ -64,6 +66,7 @@ class MUsersController extends AppController {
    * @return void
    * */
   public function remoteSaveEntryForm() {
+    $this->log('eeeeeee',LOG_DEBUG);
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
@@ -71,9 +74,8 @@ class MUsersController extends AppController {
     $saveData = [];
     $insertFlg = true;
     $errorMessage = null;
-
-    if ( !$this->request->is('ajax') ) return false;
-
+   // $this->log($this->request->data,LOG_DEBUG);
+    //if ( !$this->request->is('ajax') ) return false;
     if (!empty($this->request->data['userId'])) {
       $this->MUser->recursive = -1;
       $tmpData = $this->MUser->read(null, $this->request->data['userId']);
@@ -87,7 +89,6 @@ class MUsersController extends AppController {
         $errorMessage = ['other' => ["契約しているアカウント数をオーバーしています"]];
       }
     }
-
     $tmpData['MUser']['user_name'] = $this->request->data['userName'];
     $tmpData['MUser']['display_name'] = $this->request->data['displayName'];
     $tmpData['MUser']['mail_address'] = $this->request->data['mailAddress'];
@@ -104,7 +105,6 @@ class MUsersController extends AppController {
     $this->MUser->set($tmpData);
 
     $this->MUser->begin();
-
     // バリデーションチェックでエラーが出た場合
     if ( empty($errorMessage) && $this->MUser->validates() ) {
       $saveData = $tmpData;
@@ -154,7 +154,6 @@ class MUsersController extends AppController {
     if ( isset($mCompany['MCompany']) ) {
       $this->userInfo['MCompany'] = $mCompany['MCompany'];
     }
-
     $params = [
       'fields' => 'MUser.id',
       'conditions' => [
@@ -171,4 +170,16 @@ class MUsersController extends AppController {
     return true;
   }
 
+  /* *
+   * 登録画面
+   * @return void
+   * */
+  public function remoteSaveForm() {
+    Configure::write('debug', 0);
+    $this->autoRender = FALSE;
+    $this->layout = 'ajax';
+    $data = $this->request->data;
+    $password = $this->MUser->passwordHash($data['password']);
+    return $password;
+  }
 }

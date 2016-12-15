@@ -21,10 +21,10 @@ class MCompany extends AppModel {
         'allowEmpty' => false,
         'message' => 'サイトキーを100文字以内で設定してください'
       ],
-      'isUniqueChkKey' => [
+      /*'isUniqueChkKey' => [
         'rule' => 'isUniqueChkKey',
         'message' => '既に登録されているサイトキーです。'
-      ]
+      ]*/
     ],
     'limit_users' => [
       'maxlength' => [

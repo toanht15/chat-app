@@ -9,7 +9,7 @@ class LoginController extends AppController {
 
   public function beforeFilter(){
     parent::beforeFilter();
-    $this->Auth->allow(['index', 'logout', 'loginCheck']);
+    $this->Auth->allow(['index', 'logout', 'loginCheck','remoteSaveEntryForm']);
     $this->set('title_for_layout', 'ログイン');
 
     $notSupportBrowser = false;
@@ -31,11 +31,11 @@ class LoginController extends AppController {
 
   public function login() {
     if ($this->request->is('post')) {
-    if ($this->Auth->login()) {
-      $userInfo = $this->_setRandStr($this->Auth->user());
-      parent::setUserInfo($userInfo);
-      return $this->redirect(['controller' => 'Customers', 'action' => 'index']);
-    }
+      if ($this->Auth->login()) {
+        $userInfo = $this->_setRandStr($this->Auth->user());
+        parent::setUserInfo($userInfo);
+        return $this->redirect(['controller' => 'Customers', 'action' => 'index']);
+      }
     }
     $this->render('index');
   }

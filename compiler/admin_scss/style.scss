@@ -29,7 +29,7 @@ body {
   font-family: 'Helvetica Neue', Helvetica, Arial, Verdana, 'ヒラギノ角ゴ ProN W3', 'Hiragino Kaku Gothic ProN', 'メイリオ', Meiryo, 'ＭＳ Ｐゴシック', 'MS PGothic', sans-serif;
   line-height: 1.3;
   font-weight: normal;
-  overflow: hidden;
+  overflow: auto;
   margin: 0;
 }
 
@@ -319,6 +319,7 @@ div#sidebar {
 div[id$='_list'] table {
   width: 100%;
 }
+
 
 .fLeft {
   float: left;
@@ -652,6 +653,22 @@ div#sidebar{
 #agreement_idx {
   .action_btn {
     width: 6em;
+    margin-left:8em;
+  }
+
+  #agreement_form {
+    ul { padding: 0;
+      li { padding: 10px;
+        > span:first-child {
+            width: 105px;
+            display: block;
+          }
+
+        .labelArea.fLeft {
+          width: 105px;
+        }
+      }
+    }
   }
 
   .error-message {
@@ -661,6 +678,11 @@ div#sidebar{
 
   .normal_btn {
     width: 6em;
+    margin-left:6em;
+  }
+
+  textarea{
+    border-radius: 5px !important;
   }
 
   i.fa.fa-cog.fa-2x{
@@ -672,9 +694,9 @@ div#sidebar{
     margin-top: 15px;
   }
 
-  #agreement-button{
-    position: fixed;
+  .button{
     display: flex;
+    margin-top:30px;
   }
 }
 
@@ -731,3 +753,8 @@ div#sidebar{
     cursor: move !important;
   }
 }
+
+ul.formArea {
+    margin-top: 25px;
+}
+
