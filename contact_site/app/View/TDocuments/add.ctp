@@ -8,7 +8,7 @@
   </div>
   <div id='tdocument_form' class="p20x">
     <!-- 登録フォーム -->
-    <?=$this->Form->create('TDocument', ['id'=>'TDocumentEntryForm'])?>
+    <?=$this->Form->create('TDocument', ['id'=>'TDocumentEntryForm', 'type' => 'file'])?>
       <?php echo $this->element('TDocuments/entry'); ?>
     <?=$this->Form->end();?>
     <!-- タグ登録フォーム -->

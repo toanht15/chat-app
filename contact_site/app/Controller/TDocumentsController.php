@@ -3,8 +3,10 @@
  *TDocumentsController  controller.
  * 資料設定
  */
+
 class TDocumentsController extends AppController {
   public $uses = ['TDocument','MDocumentTag'];
+  public $components = ['Amazon'];
   public $paginate = [
     'TDocument' => [
       'limit' => 10,
@@ -144,7 +146,6 @@ class TDocumentsController extends AppController {
    * @return void
    * */
   private function _entry($saveData) {
-    $saveData = $this->request->data;
     if(!empty($this->request->data['TDocument']['tag'])) {
       $inputData = $this->request->data['TDocument']['tag'];
       $saveData['TDocument']['tag'] = $this->jsonEncode($inputData);
@@ -155,9 +156,29 @@ class TDocumentsController extends AppController {
     if ( empty($saveData['TDocument']['id']) ) {
       $this->TDocument->create();
     }
+
     $this->TDocument->set($saveData);
 
-    if($this->TDocument->validates() && $this->TDocument->save($saveData,false)) {
+    // バリデーションチェックに失敗したら
+    if ( !$this->TDocument->validates() ) return false;
+
+    // ファイルが添付されたら
+    if ( !empty($saveData['TDocument']['files']) ) {
+      $file = $saveData['TDocument']['files'];
+      $fileName = $this->userInfo['MCompany']['company_key']."_".date("YmdHis").".".pathinfo($file['name'], PATHINFO_EXTENSION);
+      $ret = $this->Amazon->putObject("medialink/".$fileName, $file['tmp_name']);
+
+      // ファイルが保存できなかったら
+      if ( empty($ret) ) {
+        $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.fileSaveFailed')]);
+        return false;
+      }
+
+      unset($saveData['TDocument']['files']);
+      $saveData['TDocument']['file_name'] = $fileName;
+    }
+
+    if($this->TDocument->save($saveData, false)) {
       $this->TDocument->commit();
       $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
       $this->redirect(['controller' => 'TDocuments', 'action' => 'index']);

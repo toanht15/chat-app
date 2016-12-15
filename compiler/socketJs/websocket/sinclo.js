@@ -799,7 +799,7 @@
         };
         var url = window.info.site.files + "/docFrame/" + encodeURIComponent(JSON.stringify(params));
 
-        window.open(url, "_blank", "width=" + size.width + ", height=" + size.height + ", resizable=no,scrollbars=yes,status=no");
+        window.open(url, "_blank", "width=" + size.width + ", height=" + size.height + ", resizable=yes,scrollbars=yes,status=no");
         this.remove();
       };
       popup.set(title, content);
