@@ -1302,10 +1302,6 @@ ul.naviBtn {
                 background-color: $main-color;
               }
             }
-
-            li[data-type="oldChat"] { /* 12月リリースまでチャット履歴機能非表示 */
-              display: none;
-            }
           }
 
           > div {

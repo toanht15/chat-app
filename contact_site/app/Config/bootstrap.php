@@ -120,6 +120,6 @@ if (!isset($_SERVER['SERVER_NAME'])) {
 CakePlugin::load('WebSocket');
 CakePlugin::load('Migrations');
 
+Configure::load("myConst");
 Configure::load("const");
 Configure::load("messageConst");
-Configure::load("myConst");
