@@ -25,6 +25,7 @@ class TDocumentsController extends AppController {
    * @return void
    * */
   public function index() {
+    $this->paginate['TDocument']['conditions']['TDocument.m_companies_id'] = $this->userInfo['MCompany']['id'];
     $documents =  $this->paginate('TDocument');
     $labelList = $this->MDocumentTag->find('list', ['fields'=> ['id','name']]);
     $documentList = [];

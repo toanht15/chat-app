@@ -1,4 +1,4 @@
-<?= $this->Html->script(C_PATH_NODE_FILE_SERVER."/websocket/pdf.js"); ?>
+<?= $this->Html->script(C_PATH_NODE_FILE_SERVER."/websocket/pdf.min.js"); ?>
 <?= $this->Html->script(C_PATH_NODE_FILE_SERVER."/websocket/compatibility.min.js"); ?>
 
 <script type="text/javascript">

@@ -215,7 +215,7 @@
     <div id="ang-popup-frame">
       <div id="ang-popup-content" class="document_list">
         <div id="title_area">資料一覧</div>
-        <p>{{message}}</p>
+        <p id="description_area">{{message}}</p>
         <div id="search_area">
           <?=$this->Form->input('name', ['label' => 'フィルター：', 'ng-model' => 'searchName']);?>
           <!-- <ng-multi-selector></ng-multi-selector> -->
