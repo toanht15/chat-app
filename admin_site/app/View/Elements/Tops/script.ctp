@@ -2,11 +2,22 @@
 //契約・使用表示
 function ChangeTab(tabname) {
   // 全部消す
-  document.getElementById('tab1').style.display = 'none';
-  document.getElementById('tab2').style.display = 'none';
+  var tab1 = document.getElementsByClassName('tab1');
+  for(var i = 0; i < tab1.length; i++) {
+    tab1[i].style.display = "none";
+  }
+
+  var tab2 = document.getElementsByClassName('tab2');
+  for(var i = 0; i < tab2.length; i++) {
+    tab2[i].style.display = "none";
+  }
   // 指定箇所のみ表示
   if(tabname){
-    document.getElementById(tabname).style.display = 'table-row-group';
+    var tab = document.getElementsByClassName(tabname);
+    for(var i = 0; i < tab.length; i++) {
+      tab[i].style.display = "table-row-group";
+    }
+    //document.getElementsByClassName(tabname).style.display = 'table-row-group';
   }
 }
 

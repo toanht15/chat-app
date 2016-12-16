@@ -21,10 +21,10 @@ class MCompany extends AppModel {
         'allowEmpty' => false,
         'message' => 'サイトキーを100文字以内で設定してください'
       ],
-      /*'isUniqueChkKey' => [
+      'isUniqueChkKey' => [
         'rule' => 'isUniqueChkKey',
         'message' => '既に登録されているサイトキーです。'
-      ]*/
+      ]
     ],
     'limit_users' => [
       'maxlength' => [
@@ -38,8 +38,8 @@ class MCompany extends AppModel {
     //サイトキーチェック
   public function isUniqueChkKey($str){
     $str['MCompany' . '.del_flg'] = 0;
-    if ( !empty($this->id) ) {
-      $str['MCompany' . '.id !='] = $this->id;
+    if ( !empty($this->data['MCompany']['id']) ) {
+      $str['MCompany' . '.id !='] = $this->data['MCompany']['id'];
     }
     $ret = $this->find('all', ['fields' => 'MCompany' . '.*', 'conditions' => $str]);
     if ( !empty($ret) ) {

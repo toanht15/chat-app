@@ -3,7 +3,7 @@
 <div id='madmin_idx'>
   <div id='madmin_add_title'>
     <div class="fLeft"><i class="fa fa-cog fa-2x" aria-hidden="true"></i></div>
-    <h1>アカウント設定</h1>
+    <h1>アカウント管理</h1>
   </div>
 
   <?= $this->Html->link('登録','javascript:void(0)',['escape' => false, 'id' => 'searchRefine','class' => 'action_btn','onclick' => 'openConfirm()']);?>

@@ -8,6 +8,16 @@ App::uses('SimplePasswordHasher', 'Controller/Component/Auth');
 class MUser extends AppModel {
 
   public $name = 'MUser';
+
+   //アソシエーション
+  public $belongsTo = ['MCompany' =>
+    ['className' => 'M_company',
+      'conditions' => '',
+      'order' => '',
+      'dependent' => true,
+      'foreignKey' => 'm_companies_id'
+    ]
+  ];
    /**
   * Validation rules
   *
@@ -20,39 +30,33 @@ class MUser extends AppModel {
         'rule' => 'email',
         'message' => 'メールアドレスの形式が不正です。'
       ],
-      /*'isUniqueChk' => [
+      'isUniqueChk' => [
         'rule' => 'isUniqueChk',
         'message' => '既に登録されているアドレスです。'
-      ]*/
+      ]
+    ],
+    'admin_password' => [
+      'minLength' => [
+        'rule' => ['between', 6, 12],
+        'allowEmpty' => false,
+        'message' => 'パスワードは６～１２文字の間で設定してください。'
+      ],
+      'alphaNumeric' => [
+        'rule' => 'alphaNumeric',
+        'message' => 'パスワードは半角英数字で設定してください。'
+      ]
     ],
   ];
 
-    //パスワードHASH化
-/*  public function beforeSave($options = []) {
-    if ( empty($this->data['MUser']) ) return true;
-
-    $data = $this->data['MUser'];
-    if ( !empty($data['password']) ) {
-      $data['password'] = $this->makePassword($data['password']);
-    }
-    $this->data['MUser'] = $data;
-    return true;
-  }
-
-  public function makePassword($str){
-    $passwordHasher = new SimplePasswordHasher();
-    return $passwordHasher->hash($str);
-  }
-*/
-    //メールアドレスチェック
+   //メールアドレスチェック
   public function isUniqueChk($str){
     $str['MUser' . '.del_flg'] = 0;
-    if ( !empty($this->id) ) {
-      $str['MUser' . '.id !='] = $this->id;
+    if ( !empty($this->data['MUser']['id']) ) {
+      $str['MUser' . '.id !='] = $this->data['MUser']['id'];
     }
 
-
     $ret = $this->find('all', ['fields' => 'MUser' . '.*', 'conditions' => $str]);
+    //pr($ret); exit();
     if ( !empty($ret) ) {
       return false;
     }

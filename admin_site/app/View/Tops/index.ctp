@@ -6,8 +6,8 @@
     <h1>契約状況</h1>
   </div>
   <div id='agreement_button'>
-    <?= $this->Html->link('契約','#tab1',['escape' => false,'class' => 'action_btn tab1 on','id' => 'agreement_tag','style'=> 'width:6em','onclick' => "ChangeTab('tab1')"]);?>
-    <?= $this->Html->link('試用','#tab2',['escape' => false,'class' => 'normal_btn tab2','id' => 'trial_tag','style'=> 'width:6em','onclick' => "ChangeTab('tab2')"]);?>
+    <?= $this->Html->link('契約','#tab1',['escape' => false,'class' => 'action_btn agreement on','id' => 'agreement_tag','style'=> 'width:6em','onclick' => "ChangeTab('tab1')"]);?>
+    <?= $this->Html->link('試用','#tab2',['escape' => false,'class' => 'normal_btn trial','id' => 'trial_tag','style'=> 'width:6em','onclick' => "ChangeTab('tab2')"]);?>
   </div>
 
 <div id='top_list' class="p20trl">
@@ -21,7 +21,7 @@
       </tr>
     </thead>
     <?php foreach((array)$companyList as $key => $val): ?>
-      <tbody id='tab1'　class='tab'>
+      <tbody class='tab1'>
         <?php if(h($val['MCompany']['trial_flg']) == 0) { ?>
 
           <tr>
@@ -42,7 +42,7 @@
       </tbody>
 
 
-      <tbody id='tab2'　class='tab'>
+      <tbody class='tab2'>
         <?php if(h($val['MCompany']['trial_flg']) == 1) { ?>
 
           <tr>
@@ -61,7 +61,7 @@
           </tr>
         <?php } ?>
       </tbody>
-    <?php endforeach; ?>
+<?php endforeach; ?>
   </table>
   </div>
 </div>

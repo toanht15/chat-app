@@ -24,20 +24,14 @@ class MAgreement extends AppModel {
   */
   //バリデーション
   public $validate = [
-    'admin_password' => [
-      'minLength' => [
-        'rule' => ['between', 6, 12],
-        'allowEmpty' => false,
-        'message' => 'パスワードは６～１２文字の間で設定してください。'
-      ],
-      'alphaNumeric' => [
-        'rule' => 'alphaNumeric',
-        'message' => 'パスワードは半角英数字で設定してください。'
-      ]
+    'application_day' => [
+      'rule' => ['date', 'ymd'],
+      'message' => '日付を設定してください'
     ],
-  ];
-
-  public $updateValidate = [
+    'agreement_start_day' => [
+      'rule' => ['date', 'ymd'],
+      'message' => '日付を設定してください'
+    ],
     'admin_password' => [
       'minLength' => [
         'rule' => ['between', 6, 12],
