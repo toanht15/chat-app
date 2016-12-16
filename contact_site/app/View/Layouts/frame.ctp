@@ -31,8 +31,6 @@
         echo $this->fetch('meta');
         echo $this->Html->script("//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js");
         echo $this->Html->script(C_NODE_SERVER_ADDR.C_NODE_SERVER_WS_PORT."/socket.io/socket.io.js");
-        echo $this->Html->script(C_PATH_NODE_FILE_SERVER."/websocket/compatibility.min.js");
-        echo $this->Html->script(C_PATH_NODE_FILE_SERVER."/websocket/pdf.min.js");
         echo $this->Html->script("//ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js");
         echo $this->Html->script("jquery-ui.min.js");
         echo $this->element("common-js");

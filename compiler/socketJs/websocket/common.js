@@ -1755,7 +1755,7 @@ var socket, // socket.io
     stop: function(e){ syncEvent.change(false); }
   };
 
-    popup = {
+  popup = {
       const: {
         action: {
           alert: 1,
@@ -1811,10 +1811,10 @@ var socket, // socket.io
         css += '        line-height: 2em;';
         css += '    }';
         css += '    #sincloPopMain {';
-        css += '        display: table;';
+        css += '        display: -ms-flexbox; display: -webkit-flex; display: flex;';
+        css += '        min-height: calc(60px + 2em);';
         css += '    }';
         css += '    sinclo-div#sincloPopMain sinclo-div {';
-        css += '        display: table-cell;';
         css += '        vertical-align: top;';
         css += '    }';
         css += '    #sincloPopAct {';
@@ -2231,6 +2231,11 @@ var socket, // socket.io
     socket.on('docShareConnect', function(d){
       var obj = common.jParse(d);
       sinclo.docShareConnect(obj);
+    }); // socket-on: confirmVideochatStart
+
+    // 資料共有終了通知
+    socket.on('docDisconnect', function(){
+      sinclo.docDisconnect();
     }); // socket-on: confirmVideochatStart
 
     socket.on('syncStop', function(d){

@@ -319,6 +319,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     $scope.typingMessageRe = {};
     $scope.chatLogList = []; // 詳細情報のチャットログリスト
     $scope.chatLogMessageList = []; // 詳細情報のチャットログメッセージリスト
+    /* 資料検索 */
+    $scope.tagList = {};
+    $scope.documentList = {};
+    /* 資料検索 */
 
     /* 定数 */
     $scope.jsConst = {
@@ -470,6 +474,88 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         <?php endif; ?>
        };
     };
+
+    /**************************************************************
+     *  資料共有　ここから
+     * ************************************************************/
+
+    $scope.docShareId = null;
+    $scope.documentOpen = function(tabId, accessId){
+      $scope.docShareId = null;
+      $.ajax({
+        type: 'GET',
+        url: '<?=$this->Html->url(["controller" => "Customers", "action" => "remoteOpenDocumentLists"])?>',
+        dataType: 'json',
+        success: function(json) {
+          $scope.docShareId = tabId;
+          $("#ang-popup").addClass("show");
+          var contHeight = $('#ang-popup-content').height();
+          $('#ang-popup-frame').css('height', contHeight);
+          $scope.message = "アクセスID【" + accessId + "】のユーザーと資料共有を開始しますか？";
+          $scope.tagList = ( json.hasOwnProperty('tagList') ) ? JSON.parse(json.tagList) : {};
+          $scope.documentList = ( json.hasOwnProperty('documentList') ) ? JSON.parse(json.documentList) : {};
+          $scope.$apply();
+        }
+      });
+    };
+
+    $scope.selectList = {};
+    $scope.searchName = "";
+    $scope.docSearchFunc = function(documentList){
+      var targetTagNum = Object.keys($scope.selectList).length;
+      if (Object.keys(documentList).length === 0) return {};
+
+      function check(elem, index, array){
+        var flg = true;
+        if ( elem.tag !== "" && elem.tag !== null ) {
+          elem.tags = $scope.jParse(elem.tag);
+        }
+        if ( $scope.searchName === "" && targetTagNum === 0 ) {
+          return elem;
+        }
+
+        if ( $scope.searchName !== "" && (elem.name + elem.overview).indexOf($scope.searchName) < 0 ) {
+          flg = false;
+        }
+
+        if ( flg && targetTagNum > 0 ) {
+          var selectList = Object.keys($scope.selectList);
+          flg = true;
+          for ( var i = 0; selectList.length > i; i++ ) {
+            if ( elem.tags.indexOf(Number(selectList[i])) === -1 ) {
+              flg = false;
+            }
+          }
+        }
+
+        return ( flg ) ? elem : false;
+
+      }
+
+      return documentList.filter(check);
+    };
+
+    /**
+     * [shareDocument description]
+     * @param  {object} doc documentInfo
+     * @return {void}     open new Window.
+     */
+    $scope.shareDocument = function(doc) {
+      window.open(
+        "<?= $this->Html->url(['controller' => 'Customers', 'action' => 'docFrame']) ?>?tabInfo=" + encodeURIComponent($scope.docShareId) + "&docId=" + doc.id,
+        "doc_monitor_" + $scope.docShareId,
+        "width=480,height=400,dialog=no,toolbar=no,location=no,status=no,menubar=no,directories=no,resizable=no, scrollbars=no"
+      );
+      $scope.closeDocumentList();
+    };
+
+    $scope.closeDocumentList = function() {
+      $("#ang-popup").removeClass("show");
+    };
+
+    /**************************************************************
+     *  資料共有　ここまで
+     * ************************************************************/
 
     $scope.openHistory = function(monitor){
         var retList = {};
@@ -929,7 +1015,14 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
       if ( 'connectToken' in obj && 'responderId' in obj) {
         $scope.monitorList[obj.tabId].connectToken = obj.connectToken;
+        $scope.monitorList[obj.tabId].responderId = obj.responderId; // ここいる？
       }
+
+      if ( 'docShareId' in obj ) {
+        $scope.monitorList[obj.tabId].docShare = true;
+        $scope.monitorList[obj.tabId].responderId = obj.docShareId;
+      }
+
     }
 
     function pushToChatList(tabId){
@@ -1089,6 +1182,24 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var obj = JSON.parse(data);
       if ( obj.tabId !== undefined && angular.isDefined($scope.monitorList[obj.tabId])) {
         $scope.monitorList[obj.tabId].connectToken = "";
+      }
+    });
+
+    socket.on('docShareConnect', function(data){ // 資料共有開始
+      var obj = JSON.parse(data);
+      if ( obj.tabId !== undefined && angular.isDefined($scope.monitorList[obj.tabId])) {
+        $scope.monitorList[obj.tabId].docShare = true;
+        $scope.monitorList[obj.tabId].responderId = obj.responderId;
+      }
+    })
+
+    socket.on('docDisconnect', function(data){ // 資料共有終了
+      var obj = JSON.parse(data);
+      if ( obj.tabId !== undefined && angular.isDefined($scope.monitorList[obj.tabId])) {
+        $scope.monitorList[obj.tabId].docShare = "";
+        if ( angular.isUndefined($scope.monitorList[obj.tabId].connectToken) ) {
+          $scope.monitorList[obj.tabId].responderId = "";
+        }
       }
     });
 
@@ -1513,6 +1624,82 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     }
 
   }]);
+
+  /**************************************************************
+   *  資料共有　ここまで
+   * ************************************************************/
+
+  sincloApp.directive('ngOverView', function(){
+    return {
+      restrict: "E",
+      scope: {
+        text: "@",
+        docid: "@"
+      },
+      template: '<span ng-mouseover="toggleOverView()" ng-mouseleave="toggleOverView()">{{::text}}</span>',
+      link: function(scope, elem, attr){
+        var ballons = angular.element('#ang-ballons');
+        var ballon = document.createElement('div');
+        ballon.classList.add("hide");
+        ballon.textContent = scope.text;
+        ballon.setAttribute('data-id', scope.docid);
+        ballons.append(ballon);
+
+        scope.toggleOverView = function(){
+          var p = angular.element(elem).offset();
+          ballon.style.top = p.top + "px";
+          ballon.style.left = p.left + "px";
+          ballon.classList.toggle("hide");
+        };
+      }
+    };
+  });
+
+  sincloApp.directive('ngMultiSelector', function(){
+    return {
+      restrict: "E",
+      template: '<selected data-elem-type="selector" ng-click="openMultiSelector()">{{selected}}</selected>' +
+                '<ul>' +
+                '  <li data-elem-type="selector" ng-repeat="(id, name) in tagList" ng-click="changAct(id)" ng-class="{selected: judgeSelect(id)}">{{name}}</li>' +
+                '</ul>',
+      link: function(scope, elem, attr){
+        scope.openMultiSelector = function(){
+          var e = angular.element(elem);
+          if ( e.hasClass('show') ) {
+            e.removeClass('show');
+          }
+          else {
+            e.addClass('show');
+          }
+        };
+        scope.selected = "-";
+        scope.changAct = function(id){
+          if ( scope.selectList.hasOwnProperty(id) ) {
+            delete scope.selectList[id];
+          }
+          else {
+            scope.selectList[id] = true;
+          }
+          var str = Object.keys(scope.selectList).map(function(item){
+            return scope.tagList[item];
+          }).join('、');
+          scope.selected = ( str === "" ) ? "-" : str;
+        };
+
+        scope.judgeSelect = function(id){
+          return (scope.selectList.hasOwnProperty(id));
+        };
+
+        scope.jParse = function(str){
+          return JSON.parse(str);
+        };
+      }
+    };
+  });
+
+  /**************************************************************
+   *  資料共有　ここまで
+   * ************************************************************/
 
   sincloApp.directive('ngCreateMessage', [function(){
     return {

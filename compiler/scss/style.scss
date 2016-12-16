@@ -1784,6 +1784,13 @@ ul.naviBtn {
         overflow-x: hidden;
 
         td:first-child span img { background-color: #FFF }
+
+        #shareToolBtn {
+          display: flex;
+          flex-direction: column;
+          justify-content: space-around;
+          height: 5.5em;
+        }
       }
 
       td, td * {
@@ -1899,6 +1906,7 @@ ul.naviBtn {
   bottom: 0;
   margin: 0;
   padding: 0;
+  z-index: 4;
 
   li {
     background-color: #595959;
@@ -1916,6 +1924,10 @@ ul.naviBtn {
 
     &.unlight {
       background-color: #bdbdbd!important;
+    }
+
+    a {
+      text-decoration: none;
     }
 
     span {
@@ -1955,6 +1967,10 @@ ul.naviBtn {
       width: 100%;
       height: 100%;
       display: block;
+
+      img {
+        transform: scale(1)!important;
+      }
     }
     li-top, li-bottom { display: block; }
   }
@@ -1969,7 +1985,7 @@ ul.naviBtn {
     margin: 0;
     padding: 0;
     right: 0;
-    z-index: 2;
+    z-index: 3;
     box-shadow: 0 0 1px 1px rgba(0,0,0,0.8);
     justify-content: space-between;
 
@@ -1990,6 +2006,53 @@ ul.naviBtn {
 
     }
 
+    li.showDescriptionBottom {
+      position: relative;
+
+      &:before {
+        content: attr(data-description);
+        display: none;
+        position: absolute;
+        top: 50px;
+        box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.7);
+        padding: 0.5em 1em;
+        border-radius: 5px;
+        background-color: #FFF;
+        width: 6em;
+        text-align: center;
+        z-index: 5;
+      }
+
+      &:hover:before {
+        display: block;
+      }
+    }
+
+    li-left .showDescriptionBottom:before {
+      left: 5px;
+    }
+
+    li-right .showDescriptionBottom:before {
+      right: 5px;
+    }
+
+    .showDescriptionBottom:after {
+      // content: attr(data-description);
+      content: "aaaa";
+      display: none;
+      position: absolute;
+      bottom: -3em;
+      left: 0;
+      box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.7);
+      padding: 0.5em 1em;
+      border-radius: 5px;
+      background-color: #FFF;
+
+      &:hover {
+        display: block;
+      }
+    }
+
     span {
       padding: 5px;
       display: inline-block;
@@ -2008,7 +2071,7 @@ ul.naviBtn {
     }
   }
 
-  #manuscript {
+  #manuscriptArea {
     background-color: #efefef;
     padding: 0.5em;
     min-height: 4em;
@@ -2017,7 +2080,35 @@ ul.naviBtn {
     width: calc(100% - 150px);
     cursor: move;
     z-index: 2;
-    white-space: pre-wrap;
+
+    #manuscript {
+      white-space: pre-wrap;
+    }
+
+    &:after {
+      content: "※ この原稿は消費者側には表示されません";
+      font-size: 0.9em;
+      color: #e48c8c;
+      display: block;
+      margin-top: 0.5em;
+    }
+
+    #manuscriptCloseBtn {
+      display: block;
+      position: absolute;
+      right: 0;
+      top: 0;
+      background-image: url(http://node.sinclo/img/sync/close_b.png);
+      background-size: 2em;
+      background-repeat: no-repeat;
+      width: 2em;
+      height: 2em;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #c3c3c3;
+      }
+    }
   }
 
   #document_canvas {

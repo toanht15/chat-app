@@ -359,9 +359,6 @@ window.onload = function(){
       };
   });
 };
-
-<?php echo $this->element('Customers/documentLists') ?>
-
 // -->
 </script>
 
@@ -392,7 +389,7 @@ window.onload = function(){
   <div id="customer_flame">
   </div>
   <div id="tabStatusMessage">別の作業をしています</div>
-
+  <?php echo $this->element('Customers/documentLists') ?>
   <div id="ang-popup">
     <div id="ang-base">
       <div id="ang-popup-background"></div>

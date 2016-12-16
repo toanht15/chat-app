@@ -94,7 +94,7 @@
                 </th>
                 <th style="width: 3em" ng-hide="labelHideList.accessId">ID</th>
         <?php if (  $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
-                <th style="width: 7em">モニター</th>
+                <th style="width: 7em">操作</th>
         <?php endif ; ?>
                 <th style="width: 7em">詳細</th>
                 <th style="width: 8em" ng-hide="labelHideList.ipAddress">訪問ユーザ</th>
@@ -117,7 +117,7 @@
                 <th style="width: 5em">状態</th>
                 <th ng-hide="labelHideList.accessId" style="width: 3em">ID</th>
         <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
-                <th style="width: 7em">モニター</th>
+                <th style="width: 7em">操作</th>
         <?php endif; ?>
                 <th style="width: 7em">詳細</th>
                 <th ng-hide="labelHideList.ipAddress" style="width: 8em">訪問ユーザ</th>
@@ -143,15 +143,16 @@
           <!-- /* ID */ -->
           <td ng-hide="labelHideList.accessId" class="tCenter">{{monitor.accessId}}</td>
         <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
-          <!-- /* モニター */ -->
+          <!-- /* 操作 */ -->
           <td class='tCenter'>
             <?php if ( strcmp($userInfo['permission_level'], C_AUTHORITY_SUPER) !== 0) :?>
               <span ng-if="monitor.widget">
-                <span ng-if="!monitor.connectToken">
-                  <a class='monitorBtn blueBtn btn-shadow' href='javascript:void(0)' ng-click='windowOpen(monitor.tabId, monitor.accessId)' >接続する</a>
+                <span ng-if="!monitor.connectToken&&!monitor.docShare" id="shareToolBtn">
+                  <a class='monitorBtn blueBtn btn-shadow' href='javascript:void(0)' ng-click='windowOpen(monitor.tabId, monitor.accessId)' >画面共有</a>
+                  <a class='monitorBtn blueBtn btn-shadow' href='javascript:void(0)' ng-click='documentOpen(monitor.tabId, monitor.accessId)' >資料共有</a>
                 </span>
               </span>
-              <span ng-if="monitor.connectToken">
+              <span ng-if="monitor.connectToken||monitor.docShare">
                 <span class="monitorOn" ng-if="!monitor.responderId">対応中...</span>
                 <span class="monitorOn" ng-if="monitor.responderId"><span class="bold">対応中</span><br>（{{setName(monitor.responderId)}}）</span>
               </span>
@@ -206,3 +207,41 @@
 
 </div>
 <!-- リスト -->
+
+<!-- 資料 -->
+<div id="ang-popup">
+  <div id="ang-base">
+    <div id="ang-popup-background"></div>
+    <div id="ang-popup-frame">
+      <div id="ang-popup-content" class="document_list">
+        <div id="title_area">資料一覧</div>
+        <p>{{message}}</p>
+        <div id="search_area">
+          <?=$this->Form->input('name', ['label' => 'フィルター：', 'ng-model' => 'searchName']);?>
+          <!-- <ng-multi-selector></ng-multi-selector> -->
+        </div>
+        <div id="list_area">
+          <ol>
+            <li ng-repeat="document in docSearchFunc(documentList)" ng-click="shareDocument(document)">
+              <div class="document_image">
+                <img src="{{::document.thumnail}}" style="width:10em;height:7em">
+              </div>
+              <div class="document_content">
+                <h3>{{::document.name}}</h3>
+                <ng-over-view docid="{{::document.id}}" text="{{::document.overview}}" ></ng-over-view>
+                <ul><li ng-repeat="tagId in document.tags">{{::tagList[tagId]}}</li></ul>
+              </div>
+            </li>
+          </ol>
+        </div>
+        <div id="btn_area">
+          <a class="btn-shadow greenBtn" ng-click="closeDocumentList()" href="javascript:void(0)">閉じる</a>
+        </div>
+      </div>
+    </div>
+    <div id="ang-ballons">
+    </div>
+  </div>
+</div>
+<!-- 資料 -->
+

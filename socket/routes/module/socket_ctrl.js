@@ -25,7 +25,7 @@ var io = require('socket.io')(process.env.WS_PORT),
     connectList = {}, // socketIDをキーとした管理
     c_connectList = {}, // socketIDをキーとしたチャット管理
     vc_connectList = {}, // tabId: socketID
-    doc_connectList = {}, // tabId: tabId
+    doc_connectList = {'socketId': {}, 'timeout': {}}, // tabId: tabId
     company = {
         info : {}, // siteKeyをキーとした企業側ユーザー人数管理
         user : {}, // socket.idをキーとした企業側ユーザー管理
@@ -205,6 +205,10 @@ function getConnectInfo(o){
   if ( isset(responderId) && isset(connectToken) ) {
     o.responderId = responderId;
     o.connectToken = connectToken;
+  }
+  var docShareId = getSessionId(o.siteKey, o.tabId, 'docShareId');
+  if ( isset(docShareId) ) {
+    o.docShareId = docShareId;
   }
   return o;
 }
@@ -1341,6 +1345,7 @@ io.sockets.on('connection', function (socket) {
           break;
         case 3: // del company ( sample: socket.emit('settingReload', JSON.stringify({type:3, targetKey: "demo", siteKey: "master"})); )
           console.log('connectList', connectList);
+          console.log('doc_connectList', doc_connectList);
           if ( ('targetKey' in obj) && (obj.targetKey in sincloCore) ) {
             console.log("--------------------------------" + obj.targetKey + "--------------------------------");
             console.log('sincloCore', sincloCore[obj.targetKey]);
@@ -1445,9 +1450,33 @@ io.sockets.on('connection', function (socket) {
       doc_connectList[obj.tabId] = {};
     }
     doc_connectList[obj.tabId][obj.from] = socket.id;
+    doc_connectList.socketId[socket.id] = {type: obj.from, tabId: obj.tabId, siteKey: obj.siteKey};
     if ( obj.from === "company" ) {
-      emit.toUser('docShareConnect', d, getSessionId(obj.siteKey, obj.tabId, "sessionId"));
+      // 通知先を変える
+      var sessionId = ( String(getSessionId(obj.siteKey, obj.tabId, "shareWindowFlg")) !== "true" ) ? getSessionId(obj.siteKey, obj.tabId, "sessionId") : getSessionId(obj.siteKey, obj.tabId, "syncSessionId");
+
+      // 資料共有中ユーザーをセットする
+      var targetId = (getSessionId(obj.siteKey, obj.tabId, "parentTabId")) ? getSessionId(obj.siteKey, obj.tabId, "parentTabId") : obj.tabId;
+      sincloCore[obj.siteKey][targetId].docShareId = obj.responderId; // 資料共有中ユーザーをセットする
+      // 消費者側に確認ポップアップを表示する
+      emit.toUser('docShareConnect', d, sessionId);
+      obj.tabId = targetId;
+      emit.toCompany('docShareConnect', obj, obj.siteKey); // リアルタイムモニタへ通知
     }
+  });
+
+ // 資料共有再接続
+  socket.on('docShareReConnect', function(d) {
+    var obj = JSON.parse(d);
+    if ( !getSessionId(obj.siteKey, obj.tabId, "sessionId") ) {
+      // TODO 再接続失敗
+      return false;
+    }
+    if ( !(obj.tabId in doc_connectList) ) {
+      doc_connectList[obj.tabId] = {};
+    }
+    doc_connectList[obj.tabId][obj.from] = socket.id;
+    doc_connectList.socketId[socket.id] = {type: obj.from, tabId: obj.tabId, siteKey: obj.siteKey};
   });
 
   // 共有する資料を変更
@@ -1466,6 +1495,8 @@ io.sockets.on('connection', function (socket) {
       doc_connectList[obj.tabId] = {};
     }
     doc_connectList[obj.tabId][obj.from] = socket.id;
+    doc_connectList.socketId[socket.id] = {type: obj.from, tabId: obj.tabId, siteKey: obj.siteKey};
+
     emit.toUser('docShareConnect', d, getSessionId(obj.siteKey, obj.tabId, "sessionId"));
   });
 
@@ -1477,6 +1508,51 @@ io.sockets.on('connection', function (socket) {
 
   // ユーザーのアウトを感知
   socket.on('disconnect', function () {
+    var info = {};
+    // 資料共有の場合
+    if ( doc_connectList.socketId.hasOwnProperty(socket.id) ) {
+      info = doc_connectList.socketId[socket.id]; // tabId, type(company or customer)
+      var partner = (info.type === "company") ? "customer" : "company";
+      doc_connectList.timeout[socket.id] = setTimeout(function(){ // 3 minutes
+        delete doc_connectList.socketId[socket.id];
+        if ( doc_connectList.hasOwnProperty(info.tabId) ) {
+          var doc = doc_connectList[info.tabId];
+          if ( doc[info.type] === socket.id ) { // 最後のsocket.idと一致したら切断扱い
+            // 相手が接続中の場合
+            if ( doc.hasOwnProperty(partner) ) {
+              // 相手の資料共有画面を閉じる
+              emit.toUser('docDisconnect', info, doc[partner]);
+              delete doc_connectList[info.tabId][info.type];
+            }
+            // 相手の接続が切れている時
+            else {
+              delete doc_connectList[info.tabId];
+              var tabId = (getSessionId(info.siteKey, info.tabId + "_frame", "connectToken")) ? info.tabId + "_frame" : info.tabId;
+              /* 資料共有中ユーザーを削除する */
+              if ( getSessionId(info.siteKey, tabId, 'docShareId') ) {
+                delete sincloCore[info.siteKey][tabId].docShareId;
+              }
+              // 画面共有を行っている場合
+              if ( getSessionId(info.siteKey, tabId, 'connectToken') ) {
+                // 企業に知らせる
+                emit.toUser('docDisconnect', info, getSessionId(info.siteKey, tabId, 'syncSessionId'));
+                // 消費者に知らせる
+                emit.toUser('docDisconnect', info, getSessionId(info.siteKey, tabId, 'sessionId'));
+              }
+              // 資料共有のみの場合
+              else {
+                // 相手画面に知らせる
+                emit.toUser('docDisconnect', info, getSessionId(info.siteKey, info.tabId, 'sessionId'));
+              }
+              // 企業側画面に知らせる
+              emit.toCompany('docDisconnect', info, info.siteKey);
+            }
+          }
+        }
+        delete doc_connectList.timeout[socket.id];
+      }, 3000);
+      return false;
+    }
     // リアルタイムモニタからのアクセスの場合
     if ( socket.id in company.user ) {
       // ユーザーの情報を削除
@@ -1533,7 +1609,7 @@ io.sockets.on('connection', function (socket) {
     }
     // タグ入りページからのアクセスの場合
     if ( !(socket.id in connectList) ) return false;
-    var info = connectList[socket.id];
+    info = connectList[socket.id];
     if (getSessionId(info.siteKey, info.tabId, 'sessionId')) {
       var core = sincloCore[info.siteKey][info.tabId];
       var siteId = companyList[info.siteKey];

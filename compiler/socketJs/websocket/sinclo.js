@@ -805,6 +805,15 @@
       popup.set(title, content);
 
     },
+    docDisconnect: function(){
+      // 終了通知
+      var title = location.host + 'の内容';
+      var content = location.host + 'との資料共有を終了しました';
+      popup.ok = function(){
+        this.remove();
+      };
+      popup.set(title, content, popup.const.action.alert);
+    },
     syncStop: function(d){
       var obj = common.jParse(d);
       syncEvent.stop(false);
