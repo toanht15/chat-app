@@ -60,7 +60,7 @@ class MAgreementsController extends AppController {
       if($this->_mcompany($saveData) && $this->_muser($saveData) && $this->_magreement($saveData) && $this->_tdictionary($saveData) && $this->_tautomessage($saveData) && $this->_mwidgetsetting($saveData)) {
         $this->TransactionManager->commit($transactions);
         //jsファイル作成
-        //$this->_addFile($saveData);
+        $this->_addFile($saveData);
         $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
         $this->redirect(['controller' => 'MAgreements', 'action' => 'index']);
       }
@@ -78,6 +78,7 @@ class MAgreementsController extends AppController {
     $this->MAgreement->id = $id;
 
     if($this->request->is('post') || $this->request->is('put')) {
+      $editData = $this->MAgreement->read(null,$id);
       $transactions = $this->TransactionManager->begin();
       $saveData = $this->request->data;
       //削除に必要なもの
@@ -88,7 +89,7 @@ class MAgreementsController extends AppController {
         $this->TransactionManager->commit($transactions);
         $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
         //jsファイル作成
-        //$this->_editFile($saveData,$editData);
+        $this->_editFile($saveData,$editData);
         $this->redirect(['controller' => 'MAgreements', 'action' => 'index']);
       }
       else {
@@ -98,18 +99,20 @@ class MAgreementsController extends AppController {
     else{
       $editData = $this->MAgreement->read(null,$id);
       $data = $this->MUser->find('first',[
-        'conditions' => array('permission_level' => 99)]);
+        'conditions' => array(
+         'MCompany.id' => $editData['MAgreement']['m_companies_id'],
+          'permission_level' => 99)]);
       //削除に必要なもの
       $this->set('companyId', $editData['MCompany']['id']);
       $this->set('userId', $data['MUser']['id']);
       $this->set('companyKey',$editData['MCompany']['company_key']);
-      $this->request->data['MAgreement']['m_companies_id'] = $editData['MCompany']['id'];
+      $this->request->data = $editData;
       $this->request->data['MAgreement']['company_name'] = $editData['MCompany']['company_name'];
-      $this->request->data['MAgreement']['m_users_id'] = $data['MUser']['id'];
       $this->request->data['MAgreement']['company_key'] = $editData['MCompany']['company_key'];
       $this->request->data['MAgreement']['limit_users'] = $editData['MCompany']['limit_users'];
       $this->request->data['MAgreement']['m_contact_types_id'] = $editData['MCompany']['m_contact_types_id'];
       $this->request->data['MAgreement']['trial_flg'] = $editData['MCompany']['trial_flg'];
+      $this->request->data['MAgreement']['m_users_id'] = $data['MUser']['id'];
       $this->request->data['MAgreement']['mail_address'] = $data['MUser']['mail_address'];
     }
   }
@@ -308,20 +311,24 @@ class MAgreementsController extends AppController {
     $this->layout = 'ajax';
     $name = $this->request->data['companyKey'];
     if(!empty($this->request->data['userId']) && ($this->request->data['companyId']) && ($this->request->data['id'])) {
-
       $transactions = $this->TransactionManager->begin();
-      if ( $this->MUser->logicalDelete($this->request->data['userId']) && $this->MCompany->logicalDelete($this->request->data['companyId']) && $this->MAgreement->logicalDelete($this->request->data['id'])) {
+       if ( $this->MCompany->logicalDelete($this->request->data['companyId']) && $this->MUser->logicalDelete($this->request->data['userId']) && $this->MAgreement->logicalDelete($this->request->data['id'])){
         $this->TransactionManager->commit($transactions);
+          $this->log('okey1',LOG_DEBUG);
         // 作成するファイル名の指定
-        $file_name =C_NODE_SERVER_DIR."webroot/client/{$name}.js";
+        $file_name =C_NODE_SERVER_DIR."/webroot/client/{$name}.js";
+        $this->log($file_name,LOG_DEBUG);
         // ファイルの存在確認
         if( file_exists($file_name) ){
+          $this->log('okey3',LOG_DEBUG);
         // ファイル削除
         unlink($file_name);
         }
         $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
-      }
+      //}
+    }
       else {
+        $this->log('out',LOG_DEBUG);
         $this->TransactionManager->rollback($transactions);
       }
     }
@@ -333,13 +340,13 @@ class MAgreementsController extends AppController {
    * */
   public function _editFile($saveData,$editData) {
     $this->autoRender = FALSE;
-    $name = $saveData['MCompany']['company_key'];
+    $name = $saveData['MAgreement']['company_key'];
     // 作成するファイル名の指定
-    $file_name =C_NODE_SERVER_DIR."webroot/client/{$name}.js";
+    $file_name =C_NODE_SERVER_DIR."/webroot/client/{$name}.js";
     // ファイルの存在確認
     if( !file_exists($file_name) ){
       $beforename = $editData['MCompany']['company_key'];
-      $before_file = C_NODE_SERVER_DIR."webroot/client/{$beforename}.js";
+      $before_file = C_NODE_SERVER_DIR."/webroot/client/{$beforename}.js";
       // ファイル削除、作成
       unlink($before_file);
       touch($file_name);
@@ -352,7 +359,8 @@ class MAgreementsController extends AppController {
    * */
   public function _addFile($saveData) {
     $this->autoRender = FALSE;
-    $name = $saveData['MCompany']['company_key'];
+    //pr($saveData); exit();
+    $name = $saveData['MAgreement']['company_key'];
     // 作成するファイル名の指定
     $file_name = C_NODE_SERVER_DIR."/webroot/client/{$name}.js";
     // ファイルの存在確認

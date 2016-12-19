@@ -14,6 +14,7 @@
             <?= $this->element('MAgreements/entry'); ?>
             <!-- /* jsファイル作成 */ -->
             <section>
+            <?=$this->Form->hidden('id')?>
               <div class="button">
                 <?= $this->Html->link('一覧',['controller'=>'MAgreements', 'action' => 'index'],['escape' => false, 'id' => 'searchRefine','class' => 'normal_btn']); ?>
                 <?= $this->Html->link('登録', 'javascript:void(0)', ['escape' => false, 'id' => 'searchRefine','class' => 'action_btn','onclick' => 'saveEdit()']); ?>

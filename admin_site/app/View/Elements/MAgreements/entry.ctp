@@ -128,3 +128,5 @@
   <span><label>備考</label></span>
   <?=$this->Form->input('note', ['type'=>'textarea','label' => false,'div' => false,'maxlength'=>300,'cols' => 40,'rows' => 10])?>
 </li>
+
+<?=$this->Form->hidden('id')?>

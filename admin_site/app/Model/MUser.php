@@ -51,8 +51,8 @@ class MUser extends AppModel {
    //メールアドレスチェック
   public function isUniqueChk($str){
     $str['MUser' . '.del_flg'] = 0;
-    if ( !empty($this->data['MUser']['id']) ) {
-      $str['MUser' . '.id !='] = $this->data['MUser']['id'];
+    if ( !empty($this->data['MAgreement']['m_users_id']) ) {
+      $str['MUser' . '.id !='] = $this->data['MAgreement']['m_users_id'];
     }
 
     $ret = $this->find('all', ['fields' => 'MUser' . '.*', 'conditions' => $str]);

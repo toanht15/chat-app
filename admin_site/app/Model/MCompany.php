@@ -31,15 +31,20 @@ class MCompany extends AppModel {
         'rule' => ['maxLength', 100],
         'allowEmpty' => false,
         'message' => '契約ID数を設定してください'
+      ],
+      'wheels' => [
+        'rule'    => 'naturalNumber',
+        'message' => '数値を入力してください',
+        'allowEmpty' => true             // 空白許可
       ]
-    ],
-    ];
+    ]
+  ];
 
     //サイトキーチェック
   public function isUniqueChkKey($str){
     $str['MCompany' . '.del_flg'] = 0;
-    if ( !empty($this->data['MCompany']['id']) ) {
-      $str['MCompany' . '.id !='] = $this->data['MCompany']['id'];
+    if ( !empty($this->data['MAgreement']['m_companies_id']) ) {
+      $str['MCompany' . '.id !='] = $this->data['MAgreement']['m_companies_id'];
     }
     $ret = $this->find('all', ['fields' => 'MCompany' . '.*', 'conditions' => $str]);
     if ( !empty($ret) ) {
