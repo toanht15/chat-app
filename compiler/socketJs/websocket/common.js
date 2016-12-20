@@ -121,7 +121,7 @@ var socket, // socket.io
       return JSON.parse(d);
     },
     createWidget: function(){
-      var widget = window.info.widget, displaySet = "";
+      var widget = window.sincloInfo.widget, displaySet = "";
       var css = this.widgetCssTemplate(widget),
           header = this.widgetHeaderTemplate(widget),
           navi = this.widgetNaviTemplate(widget),
@@ -130,20 +130,20 @@ var socket, // socket.io
           fotter = '<p id="fotter">Powered by <a target="sinclo" href="http://medialink-ml.co.jp/index.html">sinclo</a></p>';
 
       // フルプランのPCの場合
-      if ( window.info.contract.chat && window.info.contract.synclo && !check.smartphone() ) {
+      if ( window.sincloInfo.contract.chat && window.sincloInfo.contract.synclo && !check.smartphone() ) {
         displaySet += navi + chat + call;
       }
       // フルプランのSPの場合はチャットのみ表示
-      else if ( window.info.contract.chat && window.info.contract.synclo && check.smartphone() ) {
+      else if ( window.sincloInfo.contract.chat && window.sincloInfo.contract.synclo && check.smartphone() ) {
         displaySet += chat;
       }
       else {
         // チャットのみ契約の場合
-        if ( window.info.contract.chat ) {
+        if ( window.sincloInfo.contract.chat ) {
           displaySet += chat;
         }
         // 画面同期のみ契約の場合
-        if ( window.info.contract.synclo ) {
+        if ( window.sincloInfo.contract.synclo ) {
           displaySet += call;
         }
       }
@@ -207,7 +207,7 @@ var socket, // socket.io
       html += '      #sincloBox span#mainImage img { background-color: ' + widget.mainColor + ' }';
       html += '      #sincloBox p#widgetTitle { position:relative; cursor:pointer; border-bottom:none; background-color: ' + widget.mainColor + ';text-align: center; margin: 0; color: ' + widget.stringColor + ' }';
       html += '      #sincloBox p#widgetTitle #sincloChatUnread { position: absolute; top: 0; left: 0; color: #FFF; font-style: normal; text-align: center; font-weight: bold; background-color: #FF5C5C; }';
-      html += '      #sincloBox p#widgetTitle:after { background-image: url("' + window.info.site.files + '/img/widget/yajirushi.png"); content: " "; display: inline-block; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; -webkit-transition: 200ms linear; transition: transform 200ms linear}';
+      html += '      #sincloBox p#widgetTitle:after { background-image: url("' + window.sincloInfo.site.files + '/img/widget/yajirushi.png"); content: " "; display: inline-block; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; -webkit-transition: 200ms linear; transition: transform 200ms linear}';
       html += '      #sincloBox[data-openflg="true"] p#widgetTitle:after { -ms-transform: rotate(0deg); -moz-transform: rotate(0deg); -webkit-transform: rotate(0deg); -o-transform: rotate(0deg); transform: rotate(0deg); }';
       html += '      #sincloBox[data-openflg="false"] p#widgetTitle:after { -ms-transform: rotate(180deg); -moz-transform: rotate(180deg); -webkit-transform: rotate(180deg); -o-transform: rotate(180deg); transform: rotate(180deg); }';
       html += '      #sincloBox > section { background-color: #FFF; border-top: none; }';
@@ -217,8 +217,8 @@ var socket, // socket.io
       html += '      #sincloBox .flexBoxRow { display: -ms-flexbox; display: -webkit-flex; display: flex; -ms-flex-direction: row; -webkit-flex-direction: row; flex-direction: row }';
 
       // チャットを使用する際
-      if ( window.info.contract.chat ) {
-        html += '      #sincloBox #mainImage em { position: absolute; background-image: url("' + window.info.site.files + '/img/chat-bg.png");background-size: contain;background-repeat: no-repeat; color: #FFF; font-style: normal; text-align: center; font-weight: bold }';
+      if ( window.sincloInfo.contract.chat ) {
+        html += '      #sincloBox #mainImage em { position: absolute; background-image: url("' + window.sincloInfo.site.files + '/img/chat-bg.png");background-size: contain;background-repeat: no-repeat; color: #FFF; font-style: normal; text-align: center; font-weight: bold }';
         html += '      #sincloBox ul#chatTalk { width: 100%; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0; clear: both!important; }';
         html += '      #sincloBox ul sinclo-chat { clear: both!important } ';
         html += '      #sincloBox ul#chatTalk li { text-align: left!important; word-wrap: break-word; word-break: break-word; white-space: pre-wrap!important; background-color: #FFF; white-space: pre; color: #8A8A8A; }';
@@ -241,8 +241,8 @@ var socket, // socket.io
       html += '      #sincloBox #fotter { text-align: center; color: #A1A1A1!important; background-color: #FFF; margin: 0;border-top: none; }';
       html += '      #sincloBox section#navigation ul li::before{ background-color: #BCBCBC; content: " "; display: inline-block; position: relative; background-size: contain; vertical-align: middle; background-repeat: no-repeat }';
       html += '      #sincloBox section#navigation ul li.selected::after{ content: " "; position: absolute; bottom: 0px; }';
-      html += '      #sincloBox section#navigation ul li[data-tab="call"]::before{ background-image: url("' + window.info.site.files + '/img/widget/icon_tel.png"); }';
-      html += '      #sincloBox section#navigation ul li[data-tab="chat"]::before{ background-image: url("' + window.info.site.files + '/img/widget/icon_chat.png"); }';
+      html += '      #sincloBox section#navigation ul li[data-tab="call"]::before{ background-image: url("' + window.sincloInfo.site.files + '/img/widget/icon_tel.png"); }';
+      html += '      #sincloBox section#navigation ul li[data-tab="chat"]::before{ background-image: url("' + window.sincloInfo.site.files + '/img/widget/icon_chat.png"); }';
       html += '      #sincloBox section#navigation ul li.selected::before{ background-color: ' + widget.mainColor + '; }';
 
 // html += '    #sincloBox ul { clear: both; display: flex; flex-direction: column } ';
@@ -359,7 +359,7 @@ var socket, // socket.io
           html += '      #sincloBox p#widgetTitle { padding-left: 70px; }';
         }
         // チャットを使用する際
-        if ( window.info.contract.chat ) {
+        if ( window.sincloInfo.contract.chat ) {
           html += '      #sincloBox #mainImage em { top: -10px; right: -10px; width: 25px; height: 20px; font-size: 11px; padding: 1px; }';
           html += '      #sincloBox ul#chatTalk { height: 194px; padding: 5px; }';
           html += '      #sincloBox ul#chatTalk li { border-radius: 5px; margin: 5px 0; padding: 5px; font-size: 12px; border: 1px solid #C9C9C9; }';
@@ -370,11 +370,11 @@ var socket, // socket.io
 
         }
         // 画面同期を使用する際
-        if ( window.info.contract.synclo ) {
+        if ( window.sincloInfo.contract.synclo ) {
           html += '      #sincloBox section#callTab #telNumber { overflow: hidden; color: ' + widget.mainColor + '; font-weight: bold; margin: 0 auto; text-align: center }';
           html += '      #sincloBox section#callTab #telIcon { color: ' + widget.mainColor + '; display: block; width: 50px; height: 50px; float: left; background-color: #3EA3DE; border-radius: 25px; padding: 3px }';
           html += '      #sincloBox section#callTab #telContent { display: block; overflow-y: auto; overflow-x: hidden; max-height: 119px }';
-          if ( window.info.contract.chat ) {
+          if ( window.sincloInfo.contract.chat ) {
             html += '      #sincloBox section#callTab #telContent .tblBlock {  text-align: center;  margin: 0 auto;  width: 240px;  display: table; align-content: center;  height: 119px!important;  justify-content: center; }';
           }
           else {
@@ -451,7 +451,7 @@ var socket, // socket.io
       var html = "";
 
       // 電話・チャットプランの場合
-      if ( window.info.contract.chat && window.info.contract.synclo && !check.smartphone() ) {
+      if ( window.sincloInfo.contract.chat && window.sincloInfo.contract.synclo && !check.smartphone() ) {
         html += '<section id="callTab">';
       }
       // 電話のみプランの場合
@@ -461,7 +461,7 @@ var socket, // socket.io
 
       html += '    <div style="height: 50px;margin: 15px 25px">';
       // アイコン
-      html += '    <span style="display: block; width: 50px; height: 50px; float: left; background-color: ' + widget.mainColor + '; border-radius: 25px; padding: 3px;"><img width="19.5" height="33" src="' + window.info.site.files + '/img/call.png" style="margin: 6px 12px"></span>';
+      html += '    <span style="display: block; width: 50px; height: 50px; float: left; background-color: ' + widget.mainColor + '; border-radius: 25px; padding: 3px;"><img width="19.5" height="33" src="' + window.sincloInfo.site.files + '/img/call.png" style="margin: 6px 12px"></span>';
       // 受付電話番号
       if ( Number(widget.display_time_flg) === 1 ) {
           html += '    <pre id="telNumber" style="font-size: 18px; padding: 5px 0px 0px; height: 30px">' + check.escape_html(widget.tel) + '</pre>';
@@ -488,13 +488,13 @@ var socket, // socket.io
           from: fromID,
           to: toID,
         };
-        iframe.src = info.site.webcam_view + "?h=false&sincloData=" + encodeURIComponent(JSON.stringify(sincloData)); // FIXME
+        iframe.src = sincloInfo.site.webcam_view + "?h=false&sincloData=" + encodeURIComponent(JSON.stringify(sincloData)); // FIXME
         document.body.appendChild(iframe);
     },
     chatWidgetTemplate: function(widget){
       var html = "", placeholder, spFlg = check.smartphone();
       // ボタンのみの場合
-      if ( ( 'chatTrigger' in window.info.widget && window.info.widget.chatTrigger === 2) ) {
+      if ( ( 'chatTrigger' in window.sincloInfo.widget && window.sincloInfo.widget.chatTrigger === 2) ) {
         placeholder = "メッセージを入力してください";
       }
       else {
@@ -515,36 +515,36 @@ var socket, // socket.io
       }
       html += '    </div>';
       html += '    <audio id="sinclo-sound">';
-      html += '      <source src="' + window.info.site.files + '/sounds/decision.mp3" type="audio/mp3">';
+      html += '      <source src="' + window.sincloInfo.site.files + '/sounds/decision.mp3" type="audio/mp3">';
       html += '    </audio>';
       html += '  </section>';
       return html;
     },
     judgeShowWidget: function(){
-      window.info.widgetDisplay = null; // デフォルト表示しない
+      window.sincloInfo.widgetDisplay = null; // デフォルト表示しない
       // チャット契約、画面同期中であれば表示
-      if ( check.isset(userInfo.connectToken) && window.info.contract.chat ) {
-        window.info.widgetDisplay = true;
+      if ( check.isset(userInfo.connectToken) && window.sincloInfo.contract.chat ) {
+        window.sincloInfo.widgetDisplay = true;
       }
       // ウィジェットを常に表示する
-      if ( ('display_type' in window.info.widget) && window.info.widget.display_type === 1 ) {
-        window.info.widgetDisplay = true;
+      if ( ('display_type' in window.sincloInfo.widget) && window.sincloInfo.widget.display_type === 1 ) {
+        window.sincloInfo.widgetDisplay = true;
       }
       // オペレーターの数に応じて表示する
-      else if ( ('display_type' in window.info.widget) && window.info.widget.display_type === 2 ) {
-        if ( Number(window.info.activeOperatorCnt) > 0 ) {
-          window.info.widgetDisplay = true;
+      else if ( ('display_type' in window.sincloInfo.widget) && window.sincloInfo.widget.display_type === 2 ) {
+        if ( Number(window.sincloInfo.activeOperatorCnt) > 0 ) {
+          window.sincloInfo.widgetDisplay = true;
         }
       }
       // 同期対象とするが、ウィジェットは表示しない
-      if (check.isset(window.info.dataset) && (check.isset(window.info.dataset.hide) && window.info.dataset.hide === "1")) {
-        window.info.widgetDisplay = false;
+      if (check.isset(window.sincloInfo.dataset) && (check.isset(window.sincloInfo.dataset.hide) && window.sincloInfo.dataset.hide === "1")) {
+        window.sincloInfo.widgetDisplay = false;
       }
-      return window.info.widgetDisplay;
+      return window.sincloInfo.widgetDisplay;
     },
     makeAccessIdTag: function(){
       if ( !check.browser() ) return false;
-      if ( !('widget' in window.info) ) return false;
+      if ( !('widget' in window.sincloInfo) ) return false;
       if (!this.judgeShowWidget()) {
         return false;
       }
@@ -559,7 +559,7 @@ var socket, // socket.io
       if ( userInfo.accessType !== cnst.access_type.host ) {
         var html = common.createWidget();
         $('body').append(html);
-        emit('syncReady', {widget: window.info.widgetDisplay});
+        emit('syncReady', {widget: window.sincloInfo.widgetDisplay});
         sincloBox = document.getElementById('sincloBox');
         sincloBox.setAttribute('data-openflg', false);
         sinclo.operatorInfo.header = document.querySelector('#sincloBox #widgetHeader');
@@ -582,7 +582,7 @@ var socket, // socket.io
             }
         });
 
-        if ( window.info.contract.chat && check.smartphone() ) {
+        if ( window.sincloInfo.contract.chat && check.smartphone() ) {
           // 初期の画面向き
             if ( window.screen.availHeight < window.screen.availWidth ) {
               sincloBox.setAttribute('data-screen', 'horizontal'); // 横向き
@@ -1029,7 +1029,7 @@ var socket, // socket.io
       }
       var ua  =navigator.userAgent.toLowerCase();
       // チャット契約なしで、スマートフォンからの閲覧の場合は弾く
-      if ( !window.info.contract.chat && this.smartphone() ) {
+      if ( !window.sincloInfo.contract.chat && this.smartphone() ) {
         ret = false;
       }
       // Botは弾く
@@ -1344,7 +1344,7 @@ var socket, // socket.io
         chatCnt: document.getElementsByClassName('sinclo_se').length,
         chatUnread: {id: null, cnt: 0},
         service: check.browser(),
-        widget: window.info.widgetDisplay
+        widget: window.sincloInfo.widgetDisplay
       };
     }
   };
@@ -1735,7 +1735,7 @@ var socket, // socket.io
         }
       }
       this.ctrlElmEventListener(eventFlg, scEls, "scroll", syncEvent.elmScrollCall);
-      if ( ('form' in window.info.dataset ) && window.info.dataset.form ) {
+      if ( ('form' in window.sincloInfo.dataset ) && window.sincloInfo.dataset.form ) {
         // フォーム制御
         $(document).submit(function(e){
           if ( userInfo.accessType !== cnst.access_type.host ) {
@@ -1874,7 +1874,7 @@ var socket, // socket.io
           html += '    <sinclo-div id="sincloPopBar">';
           html += '    </sinclo-div>';
           html += '    <sinclo-div id="sincloPopMain">';
-          html += '      <sinclo-div id="sincloLogo"><img src="' + info.site.files + '/img/mark.png" width="60" height="60"></sinclo-div>';
+          html += '      <sinclo-div id="sincloLogo"><img src="' + sincloInfo.site.files + '/img/mark.png" width="60" height="60"></sinclo-div>';
           html += '      <sinclo-div id="sincloMessage">';
           html += '          <sinclo-h3>' + title + ':</sinclo-h3><sinclo-content>' + content + '</sinclo-content>';
           html += '      </sinclo-div>';
@@ -1913,7 +1913,7 @@ var socket, // socket.io
             from: fromID,
             to: toID,
           };
-          var url = info.site.webcam_view + "?h=false&sincloData=" + encodeURIComponent(JSON.stringify(sincloData));
+          var url = sincloInfo.site.webcam_view + "?h=false&sincloData=" + encodeURIComponent(JSON.stringify(sincloData));
           html += '  <style>';
           html += '    #sincloVcPopupFrame {';
           html += '        border: 0.15em solid #ABABAB;';
@@ -2000,7 +2000,7 @@ var socket, // socket.io
           html += '  </style>';
           html += '  <sinclo-div id="sincloVcPopupFrame">';
           html += '    <sinclo-div id="sincloVcPopBar">';
-          html += '      <sinclo-div id="sincloVcLogo"><img src="' + info.site.files + '/img/mark.png" width="18" height="18"></sinclo-div>';
+          html += '      <sinclo-div id="sincloVcLogo"><img src="' + sincloInfo.site.files + '/img/mark.png" width="18" height="18"></sinclo-div>';
           html += '    </sinclo-div>';
           html += '    <sinclo-div id="sincloVcPopMain">';
           html += '      <sinclo-div id="sincloVcMessage">';
@@ -2057,7 +2057,7 @@ var socket, // socket.io
 
   var init = function(){
     var tabStateTimer = null;
-    socket = io.connect(info.site.socket, {port: 9090, rememberTransport : false});
+    socket = io.connect(sincloInfo.site.socket, {port: 9090, rememberTransport : false});
 
     // 接続時
     socket.on("connect", function(){
@@ -2066,9 +2066,9 @@ var socket, // socket.io
       if ( sincloBox && userInfo.accessType === Number(cnst.access_type.guest) ) {
         sinclo.trigger.flg = true;
         var emitData = userInfo.getSendList();
-        emitData.widget = window.info.widgetDisplay;
+        emitData.widget = window.sincloInfo.widgetDisplay;
         emit('customerInfo', emitData);
-        emit('connectSuccess', {confirm: false, reconnect: true, widget: window.info.widgetDisplay});
+        emit('connectSuccess', {confirm: false, reconnect: true, widget: window.sincloInfo.widgetDisplay});
         sincloBox.style.display = "block";
       }
       else {
@@ -2257,10 +2257,10 @@ var socket, // socket.io
 
   $.ajax({
       type: 'get',
-      url: window.info.site.files + "/settings/",
+      url: window.sincloInfo.site.files + "/settings/",
       cache: false,
       data: {
-          'sitekey': window.info.site.key,
+          'sitekey': window.sincloInfo.site.key,
           accessType: userInfo.accessType
       },
       dataType: "json",
@@ -2270,9 +2270,9 @@ var socket, // socket.io
             clearTimeout(timer);
             return false;
           }
-          window.info.widget = json.widget;
-          window.info.messages = json.messages;
-          window.info.contract = json.contract;
+          window.sincloInfo.widget = json.widget;
+          window.sincloInfo.messages = json.messages;
+          window.sincloInfo.contract = json.contract;
         }
         else {
           clearTimeout(timer);
@@ -2286,7 +2286,7 @@ var socket, // socket.io
   });
 
   var timer = window.setInterval(function(){
-    if ( io !== "" && sinclo !== "" && window.info.contract !== undefined ) {
+    if ( io !== "" && sinclo !== "" && window.sincloInfo.contract !== undefined ) {
       window.clearInterval(timer);
       init();
     }
@@ -2305,7 +2305,7 @@ function f_url(url){
 
 function emit(evName, data){
   /* ここから：イベント名指定なし */
-  data.siteKey = info.site.key; // サイトの識別キー
+  data.siteKey = sincloInfo.site.key; // サイトの識別キー
   data.tabId = userInfo.tabId; // タブの識別ID
   if ( check.isset(userInfo.sendTabId) ) {
     data.to = userInfo.sendTabId; // 送信先ID
@@ -2321,10 +2321,10 @@ function emit(evName, data){
     data.token = common.token;
   }
   if (evName === "connectSuccess") {
-    data.widget = window.info.widgetDisplay;
+    data.widget = window.sincloInfo.widgetDisplay;
   }
   if (evName === "customerInfo" || evName === "sendAccessInfo") {
-    data.contract = window.info.contract;
+    data.contract = window.sincloInfo.contract;
   }
   if (evName === "syncReady" || evName === "connectSuccess" || evName === "customerInfo" || evName === "sendAccessInfo") {
     data.subWindow = false;
@@ -2379,10 +2379,10 @@ function now(){
 }
 
 // get type
-var myTag = document.querySelector("script[src='" + info.site.files + "/client/" + info.site.key + ".js']");
+var myTag = document.querySelector("script[src='" + sincloInfo.site.files + "/client/" + sincloInfo.site.key + ".js']");
 if (myTag.getAttribute('data-hide')) {
-    info.dataset.hide = myTag.getAttribute('data-hide');
+    sincloInfo.dataset.hide = myTag.getAttribute('data-hide');
 }
 if (myTag.getAttribute('data-form')) {
-    info.dataset.form = myTag.getAttribute('data-form');
+    sincloInfo.dataset.form = myTag.getAttribute('data-form');
 }
