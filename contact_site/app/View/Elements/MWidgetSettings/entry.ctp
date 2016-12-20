@@ -118,7 +118,7 @@ $headerNo = 1;
                 'maxlength' => 15,
                 'error' => false
             ];
-            if($coreSettings[C_COMPANY_USE_SYNCLO] && !$coreSettings[C_COMPANY_USE_CHAT]) {
+            if(($coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT])) && !$coreSettings[C_COMPANY_USE_CHAT]) {
               $subTitleOpt['ng-disabled'] = 'subTitleToggle == "2"';
             }
             $subTitle = $this->ngForm->input('sub_title', $subTitleOpt, [
@@ -239,7 +239,7 @@ $headerNo = 1;
         </ul>
       </section>
 
-      <?php if($coreSettings[C_COMPANY_USE_SYNCLO]): ?>
+      <?php if($coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT])): ?>
       <h3><?php echo mb_convert_kana($headerNo, "N", "utf-8"); $headerNo++ ?>．電話ウィンドウ設定</h3>
       <section>
         <ul class="settingList">

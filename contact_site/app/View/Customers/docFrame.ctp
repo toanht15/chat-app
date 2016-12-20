@@ -2,7 +2,7 @@
 <!--
 'use strict';
 
-var socket, emit, tabId = '<?=$tabInfo?>', url, emit, pdfjsApi, frameSize;
+var socket, emit, tabId = '<?=$tabInfo?>', url, emit, pdfjsApi, frameSize, windowScale;
 (function(){
 
   // WebSocketサーバに接続
@@ -42,6 +42,33 @@ var socket, emit, tabId = '<?=$tabInfo?>', url, emit, pdfjsApi, frameSize;
   window.focus();
 })();
 
+// WebSocketサーバ接続イベント
+socket.on('connect', function(){
+  var doc = <?=json_encode($docData['TDocument'], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_FORCE_OBJECT )?>;
+  if ( sessionStorage.getItem("doc") !== null ) {
+    doc = JSON.parse(sessionStorage.getItem("doc"));
+    emit('docShareReConnect', {
+      from: 'company'
+    }); // 資料共有開始
+  }
+  else {
+    emit('docShareConnect', {
+      from: 'company',
+      responderId: '<?=$userInfo["id"]?>',
+      url: "<?=C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/"?>" + doc.file_name,
+      pagenation_flg: doc.pagenation_flg,
+      download_flg: doc.download_flg
+    }); // 資料共有開始
+  }
+  pdfjsApi.readFile(doc);
+
+  frameSize = {
+    height: window.outerHeight - window.innerHeight,
+    width: window.outerWidth - window.innerWidth
+  };
+
+});
+
 window.onload = function(){
 
   // スクロール禁止
@@ -50,35 +77,9 @@ window.onload = function(){
     $(this).scrollLeft(0);
   });
 
-  // WebSocketサーバ接続イベント
-  socket.on('connect', function(){
-    var doc = <?=json_encode($docData['TDocument'], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_FORCE_OBJECT )?>;
-    if ( sessionStorage.getItem("doc") !== null ) {
-      doc = JSON.parse(sessionStorage.getItem("doc"));
-      emit('docShareReConnect', {
-        from: 'company'
-      }); // 資料共有開始
-    }
-    else {
-      emit('docShareConnect', {
-        from: 'company',
-        responderId: '<?=$userInfo["id"]?>',
-        url: "<?=C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/"?>" + doc.file_name,
-        pagenation_flg: doc.pagenation_flg,
-        download_flg: doc.download_flg
-      }); // 資料共有開始
-    }
-    pdfjsApi.readFile(doc);
-
-    frameSize = {
-      height: window.outerHeight - window.innerHeight,
-      width: window.outerWidth - window.innerWidth
-    };
-
-  });
-
   // 同期イベント
   var scAddEventTimer = null;
+  windowScale = (sessionStorage.getItem("windowScale")) ? sessionStorage.getItem("windowScale") : 1;
   socket.on('docSendAction', function(d){
     var obj = JSON.parse(d), cursor;
     if ( obj.hasOwnProperty('scroll') ) {
@@ -101,6 +102,9 @@ window.onload = function(){
       });
       return false;
     }
+    if ( obj.hasOwnProperty('offset') ) {
+      pdfjsApi.setWindowSize(obj.offset);
+    }
     if ( obj.hasOwnProperty('mouse') ) {
       cursor = document.getElementById('cursorImg');
       // カーソルを作成していなければ作成する
@@ -108,16 +112,9 @@ window.onload = function(){
         $('body').append('<div id="cursorImg" style="position:fixed; top:' + obj.mouse.x + '; left:' + obj.mouse.y + '; z-index: 1"><img width="50px" src="<?=C_PATH_NODE_FILE_SERVER?>/img/pointer.png"></div>');
         cursor = document.getElementById("cursorImg");
       }
-      cursor.style.left = obj.mouse.x + "px";
-      cursor.style.top  = obj.mouse.y + "px";
+      cursor.style.left = obj.mouse.x / windowScale + "px";
+      cursor.style.top  = obj.mouse.y / windowScale + "px";
       return false;
-    }
-    if ( obj.hasOwnProperty('offset') ) {
-      sessionStorage.setItem("windowSize", JSON.stringify({
-        width: frameSize.width + obj.offset.width,
-        height: frameSize.height + obj.offset.height
-      }));
-      pdfjsApi.setWindowSize();
     }
     if ( obj.hasOwnProperty('scale') ) {
       pdfjsApi.currentScale = obj.scale;

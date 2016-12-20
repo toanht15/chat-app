@@ -17,6 +17,9 @@ if ( !$coreSettings[C_COMPANY_USE_SYNCLO] && $coreSettings[C_COMPANY_USE_CHAT] )
 else if ( $coreSettings[C_COMPANY_USE_SYNCLO] && !$coreSettings[C_COMPANY_USE_CHAT] ) {
   $cName = "syncOnly";
 }
+else if ( !$coreSettings[C_COMPANY_USE_SYNCLO] && !$coreSettings[C_COMPANY_USE_CHAT] && (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT])  ) {
+  $cName = "docOnly";
+}
 ?>
 
     <div id='customer_sub_pop' data-contract='<?=$cName?>' ng-show="detailId" ng-cloak><?php echo $this->element('Customers/detail') ?></div>

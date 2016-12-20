@@ -13,7 +13,7 @@
 <div id='customer_menu'>
     <div>
         <!-- 検索窓 -->
-        <?php if ($coreSettings[C_COMPANY_USE_SYNCLO]) : ?>
+        <?php if ($coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT])) : ?>
           <div class="form01 fLeft">
             <ul class="switch" ng-init="fillterTypeId=1">
               <li ng-class="{on:fillterTypeId===1}" ng-click="fillterTypeId = 1">
@@ -142,14 +142,18 @@
           </td>
           <!-- /* ID */ -->
           <td ng-hide="labelHideList.accessId" class="tCenter">{{monitor.accessId}}</td>
-        <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
+        <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT]) ) :?>
           <!-- /* 操作 */ -->
           <td class='tCenter'>
             <?php if ( strcmp($userInfo['permission_level'], C_AUTHORITY_SUPER) !== 0) :?>
               <span ng-if="monitor.widget">
                 <span ng-if="!monitor.connectToken&&!monitor.docShare" id="shareToolBtn">
-                  <a class='monitorBtn blueBtn btn-shadow' href='javascript:void(0)' ng-click='windowOpen(monitor.tabId, monitor.accessId)' >画面共有</a>
-                  <a class='monitorBtn blueBtn btn-shadow' href='javascript:void(0)' ng-click='documentOpen(monitor.tabId, monitor.accessId)' >資料共有</a>
+                  <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
+                    <a class='monitorBtn blueBtn btn-shadow' href='javascript:void(0)' ng-click='windowOpen(monitor.tabId, monitor.accessId)' >画面共有</a>
+                  <?php endif; ?>
+                  <?php if ( isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT] ) :?>
+                    <a class='monitorBtn blueBtn btn-shadow' href='javascript:void(0)' ng-click='documentOpen(monitor.tabId, monitor.accessId)' >資料共有</a>
+                  <?php endif; ?>
                 </span>
               </span>
               <span ng-if="monitor.connectToken||monitor.docShare">

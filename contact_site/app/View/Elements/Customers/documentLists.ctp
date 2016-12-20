@@ -38,8 +38,8 @@ var pdfjsApi = {
         emit("docSendAction", {
           to: 'customer',
           mouse: {
-            x: e.clientX,
-            y: e.clientY
+            x: e.clientX * windowScale,
+            y: e.clientY * windowScale
           }
         });
       }, 10);
@@ -227,9 +227,53 @@ var pdfjsApi = {
       scale: pdfjsApi.currentScale
     });
   },
-  setWindowSize: function(){
-    var size = JSON.parse(sessionStorage.getItem("windowSize"));
-    window.resizeTo(size.width, size.height);
+  setWindowSize: function(wsInfo){
+    var cal = 1; // 縮尺
+
+    var frame = {width:null, height:null}; // iframeサイズ
+    // 描画有効サイズ
+    var enableScreen = {width:(screen.availWidth - frameSize.width), height:(screen.availHeight - frameSize.height)};
+    var ratio = {
+      w: wsInfo.width / enableScreen.width,
+      h: wsInfo.height / enableScreen.height
+    };
+    if ( ratio.w > 1 || ratio.h > 1 ) {
+      if (ratio.w > ratio.h) {
+        cal = Math.ceil((enableScreen.width / wsInfo.width)*100)/100;
+      }
+      else {
+        cal = Math.ceil((enableScreen.height / wsInfo.height)*100)/100;
+      }
+      frame.height = wsInfo.height * cal;
+      frame.width = wsInfo.width * cal;
+    }
+    else {
+      frame = wsInfo;
+    }
+
+    var wswidth = frame.width + frameSize.width;
+    var wsheight = frame.height + frameSize.height;
+
+    var winY = window.screenY, winX = window.screenX;
+    if ((screen.availHeight-window.screenY - wsheight) < 0) {
+      winY = screen.availHeight - wsheight;
+    }
+    if ((screen.availWidth-window.screenX - wswidth) < 0) {
+      winX = screen.availWidth - wswidth;
+    }
+
+    try {
+      windowSize = {'width': wswidth, 'height': wsheight};
+      var scale = wsInfo.width/frame.width;
+      sessionStorage.setItem('windowScale', scale);
+      windowScale = scale;
+
+      window.moveTo(winX, winY);
+      window.resizeTo(wswidth, wsheight);
+    }
+    catch(e) {
+      console.log("error resize.", e);
+    }
   },
   showpage: function(){
     // Asynchronous download PDF

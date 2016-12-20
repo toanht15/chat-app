@@ -844,7 +844,7 @@
         }
         var sincloBox = document.getElementById('sincloBox');
         // チャット未契約のときはウィジェットを非表示
-        if (sincloBox && (window.info.contract.chat || window.info.contract.synclo) ) {
+        if (sincloBox && (window.info.contract.chat || window.info.contract.synclo || (window.info.contract.hasOwnProperty('document') && window.info.contract.document)) ) {
           sincloBox.style.display = "block";
           sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
           sinclo.widget.condifiton.set(false);

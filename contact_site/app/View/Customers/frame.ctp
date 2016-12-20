@@ -377,10 +377,12 @@ window.onload = function(){
       <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_reconnect.png" width="40" height="40" alt=""></span>
       <p>再接続</p>
     </li>
-    <li ng-click="openDocumentList()">
-      <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_document.png" width="40" height="40" alt=""></span>
-      <p>資料請求</p>
-    </li>
+    <?php if(isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT]): ?>
+      <li ng-click="openDocumentList()">
+        <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_document.png" width="40" height="40" alt=""></span>
+        <p>資料共有</p>
+      </li>
+    <?php endif; ?>
     <li onclick="windowClose()">
       <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_disconnect.png" width="40" height="40" alt=""></span>
       <p>終了</p>

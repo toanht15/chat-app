@@ -148,9 +148,15 @@ class AppController extends Controller {
       case "TDictionaries":
       case "TAutoMessages":
       case "MChatNotifications":
-        if ( !$this->coreSettings["chat"] ) {
+        if ( !(isset($this->coreSettings[C_COMPANY_USE_CHAT]) && $this->coreSettings[C_COMPANY_USE_CHAT]) ) {
           $this->redirect("/");
         }
+        break;
+      case "TDocuments":
+        if ( !(isset($this->coreSettings[C_COMPANY_USE_DOCUMENT]) && $this->coreSettings[C_COMPANY_USE_DOCUMENT]) ) {
+          $this->redirect("/");
+        }
+        break;
     }
   }
 

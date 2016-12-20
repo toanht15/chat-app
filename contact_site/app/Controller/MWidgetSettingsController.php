@@ -242,8 +242,8 @@ class MWidgetSettingsController extends AppController {
     if ( $this->coreSettings[C_COMPANY_USE_CHAT] && !$this->coreSettings[C_COMPANY_USE_SYNCLO] ) {
       $d['widget']['showTab'] = "chat";
     }
-    // 画面同期のみ
-    else if ( $this->coreSettings[C_COMPANY_USE_SYNCLO] && !$this->coreSettings[C_COMPANY_USE_CHAT] ) {
+    // 画面・資料同期のみ
+    else if ( ($this->coreSettings[C_COMPANY_USE_SYNCLO] || (isset($this->coreSettings[C_COMPANY_USE_DOCUMENT]) && $this->coreSettings[C_COMPANY_USE_DOCUMENT]) ) && !$this->coreSettings[C_COMPANY_USE_CHAT] ) {
       $d['widget']['showTab'] = "call";
     }
     // どちらも
@@ -268,7 +268,7 @@ class MWidgetSettingsController extends AppController {
       foreach($list as $v) {
         switch ($key) {
           case 'chat':
-            if ( !$this->coreSettings['chat'] ) { continue; }
+            if ( !$this->coreSettings[C_COMPANY_USE_CHAT] ) { continue; }
             if ( strcmp($v, 'chat_radio_behavior') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['chat_radio_behavior'] = C_WIDGET_RADIO_CLICK_SEND; // デフォルト値
             }
@@ -296,7 +296,7 @@ class MWidgetSettingsController extends AppController {
             }
             break;
           case 'synclo':
-            if ( !$this->coreSettings['synclo'] ) { continue; }
+            if ( !($this->coreSettings[C_COMPANY_USE_SYNCLO] || (isset($this->coreSettings[C_COMPANY_USE_DOCUMENT]) && $this->coreSettings[C_COMPANY_USE_DOCUMENT]) ) ) { continue; }
 
             if ( isset($json[$v]) ) {
               $d[$v] = $json[$v];
