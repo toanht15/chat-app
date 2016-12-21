@@ -488,6 +488,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         dataType: 'json',
         success: function(json) {
           $scope.docShareId = tabId;
+          $scope.searchName = "";
           $("#ang-popup").addClass("show");
           var contHeight = $('#ang-popup-content').height();
           $('#ang-popup-frame').css('height', contHeight);

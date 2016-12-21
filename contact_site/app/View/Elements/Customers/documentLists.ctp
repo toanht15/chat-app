@@ -431,6 +431,7 @@ sincloApp.controller('MainCtrl', function($scope){
       dataType: 'json',
       success: function(json) {
         $("#ang-popup").addClass("show");
+        $scope.searchName = "";
         var contHeight = $('#ang-popup-content').height();
         $('#ang-popup-frame').css('height', contHeight);
         $scope.tagList = ( json.hasOwnProperty('tagList') ) ? JSON.parse(json.tagList) : {};
