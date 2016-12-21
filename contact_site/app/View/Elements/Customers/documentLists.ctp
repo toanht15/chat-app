@@ -483,6 +483,7 @@ sincloApp.controller('MainCtrl', function($scope){
    */
   $scope.shareDocument = function(doc) {
     var targetTabId = tabId.replace("_frame", "");
+    sessionStorage.removeItem('doc');
     window.open(
       "<?= $this->Html->url(['controller' => 'Customers', 'action' => 'docFrame']) ?>?tabInfo=" + encodeURIComponent(targetTabId) + "&docId=" + doc.id,
       "doc_monitor_" + targetTabId,

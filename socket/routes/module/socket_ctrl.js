@@ -1465,6 +1465,13 @@ io.sockets.on('connection', function (socket) {
     }
   });
 
+  // 資料共有のキャンセル
+  socket.on('docShareCancel', function(d){
+    var obj = JSON.parse(d);
+    var targetId = obj.tabId.replace("_frame", "");
+    emit.toUser('docDisconnect', obj, doc_connectList[targetId]["company"]);
+  });
+
  // 資料共有再接続
   socket.on('docShareReConnect', function(d) {
     var obj = JSON.parse(d);

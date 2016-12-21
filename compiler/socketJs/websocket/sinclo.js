@@ -788,6 +788,8 @@
       common.setVcInfo({receiverID: obj.receiverID, toTabId: obj.toTabId});
     },
     docShareConnect: function(obj){
+      sessionStorage.removeItem('doc');
+
       // 終了通知
       var title = location.host + 'の内容';
       var content = location.host + 'が資料共有を求めています。<br>許可しますか';
@@ -800,6 +802,10 @@
         var url = window.sincloInfo.site.files + "/docFrame/" + encodeURIComponent(JSON.stringify(params));
 
         window.open(url, "_blank", "width=" + size.width + ", height=" + size.height + ", resizable=yes,scrollbars=yes,status=no");
+        this.remove();
+      };
+      popup.no = function(){
+        emit('docShareCancel', obj);
         this.remove();
       };
       popup.set(title, content);
