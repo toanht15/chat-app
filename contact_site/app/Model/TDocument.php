@@ -35,7 +35,7 @@ class TDocument extends AppModel {
     'overview' => [
       'maxLength' => [
         'rule' => ['maxLength', 300],
-        'allowEmpty' => false,
+        'allowEmpty' => true,
         'message' => '概要を300文字以内で入力してください'
       ]
     ]

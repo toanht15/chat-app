@@ -38,8 +38,15 @@ function tagAdd(){
 
 //保存機能
 function saveAct(){
- document.getElementById('TDocumentManuscript').value = JSON.stringify(pdfjsApi.manuscript);
- document.getElementById('TDocumentEntryForm').submit();
+  document.getElementById('TDocumentManuscript').value = JSON.stringify(pdfjsApi.manuscript);
+  document.getElementById('TDocumentEntryForm').submit();
+  setTimeout(function(){
+    $("a").addClass("disableBtn").prop("onclick", "").click(
+      function(e){
+        e.preventDefault();e.stopImmediatePropagation();return false;
+      }
+    );
+  }, 100);
 }
 
 //一覧画面削除機能
@@ -186,6 +193,10 @@ var pdfjsApi, pdfjsCNST;
         var scale = ( widthScale > heightScale ) ? heightScale : widthScale;
         return page.getViewport(scale * pdfjsApi.currentScale, rotation);
       }
+
+      if ( pdfjsApi.page === undefined ) {
+        return false;
+      }
       var page = pdfjsApi.page;
       var rotate = pdfjsApi.rotation;
 
@@ -225,9 +236,7 @@ var pdfjsApi, pdfjsCNST;
   xhr.responseType = 'arraybuffer';
   xhr.onload = function(e) {
     if (this.status == 200) {
-      // Note: .response instead of .responseText
-      var blob = new Blob([this.response], {type: 'application/pdf'});
-      pdfjsApi.pdfUrl = URL.createObjectURL(blob);
+      pdfjsApi.pdfUrl = new Uint8Array(this.response);
       pdfjsApi.init();
     }
   };

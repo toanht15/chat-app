@@ -329,6 +329,9 @@ var pdfjsApi = {
       return page.getViewport(scale * pdfjsApi.currentScale);
     }
 
+    if ( pdfjsApi.page === undefined ) {
+      return false;
+    }
     var page = pdfjsApi.page;
 
     // Fetch canvas' 2d context
@@ -345,9 +348,9 @@ var pdfjsApi = {
       canvasContext: pdfjsApi.canvas.getContext('2d'),
       viewport: viewport
     }).then(function(){
-        document.getElementById('pages').textContent = pdfjsApi.currentPage + "/ " + pdfjsApi.pdf.pdfInfo.numPages;
-        pdfjsApi.canvas.style.opacity = 1;
-        pdfjsApi.renderFlg = false;
+      document.getElementById('pages').textContent = pdfjsApi.currentPage + "/ " + pdfjsApi.pdf.pdfInfo.numPages;
+      pdfjsApi.canvas.style.opacity = 1;
+      pdfjsApi.renderFlg = false;
     });
   },
   renderTimer: null,
@@ -365,9 +368,7 @@ var pdfjsApi = {
       if (this.status == 200) {
         sessionStorage.setItem('doc', JSON.stringify(doc));
         pdfjsApi.doc = doc;
-        // Note: .response instead of .responseText
-        var blob = new Blob([this.response], {type: 'application/pdf'});
-        pdfjsApi.pdfUrl = URL.createObjectURL(blob);
+        pdfjsApi.pdfUrl = new Uint8Array(this.response);
         pdfjsApi.currentPage = (sessionStorage.getItem('page') !== null) ? Number(sessionStorage.getItem('page')) : 1;
         pdfjsApi.currentScale = (sessionStorage.getItem('scale') !== null) ? Number(sessionStorage.getItem('scale')) : 1;
         pdfjsApi.manuscript = JSON.parse(doc.manuscript);

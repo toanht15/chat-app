@@ -10,7 +10,7 @@
 
       <!-- 概要 -->
       <li>
-        <span class="require"><label>概要</label></span>
+        <span><label>概要</label></span>
         <?=$this->Form->input('overview', ['type'=>'textarea','placeholder' => '概要','label' => false,'div' => false,'maxlength'=>300,'cols' => 25,'rows' => 5])?>
       </li>
       <!-- 概要 -->

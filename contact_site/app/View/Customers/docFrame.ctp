@@ -1,3 +1,4 @@
+<?php echo $this->element('Customers/documentLists') ?>
 <script type="text/javascript">
 <!--
 'use strict';
@@ -232,7 +233,6 @@ window.onload = function(){
   <div id="tabStatusMessage">別の作業をしています</div>
 
   <div id="document_canvas"></div>
-  <?php echo $this->element('Customers/documentLists') ?>
 
   <div id="ang-popup">
     <div id="ang-base">

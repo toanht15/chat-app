@@ -268,6 +268,10 @@ var pdfjsCNST, pdfjsApi, frameSize, scrollFlg;
         return page.getViewport(scale * pdfjsApi.currentScale);
       }
 
+      if ( pdfjsApi.page === undefined ) {
+        return false;
+      }
+
       var page = pdfjsApi.page;
       // Fetch canvas' 2d context
       var viewport = fitWindow(page);
@@ -315,9 +319,7 @@ var pdfjsCNST, pdfjsApi, frameSize, scrollFlg;
             document.getElementById('downloadBtn').style.display = "";
             document.getElementById('downloadFilePath').href = doc.url;
           }
-          // Note: .response instead of .responseText
-          var blob = new Blob([this.response], {type: 'application/pdf'});
-          pdfjsApi.pdfUrl = URL.createObjectURL(blob);
+          pdfjsApi.pdfUrl = new Uint8Array(this.response);
           pdfjsApi.currentPage = (sessionStorage.getItem('page') !== null) ? Number(sessionStorage.getItem('page')) : 1;
           pdfjsApi.currentScale = (sessionStorage.getItem('scale') !== null) ? Number(sessionStorage.getItem('scale')) : 1;
           pdfjsApi.init();
