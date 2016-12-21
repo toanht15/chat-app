@@ -27,6 +27,8 @@ var pdfjsApi = {
   init: function(){
     this.cngPage();
     this.showpage();
+    this.resetZoomType();// 拡大率を設定
+
     var canvas = document.getElementById('document_canvas');
 
     // マウス位置
@@ -91,14 +93,23 @@ var pdfjsApi = {
     window.addEventListener('resize', function(){
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(function(){
-        clearTimeout(resizeTimer);
         resizeTimer = null;
         var size = JSON.parse(sessionStorage.getItem('windowSize'));
         if ( size !== null && size.hasOwnProperty('width') && size.hasOwnProperty('height') && (size.width !== window.outerWidth || size.height !== window.outerHeight) ) {
+
+          var winY = window.screenY, winX = window.screenX;
+          if ((screen.availHeight-window.screenY - size.height) < 0) {
+            winY = screen.availHeight - size.height;
+          }
+          if ((screen.availWidth-window.screenX - (size.width - 100)) < 0) {
+            winX = screen.availWidth - (size.width - 100);
+          }
+
           window.resizeTo(size.width, size.height);
+          window.moveTo(winX, winY);
         }
         pdfjsApi.render();
-      }, 300);
+      }, 500);
     });
 
     // スクロール位置
@@ -131,7 +142,7 @@ var pdfjsApi = {
       pdfjsApi.currentPage--;
       pdfjsApi.cngPage();
       pdfjsApi.pageRender();
-      pdfjsApi.sendCtrlAction();
+      pdfjsApi.sendCtrlAction('page');
     }, pdfjsApi.pagingTimeTerm);
   },
   nextPage: function(){
@@ -143,7 +154,7 @@ var pdfjsApi = {
       if ( pdfjsApi.currentPage >= pdfjsApi.pdf.pdfInfo.numPages ) return pdfjsApi.notificate('LAST_PAGE');
       pdfjsApi.renderFlg = true;
       pdfjsApi.currentPage++;
-      pdfjsApi.sendCtrlAction();
+      pdfjsApi.sendCtrlAction('page');
       pdfjsApi.cngPage();
       pdfjsApi.pageRender();
     }, pdfjsApi.pagingTimeTerm);
@@ -189,7 +200,7 @@ var pdfjsApi = {
     this.zoomInTimer = setTimeout(function(){
       clearTimeout(pdfjsApi.zoomInTimer);
       pdfjsApi.currentScale = num;
-      pdfjsApi.sendCtrlAction();
+      pdfjsApi.sendCtrlAction('scale');
       pdfjsApi.render();
     }, pdfjsApi.zoomInTimeTerm);
   },
@@ -198,12 +209,13 @@ var pdfjsApi = {
     this.zoomInTimer = setTimeout(function(){
       clearTimeout(pdfjsApi.zoomInTimer);
       if ( pdfjsApi.currentScale >= 4 ) return false;
-        pdfjsApi.currentScale = Number(pdfjsApi.currentScale) + Number(num);
+        pdfjsApi.currentScale = Math.ceil( (Number(pdfjsApi.currentScale) + Number(num)) * 100 ) / 100;
       if ( pdfjsApi.currentScale > 4 ) {
         pdfjsApi.currentScale = 4;
       }
-      pdfjsApi.sendCtrlAction();
+      pdfjsApi.sendCtrlAction('scale');
       pdfjsApi.render();
+      pdfjsApi.resetZoomType();
     }, pdfjsApi.zoomInTimeTerm);
   },
   zoomOut: function(num){
@@ -211,21 +223,31 @@ var pdfjsApi = {
     this.zoomInTimer = setTimeout(function(){
       clearTimeout(pdfjsApi.zoomInTimer);
       if ( pdfjsApi.currentScale <= 0 ) return false;
-        pdfjsApi.currentScale = Number(pdfjsApi.currentScale) - Number(num);
+        pdfjsApi.currentScale = Math.ceil( (Number(pdfjsApi.currentScale) - Number(num)) * 100 ) / 100;
       if ( pdfjsApi.currentScale <= num ) {
         pdfjsApi.currentScale = num;
       }
-      pdfjsApi.sendCtrlAction();
+      pdfjsApi.sendCtrlAction('scale');
       pdfjsApi.render();
+      pdfjsApi.resetZoomType();
     }, pdfjsApi.zoomInTimeTerm);
   },
-  sendCtrlAction: function(){
-    var canvas = document.getElementById('document_canvas');
-    emit("docSendAction", {
-      to: 'customer',
-      page: pdfjsApi.currentPage,
-      scale: pdfjsApi.currentScale
-    });
+  resetZoomType: function(){
+    var scaleType = document.getElementById('scaleType');
+    for (var i = 0; i < scaleType.children.length; i++) {
+      scaleType[i].selected = false;
+    }
+    if ( document.querySelector("#scaleType option[value='" + Number(pdfjsApi.currentScale) + "']") ) {
+      document.querySelector("#scaleType option[value='" + Number(pdfjsApi.currentScale) + "']").selected = true;
+    }
+    else {
+      scaleType[0].selected = true;
+    }
+  },
+  sendCtrlAction: function(key){
+    var data = {to: 'customer'};
+    data[key] = ( key === "page" ) ? pdfjsApi.currentPage : pdfjsApi.currentScale ;
+    emit("docSendAction", data);
   },
   setWindowSize: function(wsInfo){
     var cal = 1; // 縮尺
@@ -264,6 +286,7 @@ var pdfjsApi = {
 
     try {
       windowSize = {'width': wswidth, 'height': wsheight};
+      sessionStorage.setItem('windowSize', JSON.stringify(windowSize));
       var scale = wsInfo.width/frame.width;
       sessionStorage.setItem('windowScale', scale);
       windowScale = scale;
@@ -351,17 +374,20 @@ var pdfjsApi = {
       document.getElementById('pages').textContent = pdfjsApi.currentPage + "/ " + pdfjsApi.pdf.pdfInfo.numPages;
       pdfjsApi.canvas.style.opacity = 1;
       pdfjsApi.renderFlg = false;
+      pdfjsApi.readFileState = true;
     });
   },
+  readFileState: null,
   renderTimer: null,
   notificate: function(code){
     if ( this.cnst.hasOwnProperty(code) ) {
       console.log(this.cnst[code]);
     }
   },
-  readFile: function(doc){
+  readFile: function(doc, callback){
     var file = "<?=C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/"?>" + doc.file_name;
     var xhr = new XMLHttpRequest();
+    pdfjsApi.readFileState = false;
     xhr.open('GET', file, true);
     xhr.responseType = 'arraybuffer';
     xhr.onload = function(e) {
@@ -374,6 +400,15 @@ var pdfjsApi = {
         pdfjsApi.manuscript = JSON.parse(doc.manuscript);
         pdfjsApi.init();
         document.getElementById('downloadFilePath').href = file;
+        var readTimer = setInterval(function(){
+          if ( pdfjsApi.readFileState ) {
+            clearInterval(readTimer);
+            callback(false);
+          }
+        }, 300);
+      }
+      else {
+        callback(true); // エラー
       }
     };
     xhr.send();
@@ -464,12 +499,16 @@ sincloApp.controller('MainCtrl', function($scope){
   $scope.changeDocument = function(doc){
     sessionStorage.setItem('page', 1);
     sessionStorage.setItem('scale', 1);
-    pdfjsApi.readFile(doc);
-    emit("changeDocument", {
-      url: "<?=C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/"?>" + doc.file_name,
-      pagenation_flg: doc.pagenation_flg,
-      download_flg: doc.download_flg
+    pdfjsApi.readFile(doc, function(err) {
+      if (err) return false;
+      emit("changeDocument", {
+        url: "<?=C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/"?>" + doc.file_name,
+        pagenation_flg: doc.pagenation_flg,
+        download_flg: doc.download_flg
+      });
+
     });
+
     $scope.closeDocumentList();
   };
 

@@ -46,22 +46,29 @@ var socket, emit, tabId = '<?=$tabInfo?>', url, emit, pdfjsApi, frameSize, windo
 // WebSocketサーバ接続イベント
 socket.on('connect', function(){
   var doc = <?=json_encode($docData['TDocument'], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_FORCE_OBJECT )?>;
+  var firstFlg = true;
   if ( sessionStorage.getItem("doc") !== null ) {
+    firstFlg = false;
     doc = JSON.parse(sessionStorage.getItem("doc"));
-    emit('docShareReConnect', {
-      from: 'company'
-    }); // 資料共有開始
   }
-  else {
-    emit('docShareConnect', {
-      from: 'company',
-      responderId: '<?=$userInfo["id"]?>',
-      url: "<?=C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/"?>" + doc.file_name,
-      pagenation_flg: doc.pagenation_flg,
-      download_flg: doc.download_flg
-    }); // 資料共有開始
-  }
-  pdfjsApi.readFile(doc);
+
+  pdfjsApi.readFile(doc, function(err){
+    if (err) return false;
+    if (firstFlg) {
+      emit('docShareConnect', {
+        from: 'company',
+        responderId: '<?=$userInfo["id"]?>',
+        url: "<?=C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/"?>" + doc.file_name,
+        pagenation_flg: doc.pagenation_flg,
+        download_flg: doc.download_flg
+      }); // 資料共有開始
+    }
+    else {
+      emit('docShareReConnect', {
+        from: 'company'
+      }); // 資料共有開始
+    }
+  });
 
   frameSize = {
     height: window.outerHeight - window.innerHeight,
@@ -119,6 +126,7 @@ window.onload = function(){
     }
     if ( obj.hasOwnProperty('scale') ) {
       pdfjsApi.currentScale = obj.scale;
+      pdfjsApi.resetZoomType();
     }
     if ( obj.hasOwnProperty('page') ) {
       pdfjsApi.currentPage = obj.page;

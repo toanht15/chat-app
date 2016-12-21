@@ -52,6 +52,9 @@
           </td>
         </tr>
         <?php endforeach; ?>
+        <?php if ( count($documentList) === 0 ) :?>
+          <td class="tCenter" colspan="5">保存された資料がありません</td>
+        <?php endif; ?>
       </tbody>
     </table>
   </div>
