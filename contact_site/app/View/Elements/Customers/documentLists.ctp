@@ -21,9 +21,9 @@ var pdfjsApi = {
   currentScale: 1,
   renderFlg: false,
   zoomInTimer: null,
-  zoomInTimeTerm: 200,
+  zoomInTimeTerm: 500,
   pagingTimer: null,
-  pagingTimeTerm: 200,
+  pagingTimeTerm: 500,
   init: function(){
     this.cngPage();
     this.showpage();
@@ -59,9 +59,13 @@ var pdfjsApi = {
 
     // Ctrl + ホイール
     window.addEventListener('wheel', function(e){
+      // 資料選択画面が表示されているときは無効化
+      if ( document.getElementById('ang-popup').classList.item("show") !== null ) {
+        return true;
+      }
       if ( e.ctrlKey ) {
         e.preventDefault();
-        if (e.preventDefault) { e.preventDefault(); }
+        clearTimeout(pdfjsApi.zoomInTimer);
         // 拡大
         if ( e.deltaY < 0 ) {
           pdfjsApi.zoomIn(0.1);
@@ -119,43 +123,44 @@ var pdfjsApi = {
   scrollTimer: null,
   scrollFunc: function(e){
     if ( pdfjsApi.scrollTimer !== null ) return false;
-    pdfjsApi.scrollTimer = setTimeout(function(){
-      clearTimeout(pdfjsApi.scrollTimer);
-      pdfjsApi.scrollTimer = null;
-      emit("docSendAction", {
-        to: 'customer',
-        scroll: {
-          top: e.target.scrollTop,
-          left: e.target.scrollLeft
-        }
-      });
-    }, 100);
+    clearTimeout(this.scrollTimer);
+    if ( document.getElementById('ang-popup').classList.item("show") === null ) {
+      pdfjsApi.scrollTimer = setTimeout(function(){
+        clearTimeout(pdfjsApi.scrollTimer);
+        pdfjsApi.scrollTimer = null;
+        emit("docSendAction", {
+          to: 'customer',
+          scroll: {
+            top: e.target.scrollTop,
+            left: e.target.scrollLeft
+          }
+        });
+      }, 100);
+    }
   },
   prevPage: function(){
     if ( pdfjsApi.renderFlg ) return false;
-
+    if ( pdfjsApi.currentPage < 2 ) return pdfjsApi.notificate('FIRST_PAGE');
     clearTimeout(this.pagingTimer);
     this.pagingTimer = setTimeout(function(){
       clearTimeout(pdfjsApi.pagingTimer);
-      if ( pdfjsApi.currentPage < 2 ) return pdfjsApi.notificate('FIRST_PAGE');
       pdfjsApi.renderFlg = true;
       pdfjsApi.currentPage--;
-      pdfjsApi.cngPage();
+      pdfjsApi.cngPage(); // 原稿差し替え
       pdfjsApi.pageRender();
       pdfjsApi.sendCtrlAction('page');
     }, pdfjsApi.pagingTimeTerm);
   },
   nextPage: function(){
     if ( pdfjsApi.renderFlg ) return false;
-
+    if ( pdfjsApi.currentPage >= pdfjsApi.pdf.pdfInfo.numPages ) return pdfjsApi.notificate('LAST_PAGE');
     clearTimeout(this.pagingTimer);
     this.pagingTimer = setTimeout(function(){
       clearTimeout(pdfjsApi.pagingTimer);
-      if ( pdfjsApi.currentPage >= pdfjsApi.pdf.pdfInfo.numPages ) return pdfjsApi.notificate('LAST_PAGE');
       pdfjsApi.renderFlg = true;
       pdfjsApi.currentPage++;
       pdfjsApi.sendCtrlAction('page');
-      pdfjsApi.cngPage();
+      pdfjsApi.cngPage(); // 原稿差し替え
       pdfjsApi.pageRender();
     }, pdfjsApi.pagingTimeTerm);
   },
@@ -189,11 +194,16 @@ var pdfjsApi = {
     }
     document.getElementById('manuscript').textContent = script;
   },
+  cngScaleTimer: null,
   cngScale: function(){
-    var type = document.getElementById('scaleType').value;
-    if ( type && !isNaN(Number(type)) ) {
-      this.zoom(type);
-    }
+    clearTimeout(pdfjsApi.cngScaleTimer);
+    pdfjsApi.cngScaleTimer = setTimeout(function(){
+      clearTimeout(pdfjsApi.cngScaleTimer);
+      var type = document.getElementById('scaleType').value;
+      if ( type && !isNaN(Number(type)) ) {
+        pdfjsApi.zoom(type);
+      }
+    }, pdfjsApi.zoomInTimeTerm);
   },
   zoom: function(num){
     clearTimeout(this.zoomInTimer);
@@ -205,10 +215,11 @@ var pdfjsApi = {
     }, pdfjsApi.zoomInTimeTerm);
   },
   zoomIn: function(num){
+    if ( pdfjsApi.currentScale >= 4 ) return false;
+
     clearTimeout(this.zoomInTimer);
     this.zoomInTimer = setTimeout(function(){
       clearTimeout(pdfjsApi.zoomInTimer);
-      if ( pdfjsApi.currentScale >= 4 ) return false;
         pdfjsApi.currentScale = Math.ceil( (Number(pdfjsApi.currentScale) + Number(num)) * 100 ) / 100;
       if ( pdfjsApi.currentScale > 4 ) {
         pdfjsApi.currentScale = 4;
@@ -219,10 +230,11 @@ var pdfjsApi = {
     }, pdfjsApi.zoomInTimeTerm);
   },
   zoomOut: function(num){
+    if ( pdfjsApi.currentScale <= 0 ) return false;
+
     clearTimeout(this.zoomInTimer);
     this.zoomInTimer = setTimeout(function(){
       clearTimeout(pdfjsApi.zoomInTimer);
-      if ( pdfjsApi.currentScale <= 0 ) return false;
         pdfjsApi.currentScale = Math.ceil( (Number(pdfjsApi.currentScale) - Number(num)) * 100 ) / 100;
       if ( pdfjsApi.currentScale <= num ) {
         pdfjsApi.currentScale = num;
@@ -414,6 +426,9 @@ var pdfjsApi = {
     xhr.send();
   }
 };
+
+// 拡縮率をキー押下で変更できないようにする
+$(document).on("keydown", "#scaleType", function(e){ return false; });
 
 var sincloApp = angular.module('sincloApp', []);
 sincloApp.controller('MainCtrl', function($scope){

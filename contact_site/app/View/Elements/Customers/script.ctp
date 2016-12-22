@@ -34,18 +34,6 @@ if ( window.hasOwnProperty('io') ) {
     return JSON.parse(data);
   }
 
-
-  var makeToken = function(){
-    var n = 20,
-        str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQESTUVWXYZ1234567890",
-        strLen = str.length,
-        token = "";
-        for(var i=0; i<n; i++){
-          token += str[Math.floor(Math.random()*strLen)];
-        }
-        return token;
-  };
-
   isset = function(a){
     return ( a !== undefined && a !== null && a !== "" );
   };

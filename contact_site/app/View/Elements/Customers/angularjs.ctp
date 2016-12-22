@@ -437,17 +437,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       return showData.join("\n");
     };
 
-    var makeToken = function(){
-      var n = 20,
-          str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQESTUVWXYZ1234567890",
-          strLen = str.length,
-          token = "";
-      for(var i=0; i<n; i++){
-        token += str[Math.floor(Math.random()*strLen)];
-      }
-      return token;
-    };
-
     $scope.windowOpen = function(tabId, accessId){
       var message = "アクセスID【" + accessId + "】のユーザーに接続しますか？<br><br>";
       var ua = $scope.monitorList[tabId].userAgent.toLowerCase();

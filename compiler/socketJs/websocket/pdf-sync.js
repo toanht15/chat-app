@@ -30,9 +30,9 @@ var pdfjsCNST, pdfjsApi, frameSize, scrollFlg;
     currentScale: 1,
     renderFlg: false,
     zoomInTimer: null,
-    zoomInTimeTerm: 200,
+    zoomInTimeTerm: 500,
     pagingTimer: null,
-    pagingTimeTerm: 200,
+    pagingTimeTerm: 500,
     init: function(){
       this.showpage();
       this.resetZoomType();
@@ -84,7 +84,7 @@ var pdfjsCNST, pdfjsApi, frameSize, scrollFlg;
       window.addEventListener('wheel', function(e){
         if ( e.ctrlKey ) {
           e.preventDefault();
-          if (e.preventDefault) { e.preventDefault(); }
+          clearTimeout(pdfjsApi.zoomInTimer);
           // 拡大
           if ( e.deltaY < 0 ) {
             pdfjsApi.zoomIn(0.1);
@@ -95,6 +95,7 @@ var pdfjsCNST, pdfjsApi, frameSize, scrollFlg;
           }
         }
         else {
+          clearTimeout(pdfjsApi.pagingTimer);
           var canvas = document.getElementById('document_canvas');
 
           // 前のページへ
@@ -118,6 +119,7 @@ var pdfjsCNST, pdfjsApi, frameSize, scrollFlg;
     scrollTimer: null,
     scrollFunc: function(e){
       if ( pdfjsApi.scrollTimer !== null ) return false;
+      clearTimeout(this.scrollTimer);
       pdfjsApi.scrollTimer = setTimeout(function(){
         clearTimeout(pdfjsApi.scrollTimer);
         pdfjsApi.scrollTimer = null;
@@ -154,15 +156,21 @@ var pdfjsCNST, pdfjsApi, frameSize, scrollFlg;
         pdfjsApi.sendCtrlAction('page');
       }, pdfjsApi.pagingTimeTerm);
     },
+    cngScaleTimer: null,
     cngScale: function(){
-      var type = document.getElementById('scaleType').value;
-      if ( type && !isNaN(Number(type)) ) {
-        this.zoom(type);
-      }
+      clearTimeout(pdfjsApi.cngScaleTimer);
+      pdfjsApi.cngScaleTimer = setTimeout(function(){
+        clearTimeout(pdfjsApi.cngScaleTimer);
+        var type = document.getElementById('scaleType').value;
+        if ( type && !isNaN(Number(type)) ) {
+          pdfjsApi.zoom(type);
+        }
+      }, pdfjsApi.zoomInTimeTerm);
     },
     zoom: function(num){
       clearTimeout(this.zoomInTimer);
       this.zoomInTimer = setTimeout(function(){
+        clearTimeout(this.zoomInTimer);
         pdfjsApi.currentScale = num;
         pdfjsApi.sendCtrlAction("scale");
         pdfjsApi.render();
@@ -442,3 +450,6 @@ var pdfjsCNST, pdfjsApi, frameSize, scrollFlg;
 
 // -->
 })();
+
+// 拡縮率をキー押下で変更できないようにする
+$(document).on("keydown", "#scaleType", function(e){ return false; });

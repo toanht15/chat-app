@@ -26,6 +26,17 @@
 
   }
 
+  function makeToken(){
+    var n = 20,
+        str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQESTUVWXYZ1234567890",
+        strLen = str.length,
+        token = "";
+    for(var i=0; i<n; i++){
+      token += str[Math.floor(Math.random()*strLen)];
+    }
+    return token;
+  };
+
   function trimToURL(excludes, url){
     var builder = { search: '', hash: '' }, baseUrl = url;
 

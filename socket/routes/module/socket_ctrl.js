@@ -1509,8 +1509,9 @@ io.sockets.on('connection', function (socket) {
 
   socket.on('docSendAction', function(d){
     var obj = JSON.parse(d);
-    sessionId = ( obj.to === 'company' ) ? doc_connectList[obj.tabId].company : doc_connectList[obj.tabId].customer;
-    emit.toUser('docSendAction', d, sessionId);
+    if ( (obj.tabId in doc_connectList) && (obj.to in doc_connectList[obj.tabId]) ) {
+      emit.toUser('docSendAction', d, doc_connectList[obj.tabId][obj.to]);
+    }
   });
 
   // ユーザーのアウトを感知

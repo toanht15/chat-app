@@ -33,9 +33,9 @@
                 <?=$this->Form->input('files', ['type'=>'file','placeholder' => '資料','label' => false,'div' => false])?>
                 <?=$this->Form->input('file_name', ['type'=>'hidden'])?>
               </upload>
-              <rotate class="btn-shadow greenBtn" onclick="pdfjsApi.rotate(); return false;">
+              <!-- <rotate class="btn-shadow greenBtn" onclick="pdfjsApi.rotate(); return false;">
                 <?=$this->Html->image('rotate90_w.png', ['alt' => '90度資料を回転する']);?>
-              </rotate>
+              </rotate> -->
             </controller>
           </content>
           <content>
@@ -61,10 +61,10 @@
         <input type="text" style="display:block; position: fixed; top: -500px; left: -500px; z-index: 0;">
         <input type="password" style="display:block; position: fixed; top: -500px; left: -500px; z-index: 0;">
       <?php } ?>
-      <li>
+      <!-- <li>
         <span><label>パスワード</label></span>
         <?= $this->Form->input('password', ['type' => 'password','placeholder' => 'パスワード','maxlength' => 30,'label' => false,'div' => false,'autocomplete' => 'off']) ?>
-      </li>
+      </li> -->
     </ul>
   </section>
 
