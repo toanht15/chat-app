@@ -1558,7 +1558,7 @@ io.sockets.on('connection', function (socket) {
           }
         }
         delete doc_connectList.timeout[socket.id];
-      }, 3000);
+      }, 5000);
       return false;
     }
     // リアルタイムモニタからのアクセスの場合
