@@ -3,6 +3,7 @@ $monitorSelected = "";
 $historySelected = "";
 $settingSelected = "";
 $chatSettingSelected = "";
+$docSettingSelected = "";
 switch ($this->name) {
     case 'Customers':
         $monitorSelected = "selected";
@@ -16,13 +17,15 @@ switch ($this->name) {
     case 'ScriptSettings':
     case 'TCampaigns':
     case 'DisplayExclusions':
-    case 'TDocuments':
         $settingSelected = "selected";
         break;
     case 'MChatNotifications':
     case 'TAutoMessages':
     case 'TDictionaries':
         $chatSettingSelected = "selected";
+        break;
+    case 'TDocuments':
+        $docSettingSelected = "selected";
         break;
 };
 $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
@@ -58,6 +61,11 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
             <?= $this->htmlEx->naviLink('ﾁｬｯﾄ設定', 'chat_setting.png') ?>
         </div>
       <?php endif; ?>
+      <?php if ($adminFlg && isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT]): ?>
+        <div class="icon <?=$docSettingSelected?>">
+          <?= $this->htmlEx->naviLink('資料設定', 'document.png', ['href' => ['controller' => 'TDocuments', 'action' => 'index']]) ?>
+        </div>
+      <?php endif; ?>
     </div>
 </div>
 <!-- /* サイドバー１（ここまで） */ -->
@@ -90,11 +98,6 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
       <div class="icon">
         <?= $this->htmlEx->naviLink('表示除外設定', 'exclusion.png', ['href' => ['controller' => 'DisplayExclusions', 'action' => 'index']]) ?>
       </div>
-      <?php if (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT]): ?>
-        <div class="icon">
-          <?= $this->htmlEx->naviLink('資料設定', 'document.png', ['href' => ['controller' => 'TDocuments', 'action' => 'index']]) ?>
-        </div>
-      <?php endif; ?>
     <?php endif; ?>
     </div>
     <!-- /* 共通 */ -->
@@ -118,6 +121,7 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
     <!-- /* チャット */ -->
 </div>
 <!-- /* サイドバー２（ここまで） */ -->
+
 <script type="text/javascript">
   var nowOpenType = "";
     $(".setting-icon").click(function(){

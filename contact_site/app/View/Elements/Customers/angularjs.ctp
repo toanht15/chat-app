@@ -481,7 +481,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           $("#ang-popup").addClass("show");
           var contHeight = $('#ang-popup-content').height();
           $('#ang-popup-frame').css('height', contHeight);
-          $scope.message = "アクセスID【" + accessId + "】のユーザーと資料共有を開始しますか？";
+          $scope.message = "アクセスID【" + accessId + "】のユーザーと資料共有を開始します。\n共有する資料を選択してください。";
           $scope.tagList = ( json.hasOwnProperty('tagList') ) ? JSON.parse(json.tagList) : {};
           $scope.documentList = ( json.hasOwnProperty('documentList') ) ? JSON.parse(json.documentList) : {};
           $scope.$apply();

@@ -7,13 +7,6 @@
 class TDocumentsController extends AppController {
   public $uses = ['TDocument','MDocumentTag'];
   public $components = ['Amazon'];
-  public $paginate = [
-    'TDocument' => [
-      'limit' => 10,
-      'order' => ['TDocument.id' => 'asc'],
-      'fields' => ['*'],
-    ]
-  ];
 
   public function beforeFilter(){
     parent::beforeFilter();
@@ -25,11 +18,14 @@ class TDocumentsController extends AppController {
    * @return void
    * */
   public function index() {
-    $this->paginate['TDocument']['conditions']['TDocument.m_companies_id'] = $this->userInfo['MCompany']['id'];
-    $documents =  $this->paginate('TDocument');
+    $documentList =  $this->TDocument->find('all', [
+      'conditions' => [
+        'TDocument.m_companies_id' => $this->userInfo['MCompany']['id']
+      ]
+    ]);
     $labelList = $this->MDocumentTag->find('list', ['fields'=> ['id','name']]);
-    $documentList = [];
-    foreach ($documents as $key => $document){
+    $showDocumentList = [];
+    foreach ($documentList as $key => $document){
       $tags = [];
       foreach((array)json_decode($document['TDocument']['tag'],true) as $id){
         if ( !empty($labelList[$id]) ) {
@@ -37,9 +33,9 @@ class TDocumentsController extends AppController {
         }
       }
       $document['TDocument']['tag'] = $tags;
-      $documentList[$key] = $document;
+      $showDocumentList[$key] = $document;
     }
-    $this->set('documentList', $documentList);
+    $this->set('documentList', $showDocumentList);
   }
 
   /* *
