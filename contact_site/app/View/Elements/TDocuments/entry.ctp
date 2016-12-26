@@ -21,6 +21,7 @@
         <documentArea>
           <content>
             <preview>
+              <span onclick="pdfjsApi.showpage(); return false;" class="reloadBtn"><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_reconnect.png" width="20" height="20" alt=""></span>
               <div id="document_canvas"></div>
               <paging>
                 <span onclick="pdfjsApi.prevPage(); return false;"><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_back.png" width="30" height="30" alt=""></span>
@@ -39,7 +40,7 @@
             </controller>
           </content>
           <content>
-            <p>原稿（<span class="pages"></span>）</p>
+            <p>原稿<span class="pages"></span></p>
             <textarea id="pages-text"></textarea>
             <?=$this->Form->hidden('manuscript')?>
           </content>

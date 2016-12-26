@@ -115,6 +115,7 @@ var pdfjsApi, pdfjsCNST;
     rotation: 0,
     manuscript: <?=$manuscript?>,
     init: function(){
+      pdfjsApi.currentPage = 1;
       // 原稿
       var textarea = document.getElementById('pages-text');
       if ( pdfjsApi.currentPage in pdfjsApi.manuscript ) {
@@ -216,7 +217,7 @@ var pdfjsApi, pdfjsCNST;
           canvasContext: pdfjsApi.canvas.getContext('2d'),
           viewport: viewport
         }).then(function(){
-          $('.pages').text(pdfjsApi.currentPage + "/ " + pdfjsApi.pdf.pdfInfo.numPages);
+          $('.pages').text("（" + pdfjsApi.currentPage + "/ " + pdfjsApi.pdf.pdfInfo.numPages + "）");
           pdfjsApi.canvas.style.opacity = 1;
         });
       }, 0);

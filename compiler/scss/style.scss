@@ -3693,6 +3693,25 @@ ul.naviBtn {
                 }
               }
 
+              span.reloadBtn {
+                position: absolute;
+                top: 2px;
+                right: 2px;
+                background-color: rgba(0,0,0,0.2);
+                display: block;
+                z-index: 9;
+                padding: 2px 1px 1px 3px;
+                width: 25px;
+                height: 25px;
+                border-radius: 15px;
+                box-shadow: 0 0 2px #929292;
+                cursor: pointer;
+
+                &:hover {
+                  background-color: #949494!important;
+                }
+              }
+
               paging {
                 position: absolute;
                 bottom: 0;
@@ -3705,9 +3724,17 @@ ul.naviBtn {
                 align-items: center;
 
                 > span {
-                    display: block;
-                    min-width: 3em;
-                    padding: 0.5em;
+                  display: flex;
+                  min-width: 3em;
+                  height: 3em;
+                  justify-content: center;
+                  align-items: center;
+                  cursor: default;
+
+                  &:not(.pages):hover {
+                      background-color: #797979;
+                      cursor: pointer;
+                  }
                 }
               }
             }

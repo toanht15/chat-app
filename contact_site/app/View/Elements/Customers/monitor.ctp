@@ -219,7 +219,7 @@
     <div id="ang-popup-frame">
       <div id="ang-popup-content" class="document_list">
         <div id="title_area">資料一覧</div>
-        <p id="description_area">{{message}}</p>
+        <pre id="description_area" style="margin-bottom: 0">{{message}}</pre>
         <div id="search_area">
           <?=$this->Form->input('name', ['label' => 'フィルター：', 'ng-model' => 'searchName']);?>
           <!-- <ng-multi-selector></ng-multi-selector> -->
@@ -228,7 +228,7 @@
           <ol>
             <li ng-repeat="document in docSearchFunc(documentList)" ng-click="shareDocument(document)">
               <div class="document_image">
-                <img src="{{::document.thumnail}}" style="width:10em;height:7em">
+                <img ng-src="{{::document.thumnail}}" style="width:10em;height:7em">
               </div>
               <div class="document_content">
                 <h3>{{::document.name}}</h3>
