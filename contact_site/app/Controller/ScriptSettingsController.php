@@ -6,8 +6,7 @@
 class ScriptSettingsController extends AppController {
 
   public function beforeRender(){
-    $protocol = (APP_MODE_DEV) ? "http" : "https";
-    $fileName = $protocol . ":" . C_NODE_SERVER_ADDR . C_NODE_SERVER_FILE_PORT . "/client/" . $this->userInfo['MCompany']['company_key'] . ".js";
+    $fileName = C_NODE_SERVER_ADDR . C_NODE_SERVER_FILE_PORT . "/client/" . $this->userInfo['MCompany']['company_key'] . ".js";
     $this->set("fileName", $fileName);
 
     $this->set("optList", [

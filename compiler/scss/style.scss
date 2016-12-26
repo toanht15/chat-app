@@ -3709,6 +3709,19 @@ ul.naviBtn {
 
                 &:hover {
                   background-color: #949494!important;
+
+                  &:before {
+                      content: "ページ再描画";
+                      position: absolute;
+                      top: 2.5em;
+                      right: -7em;
+                      background-color: #FFF;
+                      padding: 0.5em;
+                      width: 8em;
+                      text-align: center;
+                      box-shadow: 0 1.5px 4px rgba(0,0,0,0.6);
+                      border-radius: 4px;
+                  }
                 }
               }
 
