@@ -47,7 +47,11 @@ class TopsController extends AppController {
   *@return void
   */
   public function index() {
-  	// /pr($this->paginate('MCompany')); exit();
+  $data = $this->MCompany->find('all',[
+    //'conditions' => array('company_key' => 'template')
+   ]);
+  //pr($data); exit();
+  //pr($this->paginate('MCompany')); exit();
     $this->set('companyList', $this->paginate('MCompany'));
   }
 

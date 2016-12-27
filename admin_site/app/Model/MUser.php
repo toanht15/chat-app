@@ -56,7 +56,6 @@ class MUser extends AppModel {
     }
 
     $ret = $this->find('all', ['fields' => 'MUser' . '.*', 'conditions' => $str]);
-    //pr($ret); exit();
     if ( !empty($ret) ) {
       return false;
     }

@@ -16,17 +16,14 @@
       cache: false,
       dataType: "JSON",
       success: function(data){
-      	console.log(('haitteru'));
-      	var keys = Object.keys(data), num = 0;
+        var keys = Object.keys(data), num = 0;
         $(".error-message").remove();
           if (keys.length === 0 ) {
-          	console.log('hei!');
             location.href = "<?=$this->Html->url(array('controller' => 'MAdministrators', 'action' => 'index'))?>";
             return false;
           }
           for (var i = 0; i < keys.length; i++) {
             if ( data[keys[i]].length > 0 ) {
-            	console.log('ooo');
               var target = $("[name='data[MAdministrator][" + keys[i] + "]']");
               for (var u = 0; u < data[keys[i]].length; u++) {
                 target.after("<p class='error-message hide'>" + data[keys[i]][u] + "</p>");
@@ -35,7 +32,6 @@
             }
           }
           if ( num > 0 ) {
-          	console.log('aaaa');
             var newHeight = $("#popup-content").height() + (num * 15);
             $("#popup-frame").animate({
             height: newHeight + "px"

@@ -33,7 +33,6 @@ function saveEdit(){
 
 //一覧画面削除機能
 function remoteDeleteCompany(companyId,userId,companyKey){
-  console.log(companyId);
   modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', '契約設定');
   popupEvent.closePopup = function(){
     $.ajax({

@@ -147,7 +147,6 @@ class MAdministrator extends AppModel {
       $str['MAdministrator' . '.id !='] = $this->id;
     }
     $ret = $this->find('all', ['fields' => 'MAdministrator' . '.*', 'conditions' => $str]);
-    $this->log($ret,LOG_DEBUG);
     if ( !empty($ret) ) {
       return false;
     }

@@ -9,7 +9,6 @@ class TDocumentsController extends AppController {
   public $components = ['Amazon'];
   public $paginate = [
     'TDocument' => [
-      'limit' => 10,
       'order' => ['TDocument.id' => 'asc'],
       'fields' => ['*'],
     ]

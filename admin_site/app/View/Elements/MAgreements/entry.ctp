@@ -56,6 +56,11 @@
   <div class="labelArea fLeft"><span><label>申し込み情報</label></span></div>
   <?= $this->Form->input('application_department', array('div' => false, 'label' => '部署名', 'maxlength' => 50)) ?>
 </li>
+<!-- /* 申し込み情報役職名 */ -->
+<li>
+  <div class="labelArea fLeft"><span><label></label></span></div>
+  <?= $this->Form->input('application_position', array('div' => false, 'label' => '役職名', 'maxlength' => 50)) ?>
+</li>
 <!-- /* 申し込み情報名前 */ -->
 <li>
   <div class="labelArea fLeft"><span><label></label></span></div>

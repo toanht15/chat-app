@@ -39,7 +39,7 @@ class MUsersController extends AppController {
       'conditions' => [
       'MUser.del_flg != ' => 1,
       'MUser.permission_level !=' => C_AUTHORITY_SUPER,
-      //'MUser.m_companies_id' => $this->userInfo['MCompany']['id']
+      'MUser.m_companies_id' => $this->userInfo['MCompany']['id']
       ]
     ]));
   }
@@ -73,8 +73,7 @@ class MUsersController extends AppController {
     $saveData = [];
     $insertFlg = true;
     $errorMessage = null;
-   // $this->log($this->request->data,LOG_DEBUG);
-    //if ( !$this->request->is('ajax') ) return false;
+    if ( !$this->request->is('ajax') ) return false;
     if (!empty($this->request->data['userId'])) {
       $this->MUser->recursive = -1;
       $tmpData = $this->MUser->read(null, $this->request->data['userId']);

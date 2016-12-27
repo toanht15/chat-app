@@ -57,6 +57,7 @@ class MAgreementsController extends AppController {
       $transactions = $this->TransactionManager->begin();
       $saveData = $this->request->data;
 
+
       if($this->_mcompany($saveData) && $this->_muser($saveData) && $this->_magreement($saveData) && $this->_tdictionary($saveData) && $this->_tautomessage($saveData) && $this->_mwidgetsetting($saveData)) {
         $this->TransactionManager->commit($transactions);
         //jsファイル作成

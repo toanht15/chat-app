@@ -39,7 +39,7 @@ switch ($this->name) {
   <div id="logo" ><?=$this->Html->image('sinclo_square_logo.png', ['width'=>54, 'height'=>48])?></div>
   <nav>
     <ul>
-      <li class="link nav-group <?=$topSelected?>" onclick= "location.href = '<?=$this->Html->url(array('controller' => 'Tops', 'action' => 'index'))?>';"><i class="fa fa-home fa-lg" aria-hidden="true"></i>ホーム</li>
+      <li class="link nav-group <?=$topSelected?>" onclick= "location.href = '<?=$this->Html->url(array('controller' => 'Tops', 'action' => 'index#tab1'))?>';"><i class="fa fa-home fa-lg" aria-hidden="true"></i>ホーム</li>
       <li class="nav-group <?=$agreements?>"><i class="fa fa-building fa-lg" aria-hidden="true"></i>システム</li>
       <li class="link <?=$agreements?>" onclick= "location.href = '<?=$this->Html->url(array('controller' => 'MAgreements', 'action' => 'index'))?>';">契約管理</li>
       <li>メール配信</li>

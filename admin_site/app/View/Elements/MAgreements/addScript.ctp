@@ -28,8 +28,6 @@ function saveAct(){
     dataType: 'text',
     url: "<?= $this->Html->url('http://contact.sinclo/MUsers/remoteSaveForm') ?>",
     success: function(data){
-      console.log('ueeei');
-      console.log(data);
       $('#MAgreementHashPassword').val(data);
       document.getElementById('MAgreementAddForm').submit();
     }
@@ -56,7 +54,6 @@ $(function(){
 
 
 function remoteDeleteCompany(id,companyId,userId,companyKey){
-  console.log(companyKey);
   modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', 'アカウント設定');
   popupEvent.closePopup = function(){
     $.ajax({

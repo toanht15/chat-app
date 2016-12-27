@@ -150,10 +150,10 @@ a {
 
 [class$='_message'] {
   &.notification_message {
-    color: #26a69a;
+    color: $success-color;
   }
   &.error_message {
-    color: #E57373;
+    color: $notification-color;
   }
 }
 
@@ -529,14 +529,14 @@ div#sidebar{
       }
 
       &.on:hover:before,&:not(.on):hover:before {
-        color:#596d8f;
+        color:$normal-color;
       }
     }
 
     .action_btn {
       font-size: 12px;
       font-size: 1.1rem;
-      border: 1px solid #656565;
+      border: 1px solid $font-color;
       border-radius: 5px;
       padding: 0.25em 0.5em;
       display: block;
@@ -549,7 +549,7 @@ div#sidebar{
     .normal_btn {
       font-size: 12px;
       font-size: 1.1rem;
-      border: 1px solid #656565;
+      border: 1px solid $font-color;
       border-radius: 5px;
       padding: 0.25em 0.5em;
       display: block;
@@ -562,7 +562,7 @@ div#sidebar{
     .on{
       color: #FFF;
       background-color: $normal-color;
-      border-color: #596d8f;
+      border-color: $normal-color;
     }
   }
 }
@@ -647,7 +647,7 @@ div#sidebar{
   }
 
   i.fa.fa-home.fa-2x {
-    color: #596d8f;
+    color: $normal-color;
     margin-top: 6px;
   }
 
@@ -752,7 +752,7 @@ div#sidebar{
   }
 
   i.fa.fa-home.fa-2x {
-    color: #596d8f;
+    color: $normal-color;
     margin-top: 6px;
   }
 
@@ -802,8 +802,8 @@ div#sidebar{
     border-radius: 8px;
     height: 1.5em;
     min-width: 10em;
-    border-color: #656565;
-    color: #656565;
+    border-color: $font-color;
+    color: $font-color;
     font-size: 13px;
     font-weight: bold;
     -webkit-appearance: button;
