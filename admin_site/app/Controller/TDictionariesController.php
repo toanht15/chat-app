@@ -18,9 +18,9 @@ class TDictionariesController extends AppController {
   * @return void
   * */
   public function index() {
-  	 $data = $this->TDictionary->find('all',[
-        'conditions' => array('company_key' => 'template')
-      ]);
+    $data = $this->TDictionary->find('all',[
+      'conditions' => array('company_key' => 'template')
+    ]);
     //MCompany SessionData
     $mcompanyData = $this->Session->read('global.tmpdata')[0];
     $this->set('dictionaryList', $this->TDictionary->find('all', $this->_setParams()));
