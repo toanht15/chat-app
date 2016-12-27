@@ -169,16 +169,12 @@ class MUser extends AppModel {
         return true;
     }
 
-        public function passwordHash($pass) {
-       	$this->log('kokoko',LOG_DEBUG);
-         $this->log($pass,LOG_DEBUG);
-        if ( !empty($pass) ) {
-        	$this->log('aaaaaaieieiie',LOG_DEBUG);
-            $data = $this->makePassword($pass);
-            $this->log($data,LOG_DEBUG);
-        }
-        $password = $data;
-        return $password;
+    public function passwordHash($pass) {
+    if ( !empty($pass) ) {
+        $data = $this->makePassword($pass);
+    }
+    $password = $data;
+    return $password;
     }
 
     public function makePassword($str){

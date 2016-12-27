@@ -33,7 +33,6 @@ class TopsController extends AppController {
       ],
       'conditions' => [
         'MCompany.del_flg != ' => 1,
-        //'trial_flg =' => 1
       ],
     ]
   ];
@@ -47,11 +46,6 @@ class TopsController extends AppController {
   *@return void
   */
   public function index() {
-  $data = $this->MCompany->find('all',[
-    //'conditions' => array('company_key' => 'template')
-   ]);
-  //pr($data); exit();
-  //pr($this->paginate('MCompany')); exit();
     $this->set('companyList', $this->paginate('MCompany'));
   }
 
