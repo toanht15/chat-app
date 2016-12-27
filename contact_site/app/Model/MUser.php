@@ -171,15 +171,15 @@ class MUser extends AppModel {
 
     public function passwordHash($pass) {
     if ( !empty($pass) ) {
-        $data = $this->makePassword($pass);
+      $data = $this->makePassword($pass);
     }
     $password = $data;
     return $password;
     }
 
     public function makePassword($str){
-        $passwordHasher = new SimplePasswordHasher();
-        return $passwordHasher->hash($str);
+      $passwordHasher = new SimplePasswordHasher();
+      return $passwordHasher->hash($str);
     }
 
 
