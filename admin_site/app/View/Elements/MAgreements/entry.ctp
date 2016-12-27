@@ -99,7 +99,7 @@
    <?php if (!empty($errors['mail_address'])) echo "<li class='error-message'>" . h($errors['mail_address'][0]) . "</li>"; ?>
   </li>
 <?php } ?>
-
+<!-- /* 編集画面の時　メールアドレス */ -->
 <?php if ($this->params->action == 'edit') { ?>
   <li>
     <div class="labelArea fLeft"><span class="require"><label>スーパー管理者</label></span></div>
@@ -107,7 +107,7 @@
     <?php if (!empty($userErrors['mail_address'])) echo "<li class='error-message'>" . h($userErrors['mail_address'][0]) . "</li>"; ?>
   </li>
 <?php } ?>
-
+<!-- /* 編集画面の時　id受け渡し */ -->
   <?php if ($this->params->action == 'edit') { ?>
   <li>
     <?= $this->Form->input('m_companies_id', array('type' => 'hidden','div' => false)) ?>
