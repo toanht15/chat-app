@@ -141,6 +141,47 @@ $(document).ready(function(){
     document.getElementById('HistoryIndexForm').submit();
   });
 
+  var outputCSVBtn = document.getElementById('outputChat');
+  outputCSVBtn.addEventListener('click', function(){
+    var thead = document.querySelector('#history_list thead');
+    var tbody = document.querySelector('#history_list tbody');
+    var data = [];
+    // CSVに不要な列が追加されたら空をセット
+    var label = ["date","","ip","useragent","campaign","referrer","pageCnt","visitTime","status", "user"];
+    var noCsvData = {};
+
+    for (var a = 0; a < thead.children[0].children.length; a++) {
+      var th = thead.children[0].children[a];
+      if ( th.className.match(/noOutCsv/) !== null ) {
+        noCsvData[a] = "";
+      }
+    }
+
+    for(var i = 0; i < tbody.children.length; i++){
+      var tr = tbody.children[i];
+      var tdList = tr.children;
+      var row = {};
+      for(var u = 0; u < tdList.length; u++){
+        if (!(u in noCsvData)) {
+                  var td = tdList[u];
+                  if ( td.children.length === 0 ) {
+                    row[label[u]] = td.textContent;
+                  }
+                  else {
+                    row[label[u]] = td.children[0].textContent;
+                  }
+                  if ( u === (label.length - 1) ) {
+                    data.push(row);
+                  }
+
+        }
+      }
+    }
+    document.getElementById('HistoryOutputData').value = JSON.stringify(data);
+    document.getElementById('HistoryIndexForm').action = '<?=$this->Html->url(["controller"=>"Histories", "action" => "outputCSVOfHistory"])?>';
+    document.getElementById('HistoryIndexForm').submit();
+  });
+
   $('#dateperiod').daterangepicker({
     "ranges": {
       '今日': [moment(), moment()],

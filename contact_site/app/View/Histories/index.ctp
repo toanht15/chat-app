@@ -12,6 +12,11 @@
         'javascript:void(0)',
         array('escape' => false, 'class'=>'skyBlueBtn btn-shadow', 'id' => 'outputCSV'));
       ?>
+      <?php echo $this->Html->link(
+        'ＣＳＶ出力2',
+        'javascript:void(0)',
+        array('escape' => false, 'class'=>'skyBlueBtn btn-shadow', 'id' => 'outputChat'));
+      ?>
   </div>
 
   <div id='history_menu' class="p20trl">
