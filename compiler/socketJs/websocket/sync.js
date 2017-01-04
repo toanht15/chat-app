@@ -502,6 +502,24 @@ var cnst, init, check, userInfo, browserInfo, url, syncEvent, sinclo, common, st
         }, browserInfo.interval);
       }
     },
+    docShareConnect: function(d){
+      var obj = JSON.parse(d);
+      // 終了通知
+      var title = location.host + 'の内容';
+      var content = location.host + 'が資料共有を求めています。<br>許可しますか';
+      popup.ok = function(){
+        var size = browserInfo.windowSize();
+        var params = {
+          data: obj,
+          site: window.info.site
+        };
+        var url = window.info.site.files + "/docFrame/" + encodeURIComponent(JSON.stringify(params));
+
+        window.open(url, "_blank", "width=" + size.width + ", height=" + size.height + ", resizable=yes,scrollbars=yes,status=no");
+        this.remove();
+      };
+      popup.set(title, content);
+    },
     resUrlChecker: function(d){
       var obj = JSON.parse(d);
       // 戻る & 進む以外でのアクションの場合
@@ -545,6 +563,7 @@ var cnst, init, check, userInfo, browserInfo, url, syncEvent, sinclo, common, st
 
   init = function(){
     st = io.connect(site.socket, {port: 9090, rememberTransport : false});
+    popup.settings.filesPath = site.files;
 
     emit = function(key, data){
       data.siteKey = site.key;
@@ -581,7 +600,7 @@ var cnst, init, check, userInfo, browserInfo, url, syncEvent, sinclo, common, st
       iframe = document.createElement('iframe');
       iframe.width = window.innerWidth - 100;
       iframe.height = window.innerHeight;
-      iframe.sandbox = "allow-scripts allow-top-navigation allow-forms allow-same-origin allow-modals";
+      iframe.sandbox = "allow-scripts allow-top-navigation allow-forms allow-same-origin allow-modals allow-popups";
 
       iframe.src = common.setUrl(url);
       frameDiv.appendChild(iframe);
@@ -600,6 +619,10 @@ var cnst, init, check, userInfo, browserInfo, url, syncEvent, sinclo, common, st
         windowSize: common.windowSize(),
       });
     }); // socket-on: connectedFromSync
+
+    st.on("docShareConnect", function(d){
+      sinclo.docShareConnect(d);
+    }); // socket-on: docShareConnect
 
     st.on("syncResponce", function(d){
       sinclo.syncResponce(d);

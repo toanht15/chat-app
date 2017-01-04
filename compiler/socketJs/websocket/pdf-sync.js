@@ -1,7 +1,6 @@
-var pdfjsCNST, pdfjsApi, frameSize, docDownload;
-(function($){
+var pdfjsCNST, pdfjsApi, frameSize, scrollFlg;
+(function(){
   PDFJS.workerSrc = site.files + "/websocket/pdf.worker.min.js";
-
   pdfjsCNST = function(){
     return {
       FIRST_PAGE: "最初のページ",
@@ -9,14 +8,34 @@ var pdfjsCNST, pdfjsApi, frameSize, docDownload;
     };
   };
 
+  $(document).on("hover", ".showDescriptionBottom",function(e){
+    var desc = $(this).data('description');
+    if ( desc === undefined ) return false;
+    var d = document.getElementById("desc-balloon");
+    d.textContent = desc;
+    d.style.top = 50 + $(this).offset().top + "px";
+    d.style.left = $(this).offset().left + "px";
+    d.style.display = "block";
+  })
+  .on("blur", ".showDescriptionBottom",function(e){
+    var d = document.getElementById("desc-balloon");
+    d.style.display = "none";
+  });
+
   pdfjsApi = {
     cnst: new pdfjsCNST(),
     pdf: null,
     pdfUrl: null,
     currentPage: 1,
     currentScale: 1,
+    renderFlg: false,
+    zoomInTimer: null,
+    zoomInTimeTerm: 500,
+    pagingTimer: null,
+    pagingTimeTerm: 500,
     init: function(){
       this.showpage();
+      this.resetZoomType();
       var canvas = document.getElementById('document_canvas');
 
       emit("docSendAction", {
@@ -24,10 +43,6 @@ var pdfjsCNST, pdfjsApi, frameSize, docDownload;
         scroll: {
           top: canvas.scrollTop,
           left: canvas.scrollLeft
-        },
-        offset: {
-          width: window.innerWidth,
-          height: window.innerHeight
         },
         page: pdfjsApi.currentPage,
         scale: pdfjsApi.currentScale
@@ -48,12 +63,12 @@ var pdfjsCNST, pdfjsApi, frameSize, docDownload;
       // ウィンドウリサイズ
       var resizeTimer = null;
       window.addEventListener('resize', function(){
-        if ( resizeTimer ) {
-          clearTimeout(resizeTimer);
-        }
+        clearTimeout(resizeTimer);
         resizeTimer = setTimeout(function(){
+          clearTimeout(resizeTimer);
+          resizeTimer = null;
           pdfjsApi.sendPositionAction();
-          pdfjsApi.showpage();
+          pdfjsApi.render();
         }, 300);
       });
       // キープレス
@@ -68,9 +83,8 @@ var pdfjsCNST, pdfjsApi, frameSize, docDownload;
       // Ctrl + ホイール
       window.addEventListener('wheel', function(e){
         if ( e.ctrlKey ) {
-          if (e.preventDefault) {
-            e.preventDefault();
-          }
+          e.preventDefault();
+          clearTimeout(pdfjsApi.zoomInTimer);
           // 拡大
           if ( e.deltaY < 0 ) {
             pdfjsApi.zoomIn(0.1);
@@ -79,12 +93,36 @@ var pdfjsCNST, pdfjsApi, frameSize, docDownload;
           else {
             pdfjsApi.zoomOut(0.1);
           }
-          return false;
+        }
+        else {
+          clearTimeout(pdfjsApi.pagingTimer);
+          var canvas = document.getElementById('document_canvas');
+
+          // 前のページへ
+          if ( e.deltaY < 0 ) {
+            if ( canvas.scrollTop !== 0 ) return false;
+            if (e.preventDefault) { e.preventDefault(); }
+            pdfjsApi.prevPage();
+          }
+          // 次のページへ
+          else {
+            if ( (canvas.scrollHeight - canvas.clientHeight) !== canvas.scrollTop ) return false;
+            if (e.preventDefault) { e.preventDefault(); }
+            pdfjsApi.nextPage();
+          }
         }
       });
-
       // スクロール位置
-      $("#document_canvas").stop().on('scroll', function(e){
+      pdfjsApi.scrollTimer = null;
+      canvas.addEventListener('scroll', this.scrollFunc);
+    },
+    scrollTimer: null,
+    scrollFunc: function(e){
+      if ( pdfjsApi.scrollTimer !== null ) return false;
+      clearTimeout(this.scrollTimer);
+      pdfjsApi.scrollTimer = setTimeout(function(){
+        clearTimeout(pdfjsApi.scrollTimer);
+        pdfjsApi.scrollTimer = null;
         emit("docSendAction", {
           to: 'company',
           scroll: {
@@ -92,54 +130,96 @@ var pdfjsCNST, pdfjsApi, frameSize, docDownload;
             left: e.target.scrollLeft
           }
         });
-      });
-    },
-    docDownload: function(){
-
+      }, 100);
     },
     prevPage: function(){
+      if ( this.renderFlg ) return false;
       if ( this.currentPage < 2 ) return this.notificate('FIRST_PAGE');
-      this.currentPage--;
-      this.showpage();
-      pdfjsApi.sendCtrlAction();
+      clearTimeout(this.pagingTimer);
+      this.pagingTimer = setTimeout(function(){
+        clearTimeout(pdfjsApi.pagingTimer);
+        pdfjsApi.renderFlg = true;
+        pdfjsApi.currentPage--;
+        pdfjsApi.pageRender();
+        pdfjsApi.sendCtrlAction('page');
+      }, pdfjsApi.pagingTimeTerm);
     },
     nextPage: function(){
+      if ( this.renderFlg ) return false;
       if ( this.currentPage >= this.pdf.pdfInfo.numPages ) return this.notificate('LAST_PAGE');
-      this.currentPage++;
-      pdfjsApi.sendCtrlAction();
-      this.showpage();
+      clearTimeout(this.pagingTimer);
+      this.pagingTimer = setTimeout(function(){
+        clearTimeout(pdfjsApi.pagingTimer);
+        pdfjsApi.renderFlg = true;
+        pdfjsApi.currentPage++;
+        pdfjsApi.pageRender();
+        pdfjsApi.sendCtrlAction('page');
+      }, pdfjsApi.pagingTimeTerm);
     },
+    cngScaleTimer: null,
     cngScale: function(){
-      var type = document.getElementById('scaleType').value;
-      if ( type && !isNaN(Number(type)) ) {
-        this.zoom(type);
-      }
+      clearTimeout(pdfjsApi.cngScaleTimer);
+      pdfjsApi.cngScaleTimer = setTimeout(function(){
+        clearTimeout(pdfjsApi.cngScaleTimer);
+        var type = document.getElementById('scaleType').value;
+        if ( type && !isNaN(Number(type)) ) {
+          pdfjsApi.zoom(type);
+        }
+      }, pdfjsApi.zoomInTimeTerm);
     },
     zoom: function(num){
-      this.currentScale = num;
-      pdfjsApi.sendCtrlAction();
-      this.render();
+      clearTimeout(this.zoomInTimer);
+      this.zoomInTimer = setTimeout(function(){
+        clearTimeout(this.zoomInTimer);
+        pdfjsApi.currentScale = num;
+        pdfjsApi.sendCtrlAction("scale");
+        pdfjsApi.render();
+      }, pdfjsApi.zoomInTimeTerm);
     },
     zoomIn: function(num){
       if ( this.currentScale >= 4 ) return false;
-      this.currentScale+=num;
-      if ( this.currentScale > 4 ) {
-        this.currentScale = 4;
-      }
-      pdfjsApi.sendCtrlAction();
-      pdfjsApi.render();
+
+      clearTimeout(this.zoomInTimer);
+      this.zoomInTimer = setTimeout(function(){
+        clearTimeout(pdfjsApi.zoomInTimer);
+        pdfjsApi.currentScale = Math.ceil( (Number(pdfjsApi.currentScale) + Number(num)) * 100 ) / 100;
+        if ( pdfjsApi.currentScale > 4 ) {
+          pdfjsApi.currentScale = 4;
+        }
+        pdfjsApi.sendCtrlAction("scale");
+        pdfjsApi.render();
+        pdfjsApi.resetZoomType();
+      }, pdfjsApi.zoomInTimeTerm);
     },
     zoomOut: function(num){
       if ( this.currentScale <= 0 ) return false;
-      this.currentScale-=num;
-      if ( this.currentScale <= num ) {
-        this.currentScale = num;
+
+      clearTimeout(this.zoomInTimer);
+      this.zoomInTimer = setTimeout(function(){
+        clearTimeout(pdfjsApi.zoomInTimer);
+        pdfjsApi.currentScale = Math.ceil( (Number(pdfjsApi.currentScale) - Number(num)) * 100 ) / 100;
+        if ( pdfjsApi.currentScale <= num ) {
+          pdfjsApi.currentScale = num;
+        }
+        pdfjsApi.sendCtrlAction("scale");
+        pdfjsApi.render();
+        pdfjsApi.resetZoomType();
+      }, pdfjsApi.zoomInTimeTerm);
+    },
+    resetZoomType: function(){
+      var scaleType = document.getElementById('scaleType');
+
+      for (var i = 0; i < scaleType.children.length; i++) {
+        scaleType[i].selected = false;
       }
-      pdfjsApi.sendCtrlAction();
-      pdfjsApi.render();
+      if ( document.querySelector("#scaleType option[value='" + Number(pdfjsApi.currentScale) + "']") ) {
+        document.querySelector("#scaleType option[value='" + Number(pdfjsApi.currentScale) + "']").selected = true;
+      }
+      else {
+        scaleType[0].selected = true;
+      }
     },
     sendPositionAction: function(){
-      var canvas = document.getElementById('document_canvas');
       emit("docSendAction", {
         to: 'company',
         offset: {
@@ -148,13 +228,10 @@ var pdfjsCNST, pdfjsApi, frameSize, docDownload;
         }
       });
     },
-    sendCtrlAction: function(){
-      var canvas = document.getElementById('document_canvas');
-      emit("docSendAction", {
-        to: 'company',
-        page: pdfjsApi.currentPage,
-        scale: pdfjsApi.currentScale
-      });
+    sendCtrlAction: function(key){
+      var data = {to: 'company'};
+      data[key] = ( key === "page" ) ? pdfjsApi.currentPage : pdfjsApi.currentScale ;
+      emit("docSendAction", data);
     },
     showpage: function(){
       // Asynchronous download PDF
@@ -165,6 +242,7 @@ var pdfjsCNST, pdfjsApi, frameSize, docDownload;
         })
         .then(function(page) {
           var canvasFrame = document.getElementById('document_canvas');
+          canvasFrame.scrollTop = 0;
           // Get canvas#the-canvas
           if ( !pdfjsApi.canvas ) {
             pdfjsApi.canvas = document.createElement('canvas');
@@ -177,8 +255,29 @@ var pdfjsCNST, pdfjsApi, frameSize, docDownload;
           pdfjsApi.render();
         });
     },
+    pageRender: function(){
+      pdfjsApi.pdf.getPage(pdfjsApi.currentPage)
+        .then(function(page) {
+          var canvasFrame = document.getElementById('document_canvas');
+          canvasFrame.scrollTop = 0;
+          // Get canvas#the-canvas
+          if ( !pdfjsApi.canvas ) {
+            pdfjsApi.canvas = document.createElement('canvas');
+            pdfjsApi.canvas.setAttribute('id', 'the-canvas');
+            $(canvasFrame).html(pdfjsApi.canvas);
+            pdfjsApi.context = pdfjsApi.canvas.getContext('2d');
+          }
+
+          pdfjsApi.page = page;
+          pdfjsApi.render();
+      });
+
+    },
     render: function(){
       var canvasFrame = document.getElementById('document_canvas');
+
+      sessionStorage.setItem('page', pdfjsApi.currentPage);
+      sessionStorage.setItem('scale', pdfjsApi.currentScale);
 
       function fitWindow(page) {
         var viewport = page.getViewport(1);
@@ -187,6 +286,11 @@ var pdfjsCNST, pdfjsApi, frameSize, docDownload;
         var scale = ( widthScale > heightScale ) ? heightScale : widthScale;
         return page.getViewport(scale * pdfjsApi.currentScale);
       }
+
+      if ( pdfjsApi.page === undefined ) {
+        return false;
+      }
+
       var page = pdfjsApi.page;
       // Fetch canvas' 2d context
       var viewport = fitWindow(page);
@@ -197,21 +301,50 @@ var pdfjsCNST, pdfjsApi, frameSize, docDownload;
       var calc = ((window.innerHeight - 40 - viewport.height) > 0) ? (window.innerHeight - 40 - viewport.height)/2 : 0;
       canvasFrame.style.paddingTop = String(calc) + "px";
 
-      setTimeout(function(){
-        // Render PDF page
-        page.render({
-          canvasContext: pdfjsApi.canvas.getContext('2d'),
-          viewport: viewport
-        }).then(function(){
-            document.getElementById('pages').textContent = pdfjsApi.currentPage + "/ " + pdfjsApi.pdf.pdfInfo.numPages;
-            pdfjsApi.canvas.style.opacity = 1;
-        });
-      }, 0);
+      // Render PDF page
+      page.render({
+        canvasContext: pdfjsApi.canvas.getContext('2d'),
+        viewport: viewport
+      }).then(function(){
+        if ( document.getElementById('pages') ) {
+          document.getElementById('pages').textContent = pdfjsApi.currentPage + "/ " + pdfjsApi.pdf.pdfInfo.numPages;
+        }
+        pdfjsApi.renderFlg = false;
+        pdfjsApi.canvas.style.opacity = 1;
+      });
     },
     notificate: function(code){
       if ( this.cnst.hasOwnProperty(code) ) {
         console.log(this.cnst[code]);
       }
+    },
+    readFile: function(doc){
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', doc.url, true);
+      xhr.responseType = 'arraybuffer';
+      xhr.onload = function(e) {
+        if (this.status == 200) {
+          sessionStorage.setItem('doc', JSON.stringify(doc));
+          pdfjsApi.doc = doc;
+          $("#pages").remove();
+          if ( Number(doc.pagenation_flg) === 1 ) {
+            var s = document.createElement("span");
+            s.id = "pages";
+            document.getElementById('pageNumTag').appendChild(s);
+          }
+          document.getElementById('downloadBtn').style.display = "none";
+          document.getElementById('downloadFilePath').href = "javascript:void(0)";
+          if ( Number(doc.download_flg) === 1 ) {
+            document.getElementById('downloadBtn').style.display = "";
+            document.getElementById('downloadFilePath').href = doc.url;
+          }
+          pdfjsApi.pdfUrl = new Uint8Array(this.response);
+          pdfjsApi.currentPage = (sessionStorage.getItem('page') !== null) ? Number(sessionStorage.getItem('page')) : 1;
+          pdfjsApi.currentScale = (sessionStorage.getItem('scale') !== null) ? Number(sessionStorage.getItem('scale')) : 1;
+          pdfjsApi.init();
+        }
+      };
+      xhr.send();
     }
   };
 
@@ -225,22 +358,63 @@ var pdfjsCNST, pdfjsApi, frameSize, docDownload;
   };
 
   st.on("connect", function(d){
-    emit('docShareConnect', {from: 'customer'}); // 資料共有開始
+    var doc = {
+      url: params.url,
+      pagenation_flg: params.pagenation_flg,
+      download_flg: params.download_flg
+    };
 
+    emit('docShareConnect', {from: 'customer'}); // 資料共有開始
     frameSize = {
       height: window.outerHeight - window.innerHeight,
       width: window.outerWidth - window.innerWidth
     };
 
+    if ( sessionStorage.getItem("doc") !== null ) {
+      doc = JSON.parse(sessionStorage.getItem("doc"));
+    }
+    else { // 初回表示
+      window.resizeTo(screen.availWidth, screen.availHeight);
+      window.moveTo(0,0);
+      setTimeout(function(){
+        pdfjsApi.sendPositionAction(); // サイズを企業側へ送る
+      }, 500);
+    }
+
+    pdfjsApi.readFile(doc);
+
+  });
+
+  // 資料変更
+  st.on("changeDocument", function(d){
+    var obj = JSON.parse(d);
+    sessionStorage.setItem('page', 1);
+    sessionStorage.setItem('scale', 1);
+    pdfjsApi.readFile(obj);
   });
 
   // 同期イベント
+  var scAddEventTimer = null;
   st.on('docSendAction', function(d){
     var obj = JSON.parse(d), cursor;
     if ( obj.hasOwnProperty('scroll') ) {
-      var canvasFrame = document.getElementById('document_canvas');
-      canvasFrame.scrollTop = obj.scroll.top;
-      canvasFrame.scrollLeft = obj.scroll.left;
+      var canvas = document.getElementById('document_canvas');
+      canvas.removeEventListener('scroll', pdfjsApi.scrollFunc);
+      clearTimeout(scAddEventTimer);
+      $('#document_canvas').animate({
+        scrollTop: obj.scroll.top,
+        scrollLeft: obj.scroll.left,
+      }, {
+        duration: 50,
+        easing: 'swing',
+        complete: function(){
+          scAddEventTimer = setTimeout(function(){
+            clearTimeout(scAddEventTimer);
+            scAddEventTimer= null;
+            canvas.addEventListener('scroll', pdfjsApi.scrollFunc);
+          }, 300);
+        }
+      });
       return false;
     }
     if ( obj.hasOwnProperty('mouse') ) {
@@ -254,29 +428,28 @@ var pdfjsCNST, pdfjsApi, frameSize, docDownload;
       cursor.style.top  = obj.mouse.y + "px";
       return false;
     }
-    if ( obj.hasOwnProperty('page') ) {
-      pdfjsApi.currentPage = obj.page;
-    }
     if ( obj.hasOwnProperty('scale') ) {
       pdfjsApi.currentScale = obj.scale;
+      pdfjsApi.resetZoomType();
     }
-    pdfjsApi.showpage();
+    if ( obj.hasOwnProperty('page') ) {
+      pdfjsApi.currentPage = obj.page;
+      pdfjsApi.pageRender();
+    }
+    else {
+      pdfjsApi.render();
+    }
   });
 
-  var xhr = new XMLHttpRequest();
-  xhr.open('GET', "https://s3-ap-northeast-1.amazonaws.com/medialink.sinclo.jp/medialink/%E3%83%86%E3%82%B9%E3%83%88PDF.pdf", true);
-  xhr.responseType = 'arraybuffer';
-  xhr.onload = function(e) {
-      if (this.status == 200) {
-        // Note: .response instead of .responseText
-        var blob = new Blob([this.response], {type: 'application/pdf'});
-        pdfjsApi.pdfUrl = URL.createObjectURL(blob);
-        pdfjsApi.init();
+  st.on('docDisconnect', function(d){
+    window.close();
+    return false;
+  });
 
-      }
-  };
-  xhr.send();
   window.focus();
 
 // -->
-})(sincloJquery);
+})();
+
+// 拡縮率をキー押下で変更できないようにする
+$(document).on("keydown", "#scaleType", function(e){ return false; });

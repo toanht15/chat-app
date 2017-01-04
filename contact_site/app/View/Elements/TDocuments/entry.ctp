@@ -10,7 +10,7 @@
 
       <!-- 概要 -->
       <li>
-        <span class="require"><label>概要</label></span>
+        <span><label>概要</label></span>
         <?=$this->Form->input('overview', ['type'=>'textarea','placeholder' => '概要','label' => false,'div' => false,'maxlength'=>300,'cols' => 25,'rows' => 5])?>
       </li>
       <!-- 概要 -->
@@ -21,6 +21,7 @@
         <documentArea>
           <content>
             <preview>
+              <span onclick="pdfjsApi.showpage(); return false;" class="reloadBtn"><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_reconnect.png" width="20" height="20" alt=""></span>
               <div id="document_canvas"></div>
               <paging>
                 <span onclick="pdfjsApi.prevPage(); return false;"><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_back.png" width="30" height="30" alt=""></span>
@@ -33,32 +34,20 @@
                 <?=$this->Form->input('files', ['type'=>'file','placeholder' => '資料','label' => false,'div' => false])?>
                 <?=$this->Form->input('file_name', ['type'=>'hidden'])?>
               </upload>
-              <rotate class="btn-shadow greenBtn">
+              <!-- <rotate class="btn-shadow greenBtn" onclick="pdfjsApi.rotate(); return false;">
                 <?=$this->Html->image('rotate90_w.png', ['alt' => '90度資料を回転する']);?>
-              </rotate>
+              </rotate> -->
             </controller>
           </content>
           <content>
-            <p>原稿（<span class="pages"></span>）</p>
-            <textarea></textarea>
+            <p>原稿<span class="pages"></span></p>
+            <textarea id="pages-text"></textarea>
+            <?=$this->Form->hidden('manuscript')?>
           </content>
         </documentArea>
       </li>
       <!-- 資料 -->
 
-      <!-- タグ -->
-      <li>
-        <span><label>タグ</label></span>
-        <?= $this->Form->input('new_tag', ['type' => 'text','placeholder' => '新しいタグ','maxlength' => 30,'label' => false,'div' => false]) ?>
-        <?= $this->Html->image('add.png', array('alt' => '登録', 'class' => 'btn-shadow greenBtn', 'width' => 22, 'height' => 22, 'onclick' => 'tagAdd()')) ?>
-      </li>
-      <!-- タグ -->
-
-      <!-- タグリスト -->
-      <li>
-        <span></span>
-        <?= $this->Form->input('tag', array('type' => 'select','multiple' => true, 'label' => false,'id' => 'tagList','options' => $tagList)); ?>
-      </li>
       <!-- ダウンロードフラグ -->
       <li>
         <span class="require"><label>ダウンロード</label></span>
@@ -73,10 +62,10 @@
         <input type="text" style="display:block; position: fixed; top: -500px; left: -500px; z-index: 0;">
         <input type="password" style="display:block; position: fixed; top: -500px; left: -500px; z-index: 0;">
       <?php } ?>
-      <li>
+      <!-- <li>
         <span><label>パスワード</label></span>
         <?= $this->Form->input('password', ['type' => 'password','placeholder' => 'パスワード','maxlength' => 30,'label' => false,'div' => false,'autocomplete' => 'off']) ?>
-      </li>
+      </li> -->
     </ul>
   </section>
 

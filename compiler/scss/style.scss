@@ -511,6 +511,15 @@ a {
   color: #9e9e9e;
 }
 
+.disableBtn {
+  cursor: progress!important;
+  opacity: 0.7!important;
+  * {
+    cursor: progress!important;
+    opacity: 0.7!important;
+  }
+}
+
 .font-red {
   color: #F72A2A;
 }
@@ -1302,10 +1311,6 @@ ul.naviBtn {
                 background-color: $main-color;
               }
             }
-
-            li[data-type="oldChat"] { /* 12月リリースまでチャット履歴機能非表示 */
-              display: none;
-            }
           }
 
           > div {
@@ -1784,6 +1789,13 @@ ul.naviBtn {
         overflow-x: hidden;
 
         td:first-child span img { background-color: #FFF }
+
+        #shareToolBtn {
+          display: flex;
+          flex-direction: column;
+          justify-content: space-around;
+          height: 5.5em;
+        }
       }
 
       td, td * {
@@ -1899,6 +1911,7 @@ ul.naviBtn {
   bottom: 0;
   margin: 0;
   padding: 0;
+  z-index: 4;
 
   li {
     background-color: #595959;
@@ -1916,6 +1929,10 @@ ul.naviBtn {
 
     &.unlight {
       background-color: #bdbdbd!important;
+    }
+
+    a {
+      text-decoration: none;
     }
 
     span {
@@ -1943,13 +1960,22 @@ ul.naviBtn {
     flex-direction: column;
     justify-content: space-between;
     background-color: #595959;
-    z-index: 3;
+    z-index: 4;
     box-shadow: 0 0 1px 1px rgba(0,0,0,0.8);
 
     p {
       color: #FFF;
       text-align: center;
       font-weight: bold;
+    }
+    a {
+      width: 100%;
+      height: 100%;
+      display: block;
+
+      img {
+        transform: scale(1)!important;
+      }
     }
     li-top, li-bottom { display: block; }
   }
@@ -1964,7 +1990,7 @@ ul.naviBtn {
     margin: 0;
     padding: 0;
     right: 0;
-    z-index: 2;
+    z-index: 3;
     box-shadow: 0 0 1px 1px rgba(0,0,0,0.8);
     justify-content: space-between;
 
@@ -1985,12 +2011,59 @@ ul.naviBtn {
 
     }
 
+    li.showDescriptionBottom {
+      position: relative;
+
+      &:before {
+        content: attr(data-description);
+        display: none;
+        position: absolute;
+        top: 50px;
+        box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.7);
+        padding: 0.5em 1em;
+        border-radius: 5px;
+        background-color: #FFF;
+        width: 6em;
+        text-align: center;
+        z-index: 5;
+      }
+
+      &:hover:before {
+        display: block;
+      }
+    }
+
+    li-left .showDescriptionBottom:before {
+      left: 5px;
+    }
+
+    li-right .showDescriptionBottom:before {
+      right: 5px;
+    }
+
+    .showDescriptionBottom:after {
+      // content: attr(data-description);
+      content: "aaaa";
+      display: none;
+      position: absolute;
+      bottom: -3em;
+      left: 0;
+      box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.7);
+      padding: 0.5em 1em;
+      border-radius: 5px;
+      background-color: #FFF;
+
+      &:hover {
+        display: block;
+      }
+    }
+
     span {
       padding: 5px;
       display: inline-block;
       height: 40px;
 
-      &.btn:hover {
+      &.btn:hover, &.btn.on {
         cursor: pointer;
         background-color: #8c8c8c;
       }
@@ -2000,6 +2073,46 @@ ul.naviBtn {
           padding-top: 8px!important;
       }
 
+    }
+  }
+
+  #manuscriptArea {
+    background-color: #efefef;
+    padding: 0.5em;
+    min-height: 4em;
+    box-shadow: 0 0 2px rgba(0,0,0,0.7);
+    font-size: 1.1em;
+    width: calc(100% - 150px);
+    cursor: move;
+    z-index: 2;
+
+    #manuscript {
+      white-space: pre-wrap;
+    }
+
+    &:after {
+      content: "※ この原稿は消費者側には表示されません";
+      font-size: 0.9em;
+      color: #e48c8c;
+      display: block;
+      margin-top: 0.5em;
+    }
+
+    #manuscriptCloseBtn {
+      display: block;
+      position: absolute;
+      right: 0;
+      top: 0;
+      background-image: url(/img/close_b.png);
+      background-size: 2em;
+      background-repeat: no-repeat;
+      width: 2em;
+      height: 2em;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #c3c3c3;
+      }
     }
   }
 
@@ -3166,11 +3279,26 @@ ul.naviBtn {
   }
 }
 
-.ms-list{
- .on{
-    display:none;
+#tdocument_idx {
+  .ms-list{
+    .ms-hover {
+      background-color: rgba(195, 214, 155, 0.1);
+    }
+    .on{
+      display:none;
+    }
+  }
+  #tagTools {
+    position: absolute;
+    right: 0;
+    padding-top: 0.25em;
+
+    > img {
+        margin: 0 0.25em;
+    }
   }
 }
+
 
 /*資料一覧*/
 #ang-popup {
@@ -3374,7 +3502,6 @@ ul.naviBtn {
             width: $p-document-list-width - 5em;
             display: flex;
             border-bottom: 1px solid $main-color;
-            &:last-child { border-bottom: none; }
 
             &:hover .document_image:before {
               content: " ";
@@ -3549,6 +3676,7 @@ ul.naviBtn {
               height:15em;
               border: 1px solid #bdbdbd;
               position: relative;
+              display: block;
 
               #document_canvas {
                 position: absolute;
@@ -3565,6 +3693,38 @@ ul.naviBtn {
                 }
               }
 
+              span.reloadBtn {
+                position: absolute;
+                top: 2px;
+                right: 2px;
+                background-color: rgba(0,0,0,0.2);
+                display: block;
+                z-index: 9;
+                padding: 2px 1px 1px 3px;
+                width: 25px;
+                height: 25px;
+                border-radius: 15px;
+                box-shadow: 0 0 2px #929292;
+                cursor: pointer;
+
+                &:hover {
+                  background-color: #949494!important;
+
+                  &:before {
+                      content: "ページ再描画";
+                      position: absolute;
+                      top: 2.5em;
+                      right: -7em;
+                      background-color: #FFF;
+                      padding: 0.5em;
+                      width: 8em;
+                      text-align: center;
+                      box-shadow: 0 1.5px 4px rgba(0,0,0,0.6);
+                      border-radius: 4px;
+                  }
+                }
+              }
+
               paging {
                 position: absolute;
                 bottom: 0;
@@ -3577,9 +3737,17 @@ ul.naviBtn {
                 align-items: center;
 
                 > span {
-                    display: block;
-                    min-width: 3em;
-                    padding: 0.5em;
+                  display: flex;
+                  min-width: 3em;
+                  height: 3em;
+                  justify-content: center;
+                  align-items: center;
+                  cursor: default;
+
+                  &:not(.pages):hover {
+                      background-color: #797979;
+                      cursor: pointer;
+                  }
                 }
               }
             }
@@ -3614,6 +3782,9 @@ ul.naviBtn {
                   bottom: 0;
                   opacity: 0;
                   width: 100%;
+                  display: block;
+                  font-size: 300px;
+                  cursor: pointer !important;
                 }
               }
 
@@ -3655,7 +3826,7 @@ ul.naviBtn {
         }
 
         > li {
-          padding: 15px 0;
+          padding: 0 0 15px 0;
 
           &:first-child {
             border-top: none;
@@ -3663,10 +3834,6 @@ ul.naviBtn {
 
           input#TDocumentNewTag {
             margin-left: 205px;
-          }
-
-          .input.select {
-            margin-top: -10px;
           }
 
           > span:first-child {

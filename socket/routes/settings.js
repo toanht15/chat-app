@@ -121,12 +121,12 @@ router.get("/", function(req, res, next) {
                 }
 
                 // チャット
-                if (('chat' in core_settings) && core_settings['chat']) {
+                if (core_settings.hasOwnProperty('chat') && core_settings['chat']) {
                     actionTypeList.push('1');
                 }
 
                 // 画面同期
-                if (('synclo' in core_settings) && core_settings['synclo']) {
+                if (core_settings.hasOwnProperty('synclo') && core_settings['synclo'] || core_settings.hasOwnProperty('document') && core_settings['document']) {
                     sendData['widget']['tel'] = settings.tel;
                     sendData['widget']['content'] = "";
                     if ( typeof(settings.content) === "string" ) {

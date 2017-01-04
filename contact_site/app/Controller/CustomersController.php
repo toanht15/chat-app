@@ -4,7 +4,7 @@
  * モニタリング機能
  */
 class CustomersController extends AppController {
-  public $uses = ['THistory', 'THistoryChatLog', 'TCampaign', 'MCompany', 'MUser', 'MCustomer', 'MWidgetSetting', 'MChatNotification', 'TDictionary'];
+  public $uses = ['THistory', 'THistoryChatLog', 'TCampaign', 'TDocument', 'MCompany', 'MUser', 'MCustomer', 'MWidgetSetting', 'MChatNotification', 'TDictionary'];
 
   public $tmpLabelHideList = ["accessId", "ipAddress", "ua", "stayCount", "time", "campaign", "stayTime", "page", "title", "referrer"];
 
@@ -62,7 +62,7 @@ class CustomersController extends AppController {
    * */
   public function docFrame() {
     $this->layout = 'frame';
-    $docId = $this->params->query['docId'];
+    $this->set('docData', $this->TDocument->read(null, $this->params->query['docId']));
     $this->set('tabInfo', $this->params->query['tabInfo']);
     return $this->render('/Customers/docFrame');
   }
@@ -370,37 +370,22 @@ class CustomersController extends AppController {
     $this->layout = "ajax";
     $ret = [];
     $ret['tagList'] = $this->jsonEncode([1 => 'メイン', 2 => '紹介用', 3 => '営業用', 4 => '製品A', 5 => '製品B']);
-
-    $ret['documentList'] = json_encode([
-      [
-        'id' => 1,
-        'name' => '商品概要資料',
-        'overview' => '製品Aの紹介用資料：hogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehoge',
-        'tag' => '[1,2,4]',
-        'file_name' => ''
+    $tDocumentList = $this->TDocument->find('all', [
+      'fields' => [
+        'id', 'name', 'file_name', 'overview', 'tag', 'manuscript', 'pagenation_flg', 'download_flg', 'password'
       ],
-      [
-        'id' => 2,
-        'name' => '提案資料',
-        'overview' => '製品Aの営業用資料：hogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehoge',
-        'tag' => '[1,3,4]',
-        'file_name' => ''
+      'conditions' => [
+        'm_companies_id' => $this->userInfo['MCompany']['id']
       ],
-      [
-        'id' => 3,
-        'name' => '商品概要資料',
-        'overview' => '製品Bの紹介用資料：hogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehoge',
-        'tag' => '[1,2,5]',
-        'file_name' => ''
-      ],
-      [
-        'id' => 4,
-        'name' => '提案資料',
-        'overview' => '製品Bの営業用資料：hogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehoge',
-        'tag' => '[1,3,5]',
-        'file_name' => ''
-      ]
-    ], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+      'recursive' => -1
+    ]);
+    $docList = [];
+    foreach ($tDocumentList as $key => $val ) {
+      $tmp = $val['TDocument'];
+      $tmp['thumnail'] = C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/".C_PREFIX_DOCUMENT.pathinfo(h($val['TDocument']['file_name']), PATHINFO_FILENAME).".jpg";
+      $docList[] = $tmp;
+    }
+    $ret['documentList'] = json_encode($docList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
 
     return new CakeResponse(['body' => json_encode($ret)]);
   }

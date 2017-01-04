@@ -14,6 +14,8 @@
 /app/webroot/css/style.css
 /app/webroot/css/modal.css
 /app/webroot/files/*
+!/app/webroot/files/tmp
+/app/webroot/files/tmp/*.jpg
 /app/webroot/img/notification/*
 !/app/webroot/img/notification/popup_icon_*
 !/app/webroot/img/notification/tmp/

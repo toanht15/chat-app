@@ -9,7 +9,7 @@ block content
         b = document.getElementsByTagName('body')[0],
         l = [
           site.socket + '/socket.io/socket.io.js',
-          site.files + '/websocket/jquery-2.2.0.min.js',
+          'https://code.jquery.com/jquery-2.2.4.min.js',
           site.files + '/websocket/compatibility.min.js',
           site.files + '/websocket/pdf.min.js',
           site.files + '/websocket/pdf-sync.min.js',
@@ -27,12 +27,14 @@ block content
       };
     createElm(l[i]);
 
+
   section#document_share
     ul#document_share_tools<!-- /* サイドバー */ -->
-      li(onclick="docDownload(); return false;")
-        span
-          img(src="#{img}icon_reconnect.png", width="40", height="40", alt="")
-        p ダウンロード
+      li#downloadBtn
+        a#downloadFilePath
+          span
+            img(src="#{img}icon_download.png", width="40", height="40", alt="")
+          p ダウンロード
       li(onclick="window.close(); return false;")
         span
           img(src="#{img}icon_disconnect.png", width="40", height="40", alt="")
@@ -40,15 +42,17 @@ block content
 
     ul#document_ctrl_tools
       li-left
-        li(onclick="pdfjsApi.prevPage(); return false;")
+        li.showDescriptionBottom(data-description="前のページへ", onclick="pdfjsApi.prevPage(); return false;")
           span.btn
             img(src="#{img}icon_back.png", width="30", height="30")
-        li(onclick="pdfjsApi.nextPage(); return false;")
+        li.showDescriptionBottom(data-description="次のページへ", onclick="pdfjsApi.nextPage(); return false;")
           span.btn
             img(src="#{img}icon_next.png", width="30", height="30")
+        li.showDescriptionBottom(data-description="ページ再描画", onclick="pdfjsApi.render(); return false;")
+          span.btn
+            img(src="#{img}icon_reconnect.png", width="30", height="30")
       li-center
-        li
-          span#pages 1/ 29
+        li#pageNumTag
       li-right
         li#scaleChoose
           label(for="scaleType") 拡大率
@@ -62,11 +66,12 @@ block content
             option(value="2.5" ) 250%
             option(value="3"   ) 300%
             option(value="4"   ) 400%
-        li(onclick="pdfjsApi.zoomIn(0.25); return false;")
+        li.showDescriptionBottom(data-description="拡大する", onclick="pdfjsApi.zoomIn(0.25); return false;")
           span.btn
             img(src="#{img}icon_plus.png", width="30", height="30")
-        li(onclick="pdfjsApi.zoomOut(0.25); return false;")
+        li.showDescriptionBottom(data-description="縮小する", onclick="pdfjsApi.zoomOut(0.25); return false;")
           span.btn
             img(src="#{img}icon_minus.png", width="30", height="30")
 
   div#document_canvas
+  div#desc-balloon

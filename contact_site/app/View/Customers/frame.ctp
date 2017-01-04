@@ -1,5 +1,3 @@
-<?=$this->Html->script("//ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js");?>
-
 <script type="text/javascript">
 <!--
 'use strict';
@@ -361,9 +359,6 @@ window.onload = function(){
       };
   });
 };
-
-<?php echo $this->element('Customers/documentLists') ?>
-
 // -->
 </script>
 
@@ -382,10 +377,12 @@ window.onload = function(){
       <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_reconnect.png" width="40" height="40" alt=""></span>
       <p>再接続</p>
     </li>
-    <li ng-click="openDocumentList()">
-      <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_document.png" width="40" height="40" alt=""></span>
-      <p>資料請求</p>
-    </li>
+    <?php if(isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT]): ?>
+      <li ng-click="openDocumentList()">
+        <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_document.png" width="40" height="40" alt=""></span>
+        <p>資料共有</p>
+      </li>
+    <?php endif; ?>
     <li onclick="windowClose()">
       <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_disconnect.png" width="40" height="40" alt=""></span>
       <p>終了</p>
@@ -394,7 +391,7 @@ window.onload = function(){
   <div id="customer_flame">
   </div>
   <div id="tabStatusMessage">別の作業をしています</div>
-
+  <?php echo $this->element('Customers/documentLists') ?>
   <div id="ang-popup">
     <div id="ang-base">
       <div id="ang-popup-background"></div>
@@ -403,13 +400,13 @@ window.onload = function(){
           <div id="title_area">資料一覧</div>
           <div id="search_area">
             <?=$this->Form->input('name', ['label' => 'フィルター：', 'ng-model' => 'searchName']);?>
-            <ng-multi-selector></ng-multi-selector>
+            <!-- <ng-multi-selector></ng-multi-selector> -->
           </div>
           <div id="list_area">
             <ol>
               <li ng-repeat="document in searchFunc(documentList)" ng-click="shareDocument(document)">
                 <div class="document_image">
-                  <?=$this->Html->image("tab_status_disable.png", ["style"=>"width:10em;height:7em"])?>
+                  <img ng-src="{{::document.thumnail}}" style="width:10em;height:7em">
                 </div>
                 <div class="document_content">
                   <h3>{{::document.name}}</h3>
