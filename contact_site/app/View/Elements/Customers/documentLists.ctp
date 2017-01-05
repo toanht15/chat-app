@@ -146,7 +146,6 @@ var pdfjsApi = {
       clearTimeout(pdfjsApi.pagingTimer);
       pdfjsApi.renderFlg = true;
       pdfjsApi.currentPage--;
-      pdfjsApi.cngPage(); // 原稿差し替え
       pdfjsApi.pageRender();
       pdfjsApi.sendCtrlAction('page');
     }, pdfjsApi.pagingTimeTerm);
@@ -160,7 +159,6 @@ var pdfjsApi = {
       pdfjsApi.renderFlg = true;
       pdfjsApi.currentPage++;
       pdfjsApi.sendCtrlAction('page');
-      pdfjsApi.cngPage(); // 原稿差し替え
       pdfjsApi.pageRender();
     }, pdfjsApi.pagingTimeTerm);
   },
@@ -346,6 +344,7 @@ var pdfjsApi = {
         }
 
         pdfjsApi.page = page;
+        pdfjsApi.cngPage(); // 原稿差し替え
         pdfjsApi.render();
       });
 
