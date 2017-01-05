@@ -9,4 +9,5 @@ class THistoryChatLog extends AppModel {
 
 	public $name = 'THistoryChatLog';
 
+
 }
