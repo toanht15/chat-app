@@ -146,6 +146,7 @@ class TDocumentsController extends AppController {
    * */
   private function _entry($saveData) {
     $nowData = [];
+
     if(!empty($saveData['TDocument']['tag'])) {
       $inputData = $saveData['TDocument']['tag'];
       $saveData['TDocument']['tag'] = $this->jsonEncode($inputData);
@@ -156,8 +157,8 @@ class TDocumentsController extends AppController {
       $this->TDocument->create();
     }
 
-    if ( isset($saveData['TDocument']['files']['name']) && empty($saveData['TDocument']['files']['name']) ) {
-      unset($saveData['TDocument']['files']);
+    if ( !isset($saveData['TDocument']['files']) ) {
+      $saveData['TDocument']['files'] = [];
     }
     $this->TDocument->set($saveData);
 

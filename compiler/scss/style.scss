@@ -3829,7 +3829,7 @@ ul.naviBtn {
 
             textarea {
               height: 12em;
-              width: 25em;
+              width: 20em;
             }
           }
         }
@@ -3843,6 +3843,10 @@ ul.naviBtn {
 
         > li {
           padding: 0 0 15px 0;
+
+          &.error-message {
+            padding-left: 15em!important;
+          }
 
           &:first-child {
             border-top: none;
