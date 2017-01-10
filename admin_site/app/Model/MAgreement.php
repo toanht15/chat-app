@@ -22,7 +22,6 @@ class MAgreement extends AppModel {
   *
   * @var array
   */
-  //バリデーション
   public $validate = [
     'application_day' => [
       'rule' => ['date', 'ymd'],

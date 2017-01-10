@@ -256,11 +256,8 @@ class HistoriesController extends AppController {
     Configure::write('debug', 0);
     if ( !isset($this->request->data['History']['outputData'] ) ) return false;
 
-    $name = "sinclo-history";
+    $name = "sinclo-chat-history";
     $ret = (array) json_decode($this->request->data['History']['outputData'] );
-
-
-    // ラベル
 
     // ヘッダー
     $csv[] = [
@@ -278,8 +275,6 @@ class HistoriesController extends AppController {
       "担当者"
      ];
 
-     $chatLog = $this->THistoryChatLog->find('all');
-
      if ( $this->coreSettings[C_COMPANY_USE_CHAT] ) {
       $csv[0][] = "";
      }
@@ -287,14 +282,7 @@ class HistoriesController extends AppController {
       $csv[0][] = "担当者";
     }
 
-    $i = 0;
     foreach($ret as $val){
-      if ( $i >= 100){
-      break;  //18に達したら終了
-      } else {
-        /*繰り返し実行する内容*/
-        $i++; //繰り返された回数を1つづずカウント
-      }
       $row = [];
       // 日時
       $dateTime = preg_replace("/[\n,]+/", " ", $val->date);
@@ -314,51 +302,44 @@ class HistoriesController extends AppController {
       // 参照元URL
       $row['referrer'] = $val->referrer;
 
+      //id取得
       $id = $this->THistory->find('first',array(
         'conditions' => array(
           'created' => $row['date']))
       );
 
-      $chatLog = $this->THistoryChatLog->find('all',array(
-        'conditions' => array(
-          't_histories_id' => $id['THistory']['id']),
-        ));
-      $this->log($chatLog,LOG_DEBUG);
+      $chatLog = $this->_getChatLog($id['THistory']['id']);
       foreach($chatLog as $key => $value) {
-      // 送信日時
-      $row['pageCnt'] = preg_replace("/[\n,]+/", " ", $value['THistoryChatLog']['created']);
-      // 送信種別
-      if($value['THistoryChatLog']['message_type'] == 1) {
-        $row['pageCnt1'] = '訪問者';
-        $row['pageCnt2'] = '';
-      }
-      if($value['THistoryChatLog']['message_type'] == 2) {
-        $row['pageCnt1'] = 'オペレーター';
-        $ret = $this->MUser->find('all');
-        //$this->log($ret,LOG_DEBUG);
-        //$users = $ret['MUser']['display_name'];
-        //$users = $val->user;
-        $row['pageCnt2'] = 'EEEE';
-      }
-      if($value['THistoryChatLog']['message_type'] == 3) {
-        $row['pageCnt1'] = 'オートメッセージ';
-        $row['pageCnt2'] = '自社';
-      }
-      if($value['THistoryChatLog']['message_type'] == 98) {
-        continue;
-      }
-      // 送信者
-
-      // チャットメッセージ
-      $row['visitTime'] = $value['THistoryChatLog']['message'];
-      //}
-      // チャット担当者
-      $users = preg_replace("/[\n,]+/", ", ", $val->user);
-      $row['user'] = $users;
-      $csv[] = $row;
+        // 送信日時
+        $row['pageCnt'] = preg_replace("/[\n,]+/", " ", $value['THistoryChatLog']['created']);
+        // 送信種別
+        if($value['THistoryChatLog']['message_type'] == 1) {
+          $row['transmissionKind'] = '訪問者';
+          $row['transmissionPerson'] = '';
+        }
+        if($value['THistoryChatLog']['message_type'] == 2) {
+          $row['transmissionKind'] = 'オペレーター';
+          $users = $value['THistoryChatLog']['display_name'];
+          $row['transmissionPerson'] = $users;
+        }
+        if($value['THistoryChatLog']['message_type'] == 3) {
+          $row['transmissionKind'] = 'オートメッセージ';
+          $companyName = $this->MCompany->find('all',[
+          'conditions' => [
+            'id' => $this->userInfo['MCompany']['id']]]);
+          $row['transmissionPerson'] = $companyName[0]['MCompany']['company_name'];
+        }
+        if($value['THistoryChatLog']['message_type'] == 98) {
+          continue;
+        }
+        // チャットメッセージ
+        $row['message'] = $value['THistoryChatLog']['message'];
+        // チャット担当者
+        $users = preg_replace("/[\n,]+/", ", ", $val->user);
+        $row['user'] = $users;
+        $csv[] = $row;
       }
     }
-
     $this->_outputCSV($name, $csv);
   }
 
@@ -672,6 +653,8 @@ class HistoriesController extends AppController {
       'order' => 'THistoryChatLog.created',
       'recursive' => -1
     ];
+    /*chat内容のCSVのため新たに追加*/
+    $this->THistoryChatLog->virtualFields['display_name'] = 'concat(MUser.display_name,"さん")';
     return $this->THistoryChatLog->find('all', $params);
   }
 

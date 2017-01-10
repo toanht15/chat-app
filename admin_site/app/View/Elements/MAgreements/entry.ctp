@@ -7,30 +7,30 @@
 <!-- /* 会社名 */ -->
 <li>
   <div class="labelArea fLeft"><span class="require"><label>会社名</label></span></div>
-  <?= $this->Form->input('company_name', array('div' => false, 'label' => false, 'maxlength' => 50)) ?>
+  <?= $this->Form->input('MCompany.company_name', array('div' => false, 'label' => false, 'maxlength' => 50)) ?>
    <?php if (!empty($errors['company_name'])) echo "<li class='error-message'>" . h($errors['company_name'][0]) . "</li>"; ?>
 </li>
 <!-- /* サイトキー */ -->
 <li>
   <div class="labelArea fLeft"><span class="require"><label>サイトキー</label></span></div>
-  <?= $this->Form->input('company_key', array('div' => false, 'label' => false, 'maxlength' => 50)) ?>
+  <?= $this->Form->input('MCompany.company_key', array('div' => false, 'label' => false, 'maxlength' => 50)) ?>
   <?php if (!empty($errors['company_key'])) echo "<li class='error-message'>" . h($errors['company_key'][0]) . "</li>"; ?>
 </li>
 <!-- /* テスト利用 */ -->
 <li>
   <div class="labelArea fLeft"><span class="require"><label>テスト利用</label></span></div>
-  <?= $this->Form->checkbox('trial_flg') ?>
+  <?= $this->Form->checkbox('MCompany.trial_flg') ?>
 </li>
 <!-- 契約プラン -->
 <li>
   <span class="require"><label>契約プラン</label></span>
   <?php $plans=array('1'=>'フルプラン','2'=>'チャットプラン','3'=>'画面共有プラン'); ?>
-  <?= $this->Form->input('m_contact_types_id', array('type' => 'select', 'options' => $plans,'default' => 1,'label'=>false, 'div' => ['id' => 'planListArea'])) ?>
+  <?= $this->Form->input('MCompany.m_contact_types_id', array('type' => 'select', 'options' => $plans,'default' => 1,'label'=>false, 'div' => ['id' => 'planListArea'])) ?>
 </li>
 <!-- /* 契約ID数 */ -->
 <li>
   <div class="labelArea fLeft"><span class="require"><label>契約ID数</label></span></div>
-  <?= $this->Form->input('limit_users', array('div' => false, 'label' => false, 'maxlength' => 50)) ?>
+  <?= $this->Form->input('MCompany.limit_users', array('div' => false, 'label' => false, 'maxlength' => 50)) ?>
   <?php if (!empty($errors['limit_users'])) echo "<li class='error-message'>" . h($errors['limit_users'][0]) . "</li>"; ?>
 </li>
 <!-- /* 契約開始日 */ -->
