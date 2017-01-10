@@ -3369,11 +3369,11 @@ ul.naviBtn {
     background-color: #FFF;
 
     &.document_list {
-      $p-document-list-width: 64em;
+      $p-document-list-width: 55em;
       width: $p-document-list-width;
       border: 1px solid #595959;
       display: block;
-      padding: 2em 0;
+      padding: 1em 0;
 
       > *[id$='_area'] {
         padding-left: 3em;
@@ -3528,25 +3528,41 @@ ul.naviBtn {
               position: absolute;
               left: 0;
               right: 0;
-              top: 1.75em;
-              font-size: 2em;
+              top: 1.5em;
+              font-size: 1.2em;
               font-weight: bold;
               color: #FFF;
+            }
+
+            .document_image:hover:before {
+              background-color: #000;
+              bottom: 0;
+              height: 1.75em;
+              top: initial;
+              font-size: inherit;
+            }
+
+            .document_image:hover:after {
+              content: "プレビュー";
+              top: initial;
+              bottom: 0em;
+              font-size: inherit;
+              padding: 0.25em 0;
             }
           }
 
         }
 
         .document_image {
-          width: 11em;
-          height: 9em;
-          padding: 1em 0.5em;
+          width: 6em;
+          height: 5em;
+          padding: 0.5em;
           position: relative;
         }
 
         .document_content {
           padding: 1em 0.5em;
-          height: 9em;
+          height: 5em;
           display: flex;
           flex-direction: column;
           justify-content: space-around;
@@ -3820,7 +3836,7 @@ ul.naviBtn {
 
             textarea {
               height: 12em;
-              width: 25em;
+              width: 20em;
             }
           }
         }
@@ -3834,6 +3850,10 @@ ul.naviBtn {
 
         > li {
           padding: 0 0 15px 0;
+
+          &.error-message {
+            padding-left: 15em!important;
+          }
 
           &:first-child {
             border-top: none;

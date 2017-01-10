@@ -118,7 +118,11 @@
     log.requestUrl      = ( set.hasOwnProperty('url') ) ? set.url      : "";
     log.requestDataType = ( set.hasOwnProperty('dataType') ) ? set.dataType : "";
     log.requestData     = ( set.hasOwnProperty('data') ) ? set.data     : "";
-    location.href = "<?=$this->Html->url(['controller' => 'Login', 'action'=>'loginCheck'])?>" + "?error=" + encodeURIComponent(JSON.stringify(log));
+    <?php if ( APP_MODE_DEV === false ) { // 本番 ?>
+      location.href = "<?=$this->Html->url(['controller' => 'Login', 'action'=>'loginCheck'])?>" + "?error=" + encodeURIComponent(JSON.stringify(log));
+    <?php } else { // テスト ?>
+      console.dir(log);
+    <?php } ?>
   }
 
   /* Angularの描画 */
