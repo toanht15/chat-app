@@ -15,7 +15,7 @@ class TopsController extends AppController {
       'fields' => ['*'],
       'joins' => [
         [
-          'type' => 'inner',    // もしくは left
+          'type' => 'inner',
           'table' => 'm_agreements',
           'alias' => 'MAgreement',
           'conditions' => [
@@ -23,7 +23,7 @@ class TopsController extends AppController {
           ],
         ],
         [
-          'type' => 'inner',    // もしくは left
+          'type' => 'inner',
           'table' => '(SELECT id,m_companies_id,count(m_companies_id) AS user_account FROM  m_users WHERE del_flg != 1 GROUP BY m_companies_id)',
           'alias' => 'MUser',
           'conditions' => [

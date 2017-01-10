@@ -52,7 +52,6 @@ $(function(){
   $("#MAgreementMailAddress").prop("disabled", true);
 });
 
-
 function remoteDeleteCompany(id,companyId,userId,companyKey){
   modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', 'アカウント設定');
   popupEvent.closePopup = function(){

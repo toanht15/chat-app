@@ -23,7 +23,6 @@ class MUser extends AppModel {
   *
   * @var array
   */
-  //バリデーション
  public $validate = [
      'mail_address' => [
       'email' => [

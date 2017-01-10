@@ -62,7 +62,7 @@ class MAgreementsController extends AppController {
       if($this->_saveMcompany($saveData) && $this->_saveMuser($saveData) && $this->_saveMagreement($saveData) && $this->_saveTdictionary($saveData) && $this->_saveTautomessage($saveData) && $this->_saveMwidgetsetting($saveData)) {
         $this->TransactionManager->commit($transactions);
         //jsファイル作成
-        //$this->_addFile($saveData);
+        $this->_addFile($saveData);
         $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
         $this->redirect(['controller' => 'MAgreements', 'action' => 'index']);
       }
@@ -90,7 +90,7 @@ class MAgreementsController extends AppController {
         $this->TransactionManager->commit($transactions);
         $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
         //jsファイル作成
-        //$this->_editFile($saveData,$editData);
+        $this->_editFile($saveData,$editData);
         $this->redirect(['controller' => 'MAgreements', 'action' => 'index']);
       }
       else {
