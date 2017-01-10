@@ -1,8 +1,8 @@
 <script type = "text/javascript">
 //パスワード自動生成
 function saveAct(){
-  var key = $('#MAgreementCompanyKey').val();
-  $('#MAgreementMailAddress').val(key+"@ml.jp");
+  var key = $('#MCompanyCompanyKey').val();
+  $('#MAgreementMailAddress').val(key + "<?php echo C_MAGREEMENT_MAIL_ADDRESS; ?>");
   $("#MAgreementMailAddress").prop("disabled", false);
   if ($('#MAgreementTrialFlg').prop('checked')) {
     var day = $('MAgreementAgreementStartDay').val();
@@ -26,7 +26,7 @@ function saveAct(){
     cache: false,
     crossDomain: true,
     dataType: 'text',
-    url: "<?= $this->Html->url('http://contact.sinclo/MUsers/remoteSaveForm') ?>",
+    url: "<?= $this->Html->url("<?php echo C_CROSS_DOMAIN_ADDRESS; ?>"+'/MUsers/remoteSaveForm') ?>",
     success: function(data){
       $('#MAgreementHashPassword').val(data);
       document.getElementById('MAgreementAddForm').submit();

@@ -141,8 +141,8 @@ $(document).ready(function(){
     document.getElementById('HistoryIndexForm').submit();
   });
 
-  var outputCSVBtn = document.getElementById('outputChat');
-  outputCSVBtn.addEventListener('click', function(){
+  var outputChatCSVBtn = document.getElementById('outputChat');
+  outputChatCSVBtn.addEventListener('click', function(){
     var thead = document.querySelector('#history_list thead');
     var tbody = document.querySelector('#history_list tbody');
     var data = [];
@@ -178,7 +178,7 @@ $(document).ready(function(){
       }
     }
     document.getElementById('HistoryOutputData').value = JSON.stringify(data);
-    document.getElementById('HistoryIndexForm').action = '<?=$this->Html->url(["controller"=>"Histories", "action" => "outputCSVOfHistory"])?>';
+    document.getElementById('HistoryIndexForm').action = '<?=$this->Html->url(["controller"=>"Histories", "action" => "outputCSVOfContents"])?>';
     document.getElementById('HistoryIndexForm').submit();
   });
 

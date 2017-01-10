@@ -9,7 +9,7 @@ class LoginController extends AppController {
 
   public function beforeFilter(){
     parent::beforeFilter();
-    $this->Auth->allow(['index', 'logout', 'loginCheck','remoteSaveEntryForm']);
+    $this->Auth->allow(['index', 'logout', 'loginCheck']);
     $this->set('title_for_layout', 'ログイン');
 
     $notSupportBrowser = false;

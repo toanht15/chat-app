@@ -15,7 +15,6 @@
     <ul class="fLeft" >
       <li>
         <?= $this->Html->link('登録','javascript:void(0)',['escape' => false, 'id' => 'searchRefine','class' => 'action_btn','onclick' => 'openConfirm()']);?>
-
       </li>
       <!-- 並び替えモード -->
       <li>
