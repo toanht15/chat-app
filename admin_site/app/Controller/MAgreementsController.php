@@ -127,14 +127,17 @@ class MAgreementsController extends AppController {
       $saveData['MCompany']['id'] = $saveData['MAgreement']['m_companies_id'];
     }
     //契約プラン
+    //フルプラン
     if($saveData['MCompany']['m_contact_types_id']==1){
       $plan = array(C_MAGREEMENT_FULL_PLUN);
       $saveData['MCompany']['core_settings'] = json_encode($plan);
     }
+    //チャットプラン
     else if($saveData['MCompany']['m_contact_types_id']==2){
       $plan = array(C_MAGREEMENT_CHAT_PLUN);
       $saveData['MCompany']['core_settings'] = json_encode($plan);
     }
+    //画面共有プラン
     else if($saveData['MCompany']['m_contact_types_id']==3){
       $plan = array(C_MAGREEMENT_SCREEN_SHARING_PLUN);
       $saveData['MCompany']['core_settings'] = json_encode($plan);
