@@ -19,12 +19,12 @@ class TDocument extends AppModel {
     'files' => [
       'fileCheck' => [
         'rule' => 'fileCheck',
-        'message' => 'PDFファイルを添付してください?'
+        'message' => 'PDFファイルを添付してください'
       ],
       'extension' => [
         'rule' => ['extension', ['pdf']],
         'allowEmpty' => true,
-        'message' => 'PDFファイルを添付してください!'
+        'message' => 'PDFファイルを添付してください'
       ],
       'fileSize' => [
         'rule' => ['fileSize', '<=', '1GB'],
@@ -43,11 +43,11 @@ class TDocument extends AppModel {
 
   // ファイルの存在チェック（登録時のみ）
   public function fileCheck($data) {
-    if ( !empty($data['files']) || !empty($this->data['TDocument']['id']) ) { // 更新
-      return true;
+    if ( empty($data['files']) && empty($this->data['TDocument']['id']) ) { // 更新
+      return false;
     }
     else {
-      return false;
+      return true;
     }
   }
 

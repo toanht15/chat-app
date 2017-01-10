@@ -4,8 +4,9 @@
       <!-- 資料名 -->
       <li>
         <span class="require"><label>資料名</label></span>
-        <?= $this->Form->input('name', ['type' => 'text','placeholder' => '資料名','maxlength' => 30,'label' => false,'div' => false,]) ?>
+        <?= $this->Form->input('name', ['type' => 'text','placeholder' => '資料名','maxlength' => 30,'label' => false,'div' => false, 'error'=>false]) ?>
       </li>
+      <?php if ( $this->Form->isFieldError('name') ) echo $this->Form->error('name', null, ['wrap' => 'li']); ?>
       <!-- 資料名 -->
 
       <!-- 概要 -->
@@ -31,7 +32,7 @@
             </preview>
             <controller>
               <upload class="btn-shadow greenBtn">
-                <?=$this->Form->input('files', ['type'=>'file','placeholder' => '資料','label' => false,'div' => false])?>
+                <?=$this->Form->input('files', ['type'=>'file','placeholder' => '資料', 'error' => false, 'label' => false,'div' => false])?>
                 <?=$this->Form->input('file_name', ['type'=>'hidden'])?>
               </upload>
               <!-- <rotate class="btn-shadow greenBtn" onclick="pdfjsApi.rotate(); return false;">
@@ -46,6 +47,7 @@
           </content>
         </documentArea>
       </li>
+      <?php if ( $this->Form->isFieldError('files') ) echo $this->Form->error('files', null, ['wrap' => 'li']); ?>
       <!-- 資料 -->
 
       <!-- ダウンロードフラグ -->

@@ -420,8 +420,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     $scope.ui = function(m){
       var showData = [];
-
-      if ( (m.userId in $scope.customerList) && Object.keys($scope.customerList[m.userId]).length > 0 ) {
+      if ( $scope.customerList.hasOwnProperty(m.userId) && isset($scope.customerList[m.userId]) ) {
         var c = $scope.customerList[m.userId];
         if ( ('company' in c) && c.company.length > 0 ) {
           showData.push(c.company); // 会社名

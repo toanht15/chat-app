@@ -142,9 +142,16 @@ function formatDateParse(parse){
 
 function syncStopCtrl(siteKey, tabId, unsetFlg){
   var keys = [
-    'connectToken', 'syncSessionId', 'syncHostSessionId',
+    'connectToken', 'syncSessionId', 'syncHostSessionId', 'sdHistoryId',
     'syncFrameSessionId', 'shareWindowId', 'shareWindowFlg'
   ];
+  // 画面同期の記録
+  var sdHistoryId = getSessionId(siteKey, tabId, "sdHistoryId");
+  if ( sdHistoryId ) {
+    var now = formatDateParse();
+    db.timeUpdateToDisplayShare(now, sdHistoryId);
+  }
+
   if ( unsetFlg ) { // unsetTarget
     var sessionId = getSessionId(siteKey, tabId, "sessionId");
     clearTimeout(sincloCore[siteKey][tabId].timeoutTimer);
@@ -222,6 +229,11 @@ function getIp(socket){
   return ip;
 }
 
+// Frameの削除
+function trimFrame(str){
+  return str.replace("_frame", "");
+}
+
 // emit用
 var emit = {
   roomKey: {
@@ -259,6 +271,53 @@ var emit = {
   }
 };
 var db = {
+  addDisplayShareHistory: function(responderId, obj){
+    if ( isset(obj.siteKey) ) {
+      var tabId = ( obj.subWindow ) ? trimFrame(obj.to) : trimFrame(obj.tabId);
+      if ( !(tabId in sincloCore[obj.siteKey])  ) return false;
+      if ( !(sincloCore[obj.siteKey][tabId].hasOwnProperty('historyId')) ) return false;
+      var historyId = getSessionId(obj.siteKey, tabId, "historyId");
+      var sdHistoryId = getSessionId(obj.siteKey, tabId, "sdHistoryId");
+      var now = formatDateParse();
+      // 登録処理
+      if ( !sdHistoryId ) {
+        //insert
+        var insertData = {
+          t_histories_id: historyId,
+          m_users_id: responderId,
+          start_time: now,
+          finish_time: now,
+        };
+        pool.query("INSERT INTO t_history_share_displays SET ?", insertData,
+          function (error,results,fields){
+            if ( isset(error) ) {
+              return false;
+            }
+            sincloCore[obj.siteKey][tabId].sdHistoryId = results.insertId;
+          }
+        );
+      }
+      // 更新処理
+      else {
+        this.timeUpdateToDisplayShare(now, sdHistoryId);
+      }
+
+    }
+  },
+  timeUpdateToDisplayShare: function (now, sdHistoryId) {
+    // 渡されたIDをもとに検索
+    pool.query('SELECT * FROM t_history_share_displays WHERE id = ?;', [sdHistoryId], function(err, rows){
+      // データが見つかった場合
+      if ( isset(rows) && isset(rows[0]) ) {
+        // アップデートする
+        pool.query("UPDATE t_history_share_displays SET finish_time = ? WHERE id = ?",
+          [now, sdHistoryId],
+          function (error,results,fields){
+          }
+        );
+      }
+    });
+  },
   addHistory: function(obj, s) {
     if ( isset(obj.tabId) && isset(obj.siteKey) ) {
       if ( !isset(companyList[obj.siteKey]) || obj.subWindow ) return false;
@@ -631,6 +690,7 @@ io.sockets.on('connection', function (socket) {
       if ( !getSessionId(obj.siteKey, obj.tabId, 'responderId') ) {
         sincloCore[obj.siteKey][obj.tabId].responderId = getSessionId(obj.siteKey, obj.to, 'responderId');
       }
+      db.addDisplayShareHistory(sincloCore[obj.siteKey][obj.tabId].responderId, obj, socket); // 登録
       obj.responderId = getSessionId(obj.siteKey, obj.to, 'responderId');
       if ( getSessionId(obj.siteKey, obj.to, 'syncSessionId') ) {
         sincloCore[obj.siteKey][obj.to].syncSessionId = socket.id; // 同期先配列に、セッションIDを格納
@@ -1675,8 +1735,8 @@ io.sockets.on('connection', function (socket) {
             }
           }
         }
+        // 消費者側
         else {
-          // 消費者側
           if ( 'syncFrameSessionId' in core ) {
             emit.toUser('unsetUser', {siteKey: info.siteKey, tabId: info.tabId}, core.syncFrameSessionId);
             syncStopCtrl(info.siteKey, info.tabId);
