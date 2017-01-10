@@ -8,14 +8,6 @@ class TDictionary extends AppModel {
 
   public $name = 'TDictionary';
 
-  public $belongsTo = ['MCompany' =>
-    ['className' => 'M_company',
-      'conditions' => '',
-      'order' => '',
-      'dependent' => true,
-      'foreignKey' => 'm_companies_id'
-    ]
-  ];
   /**
   * Validation rules
   *

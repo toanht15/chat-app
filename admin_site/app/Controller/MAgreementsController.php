@@ -54,6 +54,8 @@ class MAgreementsController extends AppController {
    * */
   public function add() {
     if($this->request->is('post')) {
+      //GoogleChromeのXSS対策
+      $this->header('X-XSS-Protection: 0');
       $transactions = $this->TransactionManager->begin();
       $saveData = $this->request->data;
 
@@ -65,6 +67,7 @@ class MAgreementsController extends AppController {
         $this->redirect(['controller' => 'MAgreements', 'action' => 'index']);
       }
       else{
+        $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
         $this->TransactionManager->rollback($transactions);
       }
     }
@@ -78,7 +81,6 @@ class MAgreementsController extends AppController {
     $this->MAgreement->id = $id;
 
     if($this->request->is('post') || $this->request->is('put')) {
-      $editData = $this->MAgreement->read(null,$id);
       $transactions = $this->TransactionManager->begin();
       $saveData = $this->request->data;
       $this->set('companyId', $saveData['MAgreement']['m_companies_id']);//削除に必要なもの
@@ -92,6 +94,7 @@ class MAgreementsController extends AppController {
         $this->redirect(['controller' => 'MAgreements', 'action' => 'index']);
       }
       else {
+        $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
         $this->TransactionManager->rollback($transactions);
       }
     }
@@ -142,7 +145,6 @@ class MAgreementsController extends AppController {
       return true;
     }
     else{
-      $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
       $errors = $this->MCompany->validationErrors;
       $this->set('errors', $errors);
       return false;
@@ -175,7 +177,6 @@ class MAgreementsController extends AppController {
       return true;
     }
     else {
-      $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
       $userErrors = $this->MUser->validationErrors;
       $this->set('userErrors', $userErrors);
       return false;
@@ -199,7 +200,6 @@ class MAgreementsController extends AppController {
       return true;
     }
     else {
-      $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
       $agreementerrors = $this->MAgreement->validationErrors;
       $this->set('agreementerrors', $agreementerrors);
       return false;
@@ -229,7 +229,6 @@ class MAgreementsController extends AppController {
         continue;
       }
       else {
-        $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
         return false;
       }
     }
@@ -259,7 +258,6 @@ class MAgreementsController extends AppController {
         continue;
       }
       else {
-        $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
         return false;
       }
     }
@@ -272,25 +270,24 @@ class MAgreementsController extends AppController {
    * */
   private function _saveMwidgetsetting($saveData) {
     //ウィジェットデフォルト値設定
-      $widgetData = $this->MWidgetSetting->find('all',[
-        'conditions' => ['MCompany.company_key' => 'template']
-      ]);
-      $companyLastId = $this->MCompany->getLastInsertID();
-      foreach((array)$widgetData as $key => $val){
-        $saveData['MWidgetSetting']['m_companies_id'] = $companyLastId;
-        $saveData['MWidgetSetting']['display_type'] = $val['MWidgetSetting']['display_type'];
-        $saveData['MWidgetSetting']['style_settings'] = $val['MWidgetSetting']['style_settings'];
-        $this->MWidgetSetting->create();
-        $this->MWidgetSetting->set($saveData);
-        if($this->MWidgetSetting->save()) {
-          continue;
-        }
-        else {
-          $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
-          return false;
-        }
+    $widgetData = $this->MWidgetSetting->find('all',[
+      'conditions' => ['MCompany.company_key' => 'template']
+    ]);
+    $companyLastId = $this->MCompany->getLastInsertID();
+    foreach((array)$widgetData as $key => $val){
+      $saveData['MWidgetSetting']['m_companies_id'] = $companyLastId;
+      $saveData['MWidgetSetting']['display_type'] = $val['MWidgetSetting']['display_type'];
+      $saveData['MWidgetSetting']['style_settings'] = $val['MWidgetSetting']['style_settings'];
+      $this->MWidgetSetting->create();
+      $this->MWidgetSetting->set($saveData);
+      if($this->MWidgetSetting->save()) {
+        continue;
       }
-      return true;
+      else {
+        return false;
+      }
+    }
+    return true;
   }
 
   /* *
@@ -357,7 +354,6 @@ class MAgreementsController extends AppController {
     }else{
       // すでにファイルが存在する為エラーとする
       echo('Warning - ファイルが存在しています。 file name:['.$file_name.']');
-      exit();
     }
     // ファイルのパーティションの変更
 

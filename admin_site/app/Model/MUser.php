@@ -30,10 +30,10 @@ class MUser extends AppModel {
         'rule' => 'email',
         'message' => 'メールアドレスの形式が不正です。'
       ],
-      /*'isUniqueChk' => [
+      'isUniqueChk' => [
         'rule' => 'isUniqueChk',
         'message' => '既に登録されているアドレスです。'
-      ]*/
+      ]
     ],
     'admin_password' => [
       'minLength' => [
