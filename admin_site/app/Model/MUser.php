@@ -48,13 +48,13 @@ class MUser extends AppModel {
   ];
 
    //メールアドレスチェック
-  public function isUniqueChk($str){
-    $str['MUser' . '.del_flg'] = 0;
+  public function isUniqueChk($mail){
+    $conditions['mail_address'] = $mail['mail_address'];
+    $conditions['MUser' . '.del_flg'] = 0;
     if ( !empty($this->data['MAgreement']['m_users_id']) ) {
-      $str['MUser' . '.id !='] = $this->data['MAgreement']['m_users_id'];
+      $conditions['MUser' . '.id !='] = $this->data['MAgreement']['m_users_id'];
     }
-
-    $ret = $this->find('all', ['fields' => 'MUser' . '.*', 'conditions' => $str]);
+    $ret = $this->find('all', ['fields' => 'MUser' . '.*', 'conditions' => $conditions]);
     if ( !empty($ret) ) {
       return false;
     }

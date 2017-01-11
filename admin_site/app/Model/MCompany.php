@@ -41,12 +41,13 @@ class MCompany extends AppModel {
   ];
 
     //サイトキーチェック
-  public function isUniqueChkKey($str){
-    $str['MCompany' . '.del_flg'] = 0;
-    if ( !empty($this->data['MCompany']['m_companies_id']) ) {
-      $str['MCompany' . '.id !='] = $this->data['MCompany']['m_companies_id'];
+  public function isUniqueChkKey($siteKey){
+    $conditions['company_key'] = $siteKey['company_key'];
+    $conditions['MCompany' . '.del_flg'] = 0;
+    if ( !empty($this->data['MAgreement']['m_companies_id']) ) {
+      $conditions['MCompany' . '.id !='] = $this->data['MAgreement']['m_companies_id'];
     }
-    $ret = $this->find('all', ['fields' => 'MCompany' . '.*', 'conditions' => $str]);
+    $ret = $this->find('all', ['fields' => 'MCompany' . '.*', 'conditions' => $conditions]);
     if ( !empty($ret) ) {
       return false;
     }

@@ -54,13 +54,12 @@ class MAgreementsController extends AppController {
    * */
   public function add() {
     if($this->request->is('post')) {
-      $this->header('X-XSS-Protection: 0');
       $transactions = $this->TransactionManager->begin();
       $saveData = $this->request->data;
 
       if($this->_saveMcompany($saveData)){
-        $companyLastId = $this->MCompany->getLastInsertID();
-        if($this->_saveMuser($saveData,$companyLastId) && $this->_saveMagreement($saveData,$companyLastId) && $this->_saveTdictionary($saveData,$companyLastId) && $this->_saveTautomessage($saveData,$companyLastId) && $this->_saveMwidgetsetting($saveData,$companyLastId)) {
+        $saveData['MCompany']['id'] = $this->MCompany->getLastInsertID();
+        if($this->_saveMuser($saveData) && $this->_saveMagreement($saveData) && $this->_saveTdictionary($saveData) && $this->_saveTautomessage($saveData) && $this->_saveMwidgetsetting($saveData)) {
           $this->TransactionManager->commit($transactions);
           //jsファイル作成
           $this->_addFile($saveData);
@@ -88,37 +87,30 @@ class MAgreementsController extends AppController {
     $this->MAgreement->id = $id;
 
     if($this->request->is('post') || $this->request->is('put')) {
+      $editData = $this->MAgreement->read(null,$id);
       $transactions = $this->TransactionManager->begin();
       $saveData = $this->request->data;
       $this->set('companyId', $saveData['MAgreement']['m_companies_id']);//削除に必要なもの
       $this->set('companyKey', $saveData['MCompany']['company_key']);//削除に必要なもの
       $this->set('userId', $saveData['MAgreement']['m_users_id']);//削除に必要なもの
-      if($this->_saveMcompany($saveData)) {
-        $companyLastId = $this->MCompany->getLastInsertID();
-        if($this->_saveMuser($saveData,$companyLastId) && $this->_saveMagreement($saveData,$companyLastId)) {
-          $this->TransactionManager->commit($transactions);
-          $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
-          $editData = $this->MAgreement->read(null,$id);
-          //jsファイル作成
-          $this->_editFile($saveData,$editData);
-          $this->redirect(['controller' => 'MAgreements', 'action' => 'index']);
-        }
-        else {
-          $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
-          $this->TransactionManager->rollback($transactions);
-        }
+      if($this->_saveMcompany($saveData) && $this->_saveMuser($saveData) && $this->_saveMagreement($saveData)) {
+        $this->TransactionManager->commit($transactions);
+        $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
+        //jsファイル作成
+        $this->_editFile($saveData,$editData);
+        $this->redirect(['controller' => 'MAgreements', 'action' => 'index']);
       }
-       else {
-          $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
-          $this->TransactionManager->rollback($transactions);
-        }
+      else {
+        $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
+        $this->TransactionManager->rollback($transactions);
+      }
     }
     else{
-      $editData = $this->MAgreement->read(null,$id);
-      $data = $this->MUser->find('first',[
-        'conditions' => array(
-         'MCompany.id' => $editData['MAgreement']['m_companies_id'],
-          'permission_level' => 99)]);
+    $editData = $this->MAgreement->read(null,$id);
+    $data = $this->MUser->find('first',[
+      'conditions' => array(
+       'MCompany.id' => $editData['MAgreement']['m_companies_id'],
+        'permission_level' => 99)]);
 
       $this->set('companyId', $editData['MCompany']['id']);//削除に必要なもの
       $this->set('userId', $data['MUser']['id']);//削除に必要なもの
@@ -175,12 +167,11 @@ class MAgreementsController extends AppController {
    * @param $saveData,$companyLastId
    * @return boolean 保存処理の結果を返す
    * */
-  private function _saveMuser($saveData,$companyLastId) {
+  private function _saveMuser($saveData) {
     //m_usersに登録
     if ( empty($saveData['MAgreement']['id']) ) {
       $this->MUser->create();
-      $saveData['MUser']['m_companies_id'] = $companyLastId;
-      $companyId = $companyLastId;
+      $saveData['MUser']['m_companies_id'] = $saveData['MCompany']['id'];
     }
     else{
       $saveData['MUser']['id'] = $saveData['MAgreement']['m_users_id'];
@@ -208,11 +199,11 @@ class MAgreementsController extends AppController {
    * @param $saveData,$companyLastId
    * @return boolean 保存処理の結果を返す
    * */
-  private function _saveMagreement($saveData,$companyLastId) {
+  private function _saveMagreement($saveData) {
     //m_agreementsに登録
     if ( empty($saveData['MAgreement']['id']) ) {
       $this->MAgreement->create();
-      $saveData['MAgreement']['m_companies_id'] = $companyLastId;
+      $saveData['MAgreement']['m_companies_id'] = $saveData['MCompany']['id'];
     }
     $saveData['MAgreement']['del_flg'] = 0;
     $this->MAgreement->set($saveData);
@@ -231,16 +222,14 @@ class MAgreementsController extends AppController {
    * @param $saveData,$companyLastId
    * @return boolean 保存処理の結果を返す
    * */
-  private function _saveTdictionary($saveData,$companyLastId) {
+  private function _saveTdictionary($saveData) {
     //簡易入力メッセージデフォルト値保存
     $tdictionaryData = $this->TDictionary->find('all',[
       'conditions' => ['MCompany.company_key' => 'template']
     ]);
-    //pr($tdictionaryData); exit();
-    $companyLastId = $this->MCompany->getLastInsertID();
     $userLastId = $this->MUser->getLastInsertID();
     foreach((array)$tdictionaryData as $key => $val){
-      $saveData['TDictionary']['m_companies_id'] = $companyLastId;
+      $saveData['TDictionary']['m_companies_id'] = $saveData['MCompany']['id'];
       $saveData['TDictionary']['m_users_id'] = $userLastId;
       $saveData['TDictionary']['word'] = $val['TDictionary']['word'];
       $saveData['TDictionary']['type'] = $val['TDictionary']['type'];
@@ -262,13 +251,13 @@ class MAgreementsController extends AppController {
    * @param $saveData,$companyLastId
    * @return boolean 保存処理の結果を返す
    * */
-  private function _saveTautomessage($saveData,$companyLastId) {
+  private function _saveTautomessage($saveData) {
     //オートメッセージデフォルト値保存
     $tautoData = $this->TAutoMessage->find('all',[
       'conditions' => ['MCompany.company_key' => 'template']
     ]);
     foreach((array)$tautoData as $key => $val){
-      $saveData['TAutoMessage']['m_companies_id'] = $companyLastId;
+      $saveData['TAutoMessage']['m_companies_id'] = $saveData['MCompany']['id'];
       $saveData['TAutoMessage']['name'] = $val['TAutoMessage']['name'];
       $saveData['TAutoMessage']['trigger_type'] = $val['TAutoMessage']['trigger_type'];
       $saveData['TAutoMessage']['activity'] = $val['TAutoMessage']['activity'];
@@ -291,13 +280,13 @@ class MAgreementsController extends AppController {
    * @param $saveData,$companyLastId
    * @return boolean 保存処理の結果を返す
    * */
-  private function _saveMwidgetsetting($saveData,$companyLastId) {
+  private function _saveMwidgetsetting($saveData) {
     //ウィジェットデフォルト値設定
     $widgetData = $this->MWidgetSetting->find('all',[
       'conditions' => ['MCompany.company_key' => 'template']
     ]);
     foreach((array)$widgetData as $key => $val){
-      $saveData['MWidgetSetting']['m_companies_id'] = $companyLastId;
+      $saveData['MWidgetSetting']['m_companies_id'] = $saveData['MCompany']['id'];
       $saveData['MWidgetSetting']['display_type'] = $val['MWidgetSetting']['display_type'];
       $saveData['MWidgetSetting']['style_settings'] = $val['MWidgetSetting']['style_settings'];
       $this->MWidgetSetting->create();
@@ -367,7 +356,6 @@ class MAgreementsController extends AppController {
    * */
   public function _addFile($saveData) {
     $this->autoRender = FALSE;
-    //pr($saveData); exit();
     $name = $saveData['MCompany']['company_key'];
     // 作成するファイル名の指定
     $file_name = C_NODE_SERVER_DIR."/webroot/client/{$name}.js";
@@ -423,6 +411,6 @@ class MAgreementsController extends AppController {
       //-->
     ");
     fclose($fp);
-    $this->render('/MAgreements/index');
+    $this->render('index');
   }
 }
