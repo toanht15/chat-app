@@ -96,8 +96,9 @@ class MAgreementsController extends AppController {
       if($this->_saveMcompany($saveData) && $this->_saveMuser($saveData) && $this->_saveMagreement($saveData)) {
         $this->TransactionManager->commit($transactions);
         $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
+        $saveData['beforeData'] = $editData['MCompany']['company_key'];
         //jsファイル作成
-        $this->_editFile($saveData,$editData);
+        $this->_editFile($saveData);
         $this->redirect(['controller' => 'MAgreements', 'action' => 'index']);
       }
       else {
@@ -164,7 +165,7 @@ class MAgreementsController extends AppController {
 
   /**
    * m_user保存
-   * @param $saveData,$companyLastId
+   * @param $saveData
    * @return boolean 保存処理の結果を返す
    * */
   private function _saveMuser($saveData) {
@@ -196,7 +197,7 @@ class MAgreementsController extends AppController {
 
 /**
    * m_agreements保存
-   * @param $saveData,$companyLastId
+   * @param $saveData
    * @return boolean 保存処理の結果を返す
    * */
   private function _saveMagreement($saveData) {
@@ -219,7 +220,7 @@ class MAgreementsController extends AppController {
 
 /**
    * tdictionaries保存
-   * @param $saveData,$companyLastId
+   * @param $saveData
    * @return boolean 保存処理の結果を返す
    * */
   private function _saveTdictionary($saveData) {
@@ -248,7 +249,7 @@ class MAgreementsController extends AppController {
 
 /**
    * tautomessages保存
-   * @param $saveData,$companyLastId
+   * @param $saveData
    * @return boolean 保存処理の結果を返す
    * */
   private function _saveTautomessage($saveData) {
@@ -277,7 +278,7 @@ class MAgreementsController extends AppController {
 
   /**
    * mwidetsetting保存
-   * @param $saveData,$companyLastId
+   * @param $saveData
    * @return boolean 保存処理の結果を返す
    * */
   private function _saveMwidgetsetting($saveData) {
@@ -331,17 +332,17 @@ class MAgreementsController extends AppController {
 
   /* *
    * jsfile更新機能
-   * @param $saveData,$editData
+   * @param $saveData
    * @return void
    * */
-  public function _editFile($saveData,$editData) {
+  public function _editFile($saveData) {
     $this->autoRender = FALSE;
     $name = $saveData['MCompany']['company_key'];
     // 作成するファイル名の指定
     $file_name =C_NODE_SERVER_DIR."/webroot/client/{$name}.js";
     // ファイルの存在確認
     if( !file_exists($file_name) ){
-      $beforename = $editData['MCompany']['company_key'];
+      $beforename = $saveData['beforeData'];
       $before_file = C_NODE_SERVER_DIR."/webroot/client/{$beforename}.js";
       // ファイル削除、作成
       unlink($before_file);

@@ -73,7 +73,9 @@ class MUsersController extends AppController {
     $saveData = [];
     $insertFlg = true;
     $errorMessage = null;
+
     if ( !$this->request->is('ajax') ) return false;
+
     if (!empty($this->request->data['userId'])) {
       $this->MUser->recursive = -1;
       $tmpData = $this->MUser->read(null, $this->request->data['userId']);
@@ -87,6 +89,7 @@ class MUsersController extends AppController {
         $errorMessage = ['other' => ["契約しているアカウント数をオーバーしています"]];
       }
     }
+
     $tmpData['MUser']['user_name'] = $this->request->data['userName'];
     $tmpData['MUser']['display_name'] = $this->request->data['displayName'];
     $tmpData['MUser']['mail_address'] = $this->request->data['mailAddress'];
@@ -107,6 +110,7 @@ class MUsersController extends AppController {
     $this->MUser->set($tmpData);
 
     $this->MUser->begin();
+
     // バリデーションチェックでエラーが出た場合
     if ( empty($errorMessage) && $this->MUser->validates() ) {
       $saveData = $tmpData;
@@ -171,6 +175,7 @@ class MUsersController extends AppController {
     if ( isset($mCompany['MCompany']) ) {
       $this->userInfo['MCompany'] = $mCompany['MCompany'];
     }
+
     $params = [
       'fields' => 'MUser.id',
       'conditions' => [

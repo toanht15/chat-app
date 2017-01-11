@@ -552,7 +552,6 @@ class HistoriesController extends AppController {
           }
           $ret[]=$alluser['MCustomer']['visitors_id'];
         }
-        //pr($ret); exit();
         $this->paginate['THistory']['conditions'][] = ['THistory.visitors_id' => $ret];
       }
 

@@ -7,6 +7,7 @@ App::uses('AppModel', 'Model');
 class TDictionary extends AppModel {
 
   public $name = 'TDictionary';
+
   //アソシエーション
   public $belongsTo = ['MCompany' =>
     ['className' => 'M_company',
