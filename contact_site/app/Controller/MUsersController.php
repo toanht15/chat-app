@@ -4,7 +4,7 @@
  * ユーザーマスタ
  */
 class MUsersController extends AppController {
-  public $uses = ['MUser', 'MCompany'];
+  public $uses = ['MUser', 'MCompany', 'MChatSetting'];
   public $paginate = [
     'MUser' => [
       'limit' => 10,
@@ -62,7 +62,7 @@ class MUsersController extends AppController {
   }
 
   /* *
-   * 登録画面
+   * 登録処理
    * @return void
    * */
   public function remoteSaveEntryForm() {
@@ -99,6 +99,10 @@ class MUsersController extends AppController {
       $tmpData['MUser']['new_password'] = $this->request->data['password'];
     }
 
+    // チャットアカウント用処理（アカウント登録時のみ）
+    if ( !isset($tmpData['MUser']['id']) && isset($this->coreSettings[C_COMPANY_USE_CHAT]) && $this->coreSettings[C_COMPANY_USE_CHAT] ) {
+      $tmpData['MUser']['settings'] = $this->_setChatSetting($tmpData);
+    }
     // const
     $this->MUser->set($tmpData);
 
@@ -119,6 +123,21 @@ class MUsersController extends AppController {
       $errorMessage = $this->MUser->validationErrors;
     }
     return new CakeResponse(['body' => json_encode($errorMessage)]);
+  }
+
+  /**
+   * _setChatSetting チャット関連設定
+   * @param $tmpData array POSTデータ
+   * @return string(json) JSONデータ(settings)に格納される
+   * */
+  private function _setChatSetting($tmpData = []){
+    $chatSetting = $this->MChatSetting->coFind('first', [], false);
+    if ( isset($chatSetting['MChatSetting']['sc_flg']) && strcmp($chatSetting['MChatSetting']['sc_flg'], C_SC_ENABLED) === 0 ) {
+      return $this->jsonEncode([
+        'sc_num' => $chatSetting['MChatSetting']['sc_default_num']
+      ]);
+    }
+    return "";
   }
 
 

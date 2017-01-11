@@ -56,6 +56,13 @@ class MUser extends AppModel {
                 'rule' => 'notBlank',
                 'message' => '権限レベルを選択してください。'
             ]
+        ],
+        'sc_num' => [
+          'range' => [
+            'rule' => ['range', -1, 100],
+            'allowEmpty' => false,
+            'message' => '０～９９以内で設定してください。'
+          ]
         ]
     ];
 
@@ -196,5 +203,36 @@ class MUser extends AppModel {
             return true;
         }
     }
+
+    /**
+     * getUser ユーザーの情報を単一か複数取得する
+     * @param $id int(default:null) nullの場合は所属ユーザーを全て取得
+     * @return array 単一ユーザーの場合は 'first', 所属ユーザーの場合は 'all' の結果
+     * */
+    public function getUser($id = null){
+      $conditions = [
+        'fields' => [
+          'id',
+          'display_name',
+          'settings'
+        ],
+        'conditions' => [
+          'm_companies_id' => Configure::read('logged_company_id'),
+          'permission_level != ' => C_AUTHORITY_SUPER,
+          'del_flg' => 0
+        ],
+        'recursive' => -1
+      ];
+
+      if ( !empty($id) ) {
+        $conditions['conditions']['id'] = $id;
+        return $this->find('first', $conditions);
+      }
+      else {
+        return $this->find('all', $conditions);
+      }
+
+    }
+
 
 }
