@@ -45,6 +45,9 @@
       'javascript:void(0)',
       array('escape' => false, 'class'=>'skyBlueBtn btn-shadow','id' => 'searchRefine','onclick' => 'openSearchRefine()'));
     ?>
+    <li>
+      <label id='date'>日付</label>
+      <span><?= $this->Form->input('datefilter',['label'=> false,'div' => false,'id' => 'dateperiod','name'=> 'datefilter']); ?></li>
     <div class='seach_menu'>
       <label class='searchConditions'>検索条件</label>
       <ul>
@@ -82,6 +85,18 @@
           <li>
             <label>ﾒｰﾙｱﾄﾞﾚｽ</label>
             <span class="value"><?= h($data['History']['mail_address']) ?></span>
+          </li>
+        <?php } ?>
+        <?php if(!empty($data['History']['responsible_name'])) { ?>
+          <li>
+            <label>担当者</label>
+            <span class="value"><?= h($data['History']['responsible_name']) ?></span>
+          </li>
+        <?php } ?>
+        <?php if(!empty($data['History']['message'])) { ?>
+          <li>
+            <label>ﾁｬｯﾄ内容</label>
+            <span class="value"><?= h($data['History']['message']) ?></span>
           </li>
         <?php } ?>
       </ul>

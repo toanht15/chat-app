@@ -64,9 +64,9 @@ function remoteDeleteCompany(id,companyId,userId,companyKey){
         companyKey:companyKey
       },
       cache: false,
-      url: "<?= $this->Html->url('/MAgreements/remoteDeleteCompany') ?>",
+      url: "<?= $this->Html->url(['controller' => 'MAgreements', 'action' => 'remoteDeleteCompany']) ?>",
       success: function(){
-        location.href = "<?= $this->Html->url('/MAgreements/index') ?>";
+        location.href = "<?= $this->Html->url(['controller' => 'MAgreements', 'action' => 'index']) ?>";
       }
     });
   };

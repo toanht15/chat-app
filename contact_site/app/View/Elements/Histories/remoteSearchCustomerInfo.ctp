@@ -56,5 +56,13 @@ popupEvent.customizeBtn = function(){
       <p><span>メールアドレス</span></p>
       <span><?= $this->Form->input('mail_address',['label'=>false,'div' => false]) ?></span>
     </li>
+    <li>
+      <p><span>担当者</span></p>
+      <span><?= $this->Form->input('responsible_name',['label'=>false,'div' => false]) ?></span>
+    </li>
+    <li>
+      <p><span>チャット内容</span></p>
+      <span><?= $this->Form->input('message',['label'=>false,'div' => false]) ?></span>
+    </li>
   </ul>
 <?= $this->Form->end(); ?>

@@ -23,7 +23,7 @@ function saveEdit(){
     cache: false,
     crossDomain: true,
     dataType: 'text',
-    url: "<?= $this->Html->url('http://contact.sinclo/MUsers/remoteSaveForm') ?>",
+    url: "<?= $this->Html->url("<?php echo C_CROSS_DOMAIN_ADDRESS; ?>"+'/MUsers/remoteSaveForm') ?>",
     success: function(data){
       $('#MAgreementHashPassword').val(data);
       document.getElementById('MAgreementEditForm').submit();
@@ -44,9 +44,9 @@ function remoteDeleteCompany(companyId,userId,companyKey){
         companyKey:companyKey
       },
       cache: false,
-      url: "<?= $this->Html->url('/MAgreements/remoteDeleteCompany') ?>",
+      url: "<?= $this->Html->url(['controller' => 'MAgreements', 'action' => 'remoteDeleteCompany']) ?>",
       success: function(){
-        location.href = "<?= $this->Html->url('/MAgreements/index') ?>";
+        location.href = "<?= $this->Html->url(['controller' => 'MAgreements', 'action' => 'index']) ?>";
       }
     });
   };

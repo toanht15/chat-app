@@ -2177,7 +2177,12 @@ ul.naviBtn {
   }
   #history_menu {
     height: auto;
-
+    #dateperiod {
+      margin-left: 1em;
+    }
+    #date {
+    margin-left: 11em;
+    }
     ul {
       display: flex;
       flex-direction: row;

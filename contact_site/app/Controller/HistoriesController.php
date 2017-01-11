@@ -15,7 +15,7 @@ class HistoriesController extends AppController {
       ],
       'fields' => [
         'THistory.*',
-        'THistoryChatLog.*'
+        'THistoryChatLog.*',
       ],
       'joins' => [
         [
@@ -467,6 +467,8 @@ class HistoriesController extends AppController {
     $name = '';
     $tel = '';
     $mail = '';
+    $responsible_name='';
+    $message='';
 
     //履歴検索機能
     if($this->request->is('post')) {
@@ -482,6 +484,8 @@ class HistoriesController extends AppController {
       $name = $data['History']['customer_name'];
       $tel = $data['History']['telephone_number'];
       $mail = $data['History']['mail_address'];
+      $responsible_name = $data['History']['responsible_name'];
+      $message = $data['History']['message'];
 
       if($ip != '' ) {
         $this->paginate['THistory']['conditions'][] = ['THistory.ip_address like' =>'%'.$ip.'%'];
@@ -491,6 +495,31 @@ class HistoriesController extends AppController {
       }
       if($finish != '' ) {
         $this->paginate['THistory']['conditions'][] = ['THistory.access_date <=' => $finish.' 23:59:59'];
+      }
+      if($responsible_name != '' ) {
+        //ユーザーid取得
+        $muserData = $this->MUser->find('first',[
+          'conditions' => [
+            'MUser.user_name like' => '%'.$responsible_name.'%',
+            'MUser.m_companies_id' => $this->userInfo['MCompany']['id']]]);
+        $messageDatas = $this->THistoryChatLog->find('all',[
+          'conditions' => [
+            'THistoryChatLog.m_users_id' => $muserData['MUser']['id']]]);
+        $box = [];
+        foreach($messageDatas as $messageData) {
+          $box[]=$messageData['THistoryChatLog']['t_histories_id'];
+        }
+        $this->paginate['THistory']['conditions'][] = ['THistory.id' => $box];
+      }
+      if($message != '' ) {
+        $chatDatas = $this->THistoryChatLog->find('all',[
+          'conditions' => [
+            'THistoryChatLog.message like' => '%'.$message.'%',]]);
+        $box2 = [];
+        foreach($chatDatas as $chatData) {
+          $box2[]=$chatData['THistoryChatLog']['t_histories_id'];
+        }
+        $this->paginate['THistory']['conditions'][] = ['THistory.id' => $box2];
       }
 
       if( $company !== "" || $name !== "" || $tel !== "" || $mail !== "" ) {
@@ -523,7 +552,7 @@ class HistoriesController extends AppController {
           }
           $ret[]=$alluser['MCustomer']['visitors_id'];
         }
-
+        //pr($ret); exit();
         $this->paginate['THistory']['conditions'][] = ['THistory.visitors_id' => $ret];
       }
 
@@ -653,7 +682,7 @@ class HistoriesController extends AppController {
       'order' => 'THistoryChatLog.created',
       'recursive' => -1
     ];
-    /*chat内容のCSVのため新たに追加*/
+    /*chat内容のCSV出力のため追加*/
     $this->THistoryChatLog->virtualFields['display_name'] = 'concat(MUser.display_name,"さん")';
     return $this->THistoryChatLog->find('all', $params);
   }
