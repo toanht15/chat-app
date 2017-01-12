@@ -46,11 +46,7 @@ class CreateTableAgreements extends CakeMigration {
 				),
 			),
 		),
-		'down' => array(
-			'drop_table' => array(
-				'm_agreement_lists'
-			),
-		),
+		'down' => array(),
 	);
 
 /**

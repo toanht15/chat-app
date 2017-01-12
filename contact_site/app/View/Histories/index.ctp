@@ -13,7 +13,7 @@
         array('escape' => false, 'class'=>'skyBlueBtn btn-shadow', 'id' => 'outputCSV'));
       ?>
       <?php echo $this->Html->link(
-        'ＣＳＶ出力2',
+        'チャットＣＳＶ出力',
         'javascript:void(0)',
         array('escape' => false, 'class'=>'skyBlueBtn btn-shadow', 'id' => 'outputChat'));
       ?>
@@ -45,6 +45,7 @@
       'javascript:void(0)',
       array('escape' => false, 'class'=>'skyBlueBtn btn-shadow','id' => 'searchRefine','onclick' => 'openSearchRefine()'));
     ?>
+      <span><?= $this->Form->input('datefilter',['label'=> false,'div' => false,'id' => 'mainDatePeriod','name'=> 'datefilter']); ?></span>
     <div class='seach_menu'>
       <label class='searchConditions'>検索条件</label>
       <ul>
@@ -82,6 +83,18 @@
           <li>
             <label>ﾒｰﾙｱﾄﾞﾚｽ</label>
             <span class="value"><?= h($data['History']['mail_address']) ?></span>
+          </li>
+        <?php } ?>
+        <?php if(!empty($data['History']['responsible_name'])) { ?>
+          <li>
+            <label>担当者</label>
+            <span class="value"><?= h($data['History']['responsible_name']) ?></span>
+          </li>
+        <?php } ?>
+        <?php if(!empty($data['History']['message'])) { ?>
+          <li>
+            <label>ﾁｬｯﾄ内容</label>
+            <span class="value"><?= h($data['History']['message']) ?></span>
           </li>
         <?php } ?>
       </ul>

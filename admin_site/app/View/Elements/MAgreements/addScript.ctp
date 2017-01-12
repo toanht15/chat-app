@@ -1,5 +1,4 @@
 <script type = "text/javascript">
-//パスワード自動生成
 function saveAct(){
   var key = $('#MCompanyCompanyKey').val();
   $('#MAgreementMailAddress').val(key + "<?php echo C_MAGREEMENT_MAIL_ADDRESS; ?>");
@@ -52,7 +51,7 @@ $(function(){
   $("#MAgreementMailAddress").prop("disabled", true);
 });
 
-
+//削除処理
 function remoteDeleteCompany(id,companyId,userId,companyKey){
   modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', 'アカウント設定');
   popupEvent.closePopup = function(){
@@ -65,9 +64,9 @@ function remoteDeleteCompany(id,companyId,userId,companyKey){
         companyKey:companyKey
       },
       cache: false,
-      url: "<?= $this->Html->url('/MAgreements/remoteDeleteCompany') ?>",
+      url: "<?= $this->Html->url(['controller' => 'MAgreements', 'action' => 'remoteDeleteCompany']) ?>",
       success: function(){
-        location.href = "<?= $this->Html->url('/MAgreements/index') ?>";
+        location.href = "<?= $this->Html->url(['controller' => 'MAgreements', 'action' => 'index']) ?>";
       }
     });
   };

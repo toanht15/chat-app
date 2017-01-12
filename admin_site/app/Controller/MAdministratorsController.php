@@ -64,7 +64,6 @@ class MAdministratorsController extends AppController {
       $tmpData = $this->MAdministrator->read(null, $this->request->data['userId']);
       $insertFlg = false;
     }
-
     else {
       $this->MAdministrator->create();
     }

@@ -31,11 +31,5 @@ $(function(){
     $(this).addClass("on");
     $('#agreement_tag').removeClass("on");
   });
-
-//試験用アカウント見えなくする
-  var tab2 = document.getElementsByClassName('tab2');
-  for(var i = 0; i < tab2.length; i++) {
-    tab2[i].style.display = "none";
-  }
 });
 </script>

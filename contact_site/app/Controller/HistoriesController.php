@@ -15,7 +15,7 @@ class HistoriesController extends AppController {
       ],
       'fields' => [
         'THistory.*',
-        'THistoryChatLog.*'
+        'THistoryChatLog.*',
       ],
       'joins' => [
         [
@@ -467,12 +467,25 @@ class HistoriesController extends AppController {
     $name = '';
     $tel = '';
     $mail = '';
+    $responsible_name='';
+    $message='';
 
     //履歴検索機能
     if($this->request->is('post')) {
       $this->Session->write('Thistory', $this->data);
     }
-
+    if($this->request->is('ajax')) {
+      $this->autoRender = FALSE;
+      $start = $this->request->data['start_day'];
+      $finish = $this->request->data['finish_day'];
+      $this->log($start,LOG_DEBUG);
+      if($start != '' ) {
+        $this->paginate['THistory']['conditions'][] = ['THistory.access_date >=' => $start.' 00:00:00'];
+      }
+      if($finish != '' ) {
+        $this->paginate['THistory']['conditions'][] = ['THistory.access_date <=' => $finish.' 23:59:59'];
+      }
+    }
     if ($this->Session->check('Thistory')) {
       $data = $this->Session->read('Thistory');
       $start = $data['History']['start_day'];
@@ -482,6 +495,8 @@ class HistoriesController extends AppController {
       $name = $data['History']['customer_name'];
       $tel = $data['History']['telephone_number'];
       $mail = $data['History']['mail_address'];
+      $responsible_name = $data['History']['responsible_name'];
+      $message = $data['History']['message'];
 
       if($ip != '' ) {
         $this->paginate['THistory']['conditions'][] = ['THistory.ip_address like' =>'%'.$ip.'%'];
@@ -491,6 +506,31 @@ class HistoriesController extends AppController {
       }
       if($finish != '' ) {
         $this->paginate['THistory']['conditions'][] = ['THistory.access_date <=' => $finish.' 23:59:59'];
+      }
+      if($responsible_name != '' ) {
+        //ユーザーid取得
+        $muserData = $this->MUser->find('first',[
+          'conditions' => [
+            'MUser.user_name like' => '%'.$responsible_name.'%',
+            'MUser.m_companies_id' => $this->userInfo['MCompany']['id']]]);
+        $messageDatas = $this->THistoryChatLog->find('all',[
+          'conditions' => [
+            'THistoryChatLog.m_users_id' => $muserData['MUser']['id']]]);
+        $box = [];
+        foreach($messageDatas as $messageData) {
+          $box[]=$messageData['THistoryChatLog']['t_histories_id'];
+        }
+        $this->paginate['THistory']['conditions'][] = ['THistory.id' => $box];
+      }
+      if($message != '' ) {
+        $chatDatas = $this->THistoryChatLog->find('all',[
+          'conditions' => [
+            'THistoryChatLog.message like' => '%'.$message.'%',]]);
+        $box2 = [];
+        foreach($chatDatas as $chatData) {
+          $box2[]=$chatData['THistoryChatLog']['t_histories_id'];
+        }
+        $this->paginate['THistory']['conditions'][] = ['THistory.id' => $box2];
       }
 
       if( $company !== "" || $name !== "" || $tel !== "" || $mail !== "" ) {
@@ -653,7 +693,7 @@ class HistoriesController extends AppController {
       'order' => 'THistoryChatLog.created',
       'recursive' => -1
     ];
-    /*chat内容のCSVのため新たに追加*/
+    /*chat内容のCSV出力のため追加*/
     $this->THistoryChatLog->virtualFields['display_name'] = 'concat(MUser.display_name,"さん")';
     return $this->THistoryChatLog->find('all', $params);
   }
@@ -666,12 +706,14 @@ class HistoriesController extends AppController {
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
-    $this->data = $this->Session->read('Thistory');
-    if(empty($this->data['History']['start_day']) || empty($this->data['History']['finish_day'])) {
-      $today = date("Y/m/d");
-      $this->request->data['History']['start_day'] = $today;
-      $this->request->data['History']['finish_day'] = $today;
-    }
+    $start_day = $this->request->data['startday'];
+    $end_day = $this->request->data['finishday'];
+    //$this->data = $this->Session->read('Thistory');
+    //if(empty($this->data['History']['start_day']) || empty($this->data['History']['finish_day'])) {
+    //$today = date("Y/m/d");
+    $this->request->data['History']['start_day'] = $start_day;
+    $this->request->data['History']['finish_day'] = $end_day;
+    //}
     // const
     $this->render('/Elements/Histories/remoteSearchCustomerInfo');
   }
