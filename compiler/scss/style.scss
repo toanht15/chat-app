@@ -2186,12 +2186,44 @@ ul.naviBtn {
   #history_menu {
     height: auto;
 
-    #dateperiod {
-      margin-left: 1em;
-    }
     #date {
       margin-left: 11em;
     }
+
+    #dateperiod {
+      margin-left: 1em;
+      background-image: url(/img/calender.png);
+      background-repeat: no-repeat;
+      background-position: right 10pt bottom 4pt;
+      background-size: 15px;
+      cursor: pointer;
+    }
+
+    #mainDatePeriod {
+    margin-left: 1em;
+    background-image: url(/img/calender.png);
+    background-repeat: no-repeat;
+    background-position: right 4pt bottom 2pt;
+    background-size: 15px;
+    cursor: pointer;
+    border-bottom: 1px solid #909090;
+    font: 16.3333px Arial;
+    width: 13em!important;
+    display: block;
+    text-align: center;
+    }
+
+    #viewDate{
+    margin-left: 1em;
+    background-image: url(/img/calender.png);
+    background-repeat: no-repeat;
+    background-position: right 4pt bottom 2pt;
+    background-size: 15px;
+    cursor: pointer;
+    border-bottom: 1px solid #909090;
+    font: 13.3333px Arial;
+    }
+
     ul {
       display: flex;
       flex-direction: row;
@@ -2293,8 +2325,8 @@ ul.naviBtn {
 
   a#searchRefine {
     position: absolute;
-    top: 91px;
-    left: 37px;
+    top: 82px;
+    left: 23em;
     width: 8em;
     padding: 0.25em 0.5em;
     text-align: center;

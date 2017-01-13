@@ -194,8 +194,8 @@ $(document).ready(function(){
     "locale": {
       "format": "YYYY/MM/DD",
       "separator": " - ",
-      "applyLabel": "適用",
-      "cancelLabel": "Cancel",
+      "applyLabel": "設定",
+      "cancelLabel": "閉じる",
       "fromLabel": "From",
       "toLabel": "To",
       "customRangeLabel": "カスタム",
@@ -231,6 +231,55 @@ $(document).ready(function(){
     "opens": "left"
   });
 
+    $('#mainDatePeriod').daterangepicker({
+    "ranges": {
+      '今日': [moment(), moment()],
+      '昨日': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+      '過去一週間': [moment().subtract(6, 'days'), moment()],
+      '過去一ヶ月間': [moment().subtract(29, 'days'), moment()],
+      '今月': [moment().startOf('month'), moment().endOf('month')],
+      '先月': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+    },
+    "locale": {
+      "format": "YYYY/MM/DD",
+      "separator": " - ",
+      "applyLabel": "検索",
+      "cancelLabel": "閉じる",
+      "fromLabel": "From",
+      "toLabel": "To",
+      "customRangeLabel": "カスタム",
+      "weekLabel": "W",
+      "daysOfWeek": [
+        "日",
+        "月",
+        "火",
+        "水",
+        "木",
+        "金",
+        "土"
+      ],
+      "monthNames": [
+        "1月",
+        "2月",
+        "3月",
+        "4月",
+        "5月",
+        "6月",
+        "7月",
+        "8月",
+        "9月",
+        "10月",
+        "11月",
+        "12月"
+      ],
+      "firstDay": 1
+    },
+    "alwaysShowCalendars": true,
+    "startDate": $('#HistoryStartDay').val(),
+    "endDate": $('#HistoryFinishDay').val(),
+    //"opens": "left"
+  });
+
   $('input[name="datefilter"]').on('apply.daterangepicker', function(ev, picker) {
     $('#HistoryStartDay').val(picker.startDate.format('YYYY/MM/DD'));
     $('#HistoryFinishDay').val(picker.endDate.format('YYYY/MM/DD'));
@@ -238,6 +287,12 @@ $(document).ready(function(){
 
   $('#day_search').on('click', function() {
     if ($(this).prop('checked')) {
+      $("#dateperiod").prop("disabled", true);
+      $('#HistoryStartDay').val("");
+      $('#HistoryFinishDay').val("");
+      $("#dateperiod").addClass('extinguish');
+    }
+    else {
       $("#dateperiod").prop("disabled", false);
       var d = new Date($('#dateperiod').data('daterangepicker').startDate);
       var startDate = d.getFullYear() + '/' + (d.getMonth() + 1) + '/' + d.getDate();
@@ -246,12 +301,6 @@ $(document).ready(function(){
       $('#HistoryStartDay').val(startDate);
       $('#HistoryFinishDay').val(endDate);
       $("#dateperiod").removeClass('extinguish');
-    }
-    else {
-      $("#dateperiod").prop("disabled", true);
-      $('#HistoryStartDay').val("");
-      $('#HistoryFinishDay').val("");
-      $("#dateperiod").addClass('extinguish');
     }
   });
 });

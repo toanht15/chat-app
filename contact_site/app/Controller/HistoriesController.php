@@ -477,8 +477,25 @@ class HistoriesController extends AppController {
 
     if ($this->Session->check('Thistory')) {
       $data = $this->Session->read('Thistory');
+      if (isset($data['start_day'])){
+      $start = $data['start_day'];
+      $finish = $data['finish_day'];
+      if($start != '' ) {
+        $this->paginate['THistory']['conditions'][] = ['THistory.access_date >=' => $start.' 00:00:00'];
+      }
+      if($finish != '' ) {
+        $this->paginate['THistory']['conditions'][] = ['THistory.access_date <=' => $finish.' 23:59:59'];
+      }
+    }
+    else {
       $start = $data['History']['start_day'];
       $finish = $data['History']['finish_day'];
+      if($start != '' ) {
+        $this->paginate['THistory']['conditions'][] = ['THistory.access_date >=' => $start.' 00:00:00'];
+      }
+      if($finish != '' ) {
+        $this->paginate['THistory']['conditions'][] = ['THistory.access_date <=' => $finish.' 23:59:59'];
+      }
       $ip = $data['History']['ip_address'];
       $company = $data['History']['company_name'];
       $name = $data['History']['customer_name'];
@@ -555,7 +572,7 @@ class HistoriesController extends AppController {
 
         $this->paginate['THistory']['conditions'][] = ['THistory.visitors_id' => $ret];
       }
-
+    }
     }
       $historyList = $this->paginate('THistory');
     // TODO 良いやり方が無いか模索する
@@ -695,11 +712,18 @@ class HistoriesController extends AppController {
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
+    $start_day = $this->request->data['startday'];
+    $end_day = $this->request->data['finishday'];
     $this->data = $this->Session->read('Thistory');
+
     if(empty($this->data['History']['start_day']) || empty($this->data['History']['finish_day'])) {
-      $today = date("Y/m/d");
-      $this->request->data['History']['start_day'] = $today;
-      $this->request->data['History']['finish_day'] = $today;
+      //$today = date("Y/m/d");
+      $this->request->data['History']['start_day'] = $this->data['start_day'];
+      $this->request->data['History']['finish_day'] = $this->data['finish_day'];
+    }
+    if(empty($this->data['History']['start_day']) && empty($this->data['History']['finish_day']) && empty($this->data['start_day']) &&  empty($this->data['finish_day'])) {
+      $this->request->data['History']['start_day'] = $start_day;
+      $this->request->data['History']['finish_day'] = $end_day;
     }
     // const
     $this->render('/Elements/Histories/remoteSearchCustomerInfo');

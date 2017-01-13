@@ -45,9 +45,16 @@
       'javascript:void(0)',
       array('escape' => false, 'class'=>'skyBlueBtn btn-shadow','id' => 'searchRefine','onclick' => 'openSearchRefine()'));
     ?>
-    <li>
-      <label id='date'>日付</label>
-      <span><?= $this->Form->input('datefilter',['label'=> false,'div' => false,'id' => 'dateperiod','name'=> 'datefilter']); ?></li>
+     <?php if(!empty($data['History']['start_day'])||!empty($data['History ']['finish_day'])) { ?>
+      <span id ='mainDatePeriod' name = 'datefilter'><?= h($data['History']['start_day']) ?>-<?= h($data['History']['finish_day']) ?>　　</span>
+      <?php } ?>
+      <?php if(!empty($data['start_day'])||!empty($data['finish_day'])) { ?>
+      <span id ='mainDatePeriod' name = 'datefilter'><?= h($data['start_day']) ?>-<?= h($data['finish_day']) ?>　　</span>
+      <?php } ?>
+      <?php if(empty($data['History']['start_day'])&&empty($data['History ']['finish_day'])&&empty($data['start_day'])&&empty($data['finish_day'])) { ?>
+      <span id ='mainDatePeriod' name = 'datefilter'>全期間</span>
+      <?php } ?>
+
     <div class='seach_menu'>
       <label class='searchConditions'>検索条件</label>
       <ul>
@@ -55,6 +62,12 @@
         <li>
           <label>日付</label>
           <span class="value"><?= h($data['History']['start_day']) ?>-<?= h($data['History']['finish_day']) ?></span>
+        </li>
+        <?php } ?>
+        <?php if(!empty($data['start_day'])||!empty($data['finish_day'])) { ?>
+        <li>
+          <label>日付</label>
+          <span class="value"><?= h($data['start_day']) ?>-<?= h($data['finish_day']) ?></span>
         </li>
         <?php } ?>
         <?php if(!empty($data['History']['ip_address'])) { ?>
