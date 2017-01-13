@@ -1421,9 +1421,12 @@ console.log("chatStart");
           // 以降、受信時のみの処理
           return false;
         }
-
         // Sorryメッセージが送られている場合は通知しない
-        if (obj.scFlg) return false;
+        if (!obj.opFlg) {
+          $scope.monitorList[obj.tabId].chatUnreadCnt = 0;
+          $scope.monitorList[obj.tabId].chatUnreadId = null;
+          return false;
+        }
 
 
         // 着信音を鳴らす

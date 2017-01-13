@@ -485,7 +485,12 @@ io.sockets.on('connection', function (socket) {
 
               // 担当者のいない消費者からのメッセージの場合
               if ( d.messageType === 1 && !getSessionId(d.siteKey, d.tabId, 'chat') ) {
-                // 応対可能かチェック
+                if (chatApi.sendCheckTimerList.hasOwnProperty(d.tabId)) {
+                  clearTimeout(chatApi.sendCheckTimerList[d.tabId]);
+                  chatApi.sendCheckTimerList[d.tabId] = null;
+                }
+
+                // 応対可能かチェック(対応できるのであれば trueが返る)
                 chatApi.sendCheck(d, function(err, ret){
                   sendData.opFlg = ret.opFlg;
                   // 書き込みが成功したら顧客側に結果を返す
@@ -493,13 +498,23 @@ io.sockets.on('connection', function (socket) {
                   if (Number(insertData.message_type) === 3) return false;
                   // 書き込みが成功したら企業側に結果を返す
                   emit.toCompany('sendChatResult', {tabId: d.tabId, opFlg: sendData.opFlg, chatId: results.insertId, sort: fullDateTime(insertData.created), created: insertData.created, userId: insertData.m_users_id, messageType: d.messageType, ret: true, message: d.chatMessage, siteKey: d.siteKey}, d.siteKey);
+                  if ( ret.opFlg === true ) return false;
+                  // 応対不可だった場合、既読にする
+                  historyId = sincloCore[d.siteKey][d.tabId].historyId;
+                  pool.query("UPDATE t_history_chat_logs SET message_read_flg = 1 WHERE t_histories_id = ? AND message_type = 1 AND id <= ?;",
+                    [historyId, results.insertId], function(err, ret, fields){}
+                  );
 
-                  // 応対不可だった場合、sorryメッセージを返す
-                  if ( ret.opFlg === false && ret.message !== "" ) {
-                    var obj = d;
-                    obj.chatMessage = ret.message;
-                    obj.messageType = chatApi.cnst.observeType.sorry;
-                    chatApi.set(obj);
+                  // Sorryメッセージがある場合は送る
+                  if ( ret.message !== "" ) {
+                    chatApi.sendCheckTimerList[d.tabId] = setTimeout(function(){
+                      delete chatApi.sendCheckTimerList[d.tabId];
+                      // Sorryメッセージを送る
+                      var obj = d;
+                      obj.chatMessage = ret.message;
+                      obj.messageType = chatApi.cnst.observeType.sorry;
+                      chatApi.set(obj);
+                    }, 3000);
                   }
                 });
               }
@@ -577,6 +592,7 @@ io.sockets.on('connection', function (socket) {
       }
       return scNum;
     },
+    sendCheckTimerList: {},
     sendCheck: function(d, callback){
       var companyId = companyList[d.siteKey];
 
@@ -584,21 +600,24 @@ io.sockets.on('connection', function (socket) {
       pool.query(getUserSQL, [companyId], function(err, rows){
         var ret = false, message = null;
 
-        if ( rows && rows[0] && rows[0].hasOwnProperty("display_type") && rows[0].hasOwnProperty("display_type") ) {
+        if ( rows && rows[0] ) {
+          message = rows[0].sorry_message;
           // チャット上限数を設定していない場合
           if ( Number(rows[0].sc_flg) === 2 ) {
-            ret = true;
+            // オペレーターの在籍/離席を見る場合
+            if ( !(rows[0].display_type === 2 && getOperatorCnt(d.siteKey) === 0) ) {
+              ret = true;
+            }
           }
           // チャット上限数を設定している場合
           else if ( Number(rows[0].sc_flg) === 1 ) {
-            message = rows[0].sorry_message;
             /* チャット上限数をみる */
             if ( scList.hasOwnProperty(d.siteKey) ) {
               var userIds = Object.keys(scList[d.siteKey].user);
               if ( userIds.length !== 0 ) {
                 for (var i = 0; i < userIds.length; i++) {
                   if ( Number(scList[d.siteKey].user[userIds[i]]) === Number(scList[d.siteKey].cnt[userIds[i]]) ) continue;
-                  ret = true; break;
+                  ret = true;
                 }
               }
             }
@@ -1372,9 +1391,10 @@ io.sockets.on('connection', function (socket) {
     if ( isset(sincloCore[obj.siteKey]) && isset(sincloCore[obj.siteKey][obj.tabId].chat) ) {
       sincloCore[obj.siteKey][obj.tabId].chat = null;
       sincloCore[obj.siteKey][obj.tabId].chatSessionId = null;
+      scInfo = ( scList.hasOwnProperty(obj.siteKey) ) ? scList[obj.siteKey].cnt : {};
       var sendData = {
         ret: true, messageType: type, created: now, tabId: obj.tabId, siteKey: obj.siteKey,
-        userId: obj.userId, scInfo: scList[obj.siteKey].cnt
+        userId: obj.userId, scInfo: scInfo
       };
 
       emit.toCompany("chatEndResult", sendData, obj.siteKey);
