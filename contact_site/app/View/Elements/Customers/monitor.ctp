@@ -34,6 +34,11 @@
             <?= $this->Form->input('searchText', array('type'=>'text', 'label' => false, 'ng-model' => 'searchText', 'ng-attr-placeholder' => '{{searchTextPlaceholder()}}')); ?>
             <div id="userFilter" style="display: flex;">
             </div>
+              <?php if ( $coreSettings[C_COMPANY_USE_CHAT] && strcmp($scFlg, C_SC_ENABLED) === 0) : ?>
+                <div id="scInfo">
+                  チャット対応数上限 <span><?=$scNum?></span> 件 （残り対応可能数 <span>{{scInfo.remain}}</span> 件）
+                </div>
+              <?php endif; ?>
           </div>
         <?php endif; ?>
         <!-- 検索窓 -->
@@ -59,11 +64,11 @@
             echo '<li id="opStatus">現在のステータス</li>';
             if ( $opStatus ) {
               echo "<li id='operatorStatus' class='opWait'><span>待機中</span></li>";
-              echo "<li id='changeOpStatus' onclick='chgOpStatus()' data-status='" . $opStatus. "' class='redBtn btn-shadow'>離席中にする</li>";
+              echo "<li id='changeOpStatus' ng-click='chgOpStatus()' data-status='" . $opStatus. "' class='redBtn btn-shadow'>離席中にする</li>";
             }
             else {
               echo "<li id='operatorStatus' class='opStop'><span>離席中</span></li>";
-              echo "<li id='changeOpStatus' onclick='chgOpStatus()' data-status='" . $opStatus. "' class='blueBtn btn-shadow'>待機中にする</li>";
+              echo "<li id='changeOpStatus' ng-click='chgOpStatus()' data-status='" . $opStatus. "' class='blueBtn btn-shadow'>待機中にする</li>";
             }
           }
           ?>

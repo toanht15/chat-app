@@ -40,15 +40,22 @@ if ( window.hasOwnProperty('io') ) {
 
   // TODO ここをもとに、顧客側の存在確認コードも変える
   window.sendRegularlyRequest = function(status){
+    var data = {userId: myUserId};
     if ( status === undefined ) {
-      var opState = $('#changeOpStatus');
-      var status = opState.data('status');
+      status = $('#changeOpStatus').data('status');
     }
+<?php if ( $coreSettings[C_COMPANY_USE_CHAT] && isset($scNum) && strcmp(intval($scFlg), C_SC_ENABLED) === 0 ) :  ?>
+    // チャット契約、同時対応数
+   data.scNum = Number("<?=$scNum?>");
+<?php endif; ?>
+
     if ( status == <?=C_OPERATOR_ACTIVE?> ) {
-      emit('sendOperatorStatus', {userId: myUserId, active: true});
+      data.active = true;
+      emit('sendOperatorStatus', data);
     }
     else {
-      emit('sendOperatorStatus', {userId: myUserId, active: false});
+      data.active = false;
+      emit('sendOperatorStatus', data);
     }
   };
 
@@ -99,10 +106,17 @@ if ( window.hasOwnProperty('io') ) {
             userId: '<?=$muserId?>'
         }
     };
-<?php if ($widgetCheck): ?>
-    data.data['status'] = '<?=$opStatus?>';
 
-<?php endif; ?>
+  <?php if ( $coreSettings[C_COMPANY_USE_CHAT] && isset($scNum) && strcmp(intval($scFlg), C_SC_ENABLED) === 0 ) :  ?>
+    data.data.scNum = Number("<?=$scNum?>");
+  <?php endif; ?>
+
+  <?php if ($widgetCheck) { ?>
+    data.data.opFlg = true;
+    data.data.status = "<?=$opStatus?>";
+  <?php } else { ?>
+    data.data.opFlg = false;
+  <?php } ?>
     emit('connected', data);
   });
 

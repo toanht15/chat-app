@@ -1045,6 +1045,21 @@ ul.naviBtn {
             width: 175px;
             margin-bottom: 0;
         }
+
+        div#scInfo { /* チャット対応数上限 */
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          align-items: center;
+          margin-left: 3em;
+
+          span {
+            font-weight: bold;
+            color: #9bbb59;
+            font-size: 1.5em!important;
+            padding: 0 0.25em;
+          }
+        }
       }
 
       p {
@@ -1148,12 +1163,20 @@ ul.naviBtn {
           border-radius: 5px;
 
             &.blueBtn {
-                background-color: $wait-color!important;
-                border-color: $wait-color!important;
+              background-color: $wait-color!important;
+              border-color: $wait-color!important;
+              &:hover {
+                background-color: #8cab4c !important;
+                border-color: #8cab4c !important;
+              }
             }
             &.redBtn {
-                background-color: $stop-color!important;
-                border-color: $stop-color!important;
+              background-color: $stop-color!important;
+              border-color: $stop-color!important;
+              &:hover {
+                background-color: #ca8785 !important;
+                border-color: #ca8785 !important;
+              }
             }
         }
       }

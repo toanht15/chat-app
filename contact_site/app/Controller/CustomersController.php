@@ -4,7 +4,10 @@
  * モニタリング機能
  */
 class CustomersController extends AppController {
-  public $uses = ['THistory', 'THistoryChatLog', 'TCampaign', 'TDocument', 'MCompany', 'MUser', 'MCustomer', 'MWidgetSetting', 'MChatNotification', 'TDictionary'];
+  public $uses = [
+    'MCompany', 'MUser', 'MCustomer', 'MWidgetSetting', 'MChatNotification', 'MChatSetting',
+    'THistory', 'THistoryChatLog', 'TCampaign', 'TDocument', 'TDictionary'
+  ];
 
   public $tmpLabelHideList = ["accessId", "ipAddress", "ua", "stayCount", "time", "campaign", "stayTime", "page", "title", "referrer"];
 
@@ -22,17 +25,23 @@ class CustomersController extends AppController {
 
     $this->request->data['settings'] = [];
 
+    /* チャット基本情報を読み込む */
+    $chatSetting = $this->MChatSetting->coFind('first', [], false);
+    $scFlg = ( !empty($chatSetting['MChatSetting']['sc_flg']) ) ? intval($chatSetting['MChatSetting']['sc_flg']) : C_SC_DISABLED;
+    $this->set('scFlg', $scFlg);
+
     /* 個人設定を読み込む */
     // ユーザーの最新情報を取得
     $mUser = $this->MUser->coFind('first', ['fields', '*', 'recursive' => -1]);
     if ( !empty($mUser['MUser']['settings']) ) {
       $mySettings = json_decode($mUser['MUser']['settings']);
-      if ( isset($mySettings->sendPattarn) && strcmp($mySettings->sendPattarn, "true") === 0 ) {
-        $this->request->data['settings']['sendPattarn'] = true;
-      }
-      else if ( isset($mySettings->sendPattarn) && strcmp($mySettings->sendPattarn, "false" === 0) ) {
-        $this->request->data['settings']['sendPattarn'] = false;
-      }
+      // チャット送信方法
+      $this->request->data['settings']['sendPattarn'] = ( isset($mySettings->sendPattarn) && strcmp($mySettings->sendPattarn, "true") === 0 ) ? true : false;
+    }
+    // チャット
+    if ( strcmp($scFlg, C_SC_ENABLED) === 0 ) {
+      // チャット同時対応数制限
+      $this->set("scNum", ( !empty($mySettings->sc_num) ) ? $mySettings->sc_num : 0);
     }
 
     /* ウィジェットの設定を読み込む */

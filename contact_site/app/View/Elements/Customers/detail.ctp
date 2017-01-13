@@ -54,7 +54,7 @@
                       'change' => 'changeSetting("sendPattarn")'
                     ])?><label for="settingsSendPattarn">Enterキーで送信する</label>
               </div>
-              <div id="sendMessageArea" style="position: relative">
+              <div id="sendMessageArea" ng-hide="chatAreaShowFlg !== true" style="position: relative">
                 <?php if ( strcmp($userInfo['permission_level'], C_AUTHORITY_SUPER) !== 0) :?>
                   <textarea rows="5" id="sendMessage" ng-focus="sendMessageConnectConfirm(detailId)" maxlength="300" ng-attr-placeholder="{{chatPs()}}"></textarea>
                   <div id="wordListArea" ng-keydown="searchKeydown($event)">
