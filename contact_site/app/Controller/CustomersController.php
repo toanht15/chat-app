@@ -400,6 +400,47 @@ class CustomersController extends AppController {
   }
 
   /**
+   * 成果更新（チャット）
+   * @return void
+   * */
+  public function remoteChangeAchievement(){
+    Configure::write('debug', 0);
+    $this->autoRender = FALSE;
+    $this->layout = null;
+    $ret = ["result" => false];
+    $query = $this->params->query;
+    if ( !empty($query['chatId']) && isset($query['value']) && !empty($query['userId'] ) ) {
+      $params = [
+        'conditions' => [
+          'id' => $query['chatId'],
+          'm_users_id' => $query['userId'],
+          'message_type' => 98,
+        ],
+        'recursive' => -1
+      ];
+      $chatLog = $this->THistoryChatLog->find('first', $params);
+
+      if ( !empty($chatLog) ) {
+        $saveData = [
+          'THistoryChatLog' => [
+            'id' => $query['chatId'],
+            'achievement_flg' => $query['value']
+          ]
+        ];
+        $this->THistoryChatLog->begin();
+        if ( $this->THistoryChatLog->save($saveData) ) {
+          $this->THistoryChatLog->commit();
+          $ret["result"] = true;
+        }
+        else {
+          $this->THistoryChatLog->rollback();
+        }
+      }
+    }
+    return new CakeResponse(['body' => json_encode($ret)]);
+  }
+
+  /**
    * ビュー表示用
    * @return void
    * */
@@ -431,6 +472,7 @@ class CustomersController extends AppController {
     $this->set('cType', $cType);
     $this->set('tabStatusList', Configure::read('tabStatusList'));
     $this->set('tabStatusStrList', Configure::read('tabStatusStrList'));
+    $this->set('achievementType', Configure::read('achievementType'));
   }
 
   /**

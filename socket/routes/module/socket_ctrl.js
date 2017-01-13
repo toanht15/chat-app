@@ -429,7 +429,7 @@ io.sockets.on('connection', function (socket) {
             chatData.historyId = historyId;
 
             var sql  = "SELECT";
-                sql += " chat.id, chat.message, chat.message_type as messageType, chat.m_users_id as userId, mu.display_name as userName, chat.message_read_flg as messageReadFlg, chat.created ";
+                sql += " chat.id, chat.message, chat.message_type as messageType, chat.achievement_flg as achievementFlg, chat.m_users_id as userId, mu.display_name as userName, chat.message_read_flg as messageReadFlg, chat.created ";
                 sql += "FROM t_history_chat_logs AS chat ";
                 sql += "LEFT JOIN m_users AS mu ON ( mu.id = chat.m_users_id ) ";
                 sql += "WHERE t_histories_id = ? ORDER BY created";
@@ -1917,7 +1917,7 @@ io.sockets.on('connection', function (socket) {
         // 消費者側
         else {
           // 応対数再計算
-          if ( ('chat' in core) && scList[info.siteKey].hasOwnProperty('cnt') && scList[info.siteKey].cnt.hasOwnProperty(core.chat) ) {
+          if ( ('chat' in core) && scList.hasOwnProperty(info.siteKey) && scList[info.siteKey].cnt.hasOwnProperty(core.chat) ) {
             scList[info.siteKey].cnt[core.chat] = chatApi.calcScNum(info, core.chat);
           }
           if ( 'syncFrameSessionId' in core ) {

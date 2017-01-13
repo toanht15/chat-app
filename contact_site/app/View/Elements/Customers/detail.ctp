@@ -7,7 +7,7 @@
         <a ng-if="chatList.indexOf(detailId) < 0" href="javascript:void(0)" ng-click="showDetail(detailId)" class="fRight customer_detail_btn redBtn btn-shadow">
           <?= $this->Html->image('close.png', ['alt'=>'詳細を閉じる', 'width'=>20, 'height' => 20]); ?>
         </a>
-        <a ng-if="chatList.indexOf(detailId) >= 0" href="javascript:void(0)" ng-click="confirmDisConnect(detailId)" class="fRight customer_detail_btn redBtn btn-shadow">
+        <a ng-if="chatList.indexOf(detailId) >= 0" href="javascript:void(0)" ng-click="showDetail(detailId)" class="fRight customer_detail_btn redBtn btn-shadow">
           <?= $this->Html->image('close.png', ['alt'=>'チャットを終了する', 'width'=>20, 'height' => 20]); ?>
         </a>
         <!-- 閉じる -->
@@ -38,22 +38,43 @@
                   <li class="sinclo_re typeing_message" ng-if="typingMessageRe[detailId] && typingMessageRe[detailId] !== ''">{{typingMessageRe[detailId]}}</li>
                 </typing-message>
               </ul>
-              <div id="chatMenu" class="p05tb" ng-class="{showOption: chatOptionDisabled(detailId)}">
-                <span class="greenBtn btn-shadow" onclick="chatApi.addOption(1)">選択肢を追加する</span>
-              </div>
-              <div id="sendMenu" class="p05tb">
-                <?=$this->ngForm->input('settings.sendPattarn',
-                    [
-                      'type' => 'checkbox',
-                      'div' => false,
-                      'label' => false
-                    ],
-                    [
-                      'default' => false,
-                      'entity' => 'settings.sendPattarn',
-                      'change' => 'changeSetting("sendPattarn")'
-                    ])?><label for="settingsSendPattarn">Enterキーで送信する</label>
-              </div>
+              <chat-detail ng-class="{showOption: chatOptionDisabled(detailId)}">
+                <span>成果</span>
+                <label>
+                  <?= $this->ngForm->input('achievement',
+                        [
+                          'type' => 'select',
+                          'empty' => ' - ',
+                          'options' => $achievementType,
+                          'legend' => false,
+                          'separator' => '</label><br><label>',
+                          'label' => false,
+                          'error' => false,
+                          'div' => false
+                        ],[
+                          'entity' => 'achievement',
+                          'change' => 'changeAchievement()'
+                        ]) ?>
+                </label>
+              </chat-detail>
+              <chat-menu>
+                <chat-menu-child id="sendMenu" class="p05tb">
+                  <?=$this->ngForm->input('settings.sendPattarn',
+                      [
+                        'type' => 'checkbox',
+                        'div' => false,
+                        'label' => false
+                      ],
+                      [
+                        'default' => false,
+                        'entity' => 'settings.sendPattarn',
+                        'change' => 'changeSetting("sendPattarn")'
+                      ])?><label for="settingsSendPattarn">Enterキーで送信する</label>
+                </chat-menu-child>
+                <chat-menu-child id="chatMenu" class="p05tb" ng-class="{showOption: chatOptionDisabled(detailId)}">
+                  <span class="greenBtn btn-shadow" onclick="chatApi.addOption(1)">選択肢を追加する</span>
+                </chat-menu-child>
+              </chat-menu>
               <div id="sendMessageArea" ng-hide="chatAreaShowFlg !== true" style="position: relative">
                 <?php if ( strcmp($userInfo['permission_level'], C_AUTHORITY_SUPER) !== 0) :?>
                   <textarea rows="5" id="sendMessage" ng-focus="sendMessageConnectConfirm(detailId)" maxlength="300" ng-attr-placeholder="{{chatPs()}}"></textarea>
@@ -65,6 +86,7 @@
                     </ul>
                   </div>
                   <span id="sinclo_sendbtn" class="btn-shadow" onclick="chatApi.pushMessage()">{{chatSendBtnName()}}</span>
+                  <span id="sinclo_chatEndBtn" class="btn-shadow redBtn ng-binding" ng-click="confirmDisConnect(detailId)">退室</span>
                 <?php endif; ?>
               </div>
             </section>

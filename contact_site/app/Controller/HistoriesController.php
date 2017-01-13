@@ -20,7 +20,11 @@ class HistoriesController extends AppController {
       'joins' => [
         [
           'type' => 'INNER',
-          'table' => '(SELECT t_histories_id, COUNT(*) AS count FROM t_history_chat_logs GROUP BY t_histories_id)',
+          'table' => '('.
+            '  SELECT t_histories_id, COUNT(*) AS count, MAX(achievement_flg) AS achievementFlg'.
+            '  FROM t_history_chat_logs '.
+            '  GROUP BY t_histories_id'.
+          ')',
           'alias' => 'THistoryChatLog',
           'conditions' => [
             'THistoryChatLog.t_histories_id = THistory.id'
@@ -74,6 +78,8 @@ class HistoriesController extends AppController {
       $isChat = $this->params->query['isChat'];
     }
     $this->_setList($isChat);
+    // 成果の名称リスト
+    $this->set('achievementType', Configure::read('achievementType'));
   }
 
   public function remoteGetCustomerInfo() {

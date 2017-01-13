@@ -131,6 +131,10 @@ define('C_SOME_EITHER', 2); // いずれかが一致
 define('C_STATUS_AVAILABLE', 0); // 有効
 define('C_STATUS_UNAVAILABLE', 1); // 無効
 
+// 成果
+define('C_ACHIEVEMENT_AVAILABLE', 1); // なし
+define('C_ACHIEVEMENT_UNAVAILABLE', 2); // あり
+
 // ダウンロード設定
 define('C_YES', 1); // 可
 define('C_IMPROPER', 2); // 不可
@@ -304,4 +308,10 @@ $config['outMessageActionType'] = [
 $config['outMessageWidgetOpenType'] = [
     C_AUTO_WIDGET_TYPE_OPEN => "自動で最大化する",
     C_AUTO_WIDGET_TYPE_CLOSE => "自動で最大化しない"
+];
+
+/* 成果種別 */
+$config['achievementType'] = [
+  C_ACHIEVEMENT_AVAILABLE => "有効",
+  C_ACHIEVEMENT_UNAVAILABLE => "無効"
 ];

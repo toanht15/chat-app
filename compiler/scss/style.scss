@@ -1334,7 +1334,7 @@ ul.naviBtn {
               border-radius: 5px 5px 0 0;
               background-color: #ADADAD;
               font-size: 0.8em;
-              padding: 0.72em 3em 0.3em 3em;
+              padding: 0.3em 3em 0.3em 3em;
               box-shadow: 0px -1px 1px rgba(0,0,0,0.2);
               cursor: pointer;
 
@@ -1476,24 +1476,53 @@ ul.naviBtn {
                 }
             }
 
-            #chatMenu {
+            chat-detail {
+              display: flex;
+              flex-direction: row;
+              margin: 0.25em;
+              align-items: center;
               visibility: hidden;
+
+              span {
+                font-weight: bold;
+                padding-right: 0.5em;
+                font-size: 0.8em;
+              }
+
+              option {
+                font-size: 0.8em;
+              }
 
               &.showOption {
                 visibility: inherit;
               }
-
-              span {
-                cursor: pointer;
-                width: 10em;
-                font-weight: normal;
-                font-size: 0.8em;
-                padding: 0.25em 0.8em;
-              }
             }
 
-            #sendMenu, #sendMessageArea {
-              @include miniFont;
+            chat-menu {
+              display: flex;
+              flex-direction: row;
+              justify-content: space-between;
+              margin: 0.25em;
+
+              #chatMenu {
+                visibility: hidden;
+
+                &.showOption {
+                  visibility: inherit;
+                }
+
+                span {
+                  cursor: pointer;
+                  width: 10em;
+                  font-weight: normal;
+                  font-size: 0.8em;
+                  padding: 0.25em 0.8em;
+                }
+              }
+
+              #sendMenu, #sendMessageArea {
+                @include miniFont;
+              }
             }
 
             #sendMessageArea{
@@ -1566,6 +1595,7 @@ ul.naviBtn {
                 border: 1px solid $line-color!important;
                 padding: 0.5em;
                 margin-top: 0;
+                font-size: 0.84em;
 
                 &:focus {
                     outline: none!important;
@@ -1581,10 +1611,10 @@ ul.naviBtn {
             #sinclo_sendbtn {
               background-color: #aeca74;
               border-radius: 5px;
-              padding: 5px;
-              font-size: 15px;
+              padding: 0.25em;
+              font-size: 0.95em;
               color: #FFF;
-              height: 30px;
+              height: 2em;
               user-select: none;
               box-shadow: 0 0 2px rgba(0,0,0,0.5);
               display: block;
@@ -1595,6 +1625,19 @@ ul.naviBtn {
                 background-color: #9ab562;
                 cursor: pointer;
               }
+            }
+
+            #sinclo_chatEndBtn {
+              border-radius: 5px;
+              padding: 0.25em;
+              font-size: 0.95em;
+              color: #FFF;
+              height: 2em;
+              user-select: none;
+              box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+              display: block;
+              text-align: center;
+              margin: 0.25em;
             }
           }
         }

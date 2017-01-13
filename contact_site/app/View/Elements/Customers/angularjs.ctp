@@ -143,7 +143,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       },
       connection: function(){
         if ( isset(this.tabId) && isset(this.userId) ) {
-console.log("chatStart");
           emit("chatStart", {tabId: this.tabId, userId: myUserId});
         }
       },
@@ -549,6 +548,38 @@ console.log("chatStart");
      *  資料共有　ここまで
      * ************************************************************/
 
+    // 成果登録
+    $scope.changeAchievement = function (){
+      var achievement = $("#achievement");
+      if ( Object.keys($scope.detail).length > 0 && $scope.detail.hasOwnProperty('chat') && Number($scope.detail.chat) === Number(myUserId)) {
+        var monitor = angular.copy($scope.monitorList[$scope.detailId]);
+        var chatList = angular.copy($scope.messageList);
+        var chatId = null;
+        for (var i = chatList.length - 1; i >= 0; i--) {
+          if ( Number(chatList[i].messageType) === chatApi.messageType.start ) {
+            if ( chatList[i].hasOwnProperty('id') && Number(chatList[i].userId) === Number(myUserId) ) {
+              $.ajax({
+                type: 'GET',
+                cache: false,
+                url: "<?= $this->Html->url(array('controller' => 'Customers', 'action' => 'remoteChangeAchievement')) ?>",
+                data: {
+                  chatId: chatList[i].id,
+                  userId: $scope.detail.chat,
+                  value: achievement.prop("selectedIndex"),
+                },
+                dataType: 'json',
+                success: function(json){
+                  console.log("json", json);
+                }
+              });
+            }
+            break;
+          }
+        }
+      }
+      achievement.blur();
+    }
+
     $scope.openHistory = function(monitor){
         var retList = {};
         $.ajax({
@@ -639,15 +670,8 @@ console.log("chatStart");
       // チャットを終了する
       popupEvent.closePopup = function(){
         $scope.ngChatApi.disConnect(tabId); // チャットを終了する
-        $scope.showDetail(tabId);
         popupEvent.close(); // モーダルを閉じる
       };
-      // 最小化する
-      popupEvent.customizeBtn = function(){
-        $scope.showDetail(tabId); // 詳細を閉じる
-        popupEvent.close(); // モーダルを閉じる
-      };
-
     };
 
     $scope.showDetail = function(tabId){
@@ -659,6 +683,7 @@ console.log("chatStart");
         $scope.detailId = "";
         if ( contract.chat ) {
           $scope.typingMessageSe = "";
+          $scope.achievement = "";
           $scope.messageList = [];
           chatApi.userId = "";
           chatApi.observeType.emit(chatApi.tabId, false);
@@ -1390,6 +1415,12 @@ console.log("chatStart");
         }
         else {
           chat.text = obj.chat.messages[key];
+        }
+        if ( obj.chat.messages[key].achievementFlg !== null ) {
+          // 通過時点で「有効」の場合は「有効」のまま
+          if ( String($scope.achievement) !== "<?=C_ACHIEVEMENT_AVAILABLE?>" ) {
+            $scope.achievement = String(obj.chat.messages[key].achievementFlg);
+          }
         }
         chat.sort = Number(key);
         $scope.messageList.push(chat);
