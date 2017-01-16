@@ -287,12 +287,6 @@ $(document).ready(function(){
 
   $('#day_search').on('click', function() {
     if ($(this).prop('checked')) {
-      $("#dateperiod").prop("disabled", true);
-      $('#HistoryStartDay').val("");
-      $('#HistoryFinishDay').val("");
-      $("#dateperiod").addClass('extinguish');
-    }
-    else {
       $("#dateperiod").prop("disabled", false);
       var d = new Date($('#dateperiod').data('daterangepicker').startDate);
       var startDate = d.getFullYear() + '/' + (d.getMonth() + 1) + '/' + d.getDate();
@@ -302,9 +296,14 @@ $(document).ready(function(){
       $('#HistoryFinishDay').val(endDate);
       $("#dateperiod").removeClass('extinguish');
     }
+    else {
+      $("#dateperiod").prop("disabled", true);
+      $('#HistoryStartDay').val("");
+      $('#HistoryFinishDay').val("");
+      $("#dateperiod").addClass('extinguish');
+    }
   });
 });
-
 function searchRefine(){
   document.getElementById('searchRefine()').submit();
 }

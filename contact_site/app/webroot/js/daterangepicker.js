@@ -118,7 +118,7 @@
                 '</div>' +
                 '<div class="ranges">' +
                     '<div class="range_inputs">' +
-                        '<button class="applyBtn" disabled="disabled" type="button" id="aa" onclick="openSearchRefine2()"></button> ' +
+                        '<button class="applyBtn" disabled="disabled" type="button" onclick="searchRefine()"></button> ' +
                         '<button class="cancelBtn" type="button"></button>' +
                     '</div>' +
                 '</div>' +

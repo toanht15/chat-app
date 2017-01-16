@@ -2190,6 +2190,10 @@ ul.naviBtn {
       margin-left: 11em;
     }
 
+    span#ip,#company,#customer,#telephone,#mail,#responsible,#message {
+      display: none;
+    }
+
     #dateperiod {
       margin-left: 1em;
       background-image: url(/img/calender.png);
