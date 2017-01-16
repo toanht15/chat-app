@@ -1,9 +1,9 @@
 <script type="text/javascript">
 popupEvent.closePopup = function(){
   if (!$("#day_search").prop('checked')) {
-    $("#dateperiod").prop("disabled", false);
-    //$('#HistoryStartDay').val("");
-    //$('#HistoryFinishDay').val("");
+    $("#dateperiod").prop("disabled", true);
+    $('#HistoryStartDay').val("");
+    $('#HistoryFinishDay').val("");
   }
   if ($("#g_chat").prop("checked")) {
     document.getElementById('historySearch').action = "Histories?isChat=true";
@@ -11,7 +11,11 @@ popupEvent.closePopup = function(){
   else {
     document.getElementById('historySearch').action = "Histories?isChat=false";
   }
-  $('#historySearch').submit();
+  var start = $('#HistoryStartDay').val();
+  var end = $('#HistoryFinishDay').val();
+  var date = start　+ ' - ' + end + '　　';
+   $('#mainDatePeriod').text(date);
+   $('#historySearch').submit();
 };
 
 popupEvent.customizeBtn = function(){
@@ -27,12 +31,12 @@ popupEvent.customizeBtn = function(){
       <?php
         $extinguish = '';
         $checked = 'checked';
-        if(!isset($this->data['datefilter'])) {
+        if(!isset($this->data['datefilter'])&&!isset($this->request->data['start_day'])&&!isset($this->request->data['finish_day'])) {
           $extinguish = 'extinguish';
           $checked = '';
         }
       ?>
-      <span><?= $this->Form->input('datefilter',['label'=> false,'div' => false,'id' => 'dateperiod','name'=> 'datefilter']); ?><label><input type="checkbox" id="day_search" <?= $checked ?>><span>指定しない</span></label>
+      <span><?= $this->Form->input('datefilter',['label'=> false,'div' => false,'class'=> $extinguish,'id' => 'dateperiod','name'=> 'datefilter']); ?><label><input type="checkbox" id="day_search" <?= $checked ?>><span>指定する</span></label>
     </li>
     <?= $this->Form->hidden('start_day',['label'=> false,'div' => false]); ?>
     <?= $this->Form->hidden('finish_day',['label'=> false,'div' => false]); ?>

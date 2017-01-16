@@ -2190,6 +2190,10 @@ ul.naviBtn {
       margin-left: 11em;
     }
 
+    span#ip,#company,#customer,#telephone,#mail,#responsible,#message {
+      display: none;
+    }
+
     #dateperiod {
       margin-left: 1em;
       background-image: url(/img/calender.png);
@@ -2200,12 +2204,28 @@ ul.naviBtn {
     }
 
     #mainDatePeriod {
-      margin-left: 1em;
-      background-image: url(/img/calender.png);
-      background-repeat: no-repeat;
-      background-position: right 10pt bottom 4pt;
-      background-size: 15px;
-      cursor: pointer;
+    margin-left: 1em;
+    background-image: url(/img/calender.png);
+    background-repeat: no-repeat;
+    background-position: right 4pt bottom 2pt;
+    background-size: 15px;
+    cursor: pointer;
+    border-bottom: 1px solid #909090;
+    font: 16.3333px Arial;
+    width: 13em!important;
+    display: block;
+    text-align: center;
+    }
+
+    #viewDate{
+    margin-left: 1em;
+    background-image: url(/img/calender.png);
+    background-repeat: no-repeat;
+    background-position: right 4pt bottom 2pt;
+    background-size: 15px;
+    cursor: pointer;
+    border-bottom: 1px solid #909090;
+    font: 13.3333px Arial;
     }
 
     ul {
@@ -2309,8 +2329,8 @@ ul.naviBtn {
 
   a#searchRefine {
     position: absolute;
-    top: 88px;
-    left: 248px;
+    top: 82px;
+    left: 23em;
     width: 8em;
     padding: 0.25em 0.5em;
     text-align: center;
