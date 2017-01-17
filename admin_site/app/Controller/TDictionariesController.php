@@ -159,7 +159,6 @@ class TDictionariesController extends AppController {
       ];
       unset($params['limit']);
       $prevSort = $this->TDictionary->find('list',$params);
-      $this->log($prevSort,LOG_DEBUG);
       $prevSortKeys = am($prevSort);
 
       /* アップデート分の並び順を設定 */

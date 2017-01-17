@@ -95,7 +95,7 @@ class AppController extends Controller {
     $this->Session->write('global.userInfo', $info);
     $this->Session->write('global.tmpdata', $this->MCompany->find('all',array(
     'conditions'=>array(
-        'MCompany.company_key' => 'template'
+        //'MCompany.company_key' => 'template'
     ),
     'fields'=>array('id','company_key'))
   ));

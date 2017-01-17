@@ -176,23 +176,32 @@ class MUser extends AppModel {
         return true;
     }
 
-    public function makePassword($str){
-        $passwordHasher = new SimplePasswordHasher();
-        return $passwordHasher->hash($str);
+    public function passwordHash($pass) {
+      if ( !empty($pass) ) {
+        $data = $this->makePassword($pass);
+      }
+      $password = $data;
+      return $password;
     }
 
+    public function makePassword($str){
+      $passwordHasher = new SimplePasswordHasher();
+      return $passwordHasher->hash($str);
+    }
+
+
     public function isUniqueChk($str){
-        $str[$this->name . '.del_flg'] = 0;
-        if ( !empty($this->id) ) {
-          $str[$this->name . '.id !='] = $this->id;
-        }
-        $ret = $this->find('all', ['fields' => $this->name . '.*', 'conditions' => $str, 'recursive' => -1]);
-        if ( !empty($ret) ) {
-            return false;
-        }
-        else {
-            return true;
-        }
+      $str[$this->name . '.del_flg'] = 0;
+      if ( !empty($this->id) ) {
+        $str[$this->name . '.id !='] = $this->id;
+      }
+      $ret = $this->find('all', ['fields' => $this->name . '.*', 'conditions' => $str, 'recursive' => -1]);
+      if ( !empty($ret) ) {
+          return false;
+      }
+      else {
+          return true;
+      }
     }
 
     /**

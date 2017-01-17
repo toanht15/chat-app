@@ -7,17 +7,24 @@
 App::uses('AppController', 'Controller');
 class TopsController extends AppController {
 
-  public $uses = ['MCompany','MUser'];
+  public $uses = ['MCompany','MUser','MAgreement'];
 
   public $paginate = [
     'MCompany' => [
-      'limit' => 10,
       'order' => ['MCompany.id' => 'asc'],
       'fields' => ['*'],
       'joins' => [
         [
-          'type' => 'inner',    // もしくは left
-          'table' => '(SELECT m_companies_id,count(*) AS user_account FROM  m_users WHERE del_flg != 0)',
+          'type' => 'inner',
+          'table' => 'm_agreements',
+          'alias' => 'MAgreement',
+          'conditions' => [
+          'MAgreement.m_companies_id = MCompany.id',
+          ],
+        ],
+        [
+          'type' => 'inner',
+          'table' => '(SELECT id,m_companies_id,count(m_companies_id) AS user_account FROM  m_users WHERE del_flg != 1 GROUP BY m_companies_id)',
           'alias' => 'MUser',
           'conditions' => [
           'MUser.m_companies_id = MCompany.id',

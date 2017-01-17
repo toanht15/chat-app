@@ -110,5 +110,6 @@ CakeLog::config('error', array(
 	'file' => 'error',
 ));
 
+Configure::load("myConst");
 Configure::load("const");
 Configure::load("messageConst");

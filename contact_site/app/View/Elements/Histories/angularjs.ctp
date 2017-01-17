@@ -141,6 +141,46 @@ $(document).ready(function(){
     document.getElementById('HistoryIndexForm').submit();
   });
 
+  var outputChatCSVBtn = document.getElementById('outputChat');
+  outputChatCSVBtn.addEventListener('click', function(){
+    var thead = document.querySelector('#history_list thead');
+    var tbody = document.querySelector('#history_list tbody');
+    var data = [];
+    // CSVに不要な列が追加されたら空をセット
+    var label = ["date","","ip","useragent","campaign","referrer","pageCnt","visitTime","status", "user"];
+    var noCsvData = {};
+
+    for (var a = 0; a < thead.children[0].children.length; a++) {
+      var th = thead.children[0].children[a];
+      if ( th.className.match(/noOutCsv/) !== null ) {
+        noCsvData[a] = "";
+      }
+    }
+
+    for(var i = 0; i < tbody.children.length; i++){
+      var tr = tbody.children[i];
+      var tdList = tr.children;
+      var row = {};
+      for(var u = 0; u < tdList.length; u++){
+        if (!(u in noCsvData)) {
+          var td = tdList[u];
+          if ( td.children.length === 0 ) {
+            row[label[u]] = td.textContent;
+          }
+          else {
+            row[label[u]] = td.children[0].textContent;
+          }
+          if ( u === (label.length - 1) ) {
+            data.push(row);
+          }
+        }
+      }
+    }
+    document.getElementById('HistoryOutputData').value = JSON.stringify(data);
+    document.getElementById('HistoryIndexForm').action = '<?=$this->Html->url(["controller"=>"Histories", "action" => "outputCSVOfContents"])?>';
+    document.getElementById('HistoryIndexForm').submit();
+  });
+
   $('#dateperiod').daterangepicker({
     "ranges": {
       '今日': [moment(), moment()],
@@ -153,8 +193,8 @@ $(document).ready(function(){
     "locale": {
       "format": "YYYY/MM/DD",
       "separator": " - ",
-      "applyLabel": "適用",
-      "cancelLabel": "Cancel",
+      "applyLabel": "設定",
+      "cancelLabel": "閉じる",
       "fromLabel": "From",
       "toLabel": "To",
       "customRangeLabel": "カスタム",
@@ -188,6 +228,54 @@ $(document).ready(function(){
     "startDate": $('#HistoryStartDay').val(),
     "endDate": $('#HistoryFinishDay').val(),
     "opens": "left"
+  });
+
+    $('#mainDatePeriod').daterangepicker({
+    "ranges": {
+      '今日': [moment(), moment()],
+      '昨日': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+      '過去一週間': [moment().subtract(6, 'days'), moment()],
+      '過去一ヶ月間': [moment().subtract(29, 'days'), moment()],
+      '今月': [moment().startOf('month'), moment().endOf('month')],
+      '先月': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+    },
+    "locale": {
+      "format": "YYYY/MM/DD",
+      "separator": " - ",
+      "applyLabel": "検索",
+      "cancelLabel": "閉じる",
+      "fromLabel": "From",
+      "toLabel": "To",
+      "customRangeLabel": "カスタム",
+      "weekLabel": "W",
+      "daysOfWeek": [
+        "日",
+        "月",
+        "火",
+        "水",
+        "木",
+        "金",
+        "土"
+      ],
+      "monthNames": [
+        "1月",
+        "2月",
+        "3月",
+        "4月",
+        "5月",
+        "6月",
+        "7月",
+        "8月",
+        "9月",
+        "10月",
+        "11月",
+        "12月"
+      ],
+      "firstDay": 1
+    },
+    "alwaysShowCalendars": true,
+    "startDate": $('#HistoryStartDay').val(),
+    "endDate": $('#HistoryFinishDay').val(),
   });
 
   $('input[name="datefilter"]').on('apply.daterangepicker', function(ev, picker) {

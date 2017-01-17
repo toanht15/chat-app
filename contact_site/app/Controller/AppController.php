@@ -62,6 +62,7 @@ class AppController extends Controller {
     if ( APP_MODE_DEV === false ) {
       $this->checkPort();
     }
+    $this->Auth->allow(['remoteSaveForm']);
 
     // 通知メッセージをセット
     if ($this->Session->check('global.message')) {
