@@ -163,17 +163,16 @@ $(document).ready(function(){
       var row = {};
       for(var u = 0; u < tdList.length; u++){
         if (!(u in noCsvData)) {
-                  var td = tdList[u];
-                  if ( td.children.length === 0 ) {
-                    row[label[u]] = td.textContent;
-                  }
-                  else {
-                    row[label[u]] = td.children[0].textContent;
-                  }
-                  if ( u === (label.length - 1) ) {
-                    data.push(row);
-                  }
-
+          var td = tdList[u];
+          if ( td.children.length === 0 ) {
+            row[label[u]] = td.textContent;
+          }
+          else {
+            row[label[u]] = td.children[0].textContent;
+          }
+          if ( u === (label.length - 1) ) {
+            data.push(row);
+          }
         }
       }
     }
