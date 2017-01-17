@@ -303,6 +303,7 @@ $(document).ready(function(){
     }
   });
 });
+
 function searchRefine(){
   document.getElementById('searchRefine()').submit();
 }
