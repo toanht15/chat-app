@@ -14,6 +14,7 @@ function openSearchRefine(){
 
 //view側の検索ボタン
 function searchRefine(){
+  //開始日、終了日取得
   $('#mainDatePeriod').on('apply.daterangepicker', function(ev, picker) {
   $('#startDay').text(picker.startDate.format('YYYY/MM/DD'));
   $('#finishDay').text(picker.endDate.format('YYYY/MM/DD'));

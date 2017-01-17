@@ -92,6 +92,7 @@
     <div class='seach_menu'>
       <label class='searchConditions'>検索条件</label>
       <ul>
+        <span class="dammy">　</span>
         <?php if(!empty($data['History']['start_day'])||!empty($data['History ']['finish_day'])) { ?>
           <li>
             <label>日付</label>

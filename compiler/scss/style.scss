@@ -2190,7 +2190,7 @@ ul.naviBtn {
       margin-left: 11em;
     }
 
-    span#ip,#company,#customer,#telephone,#mail,#responsible,#message,#startDay,#finishDay {
+    span#ip,#company,#customer,#telephone,#mail,#responsible,#message,#startDay,#finishDay{
       display: none;
     }
 
@@ -2204,28 +2204,18 @@ ul.naviBtn {
     }
 
     #mainDatePeriod {
-    margin-left: 1em;
-    background-image: url(/img/calender.png);
-    background-repeat: no-repeat;
-    background-position: right 4pt bottom 2pt;
-    background-size: 15px;
-    cursor: pointer;
-    border-bottom: 1px solid #909090;
-    font: 16.3333px Arial;
-    width: 13em!important;
-    display: block;
-    text-align: center;
-    }
-
-    #viewDate{
-    margin-left: 1em;
-    background-image: url(/img/calender.png);
-    background-repeat: no-repeat;
-    background-position: right 4pt bottom 2pt;
-    background-size: 15px;
-    cursor: pointer;
-    border-bottom: 1px solid #909090;
-    font: 13.3333px Arial;
+      margin-left: 1em;
+      margin-top: 0.6em;
+      background-image: url(/img/calender.png);
+      background-repeat: no-repeat;
+      background-position: right 4pt bottom 2pt;
+      background-size: 15px;
+      cursor: pointer;
+      border-bottom: 1px solid #909090;
+      font: 16.3333px Arial;
+      width: 13em!important;
+      display: block;
+      text-align: center;
     }
 
     ul {
@@ -2329,7 +2319,7 @@ ul.naviBtn {
 
   a#searchRefine {
     position: absolute;
-    top: 82px;
+    top: 91px;
     left: 23em;
     width: 8em;
     padding: 0.25em 0.5em;
@@ -2345,7 +2335,7 @@ ul.naviBtn {
   }
 
   .seach_menu {
-    margin-top:48px;
+    margin-top:20px;
   }
 
   span.value {
@@ -3992,4 +3982,8 @@ ul.naviBtn {
       }
     }
   }
+}
+
+.dammy {
+  display:block;
 }
