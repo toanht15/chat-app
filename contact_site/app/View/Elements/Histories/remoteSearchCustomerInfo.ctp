@@ -1,5 +1,6 @@
 <script type="text/javascript">
 popupEvent.closePopup = function(){
+  //全期間の場合
   if (!$("#day_search").prop('checked')) {
     $("#dateperiod").prop("disabled", true);
     $('#HistoryStartDay').val("");
@@ -11,14 +12,11 @@ popupEvent.closePopup = function(){
   else {
     document.getElementById('historySearch').action = "Histories?isChat=false";
   }
-  var start = $('#HistoryStartDay').val();
-  var end = $('#HistoryFinishDay').val();
-  var date = start　+ ' - ' + end + '　　';
-   $('#mainDatePeriod').text(date);
-   $('#historySearch').submit();
+  $('#historySearch').submit();
 };
 
 popupEvent.customizeBtn = function(){
+  //セッションクリア
   location.href = "<?=$this->Html->url(array('controller' => 'Histories', 'action' => 'clearSession'))?>";
 };
 
@@ -31,6 +29,7 @@ popupEvent.customizeBtn = function(){
       <?php
         $extinguish = '';
         $checked = 'checked';
+        //全期間の場合
         if(!isset($this->data['datefilter'])&&!isset($this->request->data['start_day'])&&!isset($this->request->data['finish_day'])) {
           $extinguish = 'extinguish';
           $checked = '';

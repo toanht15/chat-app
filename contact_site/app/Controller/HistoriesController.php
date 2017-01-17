@@ -503,30 +503,36 @@ class HistoriesController extends AppController {
         }
         //担当者
         if($responsible_name != '' ) {
-          //ユーザーid取得
+          //担当者のユーザーid取得
           $muserData = $this->MUser->find('first',[
             'conditions' => [
               'MUser.user_name like' => '%'.$responsible_name.'%',
               'MUser.m_companies_id' => $this->userInfo['MCompany']['id']]]);
-          $messageDatas = $this->THistoryChatLog->find('all',[
-            'conditions' => [
-              'THistoryChatLog.m_users_id' => $muserData['MUser']['id']]]);
-          $box = [];
-          foreach($messageDatas as $messageData) {
-            $box[]=$messageData['THistoryChatLog']['t_histories_id'];
+          //ユーザーidからチャット内容検索
+          if(!empty($muserData)){
+            $messageDatas = $this->THistoryChatLog->find('all',[
+              'conditions' => [
+                'THistoryChatLog.m_users_id' => $muserData['MUser']['id']]]);
+            $messageDatasBox = [];
+            foreach($messageDatas as $messageData) {
+              $messageDatasBox[]=$messageData['THistoryChatLog']['t_histories_id'];
+            }
+            $this->paginate['THistory']['conditions'][] = ['THistory.id' => $messageDatasBox];
           }
-          $this->paginate['THistory']['conditions'][] = ['THistory.id' => $box];
         }
+        //チャット内容
         if($message != '' ) {
+          //チャット内容検索
           $chatDatas = $this->THistoryChatLog->find('all',[
             'conditions' => [
               'THistoryChatLog.message like' => '%'.$message.'%',]]);
-          $box2 = [];
+          $chatDatasBox = [];
           foreach($chatDatas as $chatData) {
-            $box2[]=$chatData['THistoryChatLog']['t_histories_id'];
+            $chatDatasBox[]=$chatData['THistoryChatLog']['t_histories_id'];
           }
-          $this->paginate['THistory']['conditions'][] = ['THistory.id' => $box2];
+          $this->paginate['THistory']['conditions'][] = ['THistory.id' => $chatDatasBox];
         }
+        //会社名、名前、電話、メール検索
         if( $company !== "" || $name !== "" || $tel !== "" || $mail !== "" ) {
           $userCond = [];
           if (isset($company)) { $userCond[] = ['MCustomer.informations LIKE' => '%'.$company.'%']; }
@@ -565,12 +571,6 @@ class HistoriesController extends AppController {
       else {
         $start = $data['History']['start_day'];
         $finish = $data['History']['finish_day'];
-        if($start != '' ) {
-          $this->paginate['THistory']['conditions'][] = ['THistory.access_date >=' => $start.' 00:00:00'];
-        }
-        if($finish != '' ) {
-          $this->paginate['THistory']['conditions'][] = ['THistory.access_date <=' => $finish.' 23:59:59'];
-        }
         $ip = $data['History']['ip_address'];
         $company = $data['History']['company_name'];
         $name = $data['History']['customer_name'];
@@ -579,43 +579,50 @@ class HistoriesController extends AppController {
         $responsible_name = $data['History']['responsible_name'];
         $message = $data['History']['message'];
 
+        //ipアドレス
         if($ip != '' ) {
           $this->paginate['THistory']['conditions'][] = ['THistory.ip_address like' =>'%'.$ip.'%'];
         }
+        //開始日
         if($start != '' ) {
           $this->paginate['THistory']['conditions'][] = ['THistory.access_date >=' => $start.' 00:00:00'];
         }
+        //終了日
         if($finish != '' ) {
           $this->paginate['THistory']['conditions'][] = ['THistory.access_date <=' => $finish.' 23:59:59'];
         }
+        //担当者
         if($responsible_name != '' ) {
           //ユーザーid取得
           $muserData = $this->MUser->find('first',[
             'conditions' => [
               'MUser.user_name like' => '%'.$responsible_name.'%',
               'MUser.m_companies_id' => $this->userInfo['MCompany']['id']]]);
+          //ユーザーidからチャット内容検索
           if(!empty($muserData)){
             $messageDatas = $this->THistoryChatLog->find('all',[
               'conditions' => [
                 'THistoryChatLog.m_users_id' => $muserData['MUser']['id']]]);
-            $box = [];
+            $messageDatasBox = [];
             foreach($messageDatas as $messageData) {
-              $box[]=$messageData['THistoryChatLog']['t_histories_id'];
+              $messageDatasBox[]=$messageData['THistoryChatLog']['t_histories_id'];
             }
-            $this->paginate['THistory']['conditions'][] = ['THistory.id' => $box];
+            $this->paginate['THistory']['conditions'][] = ['THistory.id' => $messageDatasBox];
           }
         }
+        //チャット内容
         if($message != '' ) {
+          //チャット内容検索
           $chatDatas = $this->THistoryChatLog->find('all',[
             'conditions' => [
               'THistoryChatLog.message like' => '%'.$message.'%',]]);
-          $box2 = [];
+          $chatDatasBox = [];
           foreach($chatDatas as $chatData) {
-            $box2[]=$chatData['THistoryChatLog']['t_histories_id'];
+            $chatDatasBox[]=$chatData['THistoryChatLog']['t_histories_id'];
           }
-          $this->paginate['THistory']['conditions'][] = ['THistory.id' => $box2];
+          $this->paginate['THistory']['conditions'][] = ['THistory.id' => $chatDatasBox];
         }
-
+        //会社名、名前、電話、メール検索
         if( $company !== "" || $name !== "" || $tel !== "" || $mail !== "" ) {
           $userCond = [];
           if (isset($company)) { $userCond[] = ['MCustomer.informations LIKE' => '%'.$company.'%']; }
@@ -791,6 +798,7 @@ class HistoriesController extends AppController {
     $this->layout = 'ajax';
     $this->data = $this->Session->read('Thistory');
 
+    //view側の検索の場合
     if(empty($this->data['History'])) {
       $this->request->data['History']['start_day'] = $this->data['start_day'];
       $this->request->data['History']['finish_day'] = $this->data['finish_day'];
@@ -802,12 +810,13 @@ class HistoriesController extends AppController {
       $this->request->data['History']['responsible_name'] = $this->data['responsible_name'];
       $this->request->data['History']['message'] = $this->data['message'];
     }
-    if(empty($this->data['History']['start_day']) && empty($this->data['History']['finish_day']) && empty($this->data['start_day']) &&  empty($this->data['finish_day'])) {
+    //範囲が全期間の場合
+    if(empty($this->data['History']['start_day']) && empty($this->data['History']['finish_day'])
+    && empty($this->data['start_day']) &&  empty($this->data['finish_day'])) {
       $today = date("Y/m/d");
       $this->request->data['History']['start_day'] = $today;
       $this->request->data['History']['finish_day'] = $today;
     }
-
     // const
     $this->render('/Elements/Histories/remoteSearchCustomerInfo');
   }

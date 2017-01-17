@@ -278,12 +278,15 @@ $(document).ready(function(){
     "startDate": $('#HistoryStartDay').val(),
     "endDate": $('#HistoryFinishDay').val(),
     //"opens": "left"
+  }, function(start, end, label) {
+//console.log(start.format('YYYY-MM-DD'));
   });
 
   $('input[name="datefilter"]').on('apply.daterangepicker', function(ev, picker) {
-    $('#HistoryStartDay').val(picker.startDate.format('YYYY/MM/DD'));
-    $('#HistoryFinishDay').val(picker.endDate.format('YYYY/MM/DD'));
+      $('#HistoryStartDay').val(picker.startDate.format('YYYY/MM/DD'));
+      $('#HistoryFinishDay').val(picker.endDate.format('YYYY/MM/DD'));
   });
+
 
   $('#day_search').on('click', function() {
     if ($(this).prop('checked')) {

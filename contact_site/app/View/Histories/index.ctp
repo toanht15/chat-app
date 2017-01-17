@@ -45,16 +45,27 @@
       'javascript:void(0)',
       array('escape' => false, 'class'=>'skyBlueBtn btn-shadow','id' => 'searchRefine','onclick' => 'openSearchRefine()'));
     ?>
-     <?php if(!empty($data['History']['start_day'])||!empty($data['History ']['finish_day'])) { ?>
+    <?php //モーダル画面の検索
+    if(!empty($data['History']['start_day'])||!empty($data['History ']['finish_day'])) { ?>
       <span id ='mainDatePeriod' name = 'datefilter'><?= h($data['History']['start_day']) ?>-<?= h($data['History']['finish_day']) ?>　　</span>
-      <?php } ?>
-      <?php if(!empty($data['start_day'])||!empty($data['finish_day'])) { ?>
+    <?php } ?>
+    <?php //view側の検索
+    if(!empty($data['start_day'])||!empty($data['finish_day'])) { ?>
       <span id ='mainDatePeriod' name = 'datefilter'><?= h($data['start_day']) ?>-<?= h($data['finish_day']) ?>　　</span>
-      <?php } ?>
-      <?php if(empty($data['History']['start_day'])&&empty($data['History ']['finish_day'])&&empty($data['start_day'])&&empty($data['finish_day'])) { ?>
+    <?php } ?>
+    <?php //全期間の検索
+    if(empty($data['History']['start_day'])&&empty($data['History ']['finish_day'])
+    &&empty($data['start_day'])&&empty($data['finish_day'])) { ?>
       <span id ='mainDatePeriod' name = 'datefilter'>全期間</span>
-      <?php } ?>
-      <?php if(!empty($data['History']['ip_address'])||!empty($data['History']['company_name'])||!empty($data['History']['customer_name'])||!empty($data['History']['telephone_number'])||!empty($data['History']['mail_address'])||!empty($data['History']['responsible_name'])||!empty($data['History']['message'])) { ?>
+    <?php } ?>
+    <span id="startDay"></span>
+    <span id="finishDay"></span>
+    <?php //モーダル画面の検索ワード
+      if(!empty($data['History']['ip_address'])||!empty($data['History']['company_name'])
+      ||!empty($data['History']['customer_name'])||!empty($data['History']['telephone_number'])
+      ||!empty($data['History']['mail_address'])||!empty($data['History']['responsible_name'])
+      ||!empty($data['History']['message'])) {
+    ?>
       <span id="ip"><?= h($data['History']['ip_address']) ?></span>
       <span id="company"><?= h($data['History']['company_name']) ?></span>
       <span id="customer"><?= h($data['History']['customer_name']) ?></span>
@@ -62,8 +73,13 @@
       <span id="mail"><?= h($data['History']['mail_address']) ?></span>
       <span id="responsible"><?= h($data['History']['responsible_name']) ?></span>
       <span id="message"><?= h($data['History']['message']) ?></span>
-      <?php } ?>
-      <?php if(!empty($data['ip_address'])||!empty($data['company_name'])||!empty($data['customer_name'])||!empty($data['telephone_number'])||!empty($data['mail_address'])||!empty($data['responsible_name'])||!empty($data['message'])) { ?>
+    <?php } ?>
+    <?php //view側の検索ワード
+      if(!empty($data['ip_address'])||!empty($data['company_name'])
+      ||!empty($data['customer_name'])||!empty($data['telephone_number'])
+      ||!empty($data['mail_address'])||!empty($data['responsible_name'])
+      ||!empty($data['message'])) {
+    ?>
       <span id="ip"><?= h($data['ip_address']) ?></span>
       <span id="company"><?= h($data['company_name']) ?></span>
       <span id="customer"><?= h($data['customer_name']) ?></span>
@@ -71,24 +87,23 @@
       <span id="mail"><?= h($data['mail_address']) ?></span>
       <span id="responsible"><?= h($data['responsible_name']) ?></span>
       <span id="message"><?= h($data['message']) ?></span>
-      <?php } ?>
-
-
+    <?php } ?>
 
     <div class='seach_menu'>
       <label class='searchConditions'>検索条件</label>
       <ul>
         <?php if(!empty($data['History']['start_day'])||!empty($data['History ']['finish_day'])) { ?>
-        <li>
-          <label>日付</label>
-          <span class="value"><?= h($data['History']['start_day']) ?>-<?= h($data['History']['finish_day']) ?></span>
-        </li>
+          <li>
+            <label>日付</label>
+            <span class="value"><?= h($data['History']['start_day']) ?>-<?= h($data['History']['finish_day']) ?></span>
+          </li>
         <?php } ?>
-        <?php if(!empty($data['start_day'])||!empty($data['finish_day'])) { ?>
-        <li>
-          <label>日付</label>
-          <span class="value"><?= h($data['start_day']) ?>-<?= h($data['finish_day']) ?></span>
-        </li>
+        <?php //view側で検索した場合
+        if(!empty($data['start_day'])||!empty($data['finish_day'])) { ?>
+          <li>
+            <label>日付</label>
+            <span class="value"><?= h($data['start_day']) ?>-<?= h($data['finish_day']) ?></span>
+          </li>
         <?php } ?>
         <?php if(!empty($data['History']['ip_address'])) { ?>
           <li>
@@ -96,20 +111,21 @@
             <span class="value"><?= h($data['History']['ip_address']) ?></span>
           </li>
         <?php } ?>
-        <?php if(!empty($data['ip_address'])) { ?>
+        <?php //view側で検索した場合
+         if(!empty($data['ip_address'])) { ?>
           <li>
             <label>IPｱﾄﾞﾚｽ</label>
             <span class="value"><?= h($data['ip_address']) ?></span>
           </li>
         <?php } ?>
-        　
         <?php if(!empty($data['History']['company_name'])) { ?>
           <li>
             <label>会社名</label>
             <span class="value"><?= h($data['History']['company_name']) ?></span>
           </li>
         <?php } ?>
-        <?php if(!empty($data['company_name'])) { ?>
+        <?php //view側で検索した場合
+        if(!empty($data['company_name'])) { ?>
           <li>
             <label>会社名</label>
             <span class="value"><?= h($data['company_name']) ?></span>
@@ -121,7 +137,8 @@
             <span class="value"><?= h($data['History']['customer_name']) ?></span>
           </li>
         <?php } ?>
-        <?php if(!empty($data['customer_name'])) { ?>
+        <?php //view側で検索した場合
+        if(!empty($data['customer_name'])) { ?>
           <li>
             <label>名前</label>
             <span class="value"><?= h($data['customer_name']) ?></span>
@@ -133,7 +150,8 @@
             <span class="value"><?= h($data['History']['telephone_number']) ?></span>
           </li>
         <?php } ?>
-        <?php if(!empty($data['telephone_number'])) { ?>
+        <?php //view側で検索した場合
+        if(!empty($data['telephone_number'])) { ?>
           <li>
             <label>電話番号</label>
             <span class="value"><?= h($data['telephone_number']) ?></span>
@@ -145,7 +163,8 @@
             <span class="value"><?= h($data['History']['mail_address']) ?></span>
           </li>
         <?php } ?>
-        <?php if(!empty($data['mail_address'])) { ?>
+        <?php //view側で検索した場合
+        if(!empty($data['mail_address'])) { ?>
           <li>
             <label>ﾒｰﾙｱﾄﾞﾚｽ</label>
             <span class="value"><?= h($data['mail_address']) ?></span>
@@ -157,7 +176,8 @@
             <span class="value"><?= h($data['History']['responsible_name']) ?></span>
           </li>
         <?php } ?>
-        <?php if(!empty($data['responsible_name'])) { ?>
+        <?php //view側で検索した場合
+        if(!empty($data['responsible_name'])) { ?>
           <li>
             <label>ﾒｰﾙｱﾄﾞﾚｽ</label>
             <span class="value"><?= h($data['responsible_name']) ?></span>
@@ -169,7 +189,8 @@
             <span class="value"><?= h($data['History']['message']) ?></span>
           </li>
         <?php } ?>
-        <?php if(!empty($data['message'])) { ?>
+        <?php //view側で検索した場合
+        if(!empty($data['message'])) { ?>
           <li>
             <label>ﾒｰﾙｱﾄﾞﾚｽ</label>
             <span class="value"><?= h($data['message']) ?></span>
