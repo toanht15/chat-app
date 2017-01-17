@@ -20,6 +20,19 @@ $(function() {
     $('#finishDay').text(picker.endDate.format('YYYY/MM/DD'));
     //モーダルの検索ボタンと被らないようにする
     if ( !$("#popup.popup-on #popup-frame ").is(".p-thistory-entry") ) {
+  $('<form/>', {action: "<?= $this->Html->url(['controller' => 'Histories', 'action' => 'index']) ?>", method: 'post'})
+  .append($('<input/>', {type: 'hidden', name: "data[History][start]", value: $('#startDay').text()}))
+  .append($('<input/>', {type: 'hidden', name: "data[History][finish]", value: $('#finishDay').text()}))
+  .append($('<input/>', {type: 'hidden', name: "data[History][ip_address]", value:  $('#ip').text()}))
+  .append($('<input/>', {type: 'hidden', name: "data[History][company_name]", value: $('#company').text()}))
+  .append($('<input/>', {type: 'hidden', name: "data[History][custoer_name]", value: $('#customer').text()}))
+  .append($('<input/>', {type: 'hidden', name: "data[History][telephone_number]", value: $('#telephone').text()}))
+  .append($('<input/>', {type: 'hidden', name: "data[History][mail]", value: $('#mail').text()}))
+  .append($('<input/>', {type: 'hidden', name: "data[History][responsible_name]", value: $('#responsible').text()}))
+  .append($('<input/>', {type: 'hidden', name: "data[History][message]", value: $('#message').text()}))
+  .appendTo(document.body)
+  .submit()
+      /*return false;
       //前の検索条件を日程以外全て引き継ぐ
       var start = $('#startDay').text();
       var end = $('#finishDay').text();
@@ -49,7 +62,7 @@ $(function() {
         success: function(){
           location.href = window.location;
         }
-      });
+      });*/
     }
   });
 });

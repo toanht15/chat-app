@@ -463,6 +463,7 @@ class HistoriesController extends AppController {
 
     //履歴検索機能
     if($this->request->is('post')) {
+      $this->log($this->request->data,LOG_DEBUG);
       $this->Session->write('Thistory', $this->data);
     }
 
