@@ -19,6 +19,20 @@ define('C_AUTHORITY_ADMIN', 1); // 管理者
 define('C_AUTHORITY_NORMAL', 2); // 一般
 define('C_AUTHORITY_SUPER', 99); // ML管理者
 
+//契約プラン
+define('C_MAGREEMENT_FULL_PLUN', "'chat' => true,'synclo' => true,'document' => true"); // フルプラン
+define('C_MAGREEMENT_CHAT_PLUN', "'chat' => true"); // チャットプラン
+define('C_MAGREEMENT_SCREEN_SHARING_PLUN', "'synclo' => true"); // 画面動機プラン
+
+//ML用アカウント
+define('C_MEDIALINK_ACCOUNT', "ML用アカウント"); // ML用アカウント
+define('C_MEDIALINK_PERMISSION_LEVEL', 99); // ML用パーミッション
+
+//メールアドレス
+define('C_MAGREEMENT_MAIL_ADDRESS', "@ml.jp"); //mcompanyアドレス
+
+define('C_CROSS_DOMAIN_ADDRESS', "http://contact.sinclo"); //sinclo管理画面URL
+
 define('C_DEFALT_MCOMPANY_KEY', 2); // template key
 
 /* ユーザー権限（単体あり：C_AUTHORITY_%） */

@@ -22,14 +22,14 @@ $notification-color: #E57373;
 }
 
 html {
-  font-size: 11px;
+  font-size: 12px;
 }
 
 body {
   font-family: 'Helvetica Neue', Helvetica, Arial, Verdana, 'ヒラギノ角ゴ ProN W3', 'Hiragino Kaku Gothic ProN', 'メイリオ', Meiryo, 'ＭＳ Ｐゴシック', 'MS PGothic', sans-serif;
   line-height: 1.3;
   font-weight: normal;
-  overflow: hidden;
+  overflow: auto;
   margin: 0;
 }
 
@@ -150,10 +150,10 @@ a {
 
 [class$='_message'] {
   &.notification_message {
-    color: #26a69a;
+    color: $success-color;
   }
   &.error_message {
-    color: #E57373;
+    color: $notification-color;
   }
 }
 
@@ -178,7 +178,10 @@ div#sidebar {
 
   * {
     color: #FFF;
-    font-size: 1.05em;
+    .fa-lg {
+    font-size: 1.5em;
+    line-height: .75em;
+    }
   }
 
   div#logo {
@@ -195,15 +198,19 @@ div#sidebar {
     align-self: stretch;
     color: #FFF;
     height: 90%;
-    height: calc(100% - 2em - 60px);
+    height: calc(100% - 2em - 72px);
     display: block;
 
     li {
       padding: 0.5em 0;
-      padding-left: 1.1em;
+      padding-left: 2.5em;
+      margin-top: 0.1em;
 
       &.nav-group {
-        padding-left: 0.5em;
+        padding-left: 1.5em;
+        padding-bottom: 3px;
+        font-size: 1.05em;
+        margin-top: 1.0em;
       }
       &:not(.nav-group) {
         font-size: 1rem!important;
@@ -244,6 +251,11 @@ div#sidebar {
     padding: 0 0.5em;
     text-align: center;
   }
+  .logout{
+    cursor: pointer;
+    padding-left: 1em;
+    margin-top: -3px;
+  }
 }
 
 #content {
@@ -266,6 +278,12 @@ div#sidebar {
       &:focus {
         outline: none;
         border-color: $high-light-color;
+      }
+    }
+    select {
+      &:focus {
+        outline: none;
+        border-color: $font-color;
       }
     }
 
@@ -319,6 +337,15 @@ div#sidebar {
 div[id$='_list'] table {
   width: 100%;
 }
+
+.fa-lg {
+  margin-right:7px;
+}
+
+.fa-2x {
+  font-size:1.03em;
+}
+
 
 .fLeft {
   float: left;
@@ -502,14 +529,14 @@ div#sidebar{
       }
 
       &.on:hover:before,&:not(.on):hover:before {
-        color:#596d8f;
+        color:$normal-color;
       }
     }
 
     .action_btn {
       font-size: 12px;
       font-size: 1.1rem;
-      border: 1px solid #656565;
+      border: 1px solid $font-color;
       border-radius: 5px;
       padding: 0.25em 0.5em;
       display: block;
@@ -522,7 +549,7 @@ div#sidebar{
     .normal_btn {
       font-size: 12px;
       font-size: 1.1rem;
-      border: 1px solid #656565;
+      border: 1px solid $font-color;
       border-radius: 5px;
       padding: 0.25em 0.5em;
       display: block;
@@ -535,7 +562,7 @@ div#sidebar{
     .on{
       color: #FFF;
       background-color: $normal-color;
-      border-color: #596d8f;
+      border-color: $normal-color;
     }
   }
 }
@@ -620,7 +647,7 @@ div#sidebar{
   }
 
   i.fa.fa-home.fa-2x {
-    color: #596d8f;
+    color: $normal-color;
     margin-top: 6px;
   }
 
@@ -637,6 +664,84 @@ div#sidebar{
       }
     }
   }
+    table tr:hover #delete {
+    visibility: visible;
+  }
+
+  #delete {
+    visibility: hidden;
+    cursor: pointer;
+  }
+
+}
+
+/* 契約登録画面 */
+#agreement_idx {
+  .action_btn {
+    width: 6em;
+    margin-left:8em;
+  }
+
+  #agreement_form {
+    ul.formArea {
+     padding: 0;
+     margin-top:20px;
+      li { padding: 10px;
+        > span:first-child {
+            width: 125px;
+            display: block;
+          }
+
+        .labelArea.fLeft {
+          width: 125px;
+        }
+        span{
+          font-weight:bold;
+        }
+        #MAgreementAdminPassword{
+          margin-bottom:30px;
+        }
+        #createPassword{
+          margin-bottom:26px;
+        }
+        .action_btn{
+          margin-left:20px;
+          margin-top:-7px;
+        }
+        div.error-message{
+          display:none;
+        }
+      }
+    }
+  }
+
+  .error-message {
+    color: $notification-color;
+    padding-left: 30px;
+  }
+
+  .normal_btn {
+    width: 6em;
+    margin-left:6em;
+  }
+
+  textarea{
+    border-radius: 5px !important;
+  }
+
+  i.fa.fa-cog.fa-2x{
+    color: $normal-color;
+    margin-top: 6px;
+  }
+
+  a#searchRefine {
+    margin-top: 15px;
+  }
+
+  .button{
+    display: flex;
+    margin-top:30px;
+  }
 }
 
 /* 簡易入力画面 */
@@ -647,7 +752,7 @@ div#sidebar{
   }
 
   i.fa.fa-home.fa-2x {
-    color: #596d8f;
+    color: $normal-color;
     margin-top: 6px;
   }
 
@@ -692,3 +797,39 @@ div#sidebar{
     cursor: move !important;
   }
 }
+
+#MCompanyMContactTypesId{
+    border-radius: 8px;
+    height: 1.5em;
+    min-width: 10em;
+    border-color: $font-color;
+    color: $font-color;
+    font-size: 13px;
+    font-weight: bold;
+    -webkit-appearance: button;
+    -moz-appearance: button;
+    appearance: button;
+    padding: 0.25em 0 0.25em 1em;
+}
+
+div#planListArea {
+    position: relative;
+}
+
+#planListArea:after {
+    content: "\f0d7";
+    position: absolute;
+    right: 0;
+    top: 1px;
+    bottom: 1px;
+    display: block;
+    width: 27px;
+    height: 27px;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-size: 2em;
+}
+

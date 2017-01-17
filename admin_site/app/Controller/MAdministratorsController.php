@@ -77,9 +77,9 @@ class MAdministratorsController extends AppController {
     else {
       $tmpData['MAdministrator']['new_password'] = $this->request->data['password'];
     }
-    // const
-    $this->MAdministrator->set($tmpData);
+
     $this->MAdministrator->begin();
+    $this->MAdministrator->set($tmpData);
     //　バリデーションチェックが成功した場合
     if ( empty($errorMessage) && $this->MAdministrator->validates() ) {
       $saveData = $tmpData;

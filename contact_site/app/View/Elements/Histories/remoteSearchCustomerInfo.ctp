@@ -1,5 +1,6 @@
 <script type="text/javascript">
 popupEvent.closePopup = function(){
+  //全期間の場合
   if (!$("#day_search").prop('checked')) {
     $("#dateperiod").prop("disabled", true);
     $('#HistoryStartDay').val("");
@@ -15,6 +16,7 @@ popupEvent.closePopup = function(){
 };
 
 popupEvent.customizeBtn = function(){
+  //セッションクリア
   location.href = "<?=$this->Html->url(array('controller' => 'Histories', 'action' => 'clearSession'))?>";
 };
 
@@ -27,7 +29,8 @@ popupEvent.customizeBtn = function(){
       <?php
         $extinguish = '';
         $checked = 'checked';
-        if(!isset($this->data['datefilter'])) {
+        //全期間の場合
+        if(!isset($this->data['datefilter'])&&!isset($this->request->data['start_day'])&&!isset($this->request->data['finish_day'])) {
           $extinguish = 'extinguish';
           $checked = '';
         }
@@ -55,6 +58,14 @@ popupEvent.customizeBtn = function(){
     <li>
       <p><span>メールアドレス</span></p>
       <span><?= $this->Form->input('mail_address',['label'=>false,'div' => false]) ?></span>
+    </li>
+    <li>
+      <p><span>担当者</span></p>
+      <span><?= $this->Form->input('responsible_name',['label'=>false,'div' => false]) ?></span>
+    </li>
+    <li>
+      <p><span>チャット内容</span></p>
+      <span><?= $this->Form->input('message',['label'=>false,'div' => false]) ?></span>
     </li>
   </ul>
 <?= $this->Form->end(); ?>

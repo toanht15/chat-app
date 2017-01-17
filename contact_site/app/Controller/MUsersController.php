@@ -23,6 +23,8 @@ class MUsersController extends AppController {
     $this->set('title_for_layout', 'ユーザー管理');
     $this->set('siteKey', $this->userInfo['MCompany']['company_key']);
     $this->set('limitUserNum', $this->userInfo['MCompany']['limit_users']);
+    $this->Auth->allow('index');
+    header('Access-Control-Allow-Origin: *');
   }
 
   /* *
@@ -190,4 +192,16 @@ class MUsersController extends AppController {
     return true;
   }
 
+  /* *
+   * 登録画面
+   * @return void
+   * */
+  public function remoteSaveForm() {
+    Configure::write('debug', 0);
+    $this->autoRender = FALSE;
+    $this->layout = 'ajax';
+    $data = $this->request->data;
+    $password = $this->MUser->passwordHash($data['password']);
+    return $password;
+  }
 }
