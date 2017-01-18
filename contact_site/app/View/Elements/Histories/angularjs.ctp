@@ -278,10 +278,7 @@ $(document).ready(function(){
     "endDate": $('#HistoryFinishDay').val(),
   });
 
-<<<<<<< HEAD
   //モーダルのカレンダーの設定ボタン
-=======
->>>>>>> origin/develop
   $('input[name="datefilter"]').on('apply.daterangepicker', function(ev, picker) {
     $('#HistoryStartDay').val(picker.startDate.format('YYYY/MM/DD'));
     $('#HistoryFinishDay').val(picker.endDate.format('YYYY/MM/DD'));

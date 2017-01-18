@@ -30,11 +30,7 @@ popupEvent.customizeBtn = function(){
         $extinguish = '';
         $checked = 'checked';
         //全期間の場合
-<<<<<<< HEAD
         if(!isset($this->data['datefilter'])) {
-=======
-        if(!isset($this->data['datefilter'])&&!isset($this->request->data['start_day'])&&!isset($this->request->data['finish_day'])) {
->>>>>>> origin/develop
           $extinguish = 'extinguish';
           $checked = '';
         }
