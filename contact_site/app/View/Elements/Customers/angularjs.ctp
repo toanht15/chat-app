@@ -628,6 +628,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             return false;
         }
 
+      <?php if ( $widgetCheck ) { ?>
         if ( String($('#changeOpStatus').data('status')) !== "<?=C_OPERATOR_ACTIVE?>" ) {
           if ( message !== "" ) {
             message += "<br><br>※ 入室すると、ステータスが『待機中』となります。";
@@ -636,6 +637,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             message = "入室すると、ステータスが『待機中』となります。<br>入室しますか？";
           }
         }
+      <?php } else { ?>
+        message = "入室します、よろしいですか？";
+      <?php } ?>
 
         if ( message === "" ) {
           $scope.ngChatApi.connect();
@@ -713,12 +717,20 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           $("#monitor_" + tabId).addClass('on'); // 対象のレコードにクラスを付ける
           $scope.chatAreaShowFlg = true;
           $("#chatContent").addClass("connectChat");
-          // 自身が担当していない場合はクラスを付ける
-          if ( !(isset($scope.monitorList[tabId].chat) && $scope.monitorList[tabId].chat === myUserId) ) {
-            // 在席中かつ、チャット対応上限が有効かつ、上限に達している場合
-            if ( String($('#changeOpStatus').data('status')) === "<?=C_OPERATOR_ACTIVE?>" && "<?=$scFlg?>" === "<?=C_SC_ENABLED?>" && Number($scope.scInfo.remain) < 1 ) {
+          // チャットエリアに非表示用のクラスを付ける
+          // チャット対応上限が有効かつ、自身が担当していない場合
+          if ( "<?=$scFlg?>" === "<?=C_SC_ENABLED?>" && !(isset($scope.monitorList[tabId].chat) && $scope.monitorList[tabId].chat === myUserId) ) {
+<?php if($widgetCheck){ /* 在席・離席管理の場合 */ ?>
+            // 在席中かつ、上限に達している場合
+            if ( String($('#changeOpStatus').data('status')) === "<?=C_OPERATOR_ACTIVE?>" && Number($scope.scInfo.remain) < 1 ) {
               $scope.chatAreaShowFlg = false; // ウィジェットを隠す
             }
+<?php } else { ?>
+            // 上限に達している場合
+            if ( Number($scope.scInfo.remain) < 1 ) {
+              $scope.chatAreaShowFlg = false; // ウィジェットを隠す
+            }
+<?php } ?>
             $("#chatContent").removeClass("connectChat");
           }
 
@@ -1306,8 +1318,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       }
     <?php if ( $coreSettings[C_COMPANY_USE_CHAT] && isset($scNum) && strcmp(intval($scFlg), C_SC_ENABLED) === 0 ) :  ?>
       $scope.scInfo.remain = 0;
-      if ( obj.hasOwnProperty('scInfo') && obj.scInfo.hasOwnProperty(Number(<?=$muserId?>)) ) {
-        $scope.scInfo.remain = Number(<?=$scNum?>) - Number(obj.scInfo[Number(<?=$muserId?>)]);
+      if ( obj.hasOwnProperty('scInfo') && obj.scInfo.hasOwnProperty(<?=$muserId?>) ) {
+        $scope.scInfo.remain = <?=$scNum?> - Number(obj.scInfo[<?=$muserId?>]);
       }
     <?php endif; ?>
     });
@@ -1397,8 +1409,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       }
 <?php if ( $coreSettings[C_COMPANY_USE_CHAT] && isset($scNum) && strcmp(intval($scFlg), C_SC_ENABLED) === 0 ) :  ?>
       $scope.scInfo.remain = 0;
-      if ( obj.hasOwnProperty('scInfo') && obj.scInfo.hasOwnProperty(Number(<?=$muserId?>)) ) {
-        $scope.scInfo.remain = Number(<?=$scNum?>) - Number(obj.scInfo[Number(<?=$muserId?>)]);
+      if ( obj.hasOwnProperty('scInfo') && obj.scInfo.hasOwnProperty(<?=$muserId?>) ) {
+        $scope.scInfo.remain = <?=$scNum?> - Number(obj.scInfo[<?=$muserId?>]);
       }
 <?php endif; ?>
 
@@ -1453,7 +1465,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           return false;
         }
         // Sorryメッセージが送られている場合は通知しない
-        if (!obj.opFlg) {
+        if (obj.hasOwnProperty('opFlg') && !obj.opFlg) {
           $scope.monitorList[obj.tabId].chatUnreadCnt = 0;
           $scope.monitorList[obj.tabId].chatUnreadId = null;
           return false;

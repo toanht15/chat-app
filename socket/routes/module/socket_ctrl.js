@@ -278,6 +278,12 @@ var emit = {
     return io.sockets.in(rName+this.roomKey.company).emit(ev, obj);
   }
 };
+
+// socket再接続
+function sincloReconnect(socket){
+  emit.toMine("sincloReconnect", {}, socket);
+}
+
 var db = {
   addDisplayShareHistory: function(responderId, obj){
     if ( isset(obj.siteKey) ) {
@@ -411,6 +417,10 @@ io.sockets.on('connection', function (socket) {
       }
     },
     set: function(d){ // メッセージが渡されてきたとき
+      if ( !getSessionId(d.siteKey, d.tabId, 'sessionId') ) {
+        sincloReconnect(socket);
+        return false;
+      }
       // 履歴idか(入退室以外に)メッセージがない
       if ( !getSessionId(d.siteKey, d.tabId, 'historyId') || (!isset(d.chatMessage) && !(chatApi.cnst.observeType.start && d.messageType || chatApi.cnst.observeType.end && d.messageType)) ) {
         // エラーを渡す
@@ -602,10 +612,16 @@ io.sockets.on('connection', function (socket) {
 
         if ( rows && rows[0] ) {
           message = rows[0].sorry_message;
+          // ウィジェットが非表示の場合
+          if ( rows[0].display_type === 3 ) {
+            return callback(true, {opFlg: ret, message: message});
+          }
           // チャット上限数を設定していない場合
           if ( Number(rows[0].sc_flg) === 2 ) {
-            // オペレーターの在籍/離席を見る場合
-            if ( !(rows[0].display_type === 2 && getOperatorCnt(d.siteKey) === 0) ) {
+            // オペレーターが待機している場合
+            if ( (rows[0].display_type === 2 && getOperatorCnt(d.siteKey) > 0) ||
+                 (rows[0].display_type === 1 && (company.info.hasOwnProperty(d.siteKey) && Object.keys(company.info[d.siteKey]).length > 0))
+            ) {
               ret = true;
             }
           }
@@ -617,7 +633,7 @@ io.sockets.on('connection', function (socket) {
               if ( userIds.length !== 0 ) {
                 for (var i = 0; i < userIds.length; i++) {
                   if ( Number(scList[d.siteKey].user[userIds[i]]) === Number(scList[d.siteKey].cnt[userIds[i]]) ) continue;
-                  ret = true;
+                  ret = true; break;
                 }
               }
             }
@@ -1183,7 +1199,6 @@ io.sockets.on('connection', function (socket) {
           if ( !scList.hasOwnProperty(obj.siteKey) ) { scList[obj.siteKey] = { user: {}, cnt: {} }; }
           scList[obj.siteKey].user[obj.userId] = obj.scNum;
           scList[obj.siteKey].cnt[obj.userId] = chatApi.calcScNum(obj, obj.userId);
-          sendData.scInfo = scList[obj.siteKey].cnt;
         }
       }
     }
@@ -1198,6 +1213,9 @@ io.sockets.on('connection', function (socket) {
       }
     }
 
+    if ( scList.hasOwnProperty(obj.siteKey) ) {
+      sendData.scInfo = scList[obj.siteKey].cnt;
+    }
     var keys = Object.keys(activeOperator[obj.siteKey]);
     sendData.count = keys.length;
     emit.toCompany('activeOpCnt', sendData, obj.siteKey);
@@ -1396,7 +1414,6 @@ io.sockets.on('connection', function (socket) {
         ret: true, messageType: type, created: now, tabId: obj.tabId, siteKey: obj.siteKey,
         userId: obj.userId, scInfo: scInfo
       };
-
       emit.toCompany("chatEndResult", sendData, obj.siteKey);
       emit.toUser("chatEndResult", {ret: true, messageType: type}, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
 
@@ -1834,7 +1851,10 @@ io.sockets.on('connection', function (socket) {
           delete company.timeout[userInfo.siteKey][userInfo.userId];
 
           // チャット対応上限のリセット
-          if ( scList.hasOwnProperty(userInfo.siteKey) && scList[userInfo.siteKey].hasOwnProperty(userInfo.userId) ) delete scList[userInfo.siteKey][userInfo.userId];
+          if ( scList.hasOwnProperty(userInfo.siteKey) && scList[userInfo.siteKey].cnt.hasOwnProperty(userInfo.userId) ) {
+            delete scList[userInfo.siteKey].cnt[userInfo.userId];
+            delete scList[userInfo.siteKey].user[userInfo.userId];
+          }
 
           // 新しいユーザーの人数を送る
           var cnt = Object.keys(company.info[userInfo.siteKey]);

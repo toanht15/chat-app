@@ -112,10 +112,10 @@ class AppController extends Controller {
     if ( !empty($widgetInfo['MWidgetSetting']['display_type']) && strcmp($widgetInfo['MWidgetSetting']['display_type'], C_WIDGET_DISPLAY_CODE_OPER) === 0 ) {
       // セッションから
       if ( $this->Session->check('widget.operator.status') ) {
-      $opStatus = $this->Session->read('widget.operator.status');
+        $opStatus = $this->Session->read('widget.operator.status');
       }
       else {
-      $this->Session->write('widget.operator.status', C_OPERATOR_PASSIVE);
+        $this->Session->write('widget.operator.status', C_OPERATOR_PASSIVE);
       }
 
       $this->set('widgetCheck', C_OPERATOR_ACTIVE); // オペレーターの在籍/退席を使用するか
@@ -124,6 +124,7 @@ class AppController extends Controller {
     else {
       $this->set('widgetCheck', C_OPERATOR_PASSIVE);
     }
+    $this->set('displayType', $widgetInfo['MWidgetSetting']['display_type']);
 
     /* 権限 */
     if ( !(strcmp($this->userInfo['permission_level'], C_AUTHORITY_SUPER) === 0 || strcmp($this->userInfo['permission_level'], C_AUTHORITY_ADMIN) === 0) ) {

@@ -34,7 +34,7 @@
             <?= $this->Form->input('searchText', array('type'=>'text', 'label' => false, 'ng-model' => 'searchText', 'ng-attr-placeholder' => '{{searchTextPlaceholder()}}')); ?>
             <div id="userFilter" style="display: flex;">
             </div>
-              <?php if ( $coreSettings[C_COMPANY_USE_CHAT] && strcmp($scFlg, C_SC_ENABLED) === 0) : ?>
+              <?php if ( $coreSettings[C_COMPANY_USE_CHAT] && strcmp($displayType, C_WIDGET_DISPLAY_CODE_HIDE) !== 0 && strcmp($scFlg, C_SC_ENABLED) === 0) : ?>
                 <div id="scInfo">
                   チャット対応数上限 <span><?=$scNum?></span> 件 （残り対応可能数 <span>{{scInfo.remain}}</span> 件）
                 </div>

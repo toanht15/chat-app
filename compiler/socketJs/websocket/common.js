@@ -2242,6 +2242,11 @@ var socket, // socket.io
       sinclo.syncStop(d);
     }); // socket-on: syncStop
 
+    socket.on('sincloReconnect', function(d){ // socket再接続
+      socket.disconnect();
+      socket.connect();
+    }); // socket-on: sincloReconnect
+
     socket.on('disconnect', function(data) {
       var sincloBox = document.getElementById('sincloBox');
       if ( sincloBox ) {
