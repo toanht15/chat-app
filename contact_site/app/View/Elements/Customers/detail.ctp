@@ -85,8 +85,10 @@
                       <li style="border:none; color:#ff7b7b" ng-if="entryWordList.length === 0">[設定] > [簡易入力] から<br>メッセージを登録してください</li>
                     </ul>
                   </div>
-                  <span id="sinclo_sendbtn" class="btn-shadow" onclick="chatApi.pushMessage()">{{chatSendBtnName()}}</span>
-                  <span id="sinclo_chatEndBtn" class="btn-shadow redBtn ng-binding" ng-click="confirmDisConnect(detailId)">退室</span>
+                  <div id="sendMessageAreaBtn" ng-class="{showOption: chatOptionDisabled(detailId)}">
+                    <span id="sinclo_chatEndBtn" class="btn-shadow redBtn ng-binding" ng-click="confirmDisConnect(detailId)">退室</span>
+                    <span id="sinclo_sendbtn" class="btn-shadow" onclick="chatApi.pushMessage()">{{chatSendBtnName()}}</span>
+                  </div>
                 <?php endif; ?>
               </div>
             </section>

@@ -1608,37 +1608,42 @@ ul.naviBtn {
 
             }
 
-            #sinclo_sendbtn {
-              background-color: #aeca74;
-              border-radius: 5px;
-              padding: 0.25em;
-              font-size: 0.95em;
-              color: #FFF;
-              height: 2em;
-              user-select: none;
-              box-shadow: 0 0 2px rgba(0,0,0,0.5);
-              display: block;
-              text-align: center;
-              margin: 5px 3px;
+            #sendMessageAreaBtn {
+              flex-direction: row;
+              align-items: center;
+              display: none;
 
-              &:hover, &.on {
-                background-color: #9ab562;
-                cursor: pointer;
+              &.showOption { display: flex; }
+
+              > span {
+                border-radius: 5px;
+                padding: 0.25em;
+                font-size: 0.95em;
+                color: #FFF;
+                height: 2em;
+                user-select: none;
+                box-shadow: 0 0 2px rgba(0,0,0,0.5);
+                display: block;
+                text-align: center;
+              }
+
+              #sinclo_sendbtn {
+                width: 80%;
+                background-color: #aeca74;
+                margin: 5px 3px;
+
+                &:hover, &.on {
+                  background-color: #9ab562;
+                  cursor: pointer;
+                }
+              }
+
+              #sinclo_chatEndBtn {
+                width: 20%;
+                margin: 0.25em;
               }
             }
 
-            #sinclo_chatEndBtn {
-              border-radius: 5px;
-              padding: 0.25em;
-              font-size: 0.95em;
-              color: #FFF;
-              height: 2em;
-              user-select: none;
-              box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
-              display: block;
-              text-align: center;
-              margin: 0.25em;
-            }
           }
         }
 
@@ -3995,9 +4000,11 @@ ul.naviBtn {
     }
     .content { margin: 0 0 2em 2em; }
     #MChatSettingSorryMessage {
-      width: 25em;
-      height: 5em;
+      width: 22em;
+      height: 8em;
       resize: none;
+      font-size: 1em;
+      padding: 0.5em;
     }
     #sc_content {
       margin-left: 2em;
