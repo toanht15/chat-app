@@ -3,6 +3,7 @@ $editFlg = true;
 if ( !empty($this->data['MUser']['edit_password']) ) {
   $editFlg = false;
 }
+$settings = json_decode($this->data['MUser']['settings']);
 ?>
 <?= $this->Form->create('MUser', array('type' => 'post', 'url' => array('controller' => 'PersonalSettings', 'action' => 'index'))); ?>
     <div class="form01">
@@ -20,6 +21,14 @@ if ( !empty($this->data['MUser']['edit_password']) ) {
                     <?= $this->Form->input('display_name', array('placeholder' => 'display_name', 'div' => false, 'label' => false, 'maxlength' => 10, 'error' => false)) ?>
                 </li>
                 <?php if ( $this->Form->isFieldError('display_name') ) echo $this->Form->error('display_name', null, array('wrap' => 'li')); ?>
+
+                <?php if ( $coreSettings[C_COMPANY_USE_CHAT] && !empty($mChatSetting['MChatSetting']) && strcmp($mChatSetting['MChatSetting']['sc_flg'], C_SC_ENABLED) === 0 ) : ?>
+                  <li>
+                      <div class="labelArea fLeft"><span><label>チャット同時対応数</label></span></div>
+                      <span><?php echo ( !empty($settings->sc_num) ) ? $settings->sc_num : 0 ?></span>
+                  </li>
+                <?php endif; ?>
+
                 <li>
                     <div class="labelArea fLeft"><span class="require"><label>メールアドレス</label></span></div>
                     <?= $this->Form->input('mail_address', array('placeholder' => 'mail_address', 'div' => false, 'label' => false, 'maxlength' => 200, 'error' => false)) ?>
@@ -62,7 +71,7 @@ if ( !empty($this->data['MUser']['edit_password']) ) {
         <!-- /* 操作 */ -->
         <section>
             <div id="personal_action">
-                <?= $this->Html->link('更新', 'javascript:void(0)', ['onclick' => 'loading.ev(saveAct)', 'class' => 'greenBtn btn-shadow']) ?>
+                <?= $this->Html->link('更新', 'javascript:void(0)', ['onclick' => 'loading.ev(saveAct)', 'class' => 'greenBtn btn-shadow inlineSaveBtn']) ?>
             </div>
         </section>
 

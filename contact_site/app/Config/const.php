@@ -66,6 +66,10 @@ define('C_WIDGET_RADIO_CLICK_TEXT', 2); // 文字列がテキストエリアに�
 define('C_WIDGET_SEND_ACT_PUSH_KEY', 1); // キーアクション込み
 define('C_WIDGET_SEND_ACT_PUSH_BTN', 2); // ボタンのみ
 
+// チャット対応数制限
+define('C_SC_ENABLED', 1); // 利用する
+define('C_SC_DISABLED', 2); // 利用しない
+
 // チャット通知の種別
 define('C_NOTIFICATION_TYPE_TITLE', 1); // タイトル
 define('C_NOTIFICATION_TYPE_URL', 2); // URL

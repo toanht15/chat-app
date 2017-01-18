@@ -114,7 +114,7 @@ class AppModel extends Model {
      * @param $params array find関数の第２引数
      * @return find関数の戻り値
      * */
-    public function coFind($type, $params = []) {
+    public function coFind($type, $params = [], $delFlg = true) {
         // is empty
         if ( !isset($params['conditions']) ) {
             $params['conditions'] = [];
@@ -122,7 +122,9 @@ class AppModel extends Model {
         // set company id
         $params['conditions']['m_companies_id'] = Configure::read('logged_company_id');
         // set delete flg
-        $params['conditions']['del_flg'] = 0;
+        if ( $delFlg ) {
+          $params['conditions']['del_flg'] = 0;
+        }
 
         return $this->find($type, $params);
     }

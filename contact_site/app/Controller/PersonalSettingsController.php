@@ -4,7 +4,7 @@
  * ユーザーマスタ
  */
 class PersonalSettingsController extends AppController {
-  public $uses = ['MUser'];
+  public $uses = ['MUser', 'MChatSetting'];
 
   public function beforeFilter(){
     parent::beforeFilter();
@@ -31,6 +31,7 @@ class PersonalSettingsController extends AppController {
     else {
       $this->data = $this->MUser->read(null, $this->userInfo['id']);
     }
+    $this->set('mChatSetting', $this->MChatSetting->coFind('first', [], false));
   }
 
   /* *

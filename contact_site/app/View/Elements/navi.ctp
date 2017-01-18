@@ -19,6 +19,7 @@ switch ($this->name) {
     case 'DisplayExclusions':
         $settingSelected = "selected";
         break;
+    case 'MChatSettings':
     case 'MChatNotifications':
     case 'TAutoMessages':
     case 'TDictionaries':
@@ -106,6 +107,9 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
     <?php if ($coreSettings[C_COMPANY_USE_CHAT]): ?>
       <div data-sidebar-type="chat" class="hide">
       <?php if ( $adminFlg ): ?>
+        <div class="icon">
+          <?= $this->htmlEx->naviLink('基本設定', 'chat_setting.png', ['href' => ['controller' => 'MChatSettings', 'action' => 'index']]) ?>
+        </div>
         <div class="icon">
           <?= $this->htmlEx->naviLink('ｵｰﾄﾒｯｾｰｼﾞ', 'auto_message.png', ['href' => ['controller' => 'TAutoMessages', 'action' => 'index']]) ?>
         </div>
