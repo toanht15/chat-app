@@ -47,7 +47,7 @@
     ?>
     <?php //モーダル画面の検索
     if(!empty($data['History']['start_day'])||!empty($data['History ']['finish_day'])) { ?>
-      <span id ='mainDatePeriod' name = 'datefilter' class='date'><?= h($data['History']['start_day']) ?>-<?= h($data['History']['finish_day']) ?>　　</span>
+      <span id ='mainDatePeriod' name = 'datefilter'><?= h($data['History']['start_day']) ?>-<?= h($data['History']['finish_day']) ?>　　</span>
     <?php } ?>
     <?php //全期間の検索
     if(empty($data['History']['start_day'])&&empty($data['History ']['finish_day'])) { ?>
