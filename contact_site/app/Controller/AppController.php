@@ -62,7 +62,6 @@ class AppController extends Controller {
     if ( APP_MODE_DEV === false ) {
       $this->checkPort();
     }
-    $this->Auth->allow(['remoteSaveForm']);
 
     // 通知メッセージをセット
     if ($this->Session->check('global.message')) {
@@ -149,6 +148,7 @@ class AppController extends Controller {
       case "TDictionaries":
       case "TAutoMessages":
       case "MChatNotifications":
+      case "MChatSettings":
         if ( !(isset($this->coreSettings[C_COMPANY_USE_CHAT]) && $this->coreSettings[C_COMPANY_USE_CHAT]) ) {
           $this->redirect("/");
         }

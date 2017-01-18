@@ -96,7 +96,7 @@
             options.template = '<div class="daterangepicker dropdown-menu">' +
                 '<div class="calendar left">' +
                     '<div class="daterangepicker_input">' +
-                      '<input class="input-mini form-control" type="text" id="start" name="daterangepicker_start" value="" />' +
+                      '<input class="input-mini form-control" type="text" name="daterangepicker_start" value="" />' +
                       '<i class="fa fa-calendar glyphicon glyphicon-calendar"></i>' +
                       '<div class="calendar-time">' +
                         '<div></div>' +
@@ -107,7 +107,7 @@
                 '</div>' +
                 '<div class="calendar right">' +
                     '<div class="daterangepicker_input">' +
-                      '<input class="input-mini form-control" type="text" id="end" name="daterangepicker_end" value="" />' +
+                      '<input class="input-mini form-control" type="text" name="daterangepicker_end" value="" />' +
                       '<i class="fa fa-calendar glyphicon glyphicon-calendar"></i>' +
                       '<div class="calendar-time">' +
                         '<div></div>' +
@@ -118,7 +118,7 @@
                 '</div>' +
                 '<div class="ranges">' +
                     '<div class="range_inputs">' +
-                        '<button class="applyBtn" disabled="disabled" type="button" onclick="searchRefine()"></button> ' +
+                        '<button class="applyBtn" disabled="disabled" type="button"></button> ' +
                         '<button class="cancelBtn" type="button"></button>' +
                     '</div>' +
                 '</div>' +
