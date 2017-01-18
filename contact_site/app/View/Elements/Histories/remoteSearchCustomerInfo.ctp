@@ -29,8 +29,9 @@ popupEvent.customizeBtn = function(){
       <?php
         $extinguish = '';
         $checked = 'checked';
+        $this->log($this->data,LOG_DEBUG);
         //全期間の場合
-        if(!isset($this->data['datefilter'])&&!isset($this->request->data['start_day'])&&!isset($this->request->data['finish_day'])) {
+        if(!isset($this->data['datefilter'])) {
           $extinguish = 'extinguish';
           $checked = '';
         }

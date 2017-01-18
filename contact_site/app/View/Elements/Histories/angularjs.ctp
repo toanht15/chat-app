@@ -278,9 +278,35 @@ $(document).ready(function(){
     "endDate": $('#HistoryFinishDay').val(),
   });
 
+  //モーダルのカレンダーの設定ボタン
   $('input[name="datefilter"]').on('apply.daterangepicker', function(ev, picker) {
+    console.log('aeieie');
     $('#HistoryStartDay').val(picker.startDate.format('YYYY/MM/DD'));
     $('#HistoryFinishDay').val(picker.endDate.format('YYYY/MM/DD'));
+  });
+
+  //view側のカレンダーの検索ボタン
+  $('#mainDatePeriod').on('apply.daterangepicker', function(ev, picker) {
+    //開始日と終了日取得
+    $('#startDay').text(picker.startDate.format('YYYY/MM/DD'));
+    $('#finishDay').text(picker.endDate.format('YYYY/MM/DD'));
+    //モーダルの検索ボタンと被らないようにする
+    if ( !$("#popup.popup-on #popup-frame ").is(".p-thistory-entry") ) {
+      //form作成
+      $('<form/>', {action: "<?= $this->Html->url(['controller' => 'Histories', 'action' => 'index']) ?>", method: 'post'})
+      .append($('<input/>', {type: 'hidden', name: "data[datefilter]", value: $('#startDay').text()+ '-' +$('#finishDay').text()}))
+      .append($('<input/>', {type: 'hidden', name: "data[History][start_day]", value: $('#startDay').text()}))
+      .append($('<input/>', {type: 'hidden', name: "data[History][finish_day]", value: $('#finishDay').text()}))
+      .append($('<input/>', {type: 'hidden', name: "data[History][ip_address]", value:  $('#ip').text()}))
+      .append($('<input/>', {type: 'hidden', name: "data[History][company_name]", value: $('#company').text()}))
+      .append($('<input/>', {type: 'hidden', name: "data[History][customer_name]", value: $('#customer').text()}))
+      .append($('<input/>', {type: 'hidden', name: "data[History][telephone_number]", value: $('#telephone').text()}))
+      .append($('<input/>', {type: 'hidden', name: "data[History][mail_address]", value: $('#mail').text()}))
+      .append($('<input/>', {type: 'hidden', name: "data[History][responsible_name]", value: $('#responsible').text()}))
+      .append($('<input/>', {type: 'hidden', name: "data[History][message]", value: $('#message').text()}))
+      .appendTo(document.body)
+      .submit()
+    }
   });
 
   $('#day_search').on('click', function() {
