@@ -577,7 +577,6 @@
         },
 
         updateCalendars: function() {
-console.log("updateCalendars");
             if (this.timePicker) {
                 var hour, minute, second;
                 if (this.endDate) {
@@ -1227,7 +1226,6 @@ console.log("updateCalendars");
         },
 
         clickNext: function(e) {
-console.log("clickNext");
             var cal = $(e.target).parents('.calendar');
             if (cal.hasClass('left')) {
                 this.leftCalendar.month.add(1, 'month');
