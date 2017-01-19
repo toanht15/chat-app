@@ -546,9 +546,14 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
      *  資料共有　ここまで
      * ************************************************************/
 
+    // 成果表示チェック
+    $scope.showAchievement = function (){
+      return ( isset($scope.detailId) && (typeof($scope.detail) === "object" && Object.keys($scope.detail).length > 0) && $scope.chatOpList.indexOf(myUserId) > -1 );
+    };
+
     // 成果登録
     $scope.changeAchievement = function (){
-      if ( Object.keys($scope.detail).length > 0 && $scope.detailId !== "" && $scope.chatOpList.indexOf(myUserId) > -1 ) {
+      if ( isset($scope.detailId) && (typeof($scope.detail) === "object" && Object.keys($scope.detail).length > 0) && $scope.chatOpList.indexOf(myUserId) > -1 ) {
         var monitor = angular.copy($scope.monitorList[$scope.detailId]);
         var chatList = angular.copy($scope.messageList);
         var chatId = null;
@@ -566,15 +571,14 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                 },
                 dataType: 'json',
                 success: function(json){
-                  console.log("json", json);
                 }
               });
+              break;
             }
-            break;
           }
         }
       }
-    }
+    };
 
     $scope.openHistory = function(monitor){
         var retList = {};
@@ -1142,10 +1146,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       }
       $scope.oprCnt = obj.onlineUserCnt;
 <?php endif; ?>
-<?php if ( $coreSettings[C_COMPANY_USE_CHAT] && isset($scNum) && strcmp(intval($scFlg), C_SC_ENABLED) === 0 ) :  ?>
+<?php if ( $coreSettings[C_COMPANY_USE_CHAT] && strcmp(intval($scFlg), C_SC_ENABLED) === 0 ) :  ?>
       // チャット対応上限を設定
-      if ( obj.hasOwnProperty('scInfo') && obj.scInfo.hasOwnProperty(Number(<?=$muserId?>)) ) {
-        $scope.scInfo.remain = Number(<?=$scNum?>) - Number(obj.scInfo[Number(<?=$muserId?>)]);
+      $scope.scInfo.remain = (isNumber(<?=$scNum?>)) ? Number(<?=$scNum?>) : 0 ;
+      if ( obj.hasOwnProperty('scInfo') && obj.scInfo.hasOwnProperty(<?=$muserId?>) ) {
+        $scope.scInfo.remain -= Number(obj.scInfo[<?=$muserId?>]);
       }
 <?php endif; ?>
       $scope.oprWaitCnt = obj.userCnt;
@@ -1314,12 +1319,13 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           chgOpStatusView("<?=C_OPERATOR_PASSIVE?>");
         }
       }
-    <?php if ( $coreSettings[C_COMPANY_USE_CHAT] && isset($scNum) && strcmp(intval($scFlg), C_SC_ENABLED) === 0 ) :  ?>
-      $scope.scInfo.remain = 0;
-      if ( obj.hasOwnProperty('scInfo') && obj.scInfo.hasOwnProperty(<?=$muserId?>) ) {
-        $scope.scInfo.remain = <?=$scNum?> - Number(obj.scInfo[<?=$muserId?>]);
-      }
-    <?php endif; ?>
+      <?php if ( $coreSettings[C_COMPANY_USE_CHAT] && strcmp(intval($scFlg), C_SC_ENABLED) === 0 ) :  ?>
+            // チャット対応上限を設定
+            $scope.scInfo.remain = (isNumber(<?=$scNum?>)) ? Number(<?=$scNum?>) : 0 ;
+            if ( obj.hasOwnProperty('scInfo') && obj.scInfo.hasOwnProperty(<?=$muserId?>) ) {
+              $scope.scInfo.remain -= Number(obj.scInfo[<?=$muserId?>]);
+            }
+      <?php endif; ?>
     });
 
     socket.on('unsetUser', function(data){
@@ -1388,12 +1394,13 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         $scope.messageList.push(chat);
         scDown(); // チャットのスクロール
       }
-<?php if ( $coreSettings[C_COMPANY_USE_CHAT] && isset($scNum) && strcmp(intval($scFlg), C_SC_ENABLED) === 0 ) :  ?>
-      $scope.scInfo.remain = 0;
-      if ( obj.hasOwnProperty('scInfo') && obj.scInfo.hasOwnProperty(Number(<?=$muserId?>)) ) {
-        $scope.scInfo.remain = Number(<?=$scNum?>) - Number(obj.scInfo[Number(<?=$muserId?>)]);
-      }
-<?php endif; ?>
+      <?php if ( $coreSettings[C_COMPANY_USE_CHAT] && strcmp(intval($scFlg), C_SC_ENABLED) === 0 ) :  ?>
+            // チャット対応上限を設定
+            $scope.scInfo.remain = (isNumber(<?=$scNum?>)) ? Number(<?=$scNum?>) : 0 ;
+            if ( obj.hasOwnProperty('scInfo') && obj.scInfo.hasOwnProperty(<?=$muserId?>) ) {
+              $scope.scInfo.remain -= Number(obj.scInfo[<?=$muserId?>]);
+            }
+      <?php endif; ?>
     });
 
     // チャット接続終了
@@ -1414,10 +1421,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         $scope.messageList.push(chat);
         scDown(); // チャットのスクロール
       }
-<?php if ( $coreSettings[C_COMPANY_USE_CHAT] && isset($scNum) && strcmp(intval($scFlg), C_SC_ENABLED) === 0 ) :  ?>
-      $scope.scInfo.remain = 0;
+<?php if ( $coreSettings[C_COMPANY_USE_CHAT] && strcmp(intval($scFlg), C_SC_ENABLED) === 0 ) :  ?>
+      $scope.scInfo.remain = (isNumber(<?=$scNum?>)) ? Number(<?=$scNum?>) : 0 ;
       if ( obj.hasOwnProperty('scInfo') && obj.scInfo.hasOwnProperty(<?=$muserId?>) ) {
-        $scope.scInfo.remain = <?=$scNum?> - Number(obj.scInfo[<?=$muserId?>]);
+        $scope.scInfo.remain -= Number(obj.scInfo[<?=$muserId?>]);
       }
 <?php endif; ?>
 
@@ -1439,13 +1446,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         if ( Number(chat.messageType) === 98 ) {
           $scope.chatOpList.push(chat.userId);
           if ( chat.userId === myUserId ) {
-            $scope.achievement = chat.achievementFlg;
-          }
-        }
-        if ( chat.achievementFlg !== null ) {
-          // 通過時点で「有効」の場合は「有効」のまま
-          if ( String($scope.achievement) !== "<?=C_ACHIEVEMENT_AVAILABLE?>" ) {
-            $scope.achievement = obj.chat.messages[key].achievementFlg;
+            $scope.achievement = String(chat.achievementFlg);
           }
         }
         chat.sort = Number(key);
@@ -1990,7 +1991,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           }
         };
         scope.showConnectionBtn = function(){
-          if (scope.detail === undefined || scope.detail === {}) return false;
+          if (scope.detail === undefined || scope.detail === {} || !scope.monitorList.hasOwnProperty(scope.detailId)) return false;
           if (!('widget' in scope.detail) || (('widget' in scope.detail) && !scope.detail.widget)) return false;
           if (!('connectToken' in scope.detail)) return true;
           if (('connectToken' in scope.detail) && scope.detail.connectToken === '') {

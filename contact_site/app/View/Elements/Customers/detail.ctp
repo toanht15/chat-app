@@ -4,18 +4,11 @@
       <h2>{{detail.accessId}}</h2>
       <div>
         <!-- 閉じる -->
-        <a ng-if="chatList.indexOf(detailId) < 0" href="javascript:void(0)" ng-click="showDetail(detailId)" class="fRight customer_detail_btn redBtn btn-shadow">
-          <?= $this->Html->image('close.png', ['alt'=>'詳細を閉じる', 'width'=>20, 'height' => 20]); ?>
-        </a>
-        <a ng-if="chatList.indexOf(detailId) >= 0" href="javascript:void(0)" ng-click="showDetail(detailId)" class="fRight customer_detail_btn redBtn btn-shadow">
-          <?= $this->Html->image('close.png', ['alt'=>'チャットを終了する', 'width'=>20, 'height' => 20]); ?>
+        <a href="javascript:void(0)" ng-click="showDetail(detailId)" class="fRight customer_detail_btn redBtn btn-shadow">
+          <?= $this->Html->image('close.png', ['alt'=>'チャットを終了する', 'width'=>20, 'height' => 20, 'ng-if="chatList.indexOf(detailId) < 0"']); ?>
+          <?= $this->Html->image('minimize.png', ['alt'=>'詳細を閉じる', 'width'=>20, 'height' => 20, 'ng-if="chatList.indexOf(detailId) >= 0"']); ?>
         </a>
         <!-- 閉じる -->
-        <!-- 最小化 -->
-        <a href="javascript:void(0)" ng-click="showDetail(detailId)" class="fRight customer_detail_btn redBtn btn-shadow">
-          <?= $this->Html->image('minimize.png', ['alt'=>'詳細を閉じる', 'width'=>20, 'height' => 20]); ?>
-        </a>
-        <!-- 最小化 -->
       </div>
     </div>
     <div id="cus_info_contents" class="flexBoxCol">
@@ -39,7 +32,7 @@
                   <li class="sinclo_re typeing_message" ng-if="typingMessageRe[detailId] && typingMessageRe[detailId] !== ''">{{typingMessageRe[detailId]}}</li>
                 </typing-message>
               </ul>
-              <chat-detail ng-class="{showOption: chatOptionDisabled(detailId)}">
+              <chat-detail ng-class="{showOption: showAchievement()}">
                 <span>成果</span>
                 <label>
                   <?= $this->ngForm->input('achievement',
