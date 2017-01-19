@@ -23,7 +23,7 @@ class MUsersController extends AppController {
     $this->set('title_for_layout', 'ユーザー管理');
     $this->set('siteKey', $this->userInfo['MCompany']['company_key']);
     $this->set('limitUserNum', $this->userInfo['MCompany']['limit_users']);
-    $this->Auth->allow('index');
+    $this->Auth->allow(['remoteSaveForm']);
     header('Access-Control-Allow-Origin: *');
   }
 
