@@ -818,7 +818,7 @@ div#planListArea {
 
 #planListArea:after {
     content: "\f0d7";
-    position: absolute;
+        position: relative;
     right: 0;
     top: 1px;
     bottom: 1px;

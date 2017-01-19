@@ -12,6 +12,15 @@ popupEvent.closePopup = function(){
   else {
     document.getElementById('historySearch').action = "Histories?isChat=false";
   }
+  var period_day = $('.active').text();
+  //カスタム検索の場合
+  if(period_day.match(/[^0-9]/) == null){
+    $('#HistoryPeriod').val("");
+  }
+  //それ以外の検索の場合
+  else{
+    $('#HistoryPeriod').val(period_day);
+  }
   $('#historySearch').submit();
 };
 
@@ -39,6 +48,7 @@ popupEvent.customizeBtn = function(){
     </li>
     <?= $this->Form->hidden('start_day',['label'=> false,'div' => false]); ?>
     <?= $this->Form->hidden('finish_day',['label'=> false,'div' => false]); ?>
+    <?= $this->Form->hidden('period',['label'=> false,'div' => false]); ?>
     <li>
       <p><span>ipアドレス</span></p>
       <span><?= $this->Form->input('ip_address',['label'=>false,'div' => false]) ?></span>

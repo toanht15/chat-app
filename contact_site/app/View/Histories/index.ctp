@@ -45,9 +45,17 @@
       'javascript:void(0)',
       array('escape' => false, 'class'=>'skyBlueBtn btn-shadow','id' => 'searchRefine','onclick' => 'openSearchRefine()'));
     ?>
-    <?php //モーダル画面の検索
+    <span id="searchPeriod">検索期間</span>
+    <?php //指定範囲のある検索
     if(!empty($data['History']['start_day'])||!empty($data['History ']['finish_day'])) { ?>
-      <span id ='mainDatePeriod' name = 'datefilter'><?= h($data['History']['start_day']) ?>-<?= h($data['History']['finish_day']) ?>　　</span>
+      <?php //モーダル画面から検索した場合
+      if(isset($data['History']['period'])) { ?>
+        <span id ='mainDatePeriod' name = 'datefilter'><?= h($data['History']['period']) ?> : <?= h($data['History']['start_day']) ?>-<?= h($data['History']['finish_day']) ?></span>
+      <?php } ?>
+      <?php //view側から検索した場合
+      if(isset($data['History']['viewPeriod'])) { ?>
+       <span id ='mainDatePeriod' name = 'datefilter'><?= h($data['History']['viewPeriod']) ?> : <?= h($data['History']['start_day']) ?>-<?= h($data['History']['finish_day']) ?></span>
+      <?php } ?>
     <?php } ?>
     <?php //全期間の検索
     if(empty($data['History']['start_day'])&&empty($data['History ']['finish_day'])) { ?>
@@ -75,12 +83,6 @@
       <label class='searchConditions'>検索条件</label>
       <ul>
         <span class="dammy">　</span>
-        <?php if(!empty($data['History']['start_day'])||!empty($data['History ']['finish_day'])) { ?>
-          <li>
-            <label>日付</label>
-            <span class="value"><?= h($data['History']['start_day']) ?>-<?= h($data['History']['finish_day']) ?></span>
-          </li>
-        <?php } ?>
         <?php if(!empty($data['History']['ip_address'])) { ?>
           <li>
             <label>IPｱﾄﾞﾚｽ</label>

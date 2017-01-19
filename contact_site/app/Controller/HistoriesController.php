@@ -468,6 +468,25 @@ class HistoriesController extends AppController {
 
     if ($this->Session->check('Thistory')) {
       $data = $this->Session->read('Thistory');
+      //検索期間ワード(ex,今日、今月など)
+      if(isset($data['History']['period'])){
+        //カスタム検索の場合
+        if(mb_strlen($data['History']['period'])==0){
+          $data['History']['period'] = "カスタム";
+        }
+        //今月、先月、過去一か月間の検索の場合
+        else if(mb_strlen($data['History']['period'])==4 || mb_strlen($data['History']['period'])==8){
+          $data['History']['period'] = substr($data['History']['period'], 2);
+        }
+        //今月、先月の検索の場合
+        else if(mb_strlen($data['History']['period'])==7){
+          $data['History']['period'] = substr($data['History']['period'], 5);
+        }
+        //それ以外の検索の場合
+        else{
+        $data['History']['period'] = substr($data['History']['period'], 4);
+        }
+      }
       //ipアドレス
       if(isset($data['History']['ip_address'])) {
         $this->paginate['THistory']['conditions'][] = ['THistory.ip_address like' =>'%'.$data['History']['ip_address'].'%'];
