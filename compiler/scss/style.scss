@@ -2174,7 +2174,7 @@ ul.naviBtn {
   }
 
   #manuscriptArea {
-    background-color: #efefef;
+    background-color: #FFF;
     padding: 0.5em;
     min-height: 4em;
     box-shadow: 0 0 2px rgba(0,0,0,0.7);
@@ -2182,9 +2182,12 @@ ul.naviBtn {
     width: calc(100% - 150px);
     cursor: move;
     z-index: 2;
+    opacity: 0.6;
 
     #manuscript {
       white-space: pre-wrap;
+      padding: 0 1em;
+      display: block!important;
     }
 
     &:after {
@@ -2193,6 +2196,7 @@ ul.naviBtn {
       color: #e48c8c;
       display: block;
       margin-top: 0.5em;
+      padding: 0 1em;
     }
 
     #manuscriptCloseBtn {
