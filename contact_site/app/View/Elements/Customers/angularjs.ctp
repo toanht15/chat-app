@@ -821,7 +821,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     };
 
     /* タブ状態を文字列で返す */
-    $scope.tabStatusStr = function (n){
+    $scope.tabStatusStr = function (tabId){
+      var n = ($scope.monitorList.hasOwnProperty(tabId)) ? $scope.monitorList[tabId].status : <?=C_WIDGET_TAB_STATUS_CODE_OUT?>;
       return $scope.jsConst.tabInfoStr[n];
     }
 
