@@ -40,4 +40,3 @@ $config['Authority'] = [
     C_AUTHORITY_ADMIN => "管理者",
     C_AUTHORITY_NORMAL => "一般"
 ];
-

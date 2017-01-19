@@ -186,7 +186,7 @@ $(document).ready(function(){
       '今日': [moment(), moment()],
       '昨日': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
       '過去一週間': [moment().subtract(6, 'days'), moment()],
-      '過去一ヶ月間': [moment().subtract(29, 'days'), moment()],
+      '過去一ヶ月間': [moment().subtract(30, 'days'), moment()],
       '今月': [moment().startOf('month'), moment().endOf('month')],
       '先月': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
     },
@@ -235,7 +235,7 @@ $(document).ready(function(){
       '今日': [moment(), moment()],
       '昨日': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
       '過去一週間': [moment().subtract(6, 'days'), moment()],
-      '過去一ヶ月間': [moment().subtract(29, 'days'), moment()],
+      '過去一ヶ月間': [moment().subtract(30, 'days'), moment()],
       '今月': [moment().startOf('month'), moment().endOf('month')],
       '先月': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
     },
@@ -276,11 +276,42 @@ $(document).ready(function(){
     "alwaysShowCalendars": true,
     "startDate": $('#HistoryStartDay').val(),
     "endDate": $('#HistoryFinishDay').val(),
+    "opens": "left"
   });
 
+  //モーダルのカレンダーの設定ボタン
   $('input[name="datefilter"]').on('apply.daterangepicker', function(ev, picker) {
     $('#HistoryStartDay').val(picker.startDate.format('YYYY/MM/DD'));
     $('#HistoryFinishDay').val(picker.endDate.format('YYYY/MM/DD'));
+  });
+
+  $('#mainDatePeriod').on('apply.daterangepicker', function(ev, picker) {
+    //開始日と終了日取得
+    $('#startDay').text(picker.startDate.format('YYYY/MM/DD'));
+    $('#finishDay').text(picker.endDate.format('YYYY/MM/DD'));
+    var search_day = $('.active').text();
+    //カスタム検索の場合
+    if(search_day.match(/[^0-9]/) == null){
+      search_day = "";
+    }
+    //モーダルの検索ボタンと被らないようにする
+    if ( !$("#popup.popup-on #popup-frame ").is(".p-thistory-entry") ) {
+      //form作成
+      $('<form/>', {action: "<?= $this->Html->url(['controller' => 'Histories', 'action' => 'index']) ?>", method: 'post'})
+      .append($('<input/>', {type: 'hidden', name: "data[datefilter]", value: $('#startDay').text()+ '-' +$('#finishDay').text()}))
+      .append($('<input/>', {type: 'hidden', name: "data[History][start_day]", value: $('#startDay').text()}))
+      .append($('<input/>', {type: 'hidden', name: "data[History][period]", value: search_day}))
+      .append($('<input/>', {type: 'hidden', name: "data[History][finish_day]", value: $('#finishDay').text()}))
+      .append($('<input/>', {type: 'hidden', name: "data[History][ip_address]", value:  $('#ip').text()}))
+      .append($('<input/>', {type: 'hidden', name: "data[History][company_name]", value: $('#company').text()}))
+      .append($('<input/>', {type: 'hidden', name: "data[History][customer_name]", value: $('#customer').text()}))
+      .append($('<input/>', {type: 'hidden', name: "data[History][telephone_number]", value: $('#telephone').text()}))
+      .append($('<input/>', {type: 'hidden', name: "data[History][mail_address]", value: $('#mail').text()}))
+      .append($('<input/>', {type: 'hidden', name: "data[History][responsible_name]", value: $('#responsible').text()}))
+      .append($('<input/>', {type: 'hidden', name: "data[History][message]", value: $('#message').text()}))
+      .appendTo(document.body)
+      .submit()
+      }
   });
 
   $('#day_search').on('click', function() {

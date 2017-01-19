@@ -1,6 +1,14 @@
 <script type="text/javascript">
 //モーダル画面
 function openSearchRefine(){
+  var sheets = document.styleSheets,
+      sheet = sheets[sheets.length - 1];
+
+  if (sheet.insertRule)
+  {
+    sheet.insertRule('.daterangepicker.opensleft:before {right:9px}', sheet.cssRules.length);
+    sheet.insertRule('.daterangepicker.opensleft:after {right:10px}', sheet.cssRules.length);
+  }
   $.ajax({
     type: 'post',
     dataType: 'html',
@@ -11,46 +19,4 @@ function openSearchRefine(){
     }
   });
 }
-
-//view側の検索ボタン
-  //開始日、終了日取得
-$(function() {
-  $('#mainDatePeriod').on('apply.daterangepicker', function(ev, picker) {
-    $('#startDay').text(picker.startDate.format('YYYY/MM/DD'));
-    $('#finishDay').text(picker.endDate.format('YYYY/MM/DD'));
-    //モーダルの検索ボタンと被らないようにする
-    if ( !$("#popup.popup-on #popup-frame ").is(".p-thistory-entry") ) {
-      //前の検索条件を日程以外全て引き継ぐ
-      var start = $('#startDay').text();
-      var end = $('#finishDay').text();
-      var ip = $('#ip').text();
-      var company = $('#company').text();
-      var customer = $('#customer').text();
-      var telephone = $('#telephone').text();
-      var mail = $('#mail').text();
-      var responsible = $('#responsible').text();
-      var message = $('#message').text();
-      var date = start　+ ' - ' + end + '　　';
-      $.ajax({
-        type: "POST",
-        url: "<?= $this->Html->url(['controller' => 'Histories', 'action' => 'index']) ?>",
-        data: {
-          start_day : start,
-          finish_day : end,
-          ip_address : ip,
-          company_name : company,
-          customer_name : customer,
-          telephone_number : telephone,
-          mail_address : mail,
-          responsible_name : responsible,
-          message : message
-        },
-        dataType: "html",
-        success: function(){
-          location.href = window.location;
-        }
-      });
-    }
-  });
-});
 </script>

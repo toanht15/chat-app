@@ -2301,18 +2301,32 @@ ul.naviBtn {
     }
 
     #mainDatePeriod {
-      margin-left: 1em;
-      margin-top: 0.6em;
-      background-image: url(/img/calender.png);
-      background-repeat: no-repeat;
-      background-position: right 4pt bottom 2pt;
-      background-size: 15px;
+      margin-left: 5em;
+      margin-top: -1.3em;
       cursor: pointer;
       border-bottom: 1px solid #909090;
-      font: 15.7333px Arial;
-      width: 13em!important;
+      font-size: 1.2em;
+      width: 19em !important;
       display: block;
-      text-align: center;
+      text-align: left;
+      position: relative;
+    }
+
+    span#mainDatePeriod:after {
+      content: " ";
+      display: block;
+      position: absolute;
+      right: 10px;
+      top: 5px;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 8px solid #848282;
+      width: 0;
+      height: 1em;
+    }
+
+    span#searchPeriod {
+      font-size: 1.2em;
     }
 
     ul {
@@ -2416,8 +2430,8 @@ ul.naviBtn {
 
   a#searchRefine {
     position: absolute;
-    top: 90px;
-    left: 23em;
+    top: 80px;
+    left: 33em;
     width: 8em;
     padding: 0.25em 0.5em;
     text-align: center;

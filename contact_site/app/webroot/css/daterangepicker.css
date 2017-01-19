@@ -25,9 +25,9 @@
     border-bottom: 6px solid #fff;
     border-left: 6px solid transparent; }
   .daterangepicker.opensleft:before {
-    right: 9px; }
+    right: 234px; }
   .daterangepicker.opensleft:after {
-    right: 10px; }
+    right: 235px; }
   .daterangepicker.openscenter:before {
     left: 0;
     right: 0;
@@ -205,7 +205,7 @@
 /*  Larger Screen Styling */
 @media (min-width: 564px) {
   .daterangepicker {
-    width: auto; }
+    width: 660px; }
     .daterangepicker .ranges ul {
       width: 160px; }
     .daterangepicker.single .ranges ul {
