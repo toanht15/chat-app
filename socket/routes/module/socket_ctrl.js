@@ -545,12 +545,12 @@ io.sockets.on('connection', function (socket) {
         }
       );
     },
-    notifyCommit: function(d){ // DBに書き込むとき
+    notifyCommit: function(name, d){ // DBに書き込むとき
 
       var insertData = {
-        t_histories_id: sincloCore[d.siteKey][d.tabId].historyId,
-        visitors_id: d.userId,
-        m_users_id: d.mUserId,
+        t_histories_id: getSessionId(d.siteKey, d.tabId, 'historyId'),
+        visitors_id: d.visitorsId,
+        m_users_id: d.userId,
         message: d.chatMessage,
         message_type: d.messageType,
         message_read_flg: 1,
@@ -564,8 +564,15 @@ io.sockets.on('connection', function (socket) {
           }
           pool.query('INSERT INTO t_history_chat_logs SET ?', insertData, function(error,results,fields){
             if ( isset(error) ) {
+              d.error = error;
+              d.ret = false;
               console.log("RECORD INSERT ERROR: notifyCommit-func:" + error);
             }
+            if ( results.hasOwnProperty('insertId') ) {
+              d.id = results.insertId;
+              d.created = fullDateTime(d.created);
+            }
+            emit.toCompany(name, d, d.siteKey);
           });
         }
       );
@@ -1321,7 +1328,7 @@ io.sockets.on('connection', function (socket) {
     }
     else {
       var sendData = {ret: true, messageType: type, tabId: obj.tabId, siteKey: obj.siteKey, userId: obj.userId, hide:false, created: now};
-      var sendDataComp = sendData;
+      var scInfo = "";
 
       sincloCore[obj.siteKey][obj.tabId].chat = obj.userId;
       sincloCore[obj.siteKey][obj.tabId].chatSessionId = socket.id;
@@ -1368,25 +1375,27 @@ io.sockets.on('connection', function (socket) {
           /* チャット対応上限の処理（対応人数加算の処理） */
           if ( scList.hasOwnProperty(obj.siteKey) && scList[obj.siteKey].cnt.hasOwnProperty(obj.userId) ) {
             scList[obj.siteKey].cnt[obj.userId]++; // 対応人数を加算する
-            sendDataComp.scInfo = scList[obj.siteKey].cnt;
+            scInfo = scList[obj.siteKey].cnt;
           }
           /* チャット対応上限の処理（対応人数加算の処理） */
 
-          emit.toCompany("chatStartResult", sendDataComp, obj.siteKey);
-
           // DBに書き込み
           var ids = obj.tabId.split("_");
+
           var insertData = {
+            ret: true,
+            hide: sendData.hide,
+            scInfo: scInfo,
             siteKey: obj.siteKey,
             tabId: obj.tabId,
-            t_histories_id: getSessionId(obj.siteKey, obj.tabId, 'historyId'),
-            userId: (ids.length > 1) ? ids[0] : "",
-            mUserId: obj.userId,
+            visitorsId: (ids.length > 1) ? ids[0] : "",
+            userId: obj.userId,
             chatMessage: "入室",
             messageType: type,
+            userName: userName,
             created: date
           };
-          chatApi.notifyCommit(insertData);
+          chatApi.notifyCommit("chatStartResult", insertData);
 
         }
       });
@@ -1410,26 +1419,23 @@ io.sockets.on('connection', function (socket) {
       sincloCore[obj.siteKey][obj.tabId].chat = null;
       sincloCore[obj.siteKey][obj.tabId].chatSessionId = null;
       scInfo = ( scList.hasOwnProperty(obj.siteKey) ) ? scList[obj.siteKey].cnt : {};
-      var sendData = {
-        ret: true, messageType: type, created: now, tabId: obj.tabId, siteKey: obj.siteKey,
-        userId: obj.userId, scInfo: scInfo
-      };
-      emit.toCompany("chatEndResult", sendData, obj.siteKey);
-      emit.toUser("chatEndResult", {ret: true, messageType: type}, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
 
+      emit.toUser("chatEndResult", {ret: true, messageType: type}, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
       // DBに書き込み
       var ids = obj.tabId.split("_");
       var insertData = {
+        ret: true,
+        scInfo: scInfo,
         siteKey: obj.siteKey,
         tabId: obj.tabId,
-        t_histories_id: getSessionId(obj.siteKey, obj.tabId, 'historyId'),
-        userId: (ids.length > 1) ? ids[0] : "",
-        mUserId: obj.userId,
+        visitorsId: (ids.length > 1) ? ids[0] : "",
+        userId: obj.userId,
         chatMessage: "退室",
         messageType: type,
+        userName: userName,
         created: date
       };
-      chatApi.notifyCommit(insertData);
+      chatApi.notifyCommit("chatEndResult", insertData);
     }
   });
 

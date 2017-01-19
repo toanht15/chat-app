@@ -315,6 +315,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     $scope.monitorList = {};
     $scope.customerList = {};
     $scope.messageList = [];
+    $scope.chatOpList = [];
     $scope.chatList = [];
     $scope.typingMessageSe = "";
     $scope.typingMessageRe = {};
@@ -550,8 +551,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     // 成果登録
     $scope.changeAchievement = function (){
-      var achievement = $("#achievement");
-      if ( Object.keys($scope.detail).length > 0 && $scope.detail.hasOwnProperty('chat') && Number($scope.detail.chat) === Number(myUserId)) {
+      if ( Object.keys($scope.detail).length > 0 && $scope.detailId !== "" && $scope.chatOpList.indexOf(myUserId) > -1 ) {
         var monitor = angular.copy($scope.monitorList[$scope.detailId]);
         var chatList = angular.copy($scope.messageList);
         var chatId = null;
@@ -564,8 +564,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                 url: "<?= $this->Html->url(array('controller' => 'Customers', 'action' => 'remoteChangeAchievement')) ?>",
                 data: {
                   chatId: chatList[i].id,
-                  userId: $scope.detail.chat,
-                  value: achievement.prop("selectedIndex"),
+                  userId: myUserId,
+                  value: $scope.achievement,
                 },
                 dataType: 'json',
                 success: function(json){
@@ -577,7 +577,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           }
         }
       }
-      achievement.blur();
     }
 
     $scope.openHistory = function(monitor){
@@ -598,8 +597,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     };
 
     $scope.chatOptionDisabled = function(detailId){
-        if (!isset(detailId)) return false;
-        return ( isset($scope.monitorList[detailId].chat) && Number($scope.monitorList[detailId].chat) === Number(myUserId));
+      if (!isset(detailId) ) return false;
+      return ( typeof($scope.detail) === "object" && $scope.detail.hasOwnProperty('chat') && Number($scope.detail.chat) === Number(myUserId));
     };
 
     $scope.objCnt = function(list){
@@ -648,6 +647,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         }
         else {
           $("#sendMessage").blur();
+          $scope.achievement = "";
           modalOpen.call(window, message, 'p-confirm', 'メッセージ');
           popupEvent.closeNoPopup = function(){
             $scope.confirmFlg = false;
@@ -1332,10 +1332,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           $scope.chatList = $scope.chatList.filter(function(v){
             return (v !== this.t);
           }, {t: obj.tabId});
-          if ( obj.tabId === chatApi.tabId ){
-            $scope.showDetail(obj.tabId);
-            chatApi.tabId = null;
-          }
         }
         else {
           socket.emit("requestSyncStop", obj);
@@ -1356,6 +1352,15 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var obj = JSON.parse(d);
       var prev = angular.copy($scope.monitorList[obj.tabId].chat);
       $scope.monitorList[obj.tabId].chat = obj.userId;
+
+      if ( Number(obj.messageType) === 98 ) {
+        $scope.chatOpList.push(obj.userId);
+        if ( obj.userId === myUserId ) {
+          $scope.achievement = obj.achievementFlg;
+        }
+      }
+
+
       if ( obj.userId === myUserId && obj.ret ) {
         pushToChatList(obj.tabId);
         // $("#sendMessage").focus();
@@ -1374,6 +1379,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       }
       if ( obj.tabId === chatApi.tabId ) {
         var chat = {
+          id: obj.id,
+          achievementFlg: "",
+          messageReadFlg: "",
+          created: obj.created,
           sort: Number(obj.created),
           messageType: Number(obj.messageType),
           userId: obj.userId
@@ -1419,7 +1428,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     // チャットメッセージ群の受信
     socket.on("chatMessageData", function(d){
-      var obj = JSON.parse(d);
+      var obj = JSON.parse(d); $scope.achievement = "", $scope.chatOpList = [];
+
       for (var key in obj.chat.messages) {
         var chat = {};
         if ( typeof(obj.chat.messages[key]) === "object" ) {
@@ -1428,16 +1438,23 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         else {
           chat.text = obj.chat.messages[key];
         }
-        if ( obj.chat.messages[key].achievementFlg !== null ) {
+        if ( Number(chat.messageType) === 98 ) {
+          $scope.chatOpList.push(chat.userId);
+          if ( chat.userId === myUserId ) {
+            $scope.achievement = chat.achievementFlg;
+          }
+        }
+        if ( chat.achievementFlg !== null ) {
           // 通過時点で「有効」の場合は「有効」のまま
           if ( String($scope.achievement) !== "<?=C_ACHIEVEMENT_AVAILABLE?>" ) {
-            $scope.achievement = String(obj.chat.messages[key].achievementFlg);
+            $scope.achievement = obj.chat.messages[key].achievementFlg;
           }
         }
         chat.sort = Number(key);
         $scope.messageList.push(chat);
         scDown(); // チャットのスクロール
       }
+
       if ( $scope.monitorList[obj.tabId].chat === myUserId ) {
         // 既読にする(ok)
         chatApi.isReadMessage($scope.monitorList[obj.tabId]);
@@ -1957,7 +1974,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           }
           if ( ret ) {
             var data = {
-                v: scope.monitorList[scope.detailId].userId,
+                v: scope.detail.userId,
                 i: value
               };
             $.ajax({
@@ -1968,7 +1985,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
               success: function(json){
                 if ( json ) {
                   scope.customPrevData = angular.copy(value);
-                  scope.customerList[scope.monitorList[scope.detailId].userId] = angular.copy(value);
+                  scope.customerList[scope.detail.userId] = angular.copy(value);
                 }
               }
             });
@@ -2003,7 +2020,12 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
         scope.$watch(function(){
           if ( angular.isDefined(scope.detailId) && scope.detailId !== "" && (scope.detailId in scope.monitorList) ) {
-            return scope.monitorList[scope.detailId];
+            if ( scope.monitorList[scope.detailId].hasOwnProperty('chat') ) {
+              return scope.monitorList[scope.detailId].chat;
+            }
+            else {
+              return scope.monitorList[scope.detailId];
+            }
           }
           else {
             return scope.detailId;
@@ -2015,7 +2037,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             scope.customPrevData = {};
           }
           if ( angular.isDefined(scope.detailId) && scope.detailId !== "" && (scope.detailId in scope.monitorList) ) {
-            scope.detail = scope.monitorList[scope.detailId];
+            scope.detail = angular.copy(scope.monitorList[scope.detailId]);
             scope.getCustomerInfo(scope.monitorList[scope.detailId].userId, function(ret){
               scope.customData = ret;
               scope.customPrevData = angular.copy(ret);
@@ -2027,11 +2049,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                 return false;
               }
             });
-          }
-          else {
-            scope.detail = {};
-            scope.customData = {};
-            scope.customPrevData = {};
           }
         });
       }
