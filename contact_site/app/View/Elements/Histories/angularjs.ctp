@@ -184,7 +184,7 @@ $(document).ready(function(){
   $('#dateperiod').daterangepicker({
     "ranges": {
       '今日': [moment(), moment()],
-      '昨日': [moment().subtract(5, 'days'), moment().subtract(1, 'days')],
+      '昨日': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
       '過去一週間': [moment().subtract(6, 'days'), moment()],
       '過去一ヶ月間': [moment().subtract(30, 'days'), moment()],
       '今月': [moment().startOf('month'), moment().endOf('month')],
