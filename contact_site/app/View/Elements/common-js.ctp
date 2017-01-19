@@ -37,6 +37,10 @@
     return token;
   };
 
+  function isNumber(n){
+    return RegExp(/^(\+|\-)?\d+(.\d+)?$/).test(n);
+  }
+
   function trimToURL(excludes, url){
     var builder = { search: '', hash: '' }, baseUrl = url;
 
