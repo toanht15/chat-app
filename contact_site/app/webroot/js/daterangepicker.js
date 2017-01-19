@@ -577,6 +577,7 @@
         },
 
         updateCalendars: function() {
+
             if (this.timePicker) {
                 var hour, minute, second;
                 if (this.endDate) {
