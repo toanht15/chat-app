@@ -2242,6 +2242,11 @@ var socket, // socket.io
       sinclo.syncStop(d);
     }); // socket-on: syncStop
 
+    socket.on('sincloReconnect', function(d){ // socket再接続
+      socket.disconnect();
+      socket.connect();
+    }); // socket-on: sincloReconnect
+
     socket.on('disconnect', function(data) {
       var sincloBox = document.getElementById('sincloBox');
       if ( sincloBox ) {
@@ -2318,7 +2323,6 @@ function f_url(url){
 function emit(evName, data){
   /* ここから：イベント名指定なし */
   data.siteKey = sincloInfo.site.key; // サイトの識別キー
-  data.tabId = userInfo.tabId; // タブの識別ID
   if ( check.isset(userInfo.sendTabId) ) {
     data.to = userInfo.sendTabId; // 送信先ID
   }
@@ -2381,8 +2385,16 @@ function emit(evName, data){
   if ( evName == "requestSyncStop" && userInfo.accessType === cnst.access_type.guest ) {
     data.type = 4;
   }
+  if ( evName === "syncReady" ) {
+  }
   /* ここまで：イベント名指定あり */
-  socket.emit(evName, JSON.stringify(data));
+  var timer = setInterval(function(){
+    if ( userInfo.tabId !== "" ) {
+      clearInterval(timer);
+      data.tabId = userInfo.tabId; // タブの識別ID
+      socket.emit(evName, JSON.stringify(data));
+    }
+  }, 100);
 }
 
 function now(){

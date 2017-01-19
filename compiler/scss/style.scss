@@ -1045,6 +1045,21 @@ ul.naviBtn {
             width: 175px;
             margin-bottom: 0;
         }
+
+        div#scInfo { /* チャット対応数上限 */
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          align-items: center;
+          margin-left: 3em;
+
+          span {
+            font-weight: bold;
+            color: #9bbb59;
+            font-size: 1.5em!important;
+            padding: 0 0.25em;
+          }
+        }
       }
 
       p {
@@ -1148,12 +1163,20 @@ ul.naviBtn {
           border-radius: 5px;
 
             &.blueBtn {
-                background-color: $wait-color!important;
-                border-color: $wait-color!important;
+              background-color: $wait-color!important;
+              border-color: $wait-color!important;
+              &:hover {
+                background-color: #8cab4c !important;
+                border-color: #8cab4c !important;
+              }
             }
             &.redBtn {
-                background-color: $stop-color!important;
-                border-color: $stop-color!important;
+              background-color: $stop-color!important;
+              border-color: $stop-color!important;
+              &:hover {
+                background-color: #ca8785 !important;
+                border-color: #ca8785 !important;
+              }
             }
         }
       }
@@ -1311,7 +1334,7 @@ ul.naviBtn {
               border-radius: 5px 5px 0 0;
               background-color: #ADADAD;
               font-size: 0.8em;
-              padding: 0.72em 3em 0.3em 3em;
+              padding: 0.3em 3em 0.3em 3em;
               box-shadow: 0px -1px 1px rgba(0,0,0,0.2);
               cursor: pointer;
 
@@ -1453,24 +1476,53 @@ ul.naviBtn {
                 }
             }
 
-            #chatMenu {
+            chat-detail {
+              display: flex;
+              flex-direction: row;
+              margin: 0.25em;
+              align-items: center;
               visibility: hidden;
+
+              span {
+                font-weight: bold;
+                padding-right: 0.5em;
+                font-size: 0.8em;
+              }
+
+              option {
+                font-size: 0.8em;
+              }
 
               &.showOption {
                 visibility: inherit;
               }
-
-              span {
-                cursor: pointer;
-                width: 10em;
-                font-weight: normal;
-                font-size: 0.8em;
-                padding: 0.25em 0.8em;
-              }
             }
 
-            #sendMenu, #sendMessageArea {
-              @include miniFont;
+            chat-menu {
+              display: flex;
+              flex-direction: row;
+              justify-content: space-between;
+              margin: 0.25em;
+
+              #chatMenu {
+                visibility: hidden;
+
+                &.showOption {
+                  visibility: inherit;
+                }
+
+                span {
+                  cursor: pointer;
+                  width: 10em;
+                  font-weight: normal;
+                  font-size: 0.8em;
+                  padding: 0.25em 0.8em;
+                }
+              }
+
+              #sendMenu, #sendMessageArea {
+                @include miniFont;
+              }
             }
 
             #sendMessageArea{
@@ -1543,6 +1595,7 @@ ul.naviBtn {
                 border: 1px solid $line-color!important;
                 padding: 0.5em;
                 margin-top: 0;
+                font-size: 0.84em;
 
                 &:focus {
                     outline: none!important;
@@ -1555,24 +1608,42 @@ ul.naviBtn {
 
             }
 
-            #sinclo_sendbtn {
-              background-color: #aeca74;
-              border-radius: 5px;
-              padding: 5px;
-              font-size: 15px;
-              color: #FFF;
-              height: 30px;
-              user-select: none;
-              box-shadow: 0 0 2px rgba(0,0,0,0.5);
-              display: block;
-              text-align: center;
-              margin: 5px 3px;
+            #sendMessageAreaBtn {
+              flex-direction: row;
+              align-items: center;
+              display: none;
 
-              &:hover, &.on {
-                background-color: #9ab562;
-                cursor: pointer;
+              &.showOption { display: flex; }
+
+              > span {
+                border-radius: 5px;
+                padding: 0.25em;
+                font-size: 0.95em;
+                color: #FFF;
+                height: 2em;
+                user-select: none;
+                box-shadow: 0 0 2px rgba(0,0,0,0.5);
+                display: block;
+                text-align: center;
+              }
+
+              #sinclo_sendbtn {
+                width: 80%;
+                background-color: #aeca74;
+                margin: 5px 3px;
+
+                &:hover, &.on {
+                  background-color: #9ab562;
+                  cursor: pointer;
+                }
+              }
+
+              #sinclo_chatEndBtn {
+                width: 20%;
+                margin: 0.25em;
               }
             }
+
           }
         }
 
@@ -3943,9 +4014,11 @@ ul.naviBtn {
     }
     .content { margin: 0 0 2em 2em; }
     #MChatSettingSorryMessage {
-      width: 25em;
-      height: 5em;
+      width: 22em;
+      height: 8em;
       resize: none;
+      font-size: 1em;
+      padding: 0.5em;
     }
     #sc_content {
       margin-left: 2em;

@@ -11,7 +11,7 @@
       $className = "sinclo_se";
       $name = $val['MUser']['display_name'];
     }
-    else if ( strcmp($val['THistoryChatLog']['message_type'], 3) === 0 ) {
+    else if ( strcmp($val['THistoryChatLog']['message_type'], 3) === 0 || strcmp($val['THistoryChatLog']['message_type'], 4) === 0 ) {
       $className = "sinclo_auto";
       $name = "自動応答";
     }

@@ -99,9 +99,9 @@ var popupEvent = {
                     closeBtn.onclick = function(){
                         return popupEvent.closePopup();
                     };
-                    var closeBtn = _button("最小化する");
+                    var closeBtn = _button("閉じる");
                     closeBtn.onclick = function(){
-                        return popupEvent.customizeBtn();
+                        return popupEvent.closeNoPopup();
                     };
                     break;
                 case 'p-show-gallary':

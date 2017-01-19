@@ -682,8 +682,8 @@
               this.chatApi.unread++;
           }
 
-          // オートメッセージか、企業からのメッセージで表示名を使用しない場合
-          if ( Number(chat.messageType) === 3 || (Number(chat.messageType) === 2 && window.sincloInfo.widget.showName !== 1) ) {
+          // オートメッセージか、Sorryメッセージ、企業からのメッセージで表示名を使用しない場合
+          if ( Number(chat.messageType) === 3 || Number(chat.messageType) === 4 || (Number(chat.messageType) === 2 && window.sincloInfo.widget.showName !== 1) ) {
             userName = window.sincloInfo.widget.subTitle;
           }
           else if ( Number(chat.messageType) === 2 ) {
@@ -728,7 +728,6 @@
       var obj = JSON.parse(d);
       if ( obj.tabId !== userInfo.tabId ) return false;
       var elm = document.getElementById('sincloChatMessage'), cn, userName = "";
-
       if ( obj.ret ) {
         // スマートフォンの場合はメッセージ送信時に、到達確認タイマーをリセットする
         if ( sinclo.chatApi.sendErrCatchTimer !== null ) {
@@ -745,6 +744,13 @@
           elm.value = "";
         }
         if (obj.messageType === sinclo.chatApi.messageType.auto) {
+          return false;
+        }
+
+        if (obj.messageType === sinclo.chatApi.messageType.sorry) {
+          cn = "sinclo_re";
+          sinclo.chatApi.call();
+          this.chatApi.createMessage(cn, obj.chatMessage, sincloInfo.widget.subTitle);
           return false;
         }
         this.chatApi.createMessageUnread(cn, obj.chatMessage, userName);
@@ -935,6 +941,7 @@
             customer: 1,
             company: 2,
             auto: 3,
+            sorry: 4,
             start: 98,
             end: 99
         },

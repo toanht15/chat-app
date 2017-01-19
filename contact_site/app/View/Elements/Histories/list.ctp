@@ -4,12 +4,15 @@
             <th width=" 9%">日時</th>
             <th width=" 6%" class="noOutCsv">詳細</th>
             <th width="15%">訪問ユーザ</th>
-            <th width="20%">プラットフォーム<br>ブラウザ</th>
+            <th width="15%">プラットフォーム<br>ブラウザ</th>
             <th width=" 7%">キャンペーン</th>
             <th width="10%">参照元URL</th>
             <th width=" 5%">閲覧<br>ページ数</th>
             <th width=" 8%">滞在時間</th>
-            <th width="10%">ステータス</th>
+        <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
+            <th width=" 5%">成果</th>
+            <th width="10%">チャット</th>
+        <?php endif; ?>
             <th width="10%">担当者</th>
         </tr>
     </thead>
@@ -47,17 +50,19 @@ if ( isset($mCustomerList[$history['THistory']['visitors_id']]) ) {
                 <?php endif; ?>
             </td>
             <td class="tRight"><?=$this->htmlEx->calcTime($history['THistory']['access_date'], $history['THistory']['out_date']) ?></td>
-            <td class="tCenter">
         <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
-                <?php if( is_numeric($history['THistoryChatLog']['count']) ): ?>
-                    <a class="underL" href="javascript:void(0)" onclick="openChatById('<?=h($history['THistory']['id'])?>')" >チャット</a>
-                <?php endif; ?>
-                <?php if( !is_numeric($history['THistoryChatLog']['count']) ): ?>（未対応）<?php endif; ?>
-        <?php endif; ?>
-        <?php if (!$coreSettings[C_COMPANY_USE_CHAT]) : ?>
-            （未対応）
-        <?php endif; ?>
+            <td class="tCenter"><?php
+              if ($history['THistoryChatLog']['achievementFlg']){
+                echo $achievementType[h($history['THistoryChatLog']['achievementFlg'])];
+              }
+            ?></td>
+            <td class="tCenter">
+              <?php if( is_numeric($history['THistoryChatLog']['count']) ): ?>
+                  <a class="underL" href="javascript:void(0)" onclick="openChatById('<?=h($history['THistory']['id'])?>')" >履歴<?php if (!empty($history['THistoryChatLog']['type'])) { echo "（".h($history['THistoryChatLog']['type'])."）"; } ?></a>
+              <?php endif; ?>
+              <?php if( !is_numeric($history['THistoryChatLog']['count']) ): ?>（未対応）<?php endif; ?>
             </td>
+        <?php endif; ?>
             <td class="tCenter pre"><?php if (isset($chatUserList[$history['THistory']['id']])) { echo $chatUserList[$history['THistory']['id']]; } ?></td>
         </tr>
 <?php endforeach; ?>
