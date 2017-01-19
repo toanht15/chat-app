@@ -276,6 +276,7 @@ $(document).ready(function(){
     "alwaysShowCalendars": true,
     "startDate": $('#HistoryStartDay').val(),
     "endDate": $('#HistoryFinishDay').val(),
+    "opens": "left"
   });
 
   //モーダルのカレンダーの設定ボタン
@@ -288,10 +289,10 @@ $(document).ready(function(){
     //開始日と終了日取得
     $('#startDay').text(picker.startDate.format('YYYY/MM/DD'));
     $('#finishDay').text(picker.endDate.format('YYYY/MM/DD'));
-    var search_day = $('.active').html();
+    var search_day = $('.active').text();
     //カスタム検索の場合
-    if(search_day == ""){
-      search_day = "カスタム";
+    if(search_day.match(/[^0-9]/) == null){
+      search_day = "";
     }
     //モーダルの検索ボタンと被らないようにする
     if ( !$("#popup.popup-on #popup-frame ").is(".p-thistory-entry") ) {
@@ -299,7 +300,7 @@ $(document).ready(function(){
       $('<form/>', {action: "<?= $this->Html->url(['controller' => 'Histories', 'action' => 'index']) ?>", method: 'post'})
       .append($('<input/>', {type: 'hidden', name: "data[datefilter]", value: $('#startDay').text()+ '-' +$('#finishDay').text()}))
       .append($('<input/>', {type: 'hidden', name: "data[History][start_day]", value: $('#startDay').text()}))
-      .append($('<input/>', {type: 'hidden', name: "data[History][viewPeriod]", value: search_day}))
+      .append($('<input/>', {type: 'hidden', name: "data[History][period]", value: search_day}))
       .append($('<input/>', {type: 'hidden', name: "data[History][finish_day]", value: $('#finishDay').text()}))
       .append($('<input/>', {type: 'hidden', name: "data[History][ip_address]", value:  $('#ip').text()}))
       .append($('<input/>', {type: 'hidden', name: "data[History][company_name]", value: $('#company').text()}))
@@ -310,7 +311,7 @@ $(document).ready(function(){
       .append($('<input/>', {type: 'hidden', name: "data[History][message]", value: $('#message').text()}))
       .appendTo(document.body)
       .submit()
-    }
+      }
   });
 
   $('#day_search').on('click', function() {
