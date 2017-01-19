@@ -27,11 +27,11 @@ class HistoriesController extends AppController {
             '  FROM ('.
             '    SELECT'.
             '      t_histories_id, COUNT(*) AS count,'.
-            '      MAX(achievement_flg) AS achievementFlg,'.
+            '      MIN(achievement_flg) AS achievementFlg,'.
             '      SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp,'.
             '      SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry,'.
             '      SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus'.
-            '    FROM sinclo_db.t_history_chat_logs '.
+            '    FROM t_history_chat_logs '.
             '    GROUP BY t_histories_id ORDER BY t_histories_id'.
             '  ) AS chat'.
           ')',

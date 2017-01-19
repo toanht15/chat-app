@@ -443,10 +443,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var message = "アクセスID【" + accessId + "】のユーザーに接続しますか？<br><br>";
       var ua = $scope.monitorList[tabId].userAgent.toLowerCase();
       var smartphone = (ua.indexOf('iphone') > 0 || ua.indexOf('ipod') > 0 || ua.indexOf('android') > 0);
-      var popupClass = "p-cus-connection-full";
-      if ( smartphone ) {
-        popupClass = "p-cus-connection";
-      }
+      var popupClass = "p-cus-connection";
       message += "<span style='color: #FF7B7B'><?=Configure::read('message.const.chatStartConfirm')?></span>";
       modalOpen.call(window, message, popupClass, 'メッセージ');
        popupEvent.closePopup = function(type){
@@ -821,7 +818,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     };
 
     /* タブ状態を文字列で返す */
-    $scope.tabStatusStr = function (n){
+    $scope.tabStatusStr = function (tabId){
+      var n = ($scope.monitorList.hasOwnProperty(tabId)) ? $scope.monitorList[tabId].status : <?=C_WIDGET_TAB_STATUS_CODE_OUT?>;
       return $scope.jsConst.tabInfoStr[n];
     }
 

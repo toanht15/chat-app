@@ -24,6 +24,7 @@ define('C_WIDGET_TAB_STATUS_CODE_OPEN', 1); // ウィジェットが開いてい
 define('C_WIDGET_TAB_STATUS_CODE_CLOSE', 2); // ウィジェットが閉じている状態
 define('C_WIDGET_TAB_STATUS_CODE_NONE', 3); // 非アクティブ状態
 define('C_WIDGET_TAB_STATUS_CODE_DISABLE', 4); // ウィジェット非表示の状態
+define('C_WIDGET_TAB_STATUS_CODE_OUT', 5); // ページ離脱状態
 
 // 通知機能
 define('C_PATH_NOTIFICATION_IMG_DIR', 'notification/'); // デスクトップ通知用画像参照先
@@ -158,7 +159,8 @@ $config['tabStatusStrList'] = [
     C_WIDGET_TAB_STATUS_CODE_OPEN => "ウィジェットが開いている状態",
     C_WIDGET_TAB_STATUS_CODE_CLOSE => "ウィジェットが閉じている状態",
     C_WIDGET_TAB_STATUS_CODE_NONE => "ウィジェットが非表示の状態",
-    C_WIDGET_TAB_STATUS_CODE_DISABLE => "非アクティブ状態"
+    C_WIDGET_TAB_STATUS_CODE_DISABLE => "非アクティブ状態",
+    C_WIDGET_TAB_STATUS_CODE_OUT => "ページ離脱"
 ];
 
 /* ユーザー権限（単体あり：C_AUTHORITY_%） */

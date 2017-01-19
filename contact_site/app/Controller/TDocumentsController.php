@@ -155,11 +155,17 @@ class TDocumentsController extends AppController {
     $this->TDocument->begin();
     if ( empty($saveData['TDocument']['id']) ) {
       $this->TDocument->create();
+      if ( !isset($saveData['TDocument']['files']) ) {
+        $saveData['TDocument']['files'] = [];
+      }
+    }
+    else {
+      // ファイルがアップロードされなかった場合はunset
+      if ( isset($saveData['TDocument']['files']) && strcmp($saveData['TDocument']['files']['error'], UPLOAD_ERR_NO_FILE) === 0 ) {
+        unset($saveData['TDocument']['files']);
+      }
     }
 
-    if ( !isset($saveData['TDocument']['files']) ) {
-      $saveData['TDocument']['files'] = [];
-    }
     $this->TDocument->set($saveData);
 
     // バリデーションチェックに失敗したら

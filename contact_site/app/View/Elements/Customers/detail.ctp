@@ -30,6 +30,7 @@
           <!-- 現在のチャット -->
             <section class="on" id="currentChat">
               <ul id="chatTalk" class="chatView">
+                <chat-notificate ng-hide="monitorList[detailId]">ページが閉じられました</chat-notificate>
                 <message-list>
                   <ng-create-message ng-repeat="chat in messageList | orderBy: 'sort'"></ng-create-message>
                 </message-list>
@@ -142,7 +143,7 @@
         <div class="nowInfo card">
           <dl>
             <dt>状態</dt>
-              <dd>{{tabStatusStr(detail.status)}}</dd>
+              <dd>{{tabStatusStr(detailId)}}</dd>
             <dt>閲覧中ページ</dt>
               <dd class="w100"><a href={{trimToURL(detail.url)}} target="_blank" class="underL" ng-if="detail.title">{{detail.title}}</a><span ng-if="!detail.title">{{trimToURL(detail.url)}}</span></dd>
             <dt>訪問回数</dt>

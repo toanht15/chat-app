@@ -1355,6 +1355,7 @@ ul.naviBtn {
 
             section {
               display: none;
+              position: relative;
 
               &.on { display: block; }
 
@@ -1414,6 +1415,23 @@ ul.naviBtn {
               * {
                 color: #8A8A8A;
               }
+
+              chat-notificate {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                background-color: rgba(223, 131, 131, 0.5);
+                padding: 0.5em;
+                margin: 0.5em;
+                border-radius: 5px;
+                text-align: center;
+                color: #FFF!important;
+                font-weight: bold;
+                user-select: none;
+                cursor: default;
+              }
+
             }
 
             .chatView {
@@ -2156,7 +2174,7 @@ ul.naviBtn {
   }
 
   #manuscriptArea {
-    background-color: #efefef;
+    background-color: #FFF;
     padding: 0.5em;
     min-height: 4em;
     box-shadow: 0 0 2px rgba(0,0,0,0.7);
@@ -2164,9 +2182,12 @@ ul.naviBtn {
     width: calc(100% - 150px);
     cursor: move;
     z-index: 2;
+    opacity: 0.6;
 
     #manuscript {
       white-space: pre-wrap;
+      padding: 0 1em;
+      display: block!important;
     }
 
     &:after {
@@ -2175,6 +2196,7 @@ ul.naviBtn {
       color: #e48c8c;
       display: block;
       margin-top: 0.5em;
+      padding: 0 1em;
     }
 
     #manuscriptCloseBtn {
