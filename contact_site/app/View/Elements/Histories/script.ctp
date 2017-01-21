@@ -13,7 +13,7 @@ function openSearchRefine(){
     type: 'post',
     dataType: 'html',
     cache: false,
-    url: "<?= $this->Html->url(['controller' => 'Histories', 'action' => 'remoteOpenEntryForm']) ?>",
+    url: "<?= $this->Html->url(['controller' => 'Histories', 'action' => 'remoteSearchCustomerInfo']) ?>",
     success: function(html){
       modalOpen.call(window, html, 'p-thistory-entry', '絞り込み検索', 'moment');
     }

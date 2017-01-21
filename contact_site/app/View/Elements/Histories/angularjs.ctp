@@ -106,7 +106,7 @@ $(document).ready(function(){
     var tbody = document.querySelector('#history_list tbody');
     var data = [];
     // CSVに不要な列が追加されたら空をセット
-    var label = ["date","","ip","useragent","campaign","referrer","pageCnt","visitTime","status", "user"];
+    var label = ["date","","ip","useragent","campaign","referrer","pageCnt","visitTime","achievement","status", "user"];
     var noCsvData = {};
 
     for (var a = 0; a < thead.children[0].children.length; a++) {
@@ -140,6 +140,8 @@ $(document).ready(function(){
     document.getElementById('HistoryIndexForm').action = '<?=$this->Html->url(["controller"=>"Histories", "action" => "outputCSVOfHistory"])?>';
     document.getElementById('HistoryIndexForm').submit();
   });
+
+<?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
 
   var outputChatCSVBtn = document.getElementById('outputChat');
   outputChatCSVBtn.addEventListener('click', function(){
@@ -180,7 +182,7 @@ $(document).ready(function(){
     document.getElementById('HistoryIndexForm').action = '<?=$this->Html->url(["controller"=>"Histories", "action" => "outputCSVOfContents"])?>';
     document.getElementById('HistoryIndexForm').submit();
   });
-
+<?php endif; ?>
   $('#dateperiod').daterangepicker({
     "ranges": {
       '今日': [moment(), moment()],
@@ -307,8 +309,9 @@ $(document).ready(function(){
       .append($('<input/>', {type: 'hidden', name: "data[History][customer_name]", value: $('#customer').text()}))
       .append($('<input/>', {type: 'hidden', name: "data[History][telephone_number]", value: $('#telephone').text()}))
       .append($('<input/>', {type: 'hidden', name: "data[History][mail_address]", value: $('#mail').text()}))
-      .append($('<input/>', {type: 'hidden', name: "data[History][responsible_name]", value: $('#responsible').text()}))
-      .append($('<input/>', {type: 'hidden', name: "data[History][message]", value: $('#message').text()}))
+      .append($('<input/>', {type: 'hidden', name: "data[THistoryChatLog][responsible_name]", value: $('#responsible').text()}))
+      .append($('<input/>', {type: 'hidden', name: "data[THistoryChatLog][achievement_flg]", value: $('#message').text()}))
+      .append($('<input/>', {type: 'hidden', name: "data[THistoryChatLog][message]", value: $('#message').text()}))
       .appendTo(document.body)
       .submit()
       }

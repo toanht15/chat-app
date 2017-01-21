@@ -69,13 +69,19 @@ popupEvent.customizeBtn = function(){
       <p><span>メールアドレス</span></p>
       <span><?= $this->Form->input('mail_address',['label'=>false,'div' => false]) ?></span>
     </li>
+<?php if ($coreSettings[C_COMPANY_USE_CHAT]): ?>
     <li>
-      <p><span>担当者</span></p>
-      <span><?= $this->Form->input('responsible_name',['label'=>false,'div' => false]) ?></span>
+      <p><span>チャット担当者</span></p>
+      <span><?= $this->Form->input('THistoryChatLog.responsible_name',['label'=>false,'div' => false]) ?></span>
+    </li>
+    <li>
+      <p><span>成果</span></p>
+      <span><label><?= $this->Form->input('THistoryChatLog.achievement_flg',['type' => 'select', 'empty' => ' - ', 'options' => $achievementType, 'legend' => false, 'separator' => '</label><br><label>', 'label'=>false,'div' => false]) ?></label></span>
     </li>
     <li>
       <p><span>チャット内容</span></p>
-      <span><?= $this->Form->input('message',['label'=>false,'div' => false]) ?></span>
+      <span><?= $this->Form->input('THistoryChatLog.message',['label'=>false,'div' => false]) ?></span>
     </li>
+<?php endif; ?>
   </ul>
 <?= $this->Form->end(); ?>

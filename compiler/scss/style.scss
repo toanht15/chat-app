@@ -210,8 +210,11 @@ select {
   top: 100px;
   right: 0;
   left: 0;
+  height: 80%;
+  overflow-x: hidden;
+  overflow-y: auto;
   background-color: #5A5A5A;
-  border: solid 1px;
+  border: solid 15px;
   display: none;
   z-index: 99;
   padding: 10px;
