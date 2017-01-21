@@ -637,8 +637,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             message = "入室すると、ステータスが『待機中』となります。<br>入室しますか？";
           }
         }
-      <?php } else { ?>
-        message = "入室します、よろしいですか？";
       <?php } ?>
 
         if ( message === "" ) {
@@ -1147,10 +1145,15 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       $scope.oprCnt = obj.onlineUserCnt;
 <?php endif; ?>
 <?php if ( $coreSettings[C_COMPANY_USE_CHAT] && strcmp(intval($scFlg), C_SC_ENABLED) === 0 ) :  ?>
+
       // チャット対応上限を設定
-      $scope.scInfo.remain = (isNumber(<?=$scNum?>)) ? Number(<?=$scNum?>) : 0 ;
-      if ( obj.hasOwnProperty('scInfo') && obj.scInfo.hasOwnProperty(<?=$muserId?>) ) {
-        $scope.scInfo.remain -= Number(obj.scInfo[<?=$muserId?>]);
+      if ( obj.hasOwnProperty('scNum') && Number("<?=$muserId?>") === Number(obj.userId) ) {
+        $scope.scInfo.remain = Number(obj.scNum);
+
+        if ( obj.hasOwnProperty('scInfo') && obj.scInfo.hasOwnProperty(obj.userId) ) {
+          $scope.scInfo.remain -= Number(obj.scInfo[Number(obj.userId)]);
+        }
+
       }
 <?php endif; ?>
       $scope.oprWaitCnt = obj.userCnt;
@@ -1319,11 +1322,15 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           chgOpStatusView("<?=C_OPERATOR_PASSIVE?>");
         }
       }
+console.log(obj);
       <?php if ( $coreSettings[C_COMPANY_USE_CHAT] && strcmp(intval($scFlg), C_SC_ENABLED) === 0 ) :  ?>
             // チャット対応上限を設定
-            $scope.scInfo.remain = (isNumber(<?=$scNum?>)) ? Number(<?=$scNum?>) : 0 ;
             if ( obj.hasOwnProperty('scInfo') && obj.scInfo.hasOwnProperty(<?=$muserId?>) ) {
+              $scope.scInfo.remain = (isNumber(<?=$scNum?>)) ? Number(<?=$scNum?>) : 0 ;
               $scope.scInfo.remain -= Number(obj.scInfo[<?=$muserId?>]);
+            }
+            else {
+              $scope.scInfo.remain = 0;
             }
       <?php endif; ?>
     });
@@ -1396,9 +1403,12 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       }
       <?php if ( $coreSettings[C_COMPANY_USE_CHAT] && strcmp(intval($scFlg), C_SC_ENABLED) === 0 ) :  ?>
             // チャット対応上限を設定
-            $scope.scInfo.remain = (isNumber(<?=$scNum?>)) ? Number(<?=$scNum?>) : 0 ;
             if ( obj.hasOwnProperty('scInfo') && obj.scInfo.hasOwnProperty(<?=$muserId?>) ) {
+              $scope.scInfo.remain = (isNumber(<?=$scNum?>)) ? Number(<?=$scNum?>) : 0 ;
               $scope.scInfo.remain -= Number(obj.scInfo[<?=$muserId?>]);
+            }
+            else {
+              $scope.scInfo.remain = 0;
             }
       <?php endif; ?>
     });
