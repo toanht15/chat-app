@@ -15,8 +15,9 @@
     </li>
     <!-- 並び替えモード -->
     <li>
-      <?= $this->Form->checkbox('sort', array('onchange' => 'toggleSort()')) ?>
-      <label for="sort">並び替え</label>
+      <label class="pointer" for="sort">
+        <?= $this->Form->checkbox('sort', array('onchange' => 'toggleSort()')) ?>並び替え
+      </label>
     </li>
     <!-- 並び替えモード -->
   </ul>

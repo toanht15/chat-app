@@ -32,10 +32,10 @@
       <!-- 条件設定 -->
       <li>
         <span class="require"><label>条件設定</label></span>
-        <label><?= $this->ngForm->input('main.condition_type', [
+        <label class="pointer"><?= $this->ngForm->input('main.condition_type', [
           'type' => 'radio',
           'options' => $outMessageIfType,
-          'separator' => '</label><label>',
+          'separator' => '</label><label class="pointer">',
           'error' => false
         ],[
           'entity' => 'conditionType',
@@ -105,10 +105,10 @@
       <!-- ウィジェット -->
       <li class="bt0">
         <span class="require"><label>ウィジェット</label></span>
-        <label><?= $this->ngForm->input('main.widget_open', [
+        <label class="pointer"><?= $this->ngForm->input('main.widget_open', [
           'type' => 'radio',
           'options' => $outMessageWidgetOpenType,
-          'separator' => '</label><label>',
+          'separator' => '</label><label class="pointer">',
           'error' => false
         ], [
           'entity' => 'widget_open',
@@ -132,13 +132,13 @@
       <!-- 状態 -->
       <li>
         <span class="require"><label>状態</label></span>
-        <?= $this->Form->input('active_flg', [
+        <label class="pointer"><?= $this->Form->input('active_flg', [
           'type' => 'radio',
           'options' => $outMessageAvailableType,
           'default' => C_STATUS_AVAILABLE,
-          'separator' => '&nbsp;',
+          'separator' => '</label>&nbsp;<label class="pointer">',
           'error' => false
-        ]); ?>
+        ]); ?></label>
       </li>
       <!-- 状態 -->
     </ul>

@@ -45,7 +45,7 @@ $settings = json_decode($this->data['MUser']['settings']);
             <!-- /* autocomplete対策 */ -->
 
             <div class="labelArea m40l fLeft"><span><label>パスワードを変更する</label></span></div>
-            <?= $this->Form->input('edit_password', array('type' => 'checkbox', 'class' => false, 'label' => false, 'div' => false)); ?>
+            <?= $this->Form->input('edit_password', array('type' => 'checkbox', 'class' => 'pointer', 'label' => false, 'div' => false)); ?>
 
             <div id="set_password_area">
                 <ul>

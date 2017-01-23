@@ -882,7 +882,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             if ( option.radio && radio > -1 ) {
                 var val = str.slice(radio+2);
                 str = "<input type='radio' name='" + radioName + "' id='" + radioName + "-" + i + "' class='sinclo-chat-radio' value='" + val + "' disabled=''>";
-                str += "<label for='" + radioName + "-" + i + "'>" + val + "</label>";
+                str += "<label class='pointer' for='" + radioName + "-" + i + "'>" + val + "</label>";
             }
             // リンク
             var link = str.match(linkReg);
@@ -1322,7 +1322,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           chgOpStatusView("<?=C_OPERATOR_PASSIVE?>");
         }
       }
-console.log(obj);
+
       <?php if ( $coreSettings[C_COMPANY_USE_CHAT] && strcmp(intval($scFlg), C_SC_ENABLED) === 0 ) :  ?>
             // チャット対応上限を設定
             if ( obj.hasOwnProperty('scInfo') && obj.scInfo.hasOwnProperty(<?=$muserId?>) ) {

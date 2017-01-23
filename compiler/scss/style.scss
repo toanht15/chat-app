@@ -46,12 +46,23 @@ s {
   color: #8f8f8f;
 }
 
+input[type='range'] {
+  cursor: pointer;
+}
+
 li {
   list-style-type: none;
 }
 
 .bold {
   font-weight: bold;
+}
+
+.pointer {
+  cursor: pointer;
+  * {
+    cursor: pointer;
+  }
 }
 
 .noSelect {
@@ -190,6 +201,7 @@ select {
   padding: 0 0.5em;
   border: none;
   border-bottom: 1px solid #909090;
+  cursor: pointer;
 
   &:focus {
     border: none;

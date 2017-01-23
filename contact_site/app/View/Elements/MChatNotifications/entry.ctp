@@ -10,7 +10,7 @@
     <!-- 対象 -->
     <li>
       <span class="require"><label>対象</label></span>
-      <pre><label><?= $this->Form->input('type', ['type' => 'radio',  'options' => $chatNotificationType, 'default' => C_NOTIFICATION_TYPE_TITLE, 'legend' => false, 'separator' => '</label>　<label>', 'label' => false, 'error' => false, 'div' => false]) ?></label></pre>
+      <pre><label class="pointer"><?= $this->Form->input('type', ['type' => 'radio', 'separator' => '</label>&nbsp;<label class="pointer">', 'options' => $chatNotificationType, 'default' => C_NOTIFICATION_TYPE_TITLE, 'legend' => false, 'separator' => '</label> <label class="pointer">', 'label' => false, 'error' => false, 'div' => false]) ?></label></pre>
     </li>
     <?php if ( $this->Form->isFieldError('type') ) echo $this->Form->error('type', null, ['wrap' => 'li']); ?>
     <!-- 対象 -->
