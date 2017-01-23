@@ -180,7 +180,7 @@ $(document).ready(function(){
     document.getElementById('HistoryIndexForm').action = '<?=$this->Html->url(["controller"=>"Histories", "action" => "outputCSVOfContents"])?>';
     document.getElementById('HistoryIndexForm').submit();
   });
-
+console.log('A');
   $('#dateperiod').daterangepicker({
     "ranges": {
       '今日': [moment(), moment()],
