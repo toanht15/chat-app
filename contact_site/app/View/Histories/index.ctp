@@ -1,13 +1,13 @@
-<?php echo $this->element('Customers/userAgentCheck') ?>
-<?php echo $this->element('Histories/angularjs') ?>
-<?php echo $this->element('Histories/script') ?>
+<?= $this->element('Customers/userAgentCheck') ?>
+<?= $this->element('Histories/angularjs') ?>
+<?= $this->element('Histories/script') ?>
 
 <div id='history_idx' class="card-shadow" ng-app="sincloApp" ng-controller="MainCtrl">
 
   <div id='history_title'>
     <div class="fLeft"><?= $this->Html->image('history_g.png', array('alt' => '履歴一覧', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?></div>
       <h1>履歴一覧</h1>
-      <?php echo $this->Html->link(
+      <?= $this->Html->link(
         'ＣＳＶ出力',
         'javascript:void(0)',
         array('escape' => false, 'class'=>'skyBlueBtn btn-shadow', 'id' => 'outputCSV'));
@@ -15,7 +15,7 @@
     <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
 
 
-      <?php echo $this->Html->link(
+      <?= $this->Html->link(
         'チャットＣＳＶ出力',
         'javascript:void(0)',
         array('escape' => false, 'class'=>'skyBlueBtn btn-shadow', 'id' => 'outputChat'));
@@ -25,17 +25,17 @@
 
   <div id='history_menu' class="p20trl">
     <div id="paging" class="fRight">
-      <?php
-        echo $this->Paginator->prev(
+      <?=
+          $this->Paginator->prev(
           $this->Html->image('paging.png', array('alt' => '前のページへ', 'width'=>25, 'height'=>25)),
           array('escape' => false, 'class' => 'btn-shadow greenBtn tr180'),
           null,
           array('class' => 'grayBtn tr180')
         );
       ?>
-      <span style="width: auto!important;padding: 10px 0 0;"> <?php echo $this->Paginator->counter('{:page} / {:pages}'); ?> </span>
-      <?php
-        echo $this->Paginator->next(
+      <span style="width: auto!important;padding: 10px 0 0;"> <?= $this->Paginator->counter('{:page} / {:pages}'); ?> </span>
+      <?=
+          $this->Paginator->next(
           $this->Html->image('paging.png', array('alt' => '次のページへ', 'width'=>25, 'height'=>25)),
           array('escape' => false, 'class' => 'btn-shadow greenBtn'),
           null,
@@ -44,7 +44,7 @@
       ?>
     </div>
 
-    <?php echo $this->Html->link(
+    <?= $this->Html->link(
       '絞り込み検索',
       'javascript:void(0)',
       array('escape' => false, 'class'=>'skyBlueBtn btn-shadow','id' => 'searchRefine','onclick' => 'openSearchRefine()'));
@@ -105,7 +105,7 @@
         $seach_menu='　';
       }
     ?>
-    <div class=<?php echo $seach_menu; ?> id=<?php echo $none ?>>
+    <div class=<?= $seach_menu; ?> id=<?= $none ?>>
       <label class='searchConditions'>検索条件</label>
       <ul>
         <span class="dammy">　</span>
