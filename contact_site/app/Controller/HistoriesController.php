@@ -260,9 +260,7 @@ class HistoriesController extends AppController {
     // ヘッダー
     $csv[] = [
       "日時",
-      "IPアドレス",
-      "会社名",
-      "名前",
+      "訪問ユーザ",
       "プラットフォーム",
       "ブラウザ",
       "送信元ページ",
@@ -285,28 +283,8 @@ class HistoriesController extends AppController {
       // 日時
       $dateTime = preg_replace("/[\n,]+/", " ", $val->date);
       $row['date'] = $dateTime;
-      $info = preg_split("/[\n,]+/", $val->ip);
-      if(isset($info[2])){
-        // IPアドレス
-        $row['ip'] = $info[2];
-        // 会社名
-        $row['company'] = $info[0];
-        // 名前
-        $row['name'] = $info[1];
-      }
-      else if(!isset($info[1])){
-        // IPアドレス
-        $row['ip'] = $info[0];
-        $row['company'] = '';
-        $row['name'] = '';
-
-      }
-      else{
-        $row['ip'] = $info[1];
-        $row['company'] = $info[0];
-        $row['name'] = '';
-      }
-
+    　　// 訪問ユーザ
+      $row['ip'] = $val->ip;
       // OS
       $ua = preg_split("/[\n,]+/", $val->useragent);
       $row['os'] = $ua[0];
