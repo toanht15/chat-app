@@ -492,7 +492,6 @@ class HistoriesController extends AppController {
     $visitorsIds = [];
     $chatCond = [];
     $chatLogCond = [];
-    //$this->data = $this->Session->read('Thistory');
 
     //履歴検索機能
     if($this->request->is('post')) {
