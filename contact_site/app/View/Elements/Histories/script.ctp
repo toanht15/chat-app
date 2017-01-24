@@ -1,14 +1,14 @@
 <script type="text/javascript">
 //モーダル画面
 function openSearchRefine(){
-  var sheets = document.styleSheets,
+  /*var sheets = document.styleSheets,
       sheet = sheets[sheets.length - 1];
 
   if (sheet.insertRule)
   {
     sheet.insertRule('.daterangepicker.opensleft:before {right:9px}', sheet.cssRules.length);
     sheet.insertRule('.daterangepicker.opensleft:after {right:10px}', sheet.cssRules.length);
-  }
+  }*/
   $.ajax({
     type: 'post',
     dataType: 'html',

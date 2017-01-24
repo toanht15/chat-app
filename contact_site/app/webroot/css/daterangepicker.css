@@ -25,9 +25,9 @@
     border-bottom: 6px solid #fff;
     border-left: 6px solid transparent; }
   .daterangepicker.opensleft:before {
-    right: 234px; }
+    right: 250px; }
   .daterangepicker.opensleft:after {
-    right: 235px; }
+    right: 251px; }
   .daterangepicker.openscenter:before {
     left: 0;
     right: 0;

@@ -253,9 +253,11 @@ class HistoriesController extends AppController {
   public function outputCSVOfContents(){
     Configure::write('debug', 0);
     if ( !isset($this->request->data['History']['outputData'] ) ) return false;
+    $this->log($this->request->data,LOG_DEBUG);
 
     $name = "sinclo-chat-history";
     $ret = (array) json_decode($this->request->data['History']['outputData'] );
+    $this->log($ret,LOG_DEBUG);
 
     // ヘッダー
     $csv[] = [
@@ -286,12 +288,28 @@ class HistoriesController extends AppController {
       $dateTime = preg_replace("/[\n,]+/", " ", $val->date);
       $row['date'] = $dateTime;
       $info = preg_split("/[\n,]+/", $val->ip);
-      // IPアドレス
-      $row['ip'] = $info[2];
-      // 会社名
-      $row['company'] = $info[0];
-      // 名前
-      $row['name'] = $info[1];
+      $this->log($info,LOG_DEBUG);
+      if(isset($info[2])){
+        // IPアドレス
+        $row['ip'] = $info[2];
+        // 会社名
+        $row['company'] = $info[0];
+        // 名前
+        $row['name'] = $info[1];
+      }
+      else if(!isset($info[1])){
+        // IPアドレス
+        $row['ip'] = $info[0];
+        $row['company'] = '';
+        $row['name'] = '';
+
+      }
+      else{
+        $row['ip'] = $info[1];
+        $row['company'] = $info[0];
+        $row['name'] = '';
+      }
+
       // OS
       $ua = preg_split("/[\n,]+/", $val->useragent);
       $row['os'] = $ua[0];
@@ -328,7 +346,7 @@ class HistoriesController extends AppController {
           $row['transmissionPerson'] = $companyName[0]['MCompany']['company_name'];
         }
         if($value['THistoryChatLog']['message_type'] == 98) {
-          continue;
+          //continue;
         }
         // チャットメッセージ
         $row['message'] = $value['THistoryChatLog']['message'];
@@ -841,10 +859,10 @@ class HistoriesController extends AppController {
 
     //範囲が全期間の場合
     if(empty($this->data['History']['start_day']) && empty($this->data['History']['finish_day'])) {
-      $today = date("Y/m/d");
-      $this->request->data['History']['start_day'] = $today;
-      $this->request->data['History']['finish_day'] = $today;
-      $this->request->data['History']['period'] = '11今日';
+      //$today = date("Y/m/d");
+      //$this->request->data['History']['start_day'] = $today;
+      //$this->request->data['History']['finish_day'] = $today;
+      //$this->request->data['History']['period'] = '11今日';
     }
 
     // 成果種別リスト

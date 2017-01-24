@@ -149,7 +149,7 @@ $(document).ready(function(){
     var tbody = document.querySelector('#history_list tbody');
     var data = [];
     // CSVに不要な列が追加されたら空をセット
-    var label = ["date","","ip","useragent","campaign","referrer","pageCnt","visitTime","status", "user"];
+    var label = ["date","","ip","useragent","campaign","referrer","pageCnt","visitTime","status","","user"];
     var noCsvData = {};
 
     for (var a = 0; a < thead.children[0].children.length; a++) {
@@ -301,6 +301,9 @@ $(document).ready(function(){
       $('#HistoryPeriod').val(period_day);
     }
   });*/
+  $('.cancelBtn').on('click', function() {
+    $('#mainDatePeriod').html('　');
+  });
 
   $('#mainDatePeriod').on('apply.daterangepicker', function(ev, picker) {
     //全期間検索の場合

@@ -1,11 +1,11 @@
 <script type="text/javascript">
 popupEvent.closePopup = function(){
   //全期間の場合
-  if (!$("#day_search").prop('checked')) {
+  /*if (!$("#day_search").prop('checked')) {
     $("#dateperiod").prop("disabled", true);
     $('#HistoryStartDay').val("");
     $('#HistoryFinishDay').val("");
-  }
+  }*/
   if ($("#g_chat").prop("checked")) {
     document.getElementById('historySearch').action = "Histories?isChat=true";
   }

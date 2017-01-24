@@ -91,14 +91,16 @@
     <?php
       $none = '';
       $seach_menu = 'seach_menu';
-      $this->log($data,LOG_DEBUG);
       //全期間の場合
       if(empty($data['History'])&&empty($data['THistoryChatLog'])){
         $none = 'none';
         $seach_menu='　';
       }
       //日程だけ検索の場合
-      if(empty($data['History']['ip_address'])&&empty($data['History']['company_name'])&&empty($data['History']['customer_name'])&&empty($data['History']['telephone_number'])&&empty($data['History']['mail_address'])&&empty($data['THistoryChatLog']['responsible_name'])&&empty($data['THistoryChatLog']['achievement_flg'])&&empty($data['THistoryChatLog']['message'])){
+      if(empty($data['History']['ip_address'])&&empty($data['History']['company_name'])
+        &&empty($data['History']['customer_name'])&&empty($data['History']['telephone_number'])
+        &&empty($data['History']['mail_address'])&&empty($data['THistoryChatLog']['responsible_name'])
+        &&empty($data['THistoryChatLog']['achievement_flg'])&&empty($data['THistoryChatLog']['message'])){
         $none = 'none';
         $seach_menu='　';
       }
