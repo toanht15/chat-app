@@ -253,11 +253,9 @@ class HistoriesController extends AppController {
   public function outputCSVOfContents(){
     Configure::write('debug', 0);
     if ( !isset($this->request->data['History']['outputData'] ) ) return false;
-    $this->log($this->request->data,LOG_DEBUG);
 
     $name = "sinclo-chat-history";
     $ret = (array) json_decode($this->request->data['History']['outputData'] );
-    $this->log($ret,LOG_DEBUG);
 
     // ヘッダー
     $csv[] = [
@@ -288,7 +286,6 @@ class HistoriesController extends AppController {
       $dateTime = preg_replace("/[\n,]+/", " ", $val->date);
       $row['date'] = $dateTime;
       $info = preg_split("/[\n,]+/", $val->ip);
-      $this->log($info,LOG_DEBUG);
       if(isset($info[2])){
         // IPアドレス
         $row['ip'] = $info[2];
@@ -346,7 +343,7 @@ class HistoriesController extends AppController {
           $row['transmissionPerson'] = $companyName[0]['MCompany']['company_name'];
         }
         if($value['THistoryChatLog']['message_type'] == 98) {
-          //continue;
+          continue;
         }
         // チャットメッセージ
         $row['message'] = $value['THistoryChatLog']['message'];
@@ -858,12 +855,12 @@ class HistoriesController extends AppController {
     $this->data = $this->Session->read('Thistory');
 
     //範囲が全期間の場合
-    if(empty($this->data['History']['start_day']) && empty($this->data['History']['finish_day'])) {
-      //$today = date("Y/m/d");
-      //$this->request->data['History']['start_day'] = $today;
-      //$this->request->data['History']['finish_day'] = $today;
-      //$this->request->data['History']['period'] = '11今日';
-    }
+    /*if(empty($this->data['History']['start_day']) && empty($this->data['History']['finish_day'])) {
+      $today = date("Y/m/d");
+      $this->request->data['History']['start_day'] = $today;
+      $this->request->data['History']['finish_day'] = $today;
+      $this->request->data['History']['period'] = '11今日';
+    }*/
 
     // 成果種別リスト
     $this->set('achievementType', Configure::read('achievementType'));

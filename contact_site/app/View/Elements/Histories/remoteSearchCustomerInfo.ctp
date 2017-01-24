@@ -12,6 +12,15 @@ popupEvent.closePopup = function(){
   else {
     document.getElementById('historySearch').action = "Histories?isChat=false";
   }
+  /*var period_day = $('.active').text();
+  //カスタム検索の場合
+  if(period_day.match(/[^0-9]/) == null){
+    $('#HistoryPeriod').val("");
+  }
+  //それ以外の検索の場合
+  else{
+    $('#HistoryPeriod').val(period_day);
+  }*/
   $('#historySearch').submit();
 };
 
