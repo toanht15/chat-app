@@ -2294,11 +2294,16 @@ ul.naviBtn {
   #history_menu {
     height: auto;
 
+    #none{
+      visibility:hidden;
+      margin-top: -10px;
+    }
+
     #date {
       margin-left: 11em;
     }
 
-    span#ip,#company,#customer,#telephone,#mail,#responsible,#message,#startDay,#finishDay{
+    span#ip,#company,#customer,#telephone,#mail,#responsible,#message,#startDay,#finishDay,#achievement{
       display: none;
     }
 
@@ -2317,14 +2322,15 @@ ul.naviBtn {
 
     #mainDatePeriod {
       margin-left: 5em;
-      margin-top: -1.3em;
+      margin-top: -1.4em;
       cursor: pointer;
       border-bottom: 1px solid #909090;
-      font-size: 1.2em;
-      width: 19em !important;
+      font-size: 1.1em;
+      width: 20em !important;
       display: block;
       text-align: left;
       position: relative;
+      padding-left: 0.5em;
     }
 
     span#mainDatePeriod:after {
@@ -2341,7 +2347,7 @@ ul.naviBtn {
     }
 
     span#searchPeriod {
-      font-size: 1.2em;
+      font-size: 1.1em;
     }
 
     ul {
@@ -2446,17 +2452,16 @@ ul.naviBtn {
   a#searchRefine {
     position: absolute;
     top: 80px;
-    left: 33em;
+    left: 31em;
     width: 8em;
     padding: 0.25em 0.5em;
     text-align: center;
   }
 
   .searchConditions{
-    font-size: 15px;
+    font-size: 1.1em;
     color: #595959;
-    font-weight: bold;
-    margin: 2px 0 5px 0;
+    margin: 5px 0 5px 0;
     float: left;
   }
 
