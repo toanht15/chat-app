@@ -11,7 +11,8 @@ $headerNo = 1;
           <!-- 表示設定 -->
           <li>
             <span class="require"><label>表示する条件</label></span>
-            <pre><label><?= $this->Form->input('display_type', ['type' => 'radio',  'options' => $widgetDisplayType, 'legend' => false, 'separator' => '</label><br><label>', 'label' => false, 'error' => false, 'div' => false]) ?></label></pre>
+            <pre><label class="pointer"><?= $this->Form->input('display_type', ['type' => 'radio',  'options' => $widgetDisplayType, 'legend' => false, 'separator' => '</label><br><label class="pointer">', 'label' => false, 'error' => false, 'div' => false]) ?></label>
+            </pre>
           </li>
           <?php if ( $this->Form->isFieldError('display_type') ) echo $this->Form->error('display_type', null, ['wrap' => 'li']); ?>
           <!-- 表示設定 -->
@@ -50,10 +51,10 @@ $headerNo = 1;
                 'entity' => 'MWidgetSetting.max_show_time_page'
               ]); ?>
               <div ng-init="showTime='<?=$this->formEx->val($this->data['MWidgetSetting'], 'show_time')?>'">
-                <label for="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_ON?>"><input type="radio" name="data[MWidgetSetting][show_time]" ng-model="showTime" id="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_ON?>" value="<?=C_WIDGET_AUTO_OPEN_TYPE_ON?>">常に自動で最大化する</label><br>
-                <label for="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_SITE?>"><input type="radio" name="data[MWidgetSetting][show_time]" ng-model="showTime" id="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_SITE?>" value="<?=C_WIDGET_AUTO_OPEN_TYPE_SITE?>" ><?=$maxShowTimeTagBySite?></label><br>
-                <label for="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_PAGE?>"><input type="radio" name="data[MWidgetSetting][show_time]" ng-model="showTime" id="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_PAGE?>" value="<?=C_WIDGET_AUTO_OPEN_TYPE_PAGE?>" ><?=$maxShowTimeTagByPage?></label><br>
-                <label for="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_OFF?>"><input type="radio" name="data[MWidgetSetting][show_time]" ng-model="showTime" id="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_OFF?>" value="<?=C_WIDGET_AUTO_OPEN_TYPE_OFF?>">常に最大化しない</label>
+                <label class="pointer" for="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_ON?>"><input type="radio" name="data[MWidgetSetting][show_time]" ng-model="showTime" id="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_ON?>" value="<?=C_WIDGET_AUTO_OPEN_TYPE_ON?>">常に自動で最大化する</label><br>
+                <label class="pointer" for="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_SITE?>"><input type="radio" name="data[MWidgetSetting][show_time]" ng-model="showTime" id="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_SITE?>" value="<?=C_WIDGET_AUTO_OPEN_TYPE_SITE?>" ><?=$maxShowTimeTagBySite?></label><br>
+                <label class="pointer" for="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_PAGE?>"><input type="radio" name="data[MWidgetSetting][show_time]" ng-model="showTime" id="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_PAGE?>" value="<?=C_WIDGET_AUTO_OPEN_TYPE_PAGE?>" ><?=$maxShowTimeTagByPage?></label><br>
+                <label class="pointer" for="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_OFF?>"><input type="radio" name="data[MWidgetSetting][show_time]" ng-model="showTime" id="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_OFF?>" value="<?=C_WIDGET_AUTO_OPEN_TYPE_OFF?>">常に最大化しない</label>
               </div>
             </div>
           </li>
@@ -63,11 +64,11 @@ $headerNo = 1;
           <!-- 表示位置 -->
           <li>
             <span class="require"><label>表示位置</label></span>
-            <pre><label><?= $this->ngForm->input('show_position', [
+            <pre><label class="pointer"><?= $this->ngForm->input('show_position', [
                 'type' => 'radio',
                 'options' => $widgetPositionType,
                 'legend' => false,
-                'separator' => '</label><br><label>',
+                'separator' => '</label><br><label class="pointer">',
                 'div' => false,
                 'label' => false,
                 'error' => false
@@ -126,8 +127,8 @@ $headerNo = 1;
             ]);
             ?>
             <div ng-init="subTitleToggle='<?=$this->formEx->val($this->data['MWidgetSetting'], 'show_subtitle')?>'">
-              <label for="showSubtitle1"><input type="radio" name="data[MWidgetSetting][show_subtitle]" ng-model="subTitleToggle" id="showSubtitle1" class="showHeader" value="1" >企業名を表示する</label><br>
-              <label for="showSubtitle2"><input type="radio" name="data[MWidgetSetting][show_subtitle]" ng-model="subTitleToggle" id="showSubtitle2" class="showHeader" value="2" >企業名を表示しない</label><br>
+              <label class="pointer" for="showSubtitle1"><input type="radio" name="data[MWidgetSetting][show_subtitle]" ng-model="subTitleToggle" id="showSubtitle1" class="showHeader" value="1" >企業名を表示する</label><br>
+              <label class="pointer" for="showSubtitle2"><input type="radio" name="data[MWidgetSetting][show_subtitle]" ng-model="subTitleToggle" id="showSubtitle2" class="showHeader" value="2" >企業名を表示しない</label><br>
               <?=$subTitle?>
             </div>
           </li>
@@ -152,8 +153,8 @@ $headerNo = 1;
               'entity' => 'MWidgetSetting.description'
             ]) ?>
             <div ng-init="descriptionToggle='<?=$this->formEx->val($this->data['MWidgetSetting'], 'show_description')?>'">
-              <label for="showDescription1"><input type="radio" class="showHeader" name="data[MWidgetSetting][show_description]" ng-model="descriptionToggle" id="showDescription1" value="1" >説明文を表示する</label><br><?=$description?><br>
-              <label for="showDescription2"><input type="radio" class="showHeader" name="data[MWidgetSetting][show_description]" ng-model="descriptionToggle" id="showDescription2" value="2" >説明文を表示しない</label>
+              <label class="pointer" for="showDescription1"><input type="radio" class="showHeader" name="data[MWidgetSetting][show_description]" ng-model="descriptionToggle" id="showDescription1" value="1" >説明文を表示する</label><br><?=$description?><br>
+              <label class="pointer" for="showDescription2"><input type="radio" class="showHeader" name="data[MWidgetSetting][show_description]" ng-model="descriptionToggle" id="showDescription2" value="2" >説明文を表示しない</label>
             </div>
           </li>
           <?php if ($this->Form->isFieldError('description')) echo $this->Form->error('description', null, ['wrap' => 'li']); ?>
@@ -200,7 +201,7 @@ $headerNo = 1;
             <span ng-class="{require: mainImageToggle=='1'}"><label>画像の設定</label></span>
             <div ng-init="mainImageToggle='<?=$this->formEx->val($this->data['MWidgetSetting'], 'show_main_image')?>'">
               <?= $this->Form->hidden('main_image') ?>
-              <label for="showMainImage1"><input type="radio" name="data[MWidgetSetting][show_main_image]" ng-model="mainImageToggle" id="showMainImage1" value="1" >画像を表示する</label><br>
+              <label class="pointer" for="showMainImage1"><input type="radio" name="data[MWidgetSetting][show_main_image]" ng-model="mainImageToggle" id="showMainImage1" value="1" >画像を表示する</label><br>
               <div id="imageSelectBtns" ng-class="{chooseImg: showChooseImg()}">
 
                 <div id="picDiv">
@@ -214,7 +215,7 @@ $headerNo = 1;
               </div>
               <?php if ($this->Form->isFieldError('main_image')) echo $this->Form->error('main_image', null, ['ng-if'=>'mainImageToggle=="1"']); ?>
               <?php if ($this->Form->isFieldError('uploadImage')) echo $this->Form->error('uploadImage', null, ['ng-if'=>'mainImageToggle=="1"']); ?>
-              <label for="showMainImage2"><input type="radio" name="data[MWidgetSetting][show_main_image]" ng-model="mainImageToggle" id="showMainImage2" value="2" >画像を表示しない</label>
+              <label class="pointer" for="showMainImage2"><input type="radio" name="data[MWidgetSetting][show_main_image]" ng-model="mainImageToggle" id="showMainImage2" value="2" >画像を表示しない</label>
             </div>
           </li>
           <!-- 画像の設定 -->
@@ -281,8 +282,8 @@ $headerNo = 1;
               'entity' => 'MWidgetSetting.time_text'
             ]) ?>
             <div ng-init="timeTextToggle='<?=$this->formEx->val($this->data['MWidgetSetting'], 'display_time_flg')?>'">
-              <label for="showTimeText1"><input type="radio" name="data[MWidgetSetting][display_time_flg]" ng-model="timeTextToggle" class="showTel" id="showTimeText1" value="1" >受付時間を表示する</label><br><?=$subTitle?><br>
-              <label for="showTimeText2"><input type="radio" name="data[MWidgetSetting][display_time_flg]" ng-model="timeTextToggle" class="showTel" id="showTimeText2" value="2" >受付時間を表示しない</label>
+              <label class="pointer" for="showTimeText1"><input type="radio" name="data[MWidgetSetting][display_time_flg]" ng-model="timeTextToggle" class="showTel" id="showTimeText1" value="1" >受付時間を表示する</label><br><?=$subTitle?><br>
+              <label class="pointer" for="showTimeText2"><input type="radio" name="data[MWidgetSetting][display_time_flg]" ng-model="timeTextToggle" class="showTel" id="showTimeText2" value="2" >受付時間を表示しない</label>
             </div>
           </li>
           <?php if ($this->Form->isFieldError('time_text')) echo $this->Form->error('time_text', null, ['wrap' => 'li']); ?>
@@ -317,11 +318,11 @@ $headerNo = 1;
           <!-- ラジオボタン操作時の動作種別 -->
           <li>
             <span class="require"><label>ラジオボタン選択動作</label></span>
-            <pre><label><?= $this->ngForm->input('chat_radio_behavior', [
+            <pre><label class="pointer"><?= $this->ngForm->input('chat_radio_behavior', [
                 'type' => 'radio',
                 'options' => $widgetRadioBtnBehaviorType,
                 'legend' => false,
-                'separator' => '</label><br><label>',
+                'separator' => '</label><br><label class="pointer">',
                 'class' => 'showChat',
                 'div' => false,
                 'label' => false,
@@ -337,11 +338,11 @@ $headerNo = 1;
           <!-- 消費者側送信アクション -->
           <li>
             <span class="require"><label>消費者側送信アクション</label></span>
-            <pre><label><?= $this->ngForm->input('chat_trigger', [
+            <pre><label class="pointer"><?= $this->ngForm->input('chat_trigger', [
                 'type' => 'radio',
                 'options' => $widgetSendActType,
                 'legend' => false,
-                'separator' => '</label><br><label>',
+                'separator' => '</label><br><label class="pointer">',
                 'class' => 'showChat',
                 'div' => false,
                 'label' => false,
@@ -356,11 +357,11 @@ $headerNo = 1;
           <!-- 担当者表示 -->
           <li>
             <span class="require"><label>担当者表示</label></span>
-            <pre><label><?= $this->ngForm->input('show_name', [
+            <pre><label class="pointer"><?= $this->ngForm->input('show_name', [
                 'type' => 'radio',
                 'options' => $widgetShowNameType,
                 'legend' => false,
-                'separator' => '</label><br><label>',
+                'separator' => '</label><br><label class="pointer">',
                 'class' => 'showChat',
                 'div' => false,
                 'label' => false,
@@ -382,11 +383,11 @@ $headerNo = 1;
           <!-- ウィジェットの表示   -->
           <li>
             <span class="require"><label>ウィジェットの表示</label></span>
-            <pre><label><?= $this->ngForm->input('sp_show_flg', [
+            <pre><label class="pointer"><?= $this->ngForm->input('sp_show_flg', [
                 'type' => 'radio',
                 'options' => $normalChoices,
                 'legend' => false,
-                'separator' => '</label><br><label>',
+                'separator' => '</label><br><label class="pointer">',
                 'class' => 'showSp',
                 'div' => false,
                 'label' => false,
@@ -402,12 +403,12 @@ $headerNo = 1;
           <!-- シンプル表示 -->
           <li>
             <span class="require"><label>シンプル表示</label></span>
-            <pre><label><?= $this->ngForm->input('sp_header_light_flg', [
+            <pre><label class="pointer"><?= $this->ngForm->input('sp_header_light_flg', [
                 'type' => 'radio',
                 'options' => $normalChoices,
                 'ng-disabled' => 'sp_show_flg !== "'.C_SELECT_CAN.'"',
                 'legend' => false,
-                'separator' => '</label><br><label>',
+                'separator' => '</label><br><label class="pointer">',
                 'class' => 'showSp',
                 'div' => false,
                 'label' => false,
@@ -423,12 +424,12 @@ $headerNo = 1;
           <!-- 自動最大化の制御 -->
           <li>
             <span class="require"><label>自動最大化の制御</label></span>
-            <pre><label><?= $this->ngForm->input('sp_auto_open_flg', [
+            <pre><label class="pointer"><?= $this->ngForm->input('sp_auto_open_flg', [
                 'type' => 'checkbox',
                 'ng-disabled' => 'sp_show_flg !== "'.C_SELECT_CAN.'"',
                 'legend' => false,
                 'ng-checked' => 'sp_auto_open_flg === "'.C_CHECK_ON.'"',
-                'separator' => '</label><br><label>',
+                'separator' => '</label><br><label class="pointer">',
                 'div' => false,
                 'class' => 'showSp',
                 'label' => "常に最大化しない",

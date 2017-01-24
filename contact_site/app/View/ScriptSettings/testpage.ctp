@@ -66,7 +66,7 @@
           </li>
           <li>
             <p>性別：
-              <?= $this->Form->radio('sexes', $optList['sexes'], ['legend' => false]) ?>
+              <label class="pointer"><?= $this->Form->radio('sexes', $optList['sexes'], ['legend' => false, 'separator' => '</label><label class="pointer">' ]) ?></label>
             </p>
           </li>
           <style type="text/css">
@@ -77,13 +77,16 @@
           <li class="cb_parent">
             <p>どの製品をお使いですか？：</p>
             <span style="margin-top:10px">
+              <label class="pointer">
               <?php echo $this->Form->input('product', [
                            'type' => 'select',
                            'multiple'=> 'checkbox',
+                           'separator' => '</label><br><label class="pointer">',
                            'options' => $optList['products'],
                            'div' => false,
                            'label' => false,
               ]); ?>
+              </label>
             </span>
           </li>
           <li>

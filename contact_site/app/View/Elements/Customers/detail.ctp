@@ -34,14 +34,14 @@
               </ul>
               <chat-detail ng-class="{showOption: showAchievement()}">
                 <span>成果</span>
-                <label>
+                <label class="pointer">
                   <?= $this->ngForm->input('achievement',
                         [
                           'type' => 'select',
                           'empty' => ' - ',
                           'options' => $achievementType,
                           'legend' => false,
-                          'separator' => '</label><br><label>',
+                          'separator' => '</label><br><label class="pointer">',
                           'label' => false,
                           'error' => false,
                           'div' => false
@@ -53,7 +53,7 @@
               </chat-detail>
               <chat-menu>
                 <chat-menu-child id="sendMenu" class="p05tb">
-                  <?=$this->ngForm->input('settings.sendPattarn',
+                  <label class="pointer" for="settingsSendPattarn"><?=$this->ngForm->input('settings.sendPattarn',
                       [
                         'type' => 'checkbox',
                         'div' => false,
@@ -63,7 +63,7 @@
                         'default' => false,
                         'entity' => 'settings.sendPattarn',
                         'change' => 'changeSetting("sendPattarn")'
-                      ])?><label for="settingsSendPattarn">Enterキーで送信する</label>
+                      ])?>Enterキーで送信する</label>
                 </chat-menu-child>
                 <chat-menu-child id="chatMenu" class="p05tb" ng-class="{showOption: chatOptionDisabled(detailId)}">
                   <span class="greenBtn btn-shadow" onclick="chatApi.addOption(1)">選択肢を追加する</span>

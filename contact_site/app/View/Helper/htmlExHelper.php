@@ -69,7 +69,7 @@ class htmlExHelper extends AppHelper {
             $str = h($tmp);
             if ( preg_match("/^\[\]/", $tmp) ) {
                 $str = "<input type='radio' id='radio".$key."' disabled=''>";
-                $str .= "<label for='radio".$key."'>".trim(preg_replace("/^\[\]/", "", $tmp))."</label>";
+                $str .= "<label class='pointer' for='radio".$key."'>".trim(preg_replace("/^\[\]/", "", $tmp))."</label>";
             }
             if ( preg_match('/http(s)?:\/\/[!-~.a-z]*/', $tmp) ) {
                 $ret = preg_replace_callback('/http(s)?:\/\/[!-~.a-z]*/', [$this, 'addLink'], $tmp);

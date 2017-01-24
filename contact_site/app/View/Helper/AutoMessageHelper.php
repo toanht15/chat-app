@@ -129,7 +129,7 @@ class autoMessageHelper extends AppHelper {
 	public function radio($itemKey=null) {
 		$returnTag = "";
 		$labelTmp = "<span><label>%s</label></span>";
-		$radioTmp = "<label><input type='radio' ng-model='setItem.%s' name='%s{{itemId}}_{{\$id}}' value='%d'>%s</label>&nbsp;";
+		$radioTmp = "<label class='pointer'><input type='radio' ng-model='setItem.%s' name='%s{{itemId}}_{{\$id}}' value='%d'>%s</label>&nbsp;";
 		if (!empty($this->dataList[$itemKey])) {
 			$data = $this->dataList[$itemKey];
 			$radioTags = "";
@@ -144,7 +144,7 @@ class autoMessageHelper extends AppHelper {
 	public function checkbox($itemKey=null) {
 		$returnTag = "";
 		$labelTmp = "<span><label>%s</label></span>";
-		$checkboxTmp = "<label><input type='checkbox' ng-model='setItem.%s.%s' name='%s' value='%d' %s>%s</label>";
+		$checkboxTmp = "<label class='pointer'><input type='checkbox' ng-model='setItem.%s.%s' name='%s' value='%d' %s>%s</label>";
 		$requiled = "ng-required='main.requireCheckBox(setItem.%s)'";
 		if (!empty($this->dataList[$itemKey])) {
 			$data = $this->dataList[$itemKey];

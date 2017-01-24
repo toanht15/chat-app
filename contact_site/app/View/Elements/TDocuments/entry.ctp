@@ -53,12 +53,26 @@
       <!-- ダウンロードフラグ -->
       <li>
         <span class="require"><label>ダウンロード</label></span>
-        <?=$this->Form->input('download_flg', ['legend' => false,'type' => 'radio','options' => $download,'default' => C_YES]); ?>
+        <label class="pointer">
+          <?=$this->Form->input('download_flg',
+          ['legend' => false,'type' => 'radio',
+          'class' => 'pointer',
+          'options' => $download,
+          'separator' => '</label>&nbsp;<label class="pointer">',
+          'default' => C_YES]); ?>
+        </label>
       </li>
       <!-- ページ数フラグ -->
       <li>
         <span class="require"><label>ページ数表示</label></span>
-        <?=$this->Form->input('pagenation_flg', ['legend' => false,'type' => 'radio','options' => $pagenation,'default' => C_SELECT_CAN]); ?>
+        <label class="pointer">
+          <?=$this->Form->input('pagenation_flg',
+          ['legend' => false,'type' => 'radio',
+          'class' => 'pointer',
+          'options' => $pagenation,
+          'separator' => '</label>&nbsp;<label class="pointer">',
+          'default' => C_SELECT_CAN]); ?>
+        </label>
       </li>
       <?php if ($this->params->action = 'add') { ?>
         <input type="text" style="display:block; position: fixed; top: -500px; left: -500px; z-index: 0;">
