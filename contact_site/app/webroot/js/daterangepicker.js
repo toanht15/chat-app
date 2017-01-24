@@ -640,7 +640,6 @@
             var daysInLastMonth = moment([lastYear, lastMonth]).daysInMonth();
             var dayOfWeek = firstDay.day();
 
-
             //initialize a 6 rows x 7 columns array for the calendar
             var calendar = [];
             calendar.firstDay = firstDay;
@@ -1263,6 +1262,7 @@
         },
 
         hoverDate: function(e) {
+
             //ignore mouse movements while an above-calendar text input has focus
             //if (this.container.find('input[name=daterangepicker_start]').is(":focus") || this.container.find('input[name=daterangepicker_end]').is(":focus"))
             //    return;
@@ -1576,6 +1576,7 @@
         },
 
         formInputsBlurred: function(e) {
+
             // this function has one purpose right now: if you tab from the first
             // text input to the second in the UI, the endDate is nulled so that
             // you can click another, but if you tab out without clicking anything
