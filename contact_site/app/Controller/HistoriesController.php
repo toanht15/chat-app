@@ -259,7 +259,7 @@ class HistoriesController extends AppController {
 
     // ヘッダー
     $csv[] = [
-      "日時",
+      "訪問日時",
       "訪問ユーザ",
       "プラットフォーム",
       "ブラウザ",
@@ -301,8 +301,10 @@ class HistoriesController extends AppController {
 
       $chatLog = $this->_getChatLog($id['THistory']['id']);
       foreach($chatLog as $key => $value) {
+        $users = preg_replace("/[\n,]+/", ", ", $val->user);
         // 送信日時
-        $row['pageCnt'] = preg_replace("/[\n,]+/", " ", $value['THistoryChatLog']['created']);
+        $row['pageCnt'] =  substr(preg_replace("/[\n,]+/", " ", $value['THistoryChatLog']['created']),0,20);
+
         // 送信種別
         if($value['THistoryChatLog']['message_type'] == 1) {
           $row['transmissionKind'] = '訪問者';
@@ -321,12 +323,16 @@ class HistoriesController extends AppController {
           $row['transmissionPerson'] = $companyName[0]['MCompany']['company_name'];
         }
         if($value['THistoryChatLog']['message_type'] == 98) {
-          continue;
+         $row['transmissionKind'] = '通知メッセージ';
+         $value['THistoryChatLog']['message'] = '-'.$users.'が入室しました-';
+        }
+        if($value['THistoryChatLog']['message_type'] == 99) {
+         $row['transmissionKind'] = '通知メッセージ';
+         $value['THistoryChatLog']['message'] = '-'.$users.'が退室しました-';
         }
         // チャットメッセージ
         $row['message'] = $value['THistoryChatLog']['message'];
         // チャット担当者
-        $users = preg_replace("/[\n,]+/", ", ", $val->user);
         $row['user'] = $users;
         $csv[] = $row;
       }
