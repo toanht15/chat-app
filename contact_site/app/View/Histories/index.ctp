@@ -70,15 +70,18 @@
       <span id ='mainDatePeriod' name = 'datefilter' class='date'>全期間</span>
     <?php } ?>
 
-    <?php //日程 ?>
-    <span id="startDay"></span>
-    <span id="finishDay"></span>
-    <?php //モーダル画面で検索した場合
-      if(!empty($data['History']['ip_address'])||!empty($data['History']['company_name'])
+    <?php //条件クリアをした時や、最初に来て値が入っていない時
+    if(empty($data['History']['start_day'])&&empty($data['History']['finish_day'])){ ?>
+    <span id="startDay"><?= '2015/01/01' ?></span>
+    <span id="finishDay"><?= date("Y/m/d") ?></span>
+    <?php }  //それ以外の時
+      else if(!empty($data['History']['start_day'])||!empty($data['History']['finish_day'])||!empty($data['History']['ip_address'])||!empty($data['History']['company_name'])
       ||!empty($data['History']['customer_name'])||!empty($data['History']['telephone_number'])
       ||!empty($data['History']['mail_address'])||!empty($data['THistoryChatLog']['responsible_name'])
       ||!empty($data['THistoryChatLog']['achievement_flg'])||!empty($data['THistoryChatLog']['message'])) {
     ?>
+      <span id="startDay"><?= h($data['History']['start_day']) ?></span>
+      <span id="finishDay"><?= h($data['History']['finish_day']) ?></span>
       <span id="ip"><?= h($data['History']['ip_address']) ?></span>
       <span id="company"><?= h($data['History']['company_name']) ?></span>
       <span id="customer"><?= h($data['History']['customer_name']) ?></span>
