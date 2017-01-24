@@ -530,7 +530,13 @@ class HistoriesController extends AppController {
         }
         //今月、先月、過去一か月間の検索の場合
         else if(mb_strlen($data['History']['period'])==4 || mb_strlen($data['History']['period'])==8){
-          $data['History']['period'] = substr($data['History']['period'], 2);
+          //条件クリアした際の処理
+          if($data['History']['period']=='1全期間') {
+            $data['History']['period'] = substr($data['History']['period'], 1);
+          }
+          else{
+            $data['History']['period'] = substr($data['History']['period'], 2);
+          }
         }
         //今月、先月の検索の場合
         else if(mb_strlen($data['History']['period'])==7){
@@ -853,14 +859,13 @@ class HistoriesController extends AppController {
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
     $this->data = $this->Session->read('Thistory');
-
     //範囲が全期間の場合
-    /*if(empty($this->data['History']['start_day']) && empty($this->data['History']['finish_day'])) {
+    if(empty($this->data['History']['start_day']) && empty($this->data['History']['finish_day'])) {
       $today = date("Y/m/d");
-      $this->request->data['History']['start_day'] = $today;
+      $this->request->data['History']['start_day'] = '2015/01/01';
       $this->request->data['History']['finish_day'] = $today;
-      $this->request->data['History']['period'] = '11今日';
-    }*/
+      $this->request->data['History']['period'] = '全期間';
+    }
 
     // 成果種別リスト
     $this->set('achievementType', Configure::read('achievementType'));
