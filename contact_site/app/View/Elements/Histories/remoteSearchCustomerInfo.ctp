@@ -12,15 +12,6 @@ popupEvent.closePopup = function(){
   else {
     document.getElementById('historySearch').action = "Histories?isChat=false";
   }
-  var period_day = $('.active').text();
-  //カスタム検索の場合
-  if(period_day.match(/[^0-9]/) == null){
-    $('#HistoryPeriod').val("");
-  }
-  //それ以外の検索の場合
-  else{
-    $('#HistoryPeriod').val(period_day);
-  }
   $('#historySearch').submit();
 };
 
@@ -33,6 +24,7 @@ popupEvent.customizeBtn = function(){
 <?php echo $this->element('Histories/angularjs') ?>
 <?=  $this->Form->create('History',['id' => 'historySearch','type' => 'post','url' => ['controller' => 'Histories','action' => 'index']]); ?>
   <ul>
+  <?php /*
     <li>
       <p><span>日付</span></p>
       <?php
@@ -46,6 +38,7 @@ popupEvent.customizeBtn = function(){
       ?>
       <span><?= $this->Form->input('datefilter',['label'=> false,'class'=> $extinguish,'div' => false,'id' => 'dateperiod','name'=> 'datefilter']); ?><label><input type="checkbox" id="day_search" <?= $checked ?>><span>指定する</span></label>
     </li>
+    */?>
     <?= $this->Form->hidden('start_day',['label'=> false,'div' => false]); ?>
     <?= $this->Form->hidden('finish_day',['label'=> false,'div' => false]); ?>
     <?= $this->Form->hidden('period',['label'=> false,'div' => false]); ?>
@@ -69,13 +62,19 @@ popupEvent.customizeBtn = function(){
       <p><span>メールアドレス</span></p>
       <span><?= $this->Form->input('mail_address',['label'=>false,'div' => false]) ?></span>
     </li>
+<?php if ($coreSettings[C_COMPANY_USE_CHAT]): ?>
     <li>
-      <p><span>担当者</span></p>
-      <span><?= $this->Form->input('responsible_name',['label'=>false,'div' => false]) ?></span>
+      <p><span>チャット担当者</span></p>
+      <span><?= $this->Form->input('THistoryChatLog.responsible_name',['label'=>false,'div' => false]) ?></span>
+    </li>
+    <li>
+      <p><span>成果</span></p>
+      <span><label><?= $this->Form->input('THistoryChatLog.achievement_flg',['type' => 'select', 'empty' => ' - ', 'options' => $achievementType, 'legend' => false, 'separator' => '</label><br><label>', 'label'=>false,'div' => false]) ?></label></span>
     </li>
     <li>
       <p><span>チャット内容</span></p>
-      <span><?= $this->Form->input('message',['label'=>false,'div' => false]) ?></span>
+      <span><?= $this->Form->input('THistoryChatLog.message',['label'=>false,'div' => false]) ?></span>
     </li>
+<?php endif; ?>
   </ul>
 <?= $this->Form->end(); ?>

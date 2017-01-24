@@ -13,8 +13,9 @@
 <div id='customer_menu'>
     <div>
         <!-- 検索窓 -->
-        <?php if ($coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT])) : ?>
+        <?php if ($coreSettings[C_COMPANY_USE_CHAT] || $coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT]) ) : ?>
           <div class="form01 fLeft">
+            <?php if ($coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT])) : ?>
             <ul class="switch" ng-init="fillterTypeId=1">
               <li ng-class="{on:fillterTypeId===1}" ng-click="fillterTypeId = 1">
                 <svg width="15" height="15">
@@ -34,11 +35,12 @@
             <?= $this->Form->input('searchText', array('type'=>'text', 'label' => false, 'ng-model' => 'searchText', 'ng-attr-placeholder' => '{{searchTextPlaceholder()}}')); ?>
             <div id="userFilter" style="display: flex;">
             </div>
-              <?php if ( $coreSettings[C_COMPANY_USE_CHAT] && strcmp($displayType, C_WIDGET_DISPLAY_CODE_HIDE) !== 0 && strcmp($scFlg, C_SC_ENABLED) === 0) : ?>
-                <div id="scInfo">
-                  チャット対応数上限 <span><?=$scNum?></span> 件 （残り対応可能数 <span>{{scInfo.remain}}</span> 件）
-                </div>
-              <?php endif; ?>
+            <?php endif; ?>
+            <?php if ( $coreSettings[C_COMPANY_USE_CHAT] && strcmp($displayType, C_WIDGET_DISPLAY_CODE_HIDE) !== 0 && strcmp($scFlg, C_SC_ENABLED) === 0) : ?>
+            <div id="scInfo">
+              チャット対応数上限 <span><?=$scNum?></span> 件 （残り対応可能数 <span>{{scInfo.remain}}</span> 件）
+            </div>
+            <?php endif; ?>
           </div>
         <?php endif; ?>
         <!-- 検索窓 -->

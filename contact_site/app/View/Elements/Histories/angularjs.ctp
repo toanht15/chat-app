@@ -106,7 +106,7 @@ $(document).ready(function(){
     var tbody = document.querySelector('#history_list tbody');
     var data = [];
     // CSVに不要な列が追加されたら空をセット
-    var label = ["date","","ip","useragent","campaign","referrer","pageCnt","visitTime","status", "user"];
+    var label = ["date","","ip","useragent","campaign","referrer","pageCnt","visitTime","achievement","status", "user"];
     var noCsvData = {};
 
     for (var a = 0; a < thead.children[0].children.length; a++) {
@@ -140,6 +140,8 @@ $(document).ready(function(){
     document.getElementById('HistoryIndexForm').action = '<?=$this->Html->url(["controller"=>"Histories", "action" => "outputCSVOfHistory"])?>';
     document.getElementById('HistoryIndexForm').submit();
   });
+
+<?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
 
   var outputChatCSVBtn = document.getElementById('outputChat');
   outputChatCSVBtn.addEventListener('click', function(){
@@ -180,15 +182,18 @@ $(document).ready(function(){
     document.getElementById('HistoryIndexForm').action = '<?=$this->Html->url(["controller"=>"Histories", "action" => "outputCSVOfContents"])?>';
     document.getElementById('HistoryIndexForm').submit();
   });
-console.log('A');
-  $('#dateperiod').daterangepicker({
+
+<?php endif; ?>
+
+  /*$('#dateperiod').daterangepicker({
     "ranges": {
       '今日': [moment(), moment()],
       '昨日': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
       '過去一週間': [moment().subtract(6, 'days'), moment()],
       '過去一ヶ月間': [moment().subtract(30, 'days'), moment()],
       '今月': [moment().startOf('month'), moment().endOf('month')],
-      '先月': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+      '先月': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+      '全期間':['',moment()]
     },
     "locale": {
       "format": "YYYY/MM/DD",
@@ -228,7 +233,7 @@ console.log('A');
     "startDate": $('#HistoryStartDay').val(),
     "endDate": $('#HistoryFinishDay').val(),
     "opens": "left"
-  });
+  });*/
 
     $('#mainDatePeriod').daterangepicker({
     "ranges": {
@@ -237,7 +242,8 @@ console.log('A');
       '過去一週間': [moment().subtract(6, 'days'), moment()],
       '過去一ヶ月間': [moment().subtract(30, 'days'), moment()],
       '今月': [moment().startOf('month'), moment().endOf('month')],
-      '先月': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+      '先月': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+      '全期間': ['2015/01/01', moment()]
     },
     "locale": {
       "format": "YYYY/MM/DD",
@@ -280,15 +286,34 @@ console.log('A');
   });
 
   //モーダルのカレンダーの設定ボタン
-  $('input[name="datefilter"]').on('apply.daterangepicker', function(ev, picker) {
+  /*$('input[name="datefilter"]').on('apply.daterangepicker', function(ev, picker) {
     $('#HistoryStartDay').val(picker.startDate.format('YYYY/MM/DD'));
     $('#HistoryFinishDay').val(picker.endDate.format('YYYY/MM/DD'));
-  });
+
+    //期間取得(今日、先月など)
+    var period_day = $('.active').text();
+    //カスタム検索の場合
+    if(period_day.match(/[^0-9]/) == null){
+      $('#HistoryPeriod').val("");
+    }
+    //それ以外の検索の場合
+    else{
+      $('#HistoryPeriod').val(period_day);
+    }
+  });*/
 
   $('#mainDatePeriod').on('apply.daterangepicker', function(ev, picker) {
-    //開始日と終了日取得
-    $('#startDay').text(picker.startDate.format('YYYY/MM/DD'));
-    $('#finishDay').text(picker.endDate.format('YYYY/MM/DD'));
+    //全期間検索の場合
+    if($("input[name='daterangepicker_start']").val() == '2015/01/01')　{
+      $('#startDay').text("");
+      $('#finishDay').text("");
+    }
+    //それ以外の検索の場合、日にち取得
+    else{
+      $('#startDay').text(picker.startDate.format('YYYY/MM/DD'));
+      $('#finishDay').text(picker.endDate.format('YYYY/MM/DD'));
+    }
+    //期間取得(今日、先月など)
     var search_day = $('.active').text();
     //カスタム検索の場合
     if(search_day.match(/[^0-9]/) == null){
@@ -307,14 +332,15 @@ console.log('A');
       .append($('<input/>', {type: 'hidden', name: "data[History][customer_name]", value: $('#customer').text()}))
       .append($('<input/>', {type: 'hidden', name: "data[History][telephone_number]", value: $('#telephone').text()}))
       .append($('<input/>', {type: 'hidden', name: "data[History][mail_address]", value: $('#mail').text()}))
-      .append($('<input/>', {type: 'hidden', name: "data[History][responsible_name]", value: $('#responsible').text()}))
-      .append($('<input/>', {type: 'hidden', name: "data[History][message]", value: $('#message').text()}))
+      .append($('<input/>', {type: 'hidden', name: "data[THistoryChatLog][responsible_name]", value: $('#responsible').text()}))
+      .append($('<input/>', {type: 'hidden', name: "data[THistoryChatLog][achievement_flg]", value: $('#achievement').text()}))
+      .append($('<input/>', {type: 'hidden', name: "data[THistoryChatLog][message]", value: $('#message').text()}))
       .appendTo(document.body)
       .submit()
       }
   });
 
-  $('#day_search').on('click', function() {
+  /*$('#day_search').on('click', function() {
     if ($(this).prop('checked')) {
       $("#dateperiod").prop("disabled", false);
       var d = new Date($('#dateperiod').data('daterangepicker').startDate);
@@ -331,7 +357,7 @@ console.log('A');
       $('#HistoryFinishDay').val("");
       $("#dateperiod").addClass('extinguish');
     }
-  });
+  });*/
 });
 
 </script>

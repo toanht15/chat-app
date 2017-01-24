@@ -4,18 +4,11 @@
       <h2>{{detail.accessId}}</h2>
       <div>
         <!-- 閉じる -->
-        <a ng-if="chatList.indexOf(detailId) < 0" href="javascript:void(0)" ng-click="showDetail(detailId)" class="fRight customer_detail_btn redBtn btn-shadow">
-          <?= $this->Html->image('close.png', ['alt'=>'詳細を閉じる', 'width'=>20, 'height' => 20]); ?>
-        </a>
-        <a ng-if="chatList.indexOf(detailId) >= 0" href="javascript:void(0)" ng-click="showDetail(detailId)" class="fRight customer_detail_btn redBtn btn-shadow">
-          <?= $this->Html->image('close.png', ['alt'=>'チャットを終了する', 'width'=>20, 'height' => 20]); ?>
+        <a href="javascript:void(0)" ng-click="showDetail(detailId)" class="fRight customer_detail_btn redBtn btn-shadow">
+          <?= $this->Html->image('close.png', ['alt'=>'チャットを終了する', 'width'=>20, 'height' => 20, 'ng-if="chatList.indexOf(detailId) < 0"']); ?>
+          <?= $this->Html->image('minimize.png', ['alt'=>'詳細を閉じる', 'width'=>20, 'height' => 20, 'ng-if="chatList.indexOf(detailId) >= 0"']); ?>
         </a>
         <!-- 閉じる -->
-        <!-- 最小化 -->
-        <a href="javascript:void(0)" ng-click="showDetail(detailId)" class="fRight customer_detail_btn redBtn btn-shadow">
-          <?= $this->Html->image('minimize.png', ['alt'=>'詳細を閉じる', 'width'=>20, 'height' => 20]); ?>
-        </a>
-        <!-- 最小化 -->
       </div>
     </div>
     <div id="cus_info_contents" class="flexBoxCol">
@@ -30,6 +23,7 @@
           <!-- 現在のチャット -->
             <section class="on" id="currentChat">
               <ul id="chatTalk" class="chatView">
+                <chat-notificate ng-hide="monitorList[detailId]">ページが閉じられました</chat-notificate>
                 <message-list>
                   <ng-create-message ng-repeat="chat in messageList | orderBy: 'sort'"></ng-create-message>
                 </message-list>
@@ -38,7 +32,7 @@
                   <li class="sinclo_re typeing_message" ng-if="typingMessageRe[detailId] && typingMessageRe[detailId] !== ''">{{typingMessageRe[detailId]}}</li>
                 </typing-message>
               </ul>
-              <chat-detail ng-class="{showOption: chatOptionDisabled(detailId)}">
+              <chat-detail ng-class="{showOption: showAchievement()}">
                 <span>成果</span>
                 <label>
                   <?= $this->ngForm->input('achievement',
@@ -142,7 +136,7 @@
         <div class="nowInfo card">
           <dl>
             <dt>状態</dt>
-              <dd>{{tabStatusStr(detail.status)}}</dd>
+              <dd>{{tabStatusStr(detailId)}}</dd>
             <dt>閲覧中ページ</dt>
               <dd class="w100"><a href={{trimToURL(detail.url)}} target="_blank" class="underL" ng-if="detail.title">{{detail.title}}</a><span ng-if="!detail.title">{{trimToURL(detail.url)}}</span></dd>
             <dt>訪問回数</dt>

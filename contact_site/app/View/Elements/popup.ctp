@@ -68,24 +68,8 @@ var popupEvent = {
                         return popupEvent.closeNoPopup();
                     };
                     break;
-                case 'p-cus-connection-full':
-                    var closeBtn = _button("ダイレクト接続");
-                    closeBtn.onclick = function(){
-                        return popupEvent.closePopup(1);
-                    };
-                    var closeBtn = _button();
-                    closeBtn.innerHTML  = "別ウィンドウ接続\n<span class='font-red'>（β版）</span>";
-                    closeBtn.classList.add('betaBtn');
-                    closeBtn.onclick = function(){
-                        return popupEvent.closePopup(2);
-                    };
-                    var closeBtn = _button("接続しない");
-                    closeBtn.onclick = function(){
-                        return popupEvent.closeNoPopup();
-                    };
-                    break;
                 case 'p-cus-connection':
-                    var closeBtn = _button("ダイレクト接続");
+                    var closeBtn = _button("接続");
                     closeBtn.onclick = function(){
                         return popupEvent.closePopup(1);
                     };

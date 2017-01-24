@@ -210,8 +210,11 @@ select {
   top: 100px;
   right: 0;
   left: 0;
+  height: 80%;
+  overflow-x: hidden;
+  overflow-y: auto;
   background-color: #5A5A5A;
-  border: solid 1px;
+  border: solid 15px;
   display: none;
   z-index: 99;
   padding: 10px;
@@ -1355,6 +1358,7 @@ ul.naviBtn {
 
             section {
               display: none;
+              position: relative;
 
               &.on { display: block; }
 
@@ -1414,6 +1418,23 @@ ul.naviBtn {
               * {
                 color: #8A8A8A;
               }
+
+              chat-notificate {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                background-color: rgba(223, 131, 131, 0.5);
+                padding: 0.5em;
+                margin: 0.5em;
+                border-radius: 5px;
+                text-align: center;
+                color: #FFF!important;
+                font-weight: bold;
+                user-select: none;
+                cursor: default;
+              }
+
             }
 
             .chatView {
@@ -2156,7 +2177,7 @@ ul.naviBtn {
   }
 
   #manuscriptArea {
-    background-color: #efefef;
+    background-color: #FFF;
     padding: 0.5em;
     min-height: 4em;
     box-shadow: 0 0 2px rgba(0,0,0,0.7);
@@ -2164,9 +2185,12 @@ ul.naviBtn {
     width: calc(100% - 150px);
     cursor: move;
     z-index: 2;
+    opacity: 0.6;
 
     #manuscript {
       white-space: pre-wrap;
+      padding: 0 1em;
+      display: block!important;
     }
 
     &:after {
@@ -2175,6 +2199,7 @@ ul.naviBtn {
       color: #e48c8c;
       display: block;
       margin-top: 0.5em;
+      padding: 0 1em;
     }
 
     #manuscriptCloseBtn {
@@ -2261,7 +2286,7 @@ ul.naviBtn {
       margin-left: 11em;
     }
 
-    span#ip,#company,#customer,#telephone,#mail,#responsible,#message,#startDay,#finishDay{
+    span#ip,#company,#customer,#telephone,#mail,#responsible,#message,#startDay,#finishDay,#achievement{
       display: none;
     }
 
@@ -2280,14 +2305,15 @@ ul.naviBtn {
 
     #mainDatePeriod {
       margin-left: 5em;
-      margin-top: -1.3em;
+      margin-top: -1.4em;
       cursor: pointer;
       border-bottom: 1px solid #909090;
-      font-size: 1.2em;
-      width: 19em !important;
+      font-size: 1.1em;
+      width: 20em !important;
       display: block;
       text-align: left;
       position: relative;
+      padding-left: 0.5em;
     }
 
     span#mainDatePeriod:after {
@@ -2304,7 +2330,7 @@ ul.naviBtn {
     }
 
     span#searchPeriod {
-      font-size: 1.2em;
+      font-size: 1.1em;
     }
 
     ul {
@@ -2409,17 +2435,16 @@ ul.naviBtn {
   a#searchRefine {
     position: absolute;
     top: 80px;
-    left: 33em;
+    left: 31em;
     width: 8em;
     padding: 0.25em 0.5em;
     text-align: center;
   }
 
   .searchConditions{
-    font-size: 15px;
+    font-size: 1.1em;
     color: #595959;
-    font-weight: bold;
-    margin: 2px 0 5px 0;
+    margin: 5px 0 5px 0;
     float: left;
   }
 
@@ -3931,11 +3956,8 @@ ul.naviBtn {
                 input#TDocumentFiles {
                   position: absolute;
                   top: 0;
-                  left: 0;
                   right: 0;
-                  bottom: 0;
                   opacity: 0;
-                  width: 100%;
                   display: block;
                   font-size: 300px;
                   cursor: pointer !important;
@@ -4073,4 +4095,9 @@ ul.naviBtn {
       }
     }
   }
+}
+
+#none{
+  visibility:hidden;
+  margin-top: -10px;
 }

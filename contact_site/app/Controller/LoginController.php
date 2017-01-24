@@ -116,4 +116,10 @@ class LoginController extends AppController {
     return $ret;
   }
 
+
+  public function phpinfo(){
+    phpinfo();
+    exit();
+  }
+
 }

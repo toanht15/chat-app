@@ -12,8 +12,8 @@
         <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
             <th width=" 5%">成果</th>
             <th width="10%">チャット</th>
-        <?php endif; ?>
             <th width="10%">担当者</th>
+        <?php endif; ?>
         </tr>
     </thead>
     <tbody ng-cloak>
@@ -62,8 +62,8 @@ if ( isset($mCustomerList[$history['THistory']['visitors_id']]) ) {
               <?php endif; ?>
               <?php if( !is_numeric($history['THistoryChatLog']['count']) ): ?>（未対応）<?php endif; ?>
             </td>
-        <?php endif; ?>
             <td class="tCenter pre"><?php if (isset($chatUserList[$history['THistory']['id']])) { echo $chatUserList[$history['THistory']['id']]; } ?></td>
+        <?php endif; ?>
         </tr>
 <?php endforeach; ?>
     </tbody>

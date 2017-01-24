@@ -12,11 +12,15 @@
         'javascript:void(0)',
         array('escape' => false, 'class'=>'skyBlueBtn btn-shadow', 'id' => 'outputCSV'));
       ?>
+    <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
+
+
       <?php echo $this->Html->link(
         'チャットＣＳＶ出力',
         'javascript:void(0)',
         array('escape' => false, 'class'=>'skyBlueBtn btn-shadow', 'id' => 'outputChat'));
       ?>
+    <?php endif; ?>
   </div>
 
   <div id='history_menu' class="p20trl">
@@ -49,8 +53,12 @@
     <?php //指定範囲のある検索
     if(!empty($data['History']['start_day'])||!empty($data['History ']['finish_day'])) { ?>
       <?php //モーダル画面から検索した場合
-      if(isset($data['History']['period'])) { ?>
+      if(isset($data['History']['period'])) {
+        if(($data['History']['period']) == '全期間') { ?>
+        <span id ='mainDatePeriod' name = 'datefilter' class='date'>全期間</span>
+      <?php } else{ ?>
         <span id ='mainDatePeriod' name = 'datefilter'><?= h($data['History']['period']) ?> : <?= h($data['History']['start_day']) ?>-<?= h($data['History']['finish_day']) ?></span>
+        <?php } ?>
       <?php } ?>
       <?php //view側から検索した場合
       if(isset($data['History']['viewPeriod'])) { ?>
@@ -61,25 +69,41 @@
     if(empty($data['History']['start_day'])&&empty($data['History ']['finish_day'])) { ?>
       <span id ='mainDatePeriod' name = 'datefilter' class='date'>全期間</span>
     <?php } ?>
+
     <?php //日程 ?>
     <span id="startDay"></span>
     <span id="finishDay"></span>
     <?php //モーダル画面で検索した場合
       if(!empty($data['History']['ip_address'])||!empty($data['History']['company_name'])
       ||!empty($data['History']['customer_name'])||!empty($data['History']['telephone_number'])
-      ||!empty($data['History']['mail_address'])||!empty($data['History']['responsible_name'])
-      ||!empty($data['History']['message'])) {
+      ||!empty($data['History']['mail_address'])||!empty($data['THistoryChatLog']['responsible_name'])
+      ||!empty($data['THistoryChatLog']['achievement_flg'])||!empty($data['THistoryChatLog']['message'])) {
     ?>
       <span id="ip"><?= h($data['History']['ip_address']) ?></span>
       <span id="company"><?= h($data['History']['company_name']) ?></span>
       <span id="customer"><?= h($data['History']['customer_name']) ?></span>
       <span id="telephone"><?= h($data['History']['telephone_number']) ?></span>
       <span id="mail"><?= h($data['History']['mail_address']) ?></span>
-      <span id="responsible"><?= h($data['History']['responsible_name']) ?></span>
-      <span id="message"><?= h($data['History']['message']) ?></span>
+      <span id="responsible"><?= h($data['THistoryChatLog']['responsible_name']) ?></span>
+      <span id="achievement"><?= h($data['THistoryChatLog']['achievement_flg']) ?></span>
+      <span id="message"><?= h($data['THistoryChatLog']['message']) ?></span>
     <?php } ?>
-
-    <div class='seach_menu'>
+    <?php
+      $none = '';
+      $seach_menu = 'seach_menu';
+      $this->log($data,LOG_DEBUG);
+      //全期間の場合
+      if(empty($data['History'])&&empty($data['THistoryChatLog'])){
+        $none = 'none';
+        $seach_menu='　';
+      }
+      //日程だけ検索の場合
+      if(empty($data['History']['ip_address'])&&empty($data['History']['company_name'])&&empty($data['History']['customer_name'])&&empty($data['History']['telephone_number'])&&empty($data['History']['mail_address'])&&empty($data['THistoryChatLog']['responsible_name'])&&empty($data['THistoryChatLog']['achievement_flg'])&&empty($data['THistoryChatLog']['message'])){
+        $none = 'none';
+        $seach_menu='　';
+      }
+    ?>
+    <div class=<?php echo $seach_menu; ?> id=<?php echo $none ?>>
       <label class='searchConditions'>検索条件</label>
       <ul>
         <span class="dammy">　</span>
@@ -113,16 +137,22 @@
             <span class="value"><?= h($data['History']['mail_address']) ?></span>
           </li>
         <?php } ?>
-        <?php if(!empty($data['History']['responsible_name'])) { ?>
+        <?php if(!empty($data['THistoryChatLog']['responsible_name'])) { ?>
           <li>
             <label>担当者</label>
-            <span class="value"><?= h($data['History']['responsible_name']) ?></span>
+            <span class="value"><?= h($data['THistoryChatLog']['responsible_name']) ?></span>
           </li>
         <?php } ?>
-        <?php if(!empty($data['History']['message'])) { ?>
+        <?php if(isset($data['THistoryChatLog']['achievement_flg']) && $data['THistoryChatLog']['achievement_flg'] !== "" ) { ?>
+          <li>
+            <label>成果</label>
+            <span class="value"><?= $achievementType[h($data['THistoryChatLog']['achievement_flg'])] ?></span>
+          </li>
+        <?php } ?>
+        <?php if(!empty($data['THistoryChatLog']['message'])) { ?>
           <li>
             <label>ﾁｬｯﾄ内容</label>
-            <span class="value"><?= h($data['History']['message']) ?></span>
+            <span class="value"><?= h($data['THistoryChatLog']['message']) ?></span>
           </li>
         <?php } ?>
       </ul>

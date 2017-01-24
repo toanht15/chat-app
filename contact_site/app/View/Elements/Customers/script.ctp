@@ -108,7 +108,11 @@ if ( window.hasOwnProperty('io') ) {
     };
 
   <?php if ( $coreSettings[C_COMPANY_USE_CHAT] && isset($scNum) && strcmp(intval($scFlg), C_SC_ENABLED) === 0 ) :  ?>
-    data.data.scNum = Number("<?=$scNum?>");
+    <?php if ( (($widgetCheck && $opStatus === C_OPERATOR_ACTIVE) || !$widgetCheck) ) {  ?>
+      data.data.scNum = Number("<?=$scNum?>");
+    <?php } else { ?>
+      data.data.scNum = 0;
+    <?php } ?>
   <?php endif; ?>
 
   <?php if ($widgetCheck) { ?>

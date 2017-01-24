@@ -177,7 +177,7 @@ var pdfjsApi = {
   },
   cngPage: function(){
     var script = "", type = sessionStorage.getItem('manuscript');
-    if ( pdfjsApi.manuscript.hasOwnProperty(Number(pdfjsApi.currentPage)) ) {
+    if ( pdfjsApi.manuscript[pdfjsApi.currentPage] !== "" && pdfjsApi.manuscript.hasOwnProperty(Number(pdfjsApi.currentPage)) ) {
       script = pdfjsApi.manuscript[pdfjsApi.currentPage];
       $("#manuscriptArea").css({ 'display': type });
     }
