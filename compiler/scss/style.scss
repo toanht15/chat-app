@@ -2294,6 +2294,11 @@ ul.naviBtn {
   #history_menu {
     height: auto;
 
+    #none{
+      visibility:hidden;
+      margin-top: -10px;
+    }
+
     #date {
       margin-left: 11em;
     }
@@ -4107,9 +4112,4 @@ ul.naviBtn {
       }
     }
   }
-}
-
-#none{
-  visibility:hidden;
-  margin-top: -10px;
 }

@@ -580,6 +580,7 @@
         },
 
         updateCalendars: function() {
+
             if (this.timePicker) {
                 var hour, minute, second;
                 if (this.endDate) {
@@ -620,6 +621,7 @@
         },
 
         renderCalendar: function(side) {
+
             //
             // Build the matrix of dates that will populate the calendar
             //
@@ -848,11 +850,13 @@
 
             html += '</tbody>';
             html += '</table>';
+
             this.container.find('.calendar.' + side + ' .calendar-table').html(html);
 
         },
 
         renderTimePicker: function(side) {
+
             // Don't bother updating the time picker if it's currently disabled
             // because an end date hasn't been clicked yet
             if (side == 'right' && !this.endDate) return;
@@ -1013,6 +1017,7 @@
         },
 
         updateFormInputs: function() {
+
             //ignore mouse movements while an above-calendar text input has focus
             if (this.container.find('input[name=daterangepicker_start]').is(":focus") || this.container.find('input[name=daterangepicker_end]').is(":focus"))
                 return;
@@ -1184,6 +1189,7 @@
         },
 
         hoverRange: function(e) {
+
             //ignore mouse movements while an above-calendar text input has focus
             if (this.container.find('input[name=daterangepicker_start]').is(":focus") || this.container.find('input[name=daterangepicker_end]').is(":focus"))
                 return;
@@ -1312,6 +1318,7 @@
         },
 
         clickDate: function(e) {
+
             if (!$(e.target).hasClass('available')) return;
 
             var title = $(e.target).attr('data-title');
@@ -1477,6 +1484,7 @@
         },
 
         timeChanged: function(e) {
+
             var cal = $(e.target).closest('.calendar'),
                 isLeft = cal.hasClass('left');
 
@@ -1548,6 +1556,7 @@
         },
 
         formInputsFocused: function(e) {
+
             // Highlight the focused input
             this.container.find('input[name="daterangepicker_start"], input[name="daterangepicker_end"]').removeClass('active');
             $(e.target).addClass('active');
