@@ -283,7 +283,7 @@ class HistoriesController extends AppController {
       // 日時
       $dateTime = preg_replace("/[\n,]+/", " ", $val->date);
       $row['date'] = $dateTime;
-    　　// 訪問ユーザ
+      //訪問ユーザ
       $row['ip'] = $val->ip;
       // OS
       $ua = preg_split("/[\n,]+/", $val->useragent);
