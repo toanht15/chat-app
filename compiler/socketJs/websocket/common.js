@@ -537,6 +537,10 @@ var socket, // socket.io
           window.sincloInfo.widgetDisplay = true;
         }
       }
+      // 同時対応上限数の設定があり、超えている場合
+      if ( window.sincloInfo.hasOwnProperty('opFlg') && window.sincloInfo.opFlg === false ) {
+        window.sincloInfo.widgetDisplay = false;
+      }
       // 同期対象とするが、ウィジェットは表示しない
       if (check.isset(window.sincloInfo.dataset) && (check.isset(window.sincloInfo.dataset.hide) && window.sincloInfo.dataset.hide === "1")) {
         window.sincloInfo.widgetDisplay = false;

@@ -234,17 +234,23 @@
       if ( ('pagetime' in obj) ) {
         userInfo.pageTime = obj.pagetime;
       }
-      if ( ('activeOperatorCnt' in obj) ) {
+      if ( obj.hasOwnProperty('activeOperatorCnt') ) {
         window.sincloInfo.activeOperatorCnt = obj.activeOperatorCnt;
+      }
+      if ( obj.hasOwnProperty('opFlg') ) {
+        window.sincloInfo.opFlg = obj.opFlg;
       }
     },
     accessInfo: function(d){
       var obj = common.jParse(d);
       if ( obj.token !== common.token ) return false;
-      if ( ('activeOperatorCnt' in obj) ) {
+      if ( obj.hasOwnProperty('activeOperatorCnt') ) {
         window.sincloInfo.activeOperatorCnt = obj.activeOperatorCnt;
       }
-      if ( ('pagetime' in obj) ) {
+      if ( obj.hasOwnProperty('opFlg') ) {
+        window.sincloInfo.opFlg = obj.opFlg;
+      }
+      if ( obj.hasOwnProperty('pagetime') ) {
         userInfo.pageTime = obj.pagetime;
       }
 
