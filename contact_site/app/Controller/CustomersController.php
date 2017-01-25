@@ -32,7 +32,7 @@ class CustomersController extends AppController {
 
     /* 個人設定を読み込む */
     // ユーザーの最新情報を取得
-    $mUser = $this->MUser->coFind('first', ['fields', '*', 'recursive' => -1]);
+    $mUser = $this->MUser->coFind('first', ['fields', 'conditions' => ['id' => $this->userInfo['id']], 'recursive' => -1]);
     if ( !empty($mUser['MUser']['settings']) ) {
       $mySettings = json_decode($mUser['MUser']['settings']);
       // チャット送信方法
@@ -134,10 +134,10 @@ class CustomersController extends AppController {
       $newSetting = $this->params->data;
 
       // データーベースより取得
-      $mUser = $this->MUser->coFind('first', ['fields', '*', 'recursive' => -1]);
+      $mUser = $this->MUser->coFind('first', ['fields', 'conditions' => ['id' => $this->userInfo['id']], 'recursive' => -1]);
       $mySettings = [];
       if ( !empty($mUser['MUser']['settings']) ) {
-      $mySettings = (array)json_decode($mUser['MUser']['settings']);
+        $mySettings = (array)json_decode($mUser['MUser']['settings']);
       }
       $mySettings[$newSetting['type']] = $newSetting['value'];
       $mUser['MUser']["settings"] = $this->jsonEncode($mySettings);
