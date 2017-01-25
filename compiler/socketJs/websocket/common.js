@@ -2389,7 +2389,9 @@ function emit(evName, data){
   if ( evName == "requestSyncStop" && userInfo.accessType === cnst.access_type.guest ) {
     data.type = 4;
   }
-  if ( evName === "syncReady" ) {
+  if ( evName === "requestSyncStopForSubmit" ) { // ページ離脱直後に送りたいメッセージ
+    data.tabId = userInfo.tabId; // タブの識別ID
+    socket.emit(evName, JSON.stringify(data)); return false;
   }
   /* ここまで：イベント名指定あり */
   var timer = setInterval(function(){
