@@ -324,10 +324,12 @@ class HistoriesController extends AppController {
         }
         if($value['THistoryChatLog']['message_type'] == 98) {
          $row['transmissionKind'] = '通知メッセージ';
+         $row['transmissionPerson'] = $users;
          $value['THistoryChatLog']['message'] = '-'.$users.'が入室しました-';
         }
         if($value['THistoryChatLog']['message_type'] == 99) {
          $row['transmissionKind'] = '通知メッセージ';
+         $row['transmissionPerson'] = $users;
          $value['THistoryChatLog']['message'] = '-'.$users.'が退室しました-';
         }
         // チャットメッセージ
@@ -498,6 +500,8 @@ class HistoriesController extends AppController {
     $visitorsIds = [];
     $chatCond = [];
     $chatLogCond = [];
+    $data['History']['company_start_day'] = substr($this->userInfo['MCompany']['created'],0,10);
+    $data['History']['company_start_day']= str_replace("-", "/",  $data['History']['company_start_day']);
 
     //履歴検索機能
     if($this->request->is('post')) {
@@ -506,7 +510,8 @@ class HistoriesController extends AppController {
 
     if ($this->Session->check('Thistory')) {
       $data = $this->Session->read('Thistory');
-
+      $data['History']['company_start_day'] = substr($this->userInfo['MCompany']['created'],0,10);
+      $data['History']['company_start_day']= str_replace("-", "/",  $data['History']['company_start_day']);
       /* ○ 検索処理 */
 
       //ipアドレス
@@ -809,10 +814,13 @@ class HistoriesController extends AppController {
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
     $this->data = $this->Session->read('Thistory');
+    $today = date("Y/m/d");
+    $start_date = substr($this->userInfo['MCompany']['created'],0,10);
+    $this->request->data['History']['company_start_day'] = str_replace("-", "/",  $start_date);
+
     //範囲が全期間の場合
     if(empty($this->data['History']['start_day']) && empty($this->data['History']['finish_day'])) {
-      $today = date("Y/m/d");
-      $this->request->data['History']['start_day'] = '2015/01/01';
+      $this->request->data['History']['start_day'] = str_replace("-", "/",  $start_date);
       $this->request->data['History']['finish_day'] = $today;
       $this->request->data['History']['period'] = '全期間';
     }

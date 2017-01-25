@@ -70,27 +70,43 @@
       <span id ='mainDatePeriod' name = 'datefilter' class='date'>全期間</span>
     <?php } ?>
 
-    <?php //条件クリアをした時や、最初に来て値が入っていない時
-    if(empty($data['History']['start_day'])&&empty($data['History']['finish_day'])){ ?>
-    <span id="startDay"><?= '2015/01/01' ?></span>
-    <span id="finishDay"><?= date("Y/m/d") ?></span>
-    <?php }  //それ以外の時
-      else if(!empty($data['History']['start_day'])||!empty($data['History']['finish_day'])||!empty($data['History']['ip_address'])||!empty($data['History']['company_name'])
-      ||!empty($data['History']['customer_name'])||!empty($data['History']['telephone_number'])
-      ||!empty($data['History']['mail_address'])||!empty($data['THistoryChatLog']['responsible_name'])
-      ||!empty($data['THistoryChatLog']['achievement_flg'])||!empty($data['THistoryChatLog']['message'])) {
-    ?>
-      <span id="startDay"><?= h($data['History']['start_day']) ?></span>
-      <span id="finishDay"><?= h($data['History']['finish_day']) ?></span>
-      <span id="ip"><?= h($data['History']['ip_address']) ?></span>
-      <span id="company"><?= h($data['History']['company_name']) ?></span>
-      <span id="customer"><?= h($data['History']['customer_name']) ?></span>
-      <span id="telephone"><?= h($data['History']['telephone_number']) ?></span>
-      <span id="mail"><?= h($data['History']['mail_address']) ?></span>
-      <span id="responsible"><?= h($data['THistoryChatLog']['responsible_name']) ?></span>
-      <span id="achievement"><?= h($data['THistoryChatLog']['achievement_flg']) ?></span>
-      <span id="message"><?= h($data['THistoryChatLog']['message']) ?></span>
-    <?php } ?>
+    <?php
+      //条件クリアをした時や、最初に来て値が入っていない時
+      if(empty($data['History']['start_day']) && empty($data['History']['finish_day'])){ ?>
+        <span id="startDay"><?=date("Y/m/d") ?></span>
+        <span id="finishDay"><?= date("Y/m/d") ?></span>
+        <span id="companyStart"><?= h($data['History']['company_start_day']) ?></span>
+      <?php }
+        //全期間検索の場合
+      else if($data['History']['start_day'] == $data['History']['company_start_day'] && $data['History']['finish_day'] == date("Y/m/d")) { ?>
+        <span id="startDay"><?=date("Y/m/d") ?></span>
+        <span id="finishDay"><?= date("Y/m/d") ?></span>
+        <span id="companyStart"><?= h($data['History']['company_start_day']) ?></span>
+        <span id="ip"><?= h($data['History']['ip_address']) ?></span>
+        <span id="company"><?= h($data['History']['company_name']) ?></span>
+        <span id="customer"><?= h($data['History']['customer_name']) ?></span>
+        <span id="telephone"><?= h($data['History']['telephone_number']) ?></span>
+        <span id="mail"><?= h($data['History']['mail_address']) ?></span>
+        <span id="responsible"><?= h($data['THistoryChatLog']['responsible_name']) ?></span>
+        <span id="achievement"><?= h($data['THistoryChatLog']['achievement_flg']) ?></span>
+        <span id="message"><?= h($data['THistoryChatLog']['message']) ?></span>
+       <?php }
+       //それ以外の検索の場合
+      else { ?>
+        <span id="startDay"><?= h($data['History']['start_day']) ?></span>
+        <span id="companyStart"><?= h($data['History']['company_start_day']) ?></span>
+        <span id="finishDay"><?= h($data['History']['finish_day']) ?></span>
+        <span id="ip"><?= h($data['History']['ip_address']) ?></span>
+        <span id="company"><?= h($data['History']['company_name']) ?></span>
+        <span id="customer"><?= h($data['History']['customer_name']) ?></span>
+        <span id="telephone"><?= h($data['History']['telephone_number']) ?></span>
+        <span id="mail"><?= h($data['History']['mail_address']) ?></span>
+        <span id="responsible"><?= h($data['THistoryChatLog']['responsible_name']) ?></span>
+        <span id="achievement"><?= h($data['THistoryChatLog']['achievement_flg']) ?></span>
+        <span id="message"><?= h($data['THistoryChatLog']['message']) ?></span>
+      <?php } ?>
+
+
     <?php
       $none = '';
       $seach_menu = 'seach_menu';

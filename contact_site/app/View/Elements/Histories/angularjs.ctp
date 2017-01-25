@@ -243,7 +243,7 @@ $(document).ready(function(){
       '過去一ヶ月間': [moment().subtract(30, 'days'), moment()],
       '今月': [moment().startOf('month'), moment().endOf('month')],
       '先月': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
-      '全期間': ['2015/01/01', moment()]
+      '全期間': [$('#companyStart').text(), moment()]
     },
     "locale": {
       "format": "YYYY/MM/DD",
@@ -291,15 +291,15 @@ $(document).ready(function(){
 
   $('#mainDatePeriod').on('apply.daterangepicker', function(ev, picker) {
     //全期間検索の場合
-    if($("input[name='daterangepicker_start']").val() == '2015/01/01')　{
+    /*if($("input[name='daterangepicker_start']").val() == '2015/01/01')　{
       $('#startDay').text("");
       $('#finishDay').text("");
-    }
+    }*/
     //それ以外の検索の場合、日にち取得
-    else{
+    //else{
       $('#startDay').text(picker.startDate.format('YYYY/MM/DD'));
       $('#finishDay').text(picker.endDate.format('YYYY/MM/DD'));
-    }
+   // }
     //期間取得(今日、先月など)
     var search_day = $('.active').val();
     //今日
@@ -324,7 +324,7 @@ $(document).ready(function(){
     var lastMonth = moment().subtract(1, 'month').startOf('month');
     lastMonth = lastMonth.format("YYYY/MM/DD");
     //全期間
-    var allDay ='';
+    var allDay = $('#companyStart').text();
 
     //今日
     if(search_day == today){
@@ -365,6 +365,7 @@ $(document).ready(function(){
       $('<form/>', {action: "<?= $this->Html->url(['controller' => 'Histories', 'action' => 'index']) ?>", method: 'post'})
       .append($('<input/>', {type: 'hidden', name: "data[datefilter]", value: $('#startDay').text()+ '-' +$('#finishDay').text()}))
       .append($('<input/>', {type: 'hidden', name: "data[History][start_day]", value: $('#startDay').text()}))
+      .append($('<input/>', {type: 'hidden', name: "data[History][company_start_day]", value: $('#companyStart').text()}))
       .append($('<input/>', {type: 'hidden', name: "data[History][period]", value: search_day}))
       .append($('<input/>', {type: 'hidden', name: "data[History][finish_day]", value: $('#finishDay').text()}))
       .append($('<input/>', {type: 'hidden', name: "data[History][ip_address]", value:  $('#ip').text()}))
