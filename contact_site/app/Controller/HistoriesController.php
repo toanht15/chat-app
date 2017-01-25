@@ -297,8 +297,7 @@ class HistoriesController extends AppController {
         }
         if($value['THistoryChatLog']['message_type'] == 2) {
           $row['transmissionKind'] = 'オペレーター';
-          $users = $value['MUser']['display_name'];
-          $row['transmissionPerson'] = $users."さん";
+          $row['transmissionPerson'] = $value['MUser']['display_name']."さん";
         }
         if($value['THistoryChatLog']['message_type'] == 3) {
           $row['transmissionKind'] = 'オートメッセージ';
