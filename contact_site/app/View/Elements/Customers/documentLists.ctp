@@ -163,34 +163,29 @@ var pdfjsApi = {
     }, pdfjsApi.pagingTimeTerm);
   },
   toggleManuScript: function(){
-    if ( document.getElementById('manuscript').textContent !== "" ) {
-      $("#manuscriptArea").toggle();
-      sessionStorage.setItem('manuscript', $("#manuscriptArea").css('display'));
-    }
-    if ( document.getElementById('manuscriptArea').style.display === "none" ) {
-      document.getElementById('scriptToggleBtn').classList.remove('on');
+    var type = sessionStorage.getItem('manuscript');
+    if ( type === "none" ) {
+      type = 'block';
+      document.getElementById('scriptToggleBtn').classList.add('on');
+      if ( pdfjsApi.manuscript.hasOwnProperty(Number(pdfjsApi.currentPage)) && pdfjsApi.manuscript[pdfjsApi.currentPage] !== "" ) {
+      }
     }
     else {
-      document.getElementById('scriptToggleBtn').classList.add('on');
+      type = 'none';
+      document.getElementById('scriptToggleBtn').classList.remove('on');
     }
-
+    $("#manuscriptArea").css({ 'display': type });
+    sessionStorage.setItem('manuscript', type);
   },
   cngPage: function(){
     var script = "", type = sessionStorage.getItem('manuscript');
-    if ( pdfjsApi.manuscript[pdfjsApi.currentPage] !== "" && pdfjsApi.manuscript.hasOwnProperty(Number(pdfjsApi.currentPage)) ) {
-      script = pdfjsApi.manuscript[pdfjsApi.currentPage];
+    if ( type === "block" && pdfjsApi.manuscript.hasOwnProperty(Number(pdfjsApi.currentPage)) && pdfjsApi.manuscript[pdfjsApi.currentPage] !== "" ) {
       $("#manuscriptArea").css({ 'display': type });
     }
     else {
       $("#manuscriptArea").css({'display': 'none'});
     }
-    if ( document.getElementById('manuscriptArea').style.display === "none" ) {
-      document.getElementById('scriptToggleBtn').classList.remove('on');
-    }
-    else {
-      document.getElementById('scriptToggleBtn').classList.add('on');
-    }
-    document.getElementById('manuscript').textContent = script;
+    document.getElementById('manuscript').textContent = pdfjsApi.manuscript[pdfjsApi.currentPage];
   },
   cngScaleTimer: null,
   cngScale: function(){
@@ -408,6 +403,7 @@ var pdfjsApi = {
         pdfjsApi.pdfUrl = new Uint8Array(this.response);
         pdfjsApi.currentPage = (sessionStorage.getItem('page') !== null) ? Number(sessionStorage.getItem('page')) : 1;
         pdfjsApi.currentScale = (sessionStorage.getItem('scale') !== null) ? Number(sessionStorage.getItem('scale')) : 1;
+        if ( sessionStorage.getItem('manuscript') === null ) { sessionStorage.setItem('manuscript', 'block') }
         pdfjsApi.manuscript = JSON.parse(doc.manuscript);
         pdfjsApi.init();
         document.getElementById('downloadFilePath').href = file;
