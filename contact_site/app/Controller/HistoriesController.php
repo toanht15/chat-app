@@ -324,10 +324,12 @@ class HistoriesController extends AppController {
         }
         if($value['THistoryChatLog']['message_type'] == 98) {
          $row['transmissionKind'] = '通知メッセージ';
+         $row['transmissionPerson'] = $users;
          $value['THistoryChatLog']['message'] = '-'.$users.'が入室しました-';
         }
         if($value['THistoryChatLog']['message_type'] == 99) {
          $row['transmissionKind'] = '通知メッセージ';
+         $row['transmissionPerson'] = $users;
          $value['THistoryChatLog']['message'] = '-'.$users.'が退室しました-';
         }
         // チャットメッセージ
