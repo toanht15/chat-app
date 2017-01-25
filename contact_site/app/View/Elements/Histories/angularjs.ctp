@@ -169,8 +169,8 @@ $(document).ready(function(){
       var tdList = tr.children;
       var row = {};
       for(var u = 0; u < tdList.length; u++){
+        var td = tdList[u];
         if (!(u in noCsvData)) {
-          var td = tdList[u];
           if ( td.children.length === 0 ) {
             row[label[u]] = td.textContent;
           }
@@ -179,6 +179,12 @@ $(document).ready(function(){
           }
           if ( u === (label.length - 1) ) {
             data.push(row);
+          }
+        }
+        else {
+          var id = $(td.children[0]).data('id');
+          if ( id !== null && id !== undefined ) {
+            row['id'] = id;
           }
         }
       }

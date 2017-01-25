@@ -267,13 +267,6 @@ class HistoriesController extends AppController {
       "担当者"
      ];
 
-     if ( $this->coreSettings[C_COMPANY_USE_CHAT] ) {
-      $csv[0][] = "";
-     }
-     else {
-      $csv[0][] = "担当者";
-    }
-
     foreach($ret as $val){
       $row = [];
       // 日時
@@ -288,14 +281,10 @@ class HistoriesController extends AppController {
       $row['browser'] = $ua[1];
       // 参照元URL
       $row['referrer'] = $val->referrer;
-
       //id取得
-      $id = $this->THistory->find('first',array(
-        'conditions' => array(
-          'created' => $row['date']))
-      );
+      $id = $val->id;
+      $chatLog = $this->_getChatLog($id);
 
-      $chatLog = $this->_getChatLog($id['THistory']['id']);
       foreach($chatLog as $key => $value) {
         $users = preg_replace("/[\n,]+/", ", ", $val->user);
         // 送信日時
@@ -308,15 +297,12 @@ class HistoriesController extends AppController {
         }
         if($value['THistoryChatLog']['message_type'] == 2) {
           $row['transmissionKind'] = 'オペレーター';
-          $users = $value['THistoryChatLog']['display_name'];
+          $users = $value['MUser']['display_name']."さん";
           $row['transmissionPerson'] = $users;
         }
         if($value['THistoryChatLog']['message_type'] == 3) {
           $row['transmissionKind'] = 'オートメッセージ';
-          $companyName = $this->MCompany->find('all',[
-          'conditions' => [
-            'id' => $this->userInfo['MCompany']['id']]]);
-          $row['transmissionPerson'] = $companyName[0]['MCompany']['company_name'];
+          $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
         }
         if($value['THistoryChatLog']['message_type'] == 98) {
          $row['transmissionKind'] = '通知メッセージ';
@@ -796,8 +782,6 @@ class HistoriesController extends AppController {
       'order' => 'THistoryChatLog.created',
       'recursive' => -1
     ];
-    /*chat内容のCSV出力のため追加*/
-    $this->THistoryChatLog->virtualFields['display_name'] = 'concat(MUser.display_name,"さん")';
     return $this->THistoryChatLog->find('all', $params);
   }
 
