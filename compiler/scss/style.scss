@@ -1646,7 +1646,12 @@ ul.naviBtn {
               align-items: center;
               display: none;
 
-              &.showOption { display: flex; }
+              &.showOption {
+                display: flex;
+                margin: 0.25em;
+                align-items: center;
+                justify-content: space-around;
+              }
 
               > span {
                 border-radius: 5px;
@@ -1661,9 +1666,8 @@ ul.naviBtn {
               }
 
               #sinclo_sendbtn {
-                width: 80%;
+                width: 18em;
                 background-color: #aeca74;
-                margin: 5px 3px;
 
                 &:hover, &.on {
                   background-color: #9ab562;
@@ -1672,8 +1676,7 @@ ul.naviBtn {
               }
 
               #sinclo_chatEndBtn {
-                width: 20%;
-                margin: 0.25em;
+                width: 4em;
               }
             }
 
