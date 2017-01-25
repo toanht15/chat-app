@@ -300,6 +300,7 @@ class HistoriesController extends AppController {
       );
 
       $chatLog = $this->_getChatLog($id['THistory']['id']);
+      $this->log($chatLog,LOG_DEBUG);
       foreach($chatLog as $key => $value) {
         $users = preg_replace("/[\n,]+/", ", ", $val->user);
         // 送信日時
@@ -313,7 +314,7 @@ class HistoriesController extends AppController {
         if($value['THistoryChatLog']['message_type'] == 2) {
           $row['transmissionKind'] = 'オペレーター';
           $users = $value['THistoryChatLog']['display_name'];
-          $row['transmissionPerson'] = $users;
+          $row['transmissionPerson'] =  $value['MUser']['display_name'];
         }
         if($value['THistoryChatLog']['message_type'] == 3) {
           $row['transmissionKind'] = 'オートメッセージ';
@@ -324,13 +325,13 @@ class HistoriesController extends AppController {
         }
         if($value['THistoryChatLog']['message_type'] == 98) {
          $row['transmissionKind'] = '通知メッセージ';
-         $row['transmissionPerson'] = $users;
-         $value['THistoryChatLog']['message'] = '-'.$users.'が入室しました-';
+         $row['transmissionPerson'] = $value['MUser']['display_name'];
+         $value['THistoryChatLog']['message'] = '-'.$value['MUser']['display_name'].'が入室しました-';
         }
         if($value['THistoryChatLog']['message_type'] == 99) {
          $row['transmissionKind'] = '通知メッセージ';
-         $row['transmissionPerson'] = $users;
-         $value['THistoryChatLog']['message'] = '-'.$users.'が退室しました-';
+         $row['transmissionPerson'] = $value['MUser']['display_name'];
+         $value['THistoryChatLog']['message'] = '-'.$value['MUser']['display_name'].'が退室しました-';
         }
         // チャットメッセージ
         $row['message'] = $value['THistoryChatLog']['message'];
