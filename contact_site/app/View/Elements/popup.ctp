@@ -111,7 +111,14 @@ var popupEvent = {
                     };
                     var closeBtn = _button("閉じる");
                     closeBtn.onclick = function(){
-                        return popupEvent.close();
+                      /*var sheets = document.styleSheets,
+                      sheet = sheets[sheets.length - 1];
+
+                      if (sheet.insertRule){
+                        sheet.insertRule('.daterangepicker.opensleft:before {right:234px}', sheet.cssRules.length);
+                        sheet.insertRule('.daterangepicker.opensleft:after {right:235px}', sheet.cssRules.length);
+                      }*/
+                      return popupEvent.close();
                     };
                     break;
                 case 'p-history-cus':

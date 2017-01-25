@@ -1,18 +1,18 @@
 <script type="text/javascript">
 popupEvent.closePopup = function(){
   //全期間の場合
-  if (!$("#day_search").prop('checked')) {
+  /*if (!$("#day_search").prop('checked')) {
     $("#dateperiod").prop("disabled", true);
     $('#HistoryStartDay').val("");
     $('#HistoryFinishDay').val("");
-  }
+  }*/
   if ($("#g_chat").prop("checked")) {
     document.getElementById('historySearch').action = "Histories?isChat=true";
   }
   else {
     document.getElementById('historySearch').action = "Histories?isChat=false";
   }
-  var period_day = $('.active').text();
+  /*var period_day = $('.active').text();
   //カスタム検索の場合
   if(period_day.match(/[^0-9]/) == null){
     $('#HistoryPeriod').val("");
@@ -20,7 +20,7 @@ popupEvent.closePopup = function(){
   //それ以外の検索の場合
   else{
     $('#HistoryPeriod').val(period_day);
-  }
+  }*/
   $('#historySearch').submit();
 };
 
@@ -33,6 +33,7 @@ popupEvent.customizeBtn = function(){
 <?php echo $this->element('Histories/angularjs') ?>
 <?=  $this->Form->create('History',['id' => 'historySearch','type' => 'post','url' => ['controller' => 'Histories','action' => 'index']]); ?>
   <ul>
+  <?php /*
     <li>
       <p><span>日付</span></p>
       <?php
@@ -46,6 +47,7 @@ popupEvent.customizeBtn = function(){
       ?>
       <span><?= $this->Form->input('datefilter',['label'=> false,'class'=> $extinguish,'div' => false,'id' => 'dateperiod','name'=> 'datefilter']); ?><label class="pointer"><input type="checkbox" id="day_search" <?= $checked ?>><span>指定する</span></label>
     </li>
+    */?>
     <?= $this->Form->hidden('start_day',['label'=> false,'div' => false]); ?>
     <?= $this->Form->hidden('finish_day',['label'=> false,'div' => false]); ?>
     <?= $this->Form->hidden('period',['label'=> false,'div' => false]); ?>
