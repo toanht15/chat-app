@@ -210,9 +210,6 @@ class HistoriesController extends AppController {
       $csv[0][] = "成果";
       $csv[0][] = "チャット担当者";
      }
-     else {
-      $csv[0][] = "担当者";
-    }
 
     foreach($ret as $val){
       $row = [];
@@ -239,11 +236,10 @@ class HistoriesController extends AppController {
       // 成果
      if ( $this->coreSettings[C_COMPANY_USE_CHAT] ) {
         $row['achievement'] = $val->achievement;
+        // 担当者
+        $users = preg_replace("/[\n,]+/", ", ", $val->user);
+        $row['user'] = $users;
       }
-
-      // 担当者
-      $users = preg_replace("/[\n,]+/", ", ", $val->user);
-      $row['user'] = $users;
       $csv[] = $row;
     }
 
