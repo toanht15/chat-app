@@ -776,9 +776,19 @@ io.sockets.on('connection', function (socket) {
         emit.toCompany('getAccessInfo', data, res.siteKey);
       }
       else {
-        send.activeOperatorCnt = getOperatorCnt(res.siteKey);
-        socket.join(res.siteKey + emit.roomKey.client);
-        emit.toMine('accessInfo', send, socket);
+        chatApi.sendCheck(res, function(err, ret){
+          send.activeOperatorCnt = getOperatorCnt(res.siteKey);
+          send.widget = ret.opFlg;
+          send.opFlg = true;
+          if ( ret.opFlg === false ) {
+            send.opFlg = false;
+            if ( res.hasOwnProperty('tabId') && isset(getSessionId(res.siteKey, res.tabId, 'chat')) ) {
+              send.opFlg = true;
+            }
+          }
+          socket.join(res.siteKey + emit.roomKey.client);
+          emit.toMine('accessInfo', send, socket);
+        });
       }
 
     }
@@ -791,7 +801,21 @@ io.sockets.on('connection', function (socket) {
     var obj = JSON.parse(data);
     var actOpCnt = getOperatorCnt(obj.siteKey);
 
-    emit.toMine("retConnectedForSync", {pagetime: Date.parse(d), activeOperatorCnt: actOpCnt}, socket);
+    chatApi.sendCheck(obj, function(err, ret){
+      var opFlg = true;
+      if ( ret.opFlg === false ) {
+        opFlg = false;
+        if ( obj.hasOwnProperty('tabId') && isset(getSessionId(obj.siteKey, obj.tabId, 'chat')) ) {
+          opFlg = true;
+        }
+      }
+      emit.toMine("retConnectedForSync", {
+        pagetime: Date.parse(d),
+        opFlg: opFlg,
+        activeOperatorCnt: actOpCnt
+      }, socket);
+    });
+
   });
 
   socket.on("customerInfo", function (data) {
@@ -1874,7 +1898,12 @@ io.sockets.on('connection', function (socket) {
           if ( userInfo.siteKey in activeOperator ) {
             opKeys = Object.keys(activeOperator[userInfo.siteKey]);
           }
-          emit.toCompany('activeOpCnt', {siteKey: userInfo.siteKey,count: opKeys.length}, userInfo.siteKey);
+          var sendData = {siteKey: userInfo.siteKey,count: opKeys.length, scInfo: scList};
+
+          if ( scList.hasOwnProperty(userInfo.siteKey) ) {
+            sendData.scInfo = scList[userInfo.siteKey].cnt;
+          }
+          emit.toCompany('activeOpCnt', sendData, userInfo.siteKey);
 
         }
       }, 5000);
@@ -1957,7 +1986,13 @@ io.sockets.on('connection', function (socket) {
               sincloCore[info.siteKey][tabId].connectTab = core.parentTabId;
             }
           }
-          emit.toCompany('unsetUser', {siteKey: info.siteKey, tabId: info.tabId}, info.siteKey);
+
+          var sendData = {siteKey: info.siteKey, tabId: info.tabId};
+
+          if ( scList.hasOwnProperty(info.siteKey) ) {
+            sendData.scInfo = scList[info.siteKey].cnt;
+          }
+          emit.toCompany('unsetUser', sendData, info.siteKey);
         }
 
       }, timeout);

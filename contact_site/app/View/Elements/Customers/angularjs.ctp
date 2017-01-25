@@ -1343,6 +1343,18 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           $scope.chatList = $scope.chatList.filter(function(v){
             return (v !== this.t);
           }, {t: obj.tabId});
+
+          <?php if ( $coreSettings[C_COMPANY_USE_CHAT] && strcmp(intval($scFlg), C_SC_ENABLED) === 0 ) :  ?>
+                // チャット対応上限を設定
+                if ( obj.hasOwnProperty('scInfo') && obj.scInfo.hasOwnProperty(<?=$muserId?>) ) {
+                  $scope.scInfo.remain = (isNumber(<?=$scNum?>)) ? Number(<?=$scNum?>) : 0 ;
+                  $scope.scInfo.remain -= Number(obj.scInfo[<?=$muserId?>]);
+                }
+                else {
+                  $scope.scInfo.remain = 0;
+                }
+          <?php endif; ?>
+
         }
         else {
           socket.emit("requestSyncStop", obj);
