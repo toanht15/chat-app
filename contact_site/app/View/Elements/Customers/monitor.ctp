@@ -91,10 +91,10 @@
                     <icon class="questionBtn">？</icon>
                     <icon-annotation>
                       <ul>
-                        <li><?=$this->Html->image('tab_status_open.png', ['alt'=>'ウィジェットが開いている'])?>&emsp;<span>{{tabStatusStr(jsConst.tabInfo.open)}}</span></li>
-                        <li><?=$this->Html->image('tab_status_close.png', ['alt'=>'ウィジェットが閉じている'])?>&emsp;<span>{{tabStatusStr(jsConst.tabInfo.close)}}</span></li>
-                        <li><?=$this->Html->image('tab_status_none.png', ['alt'=>'ウィジェット非表示'])?>&emsp;<span>{{tabStatusStr(jsConst.tabInfo.none)}}</span></li>
-                        <li><?=$this->Html->image('tab_status_disable.png', ['alt'=>'非アクティブ'])?>&emsp;<span>{{tabStatusStr(jsConst.tabInfo.disable)}}</span></li>
+                        <li><?=$this->Html->image('tab_status_open.png', ['alt'=>'ウィジェットが開いている'])?>&emsp;<span>{{jsConst.tabInfoStr[jsConst.tabInfo.open]}}</span></li>
+                        <li><?=$this->Html->image('tab_status_close.png', ['alt'=>'ウィジェットが閉じている'])?>&emsp;<span>{{jsConst.tabInfoStr[jsConst.tabInfo.close]}}</span></li>
+                        <li><?=$this->Html->image('tab_status_none.png', ['alt'=>'ウィジェット非表示'])?>&emsp;<span>{{jsConst.tabInfoStr[jsConst.tabInfo.none]}}</span></li>
+                        <li><?=$this->Html->image('tab_status_disable.png', ['alt'=>'非アクティブ'])?>&emsp;<span>{{jsConst.tabInfoStr[jsConst.tabInfo.disable]}}</span></li>
                       </ul>
                     </icon-annotation>
                   </div>
