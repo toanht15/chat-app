@@ -1898,7 +1898,12 @@ io.sockets.on('connection', function (socket) {
           if ( userInfo.siteKey in activeOperator ) {
             opKeys = Object.keys(activeOperator[userInfo.siteKey]);
           }
-          emit.toCompany('activeOpCnt', {siteKey: userInfo.siteKey,count: opKeys.length}, userInfo.siteKey);
+          var sendData = {siteKey: userInfo.siteKey,count: opKeys.length, scInfo: scList};
+
+          if ( scList.hasOwnProperty(userInfo.siteKey) ) {
+            sendData.scInfo = scList[userInfo.siteKey].cnt;
+          }
+          emit.toCompany('activeOpCnt', sendData, userInfo.siteKey);
 
         }
       }, 5000);
