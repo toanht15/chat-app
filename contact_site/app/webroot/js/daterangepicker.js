@@ -1020,14 +1020,8 @@
             //ignore mouse movements while an above-calendar text input has focus
             if (this.container.find('input[name=daterangepicker_start]').is(":focus") || this.container.find('input[name=daterangepicker_end]').is(":focus"))
                 return;
-            //2017/1/23 view側検索：日にちを選んだ際にinputの中身も変更するため
-            if(this.startDate.format(this.locale.format) == '2015/01/01'){
-              this.container.find('input[name=daterangepicker_start]').val('');
-            }
-            else{
               //ここまで
               this.container.find('input[name=daterangepicker_start]').val(this.startDate.format(this.locale.format));
-            }
             if (this.endDate)
                 this.container.find('input[name=daterangepicker_end]').val(this.endDate.format(this.locale.format));
               //2017/1/23 view側検索：日にちを選んだ際にinputの中身も変更するため
@@ -1199,17 +1193,8 @@
                 this.updateView();
             } else {
               var dates = this.ranges[label];
-              //2017/01/23 全期間検索のため開始日を隠すため
-              if(dates[0].format(this.locale.format)=='2015/01/01'){
-                this.container.find('input[name=daterangepicker_start]').val('');
-                this.container.find('input[name=daterangepicker_end]').val(new Date().getFullYear() + '/' + '0' + (new Date().getMonth() +1) + '/' + new Date().getDate());
-                $("input[name='daterangepicker_end']").val(new Date().getFullYear() + '/' + '0' + (new Date().getMonth() +1) + '/' + new Date().getDate());
-              }
-              else{
-                //ここまで
                 this.container.find('input[name=daterangepicker_start]').val(dates[0].format(this.locale.format));
                 this.container.find('input[name=daterangepicker_end]').val(dates[1].format(this.locale.format));
-              }
             }
 
         },
@@ -1278,15 +1263,8 @@
             var date = cal.hasClass('left') ? this.leftCalendar.calendar[row][col] : this.rightCalendar.calendar[row][col];
 
             if (this.endDate && !this.container.find('input[name=daterangepicker_start]').is(":focus")) {
-              //2017/01/23 全期間検索のときにinput要素を隠すため
-            if($("input[name='daterangepicker_start']").val() == '2015/01/01'){
-              this.container.find('input[name=daterangepicker_start]').val('　');
-              $('#mainDatePeriod').html('- ' + new Date().getFullYear() + '/' + '0' + (new Date().getMonth() +1) + '/' + new Date().getDate());
             }
-            else{
-            }
-            //ここまで
-            } else if (!this.endDate && !this.container.find('input[name=daterangepicker_end]').is(":focus")) {
+            else if (!this.endDate && !this.container.find('input[name=daterangepicker_end]').is(":focus")) {
                 this.container.find('input[name=daterangepicker_end]').val(date.format(this.locale.format));
             }
 
@@ -1403,15 +1381,8 @@
                 } else {
                     //ignore times when comparing dates if time picker is not enabled
                     if (this.startDate.format('YYYY-MM-DD') == this.ranges[range][0].format('YYYY-MM-DD') && this.endDate.format('YYYY-MM-DD') == this.ranges[range][1].format('YYYY-MM-DD')) {
-                        //2017/01/23 カレンダー右側の期間を押したときにinputの中身も変更させるため
-                        if(this.startDate.format('YYYY/MM/DD')=='2015/01/01'){
-                            $('#mainDatePeriod').html('- ' + this.endDate.format('YYYY/MM/DD'));
-                        }
-                        else{
                             $('#mainDatePeriod').html(this.startDate.format('YYYY/MM/DD')+ ' - ' + this.endDate.format('YYYY/MM/DD'));
                             //$('#dateperiod').val(this.startDate.format('YYYY/MM/DD')+ ' - ' + this.endDate.format('YYYY/MM/DD'));
-                        }
-                        //ここまで
                         customRange = false;
                         this.chosenLabel = this.container.find('.ranges li:eq(' + i + ')').addClass('active').html();
                         break;
