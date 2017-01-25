@@ -298,21 +298,16 @@ class HistoriesController extends AppController {
         if($value['THistoryChatLog']['message_type'] == 2) {
           $row['transmissionKind'] = 'オペレーター';
           $users = $value['MUser']['display_name'];
-          $row['transmissionPerson'] = $users;
+          $row['transmissionPerson'] = $users."さん";
         }
         if($value['THistoryChatLog']['message_type'] == 3) {
           $row['transmissionKind'] = 'オートメッセージ';
           $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
         }
-        if($value['THistoryChatLog']['message_type'] == 98) {
-         $row['transmissionKind'] = '通知メッセージ';
-         $row['transmissionPerson'] = $value['MUser']['display_name'];
-         $value['THistoryChatLog']['message'] = '-'.$value['MUser']['display_name'].'が入室しました-';
-        }
-        if($value['THistoryChatLog']['message_type'] == 99) {
-         $row['transmissionKind'] = '通知メッセージ';
-         $row['transmissionPerson'] = $value['MUser']['display_name'];
-         $value['THistoryChatLog']['message'] = '-'.$value['MUser']['display_name'].'が退室しました-';
+        if($value['THistoryChatLog']['message_type'] == 98 || $value['THistoryChatLog']['message_type'] == 99) {
+          $row['transmissionKind'] = '通知メッセージ';
+          $row['transmissionPerson'] = "";
+          $value['THistoryChatLog']['message'] = '-'.$value['MUser']['display_name'].'が'.$value['THistoryChatLog']['message'].'しました-';
         }
         // チャットメッセージ
         $row['message'] = $value['THistoryChatLog']['message'];
