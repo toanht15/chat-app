@@ -280,27 +280,11 @@ $(document).ready(function(){
       "firstDay": 1
     },
     "alwaysShowCalendars": true,
-    "startDate": $('#HistoryStartDay').val(),
-    "endDate": $('#HistoryFinishDay').val(),
+    "startDate": $('#startDay').text(),
+    "endDate": $('#finishDay').text(),
     "opens": "left"
   });
 
-  //モーダルのカレンダーの設定ボタン
-  /*$('input[name="datefilter"]').on('apply.daterangepicker', function(ev, picker) {
-    $('#HistoryStartDay').val(picker.startDate.format('YYYY/MM/DD'));
-    $('#HistoryFinishDay').val(picker.endDate.format('YYYY/MM/DD'));
-
-    //期間取得(今日、先月など)
-    var period_day = $('.active').text();
-    //カスタム検索の場合
-    if(period_day.match(/[^0-9]/) == null){
-      $('#HistoryPeriod').val("");
-    }
-    //それ以外の検索の場合
-    else{
-      $('#HistoryPeriod').val(period_day);
-    }
-  });*/
   $('.cancelBtn').on('click', function() {
     $('#mainDatePeriod').html('　');
   });
@@ -317,11 +301,64 @@ $(document).ready(function(){
       $('#finishDay').text(picker.endDate.format('YYYY/MM/DD'));
     }
     //期間取得(今日、先月など)
-    var search_day = $('.active').text();
-    //カスタム検索の場合
-    if(search_day.match(/[^0-9]/) == null){
-      search_day = "";
+    var search_day = $('.active').val();
+    //今日
+    var today = moment();
+    today = today.format("YYYY/MM/DD");
+    //昨日
+    var yesterday = moment().subtract(1, 'days');
+    yesterday = yesterday.format("YYYY/MM/DD");
+    //過去一週間
+    var oneWeekAgo = moment().subtract(6, 'days');
+    oneWeekAgo = oneWeekAgo.format("YYYY/MM/DD");
+    //過去一か月間
+    var oneMonthAgo = moment().subtract(30, 'days');
+    oneMonthAgo = oneMonthAgo.format("YYYY/MM/DD");
+    //過去一ヵ月間
+    var thisMonth = moment().startOf('month');
+    thisMonth = thisMonth.format("YYYY/MM/DD");
+    //今月
+    var thisMonth = moment().startOf('month');
+    thisMonth = thisMonth.format("YYYY/MM/DD");
+    //先月
+    var lastMonth = moment().subtract(1, 'month').startOf('month');
+    lastMonth = lastMonth.format("YYYY/MM/DD");
+    //全期間
+    var allDay ='';
+
+    //今日
+    if(search_day == today){
+      search_day = "今日";
     }
+    //昨日
+    else if(search_day == yesterday){
+      search_day = "昨日";
+    }
+    //過去一週間
+    else if(search_day == oneWeekAgo){
+      search_day = "過去一週間";
+    }
+    //過去一か月間
+    else if(search_day == oneMonthAgo){
+      search_day = "過去一ヵ月間";
+    }
+    //今月
+    else if(search_day == thisMonth){
+      search_day = "今月";
+    }
+    //先月
+    else if(search_day == lastMonth){
+      search_day = "先月";
+    }
+    //全期間
+    else if(search_day == allDay){
+      search_day = "全期間";
+    }
+    //カスタム
+    else {
+      search_day = "カスタム";
+    }
+
     //モーダルの検索ボタンと被らないようにする
     if ( !$("#popup.popup-on #popup-frame ").is(".p-thistory-entry") ) {
       //form作成

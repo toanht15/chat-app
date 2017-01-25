@@ -259,7 +259,7 @@ class HistoriesController extends AppController {
 
     // ヘッダー
     $csv[] = [
-      "日時",
+      "訪問日時",
       "訪問ユーザ",
       "プラットフォーム",
       "ブラウザ",
@@ -301,8 +301,10 @@ class HistoriesController extends AppController {
 
       $chatLog = $this->_getChatLog($id['THistory']['id']);
       foreach($chatLog as $key => $value) {
+        $users = preg_replace("/[\n,]+/", ", ", $val->user);
         // 送信日時
-        $row['pageCnt'] = preg_replace("/[\n,]+/", " ", $value['THistoryChatLog']['created']);
+        $row['pageCnt'] =  substr(preg_replace("/[\n,]+/", " ", $value['THistoryChatLog']['created']),0,20);
+
         // 送信種別
         if($value['THistoryChatLog']['message_type'] == 1) {
           $row['transmissionKind'] = '訪問者';
@@ -321,12 +323,16 @@ class HistoriesController extends AppController {
           $row['transmissionPerson'] = $companyName[0]['MCompany']['company_name'];
         }
         if($value['THistoryChatLog']['message_type'] == 98) {
-          continue;
+         $row['transmissionKind'] = '通知メッセージ';
+         $value['THistoryChatLog']['message'] = '-'.$users.'が入室しました-';
+        }
+        if($value['THistoryChatLog']['message_type'] == 99) {
+         $row['transmissionKind'] = '通知メッセージ';
+         $value['THistoryChatLog']['message'] = '-'.$users.'が退室しました-';
         }
         // チャットメッセージ
         $row['message'] = $value['THistoryChatLog']['message'];
         // チャット担当者
-        $users = preg_replace("/[\n,]+/", ", ", $val->user);
         $row['user'] = $users;
         $csv[] = $row;
       }
@@ -500,40 +506,6 @@ class HistoriesController extends AppController {
 
     if ($this->Session->check('Thistory')) {
       $data = $this->Session->read('Thistory');
-      //検索期間ワード(ex,今日、今月など)
-      if(isset($data['History']['period'])){
-        //カスタム検索の場合
-        if(mb_strlen($data['History']['period'])==0){
-          $data['History']['period'] = "カスタム";
-        }
-        //今月、先月、過去一か月間の検索の場合
-        else if(mb_strlen($data['History']['period'])==4 || mb_strlen($data['History']['period'])==8){
-          //条件クリアした際の処理
-          if($data['History']['period']=='1全期間') {
-            $data['History']['period'] = substr($data['History']['period'], 1);
-          }
-          else{
-            $data['History']['period'] = substr($data['History']['period'], 2);
-          }
-        }
-        //今月、先月の検索の場合
-        else if(mb_strlen($data['History']['period'])==7){
-          $data['History']['period'] = substr($data['History']['period'], 5);
-        }
-        //全期間の場合
-        else if(mb_strlen($data['History']['period'])==5){
-          $data['History']['period'] = substr($data['History']['period'], 2);
-        }
-        //数字がつかず、言葉がそのまま入ってくる場合
-        else if(mb_strlen($data['History']['period'])==2 ||mb_strlen($data['History']['period'])==3
-          ||mb_strlen($data['History']['period'])==5 ||mb_strlen($data['History']['period'])==6  ){
-          $data['History']['period'] = substr($data['History']['period'], 0);
-        }
-        //それ以外の検索の場合
-        else{
-          $data['History']['period'] = substr($data['History']['period'], 4);
-        }
-      }
 
       /* ○ 検索処理 */
 
