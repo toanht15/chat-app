@@ -296,7 +296,6 @@ class HistoriesController extends AppController {
       );
 
       $chatLog = $this->_getChatLog($id['THistory']['id']);
-      $this->log($chatLog,LOG_DEBUG);
       foreach($chatLog as $key => $value) {
         $users = preg_replace("/[\n,]+/", ", ", $val->user);
         // 送信日時
