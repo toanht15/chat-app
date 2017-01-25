@@ -1981,7 +1981,13 @@ io.sockets.on('connection', function (socket) {
               sincloCore[info.siteKey][tabId].connectTab = core.parentTabId;
             }
           }
-          emit.toCompany('unsetUser', {siteKey: info.siteKey, tabId: info.tabId}, info.siteKey);
+
+          var sendData = {siteKey: info.siteKey, tabId: info.tabId};
+
+          if ( scList.hasOwnProperty(info.siteKey) ) {
+            sendData.scInfo = scList[info.siteKey].cnt;
+          }
+          emit.toCompany('unsetUser', sendData, info.siteKey);
         }
 
       }, timeout);
