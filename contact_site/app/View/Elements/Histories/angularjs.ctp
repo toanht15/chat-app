@@ -106,7 +106,12 @@ $(document).ready(function(){
     var tbody = document.querySelector('#history_list tbody');
     var data = [];
     // CSVに不要な列が追加されたら空をセット
+<?php if ($coreSettings[C_COMPANY_USE_CHAT]) { ?>
     var label = ["date","","ip","useragent","campaign","referrer","pageCnt","visitTime","achievement","status", "user"];
+<?php } else { ?>
+    var label = ["date","","ip","useragent","campaign","referrer","pageCnt","visitTime"];
+<?php } ?>
+
     var noCsvData = {};
 
     for (var a = 0; a < thead.children[0].children.length; a++) {
