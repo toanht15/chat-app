@@ -97,9 +97,11 @@
         <span id="customer"><?= h($data['History']['customer_name']) ?></span>
         <span id="telephone"><?= h($data['History']['telephone_number']) ?></span>
         <span id="mail"><?= h($data['History']['mail_address']) ?></span>
-        <span id="responsible"><?= h($data['THistoryChatLog']['responsible_name']) ?></span>
-        <span id="achievement"><?= h($data['THistoryChatLog']['achievement_flg']) ?></span>
-        <span id="message"><?= h($data['THistoryChatLog']['message']) ?></span>
+        <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
+          <span id="responsible"><?= h($data['THistoryChatLog']['responsible_name']) ?></span>
+          <span id="achievement"><?= h($data['THistoryChatLog']['achievement_flg']) ?></span>
+          <span id="message"><?= h($data['THistoryChatLog']['message']) ?></span>
+        <?php endif; ?>
        <?php }
        //それ以外の検索の場合
       else { ?>
@@ -111,9 +113,11 @@
         <span id="customer"><?= h($data['History']['customer_name']) ?></span>
         <span id="telephone"><?= h($data['History']['telephone_number']) ?></span>
         <span id="mail"><?= h($data['History']['mail_address']) ?></span>
-        <span id="responsible"><?= h($data['THistoryChatLog']['responsible_name']) ?></span>
-        <span id="achievement"><?= h($data['THistoryChatLog']['achievement_flg']) ?></span>
-        <span id="message"><?= h($data['THistoryChatLog']['message']) ?></span>
+        <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
+          <span id="responsible"><?= h($data['THistoryChatLog']['responsible_name']) ?></span>
+          <span id="achievement"><?= h($data['THistoryChatLog']['achievement_flg']) ?></span>
+          <span id="message"><?= h($data['THistoryChatLog']['message']) ?></span>
+        <?php endif; ?>
       <?php } ?>
 
 

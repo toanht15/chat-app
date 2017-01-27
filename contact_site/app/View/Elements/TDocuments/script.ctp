@@ -51,7 +51,7 @@ function saveAct(){
 
 //一覧画面削除機能
 function removeAct(id){
-  modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', 'オートメッセージ設定', 'moment');
+  modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', '資料設定', 'moment');
   popupEvent.closePopup = function(){
     $.ajax({
       type: 'post',
@@ -69,7 +69,7 @@ function removeAct(id){
 
 //登録・更新画面削除機能
 function removeActEdit(){
-  modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', 'オートメッセージ設定', 'moment');
+  modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', '資料設定', 'moment');
   popupEvent.closePopup = function(){
     $.ajax({
       type: 'post',

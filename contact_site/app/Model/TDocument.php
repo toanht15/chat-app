@@ -27,7 +27,7 @@ class TDocument extends AppModel {
         'message' => 'PDFファイルを添付してください'
       ],
       'fileSize' => [
-        'rule' => ['fileSize', '<=', '1GB'],
+        'rule' => ['fileSize', '<=', '10MB'],
         'allowEmpty' => true,
         'message' => '10MB以上のファイルは添付できません'
       ]
