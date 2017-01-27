@@ -546,6 +546,7 @@ class HistoriesController extends AppController {
       if ( isset($data['THistoryChatLog']['message']) && $data['THistoryChatLog']['message'] !== "" ) {
         // メッセージ条件に対応した履歴のリストを取得するサブクエリを作成
         $message = $this->THistoryChatLog->getDataSource();
+        $this->log($message,LOG_DEBUG);
         $hisIdsForMessageQuery = $message->buildStatement(
           [
             'table' => $message->fullTableName($this->THistoryChatLog),

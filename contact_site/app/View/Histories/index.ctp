@@ -45,9 +45,19 @@
     </div>
 
     <?= $this->Html->link(
-      '絞り込み検索',
+      '高度な条件',
       'javascript:void(0)',
       array('escape' => false, 'class'=>'skyBlueBtn btn-shadow','id' => 'searchRefine','onclick' => 'openSearchRefine()'));
+    ?>
+    <?= $this->Html->link(
+      '検索',
+      'javascript:void(0)',
+      array('escape' => false, 'class'=>'skyBlueBtn btn-shadow','id' => 'searchRefine2','onclick' => 'openSearchRefine()'));
+    ?>
+    <?= $this->Html->link(
+      '条件クリア',
+      'javascript:void(0)',
+      array('escape' => false, 'class'=>'skyBlueBtn btn-shadow','id' => 'searchRefine3','onclick' => 'openSearchRefine()'));
     ?>
     <span id="searchPeriod">検索期間</span>
     <?php //指定範囲のある検索

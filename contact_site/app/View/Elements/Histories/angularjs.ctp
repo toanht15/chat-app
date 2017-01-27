@@ -253,7 +253,7 @@ $(document).ready(function(){
     "locale": {
       "format": "YYYY/MM/DD",
       "separator": " - ",
-      "applyLabel": "検索",
+      "applyLabel": "設定",
       "cancelLabel": "閉じる",
       "fromLabel": "From",
       "toLabel": "To",
@@ -291,7 +291,70 @@ $(document).ready(function(){
   });
 
   $('.cancelBtn').on('click', function() {
-    $('#mainDatePeriod').html('　');
+    var search_day = $('.active').val();
+    //今日
+    var today = moment();
+    today = today.format("YYYY/MM/DD");
+    //昨日
+    var yesterday = moment().subtract(1, 'days');
+    yesterday = yesterday.format("YYYY/MM/DD");
+    //過去一週間
+    var oneWeekAgo = moment().subtract(6, 'days');
+    oneWeekAgo = oneWeekAgo.format("YYYY/MM/DD");
+    //過去一か月間
+    var oneMonthAgo = moment().subtract(30, 'days');
+    oneMonthAgo = oneMonthAgo.format("YYYY/MM/DD");
+    //過去一ヵ月間
+    var thisMonth = moment().startOf('month');
+    thisMonth = thisMonth.format("YYYY/MM/DD");
+    //今月
+    var thisMonth = moment().startOf('month');
+    thisMonth = thisMonth.format("YYYY/MM/DD");
+    //先月
+    var lastMonth = moment().subtract(1, 'month').startOf('month');
+    lastMonth = lastMonth.format("YYYY/MM/DD");
+    //全期間
+    var allDay = $('#companyStart').text();
+
+    //今日
+    if(search_day == today){
+      search_day = "今日";
+    }
+    //昨日
+    else if(search_day == yesterday){
+      search_day = "昨日";
+    }
+    //過去一週間
+    else if(search_day == oneWeekAgo){
+      search_day = "過去一週間";
+    }
+    //過去一か月間
+    else if(search_day == oneMonthAgo){
+      search_day = "過去一ヵ月間";
+    }
+    //今月
+    else if(search_day == thisMonth){
+      search_day = "今月";
+    }
+    //先月
+    else if(search_day == lastMonth){
+      search_day = "先月";
+    }
+    //全期間
+    else if(search_day == allDay){
+      search_day = "全期間";
+    }
+    //カスタム
+    else {
+      search_day = "カスタム";
+    }
+
+    //$('#mainDatePeriod').html(search_day + ' : ' + $("input[name=daterangepicker_start]").val() + '-' + $("input[name=daterangepicker_end]").val());
+     $('#mainDatePeriod').html('　');
+    var aaa = $("input[name=daterangepicker_start]").val();
+    $("#HistoryStartDay").val(aaa);
+    console.log($("#HistoryStartDay").val());
+    $("#HistoryFinishDay").val($("input[name=daterangepicker_end]").val());
   });
 
   $('#mainDatePeriod').on('apply.daterangepicker', function(ev, picker) {

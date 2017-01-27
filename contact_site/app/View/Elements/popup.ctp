@@ -101,14 +101,14 @@ var popupEvent = {
                     };
                     break;
                 case 'p-thistory-entry':
-                    var entryBtn = _button("検索する");
+                    var entryBtn = _button("設定");
                     entryBtn.onclick = function(){
                         return popupEvent.closePopup();
                     };
-                    var closeBtn = _button("条件クリア");
+                    /*var closeBtn = _button("条件クリア");
                     closeBtn.onclick = function(){
                         return popupEvent.customizeBtn();
-                    };
+                    };*/
                     var closeBtn = _button("閉じる");
                     closeBtn.onclick = function(){
                       /*var sheets = document.styleSheets,

@@ -15,7 +15,7 @@ function openSearchRefine(){
     cache: false,
     url: "<?= $this->Html->url(['controller' => 'Histories', 'action' => 'remoteSearchCustomerInfo']) ?>",
     success: function(html){
-      modalOpen.call(window, html, 'p-thistory-entry', '絞り込み検索', 'moment');
+      modalOpen.call(window, html, 'p-thistory-entry', '高度な条件', 'moment');
     }
   });
 }
