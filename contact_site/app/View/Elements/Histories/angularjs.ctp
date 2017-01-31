@@ -248,10 +248,12 @@ $(document).ready(function(){
       "opens": "left"
     });
 
+    //閉じるボタン
     $('.cancelBtn').on('click', function() {
       $('#mainDatePeriod').text(userList.period + ' : ' + userList.start + '-' + userList.finish);
     });
 
+    //設定ボタン
     $('#mainDatePeriod').on('apply.daterangepicker', function(ev, picker) {
       //期間取得(今日、先月など)
       var search_day  = $('.active').val();
@@ -316,6 +318,7 @@ $(document).ready(function(){
       userList.finish = $("input[name=daterangepicker_end]").val();
       userList.period = search_day;
 
+      //検索期間欄に表示
       $('#mainDatePeriod').html(userList.period  + ' : ' + userList.start + '-' + userList.finish);
     });
   }

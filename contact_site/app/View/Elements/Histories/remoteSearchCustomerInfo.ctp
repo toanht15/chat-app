@@ -1,5 +1,6 @@
 <script type="text/javascript">
 
+//設定ボタンを入力した後に表示
 $('#HistoryIpAddress').val(userList.ip);
 $('#HistoryCompanyName').val(userList.company);
 $('#HistoryCustomerName').val(userList.customer);
