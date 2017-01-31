@@ -52,53 +52,24 @@
     <?= $this->Html->link(
       '検索',
       'javascript:void(0)',
-      array('escape' => false, 'class'=>'skyBlueBtn btn-shadow','id' => 'searchRefine2','onclick' => 'openSearchRefin2()'));
+      array('escape' => false, 'class'=>'skyBlueBtn btn-shadow','id' => 'searchInfo','onclick' => 'searchCustomerInfo()'));
     ?>
     <?= $this->Html->link(
       '条件クリア',
       'javascript:void(0)',
-      array('escape' => false, 'class'=>'skyBlueBtn btn-shadow','id' => 'searchRefine3','onclick' => 'openSearchRefine()'));
+      array('escape' => false, 'class'=>'skyBlueBtn btn-shadow','id' => 'sessionClear','onclick' => 'sessionClear()'));
     ?>
     <span id="searchPeriod">検索期間</span>
-    <?php //指定範囲のある検索
-    if(!empty($data['History']['start_day'])||!empty($data['History ']['finish_day'])) { ?>
-      <?php //モーダル画面から検索した場合
-      if(isset($data['History']['period'])) {
-        if(($data['History']['period']) == '全期間') { ?>
-        <span id ='mainDatePeriod' name = 'datefilter' class='date'>全期間</span>
-      <?php } else{ ?>
+    <?php //検索をした時の表示
+      if(!empty($data['History']['start_day'])||!empty($data['History ']['finish_day'])) { ?>
         <span id ='mainDatePeriod' name = 'datefilter'><?= h($data['History']['period']) ?> : <?= h($data['History']['start_day']) ?>-<?= h($data['History']['finish_day']) ?></span>
-        <?php } ?>
-      <?php } ?>
-      <?php //view側から検索した場合
-      if(isset($data['History']['viewPeriod'])) { ?>
-       <span id ='mainDatePeriod' name = 'datefilter'><?= h($data['History']['viewPeriod']) ?> : <?= h($data['History']['start_day']) ?>-<?= h($data['History']['finish_day']) ?></span>
-      <?php } ?>
     <?php } ?>
-    <?php //全期間の検索
-    if(empty($data['History']['start_day'])&&empty($data['History ']['finish_day'])) { ?>
-      <span id ='mainDatePeriod' name = 'datefilter' class='date'>全期間 : <?= h($responderList['start']) ?>-<?= h($responderList['finish']) ?></span>
+    <?php //セッションをクリアしたときの表示
+      if(empty($data['History']['start_day'])&&empty($data['History ']['finish_day'])) { ?>
+        <span id ='mainDatePeriod' name = 'datefilter' class='date'>全期間 : <?= h($responderList['start']) ?>-<?= h($responderList['finish']) ?></span>
     <?php } ?>
 
-
-    <?php
-      $none = '';
-      $seach_menu = 'seach_menu';
-      //全期間の場合
-      if(empty($data['History'])&&empty($data['THistoryChatLog'])){
-        $none = 'none';
-        $seach_menu='　';
-      }
-      //日程だけ検索の場合
-      if(empty($data['History']['ip_address'])&&empty($data['History']['company_name'])
-        &&empty($data['History']['customer_name'])&&empty($data['History']['telephone_number'])
-        &&empty($data['History']['mail_address'])&&empty($data['THistoryChatLog']['responsible_name'])
-        &&empty($data['THistoryChatLog']['achievement_flg'])&&empty($data['THistoryChatLog']['message'])){
-        $none = 'none';
-        $seach_menu='　';
-      }
-    ?>
-    <div class=<?= $seach_menu; ?> id=<?= $none ?>>
+    <div class= 'seach_menu'>
       <label class='searchConditions'>検索条件</label>
       <ul>
         <span class="dammy">　</span>

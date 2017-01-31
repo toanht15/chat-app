@@ -66,21 +66,20 @@ class HistoriesController extends AppController {
     // 成果の名称リスト
     $this->set('achievementType', Configure::read('achievementType'));
     $data = $this->Session->read('Thistory');
-    $this->log($data['History']['ip_address'],LOG_DEBUG);
     $start_date = substr($this->userInfo['MCompany']['created'],0,10);
     $companyStartDay = str_replace("-", "/",  $start_date);
-    $today = date("Y/m/d");
     if($data==null){
-      $arr = array('start' => $companyStartDay,'finish' => $today, 'period' => '','companyStart' => $companyStartDay,'ip' => '', 'company' => '', 'customer' => '','telephone' => '','mail' => '','responsible' => '','message' => '');
+      $arr = array('start' => $companyStartDay,'finish' => date("Y/m/d"), 'period' => '全期間',
+      'companyStartDay' => $companyStartDay,'ip' => '', 'company' => '', 'customer' => '',
+      'telephone' => '','mail' => '','responsible' => '','message' => '');
       $this->set('responderList', $arr);
     }
     else{
       $arr = array('start' => $data['History']['start_day'],'finish' => $data['History']['finish_day'],
-        'period' => $data['History']['period'],'companyStart' => $companyStartDay,'ip' => $data['History']['ip_address'],
-        'company' =>  $data['History']['company_name'],'customer' => $data['History']['customer_name'],
-        'telephone' => $data['History']['telephone_number'],'mail' => $data['History']['mail_address'],
-        'responsible' => $data['THistoryChatLog']['responsible_name'],'message' => $data['THistoryChatLog']['message']);
-
+      'period' => $data['History']['period'],'companyStartDay' => $companyStartDay,'ip' => $data['History']['ip_address'],
+      'company' =>  $data['History']['company_name'],'customer' => $data['History']['customer_name'],
+      'telephone' => $data['History']['telephone_number'],'mail' => $data['History']['mail_address'],
+      'responsible' => $data['THistoryChatLog']['responsible_name'],'message' => $data['THistoryChatLog']['message']);
       $this->set('responderList', $arr);
     }
   }
@@ -486,13 +485,6 @@ class HistoriesController extends AppController {
     return array_keys($visitorsIds);
   }
 
-  public function aiueo() {
-    Configure::write('debug', 0);
-    $this->autoRender = FALSE;
-    $this->layout = 'ajax';
-    $this->Session->write('Thistory', $this->request->data);
-  }
-
   private function _setList($type=true){
     $data = '';
     $userCond = [
@@ -501,21 +493,14 @@ class HistoriesController extends AppController {
     $visitorsIds = [];
     $chatCond = [];
     $chatLogCond = [];
-    $data['History']['company_start_day'] = substr($this->userInfo['MCompany']['created'],0,10);
-    $data['History']['company_start_day']= str_replace("-", "/",  $data['History']['company_start_day']);
 
     //履歴検索機能
     if($this->request->is('post')) {
       $this->Session->write('Thistory', $this->data);
-      //$data = $this->Session->read('Thistory');
-      //$this->log($data['History'],LOG_DEBUG);
     }
 
     if ($this->Session->check('Thistory')) {
       $data = $this->Session->read('Thistory');
-      //$this->log($data,LOG_DEBUG);
-      $data['History']['company_start_day'] = substr($this->userInfo['MCompany']['created'],0,10);
-      $data['History']['company_start_day']= str_replace("-", "/",  $data['History']['company_start_day']);
       /* ○ 検索処理 */
 
       //ipアドレス
@@ -816,14 +801,6 @@ class HistoriesController extends AppController {
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
     $this->data = $this->Session->read('Thistory');
-    $today = date("Y/m/d");
-    $start_date = substr($this->userInfo['MCompany']['created'],0,10);
-    $this->request->data['History']['company_start_day'] = str_replace("-", "/",  $start_date);
-    if(!empty($startDay)&&!empty($finishDay)){
-    $this->request->data['History']['start_day'] = $startDay;
-    $this->request->data['History']['finish_day'] = $finishDay;
-    $this->request->data['History']['period'] = $period;
-   }
     // 成果種別リスト
     $this->set('achievementType', Configure::read('achievementType'));
     // const
