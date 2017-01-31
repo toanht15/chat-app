@@ -1016,6 +1016,7 @@
         },
 
         updateFormInputs: function() {
+
             //ignore mouse movements while an above-calendar text input has focus
             if (this.container.find('input[name=daterangepicker_start]').is(":focus") || this.container.find('input[name=daterangepicker_end]').is(":focus"))
                 return;
@@ -1183,6 +1184,7 @@
         },
 
         hoverRange: function(e) {
+
             //ignore mouse movements while an above-calendar text input has focus
             if (this.container.find('input[name=daterangepicker_start]').is(":focus") || this.container.find('input[name=daterangepicker_end]').is(":focus"))
                 return;
@@ -1247,6 +1249,7 @@
         },
 
         hoverDate: function(e) {
+
             //ignore mouse movements while an above-calendar text input has focus
             //if (this.container.find('input[name=daterangepicker_start]').is(":focus") || this.container.find('input[name=daterangepicker_end]').is(":focus"))
             //    return;
@@ -1295,6 +1298,7 @@
         },
 
         clickDate: function(e) {
+
             if (!$(e.target).hasClass('available')) return;
 
             var title = $(e.target).attr('data-title');

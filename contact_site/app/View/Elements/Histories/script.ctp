@@ -1,6 +1,4 @@
 <script type="text/javascript">
-'use strict';
-
 //モーダル画面
 function openSearchRefine(){
   $.ajax({

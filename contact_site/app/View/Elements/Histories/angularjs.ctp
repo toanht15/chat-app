@@ -1,7 +1,6 @@
 <script type="text/javascript">
 'use strict';
   var userList = <?php echo json_encode($responderList);?>;
-  console.log(userList);
 
   var sincloApp = angular.module('sincloApp', ['ngSanitize']);
   sincloApp.controller('MainCtrl', function($scope) {

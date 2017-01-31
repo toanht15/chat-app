@@ -9,7 +9,6 @@ $('#THistoryChatLogResponsibleName').val(userList.responsible);
 $('#THistoryChatLogMessage').val(userList.message);
 
 popupEvent.closePopup = function(){
-  "use strict;"
   if ($("#g_chat").prop("checked")) {
     document.getElementById('historySearch').action = "Histories?isChat=true";
   }
