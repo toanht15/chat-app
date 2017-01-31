@@ -52,7 +52,7 @@
     <?= $this->Html->link(
       '検索',
       'javascript:void(0)',
-      array('escape' => false, 'class'=>'skyBlueBtn btn-shadow','id' => 'searchRefine2','onclick' => 'openSearchRefine()'));
+      array('escape' => false, 'class'=>'skyBlueBtn btn-shadow','id' => 'searchRefine2','onclick' => 'openSearchRefin2()'));
     ?>
     <?= $this->Html->link(
       '条件クリア',
@@ -77,48 +77,8 @@
     <?php } ?>
     <?php //全期間の検索
     if(empty($data['History']['start_day'])&&empty($data['History ']['finish_day'])) { ?>
-      <span id ='mainDatePeriod' name = 'datefilter' class='date'>全期間</span>
+      <span id ='mainDatePeriod' name = 'datefilter' class='date'>全期間 : <?= h($responderList['start']) ?>-<?= h($responderList['finish']) ?></span>
     <?php } ?>
-
-    <?php
-      //条件クリアをした時や、最初に来て値が入っていない時
-      if(empty($data['History']['start_day']) && empty($data['History']['finish_day'])){ ?>
-        <span id="startDay"><?=date("Y/m/d") ?></span>
-        <span id="finishDay"><?= date("Y/m/d") ?></span>
-        <span id="companyStart"><?= h($data['History']['company_start_day']) ?></span>
-      <?php }
-        //全期間検索の場合
-      else if($data['History']['start_day'] == $data['History']['company_start_day'] && $data['History']['finish_day'] == date("Y/m/d")) { ?>
-        <span id="startDay"><?=date("Y/m/d") ?></span>
-        <span id="finishDay"><?= date("Y/m/d") ?></span>
-        <span id="companyStart"><?= h($data['History']['company_start_day']) ?></span>
-        <span id="ip"><?= h($data['History']['ip_address']) ?></span>
-        <span id="company"><?= h($data['History']['company_name']) ?></span>
-        <span id="customer"><?= h($data['History']['customer_name']) ?></span>
-        <span id="telephone"><?= h($data['History']['telephone_number']) ?></span>
-        <span id="mail"><?= h($data['History']['mail_address']) ?></span>
-        <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
-          <span id="responsible"><?= h($data['THistoryChatLog']['responsible_name']) ?></span>
-          <span id="achievement"><?= h($data['THistoryChatLog']['achievement_flg']) ?></span>
-          <span id="message"><?= h($data['THistoryChatLog']['message']) ?></span>
-        <?php endif; ?>
-       <?php }
-       //それ以外の検索の場合
-      else { ?>
-        <span id="startDay"><?= h($data['History']['start_day']) ?></span>
-        <span id="companyStart"><?= h($data['History']['company_start_day']) ?></span>
-        <span id="finishDay"><?= h($data['History']['finish_day']) ?></span>
-        <span id="ip"><?= h($data['History']['ip_address']) ?></span>
-        <span id="company"><?= h($data['History']['company_name']) ?></span>
-        <span id="customer"><?= h($data['History']['customer_name']) ?></span>
-        <span id="telephone"><?= h($data['History']['telephone_number']) ?></span>
-        <span id="mail"><?= h($data['History']['mail_address']) ?></span>
-        <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
-          <span id="responsible"><?= h($data['THistoryChatLog']['responsible_name']) ?></span>
-          <span id="achievement"><?= h($data['THistoryChatLog']['achievement_flg']) ?></span>
-          <span id="message"><?= h($data['THistoryChatLog']['message']) ?></span>
-        <?php endif; ?>
-      <?php } ?>
 
 
     <?php

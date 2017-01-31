@@ -1,10 +1,16 @@
 <script type="text/javascript">
 popupEvent.closePopup = function(){
+  "use strict;"
+//var userList = <?php echo json_encode($responderList);?>;
+//var data = $.parseJSON(jsonstr);
+
+console.log(userList.company);
+
   //全期間の場合
   /*if (!$("#day_search").prop('checked')) {
     $("#dateperiod").prop("disabled", true);
-    $('#HistoryStartDay').val("");
-    $('#HistoryFinishDay').val("");
+    $('##ip').val("");
+    $('##HistoryFinishDay').val("");
   }*/
   if ($("#g_chat").prop("checked")) {
     document.getElementById('historySearch').action = "Histories?isChat=true";
@@ -12,6 +18,15 @@ popupEvent.closePopup = function(){
   else {
     document.getElementById('historySearch').action = "Histories?isChat=false";
   }
+
+  userList.ip = $('#HistoryIpAddress').val();
+  userList.company = $('#HistoryCompanyName').val();
+  userList.customer = $('#HistoryCustomerName').val();
+  userList.telephone = $('#HistoryTelephoneNumber').val();
+  userList.mail = $('#HistoryMailAddress').val();
+  userList.responsible = $('#THistoryChatLogResponsibleName').val();
+  userList.message = $('#THistoryChatLogMessage').val();
+  console.log(userList.ip);
   /*var period_day = $('.active').text();
   //カスタム検索の場合
   if(period_day.match(/[^0-9]/) == null){
@@ -21,7 +36,28 @@ popupEvent.closePopup = function(){
   else{
     $('#HistoryPeriod').val(period_day);
   }*/
-  $('#historySearch').submit();
+  $.ajax({
+    type: 'post',
+    data: {
+      "data[History][ip_address]": $('#HistoryIpAddress').val(),
+      "data[History][company_name]": $('#HistoryCompanyName').val(),
+      "data[History][customer_name]": $('#HistoryCustomerName').val(),
+      "data[History][telephone_number]": $('#HistoryTelephoneNumber').val(),
+      "data[History][mail_address]": $('#HistoryMailAddress').val(),
+      "data[THistoryChatLog][responsible_name]": $('#THistoryChatLogResponsibleName').val(),
+      "data[THistoryChatLog][message]": $('#THistoryChatLogMessage').val(),
+          },
+    dataType: 'text',
+    cache: false,
+    url: "<?= $this->Html->url(['controller' => 'Histories', 'action' => 'aiueo']) ?>",
+    success: function(data){
+    //return popupEvent.close();
+            //location.href = location.href;
+    }
+  });
+  return popupEvent.close();
+  //return popupEvent.close();
+  //$('#historySearch').submit();
 };
 
 popupEvent.customizeBtn = function(){
