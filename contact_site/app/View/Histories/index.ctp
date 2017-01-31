@@ -66,7 +66,7 @@
     <?php } ?>
     <?php //セッションをクリアしたときの表示
       if(empty($data['History']['start_day'])&&empty($data['History ']['finish_day'])) { ?>
-        <span id ='mainDatePeriod' name = 'datefilter' class='date'>全期間 : <?= h($responderList['start']) ?>-<?= h($responderList['finish']) ?></span>
+        <span id ='mainDatePeriod' name = 'datefilter' class='date'>全期間 : <?= h($itemList['start']) ?>-<?= h($itemList['finish']) ?></span>
     <?php } ?>
 
     <div class= 'seach_menu'>

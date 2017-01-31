@@ -69,18 +69,18 @@ class HistoriesController extends AppController {
     $start_date = substr($this->userInfo['MCompany']['created'],0,10);
     $companyStartDay = str_replace("-", "/",  $start_date);
     if($data==null){
-      $arr = array('start' => $companyStartDay,'finish' => date("Y/m/d"), 'period' => '全期間',
+      $item = array('start' => $companyStartDay,'finish' => date("Y/m/d"), 'period' => '全期間',
       'companyStartDay' => $companyStartDay,'ip' => '', 'company' => '', 'customer' => '',
       'telephone' => '','mail' => '','responsible' => '','message' => '');
-      $this->set('responderList', $arr);
+      $this->set('itemList', $item);
     }
     else{
-      $arr = array('start' => $data['History']['start_day'],'finish' => $data['History']['finish_day'],
+      $item = array('start' => $data['History']['start_day'],'finish' => $data['History']['finish_day'],
       'period' => $data['History']['period'],'companyStartDay' => $companyStartDay,'ip' => $data['History']['ip_address'],
       'company' =>  $data['History']['company_name'],'customer' => $data['History']['customer_name'],
       'telephone' => $data['History']['telephone_number'],'mail' => $data['History']['mail_address'],
       'responsible' => $data['THistoryChatLog']['responsible_name'],'message' => $data['THistoryChatLog']['message']);
-      $this->set('responderList', $arr);
+      $this->set('itemList', $item);
     }
   }
 
