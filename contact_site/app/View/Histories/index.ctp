@@ -45,19 +45,9 @@
     </div>
 
     <?= $this->Html->link(
-      '高度な条件',
+      '高度な検索',
       'javascript:void(0)',
       array('escape' => false, 'class'=>'skyBlueBtn btn-shadow','id' => 'searchRefine','onclick' => 'openSearchRefine()'));
-    ?>
-    <?= $this->Html->link(
-      '検索',
-      'javascript:void(0)',
-      array('escape' => false, 'class'=>'skyBlueBtn btn-shadow','id' => 'searchInfo','onclick' => 'searchCustomerInfo()'));
-    ?>
-    <?= $this->Html->link(
-      '条件クリア',
-      'javascript:void(0)',
-      array('escape' => false, 'class'=>'skyBlueBtn btn-shadow','id' => 'sessionClear','onclick' => 'sessionClear()'));
     ?>
     <span id="searchPeriod">検索期間</span>
     <?php //検索をした時の表示
@@ -66,7 +56,7 @@
     <?php } ?>
     <?php //セッションをクリアしたときの表示
       if(empty($data['History']['start_day'])&&empty($data['History ']['finish_day'])) { ?>
-        <span id ='mainDatePeriod' name = 'datefilter' class='date'>全期間 : <?= h($itemList['start']) ?>-<?= h($itemList['finish']) ?></span>
+        <span id ='mainDatePeriod' name = 'datefilter' class='date'>過去一ヵ月間 : <?= h($historySearchConditions['start_day']) ?>-<?= h($historySearchConditions['finish_day']) ?></span>
     <?php } ?>
 
     <div class= 'seach_menu'>
@@ -121,6 +111,12 @@
             <span class="value"><?= h($data['THistoryChatLog']['message']) ?></span>
           </li>
         <?php } ?>
+
+        <?= $this->Html->link(
+          '条件クリア',
+          'javascript:void(0)',
+          ['escape' => false, 'class'=>'skyBlueBtn btn-shadow','id' => 'sessionClear','onclick' => 'sessionClear()']);
+        ?>
       </ul>
     </div>
     <!-- 検索窓 -->

@@ -1,6 +1,7 @@
 <script type="text/javascript">
 'use strict';
-  var userList = <?php echo json_encode($itemList);?>;
+  var historySearchConditions = <?php echo json_encode($historySearchConditions);?>;
+  var thistoryChatLogSearchConditions = <?php echo json_encode($thistoryChatLogSearchConditions);?>;
 
   var sincloApp = angular.module('sincloApp', ['ngSanitize']);
   sincloApp.controller('MainCtrl', function($scope) {
@@ -206,13 +207,13 @@ $(document).ready(function(){
         '過去一ヶ月間': [moment().subtract(30, 'days'), moment()],
         '今月': [moment().startOf('month'), moment().endOf('month')],
         '先月': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
-        '全期間': [userList.companyStartDay, moment()]
+        '全期間': [historySearchConditions.company_start_day, moment()]
       },
       "locale": {
         "format": "YYYY/MM/DD",
         "separator": " - ",
-        "applyLabel": "設定",
-        "cancelLabel": "閉じる",
+        "applyLabel": "検索",
+        "cancelLabel": "キャンセル",
         "fromLabel": "From",
         "toLabel": "To",
         "customRangeLabel": "カスタム",
@@ -243,20 +244,23 @@ $(document).ready(function(){
         "firstDay": 1
       },
       "alwaysShowCalendars": true,
-      "startDate": $('#HistoryStartDay').val(),
-      "endDate": $('#HistoryFinishDay').val(),
+      "startDate": historySearchConditions.start_day,
+      "endDate": historySearchConditions.finish_day,
       "opens": "left"
     });
 
     //閉じるボタン
     $('.cancelBtn').on('click', function() {
-      $('#mainDatePeriod').text(userList.period + ' : ' + userList.start + '-' + userList.finish);
+      $('#mainDatePeriod').html(historySearchConditions.period + ' : ' + historySearchConditions.start_day + '-' + historySearchConditions.finish_day);
     });
 
     //設定ボタン
     $('#mainDatePeriod').on('apply.daterangepicker', function(ev, picker) {
-      //期間取得(今日、先月など)
       var search_day  = $('.active').val();
+      //開始日
+      var startDay =  $("input[name=daterangepicker_start]").val();
+      //終了日
+      var endDay = $("input[name=daterangepicker_end]").val();
       //今日
       var today = moment();
       today = today.format("YYYY/MM/DD");
@@ -272,54 +276,71 @@ $(document).ready(function(){
       //過去一ヵ月間
       var thisMonth = moment().startOf('month');
       thisMonth = thisMonth.format("YYYY/MM/DD");
-      //今月
-      var thisMonth = moment().startOf('month');
-      thisMonth = thisMonth.format("YYYY/MM/DD");
-      //先月
-      var lastMonth = moment().subtract(1, 'month').startOf('month');
-      lastMonth = lastMonth.format("YYYY/MM/DD");
+      //今月の初め
+      var thisMonthStart = moment().startOf('month');
+      thisMonthStart = thisMonthStart.format("YYYY/MM/DD");
+      //今月の終わり
+      var thisMonthEnd = moment().endOf('month');
+      thisMonthEnd = thisMonthEnd.format("YYYY/MM/DD");
+      //先月の初め
+      var lastMonthStart = moment().subtract(1, 'month').startOf('month');
+      lastMonthStart = lastMonthStart.format("YYYY/MM/DD");
+      //先月の終わり
+      var lastMonthEnd = moment().subtract(1, 'month').endOf('month');
+      lastMonthEnd = lastMonthEnd.format("YYYY/MM/DD");
       //全期間
-      var allDay = userList.companyStartDay;
+      var allDay = historySearchConditions.company_start_day;
 
       //今日
-      if(search_day  == today){
-        search_day  = "今日";
-      }
-      //昨日
-      else if(search_day  == yesterday){
-        search_day  = "昨日";
-      }
-      //過去一週間
-      else if(search_day  == oneWeekAgo){
-        search_day  = "過去一週間";
-      }
-      //過去一か月間
-      else if(search_day  == oneMonthAgo){
-        search_day  = "過去一ヵ月間";
-      }
-      //今月
-      else if(search_day  == thisMonth){
-        search_day  = "今月";
-      }
-      //先月
-      else if(search_day  == lastMonth){
-        search_day  = "先月";
-      }
-      //全期間
-      else if(search_day  == allDay){
-        search_day  = "全期間";
-      }
-      //カスタム
-      else {
-        search_day  = "カスタム";
-      }
+      if(startDay  == today && endDay == today){
+         search_day  = "今日";
+       }
+       //昨日
+       else if(startDay  == yesterday && endDay == yesterday){
+         search_day  = "昨日";
+       }
+       //過去一週間
+       else if(startDay  == oneWeekAgo && endDay == today){
+         search_day  = "過去一週間";
+       }
+       //過去一か月間
+       else if(startDay  == oneMonthAgo && endDay == today){
+         search_day  = "過去一ヵ月間";
+       }
+       //今月
+       else if(startDay  == thisMonthStart && endDay == thisMonthEnd){
+         search_day  = "今月";
+       }
+       //先月
+       else if(startDay  == lastMonthStart && endDay == lastMonthEnd ){
+         search_day  = "先月";
+       }
+       //全期間
+       else if(startDay  == allDay){
+         search_day  = "全期間";
+       }
+       //カスタム
+       else {
+         search_day  = "カスタム";
+       }
 
-      userList.start = $("input[name=daterangepicker_start]").val();
-      userList.finish = $("input[name=daterangepicker_end]").val();
-      userList.period = search_day;
+      historySearchConditions.start_day = $("input[name=daterangepicker_start]").val();
+      historySearchConditions.finish_day = $("input[name=daterangepicker_end]").val();
+      historySearchConditions.period = search_day;
 
-      //検索期間欄に表示
-      $('#mainDatePeriod').html(userList.period  + ' : ' + userList.start + '-' + userList.finish);
+      $.ajax({
+        type: 'post',
+        dataType: 'html',
+        data:{
+          History:historySearchConditions,
+          THistoryChatLog:thistoryChatLogSearchConditions
+        },
+        cache: false,
+        url: "<?= $this->Html->url(['controller' => 'Histories', 'action' => 'searchConditionsRecord']) ?>",
+        success: function(html){
+          location.href = location.href;
+        }
+      });
     });
   }
 });

@@ -101,7 +101,7 @@ var popupEvent = {
                     };
                     break;
                 case 'p-thistory-entry':
-                    var entryBtn = _button("設定");
+                    var entryBtn = _button("検索");
                     entryBtn.onclick = function(){
                       return popupEvent.closePopup();
                     };

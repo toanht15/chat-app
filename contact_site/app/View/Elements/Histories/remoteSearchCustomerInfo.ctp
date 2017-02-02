@@ -1,14 +1,5 @@
 <script type="text/javascript">
 
-//設定ボタンを入力した後に表示
-$('#HistoryIpAddress').val(userList.ip);
-$('#HistoryCompanyName').val(userList.company);
-$('#HistoryCustomerName').val(userList.customer);
-$('#HistoryTelephoneNumber').val(userList.telephone);
-$('#HistoryMailAddress').val(userList.mail);
-$('#THistoryChatLogResponsibleName').val(userList.responsible);
-$('#THistoryChatLogMessage').val(userList.message);
-
 popupEvent.closePopup = function(){
   if ($("#g_chat").prop("checked")) {
     document.getElementById('historySearch').action = "Histories?isChat=true";
@@ -17,15 +8,16 @@ popupEvent.closePopup = function(){
     document.getElementById('historySearch').action = "Histories?isChat=false";
   }
 
-  userList.ip = $('#HistoryIpAddress').val();
-  userList.company = $('#HistoryCompanyName').val();
-  userList.customer = $('#HistoryCustomerName').val();
-  userList.telephone = $('#HistoryTelephoneNumber').val();
-  userList.mail = $('#HistoryMailAddress').val();
-  userList.responsible = $('#THistoryChatLogResponsibleName').val();
-  userList.message = $('#THistoryChatLogMessage').val();
+  historySearchConditions.ip_address = $('#HistoryIpAddress').val();
+  historySearchConditions.company_name = $('#HistoryCompanyName').val();
+  historySearchConditions.customer_name = $('#HistoryCustomerName').val();
+  historySearchConditions.telephone_number = $('#HistoryTelephoneNumber').val();
+  historySearchConditions.mail_address = $('#HistoryMailAddress').val();
+  thistoryChatLogSearchConditions.responsible_name = $('#THistoryChatLogResponsibleName').val();
+  thistoryChatLogSearchConditions.achievement_flg = $('#THistoryChatLogAchievementFlg').val();
+  thistoryChatLogSearchConditions.message = $('#THistoryChatLogMessage').val();
 
-  return popupEvent.close();
+  $('#historySearch').submit();
 };
 
 </script>
