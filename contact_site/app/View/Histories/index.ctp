@@ -50,6 +50,10 @@
       array('escape' => false, 'class'=>'skyBlueBtn btn-shadow','id' => 'searchRefine','onclick' => 'openSearchRefine()'));
     ?>
     <span id="searchPeriod">検索期間</span>
+    <?php
+      $noseach_menu = '';
+      $seach_menu = 'seach_menu';
+    ?>
     <?php //検索をした時の表示
       if(!empty($data['History']['start_day'])||!empty($data['History ']['finish_day'])) { ?>
         <span id ='mainDatePeriod' name = 'datefilter'><?= h($data['History']['period']) ?> : <?= h($data['History']['start_day']) ?>-<?= h($data['History']['finish_day']) ?></span>
@@ -58,8 +62,19 @@
       if(empty($data['History']['start_day'])&&empty($data['History ']['finish_day'])) { ?>
         <span id ='mainDatePeriod' name = 'datefilter' class='date'>過去一ヵ月間 : <?= h($historySearchConditions['start_day']) ?>-<?= h($historySearchConditions['finish_day']) ?></span>
     <?php } ?>
+    <?php
+      //セッションクリア、日程だけ検索の場合
+      if(
+        empty($data['History']['ip_address'])&&empty($data['History']['company_name'])
+        &&empty($data['History']['customer_name'])&&empty($data['History']['telephone_number'])
+        &&empty($data['History']['mail_address'])&&empty($data['THistoryChatLog']['responsible_name'])
+        &&empty($data['THistoryChatLog']['achievement_flg'])&&empty($data['THistoryChatLog']['message'])){
+        $noseach_menu = 'noseach_menu';
+        $seach_menu='　';
+      }
+    ?>
 
-    <div class= 'seach_menu'>
+    <div class=<?= $seach_menu; ?> id=<?= $noseach_menu ?>>
       <label class='searchConditions'>検索条件</label>
       <ul>
         <span class="dammy">　</span>

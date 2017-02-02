@@ -12,7 +12,7 @@ function openSearchRefine(){
   });
 }
 
-//セッションクリア
+//セッションクリア(条件クリア)
 function sessionClear(){
   location.href = "<?=$this->Html->url(array('controller' => 'Histories', 'action' => 'clearSession'))?>";
 }

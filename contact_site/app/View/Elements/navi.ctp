@@ -52,7 +52,7 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
             <?= $this->htmlEx->naviLink('ﾘｱﾙﾀｲﾑﾓﾆﾀ', 'monitor.png', ['href' => ['controller' => 'Customers', 'action' => 'index']]) ?>
         </div>
         <div class="icon <?=$historySelected?>">
-            <?= $this->htmlEx->naviLink('履歴一覧', 'history.png', ['href' => ['controller' => 'Histories', 'action' => 'clearSession']]) ?>
+            <?= $this->htmlEx->naviLink('履歴一覧', 'history.png', ['href' => ['controller' => 'Histories', 'action' => 'allClearSession']]) ?>
         </div>
         <div class="icon <?=$settingSelected?> setting-icon" data-type="common">
             <?= $this->htmlEx->naviLink('設定', 'setting.png') ?>

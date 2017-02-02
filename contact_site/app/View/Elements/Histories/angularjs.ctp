@@ -249,12 +249,12 @@ $(document).ready(function(){
       "opens": "left"
     });
 
-    //閉じるボタン
+    //キャンセルボタン
     $('.cancelBtn').on('click', function() {
       $('#mainDatePeriod').html(historySearchConditions.period + ' : ' + historySearchConditions.start_day + '-' + historySearchConditions.finish_day);
     });
 
-    //設定ボタン
+    //検索ボタン
     $('#mainDatePeriod').on('apply.daterangepicker', function(ev, picker) {
       var search_day  = $('.active').val();
       //開始日

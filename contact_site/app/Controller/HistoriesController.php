@@ -66,12 +66,31 @@ class HistoriesController extends AppController {
     $this->set('achievementType', Configure::read('achievementType'));
     $companyStartDay = date("Y/m/d",strtotime($this->userInfo['MCompany']['created']));
     $data = $this->Session->read('Thistory');
-    //セッションクリアした場合
+    //履歴一覧ボタンを押した場合
     if($data==null){
       $historyConditions = [
         'History'=>['start_day' => date("Y/m/d",strtotime("-30 day")),'finish_day' => date("Y/m/d"),
         'period' => '過去一ヵ月間','company_start_day' => $companyStartDay,'ip_address' => '',
         'company_name' => '', 'customer_name' => '','telephone_number' => '','mail_address' => ''],
+        'THistoryChatLog'=>['responsible_name' => '','achievement_flg' => '','message' => '']
+      ];
+      $thistoryChatLogConditions = [
+        'THistoryChatLog'=>['responsible_name' => '','achievement_flg' => '','message' => '']
+      ];
+      $this->set('historySearchConditions', $historyConditions);
+      $this->set('thistoryChatLogSearchConditions', $thistoryChatLogConditions);
+      $this->Session->write('Thistory',$historyConditions);
+    }
+    //条件クリアを押した場合
+    else if(!isset($data['History']['ip_address']) && !isset($data['History']['company_name'])
+      && !isset($data['History']['customer_name']) && !isset($data['History']['telephone_number'])
+      && !isset($data['History']['mail_address']) && !isset($data['THistoryChatLog']['responsible_name'])
+      && !isset($data['THistoryChatLog']['achievement_flg']) && !isset($data['THistoryChatLog']['message'])){
+       $historyConditions = [
+        'History'=>['start_day' => $data['History']['start_day'],'finish_day' => $data['History']['finish_day'],
+        'period' => $data['History']['period'],'company_start_day' => $companyStartDay,
+        'ip_address' => '','company_name' => '','customer_name' => '',
+        'telephone_number' => '','mail_address' => ''],
         'THistoryChatLog'=>['responsible_name' => '','achievement_flg' => '','message' => '']
       ];
       $thistoryChatLogConditions = [
@@ -504,7 +523,7 @@ class HistoriesController extends AppController {
   public function searchConditionsRecord() {
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
-    $this->Session->write('Thistory', $this->request->data);
+    $this->Session->write('Thistory',$this->request->data);
   }
 
   private function _setList($type=true){
@@ -518,7 +537,7 @@ class HistoriesController extends AppController {
 
     //履歴検索機能
     if($this->request->is('post')) {
-      $this->Session->write('Thistory', $this->data);
+      $this->Session->write('Thistory',$this->data);
     }
 
     if ($this->Session->check('Thistory')) {
@@ -831,10 +850,26 @@ class HistoriesController extends AppController {
   }
 
  /* *
-   * Session削除
+   * Session削除(条件クリア)
    * @return void
    * */
   public function clearSession() {
+    $this->Session->delete('Thistory.History.ip_address');
+    $this->Session->delete('Thistory.History.company_name');
+    $this->Session->delete('Thistory.History.customer_name');
+    $this->Session->delete('Thistory.History.telephone_number');
+    $this->Session->delete('Thistory.History.mail_address');
+    $this->Session->delete('Thistory.THistoryChatLog.responsible_name');
+    $this->Session->delete('Thistory.THistoryChatLog.achievement_flg');
+    $this->Session->delete('Thistory.THistoryChatLog.message');
+    $this->redirect(['controller' => 'Histories', 'action' => 'index']);
+  }
+
+   /* *
+   * Session削除(一覧画面)
+   * @return void
+   * */
+  public function allClearSession() {
     $this->Session->delete('Thistory');
     $this->redirect(['controller' => 'Histories', 'action' => 'index']);
   }
