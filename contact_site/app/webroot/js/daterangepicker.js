@@ -536,7 +536,6 @@
             if (this.endDate) {
                 this.container.find('input[name="daterangepicker_end"]').removeClass('active');
                 this.container.find('input[name="daterangepicker_start"]').addClass('active');
-
             } else {
                 this.container.find('input[name="daterangepicker_end"]').addClass('active');
                 this.container.find('input[name="daterangepicker_start"]').removeClass('active');
@@ -1179,6 +1178,7 @@
 
             // Reposition the picker if the window is resized while it's open
             $(window).on('resize.daterangepicker', $.proxy(function(e) { this.move(e); }, this));
+
             this.oldStartDate = this.startDate.clone();
             this.oldEndDate = this.endDate.clone();
             this.previousRightTime = this.endDate.clone();
@@ -1192,6 +1192,7 @@
 
         hide: function(e) {
             if (!this.isShowing) return;
+
             //incomplete date selection, revert to last values
             if (!this.endDate) {
                 this.startDate = this.oldStartDate.clone();
@@ -1249,6 +1250,7 @@
         },
 
         hoverRange: function(e) {
+
             //ignore mouse movements while an above-calendar text input has focus
             if (this.container.find('input[name=daterangepicker_start]').is(":focus") || this.container.find('input[name=daterangepicker_end]').is(":focus"))
                 return;
@@ -1266,7 +1268,7 @@
         },
 
         clickRange: function(e) {
-           var label = e.target.getAttribute('data-range-key');
+            var label = e.target.getAttribute('data-range-key');
             this.chosenLabel = label;
             if (label == this.locale.customRangeLabel) {
                 this.showCalendars();
@@ -1364,6 +1366,7 @@
         },
 
         clickDate: function(e) {
+
             if (!$(e.target).hasClass('available')) return;
 
             var title = $(e.target).attr('data-title');
@@ -1473,12 +1476,6 @@
         },
 
         clickCancel: function(e) {
-            /*this.startDate._d = new Date(historySearchConditions.start_day);
-            this.startDate._i = historySearchConditions.start_day;
-            this.endDate._d = new Date(historySearchConditions.finish_day);
-            this.endDate._i = historySearchConditions.finish_day;*/
-            //this.oldStartDate = this.startDate;
-            //this.oldEndDate = this.endDate;
             this.startDate = this.oldStartDate;
             this.endDate = this.oldEndDate;
             this.hide();
@@ -1620,6 +1617,7 @@
         },
 
         formInputsBlurred: function(e) {
+
             // this function has one purpose right now: if you tab from the first
             // text input to the second in the UI, the endDate is nulled so that
             // you can click another, but if you tab out without clicking anything
@@ -1670,6 +1668,7 @@
         },
 
         updateElement: function() {
+
             if (this.element.is('input') && !this.singleDatePicker && this.autoUpdateInput) {
                 this.element.val(this.startDate.format(this.locale.format) + this.locale.separator + this.endDate.format(this.locale.format));
             } else if (this.element.is('input') && this.autoUpdateInput) {
