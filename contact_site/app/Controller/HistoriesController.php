@@ -62,9 +62,9 @@ class HistoriesController extends AppController {
     if ( !empty($this->params->query['isChat']) ) {
       $isChat = $this->params->query['isChat'];
     }
+    $this->_searchProcessing($isChat);
     // 成果の名称リスト
     $this->set('achievementType', Configure::read('achievementType'));
-    $this->_searchProcessing($isChat);
   }
 
   public function remoteGetCustomerInfo() {

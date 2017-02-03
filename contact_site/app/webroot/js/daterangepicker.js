@@ -1021,7 +1021,7 @@
               this.container.find('input[name=daterangepicker_start]').val(this.startDate.format(this.locale.format));
             if (this.endDate)
                 this.container.find('input[name=daterangepicker_end]').val(this.endDate.format(this.locale.format));
-              //2017/02/02 henmi: view側検索：日にちを選んだ際にinputの中身も変更するため
+              //2017/02/02 henmi: view側検索：日にちを選んだ際にinputの中身も変更するため、処理追加
               //期間取得(今日、先月など)
               var search_day  = $('.active').val();
               //開始日
@@ -1234,7 +1234,7 @@
                 ) return;
             this.hide();
             this.element.trigger('outsideClick.daterangepicker', this);
-            //2017/01/31 henmi: カレンダーUI以外の場所をクリックした時の処理
+            //2017/01/31 henmi: カレンダーUI以外の場所をクリックした時の処理追加
             $('#mainDatePeriod').html(historySearchConditions.period + ' : ' + historySearchConditions.start_day + '-' + historySearchConditions.finish_day);
         },
 
@@ -1285,8 +1285,9 @@
                     this.hideCalendars();
 
                 // 2016/10/25 henmi: 日付の範囲入力をクリックするとカレンダーが閉じていたため、処理変更
+                // 変更前:this.clickApply();
                 this.updateCalendars();
-                //2017/01/31 henmi: 期間名（昨日、先月など)を選択したときに開始日にフォーカスを当てるため、処理変更
+                //2017/01/31 henmi: 期間名（昨日、先月など)を選択したときに開始日にフォーカスを当てるため、処理追加
                 this.hide();
                 this.show();
             }
