@@ -64,59 +64,7 @@ class HistoriesController extends AppController {
     }
     // 成果の名称リスト
     $this->set('achievementType', Configure::read('achievementType'));
-    $companyStartDay = date("Y/m/d",strtotime($this->userInfo['MCompany']['created']));
-    $data = $this->Session->read('Thistory');
-    //履歴一覧ボタンを押した場合
-    if(empty($data)){
-      $historyConditions = [
-        'History'=>['start_day' => date("Y/m/d",strtotime("-30 day")),'finish_day' => date("Y/m/d"),
-        'period' => '過去一ヵ月間','company_start_day' => $companyStartDay,'ip_address' => '',
-        'company_name' => '', 'customer_name' => '','telephone_number' => '','mail_address' => ''],
-        'THistoryChatLog'=>['responsible_name' => '','achievement_flg' => '','message' => '']
-      ];
-      $thistoryChatLogConditions = [
-        'THistoryChatLog'=>['responsible_name' => '','achievement_flg' => '','message' => '']
-      ];
-      $this->set('historySearchConditions', $historyConditions);
-      $this->set('thistoryChatLogSearchConditions', $thistoryChatLogConditions);
-      $this->Session->write('Thistory',$historyConditions);
-    }
-    //条件クリアを押した場合
-    else if(!isset($data['History']['ip_address']) && !isset($data['History']['company_name'])
-      && !isset($data['History']['customer_name']) && !isset($data['History']['telephone_number'])
-      && !isset($data['History']['mail_address']) && !isset($data['THistoryChatLog']['responsible_name'])
-      && !isset($data['THistoryChatLog']['achievement_flg']) && !isset($data['THistoryChatLog']['message'])){
-      $historyConditions = [
-        'History'=>['start_day' => $data['History']['start_day'],'finish_day' => $data['History']['finish_day'],
-        'period' => $data['History']['period'],'company_start_day' => $companyStartDay,
-        'ip_address' => '','company_name' => '','customer_name' => '',
-        'telephone_number' => '','mail_address' => ''],
-        'THistoryChatLog'=>['responsible_name' => '','achievement_flg' => '','message' => '']
-      ];
-      $thistoryChatLogConditions = [
-        'THistoryChatLog'=>['responsible_name' => '','achievement_flg' => '','message' => '']
-      ];
-      $this->set('historySearchConditions', $historyConditions);
-      $this->set('thistoryChatLogSearchConditions', $thistoryChatLogConditions);
-      $this->Session->write('Thistory',$historyConditions);
-    }
-    $this->_setList($isChat);
-    //検索した場合
-    $data = $this->Session->read('Thistory');
-    if(!empty($data)){
-      $historyConditions = [
-        'start_day' => $data['History']['start_day'],'finish_day' => $data['History']['finish_day'],
-        'period' => $data['History']['period'],'company_start_day' => $companyStartDay,'ip_address' => $data['History']['ip_address'],
-        'company_name' =>  $data['History']['company_name'],'customer_name' => $data['History']['customer_name'],
-        'telephone_number' => $data['History']['telephone_number'],'mail_address' => $data['History']['mail_address']
-      ];
-      $thistoryChatLogConditions = [
-        'responsible_name' => $data['THistoryChatLog']['responsible_name'],
-        'achievement_flg' => $data['THistoryChatLog']['achievement_flg'],'message' => $data['THistoryChatLog']['message']
-      ];
-      $this->set('historySearchConditions', $historyConditions);
-      $this->set('thistoryChatLogSearchConditions', $thistoryChatLogConditions);
-    }
+    $this->_searchProcessing($isChat);
   }
 
   public function remoteGetCustomerInfo() {
@@ -518,6 +466,62 @@ class HistoriesController extends AppController {
       }
     }
     return array_keys($visitorsIds);
+  }
+
+  private function _searchProcessing($type=true){
+    $companyStartDay = date("Y/m/d",strtotime($this->userInfo['MCompany']['created']));
+    $data = $this->Session->read('Thistory');
+    //履歴一覧ボタンを押した場合
+    if(empty($data)){
+      $historyConditions = [
+        'History'=>['start_day' => date("Y/m/d",strtotime("-30 day")),'finish_day' => date("Y/m/d"),
+        'period' => '過去一ヵ月間','company_start_day' => $companyStartDay,'ip_address' => '',
+        'company_name' => '', 'customer_name' => '','telephone_number' => '','mail_address' => ''],
+        'THistoryChatLog'=>['responsible_name' => '','achievement_flg' => '','message' => '']
+      ];
+      $thistoryChatLogConditions = [
+        'THistoryChatLog'=>['responsible_name' => '','achievement_flg' => '','message' => '']
+      ];
+      $this->set('historySearchConditions', $historyConditions);
+      $this->set('thistoryChatLogSearchConditions', $thistoryChatLogConditions);
+      $this->Session->write('Thistory',$historyConditions);
+    }
+    //条件クリアを押した場合
+    else if(!isset($data['History']['ip_address']) && !isset($data['History']['company_name'])
+      && !isset($data['History']['customer_name']) && !isset($data['History']['telephone_number'])
+      && !isset($data['History']['mail_address']) && !isset($data['THistoryChatLog']['responsible_name'])
+      && !isset($data['THistoryChatLog']['achievement_flg']) && !isset($data['THistoryChatLog']['message'])){
+      $historyConditions = [
+        'History'=>['start_day' => $data['History']['start_day'],'finish_day' => $data['History']['finish_day'],
+        'period' => $data['History']['period'],'company_start_day' => $companyStartDay,
+        'ip_address' => '','company_name' => '','customer_name' => '',
+        'telephone_number' => '','mail_address' => ''],
+        'THistoryChatLog'=>['responsible_name' => '','achievement_flg' => '','message' => '']
+      ];
+      $thistoryChatLogConditions = [
+        'THistoryChatLog'=>['responsible_name' => '','achievement_flg' => '','message' => '']
+      ];
+      $this->set('historySearchConditions', $historyConditions);
+      $this->set('thistoryChatLogSearchConditions', $thistoryChatLogConditions);
+      $this->Session->write('Thistory',$historyConditions);
+    }
+    $this->_setList($type=true);
+    //検索した場合
+    $data = $this->Session->read('Thistory');
+    if(!empty($data)){
+      $historyConditions = [
+        'start_day' => $data['History']['start_day'],'finish_day' => $data['History']['finish_day'],
+        'period' => $data['History']['period'],'company_start_day' => $companyStartDay,'ip_address' => $data['History']['ip_address'],
+        'company_name' =>  $data['History']['company_name'],'customer_name' => $data['History']['customer_name'],
+        'telephone_number' => $data['History']['telephone_number'],'mail_address' => $data['History']['mail_address']
+      ];
+      $thistoryChatLogConditions = [
+        'responsible_name' => $data['THistoryChatLog']['responsible_name'],
+        'achievement_flg' => $data['THistoryChatLog']['achievement_flg'],'message' => $data['THistoryChatLog']['message']
+      ];
+      $this->set('historySearchConditions', $historyConditions);
+      $this->set('thistoryChatLogSearchConditions', $thistoryChatLogConditions);
+    }
   }
 
   private function _setList($type=true){
