@@ -327,6 +327,7 @@ $(document).ready(function(){
       historySearchConditions.start_day = $("input[name=daterangepicker_start]").val();
       historySearchConditions.finish_day = $("input[name=daterangepicker_end]").val();
       historySearchConditions.period = search_day;
+      //console.log(historySearchConditions.start_day);
 
       $.ajax({
         type: 'post',

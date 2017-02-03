@@ -67,7 +67,7 @@ class HistoriesController extends AppController {
     $companyStartDay = date("Y/m/d",strtotime($this->userInfo['MCompany']['created']));
     $data = $this->Session->read('Thistory');
     //履歴一覧ボタンを押した場合
-    if($data==null){
+    if(empty($data)){
       $historyConditions = [
         'History'=>['start_day' => date("Y/m/d",strtotime("-30 day")),'finish_day' => date("Y/m/d"),
         'period' => '過去一ヵ月間','company_start_day' => $companyStartDay,'ip_address' => '',
@@ -86,7 +86,7 @@ class HistoriesController extends AppController {
       && !isset($data['History']['customer_name']) && !isset($data['History']['telephone_number'])
       && !isset($data['History']['mail_address']) && !isset($data['THistoryChatLog']['responsible_name'])
       && !isset($data['THistoryChatLog']['achievement_flg']) && !isset($data['THistoryChatLog']['message'])){
-       $historyConditions = [
+      $historyConditions = [
         'History'=>['start_day' => $data['History']['start_day'],'finish_day' => $data['History']['finish_day'],
         'period' => $data['History']['period'],'company_start_day' => $companyStartDay,
         'ip_address' => '','company_name' => '','customer_name' => '',
@@ -103,7 +103,7 @@ class HistoriesController extends AppController {
     $this->_setList($isChat);
     //検索した場合
     $data = $this->Session->read('Thistory');
-    if($data!=null){
+    if(!empty($data)){
       $historyConditions = [
         'start_day' => $data['History']['start_day'],'finish_day' => $data['History']['finish_day'],
         'period' => $data['History']['period'],'company_start_day' => $companyStartDay,'ip_address' => $data['History']['ip_address'],
@@ -524,6 +524,7 @@ class HistoriesController extends AppController {
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
     $this->Session->write('Thistory',$this->request->data);
+    $this->log($this->request->data,LOG_DEBUG);
   }
 
   private function _setList($type=true){
@@ -853,7 +854,7 @@ class HistoriesController extends AppController {
    * Session削除(条件クリア)
    * @return void
    * */
-  public function clearSession() {
+  public function portionClearSession() {
     $this->Session->delete('Thistory.History.ip_address');
     $this->Session->delete('Thistory.History.company_name');
     $this->Session->delete('Thistory.History.customer_name');
@@ -869,7 +870,7 @@ class HistoriesController extends AppController {
    * Session削除(一覧画面)
    * @return void
    * */
-  public function allClearSession() {
+  public function clearSession() {
     $this->Session->delete('Thistory');
     $this->redirect(['controller' => 'Histories', 'action' => 'index']);
   }

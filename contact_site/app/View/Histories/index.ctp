@@ -51,6 +51,7 @@
     ?>
     <span id="searchPeriod">検索期間</span>
     <?php
+      //検索条件表示：非表示
       $noseach_menu = '';
       $seach_menu = 'seach_menu';
     ?>
@@ -58,12 +59,12 @@
       if(!empty($data['History']['start_day'])||!empty($data['History ']['finish_day'])) { ?>
         <span id ='mainDatePeriod' name = 'datefilter'><?= h($data['History']['period']) ?> : <?= h($data['History']['start_day']) ?>-<?= h($data['History']['finish_day']) ?></span>
     <?php } ?>
-    <?php //セッションをクリアしたときの表示
+    <?php //セッションをクリアしたときの表示(履歴一覧ボタンを押下した時)
       if(empty($data['History']['start_day'])&&empty($data['History ']['finish_day'])) { ?>
         <span id ='mainDatePeriod' name = 'datefilter' class='date'>過去一ヵ月間 : <?= h($historySearchConditions['start_day']) ?>-<?= h($historySearchConditions['finish_day']) ?></span>
     <?php } ?>
     <?php
-      //セッションクリア、日程だけ検索の場合
+      //セッションクリア（履歴一覧ボタン、条件クリアボタンを押下した時、日付検索だけを行った場合)
       if(
         empty($data['History']['ip_address'])&&empty($data['History']['company_name'])
         &&empty($data['History']['customer_name'])&&empty($data['History']['telephone_number'])

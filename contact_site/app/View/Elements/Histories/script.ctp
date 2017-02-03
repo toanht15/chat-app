@@ -14,6 +14,6 @@ function openSearchRefine(){
 
 //セッションクリア(条件クリア)
 function sessionClear(){
-  location.href = "<?=$this->Html->url(array('controller' => 'Histories', 'action' => 'clearSession'))?>";
+  location.href = "<?=$this->Html->url(array('controller' => 'Histories', 'action' => 'portionClearSession'))?>";
 }
 </script>
