@@ -520,13 +520,6 @@ class HistoriesController extends AppController {
     return array_keys($visitorsIds);
   }
 
-  public function searchConditionsRecord() {
-    $this->autoRender = FALSE;
-    $this->layout = 'ajax';
-    $this->Session->write('Thistory',$this->request->data);
-    $this->log($this->request->data,LOG_DEBUG);
-  }
-
   private function _setList($type=true){
     $data = '';
     $userCond = [
@@ -538,7 +531,7 @@ class HistoriesController extends AppController {
 
     //履歴検索機能
     if($this->request->is('post')) {
-      $this->Session->write('Thistory',$this->data);
+      $this->Session->write('Thistory', $this->data);
     }
 
     if ($this->Session->check('Thistory')) {

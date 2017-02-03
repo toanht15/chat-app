@@ -327,7 +327,6 @@ $(document).ready(function(){
       historySearchConditions.start_day = $("input[name=daterangepicker_start]").val();
       historySearchConditions.finish_day = $("input[name=daterangepicker_end]").val();
       historySearchConditions.period = search_day;
-      //console.log(historySearchConditions.start_day);
 
       $.ajax({
         type: 'post',
@@ -337,7 +336,7 @@ $(document).ready(function(){
           THistoryChatLog:thistoryChatLogSearchConditions
         },
         cache: false,
-        url: "<?= $this->Html->url(['controller' => 'Histories', 'action' => 'searchConditionsRecord']) ?>",
+        url: "<?= $this->Html->url(['controller' => 'Histories', 'action' => 'index']) ?>",
         success: function(html){
           location.href = location.href;
         }
