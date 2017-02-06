@@ -610,7 +610,9 @@ io.sockets.on('connection', function (socket) {
       return scNum;
     },
     sendCheckTimerList: {},
-    sendCheck: function(d, callback){
+    widgetCheck: function(d, callback){ return this.scCheck(1, d, callback) }, // ウィジェット表示チェック
+    sendCheck: function(d, callback){ return this.scCheck(2, d, callback) }, // Sorryメッセージ送信チェック
+    scCheck: function(type, d, callback){
       var companyId = companyList[d.siteKey];
 
       var getUserSQL = "SELECT IFNULL(chat.sc_flg, 2) as sc_flg, sorry_message, widget.display_type FROM m_companies AS comp LEFT JOIN m_widget_settings AS widget ON ( comp.id = widget.m_companies_id ) LEFT JOIN m_chat_settings AS chat ON ( chat.m_companies_id = widget.m_companies_id ) WHERE comp.id = ?;";
@@ -621,7 +623,11 @@ io.sockets.on('connection', function (socket) {
           message = rows[0].sorry_message;
           // ウィジェットが非表示の場合
           if ( rows[0].display_type === 3 ) {
-            return callback(true, {opFlg: ret, message: message});
+            return callback(true, {opFlg: false, message: message});
+          }
+          // ウィジェット表示のジャッジの場合、常に表示は必ずtrue
+          if ( type === 1 && rows[0].display_type === 1 ) {
+            return callback(true, {opFlg: true, message: message});
           }
           // チャット上限数を設定していない場合
           if ( Number(rows[0].sc_flg) === 2 ) {
@@ -649,7 +655,10 @@ io.sockets.on('connection', function (socket) {
           return callback(true, {opFlg: ret, message: message});
         }
         else {
-          return callback(false, {ret: false, message: null});
+          if ( type === 1 ) { // ウィジェット
+            ret = true;
+          }
+          return callback(false, {ret: ret, message: null});
         }
       });
     }
@@ -776,7 +785,7 @@ io.sockets.on('connection', function (socket) {
         emit.toCompany('getAccessInfo', data, res.siteKey);
       }
       else {
-        chatApi.sendCheck(res, function(err, ret){
+        chatApi.widgetCheck(res, function(err, ret){
           send.activeOperatorCnt = getOperatorCnt(res.siteKey);
           send.widget = ret.opFlg;
           send.opFlg = true;
@@ -801,7 +810,7 @@ io.sockets.on('connection', function (socket) {
     var obj = JSON.parse(data);
     var actOpCnt = getOperatorCnt(obj.siteKey);
 
-    chatApi.sendCheck(obj, function(err, ret){
+    chatApi.widgetCheck(obj, function(err, ret){
       var opFlg = true;
       if ( ret.opFlg === false ) {
         opFlg = false;

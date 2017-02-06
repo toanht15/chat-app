@@ -1425,7 +1425,7 @@ ul.naviBtn {
               overflow-x: hidden;
               overflow-y: scroll;
               background-color: #FDFDFD;
-              margin: 0;
+              margin: 0 0 0.25em 0;
 
               * {
                 color: #8A8A8A;
@@ -1514,7 +1514,7 @@ ul.naviBtn {
               flex-direction: row;
               margin: 0.25em;
               align-items: center;
-              visibility: hidden;
+              display: none;
 
               span {
                 font-weight: bold;
@@ -1527,7 +1527,7 @@ ul.naviBtn {
               }
 
               &.showOption {
-                visibility: inherit;
+                display: flex;
               }
             }
 
@@ -1536,13 +1536,14 @@ ul.naviBtn {
               flex-direction: row;
               justify-content: space-between;
               margin: 0.25em;
+              display: none;
+
+              &.showOption {
+                display: flex;
+              }
 
               #chatMenu {
-                visibility: hidden;
 
-                &.showOption {
-                  visibility: inherit;
-                }
 
                 span {
                   cursor: pointer;

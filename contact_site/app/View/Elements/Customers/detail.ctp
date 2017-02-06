@@ -51,7 +51,7 @@
                         ]) ?>
                 </label>
               </chat-detail>
-              <chat-menu>
+              <chat-menu ng-class="{showOption: chatOptionDisabled(detailId)}">
                 <chat-menu-child id="sendMenu" class="p05tb">
                   <label class="pointer" for="settingsSendPattarn"><?=$this->ngForm->input('settings.sendPattarn',
                       [
@@ -65,7 +65,7 @@
                         'change' => 'changeSetting("sendPattarn")'
                       ])?>Enterキーで送信する</label>
                 </chat-menu-child>
-                <chat-menu-child id="chatMenu" class="p05tb" ng-class="{showOption: chatOptionDisabled(detailId)}">
+                <chat-menu-child id="chatMenu" class="p05tb" >
                   <span class="greenBtn btn-shadow" onclick="chatApi.addOption(1)">選択肢を追加する</span>
                 </chat-menu-child>
               </chat-menu>
