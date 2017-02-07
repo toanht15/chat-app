@@ -62,8 +62,8 @@ class HistoriesController extends AppController {
     if ( !empty($this->params->query['isChat']) ) {
       $isChat = $this->params->query['isChat'];
     }
-    $historyConditions='';
-    $this->_searchProcessing($historyConditions);
+    //$historyConditions = '';
+    $this->_searchProcessing(3);
     // 成果の名称リスト
     $this->set('achievementType', Configure::read('achievementType'));
     $this->_setList($isChat);
@@ -470,15 +470,36 @@ class HistoriesController extends AppController {
     return array_keys($visitorsIds);
   }
 
-    private function _searchProcessing($historyConditions){
-    if($this->request->is('post')) {
-      $historyConditions = $this->request->data;
-    }
-    if(!empty($historyConditions)) {
-      $this->Session->write('Thistory',$historyConditions);
-    }
+  private function _searchProcessing($type){
     $data = $this->Session->read('Thistory');
-    $this->set('data', $data);
+    $companyStartDay = date("Y/m/d",strtotime($this->userInfo['MCompany']['created']));
+    $historyConditions = [
+      'History'=>['company_start_day' => $companyStartDay,
+      'ip_address' => '','company_name' => '','customer_name' => '',
+      'telephone_number' => '','mail_address' => ''],
+      'THistoryChatLog'=>['responsible_name' => '','achievement_flg' => '','message' => '']
+    ];
+    switch ($type) {
+      case 1:
+        $historyConditions['History']['start_day'] = date("Y/m/d",strtotime("-30 day"));
+        $historyConditions['History']['finish_day'] = date("Y/m/d");
+        $historyConditions['History']['period'] = '過去一ヵ月間';
+      break;
+
+      case 2:
+        $historyConditions['History']['start_day'] = $data['History']['start_day'];
+        $historyConditions['History']['finish_day'] =$data['History']['finish_day'];
+        $historyConditions['History']['period'] = $data['History']['period'];
+      break;
+
+      default:
+        $historyConditions = $data;
+        if($this->request->is('post')) {
+          $historyConditions = $this->request->data;
+        }
+      break;
+    }
+    $this->Session->write('Thistory',$historyConditions);
   }
 
   private function _setList($type=true){
@@ -804,25 +825,7 @@ class HistoriesController extends AppController {
    * @return void
    * */
   public function portionClearSession() {
-    $this->Session->delete('Thistory');
-    $this->Session->delete('Thistory.History.ip_address');
-    $this->Session->delete('Thistory.History.company_name');
-    $this->Session->delete('Thistory.History.customer_name');
-    $this->Session->delete('Thistory.History.telephone_number');
-    $this->Session->delete('Thistory.History.mail_address');
-    $this->Session->delete('Thistory.THistoryChatLog.responsible_name');
-    $this->Session->delete('Thistory.THistoryChatLog.achievement_flg');
-    $this->Session->delete('Thistory.THistoryChatLog.message');
-    $companyStartDay = date("Y/m/d",strtotime($this->userInfo['MCompany']['created']));
-    $data = $this->Session->read('Thistory');
-    $historyConditions = [
-      'History'=>['start_day' => $data['History']['start_day'],'finish_day' => $data['History']['finish_day'],
-      'period' => $data['History']['period'],'company_start_day' => $companyStartDay,
-      'ip_address' => '','company_name' => '','customer_name' => '',
-      'telephone_number' => '','mail_address' => ''],
-      'THistoryChatLog'=>['responsible_name' => '','achievement_flg' => '','message' => '']
-    ];
-    $this->_searchProcessing($historyConditions);
+    $this->_searchProcessing(2);
     $this->redirect(['controller' => 'Histories', 'action' => 'index']);
   }
 
@@ -832,14 +835,7 @@ class HistoriesController extends AppController {
    * */
   public function clearSession() {
     $this->Session->delete('Thistory');
-    $companyStartDay = date("Y/m/d",strtotime($this->userInfo['MCompany']['created']));
-    $historyConditions = [
-        'History'=>['start_day' => date("Y/m/d",strtotime("-30 day")),'finish_day' => date("Y/m/d"),
-        'period' => '過去一ヵ月間','company_start_day' => $companyStartDay,'ip_address' => '',
-        'company_name' => '', 'customer_name' => '','telephone_number' => '','mail_address' => ''],
-        'THistoryChatLog'=>['responsible_name' => '','achievement_flg' => '','message' => '']
-      ];
-    $this->_searchProcessing($historyConditions);
+    $this->_searchProcessing(1);
     $this->redirect(['controller' => 'Histories', 'action' => 'index']);
   }
 }

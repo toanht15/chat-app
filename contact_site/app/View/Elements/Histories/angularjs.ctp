@@ -317,7 +317,7 @@ $(document).ready(function(){
          search_day  = "先月";
        }
        //全期間
-       else if(startDay  == allDay){
+       else if(startDay  == allDay && endDay == today){
          search_day  = "全期間";
        }
        //カスタム
