@@ -554,9 +554,6 @@
                     &&
                     (this.endDate.format('YYYY-MM') == this.leftCalendar.month.format('YYYY-MM') || this.endDate.format('YYYY-MM') == this.rightCalendar.month.format('YYYY-MM'))
                     ) {
-                  //2017/1/23 モーダル検索：日にちを選んだ際にinputの中身も変更するため
-                    //$('#dateperiod').val(this.startDate.format('YYYY/MM/DD') + ' - '　+ this.endDate.format('YYYY/MM/DD'));
-                    //ここまで
                     return;
                 }
 
@@ -1024,8 +1021,77 @@
               this.container.find('input[name=daterangepicker_start]').val(this.startDate.format(this.locale.format));
             if (this.endDate)
                 this.container.find('input[name=daterangepicker_end]').val(this.endDate.format(this.locale.format));
-              //2017/1/23 view側検索：日にちを選んだ際にinputの中身も変更するため
-              $('#mainDatePeriod').html(this.container.find('input[name=daterangepicker_start]').val() + ' - ' + this.container.find('input[name=daterangepicker_end]').val());
+              //view側検索：日にちを選んだ際にinputの中身も変更するため、処理追加
+              //期間取得(今日、先月など)
+              var search_day  = $('.active').val();
+              //開始日
+              var startDay = this.container.find('input[name=daterangepicker_start]').val();
+              //終了日
+              var endDay = this.container.find('input[name=daterangepicker_end]').val();
+              //今日
+              var today = moment();
+              today = today.format("YYYY/MM/DD");
+              //昨日
+              var yesterday = moment().subtract(1, 'days');
+              yesterday = yesterday.format("YYYY/MM/DD");
+              //過去一週間
+              var oneWeekAgo = moment().subtract(6, 'days');
+              oneWeekAgo = oneWeekAgo.format("YYYY/MM/DD");
+              //過去一か月間
+              var oneMonthAgo = moment().subtract(30, 'days');
+              oneMonthAgo = oneMonthAgo.format("YYYY/MM/DD");
+              //過去一ヵ月間
+              var thisMonth = moment().startOf('month');
+              thisMonth = thisMonth.format("YYYY/MM/DD");
+              //今月の初め
+              var thisMonthStart = moment().startOf('month');
+              thisMonthStart = thisMonthStart.format("YYYY/MM/DD");
+              //今月の終わり
+              var thisMonthEnd = moment().endOf('month');
+              thisMonthEnd = thisMonthEnd.format("YYYY/MM/DD");
+              //先月の初め
+              var lastMonthStart = moment().subtract(1, 'month').startOf('month');
+              lastMonthStart = lastMonthStart.format("YYYY/MM/DD");
+              //先月の終わり
+              var lastMonthEnd = moment().subtract(1, 'month').endOf('month');
+              lastMonthEnd = lastMonthEnd.format("YYYY/MM/DD");
+              //全期間
+              var allDay = historySearchConditions.company_start_day;
+
+              //今日
+             if(startDay  == today && endDay == today){
+                search_day  = "今日";
+              }
+              //昨日
+              else if(startDay  == yesterday && endDay == yesterday){
+                search_day  = "昨日";
+              }
+              //過去一週間
+              else if(startDay  == oneWeekAgo && endDay == today){
+                search_day  = "過去一週間";
+              }
+              //過去一か月間
+              else if(startDay  == oneMonthAgo && endDay == today){
+                search_day  = "過去一ヵ月間";
+              }
+              //今月
+              else if(startDay  == thisMonthStart && endDay == thisMonthEnd){
+                search_day  = "今月";
+              }
+              //先月
+              else if(startDay  == lastMonthStart && endDay == lastMonthEnd ){
+                search_day  = "先月";
+              }
+              //全期間
+              else if(startDay  == allDay){
+                search_day  = "全期間";
+              }
+              //カスタム
+              else {
+                search_day  = "カスタム";
+              }
+
+              $('#mainDatePeriod').html(search_day + ' :  '  + this.container.find('input[name=daterangepicker_start]').val() + '-' + this.container.find('input[name=daterangepicker_end]').val());
               //ここまで
 
             if (this.singleDatePicker || (this.endDate && (this.startDate.isBefore(this.endDate) || this.startDate.isSame(this.endDate)))) {
@@ -1168,6 +1234,8 @@
                 ) return;
             this.hide();
             this.element.trigger('outsideClick.daterangepicker', this);
+            //カレンダーUI以外の場所をクリックした時の処理追加
+            $('#mainDatePeriod').html(historySearchConditions.period + ' : ' + historySearchConditions.start_day + '-' + historySearchConditions.finish_day);
         },
 
         showCalendars: function() {
@@ -1216,9 +1284,12 @@
                 if (!this.alwaysShowCalendars)
                     this.hideCalendars();
 
-                // 2016/10/25 henmi: 日付の範囲入力をクリックするとカレンダーが閉じていたため、処理変更
+                //日付の範囲入力をクリックするとカレンダーが閉じていたため、処理変更
+                // 変更前:this.clickApply();
                 this.updateCalendars();
-                // this.clickApply();
+                //期間名（昨日、先月など)を選択したときに開始日にフォーカスを当てる
+                this.hide();
+                this.show();
             }
         },
 

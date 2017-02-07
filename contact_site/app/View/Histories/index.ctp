@@ -45,90 +45,37 @@
     </div>
 
     <?= $this->Html->link(
-      '絞り込み検索',
+      '高度な検索',
       'javascript:void(0)',
       array('escape' => false, 'class'=>'skyBlueBtn btn-shadow','id' => 'searchRefine','onclick' => 'openSearchRefine()'));
     ?>
     <span id="searchPeriod">検索期間</span>
-    <?php //指定範囲のある検索
-    if(!empty($data['History']['start_day'])||!empty($data['History ']['finish_day'])) { ?>
-      <?php //モーダル画面から検索した場合
-      if(isset($data['History']['period'])) {
-        if(($data['History']['period']) == '全期間') { ?>
-        <span id ='mainDatePeriod' name = 'datefilter' class='date'>全期間</span>
-      <?php } else{ ?>
-        <span id ='mainDatePeriod' name = 'datefilter'><?= h($data['History']['period']) ?> : <?= h($data['History']['start_day']) ?>-<?= h($data['History']['finish_day']) ?></span>
-        <?php } ?>
-      <?php } ?>
-      <?php //view側から検索した場合
-      if(isset($data['History']['viewPeriod'])) { ?>
-       <span id ='mainDatePeriod' name = 'datefilter'><?= h($data['History']['viewPeriod']) ?> : <?= h($data['History']['start_day']) ?>-<?= h($data['History']['finish_day']) ?></span>
-      <?php } ?>
-    <?php } ?>
-    <?php //全期間の検索
-    if(empty($data['History']['start_day'])&&empty($data['History ']['finish_day'])) { ?>
-      <span id ='mainDatePeriod' name = 'datefilter' class='date'>全期間</span>
-    <?php } ?>
-
     <?php
-      //条件クリアをした時や、最初に来て値が入っていない時
-      if(empty($data['History']['start_day']) && empty($data['History']['finish_day'])){ ?>
-        <span id="startDay"><?=date("Y/m/d") ?></span>
-        <span id="finishDay"><?= date("Y/m/d") ?></span>
-        <span id="companyStart"><?= h($data['History']['company_start_day']) ?></span>
-      <?php }
-        //全期間検索の場合
-      else if($data['History']['start_day'] == $data['History']['company_start_day'] && $data['History']['finish_day'] == date("Y/m/d")) { ?>
-        <span id="startDay"><?=date("Y/m/d") ?></span>
-        <span id="finishDay"><?= date("Y/m/d") ?></span>
-        <span id="companyStart"><?= h($data['History']['company_start_day']) ?></span>
-        <span id="ip"><?= h($data['History']['ip_address']) ?></span>
-        <span id="company"><?= h($data['History']['company_name']) ?></span>
-        <span id="customer"><?= h($data['History']['customer_name']) ?></span>
-        <span id="telephone"><?= h($data['History']['telephone_number']) ?></span>
-        <span id="mail"><?= h($data['History']['mail_address']) ?></span>
-        <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
-          <span id="responsible"><?= h($data['THistoryChatLog']['responsible_name']) ?></span>
-          <span id="achievement"><?= h($data['THistoryChatLog']['achievement_flg']) ?></span>
-          <span id="message"><?= h($data['THistoryChatLog']['message']) ?></span>
-        <?php endif; ?>
-       <?php }
-       //それ以外の検索の場合
-      else { ?>
-        <span id="startDay"><?= h($data['History']['start_day']) ?></span>
-        <span id="companyStart"><?= h($data['History']['company_start_day']) ?></span>
-        <span id="finishDay"><?= h($data['History']['finish_day']) ?></span>
-        <span id="ip"><?= h($data['History']['ip_address']) ?></span>
-        <span id="company"><?= h($data['History']['company_name']) ?></span>
-        <span id="customer"><?= h($data['History']['customer_name']) ?></span>
-        <span id="telephone"><?= h($data['History']['telephone_number']) ?></span>
-        <span id="mail"><?= h($data['History']['mail_address']) ?></span>
-        <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
-          <span id="responsible"><?= h($data['THistoryChatLog']['responsible_name']) ?></span>
-          <span id="achievement"><?= h($data['THistoryChatLog']['achievement_flg']) ?></span>
-          <span id="message"><?= h($data['THistoryChatLog']['message']) ?></span>
-        <?php endif; ?>
-      <?php } ?>
-
-
-    <?php
-      $none = '';
+      //検索条件表示：非表示
+      $noseach_menu = '';
       $seach_menu = 'seach_menu';
-      //全期間の場合
-      if(empty($data['History'])&&empty($data['THistoryChatLog'])){
-        $none = 'none';
-        $seach_menu='　';
-      }
-      //日程だけ検索の場合
-      if(empty($data['History']['ip_address'])&&empty($data['History']['company_name'])
+    ?>
+    <?php //検索をした時の表示
+      if(!empty($data['History']['start_day'])||!empty($data['History ']['finish_day'])) { ?>
+        <span id ='mainDatePeriod' name = 'datefilter'><?= h($data['History']['period']) ?> : <?= h($data['History']['start_day']) ?>-<?= h($data['History']['finish_day']) ?></span>
+    <?php } ?>
+    <?php //セッションをクリアしたときの表示(履歴一覧ボタンを押下した時)
+      if(empty($data['History']['start_day'])&&empty($data['History ']['finish_day'])) { ?>
+        <span id ='mainDatePeriod' name = 'datefilter' class='date'>過去一ヵ月間 : <?= h($historySearchConditions['start_day']) ?>-<?= h($historySearchConditions['finish_day']) ?></span>
+    <?php } ?>
+    <?php
+      //セッションクリア（履歴一覧ボタン、条件クリアボタンを押下した時、日付検索だけを行った場合)
+      if(
+        empty($data['History']['ip_address'])&&empty($data['History']['company_name'])
         &&empty($data['History']['customer_name'])&&empty($data['History']['telephone_number'])
         &&empty($data['History']['mail_address'])&&empty($data['THistoryChatLog']['responsible_name'])
         &&empty($data['THistoryChatLog']['achievement_flg'])&&empty($data['THistoryChatLog']['message'])){
-        $none = 'none';
+        $noseach_menu = 'noseach_menu';
         $seach_menu='　';
       }
     ?>
-    <div class=<?= $seach_menu; ?> id=<?= $none ?>>
+
+    <div class=<?= $seach_menu; ?> id=<?= $noseach_menu ?>>
       <label class='searchConditions'>検索条件</label>
       <ul>
         <span class="dammy">　</span>
@@ -180,6 +127,12 @@
             <span class="value"><?= h($data['THistoryChatLog']['message']) ?></span>
           </li>
         <?php } ?>
+
+        <?= $this->Html->link(
+          '条件クリア',
+          'javascript:void(0)',
+          ['escape' => false, 'class'=>'skyBlueBtn btn-shadow','id' => 'sessionClear','onclick' => 'sessionClear()']);
+        ?>
       </ul>
     </div>
     <!-- 検索窓 -->

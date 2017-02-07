@@ -2298,30 +2298,8 @@ ul.naviBtn {
   #history_menu {
     height: auto;
 
-    #none{
-      visibility:hidden;
-      margin-top: -10px;
-    }
-
-    #date {
-      margin-left: 11em;
-    }
-
-    span#ip,#company,#customer,#telephone,#mail,#responsible,#message,#startDay,#finishDay,#achievement,#companyStart{
-      display: none;
-    }
-
     .dammy {
       display:block;
-    }
-
-    #dateperiod {
-      margin-left: 1em;
-      background-image: url(/img/calender.png);
-      background-repeat: no-repeat;
-      background-position: right 10pt bottom 4pt;
-      background-size: 15px;
-      cursor: pointer;
     }
 
     #mainDatePeriod {
@@ -2456,10 +2434,19 @@ ul.naviBtn {
   a#searchRefine {
     position: absolute;
     top: 80px;
-    left: 31em;
+    left: 32em;
     width: 8em;
     padding: 0.25em 0.5em;
     text-align: center;
+  }
+
+  a#sessionClear {
+    margin-top: 0.2em;
+    margin-left: 1.5em;
+    width: 8em;
+    padding: 0.25em 0.5em;
+    text-align: center;
+    height: 2em;
   }
 
   .searchConditions{
@@ -2471,6 +2458,11 @@ ul.naviBtn {
 
   .seach_menu {
     margin-top:30px;
+  }
+
+  #noseach_menu{
+    visibility:hidden;
+    margin-top: -3em;
   }
 
   span.value {

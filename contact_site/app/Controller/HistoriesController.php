@@ -62,9 +62,11 @@ class HistoriesController extends AppController {
     if ( !empty($this->params->query['isChat']) ) {
       $isChat = $this->params->query['isChat'];
     }
-    $this->_setList($isChat);
+    //$historyConditions = '';
+    $this->_searchProcessing(3);
     // 成果の名称リスト
     $this->set('achievementType', Configure::read('achievementType'));
+    $this->_setList($isChat);
   }
 
   public function remoteGetCustomerInfo() {
@@ -468,6 +470,38 @@ class HistoriesController extends AppController {
     return array_keys($visitorsIds);
   }
 
+  private function _searchProcessing($type){
+    $data = $this->Session->read('Thistory');
+    $companyStartDay = date("Y/m/d",strtotime($this->userInfo['MCompany']['created']));
+    $historyConditions = [
+      'History'=>['company_start_day' => $companyStartDay,
+      'ip_address' => '','company_name' => '','customer_name' => '',
+      'telephone_number' => '','mail_address' => ''],
+      'THistoryChatLog'=>['responsible_name' => '','achievement_flg' => '','message' => '']
+    ];
+    switch ($type) {
+      case 1:
+        $historyConditions['History']['start_day'] = date("Y/m/d",strtotime("-30 day"));
+        $historyConditions['History']['finish_day'] = date("Y/m/d");
+        $historyConditions['History']['period'] = '過去一ヵ月間';
+      break;
+
+      case 2:
+        $historyConditions['History']['start_day'] = $data['History']['start_day'];
+        $historyConditions['History']['finish_day'] =$data['History']['finish_day'];
+        $historyConditions['History']['period'] = $data['History']['period'];
+      break;
+
+      default:
+        $historyConditions = $data;
+        if($this->request->is('post')) {
+          $historyConditions = $this->request->data;
+        }
+      break;
+    }
+    $this->Session->write('Thistory',$historyConditions);
+  }
+
   private function _setList($type=true){
     $data = '';
     $userCond = [
@@ -476,18 +510,9 @@ class HistoriesController extends AppController {
     $visitorsIds = [];
     $chatCond = [];
     $chatLogCond = [];
-    $data['History']['company_start_day'] = substr($this->userInfo['MCompany']['created'],0,10);
-    $data['History']['company_start_day']= str_replace("-", "/",  $data['History']['company_start_day']);
-
     //履歴検索機能
-    if($this->request->is('post')) {
-      $this->Session->write('Thistory', $this->data);
-    }
-
     if ($this->Session->check('Thistory')) {
       $data = $this->Session->read('Thistory');
-      $data['History']['company_start_day'] = substr($this->userInfo['MCompany']['created'],0,10);
-      $data['History']['company_start_day']= str_replace("-", "/",  $data['History']['company_start_day']);
       /* ○ 検索処理 */
 
       //ipアドレス
@@ -788,16 +813,6 @@ class HistoriesController extends AppController {
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
     $this->data = $this->Session->read('Thistory');
-    $today = date("Y/m/d");
-    $start_date = substr($this->userInfo['MCompany']['created'],0,10);
-    $this->request->data['History']['company_start_day'] = str_replace("-", "/",  $start_date);
-
-    //範囲が全期間の場合
-    if(empty($this->data['History']['start_day']) && empty($this->data['History']['finish_day'])) {
-      $this->request->data['History']['start_day'] = str_replace("-", "/",  $start_date);
-      $this->request->data['History']['finish_day'] = $today;
-      $this->request->data['History']['period'] = '全期間';
-    }
 
     // 成果種別リスト
     $this->set('achievementType', Configure::read('achievementType'));
@@ -806,11 +821,21 @@ class HistoriesController extends AppController {
   }
 
  /* *
-   * Session削除
+   * Session削除(条件クリア)
+   * @return void
+   * */
+  public function portionClearSession() {
+    $this->_searchProcessing(2);
+    $this->redirect(['controller' => 'Histories', 'action' => 'index']);
+  }
+
+   /* *
+   * Session削除(一覧画面)
    * @return void
    * */
   public function clearSession() {
     $this->Session->delete('Thistory');
+    $this->_searchProcessing(1);
     $this->redirect(['controller' => 'Histories', 'action' => 'index']);
   }
 }
