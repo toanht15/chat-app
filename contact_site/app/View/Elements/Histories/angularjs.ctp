@@ -1,7 +1,7 @@
 <script type="text/javascript">
 'use strict';
-  var historySearchConditions = <?php echo json_encode($historySearchConditions);?>;
-  var thistoryChatLogSearchConditions = <?php echo json_encode($thistoryChatLogSearchConditions);?>;
+  var historySearchConditions = <?php echo json_encode($data);?>;
+  console.log(historySearchConditions);
 
   var sincloApp = angular.module('sincloApp', ['ngSanitize']);
   sincloApp.controller('MainCtrl', function($scope) {
@@ -199,6 +199,7 @@ $(document).ready(function(){
 <?php endif; ?>
 
   onload = function(){
+
     $('#mainDatePeriod').daterangepicker({
       "ranges": {
         '今日': [moment(), moment()],
@@ -207,7 +208,7 @@ $(document).ready(function(){
         '過去一ヶ月間': [moment().subtract(30, 'days'), moment()],
         '今月': [moment().startOf('month'), moment().endOf('month')],
         '先月': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
-        '全期間': [historySearchConditions.company_start_day, moment()]
+        '全期間': [historySearchConditions.History.company_start_day, moment()]
       },
       "locale": {
         "format": "YYYY/MM/DD",
@@ -244,14 +245,14 @@ $(document).ready(function(){
         "firstDay": 1
       },
       "alwaysShowCalendars": true,
-      "startDate": historySearchConditions.start_day,
-      "endDate": historySearchConditions.finish_day,
+      "startDate": historySearchConditions.History.start_day,
+      "endDate": historySearchConditions.History.finish_day,
       "opens": "left"
     });
 
     //キャンセルボタン
     $('.cancelBtn').on('click', function() {
-      $('#mainDatePeriod').html(historySearchConditions.period + ' : ' + historySearchConditions.start_day + '-' + historySearchConditions.finish_day);
+      $('#mainDatePeriod').html(historySearchConditions.History.period + ' : ' + historySearchConditions.History.start_day + '-' + historySearchConditions.History.finish_day);
     });
 
     //検索ボタン
@@ -289,7 +290,7 @@ $(document).ready(function(){
       var lastMonthEnd = moment().subtract(1, 'month').endOf('month');
       lastMonthEnd = lastMonthEnd.format("YYYY/MM/DD");
       //全期間
-      var allDay = historySearchConditions.company_start_day;
+      var allDay = historySearchConditions.History.company_start_day;
 
       //今日
       if(startDay  == today && endDay == today){
@@ -323,18 +324,15 @@ $(document).ready(function(){
        else {
          search_day  = "カスタム";
        }
-
-      historySearchConditions.start_day = $("input[name=daterangepicker_start]").val();
-      historySearchConditions.finish_day = $("input[name=daterangepicker_end]").val();
-      historySearchConditions.period = search_day;
+      console.log(historySearchConditions);
+      historySearchConditions.History.start_day = $("input[name=daterangepicker_start]").val();
+      historySearchConditions.History.finish_day = $("input[name=daterangepicker_end]").val();
+      historySearchConditions.History.period = search_day;
 
       $.ajax({
         type: 'post',
         dataType: 'html',
-        data:{
-          History:historySearchConditions,
-          THistoryChatLog:thistoryChatLogSearchConditions
-        },
+        data:historySearchConditions,
         cache: false,
         url: "<?= $this->Html->url(['controller' => 'Histories', 'action' => 'index']) ?>",
         success: function(html){

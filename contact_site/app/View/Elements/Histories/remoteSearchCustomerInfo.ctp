@@ -12,9 +12,9 @@ popupEvent.closePopup = function(){
   historySearchConditions.customer_name = $('#HistoryCustomerName').val();
   historySearchConditions.telephone_number = $('#HistoryTelephoneNumber').val();
   historySearchConditions.mail_address = $('#HistoryMailAddress').val();
-  thistoryChatLogSearchConditions.responsible_name = $('#THistoryChatLogResponsibleName').val();
-  thistoryChatLogSearchConditions.achievement_flg = $('#THistoryChatLogAchievementFlg').val();
-  thistoryChatLogSearchConditions.message = $('#THistoryChatLogMessage').val();
+  historySearchConditions.responsible_name = $('#THistoryChatLogResponsibleName').val();
+  historySearchConditions.achievement_flg = $('#THistoryChatLogAchievementFlg').val();
+  historySearchConditions.message = $('#THistoryChatLogMessage').val();
 
   $('#historySearch').submit();
 };
