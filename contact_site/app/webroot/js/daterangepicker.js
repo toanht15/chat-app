@@ -1056,7 +1056,7 @@
               var lastMonthEnd = moment().subtract(1, 'month').endOf('month');
               lastMonthEnd = lastMonthEnd.format("YYYY/MM/DD");
               //全期間
-              var allDay = historySearchConditions.company_start_day;
+              var allDay = historySearchConditions.History.company_start_day;
 
               //今日
              if(startDay  == today && endDay == today){
@@ -1083,7 +1083,7 @@
                 search_day  = "先月";
               }
               //全期間
-              else if(startDay  == allDay){
+              else if(startDay  == allDay　&& endDay == today){
                 search_day  = "全期間";
               }
               //カスタム
@@ -1235,7 +1235,7 @@
             this.hide();
             this.element.trigger('outsideClick.daterangepicker', this);
             //カレンダーUI以外の場所をクリックした時の処理追加
-            $('#mainDatePeriod').html(historySearchConditions.period + ' : ' + historySearchConditions.start_day + '-' + historySearchConditions.finish_day);
+            $('#mainDatePeriod').html(historySearchConditions.History.period + ' : ' + historySearchConditions.History.start_day + '-' + historySearchConditions.History.finish_day);
         },
 
         showCalendars: function() {
@@ -1303,6 +1303,8 @@
                 this.rightCalendar.month.subtract(1, 'month');
             }
             this.updateCalendars();
+            //カレンダーUIの矢印を押した際に日付のフォーマットをずらさないようにするため
+            $('#mainDatePeriod').html(historySearchConditions.History.period + ' : ' + historySearchConditions.History.start_day + '-' + historySearchConditions.History.finish_day);
         },
 
         clickNext: function(e) {
