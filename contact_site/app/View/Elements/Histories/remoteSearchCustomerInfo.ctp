@@ -1,20 +1,12 @@
 <script type="text/javascript">
 popupEvent.closePopup = function(){
+
   if ($("#g_chat").prop("checked")) {
     document.getElementById('historySearch').action = "Histories?isChat=true";
   }
   else {
     document.getElementById('historySearch').action = "Histories?isChat=false";
   }
-
-  historySearchConditions.ip_address = $('#HistoryIpAddress').val();
-  historySearchConditions.company_name = $('#HistoryCompanyName').val();
-  historySearchConditions.customer_name = $('#HistoryCustomerName').val();
-  historySearchConditions.telephone_number = $('#HistoryTelephoneNumber').val();
-  historySearchConditions.mail_address = $('#HistoryMailAddress').val();
-  historySearchConditions.responsible_name = $('#THistoryChatLogResponsibleName').val();
-  historySearchConditions.achievement_flg = $('#THistoryChatLogAchievementFlg').val();
-  historySearchConditions.message = $('#THistoryChatLogMessage').val();
 
   $('#historySearch').submit();
 };

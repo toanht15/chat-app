@@ -342,5 +342,12 @@ $(document).ready(function(){
     });
   }
 });
+if (!window.console){
+    window.console = {
+        log : function(msg){
+            // do nothing.
+        }
+    };
+}
 
 </script>

@@ -490,12 +490,15 @@ class HistoriesController extends AppController {
         $historyConditions['History']['start_day'] = $data['History']['start_day'];
         $historyConditions['History']['finish_day'] =$data['History']['finish_day'];
         $historyConditions['History']['period'] = $data['History']['period'];
+        $historyConditions['History']['chat'] = '条件クリア';
       break;
 
       default:
         $historyConditions = $data;
         if($this->request->is('post')) {
+          $this->log($this->request->data,LOG_DEBUG);
           $historyConditions = $this->request->data;
+          $historyConditions['History']['company_start_day'] = $companyStartDay;
         }
       break;
     }
@@ -663,15 +666,25 @@ class HistoriesController extends AppController {
       ];
 
       // チャットのみ表示との切り替え（担当者検索の場合、強制的にINNER）
+
       if ( strcmp($type, 'false') === 0 && !(!empty($data['THistoryChatLog']) && !empty(array_filter($data['THistoryChatLog']))) ) {
         $joinToChat['type'] = "LEFT";
+         //$this->log('ohoho',LOG_DEBUG);
       }
       else {
         $joinToChat['type'] = "INNER";
+        if(strcmp($type, 'false') === 0) {
+          //$this->log('ahaha',LOG_DEBUG);
+        }
+        if(isset($data['History']['chat'])) {
+          if($data['History']['chat']=='条件クリア'){
+            $joinToChat['type'] = "LEFT";
+          }
+        }
       }
 
       $this->paginate['THistory']['fields'][] = 'THistoryChatLog.*';
-
+      //$this->log($joinToChat,LOG_DEBUG);
       $this->paginate['THistory']['joins'][] = $joinToChat;
     }
 
