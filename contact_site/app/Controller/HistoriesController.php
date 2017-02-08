@@ -490,7 +490,6 @@ class HistoriesController extends AppController {
         $historyConditions['History']['start_day'] = $data['History']['start_day'];
         $historyConditions['History']['finish_day'] =$data['History']['finish_day'];
         $historyConditions['History']['period'] = $data['History']['period'];
-        $historyConditions['History']['chat'] = '条件クリア';
       break;
 
       default:
@@ -673,6 +672,7 @@ class HistoriesController extends AppController {
       }
 
       $this->paginate['THistory']['fields'][] = 'THistoryChatLog.*';
+
       $this->paginate['THistory']['joins'][] = $joinToChat;
     }
 
