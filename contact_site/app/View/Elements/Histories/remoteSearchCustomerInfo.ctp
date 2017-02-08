@@ -7,15 +7,6 @@ popupEvent.closePopup = function(){
     document.getElementById('historySearch').action = "Histories?isChat=false";
   }
 
-  historySearchConditions.ip_address = $('#HistoryIpAddress').val();
-  historySearchConditions.company_name = $('#HistoryCompanyName').val();
-  historySearchConditions.customer_name = $('#HistoryCustomerName').val();
-  historySearchConditions.telephone_number = $('#HistoryTelephoneNumber').val();
-  historySearchConditions.mail_address = $('#HistoryMailAddress').val();
-  historySearchConditions.responsible_name = $('#THistoryChatLogResponsibleName').val();
-  historySearchConditions.achievement_flg = $('#THistoryChatLogAchievementFlg').val();
-  historySearchConditions.message = $('#THistoryChatLogMessage').val();
-
   $('#historySearch').submit();
 };
 
