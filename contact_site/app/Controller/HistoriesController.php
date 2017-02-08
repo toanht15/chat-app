@@ -494,6 +494,7 @@ class HistoriesController extends AppController {
 
       default:
         $historyConditions = $data;
+
         if($this->request->is('post')) {
           $historyConditions = $this->request->data;
           $historyConditions['History']['company_start_day'] = $companyStartDay;
