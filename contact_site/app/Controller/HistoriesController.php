@@ -269,6 +269,7 @@ class HistoriesController extends AppController {
      ];
 
     foreach($ret as $val){
+      $this->log($val->id,LOG_DEBUG);
       $row = [];
       // 日時
       $dateTime = preg_replace("/[\n,]+/", " ", $val->date);
@@ -280,19 +281,87 @@ class HistoriesController extends AppController {
       $row['os'] = $ua[0];
       //ブラウザ
       $row['browser'] = $ua[1];
+
+    $params = [
+      'fields' => [
+        'MUser.display_name',
+        'THistoryChatLog.*'
+      ],
+      'conditions' => [
+        'THistoryChatLog.t_histories_id' => $val->id
+      ],
+      'joins' => [
+        [
+          'type' => 'LEFT',
+          'table' => 'm_users',
+          'alias' => 'MUser',
+          'conditions' => [
+          'THistoryChatLog.m_users_id = MUser.id',
+          'MUser.m_companies_id' => $this->userInfo['MCompany']['id']
+          ]
+        ]
+      ],
+      //'order' => 'THistoryChatLog.created',
+      //'recursive' => -1
+    ];
+
       // 送信元ページ
       $Transmission = $this->THistoryStayLog->find('all',[
         'fields' => [
-        'url'
+        '*'
         ],
+        'conditions' => [
+        'THistoryStayLog.t_histories_id' => $val->id
+        ],
+        'joins' => [
+        [
+          'type' => 'LEFT',
+          'table' => 't_history_chat_logs',
+          'alias' => 'THistoryChatLog',
+          'conditions' => [
+              'THistoryChatLog.t_history_stay_logs_id' => 'THistoryStayLog.id'
+            ]
+          ]
+        ],
+        $this->THistoryChatLog->recursive = 1
         ]);
-      foreach($Transmission as $key => $value) {
-        $row['referrer'] = $value['THistoryStayLog']['url'];
-      }
+
+        /*$Transmission = $this->THistoryChatLog->find('all',[
+        'conditions' => [
+        'THistoryChatLog.t_histories_id' => $val->id
+        ],
+        'joins' => [
+        [
+          'type' => 'LEFT',
+          'table' => 't_history_stay_logs',
+          'alias' => 'THistoryStayLog',
+          'conditions' => [
+              'THistoryChatLog.t_history_stay_logs_id' => 'THistoryStayLog.id'
+            ]
+          ]
+        ],
+        'fields' => [
+          'THistoryStayLog.url'
+        ],
+        'recursive' => -1
+        ]);*/
+
+         /*$Transmission = $this->THistoryChatLog->find('all',[
+        'fields' => [
+        '*'
+        ],
+        'conditions' => [
+        'THistoryChatLog.t_history_stay_logs_id' => $val->id
+        ]
+        ]);*/
+      //$Transmission = $this->_getChatLog2();
       //id取得
+      $this->log($Transmission,LOG_DEBUG);
+      foreach($Transmission as $key => $value1) {
+        $row['referrer'] = $value1['THistoryStayLog']['url'];
+      }
       $id = $val->id;
       $chatLog = $this->_getChatLog($id);
-
       foreach($chatLog as $key => $value) {
         $users = preg_replace("/[\n,]+/", ", ", $val->user);
         // 送信日時
@@ -324,6 +393,30 @@ class HistoriesController extends AppController {
       }
     }
     $this->_outputCSV($name, $csv);
+  }
+
+    private function _getChatLog2($aaid){
+    $params2 = [
+      'joins' => [
+        [
+          'type' => 'LEFT',
+          'table' => 't_history_chat_logs',
+          'alias' => 'THistoryChatLog',
+          'conditions' => [
+                'THistoryChatLog.t_history_stay_logs_id' => 'THistoryStayLog.id'
+            ]
+          ]
+        ],
+        'fields' => [
+        'THistoryChatLog.t_history_stay_logs_id',
+        'THistoryStayLog.*'
+        ],
+        'conditions' => [
+        'THistoryChatLog.t_histories_id' => $aaid
+      ],
+    ];
+    $this->log($this->THistoryStayLog->find('all', $params2),LOG_DEBUG);
+    return $this->THistoryStayLog->find('all', $params2);
   }
   public function outputCSVOfChat($id = null){
     Configure::write('debug', 0);
@@ -793,7 +886,8 @@ class HistoriesController extends AppController {
     $params = [
       'fields' => [
         'MUser.display_name',
-        'THistoryChatLog.*'
+        'THistoryChatLog.*',
+        'THistoryStayLog.*'
       ],
       'conditions' => [
         'THistoryChatLog.t_histories_id' => $historyId
@@ -807,6 +901,14 @@ class HistoriesController extends AppController {
           'THistoryChatLog.m_users_id = MUser.id',
           'MUser.m_companies_id' => $this->userInfo['MCompany']['id']
           ]
+        ],
+        [
+          'type' => 'LEFT',
+          'table' => 't_history_stay_logs',
+          'alias' => 'THistoryStayLog',
+          'conditions' => [
+              'THistoryChatLog.t_history_stay_logs_id' => 'THistoryStayLog.id'
+            ]
         ]
       ],
       'order' => 'THistoryChatLog.created',

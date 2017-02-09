@@ -11,7 +11,6 @@ popupEvent.closePopup = function(){
 };
 
 </script>
-<?php echo $this->element('Histories/angularjs') ?>
 <?=  $this->Form->create('History',['id' => 'historySearch','type' => 'post','url' => ['controller' => 'Histories','action' => 'index']]); ?>
   <ul>
     <?= $this->Form->hidden('start_day',['label'=> false,'div' => false]); ?>
