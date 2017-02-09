@@ -62,7 +62,6 @@ class HistoriesController extends AppController {
     if ( !empty($this->params->query['isChat']) ) {
       $isChat = $this->params->query['isChat'];
     }
-    //$historyConditions = '';
     $this->_searchProcessing(3);
     // 成果の名称リスト
     $this->set('achievementType', Configure::read('achievementType'));
@@ -281,8 +280,15 @@ class HistoriesController extends AppController {
       $row['os'] = $ua[0];
       //ブラウザ
       $row['browser'] = $ua[1];
-      // 参照元URL
-      $row['referrer'] = $val->referrer;
+      // 送信元ページ
+      $Transmission = $this->THistoryStayLog->find('all',[
+        'fields' => [
+        'url'
+        ],
+        ]);
+      foreach($Transmission as $key => $value) {
+        $row['referrer'] = $value['THistoryStayLog']['url'];
+      }
       //id取得
       $id = $val->id;
       $chatLog = $this->_getChatLog($id);
@@ -319,7 +325,6 @@ class HistoriesController extends AppController {
     }
     $this->_outputCSV($name, $csv);
   }
-
   public function outputCSVOfChat($id = null){
     Configure::write('debug', 0);
 
@@ -480,18 +485,21 @@ class HistoriesController extends AppController {
       'THistoryChatLog'=>['responsible_name' => '','achievement_flg' => '','message' => '']
     ];
     switch ($type) {
+      //履歴一覧ボタンをクリックした場合
       case 1:
         $historyConditions['History']['start_day'] = date("Y/m/d",strtotime("-30 day"));
         $historyConditions['History']['finish_day'] = date("Y/m/d");
         $historyConditions['History']['period'] = '過去一ヵ月間';
       break;
-
+      //条件クリアをクリックした場合
       case 2:
         $historyConditions['History']['start_day'] = $data['History']['start_day'];
         $historyConditions['History']['finish_day'] =$data['History']['finish_day'];
         $historyConditions['History']['period'] = $data['History']['period'];
-      break;
+        $historyConditions['History']['chat'] = '条件クリア';
 
+      break;
+      //デフォルト
       default:
         $historyConditions = $data;
         if($this->request->is('post')) {
@@ -663,9 +671,11 @@ class HistoriesController extends AppController {
         ]
       ];
 
+
       // チャットのみ表示との切り替え（担当者検索の場合、強制的にINNER）
       if ( strcmp($type, 'false') === 0 && !(!empty($data['THistoryChatLog']) && !empty(array_filter($data['THistoryChatLog']))) ) {
         $joinToChat['type'] = "LEFT";
+
       }
       else {
         $joinToChat['type'] = "INNER";
@@ -822,12 +832,21 @@ class HistoriesController extends AppController {
   }
 
  /* *
-   * Session削除(条件クリア)
+   * Session削除(条件クリア、チェックがついている場合)
+   * @return void
+   * */
+  public function checkedPortionClearSession() {
+    $this->_searchProcessing(2);
+    $this->redirect(['controller' => '', 'action' => 'Histories?isChat=true']);
+  }
+
+ /* *
+   * Session削除(条件クリア、チェックがついていない場合)
    * @return void
    * */
   public function portionClearSession() {
     $this->_searchProcessing(2);
-    $this->redirect(['controller' => 'Histories', 'action' => 'index']);
+    $this->redirect(['controller' => '', 'action' => 'Histories?isChat=false']);
   }
 
    /* *

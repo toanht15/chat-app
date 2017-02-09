@@ -1340,41 +1340,41 @@
             //全期間
             var allDay = historySearchConditions.History.company_start_day;
 
-              //今日
-             if(startDay  == today && endDay == today){
-                search_day  = "今日";
-              }
-              //昨日
-              else if(startDay  == yesterday && endDay == yesterday){
-                search_day  = "昨日";
-              }
-              //過去一週間
-              else if(startDay  == oneWeekAgo && endDay == today){
-                search_day  = "過去一週間";
-              }
-              //過去一か月間
-              else if(startDay  == oneMonthAgo && endDay == today){
-                search_day  = "過去一ヵ月間";
-              }
-              //今月
-              else if(startDay  == thisMonthStart && endDay == thisMonthEnd){
-                search_day  = "今月";
-              }
-              //先月
-              else if(startDay  == lastMonthStart && endDay == lastMonthEnd ){
-                search_day  = "先月";
-              }
-              //全期間
-              else if(startDay  == allDay　&& endDay == today){
-                search_day  = "全期間";
-              }
-              //カスタム
-              else {
-                search_day  = "カスタム";
-              }
+            //今日
+            if(startDay  == today && endDay == today){
+              search_day  = "今日";
+            }
+            //昨日
+            else if(startDay  == yesterday && endDay == yesterday){
+              search_day  = "昨日";
+            }
+            //過去一週間
+            else if(startDay  == oneWeekAgo && endDay == today){
+              search_day  = "過去一週間";
+            }
+            //過去一か月間
+            else if(startDay  == oneMonthAgo && endDay == today){
+              search_day  = "過去一ヵ月間";
+            }
+            //今月
+            else if(startDay  == thisMonthStart && endDay == thisMonthEnd){
+              search_day  = "今月";
+            }
+            //先月
+             else if(startDay  == lastMonthStart && endDay == lastMonthEnd ){
+              search_day  = "先月";
+            }
+            //全期間
+            else if(startDay  == allDay　&& endDay == today){
+              search_day  = "全期間";
+            }
+            //カスタム
+             else {
+              search_day  = "カスタム";
+            }
 
-              $('#mainDatePeriod').html(search_day + ' :  '  + this.container.find('input[name=daterangepicker_start]').val() + '-' + this.container.find('input[name=daterangepicker_end]').val());
-              //ここまで
+            $('#mainDatePeriod').html(search_day + ' :  '  + this.container.find('input[name=daterangepicker_start]').val() + '-' + this.container.find('input[name=daterangepicker_end]').val());
+            //ここまで
         },
 
         clickNext: function(e) {
@@ -1425,42 +1425,41 @@
             //全期間
             var allDay = historySearchConditions.History.company_start_day;
 
-              //今日
-             if(startDay  == today && endDay == today){
-                search_day  = "今日";
-              }
-              //昨日
-              else if(startDay  == yesterday && endDay == yesterday){
-                search_day  = "昨日";
-              }
-              //過去一週間
-              else if(startDay  == oneWeekAgo && endDay == today){
-                search_day  = "過去一週間";
-              }
-              //過去一か月間
-              else if(startDay  == oneMonthAgo && endDay == today){
-                search_day  = "過去一ヵ月間";
-              }
-              //今月
-              else if(startDay  == thisMonthStart && endDay == thisMonthEnd){
-                search_day  = "今月";
-              }
-              //先月
-              else if(startDay  == lastMonthStart && endDay == lastMonthEnd ){
-                search_day  = "先月";
-              }
-              //全期間
-              else if(startDay  == allDay　&& endDay == today){
-                search_day  = "全期間";
-              }
-              //カスタム
-              else {
-                search_day  = "カスタム";
-              }
+            //今日
+            if(startDay  == today && endDay == today){
+              search_day  = "今日";
+            }
+            //昨日
+            else if(startDay  == yesterday && endDay == yesterday){
+              search_day  = "昨日";
+             }
+            //過去一週間
+            else if(startDay  == oneWeekAgo && endDay == today){
+              search_day  = "過去一週間";
+            }
+            //過去一か月間
+            else if(startDay  == oneMonthAgo && endDay == today){
+               search_day  = "過去一ヵ月間";
+             }
+             //今月
+             else if(startDay  == thisMonthStart && endDay == thisMonthEnd){
+               search_day  = "今月";
+             }
+            //先月
+          　 else if(startDay  == lastMonthStart && endDay == lastMonthEnd ){
+              search_day  = "先月";
+            }
+            //全期間
+            else if(startDay  == allDay　&& endDay == today){
+              search_day  = "全期間";
+            }
+            //カスタム
+            else {
+              search_day  = "カスタム";
+            }
 
-              $('#mainDatePeriod').html(search_day + ' :  '  + this.container.find('input[name=daterangepicker_start]').val() + '-' + this.container.find('input[name=daterangepicker_end]').val());
-              //ここまで
-
+            $('#mainDatePeriod').html(search_day + ' :  '  + this.container.find('input[name=daterangepicker_start]').val() + '-' + this.container.find('input[name=daterangepicker_end]').val());
+            //ここまで
         },
 
         hoverDate: function(e) {

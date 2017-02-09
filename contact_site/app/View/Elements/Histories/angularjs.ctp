@@ -1,6 +1,7 @@
 <script type="text/javascript">
 'use strict';
   var historySearchConditions = <?php echo json_encode($data);?>;
+  console.log(historySearchConditions);
 
   var sincloApp = angular.module('sincloApp', ['ngSanitize']);
   sincloApp.controller('MainCtrl', function($scope) {
@@ -197,8 +198,8 @@ $(document).ready(function(){
 
 <?php endif; ?>
 
-  onload = function(){
 
+  onload = function() {
     $('#mainDatePeriod').daterangepicker({
       "ranges": {
         '今日': [moment(), moment()],
@@ -323,6 +324,7 @@ $(document).ready(function(){
        else {
          search_day  = "カスタム";
        }
+      console.log(historySearchConditions);
       historySearchConditions.History.start_day = $("input[name=daterangepicker_start]").val();
       historySearchConditions.History.finish_day = $("input[name=daterangepicker_end]").val();
       historySearchConditions.History.period = search_day;
@@ -338,7 +340,7 @@ $(document).ready(function(){
         }
       });
     });
-  }
+}
 });
 
 </script>

@@ -14,6 +14,13 @@ function openSearchRefine(){
 
 //セッションクリア(条件クリア)
 function sessionClear(){
-  location.href = "<?=$this->Html->url(array('controller' => 'Histories', 'action' => 'portionClearSession'))?>";
+  //「チャット履歴があるもののに表示」にチェックがついている場合
+  if ($("#g_chat").prop("checked")) {
+   location.href = "<?=$this->Html->url(array('controller' => 'Histories', 'action' => 'checkedPortionClearSession'))?>";
+  }
+  //「チャット履歴があるもののに表示」にチェックがついていない場合
+  else {
+    location.href = "<?=$this->Html->url(array('controller' => 'Histories', 'action' => 'portionClearSession'))?>";
+  }
 }
 </script>
