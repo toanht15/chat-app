@@ -198,8 +198,8 @@ $(document).ready(function(){
 
 <?php endif; ?>
 
-
-  onload = function() {
+  //historySearchConditionsを読み込んでからカレンダーUIを読み込む
+  if(<?php echo json_encode($data);?> != null){
     $('#mainDatePeriod').daterangepicker({
       "ranges": {
         '今日': [moment(), moment()],
@@ -340,7 +340,7 @@ $(document).ready(function(){
         }
       });
     });
-}
+  }
 });
 
 </script>
