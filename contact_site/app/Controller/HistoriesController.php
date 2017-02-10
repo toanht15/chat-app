@@ -855,6 +855,7 @@ class HistoriesController extends AppController {
    * */
   public function clearSession() {
     $this->Session->delete('Thistory');
+    $this->Session->delete('authenticity');
     $this->_searchProcessing(1);
     $this->redirect(['controller' => 'Histories', 'action' => 'index']);
   }
