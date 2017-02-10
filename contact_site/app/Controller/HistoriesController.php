@@ -60,9 +60,9 @@ class HistoriesController extends AppController {
   public function index() {
     $isChat = 'true';
     if ( !empty($this->params->query['isChat']) ) {
-      $isChat = $this->params->query['isChat'];
+      $this->Session->write('authenticity',$this->params->query['isChat']);
     }
-    //$historyConditions = '';
+    $isChat = $this->Session->read('authenticity');
     $this->_searchProcessing(3);
     // 成果の名称リスト
     $this->set('achievementType', Configure::read('achievementType'));
@@ -281,13 +281,17 @@ class HistoriesController extends AppController {
       $row['os'] = $ua[0];
       //ブラウザ
       $row['browser'] = $ua[1];
-      // 参照元URL
-      $row['referrer'] = $val->referrer;
-      //id取得
       $id = $val->id;
       $chatLog = $this->_getChatLog($id);
 
       foreach($chatLog as $key => $value) {
+        //送信元ページ
+        if($value['THistoryChatLog']['message_type'] == 1) {
+          $row['sourcePage'] = $value['THistoryStayLog']['url'];
+        }
+        else{
+          $row['sourcePage'] = '';
+        }
         $users = preg_replace("/[\n,]+/", ", ", $val->user);
         // 送信日時
         $row['pageCnt'] =  substr(preg_replace("/[\n,]+/", " ", $value['THistoryChatLog']['created']),0,20);
@@ -303,6 +307,10 @@ class HistoriesController extends AppController {
         }
         if($value['THistoryChatLog']['message_type'] == 3) {
           $row['transmissionKind'] = 'オートメッセージ';
+          $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
+        }
+        if($value['THistoryChatLog']['message_type'] == 4) {
+          $row['transmissionKind'] = 'Sorryメッセージ';
           $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
         }
         if($value['THistoryChatLog']['message_type'] == 98 || $value['THistoryChatLog']['message_type'] == 99) {
@@ -480,18 +488,19 @@ class HistoriesController extends AppController {
       'THistoryChatLog'=>['responsible_name' => '','achievement_flg' => '','message' => '']
     ];
     switch ($type) {
+      //履歴一覧ボタンをクリックした場合
       case 1:
         $historyConditions['History']['start_day'] = date("Y/m/d",strtotime("-30 day"));
         $historyConditions['History']['finish_day'] = date("Y/m/d");
         $historyConditions['History']['period'] = '過去一ヵ月間';
       break;
-
+      //条件クリアをクリックした場合
       case 2:
         $historyConditions['History']['start_day'] = $data['History']['start_day'];
         $historyConditions['History']['finish_day'] =$data['History']['finish_day'];
         $historyConditions['History']['period'] = $data['History']['period'];
       break;
-
+      //デフォルト
       default:
         $historyConditions = $data;
         if($this->request->is('post')) {
@@ -537,8 +546,10 @@ class HistoriesController extends AppController {
       }
 
       // 担当者に関する検索条件
+      $joinType = 'LEFT';
       if ( isset($data['THistoryChatLog']['responsible_name']) && $data['THistoryChatLog']['responsible_name'] !== "" ) {
         $userCond['display_name LIKE'] = "%".$data['THistoryChatLog']['responsible_name']."%";
+        $joinType = 'INNER';
       }
 
       /* チャットに関する検索条件 チャット担当者、チャット内容、チャット成果 */
@@ -595,7 +606,7 @@ class HistoriesController extends AppController {
             'fields' => ['t_histories_id'],
             'joins' => [
               [
-                'type' => 'INNER',
+                'type' => $joinType,
                 'alias' => 'muser',
                 'table' => "({$userListQurey})",
                 'conditions' => 'muser.id = chatLog.m_users_id'
@@ -639,7 +650,6 @@ class HistoriesController extends AppController {
         ],
         $this->THistoryChatLog
       );
-
 
       $dbo2 = $this->THistoryChatLog->getDataSource();
       $chatStateList = $dbo2->buildStatement(
@@ -783,7 +793,8 @@ class HistoriesController extends AppController {
     $params = [
       'fields' => [
         'MUser.display_name',
-        'THistoryChatLog.*'
+        'THistoryChatLog.*',
+        'THistoryStayLog.url'
       ],
       'conditions' => [
         'THistoryChatLog.t_histories_id' => $historyId
@@ -796,6 +807,14 @@ class HistoriesController extends AppController {
           'conditions' => [
           'THistoryChatLog.m_users_id = MUser.id',
           'MUser.m_companies_id' => $this->userInfo['MCompany']['id']
+          ]
+        ],
+        [
+          'type' => 'LEFT',
+          'table' => 't_history_stay_logs',
+          'alias' => 'THistoryStayLog',
+          'conditions' => [
+            'THistoryChatLog.t_history_stay_logs_id = THistoryStayLog.id'
           ]
         ]
       ],
@@ -821,7 +840,7 @@ class HistoriesController extends AppController {
     $this->render('/Elements/Histories/remoteSearchCustomerInfo');
   }
 
- /* *
+   /* *
    * Session削除(条件クリア)
    * @return void
    * */
@@ -836,6 +855,7 @@ class HistoriesController extends AppController {
    * */
   public function clearSession() {
     $this->Session->delete('Thistory');
+    $this->Session->delete('authenticity');
     $this->_searchProcessing(1);
     $this->redirect(['controller' => 'Histories', 'action' => 'index']);
   }
