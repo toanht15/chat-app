@@ -336,7 +336,7 @@ $(document).ready(function(){
       cache: false,
       url: "<?= $this->Html->url(['controller' => 'Histories', 'action' => 'index']) ?>",
       success: function(html){
-        location.href = "<?=$this->Html->url(array('controller' => 'Histories', 'action' => 'index'))?>";
+        location.href ="<?= $this->Html->url(['controller' => 'Histories', 'action' => 'index']) ?>";
       }
     });
   });

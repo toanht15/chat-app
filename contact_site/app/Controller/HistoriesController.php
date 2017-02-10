@@ -60,8 +60,9 @@ class HistoriesController extends AppController {
   public function index() {
     $isChat = 'true';
     if ( !empty($this->params->query['isChat']) ) {
-      $isChat = $this->params->query['isChat'];
+      $this->Session->write('authenticity',$this->params->query['isChat']);
     }
+    $isChat = $this->Session->read('authenticity');
     $this->_searchProcessing(3);
     // 成果の名称リスト
     $this->set('achievementType', Configure::read('achievementType'));
@@ -545,8 +546,10 @@ class HistoriesController extends AppController {
       }
 
       // 担当者に関する検索条件
+      $joinType = 'LEFT';
       if ( isset($data['THistoryChatLog']['responsible_name']) && $data['THistoryChatLog']['responsible_name'] !== "" ) {
         $userCond['display_name LIKE'] = "%".$data['THistoryChatLog']['responsible_name']."%";
+        $joinType = 'INNER';
       }
 
       /* チャットに関する検索条件 チャット担当者、チャット内容、チャット成果 */
@@ -603,7 +606,7 @@ class HistoriesController extends AppController {
             'fields' => ['t_histories_id'],
             'joins' => [
               [
-                'type' => 'INNER',
+                'type' => $joinType,
                 'alias' => 'muser',
                 'table' => "({$userListQurey})",
                 'conditions' => 'muser.id = chatLog.m_users_id'
@@ -647,7 +650,6 @@ class HistoriesController extends AppController {
         ],
         $this->THistoryChatLog
       );
-
 
       $dbo2 = $this->THistoryChatLog->getDataSource();
       $chatStateList = $dbo2->buildStatement(
@@ -839,21 +841,12 @@ class HistoriesController extends AppController {
   }
 
    /* *
-   * Session削除(条件クリア、チェックがついている場合)
-   * @return void
-   * */
-  public function checkedPortionClearSession() {
-    $this->_searchProcessing(2);
-    $this->redirect(['controller' => '', 'action' => 'Histories?isChat=true']);
-  }
-
-   /* *
-   * Session削除(条件クリア、チェックがついていない場合)
+   * Session削除(条件クリア)
    * @return void
    * */
   public function portionClearSession() {
     $this->_searchProcessing(2);
-    $this->redirect(['controller' => '', 'action' => 'Histories?isChat=false']);
+    $this->redirect(['controller' => 'Histories', 'action' => 'index']);
   }
 
    /* *
@@ -862,6 +855,7 @@ class HistoriesController extends AppController {
    * */
   public function clearSession() {
     $this->Session->delete('Thistory');
+    $this->Session->delete('kaka');
     $this->_searchProcessing(1);
     $this->redirect(['controller' => 'Histories', 'action' => 'index']);
   }
