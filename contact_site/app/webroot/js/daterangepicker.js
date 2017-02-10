@@ -1378,7 +1378,6 @@
         },
 
         clickNext: function(e) {
-          console.log('kakkaka');
             var cal = $(e.target).parents('.calendar');
             if (cal.hasClass('left')) {
                 this.leftCalendar.month.add(1, 'month');

@@ -280,9 +280,9 @@ class HistoriesController extends AppController {
       $row['os'] = $ua[0];
       //ブラウザ
       $row['browser'] = $ua[1];
-
       $id = $val->id;
       $chatLog = $this->_getChatLog($id);
+
       foreach($chatLog as $key => $value) {
         //送信元ページ
         if($value['THistoryChatLog']['message_type'] == 1) {
@@ -671,11 +671,9 @@ class HistoriesController extends AppController {
         ]
       ];
 
-
       // チャットのみ表示との切り替え（担当者検索の場合、強制的にINNER）
       if ( strcmp($type, 'false') === 0 && !(!empty($data['THistoryChatLog']) && !empty(array_filter($data['THistoryChatLog']))) ) {
         $joinToChat['type'] = "LEFT";
-
       }
       else {
         $joinToChat['type'] = "INNER";
