@@ -269,7 +269,7 @@ class HistoriesController extends AppController {
      ];
 
     foreach($ret as $val){
-      $this->log($val->id,LOG_DEBUG);
+      //$this->log($val->id,LOG_DEBUG);
       $row = [];
       // 日時
       $dateTime = preg_replace("/[\n,]+/", " ", $val->date);
@@ -356,12 +356,13 @@ class HistoriesController extends AppController {
         ]);*/
       //$Transmission = $this->_getChatLog2();
       //id取得
-      $this->log($Transmission,LOG_DEBUG);
+      //$this->log($Transmission,LOG_DEBUG);
       foreach($Transmission as $key => $value1) {
         $row['referrer'] = $value1['THistoryStayLog']['url'];
       }
       $id = $val->id;
       $chatLog = $this->_getChatLog($id);
+      $this->log($chatLog,LOG_DEBUG);
       foreach($chatLog as $key => $value) {
         $users = preg_replace("/[\n,]+/", ", ", $val->user);
         // 送信日時
@@ -378,6 +379,10 @@ class HistoriesController extends AppController {
         }
         if($value['THistoryChatLog']['message_type'] == 3) {
           $row['transmissionKind'] = 'オートメッセージ';
+          $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
+        }
+        if($value['THistoryChatLog']['message_type'] == 4) {
+          $row['transmissionKind'] = 'Sorryメッセージ';
           $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
         }
         if($value['THistoryChatLog']['message_type'] == 98 || $value['THistoryChatLog']['message_type'] == 99) {
@@ -415,7 +420,7 @@ class HistoriesController extends AppController {
         'THistoryChatLog.t_histories_id' => $aaid
       ],
     ];
-    $this->log($this->THistoryStayLog->find('all', $params2),LOG_DEBUG);
+    //$this->log($this->THistoryStayLog->find('all', $params2),LOG_DEBUG);
     return $this->THistoryStayLog->find('all', $params2);
   }
   public function outputCSVOfChat($id = null){
