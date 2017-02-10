@@ -1,7 +1,6 @@
 <script type="text/javascript">
 'use strict';
   var historySearchConditions = <?php echo json_encode($data);?>;
-  console.log(historySearchConditions);
 
   var sincloApp = angular.module('sincloApp', ['ngSanitize']);
   sincloApp.controller('MainCtrl', function($scope) {
@@ -156,7 +155,7 @@ $(document).ready(function(){
     var tbody = document.querySelector('#history_list tbody');
     var data = [];
     // CSVに不要な列が追加されたら空をセット
-    var label = ["date","","ip","useragent","campaign","referrer","pageCnt","visitTime","status","","user"];
+    var label = ["date","","ip","useragent","campaign","sourcePage","pageCnt","visitTime","status","","user"];
     var noCsvData = {};
 
     for (var a = 0; a < thead.children[0].children.length; a++) {
@@ -259,7 +258,6 @@ $(document).ready(function(){
 
   //検索ボタン
   $('#mainDatePeriod').on('apply.daterangepicker', function(ev, picker) {
-    console.log('aaaa');
     var search_day  = $('.active').val();
     //開始日
     var startDay =  $("input[name=daterangepicker_start]").val();
@@ -330,7 +328,6 @@ $(document).ready(function(){
     historySearchConditions.History.start_day = $("input[name=daterangepicker_start]").val();
     historySearchConditions.History.finish_day = $("input[name=daterangepicker_end]").val();
     historySearchConditions.History.period = search_day;
-    console.log(historySearchConditions);
 
     $.ajax({
       type: 'post',
