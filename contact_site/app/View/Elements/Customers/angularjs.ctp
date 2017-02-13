@@ -1036,18 +1036,23 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         emit("chatEnd", {tabId: tabId, userId: myUserId});
       },
       notification: function(monitor){
-        if (!('Notification' in window)) return false;
+        // 他のオペレーターが対応中の場合
+        if ( monitor.hasOwnProperty('chat') && String(monitor.chat) !== "" && String(monitor.chat) !== "<?=$muserId?>" ) return false;
 
-      <?php if(isset($scNum)): /* チャット応対上限 */ ?>
-        // チャット応対上限に達している場合は、通知を出さない
-        if ( !(monitor.hasOwnProperty('chat') && String(monitor.chat) === "<?=$muserId?>") && $scope.scInfo.remain < 1) return false;
-      <?php endif; ?>
-        // 詳細を開いてる且つ、企業がアクティブタブの場合は、通知を出さない
-        if ( angular.isDefined($scope.detailId) && $scope.detailId !== "" && document.hasFocus() ) return false;
+        <?php if(isset($scNum)): /* チャット応対上限 */ ?>
+          // チャット応対上限に達している場合は、通知音とデスクトップ通知を出さない
+          if ( !(monitor.hasOwnProperty('chat') && String(monitor.chat) === "<?=$muserId?>") && $scope.scInfo.remain < 1 ) return false;
+        <?php endif; ?>
 
         // 着信音を鳴らす
         chatApi.call();
 
+        // 詳細を開いてる且つ、企業がアクティブタブの場合は、デスクトップ通知を出さない
+        if ( angular.isDefined($scope.detailId) && $scope.detailId !== "" && document.hasFocus() ) {
+          return false;
+        }
+
+        if (!('Notification' in window)) return false;
         var m = monitor;
         function getBody(){
           var options = {
