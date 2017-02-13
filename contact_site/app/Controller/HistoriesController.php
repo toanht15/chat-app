@@ -329,7 +329,7 @@ class HistoriesController extends AppController {
 
     // ヘッダー
     $csv[] = [
-      "発行日時",
+      "送信日時",
       "送信種別",
       "送信者",
       "メッセージ"
@@ -337,8 +337,7 @@ class HistoriesController extends AppController {
 
     foreach($ret as $val){
       $row = [];
-      $date = date('Y/m/d H:i:s', strtotime($val['THistoryChatLog']['created'])); // 発行日時
-      // $date = date('Y年m月d日 H時i分s秒', strtotime($val['THistoryChatLog']['created'])); // 発行日時
+      $date = date('Y/m/d H:i:s', strtotime($val['THistoryChatLog']['created'])); // 送信日時
       $message = $val['THistoryChatLog']['message'];
       switch($val['THistoryChatLog']['message_type']){
         case 1: // 企業側からの送信
@@ -405,7 +404,7 @@ class HistoriesController extends AppController {
    * */
   private function _setData($date = "", $type = "", $name = "", $message = "") {
     return [
-      $date, // 発行日時
+      $date, // 送信日時
       $type, // 送信種別
       $name, // 送信者
       $message // メッセージ
