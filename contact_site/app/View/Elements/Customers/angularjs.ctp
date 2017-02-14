@@ -112,7 +112,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           }, 300);
         },
         end: function(){
-            chatApi.observeType.emit(chatApi.tabId, false);
+          clearInterval(chatApi.observeType.timer);
+          chatApi.observeType.emit(chatApi.tabId, false);
         },
         send: function(status){
           chatApi.observeType.emit(chatApi.tabId, status);
@@ -124,8 +125,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           var sendToCustomer = true;
           if ( this.prevStatus === status ) {sendToCustomer = false};
           this.prevStatus = status;
-          if ( document.getElementById('sendMessage') === undefined ) return false;
-          var value = document.getElementById('sendMessage').value;
+          var value = "";
+          if ( document.getElementById('sendMessage') !== undefined ) {
+            value = document.getElementById('sendMessage').value;
+          }
           emit('sendTypeCond', {
             type: chatApi.observeType.cnst.company, // company
             tabId: tabId,
@@ -173,6 +176,12 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             messageType: chatApi.messageType.company
           });
         }
+      },
+      errorChatStart: function(){
+        var span = document.createElement("span");
+        span.classList.add('errorMsg');
+        span.textContent = "処理に失敗しました。再読み込みしてください。";
+        $("#sendMessageArea").html(span);
       },
       isReadMessage: function(monitor){
         // フォーカスが入っているもののみ
@@ -1010,6 +1019,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         $("#sendMessage").keydown(function(e){
           if ( e.keyCode === 13 ) {
             if ( e.ctrlKey ) return false;
+            if ( !$scope.chatOptionDisabled($scope.detailId) ) {
+              chatApi.errorChatStart();
+              return false;
+            }
             if ( $scope.settings.sendPattarn && !e.shiftKey ) {
               chatApi.pushMessage();
             }
@@ -1025,6 +1038,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         })
         .blur(function(e){
           // フォーカスが当たった時にPlaceholderを消す（Edge対応）
+          chatApi.observeType.end();
           $scope.chatPsFlg = true;
         });
         chatApi.init();
@@ -1033,6 +1047,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         chatApi.connection(obj);
       },
       disConnect: function(tabId){
+        $("#sendMessage").val("").blur();
         emit("chatEnd", {tabId: tabId, userId: myUserId});
       },
       notification: function(monitor){
@@ -1815,6 +1830,16 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     $(document).ready(function(){
       $scope.ngChatApi.init();
+    });
+
+    // チャットエリアの監視
+    angular.element(document).on("focus", "#sendMessage", function(){
+      setTimeout(function(){
+        if (!$("#sendMessage").is(":focus")) return false;
+        if ( $scope.chatList.indexOf($scope.detailId) < 0 ) {
+          chatApi.errorChatStart();
+        }
+      }, 3000);
     });
 
     // ポップアップをセンターに表示
