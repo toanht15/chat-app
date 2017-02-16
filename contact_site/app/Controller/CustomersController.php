@@ -220,6 +220,29 @@ class CustomersController extends AppController {
     return new CakeResponse(['body' => json_encode($data)]);
   }
 
+  /**
+   * タブIDから履歴IDを返す
+   * */
+  public function remoteGetHistoriesId() {
+    Configure::write('debug', 0);
+    $this->autoRender = FALSE;
+    $this->layout = null;
+    $historyId = "";
+    if ( !empty($this->params->query['tabId']) ) {
+      $historyData = $this->THistory->find('first', [
+        'fields' => 'id',
+        'conditions' => [
+          'tab_id' => $this->params->query['tabId']
+        ],
+        'recursive' => -1
+      ]);
+      if ( !empty($historyData['THistory']['id']) ) {
+        $historyId = $historyData['THistory']['id'];
+      }
+    }
+    return new CakeResponse(['body' => $historyId]);
+  }
+
   public function remoteSaveCusInfo() {
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
@@ -351,7 +374,10 @@ class CustomersController extends AppController {
 
       $params = [
         'fields' => [
+          'THistoryChatLog.id',
           'THistoryChatLog.message',
+          'THistoryChatLog.message_read_flg AS messageReadFlg',
+          'THistoryChatLog.achievement_flg AS achievementFlg',
           'THistoryChatLog.message_type AS messageType',
           'THistoryChatLog.m_users_id AS userId',
           'THistoryChatLog.created'
@@ -364,6 +390,8 @@ class CustomersController extends AppController {
       ];
       $chatLog = $this->THistoryChatLog->find('all', $params);
       foreach($chatLog as $val){
+        $date = new DateTime($val['THistoryChatLog']['created']);
+        $val['THistoryChatLog']['sort'] = substr($date->format('YmdHisu'), 0, 16);
         $ret[] = $val['THistoryChatLog'];
       }
     }

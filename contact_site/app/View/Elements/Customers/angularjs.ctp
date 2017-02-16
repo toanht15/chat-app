@@ -728,7 +728,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         // チャット契約の場合
         if ( contract.chat ) {
           chatApi.token = makeToken(); // トークンを発行
-          chatApi.getMessage($scope.monitorList[tabId]); // チャットメッセージを取得
+          // チャットメッセージ取得
+          $scope.getChatMessage(tabId); // チャットメッセージを取得
           chatApi.userId = $scope.monitorList[tabId].userId;
           $("#monitor_" + tabId).addClass('on'); // 対象のレコードにクラスを付ける
           // チャットエリアに非表示用のクラスを付ける
@@ -745,6 +746,29 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           $("#customer_sub_pop").css("display", "block");
         }, 10);
       }
+    };
+
+    // チャットメッセージを取得する
+    $scope.getChatMessage = function(tabId){
+      var data = $scope.monitorList[tabId];
+      chatApi.getMessage(data); // Nodeサーバーより最新のチャットメッセージを取得
+      // 新着チャットチェック
+      // 3秒後にチェック
+      setTimeout(function(){
+        // タブを開いている、表示チャットが０件
+        if ( $scope.detailId === tabId && $scope.messageList.length === 0 ) {
+          // HTTPサーバーより最新のチャットメッセージを取得
+          $.ajax({
+            type: "GET",
+            url: "<?=$this->Html->url(['controller' => 'Customers', 'action' => 'remoteGetHistoriesId'])?>",
+            data: {tabId: tabId},
+            dataType: "json",
+            success: function(ret){
+              if ( isset(ret) ) return $scope.getOldChat(ret, false);
+            }
+          });
+        }
+      }, 5000);
     };
 
     $scope.checkChatArea = function(){
@@ -824,7 +848,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     };
 
     // 顧客の詳細情報を取得する
-    $scope.getOldChat = function(historyId){
+    $scope.getOldChat = function(historyId, oldFlg){
       $scope.chatLogMessageList = [];
       $.ajax({
         type: "GET",
@@ -834,8 +858,13 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         },
         dataType: "json",
         success: function(json){
-          angular.element("message-list-descript").attr("class", "off");
-          $scope.chatLogMessageList = json;
+          if ( oldFlg ) { // 過去チャットの場合
+            angular.element("message-list-descript").attr("class", "off");
+            $scope.chatLogMessageList = json;
+          }
+          else {
+            $scope.messageList = json;
+          }
         }
       });
     };
