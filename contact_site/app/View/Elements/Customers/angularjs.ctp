@@ -113,7 +113,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         },
         end: function(){
           clearInterval(chatApi.observeType.timer);
-          chatApi.observeType.emit(chatApi.tabId, false);
+          chatApi.observeType.send(false);
         },
         send: function(status){
           chatApi.observeType.emit(chatApi.tabId, status);
@@ -164,9 +164,13 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             sendMessage.focus();
         }
       },
+      pushMessageFlg: false,
       pushMessage: function() {
+        if ( this.pushMessageFlg ) return false;
+        this.pushMessageFlg = true;
         var elm = document.getElementById('sendMessage');
-        if ( isset(elm.value) ) {
+        var req = new RegExp(/^\s*$/);
+        if ( isset(elm.value) && !req.test(elm.value) ) {
           emit('sendChat', {
             token: this.token,
             tabId: chatApi.tabId,
@@ -175,7 +179,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             mUserId: myUserId,
             messageType: chatApi.messageType.company
           });
+          elm.value = "";
+          chatApi.observeType.send(chatApi.tabId, chatApi.observeType.status);
         }
+        this.pushMessageFlg = false;
       },
       errorChatStart: function(){
         var span = document.createElement("span");

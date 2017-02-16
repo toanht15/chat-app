@@ -1146,13 +1146,20 @@
           }, 300);
           }, 500);
         },
+        pushFlg: false,
         push: function(){
-            sinclo.operatorInfo.reCreateWidgetMessage = ""; // 送信したら空にする
+          if (this.pushFlg) return false;
+          this.pushFlg = true;
+          sinclo.operatorInfo.reCreateWidgetMessage = ""; // 送信したら空にする
 
-            var elm = document.getElementById('sincloChatMessage');
-            if ( check.isset(elm.value) ) {
-                this.send(elm.value);
-            }
+          var elm = document.getElementById('sincloChatMessage');
+          var req = new RegExp(/^\s*$/);
+
+          if ( check.isset(elm.value) && !req.test(elm.value) ) {
+            this.send(elm.value);
+            elm.value = "";
+          }
+          this.pushFlg = false;
         },
         send: function(value){
             storage.s.set('chatAct', true); // オートメッセージを表示しない
