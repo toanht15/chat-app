@@ -1618,6 +1618,14 @@ ul.naviBtn {
                   }
                 }
               }
+
+              span.errorMsg {
+                width: 100%;
+                display: block;
+                color: red;
+                text-align: center;
+                margin: 1em 0;
+              }
               textarea {
                 margin: 0.25em 1%;
                 width: 98%;
