@@ -26,6 +26,7 @@
         var flg = sinclo.widget.condifiton.get();
         var elm = $('#sincloBox');
         if ( String(flg) === "false" ) {
+          //ウィジェットを開いた回数
           ga('send', 'event', 'sinclo', 'クリック', location.href);
           sinclo.widget.condifiton.set(true);
           if ( check.smartphone() && window.sincloInfo.contract.chat && (window.screen.availHeight < window.screen.availWidth) ) {
@@ -664,6 +665,7 @@
       sinclo.chatApi.createNotifyMessage(opUser + "が入室しました");
       // チャットの契約をしている場合
       if ( window.sincloInfo.contract.chat ) {
+        //OPが入室した数
         ga('send', 'event', 'sinclo', 'チャット対応', sinclo.chatApi.opUser);
       }
     },
@@ -678,6 +680,7 @@
       check.escape_html(opUser); // エスケープ
       sinclo.chatApi.createNotifyMessage(opUser + "が退室しました");
       sinclo.chatApi.opUser = "";
+      //退室した後に同じ消費者からメッセージが来た場合、それもGAのイベントとしてカウントするため
       sessionStorage.removeItem('chatEmit');
     },
     chatMessageData:function(d){
@@ -765,6 +768,7 @@
           this.chatApi.createMessage(cn, obj.chatMessage, sincloInfo.widget.subTitle);
           // チャットの契約をしている場合
           if ( window.sincloInfo.contract.chat ) {
+            //sorryメッセージを出した数
             ga('send', 'event', 'sinclo', 'チャット拒否', location.href);
           }
           return false;
@@ -1191,6 +1195,7 @@
             // チャットの契約をしている場合
             if ( window.sincloInfo.contract.chat ) {
               var firstChatEmit = storage.s.get('chatEmit');
+              //サイト訪問者がチャット送信した初回のタイミング
               if ( !check.isset(firstChatEmit) ) {
                 ga('send', 'event', 'sinclo', 'チャット送信', location.href);
               }
