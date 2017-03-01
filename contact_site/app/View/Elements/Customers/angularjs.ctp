@@ -1088,7 +1088,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       },
       notification: function(monitor){
         // 他のオペレーターが対応中の場合
-        if ( monitor.hasOwnProperty('chat') && String(monitor.chat) !== "" && String(monitor.chat) !== "<?=$muserId?>" ) return false;
+        if ( monitor.hasOwnProperty('chat') && $scope.isset(monitor.chat) && String(monitor.chat) !== "<?=$muserId?>" ) return false;
 
         <?php if(isset($scNum)): /* チャット応対上限 */ ?>
           // チャット応対上限に達している場合は、通知音とデスクトップ通知を出さない
