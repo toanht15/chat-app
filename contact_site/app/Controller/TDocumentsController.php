@@ -116,6 +116,7 @@ class TDocumentsController extends AppController {
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
+
     $id = $this->request->data['id'];
     $ret = $this->TDocument->find('first', [
       'fields' => 'TDocument.*',
@@ -126,11 +127,11 @@ class TDocumentsController extends AppController {
       ],
       'recursive' => -1
     ]);
+
     if ( !empty($ret) ) {
       if ( $this->TDocument->delete($id) ) {
-        $this->Amazon->removeObject("medialink/".$ret['TDocument']['file_name']);
-        $this->Amazon->removeObject("medialink/".C_PREFIX_DOCUMENT.pathinfo($ret['TDocument']['file_name'], PATHINFO_FILENAME).".jpg");
-
+        // ファイルを削除
+        $this->_removeDocuments($ret['TDocument']['file_name'], $ret['TDocument']['settings']);
         $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
       }
       else {
@@ -146,7 +147,6 @@ class TDocumentsController extends AppController {
    * */
   private function _entry($saveData) {
     $nowData = [];
-
     if(!empty($saveData['TDocument']['tag'])) {
       $inputData = $saveData['TDocument']['tag'];
       $saveData['TDocument']['tag'] = $this->jsonEncode($inputData);
@@ -167,35 +167,65 @@ class TDocumentsController extends AppController {
     }
 
     $this->TDocument->set($saveData);
-
     // バリデーションチェックに失敗したら
     if ( !$this->TDocument->validates() ) return false;
 
     // ファイルが添付されたら
     $fileName = "";
+    $fileSettings = [];
     if ( !empty($saveData['TDocument']['files']) ) {
-      $file = $saveData['TDocument']['files'];
-      $fileName = $this->userInfo['MCompany']['company_key']."_".date("YmdHis").".".pathinfo($file['name'], PATHINFO_EXTENSION);
-      $ret = $this->Amazon->putObject("medialink/".$fileName, $file['tmp_name']);
+      $files = $saveData['TDocument']['files'];
+      $fileName = $this->userInfo['MCompany']['company_key']."-".date("YmdHis").".".pathinfo($files['name'], PATHINFO_EXTENSION);
+      $dirPath = WWW_ROOT.'files'.DS.pathinfo($fileName, PATHINFO_FILENAME).DS;
 
-      // ファイルが保存できなかったら
-      if ( empty($ret) ) {
+      // 専用ディレクトリを用意、添付されたファイルを共有ディレクトリに移動
+      system('mkdir -p '.$dirPath.'; cd $_; pdf2svg '.$files['tmp_name'].' %d.svg all');
+      $ret = "";
+      // ディレクトリの存在を確認し、ハンドルを取得
+      if( is_dir( $dirPath ) && $handle = opendir( $dirPath ) ) {
+        $page = 0;
+        // ループ処理
+        while( ($file = readdir($handle)) !== false ) {
+          // ファイルのみ取得
+          if( filetype( $path = $dirPath . $file ) !== "file" ) continue;
+          $retPath = $this->Amazon->putObject("medialink".DS."svg_".pathinfo($fileName, PATHINFO_FILENAME)."_".basename($path), $path);
+          $ret = ( $retPath ) ? pathinfo($retPath, PATHINFO_EXTENSION) : ""; // 拡張子を取得
+          if( strcmp($ret, "svg") !== 0 ) break; // 拡張子が得られなければ保存失敗とみなす
+          $page ++;
+        }
+
+        $fileSettings['pages'] = $page;
+        // 専用ディレクトリを削除する
+        system("rm -Rf ".WWW_ROOT.'files'.DS.pathinfo($fileName, PATHINFO_FILENAME));
+      }
+      // SVGファイルが保存できたら、PDFを保存する
+      if ( strcmp($ret, "svg") === 0 && file_exists($files['tmp_name']) ) {
+        $retPath = $this->Amazon->putObject("medialink".DS.basename($fileName), $files['tmp_name']);
+        $ret = ( $retPath ) ? pathinfo($retPath, PATHINFO_EXTENSION) : "";
+      }
+
+      // PDFファイルが保存できなかったら
+      if ( strcmp($ret, "pdf") !== 0 ) {
         $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.fileSaveFailed')]);
         return false;
       }
 
+      // 今保存されているファイルを削除する
       if ( !empty($saveData['TDocument']['id']) ) { // ファイル添付＆更新の場合
         $nowData = $this->TDocument->read(null, $saveData['TDocument']['id']);
       }
       unset($saveData['TDocument']['files']);
+
+      // 最新のファイル情報をセットする
       $saveData['TDocument']['file_name'] = $fileName;
+      $saveData['TDocument']['settings'] = $this->jsonEncode($fileSettings);
     }
 
     if($this->TDocument->save($saveData, false)) {
       // 昔のファイルを削除する
       if ( !empty($nowData['TDocument']) ) {
-        $this->Amazon->removeObject("medialink/".$nowData['TDocument']['file_name']);
-        $this->Amazon->removeObject("medialink/".C_PREFIX_DOCUMENT.pathinfo($nowData['TDocument']['file_name'], PATHINFO_FILENAME).".jpg");
+        // ファイルを削除
+        $this->_removeDocuments($nowData['TDocument']['file_name'], $nowData['TDocument']['settings']);
       }
       if ( !empty($saveData['TDocument']['file_name']) ) {
         $this->_createThumnail($saveData['TDocument']['file_name']);
@@ -207,9 +237,27 @@ class TDocumentsController extends AppController {
     else {
       $this->TDocument->rollback();
       if ( !empty($fileName) ) {
-        $this->Amazon->removeObject("medialink/".$fileName);
+        // ファイルを削除
+        $this->_removeDocuments($fileName, $fileSettings);
       }
       $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
+    }
+  }
+
+  /**
+   *  特定の資料を削除する
+   *  @param string $fileName 資料の名前
+   *  @param string $settings 資料の情報
+   *  @return void
+   * */
+  public function _removeDocuments($fileName, $settings){
+    $this->Amazon->removeObject("medialink/".$fileName);
+    $this->Amazon->removeObject("medialink/".C_PREFIX_DOCUMENT.pathinfo($fileName, PATHINFO_FILENAME).".jpg");
+    $settings = ( !empty($settings) ) ? json_decode($settings) : [];
+    if ( !empty($settings->pages) ) {
+      for ($i=1; $i <= $settings->pages; $i++) {
+        $this->Amazon->removeObject("medialink/svg_".pathinfo($fileName, PATHINFO_FILENAME)."_".$i.".svg");
+      }
     }
   }
 
