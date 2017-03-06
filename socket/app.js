@@ -11,6 +11,9 @@ var settings = require('./routes/settings');
 
 var app = express();
 
+// Timezone
+process.env.TZ = 'Asia/Tokyo';
+
 // socket
 var socket = require('./routes/module/socket_ctrl.js');
 
