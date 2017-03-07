@@ -85,6 +85,19 @@ function removeActEdit(){
   };
 }
 
+//資料共有ポップアッププレビュー
+function remoteOpenPreview(){
+  $.ajax({
+    type: 'post',
+    dataType: 'html',
+    cache: false,
+    url: "<?= $this->Html->url(['controller' => 'TDocuments', 'action' => 'openPreview']) ?>",
+    success: function(html){
+      modalOpen.call(window, html,'p-tdocument-preview','', 'moment');
+    }
+  });
+}
+
 //タグリスト表示
 $(function(){
   $('#tagList').multiSelect({});
@@ -244,16 +257,4 @@ var pdfjsApi, pdfjsCNST;
   xhr.send();
   <?php endif; ?>
 })();
-
-function remoteOpenPreview(){
-  $.ajax({
-    type: 'post',
-    dataType: 'html',
-    cache: false,
-    url: "<?= $this->Html->url(['controller' => 'TDocuments', 'action' => 'openPreview']) ?>",
-    success: function(html){
-      modalOpen.call(window, html,'p-tdocument-preview','', 'moment');
-    }
-  });
-}
 </script>
