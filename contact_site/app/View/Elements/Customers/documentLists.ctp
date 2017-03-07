@@ -427,6 +427,7 @@ $(document).on("keydown", "#scaleType", function(e){ return false; });
 
 var sincloApp = angular.module('sincloApp', []);
 sincloApp.controller('MainCtrl', function($scope){
+console.log('ahahaha');
   $scope.documentList = [];
   $scope.tagList = {};
   $scope.searchName = "";

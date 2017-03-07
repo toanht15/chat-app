@@ -858,4 +858,16 @@ class HistoriesController extends AppController {
     $this->_searchProcessing(1);
     $this->redirect(['controller' => 'Histories', 'action' => 'index']);
   }
+
+public function sample() {
+    Configure::write('debug', 0);
+    $this->autoRender = FALSE;
+    $this->layout = 'ajax';
+    //$this->data = $this->Session->read('Thistory');
+
+    // 成果種別リスト
+    $this->set('achievementType', Configure::read('achievementType'));
+    // const
+    $this->render('/Elements/Histories/sample');
+  }
 }

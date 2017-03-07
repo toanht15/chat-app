@@ -2263,6 +2263,7 @@ ul.naviBtn {
   }
 }
 
+
 #customer_flame {
   position: fixed;
   top: 0;
@@ -3852,6 +3853,38 @@ ul.naviBtn {
     span {
       color:#67d4c6;
     }
+
+    .document_image{
+      padding: 0.5em;
+      position: relative;
+      cursor:pointer;
+
+      &:hover:before {
+        content: " ";
+        position: absolute;
+        left: 0;
+        right: 0;
+        background-color: rgba(0,0,0,0.6);
+        bottom: 0;
+        height: 4em;
+        font-size: inherit;
+        opacity: 0.85;
+      }
+
+      &:hover:after {
+        content: "プレビュー";
+        display: block;
+        text-align: center;
+        position: absolute;
+        left: 0;
+        right: 0;
+        font-weight: bold;
+        color: #FFF;
+        bottom: 1em;
+        font-size: inherit;
+        padding: 0.25em 0;
+      }
+    }
   }
 
   #tdocument_form {
@@ -3886,6 +3919,35 @@ ul.naviBtn {
                 left: 0;
                 right: 0;
                 overflow: hidden;
+
+                &:hover:before {
+                  content: " ";
+                  position: absolute;
+                  top: 0;
+                  left: 0;
+                  right: 0;
+                  bottom: 0;
+                  display: block;
+                  background-color: rgba(0,0,0,0.6);
+                  z-index: 1;
+                  cursor:pointer;
+                }
+
+                &:hover:after {
+                  content: "プレビュー";
+                  color: #FFF;
+                  position: absolute;
+                  top: 5em;
+                  left: 0;
+                  right: 0;
+                  display: block;
+                  z-index: 2;
+                  text-align: center;
+                  font-weight: bold;
+                  letter-spacing: 5px;
+                  font-size: 1.1em;
+                  cursor:pointer;
+                }
 
                 canvas {
                   margin: 0 auto;
@@ -4116,4 +4178,76 @@ ul.naviBtn {
       }
     }
   }
+}
+
+#searchRefine1{
+  position: absolute;
+  top: 80px;
+  left: 50em;
+  width: 8em;
+  padding: 0.25em 0.5em;
+  text-align: center;
+}
+
+#searchRefine1:hover{
+  color:red;
+}
+
+/* 表示文字の装飾 */
+div.tooltip1{
+    color: #555;
+    display: inline-block;                        /* インライン要素化 */
+    border-bottom:dashed 1px #555;    /* 下線を引く */
+    margin-top: -62px;
+    margin-left: 674px;
+    cursor:pointer;
+}
+
+/* ツールチップ部分を隠す */
+div.tooltip1 span {
+    display: none;
+    top:150px;
+}
+
+/* マウスオーバー */
+div.tooltip1:hover {
+    position: relative;
+    color: #000;
+}
+
+/* マウスオーバー時にツールチップを表示 */
+div.tooltip1:hover span {
+    display: block;                  /* ボックス要素にする */
+    position: absolute;            /* relativeからの絶対位置 */
+    top: 25px;
+    font-size: 90%;
+    color: #fff;
+    background-color: #000;
+    width: 70px;
+    padding: 5px;
+    border-radius:3px;
+    z-index:100;
+}
+
+/* フキダシ部分を作成 */
+div.tooltip1 span:before{
+    content:'';
+    display:block;
+    position:absolute;                         /* relativeからの絶対位置 */
+    height:0;
+    width:0;
+    top:-13px;
+    left:15px;
+    border:13px transparent solid;
+    border-right-width:0;
+    border-left-color:#000;
+    transform:rotate(270deg);            /* 傾きをつける */
+    -webkit-transform:rotate(270deg);
+    -o-transform:rotate(270deg);
+    z-index:100;
+}
+
+/* ツールチップ部分を隠す */
+div.tooltip1 span {
+    display: none;
 }

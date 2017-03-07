@@ -245,4 +245,16 @@ var pdfjsApi, pdfjsCNST;
   <?php endif; ?>
 })();
 
+function remoteOpenPreview(){
+  console.log('jajaja');
+  $.ajax({
+    type: 'post',
+    dataType: 'html',
+    cache: false,
+    url: "<?= $this->Html->url(['controller' => 'TDocuments', 'action' => 'openPreview']) ?>",
+    success: function(html){
+      modalOpen.call(window, html,'p-tdocument-preview','', 'moment');
+    }
+  });
+}
 </script>

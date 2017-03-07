@@ -146,6 +146,7 @@
           $checked = "checked=\"\"";
         }
       ?>
+
         <label for="g_chat" class="pointer <?=$class?>">
           <input type="checkbox" id="g_chat" name="group_by_chat" <?=$checked?> />
           チャット履歴があるもののみ表示
