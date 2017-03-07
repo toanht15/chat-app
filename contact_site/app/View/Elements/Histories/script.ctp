@@ -16,5 +16,4 @@ function openSearchRefine(){
 function sessionClear(){
   location.href = "<?=$this->Html->url(array('controller' => 'Histories', 'action' => 'portionClearSession'))?>";
 }
-
 </script>

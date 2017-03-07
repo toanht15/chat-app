@@ -246,7 +246,6 @@ var pdfjsApi, pdfjsCNST;
 })();
 
 function remoteOpenPreview(){
-  console.log('jajaja');
   $.ajax({
     type: 'post',
     dataType: 'html',
