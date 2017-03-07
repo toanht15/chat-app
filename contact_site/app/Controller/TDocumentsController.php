@@ -309,13 +309,16 @@ class TDocumentsController extends AppController {
     $this->set('pagenation', $pagenation);
   }
 
+
+  /* *
+   * プレビュー画面
+   * @return void
+   * */
   public function openPreview() {
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
 
-    // 成果種別リスト
-    $this->set('achievementType', Configure::read('achievementType'));
     // const
     $this->render('/Elements/TDocuments/remoteOpenPreviewScreen');
   }

@@ -257,4 +257,5 @@ var pdfjsApi, pdfjsCNST;
   xhr.send();
   <?php endif; ?>
 })();
+
 </script>
