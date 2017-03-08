@@ -2,6 +2,7 @@
 <?= $this->Html->script(C_PATH_NODE_FILE_SERVER."/websocket/compatibility.min.js"); ?>
 
 <script type="text/javascript">
+<?= $this->element('TDocuments/loadScreen'); ?>
 <?php if ( $this->action !== "index" ) : ?>
 function handleFileSelect(evt) {
   var files = evt.target.files; // FileList object
@@ -38,6 +39,7 @@ function tagAdd(){
 
 //保存機能
 function saveAct(){
+  common.load.start();
   document.getElementById('TDocumentManuscript').value = JSON.stringify(pdfjsApi.manuscript);
   document.getElementById('TDocumentEntryForm').submit();
   setTimeout(function(){
