@@ -144,6 +144,7 @@ window.onload = function(){
 
   $("#manuscriptArea").draggable({
     scroll: false,
+    containment: "slideframe",
     cancel: "#document_canvas"
   })
   .css({
