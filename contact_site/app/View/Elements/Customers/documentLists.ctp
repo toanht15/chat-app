@@ -321,7 +321,7 @@ var slideJsApi = {
     $(".slide img").css("width", (canvas.clientWidth - 20) * 0.75 + "pt")
                    .css("height", (canvas.clientHeight - 20) * 0.75 + "pt");
     $(".slide").css("width",  canvas.clientWidth + "px").css("height", canvas.clientHeight + "px");
-    $(".slide img").css("zoom", slideJsApi.currentScale);
+    $(".slide img").css("transform", "scale(" + slideJsApi.currentScale + ")");
   },
   renderTimer: null,
   notificate: function(code){
