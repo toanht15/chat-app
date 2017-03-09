@@ -2034,7 +2034,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             scope.stayTime = parseInt(scope.monitor.term / 60) + "分";
           }
           else {
-            scope.stayTime = "１分以内";
+            scope.stayTime = "0分";
           }
 
           $timeout(function(e){
