@@ -1,6 +1,7 @@
 <?= $this->Html->script(C_PATH_NODE_FILE_SERVER."/websocket/compatibility.min.js"); ?>
 
 <script type="text/javascript">
+
 var pdfjsCNST = function(){
   return {
     FIRST_PAGE: "最初のページ",
@@ -174,6 +175,7 @@ var slideJsApi = {
     var script = "", type = sessionStorage.getItem('manuscript');
     if ( type === "block" && slideJsApi.manuscript.hasOwnProperty(Number(slideJsApi.currentPage)) && slideJsApi.manuscript[slideJsApi.currentPage] !== "" ) {
       $("#manuscriptArea").css({ 'display': type });
+      document.getElementById('scriptToggleBtn').classList.add('on');
     }
     else {
       $("#manuscriptArea").css({'display': 'none'});

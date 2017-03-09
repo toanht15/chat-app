@@ -22,12 +22,12 @@
         <documentArea>
           <content>
             <preview>
-              <span onclick="pdfjsApi.showpage(); return false;" class="reloadBtn"><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_reconnect.png" width="20" height="20" alt=""></span>
-              <div id="document_canvas" onclick="remoteOpenPreview()"></div>
+              <span onclick="slideJsApi.showpage(); return false;" class="reloadBtn"><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_reconnect.png" width="20" height="20" alt=""></span>
+              <div id="document_canvas"></div>
               <paging>
-                <span onclick="pdfjsApi.prevPage(); return false;"><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_back.png" width="30" height="30" alt=""></span>
+                <span onclick="slideJsApi.prevPage(); return false;"><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_back.png" width="30" height="30" alt=""></span>
                 <span class="pages"></span>
-                <span onclick="pdfjsApi.nextPage(); return false;"><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_next.png" width="30" height="30" alt=""></span>
+                <span onclick="slideJsApi.nextPage(); return false;"><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_next.png" width="30" height="30" alt=""></span>
               </paging>
             </preview>
             <controller>
@@ -35,7 +35,7 @@
                 <?=$this->Form->input('files', ['type'=>'file','placeholder' => '資料', 'error' => false, 'label' => false,'div' => false])?>
                 <?=$this->Form->input('file_name', ['type'=>'hidden'])?>
               </upload>
-              <!-- <rotate class="btn-shadow greenBtn" onclick="pdfjsApi.rotate(); return false;">
+              <!-- <rotate class="btn-shadow greenBtn" onclick="slideJsApi.rotate(); return false;">
                 <?=$this->Html->image('rotate90_w.png', ['alt' => '90度資料を回転する']);?>
               </rotate> -->
             </controller>

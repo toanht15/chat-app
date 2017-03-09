@@ -2023,10 +2023,23 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           var hour = parseInt(scope.monitor.term / 3600),
               min = parseInt((scope.monitor.term / 60) % 60),
               sec = scope.monitor.term % 60;
-          scope.stayTime = _numPad(hour) + ":" + _numPad(min) + ":" + _numPad(sec); // 表示を更新
+
+          if ( scope.monitor.term >= 86400 ) { // 24時間以上
+            scope.stayTime = parseInt(scope.monitor.term / 86400) + "日";
+          }
+          else if ( scope.monitor.term < 86400 &&  scope.monitor.term >= 3600 ) { // 1時間以上、24時間未満
+            scope.stayTime = parseInt(scope.monitor.term / 3600) + "時間";
+          }
+          else if ( scope.monitor.term < 3600 &&  scope.monitor.term >= 60 ) { // 1時間以上、24時間未満
+            scope.stayTime = parseInt(scope.monitor.term / 60) + "分";
+          }
+          else {
+            scope.stayTime = "0分";
+          }
+
           $timeout(function(e){
             countUp();
-          }, 1000); // 1秒ごとに実行
+          }, 60000); // 60秒ごとに実行
         }
         countUp();
       }
