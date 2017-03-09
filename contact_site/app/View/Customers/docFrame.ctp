@@ -51,7 +51,6 @@ socket.on('connect', function(){
     firstFlg = false;
     doc = JSON.parse(sessionStorage.getItem("doc"));
   }
-
   slideJsApi.readFile(doc, function(err){
     if (err) return false;
     if (firstFlg) {
@@ -131,8 +130,7 @@ window.onload = function(){
     }
     if ( obj.hasOwnProperty('page') ) {
       slideJsApi.currentPage = obj.page;
-      slideJsApi.readPage();
-      slideJsApi.pageRender();
+      slideJsApi.cngPage();
     }
     else {
       slideJsApi.render();

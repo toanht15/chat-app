@@ -121,11 +121,29 @@ var slideJsApi, slideJsCNST;
       var canvas = document.getElementById('document_canvas');
       var readPageTimer = setInterval(function(){
         slideJsApi.readPage();
+        slideJsApi.showPage();
         if ( limitPage < slideJsApi.loadedPage ) {
           clearInterval(readPageTimer);
-          slideJsApi.showPage();
         }
       }, 1000);
+
+      // 原稿
+      var textarea = document.getElementById('pages-text');
+      if ( this.currentPage in this.manuscript ) {
+        textarea.value = this.manuscript[this.currentPage];
+      }
+
+      textarea.addEventListener('blur',function(e){
+        if ( slideJsApi.manuscript.hasOwnProperty(slideJsApi.currentPage) && slideJsApi.manuscript[slideJsApi.currentPage] === e.target.value ) {
+          return false; // 変わっていない
+        }
+        if ( !slideJsApi.manuscript.hasOwnProperty(slideJsApi.currentPage) && e.target.value === "" ) {
+          return false; // 書いていない
+        }
+        slideJsApi.manuscript[slideJsApi.currentPage] = e.target.value;
+      });
+
+
     },
     setManuscript: function(){
       document.getElementById('pages-text').value = ( this.manuscript.hasOwnProperty(this.currentPage) ) ? this.manuscript[this.currentPage] : "";
@@ -153,6 +171,7 @@ var slideJsApi, slideJsCNST;
     showPage: function(){
       var canvas = document.getElementById('document_canvas');
       canvas.style.left = -22.5 * (slideJsApi.currentPage - 1) + "em";
+      this.setManuscript();
       $('.pages').text("（" + slideJsApi.currentPage + "/ " + slideJsApi.maxPage + "）");
     },
     readPage: function(){
@@ -180,13 +199,15 @@ var slideJsApi, slideJsCNST;
     }
   };
 
-  <?php if ( !empty($this->data['TDocument']['file_name']) ):
-    $settings = json_decode($this->data['TDocument']['settings']);
-    $filePath = C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/svg_".pathinfo(h($this->data['TDocument']['file_name']), PATHINFO_FILENAME);
-  ?>
+  $(document).ready(function(){
+    <?php if ( !empty($this->data['TDocument']['file_name']) ):
+      $settings = json_decode($this->data['TDocument']['settings']);
+      $filePath = C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/svg_".pathinfo(h($this->data['TDocument']['file_name']), PATHINFO_FILENAME);
+    ?>
 
-  slideJsApi.init("<?=$filePath?>", "<?=$settings->pages?>");
-  <?php endif; ?>
+    slideJsApi.init("<?=$filePath?>", "<?=$settings->pages?>");
+    <?php endif; ?>
+  });
 })();
 
 </script>

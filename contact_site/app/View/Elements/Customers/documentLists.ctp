@@ -175,6 +175,7 @@ var slideJsApi = {
     var script = "", type = sessionStorage.getItem('manuscript');
     if ( type === "block" && slideJsApi.manuscript.hasOwnProperty(Number(slideJsApi.currentPage)) && slideJsApi.manuscript[slideJsApi.currentPage] !== "" ) {
       $("#manuscriptArea").css({ 'display': type });
+      document.getElementById('scriptToggleBtn').classList.add('on');
     }
     else {
       $("#manuscriptArea").css({'display': 'none'});
