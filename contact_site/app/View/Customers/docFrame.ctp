@@ -3,7 +3,7 @@
 <!--
 'use strict';
 
-var socket, emit, tabId = '<?=$tabInfo?>', url, emit, pdfjsApi, frameSize, windowScale;
+var socket, emit, tabId = '<?=$tabInfo?>', url, emit, slideJsApi, frameSize, windowScale;
 (function(){
 
   // WebSocketサーバに接続
@@ -52,14 +52,17 @@ socket.on('connect', function(){
     doc = JSON.parse(sessionStorage.getItem("doc"));
   }
 
-  pdfjsApi.readFile(doc, function(err){
+  slideJsApi.readFile(doc, function(err){
     if (err) return false;
     if (firstFlg) {
+      var settings = JSON.parse(doc.settings);
       emit('docShareConnect', {
         from: 'company',
         responderId: '<?=$userInfo["id"]?>',
-        url: "<?=C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/"?>" + doc.file_name,
+        directory: "<?=C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/"?>",
+        fileName: doc.file_name,
         pagenation_flg: doc.pagenation_flg,
+        pages: settings.pages,
         download_flg: doc.download_flg
       }); // 資料共有開始
     }
@@ -86,32 +89,29 @@ window.onload = function(){
   });
 
   // 同期イベント
-  var scAddEventTimer = null;
   windowScale = (sessionStorage.getItem("windowScale")) ? sessionStorage.getItem("windowScale") : 1;
   socket.on('docSendAction', function(d){
     var obj = JSON.parse(d), cursor;
     if ( obj.hasOwnProperty('scroll') ) {
-      var canvas = document.getElementById('document_canvas');
-      canvas.removeEventListener('scroll', pdfjsApi.scrollFunc);
-      clearTimeout(scAddEventTimer);
-      $('#document_canvas').animate({
-        scrollTop: obj.scroll.top,
-        scrollLeft: obj.scroll.left,
+      slideJsApi.setScrollFlg = true;
+      clearTimeout(slideJsApi.setScrollTimer);
+      var page = document.getElementById("slide_" + obj.page);
+      $('#slide_' + obj.page).animate({
+        scrollTop: (page.scrollHeight - page.clientHeight) * obj.scroll.top,
+        scrollLeft: (page.scrollWidth - page.clientWidth) * obj.scroll.left,
       }, {
-        duration: 50,
+        duration: 100,
         easing: 'swing',
         complete: function(){
-          scAddEventTimer = setTimeout(function(){
-            clearTimeout(scAddEventTimer);
-            scAddEventTimer= null;
-            canvas.addEventListener('scroll', pdfjsApi.scrollFunc);
+          slideJsApi.setScrollTimer = setTimeout(function(){
+            slideJsApi.setScrollFlg = false;
           }, 300);
         }
       });
       return false;
     }
     if ( obj.hasOwnProperty('offset') ) {
-      pdfjsApi.setWindowSize(obj.offset);
+      slideJsApi.setWindowSize(obj.offset);
     }
     if ( obj.hasOwnProperty('mouse') ) {
       cursor = document.getElementById('cursorImg');
@@ -125,15 +125,17 @@ window.onload = function(){
       return false;
     }
     if ( obj.hasOwnProperty('scale') ) {
-      pdfjsApi.currentScale = obj.scale;
-      pdfjsApi.resetZoomType();
+      slideJsApi.currentScale = obj.scale;
+      sessionStorage.setItem('scale', slideJsApi.currentScale); // セッションに格納
+      slideJsApi.resetZoomType();
     }
     if ( obj.hasOwnProperty('page') ) {
-      pdfjsApi.currentPage = obj.page;
-      pdfjsApi.pageRender();
+      slideJsApi.currentPage = obj.page;
+      slideJsApi.readPage();
+      slideJsApi.pageRender();
     }
     else {
-      pdfjsApi.render();
+      slideJsApi.render();
     }
   });
 
@@ -191,17 +193,14 @@ window.onload = function(){
   <!-- /* ツールバー */ -->
   <ul id="document_ctrl_tools">
     <li-left>
-      <li class="showDescriptionBottom" data-description="前のページへ" onclick="pdfjsApi.prevPage(); return false;">
+      <li class="showDescriptionBottom" data-description="前のページへ" onclick="slideJsApi.prevPage(); return false;">
         <span class="btn"><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_back.png" width="30" height="30" alt=""></span>
       </li>
-      <li class="showDescriptionBottom" data-description="次のページへ" onclick="pdfjsApi.nextPage(); return false;">
+      <li class="showDescriptionBottom" data-description="次のページへ" onclick="slideJsApi.nextPage(); return false;">
         <span class="btn" ng-class="{{manuscriptType}}" ><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_next.png" width="30" height="30" alt=""></span>
       </li>
-      <li class="showDescriptionBottom" data-description="原稿の表示/非表示" onclick="pdfjsApi.toggleManuScript(); return false;">
+      <li class="showDescriptionBottom" data-description="原稿の表示/非表示" onclick="slideJsApi.toggleManuScript(); return false;">
         <span id="scriptToggleBtn" class="btn"><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_talkscript.png" width="30" height="30" alt=""></span>
-      </li>
-      <li class="showDescriptionBottom" data-description="ページ再描画" onclick="pdfjsApi.render(); return false;">
-        <span class="btn"><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_reconnect.png" width="30" height="30" alt=""></span>
       </li>
     </li-left>
     <li-center>
@@ -212,7 +211,7 @@ window.onload = function(){
     <li-right>
       <li id="scaleChoose">
         <label dir="scaleType">拡大率</label>
-        <select name="scale_type" id="scaleType" onchange="pdfjsApi.cngScale(); return false;">
+        <select name="scale_type" id="scaleType" onchange="slideJsApi.cngScale(); return false;">
           <option value=""   > - </option>
           <option value="0.5"   >50%</option>
           <option value="0.75"  >75%</option>
@@ -224,10 +223,10 @@ window.onload = function(){
           <option value="4"     >400%</option>
         </select>
       </li>
-      <li class="showDescriptionBottom" data-description="拡大する" onclick="pdfjsApi.zoomIn(0.25); return false;">
+      <li class="showDescriptionBottom" data-description="拡大する" onclick="slideJsApi.zoomIn(0.25); return false;">
         <span class="btn"><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_plus.png" width="30" height="30" alt=""></span>
       </li>
-      <li class="showDescriptionBottom" data-description="縮小する" onclick="pdfjsApi.zoomOut(0.25); return false;">
+      <li class="showDescriptionBottom" data-description="縮小する" onclick="slideJsApi.zoomOut(0.25); return false;">
         <span class="btn"><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_minus.png" width="30" height="30" alt=""></span>
       </li>
     </li-right>
@@ -235,12 +234,14 @@ window.onload = function(){
   <!-- /* ツールバー */ -->
   <div id="manuscriptArea" style="display:none;">
     <span id="manuscript"></span>
-    <span id="manuscriptCloseBtn" onclick="pdfjsApi.toggleManuScript(); return false;"></span>
+    <span id="manuscriptCloseBtn" onclick="slideJsApi.toggleManuScript(); return false;"></span>
   </div>
 
   <div id="tabStatusMessage">別の作業をしています</div>
 
-  <div id="document_canvas"></div>
+  <slideFrame>
+    <div id="document_canvas"></div>
+  </slideFrame>
 
   <div id="ang-popup">
     <div id="ang-base">

@@ -42,21 +42,18 @@ block content
 
     ul#document_ctrl_tools
       li-left
-        li.showDescriptionBottom(data-description="前のページへ", onclick="pdfjsApi.prevPage(); return false;")
+        li.showDescriptionBottom(data-description="前のページへ", onclick="slideJsApi.prevPage(); return false;")
           span.btn
             img(src="#{img}icon_back.png", width="30", height="30")
-        li.showDescriptionBottom(data-description="次のページへ", onclick="pdfjsApi.nextPage(); return false;")
+        li.showDescriptionBottom(data-description="次のページへ", onclick="slideJsApi.nextPage(); return false;")
           span.btn
             img(src="#{img}icon_next.png", width="30", height="30")
-        li.showDescriptionBottom(data-description="ページ再描画", onclick="pdfjsApi.render(); return false;")
-          span.btn
-            img(src="#{img}icon_reconnect.png", width="30", height="30")
       li-center
         li#pageNumTag
       li-right
         li#scaleChoose
           label(for="scaleType") 拡大率
-          select(name="scale_type", id="scaleType", onchange="pdfjsApi.cngScale(); return false;")
+          select(name="scale_type", id="scaleType", onchange="slideJsApi.cngScale(); return false;")
             option(value="") -
             option(value="0.5" ) 50%
             option(value="0.75") 75%
@@ -66,12 +63,13 @@ block content
             option(value="2.5" ) 250%
             option(value="3"   ) 300%
             option(value="4"   ) 400%
-        li.showDescriptionBottom(data-description="拡大する", onclick="pdfjsApi.zoomIn(0.25); return false;")
+        li.showDescriptionBottom(data-description="拡大する", onclick="slideJsApi.zoomIn(0.25); return false;")
           span.btn
             img(src="#{img}icon_plus.png", width="30", height="30")
-        li.showDescriptionBottom(data-description="縮小する", onclick="pdfjsApi.zoomOut(0.25); return false;")
+        li.showDescriptionBottom(data-description="縮小する", onclick="slideJsApi.zoomOut(0.25); return false;")
           span.btn
             img(src="#{img}icon_minus.png", width="30", height="30")
 
-  div#document_canvas
+  slideframe
+    div#document_canvas
   div#desc-balloon

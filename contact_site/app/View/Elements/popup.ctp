@@ -278,10 +278,6 @@ if ( isset($alertMessage) && !empty($alertMessage) ) {
     });
 }(popupEvent, shortMessage);
 
-function closePopup() {
-  return popupEvent.closeNoPopup();
-}
-
 </script>
 <div id="popup" class="popup-off" style="">
   <div id="popup-frame-base">

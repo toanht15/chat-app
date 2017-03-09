@@ -1,11 +1,6 @@
 <?= $this->Html->script(C_PATH_NODE_FILE_SERVER."/websocket/compatibility.min.js"); ?>
-<?= $this->Html->script(C_PATH_NODE_FILE_SERVER."/websocket/pdf.min.js"); ?>
 
 <script type="text/javascript">
-
-PDFJS.workerSrc = "<?=C_PATH_NODE_FILE_SERVER?>/websocket/pdf.worker.min.js";
-
-
 var pdfjsCNST = function(){
   return {
     FIRST_PAGE: "最初のページ",
@@ -13,20 +8,19 @@ var pdfjsCNST = function(){
   };
 };
 
-var pdfjsApi = {
+var slideJsApi = {
   cnst: new pdfjsCNST(),
-  pdf: null,
-  pdfUrl: null,
+  filePath: "",
   currentPage: 1,
   currentScale: 1,
-  renderFlg: false,
+  loadedPage: 0,
+  maxPage: 1,
   zoomInTimer: null,
   zoomInTimeTerm: 500,
   pagingTimer: null,
   pagingTimeTerm: 500,
   init: function(){
     this.cngPage();
-    this.showpage();
     this.resetZoomType();// 拡大率を設定
 
     var canvas = document.getElementById('document_canvas');
@@ -44,16 +38,16 @@ var pdfjsApi = {
             y: e.clientY * windowScale
           }
         });
-      }, 10);
+      }, 15);
     });
 
     // キープレス
     window.addEventListener('keydown',function(e){
       if ( e.keyCode === 37 || e.keyCode === 38 ) {
-        pdfjsApi.prevPage();
+        slideJsApi.prevPage();
       }
       else if ( e.keyCode === 39 || e.keyCode === 40 ) {
-        pdfjsApi.nextPage();
+        slideJsApi.nextPage();
       }
     });
 
@@ -65,29 +59,30 @@ var pdfjsApi = {
       }
       if ( e.ctrlKey ) {
         e.preventDefault();
-        clearTimeout(pdfjsApi.zoomInTimer);
+        clearTimeout(slideJsApi.zoomInTimer);
         // 拡大
         if ( e.deltaY < 0 ) {
-          pdfjsApi.zoomIn(0.1);
+          slideJsApi.zoomIn(0.1);
         }
         // 縮小
         else {
-          pdfjsApi.zoomOut(0.1);
+          slideJsApi.zoomOut(0.1);
         }
       }
       else {
-        var canvas = document.getElementById('document_canvas');
+        var canvas = document.querySelector('#slide_' + slideJsApi.currentPage);
+
         // 前のページへ
         if ( e.deltaY < 0 ) {
           if ( canvas.scrollTop !== 0 ) return false;
           if (e.preventDefault) { e.preventDefault(); }
-          pdfjsApi.prevPage();
+          slideJsApi.prevPage();
         }
         // 次のページへ
         else {
           if ( (canvas.scrollHeight - canvas.clientHeight) !== canvas.scrollTop ) return false;
           if (e.preventDefault) { e.preventDefault(); }
-          pdfjsApi.nextPage();
+          slideJsApi.nextPage();
         }
       }
     });
@@ -112,62 +107,60 @@ var pdfjsApi = {
           window.resizeTo(size.width, size.height);
           window.moveTo(winX, winY);
         }
-        pdfjsApi.render();
+        slideJsApi.pageRender();
+        slideJsApi.render();
       }, 500);
     });
 
-    // スクロール位置
-    pdfjsApi.scrollTimer = null;
-    canvas.addEventListener('scroll', this.scrollFunc);
   },
   scrollTimer: null,
+  setScrollTimer: null,
+  setScrollFlg: false,
   scrollFunc: function(e){
-    if ( pdfjsApi.scrollTimer !== null ) return false;
+    if ( slideJsApi.setScrollFlg ) return false;
     clearTimeout(this.scrollTimer);
     if ( document.getElementById('ang-popup').classList.item("show") === null ) {
-      pdfjsApi.scrollTimer = setTimeout(function(){
-        clearTimeout(pdfjsApi.scrollTimer);
-        pdfjsApi.scrollTimer = null;
+      slideJsApi.scrollTimer = setTimeout(function(){
+        clearTimeout(slideJsApi.scrollTimer);
+        slideJsApi.scrollTimer = null;
+        var page = document.getElementById("slide_" + slideJsApi.currentPage);
         emit("docSendAction", {
           to: 'customer',
+          page: slideJsApi.currentPage,
           scroll: {
-            top: e.target.scrollTop,
-            left: e.target.scrollLeft
+            top: page.scrollTop / (page.scrollHeight - page.clientHeight),
+            left: page.scrollLeft / (page.scrollWidth - page.clientWidth)
           }
         });
       }, 100);
     }
   },
   prevPage: function(){
-    if ( pdfjsApi.renderFlg ) return false;
-    if ( pdfjsApi.currentPage < 2 ) return pdfjsApi.notificate('FIRST_PAGE');
+    if ( slideJsApi.currentPage < 2 ) return slideJsApi.notificate('FIRST_PAGE');
     clearTimeout(this.pagingTimer);
     this.pagingTimer = setTimeout(function(){
-      clearTimeout(pdfjsApi.pagingTimer);
-      pdfjsApi.renderFlg = true;
-      pdfjsApi.currentPage--;
-      pdfjsApi.pageRender();
-      pdfjsApi.sendCtrlAction('page');
-    }, pdfjsApi.pagingTimeTerm);
+      clearTimeout(slideJsApi.pagingTimer);
+      slideJsApi.currentPage--;
+      slideJsApi.sendCtrlAction('page');
+      slideJsApi.cngPage();
+    }, slideJsApi.pagingTimeTerm);
   },
   nextPage: function(){
-    if ( pdfjsApi.renderFlg ) return false;
-    if ( pdfjsApi.currentPage >= pdfjsApi.pdf.pdfInfo.numPages ) return pdfjsApi.notificate('LAST_PAGE');
+    if ( slideJsApi.currentPage >= slideJsApi.maxPage ) return slideJsApi.notificate('LAST_PAGE');
     clearTimeout(this.pagingTimer);
     this.pagingTimer = setTimeout(function(){
-      clearTimeout(pdfjsApi.pagingTimer);
-      pdfjsApi.renderFlg = true;
-      pdfjsApi.currentPage++;
-      pdfjsApi.sendCtrlAction('page');
-      pdfjsApi.pageRender();
-    }, pdfjsApi.pagingTimeTerm);
+      clearTimeout(slideJsApi.pagingTimer);
+      slideJsApi.currentPage++;
+      slideJsApi.sendCtrlAction('page');
+      slideJsApi.cngPage();
+    }, slideJsApi.pagingTimeTerm);
   },
   toggleManuScript: function(){
     var type = sessionStorage.getItem('manuscript');
     if ( type === "none" ) {
       type = 'block';
       document.getElementById('scriptToggleBtn').classList.add('on');
-      if ( pdfjsApi.manuscript.hasOwnProperty(Number(pdfjsApi.currentPage)) && pdfjsApi.manuscript[pdfjsApi.currentPage] !== "" ) {
+      if ( slideJsApi.manuscript.hasOwnProperty(Number(slideJsApi.currentPage)) && slideJsApi.manuscript[slideJsApi.currentPage] !== "" ) {
       }
     }
     else {
@@ -179,71 +172,73 @@ var pdfjsApi = {
   },
   cngPage: function(){
     var script = "", type = sessionStorage.getItem('manuscript');
-    if ( type === "block" && pdfjsApi.manuscript.hasOwnProperty(Number(pdfjsApi.currentPage)) && pdfjsApi.manuscript[pdfjsApi.currentPage] !== "" ) {
+    if ( type === "block" && slideJsApi.manuscript.hasOwnProperty(Number(slideJsApi.currentPage)) && slideJsApi.manuscript[slideJsApi.currentPage] !== "" ) {
       $("#manuscriptArea").css({ 'display': type });
     }
     else {
       $("#manuscriptArea").css({'display': 'none'});
     }
-    document.getElementById('manuscript').textContent = pdfjsApi.manuscript[pdfjsApi.currentPage];
+    document.getElementById('manuscript').textContent = slideJsApi.manuscript[slideJsApi.currentPage];
+    slideJsApi.readPage();
+    slideJsApi.pageRender();
   },
   cngScaleTimer: null,
   cngScale: function(){
-    clearTimeout(pdfjsApi.cngScaleTimer);
-    pdfjsApi.cngScaleTimer = setTimeout(function(){
-      clearTimeout(pdfjsApi.cngScaleTimer);
+    clearTimeout(slideJsApi.cngScaleTimer);
+    slideJsApi.cngScaleTimer = setTimeout(function(){
+      clearTimeout(slideJsApi.cngScaleTimer);
       var type = document.getElementById('scaleType').value;
       if ( type && !isNaN(Number(type)) ) {
-        pdfjsApi.zoom(type);
+        slideJsApi.zoom(type);
       }
-    }, pdfjsApi.zoomInTimeTerm);
+    }, slideJsApi.zoomInTimeTerm);
   },
   zoom: function(num){
     clearTimeout(this.zoomInTimer);
     this.zoomInTimer = setTimeout(function(){
-      clearTimeout(pdfjsApi.zoomInTimer);
-      pdfjsApi.currentScale = num;
-      pdfjsApi.sendCtrlAction('scale');
-      pdfjsApi.render();
-    }, pdfjsApi.zoomInTimeTerm);
+      clearTimeout(slideJsApi.zoomInTimer);
+      slideJsApi.currentScale = num;
+      slideJsApi.render();
+      slideJsApi.sendCtrlAction('scale');
+    }, slideJsApi.zoomInTimeTerm);
   },
   zoomIn: function(num){
-    if ( pdfjsApi.currentScale >= 4 ) return false;
+    if ( slideJsApi.currentScale >= 4 ) return false;
 
     clearTimeout(this.zoomInTimer);
     this.zoomInTimer = setTimeout(function(){
-      clearTimeout(pdfjsApi.zoomInTimer);
-        pdfjsApi.currentScale = Math.ceil( (Number(pdfjsApi.currentScale) + Number(num)) * 100 ) / 100;
-      if ( pdfjsApi.currentScale > 4 ) {
-        pdfjsApi.currentScale = 4;
+      clearTimeout(slideJsApi.zoomInTimer);
+        slideJsApi.currentScale = Math.ceil( (Number(slideJsApi.currentScale) + Number(num)) * 100 ) / 100;
+      if ( slideJsApi.currentScale > 4 ) {
+        slideJsApi.currentScale = 4;
       }
-      pdfjsApi.sendCtrlAction('scale');
-      pdfjsApi.render();
-      pdfjsApi.resetZoomType();
-    }, pdfjsApi.zoomInTimeTerm);
+      slideJsApi.sendCtrlAction('scale');
+      slideJsApi.render();
+      slideJsApi.resetZoomType();
+    }, slideJsApi.zoomInTimeTerm);
   },
   zoomOut: function(num){
-    if ( pdfjsApi.currentScale <= 0 ) return false;
+    if ( slideJsApi.currentScale <= 0 ) return false;
 
     clearTimeout(this.zoomInTimer);
     this.zoomInTimer = setTimeout(function(){
-      clearTimeout(pdfjsApi.zoomInTimer);
-        pdfjsApi.currentScale = Math.ceil( (Number(pdfjsApi.currentScale) - Number(num)) * 100 ) / 100;
-      if ( pdfjsApi.currentScale <= num ) {
-        pdfjsApi.currentScale = num;
+      clearTimeout(slideJsApi.zoomInTimer);
+        slideJsApi.currentScale = Math.ceil( (Number(slideJsApi.currentScale) - Number(num)) * 100 ) / 100;
+      if ( slideJsApi.currentScale <= num ) {
+        slideJsApi.currentScale = num;
       }
-      pdfjsApi.sendCtrlAction('scale');
-      pdfjsApi.render();
-      pdfjsApi.resetZoomType();
-    }, pdfjsApi.zoomInTimeTerm);
+      slideJsApi.sendCtrlAction('scale');
+      slideJsApi.render();
+      slideJsApi.resetZoomType();
+    }, slideJsApi.zoomInTimeTerm);
   },
   resetZoomType: function(){
     var scaleType = document.getElementById('scaleType');
     for (var i = 0; i < scaleType.children.length; i++) {
       scaleType[i].selected = false;
     }
-    if ( document.querySelector("#scaleType option[value='" + Number(pdfjsApi.currentScale) + "']") ) {
-      document.querySelector("#scaleType option[value='" + Number(pdfjsApi.currentScale) + "']").selected = true;
+    if ( document.querySelector("#scaleType option[value='" + Number(slideJsApi.currentScale) + "']") ) {
+      document.querySelector("#scaleType option[value='" + Number(slideJsApi.currentScale) + "']").selected = true;
     }
     else {
       scaleType[0].selected = true;
@@ -251,7 +246,8 @@ var pdfjsApi = {
   },
   sendCtrlAction: function(key){
     var data = {to: 'customer'};
-    data[key] = ( key === "page" ) ? pdfjsApi.currentPage : pdfjsApi.currentScale ;
+    data[key] = ( key === "page" ) ? slideJsApi.currentPage : slideJsApi.currentScale ;
+    sessionStorage.setItem(key, data[key]); // セッションに格納
     emit("docSendAction", data);
   },
   setWindowSize: function(wsInfo){
@@ -298,127 +294,115 @@ var pdfjsApi = {
 
       window.moveTo(winX, winY);
       window.resizeTo(wswidth, wsheight);
+      slideJsApi.render();
+      slideJsApi.pageRender();
     }
     catch(e) {
       console.log("error resize.", e);
     }
   },
-  showpage: function(){
-    // Asynchronous download PDF
-    PDFJS.getDocument(pdfjsApi.pdfUrl)
-      .then(function(pdf) {
-        pdfjsApi.pdf = pdf;
-        return pdf.getPage(pdfjsApi.currentPage);
-      })
-      .then(function(page) {
-        var canvasFrame = document.getElementById('document_canvas');
-        canvasFrame.scrollTop = 0;
-        // Get canvas#the-canvas
-        if ( !pdfjsApi.canvas ) {
-          pdfjsApi.canvas = document.createElement('canvas');
-          pdfjsApi.canvas.setAttribute('id', 'the-canvas');
-          $(canvasFrame).html(pdfjsApi.canvas);
-          pdfjsApi.context = pdfjsApi.canvas.getContext('2d');
-        }
-
-        pdfjsApi.page = page;
-        pdfjsApi.render();
-      });
-  },
   pageRender: function(){
-    pdfjsApi.pdf.getPage(pdfjsApi.currentPage)
-      .then(function(page){
-        var canvasFrame = document.getElementById('document_canvas');
-        canvasFrame.scrollTop = 0;
-        // Get canvas#the-canvas
-        if ( !pdfjsApi.canvas ) {
-          pdfjsApi.canvas = document.createElement('canvas');
-          pdfjsApi.canvas.setAttribute('id', 'the-canvas');
-          $(canvasFrame).html(pdfjsApi.canvas);
-          pdfjsApi.context = pdfjsApi.canvas.getContext('2d');
-        }
-
-        pdfjsApi.page = page;
-        pdfjsApi.cngPage(); // 原稿差し替え
-        pdfjsApi.render();
-      });
-
+    slideJsApi.scrollTimer = null;
+    var canvas = document.getElementById('document_canvas');
+    var frameWidth = $("slideFrame").prop('offsetWidth');
+    if ( isNumber(frameWidth) ) {
+      canvas.style.left = -frameWidth * (slideJsApi.currentPage - 1) + "px";
+    }
+    sessionStorage.setItem('page', slideJsApi.currentPage); // セッションに格納
+    $('#pages').text(slideJsApi.currentPage + "/ " + slideJsApi.maxPage);
   },
   render: function(){
-    var canvasFrame = document.getElementById('document_canvas');
-
-    sessionStorage.setItem('page', pdfjsApi.currentPage);
-    sessionStorage.setItem('scale', pdfjsApi.currentScale);
-
-    function fitWindow(page) {
-      var viewport = page.getViewport(1);
-      var widthScale = canvasFrame.clientWidth/viewport.width;
-      var heightScale = canvasFrame.clientHeight/viewport.height;
-      var scale = ( widthScale > heightScale ) ? heightScale : widthScale;
-      return page.getViewport(scale * pdfjsApi.currentScale);
-    }
-
-    if ( pdfjsApi.page === undefined ) {
-      return false;
-    }
-    var page = pdfjsApi.page;
-
-    // Fetch canvas' 2d context
-    var viewport = fitWindow(page);
-    // Set dimensions to Canvas
-    pdfjsApi.canvas.height = viewport.height;
-    pdfjsApi.canvas.width = viewport.width;
-    // Set Margin
-    var calc = ((window.innerHeight - 40 - viewport.height) > 0) ? (window.innerHeight - 40 - viewport.height)/2 : 0;
-    canvasFrame.style.paddingTop = String(calc) + "px";
-
-    // Render PDF page
-    page.render({
-      canvasContext: pdfjsApi.canvas.getContext('2d'),
-      viewport: viewport
-    }).then(function(){
-      document.getElementById('pages').textContent = pdfjsApi.currentPage + "/ " + pdfjsApi.pdf.pdfInfo.numPages;
-      pdfjsApi.canvas.style.opacity = 1;
-      pdfjsApi.renderFlg = false;
-      pdfjsApi.readFileState = true;
-    });
+    var canvas = document.querySelector('slideframe');
+    var frameWidth = $("slideFrame").prop('clientWidth');
+    var frameHeight = $("slideFrame").prop('clientHeight');
+    /* サイズ調整処理 */
+    $(".slide img").css("width", (canvas.clientWidth - 20) * 0.75 + "pt")
+                   .css("height", (canvas.clientHeight - 20) * 0.75 + "pt");
+    $(".slide").css("width",  canvas.clientWidth + "px").css("height", canvas.clientHeight + "px");
+    $(".slide img").css("zoom", slideJsApi.currentScale);
   },
-  readFileState: null,
   renderTimer: null,
   notificate: function(code){
     if ( this.cnst.hasOwnProperty(code) ) {
       console.log(this.cnst[code]);
     }
   },
+  makePage: function(){
+    var docCanvas = document.getElementById('document_canvas');
+    // 現在の表示ページから作っていく
+    for(var i = 1; this.maxPage >= i; i++){
+      var slide = document.createElement('div');
+      slide.id = "slide_" + i;
+      slide.classList.add("slide");
+      slide.addEventListener('scroll', function(){
+        slideJsApi.scrollFunc();
+      });
+      docCanvas.appendChild(slide);
+    }
+    slideJsApi.render();
+  },
+  readPage: function(){
+    function setImage(page){
+      var img = document.createElement('img');
+      img.src = slideJsApi.filePath + "_" + Number(page) + '.svg';
+      var slide = document.getElementById('slide_' + page);
+
+      slide.appendChild(img);
+    }
+
+    // 初回のページ読み込みで、表示ページが１ページ目以上の場合
+    if ( this.loadedPage === 0 && this.currentPage > 1 ) {
+      var prevNode = null;
+      setImage(this.currentPage);
+
+      // 現在の表示ページから作っていく
+      for(var i = this.currentPage - 1; i > 0; i--){
+        setImage(i);
+      }
+      this.loadedPage = this.currentPage;
+    }
+    else {
+      this.loadedPage++;
+
+      if ( !document.querySelector('#slide_' + this.loadedPage) || document.querySelector('#slide_' + this.loadedPage + ' img') ) return false;
+      setImage(this.loadedPage); // ページを追加
+    }
+    slideJsApi.render();
+
+  },
   readFile: function(doc, callback){
-    var file = "<?=C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/"?>" + doc.file_name;
-    var xhr = new XMLHttpRequest();
-    pdfjsApi.readFileState = false;
-    xhr.open('GET', file, true);
-    xhr.responseType = 'arraybuffer';
-    xhr.onload = function(e) {
-      if (this.status == 200) {
-        sessionStorage.setItem('doc', JSON.stringify(doc));
-        pdfjsApi.doc = doc;
-        pdfjsApi.pdfUrl = new Uint8Array(this.response);
-        pdfjsApi.currentPage = (sessionStorage.getItem('page') !== null) ? Number(sessionStorage.getItem('page')) : 1;
-        pdfjsApi.currentScale = (sessionStorage.getItem('scale') !== null) ? Number(sessionStorage.getItem('scale')) : 1;
-        if ( sessionStorage.getItem('manuscript') === null ) { sessionStorage.setItem('manuscript', 'block') }
-        pdfjsApi.manuscript = JSON.parse(doc.manuscript);
-        pdfjsApi.init();
-        document.getElementById('downloadFilePath').href = file;
-        var readTimer = setInterval(function(){
-          if ( pdfjsApi.readFileState ) {
-            clearInterval(readTimer);
-            callback(false);
-          }
-        }, 300);
+    this.filePath = "<?=C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/svg_"?>" + doc.file_name.replace(/\.pdf$/, "");
+    sessionStorage.setItem('doc', JSON.stringify(doc));
+    this.doc = doc;
+    // ダウンロードファイルの設定
+    document.getElementById('downloadFilePath').href = "<?=C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/"?>" + doc.file_name;
+    this.currentPage = (sessionStorage.getItem('page') !== null) ? Number(sessionStorage.getItem('page')) : 1;
+    this.currentScale = (sessionStorage.getItem('scale') !== null) ? Number(sessionStorage.getItem('scale')) : 1;
+    if ( sessionStorage.getItem('manuscript') === null ) { sessionStorage.setItem('manuscript', 'block') }
+    this.manuscript = JSON.parse(doc.manuscript);
+    this.loadedPage = 0;
+    var settings = JSON.parse(doc.settings);
+    this.maxPage = settings.pages;
+
+    var limitPage = (this.currentPage + 3 > this.maxPage) ? this.maxPage : this.currentPage + 3 ;
+
+    var divCanvas = document.createElement("div");
+    divCanvas.id = "document_canvas";
+    $("slideframe #document_canvas").remove();
+    $("slideframe").append(divCanvas);
+
+    this.makePage(); // 初期スライドを作成
+    this.init();
+
+    var readPageTimer = setInterval(function(){
+      slideJsApi.readPage();
+      if ( limitPage < slideJsApi.loadedPage ) {
+        clearInterval(readPageTimer);
+        slideJsApi.pageRender();
+        slideJsApi.render();
+        callback(false);
       }
-      else {
-        callback(true); // エラー
-      }
-    };
-    xhr.send();
+    }, 1000);
   }
 };
 
@@ -510,10 +494,13 @@ sincloApp.controller('MainCtrl', function($scope){
   $scope.changeDocument = function(doc){
     sessionStorage.setItem('page', 1);
     sessionStorage.setItem('scale', 1);
-    pdfjsApi.readFile(doc, function(err) {
+    slideJsApi.readFile(doc, function(err) {
       if (err) return false;
+      var settings = JSON.parse(doc.settings);
       emit("changeDocument", {
-        url: "<?=C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/"?>" + doc.file_name,
+        directory: "<?=C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/"?>",
+        fileName: doc.file_name,
+        pages: settings.pages,
         pagenation_flg: doc.pagenation_flg,
         download_flg: doc.download_flg
       });

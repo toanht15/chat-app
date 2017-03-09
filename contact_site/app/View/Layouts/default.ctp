@@ -40,17 +40,23 @@ if( strcmp($this->name, 'Login') !== 0 ) {
     echo $this->fetch('script');
     echo $this->Html->css("bootstrap.css");
     echo $this->Html->css("multi-select.css");
-    echo $this->Html->css("clockpicker.css");
-    echo $this->Html->css("standalone.css");
+    if ( strcmp($this->name, 'TAutoMessages') === 0 ) {
+      echo $this->Html->css("clockpicker.css");
+      echo $this->Html->css("standalone.css");
+    }
     echo $this->Html->css("style.css");
     echo $this->Html->css("modal.css");
-    echo $this->Html->css("daterangepicker.css");
+    if ( strcmp($this->name, 'Histories') === 0 ) {
+      echo $this->Html->css("daterangepicker.css");
+    }
     echo $this->Html->script("//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js");
     if (strcmp($this->name, "Customers") === 0) {
       echo $this->Html->script(C_NODE_SERVER_ADDR.C_NODE_SERVER_WS_PORT."/socket.io/socket.io.js");
     }
     echo $this->Html->script("jquery.multi-select.js");
-    echo $this->Html->script("clockpicker.js");
+    if ( strcmp($this->name, 'TAutoMessages') === 0 ) {
+      echo $this->Html->script("clockpicker.js");
+    }
     echo $this->Html->script("common.js");
     echo $this->Html->script("//ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js");
     echo $this->Html->script("//ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-sanitize.js");
@@ -58,7 +64,10 @@ if( strcmp($this->name, 'Login') !== 0 ) {
     echo $this->Html->script("cidr2regex.js");
     echo $this->element("common-js");
     echo $this->Html->script("moment.min.js");
-    echo $this->Html->script("daterangepicker.js");
+    if ( strcmp($this->name, 'Histories') === 0 ) {
+      echo $this->Html->script("daterangepicker.js");
+    }
+
   ?>
 </head>
 <body>

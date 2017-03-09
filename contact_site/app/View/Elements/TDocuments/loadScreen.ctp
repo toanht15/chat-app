@@ -1,7 +1,7 @@
 var  load,
-     common; // 共通関数
+     loading; // 共通関数
 
-common = {
+loading = {
   load: {
     id: "loadingImg",
     flg: false,
@@ -375,7 +375,7 @@ common = {
       this.flg = true; // 一度接続済みというフラグを持たせる
       this.timer = window.setTimeout(function(){
         common.load.finish();
-      }, 80000);
+      }, 300000);
     },
     finish: function(){
       window.clearTimeout(this.timer);
