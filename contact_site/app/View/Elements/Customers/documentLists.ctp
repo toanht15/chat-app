@@ -373,7 +373,7 @@ var slideJsApi = {
     slideJsApi.render();
 
   },
-  readFile: function(doc, callback){
+  readFile: function(doc){
     this.filePath = "<?=C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/svg_"?>" + doc.file_name.replace(/\.pdf$/, "");
     sessionStorage.setItem('doc', JSON.stringify(doc));
     this.doc = doc;
@@ -403,7 +403,6 @@ var slideJsApi = {
         clearInterval(readPageTimer);
         slideJsApi.pageRender();
         slideJsApi.render();
-        callback(false);
       }
     }, 1000);
   }
@@ -517,14 +516,6 @@ sincloApp.controller('MainCtrl', function($scope){
     $("#ang-popup").removeClass("show");
   };
 
-  /*angular.element(document).on("click", function(evt){
-    if ( evt.target.getAttribute('data-elem-type') !== 'selector' ) {
-      var e = document.querySelector('ng-multi-selector');
-      if ( e.classList.contains('show') ) {
-        e.classList.remove('show');
-      }
-    }
-  });*/
 });
 
 sincloApp.directive('ngOverView', function(){

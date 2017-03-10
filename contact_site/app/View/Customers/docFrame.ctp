@@ -51,26 +51,25 @@ socket.on('connect', function(){
     firstFlg = false;
     doc = JSON.parse(sessionStorage.getItem("doc"));
   }
-  slideJsApi.readFile(doc, function(err){
-    if (err) return false;
-    if (firstFlg) {
-      var settings = JSON.parse(doc.settings);
-      emit('docShareConnect', {
-        from: 'company',
-        responderId: '<?=$userInfo["id"]?>',
-        directory: "<?=C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/"?>",
-        fileName: doc.file_name,
-        pagenation_flg: doc.pagenation_flg,
-        pages: settings.pages,
-        download_flg: doc.download_flg
-      }); // 資料共有開始
-    }
-    else {
-      emit('docShareReConnect', {
-        from: 'company'
-      }); // 資料共有開始
-    }
-  });
+  slideJsApi.readFile(doc);
+
+  if (firstFlg) {
+    var settings = JSON.parse(doc.settings);
+    emit('docShareConnect', {
+      from: 'company',
+      responderId: '<?=$userInfo["id"]?>',
+      directory: "<?=C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/"?>",
+      fileName: doc.file_name,
+      pagenation_flg: doc.pagenation_flg,
+      pages: settings.pages,
+      download_flg: doc.download_flg
+    }); // 資料共有開始
+  }
+  else {
+    emit('docShareReConnect', {
+      from: 'company'
+    }); // 資料共有開始
+  }
 
   frameSize = {
     height: window.outerHeight - window.innerHeight,

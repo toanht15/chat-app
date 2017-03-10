@@ -1,4 +1,3 @@
-<?= $this->Html->script(C_PATH_NODE_FILE_SERVER."/websocket/pdf.min.js"); ?>
 <?= $this->Html->script(C_PATH_NODE_FILE_SERVER."/websocket/compatibility.min.js"); ?>
 
 <script type="text/javascript">
@@ -25,6 +24,15 @@ if (window.File && window.FileReader && window.FileList && window.Blob) {
   })
 }
 
+var onBeforeunloadHandler = function(e) {
+  e.returnValue = 'まだ保存されておりません。離脱してもよろしいでしょうか';
+};
+
+$(document).ready(function(){
+  // イベントを登録
+  window.addEventListener('beforeunload', onBeforeunloadHandler, false);
+});
+
 <?php endif; ?>
 
 
@@ -37,7 +45,12 @@ function tagAdd(){
 
 //保存機能
 function saveAct(){
-  document.getElementById('TDocumentManuscript').value = JSON.stringify(slideJsApi.manuscript);
+  // ページ離脱防止解除
+  window.removeEventListener('beforeunload', onBeforeunloadHandler, false);
+
+  if ( slideJsApi.hasOwnProperty('manuscript') ) {
+    document.getElementById('TDocumentManuscript').value = JSON.stringify(slideJsApi.manuscript);
+  }
   document.getElementById('TDocumentEntryForm').submit();
   setTimeout(function(){
     $("a").addClass("disableBtn").prop("onclick", "").click(
@@ -60,6 +73,8 @@ function removeAct(id){
       cache: false,
       url: "<?= $this->Html->url('/TDocuments/remoteDelete') ?>",
       success: function(){
+        // ページ離脱防止解除
+        window.removeEventListener('beforeunload', onBeforeunloadHandler, false);
         location.href = "<?= $this->Html->url('/TDocuments/index') ?>";
       }
     });
@@ -78,6 +93,9 @@ function removeActEdit(){
       cache: false,
       url: "<?= $this->Html->url('/TDocuments/remoteDelete') ?>",
       success: function(){
+        // ページ離脱防止解除
+        window.removeEventListener('beforeunload', onBeforeunloadHandler, false);
+
         location.href = "<?= $this->Html->url('/TDocuments/index') ?>";
       }
     });
