@@ -22,7 +22,6 @@
         <documentArea>
           <content>
             <preview>
-              <span onclick="slideJsApi.showpage(); return false;" class="reloadBtn"><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_reconnect.png" width="20" height="20" alt=""></span>
               <slideframe><div id="document_canvas"></div></slideframe>
               <paging>
                 <span onclick="slideJsApi.prevPage(); return false;"><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_back.png" width="30" height="30" alt=""></span>
@@ -34,6 +33,7 @@
               <upload class="btn-shadow greenBtn">
                 <?=$this->Form->input('files', ['type'=>'file','placeholder' => '資料', 'error' => false, 'label' => false,'div' => false])?>
                 <?=$this->Form->input('file_name', ['type'=>'hidden'])?>
+                <?=$this->Form->input('settings', ['type'=>'hidden'])?>
               </upload>
               <!-- <rotate class="btn-shadow greenBtn" onclick="slideJsApi.rotate(); return false;">
                 <?=$this->Html->image('rotate90_w.png', ['alt' => '90度資料を回転する']);?>

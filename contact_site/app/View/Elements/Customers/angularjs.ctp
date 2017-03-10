@@ -2017,29 +2017,36 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       template: "{{stayTime}}",
       link: function(scope, attr, elem) {
         scope.stayTime = scope.monitor.term;
+        var term = 0;
 
         function countUp(){
-          scope.monitor.term = Number(scope.monitor.term) + 1;
+          // 存在しないユーザーなら、カウントを止める
+          if ( !scope.$parent.monitorList.hasOwnProperty(scope.monitor.tabId) ) return false;
+          scope.monitor.term = Number(scope.monitor.term) + term;
           var hour = parseInt(scope.monitor.term / 3600),
               min = parseInt((scope.monitor.term / 60) % 60),
               sec = scope.monitor.term % 60;
 
           if ( scope.monitor.term >= 86400 ) { // 24時間以上
             scope.stayTime = parseInt(scope.monitor.term / 86400) + "日";
+            term = 60 * 60 * 24 - ((hour * 60 + min) * 60 + sec);
           }
           else if ( scope.monitor.term < 86400 &&  scope.monitor.term >= 3600 ) { // 1時間以上、24時間未満
             scope.stayTime = parseInt(scope.monitor.term / 3600) + "時間";
+            term = 60 * 60 - (min * 60 + sec);
           }
           else if ( scope.monitor.term < 3600 &&  scope.monitor.term >= 60 ) { // 1時間以上、24時間未満
             scope.stayTime = parseInt(scope.monitor.term / 60) + "分";
+            term = 60 - sec;
           }
           else {
             scope.stayTime = "0分";
+            term = 60;
           }
 
           $timeout(function(e){
             countUp();
-          }, 60000); // 60秒ごとに実行
+          }, term * 1000); // 60秒ごとに実行
         }
         countUp();
       }
