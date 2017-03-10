@@ -3903,18 +3903,25 @@ ul.naviBtn {
               position: relative;
               display: block;
 
-              #document_canvas {
-                position: absolute;
+              slideframe {
+                width: 22.5em;
                 height: 12em;
+                position: absolute;
                 top: 0;
                 left: 0;
-                right: 0;
+              }
+
+              #document_canvas {
+                height: 12em;
+                position: absolute;
+                top: 0;
+                left: 0;
                 overflow: hidden;
                 display: flex;
 
-                div.slide svg {
-                  width: 22.5em;
-                  height: 12em;
+                .slide img {
+                  margin: 0 auto;
+                  display: block;
                 }
               }
 

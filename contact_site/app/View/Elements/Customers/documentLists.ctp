@@ -315,13 +315,14 @@ var slideJsApi = {
   },
   render: function(){
     var canvas = document.querySelector('slideframe');
-    var frameWidth = $("slideFrame").prop('clientWidth');
-    var frameHeight = $("slideFrame").prop('clientHeight');
     /* サイズ調整処理 */
     $(".slide img").css("width", (canvas.clientWidth - 20) * 0.75 + "pt")
                    .css("height", (canvas.clientHeight - 20) * 0.75 + "pt");
     $(".slide").css("width",  canvas.clientWidth + "px").css("height", canvas.clientHeight + "px");
     $(".slide img").css("transform", "scale(" + slideJsApi.currentScale + ")");
+
+    var docCanvas = document.getElementById('document_canvas');
+    docCanvas.style.width = this.maxPage * canvas.clientWidth + "px";
   },
   renderTimer: null,
   notificate: function(code){

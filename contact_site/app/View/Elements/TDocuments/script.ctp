@@ -116,6 +116,7 @@ var slideJsApi, slideJsCNST;
       this.loadedPage = 0;
       this.maxPage = page;
       this.filePath = filePath;
+      this.makePage(); // 初期スライドを作成
       var limitPage = (this.currentPage + 3 > this.maxPage) ? this.maxPage : this.currentPage + 3 ;
 
       var canvas = document.getElementById('document_canvas');
@@ -174,23 +175,44 @@ var slideJsApi, slideJsCNST;
       this.setManuscript();
       $('.pages').text("（" + slideJsApi.currentPage + "/ " + slideJsApi.maxPage + "）");
     },
+    render: function(){
+      var canvas = document.querySelector('slideframe');
+      /* サイズ調整処理 */
+      $(".slide img").css("width", (canvas.clientWidth - 20) * 0.75 + "pt")
+                     .css("height", (canvas.clientHeight - 20) * 0.75 + "pt");
+      $(".slide").css("width",  canvas.clientWidth + "px").css("height", canvas.clientHeight + "px");
+      $(".slide img").css("transform", "scale(" + slideJsApi.currentScale + ")");
+      var docCanvas = document.getElementById('document_canvas');
+      docCanvas.style.width = this.maxPage * canvas.clientWidth + "px";
+    },
+    makePage: function(){
+      var docCanvas = document.getElementById('document_canvas');
+      // 現在の表示ページから作っていく
+      for(var i = 1; this.maxPage >= i; i++){
+        var slide = document.createElement('div');
+        slide.id = "slide_" + i;
+        slide.classList.add("slide");
+        slide.addEventListener('scroll', function(){
+          slideJsApi.scrollFunc();
+        });
+        docCanvas.appendChild(slide);
+      }
+      slideJsApi.render();
+    },
     readPage: function(){
-      var docCanvas = document.getElementById('document_canvas'),
-          html = "",
-          slide = document.createElement('object');
+      function setImage(page){
+        var img = document.createElement('img');
+        img.src = slideJsApi.filePath + "_" + Number(page) + '.svg';
+        var slide = document.getElementById('slide_' + page);
+
+        slide.appendChild(img);
+      }
 
       this.loadedPage++;
 
-      if ( this.loadedPage > this.maxPage ) return false;
-
-      slide.id = "slide_" + slideJsApi.loadedPage;
-      slide.classList.add("slide");
-      slide.data = slideJsApi.filePath + "_" + Number(slideJsApi.loadedPage) + '.svg';
-      slide.type="image/svg+xml";
-      slide.style.height="12em";
-      slide.style.width="22.5em";
-      docCanvas.appendChild(slide);
-
+      if ( !document.querySelector('#slide_' + this.loadedPage) || document.querySelector('#slide_' + this.loadedPage + ' img') ) return false;
+      setImage(this.loadedPage); // ページを追加
+      slideJsApi.render();
     },
     notificate: function(code){
       if ( this.cnst.hasOwnProperty(code) ) {
