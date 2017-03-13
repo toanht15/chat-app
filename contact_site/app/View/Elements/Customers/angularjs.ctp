@@ -2029,7 +2029,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
           if ( scope.monitor.term >= 86400 ) { // 24時間以上
             scope.stayTime = parseInt(scope.monitor.term / 86400) + "日";
-            term = 60 * 60 * 24 - ((hour * 60 + min) * 60 + sec);
+            var remainHour = parseInt(hour % 24); // 一日の経過時間を算出
+            term = 60 * 60 * 24 - ((remainHour * 60 + min) * 60 + sec); // 一日の残り時間を算出
           }
           else if ( scope.monitor.term < 86400 &&  scope.monitor.term >= 3600 ) { // 1時間以上、24時間未満
             scope.stayTime = parseInt(scope.monitor.term / 3600) + "時間";
