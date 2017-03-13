@@ -44,6 +44,7 @@ class TDocumentsController extends AppController {
    * */
   public function add() {
     $this->_radioConfiguration();
+
     if($this->request->is('post')) {
       $this->_entry($this->request->data);
       $errors = $this->TDocument->validationErrors;

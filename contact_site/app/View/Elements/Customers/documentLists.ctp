@@ -1,6 +1,7 @@
 <?= $this->Html->script(C_PATH_NODE_FILE_SERVER."/websocket/compatibility.min.js"); ?>
 
 <script type="text/javascript">
+
 var pdfjsCNST = function(){
   return {
     FIRST_PAGE: "最初のページ",
