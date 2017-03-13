@@ -1,5 +1,4 @@
-var  load,
-     loading; // 共通関数
+var  loading; // 共通関数
 
 loading = {
   load: {
