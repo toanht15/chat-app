@@ -1,4 +1,3 @@
-<?php echo $this->element('Customers/documentLists') ?>
 <section id="document_share" ng-app="sincloApp" ng-controller="MainCtrl">
 
   <!-- /* サイドバー */ -->
@@ -64,7 +63,9 @@
     <span id="manuscriptCloseBtn" onclick="slideJsApi.toggleManuScript(); return false;"></span>
   </div>
 
-  <div id="tabStatusMessage">別の作業をしています</div>
+<slideFrame>
+  <div id="document_canvas"></div>
+</slideFrame>
 
   <div id="ang-popup">
     <div id="ang-base">
@@ -103,7 +104,5 @@
   <div id="desc-balloon"></div>
 </section>
 
-<slideFrame>
-  <div id="document_canvas"></div>
-</slideFrame>
+
 
