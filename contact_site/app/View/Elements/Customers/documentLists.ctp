@@ -496,17 +496,15 @@ sincloApp.controller('MainCtrl', function($scope){
   $scope.changeDocument = function(doc){
     sessionStorage.setItem('page', 1);
     sessionStorage.setItem('scale', 1);
-    slideJsApi.readFile(doc, function(err) {
-      if (err) return false;
-      var settings = JSON.parse(doc.settings);
-      emit("changeDocument", {
-        directory: "<?=C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/"?>",
-        fileName: doc.file_name,
-        pages: settings.pages,
-        pagenation_flg: doc.pagenation_flg,
-        download_flg: doc.download_flg
-      });
+    slideJsApi.readFile(doc);
 
+    var settings = JSON.parse(doc.settings);
+    emit("changeDocument", {
+      directory: "<?=C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/"?>",
+      fileName: doc.file_name,
+      pages: settings.pages,
+      pagenation_flg: doc.pagenation_flg,
+      download_flg: doc.download_flg
     });
 
     $scope.closeDocumentList();
