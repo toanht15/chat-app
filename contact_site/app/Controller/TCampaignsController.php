@@ -16,6 +16,7 @@ class TCampaignsController extends AppController {
    * @return void
    * */
   public function index() {
+  	$this->log('aaaa',LOG_DEBUG);
     $this->set('tCampaignList', $this->TCampaign->find('all', $this->_setParams()));
   }
 

@@ -1,3 +1,123 @@
+<script type="text/javascript">
+var sincloApp = angular.module('sincloApp', []);
+
+sincloApp.controller('MainCtrl', function($scope){
+console.log('kakkaka');
+  $scope.documentList = [];
+  $scope.tagList = {};
+  $scope.searchName = "";
+  $scope.selectList = {};
+  $scope.searchFunc = function(documentList){
+    var targetTagNum = Object.keys($scope.selectList).length;
+
+    function check(elem, index, array){
+      var flg = true;
+      if ( elem.tag !== "" && elem.tag !== null ) {
+        elem.tags = $scope.jParse(elem.tag);
+      }
+      if ( $scope.searchName === "" && targetTagNum === 0 ) {
+        return elem;
+      }
+
+      if ( $scope.searchName !== "" && (elem.name + elem.overview).indexOf($scope.searchName) < 0 ) {
+        flg = false;
+      }
+
+      if ( flg && targetTagNum > 0 ) {
+        var selectList = Object.keys($scope.selectList);
+        flg = true;
+        for ( var i = 0; selectList.length > i; i++ ) {
+          if ( elem.tags.indexOf(Number(selectList[i])) === -1 ) {
+            flg = false;
+          }
+        }
+      }
+
+      return ( flg ) ? elem : false;
+
+    }
+
+    return documentList.filter(check);
+  };
+
+  /**
+   * openDocumentList
+   *  ドキュメントリストの取得
+   * @return void(0)
+   */
+  $scope.openDocumentList = function() {
+    $.ajax({
+      type: 'GET',
+      url: '<?=$this->Html->url(["controller" => "Customers", "action" => "remoteOpenDocumentLists"])?>',
+      dataType: 'json',
+      success: function(json) {
+        console.log(json);
+        $("#ang-popup").addClass("show");
+        $scope.searchName = "";
+        var contHeight = $('#ang-popup-content').height();
+        $('#ang-popup-frame').css('height', contHeight);
+        $scope.tagList = ( json.hasOwnProperty('tagList') ) ? JSON.parse(json.tagList) : {};
+        $scope.documentList = ( json.hasOwnProperty('documentList') ) ? JSON.parse(json.documentList) : {};
+        $scope.$apply();
+      }
+    });
+  };
+
+  /**
+   * [shareDocument description]
+   * @param  {object} doc documentInfo
+   * @return {void}     open new Window.
+   */
+  $scope.shareDocument = function(doc) {
+    var targetTabId = tabId.replace("_frame", "");
+    sessionStorage.removeItem('doc');
+    window.open(
+      "<?= $this->Html->url(['controller' => 'Customers', 'action' => 'docFrame']) ?>?tabInfo=" + encodeURIComponent(targetTabId) + "&docId=" + doc.id,
+      "doc_monitor_" + targetTabId,
+      "width=480,height=400,dialog=no,toolbar=no,location=no,status=no,menubar=no,directories=no,resizable=no, scrollbars=no"
+    );
+    $scope.closeDocumentList();
+  };
+
+  /**
+   * [changeDocument description]
+   * @param  {object} doc document's info
+   * @return {void}     send new docURL
+   */
+  $scope.changeDocument = function(doc){
+    sessionStorage.setItem('page', 1);
+    sessionStorage.setItem('scale', 1);
+    slideJsApi.readFile(doc, function(err) {
+      if (err) return false;
+      var settings = JSON.parse(doc.settings);
+      emit("changeDocument", {
+        directory: "<?=C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/"?>",
+        fileName: doc.file_name,
+        pages: settings.pages,
+        pagenation_flg: doc.pagenation_flg,
+        download_flg: doc.download_flg
+      });
+
+    });
+
+    $scope.closeDocumentList();
+  };
+
+  $scope.closeDocumentList = function() {
+    $("#ang-popup").removeClass("show");
+  };
+
+  /*angular.element(document).on("click", function(evt){
+    if ( evt.target.getAttribute('data-elem-type') !== 'selector' ) {
+      var e = document.querySelector('ng-multi-selector');
+      if ( e.classList.contains('show') ) {
+        e.classList.remove('show');
+      }
+    }
+  });*/
+});
+
+</script>
 <section id="document_share" ng-app="sincloApp" ng-controller="MainCtrl">
 
   <!-- /* サイドバー */ -->

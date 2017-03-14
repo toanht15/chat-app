@@ -23,7 +23,7 @@
           <content>
             <preview>
               <span onclick="slideJsApi.showpage(); return false;" class="reloadBtn"><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_reconnect.png" width="20" height="20" alt=""></span>
-              <div id="document_canvas"></div>
+              <div id="document_canvas" ng-click="openDocumentList3(34)"></div>
               <paging>
                 <span onclick="slideJsApi.prevPage(); return false;"><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_back.png" width="30" height="30" alt=""></span>
                 <span class="pages"></span>
