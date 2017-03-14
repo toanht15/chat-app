@@ -3,7 +3,12 @@
 <script type="text/javascript">
 <?php if ( $this->action !== "index" ) : ?>
 function handleFileSelect(evt) {
+  $("slideframe").html('<div id="document_canvas"></div>');
   var files = evt.target.files; // FileList object
+  if (files.length === 0) {
+    if ( slideJsApi.filePath !== "" ) slideJsApi.init(slideJsApi.filePath, slideJsApi.maxPage);
+    return false;
+  }
   var file = files[0];
   if (file.type !== 'application/pdf') {
     return false;
@@ -11,7 +16,16 @@ function handleFileSelect(evt) {
   var reader = new FileReader();
   reader.onload = (function(theFile) {
     return function(e) {
-      // slideJsApi.init();
+      var slideTemp = document.createElement('div');
+      slideTemp.id = "slide_temp";
+      slideTemp.classList.add('slide');
+      var slideSample = document.createElement('div');
+      var fileTitle = document.createElement('span');
+      fileTitle.textContent = file.name;
+      slideSample.appendChild(fileTitle);
+      slideTemp.appendChild(slideSample);
+      var target = document.getElementById('document_canvas');
+      target.appendChild(slideTemp);
     };
   })(file);
   // Read in the image file as a data URL.
@@ -140,11 +154,11 @@ var slideJsApi, slideJsCNST;
       var canvas = document.getElementById('document_canvas');
       var readPageTimer = setInterval(function(){
         slideJsApi.readPage();
-        slideJsApi.showPage();
         if ( limitPage < slideJsApi.loadedPage ) {
           clearInterval(readPageTimer);
         }
       }, 1000);
+      slideJsApi.showPage();
 
       // 原稿
       var textarea = document.getElementById('pages-text');
