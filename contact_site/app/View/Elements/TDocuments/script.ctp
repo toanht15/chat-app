@@ -90,8 +90,6 @@ function removeAct(id){
       cache: false,
       url: "<?= $this->Html->url('/TDocuments/remoteDelete') ?>",
       success: function(){
-        // ページ離脱防止解除
-        window.removeEventListener('beforeunload', onBeforeunloadHandler, false);
         location.href = "<?= $this->Html->url('/TDocuments/index') ?>";
       }
     });
