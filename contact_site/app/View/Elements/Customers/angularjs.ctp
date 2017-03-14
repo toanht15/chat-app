@@ -825,6 +825,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     $scope.getCustomerInfoFromMonitor = function(m){
       $scope.getCustomerInfo(m.userId, function(ret){
         $scope.customerList[m.userId] = ret;
+        $scope.$apply();
       });
     };
 
@@ -861,6 +862,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           if ( oldFlg ) { // 過去チャットの場合
             angular.element("message-list-descript").attr("class", "off");
             $scope.chatLogMessageList = json;
+            $scope.$apply();
           }
           else {
             $scope.messageList = json;
@@ -1852,6 +1854,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           success: function(json){
             $scope.chatLogList = json;
             angular.element("message-list-descript").attr("class", "on");
+            $scope.$apply();
           }
         });
       }
