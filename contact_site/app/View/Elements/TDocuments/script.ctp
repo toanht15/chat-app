@@ -1,6 +1,7 @@
 <?= $this->Html->script(C_PATH_NODE_FILE_SERVER."/websocket/compatibility.min.js"); ?>
 
 <script type="text/javascript">
+<?= $this->element('TDocuments/loadScreen'); ?>
 <?php if ( $this->action !== "index" ) : ?>
 function handleFileSelect(evt) {
   $("slideframe").html('<div id="document_canvas"></div>');
@@ -59,6 +60,7 @@ function tagAdd(){
 
 //保存機能
 function saveAct(){
+  loading.load.start();
   // ページ離脱防止解除
   window.removeEventListener('beforeunload', onBeforeunloadHandler, false);
 
@@ -79,6 +81,7 @@ function saveAct(){
 function removeAct(id){
   modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', '資料設定', 'moment');
   popupEvent.closePopup = function(){
+    loading.load.start();
     $.ajax({
       type: 'post',
       data: {
@@ -99,6 +102,7 @@ function removeAct(id){
 function removeActEdit(){
   modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', '資料設定', 'moment');
   popupEvent.closePopup = function(){
+    loading.load.start();
     $.ajax({
       type: 'post',
       data: {
@@ -109,7 +113,6 @@ function removeActEdit(){
       success: function(){
         // ページ離脱防止解除
         window.removeEventListener('beforeunload', onBeforeunloadHandler, false);
-
         location.href = "<?= $this->Html->url('/TDocuments/index') ?>";
       }
     });
