@@ -10,8 +10,9 @@ function handleFileSelect(evt) {
     if ( slideJsApi.filePath !== "" ) slideJsApi.init(slideJsApi.filePath, slideJsApi.maxPage);
     return false;
   }
+
   var file = files[0];
-  if (file.type !== 'application/pdf') {
+  if (file.name.indexOf('.pdf') < 0) {
     return false;
   }
   var reader = new FileReader();
@@ -256,11 +257,13 @@ var slideJsApi, slideJsCNST;
 
   $(document).ready(function(){
     <?php if ( !empty($this->data['TDocument']['file_name']) ):
-      $settings = json_decode($this->data['TDocument']['settings']);
+      $pages = 1;
+      $settings = (array)json_decode($this->data['TDocument']['settings']);
+      $pages = (isset($settings['pages'])) ? $settings['pages'] : 1;
       $filePath = C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/svg_".pathinfo(h($this->data['TDocument']['file_name']), PATHINFO_FILENAME);
     ?>
 
-    slideJsApi.init("<?=$filePath?>", "<?=$settings->pages?>");
+    slideJsApi.init("<?=$filePath?>", "<?=$pages?>");
     <?php endif; ?>
   });
 })();
