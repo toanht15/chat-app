@@ -58,8 +58,9 @@ class AppController extends Controller {
   public $coreSettings;
 
   public function beforeFilter(){
+
     // プロトコルチェック(本番のみ)
-    if ( APP_MODE_DEV === false ) {
+    if ( APP_MODE_DEV === false && !( strpos($this->referer(), '/Customers/frame') )  ) {
       $this->checkPort();
     }
 
