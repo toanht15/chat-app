@@ -353,6 +353,18 @@ class CustomersController extends AppController {
           'THistoryChatLog.t_histories_id',
           'THistoryChatLog.created',
         ],
+        'joins' => [
+          [
+            'type' => 'INNER',
+            'table' => 't_histories',
+            'alias' => 'THistory',
+            'conditions' => [
+              'THistory.id = THistoryChatLog.t_histories_id',
+              'THistory.m_companies_id' => $this->userInfo['MCompany']['id']
+
+            ]
+          ]
+        ],
         'conditions' => [
           'THistoryChatLog.visitors_id' => $this->params->query['userId']
         ],
