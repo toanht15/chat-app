@@ -151,6 +151,7 @@ class TDocumentsController extends AppController {
       $inputData = $saveData['TDocument']['tag'];
       $saveData['TDocument']['tag'] = $this->jsonEncode($inputData);
     }
+
     $saveData['TDocument']['m_companies_id'] = $this->userInfo['MCompany']['id'];
     $this->TDocument->begin();
     if ( empty($saveData['TDocument']['id']) ) {
@@ -170,9 +171,13 @@ class TDocumentsController extends AppController {
     // バリデーションチェックに失敗したら
     if ( !$this->TDocument->validates() ) return false;
 
+    $fileSettings = (!empty($saveData['TDocument']['settings'])) ? (array)json_decode($saveData['TDocument']['settings']) : [];
+    if ( isset($saveData['TDocument']['rotation']) ) {
+      $fileSettings['rotation'] = $saveData['TDocument']['rotation'];
+    }
+
     // ファイルが添付されたら
     $fileName = "";
-    $fileSettings = [];
     if ( !empty($saveData['TDocument']['files']) ) {
       $files = $saveData['TDocument']['files'];
       $fileName = $this->userInfo['MCompany']['company_key']."-".date("YmdHis").".".pathinfo($files['name'], PATHINFO_EXTENSION);
@@ -218,8 +223,8 @@ class TDocumentsController extends AppController {
 
       // 最新のファイル情報をセットする
       $saveData['TDocument']['file_name'] = $fileName;
-      $saveData['TDocument']['settings'] = $this->jsonEncode($fileSettings);
     }
+    $saveData['TDocument']['settings'] = $this->jsonEncode($fileSettings);
 
     if($this->TDocument->save($saveData, false)) {
       // 昔のファイルを削除する
@@ -227,7 +232,7 @@ class TDocumentsController extends AppController {
         // ファイルを削除
         $this->_removeDocuments($nowData['TDocument']['file_name'], $nowData['TDocument']['settings']);
       }
-      if ( !empty($saveData['TDocument']['file_name']) ) {
+      if ( !empty($saveData['TDocument']['files']) ) {
         $this->_createThumnail($saveData['TDocument']['file_name']);
       }
       $this->TDocument->commit();

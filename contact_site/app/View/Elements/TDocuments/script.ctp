@@ -68,6 +68,11 @@ function saveAct(){
   if ( slideJsApi.hasOwnProperty('manuscript') ) {
     document.getElementById('TDocumentManuscript').value = JSON.stringify(slideJsApi.manuscript);
   }
+
+  if ( slideJsApi.hasOwnProperty('rotation') ) {
+    document.getElementById('TDocumentRotation').value = slideJsApi.rotation;
+  }
+
   document.getElementById('TDocumentEntryForm').submit();
   setTimeout(function(){
     $("a").addClass("disableBtn").prop("onclick", "").click(
@@ -145,10 +150,11 @@ var slideJsApi, slideJsCNST;
     maxPage: 1,
     rotation: 0,
     manuscript: <?=$manuscript?>,
-    init: function(filePath, page){
+    init: function(filePath, page, rotation){
       this.currentPage = 1;
       this.loadedPage = 0;
       this.maxPage = page;
+      this.rotation = rotation;
       this.filePath = filePath;
       this.makePage(); // 初期スライドを作成
       var limitPage = (this.currentPage + 3 > this.maxPage) ? this.maxPage : this.currentPage + 3 ;
@@ -196,11 +202,13 @@ var slideJsApi, slideJsCNST;
     },
     rotate: function(){
       setTimeout(function(){
-        this.rotation += 90;
-        if ( this.rotation === 360 ) {
-          this.rotation = 0;
+        slideJsApi.rotation += 90;
+        if ( slideJsApi.rotation === 360 ) {
+          slideJsApi.rotation = 0;
         }
-        slideJsApi.showPage();
+        for ( var i = 1; i <= slideJsApi.loadedPage; i++ ) {
+          slideJsApi.renderPage(i);
+        }
       }, 0);
     },
     showPage: function(){
@@ -211,13 +219,44 @@ var slideJsApi, slideJsCNST;
     },
     render: function(){
       var canvas = document.querySelector('slideframe');
-      /* サイズ調整処理 */
-      $(".slide img").css("width", (canvas.clientWidth - 20) * 0.75 + "pt")
-                     .css("height", (canvas.clientHeight - 20) * 0.75 + "pt");
+       /* サイズ調整処理 */
       $(".slide").css("width",  canvas.clientWidth + "px").css("height", canvas.clientHeight + "px");
       $(".slide img").css("transform", "scale(" + slideJsApi.currentScale + ")");
       var docCanvas = document.getElementById('document_canvas');
       docCanvas.style.width = this.maxPage * canvas.clientWidth + "px";
+    },
+    renderPage: function(page){
+      var canvas = document.querySelector('slideframe'),
+          pageImg = document.querySelector("#slide_" + page + " img"),
+          wScale = 0, hScale = 0, scale = 0,
+          cWidth = canvas.clientWidth,
+          cHeight = canvas.clientHeight,
+          pWidth = pageImg.naturalWidth,
+          pHeight = pageImg.naturalHeight,
+          matrix = "matrix( 1, 0, 0, 1, 0, 0)";
+      switch (Number(this.rotation)) {
+        case 90:
+           matrix = "matrix( 0, 1, -1, 0, 0, 0)";
+           break;
+        case 180:
+           matrix = "matrix(1, 0, 0, -1, 0, 0)";
+           break;
+        case 270:
+           matrix = "matrix( 0, -1, 1, 0, 0, 0)";
+           break;
+      }
+      wScale = cWidth/pWidth;
+      hScale = cHeight/pHeight;
+      if ( Number(this.rotation) === 90 || Number(this.rotation) === 270 ) {
+        wScale = cHeight/pWidth;
+        hScale = cWidth/pHeight;
+      }
+
+      scale = ( wScale < hScale ) ? wScale : hScale;
+
+      pageImg.width = pWidth * scale;
+      pageImg.height = pHeight * scale;
+      pageImg.style.transform = matrix;
     },
     makePage: function(){
       var docCanvas = document.getElementById('document_canvas');
@@ -238,8 +277,10 @@ var slideJsApi, slideJsCNST;
         var img = document.createElement('img');
         img.src = slideJsApi.filePath + "_" + Number(page) + '.svg';
         var slide = document.getElementById('slide_' + page);
-
         slide.appendChild(img);
+        img.onload = function(){
+          slideJsApi.renderPage(page);
+        }
       }
 
       this.loadedPage++;
@@ -257,13 +298,13 @@ var slideJsApi, slideJsCNST;
 
   $(document).ready(function(){
     <?php if ( !empty($this->data['TDocument']['file_name']) ):
-      $pages = 1;
       $settings = (array)json_decode($this->data['TDocument']['settings']);
       $pages = (isset($settings['pages'])) ? $settings['pages'] : 1;
+      $rotation = (isset($settings['rotation'])) ? $settings['rotation'] : 0;
       $filePath = C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/svg_".pathinfo(h($this->data['TDocument']['file_name']), PATHINFO_FILENAME);
     ?>
 
-    slideJsApi.init("<?=$filePath?>", "<?=$pages?>");
+    slideJsApi.init("<?=$filePath?>", "<?=$pages?>", "<?=$rotation?>");
     <?php endif; ?>
   });
 })();

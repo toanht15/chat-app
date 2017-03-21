@@ -504,6 +504,17 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       });
     };
 
+    $scope.setDocThumnailStyle = function(doc) {
+      var matrix = "";
+      if ( doc.hasOwnProperty('settings') ) {
+        var settings = JSON.parse(doc.settings);
+        if ( settings.hasOwnProperty('rotation') && isNumber(settings.rotation) ) {
+          matrix = "rotate" + settings.rotation;
+        }
+      }
+      return matrix;
+    };
+
     $scope.selectList = {};
     $scope.searchName = "";
     $scope.docSearchFunc = function(documentList){

@@ -406,7 +406,7 @@ window.onload = function(){
             <ol>
               <li ng-repeat="document in searchFunc(documentList)" ng-click="shareDocument(document)">
                 <div class="document_image">
-                  <img ng-src="{{::document.thumnail}}" style="width:5em;height:4em">
+                  <img ng-src="{{::document.thumnail}}" ng-class="setDocThumnailStyle(document)">
                 </div>
                 <div class="document_content">
                   <h3>{{::document.name}}</h3>

@@ -445,6 +445,22 @@ a {
   font-weight: bold;
 }
 
+.rotate0 {
+  transform: matrix( 1, 0, 0, 1, 0, 0);
+}
+
+.rotate90 {
+  transform: matrix( 0, 1, -1, 0, 0, 0);
+}
+
+.rotate180 {
+  transform: matrix(1, 0, 0, -1, 0, 0);
+}
+
+.rotate270 {
+  transform: matrix( 0, -1, 1, 0, 0, 0);
+}
+
 .card-shadow {
   box-shadow: 0 0 5px $shadow-color;
 }
@@ -2265,10 +2281,7 @@ ul.naviBtn {
       display: flex;
 
       .slide {
-        display: flex;
         overflow: auto;
-        align-items: center;
-        justify-content: center;
         position: relative;
 
         img {
@@ -2276,9 +2289,6 @@ ul.naviBtn {
           top: 0;
           left: 0;
           right: 0;
-          margin: 0 auto;
-          transform-origin: 0 0;
-          transform: scale(1);
         }
       }
     }
@@ -3711,6 +3721,22 @@ ul.naviBtn {
             display: flex;
             border-bottom: 1px solid $main-color;
 
+            .document_image {
+              width: 6em;
+              height: 5em;
+              padding: 0.5em;
+              position: relative;
+              display: flex;
+              justify-content: space-around;
+              align-items: center;
+              z-index: 1;
+
+              img {
+                width:5em;
+                height:4em
+              }
+            }
+
             &:hover .document_image:before {
               content: " ";
               position: absolute;
@@ -3720,6 +3746,7 @@ ul.naviBtn {
               bottom: 0;
               background-color: $main-color;
               opacity: 0.85 ;
+              z-index: 2;
             }
 
             &:hover .document_image:after {
@@ -3733,33 +3760,13 @@ ul.naviBtn {
               font-size: 1.2em;
               font-weight: bold;
               color: #FFF;
+              z-index: 3;
             }
 
-            .document_image:hover:before {
-              background-color: #000;
-              bottom: 0;
-              height: 1.75em;
-              top: initial;
-              font-size: inherit;
-            }
-
-            .document_image:hover:after {
-              content: "プレビュー";
-              top: initial;
-              bottom: 0em;
-              font-size: inherit;
-              padding: 0.25em 0;
-            }
           }
 
         }
 
-        .document_image {
-          width: 6em;
-          height: 5em;
-          padding: 0.5em;
-          position: relative;
-        }
 
         .document_content {
           padding: 1em 0.5em;
@@ -3858,6 +3865,10 @@ ul.naviBtn {
   }
 
   #tdocument_list {
+    img {
+      max-width: 210px;
+      max-height: 180px;
+    }
     .lineCtrl {
       text-align: center;
 

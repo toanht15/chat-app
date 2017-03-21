@@ -55,6 +55,7 @@ socket.on('connect', function(){
 
   if (firstFlg) {
     var settings = JSON.parse(doc.settings);
+    var rotation = (settings.hasOwnProperty('rotation')) ? settings.rotation : 0;
     emit('docShareConnect', {
       from: 'company',
       responderId: '<?=$userInfo["id"]?>',
@@ -62,6 +63,7 @@ socket.on('connect', function(){
       fileName: doc.file_name,
       pagenation_flg: doc.pagenation_flg,
       pages: settings.pages,
+      rotation: rotation,
       download_flg: doc.download_flg
     }); // 資料共有開始
   }
@@ -126,6 +128,7 @@ window.onload = function(){
       slideJsApi.currentScale = obj.scale;
       sessionStorage.setItem('scale', slideJsApi.currentScale); // セッションに格納
       slideJsApi.resetZoomType();
+      slideJsApi.renderAllPage();
     }
     if ( obj.hasOwnProperty('page') ) {
       slideJsApi.currentPage = obj.page;
@@ -255,7 +258,7 @@ window.onload = function(){
             <ol>
               <li ng-repeat="document in searchFunc(documentList)" ng-click="changeDocument(document)">
                 <div class="document_image">
-                  <img ng-src="{{::document.thumnail}}" style="width:5em;height:4em">
+                  <img ng-src="{{::document.thumnail}}" ng-class="::setDocThumnailStyle(document)">
                 </div>
                 <div class="document_content">
                   <h3>{{::document.name}}</h3>

@@ -39,7 +39,23 @@
         <tr data-id="<?=h($id)?>">
           <td class="tCenter"><?=$no?></td>
           <td class="tCenter">
-            <?= $this->Html->image(C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/".C_PREFIX_DOCUMENT.pathinfo(h($val['TDocument']['file_name']), PATHINFO_FILENAME).".jpg", ["width" => 210, "height" => 180]);?>
+            <?php
+            $settings = (!empty($val['TDocument']['settings'])) ? (array)json_decode($val['TDocument']['settings']) : [];
+            $rotation = (!empty($settings['rotation'])) ? $settings['rotation'] : 0;
+            $matrix = "transform: matrix( 1, 0, 0, 1, 0, 0);";
+            switch ((int)$rotation) {
+              case 90:
+                 $matrix = "transform: matrix( 0, 1, -1, 0, 0, 0);";
+                 break;
+              case 180:
+                 $matrix = "transform: matrix(1, 0, 0, -1, 0, 0);";
+                 break;
+              case 270:
+                 $matrix = "transform: matrix( 0, -1, 1, 0, 0, 0);";
+                 break;
+            }
+            ?>
+            <?= $this->Html->image(C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/".C_PREFIX_DOCUMENT.pathinfo(h($val['TDocument']['file_name']), PATHINFO_FILENAME).".jpg", ['style' => $matrix]);?>
           </td>
           <td class="tCenter"><?=h($val['TDocument']['name'])?></td>
           <td class="tCenter"><?=h($val['TDocument']['overview'])?></td>

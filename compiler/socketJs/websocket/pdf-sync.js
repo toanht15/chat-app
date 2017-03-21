@@ -32,6 +32,7 @@ var pdfjsCNST, slideJsApi, frameSize, scrollFlg;
     currentScale: 1,
     loadedPage: 0,
     maxPage: 1,
+    rotation: 0,
     zoomInTimer: null,
     zoomInTimeTerm: 500,
     pagingTimer: null,
@@ -76,6 +77,7 @@ var pdfjsCNST, slideJsApi, frameSize, scrollFlg;
           resizeTimer = null;
           slideJsApi.sendPositionAction();
           slideJsApi.render();
+          slideJsApi.renderAllPage();
           slideJsApi.pageRender();
         }, 300);
       });
@@ -181,7 +183,7 @@ var pdfjsCNST, slideJsApi, frameSize, scrollFlg;
         clearTimeout(this.zoomInTimer);
         slideJsApi.currentScale = num;
         slideJsApi.sendCtrlAction("scale");
-        slideJsApi.render();
+        slideJsApi.renderAllPage();
       }, slideJsApi.zoomInTimeTerm);
     },
     zoomIn: function(num){
@@ -195,7 +197,7 @@ var pdfjsCNST, slideJsApi, frameSize, scrollFlg;
           slideJsApi.currentScale = 4;
         }
         slideJsApi.sendCtrlAction("scale");
-        slideJsApi.render();
+        slideJsApi.renderAllPage();
         slideJsApi.resetZoomType();
       }, slideJsApi.zoomInTimeTerm);
     },
@@ -210,7 +212,7 @@ var pdfjsCNST, slideJsApi, frameSize, scrollFlg;
           slideJsApi.currentScale = num;
         }
         slideJsApi.sendCtrlAction("scale");
-        slideJsApi.render();
+        slideJsApi.renderAllPage();
         slideJsApi.resetZoomType();
       }, slideJsApi.zoomInTimeTerm);
     },
@@ -257,10 +259,7 @@ var pdfjsCNST, slideJsApi, frameSize, scrollFlg;
       var frameWidth = $("slideFrame").prop('clientWidth');
       var frameHeight = $("slideFrame").prop('clientHeight');
       /* サイズ調整処理 */
-      $(".slide img").css("width", (canvas.clientWidth - 20) * 0.75 + "pt")
-                     .css("height", (canvas.clientHeight - 20) * 0.75 + "pt");
       $(".slide").css("width",  canvas.clientWidth + "px").css("height", canvas.clientHeight + "px");
-      $(".slide img").css("transform", "scale(" + slideJsApi.currentScale + ")");
 
       var docCanvas = document.getElementById('document_canvas');
       docCanvas.style.width = this.maxPage * canvas.clientWidth + "px";
@@ -269,6 +268,54 @@ var pdfjsCNST, slideJsApi, frameSize, scrollFlg;
       if ( this.cnst.hasOwnProperty(code) ) {
         console.log(this.cnst[code]);
       }
+    },
+    renderAllPage: function(){
+      for( var i = 1; i <= this.loadedPage; i++ ){
+        this.renderPage(i);
+      }
+    },
+    renderPage: function(page){
+      var canvas = document.querySelector('slideframe'),
+          pageImg = document.querySelector("#slide_" + page + " img"),
+          wScale = 0, hScale = 0, scale = 0,
+          cWidth = canvas.clientWidth,
+          cHeight = canvas.clientHeight,
+          pWidth = pageImg.naturalWidth,
+          pHeight = pageImg.naturalHeight,
+          matrix = "matrix( 1, 0, 0, 1, 0, 0)";
+      switch (Number(this.rotation)) {
+        case 90:
+           matrix = "matrix( 0, 1, -1, 0, 0, 0)";
+           break;
+        case 180:
+           matrix = "matrix( 1, 0, 0, -1, 0, 0)";
+           break;
+        case 270:
+           matrix = "matrix( 0, -1, + 1, 0, 0, 0)";
+           break;
+      }
+      wScale = cWidth/pWidth;
+      hScale = cHeight/pHeight;
+      if ( Number(this.rotation) === 90 || Number(this.rotation) === 270 ) {
+        wScale = cHeight/pWidth;
+        hScale = cWidth/pHeight;
+      }
+
+      scale = ( wScale < hScale ) ? wScale : hScale;
+
+      pageImg.width = pWidth * scale * this.currentScale;
+      pageImg.height = pHeight * scale * this.currentScale;
+      pageImg.style.transform = matrix;
+      pageImg.style.transformOrigin = pageImg.height/2 + "px 50%";
+
+      var top = (cHeight - pageImg.height);
+      var left = (cWidth - pageImg.width);
+      if ( Number(this.rotation) === 90 || Number(this.rotation) === 270 ) {
+        top = (cHeight - pageImg.width);
+        left = (cWidth - pageImg.height);
+      }
+      pageImg.style.top = (top >= 0) ? top/2 + "px": 0;
+      pageImg.style.left = (left >= 0) ? left/2 + "px": 0;
     },
     makePage: function(){
       var docCanvas = document.getElementById('document_canvas');
@@ -289,8 +336,10 @@ var pdfjsCNST, slideJsApi, frameSize, scrollFlg;
         var img = document.createElement('img');
         img.src = slideJsApi.filePath + "_" + Number(page) + '.svg';
         var slide = document.getElementById('slide_' + page);
-
         slide.appendChild(img);
+        img.onload = function(){
+          slideJsApi.renderPage(page);
+        }
       }
 
       // 初回のページ読み込みで、表示ページが１ページ目以上の場合
@@ -321,6 +370,7 @@ var pdfjsCNST, slideJsApi, frameSize, scrollFlg;
       this.currentScale = (sessionStorage.getItem('scale') !== null) ? Number(sessionStorage.getItem('scale')) : 1;
       this.loadedPage = 0;
       this.maxPage = doc.pages;
+      this.rotation = (doc.hasOwnProperty('rotation')) ? doc.rotation : "";
 
       var limitPage = (this.currentPage + 3 > this.maxPage) ? this.maxPage : this.currentPage + 3 ;
 
@@ -440,6 +490,7 @@ var pdfjsCNST, slideJsApi, frameSize, scrollFlg;
     if ( obj.hasOwnProperty('scale') ) {
       slideJsApi.currentScale = obj.scale;
       sessionStorage.setItem('scale', slideJsApi.currentScale); // セッションに格納
+      slideJsApi.renderAllPage();
       slideJsApi.resetZoomType();
     }
     if ( obj.hasOwnProperty('page') ) {
