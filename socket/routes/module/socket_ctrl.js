@@ -103,6 +103,17 @@ function timeUpdate(historyId, obj, time){
   );
 }
 
+function makeToken(){
+  var n = 20,
+      str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQESTUVWXYZ1234567890",
+      strLen = str.length,
+      token = "";
+  for(var i=0; i<n; i++){
+    token += str[Math.floor(Math.random()*strLen)];
+  }
+  return token;
+};
+
 var companyList = {};
 function getCompanyList(){
   pool.query('select * from m_companies;', function(err, rows){
@@ -380,26 +391,26 @@ var db = {
   }
 };
 
-// var console = {
-//   date: function(){
-//     var d = new Date();
-//     return d.getFullYear() + "/" + ( "0" + (d.getMonth() + 1) ).slice(-2) + "/" + ("0" + d.getDate()).slice(-2) + " " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2) + ":" + ("0" + d.getSeconds()).slice(-2);
-//   },
-//   log: function(a, b){
-//     var label = null, data = null, d = this.date();
-//     switch(typeof b){
-//       case 'object':
-//         var data = "【" + a + "|" + d + "】 " + JSON.stringify(b, null, "\t");
-//         break;
-//       case 'string':
-//         var data = "【" + a + "|" + d + "】 " + b;
-//         break;
-//       default:
-//         var data = "【" + d + "】 " + JSON.stringify(a, null, "\t");
-//     }
-//     reqlogger.info(data);
-//   }
-// };
+var console = {
+  date: function(){
+    var d = new Date();
+    return d.getFullYear() + "/" + ( "0" + (d.getMonth() + 1) ).slice(-2) + "/" + ("0" + d.getDate()).slice(-2) + " " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2) + ":" + ("0" + d.getSeconds()).slice(-2);
+  },
+  log: function(a, b){
+    var label = null, data = null, d = this.date();
+    switch(typeof b){
+      case 'object':
+        var data = "【" + a + "|" + d + "】 " + JSON.stringify(b, null, "\t");
+        break;
+      case 'string':
+        var data = "【" + a + "|" + d + "】 " + b;
+        break;
+      default:
+        var data = "【" + d + "】 " + JSON.stringify(a, null, "\t");
+    }
+    reqlogger.info(data);
+  }
+};
 
 //接続確立時の処理
 io.sockets.on('connection', function (socket) {
@@ -1355,9 +1366,12 @@ io.sockets.on('connection', function (socket) {
   // チャット開始
   socket.on("chatStart", function(d){
     var obj = JSON.parse(d), date = new Date(), now = fullDateTime(date), type = chatApi.cnst.observeType.start;
-
+var logToken = makeToken();
+console.log("chatStart-0: [" + logToken + "] >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+console.log("chatStart-1: [" + logToken + "] " + d);
     if ( sincloCore[obj.siteKey][obj.tabId] === null ) {
       emit.toMine("chatStartResult", {ret: false, siteKey: obj.siteKey, userId: sincloCore[obj.siteKey][obj.tabId].chat}, socket);
+console.log("chatStart-2: [" + logToken + "] " + JSON.stringify({ret: false, siteKey: obj.siteKey, userId: sincloCore[obj.siteKey][obj.tabId].chat}));
     }
     else {
       var sendData = {ret: true, messageType: type, tabId: obj.tabId, siteKey: obj.siteKey, userId: obj.userId, hide:false, created: now};
@@ -1394,6 +1408,7 @@ io.sockets.on('connection', function (socket) {
 
       pool.query('SELECT mu.id, mu.display_name, wid.style_settings FROM m_users as mu LEFT JOIN m_widget_settings AS wid ON ( wid.m_companies_id = mu.m_companies_id ) WHERE mu.id = ? AND mu.del_flg != 1 AND wid.del_flg != 1 AND wid.m_companies_id = ?', [obj.userId, companyList[obj.siteKey]], function(err, rows){
         sendData.userName = "オペレーター";
+console.log("chatStart-3: [" + logToken + "] " + JSON.stringify(rows));
         if ( rows && rows[0] ) {
           var settings = JSON.parse(rows[0].style_settings);
           // 表示名をウィジェットで表示する場合
@@ -1428,9 +1443,14 @@ io.sockets.on('connection', function (socket) {
             userName: userName,
             created: date
           };
+console.log("chatStart-4: [" + logToken + "] " + JSON.stringify(insertData));
+
           chatApi.notifyCommit("chatStartResult", insertData);
 
         }
+console.log("chatStart-5: [" + logToken + "] " + JSON.stringify(sincloCore[obj.siteKey]));
+console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+
       });
     }
   });
@@ -1653,9 +1673,9 @@ io.sockets.on('connection', function (socket) {
             console.log("-------------------------------------------------------------------------");
           }
           break;
-        case 4: // del company ( sample: socket.emit('settingReload', JSON.stringify({type:4, siteKey: "master"})); )
-          if ( !((socket.id in company.user) && ('siteKey' in company.user[socket.id])) ) return false;
-          targetKey = company.user[socket.id].siteKey;
+        case 4: // del company ( sample: socket.emit('settingReload', JSON.stringify({type:4, siteKey: "master", targetSiteKey: "master"})); )
+          if ( !('targetSiteKey' in obj) ) return false;
+          targetKey = obj.targetSiteKey;
           if ( targetKey in company.info ) {
             var activeList = [];
             if ( targetKey in activeOperator ) {
