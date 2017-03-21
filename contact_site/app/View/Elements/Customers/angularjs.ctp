@@ -185,10 +185,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         this.pushMessageFlg = false;
       },
       errorChatStart: function(){
+        $(".errorMsg").remove();
         var span = document.createElement("span");
         span.classList.add('errorMsg');
         span.textContent = "処理に失敗しました。再読み込みしてください。";
-        $("#sendMessageArea").html(span);
+        $("#sendMessageArea").append(span);
       },
       isReadMessage: function(monitor){
         // フォーカスが入っているもののみ
