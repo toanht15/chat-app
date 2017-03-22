@@ -202,7 +202,7 @@ var slideJsApi, slideJsCNST;
     },
     rotate: function(){
       setTimeout(function(){
-        slideJsApi.rotation += 90;
+        slideJsApi.rotation = Number(slideJsApi.rotation) + 90;
         if ( slideJsApi.rotation === 360 ) {
           slideJsApi.rotation = 0;
         }

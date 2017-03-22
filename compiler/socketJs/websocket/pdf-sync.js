@@ -420,6 +420,7 @@ var pdfjsCNST, slideJsApi, frameSize, scrollFlg;
     var doc = {
       url: params.url,
       pages: params.pages,
+      rotation: params.rotation,
       directory: params.directory,
       fileName: params.fileName,
       pagenation_flg: params.pagenation_flg,
