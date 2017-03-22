@@ -188,23 +188,22 @@ class TDocumentsController extends AppController {
       $ret = "";
       // ディレクトリの存在を確認し、ハンドルを取得
       if( is_dir( $dirPath ) && $handle = opendir( $dirPath ) ) {
-        $page = 0;
-        // ループ処理
-        while( ($file = readdir($handle)) !== false ) {
-          // ファイルのみ取得
-          if( filetype( $path = $dirPath . $file ) !== "file" ) continue;
-          $retPath = $this->Amazon->putObject("medialink".DS."svg_".pathinfo($fileName, PATHINFO_FILENAME)."_".basename($path), $path);
-          $ret = ( $retPath ) ? pathinfo($retPath, PATHINFO_EXTENSION) : ""; // 拡張子を取得
-          if( strcmp($ret, "svg") !== 0 ) break; // 拡張子が得られなければ保存失敗とみなす
-          $page ++;
+        // スライドファイル（SVG）をアップロード
+        if ( file_exists($dirPath."1.svg") ) {
+          $ret = $this->_uploadSlide($dirPath, $fileName); // 戻り値が「svg」だと成功
         }
 
-        $fileSettings['pages'] = $page;
+        // サムネイルをアップロード
+        if ( strcmp($ret, "svg") === 0 ) {
+          $ret = $this->_createThumnail($dirPath); // 戻り値が「jpg」だと成功
+        }
+
+        $fileSettings['pages'] = count(glob($dirPath."*.svg"));
         // 専用ディレクトリを削除する
         system("rm -Rf ".WWW_ROOT.'files'.DS.pathinfo($fileName, PATHINFO_FILENAME));
       }
-      // SVGファイルが保存できたら、PDFを保存する
-      if ( strcmp($ret, "svg") === 0 && file_exists($files['tmp_name']) ) {
+      // SVGファイルが保存できたら、PDFとサムネイルを保存する
+      if ( strcmp($ret, "jpg") === 0 && file_exists($files['tmp_name']) ) {
         $retPath = $this->Amazon->putObject("medialink".DS.basename($fileName), $files['tmp_name']);
         $ret = ( $retPath ) ? pathinfo($retPath, PATHINFO_EXTENSION) : "";
       }
@@ -231,9 +230,6 @@ class TDocumentsController extends AppController {
       if ( !empty($nowData['TDocument']) ) {
         // ファイルを削除
         $this->_removeDocuments($nowData['TDocument']['file_name'], $nowData['TDocument']['settings']);
-      }
-      if ( !empty($saveData['TDocument']['files']) ) {
-        $this->_createThumnail($saveData['TDocument']['file_name']);
       }
       $this->TDocument->commit();
       $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
@@ -267,32 +263,31 @@ class TDocumentsController extends AppController {
   }
 
   /**
-   *  資料のサムネイルを作成する
+   *  資料のスライドをアップロードする
+   *  @param string $dirPath 資料の保存先パス
+   *  @param string $fileName 資料の保存名
+   *  @return void
+   * */
+  private function _uploadSlide($dirPath, $fileName){
+    $ret = "";
+    foreach( glob($dirPath."*.svg") as $path ) {
+      $retPath = $this->Amazon->putObject("medialink".DS."svg_".pathinfo($fileName, PATHINFO_FILENAME)."_".basename($path), $path);
+      $ret = ( $retPath ) ? pathinfo($retPath, PATHINFO_EXTENSION) : ""; // 拡張子を取得
+      if( strcmp($ret, "svg") !== 0 ) break; // 拡張子が得られなければ保存失敗とみなす
+    }
+    return $ret;
+  }
+
+  /**
+   *  資料のサムネイルを作成、アップロードする
    *  @param string $fileName 資料の保存先パス
    *  @return void
    * */
   private function _createThumnail($fileName){
     $name = C_PREFIX_DOCUMENT.pathinfo($fileName, PATHINFO_FILENAME).".jpg"; //サムネイルのファイル名
-    $thumbname = C_PATH_TMP_IMG_DIR.DS.$name; //サムネイルのパス名
-    /* 画像の読み込み */
-    $thumbImg = new Imagick();
-    /* サムネイルの作成 */
-    $thumbImg->readImage(C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/".$fileName);
-    $thumbImg->setImageIndex(0);
-    $thumbImg->setImageFormat ("jpeg");
-    /* リサイズした画像を保存する */
-    try {
-      $thumbImg->writeImage($thumbname);
-      $ret = $this->Amazon->putObject("medialink/".$name, $thumbname);
-
-      if ( $ret !== "" ) {
-        unlink($thumbname);
-      }
-
-      $thumbImg->destroy();
-    } catch (Exception $e) {
-      echo $e->getMessage();
-    }
+    system('convert '.$fileName.'1.svg ' . $fileName.$name);
+    $retPath = $this->Amazon->putObject("medialink/".$name, $fileName.$name);
+    return ( $retPath ) ? pathinfo($retPath, PATHINFO_EXTENSION) : ""; // 拡張子を取得
   }
 
    /**
