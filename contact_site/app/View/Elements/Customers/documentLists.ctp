@@ -336,45 +336,85 @@ var slideJsApi = {
   renderPage: function(page){
     var canvas = document.querySelector('slideframe'),
         pageImg = document.querySelector("#slide_" + page + " img"),
-        wScale = 0, hScale = 0, scale = 0,
+        wScale = 0, hScale = 0, scale = 0, pWidth = 0, pHeight = 0,
         cWidth = canvas.clientWidth,
         cHeight = canvas.clientHeight,
-        pWidth = pageImg.naturalWidth,
-        pHeight = pageImg.naturalHeight,
-        matrix = "matrix( 1, 0, 0, 1, 0, 0)";
-    switch (Number(this.rotation)) {
-      case 90:
-         matrix = "matrix( 0, 1, -1, 0, 0, 0)";
-         break;
-      case 180:
-         matrix = "matrix( 1, 0, 0, -1, 0, 0)";
-         break;
-      case 270:
-         matrix = "matrix( 0, -1, + 1, 0, 0, 0)";
-         break;
+        matrix;
+
+    if ( typeof pageImg.naturalWidth !== 'undefined' ) {
+      pWidth = pageImg.naturalWidth;
+      pHeight = pageImg.naturalHeight;
     }
-    wScale = cWidth/pWidth;
-    hScale = cHeight/pHeight;
-    if ( Number(this.rotation) === 90 || Number(this.rotation) === 270 ) {
-      wScale = cHeight/pWidth;
-      hScale = cWidth/pHeight;
+    if ( typeof pageImg.runtimeStyle !== 'undefined' ) {
+      pageImg.style.opacity = 0;
+      pageImg.style.width  = "auto";
+      pageImg.style.height = "auto";
+      setTimeout(function(){
+        pWidth = pageImg.clientWidth;
+        pHeight = pageImg.clientHeight;
+        pageImg.style.opacity = 1;
+      }, 10);
     }
 
-    scale = ( wScale < hScale ) ? wScale : hScale;
+    setTimeout(function(){
+      wScale = cWidth/pWidth;
+      hScale = cHeight/pHeight;
+      if ( Number(slideJsApi.rotation) === 90 || Number(slideJsApi.rotation) === 270 ) {
+        wScale = cHeight/pWidth;
+        hScale = cWidth/pHeight;
+      }
+      scale = ( wScale < hScale ) ? wScale : hScale;
+      var setWidth = pWidth * scale * slideJsApi.currentScale;
+      var setHeight = pHeight * scale * slideJsApi.currentScale;
+      var x = 0, y= 0;
+      if ( Number(slideJsApi.rotation) === 90 || Number(slideJsApi.rotation) === 270 ) {
+        x = (setHeight - setWidth)/2;
+        if ( setHeight < cWidth ) {
+          x += (cWidth - setHeight)/2;
+        }
+        y = (setWidth - setHeight)/2;
+        if ( setWidth < cHeight ) {
+          y += (cHeight - setWidth)/2;
+        }
+      }
+      else {
+        if ( setWidth < cWidth ) {
+          x += (cWidth - setWidth)/2;
+        }
+        if ( setHeight < cHeight ) {
+          y += (cHeight - setHeight)/2;
+        }
+      }
 
-    pageImg.width = pWidth * scale * this.currentScale;
-    pageImg.height = pHeight * scale * this.currentScale;
-    pageImg.style.transform = matrix;
-    pageImg.style.transformOrigin = pageImg.height/2 + "px 50%";
+      switch (Number(slideJsApi.rotation)) {
+        case 90:
+          matrix = "matrix( 0, 1, -1, 0, " + x + ", " + y + ")";
+          break;
+        case 180:
+          matrix = "matrix(1, 0, 0, -1, " + x + ", " + y + ")";
+          break;
+        case 270:
+          x = (setHeight - setWidth)/2;
+          y = (setWidth - setHeight)/2;
+          matrix = "matrix( 0, -1, 1, 0, " + x + ", " + y + ")";
+          break;
+        default:
+          matrix = "matrix( 1, 0, 0, 1, " + x + ", " + y + ")";
+          break;
+      }
 
-    var top = (cHeight - pageImg.height);
-    var left = (cWidth - pageImg.width);
-    if ( Number(this.rotation) === 90 || Number(this.rotation) === 270 ) {
-      top = (cHeight - pageImg.width);
-      left = (cWidth - pageImg.height);
-    }
-    pageImg.style.top = (top >= 0) ? top/2 + "px": 0;
-    pageImg.style.left = (left >= 0) ? left/2 + "px": 0;
+      pageImg.style.width = setWidth + "px";
+      pageImg.style.height = setHeight + "px";
+      pageImg.style.transform = matrix;
+      var top = (cHeight - pageImg.height);
+      if ( Number(slideJsApi.rotation) === 90 || Number(slideJsApi.rotation) === 270 ) {
+        if (pageImg.width > pageImg.height) {
+          top = (cHeight - pageImg.width);
+        }
+      }
+      // pageImg.style.top = (top >= 0) ? top/2 + "px": 0;
+    }, 10);
+
   },
   makePage: function(){
     var docCanvas = document.getElementById('document_canvas');

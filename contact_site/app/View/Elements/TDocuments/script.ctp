@@ -228,12 +228,11 @@ var slideJsApi, slideJsCNST;
     renderPage: function(page){
       var canvas = document.querySelector('slideframe'),
           pageImg = document.querySelector("#slide_" + page + " img"),
-          wScale = 0, hScale = 0, scale = 0,
+          wScale = 0, hScale = 0, scale = 0, pWidth = 0, pHeight = 0,
           cWidth = canvas.clientWidth,
           cHeight = canvas.clientHeight,
-          pWidth = pageImg.naturalWidth,
-          pHeight = pageImg.naturalHeight,
           matrix = "matrix( 1, 0, 0, 1, 0, 0)";
+
       switch (Number(this.rotation)) {
         case 90:
            matrix = "matrix( 0, 1, -1, 0, 0, 0)";
@@ -245,18 +244,35 @@ var slideJsApi, slideJsCNST;
            matrix = "matrix( 0, -1, 1, 0, 0, 0)";
            break;
       }
-      wScale = cWidth/pWidth;
-      hScale = cHeight/pHeight;
-      if ( Number(this.rotation) === 90 || Number(this.rotation) === 270 ) {
-        wScale = cHeight/pWidth;
-        hScale = cWidth/pHeight;
+
+      if ( typeof pageImg.naturalWidth !== 'undefined' ) {
+        pWidth = pageImg.naturalWidth;
+        pHeight = pageImg.naturalHeight;
+      }
+      if ( typeof pageImg.runtimeStyle !== 'undefined' ) {
+        pageImg.style.opacity = 0;
+        pageImg.style.width  = "auto";
+        pageImg.style.height = "auto";
+        setTimeout(function(){
+          pWidth = pageImg.clientWidth;
+          pHeight = pageImg.clientHeight;
+          pageImg.style.opacity = 1;
+        }, 10);
       }
 
-      scale = ( wScale < hScale ) ? wScale : hScale;
+      setTimeout(function(){
+        wScale = cWidth/pWidth;
+        hScale = cHeight/pHeight;
+        if ( Number(slideJsApi.rotation) === 90 || Number(slideJsApi.rotation) === 270 ) {
+          wScale = cHeight/pWidth;
+          hScale = cWidth/pHeight;
+        }
 
-      pageImg.width = pWidth * scale;
-      pageImg.height = pHeight * scale;
-      pageImg.style.transform = matrix;
+        scale = ( wScale < hScale ) ? wScale : hScale;
+        pageImg.style.width = pWidth * scale + "px";
+        pageImg.style.height = pHeight * scale + "px";
+        pageImg.style.transform = matrix;
+      }, 10);
     },
     makePage: function(){
       var docCanvas = document.getElementById('document_canvas');
