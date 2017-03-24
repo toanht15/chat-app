@@ -172,7 +172,7 @@ window.onload = function(){
 // -->
 </script>
 
-<section id="document_share" ng-app="sincloApp" ng-controller="MainCtrl">
+<section id="document_share" ng-app="sincloApp" ng-controller="MainController">
 
   <!-- /* サイドバー */ -->
   <ul id="document_share_tools">

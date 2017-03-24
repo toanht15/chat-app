@@ -362,7 +362,7 @@ window.onload = function(){
 // -->
 </script>
 
-<section ng-app="sincloApp" ng-controller="MainCtrl">
+<section ng-app="sincloApp" ng-controller="MainController">
 
   <ul id="sync_tools">
     <li id="prevBtn" class="unlight" onclick="iframeLocation.back(); return false;">

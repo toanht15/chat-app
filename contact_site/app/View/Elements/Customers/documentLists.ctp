@@ -603,7 +603,7 @@ var slideJsApi = {
 $(document).on("keydown", "#scaleType", function(e){ return false; });
 
 var sincloApp = angular.module('sincloApp', []);
-sincloApp.controller('MainCtrl', function($scope){
+sincloApp.controller('MainController', function($scope){
   $scope.documentList = [];
   $scope.tagList = {};
   $scope.searchName = "";

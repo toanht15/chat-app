@@ -3,7 +3,7 @@
 
 var sincloApp = angular.module('sincloApp', ['ngSanitize', 'ui.validate']);
 
-sincloApp.controller('MainCtrl', function($scope) {
+sincloApp.controller('MainController', function($scope) {
     //thisを変数にいれておく
     var self = this;
 
@@ -114,7 +114,7 @@ sincloApp.controller('MainCtrl', function($scope) {
 // http://stackoverflow.com/questions/17035621/what-is-the-angular-way-of-displaying-a-tooltip-lightbox
 sincloApp.directive('ngShowonhover',function() {
     return {
-        controller: 'MainCtrl',
+        controller: 'MainController',
         controllerAs: 'main',
         link : function(scope, element, attrs) {
             var balloon = $("div.balloon");

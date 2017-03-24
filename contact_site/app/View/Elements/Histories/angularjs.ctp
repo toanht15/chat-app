@@ -3,7 +3,7 @@
   var historySearchConditions = <?php echo json_encode($data);?>;
 
   var sincloApp = angular.module('sincloApp', ['ngSanitize']);
-  sincloApp.controller('MainCtrl', function($scope) {
+  sincloApp.controller('MainController', function($scope) {
     $scope.ua = function(str){
       return userAgentChk.pre(str);
     };
