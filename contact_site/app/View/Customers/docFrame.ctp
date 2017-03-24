@@ -144,6 +144,17 @@ window.onload = function(){
     return false;
   });
 
+  $("#pageListToggleBtn").click(function(){
+    if ( $(this).is('.on') ) {
+      $(this).removeClass('on');
+      $("#slidesArea").css('top', '-140px');
+    }
+    else {
+      $(this).addClass('on');
+      $("#slidesArea").css('top', '40px');
+    }
+  });
+
   $("#manuscriptArea").draggable({
     scroll: false,
     containment: "slideframe",
@@ -205,11 +216,14 @@ window.onload = function(){
       </li>
     </li-left>
     <li-center>
-      <li>
-        <span id="pages"></span>
+      <li class="showDescriptionBottom" data-description="目次を開く" onclick="return false;">
+        <span id="pageListToggleBtn" class="btn"><?=$this->Html->image("list.png", ['width'=>30, 'height'=>30, 'alt' => '目次']);?></span>
       </li>
     </li-center>
     <li-right>
+      <li>
+        <span id="pages"></span>
+      </li>
       <li id="scaleChoose">
         <label dir="scaleType">拡大率</label>
         <select name="scale_type" id="scaleType" onchange="slideJsApi.cngScale(); return false;">
@@ -233,10 +247,20 @@ window.onload = function(){
     </li-right>
   </ul>
   <!-- /* ツールバー */ -->
+
+  <!-- /* 目次*/ -->
+  <div id="slidesArea" style="top: -140px">
+    <div id="slideList" style="">
+    </div>
+  </div>
+  <!-- /* 目次*/ -->
+
+  <!-- /* 原稿*/ -->
   <div id="manuscriptArea" style="display:none;">
     <span id="manuscript"></span>
     <span id="manuscriptCloseBtn" onclick="slideJsApi.toggleManuScript(); return false;"></span>
   </div>
+  <!-- /* 原稿*/ -->
 
   <div id="tabStatusMessage">別の作業をしています</div>
 

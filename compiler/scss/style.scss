@@ -2051,7 +2051,7 @@ ul.naviBtn {
   bottom: 0;
   margin: 0;
   padding: 0;
-  z-index: 4;
+  z-index: 5;
 
   li {
     background-color: #595959;
@@ -2100,7 +2100,7 @@ ul.naviBtn {
     flex-direction: column;
     justify-content: space-between;
     background-color: #595959;
-    z-index: 4;
+    z-index: 5;
     box-shadow: 0 0 1px 1px rgba(0,0,0,0.8);
 
     p {
@@ -2130,14 +2130,22 @@ ul.naviBtn {
     margin: 0;
     padding: 0;
     right: 0;
-    z-index: 3;
+    z-index: 4;
     box-shadow: 0 0 1px 1px rgba(0,0,0,0.8);
     justify-content: space-between;
 
     > * {
         display: flex;
         flex-direction: row;
+        flex-grow: 1;
+        flex-basis: 34%;
     }
+
+    li-center { justify-content: center; }
+
+    li-left { justify-content: flex-start; }
+
+    li-right { justify-content: flex-end; }
 
     #scaleChoose {
       display: flex;
@@ -2213,6 +2221,108 @@ ul.naviBtn {
           padding-top: 8px!important;
       }
 
+    }
+  }
+
+  #slidesArea {
+    position: relative;
+    top: 40px;
+    left: 100px;
+    z-index: 3;
+    right: 0;
+    transition: top linear 150ms;
+
+    #slideList {
+      display: flex;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.6);
+      background-color: #f7f7f7;
+      padding: 0.5em 4em 0.5em 4em;
+      position: relative;
+      width: calc(100% - 100px);
+      justify-content: space-between;
+      align-items: center;
+
+      .slick-arrow {
+        display: block;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 3em;
+        background-color: #6b6b6b;
+        background-image: url(/img/paging.png);
+        background-repeat: no-repeat;
+        background-position: 0;
+        background-size: 30px;
+
+        &.slick-disabled {
+          background-color: #dcdcdc!important;
+        }
+      }
+
+      #prevArrow {
+        left: 0;
+        transform: matrix(-1, 0, 0,-1,0,0);
+      }
+      #nextArrow {
+        right: 0;
+      }
+
+
+      .slick-slide {
+        display: flex;
+        flex-direction: column;
+        outline: none;
+
+        &:before {
+          content: attr(data-page);
+          display: block;
+          padding-left: calc(75px - 1.5em);
+          width: 3em;
+          text-align: center;
+        }
+
+        img-frame {
+          position: relative;
+          width: 150px;
+          height: 102px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+
+          &:after {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            text-align: center;
+            font-size: 1.25em;
+            color: #FFF;
+            font-weight: bold;
+            justify-content: center;
+            align-items: center;
+          }
+
+          &.show:after {
+            background-color: rgba(191, 191, 191, 0.7);
+            content: "表示中";
+          }
+
+          &:not(.show):hover:after {
+            background-color: rgba(195, 214, 155, 0.5);
+            content: "選択する";
+            cursor: pointer;
+          }
+
+
+          img {
+            max-width: 150px;
+            max-height: 100px;
+            box-shadow: 0 0 2px rgba(0,0,0,0.8);
+          }
+        }
+      }
     }
   }
 
