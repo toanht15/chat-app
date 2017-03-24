@@ -93,6 +93,7 @@
         dataType: 'html',
         success: function(html){
           modalOpen.call(window, html, 'p-chat-logs', 'チャット履歴');
+          $(".p-chat-logs #popup-main ul").scrollTop(0);
         }
       });
     };
