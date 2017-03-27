@@ -160,7 +160,6 @@ var slideJsApi = {
     this.pagingTimer = setTimeout(function(){
       clearTimeout(slideJsApi.pagingTimer);
       slideJsApi.currentPage--;
-      slideJsApi.sendCtrlAction('page');
       slideJsApi.cngPage();
     }, slideJsApi.pagingTimeTerm);
   },
@@ -170,7 +169,6 @@ var slideJsApi = {
     this.pagingTimer = setTimeout(function(){
       clearTimeout(slideJsApi.pagingTimer);
       slideJsApi.currentPage++;
-      slideJsApi.sendCtrlAction('page');
       slideJsApi.cngPage();
     }, slideJsApi.pagingTimeTerm);
   },
@@ -202,6 +200,7 @@ var slideJsApi = {
     $("img-frame.show").removeClass('show');
     $("#slide_page_" + slideJsApi.currentPage + " img-frame").addClass('show');
     slideJsApi.pageRender();
+    slideJsApi.sendCtrlAction('page');
   },
   cngScaleTimer: null,
   cngScale: function(){
@@ -326,10 +325,11 @@ var slideJsApi = {
     slideJsApi.scrollTimer = null;
     var canvas = document.getElementById('document_canvas');
     var frameWidth = $("slideFrame").prop('offsetWidth');
+    sessionStorage.setItem('page', slideJsApi.currentPage); // セッションに格納
+
     if ( isNumber(frameWidth) ) {
       canvas.style.left = -frameWidth * (slideJsApi.currentPage - 1) + "px";
     }
-    sessionStorage.setItem('page', slideJsApi.currentPage); // セッションに格納
     $('#pages').text(slideJsApi.currentPage + "/ " + slideJsApi.maxPage);
   },
   render: function(){
