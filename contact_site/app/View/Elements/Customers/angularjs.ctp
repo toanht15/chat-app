@@ -185,10 +185,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         this.pushMessageFlg = false;
       },
       errorChatStart: function(){
+        $(".errorMsg").remove();
         var span = document.createElement("span");
         span.classList.add('errorMsg');
         span.textContent = "処理に失敗しました。再読み込みしてください。";
-        $("#sendMessageArea").html(span);
+        $("#sendMessageArea").append(span);
       },
       isReadMessage: function(monitor){
         // フォーカスが入っているもののみ
@@ -825,6 +826,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     $scope.getCustomerInfoFromMonitor = function(m){
       $scope.getCustomerInfo(m.userId, function(ret){
         $scope.customerList[m.userId] = ret;
+        $scope.$apply();
       });
     };
 
@@ -861,6 +863,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           if ( oldFlg ) { // 過去チャットの場合
             angular.element("message-list-descript").attr("class", "off");
             $scope.chatLogMessageList = json;
+            $scope.$apply();
           }
           else {
             $scope.messageList = json;
@@ -1852,6 +1855,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           success: function(json){
             $scope.chatLogList = json;
             angular.element("message-list-descript").attr("class", "on");
+            $scope.$apply();
           }
         });
       }
@@ -2017,29 +2021,37 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       template: "{{stayTime}}",
       link: function(scope, attr, elem) {
         scope.stayTime = scope.monitor.term;
+        var term = 0;
 
         function countUp(){
-          scope.monitor.term = Number(scope.monitor.term) + 1;
+          // 存在しないユーザーなら、カウントを止める
+          if ( !scope.$parent.monitorList.hasOwnProperty(scope.monitor.tabId) ) return false;
+          scope.monitor.term = Number(scope.monitor.term) + term;
           var hour = parseInt(scope.monitor.term / 3600),
               min = parseInt((scope.monitor.term / 60) % 60),
               sec = scope.monitor.term % 60;
 
           if ( scope.monitor.term >= 86400 ) { // 24時間以上
             scope.stayTime = parseInt(scope.monitor.term / 86400) + "日";
+            var remainHour = parseInt(hour % 24); // 一日の経過時間を算出
+            term = 60 * 60 * 24 - ((remainHour * 60 + min) * 60 + sec); // 一日の残り時間を算出
           }
           else if ( scope.monitor.term < 86400 &&  scope.monitor.term >= 3600 ) { // 1時間以上、24時間未満
             scope.stayTime = parseInt(scope.monitor.term / 3600) + "時間";
+            term = 60 * 60 - (min * 60 + sec);
           }
           else if ( scope.monitor.term < 3600 &&  scope.monitor.term >= 60 ) { // 1時間以上、24時間未満
             scope.stayTime = parseInt(scope.monitor.term / 60) + "分";
+            term = 60 - sec;
           }
           else {
             scope.stayTime = "0分";
+            term = 60;
           }
 
           $timeout(function(e){
             countUp();
-          }, 60000); // 60秒ごとに実行
+          }, term * 1000); // 60秒ごとに実行
         }
         countUp();
       }

@@ -315,13 +315,14 @@ var slideJsApi = {
   },
   render: function(){
     var canvas = document.querySelector('slideframe');
-    var frameWidth = $("slideFrame").prop('clientWidth');
-    var frameHeight = $("slideFrame").prop('clientHeight');
     /* サイズ調整処理 */
     $(".slide img").css("width", (canvas.clientWidth - 20) * 0.75 + "pt")
                    .css("height", (canvas.clientHeight - 20) * 0.75 + "pt");
     $(".slide").css("width",  canvas.clientWidth + "px").css("height", canvas.clientHeight + "px");
-    $(".slide img").css("zoom", slideJsApi.currentScale);
+    $(".slide img").css("transform", "scale(" + slideJsApi.currentScale + ")");
+
+    var docCanvas = document.getElementById('document_canvas');
+    docCanvas.style.width = this.maxPage * canvas.clientWidth + "px";
   },
   renderTimer: null,
   notificate: function(code){
@@ -372,7 +373,7 @@ var slideJsApi = {
     slideJsApi.render();
 
   },
-  readFile: function(doc, callback){
+  readFile: function(doc){
     this.filePath = "<?=C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/svg_"?>" + doc.file_name.replace(/\.pdf$/, "");
     sessionStorage.setItem('doc', JSON.stringify(doc));
     this.doc = doc;
@@ -402,7 +403,6 @@ var slideJsApi = {
         clearInterval(readPageTimer);
         slideJsApi.pageRender();
         slideJsApi.render();
-        callback(false);
       }
     }, 1000);
   }
@@ -499,17 +499,15 @@ sincloApp.controller('MainCtrl', function($scope){
   	console.log(doc);
     sessionStorage.setItem('page', 1);
     sessionStorage.setItem('scale', 1);
-    slideJsApi.readFile(doc, function(err) {
-      if (err) return false;
-      var settings = JSON.parse(doc.settings);
-      emit("changeDocument", {
-        directory: "<?=C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/"?>",
-        fileName: doc.file_name,
-        pages: settings.pages,
-        pagenation_flg: doc.pagenation_flg,
-        download_flg: doc.download_flg
-      });
+    slideJsApi.readFile(doc);
 
+    var settings = JSON.parse(doc.settings);
+    emit("changeDocument", {
+      directory: "<?=C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/"?>",
+      fileName: doc.file_name,
+      pages: settings.pages,
+      pagenation_flg: doc.pagenation_flg,
+      download_flg: doc.download_flg
     });
 
     $scope.closeDocumentList();
@@ -519,14 +517,6 @@ sincloApp.controller('MainCtrl', function($scope){
     $("#ang-popup").removeClass("show");
   };
 
-  /*angular.element(document).on("click", function(evt){
-    if ( evt.target.getAttribute('data-elem-type') !== 'selector' ) {
-      var e = document.querySelector('ng-multi-selector');
-      if ( e.classList.contains('show') ) {
-        e.classList.remove('show');
-      }
-    }
-  });*/
 });
 
 sincloApp.directive('ngOverView', function(){
