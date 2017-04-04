@@ -224,87 +224,7 @@ class HistoriesController extends AppController {
       'conditions' => $returnData[3]
     ]);
 
-    $userNameList = $this->MUser->find('list', [
-      'fields' => [
-        'id',
-        'display_name'
-      ],
-    ]);
-
-    $chatList = $this->THistoryChatLog->find('all',[
-      'fields' => [
-        'THistoryChatLog.t_histories_id',
-        'THistoryChatLog.m_users_id',
-      ],
-      'order' => [
-        'THistoryChatLog.t_histories_id' => 'asc'
-      ],
-      'joins' => [
-        [
-          'type' => 'INNER',
-          'table' => '(SELECT * FROM t_histories WHERE m_companies_id = '.$this->userInfo['MCompany']['id'].')',
-          'alias' => 'THistory',
-          'conditions' => 'THistoryChatLog.t_histories_id = THistory.id'
-        ]
-      ],
-      'conditions' => [
-        'NOT' => [
-        'THistoryChatLog.m_users_id' => NULL],
-        'THistoryChatLog.message_type' => 98
-      ],
-      'group' => ['THistoryChatLog.t_histories_id','THistoryChatLog.m_users_id']
-    ]);
-
-    $users = [];
-
-    foreach($chatList as $val2){
-      $users[$val2['THistoryChatLog']['t_histories_id']][] = $val2['THistoryChatLog']['m_users_id'];
-    }
-
-    $userList = [];
-    foreach($historyList as $value2){
-      $tmp = $value2;
-      $tmp['User'] = '';
-      if(isset($users[$value2['THistory']['id']])) {
-        foreach($users[$value2['THistory']['id']] as $val3){
-          $userName = $userNameList[$val3];
-          if(!empty($tmp['User'])){
-            $tmp['User'] .='、';
-          }
-          $tmp['User'] .= "\n".$userName."さん";
-        }
-      }
-      $userList[] = $tmp;
-    }
-
-    // TODO 良いやり方が無いか模索する
-    $historyIdList = [];
-    $customerIdList = [];
-    foreach($userList as $val){
-      $historyIdList[] = $val['THistory']['id'];
-      $customerIdList[$val['THistory']['visitors_id']] = true;
-    }
-    $tHistoryStayLogList = $this->THistoryStayLog->find('all', [
-      'fields' => [
-        't_histories_id',
-        'url AS firstURL',
-        'COUNT(t_histories_id) AS count '
-      ],
-      'conditions' => [
-        't_histories_id' => $historyIdList
-      ],
-      'group' => 't_histories_id'
-    ]);
-
-    $stayList = [];
-    foreach($tHistoryStayLogList as $val){
-      $stayList[$val['THistoryStayLog']['t_histories_id']] = [
-        'THistoryStayLog' => [
-          'firstURL' => $val['THistoryStayLog']['firstURL'],
-          'count' => $val[0]['count']
-        ]
-      ];
-    }
+    $userList = $this->_userList($historyList);
 
     // ヘッダー
     $csv[] = [
@@ -323,9 +243,9 @@ class HistoriesController extends AppController {
       $csv[0][] = "チャット担当者";
     }
     /* キャンペーン名の取得 */
-    foreach($userList as $key => $history){
+    foreach($userList[0] as $key => $history){
       $campaignParam = "";
-      $tmp = mb_strstr($stayList[$history['THistory']['id']]['THistoryStayLog']['firstURL'], '?');
+      $tmp = mb_strstr($userList[1][$history['THistory']['id']]['THistoryStayLog']['firstURL'], '?');
       if ( $tmp !== "" ) {
         foreach($this->TCampaign->getList() as $k => $v){
           if ( strpos($tmp, $k) !== false ) {
@@ -349,7 +269,7 @@ class HistoriesController extends AppController {
       // 参照元URL
       $row['referrer'] = $history['THistory']['referrer_url'];
       // 閲覧ページ数
-      $row['pageCnt'] = $stayList[$history['THistory']['id']]['THistoryStayLog']['count'];
+      $row['pageCnt'] = $userList[1][$history['THistory']['id']]['THistoryStayLog']['count'];
       // 滞在時間
       $row['visitTime'] = $this->calcTime($history['THistory']['access_date'], $history['THistory']['out_date']);
       // 成果
@@ -407,89 +327,7 @@ class HistoriesController extends AppController {
       'conditions' => $returnData[3]
     ]);
 
-    $userNameList = $this->MUser->find('list', [
-      'fields' => [
-        'id',
-        'display_name',
-      ],
-    ]);
-
-    $chatList = $this->THistoryChatLog->find('all',[
-      'fields' => [
-        'THistoryChatLog.t_histories_id',
-        'THistoryChatLog.m_users_id',
-      ],
-      'order' => [
-        'THistoryChatLog.t_histories_id' => 'asc'
-      ],
-      'joins' => [
-       [
-          'type' => 'INNER',
-          'table' => '(SELECT * FROM t_histories WHERE m_companies_id = '.$this->userInfo['MCompany']['id'].')',
-          'alias' => 'THistory',
-          'conditions' => 'THistoryChatLog.t_histories_id = THistory.id'
-        ]
-      ],
-      'conditions' => [
-          'NOT' => [
-          'THistoryChatLog.m_users_id' => NULL
-        ],
-        'THistoryChatLog.message_type' => 98
-      ],
-      'group' => ['THistoryChatLog.t_histories_id','THistoryChatLog.m_users_id']
-    ]);
-
-    $users = [];
-
-    foreach($chatList as $val2){
-      $users[$val2['THistoryChatLog']['t_histories_id']][] = $val2['THistoryChatLog']['m_users_id'];
-    }
-
-    $userList = [];
-    foreach($historyList as $value2){
-      $tmp = $value2;
-      $tmp['User'] = '';
-      if(isset($users[$value2['THistory']['id']])) {
-        //リストは作れたけども、そのリストは配列で複数なので、foreachで回す
-        foreach($users[$value2['THistory']['id']] as $val3){
-          $userName = $userNameList[$val3];
-          if(!empty($tmp['User'])){
-            $tmp['User'] .='、';
-          }
-          $tmp['User'] .= "\n".$userName."さん";
-        }
-      }
-      $userList[] = $tmp;
-    }
-
-    // TODO 良いやり方が無いか模索する
-    $historyIdList = [];
-    $customerIdList = [];
-    foreach($historyList as $val){
-      $historyIdList[] = $val['THistory']['id'];
-      $customerIdList[$val['THistory']['visitors_id']] = true;
-    }
-    $tHistoryStayLogList = $this->THistoryStayLog->find('all', [
-      'fields' => [
-        't_histories_id',
-        'url AS firstURL',
-        'COUNT(t_histories_id) AS count '
-      ],
-      'conditions' => [
-        't_histories_id' => $historyIdList
-      ],
-      'group' => 't_histories_id'
-    ]);
-
-    $stayList = [];
-    foreach($tHistoryStayLogList as $val){
-      $stayList[$val['THistoryStayLog']['t_histories_id']] = [
-        'THistoryStayLog' => [
-          'firstURL' => $val['THistoryStayLog']['firstURL'],
-          'count' => $val[0]['count']
-        ]
-      ];
-    }
+    $userList = $this->_userList($historyList);
     $name = "sinclo-chat-history";
 
     // ヘッダー
@@ -505,7 +343,7 @@ class HistoriesController extends AppController {
       "メッセージ",
       "担当者"
      ];
-    foreach($userList as $val){
+    foreach($userList[0] as $val){
       $row = [];
       // 日時
       $dateTime = $val['THistory']['access_date'];
@@ -1273,6 +1111,91 @@ class HistoriesController extends AppController {
     return [$join,$join1,$join2,$conditions];
   }
 
+  private function _userList($historyList){
+
+    $userNameList = $this->MUser->find('list', [
+      'fields' => [
+        'id',
+        'display_name'
+      ],
+    ]);
+
+    $chatList = $this->THistoryChatLog->find('all',[
+      'fields' => [
+        'THistoryChatLog.t_histories_id',
+        'THistoryChatLog.m_users_id',
+      ],
+      'order' => [
+        'THistoryChatLog.t_histories_id' => 'asc'
+      ],
+      'joins' => [
+        [
+          'type' => 'INNER',
+          'table' => '(SELECT * FROM t_histories WHERE m_companies_id = '.$this->userInfo['MCompany']['id'].')',
+          'alias' => 'THistory',
+          'conditions' => 'THistoryChatLog.t_histories_id = THistory.id'
+        ]
+      ],
+      'conditions' => [
+        'NOT' => [
+        'THistoryChatLog.m_users_id' => NULL],
+        'THistoryChatLog.message_type' => 98
+      ],
+      'group' => ['THistoryChatLog.t_histories_id','THistoryChatLog.m_users_id']
+    ]);
+
+    $users = [];
+
+    foreach($chatList as $val2){
+      $users[$val2['THistoryChatLog']['t_histories_id']][] = $val2['THistoryChatLog']['m_users_id'];
+    }
+
+    $userList = [];
+    foreach($historyList as $value2){
+      $tmp = $value2;
+      $tmp['User'] = '';
+      if(isset($users[$value2['THistory']['id']])) {
+        foreach($users[$value2['THistory']['id']] as $val3){
+          $userName = $userNameList[$val3];
+          if(!empty($tmp['User'])){
+            $tmp['User'] .='、';
+          }
+          $tmp['User'] .= "\n".$userName."さん";
+        }
+      }
+      $userList[] = $tmp;
+    }
+
+    // TODO 良いやり方が無いか模索する
+    $historyIdList = [];
+    $customerIdList = [];
+    foreach($userList as $val){
+      $historyIdList[] = $val['THistory']['id'];
+      $customerIdList[$val['THistory']['visitors_id']] = true;
+    }
+    $tHistoryStayLogList = $this->THistoryStayLog->find('all', [
+      'fields' => [
+        't_histories_id',
+        'url AS firstURL',
+        'COUNT(t_histories_id) AS count '
+      ],
+      'conditions' => [
+        't_histories_id' => $historyIdList
+      ],
+      'group' => 't_histories_id'
+    ]);
+
+    $stayList = [];
+    foreach($tHistoryStayLogList as $val){
+      $stayList[$val['THistoryStayLog']['t_histories_id']] = [
+        'THistoryStayLog' => [
+          'firstURL' => $val['THistoryStayLog']['firstURL'],
+          'count' => $val[0]['count']
+        ]
+      ];
+    }
+    return [$userList,$stayList];
+  }
 
   private function _userAgentCheckBrowser($val){
     if(preg_match('/Windows NT 10.0/',$val['THistory']['user_agent'])){
@@ -1399,6 +1322,7 @@ class HistoriesController extends AppController {
       $os = "unknown"; // 上記以外 OS の処理
     }
 
+    $browser = 'unknown';
     if (strpos($val['THistory']['user_agent'],'msie')) {
       preg_match('/Msie.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
       $IE = str_replace("msie", "", $match[0]);
@@ -1406,13 +1330,13 @@ class HistoriesController extends AppController {
     }
     else if(preg_match('/sleipnir/i',$val['THistory']['user_agent'])) {
       preg_match('/Sleipnir.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      str_replace("Sleipnir", "", $match[0]);
-      $browser = "Sleipnir(ver." .$match[0].  ")";
+      $Sleipnir = str_replace("Sleipnir", "", $match[0]);
+      $browser = "Sleipnir(ver." .$Sleipnir.  ")";
     }
     else if(preg_match('/lunascape/i',$val['THistory']['user_agent'])) {
       preg_match('/Lunascape.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      str_replace("Lunascape", "", $match[0]);
-      $browser = "Lunascape(ver." .$match[0].  ")";
+      $Lunascape = str_replace("Lunascape/", "", $match[0]);
+      $browser = "Lunascape(ver." .$Lunascape.  ")";
     }
     else if (strpos($val['THistory']['user_agent'],'Trident/7')){
       preg_match('/rv:.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
@@ -1421,68 +1345,68 @@ class HistoriesController extends AppController {
     }
     else if(preg_match('/edge/i',$val['THistory']['user_agent'])) {
       preg_match('/Edge.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      str_replace("Edge", "", $match[0]);
-      $browser = "Edge(ver." .$match[0].  ")";
+      $Edge = str_replace("Edge/", "", $match[0]);
+      $browser = "Edge(ver." .$Edge.  ")";
     }
     else if(preg_match('/opera mini/i',$val['THistory']['user_agent'])) {
       preg_match('/Opera Mini.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      str_replace("Opera Mini", "", $match[0]);
-      $browser = "Opera Mini(ver." .$match[0].  ")";
+      $OperaMini = str_replace("Opera Mini/", "", $match[0]);
+      $browser = "Opera Mini(ver." .$OperaMini.  ")";
     }
     else if(preg_match('/opera/i',$val['THistory']['user_agent'])) {
       preg_match('/Opera.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      str_replace("Opera", "", $match[0]);
-      $browser = "Opera(ver." .$match[0].  ")";
+      $Opera = str_replace("Opera/", "", $match[0]);
+      $browser = "Opera(ver." .$Opera.  ")";
     }
     else if(preg_match('/opr/i',$val['THistory']['user_agent'])) {
       preg_match('/Opr.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      str_replace("Opr", "", $match[0]);
-      $browser = "Opera(ver." .$match[0].  ")";
+      $Opr = str_replace("Opr/", "", $match[0]);
+      $browser = "Opera(ver." .$Opr.  ")";
     }
     else if(preg_match('/vivaldi/i',$val['THistory']['user_agent'])) {
       preg_match('/Vivaldi.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      str_replace("Vivaldi", "", $match[0]);
-      $browser = "Vivaldi(ver." .$match[0].  ")";
+      $Vivaldi = str_replace("Vivaldi/", "", $match[0]);
+      $browser = "Vivaldi(ver." .$Vivaldi.  ")";
     }
     else if(preg_match('/firefox/i',$val['THistory']['user_agent'])) {
       preg_match('/Firefox.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      str_replace("Firefox", "", $match[0]);
-      $browser = "Firefox(ver." .$match[0].  ")";
+      $Firefox = str_replace("Firefox/", "", $match[0]);
+      $browser = "Firefox(ver." .$Firefox.  ")";
     }
     else if(preg_match('/palemoon/i',$val['THistory']['user_agent'])) {
       preg_match('/Palemoon.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      str_replace("Palemoon", "", $match[0]);
-      $browser = "Palemoon(ver." .$match[0].  ")";
+      $Palemoon = str_replace("Palemoon/", "", $match[0]);
+      $browser = "Palemoon(ver." .$Palemoon.  ")";
     }
     else if(preg_match('/phantomjs/i',$val['THistory']['user_agent'])) {
       preg_match('/PhantomJs.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      str_replace("PhantomJs", "", $match[0]);
-      $browser = "PhantomJs(ver." .$match[0].  ")";
+      $PhantomJs = str_replace("PhantomJs/", "", $match[0]);
+      $browser = "PhantomJs(ver." .$PhantomJs.  ")";
     }
     else if(preg_match('/jp.co.yahoo.ipn.appli/i',$val['THistory']['user_agent'])) {
       preg_match('/jp.co.yahoo.ipn.appli.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      str_replace("jp.co.yahoo.ipn.appli", "", $match[0]);
-      $browser = "YahooJapanブラウザ(ver." .$match[0].  ")";
+      $Yahoo = str_replace("jp.co.yahoo.ipn.appli/", "", $match[0]);
+      $browser = "YahooJapanブラウザ(ver." .$Yahoo.  ")";
     }
     else if(preg_match('/jp.co.yahoo.ymail/i',$val['THistory']['user_agent'])) {
       preg_match('/jp.co.yahoo.ymail.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      str_replace("jp.co.yahoo.ymail", "", $match[0]);
-      $browser = "YahooJapanブラウザ(ver." .$match[0].  ")";
+      $Yahoo = str_replace("jp.co.yahoo.ymail/", "", $match[0]);
+      $browser = "YahooJapanブラウザ(ver." .$Yahoo.  ")";
     }
     else if(preg_match('/Chrome/i',$val['THistory']['user_agent']) && !preg_match('/samsungbrowser/i',$val['THistory']['user_agent'])) {
       preg_match('/Chrome.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      str_replace("Chrome", "", $match[0]);
-      $browser = "Chrome(ver." .$match[0].  ")";
+      $Chrome = str_replace("Chrome/", "", $match[0]);
+      $browser = "Chrome(ver." .$Chrome.  ")";
     }
     else if(preg_match('/crios/i',$val['THistory']['user_agent']) && !preg_match('/samsungbrowser/i',$val['THistory']['user_agent'])) {
       preg_match('/Crios.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      str_replace("Crios", "", $match[0]);
-      $browser = "Chrome(ver." .$match[0].  ")";
+      $Chrome = str_replace("Crios/", "", $match[0]);
+      $browser = "Chrome(ver." .$Chrome.  ")";
     }
     else if(preg_match('/blackberry/i',$val['THistory']['user_agent']) || preg_match('/bb10/i',$val['THistory']['user_agent'])) {
       preg_match('/Version.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      str_replace("Version", "", $match[0]);
-      $browser = "標準ブラウザ(ver." .$match[0].  ")";
+      $Version = str_replace("Version/", "", $match[0]);
+      $browser = "標準ブラウザ(ver." .$Version.  ")";
     }
     else if(preg_match('/safari/i',$val['THistory']['user_agent']) && preg_match('/android/i',$val['THistory']['user_agent'])) {
       $browser = "標準ブラウザ";
@@ -1492,8 +1416,7 @@ class HistoriesController extends AppController {
     }
     else if(preg_match('/safari/i',$val['THistory']['user_agent']) && !preg_match('/android/i',$val['THistory']['user_agent'])) {
       preg_match('/Version.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      $Safari = str_replace("Version", "", $match[0]);
-      $Safari = str_replace('/','',$Safari);
+      $Safari = str_replace("Version/", "", $match[0]);
       $browser = "Safari(ver." .$Safari.  ")";
     }
     else if(preg_match('/iphone/i',$val['THistory']['user_agent']) || preg_match('/ipad/i',$val['THistory']['user_agent'])) {
