@@ -456,7 +456,6 @@ sincloApp.controller('MainCtrl', function($scope){
    * @return void(0)
    */
   $scope.openDocumentList = function() {
-  	console.log('open');
     $.ajax({
       type: 'GET',
       url: '<?=$this->Html->url(["controller" => "Customers", "action" => "remoteOpenDocumentLists"])?>',
@@ -495,8 +494,6 @@ sincloApp.controller('MainCtrl', function($scope){
    * @return {void}     send new docURL
    */
   $scope.changeDocument = function(doc){
-  	console.log('change');
-  	console.log(doc);
     sessionStorage.setItem('page', 1);
     sessionStorage.setItem('scale', 1);
     slideJsApi.readFile(doc);

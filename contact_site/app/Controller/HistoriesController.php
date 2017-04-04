@@ -355,8 +355,8 @@ class HistoriesController extends AppController {
       $row['visitTime'] = $this->calcTime($history['THistory']['access_date'], $history['THistory']['out_date']);
       // 成果
       $row['achievement'] = "";
-     if ($history['THistoryChatLog2']['achievementFlg']){
-         $row['achievement'] = Configure::read('achievementType')[h($history['THistoryChatLog2']['achievementFlg'])];
+      if ($history['THistoryChatLog2']['achievementFlg']){
+        $row['achievement'] = Configure::read('achievementType')[h($history['THistoryChatLog2']['achievementFlg'])];
       }
       //　担当者
       $row['user'] =  $history['User'];
@@ -749,8 +749,7 @@ class HistoriesController extends AppController {
       'm_companies_id' => $this->userInfo['MCompany']['id']
     ];
     $visitorsIds = [];
-    $chatLogCond = [];
-
+    $chatCond = [];
     //履歴検索機能
     if ($this->Session->check('Thistory')) {
       $data = $this->Session->read('Thistory');
