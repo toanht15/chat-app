@@ -266,7 +266,6 @@ class HistoriesController extends AppController {
       $tmp = $value2;
       $tmp['User'] = '';
       if(isset($users[$value2['THistory']['id']])) {
-        //リストは作れたけども、そのリストは配列で複数なので、foreachで回す
         foreach($users[$value2['THistory']['id']] as $val3){
           $userName = $userNameList[$val3];
           if(!empty($tmp['User'])){
@@ -749,7 +748,8 @@ class HistoriesController extends AppController {
       'm_companies_id' => $this->userInfo['MCompany']['id']
     ];
     $visitorsIds = [];
-    $chatCond = [];
+    $chatLogCond = [];
+
     //履歴検索機能
     if ($this->Session->check('Thistory')) {
       $data = $this->Session->read('Thistory');
