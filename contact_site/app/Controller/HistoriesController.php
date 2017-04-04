@@ -748,8 +748,8 @@ class HistoriesController extends AppController {
       'm_companies_id' => $this->userInfo['MCompany']['id']
     ];
     $visitorsIds = [];
+    $chatCond = [];
     $chatLogCond = [];
-
     //履歴検索機能
     if ($this->Session->check('Thistory')) {
       $data = $this->Session->read('Thistory');
