@@ -204,6 +204,49 @@ class HistoriesController extends AppController {
     return $this->timepad($hour) . ":" . $this->timepad($min) . ":" . $this->timepad($sec);
   }
 
+    /**
+   * 指定されたパラメータを除外する
+   * @param $excludes array パラメーターリスト
+   * @param $url url URL
+   * @return 加工後URL
+   * */
+  public function trimToURL($excludes, $url){
+    if (empty($excludes)) return $url;
+    $elements = parse_url($url);
+    if (!isset($elements['query'])) return $url;
+    $params = $this->request->params;
+    parse_str($elements['query'], $params);
+    $elements['query'] = "";
+    foreach (array_diff_key($params, array_flip($excludes)) as $key => $val) {
+      $elements['query'] .= ($elements['query'] !== "") ? "&" :  "";
+      $elements['query'] .= (isset($val) && $val !== "") ? $key . "=" . $val : $key;
+    }
+    return $this->build_url($elements);
+  }
+
+    /**
+   * parseしたURLを元に戻す
+   * @param $elements array parse_urlの結果配列
+   * @return URL
+   * */
+  public function build_url(array $elements) {
+    $e = $elements;
+    return
+      (isset($e['host']) ? (
+        (isset($e['scheme']) ? "$e[scheme]://" : '//') .
+        (isset($e['user']) ? $e['user'] . (isset($e['pass']) ? ":$e[pass]" : '') . '@' : '') .
+        $e['host'] .
+        (isset($e['port']) ? ":$e[port]" : '')
+      ) : '') .
+      (isset($e['path']) ? $e['path'] : '/') .
+      (isset($e['query']) ? (
+        is_array($e['query']) ?
+          '?' . http_build_query($e['query'], '', '&') :
+          (($e['query'] !== "") ? '?' . $e['query'] : '')
+      ) : '') .
+    (isset($e['fragment']) ? "#$e[fragment]" : '');
+  }
+
   public function outputCSVOfHistory(){
     Configure::write('debug', 0);
 
@@ -242,6 +285,7 @@ class HistoriesController extends AppController {
       $csv[0][] = "成果";
       $csv[0][] = "チャット担当者";
     }
+
     /* キャンペーン名の取得 */
     foreach($userList[0] as $key => $history){
       $campaignParam = "";
@@ -267,7 +311,9 @@ class HistoriesController extends AppController {
       $row['browser'] = $this->_userAgentCheckBrowser($history)[1];
       $row['campaign'] = $campaignParam;
       // 参照元URL
-      $row['referrer'] = $history['THistory']['referrer_url'];
+      $excludeList = $this->MCompany->getExcludeList($this->userInfo['MCompany']['id']);
+      $params = $excludeList['params'];
+      $row['referrer'] = $this->trimToURL($params, $history['THistory']['referrer_url']);
       // 閲覧ページ数
       $row['pageCnt'] = $userList[1][$history['THistory']['id']]['THistoryStayLog']['count'];
       // 滞在時間
@@ -928,6 +974,11 @@ class HistoriesController extends AppController {
     $this->redirect(['controller' => 'Histories', 'action' => 'index']);
   }
 
+    /**
+   * //
+   *  csv出力検索条件(一覧画面)
+   * @return array join 検索結果
+   * */
   private function _searchConditions(){
     $chatCond = [];
     $chatPlan = [];
@@ -1111,6 +1162,12 @@ class HistoriesController extends AppController {
     return [$join,$join1,$join2,$conditions];
   }
 
+    /**
+   * //
+   *  csv出力担当者リスト(一覧画面)
+   * @param  csv出力内容
+   * @return 担当者リスト追加
+   * */
   private function _userList($historyList){
 
     $userNameList = $this->MUser->find('list', [
@@ -1197,6 +1254,12 @@ class HistoriesController extends AppController {
     return [$userList,$stayList];
   }
 
+    /**
+   * //
+   *  csv,os,browser出力(一覧画面)
+   * @param  csv出力内容
+   * @return array os browser
+   * */
   private function _userAgentCheckBrowser($val){
     if(preg_match('/Windows NT 10.0/',$val['THistory']['user_agent'])){
       $os = "Windows 10"; // Windows 10 の処理
