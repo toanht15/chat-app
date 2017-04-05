@@ -187,23 +187,22 @@ class HistoriesController extends AppController {
     return $this->render('/Elements/Histories/remoteGetStayLogs');
   }
 
-  public function timepad($str){
-    return sprintf("%02d", $str);
-  }
-
+    /**
+   * 滞在時間を計算する
+   * @param $startDateTime　THistoryのaccess_date
+   * @param $endDateTime THistoryのout_date
+   * @return out_dateからaccess_dateを引いた滞在時間
+   * */
   public function calcTime($startDateTime, $endDateTime){
+    Configure::write('debug', 0);
     if ( empty($startDateTime) || empty($endDateTime) ) {
       return "-";
     }
-    $start = strtotime($startDateTime);
-    $end = strtotime($endDateTime);
-    $term = intval($end - $start);
-    $hour = intval($term / 3600);
-    $min = intval(($term / 60) % 60);
-    $sec = $term % 60;
-    return $this->timepad($hour) . ":" . $this->timepad($min) . ":" . $this->timepad($sec);
+    $start = new DateTime($startDateTime);
+    $end = new DateTime($endDateTime);
+    $diff = $start->diff($end);
+    return $diff->format('%H:%I:%S');
   }
-
     /**
    * 指定されたパラメータを除外する
    * @param $excludes array パラメーターリスト
@@ -251,6 +250,8 @@ class HistoriesController extends AppController {
     Configure::write('debug', 0);
 
     $name = "sinclo-history";
+
+    //$returnData:$historyListで使うjoinのリストとconditionsの検索条件
     $returnData = $this->_searchConditions();
 
     $historyList = $this->THistory->find('all', [
@@ -262,12 +263,15 @@ class HistoriesController extends AppController {
         '*'
       ],
       'joins' => [
-        $returnData[0],$returnData[1],$returnData[2]
+        $returnData['joinList'][0],$returnData['joinList'][1],$returnData['joinList'][2]
       ],
-      'conditions' => $returnData[3]
+      'conditions' => $returnData['conditions']
     ]);
 
+    //$historyListに担当者を追加
     $userList = $this->_userList($historyList);
+    //THistoryChatLogの「firstURL」と「count」をと取ってくる
+    $stayList = $this->_stayList($userList);
 
     // ヘッダー
     $csv[] = [
@@ -286,10 +290,12 @@ class HistoriesController extends AppController {
       $csv[0][] = "チャット担当者";
     }
 
-    /* キャンペーン名の取得 */
-    foreach($userList[0] as $key => $history){
+    //除外パラメーターリスト
+    $excludeList = $this->MCompany->getExcludeList($this->userInfo['MCompany']['id']);
+
+    foreach($userList as $key => $history){
       $campaignParam = "";
-      $tmp = mb_strstr($userList[1][$history['THistory']['id']]['THistoryStayLog']['firstURL'], '?');
+      $tmp = mb_strstr($stayList[$history['THistory']['id']]['THistoryStayLog']['firstURL'], '?');
       if ( $tmp !== "" ) {
         foreach($this->TCampaign->getList() as $k => $v){
           if ( strpos($tmp, $k) !== false ) {
@@ -306,16 +312,17 @@ class HistoriesController extends AppController {
       $row['date'] = $dateTime;
       // IPアドレス
       $row['ip'] = $history['THistory']['ip_address'];
-      $row['os'] = $this->_userAgentCheckBrowser($history)[0];
+      // OS
+      $row['os'] = $this->_userAgentCheckOs($history);
       // ブラウザ
-      $row['browser'] = $this->_userAgentCheckBrowser($history)[1];
+      $row['browser'] = $this->_userAgentCheckBrowser($history);
+      //キャンペーン
       $row['campaign'] = $campaignParam;
       // 参照元URL
-      $excludeList = $this->MCompany->getExcludeList($this->userInfo['MCompany']['id']);
       $params = $excludeList['params'];
       $row['referrer'] = $this->trimToURL($params, $history['THistory']['referrer_url']);
       // 閲覧ページ数
-      $row['pageCnt'] = $userList[1][$history['THistory']['id']]['THistoryStayLog']['count'];
+      $row['pageCnt'] = $stayList[$history['THistory']['id']]['THistoryStayLog']['count'];
       // 滞在時間
       $row['visitTime'] = $this->calcTime($history['THistory']['access_date'], $history['THistory']['out_date']);
       // 成果
@@ -331,9 +338,10 @@ class HistoriesController extends AppController {
     $this->_outputCSV($name, $csv);
   }
 
-  public function outputCSVOfContents(){
+  public function outputCSVOfChatHistory(){
     Configure::write('debug', 0);
 
+    //$returnData:$historyListで使うjoinのリストとconditionsの検索条件
     $returnData = $this->_searchConditions();
 
     $historyList = $this->THistory->find('all', [
@@ -368,12 +376,14 @@ class HistoriesController extends AppController {
             'THistoryChatLog.t_history_stay_logs_id = THistoryStayLog.id'
           ]
         ],
-        $returnData[0],$returnData[1],$returnData[2]
+        $returnData['joinList'][0],$returnData['joinList'][1],$returnData['joinList'][2]
       ],
-      'conditions' => $returnData[3]
+      'conditions' => $returnData['conditions']
     ]);
 
+    //$historyListに担当者を追加
     $userList = $this->_userList($historyList);
+
     $name = "sinclo-chat-history";
 
     // ヘッダー
@@ -389,7 +399,7 @@ class HistoriesController extends AppController {
       "メッセージ",
       "担当者"
      ];
-    foreach($userList[0] as $val){
+    foreach($userList as $val){
       $row = [];
       // 日時
       $dateTime = $val['THistory']['access_date'];
@@ -397,9 +407,9 @@ class HistoriesController extends AppController {
       //訪問ユーザ
       $row['ip'] = $val['THistory']['ip_address'];
       // OS
-      $row['os'] = $this->_userAgentCheckBrowser($val)[0];
+      $row['os'] = $this->_userAgentCheckOs($val);
       //ブラウザ
-      $row['browser'] = $this->_userAgentCheckBrowser($val)[1];
+      $row['browser'] = $this->_userAgentCheckBrowser($val);
       //送信元ページ
       if($val['THistoryChatLog']['message_type'] == 1) {
         $row['sourcePage'] = $val['THistoryStayLog']['url'];
@@ -976,8 +986,11 @@ class HistoriesController extends AppController {
 
     /**
    * //
-   *  csv出力検索条件(一覧画面)
-   * @return array join 検索結果
+   *  csv出力,join検索条件(一覧画面)
+   * @return 　検索条件にメッセージがある場合のjoin
+   * @return m_users_idを取るためjoin
+   * @return 未入室、拒否、履歴を振り分けるためjoin
+   * @return 検索条件(conditions)
    * */
   private function _searchConditions(){
     $chatCond = [];
@@ -1055,7 +1068,7 @@ class HistoriesController extends AppController {
         ],
         $this->THistoryChatLog
       );
-      $join = [
+      $joinMessage = [
         'type' => 'INNER',
         'alias' => 'message',
         'table' => "({$hisIdsForMessageQuery})",
@@ -1099,7 +1112,7 @@ class HistoriesController extends AppController {
 
       if ( $this->coreSettings[C_COMPANY_USE_CHAT] ) {
         // チャットのみ表示との切り替え（担当者検索の場合、強制的にINNER）
-        $join1 = [
+        $joinMuserId = [
           'type' => 'INNER',
           'alias' => 'his',
           'table' => "({$historyIdListQuery})",
@@ -1149,7 +1162,6 @@ class HistoriesController extends AppController {
           'THistoryChatLog2.t_histories_id = THistory.id'
         ]
       ];
-
       // チャットのみ表示との切り替え（担当者検索の場合、強制的にINNER）
       if ( strcmp($type, 'false') === 0 && !(!empty($data['THistoryChatLog']) && !empty(array_filter($data['THistoryChatLog']))) ) {
         $joinToChat['type'] = "LEFT";
@@ -1157,9 +1169,8 @@ class HistoriesController extends AppController {
       else {
         $joinToChat['type'] = "INNER";
       }
-      $join2 = $joinToChat;
     }
-    return [$join,$join1,$join2,$conditions];
+    return ['joinList' => [$joinMessage,$joinMuserId,$joinToChat], 'conditions' => $conditions];
   }
 
     /**
@@ -1195,7 +1206,7 @@ class HistoriesController extends AppController {
       ],
       'conditions' => [
         'NOT' => [
-        'THistoryChatLog.m_users_id' => NULL],
+        'THistoryChatLog.m_users_id' => null],
         'THistoryChatLog.message_type' => 98
       ],
       'group' => ['THistoryChatLog.t_histories_id','THistoryChatLog.m_users_id']
@@ -1222,7 +1233,16 @@ class HistoriesController extends AppController {
       }
       $userList[] = $tmp;
     }
+    return $userList;
+  }
 
+    /**
+   * //
+   *  csv出力、THistoryChatLogの「firstURL」と「count」を取ってくる(一覧画面)
+   * @param  csv出力内容
+   * @return THistoryChatLogの「firstURL」と「count」
+   * */
+  private function _stayList($userList){
     // TODO 良いやり方が無いか模索する
     $historyIdList = [];
     $customerIdList = [];
@@ -1251,16 +1271,16 @@ class HistoriesController extends AppController {
         ]
       ];
     }
-    return [$userList,$stayList];
+    return $stayList;
   }
 
     /**
    * //
-   *  csv,os,browser出力(一覧画面)
+   *  csv,os出力(一覧画面)
    * @param  csv出力内容
-   * @return array os browser
+   * @return  osの種類
    * */
-  private function _userAgentCheckBrowser($val){
+  private function _userAgentCheckOs($val){
     if(preg_match('/Windows NT 10.0/',$val['THistory']['user_agent'])){
       $os = "Windows 10"; // Windows 10 の処理
     }
@@ -1384,7 +1404,16 @@ class HistoriesController extends AppController {
     else {
       $os = "unknown"; // 上記以外 OS の処理
     }
+    return $os;
+  }
 
+    /**
+   * //
+   *  csv,browser出力(一覧画面)
+   * @param  csv出力内容
+   * @return  browserの種類
+   * */
+  private function _userAgentCheckbrowser($val){
     $browser = 'unknown';
     if (strpos($val['THistory']['user_agent'],'msie')) {
       preg_match('/Msie.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
@@ -1485,6 +1514,6 @@ class HistoriesController extends AppController {
     else if(preg_match('/iphone/i',$val['THistory']['user_agent']) || preg_match('/ipad/i',$val['THistory']['user_agent'])) {
       $browser = "Safari";
     }
-    return [$os,$browser];
+    return $browser;
   }
 }
