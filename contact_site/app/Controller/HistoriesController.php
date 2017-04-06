@@ -263,7 +263,7 @@ class HistoriesController extends AppController {
         '*'
       ],
       'joins' => [
-        $returnData['joinList'][0],$returnData['joinList'][1],$returnData['joinList'][2]
+        $returnData['joinList']
       ],
       'conditions' => $returnData['conditions']
     ]);
@@ -343,7 +343,8 @@ class HistoriesController extends AppController {
 
     //$returnData:$historyListで使うjoinのリストとconditionsの検索条件
     $returnData = $this->_searchConditions();
-
+    //pr($returnData);
+    //exit();
     $historyList = $this->THistory->find('all', [
       'fields' => '*',
       'order' => [
@@ -376,7 +377,7 @@ class HistoriesController extends AppController {
             'THistoryChatLog.t_history_stay_logs_id = THistoryStayLog.id'
           ]
         ],
-        $returnData['joinList'][0],$returnData['joinList'][1],$returnData['joinList'][2]
+        $returnData['joinList']
       ],
       'conditions' => $returnData['conditions']
     ]);
@@ -986,7 +987,7 @@ class HistoriesController extends AppController {
 
     /**
    * //
-   *  csv出力,join検索条件(一覧画面)
+   *  csv出力,join,検索条件(一覧画面)
    * @return 　検索条件にメッセージがある場合のjoin
    * @return m_users_idを取るためjoin
    * @return 未入室、拒否、履歴を振り分けるためjoin
@@ -997,9 +998,7 @@ class HistoriesController extends AppController {
     $chatPlan = [];
     $chatLogCond = [];
     $conditions = [];
-    $join = '';
-    $join1 = '';
-    $join2 = '';
+    $joinList = [];
     $userCond = [
       'm_companies_id' => $this->userInfo['MCompany']['id']
     ];
@@ -1068,7 +1067,7 @@ class HistoriesController extends AppController {
         ],
         $this->THistoryChatLog
       );
-      $joinMessage = [
+      $joinList += [
         'type' => 'INNER',
         'alias' => 'message',
         'table' => "({$hisIdsForMessageQuery})",
@@ -1112,7 +1111,7 @@ class HistoriesController extends AppController {
 
       if ( $this->coreSettings[C_COMPANY_USE_CHAT] ) {
         // チャットのみ表示との切り替え（担当者検索の場合、強制的にINNER）
-        $joinMuserId = [
+        $joinList += [
           'type' => 'INNER',
           'alias' => 'his',
           'table' => "({$historyIdListQuery})",
@@ -1169,8 +1168,9 @@ class HistoriesController extends AppController {
       else {
         $joinToChat['type'] = "INNER";
       }
+      $joinList += $joinToChat;
     }
-    return ['joinList' => [$joinMessage,$joinMuserId,$joinToChat], 'conditions' => $conditions];
+    return ['joinList' => $joinList, 'conditions' => $conditions];
   }
 
     /**
@@ -1280,7 +1280,7 @@ class HistoriesController extends AppController {
    * @param  csv出力内容
    * @return  osの種類
    * */
-  private function _userAgentCheckOs($val){
+  private function _userAgentCheckOS($val){
     if(preg_match('/Windows NT 10.0/',$val['THistory']['user_agent'])){
       $os = "Windows 10"; // Windows 10 の処理
     }
@@ -1413,92 +1413,92 @@ class HistoriesController extends AppController {
    * @param  csv出力内容
    * @return  browserの種類
    * */
-  private function _userAgentCheckbrowser($val){
+  private function _userAgentCheckBrowser($val){
     $browser = 'unknown';
     if (strpos($val['THistory']['user_agent'],'msie')) {
       preg_match('/Msie.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      $IE = str_replace("msie", "", $match[0]);
-      $browser = "IE(ver." .$IE.  ")";
+      $version = str_replace("msie", "", $match[0]);
+      $browser = "IE(ver." .$version.  ")";
     }
     else if(preg_match('/sleipnir/i',$val['THistory']['user_agent'])) {
       preg_match('/Sleipnir.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      $Sleipnir = str_replace("Sleipnir", "", $match[0]);
-      $browser = "Sleipnir(ver." .$Sleipnir.  ")";
+      $version = str_replace("Sleipnir", "", $match[0]);
+      $browser = "Sleipnir(ver." .$version.  ")";
     }
     else if(preg_match('/lunascape/i',$val['THistory']['user_agent'])) {
       preg_match('/Lunascape.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      $Lunascape = str_replace("Lunascape/", "", $match[0]);
-      $browser = "Lunascape(ver." .$Lunascape.  ")";
+      $version = str_replace("Lunascape/", "", $match[0]);
+      $browser = "Lunascape(ver." .$version.  ")";
     }
     else if (strpos($val['THistory']['user_agent'],'Trident/7')){
       preg_match('/rv:.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      $IE = str_replace("rv:", "", $match[0]);
-      $browser = "IE(ver." .$IE.  ")";
+      $version = str_replace("rv:", "", $match[0]);
+      $browser = "IE(ver." .$version.  ")";
     }
     else if(preg_match('/edge/i',$val['THistory']['user_agent'])) {
       preg_match('/Edge.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      $Edge = str_replace("Edge/", "", $match[0]);
-      $browser = "Edge(ver." .$Edge.  ")";
+      $version = str_replace("Edge/", "", $match[0]);
+      $browser = "Edge(ver." .$version.  ")";
     }
     else if(preg_match('/opera mini/i',$val['THistory']['user_agent'])) {
       preg_match('/Opera Mini.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      $OperaMini = str_replace("Opera Mini/", "", $match[0]);
-      $browser = "Opera Mini(ver." .$OperaMini.  ")";
+      $version = str_replace("Opera Mini/", "", $match[0]);
+      $browser = "Opera Mini(ver." .$version.  ")";
     }
     else if(preg_match('/opera/i',$val['THistory']['user_agent'])) {
       preg_match('/Opera.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      $Opera = str_replace("Opera/", "", $match[0]);
-      $browser = "Opera(ver." .$Opera.  ")";
+      $version = str_replace("Opera/", "", $match[0]);
+      $browser = "Opera(ver." .$version.  ")";
     }
     else if(preg_match('/opr/i',$val['THistory']['user_agent'])) {
       preg_match('/Opr.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      $Opr = str_replace("Opr/", "", $match[0]);
-      $browser = "Opera(ver." .$Opr.  ")";
+      $version = str_replace("Opr/", "", $match[0]);
+      $browser = "Opera(ver." .$version.  ")";
     }
     else if(preg_match('/vivaldi/i',$val['THistory']['user_agent'])) {
       preg_match('/Vivaldi.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      $Vivaldi = str_replace("Vivaldi/", "", $match[0]);
-      $browser = "Vivaldi(ver." .$Vivaldi.  ")";
+      $version = str_replace("Vivaldi/", "", $match[0]);
+      $browser = "Vivaldi(ver." .$version.  ")";
     }
     else if(preg_match('/firefox/i',$val['THistory']['user_agent'])) {
       preg_match('/Firefox.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      $Firefox = str_replace("Firefox/", "", $match[0]);
-      $browser = "Firefox(ver." .$Firefox.  ")";
+      $version = str_replace("Firefox/", "", $match[0]);
+      $browser = "Firefox(ver." .$version.  ")";
     }
     else if(preg_match('/palemoon/i',$val['THistory']['user_agent'])) {
       preg_match('/Palemoon.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      $Palemoon = str_replace("Palemoon/", "", $match[0]);
-      $browser = "Palemoon(ver." .$Palemoon.  ")";
+      $version = str_replace("Palemoon/", "", $match[0]);
+      $browser = "Palemoon(ver." .$version.  ")";
     }
     else if(preg_match('/phantomjs/i',$val['THistory']['user_agent'])) {
       preg_match('/PhantomJs.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      $PhantomJs = str_replace("PhantomJs/", "", $match[0]);
-      $browser = "PhantomJs(ver." .$PhantomJs.  ")";
+      $version = str_replace("PhantomJs/", "", $match[0]);
+      $browser = "PhantomJs(ver." .$version.  ")";
     }
     else if(preg_match('/jp.co.yahoo.ipn.appli/i',$val['THistory']['user_agent'])) {
       preg_match('/jp.co.yahoo.ipn.appli.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      $Yahoo = str_replace("jp.co.yahoo.ipn.appli/", "", $match[0]);
-      $browser = "YahooJapanブラウザ(ver." .$Yahoo.  ")";
+      $version = str_replace("jp.co.yahoo.ipn.appli/", "", $match[0]);
+      $browser = "YahooJapanブラウザ(ver." .$version.  ")";
     }
     else if(preg_match('/jp.co.yahoo.ymail/i',$val['THistory']['user_agent'])) {
       preg_match('/jp.co.yahoo.ymail.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      $Yahoo = str_replace("jp.co.yahoo.ymail/", "", $match[0]);
-      $browser = "YahooJapanブラウザ(ver." .$Yahoo.  ")";
+      $version = str_replace("jp.co.yahoo.ymail/", "", $match[0]);
+      $browser = "YahooJapanブラウザ(ver." .$version.  ")";
     }
     else if(preg_match('/Chrome/i',$val['THistory']['user_agent']) && !preg_match('/samsungbrowser/i',$val['THistory']['user_agent'])) {
       preg_match('/Chrome.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      $Chrome = str_replace("Chrome/", "", $match[0]);
-      $browser = "Chrome(ver." .$Chrome.  ")";
+      $version = str_replace("Chrome/", "", $match[0]);
+      $browser = "Chrome(ver." .$version.  ")";
     }
     else if(preg_match('/crios/i',$val['THistory']['user_agent']) && !preg_match('/samsungbrowser/i',$val['THistory']['user_agent'])) {
       preg_match('/Crios.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      $Chrome = str_replace("Crios/", "", $match[0]);
-      $browser = "Chrome(ver." .$Chrome.  ")";
+      $version = str_replace("Crios/", "", $match[0]);
+      $browser = "Chrome(ver." .$version.  ")";
     }
     else if(preg_match('/blackberry/i',$val['THistory']['user_agent']) || preg_match('/bb10/i',$val['THistory']['user_agent'])) {
       preg_match('/Version.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      $Version = str_replace("Version/", "", $match[0]);
-      $browser = "標準ブラウザ(ver." .$Version.  ")";
+      $version = str_replace("Version/", "", $match[0]);
+      $browser = "標準ブラウザ(ver." .$version.  ")";
     }
     else if(preg_match('/safari/i',$val['THistory']['user_agent']) && preg_match('/android/i',$val['THistory']['user_agent'])) {
       $browser = "標準ブラウザ";
@@ -1508,8 +1508,8 @@ class HistoriesController extends AppController {
     }
     else if(preg_match('/safari/i',$val['THistory']['user_agent']) && !preg_match('/android/i',$val['THistory']['user_agent'])) {
       preg_match('/Version.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      $Safari = str_replace("Version/", "", $match[0]);
-      $browser = "Safari(ver." .$Safari.  ")";
+      $version = str_replace("Version/", "", $match[0]);
+      $browser = "Safari(ver." .$version.  ")";
     }
     else if(preg_match('/iphone/i',$val['THistory']['user_agent']) || preg_match('/ipad/i',$val['THistory']['user_agent'])) {
       $browser = "Safari";
