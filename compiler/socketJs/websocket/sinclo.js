@@ -26,6 +26,10 @@
         var flg = sinclo.widget.condifiton.get();
         var elm = $('#sincloBox');
         if ( String(flg) === "false" ) {
+          //ウィジェットを開いた回数
+          if(typeof ga == "function"){
+           ga('send', 'event', 'sinclo', 'クリック', location.href);
+          }
           sinclo.widget.condifiton.set(true);
           if ( check.smartphone() && window.sincloInfo.contract.chat && (window.screen.availHeight < window.screen.availWidth) ) {
             height = window.innerHeight * (document.body.clientWidth / window.innerWidth);
@@ -661,6 +665,13 @@
       check.escape_html(opUser); // エスケープ
 
       sinclo.chatApi.createNotifyMessage(opUser + "が入室しました");
+      // チャットの契約をしている場合
+      if ( window.sincloInfo.contract.chat ) {
+        //OPが入室した数
+        if(typeof ga == "function"){
+          ga('send', 'event', 'sinclo', 'チャット対応', sinclo.chatApi.opUser);
+        }
+      }
     },
     chatEndResult: function(d){
       var obj = JSON.parse(d);
@@ -673,6 +684,8 @@
       check.escape_html(opUser); // エスケープ
       sinclo.chatApi.createNotifyMessage(opUser + "が退室しました");
       sinclo.chatApi.opUser = "";
+      //退室した後に同じ消費者からメッセージが来た場合、それもGAのイベントとしてカウントするため
+      sessionStorage.removeItem('chatEmit');
     },
     chatMessageData:function(d){
       var obj = JSON.parse(d);
@@ -757,6 +770,13 @@
           cn = "sinclo_re";
           sinclo.chatApi.call();
           this.chatApi.createMessage(cn, obj.chatMessage, sincloInfo.widget.subTitle);
+          // チャットの契約をしている場合
+          if ( window.sincloInfo.contract.chat ) {
+            //sorryメッセージを出した数
+            if(typeof ga == "function"){
+              ga('send', 'event', 'sinclo', 'チャット拒否', location.href);
+            }
+          }
           return false;
         }
         this.chatApi.createMessageUnread(cn, obj.chatMessage, userName);
@@ -1177,6 +1197,18 @@
                   messageType: sinclo.chatApi.messageType.customer
               });
             }, 100);
+
+            // チャットの契約をしている場合
+            if ( window.sincloInfo.contract.chat ) {
+              var firstChatEmit = storage.s.get('chatEmit');
+              //サイト訪問者がチャット送信した初回のタイミング
+              if ( !check.isset(firstChatEmit) ) {
+                if(typeof ga == "function"){
+                  ga('send', 'event', 'sinclo', 'チャット送信', location.href);
+                }
+              }
+              storage.s.set('chatEmit', true);
+            }
 
             // スマートフォンの場合、タイマーをセット。（メッセージ送信に失敗した場合にリロードを促す）
             if ( check.smartphone() ) {
