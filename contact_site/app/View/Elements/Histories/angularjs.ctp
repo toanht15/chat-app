@@ -191,7 +191,7 @@ $(document).ready(function(){
       }
     }
     document.getElementById('HistoryOutputData').value = JSON.stringify(data);
-    document.getElementById('HistoryIndexForm').action = '<?=$this->Html->url(["controller"=>"Histories", "action" => "outputCSVOfContents"])?>';
+    document.getElementById('HistoryIndexForm').action = '<?=$this->Html->url(["controller"=>"Histories", "action" => "outputCSVOfChatHistory"])?>';
     document.getElementById('HistoryIndexForm').submit();
   });
 
