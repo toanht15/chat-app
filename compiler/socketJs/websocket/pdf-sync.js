@@ -36,6 +36,7 @@ var pdfjsCNST, slideJsApi, frameSize, scrollFlg;
     zoomInTimeTerm: 500,
     pagingTimer: null,
     pagingTimeTerm: 500,
+    readStartFlg: false,
     init: function(){
       this.resetZoomType();// 拡大率を設定
       this.pageRender();
@@ -70,6 +71,7 @@ var pdfjsCNST, slideJsApi, frameSize, scrollFlg;
       // ウィンドウリサイズ
       var resizeTimer = null;
       window.addEventListener('resize', function(){
+        $('slideFrame').css("opacity", 0);
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(function(){
           clearTimeout(resizeTimer);
@@ -344,6 +346,14 @@ var pdfjsCNST, slideJsApi, frameSize, scrollFlg;
         pageImg.style.height = setHeight + "px";
         pageImg.style.transform = matrix;
       }, 10);
+
+      setTimeout(function(){
+        $('slideFrame').css("opacity", 1);
+        if ( slideJsApi.readStartFlg ) {
+          slideJsApi.readStartFlg = false;
+          emit("compReadFile", {});
+        }
+      }, 100);
     },
     makePage: function(){
       var docCanvas = document.getElementById('document_canvas');
@@ -393,6 +403,7 @@ var pdfjsCNST, slideJsApi, frameSize, scrollFlg;
       }
     },
     readFile: function(doc){
+      $('slideFrame ').css("opacity", 0);
       doc.url = doc.directory + doc.fileName;
       this.filePath = doc.directory + "svg_" + doc.fileName.replace(/\.pdf$/, "");
       sessionStorage.setItem('doc', JSON.stringify(doc));
@@ -479,6 +490,7 @@ var pdfjsCNST, slideJsApi, frameSize, scrollFlg;
     var obj = JSON.parse(d);
     sessionStorage.setItem('page', 1);
     sessionStorage.setItem('scale', 1);
+    slideJsApi.readStartFlg = true;
     slideJsApi.readFile(obj);
   });
 

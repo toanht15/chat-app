@@ -1,6 +1,5 @@
-<?= $this->Html->script(C_PATH_NODE_FILE_SERVER."/websocket/compatibility.min.js"); ?>
-
 <script type="text/javascript">
+<?= $this->element('TDocuments/loadScreen'); ?>
 
 var pdfjsCNST = function(){
   return {
@@ -121,6 +120,7 @@ var slideJsApi = {
     // ウィンドウリサイズ
     var resizeTimer = null;
     window.addEventListener('resize', function(){
+      $('slideFrame').css("opacity", 0);
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(function(){
         resizeTimer = null;
@@ -439,6 +439,10 @@ var slideJsApi = {
       pageImg.style.transform = matrix;
     }, 10);
 
+    setTimeout(function(){
+      $('slideFrame').css("opacity", 1);
+    }, 100);
+
   },
   makePage: function(){
     var docCanvas = document.getElementById('document_canvas');
@@ -492,6 +496,7 @@ var slideJsApi = {
 
   },
   readFile: function(doc){
+    $('slideFrame ').css("opacity", 0);
     this.filePath = "<?=C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/svg_"?>" + doc.file_name.replace(/\.pdf$/, "");
     sessionStorage.setItem('doc', JSON.stringify(doc));
     this.doc = doc;
@@ -703,6 +708,8 @@ sincloApp.controller('MainController', function($scope){
 
     sessionStorage.setItem('page', 1);
     sessionStorage.setItem('scale', 1);
+
+    loading.load.start(); // ローディング開始
     slideJsApi.readFile(doc);
 
     var settings = JSON.parse(doc.settings);

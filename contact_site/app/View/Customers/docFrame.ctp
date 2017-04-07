@@ -136,6 +136,11 @@ window.onload = function(){
     }
   });
 
+  socket.on('compReadFile', function(d){
+    loading.load.finish(); // ローディング終了
+    return false;
+  });
+
   socket.on('docDisconnect', function(d){
     window.close();
     return false;
