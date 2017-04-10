@@ -33,7 +33,7 @@
               else { ?>
                 <slideframe>
               <?php } ?>
-              <div id="document_canvas2" ng-click="openDocumentList3(<?=$id?>)"></div>
+              <div id="document_canvas" ng-click="openDocumentList3(<?=$id?>)"></div>
               </slideframe>
               <paging>
                 <span onclick="slideJsApi.prevPage(); return false;"><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_back.png" width="30" height="30" alt=""></span>

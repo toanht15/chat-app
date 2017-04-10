@@ -85,9 +85,9 @@
     <span id="manuscriptCloseBtn" onclick="slideJsApi2.toggleManuScript(); return false;"></span>
   </div>
 
-  <slideFramea>
-    <div id="document_canvas"></div>
-  </slideFramea>
+  <slideFrame2>
+    <div id="document_canvas2"></div>
+  </slideFrame2>
 
   <div id="ang-popup2">
     <div id="ang-base2">

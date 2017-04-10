@@ -5,7 +5,7 @@
 <?= $this->element('TDocuments/loadScreen'); ?>
 <?php if ( $this->action !== "index" ) : ?>
 function handleFileSelect(evt) {
-  $("slideframe").html('<div id="document_canvas2"></div>');
+  $("slideframe").html('<div id="document_canvas"></div>');
   var files = evt.target.files; // FileList object
   if (files.length === 0) {
     if ( slideJsApi.filePath !== "" ) slideJsApi.init(slideJsApi.filePath, slideJsApi.maxPage);
@@ -27,7 +27,7 @@ function handleFileSelect(evt) {
       fileTitle.textContent = file.name;
       slideSample.appendChild(fileTitle);
       slideTemp.appendChild(slideSample);
-      var target = document.getElementById('document_canvas2');
+      var target = document.getElementById('document_canvas');
       target.appendChild(slideTemp);
     };
   })(file);
@@ -52,6 +52,7 @@ $(document).ready(function(){
 
 <?php endif; ?>
 
+
 //タグ追加
 function tagAdd(){
   var tag = $('#TDocumentNewTag').val();
@@ -65,6 +66,7 @@ function saveAct(){
   console.log(JSON.stringify(slideJsApi.manuscript));
   // ページ離脱防止解除
   window.removeEventListener('beforeunload', onBeforeunloadHandler, false);
+
   if ( slideJsApi.hasOwnProperty('manuscript') ) {
     document.getElementById('TDocumentManuscript').value = JSON.stringify(slideJsApi.manuscript);
   }
@@ -154,7 +156,7 @@ var slideJsApi,slideJsApi2,slideJsCNST;
       this.makePage(); // 初期スライドを作成
       var limitPage = (this.currentPage + 3 > this.maxPage) ? this.maxPage : this.currentPage + 3 ;
 
-      var canvas = document.getElementById('document_canvas2');
+      var canvas = document.getElementById('document_canvas');
       var readPageTimer = setInterval(function(){
         slideJsApi.readPage();
         if ( limitPage < slideJsApi.loadedPage ) {
@@ -178,6 +180,8 @@ var slideJsApi,slideJsApi2,slideJsCNST;
         }
         slideJsApi.manuscript[slideJsApi.currentPage] = e.target.value;
       });
+
+
     },
     setManuscript: function(){
       document.getElementById('pages-text').value = ( this.manuscript.hasOwnProperty(this.currentPage) ) ? this.manuscript[this.currentPage] : "";
@@ -205,7 +209,7 @@ var slideJsApi,slideJsApi2,slideJsCNST;
       }, 0);
     },
     showPage: function(){
-      var canvas = document.getElementById('document_canvas2');
+      var canvas = document.getElementById('document_canvas');
       canvas.style.left = -22.5 * (slideJsApi.currentPage - 1) + "em";
       this.setManuscript();
       $('.pages').text("（" + slideJsApi.currentPage + "/ " + slideJsApi.maxPage + "）");
@@ -215,7 +219,7 @@ var slideJsApi,slideJsApi2,slideJsCNST;
        /* サイズ調整処理 */
       $(".slide").css("width",  canvas.clientWidth + "px").css("height", canvas.clientHeight + "px");
       $(".slide img").css("transform", "scale(" + slideJsApi.currentScale + ")");
-      var docCanvas = document.getElementById('document_canvas2');
+      var docCanvas = document.getElementById('document_canvas');
       docCanvas.style.width = this.maxPage * canvas.clientWidth + "px";
     },
     renderPage: function(page){
@@ -268,7 +272,7 @@ var slideJsApi,slideJsApi2,slideJsCNST;
       }, 10);
     },
     makePage: function(){
-      var docCanvas = document.getElementById('document_canvas2');
+      var docCanvas = document.getElementById('document_canvas');
       // 現在の表示ページから作っていく
       for(var i = 1; this.maxPage >= i; i++){
         var slide = document.createElement('div');
@@ -286,6 +290,7 @@ var slideJsApi,slideJsApi2,slideJsCNST;
         var img = document.createElement('img');
         img.src = slideJsApi.filePath + "_" + Number(page) + '.svg';
         var slide = document.getElementById('slide_' + page);
+
         slide.appendChild(img);
         img.onload = function(){
           slideJsApi.renderPage(page);
@@ -319,7 +324,7 @@ var slideJsApi,slideJsApi2,slideJsCNST;
       this.cngPage();
       this.resetZoomType();// 拡大率を設定
 
-      var canvas = document.getElementById('document_canvas');
+      var canvas = document.getElementById('document_canvas2');
 
       var mousewheelevent = 'onwheel' in document ? 'wheel' : 'onmousewheel' in document ? 'mousewheel' : 'DOMMouseScroll';
       $(document).on(mousewheelevent,function(e){
@@ -350,7 +355,6 @@ var slideJsApi,slideJsApi2,slideJsCNST;
           }
           // 次のページへ
           else {
-            if ( (canvas.scrollHeight - canvas.clientHeight) !== canvas.scrollTop ) return false;
             if (e.preventDefault) { e.preventDefault(); }
             slideJsApi2.nextPage();
           }
@@ -550,8 +554,8 @@ var slideJsApi,slideJsApi2,slideJsCNST;
     },
     pageRender: function(){
       slideJsApi2.scrollTimer = null;
-      var canvas = document.getElementById('document_canvas');
-      var frameWidth = $("slideFramea").prop('offsetWidth');
+      var canvas = document.getElementById('document_canvas2');
+      var frameWidth = $("slideFrame2").prop('offsetWidth');
       if ( isNumber(frameWidth) ) {
         canvas.style.left = -frameWidth * (slideJsApi2.currentPage - 1) + "px";
       }
@@ -559,14 +563,14 @@ var slideJsApi,slideJsApi2,slideJsCNST;
       $('#pages').text(slideJsApi2.currentPage + "/ " + slideJsApi2.maxPage);
     },
     render: function(){
-      var canvas = document.querySelector('slideFramea');
+      var canvas = document.querySelector('slideFrame2');
       /* サイズ調整処理 */
       $(".slide2 img").css("width", (canvas.clientWidth - 20) * 0.65 + "pt")
                      .css("height", (canvas.clientHeight - 20) * 0.65 + "pt");
       $(".slide2").css("width",  canvas.clientWidth + "px").css("height", canvas.clientHeight + "px") ;
       $(".slide2 img").css("transform", "scale(" + slideJsApi2.currentScale + ")");
 
-      var docCanvas = document.getElementById('document_canvas');
+      var docCanvas = document.getElementById('document_canvas2');
       docCanvas.style.width = this.maxPage * canvas.clientWidth + "px";
     },
     renderTimer: null,
@@ -576,7 +580,7 @@ var slideJsApi,slideJsApi2,slideJsCNST;
       }
     },
     makePage: function(){
-      var docCanvas = document.getElementById('document_canvas');
+      var docCanvas = document.getElementById('document_canvas2');
 
       // 現在の表示ページから作っていく
       for(var i = 1; this.maxPage >= i; i++){
@@ -634,9 +638,9 @@ var slideJsApi,slideJsApi2,slideJsCNST;
       var limitPage = (this.currentPage + 3 > this.maxPage) ? this.maxPage : this.currentPage + 3 ;
 
       divCanvas = document.createElement("div");
-      divCanvas.id = "document_canvas";
-      $("slideFramea #document_canvas").remove();
-      $("slideFramea").append(divCanvas);
+      divCanvas.id = "document_canvas2";
+      $("slideFrame2 #document_canvas2").remove();
+      $("slideFrame2").append(divCanvas);
       this.makePage(); // 初期スライドを作成
       this.init();
 
@@ -660,7 +664,7 @@ var slideJsApi,slideJsApi2,slideJsCNST;
       $filePath = C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/svg_".pathinfo(h($this->data['TDocument']['file_name']), PATHINFO_FILENAME);
     ?>
 
-    slideJsApi.init("<?=$filePath?>", "<?=$pages?>","document_canvas2");
+    slideJsApi.init("<?=$filePath?>", "<?=$pages?>","document_canvas");
     <?php endif; ?>
   });
 })();
@@ -727,7 +731,7 @@ sincloApp.controller('MainCtrl', function($scope){
         $scope.tagList = ( json.hasOwnProperty('tagList') ) ? JSON.parse(json.tagList) : {};
         $scope.documentList = ( json.hasOwnProperty('documentList') ) ? JSON.parse(json.documentList) : {};
         $scope.$apply();
-        slideJsApi2.readFile(doc,"document_canvas",function(err) {
+        slideJsApi2.readFile(doc,function(err) {
           if (err) return false;
           var settings = JSON.parse(doc.settings);
         });
@@ -797,8 +801,8 @@ sincloApp.controller('MainCtrl', function($scope){
 window.onload = function(){
   $("#manuscriptArea").draggable({
     scroll: false,
-    containment: "slideframea",
-    cancel: "#document_canvas"
+    containment: "slideframe2",
+    cancel: "#document_canvas2"
   })
   .css({
     'display': 'block',

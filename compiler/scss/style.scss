@@ -3962,85 +3962,6 @@ ul.naviBtn {
                 position: absolute;
                 top: 0;
                 left: 0;
-                right: 0;
-                overflow: hidden;
-                display: flex;
-
-                &:hover:before {
-                  content: " ";
-                  position: absolute;
-                  top: 0;
-                  left: 0;
-                  right: 0;
-                  bottom: 0;
-                  display: block;
-                  background-color: rgba(0,0,0,0.6);
-                  z-index: 1;
-                  cursor:pointer;
-                }
-
-                div.slide svg {
-                  width: 22.5em;
-                  height: 12em;
-                }
-
-                .slide {
-                  display: flex;
-                  justify-content: center;
-                  align-items: center;
-
-                  &#slide_temp {
-                    width: 22.5em;
-                    height: 12em;
-
-                    div {
-                      width: 17em;
-                      height: 10em;
-                      padding: 1em;
-                      text-align: center;
-                      display: flex;
-                      align-items: center;
-                      justify-content: center;
-                      box-shadow: 0 0 2px rgba(0,0,0,0.3);
-
-                      span {
-                        overflow: hidden;
-                        text-overflow: ellipsis;
-                        white-space: nowrap;
-                      }
-                    }
-
-                    &:after {
-                      content: "「保存」をクリックしてください";
-                      position: absolute;
-                      bottom: 0;
-                      left: 0;
-                      right: 0;
-                      background-color: rgba(255, 255, 255, 0.5);
-                      height: 1.5em;
-                      padding: 0.5em 0;
-                      border: 1px solid #ddd;
-                      box-sizing: content-box;
-                      margin: 0 -1px;
-                      text-align: center;
-                      font-size: 1em;
-                      color: #ff8080;
-                    }
-                  }
-
-                  img {
-                    margin: 0 auto;
-                    display: block;
-                  }
-                }
-              }
-
-             #document_canvas2 {
-                height: 12em;
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
                 overflow: hidden;
                 display: flex;
 
@@ -4107,7 +4028,6 @@ ul.naviBtn {
                   }
                 }
               }
-
 
               paging {
                 position: absolute;
@@ -4695,7 +4615,7 @@ ul.naviBtn {
         padding-right: 3em;
       }
 
-      slideFramea {
+      slideFrame2 {
         position: absolute;
         top: 0;
         bottom: 0;
@@ -4980,7 +4900,7 @@ ul.naviBtn {
       }
     }
   }
-  slideFramea {
+  slideFrame2 {
     position: absolute;
     top: 0;
     bottom: 0;
@@ -4991,7 +4911,7 @@ ul.naviBtn {
     margin-left:100px;
     margin-top:40px;
 
-    #document_canvas {
+    #document_canvas2 {
       position: absolute;
       top: 0;
       bottom: 0;

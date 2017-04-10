@@ -269,9 +269,6 @@ class TDocumentsController extends AppController {
   private function _createThumnail($fileName){
     $name = C_PREFIX_DOCUMENT.pathinfo($fileName, PATHINFO_FILENAME).".jpg"; //サムネイルのファイル名
     $thumbname = C_PATH_TMP_IMG_DIR.DS.$name; //サムネイルのパス名
-    $this->log('ぬおおおおおおおお',LOG_DEBUG);
-    $this->log('ぬおおおおおおおお',LOG_DEBUG);
-    $this->log('ぬおおおおおおおお',LOG_DEBUG);
     /* 画像の読み込み */
     $thumbImg = new Imagick();
     /* サムネイルの作成 */
@@ -310,20 +307,6 @@ class TDocumentsController extends AppController {
 
     $this->set('download', $download);
     $this->set('pagenation', $pagenation);
-  }
-
-
-  /* *
-   * プレビュー画面
-   * @return void
-   * */
-  public function openPreview() {
-    Configure::write('debug', 0);
-    $this->autoRender = FALSE;
-    $this->layout = 'ajax';
-
-    // const
-    $this->render('/Elements/TDocuments/remoteOpenPreviewScreen');
   }
 
     /**
