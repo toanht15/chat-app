@@ -16,13 +16,20 @@
       </li>
       <!-- 概要 -->
 
+      <?php
+        $id = $_SERVER["REQUEST_URI"];
+        $id = substr($id, 17);
+      ?>
+
       <!-- 資料 -->
       <li>
         <span class="require"><label>資料</label></span>
         <documentArea>
           <content>
             <preview>
-              <slideframe><div id="document_canvas"></div></slideframe>
+            <slideframe>
+                  <div id="document_canvas2" ng-click="openDocumentList3(<?=$id?>)"></div>
+              </slideframe>
               <paging>
                 <span onclick="slideJsApi.prevPage(); return false;"><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_back.png" width="30" height="30" alt=""></span>
                 <span class="pages"></span>

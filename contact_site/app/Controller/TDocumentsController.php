@@ -269,6 +269,9 @@ class TDocumentsController extends AppController {
   private function _createThumnail($fileName){
     $name = C_PREFIX_DOCUMENT.pathinfo($fileName, PATHINFO_FILENAME).".jpg"; //サムネイルのファイル名
     $thumbname = C_PATH_TMP_IMG_DIR.DS.$name; //サムネイルのパス名
+    $this->log('ぬおおおおおおおお',LOG_DEBUG);
+    $this->log('ぬおおおおおおおお',LOG_DEBUG);
+    $this->log('ぬおおおおおおおお',LOG_DEBUG);
     /* 画像の読み込み */
     $thumbImg = new Imagick();
     /* サムネイルの作成 */
@@ -307,5 +310,48 @@ class TDocumentsController extends AppController {
 
     $this->set('download', $download);
     $this->set('pagenation', $pagenation);
+  }
+
+
+  /* *
+   * プレビュー画面
+   * @return void
+   * */
+  public function openPreview() {
+    Configure::write('debug', 0);
+    $this->autoRender = FALSE;
+    $this->layout = 'ajax';
+
+    // const
+    $this->render('/Elements/TDocuments/remoteOpenPreviewScreen');
+  }
+
+    /**
+   * remoteOpenDocumentList
+   * 共有する資料リストを表示
+   * @return string html
+   * */
+  public function remoteOpenDocumentLists(){
+    $this->layout = "ajax";
+    $ret = [];
+    $ret['tagList'] = $this->jsonEncode([1 => 'メイン', 2 => '紹介用', 3 => '営業用', 4 => '製品A', 5 => '製品B']);
+    $tDocumentList = $this->TDocument->find('all', [
+      'fields' => [
+        'id', 'name', 'file_name', 'overview', 'tag', 'manuscript', 'settings', 'pagenation_flg', 'download_flg', 'password'
+      ],
+      'conditions' => [
+        'm_companies_id' => $this->userInfo['MCompany']['id'],
+        'id' => $this->request->data['id']
+      ],
+      'recursive' => -1
+    ]);
+    $docList = [];
+    foreach ($tDocumentList as $key => $val ) {
+      $tmp = $val['TDocument'];
+      $tmp['thumnail'] = C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/".C_PREFIX_DOCUMENT.pathinfo(h($val['TDocument']['file_name']), PATHINFO_FILENAME).".jpg";
+      $docList[] = $tmp;
+    }
+    $ret['documentList'] = json_encode($docList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+    return new CakeResponse(['body' => json_encode($ret)]);
   }
 }
