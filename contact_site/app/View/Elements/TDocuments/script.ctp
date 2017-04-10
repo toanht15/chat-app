@@ -360,10 +360,10 @@ var slideJsApi,slideJsApi2,slideJsCNST;
       // キープレス
       $(window).keyup(function(e){
         if ( e.keyCode === 37 || e.keyCode === 38 ) {
-          slideJsApi2.prevPage();
+          slideJsApi2.nextPage();
         }
         else if ( e.keyCode === 39 || e.keyCode === 40 ) {
-          slideJsApi2.nextPage();
+          slideJsApi2.prevPage();
         }
       });
     },
@@ -617,8 +617,7 @@ var slideJsApi,slideJsApi2,slideJsCNST;
       }
       slideJsApi2.render();
     },
-    readFile: function(doc,canvasId,callback){
-      var canvas = document.getElementById(canvasId);
+    readFile: function(doc,callback){
       this.filePath = "<?=C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/svg_"?>" + doc.file_name.replace(/\.pdf$/, "");
       sessionStorage.setItem('doc', JSON.stringify(doc));
       this.doc = doc;
@@ -665,4 +664,148 @@ var slideJsApi,slideJsApi2,slideJsCNST;
     <?php endif; ?>
   });
 })();
+
+$(document).on("keydown", "#scaleType", function(e){ return false; });
+var sincloApp = angular.module('sincloApp', []);
+sincloApp.controller('MainCtrl', function($scope){
+  $scope.documentList = [];
+  $scope.tagList = {};
+  $scope.searchName = "";
+  $scope.selectList = {};
+  $scope.searchFunc = function(documentList){
+    var targetTagNum = Object.keys($scope.selectList).length;
+
+    function check(elem, index, array){
+      var flg = true;
+      if ( elem.tag !== "" && elem.tag !== null ) {
+        elem.tags = $scope.jParse(elem.tag);
+      }
+      if ( $scope.searchName === "" && targetTagNum === 0 ) {
+        return elem;
+      }
+
+      if ( $scope.searchName !== "" && (elem.name + elem.overview).indexOf($scope.searchName) < 0 ) {
+        flg = false;
+      }
+
+      if ( flg && targetTagNum > 0 ) {
+        var selectList = Object.keys($scope.selectList);
+        flg = true;
+        for ( var i = 0; selectList.length > i; i++ ) {
+          if ( elem.tags.indexOf(Number(selectList[i])) === -1 ) {
+            flg = false;
+          }
+        }
+      }
+
+      return ( flg ) ? elem : false;
+
+    }
+
+    return documentList.filter(check);
+  };
+
+  /**
+   * openDocumentList
+   *  ドキュメントリストの取得
+   * @return void(0)
+   */
+  $scope.openDocumentList3 = function(id) {
+    $.ajax({
+      type: 'post',
+      data: {
+        id:id
+      },
+      url: '<?=$this->Html->url(["controller" => "TDocuments", "action" => "remoteOpenDocumentLists"])?>',
+      dataType: 'json',
+      success: function(json) {
+        doc = JSON.parse(json.documentList)[0];
+        $("#ang-popup3").addClass("show");
+        $scope.searchName = "";
+        var contHeight = $('#ang-popup-content3').height();
+        $('#ang-popup-frame3').css('height', contHeight);
+        $scope.tagList = ( json.hasOwnProperty('tagList') ) ? JSON.parse(json.tagList) : {};
+        $scope.documentList = ( json.hasOwnProperty('documentList') ) ? JSON.parse(json.documentList) : {};
+        $scope.$apply();
+        slideJsApi2.readFile(doc,"document_canvas",function(err) {
+          if (err) return false;
+          var settings = JSON.parse(doc.settings);
+        });
+      }
+    });
+  };
+
+  $scope.openDocumentList2 = function() {
+    $.ajax({
+      type: 'GET',
+      url: '<?=$this->Html->url(["controller" => "Customers", "action" => "remoteOpenDocumentLists"])?>',
+      dataType: 'json',
+      success: function(json) {
+        doc = JSON.parse(json.documentList)[0];
+        $("#ang-popup2").addClass("show");
+        $scope.searchName = "";
+        var contHeight = $('#ang-popup-content2').height();
+        $('#ang-popup-frame2').css('height', contHeight);
+        $scope.tagList = ( json.hasOwnProperty('tagList') ) ? JSON.parse(json.tagList) : {};
+        $scope.documentList = ( json.hasOwnProperty('documentList') ) ? JSON.parse(json.documentList) : {};
+        $scope.$apply();
+      }
+    });
+  };
+  /**
+   * [shareDocument description]
+   * @param  {object} doc documentInfo
+   * @return {void}     open new Window.
+   */
+  $scope.shareDocument = function(doc) {
+    var targetTabId = tabId.replace("_frame", "");
+    sessionStorage.removeItem('doc');
+    window.open(
+      "<?= $this->Html->url(['controller' => 'Customers', 'action' => 'docFrame']) ?>?tabInfo=" + encodeURIComponent(targetTabId) + "&docId=" + doc.id,
+      "doc_monitor_" + targetTabId,
+      "width=480,height=400,dialog=no,toolbar=no,location=no,status=no,menubar=no,directories=no,resizable=no, scrollbars=no"
+    );
+    $scope.closeDocumentList();
+  };
+
+  /**
+   * [changeDocument description]
+   * @param  {object} doc document's info
+   * @return {void}     send new docURL
+   */
+    $scope.changeDocument = function(doc){
+    sessionStorage.setItem('page', 1);
+    sessionStorage.setItem('scale', 1);
+    slideJsApi2.readFile(doc, function(err) {
+      if (err) return false;
+      var settings = JSON.parse(doc.settings);
+    });
+    $scope.closeDocumentList2();
+  };
+
+  $scope.closeDocumentList = function() {
+    var scroll_event = 'onwheel' in document ? 'wheel' : 'onmousewheel' in document ? 'mousewheel' : 'DOMMouseScroll';
+    $(document).off(scroll_event);
+    $("#ang-popup3").removeClass("show");
+  };
+
+  $scope.closeDocumentList2 = function() {
+    $("#ang-popup2").removeClass("show");
+  };
+});
+
+window.onload = function(){
+  $("#manuscriptArea").draggable({
+    scroll: false,
+    containment: "slideframea",
+    cancel: "#document_canvas"
+  })
+  .css({
+    'display': 'block',
+    'position': 'relative',
+    'width': "calc(100% - 150px)",
+    'left': "125px",
+    'top': "4em"
+  });
+};
 </script>

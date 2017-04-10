@@ -4684,7 +4684,7 @@ ul.naviBtn {
 
     &.document_list {
       $p-document-list-width: 105em;
-      $p-document-list-height: 69em;
+      $p-document-list-height: 71em;
       width: $p-document-list-width;
       height: $p-document-list-height;
       border: 1px solid #595959;
@@ -4695,12 +4695,6 @@ ul.naviBtn {
         padding-right: 3em;
       }
 
-  /*#position{
-    position: relative;
-    overflow: hidden;
-    width: 100%;
-    height: 100%;*/
-
       slideFramea {
         position: absolute;
         top: 0;
@@ -4710,6 +4704,7 @@ ul.naviBtn {
         z-index: 1;
         overflow:hidden;
         margin-left:100px;
+        margin-top:40px;
 
         #document_canvas {
           position: absolute;
@@ -4984,9 +4979,8 @@ ul.naviBtn {
         }
       }
     }
-    /*}*/
   }
-  slideFrame {
+  slideFramea {
     position: absolute;
     top: 0;
     bottom: 0;
@@ -4995,6 +4989,7 @@ ul.naviBtn {
     z-index: 1;
     overflow:hidden;
     margin-left:100px;
+    margin-top:40px;
 
     #document_canvas {
       position: absolute;
@@ -5005,7 +5000,7 @@ ul.naviBtn {
       overflow: hidden;
       display: flex;
 
-      .slide {
+      .slide2 {
         display: flex;
         overflow: auto;
         align-items: center;
@@ -5014,7 +5009,7 @@ ul.naviBtn {
 
         img {
           position: absolute;
-          top: 85px;
+          top: 50px;
           left: 0;
           right: 0;
           margin: 0 auto;
@@ -5026,51 +5021,7 @@ ul.naviBtn {
 
 li-bottom2 {
   display: block;
-  margin-top:56em;
-}
-
-#manuscriptArea2 {
-  background-color: #FFF;
-  padding: 0.5em;
-  min-height: 4em;
-  box-shadow: 0 0 2px rgba(0,0,0,0.7);
-  font-size: 1.1em;
-  width: calc(100% - 150px);
-  cursor: move;
-  z-index: 2;
-  opacity: 0.6;
-
-  #manuscript {
-    white-space: pre-wrap;
-    padding: 0 1em;
-    display: block!important;
-  }
-
-  &:after {
-    content: "※ この原稿は消費者側には表示されません";
-    font-size: 0.9em;
-    color: #e48c8c;
-    display: block;
-    margin-top: 0.5em;
-    padding: 0 1em;
-  }
-
-  #manuscriptCloseBtn2 {
-    display: block;
-    position: absolute;
-    right: 0;
-    top: 0;
-    background-image: url(/img/close_b.png);
-    background-size: 2em;
-    background-repeat: no-repeat;
-    width: 2em;
-    height: 2em;
-    cursor: pointer;
-
-    &:hover {
-      background-color: #c3c3c3;
-    }
-  }
+  margin-top:58em;
 }
 
 
