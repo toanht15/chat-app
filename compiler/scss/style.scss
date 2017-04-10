@@ -3965,7 +3965,7 @@ ul.naviBtn {
                 overflow: hidden;
                 display: flex;
 
-                &:hover:before {
+                  &:hover:before {
                   content: " ";
                   position: absolute;
                   top: 0;
@@ -3982,6 +3982,7 @@ ul.naviBtn {
                   display: flex;
                   justify-content: center;
                   align-items: center;
+                  overflow:hidden;
 
                   &#slide_temp {
                     width: 22.5em;
@@ -4933,6 +4934,8 @@ ul.naviBtn {
           left: 0;
           right: 0;
           margin: 0 auto;
+          -webkit-transform-origin: 0 0;
+          transform-origin: 0 0;
         }
       }
     }
