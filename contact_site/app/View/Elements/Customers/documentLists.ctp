@@ -87,19 +87,6 @@ var slideJsApi = {
       }
     });
 
-    // スワイプでページ移動
-    $('.slide').on('touchend', function(e){
-      var slideTerm = e.target.scrollWidth - e.target.clientWidth;
-      // 次のページへ移動
-      if ( slideTerm === e.target.scrollLeft ) {
-          slideJsApi.nextPage();
-      }
-      // 前のページへ移動
-      if ( slideTerm === 0 ) {
-          slideJsApi.prevPage();
-      }
-    });
-
     // 特定のページへ移動
     $(document).on('click', 'img-frame', function(){
       var page = $(this).parents('.slick-slide').data('page');

@@ -82,6 +82,51 @@ var pdfjsCNST, slideJsApi, frameSize, scrollFlg;
           slideJsApi.pageRender();
         }, 300);
       });
+
+     var direction, position;
+
+      //指が触れたか検知
+      $('.slide').on('touchstart', function (event) {
+        //スワイプ開始時の横方向の座標を格納
+        position = getPosition(event);
+        direction = ''; //一度リセットする
+      });
+      
+      //指が動いたか検知
+      $('.slide').on('touchmove', function (event) {
+        //スワイプの方向（left／right）を取得
+        if (position - getPosition(event) > 70) { // 70px以上移動しなければスワイプと判断しない
+          direction = 'left'; //左と検知
+        } else if (position - getPosition(event) < -70){  // 70px以上移動しなければスワイプと判断しない
+          direction = 'right'; //右と検知
+        }
+      });
+      
+      
+      //指が離れたか検知
+      $('.slide').on('touchend', function (event) {
+        var slideTerm = this.scrollWidth - this.clientWidth;
+      
+        if (direction == 'right'){
+          if ( this.scrillLeft > 0 ) {
+            return false;
+          }
+      
+          slideJsApi.prevPage();
+        } else if (direction == 'left'){
+          if ( slideTerm !== this.scrollLeft ) {
+            return false;
+          }
+      
+          slideJsApi.nextPage();
+        }
+      });
+
+      //横方向の座標を取得
+      function getPosition(event) {
+        return event.originalEvent.touches[0].pageX;
+      }
+
       // キープレス
       window.addEventListener('keydown',function(e){
         if ( e.keyCode === 37 || e.keyCode === 38 ) {
