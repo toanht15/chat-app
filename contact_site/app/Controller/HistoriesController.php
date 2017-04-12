@@ -1281,6 +1281,7 @@ class HistoriesController extends AppController {
    * @return  osの種類
    * */
   private function _userAgentCheckOS($val){
+     Configure::write('debug', 2);
     if(preg_match('/Windows NT 10.0/',$val['THistory']['user_agent'])){
       $os = "Windows 10"; // Windows 10 の処理
     }
@@ -1317,7 +1318,7 @@ class HistoriesController extends AppController {
     else if(preg_match('/Windows 95/',$val['THistory']['user_agent'])){
       $os = "Windows 95"; // Windows 95 の処理
     }
-    else if(preg_match('/Windows NT 5.2/' && '/Phone/',$val['THistory']['user_agent'])){
+    else if(preg_match('/Windows NT 5.2/',$val['THistory']['user_agent']) && preg_match('/Phone/',$val['THistory']['user_agent'])) {
       $os = "Windows Phone"; // Windows Phone の処理
     }
     else if(preg_match('/Xbox/',$val['THistory']['user_agent'])){
@@ -1363,19 +1364,40 @@ class HistoriesController extends AppController {
     else if(preg_match('/Android/',$val['THistory']['user_agent'])){
       $myKey = "Android";
       $myEnd = ";";
-      $myStart = strpos($val['THistory']['user_agent'],$myKey) + strlen($myKey);
-      $myEnd = strpos($val['THistory']['user_agent'],$myEnd,mb_strpos($val['THistory']['user_agent'],$myEnd)+1);
+      /*$myStart = strpos($val['THistory']['user_agent'],$myKey) + strlen($myKey);
+      $myEnd = strpos($val['THistory']['user_agent'],$myEnd,strpos($val['THistory']['user_agent'],$myEnd)+10 );
       $myDifference = $myEnd - $myStart;
       $version = mb_substr($val['THistory']['user_agent'],$myStart,$myDifference);
       $terminal = "";
       if(preg_match('/Build/',$val['THistory']['user_agent'])){
-        $a = mb_substr($val['THistory']['user_agent'],0,strpos($val['THistory']['user_agent'],'Build'));
-        $myEnd = strpos($a,";",strpos($a,";")+1);
-        $terminal = mb_substr($a,$myEnd);
-        $terminal = "(".str_replace(';','',$terminal).")";
-        $terminal = preg_replace("/( |　)/", "", $terminal );
-      }
+        $myKey = "ja-jp;";
+        $myStart = strpos($val['THistory']['user_agent'],$myKey) + strlen($myKey);
+        $myEnd = "Build";
+        $myEnd = strpos($val['THistory']['user_agent'],$myEnd) + strlen($myEnd);
+        $myDifference = $myEnd - $myStart;
+        $terminal = mb_substr($val['THistory']['user_agent'],$myStart,$myDifference);
+        $terminal = str_replace(" Build", "", $terminal);
+        $terminal = "(" . ltrim($terminal) . ")\n";
+      }*/
+      $myStart = strpos($val['THistory']['user_agent'],$myKey) + strlen($myKey);
+      $myEnd = strpos($val['THistory']['user_agent'],$myEnd,strpos($val['THistory']['user_agent'],$myEnd)+1 );
+      $myDifference = $myEnd - $myStart;
+      $version = mb_substr($val['THistory']['user_agent'],$myStart,$myDifference);
+      $terminal = "";
+      $myEnd = ";";
+      $myStart = strpos($val['THistory']['user_agent'],";" ,strpos($val['THistory']['user_agent'],$myEnd)+10 );
+      pr($myStart);
+      $myEnd = "Build";
+      $myEnd = strpos($val['THistory']['user_agent'],$myEnd) + strlen($myEnd);
+      pr($myEnd);
+      $myDifference = $myEnd - $myStart;
+      pr($myDifference);
+      $terminal = mb_substr($val['THistory']['user_agent'],$myStart,$myDifference);
+      $terminal = str_replace(" Build", "", $terminal);
+      $terminal = "(" . ltrim($terminal) . ")\n";
       $os = " Android " .$version.$terminal;
+      $os = trim($os);
+      pr($os); exit();
     }
     else if(preg_match('/Firefox/' && '/Mobile/') && !preg_match('/Android/',$val['THistory']['user_agent'])) {
       $os = "FireFox Mobile"; // FireFoxOS の処理
@@ -1383,7 +1405,7 @@ class HistoriesController extends AppController {
     else if(preg_match('/Firefox/' && '/Tablet/') && !preg_match('/Android/',$val['THistory']['user_agent'])) {
       $os = "FireFox Tablet"; // FireFoxOS の処理
     }
-    else if(preg_match('/BlackBerry/' || ('/BB10/' && '/Android/'),$val['THistory']['user_agent'])) {
+    else if(preg_match('/BlackBerry/',$val['THistory']['user_agent']) || preg_match('/BB10/' && '/Android/',$val['THistory']['user_agent'])) {
       $os = "BlackBerry"; // BlackBerry の処理
     }
     else if(preg_match('/Ubuntu/',$val['THistory']['user_agent'])){
@@ -1414,15 +1436,16 @@ class HistoriesController extends AppController {
    * @return  browserの種類
    * */
   private function _userAgentCheckBrowser($val){
+    Configure::write('debug', 0);
     $browser = 'unknown';
-    if (strpos($val['THistory']['user_agent'],'msie')) {
-      preg_match('/Msie.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      $version = str_replace("msie", "", $match[0]);
+    if (strpos($val['THistory']['user_agent'],'MSIE')) {
+      preg_match('/MSIE.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
+      $version = str_replace("MSIE", "", $match[0]);
       $browser = "IE(ver." .$version.  ")";
     }
     else if(preg_match('/sleipnir/i',$val['THistory']['user_agent'])) {
       preg_match('/Sleipnir.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      $version = str_replace("Sleipnir", "", $match[0]);
+      $version = str_replace("Sleipnir/", "", $match[0]);
       $browser = "Sleipnir(ver." .$version.  ")";
     }
     else if(preg_match('/lunascape/i',$val['THistory']['user_agent'])) {
@@ -1443,6 +1466,9 @@ class HistoriesController extends AppController {
     else if(preg_match('/opera mini/i',$val['THistory']['user_agent'])) {
       preg_match('/Opera Mini.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
       $version = str_replace("Opera Mini/", "", $match[0]);
+      $myEnd = "/";
+      $myEnd = strpos($version,$myEnd);
+      $version = mb_substr($version,0,$myEnd);
       $browser = "Opera Mini(ver." .$version.  ")";
     }
     else if(preg_match('/opera/i',$val['THistory']['user_agent'])) {
@@ -1451,8 +1477,8 @@ class HistoriesController extends AppController {
       $browser = "Opera(ver." .$version.  ")";
     }
     else if(preg_match('/opr/i',$val['THistory']['user_agent'])) {
-      preg_match('/Opr.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      $version = str_replace("Opr/", "", $match[0]);
+      preg_match('/OPR.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
+      $version = str_replace("OPR/", "", $match[0]);
       $browser = "Opera(ver." .$version.  ")";
     }
     else if(preg_match('/vivaldi/i',$val['THistory']['user_agent'])) {
@@ -1491,8 +1517,8 @@ class HistoriesController extends AppController {
       $browser = "Chrome(ver." .$version.  ")";
     }
     else if(preg_match('/crios/i',$val['THistory']['user_agent']) && !preg_match('/samsungbrowser/i',$val['THistory']['user_agent'])) {
-      preg_match('/Crios.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      $version = str_replace("Crios/", "", $match[0]);
+      preg_match('/CriOS.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
+      $version = str_replace("CriOS/", "", $match[0]);
       $browser = "Chrome(ver." .$version.  ")";
     }
     else if(preg_match('/blackberry/i',$val['THistory']['user_agent']) || preg_match('/bb10/i',$val['THistory']['user_agent'])) {

@@ -17,8 +17,7 @@
       <!-- 概要 -->
 
       <?php
-        $id = $_SERVER["REQUEST_URI"];
-        $id = substr($id, 17);
+        $id = $this->params['pass'][0];
       ?>
 
       <!-- 資料 -->

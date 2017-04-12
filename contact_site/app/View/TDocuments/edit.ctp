@@ -18,11 +18,11 @@
       <?=$this->Form->end();?>
     </div>
   </div>
-  <div id="ang-popup3">
-    <div id="ang-base3">
-      <div id="ang-popup-background3"></div>
-      <div id="ang-popup-frame3">
-        <div id="ang-popup-content3" class="document_list">
+  <div id="document-preview">
+    <div id="document-base">
+      <div id="document-preview-background"></div>
+      <div id="document-preview-frame">
+        <div id="document-preview-content" class="document_list">
         <!-- /* サイドバー */ -->
         <ul id="document_share_tools">
           <li-bottom2>
@@ -89,11 +89,11 @@
     <div id="document_canvas2"></div>
   </slideFrame2>
 
-  <div id="ang-popup2">
-    <div id="ang-base2">
-      <div id="ang-popup-background2"></div>
-      <div id="ang-popup-frame2">
-        <div id="ang-popup-content2" class="document_list">
+  <div id="switching-preview">
+    <div id="switching-base">
+      <div id="switching-preview-background"></div>
+      <div id="switching-preview-frame">
+        <div id="switching-preview-content" class="document_list">
           <div id="title_area2">資料一覧</div>
           <div id="search_area2">
             <?=$this->Form->input('name', ['label' => 'フィルター：', 'ng-model' => 'searchName']);?>
@@ -117,8 +117,6 @@
             <a class="btn-shadow greenBtn" ng-click="closeDocumentList2()" href="javascript:void(0)">閉じる</a>
           </div>
         </div>
-      </div>
-      <div id="ang-ballons2">
       </div>
     </div>
   </div>

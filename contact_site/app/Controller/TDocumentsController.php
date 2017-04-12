@@ -314,10 +314,9 @@ class TDocumentsController extends AppController {
    * 共有する資料リストを表示
    * @return string html
    * */
-  public function remoteOpenDocumentLists(){
-    $this->layout = "ajax";
+  public function remoteOpenDocumentPreview(){
+ $this->layout = "ajax";
     $ret = [];
-    $ret['tagList'] = $this->jsonEncode([1 => 'メイン', 2 => '紹介用', 3 => '営業用', 4 => '製品A', 5 => '製品B']);
     $tDocumentList = $this->TDocument->find('all', [
       'fields' => [
         'id', 'name', 'file_name', 'overview', 'tag', 'manuscript', 'settings', 'pagenation_flg', 'download_flg', 'password'
@@ -328,13 +327,7 @@ class TDocumentsController extends AppController {
       ],
       'recursive' => -1
     ]);
-    $docList = [];
-    foreach ($tDocumentList as $key => $val ) {
-      $tmp = $val['TDocument'];
-      $tmp['thumnail'] = C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/".C_PREFIX_DOCUMENT.pathinfo(h($val['TDocument']['file_name']), PATHINFO_FILENAME).".jpg";
-      $docList[] = $tmp;
-    }
-    $ret['documentList'] = json_encode($docList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+    $ret['documentList'] = json_encode($tDocumentList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
     return new CakeResponse(['body' => json_encode($ret)]);
   }
 }

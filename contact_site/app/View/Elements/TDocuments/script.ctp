@@ -720,14 +720,14 @@ sincloApp.controller('MainCtrl', function($scope){
       data: {
         id:id
       },
-      url: '<?=$this->Html->url(["controller" => "TDocuments", "action" => "remoteOpenDocumentLists"])?>',
+      url: '<?=$this->Html->url(["controller" => "TDocuments", "action" => "remoteOpenDocumentPreview"])?>',
       dataType: 'json',
       success: function(json) {
-        doc = JSON.parse(json.documentList)[0];
-        $("#ang-popup3").addClass("show");
+        doc = JSON.parse(json.documentList)[0]['TDocument'];
+        $("#document-preview").addClass("show");
         $scope.searchName = "";
-        var contHeight = $('#ang-popup-content3').height();
-        $('#ang-popup-frame3').css('height', contHeight);
+        var contHeight = $('#document-preview-content').height();
+        $('#document-preview-frame').css('height', contHeight);
         $scope.tagList = ( json.hasOwnProperty('tagList') ) ? JSON.parse(json.tagList) : {};
         $scope.documentList = ( json.hasOwnProperty('documentList') ) ? JSON.parse(json.documentList) : {};
         $scope.$apply();
@@ -745,11 +745,11 @@ sincloApp.controller('MainCtrl', function($scope){
       url: '<?=$this->Html->url(["controller" => "Customers", "action" => "remoteOpenDocumentLists"])?>',
       dataType: 'json',
       success: function(json) {
-        doc = JSON.parse(json.documentList)[0];
-        $("#ang-popup2").addClass("show");
+        doc = JSON.parse(json.documentList)[0]['TDocument'];
+        $("#switching-preview").addClass("show");
         $scope.searchName = "";
-        var contHeight = $('#ang-popup-content2').height();
-        $('#ang-popup-frame2').css('height', contHeight);
+        var contHeight = $('#switching-preview-content').height();
+        $('#switching-preview-frame').css('height', contHeight);
         $scope.tagList = ( json.hasOwnProperty('tagList') ) ? JSON.parse(json.tagList) : {};
         $scope.documentList = ( json.hasOwnProperty('documentList') ) ? JSON.parse(json.documentList) : {};
         $scope.$apply();
@@ -790,11 +790,11 @@ sincloApp.controller('MainCtrl', function($scope){
   $scope.closeDocumentList = function() {
     var scroll_event = 'onwheel' in document ? 'wheel' : 'onmousewheel' in document ? 'mousewheel' : 'DOMMouseScroll';
     $(document).off(scroll_event);
-    $("#ang-popup3").removeClass("show");
+    $("#document-preview").removeClass("show");
   };
 
   $scope.closeDocumentList2 = function() {
-    $("#ang-popup2").removeClass("show");
+    $("#switching-preview").removeClass("show");
   };
 });
 
