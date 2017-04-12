@@ -1,6 +1,3 @@
-<?= $this->Html->script(C_PATH_NODE_FILE_SERVER."/websocket/pdf.min.js"); ?>
-<?= $this->Html->script(C_PATH_NODE_FILE_SERVER."/websocket/compatibility.min.js"); ?>
-
 <script type="text/javascript">
 <?= $this->element('TDocuments/loadScreen'); ?>
 <?php if ( $this->action !== "index" ) : ?>
@@ -63,7 +60,6 @@ function tagAdd(){
 //保存機能
 function saveAct(){
   loading.load.start();
-  console.log(JSON.stringify(slideJsApi.manuscript));
   // ページ離脱防止解除
   window.removeEventListener('beforeunload', onBeforeunloadHandler, false);
 
@@ -625,8 +621,6 @@ var slideJsApi,slideJsApi2,slideJsCNST;
       this.filePath = "<?=C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/svg_"?>" + doc.file_name.replace(/\.pdf$/, "");
       sessionStorage.setItem('doc', JSON.stringify(doc));
       this.doc = doc;
-      // ダウンロードファイルの設定
-      //document.getElementById('downloadFilePath').href = "<?=C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/"?>" + doc.file_name;
       this.currentPage = (sessionStorage.getItem('page') !== null) ? Number(sessionStorage.getItem('page')) : 1;
       this.currentScale = (sessionStorage.getItem('scale') !== null) ? Number(sessionStorage.getItem('scale')) : 1;
       if ( sessionStorage.getItem('manuscript') === null ) { sessionStorage.setItem('manuscript', 'block') }
@@ -664,7 +658,7 @@ var slideJsApi,slideJsApi2,slideJsCNST;
       $filePath = C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/svg_".pathinfo(h($this->data['TDocument']['file_name']), PATHINFO_FILENAME);
     ?>
 
-    slideJsApi.init("<?=$filePath?>", "<?=$pages?>","document_canvas");
+    slideJsApi.init("<?=$filePath?>", "<?=$pages?>");
     <?php endif; ?>
   });
 })();
@@ -723,13 +717,13 @@ sincloApp.controller('MainCtrl', function($scope){
       url: '<?=$this->Html->url(["controller" => "TDocuments", "action" => "remoteOpenDocumentPreview"])?>',
       dataType: 'json',
       success: function(json) {
-        doc = JSON.parse(json.documentList)[0]['TDocument'];
+        doc = JSON.parse(json.documentPreview)[0]['TDocument'];
         $("#document-preview").addClass("show");
         $scope.searchName = "";
         var contHeight = $('#document-preview-content').height();
         $('#document-preview-frame').css('height', contHeight);
         $scope.tagList = ( json.hasOwnProperty('tagList') ) ? JSON.parse(json.tagList) : {};
-        $scope.documentList = ( json.hasOwnProperty('documentList') ) ? JSON.parse(json.documentList) : {};
+        $scope.documentList = ( json.hasOwnProperty('documentList') ) ? JSON.parse(json.documentPreview) : {};
         $scope.$apply();
         slideJsApi2.readFile(doc,function(err) {
           if (err) return false;
