@@ -26,13 +26,14 @@
         <documentArea>
           <content>
             <preview>
-              <?php if(empty($id)) { ?>
+              <?php if(empty($this->params['pass'][0])) { ?>
                 <slideframe style="pointer-events: none;" >
+                <div id="document_canvas"></div>
               <?php }
               else { ?>
                 <slideframe>
+                <div id="document_canvas" ng-click="openDocumentList3(<?=$this->params['pass'][0]?>)"></div>
               <?php } ?>
-              <div id="document_canvas" ng-click="openDocumentList3(<?=$id?>)"></div>
               </slideframe>
               <paging>
                 <span onclick="slideJsApi.prevPage(); return false;"><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_back.png" width="30" height="30" alt=""></span>
