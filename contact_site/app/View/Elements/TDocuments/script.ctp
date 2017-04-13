@@ -215,8 +215,6 @@ var slideJsApi,slideJsApi2,slideJsCNST;
        /* サイズ調整処理 */
       $(".slide").css("width",  canvas.clientWidth + "px").css("height", canvas.clientHeight + "px");
       $(".slide img").css("transform", "scale(" + slideJsApi.currentScale + ")");
-      //$(".slide img").css("width",142+"px")
-                     //.css("height",93+"pt");
       var docCanvas = document.getElementById('document_canvas');
       docCanvas.style.width = this.maxPage * canvas.clientWidth + "px";
     },

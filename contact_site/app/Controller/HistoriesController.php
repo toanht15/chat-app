@@ -247,7 +247,7 @@ class HistoriesController extends AppController {
   }
 
   public function outputCSVOfHistory(){
-    Configure::write('debug', 2);
+    Configure::write('debug', 0);
     $name = "sinclo-history";
     //$returnData:$historyListで使うjoinのリストとconditionsの検索条件
     $returnData = $this->_searchConditions();
@@ -263,6 +263,7 @@ class HistoriesController extends AppController {
       'joins' =>  $returnData['joinList'],
       'conditions' => $returnData['conditions']
     ]);
+
     //$historyListに担当者を追加
     $userList = $this->_userList($historyList);
     //THistoryChatLogの「firstURL」と「count」をと取ってくる
@@ -349,6 +350,7 @@ class HistoriesController extends AppController {
 
   public function outputCSVOfChatHistory(){
     Configure::write('debug', 0);
+
     //$returnData:$historyListで使うjoinのリストとconditionsの検索条件
     $returnData = $this->_searchConditions();
     //$returnData:$returnDataのjoinにチャット履歴出力に必要なテーブルを追加
@@ -662,7 +664,6 @@ class HistoriesController extends AppController {
   }
 
   private function _setList($type=true){
-    Configure::write('debug', 0);
     $data = '';
     $userCond = [
       'm_companies_id' => $this->userInfo['MCompany']['id']
@@ -837,6 +838,7 @@ class HistoriesController extends AppController {
     }
 
     $historyList = $this->paginate('THistory');
+
     // TODO 良いやり方が無いか模索する
     $historyIdList = [];
     $customerIdList = [];
@@ -1314,7 +1316,6 @@ class HistoriesController extends AppController {
    * @return  osの種類
    * */
   private function _userAgentCheckOS($val){
-     Configure::write('debug', 0);
     if(preg_match('/Windows NT 10.0/',$val['THistory']['user_agent'])){
       $os = "Windows 10"; // Windows 10 の処理
     }
