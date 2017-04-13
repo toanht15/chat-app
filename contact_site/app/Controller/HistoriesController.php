@@ -263,7 +263,6 @@ class HistoriesController extends AppController {
       'joins' =>  $returnData['joinList'],
       'conditions' => $returnData['conditions']
     ]);
-
     //$historyListに担当者を追加
     $userList = $this->_userList($historyList);
     //THistoryChatLogの「firstURL」と「count」をと取ってくる
@@ -1056,10 +1055,9 @@ class HistoriesController extends AppController {
 
     if(isset($data['History']['ip_address']) && $data['History']['ip_address'] !== "") {
       $conditions += [
-        'THistory.ip_address' => '%'.$data['History']['ip_address'].'%',
+        'THistory.ip_address LIKE' => '%'.$data['History']['ip_address'].'%',
       ];
     }
-
     //開始日
     if(!empty($data['History']['start_day'])) {
       $conditions += [
