@@ -447,7 +447,6 @@ class HistoriesController extends AppController {
       if($val['THistoryChatLog']['message_type'] == 2) {
         $row['user'] = $val['User'];
       }
-      //exit();
       $csv[] = $row;
     }
     $this->_outputCSV($name, $csv);
