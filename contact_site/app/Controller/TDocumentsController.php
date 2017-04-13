@@ -308,4 +308,23 @@ class TDocumentsController extends AppController {
     $this->set('download', $download);
     $this->set('pagenation', $pagenation);
   }
+
+    /**
+   * remoteOpenDocumentPreview
+   * 共有する資料プレビューを表示
+   * @return string html
+   * */
+  public function remoteOpenDocumentPreview(){
+    $this->layout = "ajax";
+    $ret = [];
+    $DocumentPreview = $this->TDocument->find('first', [
+      'conditions' => [
+        'm_companies_id' => $this->userInfo['MCompany']['id'],
+        'id' => $this->request->data['id']
+      ],
+      'recursive' => -1
+    ]);
+    $ret['documentPreview'] = json_encode([$DocumentPreview], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+    return new CakeResponse(['body' => json_encode($ret)]);
+  }
 }

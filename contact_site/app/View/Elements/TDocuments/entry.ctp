@@ -14,7 +14,6 @@
         <span><label>概要</label></span>
         <?=$this->Form->input('overview', ['type'=>'textarea','placeholder' => '概要','label' => false,'div' => false,'maxlength'=>300,'cols' => 25,'rows' => 5])?>
       </li>
-      <!-- 概要 -->
 
       <!-- 資料 -->
       <li>
@@ -22,7 +21,16 @@
         <documentArea>
           <content>
             <preview>
-              <slideframe><div id="document_canvas"></div></slideframe>
+              <?php if(empty($this->params['pass'][0])) { ?>
+                <slideframe style="pointer-events: none;" >
+                  <div id="document_canvas"></div>
+                </slideframe>
+              <?php }
+              else { ?>
+                <slideframe>
+                  <div id="document_canvas" ng-click="openDocumentList3(<?=$this->params['pass'][0]?>)"></div>
+                </slideframe>
+              <?php } ?>
               <paging>
                 <span onclick="slideJsApi.prevPage(); return false;"><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_back.png" width="30" height="30" alt=""></span>
                 <span class="pages"></span>
