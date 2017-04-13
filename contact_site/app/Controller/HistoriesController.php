@@ -336,13 +336,15 @@ class HistoriesController extends AppController {
       $row['pageCnt'] = $stayList[$history['THistory']['id']]['THistoryStayLog']['count'];
       // 滞在時間
       $row['visitTime'] = $this->calcTime($history['THistory']['access_date'], $history['THistory']['out_date']);
-      // 成果
-      $row['achievement'] = "";
-      if ($history['THistoryChatLog2']['achievementFlg']){
-        $row['achievement'] = Configure::read('achievementType')[h($history['THistoryChatLog2']['achievementFlg'])];
+      if ( $this->coreSettings[C_COMPANY_USE_CHAT] ) {
+        // 成果
+        $row['achievement'] = "";
+        if ($history['THistoryChatLog2']['achievementFlg']){
+          $row['achievement'] = Configure::read('achievementType')[h($history['THistoryChatLog2']['achievementFlg'])];
+        }
+        //　担当者
+        $row['user'] =  $history['User'];
       }
-      //　担当者
-      $row['user'] =  $history['User'];
 
       $csv[] = $row;
     }
