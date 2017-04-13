@@ -452,6 +452,12 @@ class HistoriesController extends AppController {
     $this->_outputCSV($name, $csv);
   }
 
+    /**
+   * //
+   *  csvチャット履歴出力、joinのテーブル追加
+   * @param  検索条件
+   * @return 検索条件にチャット履歴出力のために必要なテーブルを追加
+   * */
   private function _searchConditionsChat($returnData){
     $returnData['joinList'][] =  [
       'type' => 'LEFT',
