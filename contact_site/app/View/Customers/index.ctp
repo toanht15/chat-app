@@ -3,7 +3,7 @@
 <?php echo $this->element('Customers/script') ?>
 <?php echo $this->element('Customers/angularjs') ?>
 
-<section id='customer_idx' class="{{customerMainClass}}" ng-app="sincloApp" ng-controller="MainCtrl">
+<section id='customer_idx' class="{{customerMainClass}}" ng-app="sincloApp" ng-controller="MainController">
 
     <div id='customer_main' class="card-shadow" ng-cloak>
         <?php echo $this->element('Customers/monitor') ?>

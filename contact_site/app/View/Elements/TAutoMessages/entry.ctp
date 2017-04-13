@@ -1,7 +1,7 @@
 <?php echo $this->element('TAutoMessages/angularjs'); ?>
 
 <?php $this->Form->inputDefaults(['label'=>false, 'div' => false, 'error' => false, 'legend' => false ]);?>
-<div class="form01" ng-app="sincloApp" ng-controller="MainCtrl as main" ng-cloak>
+<div class="form01" ng-app="sincloApp" ng-controller="MainController as main" ng-cloak>
   <section>
     <h3>１．基本設定</h3>
     <ul class="settingList pl30">

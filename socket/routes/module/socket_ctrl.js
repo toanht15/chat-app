@@ -1804,6 +1804,12 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     emit.toUser('changeDocument', d, doc_connectList[obj.tabId].customer);
   });
 
+  // 共有する資料を変更
+  socket.on('compReadFile', function(d){
+    var obj = JSON.parse(d);
+    emit.toUser('compReadFile', d, doc_connectList[obj.tabId].company);
+  });
+
   socket.on('docShareConnectToCustomer', function(d) {
     var obj = JSON.parse(d);
     if ( !getSessionId(obj.siteKey, obj.tabId, "sessionId") ) {

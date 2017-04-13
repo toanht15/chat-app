@@ -42,10 +42,11 @@
                 <?=$this->Form->input('files', ['type'=>'file','placeholder' => '資料', 'error' => false, 'label' => false,'div' => false])?>
                 <?=$this->Form->input('file_name', ['type'=>'hidden'])?>
                 <?=$this->Form->input('settings', ['type'=>'hidden'])?>
+                <?=$this->Form->input('rotation', ['type'=>'hidden'])?>
               </upload>
-              <!-- <rotate class="btn-shadow greenBtn" onclick="slideJsApi.rotate(); return false;">
+              <rotate class="btn-shadow greenBtn" onclick="slideJsApi.rotate(); return false;">
                 <?=$this->Html->image('rotate90_w.png', ['alt' => '90度資料を回転する']);?>
-              </rotate> -->
+              </rotate>
             </controller>
           </content>
           <content>

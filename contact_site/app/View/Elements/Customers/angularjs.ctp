@@ -323,7 +323,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     };
   });
 
-  sincloApp.controller('MainCtrl', ['$scope', 'angularSocket', '$timeout', function($scope, socket, $timeout) {
+  sincloApp.controller('MainController', ['$scope', 'angularSocket', '$timeout', function($scope, socket, $timeout) {
     $scope.searchText = "";
     $scope.chatMessage = "";
     $scope.oprCnt = 0; // 待機中のオペレーター人数
@@ -503,6 +503,17 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           $scope.$apply();
         }
       });
+    };
+
+    $scope.setDocThumnailStyle = function(doc) {
+      var matrix = "";
+      if ( doc.hasOwnProperty('settings') ) {
+        var settings = JSON.parse(doc.settings);
+        if ( settings.hasOwnProperty('rotation') && isNumber(settings.rotation) ) {
+          matrix = "rotate" + settings.rotation;
+        }
+      }
+      return matrix;
     };
 
     $scope.selectList = {};
@@ -2025,7 +2036,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
         function countUp(){
           // 存在しないユーザーなら、カウントを止める
-          if ( !scope.$parent.monitorList.hasOwnProperty(scope.monitor.tabId) ) return false;
+          if ( !scope.$parent.hasOwnProperty('monitorList') || (scope.$parent.hasOwnProperty('monitorList') && !scope.$parent.monitorList.hasOwnProperty(scope.monitor.tabId)) ) return false;
           scope.monitor.term = Number(scope.monitor.term) + term;
           var hour = parseInt(scope.monitor.term / 3600),
               min = parseInt((scope.monitor.term / 60) % 60),

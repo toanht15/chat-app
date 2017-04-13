@@ -55,6 +55,7 @@ socket.on('connect', function(){
 
   if (firstFlg) {
     var settings = JSON.parse(doc.settings);
+    var rotation = (settings.hasOwnProperty('rotation')) ? settings.rotation : 0;
     emit('docShareConnect', {
       from: 'company',
       responderId: '<?=$userInfo["id"]?>',
@@ -62,6 +63,7 @@ socket.on('connect', function(){
       fileName: doc.file_name,
       pagenation_flg: doc.pagenation_flg,
       pages: settings.pages,
+      rotation: rotation,
       download_flg: doc.download_flg
     }); // 資料共有開始
   }
@@ -126,19 +128,33 @@ window.onload = function(){
       slideJsApi.currentScale = obj.scale;
       sessionStorage.setItem('scale', slideJsApi.currentScale); // セッションに格納
       slideJsApi.resetZoomType();
+      slideJsApi.renderAllPage();
     }
     if ( obj.hasOwnProperty('page') ) {
       slideJsApi.currentPage = obj.page;
-      slideJsApi.cngPage();
+      slideJsApi.pageRender();
     }
-    else {
-      slideJsApi.render();
-    }
+  });
+
+  socket.on('compReadFile', function(d){
+    loading.load.finish(); // ローディング終了
+    return false;
   });
 
   socket.on('docDisconnect', function(d){
     window.close();
     return false;
+  });
+
+  $("#pageListToggleBtn").click(function(){
+    if ( $(this).is('.on') ) {
+      $(this).removeClass('on');
+      $("#slidesArea").css('top', '-140px');
+    }
+    else {
+      $(this).addClass('on');
+      $("#slidesArea").css('top', '40px');
+    }
   });
 
   $("#manuscriptArea").draggable({
@@ -158,7 +174,7 @@ window.onload = function(){
 // -->
 </script>
 
-<section id="document_share" ng-app="sincloApp" ng-controller="MainCtrl">
+<section id="document_share" ng-app="sincloApp" ng-controller="MainController">
 
   <!-- /* サイドバー */ -->
   <ul id="document_share_tools">
@@ -202,11 +218,14 @@ window.onload = function(){
       </li>
     </li-left>
     <li-center>
-      <li>
-        <span id="pages"></span>
+      <li class="showDescriptionBottom" data-description="目次を開く" onclick="return false;">
+        <span id="pageListToggleBtn" class="btn"><?=$this->Html->image("list.png", ['width'=>30, 'height'=>30, 'alt' => '目次']);?></span>
       </li>
     </li-center>
     <li-right>
+      <li>
+        <span id="pages"></span>
+      </li>
       <li id="scaleChoose">
         <label dir="scaleType">拡大率</label>
         <select name="scale_type" id="scaleType" onchange="slideJsApi.cngScale(); return false;">
@@ -230,10 +249,20 @@ window.onload = function(){
     </li-right>
   </ul>
   <!-- /* ツールバー */ -->
+
+  <!-- /* 目次*/ -->
+  <div id="slidesArea" style="top: -140px">
+    <div id="slideList" style="">
+    </div>
+  </div>
+  <!-- /* 目次*/ -->
+
+  <!-- /* 原稿*/ -->
   <div id="manuscriptArea" style="display:none;">
     <span id="manuscript"></span>
     <span id="manuscriptCloseBtn" onclick="slideJsApi.toggleManuScript(); return false;"></span>
   </div>
+  <!-- /* 原稿*/ -->
 
   <div id="tabStatusMessage">別の作業をしています</div>
 
@@ -255,7 +284,7 @@ window.onload = function(){
             <ol>
               <li ng-repeat="document in searchFunc(documentList)" ng-click="changeDocument(document)">
                 <div class="document_image">
-                  <img ng-src="{{::document.thumnail}}" style="width:5em;height:4em">
+                  <img ng-src="{{::document.thumnail}}" ng-class="::setDocThumnailStyle(document)">
                 </div>
                 <div class="document_content">
                   <h3>{{::document.name}}</h3>

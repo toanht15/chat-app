@@ -66,6 +66,11 @@ function saveAct(){
   if ( slideJsApi.hasOwnProperty('manuscript') ) {
     document.getElementById('TDocumentManuscript').value = JSON.stringify(slideJsApi.manuscript);
   }
+
+  if ( slideJsApi.hasOwnProperty('rotation') ) {
+    document.getElementById('TDocumentRotation').value = slideJsApi.rotation;
+  }
+
   document.getElementById('TDocumentEntryForm').submit();
   setTimeout(function(){
     $("a").addClass("disableBtn").prop("onclick", "").click(
@@ -286,7 +291,6 @@ var slideJsApi,slideJsApi2,slideJsCNST;
         var img = document.createElement('img');
         img.src = slideJsApi.filePath + "_" + Number(page) + '.svg';
         var slide = document.getElementById('slide_' + page);
-
         slide.appendChild(img);
         img.onload = function(){
           slideJsApi.renderPage(page);
@@ -652,13 +656,13 @@ var slideJsApi,slideJsApi2,slideJsCNST;
 
   $(document).ready(function(){
     <?php if ( !empty($this->data['TDocument']['file_name']) ):
-      $pages = 1;
       $settings = (array)json_decode($this->data['TDocument']['settings']);
       $pages = (isset($settings['pages'])) ? $settings['pages'] : 1;
+      $rotation = (isset($settings['rotation'])) ? $settings['rotation'] : 0;
       $filePath = C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/svg_".pathinfo(h($this->data['TDocument']['file_name']), PATHINFO_FILENAME);
     ?>
 
-    slideJsApi.init("<?=$filePath?>", "<?=$pages?>");
+    slideJsApi.init("<?=$filePath?>", "<?=$pages?>", "<?=$rotation?>");
     <?php endif; ?>
   });
 })();

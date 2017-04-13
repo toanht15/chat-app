@@ -30,12 +30,13 @@ var pdfjsCNST, slideJsApi, frameSize, scrollFlg;
     filePath: "",
     currentPage: 1,
     currentScale: 1,
-    loadedPage: 0,
     maxPage: 1,
+    rotation: 0,
     zoomInTimer: null,
     zoomInTimeTerm: 500,
     pagingTimer: null,
     pagingTimeTerm: 500,
+    readStartFlg: false,
     init: function(){
       this.resetZoomType();// 拡大率を設定
       this.pageRender();
@@ -70,15 +71,62 @@ var pdfjsCNST, slideJsApi, frameSize, scrollFlg;
       // ウィンドウリサイズ
       var resizeTimer = null;
       window.addEventListener('resize', function(){
+        $('slideFrame').css("opacity", 0);
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(function(){
           clearTimeout(resizeTimer);
           resizeTimer = null;
           slideJsApi.sendPositionAction();
           slideJsApi.render();
+          slideJsApi.renderAllPage();
           slideJsApi.pageRender();
         }, 300);
       });
+
+     var direction, position;
+
+      //指が触れたか検知
+      $('.slide').on('touchstart', function (event) {
+        //スワイプ開始時の横方向の座標を格納
+        position = getPosition(event);
+        direction = ''; //一度リセットする
+      });
+      
+      //指が動いたか検知
+      $('.slide').on('touchmove', function (event) {
+        //スワイプの方向（left／right）を取得
+        if (position - getPosition(event) > 70) { // 70px以上移動しなければスワイプと判断しない
+          direction = 'left'; //左と検知
+        } else if (position - getPosition(event) < -70){  // 70px以上移動しなければスワイプと判断しない
+          direction = 'right'; //右と検知
+        }
+      });
+      
+      
+      //指が離れたか検知
+      $('.slide').on('touchend', function (event) {
+        var slideTerm = this.scrollWidth - this.clientWidth;
+      
+        if (direction == 'right'){
+          if ( this.scrillLeft > 0 ) {
+            return false;
+          }
+      
+          slideJsApi.prevPage();
+        } else if (direction == 'left'){
+          if ( slideTerm !== this.scrollLeft ) {
+            return false;
+          }
+      
+          slideJsApi.nextPage();
+        }
+      });
+
+      //横方向の座標を取得
+      function getPosition(event) {
+        return event.originalEvent.touches[0].pageX;
+      }
+
       // キープレス
       window.addEventListener('keydown',function(e){
         if ( e.keyCode === 37 || e.keyCode === 38 ) {
@@ -160,7 +208,6 @@ var pdfjsCNST, slideJsApi, frameSize, scrollFlg;
       }, slideJsApi.pagingTimeTerm);
     },
     cngPage: function(){
-      slideJsApi.readPage();
       slideJsApi.pageRender();
       slideJsApi.sendCtrlAction('page');
     },
@@ -181,7 +228,7 @@ var pdfjsCNST, slideJsApi, frameSize, scrollFlg;
         clearTimeout(this.zoomInTimer);
         slideJsApi.currentScale = num;
         slideJsApi.sendCtrlAction("scale");
-        slideJsApi.render();
+        slideJsApi.renderAllPage();
       }, slideJsApi.zoomInTimeTerm);
     },
     zoomIn: function(num){
@@ -195,7 +242,7 @@ var pdfjsCNST, slideJsApi, frameSize, scrollFlg;
           slideJsApi.currentScale = 4;
         }
         slideJsApi.sendCtrlAction("scale");
-        slideJsApi.render();
+        slideJsApi.renderAllPage();
         slideJsApi.resetZoomType();
       }, slideJsApi.zoomInTimeTerm);
     },
@@ -210,7 +257,7 @@ var pdfjsCNST, slideJsApi, frameSize, scrollFlg;
           slideJsApi.currentScale = num;
         }
         slideJsApi.sendCtrlAction("scale");
-        slideJsApi.render();
+        slideJsApi.renderAllPage();
         slideJsApi.resetZoomType();
       }, slideJsApi.zoomInTimeTerm);
     },
@@ -243,6 +290,7 @@ var pdfjsCNST, slideJsApi, frameSize, scrollFlg;
       emit("docSendAction", data);
     },
     pageRender: function(){
+      slideJsApi.scrollTimer = null;
       var canvas = document.getElementById('document_canvas');
       var frameWidth = $("slideFrame").prop('offsetWidth');
       sessionStorage.setItem('page', slideJsApi.currentPage); // セッションに格納
@@ -254,13 +302,7 @@ var pdfjsCNST, slideJsApi, frameSize, scrollFlg;
     },
     render: function(){
       var canvas = document.querySelector('slideframe');
-      var frameWidth = $("slideFrame").prop('clientWidth');
-      var frameHeight = $("slideFrame").prop('clientHeight');
-      /* サイズ調整処理 */
-      $(".slide img").css("width", (canvas.clientWidth - 20) * 0.75 + "pt")
-                     .css("height", (canvas.clientHeight - 20) * 0.75 + "pt");
       $(".slide").css("width",  canvas.clientWidth + "px").css("height", canvas.clientHeight + "px");
-      $(".slide img").css("transform", "scale(" + slideJsApi.currentScale + ")");
 
       var docCanvas = document.getElementById('document_canvas');
       docCanvas.style.width = this.maxPage * canvas.clientWidth + "px";
@@ -270,6 +312,94 @@ var pdfjsCNST, slideJsApi, frameSize, scrollFlg;
         console.log(this.cnst[code]);
       }
     },
+    renderAllPage: function(){
+      for( var i = 1; i <= this.maxPage; i++ ){
+        this.renderPage(i);
+      }
+    },
+    renderPage: function(page){
+      var canvas = document.querySelector('slideframe'),
+          pageImg = document.querySelector("#slide_" + page + " img"),
+          wScale = 0, hScale = 0, scale = 0, pWidth = 0, pHeight = 0,
+          cWidth = canvas.clientWidth,
+          cHeight = canvas.clientHeight,
+          matrix;
+
+      if ( typeof pageImg.naturalWidth !== 'undefined' ) {
+        pWidth = pageImg.naturalWidth;
+        pHeight = pageImg.naturalHeight;
+      }
+      if ( typeof pageImg.runtimeStyle !== 'undefined' ) {
+        pageImg.style.opacity = 0;
+        pageImg.style.width  = "auto";
+        pageImg.style.height = "auto";
+        setTimeout(function(){
+          pWidth = pageImg.clientWidth;
+          pHeight = pageImg.clientHeight;
+          pageImg.style.opacity = 1;
+        }, 10);
+      }
+
+      setTimeout(function(){
+        wScale = cWidth/pWidth;
+        hScale = cHeight/pHeight;
+        if ( Number(slideJsApi.rotation) === 90 || Number(slideJsApi.rotation) === 270 ) {
+          wScale = cHeight/pWidth;
+          hScale = cWidth/pHeight;
+        }
+        scale = ( wScale < hScale ) ? wScale : hScale;
+        var setWidth = pWidth * scale * slideJsApi.currentScale;
+        var setHeight = pHeight * scale * slideJsApi.currentScale;
+        var x = 0, y= 0;
+        if ( Number(slideJsApi.rotation) === 90 || Number(slideJsApi.rotation) === 270 ) {
+          x = (setHeight - setWidth)/2;
+          if ( setHeight < cWidth ) {
+            x += (cWidth - setHeight)/2;
+          }
+          y = (setWidth - setHeight)/2;
+          if ( setWidth < cHeight ) {
+            y += (cHeight - setWidth)/2;
+          }
+        }
+        else {
+          if ( setWidth < cWidth ) {
+            x += (cWidth - setWidth)/2;
+          }
+          if ( setHeight < cHeight ) {
+            y += (cHeight - setHeight)/2;
+          }
+        }
+
+        switch (Number(slideJsApi.rotation)) {
+          case 90:
+            matrix = "matrix( 0, 1, -1, 0, " + x + ", " + y + ")";
+            break;
+          case 180:
+            matrix = "matrix(1, 0, 0, -1, " + x + ", " + y + ")";
+            break;
+          case 270:
+            x = (setHeight - setWidth)/2;
+            y = (setWidth - setHeight)/2;
+            matrix = "matrix( 0, -1, 1, 0, " + x + ", " + y + ")";
+            break;
+          default:
+            matrix = "matrix( 1, 0, 0, 1, " + x + ", " + y + ")";
+            break;
+        }
+
+        pageImg.style.width = setWidth + "px";
+        pageImg.style.height = setHeight + "px";
+        pageImg.style.transform = matrix;
+      }, 10);
+
+      setTimeout(function(){
+        $('slideFrame').css("opacity", 1);
+        if ( slideJsApi.readStartFlg ) {
+          slideJsApi.readStartFlg = false;
+          emit("compReadFile", {});
+        }
+      }, 100);
+    },
     makePage: function(){
       var docCanvas = document.getElementById('document_canvas');
       // 現在の表示ページから作っていく
@@ -277,9 +407,7 @@ var pdfjsCNST, slideJsApi, frameSize, scrollFlg;
         var slide = document.createElement('div');
         slide.id = "slide_" + i;
         slide.classList.add("slide");
-        slide.addEventListener('scroll', function(){
-          slideJsApi.scrollFunc();
-        });
+        slide.addEventListener('scroll', slideJsApi.scrollFunc());
         docCanvas.appendChild(slide);
       }
       slideJsApi.render();
@@ -287,40 +415,48 @@ var pdfjsCNST, slideJsApi, frameSize, scrollFlg;
     readPage: function(){
       function setImage(page){
         var img = document.createElement('img');
-        img.src = slideJsApi.filePath + "_" + Number(page) + '.svg';
         var slide = document.getElementById('slide_' + page);
-
+        img.src = slideJsApi.filePath + "_" + Number(page) + '.svg';
         slide.appendChild(img);
+        img.onload = function(){
+          slideJsApi.renderPage(page);
+        };
       }
 
-      // 初回のページ読み込みで、表示ページが１ページ目以上の場合
-      if ( this.loadedPage === 0 && this.currentPage > 1 ) {
+      // 表示ページが１ページ目以上の場合
+      if ( this.currentPage > 1 ) {
         var prevNode = null;
         setImage(this.currentPage);
 
-        // 現在の表示ページから作っていく
-        for(var i = this.currentPage - 1; i > 0; i--){
+        // 現在のページ以降のページを作る
+        for(var i = this.currentPage + 1; i <= this.maxPage; i++){
           setImage(i);
         }
-        this.loadedPage = this.currentPage;
+
+        setTimeout(function(){
+          // 現在の表示ページから作っていく
+          for(var i = slideJsApi.currentPage - 1; i > 0; i--){
+            setImage(i);
+          }
+        }, 100);
       }
       else {
-        this.loadedPage++;
-
-        if ( !document.querySelector('#slide_' + this.loadedPage) || document.querySelector('#slide_' + this.loadedPage + ' img') ) return false;
-        setImage(this.loadedPage); // ページを追加
+        // 現在のページ以降のページを作る
+        for(var i = 1; i <= slideJsApi.maxPage; i++){
+          setImage(i);
+        }
       }
-      slideJsApi.render();
     },
     readFile: function(doc){
+      $('slideFrame ').css("opacity", 0);
       doc.url = doc.directory + doc.fileName;
       this.filePath = doc.directory + "svg_" + doc.fileName.replace(/\.pdf$/, "");
       sessionStorage.setItem('doc', JSON.stringify(doc));
       this.doc = doc;
       this.currentPage = (sessionStorage.getItem('page') !== null) ? Number(sessionStorage.getItem('page')) : 1;
       this.currentScale = (sessionStorage.getItem('scale') !== null) ? Number(sessionStorage.getItem('scale')) : 1;
-      this.loadedPage = 0;
       this.maxPage = doc.pages;
+      this.rotation = (doc.hasOwnProperty('rotation')) ? doc.rotation : "";
 
       var limitPage = (this.currentPage + 3 > this.maxPage) ? this.maxPage : this.currentPage + 3 ;
 
@@ -346,14 +482,10 @@ var pdfjsCNST, slideJsApi, frameSize, scrollFlg;
 
       this.makePage(); // 初期スライドを作成
       this.init();
-      var readPageTimer = setInterval(function(){
-        slideJsApi.readPage();
-        if ( limitPage < slideJsApi.loadedPage ) {
-          clearInterval(readPageTimer);
-          slideJsApi.pageRender();
-          slideJsApi.render();
-        }
-      }, 1000);
+      this.readPage();
+      this.pageRender();
+      this.render();
+
     }
   };
 
@@ -370,6 +502,7 @@ var pdfjsCNST, slideJsApi, frameSize, scrollFlg;
     var doc = {
       url: params.url,
       pages: params.pages,
+      rotation: params.rotation,
       directory: params.directory,
       fileName: params.fileName,
       pagenation_flg: params.pagenation_flg,
@@ -402,6 +535,7 @@ var pdfjsCNST, slideJsApi, frameSize, scrollFlg;
     var obj = JSON.parse(d);
     sessionStorage.setItem('page', 1);
     sessionStorage.setItem('scale', 1);
+    slideJsApi.readStartFlg = true;
     slideJsApi.readFile(obj);
   });
 
@@ -440,17 +574,12 @@ var pdfjsCNST, slideJsApi, frameSize, scrollFlg;
     if ( obj.hasOwnProperty('scale') ) {
       slideJsApi.currentScale = obj.scale;
       sessionStorage.setItem('scale', slideJsApi.currentScale); // セッションに格納
+      slideJsApi.renderAllPage();
       slideJsApi.resetZoomType();
     }
     if ( obj.hasOwnProperty('page') ) {
-      if ( slideJsApi.currentPage < obj.page ) {
-        slideJsApi.readPage();
-      }
       slideJsApi.currentPage = obj.page;
       slideJsApi.pageRender();
-    }
-    else {
-      slideJsApi.render();
     }
   });
 
