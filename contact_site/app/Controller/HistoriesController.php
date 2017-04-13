@@ -248,7 +248,9 @@ class HistoriesController extends AppController {
 
   public function outputCSVOfHistory(){
     Configure::write('debug', 0);
+
     $name = "sinclo-history";
+
     //$returnData:$historyListで使うjoinのリストとconditionsの検索条件
     $returnData = $this->_searchConditions();
 
