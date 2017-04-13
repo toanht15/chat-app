@@ -353,7 +353,7 @@ class HistoriesController extends AppController {
 
     //$returnData:$historyListで使うjoinのリストとconditionsの検索条件
     $returnData = $this->_searchConditions();
-    //$returnData:$returnDataのjoinにチャット履歴出力に必要なテーブルを追加
+    //$returnData:チャット履歴CSV出力に必要なTHistoryChatLog、MUser、THistoryStayLogとjoinする
     $returnData = $this->_searchConditionsChat($returnData);
 
     $historyList = $this->THistory->find('all', [
@@ -447,6 +447,7 @@ class HistoriesController extends AppController {
       if($val['THistoryChatLog']['message_type'] == 2) {
         $row['user'] = $val['User'];
       }
+      //exit();
       $csv[] = $row;
     }
     $this->_outputCSV($name, $csv);
@@ -459,6 +460,7 @@ class HistoriesController extends AppController {
    * @return 検索条件にチャット履歴出力のために必要なテーブルを追加
    * */
   private function _searchConditionsChat($returnData){
+    //message,messagetypeを使うためTHistoryChatLogとjoin
     $returnData['joinList'][] =  [
       'type' => 'LEFT',
       'table' => 't_history_chat_logs',
@@ -467,7 +469,9 @@ class HistoriesController extends AppController {
       'THistoryChatLog.t_histories_id = THistory.id'
       ]
     ];
+    //display_nameを使うためMUserとjoin
     $returnData['joinList'][] =  [
+      'type' => 'LEFT',
       'table' => 'm_users',
       'alias' => 'MUser',
       'conditions' => [
@@ -475,6 +479,7 @@ class HistoriesController extends AppController {
       'MUser.m_companies_id' => $this->userInfo['MCompany']['id']
       ]
     ];
+    //url（送信元ページ)を使うためTHistoryStayLogとjoin
     $returnData['joinList'][] =  [
       'type' => 'LEFT',
       'table' => 't_history_stay_logs',
