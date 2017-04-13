@@ -3964,6 +3964,7 @@ ul.naviBtn {
               border: 1px solid #bdbdbd;
               position: relative;
               display: block;
+              box-sizing: content-box;
 
               slideframe {
                 width: 22.5em;
@@ -3980,7 +3981,7 @@ ul.naviBtn {
                   left: 0;
                   right: 0;
                   display: block;
-                  z-index: 2;
+                  z-index: 1;
                   text-align: center;
                   font-weight: bold;
                   letter-spacing: 5px;
@@ -4516,21 +4517,22 @@ ul.naviBtn {
               position: absolute;
               left: 0;
               right: 0;
-              top: 0;
+              top: initial;
               bottom: 0;
-              background-color: $main-color;
-              opacity: 0.85 ;
+              height: 1.75em;
+              background-color: #000;
+              opacity: 0.85;
             }
 
             &:hover .document_image:after {
-              content: "共有する";
+              content: "プレビュー";
               display: block;
               text-align: center;
               position: absolute;
               left: 0;
               right: 0;
-              top: 1.5em;
-              font-size: 1.2em;
+              bottom: 0em;
+              font-size: inherit;
               font-weight: bold;
               color: #FFF;
             }

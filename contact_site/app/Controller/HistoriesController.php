@@ -247,10 +247,8 @@ class HistoriesController extends AppController {
   }
 
   public function outputCSVOfHistory(){
-    Configure::write('debug', 0);
-
+    Configure::write('debug', 2);
     $name = "sinclo-history";
-
     //$returnData:$historyListで使うjoinのリストとconditionsの検索条件
     $returnData = $this->_searchConditions();
 
@@ -262,20 +260,9 @@ class HistoriesController extends AppController {
       'fields' => [
         '*'
       ],
-      'joins' => [
-        $returnData['joinList'],
-        [
-          'type' => 'left',
-          'alias' => 'MCustomer',
-          'table' => '(SELECT * FROM m_customers WHERE m_companies_id = '.$this->userInfo["MCompany"]["id"].')',
-          'conditions' => [
-            'THistory.visitors_id = THistory.visitors_id'
-          ]
-        ]
-      ],
+      'joins' =>  $returnData['joinList'],
       'conditions' => $returnData['conditions']
     ]);
-
     //$historyListに担当者を追加
     $userList = $this->_userList($historyList);
     //THistoryChatLogの「firstURL」と「count」をと取ってくる
@@ -318,7 +305,7 @@ class HistoriesController extends AppController {
       // 日時
       $dateTime = date_format(date_create($history['THistory']['access_date']), "Y/m/d\nH:i:s");
       $row['date'] = $dateTime;
-      // IPアドレス
+      // 訪問ユーザ
       $row['ip'] = "";
       if ( !empty($history['MCustomer']['informations']) ) {
         $informations = (array)json_decode($history['MCustomer']['informations']);
@@ -362,45 +349,18 @@ class HistoriesController extends AppController {
 
   public function outputCSVOfChatHistory(){
     Configure::write('debug', 0);
-
     //$returnData:$historyListで使うjoinのリストとconditionsの検索条件
     $returnData = $this->_searchConditions();
-    //pr($returnData);
-    //exit();
+    //$returnData:$returnDataのjoinにチャット履歴出力に必要なテーブルを追加
+    $returnData = $this->_searchConditionsChat($returnData);
+
     $historyList = $this->THistory->find('all', [
       'fields' => '*',
       'order' => [
         'THistory.access_date' => 'desc',
         'THistory.id' => 'desc'
        ],
-      'joins' => [
-        [
-          'type' => 'LEFT',
-          'table' => 't_history_chat_logs',
-          'alias' => 'THistoryChatLog',
-          'conditions' => [
-          'THistoryChatLog.t_histories_id = THistory.id'
-          ]
-        ],
-        [
-          'type' => 'LEFT',
-          'table' => 'm_users',
-          'alias' => 'MUser',
-          'conditions' => [
-          'THistoryChatLog.m_users_id = MUser.id',
-          'MUser.m_companies_id' => $this->userInfo['MCompany']['id']
-          ]
-        ],
-        [
-          'type' => 'LEFT',
-          'table' => 't_history_stay_logs',
-          'alias' => 'THistoryStayLog',
-          'conditions' => [
-            'THistoryChatLog.t_history_stay_logs_id = THistoryStayLog.id'
-          ]
-        ],
-        $returnData['joinList']
-      ],
+      'joins' => $returnData['joinList'],
       'conditions' => $returnData['conditions']
     ]);
 
@@ -428,7 +388,21 @@ class HistoriesController extends AppController {
       $dateTime = $val['THistory']['access_date'];
       $row['date'] = $dateTime;
       //訪問ユーザ
-      $row['ip'] = $val['THistory']['ip_address'];
+      $row['ip'] = "";
+      if ( !empty($val['MCustomer']['informations']) ) {
+        $informations = (array)json_decode($val['MCustomer']['informations']);
+        if ( isset($informations['company']) && $informations['company'] !== "" ) {
+          $row['ip'] .= $informations['company'];
+        }
+        if (isset($informations['name']) && $informations['name'] !== "" ) {
+          if ( $row['ip'] !== "" ) $row['ip'] .= "\n";
+          $row['ip'] .= $informations['name'];
+        }
+      }
+      if ($val['THistory']['ip_address'] !== "" ) {
+        if ( $row['ip'] !== "" ) $row['ip'] .= "\n";
+        $row['ip'] .= $val['THistory']['ip_address'];
+      }
       // OS
       $row['os'] = $this->_userAgentCheckOs($val);
       //ブラウザ
@@ -474,6 +448,34 @@ class HistoriesController extends AppController {
       $csv[] = $row;
     }
     $this->_outputCSV($name, $csv);
+  }
+
+  private function _searchConditionsChat($returnData){
+    $returnData['joinList'][] =  [
+      'type' => 'LEFT',
+      'table' => 't_history_chat_logs',
+      'alias' => 'THistoryChatLog',
+      'conditions' => [
+      'THistoryChatLog.t_histories_id = THistory.id'
+      ]
+    ];
+    $returnData['joinList'][] =  [
+      'table' => 'm_users',
+      'alias' => 'MUser',
+      'conditions' => [
+      'THistoryChatLog.m_users_id = MUser.id',
+      'MUser.m_companies_id' => $this->userInfo['MCompany']['id']
+      ]
+    ];
+    $returnData['joinList'][] =  [
+      'type' => 'LEFT',
+      'table' => 't_history_stay_logs',
+      'alias' => 'THistoryStayLog',
+      'conditions' => [
+        'THistoryChatLog.t_history_stay_logs_id = THistoryStayLog.id'
+      ],
+    ];
+    return $returnData;
   }
 
   public function outputCSVOfChat($id = null){
@@ -660,6 +662,7 @@ class HistoriesController extends AppController {
   }
 
   private function _setList($type=true){
+    Configure::write('debug', 0);
     $data = '';
     $userCond = [
       'm_companies_id' => $this->userInfo['MCompany']['id']
@@ -834,7 +837,6 @@ class HistoriesController extends AppController {
     }
 
     $historyList = $this->paginate('THistory');
-
     // TODO 良いやり方が無いか模索する
     $historyIdList = [];
     $customerIdList = [];
@@ -1020,7 +1022,16 @@ class HistoriesController extends AppController {
     $chatPlan = [];
     $chatLogCond = [];
     $conditions = [];
-    $joinList = [];
+    $joinList = [
+      [
+        'type' => 'left',
+        'alias' => 'MCustomer',
+        'table' => '(SELECT * FROM m_customers WHERE m_companies_id = '.$this->userInfo["MCompany"]["id"].')',
+        'conditions' => [
+          'THistory.visitors_id = THistory.visitors_id'
+        ]
+      ]
+    ];
     $userCond = [
       'm_companies_id' => $this->userInfo['MCompany']['id']
     ];
@@ -1089,7 +1100,7 @@ class HistoriesController extends AppController {
         ],
         $this->THistoryChatLog
       );
-      $joinList += [
+      $joinList[] = [
         'type' => 'INNER',
         'alias' => 'message',
         'table' => "({$hisIdsForMessageQuery})",
@@ -1133,7 +1144,7 @@ class HistoriesController extends AppController {
 
       if ( $this->coreSettings[C_COMPANY_USE_CHAT] ) {
         // チャットのみ表示との切り替え（担当者検索の場合、強制的にINNER）
-        $joinList += [
+        $joinList[] = [
           'type' => 'INNER',
           'alias' => 'his',
           'table' => "({$historyIdListQuery})",
@@ -1190,7 +1201,7 @@ class HistoriesController extends AppController {
       else {
         $joinToChat['type'] = "INNER";
       }
-      $joinList += $joinToChat;
+      $joinList[] = $joinToChat;
     }
     return ['joinList' => $joinList, 'conditions' => $conditions];
   }

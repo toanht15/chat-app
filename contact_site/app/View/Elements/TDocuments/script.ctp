@@ -215,6 +215,8 @@ var slideJsApi,slideJsApi2,slideJsCNST;
        /* サイズ調整処理 */
       $(".slide").css("width",  canvas.clientWidth + "px").css("height", canvas.clientHeight + "px");
       $(".slide img").css("transform", "scale(" + slideJsApi.currentScale + ")");
+      //$(".slide img").css("width",142+"px")
+                     //.css("height",93+"pt");
       var docCanvas = document.getElementById('document_canvas');
       docCanvas.style.width = this.maxPage * canvas.clientWidth + "px";
     },
@@ -373,7 +375,7 @@ var slideJsApi,slideJsApi2,slideJsCNST;
     scrollFunc: function(e){
       if ( slideJsApi2.setScrollFlg ) return false;
       clearTimeout(this.scrollTimer);
-      if ( document.getElementById('ang-popup3').classList.item("show") === null ) {
+      if ( document.getElementById('document-preview').classList.item("show") === null ) {
         slideJsApi2.scrollTimer = setTimeout(function(){
           clearTimeout(slideJsApi2.scrollTimer);
           slideJsApi2.scrollTimer = null;
