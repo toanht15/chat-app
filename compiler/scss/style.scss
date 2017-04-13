@@ -1005,40 +1005,6 @@ ul#color-bar-right {
   }
 }
 
-[id$=-preview] {
-  position: fixed;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  z-index: 47;
-  display: none;
-}
-
-[id$=-base] {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-
-[id$=-preview-frame] {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    margin: auto;
-}
-
-[id$=-preview-frame] {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    margin: auto;
-}
-
 ul.naviBtn {
   height: 15px;
   display: block;
@@ -2315,7 +2281,30 @@ ul.naviBtn {
     }
 
   }
+  [id$=-preview] {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 47;
+    display: none;
+  }
 
+  [id$=-base] {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  [id$=-preview-frame] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+  }
 }
 
 #customer_flame {
@@ -4273,12 +4262,6 @@ ul.naviBtn {
     z-index: 48;
   }
 
-  #document-base {
-  }
-
-  #document-preview-frame {
-  }
-
   #document-preview-content {
     z-index: 49;
     position: relative;
@@ -4356,13 +4339,6 @@ ul.naviBtn {
     background-color: rgba(0, 0, 0, 0.2);
     z-index: 48;
   }
-
-  #switching-base {
-  }
-
-  #switching-preview-frame {
-  }
-
 
   #switching-preview-content {
     z-index: 49;
