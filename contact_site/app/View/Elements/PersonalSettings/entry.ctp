@@ -3,7 +3,10 @@ $editFlg = true;
 if ( !empty($this->data['MUser']['edit_password']) ) {
   $editFlg = false;
 }
-$settings = json_decode($this->data['MUser']['settings']);
+$settings = [];
+if ( !empty($this->data['MUser']['settings']) ) {
+  $settings = (array)json_decode($this->data['MUser']['settings']);
+}
 ?>
 <?= $this->Form->create('MUser', array('type' => 'post', 'url' => array('controller' => 'PersonalSettings', 'action' => 'index'))); ?>
     <div class="form01">
@@ -25,7 +28,8 @@ $settings = json_decode($this->data['MUser']['settings']);
                 <?php if ( $coreSettings[C_COMPANY_USE_CHAT] && !empty($mChatSetting['MChatSetting']) && strcmp($mChatSetting['MChatSetting']['sc_flg'], C_SC_ENABLED) === 0 ) : ?>
                   <li>
                       <div class="labelArea fLeft"><span><label>チャット同時対応数</label></span></div>
-                      <span><?php echo ( !empty($settings->sc_num) ) ? $settings->sc_num : 0 ?></span>
+                      <span><?php echo ( !empty($settings['sc_num']) ) ? $settings['sc_num'] : 0 ?></span>
+                      <?=$this->Form->hidden('settings')?>
                   </li>
                 <?php endif; ?>
 
