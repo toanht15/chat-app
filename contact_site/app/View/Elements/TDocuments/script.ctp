@@ -785,6 +785,8 @@ sincloApp.controller('MainCtrl', function($scope){
     var scroll_event = 'onwheel' in document ? 'wheel' : 'onmousewheel' in document ? 'mousewheel' : 'DOMMouseScroll';
     $(document).off(scroll_event);
     $("#document-preview").removeClass("show");
+    sessionStorage.setItem('page', 1);
+    sessionStorage.setItem('scale', 1);
   };
 
   $scope.closeDocumentList2 = function() {
