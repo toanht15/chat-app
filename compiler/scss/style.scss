@@ -2092,7 +2092,7 @@ ul.naviBtn {
 }
 
 /* 画面同期 - 資料共有 */
-#document_share {
+#document_share, #document_preview {
 
   #document_share_tools {
     display: flex;
@@ -2394,6 +2394,25 @@ ul.naviBtn {
     }
 
   }
+}
+
+#document_share {
+  slideFrame {
+    margin-left: 100px;
+
+    #document_canvas {
+      margin-left: 100px;
+    }
+
+    .slide img {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+  }
+}
+
+#document_preview {
   [id$=-preview] {
     position: fixed;
     top: 0;
