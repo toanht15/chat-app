@@ -1043,7 +1043,7 @@ class HistoriesController extends AppController {
         'alias' => 'MCustomer',
         'table' => '(SELECT * FROM m_customers WHERE m_companies_id = '.$this->userInfo["MCompany"]["id"].')',
         'conditions' => [
-          'THistory.visitors_id = THistory.visitors_id'
+          'THistory.visitors_id = MCustomer.visitors_id'
         ]
       ]
     ];
