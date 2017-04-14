@@ -326,35 +326,31 @@ var slideJsApi,slideJsApi2,slideJsCNST;
 
       var canvas = document.getElementById('document_canvas2');
 
-      var mousewheelevent = 'onwheel' in document ? 'wheel' : 'onmousewheel' in document ? 'mousewheel' : 'DOMMouseScroll';
-      $(document).on(mousewheelevent,function(e){
-        var num = parseInt($('.wheel').text());
-        e.preventDefault();
-        var delta = e.originalEvent.deltaY ? -(e.originalEvent.deltaY) : e.originalEvent.wheelDelta ? e.originalEvent.wheelDelta : -(e.originalEvent.detail);
+      window.addEventListener('wheel', function(e){
 
         if ( e.ctrlKey ) {
           e.preventDefault();
           clearTimeout(slideJsApi2.zoomInTimer);
-          // 拡大
-          if ( delta < 0 ) {
-            slideJsApi2.zoomIn(0.1);
-          }
           // 縮小
-          else {
+          if ( e.deltaY < 0 ) {
             slideJsApi2.zoomOut(0.1);
+          }
+          // 拡大
+          else {
+            slideJsApi2.zoomIn(0.1);
           }
         }
         else {
           var canvas = document.querySelector('#slide2_' + slideJsApi2.currentPage);
-
           // 前のページへ
-          if (delta < 0 ) {
+          if ( e.deltaY < 0 ) {
             if ( canvas.scrollTop !== 0 ) return false;
             if (e.preventDefault) { e.preventDefault(); }
             slideJsApi2.prevPage();
           }
           // 次のページへ
           else {
+            if ( (canvas.scrollHeight - canvas.clientHeight - canvas.scrollTop) > 1 ) return false;
             if (e.preventDefault) { e.preventDefault(); }
             slideJsApi2.nextPage();
           }
@@ -364,10 +360,10 @@ var slideJsApi,slideJsApi2,slideJsCNST;
       // キープレス
       $(window).keyup(function(e){
         if ( e.keyCode === 37 || e.keyCode === 38 ) {
-          slideJsApi2.nextPage();
+          slideJsApi2.prevPage();
         }
         else if ( e.keyCode === 39 || e.keyCode === 40 ) {
-          slideJsApi2.prevPage();
+          slideJsApi2.nextPage();
         }
       });
     },
@@ -789,6 +785,8 @@ sincloApp.controller('MainCtrl', function($scope){
     var scroll_event = 'onwheel' in document ? 'wheel' : 'onmousewheel' in document ? 'mousewheel' : 'DOMMouseScroll';
     $(document).off(scroll_event);
     $("#document-preview").removeClass("show");
+    sessionStorage.setItem('page', 1);
+    sessionStorage.setItem('scale', 1);
   };
 
   $scope.closeDocumentList2 = function() {
