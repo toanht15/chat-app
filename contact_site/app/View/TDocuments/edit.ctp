@@ -25,16 +25,12 @@
         <div id="document-preview-content" class="document_list">
         <!-- /* サイドバー */ -->
         <ul id="document_share_tools">
-          <li-bottom2>
-            <li ng-click="openDocumentList2()">
-              <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_document.png" width="40" height="40" alt=""></span>
-              <p>資料切り替え</p>
-            </li>
+          <li-bottom-edit>
             <li ng-click="closeDocumentList()">
               <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_disconnect.png" width="40" height="40" alt=""></span>
               <p>閉じる</p>
             </li>
-          </li-bottom2>
+          </li-bottom-edit>
         </ul>
         <!-- /* サイドバー */ -->
         <!-- /* ツールバー */ -->
@@ -88,36 +84,4 @@
   <slideFrame2>
     <div id="document_canvas2"></div>
   </slideFrame2>
-
-  <div id="switching-preview">
-    <div id="switching-base">
-      <div id="switching-preview-background"></div>
-      <div id="switching-preview-frame">
-        <div id="switching-preview-content" class="document_list">
-          <div id="title_area2">資料一覧</div>
-          <div id="search_area2">
-            <?=$this->Form->input('name', ['label' => 'フィルター：', 'ng-model' => 'searchName']);?>
-            <!-- <ng-multi-selector></ng-multi-selector> -->
-          </div>
-          <div id="list_area2">
-            <ol>
-              <li ng-repeat="document in searchFunc(documentList)" ng-click="changeDocument(document)">
-                <div class="document_image">
-                  <img ng-src="{{::document.thumnail}}" style="width:5em;height:4em">
-                </div>
-                <div class="document_content">
-                  <h3>{{::document.name}}</h3>
-                  <ng-over-view docid="{{::document.id}}" text="{{::document.overview}}" ></ng-over-view>
-                  <ul><li ng-repeat="tagId in document.tags">{{::tagList[tagId]}}</li></ul>
-                </div>
-              </li>
-            </ol>
-          </div>
-          <div id="btn_area2">
-            <a class="btn-shadow greenBtn" ng-click="closeDocumentList2()" href="javascript:void(0)">閉じる</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 </section>

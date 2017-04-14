@@ -89,7 +89,7 @@
         <div id="document-preview-content" class="document_list">
             <!-- /* サイドバー */ -->
   <ul id="document_share_tools">
-    <li-bottom2>
+    <li-bottom-index>
       <li ng-click="openDocumentList2()">
         <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_document.png" width="40" height="40" alt=""></span>
         <p>資料切り替え</p>
@@ -98,7 +98,7 @@
         <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_disconnect.png" width="40" height="40" alt=""></span>
         <p>閉じる</p>
       </li>
-    </li-bottom2>
+    </li-bottom-index>
   </ul>
   <!-- /* サイドバー */ -->
   <!-- /* ツールバー */ -->
