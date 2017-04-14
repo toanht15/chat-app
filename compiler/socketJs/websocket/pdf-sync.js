@@ -372,18 +372,18 @@ var pdfjsCNST, slideJsApi, frameSize, scrollFlg;
 
         switch (Number(slideJsApi.rotation)) {
           case 90:
-            matrix = "matrix( 0, 1, -1, 0, " + x + ", " + y + ")";
+            matrix = "matrix( 0, 1, -1, 0, " + Math.round(x) + ", " + Math.round(y) + ")";
             break;
           case 180:
-            matrix = "matrix(1, 0, 0, -1, " + x + ", " + y + ")";
+            matrix = "matrix(1, 0, 0, -1, " + Math.round(x) + ", " + Math.round(y) + ")";
             break;
           case 270:
             x = (setHeight - setWidth)/2;
             y = (setWidth - setHeight)/2;
-            matrix = "matrix( 0, -1, 1, 0, " + x + ", " + y + ")";
+            matrix = "matrix( 0, -1, 1, 0, " + Math.round(x) + ", " + Math.round(y) + ")";
             break;
           default:
-            matrix = "matrix( 1, 0, 0, 1, " + x + ", " + y + ")";
+            matrix = "matrix( 1, 0, 0, 1, " + Math.round(x) + ", " + Math.round(y) + ")";
             break;
         }
 
