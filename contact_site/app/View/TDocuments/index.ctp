@@ -6,7 +6,7 @@
   $prevCnt = ($params['page'] - 1);
 ?>
 
-<section id="document_share" ng-app="sincloApp" ng-controller="MainCtrl">
+<section id="document_preview" ng-app="sincloApp" ng-controller="MainCtrl">
 <div id='tdocument_idx' class="card-shadow">
   <div id='tdocument_add_title'>
     <div class="fLeft"><?= $this->Html->image('document_g.png', array('alt' => 'ユーザー管理', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?></div>

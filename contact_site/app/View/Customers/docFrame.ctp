@@ -132,7 +132,7 @@ window.onload = function(){
     }
     if ( obj.hasOwnProperty('page') ) {
       slideJsApi.currentPage = obj.page;
-      slideJsApi.pageRender();
+      slideJsApi.cngPage();
     }
   });
 
