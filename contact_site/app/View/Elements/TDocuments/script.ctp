@@ -587,13 +587,11 @@ var slideJsApi,slideJsApi2,slideJsCNST;
       }
     },
     renderAllPage: function(){
-      console.log('aaaaaaaa');
       for( var i = 1; i <= this.maxPage; i++ ){
         this.renderPage(i);
       }
     },
     renderPage: function(page){ // ページのリサイズ、回転の処理（１ページずつ）
-      console.log('こここここ');
       var canvas = document.querySelector('slideframe2'),
         pageImg = document.querySelector("#slide2_" + page + " img"),
         wScale = 0, hScale = 0, scale = 0, pWidth = 0, pHeight = 0,
@@ -663,12 +661,9 @@ var slideJsApi,slideJsApi2,slideJsCNST;
           matrix = "matrix( 1, 0, 0, 1, " + x + ", " + y + ")";
           break;
       }
-      console.log(slideJsApi2.rotation);
-      console.log(matrix);
       pageImg.style.width = setWidth + "px";
       pageImg.style.height = setHeight + "px";
       pageImg.style.transform = matrix;
-      console.log(pageImg);
     }, 10);
 
     setTimeout(function(){
