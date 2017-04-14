@@ -265,8 +265,6 @@ class HistoriesController extends AppController {
       'joins' =>  $returnData['joinList'],
       'conditions' => $returnData['conditions']
     ]);
-    //pr($this->THistory->getLog());
-    //pr($historyList); exit();
     //$historyListに担当者を追加
     $userList = $this->_userList($historyList);
     //THistoryChatLogの「firstURL」と「count」をと取ってくる
@@ -315,7 +313,6 @@ class HistoriesController extends AppController {
         $informations = (array)json_decode($history['MCustomer']['informations']);
         if ( isset($informations['company']) && $informations['company'] !== "" ) {
           $row['ip'] .= $informations['company'];
-
         }
         if (isset($informations['name']) && $informations['name'] !== "" ) {
           if ( $row['ip'] !== "" ) $row['ip'] .= "\n";
@@ -326,7 +323,6 @@ class HistoriesController extends AppController {
         if ( $row['ip'] !== "" ) $row['ip'] .= "\n";
         $row['ip'] .= $history['THistory']['ip_address'];
       }
-      //pr($row['ip']);
       // OS
       $row['os'] = $this->_userAgentCheckOs($history);
       // ブラウザ
@@ -340,7 +336,7 @@ class HistoriesController extends AppController {
       $row['pageCnt'] = $stayList[$history['THistory']['id']]['THistoryStayLog']['count'];
       // 滞在時間
       $row['visitTime'] = $this->calcTime($history['THistory']['access_date'], $history['THistory']['out_date']);
-      //if ( $this->coreSettings[C_COMPANY_USE_CHAT] ) {
+      if ( $this->coreSettings[C_COMPANY_USE_CHAT] ) {
         // 成果
         $row['achievement'] = "";
         if ($history['THistoryChatLog2']['achievementFlg']){
@@ -348,8 +344,7 @@ class HistoriesController extends AppController {
         }
         //　担当者
         $row['user'] =  $history['User'];
-        //pr($row['user']); exit();
-      //}
+      }
       $csv[] = $row;
     }
     $this->_outputCSV($name, $csv);
