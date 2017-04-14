@@ -345,6 +345,7 @@ class HistoriesController extends AppController {
         //　担当者
         $row['user'] =  $history['User'];
       }
+
       $csv[] = $row;
     }
     $this->_outputCSV($name, $csv);
