@@ -315,6 +315,7 @@ var slideJsApi,slideJsApi2,slideJsCNST;
     currentPage: 1,
     currentScale: 1,
     loadedPage: 0,
+    rotation: 0,
     maxPage: 1,
     zoomInTimer: null,
     zoomInTimeTerm: 500,
@@ -401,6 +402,17 @@ var slideJsApi,slideJsApi2,slideJsCNST;
         slideJsApi2.cngPage();
       }, slideJsApi2.pagingTimeTerm);
     },
+    rotate: function(){
+      setTimeout(function(){
+        slideJsApi2.rotation = Number(slideJsApi2.rotation) + 90;
+        if ( slideJsApi2.rotation === 360 ) {
+          slideJsApi2.rotation = 0;
+        }
+        for ( var i = 1; i <= slideJsApi2.loadedPage; i++ ) {
+          slideJsApi2.renderPage(i);
+        }
+      }, 0);
+    },
     toggleManuScript: function(){
       var type = sessionStorage.getItem('manuscript');
       if ( type === "none" ) {
@@ -446,6 +458,7 @@ var slideJsApi,slideJsApi2,slideJsCNST;
       this.zoomInTimer = setTimeout(function(){
         clearTimeout(slideJsApi2.zoomInTimer);
         slideJsApi2.currentScale = num;
+        slideJsApi2.renderAllPage();
         slideJsApi2.render();
         slideJsApi2.sendCtrlAction('scale');
       }, slideJsApi2.zoomInTimeTerm);
@@ -461,6 +474,7 @@ var slideJsApi,slideJsApi2,slideJsCNST;
           slideJsApi2.currentScale = 4;
         }
         slideJsApi2.sendCtrlAction('scale');
+        slideJsApi2.renderAllPage();
         slideJsApi2.render();
         slideJsApi2.resetZoomType();
       }, slideJsApi2.zoomInTimeTerm);
@@ -476,6 +490,7 @@ var slideJsApi,slideJsApi2,slideJsCNST;
           slideJsApi2.currentScale = num;
         }
         slideJsApi2.sendCtrlAction('scale');
+        slideJsApi2.renderAllPage();
         slideJsApi2.render();
         slideJsApi2.resetZoomType();
       }, slideJsApi2.zoomInTimeTerm);
@@ -559,12 +574,8 @@ var slideJsApi,slideJsApi2,slideJsCNST;
       $('#pages').text(slideJsApi2.currentPage + "/ " + slideJsApi2.maxPage);
     },
     render: function(){
-      var canvas = document.querySelector('slideFrame2');
-      /* サイズ調整処理 */
-      $(".slide2 img").css("width", (canvas.clientWidth - 20) * 0.65 + "pt")
-                     .css("height", (canvas.clientHeight - 20) * 0.65 + "pt");
-      $(".slide2").css("width",  canvas.clientWidth + "px").css("height", canvas.clientHeight + "px") ;
-      $(".slide2 img").css("transform", "scale(" + slideJsApi2.currentScale + ")");
+      var canvas = document.querySelector('slideframe2');
+      $(".slide2").css("width",  canvas.clientWidth + "px").css("height", canvas.clientHeight + "px");
 
       var docCanvas = document.getElementById('document_canvas2');
       docCanvas.style.width = this.maxPage * canvas.clientWidth + "px";
@@ -575,6 +586,96 @@ var slideJsApi,slideJsApi2,slideJsCNST;
         console.log(this.cnst[code]);
       }
     },
+    renderAllPage: function(){
+      console.log('aaaaaaaa');
+      for( var i = 1; i <= this.maxPage; i++ ){
+        this.renderPage(i);
+      }
+    },
+    renderPage: function(page){ // ページのリサイズ、回転の処理（１ページずつ）
+      console.log('こここここ');
+      var canvas = document.querySelector('slideframe2'),
+        pageImg = document.querySelector("#slide2_" + page + " img"),
+        wScale = 0, hScale = 0, scale = 0, pWidth = 0, pHeight = 0,
+        cWidth = canvas.clientWidth,
+        cHeight = canvas.clientHeight,
+        matrix;
+
+        if ( pageImg === null ) return false;
+        if ( typeof pageImg.naturalWidth !== 'undefined' ) {
+          pWidth = pageImg.naturalWidth;
+          pHeight = pageImg.naturalHeight;
+        }
+        if ( typeof pageImg.runtimeStyle !== 'undefined' ) {
+          pageImg.style.opacity = 0;
+          pageImg.style.width  = "auto";
+          pageImg.style.height = "auto";
+          setTimeout(function(){
+            pWidth = pageImg.clientWidth;
+            pHeight = pageImg.clientHeight;
+            pageImg.style.opacity = 1;
+          }, 10);
+        }
+
+        setTimeout(function(){
+          wScale = cWidth/pWidth;
+          hScale = cHeight/pHeight;
+          if ( Number(slideJsApi2.rotation) === 90 || Number(slideJsApi2.rotation) === 270 ) {
+            wScale = cHeight/pWidth;
+            hScale = cWidth/pHeight;
+          }
+          scale = ( wScale < hScale ) ? wScale : hScale;
+          var setWidth = pWidth * scale * slideJsApi2.currentScale;
+          var setHeight = pHeight * scale * slideJsApi2.currentScale;
+          var x = 0, y= 0;
+          if ( Number(slideJsApi2.rotation) === 90 || Number(slideJsApi2.rotation) === 270 ) {
+            x = (setHeight - setWidth)/2;
+            if ( setHeight < cWidth ) {
+              x += (cWidth - setHeight)/2;
+            }
+            y = (setWidth - setHeight)/2;
+            if ( setWidth < cHeight ) {
+              y += (cHeight - setWidth)/2;
+            }
+          }
+          else {
+            if ( setWidth < cWidth ) {
+              x += (cWidth - setWidth)/2;
+            }
+        if ( setHeight < cHeight ) {
+          y += (cHeight - setHeight)/2;
+        }
+      }
+
+      switch (Number(slideJsApi2.rotation)) {
+        case 90:
+          matrix = "matrix( 0, 1, -1, 0, " + x + ", " + y + ")";
+          break;
+        case 180:
+          matrix = "matrix(1, 0, 0, -1, " + x + ", " + y + ")";
+          break;
+        case 270:
+          x = (setHeight - setWidth)/2;
+          y = (setWidth - setHeight)/2;
+          matrix = "matrix( 0, -1, 1, 0, " + x + ", " + y + ")";
+          break;
+        default:
+          matrix = "matrix( 1, 0, 0, 1, " + x + ", " + y + ")";
+          break;
+      }
+      console.log(slideJsApi2.rotation);
+      console.log(matrix);
+      pageImg.style.width = setWidth + "px";
+      pageImg.style.height = setHeight + "px";
+      pageImg.style.transform = matrix;
+      console.log(pageImg);
+    }, 10);
+
+    setTimeout(function(){
+      $('slideFrame2').css("opacity", 1);
+    }, 100);
+
+  },
     makePage: function(){
       var docCanvas = document.getElementById('document_canvas2');
 
@@ -596,6 +697,9 @@ var slideJsApi,slideJsApi2,slideJsCNST;
         img.src = slideJsApi2.filePath + "_" + Number(page) + '.svg';
         var slide2 = document.getElementById('slide2_' + page);
         slide2.appendChild(img);
+        img.onload = function(){
+          slideJsApi2.renderPage(page);
+        }
       }
 
       // 初回のページ読み込みで、表示ページが１ページ目以上の場合
@@ -628,6 +732,8 @@ var slideJsApi,slideJsApi2,slideJsCNST;
       this.loadedPage = 0;
       var settings = JSON.parse(doc.settings);
       this.maxPage = settings.pages;
+      this.rotation = (settings.hasOwnProperty('rotation')) ? settings.rotation : "";
+
 
       var limitPage = (this.currentPage + 3 > this.maxPage) ? this.maxPage : this.currentPage + 3 ;
 
@@ -725,6 +831,8 @@ sincloApp.controller('MainCtrl', function($scope){
         $scope.tagList = ( json.hasOwnProperty('tagList') ) ? JSON.parse(json.tagList) : {};
         $scope.documentList = ( json.hasOwnProperty('documentList') ) ? JSON.parse(json.documentPreview) : {};
         $scope.$apply();
+        sessionStorage.setItem('page', 1);
+        sessionStorage.setItem('scale', 1);
         slideJsApi2.readFile(doc,function(err) {
           if (err) return false;
           var settings = JSON.parse(doc.settings);
@@ -785,8 +893,6 @@ sincloApp.controller('MainCtrl', function($scope){
     var scroll_event = 'onwheel' in document ? 'wheel' : 'onmousewheel' in document ? 'mousewheel' : 'DOMMouseScroll';
     $(document).off(scroll_event);
     $("#document-preview").removeClass("show");
-    sessionStorage.setItem('page', 1);
-    sessionStorage.setItem('scale', 1);
   };
 
   $scope.closeDocumentList2 = function() {

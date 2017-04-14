@@ -4101,7 +4101,6 @@ ul.naviBtn {
                   content: "プレビュー";
                   color: #FFF;
                   position: absolute;
-                  top: 5em;
                   left: 0;
                   right: 0;
                   display: block;
@@ -4110,7 +4109,10 @@ ul.naviBtn {
                   font-weight: bold;
                   letter-spacing: 5px;
                   font-size: 1.1em;
-                  cursor:pointer;
+                  cursor: pointer;
+                  height: 6em;
+                  padding-top: 5em;
+                  background-color: rgba(0, 0, 0, 0.6);
                 }
               }
 
@@ -4446,12 +4448,9 @@ ul.naviBtn {
 
         img {
           position: absolute;
-          top: 50px;
+          top: 0;
           left: 0;
-          right: 0;
           margin: 0 auto;
-          -webkit-transform-origin: 0 0;
-          transform-origin: 0 0;
         }
       }
     }

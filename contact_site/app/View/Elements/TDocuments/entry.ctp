@@ -27,8 +27,8 @@
                 </slideframe>
               <?php }
               else { ?>
-                <slideframe>
-                  <div id="document_canvas" ng-click="openDocumentList3(<?=$this->params['pass'][0]?>)"></div>
+                <slideframe ng-click="openDocumentList3(<?=$this->params['pass'][0]?>)">
+                  <div id="document_canvas"></div>
                 </slideframe>
               <?php } ?>
               <paging>
