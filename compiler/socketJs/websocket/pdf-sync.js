@@ -91,7 +91,7 @@ var pdfjsCNST, slideJsApi, frameSize, scrollFlg;
         position = getPosition(event);
         direction = ''; //一度リセットする
       });
-      
+
       //指が動いたか検知
       $('.slide').on('touchmove', function (event) {
         //スワイプの方向（left／right）を取得
@@ -101,23 +101,23 @@ var pdfjsCNST, slideJsApi, frameSize, scrollFlg;
           direction = 'right'; //右と検知
         }
       });
-      
-      
+
+
       //指が離れたか検知
       $('.slide').on('touchend', function (event) {
         var slideTerm = this.scrollWidth - this.clientWidth;
-      
+
         if (direction == 'right'){
           if ( this.scrillLeft > 0 ) {
             return false;
           }
-      
+
           slideJsApi.prevPage();
         } else if (direction == 'left'){
           if ( slideTerm !== this.scrollLeft ) {
             return false;
           }
-      
+
           slideJsApi.nextPage();
         }
       });
@@ -162,7 +162,7 @@ var pdfjsCNST, slideJsApi, frameSize, scrollFlg;
           }
           // 次のページへ
           else {
-            if ( (canvas.scrollHeight - canvas.clientHeight) !== canvas.scrollTop ) return false;
+            if ( (canvas.scrollHeight - canvas.clientHeight - canvas.scrollTop) > 1 ) return false;
             if (e.preventDefault) { e.preventDefault(); }
             slideJsApi.nextPage();
           }
@@ -407,7 +407,9 @@ var pdfjsCNST, slideJsApi, frameSize, scrollFlg;
         var slide = document.createElement('div');
         slide.id = "slide_" + i;
         slide.classList.add("slide");
-        slide.addEventListener('scroll', slideJsApi.scrollFunc());
+        slide.addEventListener('scroll', function(){
+          slideJsApi.scrollFunc();
+        });
         docCanvas.appendChild(slide);
       }
       slideJsApi.render();
