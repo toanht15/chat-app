@@ -337,11 +337,11 @@ var slideJsApi,slideJsApi2,slideJsCNST;
           clearTimeout(slideJsApi2.zoomInTimer);
           // 拡大
           if ( delta < 0 ) {
-            slideJsApi2.zoomIn(0.1);
+            slideJsApi2.zoomOut(0.1);
           }
           // 縮小
           else {
-            slideJsApi2.zoomOut(0.1);
+            slideJsApi2.zoomIn(0.1);
           }
         }
         else {
@@ -351,12 +351,12 @@ var slideJsApi,slideJsApi2,slideJsCNST;
           if (delta < 0 ) {
             if ( canvas.scrollTop !== 0 ) return false;
             if (e.preventDefault) { e.preventDefault(); }
-            slideJsApi2.prevPage();
+            slideJsApi2.nextPage();
           }
           // 次のページへ
           else {
             if (e.preventDefault) { e.preventDefault(); }
-            slideJsApi2.nextPage();
+            slideJsApi2.prevPage();
           }
         }
       });
@@ -364,10 +364,10 @@ var slideJsApi,slideJsApi2,slideJsCNST;
       // キープレス
       $(window).keyup(function(e){
         if ( e.keyCode === 37 || e.keyCode === 38 ) {
-          slideJsApi2.nextPage();
+          slideJsApi2.prevPage();
         }
         else if ( e.keyCode === 39 || e.keyCode === 40 ) {
-          slideJsApi2.prevPage();
+          slideJsApi2.nextPage();
         }
       });
     },
