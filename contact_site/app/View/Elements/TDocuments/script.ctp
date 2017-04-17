@@ -340,7 +340,7 @@ var slideJsApi,slideJsApi2,frameSize,slideJsCNST;
         slideJsApi2.pageRender(); // ページ座標移動
       });
       window.addEventListener('wheel', function(e){
-
+        if ( !($("#document-preview").is(".show") && !$("#switching-preview").is(".show")) ) return false;
         if ( e.ctrlKey ) {
           e.preventDefault();
           clearTimeout(slideJsApi2.zoomInTimer);
@@ -631,8 +631,6 @@ var slideJsApi,slideJsApi2,frameSize,slideJsCNST;
           matrix = "matrix(1, 0, 0, -1, " + x + ", " + y + ")";
           break;
         case 270:
-          x = (setHeight - setWidth)/2;
-          y = (setWidth - setHeight)/2;
           matrix = "matrix( 0, -1, 1, 0, " + x + ", " + y + ")";
           break;
         default:

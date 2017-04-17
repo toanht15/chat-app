@@ -378,8 +378,6 @@ var pdfjsCNST, slideJsApi, frameSize, scrollFlg;
             matrix = "matrix(1, 0, 0, -1, " + Math.round(x) + ", " + Math.round(y) + ")";
             break;
           case 270:
-            x = (setHeight - setWidth)/2;
-            y = (setWidth - setHeight)/2;
             matrix = "matrix( 0, -1, 1, 0, " + Math.round(x) + ", " + Math.round(y) + ")";
             break;
           default:

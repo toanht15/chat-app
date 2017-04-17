@@ -412,8 +412,6 @@ var slideJsApi = {
           matrix = "matrix(1, 0, 0, -1, " + x + ", " + y + ")";
           break;
         case 270:
-          x = (setHeight - setWidth)/2;
-          y = (setWidth - setHeight)/2;
           matrix = "matrix( 0, -1, 1, 0, " + x + ", " + y + ")";
           break;
         default:
