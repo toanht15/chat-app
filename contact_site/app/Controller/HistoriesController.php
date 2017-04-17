@@ -1033,7 +1033,7 @@ class HistoriesController extends AppController {
    * @return 検索条件(conditions)
    * */
   private function _searchConditions(){
-    Configure::write('debug', 2);
+    Configure::write('debug', 0);
     $chatCond = [];
     $chatPlan = [];
     $chatLogCond = [];
@@ -1083,7 +1083,7 @@ class HistoriesController extends AppController {
     if((isset($data['History']['company_name']) && $data['History']['company_name'] !== "") || (isset($data['History']['customer_name']) && $data['History']['customer_name'] !== "") || (isset($data['History']['telephone_number']) && $data['History']['telephone_number'] !== "") || (isset($data['History']['mail_address']) && $data['History']['mail_address'] !== "") ) {
       $visitorsIds = $this->_searchCustomer($data['History']);
       $conditions[] = [
-        'THistory.visitors_id' => $visitorsIds,
+        'THistory.visitors_id' => $visitorsIds
       ];
       $chatCond['visitors_id'] = $visitorsIds;
     }
@@ -1110,7 +1110,7 @@ class HistoriesController extends AppController {
           'alias' => 'thcl',
           'fields' => ['t_histories_id'],
           'conditions' => [
-             'message LIKE' => "%".$data['THistoryChatLog']['message']."%",
+             'message LIKE' => "%".$data['THistoryChatLog']['message']."%"
           ], // メッセージでの絞り込み
           'order' => 't_histories_id',
           'group' => 't_histories_id'
