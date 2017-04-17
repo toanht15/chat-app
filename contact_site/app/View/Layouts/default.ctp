@@ -67,6 +67,10 @@ if( strcmp($this->name, 'Login') !== 0 ) {
     if ( strcmp($this->name, 'Histories') === 0 ) {
       echo $this->Html->script("daterangepicker.js");
     }
+    if ( strcmp($this->name, 'TDocuments') === 0 ) {
+      echo $this->Html->script("//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.min.js");
+      echo $this->Html->css("//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.css");
+    }
 
   ?>
 </head>

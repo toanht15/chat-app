@@ -18,7 +18,6 @@ class TDocumentsController extends AppController {
    * @return void
    * */
   public function index() {
-    $this->layout = 'frame';
     $documentList =  $this->TDocument->find('all', [
       'conditions' => [
         'TDocument.m_companies_id' => $this->userInfo['MCompany']['id']
