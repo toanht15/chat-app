@@ -40,9 +40,9 @@ if( strcmp($this->name, 'Login') !== 0 ) {
     echo $this->fetch('script');
     echo $this->Html->css("bootstrap.css");
     echo $this->Html->css("multi-select.css");
+    echo $this->Html->css("standalone.css");
     if ( strcmp($this->name, 'TAutoMessages') === 0 ) {
       echo $this->Html->css("clockpicker.css");
-      echo $this->Html->css("standalone.css");
     }
     echo $this->Html->css("style.css");
     echo $this->Html->css("modal.css");
