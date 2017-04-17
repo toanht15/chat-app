@@ -1033,7 +1033,6 @@ class HistoriesController extends AppController {
    * @return 検索条件(conditions)
    * */
   private function _searchConditions(){
-    Configure::write('debug', 0);
     $chatCond = [];
     $chatPlan = [];
     $chatLogCond = [];
