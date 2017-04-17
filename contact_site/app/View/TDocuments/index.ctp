@@ -6,7 +6,7 @@
   $prevCnt = ($params['page'] - 1);
 ?>
 
-<section id="document_preview" ng-app="sincloApp" ng-controller="MainCtrl">
+<section id="document_preview" ng-app="sincloApp" ng-controller="MainController">
 <div id='tdocument_idx' class="card-shadow">
   <div id='tdocument_add_title'>
     <div class="fLeft"><?= $this->Html->image('document_g.png', array('alt' => 'ユーザー管理', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?></div>
@@ -115,11 +115,14 @@
       </li>
     </li-left>
     <li-center>
+      <li class="showDescriptionBottom" data-description="目次を開く" onclick="return false;">
+        <span id="pageListToggleBtn" class="btn"><?=$this->Html->image("list.png", ['width'=>30, 'height'=>30, 'alt' => '目次']);?></span>
+       </li>
+    </li-center>
+    <li-right>
       <li>
         <span id="pages"></span>
       </li>
-    </li-center>
-    <li-right>
       <li id="scaleChoose">
         <label dir="scaleType">拡大率</label>
         <select name="scale_type" id="scaleType" onchange="slideJsApi2.cngScale(); return false;">
@@ -144,10 +147,19 @@
   </ul>
 
   <!-- /* ツールバー */ -->
+  <!-- /* 目次*/ -->
+  <div id="slidesArea" style="top: -300px">
+    <div id="slideList" style="">
+    </div>
+  </div>
+  <!-- /* 目次*/ -->
+
+  <!-- /* 原稿*/ -->
   <div id="manuscriptArea" style="display:none;">
     <span id="manuscript"></span>
     <span id="manuscriptCloseBtn" onclick="slideJsApi2.toggleManuScript(); return false;"></span>
   </div>
+  <!-- /* 原稿*/ -->
 
   <slideFrame2>
     <div id="document_canvas2"></div>

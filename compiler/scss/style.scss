@@ -2230,14 +2230,16 @@ ul.naviBtn {
     z-index: 3;
     right: 0;
     transition: top linear 150ms;
-    overflow: hidden;
 
     #slideList {
+      display: flex;
       box-shadow: 0 2px 4px rgba(0,0,0,0.6);
       background-color: #f7f7f7;
       padding: 0.5em 4em 0.5em 4em;
       position: relative;
       width: calc(100% - 100px);
+      justify-content: space-between;
+      align-items: center;
 
       .slick-arrow {
         display: block;
@@ -4099,7 +4101,6 @@ ul.naviBtn {
                   content: "プレビュー";
                   color: #FFF;
                   position: absolute;
-                  top: 5em;
                   left: 0;
                   right: 0;
                   display: block;
@@ -4109,6 +4110,9 @@ ul.naviBtn {
                   letter-spacing: 5px;
                   font-size: 1.1em;
                   cursor:pointer;
+                  height: 6em;
+                  padding-top: 5em;
+                  background-color: rgba(0, 0, 0, 0.6);
                 }
               }
 
@@ -4444,12 +4448,9 @@ ul.naviBtn {
 
         img {
           position: absolute;
-          top: 50px;
+          top: 0;
           left: 0;
-          right: 0;
           margin: 0 auto;
-          -webkit-transform-origin: 0 0;
-          transform-origin: 0 0;
         }
       }
     }
