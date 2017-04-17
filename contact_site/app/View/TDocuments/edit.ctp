@@ -1,7 +1,7 @@
 <?php echo $this->Html->script("jquery-ui.min.js"); ?>
 <?php echo $this->element('TDocuments/script'); ?>
 
-<section id="document_preview" ng-app="sincloApp" ng-controller="MainCtrl">
+<section id="document_preview" ng-app="sincloApp" ng-controller="MainController">
   <div id='tdocument_idx' class="card-shadow">
     <div id='tdocument_add_title'>
       <div class="fLeft"><?= $this->Html->image('document_g.png', array('alt' => '資料設定', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?></div>

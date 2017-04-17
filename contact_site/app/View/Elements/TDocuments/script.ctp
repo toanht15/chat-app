@@ -861,7 +861,7 @@ var slideJsApi,slideJsApi2,slideJsCNST;
       $filePath = C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/svg_".pathinfo(h($this->data['TDocument']['file_name']), PATHINFO_FILENAME);
     ?>
 
-    slideJsApi2.init("<?=$filePath?>", "<?=$pages?>", "<?=$rotation?>");
+    slideJsApi.init("<?=$filePath?>", "<?=$pages?>", "<?=$rotation?>");
     <?php endif; ?>
   });
 })();
@@ -1015,7 +1015,6 @@ window.onload = function(){
     'top': "4em"
   });
   $("#pageListToggleBtn").click(function(){
-  console.log('cccccccccc');
   if ( $(this).is('.on') ) {
     $(this).removeClass('on');
     $("#slidesArea").css('display', 'none');
