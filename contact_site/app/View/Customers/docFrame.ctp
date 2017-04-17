@@ -216,6 +216,9 @@ window.onload = function(){
       <li class="showDescriptionBottom" data-description="原稿の表示/非表示" onclick="slideJsApi.toggleManuScript(); return false;">
         <span id="scriptToggleBtn" class="btn"><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_talkscript.png" width="30" height="30" alt=""></span>
       </li>
+      <li>
+        <span id="pages"></span>
+      </li>
     </li-left>
     <li-center>
       <li class="showDescriptionBottom" data-description="目次を開く" onclick="return false;">
@@ -223,9 +226,6 @@ window.onload = function(){
       </li>
     </li-center>
     <li-right>
-      <li>
-        <span id="pages"></span>
-      </li>
       <li id="scaleChoose">
         <label dir="scaleType">拡大率</label>
         <select name="scale_type" id="scaleType" onchange="slideJsApi.cngScale(); return false;">

@@ -20,16 +20,21 @@
     syncTimeout: "",
     operatorInfo: {
       header: null,
+      toggle: function(){
+        this.ev();
+        var flg = sinclo.widget.condifiton.get();
+        //ウィジェットを開いた回数
+        if(String(flg) === "true" && typeof ga == "function"){
+          ga('send', 'event', 'sinclo', 'クリック', location.href);
+        }
+
+      },
       ev: function() {
         var height = 0;
         var sincloBox = document.getElementById('sincloBox');
         var flg = sinclo.widget.condifiton.get();
         var elm = $('#sincloBox');
         if ( String(flg) === "false" ) {
-          //ウィジェットを開いた回数
-          if(typeof ga == "function"){
-           ga('send', 'event', 'sinclo', 'クリック', location.href);
-          }
           sinclo.widget.condifiton.set(true);
           if ( check.smartphone() && window.sincloInfo.contract.chat && (window.screen.availHeight < window.screen.availWidth) ) {
             height = window.innerHeight * (document.body.clientWidth / window.innerWidth);

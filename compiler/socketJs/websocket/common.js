@@ -412,11 +412,11 @@ var socket, // socket.io
         if ( check.smartphone() ) {
           ratio = ($(window).width() - 20) * (1/285);
         }
-        html += '  <span id="mainImage" onclick="sinclo.operatorInfo.ev()">';
+        html += '  <span id="mainImage" onclick="sinclo.operatorInfo.toggle()">';
         html += '    <img src="' + widget.mainImage + '" width="' + (ratio * 62) + '" height="' + (ratio * 70) + '" style="width:' + (ratio * 62) + 'px!important; height:' + (ratio * 70) + 'px!important;" alt="チャット画像">';
         html += '  </span>';
       }
-      html += '  <sinclo-div id="widgetHeader" class="notSelect" onclick="sinclo.operatorInfo.ev()">';
+      html += '  <sinclo-div id="widgetHeader" class="notSelect" onclick="sinclo.operatorInfo.toggle()">';
       // タイトル
       html += '    <p id="widgetTitle">' + check.escape_html(widget.title) + '</p>';
       var subTitle = (widget.subTitle === undefined && Number(widget.showSubtitle) === 1 ) ? "" : widget.subTitle;

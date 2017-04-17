@@ -25,12 +25,13 @@
         <div id="document-preview-content" class="document_list">
         <!-- /* サイドバー */ -->
         <ul id="document_share_tools">
-          <li-bottom-edit>
+          <li-top></li-top>
+          <li-bottom>
             <li ng-click="closeDocumentList()">
               <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_disconnect.png" width="40" height="40" alt=""></span>
               <p>閉じる</p>
             </li>
-          </li-bottom-edit>
+          </li-bottom>
         </ul>
         <!-- /* サイドバー */ -->
         <!-- /* ツールバー */ -->
@@ -45,41 +46,53 @@
             <li class="showDescriptionBottom" data-description="原稿の表示/非表示" onclick="slideJsApi2.toggleManuScript(); return false;">
               <span id="scriptToggleBtn" class="btn"><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_talkscript.png" width="30" height="30" alt=""></span>
             </li>
+            <li>
+              <span id="pages"></span>
+            </li>
           </li-left>
-        <li-center>
-        <li>
-          <span id="pages"></span>
-        </li>
-      </li-center>
-      <li-right>
-        <li id="scaleChoose">
-          <label dir="scaleType">拡大率</label>
-          <select name="scale_type" id="scaleType" onchange="slideJsApi2.cngScale(); return false;">
-          <option value=""   > - </option>
-          <option value="0.5"   >50%</option>
-          <option value="0.75"  >75%</option>
-          <option value="1"     selected>100%</option>
-          <option value="1.5"   >150%</option>
-          <option value="2"     >200%</option>
-          <option value="2.5"   >250%</option>
-          <option value="3"     >300%</option>
-          <option value="4"     >400%</option>
-        </select>
-      </li>
-      <li class="showDescriptionBottom" data-description="拡大する" onclick="slideJsApi2.zoomIn(0.25); return false;">
-        <span class="btn"><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_plus.png" width="30" height="30" alt=""></span>
-      </li>
-      <li class="showDescriptionBottom" data-description="縮小する" onclick="slideJsApi2.zoomOut(0.25); return false;">
-        <span class="btn"><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_minus.png" width="30" height="30" alt=""></span>
-      </li>
-    </li-right>
-  </ul>
+          <li-center>
+            <li class="showDescriptionBottom" data-description="目次を開く" onclick="return false;">
+              <span id="pageListToggleBtn" class="btn"><?=$this->Html->image("list.png", ['width'=>30, 'height'=>30, 'alt' => '目次']);?></span>
+             </li>
+          </li-center>
+          <li-right>
+            <li id="scaleChoose">
+              <label dir="scaleType">拡大率</label>
+              <select name="scale_type" id="scaleType" onchange="slideJsApi2.cngScale(); return false;">
+              <option value=""   > - </option>
+              <option value="0.5"   >50%</option>
+              <option value="0.75"  >75%</option>
+              <option value="1"     selected>100%</option>
+              <option value="1.5"   >150%</option>
+              <option value="2"     >200%</option>
+              <option value="2.5"   >250%</option>
+              <option value="3"     >300%</option>
+              <option value="4"     >400%</option>
+            </select>
+            </li>
+            <li class="showDescriptionBottom" data-description="拡大する" onclick="slideJsApi2.zoomIn(0.25); return false;">
+              <span class="btn"><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_plus.png" width="30" height="30" alt=""></span>
+            </li>
+            <li class="showDescriptionBottom" data-description="縮小する" onclick="slideJsApi2.zoomOut(0.25); return false;">
+              <span class="btn"><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_minus.png" width="30" height="30" alt=""></span>
+            </li>
+          </li-right>
+        </ul>
+        <!-- /* ツールバー */ -->
 
-  <!-- /* ツールバー */ -->
+  <!-- /* 目次*/ -->
+  <div id="slidesArea" style="top: -140px">
+    <div id="slideList" style="">
+    </div>
+  </div>
+  <!-- /* 目次*/ -->
+
+  <!-- /* 原稿*/ -->
   <div id="manuscriptArea" style="display:none;">
     <span id="manuscript"></span>
     <span id="manuscriptCloseBtn" onclick="slideJsApi2.toggleManuScript(); return false;"></span>
   </div>
+  <!-- /* 原稿*/ -->
 
   <slideFrame2>
     <div id="document_canvas2"></div>
