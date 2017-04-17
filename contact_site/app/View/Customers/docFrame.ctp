@@ -251,7 +251,7 @@ window.onload = function(){
   <!-- /* ツールバー */ -->
 
   <!-- /* 目次*/ -->
-  <div id="slidesArea" style="top: -140px">
+  <div id="slidesArea" style="top: -3000px">
     <div id="slideList" style="">
     </div>
   </div>

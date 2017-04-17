@@ -33,6 +33,7 @@
         echo $this->Html->script("jquery.multi-select.js");
         echo $this->Html->script(C_NODE_SERVER_ADDR.C_NODE_SERVER_WS_PORT."/socket.io/socket.io.js");
         echo $this->Html->script("//ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js");
+        echo $this->Html->script("//ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-sanitize.js");
         echo $this->Html->script("//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.min.js");
         echo $this->Html->css("//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.css");
         echo $this->Html->script("jquery-ui.min.js");
