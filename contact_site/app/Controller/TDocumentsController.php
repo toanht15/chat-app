@@ -18,6 +18,7 @@ class TDocumentsController extends AppController {
    * @return void
    * */
   public function index() {
+    $this->layout = 'previewFrame';
     $documentList =  $this->TDocument->find('all', [
       'conditions' => [
         'TDocument.m_companies_id' => $this->userInfo['MCompany']['id']
@@ -315,6 +316,7 @@ class TDocumentsController extends AppController {
    * @return string html
    * */
   public function remoteOpenDocumentPreview(){
+
     $this->layout = "ajax";
     $ret = [];
     $DocumentPreview = $this->TDocument->find('first', [
