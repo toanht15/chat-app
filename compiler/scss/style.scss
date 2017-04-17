@@ -2230,16 +2230,14 @@ ul.naviBtn {
     z-index: 3;
     right: 0;
     transition: top linear 150ms;
+    overflow: hidden;
 
     #slideList {
-      display: flex;
       box-shadow: 0 2px 4px rgba(0,0,0,0.6);
       background-color: #f7f7f7;
       padding: 0.5em 4em 0.5em 4em;
       position: relative;
       width: calc(100% - 100px);
-      justify-content: space-between;
-      align-items: center;
 
       .slick-arrow {
         display: block;
