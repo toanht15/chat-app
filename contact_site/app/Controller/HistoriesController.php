@@ -1058,28 +1058,30 @@ class HistoriesController extends AppController {
     $data = $this->Session->read('Thistory');
 
     if(isset($data['History']['ip_address']) && $data['History']['ip_address'] !== "") {
-      $conditions += [
+      $conditions[] = [
         'THistory.ip_address LIKE' => '%'.$data['History']['ip_address'].'%',
       ];
     }
     //開始日
     if(!empty($data['History']['start_day'])) {
-      $conditions += [
+      $conditions[] = [
         'THistory.access_date >=' => $data['History']['start_day'].' 00:00:00',
+        'THistory.m_companies_id' => $this->userInfo['MCompany']['id']
       ];
     }
 
     //終了日
     if(!empty($data['History']['finish_day'] )) {
-      $conditions += [
+      $conditions[] = [
         'THistory.access_date <=' => $data['History']['finish_day'].' 23:59:59',
+        'THistory.m_companies_id' => $this->userInfo['MCompany']['id']
       ];
     }
 
     /* 顧客情報に関する検索条件 会社名、名前、電話、メール検索 */
     if((isset($data['History']['company_name']) && $data['History']['company_name'] !== "") || (isset($data['History']['customer_name']) && $data['History']['customer_name'] !== "") || (isset($data['History']['telephone_number']) && $data['History']['telephone_number'] !== "") || (isset($data['History']['mail_address']) && $data['History']['mail_address'] !== "") ) {
       $visitorsIds = $this->_searchCustomer($data['History']);
-      $conditions += [
+      $conditions[] = [
         'THistory.visitors_id' => $visitorsIds
       ];
       $chatCond['visitors_id'] = $visitorsIds;
