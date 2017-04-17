@@ -80,7 +80,7 @@ var slideJsApi = {
         }
         // 次のページへ
         else {
-          if ( (canvas.scrollHeight - canvas.clientHeight) !== canvas.scrollTop ) return false;
+          if ( (canvas.scrollHeight - canvas.clientHeight - canvas.scrollTop) > 1 ) return false;
           if (e.preventDefault) { e.preventDefault(); }
           slideJsApi.nextPage();
         }
