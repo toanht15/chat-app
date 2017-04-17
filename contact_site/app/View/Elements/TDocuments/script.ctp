@@ -729,7 +729,6 @@ var slideJsApi,slideJsApi2,slideJsCNST;
       this.maxPage = settings.pages;
       this.rotation = (settings.hasOwnProperty('rotation')) ? settings.rotation : "";
 
-
       var limitPage = (this.currentPage + 3 > this.maxPage) ? this.maxPage : this.currentPage + 3 ;
 
       divCanvas = document.createElement("div");
