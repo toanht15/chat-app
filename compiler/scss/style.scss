@@ -434,7 +434,7 @@ a {
 }
 
 .hide {
-  display: none;
+  display: none!important;
 }
 
 .invisibility {
@@ -4085,6 +4085,22 @@ ul.naviBtn {
 
         content {
           margin-right: 0.5em;
+
+          manuscript-input-area {
+            &[data-type='edit'] {
+              #pages-attention {
+                display: none;
+                color: #ff8080;
+                background-color: #e8e8e8;
+              }
+            }
+
+            &[data-type='add'] {
+              #pages-text {
+                display: none;
+              }
+            }
+          }
 
           &:first-child {
             display: flex;

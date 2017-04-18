@@ -6,6 +6,7 @@ function handleFileSelect(evt) {
   var files = evt.target.files; // FileList object
   if (files.length === 0) {
     if ( slideJsApi.filePath !== "" ) slideJsApi.init(slideJsApi.filePath, slideJsApi.maxPage);
+    $('manuscript-input-area').attr('data-type', '<?=$this->action?>');
     return false;
   }
 
@@ -26,6 +27,9 @@ function handleFileSelect(evt) {
       slideTemp.appendChild(slideSample);
       var target = document.getElementById('document_canvas');
       target.appendChild(slideTemp);
+      <?php if ( $this->action === "edit" ) : ?>
+        $('manuscript-input-area').attr('data-type', 'add');
+      <?php endif; ?>
     };
   })(file);
   // Read in the image file as a data URL.
@@ -62,6 +66,10 @@ function saveAct(){
   loading.load.start();
   // ページ離脱防止解除
   window.removeEventListener('beforeunload', onBeforeunloadHandler, false);
+
+  if ( document.getElementById('TDocumentFiles').value !== "" ) {
+    slideJsApi.manuscript = {};
+  }
 
   if ( slideJsApi.hasOwnProperty('manuscript') ) {
     document.getElementById('TDocumentManuscript').value = JSON.stringify(slideJsApi.manuscript);
