@@ -43,7 +43,7 @@
         <tr data-id="<?=h($id)?>">
           <td class="tCenter"><?=$no?></td>
           <td class="tCenter">
-            <div class = "document_image">
+            <div class = "document_image" ng-click="openDocumentList3(<?=$id?>)">
             <?php
             $settings = (!empty($val['TDocument']['settings'])) ? (array)json_decode($val['TDocument']['settings']) : [];
             $rotation = (!empty($settings['rotation'])) ? $settings['rotation'] : 0;
@@ -60,7 +60,7 @@
                  break;
             }
             ?>
-            <?= $this->Html->image(C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/".C_PREFIX_DOCUMENT.pathinfo(h($val['TDocument']['file_name']), PATHINFO_FILENAME).".jpg", ['style' => $matrix,"ng-click"=>"openDocumentList3($id)"]);?>
+            <?= $this->Html->image(C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/".C_PREFIX_DOCUMENT.pathinfo(h($val['TDocument']['file_name']), PATHINFO_FILENAME).".jpg", ['style' => $matrix]);?>
             </div>
           </td>
           <td class="tCenter"><?=h($val['TDocument']['name'])?></td>
@@ -89,7 +89,8 @@
         <div id="document-preview-content" class="document_list">
             <!-- /* サイドバー */ -->
   <ul id="document_share_tools">
-    <li-bottom-index>
+    <li-top></li-top>
+    <li-bottom>
       <li ng-click="openDocumentList2()">
         <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_document.png" width="40" height="40" alt=""></span>
         <p>資料切り替え</p>
@@ -98,7 +99,7 @@
         <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_disconnect.png" width="40" height="40" alt=""></span>
         <p>閉じる</p>
       </li>
-    </li-bottom-index>
+    </li-bottom>
   </ul>
   <!-- /* サイドバー */ -->
   <!-- /* ツールバー */ -->
@@ -111,7 +112,10 @@
         <span class="btn" ng-class="{{manuscriptType}}" ><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_next.png" width="30" height="30" alt=""></span>
       </li>
       <li class="showDescriptionBottom" data-description="原稿の表示/非表示" onclick="slideJsApi2.toggleManuScript(); return false;">
-        <span id="scriptToggleBtn" class="btn"><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_talkscript.png" width="30" height="30" alt=""></span>
+        <span id="scriptToggleBtn" class="btn on"><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_talkscript.png" width="30" height="30" alt=""></span>
+      </li>
+      <li>
+        <span id="pages"></span>
       </li>
     </li-left>
     <li-center>
@@ -120,9 +124,6 @@
        </li>
     </li-center>
     <li-right>
-      <li>
-        <span id="pages"></span>
-      </li>
       <li id="scaleChoose">
         <label dir="scaleType">拡大率</label>
         <select name="scale_type" id="scaleType" onchange="slideJsApi2.cngScale(); return false;">
@@ -148,14 +149,14 @@
 
   <!-- /* ツールバー */ -->
   <!-- /* 目次*/ -->
-  <div id="slidesArea" style="top: -300px">
+  <div id="slidesArea" style="top: -140px">
     <div id="slideList" style="">
     </div>
   </div>
   <!-- /* 目次*/ -->
 
   <!-- /* 原稿*/ -->
-  <div id="manuscriptArea" style="display:none;">
+  <div id="manuscriptArea">
     <span id="manuscript"></span>
     <span id="manuscriptCloseBtn" onclick="slideJsApi2.toggleManuScript(); return false;"></span>
   </div>
