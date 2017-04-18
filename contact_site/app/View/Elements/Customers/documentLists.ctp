@@ -718,6 +718,7 @@ sincloApp.controller('MainController', function($scope){
   };
 
   $scope.setDocThumnailStyle = function(doc) {
+  	console.log('aaeeeeee');
     var matrix = "";
     if ( doc.hasOwnProperty('settings') ) {
       var settings = JSON.parse(doc.settings);

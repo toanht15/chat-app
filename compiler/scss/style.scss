@@ -4629,6 +4629,7 @@ ul.naviBtn {
               height: 1.75em;
               background-color: #000;
               opacity: 0.85;
+              z-index:1;
             }
 
             &:hover .document_image:after {
@@ -4642,6 +4643,7 @@ ul.naviBtn {
               font-size: inherit;
               font-weight: bold;
               color: #FFF;
+              z-index:1;
             }
 
             .document_image:hover:before {
@@ -4668,6 +4670,11 @@ ul.naviBtn {
           height: 5em;
           padding: 0.5em;
           position: relative;
+
+            img {
+              width:5em;
+              height:4em;
+            }
         }
 
         .document_content {

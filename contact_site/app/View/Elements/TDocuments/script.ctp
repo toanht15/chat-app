@@ -912,7 +912,6 @@ sincloApp.controller('MainController', function($scope){
    * @return void(0)
    */
   $scope.openDocumentList3 = function(id) {
-    console.log('aaaaa');
     $.ajax({
       type: 'post',
       data: {
@@ -998,6 +997,19 @@ sincloApp.controller('MainController', function($scope){
 
   $scope.closeDocumentList2 = function() {
     $("#switching-preview").removeClass("show");
+    };
+
+  $scope.setDocThumnailStyle = function(doc) {
+    console.log('iiiiiiiiiii');
+    console.log('押している');
+    var matrix = "";
+    if ( doc.hasOwnProperty('settings') ) {
+      var settings = JSON.parse(doc.settings);
+      if ( settings.hasOwnProperty('rotation') && isNumber(settings.rotation) ) {
+        matrix = "rotate" + settings.rotation;
+      }
+    }
+    return matrix;
   };
 });
 
