@@ -2224,7 +2224,7 @@ ul.naviBtn {
   }
 
   #slidesArea {
-    position: relative;
+    position: absolute;
     top: -140px;
     left: 100px;
     z-index: 3;
@@ -2236,7 +2236,7 @@ ul.naviBtn {
       background-color: #f7f7f7;
       padding: 0.5em 4em 0.5em 4em;
       position: relative;
-      width: calc(100% - 100px);
+      width: 100%;
 
       .slick-arrow {
         display: block;
