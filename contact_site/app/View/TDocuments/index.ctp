@@ -50,13 +50,13 @@
             $matrix = "transform: matrix( 1, 0, 0, 1, 0, 0);";
             switch ((int)$rotation) {
               case 90:
-                 $matrix = "transform: matrix( 0, 1, -1, 0, 0, 0);";
+                 $matrix = "transform: matrix( 0, 0.75, -1, 0, 0, 0);";
                  break;
               case 180:
                  $matrix = "transform: matrix(1, 0, 0, -1, 0, 0);";
                  break;
               case 270:
-                 $matrix = "transform: matrix( 0, -1, 1, 0, 0, 0);";
+                 $matrix = "transform: matrix( 0, -0.75, 1, 0, 0, 0);";
                  break;
             }
             ?>
