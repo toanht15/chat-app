@@ -338,6 +338,7 @@ var slideJsApi,slideJsApi2,frameSize,slideJsCNST;
         slideJsApi2.renderAllPage(); // 画像のサイズ調整
         slideJsApi2.render(); // フレームのサイズ調整
         slideJsApi2.pageRender(); // ページ座標移動
+        setPositionDocumentList(); // 資料選択ダイアログの表示位置の計算
       });
       window.addEventListener('wheel', function(e){
         if ( !($("#document-preview").is(".show") && !$("#switching-preview").is(".show")) ) return false;
@@ -840,13 +841,14 @@ sincloApp.controller('MainController', function($scope){
         doc = JSON.parse(json.documentList)[0]['TDocument'];
         $("#switching-preview").addClass("show");
         $scope.searchName = "";
-        var contHeight = $('#switching-preview-content').height();
         $scope.tagList = ( json.hasOwnProperty('tagList') ) ? JSON.parse(json.tagList) : {};
         $scope.documentList = ( json.hasOwnProperty('documentList') ) ? JSON.parse(json.documentList) : {};
         $scope.$apply();
+        setPositionDocumentList(); // 資料選択ダイアログの表示位置の計算
       }
     });
   };
+
   /**
    * [shareDocument description]
    * @param  {object} doc documentInfo
@@ -904,6 +906,19 @@ sincloApp.controller('MainController', function($scope){
   };
 });
 
+/**
+ * 資料選択ダイアログの表示位置セット
+ */
+function setPositionDocumentList(){
+  if ( !$("#switching-preview").is(".show") ) return false;
+  var contHeight = $('#switching-preview-content').height();
+  contHeight = (window.innerHeight-contHeight)/2-50;
+  $("#switching-preview-content").css('top', contHeight + 'px');
+}
+
+/**
+ * 目次の表示切り替え
+ */
 function toggleSlick(type) {
   if ( type === "unset" ) {
     if ( !slideJsApi2.slicksetted ) return false;
