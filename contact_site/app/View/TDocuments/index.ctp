@@ -50,13 +50,13 @@
             $matrix = "transform: matrix( 1, 0, 0, 1, 0, 0);";
             switch ((int)$rotation) {
               case 90:
-                 $matrix = "transform: matrix( 0, 1, -1, 0, 0, 0);";
+                 $matrix = "transform: matrix( 0, 0.75, -1, 0, 0, 0);";
                  break;
               case 180:
                  $matrix = "transform: matrix(1, 0, 0, -1, 0, 0);";
                  break;
               case 270:
-                 $matrix = "transform: matrix( 0, -1, 1, 0, 0, 0);";
+                 $matrix = "transform: matrix( 0, -0.75, 1, 0, 0, 0);";
                  break;
             }
             ?>
@@ -180,7 +180,7 @@
             <ol>
               <li ng-repeat="document in searchFunc(documentList)" ng-click="changeDocument(document)">
                 <div class="document_image">
-                  <img ng-src="{{::document.thumnail}}" style="width:5em;height:4em">
+                  <img ng-src="{{::document.thumnail}}" ng-class="::setDocThumnailStyle(document)">
                 </div>
                 <div class="document_content">
                   <h3>{{::document.name}}</h3>
