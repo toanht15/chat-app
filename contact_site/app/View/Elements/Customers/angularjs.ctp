@@ -1232,15 +1232,19 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     socket.on('getAccessInfo', function (data) {
       var obj = JSON.parse(data);
 <?php if($widgetCheck): ?>
+      $scope.oprCnt = obj.onlineUserCnt;
       if ( Number(obj.userId) === Number(myUserId) ) {
         if ( String(obj.status) == "<?=C_OPERATOR_ACTIVE?>") {
           chgOpStatusView("<?=C_OPERATOR_ACTIVE?>");
+          // 待機中の際に「待機中０人以下」になるのを防ぐ
+          $scope.oprCnt = ( $scope.oprCnt < 1 ) ? 1 : $scope.oprCnt;
         }
         else {
           chgOpStatusView("<?=C_OPERATOR_PASSIVE?>");
+          // 離席中の際に「待機中０人以下」になるのを防ぐ
+          $scope.oprCnt = ( $scope.oprCnt < 1 ) ? 0 : $scope.oprCnt;
         }
       }
-      $scope.oprCnt = obj.onlineUserCnt;
 <?php endif; ?>
 <?php if ( $coreSettings[C_COMPANY_USE_CHAT] && strcmp(intval($scFlg), C_SC_ENABLED) === 0 ) :  ?>
 
@@ -1254,7 +1258,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
       }
 <?php endif; ?>
-      $scope.oprWaitCnt = obj.userCnt;
+      $scope.oprWaitCnt = ( obj.userCnt < 1 ) ? 1 : obj.userCnt;
 
       $scope.reload(); // 整っているか確認
     });
