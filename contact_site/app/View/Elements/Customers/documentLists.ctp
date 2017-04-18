@@ -650,6 +650,10 @@ sincloApp.controller('MainController', function($scope){
    * @return void(0)
    */
   $scope.openDocumentList = function() {
+    // 目次が開いていたら閉じる
+    if ($("#pageListToggleBtn").is('.on')){
+      $("#pageListToggleBtn").trigger('click');
+    }
     $.ajax({
       type: 'GET',
       url: '<?=$this->Html->url(["controller" => "Customers", "action" => "remoteOpenDocumentLists"])?>',

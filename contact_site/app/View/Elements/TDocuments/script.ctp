@@ -882,6 +882,9 @@ sincloApp.controller('MainController', function($scope){
     $(document).off(scroll_event);
     $("#document-preview").removeClass("show");
     toggleSlick('unset');
+    if ($("#pageListToggleBtn").is('.on')){
+      $("#pageListToggleBtn").trigger('click');
+    }
   };
 
   $scope.closeDocumentList2 = function() {
