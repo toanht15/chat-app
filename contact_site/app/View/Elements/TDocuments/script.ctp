@@ -890,6 +890,17 @@ sincloApp.controller('MainController', function($scope){
   $scope.closeDocumentList2 = function() {
     $("#switching-preview").removeClass("show");
     toggleSlick('set');
+    };
+
+  $scope.setDocThumnailStyle = function(doc) {
+    var matrix = "";
+    if ( doc.hasOwnProperty('settings') ) {
+      var settings = JSON.parse(doc.settings);
+      if ( settings.hasOwnProperty('rotation') && isNumber(settings.rotation) ) {
+        matrix = "rotate" + settings.rotation;
+      }
+    }
+    return matrix;
   };
 });
 
