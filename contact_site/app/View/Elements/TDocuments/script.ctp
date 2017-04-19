@@ -682,6 +682,9 @@ var slideJsApi,slideJsApi2,frameSize,slideJsCNST;
         slide.appendChild(frame);
         target.appendChild(slide);
         $('#slide_page_' + i).attr('data-page', i);
+        if ( this.maxPage === i ) {
+          toggleSlick('set');
+        }
       }
     }
   };
