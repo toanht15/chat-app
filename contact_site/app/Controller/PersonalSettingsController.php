@@ -45,7 +45,7 @@ class PersonalSettingsController extends AppController {
       $this->MUser->validate = $this->MUser->updateValidate;
     }
 
-    //userInfoのidと$inputDataのidが違う場合、$inputDataが空の場合
+    //userInfoのidと$inputDataのidが違う場合、$inputDataのidが空の場合
     if($inputData['MUser']['id'] != $this->userInfo['id']  || empty($inputData['MUser']['id'])) {
       $errors['rollback'] = Configure::read('message.const.saveFailed');
       return $errors;
@@ -54,7 +54,6 @@ class PersonalSettingsController extends AppController {
     // パスワードチェックが問題なければ単独でバリデーションチェックのみ
     $this->MUser->set($inputData);
     $this->MUser->begin();
-   // pr('あれ'); exit();
     if ( $this->MUser->validates() ) {
       // バリデーションチェックが成功した場合
       // 保存処理
