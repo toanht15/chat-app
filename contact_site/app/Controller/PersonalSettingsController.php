@@ -22,10 +22,10 @@ class PersonalSettingsController extends AppController {
     if ( $this->request->is('post') ) {
       $errors = $this->_update($this->request->data);
       if ( empty($errors) ) {
-        $this->set('successMessage', ['type' => C_MESSAGE_TYPE_SUCCESS, 'text' => Configure::read('message.const.saveSuccessful')]);
+        $this->set('alertMessage', ['type' => C_MESSAGE_TYPE_SUCCESS, 'text' => Configure::read('message.const.saveSuccessful')]);
       }
       else {
-        $this->set('successMessage', ['type' => C_MESSAGE_TYPE_ERROR, 'text' => Configure::read('message.const.saveFailed')]);
+        $this->set('alertMessage', ['type' => C_MESSAGE_TYPE_ERROR, 'text' => Configure::read('message.const.saveFailed')]);
       }
     }
     else {
@@ -45,10 +45,16 @@ class PersonalSettingsController extends AppController {
       $this->MUser->validate = $this->MUser->updateValidate;
     }
 
+    //userInfoのidと$inputDataのidが違う場合、$inputDataが空の場合
+    if($inputData['MUser']['id'] != $this->userInfo['id']  || empty($inputData['MUser']['id'])) {
+      $errors['rollback'] = Configure::read('message.const.saveFailed');
+      return $errors;
+    }
+
     // パスワードチェックが問題なければ単独でバリデーションチェックのみ
     $this->MUser->set($inputData);
     $this->MUser->begin();
-
+   // pr('あれ'); exit();
     if ( $this->MUser->validates() ) {
       // バリデーションチェックが成功した場合
       // 保存処理
