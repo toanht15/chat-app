@@ -1,15 +1,17 @@
 <script type="text/javascript">
 'use strict';
   var historySearchConditions = <?php echo json_encode($data);?>;
-
+  var mCustomerInfoList = <?php echo json_encode($mCustomerList);?>;
   var sincloApp = angular.module('sincloApp', ['ngSanitize']);
   sincloApp.controller('MainController', function($scope) {
     $scope.ua = function(str){
       return userAgentChk.pre(str);
     };
 
-    $scope.ui = function(ip, customerList){
+    $scope.ui = function(ip, id){
       var showData = [];
+      if ( !mCustomerInfoList.hasOwnProperty(id) ) return "";
+      var customerList = mCustomerInfoList[id];
 
       if ( customerList !== "" && customerList != null && customerList !== undefined ) {
         var c = JSON.parse(customerList);

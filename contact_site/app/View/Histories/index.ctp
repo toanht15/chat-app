@@ -76,7 +76,7 @@
 
     <div class=<?= $seach_menu; ?> id=<?= $noseach_menu ?>>
       <label class='searchConditions'>検索条件</label>
-      <ul>
+      <ul ng-non-bindable>
         <?php if(!empty($data['History']['ip_address'])) { ?>
           <li>
             <label>IPｱﾄﾞﾚｽ</label>
