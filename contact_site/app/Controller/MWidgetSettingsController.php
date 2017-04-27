@@ -56,6 +56,7 @@ class MWidgetSettingsController extends AppController {
       }
       $this->data = $inputData;
     }
+    $this->recurse_array_HTML_safe($this->request->data);
     $this->_viewElement();
   }
 

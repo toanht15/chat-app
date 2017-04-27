@@ -24,10 +24,10 @@ class ngFormHelper extends AppHelper {
 				}
 				else {
 					if ( is_bool($value) ) {
-						$options['ng-init'] = $fieldName .'=' . var_export($value, TRUE) . ';';
+						$options['ng-init'] = $fieldName .'=' . var_export(h($value), TRUE) . ';';
 					}
 					else {
-            $options['ng-init'] = $fieldName .'="' . addslashes($value) . '";';
+            $options['ng-init'] = $fieldName .'="' . addslashes(h($value)) . '";';
           }
         }
 			}
