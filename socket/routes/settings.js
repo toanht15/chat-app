@@ -62,6 +62,11 @@ router.get("/", function(req, res, next) {
                 }
                 return num;
             }
+            if ( err !== null && err !== '' ) {
+              sendData.status = false;
+              res.send(sendData);
+              return false;
+            }
 
             // IPアドレス制限
 
