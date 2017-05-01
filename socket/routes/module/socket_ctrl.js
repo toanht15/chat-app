@@ -76,6 +76,7 @@ function timeUpdate(historyId, obj, time){
 
   pool.query('SELECT * FROM t_history_stay_logs WHERE t_histories_id = ? ORDER BY id DESC LIMIT 1;', historyId,
     function(err, rows){
+      if ( err !== null && err !== '' ) return false; // DB接続断対応
       if ( isset(rows) && isset(rows[0]) ) {
         // UPDATE
         var stayTime = calcTime(rows[0].created, time);
@@ -117,6 +118,7 @@ function makeToken(){
 var companyList = {};
 function getCompanyList(){
   pool.query('select * from m_companies;', function(err, rows){
+    if ( err !== null && err !== '' ) return false; // DB接続断対応
     var key = Object.keys(rows);
     for ( var i = 0; key.length > i; i++ ) {
       var row = rows[key[i]];
@@ -315,9 +317,7 @@ var db = {
         };
         pool.query("INSERT INTO t_history_share_displays SET ?", insertData,
           function (error,results,fields){
-            if ( isset(error) ) {
-              return false;
-            }
+            if ( err !== null && err !== '' ) return false; // DB接続断対応
             sincloCore[obj.siteKey][tabId].sdHistoryId = results.insertId;
           }
         );
@@ -332,6 +332,7 @@ var db = {
   timeUpdateToDisplayShare: function (now, sdHistoryId) {
     // 渡されたIDをもとに検索
     pool.query('SELECT * FROM t_history_share_displays WHERE id = ?;', [sdHistoryId], function(err, rows){
+      if ( err !== null && err !== '' ) return false; // DB接続断対応
       // データが見つかった場合
       if ( isset(rows) && isset(rows[0]) ) {
         // アップデートする
@@ -348,6 +349,7 @@ var db = {
       if ( !isset(companyList[obj.siteKey]) || obj.subWindow ) return false;
       var siteId = companyList[obj.siteKey];
       pool.query('SELECT * FROM t_histories WHERE m_companies_id = ? AND tab_id = ? AND visitors_id = ? ORDER BY id DESC LIMIT 1;', [siteId, obj.tabId, obj.userId], function(err, rows){
+        if ( err !== null && err !== '' ) return false; // DB接続断対応
         var now = formatDateParse();
         if ( !(obj.tabId in sincloCore[obj.siteKey]) ) {
           sincloCore[obj.siteKey][obj.tabId] = {};
@@ -375,9 +377,7 @@ var db = {
 
           pool.query("INSERT INTO t_histories SET ?", insertData,
             function (error,results,fields){
-              if ( isset(error) ) {
-                return false;
-              }
+              if ( err !== null && err !== '' ) return false; // DB接続断対応
               var historyId = results.insertId;
               sincloCore[obj.siteKey][obj.tabId].historyId = historyId;
               timeUpdate(historyId, obj, now);
@@ -456,6 +456,7 @@ io.sockets.on('connection', function (socket) {
                 sql += "WHERE t_histories_id = ? ORDER BY created";
 
             pool.query(sql, [chatData.historyId], function(err, rows){
+              if ( err !== null && err !== '' ) return false; // DB接続断対応
               var messages = ( isset(rows) ) ? rows : [];
               var setList = {};
               for (var i = 0; i < messages.length; i++) {
@@ -487,6 +488,7 @@ io.sockets.on('connection', function (socket) {
 
       pool.query('SELECT * FROM t_history_stay_logs WHERE t_histories_id = ? ORDER BY id DESC LIMIT 1;', insertData.t_histories_id,
         function(err, rows){
+          if ( err !== null && err !== '' ) return false; // DB接続断対応
           if ( rows && rows[0] ) {
             insertData.t_history_stay_logs_id = rows[0].id;
           }
@@ -570,6 +572,7 @@ io.sockets.on('connection', function (socket) {
 
       pool.query('SELECT * FROM t_history_stay_logs WHERE t_histories_id = ? ORDER BY id DESC LIMIT 1;', insertData.t_histories_id,
         function(err, rows){
+          if ( err !== null && err !== '' ) return false; // DB接続断対応
           if ( rows && rows[0] ) {
             insertData.t_history_stay_logs_id = rows[0].id;
           }
@@ -595,6 +598,7 @@ io.sockets.on('connection', function (socket) {
       sql += " WHERE his.tab_id = ? AND his.m_companies_id = ? AND chat.message_type = 1";
       sql += "   AND chat.m_users_id IS NULL AND chat.message_read_flg != 1 ORDER BY chat.id desc";
       pool.query(sql, [tabId, siteId], function(err, rows){
+        if ( err !== null && err !== '' ) return false; // DB接続断対応
         if ( !isset(err) && (rows.length > 0 && isset(rows[0].chatId))) {
           ret.chatUnreadId = rows[0].chatId;
           ret.chatUnreadCnt = rows.length;
@@ -628,6 +632,7 @@ io.sockets.on('connection', function (socket) {
 
       var getUserSQL = "SELECT IFNULL(chat.sc_flg, 2) as sc_flg, sorry_message, widget.display_type FROM m_companies AS comp LEFT JOIN m_widget_settings AS widget ON ( comp.id = widget.m_companies_id ) LEFT JOIN m_chat_settings AS chat ON ( chat.m_companies_id = widget.m_companies_id ) WHERE comp.id = ?;";
       pool.query(getUserSQL, [companyId], function(err, rows){
+        if ( err !== null && err !== '' ) return false; // DB接続断対応
         var ret = false, message = null;
 
         if ( rows && rows[0] ) {
@@ -771,6 +776,7 @@ io.sockets.on('connection', function (socket) {
               if ( scList.hasOwnProperty(res.siteKey) ) {
                 var getChatSettingSQL = "SELECT sc_flg FROM m_chat_settings WHERE m_companies_id = ?";
                 pool.query(getChatSettingSQL, [companyList[res.siteKey]], function(err, rows){
+                  if ( err !== null && err !== '' ) return false; // DB接続断対応
                   if ( rows && rows[0] && rows[0].sc_flg === 1 ) {
                     delete scList[res.siteKey];
                   }
@@ -1407,6 +1413,8 @@ console.log("chatStart-2: [" + logToken + "] " + JSON.stringify({ret: false, sit
       }
 
       pool.query('SELECT mu.id, mu.display_name, wid.style_settings FROM m_users as mu LEFT JOIN m_widget_settings AS wid ON ( wid.m_companies_id = mu.m_companies_id ) WHERE mu.id = ? AND mu.del_flg != 1 AND wid.del_flg != 1 AND wid.m_companies_id = ?', [obj.userId, companyList[obj.siteKey]], function(err, rows){
+        if ( err !== null && err !== '' ) return false; // DB接続断対応
+
         sendData.userName = "オペレーター";
 console.log("chatStart-3: [" + logToken + "] " + JSON.stringify(rows));
         if ( rows && rows[0] ) {
@@ -1955,6 +1963,8 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       if ( !('subWindow' in core) || ('subWindow' in core) && !core.subWindow && !core.shareWindowFlg ) {
         // 履歴の更新
         pool.query('SELECT * FROM t_histories WHERE m_companies_id = ? AND tab_id = ? AND visitors_id = ? ORDER BY id DESC LIMIT 1;', [siteId, info.tabId, info.userId], function(err, rows){
+          if ( err !== null && err !== '' ) return false; // DB接続断対応
+
           if ( isset(rows) && isset(rows[0]) ) {
             var now = formatDateParse();
             timeUpdate(rows[0].id, {}, now);
