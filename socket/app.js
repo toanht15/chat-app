@@ -14,6 +14,10 @@ var app = express();
 // Timezone
 process.env.TZ = 'Asia/Tokyo';
 
+process.on('uncaughtException', function(err) {
+  console.log(err);
+});
+
 // socket
 var socket = require('./routes/module/socket_ctrl.js');
 
