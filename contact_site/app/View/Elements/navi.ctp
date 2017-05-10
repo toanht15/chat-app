@@ -67,6 +67,12 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
           <?= $this->htmlEx->naviLink('資料設定', 'document.png', ['href' => ['controller' => 'TDocuments', 'action' => 'index']]) ?>
         </div>
       <?php endif; ?>
+      <div class="icon">
+        <?= $this->htmlEx->naviLink('お知らせ', 'info.png', ['href' => 'http://info.sinclo.jp', 'target' => '_blank']) ?>
+      </div>
+      <div class="icon">
+        <?= $this->htmlEx->naviLink('マニュアル', 'manual.png', ['href' => 'http://manual.sinclo.jp', 'target' => '_blank']) ?>
+      </div>
     </div>
 </div>
 <!-- /* サイドバー１（ここまで） */ -->
