@@ -393,3 +393,13 @@ Cache::config('_cake_model_', array(
 	'duration' => $duration,
 	'mask' => 0777
 ));
+
+/**
+ * CSS/JSのキャッシュ回避用に静的ファイルのURLに強制的にタイムスタンプを追加する
+ * 付与されるのはFileName.(js|css)?<timestamp>という形となるため、ファイルが更新された（＝タイムスタンプが更新された）場合
+ * 付与されるQueryStringが変更され、ブラウザ側は新規にアクセスしたURLと認識される動作となる。
+ *
+ * @see https://norm-nois.com/blog/archives/3159
+ *
+ */
+Configure::write('Asset.timestamp', 'force');
