@@ -1377,7 +1377,9 @@ console.log("chatStart-0: [" + logToken + "] >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 console.log("chatStart-1: [" + logToken + "] " + d);
     if ( sincloCore[obj.siteKey][obj.tabId] === null ) {
       emit.toMine("chatStartResult", {ret: false, siteKey: obj.siteKey, userId: sincloCore[obj.siteKey][obj.tabId].chat}, socket);
-console.log("chatStart-2: [" + logToken + "] " + JSON.stringify({ret: false, siteKey: obj.siteKey, userId: sincloCore[obj.siteKey][obj.tabId].chat}));
+
+      var userId = ( getSessionId(obj.siteKey,obj.tabId,'chat') ) ? sincloCore[obj.siteKey][obj.tabId].chat : "undefined userId.";
+console.log("chatStart-2: [" + logToken + "] " + JSON.stringify({ret: false, siteKey: obj.siteKey, userId: userId}));
     }
     else {
       var sendData = {ret: true, messageType: type, tabId: obj.tabId, siteKey: obj.siteKey, userId: obj.userId, hide:false, created: now};
@@ -1416,7 +1418,9 @@ console.log("chatStart-2: [" + logToken + "] " + JSON.stringify({ret: false, sit
         if ( err !== null && err !== '' ) return false; // DB接続断対応
 
         sendData.userName = "オペレーター";
-console.log("chatStart-3: [" + logToken + "] " + JSON.stringify(rows));
+
+        var logData3 = ( typeof(rows) === 'object' ) ? JSON.stringify(rows) : "typeof: " + typeof(rows);
+console.log("chatStart-3: [" + logToken + "] " + logData3);
         if ( rows && rows[0] ) {
           var settings = JSON.parse(rows[0].style_settings);
           // 表示名をウィジェットで表示する場合
@@ -1451,11 +1455,14 @@ console.log("chatStart-3: [" + logToken + "] " + JSON.stringify(rows));
             userName: userName,
             created: date
           };
-console.log("chatStart-4: [" + logToken + "] " + JSON.stringify(insertData));
+
+          var logData4 = ( typeof(insertData) === 'object' ) ? JSON.stringify(insertData) : "typeof: " + typeof(insertData) ;
+console.log("chatStart-4: [" + logToken + "] " + logData4);
 
           chatApi.notifyCommit("chatStartResult", insertData);
 
         }
+        var logData5 = ( sincloCore.hasOwnProperty(obj.siteKey) && typeof(sincloCore[obj.siteKey]) === 'object' ) ? JSON.stringify(sincloCore[obj.siteKey]) : "typeof: " + typeof(sincloCore[obj.siteKey]) ;
 console.log("chatStart-5: [" + logToken + "] " + JSON.stringify(sincloCore[obj.siteKey]));
 console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
 
