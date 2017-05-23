@@ -10,11 +10,9 @@
 
     $scope.ui = function(ip, id){
       var showData = [];
-      if ( !mCustomerInfoList.hasOwnProperty(id) ) return "";
-      var customerList = mCustomerInfoList[id];
 
-      if ( customerList !== "" && customerList != null && customerList !== undefined ) {
-        var c = JSON.parse(customerList);
+      if ( mCustomerInfoList.hasOwnProperty(id) && mCustomerInfoList[id] !== "" && mCustomerInfoList[id] != null && mCustomerInfoList[id] !== undefined ) {
+        var c = JSON.parse(mCustomerInfoList[id]);
         if ( ('company' in c) && c.company.length > 0 ) {
           showData.push(c.company); // 会社名
         }
