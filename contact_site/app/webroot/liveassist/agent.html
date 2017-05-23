@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <link rel='stylesheet' href='https://sdk005.live-assist.jp/assistserver/sdk/web/agent/css/assist-console.css'/>
+    <link rel='stylesheet' href=' https://sdk005.live-assist.jp/assistserver/sdk/web/shared/css/shared-window.css '/>
+    <title>Consumer test page</title>
+    <script
+            src="https://code.jquery.com/jquery-3.2.1.js"
+            integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
+            crossorigin="anonymous"></script>
+</head>
+<body>
+    <input id="shortcode" type="text"/>
+    <button id="connect">Connect</button>
+    <button id="startScreenShare">Start Screen Share</button>
+    <div id="remoteScreenView"></div>
+    <div id="remoteVideoView"></div>
+    <div id="localVideoView"></div>
+    <div id="qualityIndicator"></div>
+    <!-- ここに入れる必要があるらしい -->
+    <script src='https://sdk005.live-assist.jp/assistserver/sdk/web/shared/js/thirdparty/i18next-1.7.4.min.js'></script>
+    <script src='https://sdk005.live-assist.jp/gateway/adapter.js'></script>
+    <script src='https://sdk005.live-assist.jp/gateway/csdk-phone.js'></script>
+    <script src='https://sdk005.live-assist.jp/gateway/csdk-common.js'></script>
+    <script src='https://sdk005.live-assist.jp/assistserver/sdk/web/shared/js/assist-aed.js'></script>
+    <script src='https://sdk005.live-assist.jp/assistserver/sdk/web/shared/js/document-packet.js'></script>
+    <script src='https://sdk005.live-assist.jp/assistserver/sdk/web/shared/js/shared-windows.js'></script>
+    <script src='https://sdk005.live-assist.jp/assistserver/sdk/web/agent/js/assist-console.js'></script>
+    <script src='./js/assist-console-callmanager.js'></script>
+    <script src='./js/agent_process.js'></script>
+</body>
+</html>
