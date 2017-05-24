@@ -1,7 +1,6 @@
 <?= $this->element('Customers/userAgentCheck') ?>
 <?= $this->element('Histories/angularjs') ?>
 <?= $this->element('Histories/script') ?>
-
 <div id='history_idx' class="card-shadow" ng-app="sincloApp" ng-controller="MainController">
 
   <div id='history_title'>
@@ -77,8 +76,7 @@
 
     <div class=<?= $seach_menu; ?> id=<?= $noseach_menu ?>>
       <label class='searchConditions'>検索条件</label>
-      <ul>
-        <span class="dammy">　</span>
+      <ul ng-non-bindable>
         <?php if(!empty($data['History']['ip_address'])) { ?>
           <li>
             <label>IPｱﾄﾞﾚｽ</label>

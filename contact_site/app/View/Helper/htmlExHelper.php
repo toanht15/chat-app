@@ -26,7 +26,7 @@ class htmlExHelper extends AppHelper {
         }
 
         // setting href
-        if ( !empty($urlOpt['href']) || !empty($urlOpt['onclick']) ) {
+        if ( !empty($urlOpt['href']) || !empty($urlOpt['onclick'])  || !empty($urlOpt['target']) ) {
             if ( empty($urlOpt['href']) ) {
                 $a = "href='javascript:void(0)'";
                 if ( empty($urlOpt['onclick']) ) {
@@ -36,8 +36,10 @@ class htmlExHelper extends AppHelper {
             else {
                 $a = "href='" . $this->Html->url($urlOpt['href']) . "'";
             }
+            if ( !empty($urlOpt['target']) ) {
+                $a .= " target='" . h((string)$urlOpt['target']) . "'";
+            }
         }
-
         return sprintf($_tmp, $a, $this->Html->image($img['src'], $img['option']), $title);
     }
 

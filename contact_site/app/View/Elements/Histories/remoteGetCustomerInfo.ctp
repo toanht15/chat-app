@@ -45,15 +45,15 @@ $(document).ready(function(){
       <p><span><?=$val?></span></p>
       <span>
       <?php
-        $val = "";
+        $infoVal = "";
         if( isset($data['informations'][$key]) ) {
-          $val = $data['informations'][$key];
+          $infoVal = $data['informations'][$key];
         }
 
         if ( strcmp($key, 'memo') === 0 ) {
-          echo $this->Form->textarea($key, ['rows'=>5, 'cols'=>25, 'class'=>'infoData', 'value'=>$val, 'data-key'=>$key]);
+          echo $this->Form->textarea($key, ['rows'=>5, 'cols'=>25, 'class'=>'infoData', 'value'=>$infoVal, 'data-key'=>$key]);
         } else {
-          echo $this->Form->input($key, ['type'=>'text', 'class'=>'infoData', 'value'=>$val, 'data-key'=>$key, 'label' => false, 'div'=> false]);
+          echo $this->Form->input($key, ['type'=>'text', 'class'=>'infoData', 'value'=>$infoVal, 'data-key'=>$key, 'label' => false, 'div'=> false]);
         }
       ?>
       </span>

@@ -42,6 +42,12 @@ class MWidgetSetting extends AppModel {
      * @var array
      */
     public $validate = [
+        'show_time' => [
+            'numberRange' => [
+              'rule' => '/^([1-4])$/',
+              'message' => '選択肢から選び、設定してください'
+            ]
+        ],
         'max_show_time' => [
             'isMaxShowTime' => [
               'rule' => 'isMaxShowTime',
