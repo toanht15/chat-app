@@ -361,13 +361,13 @@ class HistoriesController extends AppController {
 
     $historyList = $this->THistory->find('all', [
       'fields' => '*',
-      'order' => [
-        'THistory.access_date' => 'desc',
-        'THistory.id' => 'desc'
-       ],
       'joins' => $returnData['joinList'],
       'conditions' => $returnData['conditions'],
-      'order' => 'THistoryChatLog.created'
+      'order' => [
+        'THistory.access_date' => 'desc',
+        'THistory.id' => 'desc',
+        'THistoryChatLog.created'
+       ]
     ]);
 
     //$historyListに担当者を追加
