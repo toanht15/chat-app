@@ -367,7 +367,10 @@ class HistoriesController extends AppController {
        ],
       'joins' => $returnData['joinList'],
       'conditions' => $returnData['conditions'],
-      'order' => 'THistoryChatLog.created'
+      'order' => [
+        'THistory.id' => 'desc',
+        'THistoryChatLog.created',
+      ]
     ]);
 
     //$historyListに担当者を追加
