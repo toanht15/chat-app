@@ -6,7 +6,7 @@ $(function(){
 
     function init() {
         createShortCode().then(function(shortcode){
-            $('body').append('<span id="la-short-code" style="position:absolute; background-color: #F00; color: #FFF;">'+ shortcode +'</span>');
+            $('body').append('<span id="la-short-code" style="position:absolute; left: 0; top: 0; background-color: #F00; color: #FFF;">'+ shortcode +'</span>');
             console.log('Short Code: ' + shortcode);
             getSessionInfo(shortcode).then(function(){
                 $('#la-short-code').css('background-color','#0F0');
