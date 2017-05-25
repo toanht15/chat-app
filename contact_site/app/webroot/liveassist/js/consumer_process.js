@@ -4,14 +4,27 @@
 $(function(){
     var startResponse = {};
 
+    function init() {
+        createShortCode().then(function(shortcode){
+            $('body').append('<span id="la-short-code" style="position:absolute; background-color: #F00; color: #FFF;">'+ shortcode +'</span>');
+            console.log('Short Code: ' + shortcode);
+            getSessionInfo(shortcode).then(function(){
+                $('#la-short-code').css('background-color','#0F0');
+                AssistSDK.startSupport({
+                    // destination : "agent1",
+                    // videoMode : "agentOnly",
+                    sessionToken : startResponse['session-token'] ? startResponse['session-token'] : "undefined",
+                    correlationId : startResponse.cid
+                });
+            },function(statuscode){
+                $('#la-short-code').css('background-color','#aa0');
+            });
+        });
+    }
+
     //AssistSDK-callbackハンドラ
     AssistSDK.onConnectionEstablished = function() {
         console.log("Connection Established");
-    };
-
-    AssistSDK.onScreenshareRequest = function() {
-        //return boolean;
-        console.log("Screenshare Request");
     };
 
     AssistSDK.onPushRequest = function(allow, deny) {
@@ -21,11 +34,15 @@ $(function(){
     }
 
     AssistSDK.onScreenshareRequest = function() {
+        console.log("Screenshare Request");
         return true; //常に許可してみる
     };
 
-    AssistSDK.onDocumentReceivedSuccess = function(sharedDocument) { console.log("*** shared item opened successfully: " + sharedDocument.id); sharedDocument.onClosed = function(actor) {
-        alert("Shared document window has closed by " + actor + "."); };
+    AssistSDK.onDocumentReceivedSuccess = function(sharedDocument) {
+        console.log("*** shared item opened successfully: " + sharedDocument.id);
+        sharedDocument.onClosed = function(actor) {
+            alert("Shared document window has closed by " + actor + ".");
+        };
         console.log("Setting shared item " + sharedDocument.id + " to close in 15 secs.");
         setTimeout(function() {
             console.log("*** Closing shared item " + sharedDocument.id); sharedDocument.close();
@@ -52,24 +69,40 @@ $(function(){
         });
     });
 
-    var start = function(shortcode) {
-        var request = new XMLHttpRequest(); request.onreadystatechange = function() {
+    function createShortCode() {
+        var deferred = $.Deferred();
+        var request = new XMLHttpRequest();
+        request.onreadystatechange = function() {
             if (request.readyState == 4) {
                 if (request.status == 200) {
-                    startResponse = JSON.parse(request.responseText);
+                    var shortcode = JSON.parse(request.responseText).shortCode;
+                    deferred.resolve(shortcode);
+                } else {
+                    deferred.reject();
                 }
             }
         }
-        $('#shortcodeField').html(shortcode);
-        request.open('GET', 'https://sdk005.live-assist.jp/assistserver/shortcode/consumer?appkey=' + shortcode, true);
-        request.send();
+        request.open('PUT', 'https://sdk005.live-assist.jp/assistserver/shortcode/create', true); request.send();
+        return deferred.promise();
     }
 
-    var request = new XMLHttpRequest(); request.onreadystatechange = function() {
-        if (request.readyState == 4) { if (request.status == 200) {
-            var shortcode = JSON.parse(request.responseText).shortCode;
-            start(shortcode); }
+    function getSessionInfo(shortcode) {
+        var deferred = $.Deferred();
+        var request = new XMLHttpRequest();
+        request.onreadystatechange = function() {
+            if (request.readyState == 4) {
+                if (request.status == 200) {
+                    startResponse = JSON.parse(request.responseText);
+                    deferred.resolve();
+                } else {
+                    deferred.reject(request.status);
+                }
+            }
         }
+        request.open('GET', 'https://sdk005.live-assist.jp/assistserver/shortcode/consumer?appkey=' + shortcode, true);
+        request.send();
+        return deferred.promise();
     }
-    request.open('PUT', 'https://sdk005.live-assist.jp/assistserver/shortcode/create', true); request.send();
+
+    init();
 });
