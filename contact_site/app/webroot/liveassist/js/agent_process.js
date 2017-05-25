@@ -4,6 +4,7 @@
 $(function() {
     // UI設定
     var remoteView = document.getElementById("remoteScreenView");
+    var remoteViewContainer = document.getElementById("remoteScreenViewContainer");
     var remoteVideo = document.getElementById("remoteVideoView");
     var previewVideo = document.getElementById("localVideoView");
     var qualityIndicator = document.getElementById("qualityIndicator");
@@ -33,6 +34,7 @@ $(function() {
         setUI();
         initializeConfiguration();
         setConfiguration();
+        setAssistAgentCallbacks();
         getAgentSessionInfo().then(function(){console.log('getSessionID OK');});
     }
 
@@ -64,6 +66,40 @@ $(function() {
 
     function setConfiguration() {
         AssistAED.setConfig(config);
+    }
+
+    function setAssistAgentCallbacks() {
+        AssistAgentSDK.setScreenShareActiveCallback(function() {
+            debug("setScreenShareActive");
+        });
+
+        AssistAgentSDK.setRemoteViewCallBack(function (x, y) {
+            remoteX = x;
+            remoteY = y;
+            var containerHeight = remoteViewContainer.offsetHeight;
+            var containerWidth = remoteViewContainer.offsetWidth;
+            var containerAspect = containerHeight / containerWidth;
+            var remoteAspect = y / x;
+
+            var height;
+            var width;
+
+            if (containerHeight == 0 || containerWidth == 0)
+            {
+                return;
+            }
+            if (containerAspect < remoteAspect) {
+                // Container aspect is taller than the remote view aspect
+                height = Math.min(y, containerHeight);
+                width = height * (x / y);
+            } else {
+                // Container aspect is wider than (or the same as) the remote view aspect
+                width = Math.min(x, containerWidth);
+                height = width * (y / x);
+            }
+            remoteView.style.height = height + "px";
+            remoteView.style.width = width + "px";
+        });
     }
 
     function getCorrelationId (shortcode) {
@@ -143,7 +179,6 @@ $(function() {
             });
         });
     });
-
 
     init();
 });
