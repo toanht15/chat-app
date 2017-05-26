@@ -8,6 +8,7 @@ $(function() {
     var remoteVideo = document.getElementById("remoteVideoView");
     var previewVideo = document.getElementById("localVideoView");
     var qualityIndicator = document.getElementById("qualityIndicator");
+    var formContainer = document.getElementById("formContainer");
 
     var assistServerSession = {};
     var config = {autoanswer : 'true', agentName: 'Bob' };
@@ -69,6 +70,12 @@ $(function() {
     }
 
     function setAssistAgentCallbacks() {
+        AssistAgentSDK.setFormCallBack(function(formElement) {
+            if (formElement) {
+                formContainer.appendChild(formElement);
+            }
+        });
+
         AssistAgentSDK.setScreenShareActiveCallback(function() {
             debug("setScreenShareActive");
         });
