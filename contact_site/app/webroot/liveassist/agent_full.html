@@ -21,6 +21,13 @@
             width: 100%;
             height: 100%;
         }
+
+        .videoview {
+            width: 300px;
+            height: 300px;
+        }
+
+
     </style>
     <title>Consumer test page</title>
     <script
@@ -38,8 +45,8 @@
     <div id="remoteScreenViewContainer">
         <div id="remoteScreenView"></div>
     </div>
-    <div id="remoteVideoView"></div>
-    <div id="localVideoView"></div>
+    <div id="remoteVideoView" class="videoview"></div>
+    <div id="localVideoView" class="videoview"></div>
     <div id="qualityIndicator"></div>
     <div id="formContainer" style="display: none;"></div>
     <!-- ここに入れる必要があるらしい -->
@@ -52,6 +59,6 @@
     <script src='https://sdk005.live-assist.jp/assistserver/sdk/web/shared/js/shared-windows.js'></script>
     <script src='https://sdk005.live-assist.jp/assistserver/sdk/web/agent/js/assist-console.js'></script>
     <script src='./js/assist-console-callmanager.js'></script>
-    <script src='./js/agent_process.js'></script>
+    <script src='./js/agent_process_full.js'></script>
 </body>
 </html>
