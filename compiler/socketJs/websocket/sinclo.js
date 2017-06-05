@@ -444,6 +444,31 @@
       };
       popup.set(title, content);
     },
+    startCoBrowseOpen : function(obj) {
+      if ( userInfo.accessType !== Number(cnst.access_type.guest) ) return false;
+      var title = location.host + 'の内容';
+      var content = location.host + 'が閲覧ページへのアクセスを求めています。<br>許可しますか';
+      popup.ok = function() {
+        userInfo.connectToken = obj.connectToken;
+        laUtil.initAndStart().then(function() {
+          // shortcode取得
+          var shortcode = laUtil.shortcode;
+          if (shortcode !== undefined && shortcode !== null && shortcode !== "") {
+            console.log("Fire readyToCoBrowse");
+            var params = {
+              userId: userInfo.userId,
+              tabId: userInfo.tabId,
+              url: location.href,
+              connectToken: userInfo.connectToken,
+              shortcode: laUtil.shortcode
+            };
+            emit('readyToCoBrowse', params);
+          }
+        });
+        this.remove();
+      }
+      popup.set(title, content);
+    },
     windowSyncInfo: function(d) {
       var obj = common.jParse(d);
       browserInfo.set.scroll(obj.scrollPosition);
@@ -876,6 +901,7 @@
       var title = location.host + 'の内容';
       var content = location.host + 'との画面共有を終了しました';
       popup.ok = function(){
+        laUtil.disconnect();
         this.remove();
       };
       popup.set(title, content, popup.const.action.alert);
@@ -883,6 +909,7 @@
       var timer = setInterval(function(){
         if (window.sincloInfo.widgetDisplay === false) {
           clearInterval(timer);
+          laUtil.disconnect();
           return false;
         }
         var sincloBox = document.getElementById('sincloBox');

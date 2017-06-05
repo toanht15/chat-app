@@ -100,7 +100,7 @@ $(function(){
             }
         }
         request.open('GET', 'https://sdk005.live-assist.jp/assistserver/shortcode/consumer?appkey=' + shortcode, true);
-        request.send();
+      request.send();
         return deferred.promise();
     }
 

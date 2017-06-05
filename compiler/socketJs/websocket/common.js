@@ -2125,6 +2125,12 @@ var socket, // socket.io
       sinclo.getWindowInfo(obj);
     }); // socket-on: getWindowInfo
 
+    // 画面共有(LiveAssist)
+    socket.on('startCoBrowseOpen', function(d){
+      var obj = common.jParse(d);
+      sinclo.startCoBrowseOpen(obj);
+    }); // socket-on: getWindowInfo
+
     // 画面共有(iframeバージョン)
     socket.on('startWindowSync', function(d){
       var obj = common.jParse(d);

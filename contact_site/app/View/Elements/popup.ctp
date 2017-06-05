@@ -78,6 +78,20 @@ var popupEvent = {
                         return popupEvent.closeNoPopup();
                     };
                     break;
+                case 'p-cus-select-sharing-mode':
+                      var closeBtn = _button("ブラウジング共有");
+                      closeBtn.onclick = function(){
+                        return popupEvent.closePopup(1);
+                      };
+                      var closeBtn = _button("画面キャプチャ共有");
+                      closeBtn.onclick = function(){
+                        return popupEvent.closePopup(2);
+                      };
+                      var closeBtn = _button("資料共有");
+                      closeBtn.onclick = function(){
+                        return popupEvent.closePopup(3);
+                      };
+                      break;
                 case 'p-cus-detail':
                     var closeBtn = _button("チャットを終了する");
                     closeBtn.onclick = function(){

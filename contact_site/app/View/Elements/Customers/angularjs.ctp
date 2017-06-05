@@ -574,6 +574,67 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
      *  資料共有　ここまで
      * ************************************************************/
 
+    /**************************************************************
+     *　画面共有（LA）
+     * ************************************************************/
+    $scope.coBrowseOpen = function(tabId, accessId){
+        var message = "アクセスID【" + accessId + "】のユーザーに接続しますか！？<br><br>";
+        var ua = $scope.monitorList[tabId].userAgent.toLowerCase();
+        var smartphone = (ua.indexOf('iphone') > 0 || ua.indexOf('ipod') > 0 || ua.indexOf('android') > 0);
+        var popupClass = "p-cus-connection";
+        message += "<span style='color: #FF7B7B'><?=Configure::read('message.const.chatStartConfirm')?></span>";
+        modalOpen.call(window, message, popupClass, 'メッセージ');
+        popupEvent.closePopup = function(type){
+            sessionStorage.clear();
+            popupEvent.close();
+            connectToken = makeToken();
+            socket.emit('requestCoBrowseOpen', {
+                tabId: tabId,
+                type: type,
+                connectToken: connectToken
+            });
+        };
+    };
+
+    $scope.confirmSharingWindowOpen = function(tabId, accessId) {
+      var message = "アクセスID【" + accessId + "】のユーザーと共有するモードを選択してください。<br><br>";
+      var ua = $scope.monitorList[tabId].userAgent.toLowerCase();
+      var smartphone = (ua.indexOf('iphone') > 0 || ua.indexOf('ipod') > 0 || ua.indexOf('android') > 0);
+      var popupClass = "p-cus-select-sharing-mode";
+      message += "<span style='color: #FF7B7B'><?=Configure::read('message.const.chatStartConfirm')?></span>";
+      modalOpen.call(window, message, popupClass, 'メッセージ');
+      popupEvent.closePopup = function(type){
+        switch(type) {
+          case 1: // ブラウジング共有
+            sessionStorage.clear();
+            popupEvent.close();
+            connectToken = makeToken();
+            socket.emit('requestWindowSync', {
+              tabId: tabId,
+              type: type,
+              connectToken: connectToken
+            });
+            break;
+          case 2: // 画面キャプチャ共有
+            sessionStorage.clear();
+            popupEvent.close();
+            connectToken = makeToken();
+            socket.emit('requestCoBrowseOpen', {
+              tabId: tabId,
+              type: type,
+              connectToken: connectToken
+            });
+            break;
+          case 3: // 資料共有
+            modalClose();
+            $scope.documentOpen(tabId, accessId);
+            break;
+          default:
+            break;
+        }
+      };
+    };
+
     // 成果表示チェック
     $scope.showAchievement = function (){
       return ( isset($scope.detailId) && (typeof($scope.detail) === "object" && Object.keys($scope.detail).length > 0) && $scope.chatOpList.indexOf(myUserId) > -1 );
@@ -1369,6 +1430,25 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           tabId: obj.tabId,
           width: 300,
           height: 300
+        }
+      });
+    });
+
+    socket.on('readyToCoBrowse', function (data) {
+      // 担当しているユーザーかチェック
+      var obj = JSON.parse(data), url;
+      if (connectToken !== obj.connectToken) return false;
+
+      connectToken = null;
+      var url = "<?= $this->Html->url(array('controller'=>'Customers', 'action'=>'laFrame')) ?>?k=" + obj.shortcode;
+      url += "&userId=" + obj.userId;
+      url += "&connectToken=" + obj.connectToken + "&id=" + obj.tabId;
+      modalFunc.set.call({
+        option: {
+          url: url,
+          tabId: obj.tabId,
+          width: 1028,
+          height: 680
         }
       });
     });
