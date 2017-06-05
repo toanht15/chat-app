@@ -483,6 +483,7 @@
       });
 
       AssistAgentSDK.setRemoteViewCallBack(function (x, y) {
+        console.log("AssistAgentSDK.setRemoteViewCallBack("+x+","+y+")");
         var containerHeight = remoteViewContainer.offsetHeight;
         var containerWidth = remoteViewContainer.offsetWidth;
         var containerAspect = containerHeight / containerWidth;
@@ -495,18 +496,20 @@
         {
           return;
         }
-        if (containerAspect < remoteAspect) {
-          // Container aspect is taller than the remote view aspect
-          height = Math.min(y, containerHeight);
-          width = height * (x / y);
-        } else {
-          // Container aspect is wider than (or the same as) the remote view aspect
-          width = Math.min(x, containerWidth);
-          height = width * (y / x);
-        }
-        remoteView.style.height = height + "px";
-        remoteView.style.width = width + "px";
-        window.resizeTo(x+100,y+50)
+//        if (containerAspect < remoteAspect) {
+//          // Container aspect is taller than the remote view aspect
+//          height = Math.min(y, containerHeight);
+//          width = height * (x / y);
+//        } else {
+//          // Container aspect is wider than (or the same as) the remote view aspect
+//          width = Math.min(x, containerWidth);
+//          height = width * (y / x);
+//        }
+//        remoteView.style.height = height + "px";
+//        remoteView.style.width = width + "px";
+        remoteView.style.height = y + "px";
+        remoteView.style.width = x + "px";
+        window.resizeTo(x+100,y+50);
       });
     }
 
