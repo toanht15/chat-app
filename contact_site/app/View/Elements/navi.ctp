@@ -69,10 +69,10 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
       <?php endif; ?>
       <div class="bottom-area">
         <div class="icon">
-          <?= $this->htmlEx->naviLink('お知らせ', 'info.png', ['href' => 'http://info.sinclo.jp', 'target' => '_blank']) ?>
+          <?= $this->htmlEx->naviLink('お知らせ', 'info.png', ['href' => 'https://info.sinclo.jp/info/', 'target' => '_blank']) ?>
         </div>
         <div class="icon">
-          <?= $this->htmlEx->naviLink('マニュアル', 'manual.png', ['href' => 'http://manual.sinclo.jp', 'target' => '_blank']) ?>
+          <?= $this->htmlEx->naviLink('マニュアル', 'manual.png', ['href' => 'https://info.sinclo.jp/manual/', 'target' => '_blank']) ?>
         </div>
       </div>
     </div>
