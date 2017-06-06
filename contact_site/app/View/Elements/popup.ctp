@@ -83,10 +83,12 @@ var popupEvent = {
                       closeBtn.onclick = function(){
                         return popupEvent.closePopup(1);
                       };
+                <?php if (isset($coreSettings[C_COMPANY_USE_LA_CO_BROWSE]) && $coreSettings[C_COMPANY_USE_LA_CO_BROWSE]): ?>
                       var closeBtn = _button("画面キャプチャ共有");
                       closeBtn.onclick = function(){
                         return popupEvent.closePopup(2);
                       };
+                <?php endif; ?>
                       var closeBtn = _button("資料共有");
                       closeBtn.onclick = function(){
                         return popupEvent.closePopup(3);
