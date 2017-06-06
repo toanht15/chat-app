@@ -325,13 +325,17 @@
 <section ng-app="sincloApp" ng-controller="MainController">
 
   <ul id="sync_tools">
-    <li id="controlBtn">
+    <li id="controlBtn" class="unlight">
       <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_remote.png" width="40" height="40" alt=""></span>
       <p>遠隔操作</p>
     </li>
-    <li id="penBtn" class="unlight">
+    <li id="penBtn">
       <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_pen.png" width="40" height="40" alt=""></span>
       <p>ペン</p>
+    </li>
+    <li id="pointBtn">
+      <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_point.png" width="40" height="40" alt=""></span>
+      <p>ポイント</p>
     </li>
     <li onclick="location.reload(true); return false;">
       <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_reconnect.png" width="40" height="40" alt=""></span>
@@ -563,8 +567,9 @@
     $('#controlBtn').on('click', function(){
       try {
         AssistAgentSDK.controlSelected();
-        $(this).removeClass('unlight');
-        $('#penBtn').addClass('unlight');
+        $(this).addClass('unlight');
+        $('#penBtn').removeClass('unlight');
+        $('#pointBtn').removeClass('unlight');
       } catch (e) {
         if (e instanceof AssistAgentSDK.OffAssistPagesException) {
           alert('Page not Live Assist enabled');
@@ -575,8 +580,22 @@
     $('#penBtn').on('click', function(){
       try {
         AssistAgentSDK.drawSelected();
-        $(this).removeClass('unlight');
-        $('#controlBtn').addClass('unlight');
+        $(this).addClass('unlight');
+        $('#controlBtn').removeClass('unlight');
+        $('#pointBtn').removeClass('unlight');
+      } catch (e) {
+        if (e instanceof AssistAgentSDK.OffAssistPagesException) {
+          alert('Page not Live Assist enabled');
+        }
+      }
+    });
+
+    $('#pointBtn').on('click', function(){
+      try {
+        AssistAgentSDK.spotlightSelected();
+        $(this).addClass('unlight');
+        $('#controlBtn').removeClass('unlight');
+        $('#penBtn').removeClass('unlight');
       } catch (e) {
         if (e instanceof AssistAgentSDK.OffAssistPagesException) {
           alert('Page not Live Assist enabled');
