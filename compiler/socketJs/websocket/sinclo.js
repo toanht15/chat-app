@@ -296,9 +296,29 @@
       if ( (userInfo.gFrame && Number(userInfo.accessType) === Number(cnst.access_type.guest)) === false ) {
         emit('customerInfo', obj);
       }
+
+      var flg = 1;
+      var noflg = 0;
+      var widgetflg = noflg;
+
+      //サイト訪問者が初めてページでウィジェットを表示
+      var firstChatEmit = storage.s.get('chatEmit');
+
+      if ( !check.isset(firstChatEmit) ) {
+        if(window.sincloInfo.widgetDisplay == true) {
+          widgetflg = flg;
+        }
+      }
+      else {
+        if(window.sincloInfo.widgetDisplay == true) {
+
+        }
+      }
+
       emit('connectSuccess', {
         confirm: false,
         widget: window.sincloInfo.widgetDisplay,
+        widgetflg: widgetflg,
         prevList: userInfo.prevList,
         userAgent: window.navigator.userAgent,
         time: userInfo.time,
@@ -976,6 +996,10 @@
             start: 98,
             end: 99
         },
+        messageRequestFlg: {
+          flg: 1,
+          noflg: 0
+        },
         autoMessages: [],
         init: function(){
             if ( window.sincloInfo.contract.chat ) {
@@ -1194,25 +1218,32 @@
               clearTimeout(this.sendErrCatchTimer);
             }
 
-            setTimeout(function(){
-              emit('sendChat', {
-                  historyId: sinclo.chatApi.historyId,
-                  chatMessage:value,
-                  mUserId: null,
-                  messageType: sinclo.chatApi.messageType.customer
-              });
-            }, 100);
-
             // チャットの契約をしている場合
             if ( window.sincloInfo.contract.chat ) {
               var firstChatEmit = storage.s.get('chatEmit');
+              var noflg = 0;
+              var flg = 1;
+              var messageRequestFlg = noflg;
+
               //サイト訪問者がチャット送信した初回のタイミング
               if ( !check.isset(firstChatEmit) ) {
                 if(typeof ga == "function"){
                   ga('send', 'event', 'sinclo', 'チャット送信', location.href);
                 }
+                messageRequestFlg = flg;
               }
-              storage.s.set('chatEmit', true);
+
+              setTimeout(function(){
+                  emit('sendChat', {
+                  historyId: sinclo.chatApi.historyId,
+                  chatMessage:value,
+                  mUserId: null,
+                  messageType: sinclo.chatApi.messageType.customer,
+                  messageRequestFlg: messageRequestFlg
+                  });
+                }, 100);
+
+              storage.s.set('chatEmit', true) ;
             }
 
             // スマートフォンの場合、タイマーをセット。（メッセージ送信に失敗した場合にリロードを促す）
