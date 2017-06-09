@@ -296,7 +296,6 @@
       if ( (userInfo.gFrame && Number(userInfo.accessType) === Number(cnst.access_type.guest)) === false ) {
         emit('customerInfo', obj);
       }
-
       emit('connectSuccess', {
         confirm: false,
         widget: window.sincloInfo.widgetDisplay,

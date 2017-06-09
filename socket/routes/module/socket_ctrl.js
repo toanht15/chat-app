@@ -842,6 +842,7 @@ io.sockets.on('connection', function (socket) {
             // 自身の初期ステータスを送る
             emit.toUser('cngOpStatus', {status: data.status}, activeOperator[res.siteKey][data.userId]);
             /* 待機中ユーザーの管理 */
+
             /* 同時対応数の管理 */
             if ( data.hasOwnProperty('scNum') ) {
               // ウィジェット表示設定を常に表示、もしくは待機中のみ表示の場合（かつ待機中の場合）
@@ -865,7 +866,6 @@ io.sockets.on('connection', function (socket) {
                 });
               }
             }
-
             /* 同時対応数の管理 */
         }
         if ( res.siteKey in company.info ) {
