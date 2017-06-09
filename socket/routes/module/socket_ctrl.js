@@ -6,7 +6,7 @@ var mysql = require('mysql'),
       host: process.env.DB_HOST || 'localhost',
       user: process.env.DB_USER || 'root',
       password: process.env.DB_PASS || 'password',
-      database: process.env.DB_NAME || 'sinclo_db2'
+      database: process.env.DB_NAME || 'sinclo_db'
     });
 
 // log4js
@@ -1436,23 +1436,7 @@ io.sockets.on('connection', function (socket) {
     chat.created = new Date();
     chat.sort = fullDateTime(chat.created);
     emit.toCompany('resAutoChatMessage', chat, chat.siteKey);
-    var ids = chat.tabId.split("_");
-    pool.query('SELECT conversation_count FROM sinclo_db2.t_convertsation_count WHERE visitors_id = ?',[(ids.length > 1) ? ids[0] : ""], function (err, result) {
-      //応対数検索、登録
-      if(isset(err)) {
-        console.log("RECORD SElECT ERROR: t_convertsation_count(conversation_count):" + err);
-        return false;
-      }
-      //カウント数が取れなかったとき
-      if (Object.keys(result).length === 0) {
-        chat.messageDistinction = 1;
-      }
-      //カウント数が取れたとき
-      else {
-        chat.messageDistinction = result[0].conversation_count;
-      }
-      emit.toMine('resAutoChatMessage', chat, socket);
-    });
+    emit.toMine('resAutoChatMessage', chat, socket);
   });
 
   // 一括：チャットデータ取得(オートメッセージのみ)
@@ -1674,7 +1658,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   socket.on("sendChat", function(d){
     var obj = JSON.parse(d);
     //応対件数検索、登録
-    var query = pool.query('SELECT conversation_count FROM sinclo_db2.t_convertsation_count WHERE visitors_id = ?',[obj.userId], function (err, results) {
+    var query = pool.query('SELECT conversation_count FROM t_convertsation_count WHERE visitors_id = ?',[obj.userId], function (err, results) {
       if(isset(err)) {
         console.log("RECORD SElECT ERROR: t_convertsation_count(conversation_count):" + err);
         return false;
@@ -1695,7 +1679,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   socket.on("sendAutoChat", function(d){
     var obj = JSON.parse(d);
     //応対数検索、登録
-    pool.query('SELECT conversation_count FROM sinclo_db2.t_convertsation_count WHERE visitors_id = ?',[obj.userId], function (error, result) {
+    pool.query('SELECT conversation_count FROM t_convertsation_count WHERE visitors_id = ?',[obj.userId], function (error, result) {
       var messageDistinction;
       if(isset(error)) {
         console.log("RECORD SElECT ERROR: t_convertsation_count(conversation_count):" + error);

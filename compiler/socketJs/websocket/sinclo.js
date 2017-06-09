@@ -813,7 +813,7 @@
         sinclo.chatApi.autoMessages.push({
             chatId:obj.chatId,
             message: obj.message,
-            created: obj.created,
+            created: obj.created
         });
     },
     confirmVideochatStart: function(obj) {
