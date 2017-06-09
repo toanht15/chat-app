@@ -6,7 +6,7 @@ var mysql = require('mysql'),
       host: process.env.DB_HOST || 'localhost',
       user: process.env.DB_USER || 'root',
       password: process.env.DB_PASS || 'password',
-      database: process.env.DB_NAME || 'sinclo_db2'
+      database: process.env.DB_NAME || 'sinclo_db'
     });
 
 // log4js
@@ -551,7 +551,6 @@ io.sockets.on('connection', function (socket) {
                 // 書き込みが成功したら顧客側に結果を返す
                 emit.toUser('sendChatResult', sendData, sId);
                 if (Number(insertData.message_type) === 3) return false;
-                console.log(d.messageType);
                 // 書き込みが成功したら企業側に結果を返す
                 emit.toCompany('sendChatResult', {tabId: d.tabId, chatId: results.insertId, sort: fullDateTime(insertData.created), created: insertData.created, userId: insertData.m_users_id, messageType: d.messageType, ret: true, message: d.chatMessage, siteKey: d.siteKey}, d.siteKey);
               }
@@ -567,9 +566,9 @@ io.sockets.on('connection', function (socket) {
                       if(Object.keys(scList[d.siteKey].user).length != 0) {
                         for (key in Object.keys(scList[d.siteKey].user)) {
                           var userId = Object.keys(scList[d.siteKey].user)[key];
-                          //対応数がMAXじゃないか確認
+                          //対応数がMAX人数か確認
                           if(scList[d.siteKey].user[userId] > scList[d.siteKey].cnt[userId]) {
-                            pool.query('INSERT INTO sinclo_db2.t_history_chat_active_users(t_history_chat_logs_id,m_companies_id,m_users_id,created) VALUES(?,?,?,?)',[results.insertId,companyList[d.siteKey],userId,new Date()],function(err,results) {
+                            pool.query('INSERT INTO t_history_chat_active_users(t_history_chat_logs_id,m_companies_id,m_users_id,created) VALUES(?,?,?,?)',[results.insertId,companyList[d.siteKey],userId,new Date()],function(err,results) {
                               if(isset(err)) {
                                 console.log("RECORD INSERT ERROR: t_history_chat_active_users:" + err);
                                 return false;
@@ -585,7 +584,7 @@ io.sockets.on('connection', function (socket) {
                       if(Object.keys(company.info[d.siteKey]).length != 0) {
                         for (key in Object.keys(company.info[d.siteKey])) {
                           var userId = Object.keys(company.info[d.siteKey])[key];
-                          pool.query('INSERT INTO sinclo_db2.t_history_chat_active_users(t_history_chat_logs_id,m_companies_id,m_users_id,created) VALUES(?,?,?,?)',[results.insertId,companyList[d.siteKey],userId,new Date()],function(err,results) {
+                          pool.query('INSERT INTO t_history_chat_active_users(t_history_chat_logs_id,m_companies_id,m_users_id,created) VALUES(?,?,?,?)',[results.insertId,companyList[d.siteKey],userId,new Date()],function(err,results) {
                             if(isset(err)) {
                               console.log("RECORD INSERT ERROR: t_history_chat_active_users:" + err);
                               return false;
@@ -605,7 +604,7 @@ io.sockets.on('connection', function (socket) {
                           userId = Object.keys(activeOperator[d.siteKey])[key];
                           //対応数がMAX人数か確認
                           if(scList[d.siteKey].user[userId] > scList[d.siteKey].cnt[userId]) {
-                            pool.query('INSERT INTO sinclo_db2.t_history_chat_active_users(t_history_chat_logs_id,m_companies_id,m_users_id,created) VALUES(?,?,?,?)',[results.insertId,companyList[d.siteKey],userId,new Date()],function(err,results) {
+                            pool.query('INSERT INTO t_history_chat_active_users(t_history_chat_logs_id,m_companies_id,m_users_id,created) VALUES(?,?,?,?)',[results.insertId,companyList[d.siteKey],userId,new Date()],function(err,results) {
                               if(isset(err)) {
                                 console.log("RECORD INSERT ERROR: t_history_chat_active_users:" + err);
                                 return false;
@@ -618,7 +617,7 @@ io.sockets.on('connection', function (socket) {
                       else{
                         for (key in Object.keys(activeOperator[d.siteKey])) {
                           userId = Object.keys(activeOperator[d.siteKey])[key];
-                          pool.query('INSERT INTO sinclo_db2.t_history_chat_active_users(t_history_chat_logs_id,m_companies_id,m_users_id,created) VALUES(?,?,?,?)',[results.insertId,companyList[d.siteKey],userId,new Date()],function(err,results) {
+                          pool.query('INSERT INTO t_history_chat_active_users(t_history_chat_logs_id,m_companies_id,m_users_id,created) VALUES(?,?,?,?)',[results.insertId,companyList[d.siteKey],userId,new Date()],function(err,results) {
                             if(isset(err)) {
                               console.log("RECORD INSERT ERROR: t_history_chat_active_users:" + err);
                               return false;
@@ -636,7 +635,6 @@ io.sockets.on('connection', function (socket) {
               // 書き込みが失敗したらエラーを渡す
               return emit.toUser('sendChatResult', {tabId: d.tabId, messageType: d.messageType, ret: false, siteKey: d.siteKey}, d.siteKey);
             }
-
           });
         }
       );
@@ -774,7 +772,6 @@ io.sockets.on('connection', function (socket) {
         siteKey = "",
         data = res.data;
         send = data;
-
     if ( res.type !== 'admin' ) {
       if ( data.userId === undefined || data.userId === '' || data.userId === null ) {
         send.userId = makeUserId();
@@ -805,7 +802,6 @@ io.sockets.on('connection', function (socket) {
         var cnt = [], opKeys = [];
 
         if ( 'userId' in data && data.authority !== 99) {
-         //pool.query('SELECT * FROM m_widget_settings WHERE m_companies_id = ?',[companyList[res.siteKey]], function (err, results) {
             /* 企業ユーザーの管理 */
             company.user[socket.id] = {
                 userId: data.userId,
@@ -828,12 +824,10 @@ io.sockets.on('connection', function (socket) {
             if ( !(res.siteKey in activeOperator) ) {
                 activeOperator[res.siteKey] = {};
             }
-
             // 待機中の場合
             if ( ('status' in data) && String(data.status) === '1' ) {
               activeOperator[res.siteKey][data.userId] = socket.id;
             }
-
             // 待機中でない場合
             else {
               if ( activeOperator[res.siteKey].hasOwnProperty(data.userId) ) {
@@ -848,7 +842,6 @@ io.sockets.on('connection', function (socket) {
             // 自身の初期ステータスを送る
             emit.toUser('cngOpStatus', {status: data.status}, activeOperator[res.siteKey][data.userId]);
             /* 待機中ユーザーの管理 */
-
             /* 同時対応数の管理 */
             if ( data.hasOwnProperty('scNum') ) {
               // ウィジェット表示設定を常に表示、もしくは待機中のみ表示の場合（かつ待機中の場合）
@@ -965,7 +958,6 @@ io.sockets.on('connection', function (socket) {
 
   socket.on("connectSuccess", function (data) {
     var obj = JSON.parse(data);
-
     if ( !isset(sincloCore[obj.siteKey]) ) {
       sincloCore[obj.siteKey] = {};
     }
@@ -1023,7 +1015,7 @@ io.sockets.on('connection', function (socket) {
           //ウィジェットが初めて表示された場合
           if (Object.keys(results).length === 0) {
             //tabId登録
-            pool.query('INSERT INTO sinclo_db2.t_history_widget_displays(m_companies_id,tab_id,created) VALUES(?,?,?)',[companyList[obj.siteKey],obj.tabId,new Date()],function(err,results) {
+            pool.query('INSERT INTO t_history_widget_displays(m_companies_id,tab_id,created) VALUES(?,?,?)',[companyList[obj.siteKey],obj.tabId,new Date()],function(err,results) {
               if(isset(err)) {
                 console.log("RECORD INSERT ERROR: t_history_widget_displays(tab_id):" + err);
                 return false;
@@ -1493,7 +1485,7 @@ console.log("chatStart-1: [" + logToken + "] " + d);
 console.log("chatStart-2: [" + logToken + "] " + JSON.stringify({ret: false, siteKey: obj.siteKey, userId: userId}));
     }
     else {
-      var sendData = {ret: true, messageType: type, messagetabId: obj.tabId, siteKey: obj.siteKey, userId: obj.userId, hide:false, created: now};
+      var sendData = {ret: true, messageType: type, tabId: obj.tabId, siteKey: obj.siteKey, userId: obj.userId, hide:false, created: now};
       var scInfo = "";
 
       sincloCore[obj.siteKey][obj.tabId].chat = obj.userId;
@@ -1563,7 +1555,7 @@ console.log("chatStart-3: [" + logToken + "] " + logData3);
             if (Object.keys(results).length === 0) {
               obj.messageDistinction = 1;
               //visitors_id,カウント数一件を登録
-              pool.query('INSERT INTO sinclo_db2.t_convertsation_count(visitors_id,conversation_count) VALUES(?,?)',[(ids.length > 1) ? ids[0] : "",1],function(err,result) {
+              pool.query('INSERT INTO t_convertsation_count(visitors_id,conversation_count) VALUES(?,?)',[(ids.length > 1) ? ids[0] : "",1],function(err,result) {
                 if(isset(err)){
                   console.log("RECORD INSERT ERROR: t_convertsation_count(vititors_id,conversation_count):" + err);
                   return false;
@@ -1615,6 +1607,7 @@ console.log("chatStart-4: [" + logToken + "] " + JSON.stringify(insertData));
         var logData5 = ( sincloCore.hasOwnProperty(obj.siteKey) && typeof(sincloCore[obj.siteKey]) === 'object' ) ? JSON.stringify(sincloCore[obj.siteKey]) : "typeof: " + typeof(sincloCore[obj.siteKey]) ;
 console.log("chatStart-5: [" + logToken + "] " + JSON.stringify(sincloCore[obj.siteKey]));
 console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+
       });
     }
   });
@@ -1651,7 +1644,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         if (Object.keys(results).length != 0) {
           obj.messageDistinction = results[0].conversation_count;
           //カウント数一件追加
-          pool.query('UPDATE sinclo_db2.t_convertsation_count SET conversation_count = ? WHERE visitors_id = ?',[results[0].conversation_count + 1,(ids.length > 1) ? ids[0] : ""],function(err,result) {
+          pool.query('UPDATE t_convertsation_count SET conversation_count = ? WHERE visitors_id = ?',[results[0].conversation_count + 1,(ids.length > 1) ? ids[0] : ""],function(err,result) {
             if(isset(err)){
               console.log("RECORD UPDATE ERROR: t_convertsation_count(conversation_count):" + err);
               return false;

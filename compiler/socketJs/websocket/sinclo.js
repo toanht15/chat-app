@@ -297,24 +297,6 @@
         emit('customerInfo', obj);
       }
 
-      var flg = 1;
-      var noflg = 0;
-      var widgetflg = noflg;
-
-      //サイト訪問者が初めてページでウィジェットを表示
-      var firstChatEmit = storage.s.get('chatEmit');
-
-      if ( !check.isset(firstChatEmit) ) {
-        if(window.sincloInfo.widgetDisplay == true) {
-          widgetflg = flg;
-        }
-      }
-      else {
-        if(window.sincloInfo.widgetDisplay == true) {
-
-        }
-      }
-
       emit('connectSuccess', {
         confirm: false,
         widget: window.sincloInfo.widgetDisplay,
@@ -995,10 +977,6 @@
             start: 98,
             end: 99
         },
-        messageRequestFlg: {
-          flg: 1,
-          noflg: 0
-        },
         autoMessages: [],
         init: function(){
             if ( window.sincloInfo.contract.chat ) {
@@ -1220,7 +1198,9 @@
             // チャットの契約をしている場合
             if ( window.sincloInfo.contract.chat ) {
               var firstChatEmit = storage.s.get('chatEmit');
+              //チャットリクエスト件数でない
               var noFlg = 0;
+              //チャットリクエスト件数である
               var flg = 1;
               var messageRequestFlg = noFlg;
 

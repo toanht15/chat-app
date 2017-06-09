@@ -1,12 +1,12 @@
 <?php
 App::uses('AppModel', 'Model');
 /**
- * THistoryStayLog Model
+ * TLogin Model
+ *ログインテーブル
  *
- * @property TLogin $MCompanies
  */
 class TLogin extends AppModel {
 
-	public $name = "TLogin";
+  public $name = "TLogin";
 
 }
