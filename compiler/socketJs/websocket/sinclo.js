@@ -318,7 +318,6 @@
       emit('connectSuccess', {
         confirm: false,
         widget: window.sincloInfo.widgetDisplay,
-        widgetflg: widgetflg,
         prevList: userInfo.prevList,
         userAgent: window.navigator.userAgent,
         time: userInfo.time,
@@ -1221,9 +1220,9 @@
             // チャットの契約をしている場合
             if ( window.sincloInfo.contract.chat ) {
               var firstChatEmit = storage.s.get('chatEmit');
-              var noflg = 0;
+              var noFlg = 0;
               var flg = 1;
-              var messageRequestFlg = noflg;
+              var messageRequestFlg = noFlg;
 
               //サイト訪問者がチャット送信した初回のタイミング
               if ( !check.isset(firstChatEmit) ) {

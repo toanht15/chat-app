@@ -51,7 +51,10 @@
           </content>
           <content>
             <p>原稿<span class="pages"></span></p>
-            <textarea id="pages-text"></textarea>
+            <manuscript-input-area data-type="<?=$this->action?>">
+              <textarea id="pages-text"></textarea>
+              <textarea id="pages-attention" disabled>資料保存後にページ単位で原稿を設定することができます。</textarea>
+            </manuscript-input-area>
             <?=$this->Form->hidden('manuscript')?>
           </content>
         </documentArea>

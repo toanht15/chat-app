@@ -6,6 +6,7 @@ function handleFileSelect(evt) {
   var files = evt.target.files; // FileList object
   if (files.length === 0) {
     if ( slideJsApi.filePath !== "" ) slideJsApi.init(slideJsApi.filePath, slideJsApi.maxPage);
+    $('manuscript-input-area').attr('data-type', '<?=$this->action?>');
     return false;
   }
 
@@ -26,6 +27,9 @@ function handleFileSelect(evt) {
       slideTemp.appendChild(slideSample);
       var target = document.getElementById('document_canvas');
       target.appendChild(slideTemp);
+      <?php if ( $this->action === "edit" ) : ?>
+        $('manuscript-input-area').attr('data-type', 'add');
+      <?php endif; ?>
     };
   })(file);
   // Read in the image file as a data URL.
@@ -62,6 +66,10 @@ function saveAct(){
   loading.load.start();
   // ページ離脱防止解除
   window.removeEventListener('beforeunload', onBeforeunloadHandler, false);
+
+  if ( document.getElementById('TDocumentFiles').value !== "" ) {
+    slideJsApi.manuscript = {};
+  }
 
   if ( slideJsApi.hasOwnProperty('manuscript') ) {
     document.getElementById('TDocumentManuscript').value = JSON.stringify(slideJsApi.manuscript);
@@ -329,72 +337,6 @@ var slideJsApi,slideJsApi2,frameSize,slideJsCNST;
     init: function(){
       this.cngPage();
       this.resetZoomType();// 拡大率を設定
-
-      var canvas = document.getElementById('document_canvas2');
-
-      window.addEventListener('resize', function(e){
-        $("#document-preview-frame").css('width', window.innerWidth - 100); // 大枠のサイズ調整
-        $("#document-preview-frame").css('height', window.innerHeight);
-        slideJsApi2.renderAllPage(); // 画像のサイズ調整
-        slideJsApi2.render(); // フレームのサイズ調整
-        slideJsApi2.pageRender(); // ページ座標移動
-        setPositionDocumentList(); // 資料選択ダイアログの表示位置の計算
-      });
-      window.addEventListener('wheel', function(e){
-        if ( !($("#document-preview").is(".show") && !$("#switching-preview").is(".show")) ) return false;
-        if ( e.ctrlKey ) {
-          e.preventDefault();
-          clearTimeout(slideJsApi2.zoomInTimer);
-          // 拡大
-          if ( e.deltaY < 0 ) {
-            slideJsApi2.zoomIn(0.1);
-          }
-          // 縮小
-          else {
-            slideJsApi2.zoomOut(0.1);
-          }
-        }
-        else {
-          var canvas = document.querySelector('#slide2_' + slideJsApi2.currentPage);
-          // 前のページへ
-          if ( e.deltaY < 0 ) {
-            if ( canvas.scrollTop !== 0 ) return false;
-            if (e.preventDefault) { e.preventDefault(); }
-            slideJsApi2.prevPage();
-          }
-          // 次のページへ
-          else {
-            if ( (canvas.scrollHeight - canvas.clientHeight - canvas.scrollTop) > 1 ) return false;
-            if (e.preventDefault) { e.preventDefault(); }
-            slideJsApi2.nextPage();
-          }
-        }
-      });
-
-      // 特定のページへ移動
-      $(document).on('click', 'img-frame', function(){
-        var page = $(this).parents('.slick-slide').data('page');
-        $("#pageListToggleBtn").trigger('click');
-        if ( page !== undefined ) {
-          slideJsApi2.currentPage = Number(page);
-          clearTimeout(slideJsApi2.pagingTimer);
-          slideJsApi2.pagingTimer = setTimeout(function(){
-            clearTimeout(slideJsApi2.pagingTimer);
-            slideJsApi2.sendCtrlAction('page');
-            slideJsApi2.cngPage();
-          }, slideJsApi2.pagingTimeTerm);
-        }
-      });
-
-      // キープレス
-      $(window).keyup(function(e){
-        if ( e.keyCode === 37 || e.keyCode === 38 ) {
-          slideJsApi2.prevPage();
-        }
-        else if ( e.keyCode === 39 || e.keyCode === 40 ) {
-          slideJsApi2.nextPage();
-        }
-      });
     },
     scrollTimer: null,
     setScrollTimer: null,
@@ -446,8 +388,8 @@ var slideJsApi,slideJsApi2,frameSize,slideJsCNST;
         type = 'block';
         document.getElementById('scriptToggleBtn').classList.add('on');
         if ( slideJsApi2.manuscript.hasOwnProperty(Number(slideJsApi2.currentPage)) && slideJsApi2.manuscript[slideJsApi2.currentPage] !== "" ) {
+          $("#manuscriptArea").css({ 'display': type });
         }
-        $("#manuscriptArea").css({ 'display': type });
       }
       else {
         type = 'none';
@@ -740,6 +682,9 @@ var slideJsApi,slideJsApi2,frameSize,slideJsCNST;
         slide.appendChild(frame);
         target.appendChild(slide);
         $('#slide_page_' + i).attr('data-page', i);
+        if ( this.maxPage === i ) {
+          toggleSlick('set');
+        }
       }
     }
   };
@@ -756,6 +701,70 @@ var slideJsApi,slideJsApi2,frameSize,slideJsCNST;
     <?php endif; ?>
   });
 })();
+
+window.addEventListener('resize', function(e){
+  $("#document-preview-frame").css('width', window.innerWidth - 100); // 大枠のサイズ調整
+  $("#document-preview-frame").css('height', window.innerHeight);
+  slideJsApi2.renderAllPage(); // 画像のサイズ調整
+  slideJsApi2.render(); // フレームのサイズ調整
+  slideJsApi2.pageRender(); // ページ座標移動
+  setPositionDocumentList(); // 資料選択ダイアログの表示位置の計算
+});
+window.addEventListener('wheel', function(e){
+  if ( !($("#document-preview").is(".show") && !$("#switching-preview").is(".show")) ) return false;
+  if ( e.ctrlKey ) {
+    e.preventDefault();
+    clearTimeout(slideJsApi2.zoomInTimer);
+    // 拡大
+    if ( e.deltaY < 0 ) {
+      slideJsApi2.zoomIn(0.1);
+    }
+    // 縮小
+    else {
+      slideJsApi2.zoomOut(0.1);
+    }
+  }
+  else {
+    var canvas = document.querySelector('#slide2_' + slideJsApi2.currentPage);
+    // 前のページへ
+    if ( e.deltaY < 0 ) {
+      if ( canvas.scrollTop !== 0 ) return false;
+      if (e.preventDefault) { e.preventDefault(); }
+      slideJsApi2.prevPage();
+    }
+    // 次のページへ
+    else {
+      if ( (canvas.scrollHeight - canvas.clientHeight - canvas.scrollTop) > 1 ) return false;
+      if (e.preventDefault) { e.preventDefault(); }
+      slideJsApi2.nextPage();
+    }
+  }
+});
+
+// 特定のページへ移動
+$(document).on('click', 'img-frame', function(){
+  var page = $(this).parents('.slick-slide').data('page');
+  $("#pageListToggleBtn").trigger('click');
+  if ( page !== undefined ) {
+    slideJsApi2.currentPage = Number(page);
+    clearTimeout(slideJsApi2.pagingTimer);
+    slideJsApi2.pagingTimer = setTimeout(function(){
+      clearTimeout(slideJsApi2.pagingTimer);
+      slideJsApi2.sendCtrlAction('page');
+      slideJsApi2.cngPage();
+    }, slideJsApi2.pagingTimeTerm);
+  }
+});
+
+// キープレス
+$(window).keyup(function(e){
+  if ( e.keyCode === 37 || e.keyCode === 38 ) {
+    slideJsApi2.prevPage();
+  }
+  else if ( e.keyCode === 39 || e.keyCode === 40 ) {
+    slideJsApi2.nextPage();
+  }
+});
 
 $(document).on("keydown", "#scaleType", function(e){ return false; });
 var sincloApp = angular.module('sincloApp', []);
@@ -823,7 +832,6 @@ sincloApp.controller('MainController', function($scope){
         slideJsApi2.readFile(doc,function(err) {
           if (err) return false;
           var settings = JSON.parse(doc.settings);
-          toggleSlick('set');
         });
       }
     });
@@ -892,7 +900,7 @@ sincloApp.controller('MainController', function($scope){
   $scope.closeDocumentList2 = function() {
     $("#switching-preview").removeClass("show");
     toggleSlick('set');
-    };
+  };
 
   $scope.setDocThumnailStyle = function(doc) {
     var matrix = "";
@@ -1003,7 +1011,7 @@ window.onload = function(){
   })
   .css({
     'display': 'block',
-    'position': 'relative',
+    'position': 'absolute',
     'width': "calc(100% - 150px)",
     'left': "125px",
     'top': "4em"

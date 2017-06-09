@@ -206,6 +206,24 @@ class AppController extends Controller {
 
   }
 
+  /**
+   * recurse_array_HTML_safe
+   * 配列の中身をまるっとhtmlエスケープする
+   * @param $arr エスケープしたい配列 or 文字列
+   * @return void
+   **/
+  public function recurse_array_HTML_safe(&$arr) {
+      foreach ($arr as $key => $val) {
+        if (is_array($val)) {
+          $this->recurse_array_HTML_safe($arr[$key]);
+        }
+        else {
+          $arr[$key] = htmlspecialchars($val, ENT_QUOTES);
+        }
+
+      }
+  }
+
   public function setUserInfo($info){
     $this->userInfo = $info;
     $this->Session->write('global.userInfo', $info);

@@ -63,107 +63,107 @@ router.get("/", function(req, res, next) {
                 return num;
             }
 
-            // IPアドレス制限
-
-            if ( Number(accessType) === 1 && rows.length > 0 && ('exclude_ips' in rows[0]) && rows[0].exclude_ips !== "" && rows[0].exclude_ips !== null && rows[0].exclude_ips !== undefined ) {
-              var ips = rows[0].exclude_ips.split("\r\n");
-              for( var i in ips ){
-                var range = getIpRange(ips[i]);
-                var ipOfBinary = convertToBinaryNum(ip.split('.'));
-                if ( range.min !== "" && range.max !== "" && range.min <= ipOfBinary && range.max >= ipOfBinary ) {
-                  sendData.status = false;
-                  res.send(sendData);
-                  return false;
+            try {
+              // IPアドレス制限
+              if ( Number(accessType) === 1 && rows.length > 0 && ('exclude_ips' in rows[0]) && rows[0].exclude_ips !== "" && rows[0].exclude_ips !== null && rows[0].exclude_ips !== undefined ) {
+                var ips = rows[0].exclude_ips.split("\r\n");
+                for( var i in ips ){
+                  var range = getIpRange(ips[i]);
+                  var ipOfBinary = convertToBinaryNum(ip.split('.'));
+                  if ( range.min !== "" && range.max !== "" && range.min <= ipOfBinary && range.max >= ipOfBinary ) {
+                    sendData.status = false;
+                    res.send(sendData);
+                    return false;
+                  }
                 }
               }
-
-            }
-            if ( rows.length > 0 && 'style_settings' in rows[0] ) {
+              if ( rows.length > 0 && 'style_settings' in rows[0] ) {
                 var core_settings = JSON.parse(rows[0].core_settings);
                 var settings = JSON.parse(rows[0].style_settings);
                 sendData['contract'] = core_settings;
                 sendData['widget'] = {
-                    display_type: isNumeric(rows[0].display_type),
-                    showTime: isNumeric(settings.showTime),
-                    showName: isNumeric(settings.showName),
-                    showPosition: isNumeric(settings.showPosition),
-                    title: settings.title,
-                    showSubtitle: isNumeric(settings.showSubtitle),
-                    subTitle: settings.subTitle,
-                    showDescription: isNumeric(settings.showDescription),
-                    description: settings.description,
-                    mainColor: settings.mainColor,
-                    stringColor: settings.stringColor,
-                    showMainImage: settings.showMainImage,
-                    mainImage: settings.mainImage,
-                    chatRadioBehavior: isNumeric(settings.chatRadioBehavior),
-                    chatTrigger: isNumeric(settings.chatTrigger),
-                    radiusRatio: isNumeric(settings.radiusRatio),
-                    spShowFlg: isNumeric(settings.spShowFlg),
-                    spHeaderLightFlg: isNumeric(settings.spHeaderLightFlg),
-                    spAutoOpenFlg: isNumeric(settings.spAutoOpenFlg)
+                  display_type: isNumeric(rows[0].display_type),
+                  showTime: isNumeric(settings.showTime),
+                  showName: isNumeric(settings.showName),
+                  showPosition: isNumeric(settings.showPosition),
+                  title: settings.title,
+                  showSubtitle: isNumeric(settings.showSubtitle),
+                  subTitle: settings.subTitle,
+                  showDescription: isNumeric(settings.showDescription),
+                  description: settings.description,
+                  mainColor: settings.mainColor,
+                  stringColor: settings.stringColor,
+                  showMainImage: settings.showMainImage,
+                  mainImage: settings.mainImage,
+                  chatRadioBehavior: isNumeric(settings.chatRadioBehavior),
+                  chatTrigger: isNumeric(settings.chatTrigger),
+                  radiusRatio: isNumeric(settings.radiusRatio),
+                  spShowFlg: isNumeric(settings.spShowFlg),
+                  spHeaderLightFlg: isNumeric(settings.spHeaderLightFlg),
+                  spAutoOpenFlg: isNumeric(settings.spAutoOpenFlg)
                 };
 
                 actionTypeList = [];
                 // ウィジェット表示設定
                 if ( Number(sendData.widget.showTime) === 1 ) { // サイト訪問時
                   if (('maxShowTime' in settings) && settings['maxShowTime']) {
-                      sendData.widget['maxShowTime'] = settings['maxShowTime'];
+                    sendData.widget['maxShowTime'] = settings['maxShowTime'];
                   }
                 }
                 else if ( Number(sendData.widget.showTime) === 4 ) { // ページ訪問時
                   if (('maxShowTimePage' in settings) && settings['maxShowTimePage']) {
-                      sendData.widget['maxShowTime'] = settings['maxShowTimePage'];
+                    sendData.widget['maxShowTime'] = settings['maxShowTimePage'];
                   }
                 }
                 else if ( Number(sendData.widget.showTime) === 3 ) { // 常に最大化
-                      sendData.widget['maxShowTime'] = 0;
+                  sendData.widget['maxShowTime'] = 0;
                 }
 
                 // チャット
                 if (core_settings.hasOwnProperty('chat') && core_settings['chat']) {
-                    actionTypeList.push('1');
+                  actionTypeList.push('1');
                 }
 
                 // 画面同期
                 if (core_settings.hasOwnProperty('synclo') && core_settings['synclo'] || core_settings.hasOwnProperty('document') && core_settings['document']) {
-                    sendData['widget']['tel'] = settings.tel;
-                    sendData['widget']['content'] = "";
-                    if ( typeof(settings.content) === "string" ) {
-                        sendData['widget']['content'] = settings.content.replace(/\r\n/g, '<br>');
-                    }
-                    sendData['widget']['time_text'] = settings.timeText;
-                    sendData['widget']['display_time_flg'] = isNumeric(settings.displayTimeFlg);
+                  sendData['widget']['tel'] = settings.tel;
+                  sendData['widget']['content'] = "";
+                  if ( typeof(settings.content) === "string" ) {
+                    sendData['widget']['content'] = settings.content.replace(/\r\n/g, '<br>');
+                  }
+                  sendData['widget']['time_text'] = settings.timeText;
+                  sendData['widget']['display_time_flg'] = isNumeric(settings.displayTimeFlg);
                 }
 
                 pool.query(getTriggerListSql, [siteKey, actionTypeList.join(",")],
-                    function(err, rows){
-                        for(var i=0; i<rows.length; i++){
-                            if ( !(rows[i].trigger_type in sendData['messages']) ) {
-                                sendData['messages'] = [];
-                            }
-                            sendData['messages'].push({
-                                "id": rows[i].id,
-                                "sitekey": siteKey,
-                                "activity": JSON.parse(rows[i].activity),
-                                "action_type": isNumeric(rows[i].action_type),
-                            });
-                        }
-                        res.send(sendData);
-
+                  function(err, rows){
+                    for(var i=0; i<rows.length; i++){
+                      if ( !(rows[i].trigger_type in sendData['messages']) ) {
+                          sendData['messages'] = [];
+                      }
+                      sendData['messages'].push({
+                        "id": rows[i].id,
+                        "sitekey": siteKey,
+                        "activity": JSON.parse(rows[i].activity),
+                        "action_type": isNumeric(rows[i].action_type),
+                      });
                     }
+                    res.send(sendData);
+                  }
                 );
-
-            }
-            else {
-                var err = new Error('Not Found');
-                err.status = 404;
+              }
+              else {
+                var err = new Error(' Service Unavailable');
+                err.status = 503;
+                next(err);
+                return false;
+              }
+            } catch (e) {
+                var err = new Error(' Service Unavailable');
+                err.status = 503;
                 next(err);
                 return false;
             }
-
-
-
         }
     );
 

@@ -59,14 +59,14 @@
             テキストエリアの入力内容が共有できます。
           </li>
           <li>
-            <?= $this->Form->input('name', ['placeholder' => "名前", 'label' => false, 'div' => false]) ?>
+            <?= $this->Form->input('name', ['placeholder' => "名前", 'label' => false, 'div' => false, 'value' => '']) ?>
           </li>
           <li class="lb">
             <pre><span>ラジオボタンやチェックボックスの選択も反映されます。</span></pre>
           </li>
           <li>
             <p>性別：
-              <label class="pointer"><?= $this->Form->radio('sexes', $optList['sexes'], ['legend' => false, 'separator' => '</label><label class="pointer">' ]) ?></label>
+              <label class="pointer"><?= $this->Form->radio('sexes', $optList['sexes'], ['legend' => false, 'separator' => '</label><label class="pointer">', 'value' => '' ]) ?></label>
             </p>
           </li>
           <style type="text/css">
@@ -84,16 +84,17 @@
                            'separator' => '</label><br><label class="pointer">',
                            'options' => $optList['products'],
                            'div' => false,
+                           'value' => '',
                            'label' => false,
               ]); ?>
               </label>
             </span>
           </li>
           <li>
-            <?= $this->Form->input('old', ['type' => "number", 'min' => "0", 'label' => false, 'placeholder'=>"年齢"]); ?>
+            <?= $this->Form->input('old', ['type' => "number", 'min' => "0", 'label' => false, 'placeholder'=>"年齢", 'value' => '']); ?>
           </li>
           <li>
-            <?= $this->Form->input('office', ['placeholder'=>"会社", 'label' => false]); ?>
+            <?= $this->Form->input('office', ['placeholder'=>"会社", 'label' => false, 'value' => '']); ?>
           </li>
           <li class="lb">
             同じく、プルダウンの選択も反映されます。
@@ -102,15 +103,16 @@
             <?=$this->Form->input('work', [
               'type' => 'select',
               'multiple' => false,
+              'value' => '',
               'label' => "職種",
               'options' => $optList['works']
             ]);?>
           </li>
           <li>
-            <?= $this->Form->input('favorite', ['label' => false, 'placeholder'=>"趣味"]); ?>
+            <?= $this->Form->input('favorite', ['label' => false, 'placeholder'=>"趣味", 'value' => '']); ?>
           </li>
           <li>
-            <?= $this->Form->textarea('other', ['label' => false, 'placeholder'=>"その他"]); ?>
+            <?= $this->Form->textarea('other', ['label' => false, 'placeholder'=>"その他", 'value' => '']); ?>
           </li>
           <li>
             <input type="submit" value="send!!" style="margin: 0 auto">
@@ -132,23 +134,23 @@
         <span>フォーム内容が表示されます。<br>このページは、同期対象外の為、専用タグを設置しておりません。<br><br>フォームの入力以降のページには専用タグを設置しないようにお願いします。</span>
 
         <ul>
-          <li><label>名前</label>：<?php if ( isset($data['name']) ) { echo $data['name']; } ?></li>
-          <li><label>性別</label>：<?php if ( isset($data['sexes']) && isset($optList['sexes'][$data['sexes']]) ) { echo $optList['sexes'][$data['sexes']]; } ?></li>
+          <li><label>名前</label>：<?php if ( isset($data['name']) ) { echo h($data['name']); } ?></li>
+          <li><label>性別</label>：<?php if ( isset($data['sexes']) && isset($optList['sexes'][$data['sexes']]) ) { echo h($optList['sexes'][$data['sexes']]); } ?></li>
           <li><label>製品</label>：
             <?php
               if ( !empty($data['product']) ) {
                 foreach((array)$data['product'] as $key => $val) {
                   if ( $key > 0 ) { echo " / "; }
-                  if ( isset($optList['products'][$val]) ) { echo $optList['products'][$val]; }
+                  if ( isset($optList['products'][$val]) ) { echo h($optList['products'][$val]); }
                 }
               }
             ?>
           </li>
-          <li><label>年齢</label>：<?php if ( isset($data['old']) ) { echo $data['old']; } ?></li>
-          <li><label>会社</label>：<?php if ( isset($data['office']) ) { echo $data['office']; } ?></li>
+          <li><label>年齢</label>：<?php if ( isset($data['old']) ) { echo h($data['old']); } ?></li>
+          <li><label>会社</label>：<?php if ( isset($data['office']) ) { echo h($data['office']); } ?></li>
           <li><label>職種</label>：<?php if ( isset($data['work']) && isset($optList['works'][$data['work']]) ) { echo $optList['works'][$data['work']]; } ?></li>
-          <li><label>趣味</label>：<?php if ( isset($data['favorite']) ) { echo $data['favorite']; } ?></li>
-          <li><label>その他</label>：<?php if ( isset($data['other']) ) { echo $data['other']; } ?></li>
+          <li><label>趣味</label>：<?php if ( isset($data['favorite']) ) { echo h($data['favorite']); } ?></li>
+          <li><label>その他</label>：<?php if ( isset($data['other']) ) { echo h($data['other']); } ?></li>
         </ul>
       </div>
     </div>

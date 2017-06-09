@@ -28,19 +28,19 @@ if ( $tmp !== "" ) {
       if ( $campaignParam !== "" ) {
         $campaignParam .= "\n";
       }
-      $campaignParam .= $v;
+      $campaignParam .= h($v);
     }
   }
 }
-$visitorInfo = "";
-if ( isset($mCustomerList[$history['THistory']['visitors_id']]) ) {
-  $visitorInfo = $mCustomerList[$history['THistory']['visitors_id']];
+$visitorsId = "";
+if ( isset($history['THistory']['visitors_id']) ) {
+  $visitorsId = $history['THistory']['visitors_id'];
 }
 ?>
         <tr>
             <td class="tRight pre"><?=date_format(date_create($history['THistory']['access_date']), "Y/m/d\nH:i:s")?></td>
             <td class="tCenter"><ng-show-detail data-id="<?=h($history['THistory']['id'])?>"></ng-show-detail></td>
-            <td class="tLeft pre">{{ ui('<?=h($history['THistory']['ip_address'])?>', <?=json_encode($visitorInfo)?>) }}</td>
+            <td class="tLeft pre">{{ ui('<?=h($history['THistory']['ip_address'])?>', '<?=$visitorsId?>') }}</td>
             <td class="tLeft pre">{{ ua('<?=h($history['THistory']['user_agent'])?>') }}</td>
             <td class="tCenter pre"><?=$campaignParam?></td>
             <td class="tLeft omit"><a href="{{::trimToURL('<?=h($history['THistory']['referrer_url'])?>')}}" target="history">{{::trimToURL("<?=h($history['THistory']['referrer_url'])?>")}}</a></td>

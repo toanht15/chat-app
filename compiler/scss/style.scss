@@ -434,7 +434,7 @@ a {
 }
 
 .hide {
-  display: none;
+  display: none!important;
 }
 
 .invisibility {
@@ -2224,7 +2224,7 @@ ul.naviBtn {
   }
 
   #slidesArea {
-    position: relative;
+    position: absolute;
     top: -140px;
     left: 100px;
     z-index: 3;
@@ -2236,7 +2236,7 @@ ul.naviBtn {
       background-color: #f7f7f7;
       padding: 0.5em 4em 0.5em 4em;
       position: relative;
-      width: calc(100% - 100px);
+      width: 100%;
 
       .slick-arrow {
         display: block;
@@ -2490,10 +2490,6 @@ ul.naviBtn {
   }
   #history_menu {
     height: auto;
-
-    .dammy {
-      display:block;
-    }
 
     #mainDatePeriod {
       margin-left: 5em;
@@ -4085,6 +4081,24 @@ ul.naviBtn {
 
         content {
           margin-right: 0.5em;
+
+          manuscript-input-area {
+            &[data-type='edit'] {
+              #pages-attention {
+                display: none;
+              }
+            }
+
+            &[data-type='add'] {
+              #pages-text {
+                display: none;
+              }
+              #pages-attention {
+                color: #ff8080;
+                background-color: #e8e8e8;
+              }
+            }
+          }
 
           &:first-child {
             display: flex;

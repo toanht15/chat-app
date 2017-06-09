@@ -361,12 +361,13 @@ class HistoriesController extends AppController {
 
     $historyList = $this->THistory->find('all', [
       'fields' => '*',
+      'joins' => $returnData['joinList'],
+      'conditions' => $returnData['conditions'],
       'order' => [
         'THistory.access_date' => 'desc',
-        'THistory.id' => 'desc'
-       ],
-      'joins' => $returnData['joinList'],
-      'conditions' => $returnData['conditions']
+        'THistory.id' => 'desc',
+        'THistoryChatLog.created'
+       ]
     ]);
 
     //$historyListに担当者を追加
@@ -465,10 +466,10 @@ class HistoriesController extends AppController {
     //message,messagetypeを使うためTHistoryChatLogとjoin
     $returnData['joinList'][] =  [
       'type' => 'LEFT',
-      'table' => 't_history_chat_logs',
+      'table' => '(SELECT * FROM t_history_chat_logs ORDER BY t_histories_id, created)',
       'alias' => 'THistoryChatLog',
       'conditions' => [
-      'THistoryChatLog.t_histories_id = THistory.id'
+        'THistoryChatLog.t_histories_id = THistory.id'
       ]
     ];
     //display_nameを使うためMUserとjoin
