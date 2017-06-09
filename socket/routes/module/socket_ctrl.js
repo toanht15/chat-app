@@ -1567,24 +1567,6 @@ console.log("chatStart-3: [" + logToken + "] " + logData3);
               obj.messageDistinction = results[0].conversation_count;
             }
 
-          var insertData = {
-            ret: true,
-            hide: sendData.hide,
-            scInfo: scInfo,
-            siteKey: obj.siteKey,
-            tabId: obj.tabId,
-            visitorsId: (ids.length > 1) ? ids[0] : "",
-            userId: obj.userId,
-            chatMessage: "入室",
-            messageType: type,
-            userName: userName,
-            created: date
-          };
-
-          var logData4 = ( typeof(insertData) === 'object' ) ? JSON.stringify(insertData) : "typeof: " + typeof(insertData) ;
-console.log("chatStart-4: [" + logToken + "] " + logData4);
-
-
             var insertData = {
               ret: true,
               hide: sendData.hide,
@@ -1599,6 +1581,9 @@ console.log("chatStart-4: [" + logToken + "] " + logData4);
               userName: userName,
               created: date
             };
+
+            var logData4 = ( typeof(insertData) === 'object' ) ? JSON.stringify(insertData) : "typeof: " + typeof(insertData) ;
+console.log("chatStart-4: [" + logToken + "] " + logData4);
 console.log("chatStart-4: [" + logToken + "] " + JSON.stringify(insertData));
 
             chatApi.notifyCommit("chatStartResult", insertData);
