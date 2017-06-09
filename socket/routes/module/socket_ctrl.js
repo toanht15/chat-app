@@ -6,7 +6,7 @@ var mysql = require('mysql'),
       host: process.env.DB_HOST || 'localhost',
       user: process.env.DB_USER || 'root',
       password: process.env.DB_PASS || 'password',
-      database: process.env.DB_NAME || 'sinclo_db'
+      database: process.env.DB_NAME || 'sinclo_db2'
     });
 
 // log4js
@@ -498,9 +498,9 @@ io.sockets.on('connection', function (socket) {
           insertData.created = (('created' in d)) ? new Date(d.created) : new Date();
           // オートメッセージの場合は既読
           if (Number(insertData.message_type === 3) ) {
-              insertData.message_read_flg = 1;
-              insertData.message_request_flg = 0;
-              insertData.message_distinction = 1;
+            insertData.message_read_flg = 1;
+            insertData.message_request_flg = chatApi.cnst.observeType.noFlg;
+            insertData.message_distinction = d.messageDistinction;
           }
 
           pool.query('INSERT INTO t_history_chat_logs SET ?', insertData, function(error,results,fields){
@@ -556,6 +556,7 @@ io.sockets.on('connection', function (socket) {
               }
 
               //オペレータリクエスト件数
+              //リクエストチャットか確認
               if(d.messageRequestFlg == 1) {
                 pool.query('SELECT * FROM m_widget_settings WHERE m_companies_id = ?',[companyList[d.siteKey]], function (err, result) {
                   //ウィジェットが常に表示する場合
@@ -1435,7 +1436,23 @@ io.sockets.on('connection', function (socket) {
     chat.created = new Date();
     chat.sort = fullDateTime(chat.created);
     emit.toCompany('resAutoChatMessage', chat, chat.siteKey);
-    emit.toMine('resAutoChatMessage', chat, socket);
+    var ids = chat.tabId.split("_");
+    pool.query('SELECT conversation_count FROM sinclo_db2.t_convertsation_count WHERE visitors_id = ?',[(ids.length > 1) ? ids[0] : ""], function (err, result) {
+      //応対数検索、登録
+      if(isset(err)) {
+        console.log("RECORD SElECT ERROR: t_convertsation_count(conversation_count):" + err);
+        return false;
+      }
+      //カウント数が取れなかったとき
+      if (Object.keys(result).length === 0) {
+        chat.messageDistinction = 1;
+      }
+      //カウント数が取れたとき
+      else {
+        chat.messageDistinction = result[0].conversation_count;
+      }
+      emit.toMine('resAutoChatMessage', chat, socket);
+    });
   });
 
   // 一括：チャットデータ取得(オートメッセージのみ)
@@ -1584,8 +1601,6 @@ console.log("chatStart-3: [" + logToken + "] " + logData3);
 
             var logData4 = ( typeof(insertData) === 'object' ) ? JSON.stringify(insertData) : "typeof: " + typeof(insertData) ;
 console.log("chatStart-4: [" + logToken + "] " + logData4);
-console.log("chatStart-4: [" + logToken + "] " + JSON.stringify(insertData));
-
             chatApi.notifyCommit("chatStartResult", insertData);
           });
         }
@@ -1658,9 +1673,8 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   //新着チャット
   socket.on("sendChat", function(d){
     var obj = JSON.parse(d);
-
     //応対件数検索、登録
-    var query = pool.query('SELECT conversation_count FROM t_convertsation_count WHERE visitors_id = ?',[obj.userId], function (err, results) {
+    var query = pool.query('SELECT conversation_count FROM sinclo_db2.t_convertsation_count WHERE visitors_id = ?',[obj.userId], function (err, results) {
       if(isset(err)) {
         console.log("RECORD SElECT ERROR: t_convertsation_count(conversation_count):" + err);
         return false;
@@ -1680,26 +1694,42 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   // オートチャット
   socket.on("sendAutoChat", function(d){
     var obj = JSON.parse(d);
-    var loop = function(err, rows){
-      if ( !err && (rows && rows[0]) ) {
-          var activity = JSON.parse(rows[0].activity);
-          var ret = {
-              siteKey: obj.siteKey,
-              tabId: obj.tabId,
-              userId: obj.userId,
-              mUserId: null,
-              chatMessage: activity.message,
-              messageType: 3,
-              created: rows[0].inputed
-          };
-          chatApi.set(ret);
+    //応対数検索、登録
+    pool.query('SELECT conversation_count FROM sinclo_db2.t_convertsation_count WHERE visitors_id = ?',[obj.userId], function (error, result) {
+      var messageDistinction;
+      if(isset(error)) {
+        console.log("RECORD SElECT ERROR: t_convertsation_count(conversation_count):" + error);
+        return false;
       }
-    };
-    for (var i = 0; obj.messageList.length > i; i++) {
-        var message = obj.messageList[i];
-        pool.query("SELECT *, ? as inputed FROM t_auto_messages WHERE id = ?  AND m_companies_id = ? AND del_flg = 0 AND active_flg = 0 AND action_type = 1", [message.created, message.chatId, companyList[obj.siteKey]], loop);
-    }
-
+      //カウント数が取れなかったとき
+      if (Object.keys(result).length === 0) {
+        messageDistinction = 1;
+      }
+      //カウント数が取れたとき
+      else {
+        messageDistinction = result[0].conversation_count;
+      }
+      var loop = function(err, rows){
+        if ( !err && (rows && rows[0]) ) {
+            var activity = JSON.parse(rows[0].activity);
+            var ret = {
+                siteKey: obj.siteKey,
+                tabId: obj.tabId,
+                userId: obj.userId,
+                mUserId: null,
+                chatMessage: activity.message,
+                messageType: 3,
+                created: rows[0].inputed,
+                messageDistinction: messageDistinction,
+            };
+            chatApi.set(ret);
+        }
+      };
+      for (var i = 0; obj.messageList.length > i; i++) {
+          var message = obj.messageList[i];
+          pool.query("SELECT *, ? as inputed FROM t_auto_messages WHERE id = ?  AND m_companies_id = ? AND del_flg = 0 AND active_flg = 0 AND action_type = 1", [message.created, message.chatId, companyList[obj.siteKey]], loop);
+      }
+    });
   });
 
   // 既読操作
