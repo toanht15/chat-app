@@ -127,7 +127,7 @@ var socket, // socket.io
           navi = this.widgetNaviTemplate(widget),
           chat = this.chatWidgetTemplate(widget),
           call = this.widgetTemplate(widget),
-          fotter = '<p id="fotter">Powered by <a target="sinclo" href="http://medialink-ml.co.jp/index.html">sinclo</a></p>';
+          fotter = '<p id="fotter">Powered by <a target="sinclo" href="https://www.medialink-ml.co.jp">sinclo</a></p>';
 
       // フルプランのPCの場合
       if ( window.sincloInfo.contract.chat && (window.sincloInfo.contract.synclo || (window.sincloInfo.contract.hasOwnProperty('document') && window.sincloInfo.contract.document)) && !check.smartphone() ) {
