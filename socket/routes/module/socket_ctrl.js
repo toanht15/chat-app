@@ -299,7 +299,7 @@ function sincloReconnect(socket){
 
 //応対件数カウント
 function getConversationCountUser(visitors_id,callback) {
-  pool.query('SELECT conversation_count FROM sinclo_db2.t_conversation_count WHERE visitors_id = ?',[visitors_id], function (err, results) {
+  pool.query('SELECT conversation_count FROM t_conversation_count WHERE visitors_id = ?',[visitors_id], function (err, results) {
     if(isset(err)) {
       console.log("RECORD SElECT ERROR: t_conversation_count(conversation_count):" + err);
       callback(null);
@@ -313,7 +313,7 @@ function getConversationCountUser(visitors_id,callback) {
 
 //待機中オペレータ情報登録
 function addChatActiveUser(t_history_chat_logs_id,m_users_id,siteKey) {
-  pool.query('INSERT INTO sinclo_db2.t_history_chat_active_users(t_history_chat_logs_id,m_companies_id,m_users_id,created) VALUES(?,?,?,?)',[t_history_chat_logs_id,companyList[siteKey],m_users_id,new Date()],function(err,results) {
+  pool.query('INSERT INTO t_history_chat_active_users(t_history_chat_logs_id,m_companies_id,m_users_id,created) VALUES(?,?,?,?)',[t_history_chat_logs_id,companyList[siteKey],m_users_id,new Date()],function(err,results) {
     if(isset(err)) {
       console.log("RECORD INSERT ERROR: t_history_chat_active_users:" + err);
     }
@@ -591,7 +591,7 @@ io.sockets.on('connection', function (socket) {
               //オペレータリクエスト件数
               //リクエストチャットか確認
               if(d.messageRequestFlg == 1) {
-                pool.query('SELECT * FROM sinclo_db2.m_widget_settings WHERE m_companies_id = ?',[companyList[d.siteKey]], function (err, result) {
+                pool.query('SELECT * FROM m_widget_settings WHERE m_companies_id = ?',[companyList[d.siteKey]], function (err, result) {
                   //ウィジェットが常に表示する場合
                   if(result[0].display_type == 1 ){
                     //対応数上限設定ある場合
@@ -618,26 +618,23 @@ io.sockets.on('connection', function (socket) {
                       }
                     }
                   }
-                  //オペレータが待機中のみ表示する場合
-                  else if(result[0].display_type == 2)　{
-                    //待機中オペレーターがいる場合
-                    if(Object.keys(activeOperator[d.siteKey]) && Object.keys(activeOperator[d.siteKey]).length !== 0) {
-                      //対応数上限設定ある場合
-                      if(Object.keys(scList) && Object.keys(scList).length !== 0) {
-                        for (key in Object.keys(activeOperator[d.siteKey])) {
-                          userId = Object.keys(activeOperator[d.siteKey])[key];
-                          //対応数がMAX人数か確認
-                          if(scList[d.siteKey].user[userId] > scList[d.siteKey].cnt[userId]) {
-                            addChatActiveUser(results.insertId,userId,d.siteKey);
-                          }
-                        }
-                      }
-                      //対応数上限を設定していない場合
-                      else{
-                        for (key in Object.keys(activeOperator[d.siteKey])) {
-                          userId = Object.keys(activeOperator[d.siteKey])[key];
+                  //オペレータが待機中のみ表示し、待機中オペレータがいる場合場合
+                  else if(result[0].display_type == 2 && Object.keys(activeOperator[d.siteKey]) && Object.keys(activeOperator[d.siteKey]).length !== 0)　{
+                    //対応数上限設定ある場合
+                    if(Object.keys(scList) && Object.keys(scList).length !== 0) {
+                      for (key in Object.keys(activeOperator[d.siteKey])) {
+                        userId = Object.keys(activeOperator[d.siteKey])[key];
+                        //対応数がMAX人数か確認
+                        if(scList[d.siteKey].user[userId] > scList[d.siteKey].cnt[userId]) {
                           addChatActiveUser(results.insertId,userId,d.siteKey);
                         }
+                      }
+                    }
+                    //対応数上限を設定していない場合
+                    else{
+                      for (key in Object.keys(activeOperator[d.siteKey])) {
+                        userId = Object.keys(activeOperator[d.siteKey])[key];
+                        addChatActiveUser(results.insertId,userId,d.siteKey);
                       }
                     }
                   }
@@ -1021,7 +1018,7 @@ io.sockets.on('connection', function (socket) {
 
       //ウィジェット件数登録処理
       if(obj.widget == true) {
-        pool.query('SELECT * FROM sinclo_db2.t_history_widget_displays WHERE tab_id = ?',[obj.tabId], function (err, results) {
+        pool.query('SELECT * FROM t_history_widget_displays WHERE tab_id = ?',[obj.tabId], function (err, results) {
           if(isset(err)) {
             console.log("RECORD SElECT ERROR: t_history_widget_displays(tab_id):" + err);
             return false;
@@ -1029,7 +1026,7 @@ io.sockets.on('connection', function (socket) {
           //ウィジェットが初めて表示された場合
           if (Object.keys(results).length === 0) {
             //tabId登録
-            pool.query('INSERT INTO sinclo_db2.t_history_widget_displays(m_companies_id,tab_id,created) VALUES(?,?,?)',[companyList[obj.siteKey],obj.tabId,new Date()],function(err,results) {
+            pool.query('INSERT INTO t_history_widget_displays(m_companies_id,tab_id,created) VALUES(?,?,?)',[companyList[obj.siteKey],obj.tabId,new Date()],function(err,results) {
               if(isset(err)) {
                 console.log("RECORD INSERT ERROR: t_history_widget_displays(tab_id):" + err);
                 return false;
@@ -1631,7 +1628,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
           if (Object.keys(results) && Object.keys(results).length !== 0) {
             obj.messageDistinction = results[0].conversation_count;
             //カウント数一件追加
-            pool.query('UPDATE sinclo_db2.t_conversation_count SET conversation_count = ? WHERE visitors_id = ?',[results[0].conversation_count + 1,(ids.length > 1) ? ids[0] : ""],function(err,result) {
+            pool.query('UPDATE t_conversation_count SET conversation_count = ? WHERE visitors_id = ?',[results[0].conversation_count + 1,(ids.length > 1) ? ids[0] : ""],function(err,result) {
               if(isset(err)){
                 console.log("RECORD UPDATE ERROR: t_conversation_count(conversation_count):" + err);
                 return false;
@@ -1675,7 +1672,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         //リクエストメッセージの場合
         if(obj.messageRequestFlg == 1){
           //消費者が初回メッセージを送る前にオペレータが入室した場合
-          pool.query('SELECT id FROM sinclo_db2.t_history_chat_logs WHERE visitors_id = ? and t_histories_id = ? and message_distinction = ? and message_type = 98',[obj.userId,obj.historyId,obj.messageDistinction], function (err, result) {
+          pool.query('SELECT id FROM t_history_chat_logs WHERE visitors_id = ? and t_histories_id = ? and message_distinction = ? and message_type = 98',[obj.userId,obj.historyId,obj.messageDistinction], function (err, result) {
             if(Object.keys(results) && Object.keys(result).length !== 0) {
               obj.messageRequestFlg = 0;
             }
