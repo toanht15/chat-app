@@ -347,8 +347,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     /* 定数 */
     $scope.jsConst = {
       tabInfo: <?php echo json_encode($tabStatusList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>,  // タブ状態の定数
-      tabInfoStr: <?php echo json_encode($tabStatusStrList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?> // タブ状態の定数
-
+      tabInfoStr: <?php echo json_encode($tabStatusStrList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>, // タブ状態の定数
+      tabInfoNotificationMessage: <?php echo json_encode($tabStatusNotificationMessageList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?> // タブ状態の通知用メッセージ
     };
 
     $scope.search = function(array){
@@ -887,6 +887,36 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     $scope.tabStatusStr = function (tabId){
       var n = ($scope.monitorList.hasOwnProperty(tabId)) ? $scope.monitorList[tabId].status : <?=C_WIDGET_TAB_STATUS_CODE_OUT?>;
       return $scope.jsConst.tabInfoStr[n];
+    };
+
+    /* タブ状態の通知用メッセージを返す */
+    $scope.tabStatusNotificationMessage = function (tabId){
+      var n = ($scope.monitorList.hasOwnProperty(tabId)) ? $scope.monitorList[tabId].status : <?=C_WIDGET_TAB_STATUS_CODE_OUT?>;
+      changeNotificationStyleByTabStatus(n);
+      return $scope.jsConst.tabInfoNotificationMessage[n];
+    };
+
+    var changeNotificationStyleByTabStatus = function(status) {
+      var target = $('chat-notificate');
+      switch(status) {
+        case 1: // ウィジェットが開いている状態
+          target.css('background-color','rgba(131, 223, 131, 0.5)');
+          break;
+        case 2: // ウィジェットが閉じている状態
+          target.css('background-color','rgba(223, 223, 131, 0.5)');
+          break;
+        case 3: // ウィンドウが非アクティブ
+          target.css('background-color','rgba(223, 223, 131, 0.5)');
+          break;
+        case 4: // ウィジェット非表示
+          target.css('background-color','rgba(223, 131, 131, 0.5)');
+          break;
+        case 5: // ページ離脱
+          target.css('background-color','rgba(223, 131, 131, 0.5)');
+          break;
+        default:
+          break;
+      }
     }
 
     /* キャンペーン情報を取得する */
