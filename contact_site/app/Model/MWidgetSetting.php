@@ -10,6 +10,9 @@ class MWidgetSetting extends AppModel {
     public $name = "MWidgetSetting";
 
     public $styleColumns = [
+      'show_timing' => "showTiming",
+      'max_show_timing_site' => "maxShowTimingSite",
+      'max_show_timing_page' => "maxShowTimingPage",
       'show_time' => "showTime",
       'max_show_time' => "maxShowTime",
       'max_show_time_page' => "maxShowTimePage",
@@ -42,6 +45,32 @@ class MWidgetSetting extends AppModel {
      * @var array
      */
     public $validate = [
+        'show_timing' => [
+            'numberRange' => [
+                'rule' => '/^([1-4])$/',
+                'message' => '選択肢から選び、設定してください'
+            ]
+        ],
+        'max_show_timing_site' => [
+            'isMaxShowTiming' => [
+                'rule' => 'isMaxShowTiming',
+                'message' => '数値を入力してください'
+            ],
+            'numberRange' => [
+                'rule' => '/^(0[1-9]|[1-9]|[1-9][0-9]|[1-9][1-9][0-9]|[1-2][0-9][0-9][0-9]|3[0-5][0-9][0-9]|3600)$/',
+                'message' => '１～３６００秒の間で設定してください'
+            ]
+        ],
+        'max_show_timing_page' => [
+            'isMaxShowTiming' => [
+                'rule' => 'isMaxShowTiming',
+                'message' => '数値を入力してください'
+            ],
+            'numberRange' => [
+                'rule' => '/^(0[1-9]|[1-9]|[1-9][0-9]|[1-9][1-9][0-9]|[1-2][0-9][0-9][0-9]|3[0-5][0-9][0-9]|3600)$/',
+                'message' => '１～３６００秒の間で設定してください'
+            ]
+        ],
         'show_time' => [
             'numberRange' => [
               'rule' => '/^([1-4])$/',
@@ -162,6 +191,21 @@ class MWidgetSetting extends AppModel {
             ]
         ]
     ];
+
+  public function isMaxShowTiming($value){
+    if ( !isset($this->data['MWidgetSetting']['show_timing']) ) return false;
+    switch (intval($this->data['MWidgetSetting']['show_timing'])) {
+      case C_WIDGET_SHOW_TIMING_SITE:
+        if ( isset($value['max_show_timing_site']) ) {
+          return true;
+        }
+      case C_WIDGET_SHOW_TIMING_PAGE:
+        if ( isset($value['max_show_timing_page']) ) {
+          return true;
+        }
+    }
+    return false;
+  }
 
     public function isMaxShowTime($value){
       if ( !isset($this->data['MWidgetSetting']['show_time']) ) return false;
