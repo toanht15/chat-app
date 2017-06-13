@@ -43,7 +43,6 @@ define('C_DICTIONARY_TYPE_PERSON', 2); // 個人で使用する
 // 表示設定種別
 define('C_WIDGET_DISPLAY_CODE_SHOW', 1); // 常に表示する
 define('C_WIDGET_DISPLAY_CODE_OPER', 2); // オペレーターが待機中の時のみ表示する
-define('C_WIDGET_DISPLAY_CODE_OPER_AMSG', 4); // オペレーターが待機中の時、一番最初のオートメッセージ受信時に表示する
 define('C_WIDGET_DISPLAY_CODE_HIDE', 3); // 表示しない
 
 // 自動表示条件種別
@@ -180,7 +179,6 @@ $config['normalChoices'] = [
 $config['WidgetDisplayType'] = [
     1 => "常に表示する",
     2 => "オペレーターが待機中の時のみ表示する",
-    4 => "オペレーターが待機中の時、一番最初のオートメッセージ受信時に表示する",
     3 => "表示しない"
 ];
 
