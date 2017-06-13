@@ -1560,7 +1560,7 @@ console.log("chatStart-3: [" + logToken + "] " + logData3);
           getConversationCountUser((ids.length > 1) ? ids[0] : "",function(results) {
             if(results !== null){
               //カウント数が取れなかったとき
-              if (Object.keys(results).length === 0) {
+              if (Object.keys(results) && Object.keys(results).length === 0) {
                 obj.messageDistinction = 1;
                 //visitors_id,カウント数一件を登録
                 addChatActiveUser((ids.length > 1) ? ids[0] : "",1);
@@ -1694,7 +1694,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       var messageDistinction;
       if(results !== null){
         //カウント数が取れなかったとき
-        if (Object.keys(results).length === 0) {
+        if (Object.keys(results) && Object.keys(results).length === 0) {
           messageDistinction = 1;
         }
         //カウント数が取れたとき
