@@ -1347,6 +1347,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var obj = JSON.parse(d);
       if ( !(obj.tabId in $scope.monitorList) ) return false;
       $scope.monitorList[obj.tabId].status = obj.status;
+      // ウィジェット表示タイミングがページアクセスと同時に表示される訳ではないため、タブステータスの送信と共にステータスを送信する。
+      $scope.monitorList[obj.tabId].widget = obj.widget;
     });
 
     $scope.setName = function(uId){

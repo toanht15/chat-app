@@ -579,7 +579,7 @@ var cnst, init, check, userInfo, browserInfo, url, syncEvent, sinclo, common, st
       var newState = browserInfo.getActiveWindow();
       if ( tabState !== newState ) {
         tabState = newState;
-        emit('sendTabInfo', { status: tabState, connectToken: params.connectToken });
+        emit('sendTabInfo', { status: tabState, connectToken: params.connectToken, widget: window.sincloInfo.widgetDisplay });
       }
     }, 700);
 

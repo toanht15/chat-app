@@ -2176,7 +2176,7 @@ var socket, // socket.io
         var newState = browserInfo.getActiveWindow();
         if ( document.getElementById('sincloBox') !== null && tabState !== newState ) {
           tabState = newState;
-          emit('sendTabInfo', { status: tabState });
+          emit('sendTabInfo', { status: tabState, widget: window.sincloInfo.widgetDisplay });
         }
       }, 700);
     }); // socket-on: connect

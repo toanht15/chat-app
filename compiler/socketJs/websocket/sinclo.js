@@ -505,7 +505,7 @@
         scrollPosition: browserInfo.windowScroll()
       });
       if (String(userInfo.gFrame) === "true") return false;
-      emit('sendTabInfo', { status: browserInfo.getActiveWindow() });
+      emit('sendTabInfo', { status: browserInfo.getActiveWindow(), widget: window.sincloInfo.widgetDisplay });
     },
     syncElement: function(d){
       var obj = common.jParse(d);
@@ -1320,6 +1320,7 @@
         flg: false,
         nowSaving: false,
         init: function(){
+          console.log("sinclo.trigger.init");
             if ( !('messages' in window.sincloInfo) || (('messages' in window.sincloInfo) && typeof(window.sincloInfo.messages) !== "object" ) ) return false;
             this.flg = true;
             var messages = window.sincloInfo.messages;
