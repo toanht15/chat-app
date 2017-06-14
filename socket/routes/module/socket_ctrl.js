@@ -313,7 +313,7 @@ function getConversationCountUser(visitors_id,callback) {
 
 //待機中オペレータ情報登録
 function addChatActiveUser(t_history_chat_logs_id,m_users_id,siteKey) {
-  pool.query('INSERT INTO sinclo_db2.t_history_chat_active_users(t_history_chat_logs_id,m_companies_id,m_users_id,created) VALUES(?,?,?,?)',[t_history_chat_logs_id,companyList[siteKey],m_users_id,new Date()],function(err,results) {
+  pool.query('INSERT INTO t_history_chat_active_users(t_history_chat_logs_id,m_companies_id,m_users_id,created) VALUES(?,?,?,?)',[t_history_chat_logs_id,companyList[siteKey],m_users_id,new Date()],function(err,results) {
     if(isset(err)) {
       console.log("RECORD INSERT ERROR: t_history_chat_active_users:" + err);
     }
@@ -592,7 +592,7 @@ io.sockets.on('connection', function (socket) {
               //リクエストチャットか確認
               if(d.messageRequestFlg == 1) {
                 var companyId = companyList[d.siteKey];
-                var getUserInfo = "SELECT IFNULL(chat.sc_flg, 2) as sc_flg, widget.display_type FROM sinclo_db2.m_companies AS comp LEFT JOIN m_widget_settings AS widget ON ( comp.id = widget.m_companies_id ) LEFT JOIN m_chat_settings AS chat ON ( chat.m_companies_id = widget.m_companies_id ) WHERE comp.id = ?;";
+                var getUserInfo = "SELECT IFNULL(chat.sc_flg, 2) as sc_flg, widget.display_type FROM m_companies AS comp LEFT JOIN m_widget_settings AS widget ON ( comp.id = widget.m_companies_id ) LEFT JOIN m_chat_settings AS chat ON ( chat.m_companies_id = widget.m_companies_id ) WHERE comp.id = ?;";
                 pool.query(getUserInfo, [companyId], function(err, result){
                   //ウィジェットが常に表示する場合
                   if(result[0].display_type == 1 ){
@@ -1566,7 +1566,7 @@ console.log("chatStart-3: [" + logToken + "] " + logData3);
               if (Object.keys(results) && Object.keys(results).length === 0) {
                 obj.messageDistinction = 1;
                 //visitors_id,カウント数一件を登録
-                pool.query('INSERT INTO sinclo_db2.t_conversation_count(visitors_id,conversation_count) VALUES(?,?)',[(ids.length > 1) ? ids[0] : "",1],function(err,result) {
+                pool.query('INSERT INTO t_conversation_count(visitors_id,conversation_count) VALUES(?,?)',[(ids.length > 1) ? ids[0] : "",1],function(err,result) {
                   if(isset(err)){
                     console.log("RECORD INSERT ERROR: t_convertsation_count(visitors_id,conversation_count):" + err);
                     return false;
@@ -1633,7 +1633,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       getConversationCountUser((ids.length > 1) ? ids[0] : "",function(results) {
         if(results !== null){
           //カウントが取れたとき
-          if ( Object.keys(results).length !== 0) {
+          if ( Object.keys(results) && Object.keys(results).length !== 0) {
             obj.messageDistinction = results[0].conversation_count;
             //カウント数一件追加
             pool.query('UPDATE t_conversation_count SET conversation_count = ? WHERE visitors_id = ?',[results[0].conversation_count + 1,(ids.length > 1) ? ids[0] : ""],function(err,result) {
