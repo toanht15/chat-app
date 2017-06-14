@@ -649,7 +649,8 @@ var socket, // socket.io
           console.log('でろでろでろでろでろでろ');
           sincloBox.style.display = "block";
           common.widgetHandler.saveShownFlg();
-          sinclo.operatorInfo.reCreateWidget();
+          sinclo.widget.condifiton.set(false);
+          sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
         }
       },
       hide: function() {
