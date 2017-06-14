@@ -545,7 +545,37 @@ var socket, // socket.io
       if (check.isset(window.sincloInfo.dataset) && (check.isset(window.sincloInfo.dataset.hide) && window.sincloInfo.dataset.hide === "1")) {
         window.sincloInfo.widgetDisplay = false;
       }
-      return window.sincloInfo.widgetDisplay;
+
+      // ウィジェット表示タイミング
+      var beforeJudgeDisplayFlg = window.sincloInfo.widgetDisplay;
+      if(window.sincloInfo.widgetDisplay) {
+        switch(window.sincloInfo.widget.showTiming) {
+          case 1: //サイト訪問後
+            window.sincloInfo.widgetDisplay = false;
+            break;
+          case 2: //ページ訪問後
+            window.sincloInfo.widgetDisplay = false;
+            break;
+          case 3: //初回オートチャット受信時
+            window.sincloInfo.widgetDisplay = false;
+            break;
+          case 4: //常に表示
+            //上の表示条件処理に依存する
+            break;
+        }
+      }
+
+      if(beforeJudgeDisplayFlg && window.sincloInfo.widgetDisplay) {
+        return window.sincloInfo.widgetDisplay;
+      } else if (beforeJudgeDisplayFlg && !window.sincloInfo.widgetDisplay) {
+        // 常に表示以外はウィジェットUI作成処理を継続させるためにtrueを返す
+        // (window.sincloInfo.widgetDisplayのフラグは後続処理で利用する)
+        return true;
+      } else if (!beforeJudgeDisplayFlg) {
+        // そもそも表示しない設定
+        // FIXME 条件が冗長
+        return window.sincloInfo.widgetDisplay;
+      }
     },
     makeAccessIdTag: function(){
       if ( !check.browser() ) return false;
@@ -557,58 +587,105 @@ var socket, // socket.io
       var sincloBox = document.getElementById('sincloBox');
       // 非表示にされているだけであれば、再表示
       if ( sincloBox && sincloBox.style.display === "none" ) {
-        sincloBox.style.display = "block";
+        common.widgetHandler.show();
         // sincloBox.parentNode.removeChild(sincloBox);
       }
 
       if ( userInfo.accessType !== cnst.access_type.host ) {
-        var html = common.createWidget();
-        $('body').append(html);
-        emit('syncReady', {widget: window.sincloInfo.widgetDisplay});
-        sincloBox = document.getElementById('sincloBox');
-        sincloBox.setAttribute('data-openflg', false);
-        sinclo.operatorInfo.header = document.querySelector('#sincloBox #widgetHeader');
+          var html = common.createWidget();
+          $('body').append(html);
+          emit('syncReady', {widget: window.sincloInfo.widgetDisplay});
+          sincloBox = document.getElementById('sincloBox');
+          sincloBox.setAttribute('data-openflg', false);
+          sinclo.operatorInfo.header = document.querySelector('#sincloBox #widgetHeader');
 
-        $("#sincloBox .widgetCtrl").click(function(){
-            var target = $("#sincloBox .widgetCtrl.selected"), clickTab = $(this).data('tab');
-            target.removeClass("selected");
-            $("#sincloBox").height("");
-            $(this).addClass("selected");
+          $("#sincloBox .widgetCtrl").click(function(){
+              var target = $("#sincloBox .widgetCtrl.selected"), clickTab = $(this).data('tab');
+              target.removeClass("selected");
+              $("#sincloBox").height("");
+              $(this).addClass("selected");
 
-            if ( clickTab === "call" ) {
-              $("#sincloBox #chatTab").removeClass('flexBox');
-              $("#sincloBox #callTab").addClass('flexBox');
-            }
-            else {
-              $("#sincloBox #callTab").removeClass('flexBox');
-              $("#sincloBox #chatTab").addClass('flexBox');
-              sinclo.chatApi.showUnreadCnt();
-              sinclo.chatApi.scDown();
-            }
-        });
-
-        if ( window.sincloInfo.contract.chat && check.smartphone() ) {
-          // 初期の画面向き
-            if ( window.screen.availHeight < window.screen.availWidth ) {
-              sincloBox.setAttribute('data-screen', 'horizontal'); // 横向き
-            }
-            else {
-              sincloBox.setAttribute('data-screen', 'vertical'); // 縦向き
-            }
-
-          // スクロールをした時に、ページ下部であれば透過する
-          window.addEventListener('scroll', sinclo.operatorInfo.widgetHide);
-          // 画面を回転ときは、向きによってスタイルを変える
-          window.addEventListener('orientationchange', sinclo.operatorInfo.reCreateWidget);
-          // サイズが変わった時は、サイズ感を変える
-          window.addEventListener('resize', function(){
-            if ( $(window).height() > $(window).width() || document.activeElement.id === "sincloChatMessage") return false; // 横向きの場合のみ使用
-             sinclo.operatorInfo.reCreateWidget();
+              if ( clickTab === "call" ) {
+                $("#sincloBox #chatTab").removeClass('flexBox');
+                $("#sincloBox #callTab").addClass('flexBox');
+              }
+              else {
+                $("#sincloBox #callTab").removeClass('flexBox');
+                $("#sincloBox #chatTab").addClass('flexBox');
+                sinclo.chatApi.showUnreadCnt();
+                sinclo.chatApi.scDown();
+              }
           });
-        }
 
+          if ( window.sincloInfo.contract.chat && check.smartphone() ) {
+            // 初期の画面向き
+              if ( window.screen.availHeight < window.screen.availWidth ) {
+                sincloBox.setAttribute('data-screen', 'horizontal'); // 横向き
+              }
+              else {
+                sincloBox.setAttribute('data-screen', 'vertical'); // 縦向き
+              }
+
+            // スクロールをした時に、ページ下部であれば透過する
+            window.addEventListener('scroll', sinclo.operatorInfo.widgetHide);
+            // 画面を回転ときは、向きによってスタイルを変える
+            window.addEventListener('orientationchange', sinclo.operatorInfo.reCreateWidget);
+            // サイズが変わった時は、サイズ感を変える
+            window.addEventListener('resize', function(){
+              if ( $(window).height() > $(window).width() || document.activeElement.id === "sincloChatMessage") return false; // 横向きの場合のみ使用
+               sinclo.operatorInfo.reCreateWidget();
+            });
+          }
       }
-
+    },
+    widgetHandler: {
+      show: function() {
+        /**
+         * 表示可能条件
+         * １
+         */
+        if(common.widgetHandler.isShown()
+          || window.sincloInfo.widgetDisplay) {
+          console.log('でろでろでろでろでろでろ');
+          sincloBox.style.display = "block";
+          sincloBox.style.height = "84px";
+          common.widgetHandler.saveShownFlg();
+        }
+      },
+      hide: function() {
+        sincloBox.style.display = "none";
+      },
+      saveShownFlg: function() {
+        storage.s.set("widgetShown", "true");
+        storage.s.set("widgetShowTimingType", window.sincloInfo.widget.showTiming);
+      },
+      clearShownFlg: function() {
+        storage.s.unset("widgetShown");
+        storage.s.unset("widgetShowTimingType");
+      },
+      isShown: function() {
+        return storage.s.get("widgetShown") === "true";
+      },
+      getRemainingTimeMsec: function() {
+        var remainingTime = 0;
+        switch(window.sincloInfo.widget.showTiming) {
+          case 1: //サイト
+            remainingTime = this._calcRemainingShowTimingSiteTimeMsec();
+            break;
+          case 2: //ページ
+            remainingTime = window.sincloInfo.widget.maxShowTimingPage * 1000;
+            break;
+        }
+        return remainingTime;
+      },
+      _calcRemainingShowTimingSiteTimeMsec: function() {
+        var siteAccessTimeMsec = (Number(userInfo.pageTime) - Number(userInfo.time)),
+            showIntervalMsec = window.sincloInfo.widget.maxShowTimingSite * 1000;
+        console.log("siteAccessTimeMsec " + siteAccessTimeMsec);
+        console.log("showIntervalMsec" + showIntervalMsec);
+        console.log("_calcRemainingShowTimingSiteTimeMsec: " + (siteAccessTimeMsec <= showIntervalMsec ? showIntervalMsec - siteAccessTimeMsec : 0));
+        return siteAccessTimeMsec <= showIntervalMsec ? showIntervalMsec - siteAccessTimeMsec : 0;
+      }
     },
     load: {
       id: "loadingImg",
@@ -2062,6 +2139,16 @@ var socket, // socket.io
 
   var init = function(){
     var tabStateTimer = null;
+    if(window.sincloInfo.widget.showTiming !== Number(storage.s.get("widgetShowTimingType"))) {
+      // SessionStorageで保存している表示タイミング設定と違う場合はクリアする
+      console.log("Storage widgetShowTimingType is different. clearing... before: " + Number(storage.s.get("widgetShowTimingType")) + " after: " + window.sincloInfo.widget.showTiming);
+      common.widgetHandler.clearShownFlg();
+    }
+    if(window.sincloInfo.widget.showTiming === 2) {
+      // 表示タイミングがページごとの場合は初期処理でフラグをクリアする
+      console.log("Widget Show flg clear.");
+      common.widgetHandler.clearShownFlg();
+    }
     socket = io.connect(sincloInfo.site.socket, {port: 9090, rememberTransport : false});
 
     // 接続時
@@ -2074,7 +2161,7 @@ var socket, // socket.io
         emitData.widget = window.sincloInfo.widgetDisplay;
         emit('customerInfo', emitData);
         emit('connectSuccess', {confirm: false, reconnect: true, widget: window.sincloInfo.widgetDisplay});
-        sincloBox.style.display = "block";
+        common.widgetHandler.show();
       }
       else {
         sinclo.trigger.flg = false;
@@ -2255,7 +2342,7 @@ var socket, // socket.io
       var sincloBox = document.getElementById('sincloBox');
       if ( sincloBox ) {
         // sincloBox.parentNode.removeChild(sincloBox);
-        sincloBox.style.display = "none";
+        common.widgetHandler.hide();
       }
       popup.remove();
     });

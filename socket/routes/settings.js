@@ -81,7 +81,13 @@ router.get("/", function(req, res, next) {
                 var core_settings = JSON.parse(rows[0].core_settings);
                 var settings = JSON.parse(rows[0].style_settings);
                 sendData['contract'] = core_settings;
+                // ウィジェット表示タイミング設定が存在しない場合は「常に表示する」
+                var showTimingSetting = 4;
+                if(('showTiming' in settings)) {
+                  showTimingSetting = isNumeric(settings.showTiming);
+                }
                 sendData['widget'] = {
+                  showTiming: showTimingSetting,
                   display_type: isNumeric(rows[0].display_type),
                   showTime: isNumeric(settings.showTime),
                   showName: isNumeric(settings.showName),
@@ -117,6 +123,23 @@ router.get("/", function(req, res, next) {
                 }
                 else if ( Number(sendData.widget.showTime) === 3 ) { // 常に最大化
                   sendData.widget['maxShowTime'] = 0;
+                }
+
+                // ウィジェット表示タイミング
+                if ( Number(sendData.widget.showTiming) === 1 ) { // サイト訪問時
+                  if (('maxShowTimingSite' in settings) && settings['maxShowTimingSite']) {
+                    sendData.widget['maxShowTimingSite'] = settings['maxShowTimingSite'];
+                  }
+                }
+                else if ( Number(sendData.widget.showTiming) === 2 ) { // ページ訪問時
+                  if (('maxShowTimingPage' in settings) && settings['maxShowTimingPage']) {
+                    sendData.widget['maxShowTimingPage'] = settings['maxShowTimingPage'];
+                  }
+                }
+                else if ( Number(sendData.widget.showTiming) === 3
+                       || Number(sendData.widget.showTiming) === 4 ) { // 初回オートメッセージ受信 or 常に表示
+                  sendData.widget['maxShowTimingSite'] = 0;
+                  sendData.widget['maxShowTimingPage'] = 0;
                 }
 
                 // チャット

@@ -27,9 +27,12 @@
         if(String(flg) === "true" && typeof ga == "function"){
           ga('send', 'event', 'sinclo', 'クリック', location.href);
         }
-
       },
       ev: function() {
+        if(!common.widgetHandler.isShown()) {
+          console.log("非表示状態のため動作させない");
+          return;
+        }
         var height = 0;
         var sincloBox = document.getElementById('sincloBox');
         var flg = sinclo.widget.condifiton.get();
@@ -85,7 +88,7 @@
             sincloBox.style.display = "none";
           }
           else {
-            sincloBox.style.display = "block";
+            common.widgetHandler.show();
           }
         }, 500);
       },
@@ -123,7 +126,7 @@
           $("sinclo-chat").append(chatTalk);
           var sincloBox = document.getElementById('sincloBox');
           document.getElementById('sincloChatMessage').value = sinclo.operatorInfo.reCreateWidgetMessage;
-          sincloBox.style.display = "block";
+          common.widgetHandler.show();
           sincloBox.style.opacity = 0;
           sinclo.operatorInfo.header = document.getElementById('widgetHeader');
           sinclo.widget.condifiton.set(openFlg);
@@ -311,13 +314,13 @@
             createStart = function(){
                 var sincloBox = document.getElementById('sincloBox');
                 if ( window.sincloInfo.contract.chat && check.smartphone() ) {
-                  sincloBox.style.display = "block";
+                  common.widgetHandler.show();
                   sincloBox.style.opacity = 0;
                   sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
                   sinclo.operatorInfo.widgetHide();
                 }
                 else {
-                  sincloBox.style.display = "block";
+                  common.widgetHandler.show();
                   sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
                 }
                 // ウィジェット表示
@@ -326,13 +329,13 @@
                 if ( window.sincloInfo.contract.chat ) {
                     // チャット情報読み込み
                     sinclo.chatApi.init();
-                }
+            }
         };
 
         if ( document.getElementById('sincloBox') === null ) return false;
 
         createStartTimer = window.setInterval(function(){
-          if (window.sincloInfo.widgetDisplay && !sinclo.trigger.flg) {
+          if (window.sincloInfo.widget.showTiming !== 4 || (window.sincloInfo.widgetDisplay && !sinclo.trigger.flg)) {
             window.clearInterval(createStartTimer);
             createStart();
           }
@@ -799,6 +802,7 @@
     sendReqAutoChatMessages: function(d){
       // 自動メッセージの情報を渡す（保存の為）
       var obj = common.jParse(d);
+      debugger;
       emit("sendAutoChatMessages", {messages: sinclo.chatApi.autoMessages, sendTo: obj.sendTo});
       var value = "";
       if (window.sincloInfo.widgetDisplay) {
@@ -888,12 +892,11 @@
         var sincloBox = document.getElementById('sincloBox');
         // チャット未契約のときはウィジェットを非表示
         if (sincloBox && (window.sincloInfo.contract.chat || window.sincloInfo.contract.synclo || (window.sincloInfo.contract.hasOwnProperty('document') && window.sincloInfo.contract.document)) ) {
-          sincloBox.style.display = "block";
+          common.widgetHandler.show();
           sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
           sinclo.widget.condifiton.set(false);
           clearInterval(timer);
         }
-
       }, 500);
     },
     syncApi: {
@@ -1031,6 +1034,8 @@
             emit('getChatMessage', {showName: sincloInfo.widget.showName});
         },
         widgetOpen: function(){
+          console.log("chatApi.widgetOpen start");
+          this.beforeWidgetOpen();
           var widgetOpen = storage.s.get('widgetOpen');
           if ( !(('showTime' in window.sincloInfo.widget) && ('maxShowTime' in window.sincloInfo.widget) && String(window.sincloInfo.widget.maxShowTime).match(/^[0-9]{1,2}$/) !== null) ) return false;
           var showTime = String(window.sincloInfo.widget.showTime);
@@ -1041,6 +1046,7 @@
           }
           // 常に最大化する、ページ訪問時（showTime === 3,4）
           window.setTimeout(function(){
+            console.log("ウィジェット最大化条件発動");
             var flg = sinclo.widget.condifiton.get();
             if ( String(flg) === "false" ) {
               storage.s.set('widgetOpen', true);
@@ -1049,6 +1055,17 @@
               }
             }
           }, maxShowTime);
+        },
+        beforeWidgetOpen: function() {
+          // ウィジェット表示タイミングが「ページ訪問時」の場合はタイマーをセットする
+          if(window.sincloInfo.widget.showTiming === 1 || window.sincloInfo.widget.showTiming === 2) {
+            console.log("訪問後表示処理実行");
+            window.setTimeout(function() {
+              console.log("訪問後表示");
+              window.sincloInfo.widgetDisplay = true;
+              common.widgetHandler.show();
+            },common.widgetHandler.getRemainingTimeMsec());
+          }
         },
         createNotifyMessage: function(val){
             var chatList = document.getElementsByTagName('sinclo-chat')[0];
@@ -1461,6 +1478,12 @@
             callback(key, ret);
         },
         setAutoMessage: function(id, cond){
+            if(sincloInfo.widget.showTiming === 3) {
+              console.log("オートメッセージ表示処理発動");
+              // 初回オートメッセージ表示時にフラグを立てる
+              sincloInfo.widgetDisplay = true;
+              common.widgetHandler.show();
+            }
             var data = {
                 chatId:id,
                 message:cond.message
@@ -1471,6 +1494,7 @@
                 emit("sendAutoChat", {messageList: [data]});
             }
             else {
+              debugger;
                 emit('sendAutoChatMessage', data);
             }
         },
@@ -1486,6 +1510,7 @@
                 var prev = sinclo.chatApi.autoMessages;
 
                 var setAutoMessageTimer = setInterval(function(){
+                  console.log("監視中");
                     var date = common.fullDateTime();
                     if ( prev.length === 0 || (prev.length > 0 && prev[prev.length - 1].created !== date) ) {
                         clearInterval(setAutoMessageTimer);
