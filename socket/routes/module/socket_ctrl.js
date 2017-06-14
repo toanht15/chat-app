@@ -592,7 +592,7 @@ io.sockets.on('connection', function (socket) {
               //リクエストチャットか確認
               if(d.messageRequestFlg == 1) {
                 var companyId = companyList[d.siteKey];
-                var getUserInfo = "SELECT IFNULL(chat.sc_flg, 2) as sc_flg, widget.display_type FROM m_companies AS comp LEFT JOIN m_widget_settings AS widget ON ( comp.id = widget.m_companies_id ) LEFT JOIN m_chat_settings AS chat ON ( chat.m_companies_id = widget.m_companies_id ) WHERE comp.id = ?;";
+                var getUserInfo = "SELECT chat.sc_flg as sc_flg, widget.display_type FROM m_companies AS comp LEFT JOIN m_widget_settings AS widget ON ( comp.id = widget.m_companies_id ) LEFT JOIN m_chat_settings AS chat ON ( chat.m_companies_id = widget.m_companies_id ) WHERE comp.id = ?;";
                 pool.query(getUserInfo, [companyId], function(err, result){
                   //ウィジェットが常に表示する場合
                   if(result[0].display_type == 1 ){
