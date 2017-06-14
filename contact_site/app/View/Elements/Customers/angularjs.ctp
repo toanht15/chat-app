@@ -900,18 +900,22 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var target = $('chat-notificate');
       switch(status) {
         case 1: // ウィジェットが開いている状態
-          target.css('background-color','rgba(131, 223, 131, 0.5)');
+          target.css('display','none');
           break;
         case 2: // ウィジェットが閉じている状態
-          target.css('background-color','rgba(223, 223, 131, 0.5)');
+          target.css('display','block');
+          target.css('background-color','rgba(246, 171, 0, 0.75)');
           break;
-        case 3: // ウィンドウが非アクティブ
-          target.css('background-color','rgba(223, 223, 131, 0.5)');
+        case 3: // ウィジェットが非表示
+          target.css('display','block');
+          target.css('background-color','rgba(137, 137, 137, 0.75)');
           break;
-        case 4: // ウィジェット非表示
-          target.css('background-color','rgba(223, 131, 131, 0.5)');
+        case 4: // ウィンドウ非アクティブ
+          target.css('display','block');
+          target.css('background-color','rgba(181, 181, 182, 0.75)');
           break;
         case 5: // ページ離脱
+          target.css('display','block');
           target.css('background-color','rgba(223, 131, 131, 0.5)');
           break;
         default:

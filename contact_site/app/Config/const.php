@@ -171,9 +171,9 @@ $config['tabStatusStrList'] = [
 
 /* タブステータス(通知用) */
 $config['tabStatusNotificationMessageList'] = [
-    C_WIDGET_TAB_STATUS_CODE_OPEN => "ウィジェットは開いています",
+    C_WIDGET_TAB_STATUS_CODE_OPEN => "", // 表示しないため文言の指定もしない
     C_WIDGET_TAB_STATUS_CODE_CLOSE => "ウィジェットは閉じています",
-    C_WIDGET_TAB_STATUS_CODE_NONE => "ウィジェットは非表示です",
+    C_WIDGET_TAB_STATUS_CODE_NONE => "ウィジェットは表示されていません",
     C_WIDGET_TAB_STATUS_CODE_DISABLE => "別の作業をしています",
     C_WIDGET_TAB_STATUS_CODE_OUT => "ページが閉じられました"
 ];
