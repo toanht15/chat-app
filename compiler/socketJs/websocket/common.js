@@ -648,8 +648,8 @@ var socket, // socket.io
           || window.sincloInfo.widgetDisplay) {
           console.log('でろでろでろでろでろでろ');
           sincloBox.style.display = "block";
-          sincloBox.style.height = "84px";
           common.widgetHandler.saveShownFlg();
+          sinclo.operatorInfo.reCreateWidget();
         }
       },
       hide: function() {
