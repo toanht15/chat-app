@@ -2827,6 +2827,11 @@ ul.naviBtn {
           &:first-child {
             border-top: none;
           }
+
+          .padding {
+            padding-top: 0.5em;
+            padding-bottom: 0.5em;
+          }
         }
       }
 
