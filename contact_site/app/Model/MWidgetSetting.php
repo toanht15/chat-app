@@ -59,6 +59,10 @@ class MWidgetSetting extends AppModel {
             'numberRange' => [
                 'rule' => '/^(0[1-9]|[1-9]|[1-9][0-9]|[1-9][1-9][0-9]|[1-2][0-9][0-9][0-9]|3[0-5][0-9][0-9]|3600)$/',
                 'message' => '１～３６００秒の間で設定してください'
+            ],
+            'isLargerThanMaxShowTiming' => [
+                'rule' => 'isLargerThanMaxShowTiming',
+                'message' => '最大化条件よりも値を小さくしてください'
             ]
         ],
         'max_show_timing_page' => [
@@ -69,6 +73,10 @@ class MWidgetSetting extends AppModel {
             'numberRange' => [
                 'rule' => '/^(0[1-9]|[1-9]|[1-9][0-9]|[1-9][1-9][0-9]|[1-2][0-9][0-9][0-9]|3[0-5][0-9][0-9]|3600)$/',
                 'message' => '１～３６００秒の間で設定してください'
+            ],
+            'isLargerThanMaxShowTiming' => [
+                'rule' => 'isLargerThanMaxShowTiming',
+                'message' => '最大化条件よりも値を小さくしてください'
             ]
         ],
         'show_time' => [
@@ -83,8 +91,12 @@ class MWidgetSetting extends AppModel {
               'message' => '数値を入力してください'
             ],
             'numberRange' => [
-              'rule' => '/^(0[1-9]|[1-9]|[1-5][0-9]|60)$/',
-              'message' => '１～６０秒の間で設定してください'
+              'rule' => '/^(0[1-9]|[1-9]|[1-9][0-9]|[1-9][1-9][0-9]|[1-2][0-9][0-9][0-9]|3[0-5][0-9][0-9]|3600)$/',
+              'message' => '１～３６００秒の間で設定してください'
+            ],
+            'isLargerThanMaxShowTiming' => [
+                'rule' => 'isLargerThanMaxShowTiming',
+                'message' => '表示するタイミングよりも値を大きくしてください'
             ]
         ],
         'max_show_time_page' => [
@@ -93,8 +105,12 @@ class MWidgetSetting extends AppModel {
               'message' => '数値を入力してください'
             ],
             'numberRange' => [
-              'rule' => '/^(0[1-9]|[1-9]|[1-5][0-9]|60)$/',
-              'message' => '１～６０秒の間で設定してください'
+                'rule' => '/^(0[1-9]|[1-9]|[1-9][0-9]|[1-9][1-9][0-9]|[1-2][0-9][0-9][0-9]|3[0-5][0-9][0-9]|3600)$/',
+                'message' => '１～３６００秒の間で設定してください'
+            ],
+            'isLargerThanMaxShowTiming' => [
+                'rule' => 'isLargerThanMaxShowTiming',
+                'message' => '表示するタイミングよりも値を大きくしてください'
             ]
         ],
         'sub_title' => [
@@ -192,20 +208,37 @@ class MWidgetSetting extends AppModel {
         ]
     ];
 
-  public function isMaxShowTiming($value){
-    if ( !isset($this->data['MWidgetSetting']['show_timing']) ) return false;
-    switch (intval($this->data['MWidgetSetting']['show_timing'])) {
-      case C_WIDGET_SHOW_TIMING_SITE:
-        if ( isset($value['max_show_timing_site']) ) {
-          return true;
-        }
-      case C_WIDGET_SHOW_TIMING_PAGE:
-        if ( isset($value['max_show_timing_page']) ) {
-          return true;
-        }
+    public function isMaxShowTiming($value){
+      if ( !isset($this->data['MWidgetSetting']['show_timing']) ) return false;
+      switch (intval($this->data['MWidgetSetting']['show_timing'])) {
+        case C_WIDGET_SHOW_TIMING_SITE:
+          if ( isset($value['max_show_timing_site']) ) {
+            return true;
+          }
+        case C_WIDGET_SHOW_TIMING_PAGE:
+          if ( isset($value['max_show_timing_page']) ) {
+            return true;
+          }
+      }
+      return false;
     }
-    return false;
-  }
+
+    /**
+     *
+     * @param $value
+     * @return bool
+     */
+    public function isLargerThanMaxShowTiming ($value) {
+      // 表示タイミング・最大化条件が共にページ訪問後だった場合
+      if ($this->isShowTimingTypePage() && $this->isShowTimeTypePage()) {
+        return intval($this->data['MWidgetSetting']['max_show_time_page']) > intval($this->data['MWidgetSetting']['max_show_timing_page']);
+      // 表示タイミング・最大化条件が共にサイト訪問後だった場合
+      } else if ($this->isShowTimingTypeSite() && $this->isShowTimeTypeSite()) {
+        return intval($this->data['MWidgetSetting']['max_show_time']) > intval($this->data['MWidgetSetting']['max_show_timing_site']);
+      }
+      //それ以外の組み合わせ設定だった場合は比較不要のため、許容する
+      return true;
+    }
 
     public function isMaxShowTime($value){
       if ( !isset($this->data['MWidgetSetting']['show_time']) ) return false;
@@ -232,5 +265,20 @@ class MWidgetSetting extends AppModel {
         return true;
     }
 
+    private function isShowTimingTypeSite() {
+      return intval($this->data['MWidgetSetting']['show_timing']) === C_WIDGET_SHOW_TIMING_SITE;
+    }
+
+    private function isShowTimingTypePage() {
+      return intval($this->data['MWidgetSetting']['show_timing']) === C_WIDGET_SHOW_TIMING_PAGE;
+    }
+
+    private function isShowTimeTypeSite() {
+      return intval($this->data['MWidgetSetting']['show_time']) === C_WIDGET_AUTO_OPEN_TYPE_SITE;
+    }
+
+    private function isShowTimeTypePage() {
+      return intval($this->data['MWidgetSetting']['show_time']) === C_WIDGET_AUTO_OPEN_TYPE_PAGE;
+    }
 }
 

@@ -69,9 +69,9 @@ $headerNo = 1;
                 'ng-disabled' => 'showTime !== "'.C_WIDGET_AUTO_OPEN_TYPE_SITE.'"',
                 'before' => 'サイト訪問後',
                 'after' => '秒後に自動で最大化する',
-                'maxlength' => 2,
-                'style' => 'width:5em',
-                'max' => 60,
+                'maxlength' => 4,
+                'style' => 'width:6em',
+                'max' => 3600,
                 'min' => 0,
                 'error' => false
               ],[
@@ -85,8 +85,8 @@ $headerNo = 1;
                 'before' => 'ページ訪問後',
                 'after' => '秒後に自動で最大化する',
                 'maxlength' => 2,
-                'style' => 'width:5em',
-                'max' => 60,
+                'style' => 'width:6em',
+                'max' => 3600,
                 'min' => 0,
                 'error' => false
               ],[
