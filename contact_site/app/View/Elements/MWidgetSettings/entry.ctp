@@ -84,7 +84,7 @@ $headerNo = 1;
                 'ng-disabled' => 'showTime !== "'.C_WIDGET_AUTO_OPEN_TYPE_PAGE.'"',
                 'before' => 'ページ訪問後',
                 'after' => '秒後に自動で最大化する',
-                'maxlength' => 2,
+                'maxlength' => 4,
                 'style' => 'width:6em',
                 'max' => 3600,
                 'min' => 0,
