@@ -59,10 +59,6 @@ class MWidgetSetting extends AppModel {
             'numberRange' => [
                 'rule' => '/^(0[1-9]|[1-9]|[1-9][0-9]|[1-9][1-9][0-9]|[1-2][0-9][0-9][0-9]|3[0-5][0-9][0-9]|3600)$/',
                 'message' => '１～３６００秒の間で設定してください'
-            ],
-            'isLargerThanMaxShowTiming' => [
-                'rule' => 'isLargerThanMaxShowTiming',
-                'message' => '最大化条件よりも値を小さくしてください'
             ]
         ],
         'max_show_timing_page' => [
@@ -73,10 +69,6 @@ class MWidgetSetting extends AppModel {
             'numberRange' => [
                 'rule' => '/^(0[1-9]|[1-9]|[1-9][0-9]|[1-9][1-9][0-9]|[1-2][0-9][0-9][0-9]|3[0-5][0-9][0-9]|3600)$/',
                 'message' => '１～３６００秒の間で設定してください'
-            ],
-            'isLargerThanMaxShowTiming' => [
-                'rule' => 'isLargerThanMaxShowTiming',
-                'message' => '最大化条件よりも値を小さくしてください'
             ]
         ],
         'show_time' => [
