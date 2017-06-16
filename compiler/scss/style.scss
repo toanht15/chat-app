@@ -793,6 +793,12 @@ div[id^="sidebar-"] {
     position: relative;
     cursor: pointer;
   }
+  .bottom-area {
+    display: inline-block;
+    position: fixed;
+    bottom: 0;
+    margin-bottom: 25px;
+  }
 }
 
 #sidebar-main {
