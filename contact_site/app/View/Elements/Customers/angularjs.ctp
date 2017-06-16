@@ -62,7 +62,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         start: 98,
         end: 99,
       },
-
       init: function(sendPattern){
         this.sound = document.getElementById('sinclo-sound');
         if ( this.sound ) {
