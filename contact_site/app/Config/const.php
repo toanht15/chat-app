@@ -40,6 +40,12 @@ define('C_COMPANY_USE_VIDEO_CHAT', 'videochat'); // ビデオチャット
 define('C_DICTIONARY_TYPE_COMP', 1); // 企業で使用する
 define('C_DICTIONARY_TYPE_PERSON', 2); // 個人で使用する
 
+// 表示タイミング種別
+define('C_WIDGET_SHOW_TIMING_SITE', 1);              // サイト訪問後
+define('C_WIDGET_SHOW_TIMING_PAGE', 2);              // ページ訪問後
+define('C_WIDGET_SHOW_TIMING_RECV_1ST_AUTO_MES', 3); // 初回オートメッセージ受信時
+define('C_WIDGET_SHOW_TIMING_IMMEDIATELY', 4);       // すぐに表示
+
 // 表示設定種別
 define('C_WIDGET_DISPLAY_CODE_SHOW', 1); // 常に表示する
 define('C_WIDGET_DISPLAY_CODE_OPER', 2); // オペレーターが待機中の時のみ表示する
@@ -161,6 +167,15 @@ $config['tabStatusStrList'] = [
     C_WIDGET_TAB_STATUS_CODE_NONE => "ウィジェットが非表示の状態",
     C_WIDGET_TAB_STATUS_CODE_DISABLE => "非アクティブ状態",
     C_WIDGET_TAB_STATUS_CODE_OUT => "ページ離脱"
+];
+
+/* タブステータス(通知用) */
+$config['tabStatusNotificationMessageList'] = [
+    C_WIDGET_TAB_STATUS_CODE_OPEN => "", // 表示しないため文言の指定もしない
+    C_WIDGET_TAB_STATUS_CODE_CLOSE => "ウィジェットが閉じられています",
+    C_WIDGET_TAB_STATUS_CODE_NONE => "ウィジェットが表示されていません",
+    C_WIDGET_TAB_STATUS_CODE_DISABLE => "別の作業をしています",
+    C_WIDGET_TAB_STATUS_CODE_OUT => "ページが閉じられました"
 ];
 
 /* ユーザー権限（単体あり：C_AUTHORITY_%） */

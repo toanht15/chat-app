@@ -10,6 +10,7 @@ class MWidgetSettingsController extends AppController {
   public $coreSettings = null;
   public $styleSetting = [
     'common' => [
+      'show_timing', 'max_show_timing_site', 'max_show_timing_page',
       'show_time', 'max_show_time', 'max_show_time_page', 'show_position', 'title', 'show_subtitle', 'sub_title', 'show_description', 'description',
       'main_color', 'string_color', 'show_main_image', 'main_image', 'radius_ratio'
     ],
@@ -304,6 +305,19 @@ class MWidgetSettingsController extends AppController {
             }
             break;
           case 'common':
+            if ( strcmp($v, "max_show_timing_site") === 0 || strcmp($v, "max_show_timing_page") === 0 ) { continue; }
+            if ( strcmp($v, "show_timing") === 0 && isset($json[$v]) ) {
+              if ( strcmp($json[$v], C_WIDGET_SHOW_TIMING_SITE) === 0 ) {
+                if ( isset($json["max_show_timing_site"]) ) {
+                  $d["max_show_timing_site"] = $json["max_show_timing_site"];
+                }
+              }
+              else if ( strcmp($json[$v], C_WIDGET_SHOW_TIMING_PAGE) === 0 ) {
+                if ( isset($json["max_show_timing_page"]) ) {
+                  $d["max_show_timing_page"] = $json["max_show_timing_page"];
+                }
+              }
+            }
             if ( strcmp($v, "max_show_time") === 0 || strcmp($v, "max_show_time_page") === 0 ) { continue; }
             if ( strcmp($v, "show_time") === 0 && isset($json[$v]) ) {
               if ( strcmp($json[$v], C_WIDGET_AUTO_OPEN_TYPE_SITE) === 0 ) {
