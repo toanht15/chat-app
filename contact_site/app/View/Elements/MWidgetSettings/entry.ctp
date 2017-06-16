@@ -8,6 +8,48 @@ $headerNo = 1;
       <section>
         <?= $this->Form->input('id', ['type' => 'hidden']); ?>
         <ul class="settingList">
+          <!-- 表示するタイミング -->
+          <li>
+            <span class="require"><label>表示するタイミング</label></span>
+            <div>
+              <?php $maxShowWidgetTimingTagBySite = $this->ngForm->input('max_show_timing_site', [
+                  'type' => 'number',
+                  'div' => false,
+                  'label' => false,
+                  'ng-disabled' => 'showTiming !== "'.C_WIDGET_SHOW_TIMING_SITE.'"',
+                  'before' => 'サイト訪問から',
+                  'after' => '秒後に表示する',
+                  'maxlength' => 4,
+                  'style' => 'width:6em',
+                  'max' => 3600,
+                  'min' => 0,
+                  'error' => false
+              ],[
+                  'entity' => 'MWidgetSetting.max_show_timing_site'
+              ]); ?>
+              <?php $maxShowWidgetTimingTagByPage = $this->ngForm->input('max_show_timing_page', [
+                  'type' => 'number',
+                  'div' => false,
+                  'label' => false,
+                  'ng-disabled' => 'showTiming !== "'.C_WIDGET_SHOW_TIMING_PAGE.'"',
+                  'before' => 'ページ訪問から',
+                  'after' => '秒後に表示する',
+                  'maxlength' => 4,
+                  'style' => 'width:6em',
+                  'max' => 3600,
+                  'min' => 0,
+                  'error' => false
+              ],[
+                  'entity' => 'MWidgetSetting.max_show_timing_page'
+              ]); ?>
+              <div ng-init="showTiming='<?=h(empty($this->formEx->val($this->data['MWidgetSetting'], 'show_timing')) ? C_WIDGET_SHOW_TIMING_IMMEDIATELY : $this->formEx->val($this->data['MWidgetSetting'], 'show_timing'))?>'">
+                <label class="pointer" for="showTiming<?=C_WIDGET_SHOW_TIMING_SITE?>"><input type="radio" name="data[MWidgetSetting][show_timing]" ng-model="showTiming" id="showTiming<?=C_WIDGET_SHOW_TIMING_SITE?>" value="<?=C_WIDGET_SHOW_TIMING_SITE?>"><?=$maxShowWidgetTimingTagBySite?></label><br>
+                <label class="pointer" for="showTiming<?=C_WIDGET_SHOW_TIMING_PAGE?>"><input type="radio" name="data[MWidgetSetting][show_timing]" ng-model="showTiming" id="showTiming<?=C_WIDGET_SHOW_TIMING_PAGE?>" value="<?=C_WIDGET_SHOW_TIMING_PAGE?>" ><?=$maxShowWidgetTimingTagByPage?></label><br>
+                <label class="pointer" for="showTiming<?=C_WIDGET_SHOW_TIMING_RECV_1ST_AUTO_MES?>"><input type="radio" name="data[MWidgetSetting][show_timing]" ng-model="showTiming" id="showTiming<?=C_WIDGET_SHOW_TIMING_RECV_1ST_AUTO_MES?>" value="<?=C_WIDGET_SHOW_TIMING_RECV_1ST_AUTO_MES?>" >初回オートメッセージ受信時に表示する</label><br>
+                <label class="pointer" for="showTiming<?=C_WIDGET_SHOW_TIMING_IMMEDIATELY?>"><input type="radio" name="data[MWidgetSetting][show_timing]" ng-model="showTiming" id="showTiming<?=C_WIDGET_SHOW_TIMING_IMMEDIATELY?>" value="<?=C_WIDGET_SHOW_TIMING_IMMEDIATELY?>">すぐに表示する</label>
+              </div>
+            </div>
+          </li>
           <!-- 表示設定 -->
           <li>
             <span class="require"><label>表示する条件</label></span>
@@ -27,9 +69,9 @@ $headerNo = 1;
                 'ng-disabled' => 'showTime !== "'.C_WIDGET_AUTO_OPEN_TYPE_SITE.'"',
                 'before' => 'サイト訪問後',
                 'after' => '秒後に自動で最大化する',
-                'maxlength' => 2,
-                'style' => 'width:5em',
-                'max' => 60,
+                'maxlength' => 4,
+                'style' => 'width:6em',
+                'max' => 3600,
                 'min' => 0,
                 'error' => false
               ],[
@@ -42,19 +84,19 @@ $headerNo = 1;
                 'ng-disabled' => 'showTime !== "'.C_WIDGET_AUTO_OPEN_TYPE_PAGE.'"',
                 'before' => 'ページ訪問後',
                 'after' => '秒後に自動で最大化する',
-                'maxlength' => 2,
-                'style' => 'width:5em',
-                'max' => 60,
+                'maxlength' => 4,
+                'style' => 'width:6em',
+                'max' => 3600,
                 'min' => 0,
                 'error' => false
               ],[
                 'entity' => 'MWidgetSetting.max_show_time_page'
               ]); ?>
               <div ng-init="showTime='<?=h($this->formEx->val($this->data['MWidgetSetting'], 'show_time'))?>'">
-                <label class="pointer" for="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_ON?>"><input type="radio" name="data[MWidgetSetting][show_time]" ng-model="showTime" id="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_ON?>" value="<?=C_WIDGET_AUTO_OPEN_TYPE_ON?>">常に自動で最大化する</label><br>
-                <label class="pointer" for="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_SITE?>"><input type="radio" name="data[MWidgetSetting][show_time]" ng-model="showTime" id="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_SITE?>" value="<?=C_WIDGET_AUTO_OPEN_TYPE_SITE?>" ><?=$maxShowTimeTagBySite?></label><br>
-                <label class="pointer" for="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_PAGE?>"><input type="radio" name="data[MWidgetSetting][show_time]" ng-model="showTime" id="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_PAGE?>" value="<?=C_WIDGET_AUTO_OPEN_TYPE_PAGE?>" ><?=$maxShowTimeTagByPage?></label><br>
-                <label class="pointer" for="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_OFF?>"><input type="radio" name="data[MWidgetSetting][show_time]" ng-model="showTime" id="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_OFF?>" value="<?=C_WIDGET_AUTO_OPEN_TYPE_OFF?>">常に最大化しない</label>
+                <label class="pointer padding" for="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_ON?>"><input type="radio" name="data[MWidgetSetting][show_time]" ng-model="showTime" id="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_ON?>" value="<?=C_WIDGET_AUTO_OPEN_TYPE_ON?>">常に自動で最大化する</label><br>
+                <label class="pointer padding" for="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_SITE?>"><input type="radio" name="data[MWidgetSetting][show_time]" ng-model="showTime" id="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_SITE?>" value="<?=C_WIDGET_AUTO_OPEN_TYPE_SITE?>" ><?=$maxShowTimeTagBySite?></label><br>
+                <label class="pointer padding" for="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_PAGE?>"><input type="radio" name="data[MWidgetSetting][show_time]" ng-model="showTime" id="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_PAGE?>" value="<?=C_WIDGET_AUTO_OPEN_TYPE_PAGE?>" ><?=$maxShowTimeTagByPage?></label><br>
+                <label class="pointer padding" for="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_OFF?>"><input type="radio" name="data[MWidgetSetting][show_time]" ng-model="showTime" id="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_OFF?>" value="<?=C_WIDGET_AUTO_OPEN_TYPE_OFF?>">常に最大化しない</label>
               </div>
             </div>
           </li>
