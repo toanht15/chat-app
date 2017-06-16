@@ -1018,26 +1018,6 @@ io.sockets.on('connection', function (socket) {
         obj.ipAddress = getIp(socket);
       }
       emit.toCompany('syncNewInfo', obj, obj.siteKey);
-
-      //ウィジェット件数登録処理
-      if(obj.widget == true) {
-        pool.query('SELECT * FROM t_history_widget_displays WHERE tab_id = ?',[obj.tabId], function (err, results) {
-          if(isset(err)) {
-            console.log("RECORD SElECT ERROR: t_history_widget_displays(tab_id):" + err);
-            return false;
-          }
-          //ウィジェットが初めて表示された場合
-          if (Object.keys(results).length === 0) {
-            //tabId登録
-            pool.query('INSERT INTO t_history_widget_displays(m_companies_id,tab_id,created) VALUES(?,?,?)',[companyList[obj.siteKey],obj.tabId,new Date()],function(err,results) {
-              if(isset(err)) {
-                console.log("RECORD INSERT ERROR: t_history_widget_displays(tab_id):" + err);
-                return false;
-              }
-            });
-          }
-        });
-      }
     }
   });
   // ウィジェットが生成されたことを企業側に通知する
@@ -1052,6 +1032,30 @@ io.sockets.on('connection', function (socket) {
     // 画面同期中は同期フレーム本体に送る
     if ( ('connectToken' in obj) && isset(obj.connectToken) ) {
       emit.toUser('retTabInfo', obj, getSessionId(obj.siteKey, obj.tabId, 'syncFrameSessionId'));
+    }
+  });
+  //ウィジェットを開いた事を通知する
+  //現在はウィジェット表示ログを書き込むのみで、クライアント側はretTabInfoにwidgetの情報を付与してハンドリングしている
+  socket.on("sendWidgetShown",function(d){
+    var obj = JSON.parse(d);
+    //ウィジェット件数登録処理
+    if(obj.widget === true) {
+      pool.query('SELECT * FROM t_history_widget_displays WHERE tab_id = ?',[obj.tabId], function (err, results) {
+        if(isset(err)) {
+          console.log("RECORD SElECT ERROR: t_history_widget_displays(tab_id):" + err);
+          return false;
+        }
+        //ウィジェットが初めて表示された場合
+        if (Object.keys(results).length === 0) {
+          //tabId登録
+          pool.query('INSERT INTO t_history_widget_displays(m_companies_id,tab_id,created) VALUES(?,?,?)',[companyList[obj.siteKey],obj.tabId,new Date()],function(err,results) {
+            if(isset(err)) {
+              console.log("RECORD INSERT ERROR: t_history_widget_displays(tab_id):" + err);
+              return false;
+            }
+          });
+        }
+      });
     }
   });
 

@@ -651,6 +651,8 @@ var socket, // socket.io
           common.widgetHandler.saveShownFlg();
           sinclo.widget.condifiton.set(false);
           sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
+          //ログ書き込み用にメッセージ送信
+          emit("sendWidgetShown",{widget:true});
         }
       },
       hide: function() {
