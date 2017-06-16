@@ -1,12 +1,12 @@
 <?php
-class CreateTableTConvertsationCount extends CakeMigration {
+class CreateTableTConversationCount extends CakeMigration {
 
 /**
  * Migration description
  *
  * @var string
  */
-	public $description = 'create_table_t_convertsation_count';
+	public $description = 'create_table_t_conversation_count';
 
 /**
  * Actions to be performed
@@ -16,7 +16,7 @@ class CreateTableTConvertsationCount extends CakeMigration {
 	public $migration = array(
 		'up' => array(
 			'create_table' => array(
-				't_convertsation_count' => array(
+				't_conversation_count' => array(
 					'visitors_id' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 20, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 					'conversation_count' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false),
 					'indexes' => array(
@@ -27,7 +27,7 @@ class CreateTableTConvertsationCount extends CakeMigration {
 		),
 		'down' => array(
 			'drop_table' => array(
-				't_convertsation_count'
+				't_conversation_count'
 			),
 		),
 	);
