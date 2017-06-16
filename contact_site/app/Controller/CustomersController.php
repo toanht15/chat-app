@@ -522,6 +522,7 @@ class CustomersController extends AppController {
     $this->set('cType', $cType);
     $this->set('tabStatusList', Configure::read('tabStatusList'));
     $this->set('tabStatusStrList', Configure::read('tabStatusStrList'));
+    $this->set('tabStatusNotificationMessageList', Configure::read('tabStatusNotificationMessageList'));
     $this->set('achievementType', Configure::read('achievementType'));
   }
 

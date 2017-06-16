@@ -23,7 +23,7 @@
           <!-- 現在のチャット -->
             <section class="on" id="currentChat">
               <ul id="chatTalk" class="chatView">
-                <chat-notificate ng-hide="monitorList[detailId]">ページが閉じられました</chat-notificate>
+                <chat-notificate>{{tabStatusNotificationMessage(detailId)}}</chat-notificate>
                 <message-list>
                   <ng-create-message ng-repeat="chat in messageList | orderBy: 'sort'"></ng-create-message>
                 </message-list>
