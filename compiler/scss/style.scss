@@ -1459,8 +1459,8 @@ ul.naviBtn {
                 left: 0;
                 right: 0;
                 background-color: rgba(223, 131, 131, 0.5);
-                padding: 0.5em;
-                margin: 0.5em;
+                padding: 0.25em;
+                margin: 0.25em;
                 border-radius: 5px;
                 text-align: center;
                 color: #FFF!important;
@@ -2826,6 +2826,11 @@ ul.naviBtn {
 
           &:first-child {
             border-top: none;
+          }
+
+          .padding {
+            padding-top: 0.5em;
+            padding-bottom: 0.5em;
           }
         }
       }
