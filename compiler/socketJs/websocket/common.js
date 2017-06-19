@@ -641,11 +641,15 @@ var socket, // socket.io
     widgetHandler: {
       show: function() {
         /**
-         * 表示可能条件
-         * １
+         * 表示条件（OR）
+         * １：すでに表示されていた場合（common.widgetHandler.isShown()）
+         * ２：すでに表示はされていないが、表示判定の結果、表示する場合（window.sincloInfo.widgetDisplay）
+         * 表示条件（AND）
+         * ３：sincloBoxの要素が存在する
+         * ４：sincloBoxの要素のdisplayがnoneである
          */
-        if(common.widgetHandler.isShown()
-          || window.sincloInfo.widgetDisplay) {
+        if((common.widgetHandler.isShown() || window.sincloInfo.widgetDisplay)
+          && sincloBox && (sincloBox.style.display === 'none' || sincloBox.style.display === '')) {
           console.log('でろでろでろでろでろでろ');
           sincloBox.style.display = "block";
           common.widgetHandler.saveShownFlg();
