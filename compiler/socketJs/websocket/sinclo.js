@@ -1533,8 +1533,7 @@
                       var flg = sinclo.widget.condifiton.get();
                       if ( Number(cond.widgetOpen) === 1 && String(flg) === "false" ) {
                         sinclo.operatorInfo.ev();
-                      }
-                      if(!common.widgetHandler.isShown()) {
+                      } else if(Number(cond.widgetOpen) === 1 && !common.widgetHandler.isShown()) {
                         storage.s.set('preWidgetOpened', true);
                       }
                     }
