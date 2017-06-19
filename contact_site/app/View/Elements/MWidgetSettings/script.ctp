@@ -98,8 +98,8 @@ sincloApp.controller('WidgetCtrl', function($scope){
     };
 
     $scope.settingShowTimeRadioButtonEnable = function(jq) {
-      jq.prop('disabled',false).parent().css('background-color','');
-      jq.next().css('background-color','');
+      jq.prop('disabled',false).parent().css('color','');
+      jq.next().css('color','');
     }
 
     $scope.settingShowTimeRadioButtonDisable = function(jq) {
@@ -109,8 +109,8 @@ sincloApp.controller('WidgetCtrl', function($scope){
         jq.next().prop('disabled',true);
         $('#showTime<?=C_WIDGET_AUTO_OPEN_TYPE_OFF?>').prop('checked',true);
       }
-      jq.prop('disabled',true).parent().css('background-color','#999');
-      jq.next().css('background-color','#999');
+      jq.prop('disabled',true).parent().css('color','#ccc');
+      jq.next().css('color','#ccc');
     };
 
     angular.element('[name="data[MWidgetSetting][show_timing]"]').change(function(e){

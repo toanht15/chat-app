@@ -651,6 +651,9 @@ var socket, // socket.io
           common.widgetHandler.saveShownFlg();
           sinclo.widget.condifiton.set(false);
           sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
+          if(storage.s.get('preWidgetOpened') === "true") {
+            sinclo.operatorInfo.ev();
+          }
           //ログ書き込み用にメッセージ送信
           emit("sendWidgetShown",{widget:true});
         }
@@ -2142,6 +2145,8 @@ var socket, // socket.io
 
   var init = function(){
     var tabStateTimer = null;
+    // ウィジェット最大化設定をクリア
+    storage.s.unset("preWidgetOpened");
     if(window.sincloInfo.widget.showTiming !== Number(storage.s.get("widgetShowTimingType"))) {
       // SessionStorageで保存している表示タイミング設定と違う場合はクリアする
       console.log("Storage widgetShowTimingType is different. clearing... before: " + Number(storage.s.get("widgetShowTimingType")) + " after: " + window.sincloInfo.widget.showTiming);
