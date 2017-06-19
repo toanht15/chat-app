@@ -126,7 +126,7 @@
           $("sinclo-chat").append(chatTalk);
           var sincloBox = document.getElementById('sincloBox');
           document.getElementById('sincloChatMessage').value = sinclo.operatorInfo.reCreateWidgetMessage;
-          common.widgetHandler.show();
+          common.widgetHandler.show(true);
           sincloBox.style.opacity = 0;
           sinclo.operatorInfo.header = document.getElementById('widgetHeader');
           sinclo.widget.condifiton.set(openFlg);
