@@ -2,6 +2,22 @@
 'use strict';
 
 var sincloApp = angular.module('sincloApp', ['ngSanitize']);
+
+// @see http://qiita.com/amagurik2/items/b64b0a005a60b6eb225b
+sincloApp.directive('stringToNumber', function() {
+  return {
+    require: 'ngModel',
+    link: function(scope, element, attrs, ngModel) {
+      ngModel.$parsers.push(function(value) {
+        return '' + value;
+      });
+      ngModel.$formatters.push(function(value) {
+        return parseFloat(value, 10);
+      });
+    }
+  };
+});
+
 sincloApp.controller('WidgetCtrl', function($scope){
     $scope.main_image = "<?=$this->formEx->val($this->data['MWidgetSetting'], 'main_image')?>";
 
