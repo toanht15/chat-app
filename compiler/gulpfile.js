@@ -21,7 +21,7 @@ var uglify = require('gulp-uglify'),
       mangle: true,
       comments: false,
       compress: {
-        drop_console: false
+        drop_console: true
       }
     };
 
