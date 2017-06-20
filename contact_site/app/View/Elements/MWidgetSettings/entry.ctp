@@ -17,6 +17,7 @@ $headerNo = 1;
                   'div' => false,
                   'label' => false,
                   'ng-disabled' => 'showTiming !== "'.C_WIDGET_SHOW_TIMING_SITE.'"',
+                  'string-to-number' => '', // @see http://qiita.com/amagurik2/items/b64b0a005a60b6eb225b
                   'before' => 'サイト訪問から',
                   'after' => '秒後に表示する',
                   'maxlength' => 4,
@@ -32,6 +33,7 @@ $headerNo = 1;
                   'div' => false,
                   'label' => false,
                   'ng-disabled' => 'showTiming !== "'.C_WIDGET_SHOW_TIMING_PAGE.'"',
+                  'string-to-number' => '', // @see http://qiita.com/amagurik2/items/b64b0a005a60b6eb225b
                   'before' => 'ページ訪問から',
                   'after' => '秒後に表示する',
                   'maxlength' => 4,
@@ -50,6 +52,9 @@ $headerNo = 1;
               </div>
             </div>
           </li>
+          <?php if ( $this->Form->isFieldError('show_timing') ) echo $this->Form->error('show_timing', null, ['wrap' => 'li']); ?>
+          <?php if ( $this->Form->isFieldError('max_show_timing_site') ) echo $this->Form->error('max_show_timing_site', null, ['wrap' => 'li']); ?>
+          <?php if ( $this->Form->isFieldError('max_show_timing_page') ) echo $this->Form->error('max_show_timing_page', null, ['wrap' => 'li']); ?>
           <!-- 表示設定 -->
           <li>
             <span class="require"><label>表示する条件</label></span>
@@ -67,6 +72,7 @@ $headerNo = 1;
                 'div' => false,
                 'label' => false,
                 'ng-disabled' => 'showTime !== "'.C_WIDGET_AUTO_OPEN_TYPE_SITE.'"',
+                'string-to-number' => '', // @see http://qiita.com/amagurik2/items/b64b0a005a60b6eb225b
                 'before' => 'サイト訪問後',
                 'after' => '秒後に自動で最大化する',
                 'maxlength' => 4,
@@ -82,6 +88,7 @@ $headerNo = 1;
                 'div' => false,
                 'label' => false,
                 'ng-disabled' => 'showTime !== "'.C_WIDGET_AUTO_OPEN_TYPE_PAGE.'"',
+                'string-to-number' => '', // @see http://qiita.com/amagurik2/items/b64b0a005a60b6eb225b
                 'before' => 'ページ訪問後',
                 'after' => '秒後に自動で最大化する',
                 'maxlength' => 4,

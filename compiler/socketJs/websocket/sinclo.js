@@ -1077,6 +1077,9 @@
             var flg = sinclo.widget.condifiton.get();
             if ( String(flg) === "false" ) {
               storage.s.set('widgetOpen', true);
+              if(!common.widgetHandler.isShown()) {
+                storage.s.set('preWidgetOpened', true);
+              }
               if ( !(check.smartphone() && sincloInfo.widget.hasOwnProperty('spAutoOpenFlg') && Number(sincloInfo.widget.spAutoOpenFlg) === 1) ) {
                 sinclo.operatorInfo.ev();
               }
@@ -1550,14 +1553,17 @@
                   console.log("監視中");
                     var date = common.fullDateTime();
                     if ( prev.length === 0 || (prev.length > 0 && prev[prev.length - 1].created !== date) ) {
-                        clearInterval(setAutoMessageTimer);
-                        sinclo.trigger.setAutoMessage(id, cond);
-                        // 自動最大化
-                        if ( !('widgetOpen' in cond) || (check.smartphone() && sincloInfo.widget.hasOwnProperty('spAutoOpenFlg') && Number(sincloInfo.widget.spAutoOpenFlg) === 1) ) return false;
-                        var flg = sinclo.widget.condifiton.get();
-                        if ( Number(cond.widgetOpen) === 1 && String(flg) === "false" ) {
-                          sinclo.operatorInfo.ev();
-                        }
+                      clearInterval(setAutoMessageTimer);
+                      sinclo.trigger.setAutoMessage(id, cond);
+                      // 自動最大化
+                      if ( !('widgetOpen' in cond) || (check.smartphone() && sincloInfo.widget.hasOwnProperty('spAutoOpenFlg') && Number(sincloInfo.widget.spAutoOpenFlg) === 1) ) return false;
+                      var flg = sinclo.widget.condifiton.get();
+                      if ( Number(cond.widgetOpen) === 1 && String(flg) === "false" ) {
+                        sinclo.operatorInfo.ev();
+                      }
+                      if(!common.widgetHandler.isShown()) {
+                        storage.s.set('preWidgetOpened', true);
+                      }
                     }
                 }, 1);
 

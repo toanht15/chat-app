@@ -2,6 +2,22 @@
 'use strict';
 
 var sincloApp = angular.module('sincloApp', ['ngSanitize']);
+
+// @see http://qiita.com/amagurik2/items/b64b0a005a60b6eb225b
+sincloApp.directive('stringToNumber', function() {
+  return {
+    require: 'ngModel',
+    link: function(scope, element, attrs, ngModel) {
+      ngModel.$parsers.push(function(value) {
+        return '' + value;
+      });
+      ngModel.$formatters.push(function(value) {
+        return parseFloat(value, 10);
+      });
+    }
+  };
+});
+
 sincloApp.controller('WidgetCtrl', function($scope){
     $scope.main_image = "<?=$this->formEx->val($this->data['MWidgetSetting'], 'main_image')?>";
 
@@ -98,8 +114,8 @@ sincloApp.controller('WidgetCtrl', function($scope){
     };
 
     $scope.settingShowTimeRadioButtonEnable = function(jq) {
-      jq.prop('disabled',false).parent().css('background-color','');
-      jq.next().css('background-color','');
+      jq.prop('disabled',false).parent().css('color','');
+      jq.next().css('color','');
     }
 
     $scope.settingShowTimeRadioButtonDisable = function(jq) {
@@ -109,8 +125,8 @@ sincloApp.controller('WidgetCtrl', function($scope){
         jq.next().prop('disabled',true);
         $('#showTime<?=C_WIDGET_AUTO_OPEN_TYPE_OFF?>').prop('checked',true);
       }
-      jq.prop('disabled',true).parent().css('background-color','#999');
-      jq.next().css('background-color','#999');
+      jq.prop('disabled',true).parent().css('color','#ccc');
+      jq.next().css('color','#ccc');
     };
 
     angular.element('[name="data[MWidgetSetting][show_timing]"]').change(function(e){

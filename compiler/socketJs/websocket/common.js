@@ -641,16 +641,23 @@ var socket, // socket.io
     widgetHandler: {
       show: function() {
         /**
-         * 表示可能条件
-         * １
+         * 表示条件（OR）
+         * １：すでに表示されていた場合（common.widgetHandler.isShown()）
+         * ２：すでに表示はされていないが、表示判定の結果、表示する場合（window.sincloInfo.widgetDisplay）
+         * 表示条件（AND）
+         * ３：sincloBoxの要素が存在する
+         * ４：sincloBoxの要素のdisplayがnoneである
          */
-        if(common.widgetHandler.isShown()
-          || window.sincloInfo.widgetDisplay) {
+        if((common.widgetHandler.isShown() || window.sincloInfo.widgetDisplay)
+          && sincloBox && (sincloBox.style.display === 'none' || sincloBox.style.display === '')) {
           console.log('でろでろでろでろでろでろ');
           sincloBox.style.display = "block";
           common.widgetHandler.saveShownFlg();
           sinclo.widget.condifiton.set(false);
           sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
+          if(storage.s.get('preWidgetOpened') === "true") {
+            sinclo.operatorInfo.ev();
+          }
           //ログ書き込み用にメッセージ送信
           emit("sendWidgetShown",{widget:true});
         }
@@ -2142,6 +2149,8 @@ var socket, // socket.io
 
   var init = function(){
     var tabStateTimer = null;
+    // ウィジェット最大化設定をクリア
+    storage.s.unset("preWidgetOpened");
     if(window.sincloInfo.widget.showTiming !== Number(storage.s.get("widgetShowTimingType"))) {
       // SessionStorageで保存している表示タイミング設定と違う場合はクリアする
       console.log("Storage widgetShowTimingType is different. clearing... before: " + Number(storage.s.get("widgetShowTimingType")) + " after: " + window.sincloInfo.widget.showTiming);

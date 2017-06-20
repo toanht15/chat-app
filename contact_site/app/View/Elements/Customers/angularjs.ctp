@@ -169,6 +169,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         if ( this.pushMessageFlg ) return false;
         this.pushMessageFlg = true;
         var elm = document.getElementById('sendMessage');
+        var noFlg = 0;
         var req = new RegExp(/^\s*$/);
         if ( isset(elm.value) && !req.test(elm.value) ) {
           emit('sendChat', {
@@ -177,7 +178,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             userId: this.userId,
             chatMessage:elm.value,
             mUserId: myUserId,
-            messageType: chatApi.messageType.company
+            messageType: chatApi.messageType.company,
+            messageRequestFlg: noFlg
           });
           elm.value = "";
           chatApi.observeType.send(chatApi.tabId, chatApi.observeType.status);
