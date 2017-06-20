@@ -126,7 +126,7 @@
           $("sinclo-chat").append(chatTalk);
           var sincloBox = document.getElementById('sincloBox');
           document.getElementById('sincloChatMessage').value = sinclo.operatorInfo.reCreateWidgetMessage;
-          common.widgetHandler.show();
+          common.widgetHandler.show(true);
           sincloBox.style.opacity = 0;
           sinclo.operatorInfo.header = document.getElementById('widgetHeader');
           sinclo.widget.condifiton.set(openFlg);
@@ -1533,8 +1533,7 @@
                       var flg = sinclo.widget.condifiton.get();
                       if ( Number(cond.widgetOpen) === 1 && String(flg) === "false" ) {
                         sinclo.operatorInfo.ev();
-                      }
-                      if(!common.widgetHandler.isShown()) {
+                      } else if(Number(cond.widgetOpen) === 1 && !common.widgetHandler.isShown()) {
                         storage.s.set('preWidgetOpened', true);
                       }
                     }
