@@ -1531,10 +1531,13 @@
                       // 自動最大化
                       if ( !('widgetOpen' in cond) || (check.smartphone() && sincloInfo.widget.hasOwnProperty('spAutoOpenFlg') && Number(sincloInfo.widget.spAutoOpenFlg) === 1) ) return false;
                       var flg = sinclo.widget.condifiton.get();
-                      if ( Number(cond.widgetOpen) === 1 && String(flg) === "false" ) {
-                        sinclo.operatorInfo.ev();
-                      } else if(Number(cond.widgetOpen) === 1 && !common.widgetHandler.isShown()) {
+                      console.log("自動最大化設定");
+                      if(Number(cond.widgetOpen) === 1 && !common.widgetHandler.isShown()) {
+                        console.log("オートメッセージによる最大化フラグセット");
                         storage.s.set('preWidgetOpened', true);
+                      } else if ( Number(cond.widgetOpen) === 1 && String(flg) === "false" ) {
+                        console.log("オートメッセージ最大化処理");
+                        sinclo.operatorInfo.ev();
                       }
                     }
                 }, 1);
