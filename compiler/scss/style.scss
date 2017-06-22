@@ -4779,3 +4779,197 @@ ul.naviBtn {
     }
   }
 }
+  /* 統計機能 */
+#statistic_idx {
+ condition-bar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  .blueBtn {
+    background-color: #4bacc6;
+    border-color: #4bacc6;
+
+    &:hover {
+      border-color: #4c9db3;
+      background-color: #4c9db3;
+    }
+  }
+
+  left-parts {
+    display: flex;
+    align-items: center;
+    font-size: 1.25em;
+
+    select {
+      padding: 0.25em 1em;margin: 0 0.25em;
+    }
+  }
+
+  right-parts {
+    #outputCSV {
+      padding: 0.5em 1.4em;
+    }
+  }
+ }
+
+  #statistics_content {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 210px);
+
+    > contents {
+         flex: 1;
+     }
+  }
+
+  /* コンテンツ群 */
+  main-contents, contents {
+    display: flex;
+    width: 100%;
+    height: 100%;
+
+    &#mainGraphArea content-chart {
+      flex-direction: row;
+      height: 100%;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      chartjs-graph {
+          width: calc(100% - 15em);
+          height: 100%;
+      }
+
+      chartjs-legend {
+        width: 15em;
+        height: 100%;
+        padding: 0.5em;
+
+        legend-type{
+          display: flex;
+        }
+
+        legend-labels {
+          ul { padding-left: 1em; }
+        }
+
+        div {
+          height: 2.6em;
+          width: calc(50% - 0.5em);
+          border-radius: 0.5em;
+          position: relative;
+          background-color: #bfbfbf;
+          cursor: pointer;
+
+          &.checked {
+            background-color: rgb(75, 172, 198);
+          }
+          label {
+            color: #FFF;
+            text-align: center;
+            padding: 0.8em;
+            height: 2.6em;
+            width: 100%;
+            display: block;
+          }
+          input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            opacity: 0;
+          }
+        }
+      }
+    }
+  }
+
+  content {
+    display: block;
+    flex: 1;
+    border: 1px solid #ccc;
+    margin: 1%;
+    flex-direction: column;
+    height:100%;
+
+    > * {
+      padding: 1em;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    content-title {
+      height: 3em;
+      display: block;
+      border-bottom: 1px solid #c5c5c5;
+      position: relative;
+
+      &:after {
+        content: attr(data-title);
+        font-weight: bold;
+        padding-left: 1.5em;
+      }
+
+      &:before {
+        content: " ";
+        display: block;
+        width: 12em;
+        height: 0;
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        border-bottom: 3px solid #68acf5;
+      }
+      div#sincloApp {
+        height: 100%;
+      }
+    }
+
+    content-chart {
+      &.no-content-title {
+        height: 100%;
+      }
+
+      div {
+        margin: 0 auto;
+      }
+    }
+
+    content-table {
+      justify-content: left;
+      position: relative;
+      height:100%;
+      .positionSet {
+        position: absolute;
+      }
+
+      #tableFrame {
+        overflow: auto;
+
+        :not(table#fixedLabel) th, :not(table#fixedLabel) tr td:first-child { opacity: 0 }
+
+        #fixedLabel {
+          top: 0;
+          left: 0;
+          right: 0;
+        }
+      }
+
+      th, td {
+        padding: 0.25em 0.5em;
+      }
+
+      td {
+        text-align: right;
+      }
+
+      thead th:first-child {
+        width: 15em;
+      }
+    }
+  }
+}
