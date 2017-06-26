@@ -432,6 +432,61 @@
       return vars;
     }
 
+    var StorageUtil = {
+      key:{
+        storageKey:  "laSession",
+        sessionId: "sessionId",
+        correlationId: "correlationId",
+        shortcode: "shortcode"
+      },
+
+      _getAll: function() {
+        var json = localStorage.getItem(this.key);
+        return json ? JSON.parse(json) : {};
+      },
+
+      _save: function(obj) {
+        localStorage.setItem(this.key, JSON.stringify(obj));
+      },
+
+      _get: function(key) {
+        var obj = this._getAll();
+        return obj[key];
+      },
+
+      _set: function(key, val) {
+        var obj = this._getAll();
+        obj[key] = val;
+        this._save(obj);
+      },
+
+      setSessionId: function(sessionId) {
+        this._set(this.key.sessionId,sessionId);
+      },
+
+      setCorrelationId: function(cid) {
+        this._set(this.key.correlationId, cid);
+      },
+
+      setShortcode: function(shortcode) {
+        return this._set(this.key.shortcode, shortcode);
+      },
+
+      getSessionId: function() {
+        return this._get(this.key.sessionId);
+      },
+
+      getCorrelationId: function() {
+        return this._get(this.key.correlationId);
+      },
+
+      getShortcode: function() {
+        return this._get(this.key.shortcode);
+      }
+    };
+
+
+
     // UI設定
     var remoteView = document.getElementById("remoteScreenView");
     var remoteViewContainer = document.getElementById("remoteScreenViewContainer");
@@ -524,6 +579,7 @@
         if (request.readyState == 4) {
           if (request.status == 200) {
             var cid = JSON.parse(request.responseText).cid;
+            StorageUtil.setCorrelationId(cid);
             d.resolve(cid);
           } else {
             d.reject(request.status);
@@ -542,6 +598,7 @@
         if (request.readyState == 4) {
           if (request.status == 200) {
             assistServerSession = JSON.parse(request.responseText);
+            StorageUtil.setSessionId(assistServerSession.token);
             d.resolve();
           } else {
             d.reject();
@@ -554,10 +611,6 @@
         + config.password + "&type=create&targetServer=" + "aHR0cHM6Ly9zZGswMDUubGl2ZS1hc3Npc3QuanA6NDQz" //FIXME
         + "&name=" + config.agentName + "&text=" + config.agentText);
       return d.promise();
-    }
-
-    function debug(message) {
-      $('#debugMessage').append('<span>' + message + '</span>');
     }
 
     $('#startScreenShare').on('click', function (){
@@ -603,12 +656,28 @@
       }
     });
 
+    // マウスホイール拡張
+    var mousewheelevent = 'onwheel' in document ? 'wheel' : 'onmousewheel' in document ? 'mousewheel' : 'DOMMouseScroll';
+    $(remoteView).on(mousewheelevent,function(e){
+      var num = parseInt($('.wheel').text());
+      e.preventDefault();
+      var delta = e.originalEvent.deltaY ? -(e.originalEvent.deltaY) : e.originalEvent.wheelDelta ? e.originalEvent.wheelDelta : -(e.originalEvent.detail);
+      if (delta < 0){
+        console.log("wheel up");
+        $('.scrollbar.top').trigger('click');
+      } else {
+        console.log("wheel down");
+        $('.scrollbar.bottom').trigger('click');
+      }
+    });
+
     init();
     if(val['k']) {
+      StorageUtil.setShortcode(val['k']);
       getCorrelationId(val['k']).then(function(cid){
         AssistAgentSDK.startSupport({
           correlationId: cid,
-          sessionToken: assistServerSession.token,
+          sessionToken: StorageUtil.getSessionId(),
           url: "https://sdk005.live-assist.jp",
           additionalAttribute: config.additionalAttribute
         })
