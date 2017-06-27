@@ -660,7 +660,8 @@ var socket, // socket.io
             sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
             //ログ書き込み用にメッセージ送信
             emit("sendWidgetShown",{widget:true});
-            if(storage.s.get('preWidgetOpened') === "true") {
+            if(!(check.smartphone() && sincloInfo.widget.hasOwnProperty('spAutoOpenFlg') && Number(sincloInfo.widget.spAutoOpenFlg) === 1 && storage.s.get('preWidgetOpened') === "true")
+               || (!check.smartphone() && storage.s.get('preWidgetOpened') === "true")) {
               //すでに最大化処理が呼び出されていたら最大化表示する
               sinclo.operatorInfo.ev();
             }
