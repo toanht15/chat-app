@@ -660,7 +660,11 @@ var socket, // socket.io
             sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
             //ログ書き込み用にメッセージ送信
             emit("sendWidgetShown",{widget:true});
-            if(storage.s.get('preWidgetOpened') === "true") {
+            // このタイミングでの最大化実行条件
+            // １：PCの場合、ウィジェット最大化処理がウィジェット非表示時に実行されていた場合
+            // ２：スマホの場合、ウィジェット最大化する設定が有効で、ウィジェット最大化処理がウィジェット非表示時に実行されていた場合
+            if((!(check.smartphone() && sincloInfo.widget.hasOwnProperty('spAutoOpenFlg') && Number(sincloInfo.widget.spAutoOpenFlg) === 1) && storage.s.get('preWidgetOpened') === "true")
+               || (!check.smartphone() && storage.s.get('preWidgetOpened') === "true")) {
               //すでに最大化処理が呼び出されていたら最大化表示する
               sinclo.operatorInfo.ev();
             }
