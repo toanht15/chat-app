@@ -2,6 +2,22 @@
 'use strict';
 
 var sincloApp = angular.module('sincloApp', ['ngSanitize']);
+
+// @see http://qiita.com/amagurik2/items/b64b0a005a60b6eb225b
+sincloApp.directive('stringToNumber', function() {
+  return {
+    require: 'ngModel',
+    link: function(scope, element, attrs, ngModel) {
+      ngModel.$parsers.push(function(value) {
+        return '' + value;
+      });
+      ngModel.$formatters.push(function(value) {
+        return parseFloat(value, 10);
+      });
+    }
+  };
+});
+
 sincloApp.controller('WidgetCtrl', function($scope){
     $scope.main_image = "<?=$this->formEx->val($this->data['MWidgetSetting'], 'main_image')?>";
 
@@ -95,8 +111,48 @@ sincloApp.controller('WidgetCtrl', function($scope){
         }
       });
 
+    };
+
+    $scope.settingShowTimeRadioButtonEnable = function(jq) {
+      jq.prop('disabled',false).parent().css('color','');
+      jq.next().css('color','');
     }
 
+    $scope.settingShowTimeRadioButtonDisable = function(jq) {
+      // 選択されていたら「常に最大化しない」設定にする
+      if(jq.prop('checked')) {
+        jq.prop('checked',false);
+        jq.next().prop('disabled',true);
+        $('#showTime<?=C_WIDGET_AUTO_OPEN_TYPE_OFF?>').prop('checked',true);
+      }
+      jq.prop('disabled',true).parent().css('color','#ccc');
+      jq.next().css('color','#ccc');
+    };
+
+    $scope.$watch('showTiming', function(){
+      switch($scope.showTiming) {
+        case "1": // サイト訪問後__秒で表示
+          $scope.settingShowTimeRadioButtonEnable($('#showTime<?=C_WIDGET_AUTO_OPEN_TYPE_SITE?>'));
+          $scope.settingShowTimeRadioButtonDisable($('#showTime<?=C_WIDGET_AUTO_OPEN_TYPE_PAGE?>'));
+          break;
+        case "2": // ページ訪問後__秒で表示
+          $scope.settingShowTimeRadioButtonDisable($('#showTime<?=C_WIDGET_AUTO_OPEN_TYPE_SITE?>'));
+          $scope.settingShowTimeRadioButtonEnable($('#showTime<?=C_WIDGET_AUTO_OPEN_TYPE_PAGE?>'));
+          break;
+        case "3": // 初回オートメッセージ受信後に表示
+          $scope.settingShowTimeRadioButtonDisable($('#showTime<?=C_WIDGET_AUTO_OPEN_TYPE_SITE?>'));
+          $scope.settingShowTimeRadioButtonDisable($('#showTime<?=C_WIDGET_AUTO_OPEN_TYPE_PAGE?>'));
+          break;
+        case "4": // すぐに表示
+          $scope.settingShowTimeRadioButtonEnable($('#showTime<?=C_WIDGET_AUTO_OPEN_TYPE_SITE?>'));
+          $scope.settingShowTimeRadioButtonEnable($('#showTime<?=C_WIDGET_AUTO_OPEN_TYPE_PAGE?>'));
+          break;
+      }
+    });
+
+    angular.element(window).on('load',function(e){
+      $('[name="data[MWidgetSetting][show_timing]"]:checked').trigger('change');
+    });
 
     angular.element('#MWidgetSettingUploadImage').change(function(e){
         var files = e.target.files;
@@ -189,8 +245,6 @@ sincloApp.controller('WidgetCtrl', function($scope){
       $scope.openFlg = nextFlg;
       $scope.$apply();
     });
-
-
 });
 
 sincloApp.directive('errSrc', function(){
