@@ -663,11 +663,11 @@
       e.preventDefault();
       var delta = e.originalEvent.deltaY ? -(e.originalEvent.deltaY) : e.originalEvent.wheelDelta ? e.originalEvent.wheelDelta : -(e.originalEvent.detail);
       if (delta < 0){
-        console.log("wheel up");
-        $('.scrollbar.top').trigger('click');
-      } else {
         console.log("wheel down");
         $('.scrollbar.bottom').trigger('click');
+      } else {
+        console.log("wheel up");
+        $('.scrollbar.top').trigger('click');
       }
     });
 
