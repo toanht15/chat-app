@@ -335,7 +335,7 @@
     </li>
     <li id="pointBtn">
       <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_point.png" width="40" height="40" alt=""></span>
-      <p>ポイント</p>
+      <p>ポインター</p>
     </li>
     <li onclick="location.reload(true); return false;">
       <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_reconnect.png" width="40" height="40" alt=""></span>
