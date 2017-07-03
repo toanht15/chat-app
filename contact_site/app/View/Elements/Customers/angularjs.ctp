@@ -1515,6 +1515,13 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       }
     });
 
+    socket.on('stopCoBrowse', function(data){
+      var obj = JSON.parse(data);
+      if ( obj.tabId !== undefined && angular.isDefined($scope.monitorList[obj.tabId])) {
+        $scope.monitorList[obj.tabId].connectToken = "";
+      }
+    });
+
     socket.on('docShareConnect', function(data){ // 資料共有開始
       var obj = JSON.parse(data);
       if ( obj.tabId !== undefined && angular.isDefined($scope.monitorList[obj.tabId])) {
