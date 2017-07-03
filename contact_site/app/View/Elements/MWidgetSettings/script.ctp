@@ -129,10 +129,8 @@ sincloApp.controller('WidgetCtrl', function($scope){
       jq.next().css('color','#ccc');
     };
 
-    angular.element('[name="data[MWidgetSetting][show_timing]"]').change(function(e){
-      var selectedValue = $(this).val();
-
-      switch(selectedValue) {
+    $scope.$watch('showTiming', function(){
+      switch($scope.showTiming) {
         case "1": // サイト訪問後__秒で表示
           $scope.settingShowTimeRadioButtonEnable($('#showTime<?=C_WIDGET_AUTO_OPEN_TYPE_SITE?>'));
           $scope.settingShowTimeRadioButtonDisable($('#showTime<?=C_WIDGET_AUTO_OPEN_TYPE_PAGE?>'));

@@ -639,7 +639,8 @@ var socket, // socket.io
       }
     },
     widgetHandler: {
-      show: function() {
+      // 通常呼び出し時はfalse or 引数指定なし（undefined）で呼び出す
+      show: function(reCreateWidget) {
         /**
          * 表示条件（OR）
          * １：すでに表示されていた場合（common.widgetHandler.isShown()）
@@ -653,13 +654,17 @@ var socket, // socket.io
           console.log('でろでろでろでろでろでろ');
           sincloBox.style.display = "block";
           common.widgetHandler.saveShownFlg();
-          sinclo.widget.condifiton.set(false);
-          sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
-          if(storage.s.get('preWidgetOpened') === "true") {
-            sinclo.operatorInfo.ev();
+          //ウィジェットの再生成処理呼び出しでなければ最小化表示設定で呼び出す
+          if(!reCreateWidget) {
+            sinclo.widget.condifiton.set(false);
+            sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
+            //ログ書き込み用にメッセージ送信
+            emit("sendWidgetShown",{widget:true});
+            if(storage.s.get('preWidgetOpened') === "true") {
+              //すでに最大化処理が呼び出されていたら最大化表示する
+              sinclo.operatorInfo.ev();
+            }
           }
-          //ログ書き込み用にメッセージ送信
-          emit("sendWidgetShown",{widget:true});
         }
       },
       hide: function() {
