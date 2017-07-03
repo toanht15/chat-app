@@ -1260,6 +1260,9 @@ var socket, // socket.io
             tabId: userInfo.tabId
           });
         }
+        if ( check.isset(storage.s.get('coBrowseConnectToken')) ) {
+          userInfo.coBrowseConnectToken = storage.s.get('coBrowseConnectToken');
+        }
       }
     },
     syncInfo: {
@@ -2358,6 +2361,10 @@ var socket, // socket.io
     socket.on('syncStop', function(d){
       sinclo.syncStop(d);
     }); // socket-on: syncStop
+
+    socket.on('stopCoBrowse', function(d){
+      sinclo.stopCoBrowse(d);
+    }); // socket-on: stopCoBrowse
 
     socket.on('sincloReconnect', function(d){ // socket再接続
       socket.disconnect();

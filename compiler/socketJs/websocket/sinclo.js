@@ -453,8 +453,7 @@
       var content = location.host + 'が閲覧ページへのアクセスを求めています。<br>許可しますか';
       popup.ok = function() {
         userInfo.connectToken = obj.connectToken;
-        browserInfo.resetPrevList();
-        userInfo.setConnect(obj.connectToken);
+        storage.s.set('coBrowseConnectToken', obj.connectToken);
         laUtil.initAndStart().then(function() {
           // shortcode取得
           var shortcode = laUtil.shortcode;
@@ -895,10 +894,50 @@
         window.parent.close();
         return false;
       }
-      if ( !check.isset(userInfo.connectToken) ) return false;
+      if ( !check.isset(userInfo.connectToken) && !check.isset(userInfo.coBrowseConnectToken) ) return false;
 
       window.clearTimeout(sinclo.syncTimeout);
+
       userInfo.syncInfo.unset();
+      storage.s.unset("coBrowseConnectToken");
+      if (!document.getElementById('sincloBox')) {
+        common.makeAccessIdTag();
+      }
+
+      // 終了通知
+      var title = location.host + 'の内容';
+      var content = location.host + 'との画面共有を終了しました';
+      popup.ok = function(){
+        laUtil.disconnect();
+        this.remove();
+      };
+      popup.set(title, content, popup.const.action.alert);
+
+      var timer = setInterval(function(){
+        if (window.sincloInfo.widgetDisplay === false) {
+          clearInterval(timer);
+          laUtil.disconnect();
+          return false;
+        }
+        var sincloBox = document.getElementById('sincloBox');
+        // チャット未契約のときはウィジェットを非表示
+        if (sincloBox && (window.sincloInfo.contract.chat || window.sincloInfo.contract.synclo || (window.sincloInfo.contract.hasOwnProperty('document') && window.sincloInfo.contract.document)) ) {
+          common.widgetHandler.show();
+          sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
+          sinclo.widget.condifiton.set(false);
+          clearInterval(timer);
+        }
+      }, 500);
+    },
+    stopCoBrowse: function(d){
+      var obj = common.jParse(d);
+      if ( (userInfo.gFrame && Number(userInfo.accessType) === Number(cnst.access_type.guest)) ) {
+        window.parent.close();
+        return false;
+      }
+      if ( !check.isset(userInfo.coBrowseConnectToken) ) return false;
+
+      storage.s.unset("coBrowseConnectToken");
       if (!document.getElementById('sincloBox')) {
         common.makeAccessIdTag();
       }
