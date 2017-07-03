@@ -325,32 +325,39 @@
 <section ng-app="sincloApp" ng-controller="MainController">
 
   <ul id="sync_tools">
-    <li id="controlBtn" class="unlight">
-      <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_remote.png" width="40" height="40" alt=""></span>
-      <p>遠隔操作</p>
-    </li>
-    <li id="penBtn">
-      <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_pen.png" width="40" height="40" alt=""></span>
-      <p>ペン</p>
-    </li>
-    <li id="pointBtn">
-      <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_point.png" width="40" height="40" alt=""></span>
-      <p>ポインター</p>
-    </li>
-    <li onclick="location.reload(true); return false;">
-      <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_reconnect.png" width="40" height="40" alt=""></span>
-      <p>再接続</p>
-    </li>
-    <?php if(isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT]): ?>
-      <li ng-click="openDocumentList()">
-        <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_document.png" width="40" height="40" alt=""></span>
-        <p>資料共有</p>
+    <div id="la_control_tools">
+      <li id="controlBtn" class="unlight">
+        <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_remote.png" width="40" height="40" alt=""></span>
+        <p>遠隔操作</p>
       </li>
+      <li id="penBtn">
+        <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_pen.png" width="40" height="40" alt=""></span>
+        <p>ペン</p>
+      </li>
+      <li id="pointBtn">
+        <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_point.png" width="40" height="40" alt=""></span>
+        <p>ポインター</p>
+      </li>
+    </div>
+    <?php if(isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT]): ?>
+      <div id="sub_menu">
+        <hr class="separator"/>
+        <li ng-click="openDocumentList()">
+          <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_document.png" width="40" height="40" alt=""></span>
+          <p>資料共有</p>
+        </li>
+      </div>
     <?php endif; ?>
-    <li onclick="windowClose()">
-      <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_disconnect.png" width="40" height="40" alt=""></span>
-      <p>終了</p>
-    </li>
+    <div class="bottom">
+      <li onclick="location.reload(true); return false;">
+        <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_reconnect.png" width="40" height="40" alt=""></span>
+        <p>再接続</p>
+      </li>
+      <li onclick="windowClose()">
+        <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_disconnect.png" width="40" height="40" alt=""></span>
+        <p>終了</p>
+      </li>
+    </div>
   </ul>
   <div id="customer_flame">
     <div id="remoteScreenViewContainer">
