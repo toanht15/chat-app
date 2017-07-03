@@ -453,6 +453,8 @@
       var content = location.host + 'が閲覧ページへのアクセスを求めています。<br>許可しますか';
       popup.ok = function() {
         userInfo.connectToken = obj.connectToken;
+        browserInfo.resetPrevList();
+        userInfo.setConnect(obj.connectToken);
         laUtil.initAndStart().then(function() {
           // shortcode取得
           var shortcode = laUtil.shortcode;
