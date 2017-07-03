@@ -243,7 +243,6 @@ class StatisticsController extends AppController {
   }
 
   public function _monthCalculation($data){
-    $this->log('日入ってるよ？',LOG_DEBUG);
     $accessNumber = [];
     $widjetNumber = [];
     $effectivenessNumber = [];
@@ -261,24 +260,24 @@ class StatisticsController extends AppController {
       $this->log('accessStart',LOG_DEBUG);
       //合計アクセス件数
       $access = "SELECT count(th.id) FROM sinclo_db2.t_histories as th where th.access_date
-      between '".date("Y-m-d",$startDate)." 00:00:00' and '".date("Y-m-d",$startDate)." 23:59:59' and th.m_companies_id = ".$this->userInfo['MCompany']['id'];
-      $accessNumber[] = $this->THistory->query($access);
+      between '".date("Y-m-d",$startDate)." 00:00:00' and '".date("Y-m-d",$startDate)." 23:59:59' and th.m_companies_id = ?";
+      $accessNumber[] = $this->THistory->query($access, array($this->userInfo['MCompany']['id']));
       $this->log('accessFinish',LOG_DEBUG);
       //$this->log($accessNumber,LOG_DEBUG);
       $this->log('wijetStart',LOG_DEBUG);
       //ウィジェット表示件数
       $widjet = "SELECT count(tw.id) FROM sinclo_db2.t_history_widget_displays as tw where tw.created between
-       '".date("Y-m-d",$startDate)." 00:00:00' and '".date("Y-m-d",$startDate)." 23:59:59' and tw.m_companies_id = ".$this->userInfo['MCompany']['id'];
-      $widjetNumber[] = $this->THistoryWidgetDisplays->query($widjet);
+       '".date("Y-m-d",$startDate)." 00:00:00' and '".date("Y-m-d",$startDate)." 23:59:59' and tw.m_companies_id = ?";
+      $widjetNumber[] = $this->THistoryWidgetDisplays->query($widjet, array($this->userInfo['MCompany']['id']));
       $this->log('wijetStartFinish',LOG_DEBUG);
       $this->log('yuukouStart',LOG_DEBUG);
        //チャット有効件数、チャット拒否件数
-      $effectiveness = "SELECT count(th.id),SUM(case when t_history_chat_logs.achievement_flg = 2 THEN 1 ELSE 0 END) yukou,
-      SUM(case when t_history_chat_logs.message_type = 4 THEN 1 ELSE 0 END) no FROM sinclo_db2.t_histories as th LEFT JOIN
+      $effectiveness = "SELECT count(th.id),SUM(case when t_history_chat_logs.achievement_flg = ? THEN 1 ELSE 0 END) yukou,
+      SUM(case when t_history_chat_logs.message_type = ? THEN 1 ELSE 0 END) no FROM sinclo_db2.t_histories as th LEFT JOIN
       sinclo_db2.t_history_chat_logs ON t_history_chat_logs.t_histories_id = th.id where  th.access_date between
-       '".date("Y-m-d",$startDate)." 00:00:00' and '".date("Y-m-d",$startDate)." 23:59:59' and (t_history_chat_logs.achievement_flg = 2 or t_history_chat_logs.message_type = 4)
-      and th.m_companies_id = ".$this->userInfo['MCompany']['id'];
-      $effectiveness = $this->THistory->query($effectiveness);
+       '".date("Y-m-d",$startDate)." 00:00:00' and '".date("Y-m-d",$startDate)." 23:59:59' and (t_history_chat_logs.achievement_flg = ? or t_history_chat_logs.message_type = ?)
+      and th.m_companies_id = ?";
+      $effectiveness = $this->THistory->query($effectiveness, array(2,4,2,4,$this->userInfo['MCompany']['id']));
       if($effectiveness[0][0]['count(*)'] == 0) {
         $effectiveness[0][0]['yukou'] = 0;
         $effectiveness[0][0]['no'] = 0;
@@ -322,16 +321,14 @@ class StatisticsController extends AppController {
       $return4 = $this->THistory->query($sql2, array(1,1,$this->userInfo['MCompany']['id']));
       $this->log('計算スタート',LOG_DEBUG);
       $return5 = '00:00:00';
-      $this->log(date("Y-m-d",$startDate),LOG_DEBUG);
+      $v = 0;
       foreach($return4 as $k => $v) {
-      $startDates = new DateTime($v['t_histories']['access_date']);
+      $startDates = new DateTime($v['th']['access_date']);
       $endDates =new DateTime($v['t_history_chat_logs']['created']);
       $diff = $startDates->diff($endDates);
       $return4 = $diff->format('%H:%I:%S');
       $return5 = explode(":", $return5);
-      $this->log($return5,LOG_DEBUG);
       $return4 = explode(":", $return4);
-      $this->log($return4,LOG_DEBUG);
       $return5 = date("H:i:s", mktime($return5[0] + $return4[0], $return5[1] + $return4[1], $return5[2] + $return4[2]));
       }
       $this->log('計算終了',LOG_DEBUG);
@@ -339,12 +336,12 @@ class StatisticsController extends AppController {
       $requestTimes[] = $this->DivTime($return5,1/($k+1));
       $this->log('responseTimeFinish',LOG_DEBUG);
       //平均消費者待機時間
-      /*$sql6 = "SELECT th.id,th.access_date,th.m_companies_id,s1.t_histories_id,s1.message_request_flg,s1.created,s2.t_histories_id,s2.message_type,s2.created
-      FROM sinclo_db2.t_histories as th LEFT JOIN (SELECT * FROM sinclo_db2.t_history_chat_logs where message_request_flg = 1 group by t_histories_id)
-      as s1 ON th.id = s1.t_histories_id LEFT JOIN (SELECT * FROM sinclo_db2.t_history_chat_logs where message_type = 98 group by t_histories_id) as s2
+      $sql6 = "SELECT th.id,th.access_date,th.m_companies_id,s1.t_histories_id,s1.message_request_flg,s1.created,s2.t_histories_id,s2.message_type,s2.created
+      FROM sinclo_db2.t_histories as th LEFT JOIN (SELECT * FROM sinclo_db2.t_history_chat_logs where message_request_flg = ? group by t_histories_id)
+      as s1 ON th.id = s1.t_histories_id LEFT JOIN (SELECT * FROM sinclo_db2.t_history_chat_logs where message_type = ? group by t_histories_id) as s2
       ON th.id = s2.t_histories_id where th.access_date between '".date("Y-m-d",$startDate)." 00:00:00' and '".date("Y-m-d",$startDate)." 23:59:59' and
-      th.m_companies_id = ".$this->userInfo['MCompany']['id'];
-      $nyuusituTime = $this->THistory->query($sql6);
+      th.m_companies_id = ?";
+      $nyuusituTime = $this->THistory->query($sql6, array(1,98,$this->userInfo['MCompany']['id']));
       //$this->log($this->THistory->query($sql6),LOG_DEBUG);
       $return5 = '00:00:00';
       foreach($nyuusituTime as $k => $v) {
@@ -358,14 +355,14 @@ class StatisticsController extends AppController {
           $return5 = date("H:i:s", mktime($return5[0] + $return4[0], $return5[1] + $return4[1], $return5[2] + $return4[2]));
         }
       }
-      $responseTimes[] = $this->DivTime($return5,1/($k+1));*/
+      $responseTimes[] = $this->DivTime($return5,1/($k+1));
       //平均応答時間
-      /*$sql7 = "SELECT * FROM sinclo_db2.t_histories LEFT JOIN (SELECT * FROM sinclo_db2.t_history_chat_logs where message_request_flg = 1
+      $sql7 = "SELECT * FROM sinclo_db2.t_histories LEFT JOIN (SELECT * FROM sinclo_db2.t_history_chat_logs where message_request_flg = ?
       group by t_histories_id) as s1 ON t_histories.id = s1.t_histories_id LEFT JOIN
-      (SELECT * FROM sinclo_db2.t_history_chat_logs where message_type = 2 group by t_histories_id) as s2 ON t_histories.id = s2.t_histories_id
+      (SELECT * FROM sinclo_db2.t_history_chat_logs where message_type = ? group by t_histories_id) as s2 ON t_histories.id = s2.t_histories_id
       where t_histories.access_date between '".date("Y-m-d",$startDate)." 00:00:00' and '".date("Y-m-d",$startDate)." 23:59:59' and
-      t_histories.m_companies_id = ".$this->userInfo['MCompany']['id'];
-      $outouTime = $this->THistory->query($sql7);
+      t_histories.m_companies_id = ?";
+      $outouTime = $this->THistory->query($sql7, array(1,2,$this->userInfo['MCompany']['id']));
       $return5 = '00:00:00';
       foreach($outouTime as $k => $v) {
       if(!empty($v['s1']['created']) && !empty($v['s2']['created'])) {
@@ -378,7 +375,7 @@ class StatisticsController extends AppController {
       $return5 = date("H:i:s", mktime($return5[0] + $return4[0], $return5[1] + $return4[1], $return5[2] + $return4[2]));
       }
       }
-      $outouTimes[] = $this->DivTime($return5,1/($k+1));*/
+      $outouTimes[] = $this->DivTime($return5,1/($k+1));
       $startDate = strtotime("+1 day", $startDate);
     }
     $this->log('合計件数',LOG_DEBUG);
