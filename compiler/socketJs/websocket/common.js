@@ -1642,6 +1642,9 @@ var socket, // socket.io
         }
       }
       for ( var i in evList ) {
+        if(typeof i !== 'Number') {
+          break;
+        }
         var evName = ( attachFlg ) ? "on" + String(evList[Number(i)].type) : String(evList[Number(i)].type);
         var event = evList[Number(i)].ev;
         evListener(evName, event);
