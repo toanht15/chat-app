@@ -62,7 +62,7 @@ var LaUtility = function() {
 
   this.createShortCode = function () {
     var _self = this;
-    var deferred = $.Deferred();
+    var deferred = sincloJquery.Deferred();
     var API = _self.API;
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
@@ -82,7 +82,7 @@ var LaUtility = function() {
 
   this.getSessionId = function (shortcode) {
     var _self = this;
-    var deferred = $.Deferred();
+    var deferred = sincloJquery.Deferred();
     var request = new XMLHttpRequest();
     var API = _self.API;
     request.onreadystatechange = function() {
