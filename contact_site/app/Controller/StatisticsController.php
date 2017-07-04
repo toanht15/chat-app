@@ -46,8 +46,10 @@ class StatisticsController extends AppController {
         }
       }
     }
-     $allInfo = $this->Session->read('allInfo');
+    $allInfo = $this->Session->read('allInfo');
+    $Conditions = $this->Session->read('Conditions');
     $this->set('allInfo',$allInfo);
+    $this->set('Conditions',$Conditions);
   }
 
   public function _yearCalculation($data){
@@ -96,6 +98,7 @@ class StatisticsController extends AppController {
       th.access_date between '".date("Y-m-d",$startDate)." 00:00:00' and '".date("Y-m-d",$endMonth)." 23:59:59' and
       t_history_chat_logs.message_request_flg = ? and th.m_companies_id = ?";
       $requestNumber[] = $this->THistory->query($request, array(1,1,$this->userInfo['MCompany']['id']));
+
       $this->log('milli秒',date("H:i:s"));
       $this->log('requestFinish',LOG_DEBUG);
       //チャット応対件数
@@ -185,6 +188,7 @@ class StatisticsController extends AppController {
       $startDate = strtotime("+1 month", $startDate);
       $endMonth = strtotime('last day of' .date("Y-m-d",$startDate) );
     }
+    $this->log($requestNumber,LOG_DEBUG);
     //合計値
     $allAccessNumber = 0;
     foreach($accessNumber as $k => $v) {
@@ -264,7 +268,6 @@ class StatisticsController extends AppController {
   }
 
   public function _monthCalculation($data){
-    $accessNumber = [];
     $widjetNumber = [];
     $effectivenessNumber = [];
     $requestNumber = [];
@@ -275,10 +278,93 @@ class StatisticsController extends AppController {
     $responseRate = [];
     $outouTimes = [];
     $allInfo = [];
+    $array02 = [];
+    $array01 = [];
+    $array03 = [];
 
     $startDate = strtotime('first day of' .$data);
     $endDate = strtotime('last day of' .$data);
-    while($startDate <= $endDate) {
+    $correctStartDate = date("Y-m-d 00:00:00",$startDate);
+    $correctEndDate = date("Y-m-d 23:59:59",$endDate);
+    $this->log($startDate,LOG_DEBUG);
+    $this->log($endDate,LOG_DEBUG);
+
+    //応答件数
+    $response = "SELECT date_format(th.access_date, '%Y-%m-%d') as date, count(distinct message_distinction,t_histories_id)  FROM sinclo_db2.t_histories as th LEFT JOIN
+    (SELECT t_histories_id,message_type,message_distinction FROM sinclo_db2.t_history_chat_logs where message_type = ?) as t_history_chat_logs ON
+    t_history_chat_logs.t_histories_id = th.id where t_history_chat_logs.message_type = ? and
+    th.access_date between ? and ? and th.m_companies_id = ? group by date(th.access_date)";
+    $responseNumber = $this->THistory->query($response, array(98,98,$correctStartDate,$correctEndDate,$this->userInfo['MCompany']['id']));
+
+    while($startDate <= $endDate){
+      $array01 = $array01 + array(date("Y-m-d",$startDate) => 0);
+      $startDate = strtotime("+1 day", $startDate);
+    }
+    $startDate = strtotime('first day of' .$data);
+
+    foreach($responseNumber as $v) {
+      $array02 =  $array02 + array($v[0]['date'] => $v[0]['count(distinct message_distinction,t_histories_id)']);
+    }
+
+    $responseNumber = array_merge($array01,$array02);
+    $this->log('response',LOG_DEBUG);
+    $this->log($responseNumber,LOG_DEBUG);
+
+    //アクセス件数
+    $access = "SELECT date_format(th.access_date, '%Y-%m-%d') as date, count(th.id) FROM sinclo_db2.t_histories as th where th.access_date
+    between ? and ? and th.m_companies_id = ? group by date(th.access_date)";
+    $accessNumber = $this->THistory->query($access, array($correctStartDate,$correctEndDate,$this->userInfo['MCompany']['id']));
+
+    //ウィジェット表示件数
+    $widjet = "SELECT date_format(tw.created, '%Y-%m-%d') as date,count(tw.id) FROM sinclo_db2.t_history_widget_displays as tw where tw.created between
+    ? and ? and tw.m_companies_id = ? group by date(tw.created)";
+    $widjetNumber[] = $this->THistoryWidgetDisplays->query($widjet, array($correctStartDate,$correctEndDate,$this->userInfo['MCompany']['id']));
+    $this->log('widjetNumber',LOG_DEBUG);
+    $this->log($widjetNumber,LOG_DEBUG);
+
+    //チャットリクエスト件数
+    $requestNumber = "SELECT date_format(th.access_date, '%Y-%m-%d') as date, count(th.id) FROM sinclo_db2.t_histories as th
+      LEFT JOIN (SELECT t_histories_id,message_request_flg FROM sinclo_db2.t_history_chat_logs where message_request_flg = ? ) as t_history_chat_logs
+      ON t_history_chat_logs.t_histories_id = th.id
+      where th.access_date between ? and ? and t_history_chat_logs.message_request_flg = ? and th.m_companies_id = ?
+      group by date(th.access_date)";
+    $requestNumber = $this->THistory->query($requestNumber, array(1,$correctStartDate,$correctEndDate,1,$this->userInfo['MCompany']['id']));
+    $this->log('requestNumber0',LOG_DEBUG);
+    $this->log($requestNumber,LOG_DEBUG);
+
+    foreach($requestNumber as $v) {
+      $array03 =  $array03 + array($v[0]['date'] => $v[0]['count(th.id)']);
+    }
+
+    $requestNumber = array_merge($array01,$array03);
+
+    //チャット有効件数
+     $effectiveness = "SELECT date_format(th.access_date, '%Y-%m-%d') as date, count(th.id),SUM(case when t_history_chat_logs.achievement_flg = ? THEN 1 ELSE 0 END) yukou,
+     SUM(case when t_history_chat_logs.message_type = ? THEN 1 ELSE 0 END) no FROM sinclo_db2.t_histories as th LEFT JOIN
+     sinclo_db2.t_history_chat_logs ON t_history_chat_logs.t_histories_id = th.id where  th.access_date between
+      ? and ? and (t_history_chat_logs.achievement_flg = ? or t_history_chat_logs.message_type = ?)
+     and th.m_companies_id = ? group by date(th.access_date)";
+     $effectiveness = $this->THistory->query($effectiveness, array(2,4,$correctStartDate,$correctEndDate,2,4,$this->userInfo['MCompany']['id']));
+     if($effectiveness[0][0]['count(th.id)'] == 0) {
+       $effectiveness[0][0]['yukou'] = 0;
+       $effectiveness[0][0]['no'] = 0;
+     }
+     $effectivenessNumber = $effectiveness;
+
+    //チャット応対率
+    $responseRate = round($this->THistory->query($response, array(98,98,$correctStartDate,$correctEndDate,$this->userInfo['MCompany']['id']))[0][0]['count(distinct message_distinction,t_histories_id)']/$this->THistory->query($request, array(1,1,$correctStartDate,$correctEndDate,$this->userInfo['MCompany']['id']))[0][0]['count(th.id)']*100);
+    $this->log('応対率',LOG_DEBUG);
+    $this->log($responseRate,LOG_DEBUG);
+    //チャット有効率
+    $effectivenessRate = round($effectiveness[0]['yukou']/$this->THistory->query($request, array(1,1,$correctStartDate,$correctEndDate,$this->userInfo['MCompany']['id']))[0][0]['count(th.id)']*100);
+    $this->log('有効率',LOG_DEBUG);
+    $this->log($effectivenessRate,LOG_DEBUG);
+
+    $this->log('新しいクエリ',LOG_DEBUG);
+      $startDate = strtotime('first day of' .$data);
+    $endDate = strtotime('last day of' .$data);
+    //$this->log($aaa,LOG_DEBUG);
+    /*while($startDate <= $endDate) {
       $this->log('accessStart',LOG_DEBUG);
       //合計アクセス件数
       $this->log(microtime(true),LOG_DEBUG);
@@ -409,9 +495,8 @@ class StatisticsController extends AppController {
       }
       $outouTimes[] = $this->DivTime($return5,1/($k+1));
       $startDate = strtotime("+1 day", $startDate);
-    }
+    }*/
     $this->log('合計件数',LOG_DEBUG);
-    $this->log($requestTimes,LOG_DEBUG);
     //合計値
     $allAccessNumber = 0;
     foreach($accessNumber as $k => $v) {
@@ -503,7 +588,7 @@ class StatisticsController extends AppController {
       'accessNumber' => $accessNumber,
       'widjetNumber' => $widjetNumber,'effectivenessNumber' => $effectivenessNumber,'requestNumber' => $requestNumber,
       'responseNumber' => $responseNumber,'responseRate' => $responseRate,'effectivenessRate' => $effectivenessRate,
-      'requestTimes' => $requestTimes,'data' => $data
+      'requestTimes' => $requestTimes,'data' => $data,'requestNumber2' => $requestNumber2
     ];
     //$this->log($allInfo,LOG_DEBUG);
     $this->Session->write('allInfo',$allInfo);
