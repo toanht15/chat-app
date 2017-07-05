@@ -306,8 +306,10 @@ $config['outMessageTriggerList'] = [
         'createLimit' => [C_COINCIDENT => 1, C_SOME_EITHER => 1],
         'key' => 'speech_content',
         'default' => [
-            "keyword" => "",
-            "searchCond" => "1"
+            "speechContent" => "",
+            "speechContentCond" => "1",
+            "triggerTimeSec" => 3,
+            "speechTriggerCond" => "1"
         ]
     ]
 ];
