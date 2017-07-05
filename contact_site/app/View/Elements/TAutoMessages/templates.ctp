@@ -81,11 +81,32 @@
 
 <?php /* 検索キーワード｜C_AUTO_TRIGGER_SEARCH_KEY */ ?>
 <ul ng-if="itemType == '<?=C_AUTO_TRIGGER_SEARCH_KEY?>'" class="setSearchKeyword">
-	<li>
-		<span><label>キーワード</label></span>
-		<input type="text" ng-model="setItem.keyword" name="keyword" maxlength="20" required="">
-	</li>
-	<li>
-		<?=$this->AutoMessage->radio('searchCond')?>
-	</li>
+  <li>
+    <span><label>キーワード</label></span>
+    <input type="text" ng-model="setItem.keyword" name="keyword" maxlength="20" required="">
+  </li>
+  <li>
+    <?=$this->AutoMessage->radio('searchCond')?>
+  </li>
+</ul>
+
+<?php /* 発言内容｜C_AUTO_TRIGGER_SEARCH_KEY */ ?>
+<ul ng-if="itemType == '<?=C_AUTO_TRIGGER_SPEECH_CONTENT?>'" class="setSpeechKeyword">
+  <li>
+    <span><label>発言内容</label></span>
+    <input type="text" ng-model="setItem.speechContent" name="keyword" maxlength="20" required="">
+  </li>
+  <li>
+    <?=$this->AutoMessage->radio('speechContentCond')?>
+  </li>
+  <li>
+    <span><label>返信間隔</label></span>
+    <label for="triggerTimeSec">
+      <input type="number" name="triggerTimeSec" maxlength="2" required="" style="width:6em">
+      秒後
+    </label>
+  </li>
+  <li>
+    <?=$this->AutoMessage->radio('speechTriggerCond')?>
+  </li>
 </ul>

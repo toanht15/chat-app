@@ -71,6 +71,21 @@ class autoMessageHelper extends AppHelper {
 				3 => "不一致（若しくは取得できなかった場合）"
 			]
 		],
+    'speechContentCond' => [
+      'label' => '条件',
+        'dataList' => [
+          1 => "完全一致",
+          2 => "部分一致",
+          3 => "不一致"
+        ]
+    ],
+    'speechTriggerCond' => [
+      'label' => '発動回数',
+      'dataList' => [
+        1 => "１回のみ有効",
+        2 => "何度でも有効"
+      ]
+    ],
 		'day' => [
 			'label' => '曜日',
 			'dataList' => [
@@ -265,6 +280,22 @@ class autoMessageHelper extends AppHelper {
 					}
 
 					break;
+
+        case C_AUTO_TRIGGER_SPEECH_CONTENT: // 発言内容
+          foreach((array)$items as $v) {
+            if ( isset($v['keyword'])
+                && isset($v['searchCond']) && !empty($this->dataList['searchCond']['dataList'][$v['searchCond']])
+            ) {
+              $retList[] = sprintf(
+                  $this->labelList[$itemId],
+                  $v['keyword'],
+                  $this->dataList['searchCond']['dataList'][$v['searchCond']]
+              );
+
+            }
+          }
+
+          break;
 
 				default:
 					# code...
