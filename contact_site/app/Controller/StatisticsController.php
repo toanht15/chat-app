@@ -34,15 +34,16 @@ class StatisticsController extends AppController {
       if ($this->THistory->validates() ) {
         if(array_keys($this->request->data)[0] == 'year'){
           $data = $this->request->data['year'];
-          $this->_yearCalculation($data);
+          $this->yearCalculation($data);
         }
         else if(array_keys($this->request->data)[0] == 'month'){
+          $this->log('もしかして入ってない',LOG_DEBUG);
           $data = $this->request->data['month'];
-          $this->_monthCalculation($data);
+          $data = $this->monthCalculation($data);
         }
         else if(array_keys($this->request->data)[0] == 'day') {
           $data = $this->request->data['day'].' 00:00:00';
-          $this->_dayCalculation($data);
+          $this->dayCalculation($data);
         }
       }
     }
@@ -50,9 +51,10 @@ class StatisticsController extends AppController {
     $Conditions = $this->Session->read('Conditions');
     $this->set('allInfo',$allInfo);
     $this->set('Conditions',$Conditions);
+    $this->set('data',$data);
   }
 
-  public function _yearCalculation($data){
+  /*public function yearCalculation($data){
     $accessNumber = [];
     $widjetNumber = [];
     $effectivenessNumber = [];
@@ -265,22 +267,15 @@ class StatisticsController extends AppController {
     $this->Session->write('Conditions',$Conditions);
     //$this->log($allInfo,LOG_DEBUG);
     $this->log('終わり',LOG_DEBUG);
-  }
+  }*/
 
-  public function _monthCalculation($data){
-    $widjetNumber = [];
-    $effectivenessNumber = [];
-    $requestNumber = [];
-    $responseNumber = [];
-    $requestTimes = [];
-    $responseTimes = [];
-    $effectivenessRate = [];
-    $responseRate = [];
-    $outouTimes = [];
+  public function monthCalculation($data){
     $allInfo = [];
-    $array02 = [];
+    $responseNumberData = [];
+    $accessNumberData = [];
     $array01 = [];
-    $array03 = [];
+    $requestNumberData = [];
+    $widjetNumberData = [];
 
     $startDate = strtotime('first day of' .$data);
     $endDate = strtotime('last day of' .$data);
@@ -303,24 +298,37 @@ class StatisticsController extends AppController {
     $startDate = strtotime('first day of' .$data);
 
     foreach($responseNumber as $v) {
-      $array02 =  $array02 + array($v[0]['date'] => $v[0]['count(distinct message_distinction,t_histories_id)']);
+      $responseNumberData =  $responseNumberData + array($v[0]['date'] => $v[0]['count(distinct message_distinction,t_histories_id)']);
     }
 
-    $responseNumber = array_merge($array01,$array02);
-    $this->log('response',LOG_DEBUG);
-    $this->log($responseNumber,LOG_DEBUG);
+    $responseNumberData = array_merge($array01,$responseNumberData);
+    $this->log('responseNumberData',LOG_DEBUG);
+    $this->log($responseNumberData,LOG_DEBUG);
 
     //アクセス件数
     $access = "SELECT date_format(th.access_date, '%Y-%m-%d') as date, count(th.id) FROM sinclo_db2.t_histories as th where th.access_date
     between ? and ? and th.m_companies_id = ? group by date(th.access_date)";
     $accessNumber = $this->THistory->query($access, array($correctStartDate,$correctEndDate,$this->userInfo['MCompany']['id']));
 
+    foreach($widjetNumber as $v) {
+      $accessNumberData =  $accessNumberData + array($v[0]['date'] => $v[0]['count(tw.id)']);
+    }
+
+    $accessNumberData = array_merge($array01,$accessNumberData);
     //ウィジェット表示件数
     $widjet = "SELECT date_format(tw.created, '%Y-%m-%d') as date,count(tw.id) FROM sinclo_db2.t_history_widget_displays as tw where tw.created between
     ? and ? and tw.m_companies_id = ? group by date(tw.created)";
-    $widjetNumber[] = $this->THistoryWidgetDisplays->query($widjet, array($correctStartDate,$correctEndDate,$this->userInfo['MCompany']['id']));
-    $this->log('widjetNumber',LOG_DEBUG);
-    $this->log($widjetNumber,LOG_DEBUG);
+    $widjetNumber = $this->THistoryWidgetDisplays->query($widjet, array($correctStartDate,$correctEndDate,$this->userInfo['MCompany']['id']));
+    $this->log('ここまで入っている',LOG_DEBUG);
+
+    foreach($widjetNumber as $v) {
+      $widjetNumberData =  $widjetNumberData + array($v[0]['date'] => $v[0]['count(tw.id)']);
+    }
+
+    $widjetNumberData = array_merge($array01,$widjetNumberData);
+
+    $this->log('widjetNumberData',LOG_DEBUG);
+    $this->log($widjetNumberData,LOG_DEBUG);
 
     //チャットリクエスト件数
     $requestNumber = "SELECT date_format(th.access_date, '%Y-%m-%d') as date, count(th.id) FROM sinclo_db2.t_histories as th
@@ -329,14 +337,15 @@ class StatisticsController extends AppController {
       where th.access_date between ? and ? and t_history_chat_logs.message_request_flg = ? and th.m_companies_id = ?
       group by date(th.access_date)";
     $requestNumber = $this->THistory->query($requestNumber, array(1,$correctStartDate,$correctEndDate,1,$this->userInfo['MCompany']['id']));
-    $this->log('requestNumber0',LOG_DEBUG);
-    $this->log($requestNumber,LOG_DEBUG);
 
     foreach($requestNumber as $v) {
-      $array03 =  $array03 + array($v[0]['date'] => $v[0]['count(th.id)']);
+      $requestNumberData =  $requestNumberData + array($v[0]['date'] => $v[0]['count(th.id)']);
     }
 
-    $requestNumber = array_merge($array01,$array03);
+    $requestNumberData = array_merge($array01,$requestNumberData);
+
+    $this->log('requestNumberData',LOG_DEBUG);
+    $this->log($requestNumberData,LOG_DEBUG);
 
     //チャット有効件数
      $effectiveness = "SELECT date_format(th.access_date, '%Y-%m-%d') as date, count(th.id),SUM(case when t_history_chat_logs.achievement_flg = ? THEN 1 ELSE 0 END) yukou,
@@ -352,17 +361,17 @@ class StatisticsController extends AppController {
      $effectivenessNumber = $effectiveness;
 
     //チャット応対率
-    $responseRate = round($this->THistory->query($response, array(98,98,$correctStartDate,$correctEndDate,$this->userInfo['MCompany']['id']))[0][0]['count(distinct message_distinction,t_histories_id)']/$this->THistory->query($request, array(1,1,$correctStartDate,$correctEndDate,$this->userInfo['MCompany']['id']))[0][0]['count(th.id)']*100);
+    //$responseRate = round($this->THistory->query($response, array(98,98,$correctStartDate,$correctEndDate,$this->userInfo['MCompany']['id']))[0][0]['count(distinct message_distinction,t_histories_id)']/$this->THistory->query($request, array(1,1,$correctStartDate,$correctEndDate,$this->userInfo['MCompany']['id']))[0][0]['count(th.id)']*100);
     $this->log('応対率',LOG_DEBUG);
-    $this->log($responseRate,LOG_DEBUG);
+   // $this->log($responseRate,LOG_DEBUG);
     //チャット有効率
-    $effectivenessRate = round($effectiveness[0]['yukou']/$this->THistory->query($request, array(1,1,$correctStartDate,$correctEndDate,$this->userInfo['MCompany']['id']))[0][0]['count(th.id)']*100);
+    //$effectivenessRate = round($effectiveness[0]['yukou']/$this->THistory->query($request, array(1,1,$correctStartDate,$correctEndDate,$this->userInfo['MCompany']['id']))[0][0]['count(th.id)']*100);
     $this->log('有効率',LOG_DEBUG);
-    $this->log($effectivenessRate,LOG_DEBUG);
+    //$this->log($effectivenessRate,LOG_DEBUG);
 
     $this->log('新しいクエリ',LOG_DEBUG);
-      $startDate = strtotime('first day of' .$data);
-    $endDate = strtotime('last day of' .$data);
+      //$startDate = strtotime('first day of' .$data);
+    //$endDate = strtotime('last day of' .$data);
     //$this->log($aaa,LOG_DEBUG);
     /*while($startDate <= $endDate) {
       $this->log('accessStart',LOG_DEBUG);
@@ -498,7 +507,7 @@ class StatisticsController extends AppController {
     }*/
     $this->log('合計件数',LOG_DEBUG);
     //合計値
-    $allAccessNumber = 0;
+   /* $allAccessNumber = 0;
     foreach($accessNumber as $k => $v) {
       $allAccessNumber = $allAccessNumber + $v[0][0]['count(th.id)'];
     }
@@ -526,7 +535,7 @@ class StatisticsController extends AppController {
     }
     $this->log('合計平均時間',LOG_DEBUG);
     //合計リクエスト平均時間
-    /*$time = '00:00:00';
+    $time = '00:00:00';
     foreach($requestTimes as $k => $v) {
     $time = explode(":", $time);
     $averageTime = explode(":", $v);
@@ -561,12 +570,12 @@ class StatisticsController extends AppController {
     $averageoutouTimes = $this->DivTime($time,1/($number));*/
 
     //合計チャット応対率
-    $allResponseRate = round($allresponse/$allrequest*100);
+    //$allResponseRate = round($allresponse/$allrequest*100);
 
     //合計チャット有効率
-    $allEffectivenessRate = round($allweffectiveness/$allrequest*100);
+    //$allEffectivenessRate = round($allweffectiveness/$allrequest*100);
 
-    $allInfo['accessNumber'] = $accessNumber;
+    /*$allInfo['accessNumber'] = $accessNumber;
     $allInfo['data'] = $data;
     $allInfo['widjetNumber'] = $widjetNumber;
     $allInfo['effectivenessNumber'] = $effectivenessNumber;
@@ -583,20 +592,20 @@ class StatisticsController extends AppController {
     $allInfo['allresponse'] = $allresponse;
     $allInfo['allResponseRate'] = $allResponseRate;
     $allInfo['allEffectivenessRate'] = $allEffectivenessRate;
-    $allInfo['averageRequestTimes'] = $averageRequestTimes;
+    $allInfo['averageRequestTimes'] = $averageRequestTimes;*/
     $Conditions = [
       'accessNumber' => $accessNumber,
-      'widjetNumber' => $widjetNumber,'effectivenessNumber' => $effectivenessNumber,'requestNumber' => $requestNumber,
-      'responseNumber' => $responseNumber,'responseRate' => $responseRate,'effectivenessRate' => $effectivenessRate,
-      'requestTimes' => $requestTimes,'data' => $data,'requestNumber2' => $requestNumber2
+      'widjetNumberData' => $widjetNumberData,'effectivenessNumber' => $effectivenessNumber,'requestNumberData' => $requestNumberData,
+      'responseNumberData' => $responseNumberData
     ];
+    return $Conditions;
     //$this->log($allInfo,LOG_DEBUG);
-    $this->Session->write('allInfo',$allInfo);
-    $this->Session->write('Conditions',$Conditions);
+    //$this->Session->write('allInfo',$allInfo);
+    //$this->Session->write('Conditions',$Conditions);
     $this->log('終わり',LOG_DEBUG);
   }
 
-  public function OutputCsv() {
+  public function outputCsv() {
     $this->autoRender = false;
     $allInfo = $this->Session->read('allInfo');
     $Conditions = $this->Session->read('Conditions');
@@ -692,10 +701,10 @@ class StatisticsController extends AppController {
     $csv[] = $row7;
     $csv[] = $row8;
     $csv[] = $row9;
-    $this->_outputCSV2($csv);
+    $this->outputCSVStatistics($csv);
   }
 
-  public function _outputCSV2($csv = []) {
+  public function outputCSVStatistics($csv = []) {
     $this->layout = null;
 
     //メモリ上に領域確保
@@ -733,7 +742,7 @@ class StatisticsController extends AppController {
 
   }
 
-  public function _dayCalculation($data){
+  /*public function dayCalculation($data){
     $this->log('day入ってる',LOG_DEBUG);
     $this->log($data,LOG_DEBUG);
     $accessNumber = [];
@@ -924,7 +933,7 @@ class StatisticsController extends AppController {
     $this->Session->write('Conditions',$Conditions);
     //$this->log($effectivenessNumber,LOG_DEBUG);
     $this->log('終わり',LOG_DEBUG);
-  }
+  }*/
 
   function DivTime($time,$Rate){
     $tArry=explode(":",$time);
