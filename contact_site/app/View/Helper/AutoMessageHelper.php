@@ -122,6 +122,7 @@ class autoMessageHelper extends AppHelper {
 		],
 		C_AUTO_TRIGGER_REFERRER => "参照元URLにて「%s」という文字列が%s",
 		C_AUTO_TRIGGER_SEARCH_KEY => "検索キーワードにて「%s」という文字列が%s",
+    C_AUTO_TRIGGER_SPEECH_CONTENT => "発言内容が「%s」という文字列が%s"
 	];
 
 	public function select($itemKey=null) {
@@ -283,13 +284,13 @@ class autoMessageHelper extends AppHelper {
 
         case C_AUTO_TRIGGER_SPEECH_CONTENT: // 発言内容
           foreach((array)$items as $v) {
-            if ( isset($v['keyword'])
-                && isset($v['searchCond']) && !empty($this->dataList['searchCond']['dataList'][$v['searchCond']])
+            if ( isset($v['speechContent'])
+                && isset($v['speechTriggerCond']) && !empty($this->dataList['speechContentCond']['dataList'][$v['speechContentCond']])
             ) {
               $retList[] = sprintf(
                   $this->labelList[$itemId],
-                  $v['keyword'],
-                  $this->dataList['searchCond']['dataList'][$v['searchCond']]
+                  $v['speechContent'],
+                  $this->dataList['speechContentCond']['dataList'][$v['speechContentCond']]
               );
 
             }

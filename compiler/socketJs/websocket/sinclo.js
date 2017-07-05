@@ -785,6 +785,7 @@
           return false;
         }
         this.chatApi.createMessageUnread(cn, obj.chatMessage, userName);
+        sinclo.trigger.fireChatEnterEvent(obj.chatMessage);
         // オートメッセージの内容をDBに保存し、オブジェクトから削除する
         if (!sinclo.chatApi.saveFlg) {
           emit("sendAutoChat", {messageList: sinclo.chatApi.autoMessages});
@@ -1302,6 +1303,7 @@
     trigger: {
         flg: false,
         nowSaving: false,
+        timerTriggered: false,
         init: function(){
             if ( !('messages' in window.sincloInfo) || (('messages' in window.sincloInfo) && typeof(window.sincloInfo.messages) !== "object" ) ) return false;
             this.flg = true;
@@ -1312,6 +1314,11 @@
                     setTimeout(function(){
                         sinclo.trigger.setAction(message.id, message.action_type, message.activity);
                     }, ret);
+                } else if(typeof(ret) === 'object') {
+                    setTimeout(function(){
+                        console.log("AUTO MESSAGE TIMER TRIGGERED");
+                        sinclo.trigger.timerTriggered = true;
+                    }, ret.delay);
                 }
             };
             var orFunc = function(key, ret){
@@ -1338,6 +1345,7 @@
          * return 即時実行(0)、タイマー実行(ミリ秒)、非実行(null)
          */
         setAndSetting: function(key, setting, callback) {
+          console.log("setAndSettings");
             var keys = Object.keys(setting.conditions);
             var ret = 0;
             for(var i = 0; keys.length > i; i++){
@@ -1380,6 +1388,29 @@
                         this.judge.searchWord(conditions[0], function(err, timer){
                             if (err) ret = null;
                         });
+                        break;
+                    case 7: // 発言内容
+                        var self = this;
+                        if(ret !== null) { // その他の設定で無効の場合は何もしない
+                          $(this).on('chatEntered', function (event, msg) {
+                            if (sinclo.trigger.timerTriggered) {
+                              console.log("chat entered.....");
+                              storage.s.set('chatAct', false);
+                              self.judge.matchSpeechContent(msg, conditions[0], function (err, timer) {
+                                if (err) {
+                                  ret = null;
+                                  return;
+                                }
+                                ret = Number(conditions[0].triggerTimeSec) * 1000;
+                                storage.s.set('chatAct', false);
+                                callback(key, ret);
+                              });
+                            }
+                          });
+                          ret = {
+                            delay: ret
+                          }
+                        }
                         break;
                     default:
                         ret = null;
@@ -1500,6 +1531,9 @@
                 }, 1);
 
             }
+        },
+        fireChatEnterEvent: function(msg) {
+          $(this).trigger('chatEntered',msg);
         },
         common: {
             /**
@@ -1683,6 +1717,19 @@
                 else {
                     callback(true, null);
                 }
+            },
+            matchSpeechContent: function(msg, cond, callback) {
+              console.log("MATCH SPEECH CONTENT : " + JSON.stringify(cond));
+              if (!('speechContent' in cond) || !('speechContentCond' in cond )) return callback( true, null );
+              if (msg === null && Number(cond.speechContentCond) !== 3 ) return callback( true, null );
+              if (sinclo.trigger.common.pregMatch(cond.speechContentCond, cond.speechContent, msg)) {
+                console.log("MATCH!!");
+                callback(false, cond.triggerTimeSec);
+              }
+              else {
+                console.log("NOT  MATCH!!");
+                callback(true, null);
+              }
             }
         }
     }
