@@ -7,6 +7,25 @@ class StatisticsController extends AppController {
 
   public $uses = ['THistory','THistoryWidgetDisplays'];
 
+  public $chatMessageType = [
+    'messageType' => [
+      'consumerMessage' => 1,
+      'operatorMessage' => 2,
+      'autoMessage' => 3,
+      'denial' => 4,
+      'enteringRoom' => 98,
+      'leave' => 99
+    ],
+    'requestFlg' => [
+      'noFlg' => 0,
+      'flg' => 1
+    ],
+    'achievementFlg' => [
+      'invalidFlg' => 1,
+      'effectivenessFlg' => 2
+    ]
+  ];
+
   public function beforeFilter(){
     parent::beforeFilter();
     $this->set('title_for_layout', '統計機能');
@@ -25,24 +44,25 @@ class StatisticsController extends AppController {
    * */
   public function forChat() {
     Configure::write('debug', 2);
-
+    $this->log('chatType',LOG_DEBUG);
+    $this->log($this->chatMessageType,LOG_DEBUG);
     if($this->request->is('post')) {
       $this->THistory->set($this->request->data);
       if ($this->THistory->validates() ) {
         //月別の場合
         if(array_keys($this->request->data)[0] == 'year'){
           $data = $this->request->data['year'];
-          $data = $this->calculateYearData($data);
+          $data = $this->calculateMonthlyData($data);
         }
         //日別の場合
         else if(array_keys($this->request->data)[0] == 'month'){
           $data = $this->request->data['month'];
-          $data = $this->calculateMonthData($data);
+          $data = $this->calculateDailyData($data);
         }
         //時別の場合
         else if(array_keys($this->request->data)[0] == 'day') {
           $data = $this->request->data['day'].' 00:00:00';
-          $data = $this->calculateDateData($data);
+          $data = $this->calculateHourlyData($data);
         }
       }
     }
@@ -50,7 +70,7 @@ class StatisticsController extends AppController {
   }
 
   //月別の場合
-  public function calculateYearData($data){
+  public function calculateMonthlyData($data){
     $start = $data.'-01';
     $end = $data.'-12';
     $startDate = strtotime('first day of' .$start);
@@ -71,11 +91,34 @@ class StatisticsController extends AppController {
     }
     $startDate = strtotime('first day of' .$start);
 
-    $sqlDatas = $this->summarySql($date_format,$baseData,$baseTimeData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
+    //アクセス件数件数
+    $accessDatas = $this->getAccessData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
+
+    //ウィジェット表示件数
+    $widgetDatas = $this->getWidgetData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
+
+    //チャットリクエスト件数
+    $requestDatas = $this->getRequestData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
+
+    //チャット応答件数,チャット応答率　書き換え必要
+    $responseDatas = $this->getResponseData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period,$requestDatas['requestNumberData'],$requestDatas['allRequestNumberData']);
+
+    //チャット有効件数、チャット有効率、チャット拒否件数
+    $coherentDatas = $this->getCoherentData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period,$requestDatas['requestNumberData'],$requestDatas['allRequestNumberData']);
+
+    //平均チャットリクエスト時間
+    $avgRequestTimeDatas = $this->getAvgRequestTimeData($date_format,$baseData,$baseTimeData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
+
+    //平均消費者待機時間
+    $consumerWatingAvgTimeDatas = $this->getConsumerWatingAvgTimeData($date_format,$baseData,$baseTimeData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
+
+    //平均応答時間
+    $responseAvgTimeData = $this->getResponseAvgTimeData($date_format,$baseData,$baseTimeData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
+
   }
 
   //日別の場合
-  public function calculateMonthData($data){
+  public function calculateDailyData($data){
     $startDate = strtotime('first day of' .$data);
     $endDate = strtotime('last day of' .$data);
     $correctStartDate = date("Y-m-d 00:00:00",$startDate);
@@ -93,11 +136,34 @@ class StatisticsController extends AppController {
     }
     $startDate = strtotime('first day of' .$data);
 
-    $sqlDatas = $this->summarySql($date_format,$baseData,$baseTimeData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
+    //アクセス件数件数
+    $accessDatas = $this->getAccessData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
+
+    //ウィジェット表示件数
+    $widgetDatas = $this->getWidgetData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
+
+    //チャットリクエスト件数
+    $requestDatas = $this->getRequestData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
+
+    //チャット応答件数,チャット応答率　書き換え必要
+    $responseDatas = $this->getResponseData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period,$requestDatas['requestNumberData'],$requestDatas['allRequestNumberData']);
+
+    //チャット有効件数、チャット有効率、チャット拒否件数
+    $coherentDatas = $this->getCoherentData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period,$requestDatas['requestNumberData'],$requestDatas['allRequestNumberData']);
+
+    //平均チャットリクエスト時間
+    $avgRequestTimeDatas = $this->getAvgRequestTimeData($date_format,$baseData,$baseTimeData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
+
+    //平均消費者待機時間
+    $consumerWatingAvgTimeDatas = $this->getConsumerWatingAvgTimeData($date_format,$baseData,$baseTimeData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
+
+    //平均応答時間
+    $responseAvgTimeData = $this->getResponseAvgTimeData($date_format,$baseData,$baseTimeData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
+
   }
 
   //時別の場合
-  public function calculateDateData($data){
+  public function calculateHourlyData($data){
     $startDate = strtotime($data);
     $endDate = strtotime("+1 day",$startDate.' 00:00:00');
     $correctStartDate = date("Y-m-d H:00:00",$startDate);
@@ -115,28 +181,34 @@ class StatisticsController extends AppController {
     }
     $startDate = strtotime($data);
 
-    $sqlDatas = $this->summarySql($date_format,$baseData,$baseTimeData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
+    //アクセス件数件数
+    $accessDatas = $this->getAccessData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
+
+    //ウィジェット表示件数
+    $widgetDatas = $this->getWidgetData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
+
+    //チャットリクエスト件数
+    $requestDatas = $this->getRequestData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
+
+    //チャット応答件数,チャット応答率　書き換え必要
+    $responseDatas = $this->getResponseData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period,$requestDatas['requestNumberData'],$requestDatas['allRequestNumberData']);
+
+    //チャット有効件数、チャット有効率、チャット拒否件数
+    $coherentDatas = $this->getCoherentData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period,$requestDatas['requestNumberData'],$requestDatas['allRequestNumberData']);
+
+    //平均チャットリクエスト時間
+    $avgRequestTimeDatas = $this->getAvgRequestTimeData($date_format,$baseData,$baseTimeData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
+
+    //平均消費者待機時間
+    $consumerWatingAvgTimeDatas = $this->getConsumerWatingAvgTimeData($date_format,$baseData,$baseTimeData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
+
+    //平均応答時間
+    $responseAvgTimeData = $this->getResponseAvgTimeData($date_format,$baseData,$baseTimeData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
+
   }
 
-
-  public function summarySql($date_format,$baseData,$baseTimeData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period) {
+  public function getAccessData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period) {
     $accessNumberData = [];
-    $widgetNumberData =[];
-    $requestNumberData = [];
-    $responseNumberData = [];
-    $effectivenessNumberData = [];
-    $noNumberData = [];
-    $responseRate = [];
-    $effectivenessRate = [];
-    $requestAvgTime = [];
-    $consumerWatingAVGTime = [];
-    $responseAvgTime = [];
-    $avgForcalculation = [];
-    $requestFlg = 1;
-    $achievementFlg = 2;
-    $respose = 2;
-    $no = 4;
-    $enteringRoom = 98;
 
     //アクセス件数
     $access = "SELECT date_format(th.access_date, ?) as date, count(th.id) FROM t_histories as th where th.access_date
@@ -153,12 +225,20 @@ class StatisticsController extends AppController {
     //アクセス件数合計値
     $allAccessNumberData = array_sum($accessNumberData);
 
+    return ['accessNumberData' => $accessNumberData,'allAccessNumberData' => $allAccessNumberData];
+
+  }
+
+
+  public function getWidgetData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period) {
+    $widgetNumberData =[];
+
     //ウィジェット表示件数
     $widget = "SELECT date_format(tw.created, ?) as date,count(tw.id) FROM t_history_widget_displays as tw where tw.created between
     ? and ? and tw.m_companies_id = ? group by date_format(tw.created, ?)";
     $widgetNumber = $this->THistoryWidgetDisplays->query($widget, array($date_format,$correctStartDate,$correctEndDate,$this->userInfo['MCompany']['id'],$date_format));
 
-    foreach($widgetNumber as $k => $void) {
+    foreach($widgetNumber as $k => $v) {
       $widgetNumberData =  $widgetNumberData + array($v[0]['date'] => $v[0]['count(tw.id)']);
     }
 
@@ -168,6 +248,12 @@ class StatisticsController extends AppController {
     //ウィジェット件数合計値
     $allWidgetNumberData = array_sum($widgetNumberData);
 
+    return['widgetNumberData' => $widgetNumberData,'allWidgetNumberData' => $allWidgetNumberData];
+  }
+
+  public function getRequestData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period) {
+    $requestNumberData = [];
+
     //チャットリクエスト件数
     $requestNumber = "SELECT date_format(th.access_date, ?) as date, count(th.id)
     FROM t_histories as th
@@ -176,8 +262,7 @@ class StatisticsController extends AppController {
     where th.access_date between ? and ? and t_history_chat_logs.message_request_flg = ? and th.m_companies_id = ?
     group by date_format(th.access_date, ?)";
 
-    $requestNumber = $this->THistory->query($requestNumber, array($date_format,$requestFlg,$correctStartDate,$correctEndDate,$requestFlg,$this->userInfo['MCompany']['id'],$date_format));
-
+    $requestNumber = $this->THistory->query($requestNumber, array($date_format,$this->chatMessageType['requestFlg']['flg'],$correctStartDate,$correctEndDate,$requestFlg,$this->userInfo['MCompany']['id'],$date_format));
     foreach($requestNumber as $k => $v) {
       $requestNumberData =  $requestNumberData + array($v[0]['date'] => $v[0]['count(th.id)']);
     }
@@ -188,12 +273,20 @@ class StatisticsController extends AppController {
     //チャットリクエスト件数合計値
     $allRequestNumberData = array_sum($requestNumberData);
 
+    return['requestNumberData' => $requestNumberData,'allRequestNumberData' => $allRequestNumberData];
+
+  }
+
+  public function getResponseData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period,$requestNumberData,$allRequestNumberData) {
+    $responseNumberData = [];
+    $responseRate = [];
+
     //応対件数
     $response = "SELECT date_format(th.access_date, ?) as date, count(distinct message_distinction,t_histories_id)  FROM t_histories as th LEFT JOIN
     (SELECT t_histories_id,message_type,message_distinction FROM t_history_chat_logs where message_type = ?) as t_history_chat_logs ON
     t_history_chat_logs.t_histories_id = th.id where t_history_chat_logs.message_type = ? and
     th.access_date between ? and ? and th.m_companies_id = ? group by date_format(th.access_date,?)";
-    $responseNumber = $this->THistory->query($response, array($date_format,$enteringRoom,$enteringRoom,$correctStartDate,$correctEndDate,$this->userInfo['MCompany']['id'],$date_format));
+    $responseNumber = $this->THistory->query($response, array($date_format,$this->chatMessageType['messageType']['enteringRoom'],$this->chatMessageType['messageType']['enteringRoom'],$correctStartDate,$correctEndDate,$this->userInfo['MCompany']['id'],$date_format));
 
     foreach($responseNumber as $k => $v) {
       $responseRate = $responseRate + array($v[0]['date'] => round($v[0]['count(distinct message_distinction,t_histories_id)']/$requestNumberData[$v[0]['date']]*100));
@@ -210,30 +303,40 @@ class StatisticsController extends AppController {
     $allResponseNumberData = array_sum($responseNumberData);
 
     //合計チャット応答率
-    $allResponseRate = $allResponseNumberData/$allRequestNumberData*100;
+    $allResponseRate = round($allResponseNumberData/$allRequestNumberData*100);
+
+    return ['responseRate' => $responseRate,'responseNumberData' => $responseNumberData,'allResponseNumberData' => $allResponseNumberData,'allResponseRate' => $allResponseRate];
+  }
+
+  public function getCoherentData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period,$requestNumberData,$allRequestNumberData) {
+    $effectivenessNumberData = [];
+    $denialNumberData = [];
+    $effectivenessRate = [];
 
     //チャット有効件数,チャット拒否件数
-     $effectiveness = "SELECT date_format(th.access_date, ?) as date, count(th.id),SUM(case when t_history_chat_logs.achievement_flg = ? THEN 1 ELSE 0 END) effectiveness,
-     SUM(case when t_history_chat_logs.message_type = ? THEN 1 ELSE 0 END) no FROM t_histories as th LEFT JOIN
-     t_history_chat_logs ON t_history_chat_logs.t_histories_id = th.id where  th.access_date between
-      ? and ? and (t_history_chat_logs.achievement_flg = ? or t_history_chat_logs.message_type = ?)
-     and th.m_companies_id = ? group by date_format(th.access_date,?)";
-     $effectiveness = $this->THistory->query($effectiveness, array($date_format,$achievementFlg,$no,$correctStartDate,$correctEndDate,$achievementFlg,$no,$this->userInfo['MCompany']['id'],$date_format));
-     if($effectiveness[0][0]['count(th.id)'] == 0) {
-       $effectiveness[0][0]['effectiveness'] = 0;
-       $effectiveness[0][0]['no'] = 0;
-     }
+    $effectiveness = "SELECT date_format(th.access_date, ?) as date, count(th.id),SUM(case when t_history_chat_logs.achievement_flg = ? THEN 1 ELSE 0 END) effectiveness,
+    SUM(case when t_history_chat_logs.message_type = ? THEN 1 ELSE 0 END) denial FROM t_histories as th LEFT JOIN
+    t_history_chat_logs ON t_history_chat_logs.t_histories_id = th.id where  th.access_date between
+     ? and ? and (t_history_chat_logs.achievement_flg = ? or t_history_chat_logs.message_type = ?)
+    and th.m_companies_id = ? group by date_format(th.access_date,?)";
+    $effectiveness = $this->THistory->query($effectiveness, array($date_format,$this->chatMessageType['achievementFlg']['effectivenessFlg'],$this->chatMessageType['messageType']['denial'],
+      $correctStartDate,$correctEndDate,$this->chatMessageType['achievementFlg']['effectivenessFlg'],$this->chatMessageType['messageType']['denial'],$this->userInfo['MCompany']['id'],$date_format));
+    if($effectiveness[0][0]['count(th.id)'] == 0) {
+      $effectiveness[0][0]['effectiveness'] = 0;
+      $effectiveness[0][0]['denial'] = 0;
+    }
 
     foreach($effectiveness as $k => $v) {
       $effectivenessNumberData =  $effectivenessNumberData + array($v[0]['date'] => $v[0]['effectiveness']);
       $effectivenessRate = $effectivenessRate + array($v[0]['date'] => round($v[0]['effectiveness']/$requestNumberData[$v[0]['date']]*100));
-      $noNumberData =  $noNumberData + array($v[0]['date'] => $v[0]['no']);
+      $denialNumberData =  $denialNumberData + array($v[0]['date'] => $v[0]['denial']);
     }
+
     //チャット有効件数
     $effectivenessNumberData = array_merge($baseData,$effectivenessNumberData);
 
     //チャット拒否件数
-    $noNumberData = array_merge($baseData,$noNumberData);
+    $denialNumberData = array_merge($baseData,$denialNumberData);
 
     //チャット有効率
     $effectivenessRate = array_merge($baseData,$effectivenessRate);
@@ -242,10 +345,20 @@ class StatisticsController extends AppController {
     $allEffectivenessNumberData = array_sum($effectivenessNumberData);
 
     //拒否件数合計値
-    $allNoNumberData = array_sum($noNumberData);
+    $allDenialNumberData = array_sum($denialNumberData);
 
     //合計有効率
     $allEffectivenessRate = $allEffectivenessNumberData/$allRequestNumberData*100;
+
+    return ['effectivenessNumberData' => $effectivenessNumberData,'denialNumberData' => $denialNumberData,'effectivenessRate' => $effectivenessRate,
+    'allEffectivenessNumberData' => $allEffectivenessNumberData,'allDenialNumberData' => $allDenialNumberData,'allEffectivenessRate' => $allEffectivenessRate];
+
+  }
+
+  public function getAvgRequestTimeData($date_format,$baseData,$baseTimeData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period) {
+    $requestAvgTime = [];
+    $avgForcalculation = [];
+    $effectivenessRate = [];
 
     //平均チャットリクエスト時間
     $requestTime = "SELECT date_format(th.access_date, ?) as date, AVG(UNIX_TIMESTAMP(t_history_chat_logs.created)
@@ -254,7 +367,7 @@ class StatisticsController extends AppController {
       t_history_chat_logs ON t_history_chat_logs.t_histories_id = th.id where th.access_date between ? and ?
        and t_history_chat_logs.message_request_flg = ? and th.m_companies_id = ? group by date_format(th.access_date,?)";
 
-    $requestTime = $this->THistory->query($requestTime, array($date_format,$requestFlg,$correctStartDate,$correctEndDate,$requestFlg,$this->userInfo['MCompany']['id'],$date_format));
+    $requestTime = $this->THistory->query($requestTime, array($date_format,$this->chatMessageType['requestFlg']['flg'],$correctStartDate,$correctEndDate,$this->chatMessageType['requestFlg']['flg'],$this->userInfo['MCompany']['id'],$date_format));
 
     foreach($requestTime as $k => $v) {
       $timeFormat = $this->changeTimeFormat($v[0]['average']);
@@ -269,26 +382,42 @@ class StatisticsController extends AppController {
     $allRequestAvgTimeData = array_sum($avgForcalculation)/($k+1);
     $allRequestAvgTimeData = $this->changeTimeFormat($allrequestAvgTimeData);
 
+    return['requestAvgTimeData' => $requestAvgTimeData, 'allRequestAvgTimeData' => $allRequestAvgTimeData];
+
+  }
+
+  public function getConsumerWatingAvgTimeData($date_format,$baseData,$baseTimeData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period) {
+    $consumerWatingAvgTime = [];
+    $avgForcalculation = [];
+
     //平均消費者待機時間
     $consumerWatingTime = "SELECT date_format(th.access_date, ?) as date, AVG(UNIX_TIMESTAMP(s2.created) - UNIX_TIMESTAMP(s1.created)) as average
     FROM .t_histories as th LEFT JOIN (SELECT * FROM t_history_chat_logs where message_request_flg = ? group by t_histories_id) as s1
     ON th.id = s1.t_histories_id LEFT JOIN (SELECT * FROM t_history_chat_logs where message_type = ? group by t_histories_id) as s2 ON th.id = s2.t_histories_id
     where th.access_date between ? and ? and  th.m_companies_id = ? group by date_format(th.access_date,?)";
 
-    $consumerWatingTime = $this->THistory->query($consumerWatingTime, array($date_format,$requestFlg,$enteringRoom,$correctStartDate,$correctEndDate,$this->userInfo['MCompany']['id'],$date_format));
+    $consumerWatingTime = $this->THistory->query($consumerWatingTime, array($date_format,$this->chatMessageType['requestFlg']['flg'],$this->chatMessageType['messageType']['enteringRoom'],$correctStartDate,$correctEndDate,$this->userInfo['MCompany']['id'],$date_format));
 
     foreach($consumerWatingTime as $k => $v) {
       $timeFormat = $this->changeTimeFormat($v[0]['average']);
-      $consumerWatingAVGTime =  $consumerWatingAVGTime + array($v[0]['date'] => $timeFormat);
+      $consumerWatingAvgTime =  $consumerWatingAvgTime + array($v[0]['date'] => $timeFormat);
       $avgForcalculation = $avgForcalculation + array($v[0]['date'] =>$v[0]['average']);
     }
 
     //消費者待機平均時間
-    $consumerWatingAvgTimeData = array_merge($baseTimeData,$consumerWatingAVGTime);
+    $consumerWatingAvgTimeData = array_merge($baseTimeData,$consumerWatingAvgTime);
 
     //全消費者待機平均時間
     $allConsumerWatingAvgTimeData = array_sum($avgForcalculation)/($k+1);
-    $allConsumerWatingAvgTimeData = $this->changeTimeFormat($allconsumerWatingAvgTimeData);
+    $allConsumerWatingAvgTimeData = $this->changeTimeFormat($allConsumerWatingAvgTimeData);
+
+    return ['consumerWatingAvgTimeData' => $consumerWatingAvgTimeData,'allConsumerWatingAvgTimeData' => $allConsumerWatingAvgTimeData];
+
+  }
+
+  public function getResponseAvgTimeData($date_format,$baseData,$baseTimeData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period) {
+    $responseAvgTime = [];
+    $avgForcalculation = [];
 
     //平均応答時間
     $responseTime = "SELECT date_format(th.access_date, ?) as date, AVG(UNIX_TIMESTAMP(s2.created) - UNIX_TIMESTAMP(s1.created)) as average
@@ -296,7 +425,8 @@ class StatisticsController extends AppController {
     ON th.id = s1.t_histories_id LEFT JOIN (SELECT * FROM t_history_chat_logs where message_type = ? group by t_histories_id) as s2 ON th.id = s2.t_histories_id
     where th.access_date between ? and ? and  th.m_companies_id = ? group by date_format(th.access_date,?)";
 
-    $responseTime = $this->THistory->query($responseTime, array($date_format,$requestFlg,$respose,$correctStartDate,$correctEndDate,$this->userInfo['MCompany']['id'],$date_format));
+    $responseTime = $this->THistory->query($responseTime, array($date_format,$this->chatMessageType['requestFlg']['flg'],$this->chatMessageType['messageType']['operatorMessage'],
+      $correctStartDate,$correctEndDate,$this->userInfo['MCompany']['id'],$date_format));
 
     foreach($responseTime as $k => $v) {
       $timeFormat = $this->changeTimeFormat($v[0]['average']);
@@ -309,14 +439,10 @@ class StatisticsController extends AppController {
 
     //全応答平均時間
     $allResponseAvgTimeData = array_sum($avgForcalculation)/($k+1);
-    $allResponseAvgTimeData = $this->changeTimeFormat($allresponseAvgTimeData);
+    $allResponseAvgTimeData = $this->changeTimeFormat($allResponseAvgTimeData);
 
-    return [$accessNumberData,$allAccessNumberData,$widgetNumberData,$allWidgetNumberData,
-    $requestNumberData,$allRequestNumberData,$responseNumberData,$allResponseNumberData,$effectivenessNumberData,$allEffectivenessNumberData,
-    $noNumberData,$allNoNumberData,$responseRate,$allResponseRate,$effectivenessRate,$allEffectivenessRate,$requestAvgTimeData,$allRequestAvgTimeData,
-    $consumerWatingAvgTimeData,$allConsumerWatingAvgTimeData,$responseAvgTimeData,$allResponseAvgTimeData];
+    return ['responseAvgTimeData' => $responseAvgTimeData,'allResponseAvgTimeData' => $allResponseAvgTimeData];
   }
-
 
   public function changeTimeFormat($seconds) {
 
