@@ -29,29 +29,28 @@ class StatisticsController extends AppController {
     if($this->request->is('post')) {
       $this->THistory->set($this->request->data);
       if ($this->THistory->validates() ) {
+        //月別の場合
         if(array_keys($this->request->data)[0] == 'year'){
           $data = $this->request->data['year'];
-          $this->calculateYearData($data);
+          $data = $this->calculateYearData($data);
         }
+        //日別の場合
         else if(array_keys($this->request->data)[0] == 'month'){
           $data = $this->request->data['month'];
           $data = $this->calculateMonthData($data);
         }
+        //時別の場合
         else if(array_keys($this->request->data)[0] == 'day') {
           $data = $this->request->data['day'].' 00:00:00';
-          $this->calculateDateData($data);
+          $data = $this->calculateDateData($data);
         }
       }
     }
-    $allInfo = $this->Session->read('allInfo');
-    $Conditions = $this->Session->read('Conditions');
-    $this->set('allInfo',$allInfo);
-    $this->set('Conditions',$Conditions);
     $this->set('data',$data);
   }
 
+  //月別の場合
   public function calculateYearData($data){
-    $date_format = "%Y-%m";
     $start = $data.'-01';
     $end = $data.'-12';
     $startDate = strtotime('first day of' .$start);
@@ -61,53 +60,66 @@ class StatisticsController extends AppController {
     $correctEndDate = date("Y-m-d 23:59:59",$endDate);
     $date_format = "%Y-%m";
     $period = "month";
-    $agendaData = [];
+    $baseData = [];
+    $baseTimeData = [];
 
+    //array_mergeで使うためのデータを作成
     while($startDate <= $endDate){
-      $agendaData = $agendaData + array(date("Y-m",$startDate) => 0);
+      $baseData = $baseData + array(date('Y-m',$startDate) => 0);
+      $baseTimeData = $baseTimeData + array(date('Y-m',$startDate) => '00:00:00');
       $startDate = strtotime("+1 month", $startDate);
     }
+    $startDate = strtotime('first day of' .$start);
 
-    $sqlDatas = $this->summarySql($date_format,$agendaData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
+    $sqlDatas = $this->summarySql($date_format,$baseData,$baseTimeData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
   }
 
+  //日別の場合
   public function calculateMonthData($data){
     $startDate = strtotime('first day of' .$data);
     $endDate = strtotime('last day of' .$data);
     $correctStartDate = date("Y-m-d 00:00:00",$startDate);
     $correctEndDate = date("Y-m-d 23:59:59",$endDate);
     $date_format = "%Y-%m-%d";
-    $agendaData = [];
+    $baseData = [];
+    $baseTimeData = [];
     $period = 'day';
 
+    //array_mergeで使うためのデータを作成
     while($startDate <= $endDate){
-      $agendaData = $agendaData + array(date("Y-m-d",$startDate) => 0);
+      $baseData = $baseData + array(date("Y-m-d",$startDate) => 0);
+      $baseTimeData = $baseTimeData + array(date("Y-m-d",$startDate) => "00:00:00");
       $startDate = strtotime("+1 day", $startDate);
     }
     $startDate = strtotime('first day of' .$data);
 
-    $sqlDatas = $this->summarySql($date_format,$agendaData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
+    $sqlDatas = $this->summarySql($date_format,$baseData,$baseTimeData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
   }
 
+  //時別の場合
   public function calculateDateData($data){
     $startDate = strtotime($data);
     $endDate = strtotime("+1 day",$startDate.' 00:00:00');
     $correctStartDate = date("Y-m-d H:00:00",$startDate);
     $correctEndDate = date("Y-m-d H:59:59",$endDate);
     $date_format = "%H:00";
-    $agendaData = [];
+    $baseData = [];
+    $baseTimeData = [];
     $period = 'hour';
 
+    //array_mergeで使うためのデータを作成
     while($startDate <= $endDate){
-      $agendaData = $agendaData + array(date("H:00",$startDate) => 0);
+      $baseData = $baseData + array(date("H:00",$startDate) => 0);
+      $baseTimeData = $baseTimeData + array(date("H:00",$startDate) => '00:00:00');
       $startDate = strtotime("+1 hour", $startDate);
     }
+    $startDate = strtotime($data);
 
-    $sqlDatas = $this->summarySql($date_format,$agendaData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
+    $sqlDatas = $this->summarySql($date_format,$baseData,$baseTimeData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
   }
 
-  public function summarySql($date_format,$agendaData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period) {
-    $this->log('開始',LOG_DEBUG);
+
+  public function summarySql($date_format,$baseData,$baseTimeData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period) {
     $accessNumberData = [];
     $widgetNumberData =[];
     $requestNumberData = [];
@@ -119,6 +131,7 @@ class StatisticsController extends AppController {
     $requestAvgTime = [];
     $consumerWatingAVGTime = [];
     $responseAvgTime = [];
+    $avgForcalculation = [];
     $requestFlg = 1;
     $achievementFlg = 2;
     $respose = 2;
@@ -126,7 +139,7 @@ class StatisticsController extends AppController {
     $enteringRoom = 98;
 
     //アクセス件数
-    $access = "SELECT date_format(th.access_date, ?) as date, count(th.id) FROM sinclo_db2.t_histories as th where th.access_date
+    $access = "SELECT date_format(th.access_date, ?) as date, count(th.id) FROM t_histories as th where th.access_date
     between ? and ? and th.m_companies_id = ? group by date_format(th.access_date, ?)";
     $accessNumber = $this->THistory->query($access, array($date_format,$correctStartDate,$correctEndDate,$this->userInfo['MCompany']['id'],$date_format));
 
@@ -134,12 +147,14 @@ class StatisticsController extends AppController {
       $accessNumberData =  $accessNumberData + array($v[0]['date'] => $v[0]['count(th.id)']);
     }
 
-    $accessNumberData = array_merge($agendaData,$accessNumberData);
+    //アクセス件数
+    $accessNumberData = array_merge($baseData,$accessNumberData);
+
     //アクセス件数合計値
     $allAccessNumberData = array_sum($accessNumberData);
 
     //ウィジェット表示件数
-    $widget = "SELECT date_format(tw.created, ?) as date,count(tw.id) FROM sinclo_db2.t_history_widget_displays as tw where tw.created between
+    $widget = "SELECT date_format(tw.created, ?) as date,count(tw.id) FROM t_history_widget_displays as tw where tw.created between
     ? and ? and tw.m_companies_id = ? group by date_format(tw.created, ?)";
     $widgetNumber = $this->THistoryWidgetDisplays->query($widget, array($date_format,$correctStartDate,$correctEndDate,$this->userInfo['MCompany']['id'],$date_format));
 
@@ -147,14 +162,16 @@ class StatisticsController extends AppController {
       $widgetNumberData =  $widgetNumberData + array($v[0]['date'] => $v[0]['count(tw.id)']);
     }
 
-    $widgetNumberData = array_merge($agendaData,$widgetNumberData);
+    //ウィジェット件数
+    $widgetNumberData = array_merge($baseData,$widgetNumberData);
+
     //ウィジェット件数合計値
     $allWidgetNumberData = array_sum($widgetNumberData);
 
     //チャットリクエスト件数
     $requestNumber = "SELECT date_format(th.access_date, ?) as date, count(th.id)
-    FROM sinclo_db2.t_histories as th
-    LEFT JOIN (SELECT t_histories_id,message_request_flg FROM sinclo_db2.t_history_chat_logs where message_request_flg = ? ) as t_history_chat_logs
+    FROM t_histories as th
+    LEFT JOIN (SELECT t_histories_id,message_request_flg FROM t_history_chat_logs where message_request_flg = ? ) as t_history_chat_logs
     ON t_history_chat_logs.t_histories_id = th.id
     where th.access_date between ? and ? and t_history_chat_logs.message_request_flg = ? and th.m_companies_id = ?
     group by date_format(th.access_date, ?)";
@@ -165,28 +182,40 @@ class StatisticsController extends AppController {
       $requestNumberData =  $requestNumberData + array($v[0]['date'] => $v[0]['count(th.id)']);
     }
 
-    $requestNumberData = array_merge($agendaData,$requestNumberData);
+    //チャットリクエスト件数
+    $requestNumberData = array_merge($baseData,$requestNumberData);
+
     //チャットリクエスト件数合計値
     $allRequestNumberData = array_sum($requestNumberData);
 
     //応対件数
-    $response = "SELECT date_format(th.access_date, ?) as date, count(distinct message_distinction,t_histories_id)  FROM sinclo_db2.t_histories as th LEFT JOIN
-    (SELECT t_histories_id,message_type,message_distinction FROM sinclo_db2.t_history_chat_logs where message_type = ?) as t_history_chat_logs ON
+    $response = "SELECT date_format(th.access_date, ?) as date, count(distinct message_distinction,t_histories_id)  FROM t_histories as th LEFT JOIN
+    (SELECT t_histories_id,message_type,message_distinction FROM t_history_chat_logs where message_type = ?) as t_history_chat_logs ON
     t_history_chat_logs.t_histories_id = th.id where t_history_chat_logs.message_type = ? and
     th.access_date between ? and ? and th.m_companies_id = ? group by date_format(th.access_date,?)";
     $responseNumber = $this->THistory->query($response, array($date_format,$enteringRoom,$enteringRoom,$correctStartDate,$correctEndDate,$this->userInfo['MCompany']['id'],$date_format));
+
     foreach($responseNumber as $k => $v) {
+      $responseRate = $responseRate + array($v[0]['date'] => round($v[0]['count(distinct message_distinction,t_histories_id)']/$requestNumberData[$v[0]['date']]*100));
       $responseNumberData =  $responseNumberData + array($v[0]['date'] => $v[0]['count(distinct message_distinction,t_histories_id)']);
     }
 
-    $responseNumberData = array_merge($agendaData,$responseNumberData);
+    //チャット応答率
+    $responseRate = array_merge($baseData,$responseRate);
+
+    //チャット応答件数
+    $responseNumberData = array_merge($baseData,$responseNumberData);
+
     //応対件数合計値
     $allResponseNumberData = array_sum($responseNumberData);
 
+    //合計チャット応答率
+    $allResponseRate = $allResponseNumberData/$allRequestNumberData*100;
+
     //チャット有効件数,チャット拒否件数
      $effectiveness = "SELECT date_format(th.access_date, ?) as date, count(th.id),SUM(case when t_history_chat_logs.achievement_flg = ? THEN 1 ELSE 0 END) effectiveness,
-     SUM(case when t_history_chat_logs.message_type = ? THEN 1 ELSE 0 END) no FROM sinclo_db2.t_histories as th LEFT JOIN
-     sinclo_db2.t_history_chat_logs ON t_history_chat_logs.t_histories_id = th.id where  th.access_date between
+     SUM(case when t_history_chat_logs.message_type = ? THEN 1 ELSE 0 END) no FROM t_histories as th LEFT JOIN
+     t_history_chat_logs ON t_history_chat_logs.t_histories_id = th.id where  th.access_date between
       ? and ? and (t_history_chat_logs.achievement_flg = ? or t_history_chat_logs.message_type = ?)
      and th.m_companies_id = ? group by date_format(th.access_date,?)";
      $effectiveness = $this->THistory->query($effectiveness, array($date_format,$achievementFlg,$no,$correctStartDate,$correctEndDate,$achievementFlg,$no,$this->userInfo['MCompany']['id'],$date_format));
@@ -197,90 +226,111 @@ class StatisticsController extends AppController {
 
     foreach($effectiveness as $k => $v) {
       $effectivenessNumberData =  $effectivenessNumberData + array($v[0]['date'] => $v[0]['effectiveness']);
+      $effectivenessRate = $effectivenessRate + array($v[0]['date'] => round($v[0]['effectiveness']/$requestNumberData[$v[0]['date']]*100));
       $noNumberData =  $noNumberData + array($v[0]['date'] => $v[0]['no']);
     }
+    //チャット有効件数
+    $effectivenessNumberData = array_merge($baseData,$effectivenessNumberData);
 
-    $effectivenessNumberData = array_merge($agendaData,$effectivenessNumberData);
+    //チャット拒否件数
+    $noNumberData = array_merge($baseData,$noNumberData);
+
+    //チャット有効率
+    $effectivenessRate = array_merge($baseData,$effectivenessRate);
+
     //有効件数合計値
     $allEffectivenessNumberData = array_sum($effectivenessNumberData);
-    $noNumberData = array_merge($agendaData,$noNumberData);
+
     //拒否件数合計値
     $allNoNumberData = array_sum($noNumberData);
-    //チャット応答率、有効率
-    while($startDate <= $endDate){
-      $responseRate = $responseRate + array(date('Y-m-d',$startDate) => round($responseNumberData[date('Y-m-d',$startDate)]/$requestNumberData[date('Y-m-d',$startDate)]*100));
-      $effectivenessRate = $effectivenessRate + array(date('Y-m-d',$startDate) => round($effectivenessNumberData[date('Y-m-d',$startDate)]/$requestNumberData[date('Y-m-d',$startDate)]*100));
-      $startDate = strtotime("+1 ".$period, $startDate);
-    }
 
-    //合計チャット応答率
-    $allResponseRate = $allResponseNumberData/$allRequestNumberData*100;
     //合計有効率
     $allEffectivenessRate = $allEffectivenessNumberData/$allRequestNumberData*100;
 
     //平均チャットリクエスト時間
     $requestTime = "SELECT date_format(th.access_date, ?) as date, AVG(UNIX_TIMESTAMP(t_history_chat_logs.created)
-      - UNIX_TIMESTAMP(th.access_date)) as average FROM sinclo_db2.t_histories as th LEFT JOIN (SELECT t_histories_id,message_request_flg,
-      created FROM sinclo_db2.t_history_chat_logs where message_request_flg = ? group by t_histories_id) as
+      - UNIX_TIMESTAMP(th.access_date)) as average FROM t_histories as th LEFT JOIN (SELECT t_histories_id,message_request_flg,
+      created FROM t_history_chat_logs where message_request_flg = ? group by t_histories_id) as
       t_history_chat_logs ON t_history_chat_logs.t_histories_id = th.id where th.access_date between ? and ?
        and t_history_chat_logs.message_request_flg = ? and th.m_companies_id = ? group by date_format(th.access_date,?)";
 
     $requestTime = $this->THistory->query($requestTime, array($date_format,$requestFlg,$correctStartDate,$correctEndDate,$requestFlg,$this->userInfo['MCompany']['id'],$date_format));
 
     foreach($requestTime as $k => $v) {
-      $requestAvgTime =  $requestAvgTime + array($v[0]['date'] => $v[0]['average']);
+      $timeFormat = $this->changeTimeFormat($v[0]['average']);
+      $requestAvgTime =  $requestAvgTime + array($v[0]['date'] => $timeFormat);
+      $avgForcalculation = $avgForcalculation + array($v[0]['date'] =>$v[0]['average']);
     }
 
-    $requestAvgTimeData = array_merge($agendaData,$requestAvgTime);
+    //チャットリクエスト平均時間
+    $requestAvgTimeData = array_merge($baseTimeData,$requestAvgTime);
 
-    //全合計消費者待機平均時間
-    $allrequestAvgTimeData = array_sum($requestAvgTimeData)/$k;
+    //全チャットリクエスト平均時間
+    $allRequestAvgTimeData = array_sum($avgForcalculation)/($k+1);
+    $allRequestAvgTimeData = $this->changeTimeFormat($allrequestAvgTimeData);
 
-    //平均消費者待機時間 null問題
+    //平均消費者待機時間
     $consumerWatingTime = "SELECT date_format(th.access_date, ?) as date, AVG(UNIX_TIMESTAMP(s2.created) - UNIX_TIMESTAMP(s1.created)) as average
-    FROM sinclo_db2.t_histories as th LEFT JOIN (SELECT * FROM sinclo_db2.t_history_chat_logs where message_request_flg = ? group by t_histories_id) as s1
-    ON th.id = s1.t_histories_id LEFT JOIN (SELECT * FROM sinclo_db2.t_history_chat_logs where message_type = ? group by t_histories_id) as s2 ON th.id = s2.t_histories_id
+    FROM .t_histories as th LEFT JOIN (SELECT * FROM t_history_chat_logs where message_request_flg = ? group by t_histories_id) as s1
+    ON th.id = s1.t_histories_id LEFT JOIN (SELECT * FROM t_history_chat_logs where message_type = ? group by t_histories_id) as s2 ON th.id = s2.t_histories_id
     where th.access_date between ? and ? and  th.m_companies_id = ? group by date_format(th.access_date,?)";
 
     $consumerWatingTime = $this->THistory->query($consumerWatingTime, array($date_format,$requestFlg,$enteringRoom,$correctStartDate,$correctEndDate,$this->userInfo['MCompany']['id'],$date_format));
 
     foreach($consumerWatingTime as $k => $v) {
-      $consumerWatingAVGTime =  $consumerWatingAVGTime + array($v[0]['date'] => $v[0]['average']);
+      $timeFormat = $this->changeTimeFormat($v[0]['average']);
+      $consumerWatingAVGTime =  $consumerWatingAVGTime + array($v[0]['date'] => $timeFormat);
+      $avgForcalculation = $avgForcalculation + array($v[0]['date'] =>$v[0]['average']);
     }
 
-    $consumerWatingAVGTimeData = array_merge($agendaData,$consumerWatingAVGTime);
+    //消費者待機平均時間
+    $consumerWatingAvgTimeData = array_merge($baseTimeData,$consumerWatingAVGTime);
 
-    //全合計消費者待機平均時間
-    $allconsumerWatingAVGTimeData = array_sum($consumerWatingAVGTimeData)/$k;
+    //全消費者待機平均時間
+    $allConsumerWatingAvgTimeData = array_sum($avgForcalculation)/($k+1);
+    $allConsumerWatingAvgTimeData = $this->changeTimeFormat($allconsumerWatingAvgTimeData);
 
     //平均応答時間
     $responseTime = "SELECT date_format(th.access_date, ?) as date, AVG(UNIX_TIMESTAMP(s2.created) - UNIX_TIMESTAMP(s1.created)) as average
-    FROM sinclo_db2.t_histories as th LEFT JOIN (SELECT * FROM sinclo_db2.t_history_chat_logs where message_request_flg = ? group by t_histories_id) as s1
-    ON th.id = s1.t_histories_id LEFT JOIN (SELECT * FROM sinclo_db2.t_history_chat_logs where message_type = ? group by t_histories_id) as s2 ON th.id = s2.t_histories_id
+    FROM t_histories as th LEFT JOIN (SELECT * FROM t_history_chat_logs where message_request_flg = ? group by t_histories_id) as s1
+    ON th.id = s1.t_histories_id LEFT JOIN (SELECT * FROM t_history_chat_logs where message_type = ? group by t_histories_id) as s2 ON th.id = s2.t_histories_id
     where th.access_date between ? and ? and  th.m_companies_id = ? group by date_format(th.access_date,?)";
 
     $responseTime = $this->THistory->query($responseTime, array($date_format,$requestFlg,$respose,$correctStartDate,$correctEndDate,$this->userInfo['MCompany']['id'],$date_format));
 
     foreach($responseTime as $k => $v) {
-      $responseAvgTime =  $responseAvgTime + array($v[0]['date'] => $v[0]['average']);
+      $timeFormat = $this->changeTimeFormat($v[0]['average']);
+      $responseAvgTime =  $responseAvgTime + array($v[0]['date'] => $timeFormat);
+      $avgForcalculation = $avgForcalculation + array($v[0]['date'] =>$v[0]['average']);
     }
-    $this->log($responseAvgTime,LOG_DEBUG);
+
+    //平均応答時間
+    $responseAvgTimeData = array_merge($baseTimeData,$responseAvgTime);
+
+    //全応答平均時間
+    $allResponseAvgTimeData = array_sum($avgForcalculation)/($k+1);
+    $allResponseAvgTimeData = $this->changeTimeFormat($allresponseAvgTimeData);
+
+    return [$accessNumberData,$allAccessNumberData,$widgetNumberData,$allWidgetNumberData,
+    $requestNumberData,$allRequestNumberData,$responseNumberData,$allResponseNumberData,$effectivenessNumberData,$allEffectivenessNumberData,
+    $noNumberData,$allNoNumberData,$responseRate,$allResponseRate,$effectivenessRate,$allEffectivenessRate,$requestAvgTimeData,$allRequestAvgTimeData,
+    $consumerWatingAvgTimeData,$allConsumerWatingAvgTimeData,$responseAvgTimeData,$allResponseAvgTimeData];
+  }
 
 
-    $responseAvgTimeData = array_merge($agendaData,$responseAvgTime);
+  public function changeTimeFormat($seconds) {
 
-    $this->log(array_sum($responseAvgTimeData),LOG_DEBUG);
-    //全合計応答平均時間
-    $allresponseAvgTimeData = array_sum($responseAvgTimeData)/$k;
+    $hours = round($seconds / 3600);
+    $minutes = round(($seconds / 60) % 60);
+    $seconds = $seconds % 60;
 
-    $this->log('終わった後',LOG_DEBUG);
-    return [$accessNumberData,$widjetNumberData,$requestNumberData,$responseNumberData,$effectivenessNumberData,$noNumberData];
+    $timeFormat = sprintf("%02d:%02d:%02d", $hours, $minutes, $seconds);
+
+    return $timeFormat;
   }
 
   public function outputCsv() {
     $this->autoRender = false;
-    $allInfo = $this->Session->read('allInfo');
-    $Conditions = $this->Session->read('Conditions');
 
     if(array_keys($this->request->data)[0] == 'year') {
       $start = $allInfo['data'].'-01';
