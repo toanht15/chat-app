@@ -14,15 +14,15 @@ class StatisticsController extends AppController {
       'autoMessage' => 3,
       'denial' => 4,
       'enteringRoom' => 98,
-      'leave' => 99
+      'exit' => 99
     ],
     'requestFlg' => [
-      'noFlg' => 0,
-      'flg' => 1
+      'invalid' => 0,
+      'effectiveness' => 1
     ],
     'achievementFlg' => [
-      'invalidFlg' => 1,
-      'effectivenessFlg' => 2
+      'invalid' => 1,
+      'effectiveness' => 2
     ]
   ];
 
@@ -44,7 +44,6 @@ class StatisticsController extends AppController {
    * */
   public function forChat() {
     Configure::write('debug', 2);
-    $this->log('chatType',LOG_DEBUG);
     $this->log($this->chatMessageType,LOG_DEBUG);
     if($this->request->is('post')) {
       $this->THistory->set($this->request->data);
@@ -261,7 +260,7 @@ class StatisticsController extends AppController {
     where th.access_date between ? and ? and t_history_chat_logs.message_request_flg = ? and th.m_companies_id = ?
     group by date_format(th.access_date, ?)";
 
-    $requestNumber = $this->THistory->query($requestNumber, array($date_format,$this->chatMessageType['requestFlg']['flg'],$correctStartDate,$correctEndDate,$requestFlg,$this->userInfo['MCompany']['id'],$date_format));
+    $requestNumber = $this->THistory->query($requestNumber, array($date_format,$this->chatMessageType['requestFlg']['effectiveness'],$correctStartDate,$correctEndDate,$requestFlg,$this->userInfo['MCompany']['id'],$date_format));
     foreach($requestNumber as $k => $v) {
       $requestNumberData =  $requestNumberData + array($v[0]['date'] => $v[0]['count(th.id)']);
     }
@@ -318,8 +317,8 @@ class StatisticsController extends AppController {
     t_history_chat_logs ON t_history_chat_logs.t_histories_id = th.id where  th.access_date between
      ? and ? and (t_history_chat_logs.achievement_flg = ? or t_history_chat_logs.message_type = ?)
     and th.m_companies_id = ? group by date_format(th.access_date,?)";
-    $effectiveness = $this->THistory->query($effectiveness, array($date_format,$this->chatMessageType['achievementFlg']['effectivenessFlg'],$this->chatMessageType['messageType']['denial'],
-      $correctStartDate,$correctEndDate,$this->chatMessageType['achievementFlg']['effectivenessFlg'],$this->chatMessageType['messageType']['denial'],$this->userInfo['MCompany']['id'],$date_format));
+    $effectiveness = $this->THistory->query($effectiveness, array($date_format,$this->chatMessageType['achievementFlg']['effectiveness'],$this->chatMessageType['messageType']['denial'],
+      $correctStartDate,$correctEndDate,$this->chatMessageType['achievementFlg']['effectiveness'],$this->chatMessageType['messageType']['denial'],$this->userInfo['MCompany']['id'],$date_format));
     if($effectiveness[0][0]['count(th.id)'] == 0) {
       $effectiveness[0][0]['effectiveness'] = 0;
       $effectiveness[0][0]['denial'] = 0;
@@ -366,7 +365,7 @@ class StatisticsController extends AppController {
       t_history_chat_logs ON t_history_chat_logs.t_histories_id = th.id where th.access_date between ? and ?
        and t_history_chat_logs.message_request_flg = ? and th.m_companies_id = ? group by date_format(th.access_date,?)";
 
-    $requestTime = $this->THistory->query($requestTime, array($date_format,$this->chatMessageType['requestFlg']['flg'],$correctStartDate,$correctEndDate,$this->chatMessageType['requestFlg']['flg'],$this->userInfo['MCompany']['id'],$date_format));
+    $requestTime = $this->THistory->query($requestTime, array($date_format,$this->chatMessageType['requestFlg']['effectiveness'],$correctStartDate,$correctEndDate,$this->chatMessageType['requestFlg']['effectiveness'],$this->userInfo['MCompany']['id'],$date_format));
 
     foreach($requestTime as $k => $v) {
       $timeFormat = $this->changeTimeFormat($v[0]['average']);
@@ -395,7 +394,7 @@ class StatisticsController extends AppController {
     ON th.id = s1.t_histories_id LEFT JOIN (SELECT * FROM t_history_chat_logs where message_type = ? group by t_histories_id) as s2 ON th.id = s2.t_histories_id
     where th.access_date between ? and ? and  th.m_companies_id = ? group by date_format(th.access_date,?)";
 
-    $consumerWatingTime = $this->THistory->query($consumerWatingTime, array($date_format,$this->chatMessageType['requestFlg']['flg'],$this->chatMessageType['messageType']['enteringRoom'],$correctStartDate,$correctEndDate,$this->userInfo['MCompany']['id'],$date_format));
+    $consumerWatingTime = $this->THistory->query($consumerWatingTime, array($date_format,$this->chatMessageType['requestFlg']['effectiveness'],$this->chatMessageType['messageType']['enteringRoom'],$correctStartDate,$correctEndDate,$this->userInfo['MCompany']['id'],$date_format));
 
     foreach($consumerWatingTime as $k => $v) {
       $timeFormat = $this->changeTimeFormat($v[0]['average']);
@@ -424,7 +423,7 @@ class StatisticsController extends AppController {
     ON th.id = s1.t_histories_id LEFT JOIN (SELECT * FROM t_history_chat_logs where message_type = ? group by t_histories_id) as s2 ON th.id = s2.t_histories_id
     where th.access_date between ? and ? and  th.m_companies_id = ? group by date_format(th.access_date,?)";
 
-    $responseTime = $this->THistory->query($responseTime, array($date_format,$this->chatMessageType['requestFlg']['flg'],$this->chatMessageType['messageType']['operatorMessage'],
+    $responseTime = $this->THistory->query($responseTime, array($date_format,$this->chatMessageType['requestFlg']['effectiveness'],$this->chatMessageType['messageType']['operatorMessage'],
       $correctStartDate,$correctEndDate,$this->userInfo['MCompany']['id'],$date_format));
 
     foreach($responseTime as $k => $v) {
