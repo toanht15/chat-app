@@ -90,11 +90,11 @@
   </li>
 </ul>
 
-<?php /* 発言内容｜C_AUTO_TRIGGER_SEARCH_KEY */ ?>
+<?php /* 発言内容｜C_AUTO_TRIGGER_SPEECH_CONTENT */ ?>
 <ul ng-if="itemType == '<?=C_AUTO_TRIGGER_SPEECH_CONTENT?>'" class="setSpeechKeyword">
   <li>
     <span><label>発言内容</label></span>
-    <input type="text" ng-model="setItem.speechContent" name="keyword" maxlength="20" required="">
+    <input type="text" ng-model="setItem.speechContent" name="speechContent" maxlength="20" required="">
   </li>
   <li>
     <?=$this->AutoMessage->radio('speechContentCond')?>
@@ -102,7 +102,7 @@
   <li>
     <span><label>返信間隔</label></span>
     <label for="triggerTimeSec">
-      <input type="number" name="triggerTimeSec" maxlength="2" required="" style="width:6em">
+      <input type="number" ng-model="setItem.triggerTimeSec" name="triggerTimeSec" maxlength="2" required="" style="width:6em">
       秒後
     </label>
   </li>
