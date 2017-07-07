@@ -5,7 +5,7 @@
  */
 App::uses('SimplePasswordHasher', 'Controller/Component/Auth');
 class LoginController extends AppController {
-  public $uses = ['MUser'];
+  public $uses = ['MUser','TLogin'];
 
   public function beforeFilter(){
     parent::beforeFilter();
@@ -34,6 +34,22 @@ class LoginController extends AppController {
       if ($this->Auth->login()) {
         $userInfo = $this->_setRandStr($this->Auth->user());
         parent::setUserInfo($userInfo);
+        //ログイン情報を送信
+        $ipAddress = $this->request->clientIp();
+        $userAgent = $this->request->header('User-Agent');
+        $loginInfo['TLogin']['m_companies_id'] = $userInfo['MCompany']['id'];
+        $loginInfo['TLogin']['m_users_id'] = $userInfo['id'];
+        $loginInfo['TLogin']['ip_address'] = $ipAddress;
+        $loginInfo['TLogin']['user_agent'] = $userAgent;
+        $loginInfo['TLogin']['created'] = date("Y/m/d H:i:s");
+        $this->TLogin->begin();
+        $this->TLogin->set($loginInfo);
+        if($this->TLogin->save()) {
+          $this->TLogin->commit();
+        }
+        else {
+          $this->TLogin->rollback();
+        }
         return $this->redirect(['controller' => 'Customers', 'action' => 'index']);
       }
     }
@@ -44,10 +60,10 @@ class LoginController extends AppController {
     $this->userInfo = [];
     $this->Session->destroy();
     if ( $this->Auth->logout() ) {
-    $this->redirect($this->Auth->logout());
+      $this->redirect($this->Auth->logout());
     }
     else {
-    $this->redirect(['action' => 'index']);
+      $this->redirect(['action' => 'index']);
     }
   }
 

@@ -793,6 +793,24 @@ div[id^="sidebar-"] {
     position: relative;
     cursor: pointer;
   }
+  .bottom-area {
+    display: inline-block;
+
+    .separator {
+      margin-top: 1em;
+      margin-bottom: 0.5em;
+      display: block;
+      width: 78%;
+      height: 1px;
+      background-color: #777;
+      border: 0;  /*デフォルトデザインでは線がある場合があるので、消しておく。*/
+    }
+  }
+  .line-separator {
+    height:1px;
+    background:#717171;
+    border-bottom:1px solid #313030;
+  }
 }
 
 #sidebar-main {
@@ -1453,8 +1471,8 @@ ul.naviBtn {
                 left: 0;
                 right: 0;
                 background-color: rgba(223, 131, 131, 0.5);
-                padding: 0.5em;
-                margin: 0.5em;
+                padding: 0.25em;
+                margin: 0.25em;
                 border-radius: 5px;
                 text-align: center;
                 color: #FFF!important;
@@ -2820,6 +2838,11 @@ ul.naviBtn {
 
           &:first-child {
             border-top: none;
+          }
+
+          .padding {
+            padding-top: 0.5em;
+            padding-bottom: 0.5em;
           }
         }
       }

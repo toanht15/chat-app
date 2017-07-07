@@ -19,7 +19,10 @@ var uglify = require('gulp-uglify'),
     rename = require("gulp-rename"),
     uglifyOpt = {
       mangle: true,
-      comments: false
+      comments: false,
+      compress: {
+        drop_console: true
+      }
     };
 
 gulp.task('admin-scss-compile', function(){
