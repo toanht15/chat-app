@@ -229,7 +229,6 @@ class StatisticsController extends AppController {
 
   }
 
-
   public function getWidgetData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period) {
     $widgetNumberData =[];
 
