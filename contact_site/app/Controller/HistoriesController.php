@@ -440,6 +440,10 @@ class HistoriesController extends AppController {
         $row['transmissionKind'] = 'Sorryメッセージ';
         $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
       }
+      if($val['THistoryChatLog']['message_type'] == 5) {
+        $row['transmissionKind'] = '自動応答';
+        $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
+      }
       if($val['THistoryChatLog']['message_type'] == 98 || $val['THistoryChatLog']['message_type'] == 99) {
         $row['transmissionKind'] = '通知メッセージ';
         $row['transmissionPerson'] = "";
@@ -522,6 +526,9 @@ class HistoriesController extends AppController {
           break;
         case 3: // オートメッセージ
           $row = $this->_setData($date, "オートメッセージ", $this->userInfo['MCompany']['company_name'], $message);
+          break;
+        case 5: // 自動応答
+          $row = $this->_setData($date, "自動応答", $this->userInfo['MCompany']['company_name'], $message);
           break;
         case 98: // 入室メッセージ
         case 99: // 退室メッセージ
