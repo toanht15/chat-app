@@ -203,6 +203,13 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             chatId: monitor.chatUnreadId
           });
         }
+      },
+      forceReadMessage: function(monitor){
+        // メッセージを既読にする
+        emit('isReadChatMessage', {
+          tabId: monitor.tabId,
+          chatId: monitor.chatUnreadId
+        });
       }
   };
 
@@ -1657,6 +1664,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           $scope.monitorList[obj.tabId].chatUnreadCnt++;
           $scope.monitorList[obj.tabId].chatUnreadId = obj.chatId;
           $scope.ngChatApi.notification($scope.monitorList[obj.tabId]);
+        } else {
+          // 通知しないときは既読状態にする
+          chatApi.forceReadMessage($scope.monitorList[obj.tabId]);
         }
 
         // 既読にする(対象のタブを開いている、且つ自分が対応しており、フォーカスが当たっているとき)

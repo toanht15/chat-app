@@ -788,7 +788,7 @@
           return false;
         }
         this.chatApi.createMessageUnread(cn, obj.chatMessage, userName);
-        sinclo.trigger.fireChatEnterEvent(obj.chatMessage);
+        //sinclo.trigger.fireChatEnterEvent(obj.chatMessage);
         // オートメッセージの内容をDBに保存し、オブジェクトから削除する
         if (!sinclo.chatApi.saveFlg) {
           emit("sendAutoChat", {messageList: sinclo.chatApi.autoMessages});
@@ -977,6 +977,7 @@
             company: 2,
             auto: 3,
             sorry: 4,
+            autoSpeech: 5,
             start: 98,
             end: 99
         },
@@ -1232,16 +1233,22 @@
                 messageRequestFlg = flg;
               }
 
-              setTimeout(function(){
+              sinclo.trigger.judge.matchAllSpeechContent(value, function(result){
+                if(result) {
+                  storage.s.set('chatAct', false); // オートメッセージを表示しない
+                }
+
+                setTimeout(function(){
                   emit('sendChat', {
-                  historyId: sinclo.chatApi.historyId,
-                  chatMessage:value,
-                  mUserId: null,
-                  messageType: sinclo.chatApi.messageType.customer,
-                  messageRequestFlg: messageRequestFlg,
-                  notifyToCompany: false // FIXME
+                    historyId: sinclo.chatApi.historyId,
+                    chatMessage:value,
+                    mUserId: null,
+                    messageType: sinclo.chatApi.messageType.customer,
+                    messageRequestFlg: messageRequestFlg,
+                    notifyToCompany: !result
                   });
                 }, 100);
+              });
 
               storage.s.set('chatEmit', true) ;
             }
@@ -1422,23 +1429,16 @@
                         });
                         break;
                     case 7: // 発言内容
-                        var self = this;
                         if(ret !== null) { // その他の設定で無効の場合は何もしない
-                            $(this).on('chatEntered', function (event, msg) {
-                              if (sinclo.trigger.timerTriggered) {
-                                console.log("chat entered.....");
-                                storage.s.set('chatAct', false);
-                                self.judge.matchSpeechContent(msg, conditions[0], function (err, timer) {
-                                  if (err) {
-                                    ret = null;
-                                    return;
-                                  }
-                                  ret = Number(conditions[0].triggerTimeSec) * 1000;
-                                  storage.s.set('chatAct', false);
-                                  callback(key, ret);
-                                });
-                              }
-                            });
+                          this.judge.setMatchSpeechContent(conditions[0],function(err, timer){
+                            console.log("setMatchSpeechContent triggered!! : " + JSON.stringify(conditions[0]));
+                            if (err) {
+                              ret = null;
+                              return;
+                            }
+                            ret = Number(conditions[0].triggerTimeSec) * 1000;
+                            callback(key, ret);
+                          });
                           ret = {
                             delay: ret
                           }
@@ -1608,22 +1608,29 @@
              * @return bool
              */
             pregMatch: function(type, a, b) {
+              console.log("pregMatch type: " + type + " a: " + a + " b: " + b);
+                var result = false;
                 var preg = "";
                 switch(Number(type)) {
                     case 1: // 一致
                       preg = new RegExp("^" + a + "$");
-                      return preg.test(b);
+                      result = preg.test(b);
+                      break;
                     case 2: // 部分一致
                       preg = new RegExp(a);
-                      return preg.test(b);
+                      result = preg.test(b);
+                      break;
                     case 3: // 不一致
                       preg = new RegExp("^" + a + "$");
-                      return !preg.test(b);
+                      result = !preg.test(b);
+                      break;
                 }
-                return false;
+                console.log("result : " + result);
+                return result;
             }
         },
         judge: {
+            speechContentRegEx: [],
             stayTime: function(cond, callback){
                 if (!('stayTimeCheckType' in cond) || !('stayTimeType' in cond) || !('stayTimeRange' in cond )) return callback(true, null);
                 var time = 0;
@@ -1763,17 +1770,30 @@
                     callback(true, null);
                 }
             },
-            matchSpeechContent: function(msg, cond, callback) {
-              console.log("MATCH SPEECH CONTENT : " + JSON.stringify(cond));
-              if (!('speechContent' in cond) || !('speechContentCond' in cond )) return callback( true, null );
-              if (msg === null && Number(cond.speechContentCond) !== 3 ) return callback( true, null );
-              if (sinclo.trigger.common.pregMatch(cond.speechContentCond, cond.speechContent, msg)) {
-                console.log("MATCH!!");
-                callback(false, cond.triggerTimeSec);
-              }
-              else {
-                console.log("NOT  MATCH!!");
-                callback(true, null);
+            setMatchSpeechContent: function(cond, callback) {
+              if (!('speechContent' in cond) || !('speechContentCond' in cond )) return false;
+              this.speechContentRegEx.push({
+                type: cond.speechContentCond,
+                text: cond.speechContent,
+                delay: cond.triggerTimeSec,
+                callback: callback
+              });
+            },
+            matchAllSpeechContent: function(msg, callback) {
+              // FIXME マッチした処理が２回以上の場合、チャット送信処理も２回以上処理される
+              var matched = false;
+              if(this.speechContentRegEx.length > 0) {
+                for (var index in this.speechContentRegEx) {
+                  console.log("matching judge + " + this.speechContentRegEx[index]);
+                  if(sinclo.trigger.common.pregMatch(this.speechContentRegEx[index].type, this.speechContentRegEx[index].text, msg)) {
+                    this.speechContentRegEx[index].callback(false, this.speechContentRegEx[index].delay);
+                    matched = true;
+                  }
+                }
+                callback(matched);
+              } else {
+                //発言内容設定が無いのでそのままtrueを返す
+                callback(matched);
               }
             }
         }
