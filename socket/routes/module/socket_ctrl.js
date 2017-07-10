@@ -1462,7 +1462,7 @@ io.sockets.on('connection', function (socket) {
   socket.on("sendAutoChatMessage", function(d){
     var obj = JSON.parse(d);
     var chat = JSON.parse(JSON.stringify(obj));
-    chat.messageType = chatApi.cnst.observeType.auto;
+    chat.messageType = obj.isAutoSpeech ? chatApi.cnst.observeType.autoSpeech : chatApi.cnst.observeType.auto;
     chat.created = new Date();
     chat.sort = fullDateTime(chat.created);
     emit.toCompany('resAutoChatMessage', chat, chat.siteKey);
@@ -1735,8 +1735,8 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                   userId: obj.userId,
                   mUserId: null,
                   chatMessage: activity.message,
-                  messageType: 3,
-                  created: rows[0].inputed,
+                  messageType: rows[0].auto_message_type,
+                  created: rows[0].inputed ? rows[0].inputed : new Date(),
                   messageDistinction: messageDistinction,
               };
               chatApi.set(ret);
@@ -1744,7 +1744,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         };
         for (var i = 0; obj.messageList.length > i; i++) {
             var message = obj.messageList[i];
-            pool.query("SELECT *, ? as inputed FROM t_auto_messages WHERE id = ?  AND m_companies_id = ? AND del_flg = 0 AND active_flg = 0 AND action_type = 1", [message.created, message.chatId, companyList[obj.siteKey]], loop);
+            pool.query("SELECT *, ? as inputed, ? as auto_message_type FROM t_auto_messages WHERE id = ?  AND m_companies_id = ? AND del_flg = 0 AND active_flg = 0 AND action_type = 1", [message.created, message.isAutoSpeech ? chatApi.cnst.observeType.autoSpeech : chatApi.cnst.observeType.auto, message.chatId, companyList[obj.siteKey]], loop);
         }
       }
     });

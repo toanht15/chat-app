@@ -770,7 +770,7 @@
           cn = "sinclo_se";
           elm.value = "";
         }
-        if (obj.messageType === sinclo.chatApi.messageType.auto) {
+        if (obj.messageType === sinclo.chatApi.messageType.auto || obj.messageType === sinclo.chatApi.messageType.autoSpeech) {
           return false;
         }
 
@@ -791,6 +791,7 @@
         //sinclo.trigger.fireChatEnterEvent(obj.chatMessage);
         // オートメッセージの内容をDBに保存し、オブジェクトから削除する
         if (!sinclo.chatApi.saveFlg) {
+          console.log("EMIT sendAutoChat");
           emit("sendAutoChat", {messageList: sinclo.chatApi.autoMessages});
           sinclo.chatApi.autoMessages = [];
           sinclo.chatApi.saveFlg = true;
@@ -1530,17 +1531,32 @@
               sincloInfo.widgetDisplay = true;
               common.widgetHandler.show();
             }
+
+            // 発言内容によるオートメッセージかチェックする
+            var isSpeechContent = false;
+            for(var key in cond.conditions) {
+              console.log("DEBUG => key : " + key);
+              if(key === "7") { // FIXME マジックナンバー
+                isSpeechContent = true;
+              }
+            }
+
+            console.log("IS SPEECH CONTENT : " + isSpeechContent);
+
             var data = {
                 chatId:id,
-                message:cond.message
+                message:cond.message,
+                isAutoSpeech: isSpeechContent,
+
             };
 
             if ( sinclo.chatApi.saveFlg ) {
                 // オートメッセージの内容をDBに保存し、オブジェクトから削除する
+              console.log("EMIT sendAutoChat::setAutoMessage");
                 emit("sendAutoChat", {messageList: [data]});
             }
             else {
-              debugger;
+              console.log("EMIT sendAutoChatMessage::setAutoMessage");
                 emit('sendAutoChatMessage', data);
             }
         },
