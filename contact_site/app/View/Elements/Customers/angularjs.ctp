@@ -1653,9 +1653,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         }
 
         // 未読数加算（自分が対応していないとき）
-        $scope.monitorList[obj.tabId].chatUnreadCnt++;
-        $scope.monitorList[obj.tabId].chatUnreadId = obj.chatId;
-        $scope.ngChatApi.notification($scope.monitorList[obj.tabId]);
+        if(obj.hasOwnProperty('notifyToCompany') && obj.notifyToCompany) {
+          $scope.monitorList[obj.tabId].chatUnreadCnt++;
+          $scope.monitorList[obj.tabId].chatUnreadId = obj.chatId;
+          $scope.ngChatApi.notification($scope.monitorList[obj.tabId]);
+        }
 
         // 既読にする(対象のタブを開いている、且つ自分が対応しており、フォーカスが当たっているとき)
         if (  obj.tabId === chatApi.tabId && $scope.monitorList[obj.tabId].chat === myUserId && $("#sendMessage").is(":focus") ) {

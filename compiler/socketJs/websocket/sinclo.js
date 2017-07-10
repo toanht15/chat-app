@@ -1238,7 +1238,8 @@
                   chatMessage:value,
                   mUserId: null,
                   messageType: sinclo.chatApi.messageType.customer,
-                  messageRequestFlg: messageRequestFlg
+                  messageRequestFlg: messageRequestFlg,
+                  notifyToCompany: false // FIXME
                   });
                 }, 100);
 
@@ -1333,6 +1334,7 @@
         flg: false,
         nowSaving: false,
         timerTriggered: false,
+
         init: function(){
           console.log("sinclo.trigger.init");
             if ( !('messages' in window.sincloInfo) || (('messages' in window.sincloInfo) && typeof(window.sincloInfo.messages) !== "object" ) ) return false;
@@ -1422,21 +1424,21 @@
                     case 7: // 発言内容
                         var self = this;
                         if(ret !== null) { // その他の設定で無効の場合は何もしない
-                          $(this).on('chatEntered', function (event, msg) {
-                            if (sinclo.trigger.timerTriggered) {
-                              console.log("chat entered.....");
-                              storage.s.set('chatAct', false);
-                              self.judge.matchSpeechContent(msg, conditions[0], function (err, timer) {
-                                if (err) {
-                                  ret = null;
-                                  return;
-                                }
-                                ret = Number(conditions[0].triggerTimeSec) * 1000;
+                            $(this).on('chatEntered', function (event, msg) {
+                              if (sinclo.trigger.timerTriggered) {
+                                console.log("chat entered.....");
                                 storage.s.set('chatAct', false);
-                                callback(key, ret);
-                              });
-                            }
-                          });
+                                self.judge.matchSpeechContent(msg, conditions[0], function (err, timer) {
+                                  if (err) {
+                                    ret = null;
+                                    return;
+                                  }
+                                  ret = Number(conditions[0].triggerTimeSec) * 1000;
+                                  storage.s.set('chatAct', false);
+                                  callback(key, ret);
+                                });
+                              }
+                            });
                           ret = {
                             delay: ret
                           }
