@@ -123,8 +123,9 @@ class autoMessageHelper extends AppHelper {
 		C_AUTO_TRIGGER_REFERRER => "参照元URLにて「%s」という文字列が%s",
 		C_AUTO_TRIGGER_SEARCH_KEY => "検索キーワードにて「%s」という文字列が%s",
     C_AUTO_TRIGGER_SPEECH_CONTENT => "発言内容が「%s」という文字列が%s",
-    C_AUTO_TRIGGER_STAY_PAGE_OF_FIRST => "最初に訪れたページの%sにて「%s」という文字列が%s"
-	];
+    C_AUTO_TRIGGER_STAY_PAGE_OF_FIRST => "最初に訪れたページの%sにて「%s」という文字列が%s",
+    C_AUTO_TRIGGER_STAY_PAGE_OF_PREVIOUS => "前のページの%sにて「%s」という文字列が%s"
+  ];
 
 	public function select($itemKey=null) {
 		$returnTag = "";
@@ -299,7 +300,23 @@ class autoMessageHelper extends AppHelper {
 
           break;
 
-        case C_AUTO_TRIGGER_STAY_PAGE_OF_FIRST: // ページ
+        case C_AUTO_TRIGGER_STAY_PAGE_OF_FIRST: // 最初に訪れたページ
+          foreach((array)$items as $v) {
+            if (isset($v['keyword'])
+                && isset($v['targetName']) && !empty($this->dataList['targetName']['dataList'][$v['targetName']])
+                && isset($v['stayPageCond']) && !empty($this->dataList['stayPageCond']['dataList'][$v['stayPageCond']])
+            ) {
+              $retList[] = sprintf(
+                  $this->labelList[$itemId],
+                  $this->dataList['targetName']['dataList'][$v['targetName']],
+                  $v['keyword'],
+                  $this->dataList['stayPageCond']['dataList'][$v['stayPageCond']]
+              );
+            }
+          }
+          break;
+
+        case C_AUTO_TRIGGER_STAY_PAGE_OF_PREVIOUS: // 前のページ
           foreach((array)$items as $v) {
             if (isset($v['keyword'])
                 && isset($v['targetName']) && !empty($this->dataList['targetName']['dataList'][$v['targetName']])

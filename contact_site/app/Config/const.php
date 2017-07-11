@@ -116,6 +116,7 @@ define('C_AUTO_TRIGGER_REFERRER',   5); // 参照元URL（リファラー）
 define('C_AUTO_TRIGGER_SEARCH_KEY', 6); // 検索キーワード
 define('C_AUTO_TRIGGER_SPEECH_CONTENT', 7); // 発言内容
 define('C_AUTO_TRIGGER_STAY_PAGE_OF_FIRST', 8); // 最初の滞在ページ
+define('C_AUTO_TRIGGER_STAY_PAGE_OF_PREVIOUS', 9); // 前のページ
 
 // オートメッセージ機能－アクション種別コード
 define('C_AUTO_ACTION_TYPE_SENDMESSAGE', 1); // チャットメッセージを送る
@@ -330,14 +331,25 @@ $config['outMessageTriggerList'] = [
     ],
     // 最初に訪れたページ
     C_AUTO_TRIGGER_STAY_PAGE_OF_FIRST => [
-        'label' => '最初に訪れたページ',
-        'createLimit' => [C_COINCIDENT => 1, C_SOME_EITHER => 1],
-        'key' => 'stay_page_of_first',
-        'default' => [
-            "keyword" => "",
-            "targetName" => 1,
-            "stayPageCond" => 2
-        ]
+      'label' => '最初に訪れたページ',
+      'createLimit' => [C_COINCIDENT => 1, C_SOME_EITHER => 1],
+      'key' => 'stay_page_of_first',
+      'default' => [
+          "keyword" => "",
+          "targetName" => 1,
+          "stayPageCond" => 2
+      ]
+    ],
+    // 前のページ
+    C_AUTO_TRIGGER_STAY_PAGE_OF_PREVIOUS => [
+      'label' => '前のページ',
+      'createLimit' => [C_COINCIDENT => 1, C_SOME_EITHER => 1],
+      'key' => 'stay_page_of_previous',
+      'default' => [
+         "keyword" => "",
+         "targetName" => 1,
+         "stayPageCond" => 2
+      ]
     ]
 ];
 

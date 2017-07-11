@@ -1349,12 +1349,13 @@
             this.flg = true;
             var messages = window.sincloInfo.messages;
             var andFunc = function(key, ret){
+                console.log("AND FUNC key: " + key + " ret: " + ret);
                 var message = messages[key];
                 if (typeof(ret) === 'number') {
                     setTimeout(function(){
                         sinclo.trigger.setAction(message.id, message.action_type, message.activity);
                     }, ret);
-                } else if(typeof(ret) === 'object') {
+                } else if(ret && typeof(ret) === 'object') {
                     setTimeout(function(){
                         console.log("AUTO MESSAGE TIMER TRIGGERED");
                         sinclo.trigger.timerTriggered = true;
@@ -1445,9 +1446,20 @@
                           }
                         }
                         break;
-                    default:
-                        ret = null;
-                        break;
+                  case 8: // 最初に訪れたページ
+                    this.judge.pageOfFirst(conditions[0], function(err, timer){
+                      if (err) ret = null;
+                    });
+                    break;
+                  case 9: // 前のページ
+                    this.judge.pageOfPrevious(conditions[0], function(err, timer){
+                      if (err) ret = null;
+                    });
+                    break;
+                  default:
+                    console.error("automessage condition is not defined : " + Number(keys[i]));
+                    ret = null;
+                    break;
                 }
                 if (ret === null) break;
             }
@@ -1810,6 +1822,27 @@
               } else {
                 //発言内容設定が無いのでそのままtrueを返す
                 callback(matched);
+              }
+            },
+            pageOfFirst: function(cond, callback){
+              if (!('keyword' in cond) || !('targetName' in cond ) || !('stayPageCond' in cond )) return callback(true, null);
+              var target = ( Number(cond.targetName) === 1 ) ? userInfo.prev[0].title : userInfo.prev[0].url;
+              if (sinclo.trigger.common.pregMatch(cond.stayPageCond, cond.keyword, target)) {
+                callback(false, 0);
+              }
+              else {
+                callback(true, null);
+              }
+            },
+            pageOfPrevious: function(cond, callback){
+              if (!('keyword' in cond) || !('targetName' in cond ) || !('stayPageCond' in cond )) return callback(true, null);
+              var previousLength = userInfo.prev.length-2;
+              var target = ( Number(cond.targetName) === 1 ) ? userInfo.prev[previousLength].title : userInfo.prev[previousLength].url;
+              if (sinclo.trigger.common.pregMatch(cond.stayPageCond, cond.keyword, target)) {
+                callback(false, 0);
+              }
+              else {
+                callback(true, null);
               }
             }
         }

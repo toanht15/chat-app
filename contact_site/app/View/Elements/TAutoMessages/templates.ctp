@@ -124,3 +124,17 @@
     <?=$this->AutoMessage->radio('stayPageCond')?>
   </li>
 </ul>
+
+<?php /* 前のページ｜C_AUTO_TRIGGER_STAY_PAGE_OF_PREVIOUS */ ?>
+<ul ng-if="itemType == '<?=C_AUTO_TRIGGER_STAY_PAGE_OF_PREVIOUS?>'"  class="setStayPage">
+  <li>
+    <?=$this->AutoMessage->radio('targetName')?>
+  </li>
+  <li>
+    <span><label>キーワード</label></span>
+    <input type="text" ng-model="setItem.keyword" maxlength="300" name="keyword" required="">
+  </li>
+  <li>
+    <?=$this->AutoMessage->radio('stayPageCond')?>
+  </li>
+</ul>
