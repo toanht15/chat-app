@@ -115,6 +115,7 @@ define('C_AUTO_TRIGGER_DAY_TIME',   4); // 曜日・時間
 define('C_AUTO_TRIGGER_REFERRER',   5); // 参照元URL（リファラー）
 define('C_AUTO_TRIGGER_SEARCH_KEY', 6); // 検索キーワード
 define('C_AUTO_TRIGGER_SPEECH_CONTENT', 7); // 発言内容
+define('C_AUTO_TRIGGER_STAY_PAGE_OF_FIRST', 8); // 最初の滞在ページ
 
 // オートメッセージ機能－アクション種別コード
 define('C_AUTO_ACTION_TYPE_SENDMESSAGE', 1); // チャットメッセージを送る
@@ -269,6 +270,18 @@ $config['outMessageTriggerList'] = [
             "visitCntCond" => 1
         ]
     ],
+    // 発言内容
+    C_AUTO_TRIGGER_SPEECH_CONTENT => [
+        'label' => '発言内容',
+        'createLimit' => [C_COINCIDENT => 1, C_SOME_EITHER => 1],
+        'key' => 'speech_content',
+        'default' => [
+            "speechContent" => "",
+            "speechContentCond" => "1",
+            "triggerTimeSec" => 3,
+            "speechTriggerCond" => "1"
+        ]
+    ],
     // ページ
     C_AUTO_TRIGGER_STAY_PAGE => [
         'label' => 'ページ',
@@ -315,16 +328,15 @@ $config['outMessageTriggerList'] = [
            "searchCond" => "1"
         ]
     ],
-    // 発言内容
-    C_AUTO_TRIGGER_SPEECH_CONTENT => [
-        'label' => '発言内容',
+    // 最初に訪れたページ
+    C_AUTO_TRIGGER_STAY_PAGE_OF_FIRST => [
+        'label' => '最初に訪れたページ',
         'createLimit' => [C_COINCIDENT => 1, C_SOME_EITHER => 1],
-        'key' => 'speech_content',
+        'key' => 'stay_page_of_first',
         'default' => [
-            "speechContent" => "",
-            "speechContentCond" => "1",
-            "triggerTimeSec" => 3,
-            "speechTriggerCond" => "1"
+            "keyword" => "",
+            "targetName" => 1,
+            "stayPageCond" => 2
         ]
     ]
 ];
