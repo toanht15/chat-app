@@ -1336,6 +1336,21 @@
                     titleElm.appendChild(em);
                 }
             }
+        },
+        KEY_TRIGGERED_AUTO_SPEECH: "triggeredAutoSpeech",
+        // 発動した発言内容を保存
+        saveAutoSpeechTriggered: function(triggerType, id) {
+          console.log("saveAutoSpeechTriggered triggerType : " + triggerType + " id : " + id);
+          if(triggerType === "1") {
+            var array = storage.s.get(this.KEY_TRIGGERED_AUTO_SPEECH) ? JSON.parse(storage.s.get(this.KEY_TRIGGERED_AUTO_SPEECH)) : [];
+            array.push(id);
+            storage.s.set(this.KEY_TRIGGERED_AUTO_SPEECH, JSON.stringify(array));
+          }
+        },
+        // 発動した発言内容を保存
+        triggeredAutoSpeechExists: function(id) {
+          var array = storage.s.get(this.KEY_TRIGGERED_AUTO_SPEECH) ? JSON.parse(storage.s.get(this.KEY_TRIGGERED_AUTO_SPEECH)) : [];
+          return array.indexOf(id) >= 0;
         }
     },
     trigger: {
@@ -1348,6 +1363,7 @@
             if ( !('messages' in window.sincloInfo) || (('messages' in window.sincloInfo) && typeof(window.sincloInfo.messages) !== "object" ) ) return false;
             this.flg = true;
             var messages = window.sincloInfo.messages;
+            console.log("MESSAGES : " + JSON.stringify(messages));
             var andFunc = function(key, ret){
                 console.log("AND FUNC key: " + key + " ret: " + ret);
                 var message = messages[key];
@@ -1386,7 +1402,7 @@
          * return 即時実行(0)、タイマー実行(ミリ秒)、非実行(null)
          */
         setAndSetting: function(key, setting, callback) {
-          console.log("setAndSettings");
+          console.log("setAndSettings key : " + key + " setting: " + setting);
             var keys = Object.keys(setting.conditions);
             var ret = 0;
             for(var i = 0; keys.length > i; i++){
@@ -1432,8 +1448,9 @@
                         break;
                     case 7: // 発言内容
                         if(ret !== null) { // その他の設定で無効の場合は何もしない
-                          this.judge.setMatchSpeechContent(conditions[0],function(err, timer){
+                          this.judge.setMatchSpeechContent(window.sincloInfo.messages[key].id, conditions[0],function(err, timer){
                             console.log("setMatchSpeechContent triggered!! : " + JSON.stringify(conditions[0]));
+                            sinclo.chatApi.saveAutoSpeechTriggered(conditions[0].speechTriggerCond, window.sincloInfo.messages[key].id);
                             if (err) {
                               ret = null;
                               return;
@@ -1529,6 +1546,40 @@
                           });
                         }
                         break;
+                    case 7: // 発言内容 FIXME 発動済みであれば除外する
+                      for (u = 0; u < conditions.length; u++) {
+                        this.judge.setMatchSpeechContent(conditions[u], function (err, timer) {
+                          console.log("setMatchSpeechContent triggered!! : " + JSON.stringify(conditions[u]));
+                          if (err) {
+                            ret = null;
+                            return;
+                          }
+                          ret = Number(conditions[0].triggerTimeSec) * 1000;
+                          callback(key, ret);
+                        });
+                        ret = {
+                          delay: ret
+                        }
+                      }
+                      break;
+                    case 8: // 最初に訪れたページ
+                      for (u = 0; u < conditions.length; u++) {
+                        this.judge.pageOfFirst(conditions[u], function (err, timer) {
+                          if (!err) {
+                            ret = 0;
+                          }
+                        });
+                      }
+                      break;
+                    case 9: // 前のページ
+                      for (u = 0; u < conditions.length; u++) {
+                        this.judge.pageOfPrevious(conditions[u], function (err, timer) {
+                          if (!err) {
+                            ret = 0;
+                          }
+                        });
+                      }
+                      break;
                     default:
                         break;
                 }
@@ -1798,9 +1849,10 @@
                     callback(true, null);
                 }
             },
-            setMatchSpeechContent: function(cond, callback) {
+            setMatchSpeechContent: function(id, cond, callback) {
               if (!('speechContent' in cond) || !('speechContentCond' in cond )) return false;
               this.speechContentRegEx.push({
+                id:  id,
                 type: cond.speechContentCond,
                 text: cond.speechContent,
                 delay: cond.triggerTimeSec,
@@ -1812,6 +1864,10 @@
               var matched = false;
               if(this.speechContentRegEx.length > 0) {
                 for (var index in this.speechContentRegEx) {
+                  if(sinclo.chatApi.triggeredAutoSpeechExists(this.speechContentRegEx[index].id)) {
+                    console.log("triggeredAutoSpeechExists. Ignored. id : " + this.speechContentRegEx[index].id);
+                    continue;
+                  }
                   console.log("matching judge + " + this.speechContentRegEx[index]);
                   if(sinclo.trigger.common.pregMatch(this.speechContentRegEx[index].type, this.speechContentRegEx[index].text, msg)) {
                     this.speechContentRegEx[index].callback(false, this.speechContentRegEx[index].delay);
