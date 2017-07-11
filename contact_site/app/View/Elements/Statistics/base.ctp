@@ -51,8 +51,8 @@
 
   .dataTables_scrollHeadInner {
       width: 100% !important;
-  }
-*/
+  }*/
+
 
   td {
     text-align:center;
@@ -149,8 +149,6 @@ $(function() {
 
   function functionName()　{
   var select1 = document.forms.THistoryForChatForm.selectName1; //変数select1を宣言
-  //var select2 = document.forms.THistoryForChatForm.selectName2; //変数select2を宣言
-  var searchInfo;
 
   if (select1.options[select1.selectedIndex].value == "月別")
   {
@@ -185,8 +183,6 @@ $(function() {
     outputCSVBtn.addEventListener('click', function(){
       var searchInfo = $("select[name=selectName1]").val();
       var date = $("select[name=selectName2]").val();
-      console.log('date');
-      console.log(date);
 
       $.ajax({
         type: 'post',
@@ -207,13 +203,17 @@ $(function() {
       language: { url: "http://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Japanese.json" }
     });
 
-    $("#foo-table").DataTable({
-        scrollY: "400px",
-        searching: false,
+    var tableObj = $("#foo-table").DataTable({
+        //searching: false,
+        scroller:true,
+        responsive:true,
         scrollX: true,
+        scrollY: true,
+        responsive: true,
         scrollCollapse: true,
         paging: false,
         info: false,
+        ordering: false,
         columnDefs: [
             { width: 120, targets: 0 }
         ],
@@ -221,6 +221,10 @@ $(function() {
             leftColumns: 1
         }
     });
+
+    /*$(window).resize(function() {
+      tableObj.scroller.measure();
+    });*/
 
   });
 
@@ -259,7 +263,7 @@ $(function() {
     <!-- /* テーブル表示エリア */ -->
 
 
-    <table id="foo-table" class="display" cellspacing="0" width="100%">
+    <table id="foo-table" class="display" cellspacing="0" width="100%" height="100%">
       <thead>
         <?php if($date == '月別') {
           $start = 1;
