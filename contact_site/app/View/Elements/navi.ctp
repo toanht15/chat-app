@@ -54,6 +54,9 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
         <div class="icon <?=$historySelected?>">
             <?= $this->htmlEx->naviLink('履歴一覧', 'history.png', ['href' => ['controller' => 'Histories', 'action' => 'clearSession']]) ?>
         </div>
+        <div class="icon setting-icon" data-type="statistics">
+          <?= $this->htmlEx->naviLink('統計', 'graph.png') ?>
+        </div>
         <div class="icon <?=$settingSelected?> setting-icon" data-type="common">
             <?= $this->htmlEx->naviLink('設定', 'setting.png') ?>
         </div>
@@ -113,6 +116,20 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
     <!-- /* 共通 */ -->
 
     <!-- /* チャット */ -->
+    <!-- /* 統計 */ -->
+    <?php if ( $adminFlg ): ?>
+      <div data-sidebar-type="statistics" class="hide">
+        <div class="icon">
+          <?= $this->htmlEx->naviLink('ｵﾍﾟﾚｰﾀｰ', 'personal.png', ['href' => ['controller' => 'Statistics', 'action' => 'forOperator']]) ?>
+        </div>
+      <?php if ($coreSettings[C_COMPANY_USE_CHAT]): ?>
+        <div class="icon">
+          <?= $this->htmlEx->naviLink('チャット', 'chat_setting.png', ['href' => ['controller' => 'Statistics', 'action' => 'forChat']]) ?>
+        </div>
+      <?php endif; ?>
+      </div>
+    <?php endif; ?>
+    <!-- /* 統計 */ -->
     <?php if ($coreSettings[C_COMPANY_USE_CHAT]): ?>
       <div data-sidebar-type="chat" class="hide">
       <?php if ( $adminFlg ): ?>

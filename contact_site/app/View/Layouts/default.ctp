@@ -49,6 +49,7 @@ if( strcmp($this->name, 'Login') !== 0 ) {
     if ( strcmp($this->name, 'Histories') === 0 ) {
       echo $this->Html->css("daterangepicker.css");
     }
+    echo $this->Html->css("jquery.dataTables.css");
     echo $this->Html->script("//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js");
     if (strcmp($this->name, "Customers") === 0) {
       echo $this->Html->script(C_NODE_SERVER_ADDR.C_NODE_SERVER_WS_PORT."/socket.io/socket.io.js");
@@ -71,6 +72,11 @@ if( strcmp($this->name, 'Login') !== 0 ) {
       echo $this->Html->script("//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.min.js");
       echo $this->Html->css("//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.css");
     }
+    if ( strcmp($this->name, 'Statistics') === 0 ) {
+    	echo $this->Html->script('jquery.dataTables.min.js');
+    }
+
+
 
   ?>
 </head>
@@ -108,6 +114,5 @@ if( strcmp($this->name, 'Login') !== 0 ) {
     </script>
   </section>
 <?php endif; ?>
-
 </body>
 </html>

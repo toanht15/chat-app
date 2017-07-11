@@ -38,34 +38,54 @@ class StatisticsController extends AppController {
   public function forOperator() {
   }
 
+    public function index() {
+  }
+
   /* *
    * チャット統計
    * @return void
    * */
   public function forChat() {
     Configure::write('debug', 2);
-    $this->log($this->chatMessageType,LOG_DEBUG);
     if($this->request->is('post')) {
-      $this->THistory->set($this->request->data);
       if ($this->THistory->validates() ) {
+        $this->log($this->request->data,LOG_DEBUG);
+        $date = $this->request->data['selectName1'];
         //月別の場合
-        if(array_keys($this->request->data)[0] == 'year'){
-          $data = $this->request->data['year'];
-          $data = $this->calculateMonthlyData($data);
+        if($date == '月別'){
+          $name = '月別';
+          $type = $this->request->data['selectName2'];
+          $data = $this->calculateMonthlyData($type);
         }
         //日別の場合
-        else if(array_keys($this->request->data)[0] == 'month'){
-          $data = $this->request->data['month'];
-          $data = $this->calculateDailyData($data);
+        else if($date == '日別'){
+          $name = '日別';
+          $type = $this->request->data['selectName3'];
+          $data = $this->calculateDailyData($type);
         }
         //時別の場合
-        else if(array_keys($this->request->data)[0] == 'day') {
-          $data = $this->request->data['day'].' 00:00:00';
-          $data = $this->calculateHourlyData($data);
+        else if($date == '時別') {
+          $name = '時別';
+          $type = $this->request->data['datefilter'].' 00:00:00';
+          $this->log('type',LOG_DEBUG);
+          $this->log($type,LOG_DEBUG);
+          $data = $this->calculateHourlyData($type);
+          $this->log($data,LOG_DEBUG);
         }
       }
     }
+    else {
+      $date = '日別';
+      $name = '日別';
+      $type = date("Y-m");
+      $data = $this->calculateDailyData($type);
+    }
+    $this->set('name',$name);
+    $this->set('date',$date);
+    $this->set('daylyEndDate',date("d",strtotime('last day of' .$type)));
+    $this->set('type',$type);
     $this->set('data',$data);
+
   }
 
   //月別の場合
@@ -90,30 +110,8 @@ class StatisticsController extends AppController {
     }
     $startDate = strtotime('first day of' .$start);
 
-    //アクセス件数件数
-    $accessDatas = $this->getAccessData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
-
-    //ウィジェット表示件数
-    $widgetDatas = $this->getWidgetData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
-
-    //チャットリクエスト件数
-    $requestDatas = $this->getRequestData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
-
-    //チャット応答件数,チャット応答率　書き換え必要
-    $responseDatas = $this->getResponseData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period,$requestDatas['requestNumberData'],$requestDatas['allRequestNumberData']);
-
-    //チャット有効件数、チャット有効率、チャット拒否件数
-    $coherentDatas = $this->getCoherentData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period,$requestDatas['requestNumberData'],$requestDatas['allRequestNumberData']);
-
-    //平均チャットリクエスト時間
-    $avgRequestTimeDatas = $this->getAvgRequestTimeData($date_format,$baseData,$baseTimeData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
-
-    //平均消費者待機時間
-    $consumerWatingAvgTimeDatas = $this->getConsumerWatingAvgTimeData($date_format,$baseData,$baseTimeData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
-
-    //平均応答時間
-    $responseAvgTimeData = $this->getResponseAvgTimeData($date_format,$baseData,$baseTimeData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
-
+    $sqlData =$this->summarySql($date_format,$baseData,$baseTimeData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
+    return $sqlData;
   }
 
   //日別の場合
@@ -126,6 +124,8 @@ class StatisticsController extends AppController {
     $baseData = [];
     $baseTimeData = [];
     $period = 'day';
+    $this->log($correctStartDate,LOG_DEBUG);
+    $this->log($correctEndDate,LOG_DEBUG);
 
     //array_mergeで使うためのデータを作成
     while($startDate <= $endDate){
@@ -135,30 +135,8 @@ class StatisticsController extends AppController {
     }
     $startDate = strtotime('first day of' .$data);
 
-    //アクセス件数件数
-    $accessDatas = $this->getAccessData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
-
-    //ウィジェット表示件数
-    $widgetDatas = $this->getWidgetData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
-
-    //チャットリクエスト件数
-    $requestDatas = $this->getRequestData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
-
-    //チャット応答件数,チャット応答率　書き換え必要
-    $responseDatas = $this->getResponseData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period,$requestDatas['requestNumberData'],$requestDatas['allRequestNumberData']);
-
-    //チャット有効件数、チャット有効率、チャット拒否件数
-    $coherentDatas = $this->getCoherentData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period,$requestDatas['requestNumberData'],$requestDatas['allRequestNumberData']);
-
-    //平均チャットリクエスト時間
-    $avgRequestTimeDatas = $this->getAvgRequestTimeData($date_format,$baseData,$baseTimeData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
-
-    //平均消費者待機時間
-    $consumerWatingAvgTimeDatas = $this->getConsumerWatingAvgTimeData($date_format,$baseData,$baseTimeData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
-
-    //平均応答時間
-    $responseAvgTimeData = $this->getResponseAvgTimeData($date_format,$baseData,$baseTimeData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
-
+    $sqlData =$this->summarySql($date_format,$baseData,$baseTimeData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
+    return $sqlData;
   }
 
   //時別の場合
@@ -180,6 +158,14 @@ class StatisticsController extends AppController {
     }
     $startDate = strtotime($data);
 
+    $sqlData =$this->summarySql($date_format,$baseData,$baseTimeData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
+    return $sqlData;
+
+  }
+
+
+  public function summarySql($date_format,$baseData,$baseTimeData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period) {
+
     //アクセス件数件数
     $accessDatas = $this->getAccessData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
 
@@ -204,6 +190,11 @@ class StatisticsController extends AppController {
     //平均応答時間
     $responseAvgTimeData = $this->getResponseAvgTimeData($date_format,$baseData,$baseTimeData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
 
+    $this->log('終わり',LOG_DEBUG);
+
+    return ["accessDatas" => $accessDatas,"widgetDatas" => $widgetDatas,"requestDatas" => $requestDatas,'responseDatas' => $responseDatas,
+    "coherentDatas" => $coherentDatas,"avgRequestTimeDatas" => $avgRequestTimeDatas,"consumerWatingAvgTimeDatas" => $consumerWatingAvgTimeDatas,
+    "responseAvgTimeData" => $responseAvgTimeData];
   }
 
   public function getAccessData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period) {
@@ -260,7 +251,7 @@ class StatisticsController extends AppController {
     where th.access_date between ? and ? and t_history_chat_logs.message_request_flg = ? and th.m_companies_id = ?
     group by date_format(th.access_date, ?)";
 
-    $requestNumber = $this->THistory->query($requestNumber, array($date_format,$this->chatMessageType['requestFlg']['effectiveness'],$correctStartDate,$correctEndDate,$requestFlg,$this->userInfo['MCompany']['id'],$date_format));
+    $requestNumber = $this->THistory->query($requestNumber, array($date_format,$this->chatMessageType['requestFlg']['effectiveness'],$correctStartDate,$correctEndDate,$this->chatMessageType['requestFlg']['effectiveness'],$this->userInfo['MCompany']['id'],$date_format));
     foreach($requestNumber as $k => $v) {
       $requestNumberData =  $requestNumberData + array($v[0]['date'] => $v[0]['count(th.id)']);
     }
@@ -285,7 +276,9 @@ class StatisticsController extends AppController {
     t_history_chat_logs.t_histories_id = th.id where t_history_chat_logs.message_type = ? and
     th.access_date between ? and ? and th.m_companies_id = ? group by date_format(th.access_date,?)";
     $responseNumber = $this->THistory->query($response, array($date_format,$this->chatMessageType['messageType']['enteringRoom'],$this->chatMessageType['messageType']['enteringRoom'],$correctStartDate,$correctEndDate,$this->userInfo['MCompany']['id'],$date_format));
-
+    $this->log('こここここおおっこおこｋ',LOG_DEBUG);
+    $this->log($responseNumber,LOG_DEBUG);
+    $this->log($requestNumberData,LOG_DEBUG);
     foreach($responseNumber as $k => $v) {
       $responseRate = $responseRate + array($v[0]['date'] => round($v[0]['count(distinct message_distinction,t_histories_id)']/$requestNumberData[$v[0]['date']]*100));
       $responseNumberData =  $responseNumberData + array($v[0]['date'] => $v[0]['count(distinct message_distinction,t_histories_id)']);
@@ -378,6 +371,8 @@ class StatisticsController extends AppController {
 
     //全チャットリクエスト平均時間
     $allRequestAvgTimeData = array_sum($avgForcalculation)/($k+1);
+    $this->log('aaa',LOG_DEBUG);
+    $this->log($allRequestAvgTimeData,LOG_DEBUG);
     $allRequestAvgTimeData = $this->changeTimeFormat($allrequestAvgTimeData);
 
     return['requestAvgTimeData' => $requestAvgTimeData, 'allRequestAvgTimeData' => $allRequestAvgTimeData];
@@ -456,7 +451,10 @@ class StatisticsController extends AppController {
   public function outputCsv() {
     $this->autoRender = false;
 
-    if(array_keys($this->request->data)[0] == 'year') {
+    $this->log('requestData',LOG_DEBUG);
+    $this->log($this->request->data,LOG_DEBUG);
+
+    if($this->request->data[0] == '月別') {
       $start = $allInfo['data'].'-01';
       $end = $allInfo['data'].'-12';
       $startDate = strtotime('first day of' .$start);
@@ -469,9 +467,12 @@ class StatisticsController extends AppController {
       }
       $csv[] = $yearData;
     }
-    else if(array_keys($this->request->data)[0] == 'month') {
-      $firstDate = strtotime('first day of ' .$Conditions['data']);
-      $lastDate = strtotime('last day of ' . $Conditions['data']);
+    else if($this->request->data[0] == '日別') {
+      $this->log('入っていますよcsv',LOG_DEBUG);
+      $firstDate = strtotime('first day of ' .$this->request->data['date']);
+      $lastDate = strtotime('last day of ' . $this->request->data['date']);
+      $this->log($this->request->data['date'],LOG_DEBUG);
+      $this->log($this->request->data['date'],LOG_DEBUG);
       $monthData = [];
       $monthData[] = '統計項目/月別';
       while($firstDate <= $lastDate) {
@@ -480,7 +481,7 @@ class StatisticsController extends AppController {
       }
       $csv[] = $monthData;
     }
-    else if(array_keys($this->request->data)[0] == 'day') {
+    else if($this->request->data[0] == '時別') {
       $startTime = strtotime($Conditions['data']);
       $endTime = strtotime("+1 day",$startTime);
       $dayData = [];
@@ -544,12 +545,14 @@ class StatisticsController extends AppController {
     $csv[] = $requestAvgTime;
     $csv[] = $responseRate;
     $csv[] = $effectivenessRate;
+    $this->log('csv',LOG_DEBUG);
+    $this->log($csv,LOG_DEBUG);
     $this->outputCSVStatistics($csv);
   }
 
   public function outputCSVStatistics($csv = []) {
     $this->layout = null;
-
+    $this->log('ここまではいいてなぜでない',LOG_DEBUG);
     //メモリ上に領域確保
     $fp = fopen('php://temp/maxmemory:'.(5*1024*1024),'a');
 
