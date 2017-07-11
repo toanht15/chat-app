@@ -15,6 +15,10 @@
       $className = "sinclo_auto";
       $name = "自動応答";
     }
+    else if ( strcmp($val['THistoryChatLog']['message_type'], 5) === 0 || strcmp($val['THistoryChatLog']['message_type'], 4) === 0 ) {
+      $className = "sinclo_auto";
+      $name = "自動返信";
+    }
     else if ( strcmp($val['THistoryChatLog']['message_type'], 98) === 0 ) {
       $className = "sinclo_etc";
       $message = "- ". $val['MUser']['display_name'] . "が入室しました -";
