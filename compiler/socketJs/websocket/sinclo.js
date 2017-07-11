@@ -1340,20 +1340,27 @@
             }
         },
         KEY_TRIGGERED_AUTO_SPEECH: "triggeredAutoSpeech",
+        _getAutoSpeechTriggeredList: function () {
+          return storage.s.get(this.KEY_TRIGGERED_AUTO_SPEECH) ? JSON.parse(storage.s.get(this.KEY_TRIGGERED_AUTO_SPEECH)) : [];
+        },
         // 発動した発言内容を保存
         saveAutoSpeechTriggered: function(triggerType, id) {
           console.log("saveAutoSpeechTriggered triggerType : " + triggerType + " id : " + id);
           if(triggerType === "1") {
-            var array = storage.s.get(this.KEY_TRIGGERED_AUTO_SPEECH) ? JSON.parse(storage.s.get(this.KEY_TRIGGERED_AUTO_SPEECH)) : [];
-            array.push(id);
-            storage.s.set(this.KEY_TRIGGERED_AUTO_SPEECH, JSON.stringify(array));
+            // 発動条件が１回のみ有効であればidを保持する
+            var array = this._getAutoSpeechTriggeredList();
+            if(Object.keys(array).indexOf(id) < 0) {
+              // 登録済みでなければ追加する
+              array.push(id);
+              storage.s.set(this.KEY_TRIGGERED_AUTO_SPEECH, JSON.stringify(array));
+            }
           } else {
             console.log("triggerType = 2");
           }
         },
         // 発動した発言内容を保存
         triggeredAutoSpeechExists: function(id) {
-          var array = storage.s.get(this.KEY_TRIGGERED_AUTO_SPEECH) ? JSON.parse(storage.s.get(this.KEY_TRIGGERED_AUTO_SPEECH)) : [];
+          var array = this._getAutoSpeechTriggeredList();
           return array.indexOf(id) >= 0;
         }
     },
@@ -1386,7 +1393,7 @@
                 var message = messages[key];
                 if (typeof(ret) === 'number') {
                     setTimeout(function(){
-                      if(Object.keys(message.activity.conditions).indexOf("7") > 0) {
+                      if(Object.keys(message.activity.conditions).indexOf("7") >= 0) {
                         console.log("orFunc saveAutoSpeechTriggered");
                         //ここに入るオートメッセージは他の条件で発動するため、発言内容条件で動作しないようフラグを立てる
                         sinclo.chatApi.saveAutoSpeechTriggered(message.activity.conditions["7"][0].speechTriggerCond, key);
