@@ -658,6 +658,7 @@
       var obj = JSON.parse(d), opUser;
       this.chatApi.online = true;
       storage.s.set('chatAct', true); // オートメッセージを表示しない
+      storage.s.set('operatorEntered', true); // オペレータが入室した
 
       if ( sincloInfo.widget.showName === 1 ) {
         sinclo.chatApi.opUser = obj.userName;
@@ -684,6 +685,7 @@
     chatEndResult: function(d){
       var obj = JSON.parse(d);
       this.chatApi.online = false;
+      storage.s.set('operatorEntered', false); // オペレータが退室した
       storage.s.set('chatAct', false); // オートメッセージを表示してもいい
       var opUser = sinclo.chatApi.opUser;
       if ( check.isset(opUser) === false ) {
@@ -1235,7 +1237,7 @@
               }
 
               sinclo.trigger.judge.matchAllSpeechContent(value, function(result){
-                if(result) {
+                if(result && storage.s.get('operatorEntered') === "false") {
                   storage.s.set('chatAct', false); // オートメッセージを表示しない
                 }
 
