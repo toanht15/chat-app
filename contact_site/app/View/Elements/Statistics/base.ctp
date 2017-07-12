@@ -1,86 +1,45 @@
-  <?= $this->element('Statistics/datepicker') ?>
-  <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
-  <script src="https://cdn.datatables.net/fixedcolumns/3.2.1/js/dataTables.fixedColumns.min.js"></script>
+<?= $this->element('Statistics/datepicker') ?>
 
+<style type="text/css">
+.thMinWidth {
+  min-width: 150px;
+}
 
-  <style type="text/css">
-  /* 基本のテーブル定義 */
-  /*table.tableFrame {border:1px solid   #595959;border-collapse:collapse;table-layout:fixed;}
-  table.tableFrame td{border:1px solid #595959;}
-  table.tableFrame th{border:1px solid #595959; height: 35px;}
-  table.tableFrame th{background-color:#C3D69B;color:#595959;}
+.thMinWidthDayly {
+  min-width: 70px;
+}
 
-  .tableData{width: 100%;}
-  .tableData th{width:100px;}
-  .tableData td{width:100px;}
+.thMinWidthTimely {
+  min-width: 50px;
+}
 
-  div#foo-table_wrapper {
-    width:100%;
-    height:100%;
-  }
-
-  .dataTables_scrollHeadInner {
-      width: 100% !important;
-  }
-
-  table.table.table-bordered.dataTable.no-footer {
-      width: 100% !important;
-      height:100%;
-  }
-
-  .dataTables_scrollBody {
-      height: 100% !important;
-  }
-
-  .dataTables_scroll {
-    height: 100% !important;
-  }*/
-  /*th, td { white-space: nowrap; }
-  div.dataTables_wrapper {
-      margin: 0 auto;
-      width: 100%;
-  }
-
-  div.container {
-      width: 80%;
-  }
-
-  table.display.dataTable.no-footer {
-      width: 100% !important;
-  }
-
-  .dataTables_scrollHeadInner {
-      width: 100% !important;
-  }*/
-
-
-  .thMinWidth {
-    min-width: 150px;
-  }
-
-  .thMinWidthDayly {
-    min-width: 70px;
-  }
-
-  .thMinWidthTimely {
-    min-width: 50px;
-  }
-
-  tr.odd {
-    height: 40px !important;
+tr.odd {
+  height: 40px !important;
 }
 
 tr.even {
-    height: 40px !important;
+  height: 40px !important;
 }
 
-div#foo-table_wrapper {
-    top: 25px;
+div#statistics-table_wrapper {
+  top: 25px;
 }
 
 .dataTables_wrapper .dataTables_scroll div.dataTables_scrollBody > table > tbody > tr > td {
-    vertical-align: middle;
-    text-align: center;
+  vertical-align: middle;
+  text-align: center;
+}
+
+div#statistics-table_filter {
+  margin-bottom: 15px;
+}
+
+div#statistics-table_wrapper {
+  padding: 4em;
+}
+
+td.tooltip {
+    cursor: pointer;
 }
 
   </style>
@@ -215,24 +174,99 @@ $(function() {
       language: { url: "http://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Japanese.json" }
     });
 
-    var tableObj = $("#foo-table").DataTable({
-        //searching: false,
-        scroller:true,
-        responsive:true,
-        scrollX: true,
-        scrollY: '60vh',
-        responsive: true,
-        scrollCollapse: true,
-        paging: false,
-        info: false,
-        ordering: false,
-        columnDefs: [
-            { width: 120, targets: 0 }
-        ],
-        fixedColumns: {
-            leftColumns: 1
-        }
+    /*var tableObj = $("#statistics-table").DataTable({
+    //searching: false,
+    scroller:true,
+    responsive:true,
+    scrollX: true,
+    scrollY: '50vh',
+    responsive: true,
+    scrollCollapse: true,
+    paging: false,
+    info: false,
+    ordering: false,
+    columnDefs: [
+        { width: 120, targets: 0 }
+    ],
+    fixedColumns: {
+        leftColumns: 1
+    }
+    });*/
+
+
+    $('#statistics-table tbody tr td.tooltip').each( function() {
+      var description;
+      var td = $('td', this);
+      console.log(td);
+      var tooltipName = $(td['context']).text();
+
+      if ( tooltipName == "合計アクセス件数" )
+          description =  tooltipName+' : ページにアクセスされた件数';
+
+      else if ( tooltipName == "ウィジェット表示件数" )
+          description = tooltipName+' : ウィジェットが表示された件数';
+
+      else if ( tooltipName == "チャットリクエスト件数" )
+          description = tooltipName+' : 消費者からのチャットを企業側が受信した件数';
+
+      else if ( tooltipName == "チャット応対件数" )
+          description = tooltipName+' : 消費者からのチャットを企業側が応対した件数';
+
+      else if ( tooltipName == "自動返信応対件数" )
+          description = tooltipName+' : 消費者からのチャットを企業側が自動返信で応対した件数';
+
+      else if ( tooltipName == "チャット拒否件数" )
+          description = tooltipName+' : Sorryメッセージが消費者に送信された件数';
+
+      else if ( tooltipName == "チャット有効件数" )
+          description = tooltipName+' : 成果に有効を登録した件数';
+
+      else if ( tooltipName == "平均チャットリクエスト時間" )
+          description = tooltipName+' : 消費者がサイトアクセスしてからチャットを送信するまでの平均時間';
+
+      else if ( tooltipName == "平均消費者待機時間" )
+          description = tooltipName+' : 消費者からのチャットに対して、オペレーターがチャットに入室するまでの平均時間';
+
+      else if ( tooltipName == "平均応答時間" )
+          description = tooltipName+' : 消費者からのチャットに対して、オペレーターが最初のメッセージを送信するまでの平均時間';
+
+      else if ( tooltipName == "チャット応対率" )
+          description = tooltipName+' : チャット応対件数／チャットリクエスト件数*100';
+
+      else if ( tooltipName == "自動返信応対率" )
+          description = tooltipName+' : 自動返信応対件数／チャットリクエスト件数*100';
+
+      else if ( tooltipName == "チャット有効率" )
+          description = tooltipName+' :   チャット有効件数／チャットリクエスト件数*100';
+
+      this.setAttribute( 'title', description );
     });
+
+    var tableObj = $("#statistics-table").DataTable({
+    //searching: false,
+    scroller:true,
+    responsive:true,
+    scrollX: true,
+    scrollY: '50vh',
+    responsive: true,
+    scrollCollapse: true,
+    paging: false,
+    info: false,
+    ordering: false,
+    columnDefs: [
+        { width: 120, targets: 0 }
+    ],
+    fixedColumns: {
+        leftColumns: 1
+    }
+    });
+
+    /* Apply the tooltips */
+    /*tableObj.$('.dataTable').tooltip( {
+        //"delay": 0,
+        //"track": true,
+        //"fade": 250
+    } );*/
   });
 
   </script>
@@ -248,13 +282,15 @@ $(function() {
           'div'=>false, 'label'=>false,'options'=>array('月別'=>'月別','日別'=>'日別','時別'=>'時別'), 'selected' => $date)); ?>
 
           <?= $this->Form->input('dateForm', array('type'=>'select','name' => 'selectName2','id' => 'monthlyForm',
-          'div'=>false, 'label'=>false,'options'=>array('2016' => '2016','2017' => '2017'), 'selected' => $type,'style' => 'display:none')); ?>
+          'div'=>false, 'label'=>false,'options'=>$companyRangeYear, 'selected' => $type,'style' => 'display:none','empty' => '選択してください')); ?>
 
           <?= $this->Form->input('dateForm', array('type'=>'select','name' => 'selectName3','id' => 'daylyForm',
-          'div'=>false, 'label'=>false,'options'=>array('2017-04' =>'2017/04','2017-05' =>'2017/05','2017-06' =>'2017/06','2017-07' =>'2017/07'),'style' => 'display:none','selected' => $type)); ?>
+          'div'=>false, 'label'=>false,'options'=>$companyRangeDate,
+          'style' => 'display:none;','selected' => $type,'empty' => '選択してください')); ?>
 
           <?= $this->Form->input('dateForm', array('type'=>'text','name' => 'datefilter','id' => 'hourlyForm',
-          'div'=>false, 'label'=>false,'options'=>array(substr($type,0,10) => substr($type,0,10)),'style' => 'width:8em;cursor:pointer;display:none','value' => substr($type,0,10)));
+          'div'=>false, 'label'=>false,'options'=>array(substr($type,0,10) => substr($type,0,10)),
+          'style' => 'width:10em;cursor:pointer;display:none','value' => substr($type,0,10),'placeholder' => '選択してください'));
           ?>
           <?= $this->Form->end(); ?>
         </left-parts>
@@ -273,7 +309,7 @@ $(function() {
     <!-- /* テーブル表示エリア */ -->
 
 
-    <table id="foo-table" class="display" cellspacing="0" width="100%" height="100%">
+    <table id="statistics-table" class="display" cellspacing="0">
       <thead>
         <?php if($date == '月別') {
           $start = 1;
@@ -281,7 +317,7 @@ $(function() {
           <tr>
             <th>統計項目 / 月別</th>
             <?php for ($i = $start; $i <= $end; $i++) { ?>
-              <th><?= $type.'-'.sprintf("%02d",$i) ?></th>
+              <th><?= $i?></th>
             <?php } ?>
             <th class="thMinWidthDayly">合計・平均</th>
           </tr>
@@ -292,7 +328,7 @@ $(function() {
           <tr>
             <th class="thMinWidth">統計項目 / 日別</th>
             <?php for ($i = $start; $i <= $end; $i++) { ?>
-              <th class="thMinWidthDayly"><?= $type.'-'.sprintf("%02d",$i) ?></th>
+              <th class="thMinWidthDayly"><?= $i ?></th>
             <?php } ?>
             <th class="thMinWidthDayly">合計・平均</th>
           </tr>
@@ -312,91 +348,91 @@ $(function() {
       <tbody>
       <?php if($date == '日別' or $date == '月別') { ?>
         <tr>
-          <td>合計アクセス件数</td>
+          <td class = 'tooltip'>合計アクセス件数</td>
             <?php for ($i = $start; $i <= $end; $i++) { ?>
               <td><?php echo $data['accessDatas']['accessNumberData'][$type.'-'.sprintf("%02d",$i)] ?></td>
             <?php } ?>
              <td><?php echo $data['accessDatas']['allAccessNumberData'] ?></td>
         </tr>
         <tr>
-          <td>ウィジェット表示件数</td>
+          <td class = 'tooltip'>ウィジェット表示件数</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <td><?php echo $data['widgetDatas']['widgetNumberData'][$type.'-'.sprintf("%02d",$i)] ?></td>
           <?php } ?>
           <td><?php echo $data['widgetDatas']['allWidgetNumberData'] ?></td>
         </tr>
         <tr>
-          <td>チャットリクエスト件数</td>
+          <td class = 'tooltip'>チャットリクエスト件数</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <td><?php echo $data['requestDatas']['requestNumberData'][$type.'-'.sprintf("%02d",$i)] ?></td>
           <?php } ?>
           <td><?php echo $data['requestDatas']['allRequestNumberData'] ?></td>
         </tr>
         <tr>
-          <td>チャット応対件数</td>
+          <td class = 'tooltip'>チャット応対件数</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
                 <td><?php echo $data['responseDatas']['responseNumberData'][$type.'-'.sprintf("%02d",$i)] ?></td>
           <?php } ?>
           <td><?php echo $data['responseDatas']['allResponseNumberData'] ?></td>
         </tr>
         <tr>
-          <td>自動返信応対件数</td>
+          <td class = 'tooltip'>自動返信応対件数</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
                 <td><?php echo $data['automaticResponseData']['automaticResponseNumberData'][$type.'-'.sprintf("%02d",$i)] ?></td>
           <?php } ?>
           <td><?php echo $data['automaticResponseData']['allAutomaticResponseNumberData'] ?></td>
         </tr>
         <tr>
-          <td>チャット拒否件数</td>
+          <td class = 'tooltip'>チャット拒否件数</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <td><?php echo $data['coherentDatas']['denialNumberData'][$type.'-'.sprintf("%02d",$i)] ?></td>
           <?php } ?>
           <td><?php echo $data['coherentDatas']['allDenialNumberData'] ?></td>
         </tr>
         <tr>
-          <td>チャット有効件数</td>
+          <td class = 'tooltip'>チャット有効件数</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <td><?php echo $data['coherentDatas']['effectivenessNumberData'][$type.'-'.sprintf("%02d",$i)] ?></td>
           <?php } ?>
           <td><?php echo $data['coherentDatas']['allEffectivenessNumberData'] ?></td>
         </tr>
         <tr>
-          <td>平均チャットリクエスト時間</td>
+          <td class = 'tooltip'>平均チャットリクエスト時間</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <td><?php echo $data['avgRequestTimeDatas']['requestAvgTimeData'][$type.'-'.sprintf("%02d",$i)] ?></td>
           <?php } ?>
           <td><?php echo $data['avgRequestTimeDatas']['allRequestAvgTimeData'] ?></td>
         </tr>
         <tr>
-          <td>平均消費者待機時間</td>
+          <td class = 'tooltip'>平均消費者待機時間</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <td><?php echo $data['consumerWatingAvgTimeDatas']['consumerWatingAvgTimeData'][$type.'-'.sprintf("%02d",$i)] ?></td>
           <?php } ?>
           <td><?php echo $data['consumerWatingAvgTimeDatas']['allConsumerWatingAvgTimeData'] ?></td>
         </tr>
         <tr>
-          <td>平均応答時間</td>
+          <td class = 'tooltip'>平均応答時間</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <td><?php echo $data['responseAvgTimeData']['responseAvgTimeData'][$type.'-'.sprintf("%02d",$i)] ?></td>
           <?php } ?>
           <td><?php echo $data['responseAvgTimeData']['allResponseAvgTimeData'] ?></td>
         </tr>
         <tr>
-          <td>チャット応対率</td>
+          <td class = 'tooltip'>チャット応対率</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <td><?php echo $data['responseDatas']['responseRate'][$type.'-'.sprintf("%02d",$i)] ?></td>
           <?php } ?>
           <td><?php echo $data['responseDatas']['allResponseRate'] ?></td>
         </tr>
         <tr>
-          <td>自動返信応対率</td>
+          <td class = 'tooltip'>自動返信応対率</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <td><?php echo $data['automaticResponseData']['automaticResponseRate'][$type.'-'.sprintf("%02d",$i)] ?></td>
           <?php } ?>
           <td><?php echo $data['automaticResponseData']['allAutomaticResponseRate'] ?></td>
         </tr>
         <tr>
-          <td>チャット有効率</td>
+          <td class = 'tooltip'>チャット有効率</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <td><?php echo $data['coherentDatas']['effectivenessRate'][$type.'-'.sprintf("%02d",$i)] ?></td>
           <?php } ?>

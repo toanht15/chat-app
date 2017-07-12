@@ -50,44 +50,41 @@ class StatisticsController extends AppController {
     Configure::write('debug', 2);
     if($this->request->is('post')) {
       if ($this->THistory->validates() ) {
-        //$this->log($this->request->data,LOG_DEBUG);
         $date = $this->request->data['selectName1'];
         //月別の場合
         if($date == '月別'){
-          $name = '月別';
           $type = $this->request->data['selectName2'];
           $data = $this->calculateMonthlyData($type);
         }
         //日別の場合
         else if($date == '日別'){
-          $name = '日別';
           $type = $this->request->data['selectName3'];
           $data = $this->calculateDailyData($type);
           $this->log($data,LOG_DEBUG);
         }
         //時別の場合
         else if($date == '時別') {
-          $name = '時別';
           $type = $this->request->data['datefilter'].' 00:00:00';
-          //$this->log('type',LOG_DEBUG);
-          //$this->log($type,LOG_DEBUG);
           $data = $this->calculateHourlyData($type);
-          //$this->log($data,LOG_DEBUG);
         }
       }
     }
+    //デフォルト画面
     else {
       $date = '日別';
-      $name = '日別';
       $type = date("Y-m");
       $data = $this->calculateDailyData($type);
     }
-    $this->set('name',$name);
+
+    //各企業の日付けの範囲
+    $rangeData = $this->determineRange();
+
+    $this->set('companyRangeDate',$rangeData['companyRangeDate']);
+    $this->set('companyRangeYear',$rangeData['companyRangeYear']);
     $this->set('date',$date);
     $this->set('daylyEndDate',date("d",strtotime('last day of' .$type)));
     $this->set('type',$type);
     $this->set('data',$data);
-
   }
 
   //月別の場合
@@ -127,11 +124,6 @@ class StatisticsController extends AppController {
     $baseTimeData = [];
     $period = 'day';
 
-
-    //$this->log($correctStartDate,LOG_DEBUG);
-    //$this->log($correctEndDate,LOG_DEBUG);
-
-
     //array_mergeで使うためのデータを作成
     while($startDate <= $endDate){
       $baseData = $baseData + array(date("Y-m-d",$startDate) => 0);
@@ -168,6 +160,28 @@ class StatisticsController extends AppController {
 
   }
 
+  //各企業の日付けの範囲
+  public function determineRange(){
+    //企業がsincloを開始した日付
+    $companyStartDate = strtotime($this->userInfo['MCompany']['created']);
+    $endDate = strtotime("+1 month", strtotime( "now" ));
+    $endYear = strtotime("+1 year", strtotime( "now" ));
+    $companyRangeDate = [];
+    $companyRangeYear = [];
+
+    while($companyStartDate <= $endDate){
+      $companyRangeDate = $companyRangeDate + array(date('Y-m',$companyStartDate) => date('Y/m',$companyStartDate));
+      $companyStartDate = strtotime("+1 month", $companyStartDate);
+    }
+    $companyStartDate = strtotime($this->userInfo['MCompany']['created']);
+
+    while($companyStartDate <= $endYear){
+      $companyRangeYear = $companyRangeYear + array(date('Y',$companyStartDate) => date('Y',$companyStartDate));
+      $companyStartDate = strtotime("+1 year", $companyStartDate);
+    }
+
+    return ['companyRangeDate' => $companyRangeDate,'companyRangeYear' => $companyRangeYear];
+  }
 
   public function summarySql($date_format,$baseData,$baseTimeData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period) {
 
