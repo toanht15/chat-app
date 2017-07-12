@@ -50,7 +50,7 @@ class StatisticsController extends AppController {
     Configure::write('debug', 2);
     if($this->request->is('post')) {
       if ($this->THistory->validates() ) {
-        $this->log($this->request->data,LOG_DEBUG);
+        //$this->log($this->request->data,LOG_DEBUG);
         $date = $this->request->data['selectName1'];
         //月別の場合
         if($date == '月別'){
@@ -69,10 +69,10 @@ class StatisticsController extends AppController {
         else if($date == '時別') {
           $name = '時別';
           $type = $this->request->data['datefilter'].' 00:00:00';
-          $this->log('type',LOG_DEBUG);
-          $this->log($type,LOG_DEBUG);
+          //$this->log('type',LOG_DEBUG);
+          //$this->log($type,LOG_DEBUG);
           $data = $this->calculateHourlyData($type);
-          $this->log($data,LOG_DEBUG);
+          //$this->log($data,LOG_DEBUG);
         }
       }
     }
@@ -127,6 +127,11 @@ class StatisticsController extends AppController {
     $baseTimeData = [];
     $period = 'day';
 
+
+    //$this->log($correctStartDate,LOG_DEBUG);
+    //$this->log($correctEndDate,LOG_DEBUG);
+
+
     //array_mergeで使うためのデータを作成
     while($startDate <= $endDate){
       $baseData = $baseData + array(date("Y-m-d",$startDate) => 0);
@@ -167,31 +172,47 @@ class StatisticsController extends AppController {
   public function summarySql($date_format,$baseData,$baseTimeData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period) {
 
     //アクセス件数件数
+    $this->log("BEGIN getAccessData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
     $accessDatas = $this->getAccessData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
+    $this->log("END   getAccessData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
 
     //ウィジェット表示件数
+    $this->log("BEGIN getWidgetData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
     $widgetDatas = $this->getWidgetData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
+    $this->log("END   getWidgetData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
 
     //チャットリクエスト件数
+    $this->log("BEGIN getRequestData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
     $requestDatas = $this->getRequestData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
+    $this->log("END   getRequestData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
 
     //チャット応答件数,チャット応答率　書き換え必要
+    $this->log("BEGIN getResponseData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
     $responseDatas = $this->getResponseData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period,$requestDatas['requestNumberData'],$requestDatas['allRequestNumberData']);
+    $this->log("END   getResponseData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
 
     //自動返信応対件数、自動返信応対率
     $automaticResponseData = $this->getAutomaticResponseData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period,$requestDatas['requestNumberData'],$requestDatas['allRequestNumberData']);
 
     //チャット有効件数、チャット有効率、チャット拒否件数
+    $this->log("BEGIN getCoherentData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
     $coherentDatas = $this->getCoherentData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period,$requestDatas['requestNumberData'],$requestDatas['allRequestNumberData']);
+    $this->log("END   getCoherentData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
 
     //平均チャットリクエスト時間
+    $this->log("BEGIN getAvgRequestTimeData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
     $avgRequestTimeDatas = $this->getAvgRequestTimeData($date_format,$baseData,$baseTimeData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
+    $this->log("END   getAvgRequestTimeData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
 
     //平均消費者待機時間
+    $this->log("BEGIN getConsumerWatingAvgTimeData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
     $consumerWatingAvgTimeDatas = $this->getConsumerWatingAvgTimeData($date_format,$baseData,$baseTimeData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
+    $this->log("END   getConsumerWatingAvgTimeData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
 
     //平均応答時間
+    $this->log("BEGIN getResponseAvgTimeData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
     $responseAvgTimeData = $this->getResponseAvgTimeData($date_format,$baseData,$baseTimeData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
+    $this->log("END   getResponseAvgTimeData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
 
     $this->log('終わり',LOG_DEBUG);
 
@@ -279,6 +300,10 @@ class StatisticsController extends AppController {
     t_history_chat_logs.t_histories_id = th.id where t_history_chat_logs.message_type = ? and
     th.access_date between ? and ? and th.m_companies_id = ? group by date_format(th.access_date,?)";
     $responseNumber = $this->THistory->query($response, array($date_format,$this->chatMessageType['messageType']['enteringRoom'],$this->chatMessageType['messageType']['enteringRoom'],$correctStartDate,$correctEndDate,$this->userInfo['MCompany']['id'],$date_format));
+
+    //$this->log($responseNumber,LOG_DEBUG);
+    //$this->log($requestNumberData,LOG_DEBUG);
+
     foreach($responseNumber as $k => $v) {
       if($v[0]['count(distinct message_distinction,t_histories_id)'] != 0 and $requestNumberData[$v[0]['date']] != 0) {
       $responseRate = $responseRate + array($v[0]['date'] => round($v[0]['count(distinct message_distinction,t_histories_id)']/$requestNumberData[$v[0]['date']]*100));
@@ -420,11 +445,11 @@ class StatisticsController extends AppController {
     $requestAvgTimeData = array_merge($baseTimeData,$requestAvgTime);
 
     //全チャットリクエスト平均時間
-    $allRequestAvgTimeData = 0;
-    if(!empty($k)) {
-      $allRequestAvgTimeData = array_sum($avgForcalculation)/($k+1);
-    }
-    $allRequestAvgTimeData = $this->changeTimeFormat($allRequestAvgTimeData);
+
+    $allRequestAvgTimeData = array_sum($avgForcalculation)/($k+1);
+    //$this->log('aaa',LOG_DEBUG);
+    //$this->log($allRequestAvgTimeData,LOG_DEBUG);
+    $allRequestAvgTimeData = $this->changeTimeFormat($allrequestAvgTimeData);
 
     return['requestAvgTimeData' => $requestAvgTimeData, 'allRequestAvgTimeData' => $allRequestAvgTimeData];
 
@@ -507,11 +532,13 @@ class StatisticsController extends AppController {
 
   public function outputCsv() {
     $this->autoRender = false;
+
     //json_decode
     $requestData = (array)json_decode($this->request->data['statistics']['outputData']);
     if($requestData['dateFormat'] == '月別') {
       $start = $requestData['date'].'-01';
       $end = $requestData['date'].'-12';
+
       $startDate = strtotime('first day of' .$start);
       $endDate = strtotime('last day of' .$end);
       $yearData = [];
@@ -526,6 +553,7 @@ class StatisticsController extends AppController {
     else if($requestData['dateFormat'] == '日別') {
       $firstDate = strtotime('first day of ' .$requestData['date']);
       $lastDate = strtotime('last day of ' .$requestData['date']);
+
       $monthData = [];
       $monthData[] = '統計項目/月別';
       while($firstDate <= $lastDate) {
@@ -674,6 +702,7 @@ class StatisticsController extends AppController {
     foreach($csvData['coherentDatas']['effectivenessRate'] as $key => $v3) {
       $effectivenessRate[] = $v3;
     }
+
     $effectivenessRate[] = $csvData['coherentDatas']['allEffectivenessRate'];
 
     return ['accessNumber' => $accessNumber,'widgetNumber' => $widgetNumber,'requestNumber' => $requestNumber,
@@ -681,6 +710,7 @@ class StatisticsController extends AppController {
       'effectivenessNumber' => $effectivenessNumber,'requestAvgTime' =>$requestAvgTime,'consumerWatingAvgTime' => $consumerWatingAvgTime,
       'responseAvgTime' => $responseAvgTime,'responseRate' => $responseRate,'automaticResponseRate' => $automaticResponseRate,
       'effectivenessRate' => $effectivenessRate];
+
   }
 
   public function outputCSVStatistics($csv = []) {
@@ -718,5 +748,11 @@ class StatisticsController extends AppController {
 
     fclose($fp);
 
+  }
+
+  private function getDateWithMilliSec() {
+    //microtimeを.で分割
+    $arrTime = explode('.',microtime(true));
+    return date('Y-m-d H:i:s', $arrTime[0]) . '.' .$arrTime[1];
   }
 }
