@@ -138,8 +138,8 @@ class StatisticsController extends AppController {
 
   //時別の場合
   public function calculateHourlyData($data){
-    $startDate = strtotime($data);
-    $endDate = strtotime("+1 day",$startDate);
+    $startDate = strtotime($data); // 2016-11-02 00:00:00
+    $endDate = strtotime("+23 hour",$startDate); // 2016-11-02 23:00:00
     $correctStartDate = date("Y-m-d H:00:00",$startDate);
     $correctEndDate = date("Y-m-d H:59:59",$endDate);
     $date_format = "%H:00";
