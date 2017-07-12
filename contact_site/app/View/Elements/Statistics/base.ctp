@@ -54,10 +54,6 @@
   }*/
 
 
-  td {
-    text-align:center;
-  }
-
   .thMinWidth {
     min-width: 150px;
   }
@@ -70,8 +66,25 @@
     min-width: 50px;
   }
 
+  tr.odd {
+    height: 40px !important;
+}
+
+tr.even {
+    height: 40px !important;
+}
+
+div#foo-table_wrapper {
+    top: 25px;
+}
+
+.dataTables_wrapper .dataTables_scroll div.dataTables_scrollBody > table > tbody > tr > td {
+    vertical-align: middle;
+    text-align: center;
+}
+
   </style>
-  <script type="text/javascript">
+<script type="text/javascript">
 
 
 $(function() {
@@ -181,25 +194,24 @@ $(function() {
   $(document).ready(function(){
     var outputCSVBtn = document.getElementById('outputCSV');
     outputCSVBtn.addEventListener('click', function(){
-      var searchInfo = $("select[name=selectName1]").val();
-      var date = $("select[name=selectName2]").val();
+      var dateFormat = $("select[name=selectName1]").val();
+      if(dateFormat == '月別') {
+        var date = $("#monthlyForm").val();
+      }
+      if(dateFormat == '日別') {
+         date = $("#daylyForm").val();
+      }
+      if(dateFormat == '時別') {
+         date = $("#hourlyForm").val();
+      }
 
-      $.ajax({
-        type: 'post',
-        dataType: 'html',
-        data:{
-          data:searchInfo,
-          date:date,
-          //allData:allData
-        },
-        cache: false,
-        url: "<?= $this->Html->url(['controller' => 'Statistics', 'action' => 'outputCsv']) ?>",
-        success: function(html){
-           location.href = "<?=$this->Html->url(array('controller' => 'Statistics', 'action' => 'forChat'))?>";
-        }
-      });
+      document.getElementById('statisticsOutputData').value = JSON.stringify({dateFormat:dateFormat,date:date});
+      console.log(document.getElementById('statisticsOutputData').value.date);
+      document.getElementById('statisticsForChatForm').action = '<?=$this->Html->url(["controller"=>"Statistics", "action" => "outputCsv"])?>';
+      document.getElementById('statisticsForChatForm').submit();
     });
-        $.extend( $.fn.dataTable.defaults, {
+
+    $.extend( $.fn.dataTable.defaults, {
       language: { url: "http://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Japanese.json" }
     });
 
@@ -208,7 +220,7 @@ $(function() {
         scroller:true,
         responsive:true,
         scrollX: true,
-        scrollY: true,
+        scrollY: '60vh',
         responsive: true,
         scrollCollapse: true,
         paging: false,
@@ -221,11 +233,6 @@ $(function() {
             leftColumns: 1
         }
     });
-
-    /*$(window).resize(function() {
-      tableObj.scroller.measure();
-    });*/
-
   });
 
   </script>
@@ -252,6 +259,9 @@ $(function() {
           <?= $this->Form->end(); ?>
         </left-parts>
         <right-parts>
+        <?=$this->Form->create('statistics', ['action' => 'forChat']);?>
+          <?=$this->Form->hidden('outputData')?>
+          <?=$this->Form->end();?>
           <a href="#" id="outputCSV" class="btn-shadow blueBtn">CSV出力</a>
         </right-parts>
       </condition-bar>
@@ -273,6 +283,7 @@ $(function() {
             <?php for ($i = $start; $i <= $end; $i++) { ?>
               <th><?= $type.'-'.sprintf("%02d",$i) ?></th>
             <?php } ?>
+            <th class="thMinWidthDayly">合計・平均</th>
           </tr>
         <?php } ?>
         <?php if($date == '日別') {
@@ -283,6 +294,7 @@ $(function() {
             <?php for ($i = $start; $i <= $end; $i++) { ?>
               <th class="thMinWidthDayly"><?= $type.'-'.sprintf("%02d",$i) ?></th>
             <?php } ?>
+            <th class="thMinWidthDayly">合計・平均</th>
           </tr>
         <?php } ?>
         <?php if($date == '時別') {
@@ -293,6 +305,7 @@ $(function() {
             <?php for ($i = $start; $i <= $end; $i++) { ?>
               <th class = "thMinWidthTimely"><?= sprintf("%02d",$i).'-'.sprintf("%02d",$i+1) ?></th>
             <?php } ?>
+            <th class="thMinWidthDayly">合計・平均</th>
           </tr>
         <?php } ?>
       </thead>
@@ -303,67 +316,93 @@ $(function() {
             <?php for ($i = $start; $i <= $end; $i++) { ?>
               <td><?php echo $data['accessDatas']['accessNumberData'][$type.'-'.sprintf("%02d",$i)] ?></td>
             <?php } ?>
+             <td><?php echo $data['accessDatas']['allAccessNumberData'] ?></td>
         </tr>
         <tr>
           <td>ウィジェット表示件数</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <td><?php echo $data['widgetDatas']['widgetNumberData'][$type.'-'.sprintf("%02d",$i)] ?></td>
           <?php } ?>
+          <td><?php echo $data['widgetDatas']['allWidgetNumberData'] ?></td>
         </tr>
         <tr>
           <td>チャットリクエスト件数</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <td><?php echo $data['requestDatas']['requestNumberData'][$type.'-'.sprintf("%02d",$i)] ?></td>
           <?php } ?>
+          <td><?php echo $data['requestDatas']['allRequestNumberData'] ?></td>
         </tr>
         <tr>
           <td>チャット応対件数</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
                 <td><?php echo $data['responseDatas']['responseNumberData'][$type.'-'.sprintf("%02d",$i)] ?></td>
           <?php } ?>
+          <td><?php echo $data['responseDatas']['allResponseNumberData'] ?></td>
+        </tr>
+        <tr>
+          <td>自動返信応対件数</td>
+          <?php for ($i = $start; $i <= $end; $i++) { ?>
+                <td><?php echo $data['automaticResponseData']['automaticResponseNumberData'][$type.'-'.sprintf("%02d",$i)] ?></td>
+          <?php } ?>
+          <td><?php echo $data['automaticResponseData']['allAutomaticResponseNumberData'] ?></td>
         </tr>
         <tr>
           <td>チャット拒否件数</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <td><?php echo $data['coherentDatas']['denialNumberData'][$type.'-'.sprintf("%02d",$i)] ?></td>
           <?php } ?>
+          <td><?php echo $data['coherentDatas']['allDenialNumberData'] ?></td>
         </tr>
         <tr>
           <td>チャット有効件数</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <td><?php echo $data['coherentDatas']['effectivenessNumberData'][$type.'-'.sprintf("%02d",$i)] ?></td>
           <?php } ?>
+          <td><?php echo $data['coherentDatas']['allEffectivenessNumberData'] ?></td>
         </tr>
         <tr>
           <td>平均チャットリクエスト時間</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <td><?php echo $data['avgRequestTimeDatas']['requestAvgTimeData'][$type.'-'.sprintf("%02d",$i)] ?></td>
           <?php } ?>
+          <td><?php echo $data['avgRequestTimeDatas']['allRequestAvgTimeData'] ?></td>
         </tr>
         <tr>
           <td>平均消費者待機時間</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <td><?php echo $data['consumerWatingAvgTimeDatas']['consumerWatingAvgTimeData'][$type.'-'.sprintf("%02d",$i)] ?></td>
           <?php } ?>
+          <td><?php echo $data['consumerWatingAvgTimeDatas']['allConsumerWatingAvgTimeData'] ?></td>
         </tr>
         <tr>
           <td>平均応答時間</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <td><?php echo $data['responseAvgTimeData']['responseAvgTimeData'][$type.'-'.sprintf("%02d",$i)] ?></td>
           <?php } ?>
+          <td><?php echo $data['responseAvgTimeData']['allResponseAvgTimeData'] ?></td>
         </tr>
         <tr>
           <td>チャット応対率</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <td><?php echo $data['responseDatas']['responseRate'][$type.'-'.sprintf("%02d",$i)] ?></td>
           <?php } ?>
+          <td><?php echo $data['responseDatas']['allResponseRate'] ?></td>
+        </tr>
+        <tr>
+          <td>自動返信応対率</td>
+          <?php for ($i = $start; $i <= $end; $i++) { ?>
+            <td><?php echo $data['automaticResponseData']['automaticResponseRate'][$type.'-'.sprintf("%02d",$i)] ?></td>
+          <?php } ?>
+          <td><?php echo $data['automaticResponseData']['allAutomaticResponseRate'] ?></td>
         </tr>
         <tr>
           <td>チャット有効率</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <td><?php echo $data['coherentDatas']['effectivenessRate'][$type.'-'.sprintf("%02d",$i)] ?></td>
           <?php } ?>
+          <td><?php echo $data['coherentDatas']['allEffectivenessRate'] ?></td>
         </tr>
+
       <?php }
       else if($date == '時別') { ?>
         <tr>
@@ -371,66 +410,91 @@ $(function() {
             <?php for ($i = $start; $i <= $end; $i++) { ?>
               <td><?php echo $data['accessDatas']['accessNumberData'][sprintf("%02d",$i).':00'] ?></td>
             <?php } ?>
+            <td><?php echo $data['accessDatas']['allAccessNumberData'] ?></td>
         </tr>
         <tr>
           <td>ウィジェット表示件数</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <td><?php echo $data['widgetDatas']['widgetNumberData'][sprintf("%02d",$i).':00'] ?></td>
           <?php } ?>
+          <td><?php echo $data['widgetDatas']['allWidgetNumberData'] ?></td>
         </tr>
         <tr>
           <td>チャットリクエスト件数</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <td><?php echo $data['requestDatas']['requestNumberData'][sprintf("%02d",$i).':00'] ?></td>
           <?php } ?>
+          <td><?php echo $data['requestDatas']['allRequestNumberData'] ?></td>
         </tr>
         <tr>
           <td>チャット応対件数</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
                 <td><?php echo $data['responseDatas']['responseNumberData'][sprintf("%02d",$i).':00'] ?></td>
           <?php } ?>
+          <td><?php echo $data['responseDatas']['allResponseNumberData'] ?></td>
+        </tr>
+        <tr>
+          <td>自動返信応対件数</td>
+          <?php for ($i = $start; $i <= $end; $i++) { ?>
+                <td><?php echo $data['automaticResponseData']['automaticResponseNumberData'][sprintf("%02d",$i).':00'] ?></td>
+          <?php } ?>
+          <td><?php echo $data['automaticResponseData']['allAutomaticResponseNumberData'] ?></td>
         </tr>
         <tr>
           <td>チャット拒否件数</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <td><?php echo $data['coherentDatas']['denialNumberData'][sprintf("%02d",$i).':00'] ?></td>
           <?php } ?>
+          <td><?php echo $data['coherentDatas']['allDenialNumberData'] ?></td>
         </tr>
         <tr>
           <td>チャット有効件数</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <td><?php echo $data['coherentDatas']['effectivenessNumberData'][sprintf("%02d",$i).':00'] ?></td>
           <?php } ?>
+          <td><?php echo $data['coherentDatas']['allEffectivenessNumberData'] ?></td>
         </tr>
         <tr>
           <td>平均チャットリクエスト時間</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <td><?php echo $data['avgRequestTimeDatas']['requestAvgTimeData'][sprintf("%02d",$i).':00'] ?></td>
           <?php } ?>
+          <td><?php echo $data['avgRequestTimeDatas']['allRequestAvgTimeData'] ?></td>
         </tr>
         <tr>
           <td>平均消費者待機時間</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <td><?php echo $data['consumerWatingAvgTimeDatas']['consumerWatingAvgTimeData'][sprintf("%02d",$i).':00'] ?></td>
           <?php } ?>
+          <td><?php echo $data['consumerWatingAvgTimeDatas']['allConsumerWatingAvgTimeData'] ?></td>
         </tr>
         <tr>
           <td>平均応答時間</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <td><?php echo $data['responseAvgTimeData']['responseAvgTimeData'][sprintf("%02d",$i).':00'] ?></td>
           <?php } ?>
+          <td><?php echo $data['responseAvgTimeData']['allResponseAvgTimeData'] ?></td>
         </tr>
         <tr>
           <td>チャット応対率</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <td><?php echo $data['responseDatas']['responseRate'][sprintf("%02d",$i).':00'] ?></td>
           <?php } ?>
+          <td><?php echo $data['responseDatas']['allResponseRate'] ?></td>
+        </tr>
+        <tr>
+          <td>自動返信応対率</td>
+          <?php for ($i = $start; $i <= $end; $i++) { ?>
+            <td><?php echo $data['automaticResponseData']['automaticResponseRate'][sprintf("%02d",$i).':00'] ?></td>
+          <?php } ?>
+          <td><?php echo $data['automaticResponseData']['allAutomaticResponseRate'] ?></td>
         </tr>
         <tr>
           <td>チャット有効率</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <td><?php echo $data['coherentDatas']['effectivenessRate'][sprintf("%02d",$i).':00'] ?></td>
           <?php } ?>
+          <td><?php echo $data['coherentDatas']['allEffectivenessRate'] ?></td>
         </tr>
         <?php } ?>
       </tbody>
