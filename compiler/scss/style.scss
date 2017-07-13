@@ -4800,10 +4800,14 @@ ul.naviBtn {
     left-parts {
       display: flex;
       align-items: center;
-      font-size: 1.25em;
+      /*font-size: 1.25em;*/
 
       select {
         padding: 0.25em 1em;margin: 0 0.25em;
+      }
+
+      span#searchPeriod {
+        font-size: 1.1em !important;
       }
     }
 
@@ -4817,75 +4821,82 @@ ul.naviBtn {
   #statistics_content {
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 210px);
-    min-height: 630px!important;
+    height: calc(100vh - 291px);
 
     > contents {
-         flex: 1;
-     }
-  }
-
-  /* コンテンツ群 */
-  /*main-contents, contents {
-    display: flex;
-    width: 100%;
-
-    &#mainGraphArea content-chart {
-      flex-direction: row;
-      height: 100%;
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-
-      chartjs-graph {
-          width: calc(100% - 15em);
-          height: 100%;
-      }
-
-      chartjs-legend {
-        width: 15em;
-        height: 100%;
-        padding: 0.5em;
-
-        legend-type{
-          display: flex;
-        }
-
-        legend-labels {
-          ul { padding-left: 1em; }
-        }
-
-        div {
-          height: 2.6em;
-          width: calc(50% - 0.5em);
-          border-radius: 0.5em;
-          position: relative;
-          background-color: #bfbfbf;
-          cursor: pointer;
-
-          &.checked {
-            background-color: rgb(75, 172, 198);
-          }
-          label {
-            color: #FFF;
-            text-align: center;
-            padding: 0.8em;
-            height: 2.6em;
-            width: 100%;
-            display: block;
-          }
-          input {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            opacity: 0;
-          }
-        }
-      }
+      flex: 1;
     }
-  }*/
 
+    form#THistoryForChatForm {
+      margin-bottom: 0;
+    }
+
+    div#statistics-table_filter {
+      padding-bottom: 20px;
+    }
+
+    tr.odd {
+      height: 40px !important;
+    }
+
+    tr.even {
+      height: 40px !important;
+    }
+
+    .thMinWidth {
+      min-width: 170px;
+    }
+
+    .thMinWidthDayly {
+      min-width: 70px;
+    }
+
+    .thMinWidthTimely {
+      min-width: 50px;
+    }
+
+    .questionBalloon.questionBalloonPosition6 {
+        float: right;
+        margin-right: 89px;
+    }
+
+    .questionBalloon.questionBalloonPosition7 {
+        float: right;
+        margin-right: 77px;
+    }
+
+    .questionBalloon.questionBalloonPosition8 {
+        float: right;
+        margin-right: 65px;
+    }
+
+    .questionBalloon.questionBalloonPosition9 {
+        float: right;
+        margin-right: 53px;
+    }
+
+    .questionBalloon.questionBalloonPosition11 {
+        float: right;
+        margin-right: 29px;
+    }
+
+    .questionBalloon.questionBalloonPosition13 {
+        float: right;
+        margin-right: 5px;
+    }
+
+    .questionBalloon icon {
+      border-radius: 20px;
+      padding: 0.1em;
+      width: 1.5em;
+      height: 1.5em;
+      font-size: 0.9em !important;
+      cursor:pointer;
+    }
+
+    .dataTables_wrapper .dataTables_scroll div.dataTables_scrollBody > table > tbody > tr > td {
+      vertical-align: middle;
+      text-align: center;
+    }
+  }
 }
