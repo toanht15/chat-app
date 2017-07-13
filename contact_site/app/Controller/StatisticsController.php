@@ -1,3 +1,21 @@
+ GitBucket 4.5.0
+Toggle navigation
+Search this repository
+Pull requests
+Issues
+
+ Files
+ Branches 12
+ Tags 28
+ Issues
+ Pull Requests 2
+ Labels
+ Milestones
+ Wiki
+ Forks
+ CloudServiceDev / sinclo
+Find filebranch: henmi  sinclo / contact_site / app / Controller / StatisticsController.php
+ masashi.shimizu 7 minutes ago Fix : 時別の取得範囲が異常だった箇所を修正 EditRawBlameHistoryDelete
 <?php
 /**
  * StatisticsController controller.
@@ -55,6 +73,7 @@ class StatisticsController extends AppController {
         if($date == '月別'){
           $type = $this->request->data['selectName2'];
           $data = $this->calculateMonthlyData($type);
+          $this->log($data,LOG_DEBUG);
         }
         //日別の場合
         else if($date == '日別'){
@@ -138,8 +157,8 @@ class StatisticsController extends AppController {
 
   //時別の場合
   public function calculateHourlyData($data){
-    $startDate = strtotime($data);
-    $endDate = strtotime("+1 day",$startDate);
+    $startDate = strtotime($data); // 2016-11-02 00:00:00
+    $endDate = strtotime("+23 hour",$startDate); // 2016-11-02 23:00:00
     $correctStartDate = date("Y-m-d H:00:00",$startDate);
     $correctEndDate = date("Y-m-d H:59:59",$endDate);
     $date_format = "%H:00";
