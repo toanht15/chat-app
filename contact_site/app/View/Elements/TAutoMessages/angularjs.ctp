@@ -164,7 +164,7 @@ sincloApp.directive('ngShowonhover',function() {
                         messageList.push("訪問回数は「1回未満」という設定はできません");
                     }
                 }
-                /* ページ・リファラー・検索キーワード */
+                /* ページ・リファラー・検索キーワード・最初に訪れたページ・前のページ */
                 if ( 'keyword' in form ) {
                     if (String(key) === '<?=h(C_AUTO_TRIGGER_REFERRER)?>' && 'required' in form.keyword.$error) {
                         messageList.push("URLが未入力です");
@@ -193,6 +193,12 @@ sincloApp.directive('ngShowonhover',function() {
                     }
                     if ('pattern' in form.endTime.$error) {
                         messageList.push("終了時間は「00:00」の形で入力してください");
+                    }
+                }
+                /* 発言内容 */
+                if ( 'speechContent' in form ) {
+                    if ('required' in form.speechContent.$error) {
+                        messageList.push("発言内容が未入力です");
                     }
                 }
 
