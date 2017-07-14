@@ -539,7 +539,7 @@ var socket, // socket.io
     judgeShowWidget: function(){
       window.sincloInfo.widgetDisplay = null; // デフォルト表示しない
       // チャット契約、画面同期中であれば表示
-      if ( check.isset(userInfo.connectToken) && window.sincloInfo.contract.chat ) {
+      if ( window.sincloInfo.contract.chat ) {
         window.sincloInfo.widgetDisplay = true;
       }
       // ウィジェットを常に表示する
@@ -552,6 +552,12 @@ var socket, // socket.io
           window.sincloInfo.widgetDisplay = true;
         }
       }
+
+      // 画面同期中は表示しない
+      if ( check.isset(userInfo.connectToken) ) {
+        window.sincloInfo.widgetDisplay = false;
+      }
+
       // 同時対応上限数の設定があり、超えている場合
       if ( window.sincloInfo.hasOwnProperty('opFlg') && window.sincloInfo.opFlg === false ) {
         window.sincloInfo.widgetDisplay = false;
