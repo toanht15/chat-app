@@ -1242,7 +1242,7 @@
               }
 
               sinclo.trigger.judge.matchAllSpeechContent(value, function(result){
-                if(result && storage.s.get('operatorEntered') === "false") {
+                if(result && (!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false")) {
                   storage.s.set('chatAct', false); // オートメッセージを表示しない
                 }
 
@@ -1354,7 +1354,7 @@
           if(triggerType === "1") {
             // 発動条件が１回のみ有効であればidを保持する
             var array = this._getAutoSpeechTriggeredList();
-            if(Object.keys(array).indexOf(id) < 0) {
+            if(array.indexOf(id) < 0) {
               // 登録済みでなければ追加する
               array.push(id);
               storage.s.set(this.KEY_TRIGGERED_AUTO_SPEECH, JSON.stringify(array));
@@ -1650,6 +1650,7 @@
             console.log("setAction id : " + id + " type : " + type + " cond : " + JSON.stringify(cond));
             // TODO 今のところはメッセージ送信のみ、拡張予定
             var chatActFlg = storage.s.get('chatAct');
+            console.log("chatActFlg : " + chatActFlg);
             if ( !check.isset(chatActFlg) ) {
               chatActFlg = "false";
             }
