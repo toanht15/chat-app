@@ -1919,7 +1919,7 @@
               var previousLength = userInfo.prev.length-2;
               if(previousLength < 0) {
                 // 前のページ情報が存在しないため実行しない
-                callback(false, null);
+                callback(true, null);
                 return;
               }
               var target = ( Number(cond.targetName) === 1 ) ? userInfo.prev[previousLength].title : userInfo.prev[previousLength].url;
