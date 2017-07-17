@@ -1261,22 +1261,24 @@ class HistoriesController extends AppController {
       'fields' => [
         'THistoryChatLog.t_histories_id',
         'THistoryChatLog.m_users_id',
+        'THistoryChatLog.message_type',
       ],
       'order' => [
         'THistoryChatLog.t_histories_id' => 'asc'
       ],
       'joins' => [
         [
-          'type' => 'INNER',
+          'type' => 'LEFT',
           'table' => '(SELECT * FROM t_histories WHERE m_companies_id = '.$this->userInfo['MCompany']['id'].')',
           'alias' => 'THistory',
           'conditions' => 'THistoryChatLog.t_histories_id = THistory.id'
         ]
       ],
       'conditions' => [
-        'NOT' => [
-        'THistoryChatLog.m_users_id' => null],
-        'THistoryChatLog.message_type' => 98
+        'OR' => [
+          array('THistoryChatLog.message_type' => 98),
+          array('THistoryChatLog.message_type' => 5)
+        ]
       ],
       'group' => ['THistoryChatLog.t_histories_id','THistoryChatLog.m_users_id']
     ]);
@@ -1295,9 +1297,20 @@ class HistoriesController extends AppController {
         foreach($users[$value2['THistory']['id']] as $val3){
           $userName = $userNameList[$val3];
           if(!empty($tmp['User'])){
-            $tmp['User'] .='、';
+            $tmp['User'] .='、'."\n";
           }
-          $tmp['User'] .= "\n".$userName."さん";
+          if($userName === null) {
+            // 名前がnullの場合は自動応答
+            $userName = self::LABEL_AUTO_SPEECH_OPERATOR;
+          }
+          if(strpos($tmp['User'],self::LABEL_AUTO_SPEECH_OPERATOR) !== false){
+            // 自動対応オペレータの名前を挿入したあとにユーザー名を表示する場合は自動対応のラベルを消す
+            $tmp['User'] = $userName."さん";
+          } else if (empty($tmp['User']) && strcmp($userName, self::LABEL_AUTO_SPEECH_OPERATOR) === 0) {
+            $tmp['User'] = $userName;
+          } else {
+            $tmp['User'] .= $userName."さん";
+          }
         }
       }
       $userList[] = $tmp;
