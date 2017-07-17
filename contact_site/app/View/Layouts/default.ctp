@@ -80,8 +80,6 @@ if( strcmp($this->name, 'Login') !== 0 ) {
       echo $this->Html->script("https://cdn.datatables.net/fixedcolumns/3.2.1/js/dataTables.fixedColumns.min.js");
     }
 
-
-
   ?>
 </head>
 <body>

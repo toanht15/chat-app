@@ -70,9 +70,9 @@ class StatisticsController extends AppController {
     }
     //デフォルト画面
     else {
-      $date = '日別';
-      $type = date("Y-m");
-      $data = $this->calculateDailyData($type);
+      $date = '時別';
+      $type = date("Y-m-d");
+      $data = $this->calculateHourlyData($type);
     }
 
     //各企業の日付けの範囲
@@ -239,8 +239,8 @@ class StatisticsController extends AppController {
 
     //アクセス件数
     $access = "SELECT date_format(th.access_date, ?) as date, count(th.id) FROM t_histories as th where th.access_date
-    between ? and ? and th.m_companies_id = ? group by date_format(th.access_date, ?)";
-    $accessNumber = $this->THistory->query($access, array($date_format,$correctStartDate,$correctEndDate,$this->userInfo['MCompany']['id'],$date_format));
+    between ? and ? and th.m_companies_id = ? group by date";
+    $accessNumber = $this->THistory->query($access, array($date_format,$correctStartDate,$correctEndDate,$this->userInfo['MCompany']['id']));
 
     foreach($accessNumber as $k => $v) {
       $accessNumberData =  $accessNumberData + array($v[0]['date'] => $v[0]['count(th.id)']);
@@ -261,8 +261,8 @@ class StatisticsController extends AppController {
 
     //ウィジェット表示件数
     $widget = "SELECT date_format(tw.created, ?) as date,count(tw.id) FROM t_history_widget_displays as tw where tw.created between
-    ? and ? and tw.m_companies_id = ? group by date_format(tw.created, ?)";
-    $widgetNumber = $this->THistoryWidgetDisplays->query($widget, array($date_format,$correctStartDate,$correctEndDate,$this->userInfo['MCompany']['id'],$date_format));
+    ? and ? and tw.m_companies_id = ? group by date";
+    $widgetNumber = $this->THistoryWidgetDisplays->query($widget, array($date_format,$correctStartDate,$correctEndDate,$this->userInfo['MCompany']['id']));
 
     foreach($widgetNumber as $k => $v) {
       $widgetNumberData =  $widgetNumberData + array($v[0]['date'] => $v[0]['count(tw.id)']);
@@ -283,7 +283,7 @@ class StatisticsController extends AppController {
     //チャットリクエスト件数
     $requestNumber = "SELECT
       date_format(th.access_date, ?) as date,
-        count(th.id)
+        count(th.id) as request_count
     FROM t_histories as th, t_history_chat_logs as thcl
     WHERE
       th.m_companies_id = ?
@@ -293,9 +293,9 @@ class StatisticsController extends AppController {
       thcl.message_request_flg = ?
     AND
       th.access_date between ? and ?
-    group by date_format(th.access_date,?)";
+    group by date";
 
-    $requestNumber = $this->THistory->query($requestNumber, array($date_format,$this->userInfo['MCompany']['id'],$this->chatMessageType['requestFlg']['effectiveness'],$correctStartDate,$correctEndDate,$date_format));
+    $requestNumber = $this->THistory->query($requestNumber, array($date_format,$this->userInfo['MCompany']['id'],$this->chatMessageType['requestFlg']['effectiveness'],$correctStartDate,$correctEndDate));
 
     foreach($requestNumber as $k => $v) {
       $requestNumberData =  $requestNumberData + array($v[0]['date'] => $v[0]['request_count']);
@@ -317,10 +317,10 @@ class StatisticsController extends AppController {
 
     //応対件数
     $response = "SELECT date_format(th.access_date, ?) as date,
-    count(distinct thcl.message_type,thcl.t_histories_id) as response_count
+    count(thcl.t_histories_id) as response_count
     FROM (select id, m_companies_id, access_date from t_histories where m_companies_id = ? AND access_date between
     ? and ?) as th,(select t_histories_id, message_type, message_distinction
-    from t_history_chat_logs where message_type = ?) as thcl,(select t_histories_id, message_request_flg,
+    from t_history_chat_logs where message_type = ? group by t_histories_id, message_distinction) as thcl,(select t_histories_id, message_request_flg,
     message_distinction from t_history_chat_logs where message_request_flg = ?) as thcl2
     WHERE
       thcl.t_histories_id = th.id
@@ -330,7 +330,7 @@ class StatisticsController extends AppController {
       thcl.t_histories_id = thcl2.t_histories_id
     AND
       thcl.message_distinction = thcl2.message_distinction
-    group by date;";
+    group by date";
 
     $responseNumber = $this->THistory->query($response, array($date_format,$this->userInfo['MCompany']['id'],$correctStartDate,$correctEndDate,$this->chatMessageType['messageType']['enteringRoom'],$this->chatMessageType['requestFlg']['effectiveness']));
 
@@ -417,9 +417,10 @@ class StatisticsController extends AppController {
 
     $effectiveness = $this->THistory->query($effectiveness, array($date_format,$this->chatMessageType['achievementFlg']['effectiveness'],$this->chatMessageType['messageType']['denial'],
       $this->userInfo['MCompany']['id'],$correctStartDate,$correctEndDate,$this->chatMessageType['achievementFlg']['effectiveness'],$this->chatMessageType['messageType']['denial']));
+    $this->log('有効件数',LOG_DEBUG);
+    $this->log($effectiveness,LOG_DEBUG);
+
     if(!empty($effectiveness)) {
-      $effectiveness[0][0]['effectiveness'] = 0;
-      $effectiveness[0][0]['denial'] = 0;
       foreach($effectiveness as $k => $v) {
         $effectivenessNumberData =  $effectivenessNumberData + array($v[0]['date'] => $v[0]['effectiveness']);
         $denialNumberData =  $denialNumberData + array($v[0]['date'] => $v[0]['denial']);
@@ -488,7 +489,10 @@ class StatisticsController extends AppController {
     $requestAvgTimeData = array_merge($baseTimeData,$requestAvgTime);
 
     //全チャットリクエスト平均時間
-    $allRequestAvgTimeData = array_sum($avgForcalculation)/($k+1);
+    $allRequestAvgTimeData = 0;
+    if(!empty($v)) {
+      $allRequestAvgTimeData = array_sum($avgForcalculation)/($k+1);
+    }
     $allRequestAvgTimeData = $this->changeTimeFormat($allRequestAvgTimeData);
 
     return['requestAvgTimeData' => $requestAvgTimeData, 'allRequestAvgTimeData' => $allRequestAvgTimeData];
@@ -514,7 +518,7 @@ class StatisticsController extends AppController {
       thcl.t_histories_id = thcl2.t_histories_id
     AND
     thcl.message_distinction = thcl2.message_distinction
-    group by date;";
+    group by date";
 
     $consumerWatingTime = $this->THistory->query($consumerWatingTime, array($date_format,$this->userInfo['MCompany']['id'],
       $correctStartDate,$correctEndDate,$this->chatMessageType['requestFlg']['effectiveness'],$this->chatMessageType['messageType']['enteringRoom']));
@@ -557,7 +561,7 @@ class StatisticsController extends AppController {
     AND
       thcl.t_histories_id = thcl2.t_histories_id
     AND
-    thcl.message_distinction = thcl2.message_distinction group by date;";
+    thcl.message_distinction = thcl2.message_distinction group by date";
 
     $responseTime = $this->THistory->query($responseTime, array($date_format,$this->userInfo['MCompany']['id'],
       $correctStartDate,$correctEndDate,$this->chatMessageType['requestFlg']['effectiveness'],$this->chatMessageType['messageType']['operatorMessage']));
@@ -609,6 +613,7 @@ class StatisticsController extends AppController {
         $yearData[] = date('Y-m',$startDate);
         $startDate = strtotime("+1 month", $startDate);
       }
+      $yearData[] = '合計・平均';
       $csv[] = $yearData;
       $csvData = $this->calculateMonthlyData($requestData['date']);
     }
@@ -635,6 +640,7 @@ class StatisticsController extends AppController {
         $dayData[] = date('H:i',$startTime).'-'.date('H:i',strtotime("+1 hour", $startTime));
         $startTime = strtotime("+1 hour", $startTime);
       }
+      $dayData[] = '合計・平均';
       $csv[] = $dayData;
       $csvData = $this->calculateHourlyData($requestData['date']);
     }

@@ -169,6 +169,12 @@ class AppController extends Controller {
           $this->redirect("/");
         }
         break;
+      case "Statistics":
+        if ( !(isset($this->coreSettings[C_COMPANY_USE_CHAT]) && $this->coreSettings[C_COMPANY_USE_CHAT])
+          && isset($this->coreSettings[C_COMPANY_CHAT_BASIC_PLAN]) && $this->coreSettings[C_COMPANY_CHAT_BASIC_PLAN] ) {
+          $this->redirect("/");
+        }
+        break;
     }
   }
 

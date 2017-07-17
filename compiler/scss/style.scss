@@ -4809,6 +4809,10 @@ ul.naviBtn {
       span#searchPeriod {
         font-size: 1.1em !important;
       }
+
+      input#hourlyForm {
+        margin-top: 0.5px;
+      }
     }
 
     right-parts {
@@ -4821,7 +4825,7 @@ ul.naviBtn {
   #statistics_content {
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 291px);
+    height: calc(100vh - 190px);
 
     > contents {
       flex: 1;
@@ -4831,7 +4835,7 @@ ul.naviBtn {
       margin-bottom: 0;
     }
 
-    div#statistics-table_filter {
+    div#statistics_table_filter {
       padding-bottom: 20px;
     }
 
@@ -4858,45 +4862,274 @@ ul.naviBtn {
     .questionBalloon.questionBalloonPosition6 {
         float: right;
         margin-right: 89px;
+
+        icon-annotation {
+        position: absolute;
+        top: -5.8em;
+        left: -7em;
+        width: 16em;
+        height: 5.1em;
+        z-index: 2;
+        display: none;
+
+        ul {
+            margin: 0;
+            padding: 0;
+            text-align: left;
+            background-color: #FFF;
+            box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+            padding: 0.5em;
+            font-weight: normal;
+            border-radius: 5px;
+
+          img {
+            margin-bottom: -0.2em;
+            width:1em;
+            height:1em;
+          }
+
+          span {
+            font-size: 0.9em;
+          }
+        }
+      }
     }
 
     .questionBalloon.questionBalloonPosition7 {
         float: right;
         margin-right: 77px;
+
+        icon-annotation {
+        position: absolute;
+        top: -4.4em;
+        left: -7.8em;
+        width: 16em;
+        height: 5.1em;
+        z-index: 2;
+        display: none;
+
+        ul {
+            margin: 0;
+            padding: 0;
+            text-align: left;
+            background-color: #FFF;
+            box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+            padding: 0.5em;
+            font-weight: normal;
+            border-radius: 5px;
+
+          img {
+            margin-bottom: -0.2em;
+            width:1em;
+            height:1em;
+          }
+
+          span {
+            font-size: 0.9em;
+          }
+        }
+      }
     }
 
     .questionBalloon.questionBalloonPosition8 {
-        float: right;
-        margin-right: 65px;
+      float: right;
+      margin-right: 65px;
+
+      icon-annotation {
+        position: absolute;
+        top: -5.8em;
+        left: -8.8em;
+        width: 16em;
+        height: 5.1em;
+        z-index: 2;
+        display: none;
+
+        ul {
+            margin: 0;
+            padding: 0;
+            text-align: left;
+            background-color: #FFF;
+            box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+            padding: 0.5em;
+            font-weight: normal;
+            border-radius: 5px;
+
+          img {
+            margin-bottom: -0.2em;
+            width:1em;
+            height:1em;
+          }
+
+          span {
+            font-size: 0.9em;
+          }
+        }
+      }
     }
+
+    .questionBalloon.questionBalloonPosition8s {
+      float: right;
+      margin-right: 65px;
+
+      icon-annotation {
+        position: absolute;
+        top: -4.6em;
+        left: -8.8em;
+        width: 16em;
+        height: 5.1em;
+        z-index: 2;
+        display: none;
+
+        ul {
+            margin: 0;
+            padding: 0;
+            text-align: left;
+            background-color: #FFF;
+            box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+            padding: 0.5em;
+            font-weight: normal;
+            border-radius: 5px;
+
+          img {
+            margin-bottom: -0.2em;
+            width:1em;
+            height:1em;
+          }
+
+          span {
+            font-size: 0.9em;
+          }
+        }
+      }
+    }
+
 
     .questionBalloon.questionBalloonPosition9 {
         float: right;
         margin-right: 53px;
+
+        icon-annotation {
+        position: absolute;
+        top: -5.8em;
+        left: -10em;
+        width: 16em;
+        height: 5.1em;
+        z-index: 2;
+        display: none;
+
+        ul {
+            margin: 0;
+            padding: 0;
+            text-align: left;
+            background-color: #FFF;
+            box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+            padding: 0.5em;
+            font-weight: normal;
+            border-radius: 5px;
+
+          img {
+            margin-bottom: -0.2em;
+            width:1em;
+            height:1em;
+          }
+
+          span {
+            font-size: 0.9em;
+          }
+        }
+      }
     }
 
     .questionBalloon.questionBalloonPosition11 {
-        float: right;
-        margin-right: 29px;
+      float: right;
+      margin-right: 29px;
+
+      icon-annotation {
+        position: absolute;
+        top: -4.5em;
+        left: -12em;
+        width: 16em;
+        height: 5.1em;
+        z-index: 2;
+        display: none;
+
+        ul {
+            margin: 0;
+            padding: 0;
+            text-align: left;
+            background-color: #FFF;
+            box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+            padding: 0.5em;
+            font-weight: normal;
+            border-radius: 5px;
+
+          img {
+            margin-bottom: -0.2em;
+            width:1em;
+            height:1em;
+          }
+
+          span {
+            font-size: 0.9em;
+          }
+        }
+      }
     }
 
     .questionBalloon.questionBalloonPosition13 {
-        float: right;
-        margin-right: 5px;
-    }
+      float: right;
+      margin-right: 5px;
 
-    .questionBalloon icon {
-      border-radius: 20px;
-      padding: 0.1em;
-      width: 1.5em;
-      height: 1.5em;
-      font-size: 0.9em !important;
-      cursor:pointer;
+      icon-annotation {
+        position: absolute;
+        top: -5.8em;
+        left: -14em;
+        width: 16em;
+        height: 5.1em;
+        z-index: 2;
+        display: none;
+
+        ul {
+            margin: 0;
+            padding: 0;
+            text-align: left;
+            background-color: #FFF;
+            box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+            padding: 0.5em;
+            font-weight: normal;
+            border-radius: 5px;
+
+          img {
+            margin-bottom: -0.2em;
+            width:1em;
+            height:1em;
+          }
+
+          span {
+            font-size: 0.9em;
+          }
+        }
+      }
     }
 
     .dataTables_wrapper .dataTables_scroll div.dataTables_scrollBody > table > tbody > tr > td {
       vertical-align: middle;
       text-align: center;
+    }
+
+    .questionBalloon {
+      position: relative;
+
+      icon {
+        border-radius: 20px;
+        padding: 0.1em;
+        width: 1.5em;
+        height: 1.5em;
+        font-size: 0.9em!important;
+      }
+
+      &:hover icon-annotation { display: block!important; }
+
     }
   }
 }
