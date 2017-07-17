@@ -579,8 +579,8 @@ io.sockets.on('connection', function (socket) {
                     [historyId, results.insertId], function(err, ret, fields){}
                   );
 
-                  // Sorryメッセージがある場合は送る
-                  if ( ret.message !== "" ) {
+                  // 自動応対メッセージではなく、Sorryメッセージがある場合は送る
+                  if ( ret.message !== "" && (!d.hasOwnProperty('isAutoSpeech') || !d.isAutoSpeech)) {
                     chatApi.sendCheckTimerList[d.tabId] = setTimeout(function(){
                       delete chatApi.sendCheckTimerList[d.tabId];
                       // Sorryメッセージを送る

@@ -1253,6 +1253,7 @@
                     mUserId: null,
                     messageType: sinclo.chatApi.messageType.customer,
                     messageRequestFlg: messageRequestFlg,
+                    isAutoSpeech : result,
                     notifyToCompany: !result
                   });
                 }, 100);
