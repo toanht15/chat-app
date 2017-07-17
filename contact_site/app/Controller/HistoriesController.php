@@ -21,6 +21,8 @@ class HistoriesController extends AppController {
     'THistoryStayLog' => []
   ];
 
+  const LABEL_AUTO_SPEECH_OPERATOR = '＊自動返信対応';
+
   public function beforeFilter(){
     parent::beforeFilter();
     $ret = $this->MCompany->read(null, $this->userInfo['MCompany']['id']);
@@ -826,11 +828,11 @@ class HistoriesController extends AppController {
       $dbo2 = $this->THistoryChatLog->getDataSource();
       $chatStateList = $dbo2->buildStatement(
         [
-          'table' => '(SELECT t_histories_id, COUNT(*) AS count, MAX(achievement_flg) AS achievementFlg, SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp, SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus FROM t_history_chat_logs AS THistoryChatLog GROUP BY t_histories_id ORDER BY t_histories_id)',
+          'table' => '(SELECT t_histories_id, COUNT(*) AS count, MAX(achievement_flg) AS achievementFlg, SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp, SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech FROM t_history_chat_logs AS THistoryChatLog GROUP BY t_histories_id ORDER BY t_histories_id)',
           'alias' => 'chat',
           'fields' => [
             'chat.*',
-            '( CASE  WHEN chat.cus > 0 AND chat.sry = 0 AND chat.cmp = 0 THEN "未入室" WHEN chat.cus > 0 AND chat.sry > 0 THEN "拒否" ELSE "" END ) AS type',
+            '( CASE  WHEN chat.cus > 0 AND chat.sry = 0 AND chat.cmp = 0 AND auto_speech = 0 THEN "未入室" WHEN chat.cus > 0 AND chat.sry = 0 AND chat.cmp = 0 AND auto_speech > 0 THEN "自動返信" WHEN chat.cus > 0 AND chat.sry > 0 THEN "拒否" ELSE "" END ) AS type',
           ],
           'conditions' => $chatLogCond
         ],
@@ -919,13 +921,14 @@ class HistoriesController extends AppController {
     $params = [
       'fields' => [
         'THistory.id',
-        'MUser.display_name'
+        'MUser.display_name',
+        'THistoryChatLog.message_type'
       ],
       'joins' => [
         [
           'type' => 'INNER',
           'table' => '(SELECT * FROM t_history_chat_logs '.
-               ' WHERE m_users_id IS NOT NULL '.
+               ' WHERE (m_users_id IS NOT NULL OR message_type = 5)'.
                '   AND t_histories_id IN (' . implode(",", $historyList) .')'.
                ' GROUP BY t_histories_id, m_users_id'.
                ')',
@@ -935,7 +938,7 @@ class HistoriesController extends AppController {
           ]
         ],
         [
-          'type' => 'INNER',
+          'type' => 'LEFT',
           'table' => 'm_users',
           'alias' => 'MUser',
           'conditions' => [
@@ -952,10 +955,19 @@ class HistoriesController extends AppController {
     $chat = [];
     foreach((array)$ret as $val){
       if ( isset($chat[$val['THistory']['id']]) ) {
-        $chat[$val['THistory']['id']] .= "\n".$val['MUser']['display_name']."さん";
+        if (strcmp($chat[$val['THistory']['id']], self::LABEL_AUTO_SPEECH_OPERATOR) === 0) {
+          //自動返信後にオペレータが応対していた場合は自動返信の表示を消す
+          $chat[$val['THistory']['id']] = $val['MUser']['display_name']."さん";
+        } else {
+          $chat[$val['THistory']['id']] .= "\n".$val['MUser']['display_name']."さん";
+        }
       }
       else {
-        $chat[$val['THistory']['id']] = $val['MUser']['display_name']."さん";
+        if($val['MUser']['display_name'] !== null) {
+          $chat[$val['THistory']['id']] = $val['MUser']['display_name']."さん";
+        } else if (strcmp($val['THistoryChatLog']['message_type'], "5") === 0) {
+          $chat[$val['THistory']['id']] = self::LABEL_AUTO_SPEECH_OPERATOR;
+        }
       }
     }
     return $chat;
