@@ -17,8 +17,6 @@ class AddIndex extends CakeMigration {
 		'up' => array(
 			'create_field' => array(
 				't_history_chat_logs' => array(
-					'message_distinction' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false, 'after' => 'message_type'),
-					'message_request_flg' => array('type' => 'integer', 'null' => true, 'default' => '0', 'unsigned' => false, 'key' => 'index', 'after' => 'message_distinction'),
 					'indexes' => array(
 						'idx_t_history_chat_logs_t_histories_id' => array('column' => 't_histories_id', 'unique' => 0),
 						'idx_t_history_chat_logs_message_type' => array('column' => 'message_type', 'unique' => 0),
@@ -38,9 +36,6 @@ class AddIndex extends CakeMigration {
 			),
 		),
 		'down' => array(
-			'drop_field' => array(
-				't_history_chat_logs' => array('message_distinction', 'message_request_flg', 'indexes' => array('idx_t_history_chat_logs_t_histories_id', 'idx_t_history_chat_logs_message_type', 'idx_t_history_chat_logs_message_request_flg', 'idx_t_history_chat_logs_achievement_flg')),
-			),
 			'alter_field' => array(
 				't_history_chat_logs' => array(
 					'message_type' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'comment' => 'メッセージ種別（1:訪問者から、2:企業側から）'),
