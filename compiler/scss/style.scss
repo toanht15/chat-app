@@ -4863,7 +4863,7 @@ ul.naviBtn {
       box-sizing: content-box!important;
 
       div.DTFC_LeftHeadWrapper {
-        border-right: solid 1px #000000;
+        border-right: solid 1px #8B8B8B;
       }
 
       table.dataTable.no-footer {
@@ -4875,7 +4875,7 @@ ul.naviBtn {
       }
 
       div.DTFC_LeftBodyWrapper {
-        border-right: solid 1px #000000;
+        border-right: solid 1px #8B8B8B;
       }
 
       & tr {
@@ -4884,11 +4884,11 @@ ul.naviBtn {
         }
 
         th:last-child:not(.thMinWidth) {
-          border-left: solid 1px #000000!important;
+          border-left: solid 1px #8B8B8B!important;
         }
 
         td:last-child:not(.tooltip)  {
-          border-left: solid 1px #000000!important;
+          border-left: solid 1px #8B8B8B!important;
         }
       }
     }
