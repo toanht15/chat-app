@@ -1,0 +1,214 @@
+<script type="text/javascript">
+
+function functionName()　{
+  var chosenDateFormat = document.forms.THistoryForChatForm.dateFormat;
+
+  //selectで月別を選択した場合
+  if (chosenDateFormat.options[chosenDateFormat.selectedIndex].value == "月別")
+  {
+    document.getElementById("monthlyForm").style.display="";
+    document.getElementById("daylyForm").style.display="none";
+    document.getElementById("hourlyForm").style.display="none";
+    document.getElementById("monthlyForm").value = "";
+  }
+  //selectで日別を選択した場合
+  else if (chosenDateFormat.options[chosenDateFormat.selectedIndex].value == "日別")
+  {
+    document.getElementById("monthlyForm").style.display="none";
+    document.getElementById("daylyForm").style.display="";
+    document.getElementById("hourlyForm").style.display="none";
+    document.getElementById("daylyForm").value = "";
+  }
+  //selectで時別を選択した場合
+  else if (chosenDateFormat.options[chosenDateFormat.selectedIndex].value == "時別")
+  {
+    var value = new Date().getFullYear() + "/" + ("0" + (new Date().getMonth() + 1)).slice(-2) + "/01";
+    document.getElementById("monthlyForm").style.display="none";
+    document.getElementById("daylyForm").style.display="none";
+    document.getElementById("hourlyForm").style.display="";
+    document.getElementById("hourlyForm").value = '選択してください';
+    document.getElementById("hourlyForm").options = value;
+  }
+}
+
+$(document).ready(function(){
+
+  //tooltip
+  /*$('#statistics_table tbody tr td div.questionBalloon ').each( function() {
+    var description;
+    var td = $(this).parent();
+    var tooltipName = td.attr("id");
+
+    switch (tooltipName){
+      case 'chatRequestLabel':
+        description = 'サイト訪問者がチャットを送信した件数(※初回メッセージのみカウント)';
+        break;
+      case 'chatResponseLabel':
+        description = 'チャットリクエストに対してオペレータが入室した件数（※初回入室のみカウント）';
+      break;
+      case 'chatAutomaticResponseLabel':
+       description = 'サイト訪問者からのチャットを企業側が自動返信で応対した件数(※初回メッセージのみカウント)';
+      break;
+      case 'chatDenialLabel':
+        description = 'Sorryメッセージが消費者に送信された件数';
+      break;
+      case 'chatEffectivenessLabel':
+        description = '成果が「有効」として登録された件数';
+      break;
+      case 'chatRequestAverageTimeLabel':
+        description = 'サイト訪問者がサイトアクセスしてから初回メッセージを送信するまでの平均時間';
+      break;
+      case 'chatConsumerWaitAverageTimeLabel':
+        description = 'サイト訪問者の初回メッセージを受信してから、オペレータがチャットに入室するまでの平均時間';
+      break;
+      case 'chatResponseAverageTimeLabel':
+        description = 'サイト訪問者の初回メッセージを受信してから、オペレータが初回メッセージを送信するまでの平均時間';
+      break;
+      case 'chatResponseRateLabel':
+        description = 'チャット応対件数／チャットリクエスト件数';
+      break;
+      case 'chatAutomaticResponseRateLabel':
+        description = '自動返信応対件数／チャットリクエスト件数';
+      break;
+      case 'chatEffectivenessResponseRateLabel':
+        description = 'チャット有効件数／チャットリクエスト件数';
+      break;
+    }
+    this.setAttribute( 'title', description );
+  });*/
+
+  $.extend( $.fn.dataTable.defaults, {
+    language: { url: "http://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Japanese.json" }
+  });
+
+  var tableObj = $("#statistics_table").DataTable({
+    //searching: false,
+    scroller:true,
+    responsive:true,
+    scrollX: true,
+    scrollY: '64vh',
+    responsive: true,
+    scrollCollapse: true,
+    paging: false,
+    info: false,
+    ordering: false,
+    columnDefs: [
+      { width: 120, targets: 0 }
+    ],
+    fixedColumns: {
+        leftColumns: 1
+    }
+  });
+
+  //リサイズ処理
+  var resizeDataTable = function() {
+    $('.dataTables_scrollBody').css('max-height',$('#statistics_content').outerHeight() - 120 + 'px');
+  }
+
+  // ページ読み込み時にもリサイズ処理を実行
+  tableObj.on( 'draw', function () {
+    resizeDataTable();
+    $('#statistics_content').css('visibility','visible');
+  } );
+
+  $(window).on('resize', function(event){
+    console.log("resize");
+    resizeDataTable();
+  });
+
+  //CSV処理
+  var outputCSVBtn = document.getElementById('outputCSV');
+  outputCSVBtn.addEventListener('click', function(){
+    var dateFormat = $("select[name=dateFormat]").val();
+    if(dateFormat == '月別') {
+      var date = $("#monthlyForm").val();
+    }
+    if(dateFormat == '日別') {
+       date = $("#daylyForm").val();
+    }
+    if(dateFormat == '時別') {
+       date = $("#hourlyForm").val();
+    }
+
+    document.getElementById('statisticsOutputData').value = JSON.stringify({dateFormat:dateFormat,date:date});
+    console.log(document.getElementById('statisticsOutputData').value.date);
+    document.getElementById('statisticsForChatForm').action = '<?=$this->Html->url(["controller"=>"Statistics", "action" => "outputCsv"])?>';
+    document.getElementById('statisticsForChatForm').submit();
+  });
+
+  var timeType = {
+    monthly: '月別',
+    dayly: '日別',
+    timely: '時別'
+  }
+
+  //月別で検索した場合
+  if('<?= $date ?>' == '月別'){
+    document.getElementById("monthlyForm").style.display="";
+  }
+  //日別で検索した場合
+  if('<?= $date ?>' == '日別'){
+    document.getElementById("daylyForm").style.display="";
+  }
+  //時別で検索した場合
+  if('<?= $date ?>' == '時別'){
+    document.getElementById("hourlyForm").style.display="";
+  }
+
+  //月別の年を選択
+  $("#monthlyForm").change(function(){
+    var dateFormat = $("select[name=dateFormat]").val();
+
+    if(dateFormat == timeType.monthly) {
+      document.getElementById('THistoryForChatForm').submit();
+    }
+  });
+
+  //日別の月を選択
+  $("#daylyForm").change(function(){
+    var dateFormat = $("select[name=dateFormat]").val();
+
+    if(dateFormat == timeType.dayly) {
+      document.getElementById('THistoryForChatForm').submit();
+    }
+  });
+
+  //datepicke
+  $('input[name="datefilter"]').daterangepicker({
+    "locale": {
+      "format": "YYYY/MM/DD",
+      "daysOfWeek": [
+        "日",
+        "月",
+        "火",
+        "水",
+        "木",
+        "金",
+        "土"
+      ],
+      "monthNames": [
+        "1月",
+        "2月",
+        "3月",
+        "4月",
+        "5月",
+        "6月",
+        "7月",
+        "8月",
+        "9月",
+        "10月",
+        "11月",
+        "12月"
+      ],
+    },
+    singleDatePicker: true,
+  },
+  function(start, end, label) {
+    searchInfo = $("select[name=dateFormat]").val();
+    $('input[name="datefilter"]').val(start.format('YYYY/MM/DD'));
+    if(searchInfo == timeType.timely){
+      document.getElementById('THistoryForChatForm').submit();
+    }
+  });
+});
+</script>

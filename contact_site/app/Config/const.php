@@ -35,6 +35,7 @@ define('C_COMPANY_USE_SYNCLO', 'synclo'); // 画面同期
 define('C_COMPANY_USE_CHAT', 'chat'); // オペレーターが待機中の時のみ表示する
 define('C_COMPANY_USE_DOCUMENT', 'document'); // オペレーターが待機中の時のみ表示する
 define('C_COMPANY_USE_VIDEO_CHAT', 'videochat'); // ビデオチャット
+define('C_COMPANY_CHAT_BASIC_PLAN', 'chat_basic');
 
 // 簡易メッセージ入力機能種別
 define('C_DICTIONARY_TYPE_COMP', 1); // 企業で使用する

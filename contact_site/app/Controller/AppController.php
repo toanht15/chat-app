@@ -57,6 +57,14 @@ class AppController extends Controller {
   public $userInfo;
   public $coreSettings;
 
+  private $defaultCoreSettings = [
+    C_COMPANY_USE_CHAT => false, // チャット機能有効
+    C_COMPANY_USE_SYNCLO => false, // 画面共有機能有効
+    C_COMPANY_USE_DOCUMENT => false, // ドキュメント共有機能有効
+    C_COMPANY_USE_VIDEO_CHAT => false, // ビデオチャット機能有効（ただし未実装）
+    C_COMPANY_CHAT_BASIC_PLAN => false // チャットのベーシック機能有効（ただし、この設定がtrueの場合はchatもtrueにしなければならない）
+  ];
+
   public function beforeFilter(){
 
     // プロトコルチェック(本番のみ)
@@ -95,7 +103,8 @@ class AppController extends Controller {
       $this->Session->destroy();
       return $this->redirect(['controller'=>'Login', 'action' => 'index']);
     }
-    $this->coreSettings = json_decode($this->userInfo['MCompany']['core_settings'], true);
+    $this->coreSettings = $this->mergeCoreSettings(json_decode($this->userInfo['MCompany']['core_settings'], true));
+    $this->log("SHIMIZU : coreSettings => ".var_export($this->coreSettings,TRUE),LOG_DEBUG);
     $this->set('coreSettings', $this->coreSettings);
 
 
@@ -157,6 +166,12 @@ class AppController extends Controller {
         break;
       case "TDocuments":
         if ( !(isset($this->coreSettings[C_COMPANY_USE_DOCUMENT]) && $this->coreSettings[C_COMPANY_USE_DOCUMENT]) ) {
+          $this->redirect("/");
+        }
+        break;
+      case "Statistics":
+        if ( !(isset($this->coreSettings[C_COMPANY_USE_CHAT]) && $this->coreSettings[C_COMPANY_USE_CHAT])
+          && isset($this->coreSettings[C_COMPANY_CHAT_BASIC_PLAN]) && $this->coreSettings[C_COMPANY_CHAT_BASIC_PLAN] ) {
           $this->redirect("/");
         }
         break;
@@ -310,4 +325,7 @@ class AppController extends Controller {
     }
   }
 
+  protected function mergeCoreSettings($coreSettings) {
+  	return array_merge($this->defaultCoreSettings, $coreSettings);
+  }
 }
