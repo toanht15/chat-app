@@ -3222,7 +3222,7 @@ ul.naviBtn {
           }
 
           #setTriggerList {
-            width: 30em;
+            width: 31em;
             position: relative;
 
             > ul {
@@ -3256,13 +3256,13 @@ ul.naviBtn {
                       width: 2em;
                       float: left;
                       text-align: center;
-                      padding: 9px 0.25em;
+                      padding: 9px 0.75em;
                       height: 34px;
                     }
                     &.labelArea  {
                       display: block;
                       width: 25.5em;
-                      margin-left: 2em;
+                      margin-left: 2.5em;
                       padding: 9px 0.25em;
                       height: 34px;
                     }
@@ -3307,7 +3307,7 @@ ul.naviBtn {
                     > li {
                       padding: 0.5em;
                       > span:first-child {
-                        width: 8em;
+                        width: 10em;
                         display: block;
                       }
                     }
@@ -3398,7 +3398,7 @@ ul.naviBtn {
               float: left;
 
               ul {
-                height: 200px;
+                height: 325px;
                 border: 1px solid #969696;
                 overflow-x: hidden;
                 overflow-y: auto;
