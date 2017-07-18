@@ -390,6 +390,11 @@
       var title = location.host + 'の内容';
       var content = location.host + 'が閲覧ページへのアクセスを求めています。<br>許可しますか';
       popup.ok = function(){
+        var sincloBox = document.getElementById("sincloBox");
+        if( sincloBox ){
+          sincloBox.style.display = "none";
+        }
+
         userInfo.connectToken = obj.connectToken;
         browserInfo.resetPrevList();
         userInfo.setConnect(obj.connectToken);
@@ -658,6 +663,7 @@
       var obj = JSON.parse(d), opUser;
       this.chatApi.online = true;
       storage.s.set('chatAct', true); // オートメッセージを表示しない
+      storage.s.set('operatorEntered', true); // オペレータが入室した
 
       if ( sincloInfo.widget.showName === 1 ) {
         sinclo.chatApi.opUser = obj.userName;
@@ -684,6 +690,7 @@
     chatEndResult: function(d){
       var obj = JSON.parse(d);
       this.chatApi.online = false;
+      storage.s.set('operatorEntered', false); // オペレータが退室した
       storage.s.set('chatAct', false); // オートメッセージを表示してもいい
       var opUser = sinclo.chatApi.opUser;
       if ( check.isset(opUser) === false ) {
@@ -1235,7 +1242,7 @@
               }
 
               sinclo.trigger.judge.matchAllSpeechContent(value, function(result){
-                if(result) {
+                if(result && (!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false")) {
                   storage.s.set('chatAct', false); // オートメッセージを表示しない
                 }
 
@@ -1246,6 +1253,7 @@
                     mUserId: null,
                     messageType: sinclo.chatApi.messageType.customer,
                     messageRequestFlg: messageRequestFlg,
+                    isAutoSpeech : result,
                     notifyToCompany: !result
                   });
                 }, 100);
@@ -1338,20 +1346,27 @@
             }
         },
         KEY_TRIGGERED_AUTO_SPEECH: "triggeredAutoSpeech",
+        _getAutoSpeechTriggeredList: function () {
+          return storage.s.get(this.KEY_TRIGGERED_AUTO_SPEECH) ? JSON.parse(storage.s.get(this.KEY_TRIGGERED_AUTO_SPEECH)) : [];
+        },
         // 発動した発言内容を保存
         saveAutoSpeechTriggered: function(triggerType, id) {
           console.log("saveAutoSpeechTriggered triggerType : " + triggerType + " id : " + id);
           if(triggerType === "1") {
-            var array = storage.s.get(this.KEY_TRIGGERED_AUTO_SPEECH) ? JSON.parse(storage.s.get(this.KEY_TRIGGERED_AUTO_SPEECH)) : [];
-            array.push(id);
-            storage.s.set(this.KEY_TRIGGERED_AUTO_SPEECH, JSON.stringify(array));
+            // 発動条件が１回のみ有効であればidを保持する
+            var array = this._getAutoSpeechTriggeredList();
+            if(array.indexOf(id) < 0) {
+              // 登録済みでなければ追加する
+              array.push(id);
+              storage.s.set(this.KEY_TRIGGERED_AUTO_SPEECH, JSON.stringify(array));
+            }
           } else {
             console.log("triggerType = 2");
           }
         },
         // 発動した発言内容を保存
         triggeredAutoSpeechExists: function(id) {
-          var array = storage.s.get(this.KEY_TRIGGERED_AUTO_SPEECH) ? JSON.parse(storage.s.get(this.KEY_TRIGGERED_AUTO_SPEECH)) : [];
+          var array = this._getAutoSpeechTriggeredList();
           return array.indexOf(id) >= 0;
         }
     },
@@ -1384,7 +1399,7 @@
                 var message = messages[key];
                 if (typeof(ret) === 'number') {
                     setTimeout(function(){
-                      if(Object.keys(message.activity.conditions).indexOf("7") > 0) {
+                      if(Object.keys(message.activity.conditions).indexOf("7") >= 0) {
                         console.log("orFunc saveAutoSpeechTriggered");
                         //ここに入るオートメッセージは他の条件で発動するため、発言内容条件で動作しないようフラグを立てる
                         sinclo.chatApi.saveAutoSpeechTriggered(message.activity.conditions["7"][0].speechTriggerCond, key);
@@ -1636,6 +1651,7 @@
             console.log("setAction id : " + id + " type : " + type + " cond : " + JSON.stringify(cond));
             // TODO 今のところはメッセージ送信のみ、拡張予定
             var chatActFlg = storage.s.get('chatAct');
+            console.log("chatActFlg : " + chatActFlg);
             if ( !check.isset(chatActFlg) ) {
               chatActFlg = "false";
             }
@@ -1905,7 +1921,7 @@
               var previousLength = userInfo.prev.length-2;
               if(previousLength < 0) {
                 // 前のページ情報が存在しないため実行しない
-                callback(false, null);
+                callback(true, null);
                 return;
               }
               var target = ( Number(cond.targetName) === 1 ) ? userInfo.prev[previousLength].title : userInfo.prev[previousLength].url;
