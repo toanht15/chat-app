@@ -78,7 +78,7 @@ $(document).ready(function(){
   });*/
 
   $.extend( $.fn.dataTable.defaults, {
-    language: { url: "http://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Japanese.json" }
+    language: { url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Japanese.json" }
   });
 
   var tableObj = $("#statistics_table").DataTable({
@@ -204,7 +204,7 @@ $(document).ready(function(){
     singleDatePicker: true,
   },
   function(start, end, label) {
-    searchInfo = $("select[name=dateFormat]").val();
+    searchInfo = $("select[name=dateFor.mat]").val();
     $('input[name="datefilter"]').val(start.format('YYYY/MM/DD'));
     if(searchInfo == timeType.timely){
       document.getElementById('THistoryForChatForm').submit();
