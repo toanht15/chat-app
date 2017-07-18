@@ -25,22 +25,13 @@ class AddIndex extends CakeMigration {
 					),
 				),
 			),
-			'alter_field' => array(
-				't_history_chat_logs' => array(
-					'message_type' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'index', 'comment' => 'メッセージ種別（1:訪問者から、2:企業側から）'),
-					'achievement_flg' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false, 'key' => 'index', 'comment' => '成果フラグ(1:有効, 2:無効, null: 指定なし)'),
-				),
-			),
 			'drop_field' => array(
 				't_history_chat_logs' => array('indexes' => array('t_histories_id_idx')),
 			),
 		),
 		'down' => array(
-			'alter_field' => array(
-				't_history_chat_logs' => array(
-					'message_type' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'comment' => 'メッセージ種別（1:訪問者から、2:企業側から）'),
-					'achievement_flg' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false, 'comment' => '成果フラグ(1:有効, 2:無効, null: 指定なし)'),
-				),
+			'drop_field' => array(
+				't_history_chat_logs' => array('indexes' => array('idx_t_history_chat_logs_t_histories_id', 'idx_t_history_chat_logs_message_type', 'idx_t_history_chat_logs_message_request_flg', 'idx_t_history_chat_logs_achievement_flg')),
 			),
 			'create_field' => array(
 				't_history_chat_logs' => array(
