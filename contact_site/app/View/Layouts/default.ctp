@@ -116,5 +116,6 @@ if( strcmp($this->name, 'Login') !== 0 ) {
     </script>
   </section>
 <?php endif; ?>
+
 </body>
 </html>
