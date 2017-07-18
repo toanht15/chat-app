@@ -204,7 +204,7 @@ $(document).ready(function(){
     singleDatePicker: true,
   },
   function(start, end, label) {
-    searchInfo = $("select[name=dateFor.mat]").val();
+    searchInfo = $("select[name=dateFormat]").val();
     $('input[name="datefilter"]').val(start.format('YYYY/MM/DD'));
     if(searchInfo == timeType.timely){
       document.getElementById('THistoryForChatForm').submit();
