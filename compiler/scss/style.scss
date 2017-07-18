@@ -4859,6 +4859,40 @@ ul.naviBtn {
       min-width: 50px;
     }
 
+    #statistics_table_wrapper {
+      box-sizing: content-box!important;
+
+      div.DTFC_LeftHeadWrapper {
+        border-right: solid 1px #000000;
+      }
+
+      table.dataTable.no-footer {
+        border-bottom: none!important;
+      }
+
+      div.dataTables_scrollBody {
+        border-bottom: none!important;
+      }
+
+      div.DTFC_LeftBodyWrapper {
+        border-right: solid 1px #000000;
+      }
+
+      & tr {
+        th:nth-last-child(2) {
+          border-right: none !important;
+        }
+
+        th:last-child:not(.thMinWidth) {
+          border-left: solid 1px #000000!important;
+        }
+
+        td:last-child:not(.tooltip)  {
+          border-left: solid 1px #000000!important;
+        }
+      }
+    }
+
     .questionBalloon.questionBalloonPosition6 {
         float: right;
         margin-right: 89px;
