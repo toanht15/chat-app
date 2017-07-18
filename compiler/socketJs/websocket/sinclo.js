@@ -1,6 +1,6 @@
 (function(jquery){
   // -----------------------------------------------------------------------------
-  //  websocket通信
+  //   websocket通信
   // -----------------------------------------------------------------------------
 
   var $ = jquery;
@@ -770,7 +770,7 @@
           cn = "sinclo_se";
           elm.value = "";
         }
-        if (obj.messageType === sinclo.chatApi.messageType.auto) {
+        if (obj.messageType === sinclo.chatApi.messageType.auto || obj.messageType === sinclo.chatApi.messageType.autoSpeech) {
           return false;
         }
 
@@ -788,8 +788,10 @@
           return false;
         }
         this.chatApi.createMessageUnread(cn, obj.chatMessage, userName);
+        //sinclo.trigger.fireChatEnterEvent(obj.chatMessage);
         // オートメッセージの内容をDBに保存し、オブジェクトから削除する
         if (!sinclo.chatApi.saveFlg) {
+          console.log("EMIT sendAutoChat");
           emit("sendAutoChat", {messageList: sinclo.chatApi.autoMessages});
           sinclo.chatApi.autoMessages = [];
           sinclo.chatApi.saveFlg = true;
@@ -976,6 +978,7 @@
             company: 2,
             auto: 3,
             sorry: 4,
+            autoSpeech: 5,
             start: 98,
             end: 99
         },
@@ -1231,15 +1234,22 @@
                 messageRequestFlg = flg;
               }
 
-              setTimeout(function(){
+              sinclo.trigger.judge.matchAllSpeechContent(value, function(result){
+                if(result) {
+                  storage.s.set('chatAct', false); // オートメッセージを表示しない
+                }
+
+                setTimeout(function(){
                   emit('sendChat', {
-                  historyId: sinclo.chatApi.historyId,
-                  chatMessage:value,
-                  mUserId: null,
-                  messageType: sinclo.chatApi.messageType.customer,
-                  messageRequestFlg: messageRequestFlg
+                    historyId: sinclo.chatApi.historyId,
+                    chatMessage:value,
+                    mUserId: null,
+                    messageType: sinclo.chatApi.messageType.customer,
+                    messageRequestFlg: messageRequestFlg,
+                    notifyToCompany: !result
                   });
                 }, 100);
+              });
 
               storage.s.set('chatEmit', true) ;
             }
@@ -1326,29 +1336,60 @@
                     titleElm.appendChild(em);
                 }
             }
+        },
+        KEY_TRIGGERED_AUTO_SPEECH: "triggeredAutoSpeech",
+        // 発動した発言内容を保存
+        saveAutoSpeechTriggered: function(triggerType, id) {
+          console.log("saveAutoSpeechTriggered triggerType : " + triggerType + " id : " + id);
+          if(triggerType === "1") {
+            var array = storage.s.get(this.KEY_TRIGGERED_AUTO_SPEECH) ? JSON.parse(storage.s.get(this.KEY_TRIGGERED_AUTO_SPEECH)) : [];
+            array.push(id);
+            storage.s.set(this.KEY_TRIGGERED_AUTO_SPEECH, JSON.stringify(array));
+          } else {
+            console.log("triggerType = 2");
+          }
+        },
+        // 発動した発言内容を保存
+        triggeredAutoSpeechExists: function(id) {
+          var array = storage.s.get(this.KEY_TRIGGERED_AUTO_SPEECH) ? JSON.parse(storage.s.get(this.KEY_TRIGGERED_AUTO_SPEECH)) : [];
+          return array.indexOf(id) >= 0;
         }
     },
     trigger: {
         flg: false,
         nowSaving: false,
+        timerTriggered: false,
+
         init: function(){
           console.log("sinclo.trigger.init");
             if ( !('messages' in window.sincloInfo) || (('messages' in window.sincloInfo) && typeof(window.sincloInfo.messages) !== "object" ) ) return false;
             this.flg = true;
             var messages = window.sincloInfo.messages;
+            console.log("MESSAGES : " + JSON.stringify(messages));
             var andFunc = function(key, ret){
+                console.log("AND FUNC key: " + key + " ret: " + ret);
                 var message = messages[key];
                 if (typeof(ret) === 'number') {
                     setTimeout(function(){
                         sinclo.trigger.setAction(message.id, message.action_type, message.activity);
                     }, ret);
+                } else if(ret && typeof(ret) === 'object') {
+                    setTimeout(function(){
+                        console.log("AUTO MESSAGE TIMER TRIGGERED");
+                        sinclo.trigger.timerTriggered = true;
+                    }, ret.delay);
                 }
             };
             var orFunc = function(key, ret){
                 var message = messages[key];
                 if (typeof(ret) === 'number') {
                     setTimeout(function(){
-                        sinclo.trigger.setAction(message.id, message.action_type, message.activity);
+                      if(Object.keys(message.activity.conditions).indexOf("7") > 0) {
+                        console.log("orFunc saveAutoSpeechTriggered");
+                        //ここに入るオートメッセージは他の条件で発動するため、発言内容条件で動作しないようフラグを立てる
+                        sinclo.chatApi.saveAutoSpeechTriggered(message.activity.conditions["7"][0].speechTriggerCond, key);
+                      }
+                      sinclo.trigger.setAction(message.id, message.action_type, message.activity);
                     }, ret);
                 }
             };
@@ -1368,6 +1409,7 @@
          * return 即時実行(0)、タイマー実行(ミリ秒)、非実行(null)
          */
         setAndSetting: function(key, setting, callback) {
+          console.log("setAndSettings key : " + key + " setting: " + setting);
             var keys = Object.keys(setting.conditions);
             var ret = 0;
             for(var i = 0; keys.length > i; i++){
@@ -1411,9 +1453,37 @@
                             if (err) ret = null;
                         });
                         break;
-                    default:
-                        ret = null;
+                    case 7: // 発言内容
+                        if(ret !== null) { // その他の設定で無効の場合は何もしない
+                          this.judge.setMatchSpeechContent(window.sincloInfo.messages[key].id, conditions[0],function(err, timer){
+                            console.log("【AND】setMatchSpeechContent triggered!! : " + JSON.stringify(conditions[0]));
+                            sinclo.chatApi.saveAutoSpeechTriggered(conditions[0].speechTriggerCond, window.sincloInfo.messages[key].id);
+                            if (err) {
+                              ret = null;
+                              return;
+                            }
+                            ret = Number(conditions[0].triggerTimeSec) * 1000;
+                            callback(key, ret);
+                          });
+                          ret = {
+                            delay: ret
+                          }
+                        }
                         break;
+                  case 8: // 最初に訪れたページ
+                    this.judge.pageOfFirst(conditions[0], function(err, timer){
+                      if (err) ret = null;
+                    });
+                    break;
+                  case 9: // 前のページ
+                    this.judge.pageOfPrevious(conditions[0], function(err, timer){
+                      if (err) ret = null;
+                    });
+                    break;
+                  default:
+                    console.error("automessage condition is not defined : " + Number(keys[i]));
+                    ret = null;
+                    break;
                 }
                 if (ret === null) break;
             }
@@ -1423,11 +1493,13 @@
          * return 即時実行(0)、タイマー実行(ミリ秒)、非実行(null)
          */
         setOrSetting: function(key, setting, callback) {
+          console.log("setOrSetting key : " + key + " setting : " + JSON.stringify(setting));
             var keys = Object.keys(setting.conditions);
             var ret = null;
             for(var i = 0; keys.length > i; i++){
                 var conditions = setting.conditions[keys[i]], u;
                 var last = (keys.length === Number(i+1)) ? true : false;
+                var autoSpeechCondition = {};
                 switch(Number(keys[i])) {
                     case 1: // 滞在時間
                         for (u = 0; u < conditions.length; u++) {
@@ -1483,6 +1555,40 @@
                           });
                         }
                         break;
+                    case 7: // 発言内容 FIXME 発動済みであれば除外する
+                      for (u = 0; u < conditions.length; u++) {
+                        console.log("DEBUG : conditions => " + JSON.stringify(conditions));
+                        var condition = autoSpeechCondition = conditions[u];
+
+                        this.judge.setMatchSpeechContent(window.sincloInfo.messages[key].id, condition, function (err, timer) {
+                          console.log("【OR】setMatchSpeechContent triggered!! : " + JSON.stringify(condition));
+                          sinclo.chatApi.saveAutoSpeechTriggered(condition.speechTriggerCond, window.sincloInfo.messages[key].id);
+                          if (err) {
+                            return;
+                          }
+                          ret = Number(condition.triggerTimeSec) * 1000;
+                          callback(key, ret);
+                        });
+                      }
+                      break;
+                    case 8: // 最初に訪れたページ
+                      for (u = 0; u < conditions.length; u++) {
+                        this.judge.pageOfFirst(conditions[u], function (err, timer) {
+                          if (!err) {
+                            ret = 0;
+                          }
+                        });
+                      }
+                      break;
+                    case 9: // 前のページ
+                      for (u = 0; u < conditions.length; u++) {
+                        this.judge.pageOfPrevious(conditions[u], function (err, timer) {
+                          if (!err) {
+                            ret = 0;
+                          }
+                        });
+                      }
+                      break;
                     default:
                         break;
                 }
@@ -1497,21 +1603,37 @@
               sincloInfo.widgetDisplay = true;
               common.widgetHandler.show();
             }
+
+            // 発言内容によるオートメッセージかチェックする
+            var isSpeechContent = false;
+            for(var key in cond.conditions) {
+              console.log("DEBUG => key : " + key);
+              if(key === "7") { // FIXME マジックナンバー
+                isSpeechContent = true;
+              }
+            }
+
+            console.log("IS SPEECH CONTENT : " + isSpeechContent);
+
             var data = {
                 chatId:id,
-                message:cond.message
+                message:cond.message,
+                isAutoSpeech: isSpeechContent,
+
             };
 
             if ( sinclo.chatApi.saveFlg ) {
                 // オートメッセージの内容をDBに保存し、オブジェクトから削除する
+              console.log("EMIT sendAutoChat::setAutoMessage");
                 emit("sendAutoChat", {messageList: [data]});
             }
             else {
-              debugger;
+              console.log("EMIT sendAutoChatMessage::setAutoMessage");
                 emit('sendAutoChatMessage', data);
             }
         },
         setAction: function(id, type, cond){
+            console.log("setAction id : " + id + " type : " + type + " cond : " + JSON.stringify(cond));
             // TODO 今のところはメッセージ送信のみ、拡張予定
             var chatActFlg = storage.s.get('chatAct');
             if ( !check.isset(chatActFlg) ) {
@@ -1544,6 +1666,9 @@
 
             }
         },
+        fireChatEnterEvent: function(msg) {
+          $(this).trigger('chatEntered',msg);
+        },
         common: {
             /**
              * @params int type 比較種別
@@ -1572,22 +1697,29 @@
              * @return bool
              */
             pregMatch: function(type, a, b) {
+              console.log("pregMatch type: " + type + " a: " + a + " b: " + b);
+                var result = false;
                 var preg = "";
                 switch(Number(type)) {
                     case 1: // 一致
                       preg = new RegExp("^" + a + "$");
-                      return preg.test(b);
+                      result = preg.test(b);
+                      break;
                     case 2: // 部分一致
                       preg = new RegExp(a);
-                      return preg.test(b);
+                      result = preg.test(b);
+                      break;
                     case 3: // 不一致
                       preg = new RegExp("^" + a + "$");
-                      return !preg.test(b);
+                      result = !preg.test(b);
+                      break;
                 }
-                return false;
+                console.log("result : " + result);
+                return result;
             }
         },
         judge: {
+            speechContentRegEx: [],
             stayTime: function(cond, callback){
                 if (!('stayTimeCheckType' in cond) || !('stayTimeType' in cond) || !('stayTimeRange' in cond )) return callback(true, null);
                 var time = 0;
@@ -1726,6 +1858,63 @@
                 else {
                     callback(true, null);
                 }
+            },
+            setMatchSpeechContent: function(id, cond, callback) {
+              if (!('speechContent' in cond) || !('speechContentCond' in cond )) return false;
+              this.speechContentRegEx.push({
+                id:  id,
+                type: cond.speechContentCond,
+                text: cond.speechContent,
+                delay: cond.triggerTimeSec,
+                callback: callback
+              });
+            },
+            matchAllSpeechContent: function(msg, callback) {
+              // FIXME マッチした処理が２回以上の場合、チャット送信処理も２回以上処理される
+              var matched = false;
+              if(this.speechContentRegEx.length > 0) {
+                for (var index in this.speechContentRegEx) {
+                  if(sinclo.chatApi.triggeredAutoSpeechExists(this.speechContentRegEx[index].id)) {
+                    console.log("triggeredAutoSpeechExists. Ignored. id : " + this.speechContentRegEx[index].id);
+                    continue;
+                  }
+                  console.log("matching judge + " + this.speechContentRegEx[index]);
+                  if(sinclo.trigger.common.pregMatch(this.speechContentRegEx[index].type, this.speechContentRegEx[index].text, msg)) {
+                    this.speechContentRegEx[index].callback(false, this.speechContentRegEx[index].delay);
+                    matched = true;
+                  }
+                }
+                callback(matched);
+              } else {
+                //発言内容設定が無いのでそのままtrueを返す
+                callback(matched);
+              }
+            },
+            pageOfFirst: function(cond, callback){
+              if (!('keyword' in cond) || !('targetName' in cond ) || !('stayPageCond' in cond )) return callback(true, null);
+              var target = ( Number(cond.targetName) === 1 ) ? userInfo.prev[0].title : userInfo.prev[0].url;
+              if (sinclo.trigger.common.pregMatch(cond.stayPageCond, cond.keyword, target)) {
+                callback(false, 0);
+              }
+              else {
+                callback(true, null);
+              }
+            },
+            pageOfPrevious: function(cond, callback){
+              if (!('keyword' in cond) || !('targetName' in cond ) || !('stayPageCond' in cond )) return callback(true, null);
+              var previousLength = userInfo.prev.length-2;
+              if(previousLength < 0) {
+                // 前のページ情報が存在しないため実行しない
+                callback(false, null);
+                return;
+              }
+              var target = ( Number(cond.targetName) === 1 ) ? userInfo.prev[previousLength].title : userInfo.prev[previousLength].url;
+              if (sinclo.trigger.common.pregMatch(cond.stayPageCond, cond.keyword, target)) {
+                callback(false, 0);
+              }
+              else {
+                callback(true, null);
+              }
             }
         }
     }

@@ -35,6 +35,7 @@ define('C_COMPANY_USE_SYNCLO', 'synclo'); // 画面同期
 define('C_COMPANY_USE_CHAT', 'chat'); // オペレーターが待機中の時のみ表示する
 define('C_COMPANY_USE_DOCUMENT', 'document'); // オペレーターが待機中の時のみ表示する
 define('C_COMPANY_USE_VIDEO_CHAT', 'videochat'); // ビデオチャット
+define('C_COMPANY_CHAT_BASIC_PLAN', 'chat_basic');
 
 // 簡易メッセージ入力機能種別
 define('C_DICTIONARY_TYPE_COMP', 1); // 企業で使用する
@@ -114,6 +115,9 @@ define('C_AUTO_TRIGGER_STAY_PAGE',  3); // ページ
 define('C_AUTO_TRIGGER_DAY_TIME',   4); // 曜日・時間
 define('C_AUTO_TRIGGER_REFERRER',   5); // 参照元URL（リファラー）
 define('C_AUTO_TRIGGER_SEARCH_KEY', 6); // 検索キーワード
+define('C_AUTO_TRIGGER_SPEECH_CONTENT', 7); // 発言内容
+define('C_AUTO_TRIGGER_STAY_PAGE_OF_FIRST', 8); // 最初の滞在ページ
+define('C_AUTO_TRIGGER_STAY_PAGE_OF_PREVIOUS', 9); // 前のページ
 
 // オートメッセージ機能－アクション種別コード
 define('C_AUTO_ACTION_TYPE_SENDMESSAGE', 1); // チャットメッセージを送る
@@ -268,6 +272,18 @@ $config['outMessageTriggerList'] = [
             "visitCntCond" => 1
         ]
     ],
+    // 発言内容
+    C_AUTO_TRIGGER_SPEECH_CONTENT => [
+        'label' => '発言内容',
+        'createLimit' => [C_COINCIDENT => 1, C_SOME_EITHER => 1],
+        'key' => 'speech_content',
+        'default' => [
+            "speechContent" => "",
+            "speechContentCond" => "1",
+            "triggerTimeSec" => 3,
+            "speechTriggerCond" => "1"
+        ]
+    ],
     // ページ
     C_AUTO_TRIGGER_STAY_PAGE => [
         'label' => 'ページ',
@@ -313,6 +329,28 @@ $config['outMessageTriggerList'] = [
            "keyword" => "",
            "searchCond" => "1"
         ]
+    ],
+    // 最初に訪れたページ
+    C_AUTO_TRIGGER_STAY_PAGE_OF_FIRST => [
+      'label' => '最初に訪れたページ',
+      'createLimit' => [C_COINCIDENT => 1, C_SOME_EITHER => 1],
+      'key' => 'stay_page_of_first',
+      'default' => [
+          "keyword" => "",
+          "targetName" => 1,
+          "stayPageCond" => 2
+      ]
+    ],
+    // 前のページ
+    C_AUTO_TRIGGER_STAY_PAGE_OF_PREVIOUS => [
+      'label' => '前のページ',
+      'createLimit' => [C_COINCIDENT => 1, C_SOME_EITHER => 1],
+      'key' => 'stay_page_of_previous',
+      'default' => [
+         "keyword" => "",
+         "targetName" => 1,
+         "stayPageCond" => 2
+      ]
     ]
 ];
 

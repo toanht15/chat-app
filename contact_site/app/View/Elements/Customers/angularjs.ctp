@@ -59,6 +59,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         company: 2,
         auto: 3,
         sorry: 4,
+        autoSpeech: 5,
         start: 98,
         end: 99,
       },
@@ -203,6 +204,13 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             chatId: monitor.chatUnreadId
           });
         }
+      },
+      forceReadMessage: function(monitor){
+        // メッセージを既読にする
+        emit('isReadChatMessage', {
+          tabId: monitor.tabId,
+          chatId: monitor.chatUnreadId
+        });
       }
   };
 
@@ -1022,7 +1030,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         content = "<span class='cName'>" + chatName + "</span>";
         content += $scope.createTextOfMessage(chat, message);
       }
-      else if ( type === chatApi.messageType.auto || type === chatApi.messageType.sorry) {
+      else if ( type === chatApi.messageType.auto || type === chatApi.messageType.autoSpeech || type === chatApi.messageType.sorry) {
         cn = "sinclo_auto";
         content = "<span class='cName'>自動応答</span>";
         content += $scope.createTextOfMessage(chat, message);
@@ -1054,7 +1062,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       else if (Number(type) === chatApi.messageType.company) {
         cn = "sinclo_se";
       }
-      else if (Number(type) === chatApi.messageType.auto) {
+      else if (Number(type) === chatApi.messageType.auto || Number(type) === chatApi.messageType.autoSpeech) {
         cn = "sinclo_auto";
       }
       return cn;
@@ -1653,9 +1661,14 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         }
 
         // 未読数加算（自分が対応していないとき）
-        $scope.monitorList[obj.tabId].chatUnreadCnt++;
-        $scope.monitorList[obj.tabId].chatUnreadId = obj.chatId;
-        $scope.ngChatApi.notification($scope.monitorList[obj.tabId]);
+        if(obj.hasOwnProperty('notifyToCompany') && obj.notifyToCompany) {
+          $scope.monitorList[obj.tabId].chatUnreadCnt++;
+          $scope.monitorList[obj.tabId].chatUnreadId = obj.chatId;
+          $scope.ngChatApi.notification($scope.monitorList[obj.tabId]);
+        } else {
+          // 通知しないときは既読状態にする
+          chatApi.forceReadMessage($scope.monitorList[obj.tabId]);
+        }
 
         // 既読にする(対象のタブを開いている、且つ自分が対応しており、フォーカスが当たっているとき)
         if (  obj.tabId === chatApi.tabId && $scope.monitorList[obj.tabId].chat === myUserId && $("#sendMessage").is(":focus") ) {
