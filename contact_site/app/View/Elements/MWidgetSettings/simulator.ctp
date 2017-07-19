@@ -30,7 +30,7 @@
       #sincloBox div#miniTarget { overflow: hidden; transition: height 200ms linear; }
     <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
       #sincloBox ul#chatTalk { width: 100%; height: 194px; padding: 5px; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0}
-      #sincloBox ul#chatTalk li { border-radius: 5px; background-color: #FFF; margin: 5px 0; padding: 5px; font-size: 12px; border: 1px solid #C9C9C9; line-height: 1.8; white-space: pre; color: #5E614E; }
+      #sincloBox ul#chatTalk li { border-radius: 5px; background-color: #FFF; margin: 5px 0; padding: 5px; font-size: 12px; border: 1px solid #C9C9C9; line-height: 1.8; white-space: pre; color: #333333; }
       #sincloBox ul#chatTalk li.chat_right { border-bottom-right-radius: 0; margin-left: 10px }
       #sincloBox ul#chatTalk li.chat_left { border-bottom-left-radius: 0; margin-right: 10px }
       #sincloBox ul#chatTalk li span.cName { display: block; color: {{main_color}}!important; font-weight: bold; font-size: 13px }
@@ -53,7 +53,11 @@
         #sincloBox section#callTab #telContent .tblBlock { text-align: center; margin: 0 auto; width: 240px; display: table; flex-direction: column; align-content: center; justify-content: center; }
       <?php endif; ?>
       #sincloBox section#callTab #telContent span { word-wrap: break-word; word-break: break-all; font-size: 11px; line-height: 1.5!important; color: #6B6B6B; white-space: pre-wrap; display: table-cell; vertical-align: middle; text-align: center }
+      <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ): ?>
+      #sincloBox section#callTab #accessIdArea { height: 50px; display: block; margin: 18px auto; width: 80%; padding: 7px;  color: #FFF; background-color: rgb(188, 188, 188); font-size: 25px; font-weight: bold; text-align: center; border-radius: 15px }
+      <?php else: ?>
       #sincloBox section#callTab #accessIdArea { height: 50px; display: block; margin: 10px auto; width: 80%; padding: 7px;  color: #FFF; background-color: rgb(188, 188, 188); font-size: 25px; font-weight: bold; text-align: center; border-radius: 15px }
+      <?php endif; ?>
     <?php endif; ?>
     <?php if ( $coreSettings[C_COMPANY_USE_CHAT] && ($coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT])) ) :?>
       #sincloBox section#navigation { border-width: 0 1px; height: 40px; position: relative; display: block; }
@@ -110,6 +114,9 @@
           <textarea name="sincloChat" id="sincloChatMessage" placeholder="メッセージを入力してください{{chat_area_placeholder_pc}}"></textarea>
           <a id="sincloChatSendBtn" class="notSelect"><span>送信</span></a>
         </div>
+      <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT]) ) :?>
+        <span id="sincloAccessInfo" style="padding-left: 0.5em; padding-bottom: 0.4em;">ウェブ接客コード：●●●●</span>
+        <?php endif; ?>
       </section>
     <?php endif; ?>
     <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT]) ) :?>
@@ -159,7 +166,7 @@
       #sincloBox section.noDisplay { display: none }
       #sincloBox div#miniTarget { overflow: hidden; transition: height 200ms linear; }
       #sincloBox ul#chatTalk { width: 100%; height: 100px; padding: 5px; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0}
-      #sincloBox ul#chatTalk li { border-radius: 5px; background-color: #FFF; margin: 5px 0; padding: 3px; font-size: 11px; border: 1px solid #C9C9C9; line-height: 1.8; white-space: pre; color: #5E614E; }
+      #sincloBox ul#chatTalk li { border-radius: 5px; background-color: #FFF; margin: 5px 0; padding: 3px; font-size: 11px; border: 1px solid #C9C9C9; line-height: 1.8; white-space: pre; color: #333333; }
       #sincloBox ul#chatTalk li.chat_right { border-bottom-right-radius: 0; margin-left: 10px }
       #sincloBox ul#chatTalk li.chat_left { border-bottom-left-radius: 0; margin-right: 10px }
       #sincloBox ul#chatTalk li span.cName { display: block; color: {{main_color}}!important; font-weight: bold; font-size: 12px }
