@@ -29,6 +29,11 @@
       return false;
     };
 
+    // 暫定：beforeunloadのタイミングでwindowCloseを呼び出す。
+    $(window).on('beforeunload', function(){
+      windowClose();
+    });
+
 // TODO 消費者と画面サイズを合わせるためのコードと、
 // 企業側がリサイズ行為を行った際に修正するためのコードの
 // 切り分けを考える
