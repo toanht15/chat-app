@@ -354,10 +354,6 @@
       </div>
     <?php endif; ?>
     <div class="bottom">
-      <li onclick="location.reload(true); return false;">
-        <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_reconnect.png" width="40" height="40" alt=""></span>
-        <p>再接続</p>
-      </li>
       <li onclick="windowClose()">
         <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_disconnect.png" width="40" height="40" alt=""></span>
         <p>終了</p>
@@ -445,6 +441,7 @@
     }
 
     var StorageUtil = {
+      saveDir: "laInfo",
       key:{
         storageKey:  "laSession",
         sessionId: "sessionId",
@@ -453,12 +450,12 @@
       },
 
       _getAll: function() {
-        var json = localStorage.getItem(this.key);
+        var json = localStorage.getItem(this.saveDir);
         return json ? JSON.parse(json) : {};
       },
 
       _save: function(obj) {
-        localStorage.setItem(this.key, JSON.stringify(obj));
+        localStorage.setItem(this.saveDir, JSON.stringify(obj));
       },
 
       _get: function(key) {
