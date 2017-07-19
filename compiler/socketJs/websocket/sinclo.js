@@ -452,7 +452,7 @@
       var title = location.host + 'の内容';
       var content = location.host + 'が閲覧ページへのアクセスを求めています。<br>許可しますか';
       popup.ok = function() {
-        userInfo.connectToken = obj.connectToken;
+        userInfo.coBrowseConnectToken = obj.connectToken;
         storage.s.set('coBrowseConnectToken', obj.connectToken);
         laUtil.initAndStart().then(function() {
           // shortcode取得
@@ -463,7 +463,7 @@
               userId: userInfo.userId,
               tabId: userInfo.tabId,
               url: location.href,
-              connectToken: userInfo.connectToken,
+              connectToken: userInfo.coBrowseConnectToken,
               shortcode: laUtil.shortcode
             };
             emit('readyToCoBrowse', params);
