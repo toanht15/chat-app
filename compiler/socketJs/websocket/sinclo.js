@@ -1500,14 +1500,16 @@
                         break;
                     case 7: // 発言内容
                         if(ret !== null) { // その他の設定で無効の場合は何もしない
-                          this.judge.setMatchSpeechContent(1, window.sincloInfo.messages[key].id, conditions[0],function(err, timer){
-                            console.log("【AND】setMatchSpeechContent triggered!! : " + JSON.stringify(conditions[0]));
+                          // あとで実行する関数のため、第三引数は値渡しで対応する必要がある
+                          var cloneCondition = JSON.parse(JSON.stringify(conditions[0]));
+                          this.judge.setMatchSpeechContent(1, window.sincloInfo.messages[key].id, cloneCondition,function(err, timer){
+                            console.log("【AND】setMatchSpeechContent triggered!! : " + JSON.stringify(cloneCondition));
                             if (err) {
                               ret = null;
                               return;
                             }
-                            sinclo.chatApi.saveAutoSpeechTriggered(conditions[0].speechTriggerCond, window.sincloInfo.messages[key].id);
-                            ret = Number(conditions[0].triggerTimeSec) * 1000;
+                            sinclo.chatApi.saveAutoSpeechTriggered(cloneCondition.speechTriggerCond, window.sincloInfo.messages[key].id);
+                            ret = Number(cloneCondition.triggerTimeSec) * 1000;
                             callback(key, ret);
                           });
                           ret = {
@@ -1602,7 +1604,7 @@
                     case 7: // 発言内容
                       for (u = 0; u < conditions.length; u++) {
                         console.log("DEBUG : conditions => " + JSON.stringify(conditions));
-                        var condition = conditions[u];
+                        var condition = JSON.parse(JSON.stringify(conditions[u])); // 参照先が変わってもいいように値渡し
 
                         this.judge.setMatchSpeechContent(2, window.sincloInfo.messages[key].id, condition, function (err, timer) {
                           console.log("【OR】setMatchSpeechContent triggered!! : " + JSON.stringify(condition));
