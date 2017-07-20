@@ -228,9 +228,9 @@
           </div>
         </td>
         <?php for ($i = $start; $i <= $end; $i++) { ?>
-          <td><?php echo $data['responseDatas']['responseRate'][$type.'-'.sprintf("%02d",$i)] ?></td>
+          <td><?php echo $data['responseDatas']['responseRate'][$type.'-'.sprintf("%02d",$i)].' %' ?></td>
         <?php } ?>
-        <td><?php echo $data['responseDatas']['allResponseRate'] ?></td>
+        <td><?php echo $data['responseDatas']['allResponseRate'].' %' ?></td>
       </tr>
       <tr>
         <td id = 'chatAutomaticResponseRateLabel' class = 'tooltip'>自動返信応対率
@@ -244,9 +244,9 @@
           </div>
         </td>
         <?php for ($i = $start; $i <= $end; $i++) { ?>
-          <td><?php echo $data['automaticResponseData']['automaticResponseRate'][$type.'-'.sprintf("%02d",$i)] ?></td>
+          <td><?php echo $data['automaticResponseData']['automaticResponseRate'][$type.'-'.sprintf("%02d",$i)].' %' ?></td>
         <?php } ?>
-        <td><?php echo $data['automaticResponseData']['allAutomaticResponseRate'] ?></td>
+        <td><?php echo $data['automaticResponseData']['allAutomaticResponseRate'].' %' ?></td>
       </tr>
       <tr>
         <td id = 'chatEffectivenessResponseRateLabel' class = 'tooltip'>チャット有効率
@@ -260,9 +260,9 @@
           </div>
         </td>
         <?php for ($i = $start; $i <= $end; $i++) { ?>
-          <td><?php echo $data['coherentDatas']['effectivenessRate'][$type.'-'.sprintf("%02d",$i)] ?></td>
+          <td><?php echo $data['coherentDatas']['effectivenessRate'][$type.'-'.sprintf("%02d",$i)].' %' ?></td>
         <?php } ?>
-        <td><?php echo $data['coherentDatas']['allEffectivenessRate'] ?></td>
+        <td><?php echo $data['coherentDatas']['allEffectivenessRate'].' %' ?></td>
       </tr>
 
       <?php }
@@ -423,9 +423,9 @@
              </div>
           </td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
-            <td><?php echo $data['responseDatas']['responseRate'][sprintf("%02d",$i).':00'] ?></td>
+            <td><?php echo $data['responseDatas']['responseRate'][sprintf("%02d",$i).':00'].' %' ?></td>
           <?php } ?>
-          <td><?php echo $data['responseDatas']['allResponseRate'] ?></td>
+          <td><?php echo $data['responseDatas']['allResponseRate'].' %'?></td>
         </tr>
         <tr>
           <td id = 'chatAutomaticResponseRateLabel' class = 'tooltip'>自動返信応対率
@@ -439,9 +439,9 @@
             </div>
           </td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
-            <td><?php echo $data['automaticResponseData']['automaticResponseRate'][sprintf("%02d",$i).':00'] ?></td>
+            <td><?php echo $data['automaticResponseData']['automaticResponseRate'][sprintf("%02d",$i).':00'].' %' ?></td>
           <?php } ?>
-          <td><?php echo $data['automaticResponseData']['allAutomaticResponseRate'] ?></td>
+          <td><?php echo $data['automaticResponseData']['allAutomaticResponseRate'].' %' ?></td>
         </tr>
         <tr>
           <td id = 'chatEffectivenessResponseRateLabel' class = 'tooltip'>チャット有効率
@@ -455,9 +455,9 @@
             </div>
           </td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
-            <td><?php echo $data['coherentDatas']['effectivenessRate'][sprintf("%02d",$i).':00'] ?></td>
+            <td><?php echo $data['coherentDatas']['effectivenessRate'][sprintf("%02d",$i).':00'].' %' ?></td>
           <?php } ?>
-          <td><?php echo $data['coherentDatas']['allEffectivenessRate'] ?></td>
+          <td><?php echo $data['coherentDatas']['allEffectivenessRate'].' %' ?></td>
         </tr>
       <?php } ?>
       </tbody>
