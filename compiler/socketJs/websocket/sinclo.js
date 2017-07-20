@@ -1918,7 +1918,7 @@
             matchAllSpeechContent: function(msg, callback) {
               // FIXME マッチした処理が２回以上の場合、チャット送信処理も２回以上処理される
               var matched = false;
-              if(this.speechContentRegEx.length > 0 || !check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false") {
+              if((!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false") && this.speechContentRegEx.length > 0) {
                 for (var index in this.speechContentRegEx) {
                   if(sinclo.chatApi.triggeredAutoSpeechExists(this.speechContentRegEx[index].id)) {
                     console.log("triggeredAutoSpeechExists. Ignored. id : " + this.speechContentRegEx[index].id);
