@@ -1502,11 +1502,11 @@
                         if(ret !== null) { // その他の設定で無効の場合は何もしない
                           this.judge.setMatchSpeechContent(1, window.sincloInfo.messages[key].id, conditions[0],function(err, timer){
                             console.log("【AND】setMatchSpeechContent triggered!! : " + JSON.stringify(conditions[0]));
-                            sinclo.chatApi.saveAutoSpeechTriggered(conditions[0].speechTriggerCond, window.sincloInfo.messages[key].id);
                             if (err) {
                               ret = null;
                               return;
                             }
+                            sinclo.chatApi.saveAutoSpeechTriggered(conditions[0].speechTriggerCond, window.sincloInfo.messages[key].id);
                             ret = Number(conditions[0].triggerTimeSec) * 1000;
                             callback(key, ret);
                           });
@@ -1606,10 +1606,10 @@
 
                         this.judge.setMatchSpeechContent(2, window.sincloInfo.messages[key].id, condition, function (err, timer) {
                           console.log("【OR】setMatchSpeechContent triggered!! : " + JSON.stringify(condition));
-                          sinclo.chatApi.saveAutoSpeechTriggered(condition.speechTriggerCond, window.sincloInfo.messages[key].id);
                           if (err) {
                             return;
                           }
+                          sinclo.chatApi.saveAutoSpeechTriggered(condition.speechTriggerCond, window.sincloInfo.messages[key].id);
                           ret = Number(condition.triggerTimeSec) * 1000;
                           callback(7, condition, key, ret);
                         });
@@ -1918,7 +1918,7 @@
             matchAllSpeechContent: function(msg, callback) {
               // FIXME マッチした処理が２回以上の場合、チャット送信処理も２回以上処理される
               var matched = false;
-              if(this.speechContentRegEx.length > 0) {
+              if(this.speechContentRegEx.length > 0 || !check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false") {
                 for (var index in this.speechContentRegEx) {
                   if(sinclo.chatApi.triggeredAutoSpeechExists(this.speechContentRegEx[index].id)) {
                     console.log("triggeredAutoSpeechExists. Ignored. id : " + this.speechContentRegEx[index].id);
