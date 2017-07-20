@@ -530,10 +530,16 @@ io.sockets.on('connection', function (socket) {
             insertData.t_history_stay_logs_id = rows[0].id;
           }
           insertData.created = (('created' in d)) ? new Date(d.created) : new Date();
+
+
           // オートメッセージの場合は既読
           if (Number(insertData.message_type === 3) ) {
             insertData.message_read_flg = 1;
             insertData.message_request_flg = chatApi.cnst.requestFlg.noFlg;
+            insertData.message_distinction = d.messageDistinction;
+          } else if(Number(insertData.message_type)  === 1 && d.hasOwnProperty('notifyToCompany') && !d.notifyToCompany) {
+          // サイト訪問者からのチャットで通知しない場合は既読にする
+            insertData.message_read_flg = 1;
             insertData.message_distinction = d.messageDistinction;
           }
 
