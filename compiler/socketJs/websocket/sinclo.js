@@ -1373,7 +1373,7 @@
     trigger: {
         flg: false,
         nowSaving: false,
-        timerTriggered: false,
+        timerTriggeredList: {},
         orTriggeredId: [],
         init: function(){
           console.log("sinclo.trigger.init");
@@ -1389,9 +1389,10 @@
                         sinclo.trigger.setAction(message.id, message.action_type, message.activity);
                     }, ret);
                 } else if(ret && typeof(ret) === 'object') {
+                    sinclo.trigger.timerTriggeredList[message.id] = false;
                     setTimeout(function(){
                         console.log("AUTO MESSAGE TIMER TRIGGERED");
-                        sinclo.trigger.timerTriggered = true;
+                        sinclo.trigger.timerTriggeredList[message.id] = true;
                     }, ret.delay);
                 }
             };
@@ -1921,6 +1922,11 @@
                 for (var index in this.speechContentRegEx) {
                   if(sinclo.chatApi.triggeredAutoSpeechExists(this.speechContentRegEx[index].id)) {
                     console.log("triggeredAutoSpeechExists. Ignored. id : " + this.speechContentRegEx[index].id);
+                    continue;
+                  }
+                  if(sinclo.trigger.timerTriggeredList.hasOwnProperty(this.speechContentRegEx[index].id)
+                    && !sinclo.trigger.timerTriggeredList[this.speechContentRegEx[index].id]) {
+                    console.log("timer is not triggered. Ignored. id : " + this.speechContentRegEx[index].id);
                     continue;
                   }
                   console.log("matching judge + " + this.speechContentRegEx[index]);
