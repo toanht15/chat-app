@@ -1456,6 +1456,16 @@
         setAndSetting: function(key, setting, callback) {
           console.log("setAndSettings key : " + key + " setting: " + setting);
             var keys = Object.keys(setting.conditions);
+            // 発言内容条件を一番最後にする
+            var arrayForSort = ["1","2","3","4","5","6","8","9","7"];
+            var tmpKey = [];
+            arrayForSort.forEach(function(element, index, array ){
+                if(keys.indexOf(element) >= 0) {
+                  tmpKey.push(element);
+                }
+            });
+            console.log("tmpKey : " + JSON.stringify(tmpKey));
+            keys = tmpKey;
             var ret = 0;
             for(var i = 0; keys.length > i; i++){
 
