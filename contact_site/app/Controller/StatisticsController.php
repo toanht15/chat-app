@@ -163,8 +163,8 @@ class StatisticsController extends AppController {
   public function determineRange(){
     //企業がsincloを開始した日付
     $companyStartDate = strtotime($this->userInfo['MCompany']['created']);
-    $endDate = strtotime("+1 month", strtotime( "now" ));
-    $endYear = strtotime("+1 year", strtotime( "now" ));
+    $endDate = strtotime( "now" );
+    $endYear = strtotime( "now" );
     $companyRangeDate = [];
     $companyRangeYear = [];
 
