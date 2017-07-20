@@ -604,7 +604,7 @@ io.sockets.on('connection', function (socket) {
                 emit.toUser('sendChatResult', sendData, sId);
                 if (Number(insertData.message_type) === 3) return false;
                 // 書き込みが成功したら企業側に結果を返す
-                emit.toCompany('sendChatResult', {tabId: d.tabId, chatId: results.insertId, sort: fullDateTime(insertData.created), created: insertData.created, userId: insertData.m_users_id, messageType: d.messageType, ret: true, message: d.chatMessage, siteKey: d.siteKey}, d.siteKey);
+                emit.toCompany('sendChatResult', {tabId: d.tabId, chatId: results.insertId, sort: fullDateTime(insertData.created), created: insertData.created, userId: insertData.m_users_id, messageType: d.messageType, ret: true, message: d.chatMessage, siteKey: d.siteKey, notifyToCompany: d.notifyToCompany}, d.siteKey);
               }
 
               //オペレータリクエスト件数
