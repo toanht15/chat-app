@@ -530,10 +530,16 @@ io.sockets.on('connection', function (socket) {
             insertData.t_history_stay_logs_id = rows[0].id;
           }
           insertData.created = (('created' in d)) ? new Date(d.created) : new Date();
+
+
           // オートメッセージの場合は既読
           if (Number(insertData.message_type === 3) ) {
             insertData.message_read_flg = 1;
             insertData.message_request_flg = chatApi.cnst.requestFlg.noFlg;
+            insertData.message_distinction = d.messageDistinction;
+          } else if(Number(insertData.message_type)  === 1 && d.hasOwnProperty('notifyToCompany') && !d.notifyToCompany) {
+          // サイト訪問者からのチャットで通知しない場合は既読にする
+            insertData.message_read_flg = 1;
             insertData.message_distinction = d.messageDistinction;
           }
 
@@ -598,7 +604,7 @@ io.sockets.on('connection', function (socket) {
                 emit.toUser('sendChatResult', sendData, sId);
                 if (Number(insertData.message_type) === 3) return false;
                 // 書き込みが成功したら企業側に結果を返す
-                emit.toCompany('sendChatResult', {tabId: d.tabId, chatId: results.insertId, sort: fullDateTime(insertData.created), created: insertData.created, userId: insertData.m_users_id, messageType: d.messageType, ret: true, message: d.chatMessage, siteKey: d.siteKey}, d.siteKey);
+                emit.toCompany('sendChatResult', {tabId: d.tabId, chatId: results.insertId, sort: fullDateTime(insertData.created), created: insertData.created, userId: insertData.m_users_id, messageType: d.messageType, ret: true, message: d.chatMessage, siteKey: d.siteKey, notifyToCompany: d.notifyToCompany}, d.siteKey);
               }
 
               //オペレータリクエスト件数

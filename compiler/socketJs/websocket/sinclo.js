@@ -1373,8 +1373,8 @@
     trigger: {
         flg: false,
         nowSaving: false,
-        timerTriggered: false,
-
+        timerTriggeredList: {},
+        orTriggeredId: [],
         init: function(){
           console.log("sinclo.trigger.init");
             if ( !('messages' in window.sincloInfo) || (('messages' in window.sincloInfo) && typeof(window.sincloInfo.messages) !== "object" ) ) return false;
@@ -1389,20 +1389,50 @@
                         sinclo.trigger.setAction(message.id, message.action_type, message.activity);
                     }, ret);
                 } else if(ret && typeof(ret) === 'object') {
+                    sinclo.trigger.timerTriggeredList[message.id] = false;
                     setTimeout(function(){
                         console.log("AUTO MESSAGE TIMER TRIGGERED");
-                        sinclo.trigger.timerTriggered = true;
+                        sinclo.trigger.timerTriggeredList[message.id] = true;
                     }, ret.delay);
                 }
             };
-            var orFunc = function(key, ret){
+            var orFunc = function(conditionKey, condition, key, ret){
                 var message = messages[key];
                 if (typeof(ret) === 'number') {
-                    setTimeout(function(){
-                      if(Object.keys(message.activity.conditions).indexOf("7") >= 0) {
+                    setTimeout(function() {
+                      console.log("orFunc::setTimeout message : " + JSON.stringify(message) + "conditionKey : " + conditionKey + " condition : " + JSON.stringify(condition));
+
+                      // ・OR条件における発言内容発動条件
+                      // ・発言内容が先に発動した場合 => 後続で発動した条件は無視する
+                      // ・その他条件が先に発動した場合 => 発言内容が１回きりの場合、無視する
+                      // 　　　　　　　　　　　　　　　 => 発言内容が何度でもの場合、発動する
+                      var isAutoSpeechTrigger = conditionKey && condition && conditionKey === 7;
+                      var autoSpeechTriggerManyTimes = false;
+                      if(isAutoSpeechTrigger && condition.speechTriggerCond === "1") {
+                        autoSpeechTriggerManyTimes = false;
+                      } else if(isAutoSpeechTrigger && condition.speechTriggerCond === "2") {
+                        autoSpeechTriggerManyTimes = true;
+                      }
+
+                      if(!autoSpeechTriggerManyTimes && sinclo.trigger.orTriggeredId.indexOf(message.id) >= 0) {
+                        console.log("OR id: " + message.id + " was triggered. ignoreing");
+                        return;
+                      }
+
+                      console.log("OR id: " + message.id + " is triggered.");
+
+                      if(sinclo.trigger.orTriggeredId.indexOf(message.id) === -1) {
+                        sinclo.trigger.orTriggeredId.push(message.id);
+                      }
+
+                      if(!isAutoSpeechTrigger && Object.keys(message.activity.conditions).indexOf("7") >= 0) {
                         console.log("orFunc saveAutoSpeechTriggered");
                         //ここに入るオートメッセージは他の条件で発動するため、発言内容条件で動作しないようフラグを立てる
-                        sinclo.chatApi.saveAutoSpeechTriggered(message.activity.conditions["7"][0].speechTriggerCond, key);
+                        var autoSpeechCondition = message.activity.conditions["7"][0];
+                        console.log("autoSpeechCondition : " + JSON.stringify(autoSpeechCondition));
+                        if(autoSpeechCondition) {
+                          sinclo.chatApi.saveAutoSpeechTriggered(autoSpeechCondition.speechTriggerCond, message.id);
+                        }
                       }
                       sinclo.trigger.setAction(message.id, message.action_type, message.activity);
                     }, ret);
@@ -1470,13 +1500,13 @@
                         break;
                     case 7: // 発言内容
                         if(ret !== null) { // その他の設定で無効の場合は何もしない
-                          this.judge.setMatchSpeechContent(window.sincloInfo.messages[key].id, conditions[0],function(err, timer){
+                          this.judge.setMatchSpeechContent(1, window.sincloInfo.messages[key].id, conditions[0],function(err, timer){
                             console.log("【AND】setMatchSpeechContent triggered!! : " + JSON.stringify(conditions[0]));
-                            sinclo.chatApi.saveAutoSpeechTriggered(conditions[0].speechTriggerCond, window.sincloInfo.messages[key].id);
                             if (err) {
                               ret = null;
                               return;
                             }
+                            sinclo.chatApi.saveAutoSpeechTriggered(conditions[0].speechTriggerCond, window.sincloInfo.messages[key].id);
                             ret = Number(conditions[0].triggerTimeSec) * 1000;
                             callback(key, ret);
                           });
@@ -1514,7 +1544,6 @@
             for(var i = 0; keys.length > i; i++){
                 var conditions = setting.conditions[keys[i]], u;
                 var last = (keys.length === Number(i+1)) ? true : false;
-                var autoSpeechCondition = {};
                 switch(Number(keys[i])) {
                     case 1: // 滞在時間
                         for (u = 0; u < conditions.length; u++) {
@@ -1570,19 +1599,19 @@
                           });
                         }
                         break;
-                    case 7: // 発言内容 FIXME 発動済みであれば除外する
+                    case 7: // 発言内容
                       for (u = 0; u < conditions.length; u++) {
                         console.log("DEBUG : conditions => " + JSON.stringify(conditions));
-                        var condition = autoSpeechCondition = conditions[u];
+                        var condition = conditions[u];
 
-                        this.judge.setMatchSpeechContent(window.sincloInfo.messages[key].id, condition, function (err, timer) {
+                        this.judge.setMatchSpeechContent(2, window.sincloInfo.messages[key].id, condition, function (err, timer) {
                           console.log("【OR】setMatchSpeechContent triggered!! : " + JSON.stringify(condition));
-                          sinclo.chatApi.saveAutoSpeechTriggered(condition.speechTriggerCond, window.sincloInfo.messages[key].id);
                           if (err) {
                             return;
                           }
+                          sinclo.chatApi.saveAutoSpeechTriggered(condition.speechTriggerCond, window.sincloInfo.messages[key].id);
                           ret = Number(condition.triggerTimeSec) * 1000;
-                          callback(key, ret);
+                          callback(7, condition, key, ret);
                         });
                       }
                       break;
@@ -1609,7 +1638,7 @@
                 }
             }
 
-            callback(key, ret);
+            callback(null, null, key, ret);
         },
         setAutoMessage: function(id, cond){
             if(sincloInfo.widget.showTiming === 3) {
@@ -1875,23 +1904,29 @@
                     callback(true, null);
                 }
             },
-            setMatchSpeechContent: function(id, cond, callback) {
+            setMatchSpeechContent: function(conditionType, id, cond, callback) {
               if (!('speechContent' in cond) || !('speechContentCond' in cond )) return false;
               this.speechContentRegEx.push({
                 id:  id,
                 type: cond.speechContentCond,
                 text: cond.speechContent,
                 delay: cond.triggerTimeSec,
+                conditionType: conditionType,
                 callback: callback
               });
             },
             matchAllSpeechContent: function(msg, callback) {
               // FIXME マッチした処理が２回以上の場合、チャット送信処理も２回以上処理される
               var matched = false;
-              if(this.speechContentRegEx.length > 0) {
+              if(this.speechContentRegEx.length > 0 || !check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false") {
                 for (var index in this.speechContentRegEx) {
                   if(sinclo.chatApi.triggeredAutoSpeechExists(this.speechContentRegEx[index].id)) {
                     console.log("triggeredAutoSpeechExists. Ignored. id : " + this.speechContentRegEx[index].id);
+                    continue;
+                  }
+                  if(sinclo.trigger.timerTriggeredList.hasOwnProperty(this.speechContentRegEx[index].id)
+                    && !sinclo.trigger.timerTriggeredList[this.speechContentRegEx[index].id]) {
+                    console.log("timer is not triggered. Ignored. id : " + this.speechContentRegEx[index].id);
                     continue;
                   }
                   console.log("matching judge + " + this.speechContentRegEx[index]);
