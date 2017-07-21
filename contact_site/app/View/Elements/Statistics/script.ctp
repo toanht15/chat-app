@@ -161,6 +161,7 @@ $(document).ready(function(){
       ],
     },
     singleDatePicker: true,
+    minDate: '2017-07-01'
   },
   function(start, end, label) {
     loading.load.start();
