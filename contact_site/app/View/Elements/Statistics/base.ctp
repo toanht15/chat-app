@@ -227,10 +227,25 @@
               </icon-annotation>
           </div>
         </td>
-        <?php for ($i = $start; $i <= $end; $i++) { ?>
-          <td><?php echo $data['responseDatas']['responseRate'][$type.'-'.sprintf("%02d",$i)].' %' ?></td>
-        <?php } ?>
-        <td><?php echo $data['responseDatas']['allResponseRate'].' %' ?></td>
+          <?php
+            for ($i = $start; $i <= $end; $i++) {
+              if(is_numeric($data['responseDatas']['responseRate'][$type.'-'.sprintf("%02d",$i)])) {
+                $checkData = ' %';
+              }
+              else {
+                $checkData = '';
+              } ?>
+            <td><?php echo $data['responseDatas']['responseRate'][$type.'-'.sprintf("%02d",$i)].$checkData ?></td>
+          <?php } ?>
+        <?php
+          if(is_numeric($data['responseDatas']['allResponseRate'])) {
+            $checkData = ' %';
+          }
+          else {
+            $checkData = '';
+          }
+        ?>
+        <td><?php echo $data['responseDatas']['allResponseRate'].$checkData ?></td>
       </tr>
       <tr>
         <td id = 'chatAutomaticResponseRateLabel' class = 'tooltip'>自動返信応対率
@@ -243,10 +258,25 @@
               </icon-annotation>
           </div>
         </td>
-        <?php for ($i = $start; $i <= $end; $i++) { ?>
-          <td><?php echo $data['automaticResponseData']['automaticResponseRate'][$type.'-'.sprintf("%02d",$i)].' %' ?></td>
+        <?php
+          for ($i = $start; $i <= $end; $i++) {
+            if(is_numeric($data['automaticResponseData']['automaticResponseRate'][$type.'-'.sprintf("%02d",$i)])) {
+              $checkData = ' %';
+            }
+            else {
+              $checkData = '';
+            } ?>
+          <td><?php echo $data['automaticResponseData']['automaticResponseRate'][$type.'-'.sprintf("%02d",$i)].$checkData ?></td>
         <?php } ?>
-        <td><?php echo $data['automaticResponseData']['allAutomaticResponseRate'].' %' ?></td>
+        <?php
+          if(is_numeric($data['automaticResponseData']['allAutomaticResponseRate'])) {
+            $checkData = ' %';
+          }
+          else {
+            $checkData = '';
+          }
+        ?>
+      <td><?php echo $data['automaticResponseData']['allAutomaticResponseRate'].$checkData ?></td>
       </tr>
       <tr>
         <td id = 'chatEffectivenessResponseRateLabel' class = 'tooltip'>チャット有効率
@@ -259,10 +289,25 @@
               </icon-annotation>
           </div>
         </td>
-        <?php for ($i = $start; $i <= $end; $i++) { ?>
-          <td><?php echo $data['coherentDatas']['effectivenessRate'][$type.'-'.sprintf("%02d",$i)].' %' ?></td>
+        <?php
+          for ($i = $start; $i <= $end; $i++) {
+            if(is_numeric($data['coherentDatas']['effectivenessRate'][$type.'-'.sprintf("%02d",$i)])) {
+              $checkData = ' %';
+            }
+            else {
+              $checkData = '';
+            } ?>
+          <td><?php echo $data['coherentDatas']['effectivenessRate'][$type.'-'.sprintf("%02d",$i)].$checkData ?></td>
         <?php } ?>
-        <td><?php echo $data['coherentDatas']['allEffectivenessRate'].' %' ?></td>
+        <?php
+          if(is_numeric($data['coherentDatas']['allEffectivenessRate'])) {
+            $checkData = ' %';
+          }
+          else {
+            $checkData = '';
+          }
+        ?>
+      <td><?php echo $data['coherentDatas']['allEffectivenessRate'].$checkData ?></td>
       </tr>
 
       <?php }
@@ -422,10 +467,25 @@
                  </icon-annotation>
              </div>
           </td>
-          <?php for ($i = $start; $i <= $end; $i++) { ?>
-            <td><?php echo $data['responseDatas']['responseRate'][sprintf("%02d",$i).':00'].' %' ?></td>
+          <?php
+            for ($i = $start; $i <= $end; $i++) {
+              if(is_numeric($data['responseDatas']['responseRate'][sprintf("%02d",$i).':00'])) {
+                $checkData = ' %';
+              }
+              else {
+                $checkData = '';
+              } ?>
+            <td><?php echo $data['responseDatas']['responseRate'][sprintf("%02d",$i).':00'].$checkData ?></td>
           <?php } ?>
-          <td><?php echo $data['responseDatas']['allResponseRate'].' %'?></td>
+        <?php
+          if(is_numeric($data['responseDatas']['allResponseRate'])) {
+            $checkData = ' %';
+          }
+          else {
+            $checkData = '';
+          }
+        ?>
+        <td><?php echo $data['responseDatas']['allResponseRate'].$checkData ?></td>
         </tr>
         <tr>
           <td id = 'chatAutomaticResponseRateLabel' class = 'tooltip'>自動返信応対率
@@ -438,10 +498,25 @@
                 </icon-annotation>
             </div>
           </td>
-          <?php for ($i = $start; $i <= $end; $i++) { ?>
-            <td><?php echo $data['automaticResponseData']['automaticResponseRate'][sprintf("%02d",$i).':00'].' %' ?></td>
+          <?php
+            for ($i = $start; $i <= $end; $i++) {
+              if(is_numeric($data['automaticResponseData']['automaticResponseRate'][sprintf("%02d",$i).':00'])) {
+                $checkData = ' %';
+              }
+              else {
+                $checkData = '';
+              } ?>
+            <td><?php echo $data['automaticResponseData']['automaticResponseRate'][sprintf("%02d",$i).':00'].$checkData ?></td>
           <?php } ?>
-          <td><?php echo $data['automaticResponseData']['allAutomaticResponseRate'].' %' ?></td>
+          <?php
+            if(is_numeric($data['automaticResponseData']['allAutomaticResponseRate'])) {
+              $checkData = ' %';
+            }
+            else {
+              $checkData = '';
+            }
+          ?>
+        <td><?php echo $data['automaticResponseData']['allAutomaticResponseRate'].$checkData ?></td>
         </tr>
         <tr>
           <td id = 'chatEffectivenessResponseRateLabel' class = 'tooltip'>チャット有効率
@@ -454,10 +529,25 @@
                 </icon-annotation>
             </div>
           </td>
-          <?php for ($i = $start; $i <= $end; $i++) { ?>
-            <td><?php echo $data['coherentDatas']['effectivenessRate'][sprintf("%02d",$i).':00'].' %' ?></td>
+          <?php
+            for ($i = $start; $i <= $end; $i++) {
+              if(is_numeric($data['coherentDatas']['effectivenessRate'][sprintf("%02d",$i).':00'])) {
+                $checkData = ' %';
+              }
+              else {
+                $checkData = '';
+              } ?>
+            <td><?php echo $data['coherentDatas']['effectivenessRate'][sprintf("%02d",$i).':00'].$checkData ?></td>
           <?php } ?>
-          <td><?php echo $data['coherentDatas']['allEffectivenessRate'].' %' ?></td>
+          <?php
+            if(is_numeric($data['coherentDatas']['allEffectivenessRate'])) {
+              $checkData = ' %';
+            }
+            else {
+              $checkData = '';
+            }
+          ?>
+          <td><?php echo $data['coherentDatas']['allEffectivenessRate'].$checkData ?></td>
         </tr>
       <?php } ?>
       </tbody>
