@@ -27,6 +27,9 @@ class StatisticsController extends AppController {
     ]
   ];
 
+  const LABEL_INVALID = "−";
+  const LABEL_NONE = "";
+
   public function beforeFilter(){
     parent::beforeFilter();
     $this->set('title_for_layout', '統計機能');
@@ -102,8 +105,8 @@ class StatisticsController extends AppController {
 
     //array_mergeで使うためのデータを作成
     while($startDate <= $endDate){
-      $baseData = $baseData + array(date('Y-m',$startDate) => 0);
-      $baseTimeData = $baseTimeData + array(date('Y-m',$startDate) => '00:00:00');
+      $baseData = $baseData + array(date('Y-m',$startDate) => $this->isInValidDatetime(date("Y-m-d",$startDate)) ? self::LABEL_NONE : 0);
+      $baseTimeData = $baseTimeData + array(date('Y-m',$startDate) => $this->isInValidDatetime(date("Y-m-d",$startDate)) ? self::LABEL_NONE :'00:00:00');
       $startDate = strtotime("+1 month", $startDate);
     }
     $startDate = strtotime('first day of' .$start);
@@ -125,8 +128,8 @@ class StatisticsController extends AppController {
 
     //array_mergeで使うためのデータを作成
     while($startDate <= $endDate){
-      $baseData = $baseData + array(date("Y-m-d",$startDate) => 0);
-      $baseTimeData = $baseTimeData + array(date("Y-m-d",$startDate) => "00:00:00");
+      $baseData = $baseData + array(date("Y-m-d",$startDate) => $this->isInValidDatetime(date("Y-m-d",$startDate)) ? self::LABEL_NONE : 0);
+      $baseTimeData = $baseTimeData + array(date("Y-m-d",$startDate) => $this->isInValidDatetime(date("Y-m-d",$startDate)) ? self::LABEL_NONE :"00:00:00");
       $startDate = strtotime("+1 day", $startDate);
     }
     $startDate = strtotime('first day of' .$data);
@@ -148,8 +151,8 @@ class StatisticsController extends AppController {
 
     //array_mergeで使うためのデータを作成
     while($startDate <= $endDate){
-      $baseData = $baseData + array(date("H:00",$startDate) => 0);
-      $baseTimeData = $baseTimeData + array(date("H:00",$startDate) => '00:00:00');
+      $baseData = $baseData + array(date("H:00",$startDate) => $this->isInValidDatetime(date("Y-m-d",$startDate)) ? self::LABEL_NONE : 0);
+      $baseTimeData = $baseTimeData + array(date("H:00",$startDate) => $this->isInValidDatetime(date("Y-m-d",$startDate)) ? self::LABEL_NONE : '00:00:00');
       $startDate = strtotime("+1 hour", $startDate);
     }
     $startDate = strtotime($data);
@@ -177,13 +180,17 @@ class StatisticsController extends AppController {
     $companyRangeYear = [];
 
     while($companyStartDate <= $endDate){
-      $companyRangeDate = $companyRangeDate + array(date('Y-m',$companyStartDate) => date('Y/m',$companyStartDate));
+      if(!$this->isInValidDatetime(date('Y-m-d', $companyStartDate))) {
+        $companyRangeDate = $companyRangeDate + array(date('Y-m',$companyStartDate) => date('Y/m',$companyStartDate));
+      }
       $companyStartDate = strtotime("+1 month", $companyStartDate);
     }
     $companyStartDate = strtotime($this->userInfo['MCompany']['created']);
 
     while($companyStartYear <= $endYear){
-      $companyRangeYear = $companyRangeYear + array(date('Y',$companyStartYear) => date('Y',$companyStartYear));
+      if(!$this->isInValidYear(date('Y-01-01', $companyStartYear))) {
+        $companyRangeYear = $companyRangeYear + array(date('Y',$companyStartYear) => date('Y',$companyStartYear));
+      }
       $companyStartYear = strtotime("+1 year", $companyStartYear);
     }
 
@@ -243,6 +250,9 @@ class StatisticsController extends AppController {
   }
 
   public function getAccessData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period) {
+    if($this->isInValidDatetime($correctStartDate) && $this->isInValidDatetime($correctEndDate)) {
+      return ['accessNumberData' => $this->convertBaseDataForNone($baseData),'allAccessNumberData' => self::LABEL_NONE];
+    }
     $accessNumberData = [];
 
     //アクセス件数
@@ -251,7 +261,7 @@ class StatisticsController extends AppController {
     $accessNumber = $this->THistory->query($access, array($date_format,$correctStartDate,$correctEndDate,$this->userInfo['MCompany']['id']));
 
     foreach($accessNumber as $k => $v) {
-      $accessNumberData =  $accessNumberData + array($v[0]['date'] => $v[0]['count(th.id)']);
+      $accessNumberData =  $accessNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : $v[0]['count(th.id)']);
     }
 
     //アクセス件数
@@ -265,6 +275,9 @@ class StatisticsController extends AppController {
   }
 
   public function getWidgetData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period) {
+    if($this->isInValidDatetime($correctStartDate) && $this->isInValidDatetime($correctEndDate)) {
+      return ['widgetNumberData' => $this->convertBaseDataForNone($baseData),'allWidgetNumberData' => self::LABEL_NONE];
+    }
     $widgetNumberData =[];
 
     //ウィジェット表示件数
@@ -273,7 +286,7 @@ class StatisticsController extends AppController {
     $widgetNumber = $this->THistoryWidgetDisplays->query($widget, array($date_format,$correctStartDate,$correctEndDate,$this->userInfo['MCompany']['id']));
 
     foreach($widgetNumber as $k => $v) {
-      $widgetNumberData =  $widgetNumberData + array($v[0]['date'] => $v[0]['count(tw.id)']);
+      $widgetNumberData =  $widgetNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : $v[0]['count(tw.id)']);
     }
 
     //ウィジェット件数
@@ -286,6 +299,9 @@ class StatisticsController extends AppController {
   }
 
   public function getRequestData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period) {
+    if($this->isInValidDatetime($correctStartDate) && $this->isInValidDatetime($correctEndDate)) {
+      return ['requestNumberData' => $this->convertBaseDataForNone($baseData),'allRequestNumberData' => self::LABEL_NONE];
+    }
     $requestNumberData = [];
 
     //チャットリクエスト件数
@@ -306,7 +322,7 @@ class StatisticsController extends AppController {
     $requestNumber = $this->THistory->query($requestNumber, array($date_format,$this->userInfo['MCompany']['id'],$this->chatMessageType['requestFlg']['effectiveness'],$correctStartDate,$correctEndDate));
 
     foreach($requestNumber as $k => $v) {
-      $requestNumberData =  $requestNumberData + array($v[0]['date'] => $v[0]['request_count']);
+      $requestNumberData =  $requestNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : $v[0]['request_count']);
     }
 
     //チャットリクエスト件数
@@ -320,6 +336,15 @@ class StatisticsController extends AppController {
   }
 
   public function getResponseData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period,$requestNumberData,$allRequestNumberData) {
+    if($this->isInValidDatetime($correctStartDate) && $this->isInValidDatetime($correctEndDate)) {
+      $noneBaseData = $this->convertBaseDataForNone($baseData);
+      return [
+          'responseRate' => $noneBaseData,
+          'responseNumberData' => $noneBaseData,
+          'allResponseNumberData' => self::LABEL_NONE,
+          'allResponseRate' => self::LABEL_NONE
+      ];
+    }
     $responseNumberData = [];
     $responseRate = [];
 
@@ -344,9 +369,12 @@ class StatisticsController extends AppController {
 
     foreach($responseNumber as $k => $v) {
       if($v[0]['response_count'] != 0 and $requestNumberData[$v[0]['date']] != 0) {
-      $responseRate = $responseRate + array($v[0]['date'] => round($v[0]['response_count']/$requestNumberData[$v[0]['date']]*100));
-      $responseNumberData =  $responseNumberData + array($v[0]['date'] => $v[0]['response_count']);
+
+        $responseRate = $responseRate + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : round($v[0]['response_count']/$requestNumberData[$v[0]['date']]*100));
+      } else if ($requestNumberData[$v[0]['date']] === 0) {
+        $responseRate = $responseRate + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : self::LABEL_INVALID);
       }
+      $responseNumberData = $responseNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : $v[0]['response_count']);
     }
 
     //チャット応答率
@@ -369,6 +397,15 @@ class StatisticsController extends AppController {
 
 
   public function getAutomaticResponseData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period,$requestNumberData,$allRequestNumberData) {
+    if($this->isInValidDatetime($correctStartDate) && $this->isInValidDatetime($correctEndDate)) {
+      $noneBaseData = $this->convertBaseDataForNone($baseData);
+      return [
+          'automaticResponseNumberData' => $noneBaseData,
+          'automaticResponseRate' => $noneBaseData,
+          'allAutomaticResponseNumberData' => self::LABEL_NONE,
+          'allAutomaticResponseRate' => self::LABEL_NONE
+      ];
+    }
     $automaticResponseNumberData = [];
     $automaticResponseRate = [];
 
@@ -384,9 +421,12 @@ class StatisticsController extends AppController {
     $automaticResponseNumber = $this->THistory->query($automaticResponse, array($date_format,$this->userInfo['MCompany']['id'],
     $correctStartDate,$correctEndDate,$this->chatMessageType['messageType']['automatic']));
     foreach($automaticResponseNumber as $k => $v) {
-      $automaticResponseNumberData =  $automaticResponseNumberData + array($v[0]['date'] => $v[0]['automaticResponse_count']);
+      $automaticResponseNumberData =  $automaticResponseNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : $v[0]['automaticResponse_count']);
       if($v[0]['automaticResponse_count'] != 0 and $requestNumberData[$v[0]['date']] != 0) {
-        $automaticResponseRate = $automaticResponseRate + array($v[0]['date'] => round($v[0]['automaticResponse_count']/$requestNumberData[$v[0]['date']]*100));
+
+        $automaticResponseRate = $automaticResponseRate + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : round($v[0]['automaticResponse_count']/$requestNumberData[$v[0]['date']]*100));
+      } else if ($requestNumberData[$v[0]['date']] === 0) {
+        $automaticResponseRate = $automaticResponseRate + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : self::LABEL_INVALID);
       }
     }
 
@@ -410,6 +450,17 @@ class StatisticsController extends AppController {
   }
 
   public function getCoherentData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period,$requestNumberData,$allRequestNumberData) {
+    if($this->isInValidDatetime($correctStartDate) && $this->isInValidDatetime($correctEndDate)) {
+      $noneBaseData = $this->convertBaseDataForNone($baseData);
+      return [
+          'effectivenessNumberData' => $noneBaseData,
+          'denialNumberData' => $noneBaseData,
+          'effectivenessRate' => $noneBaseData,
+          'allEffectivenessNumberData' => self::LABEL_NONE,
+          'allDenialNumberData' => self::LABEL_NONE,
+          'allEffectivenessRate' => self::LABEL_NONE
+      ];
+    }
     $effectivenessNumberData = [];
     $denialNumberData = [];
     $effectivenessRate = [];
@@ -430,10 +481,13 @@ class StatisticsController extends AppController {
 
     if(!empty($effectiveness)) {
       foreach($effectiveness as $k => $v) {
-        $effectivenessNumberData =  $effectivenessNumberData + array($v[0]['date'] => $v[0]['effectiveness']);
-        $denialNumberData =  $denialNumberData + array($v[0]['date'] => $v[0]['denial']);
+        $effectivenessNumberData =  $effectivenessNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : $v[0]['effectiveness']);
+        $denialNumberData =  $denialNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : $v[0]['denial']);
         if( $v[0]['effectiveness'] != 0 and $requestNumberData[$v[0]['date']] != 0){
-          $effectivenessRate = $effectivenessRate + array($v[0]['date'] => round($v[0]['effectiveness']/$requestNumberData[$v[0]['date']]*100));
+
+          $effectivenessRate = $effectivenessRate + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : round($v[0]['effectiveness']/$requestNumberData[$v[0]['date']]*100));
+        } else if($requestNumberData[$v[0]['date']] === 0) {
+          $effectivenessRate = $effectivenessRate + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : self::LABEL_INVALID);
         }
       }
     }
@@ -464,6 +518,13 @@ class StatisticsController extends AppController {
   }
 
   public function getAvgRequestTimeData($date_format,$baseData,$baseTimeData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period) {
+    if($this->isInValidDatetime($correctStartDate) && $this->isInValidDatetime($correctEndDate)) {
+      $noneBaseData = $this->convertBaseDataForNone($baseData);
+      return [
+          'requestAvgTimeData' => $noneBaseData,
+          'allRequestAvgTimeData' => self::LABEL_NONE
+      ];
+    }
     $requestAvgTime = [];
     $avgForcalculation = [];
     $effectivenessRate = [];
@@ -489,8 +550,8 @@ class StatisticsController extends AppController {
 
     foreach($requestTime as $k => $v) {
       $timeFormat = $this->changeTimeFormat(round($v[0]['average']));
-      $requestAvgTime =  $requestAvgTime + array($v[0]['date'] => $timeFormat);
-      $avgForcalculation = $avgForcalculation + array($v[0]['date'] => round($v[0]['average']));
+      $requestAvgTime =  $requestAvgTime + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : $timeFormat);
+      $avgForcalculation = $avgForcalculation + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : round($v[0]['average']));
     }
     //チャットリクエスト平均時間
     $requestAvgTimeData = array_merge($baseTimeData,$requestAvgTime);
@@ -507,6 +568,13 @@ class StatisticsController extends AppController {
   }
 
   public function getConsumerWatingAvgTimeData($date_format,$baseData,$baseTimeData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period) {
+    if($this->isInValidDatetime($correctStartDate) && $this->isInValidDatetime($correctEndDate)) {
+      $noneBaseData = $this->convertBaseDataForNone($baseData);
+      return [
+          'consumerWatingAvgTimeData' => $noneBaseData,
+          'allConsumerWatingAvgTimeData' => self::LABEL_NONE
+      ];
+    }
     $consumerWatingAvgTime = [];
     $avgForcalculation = [];
 
@@ -532,8 +600,8 @@ class StatisticsController extends AppController {
 
     foreach($consumerWatingTime as $k => $v) {
       $timeFormat = $this->changeTimeFormat(round($v[0]['average']));
-      $consumerWatingAvgTime =  $consumerWatingAvgTime + array($v[0]['date'] => $timeFormat);
-      $avgForcalculation = $avgForcalculation + array($v[0]['date'] =>round($v[0]['average']));
+      $consumerWatingAvgTime =  $consumerWatingAvgTime + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : $timeFormat);
+      $avgForcalculation = $avgForcalculation + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : round($v[0]['average']));
     }
 
     //消費者待機平均時間
@@ -551,6 +619,13 @@ class StatisticsController extends AppController {
   }
 
   public function getResponseAvgTimeData($date_format,$baseData,$baseTimeData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period) {
+    if($this->isInValidDatetime($correctStartDate) && $this->isInValidDatetime($correctEndDate)) {
+      $noneBaseData = $this->convertBaseDataForNone($baseData);
+      return [
+          'responseAvgTimeData' => $noneBaseData,
+          'allResponseAvgTimeData' => self::LABEL_NONE
+      ];
+    }
     $responseAvgTime = [];
     $avgForcalculation = [];
 
@@ -575,8 +650,8 @@ class StatisticsController extends AppController {
 
     foreach($responseTime as $k => $v) {
       $timeFormat = $this->changeTimeFormat(round($v[0]['average']));
-      $responseAvgTime =  $responseAvgTime + array($v[0]['date'] => $timeFormat);
-      $avgForcalculation = $avgForcalculation + array($v[0]['date'] =>round($v[0]['average']));
+      $responseAvgTime =  $responseAvgTime + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : $timeFormat);
+      $avgForcalculation = $avgForcalculation + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : round($v[0]['average']));
     }
 
     //平均応答時間
@@ -829,5 +904,37 @@ class StatisticsController extends AppController {
     //microtimeを.で分割
     $arrTime = explode('.',microtime(true));
     return date('Y-m-d H:i:s', $arrTime[0]) . '.' .$arrTime[1];
+  }
+
+  private function convertBaseDataForPercent($baseData) {
+    $array = array();
+    foreach ($baseData as $k => $v) {
+      $array[$k] = $this->isInValidDatetime($k) ? self::LABEL_NONE : self::LABEL_INVALID;
+    }
+    return $array;
+  }
+
+  private function convertBaseDataForNone($baseData) {
+    $array = array();
+    foreach ($baseData as $k => $v) {
+      $array[$k] = self::LABEL_NONE;
+    }
+    return $array;
+  }
+
+  private function isInValidDatetime($datetimeStr) {
+    // しきい値（2017年6月分は無効とする）
+    $borderDatetime = strtotime('2017-06-30 23:59:59');
+    $dateTime = strtotime($datetimeStr);
+
+    return $dateTime <= $borderDatetime;
+  }
+
+  private function isInValidYear($dateStr) {
+    // しきい値（2017年6月分は無効とする）
+    $borderDate = strtotime('2017-01-01');
+    $date = strtotime($dateStr);
+
+    return $date < $borderDate;
   }
 }
