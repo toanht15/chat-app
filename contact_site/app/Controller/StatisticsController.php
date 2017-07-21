@@ -163,8 +163,16 @@ class StatisticsController extends AppController {
   public function determineRange(){
     //企業がsincloを開始した日付
     $companyStartDate = strtotime($this->userInfo['MCompany']['created']);
-    $endDate = strtotime( "now" );
-    $endYear = strtotime( "now" );
+    //契約開始月
+    $companyStartDate = strtotime('first day of ' . date('Y-m',$companyStartDate));
+    //現在の月
+    $endDate = strtotime( 'last day of '.date('Y-m',strtotime("now" )));
+    //契約開始年
+    $companyStartYear = date('Y',$companyStartDate);
+    $companyStartYear = strtotime( 'first day of '.date('Y-m',strtotime($companyStartYear."-01" )));
+    //現在の年
+    $endYear = date('Y',strtotime( "now" ));
+    $endYear = strtotime( 'last day of '.date('Y-m',strtotime($endYear."-12" )));
     $companyRangeDate = [];
     $companyRangeYear = [];
 
@@ -174,15 +182,16 @@ class StatisticsController extends AppController {
     }
     $companyStartDate = strtotime($this->userInfo['MCompany']['created']);
 
-    while($companyStartDate <= $endYear){
-      $companyRangeYear = $companyRangeYear + array(date('Y',$companyStartDate) => date('Y',$companyStartDate));
-      $companyStartDate = strtotime("+1 year", $companyStartDate);
+    while($companyStartYear <= $endYear){
+      $companyRangeYear = $companyRangeYear + array(date('Y',$companyStartYear) => date('Y',$companyStartYear));
+      $companyStartYear = strtotime("+1 year", $companyStartYear);
     }
 
     return ['companyRangeDate' => $companyRangeDate,'companyRangeYear' => $companyRangeYear];
   }
 
   public function summarySql($date_format,$baseData,$baseTimeData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period) {
+
     //アクセス件数件数
     $this->log("BEGIN getAccessData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
     $accessDatas = $this->getAccessData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
@@ -342,8 +351,6 @@ class StatisticsController extends AppController {
 
     //チャット応答率
     $responseRate = array_merge($baseData,$responseRate);
-    $this->log('応答率2',LOG_DEBUG);
-    $this->log($responseRate,LOG_DEBUG);
 
     //チャット応答件数
     $responseNumberData = array_merge($baseData,$responseNumberData);
