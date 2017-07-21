@@ -183,7 +183,6 @@ class StatisticsController extends AppController {
   }
 
   public function summarySql($date_format,$baseData,$baseTimeData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period) {
-
     //アクセス件数件数
     $this->log("BEGIN getAccessData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
     $accessDatas = $this->getAccessData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
@@ -343,6 +342,8 @@ class StatisticsController extends AppController {
 
     //チャット応答率
     $responseRate = array_merge($baseData,$responseRate);
+    $this->log('応答率2',LOG_DEBUG);
+    $this->log($responseRate,LOG_DEBUG);
 
     //チャット応答件数
     $responseNumberData = array_merge($baseData,$responseNumberData);
@@ -482,9 +483,8 @@ class StatisticsController extends AppController {
     foreach($requestTime as $k => $v) {
       $timeFormat = $this->changeTimeFormat(round($v[0]['average']));
       $requestAvgTime =  $requestAvgTime + array($v[0]['date'] => $timeFormat);
-      $avgForcalculation = $avgForcalculation + array($v[0]['date'] =>$v[0]['average']);
+      $avgForcalculation = $avgForcalculation + array($v[0]['date'] => round($v[0]['average']));
     }
-
     //チャットリクエスト平均時間
     $requestAvgTimeData = array_merge($baseTimeData,$requestAvgTime);
 
@@ -526,7 +526,7 @@ class StatisticsController extends AppController {
     foreach($consumerWatingTime as $k => $v) {
       $timeFormat = $this->changeTimeFormat(round($v[0]['average']));
       $consumerWatingAvgTime =  $consumerWatingAvgTime + array($v[0]['date'] => $timeFormat);
-      $avgForcalculation = $avgForcalculation + array($v[0]['date'] =>$v[0]['average']);
+      $avgForcalculation = $avgForcalculation + array($v[0]['date'] =>round($v[0]['average']));
     }
 
     //消費者待機平均時間
@@ -569,7 +569,7 @@ class StatisticsController extends AppController {
     foreach($responseTime as $k => $v) {
       $timeFormat = $this->changeTimeFormat(round($v[0]['average']));
       $responseAvgTime =  $responseAvgTime + array($v[0]['date'] => $timeFormat);
-      $avgForcalculation = $avgForcalculation + array($v[0]['date'] =>$v[0]['average']);
+      $avgForcalculation = $avgForcalculation + array($v[0]['date'] =>round($v[0]['average']));
     }
 
     //平均応答時間
