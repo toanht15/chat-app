@@ -77,16 +77,16 @@
       <tr>
         <td class = 'tooltip'>合計アクセス件数</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
-            <td><?php echo $data['accessDatas']['accessNumberData'][$type.'-'.sprintf("%02d",$i)] ?></td>
+            <td><?php echo number_format($data['accessDatas']['accessNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
           <?php } ?>
-           <td><?php echo $data['accessDatas']['allAccessNumberData'] ?></td>
+           <td><?php echo number_format($data['accessDatas']['allAccessNumberData']) ?></td>
       </tr>
       <tr>
         <td class = 'tooltip'>ウィジェット表示件数</td>
         <?php for ($i = $start; $i <= $end; $i++) { ?>
-          <td><?php echo $data['widgetDatas']['widgetNumberData'][$type.'-'.sprintf("%02d",$i)] ?></td>
+          <td><?php echo number_format($data['widgetDatas']['widgetNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
         <?php } ?>
-        <td><?php echo $data['widgetDatas']['allWidgetNumberData'] ?></td>
+        <td><?php echo number_format($data['widgetDatas']['allWidgetNumberData']) ?></td>
       </tr>
       <tr>
         <td id="chatRequestLabel" class = 'tooltip'>チャットリクエスト件数
@@ -100,9 +100,9 @@
           </div>
         </td>
         <?php for ($i = $start; $i <= $end; $i++) { ?>
-          <td><?php echo $data['requestDatas']['requestNumberData'][$type.'-'.sprintf("%02d",$i)] ?></td>
+          <td><?php echo number_format($data['requestDatas']['requestNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
         <?php } ?>
-        <td><?php echo $data['requestDatas']['allRequestNumberData'] ?></td>
+        <td><?php echo number_format($data['requestDatas']['allRequestNumberData']) ?></td>
       </tr>
       <tr>
         <td id = 'chatResponseLabel'  class = 'tooltip'>チャット応対件数
@@ -116,9 +116,9 @@
           </div>
         </td>
         <?php for ($i = $start; $i <= $end; $i++) { ?>
-              <td><?php echo $data['responseDatas']['responseNumberData'][$type.'-'.sprintf("%02d",$i)] ?></td>
+              <td><?php echo number_format($data['responseDatas']['responseNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
         <?php } ?>
-        <td><?php echo $data['responseDatas']['allResponseNumberData'] ?></td>
+        <td><?php echo number_format($data['responseDatas']['allResponseNumberData']) ?></td>
       </tr>
       <tr>
         <td id = 'chatAutomaticResponseLabel' class = 'tooltip'>自動返信応対件数
@@ -132,9 +132,9 @@
           </div>
         </td>
         <?php for ($i = $start; $i <= $end; $i++) { ?>
-              <td><?php echo $data['automaticResponseData']['automaticResponseNumberData'][$type.'-'.sprintf("%02d",$i)] ?></td>
+              <td><?php echo number_format($data['automaticResponseData']['automaticResponseNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
         <?php } ?>
-        <td><?php echo $data['automaticResponseData']['allAutomaticResponseNumberData'] ?></td>
+        <td><?php echo number_format($data['automaticResponseData']['allAutomaticResponseNumberData']) ?></td>
       </tr>
       <tr>
         <td id = 'chatDenialLabel' class = 'tooltip'>チャット拒否件数
@@ -148,9 +148,9 @@
           </div>
         </td>
         <?php for ($i = $start; $i <= $end; $i++) { ?>
-          <td><?php echo $data['coherentDatas']['denialNumberData'][$type.'-'.sprintf("%02d",$i)] ?></td>
+          <td><?php echo number_format($data['coherentDatas']['denialNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
         <?php } ?>
-        <td><?php echo $data['coherentDatas']['allDenialNumberData'] ?></td>
+        <td><?php echo number_format($data['coherentDatas']['allDenialNumberData']) ?></td>
       </tr>
       <tr>
         <td id = 'chatEffectivenessLabel' class = 'tooltip'>チャット有効件数
@@ -164,9 +164,9 @@
           </div>
         </td>
         <?php for ($i = $start; $i <= $end; $i++) { ?>
-          <td><?php echo $data['coherentDatas']['effectivenessNumberData'][$type.'-'.sprintf("%02d",$i)] ?></td>
+          <td><?php echo number_format($data['coherentDatas']['effectivenessNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
         <?php } ?>
-        <td><?php echo $data['coherentDatas']['allEffectivenessNumberData'] ?></td>
+        <td><?php echo number_format($data['coherentDatas']['allEffectivenessNumberData']) ?></td>
       </tr>
       <tr>
         <td id = 'chatRequestAverageTimeLabel' class = 'tooltip'>平均チャットリクエスト時間
@@ -317,16 +317,16 @@
         <tr>
           <td class = 'tooltip'>合計アクセス件数</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
-            <td><?php echo $data['accessDatas']['accessNumberData'][sprintf("%02d",$i).':00'] ?></td>
+            <td><?php echo number_format($data['accessDatas']['accessNumberData'][sprintf("%02d",$i).':00']) ?></td>
           <?php } ?>
-          <td><?php echo $data['accessDatas']['allAccessNumberData'] ?></td>
+          <td><?php echo number_format($data['accessDatas']['allAccessNumberData']) ?></td>
         </tr>
         <tr>
           <td class = 'tooltip'>ウィジェット表示件数</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
-            <td><?php echo $data['widgetDatas']['widgetNumberData'][sprintf("%02d",$i).':00'] ?></td>
+            <td><?php echo number_format($data['widgetDatas']['widgetNumberData'][sprintf("%02d",$i).':00']) ?></td>
           <?php } ?>
-          <td><?php echo $data['widgetDatas']['allWidgetNumberData'] ?></td>
+          <td><?php echo number_format($data['widgetDatas']['allWidgetNumberData']) ?></td>
         </tr>
         <tr>
         <td id="chatRequestLabel" class = 'tooltip'>チャットリクエスト件数
@@ -340,9 +340,9 @@
           </div>
         </td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
-            <td><?php echo $data['requestDatas']['requestNumberData'][sprintf("%02d",$i).':00'] ?></td>
+            <td><?php echo number_format($data['requestDatas']['requestNumberData'][sprintf("%02d",$i).':00']) ?></td>
           <?php } ?>
-          <td><?php echo $data['requestDatas']['allRequestNumberData'] ?></td>
+          <td><?php echo number_format($data['requestDatas']['allRequestNumberData']) ?></td>
         </tr>
         <tr>
         <td id = 'chatResponseLabel'  class = 'tooltip'>チャット応対件数
@@ -356,9 +356,9 @@
           </div>
         </td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
-                <td><?php echo $data['responseDatas']['responseNumberData'][sprintf("%02d",$i).':00'] ?></td>
+                <td><?php echo number_format($data['responseDatas']['responseNumberData'][sprintf("%02d",$i).':00']) ?></td>
           <?php } ?>
-          <td><?php echo $data['responseDatas']['allResponseNumberData'] ?></td>
+          <td><?php echo number_format($data['responseDatas']['allResponseNumberData']) ?></td>
         </tr>
         <tr>
           <td id = 'chatAutomaticResponseLabel' class = 'tooltip'>自動返信応対件数
@@ -372,9 +372,9 @@
             </div>
           </td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
-                <td><?php echo $data['automaticResponseData']['automaticResponseNumberData'][sprintf("%02d",$i).':00'] ?></td>
+                <td><?php echo number_format($data['automaticResponseData']['automaticResponseNumberData'][sprintf("%02d",$i).':00']) ?></td>
           <?php } ?>
-          <td><?php echo $data['automaticResponseData']['allAutomaticResponseNumberData'] ?></td>
+          <td><?php echo number_format($data['automaticResponseData']['allAutomaticResponseNumberData']) ?></td>
         </tr>
         <tr>
           <td id = 'chatDenialLabel' class = 'tooltip'>チャット拒否件数
@@ -388,9 +388,9 @@
             </div>
           </td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
-            <td><?php echo $data['coherentDatas']['denialNumberData'][sprintf("%02d",$i).':00'] ?></td>
+            <td><?php echo number_format($data['coherentDatas']['denialNumberData'][sprintf("%02d",$i).':00']) ?></td>
           <?php } ?>
-          <td><?php echo $data['coherentDatas']['allDenialNumberData'] ?></td>
+          <td><?php echo number_format($data['coherentDatas']['allDenialNumberData']) ?></td>
         </tr>
         <tr>
           <td id = 'chatEffectivenessLabel' class = 'tooltip'>チャット有効件数
