@@ -165,8 +165,16 @@ class StatisticsController extends AppController {
   public function determineRange(){
     //企業がsincloを開始した日付
     $companyStartDate = strtotime($this->userInfo['MCompany']['created']);
-    $endDate = strtotime( "now" );
-    $endYear = strtotime( "now" );
+    //契約開始月
+    $companyStartDate = strtotime('first day of ' . date('Y-m',$companyStartDate));
+    //現在の月
+    $endDate = strtotime( 'last day of '.date('Y-m',strtotime("now" )));
+    //契約開始年
+    $companyStartYear = date('Y',$companyStartDate);
+    $companyStartYear = strtotime( 'first day of '.date('Y-m',strtotime($companyStartYear."-01" )));
+    //現在の年
+    $endYear = date('Y',strtotime( "now" ));
+    $endYear = strtotime( 'last day of '.date('Y-m',strtotime($endYear."-12" )));
     $companyRangeDate = [];
     $companyRangeYear = [];
 
@@ -176,9 +184,9 @@ class StatisticsController extends AppController {
     }
     $companyStartDate = strtotime($this->userInfo['MCompany']['created']);
 
-    while($companyStartDate <= $endYear){
-      $companyRangeYear = $companyRangeYear + array(date('Y',$companyStartDate) => date('Y',$companyStartDate));
-      $companyStartDate = strtotime("+1 year", $companyStartDate);
+    while($companyStartYear <= $endYear){
+      $companyRangeYear = $companyRangeYear + array(date('Y',$companyStartYear) => date('Y',$companyStartYear));
+      $companyStartYear = strtotime("+1 year", $companyStartYear);
     }
 
     return ['companyRangeDate' => $companyRangeDate,'companyRangeYear' => $companyRangeYear];
@@ -496,9 +504,8 @@ class StatisticsController extends AppController {
     foreach($requestTime as $k => $v) {
       $timeFormat = $this->changeTimeFormat(round($v[0]['average']));
       $requestAvgTime =  $requestAvgTime + array($v[0]['date'] => $timeFormat);
-      $avgForcalculation = $avgForcalculation + array($v[0]['date'] =>$v[0]['average']);
+      $avgForcalculation = $avgForcalculation + array($v[0]['date'] => round($v[0]['average']));
     }
-
     //チャットリクエスト平均時間
     $requestAvgTimeData = array_merge($baseTimeData,$requestAvgTime);
 
@@ -540,7 +547,7 @@ class StatisticsController extends AppController {
     foreach($consumerWatingTime as $k => $v) {
       $timeFormat = $this->changeTimeFormat(round($v[0]['average']));
       $consumerWatingAvgTime =  $consumerWatingAvgTime + array($v[0]['date'] => $timeFormat);
-      $avgForcalculation = $avgForcalculation + array($v[0]['date'] =>$v[0]['average']);
+      $avgForcalculation = $avgForcalculation + array($v[0]['date'] =>round($v[0]['average']));
     }
 
     //消費者待機平均時間
@@ -583,7 +590,7 @@ class StatisticsController extends AppController {
     foreach($responseTime as $k => $v) {
       $timeFormat = $this->changeTimeFormat(round($v[0]['average']));
       $responseAvgTime =  $responseAvgTime + array($v[0]['date'] => $timeFormat);
-      $avgForcalculation = $avgForcalculation + array($v[0]['date'] =>$v[0]['average']);
+      $avgForcalculation = $avgForcalculation + array($v[0]['date'] =>round($v[0]['average']));
     }
 
     //平均応答時間
