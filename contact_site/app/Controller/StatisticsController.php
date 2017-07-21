@@ -180,13 +180,17 @@ class StatisticsController extends AppController {
     $companyRangeYear = [];
 
     while($companyStartDate <= $endDate){
-      $companyRangeDate = $companyRangeDate + array(date('Y-m',$companyStartDate) => date('Y/m',$companyStartDate));
+      if(!$this->isInValidDatetime(date('Y-m-d', $companyStartDate))) {
+        $companyRangeDate = $companyRangeDate + array(date('Y-m',$companyStartDate) => date('Y/m',$companyStartDate));
+      }
       $companyStartDate = strtotime("+1 month", $companyStartDate);
     }
     $companyStartDate = strtotime($this->userInfo['MCompany']['created']);
 
     while($companyStartYear <= $endYear){
-      $companyRangeYear = $companyRangeYear + array(date('Y',$companyStartYear) => date('Y',$companyStartYear));
+      if(!$this->isInValidYear(date('Y-01-01', $companyStartYear))) {
+        $companyRangeYear = $companyRangeYear + array(date('Y',$companyStartYear) => date('Y',$companyStartYear));
+      }
       $companyStartYear = strtotime("+1 year", $companyStartYear);
     }
 
@@ -927,5 +931,13 @@ class StatisticsController extends AppController {
     $dateTime = strtotime($datetimeStr);
 
     return $dateTime <= $borderDatetime;
+  }
+
+  private function isInValidYear($dateStr) {
+    // しきい値（2017年6月分は無効とする）
+    $borderDate = strtotime('2017-01-01');
+    $date = strtotime($dateStr);
+
+    return $date < $borderDate;
   }
 }
