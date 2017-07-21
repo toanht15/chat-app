@@ -1217,7 +1217,10 @@
           this.pushFlg = false;
         },
         send: function(value){
+          // 自動返信の処理中でなければ
+          if(!sinclo.trigger.processing) {
             storage.s.set('chatAct', true); // オートメッセージを表示しない
+          }
 
             // タイマーが仕掛けられていたらリセット
             if ( this.sendErrCatchTimer !== null ) {
@@ -1375,22 +1378,29 @@
         nowSaving: false,
         timerTriggeredList: {},
         orTriggeredId: [],
+        processing: false,
         init: function(){
           console.log("sinclo.trigger.init");
             if ( !('messages' in window.sincloInfo) || (('messages' in window.sincloInfo) && typeof(window.sincloInfo.messages) !== "object" ) ) return false;
             this.flg = true;
             var messages = window.sincloInfo.messages;
             console.log("MESSAGES : " + JSON.stringify(messages));
-            var andFunc = function(key, ret){
+            var andFunc = function(conditionKey, condition, key, ret){
+                if(conditionKey === 7) {
+                  // 自動返信のトリガーの場合は処理中フラグを立てる
+                  sinclo.trigger.processing = true;
+                }
                 console.log("AND FUNC key: " + key + " ret: " + ret);
                 var message = messages[key];
                 if (typeof(ret) === 'number') {
                     setTimeout(function(){
-                        sinclo.trigger.setAction(message.id, message.action_type, message.activity);
+                      sinclo.trigger.setAction(message.id, message.action_type, message.activity);
+                      sinclo.trigger.processing = false;
                     }, ret);
                 } else if(ret && typeof(ret) === 'object') {
                     sinclo.trigger.timerTriggeredList[message.id] = false;
                     setTimeout(function(){
+                        sinclo.trigger.processing = false;
                         console.log("AUTO MESSAGE TIMER TRIGGERED");
                         sinclo.trigger.timerTriggeredList[message.id] = true;
                     }, ret.delay);
@@ -1398,6 +1408,10 @@
             };
             var orFunc = function(conditionKey, condition, key, ret){
                 var message = messages[key];
+                if(conditionKey === 7) {
+                  // 自動返信のトリガーの場合は処理中フラグを立てる
+                  sinclo.trigger.processing = true;
+                }
                 if (typeof(ret) === 'number') {
                     setTimeout(function() {
                       console.log("orFunc::setTimeout message : " + JSON.stringify(message) + "conditionKey : " + conditionKey + " condition : " + JSON.stringify(condition));
@@ -1435,6 +1449,7 @@
                         }
                       }
                       sinclo.trigger.setAction(message.id, message.action_type, message.activity);
+                      sinclo.trigger.processing = false;
                     }, ret);
                 }
             };
@@ -1520,7 +1535,7 @@
                             }
                             sinclo.chatApi.saveAutoSpeechTriggered(cloneCondition.speechTriggerCond, window.sincloInfo.messages[key].id);
                             ret = Number(cloneCondition.triggerTimeSec) * 1000;
-                            callback(key, ret);
+                            callback(7, cloneCondition, key, ret);
                           });
                           ret = {
                             delay: ret
@@ -1544,7 +1559,7 @@
                 }
                 if (ret === null) break;
             }
-            callback(key, ret);
+            callback(null, null, key, ret);
         },
         /**
          * return 即時実行(0)、タイマー実行(ミリ秒)、非実行(null)
