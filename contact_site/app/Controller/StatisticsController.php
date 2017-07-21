@@ -27,6 +27,8 @@ class StatisticsController extends AppController {
     ]
   ];
 
+  const LABEL_INVALID = "−";
+
   public function beforeFilter(){
     parent::beforeFilter();
     $this->set('title_for_layout', '統計機能');
@@ -336,13 +338,15 @@ class StatisticsController extends AppController {
 
     foreach($responseNumber as $k => $v) {
       if($v[0]['response_count'] != 0 and $requestNumberData[$v[0]['date']] != 0) {
-      $responseRate = $responseRate + array($v[0]['date'] => round($v[0]['response_count']/$requestNumberData[$v[0]['date']]*100));
-      $responseNumberData =  $responseNumberData + array($v[0]['date'] => $v[0]['response_count']);
+        $responseRate = $responseRate + array($v[0]['date'] => round($v[0]['response_count']/$requestNumberData[$v[0]['date']]*100));
+      } else if ($requestNumberData[$v[0]['date']] === 0) {
+        $responseRate = $responseRate + array($v[0]['date'] => self::LABEL_INVALID);
       }
+      $responseNumberData = $responseNumberData + array($v[0]['date'] => $v[0]['response_count']);
     }
 
     //チャット応答率
-    $responseRate = array_merge($baseData,$responseRate);
+    $responseRate = array_merge($this->convertBaseDataForPercent($baseData),$responseRate);
 
     //チャット応答件数
     $responseNumberData = array_merge($baseData,$responseNumberData);
@@ -354,6 +358,8 @@ class StatisticsController extends AppController {
     $allResponseRate = 0;
     if($allResponseNumberData != 0 and $allRequestNumberData != 0) {
       $allResponseRate = round($allResponseNumberData/$allRequestNumberData*100);
+    } else if ($allRequestNumberData === 0) {
+      $allResponseRate = self::LABEL_INVALID;
     }
 
     return ['responseRate' => $responseRate,'responseNumberData' => $responseNumberData,'allResponseNumberData' => $allResponseNumberData,'allResponseRate' => $allResponseRate];
@@ -379,6 +385,8 @@ class StatisticsController extends AppController {
       $automaticResponseNumberData =  $automaticResponseNumberData + array($v[0]['date'] => $v[0]['automaticResponse_count']);
       if($v[0]['automaticResponse_count'] != 0 and $requestNumberData[$v[0]['date']] != 0) {
         $automaticResponseRate = $automaticResponseRate + array($v[0]['date'] => round($v[0]['automaticResponse_count']/$requestNumberData[$v[0]['date']]*100));
+      } else if ($requestNumberData[$v[0]['date']] === 0) {
+        $automaticResponseRate = $automaticResponseRate + array($v[0]['date'] => self::LABEL_INVALID);
       }
     }
 
@@ -386,7 +394,7 @@ class StatisticsController extends AppController {
     $automaticResponseNumberData = array_merge($baseData,$automaticResponseNumberData);
 
     //自動返信応答率
-    $automaticResponseRate = array_merge($baseData,$automaticResponseRate);
+    $automaticResponseRate = array_merge($this->convertBaseDataForPercent($baseData),$automaticResponseRate);
 
     //自動返信応対件数合計値
     $allAutomaticResponseNumberData = array_sum($automaticResponseNumberData);
@@ -395,6 +403,8 @@ class StatisticsController extends AppController {
     $allAutomaticResponseRate = 0;
     if($allAutomaticResponseNumberData != 0 and $allRequestNumberData != 0) {
       $allAutomaticResponseRate = round($allAutomaticResponseNumberData/$allRequestNumberData*100);
+    } else if ($allRequestNumberData === 0) {
+      $allAutomaticResponseRate = self::LABEL_INVALID;
     }
 
     return ['automaticResponseNumberData' => $automaticResponseNumberData,'automaticResponseRate' => $automaticResponseRate,
@@ -426,6 +436,8 @@ class StatisticsController extends AppController {
         $denialNumberData =  $denialNumberData + array($v[0]['date'] => $v[0]['denial']);
         if( $v[0]['effectiveness'] != 0 and $requestNumberData[$v[0]['date']] != 0){
           $effectivenessRate = $effectivenessRate + array($v[0]['date'] => round($v[0]['effectiveness']/$requestNumberData[$v[0]['date']]*100));
+        } else if($requestNumberData[$v[0]['date']] === 0) {
+          $effectivenessRate = $effectivenessRate + array($v[0]['date'] => self::LABEL_INVALID);
         }
       }
     }
@@ -436,7 +448,7 @@ class StatisticsController extends AppController {
     $denialNumberData = array_merge($baseData,$denialNumberData);
 
     //チャット有効率
-    $effectivenessRate = array_merge($baseData,$effectivenessRate);
+    $effectivenessRate = array_merge($this->convertBaseDataForPercent($baseData),$effectivenessRate);
 
     //有効件数合計値
     $allEffectivenessNumberData = array_sum($effectivenessNumberData);
@@ -448,6 +460,8 @@ class StatisticsController extends AppController {
     $allEffectivenessRate = 0;
     if($allEffectivenessNumberData != 0 and $allRequestNumberData != 0) {
       $allEffectivenessRate = round($allEffectivenessNumberData/$allRequestNumberData*100);
+    } else if ($allRequestNumberData === 0) {
+      $allEffectivenessRate = self::LABEL_INVALID;
     }
 
     return ['effectivenessNumberData' => $effectivenessNumberData,'denialNumberData' => $denialNumberData,'effectivenessRate' => $effectivenessRate,
@@ -822,5 +836,13 @@ class StatisticsController extends AppController {
     //microtimeを.で分割
     $arrTime = explode('.',microtime(true));
     return date('Y-m-d H:i:s', $arrTime[0]) . '.' .$arrTime[1];
+  }
+
+  private function convertBaseDataForPercent($baseData) {
+    $array = array();
+    foreach ($baseData as $k => $v) {
+      $array[$k] = self::LABEL_INVALID;
+    }
+    return $array;
   }
 }
