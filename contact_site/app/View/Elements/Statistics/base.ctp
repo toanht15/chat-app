@@ -77,14 +77,24 @@
       <tr>
         <td class = 'tooltip'>合計アクセス件数</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
-            <td><?php echo number_format($data['accessDatas']['accessNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
+            <?php if(is_int($data['accessDatas']['accessNumberData'][$type.'-'.sprintf("%02d",$i)]) == 'true') { ?>
+              <td><?php echo number_format($data['accessDatas']['accessNumberData'][$type.'-'.sprintf("%02d",$i)]);?></td>
+            <?php }
+            else { ?>
+              <td><?php echo $data['accessDatas']['accessNumberData'][$type.'-'.sprintf("%02d",$i)] ?></td>
+            <?php } ?>
           <?php } ?>
            <td><?php echo number_format($data['accessDatas']['allAccessNumberData']) ?></td>
       </tr>
       <tr>
         <td class = 'tooltip'>ウィジェット表示件数</td>
         <?php for ($i = $start; $i <= $end; $i++) { ?>
-          <td><?php echo number_format($data['widgetDatas']['widgetNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
+          <?php if(is_int($data['widgetDatas']['widgetNumberData'][$type.'-'.sprintf("%02d",$i)]) == 'true') { ?>
+            <td><?php echo number_format($data['widgetDatas']['widgetNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
+            <?php }
+            else { ?>
+              <td><?php echo ($data['widgetDatas']['widgetNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
+            <?php } ?>
         <?php } ?>
         <td><?php echo number_format($data['widgetDatas']['allWidgetNumberData']) ?></td>
       </tr>
@@ -100,7 +110,12 @@
           </div>
         </td>
         <?php for ($i = $start; $i <= $end; $i++) { ?>
-          <td><?php echo number_format($data['requestDatas']['requestNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
+          <?php if(is_int($data['requestDatas']['requestNumberData'][$type.'-'.sprintf("%02d",$i)]) == 'true') { ?>
+            <td><?php echo number_format($data['requestDatas']['requestNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
+          <?php }
+            else { ?>
+              <td><?php echo ($data['requestDatas']['requestNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
+            <?php } ?>
         <?php } ?>
         <td><?php echo number_format($data['requestDatas']['allRequestNumberData']) ?></td>
       </tr>
@@ -116,7 +131,12 @@
           </div>
         </td>
         <?php for ($i = $start; $i <= $end; $i++) { ?>
-              <td><?php echo number_format($data['responseDatas']['responseNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
+          <?php if(is_int($data['responseDatas']['responseNumberData'][$type.'-'.sprintf("%02d",$i)]) == 'true') { ?>
+            <td><?php echo number_format($data['responseDatas']['responseNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
+          <?php }
+            else { ?>
+              <td><?php echo ($data['responseDatas']['responseNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
+            <?php } ?>
         <?php } ?>
         <td><?php echo number_format($data['responseDatas']['allResponseNumberData']) ?></td>
       </tr>
@@ -132,7 +152,12 @@
           </div>
         </td>
         <?php for ($i = $start; $i <= $end; $i++) { ?>
-              <td><?php echo number_format($data['automaticResponseData']['automaticResponseNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
+          <?php if(is_int($data['automaticResponseData']['automaticResponseNumberData'][$type.'-'.sprintf("%02d",$i)]) == 'true') { ?>
+            <td><?php echo number_format($data['automaticResponseData']['automaticResponseNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
+          <?php }
+            else { ?>
+              <td><?php echo ($data['automaticResponseData']['automaticResponseNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
+          <?php } ?>
         <?php } ?>
         <td><?php echo number_format($data['automaticResponseData']['allAutomaticResponseNumberData']) ?></td>
       </tr>
@@ -148,7 +173,12 @@
           </div>
         </td>
         <?php for ($i = $start; $i <= $end; $i++) { ?>
-          <td><?php echo number_format($data['coherentDatas']['denialNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
+          <?php if(is_int($data['coherentDatas']['denialNumberData'][$type.'-'.sprintf("%02d",$i)]) == 'true') { ?>
+            <td><?php echo number_format($data['coherentDatas']['denialNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
+          <?php }
+            else { ?>
+              <td><?php echo ($data['coherentDatas']['denialNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
+            <?php } ?>
         <?php } ?>
         <td><?php echo number_format($data['coherentDatas']['allDenialNumberData']) ?></td>
       </tr>
@@ -164,7 +194,12 @@
           </div>
         </td>
         <?php for ($i = $start; $i <= $end; $i++) { ?>
-          <td><?php echo number_format($data['coherentDatas']['effectivenessNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
+          <?php if(is_int($data['coherentDatas']['effectivenessNumberData'][$type.'-'.sprintf("%02d",$i)]) == 'true') { ?>
+            <td><?php echo number_format($data['coherentDatas']['effectivenessNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
+          <?php }
+            else { ?>
+               <td><?php echo ($data['coherentDatas']['effectivenessNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
+            <?php } ?>
         <?php } ?>
         <td><?php echo number_format($data['coherentDatas']['allEffectivenessNumberData']) ?></td>
       </tr>

@@ -135,6 +135,7 @@ class StatisticsController extends AppController {
     $startDate = strtotime('first day of' .$data);
 
     $sqlData =$this->summarySql($date_format,$baseData,$baseTimeData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
+    $this->log($sqlData,LOG_DEBUG);
     return $sqlData;
   }
 
@@ -378,7 +379,7 @@ class StatisticsController extends AppController {
     }
 
     //チャット応答率
-    $responseRate = array_merge($baseData,$responseRate);
+    $responseRate = array_merge($this->convertBaseDataForPercent($baseData),$responseRate);
 
     //チャット応答件数
     $responseNumberData = array_merge($baseData,$responseNumberData);
@@ -434,7 +435,7 @@ class StatisticsController extends AppController {
     $automaticResponseNumberData = array_merge($baseData,$automaticResponseNumberData);
 
     //自動返信応答率
-    $automaticResponseRate = array_merge($baseData,$automaticResponseRate);
+    $automaticResponseRate = array_merge($this->convertBaseDataForPercent($baseData),$automaticResponseRate);
 
     //自動返信応対件数合計値
     $allAutomaticResponseNumberData = array_sum($automaticResponseNumberData);
@@ -498,7 +499,7 @@ class StatisticsController extends AppController {
     $denialNumberData = array_merge($baseData,$denialNumberData);
 
     //チャット有効率
-    $effectivenessRate = array_merge($baseData,$effectivenessRate);
+    $effectivenessRate = array_merge($this->convertBaseDataForPercent($baseData),$effectivenessRate);
 
     //有効件数合計値
     $allEffectivenessNumberData = array_sum($effectivenessNumberData);
