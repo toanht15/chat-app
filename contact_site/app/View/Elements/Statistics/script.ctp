@@ -1,4 +1,5 @@
 <script type="text/javascript">
+<?= $this->element('TDocuments/loadScreen'); ?>
 
 function functionName()　{
   var chosenDateFormat = document.forms.THistoryForChatForm.dateFormat;
@@ -10,6 +11,7 @@ function functionName()　{
     document.getElementById("daylyForm").style.display="none";
     document.getElementById("hourlyForm").style.display="none";
     document.getElementById("monthlyForm").value = "";
+    document.getElementById("triangle").style.borderTop = "0px";
   }
   //selectで日別を選択した場合
   else if (chosenDateFormat.options[chosenDateFormat.selectedIndex].value == "日別")
@@ -18,6 +20,7 @@ function functionName()　{
     document.getElementById("daylyForm").style.display="";
     document.getElementById("hourlyForm").style.display="none";
     document.getElementById("daylyForm").value = "";
+    document.getElementById("triangle").style.borderTop = "0px";
   }
   //selectで時別を選択した場合
   else if (chosenDateFormat.options[chosenDateFormat.selectedIndex].value == "時別")
@@ -28,54 +31,11 @@ function functionName()　{
     document.getElementById("hourlyForm").style.display="";
     document.getElementById("hourlyForm").value = '選択してください';
     document.getElementById("hourlyForm").options = value;
+    document.getElementById("triangle").style.borderTop = "6px solid";
   }
 }
 
 $(document).ready(function(){
-
-  //tooltip
-  /*$('#statistics_table tbody tr td div.questionBalloon ').each( function() {
-    var description;
-    var td = $(this).parent();
-    var tooltipName = td.attr("id");
-
-    switch (tooltipName){
-      case 'chatRequestLabel':
-        description = 'サイト訪問者がチャットを送信した件数(※初回メッセージのみカウント)';
-        break;
-      case 'chatResponseLabel':
-        description = 'チャットリクエストに対してオペレータが入室した件数（※初回入室のみカウント）';
-      break;
-      case 'chatAutomaticResponseLabel':
-       description = 'サイト訪問者からのチャットを企業側が自動返信で応対した件数(※初回メッセージのみカウント)';
-      break;
-      case 'chatDenialLabel':
-        description = 'Sorryメッセージが消費者に送信された件数';
-      break;
-      case 'chatEffectivenessLabel':
-        description = '成果が「有効」として登録された件数';
-      break;
-      case 'chatRequestAverageTimeLabel':
-        description = 'サイト訪問者がサイトアクセスしてから初回メッセージを送信するまでの平均時間';
-      break;
-      case 'chatConsumerWaitAverageTimeLabel':
-        description = 'サイト訪問者の初回メッセージを受信してから、オペレータがチャットに入室するまでの平均時間';
-      break;
-      case 'chatResponseAverageTimeLabel':
-        description = 'サイト訪問者の初回メッセージを受信してから、オペレータが初回メッセージを送信するまでの平均時間';
-      break;
-      case 'chatResponseRateLabel':
-        description = 'チャット応対件数／チャットリクエスト件数';
-      break;
-      case 'chatAutomaticResponseRateLabel':
-        description = '自動返信応対件数／チャットリクエスト件数';
-      break;
-      case 'chatEffectivenessResponseRateLabel':
-        description = 'チャット有効件数／チャットリクエスト件数';
-      break;
-    }
-    this.setAttribute( 'title', description );
-  });*/
 
   $.extend( $.fn.dataTable.defaults, {
     language: { url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Japanese.json" }
@@ -145,18 +105,22 @@ $(document).ready(function(){
   //月別で検索した場合
   if('<?= $date ?>' == '月別'){
     document.getElementById("monthlyForm").style.display="";
+    document.getElementById("triangle").style.borderTop = "0px";
   }
   //日別で検索した場合
   if('<?= $date ?>' == '日別'){
     document.getElementById("daylyForm").style.display="";
+    document.getElementById("triangle").style.borderTop = "0px";
   }
   //時別で検索した場合
   if('<?= $date ?>' == '時別'){
     document.getElementById("hourlyForm").style.display="";
+    document.getElementById("triangle").style.borderTop = "6px solid";
   }
 
   //月別の年を選択
   $("#monthlyForm").change(function(){
+    loading.load.start();
     var dateFormat = $("select[name=dateFormat]").val();
 
     if(dateFormat == timeType.monthly) {
@@ -166,6 +130,7 @@ $(document).ready(function(){
 
   //日別の月を選択
   $("#daylyForm").change(function(){
+    loading.load.start();
     var dateFormat = $("select[name=dateFormat]").val();
 
     if(dateFormat == timeType.dayly) {
@@ -202,13 +167,52 @@ $(document).ready(function(){
       ],
     },
     singleDatePicker: true,
+    minDate: '2017-07-01'
   },
   function(start, end, label) {
+    loading.load.start();
     searchInfo = $("select[name=dateFormat]").val();
     $('input[name="datefilter"]').val(start.format('YYYY/MM/DD'));
     if(searchInfo == timeType.timely){
       document.getElementById('THistoryForChatForm').submit();
     }
   });
+
+  // ツールチップの表示制御
+  $('.questionBtn').off("mouseenter").on('mouseenter',function(event){
+    var parentTdId = $(this).parent().parent().attr('id');
+    var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
+    targetObj.find('icon-annotation').css('display','block');
+    targetObj.css({
+      top: ($(this).offset().top - targetObj.find('ul').outerHeight() - 65) + 'px',
+      left: '50px'
+    });
+  });
+
+  $('.questionBtn').off("mouseleave").on('mouseleave',function(event){
+    var parentTdId = $(this).parent().parent().attr('id');
+    var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
+    targetObj.find('icon-annotation').css('display','none');
+  });
+
+  // DataTablesの検索時にツールチップを非表示にする
+  tableObj.on('search',function(event){
+    $('icon-annotation').css('display', 'none');
+  });
+
+  $(document).on({
+    mouseenter: function () {
+      trIndex = $(this).index()+1;
+      $("table.dataTable").each(function(index) {
+        $(this).find("tr:eq("+trIndex+")").addClass("highlight")
+      });
+    },
+    mouseleave: function () {
+      trIndex = $(this).index()+1;
+      $("table.dataTable").each(function(index) {
+        $(this).find("tr:eq("+trIndex+")").removeClass("highlight")
+      });
+    }
+  }, ".dataTables_wrapper tr");
 });
 </script>
