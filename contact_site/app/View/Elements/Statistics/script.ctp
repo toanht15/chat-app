@@ -37,18 +37,6 @@ function functionName()　{
 
 $(document).ready(function(){
 
-  $('.questionBtn').hover(
-    function() {　　　　　　// マウスが乗ったとき
-      console.log('載ってる');
-      $('.requestChatTooltip').css("display", "block");
-      /*$('icon-annotation').css("top", "18.5em");*/
-    },　　　　　　　　　　　// 引数の区切なので「,」が必要
-    function() {  　　　　　// マウスが離れたとき（elseなどは使わない）
-      console.log('離れてる');
-      $('.requestChatTooltip').css("display", "none");
-    }
-  );
-
   /*$('.questionBtn').tipso({
     speed: 10, //speed
     color: '#ffffff', //文字色
@@ -79,9 +67,7 @@ $(document).ready(function(){
   });
 
   var tableObj = $("#statistics_table").DataTable({
-    //searching: false,
     scroller:true,
-    responsive:true,
     scrollX: true,
     scrollY: '64vh',
     responsive: true,
@@ -97,6 +83,11 @@ $(document).ready(function(){
     }
   });
 
+  $('#statistics_table tbody')
+  .on( 'mouseenter', 'td', function () {
+      console.log('入ってる');
+      $(this).parent().css('background-color','black');
+  } );
   //リサイズ処理
   var resizeDataTable = function() {
     $('.dataTables_scrollBody').css('max-height',$('#statistics_content').outerHeight() - 120 + 'px');
