@@ -180,11 +180,6 @@
         <td id="chatRequestLabel" class = 'tooltip' >チャットリクエスト件数
           <div class="questionBalloon questionBalloonPosition11">
             <icon class="questionBtn">？</icon>
-              <icon-annotation>
-                <ul>
-                  <li><span>サイト訪問者がチャットを送信した件数(※初回メッセージのみカウント)</span></li>
-                </ul>
-              </icon-annotation>
           </div>
         </td>
         <?php for ($i = $start; $i <= $end; $i++) { ?>
@@ -201,11 +196,6 @@
         <td id = 'chatResponseLabel'  class = 'tooltip'>チャット応対件数
           <div class="questionBalloon questionBalloonPosition8">
             <icon class="questionBtn">？</icon>
-              <icon-annotation>
-                <ul>
-                  <li><span>チャットリクエストに対してオペレータが入室した件数（※初回入室のみカウント）</span></li>
-                </ul>
-              </icon-annotation>
           </div>
         </td>
         <?php for ($i = $start; $i <= $end; $i++) { ?>
