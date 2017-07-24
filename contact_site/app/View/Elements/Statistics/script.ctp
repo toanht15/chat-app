@@ -37,37 +37,14 @@ function functionName()　{
 
 $(document).ready(function(){
 
-  /*$('.questionBtn').tipso({
-    speed: 10, //speed
-    color: '#ffffff', //文字色
-    position: 'bottom', //位置の指定 top・right・bottom・left
-    background: '#F8F8FF', //背景色
-    borderColor:'black',
-    useTitle: true,//trueにすると要素のtitleをツールチップで表示/falseにすればdata-tipso=""をツールチップで表示する
-    width   : 200,//幅
-    delay   : 200,//高さ
-    offsetX : -55,//横軸の位置
-    offsetY : -100,//縦軸の位置,
-  });*/
-
-  /*$('.questionBalloonPosition8').tipso({
-    speed: 10, //speed
-    color: '#ffffff', //文字色
-    position: 'bottom', //位置の指定 top・right・bottom・left
-    background: '#F8F8FF', //背景色
-    bordercolor:'black',
-    useTitle: true,//trueにすると要素のtitleをツールチップで表示/falseにすればdata-tipso=""をツールチップで表示する
-    width   : 200,//幅
-    delay   : 200,//高さ
-    offsetX : -20,//横軸の位置
-    offsetY : -110,//縦軸の位置,
-  });*/
   $.extend( $.fn.dataTable.defaults, {
     language: { url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Japanese.json" }
   });
 
   var tableObj = $("#statistics_table").DataTable({
+    //searching: false,
     scroller:true,
+    responsive:true,
     scrollX: true,
     scrollY: '64vh',
     responsive: true,
@@ -83,11 +60,6 @@ $(document).ready(function(){
     }
   });
 
-  $('#statistics_table tbody')
-  .on( 'mouseenter', 'td', function () {
-      console.log('入ってる');
-      $(this).parent().css('background-color','black');
-  } );
   //リサイズ処理
   var resizeDataTable = function() {
     $('.dataTables_scrollBody').css('max-height',$('#statistics_content').outerHeight() - 120 + 'px');
@@ -204,6 +176,28 @@ $(document).ready(function(){
     if(searchInfo == timeType.timely){
       document.getElementById('THistoryForChatForm').submit();
     }
+  });
+
+  // ツールチップの表示制御
+  $('.questionBtn').off("mouseenter").on('mouseenter',function(event){
+    var parentTdId = $(this).parent().parent().attr('id');
+    var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
+    targetObj.find('icon-annotation').css('display','block');
+    targetObj.css({
+      top: ($(this).offset().top - targetObj.find('ul').outerHeight() - 65) + 'px',
+      left: '50px'
+    });
+  });
+
+  $('.questionBtn').off("mouseleave").on('mouseleave',function(event){
+    var parentTdId = $(this).parent().parent().attr('id');
+    var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
+    targetObj.find('icon-annotation').css('display','none');
+  });
+
+  // DataTablesの検索時にツールチップを非表示にする
+  tableObj.on('search',function(event){
+    $('icon-annotation').css('display', 'none');
   });
 });
 </script>
