@@ -11,6 +11,7 @@ function functionName()　{
     document.getElementById("daylyForm").style.display="none";
     document.getElementById("hourlyForm").style.display="none";
     document.getElementById("monthlyForm").value = "";
+    document.getElementById("triangle").style.borderTop = "0px";
   }
   //selectで日別を選択した場合
   else if (chosenDateFormat.options[chosenDateFormat.selectedIndex].value == "日別")
@@ -19,6 +20,7 @@ function functionName()　{
     document.getElementById("daylyForm").style.display="";
     document.getElementById("hourlyForm").style.display="none";
     document.getElementById("daylyForm").value = "";
+    document.getElementById("triangle").style.borderTop = "0px";
   }
   //selectで時別を選択した場合
   else if (chosenDateFormat.options[chosenDateFormat.selectedIndex].value == "時別")
@@ -29,10 +31,23 @@ function functionName()　{
     document.getElementById("hourlyForm").style.display="";
     document.getElementById("hourlyForm").value = '選択してください';
     document.getElementById("hourlyForm").options = value;
+    document.getElementById("triangle").style.borderTop = "6px solid";
   }
 }
 
 $(document).ready(function(){
+
+  $('.questionBtn').hover(
+    function() {　　　　　　// マウスが乗ったとき
+      console.log('載ってる');
+      $('.requestChatTooltip').css("display", "block");
+      /*$('icon-annotation').css("top", "18.5em");*/
+    },　　　　　　　　　　　// 引数の区切なので「,」が必要
+    function() {  　　　　　// マウスが離れたとき（elseなどは使わない）
+      console.log('離れてる');
+      $('.requestChatTooltip').css("display", "none");
+    }
+  );
 
   /*$('.questionBtn').tipso({
     speed: 10, //speed
@@ -127,14 +142,17 @@ $(document).ready(function(){
   //月別で検索した場合
   if('<?= $date ?>' == '月別'){
     document.getElementById("monthlyForm").style.display="";
+    document.getElementById("triangle").style.borderTop = "0px";
   }
   //日別で検索した場合
   if('<?= $date ?>' == '日別'){
     document.getElementById("daylyForm").style.display="";
+    document.getElementById("triangle").style.borderTop = "0px";
   }
   //時別で検索した場合
   if('<?= $date ?>' == '時別'){
     document.getElementById("hourlyForm").style.display="";
+    document.getElementById("triangle").style.borderTop = "6px solid";
   }
 
   //月別の年を選択

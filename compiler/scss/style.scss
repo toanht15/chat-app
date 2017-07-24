@@ -4800,7 +4800,6 @@ ul.naviBtn {
     left-parts {
       display: flex;
       align-items: center;
-      /*font-size: 1.25em;*/
 
       select {
         padding: 0.25em 1em;margin: 0 0.25em;
@@ -4811,7 +4810,19 @@ ul.naviBtn {
       }
 
       input#hourlyForm {
-        margin-top: 0.5px;
+        padding: 0.35em 1em;
+        margin: 0.5px 0.25em 0
+      }
+
+      #triangle {
+          display: inline-block;
+          width: 0;
+          height: 0;
+          margin-left: -16px;
+          vertical-align: middle;
+          border-top: 6px solid;
+          border-right: 3px solid transparent;
+          border-left: 3px solid transparent;
       }
     }
 
@@ -5146,39 +5157,6 @@ ul.naviBtn {
       }
     }
 
-    .requestChatTooltip {
-        icon-annotation {
-        position: absolute;
-        top: 19.5em;
-        left: 3em;;
-        width: 16em;
-        height: 5.1em;
-        z-index: 2;
-        display:none;
-
-        ul {
-            margin: 0;
-            padding: 0;
-            text-align: left;
-            background-color: #FFF;
-            box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
-            padding: 0.5em;
-            font-weight: normal;
-            border-radius: 5px;
-
-          img {
-            margin-bottom: -0.2em;
-            width:1em;
-            height:1em;
-          }
-
-          span {
-            font-size: 0.9em;
-          }
-        }
-      }
-    }
-
     .dataTables_wrapper .dataTables_scroll div.dataTables_scrollBody > table > tbody > tr > td {
       vertical-align: middle;
       text-align: center;
@@ -5195,18 +5173,6 @@ ul.naviBtn {
         font-size: 0.9em!important;
       }
 
-      &:hover .requestChatTooltip {
-        icon-annotation {
-          display: block!important; color:blue;
-        }
-        icon {
-          border-radius: 20px!important;
-        }
-      }
-
-    }
-    .tipso_style {
-      border-bottom: 0!important;
     }
   }
 }

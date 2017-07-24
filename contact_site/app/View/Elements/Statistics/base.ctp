@@ -21,7 +21,8 @@
           'style' => 'display:none;vertical-align:middle;','selected' => $type,'empty' => '選択してください')); ?>
 
           <?= $this->Form->input('dateForm', array('type'=>'text','name' => 'datefilter','id' => 'hourlyForm',
-          'div'=>false, 'label'=>false,'style' => 'width:10em;cursor:pointer;display:none','value' => substr($type,0,10) ,'placeholder' => date("Y/m/d "))); ?>
+          'div'=>false, 'label'=>false,'style' => 'width:11em;cursor:pointer;display:none','value' => substr($type,0,10),'placeholder' => date("Y/m/d "))); ?>
+          <b id = 'triangle'></b>
 
         <?= $this->Form->end(); ?>
       </left-parts>
@@ -33,7 +34,7 @@
     </div><!-- #statistic_menu -->
 
     <div id='statistics_content' class="p20trl" style="visibility:hidden;">
-      <div class = 'requestChatTooltip'>
+      <div class = 'requestChatTooltip' style= 'display:none;'>
         <icon-annotation>
           <ul>
             <li><span>サイト訪問者がチャットを送信した件数(※初回メッセージのみカウント)</span></li>
@@ -109,6 +110,11 @@
         <td id="chatRequestLabel" class = 'tooltip' >チャットリクエスト件数
           <div class="questionBalloon questionBalloonPosition11">
             <icon class="questionBtn">？</icon>
+              <icon-annotation>
+                <ul>
+                  <li><span>サイト訪問者がチャットを送信した件数(※初回メッセージのみカウント)</span></li>
+                </ul>
+              </icon-annotation>
           </div>
         </td>
         <?php for ($i = $start; $i <= $end; $i++) { ?>
@@ -125,6 +131,11 @@
         <td id = 'chatResponseLabel'  class = 'tooltip'>チャット応対件数
           <div class="questionBalloon questionBalloonPosition8" title ='チャットリクエストに対してオペレータが入室した件数（※初回入室のみカウント）(※初回メッセージのみカウント)'>
             <icon class="questionBtn">？</icon>
+              <icon-annotation>
+                <ul>
+                  <li><span>チャットリクエストに対してオペレータが入室した件数（※初回入室のみカウント）</span></li>
+                </ul>
+              </icon-annotation>
           </div>
         </td>
         <?php for ($i = $start; $i <= $end; $i++) { ?>
