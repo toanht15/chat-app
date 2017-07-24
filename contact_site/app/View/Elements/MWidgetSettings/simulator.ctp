@@ -115,7 +115,7 @@
           <a id="sincloChatSendBtn" class="notSelect"><span>送信</span></a>
         </div>
       <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT]) ) :?>
-        <span id="sincloAccessInfo" style="padding-left: 0.5em; padding-bottom: 0.4em;">ウェブ接客コード：●●●●</span>
+        <span id="sincloAccessInfo" style="padding-left: 0.5em; padding-bottom: 0.4em; font-size: 0.9em;">ウェブ接客コード：●●●●</span>
         <?php endif; ?>
       </section>
     <?php endif; ?>
