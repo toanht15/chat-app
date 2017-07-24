@@ -241,7 +241,7 @@ var socket, // socket.io
         html += '      #sincloBox section#chatTab sinclo-div #sincloChatSendBtn { display: block; height: 100%; width: 20%; text-decoration: none; border-radius: 0 5px 5px 0; cursor: pointer; margin: 0; text-align: center; background-color: ' + widget.mainColor + '; color: ' + widget.stringColor + '; font-weight: bold; font-size: 1.2em;}';
         html += '      #sincloBox section#chatTab sinclo-div #sincloChatSendBtn span { color: ' + widget.stringColor + '; }';
         if( window.sincloInfo.contract.sinclo || (window.sincloInfo.contract.hasOwnProperty("document") && window.sincloInfo.contract.document ) ) {
-          html += '      #sincloBox section#chatTab #sincloAccessInfo { padding-left: 0.5em; padding-bottom: 0.4em; }';
+          html += '      #sincloBox section#chatTab #sincloAccessInfo { padding-left: 0.5em; padding-bottom: 0.4em; font-size: 0.9em; }';
         }
       }
       html += '      #sincloBox section#navigation { position: relative; display: block; }';
