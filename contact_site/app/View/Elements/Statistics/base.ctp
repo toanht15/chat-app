@@ -177,7 +177,7 @@
       </tr>
       <tr>
         <td id="chatRequestLabel" class = 'tooltip' >チャットリクエスト件数
-          <div class="questionBalloon">
+          <div class="questionBalloon questionBalloonPosition11">
             <icon class="questionBtn">？</icon>
           </div>
         </td>
@@ -193,7 +193,7 @@
       </tr>
       <tr>
         <td id = 'chatResponseLabel'  class = 'tooltip'>チャット応対件数
-          <div class="questionBalloon">
+          <div class="questionBalloon questionBalloonPosition8">
             <icon class="questionBtn">？</icon>
           </div>
         </td>
@@ -209,7 +209,7 @@
       </tr>
       <tr>
         <td id = 'chatAutomaticResponseLabel' class = 'tooltip'>自動返信応対件数
-          <div class="questionBalloon">
+          <div class="questionBalloon questionBalloonPosition8">
             <icon class="questionBtn">？</icon>
           </div>
         </td>
@@ -225,7 +225,7 @@
       </tr>
       <tr>
         <td id = 'chatDenialLabel' class = 'tooltip'>チャット拒否件数
-          <div class="questionBalloon">
+          <div class="questionBalloon questionBalloonPosition8s">
             <icon class="questionBtn">？</icon>
           </div>
         </td>
@@ -241,7 +241,7 @@
       </tr>
       <tr>
         <td id = 'chatEffectivenessLabel' class = 'tooltip'>チャット有効件数
-          <div class="questionBalloon">
+          <div class="questionBalloon questionBalloonPosition8s">
             <icon class="questionBtn">？</icon>
           </div>
         </td>
@@ -257,7 +257,7 @@
       </tr>
       <tr>
         <td id = 'chatRequestAverageTimeLabel' class = 'tooltip'>平均チャットリクエスト時間
-          <div class="questionBalloon">
+          <div class="questionBalloon questionBalloonPosition13">
             <icon class="questionBtn">？</icon>
           </div>
         </td>
@@ -268,7 +268,7 @@
       </tr>
       <tr>
         <td id ='chatConsumerWaitAverageTimeLabel' class = 'tooltip'>平均消費者待機時間
-          <div class="questionBalloon">
+          <div class="questionBalloon questionBalloonPosition9">
             <icon class="questionBtn">？</icon>
           </div>
         </td>
@@ -279,7 +279,7 @@
       </tr>
       <tr>
         <td id ='chatResponseAverageTimeLabel' class = 'tooltip'>平均応答時間
-          <div class="questionBalloon">
+          <div class="questionBalloon questionBalloonPosition6">
             <icon class="questionBtn">？</icon>
           </div>
         </td>
@@ -290,7 +290,7 @@
       </tr>
       <tr>
         <td id = 'chatResponseRateLabel' class = 'tooltip'>チャット応対率
-          <div class="questionBalloon">
+          <div class="questionBalloon questionBalloonPosition7">
             <icon class="questionBtn">？</icon>
           </div>
         </td>
@@ -316,7 +316,7 @@
       </tr>
       <tr>
         <td id = 'chatAutomaticResponseRateLabel' class = 'tooltip'>自動返信応対率
-          <div class="questionBalloon">
+          <div class="questionBalloon questionBalloonPosition7">
             <icon class="questionBtn">？</icon>
           </div>
         </td>
@@ -342,7 +342,7 @@
       </tr>
       <tr>
         <td id = 'chatEffectivenessResponseRateLabel' class = 'tooltip'>チャット有効率
-          <div class="questionBalloon">
+          <div class="questionBalloon questionBalloonPosition7">
             <icon class="questionBtn">？</icon>
           </div>
         </td>
