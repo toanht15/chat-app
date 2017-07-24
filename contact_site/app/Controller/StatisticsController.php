@@ -50,7 +50,6 @@ class StatisticsController extends AppController {
    * @return void
    * */
   public function forChat() {
-    Configure::write('debug', 2);
     if($this->request->is('post')) {
       if ($this->THistory->validates() ) {
         $date = $this->request->data['dateFormat'];
@@ -477,8 +476,6 @@ class StatisticsController extends AppController {
 
     $effectiveness = $this->THistory->query($effectiveness, array($date_format,$this->chatMessageType['achievementFlg']['effectiveness'],$this->chatMessageType['messageType']['denial'],
       $this->userInfo['MCompany']['id'],$correctStartDate,$correctEndDate,$this->chatMessageType['achievementFlg']['effectiveness'],$this->chatMessageType['messageType']['denial']));
-    $this->log('有効件数',LOG_DEBUG);
-    $this->log($effectiveness,LOG_DEBUG);
 
     if(!empty($effectiveness)) {
       foreach($effectiveness as $k => $v) {
