@@ -546,10 +546,18 @@ class StatisticsController extends AppController {
     $requestTime = $this->THistory->query($requestTime, array($date_format,$this->userInfo['MCompany']['id'],
       $correctStartDate,$correctEndDate,$this->chatMessageType['requestFlg']['effectiveness'],$this->chatMessageType['messageType']['consumerMessage']));
 
+    $totalRequestAvgTimeDataCnt = 0;
     foreach($requestTime as $k => $v) {
       $timeFormat = $this->changeTimeFormat(round($v[0]['average']));
       $requestAvgTime =  $requestAvgTime + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : $timeFormat);
       $avgForcalculation = $avgForcalculation + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : round($v[0]['average']));
+      if (!$this->isInValidDatetime($v[0]['date'])) {
+        $totalRequestAvgTimeDataCnt++;
+      }
+    }
+    // 0件だったらゼロ割を防ぐため1にする
+    if($totalRequestAvgTimeDataCnt === 0) {
+      $totalRequestAvgTimeDataCnt = 1;
     }
     //チャットリクエスト平均時間
     $requestAvgTimeData = array_merge($baseTimeData,$requestAvgTime);
@@ -557,7 +565,7 @@ class StatisticsController extends AppController {
     //全チャットリクエスト平均時間
     $allRequestAvgTimeData = 0;
     if(!empty($v)) {
-      $allRequestAvgTimeData = array_sum($avgForcalculation)/($k+1);
+      $allRequestAvgTimeData = array_sum($avgForcalculation)/$totalRequestAvgTimeDataCnt;
     }
     $allRequestAvgTimeData = $this->changeTimeFormat($allRequestAvgTimeData);
 
@@ -596,10 +604,19 @@ class StatisticsController extends AppController {
     $consumerWatingTime = $this->THistory->query($consumerWatingTime, array($date_format,$this->userInfo['MCompany']['id'],
       $correctStartDate,$correctEndDate,$this->chatMessageType['requestFlg']['effectiveness'],$this->chatMessageType['messageType']['enteringRoom']));
 
+    $totalConsumerWaitingAvgTimeDataCnt = 0;
     foreach($consumerWatingTime as $k => $v) {
       $timeFormat = $this->changeTimeFormat(round($v[0]['average']));
       $consumerWatingAvgTime =  $consumerWatingAvgTime + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : $timeFormat);
       $avgForcalculation = $avgForcalculation + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : round($v[0]['average']));
+      if(!$this->isInValidDatetime($v[0]['date'])) {
+        $totalConsumerWaitingAvgTimeDataCnt++;
+      }
+    }
+
+    // 0件だったらゼロ割を防ぐため1にする
+    if($totalConsumerWaitingAvgTimeDataCnt === 0) {
+      $totalConsumerWaitingAvgTimeDataCnt = 1;
     }
 
     //消費者待機平均時間
@@ -608,7 +625,7 @@ class StatisticsController extends AppController {
     //全消費者待機平均時間
     $allConsumerWatingAvgTimeData = 0;
     if(!empty($v)) {
-      $allConsumerWatingAvgTimeData = array_sum($avgForcalculation)/($k+1);
+      $allConsumerWatingAvgTimeData = array_sum($avgForcalculation)/$totalConsumerWaitingAvgTimeDataCnt;
     }
     $allConsumerWatingAvgTimeData = $this->changeTimeFormat($allConsumerWatingAvgTimeData);
 
@@ -646,10 +663,19 @@ class StatisticsController extends AppController {
     $responseTime = $this->THistory->query($responseTime, array($date_format,$this->userInfo['MCompany']['id'],
       $correctStartDate,$correctEndDate,$this->chatMessageType['requestFlg']['effectiveness'],$this->chatMessageType['messageType']['operatorMessage']));
 
+    $totalResponseAvgTimeDataCnt = 0;
     foreach($responseTime as $k => $v) {
       $timeFormat = $this->changeTimeFormat(round($v[0]['average']));
       $responseAvgTime =  $responseAvgTime + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : $timeFormat);
       $avgForcalculation = $avgForcalculation + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : round($v[0]['average']));
+      if(!$this->isInValidDatetime($v[0]['date'])) {
+        $totalResponseAvgTimeDataCnt++;
+      }
+    }
+
+    // 0件だったらゼロ割を防ぐため1にする
+    if($totalResponseAvgTimeDataCnt === 0) {
+      $totalResponseAvgTimeDataCnt = 1;
     }
 
     //平均応答時間
@@ -658,7 +684,7 @@ class StatisticsController extends AppController {
     //全応答平均時間
     $allResponseAvgTimeData = 0;
     if(!empty($v)) {
-      $allResponseAvgTimeData = array_sum($avgForcalculation)/($k+1);
+      $allResponseAvgTimeData = array_sum($avgForcalculation)/$totalResponseAvgTimeDataCnt;
     }
     $allResponseAvgTimeData = $this->changeTimeFormat($allResponseAvgTimeData);
 
