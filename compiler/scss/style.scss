@@ -5146,6 +5146,39 @@ ul.naviBtn {
       }
     }
 
+    .requestChatTooltip {
+        icon-annotation {
+        position: absolute;
+        top: 19.5em;
+        left: 3em;;
+        width: 16em;
+        height: 5.1em;
+        z-index: 2;
+        display:none;
+
+        ul {
+            margin: 0;
+            padding: 0;
+            text-align: left;
+            background-color: #FFF;
+            box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+            padding: 0.5em;
+            font-weight: normal;
+            border-radius: 5px;
+
+          img {
+            margin-bottom: -0.2em;
+            width:1em;
+            height:1em;
+          }
+
+          span {
+            font-size: 0.9em;
+          }
+        }
+      }
+    }
+
     .dataTables_wrapper .dataTables_scroll div.dataTables_scrollBody > table > tbody > tr > td {
       vertical-align: middle;
       text-align: center;
@@ -5162,8 +5195,18 @@ ul.naviBtn {
         font-size: 0.9em!important;
       }
 
-      &:hover icon-annotation { display: block!important; }
+      &:hover .requestChatTooltip {
+        icon-annotation {
+          display: block!important; color:blue;
+        }
+        icon {
+          border-radius: 20px!important;
+        }
+      }
 
+    }
+    .tipso_style {
+      border-bottom: 0!important;
     }
   }
 }

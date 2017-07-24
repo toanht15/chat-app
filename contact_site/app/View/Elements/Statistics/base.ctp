@@ -33,6 +33,13 @@
     </div><!-- #statistic_menu -->
 
     <div id='statistics_content' class="p20trl" style="visibility:hidden;">
+      <div class = 'requestChatTooltip'>
+        <icon-annotation>
+          <ul>
+            <li><span>サイト訪問者がチャットを送信した件数(※初回メッセージのみカウント)</span></li>
+          </ul>
+        </icon-annotation>
+      </div>
 
     <!-- /* テーブル表示エリア */ -->
 
@@ -99,14 +106,9 @@
         <td><?php echo number_format($data['widgetDatas']['allWidgetNumberData']) ?></td>
       </tr>
       <tr>
-        <td id="chatRequestLabel" class = 'tooltip'>チャットリクエスト件数
+        <td id="chatRequestLabel" class = 'tooltip' >チャットリクエスト件数
           <div class="questionBalloon questionBalloonPosition11">
             <icon class="questionBtn">？</icon>
-              <icon-annotation>
-                <ul>
-                  <li><span>サイト訪問者がチャットを送信した件数(※初回メッセージのみカウント)</span></li>
-                </ul>
-              </icon-annotation>
           </div>
         </td>
         <?php for ($i = $start; $i <= $end; $i++) { ?>
@@ -121,13 +123,8 @@
       </tr>
       <tr>
         <td id = 'chatResponseLabel'  class = 'tooltip'>チャット応対件数
-          <div class="questionBalloon questionBalloonPosition8">
+          <div class="questionBalloon questionBalloonPosition8" title ='チャットリクエストに対してオペレータが入室した件数（※初回入室のみカウント）(※初回メッセージのみカウント)'>
             <icon class="questionBtn">？</icon>
-              <icon-annotation>
-                <ul>
-                  <li><span>チャットリクエストに対してオペレータが入室した件数（※初回入室のみカウント）</span></li>
-                </ul>
-              </icon-annotation>
           </div>
         </td>
         <?php for ($i = $start; $i <= $end; $i++) { ?>
