@@ -196,5 +196,34 @@ $(document).ready(function(){
       document.getElementById('THistoryForChatForm').submit();
     }
   });
+
+  // ツールチップの表示制御
+  $('.questionBtn').off("mouseenter").on('mouseenter',function(event){
+    console.log("mouseenter");
+    console.log($(this));
+    var parentTdId = $(this).parent().parent().attr('id');
+    console.log("parentTd : " + parentTdId);
+    var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
+    targetObj.find('icon-annotation').css('display','block');
+    console.log("inner height : " + targetObj.find('ul').outerHeight());
+    targetObj.css({
+      top: ($(this).offset().top - targetObj.find('ul').outerHeight() - 65) + 'px',
+      left: '50px'
+    });
+  });
+
+  $('.questionBtn').off("mouseleave").on('mouseleave',function(event){
+    console.log("mouseleave");
+    console.log($(this));
+    var parentTdId = $(this).parent().parent().attr('id');
+    console.log("parentTd : " + parentTdId);
+    var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
+    targetObj.find('icon-annotation').css('display','none');
+  });
+
+  // DataTablesの検索時にツールチップを非表示にする
+  tableObj.on('search',function(event){
+    $('icon-annotation').css('display', 'none');
+  });
 });
 </script>

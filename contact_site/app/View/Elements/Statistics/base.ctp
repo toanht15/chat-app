@@ -33,10 +33,80 @@
     </div><!-- #statistic_menu -->
 
     <div id='statistics_content' class="p20trl" style="visibility:hidden;">
-      <div class = 'requestChatTooltip'>
+      <div id='chatRequestTooltip' class="explainTooltip">
         <icon-annotation>
           <ul>
             <li><span>サイト訪問者がチャットを送信した件数(※初回メッセージのみカウント)</span></li>
+          </ul>
+        </icon-annotation>
+      </div>
+      <div id='chatResponseTooltip' class="explainTooltip">
+        <icon-annotation>
+          <ul>
+            <li><span>チャットリクエストに対してオペレータが入室した件数（※初回入室のみカウント）</span></li>
+          </ul>
+        </icon-annotation>
+      </div>
+      <div id='chatAutomaticResponseTooltip' class="explainTooltip">
+        <icon-annotation>
+          <ul>
+            <li><span>サイト訪問者からのチャットを企業側が自動返信で応対した件数(※初回メッセージのみカウント)</span></li>
+          </ul>
+        </icon-annotation>
+      </div>
+      <div id='chatDenialTooltip' class="explainTooltip">
+        <icon-annotation>
+          <ul>
+            <li><span>Sorryメッセージが消費者に送信された件数</span></li>
+          </ul>
+        </icon-annotation>
+      </div>
+      <div id='chatEffectivenessTooltip' class="explainTooltip">
+        <icon-annotation>
+          <ul>
+            <li><span>成果が「有効」として登録された件数</span></li>
+          </ul>
+        </icon-annotation>
+      </div>
+      <div id='chatRequestAverageTimeTooltip' class="explainTooltip">
+        <icon-annotation>
+          <ul>
+            <li><span>サイト訪問者がサイトアクセスしてから初回メッセージを送信するまでの平均時間</span></li>
+          </ul>
+        </icon-annotation>
+      </div>
+      <div id='chatConsumerWaitAverageTimeTooltip' class="explainTooltip">
+        <icon-annotation>
+          <ul>
+            <li><span>サイト訪問者の初回メッセージを受信してから、オペレータがチャットに入室するまでの平均時間</span></li>
+          </ul>
+        </icon-annotation>
+      </div>
+      <div id='chatResponseAverageTimeTooltip' class="explainTooltip">
+        <icon-annotation>
+          <ul>
+            <li><span>サイト訪問者の初回メッセージを受信してから、オペレータが初回メッセージを送信するまでの平均時間</span></li>
+          </ul>
+        </icon-annotation>
+      </div>
+      <div id='chatResponseRateTooltip' class="explainTooltip">
+        <icon-annotation>
+          <ul>
+            <li><span>チャット応対件数／チャットリクエスト件数</span></li>
+          </ul>
+        </icon-annotation>
+      </div>
+      <div id='chatAutomaticResponseRateTooltip' class="explainTooltip">
+        <icon-annotation>
+          <ul>
+            <li><span>自動返信応対件数／チャットリクエスト件数</span></li>
+          </ul>
+        </icon-annotation>
+      </div>
+      <div id='chatEffectivenessResponseRateTooltip' class="explainTooltip">
+        <icon-annotation>
+          <ul>
+            <li><span>チャット有効件数／チャットリクエスト件数</span></li>
           </ul>
         </icon-annotation>
       </div>
@@ -107,7 +177,7 @@
       </tr>
       <tr>
         <td id="chatRequestLabel" class = 'tooltip' >チャットリクエスト件数
-          <div class="questionBalloon questionBalloonPosition11">
+          <div class="questionBalloon">
             <icon class="questionBtn">？</icon>
           </div>
         </td>
@@ -123,7 +193,7 @@
       </tr>
       <tr>
         <td id = 'chatResponseLabel'  class = 'tooltip'>チャット応対件数
-          <div class="questionBalloon questionBalloonPosition8" title ='チャットリクエストに対してオペレータが入室した件数（※初回入室のみカウント）(※初回メッセージのみカウント)'>
+          <div class="questionBalloon">
             <icon class="questionBtn">？</icon>
           </div>
         </td>
@@ -139,13 +209,8 @@
       </tr>
       <tr>
         <td id = 'chatAutomaticResponseLabel' class = 'tooltip'>自動返信応対件数
-          <div class="questionBalloon questionBalloonPosition8">
+          <div class="questionBalloon">
             <icon class="questionBtn">？</icon>
-              <icon-annotation>
-                <ul>
-                  <li><span>サイト訪問者からのチャットを企業側が自動返信で応対した件数(※初回メッセージのみカウント)</span></li>
-                </ul>
-              </icon-annotation>
           </div>
         </td>
         <?php for ($i = $start; $i <= $end; $i++) { ?>
@@ -160,13 +225,8 @@
       </tr>
       <tr>
         <td id = 'chatDenialLabel' class = 'tooltip'>チャット拒否件数
-          <div class="questionBalloon questionBalloonPosition8s">
+          <div class="questionBalloon">
             <icon class="questionBtn">？</icon>
-              <icon-annotation>
-                <ul>
-                  <li><span>Sorryメッセージが消費者に送信された件数</span></li>
-                </ul>
-              </icon-annotation>
           </div>
         </td>
         <?php for ($i = $start; $i <= $end; $i++) { ?>
@@ -181,13 +241,8 @@
       </tr>
       <tr>
         <td id = 'chatEffectivenessLabel' class = 'tooltip'>チャット有効件数
-          <div class="questionBalloon questionBalloonPosition8s">
+          <div class="questionBalloon">
             <icon class="questionBtn">？</icon>
-              <icon-annotation>
-                <ul>
-                  <li><span>成果が「有効」として登録された件数</span></li>
-                </ul>
-              </icon-annotation>
           </div>
         </td>
         <?php for ($i = $start; $i <= $end; $i++) { ?>
@@ -202,13 +257,8 @@
       </tr>
       <tr>
         <td id = 'chatRequestAverageTimeLabel' class = 'tooltip'>平均チャットリクエスト時間
-          <div class="questionBalloon questionBalloonPosition13">
+          <div class="questionBalloon">
             <icon class="questionBtn">？</icon>
-            <icon-annotation>
-              <ul>
-                <li><span>サイト訪問者がサイトアクセスしてから初回メッセージを送信するまでの平均時間</span></li>
-              </ul>
-            </icon-annotation>
           </div>
         </td>
         <?php for ($i = $start; $i <= $end; $i++) { ?>
@@ -218,13 +268,8 @@
       </tr>
       <tr>
         <td id ='chatConsumerWaitAverageTimeLabel' class = 'tooltip'>平均消費者待機時間
-          <div class="questionBalloon questionBalloonPosition9">
+          <div class="questionBalloon">
             <icon class="questionBtn">？</icon>
-            <icon-annotation>
-              <ul>
-                <li><span>サイト訪問者の初回メッセージを受信してから、オペレータがチャットに入室するまでの平均時間</span></li>
-              </ul>
-            </icon-annotation>
           </div>
         </td>
         <?php for ($i = $start; $i <= $end; $i++) { ?>
@@ -234,13 +279,8 @@
       </tr>
       <tr>
         <td id ='chatResponseAverageTimeLabel' class = 'tooltip'>平均応答時間
-          <div class="questionBalloon questionBalloonPosition6">
+          <div class="questionBalloon">
             <icon class="questionBtn">？</icon>
-            <icon-annotation>
-              <ul>
-                <li><span>サイト訪問者の初回メッセージを受信してから、オペレータが初回メッセージを送信するまでの平均時間</span></li>
-              </ul>
-            </icon-annotation>
           </div>
         </td>
         <?php for ($i = $start; $i <= $end; $i++) { ?>
@@ -250,13 +290,8 @@
       </tr>
       <tr>
         <td id = 'chatResponseRateLabel' class = 'tooltip'>チャット応対率
-          <div class="questionBalloon questionBalloonPosition7">
+          <div class="questionBalloon">
             <icon class="questionBtn">？</icon>
-              <icon-annotation>
-                <ul>
-                  <li><span>チャット応対件数／チャットリクエスト件数</span></li>
-                </ul>
-              </icon-annotation>
           </div>
         </td>
           <?php
@@ -281,13 +316,8 @@
       </tr>
       <tr>
         <td id = 'chatAutomaticResponseRateLabel' class = 'tooltip'>自動返信応対率
-          <div class="questionBalloon questionBalloonPosition7">
+          <div class="questionBalloon">
             <icon class="questionBtn">？</icon>
-              <icon-annotation>
-                <ul>
-                  <li><span>自動返信応対件数／チャットリクエスト件数</span></li>
-                </ul>
-              </icon-annotation>
           </div>
         </td>
         <?php
@@ -312,13 +342,8 @@
       </tr>
       <tr>
         <td id = 'chatEffectivenessResponseRateLabel' class = 'tooltip'>チャット有効率
-          <div class="questionBalloon questionBalloonPosition7">
+          <div class="questionBalloon">
             <icon class="questionBtn">？</icon>
-              <icon-annotation>
-                <ul>
-                  <li><span>チャット有効件数／チャットリクエスト件数</span></li>
-                </ul>
-              </icon-annotation>
           </div>
         </td>
         <?php
@@ -364,11 +389,6 @@
         <td id="chatRequestLabel" class = 'tooltip'>チャットリクエスト件数
           <div class="questionBalloon questionBalloonPosition11">
             <icon class="questionBtn">？</icon>
-              <icon-annotation>
-                <ul>
-                  <li><span>サイト訪問者がチャットを送信した件数(※初回メッセージのみカウント)</span></li>
-                </ul>
-              </icon-annotation>
           </div>
         </td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
@@ -380,11 +400,6 @@
         <td id = 'chatResponseLabel'  class = 'tooltip'>チャット応対件数
           <div class="questionBalloon questionBalloonPosition8">
             <icon class="questionBtn">？</icon>
-              <icon-annotation>
-                <ul>
-                  <li><span>チャットリクエストに対してオペレータが入室した件数（※初回入室のみカウント）</span></li>
-                </ul>
-              </icon-annotation>
           </div>
         </td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
@@ -396,11 +411,6 @@
           <td id = 'chatAutomaticResponseLabel' class = 'tooltip'>自動返信応対件数
             <div class="questionBalloon questionBalloonPosition8">
               <icon class="questionBtn">？</icon>
-                <icon-annotation>
-                  <ul>
-                    <li><span>サイト訪問者からのチャットを企業側が自動返信で応対した件数(※初回メッセージのみカウント)</span></li>
-                  </ul>
-                </icon-annotation>
             </div>
           </td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
@@ -412,11 +422,6 @@
           <td id = 'chatDenialLabel' class = 'tooltip'>チャット拒否件数
             <div class="questionBalloon questionBalloonPosition8s">
               <icon class="questionBtn">？</icon>
-                <icon-annotation>
-                  <ul>
-                    <li><span>Sorryメッセージが消費者に送信された件数</span></li>
-                  </ul>
-                </icon-annotation>
             </div>
           </td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
@@ -428,11 +433,6 @@
           <td id = 'chatEffectivenessLabel' class = 'tooltip'>チャット有効件数
             <div class="questionBalloon questionBalloonPosition8s">
               <icon class="questionBtn">？</icon>
-                <icon-annotation>
-                  <ul>
-                    <li><span>成果が「有効」として登録された件数</span></li>
-                  </ul>
-                </icon-annotation>
             </div>
           </td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
@@ -444,11 +444,6 @@
           <td id = 'chatRequestAverageTimeLabel' class = 'tooltip'>平均チャットリクエスト時間
             <div class="questionBalloon questionBalloonPosition13">
               <icon class="questionBtn">？</icon>
-              <icon-annotation>
-                <ul>
-                  <li><span>サイト訪問者がサイトアクセスしてから初回メッセージを送信するまでの平均時間</span></li>
-                </ul>
-              </icon-annotation>
             </div>
           </td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
@@ -460,11 +455,6 @@
           <td id ='chatConsumerWaitAverageTimeLabel' class = 'tooltip'>平均消費者待機時間
             <div class="questionBalloon questionBalloonPosition9">
               <icon class="questionBtn">？</icon>
-              <icon-annotation>
-                <ul>
-                  <li><span>サイト訪問者の初回メッセージを受信してから、オペレータがチャットに入室するまでの平均時間</span></li>
-                </ul>
-              </icon-annotation>
             </div>
           </td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
@@ -476,11 +466,6 @@
           <td id ='chatResponseAverageTimeLabel' class = 'tooltip'>平均応答時間
             <div class="questionBalloon questionBalloonPosition6">
               <icon class="questionBtn">？</icon>
-              <icon-annotation>
-                <ul>
-                  <li><span>サイト訪問者の初回メッセージを受信してから、オペレータが初回メッセージを送信するまでの平均時間</span></li>
-                </ul>
-              </icon-annotation>
             </div>
           </td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
@@ -492,11 +477,6 @@
           <td id = 'chatResponseRateLabel' class = 'tooltip'>チャット応対率
              <div class="questionBalloon questionBalloonPosition7">
                <icon class="questionBtn">？</icon>
-                 <icon-annotation>
-                   <ul>
-                     <li><span>チャット応対件数／チャットリクエスト件数</span></li>
-                   </ul>
-                 </icon-annotation>
              </div>
           </td>
           <?php
@@ -523,11 +503,6 @@
           <td id = 'chatAutomaticResponseRateLabel' class = 'tooltip'>自動返信応対率
             <div class="questionBalloon questionBalloonPosition7">
               <icon class="questionBtn">？</icon>
-                <icon-annotation>
-                  <ul>
-                    <li><span>自動返信応対件数／チャットリクエスト件数</span></li>
-                  </ul>
-                </icon-annotation>
             </div>
           </td>
           <?php
@@ -554,11 +529,6 @@
           <td id = 'chatEffectivenessResponseRateLabel' class = 'tooltip'>チャット有効率
             <div class="questionBalloon questionBalloonPosition7">
               <icon class="questionBtn">？</icon>
-                <icon-annotation>
-                  <ul>
-                    <li><span>チャット有効件数／チャットリクエスト件数</span></li>
-                  </ul>
-                </icon-annotation>
             </div>
           </td>
           <?php
