@@ -218,5 +218,20 @@ $(document).ready(function(){
   tableObj.on('search',function(event){
     $('icon-annotation').css('display', 'none');
   });
+
+  $(document).on({
+    mouseenter: function () {
+      trIndex = $(this).index()+1;
+      $("table.dataTable").each(function(index) {
+        $(this).find("tr:eq("+trIndex+")").addClass("highlight")
+      });
+    },
+    mouseleave: function () {
+      trIndex = $(this).index()+1;
+      $("table.dataTable").each(function(index) {
+        $(this).find("tr:eq("+trIndex+")").removeClass("highlight")
+      });
+    }
+  }, ".dataTables_wrapper tr");
 });
 </script>
