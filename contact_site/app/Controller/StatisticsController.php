@@ -402,7 +402,7 @@ class StatisticsController extends AppController {
       $allResponseRate = 0;
     } else {
       // リクエストチャットが0件の場合（無効データ）
-      $addResponseRate = self::LABEL_INVALID;
+      $allResponseRate = self::LABEL_INVALID;
     }
 
     return ['responseRate' => $responseRate,'responseNumberData' => $responseNumberData,'allResponseNumberData' => $allResponseNumberData,'allResponseRate' => $allResponseRate];
