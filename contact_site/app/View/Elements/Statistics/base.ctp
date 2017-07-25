@@ -10,13 +10,13 @@
         <span id = "searchPeriod">対象期間：</span>
         <?= $this->Form->create(); ?>
 
-          <?= $this->Form->input('dateType', array('type'=>'select','name' => 'dateFormat','onChange' => 'functionName()',
+          <?= $this->Form->input('dateType', array('type'=>'select','name' => 'dateFormat','onChange' => 'timeChange()',
           'div'=>false, 'style' => 'vertical-align:middle;','label'=>false,'options'=>array('月別'=>'月別','日別'=>'日別','時別'=>'時別'), 'selected' => $date)); ?>
 
-          <?= $this->Form->input('dateForm', array('type'=>'select','name' => 'selectName2','id' => 'monthlyForm',
+          <?= $this->Form->input('dateForm', array('type'=>'select','name' => 'monthlyName','id' => 'monthlyForm',
           'div'=>false, 'label'=>false,'options'=>$companyRangeYear, 'selected' => $type,'style' => 'display:none;vertical-align:middle','empty' => '選択してください')); ?>
 
-          <?= $this->Form->input('dateForm', array('type'=>'select','name' => 'selectName3','id' => 'daylyForm',
+          <?= $this->Form->input('dateForm', array('type'=>'select','name' => 'daylyName','id' => 'daylyForm',
           'div'=>false, 'label'=>false,'options'=>$companyRangeDate,
           'style' => 'display:none;vertical-align:middle;','selected' => $type,'empty' => '選択してください')); ?>
 
