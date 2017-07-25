@@ -102,6 +102,13 @@ class TAutoMessage extends AppModel {
 							}
 						}
 
+						// 発言内容 => 自動返信までの間隔 の入力チェック
+            if (strcmp($field, "triggerTimeSec") === 0) {
+              if ( !preg_match(C_MATCH_RULE_NUM_3, $item[$field]) ) {
+                return false;
+              }
+            }
+
 						// 値が未入力のものはエラー
 						if ( strcmp($item[$field], "") === 0 ) {
 							return false;
