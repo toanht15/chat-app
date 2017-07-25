@@ -1,7 +1,7 @@
 <script type="text/javascript">
 <?= $this->element('TDocuments/loadScreen'); ?>
 
-function functionName()　{
+function timeChange()　{
   var chosenDateFormat = document.forms.THistoryForChatForm.dateFormat;
 
   //selectで月別を選択した場合

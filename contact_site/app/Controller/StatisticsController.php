@@ -55,12 +55,12 @@ class StatisticsController extends AppController {
         $date = $this->request->data['dateFormat'];
         //月別の場合
         if($date == '月別'){
-          $type = $this->request->data['selectName2'];
+          $type = $this->request->data['monthlyName'];
           $data = $this->calculateMonthlyData($type);
         }
         //日別の場合
         else if($date == '日別'){
-          $type = $this->request->data['selectName3'];
+          $type = $this->request->data['daylyName'];
           $data = $this->calculateDailyData($type);
         }
         //時別の場合
@@ -365,6 +365,9 @@ class StatisticsController extends AppController {
       thcl.message_distinction = thcl2.message_distinction
     group by date";
 
+    $this->log('リクエストデータ',LOG_DEBUG);
+    $this->log($requestNumberData,LOG_DEBUG);
+
     $responseNumber = $this->THistory->query($response, array($date_format,$this->userInfo['MCompany']['id'],$correctStartDate,$correctEndDate,$this->chatMessageType['messageType']['enteringRoom'],$this->chatMessageType['requestFlg']['effectiveness']));
 
     foreach($responseNumber as $k => $v) {
@@ -377,6 +380,7 @@ class StatisticsController extends AppController {
       $responseNumberData = $responseNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : $v[0]['response_count']);
     }
 
+    $this->log($responseRate,LOG_DEBUG);
     //チャット応答率
     $responseRate = array_merge($this->convertBaseDataForPercent($baseData),$responseRate);
 
