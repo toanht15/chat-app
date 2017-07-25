@@ -195,10 +195,21 @@ sincloApp.directive('ngShowonhover',function() {
                         messageList.push("終了時間は「00:00」の形で入力してください");
                     }
                 }
+
                 /* 発言内容 */
                 if ( 'speechContent' in form ) {
                     if ('required' in form.speechContent.$error) {
-                        messageList.push("発言内容が未入力です");
+                      messageList.push("発言内容が未入力です");
+                    }
+                }
+
+                /* 自動返信までの間隔 */
+                if ( 'triggerTimeSec' in form ) {
+                    if ('required' in form.triggerTimeSec.$error) {
+                        messageList.push("自動返信までの間隔が未指定です。");
+                    }
+                    if ('pattern' in form.triggerTimeSec.$error) {
+                      messageList.push("時間は1～60までの半角数字で指定できます");
                     }
                 }
 

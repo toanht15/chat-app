@@ -102,7 +102,7 @@
   <li>
     <span><label>自動返信までの間隔</label></span>
     <label for="triggerTimeSec">
-      <input type="number" ng-model="setItem.triggerTimeSec" name="triggerTimeSec" maxlength="2" required="" style="width:6em">
+      <input type="number" ng-model="setItem.triggerTimeSec" ng-pattern="<?=C_MATCH_RULE_NUM_3?>" name="triggerTimeSec" min="1" max="60" maxlength="2" required="" style="width:6em">
       秒後
     </label>
   </li>
