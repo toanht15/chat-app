@@ -19,7 +19,7 @@ function functionName()　{
     document.getElementById("monthlyForm").style.display="none";
     document.getElementById("daylyForm").style.display="";
     document.getElementById("hourlyForm").style.display="none";
-    document.getElementById("daylyForm").value = "";
+    document.getElementById("hourlyForm").value = "";
     document.getElementById("triangle").style.borderTop = "0px";
   }
   //selectで時別を選択した場合
@@ -120,22 +120,28 @@ $(document).ready(function(){
 
   //月別の年を選択
   $("#monthlyForm").change(function(){
-    loading.load.start();
-    var dateFormat = $("select[name=dateFormat]").val();
+    var monthlyForm = $("#monthlyForm").val();
+    if(monthlyForm != '') {
+      loading.load.start();
+      var dateFormat = $("select[name=dateFormat]").val();
 
-    if(dateFormat == timeType.monthly) {
-      document.getElementById('THistoryForChatForm').submit();
+      if(dateFormat == timeType.monthly) {
+        document.getElementById('THistoryForChatForm').submit();
+      }
     }
   });
 
   //日別の月を選択
   $("#daylyForm").change(function(){
-    loading.load.start();
-    var dateFormat = $("select[name=dateFormat]").val();
+    var daylyForm = $("#daylyForm").val();
+    if(daylyForm != '') {
+      loading.load.start();
+      var dateFormat = $("select[name=dateFormat]").val();
 
-    if(dateFormat == timeType.dayly) {
-      document.getElementById('THistoryForChatForm').submit();
-    }
+      if(dateFormat == timeType.dayly) {
+          document.getElementById('THistoryForChatForm').submit();
+        }
+      }
   });
 
   //datepicke
