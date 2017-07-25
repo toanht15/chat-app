@@ -381,6 +381,13 @@ class StatisticsController extends AppController {
     //チャット応答率
     $responseRate = array_merge($this->convertBaseDataForPercent($baseData),$responseRate);
 
+    foreach($requestNumberData as $k2 => $v2) {
+      if($v2 !== 0 && strcmp($responseRate[$k2],self::LABEL_INVALID) === 0) {
+        // 無効データと判定されたがリクエストチャット件数が存在する場合は0%（応対なし）として返却
+        $responseRate[$v2] = 0;
+      }
+    }
+
     //チャット応答件数
     $responseNumberData = array_merge($baseData,$responseNumberData);
 
@@ -391,6 +398,12 @@ class StatisticsController extends AppController {
     $allResponseRate = 0;
     if($allResponseNumberData != 0 and $allRequestNumberData != 0) {
       $allResponseRate = round($allResponseNumberData/$allRequestNumberData*100);
+    } else if($allResponseNumberData === 0 && $allRequestNumberData != 0) {
+      // リクエストチャット件数はあるけど応答がない場合
+      $allResponseRate = 0;
+    } else {
+      // リクエストチャットが0件の場合（無効データ）
+      $addResponseRate = self::LABEL_INVALID;
     }
 
     return ['responseRate' => $responseRate,'responseNumberData' => $responseNumberData,'allResponseNumberData' => $allResponseNumberData,'allResponseRate' => $allResponseRate];
@@ -437,6 +450,13 @@ class StatisticsController extends AppController {
     //自動返信応答率
     $automaticResponseRate = array_merge($this->convertBaseDataForPercent($baseData),$automaticResponseRate);
 
+    foreach($requestNumberData as $k2 => $v2) {
+      if($v2 !== 0 && strcmp($automaticResponseRate[$k2],self::LABEL_INVALID) === 0) {
+        // 無効データと判定されたがリクエストチャット件数が存在する場合は0%（自動返信なし）として返却
+        $automaticResponseRate[$v2] = 0;
+      }
+    }
+
     //自動返信応対件数合計値
     $allAutomaticResponseNumberData = array_sum($automaticResponseNumberData);
 
@@ -444,6 +464,12 @@ class StatisticsController extends AppController {
     $allAutomaticResponseRate = 0;
     if($allAutomaticResponseNumberData != 0 and $allRequestNumberData != 0) {
       $allAutomaticResponseRate = round($allAutomaticResponseNumberData/$allRequestNumberData*100);
+    } else if($allAutomaticResponseNumberData === 0 && $allRequestNumberData != 0) {
+      // リクエストチャット件数はあるけど自動返信がない場合
+      $allAutomaticResponseRate = 0;
+    } else {
+      // リクエストチャットが0件の場合（無効データ）
+      $allAutomaticResponseRate = self::LABEL_INVALID;
     }
 
     return ['automaticResponseNumberData' => $automaticResponseNumberData,'automaticResponseRate' => $automaticResponseRate,
@@ -501,6 +527,13 @@ class StatisticsController extends AppController {
     //チャット有効率
     $effectivenessRate = array_merge($this->convertBaseDataForPercent($baseData),$effectivenessRate);
 
+    foreach($requestNumberData as $k2 => $v2) {
+      if($v2 !== 0 && strcmp($effectivenessRate[$k2],self::LABEL_INVALID) === 0) {
+        // 無効データと判定されたがリクエストチャット件数が存在する場合は0%（自動返信なし）として返却
+        $effectivenessRate[$v2] = 0;
+      }
+    }
+
     //有効件数合計値
     $allEffectivenessNumberData = array_sum($effectivenessNumberData);
 
@@ -511,6 +544,12 @@ class StatisticsController extends AppController {
     $allEffectivenessRate = 0;
     if($allEffectivenessNumberData != 0 and $allRequestNumberData != 0) {
       $allEffectivenessRate = round($allEffectivenessNumberData/$allRequestNumberData*100);
+    } else if($allEffectivenessNumberData === 0 && $allRequestNumberData != 0) {
+      // リクエストチャット件数はあるけど自動返信がない場合
+      $allEffectivenessRate = 0;
+    } else {
+      // リクエストチャットが0件の場合（無効データ）
+      $allEffectivenessRate = self::LABEL_INVALID;
     }
 
     return ['effectivenessNumberData' => $effectivenessNumberData,'denialNumberData' => $denialNumberData,'effectivenessRate' => $effectivenessRate,
