@@ -381,9 +381,9 @@ class StatisticsController extends AppController {
     $responseRate = array_merge($this->convertBaseDataForPercent($baseData),$responseRate);
 
     foreach($requestNumberData as $k2 => $v2) {
-      if($v2 !== 0 && strcmp($responseRate[$k2],self::LABEL_INVALID) === 0) {
+      if(intval($v2) !== 0 && strcmp($responseRate[$k2],self::LABEL_INVALID) === 0) {
         // 無効データと判定されたがリクエストチャット件数が存在する場合は0%（応対なし）として返却
-        $responseRate[$v2] = 0;
+        $responseRate[$k2] = 0;
       }
     }
 
@@ -450,9 +450,9 @@ class StatisticsController extends AppController {
     $automaticResponseRate = array_merge($this->convertBaseDataForPercent($baseData),$automaticResponseRate);
 
     foreach($requestNumberData as $k2 => $v2) {
-      if($v2 !== 0 && strcmp($automaticResponseRate[$k2],self::LABEL_INVALID) === 0) {
+      if(intval($v2) !== 0 && strcmp($automaticResponseRate[$k2],self::LABEL_INVALID) === 0) {
         // 無効データと判定されたがリクエストチャット件数が存在する場合は0%（自動返信なし）として返却
-        $automaticResponseRate[$v2] = 0;
+        $automaticResponseRate[$k2] = 0;
       }
     }
 
@@ -525,9 +525,9 @@ class StatisticsController extends AppController {
     $effectivenessRate = array_merge($this->convertBaseDataForPercent($baseData),$effectivenessRate);
 
     foreach($requestNumberData as $k2 => $v2) {
-      if($v2 !== 0 && strcmp($effectivenessRate[$k2],self::LABEL_INVALID) === 0) {
+      if(intval($v2) !== 0 && strcmp($effectivenessRate[$k2],self::LABEL_INVALID) === 0) {
         // 無効データと判定されたがリクエストチャット件数が存在する場合は0%（自動返信なし）として返却
-        $effectivenessRate[$v2] = 0;
+        $effectivenessRate[$k2] = 0;
       }
     }
 
