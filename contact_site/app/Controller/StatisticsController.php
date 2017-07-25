@@ -728,7 +728,7 @@ class StatisticsController extends AppController {
       $lastDate = strtotime('last day of ' .$requestData['date']);
 
       $monthData = [];
-      $monthData[] = '統計項目/月別';
+      $monthData[] = '統計項目/日別';
       while($firstDate <= $lastDate) {
         $monthData[] = date('Y-m-d',$firstDate);
         $firstDate = strtotime("+1 day", $firstDate);
@@ -741,7 +741,7 @@ class StatisticsController extends AppController {
       $startTime = strtotime($requestData['date']);
       $endTime = strtotime("+1 day",$startTime);
       $dayData = [];
-      $dayData[] = '統計項目/月別';
+      $dayData[] = '統計項目/時別';
       while($startTime < $endTime) {
         $dayData[] = date('H:i',$startTime).'-'.date('H:i',strtotime("+1 hour", $startTime));
         $startTime = strtotime("+1 hour", $startTime);
@@ -864,20 +864,43 @@ class StatisticsController extends AppController {
     $responseAvgTime[] = $csvData['responseAvgTimeData']['allResponseAvgTimeData'];
 
     foreach($csvData['responseDatas']['responseRate'] as $key => $v2) {
-      $responseRate[] = $v2;
+      $percentMark = '';
+      if(is_numeric($v2)) {
+        $percentMark = '%';
+      }
+      $responseRate[] = $v2.$percentMark;
     }
-    $responseRate[] = $csvData['responseDatas']['allResponseRate'];
+    $percentMark = '';
+    if(is_numeric($csvData['responseDatas']['allResponseRate'])) {
+      $percentMark = '%';
+    }
+    $responseRate[] = $csvData['responseDatas']['allResponseRate'].$percentMark;
 
     foreach($csvData['automaticResponseData']['automaticResponseRate'] as $key => $v2) {
-      $automaticResponseRate[] = $v2;
+      $percentMark = '';
+      if(is_numeric($v2)) {
+        $percentMark = '%';
+      }
+      $automaticResponseRate[] = $v2.$percentMark;
     }
-    $automaticResponseRate[] = $csvData['automaticResponseData']['allAutomaticResponseRate'];
+    $percentMark = '';
+    if(is_numeric($csvData['automaticResponseData']['allAutomaticResponseRate'])) {
+      $percentMark = '%';
+    }
+    $automaticResponseRate[] = $csvData['automaticResponseData']['allAutomaticResponseRate'].$percentMark;
 
     foreach($csvData['coherentDatas']['effectivenessRate'] as $key => $v3) {
-      $effectivenessRate[] = $v3;
+      $percentMark = '';
+      if(is_numeric($v3)) {
+        $percentMark = '%';
+      }
+      $effectivenessRate[] = $v3.$percentMark;
     }
-
-    $effectivenessRate[] = $csvData['coherentDatas']['allEffectivenessRate'];
+    $percentMark = '';
+    if(is_numeric($csvData['coherentDatas']['allEffectivenessRate'])) {
+      $percentMark = '%';
+    }
+    $effectivenessRate[] = $csvData['coherentDatas']['allEffectivenessRate'].$percentMark;
 
     return ['accessNumber' => $accessNumber,'widgetNumber' => $widgetNumber,'requestNumber' => $requestNumber,
       'responseNumber' => $responseNumber,'automaticResponseNumber' => $automaticResponseNumber, 'noNumber' =>$noNumber,

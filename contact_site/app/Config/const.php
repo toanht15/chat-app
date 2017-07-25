@@ -93,6 +93,7 @@ define('C_MATCH_RULE_COLOR_CODE', '/^#([0-9|a-f|A-F]{3}|[0-9|a-f|A-F]{6})$/');
 define('C_MATCH_RULE_IMAGE_FILE', '/.(png|jpg|jpeg)$/i');
 define('C_MATCH_RULE_NUM_1', '/^(100|[0-9]{1,2})$/');
 define('C_MATCH_RULE_NUM_2', '/^(100|[1-9][0-9]|[1-9]{1})$/');
+define('C_MATCH_RULE_NUM_3', '/^(60|[1-5][0-9]|[1-9]{1})$/');
 
 // メッセージ種別
 define('C_MESSAGE_TYPE_SUCCESS', 1); // 処理成功
