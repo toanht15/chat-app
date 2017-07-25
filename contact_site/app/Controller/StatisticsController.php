@@ -55,12 +55,12 @@ class StatisticsController extends AppController {
         $date = $this->request->data['dateFormat'];
         //月別の場合
         if($date == '月別'){
-          $type = $this->request->data['selectName2'];
+          $type = $this->request->data['monthlyName'];
           $data = $this->calculateMonthlyData($type);
         }
         //日別の場合
         else if($date == '日別'){
-          $type = $this->request->data['selectName3'];
+          $type = $this->request->data['daylyName'];
           $data = $this->calculateDailyData($type);
         }
         //時別の場合
