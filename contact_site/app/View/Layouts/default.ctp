@@ -77,7 +77,7 @@ if( strcmp($this->name, 'Login') !== 0 ) {
     }
     if ( strcmp($this->name, 'Statistics') === 0 ) {
       echo $this->Html->script('jquery.dataTables.min.js');
-      echo $this->Html->script("https://cdn.datatables.net/fixedcolumns/3.2.1/js/dataTables.fixedColumns.min.js");
+      echo $this->Html->script("dataTables.fixedColumns.min.js");
     }
 
   ?>
