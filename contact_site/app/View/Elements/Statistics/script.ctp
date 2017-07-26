@@ -38,7 +38,7 @@ function timeChange()　{
 $(window).load(function(){
 
   $.extend( $.fn.dataTable.defaults, {
-    language: { url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Japanese.json" }
+    language: { url: "/lib/datatables/Japanese.JSON" }
   });
 
   var tableObj = $("#statistics_table").DataTable({
