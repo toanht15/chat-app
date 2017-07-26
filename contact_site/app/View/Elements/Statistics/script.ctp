@@ -126,7 +126,11 @@ $(window).load(function(){
       var dateFormat = $("select[name=dateFormat]").val();
 
       if(dateFormat == timeType.monthly) {
-        document.getElementById('THistoryForChatForm').submit();
+        // Safariでローディングのイメージが表示されない問題の解決方法としてsetTimeoutを挿入
+        // @see https://stackoverflow.com/questions/28586393/safari-not-updating-ui-during-form-submission
+        setTimeout(function(){
+          document.getElementById('THistoryForChatForm').submit();
+        },0);
       }
     }
   });
@@ -139,9 +143,13 @@ $(window).load(function(){
       var dateFormat = $("select[name=dateFormat]").val();
 
       if(dateFormat == timeType.dayly) {
+        // Safariでローディングのイメージが表示されない問題の解決方法としてsetTimeoutを挿入
+        // @see https://stackoverflow.com/questions/28586393/safari-not-updating-ui-during-form-submission
+        setTimeout(function() {
           document.getElementById('THistoryForChatForm').submit();
-        }
+        },0);
       }
+    }
   });
 
   //datepicke
@@ -179,8 +187,12 @@ $(window).load(function(){
     loading.load.start();
     searchInfo = $("select[name=dateFormat]").val();
     $('input[name="datefilter"]').val(start.format('YYYY/MM/DD'));
-    if(searchInfo == timeType.timely){
-      document.getElementById('THistoryForChatForm').submit();
+    if(searchInfo == timeType.timely) {
+      // Safariでローディングのイメージが表示されない問題の解決方法としてsetTimeoutを挿入
+      // @see https://stackoverflow.com/questions/28586393/safari-not-updating-ui-during-form-submission
+      setTimeout(function() {
+        document.getElementById('THistoryForChatForm').submit();
+      },0);
     }
   });
 

@@ -348,7 +348,7 @@ var db = {
         };
         pool.query("INSERT INTO t_history_share_displays SET ?", insertData,
           function (error,results,fields){
-            if ( err !== null && err !== '' ) return false; // DB接続断対応
+            if ( error !== null && error !== '' ) return false; // DB接続断対応
             sincloCore[obj.siteKey][tabId].sdHistoryId = results.insertId;
           }
         );
