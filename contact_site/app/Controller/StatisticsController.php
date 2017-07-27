@@ -425,14 +425,24 @@ class StatisticsController extends AppController {
     //自動返信応対件数
     $automaticResponse = "SELECT date_format(th.access_date, ?) as date,
     count(distinct thcl.message_distinction,thcl.t_histories_id) as automaticResponse_count
-    FROM (select id, m_companies_id, access_date from t_histories where m_companies_id = ? AND access_date between
-    ? and ?) as th,(select t_histories_id, message_type,message_distinction from t_history_chat_logs where message_type = ?) as thcl
+    FROM  (SELECT id, m_companies_id, access_date from t_histories where m_companies_id = ? AND access_date between
+    ? and ?) as th
+    INNER JOIN
+      (select id,t_histories_id,message_distinction,message_type from t_history_chat_logs where message_type = ?) as thcl
+    ON
+      th.id = thcl.t_histories_id
+    LEFT JOIN
+      (select id,t_histories_id,message_distinction,message_type from t_history_chat_logs  where message_type = ?) as thcl2
+    ON
+      thcl.t_histories_id = thcl2.t_histories_id
+    AND
+      thcl.message_distinction = thcl2.message_distinction
     WHERE
-      thcl.t_histories_id = th.id
+      thcl2.t_histories_id IS NULL
     group by date";
 
     $automaticResponseNumber = $this->THistory->query($automaticResponse, array($date_format,$this->userInfo['MCompany']['id'],
-    $correctStartDate,$correctEndDate,$this->chatMessageType['messageType']['automatic']));
+    $correctStartDate,$correctEndDate,$this->chatMessageType['messageType']['automatic'],$this->chatMessageType['messageType']['enteringRoom']));
     foreach($automaticResponseNumber as $k => $v) {
       $automaticResponseNumberData =  $automaticResponseNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : $v[0]['automaticResponse_count']);
       if($v[0]['automaticResponse_count'] != 0 and $requestNumberData[$v[0]['date']] != 0) {
