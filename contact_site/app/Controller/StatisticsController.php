@@ -261,7 +261,7 @@ class StatisticsController extends AppController {
     $accessNumber = $this->THistory->query($access, array($date_format,$correctStartDate,$correctEndDate,$this->userInfo['MCompany']['id']));
 
     foreach($accessNumber as $k => $v) {
-      $accessNumberData =  $accessNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : $v[0]['count(th.id)']);
+      $accessNumberData =  $accessNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : intval($v[0]['count(th.id)']));
     }
 
     //アクセス件数
@@ -286,7 +286,7 @@ class StatisticsController extends AppController {
     $widgetNumber = $this->THistoryWidgetDisplays->query($widget, array($date_format,$correctStartDate,$correctEndDate,$this->userInfo['MCompany']['id']));
 
     foreach($widgetNumber as $k => $v) {
-      $widgetNumberData =  $widgetNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : $v[0]['count(tw.id)']);
+      $widgetNumberData =  $widgetNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : intval($v[0]['count(tw.id)']));
     }
 
     //ウィジェット件数
@@ -322,7 +322,7 @@ class StatisticsController extends AppController {
     $requestNumber = $this->THistory->query($requestNumber, array($date_format,$this->userInfo['MCompany']['id'],$this->chatMessageType['requestFlg']['effectiveness'],$correctStartDate,$correctEndDate));
 
     foreach($requestNumber as $k => $v) {
-      $requestNumberData =  $requestNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : $v[0]['request_count']);
+      $requestNumberData =  $requestNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : intval($v[0]['request_count']));
     }
 
     //チャットリクエスト件数
@@ -374,7 +374,7 @@ class StatisticsController extends AppController {
       } else if ($requestNumberData[$v[0]['date']] === 0) {
         $responseRate = $responseRate + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : self::LABEL_INVALID);
       }
-      $responseNumberData = $responseNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : $v[0]['response_count']);
+      $responseNumberData = $responseNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : intval($v[0]['response_count']));
     }
 
     //チャット応答率
@@ -444,7 +444,7 @@ class StatisticsController extends AppController {
     $automaticResponseNumber = $this->THistory->query($automaticResponse, array($date_format,$this->userInfo['MCompany']['id'],
     $correctStartDate,$correctEndDate,$this->chatMessageType['messageType']['automatic'],$this->chatMessageType['messageType']['enteringRoom']));
     foreach($automaticResponseNumber as $k => $v) {
-      $automaticResponseNumberData =  $automaticResponseNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : $v[0]['automaticResponse_count']);
+      $automaticResponseNumberData =  $automaticResponseNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : intval($v[0]['automaticResponse_count']));
       if($v[0]['automaticResponse_count'] != 0 and $requestNumberData[$v[0]['date']] != 0) {
 
         $automaticResponseRate = $automaticResponseRate + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : round($v[0]['automaticResponse_count']/$requestNumberData[$v[0]['date']]*100));
@@ -515,8 +515,8 @@ class StatisticsController extends AppController {
 
     if(!empty($effectiveness)) {
       foreach($effectiveness as $k => $v) {
-        $effectivenessNumberData =  $effectivenessNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : $v[0]['effectiveness']);
-        $denialNumberData =  $denialNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : $v[0]['denial']);
+        $effectivenessNumberData =  $effectivenessNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : intval($v[0]['effectiveness']));
+        $denialNumberData =  $denialNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : intval($v[0]['denial']));
         if( $v[0]['effectiveness'] != 0 and $requestNumberData[$v[0]['date']] != 0){
 
           $effectivenessRate = $effectivenessRate + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : round($v[0]['effectiveness']/$requestNumberData[$v[0]['date']]*100));
