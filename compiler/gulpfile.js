@@ -90,7 +90,7 @@ gulp.task('watch', function(){
   gulp.watch([path.adScss + '**/*.scss'], ['admin-scss-compile']);
   gulp.watch([path.scss + '**/*.scss'], ['contact-scss-compile']);
   gulp.watch([path.socketSass + '**/*.sass'], ['socket-sass-compile']);
-  gulp.watch([path.js], ['js-minify']);
+  gulp.watch([path.js], ['js-minify-dev']);
   gulp.watch([path.jade], ['jade-compile']);
 });
 
