@@ -32,6 +32,18 @@ class StatisticsController extends AppController {
 
   public function beforeFilter(){
     parent::beforeFilter();
+    $ret = $this->MCompany->read(null, $this->userInfo['MCompany']['id']);
+    $orList = [];
+    if ( !empty($ret['MCompany']['exclude_ips']) ) {
+      $this->log($this->MCompany->getExcludeList($this->userInfo['MCompany']['id']),LOG_DEBUG);
+      foreach( explode("\n", trim($ret['MCompany']['exclude_ips'])) as $v ){
+        if ( preg_match("/^[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}$/", trim($v)) ) {
+          $this->log(trim($v),LOG_DEBUG);
+          $orList[] = "INET_ATON('".trim($v)."') = INET_ATON(THistory.ip_address)";
+          continue;
+        }
+      }
+    }
     $this->set('title_for_layout', '統計機能');
   }
 
@@ -335,7 +347,7 @@ class StatisticsController extends AppController {
 
     foreach($widgetNumber as $k => $v) {
 
-      $widgetNumberData =  $widgetNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : intval($v[0]['count(tw.id)']));
+      $widgetNumberData =  $widgetNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : intval($v[0]['widget_count']));
     }
 
     //ウィジェット件数
