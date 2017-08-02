@@ -5,7 +5,7 @@
  */
 class StatisticsController extends AppController {
 
-  public $uses = ['THistory','MCompany','THistoryChatActiveUsers','THistoryWidgetDisplays','TLogin'];
+  public $uses = ['THistory','THistoryWidgetDisplays'];
 
   public $chatMessageType = [
     'messageType' => [
@@ -32,19 +32,6 @@ class StatisticsController extends AppController {
 
   public function beforeFilter(){
     parent::beforeFilter();
-    $ret = $this->MCompany->read(null, $this->userInfo['MCompany']['id']);
-    $orList = [];
-    if ( !empty($ret['MCompany']['exclude_ips']) ) {
-      $this->log($this->MCompany->getExcludeList($this->userInfo['MCompany']['id']),LOG_DEBUG);
-      foreach( explode("\n", trim($ret['MCompany']['exclude_ips'])) as $v ){
-        if ( preg_match("/^[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}$/", trim($v)) ) {
-          $this->log(trim($v),LOG_DEBUG);
-          $orList[] = "INET_ATON('".trim($v)."') = INET_ATON(THistory.ip_address)";
-          //$this->log($orList,LOG_DEBUG);
-          continue;
-        }
-      }
-    }
     $this->set('title_for_layout', '統計機能');
   }
 
