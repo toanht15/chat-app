@@ -5,7 +5,7 @@
  */
 class StatisticsController extends AppController {
 
-  public $uses = ['THistory','THistoryWidgetDisplays'];
+  public $uses = ['THistory','MCompany','THistoryChatActiveUsers','THistoryWidgetDisplays','TLogin'];
 
   public $chatMessageType = [
     'messageType' => [
@@ -32,6 +32,19 @@ class StatisticsController extends AppController {
 
   public function beforeFilter(){
     parent::beforeFilter();
+    $ret = $this->MCompany->read(null, $this->userInfo['MCompany']['id']);
+    $orList = [];
+    if ( !empty($ret['MCompany']['exclude_ips']) ) {
+      $this->log($this->MCompany->getExcludeList($this->userInfo['MCompany']['id']),LOG_DEBUG);
+      foreach( explode("\n", trim($ret['MCompany']['exclude_ips'])) as $v ){
+        if ( preg_match("/^[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}$/", trim($v)) ) {
+          $this->log(trim($v),LOG_DEBUG);
+          $orList[] = "INET_ATON('".trim($v)."') = INET_ATON(THistory.ip_address)";
+          //$this->log($orList,LOG_DEBUG);
+          continue;
+        }
+      }
+    }
     $this->set('title_for_layout', '統計機能');
   }
 
@@ -40,9 +53,6 @@ class StatisticsController extends AppController {
    * @return void
    * */
   public function forOperator() {
-  }
-
-    public function index() {
   }
 
   /* *
@@ -249,6 +259,39 @@ class StatisticsController extends AppController {
     "responseAvgTimeData" => $responseAvgTimeData];
   }
 
+  //除外IPアドレス
+  public function exclusionIpAddress($numberData){
+    $ret = $this->MCompany->read(null, $this->userInfo['MCompany']['id']);
+    $andList = [];
+    $rangeList = [];
+    if ( !empty($ret['MCompany']['exclude_ips']) ) {
+      foreach( explode("\n", trim($ret['MCompany']['exclude_ips'])) as $v ){
+        if ( preg_match("/^[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}$/", trim($v)) ) {
+          $andList[] = trim($v);
+        }
+        else {
+          $ips = $this->MCompany->cidrToRange(trim($v));
+          $list = [];
+          if ( count($ips) === 2 ) {
+            $list[] = trim($ips[0]);
+            $list[] = trim($ips[1]);
+          }
+          $rangeList[] = $list;
+        }
+      }
+    }
+
+    foreach($andList as $k => $v) {
+      $numberData .= " AND INET_ATON(th.ip_address) != INET_ATON('".$v."')";
+    }
+
+    foreach($rangeList as $k => $v) {
+      $numberData .= " AND INET_ATON('".$v[0]."') >= INET_ATON(th.ip_address)";
+      $numberData .= " AND INET_ATON(th.ip_address) <= INET_ATON('".$v[1]."')";
+    }
+    return $numberData;
+  }
+
   public function getAccessData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period) {
     if($this->isInValidDatetime($correctStartDate) && $this->isInValidDatetime($correctEndDate)) {
       return ['accessNumberData' => $this->convertBaseDataForNone($baseData),'allAccessNumberData' => self::LABEL_NONE];
@@ -257,7 +300,12 @@ class StatisticsController extends AppController {
 
     //アクセス件数
     $access = "SELECT date_format(th.access_date, ?) as date, count(th.id) FROM t_histories as th where th.access_date
-    between ? and ? and th.m_companies_id = ? group by date";
+    between ? and ? and th.m_companies_id = ?";
+
+    $access = $this->exclusionIpAddress($access);
+
+    $access .= 'group by date';
+
     $accessNumber = $this->THistory->query($access, array($date_format,$correctStartDate,$correctEndDate,$this->userInfo['MCompany']['id']));
 
     foreach($accessNumber as $k => $v) {
@@ -281,12 +329,25 @@ class StatisticsController extends AppController {
     $widgetNumberData =[];
 
     //ウィジェット表示件数
-    $widget = "SELECT date_format(tw.created, ?) as date,count(tw.id) FROM t_history_widget_displays as tw where tw.created between
-    ? and ? and tw.m_companies_id = ? group by date";
-    $widgetNumber = $this->THistoryWidgetDisplays->query($widget, array($date_format,$correctStartDate,$correctEndDate,$this->userInfo['MCompany']['id']));
+    $widget = "SELECT
+    date_format(th.access_date, ?) as date,
+    count(th.id) as widget_count
+    FROM t_histories as th, t_history_widget_displays as tw
+    WHERE
+      th.m_companies_id = ?
+    AND
+      th.tab_id = tw.tab_id
+    AND
+      th.access_date between ? and ?";
+
+    $widget = $this->exclusionIpAddress($widget);
+
+    $widget .= 'group by date';
+
+    $widgetNumber = $this->THistoryWidgetDisplays->query($widget, array($date_format,$this->userInfo['MCompany']['id'],$correctStartDate,$correctEndDate));
 
     foreach($widgetNumber as $k => $v) {
-      $widgetNumberData =  $widgetNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : intval($v[0]['count(tw.id)']));
+      $widgetNumberData =  $widgetNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : $v[0]['widget_count']);
     }
 
     //ウィジェット件数
@@ -316,10 +377,14 @@ class StatisticsController extends AppController {
     AND
       thcl.message_request_flg = ?
     AND
-      th.access_date between ? and ?
-    group by date";
+      th.access_date between ? and ?";
 
-    $requestNumber = $this->THistory->query($requestNumber, array($date_format,$this->userInfo['MCompany']['id'],$this->chatMessageType['requestFlg']['effectiveness'],$correctStartDate,$correctEndDate));
+    $requestNumber = $this->exclusionIpAddress($requestNumber);
+
+    $requestNumber .= 'group by date';
+
+    $requestNumber = $this->THistory->query($requestNumber, array($date_format,$this->userInfo['MCompany']['id'],
+      $this->chatMessageType['requestFlg']['effectiveness'],$correctStartDate,$correctEndDate));
 
     foreach($requestNumber as $k => $v) {
       $requestNumberData =  $requestNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : intval($v[0]['request_count']));
@@ -351,7 +416,7 @@ class StatisticsController extends AppController {
     //応対件数
     $response = "SELECT date_format(th.access_date, ?) as date,
     count(thcl.t_histories_id) as response_count
-    FROM (select id, m_companies_id, access_date from t_histories where m_companies_id = ? AND access_date between
+    FROM (select id, m_companies_id, access_date,ip_address from t_histories where m_companies_id = ? AND access_date between
     ? and ?) as th,(select t_histories_id, message_type, message_distinction
     from t_history_chat_logs where message_type = ? group by t_histories_id, message_distinction) as thcl,(select t_histories_id, message_request_flg,
     message_distinction from t_history_chat_logs where message_request_flg = ?) as thcl2
@@ -362,11 +427,15 @@ class StatisticsController extends AppController {
     AND
       thcl.t_histories_id = thcl2.t_histories_id
     AND
-      thcl.message_distinction = thcl2.message_distinction
-    group by date";
+      thcl.message_distinction = thcl2.message_distinction";
+
+    $response = $this->exclusionIpAddress($response);
+
+    $response .= 'group by date';
 
     $responseNumber = $this->THistory->query($response, array($date_format,$this->userInfo['MCompany']['id'],$correctStartDate,$correctEndDate,$this->chatMessageType['messageType']['enteringRoom'],$this->chatMessageType['requestFlg']['effectiveness']));
 
+    $this->log($responseNumber,LOG_DEBUG);
     foreach($responseNumber as $k => $v) {
       if($v[0]['response_count'] != 0 and $requestNumberData[$v[0]['date']] != 0) {
 
@@ -425,7 +494,7 @@ class StatisticsController extends AppController {
     //自動返信応対件数
     $automaticResponse = "SELECT date_format(th.access_date, ?) as date,
     count(distinct thcl.message_distinction,thcl.t_histories_id) as automaticResponse_count
-    FROM  (SELECT id, m_companies_id, access_date from t_histories where m_companies_id = ? AND access_date between
+    FROM  (SELECT id, m_companies_id, access_date,ip_address from t_histories where m_companies_id = ? AND access_date between
     ? and ?) as th
     INNER JOIN
       (select id,t_histories_id,message_distinction,message_type from t_history_chat_logs where message_type = ?) as thcl
@@ -438,8 +507,11 @@ class StatisticsController extends AppController {
     AND
       thcl.message_distinction = thcl2.message_distinction
     WHERE
-      thcl2.t_histories_id IS NULL
-    group by date";
+      thcl2.t_histories_id IS NULL";
+
+    $automaticResponse = $this->exclusionIpAddress($automaticResponse);
+
+    $automaticResponse .= 'group by date';
 
     $automaticResponseNumber = $this->THistory->query($automaticResponse, array($date_format,$this->userInfo['MCompany']['id'],
     $correctStartDate,$correctEndDate,$this->chatMessageType['messageType']['automatic'],$this->chatMessageType['messageType']['enteringRoom']));
@@ -504,11 +576,14 @@ class StatisticsController extends AppController {
     //チャット有効件数
     $effectiveness = "SELECT date_format(th.access_date, ?) as date,SUM(case when thcl.achievement_flg = ? THEN 1 ELSE 0 END) effectiveness,
     SUM(case when thcl.message_type = ? THEN 1 ELSE 0 END) denial
-    FROM (select id, m_companies_id, access_date from t_histories where m_companies_id = ? AND access_date between
+    FROM (select id, m_companies_id, access_date,ip_address from t_histories where m_companies_id = ? AND access_date between
     ? and ?) as th,(select t_histories_id, achievement_flg, message_type from t_history_chat_logs where achievement_flg = ? or message_type = ? ) as thcl
     WHERE
-      thcl.t_histories_id = th.id
-    group by date;";
+      thcl.t_histories_id = th.id";
+
+    $effectiveness = $this->exclusionIpAddress($effectiveness);
+
+    $effectiveness .= 'group by date';
 
     $effectiveness = $this->THistory->query($effectiveness, array($date_format,$this->chatMessageType['achievementFlg']['effectiveness'],$this->chatMessageType['messageType']['denial'],
       $this->userInfo['MCompany']['id'],$correctStartDate,$correctEndDate,$this->chatMessageType['achievementFlg']['effectiveness'],$this->chatMessageType['messageType']['denial']));
@@ -579,7 +654,7 @@ class StatisticsController extends AppController {
     //平均チャットリクエスト時間
     $requestTime = "SELECT date_format(th.access_date, ?) as date,AVG(UNIX_TIMESTAMP(thcl.created)
       - UNIX_TIMESTAMP(th.access_date)) as average
-    FROM (select id, m_companies_id, access_date from t_histories where m_companies_id = ? AND access_date between
+    FROM (select id, m_companies_id, access_date,ip_address from t_histories where m_companies_id = ? AND access_date between
     ? and ?) as th,(select t_histories_id, message_request_flg, message_distinction,created
     from t_history_chat_logs where message_request_flg = ? group by t_histories_id) as thcl,(select t_histories_id, message_type,message_distinction
     from t_history_chat_logs where message_type = ? group by t_histories_id) as thcl2
@@ -590,7 +665,11 @@ class StatisticsController extends AppController {
     AND
       thcl.t_histories_id = thcl2.t_histories_id
     AND
-      thcl.message_distinction = thcl2.message_distinction group by date";
+      thcl.message_distinction = thcl2.message_distinction";
+
+    $requestTime = $this->exclusionIpAddress($requestTime);
+
+    $requestTime .= 'group by date';
 
     $requestTime = $this->THistory->query($requestTime, array($date_format,$this->userInfo['MCompany']['id'],
       $correctStartDate,$correctEndDate,$this->chatMessageType['requestFlg']['effectiveness'],$this->chatMessageType['messageType']['consumerMessage']));
@@ -636,7 +715,7 @@ class StatisticsController extends AppController {
     //平均消費者待機時間
     $consumerWatingTime = "SELECT date_format(th.access_date,?) as date,AVG(UNIX_TIMESTAMP(thcl2.created)
       - UNIX_TIMESTAMP(thcl.created)) as average
-    FROM (select id, m_companies_id, access_date from t_histories where m_companies_id = ? AND access_date between
+    FROM (select id, m_companies_id, access_date,ip_address from t_histories where m_companies_id = ? AND access_date between
     ? and ?) as th,(select t_histories_id, message_request_flg,created,message_distinction
     from t_history_chat_logs where message_request_flg = ? group by t_histories_id) as thcl,(select t_histories_id, message_type,created,message_distinction
     from t_history_chat_logs where message_type = ? group by t_histories_id) as thcl2
@@ -647,8 +726,11 @@ class StatisticsController extends AppController {
     AND
       thcl.t_histories_id = thcl2.t_histories_id
     AND
-    thcl.message_distinction = thcl2.message_distinction
-    group by date";
+    thcl.message_distinction = thcl2.message_distinction";
+
+    $consumerWatingTime = $this->exclusionIpAddress($consumerWatingTime);
+
+    $consumerWatingTime .= 'group by date';
 
     $consumerWatingTime = $this->THistory->query($consumerWatingTime, array($date_format,$this->userInfo['MCompany']['id'],
       $correctStartDate,$correctEndDate,$this->chatMessageType['requestFlg']['effectiveness'],$this->chatMessageType['messageType']['enteringRoom']));
@@ -696,7 +778,7 @@ class StatisticsController extends AppController {
     //平均応答時間
     $responseTime = "SELECT date_format(th.access_date, ?) as date,AVG(UNIX_TIMESTAMP(thcl2.created)
       - UNIX_TIMESTAMP(thcl.created)) as average
-    FROM (select id, m_companies_id, access_date from t_histories where m_companies_id = ? AND access_date between
+    FROM (select id, m_companies_id, access_date,ip_address from t_histories where m_companies_id = ? AND access_date between
     ? and ?) as th,(select t_histories_id, message_request_flg,created,message_distinction
     from t_history_chat_logs where message_request_flg = ? group by t_histories_id) as thcl,(select t_histories_id, message_type,created,message_distinction
     from t_history_chat_logs where message_type = ? group by t_histories_id) as thcl2
@@ -707,7 +789,11 @@ class StatisticsController extends AppController {
     AND
       thcl.t_histories_id = thcl2.t_histories_id
     AND
-    thcl.message_distinction = thcl2.message_distinction group by date";
+    thcl.message_distinction = thcl2.message_distinction";
+
+    $responseTime = $this->exclusionIpAddress($responseTime);
+
+    $responseTime .= 'group by date';
 
     $responseTime = $this->THistory->query($responseTime, array($date_format,$this->userInfo['MCompany']['id'],
       $correctStartDate,$correctEndDate,$this->chatMessageType['requestFlg']['effectiveness'],$this->chatMessageType['messageType']['operatorMessage']));
