@@ -21,7 +21,7 @@ var uglify = require('gulp-uglify'),
       mangle: true,
       comments: false,
       compress: {
-        drop_console: false
+        drop_console: true
       }
     };
 
@@ -65,6 +65,17 @@ gulp.task('js-minify', function(){
     .pipe(gulp.dest(path.minjs));
 });
 
+gulp.task('js-minify-dev', function(){
+  //console.logを表示した状態にする
+  uglifyOpt.compress.drop_console = false;
+  return gulp.src(path.js)
+    .pipe(uglify(uglifyOpt))
+    .pipe(rename({
+      extname: '.min.js'
+    }))
+    .pipe(gulp.dest(path.minjs));
+});
+
 gulp.task('scss-compile', ['admin-scss-compile','contact-scss-compile','socket-sass-compile'] );
 
 gulp.task('jade-compile', function(){
@@ -79,8 +90,8 @@ gulp.task('watch', function(){
   gulp.watch([path.adScss + '**/*.scss'], ['admin-scss-compile']);
   gulp.watch([path.scss + '**/*.scss'], ['contact-scss-compile']);
   gulp.watch([path.socketSass + '**/*.sass'], ['socket-sass-compile']);
-  gulp.watch([path.js], ['js-minify']);
+  gulp.watch([path.js], ['js-minify-dev']);
   gulp.watch([path.jade], ['jade-compile']);
 });
 
-gulp.task('dev', ['scss-compile', 'js-minify', 'jade-compile', 'watch']);
+gulp.task('dev', ['scss-compile', 'js-minify-dev', 'jade-compile', 'watch']);
