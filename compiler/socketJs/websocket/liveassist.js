@@ -52,7 +52,9 @@ var LaUtility = function() {
       url : "https://sdk005.live-assist.jp",
       sdkPath : "https://sdk005.live-assist.jp/assistserver/sdk/web/consumer",
       sessionToken : sessionToken,
-      correlationId : correlationId
+      correlationId : correlationId,
+      allowedIframeOrigins : false,
+      disableLogging : true
     });
   };
 

@@ -63,7 +63,26 @@
   var onAgentLeftCobrowseCallback  = getOverriddenFunctions(window.AssistSDK, "onAgentLeftCobrowse");
   var onAgentLeftSessionCallback  = getOverriddenFunctions(window.AssistSDK, "onAgentLeftSession");
 
+  var onZoomStartedCallback  = getOverriddenFunctions(window.AssistSDK, "onZoomStarted");
+  var onZoomEndedCallback  = getOverriddenFunctions(window.AssistSDK, "onZoomEnded");
+
   var dynamicElementIdToPermissionMap = {};
+  var dynamicIframeElementIdToPermissionMap = new Map();
+
+  // We can't use the real assistLogger here because it is not created until shared-windows is loaded.
+  var assistLogger = {
+    warn: console.warn.bind(console),
+    error: console.error.bind(console),
+    log: console.log.bind(console),
+    info: console.info.bind(console)
+  };
+
+  var disableAssistLogging = function() {
+    assistLogger.warn = function() {};
+    assistLogger.log = function() {};
+    assistLogger.error = function() {};
+    assistLogger.info = function() {};
+  };
 
   if (window.name == '') {
     window.name = "AssistWindow";
@@ -83,6 +102,10 @@
      * <code>port</code> of the support server.
      */
     startSupport: function(configuration) {
+      if (configuration && configuration.disableLogging) {
+        disableAssistLogging();
+      }
+
       if (!getLocalStorageData()) {
         if (isObject(configuration) == false) {
           configuration = {"destination": configuration};
@@ -104,7 +127,7 @@
           configuration.browserInfo = {};
           configuration.browserInfo[getBrowser().toLowerCase()] = true;
         } catch (e) {
-          console.warn("Could not determine browser information");
+          assistLogger.warn("Could not determine browser information");
         }
 
         setSessionStorageData(configuration);
@@ -116,7 +139,7 @@
       } else {
         // not a critical issue, just already in call
         if (!controllerWindow) {
-          console.log("Removing orphaned session and starting support, in one second.");
+          assistLogger.log("Removing orphaned session and starting support, in one second.");
           removeAllStorageData();
 
           setTimeout(function() {
@@ -125,7 +148,7 @@
             }
           }, 1000);
         } else {
-          console.log("Connected to the orphaned session. You will first need to call endSupport before starting a new support session.");
+          assistLogger.log("Connected to the orphaned session. You will first need to call endSupport before starting a new support session.");
         }
         doError(createErrorMessage(ERROR_CODE.SESSION_IN_PROGRESS, "There is already a session in use."));
       }
@@ -157,9 +180,40 @@
      */
     setPermissionForElementWithId: function(permission, elementId) {
       dynamicElementIdToPermissionMap[elementId] = permission;
+
+      if (controllerWindow && controllerWindow.AssistController) {
+        controllerWindow.AssistController.setDynamicElementIdPermissionsMap(dynamicElementIdToPermissionMap);
+      }
+
       var el = document.getElementById(elementId);
       if (el !== null) {
         AssistSDK.setPermissionForElement(permission, el);
+      }
+    },
+
+    /**
+     *
+     * Set an agent access permission on an element that is within a given iframe that may not currently exist. The element is identified by its
+     * identifier. If the permission logically equates to false (e.g. is null), then the permission will NOT be set on
+     * the element if and when it becomes available.
+     *
+     * @param {string} permission the permission that will be set on the element.
+     * @param {string} elementId the id of the element on which the permission will be set.
+     * @param {HTMLIFrameElement} iframe the LA-enabled iframe element that may contain the given elementId.
+     */
+    setPermissionForElementInIframeWithId: function(permission, elementId, iframe) {
+      var dynamicElementIdToPermissionForIframeMap = dynamicIframeElementIdToPermissionMap.get(iframe);
+
+      if (dynamicElementIdToPermissionForIframeMap) {
+        dynamicElementIdToPermissionForIframeMap[elementId] = permission;
+      }
+      else {
+        dynamicElementIdToPermissionForIframeMap = {};
+        dynamicElementIdToPermissionForIframeMap[elementId] = permission;
+        dynamicIframeElementIdToPermissionMap.set(iframe, dynamicElementIdToPermissionForIframeMap);
+      }
+      if (controllerWindow && controllerWindow.AssistController) {
+        controllerWindow.AssistController.setIframeDynamicElementIdPermissionsMap(dynamicIframeElementIdToPermissionMap);
       }
     },
 
@@ -174,24 +228,14 @@
     /**
      * A check that can be used to see if the browser being used is supported by Live Assist.
      *
-     * @return {boolean} <code>false</code> if running on an iPad or iPhone or Android device. <code>true</code> if
-     * running on Chrome 33 and above. <code>true</code> if running on Firefox 28 and above. <code>true</code> if
-     * running on IE 11 and above. <code>true</code> if running on Safari 8 and above. <code>false</code> otherwise.
+     * @return {boolean} <code>true</code> if running on Chrome 33 and above. <code>true</code> if running on Firefox 28 and above. <code>true</code> if
+     * running on IE 11 and above. <code>true</code> if running on Safari 8 and above. <code>true</code> if running on Opera 37 and above.
+     * <code>false</code> otherwise.
      */
     isBrowserSupported: function() {
-      var plat = navigator.platform;
-      if (plat.match(/iPad|iPhone/i)) {
-        console.log("Running on an iOS device!");
-        return false;
-      }
-      var ua = navigator.userAgent;
-      if (ua.match(/\([^\)]*?Android/)) {
-        console.log("Running on an Android device!");
-        return false;
-      }
       var browser = getBrowser();
       var version = getBrowserVersion();
-      console.log("Browser: " + browser + " " + version);
+
       if (browser == "Chrome") {
         return version >= 33;
       }
@@ -203,6 +247,9 @@
       }
       if (browser == "Safari") {
         return version >= 8;
+      }
+      if (browser == "Opera") {
+        return version >= 37;
       }
       return false;
     },
@@ -302,7 +349,7 @@
       if (controllerWindow && controllerWindow.AssistController) {
         controllerWindow.AssistController.pauseCobrowse();
       } else {
-        console.log("Unable to pause co-browse, not in a support session.")
+        assistLogger.log("Unable to pause co-browse, not in a support session.")
       }
     },
 
@@ -313,7 +360,7 @@
       if (controllerWindow && controllerWindow.AssistController) {
         controllerWindow.AssistController.resumeCobrowse();
       } else {
-        console.log("Unable to un-pause co-browse, not in a support session.")
+        assistLogger.log("Unable to un-pause co-browse, not in a support session.")
       }
     },
 
@@ -411,6 +458,16 @@
     onAgentLeftSession: onAgentLeftSessionCallback,
 
     /**
+     * Callback for when zoom has started.
+     */
+    onZoomStarted: onZoomStartedCallback,
+
+    /**
+     * Callback for when zoom has ended.
+     */
+    onZoomEnded: onZoomEndedCallback,
+
+    /**
      *
      */
     onError: onErrorCallback || function() {
@@ -429,6 +486,18 @@
         controllerWindow.AssistController.unshareMoveableElement(element);
       } else {
         doError(createErrorMessage(ERROR_CODE.CALL_FAIL, "Unable to unshare element when co-browsing is not active."));
+      }
+    },
+
+    startZoom: function() {
+      if (controllerWindow && controllerWindow.AssistController) {
+        controllerWindow.AssistController.startZoom();
+      }
+    },
+
+    endZoom: function() {
+      if (controllerWindow && controllerWindow.AssistController) {
+        controllerWindow.AssistController.endZoom();
       }
     },
 
@@ -452,6 +521,11 @@
       storageData = getSessionStorageData();
     }
     if (storageData) {
+
+      if (storageData.disableLogging) {
+        disableAssistLogging();
+      }
+
       reconnectController(storageData, function(success) {
         if (success == false) {
           removeAllStorageData();
@@ -474,7 +548,7 @@
   }
 
   function doError(error) {
-    console.error(error);
+    assistLogger.error(error);
 
     if (typeof AssistSDK['onError'] !== 'undefined') {
       AssistSDK.onError(error.code,error);
@@ -494,10 +568,10 @@
     ;(function waitForDocument() {
       // better to go on interactive as this will be quicker but some browser impls may not do 'interactive'
       if (document.readyState === "interactive" || document.readyState === "complete") {
-        console.log("document complete");
+        assistLogger.log("document complete");
         callback();
       } else {
-        console.log("document not complete, waiting");
+        assistLogger.log("document not complete, waiting");
         setTimeout(waitForDocument, 50);
       }
     })();
@@ -515,50 +589,14 @@
     }
   }
 
-  function setDynamicPermissionsForElementRecursively(element) {
-    if (typeof element.id !== 'undefined' && element.id.length > 0 &&
-      (element.id in dynamicElementIdToPermissionMap)) {
-      AssistSDK.setPermissionForElement(dynamicElementIdToPermissionMap[element.id], element);
-    }
-    for (var childElIdx = 0; childElIdx < element.childNodes.length; childElIdx++) {
-      setDynamicPermissionsForElementRecursively(element.childNodes[childElIdx]);
-    }
-  }
-
-  function setDynamicPermissionsOnChange(mutations) {
-    mutations.forEach(function(mutation) {
-      switch (mutation.type) {
-        case "attributes":
-          var target = mutation.target;
-          AssistSDK.setPermissionForElement(null, target);
-          if (target.id !== 'undefined' && target.id.length > 0 && target.id in dynamicElementIdToPermissionMap) {
-            AssistSDK.setPermissionForElement(dynamicElementIdToPermissionMap[target.id], target);
-          }
-          break;
-        case "childList":
-          for (var childAddedIdx = 0; childAddedIdx < mutation.addedNodes.length; childAddedIdx++) {
-            setDynamicPermissionsForElementRecursively(mutation.addedNodes[childAddedIdx]);
-          }
-          break;
-        default:
-          break;
-      }
-    });
-  }
-
   function loadIFrame(configuration, reconnect, popupWindow, callback) {
-
-
     // todo: we've sort of got two 'ready' callbacks for the iframe (1 & 2), which could perhaps be improved
     createIFrame(configuration, "assist-iframe", CONTROLLER_PATH, function (iframe) { // <- 1)
       if (iframe) {
         controllerWindow = iframe.contentWindow;
-        controllerWindow.AssistController.setupDynamicPermissionHandling(
-          setDynamicPermissionsForElementRecursively,
-          setDynamicPermissionsOnChange,
-          { childList : true, subtree : true, attributes:true, attributeFilter:["id"] }
-        );
 
+        controllerWindow.AssistController.setDynamicElementIdPermissionsMap(dynamicElementIdToPermissionMap);
+        controllerWindow.AssistController.setIframeDynamicElementIdPermissionsMap(dynamicIframeElementIdToPermissionMap);
 
         var terminateCallback = function () {
           controllerWindow.AssistController.endSupport();
@@ -601,61 +639,84 @@
     return popupPositionString;
   }
 
+  function browserRequiresPopupURL() {
+    return (getBrowser() === "Chrome" && getBrowserVersion() >= 60) || (getBrowser() === "Opera" && getBrowserVersion() >= 47)
+  }
+
   function loadPopup(configuration, callback) {
     var popupPositionString = getPopupInitialPositionString(configuration);
-
-    popupWindow = window.open("about:blank", POPUP_NAME, "width=" + POPUP_WIDTH +
-      ",height=" + POPUP_HEIGHT + ",resizable=yes,scrollbars=yes" + popupPositionString);
-
-    //  It may be enough to just check for popupWindow.document
-    if (popupWindow && popupWindow.document) {
-      popupWindow.document.write("<!DOCTYPE html><head><script>window.AssistSDKOpening = true;</script></head><body></body>");
-      popupWindow.document.close();
-      if (popupWindow.AssistSDKOpening) {
-        popupWindow.document.open();
-
-        ajaxGetDOM(configuration, getSDKPath(configuration) + ASSIST_CSDK_PATH, function (xmlDoc) {
-
-          if (typeof configuration.locale !== "undefined" && configuration.locale !== null) {
-            xmlDoc.getElementById("lang").textContent = "var lang='" + configuration.locale + "';";
-          }
-
-          if (configuration.popupCssUrl != null) {
-            xmlDoc.getElementById("Assist-popup-CSS").setAttribute("href", configuration.popupCssUrl);
-          }
-
-          popupWindow.document.write("<!DOCTYPE html>\n" + xmlDoc.documentElement.outerHTML);
-
-          popupWindow.document.close();
-          popupWindow.configuration = configuration;
-
-          popupWindow.AssistSDKInterface = {
-            "ready": function() {
-              callback(popupWindow);
-            }
-          };
-        }, function error(statusCode) {
-          removeAllStorageData();
-          try {
-            popupWindow.close();
-          } catch (e) {
-          }
-          var msg = "Error connecting to server for url " + getSDKPath(configuration) + ASSIST_CSDK_PATH;
-          doError(createErrorMessage(ERROR_CODE.SESSION_CREATION_FAILURE,msg));
-        });
-
-        return;
-      }
-    }
-
-    // if we got here we hit the popup blocker
-    if (configuration.popupBlocked != null) {
-      configuration.popupBlocked();
+    var windowFeatures = "width=" + POPUP_WIDTH + ",height=" + POPUP_HEIGHT + ",resizable=yes,scrollbars=yes" + popupPositionString;
+    if (browserRequiresPopupURL()) {
+      var popupURL = configuration.popupURL || "__assist_csdk_popup__.html";
+      popupWindow = window.open(popupURL, POPUP_NAME, windowFeatures);
+      var attempts = 0;
+      (function waitForURL() {
+        if (attempts > 1000) {
+          doError("Error creating AssistCSDK popup");
+        }
+        else if (popupWindow && popupWindow.location && popupWindow.location.href != "about:blank") {
+          fillPopup();
+        }
+        else {
+          attempts += 1;
+          setTimeout(waitForURL, 20);
+        }
+      })();
     } else {
-      popupBlockedDefaultHandler(configuration);
+      popupWindow = window.open("about:blank", POPUP_NAME, windowFeatures);
+      fillPopup();
     }
-    removeAllStorageData();
 
+    function fillPopup() {
+      //  It may be enough to just check for popupWindow.document
+      if (popupWindow && popupWindow.document) {
+        popupWindow.document.write("<!DOCTYPE html><head><script>window.AssistSDKOpening = true;</script></head><body></body>");
+        popupWindow.document.close();
+        if (popupWindow.AssistSDKOpening) {
+          popupWindow.document.open();
+
+          ajaxGetDOM(configuration, getSDKPath(configuration) + ASSIST_CSDK_PATH, function (xmlDoc) {
+
+            if (typeof configuration.locale !== "undefined" && configuration.locale !== null) {
+              xmlDoc.getElementById("lang").textContent = "var lang='" + configuration.locale + "';";
+            }
+
+            if (configuration.popupCssUrl != null) {
+              xmlDoc.getElementById("Assist-popup-CSS").setAttribute("href", configuration.popupCssUrl);
+            }
+
+            popupWindow.document.write("<!DOCTYPE html>\n" + xmlDoc.documentElement.outerHTML);
+
+            popupWindow.document.close();
+            popupWindow.configuration = configuration;
+
+            popupWindow.AssistSDKInterface = {
+              "ready": function () {
+                callback(popupWindow);
+              }
+            };
+          }, function error(statusCode) {
+            removeAllStorageData();
+            try {
+              popupWindow.close();
+            } catch (e) {
+            }
+            var msg = "Error connecting to server for url " + getSDKPath(configuration) + ASSIST_CSDK_PATH;
+            doError(createErrorMessage(ERROR_CODE.SESSION_CREATION_FAILURE, msg));
+          });
+
+          return;
+        }
+      }
+
+      // if we got here we hit the popup blocker
+      if (configuration.popupBlocked != null) {
+        configuration.popupBlocked();
+      } else {
+        popupBlockedDefaultHandler(configuration);
+      }
+      removeAllStorageData();
+    }
   }
 
   function createIFrame(configuration, id, src, callback) {
@@ -673,7 +734,7 @@
 
     ajaxGetDOM(configuration, getSDKPath(configuration) + src, function(xmlDoc) {
 
-      iframe.contentWindow.document.open("text/html");
+      iframe.contentWindow.document.open("text/html", "replace");
       iframe.contentWindow.document.write("<!DOCTYPE html>\n" + xmlDoc.documentElement.outerHTML);
       iframe.contentWindow.AssistSDKInterface = {
         "ready": function() {
@@ -775,7 +836,7 @@
         try {
           return JSON.parse(val);
         } catch (err) {
-          console.log("Non-JSON payload found in storage [" + val + "]");
+          assistLogger.log("Non-JSON payload found in storage [" + val + "]");
           storage.removeItem(name);
         }
       }
@@ -786,8 +847,8 @@
 
   function reconnectController(configuration, callback) {
 
-    console.log("reconnect called");
-    console.log("waiting for document ready");
+    assistLogger.log("reconnect called");
+    assistLogger.log("waiting for document ready");
 
     var popupWindow;
     var iframe;
@@ -815,7 +876,7 @@
     }
 
     onDocumentReady(document, function() {
-      console.log("document ready");
+      assistLogger.log("document ready");
       loadIFrame(configuration, true, popupWindow, function(aIframe) {
         iframe = aIframe;
         window.addEventListener("storage", localStorageChanged, false);
@@ -837,9 +898,9 @@
           iframe.parentNode.removeChild(iframe);
         }
       } catch (x) {
-        console.error(x);
+        assistLogger.error(x);
       }
-      console.warn(e);
+      assistLogger.warn(e);
       controllerWindow = null;
       removeAllStorageData();
       doError(createErrorMessage(ERROR_CODE.SESSION_CREATION_FAILURE,e));
