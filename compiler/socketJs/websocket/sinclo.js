@@ -67,7 +67,8 @@
           height: height + "px"
         }, 'first');
       },
-      widgetHide: function() {
+      widgetHide: function(e) {
+        if(e) e.stopPropagation();
         var sincloBox = document.getElementById('sincloBox');
         if ( !sincloBox ) return false;
         var openflg = sinclo.widget.condifiton.get();
@@ -94,7 +95,8 @@
       },
       reCreateWidgetMessage: "",
       reCreateWidgetTimer: null,
-      reCreateWidget: function(){
+      reCreateWidget: function(e){
+        if(e) e.stopPropagation();
         if (!check.smartphone()) return false; // 念のため
         if ( sinclo.operatorInfo.reCreateWidgetTimer ) {
           clearTimeout(sinclo.operatorInfo.reCreateWidgetTimer);
@@ -994,6 +996,7 @@
             if ( window.sincloInfo.contract.chat ) {
                 if ( !( 'chatTrigger' in window.sincloInfo.widget && window.sincloInfo.widget.chatTrigger === 2) ) {
                     $(document).on("keydown", "#sincloChatMessage", function(e){
+                        if(e) e.stopPropagation();
                         if ( (e.which && e.which === 13) || (e.keyCode && e.keyCode === 13) ) {
                             if ( !e.shiftKey && !e.ctrlKey ) {
                                 sinclo.chatApi.push();
@@ -1002,6 +1005,7 @@
                     });
                 }
                 $(document).on("focus", "#sincloChatMessage", function(e){
+                  if(e) e.stopPropagation();
                   sinclo.chatApi.observeType.start();
                 });
             }
@@ -1013,10 +1017,12 @@
 
             $(document)
               .on('focus', "#sincloChatMessage",function(e){
+                if(e) e.stopPropagation();
                 var message = document.getElementById('sincloChatMessage');
                 message.placeholder = "";
               })
               .on('blur', "#sincloChatMessage",function(e){
+                if(e) e.stopPropagation();
                 var message = document.getElementById('sincloChatMessage');
                 message.placeholder = "メッセージを入力してください";
                 if ( !( 'chatTrigger' in window.sincloInfo.widget && window.sincloInfo.widget.chatTrigger === 2) ) {
@@ -1029,6 +1035,7 @@
                 }
               })
               .on("click", "input[name^='sinclo-radio']", function(e){
+                if(e) e.stopPropagation();
                 if ( !(window.sincloInfo.widget.hasOwnProperty('chatRadioBehavior') && window.sincloInfo.widget.chatRadioBehavior === 2) ) {
                   sinclo.chatApi.send(e.target.value.trim());
                 }
