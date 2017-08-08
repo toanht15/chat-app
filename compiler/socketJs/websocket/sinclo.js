@@ -1054,7 +1054,7 @@
             if ( window.sincloInfo.contract.chat ) {
                 if ( !( 'chatTrigger' in window.sincloInfo.widget && window.sincloInfo.widget.chatTrigger === 2) ) {
                     $(document).on("keydown", "#sincloChatMessage", function(e){
-                        if(e) e.stopPropagation();
+                        if(e) e.stopImmediatePropagation();
                         if ( (e.which && e.which === 13) || (e.keyCode && e.keyCode === 13) ) {
                             if ( !e.shiftKey && !e.ctrlKey ) {
                                 sinclo.chatApi.push();
@@ -1063,7 +1063,7 @@
                     });
                     // キーイベント系はすべてバブリングしない
                     $(document).on("keyup keypress", "#sincloChatMessage", function(e){
-                      if(e) e.stopPropagation();
+                      if(e) e.stopImmediatePropagation();
                     });
                 }
                 $(document).on("focus", "#sincloChatMessage", function(e){
