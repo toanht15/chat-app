@@ -643,6 +643,7 @@ var cnst, init, check, userInfo, browserInfo, url, syncEvent, sinclo, common, st
   };
 
   $(window).on("resize", function(e){
+    e.stopPropagation();
     var windowSize = common.windowSize();
     iframe.width = windowSize.width;
     iframe.height = windowSize.height;

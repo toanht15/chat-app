@@ -631,7 +631,8 @@ var socket, // socket.io
             // 画面を回転ときは、向きによってスタイルを変える
             window.addEventListener('orientationchange', sinclo.operatorInfo.reCreateWidget);
             // サイズが変わった時は、サイズ感を変える
-            window.addEventListener('resize', function(){
+            window.addEventListener('resize', function(e){
+              if(e) e.stopPropagation();
               if ( $(window).height() > $(window).width() || document.activeElement.id === "sincloChatMessage") return false; // 横向きの場合のみ使用
                sinclo.operatorInfo.reCreateWidget();
             });
@@ -1564,6 +1565,7 @@ var socket, // socket.io
         type: "mousemove",
         timer : null,
         ev: function(e){
+          if(e) e.stopPropagation();
           if ( this.timer ) {
             return false;
           }
@@ -1579,6 +1581,7 @@ var socket, // socket.io
       {
         type: "scroll",
         ev: function(e){
+          if(e) e.stopPropagation();
           if ( socket === undefined ) return false;
           if ( "body" === syncEvent.receiveEvInfo.nodeName && "scroll" === syncEvent.receiveEvInfo.type ) return false;
           // スクロール用
@@ -1592,6 +1595,7 @@ var socket, // socket.io
       {
         type: "hashchange",
         ev: function(e){
+          if(e) e.stopPropagation();
           if ( socket === undefined ) return false;
           browserInfo.href = location.href;
           emit('reqUrlChecker', {});
@@ -1599,6 +1603,7 @@ var socket, // socket.io
       }
     ],
     pcResize: function(e){
+      if(e) e.stopPropagation();
       if (syncEvent.resizeTimer !== false) {
         clearTimeout(syncEvent.resizeTimer);
       }
@@ -1614,6 +1619,7 @@ var socket, // socket.io
       }, browserInfo.interval);
     },
     tabletResize: function(e){
+      if(e) e.stopPropagation();
       var size = {
         width: window.innerWidth,
         height: window.innerHeight
@@ -1789,6 +1795,7 @@ var socket, // socket.io
       if ( $textarea !== undefined ) {
         var bHeight, bWidth; // ここが要素ごとになるように・・・
         $textarea.addEventListener('mousemove', function(e){
+          if(e) e.stopPropagation();
             if ( bHeight && bWidth && ( bHeight !== this.style.height || bWidth !== this.style.width)) {
           }
             bHeight = this.style.height;
@@ -2133,14 +2140,17 @@ var socket, // socket.io
       startDragX: 0,
       startDragY: 0,
       dragOn: function(e) {
+        if(e) e.stopPropagation();
         vcPopup.dragging = true;
         vcPopup.startDragX = e.screenX;
         vcPopup.startDragY = e.screenY;
       },
-      dragOff: function() {
+      dragOff: function(e) {
+        if(e) e.stopPropagation();
         vcPopup.dragging = false;
       },
       drag: function(e) {
+        if(e) e.stopPropagation();
         if(!vcPopup.dragging) return;
         e.stopPropagation();
         var deltaX = e.screenX - vcPopup.startDragX;
