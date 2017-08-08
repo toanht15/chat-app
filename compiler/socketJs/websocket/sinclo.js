@@ -1003,6 +1003,10 @@
                             }
                         }
                     });
+                    // キーイベント系はすべてバブリングしない
+                    $(document).on("keyup keypress", "#sincloChatMessage", function(e){
+                      if(e) e.stopPropagation();
+                    });
                 }
                 $(document).on("focus", "#sincloChatMessage", function(e){
                   if(e) e.stopPropagation();
