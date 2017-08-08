@@ -35,6 +35,40 @@ function timeChange()　{
   }
 }
 
+function timeChangeForOperator()　{
+  var chosenDateFormat = document.forms.THistoryForOperatorForm.dateFormat;
+
+  //selectで月別を選択した場合
+  if (chosenDateFormat.options[chosenDateFormat.selectedIndex].value == "月別")
+  {
+    document.getElementById("monthlyForm").style.display="";
+    document.getElementById("daylyForm").style.display="none";
+    document.getElementById("hourlyForm").style.display="none";
+    document.getElementById("monthlyForm").value = "";
+    document.getElementById("triangle").style.borderTop = "0px";
+  }
+  //selectで日別を選択した場合
+  else if (chosenDateFormat.options[chosenDateFormat.selectedIndex].value == "日別")
+  {
+    document.getElementById("monthlyForm").style.display="none";
+    document.getElementById("daylyForm").style.display="";
+    document.getElementById("hourlyForm").style.display="none";
+    document.getElementById("hourlyForm").value = "";
+    document.getElementById("triangle").style.borderTop = "0px";
+  }
+  //selectで時別を選択した場合
+  else if (chosenDateFormat.options[chosenDateFormat.selectedIndex].value == "時別")
+  {
+    var value = new Date().getFullYear() + "/" + ("0" + (new Date().getMonth() + 1)).slice(-2) + "/01";
+    document.getElementById("monthlyForm").style.display="none";
+    document.getElementById("daylyForm").style.display="none";
+    document.getElementById("hourlyForm").style.display="";
+    document.getElementById("hourlyForm").value = '選択してください';
+    document.getElementById("hourlyForm").options = value;
+    document.getElementById("triangle").style.borderTop = "6px solid";
+  }
+}
+
 $(window).load(function(){
 
   $.extend( $.fn.dataTable.defaults, {
@@ -56,7 +90,7 @@ $(window).load(function(){
       { width: 120, targets: 0 }
     ],
     fixedColumns: {
-        leftColumns: 1
+      leftColumns: 1
     }
   });
 
@@ -120,6 +154,7 @@ $(window).load(function(){
 
   //月別の年を選択
   $("#monthlyForm").change(function(){
+    console.log('チャットフォーム');
     var monthlyForm = $("#monthlyForm").val();
     if(monthlyForm != '') {
       loading.load.start();
@@ -128,9 +163,17 @@ $(window).load(function(){
       if(dateFormat == timeType.monthly) {
         // Safariでローディングのイメージが表示されない問題の解決方法としてsetTimeoutを挿入
         // @see https://stackoverflow.com/questions/28586393/safari-not-updating-ui-during-form-submission
-        setTimeout(function(){
-          document.getElementById('THistoryForChatForm').submit();
-        },0);
+        if(document.getElementById("THistoryForChatForm") != null) {
+
+          setTimeout(function(){
+            document.getElementById('THistoryForChatForm').submit();
+          },0);
+        }
+        else if(document.getElementById("THistoryForOperatorForm") != null) {
+          setTimeout(function(){
+            document.getElementById('THistoryForOperatorForm').submit();
+          },0);
+        }
       }
     }
   });
@@ -145,9 +188,16 @@ $(window).load(function(){
       if(dateFormat == timeType.dayly) {
         // Safariでローディングのイメージが表示されない問題の解決方法としてsetTimeoutを挿入
         // @see https://stackoverflow.com/questions/28586393/safari-not-updating-ui-during-form-submission
-        setTimeout(function() {
-          document.getElementById('THistoryForChatForm').submit();
-        },0);
+        if(document.getElementById("THistoryForChatForm") != null) {
+          setTimeout(function() {
+            document.getElementById('THistoryForChatForm').submit();
+          },0);
+        }
+        else if(document.getElementById("THistoryForOperatorForm") != null) {
+          setTimeout(function(){
+            document.getElementById('THistoryForOperatorForm').submit();
+          },0);
+        }
       }
     }
   });
@@ -190,9 +240,16 @@ $(window).load(function(){
     if(searchInfo == timeType.timely) {
       // Safariでローディングのイメージが表示されない問題の解決方法としてsetTimeoutを挿入
       // @see https://stackoverflow.com/questions/28586393/safari-not-updating-ui-during-form-submission
-      setTimeout(function() {
-        document.getElementById('THistoryForChatForm').submit();
-      },0);
+      if(document.getElementById("THistoryForChatForm") != null) {
+        setTimeout(function() {
+          document.getElementById('THistoryForChatForm').submit();
+        },0);
+      }
+      else if(document.getElementById("THistoryForOperatorForm") != null) {
+        setTimeout(function(){
+          document.getElementById('THistoryForOperatorForm').submit();
+        },0);
+      }
     }
   });
 
