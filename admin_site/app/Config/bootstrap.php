@@ -113,3 +113,5 @@ CakeLog::config('error', array(
 Configure::load("myConst");
 Configure::load("const");
 Configure::load("messageConst");
+Configure::load("contractConfigurations");
+Configure::load("widgetDefaultConfiguration");
