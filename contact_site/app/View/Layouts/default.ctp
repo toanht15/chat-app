@@ -83,10 +83,9 @@ if( strcmp($this->name, 'Login') !== 0 ) {
   ?>
 </head>
 <body>
-
   <div id="container">
     <div id="header">
-      <?php if( strcmp($this->name, 'Login') !== 0 ): ?>
+      <?php if( strcmp($this->name, 'Login') !== 0 && strcmp($this->action, 'baseForAnotherWindow') !== 0 ) : ?>
         <?= $this->element('navi') ?>
       <?php endif ;?>
     </div>
