@@ -18,7 +18,28 @@ function　passwordLoad() {
 window.onload = passwordLoad;
 
 $(function(){
-  $("#MAgreementMailAddress").prop("disabled", true);
+  var inputDisabled = function(jqObj) {
+    jqObj.prop("readonly", true).addClass("disabled").prev('div').find('span').first().removeClass('require');
+  }
+
+  var inputEnabled = function(jqObj) {
+    jqObj.prop("readonly", false).removeClass("disabled").prev('div').find('span').first().addClass('require')
+  }
+
+  $('#MCompanyTrialFlg').on('change', function(event){
+    var checked = $(this).prop("checked");
+    if(checked) {
+      inputEnabled($('#MAgreementsTrialStartDay'));
+      inputEnabled($('#MAgreementsTrialEndDay'));
+      inputDisabled($('#MAgreementsAgreementStartDay'));
+      inputDisabled($('#MAgreementsAgreementEndDay'));
+    } else {
+      inputDisabled($('#MAgreementsTrialStartDay'));
+      inputDisabled($('#MAgreementsTrialEndDay'));
+      inputEnabled($('#MAgreementsAgreementStartDay'));
+      inputEnabled($('#MAgreementsAgreementEndDay'));
+    }
+  });
 });
 
 //削除処理

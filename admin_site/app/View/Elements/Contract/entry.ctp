@@ -22,6 +22,30 @@
   <?= $this->Form->input('MCompany.limit_users', array('div' => false, 'label' => false, 'maxlength' => 50)) ?>
   <?php if (!empty($errors['limit_users'])) echo "<li class='error-message'>" . h($errors['limit_users'][0]) . "</li>"; ?>
 </li>
+<!-- /* トライアル開始日 */ -->
+<li>
+  <div class="labelArea fLeft"><span><label>トライアル開始日</label></span></div>
+  <?= $this->Form->input('MAgreements.trial_start_day', array('div' => false, 'label' => false, 'maxlength' => 50,'type' => 'text','class' => 'disabled','readonly' => true)) ?>
+  <?php if (!empty($agreementerrors['MAgreements.trial_start_day'])) echo "<li class='error-message'>" . h($agreementerrors['MAgreements.trial_start_day'][0]) . "</li>"; ?>
+</li>
+<!-- /* トライアル終了日 */ -->
+<li>
+  <div class="labelArea fLeft"><span><label>トライアル終了日</label></span></div>
+  <?= $this->Form->input('MAgreements.trial_end_day', array('div' => false, 'label' => false, 'maxlength' => 50,'type' => 'text','class' => 'disabled','readonly' => true)) ?>
+  <?php if (!empty($agreementerrors['MAgreements.trial_end_day'])) echo "<li class='error-message'>" . h($agreementerrors['MAgreements.trial_end_day'][0]) . "</li>"; ?>
+</li>
+<!-- /* 契約開始日 */ -->
+<li>
+  <div class="labelArea fLeft"><span class="require"><label>契約開始日</label></span></div>
+  <?= $this->Form->input('MAgreements.agreement_start_day', array('div' => false, 'label' => false, 'maxlength' => 50,'type' => 'text')) ?>
+  <?php if (!empty($agreementerrors['MAgreements.agreement_start_day'])) echo "<li class='error-message'>" . h($agreementerrors['MAgreements.agreement_start_day'][0]) . "</li>"; ?>
+</li>
+<!-- /* 契約開始日 */ -->
+<li>
+  <div class="labelArea fLeft"><span class="require"><label>契約終了日</label></span></div>
+  <?= $this->Form->input('MAgreements.agreement_end_day', array('div' => false, 'label' => false, 'maxlength' => 50,'type' => 'text')) ?>
+  <?php if (!empty($agreementerrors['MAgreements.agreement_end_day'])) echo "<li class='error-message'>" . h($agreementerrors['MAgreements.agreement_end_day'][0]) . "</li>"; ?>
+</li>
 <!-- /* 初期管理者情報 */ -->
 <?php if ($this->params->action == 'add'): ?>
 <li>

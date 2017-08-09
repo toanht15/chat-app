@@ -9,21 +9,30 @@
 App::uses('AppController', 'Controller');
 class ContractController extends AppController
 {
-  public $uses = ['MCompany','MUser', 'MWidgetSetting', 'TAutoMessage', 'TDictionaries', 'TransactionManager'];
+  public $uses = ['MCompany', 'MAgreements', 'MUser', 'MWidgetSetting', 'TAutoMessages', 'TDictionaries', 'TransactionManager'];
 
   public $paginate = [
     'MCompany' => [
       'order' => ['MCompany.id' => 'asc'],
       'fields' => ['*'],
+      'limit' => 100,
       'joins' => [
         [
-          'type' => 'inner',
-          'table' => '(SELECT id,m_companies_id,count(m_companies_id) AS user_account FROM  m_users WHERE del_flg != 1 GROUP BY m_companies_id)',
-          'alias' => 'MUser',
+          'type' => 'left',
+          'table' => 'm_agreements',
+          'alias' => 'MAgreement',
           'conditions' => [
-              'MUser.m_companies_id = MCompany.id',
+            'MAgreement.m_companies_id = MCompany.id',
           ],
         ],
+        [
+          'type' => 'inner',
+          'table' => '(SELECT id,m_companies_id,mail_address,password,count(m_companies_id) AS user_account FROM  m_users WHERE del_flg != 1 AND permission_level != 99 GROUP BY m_companies_id)',
+          'alias' => 'MUser',
+          'conditions' => [
+            'MUser.m_companies_id = MCompany.id',
+          ],
+        ]
       ],
       'conditions' => [
           'MCompany.del_flg != ' => 1,
@@ -53,8 +62,10 @@ class ContractController extends AppController
     if( $this->request->is('post') ) {
       $this->log($this->data, LOG_DEBUG);
       $data = $this->getParams();
+
       try {
         $this->processTransaction($data['MCompany'], $data['Contract']);
+        $this->redirect(['controller' => 'Contract', 'action' => 'index']);
       } catch(Exception $e) {
         $this->log("Exception Occured : ".$e->getMessage(), LOG_WARNING);
       }
@@ -82,6 +93,7 @@ class ContractController extends AppController
     try {
       $transaction = $this->TransactionManager->begin();
       $addedCompanyInfo = $this->createCompany($companyInfo);
+      $this->createAgreementInfo($addedCompanyInfo, $companyInfo);
       $this->createFirstAdministratorUser($addedCompanyInfo['id'], $userInfo);
       $this->addDefaultChatPersonalSettings($addedCompanyInfo['id'], $companyInfo);
       $this->addDefaultWidgetSettings($addedCompanyInfo['id'], $companyInfo);
@@ -120,6 +132,36 @@ class ContractController extends AppController
     ];
   }
 
+  private function createAgreementInfo($addedCompanyInfo, $companyInfo) {
+    $password = $this->generateRandomPassword(8);
+
+    $this->MAgreements->create();
+    $this->MAgreements->set([
+      'm_companies_id' => $addedCompanyInfo['id'],
+      'application_day' => '2017-08-09', // FIXME（自動発行）
+      'trial_start_day' => '2017-08-09', // FIXME
+      'trial_end_day' => '2017-08-16', // FIXME
+      'admin_password' => $password
+    ]);
+    $this->MAgreements->save();
+
+    // スーパー管理者情報追加
+    $tmpData = [
+      "m_companies_id" => $addedCompanyInfo['id'],
+      "user_name" => 'MLAdmin',
+      "display_name" => 'MLAdmin',
+      "mail_address" => $addedCompanyInfo['companyKey'].C_MAGREEMENT_MAIL_ADDRESS,
+      "permission_level" => C_AUTHORITY_SUPER,
+      "new_password" => $password
+    ];
+    $this->MUser->create();
+    $this->MUser->set($tmpData);
+    if(!$this->MUser->validates()) {
+      throw new Exception("MUser validation error");
+    }
+    $this->MUser->save();
+  }
+
   private function createFirstAdministratorUser($m_companies_id, $userInfo) {
     $tmpData = [
         "m_companies_id" => $m_companies_id,
@@ -128,6 +170,24 @@ class ContractController extends AppController
         "mail_address" => $userInfo["user_mail_address"],
         "permission_level" => C_AUTHORITY_ADMIN,
         "new_password" => $userInfo["user_password"]
+    ];
+    $this->MUser->create();
+    $this->MUser->set($tmpData);
+    if(!$this->MUser->validates()) {
+      throw new Exception("MUser validation error");
+    }
+    $this->MUser->save();
+  }
+
+  private function createSuperAdministratorUser($addedCompanyInfo, $userInfo) {
+    $password = $this->generateRandomPassword(8);
+    $tmpData = [
+      "m_companies_id" => $addedCompanyInfo['id'],
+      "user_name" => 'MLAdmin',
+      "display_name" => 'MLAdmin',
+      "mail_address" => $addedCompanyInfo['companyKey'].C_MAGREEMENT_MAIL_ADDRESS,
+      "permission_level" => C_AUTHORITY_SUPER,
+      "new_password" => $password
     ];
     $this->MUser->create();
     $this->MUser->set($tmpData);
@@ -156,7 +216,20 @@ class ContractController extends AppController
   }
 
   private function addDefaultAutoMessages($m_companies_id, $companyInfo) {
-
+    if(!$this->isChatEnable($companyInfo['m_contact_types_id'])) return;
+    $default = $this->getDefaultAutomessageConfigurations();
+    foreach($default as $item) {
+      $this->TAutoMessages->create();
+      $this->TAutoMessages->set([
+        "m_companies_id" => $m_companies_id,
+        "name" => $item['name'],
+        "trigger_type" => $item['trigger_type'],
+        "activity" => $this->convertActivityToJSON($item['activity']),
+        "action_type" => $item['action_type'],
+        "active_flg" => $item['active_type']
+      ]);
+      $this->TAutoMessages->save();
+    }
   }
 
   private function addDefaultDictionaries($m_companies_id, $companyInfo) {
@@ -230,9 +303,26 @@ class ContractController extends AppController
     return Configure::read('default.dictionary');
   }
 
+  private function getDefaultAutomessageConfigurations() {
+    return Configure::read('default.autoMessages');
+  }
+
   private function isChatEnable($m_contact_types_id) {
     return $m_contact_types_id === C_CONTRACT_FULL_PLAN_ID
         || $m_contact_types_id === C_CONTRACT_CHAT_PLAN_ID
         || $m_contact_types_id === C_CONTRACT_CHAT_BASIC_PLAN_ID;
+  }
+
+  private function convertActivityToJSON($activity) {
+    return json_encode($activity, JSON_UNESCAPED_UNICODE);
+  }
+
+  private function generateRandomPassword($length) {
+    $str = array_merge(range('a', 'z'), range('0', '9'), range('A', 'Z'));
+    $r_str = null;
+    for ($i = 0; $i < $length; $i++) {
+      $r_str .= $str[rand(0, count($str) - 1)];
+    }
+    return $r_str;
   }
 }

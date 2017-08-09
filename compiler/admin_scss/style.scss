@@ -781,6 +781,9 @@ div#sidebar{
         }
       }
     }
+    input[type="text"].disabled {
+      background-color: #999999;
+    }
   }
 
   .error-message {
