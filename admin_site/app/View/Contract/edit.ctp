@@ -2,7 +2,7 @@
 <div id='agreement_idx'>
   <div id='agreement_add_title'>
     <div class="fLeft"><i class="fa fa-cog fa-2x" aria-hidden="true"></i></div>
-    <h1>契約更新</h1>
+    <h1>企業設定更新</h1>
   </div>
 
   <div id='agreement_form' class="p20x">
@@ -11,7 +11,7 @@
         <section>
           <?= $this->Form->input('id', array('type' => 'hidden')); ?>
           <ul class='formArea'>
-            <?= $this->element('MAgreements/entry'); ?>
+            <?= $this->element('Contract/entry'); ?>
             <!-- /* jsファイル作成 */ -->
             <section>
             <?=$this->Form->hidden('id')?>
