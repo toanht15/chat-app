@@ -115,3 +115,4 @@ Configure::load("const");
 Configure::load("messageConst");
 Configure::load("contractConfigurations");
 Configure::load("widgetDefaultConfiguration");
+Configure::load("dictionaryDefaultConfiguration");

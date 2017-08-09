@@ -1,0 +1,238 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: masashi_shimizu
+ * Date: 2017/08/08
+ * Time: 12:09
+ */
+
+App::uses('AppController', 'Controller');
+class ContractController extends AppController
+{
+  public $uses = ['MCompany','MUser', 'MWidgetSetting', 'TAutoMessage', 'TDictionaries', 'TransactionManager'];
+
+  public $paginate = [
+    'MCompany' => [
+      'order' => ['MCompany.id' => 'asc'],
+      'fields' => ['*'],
+      'joins' => [
+        [
+          'type' => 'inner',
+          'table' => '(SELECT id,m_companies_id,count(m_companies_id) AS user_account FROM  m_users WHERE del_flg != 1 GROUP BY m_companies_id)',
+          'alias' => 'MUser',
+          'conditions' => [
+              'MUser.m_companies_id = MCompany.id',
+          ],
+        ],
+      ],
+      'conditions' => [
+          'MCompany.del_flg != ' => 1,
+      ],
+    ]
+  ];
+
+  public function beforeFilter(){
+    parent::beforeFilter();
+    $this->set('title_for_layout', 'サイトキー管理');
+    $this->Auth->allow(['remoteSaveForm']);
+    header('Access-Control-Allow-Origin: *');
+  }
+
+  /**
+   * 初期画面
+   * @return void
+   */
+  public function index() {
+    $this->set('title_for_layout', 'サイトキー管理');
+    $this->set('companyList', $this->paginate('MCompany'));
+  }
+
+  public function add() {
+    $this->set('title_for_layout', 'サイトキー登録');
+
+    if( $this->request->is('post') ) {
+      $this->log($this->data, LOG_DEBUG);
+      $data = $this->getParams();
+      try {
+        $this->processTransaction($data['MCompany'], $data['Contract']);
+      } catch(Exception $e) {
+        $this->log("Exception Occured : ".$e->getMessage(), LOG_WARNING);
+      }
+    }
+  }
+
+  public function edit() {
+    $param = $this->getParams();
+  }
+
+  public function save() {
+    // パラメータに対象IDがあれば更新処理とする
+    $this->log($this->request->params, LOG_DEBUG);
+  }
+
+  private function getParams() {
+    return $this->request->data;
+  }
+
+  private function validateParams($action) {
+
+  }
+
+  private function processTransaction($companyInfo, $userInfo) {
+    try {
+      $transaction = $this->TransactionManager->begin();
+      $addedCompanyInfo = $this->createCompany($companyInfo);
+      $this->createFirstAdministratorUser($addedCompanyInfo['id'], $userInfo);
+      $this->addDefaultChatPersonalSettings($addedCompanyInfo['id'], $companyInfo);
+      $this->addDefaultWidgetSettings($addedCompanyInfo['id'], $companyInfo);
+      $this->addDefaultAutoMessages($addedCompanyInfo['id'], $companyInfo);
+      $this->addDefaultDictionaries($addedCompanyInfo['id'], $companyInfo);
+      $this->addCompanyJSFile($addedCompanyInfo['companyKey']);
+    } catch (Exception $e) {
+      $this->TransactionManager->rollback($transaction);
+      throw $e;
+    }
+    $this->TransactionManager->commit($transaction);
+  }
+
+  /**
+   * @return 一番最後に追加した
+   */
+  private function createCompany($companyInfo) {
+    try {
+      $companyKey = $this->generateCompanyKey();
+      $this->MCompany->create();
+      $this->MCompany->set([
+        "company_name" => $companyInfo['company_name'],
+        "company_key" => $companyKey,
+        "m_contact_types_id" => $companyInfo['m_contact_types_id'],
+        "limit_users" => $companyInfo['limit_users'],
+        "core_settings" => $this->getCoreSettingsFromContactTypesId($companyInfo['m_contact_types_id']),
+        "trial_flg" => $companyInfo['trial_flg']
+      ]);
+      $this->MCompany->save();
+    } catch(Exception $e) {
+      throw $e;
+    }
+    return [
+        'id' => $this->MCompany->getLastInsertID(),
+        'companyKey' => $companyKey
+    ];
+  }
+
+  private function createFirstAdministratorUser($m_companies_id, $userInfo) {
+    $tmpData = [
+        "m_companies_id" => $m_companies_id,
+        "user_name" => $userInfo["user_name"],
+        "display_name" => $userInfo["user_display_name"],
+        "mail_address" => $userInfo["user_mail_address"],
+        "permission_level" => C_AUTHORITY_ADMIN,
+        "new_password" => $userInfo["user_password"]
+    ];
+    $this->MUser->create();
+    $this->MUser->set($tmpData);
+    if(!$this->MUser->validates()) {
+      throw new Exception("MUser validation error");
+    }
+    $this->MUser->save();
+  }
+
+  private function addDefaultChatPersonalSettings($m_companies_id, $companyInfo) {
+
+  }
+
+  private function addDefaultWidgetSettings($m_companies_id, $companyInfo) {
+    $default = $this->getWidgetSettingsFromContactTypesId($companyInfo['m_contact_types_id']);
+    $styleSettings = $default;
+    // 設定保持の構造上display_typeを持ってしまっているがstyle_settingsにはいらないため省く
+    unset($styleSettings['display_type']);
+    $this->MWidgetSetting->create();
+    $this->MWidgetSetting->set([
+        "m_companies_id" => $m_companies_id,
+        "display_type" => $default['display_type'],
+        "style_settings" => json_encode($styleSettings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT)
+    ]);
+    $this->MWidgetSetting->save();
+  }
+
+  private function addDefaultAutoMessages($m_companies_id, $companyInfo) {
+
+  }
+
+  private function addDefaultDictionaries($m_companies_id, $companyInfo) {
+    if(!$this->isChatEnable($companyInfo['m_contact_types_id'])) return;
+    $default = $this->getDefaultDictionaryConfigurations();
+    foreach($default as $item) {
+      $this->TDictionaries->create();
+      $this->TDictionaries->set([
+          "m_companies_id" => $m_companies_id,
+          "m_user_id" =>  0, // 共有設定なので0固定
+          "word" => $item['word'],
+          "type" => $item['type'],
+          "sort" => $item['sort']
+      ]);
+      $this->TDictionaries->save();
+    }
+  }
+
+  private function addCompanyJSFile($companyKey) {
+
+  }
+
+  private function generateCompanyKey() {
+    return uniqid();
+  }
+
+  private function getCoreSettingsFromContactTypesId($m_contact_types_id) {
+    $plan = "";
+    switch($m_contact_types_id) {
+      case C_CONTRACT_FULL_PLAN_ID:
+        $plan = C_CONTRACT_FULL_PLAN;
+        break;
+      case C_CONTRACT_CHAT_PLAN_ID:
+        $plan = C_CONTRACT_CHAT_PLAN;
+        break;
+      case C_CONTRACT_SCREEN_SHARING_ID:
+        $plan = C_CONTRACT_SCREEN_SHARING_PLAN;
+        break;
+      case C_CONTRACT_CHAT_BASIC_PLAN_ID:
+        $plan = C_CONTRACT_CHAT_BASIC_PLAN;
+        break;
+      default:
+        throw Exception("不明なプランID: ".$m_contact_types_id);
+    }
+    return $plan;
+  }
+
+  private function getWidgetSettingsFromContactTypesId($m_contact_types_id) {
+    $widgetConfiguration = Configure::read('default.widget');
+    $val = [];
+    switch($m_contact_types_id) {
+      case C_CONTRACT_FULL_PLAN_ID:
+        $val = array_merge($val, $widgetConfiguration['common'], $widgetConfiguration['chat'], $widgetConfiguration['sharing']);
+        break;
+      case C_CONTRACT_CHAT_PLAN_ID:
+        $val = array_merge($val, $widgetConfiguration['common'], $widgetConfiguration['chat']);
+        break;
+      case C_CONTRACT_SCREEN_SHARING_ID:
+        $val = array_merge($val, $widgetConfiguration['common'], $widgetConfiguration['sharing']);
+        break;
+      case C_CONTRACT_CHAT_BASIC_PLAN_ID:
+        $val = array_merge($val, $widgetConfiguration['common'], $widgetConfiguration['chat']);
+        break;
+      default:
+        throw Exception("不明なプランID: ".$m_contact_types_id);
+    }
+    return $val;
+  }
+
+  private function getDefaultDictionaryConfigurations() {
+    return Configure::read('default.dictionary');
+  }
+
+  private function isChatEnable($m_contact_types_id) {
+    return $m_contact_types_id === C_CONTRACT_FULL_PLAN_ID
+        || $m_contact_types_id === C_CONTRACT_CHAT_PLAN_ID
+        || $m_contact_types_id === C_CONTRACT_CHAT_BASIC_PLAN_ID;
+  }
+}
