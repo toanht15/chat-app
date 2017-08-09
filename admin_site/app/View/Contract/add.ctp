@@ -1,3 +1,4 @@
+<?= $this->Html->script(C_NODE_SERVER_ADDR.C_NODE_SERVER_WS_PORT."/socket.io/socket.io.js"); ?>
 <?= $this->element('Contract/addScript'); ?>
 
 <div id='contract_idx'>

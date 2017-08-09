@@ -7,6 +7,8 @@
  */
 
 App::uses('AppController', 'Controller');
+App::uses('Folder', 'Utility');
+App::uses('File', 'Utility');
 class ContractController extends AppController
 {
   public $uses = ['MCompany', 'MAgreements', 'MUser', 'MWidgetSetting', 'TAutoMessages', 'TDictionaries', 'TransactionManager'];
@@ -249,7 +251,15 @@ class ContractController extends AppController
   }
 
   private function addCompanyJSFile($companyKey) {
-
+    $templateData = new File(C_COMPANY_JS_TEMPLATE_FILE);
+    $contents = $templateData->read();
+    $companyKeyReplaced = str_replace('##COMPANY_KEY##', $companyKey, $contents);
+    $replacedContents = str_replace('##NODE_SERVER_URL##',C_NODE_SERVER_ADDR.C_NODE_SERVER_WS_PORT, $companyKeyReplaced);
+    // 書き換えた内容を<companyKey>.jsで保存
+    $saveFile = new File(C_COMPANY_JS_FILE_DIR.'/'.$companyKey.'.js', true, 0644);
+    $saveFile->open('w');
+    $saveFile->append($replacedContents);
+    $saveFile->close();
   }
 
   private function generateCompanyKey() {

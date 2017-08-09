@@ -42,6 +42,7 @@ define('C_CROSS_DOMAIN_ADDRESS', "http://contact.sinclo"); //sinclo管理画面U
 
 define('C_DEFALT_MCOMPANY_KEY', 2); // template key
 
+define('C_COMPANY_JS_TEMPLATE_FILE', "/var/www/sinclo/admin_site/corporate.js.template"); // 企業用JSファイル配置ディレクトリ
 define('C_COMPANY_JS_FILE_DIR', "/var/www/sinclo/socket/webroot/client"); // 企業用JSファイル配置ディレクトリ
 
 /* ユーザー権限（単体あり：C_AUTHORITY_%） */
