@@ -74,8 +74,47 @@ class ContractController extends AppController
     }
   }
 
-  public function edit() {
-    $param = $this->getParams();
+  /* *
+   * 更新画面
+   * @param id
+   * @return void
+   * */
+  public function edit($id)
+  {
+    $this->MCompany->id = $id;
+
+    if ($this->request->is('post') || $this->request->is('put')) {
+      $editData = $this->MAgreement->read(null, $id);
+      $transactions = $this->TransactionManager->begin();
+      $saveData = $this->request->data;
+      $this->set('companyId', $saveData['MAgreement']['m_companies_id']);//削除に必要なもの
+      $this->set('companyKey', $saveData['MCompany']['company_key']);//削除に必要なもの
+      $this->set('userId', $saveData['MAgreement']['m_users_id']);//削除に必要なもの
+      if ($this->_saveMcompany($saveData) && $this->_saveMuser($saveData) && $this->_saveMagreement($saveData)) {
+        $this->TransactionManager->commit($transactions);
+        $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
+        $saveData['beforeData'] = $editData['MCompany']['company_key'];
+        //jsファイル作成
+        $this->_editFile($saveData);
+        $this->redirect(['controller' => 'MAgreements', 'action' => 'index']);
+      } else {
+        $this->set('alertMessage', ['type' => C_MESSAGE_TYPE_ERROR, 'text' => Configure::read('message.const.saveFailed')]);
+        $this->TransactionManager->rollback($transactions);
+      }
+    } else {
+      $editData = $this->MCompany->read(null, $id);
+      $agreementData = $this->MAgreements->find('first',[
+        'conditions' => array(
+          'm_companies_id' => $editData['MCompany']['id']
+        )]
+      );
+
+      $editData = array_merge($editData, $agreementData);
+
+      $this->set('companyId', $editData['MCompany']['id']);//削除に必要なもの
+      $this->set('companyKey', $editData['MCompany']['company_key']);//削除に必要なもの
+      $this->request->data = $editData;
+    }
   }
 
   public function save() {

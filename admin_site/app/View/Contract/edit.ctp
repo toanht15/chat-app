@@ -1,3 +1,5 @@
+<?= $this->Html->script(C_NODE_SERVER_ADDR.C_NODE_SERVER_WS_PORT."/socket.io/socket.io.js"); ?>
+<?= $this->element('Contract/inputCommonScript'); ?>
 <?= $this->element('Contract/editScript'); ?>
 <div id='agreement_idx'>
   <div id='agreement_add_title'>
@@ -16,9 +18,9 @@
             <section>
             <?=$this->Form->hidden('id')?>
               <div class="button">
-                <?= $this->Html->link('一覧',['controller'=>'MAgreements', 'action' => 'index'],['escape' => false, 'id' => 'searchRefine','class' => 'normal_btn']); ?>
-                <?= $this->Html->link('登録', 'javascript:void(0)', ['escape' => false, 'id' => 'searchRefine','class' => 'action_btn','onclick' => 'saveEdit()']); ?>
-                <?= $this->Html->link('削除', 'javascript:void(0)', ['escape' => false, 'id' => 'searchRefine','class' => 'action_btn','onclick' => "remoteDeleteCompany('$companyId','$userId','$companyKey')"]); ?>
+                <?= $this->Html->link('一覧',['controller'=>'Contract', 'action' => 'index'],['escape' => false, 'id' => 'searchRefine','class' => 'normal_btn']); ?>
+                <?= $this->Html->link('更新', 'javascript:void(0)', ['escape' => false, 'id' => 'searchRefine','class' => 'action_btn','onclick' => 'saveEdit()']); ?>
+                <?= $this->Html->link('削除', 'javascript:void(0)', ['escape' => false, 'id' => 'searchRefine','class' => 'action_btn','onclick' => "remoteDeleteCompany('$companyId','$companyKey')"]); ?>
               </div>
             </section>
           </ul>

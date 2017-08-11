@@ -1,3 +1,9 @@
+<?php
+  $isTrial = false;
+  if(!empty($data['MCompany']['trial_flg'])) {
+    $isTrial = boolval($data['MCompany']['trial_flg']);
+  }
+?>
 <!-- /* 会社名 */ -->
 <li>
   <div class="labelArea fLeft"><span class="require"><label>会社名</label></span></div>
@@ -25,25 +31,25 @@
 <!-- /* トライアル開始日 */ -->
 <li>
   <div class="labelArea fLeft"><span><label>トライアル開始日</label></span></div>
-  <?= $this->Form->input('MAgreements.trial_start_day', array('div' => false, 'label' => false, 'maxlength' => 50,'type' => 'text','class' => 'disabled','readonly' => true)) ?>
+  <?= $this->Form->input('MAgreements.trial_start_day', array('div' => false, 'label' => false, 'maxlength' => 50,'type' => 'text','class' => 'disabled','readonly' => $isTrial)) ?>
   <?php if (!empty($agreementerrors['MAgreements.trial_start_day'])) echo "<li class='error-message'>" . h($agreementerrors['MAgreements.trial_start_day'][0]) . "</li>"; ?>
 </li>
 <!-- /* トライアル終了日 */ -->
 <li>
   <div class="labelArea fLeft"><span><label>トライアル終了日</label></span></div>
-  <?= $this->Form->input('MAgreements.trial_end_day', array('div' => false, 'label' => false, 'maxlength' => 50,'type' => 'text','class' => 'disabled','readonly' => true)) ?>
+  <?= $this->Form->input('MAgreements.trial_end_day', array('div' => false, 'label' => false, 'maxlength' => 50,'type' => 'text','class' => 'disabled','readonly' => $isTrial)) ?>
   <?php if (!empty($agreementerrors['MAgreements.trial_end_day'])) echo "<li class='error-message'>" . h($agreementerrors['MAgreements.trial_end_day'][0]) . "</li>"; ?>
 </li>
 <!-- /* 契約開始日 */ -->
 <li>
   <div class="labelArea fLeft"><span class="require"><label>契約開始日</label></span></div>
-  <?= $this->Form->input('MAgreements.agreement_start_day', array('div' => false, 'label' => false, 'maxlength' => 50,'type' => 'text')) ?>
+  <?= $this->Form->input('MAgreements.agreement_start_day', array('div' => false, 'label' => false, 'maxlength' => 50,'type' => 'text','readonly' => !$isTrial)) ?>
   <?php if (!empty($agreementerrors['MAgreements.agreement_start_day'])) echo "<li class='error-message'>" . h($agreementerrors['MAgreements.agreement_start_day'][0]) . "</li>"; ?>
 </li>
 <!-- /* 契約開始日 */ -->
 <li>
   <div class="labelArea fLeft"><span class="require"><label>契約終了日</label></span></div>
-  <?= $this->Form->input('MAgreements.agreement_end_day', array('div' => false, 'label' => false, 'maxlength' => 50,'type' => 'text')) ?>
+  <?= $this->Form->input('MAgreements.agreement_end_day', array('div' => false, 'label' => false, 'maxlength' => 50,'type' => 'text','readonly' => !$isTrial)) ?>
   <?php if (!empty($agreementerrors['MAgreements.agreement_end_day'])) echo "<li class='error-message'>" . h($agreementerrors['MAgreements.agreement_end_day'][0]) . "</li>"; ?>
 </li>
 <!-- /* 初期管理者情報 */ -->
