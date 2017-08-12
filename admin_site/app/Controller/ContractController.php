@@ -400,8 +400,9 @@ class ContractController extends AppController
   }
 
   private function getAllUserCount() {
-    return $this->MUser->find('count', array(
-      'conditions' => array('MUser.permission_level !=' => 99)
+    $addUserCount = $this->MCompany->find('first', array(
+      'fields' => array('SUM(MCompany.limit_users) as allUsers')
     ));
+    return intval($addUserCount[0]['allUsers']);
   }
 }
