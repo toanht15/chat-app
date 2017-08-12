@@ -1,5 +1,20 @@
 <script type = "text/javascript">
   $(function(){
+    var changeDayInputState = function() {
+      var checked = $('#MCompanyTrialFlg').prop("checked");
+      if(checked) {
+        inputEnabled($('#MAgreementsTrialStartDay'));
+        inputEnabled($('#MAgreementsTrialEndDay'));
+        inputDisabled($('#MAgreementsAgreementStartDay'));
+        inputDisabled($('#MAgreementsAgreementEndDay'));
+      } else {
+        inputDisabled($('#MAgreementsTrialStartDay'));
+        inputDisabled($('#MAgreementsTrialEndDay'));
+        inputEnabled($('#MAgreementsAgreementStartDay'));
+        inputEnabled($('#MAgreementsAgreementEndDay'));
+      }
+    }
+
     //日付入力欄にDatePickerを付与
     var datePickerOptions = {
       dateFormat: "yy-mm-dd"
@@ -22,18 +37,10 @@
     }
 
     $('#MCompanyTrialFlg').on('change', function(event){
-      var checked = $(this).prop("checked");
-      if(checked) {
-        inputEnabled($('#MAgreementsTrialStartDay'));
-        inputEnabled($('#MAgreementsTrialEndDay'));
-        inputDisabled($('#MAgreementsAgreementStartDay'));
-        inputDisabled($('#MAgreementsAgreementEndDay'));
-      } else {
-        inputDisabled($('#MAgreementsTrialStartDay'));
-        inputDisabled($('#MAgreementsTrialEndDay'));
-        inputEnabled($('#MAgreementsAgreementStartDay'));
-        inputEnabled($('#MAgreementsAgreementEndDay'));
-      }
+      changeDayInputState();
     });
+
+    // 初回読み込み時にUIを適用するため一度呼び出す
+    changeDayInputState();
   });
 </script>

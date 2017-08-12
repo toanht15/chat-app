@@ -84,23 +84,35 @@ class ContractController extends AppController
     $this->MCompany->id = $id;
 
     if ($this->request->is('post') || $this->request->is('put')) {
-      $editData = $this->MAgreement->read(null, $id);
+      $companyEditData = $this->MCompany->read(null, $id);
+      $agreementEditData = $this->MAgreements->find('first',[
+          'conditions' => array(
+            'm_companies_id' => $companyEditData['MCompany']['id']
+          )]
+      );
       $transactions = $this->TransactionManager->begin();
       $saveData = $this->request->data;
-      $this->set('companyId', $saveData['MAgreement']['m_companies_id']);//削除に必要なもの
-      $this->set('companyKey', $saveData['MCompany']['company_key']);//削除に必要なもの
-      $this->set('userId', $saveData['MAgreement']['m_users_id']);//削除に必要なもの
-      if ($this->_saveMcompany($saveData) && $this->_saveMuser($saveData) && $this->_saveMagreement($saveData)) {
-        $this->TransactionManager->commit($transactions);
-        $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
-        $saveData['beforeData'] = $editData['MCompany']['company_key'];
-        //jsファイル作成
-        $this->_editFile($saveData);
-        $this->redirect(['controller' => 'MAgreements', 'action' => 'index']);
+      $companySaveData = [];
+      $companySaveData['MCompany'] = $saveData['MCompany'];
+      $companySaveData['MCompany']['id'] = $companyEditData['MCompany']['id'];
+      $this->MCompany->save($companySaveData,false);
+
+      if(empty($agreementEditData)) {
+        $this->MAgreements->create();
+        $this->MAgreements->set([
+          'm_companies_id' => $companyEditData['MCompany']['id'],
+          'trial_start_day' => $saveData['MAgreements']['application_day'],
+          'trial_end_day' => $saveData['MAgreements']['application_day'],
+          'agreement_start_day' => $saveData['MAgreements']['agreement_start_day'],
+          'agreement_end_day' => $saveData['MAgreements']['agreement_end_day']
+        ]);
+        $this->MAgreements->save();
       } else {
-        $this->set('alertMessage', ['type' => C_MESSAGE_TYPE_ERROR, 'text' => Configure::read('message.const.saveFailed')]);
-        $this->TransactionManager->rollback($transactions);
+        $agreementSaveData = [];
+        $agreementSaveData['MAgreements'] = array_merge($agreementEditData['MAgreements'], $saveData['MAgreements']);
+        $this->MAgreements->save($agreementSaveData, false);
       }
+      $this->TransactionManager->commit($transactions);
     } else {
       $editData = $this->MCompany->read(null, $id);
       $agreementData = $this->MAgreements->find('first',[

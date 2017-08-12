@@ -8,7 +8,7 @@
   </div>
 
   <div id='agreement_form' class="p20x">
-    <?= $this->Form->create('MCompany', array('type' => 'post')); ?>
+    <?= $this->Form->create('Contract', array('type' => 'post')); ?>
       <div class="form01">
         <section>
           <?= $this->Form->input('id', array('type' => 'hidden')); ?>

@@ -1,11 +1,11 @@
 <script type = "text/javascript">
 
-  function saveAct(){
+  function saveEdit(){
     //document.getElementById('ContractAddForm').submit();
     $.ajax({
       type: "POST",
-      url: $('#ContractAddForm').attr('action'),
-      data: $('#ContractAddForm').serialize()
+      url: $('#ContractEditForm').attr('action'),
+      data: $('#ContractEditForm').serialize()
     }).done(function(data){
       socket.emit('settingReload', JSON.stringify({type:1, siteKey: "master"}));
       location.href = "<?= $this->Html->url('/Contract/index') ?>"
