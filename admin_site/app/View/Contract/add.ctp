@@ -5,9 +5,12 @@
 <div id='contract_idx'>
   <div id='contract_add_title'>
     <div class="fLeft"><i class="fa fa-cog fa-2x" aria-hidden="true"></i></div>
-    <h1>企業キー登録</h1>
+    <h1>企業登録</h1>
   </div>
   <div id='contract_form' class="p20x">
+    <?php if(!empty($overLimitMessage)): ?>
+    <span style="margin-top: 5em;"><?= $overLimitMessage ?></span>
+    <?php else: ?>
     <?= $this->Form->create('Contract', array('type' => 'post')); ?>
       <div class="form01">
         <section>
@@ -24,5 +27,6 @@
         </section>
       </div>
     <?= $this->Form->end(); ?>
+    <?php endif; ?>
   </div>
 </div>

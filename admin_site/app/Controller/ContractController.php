@@ -17,7 +17,7 @@ class ContractController extends AppController
     'MCompany' => [
       'order' => ['MCompany.id' => 'asc'],
       'fields' => ['*'],
-      'limit' => 100,
+      'limit' => 200,
       'joins' => [
         [
           'type' => 'left',
@@ -59,6 +59,11 @@ class ContractController extends AppController
   }
 
   public function add() {
+    if($this->isOverAllUserCountLimit()) {
+      $this->set('overLimitMessage', 'アカウントの登録上限数を超過しているため、新規に企業キーを登録できません。');
+      return;
+    }
+
     $this->set('title_for_layout', 'サイトキー登録');
 
     if( $this->request->is('post') ) {
@@ -66,7 +71,7 @@ class ContractController extends AppController
       $data = $this->getParams();
 
       try {
-        $this->processTransaction($data['MCompany'], $data['Contract']);
+        $this->processTransaction($data['MCompany'], $data['Contract'], $data['MAgreements']);
         $this->redirect(['controller' => 'Contract', 'action' => 'index']);
       } catch(Exception $e) {
         $this->log("Exception Occured : ".$e->getMessage(), LOG_WARNING);
@@ -142,11 +147,11 @@ class ContractController extends AppController
 
   }
 
-  private function processTransaction($companyInfo, $userInfo) {
+  private function processTransaction($companyInfo, $userInfo, $agreementInfo) {
     try {
       $transaction = $this->TransactionManager->begin();
       $addedCompanyInfo = $this->createCompany($companyInfo);
-      $this->createAgreementInfo($addedCompanyInfo, $companyInfo);
+      $this->createAgreementInfo($addedCompanyInfo, $companyInfo, $agreementInfo);
       $this->createFirstAdministratorUser($addedCompanyInfo['id'], $userInfo);
       $this->addDefaultChatPersonalSettings($addedCompanyInfo['id'], $companyInfo);
       $this->addDefaultWidgetSettings($addedCompanyInfo['id'], $companyInfo);
@@ -185,15 +190,17 @@ class ContractController extends AppController
     ];
   }
 
-  private function createAgreementInfo($addedCompanyInfo, $companyInfo) {
+  private function createAgreementInfo($addedCompanyInfo, $companyInfo, $agreementInfo) {
     $password = $this->generateRandomPassword(8);
 
     $this->MAgreements->create();
     $this->MAgreements->set([
       'm_companies_id' => $addedCompanyInfo['id'],
-      'application_day' => '2017-08-09', // FIXME（自動発行）
-      'trial_start_day' => '2017-08-09', // FIXME
-      'trial_end_day' => '2017-08-16', // FIXME
+      'application_day' => date("Y-m-d"), // FIXME（自動発行）
+      'trial_start_day' => $agreementInfo['trial_start_day'],
+      'trial_end_day' => $agreementInfo['trial_end_day'],
+      'agreement_start_day' => $agreementInfo['agreement_start_day'],
+      'agreement_end_day' => $agreementInfo['agreement_end_day'],
       'admin_password' => $password
     ]);
     $this->MAgreements->save();
@@ -385,5 +392,16 @@ class ContractController extends AppController
       $r_str .= $str[rand(0, count($str) - 1)];
     }
     return $r_str;
+  }
+
+  private function isOverAllUserCountLimit() {
+    $maxCreateUserCount = Configure::read('limitation.createUserCount');
+    return $maxCreateUserCount <= $this->getAllUserCount();
+  }
+
+  private function getAllUserCount() {
+    return $this->MUser->find('count', array(
+      'conditions' => array('MUser.permission_level !=' => 99)
+    ));
   }
 }

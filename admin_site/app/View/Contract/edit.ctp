@@ -1,13 +1,13 @@
 <?= $this->Html->script(C_NODE_SERVER_ADDR.C_NODE_SERVER_WS_PORT."/socket.io/socket.io.js"); ?>
 <?= $this->element('Contract/inputCommonScript'); ?>
 <?= $this->element('Contract/editScript'); ?>
-<div id='agreement_idx'>
-  <div id='agreement_add_title'>
+<div id='contract_idx'>
+  <div id='contract_add_title'>
     <div class="fLeft"><i class="fa fa-cog fa-2x" aria-hidden="true"></i></div>
     <h1>企業設定更新</h1>
   </div>
 
-  <div id='agreement_form' class="p20x">
+  <div id='contract_form' class="p20x">
     <?= $this->Form->create('Contract', array('type' => 'post')); ?>
       <div class="form01">
         <section>
