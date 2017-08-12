@@ -593,6 +593,9 @@ a {
     transition: background-color, border-color 0.1s linear;
     color: #fff;
   }
+  &.grayBtn:hover, &.grayBtn.on {
+    color: #fff;
+  }
 }
 
 .textBtn {
