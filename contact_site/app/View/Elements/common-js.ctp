@@ -155,7 +155,8 @@
 
     // 共通ツールチップの配置（内容はdata-textで指定する）
     $(".commontooltip").on({
-      'mouseenter':function(){
+      'mouseenter':function(e){
+        e.stopPropagation();
         var $this = $(this);
         var text = $this.attr('data-text');
         var $tooltip = $('<div class="tooltips">'+text+'</div>');
@@ -177,7 +178,7 @@
         var leftCoordinate = offset.left + size.width / 2 - ttSize.width / 2;
         var isOverWidth = (leftCoordinate + ttSize.width + 40) > $(window).outerWidth();
         if(isOverWidth) {
-          leftCoordinate = $(window).outerWidth() - ttSize.width - 40;
+          leftCoordinate = (offset.left + size.width)  - ttSize.width;
         }
 
         // 要素の上に横中央で配置
