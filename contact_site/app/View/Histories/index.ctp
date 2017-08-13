@@ -9,7 +9,11 @@
       <?= $this->Html->link(
         'ＣＳＶ出力',
         'javascript:void(0)',
-        array('escape' => false, 'class'=>'btn-shadow'.($coreSettings[C_COMPANY_USE_HISTORY_EXPORTING] ? " skyBlueBtn" : " grayBtn disabled"), 'id' => 'outputCSV', 'disabled' => $coreSettings[C_COMPANY_USE_HISTORY_EXPORTING]));
+        array('escape' => false,
+              'class'=>'btn-shadow'.($coreSettings[C_COMPANY_USE_HISTORY_EXPORTING] ? " skyBlueBtn" : " grayBtn disabled commontooltip"),
+              'id' => 'outputCSV',
+              'disabled' => $coreSettings[C_COMPANY_USE_HISTORY_EXPORTING],
+              'data-text' => $coreSettings[C_COMPANY_USE_HISTORY_EXPORTING] ? "" : "こちらの機能はスタンダードプラン<br>からご利用いただけます。"));
       ?>
     <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
 
@@ -17,7 +21,11 @@
       <?= $this->Html->link(
         'チャットＣＳＶ出力',
         'javascript:void(0)',
-        array('escape' => false, 'class'=>'btn-shadow'.($coreSettings[C_COMPANY_USE_HISTORY_EXPORTING] ? " skyBlueBtn" : " grayBtn disabled"), 'id' => 'outputChat', 'disabled' => $coreSettings[C_COMPANY_USE_HISTORY_EXPORTING]));
+        array('escape' => false,
+              'class'=>'btn-shadow'.($coreSettings[C_COMPANY_USE_HISTORY_EXPORTING] ? " skyBlueBtn" : " grayBtn disabled commontooltip"),
+              'id' => 'outputChat',
+              'disabled' => $coreSettings[C_COMPANY_USE_HISTORY_EXPORTING],
+              'data-text' => $coreSettings[C_COMPANY_USE_HISTORY_EXPORTING] ? "" : "こちらの機能はスタンダードプラン<br>からご利用いただけます。"));
       ?>
     <?php endif; ?>
   </div>

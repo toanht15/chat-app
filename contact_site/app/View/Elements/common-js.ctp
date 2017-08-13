@@ -153,6 +153,47 @@
       }, 500);
     }
 
+    // 共通ツールチップの配置（内容はdata-textで指定する）
+    $(".commontooltip").on({
+      'mouseenter':function(){
+        var $this = $(this);
+        var text = $this.attr('data-text');
+        var $tooltip = $('<div class="tooltips">'+text+'</div>');
+        $('body').append($tooltip);// 要素の表示位置
+        var offset = $this.offset();
+
+        // 要素のサイズ
+        var size = {
+          width: $this.outerWidth(),
+          height: $this.outerHeight()
+        };
+
+        // ツールチップのサイズ
+        var ttSize = {
+          width: $tooltip.outerWidth(),
+          height: $tooltip.outerHeight()
+        };
+
+        var leftCoordinate = offset.left + size.width / 2 - ttSize.width / 2;
+        var isOverWidth = (leftCoordinate + ttSize.width + 40) > $(window).outerWidth();
+        if(isOverWidth) {
+          leftCoordinate = $(window).outerWidth() - ttSize.width - 40;
+        }
+
+        // 要素の上に横中央で配置
+        $tooltip.css({
+          top: offset.top - ttSize.height - 10, // 三角部分の高さ
+          left: leftCoordinate
+        });
+        if(isOverWidth) {
+          $tooltip.append('<style>.tooltips:after{left:75%!important;}</style>');
+        }
+      },
+      'mouseleave':function(){
+        $('body').find(".tooltips").remove();
+      }
+    });
+
     /* フッター設置ボタンの位置調整 */
     var target = document.getElementsByClassName("fotterBtnArea"), fotterBtnAreaResizeTimer = null;
     if ( target.length === 0 ) return false;
