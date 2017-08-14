@@ -236,7 +236,7 @@ var socket, // socket.io
         html += '      #sincloBox ul#chatTalk li.sinclo_etc { border: none; text-align: center!important; margin: 0 auto; font-weight: bold }';
         html += '      #sincloBox ul#chatTalk li sinclo-radio [type="radio"] { -webkit-appearance: radio!important; -moz-appearance: radio!important; appearance: radio!important; } ';
         html += '      #sincloBox section#chatTab sinclo-div { border-top: 1px solid #E8E7E0; }';
-        html += '      #sincloBox section#chatTab sinclo-div #sincloChatMessage { display: block; height: 100%; margin: 0; width: 80%; resize: none; color: ' + chatContentTextColor + '!important; border-right-color: ' + widget.mainColor + '!important; }';
+        html += '      #sincloBox section#chatTab sinclo-div #sincloChatMessage { display: block; height: 100%; min-height: 100%!important; margin: 0; width: 80%; resize: none; color: ' + chatContentTextColor + '!important; border-right-color: ' + widget.mainColor + '!important; }';
         html += '      #sincloBox section#chatTab sinclo-div #sincloChatMessage:focus { outline: none; border-color: ' + widget.mainColor + '!important }';
         html += '      #sincloBox section#chatTab sinclo-div #sincloChatSendBtn { display: block; height: 100%; width: 20%; text-decoration: none; border-radius: 0 5px 5px 0; cursor: pointer; margin: 0; text-align: center; background-color: ' + widget.mainColor + '; color: ' + widget.stringColor + '; font-weight: bold; font-size: 1.2em;}';
         html += '      #sincloBox section#chatTab sinclo-div #sincloChatSendBtn span { color: ' + widget.stringColor + '; }';
@@ -337,10 +337,10 @@ var socket, // socket.io
           html += '#sincloBox section#chatTab sinclo-div { height: 4em; padding: 0.5em; }';
 
           if ( hRatio > 16 ) {
-            html += '#sincloBox #sincloChatMessage { height: 100%; border-radius: 5px 0 0 5px!important; }';
+            html += '#sincloBox #sincloChatMessage { height: 100%;  min-height: 100%!important; border-radius: 5px 0 0 5px!important; }';
           }
           else {
-            html += '#sincloBox #sincloChatMessage { height: 100%; border-radius: 5px 0 0 5px!important; font-size: 1.5em }';
+            html += '#sincloBox #sincloChatMessage { height: 100%;  min-height: 100%!important; border-radius: 5px 0 0 5px!important; font-size: 1.5em }';
           }
           html += '      #sincloBox section#chatTab #sincloChatSendBtn { padding: 0.6em 0; border: 1px solid ' + widget.mainColor + '; }';
           html += '      #sincloBox section#chatTab sinclo-div sinclo-chat-alert { top: 0.5em; left: 0.5em; right: 0.5em; bottom: 0.5em; border-radius: 5px; color: #FFF; text-align: center; padding: 0.25em 0; }';
@@ -375,7 +375,7 @@ var socket, // socket.io
           html += '      #sincloBox ul#chatTalk li { border-radius: 5px; margin: 5px 0; padding: 5px; font-size: 12px; border: 1px solid #C9C9C9; }';
           html += '      #sincloBox ul#chatTalk li span.cName { font-size: 13px; margin: 0 0 5px 0 }';
           html += '      #sincloBox section#chatTab sinclo-div { height: 75px!important; padding: 5px }';
-          html += '      #sincloBox section#chatTab #sincloChatMessage { color: ' + chatContentTextColor + '!important; padding: 5px; height: 100%; border: 1px solid #E4E4E4!important; border-radius: 5px 0 0 5px!important; }';
+          html += '      #sincloBox section#chatTab #sincloChatMessage { color: ' + chatContentTextColor + '!important; padding: 5px; height: 100%; min-height: 100%!important; border: 1px solid #E4E4E4!important; border-radius: 5px 0 0 5px!important; }';
           html += '      #sincloBox section#chatTab #sincloChatSendBtn { padding: 20px 0; height: 100%; border: 1px solid ' + widget.mainColor + '; }';
 
         }
@@ -653,7 +653,8 @@ var socket, // socket.io
             // 画面を回転ときは、向きによってスタイルを変える
             window.addEventListener('orientationchange', sinclo.operatorInfo.reCreateWidget);
             // サイズが変わった時は、サイズ感を変える
-            window.addEventListener('resize', function(){
+            window.addEventListener('resize', function(e){
+              if(e) e.stopPropagation();
               if ( $(window).height() > $(window).width() || document.activeElement.id === "sincloChatMessage") return false; // 横向きの場合のみ使用
                sinclo.operatorInfo.reCreateWidget();
             });
@@ -1587,6 +1588,7 @@ var socket, // socket.io
         type: "mousemove",
         timer : null,
         ev: function(e){
+          if(e) e.stopPropagation();
           if ( this.timer ) {
             return false;
           }
@@ -1602,6 +1604,7 @@ var socket, // socket.io
       {
         type: "scroll",
         ev: function(e){
+          if(e) e.stopPropagation();
           if ( socket === undefined ) return false;
           if ( "body" === syncEvent.receiveEvInfo.nodeName && "scroll" === syncEvent.receiveEvInfo.type ) return false;
           // スクロール用
@@ -1615,6 +1618,7 @@ var socket, // socket.io
       {
         type: "hashchange",
         ev: function(e){
+          if(e) e.stopPropagation();
           if ( socket === undefined ) return false;
           browserInfo.href = location.href;
           emit('reqUrlChecker', {});
@@ -1622,6 +1626,7 @@ var socket, // socket.io
       }
     ],
     pcResize: function(e){
+      if(e) e.stopPropagation();
       if (syncEvent.resizeTimer !== false) {
         clearTimeout(syncEvent.resizeTimer);
       }
@@ -1637,6 +1642,7 @@ var socket, // socket.io
       }, browserInfo.interval);
     },
     tabletResize: function(e){
+      if(e) e.stopPropagation();
       var size = {
         width: window.innerWidth,
         height: window.innerHeight
@@ -1812,6 +1818,7 @@ var socket, // socket.io
       if ( $textarea !== undefined ) {
         var bHeight, bWidth; // ここが要素ごとになるように・・・
         $textarea.addEventListener('mousemove', function(e){
+          if(e) e.stopPropagation();
             if ( bHeight && bWidth && ( bHeight !== this.style.height || bWidth !== this.style.width)) {
           }
             bHeight = this.style.height;
@@ -2156,14 +2163,17 @@ var socket, // socket.io
       startDragX: 0,
       startDragY: 0,
       dragOn: function(e) {
+        if(e) e.stopPropagation();
         vcPopup.dragging = true;
         vcPopup.startDragX = e.screenX;
         vcPopup.startDragY = e.screenY;
       },
-      dragOff: function() {
+      dragOff: function(e) {
+        if(e) e.stopPropagation();
         vcPopup.dragging = false;
       },
       drag: function(e) {
+        if(e) e.stopPropagation();
         if(!vcPopup.dragging) return;
         e.stopPropagation();
         var deltaX = e.screenX - vcPopup.startDragX;
