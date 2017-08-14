@@ -12,7 +12,6 @@ $notification-color: #E57373;
 
 
 * {
-  color: $font-color;
   box-sizing: content-box;
 }
 
@@ -46,10 +45,7 @@ table {
   }
 
   thead {
-    background-color: $normal-color;
-
     th {
-      color: #FFF;
       text-align: center;
       font-weight: bold;
     }
@@ -61,7 +57,17 @@ table {
       background-color: #eee;
     }
   }
+}
 
+#agreementList_list {
+  table {
+    thead {
+      background-color: $normal-color
+    }
+    th {
+      color: #fff;
+    }
+  }
 }
 
 ul {
@@ -744,6 +750,77 @@ div#sidebar{
   }
 }
 
+#contract_idx {
+  .action_btn {
+    width: 6em;
+    margin-left:8em;
+  }
+
+  #contract_form {
+    ul.formArea {
+      padding: 0;
+      margin-top:20px;
+      li { padding: 10px;
+        > span:first-child {
+          width: 125px;
+          display: block;
+        }
+
+        .labelArea.fLeft {
+          width: 125px;
+        }
+        span{
+          font-weight:bold;
+        }
+        #MAgreementAdminPassword{
+          margin-bottom:30px;
+        }
+        #createPassword{
+          margin-bottom:26px;
+        }
+        .action_btn{
+          margin-left:20px;
+          margin-top:-7px;
+        }
+        div.error-message{
+          display:none;
+        }
+      }
+    }
+    input[type="text"].disabled {
+      background-color: #999999;
+    }
+  }
+
+  .error-message {
+    color: $notification-color;
+    padding-left: 30px;
+  }
+
+  .normal_btn {
+    width: 6em;
+    margin-left:6em;
+  }
+
+  textarea{
+    border-radius: 5px !important;
+  }
+
+  i.fa.fa-cog.fa-2x{
+    color: $normal-color;
+    margin-top: 6px;
+  }
+
+  a#searchRefine {
+    margin-top: 15px;
+  }
+
+  .button{
+    display: flex;
+    margin-top:30px;
+  }
+}
+
 /* 簡易入力画面 */
 #tdictionaries_idx {
 
@@ -801,7 +878,7 @@ div#sidebar{
 #MCompanyMContactTypesId{
     border-radius: 8px;
     height: 1.5em;
-    min-width: 10em;
+    min-width: 16em;
     border-color: $font-color;
     color: $font-color;
     font-size: 13px;
