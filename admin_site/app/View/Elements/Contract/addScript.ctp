@@ -1,7 +1,4 @@
 <script type = "text/javascript">
-
-var socket = undefined;
-
 function saveAct(){
   //document.getElementById('ContractAddForm').submit();
   $.ajax({
@@ -10,7 +7,9 @@ function saveAct(){
     data: $('#ContractAddForm').serialize()
   }).done(function(data){
     socket.emit('settingReload', JSON.stringify({type:1, siteKey: "master"}));
-    location.href = "<?= $this->Html->url('/Contract/index') ?>"
+    setTimeout(function(){
+      location.href = "<?= $this->Html->url('/Contract/index') ?>"
+    },1000);
   }).fail(function(data){
 
   });

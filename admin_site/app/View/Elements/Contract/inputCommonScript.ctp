@@ -1,4 +1,7 @@
 <script type = "text/javascript">
+
+  var socket = undefined;
+
   $(function(){
     var changeDayInputState = function() {
       var checked = $('#MCompanyTrialFlg').prop("checked");
