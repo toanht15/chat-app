@@ -35,8 +35,8 @@ define('C_COMPANY_USE_SYNCLO', 'synclo'); // 画面同期
 define('C_COMPANY_USE_CHAT', 'chat'); // オペレーターが待機中の時のみ表示する
 define('C_COMPANY_USE_DOCUMENT', 'document'); // オペレーターが待機中の時のみ表示する
 define('C_COMPANY_USE_VIDEO_CHAT', 'videochat'); // ビデオチャット
-define('C_COMPANY_USE_CHAT_LIMITER', 'chatLimiter'); // チャット同時対応数上限
-define('C_COMPANY_USE_HISTORY_EXPORTING', 'historyExporting'); // 履歴エクスポート
+define('C_COMPANY_USE_CHAT_LIMITER', 'chatLimitation'); // チャット同時対応数上限
+define('C_COMPANY_USE_HISTORY_EXPORTING', 'exportHistory'); // 履歴エクスポート
 define('C_COMPANY_USE_STATISTICS', 'statistics'); // 統計
 define('C_COMPANY_USE_DICTIONARY_CATEGORY', 'dictionaryCategory'); // 定型文カテゴリ
 
