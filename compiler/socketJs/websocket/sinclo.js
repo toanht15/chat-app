@@ -996,10 +996,10 @@
             if ( window.sincloInfo.contract.chat ) {
                 if ( !( 'chatTrigger' in window.sincloInfo.widget && window.sincloInfo.widget.chatTrigger === 2) ) {
                   // チャットメッセージ入力欄でのキーイベント系はすべてバブリングしない
-                  $("#sincloChatMessage").on("keyup keypress keydown",function(e){
+                  $("#sincloChatMessage").on("keyup keypress",function(e){
                     if(e) e.stopImmediatePropagation();
                   });
-                  $(document).on("keydown", "#sincloChatMessage", function(e){
+                  $('#sincloChatMessage').on("keydown", function(e){
                       if(e) e.stopImmediatePropagation();
                       if ( (e.which && e.which === 13) || (e.keyCode && e.keyCode === 13) ) {
                           if ( !e.shiftKey && !e.ctrlKey ) {
@@ -1008,7 +1008,7 @@
                       }
                   });
                   // キーイベント系はすべてバブリングしない
-                  $(document).on("keyup keypress", "#sincloChatMessage", function(e){
+                  $(document).on("keydown keyup keypress", "#sincloChatMessage", function(e){
                     if(e) e.stopImmediatePropagation();
                   });
                 }
