@@ -12,7 +12,7 @@
         array('escape' => false,
               'class'=>'btn-shadow'.($coreSettings[C_COMPANY_USE_HISTORY_EXPORTING] ? " skyBlueBtn" : " grayBtn disabled commontooltip"),
               'id' => 'outputCSV',
-              'disabled' => $coreSettings[C_COMPANY_USE_HISTORY_EXPORTING],
+              'disabled' => !$coreSettings[C_COMPANY_USE_HISTORY_EXPORTING],
               'data-text' => $coreSettings[C_COMPANY_USE_HISTORY_EXPORTING] ? "" : "こちらの機能はスタンダードプラン<br>からご利用いただけます。"));
       ?>
     <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
@@ -24,7 +24,7 @@
         array('escape' => false,
               'class'=>'btn-shadow'.($coreSettings[C_COMPANY_USE_HISTORY_EXPORTING] ? " skyBlueBtn" : " grayBtn disabled commontooltip"),
               'id' => 'outputChat',
-              'disabled' => $coreSettings[C_COMPANY_USE_HISTORY_EXPORTING],
+              'disabled' => !$coreSettings[C_COMPANY_USE_HISTORY_EXPORTING],
               'data-text' => $coreSettings[C_COMPANY_USE_HISTORY_EXPORTING] ? "" : "こちらの機能はスタンダードプラン<br>からご利用いただけます。"));
       ?>
     <?php endif; ?>
