@@ -408,7 +408,6 @@
   echo $this->Html->script("https://sdk005.live-assist.jp/gateway/csdk-phone.js");
   echo $this->Html->script("https://sdk005.live-assist.jp/gateway/csdk-common.js");
   echo $this->Html->script("https://sdk005.live-assist.jp/assistserver/sdk/web/shared/js/assist-aed.js");
-  echo $this->Html->script("https://sdk005.live-assist.jp/assistserver/sdk/web/shared/js/document-packet.js");
   echo $this->Html->script("https://sdk005.live-assist.jp/assistserver/sdk/web/shared/js/shared-windows.js");
   echo $this->Html->script("https://sdk005.live-assist.jp/assistserver/sdk/web/agent/js/assist-console.js");
   echo $this->Html->script("liveassist/assist-console-callmanager.js");
@@ -547,7 +546,7 @@
       });
 
       AssistAgentSDK.setScreenShareActiveCallback(function() {
-        debug("setScreenShareActive");
+        //debug("setScreenShareActive");
       });
 
       AssistAgentSDK.setRemoteViewCallBack(function (x, y) {
