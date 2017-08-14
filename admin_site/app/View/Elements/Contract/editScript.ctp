@@ -8,7 +8,9 @@
       data: $('#ContractEditForm').serialize()
     }).done(function(data){
       socket.emit('settingReload', JSON.stringify({type:1, siteKey: "master"}));
-      location.href = "<?= $this->Html->url('/Contract/index') ?>"
+      setTimeout(function(){
+        location.href = "<?= $this->Html->url('/Contract/index') ?>"
+      },1000);
     }).fail(function(data){
 
     });
