@@ -12,7 +12,6 @@ $notification-color: #E57373;
 
 
 * {
-  color: $font-color;
   box-sizing: content-box;
 }
 
@@ -46,10 +45,7 @@ table {
   }
 
   thead {
-    background-color: $normal-color;
-
     th {
-      color: #FFF;
       text-align: center;
       font-weight: bold;
     }
@@ -61,7 +57,17 @@ table {
       background-color: #eee;
     }
   }
+}
 
+#agreementList_list {
+  table {
+    thead {
+      background-color: $normal-color
+    }
+    th {
+      color: #fff;
+    }
+  }
 }
 
 ul {
