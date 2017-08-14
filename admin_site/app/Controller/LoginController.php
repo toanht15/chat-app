@@ -27,7 +27,7 @@ class LoginController extends AppController {
       if ($this->Auth->login()) {
         $userInfo = $this->Auth->user();
         parent::setUserInfo($userInfo);
-        $this->redirect(['controller' => 'Tops', 'action' => 'index']);
+        $this->redirect(['controller' => 'Contract', 'action' => 'index']);
       }
     }
     $this->render('index');

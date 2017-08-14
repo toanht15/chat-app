@@ -47,6 +47,29 @@ class MUser extends AppModel {
     ],
   ];
 
+  public function beforeSave($options = []) {
+    if ( empty($this->data['MUser']) ) return true;
+    $data = $this->data['MUser'];
+    if ( !empty($data['new_password']) ) {
+      $data['password'] = $this->makePassword($data['new_password']);
+    }
+    $this->data['MUser'] = $data;
+    return true;
+  }
+
+  public function passwordHash($pass) {
+    if ( !empty($pass) ) {
+      $data = $this->makePassword($pass);
+    }
+    $password = $data;
+    return $password;
+  }
+
+  public function makePassword($str){
+    $passwordHasher = new SimplePasswordHasher();
+    return $passwordHasher->hash($str);
+  }
+
    //メールアドレスチェック
   public function isUniqueChk($mail){
     $conditions['mail_address'] = $mail['mail_address'];

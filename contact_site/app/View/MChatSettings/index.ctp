@@ -44,7 +44,7 @@ $(document).ready(function(){
         <h3>１．同時対応数上限</h3>
         <div class ="content">
           <div>
-            <label><?=$this->Form->input('MChatSetting.sc_flg', ['type' => 'radio', 'options' => $scFlgOpt, 'default' => C_SC_DISABLED, 'legend' => false, 'separator' => '</label><br><label>', 'label' => false, 'div' => false])?></label>
+            <label><?=$this->Form->input('MChatSetting.sc_flg', ['type' => 'radio', 'options' => $scFlgOpt, 'default' => C_SC_DISABLED, 'legend' => false, 'separator' => '</label><br><label>', 'label' => false, 'div' => false, 'disabled' => !$coreSettings[C_COMPANY_USE_CHAT_LIMITER]])?></label>
           </div>
           <div id="sc_content">
             <dl class="<?=$scHiddenClass?>">
@@ -73,6 +73,9 @@ $(document).ready(function(){
               </div>
             </dl>
           </div>
+          <?php if($coreSettings[C_COMPANY_USE_CHAT] && !$coreSettings[C_COMPANY_USE_CHAT_LIMITER]): ?>
+            <span style="color:#D00">※こちらの機能はスタンダードプランからご利用いただけます。</span>
+          <?php endif;?>
         </div>
       </section>
       <section>

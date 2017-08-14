@@ -75,8 +75,8 @@ class AppController extends Controller {
     }
 
     // ログイン情報をオブジェクトに格納
-    if ( $this->Session->check('global.userInfo') ) {
-      $this->userInfo = $this->Session->read('global.userInfo');
+    if ( $this->Session->check('global.administratorInfo') ) {
+      $this->userInfo = $this->Session->read('global.administratorInfo');
       //pr($this->userInfo); exit();
       $this->set('userInfo', $this->userInfo);
     }
@@ -92,7 +92,7 @@ class AppController extends Controller {
 
   public function setUserInfo($info){
     $this->userInfo = $info;
-    $this->Session->write('global.userInfo', $info);
+    $this->Session->write('global.administratorInfo', $info);
     $this->Session->write('global.tmpdata', $this->MCompany->find('all',array(
     'conditions'=>array(
         //'MCompany.company_key' => 'template'
