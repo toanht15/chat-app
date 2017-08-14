@@ -14,11 +14,12 @@
           <th style="width:17em;">キー</th>
           <th style="width:17em;">プラン</th>
           <th style="width:15em;">ID数 / 最大ID数</th>
-          <th style="width:15em;">トライアル / 本契約</th>
-          <th style="width:15em;">開始日</th>
-          <th style="width:15em;">終了日</th>
-          <th style="width:15em;">登録日時</th>
-          <th width="1%"></th>
+          <th style="width:8em;">ML用アカウント</th>
+          <th style="width:8em;">パスワード</th>
+          <th style="width:14em;">トライアル / 本契約</th>
+          <th style="width:8em;">開始日</th>
+          <th style="width:8em;">終了日</th>
+          <th style="width:8em;">登録日時</th>
         </tr>
       </thead>
       <?php foreach((array)$companyList as $key => $val): ?>
@@ -28,29 +29,28 @@
           $companyKey = $val['MCompany']['company_key'];
         ?>
         <tbody>
-          <tr ondblclick= "location.href = '<?=$this->Html->url(array('controller' => 'Contract', 'action' => 'edit', $val['MCompany']['id']))?>';">
+          <tr ondoubleclick= "location.href = '<?=$this->Html->url(array('controller' => 'Contract', 'action' => 'edit', $val['MCompany']['id']))?>';">
             <td><?=h($val['MCompany']['company_name'])?></td>
             <td><?=h($val['MCompany']['company_key'])?></td>
             <?php if(h($val['MCompany']['m_contact_types_id']) == 1){ ?>
               <td>プレミアムプラン</td>
             <?php } ?>
             <?php if(h($val['MCompany']['m_contact_types_id']) == 2){ ?>
-              <td>チャットスタンダードプラン</td>
+              <td>スタンダードプラン</td>
             <?php } ?>
             <?php if(h($val['MCompany']['m_contact_types_id']) == 3){ ?>
               <td>シェアリングプラン</td>
             <?php } ?>
             <?php if(h($val['MCompany']['m_contact_types_id']) == 4){ ?>
-              <td>チャットベーシックプラン</td>
+              <td>ベーシックプラン</td>
             <?php } ?>
-            <td><?=h($val['MUser']['user_account'])?> / <?=h($val['MCompany']['limit_users'])?></td>
+            <td><?= h($val['MUser']['user_account'])?> / <?=h($val['MCompany']['limit_users'])?></td>
+            <td><?= h($val['MCompany']['company_key'].C_MAGREEMENT_MAIL_ADDRESS) ?></td>
+            <td><?= h($val['MAgreement']['admin_password']) ?></td>
             <td><?= intval($val['MCompany']['trial_flg']) === 1 ? "トライアル" : "本契約" ?></td>
             <td><?= intval($val['MCompany']['trial_flg']) === 1 ?  h($val['MAgreement']['trial_start_day']) : h($val['MAgreement']['agreement_start_day']) ?></td>
             <td><?= intval($val['MCompany']['trial_flg']) === 1 ?  h($val['MAgreement']['trial_end_day']) : h($val['MAgreement']['agreement_end_day']) ?></td>
             <td><?= !empty($val['MAgreement']['application_day']) ? h($val['MAgreement']['application_day']) : h(date('Y-m-d', strtotime($val['MCompany']['created']))); ?></td>
-            <td>
-            <i class="fa fa-times fa-2x" aria-hidden="true" a href="javascript:void(0)" id="delete" onclick="remoteDeleteCompany(<?=$companyId?>','<?=$userId?>','<?=$companyKey?>')"></i>
-            </td>
           </tr>
       </tbody>
     <?php endforeach; ?>
