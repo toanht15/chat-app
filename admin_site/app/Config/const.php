@@ -1,5 +1,7 @@
 <?php
 
+define('APP_MODE_DEV', true);
+
 // 正規表現
 define('C_MATCH_RULE_TEL', '/^\+?(\d|-)*$/'); // TEL
 define('C_MATCH_RULE_TIME', '/^(24:00|2[0-3]:[0-5][0-9]|[0-1]?[0-9]:[0-5][0-9])$/'); // 時間 H:i
