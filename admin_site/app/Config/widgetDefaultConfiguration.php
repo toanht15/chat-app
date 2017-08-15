@@ -71,7 +71,7 @@ $config['default'] = [
         /**
          * 画像の設定
          */
-      "mainImage"=>"https://node.sinclo.local/img/widget/op02.jpg", //FIXME ドメイン依存
+      "mainImage" => C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT."/img/widget/op02.jpg",
       /**
        * 画像を表示する
        */
