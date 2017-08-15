@@ -117,3 +117,4 @@ Configure::load("contractConfigurations");
 Configure::load("widgetDefaultConfiguration");
 Configure::load("dictionaryDefaultConfiguration");
 Configure::load("autoMessageDefaultConfiguration");
+Configure::load("chatBasicDefaultConfiguration");

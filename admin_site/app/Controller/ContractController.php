@@ -11,7 +11,7 @@ App::uses('Folder', 'Utility');
 App::uses('File', 'Utility');
 class ContractController extends AppController
 {
-  public $uses = ['MCompany', 'MAgreements', 'MUser', 'MWidgetSetting', 'TAutoMessages', 'TDictionaries', 'TransactionManager'];
+  public $uses = ['MCompany', 'MAgreements', 'MUser', 'MWidgetSetting', 'MChatSetting', 'TAutoMessages', 'TDictionaries', 'TransactionManager'];
 
   public $paginate = [
     'MCompany' => [
@@ -258,7 +258,16 @@ class ContractController extends AppController
   }
 
   private function addDefaultChatPersonalSettings($m_companies_id, $companyInfo) {
-
+    if(!$this->isChatEnable($companyInfo['m_contact_types_id'])) return;
+    $default = $this->getDefaultChatBasicConfigurations();
+    $this->MChatSetting->create();
+    $this->MChatSetting->set([
+      "m_companies_id" => $m_companies_id,
+      "sc_flg" => $default['sc_flg'],
+      "sc_default_num" => $default['sc_default_num'],
+      "sorry_message" => $default['sorry_message']
+    ]);
+    $this->MChatSetting->save();
   }
 
   private function addDefaultWidgetSettings($m_companies_id, $companyInfo) {
@@ -365,6 +374,10 @@ class ContractController extends AppController
         throw Exception("不明なプランID: ".$m_contact_types_id);
     }
     return $val;
+  }
+
+  private function getDefaultChatBasicConfigurations() {
+    return Configure::read('default.chat.basic');
   }
 
   private function getDefaultDictionaryConfigurations() {
