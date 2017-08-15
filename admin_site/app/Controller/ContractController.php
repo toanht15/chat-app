@@ -135,10 +135,41 @@ class ContractController extends AppController
     }
   }
 
-  public function save() {
-    // パラメータに対象IDがあれば更新処理とする
-    $this->log($this->request->params, LOG_DEBUG);
+  public function deleteCompany() {
+    if($this->request->is('post')) {
+      $deleteTarget = $this->getParams();
+
+      $transaction = $this->TransactionManager->begin();
+
+      try {
+        // ユーザーの削除（論理削除）
+        $data = array(
+          'MUser.del_flg' => '1',
+          'MUser.deleted' => '"'.date('Y-m-d H:i:s').'"'
+        );
+        $conditions = array(
+          'MUser.m_companies_id' => $deleteTarget['id'],
+          'MUser.permission_level != ' => "99" // ML用アカウントは残す
+        );
+        $this->MUser->updateAll($data, $conditions);
+
+        //企業用JavaScriptの退避
+        $this->backupCompanyJSFile($deleteTarget['companyKey']);
+
+        //企業キーの削除（論理削除）
+        $deleteCompanyData = array('MCompany' => array('id' => $deleteTarget['id'], 'del_flg' => '1', 'deleted' => '"'.date('Y-m-d H:i:s').'"'));
+        $deleteCompanyFields = array('del_flg', 'deleted');
+        $this->MCompany->save($deleteCompanyData, false, $deleteCompanyFields);
+
+      } catch(Exception $e) {
+        $this->TransactionManager->rollback($transaction);
+        $this->log("Delete Exception Occured : ".$e->getMessage(), LOG_WARNING);
+      }
+      $this->TransactionManager->commit($transaction);
+    }
+    $this->autoRender = false;
   }
+
 
   private function getParams() {
     return $this->request->data;
@@ -328,6 +359,12 @@ class ContractController extends AppController
     $saveFile->open('w');
     $saveFile->append($replacedContents);
     $saveFile->close();
+  }
+
+  private function backupCompanyJSFile($companyKey) {
+    if(!rename(C_COMPANY_JS_FILE_DIR.'/'.$companyKey.'.js', C_COMPANY_JS_FILE_DIR.'/'.$companyKey.'.js_'.date('Ymd').'bk')) {
+      throw Exception('企業用JavaScriptファイルのバックアップに失敗しました。');
+    };
   }
 
   private function generateCompanyKey() {

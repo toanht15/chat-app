@@ -16,4 +16,23 @@
     });
   }
 
+  //一覧画面削除機能
+  function remoteDeleteCompany(companyId,companyKey){
+    modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', '削除確認');
+    popupEvent.closePopup = function(){
+      $.ajax({
+        type: 'post',
+        data: {
+          id: companyId,
+          companyKey:companyKey
+        },
+        cache: false,
+        url: "<?= $this->Html->url(['controller' => 'Contract', 'action' => 'deleteCompany']) ?>",
+        success: function(){
+          location.href = "<?= $this->Html->url(['controller' => 'Contract', 'action' => 'index']) ?>";
+        }
+      });
+    };
+  }
+
 </script>
