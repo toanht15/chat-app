@@ -11,7 +11,7 @@ App::uses('Folder', 'Utility');
 App::uses('File', 'Utility');
 class ContractController extends AppController
 {
-  public $uses = ['MCompany', 'MAgreements', 'MUser', 'MWidgetSetting', 'TAutoMessages', 'TDictionaries', 'TransactionManager'];
+  public $uses = ['MCompany', 'MAgreements', 'MUser', 'MWidgetSetting', 'MChatSetting', 'TAutoMessages', 'TDictionaries', 'TransactionManager'];
 
   public $paginate = [
     'MCompany' => [
@@ -75,6 +75,7 @@ class ContractController extends AppController
         $this->redirect(['controller' => 'Contract', 'action' => 'index']);
       } catch(Exception $e) {
         $this->log("Exception Occured : ".$e->getMessage(), LOG_WARNING);
+        $this->log($e->getTraceAsString(),LOG_WARNING);
       }
     }
   }
@@ -100,6 +101,7 @@ class ContractController extends AppController
       $companySaveData = [];
       $companySaveData['MCompany'] = $saveData['MCompany'];
       $companySaveData['MCompany']['id'] = $companyEditData['MCompany']['id'];
+      $companySaveData['MCompany']['core_settings'] = $this->getCoreSettingsFromContactTypesId($saveData['MCompany']['m_contact_types_id']);
       $this->MCompany->save($companySaveData,false);
 
       if(empty($agreementEditData)) {
@@ -117,6 +119,9 @@ class ContractController extends AppController
         $agreementSaveData['MAgreements'] = array_merge($agreementEditData['MAgreements'], $saveData['MAgreements']);
         $this->MAgreements->save($agreementSaveData, false);
       }
+
+      // アップグレードがある場合で、デフォルト設定が必要なものは設定を追加する
+      $this->upgradeProcess($companyEditData['MCompany']['m_contact_types_id'], $saveData['MCompany']['m_contact_types_id'], $companyEditData['MCompany']['id'], $saveData['MCompany']);
       $this->TransactionManager->commit($transactions);
     } else {
       $editData = $this->MCompany->read(null, $id);
@@ -134,10 +139,41 @@ class ContractController extends AppController
     }
   }
 
-  public function save() {
-    // パラメータに対象IDがあれば更新処理とする
-    $this->log($this->request->params, LOG_DEBUG);
+  public function deleteCompany() {
+    if($this->request->is('post')) {
+      $deleteTarget = $this->getParams();
+
+      $transaction = $this->TransactionManager->begin();
+
+      try {
+        // ユーザーの削除（論理削除）
+        $data = array(
+          'MUser.del_flg' => '1',
+          'MUser.deleted' => '"'.date('Y-m-d H:i:s').'"'
+        );
+        $conditions = array(
+          'MUser.m_companies_id' => $deleteTarget['id'],
+          'MUser.permission_level != ' => "99" // ML用アカウントは残す
+        );
+        $this->MUser->updateAll($data, $conditions);
+
+        //企業用JavaScriptの退避
+        $this->backupCompanyJSFile($deleteTarget['companyKey']);
+
+        //企業キーの削除（論理削除）
+        $deleteCompanyData = array('MCompany' => array('id' => $deleteTarget['id'], 'del_flg' => '1', 'deleted' => date('Y-m-d H:i:s')));
+        $deleteCompanyFields = array('del_flg', 'deleted');
+        $this->MCompany->save($deleteCompanyData, false, $deleteCompanyFields);
+
+      } catch(Exception $e) {
+        $this->TransactionManager->rollback($transaction);
+        $this->log("Delete Exception Occured : ".$e->getMessage(), LOG_WARNING);
+      }
+      $this->TransactionManager->commit($transaction);
+    }
+    $this->autoRender = false;
   }
+
 
   private function getParams() {
     return $this->request->data;
@@ -163,6 +199,64 @@ class ContractController extends AppController
       throw $e;
     }
     $this->TransactionManager->commit($transaction);
+  }
+
+  private function upgradeProcess($beforeContactTypeId, $afterContactTypeId, $targetCompanyId, $companyInfo) {
+    if(strcmp($beforeContactTypeId, $afterContactTypeId) === 0) {
+      // プラン変更なし
+    } else if (strcmp($beforeContactTypeId, C_CONTRACT_CHAT_BASIC_PLAN_ID) === 0
+      && strcmp($afterContactTypeId, C_CONTRACT_CHAT_PLAN_ID) === 0) {
+      // ベーシック => スタンダード
+    } else if (strcmp($beforeContactTypeId, C_CONTRACT_CHAT_BASIC_PLAN_ID) === 0
+      && strcmp($afterContactTypeId, C_CONTRACT_SCREEN_SHARING_ID) === 0) {
+      // ベーシック => シェアリング
+      $this->upgradeWidgetSettings($beforeContactTypeId, $afterContactTypeId, $targetCompanyId);
+    } else if (strcmp($beforeContactTypeId, C_CONTRACT_CHAT_BASIC_PLAN_ID) === 0
+      && strcmp($afterContactTypeId, C_CONTRACT_FULL_PLAN_ID) === 0) {
+      // ベーシック => プレミアム
+      $this->upgradeWidgetSettings($beforeContactTypeId, $afterContactTypeId, $targetCompanyId);
+    } else if (strcmp($beforeContactTypeId, C_CONTRACT_CHAT_PLAN_ID) === 0
+      && strcmp($afterContactTypeId, C_CONTRACT_CHAT_BASIC_PLAN_ID) === 0) {
+      // スタンダード => ベーシック
+    } else if (strcmp($beforeContactTypeId, C_CONTRACT_CHAT_PLAN_ID) === 0
+      && strcmp($afterContactTypeId, C_CONTRACT_SCREEN_SHARING_ID) === 0) {
+      // スタンダード => シェアリング
+      $this->upgradeWidgetSettings($beforeContactTypeId, $afterContactTypeId, $targetCompanyId);
+    } else if (strcmp($beforeContactTypeId, C_CONTRACT_CHAT_PLAN_ID) === 0
+      && strcmp($afterContactTypeId, C_CONTRACT_FULL_PLAN_ID) === 0) {
+      // スタンダード => プレミアム
+      $this->upgradeWidgetSettings($beforeContactTypeId, $afterContactTypeId, $targetCompanyId);
+    } else if (strcmp($beforeContactTypeId, C_CONTRACT_SCREEN_SHARING_ID) === 0
+      && strcmp($afterContactTypeId, C_CONTRACT_CHAT_BASIC_PLAN_ID) === 0) {
+      // シェアリング => ベーシック
+      $this->upgradeWidgetSettings($beforeContactTypeId, $afterContactTypeId, $targetCompanyId);
+      $this->addDefaultChatPersonalSettings($targetCompanyId, $companyInfo);
+      $this->addDefaultAutoMessages($targetCompanyId, $companyInfo);
+      $this->addDefaultDictionaries($targetCompanyId, $companyInfo);
+    } else if (strcmp($beforeContactTypeId, C_CONTRACT_SCREEN_SHARING_ID) === 0
+      && strcmp($afterContactTypeId, C_CONTRACT_CHAT_PLAN_ID) === 0) {
+      // シェアリング => スタンダード
+      $this->upgradeWidgetSettings($beforeContactTypeId, $afterContactTypeId, $targetCompanyId);
+      $this->addDefaultChatPersonalSettings($targetCompanyId, $companyInfo);
+      $this->addDefaultAutoMessages($targetCompanyId, $companyInfo);
+      $this->addDefaultDictionaries($targetCompanyId, $companyInfo);
+    } else if (strcmp($beforeContactTypeId, C_CONTRACT_FULL_PLAN_ID) === 0
+      && strcmp($afterContactTypeId, C_CONTRACT_FULL_PLAN_ID) === 0) {
+      // シェアリング => プレミアム
+      $this->upgradeWidgetSettings($beforeContactTypeId, $afterContactTypeId, $targetCompanyId);
+      $this->addDefaultChatPersonalSettings($targetCompanyId, $companyInfo);
+      $this->addDefaultAutoMessages($targetCompanyId, $companyInfo);
+      $this->addDefaultDictionaries($targetCompanyId, $companyInfo);
+    } else if (strcmp($beforeContactTypeId, C_CONTRACT_FULL_PLAN_ID) === 0
+      && strcmp($afterContactTypeId, C_CONTRACT_CHAT_BASIC_PLAN_ID) === 0) {
+      // プレミアム => ベーシック
+    } else if (strcmp($beforeContactTypeId, C_CONTRACT_FULL_PLAN_ID) === 0
+      && strcmp($afterContactTypeId, C_CONTRACT_CHAT_PLAN_ID) === 0) {
+      // プレミアム => スタンダード
+    } else if (strcmp($beforeContactTypeId, C_CONTRACT_CHAT_BASIC_PLAN_ID) === 0
+      && strcmp($afterContactTypeId, C_CONTRACT_SCREEN_SHARING_ID) === 0) {
+      // プレミアム => シェアリング
+    }
   }
 
   /**
@@ -258,7 +352,16 @@ class ContractController extends AppController
   }
 
   private function addDefaultChatPersonalSettings($m_companies_id, $companyInfo) {
-
+    if(!$this->isChatEnable($companyInfo['m_contact_types_id'])) return;
+    $default = $this->getDefaultChatBasicConfigurations();
+    $this->MChatSetting->create();
+    $this->MChatSetting->set([
+      "m_companies_id" => $m_companies_id,
+      "sc_flg" => $default['sc_flg'],
+      "sc_default_num" => $default['sc_default_num'],
+      "sorry_message" => $default['sorry_message']
+    ]);
+    $this->MChatSetting->save();
   }
 
   private function addDefaultWidgetSettings($m_companies_id, $companyInfo) {
@@ -320,6 +423,12 @@ class ContractController extends AppController
     $saveFile->close();
   }
 
+  private function backupCompanyJSFile($companyKey) {
+    if(!rename(C_COMPANY_JS_FILE_DIR.'/'.$companyKey.'.js', C_COMPANY_JS_FILE_DIR.'/'.$companyKey.'.js_'.date('Ymd').'bk')) {
+      throw Exception('企業用JavaScriptファイルのバックアップに失敗しました。');
+    };
+  }
+
   private function generateCompanyKey() {
     return uniqid();
   }
@@ -365,6 +474,78 @@ class ContractController extends AppController
         throw Exception("不明なプランID: ".$m_contact_types_id);
     }
     return $val;
+  }
+
+  private function upgradeWidgetSettings($beforeContactTypeId, $afterContactTypeId, $targetCompanyId) {
+    $currentWidgetSettings = $this->MWidgetSetting->find('first',[
+        'conditions' => array(
+          'm_companies_id' => $targetCompanyId
+        )]
+    );
+    if(!empty($currentWidgetSettings)) {
+      $saveData = json_decode($currentWidgetSettings['MWidgetSetting']['style_settings'], TRUE);
+      $currentWidgetSettings['MWidgetSetting']['style_settings'] = $this->getUpgradedWidgetSettings($saveData, $beforeContactTypeId, $afterContactTypeId);
+      $this->MWidgetSetting->save(json_encode($currentWidgetSettings['MWidgetSetting'], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT), false, array('style_settings'));
+    } else {
+      throw Exception('ウィジェット設定の取得に失敗しました。 id: '.$targetCompanyId);
+    }
+  }
+
+  private function getUpgradedWidgetSettings($currentSettings, $beforeContactTypeId, $afterContactTypeId) {
+    $widgetConfiguration = Configure::read('default.widget');
+    $val = [];
+    if(strcmp($beforeContactTypeId, $afterContactTypeId) === 0) {
+      // プラン変更なし
+      $val = $currentSettings;
+    } else if (strcmp($beforeContactTypeId, C_CONTRACT_CHAT_BASIC_PLAN_ID) === 0
+            && strcmp($afterContactTypeId, C_CONTRACT_CHAT_PLAN_ID) === 0) {
+      // ベーシック => スタンダード
+    } else if (strcmp($beforeContactTypeId, C_CONTRACT_CHAT_BASIC_PLAN_ID) === 0
+      && strcmp($afterContactTypeId, C_CONTRACT_SCREEN_SHARING_ID) === 0) {
+      // ベーシック => シェアリング
+      $val = array_merge($currentSettings, $widgetConfiguration['sharing']);
+    } else if (strcmp($beforeContactTypeId, C_CONTRACT_CHAT_BASIC_PLAN_ID) === 0
+      && strcmp($afterContactTypeId, C_CONTRACT_FULL_PLAN_ID) === 0) {
+      // ベーシック => プレミアム
+      $val = array_merge($currentSettings, $widgetConfiguration['sharing']);
+    } else if (strcmp($beforeContactTypeId, C_CONTRACT_CHAT_PLAN_ID) === 0
+      && strcmp($afterContactTypeId, C_CONTRACT_CHAT_BASIC_PLAN_ID) === 0) {
+      // スタンダード => ベーシック
+    } else if (strcmp($beforeContactTypeId, C_CONTRACT_CHAT_PLAN_ID) === 0
+      && strcmp($afterContactTypeId, C_CONTRACT_SCREEN_SHARING_ID) === 0) {
+      // スタンダード => シェアリング
+      $val = array_merge($currentSettings, $widgetConfiguration['sharing']);
+    } else if (strcmp($beforeContactTypeId, C_CONTRACT_CHAT_PLAN_ID) === 0
+      && strcmp($afterContactTypeId, C_CONTRACT_FULL_PLAN_ID) === 0) {
+      // スタンダード => プレミアム
+      $val = array_merge($currentSettings, $widgetConfiguration['sharing']);
+    } else if (strcmp($beforeContactTypeId, C_CONTRACT_SCREEN_SHARING_ID) === 0
+      && strcmp($afterContactTypeId, C_CONTRACT_CHAT_BASIC_PLAN_ID) === 0) {
+      // シェアリング => ベーシック
+      $val = array_merge($currentSettings, $widgetConfiguration['chat']);
+    } else if (strcmp($beforeContactTypeId, C_CONTRACT_SCREEN_SHARING_ID) === 0
+      && strcmp($afterContactTypeId, C_CONTRACT_CHAT_PLAN_ID) === 0) {
+      // シェアリング => スタンダード
+      $val = array_merge($currentSettings, $widgetConfiguration['chat']);
+    } else if (strcmp($beforeContactTypeId, C_CONTRACT_FULL_PLAN_ID) === 0
+      && strcmp($afterContactTypeId, C_CONTRACT_FULL_PLAN_ID) === 0) {
+      // シェアリング => プレミアム
+      $val = array_merge($currentSettings, $widgetConfiguration['chat']);
+    } else if (strcmp($beforeContactTypeId, C_CONTRACT_FULL_PLAN_ID) === 0
+      && strcmp($afterContactTypeId, C_CONTRACT_CHAT_BASIC_PLAN_ID) === 0) {
+      // プレミアム => ベーシック
+    } else if (strcmp($beforeContactTypeId, C_CONTRACT_FULL_PLAN_ID) === 0
+      && strcmp($afterContactTypeId, C_CONTRACT_CHAT_PLAN_ID) === 0) {
+      // プレミアム => スタンダード
+    } else if (strcmp($beforeContactTypeId, C_CONTRACT_CHAT_BASIC_PLAN_ID) === 0
+      && strcmp($afterContactTypeId, C_CONTRACT_SCREEN_SHARING_ID) === 0) {
+      // プレミアム => シェアリング
+    }
+    return $val;
+  }
+
+  private function getDefaultChatBasicConfigurations() {
+    return Configure::read('default.chat.basic');
   }
 
   private function getDefaultDictionaryConfigurations() {
