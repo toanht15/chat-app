@@ -29,7 +29,7 @@
           $companyKey = $val['MCompany']['company_key'];
         ?>
         <tbody>
-          <tr ondoubleclick= "location.href = '<?=$this->Html->url(array('controller' => 'Contract', 'action' => 'edit', $val['MCompany']['id']))?>';">
+          <tr ondblclick= "location.href = '<?=$this->Html->url(array('controller' => 'Contract', 'action' => 'edit', $val['MCompany']['id']))?>';">
             <td><?=h($val['MCompany']['company_name'])?></td>
             <td><?=h($val['MCompany']['company_key'])?></td>
             <?php if(h($val['MCompany']['m_contact_types_id']) == 1){ ?>

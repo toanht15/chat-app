@@ -100,6 +100,7 @@ class ContractController extends AppController
       $companySaveData = [];
       $companySaveData['MCompany'] = $saveData['MCompany'];
       $companySaveData['MCompany']['id'] = $companyEditData['MCompany']['id'];
+      $companySaveData['MCompany']['core_settings'] = $this->getCoreSettingsFromContactTypesId($saveData['MCompany']['m_contact_types_id']);
       $this->MCompany->save($companySaveData,false);
 
       if(empty($agreementEditData)) {
