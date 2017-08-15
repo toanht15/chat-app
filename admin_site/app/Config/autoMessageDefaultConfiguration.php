@@ -19,6 +19,12 @@ $config['default'] = [
               'stayTimeType' => '1',
               'stayTimeRange' => '3'
             ]
+          ],
+          "2" => [
+            [
+              'visitCnt' => '1',
+              'visitCntCond' => '1'
+            ]
           ]
         ],
         'widgetOpen' => 1,
@@ -43,7 +49,7 @@ $config['default'] = [
           "2" => [
             [
               'visitCnt' => '2',
-              'visitCntCond' => '2'
+              'visitCntCond' => '1'
             ]
           ]
         ],
