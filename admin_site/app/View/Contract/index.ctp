@@ -25,7 +25,6 @@
       <?php foreach((array)$companyList as $key => $val): ?>
         <?php
           $companyId = $val['MCompany']['id'];
-          $userId = $val['MUser']['id'];
           $companyKey = $val['MCompany']['company_key'];
         ?>
         <tbody>
@@ -45,7 +44,7 @@
               <td>ベーシックプラン</td>
             <?php } ?>
             <td><?= h($val['MUser']['user_account'])?> / <?=h($val['MCompany']['limit_users'])?></td>
-            <td><?= h($val['MCompany']['company_key'].C_MAGREEMENT_MAIL_ADDRESS) ?></td>
+            <td><?= h($val['AdminUser']['mail_address']) ?></td>
             <td><?= h($val['MAgreement']['admin_password']) ?></td>
             <td><?= intval($val['MCompany']['trial_flg']) === 1 ? "トライアル" : "本契約" ?></td>
             <td><?= intval($val['MCompany']['trial_flg']) === 1 ?  h($val['MAgreement']['trial_start_day']) : h($val['MAgreement']['agreement_start_day']) ?></td>
