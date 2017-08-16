@@ -97,6 +97,14 @@ $(window).load(function(){
   //リサイズ処理
   var resizeDataTable = function() {
     $('.dataTables_scrollBody').css('max-height',$('#statistics_content').outerHeight() - 120 + 'px');
+    //var parentTdId = $('.questionBtn2').parent().parent().parent().attr('id');
+    //if ( parentTdId.match(/op/)) {
+      $('.opQuestionBalloonPosition11').css('right',$('.thMinWidthTimelyForOperator').width() - 85 + 'px');
+      $('.opQuestionBalloonPosition8').css('right',$('.thMinWidthTimelyForOperator').width() - 85 + 'px');
+      $('.opQuestionBalloonPosition8s').css('right',$('.thMinWidthTimelyForOperator').width() - 85 + 'px');
+      $('.opQuestionBalloonPosition13').css('right',$('.thMinWidthTimelyForOperator').width() - 85 + 'px');
+      $('.opQuestionBalloonPosition7').css('right',$('.thMinWidthTimelyForOperator').width() - 85 + 'px');
+    //}
   }
 
   // ページ読み込み時にもリサイズ処理を実行
@@ -111,24 +119,84 @@ $(window).load(function(){
   });
 
   //CSV処理
-  var outputCSVBtn = document.getElementById('outputCSV');
-  outputCSVBtn.addEventListener('click', function(){
-    var dateFormat = $("select[name=dateFormat]").val();
-    if(dateFormat == '月別') {
-      var date = $("#monthlyForm").val();
-    }
-    if(dateFormat == '日別') {
-       date = $("#daylyForm").val();
-    }
-    if(dateFormat == '時別') {
-       date = $("#hourlyForm").val();
-    }
-
+  if(document.getElementById('outputCSV') != null) {
+    var outputCSVBtn = document.getElementById('outputCSV');
+    outputCSVBtn.addEventListener('click', function(){
+      var dateFormat = $("select[name=dateFormat]").val();
+      if(dateFormat == '月別') {
+        var date = $("#monthlyForm").val();
+      }
+      if(dateFormat == '日別') {
+         date = $("#daylyForm").val();
+      }
+      if(dateFormat == '時別') {
+         date = $("#hourlyForm").val();
+      }
     document.getElementById('statisticsOutputData').value = JSON.stringify({dateFormat:dateFormat,date:date});
     console.log(document.getElementById('statisticsOutputData').value.date);
     document.getElementById('statisticsForChatForm').action = '<?=$this->Html->url(["controller"=>"Statistics", "action" => "outputCsv"])?>';
     document.getElementById('statisticsForChatForm').submit();
   });
+  }
+
+  else if(document.getElementById('outputOperatorCSV') != null) {
+    var outputOperatorCSVBtn = document.getElementById('outputOperatorCSV');
+    outputOperatorCSVBtn.addEventListener('click', function(){
+      var dateFormat = $("select[name=dateFormat]").val();
+      if(dateFormat == '月別') {
+        var date = $("#monthlyForm").val();
+      }
+      if(dateFormat == '日別') {
+         date = $("#daylyForm").val();
+      }
+      if(dateFormat == '時別') {
+         date = $("#hourlyForm").val();
+      }
+
+      document.getElementById('statisticsOutputData').value = JSON.stringify({dateFormat:dateFormat,date:date});
+      console.log(document.getElementById('statisticsOutputData').value.date);
+      document.getElementById('statisticsForChatForm').action = '<?=$this->Html->url(["controller"=>"Statistics", "action" => "outputOperatorCsv"])?>';
+      document.getElementById('statisticsForChatForm').submit();
+    });
+  }
+
+  else if(document.getElementById('outputEachItemOperatorCSV') != null) {
+    var outputEachItemOperatorCSVBtn = document.getElementById('outputEachItemOperatorCSV');
+    outputEachItemOperatorCSVBtn.addEventListener('click', function(){
+      var item = location.search.match(/item=(.*?)(&|$)/)[1];
+      var dateFormat = location.search.match(/type=(.*?)(&|$)/)[1];
+      var date = location.search.match(/target=(.*?)(&|$)/)[1];
+
+      document.getElementById('statisticsOutputData').value = JSON.stringify({item:item,dateFormat:dateFormat,date:date});
+      console.log(document.getElementById('statisticsOutputData').value.date);
+      document.getElementById('statisticsForChatForm').action = '<?=$this->Html->url(["controller"=>"Statistics", "action" => "outputEachOperatorCsv"])?>';
+      document.getElementById('statisticsForChatForm').submit();
+    });
+
+    var closeWindowBtn = document.getElementById('closeWindow');
+    closeWindowBtn.addEventListener('click', function(){
+      window.close();
+    });
+  }
+
+  else if(document.getElementById('outputPrivateOperatorCSV') != null) {
+    var outputPrivateOperatorCSVBtn = document.getElementById('outputPrivateOperatorCSV');
+    outputPrivateOperatorCSVBtn.addEventListener('click', function(){
+      var id = location.search.match(/id=(.*?)(&|$)/)[1];
+      var dateFormat = location.search.match(/type=(.*?)(&|$)/)[1];
+      var date = location.search.match(/target=(.*?)(&|$)/)[1];
+
+      document.getElementById('statisticsOutputData').value = JSON.stringify({id:id,dateFormat:dateFormat,date:date});
+      console.log(document.getElementById('statisticsOutputData').value.date);
+      document.getElementById('statisticsForChatForm').action = '<?=$this->Html->url(["controller"=>"Statistics", "action" => "outputEachOperatorCsv"])?>';
+      document.getElementById('statisticsForChatForm').submit();
+    });
+
+    var closeWindowBtn = document.getElementById('closeWindow');
+    closeWindowBtn.addEventListener('click', function(){
+      window.close();
+    });
+  }
 
   var timeType = {
     monthly: '月別',
@@ -258,10 +326,38 @@ $(window).load(function(){
     var parentTdId = $(this).parent().parent().attr('id');
     var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
     targetObj.find('icon-annotation').css('display','block');
-    targetObj.css({
-      top: ($(this).offset().top - targetObj.find('ul').outerHeight() - 65) + 'px',
+    if ( parentTdId.match(/op/)) {
+      targetObj.css({
+      top: ($(this).offset().top - targetObj.find('ul').outerHeight() -3) + 'px',
       left: '50px'
-    });
+      });
+    }
+    else {
+      targetObj.css({
+        top: ($(this).offset().top - targetObj.find('ul').outerHeight() - 65) + 'px',
+        left: '50px'
+      });
+    }
+  });
+
+    // ツールチップの表示制御
+  $('.questionBtn2').off("mouseenter").on('mouseenter',function(event){
+    console.log('入っている');
+    var parentTdId = $(this).parent().parent().parent().attr('id');
+    var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
+    console.log(targetObj);
+    targetObj.find('icon-annotation').css('display','block');
+    if ( parentTdId.match(/op/)) {
+      targetObj.css({
+      left: ($(this).offset().left - 130) + 'px'
+      });
+    }
+  });
+
+  $('.questionBtn2').off("mouseleave").on('mouseleave',function(event){
+    var parentTdId = $(this).parent().parent().parent().attr('id');
+    var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
+    targetObj.find('icon-annotation').css('display','none');
   });
 
   $('.questionBtn').off("mouseleave").on('mouseleave',function(event){
