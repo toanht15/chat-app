@@ -49,7 +49,7 @@ $config['default'] = [
           "2" => [
             [
               'visitCnt' => '2',
-              'visitCntCond' => '1'
+              'visitCntCond' => '2'
             ]
           ]
         ],
