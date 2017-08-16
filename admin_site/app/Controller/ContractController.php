@@ -17,7 +17,7 @@ class ContractController extends AppController
     'MCompany' => [
       'order' => ['MCompany.id' => 'asc'],
       'fields' => ['*'],
-      'limit' => 200,
+      'limit' => 100,
       'joins' => [
         [
           'type' => 'left',
@@ -28,13 +28,21 @@ class ContractController extends AppController
           ],
         ],
         [
+          'type' => 'left',
+          'table' => '(SELECT id,m_companies_id,mail_address,password FROM m_users WHERE del_flg != 1 AND permission_level = 99 GROUP BY m_companies_id)',
+          'alias' => 'AdminUser',
+          'conditions' => [
+            'AdminUser.m_companies_id = MCompany.id',
+          ],
+        ],
+        [
           'type' => 'inner',
           'table' => '(SELECT id,m_companies_id,mail_address,password,count(m_companies_id) AS user_account FROM  m_users WHERE del_flg != 1 AND permission_level != 99 GROUP BY m_companies_id)',
           'alias' => 'MUser',
           'conditions' => [
             'MUser.m_companies_id = MCompany.id',
           ],
-        ]
+        ],
       ],
       'conditions' => [
           'MCompany.del_flg != ' => 1,
