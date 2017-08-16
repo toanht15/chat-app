@@ -153,12 +153,14 @@
       }, 500);
     }
 
+
     // 共通ツールチップの配置（内容はdata-textで指定する）
-    $(".commontooltip").on({
-      'mouseenter':function(e){
-        e.stopPropagation();
-        var $this = $(this);
+    $(".commontooltip").each(function(index){
+      var self = this;
+      this.addEventListener('mouseenter', function(e){
+        var $this = $(self);
         var text = $this.attr('data-text');
+        var baloonPosition = $this.attr('data-balloon-position'); // 吹き出しの＜の部分
         var $tooltip = $('<div class="tooltips">'+text+'</div>');
         $('body').append($tooltip);// 要素の表示位置
         var offset = $this.offset();
@@ -183,16 +185,17 @@
 
         // 要素の上に横中央で配置
         $tooltip.css({
-          top: offset.top - ttSize.height - 10, // 三角部分の高さ
+          top: offset.top - ttSize.height - 12, // 三角部分の高さ
           left: leftCoordinate
         });
-        if(isOverWidth) {
-          $tooltip.append('<style>.tooltips:after{left:75%!important;}</style>');
+        if(baloonPosition) {
+          $tooltip.append('<style>.tooltips:after{left:' + baloonPosition + '%!important;}</style>');
         }
-      },
-      'mouseleave':function(){
+      }, true); //radioボタンのdisableに対応するためuseCaptureを利用
+
+      this.addEventListener('mouseleave',function(e){
         $('body').find(".tooltips").remove();
-      }
+      }, true); //radioボタンのdisableに対応するためuseCaptureを利用
     });
 
     /* フッター設置ボタンの位置調整 */

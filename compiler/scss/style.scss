@@ -83,12 +83,15 @@ li {
 }
 .tooltips:after {
   content: "";
-  display: block;
+  display: inline-block;
   position: absolute;
   left: 50%;
   top: 54px;
+  box-sizing: border-box;
+  height: 8px;
   border:10px solid transparent;
   border-top:8px solid rgba(0, 0, 0, 0.6);
+  border-bottom:0;
 }
 
 table {
