@@ -104,6 +104,7 @@
 $(document).ready(function(){
   var outputCSVBtn = document.getElementById('outputCSV');
   outputCSVBtn.addEventListener('click', function(){
+    if($(outputCSVBtn).hasClass('disabled')) return false;
     var thead = document.querySelector('#history_list thead');
     var tbody = document.querySelector('#history_list tbody');
     var data = [];
@@ -152,6 +153,7 @@ $(document).ready(function(){
 
   var outputChatCSVBtn = document.getElementById('outputChat');
   outputChatCSVBtn.addEventListener('click', function(){
+    if($(outputChatCSVBtn).hasClass('disabled')) return false;
     var thead = document.querySelector('#history_list thead');
     var tbody = document.querySelector('#history_list tbody');
     var data = [];

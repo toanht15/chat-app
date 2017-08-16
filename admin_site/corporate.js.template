@@ -5,9 +5,9 @@ var sincloInfo;
     sincloInfo = {
         dataset: {},
         site: {
-            key: "", // 企業用のkeyを入れること
-            socket: "http://node.sinclo", // 配置する環境によって修正すること
-            files: "http://node.sinclo"   // 配置する環境によって修正すること
+          key: "##COMPANY_KEY##",
+          socket: "##NODE_SERVER_URL##",
+          files: "##NODE_SERVER_URL##"
         }
     };
 

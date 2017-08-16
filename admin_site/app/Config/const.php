@@ -1,5 +1,7 @@
 <?php
 
+define('APP_MODE_DEV', true);
+
 // 正規表現
 define('C_MATCH_RULE_TEL', '/^\+?(\d|-)*$/'); // TEL
 define('C_MATCH_RULE_TIME', '/^(24:00|2[0-3]:[0-5][0-9]|[0-1]?[0-9]:[0-5][0-9])$/'); // 時間 H:i
@@ -20,9 +22,16 @@ define('C_AUTHORITY_NORMAL', 2); // 一般
 define('C_AUTHORITY_SUPER', 99); // ML管理者
 
 //契約プラン
-define('C_MAGREEMENT_FULL_PLUN', "'chat' => true,'synclo' => true,'document' => true"); // フルプラン
-define('C_MAGREEMENT_CHAT_PLUN', "'chat' => true"); // チャットプラン
-define('C_MAGREEMENT_SCREEN_SHARING_PLUN', "'synclo' => true"); // 画面動機プラン
+define('C_CONTRACT_FULL_PLAN', "{\"chat\": true, \"synclo\": true, \"document\": true, \"statistics\": true, \"chatLimitation\": true, \"exportHistory\": true}"); // プレミアムプラン
+define('C_CONTRACT_CHAT_BASIC_PLAN', "{\"chat\": true, \"synclo\": false, \"document\": false, \"statistics\": false, \"chatLimitation\": false, \"exportHistory\": false}"); // チャットスタンダードプラン
+define('C_CONTRACT_CHAT_PLAN', "{\"chat\": true, \"synclo\": false, \"document\": false, \"statistics\": true, \"chatLimitation\": true, \"exportHistory\": true}"); // チャットスタンダードプラン
+define('C_CONTRACT_SCREEN_SHARING_PLAN', "{\"chat\": false, \"synclo\": true, \"document\": true, \"statistics\": false, \"chatLimitation\": false, \"exportHistory\": false}"); // 画面同期プラン
+
+//契約プランID
+define('C_CONTRACT_FULL_PLAN_ID',"1");
+define('C_CONTRACT_CHAT_PLAN_ID',"2");
+define('C_CONTRACT_SCREEN_SHARING_ID',"3");
+define('C_CONTRACT_CHAT_BASIC_PLAN_ID',"4");
 
 //ML用アカウント
 define('C_MEDIALINK_ACCOUNT', "ML用アカウント"); // ML用アカウント
@@ -34,6 +43,9 @@ define('C_MAGREEMENT_MAIL_ADDRESS', "@ml.jp"); //mcompanyアドレス
 define('C_CROSS_DOMAIN_ADDRESS', "http://contact.sinclo"); //sinclo管理画面URL
 
 define('C_DEFALT_MCOMPANY_KEY', 2); // template key
+
+define('C_COMPANY_JS_TEMPLATE_FILE', "/var/www/sinclo/admin_site/corporate.js.template"); // 企業用JSファイル配置ディレクトリ
+define('C_COMPANY_JS_FILE_DIR', "/var/www/sinclo/socket/webroot/client"); // 企業用JSファイル配置ディレクトリ
 
 /* ユーザー権限（単体あり：C_AUTHORITY_%） */
 $config['Authority'] = [

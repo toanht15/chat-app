@@ -62,7 +62,10 @@ class AppController extends Controller {
     C_COMPANY_USE_SYNCLO => false, // 画面共有機能有効
     C_COMPANY_USE_DOCUMENT => false, // ドキュメント共有機能有効
     C_COMPANY_USE_VIDEO_CHAT => false, // ビデオチャット機能有効（ただし未実装）
-    C_COMPANY_CHAT_BASIC_PLAN => false // チャットのベーシック機能有効（ただし、この設定がtrueの場合はchatもtrueにしなければならない）
+    C_COMPANY_USE_CHAT_LIMITER => false, // 同時対応数上限
+    C_COMPANY_USE_HISTORY_EXPORTING => false, // 履歴エクスポート
+    C_COMPANY_USE_STATISTICS => false, // 統計
+    C_COMPANY_USE_DICTIONARY_CATEGORY => false // 統計
   ];
 
   public function beforeFilter(){

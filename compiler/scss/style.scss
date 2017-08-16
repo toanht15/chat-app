@@ -70,6 +70,26 @@ li {
   cursor: default;
 }
 
+.tooltips {
+  position: absolute;
+  width: 18em;
+  z-index: 9999;
+  padding: 0.3em 0.5em;
+  color: #FFFFFF;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 0.5em;
+  text-align: left;
+}
+.tooltips:after {
+  content: "";
+  display: block;
+  position: absolute;
+  left: 50%;
+  top: 37px;
+  border:10px solid transparent;
+  border-top:8px solid rgba(0, 0, 0, 0.6);
+}
+
 table {
   border-collapse: collapse;
   border: none;
@@ -591,6 +611,9 @@ a {
     background-color: #6A80BE;
     border: 1px solid #6A80BE;
     transition: background-color, border-color 0.1s linear;
+    color: #fff;
+  }
+  &.grayBtn:hover, &.grayBtn.on {
     color: #fff;
   }
 }

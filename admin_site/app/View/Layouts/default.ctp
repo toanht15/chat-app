@@ -28,9 +28,10 @@
     echo $this->fetch('css');
     echo $this->fetch('script');
     echo $this->Html->css('style');
-    echo $this->Html->script("//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js");
-    echo $this->Html->script("http://code.jquery.com/jquery-1.8.3.js");
-   	echo $this->Html->script("http://code.jquery.com/ui/1.10.0/jquery-ui.js");
+    echo $this->Html->css('/css/custom-theme/jquery-ui-1.10.4.custom.css');
+    echo $this->Html->script("//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js");
+    echo $this->Html->script("//code.jquery.com/ui/1.10.0/jquery-ui.js");
+    echo $this->Html->script("/js/jquery.ui.datepicker-ja.js");
     echo $this->Html->script("common.js");
     echo $this->Html->css('popup');
     echo $this->Html->css('font-awesome.min');
