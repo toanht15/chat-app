@@ -1,8 +1,14 @@
 <?= $this->element('Statistics/datepicker') ?>
 <?= $this->element('Statistics/script') ?>
-<div id='statistic_idx' class="card-shadow">
+<div id='statisticAnotherWindow_idx'>
 
-  <div id='statistic_title'>
+<div id="color-bar" class="card-shadow">
+    <ul id="color-bar-right" class="tCenter">
+      <li class="tCenter"><p>時間別サマリ</p></li>
+    </ul>
+</div>
+
+  <div id='statisticAnotherWindow_title'>
   <?php if(empty($item)) { ?>
     <h1><?= $data['users'][0]['m_users']['display_name'] ?></h1>
   <?php }
@@ -35,8 +41,47 @@
 <div id="sincloApp">
 
     <div id='statistics_content' class="p20trl" style="visibility:hidden;">
-      <div id='chatRequestTooltip' class="explainTooltip">
-
+      <div id='opChatRequestTooltip' class="explainTooltip">
+        <icon-annotation>
+          <ul>
+            <li><span>サイト訪問者がチャットを送信した件数(※初回メッセージのみカウント)</span></li>
+          </ul>
+        </icon-annotation>
+      </div>
+      <div id='opChatResponseTooltip' class="explainTooltip">
+        <icon-annotation>
+          <ul>
+            <li><span>チャットリクエストに対してオペレータが入室した件数（※初回入室のみカウント）</span></li>
+          </ul>
+        </icon-annotation>
+      </div>
+      <div id='opChatEffectivenessTooltip' class="explainTooltip">
+        <icon-annotation>
+          <ul>
+            <li><span>成果が「有効」として登録された件数</span></li>
+          </ul>
+        </icon-annotation>
+      </div>
+      <div id='opChatConsumerWaitAverageTimeTooltip' class="explainTooltip">
+        <icon-annotation>
+          <ul>
+            <li><span>サイト訪問者の初回メッセージを受信してから、オペレータがチャットに入室するまでの平均時間</span></li>
+          </ul>
+        </icon-annotation>
+      </div>
+      <div id='opChatResponseAverageTimeTooltip' class="explainTooltip">
+        <icon-annotation>
+          <ul>
+            <li><span>サイト訪問者の初回メッセージを受信してから、オペレータが初回メッセージを送信するまでの平均時間</span></li>
+          </ul>
+        </icon-annotation>
+      </div>
+      <div id='opChatEffectivenessResponseRateTooltip' class="explainTooltip">
+        <icon-annotation>
+          <ul>
+            <li><span>チャット有効件数／チャットリクエスト件数</span></li>
+          </ul>
+        </icon-annotation>
       </div>
 
     <!-- /* テーブル表示エリア */ -->
@@ -193,8 +238,16 @@
           <td><?php echo ($v['allEffectivenessRate']) ?></td>
         </tr>
         <?php }
-      }?>
+        }?>
 
+      </tbody>
+    </table>
+    <div id = 'action_btn_area'>
+      <condition-bar>
+        <a href="#" id="closeWindow" class="btn-shadow whiteBtn">閉じる</a>
+        <a href="#" id="outputEachItemOperatorCSV" class="btn-shadow blueBtn">CSV出力</a>
+      </condition-bar>
+    </div>
       <?php }
         else if($date == 'eachOperatorDaily') {
           $days ='';
@@ -219,7 +272,7 @@
           <td><?php echo number_format($data['allLoginNumberData']) ?></td>
         </tr>
         <tr>
-        <td id="chatRequestLabel" class = 'tooltip'>チャットリクエスト件数
+        <td id="opChatRequestLabel" class = 'tooltip'>チャットリクエスト件数
           <div class="questionBalloon questionBalloonPosition11">
             <icon class="questionBtn">？</icon>
           </div>
@@ -235,7 +288,7 @@
           <td><?php echo number_format($data['allRequestNumberData']) ?></td>
         </tr>
         <tr>
-        <td id = 'chatResponseLabel'  class = 'tooltip'>チャット応対件数
+        <td id = 'opChatResponseLabel'  class = 'tooltip'>チャット応対件数
           <div class="questionBalloon questionBalloonPosition8">
             <icon class="questionBtn">？</icon>
           </div>
@@ -251,8 +304,8 @@
           <td><?php echo number_format($data['allResponseNumberData']) ?></td>
         </tr>
         <tr>
-          <td id = 'chatAutomaticResponseLabel' class = 'tooltip'>チャット有効件数
-            <div class="questionBalloon questionBalloonPosition8">
+          <td id = 'opChatEffectivenessLabel' class = 'tooltip'>チャット有効件数
+            <div class="questionBalloon questionBalloonPosition8s">
               <icon class="questionBtn">？</icon>
             </div>
           </td>
@@ -267,7 +320,7 @@
           <td><?php echo number_format($data['allEffectivenessNumberData']) ?></td>
         </tr>
         <tr>
-          <td id = 'chatDenialLabel' class = 'tooltip'>平均消費者待機時間
+          <td id = 'opChatConsumerWaitAverageTimeLabel' class = 'tooltip'>平均消費者待機時間
             <div class="questionBalloon questionBalloonPosition9">
               <icon class="questionBtn">？</icon>
             </div>
@@ -278,7 +331,7 @@
           <td><?php echo ($data['allAvgEnteringRommTimeData']) ?></td>
         </tr>
         <tr>
-          <td id = 'chatEffectivenessLabel' class = 'tooltip'>平均応対時間
+          <td id = 'opChatResponseAverageTimeLabel' class = 'tooltip'>平均応対時間
             <div class="questionBalloon questionBalloonPosition6">
               <icon class="questionBtn">？</icon>
             </div>
@@ -289,7 +342,7 @@
           <td><?php echo $data['allResponseAvgTimeData'] ?></td>
         </tr>
         <tr>
-          <td id = 'chatRequestAverageTimeLabel' class = 'tooltip'>チャット有効率
+          <td id = 'opChatEffectivenessResponseRateLabel' class = 'tooltip'>チャット有効率
             <div class="questionBalloon questionBalloonPosition7">
               <icon class="questionBtn">？</icon>
             </div>
@@ -299,9 +352,15 @@
           <?php } ?>
           <td><?php echo $data['allEffectivenessRate'] ?></td>
         </tr>
-        <?php } ?>
       </tbody>
     </table>
+    <div id = 'action_btn_area'>
+    <condition-bar>
+      <a href="#" id="closeWindow" class="btn-shadow whiteBtn">閉じる</a>
+      <a href="#" id="outputPrivateOperatorCSV" class="btn-shadow blueBtn">CSV出力</a>
+    </condition-bar>
+    </div>
+    <?php } ?>
     <?=$this->Form->create('statistics', ['action' => 'forChat']);?>
       <?=$this->Form->hidden('outputData')?>
     <?=$this->Form->end();?>
