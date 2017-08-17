@@ -97,14 +97,13 @@ $(window).load(function(){
   //リサイズ処理
   var resizeDataTable = function() {
     $('.dataTables_scrollBody').css('max-height',$('#statistics_content').outerHeight() - 120 + 'px');
-    //var parentTdId = $('.questionBtn2').parent().parent().parent().attr('id');
-    //if ( parentTdId.match(/op/)) {
-      $('.opQuestionBalloonPosition11').css('right',$('.thMinWidthTimelyForOperator').width() - 85 + 'px');
-      $('.opQuestionBalloonPosition8').css('right',$('.thMinWidthTimelyForOperator').width() - 85 + 'px');
-      $('.opQuestionBalloonPosition8s').css('right',$('.thMinWidthTimelyForOperator').width() - 85 + 'px');
-      $('.opQuestionBalloonPosition13').css('right',$('.thMinWidthTimelyForOperator').width() - 85 + 'px');
-      $('.opQuestionBalloonPosition7').css('right',$('.thMinWidthTimelyForOperator').width() - 85 + 'px');
-    //}
+    $('.opQuestionBalloonPosition11').css('right',$('.thMinWidthTimelyForOperator').width() - 85 + 'px');
+    console.log($('.thMinWidthTimelyForOperator').width());
+    $('.opQuestionBalloonPosition8').css('right',$('.thMinWidthTimelyForOperator').width() - 85 + 'px');
+    $('.opQuestionBalloonPosition8s').css('right',$('.thMinWidthTimelyForOperator').width() - 85 + 'px');
+    $('.opQuestionBalloonPosition13').css('right',$('.thMinWidthTimelyForOperator').width() - 85 + 'px');
+    $('.opQuestionBalloonPosition7').css('right',$('.thMinWidthTimelyForOperator').width() - 85 + 'px');
+    $('.opQuestionBalloonPosition6').css('right',$('.thMinWidthTimelyForOperator').width() - 85 + 'px');
   }
 
   // ページ読み込み時にもリサイズ処理を実行
@@ -347,9 +346,16 @@ $(window).load(function(){
     var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
     console.log(targetObj);
     targetObj.find('icon-annotation').css('display','block');
-    if ( parentTdId.match(/op/)) {
+    console.log('用チェックやで');
+    console.log(parentTdId);
+    if( parentTdId == 'opChatEffectivenessResponseRateLabel') {
       targetObj.css({
-      left: ($(this).offset().left - 130) + 'px'
+        left: ($(this).offset().left - 207) + 'px'
+      });
+    }
+    else if ( parentTdId.match(/op/)) {
+      targetObj.css({
+        left: ($(this).offset().left - 130) + 'px'
       });
     }
   });
