@@ -34,17 +34,17 @@
     </div><!-- #statistic_menu -->
 
     <div id='statistics_content' class="p20trl" style="visibility:hidden;">
-      <div id='opChatRequestTooltip' class="opExplainTooltip">
-        <icon-annotation>
+      <div id='opChatRequestTooltip' class="opTopCorrectionExplainTooltip">
+        <icon-annotation style = "margin-top:-15px;">
           <ul>
-            <li><span>サイト訪問者がチャットを送信した件数(※初回メッセージのみカウント)</span></li>
+            <li><span>サイト訪問者が送信したチャットを待機中のオペレーターが受信した件数(※初回メッセージのみカウント)</span></li>
           </ul>
         </icon-annotation>
       </div>
-      <div id='opChatResponseTooltip' class="opTopCorrectionExplainTooltip">
-        <icon-annotation style = "margin-top:-15px;">
+      <div id='opChatResponseTooltip' class="opTopWidthCorrectionExplainTooltip">
+        <icon-annotation style = "margin-top:13px;">
           <ul>
-            <li><span>チャットリクエストに対してオペレータが入室した件数（※初回入室のみカウント）</span></li>
+            <li><span>オペレータが入室した件数</span></li>
           </ul>
         </icon-annotation>
       </div>
@@ -58,21 +58,21 @@
       <div id='opChatConsumerWaitAverageTimeTooltip' class="opTopCorrectionExplainTooltip">
         <icon-annotation style = "margin-top:-15px;">
           <ul>
-            <li><span>サイト訪問者の初回メッセージを受信してから、オペレータがチャットに入室するまでの平均時間</span></li>
+            <li><span>サイト訪問者の初回メッセージを送信してから、オペレータがチャットに入室するまでの平均時間</span></li>
           </ul>
         </icon-annotation>
       </div>
       <div id='opChatResponseAverageTimeTooltip' class="opTopCorrectionExplainTooltip">
         <icon-annotation style = "margin-top:-15px;">
           <ul>
-            <li><span>サイト訪問者の初回メッセージを受信してから、オペレータが初回メッセージを送信するまでの平均時間</span></li>
+            <li><span>サイト訪問者の初回メッセージを送信してから、オペレータが初回メッセージを送信するまでの平均時間</span></li>
           </ul>
         </icon-annotation>
       </div>
-      <div id='chatEffectivenessResponseRateTooltip' class="opExplainTooltip">
+      <div id='opChatEffectivenessResponseRateTooltip' class="opExplainRateTooltip">
         <icon-annotation>
           <ul>
-            <li><span>チャット有効件数／チャットリクエスト件数</span></li>
+            <li><span>チャット有効件数／チャット応対件数</span></li>
           </ul>
         </icon-annotation>
       </div>
@@ -123,7 +123,7 @@
           <div class="opQuestionBalloon opQuestionBalloonPosition6">
             <icon class="questionBtn2">？</icon>
           </div></th>
-          <th class = "thMinWidthTimelyForOperator tooltip" id="chatEffectivenessResponseRateLabel">
+          <th class = "thMinWidthTimelyForOperator opLastTooltip" id="opChatEffectivenessResponseRateLabel">
            <a href="<?=$this->Html->url(array('controller' => 'Statistics',
           'action' => 'baseForAnotherWindow','?'=>array('item'=>'effectivenessRate','type'=>$time,'target'=>$type)))?>"
           onclick="window.open(this.href, 'mywindow6', 'width=1000, height=700'); return false;">チャット有効率
@@ -167,7 +167,7 @@
             } ?></td>
           <td><?= $v['avgEnteringRommTime']?></td>
           <td><?= $v['responseTime'] ?></td>
-          <td><?php
+          <td class = "tooltip"><?php
           if(empty($v['effectivenessRate'])) {
             echo '0%';
           }

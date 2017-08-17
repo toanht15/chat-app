@@ -56,7 +56,7 @@ class StatisticsController extends AppController {
         //月別の場合
         if($date == '月別'){
           $type = $this->request->data['monthlyName'];
-          $timeData = $this->calculateOperatorMonthlyData($type);
+          $timeData = $this->calculateOperatorMonthlyData($type,'list');
           $users =$this->summaryOperatorSql($timeData['date_format'],$timeData['correctStartDate'],$timeData['correctEndDate']);
         }
         //日別の場合
@@ -83,11 +83,7 @@ class StatisticsController extends AppController {
 
     //各企業の日付けの範囲
     $rangeData = $this->determineRange();
-
-    $this->log('foreach終了',LOG_DEBUG);
-
     $data = ['users' => $users];
-
     $type = str_replace("/", "-", $type);
     $this->set('companyRangeDate',$rangeData['companyRangeDate']);
     $this->set('companyRangeYear',$rangeData['companyRangeYear']);
@@ -100,24 +96,31 @@ class StatisticsController extends AppController {
   }
 
   //オペレータ月別
-  public function calculateOperatorMonthlyData($type) {
-    if($type == '2017') {
-      $start = $type.'-07';
-      $end = $type.'-12';
+  public function calculateOperatorMonthlyData($type,$screen) {
+    if($screen == 'list') {
+      if($type == '2017') {
+        $start = $type.'-07';
+        $end = $type.'-12';
+      }
+      else {
+        $start = $type.'-01';
+        $end = $type.'-12';
+      }
     }
-    else {
+    else if($screen == 'another'){
       $start = $type.'-01';
       $end = $type.'-12';
     }
     $startDate = strtotime('first day of' .$start);
-    $endMonth = strtotime('last day of' .$start);
     $endDate = strtotime('last day of' .$end);
     $correctStartDate = date("Y-m-d 00:00:00",$startDate);
     $correctEndDate = date("Y-m-d 23:59:59",$endDate);
     $date_format = "%Y";
+    $anotherWindowDateFormat = '%Y-%m';
     $timeType = 'yearly';
     $baseData = [];
     $baseTimeData = [];
+    $date = 'eachOperatorYearly';
 
     //array_mergeで使うためのデータを作成
     while($startDate <= $endDate){
@@ -125,9 +128,10 @@ class StatisticsController extends AppController {
       $baseTimeData = $baseTimeData + array(date('Y-m',$startDate) => $this->isInValidDatetime(date("Y-m-d",$startDate)) ? self::LABEL_NONE :'00:00:00');
       $startDate = strtotime("+1 month", $startDate);
     }
+
     $startDate = strtotime('first day of' .$start);
-    return ['date_format' => $date_format,'correctStartDate' => $correctStartDate,'correctEndDate' => $correctEndDate,
-    'baseData' => $baseData,'baseTimeData' => $baseTimeData,'timeType' => $timeType];
+    return ['date_format' => $date_format,'anotherWindowDateFormat' => $anotherWindowDateFormat,'correctStartDate' => $correctStartDate,'correctEndDate' => $correctEndDate,
+    'baseData' => $baseData,'baseTimeData' => $baseTimeData,'timeType' => $timeType,'date' => $date];
   }
 
   //オペレータ日別
@@ -137,9 +141,11 @@ class StatisticsController extends AppController {
     $correctStartDate = date("Y-m-d 00:00:00",$startDate);
     $correctEndDate = date("Y-m-d 23:59:59",$endDate);
     $date_format = "%Y-%m";
+    $anotherWindowDateFormat = '%Y-%m-%d';
     $baseData = [];
     $baseTimeData = [];
     $timeType = 'monthly';
+    $date = 'eachOperatorMonthly';
 
     //array_mergeで使うためのデータを作成
     while($startDate <= $endDate){
@@ -148,9 +154,10 @@ class StatisticsController extends AppController {
       $startDate = strtotime("+1 day", $startDate);
     }
     $startDate = strtotime('first day of' .$type);
-    return ['date_format' => $date_format,'correctStartDate' => $correctStartDate,'correctEndDate' => $correctEndDate,
-    'baseData' => $baseData,'baseTimeData' => $baseTimeData,'timeType' => $timeType];
+    return ['date_format' => $date_format,'anotherWindowDateFormat' => $anotherWindowDateFormat,'correctStartDate' => $correctStartDate,'correctEndDate' => $correctEndDate,
+    'baseData' => $baseData,'baseTimeData' => $baseTimeData,'timeType' => $timeType,'date' => $date];
   }
+
   //オペレータ時別
   public function calculateOperatorHourlyData($type) {
     $startDate = strtotime($type); // 2016-11-02 00:00:00
@@ -158,10 +165,11 @@ class StatisticsController extends AppController {
     $correctStartDate = date("Y-m-d H:00:00",$startDate);
     $correctEndDate = date("Y-m-d H:59:59",$endDate);
     $date_format = "%Y-%m-%d";
+    $anotherWindowDateFormat = '%H:00';
     $baseData = [];
     $baseTimeData = [];
-    $period = 'hour';
     $timeType = 'daily';
+    $date = 'eachOperatorDaily';
 
     //array_mergeで使うためのデータを作成
     while($startDate <= $endDate){
@@ -171,11 +179,11 @@ class StatisticsController extends AppController {
     }
     $startDate = strtotime($type);
     $type = str_replace("/", "-", $type);
-    return ['date_format' => $date_format,'correctStartDate' => $correctStartDate,'correctEndDate' => $correctEndDate,
-    'baseData' => $baseData,'baseTimeData' => $baseTimeData,'timeType' => $timeType];
+    return ['date_format' => $date_format,'anotherWindowDateFormat' => $anotherWindowDateFormat,'correctStartDate' => $correctStartDate,'correctEndDate' => $correctEndDate,
+    'baseData' => $baseData,'baseTimeData' => $baseTimeData,'timeType' => $timeType,'date' => $date];
   }
 
-  //オペレータ時別
+  //オペレータレポートデータ取得
   public function summaryOperatorSql($date_format,$correctStartDate,$correctEndDate) {
 
     $users = "SELECT id,display_name FROM m_users
@@ -186,51 +194,47 @@ class StatisticsController extends AppController {
 
     $users = $this->MUser->query($users,
       array($this->userInfo['MCompany']['id'],0));
+    $userId = 0;
 
       $this->log('オペレータスタート',LOG_DEBUG);
       $this->log('チャットリクエスト',LOG_DEBUG);
       //チャットリクエスト件数
-      $requestNumber = $this->getSummaryOperatorRequestInfo($date_format,$correctStartDate,$correctEndDate);
+      $requestNumber = $this->getSummaryOperatorRequestInfo($date_format,$userId,$correctStartDate,$correctEndDate);
       $allData = [];
       $allData['requestNumber'] = $requestNumber;
 
-      $this->log('ログイン',LOG_DEBUG);
+      $this->log('ログインスタート',LOG_DEBUG);
       //ログイン件数
-      $loginNumber = $this->getSummaryLoginOperatorInfo($date_format,$correctStartDate,$correctEndDate);
-      //$this->log('ログインデータ-------',LOG_DEBUG);
-      //$this->log($loginNumber,LOG_DEBUG);
+      $loginNumber = $this->getSummaryLoginOperatorInfo($date_format,$userId,$correctStartDate,$correctEndDate);
       $allData['loginNumber'] = $loginNumber;
-
-      $this->log('チャット応対',LOG_DEBUG);
+      $this->log('ログイン終了',LOG_DEBUG);
+      $this->log('チャット応対スタート',LOG_DEBUG);
       //チャット応対件数
-      $responseNumber = $this->getSummaryOperatorResponseInfo($date_format,$correctStartDate,$correctEndDate);
+      $responseNumber = $this->getSummaryOperatorResponseInfo($date_format,$userId,$correctStartDate,$correctEndDate);
       $allData['responseNumber'] = $responseNumber;
-
-      $this->log('チャット有効',LOG_DEBUG);
+      $this->log('チャット応対終了',LOG_DEBUG);
+      $this->log('チャット有効スタート',LOG_DEBUG);
       //チャット有効件数
-      $effectivenessNumber = $this->getSummaryOperatorEffectivenessInfo($date_format,$correctStartDate,$correctEndDate);
+      $effectivenessNumber = $this->getSummaryOperatorEffectivenessInfo($date_format,$userId,$correctStartDate,$correctEndDate);
       $allData['effectivenessNumber'] = $effectivenessNumber;
-
-      $this->log('チャット有効率',LOG_DEBUG);
-
-      $this->log('平均入室時間',LOG_DEBUG);
+      $this->log('チャット有効終了',LOG_DEBUG);
+      $this->log('平均入室時間スタート',LOG_DEBUG);
       //平均入室時間
-      $avgEnteringRommTime = $this->getSummaryOperatorAvgEnteringRommInfo($date_format,$correctStartDate,$correctEndDate);
-
+      $avgEnteringRommTime = $this->getSummaryOperatorAvgEnteringRommInfo($date_format,$userId,$correctStartDate,$correctEndDate);
       $allData['avgEnteringRommTime'] = $avgEnteringRommTime;
-
-      $this->log('平均応答時間',LOG_DEBUG);
+       $this->log('平均入室時間終了',LOG_DEBUG);
+      $this->log('平均応答時間スタート',LOG_DEBUG);
       //平均応答時間
-      $responseTime = $this->getSummaryOperatorAvgResponseInfo($date_format,$correctStartDate,$correctEndDate);
+      $responseTime = $this->getSummaryOperatorAvgResponseInfo($date_format,$userId,$correctStartDate,$correctEndDate);
       $allData['responseTime'] = $responseTime;
-
-      $this->log('sql一人終了',LOG_DEBUG);
-      $this->log('foreachはじめ',LOG_DEBUG);
+      $this->log('平均応答時間終了',LOG_DEBUG);
+      $this->log('sql終了',LOG_DEBUG);
 
       $divideOperatorDatas =$this->divideOperatorDatas($users,$allData);
       return $divideOperatorDatas;
   }
 
+  //オペレータごとのレポート作成
   public function divideOperatorDatas($users,$allData) {
     foreach($users as $k => $v){
       if(!empty($allData['requestNumber'])) {
@@ -285,7 +289,7 @@ class StatisticsController extends AppController {
             }
           }
         }
-        if($allAvgEnteringRommTime != 0 && $totalConsumerWaitingAvgTimeDataCnt != 0) {
+        if(!empty($allData['allAvgEnteringRommTime']) && $totalConsumerWaitingAvgTimeDataCnt != 0) {
           $users[$k]['avgEnteringRommTime'] = $this->changeTimeFormat(round($allAvgEnteringRommTime/$totalConsumerWaitingAvgTimeDataCnt));
         }
         else {
@@ -307,7 +311,7 @@ class StatisticsController extends AppController {
             }
           }
         }
-        if($allAvgEnteringRommTime != 0 && $totalConsumerWaitingAvgTimeDataCnt != 0) {
+        if(!empty($allData['allAvgResponseTime']) && $totalConsumerWaitingAvgTimeDataCnt != 0) {
           $users[$k]['responseTime'] = $this->changeTimeFormat(round($allAvgResponseTime/$totalConsumerWaitingAvgTimeDataCnt));
         }
         else {
@@ -321,331 +325,10 @@ class StatisticsController extends AppController {
     return $users;
   }
 
-
-  public function getLoginOperatorInfo($date_format,$userId,$correctStartDate,$correctEndDate) {
-    //ログイン件数
-    $loginNumber = "SELECT date_format(login.created, ?) as date,m_users_id as userId,
-    count(login.id) as login_count
-    FROM t_logins as login
-    WHERE
-      login.m_companies_id = ?
-    AND
-      login.m_users_id = ?
-    AND
-      login.created between ? and ?";
-
-    $loginNumber = $this->exclusionIpAddress($loginNumber,'login');
-
-    $loginNumber .= ' group by date,m_users_id';
-
-    $loginNumber = $this->TLogin->query($loginNumber,
-      array($date_format,$this->userInfo['MCompany']['id'],$userId,$correctStartDate,$correctEndDate));
-
-    return $loginNumber;
-  }
-
-  public function getSummaryLoginOperatorInfo($date_format,$correctStartDate,$correctEndDate) {
-    //ログイン件数
-    $loginNumber = "SELECT date_format(login.created, ?) as date,m_users_id as userId,
-    count(login.id) as login_count
-    FROM t_logins as login
-    WHERE
-      login.m_companies_id = ?
-    AND
-      login.created between ? and ?";
-
-    $loginNumber = $this->exclusionIpAddress($loginNumber,'login');
-
-    $loginNumber .= ' group by date,m_users_id';
-
-    $loginNumber = $this->TLogin->query($loginNumber,
-      array($date_format,$this->userInfo['MCompany']['id'],$correctStartDate,$correctEndDate));
-
-    return $loginNumber;
-  }
-
-  public function getOperatorRequestInfo($date_format,$userId,$correctStartDate,$correctEndDate) {
-    //チャットリクエスト件数
-    $requestNumber = "SELECT date_format(thcau.created, ?) as date,m_users_id as userId,
-    count(thcau.id) as request_count
-    FROM t_history_chat_active_users as thcau
-    WHERE
-      thcau.m_companies_id = ?
-    AND
-      thcau.m_users_id = ?
-    AND
-      thcau.created between ? and ?";
-
-    //$requestNumber = $this->exclusionIpAddress($requestNumber,'th');
-
-    $requestNumber .= 'group by date,m_users_id';
-
-    $requestNumber = $this->THistoryChatActiveUsers->query($requestNumber,
-      array($date_format,$this->userInfo['MCompany']['id'],$userId,$correctStartDate,$correctEndDate,));
-
-    return $requestNumber;
-  }
-
-  public function getSummaryOperatorRequestInfo($date_format,$correctStartDate,$correctEndDate) {
-    //チャットリクエスト件数
-    $requestNumber = "SELECT date_format(thcau.created, ?) as date,m_users_id as userId,
-    count(thcau.id) as request_count
-    FROM t_history_chat_active_users as thcau
-    WHERE
-      thcau.m_companies_id = ?
-    AND
-      thcau.created between ? and ?";
-
-    //$requestNumber = $this->exclusionIpAddress($requestNumber,'th');
-
-    $requestNumber .= 'group by date,m_users_id';
-
-    $requestNumber = $this->THistoryChatActiveUsers->query($requestNumber,
-      array($date_format,$this->userInfo['MCompany']['id'],$correctStartDate,$correctEndDate,));
-
-    return $requestNumber;
-  }
-
-  public function getOperatorResponseInfo($date_format,$userId,$correctStartDate,$correctEndDate) {
-    //チャット応対件数
-    $responseNumber = "SELECT
-      date_format(th.access_date, ?) as date,m_users_id as userId,
-        count(th.id) as response_count
-    FROM t_histories as th,t_history_chat_logs as thcl
-    WHERE
-      th.m_companies_id = ?
-    AND
-      thcl.t_histories_id = th.id
-    AND
-      thcl.m_users_id = ?
-    AND
-      thcl.message_type = ?
-    AND
-      th.access_date between ? and ?";
-
-    $responseNumber = $this->exclusionIpAddress($responseNumber,'th');
-
-    $responseNumber .= 'group by date,m_users_id';
-
-    $responseNumber = $this->THistory->query($responseNumber,
-      array($date_format,$this->userInfo['MCompany']['id'],
-        $userId,$this->chatMessageType['messageType']['enteringRoom'],$correctStartDate,$correctEndDate,));
-
-    return $responseNumber;
-  }
-
-  public function getSummaryOperatorResponseInfo($date_format,$correctStartDate,$correctEndDate) {
-    //チャット応対件数
-    $responseNumber = "SELECT
-      date_format(th.access_date, ?) as date,m_users_id as userId,
-        count(th.id) as response_count
-    FROM t_histories as th,t_history_chat_logs as thcl
-    WHERE
-      th.m_companies_id = ?
-    AND
-      thcl.t_histories_id = th.id
-    AND
-      thcl.message_type = ?
-    AND
-      th.access_date between ? and ?";
-
-    $responseNumber = $this->exclusionIpAddress($responseNumber,'th');
-
-    $responseNumber .= 'group by date,m_users_id';
-
-    $responseNumber = $this->THistory->query($responseNumber,
-      array($date_format,$this->userInfo['MCompany']['id'],
-      $this->chatMessageType['messageType']['enteringRoom'],$correctStartDate,$correctEndDate,));
-
-    return $responseNumber;
-  }
-
-  public function getOperatorEffectivenessInfo($date_format,$userId,$correctStartDate,$correctEndDate) {
-    $effectivenessNumber = "SELECT
-      date_format(th.access_date, ?) as date,m_users_id as userId,
-        count(th.id) as effectiveness_count
-    FROM t_histories as th, t_history_chat_logs as thcl
-    WHERE
-      th.m_companies_id = ?
-    AND
-      thcl.t_histories_id = th.id
-    AND
-      thcl.m_users_id = ?
-    AND
-      thcl.achievement_flg = ?
-    AND
-      th.access_date between ? and ?";
-
-    $effectivenessNumber = $this->exclusionIpAddress($effectivenessNumber,'th');
-
-    $effectivenessNumber .= 'group by date,m_users_id';
-
-    $effectivenessNumber = $this->THistory->query($effectivenessNumber,
-      array($date_format,$this->userInfo['MCompany']['id'],
-        $userId,$this->chatMessageType['achievementFlg']['effectiveness'],$correctStartDate,$correctEndDate,));
-
-    return $effectivenessNumber;
-  }
-
-  public function getSummaryOperatorEffectivenessInfo($date_format,$correctStartDate,$correctEndDate) {
-    $effectivenessNumber = "SELECT
-      date_format(th.access_date, ?) as date,m_users_id as userId,
-        count(th.id) as effectiveness_count
-    FROM t_histories as th, t_history_chat_logs as thcl
-    WHERE
-      th.m_companies_id = ?
-    AND
-      thcl.t_histories_id = th.id
-    AND
-      thcl.achievement_flg = ?
-    AND
-      th.access_date between ? and ?";
-
-    $effectivenessNumber = $this->exclusionIpAddress($effectivenessNumber,'th');
-
-    $effectivenessNumber .= 'group by date,m_users_id';
-
-    $effectivenessNumber = $this->THistory->query($effectivenessNumber,
-      array($date_format,$this->userInfo['MCompany']['id'],
-      $this->chatMessageType['achievementFlg']['effectiveness'],$correctStartDate,$correctEndDate,));
-
-    return $effectivenessNumber;
-  }
-
-  public function getOperatorAvgEnteringRommInfo($date_format,$userId,$correctStartDate,$correctEndDate) {
-        $avgEnteringRommTime = "SELECT date_format(th.access_date,?) as date,thcl2.m_users_id as userId,
-        AVG(UNIX_TIMESTAMP(thcl2.created) - UNIX_TIMESTAMP(thcl.created)) as average
-        FROM t_histories as th,
-        (select t_histories_id, message_request_flg,created,message_distinction
-        from t_history_chat_logs where message_request_flg = ? group by t_histories_id) as thcl,
-        (select t_histories_id, message_type,created,message_distinction,m_users_id
-        from t_history_chat_logs where message_type = ? group by t_histories_id) as thcl2
-        WHERE
-          th.m_companies_id = ?
-        AND
-          thcl.t_histories_id = th.id
-        AND
-          th.id = thcl2.t_histories_id
-        AND
-          thcl.t_histories_id = thcl2.t_histories_id
-        AND
-          thcl.message_distinction = thcl2.message_distinction
-        AND
-          thcl2.m_users_id = ?
-        AND
-          th.access_date between ? and ?
-        group by date,m_users_id";
-
-    $avgEnteringRommTime = $this->THistory->query($avgEnteringRommTime,
-      array($date_format,$this->chatMessageType['requestFlg']['effectiveness'],
-        $this->chatMessageType['messageType']['enteringRoom'],$this->userInfo['MCompany']['id'],
-        $userId,$correctStartDate,$correctEndDate));
-
-    //$avgEnteringRommTime = $this->changeTimeFormat(round($avgEnteringRommTime[0][0]['average']));
-
-    return $avgEnteringRommTime;
-  }
-
-  public function getSummaryOperatorAvgEnteringRommInfo($date_format,$correctStartDate,$correctEndDate) {
-        $avgEnteringRommTime = "SELECT date_format(th.access_date,?) as date,thcl2.m_users_id as userId,
-        AVG(UNIX_TIMESTAMP(thcl2.created) - UNIX_TIMESTAMP(thcl.created)) as average
-        FROM t_histories as th,
-        (select t_histories_id, message_request_flg,created,message_distinction
-        from t_history_chat_logs where message_request_flg = ? group by t_histories_id) as thcl,
-        (select t_histories_id, message_type,created,message_distinction,m_users_id
-        from t_history_chat_logs where message_type = ? group by t_histories_id) as thcl2
-        WHERE
-          th.m_companies_id = ?
-        AND
-          thcl.t_histories_id = th.id
-        AND
-          th.id = thcl2.t_histories_id
-        AND
-          thcl.t_histories_id = thcl2.t_histories_id
-        AND
-          thcl.message_distinction = thcl2.message_distinction
-        AND
-          th.access_date between ? and ?
-        group by date,m_users_id";
-
-    $avgEnteringRommTime = $this->THistory->query($avgEnteringRommTime,
-      array($date_format,$this->chatMessageType['requestFlg']['effectiveness'],
-        $this->chatMessageType['messageType']['enteringRoom'],$this->userInfo['MCompany']['id'],
-        $correctStartDate,$correctEndDate));
-
-    //$avgEnteringRommTime = $this->changeTimeFormat(round($avgEnteringRommTime[0][0]['average']));
-
-    return $avgEnteringRommTime;
-  }
-
-  public function getOperatorAvgResponseInfo($date_format,$userId,$correctStartDate,$correctEndDate) {
-    //平均応答時間
-       $responseTime = "SELECT date_format(th.access_date, ?) as date,thcl2.m_users_id as userId,
-       AVG(UNIX_TIMESTAMP(thcl2.created) - UNIX_TIMESTAMP(thcl.created)) as average
-        FROM t_histories as th,(select t_histories_id,
-         message_request_flg,created,message_distinction
-        from t_history_chat_logs where message_request_flg = ? group by t_histories_id) as thcl,
-        (select t_histories_id, message_type,m_users_id,created,message_distinction
-        from t_history_chat_logs where message_type = ? group by t_histories_id) as thcl2
-        WHERE
-          th.m_companies_id = ?
-        AND
-          thcl.t_histories_id = th.id
-        AND
-          th.id = thcl2.t_histories_id
-        AND
-          thcl.t_histories_id = thcl2.t_histories_id
-        AND
-          thcl.message_distinction = thcl2.message_distinction
-        AND
-          thcl2.m_users_id = ?
-        AND
-          th.access_date between ? and ?
-        group by date,m_users_id";
-
-    $responseTime = $this->THistory->query($responseTime,
-      array($date_format,$this->chatMessageType['requestFlg']['effectiveness'],
-        $this->chatMessageType['messageType']['operatorMessage'],$this->userInfo['MCompany']['id'],
-        $userId,$correctStartDate,$correctEndDate));
-
-    //$responseTime = $this->changeTimeFormat(round($responseTime[0][0]['average']));
-
-    return $responseTime;
-  }
-
-    public function getSummaryOperatorAvgResponseInfo($date_format,$correctStartDate,$correctEndDate) {
-    //平均応答時間
-       $responseTime = "SELECT date_format(th.access_date, ?) as date,thcl2.m_users_id as userId,
-       AVG(UNIX_TIMESTAMP(thcl2.created) - UNIX_TIMESTAMP(thcl.created)) as average
-        FROM t_histories as th,(select t_histories_id,
-         message_request_flg,created,message_distinction
-        from t_history_chat_logs where message_request_flg = ? group by t_histories_id) as thcl,
-        (select t_histories_id, message_type,m_users_id,created,message_distinction
-        from t_history_chat_logs where message_type = ? group by t_histories_id) as thcl2
-        WHERE
-          th.m_companies_id = ?
-        AND
-          thcl.t_histories_id = th.id
-        AND
-          th.id = thcl2.t_histories_id
-        AND
-          thcl.t_histories_id = thcl2.t_histories_id
-        AND
-          thcl.message_distinction = thcl2.message_distinction
-        AND
-          th.access_date between ? and ?
-        group by date,m_users_id";
-
-    $responseTime = $this->THistory->query($responseTime,
-      array($date_format,$this->chatMessageType['requestFlg']['effectiveness'],
-        $this->chatMessageType['messageType']['operatorMessage'],
-        $this->userInfo['MCompany']['id'],$correctStartDate,$correctEndDate));
-
-    //$responseTime = $this->changeTimeFormat(round($responseTime[0][0]['average']));
-
-    return $responseTime;
-  }
-
+  /* *
+   * オペレーター統計別ウィンドウ画面
+   * @return void
+   * */
   public function baseForAnotherWindow() {
     if(!empty($this->params['url']['id'])) {
       $userId = $this->params['url']['id'];
@@ -658,48 +341,36 @@ class StatisticsController extends AppController {
 
     if($timeType=='daily') {
       $type = $dateType;
-      $timeInfo = $this->calculateEachOperatorHourlyData($type);
+      $timeInfo = $this->calculateOperatorHourlyData($type);
     }
     else if($timeType=='monthly') {
       $type = $dateType;
-      $timeInfo = $this->calculateEachOperatorDaylyData($type);
+      $timeInfo = $this->calculateOperatorDaylyData($type);
     }
 
     else if($timeType=='yearly') {
       $type = $dateType;
-      $timeInfo = $this->calculateEachOperatorMonthlyData($type);
+      $timeInfo = $this->calculateOperatorMonthlyData($type,'another');
     }
 
     if(!empty($userId)) {
-
-      $data = $this->getPrivateOperatorInfo($timeInfo['date_format'],$timeInfo['correctStartDate'],$timeInfo['correctEndDate'],
+      $data = $this->getPrivateOperatorInfo($timeInfo['anotherWindowDateFormat'],$timeInfo['correctStartDate'],$timeInfo['correctEndDate'],
           $timeInfo['baseData'],$timeInfo['baseTimeData'],$userId);
-
-      $rangeData = $this->determineRange();
-
-      $this->set('companyRangeDate',$rangeData['companyRangeDate']);
-      $this->set('companyRangeYear',$rangeData['companyRangeYear']);
-      $this->set('date',$timeInfo['date']);
-      $this->set('daylyEndDate',date("d",strtotime('last day of' .$type)));
-      $this->set('type',$type);
-      //$this->set('time','daily');
-      $this->set('data',$data);
     }
-
     else {
-      $data = $this->getEachAllOperatorInfo($timeInfo['date_format'],$timeInfo['correctStartDate'],$timeInfo['correctEndDate'],
+      $data = $this->getEachAllOperatorInfo($timeInfo['anotherWindowDateFormat'],$timeInfo['correctStartDate'],$timeInfo['correctEndDate'],
           $timeInfo['baseData'],$timeInfo['baseTimeData'],$item);
-      $rangeData = $this->determineRange();
-      $this->set('type',$type);
-      $this->set('data',$data);
-      $this->set('date',$timeInfo['date']);
-      $this->set('companyRangeDate',$rangeData['companyRangeDate']);
-      $this->set('companyRangeYear',$rangeData['companyRangeYear']);
-      $this->set('daylyEndDate',date("d",strtotime('last day of' .$type)));
     }
+    $rangeData = $this->determineRange();
+    $this->set('type',$type);
+    $this->set('data',$data);
+    $this->set('date',$timeInfo['date']);
+    $this->set('companyRangeDate',$rangeData['companyRangeDate']);
+    $this->set('companyRangeYear',$rangeData['companyRangeYear']);
+    $this->set('daylyEndDate',date("d",strtotime('last day of' .$type)));
   }
 
-  public function getPrivateOperatorInfo($date_format,$correctStartDate,$correctEndDate,
+    public function getPrivateOperatorInfo($date_format,$correctStartDate,$correctEndDate,
     $baseData,$baseTimeData,$userId) {
 
     $requestNumberData = [];
@@ -721,7 +392,7 @@ class StatisticsController extends AppController {
       array($this->userInfo['MCompany']['id'],$userId));
 
     //チャットリクエスト件数
-    $requestNumber = $this->getOperatorRequestInfo($date_format,$userId,$correctStartDate,$correctEndDate);
+    $requestNumber = $this->getSummaryOperatorRequestInfo($date_format,$userId,$correctStartDate,$correctEndDate);
 
     foreach($requestNumber as $k => $v) {
       $requestNumberData =  $requestNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : intval($v[0]['request_count']));
@@ -733,7 +404,7 @@ class StatisticsController extends AppController {
     //チャットリクエスト件数合計値
     $allRequestNumberData = array_sum($requestNumberData);
 
-    $loginNumber = $this->getLoginOperatorInfo($date_format,$userId,$correctStartDate,$correctEndDate);
+    $loginNumber = $this->getSummaryLoginOperatorInfo($date_format,$userId,$correctStartDate,$correctEndDate);
 
     foreach($loginNumber as $k => $v) {
       $loginNumberData =  $loginNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : intval($v[0]['login_count']));
@@ -746,7 +417,7 @@ class StatisticsController extends AppController {
     //ログイン件数合計値
     $allLoginNumberData = array_sum($loginNumberData);
 
-      $responseNumber = $this->getOperatorResponseInfo($date_format,$userId,$correctStartDate,$correctEndDate);
+      $responseNumber = $this->getSummaryOperatorResponseInfo($date_format,$userId,$correctStartDate,$correctEndDate);
 
       foreach($responseNumber as $k => $v) {
         $responseNumberData =  $responseNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : intval($v[0]['response_count']));
@@ -760,7 +431,7 @@ class StatisticsController extends AppController {
       $allResponseNumberData = array_sum($responseNumberData);
 
       //チャット有効件数
-      $effectivenessNumber = $this->getOperatorEffectivenessInfo($date_format,$userId,$correctStartDate,$correctEndDate);
+      $effectivenessNumber = $this->getSummaryOperatorEffectivenessInfo($date_format,$userId,$correctStartDate,$correctEndDate);
       foreach($effectivenessNumber as $k => $v) {
         $effectivenessNumberData =  $effectivenessNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : intval($v[0]['effectiveness_count']));
         if( $v[0]['effectiveness_count'] != 0 && $responseNumberData[$v[0]['date']] != 0){
@@ -799,7 +470,7 @@ class StatisticsController extends AppController {
       }
 
       //平均入室時間
-      $avgEnteringRommTime = $this->getOperatorAvgEnteringRommInfo($date_format,$userId,$correctStartDate,$correctEndDate);
+      $avgEnteringRommTime = $this->getSummaryOperatorAvgEnteringRommInfo($date_format,$userId,$correctStartDate,$correctEndDate);
 
       $totalConsumerWaitingAvgTimeDataCnt = 0;
       foreach($avgEnteringRommTime as $k => $v) {
@@ -827,7 +498,7 @@ class StatisticsController extends AppController {
       $allAvgEnteringRommTimeData = $this->changeTimeFormat($allAvgEnteringRommTimeData);
 
       //平均応答時間
-      $responseTime = $this->getOperatorAvgResponseInfo($date_format,$userId,$correctStartDate,$correctEndDate);
+      $responseTime = $this->getSummaryOperatorAvgResponseInfo($date_format,$userId,$correctStartDate,$correctEndDate);
 
       $avgForcalculation = [];
 
@@ -867,8 +538,290 @@ class StatisticsController extends AppController {
       return $data;
   }
 
-  public function getEachAllOperatorInfo($date_format,$correctStartDate,$correctEndDate,
-    $baseData,$baseTimeData,$item) {
+  public function getSummaryLoginOperatorInfo($date_format,$userId,$correctStartDate,$correctEndDate) {
+    //ログイン件数
+    if($userId == 0) {
+      $loginNumber = "SELECT date_format(login.created, ?) as date,m_users_id as userId,
+      count(login.id) as login_count
+      FROM t_logins as login
+      WHERE
+        login.m_companies_id = ?
+      AND
+        login.created between ? and ?";
+
+      $loginNumber = $this->exclusionIpAddress($loginNumber,'login');
+      $loginNumber .= ' group by date,m_users_id';
+      $loginNumber = $this->TLogin->query($loginNumber,
+      array($date_format,$this->userInfo['MCompany']['id'],$correctStartDate,$correctEndDate));
+    }
+    else {
+      $loginNumber = "SELECT date_format(login.created, ?) as date,m_users_id as userId,
+      count(login.id) as login_count
+      FROM t_logins as login
+      WHERE
+        login.m_companies_id = ?
+      AND
+        login.m_users_id = ?
+      AND
+        login.created between ? and ?";
+      $loginNumber = $this->exclusionIpAddress($loginNumber,'login');
+      $loginNumber .= ' group by date,m_users_id';
+      $loginNumber = $this->TLogin->query($loginNumber,
+      array($date_format,$this->userInfo['MCompany']['id'],$userId,$correctStartDate,$correctEndDate));
+    }
+    return $loginNumber;
+  }
+
+  public function getSummaryOperatorRequestInfo($date_format,$userId,$correctStartDate,$correctEndDate) {
+    //チャットリクエスト件数
+    if($userId == 0) {
+
+    $requestNumber = "SELECT
+      date_format(th.access_date, ?) as date,thcau.m_users_id as userId,
+      count(thcau.id) as request_count
+      FROM (select id,m_companies_id,access_date
+      from t_histories where m_companies_id = ? AND access_date between ? and ? ) as th,t_history_chat_logs
+       as thcl,t_history_chat_active_users as thcau
+      WHERE
+        thcau.t_history_chat_logs_id = thcl.id
+      AND
+        thcl.t_histories_id = th.id";
+      $requestNumber = $this->exclusionIpAddress($requestNumber,'th');
+      $requestNumber .= ' group by date,userId';
+
+      $requestNumber = $this->THistoryChatActiveUsers->query($requestNumber,
+      array($date_format,$this->userInfo['MCompany']['id'],$correctStartDate,$correctEndDate,));
+    }
+    else {
+      $requestNumber = "SELECT
+        date_format(th.access_date, ?) as date,thcau.m_users_id as userId,
+        count(thcau.id) as request_count
+        FROM (select id,m_companies_id,access_date
+      from t_histories where m_companies_id = ? AND access_date between ? and ? ) as th,
+      t_history_chat_logs as thcl,t_history_chat_active_users as thcau
+        WHERE
+          thcau.t_history_chat_logs_id = thcl.id
+        AND
+          thcl.t_histories_id = th.id
+        AND
+          thcau.m_users_id = ?";
+        $requestNumber = $this->exclusionIpAddress($requestNumber,'th');
+        $requestNumber .= 'group by date,userId';
+
+        $requestNumber = $this->THistoryChatActiveUsers->query($requestNumber,
+      array($date_format,$this->userInfo['MCompany']['id'],$correctStartDate,$correctEndDate,$userId));
+    }
+    return $requestNumber;
+  }
+
+  public function getSummaryOperatorResponseInfo($date_format,$userId,$correctStartDate,$correctEndDate) {
+    //チャット応対件数
+    if($userId == 0) {
+      $responseNumber = "SELECT
+      date_format(th.access_date, ?) as date,m_users_id as userId,count(th.id) as response_count
+      FROM t_histories as th,t_history_chat_logs as thcl
+      WHERE
+        th.m_companies_id = ?
+      AND
+        thcl.t_histories_id = th.id
+      AND
+        thcl.message_type = ?
+      AND
+        th.access_date between ? and ?";
+
+      $responseNumber = $this->exclusionIpAddress($responseNumber,'th');
+      $responseNumber .= 'group by date,m_users_id';
+      $responseNumber = $this->THistory->query($responseNumber,
+        array($date_format,$this->userInfo['MCompany']['id'],
+        $this->chatMessageType['messageType']['enteringRoom'],$correctStartDate,$correctEndDate,));
+    }
+    else {
+      $responseNumber = "SELECT
+      date_format(th.access_date, ?) as date,m_users_id as userId,count(th.id) as response_count
+      FROM t_histories as th,t_history_chat_logs as thcl
+      WHERE
+        th.m_companies_id = ?
+      AND
+        thcl.t_histories_id = th.id
+      AND
+        thcl.m_users_id = ?
+      AND
+        thcl.message_type = ?
+      AND
+      th.access_date between ? and ?";
+
+      $responseNumber = $this->exclusionIpAddress($responseNumber,'th');
+      $responseNumber .= 'group by date,m_users_id';
+      $responseNumber = $this->THistory->query($responseNumber,array($date_format,$this->userInfo['MCompany']['id'],
+        $userId,$this->chatMessageType['messageType']['enteringRoom'],$correctStartDate,$correctEndDate,));
+    }
+    return $responseNumber;
+  }
+
+  public function getSummaryOperatorEffectivenessInfo($date_format,$userId,$correctStartDate,$correctEndDate) {
+    //チャット有効件数
+    if($userId == 0) {
+      $effectivenessNumber = "SELECT
+      date_format(th.access_date, ?) as date,m_users_id as userId,count(th.id) as effectiveness_count
+      FROM t_histories as th, (select t_histories_id,m_users_id
+      from t_history_chat_logs where achievement_flg = ? ) as thcl
+      WHERE
+        th.m_companies_id = ?
+      AND
+        thcl.t_histories_id = th.id
+      AND
+        th.access_date between ? and ?";
+
+      $effectivenessNumber = $this->exclusionIpAddress($effectivenessNumber,'th');
+      $effectivenessNumber .= 'group by date,m_users_id';
+      $effectivenessNumber = $this->THistory->query($effectivenessNumber,array($date_format,$this->chatMessageType['achievementFlg']['effectiveness'],
+      $this->userInfo['MCompany']['id'],$correctStartDate,$correctEndDate));
+    }
+    else {
+      $effectivenessNumber = "SELECT
+      date_format(th.access_date, ?) as date,m_users_id as userId,count(th.id) as effectiveness_count
+      FROM t_histories as th, (select t_histories_id,m_users_id
+      from t_history_chat_logs where achievement_flg = ? ) as thcl
+      WHERE
+        th.m_companies_id = ?
+      AND
+        thcl.t_histories_id = th.id
+      AND
+        thcl.m_users_id = ?
+      AND
+        th.access_date between ? and ?";
+
+      $effectivenessNumber = $this->exclusionIpAddress($effectivenessNumber,'th');
+      $effectivenessNumber .= 'group by date,m_users_id';
+      $effectivenessNumber = $this->THistory->query($effectivenessNumber,array($date_format,$userId,$this->chatMessageType['achievementFlg']['effectiveness'],
+        $this->userInfo['MCompany']['id'],$correctStartDate,$correctEndDate));
+    }
+    return $effectivenessNumber;
+  }
+
+  public function getSummaryOperatorAvgEnteringRommInfo($date_format,$userId,$correctStartDate,$correctEndDate) {
+    //消費者待機時間
+    if($userId == 0) {
+      $avgEnteringRommTime = "SELECT date_format(th.access_date,?) as date,thcl2.m_users_id as userId,
+      AVG(UNIX_TIMESTAMP(thcl2.created) - UNIX_TIMESTAMP(thcl.created)) as average
+      FROM t_histories as th,
+      (select t_histories_id, message_request_flg,created,message_distinction
+      from t_history_chat_logs where message_request_flg = ? group by t_histories_id) as thcl,
+      (select t_histories_id, message_type,created,message_distinction,m_users_id
+      from t_history_chat_logs where message_type = ? group by t_histories_id) as thcl2
+      WHERE
+        th.m_companies_id = ?
+      AND
+        thcl.t_histories_id = th.id
+      AND
+        th.id = thcl2.t_histories_id
+      AND
+        thcl.t_histories_id = thcl2.t_histories_id
+      AND
+        thcl.message_distinction = thcl2.message_distinction
+      AND
+        th.access_date between ? and ?";
+
+      $avgEnteringRommTime = $this->exclusionIpAddress($avgEnteringRommTime,'th');
+      $avgEnteringRommTime .= 'group by date,m_users_id';
+
+      $avgEnteringRommTime = $this->THistory->query($avgEnteringRommTime,array($date_format,$this->chatMessageType['requestFlg']['effectiveness'],
+        $this->chatMessageType['messageType']['enteringRoom'],$this->userInfo['MCompany']['id'],$correctStartDate,$correctEndDate));
+    }
+    else {
+      $avgEnteringRommTime = "SELECT date_format(th.access_date,?) as date,thcl2.m_users_id as userId,
+      AVG(UNIX_TIMESTAMP(thcl2.created) - UNIX_TIMESTAMP(thcl.created)) as average
+      FROM t_histories as th,
+      (select t_histories_id, message_request_flg,created,message_distinction
+      from t_history_chat_logs where message_request_flg = ? group by t_histories_id) as thcl,
+      (select t_histories_id, message_type,created,message_distinction,m_users_id
+      from t_history_chat_logs where message_type = ? group by t_histories_id) as thcl2
+      WHERE
+        th.m_companies_id = ?
+      AND
+        thcl.t_histories_id = th.id
+      AND
+        th.id = thcl2.t_histories_id
+      AND
+        thcl.t_histories_id = thcl2.t_histories_id
+      AND
+        thcl.message_distinction = thcl2.message_distinction
+      AND
+        thcl2.m_users_id = ?
+      AND
+        th.access_date between ? and ?";
+
+      $avgEnteringRommTime = $this->exclusionIpAddress($avgEnteringRommTime,'th');
+      $avgEnteringRommTime .= 'group by date,m_users_id';
+
+      $avgEnteringRommTime = $this->THistory->query($avgEnteringRommTime,
+        array($date_format,$this->chatMessageType['requestFlg']['effectiveness'],
+        $this->chatMessageType['messageType']['enteringRoom'],$this->userInfo['MCompany']['id'],
+        $userId,$correctStartDate,$correctEndDate));
+    }
+    return $avgEnteringRommTime;
+  }
+
+  public function getSummaryOperatorAvgResponseInfo($date_format,$userId,$correctStartDate,$correctEndDate) {
+    //平均応答時間
+    if($userId == 0) {
+      $responseTime = "SELECT date_format(th.access_date, ?) as date,thcl2.m_users_id as userId,
+      AVG(UNIX_TIMESTAMP(thcl2.created) - UNIX_TIMESTAMP(thcl.created)) as average
+      FROM t_histories as th,(select t_histories_id,
+       message_request_flg,created,message_distinction
+      from t_history_chat_logs where message_request_flg = ? group by t_histories_id) as thcl,
+      (select t_histories_id, message_type,m_users_id,created,message_distinction
+      from t_history_chat_logs where message_type = ? group by t_histories_id) as thcl2
+      WHERE
+        th.m_companies_id = ?
+      AND
+        thcl.t_histories_id = th.id
+      AND
+        th.id = thcl2.t_histories_id
+      AND
+        thcl.t_histories_id = thcl2.t_histories_id
+      AND
+        thcl.message_distinction = thcl2.message_distinction
+      AND
+        th.access_date between ? and ?";
+      $responseTime = $this->exclusionIpAddress($responseTime,'th');
+      $responseTime .= 'group by date,m_users_id';
+
+      $responseTime = $this->THistory->query($responseTime,array($date_format,$this->chatMessageType['requestFlg']['effectiveness'],
+        $this->chatMessageType['messageType']['operatorMessage'],$this->userInfo['MCompany']['id'],$correctStartDate,$correctEndDate));
+    }
+    else {
+      $responseTime = "SELECT date_format(th.access_date, ?) as date,thcl2.m_users_id as userId,
+      AVG(UNIX_TIMESTAMP(thcl2.created) - UNIX_TIMESTAMP(thcl.created)) as average
+      FROM t_histories as th,(select t_histories_id,
+       message_request_flg,created,message_distinction
+      from t_history_chat_logs where message_request_flg = ? group by t_histories_id) as thcl,
+      (select t_histories_id, message_type,m_users_id,created,message_distinction
+      from t_history_chat_logs where message_type = ? group by t_histories_id) as thcl2
+      WHERE
+        th.m_companies_id = ?
+      AND
+        thcl.t_histories_id = th.id
+      AND
+        th.id = thcl2.t_histories_id
+      AND
+        thcl.t_histories_id = thcl2.t_histories_id
+      AND
+        thcl.message_distinction = thcl2.message_distinction
+      AND
+        thcl2.m_users_id = ?
+      AND
+        th.accepss_date between ? and ?";
+      $responseTime = $this->exclusionIpAddress($responseTime,'th');
+      $responseTime .= 'group by date,m_users_id';
+
+      $responseTime = $this->THistory->query($responseTime,array($date_format,$this->chatMessageType['requestFlg']['effectiveness'],
+        $this->chatMessageType['messageType']['operatorMessage'],$this->userInfo['MCompany']['id'],$userId,$correctStartDate,$correctEndDate));
+    }
+    return $responseTime;
+  }
+
+  public function getEachAllOperatorInfo($date_format,$correctStartDate,$correctEndDate,$baseData,$baseTimeData,$item) {
     $users = "SELECT id,display_name FROM m_users
       WHERE
         m_users.m_companies_id = ?
@@ -926,80 +879,9 @@ class StatisticsController extends AppController {
     return ['users' => $users];
   }
 
-  public function calculateEachOperatorHourlyData($type) {
-      $startDate = strtotime($type); // 2016-11-02 00:00:00
-      $endDate = strtotime("+23 hour",$startDate); // 2016-11-02 23:00:00
-      $correctStartDate = date("Y-m-d H:00:00",$startDate);
-      $correctEndDate = date("Y-m-d H:59:59",$endDate);
-      $date_format = "%H:00";
-      $baseData = [];
-      $baseTimeData = [];
-      $date = 'eachOperatorDaily';
-
-      //array_mergeで使うためのデータを作成
-      while($startDate <= $endDate){
-        $baseData = $baseData + array(date("H:00",$startDate) => $this->isInValidDatetime(date("Y-m-d",$startDate)) ? self::LABEL_NONE : 0);
-        $baseTimeData = $baseTimeData + array(date("H:00",$startDate) => $this->isInValidDatetime(date("Y-m-d",$startDate)) ? self::LABEL_NONE : '00:00:00');
-        $startDate = strtotime("+1 hour", $startDate);
-      }
-      $startDate = strtotime($type);
-
-      return ['date_format' => $date_format,'correctStartDate' => $correctStartDate,'correctEndDate' => $correctEndDate,
-      'baseData' => $baseData,'baseTimeData' => $baseTimeData,'date' => $date];
-  }
-
-  public function calculateEachOperatorDaylyData($type) {
-      $startDate = strtotime('first day of' .$type);
-      $endDate = strtotime('last day of' .$type);
-      $correctStartDate = date("Y-m-d 00:00:00",$startDate);
-      $correctEndDate = date("Y-m-d 23:59:59",$endDate);
-      $date_format = "%Y-%m-%d";
-      $baseData = [];
-      $baseTimeData = [];
-      $date = 'eachOperatorMonthly';
-
-      //array_mergeで使うためのデータを作成
-      while($startDate <= $endDate){
-        $baseData = $baseData + array(date("Y-m-d",$startDate) => $this->isInValidDatetime(date("Y-m-d",$startDate)) ? self::LABEL_NONE : 0);
-        $baseTimeData = $baseTimeData + array(date("Y-m-d",$startDate) => $this->isInValidDatetime(date("Y-m-d",$startDate)) ? self::LABEL_NONE :"00:00:00");
-        $startDate = strtotime("+1 day", $startDate);
-      }
-      $startDate = strtotime('first day of' .$type);
-
-      return ['date_format' => $date_format,'correctStartDate' => $correctStartDate,'correctEndDate' => $correctEndDate,
-      'baseData' => $baseData,'baseTimeData' => $baseTimeData,'date' => $date];
-  }
-
-  public function calculateEachOperatorMonthlyData($type) {
-      $start = $type.'-01';
-      $end = $type.'-12';
-      $startDate = strtotime('first day of' .$start);
-      $endMonth = strtotime('last day of' .$start);
-      $endDate = strtotime('last day of' .$end);
-      $correctStartDate = date("Y-m-d 00:00:00",$startDate);
-      $correctEndDate = date("Y-m-d 23:59:59",$endDate);
-      $date_format = "%Y-%m";
-      $baseData = [];
-      $baseTimeData = [];
-      $date = 'eachOperatorYearly';
-
-      //array_mergeで使うためのデータを作成
-      while($startDate <= $endDate){
-        $baseData = $baseData + array(date('Y-m',$startDate) => $this->isInValidDatetime(date("Y-m-d",$startDate)) ? self::LABEL_NONE : 0);
-        $baseTimeData = $baseTimeData + array(date('Y-m',$startDate) => $this->isInValidDatetime(date("Y-m-d",$startDate)) ? self::LABEL_NONE :'00:00:00');
-        $startDate = strtotime("+1 month", $startDate);
-      }
-      $startDate = strtotime('first day of' .$start);
-
-      return ['date_format' => $date_format,'correctStartDate' => $correctStartDate,'correctEndDate' => $correctEndDate,
-      'baseData' => $baseData,'baseTimeData' => $baseTimeData,'date' => $date];
-  }
-
-
-
   public function getAllLoginOperatorInfo($date_format,$user,$correctStartDate,$correctEndDate,$users,$k,
       $baseData) {
-    $loginNumber = $this->getLoginOperatorInfo($date_format,$user['m_users']['id'],$correctStartDate,$correctEndDate);
+    $loginNumber = $this->getSummaryLoginOperatorInfo($date_format,$user['m_users']['id'],$correctStartDate,$correctEndDate);
     $eachDayLoginNumber = [];
 
     foreach($loginNumber as $k2 => $v) {
@@ -1015,7 +897,7 @@ class StatisticsController extends AppController {
 
   public function getAllRequestOperatorInfo($date_format,$user,$correctStartDate,$correctEndDate,$users,$k,
       $baseData) {
-    $requestNumber = $this->getOperatorRequestInfo($date_format,$user['m_users']['id'],$correctStartDate,$correctEndDate);
+    $requestNumber = $this->getSummaryOperatorRequestInfo($date_format,$user['m_users']['id'],$correctStartDate,$correctEndDate);
     $eachDayRequestNumber = [];
 
     foreach($requestNumber as $k2 => $v) {
@@ -1031,7 +913,7 @@ class StatisticsController extends AppController {
   }
 
   public function getAllResponseOperatorInfo($date_format,$user,$correctStartDate,$correctEndDate,$users,$k,$baseData) {
-    $responseNumber = $this->getOperatorResponseInfo($date_format,$user['m_users']['id'],$correctStartDate,$correctEndDate);
+    $responseNumber = $this->getSummaryOperatorResponseInfo($date_format,$user['m_users']['id'],$correctStartDate,$correctEndDate);
     $eachDayResponseNumber = [];
 
     foreach($responseNumber as $k2 => $v) {
@@ -1046,7 +928,7 @@ class StatisticsController extends AppController {
   }
 
   public function getAllEffectivenessOperatorInfo($date_format,$user,$correctStartDate,$correctEndDate,$users,$k,$baseData) {
-    $effectivenessNumber = $this->getOperatorEffectivenessInfo($date_format,$user['m_users']['id'],$correctStartDate,$correctEndDate);
+    $effectivenessNumber = $this->getSummaryOperatorEffectivenessInfo($date_format,$user['m_users']['id'],$correctStartDate,$correctEndDate);
     $eachDayEffectivenessNumber = [];
 
     foreach($effectivenessNumber as $k2 => $v) {
@@ -1061,7 +943,7 @@ class StatisticsController extends AppController {
   }
 
   public function getAllAvgEnteringRommTimeOperatorInfo($date_format,$user,$correctStartDate,$correctEndDate,$users,$k,$baseTimeData) {
-    $avgEnteringRommTimeNumber = $this->getOperatorAvgEnteringRommInfo($date_format,$user['m_users']['id'],$correctStartDate,$correctEndDate);
+    $avgEnteringRommTimeNumber = $this->getSummaryOperatorAvgEnteringRommInfo($date_format,$user['m_users']['id'],$correctStartDate,$correctEndDate);
     $eachDayavgEnteringRommTimeNumber = [];
     $avgForcalculation = [];
 
@@ -1093,7 +975,7 @@ class StatisticsController extends AppController {
   }
 
   public function getAllResponseAvgTimeOperatorInfo($date_format,$user,$correctStartDate,$correctEndDate,$users,$k,$baseTimeData) {
-    $responseAvgTimeNumber = $this->getOperatorAvgResponseInfo($date_format,$user['m_users']['id'],$correctStartDate,$correctEndDate);
+    $responseAvgTimeNumber = $this->getSummaryOperatorAvgResponseInfo($date_format,$user['m_users']['id'],$correctStartDate,$correctEndDate);
     $eachDayResponseAvgTimeNumber = [];
     $avgForcalculation = [];
 
@@ -1125,7 +1007,7 @@ class StatisticsController extends AppController {
   }
 
   public function getAllEffectivenessRateOperatorInfo($date_format,$user,$correctStartDate,$correctEndDate,$users,$k,$baseData) {
-    $responseNumber = $this->getOperatorResponseInfo($date_format,$user['m_users']['id'],$correctStartDate,$correctEndDate);
+    $responseNumber = $this->getSummaryOperatorResponseInfo($date_format,$user['m_users']['id'],$correctStartDate,$correctEndDate);
     $eachDayResponseNumber = [];
 
     foreach($responseNumber as $k2 => $v) {
@@ -1141,12 +1023,11 @@ class StatisticsController extends AppController {
     $effectivenessRate = [];
 
     //チャット有効件数
-    $effectivenessNumber = $this->getOperatorEffectivenessInfo($date_format,$user['m_users']['id'],$correctStartDate,$correctEndDate);
+    $effectivenessNumber = $this->getSummaryOperatorEffectivenessInfo($date_format,$user['m_users']['id'],$correctStartDate,$correctEndDate);
     foreach($effectivenessNumber as $k2 => $v) {
       $effectivenessNumberData =  $effectivenessNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : intval($v[0]['effectiveness_count']));
       if( $v[0]['effectiveness_count'] != 0 && $responseNumber[$v[0]['date']] != 0){
         $effectivenessRate = $effectivenessRate + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : round($v[0]['effectiveness_count']/$responseNumber[$v[0]['date']]*100));
-        //$this->log($effectivenessRate,LOG_DEBUG);
       } else if($responseNumber[$v[0]['date']] === 0) {
         $effectivenessRate = $effectivenessRate + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : self::LABEL_INVALID);
       }
@@ -1563,7 +1444,6 @@ class StatisticsController extends AppController {
 
     $responseNumber = $this->THistory->query($response, array($date_format,$this->userInfo['MCompany']['id'],$correctStartDate,$correctEndDate,$this->chatMessageType['messageType']['enteringRoom'],$this->chatMessageType['requestFlg']['effectiveness']));
 
-    $this->log($responseNumber,LOG_DEBUG);
     foreach($responseNumber as $k => $v) {
       if($v[0]['response_count'] != 0 and $requestNumberData[$v[0]['date']] != 0) {
 
@@ -2402,7 +2282,7 @@ class StatisticsController extends AppController {
       }
       $dayData[] = '合計・平均';
       $csv[] = $dayData;
-      $users = $this->calculateEachOperatorHourlyData($requestData['date']);
+      $users = $this->calculateOperatorHourlyData($requestData['date']);
       if(!empty($requestData['item'])) {
         $csvData = $this->getEachAllOperatorInfo($users['date_format'],$users['correctStartDate'],$users['correctEndDate'],
                 $users['baseData'],$users['baseTimeData'],$requestData['item']);
@@ -2497,8 +2377,6 @@ class StatisticsController extends AppController {
   }
 
   public function insertPrivateOperatorCsvData($csvData,$dateFormat,$date,$userId) {
-    //$this->log('aaaaaaaaaaaaaaaaaaaaaaaaaa',LOG_DEBUG);
-    //$this->log($csvData,LOG_DEBUG);
     $userInfo = [];
     $userInfo[] = array('ログイン件数');
     if($dateFormat == 'daily'){
