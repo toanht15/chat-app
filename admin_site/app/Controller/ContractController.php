@@ -80,7 +80,6 @@ class ContractController extends AppController
 
       try {
         $this->processTransaction($data['MCompany'], $data['Contract'], $data['MAgreements']);
-        $this->redirect(['controller' => 'Contract', 'action' => 'index']);
       } catch(Exception $e) {
         $this->log("Exception Occured : ".$e->getMessage(), LOG_WARNING);
         $this->log($e->getTraceAsString(),LOG_WARNING);
