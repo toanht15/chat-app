@@ -80,7 +80,6 @@ class ContractController extends AppController
 
       try {
         $this->processTransaction($data['MCompany'], $data['Contract'], $data['MAgreements']);
-        $this->redirect(['controller' => 'Contract', 'action' => 'index']);
       } catch(Exception $e) {
         $this->log("Exception Occured : ".$e->getMessage(), LOG_WARNING);
         $this->log($e->getTraceAsString(),LOG_WARNING);
@@ -95,8 +94,6 @@ class ContractController extends AppController
    * */
   public function edit($id)
   {
-    $this->MCompany->id = $id;
-
     if ($this->request->is('post') || $this->request->is('put')) {
       $companyEditData = $this->MCompany->read(null, $id);
       $agreementEditData = $this->MAgreements->find('first',[
