@@ -11,7 +11,7 @@
     <?php if(!empty($overLimitMessage)): ?>
     <span style="margin-top: 5em;"><?= $overLimitMessage ?></span>
     <?php else: ?>
-    <?= $this->Form->create('Contract', array('type' => 'post')); ?>
+    <?= $this->Form->create('Contract', array('type' => 'post', 'url' => '/Contract/add')); ?>
       <div class="form01">
         <section>
           <ul class='formArea'>
