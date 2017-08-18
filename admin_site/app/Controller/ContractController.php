@@ -94,7 +94,7 @@ class ContractController extends AppController
    * */
   public function edit($id)
   {
-    $this->MCompany->id = $id;
+      $this->MCompany->id = $id;
 
     if ($this->request->is('post') || $this->request->is('put')) {
       $companyEditData = $this->MCompany->read(null, $id);
@@ -247,7 +247,7 @@ class ContractController extends AppController
       $this->addDefaultChatPersonalSettings($targetCompanyId, $companyInfo);
       $this->addDefaultAutoMessages($targetCompanyId, $companyInfo);
       $this->addDefaultDictionaries($targetCompanyId, $companyInfo);
-    } else if (strcmp($beforeContactTypeId, C_CONTRACT_FULL_PLAN_ID) === 0
+    } else if (strcmp($beforeContactTypeId, C_CONTRACT_SCREEN_SHARING_ID) === 0
       && strcmp($afterContactTypeId, C_CONTRACT_FULL_PLAN_ID) === 0) {
       // シェアリング => プレミアム
       $this->upgradeWidgetSettings($beforeContactTypeId, $afterContactTypeId, $targetCompanyId);
@@ -387,34 +387,48 @@ class ContractController extends AppController
 
   private function addDefaultAutoMessages($m_companies_id, $companyInfo) {
     if(!$this->isChatEnable($companyInfo['m_contact_types_id'])) return;
-    $default = $this->getDefaultAutomessageConfigurations();
-    foreach($default as $item) {
-      $this->TAutoMessages->create();
-      $this->TAutoMessages->set([
-        "m_companies_id" => $m_companies_id,
-        "name" => $item['name'],
-        "trigger_type" => $item['trigger_type'],
-        "activity" => $this->convertActivityToJSON($item['activity']),
-        "action_type" => $item['action_type'],
-        "active_flg" => $item['active_type']
-      ]);
-      $this->TAutoMessages->save();
+    $autoMessages = $this->TAutoMessages->find('all',[
+      'conditions' => array(
+        'm_companies_id' => $m_companies_id
+      )]
+    );
+    if(empty($autoMessages)) {
+      $default = $this->getDefaultAutomessageConfigurations();
+      foreach($default as $item) {
+        $this->TAutoMessages->create();
+        $this->TAutoMessages->set([
+          "m_companies_id" => $m_companies_id,
+          "name" => $item['name'],
+          "trigger_type" => $item['trigger_type'],
+          "activity" => $this->convertActivityToJSON($item['activity']),
+          "action_type" => $item['action_type'],
+          "active_flg" => $item['active_type']
+        ]);
+        $this->TAutoMessages->save();
+      }
     }
   }
 
   private function addDefaultDictionaries($m_companies_id, $companyInfo) {
     if(!$this->isChatEnable($companyInfo['m_contact_types_id'])) return;
-    $default = $this->getDefaultDictionaryConfigurations();
-    foreach($default as $item) {
-      $this->TDictionaries->create();
-      $this->TDictionaries->set([
+    $dictionaries = $this->TDictionaries->find('all',[
+        'conditions' => array(
+          'm_companies_id' => $m_companies_id
+        )]
+    );
+    if(empty($dictionaries)) {
+      $default = $this->getDefaultDictionaryConfigurations();
+      foreach($default as $item) {
+        $this->TDictionaries->create();
+        $this->TDictionaries->set([
           "m_companies_id" => $m_companies_id,
           "m_user_id" =>  0, // 共有設定なので0固定
           "word" => $item['word'],
           "type" => $item['type'],
           "sort" => $item['sort']
-      ]);
-      $this->TDictionaries->save();
+        ]);
+        $this->TDictionaries->save();
+      }
     }
   }
 
@@ -486,15 +500,15 @@ class ContractController extends AppController
   private function upgradeWidgetSettings($beforeContactTypeId, $afterContactTypeId, $targetCompanyId) {
     $currentWidgetSettings = $this->MWidgetSetting->find('first',[
         'conditions' => array(
-          'm_companies_id' => $targetCompanyId
+          'm_companies_id' => intval($targetCompanyId)
         )]
     );
     if(!empty($currentWidgetSettings)) {
       $saveData = json_decode($currentWidgetSettings['MWidgetSetting']['style_settings'], TRUE);
-      $currentWidgetSettings['MWidgetSetting']['style_settings'] = $this->getUpgradedWidgetSettings($saveData, $beforeContactTypeId, $afterContactTypeId);
-      $this->MWidgetSetting->save(json_encode($currentWidgetSettings['MWidgetSetting'], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT), false, array('style_settings'));
+      $currentWidgetSettings['MWidgetSetting']['style_settings'] = json_encode($this->getUpgradedWidgetSettings($saveData, $beforeContactTypeId, $afterContactTypeId), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+      $this->MWidgetSetting->save($currentWidgetSettings['MWidgetSetting'], false, array('style_settings'));
     } else {
-      throw Exception('ウィジェット設定の取得に失敗しました。 id: '.$targetCompanyId);
+      throw new Exception('ウィジェット設定の取得に失敗しました。 id: '.$targetCompanyId);
     }
   }
 
@@ -534,7 +548,7 @@ class ContractController extends AppController
       && strcmp($afterContactTypeId, C_CONTRACT_CHAT_PLAN_ID) === 0) {
       // シェアリング => スタンダード
       $val = array_merge($currentSettings, $widgetConfiguration['chat']);
-    } else if (strcmp($beforeContactTypeId, C_CONTRACT_FULL_PLAN_ID) === 0
+    } else if (strcmp($beforeContactTypeId, C_CONTRACT_SCREEN_SHARING_ID) === 0
       && strcmp($afterContactTypeId, C_CONTRACT_FULL_PLAN_ID) === 0) {
       // シェアリング => プレミアム
       $val = array_merge($currentSettings, $widgetConfiguration['chat']);
