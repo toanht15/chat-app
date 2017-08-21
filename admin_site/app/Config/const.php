@@ -22,10 +22,10 @@ define('C_AUTHORITY_NORMAL', 2); // 一般
 define('C_AUTHORITY_SUPER', 99); // ML管理者
 
 //契約プラン
-define('C_CONTRACT_FULL_PLAN', "{\"chat\": true, \"synclo\": true, \"document\": true, \"statistics\": true, \"chatLimitation\": true, \"exportHistory\": true}"); // プレミアムプラン
-define('C_CONTRACT_CHAT_BASIC_PLAN', "{\"chat\": true, \"synclo\": false, \"document\": false, \"statistics\": false, \"chatLimitation\": false, \"exportHistory\": false}"); // チャットスタンダードプラン
-define('C_CONTRACT_CHAT_PLAN', "{\"chat\": true, \"synclo\": false, \"document\": false, \"statistics\": true, \"chatLimitation\": true, \"exportHistory\": true}"); // チャットスタンダードプラン
-define('C_CONTRACT_SCREEN_SHARING_PLAN', "{\"chat\": false, \"synclo\": true, \"document\": true, \"statistics\": false, \"chatLimitation\": false, \"exportHistory\": false}"); // 画面同期プラン
+define('C_CONTRACT_FULL_PLAN', "{\"chat\": true, \"synclo\": true, \"document\": true, \"statistics\": true, \"chatLimitation\": true, \"exportHistory\": true, \"dictionaryCategory\": true}"); // プレミアムプラン
+define('C_CONTRACT_CHAT_BASIC_PLAN', "{\"chat\": true, \"synclo\": false, \"document\": false, \"statistics\": false, \"chatLimitation\": false, \"exportHistory\": false, \"dictionaryCategory\": false}"); // チャットベーシックプラン
+define('C_CONTRACT_CHAT_PLAN', "{\"chat\": true, \"synclo\": false, \"document\": false, \"statistics\": true, \"chatLimitation\": true, \"exportHistory\": true, \"dictionaryCategory\": true}"); // チャットスタンダードプラン
+define('C_CONTRACT_SCREEN_SHARING_PLAN', "{\"chat\": false, \"synclo\": true, \"document\": true, \"statistics\": false, \"chatLimitation\": false, \"exportHistory\": false, \"dictionaryCategory\": false}"); // 画面同期プラン
 
 //契約プランID
 define('C_CONTRACT_FULL_PLAN_ID',"1");
