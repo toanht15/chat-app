@@ -19,7 +19,7 @@
           <th style="width:14em;">トライアル / 本契約</th>
           <th style="width:8em;">開始日</th>
           <th style="width:8em;">終了日</th>
-          <th style="width:8em;">登録日時</th>
+          <th style="width:8em;">登録日</th>
         </tr>
       </thead>
       <?php foreach((array)$companyList as $key => $val): ?>
