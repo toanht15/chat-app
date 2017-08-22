@@ -4818,6 +4818,10 @@ ul.naviBtn {
         #outputPrivateOperatorCSV {
           padding: 0.5em 1.4em;
         }
+        /*別ウィンドウ画面CSVボタン*/
+        #outputEachItemOperatorCSV {
+          padding: 0.5em 1.4em;
+        }
       }
     }
   }
@@ -5333,24 +5337,6 @@ ul.naviBtn {
     #outputEachOperatorCSV {
       padding: 0.5em 1.4em;
     }
-    /*別ウィンドウ画面CSVボタン*/
-    #outputEachItemOperatorCSV {
-      width: 100px;
-      padding: 10px;
-      display: block;
-      margin: 0 auto;
-      text-align: center;
-      border-radius: .3em;
-    }
-    /*別ウィンドウ画面CSVボタン*/
-    #outputPrivateOperatorCSV {
-      width: 100px;
-      padding: 10px;
-      display: block;
-      margin: 0 auto;
-      text-align: center;
-      border-radius: .3em;
-    }
     /*別ウィンドウ画面閉じるボタン*/
     #action_btn_area {
       condition-bar {
@@ -5371,7 +5357,7 @@ ul.naviBtn {
     }
   }
 }
-
+/*別ウィンドウ画面color-bar*/
 #anotherWindow_color-bar {
   position: absolute;
   top: 0;
@@ -5382,7 +5368,7 @@ ul.naviBtn {
   z-index: $sidebar-z-index;
   overflow: hidden;
 }
-
+/*別ウィンドウ画面color-bar-right*/
 ul#anotherWindow_color-bar-right {
   margin: 0;
   li {

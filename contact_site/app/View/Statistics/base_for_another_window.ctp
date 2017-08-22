@@ -11,6 +11,10 @@
     <condition-bar>
   <?php if(empty($item)) { ?>
     <h1><?= $data['users'][0]['m_users']['display_name'] ?></h1>
+      <right-parts>
+        <a href="#" id="outputPrivateOperatorCSV" class="btn-shadow blueBtn">CSV出力</a>
+      </right-parts>
+    </condition-bar>
   <?php }
   else {
     if($item == 'ログイン件数') { ?>
@@ -33,13 +37,12 @@
     <?php }
     if($item == '有効率') { ?>
       <h1>チャット有効率</h1>
-    <?php }
-    } ?>
-
+    <?php } ?>
       <right-parts>
-        <a href="#" id="outputPrivateOperatorCSV" class="btn-shadow blueBtn">CSV出力</a>
+        <a href="#" id="outputEachItemOperatorCSV" class="btn-shadow blueBtn">CSV出力</a>
       </right-parts>
     </condition-bar>
+    <?php } ?>
   </div>
 
     <div id='statistics_content' class="p20trl" style="visibility:hidden;">
