@@ -298,6 +298,21 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     }, 500);
   }
 
+  function notify(message) {
+    var target = $('chat-receiver');
+    target.find('#receiveMessage').html(message);
+    target.show('fast').on('click', function(e){
+      e.stopImmediatePropagation();
+      scDown();
+      $(this).hide('slow');
+    });
+  }
+
+  function isShowChatReceiver() {
+    var target = $('#chatTalk');
+    return target.find('message-list').height() - target.height() - target.scrollTop() >= 55;
+  }
+
   // http://weathercook.hatenadiary.jp/entry/2013/12/02/062136
   sincloApp.factory('angularSocket', function ($rootScope) {
     return {
@@ -1648,7 +1663,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           var chat = JSON.parse(JSON.stringify(obj));
           chat.sort = Number(obj.sort);
           $scope.messageList.push(chat);
-          scDown(); // チャットのスクロール
+          if(isShowChatReceiver()) {
+            notify(obj.message); // チャットのスクロール
+          } else {
+            scDown();
+          }
         }
         if (Number(obj.messageType) === chatApi.messageType.company || Number(obj.messageType) === chatApi.messageType.sorry) {
           // 入力したメッセージを削除
@@ -1761,7 +1780,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       else {
         $scope.typingMessageRe[obj.tabId] = obj.message;
       }
-      scDown();
     });
 
     // =======================================
