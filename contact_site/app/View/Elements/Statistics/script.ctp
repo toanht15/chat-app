@@ -358,7 +358,6 @@ $(window).load(function(){
     targetObj.find('icon-annotation').css('display','none');
   });
 
-
   // DataTablesの検索時にツールチップを非表示にする
   tableObj.on('search',function(event){
     $('icon-annotation').css('display', 'none');

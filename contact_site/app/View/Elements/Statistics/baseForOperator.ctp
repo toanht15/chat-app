@@ -34,35 +34,35 @@
     </div><!-- #statistic_menu -->
 
     <div id='statistics_content' class="p20trl" style="visibility:hidden;">
-      <div id='opChatRequestTooltip' class="opTopCorrectionExplainTooltip">
+      <div id='opChatRequestTooltip' class="opThreeLineExplainTooltip">
         <icon-annotation style = "margin-top:-15px;">
           <ul>
             <li><span>サイト訪問者が送信したチャットを待機中のオペレーターが受信した件数(※初回メッセージのみカウント)</span></li>
           </ul>
         </icon-annotation>
       </div>
-      <div id='opChatResponseTooltip' class="opTopWidthCorrectionExplainTooltip">
+      <div id='opChatResponseTooltip' class="opOneLineExplainTooltip">
         <icon-annotation style = "margin-top:13px;">
           <ul>
             <li><span>オペレータが入室した件数</span></li>
           </ul>
         </icon-annotation>
       </div>
-      <div id='opChatEffectivenessTooltip' class="opExplainTooltip">
+      <div id='opChatEffectivenessTooltip' class="opTwoLineExplainTooltip">
         <icon-annotation>
           <ul>
             <li><span>成果が「有効」として登録された件数</span></li>
           </ul>
         </icon-annotation>
       </div>
-      <div id='opChatConsumerWaitAverageTimeTooltip' class="opTopCorrectionExplainTooltip">
+      <div id='opChatConsumerWaitAverageTimeTooltip' class="opThreeLineExplainTooltip">
         <icon-annotation style = "margin-top:-15px;">
           <ul>
             <li><span>サイト訪問者の初回メッセージを送信してから、オペレータがチャットに入室するまでの平均時間</span></li>
           </ul>
         </icon-annotation>
       </div>
-      <div id='opChatResponseAverageTimeTooltip' class="opTopCorrectionExplainTooltip">
+      <div id='opChatResponseAverageTimeTooltip' class="opThreeLineExplainTooltip">
         <icon-annotation style = "margin-top:-15px;">
           <ul>
             <li><span>サイト訪問者の初回メッセージを送信してから、オペレータが初回メッセージを送信するまでの平均時間</span></li>

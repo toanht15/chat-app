@@ -4815,6 +4815,7 @@ ul.naviBtn {
             background-color: #4c9db3;
           }
         }
+        /*別ウィンドウ画面CSVボタン*/
         #outputPrivateOperatorCSV {
           padding: 0.5em 1.4em;
         }
@@ -4977,7 +4978,7 @@ ul.naviBtn {
         float: right;
         margin-right: 89px;
     }
-
+    /*オペレータ画面クエッションマーク*/
     .opQuestionBalloon.opQuestionBalloonPosition6 {
       right: 7px;
       display: inline-block;
@@ -5069,8 +5070,8 @@ ul.naviBtn {
         }
       }
     }
-
-    .opExplainTooltip {
+    /*オペレータ画面クエッションマーク*/
+    .opTwoLineExplainTooltip {
       z-index: 10;
       position: absolute;
 
@@ -5129,7 +5130,7 @@ ul.naviBtn {
     }
 
 
-    .opTopCorrectionExplainTooltip {
+    .opThreeLineExplainTooltip {
       z-index: 10;
       position: absolute;
 
@@ -5187,7 +5188,7 @@ ul.naviBtn {
       }
     }
 
-    .opTopWidthCorrectionExplainTooltip {
+    .opOneLineExplainTooltip {
       z-index: 10;
       position: absolute;
 
