@@ -4790,6 +4790,38 @@ ul.naviBtn {
 
 /* 統計機能 */
 #statistic_idx {
+  /*別ウィンドウ画面タイトル*/
+  #statisticAnotherWindow_title{
+    border-bottom:0;
+    h1{
+      margin: 6px !important;
+      font-size: 20px;
+    }
+    condition-bar {
+      display: flex;
+      flex-direction: row;
+      -webkit-box-orient: horizontal;
+      -webkit-box-direction: normal;
+      -webkit-box-pack: justify;
+      justify-content: space-between;
+      right-parts {
+        padding-top: 10px;
+        .blueBtn {
+          background-color: #4bacc6;
+          border-color: #4bacc6;
+
+          &:hover {
+            border-color: #4c9db3;
+            background-color: #4c9db3;
+          }
+        }
+        #outputPrivateOperatorCSV {
+          padding: 0.5em 1.4em;
+        }
+      }
+    }
+  }
+
   condition-bar {
     display: flex;
     flex-direction: row;
@@ -5301,259 +5333,7 @@ ul.naviBtn {
     #outputEachOperatorCSV {
       padding: 0.5em 1.4em;
     }
-  }
-}
-
-/*統計別ウィンドウ画面*/
-#statisticAnotherWindow_idx {
-  margin: 10px 15px 0 15px;
-  #color-bar {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    background-color: $main-color;
-    height: 25px;
-    z-index: $sidebar-z-index;
-    overflow: hidden;
-  }
-  ul#color-bar-right {
-    margin: 0;
-    li {
-      height: 40px !important;
-      padding: 0 10px;
-      p {
-        margin-top:1px;
-        height: 20px!important;
-        color: #fff;
-        font-size: 13px;
-        padding: 3.5px 0 3.5px 0;
-      }
-    }
-  }
-  #statisticAnotherWindow_title{
-    border-bottom:0;
-    h1{
-      margin: 6px !important;
-      font-size: 20px;
-    }
-    condition-bar {
-      display: flex;
-      flex-direction: row;
-      -webkit-box-orient: horizontal;
-      -webkit-box-direction: normal;
-      -webkit-box-pack: justify;
-      justify-content: space-between;
-      right-parts {
-        padding-top: 10px;
-        .blueBtn {
-          background-color: #4bacc6;
-          border-color: #4bacc6;
-
-          &:hover {
-            border-color: #4c9db3;
-            background-color: #4c9db3;
-          }
-        }
-        #outputPrivateOperatorCSV {
-          padding: 0.5em 1.4em;
-        }
-      }
-    }
-  }
-
-  #action_btn_area {
-    condition-bar {
-      margin-top:45px;
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-
-      .blueBtn {
-        background-color: #4bacc6;
-        border-color: #4bacc6;
-
-        &:hover {
-          border-color: #4c9db3;
-          background-color: #4c9db3;
-        }
-      }
-    }
-  }
-
-  #statistics_content {
-    display: flex;
-    flex-direction: column;
-    height: calc(100vh - 100px);
-
-    > contents {
-      flex: 1;
-    }
-
-    form#THistoryForChatForm {
-      margin-bottom: 0;
-    }
-
-    div#statistics_table_filter {
-      padding-bottom: 20px;
-    }
-
-    tr.odd {
-      height: 40px !important;
-    }
-
-    tr.even {
-      height: 40px !important;
-    }
-
-    .thMinWidth {
-      min-width: 170px;
-    }
-
-    .thMinWidthTimelyForOperator {
-      min-width: 50px;
-      text-decoration: underline;
-      cursor:pointer;
-   }
-
-   .userName {
-    text-decoration: underline;
-    cursor:pointer;
-   }
-
-    .thMinWidthDayly {
-      min-width: 60px;
-    }
-
-    .thMinWidthTimely {
-      min-width: 50px;
-    }
-
-    #statistics_table_wrapper {
-      box-sizing: content-box!important;
-
-      div.DTFC_LeftHeadWrapper {
-        border-right: solid 1px #8B8B8B;
-      }
-
-      table.dataTable.no-footer {
-        border-bottom: none!important;
-      }
-
-      div.dataTables_scrollBody {
-        border-bottom: none!important;
-      }
-
-      div.DTFC_LeftBodyWrapper {
-        border-right: solid 1px #8B8B8B;
-      }
-
-      & tr {
-        th:nth-last-child(2) {
-          border-right: none !important;
-        }
-
-        th:last-child:not(.thMinWidth) {
-          border-left: solid 1px #8B8B8B!important;
-        }
-
-        td:last-child:not(.tooltip)  {
-          border-left: solid 1px #8B8B8B!important;
-        }
-      }
-
-      .highlight {
-        background-color: #EBF6F9!important;
-      }
-    }
-
-    .questionBalloon.questionBalloonPosition6 {
-        float: right;
-        margin-right: 89px;
-    }
-
-    .questionBalloon.questionBalloonPosition7 {
-        float: right;
-        margin-right: 77px;
-    }
-
-    .questionBalloon.questionBalloonPosition8 {
-      float: right;
-      margin-right: 65px;
-    }
-
-    .questionBalloon.questionBalloonPosition8s {
-      float: right;
-      margin-right: 65px;
-    }
-
-
-    .questionBalloon.questionBalloonPosition9 {
-        float: right;
-        margin-right: 53px;
-    }
-
-    .questionBalloon.questionBalloonPosition11 {
-      float: right;
-      margin-right: 29px;
-    }
-
-    .questionBalloon.questionBalloonPosition13 {
-      float: right;
-      margin-right: 5px;
-    }
-
-    .explainTooltip {
-      z-index: 10;
-      position: absolute;
-
-        icon-annotation {
-        width: 16em;
-        height: 2.1em;
-        display: none;
-
-        ul {
-            margin: 0;
-            padding: 0;
-            text-align: left;
-            background-color: #FFF;
-            box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
-            padding: 0.5em;
-            font-weight: normal;
-            border-radius: 5px;
-
-          img {
-            margin-bottom: -0.2em;
-            width:1em;
-            height:1em;
-          }
-
-          span {
-            font-size: 0.9em;
-          }
-        }
-      }
-    }
-
-    .dataTables_wrapper .dataTables_scroll div.dataTables_scrollBody > table > tbody > tr > td {
-      vertical-align: middle;
-      text-align: center;
-    }
-
-    .questionBalloon {
-      position: relative;
-
-      icon {
-        border-radius: 20px;
-        padding: 0.1em;
-        width: 1.5em;
-        height: 1.5em;
-        font-size: 0.9em!important;
-      }
-    }
-    .tipso_style {
-      border-bottom: 0!important;
-    }
+    /*別ウィンドウ画面CSVボタン*/
     #outputEachItemOperatorCSV {
       width: 100px;
       padding: 10px;
@@ -5562,6 +5342,7 @@ ul.naviBtn {
       text-align: center;
       border-radius: .3em;
     }
+    /*別ウィンドウ画面CSVボタン*/
     #outputPrivateOperatorCSV {
       width: 100px;
       padding: 10px;
@@ -5570,13 +5351,23 @@ ul.naviBtn {
       text-align: center;
       border-radius: .3em;
     }
-    #closeWindow {
-      width: 100px;
-      padding: 10px;
-      display: block;
-      margin: 0 auto;
-      text-align: center;
-      border-radius: .3em;
+    /*別ウィンドウ画面閉じるボタン*/
+    #action_btn_area {
+      condition-bar {
+        margin-top:45px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+
+        #closeWindow {
+          width: 100px;
+          padding: 10px;
+          display: block;
+          margin: 0 auto;
+          text-align: center;
+          border-radius: .3em;
+        }
+      }
     }
   }
 }

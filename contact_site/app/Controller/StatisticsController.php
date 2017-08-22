@@ -34,6 +34,7 @@ class StatisticsController extends AppController {
     parent::beforeFilter();
     $ret = $this->MCompany->read(null, $this->userInfo['MCompany']['id']);
     $orList = [];
+    //除外IPアドレス
     if ( !empty($ret['MCompany']['exclude_ips']) ) {
       foreach( explode("\n", trim($ret['MCompany']['exclude_ips'])) as $v ){
         if ( preg_match("/^[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}$/", trim($v)) ) {
@@ -200,39 +201,30 @@ class StatisticsController extends AppController {
     //オペレータ全員対象
     $userId = 0;
 
-    $this->log('オペレータスタート',LOG_DEBUG);
-    $this->log('チャットリクエスト',LOG_DEBUG);
     //チャットリクエスト件数
     $requestNumber = $this->getSummaryOperatorRequestInfo($date_format,$userId,$correctStartDate,$correctEndDate);
     $allData = [];
     $allData['requestNumber'] = $requestNumber;
 
-    $this->log('ログインスタート',LOG_DEBUG);
     //ログイン件数
     $loginNumber = $this->getSummaryLoginOperatorInfo($date_format,$userId,$correctStartDate,$correctEndDate);
     $allData['loginNumber'] = $loginNumber;
-    $this->log('ログイン終了',LOG_DEBUG);
-    $this->log('チャット応対スタート',LOG_DEBUG);
+
     //チャット応対件数
     $responseNumber = $this->getSummaryOperatorResponseInfo($date_format,$userId,$correctStartDate,$correctEndDate);
     $allData['responseNumber'] = $responseNumber;
-    $this->log('チャット応対終了',LOG_DEBUG);
-    $this->log('チャット有効スタート',LOG_DEBUG);
+
     //チャット有効件数
     $effectivenessNumber = $this->getSummaryOperatorEffectivenessInfo($date_format,$userId,$correctStartDate,$correctEndDate);
     $allData['effectivenessNumber'] = $effectivenessNumber;
-    $this->log('チャット有効終了',LOG_DEBUG);
-    $this->log('平均消費者待機時間時間スタート',LOG_DEBUG);
+
     //平均消費者待機時間時間
     $avgEnteringRommTime = $this->getSummaryOperatorAvgEnteringRommInfo($date_format,$userId,$correctStartDate,$correctEndDate);
     $allData['avgEnteringRommTime'] = $avgEnteringRommTime;
-     $this->log('平均消費者待機時間時間終了',LOG_DEBUG);
-    $this->log('平均応答時間スタート',LOG_DEBUG);
+
     //平均応答時間
     $responseTime = $this->getSummaryOperatorAvgResponseInfo($date_format,$userId,$correctStartDate,$correctEndDate);
     $allData['responseTime'] = $responseTime;
-    $this->log('平均応答時間終了',LOG_DEBUG);
-    $this->log('sql終了',LOG_DEBUG);
 
     $divideOperatorDatas =$this->divideOperatorDatas($users,$allData);
     return $divideOperatorDatas;
@@ -241,6 +233,7 @@ class StatisticsController extends AppController {
   //オペレータごとのレポート作成
   public function divideOperatorDatas($users,$allData) {
     foreach($users as $k => $v){
+      //チャットリクエスト件数
       if(!empty($allData['requestNumber'])) {
         foreach($allData['requestNumber'] as $k2 => $v2) {
           if($v['m_users']['id'] == $v2['thcau']['userId']) {
@@ -248,7 +241,7 @@ class StatisticsController extends AppController {
           }
         }
       }
-
+      //ログイン件数
       if(!empty($allData['loginNumber'])) {
         foreach($allData['loginNumber'] as $k2 => $v2) {
           if($v['m_users']['id'] == $v2['login']['userId']) {
@@ -264,7 +257,7 @@ class StatisticsController extends AppController {
           }
         }
       }
-
+      //有効件数,有効率
       if(!empty($allData['effectivenessNumber'])) {
         foreach($allData['effectivenessNumber'] as $k2 => $v2) {
           if(!empty($v2) and !empty($users[$k]['responseNumber'])){
@@ -281,7 +274,7 @@ class StatisticsController extends AppController {
       else {
         $users[$k]['effectivenessRate'] = self::LABEL_INVALID;
       }
-
+      //平均消費者待機時間
       if(!empty($allData['avgEnteringRommTime'])) {
         $allAvgEnteringRommTime = 0;
         $totalConsumerWaitingAvgTimeDataCnt = 0;
@@ -303,7 +296,7 @@ class StatisticsController extends AppController {
       else{
         $users[$k]['avgEnteringRommTime'] = '00:00:00';
       }
-
+      //平均応答時間
       if(!empty($allData['responseTime'])) {
         $allAvgResponseTime = 0;
         $totalConsumerWaitingAvgTimeDataCnt = 0;
@@ -335,7 +328,6 @@ class StatisticsController extends AppController {
    * */
   public function baseForAnotherWindow() {
     if(!array_key_exists('url',$this->params)) {
-      $this->log('ああああああああああああ',LOG_DEBUG);
       // エラー処理
       $errorMessage = '不正なアクセスです';
       $this->set('errorMessage',$errorMessage);
@@ -347,6 +339,7 @@ class StatisticsController extends AppController {
     if(!empty($this->params['url']['item'])) {
       $item = $this->params['url']['item'];
     }
+    //m_companies_idチェック
     if(isset($userId) && isset($this->userInfo['MCompany']['id'])) {
       $users = $this->getUserInfo('userId',$userId);
       if($this->userInfo['MCompany']['id'] !== $users[0]['m_users']['m_companies_id']) {
@@ -356,10 +349,9 @@ class StatisticsController extends AppController {
         return;
       }
     }
+    //m_companies_idチェック
    else if(isset($item) && isset($this->userInfo['MCompany']['id'])) {
-    $this->log('iiiiiiiiiiiii',LOG_DEBUG);
-     $users = $this->getUserInfo('item',0);
-     $this->log($users,LOG_DEBUG);
+     $users = $this->getUserInfo('item',null);
       if($this->userInfo['MCompany']['id'] !== $users[0]['m_users']['m_companies_id']) {
          // エラー処理
         $errorMessage = '該当するユーザーがいません';
@@ -368,7 +360,6 @@ class StatisticsController extends AppController {
       }
     }
     else {
-      $this->log('ううううううううううううううう',LOG_DEBUG);
       // エラー処理
       $errorMessage = '不正なアクセスです';
       $this->set('errorMessage',$errorMessage);
@@ -378,24 +369,27 @@ class StatisticsController extends AppController {
     $timeType = $this->params['url']['type'];
     $dateType = $this->params['url']['target'];
 
+    //時別の場合
     if($timeType=='daily') {
       $type = $dateType;
       $timeInfo = $this->calculateOperatorHourlyData($type);
     }
+    //日別の場合
     else if($timeType=='monthly') {
       $type = $dateType;
       $timeInfo = $this->calculateOperatorDaylyData($type);
     }
-
+    //月別の場合
     else if($timeType=='yearly') {
       $type = $dateType;
       $timeInfo = $this->calculateOperatorMonthlyData($type,'another');
     }
-
+    //オペレータ1人の情報の場合
     if(!empty($userId)) {
       $data = $this->getPrivateOperatorInfo($users,$timeInfo['anotherWindowDateFormat'],$timeInfo['correctStartDate'],$timeInfo['correctEndDate'],
           $timeInfo['baseData'],$timeInfo['baseTimeData'],$userId);
     }
+    //各項目の情報の場合
     else {
       $data = $this->getEachAllOperatorInfo($users,$timeInfo['anotherWindowDateFormat'],$timeInfo['correctStartDate'],$timeInfo['correctEndDate'],
           $timeInfo['baseData'],$timeInfo['baseTimeData'],$item);
@@ -409,7 +403,9 @@ class StatisticsController extends AppController {
     $this->set('daylyEndDate',date("d",strtotime('last day of' .$type)));
   }
 
+  //オペレータ情報取得
   public function getUserInfo($type,$userId) {
+    //オペレータ1人の情報取得の場合
     if($type == 'userId') {
       $users = "SELECT id,m_companies_id,display_name FROM m_users
       WHERE
@@ -422,7 +418,10 @@ class StatisticsController extends AppController {
 
       return $users;
     }
+    //各項目の情報取得の場合
     else if($type == 'item') {
+      //削除対象ではないフラグ
+      $noDelFlg = 0;
       $users = "SELECT id,m_companies_id,display_name FROM m_users
       WHERE
         m_users.m_companies_id = ?
@@ -430,7 +429,7 @@ class StatisticsController extends AppController {
         m_users.del_flg = ?";
 
       $users = $this->MUser->query($users,
-      array($this->userInfo['MCompany']['id'],$userId));
+      array($this->userInfo['MCompany']['id'],$noDelFlg));
 
       return $users;
     }
@@ -448,7 +447,6 @@ class StatisticsController extends AppController {
     $avgForcalculation = [];
     $responseAvgTime = [];
 
-    $this->log('チャットリクエスト件数スタート',LOG_DEBUG);
     //チャットリクエスト件数
     $requestNumber = $this->getSummaryOperatorRequestInfo($date_format,$userId,$correctStartDate,$correctEndDate);
     foreach($requestNumber as $k => $v) {
@@ -457,9 +455,8 @@ class StatisticsController extends AppController {
     $requestNumberData = array_merge($baseData,$requestNumberData);
     //チャットリクエスト件数合計値
     $allRequestNumberData = array_sum($requestNumberData);
-    $this->log('チャットリクエスト件数終了',LOG_DEBUG);
 
-    $this->log('ログイン件数スタート',LOG_DEBUG);
+    //ログイン件数
     $loginNumber = $this->getSummaryLoginOperatorInfo($date_format,$userId,$correctStartDate,$correctEndDate);
     foreach($loginNumber as $k => $v) {
       $loginNumberData =  $loginNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : intval($v[0]['login_count']));
@@ -467,9 +464,7 @@ class StatisticsController extends AppController {
     $loginNumberData = array_merge($baseData,$loginNumberData);
     //ログイン件数合計値
     $allLoginNumberData = array_sum($loginNumberData);
-    $this->log('ログイン件数終了',LOG_DEBUG);
 
-    $this->log('チャット応対件数スタート',LOG_DEBUG);
     $responseNumber = $this->getSummaryOperatorResponseInfo($date_format,$userId,$correctStartDate,$correctEndDate);
     foreach($responseNumber as $k => $v) {
       $responseNumberData =  $responseNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : intval($v[0]['response_count']));
@@ -477,9 +472,7 @@ class StatisticsController extends AppController {
     $responseNumberData = array_merge($baseData,$responseNumberData);
     //チャット応対件数合計値
     $allResponseNumberData = array_sum($responseNumberData);
-    $this->log('チャット応対件数終了',LOG_DEBUG);
 
-    $this->log('チャット有効件数、有効率スタート',LOG_DEBUG);
     //チャット有効件数
     $effectivenessNumber = $this->getSummaryOperatorEffectivenessInfo($date_format,$userId,$correctStartDate,$correctEndDate);
     foreach($effectivenessNumber as $k => $v) {
@@ -515,9 +508,7 @@ class StatisticsController extends AppController {
       // リクエストチャットが0件の場合（無効データ）
       $allEffectivenessRate = self::LABEL_INVALID;
     }
-    $this->log('チャット有効件数、有効率終了',LOG_DEBUG);
 
-    $this->log('平均入室時間スタート',LOG_DEBUG);
     //平均入室時間
     $avgEnteringRommTime = $this->getSummaryOperatorAvgEnteringRommInfo($date_format,$userId,$correctStartDate,$correctEndDate);
 
@@ -544,9 +535,7 @@ class StatisticsController extends AppController {
       $allAvgEnteringRommTimeData = array_sum($avgForcalculation)/$totalConsumerWaitingAvgTimeDataCnt;
     }
     $allAvgEnteringRommTimeData = $this->changeTimeFormat($allAvgEnteringRommTimeData);
-    $this->log('平均入室時間終了',LOG_DEBUG);
 
-    $this->log('平均応答時間スタート',LOG_DEBUG);
     //平均応答時間
     $responseTime = $this->getSummaryOperatorAvgResponseInfo($date_format,$userId,$correctStartDate,$correctEndDate);
 
@@ -576,7 +565,6 @@ class StatisticsController extends AppController {
       $allResponseAvgTimeData = array_sum($avgForcalculation)/$totalResponseAvgTimeDataCnt;
     }
     $allResponseAvgTimeData = $this->changeTimeFormat($allResponseAvgTimeData);
-    $this->log('平均応答時間終了',LOG_DEBUG);
 
     $data = ['users' => $users,'loginNumberData' => $loginNumberData,'allLoginNumberData' => $allLoginNumberData,
     'requestNumberData' => $requestNumberData,'allRequestNumberData' => $allRequestNumberData,
@@ -599,7 +587,7 @@ class StatisticsController extends AppController {
         login.m_companies_id = ?
       AND
         login.created between ? and ?";
-
+      //除外IP処理
       $loginNumber = $this->exclusionIpAddress($loginNumber,'login');
       $loginNumber .= ' group by date,m_users_id';
       $loginNumber = $this->TLogin->query($loginNumber,
@@ -616,6 +604,7 @@ class StatisticsController extends AppController {
         login.m_users_id = ?
       AND
         login.created between ? and ?";
+      //除外IP処理
       $loginNumber = $this->exclusionIpAddress($loginNumber,'login');
       $loginNumber .= ' group by date,m_users_id';
       $loginNumber = $this->TLogin->query($loginNumber,
@@ -638,6 +627,7 @@ class StatisticsController extends AppController {
         thcau.t_history_chat_logs_id = thcl.id
       AND
         thcl.t_histories_id = th.id";
+      //除外IP処理
       $requestNumber = $this->exclusionIpAddress($requestNumber,'th');
       $requestNumber .= ' group by date,userId';
 
@@ -658,6 +648,7 @@ class StatisticsController extends AppController {
           thcl.t_histories_id = th.id
         AND
           thcau.m_users_id = ?";
+        //除外IP処理
         $requestNumber = $this->exclusionIpAddress($requestNumber,'th');
         $requestNumber .= 'group by date,userId';
 
@@ -682,7 +673,7 @@ class StatisticsController extends AppController {
         thcl.message_type = ?
       AND
         th.access_date between ? and ?";
-
+      //除外IP処理
       $responseNumber = $this->exclusionIpAddress($responseNumber,'th');
       $responseNumber .= 'group by date,m_users_id';
       $responseNumber = $this->THistory->query($responseNumber,
@@ -704,7 +695,7 @@ class StatisticsController extends AppController {
         thcl.message_type = ?
       AND
       th.access_date between ? and ?";
-
+      //除外IP処理
       $responseNumber = $this->exclusionIpAddress($responseNumber,'th');
       $responseNumber .= 'group by date,m_users_id';
       $responseNumber = $this->THistory->query($responseNumber,array($date_format,$this->userInfo['MCompany']['id'],
@@ -727,7 +718,7 @@ class StatisticsController extends AppController {
         thcl.t_histories_id = th.id
       AND
         th.access_date between ? and ?";
-
+      //除外IP処理
       $effectivenessNumber = $this->exclusionIpAddress($effectivenessNumber,'th');
       $effectivenessNumber .= 'group by date,m_users_id';
       $effectivenessNumber = $this->THistory->query($effectivenessNumber,array($date_format,$this->chatMessageType['achievementFlg']['effectiveness'],
@@ -747,7 +738,7 @@ class StatisticsController extends AppController {
         thcl.m_users_id = ?
       AND
         th.access_date between ? and ?";
-
+      //除外IP処理
       $effectivenessNumber = $this->exclusionIpAddress($effectivenessNumber,'th');
       $effectivenessNumber .= 'group by date,m_users_id';
       $effectivenessNumber = $this->THistory->query($effectivenessNumber,array($date_format,$userId,$this->chatMessageType['achievementFlg']['effectiveness'],
@@ -779,7 +770,7 @@ class StatisticsController extends AppController {
         thcl.message_distinction = thcl2.message_distinction
       AND
         th.access_date between ? and ?";
-
+      //除外IP処理
       $avgEnteringRommTime = $this->exclusionIpAddress($avgEnteringRommTime,'th');
       $avgEnteringRommTime .= 'group by date,m_users_id';
 
@@ -809,7 +800,7 @@ class StatisticsController extends AppController {
         thcl2.m_users_id = ?
       AND
         th.access_date between ? and ?";
-
+      //除外IP処理
       $avgEnteringRommTime = $this->exclusionIpAddress($avgEnteringRommTime,'th');
       $avgEnteringRommTime .= 'group by date,m_users_id';
 
@@ -844,6 +835,7 @@ class StatisticsController extends AppController {
         thcl.message_distinction = thcl2.message_distinction
       AND
         th.access_date between ? and ?";
+      //除外IP処理
       $responseTime = $this->exclusionIpAddress($responseTime,'th');
       $responseTime .= 'group by date,m_users_id';
 
@@ -873,6 +865,7 @@ class StatisticsController extends AppController {
         thcl2.m_users_id = ?
       AND
         th.access_date between ? and ?";
+      //除外IP処理
       $responseTime = $this->exclusionIpAddress($responseTime,'th');
       $responseTime .= 'group by date,m_users_id';
 
@@ -885,53 +878,51 @@ class StatisticsController extends AppController {
   public function getEachAllOperatorInfo($users,$date_format,$correctStartDate,$correctEndDate,$baseData,$baseTimeData,$item) {
     //各項目オペレータ情報取得
     //オペレータ情報取得
-    $this->log('オペレータ各項目データスタート',LOG_DEBUG);
     //全オペレータ検索
-    $userId = 0;
+    $allOperatorInfo = 0;
     //ログイン件数
     $this->log('ログイン件数スタート',LOG_DEBUG);
     if($item == 'login') {
-      $users = $this->getAllLoginOperatorInfo($date_format,$userId,
+      $users = $this->getAllLoginOperatorInfo($date_format,$allOperatorInfo,
         $correctStartDate,$correctEndDate,$baseData,$users);
       $this->set('item','ログイン件数');
     }
     //リクエスト件数
     if($item == 'requestChat') {
-      $users = $this->getAllRequestOperatorInfo($date_format,$userId,
+      $users = $this->getAllRequestOperatorInfo($date_format,$allOperatorInfo,
         $correctStartDate,$correctEndDate,$baseData,$users);
       $this->set('item','リクエスト件数');
     }
     //応答件数
     if($item == 'responseChat') {
-      $users = $this->getAllResponseOperatorInfo($date_format,$userId,
+      $users = $this->getAllResponseOperatorInfo($date_format,$allOperatorInfo,
         $correctStartDate,$correctEndDate,$baseData,$users);
       $this->set('item','応対件数');
     }
     //有効件数
     if($item == 'effectiveness') {
-      $users = $this->getAllEffectivenessOperatorInfo($date_format,$userId,
+      $users = $this->getAllEffectivenessOperatorInfo($date_format,$allOperatorInfo,
         $correctStartDate,$correctEndDate,$baseData,$users);
       $this->set('item','有効件数');
     }
     //平均消費者待機時間
     if($item == 'avgConsumersWaitTime') {
-      $users = $this->getAllAvgEnteringRommTimeOperatorInfo($date_format,$userId,
+      $users = $this->getAllAvgEnteringRommTimeOperatorInfo($date_format,$allOperatorInfo,
         $correctStartDate,$correctEndDate,$baseTimeData,$users);
       $this->set('item','平均消費者待機時間');
     }
     //平均応答時間
     if($item == 'avgResponseTime') {
-      $users = $this->getAllResponseAvgTimeOperatorInfo($date_format,$userId,
+      $users = $this->getAllResponseAvgTimeOperatorInfo($date_format,$allOperatorInfo,
         $correctStartDate,$correctEndDate,$baseTimeData,$users);
       $this->set('item','平均応答時間');
     }
     //有効率
     if($item == 'effectivenessRate') {
-      $users = $this->getAllEffectivenessRateOperatorInfo($date_format,$userId,
+      $users = $this->getAllEffectivenessRateOperatorInfo($date_format,$allOperatorInfo,
         $correctStartDate,$correctEndDate,$baseData,$users);
       $this->set('item','有効率');
     }
-    $this->log('オペレータ各項目終了',LOG_DEBUG);
     return ['users' => $users];
   }
 
