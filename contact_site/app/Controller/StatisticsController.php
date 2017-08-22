@@ -199,31 +199,31 @@ class StatisticsController extends AppController {
     $users = $this->MUser->query($users,
       array($this->userInfo['MCompany']['id'],0));
     //オペレータ全員対象
-    $userId = 0;
+    $allOperatorInfo = 0;
 
     //チャットリクエスト件数
-    $requestNumber = $this->getSummaryOperatorRequestInfo($date_format,$userId,$correctStartDate,$correctEndDate);
+    $requestNumber = $this->getSummaryOperatorRequestInfo($date_format,$allOperatorInfo,$correctStartDate,$correctEndDate);
     $allData = [];
     $allData['requestNumber'] = $requestNumber;
 
     //ログイン件数
-    $loginNumber = $this->getSummaryLoginOperatorInfo($date_format,$userId,$correctStartDate,$correctEndDate);
+    $loginNumber = $this->getSummaryLoginOperatorInfo($date_format,$allOperatorInfo,$correctStartDate,$correctEndDate);
     $allData['loginNumber'] = $loginNumber;
 
     //チャット応対件数
-    $responseNumber = $this->getSummaryOperatorResponseInfo($date_format,$userId,$correctStartDate,$correctEndDate);
+    $responseNumber = $this->getSummaryOperatorResponseInfo($date_format,$allOperatorInfo,$correctStartDate,$correctEndDate);
     $allData['responseNumber'] = $responseNumber;
 
     //チャット有効件数
-    $effectivenessNumber = $this->getSummaryOperatorEffectivenessInfo($date_format,$userId,$correctStartDate,$correctEndDate);
+    $effectivenessNumber = $this->getSummaryOperatorEffectivenessInfo($date_format,$allOperatorInfo,$correctStartDate,$correctEndDate);
     $allData['effectivenessNumber'] = $effectivenessNumber;
 
     //平均消費者待機時間時間
-    $avgEnteringRommTime = $this->getSummaryOperatorAvgEnteringRommInfo($date_format,$userId,$correctStartDate,$correctEndDate);
+    $avgEnteringRommTime = $this->getSummaryOperatorAvgEnteringRommInfo($date_format,$allOperatorInfo,$correctStartDate,$correctEndDate);
     $allData['avgEnteringRommTime'] = $avgEnteringRommTime;
 
     //平均応答時間
-    $responseTime = $this->getSummaryOperatorAvgResponseInfo($date_format,$userId,$correctStartDate,$correctEndDate);
+    $responseTime = $this->getSummaryOperatorAvgResponseInfo($date_format,$allOperatorInfo,$correctStartDate,$correctEndDate);
     $allData['responseTime'] = $responseTime;
 
     $divideOperatorDatas =$this->divideOperatorDatas($users,$allData);
@@ -436,7 +436,7 @@ class StatisticsController extends AppController {
   }
 
   //各オペレータ情報
-  public function getPrivateOperatorInfo($users, $date_format,$correctStartDate,$correctEndDate,
+  public function getPrivateOperatorInfo($users,$date_format,$correctStartDate,$correctEndDate,
     $baseData,$baseTimeData,$userId) {
     $requestNumberData = [];
     $loginNumberData = [];
@@ -2224,9 +2224,16 @@ class StatisticsController extends AppController {
       }
       if(empty($v['effectivenessRate'])) {
         $operatorInfo[] = 0;
+        $checkData = ' %';
       }
       else {
-        $operatorInfo[] = $v['effectivenessRate'];
+        if(is_numeric($v['effectivenessRate'])) {
+          $checkData = ' %';
+        }
+        else {
+          $checkData = '';
+        }
+        $operatorInfo[] = $v['effectivenessRate'].$checkData;
       }
       $csv[] = $operatorInfo;
     }
@@ -2243,13 +2250,15 @@ class StatisticsController extends AppController {
       $csv[] = $this->getDateTimeInfo('月別',$requestData['date']);
       $users = $this->calculateOperatorMonthlyData($requestData['date'],'another');
       if(!empty($requestData['item'])) {
+        $user = $this->getUserInfo('item',null);
         //各項目オペレータ情報取得
-        $csvData = $this->getEachAllOperatorInfo($users['anotherWindowDateFormat'],$users['correctStartDate'],$users['correctEndDate'],
+        $csvData = $this->getEachAllOperatorInfo($user,$users['anotherWindowDateFormat'],$users['correctStartDate'],$users['correctEndDate'],
           $users['baseData'],$users['baseTimeData'],$requestData['item']);
       }
       if(!empty($requestData['id'])) {
+        $user = $this->getUserInfo('userId',$requestData['id']);
         //オペレータ1人の情報取得
-        $csvData = $this->getPrivateOperatorInfo($users['anotherWindowDateFormat'],$users['correctStartDate'],$users['correctEndDate'],
+        $csvData = $this->getPrivateOperatorInfo($user,$users['anotherWindowDateFormat'],$users['correctStartDate'],$users['correctEndDate'],
           $users['baseData'],$users['baseTimeData'],$requestData['id']);
       }
     }
@@ -2258,13 +2267,15 @@ class StatisticsController extends AppController {
       $csv[] = $this->getDateTimeInfo('日別',$requestData['date']);
       $users = $this->calculateOperatorDaylyData($requestData['date']);
       if(!empty($requestData['item'])) {
+        $user = $this->getUserInfo('item',null);
         //各項目オペレータ情報取得
-        $csvData = $this->getEachAllOperatorInfo($users['anotherWindowDateFormat'],$users['correctStartDate'],$users['correctEndDate'],
+        $csvData = $this->getEachAllOperatorInfo($user,$users['anotherWindowDateFormat'],$users['correctStartDate'],$users['correctEndDate'],
           $users['baseData'],$users['baseTimeData'],$requestData['item']);
       }
       if(!empty($requestData['id'])) {
+        $user = $this->getUserInfo('userId',$requestData['id']);
         //オペレータ1人の情報取得
-        $csvData = $this->getPrivateOperatorInfo($users['anotherWindowDateFormat'],$users['correctStartDate'],$users['correctEndDate'],
+        $csvData = $this->getPrivateOperatorInfo($user,$users['anotherWindowDateFormat'],$users['correctStartDate'],$users['correctEndDate'],
           $users['baseData'],$users['baseTimeData'],$requestData['id']);
       }
     }
@@ -2273,13 +2284,15 @@ class StatisticsController extends AppController {
       $csv[] = $this->getDateTimeInfo('時別',$requestData['date']);
       $users = $this->calculateOperatorHourlyData($requestData['date']);
       if(!empty($requestData['item'])) {
+        $user = $this->getUserInfo('item',null);
         //各項目オペレータ情報取得
-        $csvData = $this->getEachAllOperatorInfo($users['anotherWindowDateFormat'],$users['correctStartDate'],$users['correctEndDate'],
+        $csvData = $this->getEachAllOperatorInfo($user,$users['anotherWindowDateFormat'],$users['correctStartDate'],$users['correctEndDate'],
           $users['baseData'],$users['baseTimeData'],$requestData['item']);
       }
       if(!empty($requestData['id'])) {
+        $user = $this->getUserInfo('userId',$requestData['id']);
         //オペレータ1人の情報取得
-        $csvData = $this->getPrivateOperatorInfo($users['anotherWindowDateFormat'],$users['correctStartDate'],$users['correctEndDate'],
+        $csvData = $this->getPrivateOperatorInfo($user,$users['anotherWindowDateFormat'],$users['correctStartDate'],$users['correctEndDate'],
           $users['baseData'],$users['baseTimeData'],$requestData['id']);
       }
     }
