@@ -1,14 +1,14 @@
 <?= $this->element('Statistics/datepicker') ?>
 <?= $this->element('Statistics/script') ?>
+
 <div id='statisticAnotherWindow_idx'>
 
-<div id="color-bar" class="card-shadow">
-    <ul id="color-bar-right" class="tCenter">
-      <li class="tCenter"><p>時間別サマリ</p></li>
-    </ul>
-</div>
+  <div id="sincloApp">
+    <div id='statisticAnotherWindow_title'>
+    <?php if (!empty($errorMessage)) echo "<li class='error-message'>" . h($errorMessage) . "</li>";
+    else { ?>
 
-  <div id='statisticAnotherWindow_title'>
+    <condition-bar>
   <?php if(empty($item)) { ?>
     <h1><?= $data['users'][0]['m_users']['display_name'] ?></h1>
   <?php }
@@ -36,9 +36,11 @@
     <?php }
     } ?>
 
+      <right-parts>
+        <a href="#" id="outputPrivateOperatorCSV" class="btn-shadow blueBtn">CSV出力</a>
+      </right-parts>
+    </condition-bar>
   </div>
-
-<div id="sincloApp">
 
     <div id='statistics_content' class="p20trl" style="visibility:hidden;">
       <div id='opChatRequestTooltip' class="explainTooltip">
@@ -88,6 +90,7 @@
 
     <table id="statistics_table" class="display" cellspacing="0" width = "100%">
       <thead>
+      <!-- /* 月別の場合 */ -->
         <?php if($date == 'eachOperatorYearly') {
           $start = 1;
           $end = 12; ?>
@@ -99,10 +102,10 @@
             <th class="thMinWidthDayly">合計・平均</th>
           </tr>
         <?php } ?>
+      <!-- /* 日別の場合 */ -->
         <?php if($date == 'eachOperatorMonthly') {
           $start = 1;
-          $end = $daylyEndDate;
-        ?>
+          $end = $daylyEndDate; ?>
           <tr>
             <th class="thMinWidth">統計項目 / 日別</th>
             <?php for ($i = $start; $i <= $end; $i++) { ?>
@@ -111,6 +114,7 @@
             <th class="thMinWidthDayly">合計・平均</th>
           </tr>
         <?php } ?>
+      <!-- /* 時別の場合 */ -->
         <?php if($date == 'eachOperatorDaily') {
           $start = 0;
           $end = 23; ?>
@@ -125,20 +129,22 @@
       </thead>
     <tbody>
       <?php
-        if($date == 'eachOperatorDaily') {
-          $days ='';
-          $seconds = ':00';
-        }
-        else if($date == 'eachOperatorYearly' or $date == 'eachOperatorMonthly') {
-          $days = $type.'-';
-          $seconds = '';
-        }
-        if(!empty($item)) {
+      if($date == 'eachOperatorDaily') {
+        $days ='';
+        $seconds = ':00';
+      }
+      else if($date == 'eachOperatorYearly' or $date == 'eachOperatorMonthly') {
+        $days = $type.'-';
+        $seconds = '';
+      }
+      //各項目ごと画面の場合
+      if(!empty($item)) {
+        //項目がログイン件数の場合
         if($item == 'ログイン件数') {
       ?>
         <?php foreach($data['users'] as $k => $v) { ?>
         <tr>
-          <td><?= $v['m_users']['display_name'] ?></td>
+          <td><?= $v['display_name'] ?></td>
           <?php for ($i = $start; $i <= $end; $i++) {
             if(is_int($v['loginNumber'][$days.sprintf("%02d",$i).$seconds]) == 'true') { ?>
               <td><?php echo number_format($v['loginNumber'][$days.sprintf("%02d",$i).$seconds]) ?></td>
@@ -151,11 +157,12 @@
         </tr>
         <?php } ?>
       <?php }
+        //項目がリクエスト件数の場合
         else if($item == 'リクエスト件数') {
       ?>
         <?php foreach($data['users'] as $k => $v) { ?>
         <tr>
-          <td><?= $v['m_users']['display_name'] ?></td>
+          <td><?= $v['display_name'] ?></td>
           <?php for ($i = $start; $i <= $end; $i++) {
             if(is_int($v['requestNumber'][$days.sprintf("%02d",$i).$seconds]) == 'true') { ?>
               <td><?php echo number_format($v['requestNumber'][$days.sprintf("%02d",$i).$seconds]) ?></td>
@@ -168,11 +175,12 @@
         </tr>
         <?php } ?>
       <?php }
+      //項目が応対件数の場合
       else if($item == '応対件数') {
       ?>
         <?php foreach($data['users'] as $k => $v) { ?>
         <tr>
-          <td><?= $v['m_users']['display_name'] ?></td>
+          <td><?= $v['display_name'] ?></td>
           <?php for ($i = $start; $i <= $end; $i++) {
             if(is_int($v['responseNumber'][$days.sprintf("%02d",$i).$seconds]) == 'true') { ?>
               <td><?php echo number_format($v['responseNumber'][$days.sprintf("%02d",$i).$seconds]) ?></td>
@@ -185,12 +193,12 @@
         </tr>
         <?php } ?>
       <?php }
-
+      //項目が有効件数の場合
       else if($item == '有効件数') {
       ?>
         <?php foreach($data['users'] as $k => $v) { ?>
         <tr>
-          <td><?= $v['m_users']['display_name'] ?></td>
+          <td><?= $v['display_name'] ?></td>
           <?php for ($i = $start; $i <= $end; $i++) {
             if(is_int($v['effectivenessNumber'][$days.sprintf("%02d",$i).$seconds]) == 'true') { ?>
               <td><?php echo number_format($v['effectivenessNumber'][$days.sprintf("%02d",$i).$seconds]) ?></td>
@@ -203,11 +211,12 @@
         </tr>
         <?php } ?>
       <?php }
+      //項目が平均消費者待機時間の場合
       else if($item == '平均消費者待機時間') {
       ?>
         <?php foreach($data['users'] as $k => $v) { ?>
         <tr>
-          <td><?= $v['m_users']['display_name'] ?></td>
+          <td><?= $v['display_name'] ?></td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <td><?php echo ($v['avgEnteringRommTimeNumber'][$days.sprintf("%02d",$i).$seconds]) ?></td>
           <?php } ?>
@@ -215,11 +224,12 @@
         </tr>
         <?php } ?>
       <?php }
+      //項目が平均応答時間の場合
       else if($item == '平均応答時間') {
       ?>
         <?php foreach($data['users'] as $k => $v) { ?>
         <tr>
-          <td><?= $v['m_users']['display_name'] ?></td>
+          <td><?= $v['display_name'] ?></td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <td><?php echo ($v['responseAvgTimeNumber'][$days.sprintf("%02d",$i).$seconds]) ?></td>
           <?php } ?>
@@ -227,15 +237,29 @@
         </tr>
         <?php } ?>
       <?php }
+      //項目が有効率の場合
       else if($item == '有効率') {
       ?>
         <?php foreach($data['users'] as $k => $v) { ?>
         <tr>
-          <td><?= $v['m_users']['display_name'] ?></td>
-          <?php for ($i = $start; $i <= $end; $i++) { ?>
-            <td><?php echo ($v['effectivenessRate'][$days.sprintf("%02d",$i).$seconds]) ?></td>
-          <?php } ?>
-          <td><?php echo ($v['allEffectivenessRate']) ?></td>
+          <td><?= $v['display_name'] ?></td>
+          <?php for ($i = $start; $i <= $end; $i++) {
+            if(is_numeric($v['effectivenessRate'][$days.sprintf("%02d",$i).$seconds])) {
+              $checkData = ' %';
+            }
+            else {
+              $checkData = '';
+            } ?>
+            <td><?php echo ($v['effectivenessRate'][$days.sprintf("%02d",$i).$seconds].$checkData) ?></td>
+          <?php }
+            if(is_numeric($v['allEffectivenessRate'])) {
+              $checkData = ' %';
+            }
+            else {
+              $checkData = '';
+            }
+              ?>
+          <td><?php echo ($v['allEffectivenessRate'].$checkData) ?></td>
         </tr>
         <?php }
         }?>
@@ -245,21 +269,20 @@
     <div id = 'action_btn_area'>
       <condition-bar>
         <a href="#" id="closeWindow" class="btn-shadow whiteBtn">閉じる</a>
-        <a href="#" id="outputEachItemOperatorCSV" class="btn-shadow blueBtn">CSV出力</a>
       </condition-bar>
     </div>
       <?php }
-        else if($date == 'eachOperatorDaily') {
-          $days ='';
-          $seconds = ':00';
-        }
-        else if($date == 'eachOperatorYearly' or $date == 'eachOperatorMonthly') {
-          $days = $type.'-';
-          $seconds = '';
-        }
-        if(empty($item)) {
-        ?>
-      <tr>
+      else if($date == 'eachOperatorDaily') {
+        $days ='';
+        $seconds = ':00';
+      }
+      else if($date == 'eachOperatorYearly' or $date == 'eachOperatorMonthly') {
+        $days = $type.'-';
+        $seconds = '';
+      }
+      //オペレータ個人画面の場合
+      if(empty($item)) {  ?>
+        <tr>
           <td class = 'tooltip'>ログイン件数</td>
           <?php for ($i = $start; $i <= $end; $i++) {
             if(is_int($data['loginNumberData'][$days.sprintf("%02d",$i).$seconds]) == 'true') { ?>
@@ -272,11 +295,11 @@
           <td><?php echo number_format($data['allLoginNumberData']) ?></td>
         </tr>
         <tr>
-        <td id="opChatRequestLabel" class = 'tooltip'>チャットリクエスト件数
-          <div class="questionBalloon questionBalloonPosition11">
-            <icon class="questionBtn">？</icon>
-          </div>
-        </td>
+          <td id="opChatRequestLabel" class = 'tooltip'>チャットリクエスト件数
+            <div class="questionBalloon questionBalloonPosition11">
+              <icon class="questionBtn">？</icon>
+            </div>
+          </td>
           <?php for ($i = $start; $i <= $end; $i++) {
             if(is_int($data['requestNumberData'][$days.sprintf("%02d",$i).$seconds]) == 'true') { ?>
               <td><?php echo number_format($data['requestNumberData'][$days.sprintf("%02d",$i).$seconds]) ?></td>
@@ -288,11 +311,11 @@
           <td><?php echo number_format($data['allRequestNumberData']) ?></td>
         </tr>
         <tr>
-        <td id = 'opChatResponseLabel'  class = 'tooltip'>チャット応対件数
-          <div class="questionBalloon questionBalloonPosition8">
-            <icon class="questionBtn">？</icon>
-          </div>
-        </td>
+          <td id = 'opChatResponseLabel'  class = 'tooltip'>チャット応対件数
+            <div class="questionBalloon questionBalloonPosition8">
+              <icon class="questionBtn">？</icon>
+            </div>
+          </td>
           <?php for ($i = $start; $i <= $end; $i++) {
             if(is_int($data['responseNumberData'][$days.sprintf("%02d",$i).$seconds]) == 'true') { ?>
               <td><?php echo number_format($data['responseNumberData'][$days.sprintf("%02d",$i).$seconds]) ?></td>
@@ -347,24 +370,36 @@
               <icon class="questionBtn">？</icon>
             </div>
           </td>
-          <?php for ($i = $start; $i <= $end; $i++) { ?>
-            <td><?php echo $data['effectivenessRate'][$days.sprintf("%02d",$i).$seconds] ?></td>
-          <?php } ?>
-          <td><?php echo $data['allEffectivenessRate'] ?></td>
+          <?php for ($i = $start; $i <= $end; $i++) {
+            if(is_numeric($data['effectivenessRate'][$days.sprintf("%02d",$i).$seconds])) {
+              $checkData = ' %';
+            }
+            else {
+              $checkData = '';
+            } ?>
+            <td><?php echo $data['effectivenessRate'][$days.sprintf("%02d",$i).$seconds].$checkData ?></td>
+          <?php }
+          if(is_numeric($data['allEffectivenessRate'])) {
+            $checkData = ' %';
+          }
+          else {
+            $checkData = '';
+          } ?>
+          <td><?php echo $data['allEffectivenessRate'].$checkData ?></td>
         </tr>
       </tbody>
     </table>
     <div id = 'action_btn_area'>
-    <condition-bar>
-      <a href="#" id="closeWindow" class="btn-shadow whiteBtn">閉じる</a>
-      <a href="#" id="outputPrivateOperatorCSV" class="btn-shadow blueBtn">CSV出力</a>
-    </condition-bar>
+      <condition-bar>
+        <a href="#" id="closeWindow" class="btn-shadow whiteBtn">閉じる</a>
+      </condition-bar>
     </div>
-    <?php } ?>
+    <?php }
+    }?>
     <?=$this->Form->create('statistics', ['action' => 'forChat']);?>
       <?=$this->Form->hidden('outputData')?>
     <?=$this->Form->end();?>
+    </div>
   </div>
-</div>
 </div>
 
