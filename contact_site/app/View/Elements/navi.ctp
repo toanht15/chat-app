@@ -145,10 +145,10 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
     <?php if ($coreSettings[C_COMPANY_USE_CHAT] && !$coreSettings[C_COMPANY_CHAT_BASIC_PLAN]) : ?>
       <div data-sidebar-type="statistics" class="hide">
         <div class="icon">
-          <?= $this->htmlEx->naviLink('ｵﾍﾟﾚｰﾀｰ', 'personal.png', ['href' => ['controller' => 'Statistics', 'action' => 'forOperator']]) ?>
+          <?= $this->htmlEx->naviLink('チャット', 'chat_setting.png', ['href' => ['controller' => 'Statistics', 'action' => 'forChat']]) ?>
         </div>
         <div class="icon">
-          <?= $this->htmlEx->naviLink('チャット', 'chat_setting.png', ['href' => ['controller' => 'Statistics', 'action' => 'forChat']]) ?>
+          <?= $this->htmlEx->naviLink('オペレータ', 'personal.png', ['href' => ['controller' => 'Statistics', 'action' => 'forOperator']]) ?>
         </div>
       </div>
     <?php endif; ?>

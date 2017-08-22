@@ -82,64 +82,63 @@
     <table id="statistics_table" class="display" cellspacing="0" width = "100%">
       <thead>
         <tr>
-          <th class="thMinWidth">オペレーター / <?= $date; ?></th>
+          <th class="thMinWidth">オペレータ / <?= $date; ?></th>
           <th class = "thMinWidthTimelyForOperator">
           <a href="<?=$this->Html->url(array('controller' => 'Statistics',
           'action' => 'baseForAnotherWindow','?'=>array('item'=>'login','type'=>$time,'target'=>$type)))?>"
-          onclick="window.open(this.href, 'mywindow6', 'width=1000, height=700'); return false;">
+          onclick="window.open(this.href, 'mywindow1', 'width=1000, height=700'); return false;" style = "margin-right:1.2em">
           <?php $this->log($type,LOG_DEBUG); ?>ログイン件数</th>
           <th class = "thMinWidthTimelyForOperator tooltip" id="opChatRequestLabel">
           <a href="<?=$this->Html->url(array('controller' => 'Statistics',
           'action' => 'baseForAnotherWindow','?'=>array('item'=>'requestChat','type'=>$time,'target'=>$type)))?>"
-          onclick="window.open(this.href, 'mywindow6', 'width=1000, height=700'); return false;">チャットリクエスト件数
+          onclick="window.open(this.href, 'mywindow2', 'width=1000, height=700'); return false;" style = "margin-right:1.2em">チャットリクエスト件数</a>
           <div class="opQuestionBalloon opQuestionBalloonPosition11">
-            <icon class="questionBtn2">？</icon>
+            <icon class="opQuestionBtn">？</icon>
           </div></th>
           <th class = "thMinWidthTimelyForOperator tooltip" id="opChatResponseLabel">
           <a href="<?=$this->Html->url(array('controller' => 'Statistics',
           'action' => 'baseForAnotherWindow','?'=>array('item'=>'responseChat','type'=>$time,'target'=>$type)))?>"
-          onclick="window.open(this.href, 'mywindow6', 'width=1000, height=700'); return false;">チャット応対件数
+          onclick="window.open(this.href, 'mywindow3', 'width=1000, height=700'); return false;" style = "margin-right:1.2em">チャット応対件数</a>
           <div class="opQuestionBalloon opQuestionBalloonPosition8">
-            <icon class="questionBtn2">？</icon>
+            <icon class="opQuestionBtn">？</icon>
           </div></th>
           <th class = "thMinWidthTimelyForOperator tooltip" id="opChatEffectivenessLabel">
            <a href="<?=$this->Html->url(array('controller' => 'Statistics',
           'action' => 'baseForAnotherWindow','?'=>array('item'=>'effectiveness','type'=>$time,'target'=>$type)))?>"
-          onclick="window.open(this.href, 'mywindow6', 'width=1000, height=700'); return false;">チャット有効件数
+          onclick="window.open(this.href, 'mywindow4', 'width=1000, height=700'); return false;" style = "margin-right:1.2em">チャット有効件数</a>
           <div class="opQuestionBalloon opQuestionBalloonPosition8s">
-            <icon class="questionBtn2">？</icon>
+            <icon class="opQuestionBtn">？</icon>
           </div></th>
           <th class = "thMinWidthTimelyForOperator tooltip" id="opChatConsumerWaitAverageTimeLabel">
            <a href="<?=$this->Html->url(array('controller' => 'Statistics',
           'action' => 'baseForAnotherWindow','?'=>array('item'=>'avgConsumersWaitTime','type'=>$time,'target'=>$type)))?>"
-          onclick="window.open(this.href, 'mywindow6', 'width=1000, height=700'); return false;">平均消費者待機時間
+          onclick="window.open(this.href, 'mywindow5', 'width=1000, height=700'); return false;" style = "margin-right:1.2em">平均消費者待機時間</a>
           <div class="opQuestionBalloon opQuestionBalloonPosition13">
-            <icon class="questionBtn2">？</icon>
+            <icon class="opQuestionBtn">？</icon>
           </div></th>
           <th class = "thMinWidthTimelyForOperator tooltip" id="opChatResponseAverageTimeLabel">
            <a href="<?=$this->Html->url(array('controller' => 'Statistics',
           'action' => 'baseForAnotherWindow','?'=>array('item'=>'avgResponseTime','type'=>$time,'target'=>$type)))?>"
-          onclick="window.open(this.href, 'mywindow6', 'width=1000, height=700'); return false;">平均応答時間
+          onclick="window.open(this.href, 'mywindow6', 'width=1000, height=700'); return false;" style = "margin-right:1.2em">平均応答時間</a>
           <div class="opQuestionBalloon opQuestionBalloonPosition6">
-            <icon class="questionBtn2">？</icon>
+            <icon class="opQuestionBtn">？</icon>
           </div></th>
           <th class = "thMinWidthTimelyForOperator opLastTooltip" id="opChatEffectivenessResponseRateLabel">
            <a href="<?=$this->Html->url(array('controller' => 'Statistics',
           'action' => 'baseForAnotherWindow','?'=>array('item'=>'effectivenessRate','type'=>$time,'target'=>$type)))?>"
-          onclick="window.open(this.href, 'mywindow6', 'width=1000, height=700'); return false;">チャット有効率
+          onclick="window.open(this.href, 'mywindow7', 'width=1000, height=700'); return false;" style = "margin-right:1.2em">チャット有効率</a>
           <div class="opQuestionBalloon opQuestionBalloonPosition7">
-            <icon class="questionBtn2">？</icon>
+            <icon class="opQuestionBtn">？</icon>
           </div></th>
         </tr>
       </thead>
-    <tbody>
       <?php
       foreach($data['users'] as $k => $v) {
        ?>
         <tr>
           <td class = 'userName'><a href="<?=$this->Html->url(array('controller' => 'Statistics',
           'action' => 'baseForAnotherWindow','?'=>array('id'=>$v['m_users']['id'],'type'=>$time,'target'=>$type)))?>"
-          onclick="window.open(this.href, 'mywindow6', 'width=1000, height=700'); return false;">
+          onclick="window.open(this.href, '<?= $k ?>', 'width=1000, height=700'); return false;">
           <?= $v['m_users']['display_name'] ?></a></td>
           <td><?php if(empty($v['loginNumber'])) {
             echo  0;

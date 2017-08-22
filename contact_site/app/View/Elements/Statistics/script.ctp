@@ -97,15 +97,7 @@ $(window).load(function(){
   //リサイズ処理
   var resizeDataTable = function() {
     $('.dataTables_scrollBody').css('max-height',$('#statistics_content').outerHeight() - 120 + 'px');
-    $('.opQuestionBalloonPosition11').css('right',$('.thMinWidthTimelyForOperator').width() - 85 + 'px');
-    console.log($('.thMinWidthTimelyForOperator').width());
-    $('.opQuestionBalloonPosition8').css('right',$('.thMinWidthTimelyForOperator').width() - 85 + 'px');
-    $('.opQuestionBalloonPosition8s').css('right',$('.thMinWidthTimelyForOperator').width() - 85 + 'px');
-    $('.opQuestionBalloonPosition13').css('right',$('.thMinWidthTimelyForOperator').width() - 85 + 'px');
-    $('.opQuestionBalloonPosition7').css('right',$('.thMinWidthTimelyForOperator').width() - 85 + 'px');
-    $('.opQuestionBalloonPosition6').css('right',$('.thMinWidthTimelyForOperator').width() - 85 + 'px');
   }
-
   // ページ読み込み時にもリサイズ処理を実行
   tableObj.on( 'draw', function () {
     resizeDataTable();
@@ -117,7 +109,7 @@ $(window).load(function(){
     resizeDataTable();
   });
 
-  //CSV処理
+  //CSV処理(チャット統計)
   if(document.getElementById('outputCSV') != null) {
     var outputCSVBtn = document.getElementById('outputCSV');
     outputCSVBtn.addEventListener('click', function(){
@@ -131,13 +123,13 @@ $(window).load(function(){
       if(dateFormat == '時別') {
          date = $("#hourlyForm").val();
       }
-    document.getElementById('statisticsOutputData').value = JSON.stringify({dateFormat:dateFormat,date:date});
-    console.log(document.getElementById('statisticsOutputData').value.date);
-    document.getElementById('statisticsForChatForm').action = '<?=$this->Html->url(["controller"=>"Statistics", "action" => "outputCsv"])?>';
-    document.getElementById('statisticsForChatForm').submit();
-  });
+      document.getElementById('statisticsOutputData').value = JSON.stringify({dateFormat:dateFormat,date:date});
+      console.log(document.getElementById('statisticsOutputData').value.date);
+      document.getElementById('statisticsForChatForm').action = '<?=$this->Html->url(["controller"=>"Statistics", "action" => "outputCsv"])?>';
+      document.getElementById('statisticsForChatForm').submit();
+    });
   }
-
+  //CSV処理(オペレータ統計一覧画面)
   else if(document.getElementById('outputOperatorCSV') != null) {
     var outputOperatorCSVBtn = document.getElementById('outputOperatorCSV');
     outputOperatorCSVBtn.addEventListener('click', function(){
@@ -151,14 +143,15 @@ $(window).load(function(){
       if(dateFormat == '時別') {
          date = $("#hourlyForm").val();
       }
-
       document.getElementById('statisticsOutputData').value = JSON.stringify({dateFormat:dateFormat,date:date});
       console.log(document.getElementById('statisticsOutputData').value.date);
-      document.getElementById('statisticsForChatForm').action = '<?=$this->Html->url(["controller"=>"Statistics", "action" => "outputOperatorCsv"])?>';
+      document.getElementById('statisticsForChatForm').action = '<?=$this->Html->url(["controller"=>"Statistics", "action" => "outputOperatorCsv","List"])?>';
+      console.log(document.getElementById('statisticsForChatForm').action);
       document.getElementById('statisticsForChatForm').submit();
     });
   }
 
+  //CSV処理(オペレータ統計別ウィンドウ各項目画面)
   else if(document.getElementById('outputEachItemOperatorCSV') != null) {
     var outputEachItemOperatorCSVBtn = document.getElementById('outputEachItemOperatorCSV');
     outputEachItemOperatorCSVBtn.addEventListener('click', function(){
@@ -167,17 +160,16 @@ $(window).load(function(){
       var date = location.search.match(/target=(.*?)(&|$)/)[1];
 
       document.getElementById('statisticsOutputData').value = JSON.stringify({item:item,dateFormat:dateFormat,date:date});
-      console.log(document.getElementById('statisticsOutputData').value.date);
       document.getElementById('statisticsForChatForm').action = '<?=$this->Html->url(["controller"=>"Statistics", "action" => "outputEachOperatorCsv"])?>';
       document.getElementById('statisticsForChatForm').submit();
     });
-
     var closeWindowBtn = document.getElementById('closeWindow');
     closeWindowBtn.addEventListener('click', function(){
       window.close();
     });
   }
 
+  //CSV処理(オペレータ統計別ウィンドウ個人画面)
   else if(document.getElementById('outputPrivateOperatorCSV') != null) {
     var outputPrivateOperatorCSVBtn = document.getElementById('outputPrivateOperatorCSV');
     outputPrivateOperatorCSVBtn.addEventListener('click', function(){
@@ -186,11 +178,9 @@ $(window).load(function(){
       var date = location.search.match(/target=(.*?)(&|$)/)[1];
 
       document.getElementById('statisticsOutputData').value = JSON.stringify({id:id,dateFormat:dateFormat,date:date});
-      console.log(document.getElementById('statisticsOutputData').value.date);
       document.getElementById('statisticsForChatForm').action = '<?=$this->Html->url(["controller"=>"Statistics", "action" => "outputEachOperatorCsv"])?>';
       document.getElementById('statisticsForChatForm').submit();
     });
-
     var closeWindowBtn = document.getElementById('closeWindow');
     closeWindowBtn.addEventListener('click', function(){
       window.close();
@@ -221,7 +211,6 @@ $(window).load(function(){
 
   //月別の年を選択
   $("#monthlyForm").change(function(){
-    console.log('チャットフォーム');
     var monthlyForm = $("#monthlyForm").val();
     if(monthlyForm != '') {
       loading.load.start();
@@ -339,15 +328,18 @@ $(window).load(function(){
     }
   });
 
-    // ツールチップの表示制御
-  $('.questionBtn2').off("mouseenter").on('mouseenter',function(event){
-    console.log('入っている');
-    var parentTdId = $(this).parent().parent().parent().attr('id');
+  $('.questionBtn').off("mouseleave").on('mouseleave',function(event){
+    var parentTdId = $(this).parent().parent().attr('id');
     var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
-    console.log(targetObj);
-    targetObj.find('icon-annotation').css('display','block');
-    console.log('用チェックやで');
+    targetObj.find('icon-annotation').css('display','none');
+  });
+
+  // ツールチップの表示制御(オペレータ統計画面)
+  $('.opQuestionBtn').off("mouseenter").on('mouseenter',function(event){
+    var parentTdId = $(this).parent().parent().attr('id');
     console.log(parentTdId);
+    var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
+    targetObj.find('icon-annotation').css('display','block');
     if( parentTdId == 'opChatEffectivenessResponseRateLabel') {
       targetObj.css({
         left: ($(this).offset().left - 207) + 'px'
@@ -360,17 +352,12 @@ $(window).load(function(){
     }
   });
 
-  $('.questionBtn2').off("mouseleave").on('mouseleave',function(event){
-    var parentTdId = $(this).parent().parent().parent().attr('id');
-    var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
-    targetObj.find('icon-annotation').css('display','none');
-  });
-
-  $('.questionBtn').off("mouseleave").on('mouseleave',function(event){
+  $('.opQuestionBtn').off("mouseleave").on('mouseleave',function(event){
     var parentTdId = $(this).parent().parent().attr('id');
     var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
     targetObj.find('icon-annotation').css('display','none');
   });
+
 
   // DataTablesの検索時にツールチップを非表示にする
   tableObj.on('search',function(event){
