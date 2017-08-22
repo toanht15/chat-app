@@ -31,6 +31,9 @@
                   <li class="sinclo_se typeing_message" ng-if="typingMessageSe !== ''">{{typingMessageSe}}</li>
                   <li class="sinclo_re typeing_message" ng-if="typingMessageRe[detailId] && typingMessageRe[detailId] !== ''">{{typingMessageRe[detailId]}}</li>
                 </typing-message>
+                <chat-receiver>
+                  <span id="receiveMessage">テストメッセージです</span>
+                </chat-receiver>
               </ul>
               <chat-detail ng-class="{showOption: showAchievement()}">
                 <span>成果</span>
