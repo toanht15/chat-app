@@ -303,6 +303,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     target.find('#receiveMessage').html(message);
     target.css('display', 'block');
     var targetHeight = target.outerHeight();
+    target.css('top',$('#chatTalk').outerHeight() - targetHeight);
     // 指定した高さになるまで、1文字ずつ消去していく
     target.css('display', 'none');
     target.css('display', 'block');
@@ -1369,11 +1370,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             var chat = obj.messages[key];
             chat.sort = Number(key);
             $scope.messageList.push(chat);
-            if(isShowChatReceiver()) {
-              notify('【オートメッセージ】' + obj.message); // チャットのスクロール
-            } else {
-              scDown();
-            }
+            scDown();
           }
         }
 
@@ -1385,11 +1382,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             var chat = obj;
             chat.sort = Number(chat.sort);
             $scope.messageList.push(obj);
-            if(isShowChatReceiver()) {
-              notify('【オートメッセージ】' + obj.message); // チャットのスクロール
-            } else {
-              scDown();
-            }
+            scDown();
         }
     });
 
@@ -1686,10 +1679,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         if ( obj.tabId === chatApi.tabId ){
           var chat = JSON.parse(JSON.stringify(obj));
           chat.sort = Number(obj.sort);
+          // 通知表示可能で、サイト訪問者からのメッセージだったら
           if(isShowChatReceiver() && obj.messageType === 1) {
-            notify(obj.message); // チャットのスクロール
+            notify(obj.message); // 通知を出す
           } else {
-            scDown();
+            scDown(); // チャットのスクロール
           }
         }
         if (Number(obj.messageType) === chatApi.messageType.company || Number(obj.messageType) === chatApi.messageType.sorry) {
