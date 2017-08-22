@@ -301,10 +301,26 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
   function notify(message) {
     var target = $('chat-receiver');
     target.find('#receiveMessage').html(message);
-    target.show('fast').on('click', function(e){
+    target.css('display', 'block');
+    var targetHeight = target.outerHeight();
+    // 指定した高さになるまで、1文字ずつ消去していく
+    target.css('display', 'none');
+    target.css('display', 'block');
+    while((message.length > 0) && (target.find('#receiveMessage').outerHeight() >= targetHeight)) {
+      message = message.substr(0, message.length - 1);
+      target.find('#receiveMessage').html(message + '...');
+    }
+    target.css('display', 'none');
+    target.show('fast').off('click').on('click', function(e){
       e.stopImmediatePropagation();
       scDown();
       $(this).hide('slow');
+    });
+    // スクロールが表示判定とならないところまで来たら消す
+    $('#chatTalk').on('scroll', function(e){
+      if(!isShowChatReceiver()) {
+        target.hide('fast');
+      }
     });
   }
 
@@ -1353,7 +1369,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             var chat = obj.messages[key];
             chat.sort = Number(key);
             $scope.messageList.push(chat);
-            scDown(); // チャットのスクロール
+            if(isShowChatReceiver()) {
+              notify('【オートメッセージ】' + obj.message); // チャットのスクロール
+            } else {
+              scDown();
+            }
           }
         }
 
@@ -1365,7 +1385,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             var chat = obj;
             chat.sort = Number(chat.sort);
             $scope.messageList.push(obj);
-            scDown(); // チャットのスクロール
+            if(isShowChatReceiver()) {
+              notify('【オートメッセージ】' + obj.message); // チャットのスクロール
+            } else {
+              scDown();
+            }
         }
     });
 
@@ -1662,8 +1686,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         if ( obj.tabId === chatApi.tabId ){
           var chat = JSON.parse(JSON.stringify(obj));
           chat.sort = Number(obj.sort);
-          $scope.messageList.push(chat);
-          if(isShowChatReceiver()) {
+          if(isShowChatReceiver() && obj.messageType === 1) {
             notify(obj.message); // チャットのスクロール
           } else {
             scDown();
