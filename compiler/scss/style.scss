@@ -4937,8 +4937,13 @@ ul.naviBtn {
       height: 40px !important;
     }
 
+    table.dataTable thead th, table.dataTable thead td {
+      padding: 0 3px;
+    }
+
     .thMinWidth {
       min-width: 170px;
+      height:62px;
     }
 
     .thMinWidthTimelyForOperator {
