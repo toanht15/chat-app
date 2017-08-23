@@ -177,11 +177,11 @@ var socket, // socket.io
         case 1: // 右下
           showPosition = "bottom: 0; right: 10px;";
           chatPosition = {
-            se: "border-bottom-left-radius: 0; margin-right: 10px;",
-            re: "border-bottom-right-radius: 0; margin-left: 10px;"
+            se: "border-bottom-right-radius: 0; margin-left: 10px;",
+            re: "border-bottom-left-radius: 0; margin-right: 10px;"
           };
           break;
-        case 2:
+        case 2: // 左下
           showPosition = "bottom: 0; left: 10px;";
           chatPosition = {
             se: "border-bottom-right-radius: 0; margin-left: 10px;",
