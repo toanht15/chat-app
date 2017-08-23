@@ -15,11 +15,6 @@ class AddTHistoryChatActiveUsersIndex extends CakeMigration {
  */
 	public $migration = array(
 		'up' => array(
-			'alter_field' => array(
-				't_history_chat_active_users' => array(
-					't_history_chat_logs_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'index'),
-				),
-			),
 			'create_field' => array(
 				't_history_chat_active_users' => array(
 					'indexes' => array(
@@ -29,11 +24,6 @@ class AddTHistoryChatActiveUsersIndex extends CakeMigration {
 			),
 		),
 		'down' => array(
-			'alter_field' => array(
-				't_history_chat_active_users' => array(
-					't_history_chat_logs_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false),
-				),
-			),
 			'drop_field' => array(
 				't_history_chat_active_users' => array('indexes' => array('idx_t_history_chat_logs_id_m_users_id')),
 			),
