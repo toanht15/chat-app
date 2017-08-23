@@ -8,7 +8,7 @@
     <condition-bar>
       <left-parts>
         <span id = "searchPeriod">対象期間：</span>
-        <?= $this->Form->create(); ?>
+        <?= $this->Form->create('Statistics'); ?>
 
           <?= $this->Form->input('dateType', array('type'=>'select','name' => 'dateFormat','onChange' => 'timeChangeForOperator()',
           'div'=>false, 'style' => 'vertical-align:middle;','label'=>false,'options'=>array('月別'=>'月別','日別'=>'日別','時別'=>'時別'), 'selected' => $date)); ?>
