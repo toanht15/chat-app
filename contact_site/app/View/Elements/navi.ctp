@@ -58,9 +58,9 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
         <div class="icon <?=$historySelected?>">
             <?= $this->htmlEx->naviLink('履歴一覧', 'history.png', ['href' => ['controller' => 'Histories', 'action' => 'clearSession']]) ?>
         </div>
-        <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
-        <div class="icon <?=$statisticsSelected?>">
-          <?= $this->htmlEx->naviLink('統計', 'graph.png', ['href' => ['controller' => 'Statistics', 'action' => 'forChat']]) ?>
+        <?php if ($coreSettings[C_COMPANY_USE_CHAT] && !$coreSettings[C_COMPANY_CHAT_BASIC_PLAN]) : ?>
+        <div class="icon <?=$statisticsSelected?> setting-icon" data-type="statistics" >
+          <?= $this->htmlEx->naviLink('統計', 'graph.png') ?>
         </div>
         <?php endif; ?>
         <div class="icon <?=$settingSelected?> setting-icon" data-type="common">
@@ -141,6 +141,18 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
       </div>
     <?php endif; ?>
     <!-- /* チャット */ -->
+    <!-- /* 統計 */ -->
+    <?php if ($coreSettings[C_COMPANY_USE_CHAT] && !$coreSettings[C_COMPANY_CHAT_BASIC_PLAN]) : ?>
+      <div data-sidebar-type="statistics" class="hide">
+        <div class="icon">
+          <?= $this->htmlEx->naviLink('チャット', 'chat_setting.png', ['href' => ['controller' => 'Statistics', 'action' => 'forChat']]) ?>
+        </div>
+        <div class="icon">
+          <?= $this->htmlEx->naviLink('オペレータ', 'personal.png', ['href' => ['controller' => 'Statistics', 'action' => 'forOperator']]) ?>
+        </div>
+      </div>
+    <?php endif; ?>
+    <!-- /*  統計 */ -->
 </div>
 <!-- /* サイドバー２（ここまで） */ -->
 

@@ -15,10 +15,18 @@
  */
 $naviElm = "";
 $contentStyle = "";
-if( strcmp($this->name, 'Login') !== 0 ) {
+if( strcmp($this->name, 'Login') !== 0 && strcmp($this->action, 'baseForAnotherWindow') !== 0) {
   $naviElm = $this->element('navi');
   $contentStyle = "position: absolute; top: 60px; left: 60px; right: 0; bottom: 0";
 }
+if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
+  $contentStyle = "position: absolute; top: 30px; left: 0px; right: 0; bottom: 0";?>
+  <div id="anotherWindow_color-bar" class="card-shadow">
+    <ul id="anotherWindow_color-bar-right" class="tCenter">
+      <li class="tCenter"><p>時間別サマリ</p></li>
+    </ul>
+</div>
+<?php }
 
 ?>
 <!DOCTYPE html>
@@ -83,10 +91,9 @@ if( strcmp($this->name, 'Login') !== 0 ) {
   ?>
 </head>
 <body>
-
   <div id="container">
     <div id="header">
-      <?php if( strcmp($this->name, 'Login') !== 0 ): ?>
+      <?php if( strcmp($this->name, 'Login') !== 0 && strcmp($this->action, 'baseForAnotherWindow') !== 0 ) : ?>
         <?= $this->element('navi') ?>
       <?php endif ;?>
     </div>
