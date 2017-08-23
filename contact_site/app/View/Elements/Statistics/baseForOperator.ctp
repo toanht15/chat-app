@@ -86,8 +86,7 @@
           <th class = "thMinWidthTimelyForOperator">
           <a href="<?=$this->Html->url(array('controller' => 'Statistics',
           'action' => 'baseForAnotherWindow','?'=>array('item'=>'login','type'=>$time,'target'=>$type)))?>"
-          onclick="window.open(this.href, 'mywindow1', 'width=1000, height=700'); return false;" style = "margin-right:1.2em">
-          <?php $this->log($type,LOG_DEBUG); ?>ログイン件数</th>
+          onclick="window.open(this.href, 'mywindow1', 'width=1000, height=700'); return false;" style = "margin-right:1.2em">ログイン件数</th>
           <th class = "thMinWidthTimelyForOperator tooltip" id="opChatRequestLabel">
           <a href="<?=$this->Html->url(array('controller' => 'Statistics',
           'action' => 'baseForAnotherWindow','?'=>array('item'=>'requestChat','type'=>$time,'target'=>$type)))?>"
