@@ -48,7 +48,7 @@
           </ul>
         </icon-annotation>
       </div>
-      <div id='opChatEffectivenessTooltip' style = "margin-top:11px" class="opTwoLineExplainTooltip">
+      <div id='opChatEffectivenessTooltip' style = 'margin-top:11px;' class="opTwoLineExplainTooltip">
         <icon-annotation>
           <ul>
             <li><span>成果が「有効」として登録された件数</span></li>
@@ -69,7 +69,7 @@
           </ul>
         </icon-annotation>
       </div>
-      <div id='opChatEffectivenessResponseRateTooltip' style="margin-top:11px" class="opExplainRateTooltip">
+      <div id='opChatEffectivenessResponseRateTooltip' style = 'margin-top:11px;' class="opExplainRateTooltip">
         <icon-annotation>
           <ul>
             <li><span>チャット有効件数／チャット応対件数</span></li>
@@ -79,10 +79,10 @@
 
     <!-- /* テーブル表示エリア */ -->
 
-    <table id="statistics_table" class="display" cellspacing="0" width = "100%">
+    <table id="statistics_table" class="display opList" cellspacing="0" width = "100%">
       <thead>
         <tr>
-          <th class="thMinWidth">オペレータ / <?= $date; ?></th>
+          <th class="thMinWidthOp">オペレータ / <?= $date; ?></th>
           <th class = "thMinWidthTimelyForOperator">
           <a href="<?=$this->Html->url(array('controller' => 'Statistics',
           'action' => 'baseForAnotherWindow','?'=>array('item'=>'login','type'=>$time,'target'=>$type)))?>"
