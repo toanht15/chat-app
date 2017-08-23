@@ -1,7 +1,7 @@
 <?= $this->element('Statistics/datepicker') ?>
 <?= $this->element('Statistics/script') ?>
 
-<div id='statistic_idx'>
+<div id='statistic_idx' class = 'anotherWindow_idx'>
 
   <div id="sincloApp">
     <div id='statisticAnotherWindow_title'>

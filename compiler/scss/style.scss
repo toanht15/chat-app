@@ -4820,19 +4820,19 @@ ul.naviBtn {
   /*別ウィンドウ画面タイトル*/
   #statisticAnotherWindow_title{
     border-bottom:0;
-    h1{
-      margin: 6px !important;
-      font-size: 20px;
-    }
     condition-bar {
+      padding-top:10px;
       display: flex;
       flex-direction: row;
       -webkit-box-orient: horizontal;
       -webkit-box-direction: normal;
       -webkit-box-pack: justify;
       justify-content: space-between;
+      h1{
+        margin: 0 6px 6px 6px !important;
+        font-size: 20px;
+      }
       right-parts {
-        padding-top: 10px;
         .blueBtn {
           background-color: #4bacc6;
           border-color: #4bacc6;
@@ -5419,4 +5419,8 @@ ul#anotherWindow_color-bar-right {
       padding: 3.5px 0 3.5px 0;
     }
   }
+}
+/*別ウィンドウ画面idx*/
+.anotherWindow_idx {
+  margin: 0px 15px 0 15px;
 }
