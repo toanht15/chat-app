@@ -1650,7 +1650,7 @@ class StatisticsController extends AppController {
 
     $requestNumber = $this->exclusionIpAddress($requestNumber,'th');
 
-    $requestNumber .= 'group by date';
+    $requestNumber .= ' group by date';
 
     $requestNumber = $this->THistory->query($requestNumber, array($date_format,$this->userInfo['MCompany']['id'],
       $this->chatMessageType['requestFlg']['effectiveness'],$correctStartDate,$correctEndDate));
@@ -1700,7 +1700,7 @@ class StatisticsController extends AppController {
 
     $response = $this->exclusionIpAddress($response,'th');
 
-    $response .= 'group by date';
+    $response .= ' group by date';
 
     $responseNumber = $this->THistory->query($response, array($date_format,$this->userInfo['MCompany']['id'],$correctStartDate,$correctEndDate,$this->chatMessageType['messageType']['enteringRoom'],$this->chatMessageType['requestFlg']['effectiveness']));
 
@@ -1779,7 +1779,7 @@ class StatisticsController extends AppController {
 
     $automaticResponse = $this->exclusionIpAddress($automaticResponse,'th');
 
-    $automaticResponse .= 'group by date';
+    $automaticResponse .= ' group by date';
 
     $automaticResponseNumber = $this->THistory->query($automaticResponse, array($date_format,$this->userInfo['MCompany']['id'],
     $correctStartDate,$correctEndDate,$this->chatMessageType['messageType']['automatic'],$this->chatMessageType['messageType']['enteringRoom']));
@@ -1851,7 +1851,7 @@ class StatisticsController extends AppController {
 
     $effectiveness = $this->exclusionIpAddress($effectiveness,'th');
 
-    $effectiveness .= 'group by date';
+    $effectiveness .= ' group by date';
 
     $effectiveness = $this->THistory->query($effectiveness, array($date_format,$this->chatMessageType['achievementFlg']['effectiveness'],$this->chatMessageType['messageType']['denial'],
       $this->userInfo['MCompany']['id'],$correctStartDate,$correctEndDate,$this->chatMessageType['achievementFlg']['effectiveness'],$this->chatMessageType['messageType']['denial']));
@@ -1937,7 +1937,7 @@ class StatisticsController extends AppController {
 
     $requestTime = $this->exclusionIpAddress($requestTime,'th');
 
-    $requestTime .= 'group by date';
+    $requestTime .= ' group by date';
 
     $requestTime = $this->THistory->query($requestTime, array($date_format,$this->userInfo['MCompany']['id'],
       $correctStartDate,$correctEndDate,$this->chatMessageType['requestFlg']['effectiveness'],$this->chatMessageType['messageType']['consumerMessage']));
@@ -1998,7 +1998,7 @@ class StatisticsController extends AppController {
 
     $consumerWatingTime = $this->exclusionIpAddress($consumerWatingTime,'th');
 
-    $consumerWatingTime .= 'group by date';
+    $consumerWatingTime .= ' group by date';
 
     $consumerWatingTime = $this->THistory->query($consumerWatingTime, array($date_format,$this->userInfo['MCompany']['id'],
       $correctStartDate,$correctEndDate,$this->chatMessageType['requestFlg']['effectiveness'],$this->chatMessageType['messageType']['enteringRoom']));
@@ -2061,7 +2061,7 @@ class StatisticsController extends AppController {
 
     $responseTime = $this->exclusionIpAddress($responseTime,'th');
 
-    $responseTime .= 'group by date';
+    $responseTime .= ' group by date';
 
     $responseTime = $this->THistory->query($responseTime, array($date_format,$this->userInfo['MCompany']['id'],
       $correctStartDate,$correctEndDate,$this->chatMessageType['requestFlg']['effectiveness'],$this->chatMessageType['messageType']['operatorMessage']));
