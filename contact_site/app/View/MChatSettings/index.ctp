@@ -44,7 +44,27 @@ $(document).ready(function(){
         <h3>１．同時対応数上限</h3>
         <div class ="content">
           <div>
-            <label><?=$this->Form->input('MChatSetting.sc_flg', ['type' => 'radio', 'options' => $scFlgOpt, 'default' => C_SC_DISABLED, 'legend' => false, 'separator' => '</label><br><label>', 'label' => false, 'div' => false])?></label>
+            <label style="display:inline-block;" <?php echo $coreSettings[C_COMPANY_USE_CHAT_LIMITER] ? '' : 'style="color: #CCCCCC;" '?>>
+              <?php
+                $settings = [
+                  'type' => 'radio',
+                  'options' => $scFlgOpt,
+                  'default' => C_SC_DISABLED,
+                  'legend' => false,
+                  'separator' => '</label><br><label style="display:inline-block;"'.($coreSettings[C_COMPANY_USE_CHAT_LIMITER] ? '' : ' style="color: #CCCCCC;" class="commontooltip" data-text="こちらの機能はスタンダードプラン<br>からご利用いただけます。" data-balloon-position="34.5"').'>',
+                  'label' => false,
+                  'div' => false,
+                  'disabled' => !$coreSettings[C_COMPANY_USE_CHAT_LIMITER]
+                ];
+                echo $this->Form->input('MChatSetting.sc_flg',$settings);
+              ?>
+            </label>
+            <?php
+            // radioボタンがdisabledの場合POSTで値が送信されないため、hiddenで送信すべき値を補填する
+            if(!$coreSettings[C_COMPANY_USE_CHAT_LIMITER]):
+              ?>
+              <input type="hidden" name="data[MChatSetting][sc_flg]" value="2"/>
+            <?php endif; ?>
           </div>
           <div id="sc_content">
             <dl class="<?=$scHiddenClass?>">

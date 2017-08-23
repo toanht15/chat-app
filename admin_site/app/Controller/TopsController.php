@@ -16,14 +16,6 @@ class TopsController extends AppController {
       'joins' => [
         [
           'type' => 'inner',
-          'table' => 'm_agreements',
-          'alias' => 'MAgreement',
-          'conditions' => [
-          'MAgreement.m_companies_id = MCompany.id',
-          ],
-        ],
-        [
-          'type' => 'inner',
           'table' => '(SELECT id,m_companies_id,count(m_companies_id) AS user_account FROM  m_users WHERE del_flg != 1 GROUP BY m_companies_id)',
           'alias' => 'MUser',
           'conditions' => [

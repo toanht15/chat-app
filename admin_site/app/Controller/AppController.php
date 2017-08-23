@@ -65,6 +65,11 @@ class AppController extends Controller {
   *@return void
   */
   public function beforeFilter(){
+    // プロトコルチェック(本番のみ)
+    if ( APP_MODE_DEV === false ) {
+      $this->checkPort();
+    }
+
     // 未ログインの場合は以降の処理を通さない
     if (!$this->Auth->user()) return false;
 
@@ -75,8 +80,8 @@ class AppController extends Controller {
     }
 
     // ログイン情報をオブジェクトに格納
-    if ( $this->Session->check('global.userInfo') ) {
-      $this->userInfo = $this->Session->read('global.userInfo');
+    if ( $this->Session->check('global.administratorInfo') ) {
+      $this->userInfo = $this->Session->read('global.administratorInfo');
       //pr($this->userInfo); exit();
       $this->set('userInfo', $this->userInfo);
     }
@@ -90,9 +95,52 @@ class AppController extends Controller {
     $this->set('auth',$this->Auth);
   }
 
+  /**
+   * checkPort プロトコルチェック
+   * @return void
+   * */
+  public function checkPort(){
+    $params = $this->request->params;
+    $query = $this->request->query;
+
+    switch($params['controller'] . "/" . $params['action']){
+      case "Customers/frame":
+        $port = 80;
+        $protocol = "http";
+        break;
+      default:
+        $port = 443;
+        $protocol = "https";
+    }
+
+    // 推奨のプロトコルではなかった場合
+    if(strcmp($_SERVER['HTTP_X_FORWARDED_PORT'],$port) !== 0){
+      $queryStr = "";
+      $url = $protocol . "://".env('SERVER_NAME').$this->here;
+      foreach((array)$query as $key => $val){
+        if ( empty($queryStr) ) {
+          $queryStr = "?";
+        }
+        else {
+          $queryStr .= "&";
+        }
+        if ( strcmp('url', $key) === 0 ) {
+          $queryStr .= $key . "=" . urlencode($val);
+        }
+        else {
+          $queryStr .= $key . "=" . $val;
+        }
+      }
+
+      // 推奨のプロトコルでリダイレクト
+      $this->redirect($url.$queryStr);
+    }
+
+  }
+
   public function setUserInfo($info){
     $this->userInfo = $info;
-    $this->Session->write('global.userInfo', $info);
+    $this->Session->write('global.administratorInfo', $info);
     $this->Session->write('global.tmpdata', $this->MCompany->find('all',array(
     'conditions'=>array(
         //'MCompany.company_key' => 'template'

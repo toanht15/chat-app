@@ -20,9 +20,10 @@
           <th style="width:25em;">ID数</th>
         </tr>
       </thead>
-      <?php foreach((array)$companyList as $key => $val): ?>
-        <tbody class='tab1'>
-          <?php if(h($val['MCompany']['trial_flg']) == 0) { ?>
+      <tbody class='tab1'>
+        <?php /* 契約中企業一覧 初期表示は非表示 */ ?>
+        <?php foreach((array)$companyList as $key => $val): ?>
+          <?php if(intval($val['MCompany']['trial_flg']) === 0) { ?>
             <tr>
               <td><?=h($val['MCompany']['company_name'])?></td>
               <td><?=h($val['MCompany']['company_key'])?></td>
@@ -38,28 +39,29 @@
               <td><?=h($val['MUser']['user_account'])?>/<?=h($val['MCompany']['limit_users'])?></td>
             </tr>
           <?php } ?>
-        </tbody>
-
-
-        <tbody class='tab2'>
-          <?php if(h($val['MCompany']['trial_flg']) == 1) { ?>
-            <tr>
-              <td><?=h($val['MCompany']['company_name'])?></td>
-              <td><?=h($val['MCompany']['company_key'])?></td>
-              <?php if(h($val['MCompany']['m_contact_types_id']) == 1){ ?>
-                <td>フルプラン</td>
-              <?php } ?>
-              <?php if(h($val['MCompany']['m_contact_types_id']) == 2){ ?>
-                <td>画像共有のみプラン</td>
-              <?php } ?>
-              <?php if(h($val['MCompany']['m_contact_types_id']) == 3){ ?>
-                <td>チャットのみプラン</td>
-              <?php } ?>
-              <td><?=h($val['MCompany']['limit_users'])?></td>
-            </tr>
+        <?php endforeach; ?>
+      </tbody>
+      <?php /* トライアル中企業一覧 初期表示は非表示 */ ?>
+      <tbody class='tab2' style="display:none">
+        <?php foreach((array)$companyList as $key => $val): ?>
+          <?php if(intval($val['MCompany']['trial_flg']) === 1) { ?>
+          <tr>
+            <td><?=h($val['MCompany']['company_name'])?></td>
+            <td><?=h($val['MCompany']['company_key'])?></td>
+            <?php if(h($val['MCompany']['m_contact_types_id']) == 1){ ?>
+              <td>フルプラン</td>
+            <?php } ?>
+            <?php if(h($val['MCompany']['m_contact_types_id']) == 2){ ?>
+              <td>画像共有のみプラン</td>
+            <?php } ?>
+            <?php if(h($val['MCompany']['m_contact_types_id']) == 3){ ?>
+              <td>チャットのみプラン</td>
+            <?php } ?>
+            <td><?=h($val['MCompany']['limit_users'])?></td>
+          </tr>
           <?php } ?>
-        </tbody>
-      <?php endforeach; ?>
+        <?php endforeach; ?>
+      </tbody>
     </table>
   </div>
 </div>
