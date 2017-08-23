@@ -59,21 +59,24 @@ class StatisticsController extends AppController {
           $type = $this->request->data['monthlyName'];
           $timeData = $this->calculateOperatorMonthlyData($type,'list');
           //オペレータレポートデータ取得
-          $users =$this->summaryOperatorSql($timeData['date_format'],$timeData['correctStartDate'],$timeData['correctEndDate']);
+          $users =$this->summaryOperatorSql($timeData['date_format'],$timeData['anotherWindowDateFormat'],
+            $timeData['correctStartDate'],$timeData['correctEndDate']);
         }
         //日別の場合
         else if($date == '日別'){
           $type = $this->request->data['daylyName'];
           $timeData = $this->calculateOperatorDaylyData($type);
           //オペレータレポートデータ取得
-          $users =$this->summaryOperatorSql($timeData['date_format'],$timeData['correctStartDate'],$timeData['correctEndDate']);
+          $users =$this->summaryOperatorSql($timeData['date_format'],$timeData['anotherWindowDateFormat'],
+            $timeData['correctStartDate'],$timeData['correctEndDate']);
         }
         //時別の場合
         else if($date == '時別') {
           $type = $this->request->data['datefilter'];
           $timeData = $this->calculateOperatorHourlyData($type);
           //オペレータレポートデータ取得
-          $users =$this->summaryOperatorSql($timeData['date_format'],$timeData['correctStartDate'],$timeData['correctEndDate']);
+          $users =$this->summaryOperatorSql($timeData['date_format'],$timeData['anotherWindowDateFormat'],
+            $timeData['correctStartDate'],$timeData['correctEndDate']);
         }
       }
     }
@@ -82,7 +85,7 @@ class StatisticsController extends AppController {
       $date = '時別';
       $type = date("Y-m-d");
       $timeData = $this->calculateOperatorHourlyData($type);
-      $users =$this->summaryOperatorSql($timeData['date_format'],$timeData['correctStartDate'],$timeData['correctEndDate']);
+      $users =$this->summaryOperatorSql($timeData['date_format'],$timeData['anotherWindowDateFormat'],$timeData['correctStartDate'],$timeData['correctEndDate']);
     }
 
     //各企業の日付けの範囲
@@ -188,8 +191,7 @@ class StatisticsController extends AppController {
   }
 
   //オペレータレポートデータ取得
-  public function summaryOperatorSql($date_format,$correctStartDate,$correctEndDate) {
-    $this->log('オペレータスタート',LOG_DEBUG);
+  public function summaryOperatorSql($date_format,$avg_date_format,$correctStartDate,$correctEndDate) {
     //オペレータ情報取得
     $users = "SELECT id,display_name FROM m_users
     WHERE
@@ -202,12 +204,10 @@ class StatisticsController extends AppController {
     //オペレータ全員対象
     $allOperatorInfo = 0;
 
-    $this->log('チャットリクエスト件数スタート',LOG_DEBUG);
     //チャットリクエスト件数
     $requestNumber = $this->getSummaryOperatorRequestInfo($date_format,$allOperatorInfo,$correctStartDate,$correctEndDate);
     $allData = [];
     $allData['requestNumber'] = $requestNumber;
-    $this->log('チャットリクエスト終了',LOG_DEBUG);
 
     //ログイン件数
     $loginNumber = $this->getSummaryLoginOperatorInfo($date_format,$allOperatorInfo,$correctStartDate,$correctEndDate);
@@ -222,11 +222,11 @@ class StatisticsController extends AppController {
     $allData['effectivenessNumber'] = $effectivenessNumber;
 
     //平均消費者待機時間時間
-    $avgEnteringRommTime = $this->getSummaryOperatorAvgEnteringRommInfo($date_format,$allOperatorInfo,$correctStartDate,$correctEndDate);
+    $avgEnteringRommTime = $this->getSummaryOperatorAvgEnteringRommInfo($avg_date_format,$allOperatorInfo,$correctStartDate,$correctEndDate);
     $allData['avgEnteringRommTime'] = $avgEnteringRommTime;
 
     //平均応答時間
-    $responseTime = $this->getSummaryOperatorAvgResponseInfo($date_format,$allOperatorInfo,$correctStartDate,$correctEndDate);
+    $responseTime = $this->getSummaryOperatorAvgResponseInfo($avg_date_format,$allOperatorInfo,$correctStartDate,$correctEndDate);
     $allData['responseTime'] = $responseTime;
 
     $divideOperatorDatas =$this->divideOperatorDatas($users,$allData);
@@ -283,14 +283,14 @@ class StatisticsController extends AppController {
         $totalConsumerWaitingAvgTimeDataCnt = 0;
         foreach($allData['avgEnteringRommTime'] as $k2 => $v2) {
           if($v['m_users']['id'] == $v2['thcl2']['userId']) {
-            $allAvgEnteringRommTime = $allAvgEnteringRommTime + $v2[0]['average'];
+            $allAvgEnteringRommTime = $allAvgEnteringRommTime + round($v2[0]['average']);
             if(!$this->isInValidDatetime($v2[0]['date'])) {
               $totalConsumerWaitingAvgTimeDataCnt++;
             }
           }
         }
         if(!empty($allAvgEnteringRommTime) && $totalConsumerWaitingAvgTimeDataCnt != 0) {
-          $users[$k]['avgEnteringRommTime'] = $this->changeTimeFormat(round($allAvgEnteringRommTime/$totalConsumerWaitingAvgTimeDataCnt));
+          $users[$k]['avgEnteringRommTime'] = $this->changeTimeFormat($allAvgEnteringRommTime/$totalConsumerWaitingAvgTimeDataCnt);
         }
         else {
           $users[$k]['avgEnteringRommTime'] = '00:00:00';
@@ -305,14 +305,14 @@ class StatisticsController extends AppController {
         $totalConsumerWaitingAvgTimeDataCnt = 0;
         foreach($allData['responseTime'] as $k2 => $v2) {
           if($v['m_users']['id'] == $v2['thcl2']['userId']) {
-            $allAvgResponseTime = $allAvgResponseTime + $v2[0]['average'];
+            $allAvgResponseTime = $allAvgResponseTime + round($v2[0]['average']);
             if(!$this->isInValidDatetime($v2[0]['date'])) {
               $totalConsumerWaitingAvgTimeDataCnt++;
             }
           }
         }
         if(!empty($allAvgResponseTime) && $totalConsumerWaitingAvgTimeDataCnt != 0) {
-          $users[$k]['responseTime'] = $this->changeTimeFormat(round($allAvgResponseTime/$totalConsumerWaitingAvgTimeDataCnt));
+          $users[$k]['responseTime'] = $this->changeTimeFormat($allAvgResponseTime/$totalConsumerWaitingAvgTimeDataCnt);
         }
         else {
           $users[$k]['responseTime'] = '00:00:00';
@@ -744,8 +744,8 @@ class StatisticsController extends AppController {
       //除外IP処理
       $effectivenessNumber = $this->exclusionIpAddress($effectivenessNumber,'th');
       $effectivenessNumber .= 'group by date,m_users_id';
-      $effectivenessNumber = $this->THistory->query($effectivenessNumber,array($date_format,$userId,$this->chatMessageType['achievementFlg']['effectiveness'],
-        $this->userInfo['MCompany']['id'],$correctStartDate,$correctEndDate));
+      $effectivenessNumber = $this->THistory->query($effectivenessNumber,array($date_format,$this->chatMessageType['achievementFlg']['effectiveness'],
+        $this->userInfo['MCompany']['id'],$userId,$correctStartDate,$correctEndDate));
     }
     return $effectivenessNumber;
   }
@@ -884,7 +884,6 @@ class StatisticsController extends AppController {
     //全オペレータ検索
     $allOperatorInfo = 0;
     //ログイン件数
-    $this->log('ログイン件数スタート',LOG_DEBUG);
     if($item == 'login') {
       $users = $this->getAllLoginOperatorInfo($date_format,$allOperatorInfo,
         $correctStartDate,$correctEndDate,$baseData,$users);
@@ -2147,16 +2146,19 @@ class StatisticsController extends AppController {
     $requestData = (array)json_decode($this->request->data['statistics']['outputData']);
 
     if($requestData['dateFormat'] == '月別') {
-      $timeData = $this->calculateOperatorMonthlyData($requestData['date']);
-      $csvData =$this->summaryOperatorSql($timeData['date_format'],$timeData['correctStartDate'],$timeData['correctEndDate']);
+      $timeData = $this->calculateOperatorMonthlyData($requestData['date'],'list');
+      $csvData =$this->summaryOperatorSql($timeData['date_format'],$timeData['anotherWindowDateFormat'],
+        $timeData['correctStartDate'],$timeData['correctEndDate']);
     }
     else if($requestData['dateFormat'] == '日別') {
       $timeData = $this->calculateOperatorDaylyData($requestData['date']);
-      $csvData =$this->summaryOperatorSql($timeData['date_format'],$timeData['correctStartDate'],$timeData['correctEndDate']);
+      $csvData =$this->summaryOperatorSql($timeData['date_format'],$timeData['anotherWindowDateFormat'],
+        $timeData['correctStartDate'],$timeData['correctEndDate']);
     }
     else if($requestData['dateFormat'] == '時別') {
       $timeData = $this->calculateOperatorHourlyData($requestData['date']);
-      $csvData =$this->summaryOperatorSql($timeData['date_format'],$timeData['correctStartDate'],$timeData['correctEndDate']);
+      $csvData =$this->summaryOperatorSql($timeData['date_format'],$timeData['anotherWindowDateFormat'],
+        $timeData['correctStartDate'],$timeData['correctEndDate']);
     }
 
     foreach($this->insertOperatorCsvData($csvData,$timeData['timeType']) as $key => $v) {
@@ -2174,7 +2176,7 @@ class StatisticsController extends AppController {
     if($timeData == 'monthly') {
       $itemName[] = 'オペレータ/日別';
     }
-    if($timeData == 'dayly') {
+    if($timeData == 'daily') {
       $itemName[] = 'オペレータ/時別';
     }
     $itemName[] = 'ログイン件数';
@@ -2226,8 +2228,7 @@ class StatisticsController extends AppController {
         $operatorInfo[] = '00:00:00';
       }
       if(empty($v['effectivenessRate'])) {
-        $operatorInfo[] = 0;
-        $checkData = ' %';
+        $operatorInfo[] = '0%';
       }
       else {
         if(is_numeric($v['effectivenessRate'])) {
