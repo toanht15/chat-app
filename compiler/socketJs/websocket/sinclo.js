@@ -726,6 +726,7 @@
             userName = chat.userName;
           }
           this.chatApi.createMessage(cn, chat.message, userName);
+          this.chatApi.scDown();
         }
         else {
           if ( ('userName' in obj.chat.messages[key]) ) {
@@ -787,6 +788,11 @@
           cn = "sinclo_re";
           sinclo.chatApi.call();
           this.chatApi.createMessage(cn, obj.chatMessage, sincloInfo.widget.subTitle);
+          if(this.chatApi.isShowChatReceiver() && Number(obj.messageType) === sinclo.chatApi.messageType.company) {
+            this.chatApi.notify(obj.chatMessage);
+          } else {
+            this.chatApi.scDown();
+          }
           // チャットの契約をしている場合
           if ( window.sincloInfo.contract.chat ) {
             //sorryメッセージを出した数
@@ -797,6 +803,11 @@
           return false;
         }
         this.chatApi.createMessageUnread(cn, obj.chatMessage, userName);
+        if(this.chatApi.isShowChatReceiver() && Number(obj.messageType) === sinclo.chatApi.messageType.company) {
+          this.chatApi.notify(obj.chatMessage);
+        } else {
+          this.chatApi.scDown();
+        }
         //sinclo.trigger.fireChatEnterEvent(obj.chatMessage);
         // オートメッセージの内容をDBに保存し、オブジェクトから削除する
         if (!sinclo.chatApi.saveFlg) {
@@ -1149,10 +1160,10 @@
                 span.textContent += ".";
               }
             }, 500);
-            var chatTalk = document.getElementById('chatTalk');
-            $('#sincloBox #chatTalk').animate({
-              scrollTop: chatTalk.scrollHeight - chatTalk.clientHeight
-            }, 300);
+            // var chatTalk = document.getElementById('chatTalk');
+            // $('#sincloBox #chatTalk').animate({
+            //   scrollTop: chatTalk.scrollHeight - chatTalk.clientHeight
+            // }, 300);
         },
         createMessage: function(cs, val, cName){
             var chatList = document.getElementsByTagName('sinclo-chat')[0];
@@ -1195,7 +1206,6 @@
             }
             li.className = cs;
             li.innerHTML = content;
-            this.scDown();
         },
         createMessageUnread: function(cs, val, name){
             if ( cs === "sinclo_re" ) {
@@ -1215,6 +1225,54 @@
               scrollTop: chatTalk.scrollHeight - chatTalk.clientHeight
           }, 300);
           }, 500);
+        },
+        scDownImmediate: function(){
+          var chatTalk = document.getElementById('chatTalk');
+          $('#sincloBox #chatTalk').animate({
+            scrollTop: chatTalk.scrollHeight - chatTalk.clientHeight
+          }, 300);
+        },
+        notify: function(message) {
+          var self = this;
+          var target = $('sinclo-chat-receiver');
+          target.find('#receiveMessage').html(message);
+          target.css('display', 'block');
+          var targetHeight = target.outerHeight();
+          target.css('top',($('#sincloBox #chatTalk').position().top + $('#sincloBox #chatTalk').outerHeight()) - targetHeight);
+          // 指定した高さになるまで、1文字ずつ消去していく
+          target.css('display', 'none');
+          target.css('display', 'block');
+          var isShrinkMessage = false;
+          while((message.length > 0) && (target.find('#receiveMessage').outerHeight() >= targetHeight)) {
+            isShrinkMessage = true;
+            message = message.substr(0, message.length - 1);
+            target.find('#receiveMessage').html(message + '...');
+          }
+          target.css('display', 'none');
+          if(isShrinkMessage) {
+            message = message.substr(0, message.length - 1);
+            target.find('#receiveMessage').html(message + '...');
+          }
+          target.show('fast').off('click').on('click', function(e){
+            e.stopImmediatePropagation();
+            self.scDown();
+            $(this).hide();
+          });
+          // スクロールが表示判定とならないところまで来たら消す
+          $('#sincloBox #chatTalk').on('scroll', function(e){
+            if(!self.isShowChatReceiver()) {
+              target.hide('fast');
+            }
+          });
+        },
+        isShowChatReceiver: function() {
+          var target = $('#sincloBox #chatTalk');
+          var allHeight = 0;
+          target.find('sinclo-chat').find('li').each(function(index){
+            allHeight += $(this).outerHeight();
+          });
+          console.log('allHeight: ' + allHeight);
+          return allHeight - target.height() - target.scrollTop() >= 55;
         },
         pushFlg: false,
         push: function(){
