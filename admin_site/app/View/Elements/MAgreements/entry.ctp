@@ -10,12 +10,7 @@
   <?= $this->Form->input('MCompany.company_name', array('div' => false, 'label' => false, 'maxlength' => 50)) ?>
    <?php if (!empty($errors['company_name'])) echo "<li class='error-message'>" . h($errors['company_name'][0]) . "</li>"; ?>
 </li>
-<!-- /* サイトキー */ -->
-<li>
-  <div class="labelArea fLeft"><span class="require"><label>サイトキー</label></span></div>
-  <?= $this->Form->input('MCompany.company_key', array('div' => false, 'label' => false, 'maxlength' => 50)) ?>
-  <?php if (!empty($errors['company_key'])) echo "<li class='error-message'>" . h($errors['company_key'][0]) . "</li>"; ?>
-</li>
+<!-- /* サイトキー サイトキーは登録日（MD5）のハッシュ値 */ -->
 <!-- /* テスト利用 */ -->
 <li>
   <div class="labelArea fLeft"><span class="require"><label>テスト利用</label></span></div>
