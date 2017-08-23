@@ -2251,15 +2251,16 @@ class StatisticsController extends AppController {
     $requestData = (array)json_decode($this->request->data['statistics']['outputData']);
     //月別の場合
     if($requestData['dateFormat'] == 'yearly') {
-      $csv[] = $this->getDateTimeInfo('月別',$requestData['date']);
       $users = $this->calculateOperatorMonthlyData($requestData['date'],'another');
       if(!empty($requestData['item'])) {
+        $csv[] = $this->getDateTimeInfo('月別',$requestData['date'],$requestData['item']);
         $user = $this->getUserInfo('item',null);
         //各項目オペレータ情報取得
         $csvData = $this->getEachAllOperatorInfo($user,$users['anotherWindowDateFormat'],$users['correctStartDate'],$users['correctEndDate'],
           $users['baseData'],$users['baseTimeData'],$requestData['item']);
       }
       if(!empty($requestData['id'])) {
+        $csv[] = $this->getDateTimeInfo('月別',$requestData['date'],null);
         $user = $this->getUserInfo('userId',$requestData['id']);
         //オペレータ1人の情報取得
         $csvData = $this->getPrivateOperatorInfo($user,$users['anotherWindowDateFormat'],$users['correctStartDate'],$users['correctEndDate'],
@@ -2268,15 +2269,16 @@ class StatisticsController extends AppController {
     }
     //日別の場合
     else if($requestData['dateFormat'] == 'monthly') {
-      $csv[] = $this->getDateTimeInfo('日別',$requestData['date']);
       $users = $this->calculateOperatorDaylyData($requestData['date']);
       if(!empty($requestData['item'])) {
+        $csv[] = $this->getDateTimeInfo('日別',$requestData['date'],$requestData['item']);
         $user = $this->getUserInfo('item',null);
         //各項目オペレータ情報取得
         $csvData = $this->getEachAllOperatorInfo($user,$users['anotherWindowDateFormat'],$users['correctStartDate'],$users['correctEndDate'],
           $users['baseData'],$users['baseTimeData'],$requestData['item']);
       }
       if(!empty($requestData['id'])) {
+        $csv[] = $this->getDateTimeInfo('日別',$requestData['date'],null);
         $user = $this->getUserInfo('userId',$requestData['id']);
         //オペレータ1人の情報取得
         $csvData = $this->getPrivateOperatorInfo($user,$users['anotherWindowDateFormat'],$users['correctStartDate'],$users['correctEndDate'],
@@ -2285,15 +2287,16 @@ class StatisticsController extends AppController {
     }
     //時別の場合
     else if($requestData['dateFormat'] == 'daily') {
-      $csv[] = $this->getDateTimeInfo('時別',$requestData['date']);
       $users = $this->calculateOperatorHourlyData($requestData['date']);
       if(!empty($requestData['item'])) {
+        $csv[] = $this->getDateTimeInfo('時別',$requestData['date'],$requestData['item']);
         $user = $this->getUserInfo('item',null);
         //各項目オペレータ情報取得
         $csvData = $this->getEachAllOperatorInfo($user,$users['anotherWindowDateFormat'],$users['correctStartDate'],$users['correctEndDate'],
           $users['baseData'],$users['baseTimeData'],$requestData['item']);
       }
       if(!empty($requestData['id'])) {
+        $csv[] = $this->getDateTimeInfo('時別',$requestData['date'],null);
         $user = $this->getUserInfo('userId',$requestData['id']);
         //オペレータ1人の情報取得
         $csvData = $this->getPrivateOperatorInfo($user,$users['anotherWindowDateFormat'],$users['correctStartDate'],$users['correctEndDate'],
@@ -2398,8 +2401,7 @@ class StatisticsController extends AppController {
      return $itemInfo;
   }
 
-  public function getDateTimeInfo($dateType,$date) {
-
+  public function getDateTimeInfo($dateType,$date,$item) {
     if($dateType == '月別') {
       $start = $date.'-01';
       $end = $date.'-12';
@@ -2411,7 +2413,15 @@ class StatisticsController extends AppController {
         $yearData[] = date('Y-m',$startDate);
         $startDate = strtotime("+1 month", $startDate);
       }
-      $yearData[] = '合計・平均';
+      if($item == 'login' || $item == 'requestChat' ||$item == 'responseChat' || $item =='effectiveness') {
+        $yearData[] = '合計';
+      }
+      else if($item == 'avgConsumersWaitTime' || $item =='avgResponseTime' || $item =='effectivenessRate') {
+        $yearData[] = '平均';
+      }
+      else {
+        $yearData[] = '合計・平均';
+      }
       return $yearData;
     }
 
@@ -2424,7 +2434,15 @@ class StatisticsController extends AppController {
         $monthData[] = ltrim(date('d',$firstDate), "0").'日';
         $firstDate = strtotime("+1 day", $firstDate);
       }
-      $monthData[] = '合計・平均';
+      if($item == 'login' || $item == 'requestChat' ||$item == 'responseChat' || $item =='effectiveness') {
+        $monthData[] = '合計';
+      }
+      else if($item == 'avgConsumersWaitTime' || $item =='avgResponseTime' || $item =='effectivenessRate') {
+        $monthData[] = '平均';
+      }
+      else {
+        $monthData[] = '合計・平均';
+      }
       return $monthData;
     }
 
@@ -2437,7 +2455,15 @@ class StatisticsController extends AppController {
         $dayData[] = date('H:i',$startTime).'-'.date('H:i',strtotime("+1 hour", $startTime));
         $startTime = strtotime("+1 hour", $startTime);
       }
-      $dayData[] = '合計・平均';
+      if($item == 'login' || $item == 'requestChat' ||$item == 'responseChat' || $item =='effectiveness') {
+        $dayData[] = '合計';
+      }
+      else if($item == 'avgConsumersWaitTime' || $item =='avgResponseTime' || $item =='effectivenessRate') {
+        $dayData[] = '平均';
+      }
+      else {
+        $dayData[] = '合計・平均';
+      }
       return $dayData;
     }
   }
