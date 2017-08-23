@@ -1108,8 +1108,10 @@
         },
         createNotifyMessage: function(val){
             var chatList = document.getElementsByTagName('sinclo-chat')[0];
+            var div = document.createElement('div');
             var li = document.createElement('li');
-            chatList.appendChild(li);
+            div.appendChild(li);
+            chatList.appendChild(div);
             li.className = "sinclo_etc";
             li.innerHTML = "－ " + check.escape_html(val) + " －";
             this.scDown();
@@ -1167,8 +1169,10 @@
         },
         createMessage: function(cs, val, cName){
             var chatList = document.getElementsByTagName('sinclo-chat')[0];
+            var div = document.createElement('div');
             var li = document.createElement('li');
-            chatList.appendChild(li);
+            div.appendChild(li);
+            chatList.appendChild(div);
             var strings = val.split('\n');
             var radioCnt = 1;
             var linkReg = RegExp(/http(s)?:\/\/[!-~.a-z]*/);
@@ -1180,7 +1184,10 @@
             check.escape_html(cName); // エスケープ
 
             if ( cs === "sinclo_re" ) {
+              div.style.textAlign = "left";
               content = "<span class='cName'>" + cName + "</span>";
+            } else if (cs === "sinclo_se") {
+              div.style.textAlign = "right";
             }
             for (var i = 0; strings.length > i; i++) {
                 var str = check.escape_html(strings[i]);
