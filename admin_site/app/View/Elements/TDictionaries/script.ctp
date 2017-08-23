@@ -19,7 +19,7 @@ function openEntryDialog(setting){
     cache: false,
     url: "<?= $this->Html->url('/TDictionaries/remoteOpenEntryForm') ?>",
     success: function(html){
-      modalOpen.call(window, html, 'p-tdictionary-entry', '簡易入力メッセージ');
+      modalOpen.call(window, html, 'p-tdictionary-entry', '定型文メッセージ');
     }
   });
 }
@@ -52,7 +52,7 @@ function toggleSort(){
 
 //一覧画面削除機能
 function removeAct(id){
-  modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', '簡易入力メッセージ');
+  modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', '定型文メッセージ');
   popupEvent.closePopup = function(){
     $.ajax({
       type: 'post',

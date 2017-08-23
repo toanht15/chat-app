@@ -162,6 +162,13 @@
         var text = $this.attr('data-text');
         var baloonPosition = $this.attr('data-balloon-position'); // 吹き出しの＜の部分
         var $tooltip = $('<div class="tooltips">'+text+'</div>');
+        //行数をカウント
+        var id = $this.attr('id');
+        var brcount = (text.split("<br>")).length;
+        var toppx = 39;
+        if(brcount > 1){
+          toppx = toppx+((brcount-1)*15);
+        }
         $('body').append($tooltip);// 要素の表示位置
         var offset = $this.offset();
 
@@ -189,7 +196,8 @@
           left: leftCoordinate
         });
         if(baloonPosition) {
-          $tooltip.append('<style>.tooltips:after{left:' + baloonPosition + '%!important;}</style>');
+          $tooltip.append('<style>.tooltips:after{left:' + baloonPosition + '%!important; top:' + toppx + 'px!important;}</style>');
+          $tooltip.attr("id","tooltip_"+id)
         }
       }, true); //radioボタンのdisableに対応するためuseCaptureを利用
 

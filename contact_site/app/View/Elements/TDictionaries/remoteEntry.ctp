@@ -8,13 +8,15 @@
     var dictionaryId = document.getElementById('TDictionaryId').value;
     var word = document.getElementById('TDictionaryWord').value;
     var type = document.getElementById('TDictionaryType').value;
+    var tab = "<?= $tabid ?>";
     $.ajax({
       type: "post",
       url: "<?=$this->Html->url('/TDictionaries/remoteSaveEntryForm')?>",
       data: {
         dictionaryId: dictionaryId,
         word: word,
-        type: type
+        type: type,
+        tab: tab
       },
       cache: false,
       dataType: "JSON",

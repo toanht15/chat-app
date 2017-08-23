@@ -6,7 +6,7 @@
 class CustomersController extends AppController {
   public $uses = [
     'MCompany', 'MUser', 'MCustomer', 'MWidgetSetting', 'MChatNotification', 'MChatSetting',
-    'THistory', 'THistoryChatLog', 'TCampaign', 'TDocument', 'TDictionary'
+    'THistory', 'THistoryChatLog', 'TCampaign', 'TDocument', 'TDictionary', 'TDictionaryCategory'
   ];
 
   public $tmpLabelHideList = ["accessId", "ipAddress", "ua", "stayCount", "time", "campaign", "stayTime", "page", "title", "referrer"];
@@ -481,6 +481,29 @@ class CustomersController extends AppController {
   }
 
   /**
+   * 定型文選択ウィンドウ表示
+   */
+  public function openCategoryDictionaryEdit(){
+    Configure::write('debug', 0);
+    $this->autoRender = FALSE;
+    $this->layout = 'ajax';
+    $this->_viewElement();
+    //ポップアップの呼び出し
+    $this->render('/Elements/Customers/categoryDictionary');
+  }
+
+  /**
+   * 定型文選択ウィンドウから値の返却
+   */
+  public function resCategoryDictionaryEdit(){
+    Configure::write('debug', 0);
+    $this->autoRender = FALSE;
+    $this->layout = 'ajax';
+    $this->_viewElement();
+    return ;
+  }
+
+  /**
    * ビュー表示用
    * @return void
    * */
@@ -489,7 +512,9 @@ class CustomersController extends AppController {
     $this->set('campaignList', $this->jsonEncode($this->TCampaign->getList()));
     /* 通知設定取得 */
     $this->_getNotificationSettingList();
-    /* 簡易入力情報取得 */
+    /* 定型文カテゴリリスト取得 */
+    $this->_getDictionaryCategoriesList();
+    /* 定型文情報リスト取得 */
     $this->_getDictionaryList();
     /* 除外情報取得 */
     $this->set('excludeList', $this->MCompany->getExcludeList($this->userInfo['MCompany']['id']));
@@ -517,11 +542,42 @@ class CustomersController extends AppController {
   }
 
   /**
-   * 簡易入力情報取得
+   * 定型文カテゴリ取得
+   *
+   */
+  private function _getDictionaryCategoriesList(){
+    $params = [
+        'order' => [
+            'TDictionaryCategory.sort' => 'asc',
+            'TDictionaryCategory.id' => 'asc'
+        ],
+        'fields' => [
+            "TDictionaryCategory.id", "TDictionaryCategory.category_name"
+        ],
+        'conditions' => [
+            'TDictionaryCategory.m_companies_id' => $this->userInfo['MCompany']['id']
+        ],
+        'recursive' => -1
+    ];
+    $dictionaryCategoriesList = $this->TDictionaryCategory->find('list',$params);
+    $list = [];
+    foreach ( (array)$dictionaryCategoriesList as $key => $val ) {
+      $list[] = [
+          'id' => $key,
+          'label' => $val
+      ];
+    }
+    $this->set('dictionaryCategoriesList', $list);
+  }
+
+  /**
+   * 定型文情報取得
    * @return void
    * */
   private function _getDictionaryList(){
-    $dictionaryList = $this->TDictionary->find('list',
+    //上記のカテゴリインデントを定型文配列に付与、定型文配列をカテゴリごとに振り分け
+    foreach ( (array)$this->viewVars['dictionaryCategoriesList'] as $ckey => $cval ) {
+      $dictionaryList = $this->TDictionary->find('list',
       [
         "fields" => [
           "TDictionary.id", "TDictionary.word"
@@ -530,26 +586,27 @@ class CustomersController extends AppController {
           'OR' => [
             'TDictionary.type' => C_DICTIONARY_TYPE_COMP,
             [
-            'TDictionary.type' => C_DICTIONARY_TYPE_PERSON,
-            'TDictionary.m_users_id' => $this->userInfo['id']
+              'TDictionary.type' => C_DICTIONARY_TYPE_PERSON,
+              'TDictionary.m_users_id' => $this->userInfo['id']
             ]
           ],
-          'TDictionary.m_companies_id' => $this->userInfo['MCompany']['id']
+            'TDictionary.m_companies_id' => $this->userInfo['MCompany']['id'],
+            'TDictionary.m_category_id' => $cval['id']
         ],
         'order' => [
           'sort' => 'asc',
           'id' => 'asc'
         ],
-        "recursive" => -1
-      ]
-    );
-
-    $list = [];
-    foreach ( (array)$dictionaryList as $key => $val ) {
-      $list[] = [
-        'id' => $key,
-        'label' => $this->setChatValiable($val)
-      ];
+          "recursive" => -1
+        ]
+      );
+      $list[$ckey] = [];
+      foreach ( (array)$dictionaryList as $key => $val ) {
+        $list[$ckey][] = [
+            'id' => $key,
+            'label' => $this->setChatValiable($val)
+        ];
+      }
     }
     $this->set('dictionaryList', $list);
   }
