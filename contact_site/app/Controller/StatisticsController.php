@@ -189,6 +189,7 @@ class StatisticsController extends AppController {
 
   //オペレータレポートデータ取得
   public function summaryOperatorSql($date_format,$correctStartDate,$correctEndDate) {
+    $this->log('オペレータスタート',LOG_DEBUG);
     //オペレータ情報取得
     $users = "SELECT id,display_name FROM m_users
     WHERE
@@ -201,10 +202,12 @@ class StatisticsController extends AppController {
     //オペレータ全員対象
     $allOperatorInfo = 0;
 
+    $this->log('チャットリクエスト件数スタート',LOG_DEBUG);
     //チャットリクエスト件数
     $requestNumber = $this->getSummaryOperatorRequestInfo($date_format,$allOperatorInfo,$correctStartDate,$correctEndDate);
     $allData = [];
     $allData['requestNumber'] = $requestNumber;
+    $this->log('チャットリクエスト終了',LOG_DEBUG);
 
     //ログイン件数
     $loginNumber = $this->getSummaryLoginOperatorInfo($date_format,$allOperatorInfo,$correctStartDate,$correctEndDate);
@@ -620,7 +623,7 @@ class StatisticsController extends AppController {
     $requestNumber = "SELECT
       date_format(th.access_date, ?) as date,thcau.m_users_id as userId,
       count(thcau.id) as request_count
-      FROM (select id,m_companies_id,access_date
+      FROM (select id,m_companies_id,access_date,ip_address
       from t_histories where m_companies_id = ? AND access_date between ? and ? ) as th,t_history_chat_logs
        as thcl,t_history_chat_active_users as thcau
       WHERE
@@ -639,7 +642,7 @@ class StatisticsController extends AppController {
       $requestNumber = "SELECT
         date_format(th.access_date, ?) as date,thcau.m_users_id as userId,
         count(thcau.id) as request_count
-        FROM (select id,m_companies_id,access_date
+        FROM (select id,m_companies_id,access_date,ip_address
       from t_histories where m_companies_id = ? AND access_date between ? and ? ) as th,
       t_history_chat_logs as thcl,t_history_chat_active_users as thcau
         WHERE
