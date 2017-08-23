@@ -1239,6 +1239,7 @@
             scrollTop: chatTalk.scrollHeight - chatTalk.clientHeight
           }, 300);
         },
+        isNotifyOpened: false,
         notify: function(message) {
           var self = this;
           var target = $('sinclo-chat-receiver');
@@ -1255,19 +1256,24 @@
             message = message.substr(0, message.length - 1);
             target.find('#receiveMessage').html(message + '...');
           }
-          target.css('display', 'none');
           if(isShrinkMessage) {
             message = message.substr(0, message.length - 1);
             target.find('#receiveMessage').html(message + '...');
           }
-          target.show('fast').off('click').on('click', function(e){
-            e.stopImmediatePropagation();
-            self.scDown();
-            $(this).hide();
-          });
+          if(!this.isNotifyOpened) {
+            target.css('display', 'none');
+            this.isNotifyOpened = true;
+            target.show('fast').off('click').on('click', function (e) {
+              self.isNotifyOpened = false;
+              e.stopImmediatePropagation();
+              self.scDown();
+              $(this).hide();
+            });
+          }
           // スクロールが表示判定とならないところまで来たら消す
           $('#sincloBox #chatTalk').on('scroll', function(e){
             if(!self.isShowChatReceiver()) {
+              self.isNotifyOpened = false;
               target.hide('fast');
             }
           });

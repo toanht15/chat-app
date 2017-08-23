@@ -1555,6 +1555,7 @@ ul.naviBtn {
               }
 
               li {
+                  text-align: left;
                   margin: 10px 0;
                   padding: 5px;
                   font-size: 12px;
@@ -1566,11 +1567,13 @@ ul.naviBtn {
                       margin-bottom: 20px;
                   }
                   &.sinclo_re {
+                      display: inline-block;
                       margin-right: 10px;
                       border-radius: 5px 5px 5px 0;
                       background-color: #F1F5C8;
                   }
                   &.sinclo_se, &.sinclo_auto {
+                      display: inline-block;
                       border-radius: 5px 5px 0;
                       margin-left: 10px;
                       background-color: #FFF;
