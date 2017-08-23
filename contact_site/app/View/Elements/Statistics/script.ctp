@@ -316,7 +316,7 @@ $(window).load(function(){
     targetObj.find('icon-annotation').css('display','block');
     if ( parentTdId.match(/op/)) {
       targetObj.css({
-      top: ($(this).offset().top - targetObj.find('ul').outerHeight() -3) + 'px',
+      top: ($(this).offset().top - targetObj.find('ul').outerHeight() -35) + 'px',
       left: '50px'
       });
     }
