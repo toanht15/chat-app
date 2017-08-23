@@ -107,7 +107,7 @@ table {
   }
 
   tr:hover, tr.on {
-    background-color: rgba(195, 214, 155, 0.1);
+    background-color: #EBF6F9;
   }
 
   th, td {
@@ -3483,9 +3483,9 @@ ul.naviBtn {
       padding: 0;
       li {
         padding: 5px 0;
-        img {
+/* #451       img {
           border-radius: 15px;
-        }
+        }*/
       }
     }
   }
