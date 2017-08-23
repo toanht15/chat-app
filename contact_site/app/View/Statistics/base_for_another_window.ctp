@@ -49,14 +49,14 @@
       <div id='opChatRequestTooltip' class="explainTooltip">
         <icon-annotation>
           <ul>
-            <li><span>サイト訪問者がチャットを送信した件数(※初回メッセージのみカウント)</span></li>
+            <li><span>サイト訪問者が送信したチャットを待機中のオペレーターが受信した件数(※初回メッセージのみカウント)</span></li>
           </ul>
         </icon-annotation>
       </div>
       <div id='opChatResponseTooltip' class="explainTooltip">
         <icon-annotation>
           <ul>
-            <li><span>チャットリクエストに対してオペレータが入室した件数（※初回入室のみカウント）</span></li>
+            <li><span>オペレータが入室した件数</span></li>
           </ul>
         </icon-annotation>
       </div>
@@ -84,7 +84,7 @@
       <div id='opChatEffectivenessResponseRateTooltip' class="explainTooltip">
         <icon-annotation>
           <ul>
-            <li><span>チャット有効件数／チャットリクエスト件数</span></li>
+            <li><span>チャット有効件数／チャット応対件数</span></li>
           </ul>
         </icon-annotation>
       </div>
