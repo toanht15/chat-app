@@ -107,7 +107,7 @@ table {
   }
 
   tr:hover, tr.on {
-    background-color: rgba(195, 214, 155, 0.1);
+    background-color: #EBF6F9;
   }
 
   th, td {
@@ -1515,6 +1515,37 @@ ul.naviBtn {
                 cursor: default;
               }
 
+              chat-receiver {
+                display: none;
+                position: absolute;
+                left: 0;
+                right: 0;
+                width: 100%;
+                height: 1.5em;
+                background-color: rgba(0,0,0,0.3);
+                vertical-align: middle;
+
+                &:before {
+                  content: "";
+                  display: inline-block;
+                  border: 6px solid transparent;
+                  position: absolute;
+                  top: 7px;
+                  left: 5px;
+                  height: 8px;
+                  border-top:8px solid rgba(255, 255, 255, 1.0);
+                  border-bottom:0;
+                }
+
+                #receiveMessage {
+                  overflow: hidden;
+                  font-size: 12px;
+                  height: 100%;
+                  vertical-align: middle;
+                  padding-left: 2em;
+                  color: #FFF;
+                }
+              }
             }
 
             .chatView {
@@ -1531,6 +1562,7 @@ ul.naviBtn {
               }
 
               li {
+                  text-align: left;
                   margin: 10px 0;
                   padding: 5px;
                   font-size: 12px;
@@ -1542,11 +1574,13 @@ ul.naviBtn {
                       margin-bottom: 20px;
                   }
                   &.sinclo_re {
+                      display: inline-block;
                       margin-right: 10px;
                       border-radius: 5px 5px 5px 0;
                       background-color: #F1F5C8;
                   }
                   &.sinclo_se, &.sinclo_auto {
+                      display: inline-block;
                       border-radius: 5px 5px 0;
                       margin-left: 10px;
                       background-color: #FFF;
@@ -3483,9 +3517,9 @@ ul.naviBtn {
       padding: 0;
       li {
         padding: 5px 0;
-        img {
+/* #451       img {
           border-radius: 15px;
-        }
+        }*/
       }
     }
   }

@@ -1,7 +1,7 @@
 <?php
 /**
  * TDictionariesController controller.
- * 簡易入力
+ * 定型文
  */
 App::uses('SimplePasswordHasher', 'Controller/Component/Auth');
 

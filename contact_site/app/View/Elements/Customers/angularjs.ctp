@@ -298,6 +298,51 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     }, 500);
   }
 
+  function scDownImmediate() {
+    var chatTalk = document.getElementById('chatTalk');
+    $('#chatTalk').animate({
+      scrollTop: chatTalk.scrollHeight - chatTalk.clientHeight
+    }, 300);
+  }
+
+  var isNotifyOpened = false;
+  function notify(message) {
+    var target = $('chat-receiver');
+    target.find('#receiveMessage').html(message);
+    target.css('display', 'block');
+    var targetHeight = target.outerHeight();
+    target.css('top',$('#chatTalk').outerHeight() - targetHeight);
+    // 指定した高さになるまで、1文字ずつ消去していく
+    target.css('display', 'none');
+    target.css('display', 'block');
+    while((message.length > 0) && (target.find('#receiveMessage').outerHeight() >= targetHeight)) {
+      message = message.substr(0, message.length - 1);
+      target.find('#receiveMessage').html(message + '...');
+    }
+    if(!isNotifyOpened) {
+      target.css('display', 'none');
+      isNotifyOpened = true;
+      target.show('fast').off('click').on('click', function (e) {
+        isNotifyOpened = false;
+        e.stopImmediatePropagation();
+        scDownImmediate();
+        $(this).hide('fast');
+      });
+    }
+    // スクロールが表示判定とならないところまで来たら消す
+    $('#chatTalk').on('scroll', function(e){
+      if(!isShowChatReceiver()) {
+        isNotifyOpened = false;
+        target.hide('fast');
+      }
+    });
+  }
+
+  function isShowChatReceiver() {
+    var target = $('#chatTalk');
+    return target.find('message-list').height() - target.height() - target.scrollTop() >= 55;
+  }
+
   // http://weathercook.hatenadiary.jp/entry/2013/12/02/062136
   sincloApp.factory('angularSocket', function ($rootScope) {
     return {
@@ -1008,6 +1053,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     // 【チャット】チャット枠の構築
     $scope.createMessage = function(elem, chat){
       var cn = "";
+      var div = document.createElement('div');
       var li = document.createElement('li');
       var content = "";
 
@@ -1017,12 +1063,14 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       // 消費者からのメッセージの場合
       if ( type === chatApi.messageType.customer) {
         cn = "sinclo_re";
+        div.style.textAlign = 'left';
         li.className = cn;
         content = $scope.createTextOfMessage(chat, message, {radio: false});
       }
       // オートメッセージの場合
       else if ( type === chatApi.messageType.company) {
         cn = "sinclo_se";
+        div.style.textAlign = 'right';
         var chatName = widget.subTitle;
         if ( Number(widget.showName) === <?=C_WIDGET_SHOW_NAME?> ) {
           chatName = userList[Number(userId)];
@@ -1032,11 +1080,13 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       }
       else if ( type === chatApi.messageType.auto || type === chatApi.messageType.sorry) {
         cn = "sinclo_auto";
+        div.style.textAlign = 'right';
         content = "<span class='cName'>自動応答</span>";
         content += $scope.createTextOfMessage(chat, message);
       }
       else if ( type === chatApi.messageType.autoSpeech ) {
         cn = "sinclo_auto";
+        div.style.textAlign = 'right';
         content = "<span class='cName'>自動返信</span>";
         content += $scope.createTextOfMessage(chat, message);
       }
@@ -1055,7 +1105,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       }
       li.className = cn;
       li.innerHTML = content;
-      $(elem).append(li);
+      div.appendChild(li);
+      $(elem).append(div);
     };
 
     // 【チャット】クラス名のジャッジ
@@ -1338,7 +1389,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             var chat = obj.messages[key];
             chat.sort = Number(key);
             $scope.messageList.push(chat);
-            scDown(); // チャットのスクロール
+            scDown();
           }
         }
 
@@ -1350,7 +1401,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             var chat = obj;
             chat.sort = Number(chat.sort);
             $scope.messageList.push(obj);
-            scDown(); // チャットのスクロール
+            scDown();
         }
     });
 
@@ -1648,7 +1699,12 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           var chat = JSON.parse(JSON.stringify(obj));
           chat.sort = Number(obj.sort);
           $scope.messageList.push(chat);
-          scDown(); // チャットのスクロール
+          // 通知表示可能で、サイト訪問者からのメッセージだったら
+          if(isShowChatReceiver() && obj.messageType === 1) {
+            notify(obj.message); // 通知を出す
+          } else {
+            scDown(); // チャットのスクロール
+          }
         }
         if (Number(obj.messageType) === chatApi.messageType.company || Number(obj.messageType) === chatApi.messageType.sorry) {
           // 入力したメッセージを削除
@@ -1761,7 +1817,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       else {
         $scope.typingMessageRe[obj.tabId] = obj.message;
       }
-      scDown();
+      if(!isShowChatReceiver()) {
+        scDown();
+      }
     });
 
     // =======================================
@@ -1809,36 +1867,251 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       return array;
     };
 
+    function dictionarySet(name){
+        $.ajax({
+        type: 'post',
+        dataType: 'html',
+        cache: false,
+        data: name,
+        url: "<?=$this->Html->url(['controller'=>'Customers', 'action' => 'resCategoryDictionaryEdit'])?>",
+        success: function(html){
+         }
+        });
+      }
+
     // テキストエリア
     $("#sendMessage").on("keydown", function(e) {
-      if ( e.keyCode === 40 ) {
+      //定型文ポップアップの表示処理
+      //佐藤作業中
+      if ( e.keyCode === 40 ) {  //↓キー押下時
         var target = e.target;
+        var html = null;
         if ( target.selectionStart === target.selectionEnd
           && target.selectionStart === target.value.length ) {
-          var testarea_offset = $(this).offset();
-          var testarea_size = {
-            height: this.offsetHeight,
-            width: this.offsetWidth
-          };
-          var area = document.getElementById('wordListArea');
-          area.style.display = "block";
-          $("#wordSearchCond").focus();
-          $scope.entryWord = 0;
-          $scope.searchWord = "";
-          $scope.$apply();
-          entryWordApi.init();
+          $.ajax({
+            type: 'post',
+            dataType: 'html',
+            cache: false,
+            url: "<?=$this->Html->url(['controller'=>'Customers', 'action' => 'openCategoryDictionaryEdit'])?>",
+            success: function(html){
+              modalOpen.call(window, html, 'p-category-dictionary-edit', '定型文選択', 'moment');
+              $("#wordSearchCond").focus();
+              $scope.entryWord = 0;
+              $scope.searchWord = "";
+              $scope.$apply();
+              entryWordApi.init();
 
-          return false;
+              //ポップアップ全体監視(ポップアップの何処かにクリックが当たると)
+              $("#popup-content").on('click', function(e){
+                //検索テクストエリアにフォーカス
+                $("#wordSearchCond").focus();
+              });
+
+              //ポップアップ全体監視(ポップアップのどこかにフォーカスがある状態でキーを押下すると)
+              $("#popup-content").on('keyup', function(e){
+                //キー押下時の処理
+                var select_tab_index = document.getElementById("select_tab_index").value;
+                //現在選択されているタブのワードリストを取得する
+                var selectTabWordList = $scope.entryWordList[select_tab_index];
+                //現在[dictionarySelected~]クラスがついている行のidnameを取得してidだけを抽出する
+                var selected = document.querySelector('[id^="item"].dictionarySelected'+select_tab_index);
+                var selected_id = selected.id;
+                selected_id = Number(selected_id.substr(4));
+                //idから現在選択されているキーを取得する
+                for(var key in selectTabWordList) {
+                  if(selected_id === selectTabWordList[key]["id"]){
+                    var selected_key = Number(key);
+                  }
+                }
+                if ( e.keyCode === 13 ) { // Enter
+                  var list = $scope.entryWordSearch($scope.entryWordList[select_tab_index]);
+                  if ( list.length > 0 ) {
+                    entryWordApi.push(list[selected_key].label);
+                  }
+                  entryWordApi.prev();
+                  //ポップアップを閉じる
+                  modalClose();
+                  return false;
+                }
+                if ( e.keyCode === 38 ) { // 上キー
+                  if ( selected_key > 0 ) {
+                    selected_key--;
+                    var prev = $("#item" + selectTabWordList[selected_key]["id"]);
+                    if (prev.prop('id')){
+                      //もともとあったセレクトクラスを除外
+                      var selectedClassName  = document.getElementById(selected.id).className;
+                      document.getElementById("item" + selectTabWordList[selected_key]["id"]).className = selectedClassName;
+                      document.getElementById(selected.id).className = "dictionaryWord ng-binding ng-scope";
+                      //新しくセレクトされた要素までスクロール
+                      document.getElementById("item" + selectTabWordList[selected_key]["id"]).scrollIntoView(false)
+                    }
+                  }
+                  else {
+                    //ポップアップを閉じる
+                    modalClose(); // 元の操作に戻る
+                    return false;
+                  }
+                }
+                if ( e.keyCode === 27 ) { // ESCキー
+                  //ポップアップを閉じる
+                  modalClose(); // 元の操作に戻る
+                  return false;
+                }
+                if ( e.keyCode === 40 ) { // 下
+                  if ( $scope.entryWordSearch($scope.entryWordList[select_tab_index]).length > (selected_key + 1) ) {
+                    selected_key++;
+                    var next = $("#item" + selectTabWordList[selected_key]["id"]);
+                    if (next.prop('id')){
+                      //もともとあったセレクトクラスを除外
+                      var selectedClassName  = document.getElementById(selected.id).className;
+                      document.getElementById("item" + selectTabWordList[selected_key]["id"]).className = selectedClassName;
+                      document.getElementById(selected.id).className = "dictionaryWord ng-binding ng-scope";
+                      //新しくセレクトされた要素までスクロール
+                      document.getElementById("item" + selectTabWordList[selected_key]["id"]).scrollIntoView(true)
+                    }
+                  }
+                  return false;
+                }
+                if ( e.keyCode === 37 ) { // 左
+                  select_tab_index = Number(select_tab_index);
+                  if ( select_tab_index > 0 ) {
+                    select_tab_index--;
+                    $( "#categoryTabs" ).tabs({ active: select_tab_index });
+                    document.getElementById("select_tab_index").value = select_tab_index;
+                  }
+                  return false;
+                }
+                if ( e.keyCode === 39 ) { // 右
+                  select_tab_index = Number(select_tab_index);
+                  if ( $scope.entryWordList.length > (select_tab_index + 1) ) {
+                    select_tab_index++;
+                    $( "#categoryTabs" ).tabs({ active: select_tab_index });
+                    document.getElementById("select_tab_index").value = select_tab_index;
+                  }
+                  return false;
+                }
+                entryWordApi.sc = 0;
+              });
+
+              //行クリック
+              $("[id ^= wordList]").on('click', function(e){
+                //カテゴリ
+                var select_tab_index = document.getElementById("select_tab_index").value;
+                var list = $scope.entryWordSearch($scope.entryWordList[select_tab_index]);
+                if ( list.length > 0 ) {
+                  modalClose();
+                  entryWordApi.push(list[$(e.target).index()].label);
+                  entryWordApi.prev();
+                }
+                return false;
+              });
+
+              //検索テキストボックス
+              $("#wordSearchCond")
+              .on('keyup', function(e){
+                //一旦全て非表示
+                document.getElementById("categoryTabs-ALL").style.display="none";
+                document.getElementById("wordListAll").style.display="none";
+                var searchItemList = document.querySelectorAll('[id^="searchItem"]');
+                for (var i = 0; i < searchItemList.length; i++) {
+                  searchItemList[i].style.display="none";
+                }
+                onWordSearchCond(e);
+              })
+              .on('click', function(e){
+                //一旦全て非表示
+                document.getElementById("categoryTabs-ALL").style.display="none";
+                document.getElementById("wordListAll").style.display="none";
+                var searchItemList = document.querySelectorAll('[id^="searchItem"]');
+                for (var i = 0; i < searchItemList.length; i++) {
+                  searchItemList[i].style.display="none";
+                }
+                onWordSearchCond(e);
+              });
+
+              //検索モード
+              function onWordSearchCond(e){
+                var search_word = document.getElementById("wordSearchCond").value;
+                if(search_word){
+                  //一文字でも入力があったら検索モード
+                  document.getElementById("serect_tab_mode").style.display="none";
+                  document.getElementById("word_search_mode").style.display="";
+                  var array = $scope.entryWordList;
+                  var res = [];
+                  for(var key in array) {
+                    for(var v_key in array[key]) {
+                      var text = array[key][v_key];
+                      var test = text["label"];
+                      if ( text["label"].indexOf(search_word) != -1) {
+                        //strにhogeを含む場合の処理
+                        res.push(text["id"]);
+                      }
+                    }
+                  }
+                  //検索に何かヒットしたら
+                  if(res){
+                    document.getElementById("categoryTabs-ALL").style.display="";
+                    document.getElementById("wordListAll").style.display="";
+                    for(var r_key in res) {
+                      //対応する行を表示
+                      document.getElementById("searchItem"+res[r_key]).style.display="";
+                    }
+                    //searchItem
+                  }
+                }
+                else{
+                  //入力が無くなったら通常モード
+                  document.getElementById("serect_tab_mode").style.display="";
+                  document.getElementById("word_search_mode").style.display="none";
+                }
+              }
+
+            }
+          });
+
+/* 旧定型文処理 */
+//           var testarea_offset = $(this).offset();
+//           var testarea_size = {
+//             height: this.offsetHeight,
+//             width: this.offsetWidth
+//           };
+//           var area = document.getElementById('wordListArea');
+//           area.style.display = "block";
+//           $("#wordSearchCond").focus();
+//           $scope.entryWord = 0;
+//           $scope.searchWord = "";
+//           $scope.$apply();
+//           entryWordApi.init();
+//           return false;
+/* 旧定型文処理 */
         }
       }
     });
 
-    /* 【ここから】ワードリスト内 */
+//     function ajaxopenCategoryDictionary(){
+//       return $.ajax({
+//         type: 'post',
+//         dataType: 'html',
+//         cache: false,
 
-    // ワードリストエリア
-    $("#wordListArea").on('click', function(e){
-      e.stopPropagation();
-    });
+//         success: function(html){
+//           modalOpen.call(window, html, 'p-category-dictionary-edit', '定型文選択', 'moment');
+//         }
+//       });
+//       ajaxopenCategoryDictionary().done(function(result) {
+//         var test = result;
+//     }).fail(function(result) {
+//         var test = result;
+//     });
+//     }
+
+//     ajaxopenCategoryDictionary().done(function(result) {
+//         var test = result;
+//     }).fail(function(result) {
+//         var test = result;
+//     });
+
+    /* 【ここから】ワードリスト内 */
 
     // ワードリスト絞り込み
     $scope.searchKeydown = function(e){
@@ -1881,6 +2154,21 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     };
 
+    // ワードリスト（表示用※新定型文から）
+//     $("#wordList")
+//       .on('mouseover', function(e){
+//       $scope.entryWord = $(e.target).index();
+//       $scope.$apply();
+//     })
+//       .on('click', function(e){
+//       var list = $scope.entryWordSearch($scope.entryWordList);
+//       if ( list.length > 0 ) {
+//         entryWordApi.push(list[$(e.target).index()].label);
+//         entryWordApi.prev();
+//       }
+//       return false;
+//     });
+    //選択時のイベント
     // ワードリスト（表示用）
     $("#wordList")
       .on('mouseover', function(e){
@@ -2213,7 +2501,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         scope.chatPs = function(){
           var sendPattarnStr = ( scope.settings.sendPattarn ) ? "Shift + Enter": "Enter";
           if ( scope.chatPsFlg ) {
-            return "ここにメッセージ入力してください。\n・" + sendPattarnStr + "で改行されます\n・下矢印キー(↓)で簡易入力が開きます";
+            return "ここにメッセージ入力してください。\n・" + sendPattarnStr + "で改行されます\n・下矢印キー(↓)で定型文が開きます";
           }
           else {
             return "";

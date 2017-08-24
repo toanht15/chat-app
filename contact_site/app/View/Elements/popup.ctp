@@ -123,6 +123,36 @@ var popupEvent = {
                         return popupEvent.close();
                     };
                     break;
+                case 'p-copy':
+                    var closeBtn = _button("コピーする");
+                    closeBtn.onclick = function(){
+                        return popupEvent.closePopup();
+                    };
+                    break;
+                case 'p-move':
+                    var closeBtn = _button("移動する");
+                    closeBtn.onclick = function(){
+                        return popupEvent.closePopup();
+                    };
+                    break;
+                case 'p-category-edit':
+                    var closeBtn = _button("カテゴリ名を変更");
+                    closeBtn.onclick = function(){
+                        return popupEvent.closePopup();
+                    };
+                    break;
+                case 'p-category-del':
+                    var closeBtn = _button("カテゴリの削除");
+                    closeBtn.onclick = function(){
+                        return popupEvent.closePopup();
+                    };
+                    break;
+                case 'p-category-dictionary-edit':
+//                     var closeBtn = _button("カテゴリの削除");
+//                     closeBtn.onclick = function(){
+//                         return popupEvent.closePopup();
+//                     };
+//                     break;
                 case 'p-alert':
                     var closeBtn = _button("閉じる");
                     closeBtn.onclick = function(){
