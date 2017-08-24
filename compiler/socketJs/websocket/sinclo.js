@@ -1118,55 +1118,57 @@
             this.scDown();
         },
         createTypingTimer: null,
-        createTypingMessage: function(d){
-            var obj = JSON.parse(d),
-                opUser = sinclo.chatApi.opUser,
-                chatType = document.getElementsByTagName('sinclo-typing')[0],
-                typeMessage = document.getElementById('sinclo_typeing_message'),
-                li = document.createElement('li'),
-                span = document.createElement('span');
+        createTypingMessage: function(d) {
+          var obj = JSON.parse(d),
+            opUser = sinclo.chatApi.opUser,
+            chatType = document.getElementsByTagName('sinclo-typing')[0],
+            typeMessage = document.getElementById('sinclo_typeing_message'),
+            li = document.createElement('li'),
+            span = document.createElement('span');
 
-            var calcMergin = function(opUser){
-              var margin = (opUser.length + 4)/2;
-              span.style.marginLeft = "-" + margin + "em";
-            };
+          var calcMergin = function (opUser) {
+            var margin = (opUser.length + 4) / 2;
+            span.style.marginLeft = "-" + margin + "em";
+          };
 
-            if ( obj.status === false ) {
-              if ( typeMessage ) {
-                typeMessage.parentNode.removeChild(typeMessage);
-              }
-              clearInterval(this.createTypingTimer);
-              return false;
+          if (obj.status === false) {
+            if (typeMessage) {
+              typeMessage.parentNode.removeChild(typeMessage);
             }
+            clearInterval(this.createTypingTimer);
+            return false;
+          }
 
-            if ( check.isset(opUser) === false ) {
-              opUser = "オペレーター";
-            }
+          if (check.isset(opUser) === false) {
+            opUser = "オペレーター";
+          }
 
-            opUser = check.escape_html(opUser); // エスケープ
+          opUser = check.escape_html(opUser); // エスケープ
 
-            if ( !typeMessage ) {
-              li.appendChild(span);
-              chatType.appendChild(li);
-              li.id = "sinclo_typeing_message";
+          if (!typeMessage) {
+            li.appendChild(span);
+            chatType.appendChild(li);
+            li.id = "sinclo_typeing_message";
+            span.textContent = opUser + "が入力中";
+            calcMergin(opUser);
+          }
+
+          this.createTypingTimer = setInterval(function () {
+            calcMergin(opUser);
+
+            if (span.textContent.length > opUser.length + 6) {
               span.textContent = opUser + "が入力中";
-              calcMergin(opUser);
             }
-
-            this.createTypingTimer = setInterval(function(){
-              calcMergin(opUser);
-
-              if (span.textContent.length > opUser.length + 6 ) {
-                span.textContent = opUser + "が入力中";
-              }
-              else {
-                span.textContent += ".";
-              }
-            }, 500);
-            // var chatTalk = document.getElementById('chatTalk');
-            // $('#sincloBox #chatTalk').animate({
-            //   scrollTop: chatTalk.scrollHeight - chatTalk.clientHeight
-            // }, 300);
+            else {
+              span.textContent += ".";
+            }
+          }, 500);
+          if (!this.isShowChatReceiver()) {
+            var chatTalk = document.getElementById('chatTalk');
+            $('#sincloBox #chatTalk').animate({
+              scrollTop: chatTalk.scrollHeight - chatTalk.clientHeight
+            }, 300);
+          }
         },
         createMessage: function(cs, val, cName){
             var chatList = document.getElementsByTagName('sinclo-chat')[0];
