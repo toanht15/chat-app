@@ -1817,6 +1817,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       else {
         $scope.typingMessageRe[obj.tabId] = obj.message;
       }
+      if(!isShowChatReceiver()) {
+        scDown();
+      }
     });
 
     // =======================================
