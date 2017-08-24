@@ -576,6 +576,7 @@ class CustomersController extends AppController {
    * */
   private function _getDictionaryList(){
     //上記のカテゴリインデントを定型文配列に付与、定型文配列をカテゴリごとに振り分け
+    $list = array();
     foreach ( (array)$this->viewVars['dictionaryCategoriesList'] as $ckey => $cval ) {
       $dictionaryList = $this->TDictionary->find('list',
       [

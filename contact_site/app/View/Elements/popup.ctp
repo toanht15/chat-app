@@ -286,6 +286,8 @@ var popupEvent = {
     window.modalOpen = function(contents, id, title, type){
         if (typeof(type) !== 'undefined') {
             pe.moveType = type;
+        } else {
+            pe.moveType = 'moveup';
         }
         pe.init();
         return pe.open(contents, id, title);
