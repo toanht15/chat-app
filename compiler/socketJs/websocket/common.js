@@ -237,7 +237,7 @@ var socket, // socket.io
         html += '      #sincloBox ul#chatTalk li sinclo-radio [type="radio"] { -webkit-appearance: radio!important; -moz-appearance: radio!important; appearance: radio!important; } ';
         html += '      #sincloBox ul#chatTalk sinclo-chat-receiver { display: none; position: absolute; left: 0; right: 0; width: 100%; height: 1.5em; background-color: rgba(0, 0, 0, 0.3); vertical-align: middle; } ';
         html += '      #sincloBox ul#chatTalk sinclo-chat-receiver:before {content: ""; display: inline-block; border: 6px solid transparent; position: absolute; top: 7px; left: 5px; height: 8px; border-top: 8px solid white; border-bottom: 0; }';
-        html += '      #sincloBox ul#chatTalk sinclo-chat-receiver #receiveMessage { overflow: hidden; font-size: 12px; height: 100%; vertical-align: middle; padding-left: 2em; color: #FFF; }';
+        html += '      #sincloBox ul#chatTalk sinclo-chat-receiver #receiveMessage { overflow: hidden; font-size: 10px; height: 100%; vertical-align: middle; padding-left: 2em; color: #FFF; }';
         html += '      #sincloBox section#chatTab sinclo-div { border-top: 1px solid #E8E7E0; }';
         html += '      #sincloBox section#chatTab sinclo-div #sincloChatMessage { display: block; height: 100%; min-height: 100%!important; margin: 0; width: 80%; resize: none; color: ' + chatContentTextColor + '!important; border-right-color: ' + widget.mainColor + '!important; }';
         html += '      #sincloBox section#chatTab sinclo-div #sincloChatMessage:focus { outline: none; border-color: ' + widget.mainColor + '!important }';
