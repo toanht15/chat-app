@@ -4915,13 +4915,13 @@ ul.naviBtn {
   #statistics_content {
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 190px);
+    height: calc(100vh - 192px);
 
     > contents {
       flex: 1;
     }
 
-    form#StatisticsForChatForm {
+    form#StatisticsForChatForm,form#StatisticsForOperatorForm {
       margin-bottom: 0;
     }
 
@@ -4943,7 +4943,7 @@ ul.naviBtn {
 
     .thMinWidthOp {
       min-width: 170px;
-      height:62px;
+      height:35px;
     }
     table.opList thead th, table.opList thead td {
       padding: 0 3px;
