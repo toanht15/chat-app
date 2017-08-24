@@ -8,7 +8,7 @@
     <condition-bar>
       <left-parts>
         <span id = "searchPeriod">対象期間：</span>
-        <?= $this->Form->create(); ?>
+        <?= $this->Form->create('Statistics'); ?>
 
           <?= $this->Form->input('dateType', array('type'=>'select','name' => 'dateFormat','onChange' => 'timeChangeForOperator()',
           'div'=>false, 'style' => 'vertical-align:middle;','label'=>false,'options'=>array('月別'=>'月別','日別'=>'日別','時別'=>'時別'), 'selected' => $date)); ?>
@@ -35,42 +35,42 @@
 
     <div id='statistics_content' class="p20trl" style="visibility:hidden;">
       <div id='opChatRequestTooltip' class="opThreeLineExplainTooltip">
-        <icon-annotation style = "margin-top:-3px;">
+        <icon-annotation style = "margin-top:-17px;">
           <ul>
             <li><span>サイト訪問者が送信したチャットを待機中のオペレーターが受信した件数(※初回メッセージのみカウント)</span></li>
           </ul>
         </icon-annotation>
       </div>
       <div id='opChatResponseTooltip' class="opOneLineExplainTooltip">
-        <icon-annotation style = "margin-top:26px;">
+        <icon-annotation style = "margin-top:13px;">
           <ul>
             <li><span>オペレータが入室した件数</span></li>
           </ul>
         </icon-annotation>
       </div>
-      <div id='opChatEffectivenessTooltip' style = 'margin-top:11px;' class="opTwoLineExplainTooltip">
-        <icon-annotation>
+      <div id='opChatEffectivenessTooltip' class="opTwoLineExplainTooltip">
+        <icon-annotation style = "margin-top:-2px;">
           <ul>
             <li><span>成果が「有効」として登録された件数</span></li>
           </ul>
         </icon-annotation>
       </div>
       <div id='opChatConsumerWaitAverageTimeTooltip' class="opThreeLineExplainTooltip">
-        <icon-annotation style = "margin-top:-3px;">
+        <icon-annotation style = "margin-top:-17px;">
           <ul>
             <li><span>サイト訪問者の初回メッセージを送信してから、オペレータがチャットに入室するまでの平均時間</span></li>
           </ul>
         </icon-annotation>
       </div>
       <div id='opChatResponseAverageTimeTooltip' class="opThreeLineExplainTooltip">
-        <icon-annotation style = "margin-top:-3px;">
+        <icon-annotation style = "margin-top:-17px;">
           <ul>
             <li><span>サイト訪問者の初回メッセージを送信してから、オペレータが初回メッセージを送信するまでの平均時間</span></li>
           </ul>
         </icon-annotation>
       </div>
-      <div id='opChatEffectivenessResponseRateTooltip' style = 'margin-top:11px;' class="opExplainRateTooltip">
-        <icon-annotation>
+      <div id='opChatEffectivenessResponseRateTooltip' class="opExplainRateTooltip">
+        <icon-annotation style = "margin-top:-2px;">
           <ul>
             <li><span>チャット有効件数／チャット応対件数</span></li>
           </ul>
@@ -86,8 +86,7 @@
           <th class = "thMinWidthTimelyForOperator">
           <a href="<?=$this->Html->url(array('controller' => 'Statistics',
           'action' => 'baseForAnotherWindow','?'=>array('item'=>'login','type'=>$time,'target'=>$type)))?>"
-          onclick="window.open(this.href, 'mywindow1', 'width=1000, height=700'); return false;" style = "margin-right:1.2em">
-          <?php $this->log($type,LOG_DEBUG); ?>ログイン件数</th>
+          onclick="window.open(this.href, 'mywindow1', 'width=1000, height=700'); return false;" style = "margin-right:1.2em">ログイン件数</th>
           <th class = "thMinWidthTimelyForOperator tooltip" id="opChatRequestLabel">
           <a href="<?=$this->Html->url(array('controller' => 'Statistics',
           'action' => 'baseForAnotherWindow','?'=>array('item'=>'requestChat','type'=>$time,'target'=>$type)))?>"

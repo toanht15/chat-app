@@ -15,11 +15,6 @@ class AddTLoginsIndex extends CakeMigration {
  */
 	public $migration = array(
 		'up' => array(
-			'alter_field' => array(
-				't_logins' => array(
-					'm_companies_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'index'),
-				),
-			),
 			'create_field' => array(
 				't_logins' => array(
 					'indexes' => array(
@@ -29,11 +24,6 @@ class AddTLoginsIndex extends CakeMigration {
 			),
 		),
 		'down' => array(
-			'alter_field' => array(
-				't_logins' => array(
-					'm_companies_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false),
-				),
-			),
 			'drop_field' => array(
 				't_logins' => array('indexes' => array('idx_t_logins_m_companies_id_created_users_id')),
 			),
