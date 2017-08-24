@@ -28,7 +28,9 @@
           <th width="15%">資料</th>
           <th width="25%">資料名</th>
           <th width="40%">概要</th>
+<!--
           <th width="15%">操作</th>
+ -->
         </tr>
       </thead>
       <tbody>
@@ -66,12 +68,14 @@
           <td class="tCenter"><?=h($val['TDocument']['name'])?></td>
           <td class="tCenter"><?=h($val['TDocument']['overview'])?></td>
           <!-- <td class="tCenter"><span><?=implode("</span>、<span>",$val['TDocument']['tag'])?></span></td> -->
+<!--
           <td class="p10x noClick lineCtrl">
             <div>
               <a href="<?=$this->Html->url(['controller'=>'TDocuments', 'action'=>'edit', $id])?>" class="btn-shadow greenBtn fLeft"><img src="/img/edit.png" alt="更新" width="30" height="30"></a>
               <a href="javascript:void(0)" class="btn-shadow redBtn m10r10l fRight" onclick="removeAct('<?=$id?>')"><img src="/img/trash.png" alt="削除" width="30" height="30"></a>
             </div>
           </td>
+ -->
         </tr>
         <?php endforeach; ?>
         <?php if ( count($documentList) === 0 ) :?>

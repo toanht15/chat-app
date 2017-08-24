@@ -179,7 +179,10 @@
           <thead>
             <tr>
               <!-- #451 定型文カテゴリ対応 start -->
-              <th width=" 5%"><input type="checkbox" name="allCheck" id="allCheck<?=$i?>" ><label for="allCheck"></label></th>
+              <th width=" 5%">
+                <input type="checkbox" name="allCheck" id="allCheck<?=$i?>" >
+                <label for="allCheck<?=$i?>"></label>
+              </th>
               <!-- #451 定型文カテゴリ対応 end -->
               <th>No</th>
               <th>使用範囲</th>
@@ -193,7 +196,7 @@
                 <!-- #451 定型文カテゴリ対応 start -->
                 <td class="tCenter">
                   <input type="checkbox" name="selectTab<?=$i?>" id="selectTab<?=$key?>" value="<?=$val['TDictionary']['id']?>">
-                  <label for="selectTab<?=$val['TDictionary']['id']?>"></label>
+                  <label for="selectTab<?=$key?>"></label>
                 </td>
                 <!-- #451 定型文カテゴリ対応 end -->
                 <td width="8%" class="tCenter pre">
