@@ -781,6 +781,7 @@
           elm.value = "";
         }
         if (obj.messageType === sinclo.chatApi.messageType.auto || obj.messageType === sinclo.chatApi.messageType.autoSpeech) {
+          this.chatApi.scDown();
           return false;
         }
 
