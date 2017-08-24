@@ -28,8 +28,12 @@
                   <ng-create-message ng-repeat="chat in messageList | orderBy: 'sort'"></ng-create-message>
                 </message-list>
                 <typing-message>
-                  <li class="sinclo_se typeing_message" ng-if="typingMessageSe !== ''">{{typingMessageSe}}</li>
-                  <li class="sinclo_re typeing_message" ng-if="typingMessageRe[detailId] && typingMessageRe[detailId] !== ''">{{typingMessageRe[detailId]}}</li>
+                  <div style="text-align:right;">
+                    <li class="sinclo_se typeing_message" ng-if="typingMessageSe !== ''">{{typingMessageSe}}</li>
+                  </div>
+                  <div style="text-align:left">
+                    <li class="sinclo_re typeing_message" ng-if="typingMessageRe[detailId] && typingMessageRe[detailId] !== ''">{{typingMessageRe[detailId]}}</li>
+                  </div>
                 </typing-message>
                 <chat-receiver>
                   <span id="receiveMessage">テストメッセージです</span>
