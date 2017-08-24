@@ -39,7 +39,7 @@ class AppController extends Controller {
     'Auth' => [
       //ログイン後の遷移先
       'loginRedirect' => [
-        'controller' => 'Tops',
+        'controller' => 'Contract',
         'action' => 'index'
       ],
       //ログインしていない時に他ページへアクセスした場合
