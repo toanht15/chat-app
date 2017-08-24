@@ -102,7 +102,19 @@
             <?php for ($i = $start; $i <= $end; $i++) { ?>
               <th class="thMinWidthDayly"><?= $i.'月' ?></th>
             <?php } ?>
-            <th class="thMinWidthDayly">合計・平均</th>
+            <?php //各項目ごと画面の場合
+              if(isset($item)) {
+                if($item == 'ログイン件数' || $item == 'リクエスト件数' ||
+                $item == '応対件数' || $item =='有効件数') { ?>
+                <th class="thMinWidthDayly">合計</th>
+            <?php }
+              else if($item == '平均消費者待機時間' || '平均応答時間' || '有効率') { ?>
+                <th class="thMinWidthDayly">平均</th>
+            <?php }
+              }
+              else { ?>
+                <th class="thMinWidthDayly">合計・平均</th>
+            <?php } ?>
           </tr>
         <?php } ?>
       <!-- /* 日別の場合 */ -->
@@ -114,7 +126,19 @@
             <?php for ($i = $start; $i <= $end; $i++) { ?>
               <th class="thMinWidthDayly"><?= $i.'日' ?></th>
             <?php } ?>
-            <th class="thMinWidthDayly">合計・平均</th>
+            <?php //各項目ごと画面の場合
+              if(isset($item)) {
+                if($item == 'ログイン件数' || $item == 'リクエスト件数' ||
+                $item == '応対件数' || $item =='有効件数') { ?>
+                <th class="thMinWidthDayly">合計</th>
+            <?php }
+              else if($item == '平均消費者待機時間' || '平均応答時間' || '有効率') { ?>
+                <th class="thMinWidthDayly">平均</th>
+            <?php }
+              }
+              else { ?>
+                <th class="thMinWidthDayly">合計・平均</th>
+            <?php } ?>
           </tr>
         <?php } ?>
       <!-- /* 時別の場合 */ -->
@@ -126,7 +150,19 @@
             <?php for ($i = $start; $i <= $end; $i++) { ?>
               <th class = "thMinWidthTimely"><?= sprintf("%02d",$i).'-'.sprintf("%02d",$i+1) ?></th>
             <?php } ?>
-            <th class="thMinWidthDayly">合計・平均</th>
+            <?php //各項目ごと画面の場合
+              if(isset($item)) {
+                if($item == 'ログイン件数' || $item == 'リクエスト件数' ||
+                $item == '応対件数' || $item =='有効件数') { ?>
+                <th class="thMinWidthDayly">合計</th>
+            <?php }
+              else if($item == '平均消費者待機時間' || '平均応答時間' || '有効率') { ?>
+                <th class="thMinWidthDayly">平均</th>
+            <?php }
+              }
+              else { ?>
+                <th class="thMinWidthDayly">合計・平均</th>
+            <?php } ?>
           </tr>
         <?php } ?>
       </thead>

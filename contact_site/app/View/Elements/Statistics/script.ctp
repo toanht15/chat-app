@@ -2,7 +2,7 @@
 <?= $this->element('TDocuments/loadScreen'); ?>
 
 function timeChange()　{
-  var chosenDateFormat = document.forms.THistoryForChatForm.dateFormat;
+  var chosenDateFormat = document.forms.StatisticsForChatForm.dateFormat;
 
   //selectで月別を選択した場合
   if (chosenDateFormat.options[chosenDateFormat.selectedIndex].value == "月別")
@@ -36,7 +36,7 @@ function timeChange()　{
 }
 
 function timeChangeForOperator()　{
-  var chosenDateFormat = document.forms.THistoryForOperatorForm.dateFormat;
+  var chosenDateFormat = document.forms.StatisticsForOperatorForm.dateFormat;
 
   //selectで月別を選択した場合
   if (chosenDateFormat.options[chosenDateFormat.selectedIndex].value == "月別")
@@ -219,15 +219,15 @@ $(window).load(function(){
       if(dateFormat == timeType.monthly) {
         // Safariでローディングのイメージが表示されない問題の解決方法としてsetTimeoutを挿入
         // @see https://stackoverflow.com/questions/28586393/safari-not-updating-ui-during-form-submission
-        if(document.getElementById("THistoryForChatForm") != null) {
+        if(document.getElementById("StatisticsForChatForm") != null) {
 
           setTimeout(function(){
-            document.getElementById('THistoryForChatForm').submit();
+            document.getElementById('StatisticsForChatForm').submit();
           },0);
         }
-        else if(document.getElementById("THistoryForOperatorForm") != null) {
+        else if(document.getElementById("StatisticsForOperatorForm") != null) {
           setTimeout(function(){
-            document.getElementById('THistoryForOperatorForm').submit();
+            document.getElementById('StatisticsForOperatorForm').submit();
           },0);
         }
       }
@@ -244,14 +244,14 @@ $(window).load(function(){
       if(dateFormat == timeType.dayly) {
         // Safariでローディングのイメージが表示されない問題の解決方法としてsetTimeoutを挿入
         // @see https://stackoverflow.com/questions/28586393/safari-not-updating-ui-during-form-submission
-        if(document.getElementById("THistoryForChatForm") != null) {
+        if(document.getElementById("StatisticsForChatForm") != null) {
           setTimeout(function() {
-            document.getElementById('THistoryForChatForm').submit();
+            document.getElementById('StatisticsForChatForm').submit();
           },0);
         }
-        else if(document.getElementById("THistoryForOperatorForm") != null) {
+        else if(document.getElementById("StatisticsForOperatorForm") != null) {
           setTimeout(function(){
-            document.getElementById('THistoryForOperatorForm').submit();
+            document.getElementById('StatisticsForOperatorForm').submit();
           },0);
         }
       }
@@ -296,14 +296,14 @@ $(window).load(function(){
     if(searchInfo == timeType.timely) {
       // Safariでローディングのイメージが表示されない問題の解決方法としてsetTimeoutを挿入
       // @see https://stackoverflow.com/questions/28586393/safari-not-updating-ui-during-form-submission
-      if(document.getElementById("THistoryForChatForm") != null) {
+      if(document.getElementById("StatisticsForChatForm") != null) {
         setTimeout(function() {
-          document.getElementById('THistoryForChatForm').submit();
+          document.getElementById('StatisticsForChatForm').submit();
         },0);
       }
-      else if(document.getElementById("THistoryForOperatorForm") != null) {
+      else if(document.getElementById("StatisticsForOperatorForm") != null) {
         setTimeout(function(){
-          document.getElementById('THistoryForOperatorForm').submit();
+          document.getElementById('StatisticsForOperatorForm').submit();
         },0);
       }
     }
