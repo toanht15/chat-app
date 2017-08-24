@@ -142,7 +142,7 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
     <?php endif; ?>
     <!-- /* チャット */ -->
     <!-- /* 統計 */ -->
-    <?php if ($coreSettings[C_COMPANY_USE_CHAT] && !$coreSettings[C_COMPANY_CHAT_BASIC_PLAN]) : ?>
+    <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
       <div data-sidebar-type="statistics" class="hide">
         <div class="icon">
           <?= $this->htmlEx->naviLink('チャット', 'chat_setting.png', ['href' => ['controller' => 'Statistics', 'action' => 'forChat']]) ?>
