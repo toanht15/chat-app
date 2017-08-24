@@ -1811,6 +1811,9 @@
 
             if ( String(type) === "1" && ('message' in cond) && (String(chatActFlg) === "false") ) {
                 sinclo.chatApi.createMessageUnread("sinclo_re", cond.message, sincloInfo.widget.subTitle);
+                if(!sinclo.chatApi.isShowChatReceiver()) {
+                  sinclo.chatApi.scDown();
+                }
                 var prev = sinclo.chatApi.autoMessages;
 
                 var setAutoMessageTimer = setInterval(function(){
