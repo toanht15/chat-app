@@ -58,14 +58,14 @@
       <div id='opChatConsumerWaitAverageTimeTooltip' class="opThreeLineExplainTooltip">
         <icon-annotation style = "margin-top:-17px;">
           <ul>
-            <li><span>サイト訪問者の初回メッセージを送信してから、オペレータがチャットに入室するまでの平均時間</span></li>
+            <li><span>サイト訪問者の初回メッセージを受信してから、オペレータがチャットに入室するまでの平均時間</span></li>
           </ul>
         </icon-annotation>
       </div>
       <div id='opChatResponseAverageTimeTooltip' class="opThreeLineExplainTooltip">
         <icon-annotation style = "margin-top:-17px;">
           <ul>
-            <li><span>サイト訪問者の初回メッセージを送信してから、オペレータが初回メッセージを送信するまでの平均時間</span></li>
+            <li><span>サイト訪問者の初回メッセージを受信してから、オペレータが初回メッセージを送信するまでの平均時間</span></li>
           </ul>
         </icon-annotation>
       </div>

@@ -393,7 +393,7 @@
           <td><?php echo ($data['allAvgEnteringRommTimeData']) ?></td>
         </tr>
         <tr>
-          <td id = 'opChatResponseAverageTimeLabel' class = 'tooltip'>平均応対時間
+          <td id = 'opChatResponseAverageTimeLabel' class = 'tooltip'>平均応答時間
             <div class="questionBalloon questionBalloonPosition6">
               <icon class="questionBtn">？</icon>
             </div>
