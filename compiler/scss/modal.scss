@@ -846,3 +846,346 @@
     display:none;
   }
 }
+
+/* 定型文機能 */
+#tdictionaries_idx{
+  .texboxArea{
+    position: relative;
+    top: 5px;
+    left: -20px;
+    .pointer {
+      position: relative;
+      top: 0px;
+      left: 0px;
+      #tabsort{
+        position: relative;
+        top: 2px;
+        left: -4px;
+      }
+    }
+  }
+  .listArea{
+    position: relative;
+    top: 0px;
+    left: 0px;
+    margin: 20px;
+    .fLeft{
+      position: relative;
+      top: -10px;
+      left: -5px;
+      .pointer{
+        position: relative;
+        top: 0px;
+        left: -1px;
+        [id^="sort"]{
+          position: relative;
+          top: 2px;
+        }
+      }
+    }
+    .fRight{
+      position: relative;
+      top: -20px;
+      left: 2px;
+    }
+    #tdictionaries_list{
+      padding: 18px;
+    }
+  }
+}
+
+
+
+
+
+
+.disOffgreenBtn {
+  cursor: pointer !important;
+  font-weight: bold;
+  transition: background-color, border-color 0.1s linear;
+  background-color: #C3D69B;
+  color: white;
+  border: 1px solid #C3D69B;
+}
+
+.disOffgrayBtn {
+  cursor: pointer !important;
+  font-weight: bold;
+  transition: background-color, border-color 0.1s linear;
+  background-color: #DADADA;
+  border: 1px solid #DADADA;
+  color: white;
+}
+
+.disOffredBtn {
+  cursor: pointer !important;
+  font-weight: bold;
+  transition: background-color, border-color 0.1s linear;
+  background-color: #D69B9B;
+  border: 1px solid #D69B9B;
+  color: white;
+}
+
+.t-link {
+  display: block;
+  width: 100%;
+  height: 80%;
+}
+
+#popup #popup-frame-base #popup-frame.p-copy {
+  width: 350px;
+  height: 150px;
+}
+
+#popup #popup-frame-base #popup-frame.p-copy #popup-button {
+  text-align: center;
+}
+
+#popup #popup-frame-base #popup-frame.p-copy #popup-button a {
+  width: 95px;
+  margin: 0 auto;
+}
+
+#popup #popup-frame-base #popup-frame.p-move {
+  width: 350px;
+  height: 150px;
+}
+
+#popup #popup-frame-base #popup-frame.p-move #popup-button {
+  text-align: center;
+}
+
+#popup #popup-frame-base #popup-frame.p-move #popup-button a {
+  width: 95px;
+  margin: 0 auto;
+}
+
+#popup #popup-frame-base #popup-frame.p-category-edit {
+  width: 350px;
+  height: 150px;
+}
+
+#popup #popup-frame-base #popup-frame.p-category-edit #popup-button {
+  text-align: center;
+}
+
+#popup #popup-frame-base #popup-frame.p-category-edit #popup-button a {
+  width: 150px;
+  margin: 0 auto;
+}
+
+#popup #popup-frame-base #popup-frame.p-category-del {
+  width: 350px;
+  height: 150px;
+}
+
+#popup #popup-frame-base #popup-frame.p-category-del #popup-button {
+  text-align: center;
+}
+
+#popup #popup-frame-base #popup-frame.p-category-del #popup-button a {
+  width: 150px;
+  margin: 0 auto;
+}
+
+#popup #popup-frame-base #popup-frame.p-category-dictionary-edit {
+  width: 500px;
+  height: 450px !important;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+}
+
+#popup #popup-frame-base #popup-frame.p-category-dictionary-edit #popup-button {
+  display: none;
+}
+
+#popup-bg.category-tab-binding{
+  position: static;
+}
+
+#popup #popup-frame-base #popup-frame #popup-content #popup-title.category-tab-binding{
+  margin: 0;
+  padding: 0.5em;
+  background-color: #C3D69B;
+  color: #FFF;
+  display: block;
+  cursor: move;
+  border-bottom: none;
+}
+
+#popup #popup-frame-base #popup-frame #popup-content #popup-main.category-tab-binding{
+  padding: 10px;
+}
+
+#serect_tab_mode{
+  position: relative;
+  top: 10px;
+  left: 0px;
+}
+
+#categoryTabs.ui-widget.ui-widget-content{
+  border:none;
+}
+
+#categoryTabs.ui-widget-content{
+  border:none;
+}
+
+.ui-tabs .ui-tabs-nav.categoryTabStyle{
+  padding: 0;
+}
+
+.ui-widget-header.categoryTabStyle{
+  border:none;
+  background:none;
+}
+
+.wordBorder{
+  border: 1px solid #909090;
+}
+
+.chatCategory{
+  border: 0.5em solid #C3D69B;
+  background-color: #FFF;
+  padding: 0.25em;
+  height: 290px;
+}
+
+[class^="dictionaryWord ng-binding ng-scope dictionarySelected"]{
+  background-color: #e8ffee;
+}
+
+[id^="item"].dictionaryTab{
+  border: 1px solid #c5c5c5;
+}
+
+[id^="wordList"]{
+  width: 480px;
+  height: 250px !important;
+  overflow-y: scroll;
+  position: relative;
+  top: 0px;
+  left: 10px;
+}
+
+.onTabs.ui-tabs-panel.ui-corner-bottom.ui-widget-content[id^="categoryTabs-"]{
+  padding: 0px 18px;
+}
+
+#categoryTabs-ALL{
+  display: none;
+}
+
+[id="wordListAll"].fRight{
+  float:none;
+}
+
+#menuheader {
+  position: relative;
+}
+
+.dictionaryWord{
+  padding: 3px;
+  border-bottom: 1px solid #909090;
+  word-break: break-all;
+  word-wrap: break-word;
+}
+
+[id^="openMenu"] {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+[id^="layerMenu"] {
+  display: none;
+  position: absolute;
+  top: 55px;
+  right: 0;
+  width: 12em;
+  font-size: 12px;
+  z-index: 9999;
+}
+
+[id^="layerMenu"] ul {
+  border-top: solid 1px #ccc;
+}
+
+[id^="layerMenu"] ul li {
+  background: #fff;
+  list-style: none;
+  border-bottom: solid 1px #ccc;
+  position: relative;
+  padding: 10px;
+  text-decoration: none;
+  color: #555;
+  display: block;
+}
+
+[id^="tooltip_add_btn"].tooltips{
+  position: relative;
+  top: 219px !important;
+  left: 104px !important;
+  width: 6em
+}
+
+[id^="tooltip_copy_btn"].tooltips{
+  position: relative;
+  top: 219px !important;
+  left: 128px !important;
+  width: 9em;
+}
+
+[id^="tooltip_move_btn"].tooltips{
+  position: relative;
+  top: 219px !important;
+  left: 190px !important;
+  width: 6em;
+}
+
+[id^="tooltip_dustbox_btn"].tooltips{
+  position: relative;
+  top: 219px !important;
+  left: 234px !important;
+  width: 6em;
+}
+
+[id^="tooltip_manu_btn"].tooltips{
+  position: relative;
+  top: 219px !important;
+  left: 690px !important;
+}
+
+[id^="layerMenu"] ul li:hover {
+  color: #EA0001;
+}
+
+.ui-tabs.soteTabs {
+  padding: 0em;
+}
+
+.ui-widget.ui-widget-content.soteTabs {
+  border: 0px;
+}
+
+.ui-tabs .ui-tabs-nav {
+  padding: 0;
+  margin: 0;
+}
+
+.ui-widget-header.tablist{
+  border:none;
+}
+
+.ui-tabs.ui-tabs-nav{
+  padding: .0em .0em 0;
+}
+
+.ui-tabs.ui-tabs-nav.tablist{
+  padding: .0em .0em 0;
+}
+
+.tabBox.ui-tabs-panel.ui-corner-bottom.ui-widget-content{
+  border: 0.5em solid #C3D69B;
+  background-color: #FFF;
+  padding: 0.25em;
+}

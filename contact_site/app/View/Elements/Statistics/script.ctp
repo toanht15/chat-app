@@ -35,6 +35,40 @@ function timeChange()　{
   }
 }
 
+function timeChangeForOperator()　{
+  var chosenDateFormat = document.forms.THistoryForOperatorForm.dateFormat;
+
+  //selectで月別を選択した場合
+  if (chosenDateFormat.options[chosenDateFormat.selectedIndex].value == "月別")
+  {
+    document.getElementById("monthlyForm").style.display="";
+    document.getElementById("daylyForm").style.display="none";
+    document.getElementById("hourlyForm").style.display="none";
+    document.getElementById("monthlyForm").value = "";
+    document.getElementById("triangle").style.borderTop = "0px";
+  }
+  //selectで日別を選択した場合
+  else if (chosenDateFormat.options[chosenDateFormat.selectedIndex].value == "日別")
+  {
+    document.getElementById("monthlyForm").style.display="none";
+    document.getElementById("daylyForm").style.display="";
+    document.getElementById("hourlyForm").style.display="none";
+    document.getElementById("hourlyForm").value = "";
+    document.getElementById("triangle").style.borderTop = "0px";
+  }
+  //selectで時別を選択した場合
+  else if (chosenDateFormat.options[chosenDateFormat.selectedIndex].value == "時別")
+  {
+    var value = new Date().getFullYear() + "/" + ("0" + (new Date().getMonth() + 1)).slice(-2) + "/01";
+    document.getElementById("monthlyForm").style.display="none";
+    document.getElementById("daylyForm").style.display="none";
+    document.getElementById("hourlyForm").style.display="";
+    document.getElementById("hourlyForm").value = '選択してください';
+    document.getElementById("hourlyForm").options = value;
+    document.getElementById("triangle").style.borderTop = "6px solid";
+  }
+}
+
 $(window).load(function(){
 
   $.extend( $.fn.dataTable.defaults, {
@@ -56,7 +90,7 @@ $(window).load(function(){
       { width: 120, targets: 0 }
     ],
     fixedColumns: {
-        leftColumns: 1
+      leftColumns: 1
     }
   });
 
@@ -64,7 +98,6 @@ $(window).load(function(){
   var resizeDataTable = function() {
     $('.dataTables_scrollBody').css('max-height',$('#statistics_content').outerHeight() - 120 + 'px');
   }
-
   // ページ読み込み時にもリサイズ処理を実行
   tableObj.on( 'draw', function () {
     resizeDataTable();
@@ -76,25 +109,83 @@ $(window).load(function(){
     resizeDataTable();
   });
 
-  //CSV処理
-  var outputCSVBtn = document.getElementById('outputCSV');
-  outputCSVBtn.addEventListener('click', function(){
-    var dateFormat = $("select[name=dateFormat]").val();
-    if(dateFormat == '月別') {
-      var date = $("#monthlyForm").val();
-    }
-    if(dateFormat == '日別') {
-       date = $("#daylyForm").val();
-    }
-    if(dateFormat == '時別') {
-       date = $("#hourlyForm").val();
-    }
+  //CSV処理(チャット統計)
+  if(document.getElementById('outputCSV') != null) {
+    var outputCSVBtn = document.getElementById('outputCSV');
+    outputCSVBtn.addEventListener('click', function(){
+      var dateFormat = $("select[name=dateFormat]").val();
+      if(dateFormat == '月別') {
+        var date = $("#monthlyForm").val();
+      }
+      if(dateFormat == '日別') {
+         date = $("#daylyForm").val();
+      }
+      if(dateFormat == '時別') {
+         date = $("#hourlyForm").val();
+      }
+      document.getElementById('statisticsOutputData').value = JSON.stringify({dateFormat:dateFormat,date:date});
+      console.log(document.getElementById('statisticsOutputData').value.date);
+      document.getElementById('statisticsForChatForm').action = '<?=$this->Html->url(["controller"=>"Statistics", "action" => "outputCsv"])?>';
+      document.getElementById('statisticsForChatForm').submit();
+    });
+  }
+  //CSV処理(オペレータ統計一覧画面)
+  else if(document.getElementById('outputOperatorCSV') != null) {
+    var outputOperatorCSVBtn = document.getElementById('outputOperatorCSV');
+    outputOperatorCSVBtn.addEventListener('click', function(){
+      var dateFormat = $("select[name=dateFormat]").val();
+      if(dateFormat == '月別') {
+        var date = $("#monthlyForm").val();
+      }
+      if(dateFormat == '日別') {
+         date = $("#daylyForm").val();
+      }
+      if(dateFormat == '時別') {
+         date = $("#hourlyForm").val();
+      }
+      document.getElementById('statisticsOutputData').value = JSON.stringify({dateFormat:dateFormat,date:date});
+      console.log(document.getElementById('statisticsOutputData').value.date);
+      document.getElementById('statisticsForChatForm').action = '<?=$this->Html->url(["controller"=>"Statistics", "action" => "outputOperatorCsv","List"])?>';
+      console.log(document.getElementById('statisticsForChatForm').action);
+      document.getElementById('statisticsForChatForm').submit();
+    });
+  }
 
-    document.getElementById('statisticsOutputData').value = JSON.stringify({dateFormat:dateFormat,date:date});
-    console.log(document.getElementById('statisticsOutputData').value.date);
-    document.getElementById('statisticsForChatForm').action = '<?=$this->Html->url(["controller"=>"Statistics", "action" => "outputCsv"])?>';
-    document.getElementById('statisticsForChatForm').submit();
-  });
+  //CSV処理(オペレータ統計別ウィンドウ各項目画面)
+  else if(document.getElementById('outputEachItemOperatorCSV') != null) {
+    var outputEachItemOperatorCSVBtn = document.getElementById('outputEachItemOperatorCSV');
+    outputEachItemOperatorCSVBtn.addEventListener('click', function(){
+      var item = location.search.match(/item=(.*?)(&|$)/)[1];
+      var dateFormat = location.search.match(/type=(.*?)(&|$)/)[1];
+      var date = location.search.match(/target=(.*?)(&|$)/)[1];
+
+      document.getElementById('statisticsOutputData').value = JSON.stringify({item:item,dateFormat:dateFormat,date:date});
+      document.getElementById('statisticsForChatForm').action = '<?=$this->Html->url(["controller"=>"Statistics", "action" => "outputEachOperatorCsv"])?>';
+      document.getElementById('statisticsForChatForm').submit();
+    });
+    var closeWindowBtn = document.getElementById('closeWindow');
+    closeWindowBtn.addEventListener('click', function(){
+      window.close();
+    });
+  }
+
+  //CSV処理(オペレータ統計別ウィンドウ個人画面)
+  else if(document.getElementById('outputPrivateOperatorCSV') != null) {
+    var outputPrivateOperatorCSVBtn = document.getElementById('outputPrivateOperatorCSV');
+    outputPrivateOperatorCSVBtn.addEventListener('click', function(){
+      var id = location.search.match(/id=(.*?)(&|$)/)[1];
+      var dateFormat = location.search.match(/type=(.*?)(&|$)/)[1];
+      var date = location.search.match(/target=(.*?)(&|$)/)[1];
+
+      document.getElementById('statisticsOutputData').value = JSON.stringify({id:id,dateFormat:dateFormat,date:date});
+      document.getElementById('statisticsForChatForm').action = '<?=$this->Html->url(["controller"=>"Statistics", "action" => "outputEachOperatorCsv"])?>';
+      document.getElementById('statisticsForChatForm').submit();
+    });
+    var closeWindowBtn = document.getElementById('closeWindow');
+    closeWindowBtn.addEventListener('click', function(){
+      window.close();
+    });
+  }
 
   var timeType = {
     monthly: '月別',
@@ -128,9 +219,17 @@ $(window).load(function(){
       if(dateFormat == timeType.monthly) {
         // Safariでローディングのイメージが表示されない問題の解決方法としてsetTimeoutを挿入
         // @see https://stackoverflow.com/questions/28586393/safari-not-updating-ui-during-form-submission
-        setTimeout(function(){
-          document.getElementById('THistoryForChatForm').submit();
-        },0);
+        if(document.getElementById("THistoryForChatForm") != null) {
+
+          setTimeout(function(){
+            document.getElementById('THistoryForChatForm').submit();
+          },0);
+        }
+        else if(document.getElementById("THistoryForOperatorForm") != null) {
+          setTimeout(function(){
+            document.getElementById('THistoryForOperatorForm').submit();
+          },0);
+        }
       }
     }
   });
@@ -145,9 +244,16 @@ $(window).load(function(){
       if(dateFormat == timeType.dayly) {
         // Safariでローディングのイメージが表示されない問題の解決方法としてsetTimeoutを挿入
         // @see https://stackoverflow.com/questions/28586393/safari-not-updating-ui-during-form-submission
-        setTimeout(function() {
-          document.getElementById('THistoryForChatForm').submit();
-        },0);
+        if(document.getElementById("THistoryForChatForm") != null) {
+          setTimeout(function() {
+            document.getElementById('THistoryForChatForm').submit();
+          },0);
+        }
+        else if(document.getElementById("THistoryForOperatorForm") != null) {
+          setTimeout(function(){
+            document.getElementById('THistoryForOperatorForm').submit();
+          },0);
+        }
       }
     }
   });
@@ -190,9 +296,16 @@ $(window).load(function(){
     if(searchInfo == timeType.timely) {
       // Safariでローディングのイメージが表示されない問題の解決方法としてsetTimeoutを挿入
       // @see https://stackoverflow.com/questions/28586393/safari-not-updating-ui-during-form-submission
-      setTimeout(function() {
-        document.getElementById('THistoryForChatForm').submit();
-      },0);
+      if(document.getElementById("THistoryForChatForm") != null) {
+        setTimeout(function() {
+          document.getElementById('THistoryForChatForm').submit();
+        },0);
+      }
+      else if(document.getElementById("THistoryForOperatorForm") != null) {
+        setTimeout(function(){
+          document.getElementById('THistoryForOperatorForm').submit();
+        },0);
+      }
     }
   });
 
@@ -201,13 +314,45 @@ $(window).load(function(){
     var parentTdId = $(this).parent().parent().attr('id');
     var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
     targetObj.find('icon-annotation').css('display','block');
-    targetObj.css({
-      top: ($(this).offset().top - targetObj.find('ul').outerHeight() - 65) + 'px',
+    if ( parentTdId.match(/op/)) {
+      targetObj.css({
+      top: ($(this).offset().top - targetObj.find('ul').outerHeight() -35) + 'px',
       left: '50px'
-    });
+      });
+    }
+    else {
+      targetObj.css({
+        top: ($(this).offset().top - targetObj.find('ul').outerHeight() - 65) + 'px',
+        left: '50px'
+      });
+    }
   });
 
   $('.questionBtn').off("mouseleave").on('mouseleave',function(event){
+    var parentTdId = $(this).parent().parent().attr('id');
+    var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
+    targetObj.find('icon-annotation').css('display','none');
+  });
+
+  // ツールチップの表示制御(オペレータ統計画面)
+  $('.opQuestionBtn').off("mouseenter").on('mouseenter',function(event){
+    var parentTdId = $(this).parent().parent().attr('id');
+    console.log(parentTdId);
+    var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
+    targetObj.find('icon-annotation').css('display','block');
+    if( parentTdId == 'opChatEffectivenessResponseRateLabel') {
+      targetObj.css({
+        left: ($(this).offset().left - 207) + 'px'
+      });
+    }
+    else if ( parentTdId.match(/op/)) {
+      targetObj.css({
+        left: ($(this).offset().left - 130) + 'px'
+      });
+    }
+  });
+
+  $('.opQuestionBtn').off("mouseleave").on('mouseleave',function(event){
     var parentTdId = $(this).parent().parent().attr('id');
     var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
     targetObj.find('icon-annotation').css('display','none');

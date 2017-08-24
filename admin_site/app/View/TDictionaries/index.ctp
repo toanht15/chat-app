@@ -8,7 +8,7 @@
 <div id='tdictionaries_idx'>
   <div id='tdictionaries_add_title'>
     <div class="fLeft"><i class="fa fa-home fa-2x" aria-hidden="true"></i></div>
-    <h1>簡易入力メッセージ設定<span id="sortMessage"></span></h1>
+    <h1>定型文メッセージ設定<span id="sortMessage"></span></h1>
   </div>
 
   <div id='tdictionaries_menu' class="p20trl">
