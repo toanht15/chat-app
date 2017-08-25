@@ -1920,6 +1920,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
               //ポップアップ全体監視(ポップアップのどこかにフォーカスがある状態でキーを押下すると)
               $("#popup-content").on('keyup', function(e){
                 var keytime = document.getElementById("keytime").value;
+                //二重操作防止
                 if(keytime != e.timeStamp){
                   document.getElementById("keytime").value = e.timeStamp;
                   //検索モードだったら無視する
@@ -1928,16 +1929,21 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                     var select_tab_index = document.getElementById("select_tab_index").value;
                     //現在選択されているタブのワードリストを取得する
                     var selectTabWordList = $scope.entryWordList[select_tab_index];
-                    //現在[dictionarySelected~]クラスがついている行のidnameを取得してidだけを抽出する
-                    var selected = document.querySelector('[id^="item"].dictionarySelected'+select_tab_index);
-                    var selected_id = selected.id;
-                    selected_id = Number(selected_id.substr(4));
-                    //idから現在選択されているキーを取得する
-                    for(var key in selectTabWordList) {
-                      if(selected_id === selectTabWordList[key]["id"]){
-                        var selected_key = Number(key);
+
+                    //ワードリストが空の時は以下処理は実行しない
+                    if(selectTabWordList.length > 0){
+                    	//現在[dictionarySelected~]クラスがついている行のidnameを取得してidだけを抽出する
+                      var selected = document.querySelector('[id^="item"].dictionarySelected'+select_tab_index);
+                      var selected_id = selected.id;
+                      selected_id = Number(selected_id.substr(4));
+                      //idから現在選択されているキーを取得する
+                      for(var key in selectTabWordList) {
+                        if(selected_id === selectTabWordList[key]["id"]){
+                          var selected_key = Number(key);
+                        }
                       }
                     }
+
                     if ( e.keyCode === 13 ) { // Enter
                       var list = $scope.entryWordSearch($scope.entryWordList[select_tab_index]);
                       if ( list.length > 0 ) {

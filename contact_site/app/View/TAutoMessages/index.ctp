@@ -48,9 +48,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
 				<th width="20%">名称</th>
 				<th width="25%">条件</th>
 				<th width="25%">アクション</th>
-<!--
 				<th width="15%">操作</th>
- -->
 			</tr>
 		</thead>
 		<tbody>
@@ -112,10 +110,11 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
 					<span class="actionTypeLabel m10b">対象</span><span class="m10b actionValue"><?=h($outMessageActionType[$val['TAutoMessage']['action_type']])?></span>
 					<?=$activity_detail?>
 				</td>
-<!--
 				<td class="p10x noClick lineCtrl">
 					<div>
+<!--
 						<a href="<?=$this->Html->url(['controller'=>'TAutoMessages', 'action'=>'edit', $id])?>" class="btn-shadow greenBtn fLeft"><img src="/img/edit.png" alt="更新" width="30" height="30"></a>
+ -->
 						<?php if ($val['TAutoMessage']['active_flg']) { ?>
 							<a href="javascript:void(0)" class="btn-shadow redBtn fLeft m10r10l" onclick="isActive(true, '<?=$id?>')"><img src="/img/inactive.png" alt="無効" width="30" height="30"></a>
 						<?php } else { ?>
@@ -124,7 +123,6 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
 						<a href="javascript:void(0)" class="btn-shadow redBtn fRight" onclick="removeAct('<?=$no?>', '<?=$id?>')"><img src="/img/trash.png" alt="削除" width="30" height="30"></a>
 					</div>
 				</td>
- -->
 			</tr>
 		<?php endforeach; ?>
 		<?php if ( count($settingList) === 0 ) : ?>

@@ -34,22 +34,25 @@
   <table>
     <thead>
       <tr>
+<!--
         <th width=" 5%"><input type="checkbox" name="allCheck" id="allCheck" ><label for="allCheck"></label></th>
+
+ -->
         <th class="tLeft">対象ページ</th>
         <th class="tLeft">通知アイコン</th>
         <th class="tLeft">通知名</th>
-<!--
         <th class="tCenter">操作</th>
- -->
       </tr>
     </thead>
     <tbody class="sortable">
     <?php foreach((array)$settingList as $key => $val): ?>
       <tr>
+<!--
         <td class="tCenter">
           <input type="checkbox" name="selectTab" id="selectTab<?=$key?>" value="<?=$val['MChatNotification']['id']?>">
           <label for="selectTab<?=$val['MChatNotification']['id']?>"></label>
         </td>
+ -->
         <td width="20%" class="tLeft">
           <?php
             echo $this->Html->link(
@@ -94,8 +97,8 @@
           <?=h($val['MChatNotification']['name'])?>
  -->
         </td>
-<!--
         <td class="tCenter ctrlBtnArea">
+<!--
           <?php
             echo $this->Html->link(
               $this->Html->image(
@@ -113,6 +116,7 @@
               )
             );
           ?>
+ -->
           <?php
             echo $this->Html->link(
                 $this->Html->image(
@@ -132,7 +136,6 @@
             );
           ?>
         </td>
- -->
       </tr>
     <?php endforeach; ?>
     <?php if ( count($settingList) === 0 ) :?>
