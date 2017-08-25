@@ -1524,6 +1524,9 @@ ul.naviBtn {
                 height: 1.5em;
                 background-color: rgba(0,0,0,0.3);
                 vertical-align: middle;
+                -ms-word-wrap: break-word;
+                word-wrap: break-word;
+                word-break: break-all;
 
                 &:before {
                   content: "";
