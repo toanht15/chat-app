@@ -84,48 +84,132 @@
         <tr>
           <th class="thMinWidthOp">オペレータ / <?= $date; ?></th>
           <th class = "thMinWidthTimelyForOperator">
-          <a href="<?=$this->Html->url(array('controller' => 'Statistics',
-          'action' => 'baseForAnotherWindow','?'=>array('item'=>'login','type'=>$time,'target'=>$type)))?>"
-          onclick="window.open(this.href, 'mywindow1', 'width=1000, height=700'); return false;" style = "margin-right:1.2em">ログイン件数</th>
+          <?php if($date == '時別') { ?>
+            <a href="<?=$this->Html->url(array('controller' => 'Statistics',
+            'action' => 'baseForAnotherWindow','?'=>array('item'=>'login','type'=>$time,'target'=>$type)))?>"
+            onclick="window.open(this.href, 'mywindow1', 'width=1000, height=700'); return false;" style = "margin-right:1.2em">ログイン件数</th>
+          <?php }
+          else if($date == '日別') { ?>
+            <a href="<?=$this->Html->url(array('controller' => 'Statistics',
+            'action' => 'baseForAnotherWindow','?'=>array('item'=>'login','type'=>$time,'target'=>$type)))?>"
+            onclick="window.open(this.href, 'mywindow2', 'width=1000, height=700'); return false;" style = "margin-right:1.2em">ログイン件数</th>
+          <?php }
+          else if($date == '月別') { ?>
+            <a href="<?=$this->Html->url(array('controller' => 'Statistics',
+            'action' => 'baseForAnotherWindow','?'=>array('item'=>'login','type'=>$time,'target'=>$type)))?>"
+            onclick="window.open(this.href, 'mywindow3', 'width=1000, height=700'); return false;" style = "margin-right:1.2em">ログイン件数</th>
+          <?php } ?>
           <th class = "thMinWidthTimelyForOperator tooltip" id="opChatRequestLabel">
-          <a href="<?=$this->Html->url(array('controller' => 'Statistics',
-          'action' => 'baseForAnotherWindow','?'=>array('item'=>'requestChat','type'=>$time,'target'=>$type)))?>"
-          onclick="window.open(this.href, 'mywindow2', 'width=1000, height=700'); return false;" style = "margin-right:1.2em">チャットリクエスト件数</a>
+          <?php if($date == '時別') { ?>
+            <a href="<?=$this->Html->url(array('controller' => 'Statistics',
+            'action' => 'baseForAnotherWindow','?'=>array('item'=>'requestChat','type'=>$time,'target'=>$type)))?>"
+            onclick="window.open(this.href, 'mywindow4', 'width=1000, height=700'); return false;" style = "margin-right:1.2em">チャットリクエスト件数</a>
+          <?php }
+          else if($date == '日別') { ?>
+            <a href="<?=$this->Html->url(array('controller' => 'Statistics',
+            'action' => 'baseForAnotherWindow','?'=>array('item'=>'requestChat','type'=>$time,'target'=>$type)))?>"
+            onclick="window.open(this.href, 'mywindow5', 'width=1000, height=700'); return false;" style = "margin-right:1.2em">チャットリクエスト件数</a>
+          <?php }
+          else if($date == '月別') { ?>
+            <a href="<?=$this->Html->url(array('controller' => 'Statistics',
+            'action' => 'baseForAnotherWindow','?'=>array('item'=>'requestChat','type'=>$time,'target'=>$type)))?>"
+            onclick="window.open(this.href, 'mywindow6', 'width=1000, height=700'); return false;" style = "margin-right:1.2em">チャットリクエスト件数</a>
+          <?php } ?>
           <div class="opQuestionBalloon opQuestionBalloonPosition11">
             <icon class="opQuestionBtn">？</icon>
           </div></th>
           <th class = "thMinWidthTimelyForOperator tooltip" id="opChatResponseLabel">
-          <a href="<?=$this->Html->url(array('controller' => 'Statistics',
-          'action' => 'baseForAnotherWindow','?'=>array('item'=>'responseChat','type'=>$time,'target'=>$type)))?>"
-          onclick="window.open(this.href, 'mywindow3', 'width=1000, height=700'); return false;" style = "margin-right:1.2em">チャット応対件数</a>
+          <?php if($date == '時別') { ?>
+            <a href="<?=$this->Html->url(array('controller' => 'Statistics',
+            'action' => 'baseForAnotherWindow','?'=>array('item'=>'responseChat','type'=>$time,'target'=>$type)))?>"
+            onclick="window.open(this.href, 'mywindow7', 'width=1000, height=700'); return false;" style = "margin-right:1.2em">チャット応対件数</a>
+          <?php }
+          else if($date == '日別') { ?>
+            <a href="<?=$this->Html->url(array('controller' => 'Statistics',
+            'action' => 'baseForAnotherWindow','?'=>array('item'=>'responseChat','type'=>$time,'target'=>$type)))?>"
+            onclick="window.open(this.href, 'mywindow8', 'width=1000, height=700'); return false;" style = "margin-right:1.2em">チャット応対件数</a>
+          <?php }
+          else if($date == '月別') { ?>
+            <a href="<?=$this->Html->url(array('controller' => 'Statistics',
+            'action' => 'baseForAnotherWindow','?'=>array('item'=>'responseChat','type'=>$time,'target'=>$type)))?>"
+            onclick="window.open(this.href, 'mywindow9', 'width=1000, height=700'); return false;" style = "margin-right:1.2em">チャット応対件数</a>
+          <?php } ?>
           <div class="opQuestionBalloon opQuestionBalloonPosition8">
             <icon class="opQuestionBtn">？</icon>
           </div></th>
           <th class = "thMinWidthTimelyForOperator tooltip" id="opChatEffectivenessLabel">
-           <a href="<?=$this->Html->url(array('controller' => 'Statistics',
-          'action' => 'baseForAnotherWindow','?'=>array('item'=>'effectiveness','type'=>$time,'target'=>$type)))?>"
-          onclick="window.open(this.href, 'mywindow4', 'width=1000, height=700'); return false;" style = "margin-right:1.2em">チャット有効件数</a>
+          <?php if($date == '時別') { ?>
+            <a href="<?=$this->Html->url(array('controller' => 'Statistics',
+            'action' => 'baseForAnotherWindow','?'=>array('item'=>'effectiveness','type'=>$time,'target'=>$type)))?>"
+            onclick="window.open(this.href, 'mywindow10', 'width=1000, height=700'); return false;" style = "margin-right:1.2em">チャット有効件数</a>
+          <?php }
+          else if($date == '日別') { ?>
+            <a href="<?=$this->Html->url(array('controller' => 'Statistics',
+            'action' => 'baseForAnotherWindow','?'=>array('item'=>'effectiveness','type'=>$time,'target'=>$type)))?>"
+            onclick="window.open(this.href, 'mywindow11', 'width=1000, height=700'); return false;" style = "margin-right:1.2em">チャット有効件数</a>
+          <?php }
+          else if($date == '月別') { ?>
+            <a href="<?=$this->Html->url(array('controller' => 'Statistics',
+            'action' => 'baseForAnotherWindow','?'=>array('item'=>'effectiveness','type'=>$time,'target'=>$type)))?>"
+            onclick="window.open(this.href, 'mywindow12', 'width=1000, height=700'); return false;" style = "margin-right:1.2em">チャット有効件数</a>
+          <?php } ?>
           <div class="opQuestionBalloon opQuestionBalloonPosition8s">
             <icon class="opQuestionBtn">？</icon>
           </div></th>
           <th class = "thMinWidthTimelyForOperator tooltip" id="opChatConsumerWaitAverageTimeLabel">
-           <a href="<?=$this->Html->url(array('controller' => 'Statistics',
-          'action' => 'baseForAnotherWindow','?'=>array('item'=>'avgConsumersWaitTime','type'=>$time,'target'=>$type)))?>"
-          onclick="window.open(this.href, 'mywindow5', 'width=1000, height=700'); return false;" style = "margin-right:1.2em">平均消費者待機時間</a>
+          <?php if($date == '時別') { ?>
+            <a href="<?=$this->Html->url(array('controller' => 'Statistics',
+            'action' => 'baseForAnotherWindow','?'=>array('item'=>'avgConsumersWaitTime','type'=>$time,'target'=>$type)))?>"
+            onclick="window.open(this.href, 'mywindow13', 'width=1000, height=700'); return false;" style = "margin-right:1.2em">平均消費者待機時間</a>
+          <?php }
+          else if($date == '日別') { ?>
+            <a href="<?=$this->Html->url(array('controller' => 'Statistics',
+            'action' => 'baseForAnotherWindow','?'=>array('item'=>'avgConsumersWaitTime','type'=>$time,'target'=>$type)))?>"
+            onclick="window.open(this.href, 'mywindow14', 'width=1000, height=700'); return false;" style = "margin-right:1.2em">平均消費者待機時間</a>
+          <?php }
+          else if($date == '月別') { ?>
+            <a href="<?=$this->Html->url(array('controller' => 'Statistics',
+            'action' => 'baseForAnotherWindow','?'=>array('item'=>'avgConsumersWaitTime','type'=>$time,'target'=>$type)))?>"
+            onclick="window.open(this.href, 'mywindow15', 'width=1000, height=700'); return false;" style = "margin-right:1.2em">平均消費者待機時間</a>
+          <?php } ?>
           <div class="opQuestionBalloon opQuestionBalloonPosition13">
             <icon class="opQuestionBtn">？</icon>
           </div></th>
           <th class = "thMinWidthTimelyForOperator tooltip" id="opChatResponseAverageTimeLabel">
-           <a href="<?=$this->Html->url(array('controller' => 'Statistics',
-          'action' => 'baseForAnotherWindow','?'=>array('item'=>'avgResponseTime','type'=>$time,'target'=>$type)))?>"
-          onclick="window.open(this.href, 'mywindow6', 'width=1000, height=700'); return false;" style = "margin-right:1.2em">平均応答時間</a>
+          <?php if($date == '時別') { ?>
+            <a href="<?=$this->Html->url(array('controller' => 'Statistics',
+            'action' => 'baseForAnotherWindow','?'=>array('item'=>'avgResponseTime','type'=>$time,'target'=>$type)))?>"
+            onclick="window.open(this.href, 'mywindow16', 'width=1000, height=700'); return false;" style = "margin-right:1.2em">平均応答時間</a>
+          <?php }
+          else if($date == '日別') { ?>
+            <a href="<?=$this->Html->url(array('controller' => 'Statistics',
+            'action' => 'baseForAnotherWindow','?'=>array('item'=>'avgResponseTime','type'=>$time,'target'=>$type)))?>"
+            onclick="window.open(this.href, 'mywindow17', 'width=1000, height=700'); return false;" style = "margin-right:1.2em">平均応答時間</a>
+          <?php }
+          else if($date == '月別') { ?>
+            <a href="<?=$this->Html->url(array('controller' => 'Statistics',
+            'action' => 'baseForAnotherWindow','?'=>array('item'=>'avgResponseTime','type'=>$time,'target'=>$type)))?>"
+            onclick="window.open(this.href, 'mywindow18', 'width=1000, height=700'); return false;" style = "margin-right:1.2em">平均応答時間</a>
+          <?php } ?>
           <div class="opQuestionBalloon opQuestionBalloonPosition6">
             <icon class="opQuestionBtn">？</icon>
           </div></th>
           <th class = "thMinWidthTimelyForOperator opLastTooltip" id="opChatEffectivenessResponseRateLabel">
-           <a href="<?=$this->Html->url(array('controller' => 'Statistics',
-          'action' => 'baseForAnotherWindow','?'=>array('item'=>'effectivenessRate','type'=>$time,'target'=>$type)))?>"
-          onclick="window.open(this.href, 'mywindow7', 'width=1000, height=700'); return false;" style = "margin-right:1.2em">チャット有効率</a>
+          <?php if($date == '時別') { ?>
+            <a href="<?=$this->Html->url(array('controller' => 'Statistics',
+            'action' => 'baseForAnotherWindow','?'=>array('item'=>'effectivenessRate','type'=>$time,'target'=>$type)))?>"
+            onclick="window.open(this.href, 'mywindow19', 'width=1000, height=700'); return false;" style = "margin-right:1.2em">チャット有効率</a>
+          <?php }
+          else if($date == '日別') { ?>
+            <a href="<?=$this->Html->url(array('controller' => 'Statistics',
+            'action' => 'baseForAnotherWindow','?'=>array('item'=>'effectivenessRate','type'=>$time,'target'=>$type)))?>"
+            onclick="window.open(this.href, 'mywindow20', 'width=1000, height=700'); return false;" style = "margin-right:1.2em">チャット有効率</a>
+          <?php }
+          else if($date == '月別') { ?>
+            <a href="<?=$this->Html->url(array('controller' => 'Statistics',
+            'action' => 'baseForAnotherWindow','?'=>array('item'=>'effectivenessRate','type'=>$time,'target'=>$type)))?>"
+            onclick="window.open(this.href, 'mywindow21', 'width=1000, height=700'); return false;" style = "margin-right:1.2em">チャット有効率</a>
+          <?php } ?>
           <div class="opQuestionBalloon opQuestionBalloonPosition7">
             <icon class="opQuestionBtn">？</icon>
           </div></th>
@@ -135,9 +219,22 @@
       foreach($data['users'] as $k => $v) {
        ?>
         <tr>
-          <td class = 'userName'><a href="<?=$this->Html->url(array('controller' => 'Statistics',
-          'action' => 'baseForAnotherWindow','?'=>array('id'=>$v['m_users']['id'],'type'=>$time,'target'=>$type)))?>"
-          onclick="window.open(this.href, '<?= $k ?>', 'width=1000, height=700'); return false;">
+          <td class = 'userName'>
+          <?php if($date == '時別') { ?>
+            <a href="<?=$this->Html->url(array('controller' => 'Statistics',
+            'action' => 'baseForAnotherWindow','?'=>array('id'=>$v['m_users']['id'],'type'=>$time,'target'=>$type)))?>"
+            onclick="window.open(this.href, '<?= $k.'myhourlywindow' ?>', 'width=1000, height=700'); return false;">
+          <?php }
+          else if($date == '日別') { ?>
+            <a href="<?=$this->Html->url(array('controller' => 'Statistics',
+            'action' => 'baseForAnotherWindow','?'=>array('id'=>$v['m_users']['id'],'type'=>$time,'target'=>$type)))?>"
+            onclick="window.open(this.href, '<?= $k.'mydailywindow' ?>', 'width=1000, height=700'); return false;">
+          <?php }
+          else if($date == '月別') { ?>
+            <a href="<?=$this->Html->url(array('controller' => 'Statistics',
+            'action' => 'baseForAnotherWindow','?'=>array('id'=>$v['m_users']['id'],'type'=>$time,'target'=>$type)))?>"
+            onclick="window.open(this.href, '<?= $k.'mymonthlywindow' ?>', 'width=1000, height=700'); return false;">
+          <?php } ?>
           <?= $v['m_users']['display_name'] ?></a></td>
           <td><?php if(empty($v['loginNumber'])) {
             echo  0;
