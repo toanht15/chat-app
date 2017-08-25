@@ -1064,6 +1064,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       if ( type === chatApi.messageType.customer) {
         cn = "sinclo_re";
         div.style.textAlign = 'left';
+        div.style.height = 'auto';
+        div.style.padding = '0';
         li.className = cn;
         content = $scope.createTextOfMessage(chat, message, {radio: false});
       }
@@ -1071,6 +1073,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       else if ( type === chatApi.messageType.company) {
         cn = "sinclo_se";
         div.style.textAlign = 'right';
+        div.style.height = 'auto';
+        div.style.padding = '0';
         var chatName = widget.subTitle;
         if ( Number(widget.showName) === <?=C_WIDGET_SHOW_NAME?> ) {
           chatName = userList[Number(userId)];
@@ -1081,12 +1085,16 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       else if ( type === chatApi.messageType.auto || type === chatApi.messageType.sorry) {
         cn = "sinclo_auto";
         div.style.textAlign = 'right';
+        div.style.height = 'auto';
+        div.style.padding = '0';
         content = "<span class='cName'>自動応答</span>";
         content += $scope.createTextOfMessage(chat, message);
       }
       else if ( type === chatApi.messageType.autoSpeech ) {
         cn = "sinclo_auto";
         div.style.textAlign = 'right';
+        div.style.height = 'auto';
+        div.style.padding = '0';
         content = "<span class='cName'>自動返信</span>";
         content += $scope.createTextOfMessage(chat, message);
       }
@@ -1853,7 +1861,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     // =======================================
     // 　入力補助関連ここから
     // =======================================
-
     $scope.entryWordList = <?php echo json_encode($dictionaryList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
     // フィルター
     $scope.entryWordSearch = function(list){
