@@ -30,7 +30,7 @@
       #sincloBox div#miniTarget { overflow: hidden; transition: height 200ms linear; }
     <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
       #sincloBox ul#chatTalk { width: 100%; height: 194px; padding: 5px; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0}
-      #sincloBox ul#chatTalk li { border-radius: 5px; background-color: #FFF; margin: 5px 0; padding: 5px; font-size: 12px; border: 1px solid #C9C9C9; line-height: 1.8; white-space: pre; color: #333333; }
+      #sincloBox ul#chatTalk li { display: inline-block; text-align: left!important; word-wrap: break-word; word-break: break-all; border-radius: 5px; background-color: #FFF; margin: 5px 0; padding: 5px; font-size: 12px; border: 1px solid #C9C9C9; line-height: 1.8; white-space: pre; color: #333333; }
       #sincloBox ul#chatTalk li.chat_right { border-bottom-right-radius: 0; margin-left: 10px }
       #sincloBox ul#chatTalk li.chat_left { border-bottom-left-radius: 0; margin-right: 10px }
       #sincloBox ul#chatTalk li span.cName { display: block; color: {{main_color}}!important; font-weight: bold; font-size: 13px }
@@ -106,9 +106,15 @@
     <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
       <section id="chatTab" ng-hide="widget.showTab !== 'chat'">
         <ul id="chatTalk">
+          <div style="text-align: right; height: auto!important; padding:0;">
           <li class="sinclo_se chat_right" >○○について質問したいのですが</li>
-          <li class="sinclo_re chat_left" ng-style="{backgroundColor:makeFaintColor()}"><span class="cName" ng-if="show_name == 1"><?=$userInfo['display_name']?></span><span class="cName" ng-if="show_name == 2">{{sub_title}}</span>こんにちは</li>
-          <li class="sinclo_re chat_left" ng-style="{backgroundColor:makeFaintColor()}"><span class="cName" ng-if="show_name == 1"><?=$userInfo['display_name']?></span><span class="cName" ng-if="show_name == 2">{{sub_title}}</span>○○についてですね<br>どのようなご質問でしょうか？</li>
+          </div>
+          <div style="text-align: left; height: auto!important; padding:0;">
+            <li class="sinclo_re chat_left" ng-style="{backgroundColor:makeFaintColor()}"><span class="cName" ng-if="show_name == 1"><?=$userInfo['display_name']?></span><span class="cName" ng-if="show_name == 2">{{sub_title}}</span>こんにちは</li>
+          </div>
+          <div style="text-align: left; height: auto!important; padding:0;">
+            <li class="sinclo_re chat_left" ng-style="{backgroundColor:makeFaintColor()}"><span class="cName" ng-if="show_name == 1"><?=$userInfo['display_name']?></span><span class="cName" ng-if="show_name == 2">{{sub_title}}</span>○○についてですね<br>どのようなご質問でしょうか？</li>
+          </div>
         </ul>
         <div style="border-top: 1px solid #E8E7E0; padding: 0.5em;">
           <textarea name="sincloChat" id="sincloChatMessage" placeholder="メッセージを入力してください{{chat_area_placeholder_pc}}"></textarea>
@@ -184,9 +190,15 @@
     <div id="miniTarget">
       <section id="chatTab">
         <ul id="chatTalk">
-        <li class="sinclo_se" ng-class="{chat_right: show_position == 2, chat_left: show_position == 1 }">○○について質問したいのですが</li>
-        <li class="sinclo_re" ng-class="{chat_right: show_position == 1, chat_left: show_position == 2 }" ng-style="{backgroundColor:makeFaintColor()}"><span class="cName">{{sub_title}}</span>こんにちは</li>
-        <li class="sinclo_re" ng-class="{chat_right: show_position == 1, chat_left: show_position == 2 }" ng-style="{backgroundColor:makeFaintColor()}"><span class="cName">{{sub_title}}</span>○○についてですね<br>どのようなご質問でしょうか？</li>
+          <div style="text-align: right; height: auto!important; padding:0;">
+            <li class="sinclo_se chat_right">○○について質問したいのですが</li>
+          </div>
+          <div style="text-align: left; height: auto!important; padding:0;">
+            <li class="sinclo_re chat_left" ng-style="{backgroundColor:makeFaintColor()}"><span class="cName">{{sub_title}}</span>こんにちは</li>
+          </div>
+          <div style="text-align: left; height: auto!important; padding:0;">
+            <li class="sinclo_re chat_left" ng-style="{backgroundColor:makeFaintColor()}"><span class="cName">{{sub_title}}</span>○○についてですね<br>どのようなご質問でしょうか？</li>
+          </div>
         </ul>
         <div style="border-top: 1px solid #E8E7E0; padding: 0.5em;">
           <textarea name="sincloChat" id="sincloChatMessage" placeholder="メッセージを入力してください{{chat_area_placeholder_sp}}"></textarea>
