@@ -2,6 +2,7 @@
 <script type="text/javascript">
 
 $( function() {
+	document.getElementById("categoryTabs").style.display="";
   document.getElementById("popup-bg").className="category-tab-binding";
   document.getElementById("popup-title").className="category-tab-binding";
   document.getElementById("popup-main").className="category-tab-binding";
@@ -10,6 +11,8 @@ $( function() {
   $(".popup-frame").css('height', '');
   //インデックスの初期値を挿入暫定的に0
   document.getElementById("select_tab_index").value = 0;
+  document.getElementById("mode_flg").value = 0;
+  document.getElementById("keytime").value = 0;
   $("#categoryTabs").bind('tabsactivate', function(event, ui) {
       var index = ui.newTab.index();
       // クリックされたタブのインデックスをhiddenに持っておく
@@ -26,6 +29,8 @@ $( function() {
 
 <div id="categoryTabs">
   <input type="search" ng-model="searchWord" id="wordSearchCond" size="35" placeholder="検索する文字を入力してください"/>
+  <input type="hidden" id="mode_flg" value="">
+  <input type="hidden" id="keytime" value="">
   <div id="serect_tab_mode">
     <!-- 通常モード -->
     <input type="hidden" id="select_tab_index" value="">
@@ -42,7 +47,7 @@ $( function() {
               <div class="wordBorder">
               <?php foreach ( (array)$dictionaryList[$i]as $key => $val ) {?>
                 <li ng-repeat="item in entryWordSearch(entryWordList)" id="item<?=$val['id']?>" class="dictionaryWord ng-binding ng-scope <?php if($key == 0){ echo "dictionarySelected".$i;}?>">
-                  <?=$val['label']?>
+                  <?php echo nl2br($val['label'])?>
                 </li>
               <?php }?>
               </div>
@@ -58,19 +63,23 @@ $( function() {
     <!-- 通常モード -->
   </div>
   <div id="word_search_mode">
-    <div class="onTabs" id="categoryTabs-ALL">
-        <ul class="fRight" id="wordListAll">
+    <!-- 検索モード -->
+    <div id="categoryTabs-ALL">
+        <ul class="fRight" id="allWordList">
           <div class="wordBorder">
-            <?php for ($i = 0; $i < count((array)$dictionaryCategoriesList); $i++) { ?>
-              <?php foreach ( (array)$dictionaryList[$i]as $key => $val ) {?>
-                <li ng-repeat="item in entryWordSearch(entryWordList)" id="searchItem<?=$val['id']?>" class="dictionaryWord ng-binding ng-scope">
-                  <?=$val['label']?>
-                </li>
-              <?php }?>
-            <?php } ?>
+            <div id="allScroll">
+              <?php for ($i = 0; $i < count((array)$dictionaryCategoriesList); $i++) { ?>
+                <?php foreach ( (array)$dictionaryList[$i]as $key => $val ) {?>
+                  <li ng-repeat="item in entryWordSearch(entryWordList)" id="searchItem<?=$val['id']?>" class="dictionaryWord ng-binding ng-scope">
+                    <?php echo nl2br($val['label'])?>
+                  </li>
+                <?php }?>
+              <?php } ?>
+            </div>
           </div>
         </ul>
     </div>
+    <!-- 検索モード -->
   </div>
   <div>
     <span class="pre">

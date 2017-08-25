@@ -869,6 +869,7 @@
     top: 0px;
     left: 0px;
     margin: 20px;
+    padding-bottom: 20px;
     .fLeft{
       position: relative;
       top: -10px;
@@ -990,7 +991,7 @@
 
 #popup #popup-frame-base #popup-frame.p-category-dictionary-edit {
   width: 500px;
-  height: 450px !important;
+  height: 450px;
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
 }
 
@@ -1017,6 +1018,12 @@
 }
 
 #serect_tab_mode{
+  position: relative;
+  top: 10px;
+  left: 0px;
+}
+
+#word_search_mode{
   position: relative;
   top: 10px;
   left: 0px;
@@ -1071,12 +1078,18 @@
   padding: 0px 18px;
 }
 
-#categoryTabs-ALL{
-  display: none;
+#allWordList.fRight{
+  float: none;
+  width: 520px;
+  height: 300px !important;
+  position: relative;
+  top: -10px;
+  left: -40px;
 }
 
-[id="wordListAll"].fRight{
-  float:none;
+#allScroll{
+  height: 300px;
+  overflow-y: scroll;
 }
 
 #menuheader {
