@@ -139,11 +139,11 @@ function tabSort(){
     //カテゴリ名入力欄変更可
     document.getElementById("input_category_value").disabled = "";
     //定型文登録ボタン押下可
-    document.getElementById('add_btn'+index).className="btn-shadow disOffgreenBtn";
+    document.getElementById('tdictionaries_add_btn'+index).className="btn-shadow disOffgreenBtn";
     //定型文の並べ替えチェックボックスチェック可
     document.getElementById('sort'+index).disabled = "";
     //カテゴリメニューボタン押下可
-    document.getElementById('manu_btn'+index).className="btn-shadow disOffgreenBtn";
+    document.getElementById('tdictionaries_manu_btn'+index).className="btn-shadow disOffgreenBtn";
     //全て選択チェックボックス選択可
     document.getElementById('allCheck'+index).disabled = "";
     //項目チェックボックス選択可
@@ -160,11 +160,11 @@ function tabSort(){
     //カテゴリ名入力欄変更不可
     document.getElementById("input_category_value").disabled = "disabled";
     //定型文登録ボタン押下不可
-    document.getElementById('add_btn'+index).className="btn-shadow disOffgrayBtn";
+    document.getElementById('tdictionaries_add_btn'+index).className="btn-shadow disOffgrayBtn";
     //定型文の並べ替えチェックボックスチェック不可
     document.getElementById('sort'+index).disabled = "disabled";
     //カテゴリメニューボタン押下不可
-    document.getElementById('manu_btn'+index).className="btn-shadow disOffgrayBtn";
+    document.getElementById('tdictionaries_manu_btn'+index).className="btn-shadow disOffgrayBtn";
     //全て選択チェックボックス選択不可
     document.getElementById('allCheck'+index).disabled = "disabled";
     //項目チェックボックス選択不可
@@ -216,11 +216,11 @@ function toggleSort(){
     //カテゴリ名入力欄変更可
     document.getElementById("input_category_value").disabled = "";
     //定型文登録ボタン押下可
-    document.getElementById('add_btn'+index).className="btn-shadow disOffgreenBtn";
+    document.getElementById('tdictionaries_add_btn'+index).className="btn-shadow disOffgreenBtn";
     //カテゴリの並べ替えチェックボックスチェック可
     document.getElementById('tabsort').disabled = "";
     //カテゴリメニューボタン押下可
-    document.getElementById('manu_btn'+index).className="btn-shadow disOffgreenBtn";
+    document.getElementById('tdictionaries_manu_btn'+index).className="btn-shadow disOffgreenBtn";
     //全て選択チェックボックス選択可
     document.getElementById('allCheck'+index).disabled = "";
     //項目チェックボックス選択可
@@ -234,16 +234,16 @@ function toggleSort(){
     $(".sortable").addClass("move").sortable("enable");
     //定型文ソートモードメッセージ＆登録ボタン表示
     document.getElementById("sortMessage" + index).style.display="";
-    document.getElementById("sort_btn").style.display="";
+    document.getElementById("tdictionaries_sort_btn").style.display="";
     //各ボタン及び動作をモード中は動かなくする
     //カテゴリ名入力欄変更不可
     document.getElementById("input_category_value").disabled = "disabled";
     //定型文登録ボタン押下不可
-    document.getElementById('add_btn'+index).className="btn-shadow disOffgrayBtn";
+    document.getElementById('tdictionaries_add_btn'+index).className="btn-shadow disOffgrayBtn";
     //カテゴリの並べ替えチェックボックスチェック不可
     document.getElementById('tabsort').disabled = "disabled";
     //カテゴリメニューボタン押下不可
-    document.getElementById('manu_btn'+index).className="btn-shadow disOffgrayBtn";
+    document.getElementById('tdictionaries_manu_btn'+index).className="btn-shadow disOffgrayBtn";
     //全て選択チェックボックス選択不可
     document.getElementById('allCheck'+index).disabled = "disabled";
     //項目チェックボックス選択不可
@@ -356,26 +356,26 @@ var actBtnShow = function(){
   var stint_flg = document.getElementById("stint_flg").value;
   var select_tab_index = document.getElementById("select_tab_index").value;
   if ( $('input[name="selectTab'+select_tab_index+'"]').is(":checked") ) {
-    document.getElementById("copy_btn" + select_tab_index).className="btn-shadow disOffgreenBtn";
-    document.getElementById("copy_btn" + select_tab_index).addEventListener('click', openCopyDialog, false);
+    document.getElementById("tdictionaries_copy_btn" + select_tab_index).className="btn-shadow disOffgreenBtn";
+    document.getElementById("tdictionaries_copy_btn" + select_tab_index).addEventListener('click', openCopyDialog, false);
     if(stint_flg == '0'){
-      document.getElementById("move_btn" + select_tab_index).className="btn-shadow disOffgrayBtn";
-      document.getElementById("move_btn" + select_tab_index).removeEventListener('click', openMoveDialog, false);
+      document.getElementById("tdictionaries_move_btn" + select_tab_index).className="btn-shadow disOffgrayBtn";
+      document.getElementById("tdictionaries_move_btn" + select_tab_index).removeEventListener('click', openMoveDialog, false);
     }
     else{
-      document.getElementById("move_btn" + select_tab_index).className="btn-shadow disOffgreenBtn";
-      document.getElementById("move_btn" + select_tab_index).addEventListener('click', openMoveDialog, false);
+      document.getElementById("tdictionaries_move_btn" + select_tab_index).className="btn-shadow disOffgreenBtn";
+      document.getElementById("tdictionaries_move_btn" + select_tab_index).addEventListener('click', openMoveDialog, false);
     }
-    document.getElementById("dustbox_btn" + select_tab_index).className="btn-shadow disOffredBtn";
-    document.getElementById("dustbox_btn" + select_tab_index).addEventListener('click', openConfirmDialog, false);
+    document.getElementById("tdictionaries_dustbox_btn" + select_tab_index).className="btn-shadow disOffredBtn";
+    document.getElementById("tdictionaries_dustbox_btn" + select_tab_index).addEventListener('click', openConfirmDialog, false);
   }
   else {
-    document.getElementById("copy_btn" + select_tab_index).className="btn-shadow disOffgrayBtn";
-    document.getElementById("copy_btn" + select_tab_index).removeEventListener('click', openCopyDialog, false);
-    document.getElementById("move_btn" + select_tab_index).className="btn-shadow disOffgrayBtn";
-    document.getElementById("move_btn" + select_tab_index).removeEventListener('click', openMoveDialog, false);
-    document.getElementById("dustbox_btn" + select_tab_index).className="btn-shadow disOffgrayBtn";
-    document.getElementById("dustbox_btn" + select_tab_index).removeEventListener('click', openConfirmDialog, false);
+    document.getElementById("tdictionaries_copy_btn" + select_tab_index).className="btn-shadow disOffgrayBtn";
+    document.getElementById("tdictionaries_copy_btn" + select_tab_index).removeEventListener('click', openCopyDialog, false);
+    document.getElementById("tdictionaries_move_btn" + select_tab_index).className="btn-shadow disOffgrayBtn";
+    document.getElementById("tdictionaries_move_btn" + select_tab_index).removeEventListener('click', openMoveDialog, false);
+    document.getElementById("tdictionaries_dustbox_btn" + select_tab_index).className="btn-shadow disOffgrayBtn";
+    document.getElementById("tdictionaries_dustbox_btn" + select_tab_index).removeEventListener('click', openConfirmDialog, false);
   }
   allCheckCtrl();
 };
@@ -403,7 +403,7 @@ $( function() {
       tabSort();
     }
     if(stint_flg == '0'){
-      document.getElementById('manu_btn' + index).className="btn-shadow disOffgrayBtn";
+      document.getElementById('tdictionaries_manu_btn' + index).className="btn-shadow disOffgrayBtn";
     }
   });
 
@@ -417,7 +417,7 @@ $( function() {
     //プランメッセージ表示
     document.getElementById("stintMessage").style.display="";
     //カテゴリメニューボタン押下不可
-    document.getElementById('manu_btn'+index).className="btn-shadow disOffgrayBtn";
+    document.getElementById('tdictionaries_manu_btn'+index).className="btn-shadow disOffgrayBtn";
   }
 
   $("[id^=openMenu]").click(function(){

@@ -39,6 +39,9 @@
 	<table>
 		<thead>
 			<tr>
+<!--
+				<th width=" 5%"><input type="checkbox" name="allCheck" id="allCheck" ><label for="allCheck"></label></th>
+ -->
 				<th>No</th>
 				<th>氏名</th>
 				<th>表示名</th>
@@ -55,12 +58,39 @@
 			$no = $prevCnt + h($key+1);
 			?>
 			<tr>
-				<td class="tCenter"><?=$no?></td>
-				<td class="tCenter"><?=$val['MUser']['user_name']?></td>
-				<td class="tCenter"><?=$val['MUser']['display_name']?></td>
-				<td class="tCenter"><?=$authorityList[$val['MUser']['permission_level']]?></td>
-				<td class="tCenter"><?=$val['MUser']['mail_address']?></td>
+<!--
 				<td class="tCenter">
+					<input type="checkbox" name="selectTab" id="selectTab<?=$key?>" value="<?=$val['MUser']['id']?>">
+					<label for="selectTab<?=$val['MUser']['id']?>"></label>
+				</td>
+ -->
+				<td class="tCenter">
+					<a class="t-link" id="t-link" href="javascript:void(0)" onclick="openEditDialog(<?=$val['MUser']['id']?>)">
+						<?=$no?>
+					</a>
+				</td>
+				<td class="tCenter">
+					<a class="t-link" id="t-link" href="javascript:void(0)" onclick="openEditDialog(<?=$val['MUser']['id']?>)">
+						<?=$val['MUser']['user_name']?>
+					</a>
+				</td>
+				<td class="tCenter">
+					<a class="t-link" id="t-link" href="javascript:void(0)" onclick="openEditDialog(<?=$val['MUser']['id']?>)">
+						<?=$val['MUser']['display_name']?>
+					</a>
+				</td>
+				<td class="tCenter">
+					<a class="t-link" id="t-link" href="javascript:void(0)" onclick="openEditDialog(<?=$val['MUser']['id']?>)">
+						<?=$authorityList[$val['MUser']['permission_level']]?>
+					</a>
+				</td>
+				<td class="tCenter">
+					<a class="t-link" id="t-link" href="javascript:void(0)" onclick="openEditDialog(<?=$val['MUser']['id']?>)">
+						<?=$val['MUser']['mail_address']?>
+					</a>
+				</td>
+				<td class="tCenter">
+<!--
 					<?php
 						echo $this->Html->link(
 							$this->Html->image(
@@ -79,6 +109,7 @@
 							)
 						);
 					?>
+ -->
 					<?php
 						if ( $userInfo['id'] === $val['MUser']['id'] ) {
 							echo $this->Html->link(
@@ -115,10 +146,9 @@
 									)
 							);
 						}
-
 					?>
-
 				</td>
+
 			</tr>
 		<?php endforeach; ?>
 		</tbody>
