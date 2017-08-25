@@ -2032,13 +2032,21 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
               //検索モード行クリック
               $("#allWordList").on('click', function(e){
                 //カテゴリ
-                var select_tab_index = document.getElementById("select_tab_index").value;
-                var list = $scope.entryWordSearch($scope.entryWordList[select_tab_index]);
-                if ( list.length > 0 ) {
-                  modalClose();
-                  entryWordApi.push(list[$(e.target).index()].label);
-                  //entryWordApi.prev();
+                var id = e.target.id;
+                id = Number(id.substr(10));
+                //$scope.entryWordListの中のどこに該当するか特定する
+                var wordlist = $scope.entryWordList;
+                for(var key in wordlist) {
+                  for(var v_key in wordlist[key]) {
+                    if(wordlist[key][v_key]["id"] == id){
+                      var select_tab_index = key;
+                      var select_index = v_key;
+                    }
+                  }
                 }
+                var list = $scope.entryWordSearch($scope.entryWordList[select_tab_index]);
+                modalClose();
+                entryWordApi.push(list[select_index].label);
                 return false;
               });
 
