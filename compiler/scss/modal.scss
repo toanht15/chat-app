@@ -1178,38 +1178,32 @@
   display: block;
 }
 
-[id^="tooltip_add_btn"].tooltips{
-  position: relative;
-  top: 219px !important;
+[id^="tooltip_tdictionaries_add_btn"].tooltips{
+  position: fixed;
   left: 104px !important;
   width: 6em
 }
 
-[id^="tooltip_copy_btn"].tooltips{
-  position: relative;
-  top: 219px !important;
+[id^="tooltip_tdictionaries_copy_btn"].tooltips{
+  position: fixed;
   left: 128px !important;
   width: 9em;
 }
 
-[id^="tooltip_move_btn"].tooltips{
-  position: relative;
-  top: 219px !important;
+[id^="tooltip_tdictionaries_move_btn"].tooltips{
+  position: fixed;
   left: 190px !important;
   width: 6em;
 }
 
-[id^="tooltip_dustbox_btn"].tooltips{
-  position: relative;
-  top: 219px !important;
+[id^="tooltip_tdictionaries_dustbox_btn"].tooltips{
+  position: fixed;
   left: 234px !important;
   width: 6em;
 }
 
-[id^="tooltip_manu_btn"].tooltips{
-  position: relative;
-  top: 219px !important;
-  left: 690px !important;
+[id^="tooltip_tdictionaries_manu_btn"].tooltips{
+  position: fixed;
 }
 
 [id^="layerMenu"] ul li:hover {
