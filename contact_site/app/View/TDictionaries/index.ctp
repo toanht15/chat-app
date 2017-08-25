@@ -41,7 +41,7 @@
   <input type="hidden" id="select_tab_index" value="">
   <ul class="tablist">
   <?php for ($i = 0; $i < count((array)$nameList); $i++) { ?>
-    <li><a data-id="<?=$nameList[$i]['id']?>" href="#tabs-<?=$i?>"><?=$nameList[$i]['name']?></a></li>
+    <li><a onfocus="this.blur();" data-id="<?=$nameList[$i]['id']?>" href="#tabs-<?=$i?>"><?=$nameList[$i]['name']?></a></li>
   <?php } ?>
   </ul>
   <?php for ($i = 0; $i < count((array)$nameList); $i++) { ?>
