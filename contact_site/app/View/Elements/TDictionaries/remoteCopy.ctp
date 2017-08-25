@@ -52,7 +52,7 @@
   $( function() {
     var type = "<?= $type ?>";
     if(type == 1){
-      document.getElementById("edit_category_value").value = "<?= $name ?>";
+      document.getElementById("edit_category_value").value = "<?= h($name) ?>";
     }
     $("input[type=search]").keypress(function(ev) {
         if ((ev.which && ev.which === 13) ||

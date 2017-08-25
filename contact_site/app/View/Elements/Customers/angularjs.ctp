@@ -1934,7 +1934,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
                     //ワードリストが空の時は以下処理は実行しない
                     if(selectTabWordList.length > 0){
-                    	//現在[dictionarySelected~]クラスがついている行のidnameを取得してidだけを抽出する
+                      //現在[dictionarySelected~]クラスがついている行のidnameを取得してidだけを抽出する
                       var selected = document.querySelector('[id^="item"].dictionarySelected'+select_tab_index);
                       var selected_id = selected.id;
                       selected_id = Number(selected_id.substr(4));
@@ -1958,7 +1958,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                     }
                     if ( e.keyCode === 38 ) { // 上キー
                       if ( selected_key > 0 ) {
-                      	selected_key = selected_key - 1;
+                        selected_key = selected_key - 1;
                         var prev = $("#item" + selectTabWordList[selected_key]["id"]);
                         if (prev.prop('id')){
                           //もともとあったセレクトクラスを除外
@@ -1966,7 +1966,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                           document.getElementById("item" + selectTabWordList[selected_key]["id"]).className = selectedClassName;
                           document.getElementById(selected.id).className = "dictionaryWord ng-binding ng-scope";
                           //新しくセレクトされた要素までスクロール
-                          document.getElementById("item" + selectTabWordList[selected_key]["id"]).scrollIntoView(false)
+                          document.getElementById("item" + selectTabWordList[selected_key]["id"]).scrollIntoView(true);
                         }
                       }
                       else {
@@ -1982,7 +1982,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                     }
                     if ( e.keyCode === 40 ) { // 下
                       if ( $scope.entryWordSearch($scope.entryWordList[select_tab_index]).length > (selected_key + 1) ) {
-                      	selected_key = selected_key + 1;
+                        selected_key = selected_key + 1;
                         var next = $("#item" + selectTabWordList[selected_key]["id"]);
                         if (next.prop('id')){
                           //もともとあったセレクトクラスを除外
@@ -1990,7 +1990,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                           document.getElementById("item" + selectTabWordList[selected_key]["id"]).className = selectedClassName;
                           document.getElementById(selected.id).className = "dictionaryWord ng-binding ng-scope";
                           //新しくセレクトされた要素までスクロール
-                          document.getElementById("item" + selectTabWordList[selected_key]["id"]).scrollIntoView(true)
+                          document.getElementById("item" + selectTabWordList[selected_key]["id"]).scrollIntoView(false);
                         }
                       }
                       return false;
@@ -2024,7 +2024,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                 var select_tab_index = document.getElementById("select_tab_index").value;
                 var list = $scope.entryWordSearch($scope.entryWordList[select_tab_index]);
                 if ( list.length > 0 ) {
-                	closeCategoryDictionary();
+                  closeCategoryDictionary();
                   entryWordApi.push(list[$(e.target).index()].label);
                   //entryWordApi.prev();
                 }
@@ -2060,6 +2060,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                 document.getElementById("popup-main").className="";
                 document.getElementById("popup-frame").className="p-cus-detail";
                 $(".popup-frame").css('height', '100%');
+                $("#sendMessage").focus();
               }
 
               //検索テキストボックス
@@ -2123,7 +2124,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                   document.getElementById("word_search_mode").style.display="none";
                 }
               }
-
             }
           });
 

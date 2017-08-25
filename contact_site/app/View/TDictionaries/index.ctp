@@ -29,7 +29,10 @@
         <li>
           <label class="pointer">
             <?= $this->Form->checkbox('tabsort', array('onchange' => 'tabSort()')) ?>カテゴリの並び替え
+            <!--
             <span id="stintMessage" style="display:none; color:#E91E63; font-weight:normal; font-size:0.9em;">　※カテゴリ登録およびＣＳＶ関連はスタンダードプランからご利用いただけます。</span>
+             -->
+            <span id="stintMessage" style="display:none; color:#E91E63; font-weight:normal; font-size:0.9em;">　※カテゴリ登録はスタンダードプランからご利用いただけます。</span>
           </label>
           <span id="tabSortMessage" style="display:none; color:#E91E63; font-weight:normal; font-size:0.9em;">　（！）カテゴリを並び替え中（保存する場合は画面下部の「保存」ボタンをクリック／キャンセルする場合はチェックを外してください）</span>
         </li>
@@ -41,7 +44,7 @@
   <input type="hidden" id="select_tab_index" value="">
   <ul class="tablist">
   <?php for ($i = 0; $i < count((array)$nameList); $i++) { ?>
-    <li><a onfocus="this.blur();" data-id="<?=$nameList[$i]['id']?>" href="#tabs-<?=$i?>"><?=$nameList[$i]['name']?></a></li>
+    <li><a onfocus="this.blur();" data-id="<?=$nameList[$i]['id']?>" href="#tabs-<?=$i?>"><?=h($nameList[$i]['name'])?></a></li>
   <?php } ?>
   </ul>
   <?php for ($i = 0; $i < count((array)$nameList); $i++) { ?>
@@ -194,6 +197,7 @@
               <tr data-id="<?=$val['TDictionary']['id']?>" data-sort="<?=$val['TDictionary']['sort']?>">
                 <!-- #451 定型文カテゴリ対応 start -->
                 <td class="tCenter">
+                  <input type="hidden" id="dictionary_list_flg<?=$i?>" value="1">
                   <input type="checkbox" name="selectTab<?=$i.'-'.$key?>" id="selectTab<?=$i.'-'.$key?>" value="<?=$val['TDictionary']['id']?>">
                   <label for="selectTab<?=$i.'-'.$key?>"></label>
                 </td>
@@ -216,7 +220,10 @@
               </tr>
             <?php endforeach; ?>
           <?php } else {?>
-            <td class="tCenter" colspan="4">定型文メッセージが設定されていません</td>
+            <td class="tCenter" colspan="4">
+              <input type="hidden" id="dictionary_list_flg<?=$i?>" value="0">
+              定型文メッセージが設定されていません
+            </td>
           <?php } ?>
           </tbody>
         </table>
@@ -233,7 +240,7 @@
 </section>
 
 <!-- 定型文の並べ替え更新ボタン -->
-<section id="sort_btn" style="display:none;">
+<section id="tdictionaries_sort_btn" style="display:none;">
     <div id="m_widget_setting_action" class="fotterBtnArea" style="bottom: 0px; right: 17px; left: 60px;">
     <a href="javascript:void(0)" onclick="saveToggleSort()" class="greenBtn btn-shadow">更新</a>
     </div>
