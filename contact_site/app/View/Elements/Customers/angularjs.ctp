@@ -1903,12 +1903,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
               //閉じるボタンが押された時
               $("#popupCloseBtn").on('click', function(e){
-                modalClose();
-                document.getElementById("popup-bg").className="";
-                document.getElementById("popup-title").className="";
-                document.getElementById("popup-main").className="";
-                document.getElementById("popup-frame").className="p-cus-detail";
-                $(".popup-frame").css('height', '100%');
+                closeCategoryDictionary();
               });
 
               //ポップアップ全体監視(ポップアップの何処かにクリックが当たると)
@@ -1951,7 +1946,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                       }
                       entryWordApi.prev();
                       //ポップアップを閉じる
-                      modalClose();
+                      closeCategoryDictionary();
                       return false;
                     }
                     if ( e.keyCode === 38 ) { // 上キー
@@ -1969,13 +1964,13 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                       }
                       else {
                         //ポップアップを閉じる
-                        modalClose(); // 元の操作に戻る
+                        closeCategoryDictionary(); // 元の操作に戻る
                         return false;
                       }
                     }
                     if ( e.keyCode === 27 ) { // ESCキー
                       //ポップアップを閉じる
-                      modalClose(); // 元の操作に戻る
+                      closeCategoryDictionary(); // 元の操作に戻る
                       return false;
                     }
                     if ( e.keyCode === 40 ) { // 下
@@ -2022,7 +2017,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                 var select_tab_index = document.getElementById("select_tab_index").value;
                 var list = $scope.entryWordSearch($scope.entryWordList[select_tab_index]);
                 if ( list.length > 0 ) {
-                  modalClose();
+                	closeCategoryDictionary();
                   entryWordApi.push(list[$(e.target).index()].label);
                   //entryWordApi.prev();
                 }
@@ -2045,10 +2040,20 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                   }
                 }
                 var list = $scope.entryWordSearch($scope.entryWordList[select_tab_index]);
-                modalClose();
+                closeCategoryDictionary();
                 entryWordApi.push(list[select_index].label);
                 return false;
               });
+
+              //ポップアップを閉じるときの共通動作
+              function closeCategoryDictionary(){
+                modalClose();
+                document.getElementById("popup-bg").className="";
+                document.getElementById("popup-title").className="";
+                document.getElementById("popup-main").className="";
+                document.getElementById("popup-frame").className="p-cus-detail";
+                $(".popup-frame").css('height', '100%');
+              }
 
               //検索テキストボックス
               $("#wordSearchCond")
