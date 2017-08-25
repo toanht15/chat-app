@@ -29,7 +29,7 @@ function openEditDialog(id,tabid){
 //定型文コピー処理
 function openCopyDialog(){
   index = document.getElementById("select_tab_index").value;
-  var list = document.querySelectorAll('input[name="selectTab'+index+'"]:checked');
+  var list = document.querySelectorAll('input[name^="selectTab'+index+'"]:checked');
   var selectedList = [];
   for (var i = 0; i < list.length; i++){
     selectedList.push(Number(list[i].value));
@@ -45,7 +45,7 @@ function openCopyDialog(){
 //定型文移動処理
 function openMoveDialog(){
   index = document.getElementById("select_tab_index").value;
-  var list = document.querySelectorAll('input[name="selectTab'+index+'"]:checked');
+  var list = document.querySelectorAll('input[name^="selectTab'+index+'"]:checked');
   var selectedList = [];
   for (var i = 0; i < list.length; i++){
     selectedList.push(Number(list[i].value));
@@ -105,7 +105,7 @@ function openEntryEditDialog(setting){
 function openConfirmDialog(){
   //チェックボックスのチェック状態の取得
   index = document.getElementById("select_tab_index").value;
-  var list = document.querySelectorAll('input[name="selectTab'+index+'"]:checked');
+  var list = document.querySelectorAll('input[name^="selectTab'+index+'"]:checked');
   var selectedList = [];
   for (var i = 0; i < list.length; i++){
     selectedList.push(Number(list[i].value));
@@ -147,7 +147,7 @@ function tabSort(){
     //全て選択チェックボックス選択可
     document.getElementById('allCheck'+index).disabled = "";
     //項目チェックボックス選択可
-    var checkBoxList = document.querySelectorAll('[id^="selectTab"]');
+    var checkBoxList = document.querySelectorAll('[id^="selectTab'+index+'"]');
     for (var i = 0; i < checkBoxList.length; i++) {
       checkBoxList[i].disabled = "";
     }
@@ -168,7 +168,7 @@ function tabSort(){
     //全て選択チェックボックス選択不可
     document.getElementById('allCheck'+index).disabled = "disabled";
     //項目チェックボックス選択不可
-    var checkBoxList = document.querySelectorAll('[id^="selectTab"]');
+    var checkBoxList = document.querySelectorAll('[id^="selectTab'+index+'"]');
     for (var i = 0; i < checkBoxList.length; i++) {
       checkBoxList[i].disabled = "disabled";
     }
@@ -224,7 +224,7 @@ function toggleSort(){
     //全て選択チェックボックス選択可
     document.getElementById('allCheck'+index).disabled = "";
     //項目チェックボックス選択可
-    var checkBoxList = document.querySelectorAll('[id^="selectTab"]');
+    var checkBoxList = document.querySelectorAll('[id^="selectTab'+index+'"]');
     for (var i = 0; i < checkBoxList.length; i++) {
       checkBoxList[i].disabled = "";
     }
@@ -247,7 +247,7 @@ function toggleSort(){
     //全て選択チェックボックス選択不可
     document.getElementById('allCheck'+index).disabled = "disabled";
     //項目チェックボックス選択不可
-    var checkBoxList = document.querySelectorAll('[id^="selectTab"]');
+    var checkBoxList = document.querySelectorAll('[id^="selectTab'+index+'"]');
     for (var i = 0; i < checkBoxList.length; i++) {
       checkBoxList[i].disabled = "disabled";
     }
@@ -308,7 +308,7 @@ document.body.onload = function(){
   }
 
   // チェックボックス群
-  var checkBoxList = document.querySelectorAll('[id^="selectTab"]');
+  var checkBoxList = document.querySelectorAll('[id^="selectTab'+index+'"]');
   for (var i = 0; i < checkBoxList.length; i++) {
     checkBoxList[i].addEventListener('change', actBtnShow); // 有効無効ボタンの表示切り替え
   }
@@ -323,7 +323,7 @@ document.body.onload = function(){
 //全選択
 var setAllCheck = function() {
   var index = document.getElementById("select_tab_index").value;
-  $('input[name="selectTab' + index + '"]').prop('checked', this.checked);
+  $('input[name^="selectTab' + index + '"]').prop('checked', this.checked);
   if ( this.checked ) {
     $(".actCtrlBtn").css('display', 'block');
   }
@@ -337,7 +337,7 @@ var setAllCheck = function() {
 var allCheckCtrl = function(){
   var index = document.getElementById("select_tab_index").value;
   // 全て選択されている場合
-  if ( $('input[name="selectTab' + index + '"]:not(:checked)').length === 0 ) {
+  if ( $('input[name^="selectTab' + index + '"]:not(:checked)').length === 0 ) {
     $('input[id="allCheck' + index + '"]').prop('checked', true);
   }
   else {
@@ -348,6 +348,7 @@ var allCheckCtrl = function(){
 //行クリックでチェックする
 var isCheck = function(){
   allCheckCtrl();
+  actBtnShow();
 };
 
 //各ボタンの有効/無効切り替え
@@ -355,7 +356,7 @@ var actBtnShow = function(){
   // 選択中の場合
   var stint_flg = document.getElementById("stint_flg").value;
   var select_tab_index = document.getElementById("select_tab_index").value;
-  if ( $('input[name="selectTab'+select_tab_index+'"]').is(":checked") ) {
+  if ( $('input[name^="selectTab'+select_tab_index+'"]').is(":checked") ) {
     document.getElementById("tdictionaries_copy_btn" + select_tab_index).className="btn-shadow disOffgreenBtn";
     document.getElementById("tdictionaries_copy_btn" + select_tab_index).addEventListener('click', openCopyDialog, false);
     if(stint_flg == '0'){
