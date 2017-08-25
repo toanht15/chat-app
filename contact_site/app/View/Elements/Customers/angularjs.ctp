@@ -2076,6 +2076,21 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                 onWordSearchCond(e);
               })
               .on('click', function(e){
+                var $input = $(this),
+                oldValue = $input.val();
+                if (oldValue == "") return;
+                setTimeout(function(){
+                  //一旦全て非表示
+                  document.getElementById("categoryTabs-ALL").style.display="none";
+                  document.getElementById("allWordList").style.display="none";
+                  var searchItemList = document.querySelectorAll('[id^="searchItem"]');
+                  for (var i = 0; i < searchItemList.length; i++) {
+                    searchItemList[i].style.display="none";
+                  }
+                  onWordSearchCond(e);
+                },1);
+              })
+              .on('onchange', function(e){
                 //一旦全て非表示
                 document.getElementById("categoryTabs-ALL").style.display="none";
                 document.getElementById("allWordList").style.display="none";
