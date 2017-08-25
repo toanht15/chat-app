@@ -194,8 +194,8 @@
               <tr data-id="<?=$val['TDictionary']['id']?>" data-sort="<?=$val['TDictionary']['sort']?>">
                 <!-- #451 定型文カテゴリ対応 start -->
                 <td class="tCenter">
-                  <input type="checkbox" name="selectTab<?=$i?>" id="selectTab<?=$key?>" value="<?=$val['TDictionary']['id']?>">
-                  <label for="selectTab<?=$key?>"></label>
+                  <input type="checkbox" name="selectTab<?=$i.'-'.$key?>" id="selectTab<?=$i.'-'.$key?>" value="<?=$val['TDictionary']['id']?>">
+                  <label for="selectTab<?=$i.'-'.$key?>"></label>
                 </td>
                 <!-- #451 定型文カテゴリ対応 end -->
                 <td width="8%" class="tCenter pre">
