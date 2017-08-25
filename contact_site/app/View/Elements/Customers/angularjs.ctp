@@ -1910,12 +1910,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
               //閉じるボタンが押された時
               $("#popupCloseBtn").on('click', function(e){
-                modalClose();
-                document.getElementById("popup-bg").className="";
-                document.getElementById("popup-title").className="";
-                document.getElementById("popup-main").className="";
-                document.getElementById("popup-frame").className="p-cus-detail";
-                $(".popup-frame").css('height', '100%');
+                closeCategoryDictionary();
               });
 
               //ポップアップ全体監視(ポップアップの何処かにクリックが当たると)
@@ -1927,6 +1922,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
               //ポップアップ全体監視(ポップアップのどこかにフォーカスがある状態でキーを押下すると)
               $("#popup-content").on('keyup', function(e){
                 var keytime = document.getElementById("keytime").value;
+                //二重操作防止
                 if(keytime != e.timeStamp){
                   document.getElementById("keytime").value = e.timeStamp;
                   //検索モードだったら無視する
@@ -1935,16 +1931,21 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                     var select_tab_index = document.getElementById("select_tab_index").value;
                     //現在選択されているタブのワードリストを取得する
                     var selectTabWordList = $scope.entryWordList[select_tab_index];
-                    //現在[dictionarySelected~]クラスがついている行のidnameを取得してidだけを抽出する
-                    var selected = document.querySelector('[id^="item"].dictionarySelected'+select_tab_index);
-                    var selected_id = selected.id;
-                    selected_id = Number(selected_id.substr(4));
-                    //idから現在選択されているキーを取得する
-                    for(var key in selectTabWordList) {
-                      if(selected_id === selectTabWordList[key]["id"]){
-                        var selected_key = Number(key);
+
+                    //ワードリストが空の時は以下処理は実行しない
+                    if(selectTabWordList.length > 0){
+                    	//現在[dictionarySelected~]クラスがついている行のidnameを取得してidだけを抽出する
+                      var selected = document.querySelector('[id^="item"].dictionarySelected'+select_tab_index);
+                      var selected_id = selected.id;
+                      selected_id = Number(selected_id.substr(4));
+                      //idから現在選択されているキーを取得する
+                      for(var key in selectTabWordList) {
+                        if(selected_id === selectTabWordList[key]["id"]){
+                          var selected_key = Number(key);
+                        }
                       }
                     }
+
                     if ( e.keyCode === 13 ) { // Enter
                       var list = $scope.entryWordSearch($scope.entryWordList[select_tab_index]);
                       if ( list.length > 0 ) {
@@ -1952,7 +1953,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                       }
                       entryWordApi.prev();
                       //ポップアップを閉じる
-                      modalClose();
+                      closeCategoryDictionary();
                       return false;
                     }
                     if ( e.keyCode === 38 ) { // 上キー
@@ -1970,13 +1971,13 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                       }
                       else {
                         //ポップアップを閉じる
-                        modalClose(); // 元の操作に戻る
+                        closeCategoryDictionary(); // 元の操作に戻る
                         return false;
                       }
                     }
                     if ( e.keyCode === 27 ) { // ESCキー
                       //ポップアップを閉じる
-                      modalClose(); // 元の操作に戻る
+                      closeCategoryDictionary(); // 元の操作に戻る
                       return false;
                     }
                     if ( e.keyCode === 40 ) { // 下
@@ -2023,7 +2024,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                 var select_tab_index = document.getElementById("select_tab_index").value;
                 var list = $scope.entryWordSearch($scope.entryWordList[select_tab_index]);
                 if ( list.length > 0 ) {
-                  modalClose();
+                	closeCategoryDictionary();
                   entryWordApi.push(list[$(e.target).index()].label);
                   //entryWordApi.prev();
                 }
@@ -2033,15 +2034,33 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
               //検索モード行クリック
               $("#allWordList").on('click', function(e){
                 //カテゴリ
-                var select_tab_index = document.getElementById("select_tab_index").value;
-                var list = $scope.entryWordSearch($scope.entryWordList[select_tab_index]);
-                if ( list.length > 0 ) {
-                  modalClose();
-                  entryWordApi.push(list[$(e.target).index()].label);
-                  //entryWordApi.prev();
+                var id = e.target.id;
+                id = Number(id.substr(10));
+                //$scope.entryWordListの中のどこに該当するか特定する
+                var wordlist = $scope.entryWordList;
+                for(var key in wordlist) {
+                  for(var v_key in wordlist[key]) {
+                    if(wordlist[key][v_key]["id"] == id){
+                      var select_tab_index = key;
+                      var select_index = v_key;
+                    }
+                  }
                 }
+                var list = $scope.entryWordSearch($scope.entryWordList[select_tab_index]);
+                closeCategoryDictionary();
+                entryWordApi.push(list[select_index].label);
                 return false;
               });
+
+              //ポップアップを閉じるときの共通動作
+              function closeCategoryDictionary(){
+                modalClose();
+                document.getElementById("popup-bg").className="";
+                document.getElementById("popup-title").className="";
+                document.getElementById("popup-main").className="";
+                document.getElementById("popup-frame").className="p-cus-detail";
+                $(".popup-frame").css('height', '100%');
+              }
 
               //検索テキストボックス
               $("#wordSearchCond")

@@ -54,14 +54,13 @@
               <a>
                 <?= $this->Html->image('add.png', array(
                     'alt' => '登録',
-                    'id'=>'add_btn'."$i",
+                    'id'=>'tdictionaries_add_btn'."$i",
                     'class' => 'btn-shadow disOffgreenBtn commontooltip',
                     'data-text' => '新規追加',
                     'data-balloon-position' => '36',
                     'width' => 40,
                     'height' => 40,
                     'onclick' => 'openAddDialog('.$tab_id.')',
-                    'onmouseover' => 'tooltipconf()'
                 )) ?>
               </a>
             </span>
@@ -69,7 +68,7 @@
               <a>
                 <?= $this->Html->image('copy.png', array(
                     'alt' => 'コピー',
-                    'id'=>'copy_btn'."$i",
+                    'id'=>'tdictionaries_copy_btn'."$i",
                     'class' => 'btn-shadow disOffgrayBtn commontooltip',
                     'data-text' => 'コピー（複製）',
                     'data-balloon-position' => '41',
@@ -82,7 +81,7 @@
               <a>
                 <?= $this->Html->image('move.png', array(
                     'alt' => '移動',
-                    'id'=>'move_btn'."$i",
+                    'id'=>'tdictionaries_move_btn'."$i",
                     'class' => 'btn-shadow disOffgrayBtn commontooltip',
                     'data-text' => '移動する',
                     'data-balloon-position' => '36',
@@ -93,7 +92,7 @@
               <a>
                 <?= $this->Html->image('move.png', array(
                     'alt' => '移動',
-                    'id'=>'no_move_btn'."$i",
+                    'id'=>'tdictionaries_no_move_btn'."$i",
                     'class' => 'btn-shadow disOffgrayBtn commontooltip',
                     'data-text' => "こちらの機能はスタンダードプラン<br>からご利用いただけます。",
                     'data-balloon-position' => '43.5',
@@ -106,7 +105,7 @@
               <a>
                 <?= $this->Html->image('dustbox.png', array(
                     'alt' => '削除',
-                    'id'=>'dustbox_btn'."$i",
+                    'id'=>'tdictionaries_dustbox_btn'."$i",
                     'class' => 'btn-shadow disOffgrayBtn commontooltip',
                     'data-text' => '削除する',
                     'data-balloon-position' => '35',
@@ -132,10 +131,10 @@
                   <a>
                     <?= $this->Html->image('list.png', array(
                         'alt' => 'メニュー',
-                        'id'=>'manu_btn'."$i",
+                        'id'=>'tdictionaries_manu_btn'."$i",
                         'class' => 'btn-shadow disOffgreenBtn commontooltip',
                         'data-text' => 'その他編集',
-                        'data-balloon-position' => '67',
+                        'data-balloon-position' => '84',
                         'width' => 40,
                         'height' => 40)) ?>
                   </a>
@@ -147,10 +146,10 @@
                   <a>
                     <?= $this->Html->image('list.png', array(
                         'alt' => 'メニュー',
-                        'id'=>'manu_btn'."$i",
+                        'id'=>'tdictionaries_manu_btn'."$i",
                         'class' => 'btn-shadow disOffgrayBtn commontooltip',
                         'data-text' => "こちらの機能はスタンダードプラン<br>からご利用いただけます。",
-                        'data-balloon-position' => '67',
+                        'data-balloon-position' => '84',
                         'width' => 40,
                         'height' => 40)) ?>
                   </a>
@@ -179,7 +178,10 @@
           <thead>
             <tr>
               <!-- #451 定型文カテゴリ対応 start -->
-              <th width=" 5%"><input type="checkbox" name="allCheck" id="allCheck<?=$i?>" ><label for="allCheck"></label></th>
+              <th width=" 5%">
+                <input type="checkbox" name="allCheck" id="allCheck<?=$i?>" >
+                <label for="allCheck<?=$i?>"></label>
+              </th>
               <!-- #451 定型文カテゴリ対応 end -->
               <th>No</th>
               <th>使用範囲</th>
@@ -193,7 +195,7 @@
                 <!-- #451 定型文カテゴリ対応 start -->
                 <td class="tCenter">
                   <input type="checkbox" name="selectTab<?=$i?>" id="selectTab<?=$key?>" value="<?=$val['TDictionary']['id']?>">
-                  <label for="selectTab<?=$val['TDictionary']['id']?>"></label>
+                  <label for="selectTab<?=$key?>"></label>
                 </td>
                 <!-- #451 定型文カテゴリ対応 end -->
                 <td width="8%" class="tCenter pre">

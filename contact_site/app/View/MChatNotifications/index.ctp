@@ -34,6 +34,10 @@
   <table>
     <thead>
       <tr>
+<!--
+        <th width=" 5%"><input type="checkbox" name="allCheck" id="allCheck" ><label for="allCheck"></label></th>
+
+ -->
         <th class="tLeft">対象ページ</th>
         <th class="tLeft">通知アイコン</th>
         <th class="tLeft">通知名</th>
@@ -43,10 +47,58 @@
     <tbody class="sortable">
     <?php foreach((array)$settingList as $key => $val): ?>
       <tr>
-        <td width="20%" class="tLeft"><?=h($val['MChatNotification']['keyword'])?></td>
-        <td width="20%" class="tCenter"><?=$this->Html->image("notification/".$val['MChatNotification']['image'], ['width'=>30, 'height'=>30])?></td>
-        <td class="tLeft"><?=h($val['MChatNotification']['name'])?></td>
+<!--
+        <td class="tCenter">
+          <input type="checkbox" name="selectTab" id="selectTab<?=$key?>" value="<?=$val['MChatNotification']['id']?>">
+          <label for="selectTab<?=$val['MChatNotification']['id']?>"></label>
+        </td>
+ -->
+        <td width="20%" class="tLeft">
+          <?php
+            echo $this->Html->link(
+              h($val['MChatNotification']['keyword']),
+              ['controller'=>'MChatNotifications', 'action' => 'edit', h($val['MChatNotification']['id'])],
+              array(
+                'class' => 't-link',
+                'escape' => false
+            )
+            );
+          ?>
+<!--
+          <?=h($val['MChatNotification']['keyword'])?>
+ -->
+        </td>
+        <td width="20%" class="tCenter">
+          <?php
+            echo $this->Html->link(
+              $this->Html->image("notification/".$val['MChatNotification']['image'], ['width'=>30, 'height'=>30]),
+              ['controller'=>'MChatNotifications', 'action' => 'edit', h($val['MChatNotification']['id'])],
+              array(
+                'escape' => false
+            )
+            );
+          ?>
+<!--
+          <?=$this->Html->image("notification/".$val['MChatNotification']['image'], ['width'=>30, 'height'=>30])?>
+ -->
+        </td>
+        <td class="tLeft">
+          <?php
+            echo $this->Html->link(
+              h($val['MChatNotification']['name']),
+              ['controller'=>'MChatNotifications', 'action' => 'edit', h($val['MChatNotification']['id'])],
+              array(
+                'class' => 't-link',
+                'escape' => false
+            )
+            );
+          ?>
+<!--
+          <?=h($val['MChatNotification']['name'])?>
+ -->
+        </td>
         <td class="tCenter ctrlBtnArea">
+<!--
           <?php
             echo $this->Html->link(
               $this->Html->image(
@@ -64,6 +116,7 @@
               )
             );
           ?>
+ -->
           <?php
             echo $this->Html->link(
                 $this->Html->image(
@@ -82,7 +135,6 @@
                 )
             );
           ?>
-
         </td>
       </tr>
     <?php endforeach; ?>

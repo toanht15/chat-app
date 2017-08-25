@@ -112,7 +112,9 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
 				</td>
 				<td class="p10x noClick lineCtrl">
 					<div>
+<!--
 						<a href="<?=$this->Html->url(['controller'=>'TAutoMessages', 'action'=>'edit', $id])?>" class="btn-shadow greenBtn fLeft"><img src="/img/edit.png" alt="更新" width="30" height="30"></a>
+ -->
 						<?php if ($val['TAutoMessage']['active_flg']) { ?>
 							<a href="javascript:void(0)" class="btn-shadow redBtn fLeft m10r10l" onclick="isActive(true, '<?=$id?>')"><img src="/img/inactive.png" alt="無効" width="30" height="30"></a>
 						<?php } else { ?>
