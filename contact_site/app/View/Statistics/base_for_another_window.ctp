@@ -183,7 +183,7 @@
       ?>
         <?php foreach($data['users'] as $k => $v) { ?>
         <tr>
-          <td><?= $v['display_name'] ?></td>
+          <td class = 'userName'><?= $v['display_name'] ?></td>
           <?php for ($i = $start; $i <= $end; $i++) {
             if(is_int($v['loginNumber'][$days.sprintf("%02d",$i).$seconds]) == 'true') { ?>
               <td><?php echo number_format($v['loginNumber'][$days.sprintf("%02d",$i).$seconds]) ?></td>
@@ -201,7 +201,7 @@
       ?>
         <?php foreach($data['users'] as $k => $v) { ?>
         <tr>
-          <td><?= $v['display_name'] ?></td>
+          <td class = 'userName'><?= $v['display_name'] ?></td>
           <?php for ($i = $start; $i <= $end; $i++) {
             if(is_int($v['requestNumber'][$days.sprintf("%02d",$i).$seconds]) == 'true') { ?>
               <td><?php echo number_format($v['requestNumber'][$days.sprintf("%02d",$i).$seconds]) ?></td>
@@ -219,7 +219,7 @@
       ?>
         <?php foreach($data['users'] as $k => $v) { ?>
         <tr>
-          <td><?= $v['display_name'] ?></td>
+          <td class = 'userName'><?= $v['display_name'] ?></td>
           <?php for ($i = $start; $i <= $end; $i++) {
             if(is_int($v['responseNumber'][$days.sprintf("%02d",$i).$seconds]) == 'true') { ?>
               <td><?php echo number_format($v['responseNumber'][$days.sprintf("%02d",$i).$seconds]) ?></td>
@@ -237,7 +237,7 @@
       ?>
         <?php foreach($data['users'] as $k => $v) { ?>
         <tr>
-          <td><?= $v['display_name'] ?></td>
+          <td class = 'userName'><?= $v['display_name'] ?></td>
           <?php for ($i = $start; $i <= $end; $i++) {
             if(is_int($v['effectivenessNumber'][$days.sprintf("%02d",$i).$seconds]) == 'true') { ?>
               <td><?php echo number_format($v['effectivenessNumber'][$days.sprintf("%02d",$i).$seconds]) ?></td>
@@ -255,7 +255,7 @@
       ?>
         <?php foreach($data['users'] as $k => $v) { ?>
         <tr>
-          <td><?= $v['display_name'] ?></td>
+          <td class = 'userName'><?= $v['display_name'] ?></td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <td><?php echo ($v['avgEnteringRommTimeNumber'][$days.sprintf("%02d",$i).$seconds]) ?></td>
           <?php } ?>
@@ -268,7 +268,7 @@
       ?>
         <?php foreach($data['users'] as $k => $v) { ?>
         <tr>
-          <td><?= $v['display_name'] ?></td>
+          <td class = 'userName'><?= $v['display_name'] ?></td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <td><?php echo ($v['responseAvgTimeNumber'][$days.sprintf("%02d",$i).$seconds]) ?></td>
           <?php } ?>
@@ -281,7 +281,7 @@
       ?>
         <?php foreach($data['users'] as $k => $v) { ?>
         <tr>
-          <td><?= $v['display_name'] ?></td>
+          <td class = 'userName'><?= $v['display_name'] ?></td>
           <?php for ($i = $start; $i <= $end; $i++) {
             if(is_numeric($v['effectivenessRate'][$days.sprintf("%02d",$i).$seconds])) {
               $checkData = ' %';
