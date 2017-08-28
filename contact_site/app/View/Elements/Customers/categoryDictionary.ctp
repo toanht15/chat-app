@@ -2,7 +2,7 @@
 <script type="text/javascript">
 
 $( function() {
-	document.getElementById("categoryTabs").style.display="";
+  document.getElementById("categoryTabs").style.display="";
   document.getElementById("popup-bg").className="category-tab-binding";
   document.getElementById("popup-title").className="category-tab-binding";
   document.getElementById("popup-main").className="category-tab-binding";
@@ -36,7 +36,7 @@ $( function() {
     <input type="hidden" id="select_tab_index" value="">
     <ul class="categoryTabStyle">
       <?php for ($i = 0; $i < count((array)$dictionaryCategoriesList); $i++) { ?>
-        <li class="tabStyle"><a data-id="<?=$dictionaryCategoriesList[$i]['id']?>" href="#categoryTabs-<?=$i?>"><?= $dictionaryCategoriesList[$i]['label']?></a></li>
+        <li class="tabStyle"><a data-id="<?=$dictionaryCategoriesList[$i]['id']?>" href="#categoryTabs-<?=$i?>"><?= h($dictionaryCategoriesList[$i]['label'])?></a></li>
       <?php } ?>
     </ul>
     <div id="chatCategory" class="chatCategory">
@@ -47,7 +47,7 @@ $( function() {
               <div class="wordBorder">
               <?php foreach ( (array)$dictionaryList[$i]as $key => $val ) {?>
                 <li ng-repeat="item in entryWordSearch(entryWordList)" id="item<?=$val['id']?>" class="dictionaryWord ng-binding ng-scope <?php if($key == 0){ echo "dictionarySelected".$i;}?>">
-                  <?php echo nl2br($val['label'])?>
+                  <?php echo nl2br(h($val['label']))?>
                 </li>
               <?php }?>
               </div>
@@ -71,7 +71,7 @@ $( function() {
               <?php for ($i = 0; $i < count((array)$dictionaryCategoriesList); $i++) { ?>
                 <?php foreach ( (array)$dictionaryList[$i]as $key => $val ) {?>
                   <li ng-repeat="item in entryWordSearch(entryWordList)" id="searchItem<?=$val['id']?>" class="dictionaryWord ng-binding ng-scope">
-                    <?php echo nl2br($val['label'])?>
+                    <?php echo nl2br(h($val['label']))?>
                   </li>
                 <?php }?>
               <?php } ?>

@@ -212,7 +212,7 @@ function toggleSort(){
     $(".sortable").addClass("move").sortable("disable");
     //定型文ソートモードメッセージ＆登録ボタン非表示
     document.getElementById("sortMessage" + index).style.display="none";
-    document.getElementById("sort_btn").style.display="none";
+    document.getElementById("tdictionaries_sort_btn").style.display="none";
     //カテゴリ名入力欄変更可
     document.getElementById("input_category_value").disabled = "";
     //定型文登録ボタン押下可
@@ -385,6 +385,7 @@ var actBtnShow = function(){
 $( function() {
   //インデックスの初期値を挿入暫定的に0
   document.getElementById("select_tab_index").value = 0;
+  //タブが押下された時の処理
   $("#soteTabs").bind('tabsactivate', function(event, ui) {
     var index = ui.newTab.index();
     var stint_flg = document.getElementById("stint_flg").value;
@@ -393,7 +394,32 @@ $( function() {
       $(".sortable").addClass("move").sortable("disable");
       //定型文ソートモードメッセージ＆登録ボタン非表示
       document.getElementById("sortMessage" + index).style.display="none";
-      document.getElementById("sort_btn").style.display="none";
+      document.getElementById("tdictionaries_sort_btn").style.display="none";
+      //カテゴリ名入力欄変更可
+      document.getElementById("input_category_value").disabled = "";
+      //定型文登録ボタン押下可
+      var tdictionariesAddBtnList = document.querySelectorAll('[id^="tdictionaries_add_btn"]');
+      for (var i = 0; i < tdictionariesAddBtnList.length; i++) {
+        tdictionariesAddBtnList[i].className="btn-shadow disOffgreenBtn";
+      }
+      //カテゴリの並べ替えチェックボックスチェック可
+      document.getElementById('tabsort').disabled = "";
+      //カテゴリメニューボタン押下可
+      var tdictionariesManuBtnList = document.querySelectorAll('[id^="tdictionaries_manu_btn"]');
+      for (var i = 0; i < tdictionariesManuBtnList.length; i++) {
+        tdictionariesManuBtnList[i].className="btn-shadow disOffgreenBtn";
+      }
+      //全て選択チェックボックス選択可
+      //document.getElementById('allCheck'+index).disabled = "";
+      var allCheckList = document.querySelectorAll('[id^="allCheck"]');
+      for (var i = 0; i < allCheckList.length; i++) {
+        allCheckList[i].disabled = "";
+      }
+      //項目チェックボックス選択可
+      var checkBoxList = document.querySelectorAll('[id^="selectTab"]');
+      for (var i = 0; i < checkBoxList.length; i++) {
+        checkBoxList[i].disabled = "";
+      }
       //チェックボックスも空に戻す
       $("[id^=sort]").prop("checked", false);
     }
@@ -402,6 +428,19 @@ $( function() {
     //タブ並び替えモード中だったら
     if (document.getElementById("tabsort").checked) {
       tabSort();
+    }
+    //もし定型文リストが存在しなかったら
+    if((document.getElementById("dictionary_list_flg"+index).value) == 0){
+      //定型文の並べ替えチェックボックスチェック不可
+      document.getElementById('sort'+index).disabled = "disabled";
+      //全て選択チェックボックス選択不可
+      document.getElementById('allCheck'+index).disabled = "disabled";
+    }
+    else{
+      //定型文の並べ替えチェックボックスチェック不可
+      document.getElementById('sort'+index).disabled = "";
+      //全て選択チェックボックス選択不可
+      document.getElementById('allCheck'+index).disabled = "";
     }
     if(stint_flg == '0'){
       document.getElementById('tdictionaries_manu_btn' + index).className="btn-shadow disOffgrayBtn";
