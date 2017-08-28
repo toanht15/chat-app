@@ -475,6 +475,10 @@
       }
       popup.set(title, content);
     },
+    assistAgentIsReady: function(d) {
+      console.log('assistAgentIsReady');
+      laUtil.connect();
+    },
     windowSyncInfo: function(d) {
       var obj = common.jParse(d);
       browserInfo.set.scroll(obj.scrollPosition);

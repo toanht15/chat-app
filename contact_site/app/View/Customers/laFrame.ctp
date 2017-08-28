@@ -19,6 +19,7 @@
       }
       obj.siteKey = "<?=$siteKey?>";
       var data = JSON.stringify(obj);
+      console.log('EMIT : ' + data);
       socket.emit(ev, data);
     };
 
@@ -215,11 +216,11 @@
       userId = arg.userId;
       tabId = arg.id;
 
-      emit('connectFrame', {
-        tabId: tabId,
-        connectToken: arg.connectToken,
-        responderId: "<?= $muserId?>"
-      });
+//      emit('connectFrame', {
+//        tabId: tabId,
+//        connectToken: arg.connectToken,
+//        responderId: "<?//= $muserId?>//"
+//      });
     });
 
     socket.on('retTabInfo', function(d){
@@ -539,6 +540,15 @@
     }
 
     function setAssistAgentCallbacks() {
+      AssistAgentSDK.setConnectionEstablishedCallback(function () {
+        console.log('----------- setConnectionEstablishedCallback');
+        console.log('send assistAgentIsReady tabId: ' + tabId);
+        // 準備が完了した状態を通知する
+        emit('assistAgentIsReady', {
+          to: tabId
+        });
+      });
+
       AssistAgentSDK.setFormCallBack(function(formElement) {
         if (formElement) {
           formContainer.appendChild(formElement);
@@ -547,6 +557,11 @@
 
       AssistAgentSDK.setScreenShareActiveCallback(function() {
         //debug("setScreenShareActive");
+      });
+
+      AssistAgentSDK.setConsumerJoinedCallback(function(){
+        console.log("CONSUMER JOINED");
+        AssistAgentSDK.requestScreenShare();
       });
 
       AssistAgentSDK.setRemoteViewCallBack(function (x, y) {
@@ -689,7 +704,7 @@
           url: "https://sdk005.live-assist.jp",
           additionalAttribute: config.additionalAttribute
         })
-      }).then(AssistAgentSDK.requestScreenShare());
+      });
     }
   });
   // -->

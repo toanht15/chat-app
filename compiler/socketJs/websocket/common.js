@@ -2248,6 +2248,12 @@ var socket, // socket.io
       sinclo.startCoBrowseOpen(obj);
     }); // socket-on: getWindowInfo
 
+    // 画面共有準備完了
+    socket.on('assistAgentIsReady', function(d){
+      var obj = common.jParse(d);
+      sinclo.assistAgentIsReady(obj);
+    });
+
     // 画面共有(iframeバージョン)
     socket.on('startWindowSync', function(d){
       var obj = common.jParse(d);

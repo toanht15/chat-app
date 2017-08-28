@@ -1150,6 +1150,11 @@ io.sockets.on('connection', function (socket) {
     }
   });
 
+  socket.on('assistAgentIsReady', function (data) {
+    var obj = JSON.parse(data);
+    emit.toUser('assistAgentIsReady', data, getSessionId(obj.siteKey, obj.to, 'sessionId'));
+  });
+
 // FIX ME !!!!!!!
   // 継続接続(両用)
   socket.on('connectContinue', function (data) {
