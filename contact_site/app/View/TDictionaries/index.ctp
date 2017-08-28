@@ -29,7 +29,10 @@
         <li>
           <label class="pointer">
             <?= $this->Form->checkbox('tabsort', array('onchange' => 'tabSort()')) ?>カテゴリの並び替え
+            <!--
             <span id="stintMessage" style="display:none; color:#E91E63; font-weight:normal; font-size:0.9em;">　※カテゴリ登録およびＣＳＶ関連はスタンダードプランからご利用いただけます。</span>
+             -->
+            <span id="stintMessage" style="display:none; color:#E91E63; font-weight:normal; font-size:0.9em;">　※カテゴリ登録はスタンダードプランからご利用いただけます。</span>
           </label>
           <span id="tabSortMessage" style="display:none; color:#E91E63; font-weight:normal; font-size:0.9em;">　（！）カテゴリを並び替え中（保存する場合は画面下部の「保存」ボタンをクリック／キャンセルする場合はチェックを外してください）</span>
         </li>
@@ -41,7 +44,7 @@
   <input type="hidden" id="select_tab_index" value="">
   <ul class="tablist">
   <?php for ($i = 0; $i < count((array)$nameList); $i++) { ?>
-    <li><a data-id="<?=$nameList[$i]['id']?>" href="#tabs-<?=$i?>"><?=$nameList[$i]['name']?></a></li>
+    <li><a onfocus="this.blur();" data-id="<?=$nameList[$i]['id']?>" href="#tabs-<?=$i?>"><?=h($nameList[$i]['name'])?></a></li>
   <?php } ?>
   </ul>
   <?php for ($i = 0; $i < count((array)$nameList); $i++) { ?>
@@ -54,14 +57,13 @@
               <a>
                 <?= $this->Html->image('add.png', array(
                     'alt' => '登録',
-                    'id'=>'add_btn'."$i",
+                    'id'=>'tdictionaries_add_btn'."$i",
                     'class' => 'btn-shadow disOffgreenBtn commontooltip',
                     'data-text' => '新規追加',
                     'data-balloon-position' => '36',
                     'width' => 40,
                     'height' => 40,
                     'onclick' => 'openAddDialog('.$tab_id.')',
-                    'onmouseover' => 'tooltipconf()'
                 )) ?>
               </a>
             </span>
@@ -69,7 +71,7 @@
               <a>
                 <?= $this->Html->image('copy.png', array(
                     'alt' => 'コピー',
-                    'id'=>'copy_btn'."$i",
+                    'id'=>'tdictionaries_copy_btn'."$i",
                     'class' => 'btn-shadow disOffgrayBtn commontooltip',
                     'data-text' => 'コピー（複製）',
                     'data-balloon-position' => '41',
@@ -82,7 +84,7 @@
               <a>
                 <?= $this->Html->image('move.png', array(
                     'alt' => '移動',
-                    'id'=>'move_btn'."$i",
+                    'id'=>'tdictionaries_move_btn'."$i",
                     'class' => 'btn-shadow disOffgrayBtn commontooltip',
                     'data-text' => '移動する',
                     'data-balloon-position' => '36',
@@ -93,7 +95,7 @@
               <a>
                 <?= $this->Html->image('move.png', array(
                     'alt' => '移動',
-                    'id'=>'no_move_btn'."$i",
+                    'id'=>'tdictionaries_no_move_btn'."$i",
                     'class' => 'btn-shadow disOffgrayBtn commontooltip',
                     'data-text' => "こちらの機能はスタンダードプラン<br>からご利用いただけます。",
                     'data-balloon-position' => '43.5',
@@ -106,7 +108,7 @@
               <a>
                 <?= $this->Html->image('dustbox.png', array(
                     'alt' => '削除',
-                    'id'=>'dustbox_btn'."$i",
+                    'id'=>'tdictionaries_dustbox_btn'."$i",
                     'class' => 'btn-shadow disOffgrayBtn commontooltip',
                     'data-text' => '削除する',
                     'data-balloon-position' => '35',
@@ -132,10 +134,10 @@
                   <a>
                     <?= $this->Html->image('list.png', array(
                         'alt' => 'メニュー',
-                        'id'=>'manu_btn'."$i",
+                        'id'=>'tdictionaries_manu_btn'."$i",
                         'class' => 'btn-shadow disOffgreenBtn commontooltip',
                         'data-text' => 'その他編集',
-                        'data-balloon-position' => '67',
+                        'data-balloon-position' => '84',
                         'width' => 40,
                         'height' => 40)) ?>
                   </a>
@@ -147,10 +149,10 @@
                   <a>
                     <?= $this->Html->image('list.png', array(
                         'alt' => 'メニュー',
-                        'id'=>'manu_btn'."$i",
+                        'id'=>'tdictionaries_manu_btn'."$i",
                         'class' => 'btn-shadow disOffgrayBtn commontooltip',
                         'data-text' => "こちらの機能はスタンダードプラン<br>からご利用いただけます。",
-                        'data-balloon-position' => '67',
+                        'data-balloon-position' => '84',
                         'width' => 40,
                         'height' => 40)) ?>
                   </a>
@@ -179,7 +181,10 @@
           <thead>
             <tr>
               <!-- #451 定型文カテゴリ対応 start -->
-              <th width=" 5%"><input type="checkbox" name="allCheck" id="allCheck<?=$i?>" ><label for="allCheck"></label></th>
+              <th width=" 5%">
+                <input type="checkbox" name="allCheck" id="allCheck<?=$i?>" >
+                <label for="allCheck<?=$i?>"></label>
+              </th>
               <!-- #451 定型文カテゴリ対応 end -->
               <th>No</th>
               <th>使用範囲</th>
@@ -192,8 +197,9 @@
               <tr data-id="<?=$val['TDictionary']['id']?>" data-sort="<?=$val['TDictionary']['sort']?>">
                 <!-- #451 定型文カテゴリ対応 start -->
                 <td class="tCenter">
-                  <input type="checkbox" name="selectTab<?=$i?>" id="selectTab<?=$key?>" value="<?=$val['TDictionary']['id']?>">
-                  <label for="selectTab<?=$val['TDictionary']['id']?>"></label>
+                  <input type="hidden" id="dictionary_list_flg<?=$i?>" value="1">
+                  <input type="checkbox" name="selectTab<?=$i.'-'.$key?>" id="selectTab<?=$i.'-'.$key?>" value="<?=$val['TDictionary']['id']?>">
+                  <label for="selectTab<?=$i.'-'.$key?>"></label>
                 </td>
                 <!-- #451 定型文カテゴリ対応 end -->
                 <td width="8%" class="tCenter pre">
@@ -214,7 +220,10 @@
               </tr>
             <?php endforeach; ?>
           <?php } else {?>
-            <td class="tCenter" colspan="4">定型文メッセージが設定されていません</td>
+            <td class="tCenter" colspan="4">
+              <input type="hidden" id="dictionary_list_flg<?=$i?>" value="0">
+              定型文メッセージが設定されていません
+            </td>
           <?php } ?>
           </tbody>
         </table>
@@ -231,7 +240,7 @@
 </section>
 
 <!-- 定型文の並べ替え更新ボタン -->
-<section id="sort_btn" style="display:none;">
+<section id="tdictionaries_sort_btn" style="display:none;">
     <div id="m_widget_setting_action" class="fotterBtnArea" style="bottom: 0px; right: 17px; left: 60px;">
     <a href="javascript:void(0)" onclick="saveToggleSort()" class="greenBtn btn-shadow">更新</a>
     </div>

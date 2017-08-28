@@ -41,7 +41,12 @@
           $no = $prevCnt + h($key+1);
         ?>
         <tr data-id="<?=h($id)?>">
-          <td class="tCenter"><?=$no?></td>
+          <td class="tCenter">
+            <a href="<?=$this->Html->url(['controller'=>'TDocuments', 'action'=>'edit', $id])?>" id="t-link" class="t-link">
+              <?=$no?>
+            </a>
+          </td>
+          <!-- プレビュー部 -->
           <td class="tCenter">
             <div class = "document_image" ng-click="openDocumentList3(<?=$id?>)">
             <?php
@@ -63,15 +68,27 @@
             <?= $this->Html->image(C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/".C_PREFIX_DOCUMENT.pathinfo(h($val['TDocument']['file_name']), PATHINFO_FILENAME).".jpg", ['style' => $matrix]);?>
             </div>
           </td>
-          <td class="tCenter"><?=h($val['TDocument']['name'])?></td>
-          <td class="tCenter"><?=h($val['TDocument']['overview'])?></td>
+          <!-- プレビュー部 -->
+          <td class="tCenter">
+            <a href="<?=$this->Html->url(['controller'=>'TDocuments', 'action'=>'edit', $id])?>" id="t-link" class="t-link">
+              <?=h($val['TDocument']['name'])?>
+            </a>
+          </td>
+          <td class="tCenter">
+            <a href="<?=$this->Html->url(['controller'=>'TDocuments', 'action'=>'edit', $id])?>" id="t-link" class="t-link">
+              <?=h($val['TDocument']['overview'])?>
+            </a>
+          </td>
           <!-- <td class="tCenter"><span><?=implode("</span>、<span>",$val['TDocument']['tag'])?></span></td> -->
           <td class="p10x noClick lineCtrl">
             <div>
+<!--
               <a href="<?=$this->Html->url(['controller'=>'TDocuments', 'action'=>'edit', $id])?>" class="btn-shadow greenBtn fLeft"><img src="/img/edit.png" alt="更新" width="30" height="30"></a>
+ -->
               <a href="javascript:void(0)" class="btn-shadow redBtn m10r10l fRight" onclick="removeAct('<?=$id?>')"><img src="/img/trash.png" alt="削除" width="30" height="30"></a>
             </div>
           </td>
+
         </tr>
         <?php endforeach; ?>
         <?php if ( count($documentList) === 0 ) :?>

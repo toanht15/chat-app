@@ -24,6 +24,9 @@
     <table>
       <thead>
         <tr>
+<!--
+          <th width=" 5%"><input type="checkbox" name="allCheck" id="allCheck" ><label for="allCheck"></label></th>
+ -->
           <th style="width:30em;">キャンペーン名</th>
           <th style="width:20em;">URLパラメータ</th>
           <th>コメント</th>
@@ -33,9 +36,27 @@
       <tbody class="sortable">
       <?php foreach((array)$tCampaignList as $key => $val): ?>
         <tr data-id="<?=$val['TCampaign']['id']?>">
-          <td class="tCenter"><?=h($val['TCampaign']['name'])?></td>
-          <td class="tCenter"><?=h($val['TCampaign']['parameter'])?></td>
-          <td class="tLeft pre"><?=h($val['TCampaign']['comment'])?></td>
+<!--
+          <td class="tCenter">
+            <input type="checkbox" name="selectTab" id="selectTab<?=$key?>" value="<?=$val['TCampaign']['id']?>">
+            <label for="selectTab<?=$val['TCampaign']['id']?>"></label>
+          </td>
+ -->
+          <td class="tCenter">
+            <a class="t-link" id="t-link" href="javascript:void(0)" onclick="openEditDialog(<?=$val['TCampaign']['id']?>)">
+              <?=h($val['TCampaign']['name'])?>
+            </a>
+          </td>
+          <td class="tCenter">
+            <a class="t-link" id="t-link" href="javascript:void(0)" onclick="openEditDialog(<?=$val['TCampaign']['id']?>)">
+              <?=h($val['TCampaign']['parameter'])?>
+            </a>
+          </td>
+          <td class="tLeft pre">
+            <a class="t-link" id="t-link" href="javascript:void(0)" onclick="openEditDialog(<?=$val['TCampaign']['id']?>)">
+              <?=h($val['TCampaign']['comment'])?>
+            </a>
+          </td>
           <td class="tCenter ctrlBtnArea">
           <?php
             echo $this->Html->link(
@@ -55,6 +76,7 @@
               )
             );
           ?>
+<!--
           <?php
             echo $this->Html->link(
                 $this->Html->image(
@@ -73,6 +95,7 @@
                 )
             );
           ?>
+ -->
           </td>
         </tr>
       <?php endforeach; ?>
