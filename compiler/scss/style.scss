@@ -3550,7 +3550,7 @@ ul.naviBtn {
       }
     }
 
-    :not(.lineCtrl) a { text-decoration: underline; }
+    :not(.lineCtrl) a { text-decoration: none; }
 
     input[type='checkbox'] {
         display: none;

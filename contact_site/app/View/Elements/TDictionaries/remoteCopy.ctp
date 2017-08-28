@@ -48,19 +48,33 @@
     });
   }
 
+
   $( function() {
     var type = "<?= $type ?>";
     if(type == 1){
-      document.getElementById("edit_category_value").value = "<?= $name ?>";
+      document.getElementById("edit_category_value").value = "<?= h($name) ?>";
     }
+    $("input[type=search]").keypress(function(ev) {
+        if ((ev.which && ev.which === 13) ||
+            (ev.keyCode && ev.keyCode === 13)) {
+          return false;
+        } else {
+          return true;
+        }
+    });
   });
 </script>
+<?= $this->Form->create('TDictionary'); ?>
 <div class="form01">
+  <?= $this->Form->input('id', array('type' => 'hidden')); ?>
   <?php if($type == '1'){?>
   <!-- カテゴリ更新 -->
     <div style="text-align:center;">
       <span>カテゴリ名：</span>
-      <span><input type="search" class="" size="35" id="edit_category_value" value="" ></span>
+      <span>
+        <input type="text" name="dummy" style="display:none;">
+        <input type="search" class="" size="35" id="edit_category_value" value="" >
+      </span>
     </div>
   <!-- カテゴリ更新 -->
   <?php }?>
@@ -100,3 +114,4 @@
   <!-- 定型文移動 -->
   <?php }?>
 </div>
+<?= $this->Form->end(); ?>
