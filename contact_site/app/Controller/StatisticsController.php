@@ -495,10 +495,12 @@ class StatisticsController extends AppController {
     WHERE
       m_users.m_companies_id = ?
     AND
+      m_users.permission_level != ?
+    AND
       m_users.del_flg = ?";
 
     $users = $this->MUser->query($users,
-      array($this->userInfo['MCompany']['id'],0));
+      array($this->userInfo['MCompany']['id'],C_AUTHORITY_SUPER,0));
     //オペレータ全員対象
     $allOperatorInfo = 0;
 
