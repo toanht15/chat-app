@@ -80,6 +80,13 @@ class TDictionariesController extends AppController {
     $this->set('nameList', $tab_name);
     $this->set('dictionaryList', $tab_array);
     $this->set('stint_flg', $stint_flg);
+    if(isset($this->request->params['named']['tabindex'])){
+      $tabindex= $this->request->params['named']['tabindex'];
+      $this->set('tabindex', $tabindex);
+    }
+    else{
+      $this->set('tabindex', 0);
+    }
     //#451 定型文カテゴリ対応 end
     $this->_viewElement();
   }
@@ -143,6 +150,7 @@ class TDictionariesController extends AppController {
     $this->layout = 'ajax';
     $this->_viewElement();
     $this->set('tabid', $this->request->data['tabid']);
+    $this->set('tabindex', $this->request->data['tabindex']);
     // const
     if ( strcmp($this->request->data['type'], 2) === 0 ) {
       $this->TDictionary->recursive = -1;

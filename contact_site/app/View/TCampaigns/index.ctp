@@ -58,6 +58,7 @@
             </a>
           </td>
           <td class="tCenter ctrlBtnArea">
+<!--
           <?php
             echo $this->Html->link(
               $this->Html->image(
@@ -76,7 +77,7 @@
               )
             );
           ?>
-<!--
+ -->
           <?php
             echo $this->Html->link(
                 $this->Html->image(
@@ -95,7 +96,7 @@
                 )
             );
           ?>
- -->
+
           </td>
         </tr>
       <?php endforeach; ?>

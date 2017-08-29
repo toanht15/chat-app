@@ -6,7 +6,7 @@ function openAddDialog(tabid){
   var index = document.getElementById("select_tab_index").value;
   if (!document.getElementById("sort" + index).checked
        && !document.getElementById("tabsort").checked) {
-    openEntryDialog({type: 1, tabid: tabid});
+    openEntryDialog({type: 1, tabid: tabid, tabindex:index});
   }
   else{
     return false;
@@ -19,7 +19,7 @@ function openEditDialog(id,tabid){
   var index = document.getElementById("select_tab_index").value;
   if (!document.getElementById("sort" + index).checked
        && !document.getElementById("tabsort").checked) {
-    openEntryDialog({type: 2, id: id, tabid: tabid});
+    openEntryDialog({type: 2, id: id, tabid: tabid, tabindex:index});
   }
   else{
     return false;
@@ -291,8 +291,8 @@ $(".sortable").sortable({
 });
 $(".sortable").sortable("disable");
 
-$("#soteTabs").tabs();
-$('.ui-tabs-nav') . sortable( {
+$("#soteTabs").tabs({active: "<?= $tabindex ?>",});
+$('.ui-tabs-nav').sortable( {
     axis: 'x'
 } );
 $(".ui-tabs-nav").sortable("disable");
@@ -383,8 +383,9 @@ var actBtnShow = function(){
 
 /* #451 定型文カテゴリ対応 start */
 $( function() {
+
   //インデックスの初期値を挿入暫定的に0
-  document.getElementById("select_tab_index").value = 0;
+  document.getElementById("select_tab_index").value = "<?= $tabindex ?>";
   //タブが押下された時の処理
   $("#soteTabs").bind('tabsactivate', function(event, ui) {
     var index = ui.newTab.index();
