@@ -2066,14 +2066,94 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
               //検索テキストボックス
               $("#wordSearchCond")
               .on('keyup', function(e){
-                //一旦全て非表示
-                document.getElementById("categoryTabs-ALL").style.display="none";
-                document.getElementById("allWordList").style.display="none";
-                var searchItemList = document.querySelectorAll('[id^="searchItem"]');
-                for (var i = 0; i < searchItemList.length; i++) {
-                  searchItemList[i].style.display="none";
+                //上下エンターキーの判定
+                if((e.keyCode === 13)||(e.keyCode === 38)||(e.keyCode === 40)){
+                  var keytime = document.getElementById("keytime").value;
+                  //二重操作防止
+                  if(keytime != e.timeStamp){
+                    document.getElementById("keytime").value = e.timeStamp;
+                  //検索結果に対する操作
+                    var search_word = document.getElementById("wordSearchCond").value;
+                    //検索文字列があるか
+                    if(search_word){
+                      var searchItemList = document.querySelectorAll('[id^="searchItem"]');
+                      var res = [];
+                      for (var i = 0; i < searchItemList.length; i++) {
+                        if(searchItemList[i].style.display != "none"){
+                          res.push(searchItemList[i]);
+                        }
+                      }
+                      //現在表示されているリストが存在すれば
+                      if(res){
+                        //現在dictionarySearchSelectedクラスを持っているIDを取得する
+                        var selected = document.querySelector('[id^="searchItem"].dictionarySearchSelected');
+                        var selected_id = selected.id;
+                        var selected_key = '';
+                        for (var i = 0; i < res.length; i++) {
+                          if(res[i].id == selected_id){
+                            selected_key = i;
+                          }
+                        }
+                        //selected_id = Number(selected_id.substr(10));
+                        //各ボタンの判定
+                        if (e.keyCode === 13) { // Enter
+                          var id = Number(selected_id.substr(10));
+                          //$scope.entryWordListの中のどこに該当するか特定する
+                          var wordlist = $scope.entryWordList;
+                          for(var key in wordlist) {
+                            for(var v_key in wordlist[key]) {
+                              if(wordlist[key][v_key]["id"] == id){
+                                var select_tab_index = key;
+                                var select_index = v_key;
+                              }
+                            }
+                          }
+                          var list = $scope.entryWordSearch($scope.entryWordList[select_tab_index]);
+                          closeCategoryDictionary();
+                          entryWordApi.push(list[select_index].label);
+                          return false;
+                        }
+                        if (e.keyCode === 38) { // 上キー
+                          if ( selected_key > 0 ) {
+                            selected_key = selected_key - 1;
+                            //もともとあったセレクトクラスを除外
+                            var selectedClassName  = document.getElementById(selected_id).className;
+                            document.getElementById(res[selected_key].id).className = selectedClassName;
+                            document.getElementById(selected_id).className = "dictionaryWord ng-binding ng-scope";
+                            //新しくセレクトされた要素までスクロール
+                            document.getElementById(res[selected_key].id).scrollIntoView(true);
+                          }
+//                           else {
+//                             //検索モードから通常モードへ
+//                           }
+                        }
+                        if (e.keyCode === 40) { // 下キー
+                          if ( res.length > (selected_key + 1) ) {
+                            selected_key = selected_key + 1;
+                            var next = res[selected_key].id;
+                            //もともとあったセレクトクラスを除外
+                            var selectedClassName  = document.getElementById(selected_id).className;
+                            document.getElementById(res[selected_key].id).className = selectedClassName;
+                            document.getElementById(selected_id).className = "dictionaryWord ng-binding ng-scope";
+                            //新しくセレクトされた要素までスクロール
+                            document.getElementById(res[selected_key].id).scrollIntoView(false);
+                          }
+                          return false;
+                        }
+                      }
+                    }
+                  }
                 }
-                onWordSearchCond(e);
+                else{
+                  //一旦全て非表示
+                  document.getElementById("categoryTabs-ALL").style.display="none";
+                  document.getElementById("allWordList").style.display="none";
+                  var searchItemList = document.querySelectorAll('[id^="searchItem"]');
+                  for (var i = 0; i < searchItemList.length; i++) {
+                    searchItemList[i].style.display="none";
+                  }
+                  onWordSearchCond(e);
+                }
               })
               .on('click', function(e){
                 var $input = $(this),
@@ -2128,6 +2208,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                     for(var r_key in res) {
                       //対応する行を表示
                       document.getElementById("searchItem"+res[r_key]).style.display="";
+                      //検索にヒットしたリストの一番先頭にdictionarySearchSelectedクラスを付与する
+                      if(r_key == 0){
+                        document.getElementById("searchItem"+res[r_key]).className = "dictionaryWord ng-binding ng-scope dictionarySearchSelected";
+                      }
                     }
                     //searchItem
                   }

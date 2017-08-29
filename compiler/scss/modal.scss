@@ -1102,7 +1102,11 @@
 }
 
 [class^="dictionaryWord ng-binding ng-scope dictionarySelected"]{
-  background-color: #e8ffee;
+  background-color: rgba(195, 214, 155, 0.5);
+}
+
+[class^="dictionaryWord ng-binding ng-scope dictionarySearchSelected"]{
+  background-color: rgba(195, 214, 155, 0.5);
 }
 
 [id^="item"].dictionaryTab{

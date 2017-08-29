@@ -107,7 +107,7 @@ table {
   }
 
   tr:hover, tr.on {
-    background-color: #EBF6F9;
+    background-color: rgba(195, 214, 155, 0.5);
   }
 
   th, td {
@@ -5098,17 +5098,17 @@ ul.naviBtn {
           border-right: none !important;
         }
 
-        th:last-child:not(.thMinWidth) {
+        th:last-child:not(.thMinWidth):not(.thMinWidthOp) {
           border-left: solid 1px #8B8B8B!important;
         }
 
-        td:last-child:not(.tooltip)  {
+        td:last-child:not(.tooltip):not(.userName)  {
           border-left: solid 1px #8B8B8B!important;
         }
       }
 
       .highlight {
-        background-color: #EBF6F9!important;
+        background-color: rgba(195, 214, 155, 0.5) !important;
       }
     }
 
