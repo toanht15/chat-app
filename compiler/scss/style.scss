@@ -341,6 +341,10 @@ a {
   text-align: center;
 }
 
+.blockCenter {
+  margin: 0 auto;
+}
+
 .fRight {
   float: right;
 }
@@ -3632,7 +3636,6 @@ ul.naviBtn {
           a {
             width: 35px;
             height: 35px;
-            margin: 5px;
             padding: 2px;
           }
       }
@@ -3641,10 +3644,10 @@ ul.naviBtn {
       }
       table {
         th, td {
-          /*padding: 0 1em;*/
+          padding: 0 1em;
         }
         td {
-          /*height: 45px!important;*/
+          height: 45px!important;
         }
       }
   }
