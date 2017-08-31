@@ -490,6 +490,14 @@ $( function() {
       return;
     }
   });
+
+  //ページ全体を監視して何らかのクリックがあった時
+  $(document).on('click touchend', function(event) {
+    //メニューオープン以外の動きだったら
+    if (!$(event.target).closest('[id^=openMenu]').length) {
+      $("#layerMenu"+ index).fadeOut("fast");
+    }
+  });
 });
 
 //テキストボックスに入力があったらボタンを有効化

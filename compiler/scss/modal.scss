@@ -1165,22 +1165,52 @@
   width: 12em;
   font-size: 12px;
   z-index: 9999;
+  a:hover {
+    background-color: rgba(195, 214, 155, 0.5) !important;
+    text-decoration: none;
+    display: block;
+    padding: 10px 5px 10px
+  }
+  a{
+    text-decoration: none;
+    display: block;
+    padding: 10px 5px 10px
+  }
+/*  a{
+    text-decoration: none;
+    display: block;
+  }
+  a:hover {
+    text-decoration: none;
+    display: block;
+  }*/
 }
 
 [id^="layerMenu"] ul {
-  border-top: solid 1px #ccc;
+  border: solid 1px #ccc;
+  display: block;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
+
+  #tdictionaries_idx #tdictionaries_menu ul li.t-link{
+    padding: 0px 0px 0px;
+    width: 100%;
+    height: 100%;
+  }
 }
 
 [id^="layerMenu"] ul li {
   background: #fff;
   list-style: none;
-  border-bottom: solid 1px #ccc;
+/*  border-bottom: solid 1px #ccc;*/
   position: relative;
   padding: 10px;
-  text-decoration: none;
   color: #555;
   display: block;
 }
+
+/*[id^="layerMenu"] ul li:hover {
+  color: #EA0001;
+}*/
 
 [id^="tooltip_tdictionaries_add_btn"].tooltips{
   position: fixed;
@@ -1210,9 +1240,7 @@
   position: fixed;
 }
 
-[id^="layerMenu"] ul li:hover {
-  color: #EA0001;
-}
+
 
 .ui-tabs.soteTabs {
   padding: 0em;

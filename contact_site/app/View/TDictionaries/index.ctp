@@ -162,12 +162,12 @@
             <?php }?>
             <div id="layerMenu<?=$i?>">
              <ul>
-                <li>
+                <li class="t-link">
                   <a href="javascript:void(0)" onclick="openCategoryEditDialog(<?=$nameList[$i]['id']?>)">
                     カテゴリ名を変更する
                   </a>
                 </li>
-                <li>
+                <li class="t-link">
                   <a href="javascript:void(0)" onclick="openCategoryDeleteDialog(<?=$nameList[$i]['id']?>)">
                     カテゴリを削除する
                   </a>

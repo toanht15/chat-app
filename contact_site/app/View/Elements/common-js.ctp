@@ -232,6 +232,10 @@
       }, 100);
   }
 
+  function jumpTo(url) {
+    location.href = url;
+  }
+
   $.ajaxSetup({
     cache: false,
   });
