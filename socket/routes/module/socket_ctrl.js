@@ -1152,6 +1152,9 @@ io.sockets.on('connection', function (socket) {
 
   socket.on('assistAgentIsReady', function (data) {
     var obj = JSON.parse(data);
+    console.log("OBJ : " + JSON.stringify(data));
+    sincloCore[obj.siteKey][obj.to]['responderId'] = obj.responderId; // 対応ユーザーID
+    sincloCore[obj.siteKey][obj.to]['coBrowseParentSessionId'] = socket.id; // 企業側のsocket.id
     emit.toUser('assistAgentIsReady', data, getSessionId(obj.siteKey, obj.to, 'sessionId'));
   });
 
@@ -1884,11 +1887,27 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     // }
   });
 
+  socket.on('beginToCoBrowse', function (data) {
+    var obj = JSON.parse(data);
+    sincloCore[obj.siteKey][obj.tabId].coBrowseConnectToken = obj.connectToken;
+    emit.toCompany('beginToCoBrowse', data, obj.siteKey);
+    // 今まで通り
+    // else {
+    //     // 同形ウィンドウを作成するための情報取得依頼
+    //     if ( !getSessionId(obj.siteKey, obj.tabId, 'sessionId') ) return false;
+    //     sincloCore[obj.siteKey][obj.tabId].shareWindowFlg = false;
+    //     sincloCore[obj.siteKey][obj.tabId].connectToken = obj.connectToken;
+    //     sincloCore[obj.siteKey][obj.tabId].syncSessionId = null;
+    //     sincloCore[obj.siteKey][obj.tabId].syncHostSessionId = socket.id; // 企業画面側のセッションID
+    //     emit.toUser('getWindowInfo', data, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
+    // }
+  });
+
   socket.on('readyToCoBrowse', function (data) {
     var obj = JSON.parse(data);
     sincloCore[obj.siteKey][obj.tabId].laShortCode = obj.shortcode;
     sincloCore[obj.siteKey][obj.tabId].coBrowseConnectToken = obj.connectToken;
-    emit.toCompany('readyToCoBrowse', data, obj.siteKey);
+    emit.toUser('readyToCoBrowse', data, getSessionId(obj.siteKey, obj.tabId, 'coBrowseParentSessionId'));
     // 今まで通り
     // else {
     //     // 同形ウィンドウを作成するための情報取得依頼

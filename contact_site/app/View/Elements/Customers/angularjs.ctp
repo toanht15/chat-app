@@ -1472,13 +1472,13 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       });
     });
 
-    socket.on('readyToCoBrowse', function (data) {
+    socket.on('beginToCoBrowse', function (data) {
       // 担当しているユーザーかチェック
       var obj = JSON.parse(data), url;
       if (connectToken !== obj.connectToken) return false;
 
       connectToken = null;
-      var url = "<?= $this->Html->url(array('controller'=>'Customers', 'action'=>'laFrame')) ?>?k=" + obj.shortcode;
+      var url = "<?= $this->Html->url(array('controller'=>'Customers', 'action'=>'laFrame')) ?>?k=begin";
       url += "&userId=" + obj.userId;
       url += "&connectToken=" + obj.connectToken + "&id=" + obj.tabId;
       modalFunc.set.call({

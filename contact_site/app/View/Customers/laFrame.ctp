@@ -205,22 +205,132 @@
       $(this).scrollTop(0);
       $(this).scrollLeft(0);
     });
+  };
+  // -->
+</script>
+
+<section ng-app="sincloApp" ng-controller="MainController">
+
+  <ul id="sync_tools">
+    <div id="la_control_tools">
+      <li id="controlBtn" class="unlight">
+        <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_remote.png" width="40" height="40" alt=""></span>
+        <p>遠隔操作</p>
+      </li>
+      <li id="penBtn">
+        <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_pen.png" width="40" height="40" alt=""></span>
+        <p>ペン</p>
+      </li>
+      <li id="pointBtn">
+        <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_point.png" width="40" height="40" alt=""></span>
+        <p>ポインタ</p>
+      </li>
+    </div>
+    <?php if(isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT]): ?>
+      <div id="sub_menu">
+        <hr class="separator"/>
+        <li ng-click="openDocumentList()">
+          <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_document.png" width="40" height="40" alt=""></span>
+          <p>資料共有</p>
+        </li>
+      </div>
+    <?php endif; ?>
+    <div class="bottom">
+      <li onclick="windowClose()">
+        <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_disconnect.png" width="40" height="40" alt=""></span>
+        <p>終了</p>
+      </li>
+    </div>
+  </ul>
+  <div id="customer_flame">
+    <div id="remoteScreenViewContainer">
+      <div id="remoteScreenView"></div>
+    </div>
+    <div id="formContainer" style="display: none;"></div>
+  </div>
+  <div id="tabStatusMessage">別の作業をしています</div>
+  <?php echo $this->element('Customers/laDocumentLists') ?>
+  <div id="ang-popup">
+    <div id="ang-base">
+      <div id="ang-popup-background"></div>
+      <div id="ang-popup-frame">
+        <div id="ang-popup-content" class="document_list">
+          <div id="title_area">資料一覧</div>
+          <div id="search_area">
+            <?=$this->Form->input('name', ['label' => 'フィルター：', 'ng-model' => 'searchName']);?>
+            <!-- <ng-multi-selector></ng-multi-selector> -->
+          </div>
+          <div id="list_area">
+            <ol>
+              <li ng-repeat="document in searchFunc(documentList)" ng-click="shareDocument(document)">
+                <div class="document_image">
+                  <img ng-src="{{::document.thumnail}}" ng-class="setDocThumnailStyle(document)">
+                </div>
+                <div class="document_content">
+                  <h3>{{::document.name}}</h3>
+                  <ng-over-view docid="{{::document.id}}" text="{{::document.overview}}" ></ng-over-view>
+                  <ul><li ng-repeat="tagId in document.tags">{{::tagList[tagId]}}</li></ul>
+                </div>
+              </li>
+            </ol>
+          </div>
+          <div id="btn_area">
+            <a class="btn-shadow greenBtn" ng-click="closeDocumentList()" href="javascript:void(0)">閉じる</a>
+          </div>
+        </div>
+      </div>
+      <div id="ang-ballons">
+      </div>
+    </div>
+  </div>
+</section>
+<?php
+  echo $this->Html->script("https://sdk005.live-assist.jp/assistserver/sdk/web/shared/js/thirdparty/i18next-1.7.4.min.js");
+  echo $this->Html->script("https://sdk005.live-assist.jp/gateway/adapter.js");
+  echo $this->Html->script("https://sdk005.live-assist.jp/gateway/csdk-phone.js");
+  echo $this->Html->script("https://sdk005.live-assist.jp/gateway/csdk-common.js");
+  echo $this->Html->script("https://sdk005.live-assist.jp/assistserver/sdk/web/shared/js/assist-aed.js");
+  echo $this->Html->script("https://sdk005.live-assist.jp/assistserver/sdk/web/shared/js/shared-windows.js");
+  echo $this->Html->script("https://sdk005.live-assist.jp/assistserver/sdk/web/agent/js/assist-console.js");
+  echo $this->Html->script("liveassist/assist-console-callmanager.js");
+?>
+<script type="text/javascript">
+  <!--
+  'use strict';
+  $(function() {
 
     // WebSocketサーバに接続
     socket = io.connect("<?=C_NODE_SERVER_ADDR.C_NODE_SERVER_WS_PORT?>");
     var first = true;
 
-
     // WebSocketサーバ接続イベント
     socket.on('connect', function(){
+      console.log('WS CONNECT OK');
       userId = arg.userId;
       tabId = arg.id;
 
-//      emit('connectFrame', {
-//        tabId: tabId,
-//        connectToken: arg.connectToken,
-//        responderId: "<?//= $muserId?>//"
-//      });
+      getAgentSessionInfo().then(function(){
+        console.log('send assistAgentIsReady tabId: ' + tabId);
+        // 準備が完了した状態を通知する
+        emit('assistAgentIsReady', {
+          to: tabId,
+          responderId: "<?= $muserId?>"
+        });
+      });
+    });
+
+    socket.on('readyToCoBrowse', function (data) {
+      // 担当しているユーザーかチェック
+      var obj = JSON.parse(data), url;
+
+      getCorrelationId(obj.shortcode).then(function(cid){
+        AssistAgentSDK.startSupport({
+          correlationId: cid,
+          sessionToken: StorageUtil.getSessionId(),
+          url: "https://sdk005.live-assist.jp",
+          additionalAttribute: config.additionalAttribute
+        });
+      });
     });
 
     socket.on('retTabInfo', function(d){
@@ -324,99 +434,7 @@
         window.close();
       };
     });
-  };
-  // -->
-</script>
 
-<section ng-app="sincloApp" ng-controller="MainController">
-
-  <ul id="sync_tools">
-    <div id="la_control_tools">
-      <li id="controlBtn" class="unlight">
-        <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_remote.png" width="40" height="40" alt=""></span>
-        <p>遠隔操作</p>
-      </li>
-      <li id="penBtn">
-        <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_pen.png" width="40" height="40" alt=""></span>
-        <p>ペン</p>
-      </li>
-      <li id="pointBtn">
-        <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_point.png" width="40" height="40" alt=""></span>
-        <p>ポインタ</p>
-      </li>
-    </div>
-    <?php if(isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT]): ?>
-      <div id="sub_menu">
-        <hr class="separator"/>
-        <li ng-click="openDocumentList()">
-          <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_document.png" width="40" height="40" alt=""></span>
-          <p>資料共有</p>
-        </li>
-      </div>
-    <?php endif; ?>
-    <div class="bottom">
-      <li onclick="windowClose()">
-        <span><img src="<?=C_PATH_SYNC_TOOL_IMG?>icon_disconnect.png" width="40" height="40" alt=""></span>
-        <p>終了</p>
-      </li>
-    </div>
-  </ul>
-  <div id="customer_flame">
-    <div id="remoteScreenViewContainer">
-      <div id="remoteScreenView"></div>
-    </div>
-    <div id="formContainer" style="display: none;"></div>
-  </div>
-  <div id="tabStatusMessage">別の作業をしています</div>
-  <?php echo $this->element('Customers/laDocumentLists') ?>
-  <div id="ang-popup">
-    <div id="ang-base">
-      <div id="ang-popup-background"></div>
-      <div id="ang-popup-frame">
-        <div id="ang-popup-content" class="document_list">
-          <div id="title_area">資料一覧</div>
-          <div id="search_area">
-            <?=$this->Form->input('name', ['label' => 'フィルター：', 'ng-model' => 'searchName']);?>
-            <!-- <ng-multi-selector></ng-multi-selector> -->
-          </div>
-          <div id="list_area">
-            <ol>
-              <li ng-repeat="document in searchFunc(documentList)" ng-click="shareDocument(document)">
-                <div class="document_image">
-                  <img ng-src="{{::document.thumnail}}" ng-class="setDocThumnailStyle(document)">
-                </div>
-                <div class="document_content">
-                  <h3>{{::document.name}}</h3>
-                  <ng-over-view docid="{{::document.id}}" text="{{::document.overview}}" ></ng-over-view>
-                  <ul><li ng-repeat="tagId in document.tags">{{::tagList[tagId]}}</li></ul>
-                </div>
-              </li>
-            </ol>
-          </div>
-          <div id="btn_area">
-            <a class="btn-shadow greenBtn" ng-click="closeDocumentList()" href="javascript:void(0)">閉じる</a>
-          </div>
-        </div>
-      </div>
-      <div id="ang-ballons">
-      </div>
-    </div>
-  </div>
-</section>
-<?php
-  echo $this->Html->script("https://sdk005.live-assist.jp/assistserver/sdk/web/shared/js/thirdparty/i18next-1.7.4.min.js");
-  echo $this->Html->script("https://sdk005.live-assist.jp/gateway/adapter.js");
-  echo $this->Html->script("https://sdk005.live-assist.jp/gateway/csdk-phone.js");
-  echo $this->Html->script("https://sdk005.live-assist.jp/gateway/csdk-common.js");
-  echo $this->Html->script("https://sdk005.live-assist.jp/assistserver/sdk/web/shared/js/assist-aed.js");
-  echo $this->Html->script("https://sdk005.live-assist.jp/assistserver/sdk/web/shared/js/shared-windows.js");
-  echo $this->Html->script("https://sdk005.live-assist.jp/assistserver/sdk/web/agent/js/assist-console.js");
-  echo $this->Html->script("liveassist/assist-console-callmanager.js");
-?>
-<script type="text/javascript">
-  <!--
-  'use strict';
-  $(function() {
     var val = getUrlVars();
 
     /**
@@ -509,7 +527,6 @@
       initializeConfiguration();
       setConfiguration();
       setAssistAgentCallbacks();
-      getAgentSessionInfo().then(function(){console.log('getSessionID OK');});
     }
 
     function setUI() {
@@ -541,12 +558,7 @@
 
     function setAssistAgentCallbacks() {
       AssistAgentSDK.setConnectionEstablishedCallback(function () {
-        console.log('----------- setConnectionEstablishedCallback');
-        console.log('send assistAgentIsReady tabId: ' + tabId);
-        // 準備が完了した状態を通知する
-        emit('assistAgentIsReady', {
-          to: tabId
-        });
+
       });
 
       AssistAgentSDK.setFormCallBack(function(formElement) {
@@ -695,17 +707,18 @@
     });
 
     init();
-    if(val['k']) {
-      StorageUtil.setShortcode(val['k']);
-      getCorrelationId(val['k']).then(function(cid){
-        AssistAgentSDK.startSupport({
-          correlationId: cid,
-          sessionToken: StorageUtil.getSessionId(),
-          url: "https://sdk005.live-assist.jp",
-          additionalAttribute: config.additionalAttribute
-        })
-      });
-    }
+//    if(val['k']) {
+//      StorageUtil.setShortcode(val['k']);
+//
+//      getAgentSessionInfo().then(getCorrelationId(val['k'])).then(function(cid){
+//        AssistAgentSDK.startSupport({
+//          correlationId: cid,
+//          sessionToken: StorageUtil.getSessionId(),
+//          url: "https://sdk005.live-assist.jp",
+//          additionalAttribute: config.additionalAttribute
+//        })
+//      });
+//    }
   });
   // -->
 </script>

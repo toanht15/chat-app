@@ -456,28 +456,34 @@
       popup.ok = function() {
         userInfo.coBrowseConnectToken = obj.connectToken;
         storage.s.set('coBrowseConnectToken', obj.connectToken);
-        laUtil.initAndStart().then(function() {
-          // shortcode取得
-          var shortcode = laUtil.shortcode;
-          if (shortcode !== undefined && shortcode !== null && shortcode !== "") {
-            console.log("Fire readyToCoBrowse");
-            var params = {
-              userId: userInfo.userId,
-              tabId: userInfo.tabId,
-              url: location.href,
-              connectToken: userInfo.coBrowseConnectToken,
-              shortcode: laUtil.shortcode
-            };
-            emit('readyToCoBrowse', params);
-          }
-        });
+        var params = {
+          userId: userInfo.userId,
+          tabId: userInfo.tabId,
+          connectToken: userInfo.coBrowseConnectToken
+        };
+        emit('beginToCoBrowse', params);
         this.remove();
       }
       popup.set(title, content);
     },
     assistAgentIsReady: function(d) {
       console.log('assistAgentIsReady');
-      laUtil.connect();
+      laUtil.initAndStart().then(function() {
+        // shortcode取得
+        var shortcode = laUtil.shortcode;
+        if (shortcode !== undefined && shortcode !== null && shortcode !== "") {
+          console.log("Fire readyToCoBrowse");
+          var params = {
+            userId: userInfo.userId,
+            tabId: userInfo.tabId,
+            responderId: d.responderId,
+            url: location.href,
+            connectToken: userInfo.coBrowseConnectToken,
+            shortcode: laUtil.shortcode
+          };
+          emit('readyToCoBrowse', params);
+        }
+      });
     },
     windowSyncInfo: function(d) {
       var obj = common.jParse(d);

@@ -33,7 +33,7 @@ var LaUtility = function() {
    */
   this.initAndStart = function() {
     this.initSDKCallbacks();
-    return this.createShortCode().then(this.getSessionId.bind(this));
+    return this.createShortCode().then(this.getSessionId.bind(this)).then(this.connect.bind(this));
   };
 
   this.initSDKCallbacks = function() {
