@@ -333,6 +333,10 @@
       });
     });
 
+    socket.on('coBrowseFailed', function (data) {
+      window.close();
+    });
+
     socket.on('retTabInfo', function(d){
       var obj = JSON.parse(d);
       // 別の作業をしている場合

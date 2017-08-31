@@ -485,6 +485,11 @@
         }
       }).fail(function(e){
         // 終了通知
+        emit('coBrowseFailed', {
+          userId: userInfo.userId,
+          tabId: userInfo.tabId,
+          connectToken: userInfo.coBrowseConnectToken
+        });
         var title = location.host + 'の内容';
         var content = '接続時にエラーが発生しました。<br>しばらくたってから再度お試しください。';
         popup.ok = function(){

@@ -1920,6 +1920,21 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     // }
   });
 
+  socket.on('coBrowseFailed', function (data) {
+    var obj = JSON.parse(data);
+    emit.toUser('coBrowseFailed', data, getSessionId(obj.siteKey, obj.tabId, 'coBrowseParentSessionId'));
+    // 今まで通り
+    // else {
+    //     // 同形ウィンドウを作成するための情報取得依頼
+    //     if ( !getSessionId(obj.siteKey, obj.tabId, 'sessionId') ) return false;
+    //     sincloCore[obj.siteKey][obj.tabId].shareWindowFlg = false;
+    //     sincloCore[obj.siteKey][obj.tabId].connectToken = obj.connectToken;
+    //     sincloCore[obj.siteKey][obj.tabId].syncSessionId = null;
+    //     sincloCore[obj.siteKey][obj.tabId].syncHostSessionId = socket.id; // 企業画面側のセッションID
+    //     emit.toUser('getWindowInfo', data, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
+    // }
+  });
+
   // -----------------------------------------------------------------------
   // ビデオチャット関連
   // ビデオチャットで利用している各値はプレフィックス（vc_）をつけている。
