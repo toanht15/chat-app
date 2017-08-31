@@ -1908,6 +1908,26 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
               $scope.$apply();
               entryWordApi.init();
 
+              // タイトルバーをドラッグしたとき
+              $('#popup-title').mousedown(function(e) {
+                var wx = $('#popup-frame').css("top");
+                var wy = $('#popup-frame').css("left");   // ウインドウの左上座標
+                var mx = e.pageX;
+                var my = e.pageY;
+                $(document).on('mousemove.popup-frame', function(e) {
+                  wx += e.pageX - mx;
+                  wy += e.pageY - my;
+                  $('#popup-frame').css({top: wy + "!important", left: wx + "!important"});
+                  mx = e.pageX;
+                  my = e.pageY;
+                  return false;
+                }).one('mouseup', function(e) {
+                  $(document).off('mousemove.popup-frame');
+                });
+                return false;
+              });
+
+
               //閉じるボタンが押された時
               $("#popupCloseBtn").on('click', function(e){
                 closeCategoryDictionary();
@@ -2068,10 +2088,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
               .on('keyup', function(e){
                 //上下エンターキーの判定
                 if((e.keyCode === 13)||(e.keyCode === 38)||(e.keyCode === 40)){
-                  var keytime = document.getElementById("keytime").value;
+                  var searchkeytime = document.getElementById("searchkeytime").value;
                   //二重操作防止
-                  if(keytime != e.timeStamp){
-                    document.getElementById("keytime").value = e.timeStamp;
+                  if(searchkeytime != e.timeStamp){
+                    document.getElementById("searchkeytime").value = e.timeStamp;
                   //検索結果に対する操作
                     var search_word = document.getElementById("wordSearchCond").value;
                     //検索文字列があるか

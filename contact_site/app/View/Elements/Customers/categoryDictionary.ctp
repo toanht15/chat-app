@@ -13,6 +13,7 @@ $( function() {
   document.getElementById("select_tab_index").value = 0;
   document.getElementById("mode_flg").value = 0;
   document.getElementById("keytime").value = 0;
+  document.getElementById("searchkeytime").value = 0;
   $("#categoryTabs").bind('tabsactivate', function(event, ui) {
       var index = ui.newTab.index();
       // クリックされたタブのインデックスをhiddenに持っておく
@@ -31,6 +32,7 @@ $( function() {
   <input type="search" ng-model="searchWord" id="wordSearchCond" size="35" placeholder="検索する文字を入力してください"/>
   <input type="hidden" id="mode_flg" value="">
   <input type="hidden" id="keytime" value="">
+  <input type="hidden" id="searchkeytime" value="">
   <div id="serect_tab_mode">
     <!-- 通常モード -->
     <input type="hidden" id="select_tab_index" value="">

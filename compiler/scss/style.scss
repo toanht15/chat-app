@@ -107,7 +107,7 @@ table {
   }
 
   tr:hover, tr.on {
-    background-color: rgba(195, 214, 155, 0.5);
+    background-color: rgba(195, 214, 155, 0.1);
   }
 
   th, td {
@@ -2393,7 +2393,7 @@ ul.naviBtn {
           }
 
           &:not(.show):hover:after {
-            background-color: rgba(195, 214, 155, 0.5);
+            background-color: rgba(195, 214, 155, 0.1);
             content: "選択する";
             cursor: pointer;
           }

@@ -81,11 +81,17 @@ class TDictionariesController extends AppController {
     $this->set('dictionaryList', $tab_array);
     $this->set('stint_flg', $stint_flg);
     if(isset($this->request->params['named']['tabindex'])){
-      $tabindex= $this->request->params['named']['tabindex'];
+      $tabindex = $this->request->params['named']['tabindex'];
       $this->set('tabindex', $tabindex);
     }
     else{
-      $this->set('tabindex', 0);
+      if(isset($this->request->data['index'])){
+        $tabindex = $this->request->data['index'];
+        $this->set('tabindex', $tabindex);
+      }
+      else{
+        $this->set('tabindex', 0);
+      }
     }
     //#451 定型文カテゴリ対応 end
     $this->_viewElement();

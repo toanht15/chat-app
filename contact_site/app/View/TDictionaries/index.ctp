@@ -6,7 +6,7 @@
 
 <div id='tdictionaries_add_title'>
   <div class="fLeft"><?= $this->Html->image('dictionary_g.png', array('alt' => '定型文メッセージ管理', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?></div>
-  <h1>定型文メッセージ管理</h1>
+  <h1>定型文管理</h1>
 </div>
 <!-- #451 定型文カテゴリ対応 start -->
 <!-- カテゴリ名入力登録 start -->
@@ -42,6 +42,7 @@
 <section class="listArea">
 <div id="soteTabs" class="soteTabs">
   <input type="hidden" id="select_tab_index" value="">
+  <input type="hidden" id="select_soto" value="">
   <ul class="tablist">
   <?php for ($i = 0; $i < count((array)$nameList); $i++) { ?>
     <li><a onfocus="this.blur();" data-id="<?=$nameList[$i]['id']?>" href="#tabs-<?=$i?>"><?=h($nameList[$i]['name'])?></a></li>
