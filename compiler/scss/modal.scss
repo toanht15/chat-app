@@ -1162,19 +1162,21 @@
   position: absolute;
   top: 55px;
   right: 0;
-  width: 12em;
+  width: 160px;
   font-size: 12px;
   z-index: 9999;
   a:hover {
-    background-color: rgba(195, 214, 155, 0.5) !important;
+    /*background-color: rgba(195, 214, 155, 0.5) !important;*/
+    background-color: #C3D69B;
+    color: #fff;
     text-decoration: none;
     display: block;
-    padding: 10px 5px 10px
+    padding: 10px 10px 10px
   }
   a{
     text-decoration: none;
     display: block;
-    padding: 10px 5px 10px
+    padding: 10px 10px 10px
   }
 /*  a{
     text-decoration: none;
