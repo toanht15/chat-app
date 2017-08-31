@@ -536,7 +536,7 @@
     function initializeConfiguration() {
       config.autoanswer = 'true';
       config.agentName = 'Bob';
-      config.username = 'agent';
+      config.username = 'agent<?= $muserId?>';
       config.password = 'password';
       config.url = "https://sdk005.live-assist.jp";
       config.additionalAttribute = {

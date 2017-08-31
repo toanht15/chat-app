@@ -483,6 +483,15 @@
           };
           emit('readyToCoBrowse', params);
         }
+      }).fail(function(e){
+        // 終了通知
+        var title = location.host + 'の内容';
+        var content = '接続時にエラーが発生しました。<br>しばらくたってから再度お試しください。';
+        popup.ok = function(){
+          laUtil.disconnect();
+          this.remove();
+        };
+        popup.set(title, content, popup.const.action.alert);
       });
     },
     windowSyncInfo: function(d) {
