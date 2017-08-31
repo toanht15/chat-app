@@ -939,15 +939,18 @@
 }
 
 #input_category_btn.disOffgreenBtn{
-  border: 2px solid #C3D69B;
+  border: 1px solid #C3D69B;
   margin: 0px 5px 0px;
-  padding: 0px 10px 0px;
+  padding: 5px 20px 5px;
+  transition: background-color, border-color 0.1s linear;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
 }
 
 #input_category_btn.disOffgrayBtn{
-  border: 2px solid #DADADA;
+  border: 1px solid #DADADA;
   margin: 0px 5px 0px;
-  padding: 0px 10px 0px;
+  padding: 5px 20px 5px;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
 }
 
 
@@ -957,14 +960,20 @@
   transition: background-color, border-color 0.1s linear;
   background-color: #C3D69B;
   color: white;
-  border: 7px solid #C3D69B;
+  border: 0px solid #C3D69B;
+  padding: 7px;
 }
 
 .disOffgreenBtn:hover{
   background-color: #A5B77E;
-  border: 3px solid #A5B77E;
+  border: 0px solid #A5B77E;
+  padding: 6.5px;
   transition: background-color, border-color 0.1s linear;
   color: #fff;
+}
+
+[id^="tdictionaries_manu_btn"].disOffgreenBtn:hover{
+  padding: 6.5px;
 }
 
 .disOffgrayBtn {
@@ -972,8 +981,17 @@
   font-weight: bold;
   transition: background-color, border-color 0.1s linear;
   background-color: #DADADA;
-  border: 7px solid #DADADA;
+  border: 0px solid #DADADA;
+  padding: 7px;
   color: white;
+}
+
+.disOffgrayBtn:hover {
+  background-color: #DADADA;
+  border: 0px solid #DADADA;
+  transition: background-color, border-color 0.1s linear;
+  color: #fff;
+  padding: 7px;
 }
 
 .disOffredBtn {
@@ -981,15 +999,17 @@
   font-weight: bold;
   transition: background-color, border-color 0.1s linear;
   background-color: #D69B9B;
-  border: 7px solid #D69B9B;
+  border: 0px solid #D69B9B;
   color: white;
+  padding: 7px;
 }
 
 .disOffredBtn:hover {
   background-color: #B78080;
-  border: 3px solid #B78080;
+  border: 0px solid #B78080;
   transition: background-color, border-color 0.1s linear;
   color: #fff;
+  padding: 6.5px;
 }
 
 .t-link {
@@ -1188,7 +1208,6 @@
   font-size: 12px;
   z-index: 9999;
   a:hover {
-    /*background-color: rgba(195, 214, 155, 0.5) !important;*/
     background-color: #C3D69B;
     color: #fff;
     text-decoration: none;
@@ -1200,21 +1219,18 @@
     display: block;
     padding: 10px 10px 10px
   }
-/*  a{
-    text-decoration: none;
-    display: block;
-  }
-  a:hover {
-    text-decoration: none;
-    display: block;
-  }*/
+}
+
+#input_category_value{
+  padding: 7px 10px !important;
 }
 
 [id^="layerMenu"] ul {
   border: solid 1px #ccc;
   display: block;
   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
-
+  padding: 5px 0px !important;
+  background: #fff;
   #tdictionaries_idx #tdictionaries_menu ul li.t-link{
     padding: 0px 0px 0px;
     width: 100%;
@@ -1227,7 +1243,7 @@
   list-style: none;
 /*  border-bottom: solid 1px #ccc;*/
   position: relative;
-  padding: 10px;
+  padding: 0px !important;
   color: #555;
   display: block;
 }
