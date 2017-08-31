@@ -938,9 +938,17 @@
   }
 }
 
+#input_category_btn.disOffgreenBtn{
+  border: 2px solid #C3D69B;
+  margin: 0px 5px 0px;
+  padding: 0px 10px 0px;
+}
 
-
-
+#input_category_btn.disOffgrayBtn{
+  border: 2px solid #DADADA;
+  margin: 0px 5px 0px;
+  padding: 0px 10px 0px;
+}
 
 
 .disOffgreenBtn {
@@ -949,7 +957,14 @@
   transition: background-color, border-color 0.1s linear;
   background-color: #C3D69B;
   color: white;
-  border: 1px solid #C3D69B;
+  border: 7px solid #C3D69B;
+}
+
+.disOffgreenBtn:hover{
+  background-color: #A5B77E;
+  border: 3px solid #A5B77E;
+  transition: background-color, border-color 0.1s linear;
+  color: #fff;
 }
 
 .disOffgrayBtn {
@@ -957,7 +972,7 @@
   font-weight: bold;
   transition: background-color, border-color 0.1s linear;
   background-color: #DADADA;
-  border: 1px solid #DADADA;
+  border: 7px solid #DADADA;
   color: white;
 }
 
@@ -966,8 +981,15 @@
   font-weight: bold;
   transition: background-color, border-color 0.1s linear;
   background-color: #D69B9B;
-  border: 1px solid #D69B9B;
+  border: 7px solid #D69B9B;
   color: white;
+}
+
+.disOffredBtn:hover {
+  background-color: #B78080;
+  border: 3px solid #B78080;
+  transition: background-color, border-color 0.1s linear;
+  color: #fff;
 }
 
 .t-link {
@@ -1160,7 +1182,7 @@
 [id^="layerMenu"] {
   display: none;
   position: absolute;
-  top: 55px;
+  top: 50px;
   right: 0;
   width: 160px;
   font-size: 12px;

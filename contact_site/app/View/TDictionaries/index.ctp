@@ -16,7 +16,7 @@
     <li>
     <div>
     <p>
-      <span><input type="search" class="" size="35" id="input_category_value" placeholder="追加するカテゴリ名を入力してください" onKeyUp="inputValue(this)"></span>
+      <span><input type="text" class="" size="35" id="input_category_value" placeholder="追加するカテゴリ名を入力してください" onKeyUp="inputValue(this)"></span>
       <span>
         <input type="button" class="disOffgrayBtn btn-shadow" id="input_category_btn" value="カテゴリを追加" disabled="disabled" onClick="saveCategoryAddDialog()">
       </span>
@@ -132,31 +132,27 @@
             <?php if($stint_flg){?>
               <div id="menuheader">
                 <p id="openMenu<?=$i?>">
-                  <a>
                     <?= $this->Html->image('list.png', array(
                         'alt' => 'メニュー',
                         'id'=>'tdictionaries_manu_btn'."$i",
                         'class' => 'btn-shadow disOffgreenBtn commontooltip',
                         'data-text' => 'その他編集',
                         'data-balloon-position' => '84',
-                        'width' => 40,
-                        'height' => 40)) ?>
-                  </a>
+                        'width' => 32,
+                        'height' => 32)) ?>
                 </p>
               </div>
             <?php }else{?>
               <div id="menuheader">
                 <p id="openMenu<?=$i?>">
-                  <a>
                     <?= $this->Html->image('list.png', array(
                         'alt' => 'メニュー',
                         'id'=>'tdictionaries_manu_btn'."$i",
                         'class' => 'btn-shadow disOffgrayBtn commontooltip',
                         'data-text' => "こちらの機能はスタンダードプラン<br>からご利用いただけます。",
                         'data-balloon-position' => '84',
-                        'width' => 40,
-                        'height' => 40)) ?>
-                  </a>
+                        'width' => 32,
+                        'height' => 32)) ?>
                 </p>
               </div>
             <?php }?>
