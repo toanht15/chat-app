@@ -1270,7 +1270,8 @@
 }
 
 .tabBox.ui-tabs-panel.ui-corner-bottom.ui-widget-content{
-  border: 0.5em solid #C3D69B;
+  border: solid #C3D69B;
+  border-width: 15px 10px 10px;
   background-color: #FFF;
   padding: 0.25em;
 }

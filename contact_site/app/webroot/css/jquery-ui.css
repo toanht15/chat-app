@@ -103,7 +103,7 @@
   float: left;
   position: relative;
   top: 0;
-  margin: 1px 1em 0 0;
+  margin: 1px 1px 0 0;
   border-bottom-width: 0;
   padding: 0;
   white-space: nowrap;
@@ -181,7 +181,7 @@ works properly when clicked or hovered */
 html .ui-button.ui-state-disabled:hover,
 html .ui-button.ui-state-disabled:active {
   border: 1px solid #c5c5c5;
-  background: #ffffff;
+  background: #ADADAD;
   font-weight: normal;
   color: #454545;
 }
@@ -192,7 +192,9 @@ a.ui-button,
 a:link.ui-button,
 a:visited.ui-button,
 .ui-button {
-  color: #454545;
+  font-size: 13px;
+  font-weight: bold;
+  color: #fff;
   text-decoration: none;
 }
 .ui-state-hover,
@@ -218,7 +220,9 @@ a:visited.ui-button,
 .ui-state-focus a:visited,
 a.ui-button:hover,
 a.ui-button:focus {
-  color: #555555;
+  font-size: 13px;
+  font-weight: bold;
+  color: #fff;
   text-decoration: none;
 }
 
@@ -244,7 +248,9 @@ a.ui-button:active,
 .ui-state-active a,
 .ui-state-active a:link,
 .ui-state-active a:visited {
-  color: #555555;
+  font-size: 13px;
+  font-weight: bold;
+  color: #fff;
   text-decoration: none;
 }
 
@@ -530,25 +536,25 @@ a.ui-button:active,
 .ui-corner-top,
 .ui-corner-left,
 .ui-corner-tl {
-  border-top-left-radius: 10px;
+  border-top-left-radius: 5px;
 }
 .ui-corner-all,
 .ui-corner-top,
 .ui-corner-right,
 .ui-corner-tr {
-  border-top-right-radius: 10px;
+  border-top-right-radius: 5px;
 }
 .ui-corner-all,
 .ui-corner-bottom,
 .ui-corner-left,
 .ui-corner-bl {
-  border-bottom-left-radius: 10px;
+  border-bottom-left-radius: 0px;
 }
 .ui-corner-all,
 .ui-corner-bottom,
 .ui-corner-right,
 .ui-corner-br {
-  border-bottom-right-radius: 10px;
+  border-bottom-right-radius: 0px;
 }
 
 /* Overlays */

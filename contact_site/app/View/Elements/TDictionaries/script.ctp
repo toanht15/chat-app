@@ -498,6 +498,34 @@ $( function() {
       $("#layerMenu"+ index).fadeOut("fast");
     }
   });
+
+  //全てのタブの要素を取得
+  var allTabList = document.querySelectorAll('[id^="ui-id-"]');
+  for (var i = 0; i < allTabList.length; i++) {
+    //全角を2、半角を1バイトとして長さを取得
+    var length = countLength(allTabList[i].text);
+    //全角バイトを超えていなかったらタブの長さを固定
+    if(length < 12){
+      allTabList[i].style.width = '100px';
+      allTabList[i].style.textAlign = 'center';
+    }
+  }
+
+  function countLength(str) {
+    var r = 0;
+    for (var i = 0; i < str.length; i++) {
+        var c = str.charCodeAt(i);
+        // Shift_JIS: 0x0 ～ 0x80, 0xa0 , 0xa1 ～ 0xdf , 0xfd ～ 0xff
+        // Unicode : 0x0 ～ 0x80, 0xf8f0, 0xff61 ～ 0xff9f, 0xf8f1 ～ 0xf8f3
+        if ( (c >= 0x0 && c < 0x81) || (c == 0xf8f0) || (c >= 0xff61 && c < 0xffa0) || (c >= 0xf8f1 && c < 0xf8f4)) {
+            r += 1;
+        } else {
+            r += 2;
+        }
+    }
+    return r;
+  }
+
 });
 
 //テキストボックスに入力があったらボタンを有効化
