@@ -56,7 +56,9 @@ $( function() {
             </ul>
             <?php }else{?>
             <ul class="fRight" id="wordListoff">
+              <!--
               <li style="color:#ff7b7b">[設定] > [定型文] から<br>メッセージを登録してください</li>
+               -->
             </ul>
             <?php }?>
       </div>
