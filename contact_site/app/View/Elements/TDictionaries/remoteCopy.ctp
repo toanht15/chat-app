@@ -43,7 +43,12 @@
       },
       url: url,
       success: function(){
-        location.href = "<?= $this->Html->url('/TDictionaries/index') ?>";
+        if(type == '3' || type == '4'){
+          location.href = "<?=$this->Html->url(array('controller' => 'TDictionaries', 'action' => 'index', 'tabindex' => $tabindex))?>";
+        }
+        else{
+          location.href = "<?= $this->Html->url('/TDictionaries/index') ?>";
+        }
       }
     });
   }
@@ -74,7 +79,7 @@
       <span>カテゴリ名：</span>
       <span>
         <input type="text" name="dummy" style="display:none;">
-        <input type="search" class="" size="35" id="edit_category_value" value="" >
+        <input type="text" class="" size="35" id="edit_category_value" value="" >
       </span>
       <br/>
       <br/>

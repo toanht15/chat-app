@@ -97,6 +97,11 @@
 .ui-tabs .ui-tabs-nav {
   margin: 0;
   padding: .0em .0em 0;
+  /* 試験的に上下スクロール対応 */
+  height: 29px;
+  width: 100%;
+  overflow-y: scroll;
+  /* 試験的に上下スクロール対応 */
 }
 .ui-tabs .ui-tabs-nav li {
   list-style: none;

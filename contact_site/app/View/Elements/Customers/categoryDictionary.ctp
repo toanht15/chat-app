@@ -29,7 +29,7 @@ $( function() {
 
 
 <div id="categoryTabs">
-  <input type="search" ng-model="searchWord" id="wordSearchCond" size="35" placeholder="検索する文字を入力してください"/>
+  <input type="text" ng-model="searchWord" id="wordSearchCond" size="35" placeholder="検索する文字を入力してください"/>
   <input type="hidden" id="mode_flg" value="">
   <input type="hidden" id="keytime" value="">
   <input type="hidden" id="searchkeytime" value="">

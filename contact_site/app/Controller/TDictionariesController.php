@@ -29,7 +29,7 @@ class TDictionariesController extends AppController {
 
   public function beforeFilter(){
     parent::beforeFilter();
-    $this->set('title_for_layout', '単語帳管理');
+    $this->set('title_for_layout', '定型文管理');
   }
 
   /* *
@@ -248,6 +248,7 @@ class TDictionariesController extends AppController {
     foreach($tab_name as $value){
       $names[$value['id']] = $value['name'];
     }
+    $this->set('tabindex', $data['select_tab_index']);
     $this->set('type', $data['type']);
     $this->set('id', $tab_name[0]['id']);
     $this->set('names', $names);

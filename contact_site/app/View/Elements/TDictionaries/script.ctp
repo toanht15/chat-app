@@ -86,6 +86,7 @@ function openEntryEditDialog(setting){
 //      var selectedCategory = document.getElementById("TDictionaryType").value;
       if(type == 1){
         modalOpen.call(window, html, 'p-category-edit', 'カテゴリ名の変更', 'moment');
+        $("#edit_category_value").select();
       }
       if(type == 2){
         modalOpen.call(window, html, 'p-category-del', 'カテゴリの削除', 'moment');
@@ -121,7 +122,8 @@ function openConfirmDialog(){
       },
       url: "<?= $this->Html->url('/TDictionaries/remoteDeleteUser') ?>",
       success: function(){
-        location.href = "<?= $this->Html->url('/TDictionaries/index') ?>";
+        var url = "<?= $this->Html->url('/TDictionaries/index') ?>";
+        location.href = url + "/tabindex:" + index;
       }
     });
   };
@@ -181,6 +183,7 @@ function tabSort(){
 //カテゴリのソートを保存
 function saveTabSort(){
   var list = getTabSort();
+  var index = document.getElementById("select_tab_index").value;
   $.ajax({
     type: "POST",
     url: "<?= $this->Html->url(['controller' => 'TDictionaries', 'action' => 'remoteSaveTabSort']) ?>",
@@ -189,7 +192,7 @@ function saveTabSort(){
     },
     dataType: "html",
     success: function(){
-      location.href = location.href;
+      location.href = location.href + "/tabindex:" + index;
     }
   });
 }
