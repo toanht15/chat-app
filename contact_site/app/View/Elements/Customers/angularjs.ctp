@@ -1194,8 +1194,13 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           // フォーカスが当たった時にPlaceholderを消す（Edge対応）
           $scope.chatPsFlg = false;
         })
+        .click(function(e){
+          // クリックされた時にPlaceholderを消す
+          //this.placeholder='';
+          $scope.chatPsFlg = false;
+        })
         .blur(function(e){
-          // フォーカスが当たった時にPlaceholderを消す（Edge対応）
+          // フォーカスが外れたら時にPlaceholderを表示（Edge対応）
           chatApi.observeType.end();
           $scope.chatPsFlg = true;
         });

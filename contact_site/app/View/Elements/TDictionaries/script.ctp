@@ -192,7 +192,7 @@ function saveTabSort(){
     },
     dataType: "html",
     success: function(){
-      location.href = location.href + "/tabindex:" + index;
+      location.href = location.href;
     }
   });
 }
@@ -278,7 +278,9 @@ function saveToggleSort(){
     },
     dataType: "html",
     success: function(){
-      location.href = location.href;
+      var index = document.getElementById("select_tab_index").value;
+      var url = "<?= $this->Html->url('/TDictionaries/index') ?>";
+      location.href = url + "/tabindex:" + index;
     }
   });
 
@@ -290,6 +292,7 @@ var getSort = function(){
   $(".sortable tr").each(function(e){
     list.push($(this).data('id'));
   });
+  list = $.grep(list, function(e){return e;});
   return JSON.parse(JSON.stringify(list));
 };
 
