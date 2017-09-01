@@ -5050,7 +5050,7 @@ ul.naviBtn {
     }
 
     .thMinWidthTimelyForOperator {
-      min-width: 50px;
+      min-width: 166px;
       text-decoration: underline;
       cursor:pointer;
        a:hover {
@@ -5090,6 +5090,11 @@ ul.naviBtn {
         border-right: solid 1px #8B8B8B;
       }
 
+      input[type='search']:focus {
+        outline: none !important;
+        border: 1px solid #C3D69B;
+      }
+
       & tr {
         th:nth-last-child(2) {
           border-right: none !important;
@@ -5099,7 +5104,7 @@ ul.naviBtn {
           border-left: solid 1px #8B8B8B!important;
         }
 
-        td:last-child:not(.tooltip):not(.userName)  {
+        td:last-child:not(.tooltip):not(.anotherWindowUserName)  {
           border-left: solid 1px #8B8B8B!important;
         }
       }
@@ -5115,7 +5120,7 @@ ul.naviBtn {
     }
     /*オペレータ画面クエッションマーク*/
     .opQuestionBalloon.opQuestionBalloonPosition6 {
-      right: 7.4px;
+      left: 5.5px;
       display: inline-block;
     }
 
@@ -5124,7 +5129,7 @@ ul.naviBtn {
         margin-right: 77.5px;
     }
     .opQuestionBalloon.opQuestionBalloonPosition7 {
-      right: 7.4px;
+      left: 5.5px;
       display: inline-block;
     }
 
@@ -5134,7 +5139,7 @@ ul.naviBtn {
     }
 
     .opQuestionBalloon.opQuestionBalloonPosition8 {
-      right: 7.4px;
+      left: 5.5px;
       display: inline-block;
     }
 
@@ -5144,7 +5149,7 @@ ul.naviBtn {
     }
 
     .opQuestionBalloon.opQuestionBalloonPosition8s {
-      right: 7.4px;
+      left: 5.5px;
       display: inline-block;
     }
 
@@ -5160,7 +5165,7 @@ ul.naviBtn {
     }
 
     .opQuestionBalloon.opQuestionBalloonPosition11 {
-      right: 7.4px;
+      left: 5.5px;
       display: inline-block;
     }
 
@@ -5170,7 +5175,7 @@ ul.naviBtn {
     }
 
     .opQuestionBalloon.opQuestionBalloonPosition13 {
-      right: 7.4px;
+      left: 5.5px;
       display: inline-block;
     }
 
