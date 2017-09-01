@@ -153,6 +153,12 @@ var popupEvent = {
 //                         return popupEvent.closePopup();
 //                     };
 //                     break;
+                case 'p-dictionary-del':
+                    var closeBtn = _button("削除する");
+                    closeBtn.onclick = function(){
+                        return popupEvent.closePopup();
+                    };
+                    break;
                 case 'p-alert':
                     var closeBtn = _button("閉じる");
                     closeBtn.onclick = function(){

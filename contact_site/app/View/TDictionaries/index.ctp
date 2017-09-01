@@ -28,13 +28,13 @@
       <!-- カテゴリの並び替えモード -->
         <li>
           <label class="pointer">
-            <?= $this->Form->checkbox('tabsort', array('onchange' => 'tabSort()')) ?>カテゴリの並び替え
+            <?= $this->Form->checkbox('tabsort', array('onchange' => 'tabSort()')) ?><span id="tabsortText">カテゴリの並び替え</span>
             <!--
             <span id="stintMessage" style="display:none; color:#E91E63; font-weight:normal; font-size:0.9em;">　※カテゴリ登録およびＣＳＶ関連はスタンダードプランからご利用いただけます。</span>
              -->
             <span id="stintMessage" style="display:none; color:#E91E63; font-weight:normal; font-size:0.9em;">　※カテゴリ登録はスタンダードプランからご利用いただけます。</span>
           </label>
-          <span id="tabSortMessage" style="display:none; color:#E91E63; font-weight:normal; font-size:0.9em;">　（！）カテゴリを並び替え中（保存する場合は画面下部の「保存」ボタンをクリック／キャンセルする場合はチェックを外してください）</span>
+          <span id="tabSortMessage" style="display:none; color:#E91E63; font-weight:normal; font-size:0.9em;">(！)カテゴリを並び替え中（保存する場合は画面下部の「保存」ボタンをクリック／キャンセルする場合はチェックを外してください）</span>
         </li>
       <!-- カテゴリの並び替えモード -->
     </ul>
@@ -121,9 +121,9 @@
           <!-- 定型文の並び替えモード -->
           <li>
             <label class="pointer" for="sort">
-              <?= $this->Form->checkbox('sort'.$i, array('onchange' => 'toggleSort()')) ?>定型文の並び替え
+              <?= $this->Form->checkbox('sort'.$i, array('onchange' => 'toggleSort()')) ?><span id="sortText<?=$i?>">定型文の並び替え</span>
             </label>
-            <span id="sortMessage<?=$i?>" style="display:none; color:#E91E63; font-weight:normal; font-size:0.9em;">　（！）定型文を並び替え中（保存する場合は画面下部の「保存」ボタンをクリック／キャンセルする場合はチェックを外してください）</span>
+            <span id="sortMessage<?=$i?>" style="display:none; color:#E91E63; font-weight:normal; font-size:0.9em;">(！)定型文を並び替え中（保存する場合は画面下部の「保存」ボタンをクリック／キャンセルする場合はチェックを外してください）</span>
           </li>
           <!-- 定型文の並び替えモード -->
         </ul>

@@ -110,7 +110,7 @@ function openConfirmDialog(){
     selectedList.push(Number(list[i].value));
   }
   var select_tab_index = document.getElementById("select_tab_index").value;
-  modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', '定型文メッセージ情報', 'moment');
+  modalOpen.call(window, "選択された定型文を削除します。<br/><br/>よろしいですか？<br/>", 'p-dictionary-del', '削除', 'moment');
   popupEvent.closePopup = function(){
     $.ajax({
       type: 'post',
@@ -154,6 +154,7 @@ function tabSort(){
 //     $(".ui-tabs-nav").addClass("move").sortable("disable");
   }
   else {
+    document.getElementById("tabsortText").style.display="none";
     document.getElementById("tabSortMessage").style.display="";
     document.getElementById("tabsort_btn").style.display="";
     //各ボタン及び動作をモード中は動かなくする
@@ -217,6 +218,7 @@ function toggleSort(){
     //ソートモードoff
     $(".sortable").addClass("move").sortable("disable");
     //定型文ソートモードメッセージ＆登録ボタン非表示
+    document.getElementById("sortText" + index).style.display="";
     document.getElementById("sortMessage" + index).style.display="none";
     document.getElementById("tdictionaries_sort_btn").style.display="none";
     //カテゴリ名入力欄変更可
@@ -239,6 +241,7 @@ function toggleSort(){
     //ソートモードon
     $(".sortable").addClass("move").sortable("enable");
     //定型文ソートモードメッセージ＆登録ボタン表示
+    document.getElementById("sortText" + index).style.display="none";
     document.getElementById("sortMessage" + index).style.display="";
     document.getElementById("tdictionaries_sort_btn").style.display="";
     //各ボタン及び動作をモード中は動かなくする
@@ -298,13 +301,15 @@ $(".sortable").sortable({
   axis: "y",
   tolerance: "pointer",
   containment: "parent",
+  cursor: 'move',
   revert: 100
 });
 $(".sortable").sortable("disable");
 
 $("#soteTabs").tabs({active: "<?= $tabindex ?>",});
 $('.ui-tabs-nav').sortable( {
-    axis: 'x'
+    axis: 'x',
+    cursor: 'move'
 } );
 $(".ui-tabs-nav").sortable("disable");
 
@@ -405,6 +410,7 @@ $( function() {
     if (!document.getElementById("sort" + index).checked) {
       $(".sortable").addClass("move").sortable("disable");
       //定型文ソートモードメッセージ＆登録ボタン非表示
+      document.getElementById("sortText" + index).style.display="";
       document.getElementById("sortMessage" + index).style.display="none";
       document.getElementById("tdictionaries_sort_btn").style.display="none";
       //カテゴリ名入力欄変更可
