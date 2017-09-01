@@ -2012,8 +2012,20 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                           var selectedClassName  = document.getElementById(selected.id).className;
                           document.getElementById("item" + selectTabWordList[selected_key]["id"]).className = selectedClassName;
                           document.getElementById(selected.id).className = "dictionaryWord ng-binding ng-scope";
-                          //新しくセレクトされた要素までスクロール
-                          document.getElementById("item" + selectTabWordList[selected_key]["id"]).scrollIntoView(true);
+                          //スクロール判定のために次の次のリストが存在するかどうかを判定する
+                          if ( selected_key > 0 ) {
+                            var nextnext = selected_key - 1;
+                            var t = $("#item" + selectTabWordList[nextnext]["id"]).offset().top; // ターゲットの位置取得
+                            var c = $("#wordList"+select_tab_index).offset().top; // 基準となるulの位置取得
+                            if(c > t){
+                              //新しくセレクトされた要素までスクロール
+                              document.getElementById("item" + selectTabWordList[selected_key]["id"]).scrollIntoView(true);
+                            }
+                          }
+                          else{
+                            //新しくセレクトされた要素までスクロール
+                            document.getElementById("item" + selectTabWordList[selected_key]["id"]).scrollIntoView(true);
+                          }
                         }
                       }
                       else {
@@ -2036,8 +2048,21 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                           var selectedClassName  = document.getElementById(selected.id).className;
                           document.getElementById("item" + selectTabWordList[selected_key]["id"]).className = selectedClassName;
                           document.getElementById(selected.id).className = "dictionaryWord ng-binding ng-scope";
-                          //新しくセレクトされた要素までスクロール
-                          document.getElementById("item" + selectTabWordList[selected_key]["id"]).scrollIntoView(false);
+                          //スクロール判定のために次の次のリストが存在するかどうかを判定する
+                          if ( $scope.entryWordSearch($scope.entryWordList[select_tab_index]).length > (selected_key + 1) ) {
+                            var nextnext = selected_key + 1;
+                            var t = $("#item" + selectTabWordList[nextnext]["id"]).offset().top; // ターゲットの位置取得
+                            var c = $("#wordList"+select_tab_index).offset().top; // 基準となるulの位置取得
+                            var h = $("#wordList"+select_tab_index).height(); //基準となるuiの縦幅
+                            if(c + h < t){
+                              //新しくセレクトされた要素までスクロール
+                              document.getElementById("item" + selectTabWordList[selected_key]["id"]).scrollIntoView(false);
+                            }
+                          }
+                          else{
+                            //新しくセレクトされた要素までスクロール
+                            document.getElementById("item" + selectTabWordList[selected_key]["id"]).scrollIntoView(false);
+                          }
                         }
                       }
                       return false;
@@ -2167,12 +2192,21 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                             var selectedClassName  = document.getElementById(selected_id).className;
                             document.getElementById(res[selected_key].id).className = selectedClassName;
                             document.getElementById(selected_id).className = "dictionaryWord ng-binding ng-scope";
-                            //新しくセレクトされた要素までスクロール
-                            document.getElementById(res[selected_key].id).scrollIntoView(true);
+                            //スクロール判定のために次の次のリストが存在するかどうかを判定する
+                            if ( selected_key > 0 ) {
+                              var nextnext = selected_key - 1;
+                              var t = $("#" + res[nextnext].id).offset().top; // ターゲットの位置取得
+                              var c = $("#allWordList").offset().top; // 基準となるulの位置取得
+                              if(c > t){
+                                //新しくセレクトされた要素までスクロール
+                                document.getElementById(res[selected_key].id).scrollIntoView(true);
+                              }
+                            }
+                            else{
+                              //新しくセレクトされた要素までスクロール
+                              document.getElementById(res[selected_key].id).scrollIntoView(true);
+                            }
                           }
-//                           else {
-//                             //検索モードから通常モードへ
-//                           }
                         }
                         if (e.keyCode === 40) { // 下キー
                           if ( res.length > (selected_key + 1) ) {
@@ -2182,8 +2216,21 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                             var selectedClassName  = document.getElementById(selected_id).className;
                             document.getElementById(res[selected_key].id).className = selectedClassName;
                             document.getElementById(selected_id).className = "dictionaryWord ng-binding ng-scope";
-                            //新しくセレクトされた要素までスクロール
-                            document.getElementById(res[selected_key].id).scrollIntoView(false);
+                            //スクロール判定のために次の次のリストが存在するかどうかを判定する
+                            if ( res.length > (selected_key + 1) ) {
+                              var nextnext = selected_key + 1;
+                              var t = $("#" + res[nextnext].id).offset().top; // ターゲットの位置取得
+                              var c = $("#allWordList").offset().top; // 基準となるulの位置取得
+                              var h = $("#allWordList").height(); //基準となるuiの縦幅
+                              if(c + h < t){
+                                //新しくセレクトされた要素までスクロール
+                                document.getElementById(res[selected_key].id).scrollIntoView(false);
+                              }
+                            }
+                            else{
+                              //新しくセレクトされた要素までスクロール
+                              document.getElementById(res[selected_key].id).scrollIntoView(false);
+                            }
                           }
                           return false;
                         }
