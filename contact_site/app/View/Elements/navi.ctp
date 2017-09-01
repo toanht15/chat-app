@@ -59,8 +59,8 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
             <?= $this->htmlEx->naviLink('履歴一覧', 'history.png', ['href' => ['controller' => 'Histories', 'action' => 'clearSession']]) ?>
         </div>
         <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
-        <div class="icon <?=$statisticsSelected?>">
-          <?= $this->htmlEx->naviLink('統計', 'graph.png', ['href' => ['controller' => 'Statistics', 'action' => 'forChat']]) ?>
+        <div class="icon <?=$statisticsSelected?> setting-icon" data-type="statistics" >
+            <?= $this->htmlEx->naviLink('統計', 'graph.png') ?>
         </div>
         <?php endif; ?>
         <div class="icon <?=$settingSelected?> setting-icon" data-type="common">
