@@ -5051,15 +5051,22 @@ ul.naviBtn {
 
     .thMinWidthTimelyForOperator {
       min-width: 166px;
-      cursor:pointer;
-       a:hover {
+
+      a {
+        cursor:pointer;
+      }
+
+      a:hover {
         color:#8d9b6f;
       }
    }
 
    .userName {
     text-decoration: underline;
-    cursor:pointer;
+
+    a {
+      cursor:pointer;
+    }
    }
 
     .thMinWidthDayly {
