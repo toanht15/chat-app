@@ -1872,6 +1872,19 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var array = [];
       var keys = Object.keys(list);
       angular.forEach(list, function(item){
+        for(var key in item) {
+          if (item[key].label.indexOf($scope.searchWord) === 0 || angular.isUndefined($scope.searchWord) ) {
+            array.push(item[key]);
+          }
+        }
+      });
+      return array;
+    };
+
+    function getEntryWordSearch(list){
+      var array = [];
+      var keys = Object.keys(list);
+      angular.forEach(list, function(item){
         if (item.label.indexOf($scope.searchWord) === 0 || angular.isUndefined($scope.searchWord) ) {
           array.push(item);
         }
@@ -1999,7 +2012,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                     }
 
                     if ( e.keyCode === 13 ) { // Enter
-                      var list = $scope.entryWordSearch($scope.entryWordList[select_tab_index]);
+                      var list = getEntryWordSearch($scope.entryWordList[select_tab_index]);
                       if ( list.length > 0 ) {
                         entryWordApi.push(list[selected_key].label);
                       }
@@ -2045,7 +2058,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                       return false;
                     }
                     if ( e.keyCode === 40 ) { // 下
-                      if ( $scope.entryWordSearch($scope.entryWordList[select_tab_index]).length > (selected_key + 1) ) {
+                      if ( getEntryWordSearch($scope.entryWordList[select_tab_index]).length > (selected_key + 1) ) {
                         selected_key = selected_key + 1;
                         var next = $("#item" + selectTabWordList[selected_key]["id"]);
                         if (next.prop('id')){
@@ -2054,7 +2067,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                           document.getElementById("item" + selectTabWordList[selected_key]["id"]).className = selectedClassName;
                           document.getElementById(selected.id).className = "dictionaryWord ng-binding ng-scope";
                           //スクロール判定のために次の次のリストが存在するかどうかを判定する
-                          if ( $scope.entryWordSearch($scope.entryWordList[select_tab_index]).length > (selected_key + 1) ) {
+                          if ( getEntryWordSearch($scope.entryWordList[select_tab_index]).length > (selected_key + 1) ) {
                             var nextnext = selected_key + 1;
                             var t = $("#item" + selectTabWordList[nextnext]["id"]).offset().top; // ターゲットの位置取得
                             var c = $("#wordList"+select_tab_index).offset().top; // 基準となるulの位置取得
@@ -2099,7 +2112,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
               $("[id ^= wordList]").on('click', function(e){
                 //カテゴリ
                 var select_tab_index = document.getElementById("select_tab_index").value;
-                var list = $scope.entryWordSearch($scope.entryWordList[select_tab_index]);
+                var list = getEntryWordSearch($scope.entryWordList[select_tab_index]);
                 if ( list.length > 0 ) {
                   closeCategoryDictionary();
                   entryWordApi.push(list[$(e.target).index()].label);
@@ -2123,7 +2136,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                     }
                   }
                 }
-                var list = $scope.entryWordSearch($scope.entryWordList[select_tab_index]);
+                var list = getEntryWordSearch($scope.entryWordList[select_tab_index]);
                 closeCategoryDictionary();
                 entryWordApi.push(list[select_index].label);
                 return false;
@@ -2185,7 +2198,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                               }
                             }
                           }
-                          var list = $scope.entryWordSearch($scope.entryWordList[select_tab_index]);
+                          var list = getEntryWordSearch($scope.entryWordList[select_tab_index]);
                           closeCategoryDictionary();
                           entryWordApi.push(list[select_index].label);
                           return false;
