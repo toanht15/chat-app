@@ -11,7 +11,8 @@
         <?= $this->Form->create('Statistics'); ?>
 
           <?= $this->Form->input('dateType', array('type'=>'select','name' => 'dateFormat','onChange' => 'timeChangeForOperator()',
-          'div'=>false, 'style' => 'vertical-align:middle;','label'=>false,'options'=>array('月別'=>'月別','日別'=>'日別','時別'=>'時別'), 'selected' => $date)); ?>
+          'div'=>false, 'style' => 'vertical-align:middle;','label'=>false,'options'=>array('月別'=>'月別','日別'=>'日別','時別'=>'時別'), 'selected' => $date,
+          'autocomplete'=> 'off')); ?>
 
           <?= $this->Form->input('dateForm', array('type'=>'select','name' => 'monthlyName','id' => 'monthlyForm',
           'div'=>false, 'label'=>false,'options'=>$companyRangeYear, 'selected' => $type,'style' => 'display:none;vertical-align:middle','empty' => '選択してください')); ?>
@@ -35,42 +36,42 @@
 
     <div id='statistics_content' class="p20trl" style="visibility:hidden;">
       <div id='opChatRequestTooltip' class="opThreeLineExplainTooltip">
-        <icon-annotation style = "margin-top:-17px;">
+        <icon-annotation style = "margin-top:-58px;">
           <ul>
             <li><span>サイト訪問者が送信したチャットを待機中のオペレーターが受信した件数(※初回メッセージのみカウント)</span></li>
           </ul>
         </icon-annotation>
       </div>
       <div id='opChatResponseTooltip' class="opOneLineExplainTooltip">
-        <icon-annotation style = "margin-top:13px;">
+        <icon-annotation style = "margin-top:-28px;">
           <ul>
             <li><span>オペレータが入室した件数</span></li>
           </ul>
         </icon-annotation>
       </div>
       <div id='opChatEffectivenessTooltip' class="opTwoLineExplainTooltip">
-        <icon-annotation style = "margin-top:-2px;">
+        <icon-annotation style = "margin-top:-43px;">
           <ul>
             <li><span>成果が「有効」として登録された件数</span></li>
           </ul>
         </icon-annotation>
       </div>
       <div id='opChatConsumerWaitAverageTimeTooltip' class="opThreeLineExplainTooltip">
-        <icon-annotation style = "margin-top:-17px;">
+        <icon-annotation style = "margin-top:-58px;">
           <ul>
             <li><span>サイト訪問者の初回メッセージを受信してから、オペレータがチャットに入室するまでの平均時間</span></li>
           </ul>
         </icon-annotation>
       </div>
       <div id='opChatResponseAverageTimeTooltip' class="opThreeLineExplainTooltip">
-        <icon-annotation style = "margin-top:-17px;">
+        <icon-annotation style = "margin-top:-58px;">
           <ul>
             <li><span>サイト訪問者の初回メッセージを受信してから、オペレータが初回メッセージを送信するまでの平均時間</span></li>
           </ul>
         </icon-annotation>
       </div>
-      <div id='opChatEffectivenessResponseRateTooltip' class="opExplainRateTooltip">
-        <icon-annotation style = "margin-top:-2px;">
+      <div id='opChatEffectivenessResponseRateTooltip' class="opTwoLineExplainTooltip">
+        <icon-annotation style = "margin-top:-43px;">
           <ul>
             <li><span>チャット有効件数／チャット応対件数</span></li>
           </ul>
