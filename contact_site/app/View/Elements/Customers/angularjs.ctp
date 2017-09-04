@@ -1925,6 +1925,12 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
               $scope.searchWord = "";
               $scope.$apply();
               entryWordApi.init();
+              var wy = $('#sub_contents.ui-draggable.ui-draggable-handle').offset().top;
+              var wx = $('#sub_contents.ui-draggable.ui-draggable-handle').offset().left;   // ウインドウの左上座標
+              $("#popup #popup-frame-base #popup-frame.p-category-dictionary-edit").css({
+                  top:(wy + 50) + "px",
+                  left:(wx + 80) + "px"
+              });
 
               //全てのタブの要素を取得
               var allTabList = document.querySelectorAll('[id^="ui-id-"]');
@@ -1954,22 +1960,21 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
               }
 
               // タイトルバーをドラッグしたとき
-              $('#popup-title').mousedown(function(e) {
-                var wx = $('#popup-frame').css("top");
-                var wy = $('#popup-frame').css("left");   // ウインドウの左上座標
-                var mx = e.pageX;
-                var my = e.pageY;
-                $(document).on('mousemove.popup-frame', function(e) {
-                  wx += e.pageX - mx;
-                  wy += e.pageY - my;
-                  $('#popup-frame').css({top: wy + "!important", left: wx + "!important"});
-                  mx = e.pageX;
-                  my = e.pageY;
-                  return false;
-                }).one('mouseup', function(e) {
-                  $(document).off('mousemove.popup-frame');
-                });
-                return false;
+              $("#popup-title").mousedown(function(e){
+                $("#popup #popup-frame-base #popup-frame.p-category-dictionary-edit")
+                  .data("clickPointX" , e.pageX - $("#popup #popup-frame-base #popup-frame.p-category-dictionary-edit").offset().left)
+                  .data("clickPointY" , e.pageY - $("#popup #popup-frame-base #popup-frame.p-category-dictionary-edit").offset().top);
+
+                $("#popup-title").mousemove(function(e){
+                  $("#popup #popup-frame-base #popup-frame.p-category-dictionary-edit").css({
+                      top:e.pageY  - $("#popup #popup-frame-base #popup-frame.p-category-dictionary-edit").data("clickPointY")+"px",
+                      left:e.pageX - $("#popup #popup-frame-base #popup-frame.p-category-dictionary-edit").data("clickPointX")+"px"
+                  })
+                })
+
+              });
+              $("#popup-title").mouseup(function(){
+                $("#popup-title").unbind("mousemove")
               });
 
 
