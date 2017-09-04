@@ -218,27 +218,28 @@ var resetTabSort = function(){
 function toggleSort(){
   var index = document.getElementById("select_tab_index").value;
   if (!document.getElementById("sort" + index).checked) {
-    //ソートモードoff
-    $(".sortable").addClass("move").sortable("disable");
-    //定型文ソートモードメッセージ＆登録ボタン非表示
-    document.getElementById("sortText" + index).style.display="";
-    document.getElementById("sortMessage" + index).style.display="none";
-    document.getElementById("tdictionaries_sort_btn").style.display="none";
-    //カテゴリ名入力欄変更可
-    document.getElementById("input_category_value").disabled = "";
-    //定型文登録ボタン押下可
-    document.getElementById('tdictionaries_add_btn'+index).className="btn-shadow disOffgreenBtn";
-    //カテゴリの並べ替えチェックボックスチェック可
-    document.getElementById('tabsort').disabled = "";
-    //カテゴリメニューボタン押下可
-    document.getElementById('tdictionaries_manu_btn'+index).className="btn-shadow disOffgreenBtn";
-    //全て選択チェックボックス選択可
-    document.getElementById('allCheck'+index).disabled = "";
-    //項目チェックボックス選択可
-    var checkBoxList = document.querySelectorAll('[id^="selectTab'+index+'"]');
-    for (var i = 0; i < checkBoxList.length; i++) {
-      checkBoxList[i].disabled = "";
-    }
+    restSort();
+//     //ソートモードoff
+//     $(".sortable").addClass("move").sortable("disable");
+//     //定型文ソートモードメッセージ＆登録ボタン非表示
+//     document.getElementById("sortText" + index).style.display="";
+//     document.getElementById("sortMessage" + index).style.display="none";
+//     document.getElementById("tdictionaries_sort_btn").style.display="none";
+//     //カテゴリ名入力欄変更可
+//     document.getElementById("input_category_value").disabled = "";
+//     //定型文登録ボタン押下可
+//     document.getElementById('tdictionaries_add_btn'+index).className="btn-shadow disOffgreenBtn";
+//     //カテゴリの並べ替えチェックボックスチェック可
+//     document.getElementById('tabsort').disabled = "";
+//     //カテゴリメニューボタン押下可
+//     document.getElementById('tdictionaries_manu_btn'+index).className="btn-shadow disOffgreenBtn";
+//     //全て選択チェックボックス選択可
+//     document.getElementById('allCheck'+index).disabled = "";
+//     //項目チェックボックス選択可
+//     var checkBoxList = document.querySelectorAll('[id^="selectTab'+index+'"]');
+//     for (var i = 0; i < checkBoxList.length; i++) {
+//       checkBoxList[i].disabled = "";
+//     }
   }
   else {
     //ソートモードon
@@ -297,8 +298,10 @@ var getSort = function(){
 };
 
 //定型文のソート順をリセット
-var restSort = function(){
-  location.href = "<?= $this->Html->url('/TDictionaries/index') ?>";
+function restSort(){
+  var index = document.getElementById("select_tab_index").value;
+  var url = "<?= $this->Html->url('/TDictionaries/index') ?>";
+  location.href = url + "/tabindex:" + index;
 };
 
 $(document).ready(function(){
