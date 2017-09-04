@@ -76,7 +76,7 @@ $(window).load(function(){
   });
 
   var tableObj = $("#statistics_table").DataTable({
-    //searching: false,
+    searching: false,
     scroller:true,
     responsive:true,
     scrollX: true,
@@ -316,8 +316,8 @@ $(window).load(function(){
     targetObj.find('icon-annotation').css('display','block');
     if ( parentTdId.match(/op/)) {
       targetObj.css({
-      top: ($(this).offset().top - targetObj.find('ul').outerHeight() -35) + 'px',
-      left: '50px'
+        top: ($(this).offset().top - targetObj.find('ul').outerHeight() -35) + 'px',
+        left: '50px'
       });
     }
     else {
@@ -339,14 +339,16 @@ $(window).load(function(){
     var parentTdId = $(this).parent().parent().attr('id');
     var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
     targetObj.find('icon-annotation').css('display','block');
-    if( parentTdId == 'opChatEffectivenessResponseRateLabel') {
+    console.log(parentTdId);
+    if( parentTdId == 'opChatResponseLabel') {
       targetObj.css({
-        left: ($(this).offset().left - 207) + 'px'
+        left: ($(this).offset().left - 170) + 'px'
       });
     }
     else if ( parentTdId.match(/op/)) {
+      console.log($(this).offset().left);
       targetObj.css({
-        left: ($(this).offset().left - 130) + 'px'
+        left: ($(this).offset().left - 207) + 'px'
       });
     }
   });
@@ -355,6 +357,7 @@ $(window).load(function(){
     var parentTdId = $(this).parent().parent().attr('id');
     var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
     targetObj.find('icon-annotation').css('display','none');
+    console.log($(this).offset().left);
   });
 
   // DataTablesの検索時にツールチップを非表示にする

@@ -4930,11 +4930,11 @@ ul.naviBtn {
     }
 
     tr.odd {
-      height: 40px !important;
+      height: 43px !important;
     }
 
     tr.even {
-      height: 40px !important;
+      height: 43px !important;
     }
 
     .thMinWidth {
@@ -4994,6 +4994,7 @@ ul.naviBtn {
 
       div.DTFC_LeftBodyWrapper {
         border-right: solid 1px #8B8B8B;
+        height:559px;
       }
 
       input[type='search']:focus {
@@ -5134,8 +5135,8 @@ ul.naviBtn {
             border-left: 9px solid transparent;
             border-right: 9px solid transparent;
             position: absolute;
-            bottom: -1em;
-            left: 70px;
+            bottom: -0.7em;
+            left: 109px;
             z-index: 1;
           }
 
@@ -5146,8 +5147,8 @@ ul.naviBtn {
             border-left: 9px solid transparent;
             border-right: 9px solid transparent;
             position: absolute;
-            bottom: -1em;
-            left: 70px;
+            bottom: -0.7em;
+            left: 109px;
             z-index: 3;
           }
 
@@ -5192,8 +5193,8 @@ ul.naviBtn {
             border-left: 9px solid transparent;
             border-right: 9px solid transparent;
             position: absolute;
-            bottom: -2.2em;
-            left: 70px;
+            bottom: -0.7em;
+            left: 147px;
             z-index: 1;;
           }
 
@@ -5204,8 +5205,8 @@ ul.naviBtn {
             border-left: 9px solid transparent;
             border-right: 9px solid transparent;
             position: absolute;
-            bottom: -2.2em;
-            left: 70px;
+            bottom: -0.7em;
+            left: 147px;
             z-index: 3;
           }
 
@@ -5251,8 +5252,8 @@ ul.naviBtn {
             border-left: 9px solid transparent;
             border-right: 9px solid transparent;
             position: absolute;
-            bottom: -3.4em;
-            left: 70px;
+            bottom: -0.7em;
+            left: 147px;
             z-index: 1;;
           }
 
@@ -5263,66 +5264,8 @@ ul.naviBtn {
             border-left: 9px solid transparent;
             border-right: 9px solid transparent;
             position: absolute;
-            bottom: -3.4em;
-            left: 70px;
-            z-index: 3;
-          }
-
-
-        ul {
-            margin: 0;
-            padding: 0;
-            text-align: left;
-            background-color: #FFF;
-            box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
-            padding: 0.5em;
-            font-weight: normal;
-            border-radius: 5px;
-
-          img {
-            margin-bottom: -0.2em;
-            width:1em;
-            height:1em;
-          }
-
-          span {
-            font-size: 0.9em;
-          }
-        }
-      }
-    }
-
-    .opExplainRateTooltip {
-      z-index: 10;
-      position: absolute;
-
-        icon-annotation {
-        width: 16em;
-        height: 2.1em;
-        display: none;
-
-        /* 矢印 */
-          &:before {
-            content: " ";
-            border: none;
-            border-top: 10px solid rgba(0, 0, 0, 0.13);
-            border-left: 9px solid transparent;
-            border-right: 9px solid transparent;
-            position: absolute;
-            bottom: -2.2em;
-            left: 148px;
-            z-index: 1;
-          }
-
-          &:after {
-            content: " ";
-            border: none;
-            border-top: 10px solid white;
-            border-left: 9px solid transparent;
-            border-right: 9px solid transparent;
-            position: absolute;
-            bottom: -2.2em;
-            left: 148px;
+            bottom: -0.7em;
+            left: 147px;
             z-index: 3;
           }
 
