@@ -1,10 +1,14 @@
 <script type="text/javascript">
 <?= $this->element('TDocuments/loadScreen'); ?>
+var childWindowCount = 0;
+var childWindows = new Array();
+var childWindow;
+var datalist;
 
 function timeChange()　{
   var chosenDateFormat = document.forms.StatisticsForChatForm.dateFormat;
 
-  //selectで月別を選択した場合
+  //  selectで月別を選択した場合
   if (chosenDateFormat.options[chosenDateFormat.selectedIndex].value == "月別")
   {
     document.getElementById("monthlyForm").style.display="";
@@ -344,6 +348,7 @@ $(window).load(function(){
       targetObj.css({
         left: ($(this).offset().left - 207) + 'px'
       });
+      console.log(($(this).offset().left - 207));
     }
     else if ( parentTdId.match(/op/)) {
       targetObj.css({
@@ -365,14 +370,16 @@ $(window).load(function(){
 
   $(document).on({
     mouseenter: function () {
-      trIndex = $(this).index()+1;
-      $("table.dataTable").each(function(index) {
-        $(this).find("tr:eq("+trIndex+")").addClass("highlight")
-      });
+      trIndex = $(this).index();
+      if($(this).attr('class') == 'odd' || $(this).attr('class') == 'even') {
+        $("table.dataTable tbody").each(function(index) {
+          $(this).find("tr:eq("+trIndex+")").addClass("highlight")
+        });
+      }
     },
     mouseleave: function () {
-      trIndex = $(this).index()+1;
-      $("table.dataTable").each(function(index) {
+      trIndex = $(this).index();
+      $("table.dataTable tbody").each(function(index) {
         $(this).find("tr:eq("+trIndex+")").removeClass("highlight")
       });
     }
