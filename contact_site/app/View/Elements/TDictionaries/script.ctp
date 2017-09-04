@@ -520,7 +520,7 @@ $( function() {
     //全角を2、半角を1バイトとして長さを取得
     var length = countLength(allTabList[i].text);
     //全角バイトを超えていなかったらタブの長さを固定
-    if(length < 12){
+    if(length <= 12){
       allTabList[i].style.width = '100px';
       allTabList[i].style.textAlign = 'center';
     }

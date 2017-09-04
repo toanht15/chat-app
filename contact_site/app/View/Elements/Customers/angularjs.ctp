@@ -1192,17 +1192,21 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         .focus(function(e){
           chatApi.observeType.start();
           // フォーカスが当たった時にPlaceholderを消す（Edge対応）
+          this.placeholder='';
           $scope.chatPsFlg = false;
         })
         .click(function(e){
           // クリックされた時にPlaceholderを消す
-          //this.placeholder='';
+          this.placeholder='';
           $scope.chatPsFlg = false;
         })
         .blur(function(e){
           // フォーカスが外れたら時にPlaceholderを表示（Edge対応）
+          var sendPattarnStr = ( $scope.settings.sendPattarn ) ? "Shift + Enter": "Enter";
           chatApi.observeType.end();
+          this.placeholder="ここにメッセージ入力してください。\n・" + sendPattarnStr + "で改行されます\n・下矢印キー(↓)で定型文が開きます";
           $scope.chatPsFlg = true;
+
         });
         chatApi.init();
       },
@@ -2095,6 +2099,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                       if ( select_tab_index > 0 ) {
                         select_tab_index--;
                         $( "#categoryTabs" ).tabs({ active: select_tab_index });
+                        var allTabList = document.querySelectorAll('[id^="ui-id-"]');
+                        allTabList[select_tab_index].scrollIntoView();
+                        //新しくセレクトされた要素までスクロール
                         document.getElementById("select_tab_index").value = select_tab_index;
                       }
                       return false;
@@ -2104,6 +2111,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                       if ( $scope.entryWordList.length > (select_tab_index + 1) ) {
                         select_tab_index++;
                         $( "#categoryTabs" ).tabs({ active: select_tab_index });
+                        var allTabList = document.querySelectorAll('[id^="ui-id-"]');
+                        allTabList[select_tab_index].scrollIntoView();
                         document.getElementById("select_tab_index").value = select_tab_index;
                       }
                       return false;
