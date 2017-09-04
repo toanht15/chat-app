@@ -4951,10 +4951,9 @@ ul.naviBtn {
 
     .thMinWidthTimelyForOperator {
       min-width: 166px;
-      text-decoration: underline;
       cursor:pointer;
        a:hover {
-        color: #595959;;
+        color:#8d9b6f;
       }
    }
 
@@ -5004,7 +5003,7 @@ ul.naviBtn {
           border-left: solid 1px #8B8B8B!important;
         }
 
-        td:last-child:not(.tooltip):not(.anotherWindowUserName)  {
+        td:last-child:not(.tooltip):not(.anotherWindowUserName):not(.userName)  {
           border-left: solid 1px #8B8B8B!important;
         }
       }
