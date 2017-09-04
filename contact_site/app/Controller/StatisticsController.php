@@ -95,8 +95,6 @@ class StatisticsController extends AppController {
    * @return void
    * */
   public function forOperator() {
-    $this->log('userinfo',LOG_DEBUG);
-    $this->log($this->userInfo,LOG_DEBUG);
     if($this->request->is('post')) {
       if ($this->THistory->validates() ) {
         $date = $this->request->data['dateFormat'];

@@ -1,9 +1,5 @@
 <script type="text/javascript">
 <?= $this->element('TDocuments/loadScreen'); ?>
-var childWindowCount = 0;
-var childWindows = new Array();
-var childWindow;
-var datalist;
 
 function timeChange()　{
   var chosenDateFormat = document.forms.StatisticsForChatForm.dateFormat;
@@ -341,14 +337,12 @@ $(window).load(function(){
   // ツールチップの表示制御(オペレータ統計画面)
   $('.opQuestionBtn').off("mouseenter").on('mouseenter',function(event){
     var parentTdId = $(this).parent().parent().attr('id');
-    console.log(parentTdId);
     var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
     targetObj.find('icon-annotation').css('display','block');
     if( parentTdId == 'opChatEffectivenessResponseRateLabel') {
       targetObj.css({
         left: ($(this).offset().left - 207) + 'px'
       });
-      console.log(($(this).offset().left - 207));
     }
     else if ( parentTdId.match(/op/)) {
       targetObj.css({
