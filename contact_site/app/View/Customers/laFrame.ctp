@@ -585,6 +585,7 @@
 
       AssistAgentSDK.setRemoteViewCallBack(function(x,y){
         handleResizedFunction(x, y);
+        window.resizeTo(x+100,y+50);
       });
     }
 
@@ -632,7 +633,6 @@
       }
       remoteView.style.height = height + "px";
       remoteView.style.width = width + "px";
-      window.resizeTo(x+100,y+50);
     }
 
     function getCorrelationId (shortcode) {
