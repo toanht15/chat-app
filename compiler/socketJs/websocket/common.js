@@ -381,7 +381,7 @@ var socket, // socket.io
         }
         // 画面同期を使用する際
         if ( window.sincloInfo.contract.synclo || (window.sincloInfo.contract.hasOwnProperty('document') && window.sincloInfo.contract.document) ) {
-          html += '      #sincloBox section#callTab #telNumber { overflow: hidden; color: ' + widget.mainColor + '; font-weight: bold; margin: 0 auto; text-align: center; background-color: #FFF!important; border: none!important; }';
+          html += '      #sincloBox section#callTab #telNumber { overflow: hidden; color: ' + widget.mainColor + '; font-weight: bold; margin: 0 auto; text-align: center; background-color: #FFF!important; border: none!important; overflow: visible!important; }';
           html += '      #sincloBox section#callTab #telIcon { color: ' + widget.mainColor + '; display: block; width: 50px; height: 50px; float: left; background-color: #3EA3DE; border-radius: 25px; padding: 3px }';
           html += '      #sincloBox section#callTab #telContent { display: block; overflow-y: auto; overflow-x: hidden; max-height: 119px }';
           if ( window.sincloInfo.contract.chat ) {
@@ -485,7 +485,7 @@ var socket, // socket.io
       }
       // 受付時間
       if ( Number(widget.display_time_flg) === 1 ) {
-          html += '    <pre style="font-weight: bold; color: ' + widget.mainColor + '; margin: 0 auto; white-space: pre-line; font-size: 11px; text-align: center; padding: 0 0 5px; height: 20px; background-color: #FFF!important; border: none!important;">受付時間： ' + widget.time_text + '</pre>';
+          html += '    <pre style="font-weight: bold; color: ' + widget.mainColor + '; margin: 0 auto; white-space: pre-line; font-size: 11px; text-align: center; padding: 0 0 5px; height: 20px; background-color: #FFF!important; border: none!important;  overflow: visible!important;">受付時間： ' + widget.time_text + '</pre>';
       }
       html += '    </sinclo-div>';
       // テキスト
