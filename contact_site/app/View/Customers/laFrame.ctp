@@ -523,6 +523,9 @@
     var remoteViewContainer = document.getElementById("remoteScreenViewContainer");
     var formContainer = document.getElementById("formContainer");
 
+    var remoteX;
+    var remoteY;
+
     var assistServerSession = {};
     var config = {autoanswer : 'true', agentName: 'Bob' };
 
@@ -580,35 +583,56 @@
         AssistAgentSDK.requestScreenShare();
       });
 
-      AssistAgentSDK.setRemoteViewCallBack(function (x, y) {
-        console.log("AssistAgentSDK.setRemoteViewCallBack("+x+","+y+")");
-        var containerHeight = remoteViewContainer.offsetHeight;
-        var containerWidth = remoteViewContainer.offsetWidth;
-        var containerAspect = containerHeight / containerWidth;
-        var remoteAspect = y / x;
-
-        var height;
-        var width;
-
-        if (containerHeight == 0 || containerWidth == 0)
-        {
-          return;
-        }
-//        if (containerAspect < remoteAspect) {
-//          // Container aspect is taller than the remote view aspect
-//          height = Math.min(y, containerHeight);
-//          width = height * (x / y);
-//        } else {
-//          // Container aspect is wider than (or the same as) the remote view aspect
-//          width = Math.min(x, containerWidth);
-//          height = width * (y / x);
-//        }
-//        remoteView.style.height = height + "px";
-//        remoteView.style.width = width + "px";
-        remoteView.style.height = y + "px";
-        remoteView.style.width = x + "px";
-        window.resizeTo(x+100,y+50);
+      AssistAgentSDK.setRemoteViewCallBack(function(x,y){
+        handleResizedFunction(x, y);
       });
+    }
+
+    var resizeTimer = null;
+    window.addEventListener("resize", function(){
+      var shareCanvas = remoteView.getElementsByTagName("CANVAS");
+      if (shareCanvas[0]) {
+        if(resizeTimer) {
+          clearTimeout(resizeTimer);
+        }
+        resizeTimer = setTimeout(function() {
+          if (shareCanvas[0]) {
+            handleResizedFunction(shareCanvas[0].width, shareCanvas[0].height);
+          }
+          if(AssistAgentSDK.annotationWindow) {
+            AssistAgentSDK.annotationWindow.parentResized();
+          }
+        }, 300);
+      }
+    });
+
+    function handleResizedFunction(x, y) {
+      remoteX = x;
+      remoteY = y;
+      var containerHeight = remoteViewContainer.offsetHeight;
+      var containerWidth = remoteViewContainer.offsetWidth;
+      var containerAspect = containerHeight / containerWidth;
+      var remoteAspect = y / x;
+
+      var height;
+      var width;
+
+      if (containerHeight == 0 || containerWidth == 0)
+      {
+        return;
+      }
+      if (containerAspect < remoteAspect) {
+        // Container aspect is taller than the remote view aspect
+        height = Math.min(y, containerHeight);
+        width = height * (x / y);
+      } else {
+        // Container aspect is wider than (or the same as) the remote view aspect
+        width = Math.min(x, containerWidth);
+        height = width * (y / x);
+      }
+      remoteView.style.height = height + "px";
+      remoteView.style.width = width + "px";
+      window.resizeTo(x+100,y+50);
     }
 
     function getCorrelationId (shortcode) {
