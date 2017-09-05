@@ -156,6 +156,9 @@ function tabSort(){
 //     $(".ui-tabs-nav").addClass("move").sortable("disable");
   }
   else {
+    $('[id^="selectTab"]').prop('checked', false);
+    allCheckCtrl();
+    actBtnShow();
     document.getElementById("tabsortText").style.display="none";
     document.getElementById("tabSortMessage").style.display="";
     document.getElementById("tabsort_btn").style.display="";
@@ -244,6 +247,9 @@ function toggleSort(){
 //     }
   }
   else {
+    $('[id^="selectTab"]').prop('checked', false);
+    allCheckCtrl();
+    actBtnShow();
     //ソートモードon
     $(".sortable").addClass("move").sortable("enable");
     //定型文ソートモードメッセージ＆登録ボタン表示
