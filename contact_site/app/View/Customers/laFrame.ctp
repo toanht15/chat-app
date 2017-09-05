@@ -334,6 +334,7 @@
     });
 
     socket.on('coBrowseFailed', function (data) {
+      alert('お客様側の接続時にエラーが発生しました。再度お試しください。');
       window.close();
     });
 
