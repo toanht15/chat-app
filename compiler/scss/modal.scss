@@ -903,6 +903,16 @@
         left: -4px;
       }
     }
+    #stintMessage{
+      position: relative;
+      top: -2px;
+      left: 0px;
+    }
+    #tabSortMessage{
+      position: relative;
+      top: -2px;
+      left: 0px;
+    }
   }
   .listArea{
     position: relative;
@@ -920,7 +930,15 @@
         left: -1px;
         [id^="sort"]{
           position: relative;
-          top: 2px;
+          padding: 10px;
+        }
+        [id^="sortText"]{
+          top: -2px;
+        }
+        [id^="sortMessage"]{
+          position: relative;
+          top: -4px;
+          left: 0px;
         }
       }
     }
@@ -932,7 +950,9 @@
     #tdictionaries_list{
       padding: 15px;
       .t-link{
-        padding: 15px 5px 2px;
+        vertical-align: middle;
+        display: table-cell;
+        padding: 0px 10px 10px;
       }
     }
   }
@@ -973,7 +993,7 @@
 }
 
 [id^="tdictionaries_manu_btn"].disOffgreenBtn:hover{
-  padding: 6.5px;
+  padding: 6.5px 7.5px 6.5px 6.5px;
 }
 
 .disOffgrayBtn {
@@ -1127,6 +1147,14 @@
 
 #popup #popup-frame-base #popup-frame #popup-content #popup-main.category-tab-binding{
   padding: 10px;
+}
+
+#TDictionaryType{
+  padding: 0em 0em 0.3em;
+}
+
+#wordSearchCond{
+  background-color: rgb(242, 242, 242);
 }
 
 #serect_tab_mode{

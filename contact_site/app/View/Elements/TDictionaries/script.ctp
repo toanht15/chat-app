@@ -177,6 +177,8 @@ function tabSort(){
     }
     //ソートモードon
     $(".ui-tabs-nav").addClass("move").sortable("enable");
+    $(".soteTabs ul li").css('cursor', 'move');
+    $(".soteTabs ul li a").css('cursor', 'move');
   }
 }
 
@@ -265,6 +267,8 @@ function toggleSort(){
       checkBoxList[i].disabled = "disabled";
     }
     $('t-link').removeClass('t-link');
+    $("table tbody.sortable tr td").css('cursor', 'move');
+    $("table tbody.sortable tr td a").css('cursor', 'move');
   }
 }
 
@@ -315,13 +319,12 @@ $(".sortable").sortable({
 });
 $(".sortable").sortable("disable");
 
-$("#soteTabs").tabs({active: "<?= $tabindex ?>",});
+$(".soteTabs").tabs({active: "<?= $tabindex ?>",});
 $('.ui-tabs-nav').sortable( {
-    axis: 'x',
+//    axis: 'x',
     cursor: 'move'
 } );
 $(".ui-tabs-nav").sortable("disable");
-
 });
 
 document.body.onload = function(){
@@ -413,6 +416,7 @@ $( function() {
   document.getElementById("select_tab_index").value = "<?= $tabindex ?>";
   //タブが押下された時の処理
   $("#soteTabs").bind('tabsactivate', function(event, ui) {
+    var oldid = "ui-id-" + (Number(document.getElementById("select_tab_index").value) + 1);
     var index = ui.newTab.index();
     var stint_flg = document.getElementById("stint_flg").value;
     //もし、タブをクリックされた時定型文並び替えモードだったら並べ替えモードをキャンセル
@@ -471,6 +475,66 @@ $( function() {
     }
     if(stint_flg == '0'){
       document.getElementById('tdictionaries_manu_btn' + index).className="btn-shadow disOffgrayBtn";
+    }
+    var allTabList = document.querySelectorAll('[id^="ui-id-"]');
+    //要素の高さを取得
+    var newid = "ui-id-" + (index + 1);
+    var top = document.getElementById(newid).getBoundingClientRect().top;
+    //基準点（0盤目のタブの高さを取得）
+    var c_top = document.getElementById(oldid).getBoundingClientRect().top;
+    //もし基準点と高さが異なった場合
+    if(top != c_top){
+//       //タブ各要素の高さ順に配列を取得
+//       for (var i = 0; i < allTabList.length; i++) {
+
+//       }
+//       //<li>リスト取得（タブリスト）
+//       var array1 = [];
+//       var array2 = [];
+//       $("#tablist li").each(function(i) {
+//         if(i < index){
+//           array1.push({
+//             name: $(this).find("a").text(),
+//             source: $(this).html()
+//           });
+//         }
+//         else{
+//           array2.push({
+//             name: $(this).find("a").text(),
+//             source: $(this).html()
+//           });
+//         }
+//       });
+
+//       //var tabListArray = Array.prototype.slice.call(allTabList);
+//       var tabListArray = ul.querySelectorAll('[id^="ui-id-"]');
+//       for (var i = 0; i < tabListArray.length; i++) {
+//         if(i < index){
+//           array1.push({
+//               name: tabListArray[i].text,
+//               source: $("#"+tabListArray[i].id).html()
+//             });
+//         }
+//         else{
+//             array2.push({
+//                 name: tabListArray[i].text,
+//                 source: $("#"+tabListArray[i].id).html()
+//             });
+//         }
+//       }
+//       var liList = array2.concat(array1);
+//       var arr = [];
+//       for (i = 0; i < liList.length; i++) {
+//         arr[i] = {
+//           idx : i,
+//           id : Number(liList[i].substr(6))
+//         };
+//       }
+//       for (i = 0; i < arr.length; i++) {
+//         ul.insertBefore(childs[arr[i].index]);
+//         //ul.appendChild(ul.removeChild(liList[i]))
+//         //$("#tablist").append(liList[i].value);
+//       }
     }
   });
 

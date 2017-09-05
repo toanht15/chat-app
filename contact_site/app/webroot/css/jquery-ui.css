@@ -97,10 +97,17 @@
 .ui-tabs .ui-tabs-nav {
   margin: 0;
   padding: .0em .0em 0;
+/* 折り返しを逆順に */
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap-reverse;
+/* 折り返しを逆順に */
   /* 試験的に上下スクロール対応 */
+/*
   height: 29px;
   width: 100%;
   overflow-y: scroll;
+*/
   /* 試験的に上下スクロール対応 */
 }
 .ui-tabs .ui-tabs-nav li {
@@ -117,6 +124,8 @@
   float: left;
   padding: .5em 1em;
   text-decoration: none;
+  overflow: hidden;
+  outline: none;
 }
 .ui-tabs .ui-tabs-nav li.ui-tabs-active {
   margin-bottom: -1px;
@@ -542,13 +551,13 @@ a.ui-button:active,
 .ui-corner-top,
 .ui-corner-left,
 .ui-corner-tl {
-  border-top-left-radius: 5px;
+  border-top-left-radius: 10px;
 }
 .ui-corner-all,
 .ui-corner-top,
 .ui-corner-right,
 .ui-corner-tr {
-  border-top-right-radius: 5px;
+  border-top-right-radius: 10px;
 }
 .ui-corner-all,
 .ui-corner-bottom,

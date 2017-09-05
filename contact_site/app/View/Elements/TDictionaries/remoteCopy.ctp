@@ -76,10 +76,10 @@
   <!-- カテゴリ更新 -->
     <div style="text-align:center;">
       <br/>
-      <span>カテゴリ名：</span>
+      <span>カテゴリ名：　</span>
       <span>
         <input type="text" name="dummy" style="display:none;">
-        <input type="text" class="" size="35" id="edit_category_value" value="" >
+        <input type="text" class="" size="25" id="edit_category_value" value="" >
       </span>
       <br/>
       <br/>
@@ -91,7 +91,7 @@
     <br/>
     <br/>
     <div style="text-align:center;">
-      カテゴリを削除すると<font style="color:red">カテゴリ内の定型文も全て削除</font>されます。<br>
+      カテゴリを削除すると<font style="color:rgb(192, 0, 0)">カテゴリ内の定型文も全て削除</font>されます。<br>
     </div>
     <br/>
     <br/>
