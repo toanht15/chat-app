@@ -44,7 +44,6 @@ class TDictionariesController extends AppController {
     else{
       $stint_flg = '0';
     }
-    $stint_flg = '0';
     //#451 定型文カテゴリ対応 start
     $dictionaryList = $this->TDictionary->find('all', $this->_setParams());
     $categoryList = $this->TDictionaryCategory->find('all', $this->_setCategoryParams());
