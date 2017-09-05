@@ -1906,8 +1906,9 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   socket.on('readyToCoBrowse', function (data) {
     var obj = JSON.parse(data);
     sincloCore[obj.siteKey][obj.tabId].laShortCode = obj.shortcode;
-    sincloCore[obj.siteKey][obj.tabId].coBrowseConnectToken = obj.connectToken;
+    sincloCore[obj.siteKey][obj.tabId].connectToken = obj.connectToken;
     emit.toUser('readyToCoBrowse', data, getSessionId(obj.siteKey, obj.tabId, 'coBrowseParentSessionId'));
+    emit.toCompany('syncNewInfo', data, obj.siteKey);
     // 今まで通り
     // else {
     //     // 同形ウィンドウを作成するための情報取得依頼

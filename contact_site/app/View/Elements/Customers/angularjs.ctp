@@ -1477,7 +1477,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var obj = JSON.parse(data), url;
       if (connectToken !== obj.connectToken) return false;
 
-      connectToken = null;
       var url = "<?= $this->Html->url(array('controller'=>'Customers', 'action'=>'laFrame')) ?>?k=begin";
       url += "&userId=" + obj.userId;
       url += "&connectToken=" + obj.connectToken + "&id=" + obj.tabId;
