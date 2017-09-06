@@ -866,7 +866,7 @@ class StatisticsController extends AppController {
         date_format(th.access_date, ?) as date,thcau.m_users_id as userId,
         count(thcau.id) as request_count
         FROM (select id,m_companies_id,access_date,ip_address
-      from t_histories where m_companies_id = ? AND access_date between ? and ? ) as th,
+      from t_histories force index(company_access_date) where m_companies_id = ? AND access_date between ? and ? ) as th,
       t_history_chat_logs as thcl,t_history_chat_active_users as thcau
         WHERE
           thcau.t_history_chat_logs_id = thcl.id
@@ -908,19 +908,19 @@ class StatisticsController extends AppController {
     }
     //1人のオペレータ検索の場合
     else {
-      $responseNumber = "SELECT
-      date_format(th.access_date, ?) as date,m_users_id as userId,count(th.id) as response_count
-      FROM t_histories as th,t_history_chat_logs as thcl
-      WHERE
-        th.m_companies_id = ?
-      AND
-        thcl.t_histories_id = th.id
-      AND
-        thcl.m_users_id = ?
-      AND
-        thcl.message_type = ?
-      AND
-      th.access_date between ? and ?";
+        $responseNumber = "SELECT
+        date_format(th.access_date, ?) as date,m_users_id as userId,count(th.id) as response_count
+        FROM t_histories as th,t_history_chat_logs as thcl
+        WHERE
+          th.m_companies_id = ?
+        AND
+          thcl.t_histories_id = th.id
+        AND
+          thcl.m_users_id = ?
+        AND
+          thcl.message_type = ?
+        AND
+        th.access_date between ? and ?";
       //除外IP処理
       $responseNumber = $this->exclusionIpAddress($responseNumber,'th');
       $responseNumber .= 'group by date,m_users_id';
@@ -1603,16 +1603,16 @@ class StatisticsController extends AppController {
     $widgetNumberData =[];
 
     //ウィジェット表示件数
-    $widget = "SELECT
-    date_format(th.access_date, ?) as date,
-    count(th.id) as widget_count
-    FROM t_histories as th, t_history_widget_displays as tw
-    WHERE
-      th.m_companies_id = ?
-    AND
-      th.tab_id = tw.tab_id
-    AND
-      th.access_date between ? and ?";
+      $widget = "SELECT
+      date_format(th.access_date, ?) as date,
+      count(th.id) as widget_count
+      FROM t_histories as th, t_history_widget_displays as tw
+      WHERE
+        th.m_companies_id = ?
+      AND
+        th.tab_id = tw.tab_id
+      AND
+        th.access_date between ? and ?";
 
     $widget = $this->exclusionIpAddress($widget,'th');
 
