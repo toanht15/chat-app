@@ -1929,6 +1929,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
               $scope.searchWord = "";
               $scope.$apply();
               entryWordApi.init();
+              var positionTop = 0;
               var wy = $('#sub_contents.ui-draggable.ui-draggable-handle').offset().top;
               var wx = $('#sub_contents.ui-draggable.ui-draggable-handle').offset().left;   // ウインドウの左上座標
               $("#popup #popup-frame-base #popup-frame.p-category-dictionary-edit").css({
@@ -1981,6 +1982,160 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                 $("#popup-title").unbind("mousemove")
               });
 
+//               //スクロール対応
+//               var start_pos = 0;
+//               var flug = true;
+//               $(".ui-tabs .ui-tabs-nav.categoryTabStyle").scroll(function(e){
+//                 //タブリスト取得
+//                 var allTabList = document.querySelectorAll('[id^="ui-id-"]');
+//                 //タブの高さごとの配列を取得
+//                 var tobTopList = getTabTopList(allTabList);
+//                 //現在選択されているタブインデックス
+//                 var select_tab_index = Number(document.getElementById("select_tab_index").value);
+//                 //現在選択されている行のインデックス
+//                 var select_line_index = Number(document.getElementById("select_line_index").value);
+//                 var current_pos = $(this).scrollTop();
+//                 if (current_pos > start_pos) {
+//                   //多重処理防止
+//                   if(flug){
+//                     flug = false;
+//                     setTimeout(function(){
+//                       if(select_line_index != (tobTopList.length - 1)){
+//                         //下;
+//                         select_line_index = (select_line_index + 1);
+//                         //その行の先頭のIDを取得
+//                         var id = tobTopList[select_line_index][0];
+//                         //そのIDまでスクロール
+//                         document.getElementById(id).scrollIntoView();
+//                         //変更された行IDを保持
+//                         document.getElementById("select_line_index").value = select_line_index;
+//                         document.getElementById("scrollkeytime").value = e.timeStamp;
+//                       }
+//                       flug = true;
+//                       return flug;
+//                     }, 200);
+//                   }else{
+//                     //現在選択されている行のインデックス
+//                     var select_line_index = Number(document.getElementById("select_line_index").value);
+//                     //その行の先頭のIDを取得
+//                     var id = tobTopList[select_line_index][0];
+//                     //そのIDまでスクロール
+//                     document.getElementById(id).scrollIntoView();
+//                    }
+//                 } else {
+//                   //多重処理防止
+//                   if(flug){
+//                     flug = false;
+//                     setTimeout(function(){
+//                       if(select_line_index != 0){
+//                         //上;
+//                         select_line_index = (select_line_index - 1);
+//                         //その行の先頭のIDを取得
+//                         var id = tobTopList[select_line_index][0];
+//                         //そのIDまでスクロール
+//                         document.getElementById(id).scrollIntoView();
+//                         //変更された行IDを保持
+//                         document.getElementById("select_line_index").value = select_line_index;
+//                         document.getElementById("scrollkeytime").value = e.timeStamp;
+//                       }
+//                       flug = true;
+//                       return flug;
+//                     }, 200);
+//                   }else{
+//                     //現在選択されている行のインデックス
+//                     var select_line_index = Number(document.getElementById("select_line_index").value);
+//                     //その行の先頭のIDを取得
+//                     var id = tobTopList[select_line_index][0];
+//                     //そのIDまでスクロール
+//                     document.getElementById(id).scrollIntoView();
+//                    }
+//                 }
+//                 start_pos = current_pos;
+//               });
+
+              //カテゴリースクロール対応
+              //上スクロール
+               $("#category_up_btn").on('click', function(e){
+                //タブリスト取得
+                var allTabList = document.querySelectorAll('[id^="ui-id-"]');
+                //タブの高さごとの配列を取得
+                var tobTopList = getTabTopList(allTabList);
+                //現在選択されているタブインデックス
+                var select_tab_index = Number(document.getElementById("select_tab_index").value);
+                //現在選択されている行のインデックス
+                var select_line_index = Number(document.getElementById("select_line_index").value);
+                if(select_line_index != 0){
+                  //上スライドされたら必ず下ボタンはグリーンになる
+                  document.getElementById("category_down_btn").className="btn-shadow greenBtn commontooltip";
+                  //上;
+                  select_line_index = (select_line_index - 1);
+                  //その行の先頭のIDを取得
+                  var id = tobTopList[select_line_index][0];
+                  //そのIDまでスクロール
+                  document.getElementById(id).scrollIntoView();
+                  //変更された行IDを保持
+                  document.getElementById("select_line_index").value = select_line_index;
+                  if(select_line_index == 0){
+                    //上限に到達したら上ボタンをグレーにする
+                    document.getElementById("category_up_btn").className="btn-shadow grayBtn commontooltip";
+                  }
+                }
+              });
+
+              //下スクロール
+               $("#category_down_btn").on('click', function(e){
+                //タブリスト取得
+                var allTabList = document.querySelectorAll('[id^="ui-id-"]');
+                //タブの高さごとの配列を取得
+                var tobTopList = getTabTopList(allTabList);
+                //現在選択されているタブインデックス
+                var select_tab_index = Number(document.getElementById("select_tab_index").value);
+                //現在選択されている行のインデックス
+                var select_line_index = Number(document.getElementById("select_line_index").value);
+                if(select_line_index != (tobTopList.length - 1)){
+                  //下スライドされたら必ず上ボタンはグリーンになる
+                  document.getElementById("category_up_btn").className="btn-shadow greenBtn commontooltip";
+                  //下;
+                  select_line_index = (select_line_index + 1);
+                  //その行の先頭のIDを取得
+                  var id = tobTopList[select_line_index][0];
+                  //そのIDまでスクロール
+                  document.getElementById(id).scrollIntoView();
+                  //変更された行IDを保持
+                  document.getElementById("select_line_index").value = select_line_index;
+                  if(select_line_index == (tobTopList.length - 1)){
+                    //下限に到達したら下ボタンをグレーにする
+                    document.getElementById("category_down_btn").className="btn-shadow grayBtn commontooltip";
+                  }
+                }
+              });
+
+              //タブの高さごとの配列を取得
+              function getTabTopList(allTabList){
+                var tobTopList = [];
+                var topAllay = [];
+                for (var i = 0; i < allTabList.length; i++) {
+                  var id = allTabList[i].id;
+                  topAllay.push($("#"+id).offset().top);
+                }
+                var nawtop = topAllay[0];
+                var tabAllay = [];
+                for (var i = 0; i < topAllay.length; i++) {
+                  tabAllay.push(allTabList[i].id);
+                  if(nawtop == topAllay[(i + 1)]){
+                    var linechange = 0;
+                  }
+                  else{
+                    var linechange = 1;
+                    nawtop = topAllay[(i + 1)];
+                  }
+                  if(linechange == 1 || (topAllay.length - 1) == i){
+                    tobTopList.push(tabAllay);
+                    tabAllay = [];
+                  }
+                }
+                return tobTopList;
+              }
 
               //閉じるボタンが押された時
               $("#popupCloseBtn").on('click', function(e){
@@ -2100,6 +2255,30 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                         select_tab_index--;
                         $( "#categoryTabs" ).tabs({ active: select_tab_index });
                         var allTabList = document.querySelectorAll('[id^="ui-id-"]');
+                        var id = allTabList[select_tab_index].id;
+                        //id = Number(id.substr(10));
+                        //タブの高さごとの配列を取得
+                        var tobTopList = getTabTopList(allTabList);
+                        //タブの高さリストから該当IDを検索
+                        for(var key in tobTopList) {
+                          for(var i_key in tobTopList[key]) {
+                            if(tobTopList[key][i_key] == id){
+                              var c_key = key;
+                            }
+                          }
+                        }
+                        //現在選択されている行のインデックス
+                        var select_line_index = Number(document.getElementById("select_line_index").value);
+                        if(Number(c_key) != select_line_index){
+                          //現在選択されている行インデックスを変更
+                          document.getElementById("select_line_index").value = c_key;
+                          //上スライドされたら必ず下ボタンはグリーンになる
+                          document.getElementById("category_down_btn").className="btn-shadow greenBtn commontooltip";
+                          if(c_key == 0){
+                            //上限に到達したら上ボタンをグレーにする
+                            document.getElementById("category_up_btn").className="btn-shadow grayBtn commontooltip";
+                          }
+                        }
                         allTabList[select_tab_index].scrollIntoView();
                         //新しくセレクトされた要素までスクロール
                         document.getElementById("select_tab_index").value = select_tab_index;
@@ -2112,6 +2291,30 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                         select_tab_index++;
                         $( "#categoryTabs" ).tabs({ active: select_tab_index });
                         var allTabList = document.querySelectorAll('[id^="ui-id-"]');
+                        var id = allTabList[select_tab_index].id;
+                        //id = Number(id.substr(10));
+                        //タブの高さごとの配列を取得
+                        var tobTopList = getTabTopList(allTabList);
+                        //タブの高さリストから該当IDを検索
+                        for(var key in tobTopList) {
+                          for(var i_key in tobTopList[key]) {
+                            if(tobTopList[key][i_key] == id){
+                              var c_key = key;
+                            }
+                          }
+                        }
+                        //現在選択されている行のインデックス
+                        var select_line_index = Number(document.getElementById("select_line_index").value);
+                        if(Number(c_key) != select_line_index){
+                          //現在選択されている行インデックスを変更
+                          document.getElementById("select_line_index").value = c_key;
+                          //下スライドされたら必ず上ボタンはグリーンになる
+                          document.getElementById("category_up_btn").className="btn-shadow greenBtn commontooltip";
+                          if(c_key == (tobTopList.length - 1)){
+                            //下限に到達したら下ボタンをグレーにする
+                            document.getElementById("category_down_btn").className="btn-shadow grayBtn commontooltip";
+                          }
+                        }
                         allTabList[select_tab_index].scrollIntoView();
                         document.getElementById("select_tab_index").value = select_tab_index;
                       }

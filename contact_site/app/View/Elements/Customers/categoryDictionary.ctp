@@ -11,9 +11,11 @@ $( function() {
   $(".popup-frame").css('height', '');
   //インデックスの初期値を挿入暫定的に0
   document.getElementById("select_tab_index").value = 0;
+  document.getElementById("select_line_index").value = 0;
   document.getElementById("mode_flg").value = 0;
   document.getElementById("keytime").value = 0;
   document.getElementById("searchkeytime").value = 0;
+  document.getElementById("scrollkeytime").value = 0;
   $("#categoryTabs").bind('tabsactivate', function(event, ui) {
       var index = ui.newTab.index();
       // クリックされたタブのインデックスをhiddenに持っておく
@@ -33,14 +35,22 @@ $( function() {
   <input type="hidden" id="mode_flg" value="">
   <input type="hidden" id="keytime" value="">
   <input type="hidden" id="searchkeytime" value="">
+  <input type="hidden" id="scrollkeytime" value="">
   <div id="serect_tab_mode">
     <!-- 通常モード -->
     <input type="hidden" id="select_tab_index" value="">
+    <input type="hidden" id="select_line_index" value="0">
     <ul class="categoryTabStyle">
       <?php for ($i = 0; $i < count((array)$dictionaryCategoriesList); $i++) { ?>
-        <li class="tabStyle"><a data-id="<?=$dictionaryCategoriesList[$i]['id']?>" href="#categoryTabs-<?=$i?>"><?= h($dictionaryCategoriesList[$i]['label'])?></a></li>
+        <li class="tabStyle  <?php if($key == 0){ echo "categoryLineSelected";}?>">
+          <a data-id="<?=$dictionaryCategoriesList[$i]['id']?>" href="#categoryTabs-<?=$i?>"><?= h($dictionaryCategoriesList[$i]['label'])?></a>
+        </li>
       <?php } ?>
     </ul>
+    <span id="category_select_button">
+      <a href="javascript:void(0)" class="btn-shadow grayBtn commontooltip" id="category_up_btn"><font class="triangle" style="color:#FFFFFF;">▲</font></a>
+      <a href="javascript:void(0)" class="btn-shadow greenBtn commontooltip" id="category_down_btn"><font class="triangle" style="color:#FFFFFF;">▼</font></a>
+    </span>
     <div id="chatCategory" class="chatCategory">
       <?php for ($i = 0; $i < count((array)$dictionaryCategoriesList); $i++) { ?>
       <div class="onTabs" id="categoryTabs-<?=$i?>">

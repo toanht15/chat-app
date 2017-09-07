@@ -915,6 +915,15 @@
     }
   }
   .listArea{
+    .soteTabs{
+      .tablist{
+        width: 100%;
+        /*overflow: scroll;*/
+        text-overflow:ellipsis;
+        overflow:hidden;
+        white-space:nowrap;
+      }
+    }
     position: relative;
     top: 0px;
     left: 0px;
@@ -1149,6 +1158,35 @@
   padding: 10px;
 }
 
+#category_select_button{
+  position: absolute;
+  zoom: 100%;
+  top: -2px;
+  left: 510px;
+  #category_up_btn{
+    width: 15px;
+    height: 15px;
+    font-size: 8px;
+    text-align: center;
+    .triangle{
+      position: absolute;
+      top: 0px;
+      left: 2px;
+    }
+  }
+  #category_down_btn{
+    width: 15px;
+    height: 15px;
+    font-size: 8px;
+    text-align: center;
+    .triangle{
+      position: absolute;
+      top: 15px;
+      left: 2px;
+    }
+  }
+}
+
 #TDictionaryType{
   padding: 0em 0em 0.3em;
 }
@@ -1179,6 +1217,9 @@
 
 .ui-tabs .ui-tabs-nav.categoryTabStyle{
   padding: 0;
+  height: 29px;
+  width: 101%;
+  overflow: hidden;
 }
 
 .ui-widget-header.categoryTabStyle{

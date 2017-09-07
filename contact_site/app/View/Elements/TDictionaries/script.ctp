@@ -584,16 +584,70 @@ $( function() {
     }
   });
 
-  //全てのタブの要素を取得
-  var allTabList = document.querySelectorAll('[id^="ui-id-"]');
-  for (var i = 0; i < allTabList.length; i++) {
-    //全角を2、半角を1バイトとして長さを取得
-    var length = countLength(allTabList[i].text);
-    //全角バイトを超えていなかったらタブの長さを固定
-    if(length <= 12){
-      allTabList[i].style.width = '100px';
-      allTabList[i].style.textAlign = 'center';
+  $(window).on('load resize', function(){
+    //全てのタブの要素を取得
+    var allTabList = document.querySelectorAll('[id^="ui-id-"]');
+    for (var i = 0; i < allTabList.length; i++) {
+      //全角を2、半角を1バイトとして長さを取得
+      var length = countLength(allTabList[i].text);
+      //全角バイトを超えていなかったらタブの長さを固定
+      if(length <= 12){
+        allTabList[i].style.width = '100px';
+        allTabList[i].style.textAlign = 'center';
+      }
     }
+    //タブの高さごとの配列を取得
+    var tobTopList = getTabTopList(allTabList);
+    if(tobTopList.length > 1){
+      //表示が複数行になってしまっているとき
+      //タブが一行に収まるまで繰り返し
+      var lineChk = false;
+      var px = 100;
+      while (lineChk == false) {
+        for (var i = 0; i < allTabList.length; i++) {
+          allTabList[i].style.width = px+'px'
+          allTabList[i].style.textAlign = 'center';
+        }
+        //全てのタブの要素を取得
+        var allTabList = document.querySelectorAll('[id^="ui-id-"]');
+        //タブの高さごとの配列を取得
+        var tobTopList = getTabTopList(allTabList);
+        if(tobTopList.length == 1){
+          //一行になったらループ終わり
+          lineChk = true;
+        }
+        else{
+          px = (px - 1);
+        }
+      }
+    }
+  });
+
+  //タブの高さごとの配列を取得
+  function getTabTopList(allTabList){
+    var tobTopList = [];
+    var topAllay = [];
+    for (var i = 0; i < allTabList.length; i++) {
+      var id = allTabList[i].id;
+      topAllay.push($("#"+id).offset().top);
+    }
+    var nawtop = topAllay[0];
+    var tabAllay = [];
+    for (var i = 0; i < topAllay.length; i++) {
+      tabAllay.push(allTabList[i].id);
+      if(nawtop == topAllay[(i + 1)]){
+        var linechange = 0;
+      }
+      else{
+        var linechange = 1;
+        nawtop = topAllay[(i + 1)];
+      }
+      if(linechange == 1 || (topAllay.length - 1) == i){
+        tobTopList.push(tabAllay);
+        tabAllay = [];
+      }
+    }
+    return tobTopList;
   }
 
   function countLength(str) {
@@ -648,8 +702,6 @@ function saveCategoryEntryDialog(setting){
   var type = setting.type;
   var category_name = document.getElementById('input_category_value').value;
   if(category_name){
-    modalOpen.call(window, "カテゴリを登録します、よろしいですか？", 'p-confirm', '定型文メッセージ情報', 'moment');
-    popupEvent.closePopup = function(){
       $.ajax({
         type: 'post',
         url: "<?= $this->Html->url('/TDictionaries/remoteSaveCategoryEntryForm') ?>",
@@ -663,7 +715,6 @@ function saveCategoryEntryDialog(setting){
           location.href = "<?= $this->Html->url('/TDictionaries/index') ?>";
         }
       });
-    };
   }
   else{
     document.getElementById("input_category_btn").disabled = "disabled";

@@ -41,11 +41,12 @@
 </section>
 <section class="listArea">
 <div id="soteTabs" class="soteTabs">
+  <input type="hidden" id="lineChange_flg" value="0">
   <input type="hidden" id="select_tab_index" value="">
   <input type="hidden" id="select_soto" value="">
   <ul class="tablist" id="tablist">
   <?php for ($i = 0; $i < count((array)$nameList); $i++) { ?>
-    <li id = "li_<?=($i + 1)?>"><a onfocus="this.blur();" data-id="<?=$nameList[$i]['id']?>" href="#tabs-<?=$i?>"><?=h($nameList[$i]['name'])?></a></li>
+    <li id = "li_<?=$i?>"><a onfocus="this.blur();" data-id="<?=$nameList[$i]['id']?>" href="#tabs-<?=$i?>"><?=h($nameList[$i]['name'])?></a></li>
   <?php } ?>
   </ul>
   <?php for ($i = 0; $i < count((array)$nameList); $i++) { ?>
