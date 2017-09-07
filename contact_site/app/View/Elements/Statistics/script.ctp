@@ -4,7 +4,7 @@
 function timeChange()　{
   var chosenDateFormat = document.forms.StatisticsForChatForm.dateFormat;
 
-  //selectで月別を選択した場合
+  //  selectで月別を選択した場合
   if (chosenDateFormat.options[chosenDateFormat.selectedIndex].value == "月別")
   {
     document.getElementById("monthlyForm").style.display="";
@@ -76,7 +76,7 @@ $(window).load(function(){
   });
 
   var tableObj = $("#statistics_table").DataTable({
-    //searching: false,
+    searching: false,
     scroller:true,
     responsive:true,
     scrollX: true,
@@ -316,8 +316,8 @@ $(window).load(function(){
     targetObj.find('icon-annotation').css('display','block');
     if ( parentTdId.match(/op/)) {
       targetObj.css({
-      top: ($(this).offset().top - targetObj.find('ul').outerHeight() -35) + 'px',
-      left: '50px'
+        top: ($(this).offset().top - targetObj.find('ul').outerHeight() -35) + 'px',
+        left: '50px'
       });
     }
     else {
@@ -337,17 +337,18 @@ $(window).load(function(){
   // ツールチップの表示制御(オペレータ統計画面)
   $('.opQuestionBtn').off("mouseenter").on('mouseenter',function(event){
     var parentTdId = $(this).parent().parent().attr('id');
-    console.log(parentTdId);
     var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
     targetObj.find('icon-annotation').css('display','block');
-    if( parentTdId == 'opChatEffectivenessResponseRateLabel') {
+    console.log(parentTdId);
+    if( parentTdId == 'opChatResponseLabel') {
       targetObj.css({
-        left: ($(this).offset().left - 207) + 'px'
+        left: ($(this).offset().left - 170) + 'px'
       });
     }
     else if ( parentTdId.match(/op/)) {
+      console.log($(this).offset().left);
       targetObj.css({
-        left: ($(this).offset().left - 130) + 'px'
+        left: ($(this).offset().left - 207) + 'px'
       });
     }
   });
@@ -356,6 +357,7 @@ $(window).load(function(){
     var parentTdId = $(this).parent().parent().attr('id');
     var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
     targetObj.find('icon-annotation').css('display','none');
+    console.log($(this).offset().left);
   });
 
   // DataTablesの検索時にツールチップを非表示にする
@@ -365,14 +367,16 @@ $(window).load(function(){
 
   $(document).on({
     mouseenter: function () {
-      trIndex = $(this).index()+1;
-      $("table.dataTable").each(function(index) {
-        $(this).find("tr:eq("+trIndex+")").addClass("highlight")
-      });
+      trIndex = $(this).index();
+      if($(this).attr('class') == 'odd' || $(this).attr('class') == 'even') {
+        $("table.dataTable tbody").each(function(index) {
+          $(this).find("tr:eq("+trIndex+")").addClass("highlight")
+        });
+      }
     },
     mouseleave: function () {
-      trIndex = $(this).index()+1;
-      $("table.dataTable").each(function(index) {
+      trIndex = $(this).index();
+      $("table.dataTable tbody").each(function(index) {
         $(this).find("tr:eq("+trIndex+")").removeClass("highlight")
       });
     }
