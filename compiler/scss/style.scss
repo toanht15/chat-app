@@ -436,6 +436,11 @@ a {
 .m10r10l {
   margin: 0 10px;
 }
+
+.m10r {
+  margin-right: 10px;
+}
+
 .m20t {
   margin-top: 20px!important;
 }
@@ -2393,7 +2398,7 @@ ul.naviBtn {
           }
 
           &:not(.show):hover:after {
-            background-color: rgba(195, 214, 155, 0.5);
+            background-color: rgba(195, 214, 155, 0.1);
             content: "選択する";
             cursor: pointer;
           }
@@ -2829,12 +2834,14 @@ ul.naviBtn {
 
 #muser_list table td:last-child {
   width: 100px;
+/*
   a {
     width: 35px;
     height: 35px;
     margin: 5px;
     padding: 2px;
   }
+*/
 }
 
 /* 個人設定 */
@@ -3520,25 +3527,86 @@ ul.naviBtn {
       padding: 0;
       li {
         padding: 5px 0;
-        img {
+/* #451       img {
           border-radius: 15px;
-        }
+        }*/
       }
     }
   }
   #tdictionaries_list {
-      .ctrlBtnArea {
-          width: 100px;
-          a {
-            width: 35px;
-            height: 35px;
-            margin: 5px;
-            padding: 2px;
-          }
+        td:not(.noClick) {
+      cursor: pointer;
+    }
+
+    .bgGrey {
+      background-color: #DEDEDE;
+    }
+
+    .lineCtrl {
+      text-align: center;
+
+      div {
+        display: inline-block;
+        a {
+          float: left;
+          margin-bottom: 5px;
+          margin-top: 5px;
+        }
       }
-      .ui-sortable-helper {
-          display: table;
-      }
+    }
+
+    :not(.lineCtrl) a { text-decoration: none; }
+
+    input[type='checkbox'] {
+        display: none;
+
+        &:checked + label {
+            background-color: $main-color;
+            border: 1px solid $main-color;
+            position: relative;
+            cursor: pointer;
+
+            &:after {
+                content: "";
+                font-weight: bold;
+                border-right: 4px solid #FFF;
+                border-bottom: 4px solid #FFF;
+                width: 6px;
+                height: 10px;
+                position: absolute;
+                top: 0;
+                right: 4px;
+                transform: rotate(45deg);
+            }
+        }
+
+        & + label {
+            width: 20px;
+            height: 20px;
+            display: block;
+            margin: 0 auto;
+            background-color: #FFF;
+            padding: 1px;
+            border: 1px solid #828282;
+            cursor: pointer;
+        }
+    }
+
+    th input[type='checkbox']:checked + label {
+        border: 1px solid #FFF;
+    }
+    .ctrlBtnArea {
+        width: 100px;
+        a {
+          width: 35px;
+          height: 35px;
+          margin: 5px;
+          padding: 2px;
+        }
+    }
+    .ui-sortable-helper {
+        display: table;
+    }
   }
 }
 #chat_notifications_idx {
@@ -3578,10 +3646,10 @@ ul.naviBtn {
       }
       table {
         th, td {
-          padding: 0 1em;
+          /*padding: 0 1em;*/
         }
         td {
-          height: 45px!important;
+          /*height: 45px!important;*/
         }
       }
   }

@@ -846,3 +846,565 @@
     display:none;
   }
 }
+
+/* ユーザ管理レイアウト調整 */
+#muser_idx{
+  #muser_menu{
+  }
+  #muser_list{
+    .tCenter{
+      .t-link{
+        padding: 20px 5px 5px;
+      }
+    }
+  }
+}
+
+/* キャンペーン設定レイアウト調整 */
+#tcampaigns_idx{
+  #tcampaigns_description{
+  }
+  #tcampaigns_menu{
+  }
+  #tcampaigns_list{
+    .tCenter{
+      .t-link{
+        padding: 20px 5px 5px;
+      }
+    }
+  }
+}
+
+/* チャット通知設定レイアウト調整 */
+#chat_notifications_idx{
+  #chat_notifications_menu{
+  }
+  #chat_notifications_list{
+    .t-link{
+      padding: 20px 5px 5px;
+    }
+  }
+}
+
+
+/* 定型文機能 */
+#tdictionaries_idx{
+  .texboxArea{
+    position: relative;
+    top: 5px;
+    left: -20px;
+    .pointer {
+      position: relative;
+      top: 0px;
+      left: 0px;
+      #tabsort{
+        position: relative;
+        top: 2px;
+        left: -4px;
+      }
+    }
+    #stintMessage{
+      position: relative;
+      top: -2px;
+      left: 0px;
+    }
+    #tabSortMessage{
+      position: relative;
+      top: -2px;
+      left: 0px;
+    }
+  }
+  .listArea{
+    .soteTabs{
+      .tablist{
+        width: 100%;
+        /*overflow: scroll;*/
+        text-overflow:ellipsis;
+        overflow:hidden;
+        white-space:nowrap;
+      }
+    }
+    position: relative;
+    top: 0px;
+    left: 0px;
+    margin: 20px;
+    padding-bottom: 20px;
+    .fLeft{
+      position: relative;
+      top: -10px;
+      left: -5px;
+      .pointer{
+        position: relative;
+        top: 0px;
+        left: -1px;
+        [id^="sort"]{
+          position: relative;
+          padding: 10px;
+        }
+        [id^="sortText"]{
+          top: -2px;
+        }
+        [id^="sortMessage"]{
+          position: relative;
+          top: -4px;
+          left: 0px;
+        }
+      }
+    }
+    .fRight{
+      position: relative;
+      top: -20px;
+      left: 2px;
+    }
+    #tdictionaries_list{
+      padding: 15px;
+      .t-link{
+        vertical-align: middle;
+        display: table-cell;
+        padding: 0px 10px 10px;
+      }
+    }
+  }
+}
+
+#input_category_btn.disOffgreenBtn{
+  border: 1px solid #C3D69B;
+  margin: 0px 5px 0px;
+  padding: 5px 20px 5px;
+  transition: background-color, border-color 0.1s linear;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+}
+
+#input_category_btn.disOffgrayBtn{
+  border: 1px solid #DADADA;
+  margin: 0px 5px 0px;
+  padding: 5px 20px 5px;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+}
+
+
+.disOffgreenBtn {
+  cursor: pointer !important;
+  font-weight: bold;
+  transition: background-color, border-color 0.1s linear;
+  background-color: #C3D69B;
+  color: white;
+  border: 0px solid #C3D69B;
+  padding: 7px;
+}
+
+.disOffgreenBtn:hover{
+  background-color: #A5B77E;
+  border: 0px solid #A5B77E;
+  padding: 6.5px;
+  transition: background-color, border-color 0.1s linear;
+  color: #fff;
+}
+
+[id^="tdictionaries_manu_btn"].disOffgreenBtn:hover{
+  padding: 5.5px 7px 6.5px 6.5px;
+}
+
+.disOffgrayBtn {
+  cursor: pointer !important;
+  font-weight: bold;
+  transition: background-color, border-color 0.1s linear;
+  background-color: #DADADA;
+  border: 0px solid #DADADA;
+  padding: 7px;
+  color: white;
+}
+
+.disOffgrayBtn:hover {
+  background-color: #DADADA;
+  border: 0px solid #DADADA;
+  transition: background-color, border-color 0.1s linear;
+  color: #fff;
+  padding: 7px;
+}
+
+.disOffredBtn {
+  cursor: pointer !important;
+  font-weight: bold;
+  transition: background-color, border-color 0.1s linear;
+  background-color: #D69B9B;
+  border: 0px solid #D69B9B;
+  color: white;
+  padding: 7px;
+}
+
+.disOffredBtn:hover {
+  background-color: #B78080;
+  border: 0px solid #B78080;
+  transition: background-color, border-color 0.1s linear;
+  color: #fff;
+  padding: 6.5px;
+}
+
+.t-link {
+  display: block;
+  width: 100%;
+  height: 100%;
+/*  padding: 10px 5px 2px;*/
+}
+
+#popup #popup-frame-base #popup-frame.p-copy {
+  width: 450px;
+  height: 150px;
+}
+
+#popup #popup-frame-base #popup-frame.p-copy #popup-button {
+  text-align: center;
+}
+
+#popup #popup-frame-base #popup-frame.p-copy #popup-button a {
+  width: 110px;
+  margin: 0 auto;
+  font-size: 10px;
+  padding: 7px 0px;
+}
+
+#popup #popup-frame-base #popup-frame.p-move {
+  width: 450px;
+  height: 150px;
+}
+
+#popup #popup-frame-base #popup-frame.p-move #popup-button {
+  text-align: center;
+}
+
+#popup #popup-frame-base #popup-frame.p-move #popup-button a {
+  width: 110px;
+  margin: 0 auto;
+  font-size: 10px;
+  padding: 7px 0px;
+}
+
+#popup #popup-frame-base #popup-frame.p-dictionary-del {
+  width: 450px;
+  height: 150px;
+  text-align: center;
+}
+
+#popup #popup-frame-base #popup-frame.p-dictionary-del #popup-button {
+  text-align: center;
+}
+
+#popup #popup-frame-base #popup-frame.p-dictionary-del #popup-button a {
+  width: 110px;
+  margin: 0 auto;
+  font-size: 10px;
+  padding: 7px 0px;
+}
+
+#popup #popup-frame-base #popup-frame.p-category-edit {
+  width: 450px;
+  height: 150px;
+}
+
+#popup #popup-frame-base #popup-frame.p-category-edit #popup-button {
+  text-align: center;
+}
+
+#popup #popup-frame-base #popup-frame.p-category-edit #popup-button a {
+  width: 120px;
+  margin: 0 auto;
+  font-size: 10px;
+  padding: 7px 0px;
+}
+
+#popup #popup-frame-base #popup-frame.p-category-del {
+  width: 450px;
+  height: 150px;
+}
+
+#popup #popup-frame-base #popup-frame.p-category-del #popup-button {
+  text-align: center;
+}
+
+#popup #popup-frame-base #popup-frame.p-category-del #popup-button a {
+  width: 120px;
+  margin: 0 auto;
+  font-size: 10px;
+  padding: 7px 0px;
+}
+
+#popup #popup-frame-base #popup-frame.p-category-dictionary-edit {
+  width: 550px;
+  height: 455px;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+  margin: 0;
+}
+
+#popup #popup-frame-base #popup-frame.p-category-dictionary-edit #popup-button {
+  display: none;
+}
+
+#popup-bg.category-tab-binding{
+  position: static;
+}
+
+#popup #popup-frame-base #popup-frame #popup-content #popup-title.category-tab-binding{
+  margin: 0;
+  padding: 0.5em;
+  background-color: #C3D69B;
+  color: #FFF;
+  display: block;
+  cursor: move;
+  border-bottom: none;
+}
+
+#popup #popup-frame-base #popup-frame #popup-content #popup-main.category-tab-binding{
+  padding: 10px;
+}
+
+#category_select_button{
+  position: absolute;
+  zoom: 100%;
+  top: -2px;
+  left: 510px;
+  #category_up_btn{
+    width: 15px;
+    height: 15px;
+    font-size: 8px;
+    text-align: center;
+    .triangle{
+      position: absolute;
+      top: 0px;
+      left: 2px;
+    }
+  }
+  #category_down_btn{
+    width: 15px;
+    height: 15px;
+    font-size: 8px;
+    text-align: center;
+    .triangle{
+      position: absolute;
+      top: 15px;
+      left: 2px;
+    }
+  }
+}
+
+#TDictionaryType{
+  padding: 0em 0em 0.3em;
+}
+
+#wordSearchCond{
+  background-color: rgb(242, 242, 242);
+}
+
+#serect_tab_mode{
+  position: relative;
+  top: 10px;
+  left: 0px;
+}
+
+#word_search_mode{
+  position: relative;
+  top: 10px;
+  left: 0px;
+}
+
+#categoryTabs.ui-widget.ui-widget-content{
+  border:none;
+}
+
+#categoryTabs.ui-widget-content{
+  border:none;
+}
+
+.ui-tabs .ui-tabs-nav.categoryTabStyle{
+  padding: 0;
+  height: 29px;
+  width: 101%;
+  overflow: hidden;
+}
+
+.ui-widget-header.categoryTabStyle{
+  border:none;
+  background:none;
+}
+
+.wordBorder{
+  border: 1px solid #909090;
+}
+
+.chatCategory{
+  border: 0.5em solid #C3D69B;
+  background-color: #FFF;
+  padding: 0.25em;
+  height: 290px;
+}
+
+[class^="dictionaryWord ng-binding ng-scope dictionarySelected"]{
+  background-color: rgba(195, 214, 155, 0.5);
+}
+
+[class^="dictionaryWord ng-binding ng-scope dictionarySearchSelected"]{
+  background-color: rgba(195, 214, 155, 0.5);
+}
+
+[id^="item"].dictionaryTab{
+  border: 1px solid #c5c5c5;
+}
+
+[id^="wordList"]{
+  width: 530px;
+  height: 250px !important;
+  overflow-y: scroll;
+  position: relative;
+  top: 0px;
+  left: 10px;
+}
+
+.onTabs.ui-tabs-panel.ui-corner-bottom.ui-widget-content[id^="categoryTabs-"]{
+  padding: 0px 18px;
+}
+
+#allWordList.fRight{
+  float: none;
+  width: 565px;
+  height: 300px !important;
+  position: relative;
+  top: -10px;
+  left: -40px;
+}
+
+#allScroll{
+  height: 300px;
+  overflow-y: scroll;
+}
+
+#menuheader {
+  position: relative;
+}
+
+.dictionaryWord{
+  padding: 3px;
+  border-bottom: 1px solid #909090;
+  word-break: break-all;
+  word-wrap: break-word;
+}
+
+[id^="openMenu"] {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+[id^="layerMenu"] {
+  display: none;
+  position: absolute;
+  top: 50px;
+  right: 0;
+  width: 160px;
+  font-size: 12px;
+  z-index: 9999;
+  a:hover {
+    background-color: #C3D69B;
+    color: #fff;
+    text-decoration: none;
+    display: block;
+    padding: 10px 10px 10px
+  }
+  a{
+    text-decoration: none;
+    display: block;
+    padding: 10px 10px 10px
+  }
+}
+
+#input_category_value{
+  padding: 7px 10px !important;
+}
+
+[id^="layerMenu"] ul {
+  border: solid 1px #ccc;
+  display: block;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
+  padding: 5px 0px !important;
+  background: #fff;
+  #tdictionaries_idx #tdictionaries_menu ul li.t-link{
+    padding: 0px 0px 0px;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+[id^="layerMenu"] ul li {
+  background: #fff;
+  list-style: none;
+/*  border-bottom: solid 1px #ccc;*/
+  position: relative;
+  padding: 0px !important;
+  color: #555;
+  display: block;
+}
+
+/*[id^="layerMenu"] ul li:hover {
+  color: #EA0001;
+}*/
+
+[id^="tooltip_tdictionaries_add_btn"].tooltips{
+  position: fixed;
+  left: 104px !important;
+  width: 6em
+}
+
+[id^="tooltip_tdictionaries_copy_btn"].tooltips{
+  position: fixed;
+  left: 128px !important;
+  width: 9em;
+}
+
+[id^="tooltip_tdictionaries_move_btn"].tooltips{
+  position: fixed;
+  left: 190px !important;
+  width: 6em;
+}
+
+[id^="tooltip_tdictionaries_dustbox_btn"].tooltips{
+  position: fixed;
+  left: 234px !important;
+  width: 6em;
+}
+
+[id^="tooltip_tdictionaries_manu_btn"].tooltips{
+  position: fixed;
+}
+
+
+
+.ui-tabs.soteTabs {
+  padding: 0em;
+}
+
+.ui-widget.ui-widget-content.soteTabs {
+  border: 0px;
+}
+
+.ui-tabs .ui-tabs-nav {
+  padding: 0;
+  margin: 0;
+}
+
+.ui-widget-header.tablist{
+  border:none;
+}
+
+.ui-tabs.ui-tabs-nav{
+  padding: .0em .0em 0;
+}
+
+.ui-tabs.ui-tabs-nav.tablist{
+  padding: .0em .0em 0;
+}
+
+.tabBox.ui-tabs-panel.ui-corner-bottom.ui-widget-content{
+  border: solid #C3D69B;
+  border-width: 15px 10px 10px;
+  background-color: #FFF;
+  padding: 0.25em;
+}

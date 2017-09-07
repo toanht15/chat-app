@@ -76,16 +76,19 @@
                   <span class="greenBtn btn-shadow" onclick="chatApi.addOption(1)">選択肢を追加する</span>
                 </chat-menu-child>
               </chat-menu>
-              <div id="sendMessageArea" ng-hide="chatAreaShowFlg !== true" style="position: relative">
+             <div id="sendMessageArea" ng-hide="chatAreaShowFlg !== true" style="position: relative">
                 <?php if ( strcmp($userInfo['permission_level'], C_AUTHORITY_SUPER) !== 0) :?>
                   <textarea rows="5" id="sendMessage" ng-focus="sendMessageConnectConfirm(detailId)" maxlength="300" ng-attr-placeholder="{{chatPs()}}"></textarea>
+
                   <div id="wordListArea" ng-keydown="searchKeydown($event)">
+
                     <input type="text" ng-model="searchWord" id="wordSearchCond" />
                     <ul id="wordList">
                       <li ng-repeat="item in entryWordSearch(entryWordList)" id="item{{$index}}" ng-class="{selected: $index === entryWord}">{{item.label}}</li>
-                      <li style="border:none; color:#ff7b7b" ng-if="entryWordList.length === 0">[設定] > [簡易入力] から<br>メッセージを登録してください</li>
+                      <li style="border:none; color:#ff7b7b" ng-if="entryWordList.length === 0">[設定] > [定型文] から<br>メッセージを登録してください</li>
                     </ul>
                   </div>
+
                   <div id="sendMessageAreaBtn" ng-class="{showOption: chatOptionDisabled(detailId)}">
                     <span id="sinclo_chatEndBtn" class="btn-shadow redBtn ng-binding" ng-click="confirmDisConnect(detailId)">退室</span>
                     <span id="sinclo_sendbtn" class="btn-shadow" onclick="chatApi.pushMessage()">{{chatSendBtnName()}}</span>
