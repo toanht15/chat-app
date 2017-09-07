@@ -25,7 +25,7 @@
         $(".error-message").remove();
 
         if ( keys.length === 0 ) {
-          location.href = "<?=$this->Html->url(array('controller' => 'TDictionaries', 'action' => 'index'))?>";
+          location.href = "<?=$this->Html->url(array('controller' => 'TDictionaries', 'action' => 'index', 'tabindex' => $tabindex))?>";
           return false;
         }
         for (var i = 0; i < keys.length; i++) {

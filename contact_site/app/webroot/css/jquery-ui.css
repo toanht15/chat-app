@@ -97,13 +97,27 @@
 .ui-tabs .ui-tabs-nav {
   margin: 0;
   padding: .0em .0em 0;
+/* 折り返しを逆順に */
+/*
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap-reverse;
+*/
+/* 折り返しを逆順に */
+  /* 試験的に上下スクロール対応 */
+  /*
+  height: 29px;
+  width: 100%;
+  overflow-y: scroll;
+  */
+  /* 試験的に上下スクロール対応 */
 }
 .ui-tabs .ui-tabs-nav li {
   list-style: none;
   float: left;
   position: relative;
   top: 0;
-  margin: 1px 1em 0 0;
+  margin: 1px 2px 0 0;
   border-bottom-width: 0;
   padding: 0;
   white-space: nowrap;
@@ -112,6 +126,8 @@
   float: left;
   padding: .5em 1em;
   text-decoration: none;
+  overflow: hidden;
+  outline: none;
 }
 .ui-tabs .ui-tabs-nav li.ui-tabs-active {
   margin-bottom: -1px;
@@ -180,8 +196,9 @@
 works properly when clicked or hovered */
 html .ui-button.ui-state-disabled:hover,
 html .ui-button.ui-state-disabled:active {
-  border: 1px solid #c5c5c5;
-  background: #ffffff;
+  /*border: 1px solid #c5c5c5;*/
+  box-shadow: 0px -1px 1px rgba(0, 0, 0, 0.2);
+  background: #ADADAD;
   font-weight: normal;
   color: #454545;
 }
@@ -192,7 +209,9 @@ a.ui-button,
 a:link.ui-button,
 a:visited.ui-button,
 .ui-button {
-  color: #454545;
+  font-size: 13px;
+  font-weight: bold;
+  color: #fff;
   text-decoration: none;
 }
 .ui-state-hover,
@@ -203,8 +222,8 @@ a:visited.ui-button,
 .ui-widget-header .ui-state-focus,
 .ui-button:hover,
 .ui-button:focus {
-  border: 1px solid #c5c5c5;
-  background: #ededed;
+  /*border: 1px solid #c5c5c5;*/
+  /*background: #ededed;*/
   font-weight: normal;
   color: #555555;
 }
@@ -218,7 +237,9 @@ a:visited.ui-button,
 .ui-state-focus a:visited,
 a.ui-button:hover,
 a.ui-button:focus {
-  color: #555555;
+  font-size: 13px;
+  font-weight: bold;
+  color: #fff;
   text-decoration: none;
 }
 
@@ -231,7 +252,7 @@ a.ui-button:focus {
 a.ui-button:active,
 .ui-button:active,
 .ui-button.ui-state-active:hover {
-  border: 1px solid #c5c5c5;
+  /*border: 1px solid #c5c5c5;*/
   background: #C3D69B;
   font-weight: normal;
   color: #555555;
@@ -244,7 +265,9 @@ a.ui-button:active,
 .ui-state-active a,
 .ui-state-active a:link,
 .ui-state-active a:visited {
-  color: #555555;
+  font-size: 13px;
+  font-weight: bold;
+  color: #fff;
   text-decoration: none;
 }
 
@@ -542,13 +565,13 @@ a.ui-button:active,
 .ui-corner-bottom,
 .ui-corner-left,
 .ui-corner-bl {
-  border-bottom-left-radius: 10px;
+  border-bottom-left-radius: 0px;
 }
 .ui-corner-all,
 .ui-corner-bottom,
 .ui-corner-right,
 .ui-corner-br {
-  border-bottom-right-radius: 10px;
+  border-bottom-right-radius: 0px;
 }
 
 /* Overlays */

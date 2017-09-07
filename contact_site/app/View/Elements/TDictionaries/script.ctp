@@ -1,4 +1,3 @@
-
 <script type="text/javascript">
 //定型文新規追加
 function openAddDialog(tabid){
@@ -6,7 +5,7 @@ function openAddDialog(tabid){
   var index = document.getElementById("select_tab_index").value;
   if (!document.getElementById("sort" + index).checked
        && !document.getElementById("tabsort").checked) {
-    openEntryDialog({type: 1, tabid: tabid});
+    openEntryDialog({type: 1, tabid: tabid, tabindex:index});
   }
   else{
     return false;
@@ -19,7 +18,7 @@ function openEditDialog(id,tabid){
   var index = document.getElementById("select_tab_index").value;
   if (!document.getElementById("sort" + index).checked
        && !document.getElementById("tabsort").checked) {
-    openEntryDialog({type: 2, id: id, tabid: tabid});
+    openEntryDialog({type: 2, id: id, tabid: tabid, tabindex:index});
   }
   else{
     return false;
@@ -87,6 +86,7 @@ function openEntryEditDialog(setting){
 //      var selectedCategory = document.getElementById("TDictionaryType").value;
       if(type == 1){
         modalOpen.call(window, html, 'p-category-edit', 'カテゴリ名の変更', 'moment');
+        $("#edit_category_value").select();
       }
       if(type == 2){
         modalOpen.call(window, html, 'p-category-del', 'カテゴリの削除', 'moment');
@@ -111,7 +111,7 @@ function openConfirmDialog(){
     selectedList.push(Number(list[i].value));
   }
   var select_tab_index = document.getElementById("select_tab_index").value;
-  modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', '定型文メッセージ情報', 'moment');
+  modalOpen.call(window, "選択された定型文を削除します。<br/><br/>よろしいですか？<br/>", 'p-dictionary-del', '削除', 'moment');
   popupEvent.closePopup = function(){
     $.ajax({
       type: 'post',
@@ -122,7 +122,8 @@ function openConfirmDialog(){
       },
       url: "<?= $this->Html->url('/TDictionaries/remoteDeleteUser') ?>",
       success: function(){
-        location.href = "<?= $this->Html->url('/TDictionaries/index') ?>";
+        var url = "<?= $this->Html->url('/TDictionaries/index') ?>";
+        location.href = url + "/tabindex:" + index;
       }
     });
   };
@@ -134,26 +135,31 @@ function tabSort(){
   //チェックモードタブを判定
   var index = document.getElementById("select_tab_index").value;
   if (!document.getElementById("tabsort").checked) {
-    document.getElementById("tabSortMessage").style.display="none";
-    document.getElementById("tabsort_btn").style.display="none";
-    //カテゴリ名入力欄変更可
-    document.getElementById("input_category_value").disabled = "";
-    //定型文登録ボタン押下可
-    document.getElementById('tdictionaries_add_btn'+index).className="btn-shadow disOffgreenBtn";
-    //定型文の並べ替えチェックボックスチェック可
-    document.getElementById('sort'+index).disabled = "";
-    //カテゴリメニューボタン押下可
-    document.getElementById('tdictionaries_manu_btn'+index).className="btn-shadow disOffgreenBtn";
-    //全て選択チェックボックス選択可
-    document.getElementById('allCheck'+index).disabled = "";
-    //項目チェックボックス選択可
-    var checkBoxList = document.querySelectorAll('[id^="selectTab'+index+'"]');
-    for (var i = 0; i < checkBoxList.length; i++) {
-      checkBoxList[i].disabled = "";
-    }
-    $(".ui-tabs-nav").addClass("move").sortable("disable");
+    resetTabSort();
+//     document.getElementById("tabSortMessage").style.display="none";
+//     document.getElementById("tabsort_btn").style.display="none";
+//     //カテゴリ名入力欄変更可
+//     document.getElementById("input_category_value").disabled = "";
+//     //定型文登録ボタン押下可
+//     document.getElementById('tdictionaries_add_btn'+index).className="btn-shadow disOffgreenBtn";
+//     //定型文の並べ替えチェックボックスチェック可
+//     document.getElementById('sort'+index).disabled = "";
+//     //カテゴリメニューボタン押下可
+//     document.getElementById('tdictionaries_manu_btn'+index).className="btn-shadow disOffgreenBtn";
+//     //全て選択チェックボックス選択可
+//     document.getElementById('allCheck'+index).disabled = "";
+//     //項目チェックボックス選択可
+//     var checkBoxList = document.querySelectorAll('[id^="selectTab'+index+'"]');
+//     for (var i = 0; i < checkBoxList.length; i++) {
+//       checkBoxList[i].disabled = "";
+//     }
+//     $(".ui-tabs-nav").addClass("move").sortable("disable");
   }
   else {
+    $('[id^="selectTab"]').prop('checked', false);
+    allCheckCtrl();
+    actBtnShow();
+    document.getElementById("tabsortText").style.display="none";
     document.getElementById("tabSortMessage").style.display="";
     document.getElementById("tabsort_btn").style.display="";
     //各ボタン及び動作をモード中は動かなくする
@@ -174,12 +180,15 @@ function tabSort(){
     }
     //ソートモードon
     $(".ui-tabs-nav").addClass("move").sortable("enable");
+    $(".soteTabs ul li").css('cursor', 'move');
+    $(".soteTabs ul li a").css('cursor', 'move');
   }
 }
 
 //カテゴリのソートを保存
 function saveTabSort(){
   var list = getTabSort();
+  var index = document.getElementById("select_tab_index").value;
   $.ajax({
     type: "POST",
     url: "<?= $this->Html->url(['controller' => 'TDictionaries', 'action' => 'remoteSaveTabSort']) ?>",
@@ -199,7 +208,13 @@ var getTabSort = function(){
   $(".soteTabs ul li a").each(function(e){
     list.push($(this).data('id'));
   });
+  list = $.grep(list, function(e){return e;});
   return JSON.parse(JSON.stringify(list));
+};
+
+//タブのソート順をリセット
+var resetTabSort = function(){
+  location.href = "<?= $this->Html->url('/TDictionaries/index') ?>";
 };
 
 /* #451 定型文カテゴリ対応 end */
@@ -208,31 +223,37 @@ var getTabSort = function(){
 function toggleSort(){
   var index = document.getElementById("select_tab_index").value;
   if (!document.getElementById("sort" + index).checked) {
-    //ソートモードoff
-    $(".sortable").addClass("move").sortable("disable");
-    //定型文ソートモードメッセージ＆登録ボタン非表示
-    document.getElementById("sortMessage" + index).style.display="none";
-    document.getElementById("tdictionaries_sort_btn").style.display="none";
-    //カテゴリ名入力欄変更可
-    document.getElementById("input_category_value").disabled = "";
-    //定型文登録ボタン押下可
-    document.getElementById('tdictionaries_add_btn'+index).className="btn-shadow disOffgreenBtn";
-    //カテゴリの並べ替えチェックボックスチェック可
-    document.getElementById('tabsort').disabled = "";
-    //カテゴリメニューボタン押下可
-    document.getElementById('tdictionaries_manu_btn'+index).className="btn-shadow disOffgreenBtn";
-    //全て選択チェックボックス選択可
-    document.getElementById('allCheck'+index).disabled = "";
-    //項目チェックボックス選択可
-    var checkBoxList = document.querySelectorAll('[id^="selectTab'+index+'"]');
-    for (var i = 0; i < checkBoxList.length; i++) {
-      checkBoxList[i].disabled = "";
-    }
+    restSort();
+//     //ソートモードoff
+//     $(".sortable").addClass("move").sortable("disable");
+//     //定型文ソートモードメッセージ＆登録ボタン非表示
+//     document.getElementById("sortText" + index).style.display="";
+//     document.getElementById("sortMessage" + index).style.display="none";
+//     document.getElementById("tdictionaries_sort_btn").style.display="none";
+//     //カテゴリ名入力欄変更可
+//     document.getElementById("input_category_value").disabled = "";
+//     //定型文登録ボタン押下可
+//     document.getElementById('tdictionaries_add_btn'+index).className="btn-shadow disOffgreenBtn";
+//     //カテゴリの並べ替えチェックボックスチェック可
+//     document.getElementById('tabsort').disabled = "";
+//     //カテゴリメニューボタン押下可
+//     document.getElementById('tdictionaries_manu_btn'+index).className="btn-shadow disOffgreenBtn";
+//     //全て選択チェックボックス選択可
+//     document.getElementById('allCheck'+index).disabled = "";
+//     //項目チェックボックス選択可
+//     var checkBoxList = document.querySelectorAll('[id^="selectTab'+index+'"]');
+//     for (var i = 0; i < checkBoxList.length; i++) {
+//       checkBoxList[i].disabled = "";
+//     }
   }
   else {
+    $('[id^="selectTab"]').prop('checked', false);
+    allCheckCtrl();
+    actBtnShow();
     //ソートモードon
     $(".sortable").addClass("move").sortable("enable");
     //定型文ソートモードメッセージ＆登録ボタン表示
+    document.getElementById("sortText" + index).style.display="none";
     document.getElementById("sortMessage" + index).style.display="";
     document.getElementById("tdictionaries_sort_btn").style.display="";
     //各ボタン及び動作をモード中は動かなくする
@@ -252,6 +273,8 @@ function toggleSort(){
       checkBoxList[i].disabled = "disabled";
     }
     $('t-link').removeClass('t-link');
+    $("table tbody.sortable tr td").css('cursor', 'move');
+    $("table tbody.sortable tr td a").css('cursor', 'move');
   }
 }
 
@@ -266,7 +289,9 @@ function saveToggleSort(){
     },
     dataType: "html",
     success: function(){
-      location.href = location.href;
+      var index = document.getElementById("select_tab_index").value;
+      var url = "<?= $this->Html->url('/TDictionaries/index') ?>";
+      location.href = url + "/tabindex:" + index;
     }
   });
 
@@ -278,7 +303,15 @@ var getSort = function(){
   $(".sortable tr").each(function(e){
     list.push($(this).data('id'));
   });
+  list = $.grep(list, function(e){return e;});
   return JSON.parse(JSON.stringify(list));
+};
+
+//定型文のソート順をリセット
+function restSort(){
+  var index = document.getElementById("select_tab_index").value;
+  var url = "<?= $this->Html->url('/TDictionaries/index') ?>";
+  location.href = url + "/tabindex:" + index;
 };
 
 $(document).ready(function(){
@@ -287,16 +320,17 @@ $(".sortable").sortable({
   axis: "y",
   tolerance: "pointer",
   containment: "parent",
+  cursor: 'move',
   revert: 100
 });
 $(".sortable").sortable("disable");
 
-$("#soteTabs").tabs();
-$('.ui-tabs-nav') . sortable( {
-    axis: 'x'
+$(".soteTabs").tabs({active: "<?= $tabindex ?>",});
+$('.ui-tabs-nav').sortable( {
+//    axis: 'x',
+    cursor: 'move'
 } );
 $(".ui-tabs-nav").sortable("disable");
-
 });
 
 document.body.onload = function(){
@@ -383,16 +417,19 @@ var actBtnShow = function(){
 
 /* #451 定型文カテゴリ対応 start */
 $( function() {
+
   //インデックスの初期値を挿入暫定的に0
-  document.getElementById("select_tab_index").value = 0;
+  document.getElementById("select_tab_index").value = "<?= $tabindex ?>";
   //タブが押下された時の処理
   $("#soteTabs").bind('tabsactivate', function(event, ui) {
+    var oldid = "ui-id-" + (Number(document.getElementById("select_tab_index").value) + 1);
     var index = ui.newTab.index();
     var stint_flg = document.getElementById("stint_flg").value;
     //もし、タブをクリックされた時定型文並び替えモードだったら並べ替えモードをキャンセル
     if (!document.getElementById("sort" + index).checked) {
       $(".sortable").addClass("move").sortable("disable");
       //定型文ソートモードメッセージ＆登録ボタン非表示
+      document.getElementById("sortText" + index).style.display="";
       document.getElementById("sortMessage" + index).style.display="none";
       document.getElementById("tdictionaries_sort_btn").style.display="none";
       //カテゴリ名入力欄変更可
@@ -445,6 +482,66 @@ $( function() {
     if(stint_flg == '0'){
       document.getElementById('tdictionaries_manu_btn' + index).className="btn-shadow disOffgrayBtn";
     }
+    var allTabList = document.querySelectorAll('[id^="ui-id-"]');
+    //要素の高さを取得
+    var newid = "ui-id-" + (index + 1);
+    var top = document.getElementById(newid).getBoundingClientRect().top;
+    //基準点（0盤目のタブの高さを取得）
+    var c_top = document.getElementById(oldid).getBoundingClientRect().top;
+    //もし基準点と高さが異なった場合
+    if(top != c_top){
+//       //タブ各要素の高さ順に配列を取得
+//       for (var i = 0; i < allTabList.length; i++) {
+
+//       }
+//       //<li>リスト取得（タブリスト）
+//       var array1 = [];
+//       var array2 = [];
+//       $("#tablist li").each(function(i) {
+//         if(i < index){
+//           array1.push({
+//             name: $(this).find("a").text(),
+//             source: $(this).html()
+//           });
+//         }
+//         else{
+//           array2.push({
+//             name: $(this).find("a").text(),
+//             source: $(this).html()
+//           });
+//         }
+//       });
+
+//       //var tabListArray = Array.prototype.slice.call(allTabList);
+//       var tabListArray = ul.querySelectorAll('[id^="ui-id-"]');
+//       for (var i = 0; i < tabListArray.length; i++) {
+//         if(i < index){
+//           array1.push({
+//               name: tabListArray[i].text,
+//               source: $("#"+tabListArray[i].id).html()
+//             });
+//         }
+//         else{
+//             array2.push({
+//                 name: tabListArray[i].text,
+//                 source: $("#"+tabListArray[i].id).html()
+//             });
+//         }
+//       }
+//       var liList = array2.concat(array1);
+//       var arr = [];
+//       for (i = 0; i < liList.length; i++) {
+//         arr[i] = {
+//           idx : i,
+//           id : Number(liList[i].substr(6))
+//         };
+//       }
+//       for (i = 0; i < arr.length; i++) {
+//         ul.insertBefore(childs[arr[i].index]);
+//         //ul.appendChild(ul.removeChild(liList[i]))
+//         //$("#tablist").append(liList[i].value);
+//       }
+    }
   });
 
   //プラン別対応
@@ -478,6 +575,96 @@ $( function() {
       return;
     }
   });
+
+  //ページ全体を監視して何らかのクリックがあった時
+  $(document).on('click touchend', function(event) {
+    //メニューオープン以外の動きだったら
+    if (!$(event.target).closest('[id^=openMenu]').length) {
+      $("#layerMenu"+ index).fadeOut("fast");
+    }
+  });
+
+  $(window).on('load resize', function(){
+    //全てのタブの要素を取得
+    var allTabList = document.querySelectorAll('[id^="ui-id-"]');
+    for (var i = 0; i < allTabList.length; i++) {
+      //全角を2、半角を1バイトとして長さを取得
+      var length = countLength(allTabList[i].text);
+      //全角バイトを超えていなかったらタブの長さを固定
+      if(length <= 12){
+        allTabList[i].style.width = '100px';
+        allTabList[i].style.textAlign = 'center';
+      }
+    }
+    //タブの高さごとの配列を取得
+    var tobTopList = getTabTopList(allTabList);
+    if(tobTopList.length > 1){
+      //表示が複数行になってしまっているとき
+      //タブが一行に収まるまで繰り返し
+      var lineChk = false;
+      var px = 100;
+      while (lineChk == false) {
+        for (var i = 0; i < allTabList.length; i++) {
+          allTabList[i].style.width = px+'px'
+          allTabList[i].style.textAlign = 'center';
+        }
+        //全てのタブの要素を取得
+        var allTabList = document.querySelectorAll('[id^="ui-id-"]');
+        //タブの高さごとの配列を取得
+        var tobTopList = getTabTopList(allTabList);
+        if(tobTopList.length == 1){
+          //一行になったらループ終わり
+          lineChk = true;
+        }
+        else{
+          px = (px - 1);
+        }
+      }
+    }
+  });
+
+  //タブの高さごとの配列を取得
+  function getTabTopList(allTabList){
+    var tobTopList = [];
+    var topAllay = [];
+    for (var i = 0; i < allTabList.length; i++) {
+      var id = allTabList[i].id;
+      topAllay.push($("#"+id).offset().top);
+    }
+    var nawtop = topAllay[0];
+    var tabAllay = [];
+    for (var i = 0; i < topAllay.length; i++) {
+      tabAllay.push(allTabList[i].id);
+      if(nawtop == topAllay[(i + 1)]){
+        var linechange = 0;
+      }
+      else{
+        var linechange = 1;
+        nawtop = topAllay[(i + 1)];
+      }
+      if(linechange == 1 || (topAllay.length - 1) == i){
+        tobTopList.push(tabAllay);
+        tabAllay = [];
+      }
+    }
+    return tobTopList;
+  }
+
+  function countLength(str) {
+    var r = 0;
+    for (var i = 0; i < str.length; i++) {
+        var c = str.charCodeAt(i);
+        // Shift_JIS: 0x0 ～ 0x80, 0xa0 , 0xa1 ～ 0xdf , 0xfd ～ 0xff
+        // Unicode : 0x0 ～ 0x80, 0xf8f0, 0xff61 ～ 0xff9f, 0xf8f1 ～ 0xf8f3
+        if ( (c >= 0x0 && c < 0x81) || (c == 0xf8f0) || (c >= 0xff61 && c < 0xffa0) || (c >= 0xf8f1 && c < 0xf8f4)) {
+            r += 1;
+        } else {
+            r += 2;
+        }
+    }
+    return r;
+  }
+
 });
 
 //テキストボックスに入力があったらボタンを有効化
@@ -515,8 +702,6 @@ function saveCategoryEntryDialog(setting){
   var type = setting.type;
   var category_name = document.getElementById('input_category_value').value;
   if(category_name){
-    modalOpen.call(window, "カテゴリを登録します、よろしいですか？", 'p-confirm', '定型文メッセージ情報', 'moment');
-    popupEvent.closePopup = function(){
       $.ajax({
         type: 'post',
         url: "<?= $this->Html->url('/TDictionaries/remoteSaveCategoryEntryForm') ?>",
@@ -530,7 +715,6 @@ function saveCategoryEntryDialog(setting){
           location.href = "<?= $this->Html->url('/TDictionaries/index') ?>";
         }
       });
-    };
   }
   else{
     document.getElementById("input_category_btn").disabled = "disabled";

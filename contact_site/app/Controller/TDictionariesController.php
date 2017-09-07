@@ -29,7 +29,7 @@ class TDictionariesController extends AppController {
 
   public function beforeFilter(){
     parent::beforeFilter();
-    $this->set('title_for_layout', '単語帳管理');
+    $this->set('title_for_layout', '定型文管理');
   }
 
   /* *
@@ -80,6 +80,19 @@ class TDictionariesController extends AppController {
     $this->set('nameList', $tab_name);
     $this->set('dictionaryList', $tab_array);
     $this->set('stint_flg', $stint_flg);
+    if(isset($this->request->params['named']['tabindex'])){
+      $tabindex = $this->request->params['named']['tabindex'];
+      $this->set('tabindex', $tabindex);
+    }
+    else{
+      if(isset($this->request->data['index'])){
+        $tabindex = $this->request->data['index'];
+        $this->set('tabindex', $tabindex);
+      }
+      else{
+        $this->set('tabindex', 0);
+      }
+    }
     //#451 定型文カテゴリ対応 end
     $this->_viewElement();
   }
@@ -143,6 +156,7 @@ class TDictionariesController extends AppController {
     $this->layout = 'ajax';
     $this->_viewElement();
     $this->set('tabid', $this->request->data['tabid']);
+    $this->set('tabindex', $this->request->data['tabindex']);
     // const
     if ( strcmp($this->request->data['type'], 2) === 0 ) {
       $this->TDictionary->recursive = -1;
@@ -234,6 +248,7 @@ class TDictionariesController extends AppController {
     foreach($tab_name as $value){
       $names[$value['id']] = $value['name'];
     }
+    $this->set('tabindex', $data['select_tab_index']);
     $this->set('type', $data['type']);
     $this->set('id', $tab_name[0]['id']);
     $this->set('names', $names);

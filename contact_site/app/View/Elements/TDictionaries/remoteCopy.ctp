@@ -43,7 +43,12 @@
       },
       url: url,
       success: function(){
-        location.href = "<?= $this->Html->url('/TDictionaries/index') ?>";
+        if(type == '3' || type == '4'){
+          location.href = "<?=$this->Html->url(array('controller' => 'TDictionaries', 'action' => 'index', 'tabindex' => $tabindex))?>";
+        }
+        else{
+          location.href = "<?= $this->Html->url('/TDictionaries/index') ?>";
+        }
       }
     });
   }
@@ -70,32 +75,41 @@
   <?php if($type == '1'){?>
   <!-- カテゴリ更新 -->
     <div style="text-align:center;">
-      <span>カテゴリ名：</span>
+      <br/>
+      <span>カテゴリ名：　</span>
       <span>
         <input type="text" name="dummy" style="display:none;">
-        <input type="search" class="" size="35" id="edit_category_value" value="" >
+        <input type="text" class="" size="25" id="edit_category_value" value="" >
       </span>
+      <br/>
+      <br/>
     </div>
   <!-- カテゴリ更新 -->
   <?php }?>
   <?php if($type == '2'){?>
   <!-- カテゴリ削除 -->
+    <br/>
+    <br/>
     <div style="text-align:center;">
-      カテゴリを削除すると<font style="color:red">カテゴリ内の定型文も全て削除</font>されます。<br>
+      カテゴリを削除すると<font style="color:rgb(192, 0, 0)">カテゴリ内の定型文も全て削除</font>されます。<br>
     </div>
+    <br/>
+    <br/>
   <!-- カテゴリ削除 -->
   <?php }?>
   <?php if($type == '3'){?>
   <!-- 定型文コピー -->
     <div style="text-align:center;">
     <font>
-      選択された定型文をコピーします。<br>
+      選択された定型文をコピーします。<br/><br/>
     </font>
     <?php if($stint_flg == '1'){ ?>
       <font>
-        コピー先を選択してください<br>
+        コピー先を選択してください<br/><br/>
       </font>
       <?= $this->Form->input('type', array('type' => 'select', 'options' => $names, 'div' => false, 'label' => false)) ?>
+      <br/>
+      <br/>
     <?php }?>
     </div>
   <!-- 定型文コピー -->
@@ -104,12 +118,14 @@
   <!-- 定型文移動 -->
     <div style="text-align:center;">
     <font>
-      選択された定型文を移動します。<br>
+      選択された定型文を移動します。<br/><br/>
     </font>
     <font>
-      移動先を選択してください<br>
+      移動先を選択してください<br/><br/>
     </font>
     <?= $this->Form->input('type', array('type' => 'select', 'options' => $names, 'div' => false, 'label' => false)) ?>
+    <br/>
+    <br/>
     </div>
   <!-- 定型文移動 -->
   <?php }?>
