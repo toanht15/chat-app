@@ -866,7 +866,7 @@ class StatisticsController extends AppController {
         date_format(th.access_date, ?) as date,thcau.m_users_id as userId,
         count(thcau.id) as request_count
         FROM (select id,m_companies_id,access_date,ip_address
-      from t_histories where m_companies_id = ? AND access_date between ? and ? ) as th,
+      from t_histories force index(company_access_date) where m_companies_id = ? AND access_date between ? and ? ) as th,
       t_history_chat_logs as thcl,t_history_chat_active_users as thcau
         WHERE
           thcau.t_history_chat_logs_id = thcl.id
