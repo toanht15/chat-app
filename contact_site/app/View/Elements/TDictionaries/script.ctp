@@ -596,10 +596,13 @@ $( function() {
       var allTabList = document.querySelectorAll('[id^="ui-id-"]');
       //overflowしているか判定ししていたら配列に保持
       for (var i = 0; i < allTabList.length; i++) {
-         var id = allTabList[i].id;
-         var jq_obj = $(allTabList[i]);
-         if(isEllipsisActive(jq_obj)){
-           overflowList.push(allTabList[i]);
+//          var id = allTabList[i].id;
+//          var jq_obj = $(allTabList[i]);
+//          if(isEllipsisActive(jq_obj)){
+//            overflowList.push(allTabList[i]);
+//          }
+         if(isEllipsisActive(allTabList[i])){
+             overflowList.push(allTabList[i]);
          }
       }
       //overflowしているリストがあればoverflowの分だけ繰り返し
@@ -700,8 +703,11 @@ $( function() {
   }
 
   //オーバーフローされているかどうかの判定
-  function isEllipsisActive($jQueryObject) {
-    return ($jQueryObject.outerWidth() < $jQueryObject[0].scrollWidth);
+//   function isEllipsisActive($jQueryObject) {
+//     return ($jQueryObject.outerWidth() < $jQueryObject[0].scrollWidth);
+//   }
+  function isEllipsisActive(e) {
+    return (e.offsetWidth < e.scrollWidth);
   }
 
   //タブの高さごとの配列を取得
