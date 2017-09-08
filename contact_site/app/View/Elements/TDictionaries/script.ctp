@@ -585,8 +585,8 @@ $( function() {
   });
 
 //  var currentWidth = $(window).outerWidth();
-  $(window).on('load resize', function(){
-    setWidth();
+  $(window).on('load resize', function(e){
+    setWidth(e);
 
     var allTabList = document.querySelectorAll('[id^="ui-id-"]');
     //タブが一行に収まっていてoverflowがされているときの処理（ウィンドウが大きくなった時を想定）
@@ -606,26 +606,40 @@ $( function() {
       if(overflowList.length > 0){
         //タブが1行でなくなるまで繰り返し
         var lineChk = false;
+        var isMaxWidth = false;
         var px = 1;
+        var totalWidth = 0;
         while (lineChk == false) {
+          var currentTotalWidth = 0;
           for (var i = 0; i < overflowList.length; i++) {
             var tab_w = overflowList[i].clientWidth;
-            overflowList[i].style.width = (tab_w + 1)+'px';
+            var defaultWidthSize = Number(overflowList[i].dataset.defaultWidth);
+            var tabWidth = (defaultWidthSize < (tab_w + 1)) ? defaultWidthSize : tab_w + 1;
+            console.log('SHIMIZU : ' + tabWidth);
+            overflowList[i].style.width = tabWidth+'px';
             overflowList[i].style.textAlign = 'center';
+            currentTotalWidth += tabWidth;
           }
           var tobTopList = getTabTopList(allTabList);
+          console.log('SHIMIZU 2 : ' + tobTopList.length);
           if(tobTopList.length > 1){
             //一行以上になったらループ終わり
             lineChk = true;
+          } else if(currentTotalWidth === totalWidth) {
+            //一行以上になったらループ終わり
+            lineChk = true;
+            isMaxWidth = true;
+          }
+          totalWidth = currentTotalWidth;
+        }
+        if(!isMaxWidth) {
+          //二行になってしまう直前のサイズに戻す
+          for (var i = 0; i < overflowList.length; i++) {
+            var tab_w = overflowList[i].clientWidth;
+            overflowList[i].style.width = (tab_w - 1)+'px';
+            overflowList[i].style.textAlign = 'center';
           }
         }
-        //二行になってしまう直前のサイズに戻す
-        for (var i = 0; i < overflowList.length; i++) {
-          var tab_w = overflowList[i].clientWidth;
-          overflowList[i].style.width = (tab_w - 1)+'px';
-          overflowList[i].style.textAlign = 'center';
-        }
-
 //        setWidth();
       }
     }
@@ -634,12 +648,15 @@ $( function() {
   });
 
   //デフォルトのタブ幅セット
-  function setWidth(){
+  function setWidth(e){
     var afterWindowSize = $(this).outerWidth();
     //全てのタブの要素を取得
     var allTabList = document.querySelectorAll('[id^="ui-id-"]');
     for (var i = 0; i < allTabList.length; i++) {
       var tab_w = allTabList[i].clientWidth;
+      if(e.type === 'load') {
+        allTabList[i].dataset.defaultWidth = tab_w;
+      }
       if(tab_w < 104){
         allTabList[i].style.width = '104px';
         allTabList[i].style.textAlign = 'center';
