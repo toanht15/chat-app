@@ -1214,6 +1214,13 @@
                 content += str + "\n";
 
             }
+
+            if ( cs === "sinclo_re" ) {
+              cs += ' effect_left';
+            } else if (cs === "sinclo_se") {
+              cs += ' effect_right';
+            }
+
             li.className = cs;
             li.innerHTML = content;
         },
