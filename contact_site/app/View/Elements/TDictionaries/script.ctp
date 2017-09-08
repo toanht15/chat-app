@@ -393,11 +393,7 @@ var actBtnShow = function(){
   if ( $('input[name^="selectTab'+select_tab_index+'"]').is(":checked") ) {
     document.getElementById("tdictionaries_copy_btn" + select_tab_index).className="btn-shadow disOffgreenBtn";
     document.getElementById("tdictionaries_copy_btn" + select_tab_index).addEventListener('click', openCopyDialog, false);
-    if(stint_flg == '0'){
-      document.getElementById("tdictionaries_move_btn" + select_tab_index).className="btn-shadow disOffgrayBtn";
-      document.getElementById("tdictionaries_move_btn" + select_tab_index).removeEventListener('click', openMoveDialog, false);
-    }
-    else{
+    if(stint_flg != '0'){
       document.getElementById("tdictionaries_move_btn" + select_tab_index).className="btn-shadow disOffgreenBtn";
       document.getElementById("tdictionaries_move_btn" + select_tab_index).addEventListener('click', openMoveDialog, false);
     }
@@ -407,8 +403,10 @@ var actBtnShow = function(){
   else {
     document.getElementById("tdictionaries_copy_btn" + select_tab_index).className="btn-shadow disOffgrayBtn";
     document.getElementById("tdictionaries_copy_btn" + select_tab_index).removeEventListener('click', openCopyDialog, false);
-    document.getElementById("tdictionaries_move_btn" + select_tab_index).className="btn-shadow disOffgrayBtn";
-    document.getElementById("tdictionaries_move_btn" + select_tab_index).removeEventListener('click', openMoveDialog, false);
+    if(stint_flg != '0'){
+      document.getElementById("tdictionaries_move_btn" + select_tab_index).className="btn-shadow disOffgrayBtn";
+      document.getElementById("tdictionaries_move_btn" + select_tab_index).removeEventListener('click', openMoveDialog, false);
+    }
     document.getElementById("tdictionaries_dustbox_btn" + select_tab_index).className="btn-shadow disOffgrayBtn";
     document.getElementById("tdictionaries_dustbox_btn" + select_tab_index).removeEventListener('click', openConfirmDialog, false);
   }
@@ -555,6 +553,8 @@ $( function() {
     document.getElementById("stintMessage").style.display="";
     //カテゴリメニューボタン押下不可
     document.getElementById('tdictionaries_manu_btn'+index).className="btn-shadow disOffgrayBtn";
+    //カテゴリ並べ替えチェックボックスボタン押下不可
+    document.getElementById("tabsort").disabled = "disabled";
   }
 
   $("[id^=openMenu]").click(function(){
@@ -584,17 +584,75 @@ $( function() {
     }
   });
 
+//  var currentWidth = $(window).outerWidth();
   $(window).on('load resize', function(){
+    setWidth();
+
+    var allTabList = document.querySelectorAll('[id^="ui-id-"]');
+    //タブが一行に収まっていてoverflowがされているときの処理（ウィンドウが大きくなった時を想定）
+    var tobTopList = getTabTopList(allTabList);
+    var overflowList = [];
+    if(tobTopList.length == 1){
+      var allTabList = document.querySelectorAll('[id^="ui-id-"]');
+      //overflowしているか判定ししていたら配列に保持
+      for (var i = 0; i < allTabList.length; i++) {
+         var id = allTabList[i].id;
+         var jq_obj = $(allTabList[i]);
+         if(isEllipsisActive(jq_obj)){
+           overflowList.push(allTabList[i]);
+         }
+      }
+      //overflowしているリストがあればoverflowの分だけ繰り返し
+      if(overflowList.length > 0){
+        //タブが1行でなくなるまで繰り返し
+        var lineChk = false;
+        var px = 1;
+        while (lineChk == false) {
+          for (var i = 0; i < overflowList.length; i++) {
+            var tab_w = overflowList[i].clientWidth;
+            overflowList[i].style.width = (tab_w + 1)+'px';
+            overflowList[i].style.textAlign = 'center';
+          }
+          var tobTopList = getTabTopList(allTabList);
+          if(tobTopList.length > 1){
+            //一行以上になったらループ終わり
+            lineChk = true;
+          }
+        }
+        //二行になってしまう直前のサイズに戻す
+        for (var i = 0; i < overflowList.length; i++) {
+          var tab_w = overflowList[i].clientWidth;
+          overflowList[i].style.width = (tab_w - 1)+'px';
+          overflowList[i].style.textAlign = 'center';
+        }
+
+//        setWidth();
+      }
+    }
+
+//    currentWidth = afterWindowSize;
+  });
+
+  //デフォルトのタブ幅セット
+  function setWidth(){
+    var afterWindowSize = $(this).outerWidth();
     //全てのタブの要素を取得
     var allTabList = document.querySelectorAll('[id^="ui-id-"]');
     for (var i = 0; i < allTabList.length; i++) {
-      //全角を2、半角を1バイトとして長さを取得
-      var length = countLength(allTabList[i].text);
-      //全角バイトを超えていなかったらタブの長さを固定
-      if(length <= 12){
-        allTabList[i].style.width = '100px';
+      var tab_w = allTabList[i].clientWidth;
+      if(tab_w < 104){
+        allTabList[i].style.width = '104px';
         allTabList[i].style.textAlign = 'center';
       }
+      else{
+        var tab_w = allTabList[i].clientWidth;
+        if(allTabList[i].clientWidth > 40){
+          var px_str = tab_w+'px'
+          allTabList[i].style.width = px_str;
+          allTabList[i].style.textAlign = 'center';
+        }
+      }
+      console.log(i + ' : ' +allTabList[i].style.width);
     }
     //タブの高さごとの配列を取得
     var tobTopList = getTabTopList(allTabList);
@@ -602,11 +660,15 @@ $( function() {
       //表示が複数行になってしまっているとき
       //タブが一行に収まるまで繰り返し
       var lineChk = false;
-      var px = 100;
+      var px = 1;
       while (lineChk == false) {
         for (var i = 0; i < allTabList.length; i++) {
-          allTabList[i].style.width = px+'px'
-          allTabList[i].style.textAlign = 'center';
+          //対象のタブの幅を取得
+          var tab_w = allTabList[i].clientWidth;
+          if(allTabList[i].clientWidth > 40){
+            allTabList[i].style.width = (tab_w - px)+'px';
+            allTabList[i].style.textAlign = 'center';
+          }
         }
         //全てのタブの要素を取得
         var allTabList = document.querySelectorAll('[id^="ui-id-"]');
@@ -616,12 +678,14 @@ $( function() {
           //一行になったらループ終わり
           lineChk = true;
         }
-        else{
-          px = (px - 1);
-        }
       }
     }
-  });
+  }
+
+  //オーバーフローされているかどうかの判定
+  function isEllipsisActive($jQueryObject) {
+    return ($jQueryObject.outerWidth() < $jQueryObject[0].scrollWidth);
+  }
 
   //タブの高さごとの配列を取得
   function getTabTopList(allTabList){
