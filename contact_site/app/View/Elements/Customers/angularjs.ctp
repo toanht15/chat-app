@@ -1948,6 +1948,12 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                   allTabList[i].style.textAlign = 'center';
                 }
               }
+              //タブの高さごとの配列を取得
+              var tobTopList = getTabTopList(allTabList);
+              //タブが一行だったら上下ボタンは非表示
+              if(tobTopList.length == 1){
+                document.getElementById("category_select_button").style.display="none";
+              }
 
               function countLength(str) {
                 var r = 0;

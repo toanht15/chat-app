@@ -918,10 +918,11 @@
     .soteTabs{
       .tablist{
         width: 100%;
-        /*overflow: scroll;*/
-        text-overflow:ellipsis;
-        overflow:hidden;
-        white-space:nowrap;
+        .ui-tabs-anchor{
+          text-overflow:ellipsis;
+          overflow:hidden;
+          white-space:nowrap;
+        }
       }
     }
     position: relative;
@@ -973,6 +974,8 @@
   padding: 5px 20px 5px;
   transition: background-color, border-color 0.1s linear;
   box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+  overflow:hidden;
+  outline:none;
 }
 
 #input_category_btn.disOffgrayBtn{
@@ -980,6 +983,8 @@
   margin: 0px 5px 0px;
   padding: 5px 20px 5px;
   box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+  overflow:hidden;
+  outline:none;
 }
 
 
