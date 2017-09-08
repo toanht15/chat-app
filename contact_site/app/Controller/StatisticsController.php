@@ -633,10 +633,12 @@ class StatisticsController extends AppController {
       WHERE
         m_users.m_companies_id = ?
       AND
-        m_users.id = ?";
+        m_users.id = ?
+      AND
+        m_users.permission_level != ?";
 
       $users = $this->MUser->query($users,
-        array($this->userInfo['MCompany']['id'],$userId));
+        array($this->userInfo['MCompany']['id'],$userId,C_AUTHORITY_SUPER));
 
       return $users;
     }
@@ -648,10 +650,12 @@ class StatisticsController extends AppController {
       WHERE
         m_users.m_companies_id = ?
       AND
-        m_users.del_flg = ?";
+        m_users.del_flg = ?
+      AND
+        m_users.permission_level != ?";
 
       $users = $this->MUser->query($users,
-      array($this->userInfo['MCompany']['id'],$noDelFlg));
+      array($this->userInfo['MCompany']['id'],$noDelFlg,C_AUTHORITY_SUPER));
 
       return $users;
     }
@@ -862,7 +866,7 @@ class StatisticsController extends AppController {
         date_format(th.access_date, ?) as date,thcau.m_users_id as userId,
         count(thcau.id) as request_count
         FROM (select id,m_companies_id,access_date,ip_address
-      from t_histories where m_companies_id = ? AND access_date between ? and ? ) as th,
+      from t_histories force index(company_access_date) where m_companies_id = ? AND access_date between ? and ? ) as th,
       t_history_chat_logs as thcl,t_history_chat_active_users as thcau
         WHERE
           thcau.t_history_chat_logs_id = thcl.id
@@ -1637,18 +1641,18 @@ class StatisticsController extends AppController {
     $requestNumberData = [];
 
     //チャットリクエスト件数
-    $requestNumber = "SELECT
-      date_format(th.access_date, ?) as date,
-        count(th.id) as request_count
-    FROM t_histories as th, t_history_chat_logs as thcl
-    WHERE
-      th.m_companies_id = ?
-    AND
-      thcl.t_histories_id = th.id
-    AND
-      thcl.message_request_flg = ?
-    AND
-      th.access_date between ? and ?";
+      $requestNumber = "SELECT
+        date_format(th.access_date, ?) as date,
+          count(th.id) as request_count
+      FROM t_histories as th, t_history_chat_logs as thcl
+      WHERE
+        th.m_companies_id = ?
+      AND
+        thcl.t_histories_id = th.id
+      AND
+        thcl.message_request_flg = ?
+      AND
+        th.access_date between ? and ?";
 
     $requestNumber = $this->exclusionIpAddress($requestNumber,'th');
 
@@ -1844,16 +1848,16 @@ class StatisticsController extends AppController {
     $effectivenessRate = [];
 
     //チャット有効件数
-    $effectiveness = "SELECT date_format(th.access_date, ?) as date,SUM(case when thcl.achievement_flg = ? THEN 1 ELSE 0 END) effectiveness,
-    SUM(case when thcl.message_type = ? THEN 1 ELSE 0 END) denial
-    FROM (select id, m_companies_id, access_date,ip_address from t_histories where m_companies_id = ? AND access_date between
-    ? and ?) as th,(select t_histories_id, achievement_flg, message_type from t_history_chat_logs where achievement_flg = ? or message_type = ? ) as thcl
-    WHERE
-      thcl.t_histories_id = th.id";
+      $effectiveness = "SELECT date_format(th.access_date, ?) as date,SUM(case when thcl.achievement_flg = ? THEN 1 ELSE 0 END) effectiveness,
+      SUM(case when thcl.message_type = ? THEN 1 ELSE 0 END) denial
+      FROM (select id, m_companies_id, access_date,ip_address from t_histories where m_companies_id = ? AND access_date between
+      ? and ?) as th,(select t_histories_id, achievement_flg, message_type from t_history_chat_logs where achievement_flg = ? or message_type = ? ) as thcl
+      WHERE
+        thcl.t_histories_id = th.id";
 
-    $effectiveness = $this->exclusionIpAddress($effectiveness,'th');
+      $effectiveness = $this->exclusionIpAddress($effectiveness,'th');
 
-    $effectiveness .= ' group by date';
+      $effectiveness .= ' group by date';
 
     $effectiveness = $this->THistory->query($effectiveness, array($date_format,$this->chatMessageType['achievementFlg']['effectiveness'],$this->chatMessageType['messageType']['denial'],
       $this->userInfo['MCompany']['id'],$correctStartDate,$correctEndDate,$this->chatMessageType['achievementFlg']['effectiveness'],$this->chatMessageType['messageType']['denial']));
