@@ -613,7 +613,7 @@ $( function() {
           var currentTotalWidth = 0;
           for (var i = 0; i < overflowList.length; i++) {
             var tab_w = overflowList[i].clientWidth;
-            var defaultWidthSize = Number(overflowList[i].dataset.defaultWidth);
+            var defaultWidthSize = Number($(overflowList[i]).data('defaultWidth'));
             var tabWidth = (defaultWidthSize < (tab_w + 1)) ? defaultWidthSize : tab_w + 1;
             console.log('SHIMIZU : ' + tabWidth);
             overflowList[i].style.width = tabWidth+'px';
@@ -655,7 +655,7 @@ $( function() {
     for (var i = 0; i < allTabList.length; i++) {
       var tab_w = allTabList[i].clientWidth;
       if(e.type === 'load') {
-        allTabList[i].dataset.defaultWidth = tab_w;
+        $(allTabList[i]).data('defaultWidth', tab_w + 1);
       }
       if(tab_w < 104){
         allTabList[i].style.width = '104px';
