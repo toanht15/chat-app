@@ -2480,14 +2480,15 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                   }
                 }
                 else{
-                  //一旦全て非表示
-                  document.getElementById("categoryTabs-ALL").style.display="none";
-                  document.getElementById("allWordList").style.display="none";
-                  var searchItemList = document.querySelectorAll('[id^="searchItem"]');
-                  for (var i = 0; i < searchItemList.length; i++) {
-                    searchItemList[i].style.display="none";
-                  }
-                  onWordSearchCond(e);
+//                   //一旦全て非表示
+//                   document.getElementById("categoryTabs-ALL").style.display="none";
+//                   document.getElementById("allWordList").style.display="none";
+//                   var searchItemList = document.querySelectorAll('[id^="searchItem"]');
+//                   for (var i = 0; i < searchItemList.length; i++) {
+//                     searchItemList[i].style.display="none";
+//                   }
+//                   onWordSearchCond(e);
+                  return false;
                 }
               })
               .on('click', function(e){

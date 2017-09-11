@@ -162,7 +162,21 @@ class TDictionariesController extends AppController {
       $this->TDictionary->recursive = -1;
       $this->request->data = $this->TDictionary->read(null, $this->request->data['id']);
     }
+    //二重操作防止
+    $dstoken = $this->rand(); //ランダムな文字列を生成する関数用意
+    $this->Session->write('dstoken', $dstoken);
+    $this->set('dstoken', $dstoken);
     $this->render('/Elements/TDictionaries/remoteEntry');
+  }
+
+  function rand($length = 8){
+    $char = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
+    mt_srand();
+    $ret = "";
+    for($i = 0; $i < $length; $i++){
+      $ret .= $char{mt_rand(0, strlen($char) - 1)};
+    }
+    return $ret;
   }
 
   /* *
@@ -170,6 +184,10 @@ class TDictionariesController extends AppController {
    * @return void
    * */
   public function openEntryEdit(){
+    //二重操作防止
+    $dstoken = $this->rand(); //ランダムな文字列を生成する関数用意
+    $this->Session->write('dstoken', $dstoken);
+    $this->set('dstoken', $dstoken);
     //プラン別対応
     if($this->coreSettings['dictionaryCategory']){
       $stint_flg = '1';
@@ -263,54 +281,57 @@ class TDictionariesController extends AppController {
    * @return void
    * */
   public function remoteCopyEntryForm() {
-    Configure::write('debug', 0);
-    $this->autoRender = FALSE;
-    $this->layout = 'ajax';
-    $data = $this->request->data;
-    //コピー元の定型文リスト取得
-    foreach($data['selectedList'] as $value){
-      $copyData[] = $this->TDictionary->read(null, $value);
-    }
-    $res = true;
-    foreach($copyData as $value){
-      $this->TDictionary->create();
-      $saveData['TDictionary']['m_companies_id'] = $this->userInfo['MCompany']['id'];
-      $saveData['TDictionary']['m_category_id'] = $data['selectedCategory'];
-      $saveData['TDictionary']['word'] = $value['TDictionary']['word'];
-      $saveData['TDictionary']['type'] = $value['TDictionary']['type'];
-      $params = [
-          'fields' => [
-              'TDictionary.sort'
-          ],
-          'conditions' => [
-              'TDictionary.m_companies_id' => $this->userInfo['MCompany']['id']
-          ],
-          'order' => [
-              'TDictionary.sort' => 'desc',
-              'TDictionary.id' => 'desc'
-          ],
-          'limit' => 1,
-          'recursive' => -1
-      ];
-      $lastData = $this->TDictionary->find('first', $params);
-      $nextSort = 1;
-      if (!empty($lastData)) {
-        $nextSort = intval($lastData['TDictionary']['sort']) + 1;
+    if($this->Session->read('dstoken') == $this->request->data['dstoken']){
+      $this->Session->delete('dstoken');
+      Configure::write('debug', 0);
+      $this->autoRender = FALSE;
+      $this->layout = 'ajax';
+      $data = $this->request->data;
+      //コピー元の定型文リスト取得
+      foreach($data['selectedList'] as $value){
+        $copyData[] = $this->TDictionary->read(null, $value);
       }
-      $saveData['TDictionary']['sort'] = $nextSort;
-      $saveData['TDictionary']['m_users_id'] = $this->userInfo['id'];
-      $this->TDictionary->set($saveData);
-      $this->TDictionary->begin();
-      // バリデーションチェックでエラーが出た場合
-      if($res){
-        if (! $this->TDictionary->save() ) {
-          $res = false;
-          $errorMessage = $this->TDictionary->validationErrors;
-          $this->TDictionary->rollback();
+      $res = true;
+      foreach($copyData as $value){
+        $this->TDictionary->create();
+        $saveData['TDictionary']['m_companies_id'] = $this->userInfo['MCompany']['id'];
+        $saveData['TDictionary']['m_category_id'] = $data['selectedCategory'];
+        $saveData['TDictionary']['word'] = $value['TDictionary']['word'];
+        $saveData['TDictionary']['type'] = $value['TDictionary']['type'];
+        $params = [
+            'fields' => [
+                'TDictionary.sort'
+            ],
+            'conditions' => [
+                'TDictionary.m_companies_id' => $this->userInfo['MCompany']['id']
+            ],
+            'order' => [
+                'TDictionary.sort' => 'desc',
+                'TDictionary.id' => 'desc'
+            ],
+            'limit' => 1,
+            'recursive' => -1
+        ];
+        $lastData = $this->TDictionary->find('first', $params);
+        $nextSort = 1;
+        if (!empty($lastData)) {
+          $nextSort = intval($lastData['TDictionary']['sort']) + 1;
         }
-        else{
-          $this->TDictionary->commit();
-          $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
+        $saveData['TDictionary']['sort'] = $nextSort;
+        $saveData['TDictionary']['m_users_id'] = $this->userInfo['id'];
+        $this->TDictionary->set($saveData);
+        $this->TDictionary->begin();
+        // バリデーションチェックでエラーが出た場合
+        if($res){
+          if (! $this->TDictionary->save() ) {
+            $res = false;
+            $errorMessage = $this->TDictionary->validationErrors;
+            $this->TDictionary->rollback();
+          }
+          else{
+            $this->TDictionary->commit();
+            $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
+          }
         }
       }
     }
@@ -322,29 +343,32 @@ class TDictionariesController extends AppController {
    * @return void
    * */
   public function remoteMoveEntryForm() {
-    Configure::write('debug', 0);
-    $this->autoRender = FALSE;
-    $this->layout = 'ajax';
-    $data = $this->request->data;
-    //移動元の定型文リスト取得
-    $res = true;
-    foreach($data['selectedList'] as $value){
-      $moveData = $this->TDictionary->read(null, $value);
-      $this->TDictionary->recursive = -1;
-      $moveData['TDictionary']['m_category_id'] = $data['selectedCategory'];
-      $moveData['TDictionary']['m_users_id'] = $this->userInfo['id'];
-      $this->TDictionary->set($moveData);
-      $this->TDictionary->begin();
-      // バリデーションチェックでエラーが出た場合
-      if($res){
-        if (! $this->TDictionary->save() ) {
-          $res = false;
-          $errorMessage = $this->TDictionary->validationErrors;
-          $this->TDictionary->rollback();
-        }
-        else{
-          $this->TDictionary->commit();
-          $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
+    if($this->Session->read('dstoken') == $this->request->data['dstoken']){
+      $this->Session->delete('dstoken');
+      Configure::write('debug', 0);
+      $this->autoRender = FALSE;
+      $this->layout = 'ajax';
+      $data = $this->request->data;
+      //移動元の定型文リスト取得
+      $res = true;
+      foreach($data['selectedList'] as $value){
+        $moveData = $this->TDictionary->read(null, $value);
+        $this->TDictionary->recursive = -1;
+        $moveData['TDictionary']['m_category_id'] = $data['selectedCategory'];
+        $moveData['TDictionary']['m_users_id'] = $this->userInfo['id'];
+        $this->TDictionary->set($moveData);
+        $this->TDictionary->begin();
+        // バリデーションチェックでエラーが出た場合
+        if($res){
+          if (! $this->TDictionary->save() ) {
+            $res = false;
+            $errorMessage = $this->TDictionary->validationErrors;
+            $this->TDictionary->rollback();
+          }
+          else{
+            $this->TDictionary->commit();
+            $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
+          }
         }
       }
     }
@@ -361,56 +385,59 @@ class TDictionariesController extends AppController {
     $this->layout = 'ajax';
     $saveData = [];
     $errorMessage = [];
-    // if ( !$this->request->is('ajax') ) return false;
-    if (!empty($this->request->data['dictionaryId'])) {
-      $this->TDictionary->recursive = -1;
-      $saveData = $this->TDictionary->read(null, $this->request->data['dictionaryId']);
-    }
-    else {
-      $this->TDictionary->create();
-    }
-    $saveData['TDictionary']['m_companies_id'] = $this->userInfo['MCompany']['id'];
-    $saveData['TDictionary']['m_category_id'] = $this->request->data['tab'];
-    $saveData['TDictionary']['word'] = $this->request->data['word'];
-    if (empty($this->request->data['dictionaryId'])) {
-      $params = [
-        'fields' => [
-          'TDictionary.sort'
-        ],
-        'conditions' => [
-          'TDictionary.m_companies_id' => $this->userInfo['MCompany']['id']
-        ],
-        'order' => [
-          'TDictionary.sort' => 'desc',
-          'TDictionary.id' => 'desc'
-        ],
-        'limit' => 1,
-        'recursive' => -1
-      ];
-      $lastData = $this->TDictionary->find('first', $params);
-      $nextSort = 1;
-      if (!empty($lastData)) {
-        $nextSort = intval($lastData['TDictionary']['sort']) + 1;
+    if($this->Session->read('dstoken') == $this->request->data['dstoken']){
+      $this->Session->delete('dstoken');
+      // if ( !$this->request->is('ajax') ) return false;
+      if (!empty($this->request->data['dictionaryId'])) {
+        $this->TDictionary->recursive = -1;
+        $saveData = $this->TDictionary->read(null, $this->request->data['dictionaryId']);
       }
-      $saveData['TDictionary']['sort'] = $nextSort;
+      else {
+        $this->TDictionary->create();
+      }
+      $saveData['TDictionary']['m_companies_id'] = $this->userInfo['MCompany']['id'];
+      $saveData['TDictionary']['m_category_id'] = $this->request->data['tab'];
+      $saveData['TDictionary']['word'] = $this->request->data['word'];
+      if (empty($this->request->data['dictionaryId'])) {
+        $params = [
+            'fields' => [
+                'TDictionary.sort'
+            ],
+            'conditions' => [
+                'TDictionary.m_companies_id' => $this->userInfo['MCompany']['id']
+            ],
+            'order' => [
+                'TDictionary.sort' => 'desc',
+                'TDictionary.id' => 'desc'
+            ],
+            'limit' => 1,
+            'recursive' => -1
+        ];
+        $lastData = $this->TDictionary->find('first', $params);
+        $nextSort = 1;
+        if (!empty($lastData)) {
+          $nextSort = intval($lastData['TDictionary']['sort']) + 1;
+        }
+        $saveData['TDictionary']['sort'] = $nextSort;
+      }
+      $saveData['TDictionary']['type'] = $this->request->data['type'];
+      if ( strcmp($saveData['TDictionary']['type'], C_AUTHORITY_NORMAL) === 0 ) {
+        $saveData['TDictionary']['m_users_id'] = $this->userInfo['id'];
+      }
+      // const
+      $this->TDictionary->set($saveData);
+      $this->TDictionary->begin();
+      // バリデーションチェックでエラーが出た場合
+      if ( $this->TDictionary->save() ) {
+        $this->TDictionary->commit();
+        $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
+      }
+      else {
+        $this->TDictionary->rollback();
+      }
+      $errorMessage = $this->TDictionary->validationErrors;
+      return new CakeResponse(['body' => json_encode($errorMessage)]);
     }
-    $saveData['TDictionary']['type'] = $this->request->data['type'];
-    if ( strcmp($saveData['TDictionary']['type'], C_AUTHORITY_NORMAL) === 0 ) {
-      $saveData['TDictionary']['m_users_id'] = $this->userInfo['id'];
-    }
-    // const
-    $this->TDictionary->set($saveData);
-    $this->TDictionary->begin();
-    // バリデーションチェックでエラーが出た場合
-    if ( $this->TDictionary->save() ) {
-      $this->TDictionary->commit();
-      $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
-    }
-    else {
-      $this->TDictionary->rollback();
-    }
-    $errorMessage = $this->TDictionary->validationErrors;
-    return new CakeResponse(['body' => json_encode($errorMessage)]);
   }
 
   /**
@@ -437,30 +464,33 @@ class TDictionariesController extends AppController {
    *
    * */
   public function remoteCategoryEdit(){
-    Configure::write('debug', 0);
-    $this->autoRender = FALSE;
-    $this->layout = 'ajax';
-    $data = $this->request->data;
-    $saveData = [];
-    $errorMessage = [];
-    //更新
-    $this->TDictionaryCategory->recursive = -1;
-    $saveData = $this->TDictionaryCategory->read(null, $data['id']);
-    $saveData['TDictionaryCategory']['m_companies_id'] = $this->userInfo['MCompany']['id'];
-    $saveData['TDictionaryCategory']['category_name'] = $data['name'];
-    // const
-    $this->TDictionaryCategory->set($saveData);
-    $this->TDictionaryCategory->begin();
-    // バリデーションチェックでエラーが出た場合
-    if ( $this->TDictionaryCategory->save() ) {
-      $this->TDictionaryCategory->commit();
-      $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
+    if($this->Session->read('dstoken') == $this->request->data['dstoken']){
+      $this->Session->delete('dstoken');
+      Configure::write('debug', 0);
+      $this->autoRender = FALSE;
+      $this->layout = 'ajax';
+      $data = $this->request->data;
+      $saveData = [];
+      $errorMessage = [];
+      //更新
+      $this->TDictionaryCategory->recursive = -1;
+      $saveData = $this->TDictionaryCategory->read(null, $data['id']);
+      $saveData['TDictionaryCategory']['m_companies_id'] = $this->userInfo['MCompany']['id'];
+      $saveData['TDictionaryCategory']['category_name'] = $data['name'];
+      // const
+      $this->TDictionaryCategory->set($saveData);
+      $this->TDictionaryCategory->begin();
+      // バリデーションチェックでエラーが出た場合
+      if ( $this->TDictionaryCategory->save() ) {
+        $this->TDictionaryCategory->commit();
+        $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
+      }
+      else {
+        $this->TDictionaryCategory->rollback();
+      }
+      $errorMessage = $this->TDictionaryCategory->validationErrors;
+      return new CakeResponse(['body' => json_encode($errorMessage)]);
     }
-    else {
-      $this->TDictionaryCategory->rollback();
-    }
-    $errorMessage = $this->TDictionaryCategory->validationErrors;
-    return new CakeResponse(['body' => json_encode($errorMessage)]);
   }
 
   /**
@@ -484,39 +514,42 @@ class TDictionariesController extends AppController {
    *
    * */
   public function remoteCategoryDelete(){
-    Configure::write('debug', 0);
-    $this->autoRender = FALSE;
-    $this->layout = 'ajax';
-    $this->TDictionaryCategory->recursive = -1;
-    $data = $this->request->data;
-    $this->TDictionaryCategory->begin();
-    if($this->TDictionaryCategory->delete($data['id'])){
-      $this->TDictionaryCategory->commit();
-      $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
-      //カテゴリが削除し終わったら定型文も削除する
-      $params = [
-          'fields' => [
-              'TDictionary.id'
-          ],
-          'conditions' => [
-              'TDictionary.m_category_id' => $data['id']
-          ]
-      ];
-      $dictionaryList = $this->TDictionary->find('all', $params);
-      $delete_list = array();
-      foreach($dictionaryList as $value){
-        $delete_list[] = $value['TDictionary']['id'];
+    if($this->Session->read('dstoken') == $this->request->data['dstoken']){
+      $this->Session->delete('dstoken');
+      Configure::write('debug', 0);
+      $this->autoRender = FALSE;
+      $this->layout = 'ajax';
+      $this->TDictionaryCategory->recursive = -1;
+      $data = $this->request->data;
+      $this->TDictionaryCategory->begin();
+      if($this->TDictionaryCategory->delete($data['id'])){
+        $this->TDictionaryCategory->commit();
+        $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
+        //カテゴリが削除し終わったら定型文も削除する
+        $params = [
+            'fields' => [
+                'TDictionary.id'
+            ],
+            'conditions' => [
+                'TDictionary.m_category_id' => $data['id']
+            ]
+        ];
+        $dictionaryList = $this->TDictionary->find('all', $params);
+        $delete_list = array();
+        foreach($dictionaryList as $value){
+          $delete_list[] = $value['TDictionary']['id'];
+        }
+        //変数に削除するIDリストを代入する
+        $this->request->data['selectedList'] = $delete_list;
+        $this->remoteDeleteUser();
       }
-      //変数に削除するIDリストを代入する
-      $this->request->data['selectedList'] = $delete_list;
-      $this->remoteDeleteUser();
+      else{
+        $this->TDictionaryCategory->rollback();
+        $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
+      }
+      $errorMessage = $this->TDictionaryCategory->validationErrors;
+      return new CakeResponse(['body' => json_encode($errorMessage)]);
     }
-    else{
-      $this->TDictionaryCategory->rollback();
-      $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
-    }
-    $errorMessage = $this->TDictionaryCategory->validationErrors;
-    return new CakeResponse(['body' => json_encode($errorMessage)]);
   }
 
 
