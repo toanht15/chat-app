@@ -2,6 +2,7 @@
   popupEvent.closePopup = function(){
     var data=JSON.parse('<?php echo  $data; ?>');
     var type = data.type;
+    var dstoken = document.getElementById('dstoken').value;
     switch (type){
     case '1':
       //カテゴリ編集処理
@@ -39,6 +40,7 @@
       data: {
         data: data,
         name: name,
+        dstoken: dstoken,
         selectedCategory: selectedCategory
       },
       url: url,
@@ -71,6 +73,7 @@
 </script>
 <?= $this->Form->create('TDictionary'); ?>
 <div class="form01">
+  <input type="hidden" id="dstoken" name="dstoken" value="<?=$dstoken?>">
   <?= $this->Form->input('id', array('type' => 'hidden')); ?>
   <?php if($type == '1'){?>
   <!-- カテゴリ更新 -->
