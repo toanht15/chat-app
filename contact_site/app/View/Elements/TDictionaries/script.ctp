@@ -112,7 +112,7 @@ function openConfirmDialog(){
   }
   var select_tab_index = document.getElementById("select_tab_index").value;
   modalOpen.call(window, "選択された定型文を削除します。<br/><br/>よろしいですか？<br/>", 'p-dictionary-del', '削除', 'moment');
-  popupEvent.closePopup = function(){
+  popupEvent.closePopup = toExecutableOnce(function(){
     $.ajax({
       type: 'post',
             cache: false,
@@ -122,12 +122,25 @@ function openConfirmDialog(){
       },
       url: "<?= $this->Html->url('/TDictionaries/remoteDeleteUser') ?>",
       success: function(){
+        $(".p-dictionary-del #popup-button a").prop("disabled", true);
         var url = "<?= $this->Html->url('/TDictionaries/index') ?>";
         location.href = url + "/tabindex:" + index;
       }
     });
-  };
+  });
 }
+
+//一度だけ実行
+var toExecutableOnce = function(f){
+    var called = false, result = undefined;
+    return function(){
+        if(!called){
+            result = f.apply(this, arguments);
+            called = true;
+        }
+        return result;
+    };
+};
 
 /* #451 定型文カテゴリ対応 start */
 //カテゴリのソートモード（タブ）
@@ -186,7 +199,7 @@ function tabSort(){
 }
 
 //カテゴリのソートを保存
-function saveTabSort(){
+var saveTabSort = toExecutableOnce(function(){
   var list = getTabSort();
   var index = document.getElementById("select_tab_index").value;
   $.ajax({
@@ -200,7 +213,7 @@ function saveTabSort(){
       location.href = location.href;
     }
   });
-}
+});
 
 //タブのソート順を取得
 var getTabSort = function(){
@@ -285,7 +298,7 @@ function toggleSort(){
 }
 
 //定型文ソートを保存
-function saveToggleSort(){
+var saveToggleSort = toExecutableOnce(function(){
   var list = getSort();
   $.ajax({
     type: "POST",
@@ -300,8 +313,9 @@ function saveToggleSort(){
       location.href = url + "/tabindex:" + index;
     }
   });
+});
 
-}
+//
 
 //定型文のソート順を取得
 var getSort = function(){
@@ -780,7 +794,12 @@ function inputValue($this){
 
 //カテゴリ追加
 function saveCategoryAddDialog(){
+  //二重サブミット防止
+  document.getElementById("input_category_btn").disabled = "disabled";
   saveCategoryEntryDialog({type: 1});
+  setTimeout(function() {
+    document.getElementById("input_category_btn").disabled = "";
+  }, 10000);
 }
 
 //カテゴリ更新

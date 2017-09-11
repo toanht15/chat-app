@@ -8,6 +8,7 @@
     var dictionaryId = document.getElementById('TDictionaryId').value;
     var word = document.getElementById('TDictionaryWord').value;
     var type = document.getElementById('TDictionaryType').value;
+    var dstoken = document.getElementById('dstoken').value;
     var tab = "<?= $tabid ?>";
     $.ajax({
       type: "post",
@@ -16,6 +17,7 @@
         dictionaryId: dictionaryId,
         word: word,
         type: type,
+        dstoken: dstoken,
         tab: tab
       },
       cache: false,
@@ -104,6 +106,7 @@
       <div id="inputStr">
         <label class="require">入力文字</label>
         <menu class="w100">
+        <input type="hidden" id="dstoken" name="dstoken" value="<?=$dstoken?>">
         <span class="btn-shadow" data-type="1" onclick="addOption(1)">選択肢</span>
         <span class="btn-shadow" data-type="2" onclick="addOption(2)">企業名</span>
         <span class="btn-shadow" data-type="3" onclick="addOption(3)">表示名</span>

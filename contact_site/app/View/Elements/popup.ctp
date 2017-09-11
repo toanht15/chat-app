@@ -113,6 +113,15 @@ var popupEvent = {
                 case 'p-history-cus':
                 case 'p-muser-entry':
                 case 'p-tcampaign-entry':
+                    var entryBtn = _button("保存");
+                    entryBtn.onclick = function(){
+                        return popupEvent.closePopup();
+                    };
+                    var closeBtn = _button("閉じる");
+                    closeBtn.onclick = function(){
+                        return popupEvent.close();
+                    };
+                    break;
                 case 'p-tdictionary-entry':
                     var entryBtn = _button("保存");
                     entryBtn.onclick = function(){
