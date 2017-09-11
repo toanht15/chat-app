@@ -793,8 +793,8 @@ function saveCategoryEntryDialog(setting){
         cache: false,
         dataType: "JSON",
         success: function(data){
-          location.href = "<?= $this->Html->url('/TDictionaries/index') ?>";
-        }
+          location.href = "<?= $this->Html->url('/TDictionaries/index')?>" + '/tabindex:' + (document.querySelectorAll('[id^="ui-id-"]').length);
+      }
       });
   }
   else{
