@@ -556,6 +556,7 @@ class TDictionariesController extends AppController {
               'TDictionaryCategory' => [
                   'id' => $id,
                   'sort' => $prevSortKeys[$i]
+ //                 'sort' => $i
               ]
           ];
           if (!$this->TDictionaryCategory->validates()) {

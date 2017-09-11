@@ -327,7 +327,7 @@ $(".sortable").sortable("disable");
 
 $(".soteTabs").tabs({active: "<?= $tabindex ?>",});
 $('.ui-tabs-nav').sortable( {
-//    axis: 'x',
+    axis: 'x',
     cursor: 'move'
 } );
 $(".ui-tabs-nav").sortable("disable");
