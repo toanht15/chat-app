@@ -214,7 +214,13 @@ var getTabSort = function(){
 
 //タブのソート順をリセット
 var resetTabSort = function(){
-  location.href = "<?= $this->Html->url('/TDictionaries/index') ?>";
+  modalOpen.call(window, "カテゴリの並び替えをキャンセルします。<br/><br/>よろしいですか？<br/>", 'p-tabsort-reset', 'カテゴリ並び替えのキャンセル', 'moment');
+  popupEvent.closePopup = function(){
+    location.href = "<?= $this->Html->url('/TDictionaries/index') ?>";
+  }
+  $(".p-tabsort-reset #popupCloseBtn").click(function(){
+    $('#tabsort').prop('checked', true);
+  });
 };
 
 /* #451 定型文カテゴリ対応 end */
@@ -310,8 +316,14 @@ var getSort = function(){
 //定型文のソート順をリセット
 function restSort(){
   var index = document.getElementById("select_tab_index").value;
-  var url = "<?= $this->Html->url('/TDictionaries/index') ?>";
-  location.href = url + "/tabindex:" + index;
+  modalOpen.call(window, "定型文の並び替えをキャンセルします。<br/><br/>よろしいですか？<br/>", 'p-sort-rest', '定型文並び替えのキャンセル', 'moment');
+  popupEvent.closePopup = function(){
+    var url = "<?= $this->Html->url('/TDictionaries/index') ?>";
+    location.href = url + "/tabindex:" + index;
+  }
+  $(".p-sort-rest #popupCloseBtn").click(function(){
+    $("#sort" + index).prop('checked', true);
+  });
 };
 
 $(document).ready(function(){
