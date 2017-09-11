@@ -905,12 +905,12 @@
     }
     #stintMessage{
       position: relative;
-      top: -2px;
+      top: -1px;
       left: 0px;
     }
     #tabSortMessage{
       position: relative;
-      top: -2px;
+      top: -1px;
       left: 0px;
     }
   }
@@ -947,7 +947,7 @@
         }
         [id^="sortMessage"]{
           position: relative;
-          top: -4px;
+          top: -3px;
           left: 0px;
         }
       }
@@ -1079,6 +1079,40 @@
 }
 
 #popup #popup-frame-base #popup-frame.p-move #popup-button a {
+  width: 110px;
+  margin: 0 auto;
+  font-size: 10px;
+  padding: 7px 0px;
+}
+
+#popup #popup-frame-base #popup-frame.p-tabsort-reset {
+  width: 450px;
+  height: 150px;
+  text-align: center;
+}
+
+#popup #popup-frame-base #popup-frame.p-tabsort-reset #popup-button {
+  text-align: center;
+}
+
+#popup #popup-frame-base #popup-frame.p-tabsort-reset #popup-button a {
+  width: 110px;
+  margin: 0 auto;
+  font-size: 10px;
+  padding: 7px 0px;
+}
+
+#popup #popup-frame-base #popup-frame.p-sort-rest {
+  width: 450px;
+  height: 150px;
+  text-align: center;
+}
+
+#popup #popup-frame-base #popup-frame.p-sort-rest #popup-button {
+  text-align: center;
+}
+
+#popup #popup-frame-base #popup-frame.p-sort-rest #popup-button a {
   width: 110px;
   margin: 0 auto;
   font-size: 10px;

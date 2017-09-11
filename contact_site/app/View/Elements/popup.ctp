@@ -153,6 +153,18 @@ var popupEvent = {
 //                         return popupEvent.closePopup();
 //                     };
 //                     break;
+                case 'p-tabsort-reset':
+                    var closeBtn = _button("キャンセルする");
+                    closeBtn.onclick = function(){
+                        return popupEvent.closePopup();
+                    };
+                    break;
+                case 'p-sort-rest':
+                    var closeBtn = _button("キャンセルする");
+                    closeBtn.onclick = function(){
+                        return popupEvent.closePopup();
+                    };
+                    break;
                 case 'p-dictionary-del':
                     var closeBtn = _button("削除する");
                     closeBtn.onclick = function(){
