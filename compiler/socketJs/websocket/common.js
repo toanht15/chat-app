@@ -155,7 +155,7 @@ var socket, // socket.io
       // チャットのフォントカラー
       var chatContentTextColor = "#333333";
 
-      var html = "", faintColor = widget.mainColor;
+      var html = "", faintColor = widget.mainColor, balloonInnerColor = faintColor = widget.mainColor;
       if ( faintColor.indexOf("#") >= 0 ) {
         var code = faintColor.substr(1), r,g,b;
         if (code.length === 3) {
@@ -169,6 +169,10 @@ var socket, // socket.io
           b = String(code.substr(4));
         }
         faintColor = "rgba(" + parseInt(r,16) + ", " + parseInt(g,16) + ", " + parseInt(b,16) + ", 0.1)";
+        var balloonR = String(Math.floor(255 - (255 - parseInt(r,16)) * 0.1));
+        var balloonG = String(Math.floor(255 - (255 - parseInt(g,16)) * 0.1));
+        var balloonB = String(Math.floor(255 - (255 - parseInt(b,16)) * 0.1));
+        balloonInnerColor = 'rgb(' + balloonR  + ', ' +  balloonG  + ', ' +  balloonB + ');';
       }
 
       // 表示位置
@@ -177,15 +181,15 @@ var socket, // socket.io
         case 1: // 右下
           showPosition = "bottom: 0; right: 10px;";
           chatPosition = {
-            se: "border-bottom-right-radius: 0; margin-left: 10px;",
-            re: "border-bottom-left-radius: 0; margin-right: 10px;"
+            se: "margin-left: 10px;",
+            re: "margin-right: 10px;"
           };
           break;
         case 2: // 左下
           showPosition = "bottom: 0; left: 10px;";
           chatPosition = {
-            se: "border-bottom-right-radius: 0; margin-left: 10px;",
-            re: "border-bottom-left-radius: 0; margin-right: 10px;"
+            se: "margin-left: 10px;",
+            re: "margin-right: 10px;"
           };
           break;
       }
@@ -231,10 +235,14 @@ var socket, // socket.io
         html += '      #sincloBox ul#chatTalk { width: 100%; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0; clear: both!important; }';
         html += '      #sincloBox ul sinclo-chat { clear: both!important } ';
         html += '      #sincloBox ul#chatTalk li { text-align: left!important; word-wrap: break-word; word-break: break-all; white-space: pre-wrap!important; background-color: #FFF; white-space: pre; color: ' + chatContentTextColor + '; }';
-        html += '      #sincloBox ul#chatTalk li.sinclo_se { ' + chatPosition.se + 'background-color: #FFF; display: inline-block; }';
+        html += '      #sincloBox ul#chatTalk li.sinclo_se { ' + chatPosition.se + 'background-color: #FFF; display: inline-block; margin-right: 15px; }';
+        html += '      #sincloBox ul#chatTalk li.sinclo_se:before { content: ""; position: absolute; top: 60%; left: calc(100% - 2.5px); margin-top: -10px; border: 10px solid transparent; border-left: 10px solid #FFF; z-index: 2; }';
+        html += '      #sincloBox ul#chatTalk li.sinclo_se:after { content: ""; position: absolute; top: 60%; left: 100%; margin-top: -9px; border: 9px solid transparent; border-left: 9px solid #C9C9C9; z-index: 1; }';
         // html += '      #sincloBox ul#chatTalk li.effect_right { -webkit-animation-name:fadeIn; -moz-animation-name:fadeIn; -o-animation-name:fadeIn; -ms-animation-name:fadeIn; animation-name:fadeIn; -webkit-animation-duration:0.5s; -moz-animation-duration:0.5s; -o-animation-duration:0.5s; -ms-animation-duration:0.5s; animation-duration:0.5s; -webkit-animation-iteration-count:1; -moz-animation-iteration-count:1; -o-animation-iteration-count:1; -ms-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:forwards; -moz-animation-fill-mode:forwards; -o-animation-fill-mode:forwards; -ms-animation-fill-mode:forwards; animation-fill-mode:forwards; -webkit-transform-origin:left bottom; -moz-transform-origin:left bottom; -o-transform-origin:left bottom; -ms-transform-origin:left bottom; transform-origin:left bottom; opacity:0; -webkit-animation-delay:0.6s; -moz-animation-delay:0.6s; -o-animation-delay:0.6s; -ms-animation-delay:0.6s; animation-delay:0.6s; }';
         html += '      #sincloBox ul#chatTalk li.effect_right { -webkit-animation-name:rightEffect; -moz-animation-name:rightEffect; -o-animation-name:rightEffect; -ms-animation-name:rightEffect; animation-name:rightEffect; -webkit-animation-duration:0.5s; -moz-animation-duration:0.5s; -o-animation-duration:0.5s; -ms-animation-duration:0.5s; animation-duration:0.5s; -webkit-animation-iteration-count:1; -moz-animation-iteration-count:1; -o-animation-iteration-count:1; -ms-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:forwards; -moz-animation-fill-mode:forwards; -o-animation-fill-mode:forwards; -ms-animation-fill-mode:forwards; animation-fill-mode:forwards; -webkit-transform-origin:left bottom; -moz-transform-origin:left bottom; -o-transform-origin:left bottom; -ms-transform-origin:left bottom; transform-origin:left bottom; opacity:0; -webkit-animation-delay:0.6s; -moz-animation-delay:0.6s; -o-animation-delay:0.6s; -ms-animation-delay:0.6s; animation-delay:0.6s; }';
-        html += '      #sincloBox ul#chatTalk li.sinclo_re { ' + chatPosition.re + 'background-color:' + faintColor + '; display: inline-block; }';
+        html += '      #sincloBox ul#chatTalk li.sinclo_re { ' + chatPosition.re + 'background-color:' + faintColor + '; display: inline-block; margin-left: 10px; }';
+        html += '      #sincloBox ul#chatTalk li.sinclo_re:before { content: ""; position: absolute; top: 70%; left: -19px; margin-top: -10px; border: 10px solid transparent; border-right: 10px solid ' + balloonInnerColor + '; z-index: 2; }';
+        html += '      #sincloBox ul#chatTalk li.sinclo_re:after { content: ""; position: absolute; top: 70%; left: -19px; margin-top: -9px; border: 9px solid transparent; border-right: 9px solid #C9C9C9; z-index: 1; }';
         // html += '      #sincloBox ul#chatTalk li.effect_left { -webkit-animation-name:fadeIn; -moz-animation-name:fadeIn; -o-animation-name:fadeIn; -ms-animation-name:fadeIn; animation-name:fadeIn; -webkit-animation-duration:0.5s; -moz-animation-duration:0.5s; -o-animation-duration:0.5s; -ms-animation-duration:0.5s; animation-duration:0.5s; -webkit-animation-iteration-count:1; -moz-animation-iteration-count:1; -o-animation-iteration-count:1; -ms-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:forwards; -moz-animation-fill-mode:forwards; -o-animation-fill-mode:forwards; -ms-animation-fill-mode:forwards; animation-fill-mode:forwards; -webkit-transform-origin:left bottom; -moz-transform-origin:left bottom; -o-transform-origin:left bottom; -ms-transform-origin:left bottom; transform-origin:left bottom; opacity:0; -webkit-animation-delay:0.6s; -moz-animation-delay:0.6s; -o-animation-delay:0.6s; -ms-animation-delay:0.6s; animation-delay:0.6s; }';
         html += '      #sincloBox ul#chatTalk li.effect_left { -webkit-animation-name:leftEffect; -moz-animation-name:leftEffect; -o-animation-name:leftEffect; -ms-animation-name:leftEffect; animation-name:leftEffect; -webkit-animation-duration:0.5s; -moz-animation-duration:0.5s; -o-animation-duration:0.5s; -ms-animation-duration:0.5s; animation-duration:0.5s; -webkit-animation-iteration-count:1; -moz-animation-iteration-count:1; -o-animation-iteration-count:1; -ms-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:forwards; -moz-animation-fill-mode:forwards; -o-animation-fill-mode:forwards; -ms-animation-fill-mode:forwards; animation-fill-mode:forwards; -webkit-transform-origin:left bottom; -moz-transform-origin:left bottom; -o-transform-origin:left bottom; -ms-transform-origin:left bottom; transform-origin:left bottom; opacity:0; -webkit-animation-delay:0.6s; -moz-animation-delay:0.6s; -o-animation-delay:0.6s; -ms-animation-delay:0.6s; animation-delay:0.6s; }';
         html += '      #sincloBox ul#chatTalk li#sinclo_typeing_message { position: relative; color: #d5d5d5; border: none; text-align: center; }';
@@ -394,7 +402,7 @@ var socket, // socket.io
         if ( window.sincloInfo.contract.chat ) {
           html += '      #sincloBox #mainImage em { top: -10px; right: -10px; width: 25px; height: 20px; font-size: 11px; padding: 1px; }';
           html += '      #sincloBox ul#chatTalk { height: 194px; padding: 5px; }';
-          html += '      #sincloBox ul#chatTalk li { border-radius: 5px; margin: 5px 0; padding: 5px; font-size: 12px; border: 1px solid #C9C9C9; }';
+          html += '      #sincloBox ul#chatTalk li { border-radius: 5px; margin: 5px 0; padding: 8px; font-size: 12px; border: 1px solid #C9C9C9; }';
           html += '      #sincloBox ul#chatTalk li span.cName { font-size: 13px; margin: 0 0 5px 0 }';
           html += '      #sincloBox section#chatTab sinclo-div { height: 75px!important; padding: 5px }';
           html += '      #sincloBox section#chatTab #sincloChatMessage { color: ' + chatContentTextColor + '!important; padding: 5px; height: 100%; min-height: 100%!important; border: 1px solid #E4E4E4!important; border-radius: 5px 0 0 5px!important; }';
