@@ -933,18 +933,18 @@
     .fLeft{
       .tabName{
         position: relative;
-        top: -10px;
-        left: 0px;
+        top: 10px;
+        left: 15px;
       }
       .tabBtnSet{
         position: relative;
-        top: -15px;
-        left: 0px;
+        top: 2px;
+        left: 17px;
       }
       .tabpointer{
         position: relative;
-        top: -20px;
-        left: 0px;
+        top: -1px;
+        left: 18px;
       }
       position: relative;
       top: -10px;
@@ -969,13 +969,11 @@
     }
     .fRight{
       position: relative;
-      top: -34px;
-      left: 2px;
+      top: -18px;
+      left: -15px;
     }
     #tdictionaries_list{
-      /*padding: 15px;*/
-      position: relative;
-      top: -20px;
+      padding: 15px;
       margin: 0 auto;
       td {
         label{
@@ -991,8 +989,8 @@
 }
 
 .btn-shadow.d-set-option-btn{
-  width: 100px;
-  height: 10px;
+  width: 90px;
+  height: 20px;
   text-align: center;
 }
 
@@ -1420,30 +1418,30 @@
 
 [id^="tooltip_tdictionaries_add_btn"].tooltips{
   position: fixed;
-  left: 112px !important;
+  left: 109px !important;
   width: 6em
 }
 
 [id^="tooltip_tdictionaries_copy_btn"].tooltips{
   position: fixed;
-  left: 141px !important;
+  left: 139px !important;
   width: 9em;
 }
 
 [id^="tooltip_tdictionaries_move_btn"].tooltips{
   position: fixed;
-  left: 209px !important;
+  left: 205px !important;
   width: 6em;
 }
 
 [id^="tooltip_tdictionaries_dustbox_btn"].tooltips{
   position: fixed;
-  left: 258px !important;
+  left: 254px !important;
   width: 6em;
 }
 
 [id^="tooltip_tdictionaries_manu_btn"].tooltips{
-  right: 60px;
+  right: 57px;
   width: 7em;
   position: fixed;
 }

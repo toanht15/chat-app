@@ -53,7 +53,7 @@
   <div id="tabBoxborder<?=$i?>" class="tabBoxborder" style="display:none;">
   <div id="tabs-<?=$i?>" class="tabBox">
   <div class="tabBoxInborder">
-      <div id='tdictionaries_menu' class="p20trl">
+      <div id='tdictionaries_menu'>
         <ul class="fLeft" >
           <li class="tabName">
             <h1><?=h($nameList[$i]['name'])?></h1>
