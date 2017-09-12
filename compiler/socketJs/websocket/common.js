@@ -194,7 +194,7 @@ var socket, // socket.io
           break;
       }
 
-      switch ( Number(widget.chatMessageWidgetType) ) {
+      switch ( Number(widget.chatMessageDesignType) ) {
         case 1: //BOX型
           chatPosition.se += " border-bottom-right-radius: 0;";
           chatPosition.re += " border-bottom-left-radius: 0;";
