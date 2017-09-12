@@ -344,8 +344,6 @@ var socket, // socket.io
           html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label { display: inline; padding-left: 1.5em; } ';
           html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label:before { content: ""; display: block; position: absolute; top: -2px; left: -2px; width: 17px; height: 17px; border: 1px solid ' + chatContentTextColor + '; border-radius: 50%; background-color: #FFF; } ';
           html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"]:checked + label:after { content: ""; display: block; position: absolute; top: 2px; left: 2px; width: 11px; height: 11px; background: ' + widget.mainColor + '; border-radius: 50%; } ';
-          html += '#sincloBox ul#chatTalk li.sinclo_se { margin-right: ' + (10 * ratio) + 'px; }';
-          html += '#sincloBox ul#chatTalk li.sinclo_re { margin-left: ' + (10 * ratio) + 'px; }';
           html += '#sincloBox ul#chatTalk li span.cName { font-size: ' + (13 * ratio) + 'px; margin: 0 0 ' + (5 * ratio) + 'px 0; }';
           html += '#sincloBox ul#chatTalk sinclo-chat-receiver #receiveMessage { font-size: ' + (10 * ratio) + 'px; }';
           html += '#sincloBox section#chatTab sinclo-div { height: ' + (60*ratio) + 'px; padding: ' + (5 * ratio) + 'px; }';
