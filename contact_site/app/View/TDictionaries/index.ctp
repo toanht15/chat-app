@@ -46,14 +46,19 @@
   <input type="hidden" id="select_soto" value="">
   <ul class="tablist" id="tablist">
   <?php for ($i = 0; $i < count((array)$nameList); $i++) { ?>
-    <li id = "li_<?=$i?>"><a onfocus="this.blur();" data-id="<?=$nameList[$i]['id']?>" href="#tabs-<?=$i?>"><?=h($nameList[$i]['name'])?></a></li>
+    <li id = "li_<?=$i?>" class="taboutborder"><a onfocus="this.blur();" data-id="<?=$nameList[$i]['id']?>" href="#tabs-<?=$i?>"><?=h($nameList[$i]['name'])?></a></li>
   <?php } ?>
   </ul>
   <?php for ($i = 0; $i < count((array)$nameList); $i++) { ?>
+  <div id="tabBoxborder<?=$i?>" class="tabBoxborder" style="display:none;">
   <div id="tabs-<?=$i?>" class="tabBox">
-      <div id='tdictionaries_menu' class="p20trl">
+  <div class="tabBoxInborder">
+      <div id='tdictionaries_menu'>
         <ul class="fLeft" >
-          <li>
+          <li class="tabName">
+            <h1><?=h($nameList[$i]['name'])?></h1>
+          </li>
+          <li class="tabBtnSet">
             <?php $tab_id = $nameList[$i]['id']; ?>
             <span>
               <a>
@@ -63,8 +68,8 @@
                     'class' => 'btn-shadow disOffgreenBtn commontooltip',
                     'data-text' => '新規追加',
                     'data-balloon-position' => '36',
-                    'width' => 40,
-                    'height' => 40,
+                    'width' => 45,
+                    'height' => 45,
                     'onclick' => 'openAddDialog('.$tab_id.')',
                 )) ?>
               </a>
@@ -77,8 +82,8 @@
                     'class' => 'btn-shadow disOffgrayBtn commontooltip',
                     'data-text' => 'コピー（複製）',
                     'data-balloon-position' => '41',
-                    'width' => 40,
-                    'height' => 40)) ?>
+                    'width' => 45,
+                    'height' => 45)) ?>
               </a>
             </span>
             <span>
@@ -90,8 +95,8 @@
                     'class' => 'btn-shadow disOffgrayBtn commontooltip',
                     'data-text' => '移動する',
                     'data-balloon-position' => '36',
-                    'width' => 40,
-                    'height' => 40)) ?>
+                    'width' => 45,
+                    'height' => 45)) ?>
               </a>
               <?php }else{?>
               <a>
@@ -101,8 +106,8 @@
                     'class' => 'btn-shadow disOffgrayBtn commontooltip',
                     'data-text' => "こちらの機能はスタンダードプラン<br>からご利用いただけます。",
                     'data-balloon-position' => '43.5',
-                    'width' => 40,
-                    'height' => 40)) ?>
+                    'width' => 45,
+                    'height' => 45)) ?>
               </a>
               <?php }?>
             </span>
@@ -114,13 +119,13 @@
                     'class' => 'btn-shadow disOffgrayBtn commontooltip',
                     'data-text' => '削除する',
                     'data-balloon-position' => '35',
-                    'width' => 40,
-                    'height' => 40)) ?>
+                    'width' => 45,
+                    'height' => 45)) ?>
               </a>
             </span>
           </li>
           <!-- 定型文の並び替えモード -->
-          <li>
+          <li class="tabpointer">
             <label class="pointer">
               <?= $this->Form->checkbox('sort'.$i, array('onchange' => 'toggleSort()')) ?><span id="sortText<?=$i?>">定型文の並び替え</span>
               <span id="sortMessage<?=$i?>" style="display:none; color:rgb(192, 0, 0); font-weight:bold;">(！)定型文を並び替え中（更新する場合は画面下部の「更新」ボタンをクリック／キャンセルする場合はチェックを外してください）</span>
@@ -140,8 +145,8 @@
                         'data-text' => 'その他編集',
                         'data-balloon-position' => '38',
                         'noleft' => '1',
-                        'width' => 32,
-                        'height' => 32)) ?>
+                        'width' => 35,
+                        'height' => 35)) ?>
                 </p>
               </div>
             <?php }else{?>
@@ -153,8 +158,8 @@
                         'class' => 'btn-shadow disOffgrayBtn commontooltip',
                         'data-text' => "こちらの機能はスタンダードプラン<br>からご利用いただけます。",
                         'data-balloon-position' => '84',
-                        'width' => 32,
-                        'height' => 32)) ?>
+                        'width' => 36,
+                        'height' => 36)) ?>
                 </p>
               </div>
             <?php }?>
@@ -195,21 +200,15 @@
               <?php foreach((array)$dictionaryList[$i]as $key => $val): ?>
               <tr data-id="<?=$val['TDictionary']['id']?>" data-sort="<?=$val['TDictionary']['sort']?>" onclick="<?="openEditDialog('".$val['TDictionary']['id'].",".$nameList[$i]['id']."')"?>">
                 <!-- #451 定型文カテゴリ対応 start -->
-                <td class="tCenter">
+                <td class="tCenter" onclick="event.stopPropagation();">
                   <input type="hidden" id="dictionary_list_flg<?=$i?>" value="1">
                   <input type="checkbox" name="selectTab<?=$i.'-'.$key?>" id="selectTab<?=$i.'-'.$key?>" value="<?=$val['TDictionary']['id']?>">
                   <label for="selectTab<?=$i.'-'.$key?>"></label>
                 </td>
                 <!-- #451 定型文カテゴリ対応 end -->
-                <td width="8%" class="tCenter pre">
-                  <?=$key+1?>
-                </td>
-                <td style="width:8em;" class="tCenter pre">
-                  <?=$dictionaryTypeList[$val['TDictionary']['type']]?>
-                </td>
-                <td class="tLeft pre">
-                  <?=h($val['TDictionary']['word'])?>
-                </td>
+                <td width="8%" class="tCenter pre"><?=$key+1?></td>
+                <td style="width:8em;" class="tCenter pre"><?=$dictionaryTypeList[$val['TDictionary']['type']]?></td>
+                <td class="tLeft pre"><?=h($val['TDictionary']['word'])?></td>
               </tr>
             <?php endforeach; ?>
           <?php } else {?>
@@ -221,6 +220,8 @@
           </tbody>
         </table>
       </div>
+  </div>
+  </div>
   </div>
   <?php } ?>
 </div>

@@ -18,9 +18,9 @@ class TDictionary extends AppModel {
   public $validate = [
     'word' => [
       'maxlength' => [
-        'rule' => ['maxLength', 100],
+        'rule' => ['maxLength', 200],
         'allowEmpty' => false,
-        'message' => '１００文字以内で設定してください'
+        'message' => '２００文字以内で設定してください'
       ]
     ],
     'type' => [
