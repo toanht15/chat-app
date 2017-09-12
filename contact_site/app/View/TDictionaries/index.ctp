@@ -55,10 +55,10 @@
   <div class="tabBoxInborder">
       <div id='tdictionaries_menu' class="p20trl">
         <ul class="fLeft" >
-          <li>
+          <li class="tabName">
             <h1><?=h($nameList[$i]['name'])?></h1>
           </li>
-          <li>
+          <li class="tabBtnSet">
             <?php $tab_id = $nameList[$i]['id']; ?>
             <span>
               <a>
@@ -125,7 +125,7 @@
             </span>
           </li>
           <!-- 定型文の並び替えモード -->
-          <li>
+          <li class="tabpointer">
             <label class="pointer">
               <?= $this->Form->checkbox('sort'.$i, array('onchange' => 'toggleSort()')) ?><span id="sortText<?=$i?>">定型文の並び替え</span>
               <span id="sortMessage<?=$i?>" style="display:none; color:rgb(192, 0, 0); font-weight:bold;">(！)定型文を並び替え中（更新する場合は画面下部の「更新」ボタンをクリック／キャンセルする場合はチェックを外してください）</span>
@@ -200,21 +200,15 @@
               <?php foreach((array)$dictionaryList[$i]as $key => $val): ?>
               <tr data-id="<?=$val['TDictionary']['id']?>" data-sort="<?=$val['TDictionary']['sort']?>" onclick="<?="openEditDialog('".$val['TDictionary']['id'].",".$nameList[$i]['id']."')"?>">
                 <!-- #451 定型文カテゴリ対応 start -->
-                <td class="tCenter">
+                <td class="tCenter" onclick="event.stopPropagation();">
                   <input type="hidden" id="dictionary_list_flg<?=$i?>" value="1">
                   <input type="checkbox" name="selectTab<?=$i.'-'.$key?>" id="selectTab<?=$i.'-'.$key?>" value="<?=$val['TDictionary']['id']?>">
                   <label for="selectTab<?=$i.'-'.$key?>"></label>
                 </td>
                 <!-- #451 定型文カテゴリ対応 end -->
-                <td width="8%" class="tCenter pre">
-                  <?=$key+1?>
-                </td>
-                <td style="width:8em;" class="tCenter pre">
-                  <?=$dictionaryTypeList[$val['TDictionary']['type']]?>
-                </td>
-                <td class="tLeft pre">
-                  <?=h($val['TDictionary']['word'])?>
-                </td>
+                <td width="8%" class="tCenter pre"><?=$key+1?></td>
+                <td style="width:8em;" class="tCenter pre"><?=$dictionaryTypeList[$val['TDictionary']['type']]?></td>
+                <td class="tLeft pre"><?=h($val['TDictionary']['word'])?></td>
               </tr>
             <?php endforeach; ?>
           <?php } else {?>

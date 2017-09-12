@@ -2348,21 +2348,23 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
               $("#allWordList").on('click', function(e){
                 //カテゴリ
                 var id = e.target.id;
-                id = Number(id.substr(10));
-                //$scope.entryWordListの中のどこに該当するか特定する
-                var wordlist = $scope.entryWordList;
-                for(var key in wordlist) {
-                  for(var v_key in wordlist[key]) {
-                    if(wordlist[key][v_key]["id"] == id){
-                      var select_tab_index = key;
-                      var select_index = v_key;
+                if(id != 0){
+                  id = Number(id.substr(10));
+                  //$scope.entryWordListの中のどこに該当するか特定する
+                  var wordlist = $scope.entryWordList;
+                  for(var key in wordlist) {
+                    for(var v_key in wordlist[key]) {
+                      if(wordlist[key][v_key]["id"] == id){
+                        var select_tab_index = key;
+                        var select_index = v_key;
+                      }
                     }
                   }
-                }
-                var list = getEntryWordSearch($scope.entryWordList[select_tab_index]);
-                closeCategoryDictionary();
-                entryWordApi.push(list[select_index].label);
-                return false;
+                  var list = getEntryWordSearch($scope.entryWordList[select_tab_index]);
+                  closeCategoryDictionary();
+                  entryWordApi.push(list[select_index].label);
+                  }
+                  return false;
               });
 
               //ポップアップを閉じるときの共通動作
@@ -2385,7 +2387,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                   //二重操作防止
                   if(searchkeytime != e.timeStamp){
                     document.getElementById("searchkeytime").value = e.timeStamp;
-                  //検索結果に対する操作
+                    //検索結果に対する操作
                     var search_word = document.getElementById("wordSearchCond").value;
                     //検索文字列があるか
                     if(search_word){
@@ -2480,14 +2482,14 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                   }
                 }
                 else{
-//                   //一旦全て非表示
-//                   document.getElementById("categoryTabs-ALL").style.display="none";
-//                   document.getElementById("allWordList").style.display="none";
-//                   var searchItemList = document.querySelectorAll('[id^="searchItem"]');
-//                   for (var i = 0; i < searchItemList.length; i++) {
-//                     searchItemList[i].style.display="none";
-//                   }
-//                   onWordSearchCond(e);
+                  //一旦全て非表示
+                  document.getElementById("categoryTabs-ALL").style.display="none";
+                  document.getElementById("allWordList").style.display="none";
+                  var searchItemList = document.querySelectorAll('[id^="searchItem"]');
+                  for (var i = 0; i < searchItemList.length; i++) {
+                    searchItemList[i].style.display="none";
+                  }
+                  onWordSearchCond(e);
                   return false;
                 }
               })
@@ -2520,6 +2522,14 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
               //検索モード
               function onWordSearchCond(e){
                 var search_word = document.getElementById("wordSearchCond").value;
+                if((document.getElementById("mode_flg").value == 1) && (search_word != document.getElementById("wordSearchChk").value)){
+                  //選択行の削除
+                  var selected = document.querySelector('[id^="searchItem"].dictionarySearchSelected');
+                  if(selected){
+                    var selected_id = selected.id;
+                    document.getElementById(selected_id).className = "dictionaryWord ng-binding ng-scope";
+                  }
+                }
                 if(search_word){
                   //一文字でも入力があったら検索モード
                   document.getElementById("mode_flg").value = 1;
@@ -2545,10 +2555,12 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                       //対応する行を表示
                       document.getElementById("searchItem"+res[r_key]).style.display="";
                       //検索にヒットしたリストの一番先頭にdictionarySearchSelectedクラスを付与する
-                      if(r_key == 0){
+                      if(r_key == 0 && (document.getElementById("wordSearchChk").value != search_word)){
                         document.getElementById("searchItem"+res[r_key]).className = "dictionaryWord ng-binding ng-scope dictionarySearchSelected";
                       }
                     }
+                    //検索にヒットしたらwordSearchChkに検索文字列を格納しておく
+                    document.getElementById("wordSearchChk").value = search_word;
                     //searchItem
                   }
                 }
@@ -2557,6 +2569,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                   document.getElementById("mode_flg").value = 0;
                   document.getElementById("serect_tab_mode").style.display="";
                   document.getElementById("word_search_mode").style.display="none";
+                  document.getElementById("wordSearchChk").value = "";
                 }
               }
             }
