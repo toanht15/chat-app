@@ -1257,7 +1257,7 @@
 }
 
 #TDictionaryType{
-  padding: 0em 0em 0.3em;
+  padding: 0 0 3px 0.5em;
 }
 
 #wordSearchCond{
@@ -1286,7 +1286,7 @@
 
 .ui-tabs .ui-tabs-nav.categoryTabStyle{
   padding: 0;
-  height: 29px;
+  height: 30px;
   width: 101%;
   overflow: hidden;
 }
@@ -1492,4 +1492,9 @@
   border-width: 15px 10px 10px;
   background-color: #FFF;
   padding: 0px;
+}
+
+.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active.taboutborder{
+  border: 1px solid #a6a6a6;
+  border-bottom: none;
 }

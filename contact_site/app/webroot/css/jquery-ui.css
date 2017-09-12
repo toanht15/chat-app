@@ -197,7 +197,7 @@ works properly when clicked or hovered */
 html .ui-button.ui-state-disabled:hover,
 html .ui-button.ui-state-disabled:active {
   border: 1px solid #c5c5c5;
-  box-shadow: 0px -1px 1px rgba(0, 0, 0, 0.2);
+  /*box-shadow: 0px -1px 1px rgba(0, 0, 0, 0.2);*/
   background: #bfbfbf;
   font-weight: normal;
   color: #f2f2f2;
@@ -252,7 +252,7 @@ a.ui-button:focus {
 a.ui-button:active,
 .ui-button:active,
 .ui-button.ui-state-active:hover {
-  border: 1px solid #a6a6a6;
+/*  border: 1px solid #a6a6a6;*/
   background: #C3D69B;
   font-weight: normal;
   color: #555555;
