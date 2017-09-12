@@ -29,6 +29,7 @@
       #sincloBox section.noDisplay { display: none }
       #sincloBox div#miniTarget { overflow: hidden; transition: height 200ms linear; }
     <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
+      @keyframes leftEffect { 0% { transform :translate3d(-20px, 0px, 0px) scale(0.8); opacity :0; } 69% {} 100% { transform :translate3d(0px, 0px, 0px); opacity :1; } }
       #sincloBox ul#chatTalk { width: 100%; height: 194px; padding: 5px; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0}
       #sincloBox ul#chatTalk div.liLeft { text-align: left; }
       #sincloBox ul#chatTalk div.liRight { text-align: right; }
@@ -36,11 +37,12 @@
       #sincloBox ul#chatTalk li.boxType { word-wrap: break-word; word-break: break-all; }
       #sincloBox ul#chatTalk li.balloonType { display: inline-block; position: relative; padding: 8px; text-align: left!important; word-wrap: break-word; word-break: break-all; }
       #sincloBox ul#chatTalk li.sinclo_se.balloonType { margin-right: 15px; }
-      #sincloBox ul#chatTalk li.sinclo_se.balloonType:before { height: 0px; content: ""; position: absolute; top: 60%; left: calc(100% - 2.5px); margin-top: -10px; border: 10px solid transparent; border-left: 10px solid #FFF; z-index: 2; }
-      #sincloBox ul#chatTalk li.sinclo_se.balloonType:after { height: 0px; content: ""; position: absolute; top: 60%; left: 100%; margin-top: -9px; border: 9px solid transparent; border-left: 9px solid #C9C9C9; z-index: 1; }
+      #sincloBox ul#chatTalk li.sinclo_se.balloonType:before { height: 0px; content: ""; position: absolute; bottom: 0.35em; left: calc(100% - 2.5px); margin-top: -10px; border: 10px solid transparent; border-left: 10px solid #FFF; z-index: 2; }
+      #sincloBox ul#chatTalk li.sinclo_se.balloonType:after { height: 0px; content: ""; position: absolute; bottom: 0.4em; left: 100%; margin-top: -9px; border: 9px solid transparent; border-left: 9px solid #C9C9C9; z-index: 1; }
       #sincloBox ul#chatTalk li.sinclo_re.balloonType { margin-left: 10px; padding-right: 20px; }
-      #sincloBox ul#chatTalk li.sinclo_re.balloonType:before { height: 0px; content: ""; position: absolute; top: 70%; left: -19px; margin-top: -10px; border: 10px solid transparent; border-right: 10px solid {{makeBalloonTriangleColor()}}; z-index: 2; }
-      #sincloBox ul#chatTalk li.sinclo_re.balloonType:after { height: 0px; content: ""; position: absolute; top: 70%; left: -19px; margin-top: -9px; border: 9px solid transparent; border-right: 9px solid #C9C9C9; z-index: 1; }
+      #sincloBox ul#chatTalk li.sinclo_re.balloonType:before { height: 0px; content: ""; position: absolute; bottom: 0.35em; left: -19px; margin-top: -10px; border: 10px solid transparent; border-right: 10px solid {{makeBalloonTriangleColor()}}; z-index: 2; }
+      #sincloBox ul#chatTalk li.sinclo_re.balloonType:after { height: 0px; content: ""; position: absolute; bottom: 0.4em; left: -19px; margin-top: -9px; border: 9px solid transparent; border-right: 9px solid #C9C9C9; z-index: 1; }
+      #sincloBox ul#chatTalk li.effect_left { -webkit-animation-name:leftEffect; -moz-animation-name:leftEffect; -o-animation-name:leftEffect; -ms-animation-name:leftEffect; animation-name:leftEffect; -webkit-animation-duration:0.5s; -moz-animation-duration:0.5s; -o-animation-duration:0.5s; -ms-animation-duration:0.5s; animation-duration:0.5s; -webkit-animation-iteration-count:1; -moz-animation-iteration-count:1; -o-animation-iteration-count:1; -ms-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:forwards; -moz-animation-fill-mode:forwards; -o-animation-fill-mode:forwards; -ms-animation-fill-mode:forwards; animation-fill-mode:forwards; -webkit-transform-origin:left bottom; -moz-transform-origin:left bottom; -o-transform-origin:left bottom; -ms-transform-origin:left bottom; transform-origin:left bottom; opacity:0; -webkit-animation-delay:0.6s; -moz-animation-delay:0.6s; -o-animation-delay:0.6s; -ms-animation-delay:0.6s; animation-delay:0.6s; }
       #sincloBox ul#chatTalk li.boxType.chat_right { border-bottom-right-radius: 0; margin-left: 10px }
       #sincloBox ul#chatTalk li.boxType.chat_left { border-bottom-left-radius: 0; margin-right: 10px }
       #sincloBox ul#chatTalk li.balloonType.chat_right { margin-left: 15px }
@@ -125,7 +127,7 @@
             <li class="sinclo_re chat_left" ng-class="{boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}" ng-style="{backgroundColor:makeFaintColor()}"><span class="cName" ng-if="show_name == 1"><?=$userInfo['display_name']?></span><span class="cName" ng-if="show_name == 2">{{sub_title}}</span>こんにちは</li>
           </div>
           <div style="height: auto!important; padding:0;">
-            <li class="sinclo_re chat_left" ng-class="{boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}" ng-style="{backgroundColor:makeFaintColor()}"><span class="cName" ng-if="show_name == 1"><?=$userInfo['display_name']?></span><span class="cName" ng-if="show_name == 2">{{sub_title}}</span>○○についてですね<br>どのようなご質問でしょうか？</li>
+            <li class="showAnimationSample sinclo_re chat_left" ng-class="{boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}" ng-style="{backgroundColor:makeFaintColor()}"><span class="cName" ng-if="show_name == 1"><?=$userInfo['display_name']?></span><span class="cName" ng-if="show_name == 2">{{sub_title}}</span>○○についてですね<br>どのようなご質問でしょうか？</li>
           </div>
         </ul>
         <div style="border-top: 1px solid #E8E7E0; padding: 0.5em;">
@@ -183,10 +185,24 @@
       #sincloBox section { display: inline-block; width: 285px; border: 1px solid #E8E7E0; border-top: none; }
       #sincloBox section.noDisplay { display: none }
       #sincloBox div#miniTarget { overflow: hidden; transition: height 200ms linear; }
+      @keyframes leftEffect { 0% { transform :translate3d(-20px, 0px, 0px) scale(0.8); opacity :0; } 69% {} 100% { transform :translate3d(0px, 0px, 0px); opacity :1; } }
       #sincloBox ul#chatTalk { width: 100%; height: 100px; padding: 5px; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0}
       #sincloBox ul#chatTalk li { border-radius: 5px; background-color: #FFF; margin: 5px 0 0; padding: 3px; font-size: 11px; border: 1px solid #C9C9C9; line-height: 1.8; white-space: pre; color: #333333; }
-      #sincloBox ul#chatTalk li.chat_right { border-bottom-right-radius: 0; margin-left: 10px }
-      #sincloBox ul#chatTalk li.chat_left { border-bottom-left-radius: 0; margin-right: 10px }
+      #sincloBox ul#chatTalk div.liLeft { text-align: left; }
+      #sincloBox ul#chatTalk div.liRight { text-align: right; }
+      #sincloBox ul#chatTalk li.boxType { word-wrap: break-word; word-break: break-all; }
+      #sincloBox ul#chatTalk li.balloonType { display: inline-block; position: relative; padding: 8px; text-align: left!important; word-wrap: break-word; word-break: break-all; }
+      #sincloBox ul#chatTalk li.sinclo_se.balloonType { margin-right: 15px; }
+      #sincloBox ul#chatTalk li.sinclo_se.balloonType:before { height: 0px; content: ""; position: absolute; bottom: 0.35em; left: calc(100% - 2.5px); margin-top: -10px; border: 10px solid transparent; border-left: 10px solid #FFF; z-index: 2; }
+      #sincloBox ul#chatTalk li.sinclo_se.balloonType:after { height: 0px; content: ""; position: absolute; bottom: 0.4em; left: 100%; margin-top: -9px; border: 9px solid transparent; border-left: 9px solid #C9C9C9; z-index: 1; }
+      #sincloBox ul#chatTalk li.sinclo_re.balloonType { margin-left: 10px; padding-right: 20px; }
+      #sincloBox ul#chatTalk li.sinclo_re.balloonType:before { height: 0px; content: ""; position: absolute; bottom: 0.35em; left: -19px; margin-top: -10px; border: 10px solid transparent; border-right: 10px solid {{makeBalloonTriangleColor()}}; z-index: 2; }
+      #sincloBox ul#chatTalk li.sinclo_re.balloonType:after { height: 0px; content: ""; position: absolute; bottom: 0.4em; left: -19px; margin-top: -9px; border: 9px solid transparent; border-right: 9px solid #C9C9C9; z-index: 1; }
+      #sincloBox ul#chatTalk li.effect_left { -webkit-animation-name:leftEffect; -moz-animation-name:leftEffect; -o-animation-name:leftEffect; -ms-animation-name:leftEffect; animation-name:leftEffect; -webkit-animation-duration:0.5s; -moz-animation-duration:0.5s; -o-animation-duration:0.5s; -ms-animation-duration:0.5s; animation-duration:0.5s; -webkit-animation-iteration-count:1; -moz-animation-iteration-count:1; -o-animation-iteration-count:1; -ms-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:forwards; -moz-animation-fill-mode:forwards; -o-animation-fill-mode:forwards; -ms-animation-fill-mode:forwards; animation-fill-mode:forwards; -webkit-transform-origin:left bottom; -moz-transform-origin:left bottom; -o-transform-origin:left bottom; -ms-transform-origin:left bottom; transform-origin:left bottom; opacity:0; -webkit-animation-delay:0.6s; -moz-animation-delay:0.6s; -o-animation-delay:0.6s; -ms-animation-delay:0.6s; animation-delay:0.6s; }
+      #sincloBox ul#chatTalk li.boxType.chat_right { border-bottom-right-radius: 0; margin-left: 10px }
+      #sincloBox ul#chatTalk li.boxType.chat_left { border-bottom-left-radius: 0; margin-right: 10px }
+      #sincloBox ul#chatTalk li.balloonType.chat_right { margin-left: 15px }
+      #sincloBox ul#chatTalk li.balloonType.chat_left { margin-right: 10px }
       #sincloBox ul#chatTalk li span.cName { display: block; color: {{main_color}}!important; font-weight: bold; font-size: 12px }
       #sincloBox section#chatTab div { height: 65px!important;  padding: 10px; }
       #sincloBox section#chatTab textarea#sincloChatMessage { width: 80%; height: 100%; margin: 0; font-size: 11px; color: #666666; border-radius: 5px 0 0 5px!important; resize: none; color: #666666; padding: 5px; border: 1px solid #C9C9C9!important; border-right-color: transparent!important; }
@@ -202,14 +218,14 @@
     <div id="miniTarget">
       <section id="chatTab">
         <ul id="chatTalk">
-          <div style="height: auto!important; padding:0;">
+          <div style="height: auto!important; padding:0;" ng-class="{liLeft: chat_message_design_type == 1, liRight: chat_message_design_type == 2}">
             <li class="sinclo_se chat_right" ng-class="{boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}">○○について質問したいのですが</li>
           </div>
           <div style="height: auto!important; padding:0;">
             <li class="sinclo_re chat_left" ng-class="{boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}" ng-style="{backgroundColor:makeFaintColor()}"><span class="cName">{{sub_title}}</span>こんにちは</li>
           </div>
           <div style="height: auto!important; padding:0;">
-            <li class="sinclo_re chat_left" ng-class="{boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}" ng-style="{backgroundColor:makeFaintColor()}"><span class="cName">{{sub_title}}</span>○○についてですね<br>どのようなご質問でしょうか？</li>
+            <li class="showAnimationSample sinclo_re chat_left" ng-class="{boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}" ng-style="{backgroundColor:makeFaintColor()}"><span class="cName">{{sub_title}}</span>○○についてですね<br>どのようなご質問でしょうか？</li>
           </div>
         </ul>
         <div style="border-top: 1px solid #E8E7E0; padding: 0.5em;">
