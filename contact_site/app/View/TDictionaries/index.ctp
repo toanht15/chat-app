@@ -138,7 +138,8 @@
                         'id'=>'tdictionaries_manu_btn'."$i",
                         'class' => 'btn-shadow disOffgreenBtn commontooltip',
                         'data-text' => 'その他編集',
-                        'data-balloon-position' => '84',
+                        'data-balloon-position' => '38',
+                        'noleft' => '1',
                         'width' => 32,
                         'height' => 32)) ?>
                 </p>
@@ -148,7 +149,7 @@
                 <p id="openMenu<?=$i?>">
                     <?= $this->Html->image('list.png', array(
                         'alt' => 'メニュー',
-                        'id'=>'tdictionaries_manu_btn'."$i",
+                        'id'=>'gray_tdictionaries_manu_btn'."$i",
                         'class' => 'btn-shadow disOffgrayBtn commontooltip',
                         'data-text' => "こちらの機能はスタンダードプラン<br>からご利用いただけます。",
                         'data-balloon-position' => '84',
@@ -192,7 +193,7 @@
           <tbody class="sortable">
             <?php if (!empty($dictionaryList[$i])) {?>
               <?php foreach((array)$dictionaryList[$i]as $key => $val): ?>
-              <tr data-id="<?=$val['TDictionary']['id']?>" data-sort="<?=$val['TDictionary']['sort']?>">
+              <tr data-id="<?=$val['TDictionary']['id']?>" data-sort="<?=$val['TDictionary']['sort']?>" onclick="<?="openEditDialog('".$val['TDictionary']['id'].",".$nameList[$i]['id']."')"?>">
                 <!-- #451 定型文カテゴリ対応 start -->
                 <td class="tCenter">
                   <input type="hidden" id="dictionary_list_flg<?=$i?>" value="1">
@@ -201,19 +202,13 @@
                 </td>
                 <!-- #451 定型文カテゴリ対応 end -->
                 <td width="8%" class="tCenter pre">
-                  <a class="t-link" id="t-link" href="javascript:void(0)" onclick="openEditDialog(<?=$val['TDictionary']['id']?>,<?=$nameList[$i]['id']?>)">
-                    <?=$key+1?>
-                  </a>
+                  <?=$key+1?>
                 </td>
                 <td style="width:8em;" class="tCenter pre">
-                    <a class="t-link" id="t-link" href="javascript:void(0)" onclick="openEditDialog(<?=$val['TDictionary']['id']?>,<?=$nameList[$i]['id']?>)">
-                      <?=$dictionaryTypeList[$val['TDictionary']['type']]?>
-                    </a>
+                  <?=$dictionaryTypeList[$val['TDictionary']['type']]?>
                 </td>
                 <td class="tLeft pre">
-                    <a class="t-link" id="t-link" href="javascript:void(0)" onclick="openEditDialog(<?=$val['TDictionary']['id']?>,<?=$nameList[$i]['id']?>)">
-                      <?=h($val['TDictionary']['word'])?>
-                    </a>
+                  <?=h($val['TDictionary']['word'])?>
                 </td>
               </tr>
             <?php endforeach; ?>
