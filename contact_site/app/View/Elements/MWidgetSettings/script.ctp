@@ -204,6 +204,22 @@ sincloApp.controller('WidgetCtrl', function($scope){
         $scope.$apply();
     });
 
+    $("#MWidgetSettingChatMessageWithAnimation").on("click", function(e){
+      var checked = $(this).prop('checked');
+      var targetMessageUI = $('.showAnimationSample');
+      //いったん非表示にする
+      targetMessageUI.css('visibility', 'hidden');
+      if(checked) {
+        targetMessageUI.addClass('effect_left');
+      } else {
+        targetMessageUI.removeClass('effect_left');
+      }
+      // 設定が適用されたことをプレビューで見やすいようにずらして表示
+      setTimeout(function(){
+        targetMessageUI.css('visibility', 'visible');
+      },600);
+    });
+
     angular.element(window).on("focus", ".showSp", function(e){
         $scope.switchWidget(3);
     });
