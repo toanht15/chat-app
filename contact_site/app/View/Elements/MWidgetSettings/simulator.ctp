@@ -35,7 +35,7 @@
       #sincloBox ul#chatTalk div.liRight { text-align: right; }
       #sincloBox ul#chatTalk li { border-radius: 5px; background-color: #FFF; margin: 5px 0 0; padding: 5px; font-size: 12px; border: 1px solid #C9C9C9; line-height: 1.8; white-space: pre; color: #333333; }
       #sincloBox ul#chatTalk li.boxType { word-wrap: break-word; word-break: break-all; }
-      #sincloBox ul#chatTalk li.balloonType { display: inline-block; position: relative; padding: 8px; text-align: left!important; word-wrap: break-word; word-break: break-all; }
+      #sincloBox ul#chatTalk li.balloonType { display: inline-block; position: relative; padding: 5px 8px; text-align: left!important; word-wrap: break-word; word-break: break-all; }
       #sincloBox ul#chatTalk li.sinclo_se.balloonType { margin-right: 15px; }
       #sincloBox ul#chatTalk li.sinclo_se.balloonType:before { height: 0px; content: ""; position: absolute; bottom: 0.35em; left: calc(100% - 2.5px); margin-top: -10px; border: 10px solid transparent; border-left: 10px solid #FFF; z-index: 2; }
       #sincloBox ul#chatTalk li.sinclo_se.balloonType:after { height: 0px; content: ""; position: absolute; bottom: 0.4em; left: 100%; margin-top: -9px; border: 9px solid transparent; border-left: 9px solid #C9C9C9; z-index: 1; }
