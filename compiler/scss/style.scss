@@ -1577,7 +1577,7 @@ ul.naviBtn {
               li {
                   text-align: left;
                   margin: 10px 0 0;
-                  padding: 5px;
+                  padding: 10px;
                   font-size: 12px;
                   border: 1px solid #C9C9C9;
                   color: #333333;
@@ -1588,6 +1588,7 @@ ul.naviBtn {
                   }
                   &.sinclo_re {
                       display: inline-block;
+                      text-align: right;
                       margin-right: 10px;
                       border-radius: 5px 5px 5px 0;
                       background-color: #F1F5C8;
@@ -3012,7 +3013,7 @@ ul.naviBtn {
       }
 
       li span {
-        width: 15em;
+        width: 17em;
         padding-top: 5px;
         display: block;
       }

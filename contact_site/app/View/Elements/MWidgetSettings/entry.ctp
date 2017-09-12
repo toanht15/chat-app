@@ -425,6 +425,43 @@ $headerNo = 1;
           </li>
           <?php if ( $this->Form->isFieldError('show_name') ) echo $this->Form->error('show_name', null, ['wrap' => 'li']); ?>
           <!-- 担当者表示 -->
+          <!-- 吹き出しデザイン -->
+          <li>
+            <span class="require"><label>吹き出しデザイン</label></span>
+            <pre><label class="pointer"><?= $this->ngForm->input('chat_message_design_type', [
+                  'type' => 'radio',
+                  'options' => $chatMessageDesignType,
+                  'legend' => false,
+                  'separator' => '</label><br><label class="pointer">',
+                  'class' => 'chatMessageDesignType',
+                  'div' => false,
+                  'label' => false,
+                  'error' => false
+                ],
+                  [
+                    'entity' => 'MWidgetSetting.chat_message_design_type'
+                  ]) ?></label></pre>
+          </li>
+          <?php if ( $this->Form->isFieldError('chat_message_design_type') ) echo $this->Form->error('chat_message_design_type', null, ['wrap' => 'li']); ?>
+          <!-- 吹き出しデザイン -->
+          <!-- メッセージ表示時アニメーション -->
+          <li>
+            <span class="require"><label>メッセージ表示時アニメーション</label></span>
+            <pre><label class="pointer"><?= $this->ngForm->input('chat_message_with_animation', [
+                  'type' => 'checkbox',
+                  'legend' => false,
+                  'ng-checked' => 'chat_message_with_animation === "'.C_CHECK_ON.'"',
+                  'div' => false,
+                  'class' => 'chatMessageWithAnimation',
+                  'label' => "アニメーションを有効にする",
+                  'error' => false
+                ],
+                  [
+                    'entity' => 'MWidgetSetting.chat_message_with_animation'
+                  ]) ?></label></pre>
+          </li>
+          <?php if ( $this->Form->isFieldError('chat_message_with_animation') ) echo $this->Form->error('chat_message_with_animation', null, ['wrap' => 'li']); ?>
+          <!-- メッセージ表示時アニメーション -->
         </ul>
       </section>
       <h3><?php echo mb_convert_kana($headerNo, "N", "utf-8"); $headerNo++ ?>．チャット設定（スマートフォン用）</h3>

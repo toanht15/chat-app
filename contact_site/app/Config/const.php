@@ -70,6 +70,10 @@ define('C_WIDGET_POSITION_LEFT_BOTTOM', 2); // 左下
 define('C_WIDGET_SHOW_NAME', 1); // 表示名
 define('C_WIDGET_SHOW_COMP', 2); // 企業名
 
+// チャットデザインタイプ
+define('C_WIDGET_CHAT_MESSAGE_DESIGN_TYPE_BOX', 1); // BOX型（サイズ固定）
+define('C_WIDGET_CHAT_MESSAGE_DESIGN_TYPE_BALLOON', 2); // 吹き出し型（サイズ可変）
+
 // ラジオボタン選択時の動作種別
 define('C_WIDGET_RADIO_CLICK_SEND', 1); // 文字列が送信される
 define('C_WIDGET_RADIO_CLICK_TEXT', 2); // 文字列がテキストエリアに挿入される
@@ -216,6 +220,12 @@ $config['widgetPositionType'] = [
 $config['widgetShowNameType'] = [
     C_WIDGET_SHOW_NAME => "担当者名を表示する<br>　<s>※ユーザーマスタの「表示名」に設定された名称を表示します</s>",
     C_WIDGET_SHOW_COMP=> "企業名を表示する<br>　<s>※こちらの画面の「企業名」に設定された名称を表示します</s>"
+];
+
+/* ウィジェット設定 － 吹き出しデザイン */
+$config['chatMessageDesignType'] = [
+  C_WIDGET_CHAT_MESSAGE_DESIGN_TYPE_BOX => "BOX型（サイズ固定）",
+  C_WIDGET_CHAT_MESSAGE_DESIGN_TYPE_BALLOON => "吹き出し型（サイズ可変）"
 ];
 
 /* ウィジェット設定 － ラジオボタン操作時の動作種別 */
