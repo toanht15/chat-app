@@ -161,6 +161,7 @@
         var $this = $(self);
         var text = $this.attr('data-text');
         var baloonPosition = $this.attr('data-balloon-position'); // 吹き出しの＜の部分
+        var noleft = $this.attr('noleft');
         var $tooltip = $('<div class="tooltips">'+text+'</div>');
         //行数をカウント
         var id = $this.attr('id');
@@ -191,10 +192,17 @@
         }
 
         // 要素の上に横中央で配置
-        $tooltip.css({
-          top: offset.top - ttSize.height - 12, // 三角部分の高さ
-          left: leftCoordinate
-        });
+        if(! noleft){
+          $tooltip.css({
+            top: offset.top - ttSize.height - 12, // 三角部分の高さ
+            left: leftCoordinate
+          });
+        }
+        else{
+          $tooltip.css({
+            top: offset.top - ttSize.height - 12 // 三角部分の高さ
+          });
+        }
         if(baloonPosition) {
           $tooltip.append('<style>.tooltips:after{left:' + baloonPosition + '%!important; top:' + toppx + 'px!important;}</style>');
           $tooltip.attr("id","tooltip_"+id)
