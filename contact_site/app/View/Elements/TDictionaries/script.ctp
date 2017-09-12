@@ -449,6 +449,8 @@ $( function() {
     var oldid = "ui-id-" + (Number(document.getElementById("select_tab_index").value) + 1);
     var index = ui.newTab.index();
     var stint_flg = document.getElementById("stint_flg").value;
+    //メニューが開いていたらメニューを閉じる
+    $("#layerMenu"+ index).fadeOut("fast");
     //もし、タブをクリックされた時定型文並び替えモードだったら並べ替えモードをキャンセル
     if (!document.getElementById("sort" + index).checked) {
       $(".sortable").addClass("move").sortable("disable");
@@ -504,8 +506,9 @@ $( function() {
       document.getElementById('allCheck'+index).disabled = "";
     }
     if(stint_flg == '0'){
-      document.getElementById('tdictionaries_manu_btn' + index).className="btn-shadow disOffgrayBtn";
+      document.getElementById('gray_tdictionaries_manu_btn' + index).className="btn-shadow disOffgrayBtn";
     }
+    setWidth(event);
     var allTabList = document.querySelectorAll('[id^="ui-id-"]');
     //要素の高さを取得
     var newid = "ui-id-" + (index + 1);
@@ -578,7 +581,7 @@ $( function() {
     //プランメッセージ表示
     document.getElementById("stintMessage").style.display="";
     //カテゴリメニューボタン押下不可
-    document.getElementById('tdictionaries_manu_btn'+index).className="btn-shadow disOffgrayBtn";
+    document.getElementById('gray_tdictionaries_manu_btn'+index).className="btn-shadow disOffgrayBtn";
     //カテゴリ並べ替えチェックボックスボタン押下不可
     document.getElementById("tabsort").disabled = "disabled";
   }
@@ -604,6 +607,7 @@ $( function() {
 
   //ページ全体を監視して何らかのクリックがあった時
   $(document).on('click touchend', function(event) {
+    var index = document.getElementById("select_tab_index").value;
     //メニューオープン以外の動きだったら
     if (!$(event.target).closest('[id^=openMenu]').length) {
       $("#layerMenu"+ index).fadeOut("fast");
