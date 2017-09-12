@@ -83,6 +83,28 @@ sincloApp.controller('WidgetCtrl', function($scope){
       return defColor;
     };
 
+  $scope.makeBalloonTriangleColor = function(){
+    var defColor = "#F1F5C8";
+    if ( $scope.main_color.indexOf("#") >= 0 ) {
+      var code = $scope.main_color.substr(1), r,g,b;
+      if (code.length === 3) {
+        r = String(code.substr(0,1)) + String(code.substr(0,1));
+        g = String(code.substr(1,1)) + String(code.substr(1,1));
+        b = String(code.substr(2)) + String(code.substr(2));
+      }
+      else {
+        r = String(code.substr(0,2));
+        g = String(code.substr(2,2));
+        b = String(code.substr(4));
+      }
+      var balloonR = String(Math.floor(255 - (255 - parseInt(r,16)) * 0.1));
+      var balloonG = String(Math.floor(255 - (255 - parseInt(g,16)) * 0.1));
+      var balloonB = String(Math.floor(255 - (255 - parseInt(b,16)) * 0.1));
+      defColor = 'rgb(' + balloonR  + ', ' +  balloonG  + ', ' +  balloonB + ');';
+    }
+    return defColor;
+  };
+
     $scope.inputInitToggle = function(item){
       return (item) ? 1 : 2;
     };
