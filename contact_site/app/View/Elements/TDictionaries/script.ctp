@@ -441,16 +441,18 @@ var actBtnShow = function(){
 
 /* #451 定型文カテゴリ対応 start */
 $( function() {
-
   //インデックスの初期値を挿入暫定的に0
   document.getElementById("select_tab_index").value = "<?= $tabindex ?>";
+  document.getElementById("tabBoxborder" + document.getElementById("select_tab_index").value).style.display="";
   //タブが押下された時の処理
   $("#soteTabs").bind('tabsactivate', function(event, ui) {
     var oldid = "ui-id-" + (Number(document.getElementById("select_tab_index").value) + 1);
-    var index = ui.newTab.index();
-    var stint_flg = document.getElementById("stint_flg").value;
     //メニューが開いていたらメニューを閉じる
-    $("#layerMenu"+ index).fadeOut("fast");
+    $("#layerMenu"+ document.getElementById("select_tab_index").value).fadeOut("fast");
+    document.getElementById("tabBoxborder" + document.getElementById("select_tab_index").value).style.display="none";
+    var index = ui.newTab.index();
+    document.getElementById("tabBoxborder" + index).style.display="";
+    var stint_flg = document.getElementById("stint_flg").value;
     //もし、タブをクリックされた時定型文並び替えモードだったら並べ替えモードをキャンセル
     if (!document.getElementById("sort" + index).checked) {
       $(".sortable").addClass("move").sortable("disable");

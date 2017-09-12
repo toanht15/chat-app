@@ -266,7 +266,7 @@ class TDictionariesController extends AppController {
     foreach($tab_name as $value){
       $names[$value['id']] = $value['name'];
     }
-    //$this->set('tabindex', $data['select_tab_index']);
+    $this->set('selectTabIndex', $data['select_tab_index']);
     $this->set('type', $data['type']);
     $this->set('id', $tab_name[0]['id']);
     $this->set('names', $names);

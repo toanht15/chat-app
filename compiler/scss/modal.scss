@@ -931,6 +931,21 @@
     margin: 20px;
     padding-bottom: 20px;
     .fLeft{
+      .tabName{
+        position: relative;
+        top: 10px;
+        left: 15px;
+      }
+      .tabBtnSet{
+        position: relative;
+        top: 2px;
+        left: 17px;
+      }
+      .tabpointer{
+        position: relative;
+        top: -1px;
+        left: 18px;
+      }
       position: relative;
       top: -10px;
       left: -5px;
@@ -954,8 +969,8 @@
     }
     .fRight{
       position: relative;
-      top: -20px;
-      left: 2px;
+      top: -18px;
+      left: -15px;
     }
     #tdictionaries_list{
       padding: 15px;
@@ -963,14 +978,20 @@
       td {
         label{
           position: relative;
-          top: 5px;
+          top: 0px;
           left: 0px;
         }
         /*display: block;*/
-        padding: 0px 10px 10px;
+        /*padding: 0px 10px 10px;*/
       }
     }
   }
+}
+
+.btn-shadow.d-set-option-btn{
+  width: 90px;
+  height: 20px;
+  text-align: center;
 }
 
 #input_category_btn.disOffgreenBtn{
@@ -1236,7 +1257,7 @@
 }
 
 #TDictionaryType{
-  padding: 0em 0em 0.3em;
+  padding: 0 0 3px 0.5em;
 }
 
 #wordSearchCond{
@@ -1265,7 +1286,7 @@
 
 .ui-tabs .ui-tabs-nav.categoryTabStyle{
   padding: 0;
-  height: 29px;
+  height: 30px;
   width: 101%;
   overflow: hidden;
 }
@@ -1338,14 +1359,14 @@
 
 [id^="openMenu"] {
   position: absolute;
-  top: 0;
+  top: 43px;
   right: 0;
 }
 
 [id^="layerMenu"] {
   display: none;
   position: absolute;
-  top: 50px;
+  top: 95px;
   right: 0;
   width: 160px;
   font-size: 12px;
@@ -1397,30 +1418,30 @@
 
 [id^="tooltip_tdictionaries_add_btn"].tooltips{
   position: fixed;
-  left: 104px !important;
+  left: 109px !important;
   width: 6em
 }
 
 [id^="tooltip_tdictionaries_copy_btn"].tooltips{
   position: fixed;
-  left: 128px !important;
+  left: 139px !important;
   width: 9em;
 }
 
 [id^="tooltip_tdictionaries_move_btn"].tooltips{
   position: fixed;
-  left: 190px !important;
+  left: 205px !important;
   width: 6em;
 }
 
 [id^="tooltip_tdictionaries_dustbox_btn"].tooltips{
   position: fixed;
-  left: 234px !important;
+  left: 254px !important;
   width: 6em;
 }
 
 [id^="tooltip_tdictionaries_manu_btn"].tooltips{
-  right: 40px;
+  right: 57px;
   width: 7em;
   position: fixed;
 }
@@ -1454,9 +1475,26 @@
   padding: .0em .0em 0;
 }
 
+[id^="tabBoxborder"]{
+  border: 1px solid #a6a6a6;
+  background-color: #FFF;
+  padding: 0px;
+}
+
+.tabBoxInborder{
+  border: 1px solid #a6a6a6;
+  background-color: #FFF;
+  padding: 0.25em;
+}
+
 .tabBox.ui-tabs-panel.ui-corner-bottom.ui-widget-content{
   border: solid #C3D69B;
   border-width: 15px 10px 10px;
   background-color: #FFF;
-  padding: 0.25em;
+  padding: 0px;
+}
+
+.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active.taboutborder{
+  border: 1px solid #a6a6a6;
+  border-bottom: none;
 }
