@@ -194,6 +194,20 @@ var socket, // socket.io
           break;
       }
 
+      switch ( Number(widget.chatMessageWidgetType) ) {
+        case 1: //BOX型
+          chatPosition.se += " border-bottom-right-radius: 0;";
+          chatPosition.re += " border-bottom-left-radius: 0;";
+          break;
+        case 2: //吹き出し型
+          // 何もしない
+          break;
+        default: //BOX型
+          chatPosition.se += " border-bottom-right-radius: 0;";
+          chatPosition.re += " border-bottom-left-radius: 0;";
+          break;
+      }
+
       // 基本設定
       var widgetWidth = 285, ratio = 1;
       // ユーザーエージェント
