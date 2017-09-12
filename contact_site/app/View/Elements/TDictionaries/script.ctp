@@ -444,10 +444,13 @@ $( function() {
 
   //インデックスの初期値を挿入暫定的に0
   document.getElementById("select_tab_index").value = "<?= $tabindex ?>";
+  document.getElementById("tabBoxborder" + document.getElementById("select_tab_index").value).style.display="";
   //タブが押下された時の処理
   $("#soteTabs").bind('tabsactivate', function(event, ui) {
     var oldid = "ui-id-" + (Number(document.getElementById("select_tab_index").value) + 1);
+    document.getElementById("tabBoxborder" + document.getElementById("select_tab_index").value).style.display="none";
     var index = ui.newTab.index();
+    document.getElementById("tabBoxborder" + index).style.display="";
     var stint_flg = document.getElementById("stint_flg").value;
     //メニューが開いていたらメニューを閉じる
     $("#layerMenu"+ index).fadeOut("fast");

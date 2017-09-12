@@ -1338,14 +1338,14 @@
 
 [id^="openMenu"] {
   position: absolute;
-  top: 0;
+  top: 43px;
   right: 0;
 }
 
 [id^="layerMenu"] {
   display: none;
   position: absolute;
-  top: 50px;
+  top: 95px;
   right: 0;
   width: 160px;
   font-size: 12px;
@@ -1454,9 +1454,21 @@
   padding: .0em .0em 0;
 }
 
+[id^="tabBoxborder"]{
+  border: 1px solid #a6a6a6;
+  background-color: #FFF;
+  padding: 0px;
+}
+
+.tabBoxInborder{
+  border: 1px solid #a6a6a6;
+  background-color: #FFF;
+  padding: 0.25em;
+}
+
 .tabBox.ui-tabs-panel.ui-corner-bottom.ui-widget-content{
   border: solid #C3D69B;
   border-width: 15px 10px 10px;
   background-color: #FFF;
-  padding: 0.25em;
+  padding: 0px;
 }

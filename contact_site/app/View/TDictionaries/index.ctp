@@ -50,9 +50,14 @@
   <?php } ?>
   </ul>
   <?php for ($i = 0; $i < count((array)$nameList); $i++) { ?>
+  <div id="tabBoxborder<?=$i?>" class="tabBoxborder" style="display:none;">
   <div id="tabs-<?=$i?>" class="tabBox">
+  <div class="tabBoxInborder">
       <div id='tdictionaries_menu' class="p20trl">
         <ul class="fLeft" >
+          <li>
+            <h1><?=h($nameList[$i]['name'])?></h1>
+          </li>
           <li>
             <?php $tab_id = $nameList[$i]['id']; ?>
             <span>
@@ -63,8 +68,8 @@
                     'class' => 'btn-shadow disOffgreenBtn commontooltip',
                     'data-text' => '新規追加',
                     'data-balloon-position' => '36',
-                    'width' => 40,
-                    'height' => 40,
+                    'width' => 45,
+                    'height' => 45,
                     'onclick' => 'openAddDialog('.$tab_id.')',
                 )) ?>
               </a>
@@ -77,8 +82,8 @@
                     'class' => 'btn-shadow disOffgrayBtn commontooltip',
                     'data-text' => 'コピー（複製）',
                     'data-balloon-position' => '41',
-                    'width' => 40,
-                    'height' => 40)) ?>
+                    'width' => 45,
+                    'height' => 45)) ?>
               </a>
             </span>
             <span>
@@ -90,8 +95,8 @@
                     'class' => 'btn-shadow disOffgrayBtn commontooltip',
                     'data-text' => '移動する',
                     'data-balloon-position' => '36',
-                    'width' => 40,
-                    'height' => 40)) ?>
+                    'width' => 45,
+                    'height' => 45)) ?>
               </a>
               <?php }else{?>
               <a>
@@ -101,8 +106,8 @@
                     'class' => 'btn-shadow disOffgrayBtn commontooltip',
                     'data-text' => "こちらの機能はスタンダードプラン<br>からご利用いただけます。",
                     'data-balloon-position' => '43.5',
-                    'width' => 40,
-                    'height' => 40)) ?>
+                    'width' => 45,
+                    'height' => 45)) ?>
               </a>
               <?php }?>
             </span>
@@ -114,8 +119,8 @@
                     'class' => 'btn-shadow disOffgrayBtn commontooltip',
                     'data-text' => '削除する',
                     'data-balloon-position' => '35',
-                    'width' => 40,
-                    'height' => 40)) ?>
+                    'width' => 45,
+                    'height' => 45)) ?>
               </a>
             </span>
           </li>
@@ -140,8 +145,8 @@
                         'data-text' => 'その他編集',
                         'data-balloon-position' => '38',
                         'noleft' => '1',
-                        'width' => 32,
-                        'height' => 32)) ?>
+                        'width' => 35,
+                        'height' => 35)) ?>
                 </p>
               </div>
             <?php }else{?>
@@ -153,8 +158,8 @@
                         'class' => 'btn-shadow disOffgrayBtn commontooltip',
                         'data-text' => "こちらの機能はスタンダードプラン<br>からご利用いただけます。",
                         'data-balloon-position' => '84',
-                        'width' => 32,
-                        'height' => 32)) ?>
+                        'width' => 36,
+                        'height' => 36)) ?>
                 </p>
               </div>
             <?php }?>
@@ -221,6 +226,8 @@
           </tbody>
         </table>
       </div>
+  </div>
+  </div>
   </div>
   <?php } ?>
 </div>
