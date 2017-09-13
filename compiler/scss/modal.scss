@@ -1476,7 +1476,7 @@
 }
 
 [id^="tabBoxborder"]{
-  border: 1px solid #a6a6a6;
+  border: 2px solid #a6a6a6;
   background-color: #FFF;
   padding: 0px;
 }
@@ -1488,13 +1488,13 @@
 }
 
 .tabBox.ui-tabs-panel.ui-corner-bottom.ui-widget-content{
-  border: solid #C3D69B;
+  border: 2px solid #C3D69B;
   border-width: 15px 10px 10px;
   background-color: #FFF;
   padding: 0px;
 }
 
 .ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active.taboutborder{
-  border: 1px solid #a6a6a6;
+  border: 2px solid #a6a6a6;
   border-bottom: none;
 }

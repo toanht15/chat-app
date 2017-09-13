@@ -360,6 +360,7 @@ $(".ui-tabs-nav").sortable("disable");
 });
 
 document.body.onload = function(){
+  console.log("huga");
   // 全選択用チェックボックス
   var index = document.getElementById("select_tab_index").value;
   var allCheckElm = document.querySelectorAll('[id^="allCheck"]');
@@ -645,6 +646,7 @@ $( function() {
         var px = 1;
         var totalWidth = 0;
         while (lineChk == false) {
+          console.log("hogehoge..");
           var currentTotalWidth = 0;
           for (var i = 0; i < overflowList.length; i++) {
             var tab_w = overflowList[i].clientWidth;
@@ -656,7 +658,6 @@ $( function() {
             currentTotalWidth += tabWidth;
           }
           var tobTopList = getTabTopList(allTabList);
-          console.log('SHIMIZU 2 : ' + tobTopList.length);
           if(tobTopList.length > 1){
             //一行以上になったらループ終わり
             lineChk = true;
@@ -714,6 +715,7 @@ $( function() {
       var lineChk = false;
       var px = 1;
       while (lineChk == false) {
+        console.log("hugahuga");
         for (var i = 0; i < allTabList.length; i++) {
           //対象のタブの幅を取得
           var tab_w = allTabList[i].clientWidth;
@@ -754,7 +756,8 @@ $( function() {
     var tabAllay = [];
     for (var i = 0; i < topAllay.length; i++) {
       tabAllay.push(allTabList[i].id);
-      if(nawtop == topAllay[(i + 1)]){
+      console.log(nawtop - topAllay[(i + 1)]);
+      if(Math.abs(nawtop - topAllay[(i + 1)]) < 25){ // タブが折り返された判定になったら
         var linechange = 0;
       }
       else{
@@ -766,6 +769,7 @@ $( function() {
         tabAllay = [];
       }
     }
+    console.log(JSON.stringify(tobTopList));
     return tobTopList;
   }
 
