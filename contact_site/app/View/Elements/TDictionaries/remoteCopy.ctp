@@ -22,6 +22,10 @@
       if("<?= $stint_flg ?>" == "1"){
         var selectedCategory = document.getElementById("TDictionaryType").value;
         var nextTabIndex = document.getElementById("TDictionaryType").selectedIndex;
+        var val_key = "<?= $val_key ?>";
+        if(nextTabIndex == 0){
+          nextTabIndex = val_key;
+        }
       }
       else{
         var selectedCategory = "<?= $id ?>";

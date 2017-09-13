@@ -249,6 +249,7 @@ class TDictionariesController extends AppController {
         $tab_name[0] = $key_array;
         $tab_name[$val_key] = $zero_array;
       }
+      $this->set('val_key', $val_key);
     }
     else{
       //移動
