@@ -2347,6 +2347,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                                 //新しくセレクトされた要素までスクロール
                                 document.getElementById(res[selected_key].id).scrollIntoView(true);
                               }
+                            } else {
+                              closeCategoryDictionary();
                             }
                             return false;
                           }
