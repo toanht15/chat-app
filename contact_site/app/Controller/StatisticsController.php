@@ -228,6 +228,26 @@ class StatisticsController extends AppController {
   }
 
   /* *
+   * loading画像(別ウィンドウ画面が表示されるまで)
+   * @return void
+   * */
+  public function loadingHtml() {
+    if(!empty($this->params['url']['id'])) {
+      $userId = $this->params['url']['id'];
+      $this->set('userId',$userId);
+    }
+    if(!empty($this->params['url']['item'])) {
+      $item = $this->params['url']['item'];
+      $this->set('item',$item);
+    }
+
+    $timeType = $this->params['url']['type'];
+    $dateType = $this->params['url']['target'];
+
+    $this->set('timeType',$timeType);
+    $this->set('dateType',$dateType);
+  }
+  /* *
    * チャットレポートCSV
    * @return void
    * */
