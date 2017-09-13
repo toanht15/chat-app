@@ -2089,6 +2089,15 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                     }
               });
 
+              var IMEOnEntering = false;
+              $("#popup-content").on("keypress", function(e){
+                if(e.keyCode === 229) {
+                  IMEOnEntering = true;
+                } else {
+                  IMEOnEntering = false;
+                }
+              });
+
               //ポップアップ全体監視(ポップアップのどこかにフォーカスがある状態でキーを押下すると)
               $("#popup-content").on('keyup', function(e){
                 var search_word = document.getElementById("wordSearchCond").value;
@@ -2130,13 +2139,15 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                         }
                       }
                       if ( e.keyCode === 13 ) { // Enter
-                        var list = getEntryWordSearch($scope.entryWordList[select_tab_index]);
-                        if ( list.length > 0 ) {
-                          entryWordApi.push(list[selected_key].label);
+                        if(!IMEOnEntering) {
+                          var list = getEntryWordSearch($scope.entryWordList[select_tab_index]);
+                          if (list.length > 0) {
+                            entryWordApi.push(list[selected_key].label);
+                          }
+                          entryWordApi.prev();
+                          //ポップアップを閉じる
+                          closeCategoryDictionary();
                         }
-                        entryWordApi.prev();
-                        //ポップアップを閉じる
-                        closeCategoryDictionary();
                         return false;
                       }
                       if ( e.keyCode === 38 ) { // 上キー
@@ -2310,20 +2321,22 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                           //selected_id = Number(selected_id.substr(10));
                           //各ボタンの判定
                           if (e.keyCode === 13) { // Enter
-                            var id = Number(selected_id.substr(10));
-                            //$scope.entryWordListの中のどこに該当するか特定する
-                            var wordlist = $scope.entryWordList;
-                            for(var key in wordlist) {
-                              for(var v_key in wordlist[key]) {
-                                if(wordlist[key][v_key]["id"] == id){
-                                  var select_tab_index = key;
-                                  var select_index = v_key;
+                            if(!IMEOnEntering) {
+                              var id = Number(selected_id.substr(10));
+                              //$scope.entryWordListの中のどこに該当するか特定する
+                              var wordlist = $scope.entryWordList;
+                              for (var key in wordlist) {
+                                for (var v_key in wordlist[key]) {
+                                  if (wordlist[key][v_key]["id"] == id) {
+                                    var select_tab_index = key;
+                                    var select_index = v_key;
+                                  }
                                 }
                               }
+                              var list = getEntryWordSearch($scope.entryWordList[select_tab_index]);
+                              closeCategoryDictionary();
+                              entryWordApi.push(list[select_index].label);
                             }
-                            var list = getEntryWordSearch($scope.entryWordList[select_tab_index]);
-                            closeCategoryDictionary();
-                            entryWordApi.push(list[select_index].label);
                             return false;
                           }
                           if (e.keyCode === 38) { // 上キー
