@@ -450,7 +450,7 @@ $( function() {
     //メニューが開いていたらメニューを閉じる
     $("#layerMenu"+ document.getElementById("select_tab_index").value).fadeOut("fast");
     document.getElementById("tabBoxborder" + document.getElementById("select_tab_index").value).style.display="none";
-    var index = ui.newTab.index();
+    var index = Number($(ui.newTab).attr('id').replace('li_',''));
     document.getElementById("tabBoxborder" + index).style.display="";
     var stint_flg = document.getElementById("stint_flg").value;
     //もし、タブをクリックされた時定型文並び替えモードだったら並べ替えモードをキャンセル
