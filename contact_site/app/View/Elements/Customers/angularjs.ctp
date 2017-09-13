@@ -2090,7 +2090,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
               });
 
               var IMEOnEntering = false;
-              $("#popup-content").on("keypress", function(e){
+              $("#popup-content").on("keydown", function(e){
                 if(e.keyCode === 229) {
                   IMEOnEntering = true;
                 } else {
