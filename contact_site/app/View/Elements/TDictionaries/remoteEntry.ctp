@@ -104,7 +104,7 @@
     <?= $this->Form->input('id', array('type' => 'hidden')); ?>
     <div>
       <div id="inputStr">
-        <label class="require">入力文字</label>
+        <label class="require">定型文</label>
         <menu class="w100">
         <input type="hidden" id="dstoken" name="dstoken" value="<?=$dstoken?>">
         <span class="btn-shadow d-set-option-btn" data-type="1" onclick="addOption(1)">選択肢</span>
@@ -113,7 +113,7 @@
         </menu>
         <div class="balloon"><span></span></div>
       </div>
-      <?= $this->Form->textarea('word', array('placeholder' => '入力文字', 'div' => false, 'label' => false, 'maxlength' => 200)) ?>
+      <?= $this->Form->textarea('word', array('placeholder' => '定型文を入力して下さい', 'div' => false, 'label' => false, 'maxlength' => 200)) ?>
     </div>
     <div>
       <label class="require">使用範囲</label>
