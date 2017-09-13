@@ -2007,7 +2007,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                   //その行の先頭のIDを取得
                   var id = tobTopList[select_line_index][0];
                   //そのIDまでスクロール
-                  document.getElementById(id).scrollIntoView();
+                  document.getElementById(id).scrollIntoView(false);
                   //変更された行IDを保持
                   document.getElementById("select_line_index").value = select_line_index;
                   if(select_line_index == 0){
@@ -2035,7 +2035,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                   //その行の先頭のIDを取得
                   var id = tobTopList[select_line_index][0];
                   //そのIDまでスクロール
-                  document.getElementById(id).scrollIntoView();
+                  document.getElementById(id).scrollIntoView(false);
                   //変更された行IDを保持
                   document.getElementById("select_line_index").value = select_line_index;
                   if(select_line_index == (tobTopList.length - 1)){
@@ -2083,9 +2083,29 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                 $("#wordSearchCond").focus();
               });
 
-              if(document.getElementById("mode_flg").value == 0){
-                //ポップアップ全体監視(ポップアップのどこかにフォーカスがある状態でキーを押下すると)
-                $("#popup-content").on('keyup', function(e){
+              $('#wordSearchCond').on('keydown', function(e) {
+                    if(e.keyCode === 38 || e.keyCode === 40) {
+                        e.preventDefault();
+                    }
+              });
+
+              //ポップアップ全体監視(ポップアップのどこかにフォーカスがある状態でキーを押下すると)
+              $("#popup-content").on('keyup', function(e){
+                var search_word = document.getElementById("wordSearchCond").value;
+                //検索文字列があるか
+                if(search_word){
+                  //検索モード
+                  document.getElementById("mode_flg").value = 1;
+                }
+                else{
+                  //通常モード
+                  document.getElementById("mode_flg").value = 0;
+                  //入力が無くなったら通常モード
+                  document.getElementById("serect_tab_mode").style.display="";
+                  document.getElementById("word_search_mode").style.display="none";
+                  document.getElementById("wordSearchChk").value = "";
+                }
+                if(document.getElementById("mode_flg").value == 0){
                   var keytime = document.getElementById("keytime").value;
                   //二重操作防止
                   if(keytime != e.timeStamp){
@@ -2257,57 +2277,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                       entryWordApi.sc = 0;
                     }
                   }
-                });
-              }
-
-              $("#wordSearchCond")
-              .on('keyup', function(e){
-                var search_word = document.getElementById("wordSearchCond").value;
-                //検索文字列があるか
-                if(search_word){
-                  //一旦全て非表示
-                  document.getElementById("categoryTabs-ALL").style.display="none";
-                  document.getElementById("allWordList").style.display="none";
-                  var searchItemList = document.querySelectorAll('[id^="searchItem"]');
-                  for (var i = 0; i < searchItemList.length; i++) {
-                    searchItemList[i].style.display="none";
-                  }
-                  onWordSearchCond(e);
-                  wordSearchkeyup(e)
-                  return false;
                 }
-              })
-              .on('click', function(e){
-                var $input = $(this),
-                oldValue = $input.val();
-                if (oldValue == "") return;
-                setTimeout(function(){
-                  //一旦全て非表示
-                  document.getElementById("categoryTabs-ALL").style.display="none";
-                  document.getElementById("allWordList").style.display="none";
-                  var searchItemList = document.querySelectorAll('[id^="searchItem"]');
-                  for (var i = 0; i < searchItemList.length; i++) {
-                    searchItemList[i].style.display="none";
-                  }
-                  onWordSearchCond(e);
-                },1);
-              })
-              .on('onchange', function(e){
-                //一旦全て非表示
-                document.getElementById("categoryTabs-ALL").style.display="none";
-                document.getElementById("allWordList").style.display="none";
-                var searchItemList = document.querySelectorAll('[id^="searchItem"]');
-                for (var i = 0; i < searchItemList.length; i++) {
-                  searchItemList[i].style.display="none";
-                }
-                onWordSearchCond(e);
-              });
-
-              function wordSearchkeyup(){
-                //検索モード
-                //検索テキストボックス
-                $("#wordSearchCond")
-                .on('keyup', function(e){
+                else{
                   //上下エンターキーの判定
                   if((e.keyCode === 13)||(e.keyCode === 38)||(e.keyCode === 40)){
                     var searchkeytime = document.getElementById("searchkeytime").value;
@@ -2377,6 +2348,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                                 document.getElementById(res[selected_key].id).scrollIntoView(true);
                               }
                             }
+                            return false;
                           }
                           if (e.keyCode === 40) { // 下キー
                             if ( res.length > (selected_key + 1) ) {
@@ -2419,8 +2391,42 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                     onWordSearchCond(e);
                     return false;
                   }
-                });
-              }
+                }
+              });
+
+
+              $("#wordSearchCond")
+              .on('click', function(e){
+                //検索モードのみ
+                if(document.getElementById("mode_flg").value == 1){
+                  var $input = $(this),
+                  oldValue = $input.val();
+                  if (oldValue == "") return;
+                  setTimeout(function(){
+                    //一旦全て非表示
+                    document.getElementById("categoryTabs-ALL").style.display="none";
+                    document.getElementById("allWordList").style.display="none";
+                    var searchItemList = document.querySelectorAll('[id^="searchItem"]');
+                    for (var i = 0; i < searchItemList.length; i++) {
+                      searchItemList[i].style.display="none";
+                    }
+                    onWordSearchCond(e);
+                  },1);
+                }
+              })
+              .on('onchange', function(e){
+                //検索モードのみ
+                if(document.getElementById("mode_flg").value == 1){
+                  //一旦全て非表示
+                  document.getElementById("categoryTabs-ALL").style.display="none";
+                  document.getElementById("allWordList").style.display="none";
+                  var searchItemList = document.querySelectorAll('[id^="searchItem"]');
+                  for (var i = 0; i < searchItemList.length; i++) {
+                    searchItemList[i].style.display="none";
+                  }
+                  onWordSearchCond(e);
+                }
+              });
 
               //行クリック
               $("[id ^= wordList]").on('click', function(e){
