@@ -26,7 +26,8 @@ class HistoriesController extends AppController {
   public function beforeFilter(){
     parent::beforeFilter();
     $ret = $this->MCompany->read(null, $this->userInfo['MCompany']['id']);
-    $orList = [];
+    //20170913 仕様変更　除外IPアドレスを登録しても過去の履歴を表示する
+    /*$orList = [];
     if ( !empty($ret['MCompany']['exclude_ips']) ) {
       foreach( explode("\n", trim($ret['MCompany']['exclude_ips'])) as $v ){
         if ( preg_match("/^[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}$/", trim($v)) ) {
@@ -41,15 +42,16 @@ class HistoriesController extends AppController {
         }
         $orList[] = $list;
       }
-    }
+    }*/
 
     $this->paginate['THistory']['conditions'] = [
       'THistory.m_companies_id' => $this->userInfo['MCompany']['id']
     ];
 
-    if ( !empty($orList) ) {
+    //20170913 仕様変更　除外IPアドレスを登録しても過去の履歴を表示する
+    /*if ( !empty($orList) ) {
       $this->paginate['THistory']['conditions']['NOT'] = ['OR' => $orList];
-    }
+    }*/
 
     $this->set('siteKey', $this->userInfo['MCompany']['company_key']);
     $this->set('title_for_layout', '履歴');
@@ -907,6 +909,8 @@ class HistoriesController extends AppController {
     $this->set('groupByChatChecked', $type);
     $this->set('campaignList', $this->TCampaign->getList());
     /* 除外情報取得 */
+    $this->log('除外情報ちぇっくしよう',LOG_DEBUG);
+    $this->log($this->MCompany->getExcludeList($this->userInfo['MCompany']['id']),LOG_DEBUG);
     $this->set('excludeList', $this->MCompany->getExcludeList($this->userInfo['MCompany']['id']));
   }
 
