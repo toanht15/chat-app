@@ -198,7 +198,7 @@
           <tbody class="sortable">
             <?php if (!empty($dictionaryList[$i])) {?>
               <?php foreach((array)$dictionaryList[$i]as $key => $val): ?>
-              <tr data-id="<?=$val['TDictionary']['id']?>" data-sort="<?=$val['TDictionary']['sort']?>" onclick="<?="openEditDialog('".$val['TDictionary']['id'].",".$nameList[$i]['id']."')"?>">
+              <tr data-id="<?=$val['TDictionary']['id']?>" data-sort="<?=$val['TDictionary']['sort']?>" onclick="<?="openEditDialog('".$val['TDictionary']['id']."','".$nameList[$i]['id']."')"?>">
                 <!-- #451 定型文カテゴリ対応 start -->
                 <td class="tCenter" onclick="event.stopPropagation();">
                   <input type="hidden" id="dictionary_list_flg<?=$i?>" value="1">
