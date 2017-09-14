@@ -33,7 +33,7 @@
             <span id="stintMessage" style="display:none; color:#E91E63; font-weight:normal; font-size:0.9em;">　※カテゴリ登録およびＣＳＶ関連はスタンダードプランからご利用いただけます。</span>
              -->
             <span id="stintMessage" style="display:none; color:rgb(192, 0, 0); font-weight:bold;">　※カテゴリ登録はスタンダードプランからご利用いただけます。</span>
-            <span id="tabSortMessage" style="display:none; color:rgb(192, 0, 0); font-weight:bold;">(！)カテゴリを並び替え中（更新する場合は画面下部の「更新」ボタンをクリック／キャンセルする場合はチェックを外してください）</span>
+            <span id="tabSortMessage" style="display:none; font-size: 1.1em; color:rgb(192, 0, 0); font-weight:bold;">(！)カテゴリを並び替え中（更新する場合は画面下部の「更新」ボタンをクリック／キャンセルする場合はチェックを外してください）</span>
           </label>
         </li>
       <!-- カテゴリの並び替えモード -->
@@ -128,7 +128,7 @@
           <li class="tabpointer">
             <label class="pointer">
               <?= $this->Form->checkbox('sort'.$i, array('onchange' => 'toggleSort()')) ?><span id="sortText<?=$i?>">定型文の並び替え</span>
-              <span id="sortMessage<?=$i?>" style="display:none; color:rgb(192, 0, 0); font-weight:bold;">(！)定型文を並び替え中（更新する場合は画面下部の「更新」ボタンをクリック／キャンセルする場合はチェックを外してください）</span>
+              <span id="sortMessage<?=$i?>" style="display:none; font-size: 1.1em; color:rgb(192, 0, 0); font-weight:bold;">(！)定型文を並び替え中（更新する場合は画面下部の「更新」ボタンをクリック／キャンセルする場合はチェックを外してください）</span>
             </label>
           </li>
           <!-- 定型文の並び替えモード -->
