@@ -909,8 +909,6 @@ class HistoriesController extends AppController {
     $this->set('groupByChatChecked', $type);
     $this->set('campaignList', $this->TCampaign->getList());
     /* 除外情報取得 */
-    $this->log('除外情報ちぇっくしよう',LOG_DEBUG);
-    $this->log($this->MCompany->getExcludeList($this->userInfo['MCompany']['id']),LOG_DEBUG);
     $this->set('excludeList', $this->MCompany->getExcludeList($this->userInfo['MCompany']['id']));
   }
 
