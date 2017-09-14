@@ -208,8 +208,16 @@ sincloApp.controller('WidgetCtrl', function($scope){
         $scope.$apply();
     });
 
+    angular.element(window).on("click", ".widgetCtrl", function(e){
+        var clickTab = $(this).data('tab');
+        if ( clickTab === $scope.widget.showTab ) return false;
+        $scope.widget.showTab = clickTab;
+        $scope.$apply();
+    });
+
+    //位置調整
     $scope.$watch(function(){
-      return {'openFlg': $scope.openFlg, 'showWidgetType': $scope.showWidgetType};
+      return {'openFlg': $scope.openFlg, 'showWidgetType': $scope.showWidgetType, 'widgetSizeType': $scope.widgetSizeTypeToggle, 'chat_radio_behavior': $scope.chat_radio_behavior, 'chat_trigger': $scope.chat_trigger, 'show_name': $scope.show_name, 'widget.showTab': $scope.widget.showTab};
     },
     function(){
       var main = document.getElementById("miniTarget");
@@ -230,6 +238,14 @@ sincloApp.controller('WidgetCtrl', function($scope){
       }
     }, true);
 
+    //位置調整
+    $scope.$watch(function(){
+      return {'widgetSizeType': $scope.widgetSizeTypeToggle};
+    },
+    function(){
+      $scope.switchWidget(1); // 標準に切り替える
+    }, true);
+
     $scope.saveAct = function (){
         $('#widgetShowTab').val($scope.widget.showTab);
         $('#MWidgetSettingMainImage').val($scope.main_image);
@@ -248,18 +264,18 @@ sincloApp.controller('WidgetCtrl', function($scope){
 });
 
 sincloApp.directive('errSrc', function(){
-	return {
-		link: function(scope,elements, attrs) {
-			if ( attrs.ngSrc === "" ) {
-				attrs.$set('src', attrs.errSrc);
-			}
-			elements.bind("error", function(){
-				if ( attrs.ngSrc != attrs.errSrc ) {
-					attrs.$set('src', attrs.errSrc);
-				}
-			});
-		}
-	};
+  return {
+    link: function(scope,elements, attrs) {
+      if ( attrs.ngSrc === "" ) {
+        attrs.$set('src', attrs.errSrc);
+      }
+      elements.bind("error", function(){
+        if ( attrs.ngSrc != attrs.errSrc ) {
+          attrs.$set('src', attrs.errSrc);
+        }
+      });
+    }
+  };
 });
 
 /* [ #2243 ] IE緊急対応 */

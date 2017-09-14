@@ -17,6 +17,9 @@ class MWidgetSetting extends AppModel {
       'max_show_time' => "maxShowTime",
       'max_show_time_page' => "maxShowTimePage",
       'show_position' => "showPosition",
+      //ウィジットサイズ対応
+      'widget_size_type' => "widgetSizeType",
+      //ウィジットサイズ対応
       'title' => "title",
       'sub_title' => "subTitle",
       'description' => "description",

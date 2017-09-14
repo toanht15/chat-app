@@ -11,7 +11,7 @@ class MWidgetSettingsController extends AppController {
   public $styleSetting = [
     'common' => [
       'show_timing', 'max_show_timing_site', 'max_show_timing_page',
-      'show_time', 'max_show_time', 'max_show_time_page', 'show_position', 'title', 'show_subtitle', 'sub_title', 'show_description', 'description',
+      'show_time', 'max_show_time', 'max_show_time_page', 'show_position', 'widget_size_type', 'title', 'show_subtitle', 'sub_title', 'show_description', 'description',
       'main_color', 'string_color', 'show_main_image', 'main_image', 'radius_ratio'
     ],
     'synclo' => ['tel', 'content', 'display_time_flg', 'time_text'],
@@ -330,6 +330,10 @@ class MWidgetSettingsController extends AppController {
                   $d["max_show_time_page"] = $json["max_show_time_page"];
                 }
               }
+            }
+            //ウィジットサイズタイプ
+            if ( strcmp($v, 'widget_size_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['widget_size_type'] = C_WIDGET_SIZE_TYPE_SMALL; // デフォルト値
             }
 
             if ( isset($json[$v]) ) {

@@ -155,6 +155,11 @@ define('C_ACHIEVEMENT_AVAILABLE', 2); // あり
 define('C_YES', 1); // 可
 define('C_IMPROPER', 2); // 不可
 
+//ウィジットサイズタイプ
+define('C_WIDGET_SIZE_TYPE_SMALL', 1); // 小
+define('C_WIDGET_SIZE_TYPE_MEDIUM', 2); // 中
+define('C_WIDGET_SIZE_TYPE_LARGE', 3); // 大
+
 /* ユーザー権限（単体あり：C_AUTHORITY_%） */
 $config['Authority'] = [
     C_AUTHORITY_ADMIN => "管理者",

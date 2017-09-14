@@ -139,6 +139,17 @@ $headerNo = 1;
       <section>
         <ul class="settingList">
 
+          <!-- ウィジットサイズ -->
+          <li>
+            <span class='require'><label>ウィジットサイズ</label></span>
+            <div ng-init="widgetSizeTypeToggle='<?=h($this->formEx->val($this->data['MWidgetSetting'], 'widget_size_type'))?>'">
+              <label class="pointer choose" for="widgetSizeType1"><input type="radio" name="data[MWidgetSetting][widget_size_type]" ng-model="widgetSizeTypeToggle" id="widgetSizeType1" class="showHeader" value="1" >小</label><br>
+              <label class="pointer choose" for="widgetSizeType2"><input type="radio" name="data[MWidgetSetting][widget_size_type]" ng-model="widgetSizeTypeToggle" id="widgetSizeType2" class="showHeader" value="2" >中</label><br>
+              <label class="pointer choose" for="widgetSizeType3"><input type="radio" name="data[MWidgetSetting][widget_size_type]" ng-model="widgetSizeTypeToggle" id="widgetSizeType3" class="showHeader" value="3" >大</label><br>
+            </div>
+          </li>
+          <!-- ウィジットサイズ -->
+
           <!-- ウィジェットタイトル -->
           <li>
             <span class="require"><label>トップタイトル</label></span>

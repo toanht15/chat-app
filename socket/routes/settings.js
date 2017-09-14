@@ -92,6 +92,9 @@ router.get("/", function(req, res, next) {
                   showTime: isNumeric(settings.showTime),
                   showName: isNumeric(settings.showName),
                   showPosition: isNumeric(settings.showPosition),
+                  //ウィジットサイズ対応
+                  widgetSizeType: isNumeric(settings.widgetSizeType),
+                  //ウィジットサイズ対応
                   title: settings.title,
                   showSubtitle: isNumeric(settings.showSubtitle),
                   subTitle: settings.subTitle,
