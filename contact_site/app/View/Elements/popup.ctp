@@ -162,16 +162,24 @@ var popupEvent = {
 //                         return popupEvent.closePopup();
 //                     };
 //                     break;
-                case 'p-tabsort-reset':
-                    var closeBtn = _button("キャンセルする");
-                    closeBtn.onclick = function(){
-                        return popupEvent.closePopup();
+                case 'p-tabsort-save-confirm':
+                    var saveBtn = _button("保存");
+                    saveBtn.onclick = function(){
+                      return popupEvent.saveClicked();
+                    };
+                    var cancelBtn = _button("キャンセル");
+                    cancelBtn.onclick = function(){
+                      return popupEvent.cancelClicked();
                     };
                     break;
-                case 'p-sort-rest':
-                    var closeBtn = _button("キャンセルする");
-                    closeBtn.onclick = function(){
-                        return popupEvent.closePopup();
+                case 'p-sort-save-confirm':
+                    var saveBtn = _button("保存");
+                    saveBtn.onclick = function(){
+                        return popupEvent.saveClicked();
+                    };
+                    var cancelBtn = _button("キャンセル");
+                    cancelBtn.onclick = function(){
+                      return popupEvent.cancelClicked();
                     };
                     break;
                 case 'p-dictionary-del':

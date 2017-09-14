@@ -150,23 +150,23 @@ table {
 menu {
   display: flex;
   flex-direction: row;
-  flex-direction: row;
-  justify-content: space-around;
   margin-bottom: 0;
+  margin-top: 0.5em;
   border: 1px solid #909090;
   border-radius: 5px 5px 0 0;
   background-color: #909090;
   border-bottom: none;
-  padding: 0.5em 0;
+  padding: 0.5em 0.5em;
 
   > span {
-    padding: 0.25em 1em;
+    padding: 0.25em 0.5em;
     font-size: 0.95em;
     background-color: #ffffff!important;
     color: #868686!important;
     border: none!important;
     cursor: pointer!important;
     color: #888;
+    margin-right: 0.6em;
 
     &:hover {
       color: #c3d69b!important;

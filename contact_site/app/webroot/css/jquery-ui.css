@@ -131,7 +131,7 @@
 }
 .ui-tabs .ui-tabs-nav li.ui-tabs-active {
   margin-bottom: -1px;
-  padding-bottom: 1px;
+  padding-bottom: 2px;
 }
 .ui-tabs .ui-tabs-nav li.ui-tabs-active .ui-tabs-anchor,
 .ui-tabs .ui-tabs-nav li.ui-state-disabled .ui-tabs-anchor,
@@ -210,8 +210,7 @@ a:link.ui-button,
 a:visited.ui-button,
 .ui-button {
   font-size: 13px;
-  font-weight: bold;
-  color: #f2f2f2;
+  color: #E5E5E5;
   text-decoration: none;
 }
 .ui-state-hover,
@@ -254,7 +253,7 @@ a.ui-button:active,
 .ui-button.ui-state-active:hover {
 /*  border: 1px solid #a6a6a6;*/
   background: #C3D69B;
-  font-weight: normal;
+  font-weight: bold;
   color: #555555;
 }
 .ui-icon-background,
