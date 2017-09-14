@@ -143,7 +143,7 @@
                         'id'=>'tdictionaries_manu_btn'."$i",
                         'class' => 'btn-shadow disOffgreenBtn commontooltip',
                         'data-text' => 'その他編集',
-                        'data-balloon-position' => '38',
+                        'data-balloon-position' => '56',
                         'noleft' => '1',
                         'width' => 35,
                         'height' => 35)) ?>
