@@ -226,19 +226,6 @@
   <?php } ?>
 </div>
 </section>
-<!-- カテゴリの並べ替え更新ボタン -->
-<section id="tabsort_btn" style="display:none;">
-    <div id="m_widget_setting_action" class="fotterBtnArea" style="bottom: 0px; right: 17px; left: 60px;">
-    <a href="javascript:void(0)" onclick="saveTabSort()" class="greenBtn btn-shadow">更新</a>
-    </div>
-</section>
-
-<!-- 定型文の並べ替え更新ボタン -->
-<section id="tdictionaries_sort_btn" style="display:none;">
-    <div id="m_widget_setting_action" class="fotterBtnArea" style="bottom: 0px; right: 17px; left: 60px;">
-    <a href="javascript:void(0)" onclick="saveToggleSort()" class="greenBtn btn-shadow">更新</a>
-    </div>
-</section>
 <!-- カテゴリ名入力登録 end -->
 <!-- #451 定型文カテゴリ対応 end -->
 
