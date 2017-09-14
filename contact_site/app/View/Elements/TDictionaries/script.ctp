@@ -174,7 +174,6 @@ function tabSort(){
     actBtnShow();
     document.getElementById("tabsortText").style.display="none";
     document.getElementById("tabSortMessage").style.display="";
-    document.getElementById("tabsort_btn").style.display="";
     //各ボタン及び動作をモード中は動かなくする
     //カテゴリ名入力欄変更不可
     document.getElementById("input_category_value").disabled = "disabled";
@@ -293,7 +292,6 @@ function toggleSort(){
     //定型文ソートモードメッセージ＆登録ボタン表示
     document.getElementById("sortText" + index).style.display="none";
     document.getElementById("sortMessage" + index).style.display="";
-    document.getElementById("tdictionaries_sort_btn").style.display="";
     //各ボタン及び動作をモード中は動かなくする
     //カテゴリ名入力欄変更不可
     document.getElementById("input_category_value").disabled = "disabled";
@@ -469,7 +467,6 @@ $( function() {
       //定型文ソートモードメッセージ＆登録ボタン非表示
       document.getElementById("sortText" + index).style.display="";
       document.getElementById("sortMessage" + index).style.display="none";
-      document.getElementById("tdictionaries_sort_btn").style.display="none";
       //カテゴリ名入力欄変更可
       document.getElementById("input_category_value").disabled = "";
       //定型文登録ボタン押下可
