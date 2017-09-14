@@ -703,7 +703,10 @@
     > div {
       display: flex;
       flex-direction: column;
-      margin: 5px 0;
+
+      &:last-child {
+        padding-top: 1em;
+      }
 
       div#inputStr {
         display: flex;
@@ -902,6 +905,11 @@
         top: 2px;
         left: -4px;
       }
+      #tabsortText {
+        position: relative;
+        top: 1px;
+        left: 0px;
+      }
     }
     #stintMessage{
       position: relative;
@@ -910,8 +918,8 @@
     }
     #tabSortMessage{
       position: relative;
-      top: -1px;
-      left: 0px;
+      top: 2px;
+      left: -11px;
     }
   }
   .listArea{
@@ -955,15 +963,15 @@
         left: -1px;
         [id^="sort"]{
           position: relative;
-          padding: 10px;
+          padding: 10px 10px 10px 4px;
         }
         [id^="sortText"]{
-          top: -2px;
+          top: -1px;
         }
         [id^="sortMessage"]{
           position: relative;
-          top: -3px;
-          left: 0px;
+          top: 0px;
+          left: -12px;
         }
       }
     }
@@ -989,7 +997,7 @@
 }
 
 .btn-shadow.d-set-option-btn{
-  width: 90px;
+  width: 65px;
   height: 20px;
   text-align: center;
 }
@@ -1115,34 +1123,60 @@
   padding: 7px 0px;
 }
 
-#popup #popup-frame-base #popup-frame.p-tabsort-reset {
+#popup #popup-frame-base #popup-frame.p-tabsort-save-confirm {
   width: 450px;
   height: 150px;
   text-align: center;
+  div#popup-button {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+
+    a {
+      flex-basis: 140px;
+      height: 2em;
+      margin: 0 5px;
+      padding: 0.25em 0;
+      font-size: 1.1em;
+    }
+  }
 }
 
-#popup #popup-frame-base #popup-frame.p-tabsort-reset #popup-button {
+#popup #popup-frame-base #popup-frame.p-tabsort-save-confirm #popup-button {
   text-align: center;
 }
 
-#popup #popup-frame-base #popup-frame.p-tabsort-reset #popup-button a {
+#popup #popup-frame-base #popup-frame.p-tabsort-save-confirm #popup-button a {
   width: 110px;
   margin: 0 auto;
   font-size: 10px;
   padding: 7px 0px;
 }
 
-#popup #popup-frame-base #popup-frame.p-sort-rest {
+#popup #popup-frame-base #popup-frame.p-sort-save-confirm {
   width: 450px;
   height: 150px;
   text-align: center;
+  div#popup-button {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+
+    a {
+      flex-basis: 140px;
+      height: 2em;
+      margin: 0 5px;
+      padding: 0.25em 0;
+      font-size: 1.1em;
+    }
+  }
 }
 
-#popup #popup-frame-base #popup-frame.p-sort-rest #popup-button {
+#popup #popup-frame-base #popup-frame.p-sort-save-confirm #popup-button {
   text-align: center;
 }
 
-#popup #popup-frame-base #popup-frame.p-sort-rest #popup-button a {
+#popup #popup-frame-base #popup-frame.p-sort-save-confirm #popup-button a {
   width: 110px;
   margin: 0 auto;
   font-size: 10px;
@@ -1258,6 +1292,7 @@
 
 #TDictionaryType{
   padding: 0 0 3px 0.5em;
+  margin-top: 0.5em;
 }
 
 #wordSearchCond{
@@ -1359,7 +1394,7 @@
 
 [id^="openMenu"] {
   position: absolute;
-  top: 43px;
+  top: 16px;
   right: 0;
 }
 
@@ -1488,7 +1523,7 @@
 }
 
 .tabBox.ui-tabs-panel.ui-corner-bottom.ui-widget-content{
-  border: solid #C3D69B;
+  border: 2px solid #C3D69B;
   border-width: 15px 10px 10px;
   background-color: #FFF;
   padding: 0px;
