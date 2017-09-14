@@ -31,13 +31,12 @@
         var selectedCategory = "<?= $id ?>";
       }
       break;
-    case '4':
-      //定型文移動処理
+    case '4': //定型文移動処理
+      var selectTabIndex = Number("<?= $selectTabIndex ?>");
       var url = "<?= $this->Html->url('/TDictionaries/remoteMoveEntryForm') ?>";
-      var selectedCategory = document.getElementById("TDictionaryType").value;
-      var nextTabIndex = document.getElementById("TDictionaryType").selectedIndex;
-      var selectTabIndex = "<?= $selectTabIndex ?>";
-      if(nextTabIndex => selectTabIndex){
+      selectedCategory = document.getElementById("TDictionaryType").value;
+      nextTabIndex = document.getElementById("TDictionaryType").selectedIndex;
+      if(nextTabIndex >= selectTabIndex){
         nextTabIndex = nextTabIndex + 1;
       }
       break;
