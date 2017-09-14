@@ -703,7 +703,10 @@
     > div {
       display: flex;
       flex-direction: column;
-      margin: 5px 0;
+
+      &:last-child {
+        padding-top: 1em;
+      }
 
       div#inputStr {
         display: flex;
@@ -994,7 +997,7 @@
 }
 
 .btn-shadow.d-set-option-btn{
-  width: 90px;
+  width: 65px;
   height: 20px;
   text-align: center;
 }
@@ -1289,6 +1292,7 @@
 
 #TDictionaryType{
   padding: 0 0 3px 0.5em;
+  margin-top: 0.5em;
 }
 
 #wordSearchCond{
