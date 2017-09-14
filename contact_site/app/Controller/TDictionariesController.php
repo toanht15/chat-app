@@ -283,7 +283,6 @@ class TDictionariesController extends AppController {
    * */
   public function remoteCopyEntryForm() {
     if($this->Session->read('dstoken') == $this->request->data['dstoken']){
-      $this->Session->delete('dstoken');
       Configure::write('debug', 0);
       $this->autoRender = FALSE;
       $this->layout = 'ajax';
@@ -331,6 +330,7 @@ class TDictionariesController extends AppController {
           }
           else{
             $this->TDictionary->commit();
+            $this->Session->delete('dstoken');
             $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
             $this->set('tabindex', $data['selectedCategory']);
             //$data['selectedCategory'];
@@ -347,7 +347,6 @@ class TDictionariesController extends AppController {
    * */
   public function remoteMoveEntryForm() {
     if($this->Session->read('dstoken') == $this->request->data['dstoken']){
-      $this->Session->delete('dstoken');
       Configure::write('debug', 0);
       $this->autoRender = FALSE;
       $this->layout = 'ajax';
@@ -370,6 +369,7 @@ class TDictionariesController extends AppController {
           }
           else{
             $this->TDictionary->commit();
+            $this->Session->delete('dstoken');
             $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
           }
         }
@@ -389,7 +389,6 @@ class TDictionariesController extends AppController {
     $saveData = [];
     $errorMessage = [];
     if($this->Session->read('dstoken') == $this->request->data['dstoken']){
-      $this->Session->delete('dstoken');
       // if ( !$this->request->is('ajax') ) return false;
       if (!empty($this->request->data['dictionaryId'])) {
         $this->TDictionary->recursive = -1;
@@ -433,6 +432,7 @@ class TDictionariesController extends AppController {
       // バリデーションチェックでエラーが出た場合
       if ( $this->TDictionary->save() ) {
         $this->TDictionary->commit();
+        $this->Session->delete('dstoken');
         $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
       }
       else {
@@ -468,7 +468,6 @@ class TDictionariesController extends AppController {
    * */
   public function remoteCategoryEdit(){
     if($this->Session->read('dstoken') == $this->request->data['dstoken']){
-      $this->Session->delete('dstoken');
       Configure::write('debug', 0);
       $this->autoRender = FALSE;
       $this->layout = 'ajax';
@@ -486,6 +485,7 @@ class TDictionariesController extends AppController {
       // バリデーションチェックでエラーが出た場合
       if ( $this->TDictionaryCategory->save() ) {
         $this->TDictionaryCategory->commit();
+        $this->Session->delete('dstoken');
         $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
       }
       else {
@@ -518,7 +518,6 @@ class TDictionariesController extends AppController {
    * */
   public function remoteCategoryDelete(){
     if($this->Session->read('dstoken') == $this->request->data['dstoken']){
-      $this->Session->delete('dstoken');
       Configure::write('debug', 0);
       $this->autoRender = FALSE;
       $this->layout = 'ajax';
@@ -527,6 +526,7 @@ class TDictionariesController extends AppController {
       $this->TDictionaryCategory->begin();
       if($this->TDictionaryCategory->delete($data['id'])){
         $this->TDictionaryCategory->commit();
+        $this->Session->delete('dstoken');
         $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
         //カテゴリが削除し終わったら定型文も削除する
         $params = [

@@ -676,7 +676,7 @@ $( function() {
           //二行になってしまう直前のサイズに戻す
           for (var i = 0; i < overflowList.length; i++) {
             var tab_w = overflowList[i].clientWidth;
-            overflowList[i].style.width = (tab_w - 1)+'px';
+            overflowList[i].style.width = (tab_w - 2)+'px';
             overflowList[i].style.textAlign = 'center';
           }
         }
