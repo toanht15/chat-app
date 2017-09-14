@@ -40,7 +40,7 @@
     </ul>
 </section>
 <section class="listArea">
-<div id="soteTabs" class="soteTabs">
+<div id="soteTabs" class="soteTabs" style="visibility:hidden;">
   <input type="hidden" id="lineChange_flg" value="0">
   <input type="hidden" id="select_tab_index" value="">
   <input type="hidden" id="select_soto" value="">
