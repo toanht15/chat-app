@@ -5,7 +5,7 @@ function openAddDialog(tabid){
   var index = document.getElementById("select_tab_index").value;
   if (!document.getElementById("sort" + index).checked
        && !document.getElementById("tabsort").checked) {
-    openEntryDialog({type: 1, tabid: tabid, tabindex:index});
+    openEntryDialog({type: 1, tabid: tabid, tabindex:index, title:"定型文登録"});
   }
   else{
     return false;
@@ -18,7 +18,7 @@ function openEditDialog(id,tabid){
   var index = document.getElementById("select_tab_index").value;
   if (!document.getElementById("sort" + index).checked
        && !document.getElementById("tabsort").checked) {
-    openEntryDialog({type: 2, id: id, tabid: tabid, tabindex:index});
+    openEntryDialog({type: 2, id: id, tabid: tabid, tabindex:index, title:"定型文更新"});
   }
   else{
     return false;
@@ -67,7 +67,7 @@ function openEntryDialog(setting){
     cache: false,
     url: "<?= $this->Html->url('/TDictionaries/remoteOpenEntryForm') ?>",
     success: function(html){
-      modalOpen.call(window, html, 'p-tdictionary-entry', '定型文メッセージ情報', 'moment');
+      modalOpen.call(window, html, 'p-tdictionary-entry', setting.title, 'moment');
     }
   });
 }
@@ -148,7 +148,7 @@ function tabSort(){
   //チェックモードタブを判定
   var index = document.getElementById("select_tab_index").value;
   if (!document.getElementById("tabsort").checked) {
-    resetTabSort();
+    confirmTabSort();
 //     document.getElementById("tabSortMessage").style.display="none";
 //     document.getElementById("tabsort_btn").style.display="none";
 //     //カテゴリ名入力欄変更可
@@ -226,13 +226,32 @@ var getTabSort = function(){
 };
 
 //タブのソート順をリセット
-var resetTabSort = function(){
-  modalOpen.call(window, "カテゴリの並び替えをキャンセルします。<br/><br/>よろしいですか？<br/>", 'p-tabsort-reset', 'カテゴリ並び替えのキャンセル', 'moment');
-  popupEvent.closePopup = function(){
-    location.href = "<?= $this->Html->url('/TDictionaries/index') ?>";
+var confirmTabSort = function(){
+  modalOpen.call(window, "編集内容を保存します。<br/><br/>よろしいですか？<br/>", 'p-tabsort-save-confirm', 'カテゴリ並び替えの保存', 'moment');
+  popupEvent.saveClicked = function(){
+    saveTabSort();
   }
-  $(".p-tabsort-reset #popupCloseBtn").click(function(){
+  popupEvent.cancelClicked = function(){
+    location.href = "<?= $this->Html->url('/TDictionaries/index') ?>";
+  };
+  $(".p-tabsort-save-confirm #popupCloseBtn").click(function(){
     $('#tabsort').prop('checked', true);
+  });
+};
+
+//定型文のソート順をリセット
+var confirmSort = function(){
+  var index = document.getElementById("select_tab_index").value;
+  modalOpen.call(window, "編集内容を保存します。<br/><br/>よろしいですか？<br/>", 'p-sort-save-confirm', '定型文並び替えの保存', 'moment');
+  popupEvent.saveClicked = function(){
+    saveToggleSort();
+  }
+  popupEvent.cancelClicked = function(){
+    var url = "<?= $this->Html->url('/TDictionaries/index') ?>";
+    location.href = url + "/tabindex:" + index;
+  }
+  $(".p-sort-save-confirm #popupCloseBtn").click(function(){
+    $("#sort" + index).prop('checked', true);
   });
 };
 
@@ -242,7 +261,7 @@ var resetTabSort = function(){
 function toggleSort(){
   var index = document.getElementById("select_tab_index").value;
   if (!document.getElementById("sort" + index).checked) {
-    restSort();
+    confirmSort();
 //     //ソートモードoff
 //     $(".sortable").addClass("move").sortable("disable");
 //     //定型文ソートモードメッセージ＆登録ボタン非表示
@@ -325,19 +344,6 @@ var getSort = function(){
   });
   list = $.grep(list, function(e){return e;});
   return JSON.parse(JSON.stringify(list));
-};
-
-//定型文のソート順をリセット
-function restSort(){
-  var index = document.getElementById("select_tab_index").value;
-  modalOpen.call(window, "定型文の並び替えをキャンセルします。<br/><br/>よろしいですか？<br/>", 'p-sort-rest', '定型文並び替えのキャンセル', 'moment');
-  popupEvent.closePopup = function(){
-    var url = "<?= $this->Html->url('/TDictionaries/index') ?>";
-    location.href = url + "/tabindex:" + index;
-  }
-  $(".p-sort-rest #popupCloseBtn").click(function(){
-    $("#sort" + index).prop('checked', true);
-  });
 };
 
 $(document).ready(function(){

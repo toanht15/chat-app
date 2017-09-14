@@ -902,6 +902,11 @@
         top: 2px;
         left: -4px;
       }
+      #tabsortText {
+        position: relative;
+        top: 1px;
+        left: 0px;
+      }
     }
     #stintMessage{
       position: relative;
@@ -910,8 +915,8 @@
     }
     #tabSortMessage{
       position: relative;
-      top: 0px;
-      left: 0px;
+      top: 2px;
+      left: -11px;
     }
   }
   .listArea{
@@ -955,15 +960,15 @@
         left: -1px;
         [id^="sort"]{
           position: relative;
-          padding: 10px;
+          padding: 10px 10px 10px 4px;
         }
         [id^="sortText"]{
-          top: -2px;
+          top: -1px;
         }
         [id^="sortMessage"]{
           position: relative;
-          top: -2px;
-          left: 0px;
+          top: 0px;
+          left: -12px;
         }
       }
     }
@@ -1115,34 +1120,60 @@
   padding: 7px 0px;
 }
 
-#popup #popup-frame-base #popup-frame.p-tabsort-reset {
+#popup #popup-frame-base #popup-frame.p-tabsort-save-confirm {
   width: 450px;
   height: 150px;
   text-align: center;
+  div#popup-button {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+
+    a {
+      flex-basis: 140px;
+      height: 2em;
+      margin: 0 5px;
+      padding: 0.25em 0;
+      font-size: 1.1em;
+    }
+  }
 }
 
-#popup #popup-frame-base #popup-frame.p-tabsort-reset #popup-button {
+#popup #popup-frame-base #popup-frame.p-tabsort-save-confirm #popup-button {
   text-align: center;
 }
 
-#popup #popup-frame-base #popup-frame.p-tabsort-reset #popup-button a {
+#popup #popup-frame-base #popup-frame.p-tabsort-save-confirm #popup-button a {
   width: 110px;
   margin: 0 auto;
   font-size: 10px;
   padding: 7px 0px;
 }
 
-#popup #popup-frame-base #popup-frame.p-sort-rest {
+#popup #popup-frame-base #popup-frame.p-sort-save-confirm {
   width: 450px;
   height: 150px;
   text-align: center;
+  div#popup-button {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+
+    a {
+      flex-basis: 140px;
+      height: 2em;
+      margin: 0 5px;
+      padding: 0.25em 0;
+      font-size: 1.1em;
+    }
+  }
 }
 
-#popup #popup-frame-base #popup-frame.p-sort-rest #popup-button {
+#popup #popup-frame-base #popup-frame.p-sort-save-confirm #popup-button {
   text-align: center;
 }
 
-#popup #popup-frame-base #popup-frame.p-sort-rest #popup-button a {
+#popup #popup-frame-base #popup-frame.p-sort-save-confirm #popup-button a {
   width: 110px;
   margin: 0 auto;
   font-size: 10px;
@@ -1476,7 +1507,7 @@
 }
 
 [id^="tabBoxborder"]{
-  border: 2px solid #a6a6a6;
+  border: 1px solid #a6a6a6;
   background-color: #FFF;
   padding: 0px;
 }
@@ -1495,6 +1526,6 @@
 }
 
 .ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active.taboutborder{
-  border: 2px solid #a6a6a6;
+  border: 1px solid #a6a6a6;
   border-bottom: none;
 }
