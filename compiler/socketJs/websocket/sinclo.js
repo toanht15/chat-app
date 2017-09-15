@@ -296,6 +296,10 @@
         userInfo.setTabId();
       }
 
+      if ( !check.isset(userInfo.sincloSessionId) && check.isset(obj.sessionId) ) {
+        userInfo.set(cnst.info_type.sessionId, obj.sessionId, "sincloSessionId");
+      }
+
       obj.prev = userInfo.prev;
       obj.stayCount = userInfo.getStayCount();
       if ( (userInfo.gFrame && Number(userInfo.accessType) === Number(cnst.access_type.guest)) === false ) {

@@ -40,6 +40,7 @@ var socket, // socket.io
       gFrame: 11,
       sendTabId: 12,
       parentId: 13,
+      sessionId: 14
     },
     sync_type: { inner: 1, outer: 2 }
   };
@@ -1188,6 +1189,30 @@ var socket, // socket.io
       unset: function(name){
         localStorage.removeItem(name);
       }
+    },
+    c: {
+      prefix: '___',
+      get: function(name){
+        var cookies = document.cookie;
+        var cookieItem = cookies.split(";");
+        var cookieValue = "";
+
+        for (var i = 0; i < cookieItem.length; i++) {
+          var elem = cookieItem[i].split("=");
+          if (elem[0].trim() === this.prefix + name) {
+            cookieValue = decodeURIComponent(elem[1]);
+          } else {
+            continue;
+          }
+        }
+        return cookieValue;
+      },
+      set: function(name, val){
+        document.cookie = this.prefix + name + '=' + encodeURIComponent(val);
+      },
+      unset: function(name){
+        localStorage.removeItem(name);
+      }
     }
   };
 
@@ -1385,14 +1410,19 @@ var socket, // socket.io
           return "sendTabId";
         case cnst.info_type.parentId:
           return "parentId";
+        case cnst.info_type.sessionId:
+          return "sincloSessionId";
       }
     },
     set: function(type, val, session){
+      debugger;
       var code = this.getCode(type);
-      if ( !session ) {
+      if ( typeof(session) === 'undefined' ) {
         storage.l.set(code, val);
-      }
-      else {
+      } else if ( session === 'sincloSessionId' ) {
+        console.log('sincloSessionId is set : ' + val);
+        storage.c.set(code, val);
+      } else {
         storage.s.set(code, val);
       }
       userInfo[code] = val;
@@ -1404,6 +1434,8 @@ var socket, // socket.io
       }
       else if (check.isset(storage.s.get(code))) {
         return storage.s.get(code);
+      } else if (check.isset(storage.c.get(code))) {
+        return storage.c.get(code);
       }
     },
     unset: function(type){
@@ -1425,6 +1457,8 @@ var socket, // socket.io
         }
         else if (check.isset(storage.s.get(code))) {
           userInfo[code] = storage.s.get(code);
+        } else if (check.isset(storage.c.get(code))) {
+          userInfo[code] = storage.c.get(code);
         }
       }
     },
