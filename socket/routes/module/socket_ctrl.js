@@ -48,6 +48,13 @@ function getSessionId(siteKey, tabId, key){
   }
 }
 
+// sincloCoreオブジェクトからチャットで関連するセッションID群を取得する関数
+function getChatSessionIds(siteKey, sessionId, key){
+  if ( (siteKey in sincloCore) && (sessionId in sincloCore[siteKey]) && (key in sincloCore[siteKey][sessionId]) ) {
+    return sincloCore[siteKey][sessionId][key];
+  }
+}
+
 function now(){
   var d = new Date();
   return "【" + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds() + "】";
@@ -280,6 +287,16 @@ var emit = {
     if ( !isset(io.sockets.connected[sId]) ) return false;
     return io.sockets.connected[sId].emit(ev, obj);
   },
+  toSameUser: function(ev, d, siteKey, sessionId){ // 対象ユーザーに送信(sId = the session id)
+    var obj = this._convert(d);
+    var sessionIds = getChatSessionIds(siteKey, sessionId, 'sessionIds');
+    if ( !isset(sessionIds) ) return false;
+    var result = false;
+    for (var index in sessionIds) {
+      if ( !isset(io.sockets.connected[sessionIds[index]]) ) continue;
+      io.sockets.connected[sessionIds[index]].emit(ev, obj);
+    }
+  },
   toClient: function(ev, d, rName) { // 対象企業を閲覧中のユーザーに送信(rName = the room's name)
     var obj = this._convert(d);
     if ( !isset(rName) ) return false;
@@ -379,15 +396,15 @@ var db = {
     if ( isset(obj.tabId) && isset(obj.siteKey) ) {
       if ( !isset(companyList[obj.siteKey]) || obj.subWindow ) return false;
       var siteId = companyList[obj.siteKey];
-      pool.query('SELECT * FROM t_histories WHERE m_companies_id = ? AND tab_id = ? AND visitors_id = ? ORDER BY id DESC LIMIT 1;', [siteId, obj.tabId, obj.userId], function(err, rows){
+      pool.query('SELECT * FROM t_histories WHERE m_companies_id = ? AND tab_id = ? AND visitors_id = ? ORDER BY id DESC LIMIT 1;', [siteId, obj.sessionId, obj.userId], function(err, rows){
         if ( err !== null && err !== '' ) return false; // DB接続断対応
         var now = formatDateParse();
-        if ( !(obj.tabId in sincloCore[obj.siteKey]) ) {
-          sincloCore[obj.siteKey][obj.tabId] = {};
+        if ( !(obj.sincloSessionId in sincloCore[obj.siteKey]) ) {
+          sincloCore[obj.siteKey][obj.sincloSessionId] = {};
         }
 
         if ( isset(rows) && isset(rows[0]) ) {
-          sincloCore[obj.siteKey][obj.tabId].historyId = rows[0].id;
+          sincloCore[obj.siteKey][obj.sincloSessionId].historyId = rows[0].id;
           timeUpdate(rows[0].id, obj, now);
           obj.historyId = rows[0].id;
           emit.toMine('setHistoryId', obj, s);
@@ -397,7 +414,7 @@ var db = {
           var insertData = {
             m_companies_id: siteId,
             visitors_id: obj.userId,
-            tab_id: obj.tabId,
+            tab_id: obj.sincloSessionId,
             ip_address: obj.ipAddress,
             user_agent: obj.userAgent,
             access_date: formatDateParse(obj.time),
@@ -410,6 +427,7 @@ var db = {
             function (error,results,fields){
               if ( err !== null && err !== '' ) return false; // DB接続断対応
               var historyId = results.insertId;
+              sincloCore[obj.siteKey][obj.sincloSessionId].historyId = historyId;
               sincloCore[obj.siteKey][obj.tabId].historyId = historyId;
               timeUpdate(historyId, obj, now);
               obj.historyId = historyId;
@@ -601,7 +619,9 @@ io.sockets.on('connection', function (socket) {
               }
               else {
                 // 書き込みが成功したら顧客側に結果を返す
-                emit.toUser('sendChatResult', sendData, sId);
+                var sincloSessionId = sincloCore[d.siteKey][d.tabId].sincloSessionId;
+                sendData.sincloSessionId = sincloSessionId;
+                emit.toSameUser('sendChatResult', sendData, d.siteKey, sincloSessionId);
                 if (Number(insertData.message_type) === 3) return false;
                 // 書き込みが成功したら企業側に結果を返す
                 emit.toCompany('sendChatResult', {tabId: d.tabId, chatId: results.insertId, sort: fullDateTime(insertData.created), created: insertData.created, userId: insertData.m_users_id, messageType: d.messageType, ret: true, message: d.chatMessage, siteKey: d.siteKey, notifyToCompany: d.notifyToCompany}, d.siteKey);
@@ -808,7 +828,7 @@ io.sockets.on('connection', function (socket) {
     if ( res.type !== 'admin' ) {
       if ( data.userId === undefined || data.userId === '' || data.userId === null ) {
         send.userId = makeUserId();
-        send.sessionId = send.userId;
+        send.sincloSessionId = send.userId;
       }
       if ( data.accessId === undefined || data.accessId === '' || data.accessId === null ) {
         send.accessId = ('000' + Math.floor(Math.random() * 10000)).slice(-4);
@@ -996,7 +1016,10 @@ io.sockets.on('connection', function (socket) {
       sincloCore[obj.siteKey] = {};
     }
     if ( !isset(sincloCore[obj.siteKey][obj.tabId]) ) {
-      sincloCore[obj.siteKey][obj.tabId] = {sessionId: null, subWindow: false};
+      sincloCore[obj.siteKey][obj.tabId] = {sincloSessionId: null, sessionId: null, subWindow: false};
+    }
+    if ( !isset(sincloCore[obj.siteKey][obj.sincloSessionId]) ) {
+      sincloCore[obj.siteKey][obj.sincloSessionId] = {sessionIds: []};
     }
     if ('timeoutTimer' in sincloCore[obj.siteKey][obj.tabId]) {
       clearTimeout(sincloCore[obj.siteKey][obj.tabId].timeoutTimer);
@@ -1005,6 +1028,8 @@ io.sockets.on('connection', function (socket) {
 
     connectList[socket.id] = {siteKey: obj.siteKey, tabId: obj.tabId, userId: null};
     sincloCore[obj.siteKey][obj.tabId].sessionId = socket.id;
+    sincloCore[obj.siteKey][obj.tabId].sincloSessionId = obj.sincloSessionId;
+    sincloCore[obj.siteKey][obj.sincloSessionId].sessionIds.push(socket.id);
     if ( obj.subWindow ) {
       sincloCore[obj.siteKey][obj.tabId].toTabId = obj.to;
       sincloCore[obj.siteKey][obj.tabId].connectToken = obj.connectToken;
@@ -1626,7 +1651,6 @@ console.log("chatStart-4: [" + logToken + "] " + logData4);
         var logData5 = ( sincloCore.hasOwnProperty(obj.siteKey) && typeof(sincloCore[obj.siteKey]) === 'object' ) ? JSON.stringify(sincloCore[obj.siteKey]) : "typeof: " + typeof(sincloCore[obj.siteKey]) ;
 console.log("chatStart-5: [" + logToken + "] " + JSON.stringify(sincloCore[obj.siteKey]));
 console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-
       });
     }
   });

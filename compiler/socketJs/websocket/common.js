@@ -40,7 +40,7 @@ var socket, // socket.io
       gFrame: 11,
       sendTabId: 12,
       parentId: 13,
-      sessionId: 14
+      sincloSessionId: 14
     },
     sync_type: { inner: 1, outer: 2 }
   };
@@ -1410,7 +1410,7 @@ var socket, // socket.io
           return "sendTabId";
         case cnst.info_type.parentId:
           return "parentId";
-        case cnst.info_type.sessionId:
+        case cnst.info_type.sincloSessionId:
           return "sincloSessionId";
       }
     },
@@ -2581,6 +2581,7 @@ function emit(evName, data){
   }
   if (evName === "connectSuccess" || evName === "sendWindowInfo" || evName === "sendAutoChat" || evName === "sendChat") {
     data.userId = userInfo.userId;
+    data.sincloSessionId = userInfo.sincloSessionId;
   }
   if (   evName === "connectSuccess" || evName === "sendWindowInfo" || evName === "sendAutoChatMessages" ||
          evName === "getChatMessage" || evName === "sendChat" || evName === "sendAutoChatMessage"

@@ -296,8 +296,8 @@
         userInfo.setTabId();
       }
 
-      if ( !check.isset(userInfo.sincloSessionId) && check.isset(obj.sessionId) ) {
-        userInfo.set(cnst.info_type.sessionId, obj.sessionId, "sincloSessionId");
+      if ( !check.isset(userInfo.sincloSessionId) && check.isset(obj.sincloSessionId) ) {
+        userInfo.set(cnst.info_type.sincloSessionId, obj.sincloSessionId, "sincloSessionId");
       }
 
       obj.prev = userInfo.prev;
@@ -767,7 +767,7 @@
     },
     sendChatResult: function(d){
       var obj = JSON.parse(d);
-      if ( obj.tabId !== userInfo.tabId ) return false;
+      if ( obj.sincloSessionId !== userInfo.sincloSessionId && obj.tabId !== userInfo.tabId ) return false;
       var elm = document.getElementById('sincloChatMessage'), cn, userName = "";
       if ( obj.ret ) {
         // スマートフォンの場合はメッセージ送信時に、到達確認タイマーをリセットする
