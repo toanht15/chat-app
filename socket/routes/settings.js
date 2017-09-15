@@ -120,6 +120,9 @@ router.get("/", function(req, res, next) {
                   chatMessageWithAnimation: chatMessageWithAnimation,
                   chatTrigger: isNumeric(settings.chatTrigger),
                   radiusRatio: isNumeric(settings.radiusRatio),
+                  //最小化時デザイン対応
+                  minimizeDesignType: isNumeric(settings.minimizeDesignType),
+                  //最小化時デザイン対応
                   spShowFlg: isNumeric(settings.spShowFlg),
                   spHeaderLightFlg: isNumeric(settings.spHeaderLightFlg),
                   spAutoOpenFlg: isNumeric(settings.spAutoOpenFlg)

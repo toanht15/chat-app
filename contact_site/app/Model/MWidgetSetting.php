@@ -29,6 +29,9 @@ class MWidgetSetting extends AppModel {
       'show_main_image' => "showMainImage",
       'main_image' => "mainImage",
       'radius_ratio' => "radiusRatio",
+      //最小化時デザイン対応
+      'minimize_design_type' => "minimizeDesignType",
+      //最小化時デザイン対応
       'tel' => "tel",
       'show_name' => "showName",
       'chat_message_design_type' => "chatMessageDesignType",

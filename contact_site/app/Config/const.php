@@ -164,6 +164,11 @@ define('C_WIDGET_SIZE_TYPE_SMALL', 1); // 小
 define('C_WIDGET_SIZE_TYPE_MEDIUM', 2); // 中
 define('C_WIDGET_SIZE_TYPE_LARGE', 3); // 大
 
+//最小化時のデザインタイプ
+define('C_MINIMIZED_DESIGN_NO_SIMPLE', 1); // シンプル表示しない
+define('C_MINIMIZED_DESIGN_SP_SIMPLE', 2); // スマホのみシンプル表示する
+define('C_MINIMIZED_DESIGN_ALL_SIMPLE', 3); // すべての端末でシンプル表示する
+
 /* ユーザー権限（単体あり：C_AUTHORITY_%） */
 $config['Authority'] = [
     C_AUTHORITY_ADMIN => "管理者",

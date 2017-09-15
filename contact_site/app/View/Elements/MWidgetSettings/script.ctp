@@ -109,9 +109,181 @@ sincloApp.controller('WidgetCtrl', function($scope){
       return (item) ? 1 : 2;
     };
 
+    //シンプル表示判定
+    /*
+    * 最小化時のデザイン
+    * $scope.minimizedDesignToggle = 1/2/3:シンプル表示しない/スマホのみシンプル表示する/すべての端末でシンプル表示する
+    * $scope.showWidgetType = 1/3:通常/スマホ（縦）
+    * 最大時のシンプル表示(スマホ)
+    * $scope.sp_header_light_flg = 0/1:しない/する
+    * $scope.openFlg = true/false:最大化/最小化
+    */
     $scope.spHeaderLightToggle = function(){
-      return ( $scope.showWidgetType === 3 && $scope.sp_header_light_flg === '<?=C_SELECT_CAN?>' );
+      switch ($scope.minimizedDesignToggle) {
+      case "1": //シンプル表示しない
+        if($scope.showWidgetType === 1){
+          //通常（PC）
+          if($scope.sp_header_light_flg === '<?=C_SELECT_CAN?>'){
+            //最大時のシンプル表示(スマホ)する
+            if(!$scope.openFlg){
+              //最小化中
+              var res = false;
+            }
+            else{
+              //最大化中
+              var res = false;
+            }
+          }
+          else{
+            //最大時のシンプル表示(スマホ)しない
+            if(!$scope.openFlg){
+              //最小化中
+              var res = false;
+            }
+            else{
+              //最大化中
+              var res = false;
+            }
+          }
+        }
+        else{
+          //スマホ（縦）
+          if($scope.sp_header_light_flg === '<?=C_SELECT_CAN?>'){
+            //最大時のシンプル表示(スマホ)する
+            if(!$scope.openFlg){
+              //最小化中
+              var res = false;
+            }
+            else{
+              //最大化中
+              var res = true;
+            }
+          }
+          else{
+            //最大時のシンプル表示(スマホ)しない
+            if(!$scope.openFlg){
+              //最小化中
+              var res = false;
+            }
+            else{
+              //最大化中
+              var res = false;
+            }
+          }
+        }
+        break;
+      case "2": //スマホのみシンプル表示する
+        if($scope.showWidgetType === 1){
+          //通常（PC）
+          if($scope.sp_header_light_flg === '<?=C_SELECT_CAN?>'){
+            //最大時のシンプル表示(スマホ)する
+            if(!$scope.openFlg){
+              //最小化中
+              var res = false;
+            }
+            else{
+              //最大化中
+              var res = false;
+            }
+          }
+          else{
+            //最大時のシンプル表示(スマホ)しない
+            if(!$scope.openFlg){
+              //最小化中
+              var res = false;
+            }
+            else{
+              //最大化中
+              var res = false;
+            }
+          }
+        }
+        else{
+          //スマホ（縦）
+          if($scope.sp_header_light_flg === '<?=C_SELECT_CAN?>'){
+            //最大時のシンプル表示(スマホ)する
+            if(!$scope.openFlg){
+              //最小化中
+              var res = true;
+            }
+            else{
+              //最大化中
+              var res = true;
+            }
+          }
+          else{
+            //最大時のシンプル表示(スマホ)しない
+            if(!$scope.openFlg){
+              //最小化中
+              var res = true;
+            }
+            else{
+              //最大化中
+              var res = false;
+            }
+          }
+        }
+        break;
+      case "3": //すべての端末でシンプル表示する
+        if($scope.showWidgetType === 1){
+          //通常（PC）
+          if($scope.sp_header_light_flg === '<?=C_SELECT_CAN?>'){
+            //最大時のシンプル表示(スマホ)する
+            if(!$scope.openFlg){
+              //最小化中
+              var res = true;
+            }
+            else{
+              //最大化中
+              var res = false;
+            }
+          }
+          else{
+            //最大時のシンプル表示(スマホ)しない
+            if(!$scope.openFlg){
+              //最小化中
+              var res = true;
+            }
+            else{
+              //最大化中
+              var res = false;
+            }
+          }
+        }
+        else{
+          //スマホ（縦）
+          if($scope.sp_header_light_flg === '<?=C_SELECT_CAN?>'){
+            //最大時のシンプル表示(スマホ)する
+            if(!$scope.openFlg){
+              //最小化中
+              var res = true;
+            }
+            else{
+              //最大化中
+              var res = true;
+            }
+          }
+          else{
+            //最大時のシンプル表示(スマホ)しない
+            if(!$scope.openFlg){
+              //最小化中
+              var res = true;
+            }
+            else{
+              //最大化中
+              var res = false;
+            }
+          }
+        }
+        break;
+      }
+      return res;
     };
+
+//     //旧・シンプル表示
+//     $scope.spHeaderLightToggle = function(){
+//      return ( $scope.showWidgetType === 3 && $scope.sp_header_light_flg === '<?=C_SELECT_CAN?>' );
+//     };
 
     $scope.showGallary = function(){
       $.ajax({

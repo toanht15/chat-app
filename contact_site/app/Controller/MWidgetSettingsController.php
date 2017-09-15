@@ -12,7 +12,7 @@ class MWidgetSettingsController extends AppController {
     'common' => [
       'show_timing', 'max_show_timing_site', 'max_show_timing_page',
       'show_time', 'max_show_time', 'max_show_time_page', 'show_position', 'widget_size_type', 'title', 'show_subtitle', 'sub_title', 'show_description', 'description',
-      'main_color', 'string_color', 'show_main_image', 'main_image', 'radius_ratio'
+      'main_color', 'string_color', 'show_main_image', 'main_image', 'radius_ratio', 'minimize_design_type'
     ],
     'synclo' => ['tel', 'content', 'display_time_flg', 'time_text'],
     'chat' => ['chat_radio_behavior', 'chat_trigger', 'show_name',  'chat_message_design_type',  'chat_message_with_animation', 'sp_show_flg', 'sp_header_light_flg', 'sp_auto_open_flg',],
@@ -340,6 +340,10 @@ class MWidgetSettingsController extends AppController {
             //ウィジットサイズタイプ
             if ( strcmp($v, 'widget_size_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['widget_size_type'] = C_WIDGET_SIZE_TYPE_SMALL; // デフォルト値
+            }
+            //最小化時のデザインタイプ
+            if ( strcmp($v, 'minimize_design_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['minimize_design_type'] = C_MINIMIZED_DESIGN_NO_SIMPLE; // デフォルト値
             }
 
             if ( isset($json[$v]) ) {
