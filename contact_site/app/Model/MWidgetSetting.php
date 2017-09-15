@@ -21,6 +21,7 @@ class MWidgetSetting extends AppModel {
       'widget_size_type' => "widgetSizeType",
       //ウィジットサイズ対応
       'title' => "title",
+      'show_subtitle' => "showSubtitle",
       'sub_title' => "subTitle",
       'description' => "description",
       'main_color' => "mainColor",
@@ -30,7 +31,8 @@ class MWidgetSetting extends AppModel {
       'radius_ratio' => "radiusRatio",
       'tel' => "tel",
       'show_name' => "showName",
-      'show_subtitle' => "showSubtitle",
+      'chat_message_design_type' => "chatMessageDesignType",
+      'chat_message_with_animation' => "chatMessageWithAnimation",
       'show_description' => "showDescription",
       'display_time_flg' => "displayTimeFlg",
       'time_text' => "timeText",

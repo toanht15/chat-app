@@ -86,6 +86,16 @@ router.get("/", function(req, res, next) {
                 if(('showTiming' in settings)) {
                   showTimingSetting = isNumeric(settings.showTiming);
                 }
+                // 吹き出しデザイン設定が存在しない場合は「BOX型（サイズ固定）」
+                var chatMessageDesignType = 1;
+                if(('chatMessageDesignType' in settings)) {
+                  chatMessageDesignType = isNumeric(settings.chatMessageDesignType);
+                }
+                // メッセージ表示時アニメーション設定が存在しない場合は「アニメーション無効」
+                var chatMessageWithAnimation = 0;
+                if(('chatMessageWithAnimation' in settings)) {
+                  chatMessageWithAnimation = isNumeric(settings.chatMessageWithAnimation);
+                }
                 sendData['widget'] = {
                   showTiming: showTimingSetting,
                   display_type: isNumeric(rows[0].display_type),
@@ -105,6 +115,9 @@ router.get("/", function(req, res, next) {
                   showMainImage: settings.showMainImage,
                   mainImage: settings.mainImage,
                   chatRadioBehavior: isNumeric(settings.chatRadioBehavior),
+                  chatTrigger: isNumeric(settings.chatTrigger),
+                  chatMessageDesignType: chatMessageDesignType,
+                  chatMessageWithAnimation: chatMessageWithAnimation,
                   chatTrigger: isNumeric(settings.chatTrigger),
                   radiusRatio: isNumeric(settings.radiusRatio),
                   spShowFlg: isNumeric(settings.spShowFlg),
