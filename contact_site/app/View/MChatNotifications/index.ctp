@@ -42,7 +42,7 @@
       </thead>
       <tbody class="sortable">
       <?php foreach((array)$settingList as $key => $val): ?>
-        <tr onclick="jumpTo(<?="'".$this->Html->url(['controller'=>'MChatNotifications', 'action' => 'edit', h($val['MChatNotification']['id'])])."'";?>)">
+        <tr class="pointer" onclick="jumpTo(<?="'".$this->Html->url(['controller'=>'MChatNotifications', 'action' => 'edit', h($val['MChatNotification']['id'])])."'";?>)">
           <td width="20%" class="tLeft"><?=h($val['MChatNotification']['keyword'])?></td>
           <td width="20%" class="tCenter"><?=$this->Html->image("notification/".$val['MChatNotification']['image'], ['width'=>30, 'height'=>30])?></td>
           <td class="tLeft"><?=h($val['MChatNotification']['name'])?></td>

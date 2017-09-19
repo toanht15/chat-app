@@ -54,7 +54,7 @@
         $prevCnt = ($params['page'] - 1) * $params['limit'];
         $no = $prevCnt + h($key+1);
         ?>
-        <tr onclick="<?="openEditDialog('".h($val['MUser']['id'])."')"?>">
+        <tr class="pointer" onclick="<?="openEditDialog('".h($val['MUser']['id'])."')"?>">
           <td class="tCenter"><?=$no?></td>
           <td class="tCenter"><?=$val['MUser']['user_name']?></td>
           <td class="tCenter"><?=$val['MUser']['display_name']?></td>
