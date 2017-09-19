@@ -54,7 +54,8 @@ $(document).ready(function(){
                   'separator' => '</label><br><label style="display:inline-block;"'.($coreSettings[C_COMPANY_USE_CHAT_LIMITER] ? '' : ' style="color: #CCCCCC;" class="commontooltip" data-text="こちらの機能はスタンダードプラン<br>からご利用いただけます。" data-balloon-position="34.5"').'>',
                   'label' => false,
                   'div' => false,
-                  'disabled' => !$coreSettings[C_COMPANY_USE_CHAT_LIMITER]
+                  'disabled' => !$coreSettings[C_COMPANY_USE_CHAT_LIMITER],
+                  'class' => 'pointer'
                 ];
                 echo $this->Form->input('MChatSetting.sc_flg',$settings);
               ?>
