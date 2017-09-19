@@ -191,7 +191,15 @@ function tabSort(){
       checkBoxList[i].disabled = "disabled";
     }
     //ソートモードon
-    $(".ui-tabs-nav").addClass("move").sortable("enable");
+    $(".ui-tabs-nav").addClass("move").sortable( "option", {
+      disabled: false,
+      update: function( event, ui ) {
+        console.log("update");
+        $('.soteTabs').tabs({
+          active: ui.item.attr('id').replace('li_','')
+        })
+      }
+    });
     $(".soteTabs ul li").css('cursor', 'move');
     $(".soteTabs ul li a").css('cursor', 'move');
   }
