@@ -1970,22 +1970,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                 return r;
               }
 
-              // タイトルバーをドラッグしたとき
-              $("#popup-title").mousedown(function(e){
-                $("#popup #popup-frame-base #popup-frame.p-category-dictionary-edit")
-                  .data("clickPointX" , e.pageX - $("#popup #popup-frame-base #popup-frame.p-category-dictionary-edit").offset().left)
-                  .data("clickPointY" , e.pageY - $("#popup #popup-frame-base #popup-frame.p-category-dictionary-edit").offset().top);
-
-                $("#popup-title").mousemove(function(e){
-                  $("#popup #popup-frame-base #popup-frame.p-category-dictionary-edit").css({
-                      top:e.pageY  - $("#popup #popup-frame-base #popup-frame.p-category-dictionary-edit").data("clickPointY")+"px",
-                      left:e.pageX - $("#popup #popup-frame-base #popup-frame.p-category-dictionary-edit").data("clickPointX")+"px"
-                  })
-                })
-
-              });
-              $("#popup-title").mouseup(function(){
-                $("#popup-title").unbind("mousemove")
+              $('#popup-frame').draggable({
+                handle: "#popup-title"
               });
 
               //カテゴリースクロール対応
