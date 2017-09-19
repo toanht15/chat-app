@@ -654,8 +654,6 @@ $( function() {
         var px = 1;
         var totalWidth = 0;
         while (lineChk == false) {
-          console.log("hoge");
-          debugger;
           var currentTotalWidth = 0;
           for (var i = 0; i < overflowList.length; i++) {
             var tab_w = overflowList[i].clientWidth;
