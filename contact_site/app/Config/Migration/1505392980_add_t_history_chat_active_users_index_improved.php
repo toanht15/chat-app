@@ -1,12 +1,12 @@
 <?php
-class AddTHistoryChatActiveUsersIndex extends CakeMigration {
+class AddTHistoryChatActiveUsersIndexImproved extends CakeMigration {
 
 /**
  * Migration description
  *
  * @var string
  */
-	public $description = 'add_t_history_chat_active_users_index';
+	public $description = 'add_t_history_chat_active_users_index_improved';
 
 /**
  * Actions to be performed
