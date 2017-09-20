@@ -20,6 +20,7 @@ class AddTHistoryChatLogsMCompaniesIdIndex extends CakeMigration {
 			),
 			'create_field' => array(
 				't_history_chat_logs' => array(
+					'm_companies_id' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false, 'after' => 't_history_stay_logs_id'),
 					'indexes' => array(
 						'idx_t_history_chat_logs_request_flg_companies_id_users_id' => array('column' => array('message_request_flg', 'm_companies_id', 'm_users_id', 't_histories_id', 'message_distinction', 'created'), 'unique' => 0),
 						'idx_t_history_chat_logs_message_type_companies_id_users_id' => array('column' => array('message_type', 'm_companies_id', 'm_users_id', 't_histories_id', 'message_distinction', 'created'), 'unique' => 0),
@@ -43,7 +44,8 @@ class AddTHistoryChatLogsMCompaniesIdIndex extends CakeMigration {
 				),
 			),
 			'drop_field' => array(
-				't_history_chat_logs' => array('indexes' => array('idx_t_history_chat_logs_request_flg_companies_id_users_id', 'idx_t_history_chat_logs_message_type_companies_id_users_id', 'idx_t_history_chat_logs_achievement_flg_companies_id', 'idx_t_history_chat_logs_request_flg_companies_id', 'idx_t_history_chat_logs_message_type_companies_id', 'idx_t_history_chat_logs_achievement_flg_companies_id_users_id')),
+				't_history_chat_logs' => array('t_history_chat_logs' => array('m_companies_id'),
+					'indexes' => array('idx_t_history_chat_logs_request_flg_companies_id_users_id', 'idx_t_history_chat_logs_message_type_companies_id_users_id', 'idx_t_history_chat_logs_achievement_flg_companies_id', 'idx_t_history_chat_logs_request_flg_companies_id', 'idx_t_history_chat_logs_message_type_companies_id', 'idx_t_history_chat_logs_achievement_flg_companies_id_users_id')),
 			),
 		),
 	);
