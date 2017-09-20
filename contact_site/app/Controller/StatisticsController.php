@@ -1582,8 +1582,6 @@ class StatisticsController extends AppController {
     foreach($accessNumber as $k => $v) {
       $accessNumberData =  $accessNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : intval($v[0]['sum(access_count)']));
     }
-    $this->log('アクセス件数',LOG_DEBUG);
-    $this->Log($accessNumberData,LOG_DEBUG);
     //アクセス件数
     $accessNumberData = array_merge($baseData,$accessNumberData);
 
