@@ -37,7 +37,18 @@
         var sincloBox = document.getElementById('sincloBox');
         var flg = sinclo.widget.condifiton.get();
         var elm = $('#sincloBox');
+        //最小化時と最大化時の状態を取得
+        var abridgementType = common.getAbridgementType()
         if ( String(flg) === "false" ) {
+          //最大化
+          if(abridgementType['MaxRes']){
+            //ヘッダ非表示（シンプル表示）
+            common.abridgementTypehide();
+          }
+          else{
+            //ヘッダ表示（通常表示）
+            common.abridgementTypeShow();
+          }
           sinclo.widget.condifiton.set(true);
           if ( check.smartphone() && window.sincloInfo.contract.chat && (window.screen.availHeight < window.screen.availWidth) ) {
             height = window.innerHeight * (document.body.clientWidth / window.innerWidth);
@@ -60,6 +71,15 @@
           }
         }
         else {
+          //最小化
+          if(abridgementType['MinRes']){
+            //ヘッダ非表示（シンプル表示）
+            common.abridgementTypehide();
+          }
+          else{
+            //ヘッダ表示（通常表示）
+            common.abridgementTypeShow();
+          }
           height = this.header.offsetHeight;
           sinclo.widget.condifiton.set(false);
         }
@@ -128,10 +148,10 @@
           $("sinclo-chat").append(chatTalk);
           var sincloBox = document.getElementById('sincloBox');
           document.getElementById('sincloChatMessage').value = sinclo.operatorInfo.reCreateWidgetMessage;
-          common.widgetHandler.show(true);
           sincloBox.style.opacity = 0;
           sinclo.operatorInfo.header = document.getElementById('widgetHeader');
           sinclo.widget.condifiton.set(openFlg);
+          common.widgetHandler.show(true);
           sinclo.operatorInfo.widgetHide();
 
           if ( String(openFlg) === "true" ) {

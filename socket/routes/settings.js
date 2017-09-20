@@ -96,6 +96,7 @@ router.get("/", function(req, res, next) {
                 if(('chatMessageWithAnimation' in settings)) {
                   chatMessageWithAnimation = isNumeric(settings.chatMessageWithAnimation);
                 }
+
                 sendData['widget'] = {
                   showTiming: showTimingSetting,
                   display_type: isNumeric(rows[0].display_type),
@@ -124,7 +125,9 @@ router.get("/", function(req, res, next) {
                   minimizeDesignType: isNumeric(settings.minimizeDesignType),
                   //最小化時デザイン対応
                   spShowFlg: isNumeric(settings.spShowFlg),
+                  //最大時のシンプル表示
                   spHeaderLightFlg: isNumeric(settings.spHeaderLightFlg),
+                  //最大時のシンプル表示
                   spAutoOpenFlg: isNumeric(settings.spAutoOpenFlg)
                 };
 
@@ -211,7 +214,6 @@ router.get("/", function(req, res, next) {
 
     // res.render('index', { title: 'Settings' });
 });
-
 
 /**
  * 10進数表記ののIPアドレスを2進数に変換

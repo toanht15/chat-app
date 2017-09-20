@@ -239,6 +239,162 @@ var socket, // socket.io
       }
       return sizeArray;
     },
+    //最小化時と最大化時の状態を取得する関数
+    getAbridgementType: function() {
+      var widget = window.sincloInfo.widget;
+      //1/2/3:シンプル表示しない/スマホのみシンプル表示する/すべての端末でシンプル表示する
+      var minimizeDesignType = Number(widget.minimizeDesignType);
+      //最大時のシンプル表示(スマホ) 1/2:する/しない
+      var spHeaderLightFlg = Number(widget.spHeaderLightFlg);
+      //最大化時、最小化時シンプル表示するしない true/false:する/しない
+      var pcMaxRes = false;
+      var pcMinRes = false;
+      var spMaxRes = false;
+      var spMinRes = false;
+      switch (widget.minimizeDesignType) {
+      case 1: //シンプル表示しない
+        if(spHeaderLightFlg === 1){
+          //最大時のシンプル表示(スマホ)する
+          //pc最小化中
+          pcMinRes = false;
+          //pc最大化中
+          pcMaxRes = false;
+          //sp最小化中
+          spMinRes = false;
+          //sp最大化中
+          spMaxRes = true;
+        }
+        else{
+          //最大時のシンプル表示(スマホ)しない
+          //pc最小化中
+          pcMinRes = false;
+          //pc最大化中
+          pcMaxRes = false;
+          //sp最小化中
+          spMinRes = false;
+          //sp最大化中
+          spMaxRes = false;
+        }
+        break;
+      case 2: //スマホのみシンプル表示する
+        if(spHeaderLightFlg === 1){
+          //最大時のシンプル表示(スマホ)する
+          //pc最小化中
+          pcMinRes = false;
+          //pc最大化中
+          pcMaxRes = false;
+          //sp最小化中
+          spMinRes = true;
+          //sp最大化中
+          spMaxRes = true;
+        }
+        else{
+          //最大時のシンプル表示(スマホ)しない
+          //pc最小化中
+          pcMinRes = false;
+          //pc最大化中
+          pcMaxRes = false;
+          //sp最小化中
+          spMinRes = true;
+          //sp最大化中
+          spMaxRes = false;
+        }
+        break;
+      case 3: //すべての端末でシンプル表示する
+        if(spHeaderLightFlg === 1){
+          //最大時のシンプル表示(スマホ)する
+          //pc最小化中
+          pcMinRes = true;
+          //pc最大化中
+          pcMaxRes = false;
+          //sp最小化中
+          spMinRes = true;
+          //sp最大化中
+          spMaxRes = true;
+        }
+        else{
+          //最大時のシンプル表示(スマホ)しない
+          //pc最小化中
+          pcMinRes = true;
+          //pc最大化中
+          pcMaxRes = false;
+          //sp最小化中
+          spMinRes = true;
+          //sp最大化中
+          spMaxRes = false;
+        }
+        break;
+      default ://該当しない場合はシンプル表示しない
+        if(spHeaderLightFlg === 1){
+          //最大時のシンプル表示(スマホ)する
+          //pc最小化中
+          pcMinRes = false;
+          //pc最大化中
+          pcMaxRes = false;
+          //sp最小化中
+          spMinRes = false;
+          //sp最大化中
+          spMaxRes = true;
+        }
+        else{
+          //最大時のシンプル表示(スマホ)しない
+          //pc最小化中
+          pcMinRes = false;
+          //pc最大化中
+          pcMaxRes = false;
+          //sp最小化中
+          spMinRes = false;
+          //sp最大化中
+          spMaxRes = false;
+        }
+        break;
+      }
+      var abridgementType = {
+          pcMinRes: pcMinRes,
+          pcMaxRes: pcMaxRes,
+          spMinRes: spMinRes,
+          spMaxRes: spMaxRes
+      };
+      //false/true:通常（PC）/スマホ
+      var smartphone = check.smartphone();
+      if(smartphone){
+        //スマホだったら縦か横かを判定
+        if($(window).height() > $(window).width()){
+          //縦
+          var MinRes = abridgementType['spMinRes'];
+          var MaxRes = abridgementType['spMaxRes'];
+        }
+        else{
+          //横
+          var MinRes = true;
+          var MaxRes = true;
+        }
+      }
+      else{
+        //PC
+        var MinRes = abridgementType['pcMinRes'];
+        var MaxRes = abridgementType['pcMaxRes'];
+      }
+      var res = {
+          MinRes: MinRes,
+          MaxRes: MaxRes
+      }
+      return res;
+    },
+    //ヘッダ表示（通常表示）
+    abridgementTypeShow: function() {
+      $("#mainImage").show();
+      $("#widgetSubTitle").show();
+      $("#widgetDescription").show();
+      $('#widgetTitle').css('text-align', 'center');
+    },
+    //ヘッダ非表示（シンプル表示）
+    abridgementTypehide: function() {
+      $("#mainImage").hide();
+      $("#widgetSubTitle").hide();
+      $("#widgetDescription").hide();
+      $('#widgetTitle').css('text-align', '-webkit-auto');
+    },
     widgetCssTemplate: function(widget){
       // システムで出力するテキストのカラー
       var systemTextColor = "#666666";
@@ -561,9 +717,9 @@ var socket, // socket.io
     widgetHeaderTemplate: function(widget){
       var html = "", chatAndTitleOnly = false;
       // チャットとタイトルバーのみ表示するフラグ
-      if ( check.smartphone() && ( window.screen.availHeight < window.screen.availWidth || (widget.hasOwnProperty('spHeaderLightFlg') && Number(widget.spHeaderLightFlg) === 1) ) ) {
-        chatAndTitleOnly = true;
-      }
+//      if ( check.smartphone() && ( window.screen.availHeight < window.screen.availWidth || (widget.hasOwnProperty('spHeaderLightFlg') && Number(widget.spHeaderLightFlg) === 1) ) ) {
+//        chatAndTitleOnly = true;
+//      }
       // 画像
       if ( !chatAndTitleOnly && (Number(widget.showMainImage) === 1 || widget.mainImage !== "") ) {
         var ratio = 1;
@@ -800,7 +956,9 @@ var socket, // socket.io
             // スクロールをした時に、ページ下部であれば透過する
             window.addEventListener('scroll', sinclo.operatorInfo.widgetHide);
             // 画面を回転ときは、向きによってスタイルを変える
-            window.addEventListener('orientationchange', sinclo.operatorInfo.reCreateWidget);
+            window.addEventListener('orientationchange', function(){
+              sinclo.operatorInfo.reCreateWidget();
+            });
             // サイズが変わった時は、サイズ感を変える
             window.addEventListener('resize', function(e){
               if(e) e.stopPropagation();
@@ -825,13 +983,28 @@ var socket, // socket.io
           && sincloBox && (sincloBox.style.display === 'none' || sincloBox.style.display === '')) {
           console.log('でろでろでろでろでろでろ');
           sincloBox.style.display = "block";
+          //一旦非表示
+          //ヘッダ非表示（シンプル表示）
+          common.abridgementTypehide();
           common.widgetHandler.saveShownFlg();
+          var dataOpenflg = sinclo.widget.condifiton.get();
+          //最小化時と最大化時の状態を取得
+          var abridgementType = common.getAbridgementType();
           //ウィジェットの再生成処理呼び出しでなければ最小化表示設定で呼び出す
           if(!reCreateWidget) {
             sinclo.widget.condifiton.set(false);
             sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
             //ログ書き込み用にメッセージ送信
             emit("sendWidgetShown",{widget:true});
+            //最小化
+            if(abridgementType['MinRes']){
+              //ヘッダ非表示（シンプル表示）
+              common.abridgementTypehide();
+            }
+            else{
+              //ヘッダ表示（通常表示）
+              common.abridgementTypeShow();
+            }
             // このタイミングでの最大化実行条件
             // １：PCの場合、ウィジェット最大化処理がウィジェット非表示時に実行されていた場合
             // ２：スマホの場合、ウィジェット最大化する設定が有効で、ウィジェット最大化処理がウィジェット非表示時に実行されていた場合
@@ -839,6 +1012,39 @@ var socket, // socket.io
                || (!check.smartphone() && storage.s.get('preWidgetOpened') === "true")) {
               //すでに最大化処理が呼び出されていたら最大化表示する
               sinclo.operatorInfo.ev();
+              //最大化
+              if(abridgementType['MaxRes']){
+                //ヘッダ非表示（シンプル表示）
+                common.abridgementTypehide();
+              }
+              else{
+                //ヘッダ表示（通常表示）
+                common.abridgementTypeShow();
+              }
+            }
+          }
+          else{
+            if(dataOpenflg === "false"){
+              //最小化
+              if(abridgementType['MinRes']){
+                //ヘッダ非表示（シンプル表示）
+                common.abridgementTypehide();
+              }
+              else{
+                //ヘッダ表示（通常表示）
+                common.abridgementTypeShow();
+              }
+            }
+            else{
+              //最大化
+              if(abridgementType['MaxRes']){
+                //ヘッダ非表示（シンプル表示）
+                common.abridgementTypehide();
+              }
+              else{
+                //ヘッダ表示（通常表示）
+                common.abridgementTypeShow();
+              }
             }
           }
         }
