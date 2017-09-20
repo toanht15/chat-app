@@ -720,10 +720,12 @@ $( function() {
       var lineChk = false;
       var px = 1;
       while (lineChk == false) {
+        var widthChanged = false;
         for (var i = 0; i < allTabList.length; i++) {
           //対象のタブの幅を取得
           var tab_w = allTabList[i].clientWidth;
           if(allTabList[i].clientWidth > 40){
+            widthChanged = true;
             allTabList[i].style.width = (tab_w - px)+'px';
             allTabList[i].style.textAlign = 'center';
           }
@@ -732,7 +734,7 @@ $( function() {
         var allTabList = document.querySelectorAll('[id^="ui-id-"]');
         //タブの高さごとの配列を取得
         var tobTopList = getTabTopList(allTabList);
-        if(tobTopList.length == 1){
+        if(!widthChanged || tobTopList.length == 1){
           //一行になったらループ終わり
           lineChk = true;
         }
