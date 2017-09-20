@@ -393,7 +393,24 @@ var socket, // socket.io
       $("#mainImage").hide();
       $("#widgetSubTitle").hide();
       $("#widgetDescription").hide();
-      $('#widgetTitle').css('text-align', '-webkit-auto');
+      //false/true:通常（PC）/スマホ
+      var smartphone = check.smartphone();
+      if(smartphone){
+        //スマホ時
+        //スマホだったら縦か横かを判定
+        if($(window).height() > $(window).width()){
+          //縦
+          $('#widgetTitle').css('text-align', 'initial');
+        }
+        else{
+          //横
+          $('#widgetTitle').css('text-align', 'center');
+        }
+      }
+      else{
+        //PC時
+        $('#widgetTitle').css('text-align', '-webkit-auto');
+      }
     },
     widgetCssTemplate: function(widget){
       // システムで出力するテキストのカラー
