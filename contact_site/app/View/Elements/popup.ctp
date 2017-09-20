@@ -113,6 +113,15 @@ var popupEvent = {
                 case 'p-history-cus':
                 case 'p-muser-entry':
                 case 'p-tcampaign-entry':
+                    var entryBtn = _button("保存");
+                    entryBtn.onclick = function(){
+                        return popupEvent.closePopup();
+                    };
+                    var closeBtn = _button("閉じる");
+                    closeBtn.onclick = function(){
+                        return popupEvent.close();
+                    };
+                    break;
                 case 'p-tdictionary-entry':
                     var entryBtn = _button("保存");
                     entryBtn.onclick = function(){
@@ -153,6 +162,32 @@ var popupEvent = {
 //                         return popupEvent.closePopup();
 //                     };
 //                     break;
+                case 'p-tabsort-save-confirm':
+                    var saveBtn = _button("保存");
+                    saveBtn.onclick = function(){
+                      return popupEvent.saveClicked();
+                    };
+                    var cancelBtn = _button("キャンセル");
+                    cancelBtn.onclick = function(){
+                      return popupEvent.cancelClicked();
+                    };
+                    break;
+                case 'p-sort-save-confirm':
+                    var saveBtn = _button("保存");
+                    saveBtn.onclick = function(){
+                        return popupEvent.saveClicked();
+                    };
+                    var cancelBtn = _button("キャンセル");
+                    cancelBtn.onclick = function(){
+                      return popupEvent.cancelClicked();
+                    };
+                    break;
+                case 'p-dictionary-del':
+                    var closeBtn = _button("削除する");
+                    closeBtn.onclick = function(){
+                        return popupEvent.closePopup();
+                    };
+                    break;
                 case 'p-alert':
                     var closeBtn = _button("閉じる");
                     closeBtn.onclick = function(){

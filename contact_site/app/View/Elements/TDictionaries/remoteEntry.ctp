@@ -8,6 +8,7 @@
     var dictionaryId = document.getElementById('TDictionaryId').value;
     var word = document.getElementById('TDictionaryWord').value;
     var type = document.getElementById('TDictionaryType').value;
+    var dstoken = document.getElementById('dstoken').value;
     var tab = "<?= $tabid ?>";
     $.ajax({
       type: "post",
@@ -16,6 +17,7 @@
         dictionaryId: dictionaryId,
         word: word,
         type: type,
+        dstoken: dstoken,
         tab: tab
       },
       cache: false,
@@ -25,7 +27,7 @@
         $(".error-message").remove();
 
         if ( keys.length === 0 ) {
-          location.href = "<?=$this->Html->url(array('controller' => 'TDictionaries', 'action' => 'index'))?>";
+          location.href = "<?=$this->Html->url(array('controller' => 'TDictionaries', 'action' => 'index', 'tabindex' => $tabindex))?>";
           return false;
         }
         for (var i = 0; i < keys.length; i++) {
@@ -102,15 +104,16 @@
     <?= $this->Form->input('id', array('type' => 'hidden')); ?>
     <div>
       <div id="inputStr">
-        <label class="require">入力文字</label>
+        <label class="require">定型文</label>
         <menu class="w100">
-        <span class="btn-shadow" data-type="1" onclick="addOption(1)">選択肢</span>
-        <span class="btn-shadow" data-type="2" onclick="addOption(2)">企業名</span>
-        <span class="btn-shadow" data-type="3" onclick="addOption(3)">表示名</span>
+        <input type="hidden" id="dstoken" name="dstoken" value="<?=$dstoken?>">
+        <span class="btn-shadow d-set-option-btn" data-type="1" onclick="addOption(1)">選択肢</span>
+        <span class="btn-shadow d-set-option-btn" data-type="2" onclick="addOption(2)">企業名</span>
+        <span class="btn-shadow d-set-option-btn" data-type="3" onclick="addOption(3)">表示名</span>
         </menu>
         <div class="balloon"><span></span></div>
       </div>
-      <?= $this->Form->textarea('word', array('placeholder' => '入力文字', 'div' => false, 'label' => false, 'maxlength' => 200)) ?>
+      <?= $this->Form->textarea('word', array('placeholder' => '定型文を入力して下さい', 'div' => false, 'label' => false, 'maxlength' => 200)) ?>
     </div>
     <div>
       <label class="require">使用範囲</label>

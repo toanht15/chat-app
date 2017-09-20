@@ -1192,12 +1192,21 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         .focus(function(e){
           chatApi.observeType.start();
           // フォーカスが当たった時にPlaceholderを消す（Edge対応）
+          this.placeholder='';
+          $scope.chatPsFlg = false;
+        })
+        .click(function(e){
+          // クリックされた時にPlaceholderを消す
+          this.placeholder='';
           $scope.chatPsFlg = false;
         })
         .blur(function(e){
-          // フォーカスが当たった時にPlaceholderを消す（Edge対応）
+          // フォーカスが外れたら時にPlaceholderを表示（Edge対応）
+          var sendPattarnStr = ( $scope.settings.sendPattarn ) ? "Shift + Enter": "Enter";
           chatApi.observeType.end();
+          this.placeholder="ここにメッセージ入力してください。\n・" + sendPattarnStr + "で改行されます\n・下矢印キー(↓)で定型文が開きます";
           $scope.chatPsFlg = true;
+
         });
         chatApi.init();
       },
@@ -1867,6 +1876,19 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var array = [];
       var keys = Object.keys(list);
       angular.forEach(list, function(item){
+        for(var key in item) {
+          if (item[key].label.indexOf($scope.searchWord) === 0 || angular.isUndefined($scope.searchWord) ) {
+            array.push(item[key]);
+          }
+        }
+      });
+      return array;
+    };
+
+    function getEntryWordSearch(list){
+      var array = [];
+      var keys = Object.keys(list);
+      angular.forEach(list, function(item){
         if (item.label.indexOf($scope.searchWord) === 0 || angular.isUndefined($scope.searchWord) ) {
           array.push(item);
         }
@@ -1907,6 +1929,134 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
               $scope.searchWord = "";
               $scope.$apply();
               entryWordApi.init();
+              var positionTop = 0;
+              var wy = $('#sub_contents.ui-draggable.ui-draggable-handle').offset().top;
+              var wx = $('#sub_contents.ui-draggable.ui-draggable-handle').offset().left;   // ウインドウの左上座標
+              $("#popup #popup-frame-base #popup-frame.p-category-dictionary-edit").css({
+                  top:(wy + 50) + "px",
+                  left:(wx + 80) + "px"
+              });
+
+              //全てのタブの要素を取得
+              var allTabList = document.querySelectorAll('[id^="ui-id-"]');
+              for (var i = 0; i < allTabList.length; i++) {
+                //全角を2、半角を1バイトとして長さを取得
+                var length = countLength(allTabList[i].text);
+                //全角バイトを超えていなかったらタブの長さを固定
+                if(length < 12){
+                  allTabList[i].style.width = '100px';
+                  allTabList[i].style.textAlign = 'center';
+                }
+              }
+              //タブの高さごとの配列を取得
+              var tobTopList = getTabTopList(allTabList);
+              //タブが一行だったら上下ボタンは非表示
+              if(tobTopList.length == 1){
+                document.getElementById("category_select_button").style.display="none";
+              }
+
+              function countLength(str) {
+                var r = 0;
+                for (var i = 0; i < str.length; i++) {
+                    var c = str.charCodeAt(i);
+                    // Shift_JIS: 0x0 ～ 0x80, 0xa0 , 0xa1 ～ 0xdf , 0xfd ～ 0xff
+                    // Unicode : 0x0 ～ 0x80, 0xf8f0, 0xff61 ～ 0xff9f, 0xf8f1 ～ 0xf8f3
+                    if ( (c >= 0x0 && c < 0x81) || (c == 0xf8f0) || (c >= 0xff61 && c < 0xffa0) || (c >= 0xf8f1 && c < 0xf8f4)) {
+                        r += 1;
+                    } else {
+                        r += 2;
+                    }
+                }
+                return r;
+              }
+
+              $('#popup-frame').draggable({
+                handle: "#popup-title"
+              });
+
+              //カテゴリースクロール対応
+              //上スクロール
+               $("#category_up_btn").on('click', function(e){
+                //タブリスト取得
+                var allTabList = document.querySelectorAll('[id^="ui-id-"]');
+                //タブの高さごとの配列を取得
+                var tobTopList = getTabTopList(allTabList);
+                //現在選択されているタブインデックス
+                var select_tab_index = Number(document.getElementById("select_tab_index").value);
+                //現在選択されている行のインデックス
+                var select_line_index = Number(document.getElementById("select_line_index").value);
+                if(select_line_index != 0){
+                  //上スライドされたら必ず下ボタンはグリーンになる
+                  document.getElementById("category_down_btn").className="btn-shadow greenBtn commontooltip";
+                  //上;
+                  select_line_index = (select_line_index - 1);
+                  //その行の先頭のIDを取得
+                  var id = tobTopList[select_line_index][0];
+                  //そのIDまでスクロール
+                  document.getElementById(id).scrollIntoView(false);
+                  //変更された行IDを保持
+                  document.getElementById("select_line_index").value = select_line_index;
+                  if(select_line_index == 0){
+                    //上限に到達したら上ボタンをグレーにする
+                    document.getElementById("category_up_btn").className="btn-shadow grayBtn commontooltip";
+                  }
+                }
+              });
+
+              //下スクロール
+               $("#category_down_btn").on('click', function(e){
+                //タブリスト取得
+                var allTabList = document.querySelectorAll('[id^="ui-id-"]');
+                //タブの高さごとの配列を取得
+                var tobTopList = getTabTopList(allTabList);
+                //現在選択されているタブインデックス
+                var select_tab_index = Number(document.getElementById("select_tab_index").value);
+                //現在選択されている行のインデックス
+                var select_line_index = Number(document.getElementById("select_line_index").value);
+                if(select_line_index != (tobTopList.length - 1)){
+                  //下スライドされたら必ず上ボタンはグリーンになる
+                  document.getElementById("category_up_btn").className="btn-shadow greenBtn commontooltip";
+                  //下;
+                  select_line_index = (select_line_index + 1);
+                  //その行の先頭のIDを取得
+                  var id = tobTopList[select_line_index][0];
+                  //そのIDまでスクロール
+                  document.getElementById(id).scrollIntoView(false);
+                  //変更された行IDを保持
+                  document.getElementById("select_line_index").value = select_line_index;
+                  if(select_line_index == (tobTopList.length - 1)){
+                    //下限に到達したら下ボタンをグレーにする
+                    document.getElementById("category_down_btn").className="btn-shadow grayBtn commontooltip";
+                  }
+                }
+              });
+
+              //タブの高さごとの配列を取得
+              function getTabTopList(allTabList){
+                var tobTopList = [];
+                var topAllay = [];
+                for (var i = 0; i < allTabList.length; i++) {
+                  var id = allTabList[i].id;
+                  topAllay.push($("#"+id).offset().top);
+                }
+                var nawtop = topAllay[0];
+                var tabAllay = [];
+                for (var i = 0; i < topAllay.length; i++) {
+                  tabAllay.push(allTabList[i].id);
+                  if(nawtop == topAllay[(i + 1)]){
+                    var linechange = 0;
+                  }
+                  else{
+                    var linechange = 1;
+                    nawtop = topAllay[(i + 1)];
+                  }
+                  if(linechange == 1 || (topAllay.length - 1) == i){
+                    tobTopList.push(tabAllay);
+                    tabAllay = [];
+                  }
+                }
+                return tobTopList;
+              }
 
               //閉じるボタンが押された時
               $("#popupCloseBtn").on('click', function(e){
@@ -1919,102 +2069,363 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                 $("#wordSearchCond").focus();
               });
 
+              $('#wordSearchCond').on('keydown', function(e) {
+                    if(e.keyCode === 38 || e.keyCode === 40) {
+                        e.preventDefault();
+                    }
+              });
+
+              var IMEOnEntering = false;
+              $("#popup-content").on("keydown", function(e){
+                if(e.keyCode === 229) {
+                  IMEOnEntering = true;
+                } else {
+                  IMEOnEntering = false;
+                }
+              });
+
               //ポップアップ全体監視(ポップアップのどこかにフォーカスがある状態でキーを押下すると)
               $("#popup-content").on('keyup', function(e){
-                var keytime = document.getElementById("keytime").value;
-                //二重操作防止
-                if(keytime != e.timeStamp){
-                  document.getElementById("keytime").value = e.timeStamp;
-                  //検索モードだったら無視する
-                  if(document.getElementById("mode_flg").value == 0){
-                    //キー押下時の処理
-                    var select_tab_index = document.getElementById("select_tab_index").value;
-                    //現在選択されているタブのワードリストを取得する
-                    var selectTabWordList = $scope.entryWordList[select_tab_index];
-
-                    //ワードリストが空の時は以下処理は実行しない
-                    if(selectTabWordList.length > 0){
-                      //現在[dictionarySelected~]クラスがついている行のidnameを取得してidだけを抽出する
-                      var selected = document.querySelector('[id^="item"].dictionarySelected'+select_tab_index);
-                      var selected_id = selected.id;
-                      selected_id = Number(selected_id.substr(4));
-                      //idから現在選択されているキーを取得する
-                      for(var key in selectTabWordList) {
-                        if(selected_id === selectTabWordList[key]["id"]){
-                          var selected_key = Number(key);
+                var search_word = document.getElementById("wordSearchCond").value;
+                //検索文字列があるか
+                if(search_word){
+                  //検索モード
+                  document.getElementById("mode_flg").value = 1;
+                }
+                else{
+                  //通常モード
+                  document.getElementById("mode_flg").value = 0;
+                  //入力が無くなったら通常モード
+                  document.getElementById("serect_tab_mode").style.display="";
+                  document.getElementById("word_search_mode").style.display="none";
+                  document.getElementById("wordSearchChk").value = "";
+                }
+                if(document.getElementById("mode_flg").value == 0){
+                  var keytime = document.getElementById("keytime").value;
+                  //二重操作防止
+                  if(keytime != e.timeStamp){
+                    document.getElementById("keytime").value = e.timeStamp;
+                    //検索モードだったら無視する
+                    if(document.getElementById("mode_flg").value == 0){
+                      //キー押下時の処理
+                      var select_tab_index = document.getElementById("select_tab_index").value;
+                      //現在選択されているタブのワードリストを取得する
+                      var selectTabWordList = $scope.entryWordList[select_tab_index];
+                      //ワードリストが空の時は以下処理は実行しない
+                      if(selectTabWordList.length > 0){
+                        //現在[dictionarySelected~]クラスがついている行のidnameを取得してidだけを抽出する
+                        var selected = document.querySelector('[id^="item"].dictionarySelected'+select_tab_index);
+                        var selected_id = selected.id;
+                        selected_id = Number(selected_id.substr(4));
+                        //idから現在選択されているキーを取得する
+                        for(var key in selectTabWordList) {
+                          if(selected_id === selectTabWordList[key]["id"]){
+                            var selected_key = Number(key);
+                          }
                         }
                       }
-                    }
-
-                    if ( e.keyCode === 13 ) { // Enter
-                      var list = $scope.entryWordSearch($scope.entryWordList[select_tab_index]);
-                      if ( list.length > 0 ) {
-                        entryWordApi.push(list[selected_key].label);
+                      if ( e.keyCode === 13 ) { // Enter
+                        if(!IMEOnEntering) {
+                          var list = getEntryWordSearch($scope.entryWordList[select_tab_index]);
+                          if (list.length > 0) {
+                            entryWordApi.push(list[selected_key].label);
+                          }
+                          entryWordApi.prev();
+                          //ポップアップを閉じる
+                          closeCategoryDictionary();
+                        }
+                        return false;
                       }
-                      entryWordApi.prev();
-                      //ポップアップを閉じる
-                      closeCategoryDictionary();
-                      return false;
-                    }
-                    if ( e.keyCode === 38 ) { // 上キー
-                      if ( selected_key > 0 ) {
-                        selected_key = selected_key - 1;
-                        var prev = $("#item" + selectTabWordList[selected_key]["id"]);
-                        if (prev.prop('id')){
-                          //もともとあったセレクトクラスを除外
-                          var selectedClassName  = document.getElementById(selected.id).className;
-                          document.getElementById("item" + selectTabWordList[selected_key]["id"]).className = selectedClassName;
-                          document.getElementById(selected.id).className = "dictionaryWord ng-binding ng-scope";
-                          //新しくセレクトされた要素までスクロール
-                          document.getElementById("item" + selectTabWordList[selected_key]["id"]).scrollIntoView(true);
+                      if ( e.keyCode === 38 ) { // 上キー
+                        if ( selected_key > 0 ) {
+                          selected_key = selected_key - 1;
+                          var prev = $("#item" + selectTabWordList[selected_key]["id"]);
+                          if (prev.prop('id')){
+                            //もともとあったセレクトクラスを除外
+                            var selectedClassName  = document.getElementById(selected.id).className;
+                            document.getElementById("item" + selectTabWordList[selected_key]["id"]).className = selectedClassName;
+                            document.getElementById(selected.id).className = "dictionaryWord ng-binding ng-scope";
+                            //スクロール判定のために次の次のリストが存在するかどうかを判定する
+                            if ( selected_key > 0 ) {
+                              var nextnext = selected_key - 1;
+                              var t = $("#item" + selectTabWordList[nextnext]["id"]).offset().top; // ターゲットの位置取得
+                              var c = $("#wordList"+select_tab_index).offset().top; // 基準となるulの位置取得
+                              if(c > t){
+                                //新しくセレクトされた要素までスクロール
+                                document.getElementById("item" + selectTabWordList[selected_key]["id"]).scrollIntoView(true);
+                              }
+                            }
+                            else{
+                              //新しくセレクトされた要素までスクロール
+                              document.getElementById("item" + selectTabWordList[selected_key]["id"]).scrollIntoView(true);
+                            }
+                          }
+                        }
+                        else {
+                          //ポップアップを閉じる
+                          closeCategoryDictionary(); // 元の操作に戻る
+                          return false;
                         }
                       }
-                      else {
+                      if ( e.keyCode === 27 ) { // ESCキー
                         //ポップアップを閉じる
                         closeCategoryDictionary(); // 元の操作に戻る
                         return false;
                       }
-                    }
-                    if ( e.keyCode === 27 ) { // ESCキー
-                      //ポップアップを閉じる
-                      closeCategoryDictionary(); // 元の操作に戻る
-                      return false;
-                    }
-                    if ( e.keyCode === 40 ) { // 下
-                      if ( $scope.entryWordSearch($scope.entryWordList[select_tab_index]).length > (selected_key + 1) ) {
-                        selected_key = selected_key + 1;
-                        var next = $("#item" + selectTabWordList[selected_key]["id"]);
-                        if (next.prop('id')){
-                          //もともとあったセレクトクラスを除外
-                          var selectedClassName  = document.getElementById(selected.id).className;
-                          document.getElementById("item" + selectTabWordList[selected_key]["id"]).className = selectedClassName;
-                          document.getElementById(selected.id).className = "dictionaryWord ng-binding ng-scope";
+                      if ( e.keyCode === 40 ) { // 下
+                        if ( getEntryWordSearch($scope.entryWordList[select_tab_index]).length > (selected_key + 1) ) {
+                          selected_key = selected_key + 1;
+                          var next = $("#item" + selectTabWordList[selected_key]["id"]);
+                          if (next.prop('id')){
+                            //もともとあったセレクトクラスを除外
+                            var selectedClassName  = document.getElementById(selected.id).className;
+                            document.getElementById("item" + selectTabWordList[selected_key]["id"]).className = selectedClassName;
+                            document.getElementById(selected.id).className = "dictionaryWord ng-binding ng-scope";
+                            //スクロール判定のために次の次のリストが存在するかどうかを判定する
+                            if ( getEntryWordSearch($scope.entryWordList[select_tab_index]).length > (selected_key + 1) ) {
+                              var nextnext = selected_key + 1;
+                              var t = $("#item" + selectTabWordList[nextnext]["id"]).offset().top; // ターゲットの位置取得
+                              var c = $("#wordList"+select_tab_index).offset().top; // 基準となるulの位置取得
+                              var h = $("#wordList"+select_tab_index).height(); //基準となるuiの縦幅
+                              if(c + h < t){
+                                //新しくセレクトされた要素までスクロール
+                                document.getElementById("item" + selectTabWordList[selected_key]["id"]).scrollIntoView(false);
+                              }
+                            }
+                            else{
+                              //新しくセレクトされた要素までスクロール
+                              document.getElementById("item" + selectTabWordList[selected_key]["id"]).scrollIntoView(false);
+                            }
+                          }
+                        }
+                        return false;
+                      }
+                      if ( e.keyCode === 37 ) { // 左
+                        select_tab_index = Number(select_tab_index);
+                        if ( select_tab_index > 0 ) {
+                          select_tab_index--;
+                          $( "#categoryTabs" ).tabs({ active: select_tab_index });
+                          var allTabList = document.querySelectorAll('[id^="ui-id-"]');
+                          var id = allTabList[select_tab_index].id;
+                          //id = Number(id.substr(10));
+                          //タブの高さごとの配列を取得
+                          var tobTopList = getTabTopList(allTabList);
+                          //タブの高さリストから該当IDを検索
+                          for(var key in tobTopList) {
+                            for(var i_key in tobTopList[key]) {
+                              if(tobTopList[key][i_key] == id){
+                                var c_key = key;
+                              }
+                            }
+                          }
+                          //現在選択されている行のインデックス
+                          var select_line_index = Number(document.getElementById("select_line_index").value);
+                          if(Number(c_key) != select_line_index){
+                            //現在選択されている行インデックスを変更
+                            document.getElementById("select_line_index").value = c_key;
+                            //上スライドされたら必ず下ボタンはグリーンになる
+                            document.getElementById("category_down_btn").className="btn-shadow greenBtn commontooltip";
+                            if(c_key == 0){
+                              //上限に到達したら上ボタンをグレーにする
+                              document.getElementById("category_up_btn").className="btn-shadow grayBtn commontooltip";
+                            }
+                          }
+                          allTabList[select_tab_index].scrollIntoView(false);
                           //新しくセレクトされた要素までスクロール
-                          document.getElementById("item" + selectTabWordList[selected_key]["id"]).scrollIntoView(false);
+                          document.getElementById("select_tab_index").value = select_tab_index;
+                        }
+                        return false;
+                      }
+                      if ( e.keyCode === 39 ) { // 右
+                        select_tab_index = Number(select_tab_index);
+                        if ( $scope.entryWordList.length > (select_tab_index + 1) ) {
+                          select_tab_index++;
+                          $( "#categoryTabs" ).tabs({ active: select_tab_index });
+                          var allTabList = document.querySelectorAll('[id^="ui-id-"]');
+                          var id = allTabList[select_tab_index].id;
+                          //id = Number(id.substr(10));
+                          //タブの高さごとの配列を取得
+                          var tobTopList = getTabTopList(allTabList);
+                          //タブの高さリストから該当IDを検索
+                          for(var key in tobTopList) {
+                            for(var i_key in tobTopList[key]) {
+                              if(tobTopList[key][i_key] == id){
+                                var c_key = key;
+                              }
+                            }
+                          }
+                          //現在選択されている行のインデックス
+                          var select_line_index = Number(document.getElementById("select_line_index").value);
+                          if(Number(c_key) != select_line_index){
+                            //現在選択されている行インデックスを変更
+                            document.getElementById("select_line_index").value = c_key;
+                            //下スライドされたら必ず上ボタンはグリーンになる
+                            document.getElementById("category_up_btn").className="btn-shadow greenBtn commontooltip";
+                            if(c_key == (tobTopList.length - 1)){
+                              //下限に到達したら下ボタンをグレーにする
+                              document.getElementById("category_down_btn").className="btn-shadow grayBtn commontooltip";
+                            }
+                          }
+                          allTabList[select_tab_index].scrollIntoView(false);
+                          document.getElementById("select_tab_index").value = select_tab_index;
+                        }
+                        return false;
+                      }
+                      entryWordApi.sc = 0;
+                    }
+                  }
+                }
+                else{
+                  //上下エンターキーの判定
+                  if((e.keyCode === 13)||(e.keyCode === 38)||(e.keyCode === 40)){
+                    var searchkeytime = document.getElementById("searchkeytime").value;
+                    //二重操作防止
+                    if(searchkeytime != e.timeStamp){
+                      document.getElementById("searchkeytime").value = e.timeStamp;
+                      //検索結果に対する操作
+                      var search_word = document.getElementById("wordSearchCond").value;
+                      //検索文字列があるか
+                      if(search_word){
+                        var searchItemList = document.querySelectorAll('[id^="searchItem"]');
+                        var res = [];
+                        for (var i = 0; i < searchItemList.length; i++) {
+                          if(searchItemList[i].style.display != "none"){
+                            res.push(searchItemList[i]);
+                          }
+                        }
+                        //現在表示されているリストが存在すれば
+                        if(res){
+                          //現在dictionarySearchSelectedクラスを持っているIDを取得する
+                          var selected = document.querySelector('[id^="searchItem"].dictionarySearchSelected');
+                          var selected_id = selected.id;
+                          var selected_key = '';
+                          for (var i = 0; i < res.length; i++) {
+                            if(res[i].id == selected_id){
+                              selected_key = i;
+                            }
+                          }
+                          //selected_id = Number(selected_id.substr(10));
+                          //各ボタンの判定
+                          if (e.keyCode === 13) { // Enter
+                            if(!IMEOnEntering) {
+                              var id = Number(selected_id.substr(10));
+                              //$scope.entryWordListの中のどこに該当するか特定する
+                              var wordlist = $scope.entryWordList;
+                              for (var key in wordlist) {
+                                for (var v_key in wordlist[key]) {
+                                  if (wordlist[key][v_key]["id"] == id) {
+                                    var select_tab_index = key;
+                                    var select_index = v_key;
+                                  }
+                                }
+                              }
+                              var list = getEntryWordSearch($scope.entryWordList[select_tab_index]);
+                              closeCategoryDictionary();
+                              entryWordApi.push(list[select_index].label);
+                            }
+                            return false;
+                          }
+                          if (e.keyCode === 38) { // 上キー
+                            if ( selected_key > 0 ) {
+                              selected_key = selected_key - 1;
+                              //もともとあったセレクトクラスを除外
+                              var selectedClassName  = document.getElementById(selected_id).className;
+                              document.getElementById(res[selected_key].id).className = selectedClassName;
+                              document.getElementById(selected_id).className = "dictionaryWord ng-binding ng-scope";
+                              //スクロール判定のために次の次のリストが存在するかどうかを判定する
+                              if ( selected_key > 0 ) {
+                                var nextnext = selected_key - 1;
+                                var t = $("#" + res[nextnext].id).offset().top; // ターゲットの位置取得
+                                var c = $("#allWordList").offset().top; // 基準となるulの位置取得
+                                if(c > t){
+                                  //新しくセレクトされた要素までスクロール
+                                  document.getElementById(res[selected_key].id).scrollIntoView(true);
+                                }
+                              }
+                              else{
+                                //新しくセレクトされた要素までスクロール
+                                document.getElementById(res[selected_key].id).scrollIntoView(true);
+                              }
+                            } else {
+                              closeCategoryDictionary();
+                            }
+                            return false;
+                          }
+                          if (e.keyCode === 40) { // 下キー
+                            if ( res.length > (selected_key + 1) ) {
+                              selected_key = selected_key + 1;
+                              var next = res[selected_key].id;
+                              //もともとあったセレクトクラスを除外
+                              var selectedClassName  = document.getElementById(selected_id).className;
+                              document.getElementById(res[selected_key].id).className = selectedClassName;
+                              document.getElementById(selected_id).className = "dictionaryWord ng-binding ng-scope";
+                              //スクロール判定のために次の次のリストが存在するかどうかを判定する
+                              if ( res.length > (selected_key + 1) ) {
+                                var nextnext = selected_key + 1;
+                                var t = $("#" + res[nextnext].id).offset().top; // ターゲットの位置取得
+                                var c = $("#allWordList").offset().top; // 基準となるulの位置取得
+                                var h = $("#allWordList").height(); //基準となるuiの縦幅
+                                if(c + h < t){
+                                  //新しくセレクトされた要素までスクロール
+                                  document.getElementById(res[selected_key].id).scrollIntoView(false);
+                                }
+                              }
+                              else{
+                                //新しくセレクトされた要素までスクロール
+                                document.getElementById(res[selected_key].id).scrollIntoView(false);
+                              }
+                            }
+                            return false;
+                          }
                         }
                       }
-                      return false;
                     }
-                    if ( e.keyCode === 37 ) { // 左
-                      select_tab_index = Number(select_tab_index);
-                      if ( select_tab_index > 0 ) {
-                        select_tab_index--;
-                        $( "#categoryTabs" ).tabs({ active: select_tab_index });
-                        document.getElementById("select_tab_index").value = select_tab_index;
-                      }
-                      return false;
-                    }
-                    if ( e.keyCode === 39 ) { // 右
-                      select_tab_index = Number(select_tab_index);
-                      if ( $scope.entryWordList.length > (select_tab_index + 1) ) {
-                        select_tab_index++;
-                        $( "#categoryTabs" ).tabs({ active: select_tab_index });
-                        document.getElementById("select_tab_index").value = select_tab_index;
-                      }
-                      return false;
-                    }
-                    entryWordApi.sc = 0;
                   }
+                  else{
+                    //一旦全て非表示
+                    document.getElementById("categoryTabs-ALL").style.display="none";
+                    document.getElementById("allWordList").style.display="none";
+                    var searchItemList = document.querySelectorAll('[id^="searchItem"]');
+                    for (var i = 0; i < searchItemList.length; i++) {
+                      searchItemList[i].style.display="none";
+                    }
+                    onWordSearchCond(e);
+                    return false;
+                  }
+                }
+              });
+
+
+              $("#wordSearchCond")
+              .on('click', function(e){
+                //検索モードのみ
+                if(document.getElementById("mode_flg").value == 1){
+                  var $input = $(this),
+                  oldValue = $input.val();
+                  if (oldValue == "") return;
+                  setTimeout(function(){
+                    //一旦全て非表示
+                    document.getElementById("categoryTabs-ALL").style.display="none";
+                    document.getElementById("allWordList").style.display="none";
+                    var searchItemList = document.querySelectorAll('[id^="searchItem"]');
+                    for (var i = 0; i < searchItemList.length; i++) {
+                      searchItemList[i].style.display="none";
+                    }
+                    onWordSearchCond(e);
+                  },1);
+                }
+              })
+              .on('onchange', function(e){
+                //検索モードのみ
+                if(document.getElementById("mode_flg").value == 1){
+                  //一旦全て非表示
+                  document.getElementById("categoryTabs-ALL").style.display="none";
+                  document.getElementById("allWordList").style.display="none";
+                  var searchItemList = document.querySelectorAll('[id^="searchItem"]');
+                  for (var i = 0; i < searchItemList.length; i++) {
+                    searchItemList[i].style.display="none";
+                  }
+                  onWordSearchCond(e);
                 }
               });
 
@@ -2022,7 +2433,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
               $("[id ^= wordList]").on('click', function(e){
                 //カテゴリ
                 var select_tab_index = document.getElementById("select_tab_index").value;
-                var list = $scope.entryWordSearch($scope.entryWordList[select_tab_index]);
+                var list = getEntryWordSearch($scope.entryWordList[select_tab_index]);
                 if ( list.length > 0 ) {
                   closeCategoryDictionary();
                   entryWordApi.push(list[$(e.target).index()].label);
@@ -2035,21 +2446,23 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
               $("#allWordList").on('click', function(e){
                 //カテゴリ
                 var id = e.target.id;
-                id = Number(id.substr(10));
-                //$scope.entryWordListの中のどこに該当するか特定する
-                var wordlist = $scope.entryWordList;
-                for(var key in wordlist) {
-                  for(var v_key in wordlist[key]) {
-                    if(wordlist[key][v_key]["id"] == id){
-                      var select_tab_index = key;
-                      var select_index = v_key;
+                if(id != 0){
+                  id = Number(id.substr(10));
+                  //$scope.entryWordListの中のどこに該当するか特定する
+                  var wordlist = $scope.entryWordList;
+                  for(var key in wordlist) {
+                    for(var v_key in wordlist[key]) {
+                      if(wordlist[key][v_key]["id"] == id){
+                        var select_tab_index = key;
+                        var select_index = v_key;
+                      }
                     }
                   }
-                }
-                var list = $scope.entryWordSearch($scope.entryWordList[select_tab_index]);
-                closeCategoryDictionary();
-                entryWordApi.push(list[select_index].label);
-                return false;
+                  var list = getEntryWordSearch($scope.entryWordList[select_tab_index]);
+                  closeCategoryDictionary();
+                  entryWordApi.push(list[select_index].label);
+                  }
+                  return false;
               });
 
               //ポップアップを閉じるときの共通動作
@@ -2063,47 +2476,17 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                 $("#sendMessage").focus();
               }
 
-              //検索テキストボックス
-              $("#wordSearchCond")
-              .on('keyup', function(e){
-                //一旦全て非表示
-                document.getElementById("categoryTabs-ALL").style.display="none";
-                document.getElementById("allWordList").style.display="none";
-                var searchItemList = document.querySelectorAll('[id^="searchItem"]');
-                for (var i = 0; i < searchItemList.length; i++) {
-                  searchItemList[i].style.display="none";
-                }
-                onWordSearchCond(e);
-              })
-              .on('click', function(e){
-                var $input = $(this),
-                oldValue = $input.val();
-                if (oldValue == "") return;
-                setTimeout(function(){
-                  //一旦全て非表示
-                  document.getElementById("categoryTabs-ALL").style.display="none";
-                  document.getElementById("allWordList").style.display="none";
-                  var searchItemList = document.querySelectorAll('[id^="searchItem"]');
-                  for (var i = 0; i < searchItemList.length; i++) {
-                    searchItemList[i].style.display="none";
-                  }
-                  onWordSearchCond(e);
-                },1);
-              })
-              .on('onchange', function(e){
-                //一旦全て非表示
-                document.getElementById("categoryTabs-ALL").style.display="none";
-                document.getElementById("allWordList").style.display="none";
-                var searchItemList = document.querySelectorAll('[id^="searchItem"]');
-                for (var i = 0; i < searchItemList.length; i++) {
-                  searchItemList[i].style.display="none";
-                }
-                onWordSearchCond(e);
-              });
-
               //検索モード
               function onWordSearchCond(e){
                 var search_word = document.getElementById("wordSearchCond").value;
+                if((document.getElementById("mode_flg").value == 1) && (search_word != document.getElementById("wordSearchChk").value)){
+                  //選択行の削除
+                  var selected = document.querySelector('[id^="searchItem"].dictionarySearchSelected');
+                  if(selected){
+                    var selected_id = selected.id;
+                    document.getElementById(selected_id).className = "dictionaryWord ng-binding ng-scope";
+                  }
+                }
                 if(search_word){
                   //一文字でも入力があったら検索モード
                   document.getElementById("mode_flg").value = 1;
@@ -2128,7 +2511,13 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                     for(var r_key in res) {
                       //対応する行を表示
                       document.getElementById("searchItem"+res[r_key]).style.display="";
+                      //検索にヒットしたリストの一番先頭にdictionarySearchSelectedクラスを付与する
+                      if(r_key == 0 && (document.getElementById("wordSearchChk").value != search_word)){
+                        document.getElementById("searchItem"+res[r_key]).className = "dictionaryWord ng-binding ng-scope dictionarySearchSelected";
+                      }
                     }
+                    //検索にヒットしたらwordSearchChkに検索文字列を格納しておく
+                    document.getElementById("wordSearchChk").value = search_word;
                     //searchItem
                   }
                 }
@@ -2137,6 +2526,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                   document.getElementById("mode_flg").value = 0;
                   document.getElementById("serect_tab_mode").style.display="";
                   document.getElementById("word_search_mode").style.display="none";
+                  document.getElementById("wordSearchChk").value = "";
                 }
               }
             }

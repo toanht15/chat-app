@@ -703,7 +703,10 @@
     > div {
       display: flex;
       flex-direction: column;
-      margin: 5px 0;
+
+      &:last-child {
+        padding-top: 1em;
+      }
 
       div#inputStr {
         display: flex;
@@ -759,7 +762,7 @@
 
       textarea {
         margin: 0px;
-        height: 120px;
+        height: 200px;
         resize: none;
       }
     }
@@ -772,6 +775,7 @@
     margin: 0 auto;
 
     .textBtn {
+      font-size: 1.1em;
       width: 5em;
       margin: 0 0.5em;
       float: left;
@@ -902,15 +906,55 @@
         top: 2px;
         left: -4px;
       }
+      #tabsortText {
+        position: relative;
+        top: 1px;
+        left: 0px;
+      }
+    }
+    #stintMessage{
+      position: relative;
+      top: -1px;
+      left: 0px;
+    }
+    #tabSortMessage{
+      position: relative;
+      top: 2px;
+      left: -11px;
     }
   }
   .listArea{
+    .soteTabs{
+      .tablist{
+        width: 100%;
+        .ui-tabs-anchor{
+          text-overflow:ellipsis;
+          overflow:hidden;
+          white-space:nowrap;
+        }
+      }
+    }
     position: relative;
     top: 0px;
     left: 0px;
     margin: 20px;
     padding-bottom: 20px;
     .fLeft{
+      .tabName{
+        position: relative;
+        top: 10px;
+        left: 15px;
+      }
+      .tabBtnSet{
+        position: relative;
+        top: 2px;
+        left: 17px;
+      }
+      .tabpointer{
+        position: relative;
+        top: -1px;
+        left: 18px;
+      }
       position: relative;
       top: -10px;
       left: -5px;
@@ -920,27 +964,63 @@
         left: -1px;
         [id^="sort"]{
           position: relative;
-          top: 2px;
+          padding: 10px 10px 10px 4px;
+        }
+        [id^="sortText"]{
+          top: -1px;
+        }
+        [id^="sortMessage"]{
+          position: relative;
+          top: 0px;
+          left: -12px;
         }
       }
     }
     .fRight{
       position: relative;
-      top: -20px;
-      left: 2px;
+      top: -18px;
+      left: -15px;
     }
     #tdictionaries_list{
-      padding: 18px;
-      .t-link{
-        padding: 10px 5px 2px;
+      padding: 15px;
+      margin: 0 auto;
+      td {
+        label{
+          position: relative;
+          top: 0px;
+          left: 0px;
+        }
+        /*display: block;*/
+        /*padding: 0px 10px 10px;*/
       }
     }
   }
 }
 
+.btn-shadow.d-set-option-btn{
+  width: 65px;
+  height: 20px;
+  text-align: center;
+}
 
+#input_category_btn.disOffgreenBtn{
+  border: 1px solid #C3D69B;
+  margin: 0px 5px 0px;
+  padding: 5px 20px 5px;
+  transition: background-color, border-color 0.1s linear;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+  overflow:hidden;
+  outline:none;
+}
 
-
+#input_category_btn.disOffgrayBtn{
+  border: 1px solid #DADADA;
+  margin: 0px 5px 0px;
+  padding: 5px 20px 5px;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+  overflow:hidden;
+  outline:none;
+}
 
 
 .disOffgreenBtn {
@@ -949,7 +1029,20 @@
   transition: background-color, border-color 0.1s linear;
   background-color: #C3D69B;
   color: white;
-  border: 1px solid #C3D69B;
+  border: 0px solid #C3D69B;
+  padding: 7px;
+}
+
+.disOffgreenBtn:hover{
+  background-color: #A5B77E;
+  border: 0px solid #A5B77E;
+  padding: 6.5px;
+  transition: background-color, border-color 0.1s linear;
+  color: #fff;
+}
+
+[id^="tdictionaries_manu_btn"].disOffgreenBtn:hover{
+  padding: 5.5px 7px 6.5px 6.5px;
 }
 
 .disOffgrayBtn {
@@ -957,8 +1050,17 @@
   font-weight: bold;
   transition: background-color, border-color 0.1s linear;
   background-color: #DADADA;
-  border: 1px solid #DADADA;
+  border: 0px solid #DADADA;
+  padding: 7px;
   color: white;
+}
+
+.disOffgrayBtn:hover {
+  background-color: #DADADA;
+  border: 0px solid #DADADA;
+  transition: background-color, border-color 0.1s linear;
+  color: #fff;
+  padding: 7px;
 }
 
 .disOffredBtn {
@@ -966,19 +1068,32 @@
   font-weight: bold;
   transition: background-color, border-color 0.1s linear;
   background-color: #D69B9B;
-  border: 1px solid #D69B9B;
+  border: 0px solid #D69B9B;
   color: white;
+  padding: 7px;
+}
+
+.disOffredBtn:hover {
+  background-color: #B78080;
+  border: 0px solid #B78080;
+  transition: background-color, border-color 0.1s linear;
+  color: #fff;
+  padding: 6.5px;
 }
 
 .t-link {
-  display: block;
-  width: 100%;
-  height: 100%;
+  /*display: block;*/
+  /*width: 100%;*/
 /*  padding: 10px 5px 2px;*/
 }
 
+#popup #popup-frame-base #popup-frame.p-tdictionary-entry {
+  width: 500px;
+  height: 450px !important;
+}
+
 #popup #popup-frame-base #popup-frame.p-copy {
-  width: 350px;
+  width: 450px;
   height: 150px;
 }
 
@@ -987,12 +1102,15 @@
 }
 
 #popup #popup-frame-base #popup-frame.p-copy #popup-button a {
-  width: 95px;
+  width: 10em;
   margin: 0 auto;
+  height: 2em;
+  font-size: 1.1em;
+  padding: 4px 0px;
 }
 
 #popup #popup-frame-base #popup-frame.p-move {
-  width: 350px;
+  width: 450px;
   height: 150px;
 }
 
@@ -1001,12 +1119,95 @@
 }
 
 #popup #popup-frame-base #popup-frame.p-move #popup-button a {
-  width: 95px;
+  width: 10em;
   margin: 0 auto;
+  height: 2em;
+  font-size: 1.1em;
+  padding: 4px 0px;
+}
+
+#popup #popup-frame-base #popup-frame.p-tabsort-save-confirm {
+  width: 450px;
+  height: 150px;
+  text-align: center;
+  div#popup-button {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+
+    a {
+      flex-basis: 140px;
+      height: 2em;
+      margin: 0 5px;
+      padding: 0.25em 0;
+      font-size: 1.1em;
+    }
+  }
+}
+
+#popup #popup-frame-base #popup-frame.p-tabsort-save-confirm #popup-button {
+  text-align: center;
+}
+
+#popup #popup-frame-base #popup-frame.p-tabsort-save-confirm #popup-button a {
+  width: 10em;
+  margin: 0 auto;
+  height: 2em;
+  font-size: 1.1em;
+  padding: 4px 0px;
+}
+
+#popup #popup-frame-base #popup-frame.p-sort-save-confirm {
+  width: 450px;
+  height: 150px;
+  text-align: center;
+  div#popup-button {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+
+    a {
+      flex-basis: 140px;
+      height: 2em;
+      margin: 0 5px;
+      padding: 0.25em 0;
+      font-size: 1.1em;
+    }
+  }
+}
+
+#popup #popup-frame-base #popup-frame.p-sort-save-confirm #popup-button {
+  text-align: center;
+}
+
+#popup #popup-frame-base #popup-frame.p-sort-save-confirm #popup-button a {
+  width: 10em;
+  margin: 0 auto;
+  height: 2em;
+  font-size: 1em;
+  padding: 4px 0px;
+}
+
+#popup #popup-frame-base #popup-frame.p-dictionary-del {
+  width: 450px;
+  height: 150px;
+  text-align: center;
+}
+
+#popup #popup-frame-base #popup-frame.p-dictionary-del #popup-button {
+  text-align: center;
+}
+
+#popup #popup-frame-base #popup-frame.p-dictionary-del #popup-button a {
+  width: 10em;
+  margin: 0 auto;
+  height: 2em;
+  font-size: 1.1em;
+  padding: 4px 0px;
 }
 
 #popup #popup-frame-base #popup-frame.p-category-edit {
-  width: 350px;
+  width: 450px;
   height: 150px;
 }
 
@@ -1015,12 +1216,15 @@
 }
 
 #popup #popup-frame-base #popup-frame.p-category-edit #popup-button a {
-  width: 150px;
+  width: 10em;
   margin: 0 auto;
+  height: 2em;
+  font-size: 1.1em;
+  padding: 4px 0px;
 }
 
 #popup #popup-frame-base #popup-frame.p-category-del {
-  width: 350px;
+  width: 450px;
   height: 150px;
 }
 
@@ -1029,14 +1233,18 @@
 }
 
 #popup #popup-frame-base #popup-frame.p-category-del #popup-button a {
-  width: 150px;
+  width: 10em;
   margin: 0 auto;
+  height: 2em;
+  font-size: 1.1em;
+  padding: 4px 0px;
 }
 
 #popup #popup-frame-base #popup-frame.p-category-dictionary-edit {
-  width: 500px;
-  height: 450px;
+  width: 550px;
+  height: 455px;
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+  margin: 0;
 }
 
 #popup #popup-frame-base #popup-frame.p-category-dictionary-edit #popup-button {
@@ -1061,6 +1269,44 @@
   padding: 10px;
 }
 
+#category_select_button{
+  position: absolute;
+  zoom: 100%;
+  top: -2px;
+  left: 510px;
+  #category_up_btn{
+    width: 15px;
+    height: 15px;
+    font-size: 8px;
+    text-align: center;
+    .triangle{
+      position: absolute;
+      top: 0px;
+      left: 2px;
+    }
+  }
+  #category_down_btn{
+    width: 15px;
+    height: 15px;
+    font-size: 8px;
+    text-align: center;
+    .triangle{
+      position: absolute;
+      top: 15px;
+      left: 2px;
+    }
+  }
+}
+
+#TDictionaryType{
+  padding: 0 0 3px 0.5em;
+  margin-top: 0.5em;
+}
+
+#wordSearchCond{
+  background-color: rgb(242, 242, 242);
+}
+
 #serect_tab_mode{
   position: relative;
   top: 10px;
@@ -1083,6 +1329,9 @@
 
 .ui-tabs .ui-tabs-nav.categoryTabStyle{
   padding: 0;
+  height: 30px;
+  width: 101%;
+  overflow: hidden;
 }
 
 .ui-widget-header.categoryTabStyle{
@@ -1114,7 +1363,7 @@
 }
 
 [id^="wordList"]{
-  width: 480px;
+  width: 530px;
   height: 250px !important;
   overflow-y: scroll;
   position: relative;
@@ -1128,7 +1377,7 @@
 
 #allWordList.fRight{
   float: none;
-  width: 520px;
+  width: 565px;
   height: 300px !important;
   position: relative;
   top: -10px;
@@ -1153,65 +1402,95 @@
 
 [id^="openMenu"] {
   position: absolute;
-  top: 0;
+  top: 16px;
   right: 0;
 }
 
 [id^="layerMenu"] {
   display: none;
   position: absolute;
-  top: 55px;
+  top: 69px;
   right: 0;
-  width: 12em;
+  width: 160px;
   font-size: 12px;
   z-index: 9999;
+  a:hover {
+    background-color: #C3D69B;
+    color: #fff;
+    text-decoration: none;
+    display: block;
+    padding: 10px 10px 10px
+  }
+  a{
+    text-decoration: none;
+    display: block;
+    padding: 10px 10px 10px
+  }
+}
+
+#input_category_value{
+  padding: 7px 10px !important;
 }
 
 [id^="layerMenu"] ul {
-  border-top: solid 1px #ccc;
+  border: solid 1px #ccc;
+  display: block;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
+  padding: 5px 0px !important;
+  background: #fff;
+  #tdictionaries_idx #tdictionaries_menu ul li.t-link{
+    padding: 0px 0px 0px;
+    width: 100%;
+    height: 100%;
+  }
 }
 
 [id^="layerMenu"] ul li {
   background: #fff;
   list-style: none;
-  border-bottom: solid 1px #ccc;
+/*  border-bottom: solid 1px #ccc;*/
   position: relative;
-  padding: 10px;
-  text-decoration: none;
+  padding: 0px !important;
   color: #555;
   display: block;
 }
 
+/*[id^="layerMenu"] ul li:hover {
+  color: #EA0001;
+}*/
+
 [id^="tooltip_tdictionaries_add_btn"].tooltips{
   position: fixed;
-  left: 104px !important;
+  left: 109px !important;
   width: 6em
 }
 
 [id^="tooltip_tdictionaries_copy_btn"].tooltips{
   position: fixed;
-  left: 128px !important;
+  left: 139px !important;
   width: 9em;
 }
 
 [id^="tooltip_tdictionaries_move_btn"].tooltips{
   position: fixed;
-  left: 190px !important;
+  left: 205px !important;
   width: 6em;
 }
 
 [id^="tooltip_tdictionaries_dustbox_btn"].tooltips{
   position: fixed;
-  left: 234px !important;
+  left: 254px !important;
   width: 6em;
 }
 
 [id^="tooltip_tdictionaries_manu_btn"].tooltips{
+  right: 57px;
+  width: 7em;
   position: fixed;
 }
 
-[id^="layerMenu"] ul li:hover {
-  color: #EA0001;
+[id^="tooltip_gray_tdictionaries_manu_btn"].tooltips{
+  position: fixed;
 }
 
 .ui-tabs.soteTabs {
@@ -1239,8 +1518,26 @@
   padding: .0em .0em 0;
 }
 
-.tabBox.ui-tabs-panel.ui-corner-bottom.ui-widget-content{
-  border: 0.5em solid #C3D69B;
+[id^="tabBoxborder"]{
+  border: 1px solid #a6a6a6;
+  background-color: #FFF;
+  padding: 0px;
+}
+
+.tabBoxInborder{
+  border: 1px solid #a6a6a6;
   background-color: #FFF;
   padding: 0.25em;
+}
+
+.tabBox.ui-tabs-panel.ui-corner-bottom.ui-widget-content{
+  border: 2px solid #C3D69B;
+  border-width: 15px 10px 10px;
+  background-color: #FFF;
+  padding: 0px;
+}
+
+.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active.taboutborder{
+  border: 1px solid #a6a6a6;
+  border-bottom: none;
 }
