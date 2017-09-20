@@ -878,7 +878,7 @@ class StatisticsController extends AppController {
       date_format(th.access_date, ?) as date,thcau.m_users_id as userId,
       count(thcau.id) as request_count
       FROM (select id,m_users_id,t_history_chat_logs_id,m_companies_id from t_history_chat_active_users
-      force index(idx_t_history_chat_active_users_companies_id_users_id) where m_companies_id = ?) as thcau ,
+      force index(idx_m_companies_id_users_id_chat_logs_id) where m_companies_id = ?) as thcau ,
       t_history_chat_logs as thcl,t_histories as th
       WHERE
         thcau.t_history_chat_logs_id = thcl.id
@@ -897,7 +897,7 @@ class StatisticsController extends AppController {
         date_format(th.access_date, ?) as date,thcau.m_users_id as userId,
         count(thcau.id) as request_count
         FROM (select id,t_history_chat_logs_id,m_companies_id,m_users_id from t_history_chat_active_users
-        force index(idx_t_history_chat_active_users_companies_id_users_id) where m_companies_id = ? and m_users_id = ?) as thcau,
+        force index(idx_m_companies_id_users_id_chat_logs_id) where m_companies_id = ? and m_users_id = ?) as thcau,
         t_history_chat_logs as thcl,t_histories as th
         WHERE
           thcau.t_history_chat_logs_id = thcl.id
@@ -1551,6 +1551,7 @@ class StatisticsController extends AppController {
     $accessNumberData = [];
 
     //アクセス件数
+    //月別
     if($period == 'month') {
       $access = "SELECT CONCAT(year, '-', month) as date,sum(access_count)
       FROM t_history_access_counts
@@ -1559,6 +1560,7 @@ class StatisticsController extends AppController {
       $accessNumber = $this->THistory->query($access,
        array($this->userInfo['MCompany']['id'],date('Y',  $startDate)));
     }
+    //日別
     if($period == 'day') {
       $access = "SELECT CONCAT(year, '-', month,'-',day) as date,sum(access_count)
       FROM t_history_access_counts
@@ -1567,6 +1569,7 @@ class StatisticsController extends AppController {
       $accessNumber = $this->THistory->query($access,
        array($this->userInfo['MCompany']['id'],date('Y',  $startDate),date('m',  $startDate)));
     }
+    //時別
     if($period == 'hour') {
       $access = "SELECT CONCAT(hour, ':00') as date,sum(access_count)
       FROM t_history_access_counts
@@ -1579,6 +1582,8 @@ class StatisticsController extends AppController {
     foreach($accessNumber as $k => $v) {
       $accessNumberData =  $accessNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : intval($v[0]['sum(access_count)']));
     }
+    $this->log('アクセス件数',LOG_DEBUG);
+    $this->Log($accessNumberData,LOG_DEBUG);
     //アクセス件数
     $accessNumberData = array_merge($baseData,$accessNumberData);
 
@@ -1595,6 +1600,7 @@ class StatisticsController extends AppController {
     $widgetNumberData =[];
 
     //ウィジェット表示件数
+    //月別
     if($period == 'month') {
       $widget = "SELECT CONCAT(year, '-', month) as date,sum(widget_count)
       FROM t_history_widget_counts
@@ -1603,6 +1609,7 @@ class StatisticsController extends AppController {
       $widgetNumber = $this->THistory->query($widget,
        array($this->userInfo['MCompany']['id'],date('Y',  $startDate)));
     }
+    //日別
     if($period == 'day') {
       $widget = "SELECT CONCAT(year, '-', month,'-',day) as date,sum(widget_count)
       FROM t_history_widget_counts
@@ -1611,6 +1618,7 @@ class StatisticsController extends AppController {
       $widgetNumber = $this->THistory->query($widget,
        array($this->userInfo['MCompany']['id'],date('Y',  $startDate),date('m',  $startDate)));
     }
+    //時別
     if($period == 'hour') {
       $widget = "SELECT CONCAT(hour, ':00') as date,sum(widget_count)
       FROM t_history_widget_counts
@@ -1948,7 +1956,7 @@ class StatisticsController extends AppController {
     $avgForcalculation = [];
     $effectivenessRate = [];
 
-    //平均チャットリクエスト時間
+    //
     $requestTime = "SELECT date_format(th.access_date,?) as date,AVG(UNIX_TIMESTAMP(thcl.created)
       - UNIX_TIMESTAMP(th.access_date)) as average
     FROM (select t_histories_id, message_request_flg, message_distinction,created
