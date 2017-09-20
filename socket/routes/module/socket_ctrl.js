@@ -674,6 +674,7 @@ io.sockets.on('connection', function (socket) {
       );
     },
     notifyCommit: function(name, d){ // DBに書き込むとき
+
       var insertData = {
         t_histories_id: getSessionId(d.siteKey, d.tabId, 'historyId'),
         m_companies_id: companyList[d.siteKey],
