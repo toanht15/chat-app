@@ -44,6 +44,7 @@ var setAllCheck = function() {
 
 // 全選択用チェックボックスのコントロール
 var allCheckCtrl = function(){
+	console.log('ここチェック');
 	// 全て選択されている場合
 	if ( $('input[name="selectTab"]:not(:checked)').length === 0 ) {
 		$('input[name="allCheck"]').prop('checked', true);
