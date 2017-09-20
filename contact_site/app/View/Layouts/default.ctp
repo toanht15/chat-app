@@ -15,7 +15,8 @@
  */
 $naviElm = "";
 $contentStyle = "";
-if( strcmp($this->name, 'Login') !== 0 && strcmp($this->action, 'baseForAnotherWindow') !== 0) {
+if( strcmp($this->name, 'Login') !== 0 && strcmp($this->action, 'baseForAnotherWindow') !== 0
+  && strcmp($this->action, 'loadingHtml') !== 0) {
   $naviElm = $this->element('navi');
   $contentStyle = "position: absolute; top: 60px; left: 60px; right: 0; bottom: 0";
 }
@@ -40,6 +41,7 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
 <!DOCTYPE html>
 <html>
 <head>
+
   <?php echo $this->Html->charset(); ?>
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>
@@ -102,12 +104,14 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
       echo $this->Html->script("jquery-ui.js");
     }
 
-  ?>
+?>
+
 </head>
 <body>
   <div id="container">
     <div id="header">
-      <?php if( strcmp($this->name, 'Login') !== 0 && strcmp($this->action, 'baseForAnotherWindow') !== 0 ) : ?>
+      <?php if( strcmp($this->name, 'Login') !== 0 && strcmp($this->action, 'baseForAnotherWindow') !== 0
+      && strcmp($this->action, 'loadingHtml') !== 0 ) : ?>
         <?= $this->element('navi') ?>
       <?php endif ;?>
     </div>
