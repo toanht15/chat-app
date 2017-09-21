@@ -87,7 +87,7 @@
                     </ul>
                   </div>
                   <div id="sendMessageAreaBtn" ng-class="{showOption: chatOptionDisabled(detailId)}">
-                    <span id="sinclo_chatEndBtn" class="btn-shadow redBtn ng-binding" ng-click="confirmDisConnect(detailId)">退室</span>
+                    <span id="sinclo_chatEndBtn" class="btn-shadow redBtn ng-binding" ng-click="confirmDisConnect(detailId, detail.sincloSessionId)">退室</span>
                     <span id="sinclo_sendbtn" class="btn-shadow" onclick="chatApi.pushMessage()">{{chatSendBtnName()}}</span>
                   </div>
                 <?php endif; ?>

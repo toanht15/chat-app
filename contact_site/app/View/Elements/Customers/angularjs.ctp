@@ -52,6 +52,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
   chatApi = {
       connect: false,
       tabId: null,
+      sincloSessionId: null,
       userId: null,
       token: null,
       messageType: {
@@ -147,7 +148,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       },
       connection: function(){
         if ( isset(this.tabId) && isset(this.userId) ) {
-          emit("chatStart", {tabId: this.tabId, userId: myUserId});
+          emit("chatStart", {tabId: this.tabId, userId: myUserId, sincloSessionId: this.sincloSessionId});
         }
       },
       getMessage: function(obj){
@@ -176,6 +177,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           emit('sendChat', {
             token: this.token,
             tabId: chatApi.tabId,
+            sincloSessionId: chatApi.sincloSessionId,
             userId: this.userId,
             chatMessage:elm.value,
             mUserId: myUserId,
@@ -752,16 +754,16 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     };
 
-    $scope.confirmDisConnect = function(tabId){
+    $scope.confirmDisConnect = function(tabId, sincloSessionId){
       modalOpen.call(window, 'チャットを終了してもよろしいでしょうか？', 'p-cus-detail', '操作確認');
       // チャットを終了する
       popupEvent.closePopup = function(){
-        $scope.ngChatApi.disConnect(tabId); // チャットを終了する
+        $scope.ngChatApi.disConnect(tabId, sincloSessionId); // チャットを終了する
         popupEvent.close(); // モーダルを閉じる
       };
     };
 
-    $scope.showDetail = function(tabId){
+    $scope.showDetail = function(tabId, sincloSessionId){
       $("#sendMessage").attr('value', '');
       // ポップアップを閉じる
       if ( $scope.customerMainClass !== "" ) {
@@ -792,6 +794,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         $scope.customerMainClass = "showDetail";
         $scope.detailId = tabId;
         chatApi.tabId = tabId;
+        chatApi.sincloSessionId = sincloSessionId;
         // チャット契約の場合
         if ( contract.chat ) {
           chatApi.token = makeToken(); // トークンを発行
@@ -1204,9 +1207,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       connect: function(obj){
         chatApi.connection(obj);
       },
-      disConnect: function(tabId){
+      disConnect: function(tabId, sincloSessionId){
         $("#sendMessage").val("").blur();
-        emit("chatEnd", {tabId: tabId, userId: myUserId});
+        emit("chatEnd", {tabId: tabId, userId: myUserId, sincloSessionId: sincloSessionId});
       },
       notification: function(monitor){
         // 他のオペレーターが対応中の場合
@@ -1305,6 +1308,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         $scope.monitorList[obj.tabId].responderId = obj.docShareId;
       }
 
+      if ( 'sincloSessionId' in obj ) {
+        $scope.monitorList[obj.tabId].sincloSessionId = obj.sincloSessionId;
+      }
+
     }
 
     var changeStatusTimer = null;
@@ -1381,7 +1388,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       if ( receiveAccessInfoToken !== obj.receiveAccessInfoToken ) return false;
       pushToList(obj);
       if ( 'chat' in obj && String(obj.chat) === "<?=$muserId?>" ) {
-        pushToChatList(obj.tabId);
+        pushToChatList(obj.sincloSessionId);
       }
     });
 
@@ -1599,15 +1606,15 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
 
       if ( obj.userId === myUserId && obj.ret ) {
-        pushToChatList(obj.tabId);
+        pushToChatList(obj.sincloSessionId);
         // $("#sendMessage").focus();
         // 既読にする
-        chatApi.isReadMessage($scope.monitorList[obj.tabId]);
+        chatApi.isReadMessage($scope.monitorList[obj.sincloSessionId]);
       }
       else {
         $scope.chatList = $scope.chatList.filter(function(v){
           return (v !== this.t);
-        }, {t: obj.tabId});
+        }, {t: obj.sincloSessionId});
 
         // 前回の担当が自分だった場合
         if ( prev === myUserId && obj.ret ) {
