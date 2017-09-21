@@ -11,7 +11,7 @@ App::uses('Folder', 'Utility');
 App::uses('File', 'Utility');
 class ContractController extends AppController
 {
-  public $uses = ['MCompany', 'MAgreements', 'MUser', 'MWidgetSetting', 'MChatSetting', 'TAutoMessages', 'TDictionaries', 'TransactionManager'];
+  public $uses = ['MCompany', 'MAgreements', 'MUser', 'MWidgetSetting', 'MChatSetting', 'TAutoMessages', 'TDictionaries', 'TDictionaryCategory', 'TransactionManager'];
 
   public $paginate = [
     'MCompany' => [
@@ -417,12 +417,24 @@ class ContractController extends AppController
         )]
     );
     if(empty($dictionaries)) {
+      // まずカテゴリ[定型文]を入れる
+      $this->TDictionaryCategory->create();
+      $this->TDictionaryCategory->set([
+        "m_companies_id" => $m_companies_id,
+        "category_name" => "定型文",
+        "sort" => 1
+      ]);
+      $this->TDictionaryCategory->save();
+      $categoryId = $this->TDictionaryCategory->getLastInsertID();
+
+      //カテゴリに紐づく定型文を入れる
       $default = $this->getDefaultDictionaryConfigurations();
       foreach($default as $item) {
         $this->TDictionaries->create();
         $this->TDictionaries->set([
           "m_companies_id" => $m_companies_id,
           "m_user_id" =>  0, // 共有設定なので0固定
+          "m_category_id" => $categoryId,
           "word" => $item['word'],
           "type" => $item['type'],
           "sort" => $item['sort']
