@@ -194,6 +194,20 @@ var socket, // socket.io
           break;
       }
 
+      switch ( Number(widget.chatMessageDesignType) ) {
+        case 1: //BOX型
+          chatPosition.se += " border-bottom-right-radius: 0;";
+          chatPosition.re += " border-bottom-left-radius: 0;";
+          break;
+        case 2: //吹き出し型
+          // 何もしない
+          break;
+        default: //BOX型
+          chatPosition.se += " border-bottom-right-radius: 0;";
+          chatPosition.re += " border-bottom-left-radius: 0;";
+          break;
+      }
+
       // 基本設定
       var widgetWidth = 285, ratio = 1;
       // ユーザーエージェント
@@ -238,11 +252,11 @@ var socket, // socket.io
         if (widget.chatMessageDesignType === 2) {
           // 吹き出し型
           html += '      #sincloBox ul#chatTalk li.sinclo_se { ' + chatPosition.se + 'background-color: #FFF; display: inline-block; position: relative; margin-right: 15px; }';
-          html += '      #sincloBox ul#chatTalk li.sinclo_se:before { height: 0px; content: ""; position: absolute; bottom: 0.5em; left: calc(100% - 2.5px); margin-top: -10px; border: 10px solid transparent; border-left: 10px solid #FFF; z-index: 2; }';
-          html += '      #sincloBox ul#chatTalk li.sinclo_se:after { height: 0px; content: ""; position: absolute; bottom: 0.6em; left: 100%; margin-top: -9px; border: 9px solid transparent; border-left: 9px solid #C9C9C9; z-index: 1; }';
+          html += '      #sincloBox ul#chatTalk li.sinclo_se:before { height: 0px; content: ""; position: absolute; bottom: 0.35em; left: calc(100% - 2.5px); margin-top: -10px; border: 10px solid transparent; border-left: 10px solid #FFF; z-index: 2; }';
+          html += '      #sincloBox ul#chatTalk li.sinclo_se:after { height: 0px; content: ""; position: absolute; bottom: 0.4em; left: 100%; margin-top: -9px; border: 9px solid transparent; border-left: 9px solid #C9C9C9; z-index: 1; }';
           html += '      #sincloBox ul#chatTalk li.sinclo_re { ' + chatPosition.re + 'background-color:' + faintColor + '; display: inline-block; position: relative; margin-left: 10px; padding-right: 20px; }';
-          html += '      #sincloBox ul#chatTalk li.sinclo_re:before { height: 0px; content: ""; position: absolute; bottom: 0.5em; left: -19px; margin-top: -10px; border: 10px solid transparent; border-right: 10px solid ' + balloonInnerColor + '; z-index: 2; }';
-          html += '      #sincloBox ul#chatTalk li.sinclo_re:after { height: 0px; content: ""; position: absolute; bottom: 0.6em; left: -19px; margin-top: -9px; border: 9px solid transparent; border-right: 9px solid #C9C9C9; z-index: 1; }';
+          html += '      #sincloBox ul#chatTalk li.sinclo_re:before { height: 0px; content: ""; position: absolute; bottom: 0.35em; left: -19px; margin-top: -10px; border: 10px solid transparent; border-right: 10px solid ' + balloonInnerColor + '; z-index: 2; }';
+          html += '      #sincloBox ul#chatTalk li.sinclo_re:after { height: 0px; content: ""; position: absolute; bottom: 0.4em; left: -19px; margin-top: -9px; border: 9px solid transparent; border-right: 9px solid #C9C9C9; z-index: 1; }';
         } else {
           // BOX型
           html += '      #sincloBox ul#chatTalk li.sinclo_se { ' + chatPosition.se + 'background-color: #FFF; }';
@@ -256,9 +270,9 @@ var socket, // socket.io
         html += '      #sincloBox ul#chatTalk li#sinclo_typeing_message span { position: absolute; top: 0; bottom: 0; left: 50%; display: block; }';
         html += '      #sincloBox ul#chatTalk li span.cName { display: block; color: ' + widget.mainColor + '; font-weight: bold; }';
         html += '      #sincloBox ul#chatTalk li.sinclo_etc { border: none; text-align: center!important; margin: 0 auto; font-weight: bold }';
-        html += '      #sincloBox ul#chatTalk li sinclo-radio { display: block; margin-top: 0.25em; margin-bottom: -1.25em; } ';
+        html += '      #sincloBox ul#chatTalk li sinclo-radio { display: block; margin-top: 0.1em; margin-bottom: -1.25em; } ';
         html += '      #sincloBox ul#chatTalk li sinclo-radio [type="radio"] { display: none; -webkit-appearance: radio!important; -moz-appearance: radio!important; appearance: radio!important; } ';
-        html += '      #sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label { position: relative; display: inline-block; width: 100%; cursor: pointer; margin-bottom: 2px; padding-left: 15px; } ';
+        html += '      #sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label { position: relative; display: inline-block; width: 100%; cursor: pointer; padding-left: 15px; } ';
         html += '      #sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label:before { content: ""; display: block; position: absolute; top: 0.1em; left: 0px; width: 11px; height: 11px; border: 1px solid #999; border-radius: 50%; background-color: #FFF; } ';
         html += '      #sincloBox ul#chatTalk li sinclo-radio [type="radio"]:checked + label:after { content: ""; display: block; position: absolute; top: 0.35em; left: 3px; width: 7px; height: 7px; background: ' + widget.mainColor + '; border-radius: 50%; } ';
         html += '      #sincloBox ul#chatTalk sinclo-chat-receiver { cursor: pointer; display: none; position: absolute; left: 0; right: 0; width: 100%; height: 1.5em; background-color: rgba(0, 0, 0, 0.45); vertical-align: middle; word-wrap: break-word; word-break: } ';
@@ -330,8 +344,6 @@ var socket, // socket.io
           html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label { display: inline; padding-left: 1.5em; } ';
           html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label:before { content: ""; display: block; position: absolute; top: -2px; left: -2px; width: 17px; height: 17px; border: 1px solid ' + chatContentTextColor + '; border-radius: 50%; background-color: #FFF; } ';
           html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"]:checked + label:after { content: ""; display: block; position: absolute; top: 2px; left: 2px; width: 11px; height: 11px; background: ' + widget.mainColor + '; border-radius: 50%; } ';
-          html += '#sincloBox ul#chatTalk li.sinclo_se { margin-right: ' + (10 * ratio) + 'px; }';
-          html += '#sincloBox ul#chatTalk li.sinclo_re { margin-left: ' + (10 * ratio) + 'px; }';
           html += '#sincloBox ul#chatTalk li span.cName { font-size: ' + (13 * ratio) + 'px; margin: 0 0 ' + (5 * ratio) + 'px 0; }';
           html += '#sincloBox ul#chatTalk sinclo-chat-receiver #receiveMessage { font-size: ' + (10 * ratio) + 'px; }';
           html += '#sincloBox section#chatTab sinclo-div { height: ' + (60*ratio) + 'px; padding: ' + (5 * ratio) + 'px; }';
