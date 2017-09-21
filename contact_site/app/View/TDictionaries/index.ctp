@@ -171,7 +171,7 @@
                   </a>
                 </li>
                 <li class="t-link">
-                  <a href="javascript:void(0)" onclick="openCategoryDeleteDialog(<?=$nameList[$i]['id']?>)">
+                  <a href="javascript:void(0)" onclick="<?php if(count((array)$nameList) >= 2): ?>openCategoryDeleteDialog(<?=$nameList[$i]['id']?>)<?php endif;?>">
                     カテゴリを削除する
                   </a>
                 </li>
