@@ -930,8 +930,8 @@ class StatisticsController extends AppController {
       group by date,userId";
 
       $responseNumber = $this->THistory->query($responseNumber,
-        array($date_format,$this->userInfo['MCompany']['id'],
-        $this->chatMessageType['messageType']['enteringRoom'],$correctStartDate,$correctEndDate,));
+        array($date_format,$this->chatMessageType['messageType']['enteringRoom'],
+        $this->userInfo['MCompany']['id'],$correctStartDate,$correctEndDate,));
     }
     //1人のオペレータ検索の場合
     else {
@@ -939,7 +939,7 @@ class StatisticsController extends AppController {
       date_format(th.access_date, ?) as date,m_users_id as userId,count(th.id) as response_count
       FROM (select t_histories_id,m_companies_id,m_users_id,message_type from
       t_history_chat_logs force index(idx_t_history_chat_logs_message_type_companies_id_users_id)
-      where m_companies_id = ? and  message_type = ? and m_users_id = ?)as thcl,
+      where message_type = ? and  m_companies_id = ? and m_users_id = ?)as thcl,
       t_histories as th
       WHERE
         thcl.t_histories_id = th.id
@@ -947,8 +947,8 @@ class StatisticsController extends AppController {
         th.access_date between ? and ?
       group by date,userId";
 
-      $responseNumber = $this->THistory->query($responseNumber,array($date_format,$this->userInfo['MCompany']['id'],
-        $this->chatMessageType['messageType']['enteringRoom'],$userId,$correctStartDate,$correctEndDate,));
+      $responseNumber = $this->THistory->query($responseNumber,array($date_format,$this->chatMessageType['messageType']['enteringRoom'],
+        $this->userInfo['MCompany']['id'],$userId,$correctStartDate,$correctEndDate,));
     }
     return $responseNumber;
   }
@@ -968,8 +968,8 @@ class StatisticsController extends AppController {
         th.access_date between ? and ?
       group by date,m_users_id";
 
-      $effectivenessNumber = $this->THistory->query($effectivenessNumber,array($date_format,$this->userInfo['MCompany']['id'],
-        $this->chatMessageType['achievementFlg']['effectiveness'],$correctStartDate,$correctEndDate));
+      $effectivenessNumber = $this->THistory->query($effectivenessNumber,array($date_format,$this->chatMessageType['achievementFlg']['effectiveness'],
+        $this->userInfo['MCompany']['id'],$correctStartDate,$correctEndDate));
     }
     //1人のオペレータ検索の場合
     else {
@@ -984,8 +984,8 @@ class StatisticsController extends AppController {
         th.access_date between ? and ?
       group by date,m_users_id";
 
-      $effectivenessNumber = $this->THistory->query($effectivenessNumber,array($date_format,$this->userInfo['MCompany']['id'],
-        $this->chatMessageType['achievementFlg']['effectiveness'],$userId,$correctStartDate,$correctEndDate));
+      $effectivenessNumber = $this->THistory->query($effectivenessNumber,array($date_format,$this->chatMessageType['achievementFlg']['effectiveness'],
+        $this->userInfo['MCompany']['id'],$userId,$correctStartDate,$correctEndDate));
     }
     return $effectivenessNumber;
   }
@@ -2009,8 +2009,8 @@ class StatisticsController extends AppController {
     $avgForcalculation = [];
 
     //平均消費者待機時間
-    $consumerWatingTime = "SELECT date_format(th.access_date,?) as date,AVG(UNIX_TIMESTAMP(thcl.created)
-      - UNIX_TIMESTAMP(th.access_date)) as average
+    $consumerWatingTime = "SELECT date_format(th.access_date,?) as date,AVG(UNIX_TIMESTAMP(thcl2.created)
+      - UNIX_TIMESTAMP(thcl.created)) as average
     FROM (select t_histories_id, message_request_flg,created,message_distinction
     from t_history_chat_logs force index(idx_t_history_chat_logs_request_flg_companies_id)
     where message_request_flg = ? and m_companies_id = ? group by t_histories_id) as thcl,
