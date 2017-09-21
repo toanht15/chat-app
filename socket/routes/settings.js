@@ -121,13 +121,18 @@ router.get("/", function(req, res, next) {
                   chatMessageWithAnimation: chatMessageWithAnimation,
                   chatTrigger: isNumeric(settings.chatTrigger),
                   radiusRatio: isNumeric(settings.radiusRatio),
+                  //背景の影
+                  boxShadow: isNumeric(settings.boxShadow),
                   //最小化時デザイン対応
                   minimizeDesignType: isNumeric(settings.minimizeDesignType),
-                  //最小化時デザイン対応
+                  //閉じるボタン start
+                  closeButtonSetting: isNumeric(settings.closeButtonSetting),
+                  closeButtonModeType: isNumeric(settings.closeButtonModeType),
+                  bannertext: isNumeric(settings.bannertext),
+                  //閉じるボタン end
                   spShowFlg: isNumeric(settings.spShowFlg),
                   //最大時のシンプル表示
                   spHeaderLightFlg: isNumeric(settings.spHeaderLightFlg),
-                  //最大時のシンプル表示
                   spAutoOpenFlg: isNumeric(settings.spAutoOpenFlg)
                 };
 

@@ -29,9 +29,17 @@ class MWidgetSetting extends AppModel {
       'show_main_image' => "showMainImage",
       'main_image' => "mainImage",
       'radius_ratio' => "radiusRatio",
+      //背景の影
+      'box_shadow' => "boxShadow",
+      //背景の影
       //最小化時デザイン対応
       'minimize_design_type' => "minimizeDesignType",
       //最小化時デザイン対応
+      //閉じるボタン対応
+      'close_button_setting' => "closeButtonSetting",
+      'close_button_mode_type' => "closeButtonModeType",
+      'bannertext' => "bannertext",
+      //閉じるボタン対応
       'tel' => "tel",
       'show_name' => "showName",
       'chat_message_design_type' => "chatMessageDesignType",
@@ -127,6 +135,13 @@ class MWidgetSetting extends AppModel {
               'message' => '１５文字以内で設定してください'
             ]
         ],
+        'bannertext' => [
+            'maxLength' => [
+                'rule' => ['maxLength', 15],
+                'allowEmpty' => false,
+                'message' => '１５文字以内で設定してください'
+            ]
+        ],
         'main_color' => [
             'colorcode' => [
               'rule' => C_MATCH_RULE_COLOR_CODE,
@@ -173,6 +188,14 @@ class MWidgetSetting extends AppModel {
               'message' => '１～１５の間で設定してください'
             ]
         ],
+        //背景の影
+        'box_shadow' => [
+            'between' => [
+                'rule' => ['between', 0, 10],
+                'message' => '１～１０の間で設定してください'
+            ]
+        ],
+        //背景の影
         'title' => [
             'maxLength' => [
                 'rule' => ['maxLength', 12],
