@@ -2075,11 +2075,25 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                     }
               });
 
+              var userAgent = window.navigator.userAgent.toLowerCase();
               var IMEOnEntering = false;
               $("#popup-content").on("keydown", function(e){
                 if(e.keyCode === 229) {
                   IMEOnEntering = true;
+                } else if(userAgent.indexOf('gecko')) {
+                  // FireFox用の処理（このタイミングで日本語入力かどうかわからないため一応ON）
+                  // 後述のkeypressイベントで判断する
+                  console.log("FF IME ON");
+                  IMEOnEntering = true;
                 } else {
+                  IMEOnEntering = false;
+                }
+              });
+
+              $("#popup-content").on("keypress", function(e){
+                // FireFoxでkeypress時にkeyCodeが0の場合IME入力ではない
+                if(userAgent.indexOf('gecko') && (e.keyCode === 0 || e.keyCode === 13)) {
+                  console.log("FF IME off");
                   IMEOnEntering = false;
                 }
               });
@@ -2277,7 +2291,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                 }
                 else{
                   //上下エンターキーの判定
-                  if((e.keyCode === 13)||(e.keyCode === 38)||(e.keyCode === 40)){
+                  if((!IMEOnEntering && e.keyCode === 13)||(e.keyCode === 38)||(e.keyCode === 40)){
                     var searchkeytime = document.getElementById("searchkeytime").value;
                     //二重操作防止
                     if(searchkeytime != e.timeStamp){
