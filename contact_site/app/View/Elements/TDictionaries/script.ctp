@@ -533,6 +533,7 @@ $( function() {
 
   //デフォルトのタブ幅セット
   var allDefaultTabWidth = 0;
+  var minimumWidgetSizeList = {};
   function setWidth(e){
     var afterWindowSize = $(this).outerWidth();
     //全てのタブの要素を取得
@@ -558,17 +559,26 @@ $( function() {
     }
 
     // タブ表示領域サイズを取得
-    var tabDisplayWidth = $('#tablist').outerWidth() - (3 * allTabList.length);
+    var tabDisplayWidth = $('#tablist').outerWidth() - (5 * allTabList.length);
     for (var i = 0; i < allTabList.length; i++) {
       var tabWidth = $(allTabList[i]).data('defaultWidth');
       var ratio = tabWidth / allDefaultTabWidth;
 
       if (tabDisplayWidth * ratio >  tabWidth) {
         allTabList[i].style.width = tabWidth - 2 + "px";
-      } else if(tabDisplayWidth * ratio > 45) {
-        allTabList[i].style.width = (tabDisplayWidth * ratio - 2) + "px";
+        if(typeof minimumWidgetSizeList[i] !== 'undefined') {
+          delete minimumWidgetSizeList[i];
+        }
+      } else if((tabDisplayWidth * ratio - (2 * (1.5 * ratio) + (0.1 * Object.keys(minimumWidgetSizeList).length))) > 40) {
+        allTabList[i].style.width = (tabDisplayWidth * ratio - (2 * (1.5 * ratio) + (0.1 * Object.keys(minimumWidgetSizeList).length))) + "px";
+        if(typeof minimumWidgetSizeList[i] !== 'undefined') {
+          delete minimumWidgetSizeList[i];
+        }
       } else {
         allTabList[i].style.width = "40px";
+        if(typeof minimumWidgetSizeList[i] === 'undefined') {
+          minimumWidgetSizeList[i] = true;
+        }
       }
     }
   }
