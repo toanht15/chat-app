@@ -49,9 +49,9 @@ function getSessionId(siteKey, tabId, key){
 }
 
 // sincloCoreオブジェクトからチャットで関連するセッションID群を取得する関数
-function getChatSessionIds(siteKey, sessionId, key){
-  if ( (siteKey in sincloCore) && (sessionId in sincloCore[siteKey]) && (key in sincloCore[siteKey][sessionId]) ) {
-    return sincloCore[siteKey][sessionId][key];
+function getChatSessionIds(siteKey, sincloSessionId, key){
+  if ( (siteKey in sincloCore) && (sincloSessionId in sincloCore[siteKey]) && (key in sincloCore[siteKey][sincloSessionId]) ) {
+    return sincloCore[siteKey][sincloSessionId][key];
   }
 }
 
@@ -282,7 +282,7 @@ var emit = {
       return d;
     }
   },
-  toMine: function(ev, d, s){ // 送り主に返信
+  toMine: function(ev, d, s){ // 送り主に返信（そのタブのみ）
     var obj = this._convert(d);
     return s.emit(ev, obj);
   },
@@ -298,6 +298,7 @@ var emit = {
     if ( !isset(sessionIds) ) return false;
     var result = false;
     for (var index in sessionIds) {
+      console.log("emit to same user sessionId => " + sessionIds[index]);
       if ( !isset(io.sockets.connected[sessionIds[index]]) ) continue;
       io.sockets.connected[sessionIds[index]].emit(ev, obj);
     }
@@ -587,7 +588,10 @@ io.sockets.on('connection', function (socket) {
                 chatApi.sendCheck(d, function(err, ret){
                   sendData.opFlg = ret.opFlg;
                   // 書き込みが成功したら顧客側に結果を返す
-                  emit.toUser('sendChatResult', sendData, sId);
+                  //emit.toUser('sendChatResult', sendData, sId);
+                  var sincloSessionId = sincloCore[d.siteKey][d.tabId].sincloSessionId;
+                  sendData.sincloSessionId = sincloSessionId;
+                  emit.toSameUser('sendChatResult', sendData, d.siteKey, sincloSessionId);
                   if (Number(insertData.message_type) === 3) return false;
                   // 書き込みが成功したら企業側に結果を返す
                   emit.toCompany('sendChatResult', {
