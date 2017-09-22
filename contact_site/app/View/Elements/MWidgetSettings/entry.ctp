@@ -135,9 +135,20 @@ $headerNo = 1;
       </section>
 
       <!-- /* ウィジェットの文言設定 */ -->
-      <h3><?php echo mb_convert_kana($headerNo, "N", "utf-8"); $headerNo++ ?>．ウィジェット詳細設定</h3>
+      <h3><?php echo mb_convert_kana($headerNo, "N", "utf-8"); $headerNo++ ?>．ウィジェットデザイン</h3>
       <section>
         <ul class="settingList">
+
+          <!-- ウィジットサイズ -->
+          <li>
+            <span class='require'><label>ウィジェットサイズ</label></span>
+            <div ng-init="widgetSizeTypeToggle='<?=h($this->formEx->val($this->data['MWidgetSetting'], 'widget_size_type'))?>'">
+              <label class="pointer choose" for="widgetSizeType1"><input type="radio" name="data[MWidgetSetting][widget_size_type]" ng-model="widgetSizeTypeToggle" id="widgetSizeType1" class="showHeader" value="1" >小</label><br>
+              <label class="pointer choose" for="widgetSizeType2"><input type="radio" name="data[MWidgetSetting][widget_size_type]" ng-model="widgetSizeTypeToggle" id="widgetSizeType2" class="showHeader" value="2" >中</label><br>
+              <label class="pointer choose" for="widgetSizeType3"><input type="radio" name="data[MWidgetSetting][widget_size_type]" ng-model="widgetSizeTypeToggle" id="widgetSizeType3" class="showHeader" value="3" >大</label><br>
+            </div>
+          </li>
+          <!-- ウィジットサイズ -->
 
           <!-- ウィジェットタイトル -->
           <li>
@@ -289,76 +300,41 @@ $headerNo = 1;
           </li>
           <?php if ( $this->Form->isFieldError('radius_ratio') ) echo $this->Form->error('radius_ratio', null, ['wrap' => 'li']); ?>
           <!-- 角の丸み -->
+
+          <!-- 背景の影 -->
+          <li>
+          <span class="require"><label>背景の影</label></span>
+          <?= $this->ngForm->input('box_shadow', [
+            'type' => 'range',
+            'step' => 1,
+            'div' => false,
+            'label' => false,
+            'max' => 10,
+            'min' => 0,
+            'error' => false
+          ],[
+            'entity' => 'MWidgetSetting.box_shadow'
+          ]) ?>
+          </li>
+          <?php if ( $this->Form->isFieldError('box_shadow') ) echo $this->Form->error('box_shadow', null, ['wrap' => 'li']); ?>
+          <!-- 背景の影 -->
         </ul>
       </section>
 
       <?php if($coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT])): ?>
-      <h3><?php echo mb_convert_kana($headerNo, "N", "utf-8"); $headerNo++ ?>．電話ウィンドウ設定</h3>
+      <h3><?php echo mb_convert_kana($headerNo, "N", "utf-8"); $headerNo++ ?>．最小化／閉じる</h3>
       <section>
         <ul class="settingList">
-          <!-- お問い合わせ先 -->
+          <!-- 最小化時のデザイン -->
           <li>
-            <span class="require"><label>お問い合わせ先</label></span>
-            <?= $this->ngForm->input('tel', [
-              'type' => 'text',
-              'placeholder' => 'お問い合わせ先電話番号',
-              'div' => false,
-              'class' => 'showTel',
-              'label' => false,
-              'maxlength' => 13,
-              'error' => false
-            ],
-            [
-              'entity' => 'MWidgetSetting.tel'
-            ]
-            ) ?>
-          </li>
-          <?php if ($this->Form->isFieldError('tel') ) echo $this->Form->error('tel', null, ['wrap' => 'li']); ?>
-          <!-- お問い合わせ先 -->
-
-
-          <!-- 受付時間 -->
-          <li>
-            <span class="require"><label>受付時間</label></span>
-            <?php $subTitle = $this->ngForm->input('time_text', [
-              'type' => 'text',
-              'placeholder' => '（例）9：00-18：00',
-              'ng-disabled' => 'timeTextToggle == "2"',
-              'div' => false,
-              'style' => 'margin:10px 0 10px 20px;',
-              'label' => false,
-              'class' => 'showTel',
-              'maxlength' => 15,
-              'error' => false
-            ],[
-              'entity' => 'MWidgetSetting.time_text'
-            ]) ?>
-            <div ng-init="timeTextToggle='<?=h($this->formEx->val($this->data['MWidgetSetting'], 'display_time_flg'))?>'">
-              <label class="pointer" for="showTimeText1"><input type="radio" name="data[MWidgetSetting][display_time_flg]" ng-model="timeTextToggle" class="showTel" id="showTimeText1" value="1" >受付時間を表示する</label><br><?=$subTitle?><br>
-              <label class="pointer" for="showTimeText2"><input type="radio" name="data[MWidgetSetting][display_time_flg]" ng-model="timeTextToggle" class="showTel" id="showTimeText2" value="2" >受付時間を表示しない</label>
+            <span class="require"><label>最小化時のデザイン</label></span>
+            <div ng-init="minimizedDesignToggle='<?=h($this->formEx->val($this->data['MWidgetSetting'], 'minimize_design_type'))?>'">
+              <label class="pointer choose" for="minimizedDesign1"><input type="radio" name="data[MWidgetSetting][minimize_design_type]" ng-model="minimizedDesignToggle" id="minimizedDesign1" class="showHeader" value="1" >シンプル表示しない</label><br>
+              <label class="pointer choose" for="minimizedDesign2"><input type="radio" name="data[MWidgetSetting][minimize_design_type]" ng-model="minimizedDesignToggle" id="minimizedDesign2" class="showHeader" value="2" >スマホのみシンプル表示する</label><br>
+              <label class="pointer choose" for="minimizedDesign3"><input type="radio" name="data[MWidgetSetting][minimize_design_type]" ng-model="minimizedDesignToggle" id="minimizedDesign3" class="showHeader" value="3" >すべての端末でシンプル表示する</label><br>
             </div>
           </li>
-          <?php if ($this->Form->isFieldError('time_text')) echo $this->Form->error('time_text', null, ['wrap' => 'li']); ?>
-          <!-- 受付時間 -->
-
-          <!-- ウィジェット本文 -->
-          <li>
-            <span><label>ウィジェット本文</label></span>
-            <?= $this->ngForm->input('content', [
-              'type' => 'textarea',
-              'placeholder' => '本文を１００文字以内で設定してください',
-              'class' => 'showTel',
-              'div' => false,
-              'cols' => 40,
-              'label' => false,
-              'error' => false
-            ],
-            [
-              'entity' => 'MWidgetSetting.content'
-            ]) ?>
-          </li>
-          <?php if ($this->Form->isFieldError('content') ) echo $this->Form->error('content', null, ['wrap' => 'li']); ?>
-          <!-- ウィジェット本文 -->
+          <!-- 最小化時のデザイン -->
         </ul>
       </section>
       <?php endif; ?>
@@ -464,11 +440,10 @@ $headerNo = 1;
           <!-- メッセージ表示時アニメーション -->
         </ul>
       </section>
-      <h3><?php echo mb_convert_kana($headerNo, "N", "utf-8"); $headerNo++ ?>．チャット設定（スマートフォン用）</h3>
+
+      <h3><?php echo mb_convert_kana($headerNo, "N", "utf-8"); $headerNo++ ?>．スマートフォン個別設定</h3>
       <section>
-
         <ul class="settingList">
-
           <!-- ウィジェットの表示   -->
           <li>
             <span class="require"><label>ウィジェットの表示</label></span>
@@ -491,7 +466,7 @@ $headerNo = 1;
 
           <!-- シンプル表示 -->
           <li>
-            <span class="require"><label>シンプル表示</label></span>
+            <span class="require"><label>最大時のシンプル表示</label></span>
             <pre><label class="pointer"><?= $this->ngForm->input('sp_header_light_flg', [
                 'type' => 'radio',
                 'options' => $normalChoices,
@@ -530,6 +505,77 @@ $headerNo = 1;
           </li>
           <?php if ( $this->Form->isFieldError('sp_auto_open_flg') ) echo $this->Form->error('sp_auto_open_flg', null, ['wrap' => 'li']); ?>
           <!-- 自動最大化の制御 -->
+        </ul>
+      </section>
+      <?php endif; ?>
+
+      <?php if($coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT])): ?>
+      <h3><?php echo mb_convert_kana($headerNo, "N", "utf-8"); $headerNo++ ?>．電話ウィンドウ設定</h3>
+      <section>
+        <ul class="settingList">
+          <!-- お問い合わせ先 -->
+          <li>
+            <span class="require"><label>お問い合わせ先</label></span>
+            <?= $this->ngForm->input('tel', [
+              'type' => 'text',
+              'placeholder' => 'お問い合わせ先電話番号',
+              'div' => false,
+              'class' => 'showTel',
+              'label' => false,
+              'maxlength' => 13,
+              'error' => false
+            ],
+            [
+              'entity' => 'MWidgetSetting.tel'
+            ]
+            ) ?>
+          </li>
+          <?php if ($this->Form->isFieldError('tel') ) echo $this->Form->error('tel', null, ['wrap' => 'li']); ?>
+          <!-- お問い合わせ先 -->
+
+
+          <!-- 受付時間 -->
+          <li>
+            <span class="require"><label>受付時間</label></span>
+            <?php $subTitle = $this->ngForm->input('time_text', [
+              'type' => 'text',
+              'placeholder' => '（例）9：00-18：00',
+              'ng-disabled' => 'timeTextToggle == "2"',
+              'div' => false,
+              'style' => 'margin:10px 0 10px 20px;',
+              'label' => false,
+              'class' => 'showTel',
+              'maxlength' => 15,
+              'error' => false
+            ],[
+              'entity' => 'MWidgetSetting.time_text'
+            ]) ?>
+            <div ng-init="timeTextToggle='<?=h($this->formEx->val($this->data['MWidgetSetting'], 'display_time_flg'))?>'">
+              <label class="pointer" for="showTimeText1"><input type="radio" name="data[MWidgetSetting][display_time_flg]" ng-model="timeTextToggle" class="showTel" id="showTimeText1" value="1" >受付時間を表示する</label><br><?=$subTitle?><br>
+              <label class="pointer" for="showTimeText2"><input type="radio" name="data[MWidgetSetting][display_time_flg]" ng-model="timeTextToggle" class="showTel" id="showTimeText2" value="2" >受付時間を表示しない</label>
+            </div>
+          </li>
+          <?php if ($this->Form->isFieldError('time_text')) echo $this->Form->error('time_text', null, ['wrap' => 'li']); ?>
+          <!-- 受付時間 -->
+
+          <!-- ウィジェット本文 -->
+          <li>
+            <span><label>ウィジェット本文</label></span>
+            <?= $this->ngForm->input('content', [
+              'type' => 'textarea',
+              'placeholder' => '本文を１００文字以内で設定してください',
+              'class' => 'showTel',
+              'div' => false,
+              'cols' => 40,
+              'label' => false,
+              'error' => false
+            ],
+            [
+              'entity' => 'MWidgetSetting.content'
+            ]) ?>
+          </li>
+          <?php if ($this->Form->isFieldError('content') ) echo $this->Form->error('content', null, ['wrap' => 'li']); ?>
+          <!-- ウィジェット本文 -->
         </ul>
       </section>
       <?php endif; ?>

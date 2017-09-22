@@ -149,11 +149,277 @@ var socket, // socket.io
       }
       return "<sinclo id='sincloBox' >" + css + header + displaySet + fotter + "</sinclo>";
     },
+    //サイズを返す関数
+    getSizeType: function(sizeTypeID){
+      switch (sizeTypeID) {
+        case 1: //小
+          var sizeArray = {
+            boxHeight: 447,
+            boxWidth: 285,
+            widgetTitleHeight: 32,
+            widgetSubTitleHeight: 29,
+            widgetDescriptionHeight: 23,
+            navigationHeight: 40,
+            chatTalkHeight: 194,
+            classFlexBoxRowHeight: 75,
+            sincloAccessInfoHeight: 26.5,
+            fotterHeight: 26.5,
+            d11font: 11,
+            d12font: 12,
+            d13font: 13,
+            d14font: 14,
+            d18font: 18,
+            d20font: 20,
+            d25font: 25
+          };
+          break;
+        case 2: //中
+          var sizeArray = {
+            boxHeight: 495,
+            boxWidth: 316.5,
+            widgetTitleHeight: 35.5,
+            widgetSubTitleHeight: 29,
+            widgetDescriptionHeight: 23,
+            navigationHeight: 40,
+            chatTalkHeight: 239.5,
+            classFlexBoxRowHeight: 75,
+            sincloAccessInfoHeight: 26.5,
+            fotterHeight: 26.5,
+            d11font: 12,
+            d12font: 13,
+            d13font: 14,
+            d14font: 15,
+            d18font: 19,
+            d20font: 21,
+            d25font: 26
+          };
+          break;
+        case 3: //大
+          var sizeArray = {
+            boxHeight: 544,
+            boxWidth: 348,
+            widgetTitleHeight: 36,
+            widgetSubTitleHeight: 29,
+            widgetDescriptionHeight: 23,
+            navigationHeight: 40,
+            chatTalkHeight: 288,
+            classFlexBoxRowHeight: 75,
+            sincloAccessInfoHeight: 26.5,
+            fotterHeight: 26.5,
+            d11font: 12,
+            d12font: 13,
+            d13font: 14,
+            d14font: 15,
+            d18font: 19,
+            d20font: 21,
+            d25font: 26
+          };
+          break;
+        default: //該当しないタイプが来たら小
+          var sizeArray = {
+            boxHeight: 447,
+            boxWidth: 285,
+            widgetTitleHeight: 32,
+            widgetSubTitleHeight: 29,
+            widgetDescriptionHeight: 23,
+            navigationHeight: 40,
+            chatTalkHeight: 194,
+            classFlexBoxRowHeight: 75,
+            sincloAccessInfoHeight: 26.5,
+            fotterHeight: 26.5,
+            d11font: 11,
+            d12font: 12,
+            d13font: 13,
+            d14font: 14,
+            d18font: 18,
+            d20font: 20,
+            d25font: 25
+          };
+          break;
+      }
+      return sizeArray;
+    },
+    //最小化時と最大化時の状態を取得する関数
+    getAbridgementType: function() {
+      var widget = window.sincloInfo.widget;
+      //1/2/3:シンプル表示しない/スマホのみシンプル表示する/すべての端末でシンプル表示する
+      var minimizeDesignType = Number(widget.minimizeDesignType);
+      //最大時のシンプル表示(スマホ) 1/2:する/しない
+      var spHeaderLightFlg = Number(widget.spHeaderLightFlg);
+      //最大化時、最小化時シンプル表示するしない true/false:する/しない
+      var pcMaxRes = false;
+      var pcMinRes = false;
+      var spMaxRes = false;
+      var spMinRes = false;
+      switch (widget.minimizeDesignType) {
+      case 1: //シンプル表示しない
+        if(spHeaderLightFlg === 1){
+          //最大時のシンプル表示(スマホ)する
+          //pc最小化中
+          pcMinRes = false;
+          //pc最大化中
+          pcMaxRes = false;
+          //sp最小化中
+          spMinRes = false;
+          //sp最大化中
+          spMaxRes = true;
+        }
+        else{
+          //最大時のシンプル表示(スマホ)しない
+          //pc最小化中
+          pcMinRes = false;
+          //pc最大化中
+          pcMaxRes = false;
+          //sp最小化中
+          spMinRes = false;
+          //sp最大化中
+          spMaxRes = false;
+        }
+        break;
+      case 2: //スマホのみシンプル表示する
+        if(spHeaderLightFlg === 1){
+          //最大時のシンプル表示(スマホ)する
+          //pc最小化中
+          pcMinRes = false;
+          //pc最大化中
+          pcMaxRes = false;
+          //sp最小化中
+          spMinRes = true;
+          //sp最大化中
+          spMaxRes = true;
+        }
+        else{
+          //最大時のシンプル表示(スマホ)しない
+          //pc最小化中
+          pcMinRes = false;
+          //pc最大化中
+          pcMaxRes = false;
+          //sp最小化中
+          spMinRes = true;
+          //sp最大化中
+          spMaxRes = false;
+        }
+        break;
+      case 3: //すべての端末でシンプル表示する
+        if(spHeaderLightFlg === 1){
+          //最大時のシンプル表示(スマホ)する
+          //pc最小化中
+          pcMinRes = true;
+          //pc最大化中
+          pcMaxRes = false;
+          //sp最小化中
+          spMinRes = true;
+          //sp最大化中
+          spMaxRes = true;
+        }
+        else{
+          //最大時のシンプル表示(スマホ)しない
+          //pc最小化中
+          pcMinRes = true;
+          //pc最大化中
+          pcMaxRes = false;
+          //sp最小化中
+          spMinRes = true;
+          //sp最大化中
+          spMaxRes = false;
+        }
+        break;
+      default ://該当しない場合はシンプル表示しない
+        if(spHeaderLightFlg === 1){
+          //最大時のシンプル表示(スマホ)する
+          //pc最小化中
+          pcMinRes = false;
+          //pc最大化中
+          pcMaxRes = false;
+          //sp最小化中
+          spMinRes = false;
+          //sp最大化中
+          spMaxRes = true;
+        }
+        else{
+          //最大時のシンプル表示(スマホ)しない
+          //pc最小化中
+          pcMinRes = false;
+          //pc最大化中
+          pcMaxRes = false;
+          //sp最小化中
+          spMinRes = false;
+          //sp最大化中
+          spMaxRes = false;
+        }
+        break;
+      }
+      var abridgementType = {
+          pcMinRes: pcMinRes,
+          pcMaxRes: pcMaxRes,
+          spMinRes: spMinRes,
+          spMaxRes: spMaxRes
+      };
+      //false/true:通常（PC）/スマホ
+      var smartphone = check.smartphone();
+      if(smartphone){
+        //スマホだったら縦か横かを判定
+        if($(window).height() > $(window).width()){
+          //縦
+          var MinRes = abridgementType['spMinRes'];
+          var MaxRes = abridgementType['spMaxRes'];
+        }
+        else{
+          //横
+          var MinRes = true;
+          var MaxRes = true;
+        }
+      }
+      else{
+        //PC
+        var MinRes = abridgementType['pcMinRes'];
+        var MaxRes = abridgementType['pcMaxRes'];
+      }
+      var res = {
+          MinRes: MinRes,
+          MaxRes: MaxRes
+      }
+      return res;
+    },
+    //ヘッダ表示（通常表示）
+    abridgementTypeShow: function() {
+      $("#mainImage").show();
+      $("#widgetSubTitle").show();
+      $("#widgetDescription").show();
+      $('#widgetTitle').css('text-align', 'center');
+    },
+    //ヘッダ非表示（シンプル表示）
+    abridgementTypehide: function() {
+      $("#mainImage").hide();
+      $("#widgetSubTitle").hide();
+      $("#widgetDescription").hide();
+      //false/true:通常（PC）/スマホ
+      var smartphone = check.smartphone();
+      if(smartphone){
+        //スマホ時
+        //スマホだったら縦か横かを判定
+        if($(window).height() > $(window).width()){
+          //縦
+          $('#widgetTitle').css('text-align', 'initial');
+        }
+        else{
+          //横
+          $('#widgetTitle').css('text-align', 'center');
+        }
+      }
+      else{
+        //PC時
+        $('#widgetTitle').css('text-align', '-webkit-auto');
+      }
+    },
     widgetCssTemplate: function(widget){
       // システムで出力するテキストのカラー
       var systemTextColor = "#666666";
       // チャットのフォントカラー
       var chatContentTextColor = "#333333";
+
+      //サイズを取得
+      var sizeList = this.getSizeType(widget.widgetSizeType);
 
       var html = "", faintColor = widget.mainColor, balloonInnerColor = faintColor = widget.mainColor;
       if ( faintColor.indexOf("#") >= 0 ) {
@@ -284,7 +550,7 @@ var socket, // socket.io
         html += '      #sincloBox section#chatTab sinclo-div #sincloChatSendBtn { display: block; height: 100%; width: 20%; text-decoration: none; border-radius: 0 5px 5px 0; cursor: pointer; margin: 0; text-align: center; background-color: ' + widget.mainColor + '; color: ' + widget.stringColor + '; font-weight: bold; font-size: 1.2em;}';
         html += '      #sincloBox section#chatTab sinclo-div #sincloChatSendBtn span { color: ' + widget.stringColor + '; }';
         if( window.sincloInfo.contract.sinclo || (window.sincloInfo.contract.hasOwnProperty("document") && window.sincloInfo.contract.document ) ) {
-          html += '      #sincloBox section#chatTab #sincloAccessInfo { text-align: left; padding-left: 0.5em; padding-top: 5px; padding-bottom: 5px; font-size: 0.9em; border-top: 1px solid #E8E7E0 }';
+          html += '      #sincloBox section#chatTab #sincloAccessInfo { height: '+ sizeList['sincloAccessInfoHeight'] +'px; text-align: left; padding-left: 0.5em; padding-top: 5px; padding-bottom: 5px; font-size: 0.9em; border-top: 1px solid #E8E7E0 }';
         }
       }
       html += '      #sincloBox section#navigation { position: relative; display: block; }';
@@ -319,7 +585,7 @@ var socket, // socket.io
 
         /* 縦の場合 */
         if ( $(window).height() > $(window).width() ) {
-          html += '#sincloBox { width: ' + widgetWidth + 'px }';
+          html += '#sincloBox { width: ' + widgetWidth + 'px; box-shadow: 0px 0px calc( ' + widget.boxShadow * ratio + 'px + 1px) ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px 0 0;}';
           html += '#sincloBox * { font-size: ' + (12 * ratio) + 'px; }';
           html += '#sincloBox section { width: ' + widgetWidth + 'px }';
           html += '#sincloBox section#navigation ul { width: ' + widgetWidth + 'px }';
@@ -363,7 +629,7 @@ var socket, // socket.io
         else {
           var chatAreaHeight = window.innerHeight * (document.body.clientWidth / window.innerWidth);
           var hRatio = chatAreaHeight * 0.07;
-          html += '#sincloBox { left:0; right:0; bottom: 0; }';
+          html += '#sincloBox { left:0; right:0; bottom: 0; box-shadow: 0px 0px calc( ' + widget.boxShadow + 'px + 1px) ' + widget.boxShadow  + 'px rgba(0,0,0,0.1);}';
           html += '#sincloBox * { font-size: ' + hRatio + 'px }';
           html += '#sincloBox p#widgetTitle { border-radius: 0; border-top-width: 0.1em; height: 2em; padding: 0.35em; font-size: 1.2em }';
           html += '#sincloBox section { width: 100% }';
@@ -401,17 +667,20 @@ var socket, // socket.io
       }
       /* PC版 */
       else {
-        html += "      #sincloBox { width: " + widgetWidth + "px }";
-        html += '      #sincloBox * { line-height: 1.4; font-size: 12px; }';
+//        html += "      #sincloBox { width: " + widgetWidth + "px }";
+        html += "      #sincloBox { width: " + sizeList['boxWidth'] + "px; box-shadow: 0px 0px calc( " + widget.boxShadow + "px + 1px) " + widget.boxShadow + "px rgba(0,0,0,0.1); border-radius: " + widget.radiusRatio + "px " + widget.radiusRatio + "px 0 0;}";
+        html += '      #sincloBox * { line-height: 1.4; font-size: '+ sizeList['d12font'] +'px; }';
         html += '      #sincloBox sinclo-div#widgetHeader:after { top: 32px }';
-        html += "      #sincloBox section { width: " + widgetWidth + "px }";
-        html += "      #sincloBox section#navigation ul { width: " + widgetWidth + "px }";
+//        html += "      #sincloBox section { width: " + widgetWidth + "px }";
+//        html += "      #sincloBox section#navigation ul { width: " + widgetWidth + "px }";
+        html += "      #sincloBox section { width: " + sizeList['boxWidth'] + "px }";
+        html += "      #sincloBox section#navigation ul { width: " + sizeList['boxWidth'] + "px }";
         html += '      #sincloBox span#mainImage { top: 7px; left: 10px }';
-        html += '      #sincloBox p#widgetTitle { border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px 0 0; border: 1px solid ' + widget.mainColor + '; font-size: 14px;padding: 7px 30px; height: 32px }';
-        html += '      #sincloBox p#widgetTitle #sincloChatUnread { width: 25px; height: 25px; font-size: 13px; border-radius: 15px; margin: 2.5px 6px; padding: 3px; }';
+        html += '      #sincloBox p#widgetTitle { border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px 0 0; border: 1px solid ' + widget.mainColor + '; font-size: '+ sizeList['d14font'] +'px;padding: 7px 30px; height: '+ sizeList['widgetTitleHeight'] +'px }';
+        html += '      #sincloBox p#widgetTitle #sincloChatUnread { width: 25px; height: 25px; font-size: '+ sizeList['d13font'] +'px; border-radius: 15px; margin: 2.5px 6px; padding: 3px; }';
         html += '      #sincloBox p#widgetTitle:after { background-position-y: 3px; top: 6px; right: 10px; bottom: 6px; width: 20px; height: 20px; }';
-        html += '      #sincloBox p#widgetSubTitle { background-color: #FFF; margin: 0; padding: 7px 0; text-align: left; border-width: 0 1px 0 1px; border-color: #E8E7E0; border-style: solid; padding-left: 77px; font-weight: bold; color: ' + widget.mainColor + '; height: 29px }';
-        html += '      #sincloBox p#widgetDescription { background-color: #FFF; margin: 0; padding-bottom: 7px; text-align: left; border-width: 0 1px 1px 1px; border-color: #E8E7E0; border-style: solid; padding-left: 77px; height: 23px; color: ' + systemTextColor + '; }';
+        html += '      #sincloBox p#widgetSubTitle { background-color: #FFF; margin: 0; padding: 7px 0; text-align: left; border-width: 0 1px 0 1px; border-color: #E8E7E0; border-style: solid; padding-left: 77px; font-weight: bold; color: ' + widget.mainColor + '; height: '+ sizeList['widgetSubTitleHeight'] +'px }';
+        html += '      #sincloBox p#widgetDescription { background-color: #FFF; margin: 0; padding-bottom: 7px; text-align: left; border-width: 0 1px 1px 1px; border-color: #E8E7E0; border-style: solid; padding-left: 77px; height: '+ sizeList['widgetDescriptionHeight'] +'px; color: ' + systemTextColor + '; }';
         html += '      #sincloBox section { background-color: #FFF; border: 1px solid #E8E7E0; border-top: none; }';
         // 画像がセットされている場合のスタイル
         if ( String(widget.showMainImage) !== "2" ) {
@@ -419,11 +688,11 @@ var socket, // socket.io
         }
         // チャットを使用する際
         if ( window.sincloInfo.contract.chat ) {
-          html += '      #sincloBox #mainImage em { top: -10px; right: -10px; width: 25px; height: 20px; font-size: 11px; padding: 1px; }';
-          html += '      #sincloBox ul#chatTalk { height: 194px; padding: 5px; }';
-          html += '      #sincloBox ul#chatTalk li { border-radius: 5px; margin: 5px 0; padding: 8px; font-size: 12px; border: 1px solid #C9C9C9; }';
-          html += '      #sincloBox ul#chatTalk li span.cName { font-size: 13px; margin: 0 0 5px 0 }';
-          html += '      #sincloBox section#chatTab sinclo-div { height: 75px!important; padding: 5px }';
+          html += '      #sincloBox #mainImage em { top: -10px; right: -10px; width: 25px; height: 20px; font-size: '+ sizeList['d11font'] +'px; padding: 1px; }';
+          html += '      #sincloBox ul#chatTalk { height: '+ sizeList['chatTalkHeight'] +'px; padding: 5px; }';
+          html += '      #sincloBox ul#chatTalk li { border-radius: 5px; margin: 5px 0; padding: 8px; font-size: '+ sizeList['d12font'] +'px; border: 1px solid #C9C9C9; }';
+          html += '      #sincloBox ul#chatTalk li span.cName { font-size: '+ sizeList['d13font'] +'px; margin: 0 0 5px 0 }';
+          html += '      #sincloBox section#chatTab sinclo-div { height: '+ sizeList['classFlexBoxRowHeight'] +'px!important; padding: 5px }';
           html += '      #sincloBox section#chatTab #sincloChatMessage { color: ' + chatContentTextColor + '!important; padding: 5px; height: 100%; min-height: 100%!important; border: 1px solid #E4E4E4!important; border-radius: 5px 0 0 5px!important; }';
           html += '      #sincloBox section#chatTab #sincloChatSendBtn { padding: 20px 0; height: 100%; border: 1px solid ' + widget.mainColor + '; }';
 
@@ -439,20 +708,20 @@ var socket, // socket.io
           else {
             html += '      #sincloBox section#callTab #telContent .tblBlock { text-align: center; margin: 0 auto; width: 240px; display: table; align-content: center; justify-content: center; overflow-x: hidden; overflow-y: auto }';
           }
-          html += '      #sincloBox section#callTab #telContent span { word-wrap: break-word ;word-break: break-all; font-size: 11px; line-height: 1.5!important; color: #6B6B6B; white-space: pre-wrap; max-height: 119px; display: table-cell; vertical-align: middle; text-align: center }';
+          html += '      #sincloBox section#callTab #telContent span { word-wrap: break-word ;word-break: break-all; font-size: '+ sizeList['d11font'] +'px; line-height: 1.5!important; color: #6B6B6B; white-space: pre-wrap; max-height: 119px; display: table-cell; vertical-align: middle; text-align: center }';
           if ( window.sincloInfo.contract.chat ) {
-            html += '      #sincloBox section#callTab #accessIdArea { height: 50px; display: block; margin: 20px auto 21px; width: 80%; padding: 7px;  color: #FFF; background-color: rgb(188, 188, 188); font-size: 25px; font-weight: bold; text-align: center; border-radius: 15px } ';
+            html += '      #sincloBox section#callTab #accessIdArea { height: 50px; display: block; margin: 20px auto 21px; width: 80%; padding: 7px;  color: #FFF; background-color: rgb(188, 188, 188); font-size: '+ sizeList['d25font'] +'px; font-weight: bold; text-align: center; border-radius: 15px } ';
           } else {
-            html += '      #sincloBox section#callTab #accessIdArea { height: 50px; display: block; margin: 10px auto; width: 80%; padding: 7px;  color: #FFF; background-color: rgb(188, 188, 188); font-size: 25px; font-weight: bold; text-align: center; border-radius: 15px } ';
+            html += '      #sincloBox section#callTab #accessIdArea { height: 50px; display: block; margin: 10px auto; width: 80%; padding: 7px;  color: #FFF; background-color: rgb(188, 188, 188); font-size: '+ sizeList['d25font'] +'px; font-weight: bold; text-align: center; border-radius: 15px } ';
           }
         }
-        html += '      #sincloBox section#navigation { border-width: 0 1px; height: 40px; }';
-        html += '      #sincloBox section#navigation ul { margin: 0 0 0 -1px; height: 40px;}';
-        html += '      #sincloBox section#navigation ul li { width: 50%; padding: 10px 0; border-left: 1px solid #E8E7E0; height: 40px }';
+        html += '      #sincloBox section#navigation { border-width: 0 1px; height: '+ sizeList['navigationHeight'] +'px; }';
+        html += '      #sincloBox section#navigation ul { margin: 0 0 0 -1px; height: '+ sizeList['navigationHeight'] +'px;}';
+        html += '      #sincloBox section#navigation ul li { width: 50%; padding: 10px 0; border-left: 1px solid #E8E7E0; height: '+ sizeList['navigationHeight'] +'px }';
         html += '      #sincloBox section#navigation ul li:last-child { border-right: 1px solid #E8E7E0; }';
         html += '      #sincloBox section#navigation ul li:not(.selected) { border-bottom: 1px solid #E8E7E0 }';
         html += '      #sincloBox section#navigation ul li.selected::after{ border-bottom: 2px solid ' + widget.mainColor + '; }';
-        html += '      #sincloBox #fotter { padding: 5px 0; border: 1px solid #E8E7E0; font-size: 11px; border-top: none; }';
+        html += '      #sincloBox #fotter { height: '+ sizeList['fotterHeight'] +'px; padding: 5px 0; border: 1px solid #E8E7E0; font-size: '+ sizeList['d11font'] +'px; border-top: none; }';
         html += '      #sincloBox section#navigation ul li::before{ margin-right: 5px; width: 18px; height: 18px; }';
 
       }
@@ -465,9 +734,9 @@ var socket, // socket.io
     widgetHeaderTemplate: function(widget){
       var html = "", chatAndTitleOnly = false;
       // チャットとタイトルバーのみ表示するフラグ
-      if ( check.smartphone() && ( window.screen.availHeight < window.screen.availWidth || (widget.hasOwnProperty('spHeaderLightFlg') && Number(widget.spHeaderLightFlg) === 1) ) ) {
-        chatAndTitleOnly = true;
-      }
+//      if ( check.smartphone() && ( window.screen.availHeight < window.screen.availWidth || (widget.hasOwnProperty('spHeaderLightFlg') && Number(widget.spHeaderLightFlg) === 1) ) ) {
+//        chatAndTitleOnly = true;
+//      }
       // 画像
       if ( !chatAndTitleOnly && (Number(widget.showMainImage) === 1 || widget.mainImage !== "") ) {
         var ratio = 1;
@@ -511,6 +780,10 @@ var socket, // socket.io
       return html;
     },
     widgetTemplate: function(widget){
+
+      //サイズを取得
+      var sizeList = this.getSizeType(widget.widgetSizeType);
+
       var html = "";
 
       // 電話・チャットプランの場合
@@ -527,10 +800,10 @@ var socket, // socket.io
       html += '    <span style="display: block; width: 50px; height: 50px; float: left; background-color: ' + widget.mainColor + '; border-radius: 25px; padding: 3px;"><img width="19.5" height="33" src="' + window.sincloInfo.site.files + '/img/call.png" style="margin: 6px 12px"></span>';
       // 受付電話番号
       if ( Number(widget.display_time_flg) === 1 ) {
-          html += '    <pre id="telNumber" style="font-size: 18px; padding: 5px 0px 0px; height: 30px">' + check.escape_html(widget.tel) + '</pre>';
+          html += '    <pre id="telNumber" style="font-size: '+ sizeList['d18font'] +'px; padding: 5px 0px 0px; height: 30px">' + check.escape_html(widget.tel) + '</pre>';
       }
       else {
-          html += '    <pre id="telNumber" style="font-size: 20px; padding: 10px 0px 0px; height: 45px;">' + check.escape_html(widget.tel) + '</pre>';
+          html += '    <pre id="telNumber" style="font-size: '+ sizeList['d20font'] +'px; padding: 10px 0px 0px; height: 45px;">' + check.escape_html(widget.tel) + '</pre>';
       }
       // 受付時間
       if ( Number(widget.display_time_flg) === 1 ) {
@@ -700,7 +973,9 @@ var socket, // socket.io
             // スクロールをした時に、ページ下部であれば透過する
             window.addEventListener('scroll', sinclo.operatorInfo.widgetHide);
             // 画面を回転ときは、向きによってスタイルを変える
-            window.addEventListener('orientationchange', sinclo.operatorInfo.reCreateWidget);
+            window.addEventListener('orientationchange', function(){
+              sinclo.operatorInfo.reCreateWidget();
+            });
             // サイズが変わった時は、サイズ感を変える
             window.addEventListener('resize', function(e){
               if(e) e.stopPropagation();
@@ -725,13 +1000,28 @@ var socket, // socket.io
           && sincloBox && (sincloBox.style.display === 'none' || sincloBox.style.display === '')) {
           console.log('でろでろでろでろでろでろ');
           sincloBox.style.display = "block";
+          //一旦非表示
+          //ヘッダ非表示（シンプル表示）
+          common.abridgementTypehide();
           common.widgetHandler.saveShownFlg();
+          var dataOpenflg = sinclo.widget.condifiton.get();
+          //最小化時と最大化時の状態を取得
+          var abridgementType = common.getAbridgementType();
           //ウィジェットの再生成処理呼び出しでなければ最小化表示設定で呼び出す
           if(!reCreateWidget) {
             sinclo.widget.condifiton.set(false);
             sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
             //ログ書き込み用にメッセージ送信
             emit("sendWidgetShown",{widget:true});
+            //最小化
+            if(abridgementType['MinRes']){
+              //ヘッダ非表示（シンプル表示）
+              common.abridgementTypehide();
+            }
+            else{
+              //ヘッダ表示（通常表示）
+              common.abridgementTypeShow();
+            }
             // このタイミングでの最大化実行条件
             // １：PCの場合、ウィジェット最大化処理がウィジェット非表示時に実行されていた場合
             // ２：スマホの場合、ウィジェット最大化する設定が有効で、ウィジェット最大化処理がウィジェット非表示時に実行されていた場合
@@ -739,6 +1029,39 @@ var socket, // socket.io
                || (!check.smartphone() && storage.s.get('preWidgetOpened') === "true")) {
               //すでに最大化処理が呼び出されていたら最大化表示する
               sinclo.operatorInfo.ev();
+              //最大化
+              if(abridgementType['MaxRes']){
+                //ヘッダ非表示（シンプル表示）
+                common.abridgementTypehide();
+              }
+              else{
+                //ヘッダ表示（通常表示）
+                common.abridgementTypeShow();
+              }
+            }
+          }
+          else{
+            if(dataOpenflg === "false"){
+              //最小化
+              if(abridgementType['MinRes']){
+                //ヘッダ非表示（シンプル表示）
+                common.abridgementTypehide();
+              }
+              else{
+                //ヘッダ表示（通常表示）
+                common.abridgementTypeShow();
+              }
+            }
+            else{
+              //最大化
+              if(abridgementType['MaxRes']){
+                //ヘッダ非表示（シンプル表示）
+                common.abridgementTypehide();
+              }
+              else{
+                //ヘッダ表示（通常表示）
+                common.abridgementTypeShow();
+              }
             }
           }
         }

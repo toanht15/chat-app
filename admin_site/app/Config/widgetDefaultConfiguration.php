@@ -33,6 +33,20 @@ $config['default'] = [
        */
       "showPosition" => "1",
 
+      //ウィジットサイズ対応
+      /**
+       * ウィジットサイズ
+       */
+      "widgetSizeType" => "2",
+      //ウィジットサイズ対応
+
+      //最小化時デザイン対応
+      /**
+       * 最小化時のデザイン
+       */
+      "minimizeDesignType" => "1",
+      //最小化時デザイン対応
+
       /**
        * トップタイトル
        */
@@ -80,7 +94,12 @@ $config['default'] = [
       /**
        * 角丸
        */
-      "radiusRatio"=>"8"
+      "radiusRatio"=>"8",
+
+      /**
+       * 背景の影
+       */
+      "boxShadow"=>"5",
     ],
     "chat" => [
       /**

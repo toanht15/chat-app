@@ -17,6 +17,9 @@ class MWidgetSetting extends AppModel {
       'max_show_time' => "maxShowTime",
       'max_show_time_page' => "maxShowTimePage",
       'show_position' => "showPosition",
+      //ウィジットサイズ対応
+      'widget_size_type' => "widgetSizeType",
+      //ウィジットサイズ対応
       'title' => "title",
       'show_subtitle' => "showSubtitle",
       'sub_title' => "subTitle",
@@ -26,6 +29,12 @@ class MWidgetSetting extends AppModel {
       'show_main_image' => "showMainImage",
       'main_image' => "mainImage",
       'radius_ratio' => "radiusRatio",
+      //背景の影
+      'box_shadow' => "boxShadow",
+      //背景の影
+      //最小化時デザイン対応
+      'minimize_design_type' => "minimizeDesignType",
+      //最小化時デザイン対応
       'tel' => "tel",
       'show_name' => "showName",
       'chat_message_design_type' => "chatMessageDesignType",
@@ -167,6 +176,14 @@ class MWidgetSetting extends AppModel {
               'message' => '１～１５の間で設定してください'
             ]
         ],
+        //背景の影
+        'box_shadow' => [
+            'between' => [
+                'rule' => ['between', 0, 10],
+                'message' => '１～１０の間で設定してください'
+            ]
+        ],
+        //背景の影
         'title' => [
             'maxLength' => [
                 'rule' => ['maxLength', 12],

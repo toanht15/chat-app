@@ -96,12 +96,16 @@ router.get("/", function(req, res, next) {
                 if(('chatMessageWithAnimation' in settings)) {
                   chatMessageWithAnimation = isNumeric(settings.chatMessageWithAnimation);
                 }
+
                 sendData['widget'] = {
                   showTiming: showTimingSetting,
                   display_type: isNumeric(rows[0].display_type),
                   showTime: isNumeric(settings.showTime),
                   showName: isNumeric(settings.showName),
                   showPosition: isNumeric(settings.showPosition),
+                  //ウィジットサイズ対応
+                  widgetSizeType: isNumeric(settings.widgetSizeType),
+                  //ウィジットサイズ対応
                   title: settings.title,
                   showSubtitle: isNumeric(settings.showSubtitle),
                   subTitle: settings.subTitle,
@@ -117,9 +121,8 @@ router.get("/", function(req, res, next) {
                   chatMessageWithAnimation: chatMessageWithAnimation,
                   chatTrigger: isNumeric(settings.chatTrigger),
                   radiusRatio: isNumeric(settings.radiusRatio),
-                  spShowFlg: isNumeric(settings.spShowFlg),
-                  spHeaderLightFlg: isNumeric(settings.spHeaderLightFlg),
-                  spAutoOpenFlg: isNumeric(settings.spAutoOpenFlg)
+                  //背景の影
+                  boxShadow: isNumeric(settings.boxShadow),
                 };
 
                 actionTypeList = [];
@@ -205,7 +208,6 @@ router.get("/", function(req, res, next) {
 
     // res.render('index', { title: 'Settings' });
 });
-
 
 /**
  * 10進数表記ののIPアドレスを2進数に変換
