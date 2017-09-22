@@ -40,8 +40,6 @@
         //最小化時と最大化時の状態を取得
         var abridgementType = common.getAbridgementType()
         if ( String(flg) === "false" ) {
-          //最大化時ボタン表示
-          common.whenMaximizedBtnShow();
           //最大化
           if(abridgementType['MaxRes']){
             //ヘッダ非表示（シンプル表示）
@@ -66,23 +64,13 @@
               height += $("#sincloBox [id$='Tab']").outerHeight(true);
             }
             height += $("#sincloBox > #fotter").outerHeight(true);
-            //閉じるボタン設定が有効かつバナー表示設定になっているかどうか、かつPCか
-            //false/true:通常（PC）/スマホ
-            var smartphone = check.smartphone();
-            if(Number(window.sincloInfo.widget.closeButtonSetting) === 2 && Number(window.sincloInfo.widget.closeButtonModeType) === 1 && smartphone === false){
-              height += $("#sincloBannerBox").outerHeight(true);
-            }
           }
           if ( window.sincloInfo.contract.chat ) {
             sinclo.chatApi.showUnreadCnt();
             sinclo.chatApi.scDown();
           }
-//          target.removeClass("selected");
-//          $("#sincloBox").height("");
         }
         else {
-          //最小化時ボタン表示
-          common.whenMinimizedBtnShow();
           //最小化
           if(abridgementType['MinRes']){
             //ヘッダ非表示（シンプル表示）
@@ -98,49 +86,6 @@
         elm.animate({
           height: height + "px"
         }, 'first');
-//        target.removeClass("selected");
-//        $("#sincloBox").height("");
-      },
-      //閉じるボタンがクリックされた時の挙動
-      closeBtn: function(){
-        //閉じるボタン設定が有効かつバナー表示設定になっているかどうか
-        if(Number(window.sincloInfo.widget.closeButtonSetting) === 2 && Number(window.sincloInfo.widget.closeButtonModeType) === 1){
-          //バナー表示
-          $("#sincloBannerBox").show();
-          $("#sincloWidgetBox").hide();
-          $("#sincloBox").css("bottom","30px");
-          switch ( Number(window.sincloInfo.widget.showPosition) ) {
-          case 1: // 右下
-            //right: 10px;
-            $("#sincloBox").css("right","30px");
-            break;
-          case 2: // 左下
-            //left: 10px;
-            $("#sincloBox").css("left","30px");
-            break;
-          }
-        }
-        else{
-          //チャットを閉じる
-          $("#sincloBox").hide();
-        }
-      },
-      //バナーがクリックされた時の挙動
-      clickBanner: function() {
-        $("#sincloWidgetBox").show();
-        $("#sincloBannerBox").hide();
-        $("#sincloBox").css("bottom","0");
-        switch ( Number(window.sincloInfo.widget.showPosition) ) {
-        case 1: // 右下
-          //right: 10px;
-          $("#sincloBox").css("right","10px");
-          break;
-        case 2: // 左下
-          //left: 10px;
-          $("#sincloBox").css("left","10px");
-          break;
-        }
-        this.ev();
       },
       widgetHide: function(e) {
         if(e) e.stopPropagation();

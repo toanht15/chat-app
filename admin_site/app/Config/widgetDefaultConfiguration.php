@@ -47,21 +47,6 @@ $config['default'] = [
       "minimizeDesignType" => "1",
       //最小化時デザイン対応
 
-      //閉じるボタン対応
-      /**
-       * 閉じるボタン有効無効
-       */
-      "closeButtonSetting" => "1",
-      /**
-       * 小さなバナー表示有効無効
-       */
-      "closeButtonModeType" => "2",
-      /**
-       * バナーテキスト
-       */
-      "bannertext" => "チャットで相談",
-      //閉じるボタン対応
-
       /**
        * トップタイトル
        */

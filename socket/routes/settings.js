@@ -123,17 +123,6 @@ router.get("/", function(req, res, next) {
                   radiusRatio: isNumeric(settings.radiusRatio),
                   //背景の影
                   boxShadow: isNumeric(settings.boxShadow),
-                  //最小化時デザイン対応
-                  minimizeDesignType: isNumeric(settings.minimizeDesignType),
-                  //閉じるボタン start
-                  closeButtonSetting: isNumeric(settings.closeButtonSetting),
-                  closeButtonModeType: isNumeric(settings.closeButtonModeType),
-                  bannertext: settings.bannertext,
-                  //閉じるボタン end
-                  spShowFlg: isNumeric(settings.spShowFlg),
-                  //最大時のシンプル表示
-                  spHeaderLightFlg: isNumeric(settings.spHeaderLightFlg),
-                  spAutoOpenFlg: isNumeric(settings.spAutoOpenFlg)
                 };
 
                 actionTypeList = [];

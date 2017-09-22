@@ -35,11 +35,6 @@ class MWidgetSetting extends AppModel {
       //最小化時デザイン対応
       'minimize_design_type' => "minimizeDesignType",
       //最小化時デザイン対応
-      //閉じるボタン対応
-      'close_button_setting' => "closeButtonSetting",
-      'close_button_mode_type' => "closeButtonModeType",
-      'bannertext' => "bannertext",
-      //閉じるボタン対応
       'tel' => "tel",
       'show_name' => "showName",
       'chat_message_design_type' => "chatMessageDesignType",
@@ -133,13 +128,6 @@ class MWidgetSetting extends AppModel {
               'rule' => ['maxLength', 15],
               'allowEmpty' => false,
               'message' => '１５文字以内で設定してください'
-            ]
-        ],
-        'bannertext' => [
-            'maxLength' => [
-                'rule' => ['maxLength', 15],
-                'allowEmpty' => false,
-                'message' => '１５文字以内で設定してください'
             ]
         ],
         'main_color' => [
