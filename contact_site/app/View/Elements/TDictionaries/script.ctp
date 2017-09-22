@@ -533,16 +533,13 @@ $( function() {
 
   //デフォルトのタブ幅セット
   var allDefaultTabWidth = 0;
+  var minimumWidgetSizeList = {};
   function setWidth(e){
     var afterWindowSize = $(this).outerWidth();
     //全てのタブの要素を取得
     var allTabList = document.querySelectorAll('[id^="ui-id-"]');
     for (var i = 0; i < allTabList.length; i++) {
       var tab_w = allTabList[i].clientWidth;
-      if(e.type === 'load') {
-        $(allTabList[i]).data('defaultWidth', tab_w + 1);
-        allDefaultTabWidth += tab_w;
-      }
       if(tab_w < 104){
         allTabList[i].style.width = '104px';
         allTabList[i].style.textAlign = 'center';
@@ -555,19 +552,33 @@ $( function() {
           allTabList[i].style.textAlign = 'center';
         }
       }
+      if(e.type === 'load') {
+        $(allTabList[i]).data('defaultWidth', allTabList[i].clientWidth);
+        allDefaultTabWidth += allTabList[i].clientWidth + 1;
+      }
     }
+
     // タブ表示領域サイズを取得
-    var tabDisplayWidth = $('#tablist').outerWidth() - 60;
+    var tabDisplayWidth = $('#tablist').outerWidth() - (5 * allTabList.length);
     for (var i = 0; i < allTabList.length; i++) {
       var tabWidth = $(allTabList[i]).data('defaultWidth');
       var ratio = tabWidth / allDefaultTabWidth;
 
       if (tabDisplayWidth * ratio >  tabWidth) {
-        allTabList[i].style.width = tabWidth + "px";
-      } else if(tabDisplayWidth * ratio > 40) {
-        allTabList[i].style.width = tabDisplayWidth * ratio + "px";
+        allTabList[i].style.width = tabWidth - 2 + "px";
+        if(typeof minimumWidgetSizeList[i] !== 'undefined') {
+          delete minimumWidgetSizeList[i];
+        }
+      } else if((tabDisplayWidth * ratio - (2 * (1.5 * ratio) + (0.1 * Object.keys(minimumWidgetSizeList).length))) > 40) {
+        allTabList[i].style.width = (tabDisplayWidth * ratio - (2 * (1.5 * ratio) + (0.1 * Object.keys(minimumWidgetSizeList).length))) + "px";
+        if(typeof minimumWidgetSizeList[i] !== 'undefined') {
+          delete minimumWidgetSizeList[i];
+        }
       } else {
         allTabList[i].style.width = "40px";
+        if(typeof minimumWidgetSizeList[i] === 'undefined') {
+          minimumWidgetSizeList[i] = true;
+        }
       }
     }
   }
