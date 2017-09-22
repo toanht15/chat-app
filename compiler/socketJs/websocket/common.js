@@ -1415,7 +1415,6 @@ var socket, // socket.io
       }
     },
     set: function(type, val, session){
-      debugger;
       var code = this.getCode(type);
       if ( typeof(session) === 'undefined' ) {
         storage.l.set(code, val);
