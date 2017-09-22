@@ -224,7 +224,7 @@ class MAgreementsController extends AppController {
    * @return boolean 保存処理の結果を返す
    * */
   private function _saveTdictionary($saveData) {
-    //簡易入力メッセージデフォルト値保存
+    //定型文メッセージデフォルト値保存
     $tdictionaryData = $this->TDictionary->find('all',[
       'conditions' => ['MCompany.company_key' => 'template']
     ]);

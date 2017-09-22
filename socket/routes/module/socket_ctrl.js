@@ -541,6 +541,7 @@ io.sockets.on('connection', function (socket) {
     commit: function(d){ // DBに書き込むとき
       var insertData = {
         t_histories_id: sincloCore[d.siteKey][d.tabId].historyId,
+        m_companies_id: companyList[d.siteKey],
         visitors_id: d.userId,
         m_users_id: d.mUserId,
         message: d.chatMessage,
@@ -707,6 +708,7 @@ io.sockets.on('connection', function (socket) {
 
       var insertData = {
         t_histories_id: getSessionId(d.siteKey, d.tabId, 'historyId'),
+        m_companies_id: companyList[d.siteKey],
         visitors_id: d.visitorsId,
         m_users_id: d.userId,
         message: d.chatMessage,

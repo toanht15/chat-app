@@ -5,12 +5,12 @@
 
   <div id='tcampaigns_add_title'>
     <div class="fLeft"><?= $this->Html->image('campaign_g.png', array('alt' => 'キャンペーン管理', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?></div>
-      <h1>キャンペーン設定<span id="sortMessage"></span></h1>
-    </div>
-    <div id='tcampaigns_description'>
+    <h1>キャンペーン設定<span id="sortMessage"></span></h1>
+  </div>
+  <div id='tcampaigns_description'>
       <span class="pre">サイトアクセス時のURL（ランディングURL）に特定のパラメータを含む場合にリアルタイムモニタ（および履歴）に任意のキャンペーン名を表示させることができます。&#10;どの広告からの流入かを可視化したい場合などに本設定をお使いください。
       </span>
-    </div>
+  </div>
 
   <div id='tcampaigns_menu' style= 'padding-left: 20px;'>
     <ul class="fLeft" >
@@ -23,56 +23,38 @@
   <div id='tcampaigns_list' style = 'padding: 5px 20px 20px 20px;'>
     <table>
       <thead>
-        <tr>
-          <th style="width:30em;">キャンペーン名</th>
-          <th style="width:20em;">URLパラメータ</th>
-          <th>コメント</th>
-          <th>操作</th>
-        </tr>
+      <tr>
+        <th style="width:30em;">キャンペーン名</th>
+        <th style="width:20em;">URLパラメータ</th>
+        <th>コメント</th>
+        <th>操作</th>
+      </tr>
       </thead>
       <tbody class="sortable">
       <?php foreach((array)$tCampaignList as $key => $val): ?>
-        <tr data-id="<?=$val['TCampaign']['id']?>">
+        <tr data-id="<?=$val['TCampaign']['id']?>" onclick="openEditDialog('<?=h($val['TCampaign']['id'])?>')">
           <td class="tCenter"><?=h($val['TCampaign']['name'])?></td>
           <td class="tCenter"><?=h($val['TCampaign']['parameter'])?></td>
           <td class="tLeft pre"><?=h($val['TCampaign']['comment'])?></td>
           <td class="tCenter ctrlBtnArea">
-          <?php
+            <?php
             echo $this->Html->link(
               $this->Html->image(
-                'edit.png',
+                'trash.png',
                 array(
-                  'alt' => '更新',
+                  'alt' => '削除',
                   'width' => 30,
-                  'height' => 30,
+                  'height' => 30
                 )
               ),
               'javascript:void(0)',
               array(
-                'class' => 'btn-shadow greenBtn fLeft',
-                'onclick' => 'openEditDialog('.$val['TCampaign']['id'].')',
+                'class' => 'btn-shadow redBtn blockCenter',
+                'onclick' => 'event.stopPropagation(); openConfirmDialog('.$val['TCampaign']['id'].')',
                 'escape' => false
               )
             );
-          ?>
-          <?php
-            echo $this->Html->link(
-                $this->Html->image(
-                  'trash.png',
-                  array(
-                    'alt' => '削除',
-                    'width' => 30,
-                    'height' => 30
-                  )
-                ),
-                'javascript:void(0)',
-                array(
-                  'class' => 'btn-shadow redBtn fRight',
-                  'onclick' => 'openConfirmDialog('.$val['TCampaign']['id'].')',
-                  'escape' => false
-                )
-            );
-          ?>
+            ?>
           </td>
         </tr>
       <?php endforeach; ?>

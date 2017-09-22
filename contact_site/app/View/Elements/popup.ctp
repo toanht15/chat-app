@@ -113,6 +113,15 @@ var popupEvent = {
                 case 'p-history-cus':
                 case 'p-muser-entry':
                 case 'p-tcampaign-entry':
+                    var entryBtn = _button("保存");
+                    entryBtn.onclick = function(){
+                        return popupEvent.closePopup();
+                    };
+                    var closeBtn = _button("閉じる");
+                    closeBtn.onclick = function(){
+                        return popupEvent.close();
+                    };
+                    break;
                 case 'p-tdictionary-entry':
                     var entryBtn = _button("保存");
                     entryBtn.onclick = function(){
@@ -121,6 +130,62 @@ var popupEvent = {
                     var closeBtn = _button("閉じる");
                     closeBtn.onclick = function(){
                         return popupEvent.close();
+                    };
+                    break;
+                case 'p-copy':
+                    var closeBtn = _button("コピーする");
+                    closeBtn.onclick = function(){
+                        return popupEvent.closePopup();
+                    };
+                    break;
+                case 'p-move':
+                    var closeBtn = _button("移動する");
+                    closeBtn.onclick = function(){
+                        return popupEvent.closePopup();
+                    };
+                    break;
+                case 'p-category-edit':
+                    var closeBtn = _button("カテゴリ名を変更");
+                    closeBtn.onclick = function(){
+                        return popupEvent.closePopup();
+                    };
+                    break;
+                case 'p-category-del':
+                    var closeBtn = _button("カテゴリの削除");
+                    closeBtn.onclick = function(){
+                        return popupEvent.closePopup();
+                    };
+                    break;
+                case 'p-category-dictionary-edit':
+//                     var closeBtn = _button("カテゴリの削除");
+//                     closeBtn.onclick = function(){
+//                         return popupEvent.closePopup();
+//                     };
+//                     break;
+                case 'p-tabsort-save-confirm':
+                    var saveBtn = _button("保存");
+                    saveBtn.onclick = function(){
+                      return popupEvent.saveClicked();
+                    };
+                    var cancelBtn = _button("キャンセル");
+                    cancelBtn.onclick = function(){
+                      return popupEvent.cancelClicked();
+                    };
+                    break;
+                case 'p-sort-save-confirm':
+                    var saveBtn = _button("保存");
+                    saveBtn.onclick = function(){
+                        return popupEvent.saveClicked();
+                    };
+                    var cancelBtn = _button("キャンセル");
+                    cancelBtn.onclick = function(){
+                      return popupEvent.cancelClicked();
+                    };
+                    break;
+                case 'p-dictionary-del':
+                    var closeBtn = _button("削除する");
+                    closeBtn.onclick = function(){
+                        return popupEvent.closePopup();
                     };
                     break;
                 case 'p-alert':
@@ -256,6 +321,8 @@ var popupEvent = {
     window.modalOpen = function(contents, id, title, type){
         if (typeof(type) !== 'undefined') {
             pe.moveType = type;
+        } else {
+            pe.moveType = 'moveup';
         }
         pe.init();
         return pe.open(contents, id, title);
