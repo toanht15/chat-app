@@ -1436,6 +1436,7 @@
                 this.sound.play();
             }
         },
+        //未読数表示
         showUnreadCnt: function(){
             var elmId = "sincloChatUnread",
                 unreadIcon = document.getElementById(elmId);

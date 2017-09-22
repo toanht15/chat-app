@@ -90,6 +90,9 @@
       #sincloBox section#chatTab #sincloChatSendBtn span { color: {{string_color}} }
     <?php endif; ?>
     <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT]) ) :?>
+      #sincloBox section#callTab{height: 296.5px;}
+      #sincloBox section#callTab.middleSize {height: 342px;}
+      #sincloBox section#callTab.largeSize {height: 390.5px;}
       #sincloBox section#callTab #telNumber { overflow: hidden; color: {{main_color}}; font-weight: bold; margin: 0 auto; text-align: center }
       #sincloBox section#callTab #telNumber:not(.notUseTime) { font-size: 18px; padding: 5px 0px 0px; height: 30px }
       #sincloBox section#callTab #telNumber.middleSize:not(.notUseTime) { font-size: 19px; padding: 5px 0px 0px; height: 30px }
@@ -102,8 +105,8 @@
       #sincloBox section#callTab #telTime.middleSize { font-size: 12px; padding: 0 0 5px; height: 20px }
       #sincloBox section#callTab #telTime.largeSize { font-size: 12px; padding: 0 0 5px; height: 20px }
       #sincloBox section#callTab #telContent { display: block; overflow-y: auto; overflow-x: hidden; max-height: 119px }
-      #sincloBox section#callTab #telContent.middleSize{ max-height: 130px }
-      #sincloBox section#callTab #telContent.largeSize{ max-height: 130px }
+      #sincloBox section#callTab #telContent.middleSize{ max-height: 159px; height: 159px}
+      #sincloBox section#callTab #telContent.largeSize{ max-height: 207px; height: 207px}
       <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
         #sincloBox section#callTab #telContent .tblBlock {  text-align: center;  margin: 0 auto;  width: 240px;  display: table;  flex-direction: column;  align-content: center;  height: 119px!important;  justify-content: center; }
       <?php else: ?>

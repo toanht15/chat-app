@@ -164,6 +164,7 @@ var socket, // socket.io
             classFlexBoxRowHeight: 75,
             sincloAccessInfoHeight: 26.5,
             fotterHeight: 26.5,
+            telContentHeight: 125,
             d11font: 11,
             d12font: 12,
             d13font: 13,
@@ -185,6 +186,7 @@ var socket, // socket.io
             classFlexBoxRowHeight: 75,
             sincloAccessInfoHeight: 26.5,
             fotterHeight: 26.5,
+            telContentHeight: 170,
             d11font: 12,
             d12font: 13,
             d13font: 14,
@@ -206,6 +208,7 @@ var socket, // socket.io
             classFlexBoxRowHeight: 75,
             sincloAccessInfoHeight: 26.5,
             fotterHeight: 26.5,
+            telContentHeight: 219,
             d11font: 12,
             d12font: 13,
             d13font: 14,
@@ -227,6 +230,7 @@ var socket, // socket.io
             classFlexBoxRowHeight: 75,
             sincloAccessInfoHeight: 26.5,
             fotterHeight: 26.5,
+            telContentHeight: 125,
             d11font: 11,
             d12font: 12,
             d13font: 13,
@@ -386,6 +390,10 @@ var socket, // socket.io
       $("#mainImage").show();
       $("#widgetSubTitle").show();
       $("#widgetDescription").show();
+      var smartphone = check.smartphone();
+      if(!smartphone){
+        $('#widgetTitle').css('padding-left', '70px');
+      }
       $('#widgetTitle').css('text-align', 'center');
     },
     //ヘッダ非表示（シンプル表示）
@@ -400,7 +408,7 @@ var socket, // socket.io
         //スマホだったら縦か横かを判定
         if($(window).height() > $(window).width()){
           //縦
-          $('#widgetTitle').css('text-align', 'initial');
+          $('#widgetTitle').css('text-align', '-webkit-center');
         }
         else{
           //横
@@ -409,7 +417,9 @@ var socket, // socket.io
       }
       else{
         //PC時
-        $('#widgetTitle').css('text-align', '-webkit-auto');
+        $('#widgetTitle').css('text-align', 'center');
+        $('#widgetTitle').css('padding-left', '30px');
+        //padding-left: 30px;
       }
     },
     widgetCssTemplate: function(widget){
@@ -701,7 +711,7 @@ var socket, // socket.io
         if ( window.sincloInfo.contract.synclo || (window.sincloInfo.contract.hasOwnProperty('document') && window.sincloInfo.contract.document) ) {
           html += '      #sincloBox section#callTab #telNumber { overflow: hidden; color: ' + widget.mainColor + '; font-weight: bold; margin: 0 auto; text-align: center; background-color: #FFF!important; border: none!important; overflow: visible!important; }';
           html += '      #sincloBox section#callTab #telIcon { color: ' + widget.mainColor + '; display: block; width: 50px; height: 50px; float: left; background-color: #3EA3DE; border-radius: 25px; padding: 3px }';
-          html += '      #sincloBox section#callTab #telContent { display: block; overflow-y: auto; overflow-x: hidden; max-height: 119px }';
+          html += '      #sincloBox section#callTab #telContent { display: block; overflow-y: auto; overflow-x: hidden; height:'+ sizeList['telContentHeight'] +'px; max-height: '+ sizeList['telContentHeight'] +'px }';
           if ( window.sincloInfo.contract.chat ) {
             html += '      #sincloBox section#callTab #telContent .tblBlock {  text-align: center;  margin: 0 auto;  width: 240px;  display: table; align-content: center;  height: 119px!important;  justify-content: center; }';
           }
