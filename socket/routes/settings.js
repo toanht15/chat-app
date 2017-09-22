@@ -123,6 +123,9 @@ router.get("/", function(req, res, next) {
                   radiusRatio: isNumeric(settings.radiusRatio),
                   //背景の影
                   boxShadow: isNumeric(settings.boxShadow),
+                  spShowFlg: isNumeric(settings.spShowFlg),
+                  spHeaderLightFlg: isNumeric(settings.spHeaderLightFlg),
+                  spAutoOpenFlg: isNumeric(settings.spAutoOpenFlg)
                 };
 
                 actionTypeList = [];
