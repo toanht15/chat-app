@@ -128,7 +128,7 @@ router.get("/", function(req, res, next) {
                   //閉じるボタン start
                   closeButtonSetting: isNumeric(settings.closeButtonSetting),
                   closeButtonModeType: isNumeric(settings.closeButtonModeType),
-                  bannertext: isNumeric(settings.bannertext),
+                  bannertext: settings.bannertext,
                   //閉じるボタン end
                   spShowFlg: isNumeric(settings.spShowFlg),
                   //最大時のシンプル表示
