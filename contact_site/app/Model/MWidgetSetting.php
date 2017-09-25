@@ -116,6 +116,13 @@ class MWidgetSetting extends AppModel {
                 'message' => '表示するタイミングよりも値を大きくしてください'
             ]
         ],
+        'title' => [
+            'maxLength' => [
+                'rule' => ['maxLength', 12],
+                'allowEmpty' => false,
+                'message' => '１２文字以内で設定してください。'
+            ]
+        ],
         'sub_title' => [
             'maxLength' => [
               'rule' => ['maxLength', 15],
@@ -184,13 +191,6 @@ class MWidgetSetting extends AppModel {
             ]
         ],
         //背景の影
-        'title' => [
-            'maxLength' => [
-                'rule' => ['maxLength', 12],
-                'allowEmpty' => false,
-                'message' => '１２文字以内で設定してください。'
-            ]
-        ],
         'tel' => [
             'tel' => [
                 'rule' => ['custom', C_MATCH_RULE_TEL],
