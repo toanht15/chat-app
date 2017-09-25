@@ -1442,6 +1442,7 @@
                 unreadIcon = document.getElementById(elmId);
             var sincloBox = document.getElementById('sincloBox');
             var flg = sinclo.widget.condifiton.get();
+            //unreadIconがあればエレメントを削除
             if ( unreadIcon ) {
                 unreadIcon.parentNode.removeChild(unreadIcon);
             }
@@ -1457,12 +1458,25 @@
                 em.textContent = sinclo.chatApi.unread;
                 var mainImg = document.getElementById('mainImage');
                 var titleElm = document.getElementById('widgetTitle');
-                if ( mainImg ) {
+                //最小化時と最大化時の状態を取得
+                var abridgementType = common.getAbridgementType()
+                //未読表示位置がシンプル設定か否かによって異なる
+                if (! abridgementType['MinRes'] ) {
+                    //通常時
                     mainImg.appendChild(em);
                 }
-                else if (titleElm) {
+                else {
+                    //シンプルデザイン時
                     titleElm.appendChild(em);
                 }
+//                if ( mainImg ) {
+//                  //通常時
+//                  mainImg.appendChild(em);
+//                }
+//                else if ( titleElm ) {
+//                    //シンプルデザイン時
+//                    titleElm.appendChild(em);
+//                }
             }
         },
         KEY_TRIGGERED_AUTO_SPEECH: "triggeredAutoSpeech",
