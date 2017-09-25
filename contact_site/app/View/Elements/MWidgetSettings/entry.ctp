@@ -321,7 +321,6 @@ $headerNo = 1;
         </ul>
       </section>
 
-      <?php if($coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT])): ?>
       <h3><?php echo mb_convert_kana($headerNo, "N", "utf-8"); $headerNo++ ?>．最小化／閉じる</h3>
       <section>
         <ul class="settingList">
@@ -337,7 +336,6 @@ $headerNo = 1;
           <!-- 最小化時のデザイン -->
         </ul>
       </section>
-      <?php endif; ?>
 
       <?php if($coreSettings[C_COMPANY_USE_CHAT]): ?>
       <h3><?php echo mb_convert_kana($headerNo, "N", "utf-8"); $headerNo++ ?>．チャット設定</h3>
