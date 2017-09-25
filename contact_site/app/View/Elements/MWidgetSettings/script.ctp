@@ -335,18 +335,17 @@ sincloApp.controller('WidgetCtrl', function($scope){
           break;
       }
       settingTitle.maxLength = titleLength;
-      if(settingTitle.value.length > titleLength){
-        $scope.title = settingTitle.value.substring(0, titleLength);
-      }
+//       if(settingTitle.value.length > titleLength){
+//         $scope.title = settingTitle.value.substring(0, titleLength);
+//       }
       settingSubTitle.maxLength = subTitleLength;
-      if(settingSubTitle.value.length > subTitleLength){
-        $scope.sub_title = settingSubTitle.value.substring(0, subTitleLength);
-      }
+//       if(settingSubTitle.value.length > subTitleLength){
+//         $scope.sub_title = settingSubTitle.value.substring(0, subTitleLength);
+//       }
       settingDescription.maxLength = descriptionLength;
-      if(settingDescription.value.length > descriptionLength){
-        $scope.description = settingDescription.value.substring(0, descriptionLength);
-      }
-
+//       if(settingDescription.value.length > descriptionLength){
+//         $scope.description = settingDescription.value.substring(0, descriptionLength);
+//       }
     }
 
     //最小化時のデザインがクリックされた時の動作
