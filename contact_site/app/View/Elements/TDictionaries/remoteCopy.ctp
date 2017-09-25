@@ -56,7 +56,7 @@
         if(type == '3' || type == '4'){
           //location.href = "<?=$this->Html->url(array('controller' => 'TDictionaries', 'action' => 'index', 'tabindex' => $this->Session->read('tabindex')))?>";
           var url = "<?= $this->Html->url('/TDictionaries/index') ?>";
-          location.href = url + "/tabindex:" + nextTabIndex;
+          location.href = url + "/tabindex:" + (nextTabIndex === "" ? "0" : nextTabIndex);
         }
         else{
           location.href = "<?= $this->Html->url('/TDictionaries/index') ?>";
