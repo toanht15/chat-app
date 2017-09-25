@@ -437,7 +437,7 @@ class AppSchema extends CakeSchema {
   );
 
 
-  public $t_history_access_counts => array(
+  public $t_history_access_counts = array(
     'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary'),
     'm_companies_id' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false, 'key' => 'index'),
     'year' => array('type' => 'integer', 'null' => true, 'default' => null, 'length' => 4, 'unsigned' => false),
@@ -453,7 +453,7 @@ class AppSchema extends CakeSchema {
   );
 
 
-  public $t_history_widget_counts => array(
+  public $t_history_widget_counts = array(
     'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary'),
     'm_companies_id' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false, 'key' => 'index'),
     'year' => array('type' => 'integer', 'null' => true, 'default' => null, 'length' => 4, 'unsigned' => false),
