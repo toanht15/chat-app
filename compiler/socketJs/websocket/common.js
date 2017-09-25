@@ -527,10 +527,11 @@ var socket, // socket.io
         html += '      #sincloBox ul#chatTalk li { text-align: left!important; word-wrap: break-word; word-break: break-all; white-space: pre-wrap!important; background-color: #FFF; white-space: pre; color: ' + chatContentTextColor + '; }';
         if (widget.chatMessageDesignType === 2) {
           // 吹き出し型
+          html += '      #sincloBox ul#chatTalk li { line-height: 1.4; padding: 5px 20px !important; border-radius: 12px !important;}';
           html += '      #sincloBox ul#chatTalk li.sinclo_se { ' + chatPosition.se + 'background-color: #FFF; display: inline-block; position: relative; margin-right: 15px; }';
           html += '      #sincloBox ul#chatTalk li.sinclo_se:before { height: 0px; content: ""; position: absolute; bottom: 0.35em; left: calc(100% - 2.5px); margin-top: -10px; border: 10px solid transparent; border-left: 10px solid #FFF; z-index: 2; }';
           html += '      #sincloBox ul#chatTalk li.sinclo_se:after { height: 0px; content: ""; position: absolute; bottom: 0.4em; left: 100%; margin-top: -9px; border: 9px solid transparent; border-left: 9px solid #C9C9C9; z-index: 1; }';
-          html += '      #sincloBox ul#chatTalk li.sinclo_re { ' + chatPosition.re + 'background-color:' + faintColor + '; display: inline-block; position: relative; margin-left: 10px; padding-right: 20px; }';
+          html += '      #sincloBox ul#chatTalk li.sinclo_re { ' + chatPosition.re + 'background-color:' + faintColor + '; display: inline-block; position: relative; margin-left: 10px; }';
           html += '      #sincloBox ul#chatTalk li.sinclo_re:before { height: 0px; content: ""; position: absolute; bottom: 0.35em; left: -19px; margin-top: -10px; border: 10px solid transparent; border-right: 10px solid ' + balloonInnerColor + '; z-index: 2; }';
           html += '      #sincloBox ul#chatTalk li.sinclo_re:after { height: 0px; content: ""; position: absolute; bottom: 0.4em; left: -19px; margin-top: -9px; border: 9px solid transparent; border-right: 9px solid #C9C9C9; z-index: 1; }';
         } else {
@@ -614,6 +615,10 @@ var socket, // socket.io
           html += '#sincloBox #mainImage em { top: -' + (10 * ratio) + 'px; right: -' + (10 * ratio) + 'px; width: ' + (25 * ratio) + 'px; height: ' + (20 * ratio) + 'px; font-size: ' + (11 * ratio) + 'px; padding: ' + (1 * ratio) + 'px; }';
           html += '#sincloBox ul#chatTalk { padding: ' + (5 * ratio) + 'px; height: ' + (194 * ratio) + 'px; }';
           html += '#sincloBox ul#chatTalk li { border-radius: ' + (5 * ratio) + 'px; margin: ' + (5 * ratio) + 'px 0; padding: ' + (5 * ratio) + 'px; font-size: ' + (12 * ratio) + 'px; border: ' + (1 * ratio) + 'px solid #C9C9C9; }';
+          if (widget.chatMessageDesignType === 2) {
+            // 吹き出し型
+            html += '#sincloBox ul#chatTalk li { line-height: 1.4; padding: ' + (5 * ratio) + 'px ' + (20 * ratio) + 'px !important; border-radius: ' + (12 * ratio) + 'px !important;}';
+          }
           html += '#sincloBox ul#chatTalk li sinclo-radio { margin: 0.55em 0 -1em 0.5em; display: block; } ';
           html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"] { margin-right: 0.5em } ';
           html += '#sincloBox ul#chatTalk li sinclo-radio * { webkit-transform: scale(' + (1 * ratio) + '); transform: scale(' + (1 * ratio) + '); moz-transform: scale(' + (1 * ratio) + '); } ';
