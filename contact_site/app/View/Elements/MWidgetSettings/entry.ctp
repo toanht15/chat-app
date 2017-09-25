@@ -328,9 +328,9 @@ $headerNo = 1;
           <li>
             <span class="require"><label>最小化時のデザイン</label></span>
             <div ng-init="minimizedDesignToggle='<?=h($this->formEx->val($this->data['MWidgetSetting'], 'minimize_design_type'))?>'">
-              <label class="pointer choose" for="minimizedDesign1"><input type="radio" name="data[MWidgetSetting][minimize_design_type]" ng-model="minimizedDesignToggle" id="minimizedDesign1" class="showHeader" value="1" >シンプル表示しない</label><br>
-              <label class="pointer choose" for="minimizedDesign2"><input type="radio" name="data[MWidgetSetting][minimize_design_type]" ng-model="minimizedDesignToggle" id="minimizedDesign2" class="showHeader" value="2" >スマホのみシンプル表示する</label><br>
-              <label class="pointer choose" for="minimizedDesign3"><input type="radio" name="data[MWidgetSetting][minimize_design_type]" ng-model="minimizedDesignToggle" id="minimizedDesign3" class="showHeader" value="3" >すべての端末でシンプル表示する</label><br>
+              <label class="pointer choose" for="minimizedDesign1"><input type="radio" name="data[MWidgetSetting][minimize_design_type]" ng-model="minimizedDesignToggle" id="minimizedDesign1" ng-click="clickMinimizedDesignToggle(1)" class="showHeader" value="1" >シンプル表示しない</label><br>
+              <label class="pointer choose" for="minimizedDesign2"><input type="radio" name="data[MWidgetSetting][minimize_design_type]" ng-model="minimizedDesignToggle" id="minimizedDesign2" ng-click="clickMinimizedDesignToggle(3)" class="showHeader" value="2" >スマホのみシンプル表示する</label><br>
+              <label class="pointer choose" for="minimizedDesign3"><input type="radio" name="data[MWidgetSetting][minimize_design_type]" ng-model="minimizedDesignToggle" id="minimizedDesign3" ng-click="clickMinimizedDesignToggle(1)" class="showHeader" value="3" >すべての端末でシンプル表示する</label><br>
             </div>
           </li>
           <!-- 最小化時のデザイン -->

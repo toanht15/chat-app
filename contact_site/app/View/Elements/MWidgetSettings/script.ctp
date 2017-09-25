@@ -38,11 +38,13 @@ sincloApp.controller('WidgetCtrl', function($scope){
         if ( !$scope.openFlg ) { // 最小化されている場合
           var main = document.getElementById("miniTarget");  // 非表示対象エリア
           var height = 0;
-          for(var i = 0; main.children.length > i; i++){ // 非表示エリアのサイズを計測する
-            if ( Number(num) === 3 && main.children[i].id === 'navigation' ) continue; // SPの場合はナビゲーションは基本表示しない
-            height += main.children[i].offsetHeight;
+          if(main){
+            for(var i = 0; main.children.length > i; i++){ // 非表示エリアのサイズを計測する
+              if ( Number(num) === 3 && main.children[i].id === 'navigation' ) continue; // SPの場合はナビゲーションは基本表示しない
+              height += main.children[i].offsetHeight;
+            }
+            main.style.height = height + "px";
           }
-          main.style.height = height + "px";
         }
       }
 
@@ -304,8 +306,15 @@ sincloApp.controller('WidgetCtrl', function($scope){
           };
         }
       });
-
     };
+
+    //最小化時のデザインがクリックされた時の動作
+    $scope.clickMinimizedDesignToggle = function(tag){
+      if($scope.showWidgetType !== tag){
+        $scope.switchWidget(tag);
+      }
+      $scope.openFlg = false;
+    }
 
     $scope.settingShowTimeRadioButtonEnable = function(jq) {
       jq.prop('disabled',false).parent().css('color','');
@@ -398,17 +407,17 @@ sincloApp.controller('WidgetCtrl', function($scope){
 
     angular.element(window).on("focus", ".showHeader", function(e){
         if ( $scope.showWidgetType === 1 ) return false;
-        if ( $scope.showWidgetType === 3 ) {
-          if ( !$scope.spHeaderLightToggle() ) return false;
-        }
-        $scope.switchWidget(1);
+//        if ( $scope.showWidgetType === 3 ) {
+//           if ( !$scope.spHeaderLightToggle() ) return false;
+//         }
+//        $scope.switchWidget(1);
         $scope.$apply();
     });
     angular.element(window).on("focus", ".showChat", function(e){
         $scope.widget.showTab = "chat";
-        if ( $scope.spHeaderLightToggle() ) {
-          $scope.switchWidget(1);
-        }
+//         if ( $scope.spHeaderLightToggle() ) {
+//           $scope.switchWidget(1);
+//         }
         $scope.$apply();
     });
 
