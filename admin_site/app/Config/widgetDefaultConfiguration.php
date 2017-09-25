@@ -118,6 +118,18 @@ $config['default'] = [
       "showName"=>"2",
 
       /**
+       * 吹き出しデザイン
+       * 1: BOX型、2: 吹き出し型
+       */
+      "chatMessageDesignType"=>"2",
+
+      /**
+       * メッセージ表示時アニメーション
+       * 1: 有効、0: 無効
+       */
+      "chatMessageWithAnimation"=>"1",
+
+      /**
        * スマートフォンウィジェット表示
        */
       "spShowFlg"=>"1",
