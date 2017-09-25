@@ -338,7 +338,7 @@ var socket, // socket.io
           html += '#sincloBox #mainImage em { top: -' + (10 * ratio) + 'px; right: -' + (10 * ratio) + 'px; width: ' + (25 * ratio) + 'px; height: ' + (20 * ratio) + 'px; font-size: ' + (11 * ratio) + 'px; padding: ' + (1 * ratio) + 'px; }';
           html += '#sincloBox ul#chatTalk { padding: ' + (5 * ratio) + 'px; height: ' + (194 * ratio) + 'px; }';
           html += '#sincloBox ul#chatTalk li { border-radius: ' + (5 * ratio) + 'px; margin: ' + (5 * ratio) + 'px 0; padding: ' + (5 * ratio) + 'px; font-size: ' + (12 * ratio) + 'px; border: ' + (1 * ratio) + 'px solid #C9C9C9; }';
-          html += '#sincloBox ul#chatTalk li sinclo-radio { margin: 0.55em 0 -1em 0.5em; display: block; } ';
+          html += '#sincloBox ul#chatTalk li sinclo-radio { margin: 0.15em 0 -1em 0.5em; display: block; } ';
           html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"] { margin-right: 0.5em } ';
           html += '#sincloBox ul#chatTalk li sinclo-radio * { webkit-transform: scale(' + (1 * ratio) + '); transform: scale(' + (1 * ratio) + '); moz-transform: scale(' + (1 * ratio) + '); } ';
           html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label { display: inline; padding-left: 1.5em; } ';
@@ -379,7 +379,7 @@ var socket, // socket.io
           html += '#sincloBox #widgetTitle em { width: 2em; height: 2em; font-size: 0.8em; padding: 0.25em; border-radius: 5em; margin: 0.25em; }';
           html += '#sincloBox ul#chatTalk { padding: 0.3em; }';
           html += '#sincloBox ul#chatTalk li { font-size: 0.8em; border-radius: 0.3em; margin: 0.3em 0; padding: 0.3em; border: 1px solid #C9C9C9; }';
-          html += '#sincloBox ul#chatTalk li sinclo-radio { margin: 0.55em 0 -1em 0.5em; display: inline-block; } ';
+          html += '#sincloBox ul#chatTalk li sinclo-radio { margin: 0.15em 0 -1em 0.5em; display: inline-block; } ';
           html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"] { margin-right: 0.5em } ';
           html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"], #sincloBox ul#chatTalk li sinclo-radio label { webkit-transform: scale(1.3); transform: scale(1.3); moz-transform: scale(1.3); } ';
           html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label { display: inline; padding-left: 1em; } ';
