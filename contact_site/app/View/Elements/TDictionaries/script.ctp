@@ -149,24 +149,6 @@ function tabSort(){
   var index = document.getElementById("select_tab_index").value;
   if (!document.getElementById("tabsort").checked) {
     confirmTabSort();
-//     document.getElementById("tabSortMessage").style.display="none";
-//     document.getElementById("tabsort_btn").style.display="none";
-//     //カテゴリ名入力欄変更可
-//     document.getElementById("input_category_value").disabled = "";
-//     //定型文登録ボタン押下可
-//     document.getElementById('tdictionaries_add_btn'+index).className="btn-shadow disOffgreenBtn";
-//     //定型文の並べ替えチェックボックスチェック可
-//     document.getElementById('sort'+index).disabled = "";
-//     //カテゴリメニューボタン押下可
-//     document.getElementById('tdictionaries_manu_btn'+index).className="btn-shadow disOffgreenBtn";
-//     //全て選択チェックボックス選択可
-//     document.getElementById('allCheck'+index).disabled = "";
-//     //項目チェックボックス選択可
-//     var checkBoxList = document.querySelectorAll('[id^="selectTab'+index+'"]');
-//     for (var i = 0; i < checkBoxList.length; i++) {
-//       checkBoxList[i].disabled = "";
-//     }
-//     $(".ui-tabs-nav").addClass("move").sortable("disable");
   }
   else {
     $('[id^="selectTab"]').prop('checked', false);
@@ -269,27 +251,6 @@ function toggleSort(){
   var index = document.getElementById("select_tab_index").value;
   if (!document.getElementById("sort" + index).checked) {
     confirmSort();
-//     //ソートモードoff
-//     $(".sortable").addClass("move").sortable("disable");
-//     //定型文ソートモードメッセージ＆登録ボタン非表示
-//     document.getElementById("sortText" + index).style.display="";
-//     document.getElementById("sortMessage" + index).style.display="none";
-//     document.getElementById("tdictionaries_sort_btn").style.display="none";
-//     //カテゴリ名入力欄変更可
-//     document.getElementById("input_category_value").disabled = "";
-//     //定型文登録ボタン押下可
-//     document.getElementById('tdictionaries_add_btn'+index).className="btn-shadow disOffgreenBtn";
-//     //カテゴリの並べ替えチェックボックスチェック可
-//     document.getElementById('tabsort').disabled = "";
-//     //カテゴリメニューボタン押下可
-//     document.getElementById('tdictionaries_manu_btn'+index).className="btn-shadow disOffgreenBtn";
-//     //全て選択チェックボックス選択可
-//     document.getElementById('allCheck'+index).disabled = "";
-//     //項目チェックボックス選択可
-//     var checkBoxList = document.querySelectorAll('[id^="selectTab'+index+'"]');
-//     for (var i = 0; i < checkBoxList.length; i++) {
-//       checkBoxList[i].disabled = "";
-//     }
   }
   else {
     $('[id^="selectTab"]').prop('checked', false);
@@ -520,66 +481,6 @@ $( function() {
       document.getElementById('gray_tdictionaries_manu_btn' + index).className="btn-shadow disOffgrayBtn";
     }
     setWidth(event);
-    var allTabList = document.querySelectorAll('[id^="ui-id-"]');
-    //要素の高さを取得
-    var newid = "ui-id-" + (index + 1);
-    var top = document.getElementById(newid).getBoundingClientRect().top;
-    //基準点（0盤目のタブの高さを取得）
-    var c_top = document.getElementById(oldid).getBoundingClientRect().top;
-    //もし基準点と高さが異なった場合
-    if(top != c_top){
-//       //タブ各要素の高さ順に配列を取得
-//       for (var i = 0; i < allTabList.length; i++) {
-
-//       }
-//       //<li>リスト取得（タブリスト）
-//       var array1 = [];
-//       var array2 = [];
-//       $("#tablist li").each(function(i) {
-//         if(i < index){
-//           array1.push({
-//             name: $(this).find("a").text(),
-//             source: $(this).html()
-//           });
-//         }
-//         else{
-//           array2.push({
-//             name: $(this).find("a").text(),
-//             source: $(this).html()
-//           });
-//         }
-//       });
-
-//       //var tabListArray = Array.prototype.slice.call(allTabList);
-//       var tabListArray = ul.querySelectorAll('[id^="ui-id-"]');
-//       for (var i = 0; i < tabListArray.length; i++) {
-//         if(i < index){
-//           array1.push({
-//               name: tabListArray[i].text,
-//               source: $("#"+tabListArray[i].id).html()
-//             });
-//         }
-//         else{
-//             array2.push({
-//                 name: tabListArray[i].text,
-//                 source: $("#"+tabListArray[i].id).html()
-//             });
-//         }
-//       }
-//       var liList = array2.concat(array1);
-//       var arr = [];
-//       for (i = 0; i < liList.length; i++) {
-//         arr[i] = {
-//           idx : i,
-//           id : Number(liList[i].substr(6))
-//         };
-//       }
-//       for (i = 0; i < arr.length; i++) {
-//         ul.insertBefore(childs[arr[i].index]);
-//         //ul.appendChild(ul.removeChild(liList[i]))
-//         //$("#tablist").append(liList[i].value);
-//       }
-    }
   });
 
   //プラン別対応
@@ -628,77 +529,17 @@ $( function() {
 //  var currentWidth = $(window).outerWidth();
   $(window).on('load resize', function(e){
     setWidth(e);
-
-    var allTabList = document.querySelectorAll('[id^="ui-id-"]');
-    //タブが一行に収まっていてoverflowがされているときの処理（ウィンドウが大きくなった時を想定）
-    var tobTopList = getTabTopList(allTabList);
-    var overflowList = [];
-    if(tobTopList.length == 1){
-      var allTabList = document.querySelectorAll('[id^="ui-id-"]');
-      //overflowしているか判定ししていたら配列に保持
-      for (var i = 0; i < allTabList.length; i++) {
-//          var id = allTabList[i].id;
-//          var jq_obj = $(allTabList[i]);
-//          if(isEllipsisActive(jq_obj)){
-//            overflowList.push(allTabList[i]);
-//          }
-         if(isEllipsisActive(allTabList[i])){
-             overflowList.push(allTabList[i]);
-         }
-      }
-      //overflowしているリストがあればoverflowの分だけ繰り返し
-      if(overflowList.length > 0){
-        //タブが1行でなくなるまで繰り返し
-        var lineChk = false;
-        var isMaxWidth = false;
-        var px = 1;
-        var totalWidth = 0;
-        while (lineChk == false) {
-          var currentTotalWidth = 0;
-          for (var i = 0; i < overflowList.length; i++) {
-            var tab_w = overflowList[i].clientWidth;
-            var defaultWidthSize = Number($(overflowList[i]).data('defaultWidth'));
-            var tabWidth = (defaultWidthSize < (tab_w + 1)) ? defaultWidthSize : tab_w + 1;
-            overflowList[i].style.width = tabWidth+'px';
-            overflowList[i].style.textAlign = 'center';
-            currentTotalWidth += tabWidth;
-          }
-          var tobTopList = getTabTopList(allTabList);
-          if(tobTopList.length > 1){
-            //一行以上になったらループ終わり
-            lineChk = true;
-          } else if(currentTotalWidth === totalWidth) {
-            //一行以上になったらループ終わり
-            lineChk = true;
-            isMaxWidth = true;
-          }
-          totalWidth = currentTotalWidth;
-        }
-        if(!isMaxWidth) {
-          //二行になってしまう直前のサイズに戻す
-          for (var i = 0; i < overflowList.length; i++) {
-            var tab_w = overflowList[i].clientWidth;
-            overflowList[i].style.width = (tab_w - 2)+'px';
-            overflowList[i].style.textAlign = 'center';
-          }
-        }
-//        setWidth();
-      }
-    }
-
-//    currentWidth = afterWindowSize;
   });
 
   //デフォルトのタブ幅セット
+  var allDefaultTabWidth = 0;
+  var minimumWidgetSizeList = {};
   function setWidth(e){
     var afterWindowSize = $(this).outerWidth();
     //全てのタブの要素を取得
     var allTabList = document.querySelectorAll('[id^="ui-id-"]');
     for (var i = 0; i < allTabList.length; i++) {
       var tab_w = allTabList[i].clientWidth;
-      if(e.type === 'load') {
-        $(allTabList[i]).data('defaultWidth', tab_w + 1);
-      }
       if(tab_w < 104){
         allTabList[i].style.width = '104px';
         allTabList[i].style.textAlign = 'center';
@@ -711,41 +552,37 @@ $( function() {
           allTabList[i].style.textAlign = 'center';
         }
       }
+      if(e.type === 'load') {
+        $(allTabList[i]).data('defaultWidth', allTabList[i].clientWidth);
+        allDefaultTabWidth += allTabList[i].clientWidth + 1;
+      }
     }
-    //タブの高さごとの配列を取得
-    var tobTopList = getTabTopList(allTabList);
-    if(tobTopList.length > 1){
-      //表示が複数行になってしまっているとき
-      //タブが一行に収まるまで繰り返し
-      var lineChk = false;
-      var px = 1;
-      while (lineChk == false) {
-        var widthChanged = false;
-        for (var i = 0; i < allTabList.length; i++) {
-          //対象のタブの幅を取得
-          var tab_w = allTabList[i].clientWidth;
-          if(allTabList[i].clientWidth > 40){
-            widthChanged = true;
-            allTabList[i].style.width = (tab_w - px)+'px';
-            allTabList[i].style.textAlign = 'center';
-          }
+
+    // タブ表示領域サイズを取得
+    var tabDisplayWidth = $('#tablist').outerWidth() - (5 * allTabList.length);
+    for (var i = 0; i < allTabList.length; i++) {
+      var tabWidth = $(allTabList[i]).data('defaultWidth');
+      var ratio = tabWidth / allDefaultTabWidth;
+
+      if (tabDisplayWidth * ratio >  tabWidth) {
+        allTabList[i].style.width = tabWidth - 2 + "px";
+        if(typeof minimumWidgetSizeList[i] !== 'undefined') {
+          delete minimumWidgetSizeList[i];
         }
-        //全てのタブの要素を取得
-        var allTabList = document.querySelectorAll('[id^="ui-id-"]');
-        //タブの高さごとの配列を取得
-        var tobTopList = getTabTopList(allTabList);
-        if(!widthChanged || tobTopList.length == 1){
-          //一行になったらループ終わり
-          lineChk = true;
+      } else if((tabDisplayWidth * ratio - (2 * (1.5 * ratio) + (0.1 * Object.keys(minimumWidgetSizeList).length))) > 40) {
+        allTabList[i].style.width = (tabDisplayWidth * ratio - (2 * (1.5 * ratio) + (0.1 * Object.keys(minimumWidgetSizeList).length))) + "px";
+        if(typeof minimumWidgetSizeList[i] !== 'undefined') {
+          delete minimumWidgetSizeList[i];
+        }
+      } else {
+        allTabList[i].style.width = "40px";
+        if(typeof minimumWidgetSizeList[i] === 'undefined') {
+          minimumWidgetSizeList[i] = true;
         }
       }
     }
   }
 
-  //オーバーフローされているかどうかの判定
-//   function isEllipsisActive($jQueryObject) {
-//     return ($jQueryObject.outerWidth() < $jQueryObject[0].scrollWidth);
-//   }
   function isEllipsisActive(e) {
     return (e.offsetWidth < e.scrollWidth);
   }
