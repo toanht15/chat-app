@@ -1971,7 +1971,46 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
               }
 
               $('#popup-frame').draggable({
-                handle: "#popup-title"
+                handle: "#popup-title",
+                stop: function() {
+                  // スクロールを使用するか
+                  var subCon = document.getElementById('popup-frame');
+                  // 詳細画面が表示されている場合
+                  if (document.getElementById('customer_sub_pop').style.display === "block") {
+                    /* position-top */
+                    if ($("#popup-frame").css("top").indexOf('px') < 0) return false;
+                    var subConTop = Number($("#popup-frame").css("top").replace("px", ""));
+
+                    // ポップアップが画面外（上）に潜った場合の対処
+                    var calc = subConTop - 60;
+                    if (calc < 0) {
+                      subCon.style.top = "60px";
+                    }
+
+                    // ポップアップが画面外（下）に潜った場合の対処
+                    var subHeader = document.getElementById('popup-title'); // モーダル内のヘッダー
+                    var calc = window.innerHeight - (subConTop + Number(subHeader.offsetHeight));
+                    if (calc < 0) {
+                      subCon.style.top = window.innerHeight - Number(subHeader.offsetHeight) + "px";
+                    }
+
+                    /* position-left */
+                    if ($("#popup-frame").css("left").indexOf('px') < 0) return false;
+
+                    var subConLeft = Number($("#popup-frame").css("left").replace("px", ""));
+                    // ポップアップが画面外（左）に潜った場合の対処
+                    if (subConLeft < 0) {
+                      subCon.style.left = "0";
+                    }
+
+                    // ポップアップが画面外（右）に潜った場合の対処
+                    var sideBar = document.getElementById('sidebar-main');
+                    var widthArea = window.innerWidth - Number(sideBar.offsetWidth); // 有効横幅
+                    if ((widthArea - subConLeft) < 50) {
+                      subCon.style.left = widthArea - 80 + "px";
+                    }
+                  }
+                }
               });
 
               //カテゴリースクロール対応
