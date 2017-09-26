@@ -349,6 +349,12 @@ document.body.onload = function(){
   for (var i = 0; i < checkBoxList.length; i++) {
     checkBoxList[i].addEventListener('change', actBtnShow); // 有効無効ボタンの表示切り替え
   }
+
+  // チェックボックスが入っていないtdタグ群
+  var clickTargetTds = document.querySelectorAll('td:not(.noClick)');
+  for (var i = 0; i < clickTargetTds.length; i++) {
+    clickTargetTds[i].addEventListener('click', isCheck); // 対象にチェックを付ける
+  }
 };
 
 //全選択
