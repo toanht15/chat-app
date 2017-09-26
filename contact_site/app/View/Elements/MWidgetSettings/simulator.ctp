@@ -40,11 +40,10 @@
       #sincloBox .pb07 { padding-bottom: 7px }
       #sincloBox .notSelect { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
       #sincloBox .center { text-align: center!important; padding: 7px 30px!important }
-      #sincloBox .center.largeSize { text-align: center!important; padding: 7px 30px!important }
       #sincloBox div#descriptionSet { cursor: pointer; }
       #sincloBox p#widgetTitle { position:relative; z-index: 1; cursor:pointer; border-radius: {{radius_ratio}}px {{radius_ratio}}px 0 0; border: 1px solid {{main_color}}; border-bottom:none; background-color: {{main_color}};text-align: center; font-size: 14px; padding: 7px 30px 7px 70px; margin: 0; color: {{string_color}}; height: 32px }
-      #sincloBox p#widgetTitle.middleSize { font-size: 15px; padding: 9px 30px 7px 70px; margin: 0; height: 38.5px }
-      #sincloBox p#widgetTitle.largeSize { font-size: 15px; padding: 12px 30px 7px 70px; margin: 0; height: 45px }
+      #sincloBox p#widgetTitle.middleSize { font-size: 15px; }
+      #sincloBox p#widgetTitle.largeSize { font-size: 15px; }
       #sincloBox p#widgetTitle.spText{ overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
       #sincloBox p#widgetTitle:after { background-position-y: 3px; background-image: url('<?=$gallaryPath?>yajirushi.png'); top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear}
       #sincloBox.open p#widgetTitle:after { transform: rotate(0deg); }
@@ -61,21 +60,27 @@
     <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
       @keyframes leftEffect { 0% { transform :translate3d(-20px, 0px, 0px) scale(0.8); opacity :0; } 69% {} 100% { transform :translate3d(0px, 0px, 0px); opacity :1; } }
       #sincloBox ul#chatTalk { width: 100%; height: 194px; padding: 5px; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0}
-      #sincloBox ul#chatTalk.middleSize { height: 282px; }
-      #sincloBox ul#chatTalk.largeSize { height: 367px; }
+      #sincloBox ul#chatTalk.middleSize { height: 284px; }
+      #sincloBox ul#chatTalk.largeSize { height: 374px; }
       #sincloBox ul#chatTalk div.liLeft { text-align: left; }
       #sincloBox ul#chatTalk div.liRight { text-align: right; }
       #sincloBox ul#chatTalk li { border-radius: 5px; background-color: #FFF; margin: 5px 0 0; padding: 5px; font-size: 12px; border: 1px solid #C9C9C9; line-height: 1.8; white-space: pre; color: #333333; }
       #sincloBox ul#chatTalk li.middleSize { font-size: 13px; }
       #sincloBox ul#chatTalk li.largeSize { font-size: 13px; }
       #sincloBox ul#chatTalk li.boxType { word-wrap: break-word; word-break: break-all; }
-      #sincloBox ul#chatTalk li.balloonType { display: inline-block; position: relative; padding: 5px 20px; text-align: left!important; word-wrap: break-word; word-break: break-all; border-radius: 12px; line-height: 1.4;}
-      #sincloBox ul#chatTalk li.sinclo_se.balloonType { margin-right: 15px; }
-      #sincloBox ul#chatTalk li.sinclo_se.balloonType:before { height: 0px; content: ""; position: absolute; bottom: 5px; left: calc(100% - 2.5px); margin-top: -10px; border: 10px solid transparent; border-left: 10px solid #FFF; z-index: 2; }
-      #sincloBox ul#chatTalk li.sinclo_se.balloonType:after { height: 0px; content: ""; position: absolute; bottom: 6px; left: 100%; margin-top: -9px; border: 9px solid transparent; border-left: 9px solid #C9C9C9; z-index: 1; }
-      #sincloBox ul#chatTalk li.sinclo_re.balloonType { margin-left: 10px; padding-right: 20px; }
-      #sincloBox ul#chatTalk li.sinclo_re.balloonType:before { height: 0px; content: ""; position: absolute; bottom: 5px; left: -19px; margin-top: -10px; border: 10px solid transparent; border-right: 10px solid {{makeBalloonTriangleColor()}}; z-index: 2; }
-      #sincloBox ul#chatTalk li.sinclo_re.balloonType:after { height: 0px; content: ""; position: absolute; bottom: 6px; left: -19px; margin-top: -9px; border: 9px solid transparent; border-right: 9px solid #C9C9C9; z-index: 1; }
+      #sincloBox ul#chatTalk li.balloonType { display: inline-block; position: relative; padding: 5px 15px; text-align: left!important; word-wrap: break-word; word-break: break-all; border-radius: 12px; line-height: 1.4;}
+      #sincloBox ul#chatTalk li.sinclo_se.balloonType { margin-right: 15px; border-bottom-right-radius: 0px; }
+      #sincloBox ul#chatTalk li.sinclo_se.balloonType:before { height: 0px; content: ""; position: absolute; bottom: 0px; left: calc(100% - 3px); margin-top: -10px; border: 5px solid transparent; border-left: 5px solid #FFF; border-bottom: 5px solid #FFF; z-index: 2; }
+      #sincloBox ul#chatTalk li.sinclo_se.balloonType:after { height: 0px; content: ""; position: absolute; bottom: -1px; left: 100%; margin-top: -9px; border: 5px solid transparent; border-left: 5px solid #C9C9C9; border-bottom: 5px solid #C9C9C9; z-index: 1; }
+      /* 二等辺三角形バージョン */
+      /*#sincloBox ul#chatTalk li.sinclo_se.balloonType:before { height: 0px; content: ""; position: absolute; bottom: 5px; left: calc(100% - 2.5px); margin-top: -10px; border: 10px solid transparent; border-left: 10px solid #FFF; z-index: 2; }*/
+      /*#sincloBox ul#chatTalk li.sinclo_se.balloonType:after { height: 0px; content: ""; position: absolute; bottom: 6px; left: 100%; margin-top: -9px; border: 9px solid transparent; border-left: 9px solid #C9C9C9; z-index: 1; }*/
+      #sincloBox ul#chatTalk li.sinclo_re.balloonType { margin-left: 10px; padding-right: 20px; border-bottom-left-radius: 0px; }
+      #sincloBox ul#chatTalk li.sinclo_re.balloonType:before { height: 0px; content: ""; position: absolute; bottom: 0px; left: -7px; margin-top: -10px; border: 5px solid transparent; border-right: 5px solid {{makeBalloonTriangleColor()}}; border-bottom: 5px solid {{makeBalloonTriangleColor()}}; z-index: 2; }
+      #sincloBox ul#chatTalk li.sinclo_re.balloonType:after { height: 0px; content: ""; position: absolute; bottom: -1px; left: -10px; margin-top: -9px; border: 5px solid transparent; border-right: 5px solid #C9C9C9; border-bottom: 5px solid #C9C9C9; z-index: 1; }
+      /* 二等辺三角形バージョン */
+      /*#sincloBox ul#chatTalk li.sinclo_re.balloonType:before { height: 0px; content: ""; position: absolute; bottom: 5px; left: -19px; margin-top: -10px; border: 10px solid transparent; border-right: 10px solid {{makeBalloonTriangleColor()}}; z-index: 2; }*/
+      /*#sincloBox ul#chatTalk li.sinclo_re.balloonType:after { height: 0px; content: ""; position: absolute; bottom: 6px; left: -19px; margin-top: -9px; border: 9px solid transparent; border-right: 9px solid #C9C9C9; z-index: 1; }*/
       #sincloBox ul#chatTalk li.effect_left { -webkit-animation-name:leftEffect; -moz-animation-name:leftEffect; -o-animation-name:leftEffect; -ms-animation-name:leftEffect; animation-name:leftEffect; -webkit-animation-duration:0.5s; -moz-animation-duration:0.5s; -o-animation-duration:0.5s; -ms-animation-duration:0.5s; animation-duration:0.5s; -webkit-animation-iteration-count:1; -moz-animation-iteration-count:1; -o-animation-iteration-count:1; -ms-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:forwards; -moz-animation-fill-mode:forwards; -o-animation-fill-mode:forwards; -ms-animation-fill-mode:forwards; animation-fill-mode:forwards; -webkit-transform-origin:left bottom; -moz-transform-origin:left bottom; -o-transform-origin:left bottom; -ms-transform-origin:left bottom; transform-origin:left bottom; opacity:0; -webkit-animation-delay:0.6s; -moz-animation-delay:0.6s; -o-animation-delay:0.6s; -ms-animation-delay:0.6s; animation-delay:0.6s; }
       #sincloBox ul#chatTalk li.boxType.chat_right { border-bottom-right-radius: 0; margin-left: 10px }
       #sincloBox ul#chatTalk li.boxType.chat_left { border-bottom-left-radius: 0; margin-right: 10px }
@@ -94,8 +99,8 @@
     <?php endif; ?>
     <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT]) ) :?>
       #sincloBox section#callTab{height: 296.5px;}
-      #sincloBox section#callTab.middleSize {height: 385px;}
-      #sincloBox section#callTab.largeSize {height: 469.5px;}
+      #sincloBox section#callTab.middleSize {height: 387px;}
+      #sincloBox section#callTab.largeSize {height: 476.5px;}
       #sincloBox section#callTab #telNumber { overflow: hidden; color: {{main_color}}; font-weight: bold; margin: 0 auto; text-align: center }
       #sincloBox section#callTab #telNumber:not(.notUseTime) { font-size: 18px; padding: 5px 0px 0px; height: 30px }
       #sincloBox section#callTab #telNumber.middleSize:not(.notUseTime) { font-size: 19px; padding: 5px 0px 0px; height: 30px }
