@@ -40,13 +40,15 @@
       #sincloBox .pb07 { padding-bottom: 7px }
       #sincloBox .notSelect { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
       #sincloBox .center { text-align: center!important; padding: 7px 30px!important }
-      #sincloBox .center.largeSize { text-align: center!important; padding: 7px 30px!important }
+      #sincloBox .center.largeSize { text-align: center!important; padding: 11px 30px!important }
       #sincloBox div#descriptionSet { cursor: pointer; }
       #sincloBox p#widgetTitle { position:relative; z-index: 1; cursor:pointer; border-radius: {{radius_ratio}}px {{radius_ratio}}px 0 0; border: 1px solid {{main_color}}; border-bottom:none; background-color: {{main_color}};text-align: center; font-size: 14px; padding: 7px 30px 7px 70px; margin: 0; color: {{string_color}}; height: 32px }
       #sincloBox p#widgetTitle.middleSize { font-size: 15px; padding: 9px 30px 7px 70px; margin: 0; height: 38.5px }
       #sincloBox p#widgetTitle.largeSize { font-size: 15px; padding: 12px 30px 7px 70px; margin: 0; height: 45px }
       #sincloBox p#widgetTitle.spText{ overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
       #sincloBox p#widgetTitle:after { background-position-y: 3px; background-image: url('<?=$gallaryPath?>yajirushi.png'); top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear}
+      #sincloBox p#widgetTitle.middleSize:after { top: 9px; }
+      #sincloBox p#widgetTitle.largeSize:after { top: 12px; }
       #sincloBox.open p#widgetTitle:after { transform: rotate(0deg); }
       #sincloBox:not(.open) p#widgetTitle:after { transform: rotate(180deg); }
       #sincloBox p#widgetSubTitle { background-color: #FFF; margin: 0; padding: 7px 0; text-align: left; border-width: 0 1px 0 1px; border-color: #E8E7E0; border-style: solid; padding-left: 77px; font-weight: bold; color: {{main_color}}; height: 29px; }
