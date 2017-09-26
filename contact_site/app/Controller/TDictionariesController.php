@@ -716,6 +716,10 @@ class TDictionariesController extends AppController {
       ],
       'conditions' => [
         'TDictionary.m_companies_id' => $this->userInfo['MCompany']['id'],
+        'NOT' => [
+          ['TDictionary.m_category_id' => 0],
+          ['TDictionary.m_category_id' => NULL]
+        ],
         'OR' => [
           'TDictionary.type' => C_DICTIONARY_TYPE_COMP,
           [
