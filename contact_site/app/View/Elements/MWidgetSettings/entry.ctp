@@ -191,8 +191,8 @@ $headerNo = 1;
             ?>
             <div ng-init="subTitleToggle='<?=h($this->formEx->val($this->data['MWidgetSetting'], 'show_subtitle'))?>'">
               <label class="pointer" for="showSubtitle1"><input type="radio" name="data[MWidgetSetting][show_subtitle]" ng-model="subTitleToggle" id="showSubtitle1" class="showHeader" value="1" >企業名を表示する</label><br>
-              <label class="pointer" for="showSubtitle2"><input type="radio" name="data[MWidgetSetting][show_subtitle]" ng-model="subTitleToggle" id="showSubtitle2" class="showHeader" value="2" >企業名を表示しない</label><br>
-              <?=$subTitle?>
+              <?=$subTitle?><br>
+              <label class="pointer" for="showSubtitle2"><input type="radio" name="data[MWidgetSetting][show_subtitle]" ng-model="subTitleToggle" id="showSubtitle2" class="showHeader" value="2" >企業名を表示しない</label>
             </div>
           </li>
           <?php if ($this->Form->isFieldError('sub_title')) echo $this->Form->error('sub_title', null, ['wrap' => 'li']); ?>
