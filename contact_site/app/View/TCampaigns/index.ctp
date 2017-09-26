@@ -32,7 +32,7 @@
       </thead>
       <tbody class="sortable">
       <?php foreach((array)$tCampaignList as $key => $val): ?>
-        <tr data-id="<?=$val['TCampaign']['id']?>" onclick="openEditDialog('<?=h($val['TCampaign']['id'])?>')">
+        <tr class="pointer" data-id="<?=$val['TCampaign']['id']?>" onclick="openEditDialog('<?=h($val['TCampaign']['id'])?>')">
           <td class="tCenter"><?=h($val['TCampaign']['name'])?></td>
           <td class="tCenter"><?=h($val['TCampaign']['parameter'])?></td>
           <td class="tLeft pre"><?=h($val['TCampaign']['comment'])?></td>
