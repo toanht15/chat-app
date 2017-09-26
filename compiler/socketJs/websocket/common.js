@@ -416,7 +416,7 @@ var socket, // socket.io
         //スマホだったら縦か横かを判定
         if($(window).height() > $(window).width()){
           //縦
-          $('#widgetTitle').css('text-align', '-webkit-center');
+          $('#widgetTitle').css('text-align', '-webkit-auto');
         }
         else{
           //横
@@ -1070,6 +1070,15 @@ var socket, // socket.io
             else{
               //ヘッダ表示（通常表示）
               common.abridgementTypeShow();
+              //表示するタイミングを指定している場合heightの値を取り直す必要がある
+              if(window.sincloInfo.widget.showTiming !== 4){
+                if(dataOpenflg === 'false'){
+                  var height = sinclo.operatorInfo.header.offsetHeight;
+                  $('#sincloBox').animate({
+                    height: height + "px"
+                  }, 'first');
+                }
+              }
             }
             // このタイミングでの最大化実行条件
             // １：PCの場合、ウィジェット最大化処理がウィジェット非表示時に実行されていた場合
@@ -1129,6 +1138,7 @@ var socket, // socket.io
       isShown: function() {
         return storage.s.get("widgetShown") === "true";
       },
+      //サイト/ページ訪問時の設定
       getRemainingTimeMsec: function() {
         var remainingTime = 0;
         switch(window.sincloInfo.widget.showTiming) {
