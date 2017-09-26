@@ -41,17 +41,14 @@
       #sincloBox .notSelect { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
       #sincloBox .center { text-align: center!important; padding: 7px 30px!important }
       #sincloBox div#descriptionSet { cursor: pointer; }
-      #sincloBox p#widgetTitle { position:relative; z-index: 1; cursor:pointer; border-radius: {{radius_ratio}}px {{radius_ratio}}px 0 0; border: 1px solid {{main_color}}; border-bottom:none; background-color: {{main_color}};text-align: center; font-size: 14px; padding: 7px 30px 7px 70px; margin: 0; color: {{string_color}}; height: 32px }
+      #sincloBox p#widgetTitle { position:relative; z-index: 1; cursor:pointer; border-radius: {{radius_ratio}}px {{radius_ratio}}px 0 0; border: 1px solid {{main_color}}; border-bottom:none; background-color: {{main_color}};text-align: center; font-size: 14px; padding: 7px 30px 7px 70px; margin: 0; color: {{string_color}}; height: 32px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
       #sincloBox p#widgetTitle.middleSize { font-size: 15px; }
       #sincloBox p#widgetTitle.largeSize { font-size: 15px; }
-      #sincloBox p#widgetTitle.spText{ overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
       #sincloBox p#widgetTitle:after { background-position-y: 3px; background-image: url('<?=$gallaryPath?>yajirushi.png'); top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear}
       #sincloBox.open p#widgetTitle:after { transform: rotate(0deg); }
       #sincloBox:not(.open) p#widgetTitle:after { transform: rotate(180deg); }
-      #sincloBox p#widgetSubTitle { background-color: #FFF; margin: 0; padding: 7px 0; text-align: left; border-width: 0 1px 0 1px; border-color: #E8E7E0; border-style: solid; padding-left: 77px; font-weight: bold; color: {{main_color}}; height: 29px; }
-      #sincloBox p#widgetSubTitle.spText{ overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-      #sincloBox p#widgetDescription { background-color: #FFF; margin: 0; padding-bottom: 7px; text-align: left; border-width: 0 1px 1px 1px; border-color: #E8E7E0; border-style: solid; padding-left: 77px; height: 23px; color: #666666; }
-      #sincloBox p#widgetDescription.spText{ overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      #sincloBox p#widgetSubTitle { background-color: #FFF; margin: 0; padding: 7px 0; text-align: left; border-width: 0 1px 0 1px; border-color: #E8E7E0; border-style: solid; padding-left: 77px; font-weight: bold; color: {{main_color}}; height: 29px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      #sincloBox p#widgetDescription { background-color: #FFF; margin: 0; padding-bottom: 7px; text-align: left; border-width: 0 1px 1px 1px; border-color: #E8E7E0; border-style: solid; padding-left: 77px; height: 23px; color: #666666; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
       #sincloBox section { display: inline-block; width: 285px; border: 1px solid #E8E7E0; border-top: none; }
       #sincloBox section.middleSize { width: 342.5px; }
       #sincloBox section.largeSize { width: 400px; }
@@ -156,17 +153,17 @@
     <!-- 画像 -->
     <div>
       <!-- タイトル -->
-      <p id="widgetTitle" class="widgetOpener notSelect" ng-class="{center: spHeaderLightToggle() || mainImageToggle !== '1',middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3', spText:showWidgetType === 3}">{{title}}</p>
+      <p id="widgetTitle" class="widgetOpener notSelect" ng-class="{center: spHeaderLightToggle() || mainImageToggle !== '1',middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">{{title}}</p>
       <!-- タイトル -->
     </div>
     <div id='descriptionSet' class="widgetOpener notSelect" ng-hide=" spHeaderLightToggle() || mainImageToggle == '2' && subTitleToggle == '2' && descriptionToggle == '2'">
       <!-- サブタイトル -->
-      <p ng-if="subTitleToggle == '1'" id="widgetSubTitle" ng-class="{spText:showWidgetType === 3}">{{sub_title}}</p>
+      <p ng-if="subTitleToggle == '1'" id="widgetSubTitle" >{{sub_title}}</p>
       <p ng-if="subTitleToggle == '2'" id="widgetSubTitle"></p>
       <!-- サブタイトル -->
 
       <!-- 説明文 -->
-      <p ng-if="descriptionToggle == '1'" id="widgetDescription" ng-class="{spText:showWidgetType === 3}">{{description}}</p>
+      <p ng-if="descriptionToggle == '1'" id="widgetDescription" >{{description}}</p>
       <p ng-if="descriptionToggle == '2'" id="widgetDescription"></p>
       <!-- 説明文 -->
     </div>
