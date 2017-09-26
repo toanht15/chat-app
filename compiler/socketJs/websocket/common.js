@@ -645,10 +645,10 @@ var socket, // socket.io
           html += '#sincloBox ul#chatTalk li span.cName { font-size: ' + (13 * ratio) + 'px; margin: 0 0 ' + (5 * ratio) + 'px 0; }';
           if (widget.chatMessageDesignType === 2) {
             // 吹き出し型
-            html += '#sincloBox ul#chatTalk li.sinclo_se:before { bottom: 0.35em; left: calc(100% - 2px); }';
-            html += '#sincloBox ul#chatTalk li.sinclo_se:after { bottom: 0.4em; }';
-            html += '#sincloBox ul#chatTalk li.sinclo_re:before { bottom: 0.35em; left: -18px; }';
-            html += '#sincloBox ul#chatTalk li.sinclo_re:after { bottom: 0.4em; }';
+            // html += '#sincloBox ul#chatTalk li.sinclo_se:before { bottom: 0.35em; left: calc(100% - 2px); }';
+            // html += '#sincloBox ul#chatTalk li.sinclo_se:after { bottom: 0.4em; }';
+            // html += '#sincloBox ul#chatTalk li.sinclo_re:before { bottom: 0.35em; left: -18px; }';
+            // html += '#sincloBox ul#chatTalk li.sinclo_re:after { bottom: 0.4em; }';
           }
           html += '#sincloBox ul#chatTalk sinclo-chat-receiver #receiveMessage { font-size: ' + (10 * ratio) + 'px; }';
           html += '#sincloBox section#chatTab sinclo-div { height: ' + (60*ratio) + 'px; padding: ' + (5 * ratio) + 'px; }';
@@ -692,10 +692,10 @@ var socket, // socket.io
           html += '#sincloBox ul#chatTalk li span.cName { margin: 0 0 0.3em 0 }';
           if (widget.chatMessageDesignType === 2) {
             // 吹き出し型
-            html += '#sincloBox ul#chatTalk li.sinclo_se:before { bottom: 0.35em; left: calc(100% - 3px); }';
-            html += '#sincloBox ul#chatTalk li.sinclo_se:after { bottom: 0.4em; }';
-            html += '#sincloBox ul#chatTalk li.sinclo_re:before { bottom: 0.35em; left: -18px; }';
-            html += '#sincloBox ul#chatTalk li.sinclo_re:after { bottom: 0.4em; }';
+            // html += '#sincloBox ul#chatTalk li.sinclo_se:before { bottom: 0.35em; left: calc(100% - 3px); }';
+            // html += '#sincloBox ul#chatTalk li.sinclo_se:after { bottom: 0.4em; }';
+            // html += '#sincloBox ul#chatTalk li.sinclo_re:before { bottom: 0.35em; left: -18px; }';
+            // html += '#sincloBox ul#chatTalk li.sinclo_re:after { bottom: 0.4em; }';
           }
           html += '#sincloBox ul#chatTalk sinclo-chat-receiver #receiveMessage { font-size: 0.8em; }';
           html += '#sincloBox section#chatTab sinclo-div { height: 4em; padding: 0.5em; }';
