@@ -92,7 +92,7 @@
                 'javascript:void(0)',
                 array(
                   'class' => 'btn-shadow redBtn blockCenter',
-                  'onclick' => 'openConfirmDialog('.$val['MUser']['id'].')',
+                  'onclick' => 'event.stopPropagation(); openConfirmDialog('.$val['MUser']['id'].')',
                   'escape' => false
                 )
               );
