@@ -416,7 +416,7 @@ var socket, // socket.io
         //スマホだったら縦か横かを判定
         if($(window).height() > $(window).width()){
           //縦
-          $('#widgetTitle').css('text-align', '-webkit-auto');
+          $('#widgetTitle').css('text-align', '-webkit-center');
         }
         else{
           //横
