@@ -190,7 +190,13 @@ function tabSort(){
 //カテゴリのソートを保存
 var saveTabSort = toExecutableOnce(function(){
   var list = getTabSort();
-  var index = document.getElementById("select_tab_index").value;
+  var tabindex = 0;
+  $('#tablist').find('li').each(function(index, element){
+    if($(element).hasClass('ui-state-active')) {
+      tabindex = index;
+      return;
+    }
+  });
   $.ajax({
     type: "POST",
     url: "<?= $this->Html->url(['controller' => 'TDictionaries', 'action' => 'remoteSaveTabSort']) ?>",
@@ -199,7 +205,8 @@ var saveTabSort = toExecutableOnce(function(){
     },
     dataType: "html",
     success: function(){
-      location.href = location.href;
+      var url = "<?= $this->Html->url('/TDictionaries/index') ?>";
+      location.href = url + "/tabindex:" + tabindex;
     }
   });
 });
@@ -348,6 +355,12 @@ document.body.onload = function(){
   var checkBoxList = document.querySelectorAll('[id^="selectTab'+index+'"]');
   for (var i = 0; i < checkBoxList.length; i++) {
     checkBoxList[i].addEventListener('change', actBtnShow); // 有効無効ボタンの表示切り替え
+  }
+
+  // チェックボックスが入っていないtdタグ群
+  var clickTargetTds = document.querySelectorAll('td:not(.noClick)');
+  for (var i = 0; i < clickTargetTds.length; i++) {
+    clickTargetTds[i].addEventListener('click', isCheck); // 対象にチェックを付ける
   }
 };
 
