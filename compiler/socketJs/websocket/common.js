@@ -635,7 +635,7 @@ var socket, // socket.io
           html += '#sincloBox ul#chatTalk li sinclo-radio { margin: 0.15em 0 -1em 0.5em; display: block; } ';
           if (widget.chatMessageDesignType === 2) {
             // 吹き出し型
-            html += '#sincloBox ul#chatTalk li { line-height: 1.4; padding: ' + (5 * ratio) + 'px ' + (20 * ratio) + 'px !important; border-radius: ' + (12 * ratio) + 'px !important;}';
+            html += '#sincloBox ul#chatTalk li { line-height: 1.4; padding: ' + (5 * ratio) + 'px ' + (15 * ratio) + 'px !important; border-radius: ' + (12 * ratio) + 'px !important;}';
           }
           html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"] { margin-right: 0.5em } ';
           html += '#sincloBox ul#chatTalk li sinclo-radio * { webkit-transform: scale(' + (1 * ratio) + '); transform: scale(' + (1 * ratio) + '); moz-transform: scale(' + (1 * ratio) + '); } ';
