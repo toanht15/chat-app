@@ -113,11 +113,11 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
           <td class="p10x lineCtrl">
             <div>
               <?php if ($val['TAutoMessage']['active_flg']) { ?>
-                <a href="javascript:void(0)" class="btn-shadow redBtn fLeft m10r10l" onclick="isActive(true, '<?=$id?>')"><img src="/img/inactive.png" alt="無効" width="30" height="30"></a>
+                <a href="javascript:void(0)" class="btn-shadow redBtn fLeft m10r10l" onclick="event.stopPropagation(); isActive(true, '<?=$id?>')"><img src="/img/inactive.png" alt="無効" width="30" height="30"></a>
               <?php } else { ?>
-                <a href="javascript:void(0)" class="btn-shadow greenBtn fLeft m10r10l" onclick="isActive(false, '<?=$id?>')"><img src="/img/check.png" alt="有効" width="30" height="30"></a>
+                <a href="javascript:void(0)" class="btn-shadow greenBtn fLeft m10r10l" onclick="event.stopPropagation(); isActive(false, '<?=$id?>')"><img src="/img/check.png" alt="有効" width="30" height="30"></a>
               <?php } ?>
-              <a href="javascript:void(0)" class="btn-shadow redBtn fRight m10r" onclick="removeAct('<?=$no?>', '<?=$id?>')"><img src="/img/trash.png" alt="削除" width="30" height="30"></a>
+              <a href="javascript:void(0)" class="btn-shadow redBtn fRight m10r" onclick="event.stopPropagation(); removeAct('<?=$no?>', '<?=$id?>')"><img src="/img/trash.png" alt="削除" width="30" height="30"></a>
             </div>
           </td>
         </tr>
