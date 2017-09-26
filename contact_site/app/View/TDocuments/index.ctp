@@ -40,7 +40,7 @@ $prevCnt = ($params['page'] - 1);
           }
           $no = $prevCnt + h($key+1);
           ?>
-          <tr data-id="<?=h($id)?>" onclick="jumpTo(<?="'".$this->Html->url(['controller'=>'TDocuments', 'action'=>'edit', $id])."'";?>)">
+          <tr class="pointer" data-id="<?=h($id)?>" onclick="jumpTo(<?="'".$this->Html->url(['controller'=>'TDocuments', 'action'=>'edit', $id])."'";?>)">
             <td class="tCenter"><?=$no?></td>
             <td class="tCenter">
               <div class = "document_image" ng-click="$event.stopPropagation(); openDocumentList3(<?=$id?>)">
