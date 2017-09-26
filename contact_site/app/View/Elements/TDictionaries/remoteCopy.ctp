@@ -11,7 +11,6 @@
       //カテゴリ編集処理
       var url = "<?= $this->Html->url('/TDictionaries/remoteCategoryEdit') ?>";
       var name = document.getElementById("edit_category_value").value;
-      nextTabIndex = document.getElementById("select_tab_index").value;
       break;
     case '2':
       //カテゴリ削除処理
@@ -54,7 +53,7 @@
       },
       url: url,
       success: function(){
-        if(type == '1' || type == '3' || type == '4'){
+        if(type == '3' || type == '4'){
           //location.href = "<?=$this->Html->url(array('controller' => 'TDictionaries', 'action' => 'index', 'tabindex' => $this->Session->read('tabindex')))?>";
           var url = "<?= $this->Html->url('/TDictionaries/index') ?>";
           location.href = url + "/tabindex:" + (nextTabIndex === "" ? "0" : nextTabIndex);
