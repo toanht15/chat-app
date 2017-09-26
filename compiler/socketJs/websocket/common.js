@@ -416,7 +416,7 @@ var socket, // socket.io
         //スマホだったら縦か横かを判定
         if($(window).height() > $(window).width()){
           //縦
-          $('#widgetTitle').css('text-align', '-webkit-center');
+          $('#widgetTitle').css('text-align', '-webkit-auto');
         }
         else{
           //横
@@ -635,7 +635,7 @@ var socket, // socket.io
           html += '#sincloBox ul#chatTalk li sinclo-radio { margin: 0.15em 0 -1em 0.5em; display: block; } ';
           if (widget.chatMessageDesignType === 2) {
             // 吹き出し型
-            html += '#sincloBox ul#chatTalk li { line-height: 1.4; padding: ' + (5 * ratio) + 'px ' + (20 * ratio) + 'px !important; border-radius: ' + (12 * ratio) + 'px !important;}';
+            html += '#sincloBox ul#chatTalk li { line-height: 1.4; padding: ' + (5 * ratio) + 'px ' + (15 * ratio) + 'px !important; border-radius: ' + (12 * ratio) + 'px !important;}';
           }
           html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"] { margin-right: 0.5em } ';
           html += '#sincloBox ul#chatTalk li sinclo-radio * { webkit-transform: scale(' + (1 * ratio) + '); transform: scale(' + (1 * ratio) + '); moz-transform: scale(' + (1 * ratio) + '); } ';
@@ -1059,7 +1059,6 @@ var socket, // socket.io
           //ウィジェットの再生成処理呼び出しでなければ最小化表示設定で呼び出す
           if(!reCreateWidget) {
             sinclo.widget.condifiton.set(false);
-            sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
             //ログ書き込み用にメッセージ送信
             emit("sendWidgetShown",{widget:true});
             //最小化
@@ -1071,6 +1070,7 @@ var socket, // socket.io
               //ヘッダ表示（通常表示）
               common.abridgementTypeShow();
             }
+            sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
             // このタイミングでの最大化実行条件
             // １：PCの場合、ウィジェット最大化処理がウィジェット非表示時に実行されていた場合
             // ２：スマホの場合、ウィジェット最大化する設定が有効で、ウィジェット最大化処理がウィジェット非表示時に実行されていた場合
@@ -1129,6 +1129,7 @@ var socket, // socket.io
       isShown: function() {
         return storage.s.get("widgetShown") === "true";
       },
+      //サイト/ページ訪問時の設定
       getRemainingTimeMsec: function() {
         var remainingTime = 0;
         switch(window.sincloInfo.widget.showTiming) {
