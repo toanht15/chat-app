@@ -40,11 +40,10 @@
       #sincloBox .pb07 { padding-bottom: 7px }
       #sincloBox .notSelect { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
       #sincloBox .center { text-align: center!important; padding: 7px 30px!important }
-      #sincloBox .center.largeSize { text-align: center!important; padding: 7px 30px!important }
       #sincloBox div#descriptionSet { cursor: pointer; }
       #sincloBox p#widgetTitle { position:relative; z-index: 1; cursor:pointer; border-radius: {{radius_ratio}}px {{radius_ratio}}px 0 0; border: 1px solid {{main_color}}; border-bottom:none; background-color: {{main_color}};text-align: center; font-size: 14px; padding: 7px 30px 7px 70px; margin: 0; color: {{string_color}}; height: 32px }
-      #sincloBox p#widgetTitle.middleSize { font-size: 15px; padding: 9px 30px 7px 70px; margin: 0; height: 38.5px }
-      #sincloBox p#widgetTitle.largeSize { font-size: 15px; padding: 12px 30px 7px 70px; margin: 0; height: 45px }
+      #sincloBox p#widgetTitle.middleSize { font-size: 15px; }
+      #sincloBox p#widgetTitle.largeSize { font-size: 15px; }
       #sincloBox p#widgetTitle.spText{ overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
       #sincloBox p#widgetTitle:after { background-position-y: 3px; background-image: url('<?=$gallaryPath?>yajirushi.png'); top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear}
       #sincloBox.open p#widgetTitle:after { transform: rotate(0deg); }
@@ -61,8 +60,8 @@
     <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
       @keyframes leftEffect { 0% { transform :translate3d(-20px, 0px, 0px) scale(0.8); opacity :0; } 69% {} 100% { transform :translate3d(0px, 0px, 0px); opacity :1; } }
       #sincloBox ul#chatTalk { width: 100%; height: 194px; padding: 5px; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0}
-      #sincloBox ul#chatTalk.middleSize { height: 282px; }
-      #sincloBox ul#chatTalk.largeSize { height: 367px; }
+      #sincloBox ul#chatTalk.middleSize { height: 284px; }
+      #sincloBox ul#chatTalk.largeSize { height: 374px; }
       #sincloBox ul#chatTalk div.liLeft { text-align: left; }
       #sincloBox ul#chatTalk div.liRight { text-align: right; }
       #sincloBox ul#chatTalk li { border-radius: 5px; background-color: #FFF; margin: 5px 0 0; padding: 5px; font-size: 12px; border: 1px solid #C9C9C9; line-height: 1.8; white-space: pre; color: #333333; }
@@ -100,8 +99,8 @@
     <?php endif; ?>
     <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT]) ) :?>
       #sincloBox section#callTab{height: 296.5px;}
-      #sincloBox section#callTab.middleSize {height: 385px;}
-      #sincloBox section#callTab.largeSize {height: 469.5px;}
+      #sincloBox section#callTab.middleSize {height: 387px;}
+      #sincloBox section#callTab.largeSize {height: 476.5px;}
       #sincloBox section#callTab #telNumber { overflow: hidden; color: {{main_color}}; font-weight: bold; margin: 0 auto; text-align: center }
       #sincloBox section#callTab #telNumber:not(.notUseTime) { font-size: 18px; padding: 5px 0px 0px; height: 30px }
       #sincloBox section#callTab #telNumber.middleSize:not(.notUseTime) { font-size: 19px; padding: 5px 0px 0px; height: 30px }

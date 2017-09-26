@@ -158,6 +158,7 @@ var socket, // socket.io
             boxWidth: 285,
             widgetTitlePadding: 7,
             widgetTitleHeight: 32,
+            widgetTitleTop: 6,
             widgetSubTitleHeight: 29,
             widgetDescriptionHeight: 23,
             navigationHeight: 40,
@@ -179,16 +180,17 @@ var socket, // socket.io
           var sizeArray = {
             boxHeight: 540.5,
             boxWidth: 342.5,
-            widgetTitlePadding: 9,
-            widgetTitleHeight: 38.5,
+            widgetTitlePadding: 7,
+            widgetTitleHeight: 32,
+            widgetTitleTop: 6,
             widgetSubTitleHeight: 29,
             widgetDescriptionHeight: 23,
             navigationHeight: 40,
-            chatTalkHeight: 282,
+            chatTalkHeight: 284,
             classFlexBoxRowHeight: 75,
             sincloAccessInfoHeight: 26.5,
             fotterHeight: 26.5,
-            telContentHeight: 212.5,
+            telContentHeight: 214.5,
             d11font: 12,
             d12font: 13,
             d13font: 14,
@@ -202,16 +204,17 @@ var socket, // socket.io
           var sizeArray = {
             boxHeight: 632,
             boxWidth: 400,
-            widgetTitlePadding: 13,
-            widgetTitleHeight: 46,
+            widgetTitlePadding: 7,
+            widgetTitleHeight: 32,
+            widgetTitleTop: 6,
             widgetSubTitleHeight: 29,
             widgetDescriptionHeight: 23,
             navigationHeight: 40,
-            chatTalkHeight: 367,
+            chatTalkHeight: 374,
             classFlexBoxRowHeight: 75,
             sincloAccessInfoHeight: 26.5,
             fotterHeight: 26.5,
-            telContentHeight: 298,
+            telContentHeight: 305,
             d11font: 12,
             d12font: 13,
             d13font: 14,
@@ -227,6 +230,7 @@ var socket, // socket.io
             boxWidth: 285,
             widgetTitlePadding: 7,
             widgetTitleHeight: 32,
+            widgetTitleTop: 6,
             widgetSubTitleHeight: 29,
             widgetDescriptionHeight: 23,
             navigationHeight: 40,
@@ -723,7 +727,7 @@ var socket, // socket.io
         html += '      #sincloBox span#mainImage { top: 7px; left: 10px }';
         html += '      #sincloBox p#widgetTitle { border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px 0 0; border: 1px solid ' + widget.mainColor + '; font-size: '+ sizeList['d14font'] +'px;padding: '+ sizeList['widgetTitlePadding'] +'px 30px; height: '+ sizeList['widgetTitleHeight'] +'px }';
         html += '      #sincloBox p#widgetTitle #sincloChatUnread { width: 25px; height: 25px; font-size: '+ sizeList['d13font'] +'px; border-radius: 15px; margin: 2.5px 6px; padding: 3px; }';
-        html += '      #sincloBox p#widgetTitle:after { background-position-y: 3px; top: 6px; right: 10px; bottom: 6px; width: 20px; height: 20px; }';
+        html += '      #sincloBox p#widgetTitle:after { background-position-y: 3px; top: '+ sizeList['widgetTitleTop'] +'px; right: 10px; bottom: 6px; width: 20px; height: 20px; }';
         html += '      #sincloBox p#widgetSubTitle { background-color: #FFF; margin: 0; padding: 7px 0; text-align: left; border-width: 0 1px 0 1px; border-color: #E8E7E0; border-style: solid; padding-left: 77px; font-weight: bold; color: ' + widget.mainColor + '; height: '+ sizeList['widgetSubTitleHeight'] +'px }';
         html += '      #sincloBox p#widgetDescription { background-color: #FFF; margin: 0; padding-bottom: 7px; text-align: left; border-width: 0 1px 1px 1px; border-color: #E8E7E0; border-style: solid; padding-left: 77px; height: '+ sizeList['widgetDescriptionHeight'] +'px; color: ' + systemTextColor + '; }';
         html += '      #sincloBox section { background-color: #FFF; border: 1px solid #E8E7E0; border-top: none; }';
