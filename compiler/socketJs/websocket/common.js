@@ -416,7 +416,7 @@ var socket, // socket.io
         //スマホだったら縦か横かを判定
         if($(window).height() > $(window).width()){
           //縦
-          $('#widgetTitle').css('text-align', '-webkit-center');
+          $('#widgetTitle').css('text-align', '-webkit-auto');
         }
         else{
           //横
@@ -1059,7 +1059,6 @@ var socket, // socket.io
           //ウィジェットの再生成処理呼び出しでなければ最小化表示設定で呼び出す
           if(!reCreateWidget) {
             sinclo.widget.condifiton.set(false);
-            sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
             //ログ書き込み用にメッセージ送信
             emit("sendWidgetShown",{widget:true});
             //最小化
@@ -1070,16 +1069,8 @@ var socket, // socket.io
             else{
               //ヘッダ表示（通常表示）
               common.abridgementTypeShow();
-              //表示するタイミングを指定している場合heightの値を取り直す必要がある
-              if(window.sincloInfo.widget.showTiming !== 4){
-                if(dataOpenflg === 'false'){
-                  var height = sinclo.operatorInfo.header.offsetHeight;
-                  $('#sincloBox').animate({
-                    height: height + "px"
-                  }, 'first');
-                }
-              }
             }
+            sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
             // このタイミングでの最大化実行条件
             // １：PCの場合、ウィジェット最大化処理がウィジェット非表示時に実行されていた場合
             // ２：スマホの場合、ウィジェット最大化する設定が有効で、ウィジェット最大化処理がウィジェット非表示時に実行されていた場合
