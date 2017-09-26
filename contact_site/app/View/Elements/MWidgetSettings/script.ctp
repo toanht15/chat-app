@@ -38,11 +38,13 @@ sincloApp.controller('WidgetCtrl', function($scope){
         if ( !$scope.openFlg ) { // 最小化されている場合
           var main = document.getElementById("miniTarget");  // 非表示対象エリア
           var height = 0;
-          for(var i = 0; main.children.length > i; i++){ // 非表示エリアのサイズを計測する
-            if ( Number(num) === 3 && main.children[i].id === 'navigation' ) continue; // SPの場合はナビゲーションは基本表示しない
-            height += main.children[i].offsetHeight;
+          if(main){
+            for(var i = 0; main.children.length > i; i++){ // 非表示エリアのサイズを計測する
+              if ( Number(num) === 3 && main.children[i].id === 'navigation' ) continue; // SPの場合はナビゲーションは基本表示しない
+              height += main.children[i].offsetHeight;
+            }
+            main.style.height = height + "px";
           }
-          main.style.height = height + "px";
         }
       }
 
@@ -304,8 +306,55 @@ sincloApp.controller('WidgetCtrl', function($scope){
           };
         }
       });
-
     };
+
+    //ウィジェットサイズがクリックされた時の動作
+    $scope.clickWidgetSizeTypeToggle = function(siz){
+      var settingTitle = document.getElementById('MWidgetSettingTitle');
+      var settingSubTitle = document.getElementById('MWidgetSettingSubTitle');
+      var settingDescription = document.getElementById('MWidgetSettingDescription');
+      var titleLength = 12;
+      var subTitleLength = 15;
+      var descriptionLength = 15;
+      switch (siz) {
+       //大きさによってトップタイトル、企業名、説明文のmaxlengthを可変とする
+      case 1: //小
+          titleLength = 12;
+          subTitleLength = 15;
+          descriptionLength = 15;
+          break;
+        case 2: //中
+          titleLength = 16;
+          subTitleLength = 20;
+          descriptionLength = 20;
+          break;
+        case 3: //大
+          titleLength = 19;
+          subTitleLength = 24;
+          descriptionLength = 24;
+          break;
+      }
+      settingTitle.maxLength = titleLength;
+//       if(settingTitle.value.length > titleLength){
+//         $scope.title = settingTitle.value.substring(0, titleLength);
+//       }
+      settingSubTitle.maxLength = subTitleLength;
+//       if(settingSubTitle.value.length > subTitleLength){
+//         $scope.sub_title = settingSubTitle.value.substring(0, subTitleLength);
+//       }
+      settingDescription.maxLength = descriptionLength;
+//       if(settingDescription.value.length > descriptionLength){
+//         $scope.description = settingDescription.value.substring(0, descriptionLength);
+//       }
+    }
+
+    //最小化時のデザインがクリックされた時の動作
+    $scope.clickMinimizedDesignToggle = function(tag){
+      if($scope.showWidgetType !== tag){
+        $scope.switchWidget(tag);
+      }
+      $scope.openFlg = false;
+    }
 
     $scope.settingShowTimeRadioButtonEnable = function(jq) {
       jq.prop('disabled',false).parent().css('color','');
@@ -398,17 +447,17 @@ sincloApp.controller('WidgetCtrl', function($scope){
 
     angular.element(window).on("focus", ".showHeader", function(e){
         if ( $scope.showWidgetType === 1 ) return false;
-        if ( $scope.showWidgetType === 3 ) {
-          if ( !$scope.spHeaderLightToggle() ) return false;
-        }
-        $scope.switchWidget(1);
+//        if ( $scope.showWidgetType === 3 ) {
+//           if ( !$scope.spHeaderLightToggle() ) return false;
+//         }
+//        $scope.switchWidget(1);
         $scope.$apply();
     });
     angular.element(window).on("focus", ".showChat", function(e){
         $scope.widget.showTab = "chat";
-        if ( $scope.spHeaderLightToggle() ) {
-          $scope.switchWidget(1);
-        }
+//         if ( $scope.spHeaderLightToggle() ) {
+//           $scope.switchWidget(1);
+//         }
         $scope.$apply();
     });
 

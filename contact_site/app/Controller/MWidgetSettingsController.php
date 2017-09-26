@@ -57,6 +57,30 @@ class MWidgetSettingsController extends AppController {
       }
       $this->data = $inputData;
     }
+    $titleLength = 12;
+    $subTitleLength = 15;
+    $descriptionLength = 15;
+    switch ($json['widget_size_type']) {
+      //大きさによってトップタイトル、企業名、説明文のmaxlengthを可変とする
+      case '1': //小
+        $titleLength = 12;
+        $subTitleLength = 15;
+        $descriptionLength = 15;
+        break;
+      case '2': //中
+        $titleLength = 16;
+        $subTitleLength = 20;
+        $descriptionLength = 20;
+        break;
+      case '3': //大
+        $titleLength = 19;
+        $subTitleLength = 24;
+        $descriptionLength = 24;
+        break;
+    }
+    $this->set('titleLength_maxlength', $titleLength);
+    $this->set('subTitleLength_maxlength', $subTitleLength);
+    $this->set('descriptionLength_maxlength', $descriptionLength);
     $this->recurse_array_HTML_safe($this->request->data);
     $this->_viewElement();
   }
@@ -115,6 +139,41 @@ class MWidgetSettingsController extends AppController {
     else {
       $this->request->data['MWidgetSetting']['main_image'] = "";
     }
+
+    //ウィジットサイズが中もしくは大の場合バリデーションの上限をトップタイトル、企業名、説明文のみ可変とする
+    if($inputData['MWidgetSetting']['widget_size_type'] !== '1'){
+      $titleLength = 12;
+      $subTitleLength = 15;
+      $descriptionLength = 15;
+      switch ($inputData['MWidgetSetting']['widget_size_type']) {
+        //大きさによってトップタイトル、企業名、説明文のmaxlengthを可変とする
+        case '2': //中
+          $titleLength = 16;
+          $subTitleLength = 20;
+          $descriptionLength = 20;
+          $title_message = '１６文字以内で設定してください。';
+          $subTitle_message = '２０文字以内で設定してください';
+          $description_message = '２０文字以内で設定してください';
+          break;
+        case '3': //大
+          $titleLength = 19;
+          $subTitleLength = 24;
+          $descriptionLength = 24;
+          $title_message = '１９文字以内で設定してください。';
+          $subTitle_message = '２４文字以内で設定してください';
+          $description_message = '２４文字以内で設定してください';
+          break;
+      }
+      $validate = $this->MWidgetSetting->validate;
+      $validate['title']['maxLength']['rule'][1] = $titleLength;
+      $validate['title']['maxLength']['message'] = $title_message;
+      $validate['sub_title']['maxLength']['rule'][1] = $subTitleLength;
+      $validate['sub_title']['maxLength']['message'] = $subTitle_message;
+      $validate['description']['maxLength']['rule'][1] = $descriptionLength;
+      $validate['description']['maxLength']['message'] = $description_message;
+      $this->MWidgetSetting->validate = $validate;
+    }
+
 
     // バリデーションチェック
     $this->MWidgetSetting->set($inputData);
