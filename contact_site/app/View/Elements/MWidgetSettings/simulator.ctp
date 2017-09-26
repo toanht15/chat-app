@@ -68,7 +68,7 @@
       #sincloBox ul#chatTalk li.middleSize { font-size: 13px; }
       #sincloBox ul#chatTalk li.largeSize { font-size: 13px; }
       #sincloBox ul#chatTalk li.boxType { word-wrap: break-word; word-break: break-all; }
-      #sincloBox ul#chatTalk li.balloonType { display: inline-block; position: relative; padding: 8px 15px; text-align: left!important; word-wrap: break-word; word-break: break-all; border-radius: 12px; }
+      #sincloBox ul#chatTalk li.balloonType { display: inline-block; position: relative; padding: 5px 15px; text-align: left!important; word-wrap: break-word; word-break: break-all; border-radius: 12px; }
       #sincloBox ul#chatTalk li.sinclo_se.balloonType { margin-right: 15px; border-bottom-right-radius: 0px; }
       #sincloBox ul#chatTalk li.sinclo_se.balloonType:before { height: 0px; content: ""; position: absolute; bottom: 0px; left: calc(100% - 3px); margin-top: -10px; border: 5px solid transparent; border-left: 5px solid #FFF; border-bottom: 5px solid #FFF; z-index: 2; }
       #sincloBox ul#chatTalk li.sinclo_se.balloonType:after { height: 0px; content: ""; position: absolute; bottom: -1px; left: 100%; margin-top: -9px; border: 5px solid transparent; border-left: 5px solid #C9C9C9; border-bottom: 5px solid #C9C9C9; z-index: 1; }
