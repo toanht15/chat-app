@@ -55,9 +55,6 @@
       url: url,
       success: function(xhr){
         var showIndex = (xhr) ? Number(xhr) : 0;
-        // console.log('見るべきデータ');
-        // console.log(xhr);
-        // console.log(nextTabIndex);
         if(type == '1' || type == '3' || type == '4'){
           //location.href = "<?=$this->Html->url(array('controller' => 'TDictionaries', 'action' => 'index', 'tabindex' => $this->Session->read('tabindex')))?>";
           var url = "<?= $this->Html->url('/TDictionaries/index') ?>";

@@ -204,8 +204,6 @@ function tabSort(){
 var saveTabSort = toExecutableOnce(function(){
   var list = getTabSort();
   var index = document.getElementById("select_tab_index").value;
-  console.log('index');
-  console.log(index);
   var tabindex = 0;
   $('#tablist').find('li').each(function(index, element){
     if($(element).hasClass('ui-state-active')) {
