@@ -53,15 +53,27 @@
 //        nextTabIndex: nextTabIndex
       },
       url: url,
-      success: function(){
+      success: function(xhr){
+        var showIndex = (xhr) ? Number(xhr) : 0;
         if(type == '1' || type == '3' || type == '4'){
           //location.href = "<?=$this->Html->url(array('controller' => 'TDictionaries', 'action' => 'index', 'tabindex' => $this->Session->read('tabindex')))?>";
           var url = "<?= $this->Html->url('/TDictionaries/index') ?>";
-          location.href = url + "/tabindex:" + (nextTabIndex === "" ? "0" : nextTabIndex);
+          if(showIndex === Number(nextTabIndex)) {
+            location.href = url + "/tabindex:" + (nextTabIndex === "" ? "0" : nextTabIndex);
+          }
+          else {
+            location.href = url + "/tabindex:" + showIndex;
+          }
         }
         else{
           location.href = "<?= $this->Html->url('/TDictionaries/index') ?>";
         }
+      },
+      error: function() {
+        console.log('error');
+        var tabIndex = 0;
+        var url = "<?= $this->Html->url('/TDictionaries/index') ?>";
+      　　location.href = url + "/tabindex:" + tabIndex;
       }
     });
   }
