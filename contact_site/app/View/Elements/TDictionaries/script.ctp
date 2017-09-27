@@ -397,13 +397,15 @@ var isCheck = function(){
 
 //各ボタンの有効/無効切り替え
 var actBtnShow = function(){
+  // タブの数を取得
+  var tabCount = document.querySelectorAll('[id^="ui-id-"]').length;
   // 選択中の場合
   var stint_flg = document.getElementById("stint_flg").value;
   var select_tab_index = document.getElementById("select_tab_index").value;
   if ( $('input[name^="selectTab'+select_tab_index+'"]').is(":checked") ) {
     document.getElementById("tdictionaries_copy_btn" + select_tab_index).className="btn-shadow disOffgreenBtn";
     document.getElementById("tdictionaries_copy_btn" + select_tab_index).addEventListener('click', openCopyDialog, false);
-    if(stint_flg != '0'){
+    if(stint_flg != '0' && tabCount > 1){
       document.getElementById("tdictionaries_move_btn" + select_tab_index).className="btn-shadow disOffgreenBtn";
       document.getElementById("tdictionaries_move_btn" + select_tab_index).addEventListener('click', openMoveDialog, false);
     }
@@ -413,7 +415,7 @@ var actBtnShow = function(){
   else {
     document.getElementById("tdictionaries_copy_btn" + select_tab_index).className="btn-shadow disOffgrayBtn";
     document.getElementById("tdictionaries_copy_btn" + select_tab_index).removeEventListener('click', openCopyDialog, false);
-    if(stint_flg != '0'){
+    if(stint_flg != '0' && tabCount > 1){
       document.getElementById("tdictionaries_move_btn" + select_tab_index).className="btn-shadow disOffgrayBtn";
       document.getElementById("tdictionaries_move_btn" + select_tab_index).removeEventListener('click', openMoveDialog, false);
     }
