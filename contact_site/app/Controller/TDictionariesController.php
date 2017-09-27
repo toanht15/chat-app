@@ -329,7 +329,6 @@ class TDictionariesController extends AppController {
       $this->autoRender = FALSE;
       $this->layout = 'ajax';
       $data = $this->request->data;
-      $this->log('はいいている',LOG_DEBUG);
       //カテゴリーIDチェック
       $selectedCategory = $this->getCategoryEntityFromId($data['selectedCategory']);
 
@@ -380,8 +379,6 @@ class TDictionariesController extends AppController {
               $this->Session->delete('dstoken');
               $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
               $this->set('tabindex', $data['selectedCategory']);
-              $this->log('log',LOG_DEBUG);
-              $this->log($this->getCategoryIndexFromId($saveData['TDictionary']['m_category_id']),LOG_DEBUG);
               return $this->getCategoryIndexFromId($saveData['TDictionary']['m_category_id']);
               //$data['selectedCategory'];
             }
@@ -554,13 +551,9 @@ class TDictionariesController extends AppController {
       $this->autoRender = FALSE;
       $this->layout = 'ajax';
       $data = $this->request->data;
-      $this->log('カテゴリ編集でーた',LOG_DEBUG);
-      $this->log($data,LOG_DEBUG);
 
       //カテゴリーIDチェック
       $selectedCategory = $this->getCategoryEntityFromId($data['id']);
-      $this->log('kategoriid',LOG_DEBUG);
-      $this->log($selectedCategory,LOG_DEBUG);
       if(!empty($selectedCategory)) {
         $saveData = [];
         $errorMessage = [];
@@ -678,7 +671,6 @@ class TDictionariesController extends AppController {
     Configure::write('debug', 2);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
-    $this->log($this->request->data,LOG_DEBUG);
     //TDictionaryCategory
     if ( !$this->request->is('ajax') ) return false;
 
@@ -721,7 +713,6 @@ class TDictionariesController extends AppController {
                     'sort' => $prevSortKeys[$i]
                 ]
             ];
-            $this->log($saveData,LOG_DEBUG);
             if (!$this->TDictionaryCategory->validates()) {
               $ret = false;
               break;
