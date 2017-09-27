@@ -104,7 +104,7 @@ function openEntryEditDialog(setting){
 //定型文の削除
 function openConfirmDialog(){
   //チェックボックスのチェック状態の取得
-  index = document.getElementById("select_tab_index").value;
+  var index = Number(document.getElementById("select_tab_index").value);
   var list = document.querySelectorAll('input[name^="selectTab'+index+'"]:checked');
   var selectedList = [];
   for (var i = 0; i < list.length; i++){
@@ -121,10 +121,23 @@ function openConfirmDialog(){
         select_tab_index: select_tab_index
       },
       url: "<?= $this->Html->url('/TDictionaries/remoteDeleteUser') ?>",
-      success: function(){
+      success: function(xhr){
+        var showIndex = Number(xhr);
         $(".p-dictionary-del #popup-button a").prop("disabled", true);
         var url = "<?= $this->Html->url('/TDictionaries/index') ?>";
-        location.href = url + "/tabindex:" + index;
+        if(index === showIndex) {
+          location.href = url + "/tabindex:" + index;
+        }
+        else {
+          location.href = url + "/tabindex:" + showIndex;
+        }
+      },
+      error: function() {
+        //debugger;
+        console.log('error');
+        TabIndex = document.getElementById("select_tab_index").value;
+        var url = "<?= $this->Html->url('/TDictionaries/index') ?>";
+        location.href = url + "/tabindex:" + 0;
       }
     });
   });
@@ -190,6 +203,7 @@ function tabSort(){
 //カテゴリのソートを保存
 var saveTabSort = toExecutableOnce(function(){
   var list = getTabSort();
+  var index = document.getElementById("select_tab_index").value;
   var tabindex = 0;
   $('#tablist').find('li').each(function(index, element){
     if($(element).hasClass('ui-state-active')) {
@@ -207,6 +221,13 @@ var saveTabSort = toExecutableOnce(function(){
     success: function(){
       var url = "<?= $this->Html->url('/TDictionaries/index') ?>";
       location.href = url + "/tabindex:" + tabindex;
+    },
+    error: function() {
+      //debugger;
+      console.log('error');
+      TabIndex = document.getElementById("select_tab_index").value;
+      var url = "<?= $this->Html->url('/TDictionaries/index') ?>";
+      location.href = url + "/tabindex:" + 0;
     }
   });
 });
