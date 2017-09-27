@@ -664,6 +664,11 @@ class TDictionariesController extends AppController {
             $ret = false;
             break;
           }
+        } else {
+          // 送信された定型文設定と現在DBに存在する定型文設定に差がある場合
+          $this->TDictionary->rollback();
+          $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.configChanged'));
+          return;
         }
       }
       if ($ret) {
