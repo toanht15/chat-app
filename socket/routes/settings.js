@@ -125,6 +125,11 @@ router.get("/", function(req, res, next) {
                   boxShadow: isNumeric(settings.boxShadow),
                   //最小化時デザイン対応
                   minimizeDesignType: isNumeric(settings.minimizeDesignType),
+                  //閉じるボタン start
+                  closeButtonSetting: isNumeric(settings.closeButtonSetting),
+                  closeButtonModeType: isNumeric(settings.closeButtonModeType),
+                  bannertext: settings.bannertext,
+                  //閉じるボタン end
                   spShowFlg: isNumeric(settings.spShowFlg),
                   spHeaderLightFlg: isNumeric(settings.spHeaderLightFlg),
                   spAutoOpenFlg: isNumeric(settings.spAutoOpenFlg)

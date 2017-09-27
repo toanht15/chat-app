@@ -40,6 +40,8 @@
         //最小化時と最大化時の状態を取得
         var abridgementType = common.getAbridgementType()
         if ( String(flg) === "false" ) {
+          //最大化時ボタン表示
+          common.whenMaximizedBtnShow();
           //最大化
           if(abridgementType['MaxRes']){
             //ヘッダ非表示（シンプル表示）
@@ -51,6 +53,7 @@
           }
           sinclo.widget.condifiton.set(true);
           if ( check.smartphone() && window.sincloInfo.contract.chat && (window.screen.availHeight < window.screen.availWidth) ) {
+            //スマホ横
             height = window.innerHeight * (document.body.clientWidth / window.innerWidth);
           }
           else {
@@ -64,6 +67,12 @@
               height += $("#sincloBox [id$='Tab']").outerHeight(true);
             }
             height += $("#sincloBox > #fotter").outerHeight(true);
+            //閉じるボタン設定が有効かつバナー表示設定になっているかどうか、かつPCか
+            //false/true:通常（PC）/スマホ
+            var smartphone = check.smartphone();
+            if(Number(window.sincloInfo.widget.closeButtonSetting) === 2 && Number(window.sincloInfo.widget.closeButtonModeType) === 1 && smartphone === false){
+              height += $("#sincloBannerBox").outerHeight(true);
+            }
           }
           if ( window.sincloInfo.contract.chat ) {
             sinclo.chatApi.showUnreadCnt();
@@ -71,6 +80,8 @@
           }
         }
         else {
+          //最小化時ボタン表示
+          common.whenMinimizedBtnShow();
           //最小化
           if(abridgementType['MinRes']){
             //ヘッダ非表示（シンプル表示）
@@ -86,6 +97,61 @@
         elm.animate({
           height: height + "px"
         }, 'first');
+//        target.removeClass("selected");
+//        $("#sincloBox").height("");
+      },
+      //閉じるボタンがクリックされた時の挙動
+      closeBtn: function(){
+        //閉じるボタン設定が有効かつバナー表示設定になっているかどうか
+        if(Number(window.sincloInfo.widget.closeButtonSetting) === 2 && Number(window.sincloInfo.widget.closeButtonModeType) === 1){
+          //バナー表示
+          $("#sincloWidgetBox").hide();
+          if ( check.smartphone() ) {
+            var widgetWidth = $(window).width() - 20;
+            var ratio = widgetWidth * (1/285);
+            var bottom = 70 * ratio;
+            var leftRight = 30 * ratio;
+          }
+          else{
+            var bottom = 30;
+            var leftRight = 30;
+          }
+          $("#sincloBox").css("bottom",bottom+"px");
+          switch ( Number(window.sincloInfo.widget.showPosition) ) {
+            case 1: // 右下
+              //right: 10px;
+              $("#sincloBox").css("right",leftRight+"px");
+              break;
+            case 2: // 左下
+              //left: 10px;
+              $("#sincloBox").css("left",leftRight+"px");
+              break;
+          }
+          //outline: none;
+          $("#sincloBox").css("outline","none");
+          $("#sincloBannerBox").show();
+        }
+        else{
+          //チャットを閉じる
+          $("#sincloBox").hide();
+        }
+      },
+      //バナーがクリックされた時の挙動
+      clickBanner: function() {
+        $("#sincloWidgetBox").show();
+        $("#sincloBannerBox").hide();
+        $("#sincloBox").css("bottom","0");
+        switch ( Number(window.sincloInfo.widget.showPosition) ) {
+        case 1: // 右下
+          //right: 10px;
+          $("#sincloBox").css("right","10px");
+          break;
+        case 2: // 左下
+          //left: 10px;
+          $("#sincloBox").css("left","10px");
+          break;
+        }
+        this.ev();
       },
       widgetHide: function(e) {
         if(e) e.stopPropagation();

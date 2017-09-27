@@ -334,6 +334,34 @@ $headerNo = 1;
             </div>
           </li>
           <!-- 最小化時のデザイン -->
+          <!-- 閉じるボタン -->
+          <li>
+            <span class="require"><label>閉じるボタン</label></span>
+            <div ng-init="closeButtonSettingToggle='<?=h($this->formEx->val($this->data['MWidgetSetting'], 'close_button_setting'))?>'">
+              <label class="pointer choose" for="closeButtonSetting1"><input type="radio" name="data[MWidgetSetting][close_button_setting]" ng-model="closeButtonSettingToggle" id="closeButtonSetting1" class="showHeader" value="1" >無効にする</label><br>
+              <label class="pointer choose" for="closeButtonSetting2"><input type="radio" name="data[MWidgetSetting][close_button_setting]" ng-model="closeButtonSettingToggle" id="closeButtonSetting2" class="showHeader" value="2" >有効にする</label><br>
+              <div id="closeButtonMode" ng-class="{chooseImg: showcloseButtonMode()}" style="padding: 10px 0 0 0;">
+                <div ng-init="closeButtonModeTypeToggle='<?=h($this->formEx->val($this->data['MWidgetSetting'], 'close_button_mode_type'))?>'">
+                  <label class="pointer choose" for="closeButtonModeType1" style="margin:10px 0 10px 20px;"><input type="radio" name="data[MWidgetSetting][close_button_mode_type]" ng-model="closeButtonModeTypeToggle" id="closeButtonModeType1" class="showHeader" value="1" ng-click="switchWidget(4)">小さなバナー表示</label><br>
+                  <?= $this->ngForm->input('bannertext', [
+                    'type' => 'text',
+                    'placeholder' => 'バナーテキスト',
+                    'ng-disabled' => 'closeButtonModeTypeToggle == "2"',
+                    'style' => 'margin:10px 0 10px 40px;',
+                    'div' => false,
+                    'label' => false,
+                    'maxlength' => 15,
+                    'error' => false,
+                    'ng-focus' => 'switchWidget(4)'
+                  ],[
+                    'entity' => 'MWidgetSetting.bannertext'
+                  ]) ?><br>
+                  <label class="pointer choose" for="closeButtonModeType2" style="margin:10px 0 10px 20px;"><input type="radio" name="data[MWidgetSetting][close_button_mode_type]" ng-model="closeButtonModeTypeToggle" id="closeButtonModeType2" class="showHeader" value="2" ng-click="switchWidget(4)">非表示</label><br>
+                </div>
+              </div>
+            </div>
+          </li>
+          <!-- 閉じるボタン -->
         </ul>
       </section>
 

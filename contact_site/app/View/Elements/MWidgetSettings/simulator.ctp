@@ -1,10 +1,31 @@
 <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
-<section id="switch_widget" ng-cloak>
-  <ul class="ulTab" data-col=3>
+<style>
+    .showType4{
+      width: 285px;
+    }
+    .showType4.middleSize{
+      width: 342.5px;
+    }
+    .showType4.largeSize{
+      width: 400px;
+    }
+    #m_widget_setting_idx #m_widget_setting_form #m_widget_simulator section#switch_widget.showBanner{
+      margin-bottom: 3em;
+    }
+</style>
+<section id="switch_widget" ng-cloak ng-class="{showBanner:closeButtonModeTypeToggle === '1' && closeButtonSettingToggle === '2' && showWidgetType === 4}">
+  <ul class="ulTab" data-col=3 ng-hide="closeButtonSettingToggle === '2'">
     <li ng-class="{choose: showWidgetType === 1}" ng-click="switchWidget(1)">通常</li>
     <li ng-class="{choose: showWidgetType === 3}" ng-click="switchWidget(3)">ｽﾏｰﾄﾌｫﾝ(縦)</li>
     <li ng-class="{choose: showWidgetType === 2}" ng-click="switchWidget(2)">ｽﾏｰﾄﾌｫﾝ(横)</li>
   </ul>
+  <ul class="ulTab showType4" data-col=3 ng-hide="closeButtonSettingToggle !== '2'" ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">
+    <li ng-class="{choose: showWidgetType === 1}" ng-click="switchWidget(1)">通常</li>
+    <li ng-class="{choose: showWidgetType === 3}" ng-click="switchWidget(3)">ｽﾏｰﾄﾌｫﾝ(縦)</li>
+    <li ng-class="{choose: showWidgetType === 2}" ng-click="switchWidget(2)">ｽﾏｰﾄﾌｫﾝ(横)</li>
+    <li ng-class="{choose: showWidgetType === 4}" ng-click="switchWidget(4)">非表示</li>
+  </ul>
+  <input type="hidden" id="switch_widget" value="">
 </section>
 <?php endif; ?>
 
@@ -29,7 +50,7 @@
       width: 400px;
     }
   </style>
-  <div id="sincloBox" ng-if="showWidgetType !== 2"  ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">
+  <div id="sincloBox" ng-if="showWidgetType !== 2" ng-hide="showWidgetType === 4" ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">
     <style>
       #sincloBox * { font-size: 12px; }
       #sincloBox.middleSize  * { font-size: 13px; }
@@ -45,9 +66,16 @@
       #sincloBox p#widgetTitle.spText{ text-indent: 1em; }
       #sincloBox p#widgetTitle.middleSize { font-size: 15px; }
       #sincloBox p#widgetTitle.largeSize { font-size: 15px; }
+      #sincloBox div#minimizeBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>minimize.png'); background-position-y: 0px; top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
+      #sincloBox div#addBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>add.png'); background-position-y: 0px; top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
+      #sincloBox div#addBtn.closeButtonSetting { right: 25px; }
+      #sincloBox div#closeBtn { display: none; cursor: pointer; background-image: url('<?=$gallaryPath?>close.png'); background-position-y: -1.5px; top: 6px; right: 10px; bottom: 6px; content: " "; width: 23px; height: 23px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
+      #sincloBox div#closeBtn.closeButtonSetting {display: inline-block; right: 5px; }
+/*
       #sincloBox p#widgetTitle:after { background-position-y: 3px; background-image: url('<?=$gallaryPath?>yajirushi.png'); top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear}
       #sincloBox.open p#widgetTitle:after { transform: rotate(0deg); }
       #sincloBox:not(.open) p#widgetTitle:after { transform: rotate(180deg); }
+*/
       #sincloBox p#widgetSubTitle { background-color: #FFF; margin: 0; padding: 7px 0; text-align: left; border-width: 0 1px 0 1px; border-color: #E8E7E0; border-style: solid; padding-left: 77px; font-weight: bold; color: {{main_color}}; height: 29px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
       #sincloBox p#widgetDescription { background-color: #FFF; margin: 0; padding-bottom: 7px; text-align: left; border-width: 0 1px 1px 1px; border-color: #E8E7E0; border-style: solid; padding-left: 77px; height: 23px; color: #666666; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
       #sincloBox section { display: inline-block; width: 285px; border: 1px solid #E8E7E0; border-top: none; }
@@ -157,6 +185,9 @@
       <p id="widgetTitle" class="widgetOpener notSelect" ng-class="{center: spHeaderLightToggle() || mainImageToggle !== '1',middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3', spText:showWidgetType === 3}">{{title}}</p>
       <!-- タイトル -->
     </div>
+    <div id="minimizeBtn" class="widgetOpener" ng-class="" style="display: block;"></div>
+    <div id="addBtn" class="widgetOpener" ng-class="{closeButtonSetting: closeButtonSettingToggle === '2'}" style="display: none;"></div>
+    <div id="closeBtn" ng-click="switchWidget(4)" ng-class="{closeButtonSetting: closeButtonSettingToggle === '2'}"></div>
     <div id='descriptionSet' class="widgetOpener notSelect" ng-hide=" spHeaderLightToggle() || mainImageToggle == '2' && subTitleToggle == '2' && descriptionToggle == '2'">
       <!-- サブタイトル -->
       <p ng-if="subTitleToggle == '1'" id="widgetSubTitle" >{{sub_title}}</p>
@@ -228,7 +259,74 @@
       <p style="height: 26.5px; padding: 5px 0;text-align: center;border: 1px solid #E8E7E0;color: #A1A1A1!important;font-size: 11px;margin: 0;border-top: none;">Powered by <a target="sinclo" href="https://sinclo.medialink-ml.co.jp/lp/?utm_medium=web-widget&utm_campaign=widget-referral">sinclo</a></p>
     </div>
   </div>
+  <!-- バナー -->
+  <style>
+    @font-face {
+      font-family: 'SincloFont';
+      src: url('https://netdna.bootstrapcdn.com/font-awesome/4.0.3/fonts/fontawesome-webfont.eot?v=4.0.3');
+      src: url('https://netdna.bootstrapcdn.com/font-awesome/4.0.3/fonts/fontawesome-webfont.eot?#iefix&v=4.0.3') format('embedded-opentype'), url('https://netdna.bootstrapcdn.com/font-awesome/4.0.3/fonts/fontawesome-webfont.woff?v=4.0.3') format('woff'), url('https://netdna.bootstrapcdn.com/font-awesome/4.0.3/fonts/fontawesome-webfont.ttf?v=4.0.3') format('truetype'), url('https://netdna.bootstrapcdn.com/font-awesome/4.0.3/fonts/fontawesome-webfont.svg?v=4.0.3#fontawesomeregular') format('svg');
+      font-weight: normal;
+      font-style: normal
+    }
 
+    .sinclo-fa {
+      display: inline-block;
+      font-family: SincloFont;
+      font-style: normal;
+      font-weight: normal;
+      line-height: 1;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      cursor: pointer;
+    }
+
+    .sinclo-fa .fa-comment:before {
+      content: "\f075"
+    }
+    #sincloBanner {
+      position: relative;
+      z-index: 1;
+      height: 60px;
+      width : fit-content !important;
+      background-color: {{main_color}};
+      box-shadow: 0px 0px calc( {{box_shadow}}px + 1px) {{box_shadow}}px rgba(0,0,0,0.1);
+      border-radius: {{radius_ratio}}px {{radius_ratio}}px {{radius_ratio}}px {{radius_ratio}}px;
+      color: {{string_color}};
+      margin: auto;
+      filter:alpha(opacity=80);
+      -moz-opacity: 0.8;
+      opacity: 0.8;
+      top: -30px;
+      cursor: pointer;
+      zoom: 70%;
+    }
+    #sincloBannerText{
+      line-height: 60px;
+      height: auto!important;
+      width: auto!important;
+      padding:0;
+    }
+    #sincloBanner i{
+      color: {{string_color}};
+    }
+    #sincloBanner #sinclo-comment{
+      transform: scale( 1 , 1.4 );
+      font-size: 25px;
+      padding: 0 15px 0 15px;
+      cursor: pointer;
+    }
+    #sincloBanner #bannertext{
+      font-size: 18px;
+      padding: 0 15px 0 0;
+      cursor: pointer;
+    }
+  </style>
+  <div id="sincloBanner" ng-click="bannerSwitchWidget()" ng-if="closeButtonModeTypeToggle === '1' && closeButtonSettingToggle === '2' && showWidgetType === 4">
+    <div id="sincloBannerText" ng-click="bannerSwitchWidget()">
+      <span ng-click="bannerSwitchWidget()"><i id="sinclo-comment" class="sinclo-fa fa-comment">&#xf075;</i><i id="bannertext">{{bannertext}}</i></span>
+    </div>
+  </div>
+  <!-- バナー -->
 
 <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
 <!-- スマホ版 -->
@@ -239,9 +337,14 @@
       #sincloBox .pb07 { padding-bottom: 7px }
       #sincloBox .notSelect { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
       #sincloBox p#widgetTitle { text-align: center!important; padding: 7px 30px!important; position:relative; z-index: 1; cursor:pointer; border-radius: 0; border: 1px solid {{main_color}}; border-bottom:none; background-color: {{main_color}};text-align: center; font-size: 14px; margin: 0;color: {{string_color}}; height: 32px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
+      #sincloBox.open #minimizeBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>minimize.png'); background-position-y: 0px; top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
+      #sincloBox:not(.open) #addBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>add.png'); background-position-y: 0px; top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
+
+/*
       #sincloBox p#widgetTitle:after { background-position-y: 3px; background-image: url('<?=$gallaryPath?>yajirushi.png'); top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear}
       #sincloBox.open p#widgetTitle:after { transform: rotate(0deg); }
       #sincloBox:not(.open) p#widgetTitle:after { transform: rotate(180deg); }
+*/
       #sincloBox section { display: inline-block; width: 285px; border: 1px solid #E8E7E0; border-top: none; }
       #sincloBox section.noDisplay { display: none }
       #sincloBox div#miniTarget { overflow: hidden; transition: height 200ms linear; }
@@ -275,6 +378,8 @@
       <p id="widgetTitle" class="widgetOpener" ng-class="{center: mainImageToggle == '2'}">{{title}}</p>
       <!-- タイトル -->
     </div>
+    <div id="minimizeBtn" class="widgetOpener"></div>
+    <div id="addBtn" class="widgetOpener"></div>
     <div id="miniTarget">
       <section id="chatTab">
         <ul id="chatTalk">

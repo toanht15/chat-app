@@ -128,7 +128,6 @@ var socket, // socket.io
           chat = this.chatWidgetTemplate(widget),
           call = this.widgetTemplate(widget),
           fotter = '<p id="fotter">Powered by <a target="sinclo" href="https://sinclo.medialink-ml.co.jp/lp/?utm_medium=web-widget&utm_campaign=widget-referral">sinclo</a></p>';
-
       // フルプランのPCの場合
       if ( window.sincloInfo.contract.chat && (window.sincloInfo.contract.synclo || (window.sincloInfo.contract.hasOwnProperty('document') && window.sincloInfo.contract.document)) && !check.smartphone() ) {
         displaySet += navi + chat + call;
@@ -147,7 +146,16 @@ var socket, // socket.io
           displaySet += call;
         }
       }
-      return "<sinclo id='sincloBox' >" + css + header + displaySet + fotter + "</sinclo>";
+      //閉じるボタン設定が有効かつバナー表示設定になっているかどうか
+      if(Number(widget.closeButtonSetting) === 2 && Number(widget.closeButtonModeType) === 1){
+        //バナーも同時に生成したsinclo
+        var sincloBanner = this.sincloBannerTemplate(widget);
+        return "<sinclo id='sincloBox' >" + css + "<div id='sincloWidgetBox'>" + header + displaySet + fotter + "</div><div id='sincloBannerBox' style='display: none;'>"+ sincloBanner +"</div></sinclo>";
+      }
+      else{
+        //今までと同じ通常のsinclo
+        return "<sinclo id='sincloBox' >" + css + "<div id='sincloWidgetBox'>" + header + displaySet + fotter + "</div></sinclo>";
+      }
     },
     //サイズを返す関数
     getSizeType: function(sizeTypeID){
@@ -444,6 +452,42 @@ var socket, // socket.io
         }
       }
     },
+    //最大化時ボタン表示
+    whenMaximizedBtnShow: function() {
+      $("#minimizeBtn").show();
+      $("#addBtn").hide();
+      $("#closeBtn").hide();
+    },
+    //最小化時ボタン表示
+    whenMinimizedBtnShow: function() {
+      var widget = window.sincloInfo.widget, displaySet = "";
+      if ( Number(widget.closeButtonSetting) === 1 ) {
+        //閉じるボタン無効
+        $("#minimizeBtn").hide();
+        $("#addBtn").show();
+        $("#closeBtn").hide();
+      }
+      else{
+        //閉じるボタン有効
+        $("#minimizeBtn").hide();
+        $("#addBtn").show();
+        var smartphone = check.smartphone();
+        if(smartphone){
+          //スマホ時
+          //スマホだったら縦か横かを判定
+          if($(window).height() > $(window).width()){
+            //縦
+            $("#closeBtn").show();
+          }
+          else{
+            $("#closeBtn").hide();
+          }
+        }
+        else{
+          $("#closeBtn").show();
+        }
+      }
+    },
     widgetCssTemplate: function(widget){
       // システムで出力するテキストのカラー
       var systemTextColor = "#666666";
@@ -515,6 +559,10 @@ var socket, // socket.io
 
       /* 共通スタイル */
       html += '      @media print{ sinclo { display:none!important; } }';
+      //閉じるボタン設定が有効かつバナー表示設定になっているかどうか
+      if(Number(widget.closeButtonSetting) === 2 && Number(widget.closeButtonModeType) === 1){
+        html += '      @font-face { font-family: "SincloFont"; src: url("https://netdna.bootstrapcdn.com/font-awesome/4.0.3/fonts/fontawesome-webfont.eot?v=4.0.3"); src: url("https://netdna.bootstrapcdn.com/font-awesome/4.0.3/fonts/fontawesome-webfont.eot?#iefix&v=4.0.3") format("embedded-opentype"), url("https://netdna.bootstrapcdn.com/font-awesome/4.0.3/fonts/fontawesome-webfont.woff?v=4.0.3") format("woff"), url("https://netdna.bootstrapcdn.com/font-awesome/4.0.3/fonts/fontawesome-webfont.ttf?v=4.0.3") format("truetype"), url("https://netdna.bootstrapcdn.com/font-awesome/4.0.3/fonts/fontawesome-webfont.svg?v=4.0.3#fontawesomeregular") format("svg"); font-weight: normal; font-style: normal }';
+      }
       html += '      #sincloBox { display: none; position: fixed; ' + showPosition + ' z-index: 999998; background-color: rgba(0,0,0,0);}';
       html += '      #sincloBox * { color: #333333; line-height: 1.3; box-sizing: border-box; font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana; letter-spacing: initial;}';
       html += '      #sincloBox .notSelect { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }';
@@ -529,10 +577,25 @@ var socket, // socket.io
       html += '      #sincloBox span#mainImage img { background-color: ' + widget.mainColor + ' }';
       html += '      #sincloBox p#widgetTitle { position:relative; cursor:pointer; border-bottom:none; background-color: ' + widget.mainColor + ';text-align: center; margin: 0; color: ' + widget.stringColor + ' }';
       html += '      #sincloBox p#widgetTitle #sincloChatUnread { position: absolute; top: 0; left: 0; color: #FFF; font-style: normal; text-align: center; font-weight: bold; background-color: #FF5C5C; }';
-      html += '      #sincloBox p#widgetTitle:after { background-image: url("' + window.sincloInfo.site.files + '/img/widget/yajirushi.png"); content: " "; display: inline-block; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; -webkit-transition: 200ms linear; transition: transform 200ms linear}';
-      html += '      #sincloBox[data-openflg="true"] p#widgetTitle:after { -ms-transform: rotate(0deg); -moz-transform: rotate(0deg); -webkit-transform: rotate(0deg); -o-transform: rotate(0deg); transform: rotate(0deg); }';
-      html += '      #sincloBox[data-openflg="false"] p#widgetTitle:after { -ms-transform: rotate(180deg); -moz-transform: rotate(180deg); -webkit-transform: rotate(180deg); -o-transform: rotate(180deg); transform: rotate(180deg); }';
-      html += '      #sincloBox > section { background-color: #FFF; border-top: none; }';
+
+//    html += '      #sincloBox p#widgetTitle:after { background-image: url("' + window.sincloInfo.site.files + '/img/widget/yajirushi.png"); content: " "; display: inline-block; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; -webkit-transition: 200ms linear; transition: transform 200ms linear}';
+//    html += '      #sincloBox[data-openflg="true"] p#widgetTitle:after { -ms-transform: rotate(0deg); -moz-transform: rotate(0deg); -webkit-transform: rotate(0deg); -o-transform: rotate(0deg); transform: rotate(0deg); }';
+//    html += '      #sincloBox[data-openflg="false"] p#widgetTitle:after { -ms-transform: rotate(180deg); -moz-transform: rotate(180deg); -webkit-transform: rotate(180deg); -o-transform: rotate(180deg); transform: rotate(180deg); }';
+
+      html += '      #sincloBox div#minimizeBtn { display: none; cursor: pointer; background-image: url("' + window.sincloInfo.site.files + '/img/widget/minimize.png"); background-position-y: 0px; top: 6px; right: 10px; bottom: 6px; content: " "; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }';
+      //＋ボタンと×ボタンは閉じるボタン設定によってポジションが異なるため別々に記載。なお、IDは同一とする
+      if ( Number(widget.closeButtonSetting) === 1 ) {
+        //閉じるボタン無効
+        html += '      #sincloBox div#addBtn { display: none; cursor: pointer; background-image: url("' + window.sincloInfo.site.files + '/img/widget/add.png"); background-position-y: 0px; top: 6px; right: 10px; bottom: 6px; content: " "; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }';
+        html += '      #sincloBox div#closeBtn { display: none; cursor: pointer; background-image: url("' + window.sincloInfo.site.files + '/img/widget/close.png"); background-position-y: -1.5px; top: 5px; right: 10px; bottom: 6px; content: " "; width: 23px; height: 23px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }';
+      }
+      else{
+        //閉じるボタン有効
+        html += '      #sincloBox div#addBtn { display: none; cursor: pointer; background-image: url("' + window.sincloInfo.site.files + '/img/widget/add.png"); background-position-y: 0px; top: 6px; right: 25px; bottom: 6px; content: " "; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }';
+        html += '      #sincloBox div#closeBtn { display: none; cursor: pointer; background-image: url("' + window.sincloInfo.site.files + '/img/widget/close.png"); background-position-y: -1.5px; top: 5px; right: 5px; bottom: 6px; content: " "; width: 23px; height: 23px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }';
+      }
+
+      html += '      #sincloWidgetBox > section { background-color: #FFF; border-top: none; }';
       html += '      #sincloBox ul#chatTalk li a, #sincloBox #fotter a {  text-decoration: underline; }';
       html += '      #sincloBox section { display: none; padding: 0!important; }';
       html += '      #sincloBox .flexBox { display: -ms-flexbox; display: -webkit-flex; display: flex; -ms-flex-direction: column; -webkit-flex-direction: column; flex-direction: column }';
@@ -596,6 +659,27 @@ var socket, // socket.io
       html += '      #sincloBox section#navigation ul li[data-tab="call"]::before{ background-image: url("' + window.sincloInfo.site.files + '/img/widget/icon_tel.png"); }';
       html += '      #sincloBox section#navigation ul li[data-tab="chat"]::before{ background-image: url("' + window.sincloInfo.site.files + '/img/widget/icon_chat.png"); }';
       html += '      #sincloBox section#navigation ul li.selected::before{ background-color: ' + widget.mainColor + '; }';
+      //閉じるボタン設定が有効かつバナー表示設定になっているかどうか
+      if(Number(widget.closeButtonSetting) === 2 && Number(widget.closeButtonModeType) === 1){
+        html += '      #sincloBannerBox{ bottom:0px; right:0px; }';
+        html += '      #sincloBanner .sinclo-fa { display: inline-block; font-family: SincloFont ; font-style: normal; font-weight: normal; line-height: 1; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; cursor: pointer; }';
+        html += '      #sincloBanner .sinclo-fa.fa-comment:before { content: "\\f075" }';
+        html += '      #sincloBanner.sincloBanner { position: relative; z-index: 1; height: 60px; width : fit-content !important; background-color: '+ widget.mainColor +'; box-shadow: 0px 0px ' + widget.boxShadow + 'px ' + widget.boxShadow + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px; color: '+ widget.stringColor +'; margin: auto; filter:alpha(opacity=80); -moz-opacity: 0.8; opacity: 0.8; cursor: pointer; zoom: 70%; }';
+        html += '      #sincloBanner.sincloBannerText{ line-height: 60px; height: auto!important; width: auto!important; padding:0; }';
+        html += '      #sincloBanner.sincloBanner i{ color: '+ widget.stringColor +'; }';
+        html += '      #sincloBanner.sincloBanner .sinclo-comment{ transform: scale( 1 , 1.4 ); font-size: 25px; padding: 0 15px 0 15px; cursor: pointer; }';
+        html += '      #sincloBanner.sincloBanner .bannertext{ font-size: 18px; padding: 0 15px 0 0; cursor: pointer; }';
+        //スマホだったらpxの書き換え
+//        if ( check.smartphone() ) {
+//          widgetWidth = $(window).width() - 20;
+//          ratio = widgetWidth * (1/285);
+//          html += '      #sincloBannerBox{ bottom:0px; right:0px; }';
+//          html += '      #sincloBanner.sincloBanner { height: '+ (60 * ratio) +'px; box-shadow: 0px 0px ' + widget.boxShadow + 'px ' + widget.boxShadow + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px; }';
+//          html += '      #sincloBanner.sincloBannerText{ line-height: '+ (60 * ratio) +'px; padding:0; }';
+//          html += '      #sincloBanner.sincloBanner .sinclo-comment{ font-size: '+ (25 * ratio) +'px; padding: 0 '+ (15 * ratio) +'px 0 '+ (15 * ratio) +'px; }';
+//          html += '      #sincloBanner.sincloBanner .bannertext{ font-size: '+ (18 * ratio) +'px; padding: 0 '+ (15 * ratio) +'px 0 0; }';
+//        }
+      }
 
 // html += '    #sincloBox ul { clear: both; display: flex; flex-direction: column } ';
 // html += '    #sincloBox sinclo-chat, #sincloBox sinclo-typing { display: block; border-top: 1px solid #ddd; border-bottom: 1px solid #ddd; } ';
@@ -618,7 +702,7 @@ var socket, // socket.io
 
         /* 縦の場合 */
         if ( $(window).height() > $(window).width() ) {
-          html += '#sincloBox { width: ' + widgetWidth + 'px; box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px 0 0;}';
+          html += '#sincloWidgetBox { width: ' + widgetWidth + 'px; box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px 0 0;}';
           html += '#sincloBox * { font-size: ' + (12 * ratio) + 'px; }';
           html += '#sincloBox section { width: ' + widgetWidth + 'px }';
           html += '#sincloBox section#navigation ul { width: ' + widgetWidth + 'px }';
@@ -629,7 +713,19 @@ var socket, // socket.io
             html += '#sincloBox p#widgetTitle { overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}';
           }
           html += '#sincloBox p#widgetTitle #sincloChatUnread { width: ' + (25 * ratio) + 'px; height: ' + (25 * ratio) + 'px; font-size: ' + (13 * ratio) + 'px; border-radius: ' + (15 * ratio) + 'px; margin: ' + (2.5 * ratio) + 'px ' + (6 * ratio) + 'px; padding: ' + (3 * ratio) + 'px; }';
-          html += '#sincloBox p#widgetTitle:after { background-position-y: ' + (3 * ratio) + 'px; top: ' + (6 * ratio) + 'px; right: ' + (10 * ratio) + 'px; bottom: ' + (6 * ratio) + 'px; width: ' + (20 * ratio) + 'px; height: ' + (20 * ratio) + 'px; }';
+//        html += '#sincloBox p#widgetTitle:after { background-position-y: ' + (3 * ratio) + 'px; top: ' + (6 * ratio) + 'px; right: ' + (10 * ratio) + 'px; bottom: ' + (6 * ratio) + 'px; width: ' + (20 * ratio) + 'px; height: ' + (20 * ratio) + 'px; }';
+          html += '#sincloBox div#minimizeBtn { display: none; top: ' + (6 * ratio) + 'px; right: ' + (10 * ratio) + 'px; bottom: ' + (6 * ratio) + 'px; width: ' + (20 * ratio) + 'px; height: ' + (20 * ratio) + 'px; z-index: 2; }';
+          //＋ボタンと×ボタンは閉じるボタン設定によってポジションが異なるため別々に記載。なお、IDは同一とする
+          if ( Number(widget.closeButtonSetting) === 1 ) {
+            //閉じるボタン無効
+            html += '#sincloBox div#addBtn { display: none; top: ' + (6 * ratio) + 'px; right: ' + (10 * ratio) + 'px; bottom: ' + (6 * ratio) + 'px; width: ' + (20 * ratio) + 'px; height: ' + (20 * ratio) + 'px; z-index: 2; }';
+            html += '#sincloBox div#closeBtn { display: none; top: ' + (5 * ratio) + 'px; right: ' + (10 * ratio) + 'px; bottom: ' + (6 * ratio) + 'px; width: ' + (23 * ratio) + 'px; height: ' + (23 * ratio) + 'px; z-index: 2; }';
+          }
+          else{
+            //閉じるボタン有効
+            html += '#sincloBox div#addBtn { display: none; top: ' + (6 * ratio) + 'px; right: ' + (25 * ratio) + 'px; bottom: ' + (6 * ratio) + 'px; width: ' + (20 * ratio) + 'px; height: ' + (20 * ratio) + 'px; z-index: 2; }';
+            html += '#sincloBox div#closeBtn { display: none; top: ' + (5 * ratio) + 'px; right: ' + (5 * ratio) + 'px; bottom: ' + (6 * ratio) + 'px; width: ' + (23 * ratio) + 'px; height: ' + (23 * ratio) + 'px; z-index: 2; }';
+          }
           html += '#sincloBox p#widgetSubTitle { background-color: #FFF; border-color: #E8E7E0; font-weight: bold; color: ' + widget.mainColor + '; border-style: solid; text-align: left; margin: 0; padding: ' + (7 * ratio) + 'px 0; border-width: 0 ' + (1 * ratio) + 'px 0 ' + (1 * ratio) + 'px; padding-left: ' + (77 * ratio) + 'px; height: ' + (29 * ratio) + 'px; }';
           if(widget.widgetSizeType !== 1){
             html += '#sincloBox p#widgetSubTitle { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }';
@@ -675,6 +771,13 @@ var socket, // socket.io
           html += '#sincloBox section#navigation ul li.selected::after { border-bottom: ' + (2 * ratio) + 'px solid ' + widget.mainColor + '; left: ' + (5 * ratio) + 'px; }';
           html += '#sincloBox #fotter { padding: ' + (5 * ratio) + 'px 0; border: ' + (1 * ratio) + 'px solid #E8E7E0; font-size: ' + (11 * ratio) + 'px; border-top: none;}';
           html += '#sincloBox section#navigation ul li::before { margin-right: ' + (5 * ratio) + 'px; width: ' + (18 * ratio) + 'px; height: ' + (18 * ratio) + 'px; }';
+          //閉じるボタン設定が有効かつバナー表示設定になっているかどうか
+          if(Number(widget.closeButtonSetting) === 2 && Number(widget.closeButtonModeType) === 1){
+            html += '      #sincloBannerBox{ bottom:0px; right:0px; }';
+            html += '      #sincloBanner.sincloBanner { height: '+ (60 * ratio) +'px; box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px; }';
+            html += '      #sincloBanner.sincloBanner .sinclo-comment{ font-size: '+ (25 * ratio) +'px; padding: 0 '+ (15 * ratio) +'px 0 '+ (15 * ratio) +'px; }';
+            html += '      #sincloBanner.sincloBanner .bannertext{ font-size: '+ (18 * ratio) +'px; padding: 0 '+ (15 * ratio) +'px 0 0; }';
+          }
         }
         /* 横の場合 */
         else {
@@ -688,8 +791,13 @@ var socket, // socket.io
           }
           html += '#sincloBox section { width: 100% }';
           html += '#sincloBox section#chatTab ul { height: ' + (chatAreaHeight - (6.5 * hRatio)) + 'px }';
-
+          html += '#sincloBox div#minimizeBtn { width: 1.5em; height: 1.5em; top: 0.4em; bottom: 0; right: 0.7em; }';
+          //＋ボタンと×ボタンは閉じるボタン設定によってポジションが異なるため別々に記載。なお、IDは同一とする
+          //閉じるボタン無効
+          html += '#sincloBox div#addBtn { width: 1.5em; height: 1.5em; top: 0.4em; bottom: 0; right: 0.7em; }';
+/*
           html += '#sincloBox #widgetTitle:after { width: 1.5em; height: 1.5em; top: 0; bottom: 0; right: 0.25em;}';
+*/
           html += '#sincloBox[data-openflg="true"] p#widgetTitle:after { margin-top: 0.5em; }';
           html += '#sincloBox #widgetTitle em { width: 2em; height: 2em; font-size: 0.8em; padding: 0.25em; border-radius: 5em; margin: 0.25em; }';
           html += '#sincloBox ul#chatTalk { padding: 0.3em; }';
@@ -729,7 +837,7 @@ var socket, // socket.io
       /* PC版 */
       else {
 //        html += "      #sincloBox { width: " + widgetWidth + "px }";
-        html += "      #sincloBox { width: " + sizeList['boxWidth'] + "px; box-shadow: 0px 0px " + widget.boxShadow + "px " + widget.boxShadow + "px rgba(0,0,0,0.1); border-radius: " + widget.radiusRatio + "px " + widget.radiusRatio + "px 0 0;}";
+        html += "      #sincloWidgetBox { width: " + sizeList['boxWidth'] + "px; box-shadow: 0px 0px " + widget.boxShadow + "px " + widget.boxShadow + "px rgba(0,0,0,0.1); border-radius: " + widget.radiusRatio + "px " + widget.radiusRatio + "px 0 0;}";
         html += '      #sincloBox * { line-height: 1.4; font-size: '+ sizeList['d12font'] +'px; }';
         html += '      #sincloBox sinclo-div#widgetHeader:after { top: 32px }';
 //        html += "      #sincloBox section { width: " + widgetWidth + "px }";
@@ -790,6 +898,24 @@ var socket, // socket.io
 
       return html;
     },
+    //バナーを生成する関数
+    sincloBannerTemplate: function(widget){
+      var widgetWidth = $(window).width() - 20;
+      var ratio = widgetWidth * (1/285);
+      if ( check.smartphone() ) {
+        var lineHeight = 60 * ratio;
+      }
+      else{
+        var lineHeight = 60;
+      }
+      var html = "";
+      html += '  <div id="sincloBanner" class="sincloBanner" onclick="sinclo.operatorInfo.clickBanner()">';
+      html += '    <div id="sincloBannerText" class="sincloBannerText" style=" line-height: '+ lineHeight +'px; height: auto!important; width: auto!important; padding:0;">';
+      html += '      <span><i id="sinclo-comment" class="sinclo-fa fa-comment sinclo-comment"></i><i class="bannertext">'+ check.escape_html(widget.bannertext) +'</i></span>';
+      html += '    </div>';
+      html += '  </div>';
+      return html;
+    },
     widgetHeaderTemplate: function(widget){
       var html = "", chatAndTitleOnly = false;
       // チャットとタイトルバーのみ表示するフラグ
@@ -809,6 +935,10 @@ var socket, // socket.io
       html += '  <sinclo-div id="widgetHeader" class="notSelect" onclick="sinclo.operatorInfo.toggle()">';
       // タイトル
       html += '    <p id="widgetTitle">' + check.escape_html(widget.title) + '</p>';
+      //ボタン差し替え対応
+      html += '    <div id="minimizeBtn"></div>';
+      html += '    <div id="addBtn"></div>';
+      html += '    <div id="closeBtn" onclick="sinclo.operatorInfo.closeBtn()"></div>';
       var subTitle = (widget.subTitle === undefined && Number(widget.showSubtitle) === 1 ) ? "" : widget.subTitle;
       var description = (widget.description === undefined) ? "" : widget.description;
       if ( !chatAndTitleOnly && (Number(widget.showMainImage) === 1 || Number(widget.showSubtitle) === 1 || Number(widget.showDescription) === 1) ) {
@@ -1081,6 +1211,8 @@ var socket, // socket.io
               common.abridgementTypeShow();
             }
             sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
+            //最小化時ボタン表示
+            common.whenMinimizedBtnShow();
             // このタイミングでの最大化実行条件
             // １：PCの場合、ウィジェット最大化処理がウィジェット非表示時に実行されていた場合
             // ２：スマホの場合、ウィジェット最大化する設定が有効で、ウィジェット最大化処理がウィジェット非表示時に実行されていた場合
@@ -1097,6 +1229,8 @@ var socket, // socket.io
                 //ヘッダ表示（通常表示）
                 common.abridgementTypeShow();
               }
+              //最大化時ボタン表示
+              common.whenMaximizedBtnShow();
             }
           }
           else{
@@ -1110,6 +1244,8 @@ var socket, // socket.io
                 //ヘッダ表示（通常表示）
                 common.abridgementTypeShow();
               }
+              //最小化時ボタン表示
+              common.whenMinimizedBtnShow();
             }
             else{
               //最大化
@@ -1121,6 +1257,8 @@ var socket, // socket.io
                 //ヘッダ表示（通常表示）
                 common.abridgementTypeShow();
               }
+              //最大化時ボタン表示
+              common.whenMaximizedBtnShow();
             }
           }
         }

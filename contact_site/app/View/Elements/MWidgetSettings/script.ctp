@@ -34,6 +34,11 @@ sincloApp.controller('WidgetCtrl', function($scope){
       }
 
       if ( Number(num) !== 2 ) { // ｽﾏｰﾄﾌｫﾝ（横）以外は最大化する
+        if(sincloBox){
+          if(sincloBox.style.display == 'none'){
+            sincloBox.style.display = 'block';
+          }
+        }
         /* ウィジェットが最小化されていたら最大化する */
         if ( !$scope.openFlg ) { // 最小化されている場合
           var main = document.getElementById("miniTarget");  // 非表示対象エリア
@@ -47,12 +52,33 @@ sincloApp.controller('WidgetCtrl', function($scope){
           }
         }
       }
-
+      if( Number(num) !== 4 ){
+        document.getElementById("switch_widget").value = num;
+      }
       $scope.openFlg = true;
+    }
+
+    //バナーから通常の表示に戻るときの処理
+    $scope.bannerSwitchWidget = function(){
+      var lastSwitchWidget = Number(document.getElementById("switch_widget").value);
+      sincloBox.style.display = 'block';
+      $scope.switchWidget(lastSwitchWidget);
+      $scope.openFlg = false;
+      return;
     }
 
     $scope.showChooseImg = function(){
       return $scope.mainImageToggle == '1';
+    }
+
+    $scope.showcloseButtonMode = function(){
+      if($scope.closeButtonSettingToggle == '2' && $scope.mainImageToggle != '4'){
+        $("#closeButtonMode").show();
+      }
+      else{
+        $("#closeButtonMode").hide();
+      }
+      return;
     }
 
     $scope.$watch('chat_trigger', function(){
@@ -278,6 +304,24 @@ sincloApp.controller('WidgetCtrl', function($scope){
           }
         }
         break;
+      }
+      if($scope.openFlg){
+        //最大化時
+        $("#minimizeBtn").show();
+        $("#addBtn").hide();
+        $("#closeBtn").hide();
+      }
+      else{
+        //最小化時
+        $("#addBtn").show();
+        $("#minimizeBtn").hide();
+        if($scope.closeButtonSettingToggle === '2'){
+          $("#closeBtn").show();
+        }
+        else{
+          $("#closeBtn").hide();
+        }
+        document.getElementById("switch_widget").value = $scope.showWidgetType;
       }
       return res;
     };
