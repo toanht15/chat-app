@@ -897,7 +897,7 @@ var socket, // socket.io
           placeholder = "メッセージを入力してください（改行で送信）";
         }
         else {
-          placeholder = "メッセージを入力してください（Shift+Enterで改行/Enterで送信）";
+          placeholder = "メッセージを入力してください&#13;&#10;（Shift+Enterで改行/Enterで送信）";
         }
       }
       html += '  <section id="chatTab" class="flexBox">';
