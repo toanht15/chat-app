@@ -894,7 +894,7 @@ var socket, // socket.io
       }
       else {
         if ( spFlg ) { // スマートフォンの場合
-          placeholder = "メッセージを入力してください&#13;&#10;（改行で送信）";
+          placeholder = "メッセージを入力してください（改行で送信）";
         }
         else {
           placeholder = "メッセージを入力してください&#13;&#10;（Shift+Enterで改行/Enterで送信）";

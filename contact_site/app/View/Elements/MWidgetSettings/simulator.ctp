@@ -289,7 +289,7 @@
           </div>
         </ul>
         <div style="border-top: 1px solid #E8E7E0; padding: 0.5em;">
-          <textarea name="sincloChat" id="sincloChatMessage" placeholder="メッセージを入力してください&#13;&#10;{{chat_area_placeholder_sp}}"></textarea>
+          <textarea name="sincloChat" id="sincloChatMessage" placeholder="メッセージを入力してください{{chat_area_placeholder_sp}}"></textarea>
           <a id="sincloChatSendBtn" class="notSelect"><span>送信</span></a>
         </div>
       </section>
