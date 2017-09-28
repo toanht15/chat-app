@@ -488,6 +488,9 @@ var socket, // socket.io
         }
       }
     },
+    returnRatioPx: function(px) {
+      return window.innerHeight * (px / window.innerWidth);
+    },
     widgetCssTemplate: function(widget){
       // システムで出力するテキストのカラー
       var systemTextColor = "#666666";
@@ -702,6 +705,7 @@ var socket, // socket.io
 
         /* 縦の場合 */
         if ( $(window).height() > $(window).width() ) {
+          html += '#sincloBox { width: ' + widgetWidth + 'px; }';
           html += '#sincloWidgetBox { width: ' + widgetWidth + 'px; box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px 0 0;}';
           html += '#sincloBox * { font-size: ' + (12 * ratio) + 'px; }';
           html += '#sincloBox section { width: ' + widgetWidth + 'px }';
@@ -783,7 +787,8 @@ var socket, // socket.io
         else {
           var chatAreaHeight = window.innerHeight * (document.body.clientWidth / window.innerWidth);
           var hRatio = chatAreaHeight * 0.07;
-          html += '#sincloBox { left:0; right:0; bottom: 0; box-shadow: 0px 0px ' + widget.boxShadow + 'px ' + widget.boxShadow  + 'px rgba(0,0,0,0.1);}';
+          html += '#sincloBox { left:0; right:0; bottom: 0; }';
+          html += '#sincloWidgetBox { box-shadow: 0px 0px ' + widget.boxShadow + 'px ' + widget.boxShadow  + 'px rgba(0,0,0,0.1);}';
           html += '#sincloBox * { font-size: ' + hRatio + 'px }';
           html += '#sincloBox p#widgetTitle { border-radius: 0; border-top-width: 0.1em; height: 2em; padding: 0.35em 2em 0; font-size: 1.2em }';
           if(widget.widgetSizeType !== 1){
@@ -832,6 +837,14 @@ var socket, // socket.io
           html += '#sincloBox section#navigation ul { width: 100% }';
           html += 'sinclo span#mainImage, sinclo #widgetSubTitle, sinclo #widgetDescription, sinclo #navigation, sinclo #navigation * { display:none!important; height: 0!important }';
           html += '#sincloBox #fotter { display: none; height: 0!important }';
+          //閉じるボタン設定が有効かつバナー表示設定になっているかどうか
+          if(Number(widget.closeButtonSetting) === 2 && Number(widget.closeButtonModeType) === 1){
+            var ratio = 1;
+            html += '      #sincloBannerBox{ bottom:0px; right:0px; }';
+            html += '      #sincloBanner.sincloBanner { height: '+ (60 * ratio) +'px; box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px; }';
+            html += '      #sincloBanner.sincloBanner .sinclo-comment{ font-size: '+ (25 * ratio) +'px; padding: 0 '+ (15 * ratio) +'px 0 '+ (15 * ratio) +'px; }';
+            html += '      #sincloBanner.sincloBanner .bannertext{ font-size: '+ (18 * ratio) +'px; padding: 0 '+ (15 * ratio) +'px 0 0; }';
+          }
         }
       }
       /* PC版 */
@@ -903,7 +916,14 @@ var socket, // socket.io
       var widgetWidth = $(window).width() - 20;
       var ratio = widgetWidth * (1/285);
       if ( check.smartphone() ) {
-        var lineHeight = 60 * ratio;
+        if ( $(window).height() > $(window).width() ) {
+          //縦
+          var lineHeight = 60 * ratio;
+        }
+        else{
+          //横
+          var lineHeight = 0;
+        }
       }
       else{
         var lineHeight = 60;
@@ -1185,6 +1205,24 @@ var socket, // socket.io
          * ３：sincloBoxの要素が存在する
          * ４：sincloBoxの要素のdisplayがnoneである
          */
+        //画面遷移前に閉じるボタンが押下されていたか
+        //バナー表示だった
+        var bannerAct = storage.s.get('bannerAct');
+        //非表示の状態だった
+        var closeAct = storage.s.get('closeAct');
+        if(bannerAct === "true"){
+          //強制的にバナー表示とする
+          sinclo.operatorInfo.onBanner();
+          //バナー表示フラグ設定をクリア
+//          storage.s.unset("bannerAct");
+        }
+        if(closeAct === "true"){
+          //強制的に非表示とする
+          //チャットを閉じる
+          $("#sincloWidgetBox").hide();
+          //非表示フラグ設定をクリア
+//          storage.s.unset("closeAct");
+        }
         if((common.widgetHandler.isShown() || window.sincloInfo.widgetDisplay)
           && sincloBox && (sincloBox.style.display === 'none' || sincloBox.style.display === '')) {
           console.log('でろでろでろでろでろでろ');

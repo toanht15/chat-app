@@ -94,9 +94,16 @@
           height = this.header.offsetHeight;
           sinclo.widget.condifiton.set(false);
         }
-        elm.animate({
-          height: height + "px"
-        }, 'first');
+        var bannerAct = storage.s.get('bannerAct');
+        //閉じるボタン設定が有効かつバナー表示設定になっているかどうか
+        if(!(bannerAct === "true" && Number(window.sincloInfo.widget.closeButtonSetting) === 2 && Number(window.sincloInfo.widget.closeButtonModeType) === 1)){
+          elm.animate({
+            height: height + "px"
+          }, 'first');
+        }
+        else{
+          return;
+        }
 //        target.removeClass("selected");
 //        $("#sincloBox").height("");
       },
@@ -104,52 +111,89 @@
       closeBtn: function(){
         //閉じるボタン設定が有効かつバナー表示設定になっているかどうか
         if(Number(window.sincloInfo.widget.closeButtonSetting) === 2 && Number(window.sincloInfo.widget.closeButtonModeType) === 1){
-          //バナー表示
-          $("#sincloWidgetBox").hide();
-          if ( check.smartphone() ) {
-            var widgetWidth = $(window).width() - 20;
-            var ratio = widgetWidth * (1/285);
-            var bottom = 70 * ratio;
-            var leftRight = 30 * ratio;
-          }
-          else{
-            var bottom = 30;
-            var leftRight = 30;
-          }
-          $("#sincloBox").css("bottom",bottom+"px");
-          switch ( Number(window.sincloInfo.widget.showPosition) ) {
-            case 1: // 右下
-              //right: 10px;
-              $("#sincloBox").css("right",leftRight+"px");
-              break;
-            case 2: // 左下
-              //left: 10px;
-              $("#sincloBox").css("left",leftRight+"px");
-              break;
-          }
-          //outline: none;
-          $("#sincloBox").css("outline","none");
-          $("#sincloBannerBox").show();
+          //バナー表示にする
+          sinclo.operatorInfo.onBanner();
         }
         else{
+          //非表示状態になった
+          storage.s.set('closeAct', true);
           //チャットを閉じる
           $("#sincloBox").hide();
         }
       },
+      //バナー表示にする
+      onBanner: function() {
+        var kyeWidth = $(window).width();
+        var kyeHeight = $(window).height();
+        //バナー表示
+        $("#sincloWidgetBox").hide();
+        if ( check.smartphone() ) {
+          $("#sincloBox").css("height","auto");
+          //スマホだったら縦か横かを判定
+          if($(window).height() > $(window).width()){
+            //縦
+            var bottom = "15vh";
+            var leftRight = "-15vw";
+          }
+          else{
+            //横
+            var bottom = "9vh";
+            var leftRight = "-75vw";
+          }
+        }
+        else{
+          if(storage.s.get('bannerAct') && storage.s.get('bannerBottom')){
+            var bottom = Number(storage.s.get('bannerBottom'));
+
+          }
+          else{
+            var bottom = kyeWidth * 0.05;
+            storage.s.set('bannerBottom', bottom);
+          }
+          var leftRight = kyeHeight * 0.05;
+        }
+        $("#sincloBox").css("bottom",bottom + "px");
+        switch ( Number(window.sincloInfo.widget.showPosition) ) {
+          case 1: // 右下
+            //right: 10px;
+            $("#sincloBox").css("right",leftRight + "px");
+            break;
+          case 2: // 左下
+            //left: 10px;
+            $("#sincloBox").css("left",leftRight + "px");
+            break;
+        }
+        //outline: none;
+        $("#sincloBox").css("outline","none");
+        $("#sincloBannerBox").show();
+        //バナー表示状態になった
+        storage.s.set('bannerAct', true);
+
+//        height = this.header.offsetHeight;
+      },
       //バナーがクリックされた時の挙動
       clickBanner: function() {
+        //バナー非表示状態になった
+        storage.s.set('bannerAct', false);
         $("#sincloWidgetBox").show();
         $("#sincloBannerBox").hide();
         $("#sincloBox").css("bottom","0");
-        switch ( Number(window.sincloInfo.widget.showPosition) ) {
-        case 1: // 右下
-          //right: 10px;
-          $("#sincloBox").css("right","10px");
-          break;
-        case 2: // 左下
-          //left: 10px;
-          $("#sincloBox").css("left","10px");
-          break;
+        //スマホかつ横かを判定
+        if (check.smartphone()) {
+          $("#sincloBox").css("right","");
+          $("#sincloBox").css("left","");
+        }
+        else{
+          switch ( Number(window.sincloInfo.widget.showPosition) ) {
+          case 1: // 右下
+            //right: 10px;
+            $("#sincloBox").css("right","10px");
+            break;
+          case 2: // 左下
+            //left: 10px;
+            $("#sincloBox").css("left","10px");
+            break;
+          }
         }
         this.ev();
       },
