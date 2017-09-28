@@ -1067,7 +1067,7 @@
                 message.placeholder = "メッセージを入力してください";
                 if ( !( 'chatTrigger' in window.sincloInfo.widget && window.sincloInfo.widget.chatTrigger === 2) ) {
                   if ( check.smartphone() ) {
-                    message.placeholder += "（改行で送信）";
+                    message.placeholder += "\n（改行で送信）";
                   }
                   else {
                     message.placeholder += "\n（Shift+Enterで改行/Enterで送信）";
