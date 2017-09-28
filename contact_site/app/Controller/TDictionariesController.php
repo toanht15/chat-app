@@ -369,8 +369,6 @@ class TDictionariesController extends AppController {
           $this->TDictionary->begin();
           // バリデーションチェックでエラーが出た場合
           if($res){
-            $this->log('save前セーブデータ',LOG_DEBUG);
-            $this->log($saveData,LOG_DEBUG);
             if (! $this->TDictionary->save() ) {
               $res = false;
               $errorMessage = $this->TDictionary->validationErrors;
