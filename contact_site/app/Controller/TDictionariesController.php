@@ -379,11 +379,11 @@ class TDictionariesController extends AppController {
               $this->Session->delete('dstoken');
               $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
               $this->set('tabindex', $data['selectedCategory']);
-              return $this->getCategoryIndexFromId($saveData['TDictionary']['m_category_id']);
               //$data['selectedCategory'];
             }
           }
         }
+        return $this->getCategoryIndexFromId($saveData['TDictionary']['m_category_id']);
       } else {
         // すでに存在しないカテゴリへのコピーのため変更済みとしてエラーを返す
         $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.configChanged'));
@@ -428,10 +428,10 @@ class TDictionariesController extends AppController {
               $this->TDictionary->commit();
               $this->Session->delete('dstoken');
               $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
-              return $this->getCategoryIndexFromId($moveData['TDictionary']['m_category_id']);
             }
           }
         }
+        return $this->getCategoryIndexFromId($moveData['TDictionary']['m_category_id']);
       }
       else {
         // すでに存在しないカテゴリへのコピーのため変更済みとしてエラーを返す
