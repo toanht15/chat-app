@@ -123,7 +123,9 @@
     log.requestDataType = ( set.hasOwnProperty('dataType') ) ? set.dataType : "";
     log.requestData     = ( set.hasOwnProperty('data') ) ? set.data     : "";
     <?php if ( APP_MODE_DEV === false ) { // 本番 ?>
-      location.href = "<?=$this->Html->url(['controller' => 'Login', 'action'=>'loginCheck'])?>" + "?error=" + encodeURIComponent(JSON.stringify(log));
+    if(!jqxhr.hasOwnProperty('status') || jqxhr.status !== 409) { // 409エラーは定型文管理画面のエラーハンドリングで利用しているためリダイレクトさせない
+      location.href = "<?=$this->Html->url(['controller' => 'Login', 'action' => 'loginCheck'])?>" + "?error=" + encodeURIComponent(JSON.stringify(log));
+    }
     <?php } else { // テスト ?>
       console.dir(log);
     <?php } ?>
