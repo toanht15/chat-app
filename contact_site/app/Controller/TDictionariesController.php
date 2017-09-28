@@ -386,8 +386,8 @@ class TDictionariesController extends AppController {
         }
       } else {
         // すでに存在しないカテゴリへのコピーのため変更済みとしてエラーを返す
-        $this->response->statusCode(409); //CONFLICT
         $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.configChanged'));
+        $this->response->statusCode(409); //CONFLICT
         return;
       }
     }
@@ -435,8 +435,8 @@ class TDictionariesController extends AppController {
       }
       else {
         // すでに存在しないカテゴリへのコピーのため変更済みとしてエラーを返す
-        $this->response->statusCode(409); //CONFLICT
         $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.configChanged'));
+        $this->response->statusCode(409); //CONFLICT
         return;
       }
     }
@@ -515,8 +515,8 @@ class TDictionariesController extends AppController {
       }
       else {
         // すでに存在しないカテゴリへの登録・更新のため変更済みとしてエラーを返す
-        $this->response->statusCode(409); //CONFLICT
         $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.configChanged'));
+        $this->response->statusCode(409); //CONFLICT
         return;
       }
     }
@@ -580,8 +580,8 @@ class TDictionariesController extends AppController {
       }
       else {
         // すでに存在しないカテゴリへのコピーのため変更済みとしてエラーを返す
-        $this->response->statusCode(409); //CONFLICT
         $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.configChanged'));
+        $this->response->statusCode(409); //CONFLICT
         return;
       }
     }
@@ -725,8 +725,8 @@ class TDictionariesController extends AppController {
           } else {
             // 送信されたカテゴリ設定と現在DBに存在する定型文設定に差がある場合
             $this->TDictionaryCategory->rollback();
-            $this->response->statusCode(409); //CONFLICT
             $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.configChanged'));
+            $this->response->statusCode(409); //CONFLICT
             return;
           }
         }
@@ -742,8 +742,8 @@ class TDictionariesController extends AppController {
       }
       else {
         // すでに存在しないカテゴリへのコピーのため変更済みとしてエラーを返す
-        $this->response->statusCode(409); //CONFLICT
         $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.configChanged'));
+        $this->response->statusCode(409); //CONFLICT
         return;
       }
     }
@@ -845,8 +845,8 @@ class TDictionariesController extends AppController {
       }
       else {
         //すでに存在しないカテゴリへのコピーのため変更済みとしてエラーを返す
-        $this->response->statusCode(409); //CONFLICT
         $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.configChanged'));
+        $this->response->statusCode(409); //CONFLICT
         return;
       }
     }
