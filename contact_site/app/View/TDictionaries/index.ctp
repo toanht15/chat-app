@@ -16,7 +16,7 @@
     <li>
     <div>
     <p>
-      <span><input type="text" class="" size="35" id="input_category_value" placeholder="追加するカテゴリ名を入力してください" onKeyUp="inputValue(this)"></span>
+      <span><input type="text" class="" size="36" id="input_category_value" placeholder="追加するカテゴリ名を入力してください" onKeyUp="inputValue(this)"></span>
       <span>
         <input type="button" class="disOffgrayBtn btn-shadow" id="input_category_btn" value="カテゴリを追加" disabled="disabled" onClick="saveCategoryAddDialog()">
       </span>
