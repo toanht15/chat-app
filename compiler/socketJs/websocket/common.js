@@ -488,9 +488,6 @@ var socket, // socket.io
         }
       }
     },
-    returnRatioPx: function(px) {
-      return window.innerHeight * (px / window.innerWidth);
-    },
     widgetCssTemplate: function(widget){
       // システムで出力するテキストのカラー
       var systemTextColor = "#666666";
@@ -706,7 +703,7 @@ var socket, // socket.io
         /* 縦の場合 */
         if ( $(window).height() > $(window).width() ) {
           html += '#sincloBox { width: ' + widgetWidth + 'px; }';
-          html += '#sincloWidgetBox { width: ' + widgetWidth + 'px; box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px 0 0;}';
+          html += '#sincloWidgetBox { box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px 0 0;}';
           html += '#sincloBox * { font-size: ' + (12 * ratio) + 'px; }';
           html += '#sincloBox section { width: ' + widgetWidth + 'px }';
           html += '#sincloBox section#navigation ul { width: ' + widgetWidth + 'px }';
@@ -839,7 +836,7 @@ var socket, // socket.io
           html += '#sincloBox #fotter { display: none; height: 0!important }';
           //閉じるボタン設定が有効かつバナー表示設定になっているかどうか
           if(Number(widget.closeButtonSetting) === 2 && Number(widget.closeButtonModeType) === 1){
-            var ratio = 1;
+            var ratio = 1.9;
             html += '      #sincloBannerBox{ bottom:0px; right:0px; }';
             html += '      #sincloBanner.sincloBanner { height: '+ (60 * ratio) +'px; box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px; }';
             html += '      #sincloBanner.sincloBanner .sinclo-comment{ font-size: '+ (25 * ratio) +'px; padding: 0 '+ (15 * ratio) +'px 0 '+ (15 * ratio) +'px; }';
@@ -922,7 +919,7 @@ var socket, // socket.io
         }
         else{
           //横
-          var lineHeight = 0;
+          var lineHeight = 110;
         }
       }
       else{
@@ -1183,6 +1180,14 @@ var socket, // socket.io
             window.addEventListener('scroll', sinclo.operatorInfo.widgetHide);
             // 画面を回転ときは、向きによってスタイルを変える
             window.addEventListener('orientationchange', function(){
+              //バナー表示だった
+              var bannerAct = storage.s.get('bannerAct');
+              if(bannerAct === "true"){
+                //強制的にバナー表示とする
+                $("#sincloBannerBox").hide();
+//                $("#sincloBox").css("height","");
+//                sinclo.operatorInfo.onBanner();
+              }
               sinclo.operatorInfo.reCreateWidget();
             });
             // サイズが変わった時は、サイズ感を変える
@@ -1212,6 +1217,7 @@ var socket, // socket.io
         var closeAct = storage.s.get('closeAct');
         if(bannerAct === "true"){
           //強制的にバナー表示とする
+          $("#sincloBox").css("height","");
           sinclo.operatorInfo.onBanner();
           //バナー表示フラグ設定をクリア
 //          storage.s.unset("bannerAct");

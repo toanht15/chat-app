@@ -37,75 +37,76 @@
         var sincloBox = document.getElementById('sincloBox');
         var flg = sinclo.widget.condifiton.get();
         var elm = $('#sincloBox');
-        //最小化時と最大化時の状態を取得
-        var abridgementType = common.getAbridgementType()
-        if ( String(flg) === "false" ) {
-          //最大化時ボタン表示
-          common.whenMaximizedBtnShow();
-          //最大化
-          if(abridgementType['MaxRes']){
-            //ヘッダ非表示（シンプル表示）
-            common.abridgementTypehide();
-          }
-          else{
-            //ヘッダ表示（通常表示）
-            common.abridgementTypeShow();
-          }
-          sinclo.widget.condifiton.set(true);
-          if ( check.smartphone() && window.sincloInfo.contract.chat && (window.screen.availHeight < window.screen.availWidth) ) {
-            //スマホ横
-            height = window.innerHeight * (document.body.clientWidth / window.innerWidth);
-          }
-          else {
-            height += $("#sincloBox #widgetHeader").outerHeight(true);
-            if ( $("#sincloBox").children().is("#navigation") ) {
-              height += $("#sincloBox > #navigation").outerHeight(true);
-              var tab = $("#sincloBox #navigation li.selected").data('tab');
-              height += $("#sincloBox #" + tab + "Tab").outerHeight(true);
+        //実際にバナーではないか
+        var bannerAct = storage.s.get('bannerAct');
+        if(bannerAct !== "true"){
+          //アニメーションさせる
+          //最小化時と最大化時の状態を取得
+          var abridgementType = common.getAbridgementType()
+          if ( String(flg) === "false" ) {
+            //最大化時ボタン表示
+            common.whenMaximizedBtnShow();
+            //最大化
+            if(abridgementType['MaxRes']){
+              //ヘッダ非表示（シンプル表示）
+              common.abridgementTypehide();
+            }
+            else{
+              //ヘッダ表示（通常表示）
+              common.abridgementTypeShow();
+            }
+            sinclo.widget.condifiton.set(true);
+            if ( check.smartphone() && window.sincloInfo.contract.chat && (window.screen.availHeight < window.screen.availWidth) ) {
+              //スマホ横
+              height = window.innerHeight * (document.body.clientWidth / window.innerWidth);
             }
             else {
-              height += $("#sincloBox [id$='Tab']").outerHeight(true);
+              height += $("#sincloBox #widgetHeader").outerHeight(true);
+              if ( $("#sincloBox").children().is("#navigation") ) {
+                height += $("#sincloBox > #navigation").outerHeight(true);
+                var tab = $("#sincloBox #navigation li.selected").data('tab');
+                height += $("#sincloBox #" + tab + "Tab").outerHeight(true);
+              }
+              else {
+                height += $("#sincloBox [id$='Tab']").outerHeight(true);
+              }
+              height += $("#sincloBox > #fotter").outerHeight(true);
+              //閉じるボタン設定が有効かつバナー表示設定になっているかどうか、かつPCか
+              //false/true:通常（PC）/スマホ
+              var smartphone = check.smartphone();
+              if(Number(window.sincloInfo.widget.closeButtonSetting) === 2 && Number(window.sincloInfo.widget.closeButtonModeType) === 1 && smartphone === false){
+                height += $("#sincloBannerBox").outerHeight(true);
+              }
             }
-            height += $("#sincloBox > #fotter").outerHeight(true);
-            //閉じるボタン設定が有効かつバナー表示設定になっているかどうか、かつPCか
-            //false/true:通常（PC）/スマホ
-            var smartphone = check.smartphone();
-            if(Number(window.sincloInfo.widget.closeButtonSetting) === 2 && Number(window.sincloInfo.widget.closeButtonModeType) === 1 && smartphone === false){
-              height += $("#sincloBannerBox").outerHeight(true);
+            if ( window.sincloInfo.contract.chat ) {
+              sinclo.chatApi.showUnreadCnt();
+              sinclo.chatApi.scDown();
             }
           }
-          if ( window.sincloInfo.contract.chat ) {
-            sinclo.chatApi.showUnreadCnt();
-            sinclo.chatApi.scDown();
+          else {
+            //最小化時ボタン表示
+            common.whenMinimizedBtnShow();
+            //最小化
+            if(abridgementType['MinRes']){
+              //ヘッダ非表示（シンプル表示）
+              common.abridgementTypehide();
+            }
+            else{
+              //ヘッダ表示（通常表示）
+              common.abridgementTypeShow();
+            }
+            height = this.header.offsetHeight;
+            sinclo.widget.condifiton.set(false);
           }
-        }
-        else {
-          //最小化時ボタン表示
-          common.whenMinimizedBtnShow();
-          //最小化
-          if(abridgementType['MinRes']){
-            //ヘッダ非表示（シンプル表示）
-            common.abridgementTypehide();
-          }
-          else{
-            //ヘッダ表示（通常表示）
-            common.abridgementTypeShow();
-          }
-          height = this.header.offsetHeight;
-          sinclo.widget.condifiton.set(false);
-        }
-        var bannerAct = storage.s.get('bannerAct');
-        //閉じるボタン設定が有効かつバナー表示設定になっているかどうか
-        if(!(bannerAct === "true" && Number(window.sincloInfo.widget.closeButtonSetting) === 2 && Number(window.sincloInfo.widget.closeButtonModeType) === 1)){
-          elm.animate({
-            height: height + "px"
-          }, 'first');
+            elm.animate({
+              height: height + "px"
+            }, 'first');
         }
         else{
-          return;
+          //バナー表示時の位置を設定
+          $("#sincloBox").css("height","");
+          sinclo.operatorInfo.bannerBottomLeftRight();
         }
-//        target.removeClass("selected");
-//        $("#sincloBox").height("");
       },
       //閉じるボタンがクリックされた時の挙動
       closeBtn: function(){
@@ -121,55 +122,49 @@
           $("#sincloBox").hide();
         }
       },
-      //バナー表示にする
-      onBanner: function() {
-        var kyeWidth = $(window).width();
-        var kyeHeight = $(window).height();
-        //バナー表示
-        $("#sincloWidgetBox").hide();
+      //バナー表示時の位置を設定
+      bannerBottomLeftRight: function() {
         if ( check.smartphone() ) {
-          $("#sincloBox").css("height","auto");
           //スマホだったら縦か横かを判定
           if($(window).height() > $(window).width()){
             //縦
-            var bottom = "15vh";
-            var leftRight = "-15vw";
+            var bottom = "3%";
+            var leftRight = "-20%";
           }
           else{
             //横
-            var bottom = "9vh";
-            var leftRight = "-75vw";
+            var bottom = "6%";
+            var leftRight = "-67%";
           }
         }
         else{
-          if(storage.s.get('bannerAct') && storage.s.get('bannerBottom')){
-            var bottom = Number(storage.s.get('bannerBottom'));
-
-          }
-          else{
-            var bottom = kyeWidth * 0.05;
-            storage.s.set('bannerBottom', bottom);
-          }
-          var leftRight = kyeHeight * 0.05;
+          //pc
+          var bottom = "5%";
+          var leftRight = "5%";
         }
-        $("#sincloBox").css("bottom",bottom + "px");
+        $("#sincloBox").css("bottom",bottom);
         switch ( Number(window.sincloInfo.widget.showPosition) ) {
           case 1: // 右下
             //right: 10px;
-            $("#sincloBox").css("right",leftRight + "px");
+            $("#sincloBox").css("right",leftRight);
             break;
           case 2: // 左下
             //left: 10px;
-            $("#sincloBox").css("left",leftRight + "px");
+            $("#sincloBox").css("left",leftRight);
             break;
         }
-        //outline: none;
+      },
+      //バナー表示にする
+      onBanner: function() {
+        //バナー表示
+        $("#sincloWidgetBox").hide();
         $("#sincloBox").css("outline","none");
-        $("#sincloBannerBox").show();
+        $("#sincloBox").css("height","");
+        //バナー表示時の位置を設定
+        sinclo.operatorInfo.bannerBottomLeftRight();
         //バナー表示状態になった
         storage.s.set('bannerAct', true);
-
-//        height = this.header.offsetHeight;
+        $("#sincloBannerBox").show();
       },
       //バナーがクリックされた時の挙動
       clickBanner: function() {
@@ -195,7 +190,7 @@
             break;
           }
         }
-        this.ev();
+        sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
       },
       widgetHide: function(e) {
         if(e) e.stopPropagation();
