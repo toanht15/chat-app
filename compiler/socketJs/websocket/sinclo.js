@@ -22,6 +22,7 @@
       header: null,
       toggle: function(){
         this.ev();
+//        sincloBox.setAttribute('data-openflg', false);
         var flg = sinclo.widget.condifiton.get();
         //ウィジェットを開いた回数
         if(String(flg) === "true" && typeof ga == "function"){
@@ -61,22 +62,17 @@
               height = window.innerHeight * (document.body.clientWidth / window.innerWidth);
             }
             else {
-              height += $("#sincloBox #widgetHeader").outerHeight(true);
-              if ( $("#sincloBox").children().is("#navigation") ) {
-                height += $("#sincloBox > #navigation").outerHeight(true);
-                var tab = $("#sincloBox #navigation li.selected").data('tab');
-                height += $("#sincloBox #" + tab + "Tab").outerHeight(true);
+              height += $("#sincloWidgetBox #widgetHeader").outerHeight(true);
+              if ( $("#sincloWidgetBox").children().is("#navigation") ) {
+              //if(check.smartphone()) {
+                height += $("#sincloWidgetBox > #navigation").outerHeight(true);
+                var tab = $("#sincloWidgetBox #navigation li.selected").data('tab');
+                height += $("#sincloWidgetBox #" + tab + "Tab").outerHeight(true);
               }
               else {
-                height += $("#sincloBox [id$='Tab']").outerHeight(true);
+                height += $("#sincloWidgetBox [id$='Tab']").outerHeight(true);
               }
-              height += $("#sincloBox > #fotter").outerHeight(true);
-              //閉じるボタン設定が有効かつバナー表示設定になっているかどうか、かつPCか
-              //false/true:通常（PC）/スマホ
-              var smartphone = check.smartphone();
-              if(Number(window.sincloInfo.widget.closeButtonSetting) === 2 && Number(window.sincloInfo.widget.closeButtonModeType) === 1 && smartphone === false){
-                height += $("#sincloBannerBox").outerHeight(true);
-              }
+              height += $("#sincloWidgetBox > #fotter").outerHeight(true);
             }
             if ( window.sincloInfo.contract.chat ) {
               sinclo.chatApi.showUnreadCnt();
@@ -190,6 +186,8 @@
             break;
           }
         }
+        //最小化時ボタン表示
+        common.whenMinimizedBtnShow();
         sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
       },
       widgetHide: function(e) {
