@@ -15,7 +15,7 @@ class MWidgetSettingsController extends AppController {
       'main_color', 'string_color', 'show_main_image', 'main_image', 'radius_ratio', 'box_shadow', 'minimize_design_type'
     ],
     'synclo' => ['tel', 'content', 'display_time_flg', 'time_text'],
-    'chat' => ['chat_radio_behavior', 'chat_trigger', 'show_name',  'chat_message_design_type',  'chat_message_with_animation', 'sp_show_flg', 'sp_header_light_flg', 'sp_auto_open_flg',],
+    'chat' => ['chat_radio_behavior', 'chat_trigger', 'show_name',  'chat_message_design_type', 'chat_message_with_animation', 'chat_message_copy', 'sp_show_flg', 'sp_header_light_flg', 'sp_auto_open_flg',],
   ];
 
   public function beforeRender(){
@@ -110,6 +110,7 @@ class MWidgetSettingsController extends AppController {
     $this->set('widgetShowNameType', Configure::read('widgetShowNameType'));
     $this->set('chatMessageDesignType', Configure::read('chatMessageDesignType'));
     $this->set('widgetSendActType', Configure::read('widgetSendActType'));
+    $this->set('chatMessageCopy', Configure::read('chatMessageCopy'));
     $this->set('normalChoices', Configure::read('normalChoices')); // はい・いいえ
     $this->set('widgetRadioBtnBehaviorType', Configure::read('widgetRadioBtnBehaviorType'));
     $this->set('gallaryPath', C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT.'/img/widget/');
@@ -345,6 +346,9 @@ class MWidgetSettingsController extends AppController {
             }
             if ( strcmp($v, 'chat_message_with_animation') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['chat_message_with_animation'] = C_CHECK_OFF; // デフォルト値（非選択状態：アニメーション無効）
+            }
+            if ( strcmp($v, 'chat_message_copy') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['chat_message_copy'] = C_WIDGET_CHAT_MESSAGE_CAN_COPY; // デフォルト値
             }
             if ( strcmp($v, 'sp_show_flg') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['sp_show_flg'] = C_SELECT_CAN; // デフォルト値
