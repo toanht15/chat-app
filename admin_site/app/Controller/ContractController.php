@@ -17,7 +17,7 @@ class ContractController extends AppController
     'MCompany' => [
       'order' => ['MCompany.id' => 'asc'],
       'fields' => ['*'],
-      'limit' => 100,
+      'limit' => 1000,
       'joins' => [
         [
           'type' => 'left',

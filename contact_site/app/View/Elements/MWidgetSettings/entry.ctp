@@ -159,7 +159,8 @@ $headerNo = 1;
               'div' => false,
               'label' => false,
               'maxlength' => $titleLength_maxlength,
-              'error' => false
+              'error' => false,
+              'ng-maxlength' => "false"
             ],[
               'entity' => 'MWidgetSetting.title'
             ]) ?>
@@ -180,7 +181,8 @@ $headerNo = 1;
                 'class' => 'showHeader',
                 'required' => false,
                 'maxlength' => $subTitleLength_maxlength,
-                'error' => false
+                'error' => false,
+                'ng-maxlength' => "false"
             ];
             if(($coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT])) && !$coreSettings[C_COMPANY_USE_CHAT]) {
               $subTitleOpt['ng-disabled'] = 'subTitleToggle == "2"';
@@ -210,7 +212,8 @@ $headerNo = 1;
               'class' => 'showHeader',
               'label' => false,
               'maxlength' => $descriptionLength_maxlength,
-              'error' => false
+              'error' => false,
+              'ng-maxlength' => "false"
             ],
             [
               'entity' => 'MWidgetSetting.description'

@@ -1173,7 +1173,7 @@
                     message.placeholder += "（改行で送信）";
                   }
                   else {
-                    message.placeholder += "（Shift+Enterで改行/Enterで送信）";
+                    message.placeholder += "\n（Shift+Enterで改行/Enterで送信）";
                   }
                 }
               })
