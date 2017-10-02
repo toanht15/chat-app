@@ -96,6 +96,11 @@ router.get("/", function(req, res, next) {
                 if(('chatMessageWithAnimation' in settings)) {
                   chatMessageWithAnimation = isNumeric(settings.chatMessageWithAnimation);
                 }
+                // チャット本文コピー設定が存在しない場合は「コピー可」
+                var chatMessageCopy = 1;
+               	if(('chatMessageCopy' in settings)) {
+                  chatMessageCopy = isNumeric(settings.chatMessageCopy);
+                }
 
                 sendData['widget'] = {
                   showTiming: showTimingSetting,
@@ -127,7 +132,8 @@ router.get("/", function(req, res, next) {
                   minimizeDesignType: isNumeric(settings.minimizeDesignType),
                   spShowFlg: isNumeric(settings.spShowFlg),
                   spHeaderLightFlg: isNumeric(settings.spHeaderLightFlg),
-                  spAutoOpenFlg: isNumeric(settings.spAutoOpenFlg)
+                  spAutoOpenFlg: isNumeric(settings.spAutoOpenFlg),
+                  chatMessageCopy: chatMessageCopy
                 };
 
                 actionTypeList = [];

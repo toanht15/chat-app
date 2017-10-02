@@ -439,6 +439,26 @@ $headerNo = 1;
           </li>
           <?php if ( $this->Form->isFieldError('chat_message_with_animation') ) echo $this->Form->error('chat_message_with_animation', null, ['wrap' => 'li']); ?>
           <!-- メッセージ表示時アニメーション -->
+          <!-- チャット本文コピー -->
+          <li>
+            <span class="require"><label>チャット本文コピー</label></span>
+            <pre><label class="pointer"><?= $this->ngForm->input('chat_message_copy', [
+                  'type' => 'radio',
+                  'options' => $chatMessageCopy,
+                  'legend' => false,
+                  'separator' => '</label><br><label class="pointer">',
+                  'class' => 'chatMessageCopy',
+                  'div' => false,
+                  'label' => false,
+                  'error' => false
+                ],
+                  [
+                    'entity' => 'MWidgetSetting.chat_message_copy'
+                  ])
+                   ?></label></pre>
+          </li>
+          <?php if ( $this->Form->isFieldError('chat_message_copy') ) echo $this->Form->error('chat_message_copy', null, ['wrap' => 'li']); ?>
+          <!-- チャット本文コピー -->
         </ul>
       </section>
 
