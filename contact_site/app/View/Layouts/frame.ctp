@@ -38,6 +38,10 @@
         echo $this->element("common-js");
         echo $this->Html->css("style.css");
         echo $this->Html->css("modal.css");
+        if ( strcmp($this->action, "laFrame") === 0 ) {
+          echo $this->Html->css('https://sdk005.live-assist.jp/assistserver/sdk/web/agent/css/assist-console.css');
+          echo $this->Html->css('https://sdk005.live-assist.jp/assistserver/sdk/web/shared/css/shared-window.css');
+        }
     ?>
     <style type="text/css">
         body { margin: 0; overflow: hidden }

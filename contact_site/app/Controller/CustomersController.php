@@ -66,7 +66,7 @@ class CustomersController extends AppController {
   }
 
   /* *
-   * モニタリング画面(資料共有用)
+   * モニタリング画面(資料)
    * @return void
    * */
   public function docFrame() {
@@ -74,6 +74,16 @@ class CustomersController extends AppController {
     $this->set('docData', $this->TDocument->read(null, $this->params->query['docId']));
     $this->set('tabInfo', $this->params->query['tabInfo']);
     return $this->render('/Customers/docFrame');
+  }
+
+  /* *
+   * モニタリング画面(画面キャプチャ共有用)
+   * @return void
+   * */
+  public function laFrame() {
+    $this->layout = 'frame';
+    $this->set('query', $this->params->query);
+    return $this->render('/Customers/laFrame');
   }
 
   /* *

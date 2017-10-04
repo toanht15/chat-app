@@ -2187,6 +2187,29 @@ ul.naviBtn {
   }
 }
 
+#sync_tools {
+  #sub_menu {
+    margin-top: 1em;
+  }
+
+  .separator {
+    margin-top: 0.75em;
+    margin-bottom: calc(0.75em + 5px);
+    display: block;
+    width: 85%;
+    height: 1px;
+    background-color: #777;
+    border: 0;  /*デフォルトデザインでは線がある場合があるので、消しておく。*/
+  }
+
+  .bottom {
+    display: inline-block;
+    position: fixed;
+    bottom: 0;
+    margin: auto 5px;
+  }
+}
+
 /* 画面同期 - 資料共有 */
 #document_share, #document_preview {
 
@@ -2548,7 +2571,16 @@ ul.naviBtn {
   position: fixed;
   top: 0;
   left: 100px;
+  right: 0;
+  bottom: 0;
+
+  #remoteScreenViewContainer {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
 }
+
 #tabStatusMessage {
   display: none;
   position: fixed;

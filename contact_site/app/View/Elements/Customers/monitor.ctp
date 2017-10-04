@@ -155,12 +155,19 @@
             <?php if ( strcmp($userInfo['permission_level'], C_AUTHORITY_SUPER) !== 0) :?>
               <span ng-if="monitor.widget">
                 <span ng-if="!monitor.connectToken&&!monitor.docShare" id="shareToolBtn">
-                  <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
-                    <a class='monitorBtn blueBtn btn-shadow' href='javascript:void(0)' ng-click='windowOpen(monitor.tabId, monitor.accessId)' >画面共有</a>
-                  <?php endif; ?>
-                  <?php if ( isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT] ) :?>
-                    <a class='monitorBtn blueBtn btn-shadow' href='javascript:void(0)' ng-click='documentOpen(monitor.tabId, monitor.accessId)' >資料共有</a>
-                  <?php endif; ?>
+                  <a class='monitorBtn blueBtn btn-shadow' href='javascript:void(0)' ng-click='confirmSharingWindowOpen(monitor.tabId, monitor.accessId)' >共有</a>
+<!--                  --><?php //if ( $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
+<!--                    <a class='monitorBtn blueBtn btn-shadow' href='javascript:void(0)' ng-click='windowOpen(monitor.tabId, monitor.accessId)' >画面共有</a>-->
+<!--                  --><?php //endif; ?>
+<!--                  --><?php //if ( isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT] ) :?>
+<!--                    <a class='monitorBtn blueBtn btn-shadow' href='javascript:void(0)' ng-click='documentOpen(monitor.tabId, monitor.accessId)' >資料共有</a>-->
+<!--                  --><?php //endif; ?>
+<!--                  --><?php //if ( true/*FIXME:isset($coreSettings[C_COMPANY_USE_CO_BROWSE]) && $coreSettings[C_COMPANY_USE_CO_BROWSE]*/ ) :?>
+<!--                    <a class='monitorBtn blueBtn btn-shadow' href='javascript:void(0)' ng-click='coBrowseOpen(monitor.tabId, monitor.accessId)' >スナップ</a>-->
+<!--                  --><?php //endif; ?>
+<!--                  --><?php //if ( true/*FIXME:isset($coreSettings[C_COMPANY_USE_VIDEOCHAT]) && $coreSettings[C_COMPANY_USE_VIDEOCHAT]*/ ) :?>
+<!--                    <a class='monitorBtn blueBtn btn-shadow' href='javascript:void(0)' ng-click='documentOpen(monitor.tabId, monitor.accessId)' >ビデオ</a>-->
+<!--                  --><?php //endif; ?>
                 </span>
               </span>
               <span ng-if="monitor.connectToken||monitor.docShare">
