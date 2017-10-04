@@ -407,16 +407,22 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     };
 
     $scope.search = function(array){
+      var isHideRealTimeMonitor = contract.hideRealtimeMonitor;
       var result = {}, targetField;
       targetField = ( Number($scope.fillterTypeId) === 2 ) ? 'ipAddress' : 'accessId';
       if ( $scope.searchText ) {
-        angular.forEach(array, function(value, key) {
-          if ( value[targetField].indexOf($scope.searchText) === 0) {
-            result[key] = value;
-          }
-        });
-      }
-      else {
+        if(isHideRealTimeMonitor && $scope.searchText.length < 3 ) {
+          // 何もしない
+        } else {
+          angular.forEach(array, function(value, key) {
+            if ( value[targetField].indexOf($scope.searchText) === 0) {
+              result[key] = value;
+            }
+          });
+        }
+      } else if(isHideRealTimeMonitor) {
+        // 検索状態じゃない場合で通常時リアルタイムモニタ非表示であれば非表示にする
+      } else {
         result = array;
       }
       return result;
