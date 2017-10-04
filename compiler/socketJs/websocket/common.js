@@ -2543,7 +2543,7 @@ function now(){
 }
 
 // get type
-var myTag = document.querySelector("script[src='" + sincloInfo.site.files + "/client/" + sincloInfo.site.key + ".js']");
+var myTag = document.querySelector("script[src$='/client/" + sincloInfo.site.key + ".js']");
 if (myTag.getAttribute('data-hide')) {
     sincloInfo.dataset.hide = myTag.getAttribute('data-hide');
 }
