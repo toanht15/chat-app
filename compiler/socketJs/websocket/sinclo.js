@@ -479,6 +479,10 @@
       var title = location.host + 'の内容';
       var content = location.host + 'が閲覧ページへのアクセスを求めています。<br>許可しますか';
       popup.ok = function() {
+        var sincloBox = document.getElementById("sincloBox");
+        if( sincloBox ){
+          sincloBox.style.display = "none";
+        }
         userInfo.coBrowseConnectToken = obj.connectToken;
         storage.s.set('coBrowseConnectToken', obj.connectToken);
         var params = {
