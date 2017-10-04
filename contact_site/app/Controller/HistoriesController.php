@@ -164,9 +164,13 @@ class HistoriesController extends AppController {
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
-
+    $this->log('ここまでは？',LOG_DEBUG);
     $ret = $this->_getChatLog($this->params->query['historyId']);
+    $this->log('ここまでは2？',LOG_DEBUG);
+    $permissionLevel = $this->userInfo['permission_level'];
     $this->set('THistoryChatLog', $ret);
+    $this->set('permissionLevel',$permissionLevel);
+    $this->log('ここまでは3？',LOG_DEBUG);
     return $this->render('/Elements/Histories/remoteGetChatLogs');
   }
 
@@ -979,6 +983,7 @@ class HistoriesController extends AppController {
     $params = [
       'fields' => [
         'MUser.display_name',
+        'DeleteMUser.display_name',
         'THistoryChatLog.*',
         'THistoryStayLog.url'
       ],
@@ -997,6 +1002,16 @@ class HistoriesController extends AppController {
         ],
         [
           'type' => 'LEFT',
+          'table' => 'm_users',
+          'alias' => 'DeleteMUser',
+          'conditions' => [
+            'THistoryChatLog.deleted_user_id = DeleteMUser.id',
+            'DeleteMUser.m_companies_id' => $this->userInfo['MCompany']['id'],
+            'THistoryChatLog.delete_flg' => 1,
+          ]
+        ],
+        [
+          'type' => 'LEFT',
           'table' => 't_history_stay_logs',
           'alias' => 'THistoryStayLog',
           'conditions' => [
@@ -1008,6 +1023,75 @@ class HistoriesController extends AppController {
       'recursive' => -1
     ];
     return $this->THistoryChatLog->find('all', $params);
+  }
+
+    /* *
+   * 履歴削除ダイアログ表示
+   * @return void
+   * */
+  public function openEntryDelete(){
+    Configure::write('debug', 0);
+    $this->autoRender = FALSE;
+    $this->layout = 'ajax';
+    $this->log('来てまっせんん',LOG_DEBUG);
+    $data = $this->request->data;
+    //メッセージが10文字以上の場合3点リーダー表示
+    if(mb_strlen($data['message']) > 10) {
+       $data['message'] = mb_substr($data['message'], 0, 10).'…';
+    }
+    $data=json_encode($data);
+    $this->set('data', $data);
+    //ポップアップの呼び出し
+    $this->render('/Elements/Histories/remoteDelete');
+  }
+
+  /* *
+   * 履歴削除
+   * @return void
+   * */
+  public function remoteDeleteChat() {
+    Configure::write('debug', 0);
+    $this->autoRender = FALSE;
+    $this->layout = 'ajax';
+    $id = $this->request->data['id'];
+    $now = date('Y/m/d H:i:s');
+    $userName = $this->userInfo['display_name'];
+    $params = [
+        'fields' => [
+          'm_companies_id'
+        ],
+        'conditions' => [
+          'THistoryChatLog.id' => $id
+        ]
+      ];
+
+    //m_companies_id
+    $m_companies_id = $this->THistoryChatLog->find('first', $params)['THistoryChatLog']['m_companies_id'];
+
+    if($m_companies_id == $this->userInfo['MCompany']['id']) {
+      $saveData = [];
+      $saveData = $this->THistoryChatLog->read(null, $id);
+      $saveData['THistoryChatLog']['message'] = "(このメッセージは $now に 削除されました。)";
+      $saveData['THistoryChatLog']['delete_flg'] = 1;
+      $saveData['THistoryChatLog']['deleted'] = $now;
+      $saveData['THistoryChatLog']['deleted_user_id'] = $this->userInfo['id'];
+
+      $this->THistoryChatLog->set($saveData);
+      $this->THistoryChatLog->begin();
+      if ( $this->THistoryChatLog->save() ) {
+        $this->THistoryChatLog->commit();
+        $this->log("DeleteHistory deleted : ".$now,LOG_DEBUG);
+        $this->log("DeleteHistory deleted_user_id: ".$this->userInfo['id'],LOG_DEBUG);
+        $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
+      }
+      else {
+        $this->THistoryChatLog->rollback();
+        $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
+      }
+    }
+    else {
+      $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
+    }
   }
 
   /* *

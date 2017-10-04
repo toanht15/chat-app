@@ -156,6 +156,16 @@ var popupEvent = {
                         return popupEvent.closePopup();
                     };
                     break;
+                case 'p-history-del':
+                    var closeBtn = _button("はい");
+                    closeBtn.onclick = function(){
+                      return popupEvent.closePopup();
+                    };
+                    var cancelBtn = _button("いいえ");
+                    cancelBtn.onclick = function(){
+                      return popupEvent.cancelClicked();
+                    };
+                    break;
                 case 'p-category-dictionary-edit':
 //                     var closeBtn = _button("カテゴリの削除");
 //                     closeBtn.onclick = function(){
@@ -171,6 +181,7 @@ var popupEvent = {
                     cancelBtn.onclick = function(){
                       return popupEvent.cancelClicked();
                     };
+
                     break;
                 case 'p-sort-save-confirm':
                     var saveBtn = _button("保存");
@@ -292,9 +303,9 @@ var popupEvent = {
                     className = "failure";
                     break;
                 case 3: // alert
-                    alert(message);
-                    return false;
-                    break;
+                    //alert(message);
+                    //return false;
+                    //break;
             }
             $("#shortMessage").text(message).attr('style', '').addClass(className);
             $("#shortMessage").removeClass('popup-off');

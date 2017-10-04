@@ -681,6 +681,47 @@
   }
 }
 
+/* フラッシュメッセージ用スタイル(モーダル用) */
+#modalShortMessage {
+  width: 70%;
+  font-size: 15px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin: -60px auto;
+  z-index: 50;
+  padding: 15px;
+  border-radius: 10px;
+  color: #FFF;
+  font-weight: bold;
+  opacity: 1;
+
+  &:after {
+    content: "";
+    position: absolute;
+    bottom: -20px;
+    left: 15px;
+    border: 12px solid transparent;
+  }
+
+  &.success {
+    background-color: #86C18D;
+
+    &:after {
+      border-top: 12px solid #86C18D;
+    }
+  }
+
+  &.failure {
+    background-color: #C18686;
+
+    &:after {
+      border-top: 12px solid #C18686;
+    }
+  }
+}
+
 /* ポップアップ用:バックグラウンド */
 #popup-bg {
   position: fixed;
@@ -1085,6 +1126,22 @@
   /*display: block;*/
   /*width: 100%;*/
 /*  padding: 10px 5px 2px;*/
+}
+
+#popup #popup-frame-base #popup-frame.p-history-del {
+  width: 450px;
+  height: 150px;
+  text-align: center;
+}
+
+#popup #popup-frame-base #popup-frame.p-history-del #popup-button {
+  text-align: center;
+}
+
+#popup #popup-frame-base #popup-frame.p-history-del #popup-button a {
+  width: 125px;
+  float: left;
+  margin: 0 50px;
 }
 
 #popup #popup-frame-base #popup-frame.p-tdictionary-entry {
