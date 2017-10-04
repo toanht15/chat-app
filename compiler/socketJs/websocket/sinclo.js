@@ -1835,6 +1835,16 @@
                 }
             }
         }
+    },
+    // 外部連携API
+    api: {
+      getAccessId : function() {
+        var value = "";
+        if(userInfo && userInfo.accessId) {
+          value = userInfo.accessId;
+        }
+        return value;
+      }
     }
   };
 
