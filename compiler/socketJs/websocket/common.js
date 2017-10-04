@@ -517,6 +517,7 @@ var socket, // socket.io
       html += '      @media print{ sinclo { display:none!important; } }';
       html += '      #sincloBox { display: none; position: fixed; ' + showPosition + ' z-index: 999998; background-color: rgba(0,0,0,0);}';
       html += '      #sincloBox * { color: #333333; line-height: 1.3; box-sizing: border-box; font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana; letter-spacing: initial;}';
+      html += '      #sincloBox *:before, #sincloBox *:after { box-sizing: content-box; }';
       html += '      #sincloBox .notSelect { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }';
       html += '      #sincloBox a { color: #8a8a8a }';
       html += '      #sincloBox sinclo-div {display: block; }';
@@ -585,7 +586,7 @@ var socket, // socket.io
         html += '      #sincloBox ul#chatTalk li.sinclo_etc { border: none; text-align: center!important; margin: 0 auto; font-weight: bold }';
         html += '      #sincloBox ul#chatTalk li sinclo-radio { display: block; margin-top: 0.1em; margin-bottom: -1.25em; } ';
         html += '      #sincloBox ul#chatTalk li sinclo-radio [type="radio"] { display: none; -webkit-appearance: radio!important; -moz-appearance: radio!important; appearance: radio!important; } ';
-        html += '      #sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label { position: relative; display: inline-block; width: 100%; cursor: pointer; padding-left: 15px; } ';
+        html += '      #sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label { position: relative; display: inline-block; width: 100%; cursor: pointer; padding: 0 0 0 15px; } ';
         html += '      #sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label:before { content: ""; display: block; position: absolute; top: 1px; left: 0px; width: 11px; height: 11px; border: 1px solid #999; border-radius: 50%; background-color: #FFF; } ';
         html += '      #sincloBox ul#chatTalk li sinclo-radio [type="radio"]:checked + label:after { content: ""; display: block; position: absolute; top: 4px; left: 3px; width: 7px; height: 7px; background: ' + widget.mainColor + '; border-radius: 50%; } ';
         html += '      #sincloBox ul#chatTalk sinclo-chat-receiver { cursor: pointer; display: none; position: absolute; left: 0; right: 0; width: 100%; height: 1.5em; background-color: rgba(0, 0, 0, 0.45); vertical-align: middle; word-wrap: break-word; z-index: 2; } ';
@@ -607,7 +608,7 @@ var socket, // socket.io
       }
       html += '      #sincloBox section#navigation { position: relative; display: block; }';
       html += '      #sincloBox section#navigation ul { display: table; padding: 0; position: absolute; top: 0; left: 0; }';
-      html += '      #sincloBox section#navigation ul li { position: relative; overflow: hidden; cursor: pointer; color: ' + systemTextColor + '; text-align: center; display: table-cell; }';
+      html += '      #sincloBox section#navigation ul li { position: relative; overflow: hidden; cursor: pointer; color: ' + systemTextColor + '; text-align: center; display: table-cell; font-weight: normal; }';
       html += '      #sincloBox section#navigation ul li.selected { background-color: #FFFFFF; }';
       if(widget.chatMessageCopy === 2) {
         html += '      #sincloBox #fotter { text-align: center; color: #A1A1A1!important; background-color: #FFF; margin: 0;border-top: none; user-select: none;-moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;}';
