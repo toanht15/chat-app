@@ -961,7 +961,7 @@ var socket, // socket.io
       }
 
       // 画面同期中は表示しない
-      if ( check.isset(userInfo.connectToken) ) {
+      if ( check.isset(userInfo.connectToken) || check.isset(userInfo.coBrowseConnectToken) ) {
         window.sincloInfo.widgetDisplay = false;
       }
 
