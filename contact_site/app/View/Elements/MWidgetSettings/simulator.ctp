@@ -321,7 +321,7 @@
     }
     #sincloBanner, #bannertext{
       font-size: 18px;
-      padding: 0 25px 0 0;
+      padding: 0 15px 0 0;
       cursor: pointer;
       color: {{string_color}};
     }
