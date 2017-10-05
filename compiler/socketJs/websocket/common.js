@@ -2178,6 +2178,10 @@ var socket, // socket.io
     },
     getActiveWindow: function(){
       var tabFlg = document.hasFocus(), widgetFlg = false, tabStatus, sincloBox;
+      //バナー表示かどうか　bannerAct === "true"だったらバナー表示
+      var bannerAct = storage.s.get('bannerAct');
+      //閉じるボタンによる非表示の状態かどうか　closeAct === "true"だったら閉じるボタンによる非表示状態
+      var closeAct = storage.s.get('closeAct');
       if ( document.getElementById('sincloBox') ) {
         sincloBox = document.getElementById('sincloBox');
         var tmp = sincloBox.getAttribute('data-openflg');
@@ -2198,7 +2202,14 @@ var socket, // socket.io
         if ( !sincloBox || ( sincloBox && sincloBox.style.display !== "block" ) ) {
           tabStatus = cnst.tab_type.none;
         }
-
+        //バナー表示中
+        if(bannerAct === "true"){
+          tabStatus = cnst.tab_type.none;
+        }
+        //閉じるボタンによる非表示中
+        if(closeAct === "true"){
+          tabStatus = cnst.tab_type.none;
+        }
       }
       else {
         tabStatus = cnst.tab_type.disable;
