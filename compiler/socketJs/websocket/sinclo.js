@@ -447,11 +447,12 @@
                 if ( window.sincloInfo.contract.chat && check.smartphone() ) {
                   common.widgetHandler.show();
                   sincloBox.style.opacity = 0;
-                  sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
                   sinclo.operatorInfo.widgetHide();
                 }
                 else {
                   common.widgetHandler.show();
+                }
+                if(storage.s.get('bannerAct') !== "true") {
                   sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
                 }
                 // ウィジェット表示
