@@ -1,10 +1,7 @@
 <script type = "text/javascript">
 
-var popupCansel = document.getElementById('popupCloseBtn');
-popupCansel.id = "popupCanselBtn";
-
 //はいをクリック
-popupEvent.closePopup = function(){
+popupEventOverlap.closePopup = function(){
   var data=JSON.parse('<?php echo  $data; ?>');
   //履歴削除処理
   var url = "<?= $this->Html->url('/Histories/remoteDeleteChat') ?>";
@@ -27,8 +24,6 @@ popupEvent.closePopup = function(){
         },
         dataType: 'html',
         success: function(html){
-          var popupCansel = document.getElementById('popupCanselBtn');
-          popupCansel.id = "popupCloseBtn";
           modalOpen.call(window, html, 'p-chat-logs', 'チャット履歴','moment');
           $(".p-chat-logs #popup-main ul").scrollTop(0);
         }
@@ -38,7 +33,7 @@ popupEvent.closePopup = function(){
 }
 
 //いいえをクリック
-popupEvent.cancelClicked = function(){
+/*popupEvent.cancelClicked = function(){
   var data=JSON.parse('<?php echo  $data; ?>');
   //履歴呼び直し
     $.ajax({
@@ -77,7 +72,7 @@ $("#popupCanselBtn").on('click', function(e){
         $(".p-chat-logs #popup-main ul").scrollTop(0);
       }
     });
-});
+});*/
 
 </script>
 <div class="form01">

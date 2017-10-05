@@ -91,7 +91,7 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
     if ( strcmp($this->name, 'Histories') === 0 ) {
       echo $this->Html->script("daterangepicker.js");
     }
-    if ( strcmp($this->name, 'TDocuments') === 0 ) {
+    if ( strcmp($this->name, 'TDocuments') ===  0 ) {
       echo $this->Html->script("//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.min.js");
       echo $this->Html->css("//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.css");
     }
@@ -103,7 +103,6 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
       echo $this->Html->css('jquery-ui.css');
       echo $this->Html->script("jquery-ui.js");
     }
-
 ?>
 
 </head>
@@ -116,6 +115,7 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
       <?php endif ;?>
     </div>
     <div id="content" style="<?=$contentStyle?>">
+      <?= $this->element('popupOverlap') ?>
       <?= $this->element('popup') ?>
       <?php echo $this->Flash->render(); ?>
 

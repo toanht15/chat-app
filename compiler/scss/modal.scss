@@ -733,8 +733,24 @@
   z-index: 50;
 }
 
+/* 重複ポップアップ用:バックグラウンド */
+#popup-bg-overlap {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 52;
+}
+
 /* ポップアップ用非表示クラス */
 .popup-off {
+  display: none;
+}
+
+/* 重複ポップアップ用非表示クラス */
+.popup-off-overlap {
   display: none;
 }
 .p-tdictionary-entry {
@@ -1128,17 +1144,17 @@
 /*  padding: 10px 5px 2px;*/
 }
 
-#popup #popup-frame-base #popup-frame.p-history-del {
+#popup-overlap #popup-frame-base-overlap #popup-frame-overlap.p-history-del {
   width: 450px;
   height: 150px;
   text-align: center;
 }
 
-#popup #popup-frame-base #popup-frame.p-history-del #popup-button {
+#popup-overlap #popup-frame-base-overlap #popup-frame-overlap.p-history-del #popup-button-overlap {
   text-align: center;
 }
 
-#popup #popup-frame-base #popup-frame.p-history-del #popup-button a {
+#popup-overlap #popup-frame-base-overlap #popup-frame-overlap.p-history-del #popup-button-overlap a {
   width: 125px;
   float: left;
   margin: 0 50px;
@@ -1597,4 +1613,81 @@
 .ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active.taboutborder{
   border: 1px solid #a6a6a6;
   border-bottom: none;
+}
+
+/*重複ポップアップ*/
+#popup-overlap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  #popup-frame-base-overlap {
+    position:relative;
+    width: 100%;
+    height: 100%;
+
+    #popup-frame-overlap {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: white;
+      margin: auto;
+      z-index: 53;
+
+      /*ポップアップ用:装飾系*/
+      #popup-content-overlap {
+        position: relative;
+
+        #popup-title-overlap {
+          padding: 12px 0 5px;
+          text-align: center;
+          border-bottom: 1px solid #909090;
+          font-size: 18px;
+          color: #555;
+        }
+
+        #popup-main-overlap {
+          padding: 20px;
+        }
+
+        #popup-button-overlap {
+          height: 50px;
+        }
+
+      }
+
+      #popup-ctrl-btn-overlap {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        a {
+          width: 30px;
+          height: 30px;
+          padding: 5px;
+          float: left;
+          margin-right: 5px;
+          border-radius: 15px;
+        }
+      }
+      /* アラート用 */
+      &.p-alert {
+        width: 350px;
+        height: 150px;
+        #popup-button{
+          text-align: center;
+          a {
+            width: 75px;
+            margin: 0 auto;
+          }
+        }
+      }
+
+    }
+
+  }
+
 }
