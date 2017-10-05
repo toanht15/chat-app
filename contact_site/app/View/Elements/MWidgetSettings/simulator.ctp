@@ -67,8 +67,10 @@
       #sincloBox p#widgetTitle.middleSize { font-size: 15px; }
       #sincloBox p#widgetTitle.largeSize { font-size: 15px; }
       #sincloBox div#minimizeBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>minimize.png'); background-position-y: 0px; top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
+/*
       #sincloBox div#addBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>add.png'); background-position-y: 0px; top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
       #sincloBox div#addBtn.closeButtonSetting { right: 25px; }
+*/
       #sincloBox div#closeBtn { display: none; cursor: pointer; background-image: url('<?=$gallaryPath?>close.png'); background-position-y: -1.5px; top: 6px; right: 10px; bottom: 6px; content: " "; width: 23px; height: 23px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
       #sincloBox div#closeBtn.closeButtonSetting {display: inline-block; right: 5px; }
 /*
@@ -186,7 +188,9 @@
       <!-- タイトル -->
     </div>
     <div id="minimizeBtn" class="widgetOpener" ng-class="" style="display: block;"></div>
+<!--
     <div id="addBtn" class="widgetOpener" ng-class="{closeButtonSetting: closeButtonSettingToggle === '2'}" style="display: none;"></div>
+ -->
     <div id="closeBtn" ng-click="switchWidget(4)" ng-class="{closeButtonSetting: closeButtonSettingToggle === '2'}"></div>
     <div id='descriptionSet' class="widgetOpener notSelect" ng-hide=" spHeaderLightToggle() || mainImageToggle == '2' && subTitleToggle == '2' && descriptionToggle == '2'">
       <!-- サブタイトル -->
@@ -312,18 +316,19 @@
     #sincloBanner #sinclo-comment{
       transform: scale( 1 , 1.4 );
       font-size: 25px;
-      padding: 0 15px 0 15px;
+      padding: 0 15px 0 25px;
       cursor: pointer;
     }
-    #sincloBanner #bannertext{
+    #sincloBanner, #bannertext{
       font-size: 18px;
-      padding: 0 15px 0 0;
+      padding: 0 25px 0 0;
       cursor: pointer;
+      color: {{string_color}};
     }
   </style>
   <div id="sincloBanner" ng-click="bannerSwitchWidget()" ng-if="closeButtonModeTypeToggle === '1' && closeButtonSettingToggle === '2' && showWidgetType === 4">
     <div id="sincloBannerText" ng-click="bannerSwitchWidget()">
-      <span ng-click="bannerSwitchWidget()"><i id="sinclo-comment" class="sinclo-fa fa-comment">&#xf075;</i><i id="bannertext">{{bannertext}}</i></span>
+      <span ng-click="bannerSwitchWidget()"><i id="sinclo-comment" class="sinclo-fa fa-comment">&#xf075;</i><font id="bannertext">{{bannertext}}</font></span>
     </div>
   </div>
   <!-- バナー -->
@@ -338,8 +343,9 @@
       #sincloBox .notSelect { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
       #sincloBox p#widgetTitle { text-align: center!important; padding: 7px 30px!important; position:relative; z-index: 1; cursor:pointer; border-radius: 0; border: 1px solid {{main_color}}; border-bottom:none; background-color: {{main_color}};text-align: center; font-size: 14px; margin: 0;color: {{string_color}}; height: 32px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
       #sincloBox.open #minimizeBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>minimize.png'); background-position-y: 0px; top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
+/*
       #sincloBox:not(.open) #addBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>add.png'); background-position-y: 0px; top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
-
+*/
 /*
       #sincloBox p#widgetTitle:after { background-position-y: 3px; background-image: url('<?=$gallaryPath?>yajirushi.png'); top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear}
       #sincloBox.open p#widgetTitle:after { transform: rotate(0deg); }
@@ -379,7 +385,9 @@
       <!-- タイトル -->
     </div>
     <div id="minimizeBtn" class="widgetOpener"></div>
+<!--
     <div id="addBtn" class="widgetOpener"></div>
+ -->
     <div id="miniTarget">
       <section id="chatTab">
         <ul id="chatTalk">

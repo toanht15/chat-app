@@ -455,7 +455,7 @@ var socket, // socket.io
     //最大化時ボタン表示
     whenMaximizedBtnShow: function() {
       $("#minimizeBtn").show();
-      $("#addBtn").hide();
+      //$("#addBtn").hide();
       $("#closeBtn").hide();
     },
     //最小化時ボタン表示
@@ -464,13 +464,13 @@ var socket, // socket.io
       if ( Number(widget.closeButtonSetting) === 1 ) {
         //閉じるボタン無効
         $("#minimizeBtn").hide();
-        $("#addBtn").show();
+        //$("#addBtn").show();
         $("#closeBtn").hide();
       }
       else{
         //閉じるボタン有効
         $("#minimizeBtn").hide();
-        $("#addBtn").show();
+        //$("#addBtn").show();
         var smartphone = check.smartphone();
         if(smartphone){
           //スマホ時
@@ -586,12 +586,16 @@ var socket, // socket.io
       //＋ボタンと×ボタンは閉じるボタン設定によってポジションが異なるため別々に記載。なお、IDは同一とする
       if ( Number(widget.closeButtonSetting) === 1 ) {
         //閉じるボタン無効
+/*
         html += '      #sincloBox div#addBtn { display: none; cursor: pointer; background-image: url("' + window.sincloInfo.site.files + '/img/widget/add.png"); background-position-y: 0px; top: 6px; right: 10px; bottom: 6px; content: " "; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }';
+*/
         html += '      #sincloBox div#closeBtn { display: none; cursor: pointer; background-image: url("' + window.sincloInfo.site.files + '/img/widget/close.png"); background-position-y: -1.5px; top: 5px; right: 10px; bottom: 6px; content: " "; width: 23px; height: 23px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }';
       }
       else{
         //閉じるボタン有効
+/*
         html += '      #sincloBox div#addBtn { display: none; cursor: pointer; background-image: url("' + window.sincloInfo.site.files + '/img/widget/add.png"); background-position-y: 0px; top: 6px; right: 25px; bottom: 6px; content: " "; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }';
+*/
         html += '      #sincloBox div#closeBtn { display: none; cursor: pointer; background-image: url("' + window.sincloInfo.site.files + '/img/widget/close.png"); background-position-y: -1.5px; top: 5px; right: 5px; bottom: 6px; content: " "; width: 23px; height: 23px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }';
       }
 
@@ -664,11 +668,11 @@ var socket, // socket.io
         html += '      #sincloBannerBox{ bottom:0px; right:0px; }';
         html += '      #sincloBanner .sinclo-fa { display: inline-block; font-family: SincloFont ; font-style: normal; font-weight: normal; line-height: 1; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; cursor: pointer; }';
         html += '      #sincloBanner .sinclo-fa.fa-comment:before { content: "\\f075" }';
-        html += '      #sincloBanner.sincloBanner { position: relative; z-index: 1; height: 60px; width : fit-content !important; background-color: '+ widget.mainColor +'; box-shadow: 0px 0px ' + widget.boxShadow + 'px ' + widget.boxShadow + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px; color: '+ widget.stringColor +'; margin: auto; filter:alpha(opacity=80); -moz-opacity: 0.8; opacity: 0.8; cursor: pointer; zoom: 70%; }';
-        html += '      #sincloBanner.sincloBannerText{ line-height: 60px; height: auto!important; width: auto!important; padding:0; }';
+        html += '      #sincloBanner.sincloBanner { position: relative; z-index: 1; height: 42px; width : fit-content !important; background-color: '+ widget.mainColor +'; box-shadow: 0px 0px ' + widget.boxShadow + 'px ' + widget.boxShadow + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px; color: '+ widget.stringColor +'; margin: auto; filter:alpha(opacity=80); -moz-opacity: 0.8; opacity: 0.8; cursor: pointer; }';
+        html += '      #sincloBanner.sincloBannerText{ line-height: 42px; height: auto!important; width: auto!important; padding:0; }';
         html += '      #sincloBanner.sincloBanner i{ color: '+ widget.stringColor +'; }';
-        html += '      #sincloBanner.sincloBanner .sinclo-comment{ transform: scale( 1 , 1.4 ); font-size: 25px; padding: 0 15px 0 15px; cursor: pointer; }';
-        html += '      #sincloBanner.sincloBanner .bannertext{ font-size: 18px; padding: 0 15px 0 0; cursor: pointer; }';
+        html += '      #sincloBanner.sincloBanner .sinclo-comment{ transform: scale( 1 , 1.4 ); font-size: 17.5px; padding: 0 10.5px 0 17.5px; cursor: pointer; }';
+        html += '      #sincloBanner.sincloBanner .bannertext{ color: '+ widget.stringColor +'; font-size: 12.5px; padding: 0 17.5px 0 0; cursor: pointer; }';
         //スマホだったらpxの書き換え
 //        if ( check.smartphone() ) {
 //          widgetWidth = $(window).width() - 20;
@@ -719,12 +723,17 @@ var socket, // socket.io
           //＋ボタンと×ボタンは閉じるボタン設定によってポジションが異なるため別々に記載。なお、IDは同一とする
           if ( Number(widget.closeButtonSetting) === 1 ) {
             //閉じるボタン無効
+            //＋ボタン無効に仕様変更
+/*
             html += '#sincloBox div#addBtn { display: none; top: ' + (6 * ratio) + 'px; right: ' + (10 * ratio) + 'px; bottom: ' + (6 * ratio) + 'px; width: ' + (20 * ratio) + 'px; height: ' + (20 * ratio) + 'px; z-index: 2; }';
+*/
             html += '#sincloBox div#closeBtn { display: none; top: ' + (5 * ratio) + 'px; right: ' + (10 * ratio) + 'px; bottom: ' + (6 * ratio) + 'px; width: ' + (23 * ratio) + 'px; height: ' + (23 * ratio) + 'px; z-index: 2; }';
           }
           else{
             //閉じるボタン有効
+/*
             html += '#sincloBox div#addBtn { display: none; top: ' + (6 * ratio) + 'px; right: ' + (25 * ratio) + 'px; bottom: ' + (6 * ratio) + 'px; width: ' + (20 * ratio) + 'px; height: ' + (20 * ratio) + 'px; z-index: 2; }';
+*/
             html += '#sincloBox div#closeBtn { display: none; top: ' + (5 * ratio) + 'px; right: ' + (5 * ratio) + 'px; bottom: ' + (6 * ratio) + 'px; width: ' + (23 * ratio) + 'px; height: ' + (23 * ratio) + 'px; z-index: 2; }';
           }
           html += '#sincloBox p#widgetSubTitle { background-color: #FFF; border-color: #E8E7E0; font-weight: bold; color: ' + widget.mainColor + '; border-style: solid; text-align: left; margin: 0; padding: ' + (7 * ratio) + 'px 0; border-width: 0 ' + (1 * ratio) + 'px 0 ' + (1 * ratio) + 'px; padding-left: ' + (77 * ratio) + 'px; height: ' + (29 * ratio) + 'px; }';
@@ -775,9 +784,9 @@ var socket, // socket.io
           //閉じるボタン設定が有効かつバナー表示設定になっているかどうか
           if(Number(widget.closeButtonSetting) === 2 && Number(widget.closeButtonModeType) === 1){
             html += '      #sincloBannerBox{ bottom:0px; right:0px; }';
-            html += '      #sincloBanner.sincloBanner { height: '+ (60 * ratio) +'px; box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px; }';
-            html += '      #sincloBanner.sincloBanner .sinclo-comment{ font-size: '+ (25 * ratio) +'px; padding: 0 '+ (15 * ratio) +'px 0 '+ (15 * ratio) +'px; }';
-            html += '      #sincloBanner.sincloBanner .bannertext{ font-size: '+ (18 * ratio) +'px; padding: 0 '+ (15 * ratio) +'px 0 0; }';
+            html += '      #sincloBanner.sincloBanner { height: '+ (42 * ratio) +'px; box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px; }';
+            html += '      #sincloBanner.sincloBanner .sinclo-comment{ font-size: '+ (17.5 * ratio) +'px; padding: 0 '+ (10.5 * ratio) +'px 0 '+ (17.5 * ratio) +'px; }';
+            html += '      #sincloBanner.sincloBanner .bannertext{ color: '+ widget.stringColor +'; font-size: '+ (12.5 * ratio) +'px; padding: 0 '+ (17.5 * ratio) +'px 0 0; }';
           }
         }
         /* 横の場合 */
@@ -796,7 +805,10 @@ var socket, // socket.io
           html += '#sincloBox div#minimizeBtn { width: 1.5em; height: 1.5em; top: 0.4em; bottom: 0; right: 0.7em; }';
           //＋ボタンと×ボタンは閉じるボタン設定によってポジションが異なるため別々に記載。なお、IDは同一とする
           //閉じるボタン無効
+          //＋ボタン無効に仕様変更
+/*
           html += '#sincloBox div#addBtn { width: 1.5em; height: 1.5em; top: 0.4em; bottom: 0; right: 0.7em; }';
+*/
 /*
           html += '#sincloBox #widgetTitle:after { width: 1.5em; height: 1.5em; top: 0; bottom: 0; right: 0.25em;}';
 */
@@ -838,9 +850,9 @@ var socket, // socket.io
           if(Number(widget.closeButtonSetting) === 2 && Number(widget.closeButtonModeType) === 1){
             var ratio = 1.9;
             html += '      #sincloBannerBox{ bottom:0px; right:0px; }';
-            html += '      #sincloBanner.sincloBanner { height: '+ (60 * ratio) +'px; box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px; }';
-            html += '      #sincloBanner.sincloBanner .sinclo-comment{ font-size: '+ (25 * ratio) +'px; padding: 0 '+ (15 * ratio) +'px 0 '+ (15 * ratio) +'px; }';
-            html += '      #sincloBanner.sincloBanner .bannertext{ font-size: '+ (18 * ratio) +'px; padding: 0 '+ (15 * ratio) +'px 0 0; }';
+            html += '      #sincloBanner.sincloBanner { height: '+ (42 * ratio) +'px; box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px; }';
+            html += '      #sincloBanner.sincloBanner .sinclo-comment{ font-size: '+ (17.5 * ratio) +'px; padding: 0 '+ (10.5 * ratio) +'px 0 '+ (17.5 * ratio) +'px; }';
+            html += '      #sincloBanner.sincloBanner .bannertext{ color: '+ widget.stringColor +'; font-size: '+ (12.5 * ratio) +'px; padding: 0 '+ (17.5 * ratio) +'px 0 0; }';
           }
         }
       }
@@ -915,20 +927,20 @@ var socket, // socket.io
       if ( check.smartphone() ) {
         if ( $(window).height() > $(window).width() ) {
           //縦
-          var lineHeight = 60 * ratio;
+          var lineHeight = 42 * ratio;
         }
         else{
           //横
-          var lineHeight = 110;
+          var lineHeight = 77;
         }
       }
       else{
-        var lineHeight = 60;
+        var lineHeight = 42;
       }
       var html = "";
       html += '  <div id="sincloBanner" class="sincloBanner" onclick="sinclo.operatorInfo.clickBanner()">';
       html += '    <div id="sincloBannerText" class="sincloBannerText" style=" line-height: '+ lineHeight +'px; height: auto!important; width: auto!important; padding:0;">';
-      html += '      <span><i id="sinclo-comment" class="sinclo-fa fa-comment sinclo-comment"></i><i class="bannertext">'+ check.escape_html(widget.bannertext) +'</i></span>';
+      html += '      <span><i id="sinclo-comment" class="sinclo-fa fa-comment sinclo-comment"></i><font class="bannertext">'+ check.escape_html(widget.bannertext) +'</font></span>';
       html += '    </div>';
       html += '  </div>';
       return html;
@@ -954,7 +966,7 @@ var socket, // socket.io
       html += '    <p id="widgetTitle">' + check.escape_html(widget.title) + '</p>';
       //ボタン差し替え対応
       html += '    <div id="minimizeBtn"></div>';
-      html += '    <div id="addBtn"></div>';
+//      html += '    <div id="addBtn"></div>';
       html += '    <div id="closeBtn" onclick="sinclo.operatorInfo.closeBtn()"></div>';
       var subTitle = (widget.subTitle === undefined && Number(widget.showSubtitle) === 1 ) ? "" : widget.subTitle;
       var description = (widget.description === undefined) ? "" : widget.description;

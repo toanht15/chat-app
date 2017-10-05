@@ -123,20 +123,22 @@
         if ( check.smartphone() ) {
           //スマホだったら縦か横かを判定
           if($(window).height() > $(window).width()){
+            var widgetWidth = $(window).width() - 20;
+            var ratio = widgetWidth * (1/285);
             //縦
-            var bottom = "3%";
-            var leftRight = "-20%";
+            var bottom = (10 * ratio) + "px" ;
+            var leftRight = (-58 * ratio) + "px" ;
           }
           else{
             //横
-            var bottom = "6%";
-            var leftRight = "-67%";
+            var bottom = "2em";
+            var leftRight = "-54.5em";
           }
         }
         else{
           //pc
-          var bottom = "5%";
-          var leftRight = "5%";
+          var bottom = "10px";
+          var leftRight = "10px";
         }
         $("#sincloBox").css("bottom",bottom);
         switch ( Number(window.sincloInfo.widget.showPosition) ) {
@@ -270,8 +272,12 @@
             }
           }
           else {
-            sinclo.widget.condifiton.set(false);
-            sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
+            //ここでもしバナーだったら二段階表示防止のために以下の処理を避ける
+            var bannerAct = storage.s.get('bannerAct');
+            if(bannerAct !== "true"){
+              sinclo.widget.condifiton.set(false);
+              sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
+            }
           }
 
           sincloBox.setAttribute('data-screen', screen); // 画面の向きを制御
