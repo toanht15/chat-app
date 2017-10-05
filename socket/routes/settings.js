@@ -111,8 +111,66 @@ router.get("/", function(req, res, next) {
                   subTitle: settings.subTitle,
                   showDescription: isNumeric(settings.showDescription),
                   description: settings.description,
+
+                  /* カラー設定styat */
+                  //0.通常設定・高度設定
+                  colorSettingType: settings.colorSettingType,
+                  //1.メインカラー
                   mainColor: settings.mainColor,
+                  //2.タイトル文字色
                   stringColor: settings.stringColor,
+                  //3.吹き出し文字色
+                  messageTextColor: settings.messageTextColor,
+                  //4.その他文字色
+                  otherTextColor: settings.otherTextColor,
+                  //5.ウィジェット枠線色
+                  widgetBorderColor: settings.widgetBorderColor,
+                  //6.吹き出し枠線色
+                  chatTalkBorderColor: settings.chatTalkBorderColor,
+                  //7.企業名文字色
+                  subTitleTextColor: settings.subTitleTextColor,
+                  //8.説明文文字色
+                  descriptionTextColor: settings.descriptionTextColor,
+                  //9.チャットエリア背景色
+                  chatTalkBackgroundColor: settings.chatTalkBackgroundColor,
+                  //10.企業名担当者名文字色
+                  cNameTextColor: settings.cNameTextColor,
+                  //11.企業側吹き出し文字色
+                  reTextColor: settings.reTextColor,
+                  //12.企業側吹き出し背景色
+                  reBackgroundColor: settings.reBackgroundColor,
+                  //13.企業側吹き出し枠線色
+                  reBorderColor: settings.reBorderColor,
+                  //14.企業側吹き出し枠線なし
+                  reBorderNone: settings.reBorderNone,
+                  //15.訪問者側吹き出し文字色
+                  seTextColor: settings.seTextColor,
+                  //16.訪問者側吹き出し背景色
+                  seBackgroundColor: settings.seBackgroundColor,
+                  //17.訪問者側吹き出し枠線色
+                  seBorderColor: settings.seBorderColor,
+                  //18.訪問者側吹き出し枠線なし
+                  seBorderNone: settings.seBorderNone,
+                  //19.メッセージエリア背景色
+                  chatMessageBackgroundColor: settings.chatMessageBackgroundColor,
+                  //20.メッセージBOX文字色
+                  messageBoxTextColor: settings.messageBoxTextColor,
+                  //21.メッセージBOX背景色
+                  messageBoxBackgroundColor: settings.messageBoxBackgroundColor,
+                  //22.メッセージBOX枠線色
+                  messageBoxBorderColor: settings.messageBoxBorderColor,
+                  //23.メッセージBOX枠線なし
+                  messageBoxBorderNone: settings.messageBoxBorderNone,
+                  //24.送信ボタン文字色
+                  chatSendBtnTextColor: settings.chatSendBtnTextColor,
+                  //25.送信ボタン背景色
+                  chatSendBtnBackgroundColor: settings.chatSendBtnBackgroundColor,
+                  //26.ウィジット内枠線色
+                  widgetInsideBorderColor: settings.widgetInsideBorderColor,
+                  //27.ウィジット内枠線なし
+                  widgetInsideBorderNone: settings.widgetInsideBorderNone,
+                  /* カラー設定end */
+
                   showMainImage: settings.showMainImage,
                   mainImage: settings.mainImage,
                   chatRadioBehavior: isNumeric(settings.chatRadioBehavior),
