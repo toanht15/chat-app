@@ -1,5 +1,9 @@
 <script type = "text/javascript">
-console.log('来てる');
+
+var popupCansel = document.getElementById('popupCloseBtn');
+popupCansel.id = "popupCanselBtn";
+
+//はいをクリック
 popupEvent.closePopup = function(){
   var data=JSON.parse('<?php echo  $data; ?>');
   //履歴削除処理
@@ -23,14 +27,17 @@ popupEvent.closePopup = function(){
         },
         dataType: 'html',
         success: function(html){
+          var popupCansel = document.getElementById('popupCanselBtn');
+          popupCansel.id = "popupCloseBtn";
           modalOpen.call(window, html, 'p-chat-logs', 'チャット履歴','moment');
           $(".p-chat-logs #popup-main ul").scrollTop(0);
         }
       });
-      }
+    }
   });
 }
 
+//いいえをクリック
 popupEvent.cancelClicked = function(){
   var data=JSON.parse('<?php echo  $data; ?>');
   //履歴呼び直し
@@ -43,15 +50,18 @@ popupEvent.cancelClicked = function(){
       },
       dataType: 'html',
       success: function(html){
+        var popupCansel = document.getElementById('popupCanselBtn');
+        popupCansel.id = "popupCloseBtn";
         modalOpen.call(window, html, 'p-chat-logs', 'チャット履歴','moment');
         $(".p-chat-logs #popup-main ul").scrollTop(0);
       }
     });
 }
 
-/*$("#popupCloseBtn").on('click', function(e){
+//×ボタンをクリック
+$("#popupCanselBtn").on('click', function(e){
      var data=JSON.parse('<?php echo  $data; ?>');
-  //カテゴリ削除処理
+  //履歴呼び直し
     $.ajax({
       type: 'GET',
       url: "<?= $this->Html->url(array('controller' => 'Histories', 'action' => 'remoteGetChatLogs')) ?>",
@@ -61,11 +71,13 @@ popupEvent.cancelClicked = function(){
       },
       dataType: 'html',
       success: function(html){
-        modalOpen.call(window, html, 'p-chat-logs', 'チャット履歴');
+        var popupCansel = document.getElementById('popupCanselBtn');
+        popupCansel.id = "popupCloseBtn";
+        modalOpen.call(window, html, 'p-chat-logs', 'チャット履歴','moment');
         $(".p-chat-logs #popup-main ul").scrollTop(0);
       }
     });
-});*/
+});
 
 </script>
 <div class="form01">

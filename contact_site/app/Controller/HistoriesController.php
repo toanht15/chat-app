@@ -176,7 +176,7 @@ class HistoriesController extends AppController {
 
   public function remoteGetStayLogs() {
     Configure::write('debug', 0);
-    $this->autoRender = FALSE;
+    $this->autoRenderrir = FALSE;
     $this->layout = 'ajax';
 
     $historyId = $this->params->query['historyId'];
@@ -1033,7 +1033,6 @@ class HistoriesController extends AppController {
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
-    $this->log('来てまっせんん',LOG_DEBUG);
     $data = $this->request->data;
     //メッセージが10文字以上の場合3点リーダー表示
     if(mb_strlen($data['message']) > 10) {
@@ -1056,7 +1055,21 @@ class HistoriesController extends AppController {
     $id = $this->request->data['id'];
     $now = date('Y/m/d H:i:s');
     $userName = $this->userInfo['display_name'];
+
     $params = [
+      'fields' => [
+        'id'
+      ],
+      'conditions' => [
+        'THistoryChatLog.id' => $id,
+        'THistoryChatLog.delete_flg' => 0
+      ]
+    ];
+    //対象の履歴が既に削除されていないかチェック
+    $checkDeleteHistory = $this->THistoryChatLog->find('first', $params);
+
+    if(!empty($checkDeleteHistory)) {
+      $params = [
         'fields' => [
           'm_companies_id'
         ],
@@ -1065,32 +1078,35 @@ class HistoriesController extends AppController {
         ]
       ];
 
-    //m_companies_id
-    $m_companies_id = $this->THistoryChatLog->find('first', $params)['THistoryChatLog']['m_companies_id'];
+      //m_companies_id
+      $m_companies_id = $this->THistoryChatLog->find('first', $params)['THistoryChatLog']['m_companies_id'];
 
-    if($m_companies_id == $this->userInfo['MCompany']['id']) {
-      $saveData = [];
-      $saveData = $this->THistoryChatLog->read(null, $id);
-      $saveData['THistoryChatLog']['message'] = "(このメッセージは $now に 削除されました。)";
-      $saveData['THistoryChatLog']['delete_flg'] = 1;
-      $saveData['THistoryChatLog']['deleted'] = $now;
-      $saveData['THistoryChatLog']['deleted_user_id'] = $this->userInfo['id'];
+      if($m_companies_id == $this->userInfo['MCompany']['id']) {
+        $saveData = [];
+        $saveData = $this->THistoryChatLog->read(null, $id);
+        $saveData['THistoryChatLog']['message'] = "(このメッセージは $now に 削除されました。)";
+        $saveData['THistoryChatLog']['delete_flg'] = 1;
+        $saveData['THistoryChatLog']['deleted'] = $now;
+        $saveData['THistoryChatLog']['deleted_user_id'] = $this->userInfo['id'];
 
-      $this->THistoryChatLog->set($saveData);
-      $this->THistoryChatLog->begin();
-      if ( $this->THistoryChatLog->save() ) {
-        $this->THistoryChatLog->commit();
-        $this->log("DeleteHistory deleted : ".$now,LOG_DEBUG);
-        $this->log("DeleteHistory deleted_user_id: ".$this->userInfo['id'],LOG_DEBUG);
-        $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
+        $this->THistoryChatLog->set($saveData);
+        $this->THistoryChatLog->begin();
+        if ( $this->THistoryChatLog->save() ) {
+          $this->THistoryChatLog->commit();
+          $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
+        }
+        else {
+          $this->THistoryChatLog->rollback();
+          $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
+        }
       }
       else {
-        $this->THistoryChatLog->rollback();
         $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
       }
     }
     else {
-      $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
+      // すでに存在しない履歴のため変更済みとしてエラーを返す
+      $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deletedHistory'));
     }
   }
 

@@ -29,6 +29,7 @@ $(function(){
     );
   }, 1500);
 });
+
 </script>
 
 <div id = "modalShortMessage">
