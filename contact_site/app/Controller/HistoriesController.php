@@ -164,13 +164,10 @@ class HistoriesController extends AppController {
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
-    $this->log('ここまでは？',LOG_DEBUG);
     $ret = $this->_getChatLog($this->params->query['historyId']);
-    $this->log('ここまでは2？',LOG_DEBUG);
     $permissionLevel = $this->userInfo['permission_level'];
     $this->set('THistoryChatLog', $ret);
     $this->set('permissionLevel',$permissionLevel);
-    $this->log('ここまでは3？',LOG_DEBUG);
     return $this->render('/Elements/Histories/remoteGetChatLogs');
   }
 

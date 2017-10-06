@@ -181,7 +181,6 @@ var popupEvent = {
                     cancelBtn.onclick = function(){
                       return popupEvent.cancelClicked();
                     };
-
                     break;
                 case 'p-sort-save-confirm':
                     var saveBtn = _button("保存");
@@ -229,6 +228,8 @@ var popupEvent = {
             // タイトルをセット
             $('#popup-title').text(this.title);
             this.create();
+            console.log('aaaaaa');
+            console.log(this.elm.popup);
             // 出現初期位置をセット
             this.elm.popup.classList.add(this.id);
         },
@@ -303,9 +304,9 @@ var popupEvent = {
                     className = "failure";
                     break;
                 case 3: // alert
-                    //alert(message);
-                    //return false;
-                    //break;
+                    alert(message);
+                    return false;
+                    break;
             }
             $("#shortMessage").text(message).attr('style', '').addClass(className);
             $("#shortMessage").removeClass('popup-off');

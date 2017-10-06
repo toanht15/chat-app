@@ -31,49 +31,6 @@ popupEventOverlap.closePopup = function(){
     }
   });
 }
-
-//いいえをクリック
-/*popupEvent.cancelClicked = function(){
-  var data=JSON.parse('<?php echo  $data; ?>');
-  //履歴呼び直し
-    $.ajax({
-      type: 'GET',
-      url: "<?= $this->Html->url(array('controller' => 'Histories', 'action' => 'remoteGetChatLogs')) ?>",
-      cache: false,
-      data: {
-        historyId: data.historyId
-      },
-      dataType: 'html',
-      success: function(html){
-        var popupCansel = document.getElementById('popupCanselBtn');
-        popupCansel.id = "popupCloseBtn";
-        modalOpen.call(window, html, 'p-chat-logs', 'チャット履歴','moment');
-        $(".p-chat-logs #popup-main ul").scrollTop(0);
-      }
-    });
-}
-
-//×ボタンをクリック
-$("#popupCanselBtn").on('click', function(e){
-     var data=JSON.parse('<?php echo  $data; ?>');
-  //履歴呼び直し
-    $.ajax({
-      type: 'GET',
-      url: "<?= $this->Html->url(array('controller' => 'Histories', 'action' => 'remoteGetChatLogs')) ?>",
-      cache: false,
-      data: {
-        historyId: data.historyId
-      },
-      dataType: 'html',
-      success: function(html){
-        var popupCansel = document.getElementById('popupCanselBtn');
-        popupCansel.id = "popupCloseBtn";
-        modalOpen.call(window, html, 'p-chat-logs', 'チャット履歴','moment');
-        $(".p-chat-logs #popup-main ul").scrollTop(0);
-      }
-    });
-});*/
-
 </script>
 <div class="form01">
   <!--　履歴削除  -->
