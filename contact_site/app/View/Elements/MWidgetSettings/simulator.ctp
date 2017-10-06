@@ -307,8 +307,8 @@
     #sincloBanner {
       position: relative;
       z-index: 1;
-      height: 60px;
-      width : fit-content !important;
+      height: 42px;
+      width : {{getBannerWidth()}};
       background-color: {{main_color}};
       box-shadow: 0px 0px calc( {{box_shadow}}px + 1px) {{box_shadow}}px rgba(0,0,0,0.1);
       border-radius: {{radius_ratio}}px {{radius_ratio}}px {{radius_ratio}}px {{radius_ratio}}px;
@@ -319,10 +319,9 @@
       opacity: 0.8;
       top: -30px;
       cursor: pointer;
-      zoom: 70%;
     }
     #sincloBannerText{
-      line-height: 60px;
+      line-height: 42px;
       height: auto!important;
       width: auto!important;
       padding:0;
@@ -332,13 +331,13 @@
     }
     #sincloBanner #sinclo-comment{
       transform: scale( 1 , 1.4 );
-      font-size: 25px;
-      padding: 0 15px 0 25px;
+      font-size: 17.5px;
+      padding: 0 10.5px 0 17.5px;
       cursor: pointer;
     }
     #sincloBanner, #bannertext{
-      font-size: 18px;
-      padding: 0 15px 0 0;
+      font-size: 12.5px;
+      padding: 0 10.5px 0 3.5px;
       cursor: pointer;
       color: {{string_color}};
     }
