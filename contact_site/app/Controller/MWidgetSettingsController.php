@@ -60,7 +60,7 @@ class MWidgetSettingsController extends AppController {
     $titleLength = 12;
     $subTitleLength = 15;
     $descriptionLength = 15;
-    switch ($json['widget_size_type']) {
+    switch ($inputData['MWidgetSetting']['widget_size_type']) {
       //大きさによってトップタイトル、企業名、説明文のmaxlengthを可変とする
       case '1': //小
         $titleLength = 12;
