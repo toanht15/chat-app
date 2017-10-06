@@ -441,8 +441,10 @@ sincloApp.controller('WidgetCtrl', function($scope){
       },600);
     });
 
-    $("#MWidgetSettingChatMessageCopy").on('change', function(e){
-      $scope.chat_message_copy = this.checked ? "1" : "0";
+    $scope.$watch('chat_message_copy', function(){
+      // 代入される値の型にバラつきがあるので文字列で統一させる
+      $scope.chat_message_copy = Boolean(Number($scope.chat_message_copy));
+      $("#MWidgetSettingChatMessageCopy").prop("checked", $scope.chat_message_copy);
     });
 
     angular.element(window).on("focus", ".showSp", function(e){
