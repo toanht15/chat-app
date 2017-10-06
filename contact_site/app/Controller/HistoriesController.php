@@ -456,7 +456,12 @@ class HistoriesController extends AppController {
         $val['THistoryChatLog']['message'] = '-'.$val['MUser']['display_name'].'が'.$val['THistoryChatLog']['message'].'しました-';
       }
       // チャットメッセージ
-      $row['message'] = $val['THistoryChatLog']['message'];
+      if($val['THistoryChatLog']['delete_flg'] == 1) {
+        $row['message'] = "(このメッセージは ".$val['THistoryChatLog']['deleted']." に ".$val['DeleteMUser']['display_name']." さんによって削除されました。)";
+      }
+      else {
+        $row['message'] = $val['THistoryChatLog']['message'];
+      }
       // チャット担当者
       if($val['THistoryChatLog']['message_type'] == 2) {
         $row['user'] = $val['User'];
@@ -501,6 +506,16 @@ class HistoriesController extends AppController {
         'THistoryChatLog.t_history_stay_logs_id = THistoryStayLog.id'
       ],
     ];
+    $returnData['joinList'][] =  [
+      'type' => 'LEFT',
+      'table' => 'm_users',
+      'alias' => 'DeleteMUser',
+      'conditions' => [
+        'THistoryChatLog.deleted_user_id = DeleteMUser.id',
+        'DeleteMUser.m_companies_id' => $this->userInfo['MCompany']['id'],
+        'THistoryChatLog.delete_flg' => 1,
+      ]
+    ];
     return $returnData;
   }
 
@@ -522,7 +537,12 @@ class HistoriesController extends AppController {
     foreach($ret as $val){
       $row = [];
       $date = date('Y/m/d H:i:s', strtotime($val['THistoryChatLog']['created'])); // 送信日時
-      $message = $val['THistoryChatLog']['message'];
+      if($val['THistoryChatLog']['delete_flg'] == 1) {
+        $message = "(このメッセージは ".$val['THistoryChatLog']['deleted']." に ".$val['DeleteMUser']['display_name']." さんによって削除されました。)";
+      }
+      else {
+        $message = $val['THistoryChatLog']['message'];
+      }
       switch($val['THistoryChatLog']['message_type']){
         case 1: // 企業側からの送信
           $row = $this->_setData($date, "訪問者", "", $message);
@@ -1361,7 +1381,7 @@ class HistoriesController extends AppController {
       'fields' => [
         'THistoryChatLog.t_histories_id',
         'THistoryChatLog.m_users_id',
-        'THistoryChatLog.message_type',
+        'THistoryChatLog.message_type'
       ],
       'order' => [
         'THistoryChatLog.t_histories_id' => 'asc'
@@ -1372,7 +1392,7 @@ class HistoriesController extends AppController {
           'table' => '(SELECT * FROM t_histories WHERE m_companies_id = '.$this->userInfo['MCompany']['id'].')',
           'alias' => 'THistory',
           'conditions' => 'THistoryChatLog.t_histories_id = THistory.id'
-        ]
+        ],
       ],
       'conditions' => [
         'OR' => [
