@@ -337,14 +337,14 @@
     }
     #sincloBanner, #bannertext{
       font-size: 12.5px;
-      padding: 0 10.5px 0 3.5px;
+      padding: 0 10.5px 0 5.5px;
       cursor: pointer;
       color: {{string_color}};
     }
   </style>
   <div id="sincloBanner" ng-click="bannerSwitchWidget()" ng-if="closeButtonModeTypeToggle === '1' && closeButtonSettingToggle === '2' && showWidgetType === 4">
     <div id="sincloBannerText" ng-click="bannerSwitchWidget()">
-      <span ng-click="bannerSwitchWidget()"><i id="sinclo-comment" class="sinclo-fa fa-comment">&#xf075;</i><font id="bannertext">{{bannertext}}</font></span>
+      <div ng-click="bannerSwitchWidget()"><i id="sinclo-comment" class="sinclo-fa fa-comment">&#xf075;</i><span id="bannertext">{{bannertext}}</span></div>
     </div>
   </div>
   <!-- バナー -->
