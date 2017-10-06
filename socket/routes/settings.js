@@ -97,7 +97,7 @@ router.get("/", function(req, res, next) {
                   chatMessageWithAnimation = isNumeric(settings.chatMessageWithAnimation);
                 }
                 // チャット本文コピー設定が存在しない場合は「コピー可」
-                var chatMessageCopy = 1;
+                var chatMessageCopy = 0;
                	if(('chatMessageCopy' in settings)) {
                   chatMessageCopy = isNumeric(settings.chatMessageCopy);
                 }
