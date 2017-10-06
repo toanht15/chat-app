@@ -582,21 +582,21 @@ var socket, // socket.io
 //    html += '      #sincloBox[data-openflg="true"] p#widgetTitle:after { -ms-transform: rotate(0deg); -moz-transform: rotate(0deg); -webkit-transform: rotate(0deg); -o-transform: rotate(0deg); transform: rotate(0deg); }';
 //    html += '      #sincloBox[data-openflg="false"] p#widgetTitle:after { -ms-transform: rotate(180deg); -moz-transform: rotate(180deg); -webkit-transform: rotate(180deg); -o-transform: rotate(180deg); transform: rotate(180deg); }';
 
-      html += '      #sincloBox div#minimizeBtn { display: none; cursor: pointer; background-image: url("' + window.sincloInfo.site.files + '/img/widget/minimize.png"); background-position-y: 0px; top: 6px; right: 10px; bottom: 6px; content: " "; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }';
+      html += '      #sincloBox div#minimizeBtn { display: none; cursor: pointer; background-image: url("' + window.sincloInfo.site.files + '/img/widget/minimize.png"); background-position-y: 0px; top: 6px; right: 6px; bottom: 6px; content: " "; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }';
       //＋ボタンと×ボタンは閉じるボタン設定によってポジションが異なるため別々に記載。なお、IDは同一とする
       if ( Number(widget.closeButtonSetting) === 1 ) {
         //閉じるボタン無効
 /*
         html += '      #sincloBox div#addBtn { display: none; cursor: pointer; background-image: url("' + window.sincloInfo.site.files + '/img/widget/add.png"); background-position-y: 0px; top: 6px; right: 10px; bottom: 6px; content: " "; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }';
 */
-        html += '      #sincloBox div#closeBtn { display: none; cursor: pointer; background-image: url("' + window.sincloInfo.site.files + '/img/widget/close.png"); background-position-y: -1.5px; top: 5px; right: 10px; bottom: 6px; content: " "; width: 23px; height: 23px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }';
+        html += '      #sincloBox div#closeBtn { display: none; cursor: pointer; background-image: url("' + window.sincloInfo.site.files + '/img/widget/close.png"); background-position-y: -1.5px; top: 6px; right: 6px; bottom: 6px; content: " "; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }';
       }
       else{
         //閉じるボタン有効
 /*
         html += '      #sincloBox div#addBtn { display: none; cursor: pointer; background-image: url("' + window.sincloInfo.site.files + '/img/widget/add.png"); background-position-y: 0px; top: 6px; right: 25px; bottom: 6px; content: " "; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }';
 */
-        html += '      #sincloBox div#closeBtn { display: none; cursor: pointer; background-image: url("' + window.sincloInfo.site.files + '/img/widget/close.png"); background-position-y: -1.5px; top: 5px; right: 5px; bottom: 6px; content: " "; width: 23px; height: 23px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }';
+        html += '      #sincloBox div#closeBtn { display: none; cursor: pointer; background-image: url("' + window.sincloInfo.site.files + '/img/widget/close.png"); background-position-y: -1.5px; top: 6px; right: 6px; bottom: 6px; content: " "; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }';
       }
 
       html += '      #sincloWidgetBox > section { background-color: #FFF; border-top: none; }';
@@ -1266,7 +1266,9 @@ var socket, // socket.io
               //ヘッダ表示（通常表示）
               common.abridgementTypeShow();
             }
-            sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
+            if(bannerAct !== "true") {
+              sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
+            }
             //最小化時ボタン表示
             common.whenMinimizedBtnShow();
             // このタイミングでの最大化実行条件
