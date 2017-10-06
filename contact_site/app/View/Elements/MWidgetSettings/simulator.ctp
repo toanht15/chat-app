@@ -287,9 +287,14 @@
       #sincloBox section#chatTab #sincloChatSendBtn{ width: 20%; height: 100%; padding: 1em 0; border-radius: 0 5px 5px 0; cursor: pointer; margin: 0 auto; float: right; text-align: center; background-color: {{main_color}}!important; color: {{string_color}}; font-weight: bold; font-size: 1.2em;}
       #sincloBox section#chatTab #sincloChatSendBtn span { color: {{string_color}} }
     </style>
-    <div>
+    <div ng-if="chat_message_copy == '0'">
       <!-- タイトル -->
-      <p id="widgetTitle" class="widgetOpener" ng-class="{center: mainImageToggle == '2'}">{{title}}</p>
+      <p id="widgetTitle" class="widgetOpener" ng-class="{center: mainImageToggle == '2'}" >{{title}}</p>
+      <!-- タイトル -->
+    </div>
+    <div ng-if="chat_message_copy == '1'">
+      <!-- タイトル -->
+      <p id="widgetTitle" class="widgetOpener" ng-class="{center: mainImageToggle == '2'}" style = "user-select: none;-moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;">{{title}}</p>
       <!-- タイトル -->
     </div>
     <div id="miniTarget">
