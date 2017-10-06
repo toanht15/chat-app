@@ -441,6 +441,10 @@ sincloApp.controller('WidgetCtrl', function($scope){
       },600);
     });
 
+    $("#MWidgetSettingChatMessageCopy").on('change', function(e){
+      $scope.chat_message_copy = this.checked ? "1" : "0";
+    });
+
     angular.element(window).on("focus", ".showSp", function(e){
         $scope.switchWidget(3);
     });
