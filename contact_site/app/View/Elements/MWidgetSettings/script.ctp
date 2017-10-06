@@ -81,6 +81,24 @@ sincloApp.controller('WidgetCtrl', function($scope){
       return;
     }
 
+    //小さなウィジェットの横幅を求める関数
+    $scope.getBannerWidth = function(){
+      var text = $scope.bannertext;
+      var oneByteCount = 0;
+      var towByteCount = 0;
+      for (var i=0; i<text.length; i++){
+        var n = escape(text.charAt(i));
+        if (n.length < 4){
+          oneByteCount++;
+        }
+        else{
+          towByteCount++;
+        }
+      }
+      var bannerWidth = (oneByteCount * 7) + (towByteCount * 13) + 73.5;
+      $('#sincloBanner').css("width", bannerWidth + "px");
+    }
+
     $scope.$watch('chat_trigger', function(){
       if ( Number($scope.chat_trigger) === 1 ) {
         $scope.chat_area_placeholder_pc = "（Shift+Enterで改行/Enterで送信）";

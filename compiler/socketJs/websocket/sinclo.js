@@ -122,17 +122,39 @@
       bannerBottomLeftRight: function() {
         if ( check.smartphone() ) {
           //スマホだったら縦か横かを判定
+
+          var text = check.escape_html(window.sincloInfo.widget.bannertext);
+          var oneByteCount = 0;
+          var towByteCount = 0;
+          for (var i=0; i<text.length; i++){
+            var n = escape(text.charAt(i));
+            if (n.length < 4){
+              oneByteCount++;
+            }
+            else{
+              towByteCount++;
+            }
+          }
           if($(window).height() > $(window).width()){
             var widgetWidth = $(window).width() - 20;
             var ratio = widgetWidth * (1/285);
+            var bannerBasicSize = (63 * ratio);
+            var fontSize = (12.5 * ratio);
+            var bannerSize = bannerBasicSize + (oneByteCount * (fontSize * (1/2))) + (towByteCount * fontSize)
             //縦
             var bottom = (10 * ratio) + "px" ;
-            var leftRight = (-58 * ratio) + "px" ;
+            var leftRight = (-(widgetWidth * (1/2)) + (bannerSize * (1/2)) + (10 * ratio) ) + "px" ;
           }
           else{
+            var ratio = 1.9;
+            var widgetWidth = $(window).width() * ratio;
+            var bannerBasicSize = (63 * ratio);
+            var fontSize = (12.5 * ratio);
+            var bannerSize = bannerBasicSize + (oneByteCount * (fontSize * (1/2))) + (towByteCount * fontSize)
             //横
             var bottom = "2em";
-            var leftRight = "-54.5em";
+            var leftRight = (-(widgetWidth * (1/2)) + ((bannerSize * (1/2)) * ratio) + (10 * ratio) ) + "px" ;
+            //var leftRight = (-(widgetWidth * (1/2))) + "px" ;
           }
         }
         else{
