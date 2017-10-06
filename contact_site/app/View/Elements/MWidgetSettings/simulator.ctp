@@ -1,4 +1,3 @@
-<?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
 <style>
     .showType4{
       width: 285px;
@@ -13,6 +12,7 @@
       margin-bottom: 3em;
     }
 </style>
+<?php if ( $coreSettings[C_COMPANY_USE_CHAT] ){?>
 <section id="switch_widget" ng-cloak ng-class="{showBanner:closeButtonModeTypeToggle === '1' && closeButtonSettingToggle === '2' && showWidgetType === 4}">
   <ul class="ulTab" data-col=3 ng-hide="closeButtonSettingToggle === '2'">
     <li ng-class="{choose: showWidgetType === 1}" ng-click="switchWidget(1)">通常</li>
@@ -27,7 +27,15 @@
   </ul>
   <input type="hidden" id="switch_widget" value="">
 </section>
-<?php endif; ?>
+<?php } else { ?>
+<section id="switch_widget" ng-cloak ng-hide="closeButtonSettingToggle !== '2'" ng-class="{showBanner:closeButtonModeTypeToggle === '1' && closeButtonSettingToggle === '2' && showWidgetType === 4}">
+  <ul class="ulTab showType4" data-col=3  ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">
+    <li ng-class="{choose: showWidgetType === 1}" ng-click="switchWidget(1)">通常</li>
+    <li ng-class="{choose: showWidgetType === 4}" ng-click="switchWidget(4)">非表示</li>
+  </ul>
+  <input type="hidden" id="switch_widget" value="">
+</section>
+<?php }?>
 
 <section id="sample_widget_area" ng-cloak>
   <style>
@@ -320,14 +328,14 @@
     }
     #sincloBanner, #bannertext{
       font-size: 12.5px;
-      padding: 0 10.5px 0 3.5px;
+      padding: 0 10.5px 0 5.5px;
       cursor: pointer;
       color: {{string_color}};
     }
   </style>
   <div id="sincloBanner" ng-click="bannerSwitchWidget()" ng-if="closeButtonModeTypeToggle === '1' && closeButtonSettingToggle === '2' && showWidgetType === 4">
     <div id="sincloBannerText" ng-click="bannerSwitchWidget()">
-      <span ng-click="bannerSwitchWidget()"><i id="sinclo-comment" class="sinclo-fa fa-comment">&#xf075;</i><font id="bannertext">{{bannertext}}</font></span>
+      <div ng-click="bannerSwitchWidget()"><i id="sinclo-comment" class="sinclo-fa fa-comment">&#xf075;</i><span id="bannertext">{{bannertext}}</span></div>
     </div>
   </div>
   <!-- バナー -->

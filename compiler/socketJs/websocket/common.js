@@ -927,20 +927,20 @@ var socket, // socket.io
       if ( check.smartphone() ) {
         if ( $(window).height() > $(window).width() ) {
           //縦
-          var lineHeight = 42 * ratio;
+          var paddingpx = 'padding: '+ 10 * ratio +'px 0';
         }
         else{
           //横
-          var lineHeight = 77;
+          var paddingpx = 'padding: '+ 10 +'px 0';
         }
       }
       else{
-        var lineHeight = 42;
+        var paddingpx = 'padding: '+ 10 +'px 0';
       }
       var html = "";
       html += '  <div id="sincloBanner" class="sincloBanner" onclick="sinclo.operatorInfo.clickBanner()">';
-      html += '    <div id="sincloBannerText" class="sincloBannerText" style=" line-height: '+ lineHeight +'px; height: auto!important; width: auto!important; padding:0;">';
-      html += '      <span><i id="sinclo-comment" class="sinclo-fa fa-comment sinclo-comment"></i><font class="bannertext">'+ check.escape_html(widget.bannertext) +'</font></span>';
+      html += '    <div id="sincloBannerText" class="sincloBannerText" style="height: auto!important; width: auto!important; '+ paddingpx +'">';
+      html += '      <i id="sinclo-comment" class="sinclo-fa fa-comment sinclo-comment"></i><span class="bannertext">'+ check.escape_html(widget.bannertext) +'</span>';
       html += '    </div>';
       html += '  </div>';
       return html;
