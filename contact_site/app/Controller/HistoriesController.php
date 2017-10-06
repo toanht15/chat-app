@@ -164,6 +164,7 @@ class HistoriesController extends AppController {
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
+
     $ret = $this->_getChatLog($this->params->query['historyId']);
     $permissionLevel = $this->userInfo['permission_level'];
     $this->set('THistoryChatLog', $ret);
@@ -173,7 +174,7 @@ class HistoriesController extends AppController {
 
   public function remoteGetStayLogs() {
     Configure::write('debug', 0);
-    $this->autoRenderrir = FALSE;
+    $this->autoRender = FALSE;
     $this->layout = 'ajax';
 
     $historyId = $this->params->query['historyId'];

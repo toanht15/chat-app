@@ -228,8 +228,6 @@ var popupEvent = {
             // タイトルをセット
             $('#popup-title').text(this.title);
             this.create();
-            console.log('aaaaaa');
-            console.log(this.elm.popup);
             // 出現初期位置をセット
             this.elm.popup.classList.add(this.id);
         },
