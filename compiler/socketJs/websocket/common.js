@@ -931,7 +931,7 @@ var socket, // socket.io
         }
         else{
           //横
-          var paddingpx = 'padding: '+ 10 +'px 0';
+          var paddingpx = 'line-height: '+ 77 +'px';
         }
       }
       else{
