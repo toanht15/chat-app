@@ -96,7 +96,7 @@ sincloApp.controller('WidgetCtrl', function($scope){
         }
       }
       //ブラウザによってフォントサイズの扱いが異なるため、細かく設定する必要がある
-      var bannerWidth = (oneByteCount * 8) + (towByteCount * 14) + 74.5;
+      var bannerWidth = (oneByteCount * 8) + (towByteCount * 14.5) + 76.5;
       $('#sincloBanner').css("width", bannerWidth + "px");
     }
 
