@@ -179,7 +179,7 @@
     <?php endif; ?>
     <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
       <section id="chatTab" ng-hide="widget.showTab !== 'chat'" ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">
-        <ul id="chatTalk" ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}" ng-if="chat_message_copy == '1'">
+        <ul id="chatTalk" ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}" ng-if="chat_message_copy == '0'">
           <div style="height: auto!important; padding:0;" ng-class="{liLeft: chat_message_design_type == 1, liRight: chat_message_design_type == 2}" >
           <li class="sinclo_se chat_right" ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3',boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}" >○○について質問したいのですが</li>
           </div>
@@ -190,7 +190,7 @@
             <li class="showAnimationSample sinclo_re chat_left" ng-style="{backgroundColor:makeFaintColor()}" ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3',boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}"><span class="cName" ng-if="show_name == 1" ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}"><?=$userInfo['display_name']?></span><span class="cName" ng-if="show_name == 2" ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">{{sub_title}}</span>○○についてですね<br>どのようなご質問でしょうか？</li>
           </div>
         </ul>
-        <ul id="chatTalk" ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}" ng-if="chat_message_copy == '2'" style = "user-select: none;-moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;">
+        <ul id="chatTalk" ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}" ng-if="chat_message_copy == '1'" style = "user-select: none;-moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;">
           <div style="height: auto!important; padding:0;" ng-class="{liLeft: chat_message_design_type == 1, liRight: chat_message_design_type == 2}" >
             <li class="sinclo_se chat_right" ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3',boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}" >○○について質問したいのですが</li>
           </div>
@@ -294,7 +294,7 @@
     </div>
     <div id="miniTarget">
       <section id="chatTab">
-        <ul id="chatTalk" ng-if="chat_message_copy == '1'">
+        <ul id="chatTalk" ng-if="chat_message_copy == '0'">
           <div style="height: auto!important; padding:0;" ng-class="{liLeft: chat_message_design_type == 1, liRight: chat_message_design_type == 2}">
             <li class="sinclo_se chat_right" ng-class="{boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}">○○について質問したいのですが</li>
           </div>
@@ -305,7 +305,7 @@
             <li class="showAnimationSample sinclo_re chat_left" ng-class="{boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}" ng-style="{backgroundColor:makeFaintColor()}"><span class="cName">{{sub_title}}</span>○○についてですね<br>どのようなご質問でしょうか？</li>
           </div>
         </ul>
-        <ul id="chatTalk" ng-if="chat_message_copy == '2'" style = "user-select: none;-moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;" >
+        <ul id="chatTalk" ng-if="chat_message_copy == '1'" style = "user-select: none;-moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;" >
           <div style="height: auto!important; padding:0;" ng-class="{liLeft: chat_message_design_type == 1, liRight: chat_message_design_type == 2}">
             <li class="sinclo_se chat_right" ng-class="{boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}">○○について質問したいのですが</li>
           </div>

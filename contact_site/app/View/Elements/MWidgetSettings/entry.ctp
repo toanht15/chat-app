@@ -443,13 +443,12 @@ $headerNo = 1;
           <li>
             <span class="require"><label>チャット本文コピー</label></span>
             <pre><label class="pointer"><?= $this->ngForm->input('chat_message_copy', [
-                  'type' => 'radio',
-                  'options' => $chatMessageCopy,
+                  'type' => 'checkbox',
                   'legend' => false,
-                  'separator' => '</label><br><label class="pointer">',
                   'class' => 'chatMessageCopy',
+                  'ng-checked' => 'chat_message_copy === "'.C_WIDGET_CHAT_MESSAGE_CANT_COPY.'"',
+                  'label' => 'サイト訪問者によるチャット本文のコピーを出来なくする',
                   'div' => false,
-                  'label' => false,
                   'error' => false
                 ],
                   [
