@@ -327,7 +327,7 @@
   </style>
   <div id="sincloBanner" ng-click="bannerSwitchWidget()" ng-if="closeButtonModeTypeToggle === '1' && closeButtonSettingToggle === '2' && showWidgetType === 4">
     <div id="sincloBannerText" ng-click="bannerSwitchWidget()">
-      <span ng-click="bannerSwitchWidget()"><i id="sinclo-comment" class="sinclo-fa fa-comment">&#xf075;</i><font id="bannertext">{{bannertext}}</font></span>
+      <div ng-click="bannerSwitchWidget()"><i id="sinclo-comment" class="sinclo-fa fa-comment">&#xf075;</i><span id="bannertext">{{bannertext}}</span></div>
     </div>
   </div>
   <!-- バナー -->
