@@ -81,7 +81,13 @@ sincloApp.controller('WidgetCtrl', function($scope){
       return;
     }
 
-    //小さなウィジェットの横幅を求める関数
+    //小さなバナーの横幅を求める関数
+    /*
+     * 　もともとバナーの横幅はwidth: fit-content;で値を動的に持たせていたが、IEでこの実装は動作しなかったため
+     * 現在の横幅を算出して当てはめる方法にした経緯がある。
+     * 　しかし、各ブラウザごとにfontサイズの扱いが異なるため、この実装においても、サファリなどで見た目に差異が
+     * 生まれてしまっていた。そのため、ブラウザごとに微調整できるようにし、現在に至る。
+     */
     $scope.getBannerWidth = function(){
       $('#sincloBanner').css("width","40px");
       var text = $scope.bannertext;
@@ -112,7 +118,7 @@ sincloApp.controller('WidgetCtrl', function($scope){
       }
       else if(userAgent.indexOf('safari') != -1) {
         //Safari
-        userAgent = userAgent + 5;
+        bannerWidth = bannerWidth + 5;
       }
       else if(userAgent.indexOf('firefox') != -1) {
         //FireFox
