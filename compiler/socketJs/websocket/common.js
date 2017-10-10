@@ -696,8 +696,8 @@ var socket, // socket.io
         html += '      #sincloBanner.sincloBanner { position: relative; z-index: 1; height: 42px; width : fit-content !important; background-color: '+ widget.mainColor +'; box-shadow: 0px 0px ' + widget.boxShadow + 'px ' + widget.boxShadow + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px; color: '+ widget.stringColor +'; margin: auto; filter:alpha(opacity=80); -moz-opacity: 0.8; opacity: 0.8; cursor: pointer; }';
         html += '      #sincloBanner.sincloBannerText{ line-height: 42px; height: auto!important; width: auto!important; padding:0; }';
         html += '      #sincloBanner.sincloBanner i{ color: '+ widget.stringColor +'; }';
-        html += '      #sincloBanner.sincloBanner .sinclo-comment{ transform: scale( 1 , 1.4 ); font-size: 17.5px; padding: 0 10.5px 0 17.5px; cursor: pointer; }';
-        html += '      #sincloBanner.sincloBanner .bannertext{ color: '+ widget.stringColor +'; font-size: 12.5px; padding: 0 17.5px 0 0; cursor: pointer; }';
+        html += '      #sincloBanner.sincloBanner .sinclo-comment{ transform: scale( 1 , 1.4 ); font-size: 17.5px; padding: 0 2px 0 10px; cursor: pointer; }';
+        html += '      #sincloBanner.sincloBanner .bannertext{ color: '+ widget.stringColor +'; font-size: 12.5px; padding: 0 10px 0 3px; cursor: pointer; }';
         //スマホだったらpxの書き換え
 //        if ( check.smartphone() ) {
 //          widgetWidth = $(window).width() - 20;
@@ -810,8 +810,8 @@ var socket, // socket.io
           if(Number(widget.closeButtonSetting) === 2 && Number(widget.closeButtonModeType) === 1){
             html += '      #sincloBannerBox{ bottom:0px; right:0px; }';
             html += '      #sincloBanner.sincloBanner { height: '+ (42 * ratio) +'px; box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px; }';
-            html += '      #sincloBanner.sincloBanner .sinclo-comment{ font-size: '+ (17.5 * ratio) +'px; padding: 0 '+ (10.5 * ratio) +'px 0 '+ (17.5 * ratio) +'px; }';
-            html += '      #sincloBanner.sincloBanner .bannertext{ color: '+ widget.stringColor +'; font-size: '+ (12.5 * ratio) +'px; padding: 0 '+ (17.5 * ratio) +'px 0 0; }';
+            html += '      #sincloBanner.sincloBanner .sinclo-comment{ font-size: '+ (17.5 * ratio) +'px; padding: 0 '+ (2 * ratio) +'px 0 '+ (10 * ratio) +'px; }';
+            html += '      #sincloBanner.sincloBanner .bannertext{ color: '+ widget.stringColor +'; font-size: '+ (12.5 * ratio) +'px; padding: 0 '+ (10 * ratio) +'px 0 '+ (3 * ratio) +'px; }';
           }
         }
         /* 横の場合 */
@@ -881,8 +881,8 @@ var socket, // socket.io
             var ratio = 1.9;
             html += '      #sincloBannerBox{ bottom:0px; right:0px; }';
             html += '      #sincloBanner.sincloBanner { height: '+ (42 * ratio) +'px; box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px; }';
-            html += '      #sincloBanner.sincloBanner .sinclo-comment{ font-size: '+ (17.5 * ratio) +'px; padding: 0 '+ (10.5 * ratio) +'px 0 '+ (17.5 * ratio) +'px; }';
-            html += '      #sincloBanner.sincloBanner .bannertext{ color: '+ widget.stringColor +'; font-size: '+ (12.5 * ratio) +'px; padding: 0 '+ (17.5 * ratio) +'px 0 0; }';
+            html += '      #sincloBanner.sincloBanner .sinclo-comment{ font-size: '+ (17.5 * ratio) +'px; padding: 0 '+ (2 * ratio) +'px 0 '+ (10 * ratio) +'px; }';
+            html += '      #sincloBanner.sincloBanner .bannertext{ color: '+ widget.stringColor +'; font-size: '+ (12.5 * ratio) +'px; padding: 0 '+ (10 * ratio) +'px 0 '+ (3 * ratio) +'px; }';
           }
         }
       }
