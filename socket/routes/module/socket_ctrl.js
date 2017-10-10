@@ -1171,14 +1171,6 @@ io.sockets.on('connection', function (socket) {
     }
   });
 
-  socket.on('assistAgentIsReady', function (data) {
-    var obj = JSON.parse(data);
-    console.log("OBJ : " + JSON.stringify(data));
-    sincloCore[obj.siteKey][obj.to]['responderId'] = obj.responderId; // 対応ユーザーID
-    sincloCore[obj.siteKey][obj.to]['coBrowseParentSessionId'] = socket.id; // 企業側のsocket.id
-    emit.toUser('assistAgentIsReady', data, getSessionId(obj.siteKey, obj.to, 'sessionId'));
-  });
-
 // FIX ME !!!!!!!
   // 継続接続(両用)
   socket.on('connectContinue', function (data) {
@@ -1311,64 +1303,6 @@ io.sockets.on('connection', function (socket) {
 
       // 企業一括
       emit.toCompany('syncStop', compData, obj.siteKey); // リアルタイムモニタを更新する為
-    }
-    else {
-      emit.toCompany('unsetUser', data, obj.siteKey);
-    }
-  });
-
-  /**
-   * 企業フレーム:1, 消費者フレーム:2,企業インライン:3, 消費者インライン:4
-   * */
-  socket.on('requestStopCoBrowse', function (data) {
-    var obj = JSON.parse(data);
-    if ( isset(obj.connectToken) ) {
-      var parentId = false;
-      obj.message = "切断を検知しました。";
-      // 企業フレーム
-      switch(Number(obj.type)){
-        case 1: // 企業フレーム
-        case 2: // 消費者フレーム
-          if ( Number(obj.type) === 1 ) { // Was angry JS Lint
-            parentId = obj.tabId.replace("_frame", "");
-          }
-          if ( 'parentId' in obj ) {
-            parentId = obj.parentId;
-          }
-
-          if ( getSessionId(obj.siteKey, obj.tabId, 'shareWindowFlg') ) {
-            // 企業フレーム
-            emit.toUser('stopCoBrowse', obj, getSessionId(obj.siteKey, obj.tabId, 'shareWindowFlg'));
-            // 企業インライン
-            // emit.toUser('syncStop', obj, getSessionId(obj.siteKey, obj.tabId, 'syncSessionId'));
-            // 消費者フレーム
-            emit.toUser('stopCoBrowse', obj, getSessionId(obj.siteKey, obj.tabId, 'syncFrameSessionId'));
-            // 消費者インライン
-            emit.toUser('stopCoBrowse', obj, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
-            syncStopCtrl(obj.siteKey, obj.tabId, true);
-          }
-          else {
-            syncStopCtrl(obj.siteKey, obj.tabId);
-          }
-          break;
-        case 3: // 企業インライン
-        case 4: // 消費者インライン
-          // 相手先インラインフレーム
-          emit.toUser('stopCoBrowse', obj, getSessionId(obj.siteKey, obj.to, 'sessionId'));
-          // 消費者インライン
-          break;
-      }
-
-      // 消費者親タブ
-      var compData = obj;
-      if ( parentId ) {
-        emit.toUser('stopCoBrowse', data, getSessionId(obj.siteKey, parentId, 'sessionId')); // 消費者の親フレーム
-        syncStopCtrl(obj.siteKey, parentId);
-        compData.tabId = parentId;
-      }
-
-      // 企業一括
-      emit.toCompany('stopCoBrowse', compData, obj.siteKey); // リアルタイムモニタを更新する為
     }
     else {
       emit.toCompany('unsetUser', data, obj.siteKey);
@@ -1955,6 +1889,72 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     //     sincloCore[obj.siteKey][obj.tabId].syncHostSessionId = socket.id; // 企業画面側のセッションID
     //     emit.toUser('getWindowInfo', data, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
     // }
+  });
+
+  socket.on('assistAgentIsReady', function (data) {
+    var obj = JSON.parse(data);
+    console.log("OBJ : " + JSON.stringify(data));
+    sincloCore[obj.siteKey][obj.to]['responderId'] = obj.responderId; // 対応ユーザーID
+    sincloCore[obj.siteKey][obj.to]['coBrowseParentSessionId'] = socket.id; // 企業側のsocket.id
+    emit.toUser('assistAgentIsReady', data, getSessionId(obj.siteKey, obj.to, 'sessionId'));
+  });
+
+  /**
+   * 企業フレーム:1, 消費者フレーム:2,企業インライン:3, 消費者インライン:4
+   * */
+  socket.on('requestStopCoBrowse', function (data) {
+    var obj = JSON.parse(data);
+    if ( isset(obj.connectToken) ) {
+      var parentId = false;
+      obj.message = "切断を検知しました。";
+      // 企業フレーム
+      switch(Number(obj.type)){
+        case 1: // 企業フレーム
+        case 2: // 消費者フレーム
+          if ( Number(obj.type) === 1 ) { // Was angry JS Lint
+            parentId = obj.tabId.replace("_frame", "");
+          }
+          if ( 'parentId' in obj ) {
+            parentId = obj.parentId;
+          }
+
+          if ( getSessionId(obj.siteKey, obj.tabId, 'shareWindowFlg') ) {
+            // 企業フレーム
+            emit.toUser('stopCoBrowse', obj, getSessionId(obj.siteKey, obj.tabId, 'shareWindowFlg'));
+            // 企業インライン
+            // emit.toUser('syncStop', obj, getSessionId(obj.siteKey, obj.tabId, 'syncSessionId'));
+            // 消費者フレーム
+            emit.toUser('stopCoBrowse', obj, getSessionId(obj.siteKey, obj.tabId, 'syncFrameSessionId'));
+            // 消費者インライン
+            emit.toUser('stopCoBrowse', obj, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
+            syncStopCtrl(obj.siteKey, obj.tabId, true);
+          }
+          else {
+            syncStopCtrl(obj.siteKey, obj.tabId);
+          }
+          break;
+        case 3: // 企業インライン
+        case 4: // 消費者インライン
+          // 相手先インラインフレーム
+          emit.toUser('stopCoBrowse', obj, getSessionId(obj.siteKey, obj.to, 'sessionId'));
+          // 消費者インライン
+          break;
+      }
+
+      // 消費者親タブ
+      var compData = obj;
+      if ( parentId ) {
+        emit.toUser('stopCoBrowse', data, getSessionId(obj.siteKey, parentId, 'sessionId')); // 消費者の親フレーム
+        syncStopCtrl(obj.siteKey, parentId);
+        compData.tabId = parentId;
+      }
+
+      // 企業一括
+      emit.toCompany('stopCoBrowse', compData, obj.siteKey); // リアルタイムモニタを更新する為
+    }
+    else {
+      emit.toCompany('unsetUser', data, obj.siteKey);
+    }
   });
 
   // -----------------------------------------------------------------------
