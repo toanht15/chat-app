@@ -83,7 +83,7 @@ sincloApp.controller('WidgetCtrl', function($scope){
 
     //小さなウィジェットの横幅を求める関数
     $scope.getBannerWidth = function(){
-      $('#sincloBanner').css("width","36.5px");
+      $('#sincloBanner').css("width","40px");
       var text = $scope.bannertext;
       var oneByteCount = 0;
       var towByteCount = 0;
@@ -97,7 +97,7 @@ sincloApp.controller('WidgetCtrl', function($scope){
         }
       }
       //ブラウザによってフォントサイズの扱いが異なるため、細かく設定する必要がある
-      var bannerWidth = (oneByteCount * 8) + (towByteCount * 12.7) + 36.5;
+      var bannerWidth = (oneByteCount * 8) + (towByteCount * 12.7) + 40;
       $('#sincloBanner').css("width", bannerWidth + "px");
     }
 
