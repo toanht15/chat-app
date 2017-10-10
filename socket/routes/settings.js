@@ -97,6 +97,32 @@ router.get("/", function(req, res, next) {
                   chatMessageWithAnimation = isNumeric(settings.chatMessageWithAnimation);
                 }
 
+                // 通常設定・高度設定が存在しない場合は「通常設定」
+                var colorSettingType = 0;
+                if(('colorSettingType' in settings)) {
+                  colorSettingType = isNumeric(settings.colorSettingType);
+                }
+                // 吹き出し文字色が存在しない場合はデフォルト色を設定
+                var messageTextColor = "#333333";
+                if(('messageTextColor' in settings)) {
+                  messageTextColor = settings.messageTextColor;
+                }
+                // その他文字色が存在しない場合はデフォルト色を設定
+                var otherTextColor = "#666666";
+                if(('otherTextColor' in settings)) {
+                  otherTextColor = settings.otherTextColor;
+                }
+                // ウィジェット枠線色が存在しない場合はデフォルト色を設定
+                var widgetBorderColor = "#E8E7E0";
+                if(('widgetBorderColor' in settings)) {
+                  widgetBorderColor = settings.widgetBorderColor;
+                }
+                // 吹き出し枠線色が存在しない場合はデフォルト色を設定
+                var chatTalkBorderColor = "#C9C9C9";
+                if(('chatTalkBorderColor' in settings)) {
+                  chatTalkBorderColor = settings.chatTalkBorderColor;
+                }
+
                 sendData['widget'] = {
                   showTiming: showTimingSetting,
                   display_type: isNumeric(rows[0].display_type),
@@ -114,19 +140,19 @@ router.get("/", function(req, res, next) {
 
                   /* カラー設定styat */
                   //0.通常設定・高度設定
-                  colorSettingType: settings.colorSettingType,
+                  colorSettingType: colorSettingType,
                   //1.メインカラー
                   mainColor: settings.mainColor,
                   //2.タイトル文字色
                   stringColor: settings.stringColor,
                   //3.吹き出し文字色
-                  messageTextColor: settings.messageTextColor,
+                  messageTextColor: messageTextColor,
                   //4.その他文字色
-                  otherTextColor: settings.otherTextColor,
+                  otherTextColor: otherTextColor,
                   //5.ウィジェット枠線色
-                  widgetBorderColor: settings.widgetBorderColor,
+                  widgetBorderColor: widgetBorderColor,
                   //6.吹き出し枠線色
-                  chatTalkBorderColor: settings.chatTalkBorderColor,
+                  chatTalkBorderColor: chatTalkBorderColor,
                   //7.企業名文字色
                   subTitleTextColor: settings.subTitleTextColor,
                   //8.説明文文字色

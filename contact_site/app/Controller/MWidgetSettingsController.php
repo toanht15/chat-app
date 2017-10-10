@@ -60,34 +60,54 @@ class MWidgetSettingsController extends AppController {
         $json = $this->_settingToObj($ret['MWidgetSetting']['style_settings']);
         $inputData['MWidgetSetting'] = $this->_setStyleSetting($inputData['MWidgetSetting'], $json);
       }
-      if($json['re_border_color'] === 'none'){
-        $this->set('re_border_color_flg', false);
-        $inputData['MWidgetSetting']['re_border_color'] = 'なし';
-        $inputData['MWidgetSetting']['re_border_none'] = true;
+      if(array_key_exists ('re_border_color',$json)){
+        if($json['re_border_color'] === 'none'){
+          $this->set('re_border_color_flg', false);
+          $inputData['MWidgetSetting']['re_border_color'] = 'なし';
+          $inputData['MWidgetSetting']['re_border_none'] = true;
+        }
+        else{
+          $this->set('re_border_color_flg', true);
+        }
       }
       else{
         $this->set('re_border_color_flg', true);
       }
-      if($json['se_border_color'] === 'none'){
-        $this->set('se_border_color_flg', false);
-        $inputData['MWidgetSetting']['se_border_color'] = 'なし';
-        $inputData['MWidgetSetting']['se_border_none'] = true;
+      if(array_key_exists ('se_border_color',$json)){
+        if($json['se_border_color'] === 'none'){
+          $this->set('se_border_color_flg', false);
+          $inputData['MWidgetSetting']['se_border_color'] = 'なし';
+          $inputData['MWidgetSetting']['se_border_none'] = true;
+        }
+        else{
+          $this->set('se_border_color_flg', true);
+        }
       }
       else{
         $this->set('se_border_color_flg', true);
       }
-      if($json['message_box_border_color'] === 'none'){
-        $this->set('message_box_border_color_flg', false);
-        $inputData['MWidgetSetting']['message_box_border_color'] = 'なし';
-        $inputData['MWidgetSetting']['message_box_border_none'] = true;
+      if(array_key_exists ('message_box_border_color',$json)){
+        if($json['message_box_border_color'] === 'none'){
+          $this->set('message_box_border_color_flg', false);
+          $inputData['MWidgetSetting']['message_box_border_color'] = 'なし';
+          $inputData['MWidgetSetting']['message_box_border_none'] = true;
+        }
+        else{
+          $this->set('message_box_border_color_flg', true);
+        }
       }
       else{
         $this->set('message_box_border_color_flg', true);
       }
-      if($json['widget_inside_border_color'] === 'none'){
-        $this->set('widget_inside_border_color_flg', false);
-        $inputData['MWidgetSetting']['widget_inside_border_color'] = 'なし';
-        $inputData['MWidgetSetting']['widget_inside_border_none'] = true;
+      if(array_key_exists ('widget_inside_border_color',$json)){
+        if($json['widget_inside_border_color'] === 'none'){
+          $this->set('widget_inside_border_color_flg', false);
+          $inputData['MWidgetSetting']['widget_inside_border_color'] = 'なし';
+          $inputData['MWidgetSetting']['widget_inside_border_none'] = true;
+        }
+        else{
+          $this->set('widget_inside_border_color_flg', true);
+        }
       }
       else{
         $this->set('widget_inside_border_color_flg', true);

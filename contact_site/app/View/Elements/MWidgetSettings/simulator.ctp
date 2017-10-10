@@ -127,9 +127,10 @@
       #sincloBox ul#chatTalk li span.cName.middleSize { font-size: 14px }
       #sincloBox ul#chatTalk li span.cName.largeSize { font-size: 14px }
       #sincloBox ul#chatTalk li span.cName.details{ color: {{c_name_text_color}}!important;}
-      #sincloBox ul#chatTalk li font:not(.details){  color: {{message_text_color}}!important; }
-      #sincloBox ul#chatTalk li.sinclo_re font.details{ color: {{re_text_color}}!important;}
-      #sincloBox ul#chatTalk li.sinclo_se font.details{ color: {{se_text_color}}!important;}
+      #sincloBox ul#chatTalk li span.cName:not(.details){ color: {{main_color}}!important;}
+      #sincloBox ul#chatTalk li span:not(.details){  color: {{message_text_color}}!important; }
+      #sincloBox ul#chatTalk li.sinclo_re span.details{ color: {{re_text_color}};}
+      #sincloBox ul#chatTalk li.sinclo_se span.details{ color: {{se_text_color}};}
       #sincloBox section#chatTab div { height: 75px!important; padding: 5px; }
       #sincloBox section#chatTab textarea#sincloChatMessage { width: 80%; height: 100%; color: {{other_text_color}}; margin: 0; resize: none; padding: 5px; }
       #sincloBox section#chatTab textarea#sincloChatMessage.details { color: {{message_box_text_color}}; background-color: {{message_box_background_color}}; }
@@ -249,13 +250,13 @@
       <section id="chatTab" ng-hide="widget.showTab !== 'chat'" ng-class="{ notNone:widget_inside_border_none === ''||widget_inside_border_none === false, details: color_setting_type === '1' || color_setting_type === true,middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">
         <ul id="chatTalk" ng-class="{ details: color_setting_type === '1' || color_setting_type === true,middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">
           <div style="height: auto!important; padding:0;" ng-class="{liLeft: chat_message_design_type == 1, liRight: chat_message_design_type == 2}" >
-          <li class="sinclo_se chat_right" ng-class="{ notNone:se_border_none === '' || se_border_none === false,details: color_setting_type === '1' || color_setting_type === true,middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3',boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}" ><font ng-class="{ details: color_setting_type === '1' || color_setting_type === true}">○○について質問したいのですが</font></li>
+          <li class="sinclo_se chat_right" ng-class="{ notNone:se_border_none === '' || se_border_none === false,details: color_setting_type === '1' || color_setting_type === true,middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3',boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}" ><span ng-class="{ details: color_setting_type === '1' || color_setting_type === true}">○○について質問したいのですが</span></li>
           </div>
           <div style="height: auto!important; padding:0;">
-            <li class="sinclo_re chat_left" ng-style="{backgroundColor:makeFaintColor()}" ng-class="{ notNone:re_border_none === '' || re_border_none === false, middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3',boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}"><span class="cName" ng-if="show_name == 1" ng-class="{ details: color_setting_type === '1' || color_setting_type === true, middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}"><?=$userInfo['display_name']?></span><span class="cName" ng-if="show_name == 2" ng-class="{ details: color_setting_type === '1' || color_setting_type === true, middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">{{sub_title}}</span><font ng-class="{ details: color_setting_type === '1' || color_setting_type === true}">こんにちは</font></li>
+            <li class="sinclo_re chat_left" ng-style="{backgroundColor:makeFaintColor()}" ng-class="{ notNone:re_border_none === '' || re_border_none === false, middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3',boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}"><span class="cName" ng-if="show_name == 1" ng-class="{ details: color_setting_type === '1' || color_setting_type === true, middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}"><?=$userInfo['display_name']?></span><span class="cName" ng-if="show_name == 2" ng-class="{ details: color_setting_type === '1' || color_setting_type === true, middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">{{sub_title}}</span><span ng-class="{ details: color_setting_type === '1' || color_setting_type === true}">こんにちは</span></li>
           </div>
           <div style="height: auto!important; padding:0;">
-            <li class="showAnimationSample sinclo_re chat_left" ng-style="{backgroundColor:makeFaintColor()}" ng-class="{ notNone:re_border_none === '' || re_border_none === false, middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3',boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}"><span class="cName" ng-if="show_name == 1" ng-class="{ details: color_setting_type === '1' || color_setting_type === true, middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}"><?=$userInfo['display_name']?></span><span class="cName" ng-if="show_name == 2" ng-class="{ details: color_setting_type === '1' || color_setting_type === true, middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">{{sub_title}}</span><font ng-class="{ details: color_setting_type === '1' || color_setting_type === true}">○○についてですね<br>どのようなご質問でしょうか？</font></li>
+            <li class="showAnimationSample sinclo_re chat_left" ng-style="{backgroundColor:makeFaintColor()}" ng-class="{ notNone:re_border_none === '' || re_border_none === false, middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3',boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}"><span class="cName" ng-if="show_name == 1" ng-class="{ details: color_setting_type === '1' || color_setting_type === true, middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}"><?=$userInfo['display_name']?></span><span class="cName" ng-if="show_name == 2" ng-class="{ details: color_setting_type === '1' || color_setting_type === true, middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">{{sub_title}}</span><span ng-class="{ details: color_setting_type === '1' || color_setting_type === true}">○○についてですね<br>どのようなご質問でしょうか？</span></li>
           </div>
         </ul>
         <div id="messageBox" class="messageBox" ng-class="{ notNone:widget_inside_border_none === ''||widget_inside_border_none === false,details: color_setting_type === '1' || color_setting_type === true }">
@@ -387,28 +388,48 @@
       #sincloBox div#miniTarget { overflow: hidden; transition: height 200ms linear; }
       @keyframes leftEffect { 0% { transform :translate3d(-20px, 0px, 0px) scale(0.8); opacity :0; } 69% {} 100% { transform :translate3d(0px, 0px, 0px); opacity :1; } }
       #sincloBox ul#chatTalk { width: 100%; height: 100px; padding: 5px; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0}
-      #sincloBox ul#chatTalk li { border-radius: 5px; background-color: #FFF; margin: 5px 0 0; padding: 3px; font-size: 11px; border: 1px solid {{chat_talk_border_color}}; line-height: 1.4; white-space: pre; color: {{message_text_color}}; }
+      #sincloBox ul#chatTalk.details { background-color: {{chat_talk_background_color}}; }
+      #sincloBox ul#chatTalk li { border-radius: 5px; background-color: #FFF; margin: 5px 0 0; padding: 3px; font-size: 11px; line-height: 1.4; white-space: pre; color: {{message_text_color}}; }
       #sincloBox ul#chatTalk div.liLeft { text-align: left; }
       #sincloBox ul#chatTalk div.liRight { text-align: right; }
       #sincloBox ul#chatTalk li.boxType { word-wrap: break-word; word-break: break-all; }
       #sincloBox ul#chatTalk li.balloonType { display: inline-block; position: relative; padding: 5px 15px; text-align: left!important; word-wrap: break-word; word-break: break-all; border-radius: 12px; }
+      #sincloBox ul#chatTalk li.sinclo_se.details { background-color: {{getSeBackgroundColor()}}; }
+      #sincloBox ul#chatTalk li.sinclo_se.notNone { border: 1px solid {{getTalkBorderColor('se')}}; }
       #sincloBox ul#chatTalk li.sinclo_se.balloonType { margin-right: 15px; border-bottom-right-radius: 0px; }
-      #sincloBox ul#chatTalk li.sinclo_se.balloonType:before { height: 0px; content: ""; position: absolute; bottom: 0px; left: calc(100% - 3px); margin-top: -10px; border: 5px solid transparent; border-left: 5px solid #FFF; border-bottom: 5px solid #FFF; z-index: 2; }
-      #sincloBox ul#chatTalk li.sinclo_se.balloonType:after { height: 0px; content: ""; position: absolute; bottom: -1px; left: 100%; margin-top: -9px; border: 5px solid transparent; border-left: 5px solid {{chat_talk_border_color}}; border-bottom: 5px solid {{chat_talk_border_color}}; z-index: 1; }
+      #sincloBox ul#chatTalk li.sinclo_se.balloonType:before { height: 0px; content: ""; position: absolute; bottom: 0px; left: calc(100% - 3px); margin-top: -10px; border: 5px solid transparent; border-left: 5px solid {{getSeBackgroundColor()}}; border-bottom: 5px solid {{getSeBackgroundColor()}}; z-index: 2; }
+      #sincloBox ul#chatTalk li.sinclo_se.balloonType:after { height: 0px; content: ""; position: absolute; bottom: -1px; left: 100%; margin-top: -9px; border: 5px solid transparent; z-index: 1; }
+      #sincloBox ul#chatTalk li.sinclo_se.balloonType.notNone:after { border-left: 5px solid {{getTalkBorderColor('se')}}; border-bottom: 5px solid {{getTalkBorderColor('se')}}; }
+      #sincloBox ul#chatTalk li.sinclo_re.notNone { border: 1px solid {{getTalkBorderColor('re')}}; }
       #sincloBox ul#chatTalk li.sinclo_re.balloonType { margin-left: 10px; padding-right: 20px; border-bottom-left-radius: 0px; }
-      #sincloBox ul#chatTalk li.sinclo_re.balloonType:before { height: 0px; content: ""; position: absolute; bottom: 0px; left: -7px; margin-top: -10px; border: 5px solid transparent; border-right: 5px solid {{makeBalloonTriangleColor()}}; border-bottom: 5px solid {{makeBalloonTriangleColor()}}; z-index: 2; }
-      #sincloBox ul#chatTalk li.sinclo_re.balloonType:after { height: 0px; content: ""; position: absolute; bottom: -1px; left: -10px; margin-top: -9px; border: 5px solid transparent; border-right: 5px solid {{chat_talk_border_color}}; border-bottom: 5px solid {{chat_talk_border_color}}; z-index: 1; }
+      #sincloBox ul#chatTalk li.sinclo_re.balloonType:before { height: 0px; content: ""; position: absolute; bottom: 0px; left: -7px; margin-top: -10px; border: 5px solid transparent; border-right: 5px solid {{makeFaintColor()}}; border-bottom: 5px solid {{makeFaintColor()}}; z-index: 2; }
+      #sincloBox ul#chatTalk li.sinclo_re.balloonType:after { height: 0px; content: ""; position: absolute; bottom: -1px; left: -10px; margin-top: -9px; border: 5px solid transparent; z-index: 1; }
+      #sincloBox ul#chatTalk li.sinclo_re.balloonType.notNone:after { border-right: 5px solid {{getTalkBorderColor('re')}}; border-bottom: 5px solid {{getTalkBorderColor('re')}}; }
       #sincloBox ul#chatTalk li.effect_left { -webkit-animation-name:leftEffect; -moz-animation-name:leftEffect; -o-animation-name:leftEffect; -ms-animation-name:leftEffect; animation-name:leftEffect; -webkit-animation-duration:0.5s; -moz-animation-duration:0.5s; -o-animation-duration:0.5s; -ms-animation-duration:0.5s; animation-duration:0.5s; -webkit-animation-iteration-count:1; -moz-animation-iteration-count:1; -o-animation-iteration-count:1; -ms-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:forwards; -moz-animation-fill-mode:forwards; -o-animation-fill-mode:forwards; -ms-animation-fill-mode:forwards; animation-fill-mode:forwards; -webkit-transform-origin:left bottom; -moz-transform-origin:left bottom; -o-transform-origin:left bottom; -ms-transform-origin:left bottom; transform-origin:left bottom; opacity:0; -webkit-animation-delay:0.6s; -moz-animation-delay:0.6s; -o-animation-delay:0.6s; -ms-animation-delay:0.6s; animation-delay:0.6s; }
       #sincloBox ul#chatTalk li.boxType.chat_right { border-bottom-right-radius: 0; margin-left: 10px }
       #sincloBox ul#chatTalk li.boxType.chat_left { border-bottom-left-radius: 0; margin-right: 10px }
       #sincloBox ul#chatTalk li.balloonType.chat_right { margin-left: 15px }
       #sincloBox ul#chatTalk li.balloonType.chat_left { margin-right: 10px }
       #sincloBox ul#chatTalk li span.cName { display: block; color: {{main_color}}!important; font-weight: bold; font-size: 12px; margin: 0 0 5px 0; }
+      #sincloBox ul#chatTalk li span.cName.details{ color: {{c_name_text_color}}!important;}
+      #sincloBox ul#chatTalk li span.cName:not(.details){ color: {{main_color}}!important;}
+      #sincloBox ul#chatTalk li span:not(.details){  color: {{message_text_color}}!important; }
+      #sincloBox ul#chatTalk li.sinclo_re span.details{ color: {{re_text_color}};}
+      #sincloBox ul#chatTalk li.sinclo_se span.details{ color: {{se_text_color}};}
       #sincloBox section#chatTab div { height: 65px!important;  padding: 10px; }
-      #sincloBox section#chatTab textarea#sincloChatMessage { width: 80%; height: 100%; margin: 0; font-size: 11px; color: {{other_text_color}}; border-radius: 5px 0 0 5px!important; resize: none; padding: 5px; border: 1px solid {{widget_border_color}}!important; border-right-color: transparent!important; }
-      #sincloBox section#chatTab textarea#sincloChatMessage:focus { border-color: {{main_color}}!important; outline: none!important; border-right-color: transparent!important; }
+      #sincloBox section#chatTab textarea#sincloChatMessage { width: 80%; height: 100%; color: {{other_text_color}}; margin: 0; resize: none; padding: 5px; }
+      #sincloBox section#chatTab textarea#sincloChatMessage.details { color: {{message_box_text_color}}; background-color: {{message_box_background_color}}; }
+      #sincloBox section#chatTab textarea#sincloChatMessage.details.notNone { border: 1px solid {{message_box_border_color}}!important; }
+      #sincloBox section#chatTab textarea#sincloChatMessage.notNone { border-radius: 5px 0 0 5px!important; border: 1px solid {{chat_talk_border_color}}!important; border-right-color: transparent!important; }
+      #sincloBox section#chatTab textarea#sincloChatMessage.notNone:focus { border-color: {{main_color}}!important; outline: none!important; border-right-color: transparent!important; }
+      #sincloBox section#chatTab textarea#sincloChatMessage:not(.notNone){ border: none!important }
       #sincloBox section#chatTab #sincloChatSendBtn{ width: 20%; height: 100%; padding: 1em 0; border-radius: 0 5px 5px 0; cursor: pointer; margin: 0 auto; float: right; text-align: center; background-color: {{main_color}}!important; color: {{string_color}}; font-weight: bold; font-size: 1.2em;}
+      #sincloBox section#chatTab #sincloChatSendBtn.details{ background-color: {{chat_send_btn_background_color}}!important; }
       #sincloBox section#chatTab #sincloChatSendBtn span { color: {{string_color}} }
+      #sincloBox section#chatTab #sincloChatSendBtn span.details { color: {{chat_send_btn_text_color}} }
+      #sincloBox section#chatTab #messageBox.messageBox{border-top: 1px solid {{widget_border_color}}; padding: 0.5em;}
+      #sincloBox section#chatTab #messageBox.messageBox.details{ background-color: {{chat_message_background_color}}; border-top: 1px solid {{widget_inside_border_color}}; }
+      #sincloBox section#chatTab #messageBox.messageBox.details:not(.notNone){ border-top: none; }
     </style>
     <div>
       <!-- タイトル -->
@@ -419,20 +440,20 @@
     <div id="addBtn" class="widgetOpener"></div>
     <div id="miniTarget">
       <section id="chatTab">
-        <ul id="chatTalk">
+        <ul id="chatTalk" ng-class="{ details: color_setting_type === '1' || color_setting_type === true }">
           <div style="height: auto!important; padding:0;" ng-class="{liLeft: chat_message_design_type == 1, liRight: chat_message_design_type == 2}">
-            <li class="sinclo_se chat_right" ng-class="{boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}">○○について質問したいのですが</li>
+            <li class="sinclo_se chat_right" ng-class="{notNone:se_border_none === '' || se_border_none === false, details: color_setting_type === '1' || color_setting_type === true, boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}"><span ng-class="{ details: color_setting_type === '1' || color_setting_type === true}">○○について質問したいのですが</span></li>
           </div>
           <div style="height: auto!important; padding:0;">
-            <li class="sinclo_re chat_left" ng-class="{boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}" ng-style="{backgroundColor:makeFaintColor()}"><span class="cName">{{sub_title}}</span>こんにちは</li>
+            <li class="sinclo_re chat_left" ng-class="{notNone:re_border_none === '' || re_border_none === false, boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}" ng-style="{backgroundColor:makeFaintColor()}"><span class="cName" ng-class="{ details: color_setting_type === '1' || color_setting_type === true }">{{sub_title}}</span><span ng-class="{ details: color_setting_type === '1' || color_setting_type === true}">こんにちは</span></li>
           </div>
           <div style="height: auto!important; padding:0;">
-            <li class="showAnimationSample sinclo_re chat_left" ng-class="{boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}" ng-style="{backgroundColor:makeFaintColor()}"><span class="cName">{{sub_title}}</span>○○についてですね<br>どのようなご質問でしょうか？</li>
+            <li class="showAnimationSample sinclo_re chat_left" ng-class="{notNone:re_border_none === '' || re_border_none === false, boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}" ng-style="{backgroundColor:makeFaintColor()}"><span class="cName" ng-class="{ details: color_setting_type === '1' || color_setting_type === true }">{{sub_title}}</span><span ng-class="{ details: color_setting_type === '1' || color_setting_type === true}">○○についてですね<br>どのようなご質問でしょうか？</span></li>
           </div>
         </ul>
-        <div style="border-top: 1px solid {{widget_border_color}}; padding: 0.5em;">
-          <textarea name="sincloChat" id="sincloChatMessage" placeholder="メッセージを入力してください{{chat_area_placeholder_sp}}"></textarea>
-          <a id="sincloChatSendBtn" class="notSelect"><span>送信</span></a>
+        <div id="messageBox" class="messageBox" ng-class="{ notNone:widget_inside_border_none === ''||widget_inside_border_none === false,details: color_setting_type === '1' || color_setting_type === true }">
+          <textarea name="sincloChat" id="sincloChatMessage" ng-class="{ notNone:message_box_border_none === ''||message_box_border_none === false, details: color_setting_type === '1' || color_setting_type === true}" placeholder="メッセージを入力してください{{chat_area_placeholder_sp}}"></textarea>
+          <a id="sincloChatSendBtn" class="notSelect" ng-class="{details: color_setting_type === '1' || color_setting_type === true }"><span ng-class="{details: color_setting_type === '1' || color_setting_type === true }">送信</span></a>
         </div>
       </section>
     </div>
