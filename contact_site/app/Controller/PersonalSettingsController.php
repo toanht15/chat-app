@@ -60,6 +60,7 @@ class PersonalSettingsController extends AppController {
       // 保存処理
       if ( $this->MUser->save($inputData, false) ) {
         $this->MUser->commit();
+        $this->MUser->set($inputData);
       }
       else {
         $this->MUser->rollback();

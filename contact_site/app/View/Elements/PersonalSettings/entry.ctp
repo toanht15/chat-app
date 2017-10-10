@@ -1,3 +1,12 @@
+<script type="text/javascript">
+$(function(){
+  document.getElementById("MUserCurrentPassword").defaultValue  = "";
+  document.getElementById("MUserNewPassword").defaultValue  = "";
+  document.getElementById("MUserConfirmPassword").defaultValue  = "";
+});
+</script>
+
+
 <?php
 $editFlg = true;
 if ( !empty($this->data['MUser']['edit_password']) ) {
