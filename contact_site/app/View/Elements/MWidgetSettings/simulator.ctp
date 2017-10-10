@@ -323,7 +323,7 @@
     #sincloBanner #sinclo-comment{
       transform: scale( 1 , 1.4 );
       font-size: 17.5px;
-      padding: 0 0 0 5px;
+      padding: 0 2px 0 5px;
       cursor: pointer;
     }
     #sincloBanner, #bannertext{
