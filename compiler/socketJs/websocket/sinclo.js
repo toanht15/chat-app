@@ -143,7 +143,7 @@
             var bannerSize = bannerBasicSize + (oneByteCount * (fontSize * (1/2))) + (towByteCount * fontSize)
             //縦
             var bottom = (10 * ratio) + "px" ;
-            var leftRight = (-(widgetWidth * (1/2)) + (bannerSize * (1/2)) + (10 * ratio) ) + "px" ;
+            var leftRight = (-(widgetWidth * (1/2)) + (bannerSize * (1/2))) + "px" ;
           }
           else{
             var ratio = 1.9;
@@ -153,7 +153,7 @@
             var bannerSize = bannerBasicSize + (oneByteCount * (fontSize * (1/2))) + (towByteCount * fontSize)
             //横
             var bottom = "2em";
-            var leftRight = (-(widgetWidth * (1/2)) + ((bannerSize * (1/2)) * ratio) + (10 * ratio) ) + "px" ;
+            var leftRight = (-(widgetWidth * (1/2)) + ((bannerSize * (1/2)) * ratio) - (12 * ratio) ) + "px" ;
             //var leftRight = (-(widgetWidth * (1/2))) + "px" ;
           }
         }

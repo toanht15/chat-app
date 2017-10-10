@@ -98,6 +98,32 @@ sincloApp.controller('WidgetCtrl', function($scope){
       }
       //ブラウザによってフォントサイズの扱いが異なるため、細かく設定する必要がある
       var bannerWidth = (oneByteCount * 8) + (towByteCount * 12.7) + 40;
+      var userAgent = window.navigator.userAgent.toLowerCase();
+      /* ブラウザごとの微調整start */
+      if(userAgent.indexOf('msie') != -1 ||
+          userAgent.indexOf('trident') != -1) {
+        //Internet Explorer
+      }
+      else if(userAgent.indexOf('edge') != -1) {
+        //Edge;
+      }
+      else if(userAgent.indexOf('chrome') != -1) {
+        //Chrome
+      }
+      else if(userAgent.indexOf('safari') != -1) {
+        //Safari
+        userAgent = userAgent + 5;
+      }
+      else if(userAgent.indexOf('firefox') != -1) {
+        //FireFox
+      }
+      else if(userAgent.indexOf('opera') != -1) {
+        //Opera
+      }
+      else {
+        //該当しないブラウザ
+      }
+      /* ブラウザごとの微調整end */
       $('#sincloBanner').css("width", bannerWidth + "px");
     }
 
