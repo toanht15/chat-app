@@ -4,11 +4,11 @@
 var LaUtility = function() {
   this.API = {
     CREATE_SHORTCODE: {
-      URL: 'https://sdk005.live-assist.jp/assistserver/shortcode/create',
+      URL: window.sincloInfo.site.la + '/assistserver/shortcode/create',
       METHOD: 'PUT'
     },
     GET_SESSION: {
-      URL: 'https://sdk005.live-assist.jp/assistserver/shortcode/consumer?appkey=',
+      URL: window.sincloInfo.site.la + '/assistserver/shortcode/consumer?appkey=',
       METHOD: 'GET'
     },
     STATUSCODE: {
@@ -27,11 +27,13 @@ var LaUtility = function() {
    */
   this.shortcode = '';
   this.sessionInfo = {};
+  this.operatorId = '';
 
   /**
    * @return $.Diferred.promise()
    */
-  this.initAndStart = function() {
+  this.initAndStart = function(operatorId) {
+    this.operatorId = operatorId;
     this.initSDKCallbacks();
     return this.createShortCode().then(this.getSessionId.bind(this)).then(this.connect.bind(this));
   };
@@ -47,10 +49,10 @@ var LaUtility = function() {
     var sessionToken = this.sessionInfo['session-token'] ? this.sessionInfo['session-token'] : "undefined";
     var correlationId = this.sessionInfo.cid ? this.sessionInfo.cid : "undefined";
     AssistSDK.startSupport({
-      // destination : "agent1",
-      // videoMode : "agentOnly",
-      url : "https://sdk005.live-assist.jp",
-      sdkPath : "https://sdk005.live-assist.jp/assistserver/sdk/web/consumer",
+      cobrowseOnly: true,
+      videoMode : "none",
+      url : window.sincloInfo.site.la,
+      sdkPath : window.sincloInfo.site.la + "/assistserver/sdk/web/consumer",
       sessionToken : sessionToken,
       correlationId : correlationId,
       allowedIframeOrigins : false,

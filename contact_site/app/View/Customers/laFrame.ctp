@@ -285,14 +285,14 @@
   </div>
 </section>
 <?php
-  echo $this->Html->script("https://sdk005.live-assist.jp/assistserver/sdk/web/shared/js/thirdparty/i18next-1.7.4.min.js");
-  echo $this->Html->script("https://sdk005.live-assist.jp/gateway/adapter.js");
-  echo $this->Html->script("https://sdk005.live-assist.jp/gateway/csdk-phone.js");
-  echo $this->Html->script("https://sdk005.live-assist.jp/gateway/csdk-common.js");
-  echo $this->Html->script("https://sdk005.live-assist.jp/assistserver/sdk/web/shared/js/assist-aed.js");
-  echo $this->Html->script("https://sdk005.live-assist.jp/assistserver/sdk/web/shared/js/shared-windows.js");
-  echo $this->Html->script("https://sdk005.live-assist.jp/assistserver/sdk/web/agent/js/assist-console.js");
-  echo $this->Html->script("liveassist/assist-console-callmanager.js");
+  echo $this->Html->script(C_LIVEASSIST_SERVER_SDK_FQDN."/assistserver/sdk/web/shared/js/thirdparty/i18next-1.7.4.min.js");
+  echo $this->Html->script(C_LIVEASSIST_SERVER_SDK_FQDN."/gateway/adapter.js");
+  echo $this->Html->script(C_LIVEASSIST_SERVER_SDK_FQDN."/gateway/csdk-phone.js");
+  echo $this->Html->script(C_LIVEASSIST_SERVER_SDK_FQDN."/gateway/csdk-common.js");
+  echo $this->Html->script(C_LIVEASSIST_SERVER_SDK_FQDN."/assistserver/sdk/web/shared/js/assist-aed.js");
+  echo $this->Html->script(C_LIVEASSIST_SERVER_SDK_FQDN."/assistserver/sdk/web/shared/js/shared-windows.js");
+  echo $this->Html->script(C_LIVEASSIST_SERVER_SDK_FQDN."/assistserver/sdk/web/agent/js/assist-console.js");
+  echo $this->element("Customers/assist-console-callmanager");
 ?>
 <script type="text/javascript">
   <!--
@@ -327,7 +327,7 @@
         AssistAgentSDK.startSupport({
           correlationId: cid,
           sessionToken: StorageUtil.getSessionId(),
-          url: "https://sdk005.live-assist.jp",
+          url: "<?php echo C_LIVEASSIST_SERVER_SDK_FQDN ?>",
           additionalAttribute: config.additionalAttribute
         });
       });
@@ -543,19 +543,16 @@
 
     function initializeConfiguration() {
       config.autoanswer = 'true';
-      config.agentName = 'Bob';
-      config.username = 'agent<?= $muserId?>';
+      config.agentName = '<?= h($userInfo['display_name']) ?>';
+      config.username = 'agent<?= h($muserId) ?>';
       config.password = 'password';
-      config.url = "https://sdk005.live-assist.jp";
+      config.url = "<?php echo C_LIVEASSIST_SERVER_SDK_FQDN ?>";
       config.additionalAttribute = {
+        "AED2.allowedTopic": ".*", //FIXME
         "AED2.metadata": {
+          "features": ["annotate","spotlight"],
           "role": "agent",
-          "permissions": {
-            "viewable": ["banking", "claims", "default"],
-            "interactive": ["claims", "default"]
-          },
-          "agent-data-1": "agent-value-1",
-          "agent-data-2": "agent-value-2"
+          "name": "<?= h($userInfo['display_name']) ?>"
         }
       };
     }
@@ -650,7 +647,7 @@
           }
         }
       };
-      request.open("GET", "https://sdk005.live-assist.jp/assistserver/shortcode/agent?appkey=" + shortcode, true);
+      request.open("GET", "<?php echo C_LIVEASSIST_SERVER_SDK_FQDN ?>/assistserver/shortcode/agent?appkey=" + shortcode, true);
       request.send();
       return d.promise();
     }
@@ -669,7 +666,7 @@
           }
         }
       };
-      request.open("POST", "https://sdk005.live-assist.jp/assistserver/agent", true);
+      request.open("POST", "<?php echo C_LIVEASSIST_SERVER_SDK_FQDN ?>/assistserver/agent", true);
       request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
       request.send("username=" + config.username + "&password="
         + config.password + "&type=create&targetServer=" + "aHR0cHM6Ly9zZGswMDUubGl2ZS1hc3Npc3QuanA6NDQz" //FIXME

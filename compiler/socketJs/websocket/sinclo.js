@@ -497,7 +497,8 @@
     },
     assistAgentIsReady: function(d) {
       console.log('assistAgentIsReady');
-      laUtil.initAndStart().then(function() {
+      var operatorId = d.responderId;
+      laUtil.initAndStart(operatorId).then(function() {
         // shortcode取得
         var shortcode = laUtil.shortcode;
         if (shortcode !== undefined && shortcode !== null && shortcode !== "") {
@@ -505,7 +506,7 @@
           var params = {
             userId: userInfo.userId,
             tabId: userInfo.tabId,
-            responderId: d.responderId,
+            responderId: operatorId,
             url: location.href,
             connectToken: userInfo.coBrowseConnectToken,
             shortcode: laUtil.shortcode
