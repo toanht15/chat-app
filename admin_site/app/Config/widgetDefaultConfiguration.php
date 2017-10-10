@@ -51,15 +51,15 @@ $config['default'] = [
       /**
        * 閉じるボタン有効無効
        */
-      "closeButtonSetting" => "1",
+      "closeButtonSetting" => "2",
       /**
        * 小さなバナー表示有効無効
        */
-      "closeButtonModeType" => "2",
+      "closeButtonModeType" => "1",
       /**
        * バナーテキスト
        */
-      "bannertext" => "チャットで相談",
+      "bannertext" => "お問い合わせはこちら",
       //閉じるボタン対応
 
       /**
