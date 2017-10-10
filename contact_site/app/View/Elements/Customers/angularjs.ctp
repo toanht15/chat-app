@@ -639,7 +639,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
      *　画面共有（LA）
      * ************************************************************/
     $scope.coBrowseOpen = function(tabId, accessId){
-        var message = "アクセスID【" + accessId + "】のユーザーに接続しますか！？<br><br>";
+        var message = "アクセスID【" + accessId + "】のユーザーに接続しますか？<br><br>";
         var ua = $scope.monitorList[tabId].userAgent.toLowerCase();
         var smartphone = (ua.indexOf('iphone') > 0 || ua.indexOf('ipod') > 0 || ua.indexOf('android') > 0);
         var popupClass = "p-cus-connection";
@@ -648,11 +648,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         popupEvent.closePopup = function(type){
             sessionStorage.clear();
             popupEvent.close();
-            connectToken = makeToken();
+            coBrowseConnectToken = makeToken();
             socket.emit('requestCoBrowseOpen', {
                 tabId: tabId,
                 type: type,
-                connectToken: connectToken
+                coBrowseConnectToken: coBrowseConnectToken
             });
         };
     };
@@ -679,11 +679,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           case 2: // 画面キャプチャ共有
             sessionStorage.clear();
             popupEvent.close();
-            connectToken = makeToken();
+            coBrowseConnectToken = makeToken();
             socket.emit('requestCoBrowseOpen', {
               tabId: tabId,
               type: type,
-              connectToken: connectToken
+              coBrowseConnectToken: coBrowseConnectToken
             });
             break;
           case 3: // 資料共有
@@ -1562,11 +1562,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     socket.on('beginToCoBrowse', function (data) {
       // 担当しているユーザーかチェック
       var obj = JSON.parse(data), url;
-      if (connectToken !== obj.connectToken) return false;
+      if (coBrowseConnectToken !== obj.coBrowseConnectToken) return false;
 
       var url = "<?= $this->Html->url(array('controller'=>'Customers', 'action'=>'laFrame')) ?>?k=begin";
       url += "&userId=" + obj.userId;
-      url += "&connectToken=" + obj.connectToken + "&id=" + obj.tabId;
+      url += "&connectToken=" + obj.coBrowseConnectToken + "&id=" + obj.tabId;
       modalFunc.set.call({
         option: {
           url: url,

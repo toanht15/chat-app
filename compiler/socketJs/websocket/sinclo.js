@@ -483,12 +483,12 @@
         if( sincloBox ){
           sincloBox.style.display = "none";
         }
-        userInfo.coBrowseConnectToken = obj.connectToken;
-        storage.s.set('coBrowseConnectToken', obj.connectToken);
+        userInfo.coBrowseConnectToken = obj.coBrowseConnectToken;
+        storage.s.set('coBrowseConnectToken', obj.coBrowseConnectToken);
         var params = {
           userId: userInfo.userId,
           tabId: userInfo.tabId,
-          connectToken: userInfo.coBrowseConnectToken
+          coBrowseConnectToken: userInfo.coBrowseConnectToken
         };
         emit('beginToCoBrowse', params);
         this.remove();
@@ -508,7 +508,7 @@
             tabId: userInfo.tabId,
             responderId: operatorId,
             url: location.href,
-            connectToken: userInfo.coBrowseConnectToken,
+            coBrowseConnectToken: userInfo.coBrowseConnectToken,
             shortcode: laUtil.shortcode
           };
           emit('readyToCoBrowse', params);
@@ -966,12 +966,11 @@
         window.parent.close();
         return false;
       }
-      if ( !check.isset(userInfo.connectToken) && !check.isset(userInfo.coBrowseConnectToken) ) return false;
+      if ( !check.isset(userInfo.connectToken) ) return false;
 
       window.clearTimeout(sinclo.syncTimeout);
 
       userInfo.syncInfo.unset();
-      storage.s.unset("coBrowseConnectToken");
       if (!document.getElementById('sincloBox')) {
         common.makeAccessIdTag();
       }
