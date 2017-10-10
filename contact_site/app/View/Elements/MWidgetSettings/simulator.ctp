@@ -340,12 +340,12 @@
     #sincloBanner #sinclo-comment{
       transform: scale( 1 , 1.4 );
       font-size: 17.5px;
-      padding: 0 2px 0 5px;
+      padding: 0 2px 0 7px;
       cursor: pointer;
     }
     #sincloBanner, #bannertext{
       font-size: 12.5px;
-      padding: 0 0 0 5px;
+      padding: 0 0 0 3px;
       cursor: pointer;
       color: {{string_color}};
     }
