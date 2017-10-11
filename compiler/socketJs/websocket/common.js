@@ -672,7 +672,9 @@ var socket, // socket.io
         html += '      #sincloBanner.sincloBannerText{ line-height: 42px; height: auto!important; width: auto!important; padding:0; }';
         html += '      #sincloBanner.sincloBanner i{ color: '+ widget.stringColor +'; }';
         html += '      #sincloBanner.sincloBanner .sinclo-comment{ transform: scale( 1 , 1.4 ); font-size: 17.5px; padding: 0 2px 0 10px; cursor: pointer; }';
+        html += '      #sincloBanner.sincloBanner .sinclo-comment-notext{ transform: scale( 1 , 1.4 ); font-size: 17.5px; padding: 0 2px 0 13px; cursor: pointer; }';
         html += '      #sincloBanner.sincloBanner .bannertext{ color: '+ widget.stringColor +'; font-size: 12.5px; padding: 0 10px 0 3px; cursor: pointer; }';
+        html += '      #sincloBanner.sincloBanner .notext{ padding: 0 7px 0 3px; cursor: pointer; }';
         //スマホだったらpxの書き換え
 //        if ( check.smartphone() ) {
 //          widgetWidth = $(window).width() - 20;
@@ -786,7 +788,9 @@ var socket, // socket.io
             html += '      #sincloBannerBox{ bottom:0px; right:0px; }';
             html += '      #sincloBanner.sincloBanner { height: '+ (42 * ratio) +'px; box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px; }';
             html += '      #sincloBanner.sincloBanner .sinclo-comment{ font-size: '+ (17.5 * ratio) +'px; padding: 0 '+ (2 * ratio) +'px 0 '+ (10 * ratio) +'px; }';
+            html += '      #sincloBanner.sincloBanner .sinclo-comment-notext{ font-size: ' + (17.5 * ratio) + 'px; padding: 0 '+ (2 * ratio) +'px 0 '+ (13 * ratio) +'px; }';
             html += '      #sincloBanner.sincloBanner .bannertext{ color: '+ widget.stringColor +'; font-size: '+ (12.5 * ratio) +'px; padding: 0 '+ (10 * ratio) +'px 0 '+ (3 * ratio) +'px; }';
+            html += '      #sincloBanner.sincloBanner .notext{ padding: 0 ' + (7 * ratio) + 'px 0 ' + (3 * ratio) + 'px; cursor: pointer; }';
           }
         }
         /* 横の場合 */
@@ -852,7 +856,9 @@ var socket, // socket.io
             html += '      #sincloBannerBox{ bottom:0px; right:0px; }';
             html += '      #sincloBanner.sincloBanner { height: '+ (42 * ratio) +'px; box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px; }';
             html += '      #sincloBanner.sincloBanner .sinclo-comment{ font-size: '+ (17.5 * ratio) +'px; padding: 0 '+ (2 * ratio) +'px 0 '+ (10 * ratio) +'px; }';
+            html += '      #sincloBanner.sincloBanner .sinclo-comment-notext{ font-size: ' + (17.5 * ratio) + 'px; padding: 0 '+ (2 * ratio) +'px 0 '+ (13 * ratio) +'px; }';
             html += '      #sincloBanner.sincloBanner .bannertext{ color: '+ widget.stringColor +'; font-size: '+ (12.5 * ratio) +'px; padding: 0 '+ (10 * ratio) +'px 0 '+ (3 * ratio) +'px; }';
+            html += '      #sincloBanner.sincloBanner .notext{ padding: 0 ' + (7 * ratio) + 'px 0 ' + (3 * ratio) + 'px; cursor: pointer; }';
           }
         }
       }
@@ -940,7 +946,7 @@ var socket, // socket.io
       var html = "";
       html += '  <div id="sincloBanner" class="sincloBanner" onclick="sinclo.operatorInfo.clickBanner()">';
       html += '    <div id="sincloBannerText" class="sincloBannerText" style="height: auto!important; width: auto!important; '+ paddingpx +'">';
-      html += '      <i id="sinclo-comment" class="sinclo-fa fa-comment sinclo-comment"></i><span class="bannertext">'+ check.escape_html(widget.bannertext) +'</span>';
+      html += '      <i id="sinclo-comment" class="sinclo-fa fa-comment sinclo-comment' + (widget.bannertext.length !== 0 ? '' : '-notext') + '"></i><span class="' + (widget.bannertext.length !== 0 ? 'bannertext' : 'notext') + '">'+ check.escape_html(widget.bannertext) +'</span>';
       html += '    </div>';
       html += '  </div>';
       return html;
