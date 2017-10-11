@@ -213,7 +213,7 @@ class MWidgetSetting extends AppModel {
         'bannertext' => [
             'maxLength' => [
                 'rule' => ['maxLength', 15],
-                'allowEmpty' => false,
+                'allowEmpty' => true,
                 'message' => '１５文字以内で設定してください'
             ]
         ],
