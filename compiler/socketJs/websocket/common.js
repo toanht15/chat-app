@@ -834,7 +834,7 @@ var socket, // socket.io
         html += '      #sincloBox section#chatTab sinclo-div #sincloChatMessage { display: block; height: 100%; min-height: 100%!important; margin: 0; width: 80%; resize: none; color: ' + colorList['messageBoxTextColor'] + '!important; background-color: '+ colorList['messageBoxBackgroundColor'] +'; }';
         html += '      #sincloBox section#chatTab sinclo-div #sincloChatMessage:focus { outline: none; border-color: ' + colorList['mainColor'] + '!important }';
         if(colorList['messageBoxBorderNone'] === 0){
-          html += '      #sincloBox section#chatTab sinclo-div #sincloChatMessage { border-right-color: ' + colorList['mainColor'] + '!important; }';
+          html += '      #sincloBox section#chatTab sinclo-div #sincloChatMessage { border-right-color: ' + colorList['chatSendBtnBackgroundColor'] + '!important; }';
           html += '      #sincloBox section#chatTab sinclo-div #sincloChatMessage:focus { border-color: ' + colorList['mainColor'] + '!important }';
         }
         html += '      #sincloBox section#chatTab sinclo-div #sincloChatSendBtn { display: block; height: 100%; width: 20%; text-decoration: none; border-radius: 0 5px 5px 0; cursor: pointer; margin: 0; text-align: center; background-color: ' + colorList['chatSendBtnBackgroundColor'] + '; color: ' + colorList['chatSendBtnTextColor'] + '; font-weight: bold; font-size: 1.2em;}';
