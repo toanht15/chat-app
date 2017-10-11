@@ -292,7 +292,6 @@
   echo $this->Html->script(C_LIVEASSIST_SERVER_SDK_FQDN."/assistserver/sdk/web/shared/js/assist-aed.js");
   echo $this->Html->script(C_LIVEASSIST_SERVER_SDK_FQDN."/assistserver/sdk/web/shared/js/shared-windows.js");
   echo $this->Html->script(C_LIVEASSIST_SERVER_SDK_FQDN."/assistserver/sdk/web/agent/js/assist-console.js");
-  echo $this->element("Customers/assist-console-callmanager");
 ?>
 <script type="text/javascript">
   <!--
