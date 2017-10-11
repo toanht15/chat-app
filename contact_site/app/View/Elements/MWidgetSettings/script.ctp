@@ -99,51 +99,27 @@ sincloApp.controller('WidgetCtrl', function($scope){
         return;
       }
 
-      var targetSpan = $('#bannertext').get(0);
-      var bannerWidth = 10;
-
-      if(targetSpan) {
-        bannerWidth = targetSpan.offsetWidth + 40;
+      for (var i=0; i<text.length; i++){
+        var n = escape(text.charAt(i));
+        if (n.length < 4){
+          oneByteCount++;
+        }
+        else{
+          towByteCount++;
+        }
       }
 
-//      for (var i=0; i<text.length; i++){
-//        var n = escape(text.charAt(i));
-//        if (n.length < 4){
-//          oneByteCount++;
-//        }
-//        else{
-//          towByteCount++;
-//        }
-//      }
-//      //ブラウザによってフォントサイズの扱いが異なるため、細かく設定する必要がある
-//      var bannerWidth = (oneByteCount * 8) + (towByteCount * 12.7) + 40;
-//      var userAgent = window.navigator.userAgent.toLowerCase();
-//      /* ブラウザごとの微調整start */
-//      if(userAgent.indexOf('msie') != -1 ||
-//          userAgent.indexOf('trident') != -1) {
-//        //Internet Explorer
-//      }
-//      else if(userAgent.indexOf('edge') != -1) {
-//        //Edge;
-//      }
-//      else if(userAgent.indexOf('chrome') != -1) {
-//        //Chrome
-//      }
-//      else if(userAgent.indexOf('safari') != -1) {
-//        //Safari
-//        bannerWidth = bannerWidth + 5;
-//      }
-//      else if(userAgent.indexOf('firefox') != -1) {
-//        //FireFox
-//      }
-//      else if(userAgent.indexOf('opera') != -1) {
-//        //Opera
-//      }
-//      else {
-//        //該当しないブラウザ
-//      }
-      /* ブラウザごとの微調整end */
+      //いったん文字数でのサイズ調整を行い、その後spanタグの長さで調整（span内で文字が折り返さないように）
+      var bannerWidth = (oneByteCount * 8) + (towByteCount * 12.7) + 40;
       $('#sincloBanner').css("width", bannerWidth + "px");
+
+      var targetSpan = $('#bannertext').get(0);
+
+      if(targetSpan) {
+        console.log(targetSpan.offsetWidth);
+        bannerWidth = targetSpan.offsetWidth + 40;
+        $('#sincloBanner').css("width", bannerWidth + "px");
+      }
     }
 
     $scope.$watch('chat_trigger', function(){
