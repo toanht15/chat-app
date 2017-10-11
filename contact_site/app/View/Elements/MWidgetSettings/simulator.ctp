@@ -49,6 +49,26 @@
     #sincloBox.largeSize{
       width: 400px;
     }
+    /* タブアイコンフォント化対応start */
+    @font-face {
+      font-family: 'SincloFont';
+      src: url('https://netdna.bootstrapcdn.com/font-awesome/4.0.3/fonts/fontawesome-webfont.eot?v=4.0.3');
+      src: url('https://netdna.bootstrapcdn.com/font-awesome/4.0.3/fonts/fontawesome-webfont.eot?#iefix&v=4.0.3') format('embedded-opentype'), url('https://netdna.bootstrapcdn.com/font-awesome/4.0.3/fonts/fontawesome-webfont.woff?v=4.0.3') format('woff'), url('https://netdna.bootstrapcdn.com/font-awesome/4.0.3/fonts/fontawesome-webfont.ttf?v=4.0.3') format('truetype'), url('https://netdna.bootstrapcdn.com/font-awesome/4.0.3/fonts/fontawesome-webfont.svg?v=4.0.3#fontawesomeregular') format('svg');
+      font-weight: normal;
+      font-style: normal
+    }
+
+    .sinclo-fa {
+      display: inline-block;
+      font-family: SincloFont;
+      font-style: normal;
+      font-weight: normal;
+      line-height: 1;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      cursor: pointer;
+    }
+    /* タブアイコンフォント化対応end */
   </style>
   <div id="sincloBox" ng-if="showWidgetType !== 2" ng-hide="showWidgetType === 4" ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">
     <style>
@@ -152,6 +172,7 @@
       #sincloBox section#callTab{height: 296.5px;}
       #sincloBox section#callTab.middleSize {height: 387px;}
       #sincloBox section#callTab.largeSize {height: 476.5px;}
+      #sincloBox section#callTab.details { background-color: {{chat_talk_background_color}}; }
       #sincloBox section#callTab #telNumber { overflow: hidden; color: {{main_color}}; font-weight: bold; margin: 0 auto; text-align: center }
       #sincloBox section#callTab #telNumber:not(.notUseTime) { font-size: 18px; padding: 5px 0px 0px; height: 30px }
       #sincloBox section#callTab #telNumber.middleSize:not(.notUseTime) { font-size: 19px; padding: 5px 0px 0px; height: 30px }
@@ -193,6 +214,10 @@
       #sincloBox section#navigation ul li:last-child { border-right: 1px solid {{widget_border_color}}; }
       #sincloBox section#navigation ul li.selected { background-color: #FFFFFF; }
       #sincloBox section#navigation ul li:not(.selected) { border-bottom: 1px solid {{widget_border_color}} }
+
+      #sincloBox section#navigation ul li.selected.details { background-color: {{chat_talk_background_color}}; }
+      #sincloBox section#navigation ul li:not(.selected).details {  }
+
       #sincloBox section#navigation ul li.details:not(.selected) { border-bottom: 1px solid {{widget_inside_border_color}} }
       #sincloBox section#navigation ul li.details:not(.selected):not(.notNone) { border-bottom: none }
       #sincloBox section#navigation ul li[data-tab='call'].details:not(.selected){ border-left: 1px solid {{widget_inside_border_color}}; }
@@ -200,10 +225,15 @@
       #sincloBox section#navigation ul li[data-tab='chat'].details:not(.selected){ border-right: 1px solid {{widget_inside_border_color}}; }
       #sincloBox section#navigation ul li[data-tab='chat'].details:not(.selected):not(.notNone){ border-right: none }
       #sincloBox section#navigation ul li.selected::after{ content: " "; border-bottom: 2px solid {{main_color}}; position: absolute; bottom: 0px; left: 5px; right: 5px;}
-      #sincloBox section#navigation ul li::before{ margin-right: 5px; background-color: #BCBCBC; content: " "; display: inline-block; width: 18px; height: 18px; position: relative; background-size: contain; vertical-align: middle; background-repeat: no-repeat }
-      #sincloBox section#navigation ul li[data-tab='call']::before{ background-image: url('<?=C_PATH_NODE_FILE_SERVER?>/img/widget/icon_tel.png'); }
-      #sincloBox section#navigation ul li[data-tab='chat']::before{ background-image: url('<?=C_PATH_NODE_FILE_SERVER?>/img/widget/icon_chat.png'); }
-      #sincloBox section#navigation ul li.selected::before{ background-color: {{main_color}}; }
+      #sincloBox section#navigation ul li::before{ margin-right: 5px; color: #BCBCBC; content: " "; display: inline-block; width: 18px; height: 18px; position: relative; background-size: contain; vertical-align: middle; background-repeat: no-repeat }
+/*
+      #sincloBox section#navigation ul li[data-tab='call']::before{ background-image: url('/img/widget/icon_tel.png'); }
+      #sincloBox section#navigation ul li[data-tab='chat']::before{ background-image: url('/img/widget/icon_chat.png'); }
+*/
+      #sincloBox section#navigation ul li[data-tab='call']::before{ content: "\f095"; font-family: SincloFont; font-size: 17px; margin: -5px 7px 0 0; font-weight: bold;}
+      #sincloBox section#navigation ul li[data-tab='chat']::before{ content: "\f075"; font-family: SincloFont; font-size: 17px; margin: -5px 7px 0 0; transform: scale( 1 , 1.1 ); }
+
+      #sincloBox section#navigation ul li.selected::before{ color: {{main_color}}; }
     <?php endif; ?>
     <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT]) ) :?>
       #sincloBox span#sincloAccessInfo{ height: 26.5px; display: block; padding-left: 0.5em; padding-top: 5px; padding-bottom: 5px; border-top: 1px solid {{widget_border_color}}; font-size: 0.9em; }
@@ -269,7 +299,7 @@
       </section>
     <?php endif; ?>
     <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT]) ) :?>
-      <section id="callTab" ng-hide="widget.showTab !== 'call'" ng-class="{middleSize: widgetSizeTypeToggle === '2',largeSize: widgetSizeTypeToggle === '3'}">
+      <section id="callTab" ng-hide="widget.showTab !== 'call'" ng-class="{details: color_setting_type === '1' || color_setting_type === true, middleSize: widgetSizeTypeToggle === '2',largeSize: widgetSizeTypeToggle === '3'}">
         <div style="height: 50px;margin: 15px 25px;">
         <!-- アイコン -->
         <span id="telIcon"><img width="19.5" height="33" src="<?=C_PATH_NODE_FILE_SERVER?>/img/call.png" style="margin: 6px 12px"></span>
