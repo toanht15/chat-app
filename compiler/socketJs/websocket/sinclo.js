@@ -159,8 +159,8 @@
         }
         else{
           //pc
-          var bottom = "10px";
-          var leftRight = "10px";
+          var bottom = "20px";
+          var leftRight = "20px";
         }
         $("#sincloBox").css("bottom",bottom);
         switch ( Number(window.sincloInfo.widget.showPosition) ) {
