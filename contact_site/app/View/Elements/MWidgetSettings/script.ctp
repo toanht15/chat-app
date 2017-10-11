@@ -95,7 +95,7 @@ sincloApp.controller('WidgetCtrl', function($scope){
       var towByteCount = 0;
 
       if(text.length === 0) {
-        $('#sincloBanner').css("width","37px");
+        $('#sincloBanner').css("width","38px");
         return;
       }
 
