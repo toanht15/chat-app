@@ -93,42 +93,55 @@ sincloApp.controller('WidgetCtrl', function($scope){
       var text = $scope.bannertext;
       var oneByteCount = 0;
       var towByteCount = 0;
-      for (var i=0; i<text.length; i++){
-        var n = escape(text.charAt(i));
-        if (n.length < 4){
-          oneByteCount++;
-        }
-        else{
-          towByteCount++;
-        }
+
+      if(text.length === 0) {
+        $('#sincloBanner').css("width","37px");
+        return;
       }
-      //ブラウザによってフォントサイズの扱いが異なるため、細かく設定する必要がある
-      var bannerWidth = (oneByteCount * 8) + (towByteCount * 12.7) + 40;
-      var userAgent = window.navigator.userAgent.toLowerCase();
-      /* ブラウザごとの微調整start */
-      if(userAgent.indexOf('msie') != -1 ||
-          userAgent.indexOf('trident') != -1) {
-        //Internet Explorer
+
+      var targetSpan = $('#bannertext').get(0);
+      var bannerWidth = 10;
+
+      if(targetSpan) {
+        bannerWidth = targetSpan.offsetWidth + 40;
       }
-      else if(userAgent.indexOf('edge') != -1) {
-        //Edge;
-      }
-      else if(userAgent.indexOf('chrome') != -1) {
-        //Chrome
-      }
-      else if(userAgent.indexOf('safari') != -1) {
-        //Safari
-        bannerWidth = bannerWidth + 5;
-      }
-      else if(userAgent.indexOf('firefox') != -1) {
-        //FireFox
-      }
-      else if(userAgent.indexOf('opera') != -1) {
-        //Opera
-      }
-      else {
-        //該当しないブラウザ
-      }
+
+//      for (var i=0; i<text.length; i++){
+//        var n = escape(text.charAt(i));
+//        if (n.length < 4){
+//          oneByteCount++;
+//        }
+//        else{
+//          towByteCount++;
+//        }
+//      }
+//      //ブラウザによってフォントサイズの扱いが異なるため、細かく設定する必要がある
+//      var bannerWidth = (oneByteCount * 8) + (towByteCount * 12.7) + 40;
+//      var userAgent = window.navigator.userAgent.toLowerCase();
+//      /* ブラウザごとの微調整start */
+//      if(userAgent.indexOf('msie') != -1 ||
+//          userAgent.indexOf('trident') != -1) {
+//        //Internet Explorer
+//      }
+//      else if(userAgent.indexOf('edge') != -1) {
+//        //Edge;
+//      }
+//      else if(userAgent.indexOf('chrome') != -1) {
+//        //Chrome
+//      }
+//      else if(userAgent.indexOf('safari') != -1) {
+//        //Safari
+//        bannerWidth = bannerWidth + 5;
+//      }
+//      else if(userAgent.indexOf('firefox') != -1) {
+//        //FireFox
+//      }
+//      else if(userAgent.indexOf('opera') != -1) {
+//        //Opera
+//      }
+//      else {
+//        //該当しないブラウザ
+//      }
       /* ブラウザごとの微調整end */
       $('#sincloBanner').css("width", bannerWidth + "px");
     }
