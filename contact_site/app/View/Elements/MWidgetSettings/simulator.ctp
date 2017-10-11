@@ -318,7 +318,7 @@
       height: 42px;
       width : {{getBannerWidth()}};
       background-color: {{main_color}};
-      box-shadow: 0px 0px calc( {{box_shadow}}px + 1px) {{box_shadow}}px rgba(0,0,0,0.1);
+      box-shadow: 0px 0px {{box_shadow}}px {{box_shadow}}px rgba(0,0,0,0.1);
       border-radius: {{radius_ratio}}px {{radius_ratio}}px {{radius_ratio}}px {{radius_ratio}}px;
       color: {{string_color}};
       margin: auto;
