@@ -305,9 +305,9 @@
       border-radius: {{radius_ratio}}px {{radius_ratio}}px {{radius_ratio}}px {{radius_ratio}}px;
       color: {{string_color}};
       margin: auto;
-      filter:alpha(opacity=80);
-      -moz-opacity: 0.8;
-      opacity: 0.8;
+      filter:alpha(opacity=90);
+      -moz-opacity: 0.9;
+      opacity: 0.9;
       top: -30px;
       cursor: pointer;
     }
