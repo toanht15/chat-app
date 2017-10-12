@@ -646,8 +646,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         message += "<span style='color: #FF7B7B'><?=Configure::read('message.const.chatStartConfirm')?></span>";
         modalOpen.call(window, message, popupClass, 'メッセージ');
         popupEvent.closePopup = function(type){
-            sessionStorage.clear();
-            popupEvent.close();
             coBrowseConnectToken = makeToken();
             socket.emit('requestCoBrowseOpen', {
                 tabId: tabId,
@@ -664,7 +662,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var popupClass = "p-cus-select-sharing-mode";
       message += "<span style='color: #FF7B7B'><?=Configure::read('message.const.chatStartConfirm')?></span>";
       modalOpen.call(window, message, popupClass, 'メッセージ');
-      popupEvent.closePopup = function(type){
+      popupEvent.closePopup = function(type) {
         switch(type) {
           case 1: // ブラウジング共有
             sessionStorage.clear();
@@ -677,8 +675,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             });
             break;
           case 2: // 画面キャプチャ共有
-            sessionStorage.clear();
-            popupEvent.close();
             coBrowseConnectToken = makeToken();
             socket.emit('requestCoBrowseOpen', {
               tabId: tabId,
@@ -1558,6 +1554,15 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           height: 300
         }
       });
+    });
+
+    socket.on('requestCoBrowseAllowed', function (data) {
+      sessionStorage.clear();
+      popupEvent.close();
+    });
+
+    socket.on('coBrowseSessionLimit', function (data) {
+      modalOpen.call(window, '画面キャプチャ共有の同時利用数上限に達しています。', "p-alert", 'お知らせ', 'moment');
     });
 
     socket.on('beginToCoBrowse', function (data) {

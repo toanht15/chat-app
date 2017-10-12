@@ -561,18 +561,10 @@
     }
 
     function setAssistAgentCallbacks() {
-      AssistAgentSDK.setConnectionEstablishedCallback(function () {
-
-      });
-
       AssistAgentSDK.setFormCallBack(function(formElement) {
         if (formElement) {
           formContainer.appendChild(formElement);
         }
-      });
-
-      AssistAgentSDK.setScreenShareActiveCallback(function() {
-        //debug("setScreenShareActive");
       });
 
       AssistAgentSDK.setConsumerJoinedCallback(function(){
@@ -583,6 +575,35 @@
       AssistAgentSDK.setRemoteViewCallBack(function(x,y){
         handleResizedFunction(x, y);
         window.resizeTo(x+100,y+50);
+      });
+
+      // Connection events
+      AssistAgentSDK.setConnectionEstablishedCallback(function () {
+        console.log('----------- setConnectionEstablishedCallback');
+      });
+
+      AssistAgentSDK.setConnectionLostCallback(function () {
+        console.log('----------- setConnectionLostCallback');
+      });
+
+      AssistAgentSDK.setConnectionReestablishedCallback(function () {
+        console.log('----------- setConnectionReestablishedCallback');
+      });
+
+      AssistAgentSDK.setConnectionRetryCallback(function (retryCount, retryTimeInMilliSeconds) {
+        console.log('----------- setConnectionRetryCallback');
+      });
+
+      AssistAgentSDK.setScreenShareActiveCallback(function(active) {
+        console.log('------------ ssetScreenShareActiveCallback active: ' + active);
+      });
+
+      AssistAgentSDK.setScreenShareRejectedCallback(function() {
+        console.log('------------ setScreenShareRejectedCallback. Caller has rejected agents invitation to screen share');
+      });
+
+      AssistAgentSDK.setSnapshotCallBack(function (snapshot) {
+        console.log('------------ setSnapshotCallBack');
       });
     }
 

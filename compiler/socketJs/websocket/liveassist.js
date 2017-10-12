@@ -39,9 +39,45 @@ var LaUtility = function() {
   };
 
   this.initSDKCallbacks = function() {
+    AssistSDK.onConnectionEstablished = function() {
+      console.log("onConnectionEstablished");
+    };
+
+    AssistSDK.onInSupport = function() {
+      console.log("onInSupport");
+    };
+
+    AssistSDK.onPushRequest = function() {
+      console.log("onPushRequest");
+    };
+
+    AssistSDK.onAgentJoinedSession = function() {
+      console.log("onAgentJoinedSession");
+    };
+
+    AssistSDK.onAgentJoinedCobrowse = function() {
+      console.log("onAgentJoinedCobrowse");
+    };
+
+    AssistSDK.onAgentLeftCobrowse = function() {
+      console.log("onAgentLeftCobrowse");
+    };
+
+    AssistSDK.onAgentLeftSession = function() {
+      console.log("onAgentLeftSession");
+    };
+
+    AssistSDK.onEndSupport = function() {
+      console.log("onEndSupport");
+    };
+
+    AssistSDK.onError = function(error) {
+      console.log("!!!!!!!!!! ON ERROR !!!!!!!!!!!!!! " + JSON.stringify(error));
+    };
+
     AssistSDK.onScreenshareRequest = function() {
       console.log("Screenshare Request");
-      return true; //常に許可してみる
+      return true; //常に許可
     };
   };
 

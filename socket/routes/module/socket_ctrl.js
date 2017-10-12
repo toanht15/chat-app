@@ -41,11 +41,12 @@ var LaSessionCounter = function() {
   var _key_currentCount = 'current';
   var _key_maxCount = 'max';
   var countList = {};
-  var initializeCountList = function(siteKey) {
+  var _initializeCountList = function(siteKey) {
     countList[siteKey] = {
       _key_currentCount: 0,
       _key_maxCount: 0
     };
+    _printCurrentState(siteKey, '_initializeCountList');
   }
   var _getMaxCount = function(siteKey) {
     return (siteKey in countList && _key_maxCount in countList[siteKey]) ? countList[siteKey][_key_maxCount] : 0;
@@ -61,7 +62,7 @@ var LaSessionCounter = function() {
   return {
     setMaxCount: function(siteKey, maxCount) {
       if(!(siteKey in countList)) {
-        initializeCountList(siteKey);
+        _initializeCountList(siteKey);
       }
       countList[siteKey][_key_maxCount] = maxCount;
     },
@@ -195,7 +196,7 @@ function getCompanyList(){
     for ( var i = 0; key.length > i; i++ ) {
       var row = rows[key[i]];
       companyList[row.company_key] = row.id;
-      //test
+      //FIXME DBから取得した値を当てはめる
       laSessionCounter.setMaxCount(row.company_key, 1);
     }
   });
@@ -241,6 +242,36 @@ function syncStopCtrl(siteKey, tabId, unsetFlg){
     var now = formatDateParse();
     db.timeUpdateToDisplayShare(now, sdHistoryId);
   }
+
+  if ( unsetFlg ) { // unsetTarget
+    var sessionId = getSessionId(siteKey, tabId, "sessionId");
+    clearTimeout(sincloCore[siteKey][tabId].timeoutTimer);
+    delete sincloCore[siteKey][tabId];
+    delete connectList[sessionId];
+    return false;
+  }
+
+  for (var i = 0; keys.length > i; i++) {
+    if ( getSessionId(siteKey, tabId, keys[i]) ) {
+      delete sincloCore[siteKey][tabId][keys[i]];
+    }
+  }
+
+}
+
+function coBrowseStopCtrl(siteKey, tabId, unsetFlg){
+  var keys = [
+    'coBrowseConnectToken', 'shareCoBrowseFlg', 'syncHostSessionId', 'laShortCode',
+    'responderId', 'coBrowseParentSessionId'
+  ];
+  // 画面同期の記録 FIXME
+  /*
+  var sdHistoryId = getSessionId(siteKey, tabId, "sdHistoryId");
+  if ( sdHistoryId ) {
+    var now = formatDateParse();
+    db.timeUpdateToDisplayShare(now, sdHistoryId);
+  }
+  */
 
   if ( unsetFlg ) { // unsetTarget
     var sessionId = getSessionId(siteKey, tabId, "sessionId");
@@ -1910,15 +1941,18 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
    * オペレータから画面キャプチャ共有のリクエストを送信する
    */
   socket.on('requestCoBrowseOpen', function (data) {
+    console.log("requestCoBrowseOpen >>> " + data);
     var obj = JSON.parse(data);
     console.log(data);
     if ( !getSessionId(obj.siteKey, obj.tabId, 'sessionId') ) return false;
+    if(laSessionCounter.isLimit(obj.siteKey)) {
+      emit.toMine('coBrowseSessionLimit', data, socket);
+      return;
+    }
     sincloCore[obj.siteKey][obj.tabId].shareCoBrowseFlg = true;
     sincloCore[obj.siteKey][obj.tabId].syncHostSessionId = socket.id; // 企業画面側のセッションID
-    if(laSessionCounter.isLimit(obj.siteKey)) {
-      // FIXME !!
-    }
     emit.toUser('startCoBrowseOpen', data, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
+    emit.toMine('requestCoBrowseAllowed', data, socket);
     // 今まで通り
     // else {
     //     // 同形ウィンドウを作成するための情報取得依頼
@@ -1935,7 +1969,9 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
    * サイト訪問者側で画面キャプチャ共有のリクエストを許可したときに送信する
    */
   socket.on('beginToCoBrowse', function (data) {
+    console.log("beginToCoBrowse >>> " + data);
     var obj = JSON.parse(data);
+    laSessionCounter.countUp(obj.siteKey);
     emit.toCompany('beginToCoBrowse', data, obj.siteKey);
     // 今まで通り
     // else {
@@ -1953,6 +1989,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
    * オペレータ側の準備が完了し、サイト訪問者側もLiveAssistとのセッションを確立した後に送信する
    */
   socket.on('readyToCoBrowse', function (data) {
+    console.log("readyToCoBrowse >>> " + data);
     var obj = JSON.parse(data);
     sincloCore[obj.siteKey][obj.tabId].laShortCode = obj.shortcode;
     sincloCore[obj.siteKey][obj.tabId].coBrowseConnectToken = obj.coBrowseConnectToken;
@@ -1964,6 +2001,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
    * オペレータ側の準備が完了し、サイト訪問者側がLiveAssistとのセッションの確立に失敗した後に送信する
    */
   socket.on('coBrowseFailed', function (data) {
+    console.log("coBrowseFailed >>> " + data);
     var obj = JSON.parse(data);
     emit.toUser('coBrowseFailed', data, getSessionId(obj.siteKey, obj.tabId, 'coBrowseParentSessionId'));
   });
@@ -1972,11 +2010,11 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
    * オペレータの画面キャプチャ共有時の子ウィンドウがオープンし、LiveAssistとのセッションを確立したときに送信する
    */
   socket.on('assistAgentIsReady', function (data) {
+    console.log("assistAgentIsReady >>> " + data);
     var obj = JSON.parse(data);
     console.log("OBJ : " + JSON.stringify(data));
     sincloCore[obj.siteKey][obj.to]['responderId'] = obj.responderId; // 対応ユーザーID
     sincloCore[obj.siteKey][obj.to]['coBrowseParentSessionId'] = socket.id; // 企業側のsocket.id
-    laSessionCounter.countUp(obj.siteKey);
     emit.toUser('assistAgentIsReady', data, getSessionId(obj.siteKey, obj.to, 'sessionId'));
   });
 
@@ -1985,7 +2023,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
    * 企業フレーム:1, 消費者フレーム:2,企業インライン:3, 消費者インライン:4
    */
   socket.on('requestStopCoBrowse', function (data) {
-    console.log("requestStopCoBrowse : " + data);
+    console.log("requestStopCoBrowse >>> " + data);
     var obj = JSON.parse(data);
     if ( isset(obj.coBrowseConnectToken) ) {
       var parentId = false;
@@ -2013,7 +2051,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             syncStopCtrl(obj.siteKey, obj.tabId, true);
           }
           else {
-            syncStopCtrl(obj.siteKey, obj.tabId);
+            coBrowseStopCtrl(obj.siteKey, obj.tabId);
           }
           break;
         case 3: // 企業インライン
@@ -2028,7 +2066,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       var compData = obj;
       if ( parentId ) {
         emit.toUser('stopCoBrowse', data, getSessionId(obj.siteKey, parentId, 'sessionId')); // 消費者の親フレーム
-        syncStopCtrl(obj.siteKey, parentId);
+        coBrowseStopCtrl(obj.siteKey, parentId);
         compData.tabId = parentId;
       }
 
