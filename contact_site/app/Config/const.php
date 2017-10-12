@@ -76,8 +76,8 @@ define('C_WIDGET_CHAT_MESSAGE_DESIGN_TYPE_BOX', 1); // BOX型（サイズ固定�
 define('C_WIDGET_CHAT_MESSAGE_DESIGN_TYPE_BALLOON', 2); // 吹き出し型（サイズ可変）
 
 // チャット本文コピー
-define('C_WIDGET_CHAT_MESSAGE_CAN_COPY', 1); // コピーできる
-define('C_WIDGET_CHAT_MESSAGE_CANT_COPY', 2); // コピーできない
+define('C_WIDGET_CHAT_MESSAGE_CAN_COPY', 0); // コピーできる
+define('C_WIDGET_CHAT_MESSAGE_CANT_COPY', 1); // コピーできない
 
 // ラジオボタン選択時の動作種別
 define('C_WIDGET_RADIO_CLICK_SEND', 1); // 文字列が送信される
@@ -244,12 +244,6 @@ $config['widgetShowNameType'] = [
 $config['chatMessageDesignType'] = [
   C_WIDGET_CHAT_MESSAGE_DESIGN_TYPE_BOX => "BOX型（サイズ固定）",
   C_WIDGET_CHAT_MESSAGE_DESIGN_TYPE_BALLOON => "吹き出し型（サイズ可変）"
-];
-
-/* ウィジェット設定 － チャット本文コピー */
-$config['chatMessageCopy'] = [
-  C_WIDGET_CHAT_MESSAGE_CAN_COPY => "コピー可<br>　<s>※サイト訪問者がチャット本文をコピー出来るようにします</s>",
-  C_WIDGET_CHAT_MESSAGE_CANT_COPY => "コピー不可<br>　<s>※サイト訪問者がチャット本文をコピー出来ないようにします</s>"
 ];
 
 /* ウィジェット設定 － ラジオボタン操作時の動作種別 */

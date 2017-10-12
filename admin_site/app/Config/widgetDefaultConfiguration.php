@@ -130,6 +130,12 @@ $config['default'] = [
       "chatMessageWithAnimation"=>"1",
 
       /**
+       * チャット本文コピー
+       * 0: コピーできる、1: コピーできない
+       */
+      "chatMessageCopy"=>"0",
+
+      /**
        * スマートフォンウィジェット表示
        */
       "spShowFlg"=>"1",

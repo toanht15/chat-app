@@ -179,7 +179,7 @@
     <?php endif; ?>
     <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
       <section id="chatTab" ng-hide="widget.showTab !== 'chat'" ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">
-        <ul id="chatTalk" ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}" ng-if="chat_message_copy == '1'">
+        <ul id="chatTalk" ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}" ng-if="chat_message_copy == '0'">
           <div style="height: auto!important; padding:0;" ng-class="{liLeft: chat_message_design_type == 1, liRight: chat_message_design_type == 2}" >
           <li class="sinclo_se chat_right" ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3',boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}" >○○について質問したいのですが</li>
           </div>
@@ -190,7 +190,7 @@
             <li class="showAnimationSample sinclo_re chat_left" ng-style="{backgroundColor:makeFaintColor()}" ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3',boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}"><span class="cName" ng-if="show_name == 1" ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}"><?=$userInfo['display_name']?></span><span class="cName" ng-if="show_name == 2" ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">{{sub_title}}</span>○○についてですね<br>どのようなご質問でしょうか？</li>
           </div>
         </ul>
-        <ul id="chatTalk" ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}" ng-if="chat_message_copy == '2'" style = "user-select: none;-moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;">
+        <ul id="chatTalk" ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}" ng-if="chat_message_copy == '1'" style = "user-select: none;-moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;">
           <div style="height: auto!important; padding:0;" ng-class="{liLeft: chat_message_design_type == 1, liRight: chat_message_design_type == 2}" >
             <li class="sinclo_se chat_right" ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3',boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}" >○○について質問したいのですが</li>
           </div>
@@ -201,12 +201,17 @@
             <li class="showAnimationSample sinclo_re chat_left" ng-style="{backgroundColor:makeFaintColor()}" ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3',boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}"><span class="cName" ng-if="show_name == 1" ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}"><?=$userInfo['display_name']?></span><span class="cName" ng-if="show_name == 2" ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">{{sub_title}}</span>○○についてですね<br>どのようなご質問でしょうか？</li>
           </div>
         </ul>
-        <div style="border-top: 1px solid #E8E7E0; padding: 0.5em;">
+        <div ng-if="chat_message_copy == '1'" style="border-top: 1px solid #E8E7E0; padding: 0.5em; user-select: none; -moz-user-select: none; -webkit-user-select: none; -ms-user-select: none;">
+          <textarea name="sincloChat" id="sincloChatMessage" placeholder="メッセージを入力してください&#13;&#10;{{chat_area_placeholder_pc}}"></textarea>
+          <a id="sincloChatSendBtn" class="notSelect" ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}"><span>送信</span></a>
+        </div>
+        <div ng-if="chat_message_copy == '0'" style="border-top: 1px solid #E8E7E0; padding: 0.5em;">
           <textarea name="sincloChat" id="sincloChatMessage" placeholder="メッセージを入力してください&#13;&#10;{{chat_area_placeholder_pc}}"></textarea>
           <a id="sincloChatSendBtn" class="notSelect" ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}"><span>送信</span></a>
         </div>
       <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT]) ) :?>
-        <span id="sincloAccessInfo" style="height: 26.5px; display: block; padding-left: 0.5em; padding-top: 5px; padding-bottom: 5px; border-top: 1px solid #E8E7E0; font-size: 0.9em;" ng-hide="showWidgetType === 3">ウェブ接客コード：●●●●</span>
+        <span id="sincloAccessInfo" ng-if="chat_message_copy == '1'" style="height: 26.5px; display: block; padding-left: 0.5em; padding-top: 5px; padding-bottom: 5px; border-top: 1px solid #E8E7E0; font-size: 0.9em; user-select: none;-moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;" ng-hide="showWidgetType === 3">ウェブ接客コード：●●●●</span>
+        <span id="sincloAccessInfo" ng-if="chat_message_copy == '0'" style="height: 26.5px; display: block; padding-left: 0.5em; padding-top: 5px; padding-bottom: 5px; border-top: 1px solid #E8E7E0; font-size: 0.9em;" ng-hide="showWidgetType === 3">ウェブ接客コード：●●●●</span>
         <?php endif; ?>
       </section>
     <?php endif; ?>
@@ -236,7 +241,8 @@
         </span>
       </section>
     <?php endif; ?>
-      <p style="height: 26.5px; padding: 5px 0;text-align: center;border: 1px solid #E8E7E0;color: #A1A1A1!important;font-size: 11px;margin: 0;border-top: none;">Powered by <a target="sinclo" href="https://sinclo.medialink-ml.co.jp/lp/?utm_medium=web-widget&utm_campaign=widget-referral">sinclo</a></p>
+      <p ng-if="chat_message_copy == '1'" style="height: 26.5px; padding: 5px 0;text-align: center;border: 1px solid #E8E7E0;color: #A1A1A1!important;font-size: 11px;margin: 0;border-top: none; user-select: none;-moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;">Powered by <a target="sinclo" href="https://sinclo.medialink-ml.co.jp/lp/?utm_medium=web-widget&utm_campaign=widget-referral">sinclo</a></p>
+      <p ng-if="chat_message_copy == '0'" style="height: 26.5px; padding: 5px 0;text-align: center;border: 1px solid #E8E7E0;color: #A1A1A1!important;font-size: 11px;margin: 0;border-top: none;">Powered by <a target="sinclo" href="https://sinclo.medialink-ml.co.jp/lp/?utm_medium=web-widget&utm_campaign=widget-referral">sinclo</a></p>
     </div>
   </div>
 
@@ -281,14 +287,30 @@
       #sincloBox section#chatTab #sincloChatSendBtn{ width: 20%; height: 100%; padding: 1em 0; border-radius: 0 5px 5px 0; cursor: pointer; margin: 0 auto; float: right; text-align: center; background-color: {{main_color}}!important; color: {{string_color}}; font-weight: bold; font-size: 1.2em;}
       #sincloBox section#chatTab #sincloChatSendBtn span { color: {{string_color}} }
     </style>
-    <div>
+    <div ng-if="chat_message_copy == '0'">
       <!-- タイトル -->
-      <p id="widgetTitle" class="widgetOpener" ng-class="{center: mainImageToggle == '2'}">{{title}}</p>
+      <p id="widgetTitle" class="widgetOpener" ng-class="{center: mainImageToggle == '2'}" >{{title}}</p>
+      <!-- タイトル -->
+    </div>
+    <div ng-if="chat_message_copy == '1'">
+      <!-- タイトル -->
+      <p id="widgetTitle" class="widgetOpener" ng-class="{center: mainImageToggle == '2'}" style = "user-select: none;-moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;">{{title}}</p>
       <!-- タイトル -->
     </div>
     <div id="miniTarget">
       <section id="chatTab">
-        <ul id="chatTalk">
+        <ul id="chatTalk" ng-if="chat_message_copy == '0'">
+          <div style="height: auto!important; padding:0;" ng-class="{liLeft: chat_message_design_type == 1, liRight: chat_message_design_type == 2}">
+            <li class="sinclo_se chat_right" ng-class="{boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}">○○について質問したいのですが</li>
+          </div>
+          <div style="height: auto!important; padding:0;">
+            <li class="sinclo_re chat_left" ng-class="{boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}" ng-style="{backgroundColor:makeFaintColor()}"><span class="cName">{{sub_title}}</span>こんにちは</li>
+          </div>
+          <div style="height: auto!important; padding:0;">
+            <li class="showAnimationSample sinclo_re chat_left" ng-class="{boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}" ng-style="{backgroundColor:makeFaintColor()}"><span class="cName">{{sub_title}}</span>○○についてですね<br>どのようなご質問でしょうか？</li>
+          </div>
+        </ul>
+        <ul id="chatTalk" ng-if="chat_message_copy == '1'" style = "user-select: none;-moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;" >
           <div style="height: auto!important; padding:0;" ng-class="{liLeft: chat_message_design_type == 1, liRight: chat_message_design_type == 2}">
             <li class="sinclo_se chat_right" ng-class="{boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}">○○について質問したいのですが</li>
           </div>
