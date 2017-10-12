@@ -116,6 +116,7 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
       <?php endif ;?>
     </div>
     <div id="content" style="<?=$contentStyle?>">
+      <?= $this->element('popupOverlap') ?>
       <?= $this->element('popup') ?>
       <?php echo $this->Flash->render(); ?>
 
