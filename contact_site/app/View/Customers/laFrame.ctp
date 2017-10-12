@@ -1,4 +1,7 @@
 <script type="text/javascript">
+<?= $this->element('TDocuments/loadScreen'); ?>
+</script>
+<script type="text/javascript">
   <!--
   'use strict';
   var socket, userId, tabId, iframe, windowSize, windowClose, connectToken, url, emit, resizeApi, iframeLocation, arg = new Object;
@@ -205,6 +208,7 @@
       $(this).scrollTop(0);
       $(this).scrollLeft(0);
     });
+    loading.load.start();
   };
   // -->
 </script>
@@ -569,6 +573,7 @@
 
       AssistAgentSDK.setConsumerJoinedCallback(function(){
         console.log("CONSUMER JOINED");
+        loading.load.finish();
         AssistAgentSDK.requestScreenShare();
       });
 
@@ -604,6 +609,11 @@
 
       AssistAgentSDK.setSnapshotCallBack(function (snapshot) {
         console.log('------------ setSnapshotCallBack');
+      });
+
+      AssistAgentSDK.setOnErrorCallback(function (error) {
+        console.log("Agent console Error " + JSON.stringify(error));
+        // FIXME 接続失敗時のエラーハンドリングする
       });
     }
 
