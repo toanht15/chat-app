@@ -28,6 +28,7 @@ var LaUtility = function() {
   this.shortcode = '';
   this.sessionInfo = {};
   this.operatorId = '';
+  this.errorCallback = function() {};
 
   /**
    * @return $.Diferred.promise()
@@ -73,6 +74,7 @@ var LaUtility = function() {
 
     AssistSDK.onError = function(error) {
       console.log("!!!!!!!!!! ON ERROR !!!!!!!!!!!!!! " + JSON.stringify(error));
+      this.errorCallback(error);
     };
 
     AssistSDK.onScreenshareRequest = function() {
@@ -139,6 +141,10 @@ var LaUtility = function() {
     request.send();
     return deferred.promise();
   };
+
+  this.setOnErrorCallback = function(fnc) {
+    this.errorCallback = fnc;
+  }
 
   return this;
 };

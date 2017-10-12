@@ -498,6 +498,10 @@
     assistAgentIsReady: function(d) {
       console.log('assistAgentIsReady');
       var operatorId = d.responderId;
+      var _self = this;
+      laUtil.setOnErrorCallback(function(error){
+        _self.coBrowseErrorProcess();
+      });
       laUtil.initAndStart(operatorId).then(function() {
         // shortcode取得
         var shortcode = laUtil.shortcode;
@@ -514,20 +518,23 @@
           emit('readyToCoBrowse', params);
         }
       }).fail(function(e){
-        // 終了通知
-        emit('coBrowseFailed', {
-          userId: userInfo.userId,
-          tabId: userInfo.tabId,
-          connectToken: userInfo.coBrowseConnectToken
-        });
-        var title = location.host + 'の内容';
-        var content = '接続時にエラーが発生しました。<br>しばらくたってから再度お試しください。';
-        popup.ok = function(){
-          laUtil.disconnect();
-          this.remove();
-        };
-        popup.set(title, content, popup.const.action.alert);
+        this.coBrowseErrorProcess();
       });
+    },
+    coBrowseErrorProcess: function() {
+      // 終了通知
+      emit('coBrowseFailed', {
+        userId: userInfo.userId,
+        tabId: userInfo.tabId,
+        connectToken: userInfo.coBrowseConnectToken
+      });
+      var title = location.host + 'の内容';
+      var content = '接続時にエラーが発生しました。<br>しばらくたってから再度お試しください。';
+      popup.ok = function(){
+        laUtil.disconnect();
+        this.remove();
+      };
+      popup.set(title, content, popup.const.action.alert);
     },
     windowSyncInfo: function(d) {
       var obj = common.jParse(d);
