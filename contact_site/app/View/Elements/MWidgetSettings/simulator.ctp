@@ -210,10 +210,11 @@
       #sincloBox section#navigation ul { margin: 0 0 0 -1px; display: table; padding: 0; position: absolute; top: 0; left: 0; height: 40px; width: 285px }
       #sincloBox section#navigation ul.middleSize { width: 343.5px }
       #sincloBox section#navigation ul.largeSize { width: 400px }
-      #sincloBox section#navigation ul li { position: relative; overflow: hidden; cursor: pointer; color: {{other_text_color}}; width: 50%; text-align: center; display: table-cell; padding: 10px 0; border-left: 1px solid {{widget_border_color}}; height: 40px }
+      #sincloBox section#navigation ul li { position: relative; overflow: hidden; cursor: pointer; color: {{other_text_color}}; width: 50%; text-align: center; display: table-cell; padding: 10px 0; height: 40px }
+      #sincloBox section#navigation ul li:not(.details) { border-left: 1px solid {{widget_border_color}}; }
       #sincloBox section#navigation ul li:last-child { border-right: 1px solid {{widget_border_color}}; }
-      #sincloBox section#navigation ul li.selected { background-color: #FFFFFF; }
-      #sincloBox section#navigation ul li:not(.selected) { border-bottom: 1px solid {{widget_border_color}} }
+      #sincloBox section#navigation ul li.selected { background-color: #FFFFFF; z-index: -1; }
+      #sincloBox section#navigation ul li:not(.selected) { border-bottom: 1px solid {{widget_border_color}}; }
 
       #sincloBox section#navigation ul li.selected.details { background-color: {{chat_talk_background_color}}; }
       #sincloBox section#navigation ul li:not(.selected).details {  }
@@ -239,6 +240,7 @@
       #sincloBox span#sincloAccessInfo{ height: 26.5px; display: block; padding-left: 0.5em; padding-top: 5px; padding-bottom: 5px; border-top: 1px solid {{widget_border_color}}; font-size: 0.9em; }
       #sincloBox span#sincloAccessInfo.details{ border-top: 1px solid {{widget_inside_border_color}}; }
       #sincloBox span#sincloAccessInfo.details:not(.notNone){ border-top: none; }
+      #sincloBox #footer{ height: 26.5px; padding: 5px 0; text-align: center; border: 1px solid {{widget_border_color}}; color:#A1A1A1!important; font-size: 11px;margin: 0; border-top: none; }
     <?php endif; ?>
     </style>
     <!-- 画像 -->
@@ -324,7 +326,7 @@
         </span>
       </section>
     <?php endif; ?>
-      <p style="height: 26.5px; padding: 5px 0;text-align: center;border: 1px solid {{widget_border_color}};color: #A1A1A1!important;font-size: 11px;margin: 0;border-top: none;">Powered by <a target="sinclo" href="https://sinclo.medialink-ml.co.jp/lp/?utm_medium=web-widget&utm_campaign=widget-referral">sinclo</a></p>
+      <p id="footer" >Powered by <a target="sinclo" href="https://sinclo.medialink-ml.co.jp/lp/?utm_medium=web-widget&utm_campaign=widget-referral">sinclo</a></p>
     </div>
   </div>
   <!-- バナー -->
