@@ -49,8 +49,20 @@ class TDocumentsController extends AppController {
    * */
   public function add() {
     $this->_radioConfiguration();
+    $this->log('俺の原因か',LOG_DEBUG);
     if($this->userInfo['permission_level'] == 1) {
       if($this->request->is('post')) {
+        $this->log('資料データ',LOG_DEBUG);
+        $this->log($this->request->data,LOG_DEBUG);
+        $this->request->data['TDocument']['name'] = htmlspecialchars($this->request->data['TDocument']['name'], ENT_QUOTES, 'UTF-8');
+        $this->request->data['TDocument']['overview'] = htmlspecialchars($this->request->data['TDocument']['overview'], ENT_QUOTES, 'UTF-8');
+        $this->request->data['TDocument']['tag'] = htmlspecialchars($this->request->data['TDocument']['tag'], ENT_QUOTES, 'UTF-8');
+        $this->request->data['TDocument']['file_name'] = htmlspecialchars($this->request->data['TDocument']['file_name'], ENT_QUOTES, 'UTF-8');
+        $this->request->data['TDocument']['manuscript'] = htmlspecialchars($this->request->data['TDocument']['manuscript'], ENT_QUOTES, 'UTF-8');
+        $this->request->data['TDocument']['download_flg'] = htmlspecialchars($this->request->data['TDocument']['download_flg'], ENT_QUOTES, 'UTF-8');
+        $this->request->data['TDocument']['pagenation_flg'] = htmlspecialchars($this->request->data['TDocument']['pagenation_flg'], ENT_QUOTES, 'UTF-8');
+        $this->request->data['TDocument']['password'] = htmlspecialchars($this->request->data['TDocument']['password'], ENT_QUOTES, 'UTF-8');
+        $this->request->data['TDocument']['settings'] = htmlspecialchars($this->request->data['TDocument']['settings'], ENT_QUOTES, 'UTF-8');
         $this->_entry($this->request->data);
         $errors = $this->TDocument->validationErrors;
         $this->set('errors', $errors);
@@ -71,9 +83,20 @@ class TDocumentsController extends AppController {
    * */
   public function edit($id) {
     $this->_radioConfiguration();
-
     if($this->userInfo['permission_level'] == 1) {
+      $this->log($this->request->data,LOG_DEBUG);
       if($this->request->is('post') || $this->request->is('put')) {
+        $this->log('資料データ',LOG_DEBUG);
+        $this->log($this->request->data,LOG_DEBUG);
+        $this->request->data['TDocument']['name'] = htmlspecialchars($this->request->data['TDocument']['name'], ENT_QUOTES, 'UTF-8');
+        $this->request->data['TDocument']['overview'] = htmlspecialchars($this->request->data['TDocument']['overview'], ENT_QUOTES, 'UTF-8');
+        $this->request->data['TDocument']['tag'] = htmlspecialchars($this->request->data['TDocument']['tag'], ENT_QUOTES, 'UTF-8');
+        $this->request->data['TDocument']['file_name'] = htmlspecialchars($this->request->data['TDocument']['file_name'], ENT_QUOTES, 'UTF-8');
+        $this->request->data['TDocument']['manuscript'] = htmlspecialchars($this->request->data['TDocument']['manuscript'], ENT_QUOTES, 'UTF-8');
+        $this->request->data['TDocument']['download_flg'] = htmlspecialchars($this->request->data['TDocument']['download_flg'], ENT_QUOTES, 'UTF-8');
+        $this->request->data['TDocument']['pagenation_flg'] = htmlspecialchars($this->request->data['TDocument']['pagenation_flg'], ENT_QUOTES, 'UTF-8');
+        $this->request->data['TDocument']['password'] = htmlspecialchars($this->request->data['TDocument']['password'], ENT_QUOTES, 'UTF-8');
+        $this->request->data['TDocument']['settings'] = htmlspecialchars($this->request->data['TDocument']['settings'], ENT_QUOTES, 'UTF-8');
         $this->_entry($this->request->data);
         $errors = $this->TDocument->validationErrors;
         $this->set('errors', $errors);
@@ -83,10 +106,12 @@ class TDocumentsController extends AppController {
         $this->set('tagList',$tagList);
       }
       else {
+        $this->log('資料データ',LOG_DEBUG);
         /* 更新画面　タグリスト表示 */
         $this->TDocument->id = $id;
         $tags = json_decode($this->TDocument->read(null,$id)['TDocument'] ['tag'],true);
         $this->request->data = $this->TDocument->read(null,$id);
+        $this->log($this->request->data,LOG_DEBUG);
         if($this->request->data['TDocument']['m_companies_id'] == $this->userInfo['MCompany']['id']) {
           $tagList = $this->MDocumentTag->find('list', ['fields'=> ['id','name']]);
           $documentList = [];
@@ -102,6 +127,7 @@ class TDocumentsController extends AppController {
           $selectedTagList = $tags;
           $this->set('selectedTagList', $selectedTagList);
           $this->set('tagList',$tagList);
+          //$this->request->data['TDocument']['settings'] = htmlspecialchars($this->request->data['TDocument']['settings'], ENT_QUOTES, 'UTF-8');
         }
         else {
           $this->redirect($this->referer());

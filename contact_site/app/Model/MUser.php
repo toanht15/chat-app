@@ -46,9 +46,21 @@ class MUser extends AppModel {
                 'allowEmpty' => false,
                 'message' => 'パスワードは６～１２文字の間で設定してください。'
             ],
-            'alphaNumeric' => [
-                'rule' => 'alphaNumeric',
-                'message' => 'パスワードは英数字で設定してください。'
+            'checkLargeAlphabet' => [
+                'rule' =>  '/[A-Z]/',//半角英大小文字、数字のみ
+                'message' => 'パスワードは英大小文字、数字を含んで設定してください。'
+            ],
+            'checkSmallAlphabet' => [
+                'rule' =>  '/[a-z]/',//半角英大小文字、数字のみ
+                'message' => 'パスワードはパスワードは英大小文字、数字を含んで設定してください。'
+            ],
+            'checkNumber' => [
+                'rule' =>  '/[0-9]/',//半角英大小文字、数字のみ
+                'message' => 'パスワードは英大小文字、数字を含んで設定してください。'
+            ],
+            'checkOverlapMail' => [
+              'rule' => 'notOverlapMail',
+              'message' => 'メールアドレスを含めずに設定してください'
             ]
         ],
         'permission_level' => [
@@ -93,9 +105,21 @@ class MUser extends AppModel {
                 'allowEmpty' => false,
                 'message' => 'パスワードは６～１２文字の間で設定してください。'
             ],
-            'alphaNumeric' => [
-                'rule' => 'alphaNumeric',
-                'message' => 'パスワードは英数字で設定してください。'
+            'checkLargeAlphabet' => [
+                'rule' =>  '/[A-Z]/',//半角英大小文字、数字のみ
+                'message' => 'パスワードは英大小文字、数字を含んで設定してください。'
+            ],
+            'checkSmallAlphabet' => [
+                'rule' =>  '/[a-z]/',//半角英大小文字、数字のみ
+                'message' => 'パスワードはパスワードは英大小文字、数字を含んで設定してください。'
+            ],
+            'checkNumber' => [
+                'rule' =>  '/[0-9]/',//半角英大小文字、数字のみ
+                'message' => 'パスワードは英大小文字、数字を含んで設定してください。'
+            ],
+            'checkOverlapMail' => [
+              'rule' => 'notOverlapMail',
+              'message' => 'メールアドレスを含めずに設定してください'
             ]
         ],
         'permission_level' => [
@@ -139,6 +163,16 @@ class MUser extends AppModel {
             return true;
         }
         return false;
+    }
+
+    public function notOverlapMail(){
+      $data = $this->data['MUser'];
+      if ( !empty($data['new_password'])) {
+        if(strpos($data['new_password'],(substr($data['mail_address'],0,strpos($data['mail_address'],'@')))) === false){
+          return true;
+        }
+        return false;
+      }
     }
 
     public function canMatchConfirmPw(){

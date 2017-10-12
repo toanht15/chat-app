@@ -1,9 +1,26 @@
 <script type="text/javascript">
-$(function(){
-  document.getElementById("MUserCurrentPassword").defaultValue  = "";
-  document.getElementById("MUserNewPassword").defaultValue  = "";
-  document.getElementById("MUserConfirmPassword").defaultValue  = "";
-});
+<?php $this->request->data['MUser']['user_name'] = htmlspecialchars($this->request->data['MUser']['user_name'], ENT_QUOTES, 'UTF-8');?>
+<?php $this->request->data['MUser']['display_name'] = htmlspecialchars($this->request->data['MUser']['display_name'], ENT_QUOTES, 'UTF-8');?>
+<?php $this->request->data['MUser']['mail_address'] = htmlspecialchars($this->request->data['MUser']['mail_address'], ENT_QUOTES, 'UTF-8');?>
+<?php $this->request->data['MUser']['current_password'] = htmlspecialchars($this->request->data['MUser']['current_password'], ENT_QUOTES, 'UTF-8');?>
+<?php $this->request->data['MUser']['new_password'] = htmlspecialchars($this->request->data['MUser']['new_password'], ENT_QUOTES, 'UTF-8');?>
+<?php $this->request->data['MUser']['confirm_password'] = htmlspecialchars($this->request->data['MUser']['confirm_password'], ENT_QUOTES, 'UTF-8');?>
+
+function setPasswordLevel() {
+  console.log('入ってまあ明日');
+  password = document.getElementById("MUserNewPassword").value;
+  console.log(password);
+  var level = getPasswordLevel(password);
+  var text = "";
+  if (level == 1) { text = "弱い";}
+  if (level == 2) { text = "やや弱い";}
+  if (level == 3) { text = "普通";}
+  if (level == 4) { text = "やや強い";}
+  if (level == 5) { text = "強い";}
+  console.log('password');
+  console.log(text);
+  document.getElementById("level").innerHTML = text;
+}
 </script>
 
 
@@ -69,7 +86,8 @@ if ( !empty($this->data['MUser']['settings']) ) {
                     <?php if ($this->Form->isFieldError('current_password')) echo $this->Form->error('current_password', null, array('wrap' => 'li')); ?>
                     <li>
                         <div class="labelArea fLeft"><span><label>新しいパスワード</label></span></div>
-                        <?= $this->Form->input('new_password', array('type' => 'password', 'disabled' => $editFlg, 'placeholder' => 'new password', 'div' => false, 'label' => false, 'maxlength' => 12, 'error' => false)) ?>
+                        <?= $this->Form->input('new_password', array('type' => 'password', 'disabled' => $editFlg, 'placeholder' => 'new password', 'div' => false, 'label' => false, 'maxlength' => 12, 'error' => false, 'onblur' => "setPasswordLevel()")) ?>
+                        <div id="level">aaa</div>
                     </li>
                     <?php if ($this->Form->isFieldError('new_password') ) echo $this->Form->error('new_password', null, array('wrap' => 'li')); ?>
                     <li>
