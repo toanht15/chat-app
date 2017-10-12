@@ -154,7 +154,7 @@
           <td class='tCenter'>
             <?php if ( strcmp($userInfo['permission_level'], C_AUTHORITY_SUPER) !== 0) :?>
               <span ng-if="monitor.widget">
-                <span ng-if="!monitor.connectToken&&!monitor.docShare" id="shareToolBtn">
+                <span ng-if="!monitor.connectToken&&!monitor.docShare&&!monitor.coBrowseConnectToken" id="shareToolBtn">
                   <a class='monitorBtn blueBtn btn-shadow' href='javascript:void(0)' ng-click='confirmSharingWindowOpen(monitor.tabId, monitor.accessId)' >共有</a>
 <!--                  --><?php //if ( $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
 <!--                    <a class='monitorBtn blueBtn btn-shadow' href='javascript:void(0)' ng-click='windowOpen(monitor.tabId, monitor.accessId)' >画面共有</a>-->
@@ -170,7 +170,7 @@
 <!--                  --><?php //endif; ?>
                 </span>
               </span>
-              <span ng-if="monitor.connectToken||monitor.docShare">
+              <span ng-if="monitor.connectToken||monitor.docShare||monitor.coBrowseConnectToken">
                 <span class="monitorOn" ng-if="!monitor.responderId">対応中...</span>
                 <span class="monitorOn" ng-if="monitor.responderId"><span class="bold">対応中</span><br>（{{setName(monitor.responderId)}}）</span>
               </span>

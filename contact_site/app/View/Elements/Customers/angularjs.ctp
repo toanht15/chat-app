@@ -1532,6 +1532,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           }
         }
         if ( 'connectToken' in obj ) { $scope.monitorList[tabId].connectToken = obj.connectToken; }
+        if ( 'coBrowseConnectToken' in obj ) { $scope.monitorList[tabId].coBrowseConnectToken = obj.coBrowseConnectToken; }
         if ( 'prev' in obj ) { $scope.monitorList[tabId].prev = obj.prev; }
         if ( 'title' in obj ) { $scope.monitorList[tabId].title = obj.title; }
         if ( 'url' in obj ) { $scope.monitorList[tabId].url = obj.url; }
@@ -1604,7 +1605,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     socket.on('stopCoBrowse', function(data){
       var obj = JSON.parse(data);
       if ( obj.tabId !== undefined && angular.isDefined($scope.monitorList[obj.tabId])) {
-        $scope.monitorList[obj.tabId].connectToken = "";
+        $scope.monitorList[obj.tabId].coBrowseConnectToken = "";
       }
     });
 
@@ -1614,7 +1615,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         $scope.monitorList[obj.tabId].docShare = true;
         $scope.monitorList[obj.tabId].responderId = obj.responderId;
       }
-    })
+    });
 
     socket.on('docDisconnect', function(data){ // 資料共有終了
       var obj = JSON.parse(data);

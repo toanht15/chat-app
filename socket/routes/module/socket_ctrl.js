@@ -35,6 +35,78 @@ var io = require('socket.io')(process.env.WS_PORT),
         timeout : {} // userIdをキーとした企業側ユーザー管理
     };
 
+// LiveAssistの同時セッション数管理用クラス
+// laSessionCount = { 'siteKey' : {current: '利用中セッション数', max: '指定済みの最大数'} }
+var LaSessionCounter = function() {
+  var _key_currentCount = 'current';
+  var _key_maxCount = 'max';
+  var countList = {};
+  var initializeCountList = function(siteKey) {
+    countList[siteKey] = {
+      _key_currentCount: 0,
+      _key_maxCount: 0
+    };
+  }
+  var _getMaxCount = function(siteKey) {
+    return (siteKey in countList && _key_maxCount in countList[siteKey]) ? countList[siteKey][_key_maxCount] : 0;
+  };
+  var _getCurrentCount = function(siteKey) {
+    return (siteKey in countList && _key_currentCount in countList[siteKey]) ? countList[siteKey][_key_currentCount] : 0;
+  };
+  var _printCurrentState = function(siteKey, functionName) {
+    var current = _getCurrentCount(siteKey);
+    var max = _getMaxCount(siteKey);
+    console.log("LaSessionCounter::" + functionName + " siteKey:" + siteKey + ' currentSessions:' + current + ' max:' + max);
+  };
+  return {
+    setMaxCount: function(siteKey, maxCount) {
+      if(!(siteKey in countList)) {
+        initializeCountList(siteKey);
+      }
+      countList[siteKey][_key_maxCount] = maxCount;
+    },
+    getMaxCount: function(siteKey) {
+      return _getMaxCount(siteKey);
+    },
+    getCurrentCount: function(siteKey) {
+      return _getCurrentCount(siteKey);
+    },
+    countUp : function(siteKey) {
+      if(this.currentCountExists(siteKey)) {
+        // まずはゼロ代入
+        this.initializeCurrentCount(siteKey);
+      }
+      if(!this.isLimit(siteKey)) {
+        countList[siteKey][_key_currentCount]++;
+      }
+      _printCurrentState(siteKey, "countUp");
+    },
+    countDown : function(siteKey) {
+      if(countList[siteKey][_key_currentCount] <= 0) return;
+      countList[siteKey][_key_currentCount]--;
+      _printCurrentState(siteKey, "countDown");
+
+    },
+    initializeCurrentCount : function(siteKey) {
+      countList[siteKey][_key_currentCount] = 0;
+    },
+    currentCountExists : function(siteKey) {
+      return (siteKey in countList) && (_key_currentCount in countList[siteKey]);
+    },
+    isLimit : function(siteKey) {
+      var current = this.getCurrentCount(siteKey);
+      var max = this.getMaxCount(siteKey);
+      var result = (current >= max);
+      if(result) {
+        _printCurrentState(siteKey, "isLimit");
+      }
+      return result;
+    }
+  }
+};
+
+var laSessionCounter = new LaSessionCounter();
+
 // ユーザーIDの新規作成
 function makeUserId(){
   var d = new Date();
@@ -123,6 +195,8 @@ function getCompanyList(){
     for ( var i = 0; key.length > i; i++ ) {
       var row = rows[key[i]];
       companyList[row.company_key] = row.id;
+      //test
+      laSessionCounter.setMaxCount(row.company_key, 1);
     }
   });
 }
@@ -224,10 +298,15 @@ function objectSort(object) {
 
 function getConnectInfo(o){
   var connectToken = getSessionId(o.siteKey, o.tabId, 'connectToken');
+  var coBrowseConnectToken = getSessionId(o.siteKey, o.tabId, 'coBrowseConnectToken');
   var responderId = getSessionId(o.siteKey, o.tabId, 'responderId');
   if ( isset(responderId) && isset(connectToken) ) {
     o.responderId = responderId;
     o.connectToken = connectToken;
+  }
+  if ( isset(responderId) && isset(coBrowseConnectToken) ) {
+    o.responderId = responderId;
+    o.coBrowseConnectToken = coBrowseConnectToken;
   }
   var docShareId = getSessionId(o.siteKey, o.tabId, 'docShareId');
   if ( isset(docShareId) ) {
@@ -1836,6 +1915,9 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     if ( !getSessionId(obj.siteKey, obj.tabId, 'sessionId') ) return false;
     sincloCore[obj.siteKey][obj.tabId].shareCoBrowseFlg = true;
     sincloCore[obj.siteKey][obj.tabId].syncHostSessionId = socket.id; // 企業画面側のセッションID
+    if(laSessionCounter.isLimit(obj.siteKey)) {
+      // FIXME !!
+    }
     emit.toUser('startCoBrowseOpen', data, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
     // 今まで通り
     // else {
@@ -1894,6 +1976,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     console.log("OBJ : " + JSON.stringify(data));
     sincloCore[obj.siteKey][obj.to]['responderId'] = obj.responderId; // 対応ユーザーID
     sincloCore[obj.siteKey][obj.to]['coBrowseParentSessionId'] = socket.id; // 企業側のsocket.id
+    laSessionCounter.countUp(obj.siteKey);
     emit.toUser('assistAgentIsReady', data, getSessionId(obj.siteKey, obj.to, 'sessionId'));
   });
 
@@ -1902,8 +1985,9 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
    * 企業フレーム:1, 消費者フレーム:2,企業インライン:3, 消費者インライン:4
    */
   socket.on('requestStopCoBrowse', function (data) {
+    console.log("requestStopCoBrowse : " + data);
     var obj = JSON.parse(data);
-    if ( isset(obj.connectToken) ) {
+    if ( isset(obj.coBrowseConnectToken) ) {
       var parentId = false;
       obj.message = "切断を検知しました。";
       // 企業フレーム
@@ -1935,7 +2019,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         case 3: // 企業インライン
         case 4: // 消費者インライン
           // 相手先インラインフレーム
-          emit.toUser('stopCoBrowse', obj, getSessionId(obj.siteKey, obj.to, 'sessionId'));
+          emit.toUser('stopCoBrowse', obj, getSessionId(obj.siteKey, obj.to, 'coBrowseParentSessionId'));
           // 消費者インライン
           break;
       }
@@ -1950,6 +2034,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
       // 企業一括
       emit.toCompany('stopCoBrowse', compData, obj.siteKey); // リアルタイムモニタを更新する為
+      laSessionCounter.countDown(obj.siteKey);
     }
     else {
       emit.toCompany('unsetUser', data, obj.siteKey);

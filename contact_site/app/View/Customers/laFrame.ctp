@@ -24,7 +24,7 @@
     };
 
     windowClose = function(){
-      emit('requestStopCoBrowse', {type: 1, tabId: tabId, connectToken: arg.connectToken});
+      emit('requestStopCoBrowse', {type: 1, tabId: tabId, coBrowseConnectToken: arg.connectToken});
       AssistAgentSDK.endSupport();
       window.close();
       return false;
