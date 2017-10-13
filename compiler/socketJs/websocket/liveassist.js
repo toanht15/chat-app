@@ -28,7 +28,8 @@ var LaUtility = function() {
   this.shortcode = '';
   this.sessionInfo = {};
   this.operatorId = '';
-  this.errorCallback = function() {};
+  this.onAgentLeftCallback = function() {};
+  this.errorCallback = function(error) {};
 
   /**
    * @return $.Diferred.promise()
@@ -40,6 +41,7 @@ var LaUtility = function() {
   };
 
   this.initSDKCallbacks = function() {
+    var _self = this;
     AssistSDK.onConnectionEstablished = function() {
       console.log("onConnectionEstablished");
     };
@@ -66,6 +68,7 @@ var LaUtility = function() {
 
     AssistSDK.onAgentLeftSession = function() {
       console.log("onAgentLeftSession");
+      _self.onAgentLeftCallback();
     };
 
     AssistSDK.onEndSupport = function() {
@@ -74,7 +77,7 @@ var LaUtility = function() {
 
     AssistSDK.onError = function(error) {
       console.log("!!!!!!!!!! ON ERROR !!!!!!!!!!!!!! " + JSON.stringify(error));
-      this.errorCallback(error);
+      _self.errorCallback(error);
     };
 
     AssistSDK.onScreenshareRequest = function() {
@@ -144,7 +147,11 @@ var LaUtility = function() {
 
   this.setOnErrorCallback = function(fnc) {
     this.errorCallback = fnc;
-  }
+  };
+
+  this.setOnAgentLeftCallback = function(fnc) {
+    this.onAgentLeftCallback = fnc;
+  };
 
   return this;
 };

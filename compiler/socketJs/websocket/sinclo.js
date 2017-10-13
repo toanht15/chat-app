@@ -502,6 +502,39 @@
       laUtil.setOnErrorCallback(function(error){
         _self.coBrowseErrorProcess();
       });
+      laUtil.setOnAgentLeftCallback(function(){
+        if ( !check.isset(userInfo.coBrowseConnectToken) ) return false;
+
+        storage.s.unset("coBrowseConnectToken");
+        if (!document.getElementById('sincloBox')) {
+          common.makeAccessIdTag();
+        }
+
+        // 終了通知
+        var title = location.host + 'の内容';
+        var content = location.host + 'との画面共有を終了しました';
+        popup.ok = function(){
+          laUtil.disconnect();
+          this.remove();
+        };
+        popup.set(title, content, popup.const.action.alert);
+
+        var timer = setInterval(function(){
+          if (window.sincloInfo.widgetDisplay === false) {
+            clearInterval(timer);
+            laUtil.disconnect();
+            return false;
+          }
+          var sincloBox = document.getElementById('sincloBox');
+          // チャット未契約のときはウィジェットを非表示
+          if (sincloBox && (window.sincloInfo.contract.chat || window.sincloInfo.contract.synclo || (window.sincloInfo.contract.hasOwnProperty('document') && window.sincloInfo.contract.document)) ) {
+            common.widgetHandler.show();
+            sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
+            sinclo.widget.condifiton.set(false);
+            clearInterval(timer);
+          }
+        }, 500);
+      });
       laUtil.initAndStart(operatorId).then(function() {
         // shortcode取得
         var shortcode = laUtil.shortcode;
@@ -529,7 +562,7 @@
         connectToken: userInfo.coBrowseConnectToken
       });
       var title = location.host + 'の内容';
-      var content = '接続時にエラーが発生しました。<br>しばらくたってから再度お試しください。';
+      var content = '接続時にエラーが発生しました。<br>再度お試しください。';
       popup.ok = function(){
         laUtil.disconnect();
         this.remove();
