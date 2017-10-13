@@ -185,8 +185,6 @@ class TDocumentsController extends AppController {
       }
     }
 
-    $this->log('saveData',LOG_DEBUG);
-    $this->log($saveData,LOG_DEBUG);
     $this->TDocument->set($saveData);
     // バリデーションチェックに失敗したら
     if ( !$this->TDocument->validates() ) return false;

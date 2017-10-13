@@ -1,7 +1,6 @@
 <script type="text/javascript">
 <?= $this->element('TDocuments/loadScreen'); ?>
 <?php if ( $this->action !== "index" ) : ?>
-
 function handleFileSelect(evt) {
   $("slideframe").html('<div id="document_canvas"></div>');
   var files = evt.target.files; // FileList object
@@ -73,12 +72,13 @@ function saveAct(){
   }
 
   if ( slideJsApi.hasOwnProperty('manuscript') ) {
-    //document.getElementById('TDocumentManuscript').value = JSON.stringify(slideJsApi.manuscript);
+    document.getElementById('TDocumentManuscript').value = JSON.stringify(slideJsApi.manuscript);
   }
 
   if ( slideJsApi.hasOwnProperty('rotation') ) {
     document.getElementById('TDocumentRotation').value = slideJsApi.rotation;
   }
+
   document.getElementById('TDocumentEntryForm').submit();
   setTimeout(function(){
     $("a").addClass("disableBtn").prop("onclick", "").click(
@@ -135,8 +135,9 @@ $(function(){
 });
 
 <?php
-$manuscript = (!empty($this->data['TDocument']['manuscript'])) ? h($this->data['TDocument']['manuscript']) : '{}';
+$manuscript = (!empty($this->data['TDocument']['manuscript'])) ? $this->data['TDocument']['manuscript'] : '{}';
 ?>
+
 var slideJsApi,slideJsApi2,frameSize,slideJsCNST;
 
 (function(){

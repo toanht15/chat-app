@@ -54,10 +54,10 @@ class PersonalSettingsController extends AppController {
       return $errors;
     }
 
-    //if (preg_match("/[A-Za-z]/", $inputData['MUser']['new_password']) && preg_match("/[0-9]/", $inputData['MUser']['new_password'])) {
     // パスワードチェックが問題なければ単独でバリデーションチェックのみ
     $this->MUser->set($inputData);
     $this->MUser->begin();
+
     if ( $this->MUser->validates() ) {
       // バリデーションチェックが成功した場合
       // 保存処理

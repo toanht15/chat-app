@@ -97,7 +97,7 @@ class MUsersController extends AppController {
       }
     }
 
-    $tmpData['MUser']['user_name'] =  $this->request->data['userName'];
+    $tmpData['MUser']['user_name'] = $this->request->data['userName'];
     $tmpData['MUser']['display_name'] = $this->request->data['displayName'];
     $tmpData['MUser']['mail_address'] = $this->request->data['mailAddress'];
     $tmpData['MUser']['permission_level'] = $this->request->data['permissionLevel'];
