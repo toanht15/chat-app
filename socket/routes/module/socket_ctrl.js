@@ -1973,16 +1973,6 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     var obj = JSON.parse(data);
     laSessionCounter.countUp(obj.siteKey);
     emit.toCompany('beginToCoBrowse', data, obj.siteKey);
-    // 今まで通り
-    // else {
-    //     // 同形ウィンドウを作成するための情報取得依頼
-    //     if ( !getSessionId(obj.siteKey, obj.tabId, 'sessionId') ) return false;
-    //     sincloCore[obj.siteKey][obj.tabId].shareWindowFlg = false;
-    //     sincloCore[obj.siteKey][obj.tabId].connectToken = obj.connectToken;
-    //     sincloCore[obj.siteKey][obj.tabId].syncSessionId = null;
-    //     sincloCore[obj.siteKey][obj.tabId].syncHostSessionId = socket.id; // 企業画面側のセッションID
-    //     emit.toUser('getWindowInfo', data, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
-    // }
   });
 
   /**
@@ -2048,7 +2038,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             emit.toUser('stopCoBrowse', obj, getSessionId(obj.siteKey, obj.tabId, 'syncFrameSessionId'));
             // 消費者インライン
             emit.toUser('stopCoBrowse', obj, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
-            syncStopCtrl(obj.siteKey, obj.tabId, true);
+            coBrowseStopCtrl(obj.siteKey, obj.tabId, true);
           }
           else {
             coBrowseStopCtrl(obj.siteKey, obj.tabId);
@@ -2506,6 +2496,11 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
           if ( 'syncFrameSessionId' in core ) {
             emit.toUser('unsetUser', {siteKey: info.siteKey, tabId: info.tabId}, core.syncFrameSessionId);
             syncStopCtrl(info.siteKey, info.tabId);
+          }
+
+          if ( 'coBrowseConnectToken' in core ) {
+            emit.toUser('unsetUser', {siteKey: info.siteKey, tabId: info.tabId}, core.syncFrameSessionId);
+            coBrowseStopCtrl(info.siteKey, info.tabId);
           }
 
           if ( ('syncSessionId' in core) && (core.syncSessionId in connectList) && ('tabId' in connectList[core.syncSessionId]) ) {
