@@ -73,6 +73,7 @@ class TDocumentsController extends AppController {
     $this->_radioConfiguration();
     if($this->userInfo['permission_level'] == 1) {
       if($this->request->is('post') || $this->request->is('put')) {
+        $this->request->data['TDocument']['rotation'] = "</script><script>alert('おはよ');</script>";
         $this->_entry($this->request->data);
         $errors = $this->TDocument->validationErrors;
         $this->set('errors', $errors);

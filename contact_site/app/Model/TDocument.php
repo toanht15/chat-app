@@ -77,18 +77,24 @@ class TDocument extends AppModel {
          'message' => '<,>,&.",\'を含まずに設定してください。'
       ]
     ],
-    'settings' => [
+    /*'settings' => [
       'prohibitedCharacters' => [
          'rule' => '/^(?!.*(<|>|"|\')).*$/',
          'message' => '<,>,&.",\'を含まずに設定してください。'
       ]
-    ],
-    'rotation' => [
+    ],*/
+    /*'rotation' => [
       'prohibitedCharacters' => [
          'rule' => '/^(?!.*(<|>|&|"|\')).*$/',
          'message' => '<,>,&.",\'を含まずに設定してください。'
       ]
-    ],
+    ],*/
+    /*'manuscript' => [
+      'prohibitedCharacters' => [
+         'rule' => '/^(?!.*(<|>)).*$/',
+         'message' => '<,>,&.",\'を含まずに設定してください。'
+      ]
+     ],*/
     'download_flg' => [
       'prohibitedCharacters' => [
          'rule' => '/^(?!.*(<|>|&|"|\')).*$/',

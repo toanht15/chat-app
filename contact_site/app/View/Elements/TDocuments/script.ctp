@@ -1,4 +1,5 @@
 <script type="text/javascript">
+console.log('jsdklajf');
 <?= $this->element('TDocuments/loadScreen'); ?>
 <?php if ( $this->action !== "index" ) : ?>
 function handleFileSelect(evt) {
@@ -134,6 +135,15 @@ $(function(){
   $('#tagList').multiSelect({});
 });
 
+function htmlEntities( str, proc ) {
+  if ( 'encode' === proc ) {
+    str = $('<div/>').text( str ).html();
+    return str.replace( '\'', '&apos;' ).replace( '"', '&quot;' );
+  } else {
+    return $("<div/>").html( str ).text();
+  }
+}
+
 <?php
 $manuscript = (!empty($this->data['TDocument']['manuscript'])) ? $this->data['TDocument']['manuscript'] : '{}';
 ?>
@@ -166,6 +176,7 @@ var slideJsApi,slideJsApi2,frameSize,slideJsCNST;
       this.maxPage = page;
       this.rotation = rotation;
       this.filePath = filePath;
+      this.manuscript = JSON.parse(htmlEntities( this.manuscript, 'decode' ));
       this.makePage(); // 初期スライドを作成
       var limitPage = (this.currentPage + 3 > this.maxPage) ? this.maxPage : this.currentPage + 3 ;
 
@@ -691,10 +702,21 @@ var slideJsApi,slideJsApi2,frameSize,slideJsCNST;
 
   $(document).ready(function(){
     <?php if ( !empty($this->data['TDocument']['file_name']) ):
-      $settings = (array)json_decode($this->data['TDocument']['settings']);
+      $settings = $this->data['TDocument']['settings'];
+      $this->log('settings',LOG_DEBUG);
+      $this->log(htmlspecialchars_decode($settings, ENT_QUOTES),LOG_DEBUG);
+      $this->log((array)json_decode(htmlspecialchars_decode($settings, ENT_QUOTES)),LOG_DEBUG);
+      $settings = (array)json_decode(htmlspecialchars_decode($settings, ENT_QUOTES));
+      if(preg_match('/^(?!.*(<|>|&|"|\')).*$/',$settings['rotation']) && preg_match('/^(?!.*(<|>|&|"|\')).*$/',$settings['pages'])) {
+        $this->log('これよく見て',LOG_DEBUG);
+      /*preg_match('/pages&quot;:(\w+)/', $settings, $pages);
+      preg_match('/rotation&quot;:&quot;(\w+)/', $settings, $rotation);
+      $pages = (isset($pages[1])) ? $pages[1] : 1;
+      $rotation = (isset($rotation[1])) ? $rotation[1] : 0;*/
       $pages = (isset($settings['pages'])) ? $settings['pages'] : 1;
       $rotation = (isset($settings['rotation'])) ? $settings['rotation'] : 0;
       $filePath = C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/svg_".pathinfo(h($this->data['TDocument']['file_name']), PATHINFO_FILENAME);
+    }
     ?>
 
     slideJsApi.init("<?=$filePath?>", "<?=$pages?>", "<?=$rotation?>");
@@ -711,6 +733,7 @@ window.addEventListener('resize', function(e){
   setPositionDocumentList(); // 資料選択ダイアログの表示位置の計算
 });
 window.addEventListener('wheel', function(e){
+  console.log('66');
   if ( !($("#document-preview").is(".show") && !$("#switching-preview").is(".show")) ) return false;
   if ( e.ctrlKey ) {
     e.preventDefault();
