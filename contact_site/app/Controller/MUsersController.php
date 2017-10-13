@@ -57,8 +57,6 @@ class MUsersController extends AppController {
     if ( strcmp($this->request->data['type'], 2) === 0 ) {
       $this->MUser->recursive = -1;
       $this->request->data = $this->MUser->read(null, $this->request->data['id']);
-      $this->log('渡すデータ',LOG_DEBUG);
-      $this->log($this->request->data,LOG_DEBUG);
       if($this->request->data['MUser']['m_companies_id'] == $this->userInfo['MCompany']['id'] && $this->request->data['MUser']['permission_level'] != 99 && $this->request->data['MUser']['del_flg'] != 1) {
         $this->render('/MUsers/remoteEntryUser');
       }
@@ -99,21 +97,21 @@ class MUsersController extends AppController {
       }
     }
 
-    $tmpData['MUser']['user_name'] =  htmlspecialchars($this->request->data['userName'], ENT_QUOTES, 'UTF-8');
-    $tmpData['MUser']['display_name'] = htmlspecialchars($this->request->data['displayName'], ENT_QUOTES, 'UTF-8');
-    $tmpData['MUser']['mail_address'] = htmlspecialchars($this->request->data['mailAddress'], ENT_QUOTES, 'UTF-8');
-    $tmpData['MUser']['permission_level'] = htmlspecialchars($this->request->data['permissionLevel'], ENT_QUOTES, 'UTF-8');
+    $tmpData['MUser']['user_name'] =  $this->request->data['userName'];
+    $tmpData['MUser']['display_name'] = $this->request->data['displayName'];
+    $tmpData['MUser']['mail_address'] = $this->request->data['mailAddress'];
+    $tmpData['MUser']['permission_level'] = $this->request->data['permissionLevel'];
 
     if ( !$insertFlg && empty($this->request->data['password']) ) {
       unset($this->MUser->validate['password']);
     }
     else {
-      $tmpData['MUser']['new_password'] = htmlspecialchars($this->request->data['password'], ENT_QUOTES, 'UTF-8');
+      $tmpData['MUser']['new_password'] = $this->request->data['password'];
     }
 
     // チャットアカウント用処理（アカウント登録時のみ）
     if ( !isset($tmpData['MUser']['id']) && isset($this->coreSettings[C_COMPANY_USE_CHAT]) && $this->coreSettings[C_COMPANY_USE_CHAT] ) {
-      $tmpData['MUser']['settings'] = htmlspecialchars($this->_setChatSetting($tmpData), ENT_QUOTES, 'UTF-8');
+      $tmpData['MUser']['settings'] = $this->_setChatSetting($tmpData);
     }
     // const
     $this->MUser->set($tmpData);

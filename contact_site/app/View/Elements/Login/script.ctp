@@ -13,6 +13,5 @@
   window.onload = function(){
     if (typeof MUserFormButton === 'undefined') return false;
     MUserFormButton.addEventListener('click', elmEv.submit.func);
-    document.getElementById("MUserPassword").defaultValue  = "";
   };
 </script>

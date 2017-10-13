@@ -40,9 +40,9 @@
             <controller>
               <upload class="btn-shadow greenBtn">
                 <?=$this->Form->input('files', ['type'=>'file','placeholder' => '資料', 'error' => false, 'label' => false,'div' => false])?>
-                <?=$this->Form->input('file_name', ['type'=>'hidden'])?>
-                <?=$this->Form->input('settings', ['type'=>'hidden'])?>
-                <?=$this->Form->input('rotation', ['type'=>'hidden'])?>
+                <?=$this->Form->input('file_name', ['type'=>'hidden','error' => false])?>
+                <?=$this->Form->input('settings', ['type'=>'hidden','error' => false])?>
+                <?=$this->Form->input('rotation', ['type'=>'hidden','error' => false])?>
               </upload>
               <rotate class="btn-shadow greenBtn" onclick="slideJsApi.rotate(); return false;">
                 <?=$this->Html->image('rotate90_w.png', ['alt' => '90度資料を回転する']);?>
@@ -60,6 +60,9 @@
         </documentArea>
       </li>
       <?php if ( $this->Form->isFieldError('files') ) echo $this->Form->error('files', null, ['wrap' => 'li']); ?>
+      <?php if ( $this->Form->isFieldError('file_name') ) echo $this->Form->error('file_name', null, ['wrap' => 'li']); ?>
+      <?php if ( $this->Form->isFieldError('settings') ) echo $this->Form->error('settings', null, ['wrap' => 'li']); ?>
+      <?php if ( $this->Form->isFieldError('rotation') ) echo $this->Form->error('rotation', null, ['wrap' => 'li']); ?>
       <!-- 資料 -->
 
       <!-- ダウンロードフラグ -->

@@ -21,6 +21,10 @@ class MUser extends AppModel {
                 'rule' => ['maxLength', 50],
                 'allowEmpty' => false,
                 'message' => 'ユーザー名は５０文字以内で設定してください。'
+            ],
+            'prohibitedCharacters' => [
+                'rule' => '/^(?!.*(<|>|&|"|\')).*$/',
+                'message' => '<,>,&.",\'を含まずに設定してください。'
             ]
         ],
         'display_name' => [
@@ -28,6 +32,10 @@ class MUser extends AppModel {
                 'rule' => ['maxLength', 10],
                 'allowEmpty' => false,
                 'message' => '表示名は１０文字以内で設定してください。'
+            ],
+            'prohibitedCharacters' => [
+                'rule' => '/^(?!.*(<|>|&|"|\')).*$/',
+                'message' => '<,>,&.",\'を含まずに設定してください。'
             ]
         ],
         'mail_address' => [
@@ -38,6 +46,10 @@ class MUser extends AppModel {
             'isUniqueChk' => [
                 'rule' => 'isUniqueChk',
                 'message' => '既に登録されているアドレスです。'
+            ],
+            'prohibitedCharacters' => [
+                'rule' => '/^(?!.*(<|>|&|"|\')).*$/',
+                'message' => '<,>,&.",\'を含まずに設定してください。'
             ]
         ],
         'new_password' => [
@@ -61,12 +73,20 @@ class MUser extends AppModel {
             'checkOverlapMail' => [
               'rule' => 'notOverlapMail',
               'message' => 'メールアドレスを含めずに設定してください'
+            ],
+            'prohibitedCharacters' => [
+                'rule' => '/^(?!.*(<|>|&|"|\')).*$/',
+                'message' => '<,>,&.",\'を含まずに設定してください。'
             ]
         ],
         'permission_level' => [
             'notBlank' => [
                 'rule' => 'notBlank',
                 'message' => '権限レベルを選択してください。'
+            ],
+            'prohibitedCharacters' => [
+                'rule' => '/^(?!.*(<|>|&|"|\')).*$/',
+                'message' => '<,>,&.",\'を含まずに設定してください。'
             ]
         ],
         'sc_num' => [
@@ -84,6 +104,10 @@ class MUser extends AppModel {
                 'rule' => ['maxLength', 50],
                 'allowEmpty' => false,
                 'message' => 'ユーザー名は５０文字以内で設定してください。'
+            ],
+            'prohibitedCharacters' => [
+                'rule' => '/^(?!.*(<|>|&|"|\')).*$/',
+                'message' => '<,>,&.",\'を含まずに設定してください。'
             ]
         ],
         'display_name' => [
@@ -91,12 +115,20 @@ class MUser extends AppModel {
                 'rule' => ['maxLength', 10],
                 'allowEmpty' => false,
                 'message' => '表示名は１０文字以内で設定してください。'
+            ],
+            'prohibitedCharacters' => [
+                'rule' => '/^(?!.*(<|>|&|"|\')).*$/',
+                'message' => '<,>,&.",\'を含まずに設定してください。'
             ]
         ],
         'mail_address' => [
             'email' => [
                 'rule' => 'email',
                 'message' => 'メールアドレスの形式が不正です。'
+            ],
+            'prohibitedCharacters' => [
+                'rule' => '/^(?!.*(<|>|&|"|\')).*$/',
+                'message' => '<,>,&.",\'を含まずに設定してください。'
             ]
         ],
         'new_password' => [
@@ -120,12 +152,20 @@ class MUser extends AppModel {
             'checkOverlapMail' => [
               'rule' => 'notOverlapMail',
               'message' => 'メールアドレスを含めずに設定してください'
+            ],
+            'prohibitedCharacters' => [
+                'rule' => '/^(?!.*(<|>|&|"|\')).*$/',
+                'message' => '<,>,&.",\'を含まずに設定してください。'
             ]
         ],
         'permission_level' => [
             'notBlank' => [
                 'rule' => 'notBlank',
                 'message' => '権限レベルを選択してください。'
+            ],
+            'prohibitedCharacters' => [
+                'rule' => '/^(?!.*(<|>|&|"|\')).*$/',
+                'message' => '<,>,&.",\'を含まずに設定してください。'
             ]
         ],
         'current_password' => [
@@ -133,6 +173,10 @@ class MUser extends AppModel {
                 'rule' => 'isCurrentPw',
                 'allowEmpty' => false,
                 'message' => '現在のパスワードが一致しません。'
+            ],
+            'prohibitedCharacters' => [
+                'rule' => '/^(?!.*(<|>|&|"|\')).*$/',
+                'message' => '<,>,&.",\'を含まずに設定してください。'
             ]
         ],
         'confirm_password' => [
@@ -140,6 +184,10 @@ class MUser extends AppModel {
                 'rule' => 'canMatchConfirmPw',
                 'allowEmpty' => false,
                 'message' => '新しいパスワードが一致しません。'
+            ],
+            'prohibitedCharacters' => [
+                'rule' => '/^(?!.*(<|>|&|"|\')).*$/',
+                'message' => '<,>,&.",\'を含まずに設定してください。'
             ]
         ]
     ];

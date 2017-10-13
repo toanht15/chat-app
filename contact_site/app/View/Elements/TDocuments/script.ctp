@@ -1,15 +1,6 @@
 <script type="text/javascript">
 <?= $this->element('TDocuments/loadScreen'); ?>
 <?php if ( $this->action !== "index" ) : ?>
-<?php $this->request->data['TDocument']['name'] = htmlspecialchars($this->request->data['TDocument']['name'], ENT_QUOTES, 'UTF-8');?>
-<?php $this->request->data['TDocument']['overview'] = htmlspecialchars($this->request->data['TDocument']['overview'], ENT_QUOTES, 'UTF-8');?>
-<?php $this->request->data['TDocument']['tag'] = htmlspecialchars($this->request->data['TDocument']['tag'], ENT_QUOTES, 'UTF-8');?>
-<?php $this->request->data['TDocument']['file_name'] = htmlspecialchars($this->request->data['TDocument']['file_name'], ENT_QUOTES, 'UTF-8');?>
-<?php $this->request->data['TDocument']['manuscript'] = htmlspecialchars($this->request->data['TDocument']['manuscript'], ENT_QUOTES, 'UTF-8');?>
-<?php $this->request->data['TDocument']['download_flg'] = htmlspecialchars($this->request->data['TDocument']['download_flg'], ENT_QUOTES, 'UTF-8');?>
-<?php $this->request->data['TDocument']['pagenation_flg'] = htmlspecialchars($this->request->data['TDocument']['pagenation_flg'], ENT_QUOTES, 'UTF-8');?>
-<?php $this->request->data['TDocument']['password'] = htmlspecialchars($this->request->data['TDocument']['password'], ENT_QUOTES, 'UTF-8');?>
-<?php $this->request->data['TDocument']['settings'] = htmlspecialchars($this->request->data['TDocument']['settings'], ENT_QUOTES, 'UTF-8');?>
 
 function handleFileSelect(evt) {
   $("slideframe").html('<div id="document_canvas"></div>');
@@ -88,7 +79,6 @@ function saveAct(){
   if ( slideJsApi.hasOwnProperty('rotation') ) {
     document.getElementById('TDocumentRotation').value = slideJsApi.rotation;
   }
-  console.log('ここまで入ってる');
   document.getElementById('TDocumentEntryForm').submit();
   setTimeout(function(){
     $("a").addClass("disableBtn").prop("onclick", "").click(
@@ -146,11 +136,7 @@ $(function(){
 
 <?php
 $manuscript = (!empty($this->data['TDocument']['manuscript'])) ? h($this->data['TDocument']['manuscript']) : '{}';
-$this->log('manuscript',LOG_DEBUG);
-$this->log($manuscript,LOG_DEBUG);
 ?>
-console.log('この辺');
-console.log("<?= $manuscript ?>" );
 var slideJsApi,slideJsApi2,frameSize,slideJsCNST;
 
 (function(){

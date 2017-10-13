@@ -1,3 +1,13 @@
+<script type = "text/javascript">
+  <?php  $this->request->data['TDocument']['name'] = htmlspecialchars($this->request->data['TDocument']['name'], ENT_QUOTES, 'UTF-8');?>
+  <?php  $this->request->data['TDocument']['overview'] = htmlspecialchars($this->request->data['TDocument']['overview'], ENT_QUOTES, 'UTF-8');?>
+  <?php  $this->request->data['TDocument']['tag'] = htmlspecialchars($this->request->data['TDocument']['tag'], ENT_QUOTES, 'UTF-8');?>
+  <?php  $this->request->data['TDocument']['file_name'] = htmlspecialchars($this->request->data['TDocument']['file_name'], ENT_QUOTES, 'UTF-8');?>
+  <?php  $this->request->data['TDocument']['manuscript'] = htmlspecialchars($this->request->data['TDocument']['manuscript'], ENT_QUOTES, 'UTF-8');?>
+  <?php  $this->request->data['TDocument']['download_flg'] = htmlspecialchars($this->request->data['TDocument']['download_flg'], ENT_QUOTES, 'UTF-8');?>
+  <?php  $this->request->data['TDocument']['pagenation_flg'] = htmlspecialchars($this->request->data['TDocument']['pagenation_flg'], ENT_QUOTES, 'UTF-8');?>
+  <?php  $this->request->data['TDocument']['settings'] = htmlspecialchars($this->request->data['TDocument']['settings'], ENT_QUOTES, 'UTF-8');?>
+</script>
 <?php echo $this->Html->script("jquery-ui.min.js"); ?>
 <?php echo $this->element('TDocuments/script'); ?>
 
