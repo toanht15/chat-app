@@ -1,5 +1,6 @@
 <script type="text/javascript">
     popupEvent.closePopup = function(){
+        var page = Number("<?=$page?>");
         var userId = document.getElementById('MUserId').value;
         var userName = document.getElementById('MUserUserName').value;
         var displayName = document.getElementById('MUserDisplayName').value;
@@ -25,7 +26,9 @@
                 $(".error-message").remove();
 
                 if ( keys.length === 0 ) {
-                    location.href = "<?=$this->Html->url(array('controller' => 'MUsers', 'action' => 'index'))?>";
+                    var url = "<?= $this->Html->url('/MUsers/index') ?>";
+                    location.href = url + "/page:" + page;
+//                    location.href = "<?=$this->Html->url(array('controller' => 'MUsers', 'action' => 'index'))?>";
                     return false;
                 }
                 for (var i = 0; i < keys.length; i++) {

@@ -53,6 +53,8 @@ class MUsersController extends AppController {
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
     $this->_viewElement();
+    //$this->request->
+    $this->set('page', $this->request->data['index']);
     // const
     if ( strcmp($this->request->data['type'], 2) === 0 ) {
       $this->MUser->recursive = -1;
@@ -154,12 +156,28 @@ class MUsersController extends AppController {
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
     $this->MUser->recursive = -1;
-    if ( $this->MUser->logicalDelete($this->request->data['id']) ) {
+    $selectedList = $this->request->data['selectedList'];
+    $this->MUser->begin();
+    $res = true;
+    foreach($selectedList as $key => $val){
+      if (! $this->MUser->delete($val) ) {
+        $res = false;
+      }
+    }
+    if($res){
+      $this->MUser->commit();
       $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
     }
-    else {
+    else{
+      $this->MUser->rollback();
       $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
     }
+//     if ( $this->MUser->logicalDelete($this->request->data['id']) ) {
+//       $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
+//     }
+//     else {
+//       $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
+//     }
   }
 
   private function _viewElement(){

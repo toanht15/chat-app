@@ -10,7 +10,32 @@
   <div id='muser_menu' class="p20trl">
     <?php if( $limitUserNum > $userListCnt ): ?>
       <div class="fLeft" >
-        <?= $this->Html->image('add.png', array('alt' => '登録', 'class' => 'btn-shadow greenBtn', 'width' => 30, 'height' => 30, 'onclick' => 'openAddDialog()')) ?>
+        <span>
+          <a>
+            <?= $this->Html->image('add.png', array(
+                'alt' => '登録',
+                'id'=>'m_users_add_btn',
+                'class' => 'btn-shadow disOffgreenBtn commontooltip',
+                'data-text' => '新規追加',
+                'data-balloon-position' => '36',
+                'width' => 45,
+                'height' => 45,
+                'onclick' => 'openAddDialog()',
+            )) ?>
+          </a>
+        </span>
+        <span>
+          <a>
+            <?= $this->Html->image('dustbox.png', array(
+                'alt' => '削除',
+                'id'=>'m_users_dustbox_btn',
+                'class' => 'btn-shadow disOffgrayBtn commontooltip',
+                'data-text' => '削除する',
+                'data-balloon-position' => '35',
+                'width' => 45,
+                'height' => 45)) ?>
+          </a>
+        </span>
       </div>
     <?php endif;?>
     <!-- 検索窓 -->
@@ -39,12 +64,20 @@
     <table>
       <thead>
       <tr>
+<!-- UI/UX統合対応start -->
+        <th width=" 5%">
+          <input type="checkbox" name="allCheck" id="allCheck" >
+          <label for="allCheck"></label>
+        </th>
+<!-- UI/UX統合対応end -->
         <th>No</th>
         <th>氏名</th>
         <th>表示名</th>
         <th>権限</th>
         <th>メールアドレス</th>
+<!--
         <th>操作</th>
+ -->
       </tr>
       </thead>
       <tbody>
@@ -55,11 +88,18 @@
         $no = $prevCnt + h($key+1);
         ?>
         <tr class="pointer" onclick="<?="openEditDialog('".h($val['MUser']['id'])."')"?>">
+<!-- UI/UX統合対応start -->
+          <td class="tCenter" onclick="event.stopPropagation();">
+            <input type="checkbox" name="selectTab" id="selectTab<?=$key?>" value="<?=$val['MUser']['id']?>">
+            <label for="selectTab<?=$key?>"></label>
+          </td>
+<!-- UI/UX統合対応end -->
           <td class="tCenter"><?=$no?></td>
           <td class="tCenter"><?=$val['MUser']['user_name']?></td>
           <td class="tCenter"><?=$val['MUser']['display_name']?></td>
           <td class="tCenter"><?=$authorityList[$val['MUser']['permission_level']]?></td>
           <td class="tCenter"><?=$val['MUser']['mail_address']?></td>
+<!--
           <td class="tCenter ctrlBtnArea">
             <?php
             if ( $userInfo['id'] === $val['MUser']['id'] ) {
@@ -97,10 +137,9 @@
                 )
               );
             }
-
             ?>
-
           </td>
+ -->
         </tr>
       <?php endforeach; ?>
       </tbody>
