@@ -589,8 +589,8 @@ $( function() {
         }
       }
       if(e.type === 'load') {
-        $(allTabList[i]).data('defaultWidth', tab_w);
-        allDefaultTabWidth += tab_w;
+        $(allTabList[i]).data('defaultWidth', allTabList[i].clientWidth);
+        allDefaultTabWidth += allTabList[i].clientWidth + 1;
       }
     }
 

@@ -56,7 +56,6 @@
               <textarea id="pages-attention" disabled>資料保存後にページ単位で原稿を設定することができます。</textarea>
             </manuscript-input-area>
             <?=$this->Form->hidden('manuscript')?>
-
           </content>
         </documentArea>
       </li>
