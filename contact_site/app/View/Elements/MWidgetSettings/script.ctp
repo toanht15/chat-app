@@ -122,6 +122,481 @@ sincloApp.controller('WidgetCtrl', function($scope){
       }
     }
 
+    $scope.showColorSettingDetails = function(){
+      var chk = document.getElementById('MWidgetSettingColorSettingType').checked;
+      //高度な設定を行う行わないを制御するチェックボックス
+      if(chk) {
+        $('#color_setting_details').show();
+        $scope.color_setting_type = '1';
+      }
+      else{
+        $('#color_setting_details').hide();
+        $scope.color_setting_type = '0';
+//         $scope.re_border_none = '0';
+//         $scope.se_border_none = '0';
+//         $scope.message_box_border_none = '';
+//         $scope.widget_inside_border_none = '0';
+      }
+      return;
+    }
+
+    /* 各基本カラー（高度な設定以外の色）が変更されたら対応する子カラーもその色に変更する start */
+    //メインカラー
+    $scope.changeMainColor = function(){
+      var colorid = $scope.main_color;
+      var rgb = $scope.checkRgbColor(colorid);
+      //企業名文字色
+      $scope.sub_title_text_color = colorid;
+      document.getElementById('MWidgetSettingSubTitleTextColor').style.backgroundColor = colorid;
+      document.getElementById('MWidgetSettingSubTitleTextColor').style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+      //企業名担当者名文字色
+      $scope.c_name_text_color = colorid;
+      document.getElementById('MWidgetSettingCNameTextColor').style.backgroundColor = colorid;
+      document.getElementById('MWidgetSettingCNameTextColor').style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+      //送信ボタン背景色
+      $scope.chat_send_btn_background_color = colorid;
+      document.getElementById('MWidgetSettingChatSendBtnBackgroundColor').style.backgroundColor = colorid;
+      document.getElementById('MWidgetSettingChatSendBtnBackgroundColor').style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+      //企業側吹き出し背景色※算出
+      var main_color = $scope.main_color;
+      var code = main_color.substr(1), r,g,b;
+      if (code.length === 3) {
+        r = String(code.substr(0,1)) + String(code.substr(0,1));
+        g = String(code.substr(1,1)) + String(code.substr(1,1));
+        b = String(code.substr(2)) + String(code.substr(2));
+      }
+      else {
+        r = String(code.substr(0,2));
+        g = String(code.substr(2,2));
+        b = String(code.substr(4));
+      }
+
+      var balloonR = String(Math.floor(255 - (255 - parseInt(r,16)) * 0.1));
+      var balloonG = String(Math.floor(255 - (255 - parseInt(g,16)) * 0.1));
+      var balloonB = String(Math.floor(255 - (255 - parseInt(b,16)) * 0.1));
+      var codeR = parseInt(balloonR).toString(16);
+      var codeG = parseInt(balloonG).toString(16);
+      var codeB = parseInt(balloonB).toString(16);
+      var code = ('#' + codeR + codeG + codeB).toUpperCase();
+      $scope.re_background_color = code;
+      var rgb = 'rgb(' + balloonR  + ', ' +  balloonG  + ', ' +  balloonB + ')';
+      var element = document.getElementById('MWidgetSettingReBackgroundColor');
+      element.style.backgroundColor = rgb;
+      element.style.color = $scope.checkTxtColor(balloonR,balloonG,balloonB);
+      jscolor.installByClassName("jscolor");
+    }
+    //タイトル文字色
+    $scope.changeStringColor = function(){
+      //現在設定されているタイトルバー文字色に変更
+      var colorid = $scope.string_color;
+      //送信ボタン文字色
+      $scope.chat_send_btn_text_color = colorid;
+      var rgb = $scope.checkRgbColor(colorid);
+      var rgbcode = 'rgb(' + rgb['r']  + ', ' +  rgb['g']  + ', ' +  rgb['b'] + ')';
+      var element = document.getElementById('MWidgetSettingChatSendBtnTextColor');
+      element.style.backgroundColor = rgbcode;
+      element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+      jscolor.installByClassName("jscolor");
+    }
+    //吹き出し文字色
+    $scope.changeMessageTextColor = function(){
+      //現在設定されている吹き出し文字色に変更
+      var colorid = $scope.message_text_color;
+      //企業側吹き出し文字色
+      $scope.re_text_color = colorid;
+      var rgb = $scope.checkRgbColor(colorid);
+      var rgbcode = 'rgb(' + rgb['r']  + ', ' +  rgb['g']  + ', ' +  rgb['b'] + ')';
+      document.getElementById('MWidgetSettingReTextColor').style.backgroundColor = rgbcode;
+      document.getElementById('MWidgetSettingReTextColor').style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+      //訪問者側吹き出し文字色
+      $scope.se_text_color = colorid;
+      document.getElementById('MWidgetSettingSeTextColor').style.backgroundColor = rgbcode;
+      document.getElementById('MWidgetSettingSeTextColor').style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+      jscolor.installByClassName("jscolor");
+    }
+    //その他文字色
+    $scope.changeOtherTextColor = function(){
+      //現在設定されているその他文字色に変更
+      var colorid = $scope.other_text_color;
+      //説明文文字色
+      $scope.description_text_color = colorid;
+      var rgb = $scope.checkRgbColor(colorid);
+      var rgbcode = 'rgb(' + rgb['r']  + ', ' +  rgb['g']  + ', ' +  rgb['b'] + ')';
+      document.getElementById('MWidgetSettingDescriptionTextColor').style.backgroundColor = rgbcode;
+      document.getElementById('MWidgetSettingDescriptionTextColor').style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+      //メッセージBOX文字色
+      $scope.message_box_text_color = colorid;
+      document.getElementById('MWidgetSettingMessageBoxTextColor').style.backgroundColor = rgbcode;
+      document.getElementById('MWidgetSettingMessageBoxTextColor').style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+      jscolor.installByClassName("jscolor");
+    }
+    //ウィジェット枠線色
+    $scope.changeWidgetBorderColor = function(){
+      //現在設定されているウィジェット枠線色に変更
+      var colorid = $scope.widget_border_color;
+      //ウィジェット内枠線色
+      $scope.widget_inside_border_color = colorid;
+      var rgb = $scope.checkRgbColor(colorid);
+      var rgbcode = 'rgb(' + rgb['r']  + ', ' +  rgb['g']  + ', ' +  rgb['b'] + ')';
+      var element = document.getElementById('MWidgetSettingWidgetInsideBorderColor');
+      element.style.backgroundColor = rgbcode;
+      element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+      jscolor.installByClassName("jscolor");
+    }
+    //吹き出し枠線色
+    $scope.changeChatTalkBorderColor = function(){
+      //現在設定されている吹き出し枠線色に変更
+      var colorid = $scope.chat_talk_border_color;
+      //企業側吹き出し枠線色
+      $scope.re_border_color = colorid;
+      var rgb = $scope.checkRgbColor(colorid);
+      var rgbcode = 'rgb(' + rgb['r']  + ', ' +  rgb['g']  + ', ' +  rgb['b'] + ')';
+      document.getElementById('MWidgetSettingReBorderColor').style.backgroundColor = rgbcode;
+      document.getElementById('MWidgetSettingReBorderColor').style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+      //訪問者側吹き出し枠線色
+      $scope.se_border_color = colorid;
+      document.getElementById('MWidgetSettingSeBorderColor').style.backgroundColor = rgbcode;
+      document.getElementById('MWidgetSettingSeBorderColor').style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+      //メッセージBOX枠線色
+      $scope.message_box_border_color = colorid;
+      document.getElementById('MWidgetSettingMessageBoxBorderColor').style.backgroundColor = rgbcode;
+      document.getElementById('MWidgetSettingMessageBoxBorderColor').style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+      jscolor.installByClassName("jscolor");
+    }
+    /* 各基本カラー（高度な設定以外の色）が変更されたら対応する子カラーもその色に変更する end */
+
+    /* 各ボーダー色を変更した時にその色に対応する「枠線なしチェックボックス」が入っていたらチェックを外す start*/
+    //企業側吹き出し枠線色
+    $scope.changeReBorderColor = function(){
+      var chk = document.getElementById('MWidgetSettingReBorderNone').checked;
+      if(chk){
+        var element = document.getElementById('MWidgetSettingReBorderColor');
+        if(!element.classList.contains("jscolor{hash:true}")){
+          element.classList.add("jscolor{hash:true}");
+          jscolor.installByClassName("jscolor");
+        }
+        element.jscolor.show();
+        var colorid = $scope.chat_talk_border_color;
+        $scope.re_border_color = colorid;
+        var rgb = $scope.checkRgbColor(colorid);
+        element.style.backgroundColor = colorid;
+        element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+        document.getElementById('MWidgetSettingReBorderNone').checked = false;
+        $scope.re_border_none = '';
+      }
+    }
+    //訪問者側吹き出し枠線色
+    $scope.changeSeBorderColor = function(){
+      var chk = document.getElementById('MWidgetSettingSeBorderNone').checked;
+      if(chk){
+        var element = document.getElementById('MWidgetSettingSeBorderColor');
+        if(!element.classList.contains("jscolor{hash:true}")){
+          element.classList.add("jscolor{hash:true}");
+          jscolor.installByClassName("jscolor");
+        }
+        element.jscolor.show();
+        var colorid = $scope.chat_talk_border_color;
+        $scope.se_border_color = colorid;
+        var rgb = $scope.checkRgbColor(colorid);
+        element.style.backgroundColor = colorid;
+        element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+        document.getElementById('MWidgetSettingSeBorderNone').checked = false;
+        $scope.se_border_none = '';
+      }
+    }
+    //メッセージBOX枠線色
+    $scope.changeMessageBoxBorderColor = function(){
+      var chk = document.getElementById('MWidgetSettingMessageBoxBorderNone').checked;
+      if(chk){
+        var element = document.getElementById('MWidgetSettingMessageBoxBorderColor');
+        if(!element.classList.contains("jscolor{hash:true}")){
+          element.classList.add("jscolor{hash:true}");
+          jscolor.installByClassName("jscolor");
+        }
+        element.jscolor.show();
+        var colorid = $scope.chat_talk_border_color;
+        $scope.message_box_border_color = colorid;
+        var rgb = $scope.checkRgbColor(colorid);
+        element.style.backgroundColor = colorid;
+        element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+        document.getElementById('MWidgetSettingMessageBoxBorderNone').checked = false;
+        $scope.message_box_border_none = false;
+      }
+    }
+    //ウィジェット内枠線色
+    $scope.changeWidgetInsideBorderColor = function(){
+      var chk = document.getElementById('MWidgetSettingWidgetInsideBorderNone').checked;
+      if(chk){
+        var element = document.getElementById('MWidgetSettingWidgetInsideBorderColor');
+        if(!element.classList.contains("jscolor{hash:true}")){
+          element.classList.add("jscolor{hash:true}");
+          jscolor.installByClassName("jscolor");
+        }
+        element.jscolor.show();
+        var colorid = $scope.widget_border_color;
+        $scope.widget_inside_border_color = colorid;
+        var rgb = $scope.checkRgbColor(colorid);
+        element.style.backgroundColor = colorid;
+        element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+        document.getElementById('MWidgetSettingWidgetInsideBorderNone').checked = false;
+        $scope.widget_inside_border_none = false;
+      }
+//       var flg = $scope.widget_inside_border_none;
+//       if(flg){
+//         $scope.widget_inside_border_none = '0';
+//       }
+    }
+    /* 各ボーダー色を変更した時にその色に対応する「枠線なしチェックボックス」が入っていたらチェックを外す end*/
+
+
+    //各標準色に戻す
+    /*
+    *ヘッダ部
+    * 7.企業名文字色'sub_title_text_color':現在設定されているメインカラーに変更
+    * 8.説明文文字色'description_text_color':現在設定されているその他文字色に変更ok
+    *
+    *チャットエリア部
+    * 9.チャットエリア背景色'chat_talk_background_color':標準カラーに変更ok
+    * 10.企業名担当者名文字色'c_name_text_color':現在設定されているメインカラーに変更
+    * 11.企業側吹き出し文字色're_text_color':現在設定されている吹き出し文字色に変更ok
+    * 12.企業側吹き出し背景色're_background_color':標準カラーに変更ok
+    * 13.企業側吹き出し枠線色're_border_color':現在設定されている吹き出し枠線色に変更ok
+    * 14.訪問者側吹き出し文字色'se_text_color':現在設定されている吹き出し文字色に変更ok
+    * 15.訪問者側吹き出し背景色'se_background_color':標準カラーに変更ok
+    * 16.訪問者側吹き出し枠線色'se_border_color':現在設定されている吹き出し枠線色に変更ok
+    *
+    *メッセージエリア部
+    * 17.メッセージエリア背景色'chat_message_background_color':標準カラーに変更ok
+    * 18.メッセージBOX文字色'message_box_text_color':現在設定されているその他文字色に変更ok
+    * 19.メッセージBOX背景色'message_box_background_color':標準カラーに変更ok
+    * 20.メッセージBOX枠線色'message_box_border_color':現在設定されている吹き出し枠線色に変更ok
+    * 21.送信ボタン文字色'chat_send_btn_text_color':現在設定されているタイトルバー文字色に変更ok
+    * 22.送信ボタン背景色'chat_send_btn_background_color':現在設定されているメインカラーに変更
+    *
+    *その他
+    * 23.ウィジット内枠線色'widget_inside_border_color':現在設定されているウィジェット枠線色に変更ok
+    */
+    $scope.returnStandardColor = function(id){
+      if(id === 'chat_send_btn_text_color'){
+        //現在設定されているタイトルバー文字色に変更
+        var colorid = $scope.string_color;
+        $scope.chat_send_btn_text_color = colorid;
+        //MWidgetSettingChatSendBtnTextColor
+        var rgb = $scope.checkRgbColor(colorid);
+        var rgbcode = 'rgb(' + rgb['r']  + ', ' +  rgb['g']  + ', ' +  rgb['b'] + ')';
+        var element = document.getElementById('MWidgetSettingChatSendBtnTextColor');
+        element.style.backgroundColor = rgbcode;
+        element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+      }
+      if(id === 'widget_inside_border_color'){
+        //現在設定されているウィジェット枠線色に変更
+        var colorid = $scope.widget_border_color;
+        $scope.widget_inside_border_color = colorid;
+        $scope.changeWidgetInsideBorderColor();
+        //MWidgetSettingWidgetInsideBorderColor
+        var rgb = $scope.checkRgbColor(colorid);
+        var rgbcode = 'rgb(' + rgb['r']  + ', ' +  rgb['g']  + ', ' +  rgb['b'] + ')';
+        var element = document.getElementById('MWidgetSettingWidgetInsideBorderColor');
+        element.style.backgroundColor = rgbcode;
+        element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+      }
+      if(id === 're_background_color'){
+        //企業側吹き出し背景色は現在設定されているメインカラーから算出する
+        var main_color = $scope.main_color;
+        var code = main_color.substr(1), r,g,b;
+        if (code.length === 3) {
+          r = String(code.substr(0,1)) + String(code.substr(0,1));
+          g = String(code.substr(1,1)) + String(code.substr(1,1));
+          b = String(code.substr(2)) + String(code.substr(2));
+        }
+        else {
+          r = String(code.substr(0,2));
+          g = String(code.substr(2,2));
+          b = String(code.substr(4));
+        }
+
+        var balloonR = String(Math.floor(255 - (255 - parseInt(r,16)) * 0.1));
+        var balloonG = String(Math.floor(255 - (255 - parseInt(g,16)) * 0.1));
+        var balloonB = String(Math.floor(255 - (255 - parseInt(b,16)) * 0.1));
+        var codeR = parseInt(balloonR).toString(16);
+        var codeG = parseInt(balloonG).toString(16);
+        var codeB = parseInt(balloonB).toString(16);
+        var code = ('#' + codeR + codeG + codeB).toUpperCase();
+        $scope.re_background_color = code;
+        var rgb = 'rgb(' + balloonR  + ', ' +  balloonG  + ', ' +  balloonB + ')';
+        var element = document.getElementById('MWidgetSettingReBackgroundColor');
+        element.style.backgroundColor = rgb;
+        element.style.color = $scope.checkTxtColor(balloonR,balloonG,balloonB);
+
+      }
+      if(id === 'description_text_color' || id === 'message_box_text_color'){
+        //現在設定されているその他文字色に変更
+        var colorid = $scope.other_text_color;
+        switch (id) {
+          case "description_text_color":
+            $scope.description_text_color = colorid;
+            //MWidgetSettingDescriptionTextColor
+            var rgb = $scope.checkRgbColor(colorid);
+            var rgbcode = 'rgb(' + rgb['r']  + ', ' +  rgb['g']  + ', ' +  rgb['b'] + ')';
+            var element = document.getElementById('MWidgetSettingDescriptionTextColor');
+            element.style.backgroundColor = rgbcode;
+            element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+            break;
+          case "message_box_text_color":
+            $scope.message_box_text_color = colorid;
+            //MWidgetSettingMessageBoxTextColor
+            var rgb = $scope.checkRgbColor(colorid);
+            var rgbcode = 'rgb(' + rgb['r']  + ', ' +  rgb['g']  + ', ' +  rgb['b'] + ')';
+            var element = document.getElementById('MWidgetSettingMessageBoxTextColor');
+            element.style.backgroundColor = rgbcode;
+            element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+            break;
+        }
+      }
+      if(id === 're_text_color' || id === 'se_text_color'){
+        //現在設定されている吹き出し文字色に変更
+        var colorid = $scope.message_text_color;
+        switch (id) {
+          case "re_text_color":
+            $scope.re_text_color = colorid;
+            //MWidgetSettingReTextColor
+            var rgb = $scope.checkRgbColor(colorid);
+            var rgbcode = 'rgb(' + rgb['r']  + ', ' +  rgb['g']  + ', ' +  rgb['b'] + ')';
+            var element = document.getElementById('MWidgetSettingReTextColor');
+            element.style.backgroundColor = rgbcode;
+            element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+            break;
+          case "se_text_color":
+            $scope.se_text_color = colorid;
+            //MWidgetSettingSeTextColor
+            var rgb = $scope.checkRgbColor(colorid);
+            var rgbcode = 'rgb(' + rgb['r']  + ', ' +  rgb['g']  + ', ' +  rgb['b'] + ')';
+            var element = document.getElementById('MWidgetSettingSeTextColor');
+            element.style.backgroundColor = rgbcode;
+            element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+            break;
+        }
+      }
+      if(id === 're_border_color' || id === 'se_border_color' || id === 'message_box_border_color'){
+        //現在設定されている吹き出し枠線色に変更
+        var colorid = $scope.chat_talk_border_color;
+        switch (id) {
+          case "re_border_color":
+            $scope.re_border_color = colorid;
+            $scope.changeReBorderColor();
+            //MWidgetSettingReBorderColor
+            var rgb = $scope.checkRgbColor(colorid);
+            var rgbcode = 'rgb(' + rgb['r']  + ', ' +  rgb['g']  + ', ' +  rgb['b'] + ')';
+            var element = document.getElementById('MWidgetSettingReBorderColor');
+            element.style.backgroundColor = rgbcode;
+            element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+            break;
+          case "se_border_color":
+            $scope.se_border_color = colorid;
+            $scope.changeSeBorderColor();
+            //MWidgetSettingSeBorderColor
+            var rgb = $scope.checkRgbColor(colorid);
+            var rgbcode = 'rgb(' + rgb['r']  + ', ' +  rgb['g']  + ', ' +  rgb['b'] + ')';
+            var element = document.getElementById('MWidgetSettingSeBorderColor');
+            element.style.backgroundColor = rgbcode;
+            element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+            break;
+          case "message_box_border_color":
+            $scope.message_box_border_color = colorid;
+            $scope.changeMessageBoxBorderColor();
+            //MWidgetSettingMessageBoxBorderColor
+            var rgb = $scope.checkRgbColor(colorid);
+            var rgbcode = 'rgb(' + rgb['r']  + ', ' +  rgb['g']  + ', ' +  rgb['b'] + ')';
+            var element = document.getElementById('MWidgetSettingMessageBoxBorderColor');
+            element.style.backgroundColor = rgbcode;
+            element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+            break;
+        }
+      }
+      if(id === 'chat_talk_background_color'
+         || id === 'se_background_color'
+         || id === 'chat_message_background_color'
+         || id === 'message_box_background_color'){
+        //標準カラーに変更
+        switch (id) {
+          case "chat_talk_background_color":
+            var colorid = '<?=CHAT_TALK_BACKGROUND_COLOR?>';
+            $scope.chat_talk_background_color = colorid;
+            //MWidgetSettingChatTalkBackgroundColor
+            var rgb = $scope.checkRgbColor(colorid);
+            var rgbcode = 'rgb(' + rgb['r']  + ', ' +  rgb['g']  + ', ' +  rgb['b'] + ')';
+            var element = document.getElementById('MWidgetSettingChatTalkBackgroundColor');
+            element.style.backgroundColor = rgbcode;
+            element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+            break;
+          case "se_background_color":
+            var colorid = '<?=SE_BACKGROUND_COLOR?>';
+            $scope.se_background_color = colorid;
+            //MWidgetSettingSeBackgroundColor
+            var rgb = $scope.checkRgbColor(colorid);
+            var rgbcode = 'rgb(' + rgb['r']  + ', ' +  rgb['g']  + ', ' +  rgb['b'] + ')';
+            var element = document.getElementById('MWidgetSettingSeBackgroundColor');
+            element.style.backgroundColor = rgbcode;
+            element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+            break;
+          case "chat_message_background_color":
+            var colorid = '<?=CHAT_MESSAGE_BACKGROUND_COLOR?>';
+            $scope.chat_message_background_color = colorid;
+            //MWidgetSettingChatMessageBackgroundColor
+            var rgb = $scope.checkRgbColor(colorid);
+            var rgbcode = 'rgb(' + rgb['r']  + ', ' +  rgb['g']  + ', ' +  rgb['b'] + ')';
+            var element = document.getElementById('MWidgetSettingChatMessageBackgroundColor');
+            element.style.backgroundColor = rgbcode;
+            element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+            break;
+          case "message_box_background_color":
+            var colorid = '<?=MESSAGE_BOX_BACKGROUND_COLOR?>';
+            $scope.message_box_background_color = colorid;
+            //MWidgetSettingMessageBoxBackgroundColor
+            var rgb = $scope.checkRgbColor(colorid);
+            var rgbcode = 'rgb(' + rgb['r']  + ', ' +  rgb['g']  + ', ' +  rgb['b'] + ')';
+            var element = document.getElementById('MWidgetSettingMessageBoxBackgroundColor');
+            element.style.backgroundColor = rgbcode;
+            element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+            break;
+        }
+      }
+      if(id === 'sub_title_text_color' || id === 'c_name_text_color' || id === 'chat_send_btn_background_color'){
+        //現在設定されているメインカラーに変更
+        var colorid = $scope.main_color;
+        switch (id) {
+          case "sub_title_text_color":
+            $scope.sub_title_text_color = colorid;
+            //MWidgetSettingSubTitleTextColor
+            var rgb = $scope.checkRgbColor(colorid);
+            var rgbcode = 'rgb(' + rgb['r']  + ', ' +  rgb['g']  + ', ' +  rgb['b'] + ')';
+            var element = document.getElementById('MWidgetSettingSubTitleTextColor');
+            element.style.backgroundColor = rgbcode;
+            element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+            break;
+          case "c_name_text_color":
+            $scope.c_name_text_color = colorid;
+            //MWidgetSettingCNameTextColor
+            var rgb = $scope.checkRgbColor(colorid);
+            var rgbcode = 'rgb(' + rgb['r']  + ', ' +  rgb['g']  + ', ' +  rgb['b'] + ')';
+            var element = document.getElementById('MWidgetSettingCNameTextColor');
+            element.style.backgroundColor = rgbcode;
+            element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+            break;
+          case "chat_send_btn_background_color":
+            $scope.chat_send_btn_background_color = colorid;
+            //MWidgetSettingChatSendBtnBackgroundColor
+            var rgb = $scope.checkRgbColor(colorid);
+            var rgbcode = 'rgb(' + rgb['r']  + ', ' +  rgb['g']  + ', ' +  rgb['b'] + ')';
+            var element = document.getElementById('MWidgetSettingChatSendBtnBackgroundColor');
+            element.style.backgroundColor = rgbcode;
+            element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+            break;
+        }
+      }
+      jscolor.installByClassName("jscolor");
+    }
+
     $scope.$watch('chat_trigger', function(){
       if ( Number($scope.chat_trigger) === 1 ) {
         $scope.chat_area_placeholder_pc = "（Shift+Enterで改行/Enterで送信）";
@@ -135,22 +610,55 @@ sincloApp.controller('WidgetCtrl', function($scope){
 
     $scope.makeFaintColor = function(){
       var defColor = "#F1F5C8";
-      if ( $scope.main_color.indexOf("#") >= 0 ) {
-        var code = $scope.main_color.substr(1), r,g,b;
-        if (code.length === 3) {
-          r = String(code.substr(0,1)) + String(code.substr(0,1));
-          g = String(code.substr(1,1)) + String(code.substr(1,1));
-          b = String(code.substr(2)) + String(code.substr(2));
+      if($scope.color_setting_type === '1'){
+        defColor = $scope.re_background_color;
+      }
+      else{
+        if ( $scope.main_color.indexOf("#") >= 0 ) {
+          var code = $scope.main_color.substr(1), r,g,b;
+          if (code.length === 3) {
+            r = String(code.substr(0,1)) + String(code.substr(0,1));
+            g = String(code.substr(1,1)) + String(code.substr(1,1));
+            b = String(code.substr(2)) + String(code.substr(2));
+          }
+          else {
+            r = String(code.substr(0,2));
+            g = String(code.substr(2,2));
+            b = String(code.substr(4));
+          }
+          var balloonR = String(Math.floor(255 - (255 - parseInt(r,16)) * 0.1));
+          var balloonG = String(Math.floor(255 - (255 - parseInt(g,16)) * 0.1));
+          var balloonB = String(Math.floor(255 - (255 - parseInt(b,16)) * 0.1));
+          defColor = 'rgb(' + balloonR  + ', ' +  balloonG  + ', ' +  balloonB + ')';
+//          defColor = "rgba(" + parseInt(r,16) + ", " + parseInt(g,16) + ", " + parseInt(b,16) + ", 0.1)";
         }
-        else {
-          r = String(code.substr(0,2));
-          g = String(code.substr(2,2));
-          b = String(code.substr(4));
-        }
-        defColor = "rgba(" + parseInt(r,16) + ", " + parseInt(g,16) + ", " + parseInt(b,16) + ", 0.1)";
       }
       return defColor;
     };
+
+    $scope.getTalkBorderColor = function(chk){
+      var defColor = "#E8E7E0";
+      if($scope.color_setting_type === '1'){
+        if(chk === 're'){
+          defColor = $scope.re_border_color;
+        }
+        else{
+          defColor = $scope.se_border_color;
+        }
+      }
+      else{
+        defColor = $scope.chat_talk_border_color;
+      }
+      return defColor;
+    }
+
+    $scope.getSeBackgroundColor = function(){
+      var defColor = "#FFFFFF";
+      if($scope.color_setting_type === '1'){
+        defColor = $scope.se_background_color;
+      }
+      return defColor;
+    }
 
   $scope.makeBalloonTriangleColor = function(){
     var defColor = "#F1F5C8";
@@ -393,6 +901,41 @@ sincloApp.controller('WidgetCtrl', function($scope){
       });
     };
 
+    //カラーコードのＲＧＢを算出
+    $scope.checkRgbColor = function(color){
+      var code = color.substr(1), r,g,b;
+      if (code.length === 3) {
+        r = String(code.substr(0,1)) + String(code.substr(0,1));
+        g = String(code.substr(1,1)) + String(code.substr(1,1));
+        b = String(code.substr(2)) + String(code.substr(2));
+      }
+      else {
+        r = String(code.substr(0,2));
+        g = String(code.substr(2,2));
+        b = String(code.substr(4));
+      }
+      var balloonR = String(Math.floor(255 - (255 - parseInt(r,16))));
+      var balloonG = String(Math.floor(255 - (255 - parseInt(g,16))));
+      var balloonB = String(Math.floor(255 - (255 - parseInt(b,16))));
+      var res = {
+          r: balloonR,
+          g: balloonG,
+          b: balloonB
+      };
+      return res;
+    }
+
+    //テキストカラーの振り分け
+    $scope.checkTxtColor = function(cR,cG,cB){
+      // 最高値は 255 なので、約半分の数値 127 を堺目にして白/黒の判別する
+      var cY = 0.3*cR + 0.6*cG + 0.1*cB;
+
+      if(cY > 127){
+          return "#000000"; // 黒に設定
+      }
+      return "#FFFFFF"; // 白に設定
+    }
+
     //ウィジェットサイズがクリックされた時の動作
     $scope.clickWidgetSizeTypeToggle = function(siz){
       var settingTitle = document.getElementById('MWidgetSettingTitle');
@@ -531,6 +1074,102 @@ sincloApp.controller('WidgetCtrl', function($scope){
       $scope.chat_message_copy = Boolean(Number($scope.chat_message_copy));
       $("#MWidgetSettingChatMessageCopy").prop("checked", $scope.chat_message_copy);
     });
+
+    //各チェックボックスがクリックされた時の値を明示的に制御する
+    $("#MWidgetSettingReBorderNone").on("click", function(e){
+      //企業側吹き出し枠線なし
+      var chk = document.getElementById('MWidgetSettingReBorderNone').checked;
+      var element = document.getElementById('MWidgetSettingReBorderColor');
+      if(chk) {
+        $scope.re_border_none = true;
+        element.style.backgroundColor = "#FFFFFF";
+        element.style.color = "#909090";
+        $scope.re_border_color = "なし"
+      }
+      else{
+        $scope.re_border_none = false;
+        //現在設定されている吹き出し枠線色に変更
+        var colorid = $scope.chat_talk_border_color;
+        $scope.re_border_color = colorid;
+        var rgb = $scope.checkRgbColor(colorid);
+        element.style.backgroundColor = colorid;
+        element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+      }
+    });
+    $("#MWidgetSettingReBorderNone").on("load", function(e){
+      var chk = document.getElementById('MWidgetSettingReBorderNone').checked;
+    });
+    //load
+    $("#MWidgetSettingSeBorderNone").on("click", function(e){
+      //訪問者側吹き出し枠線なし
+      var chk = document.getElementById('MWidgetSettingSeBorderNone').checked;
+      var element = document.getElementById('MWidgetSettingSeBorderColor');
+      if(chk) {
+        $scope.se_border_none = true;
+        element.style.backgroundColor = "#FFFFFF";
+        element.style.color = "#909090";
+        $scope.se_border_color = "なし"
+      }
+      else{
+        $scope.se_border_none = false;
+        //現在設定されている吹き出し枠線色に変更
+        var colorid = $scope.chat_talk_border_color;
+        $scope.se_border_color = colorid;
+        var rgb = $scope.checkRgbColor(colorid);
+        element.style.backgroundColor = colorid;
+        element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+      }
+    });
+    $("#MWidgetSettingMessageBoxBorderNone").on("click", function(e){
+      //メッセージボックス枠線なし
+      var chk = document.getElementById('MWidgetSettingMessageBoxBorderNone').checked;
+      var element = document.getElementById('MWidgetSettingMessageBoxBorderColor');
+      if(chk) {
+        $scope.message_box_border_none = true;
+        element.style.backgroundColor = "#FFFFFF";
+        element.style.color = "#909090";
+        $scope.message_box_border_color = "なし"
+      }
+      else{
+        $scope.message_box_border_none = false;
+        //現在設定されている吹き出し枠線色に変更
+        var colorid = $scope.chat_talk_border_color;
+        $scope.message_box_border_color = colorid;
+        var rgb = $scope.checkRgbColor(colorid);
+        element.style.backgroundColor = colorid;
+        element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+      }
+    });
+    $("#MWidgetSettingWidgetInsideBorderNone").on("click", function(e){
+      //ウィジット内枠線なし
+      var chk = document.getElementById('MWidgetSettingWidgetInsideBorderNone').checked;
+      var element = document.getElementById('MWidgetSettingWidgetInsideBorderColor');
+      if(chk) {
+        $scope.widget_inside_border_none = true;
+        element.style.backgroundColor = "#FFFFFF";
+        element.style.color = "#909090";
+        $scope.widget_inside_border_color = "なし"
+      }
+      else{
+        $scope.widget_inside_border_none = false;
+        //現在設定されているウィジェット枠線色に変更
+        var colorid = $scope.widget_border_color;
+        $scope.widget_inside_border_color = colorid;
+        var rgb = $scope.checkRgbColor(colorid);
+        element.style.backgroundColor = colorid;
+        element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+      }
+    });
+//     //高度な設定を行う行わないを制御するチェックボックス
+//     $("#MWidgetSettingColorSettingType").on("click", function(e){
+//       var checked = $(this).prop('checked');
+//       if(checked) {
+//         $('#color_setting_details').show();
+//       }
+//       else{
+//         $('#color_setting_details').hide();
+//       }
+//     });
 
     angular.element(window).on("focus", ".showSp", function(e){
         $scope.switchWidget(3);
