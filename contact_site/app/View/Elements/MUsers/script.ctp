@@ -154,13 +154,13 @@ function openConfirmDialog(){
 
 //一度だけ実行
 var toExecutableOnce = function(f){
-    var called = false, result = undefined;
-    return function(){
-        if(!called){
-            result = f.apply(this, arguments);
-            called = true;
-        }
-        return result;
-    };
+  var called = false, result = undefined;
+  return function(){
+      if(!called){
+          result = f.apply(this, arguments);
+          called = true;
+      }
+      return result;
+  };
 };
 </script>
