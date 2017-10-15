@@ -53,8 +53,8 @@ if ( isset($history['THistory']['visitors_id']) ) {
             <td class="tRight"><?=$this->htmlEx->calcTime($history['THistory']['access_date'], $history['THistory']['out_date']) ?></td>
         <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
             <td class="tCenter"><?php
-            if ($history['THistoryChatLog']['lastSpeechTime']){
-              echo $this->htmlEx->calcTime($history['THistoryChatLog']['lastSpeechTime'], $history['THistory']['out_date']);
+            if ($history['LastSpeechTime']['lastSpeechTime']){
+              echo $this->htmlEx->calcTime($history['LastSpeechTime']['lastSpeechTime'], $history['THistory']['out_date']);
             }
             ?></td>
             <td class="tCenter"><?php
