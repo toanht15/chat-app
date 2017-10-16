@@ -1110,8 +1110,11 @@ io.sockets.on('connection', function (socket) {
       var keys = Object.keys(customerList[obj.siteKey]);
       if(keys && keys.length > 0) {
         keys.forEach(function(key) {
-          if(key.indexOf(term) >= 0) {
-            result.push(customerList[obj.siteKey][key]);
+          var splitedKey = key.split("_");
+          if(splitedKey[0]) {
+            if(splitedKey[0].indexOf(term) === 0) { // 前方一致検索
+              result.push(customerList[obj.siteKey][key]);
+            }
           }
         });
       }
