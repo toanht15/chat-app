@@ -1,5 +1,4 @@
 <script type="text/javascript">
-console.log('jsdklajf');
 <?= $this->element('TDocuments/loadScreen'); ?>
 <?php if ( $this->action !== "index" ) : ?>
 function handleFileSelect(evt) {
@@ -177,8 +176,6 @@ var slideJsApi,slideJsApi2,frameSize,slideJsCNST;
       this.rotation = rotation;
       this.filePath = filePath;
       this.manuscript = JSON.parse(htmlEntities( this.manuscript, 'decode' ));
-      console.log('資料チェック');
-      console.log(this.manuscript);
       this.makePage(); // 初期スライドを作成
       var limitPage = (this.currentPage + 3 > this.maxPage) ? this.maxPage : this.currentPage + 3 ;
 
@@ -661,8 +658,6 @@ var slideJsApi,slideJsApi2,frameSize,slideJsCNST;
       this.manuscript = JSON.parse(doc.manuscript);
       var settings = JSON.parse(doc.settings);
       this.maxPage = settings.pages;
-      console.log('maxpage');
-      console.log(maxpage);
       this.rotation = (settings.hasOwnProperty('rotation')) ? settings.rotation : "";
 
       divCanvas = document.createElement("div");
@@ -729,7 +724,6 @@ window.addEventListener('resize', function(e){
   setPositionDocumentList(); // 資料選択ダイアログの表示位置の計算
 });
 window.addEventListener('wheel', function(e){
-  console.log('66');
   if ( !($("#document-preview").is(".show") && !$("#switching-preview").is(".show")) ) return false;
   if ( e.ctrlKey ) {
     e.preventDefault();

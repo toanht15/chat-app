@@ -75,6 +75,7 @@ class MChatSettingsController extends AppController {
 
     // チャット基本設定のバリデーション結果を変数に渡す
     $ret = $this->MChatSetting->validates();
+
     // ユーザーへの同時対応数設定を複数行一括保存が出来るように加工する
     $saveData = $this->_makeSaveUserData($inputData);
     $userRet = true;
