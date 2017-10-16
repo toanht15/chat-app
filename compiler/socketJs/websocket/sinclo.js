@@ -1019,7 +1019,6 @@
       var title = location.host + 'の内容';
       var content = location.host + 'との画面共有を終了しました';
       popup.ok = function(){
-        laUtil.disconnect();
         this.remove();
       };
       popup.set(title, content, popup.const.action.alert);
@@ -1027,7 +1026,6 @@
       var timer = setInterval(function(){
         if (window.sincloInfo.widgetDisplay === false) {
           clearInterval(timer);
-          laUtil.disconnect();
           return false;
         }
         var sincloBox = document.getElementById('sincloBox');
