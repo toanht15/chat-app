@@ -406,27 +406,62 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       tabInfoNotificationMessage: <?php echo json_encode($tabStatusNotificationMessageList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?> // タブ状態の通知用メッセージ
     };
 
-    $scope.search = function(array){
+    $scope.searchResult = [];
+    $scope.search = function(array, forceResult){
       var isHideRealTimeMonitor = contract.hideRealtimeMonitor;
       var result = {}, targetField;
       targetField = ( Number($scope.fillterTypeId) === 2 ) ? 'ipAddress' : 'accessId';
-      if ( $scope.searchText ) {
-        if(isHideRealTimeMonitor && $scope.searchText.length < 3 ) {
-          // 何もしない
-        } else {
-          angular.forEach(array, function(value, key) {
-            if ( value[targetField].indexOf($scope.searchText) === 0) {
-              result[key] = value;
-            }
-          });
+      if(isHideRealTimeMonitor) {
+        var result = $scope.searchResult;
+        if(forceResult) {
+          $scope.searchResult = array;
+          result = array;
+        } else if($scope.searchText.length > 0 && $scope.searchResult.length === 0) {
+          $scope.searchProcess($scope.searchText);
+          return [];
+        } else if($scope.searchText.length === 0) {
+          $scope.searchResult = [];
+          result = [];
         }
-      } else if(isHideRealTimeMonitor) {
-        // 検索状態じゃない場合で通常時リアルタイムモニタ非表示であれば非表示にする
       } else {
-        result = array;
+        if ( $scope.searchText ) {
+          if(isHideRealTimeMonitor && $scope.searchText.length < 3 ) {
+            // 何もしない
+          } else {
+            angular.forEach(array, function(value, key) {
+              if ( value[targetField].indexOf($scope.searchText) === 0) {
+                result[key] = value;
+              }
+            });
+          }
+        } else if(isHideRealTimeMonitor) {
+          // 検索状態じゃない場合で通常時リアルタイムモニタ非表示であれば非表示にする
+        } else {
+          result = array;
+        }
       }
       return result;
     };
+
+    // 検索用
+    $scope.searchProcess = function(term) {
+      emit('searchCustomerByAccessId', {
+        term: term
+      });
+    };
+
+    socket.on('searchCustomerResult', function(result){
+      var obj = JSON.parse(result);
+      $scope.search(obj, true);
+      if(obj && obj.length > 0) {
+        obj.forEach(function(targetObj){
+          pushToList(targetObj);
+          if ('chat' in targetObj && String(targetObj.chat) === "<?=$muserId?>") {
+            pushToChatList(targetObj.tabId);
+          }
+        });
+      }
+    });
 
     $scope.$watch('searchWord', function(n,o){
       if ( n !== o ) {
@@ -1372,6 +1407,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         $scope.monitorList[obj.tabId].responderId = obj.responderId; // ここいる？
       }
 
+      if ( 'coBrowseConnectToken' in obj && 'responderId' in obj) {
+        $scope.monitorList[obj.tabId].coBrowseConnectToken = obj.coBrowseConnectToken;
+        $scope.monitorList[obj.tabId].responderId = obj.responderId; // ここいる？
+      }
+
       if ( 'docShareId' in obj ) {
         $scope.monitorList[obj.tabId].docShare = true;
         $scope.monitorList[obj.tabId].responderId = obj.docShareId;
@@ -1449,11 +1489,13 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     });
 
     socket.on('receiveAccessInfo', function (data) {
-      var obj = JSON.parse(data);
-      if ( receiveAccessInfoToken !== obj.receiveAccessInfoToken ) return false;
-      pushToList(obj);
-      if ( 'chat' in obj && String(obj.chat) === "<?=$muserId?>" ) {
-        pushToChatList(obj.tabId);
+      if(!contract.hideRealtimeMonitor) {
+        var obj = JSON.parse(data);
+        if (receiveAccessInfoToken !== obj.receiveAccessInfoToken) return false;
+        pushToList(obj);
+        if ('chat' in obj && String(obj.chat) === "<?=$muserId?>") {
+          pushToChatList(obj.tabId);
+        }
       }
     });
 
@@ -1511,28 +1553,42 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     };
 
     socket.on('syncNewInfo', function (data) {
-      var obj = JSON.parse(data);
+      if(!contract.hideRealtimeMonitor) {
+        var obj = JSON.parse(data);
 
-      var tabId = ( obj.subWindow ) ? obj.to : obj.tabId;
-      if ( angular.isDefined(tabId) && tabId.length > 0 && tabId.indexOf('_frame') > -1 ) {
-        tabId = tabId.substr(0, tabId.indexOf('_frame'));
-      }
-      // 消費者
-      if ( $scope.monitorList.hasOwnProperty(tabId) ) {
+        var tabId = ( obj.subWindow ) ? obj.to : obj.tabId;
+        if (angular.isDefined(tabId) && tabId.length > 0 && tabId.indexOf('_frame') > -1) {
+          tabId = tabId.substr(0, tabId.indexOf('_frame'));
+        }
+        // 消費者
+        if ($scope.monitorList.hasOwnProperty(tabId)) {
 
-        if ( 'widget' in obj ) {
-          $scope.monitorList[tabId].widget = obj.widget;
-          if ( chatApi.tabId === tabId ) {
-            chatApi.observeType.emit(chatApi.tabId, chatApi.observeType.status);
+          if ('widget' in obj) {
+            $scope.monitorList[tabId].widget = obj.widget;
+            if (chatApi.tabId === tabId) {
+              chatApi.observeType.emit(chatApi.tabId, chatApi.observeType.status);
 
+            }
+          }
+          if ('connectToken' in obj) {
+            $scope.monitorList[tabId].connectToken = obj.connectToken;
+          }
+          if ('coBrowseConnectToken' in obj) {
+            $scope.monitorList[tabId].coBrowseConnectToken = obj.coBrowseConnectToken;
+          }
+          if ('prev' in obj) {
+            $scope.monitorList[tabId].prev = obj.prev;
+          }
+          if ('title' in obj) {
+            $scope.monitorList[tabId].title = obj.title;
+          }
+          if ('url' in obj) {
+            $scope.monitorList[tabId].url = obj.url;
+          }
+          if ('responderId' in obj) {
+            $scope.monitorList[tabId].responderId = obj.responderId;
           }
         }
-        if ( 'connectToken' in obj ) { $scope.monitorList[tabId].connectToken = obj.connectToken; }
-        if ( 'coBrowseConnectToken' in obj ) { $scope.monitorList[tabId].coBrowseConnectToken = obj.coBrowseConnectToken; }
-        if ( 'prev' in obj ) { $scope.monitorList[tabId].prev = obj.prev; }
-        if ( 'title' in obj ) { $scope.monitorList[tabId].title = obj.title; }
-        if ( 'url' in obj ) { $scope.monitorList[tabId].url = obj.url; }
-        if ( 'responderId' in obj ) { $scope.monitorList[tabId].responderId = obj.responderId; }
       }
     });
 

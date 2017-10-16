@@ -33,7 +33,8 @@ var io = require('socket.io')(process.env.WS_PORT),
         info : {}, // siteKeyをキーとした企業側ユーザー人数管理
         user : {}, // socket.idをキーとした企業側ユーザー管理
         timeout : {} // userIdをキーとした企業側ユーザー管理
-    };
+    },
+    customerList = {}; // customerList[siteKey][<accessId>_<socket.id>][<userObj>]
 
 // LiveAssistの同時セッション数管理用クラス
 // laSessionCount = { 'siteKey' : {current: '利用中セッション数', max: '指定済みの最大数'} }
@@ -196,6 +197,7 @@ function getCompanyList(){
     for ( var i = 0; key.length > i; i++ ) {
       var row = rows[key[i]];
       companyList[row.company_key] = row.id;
+      customerList[row.company_key] = {};
       //FIXME DBから取得した値を当てはめる
       laSessionCounter.setMaxCount(row.company_key, row.la_limit_users);
     }
@@ -1042,9 +1044,9 @@ io.sockets.on('connection', function (socket) {
           }
           socket.join(res.siteKey + emit.roomKey.client);
           emit.toMine('accessInfo', send, socket);
+
         });
       }
-
     }
   });
 
@@ -1087,6 +1089,10 @@ io.sockets.on('connection', function (socket) {
     }
 
     emit.toCompany("sendCustomerInfo", obj, obj.siteKey);
+
+    customerList[obj.siteKey][obj.accessId + '_' + socket.id] = obj;
+    console.log("customerList : " + JSON.stringify(customerList[obj.siteKey]));
+
     if ( ('contract' in obj) && ('chat' in obj.contract) && obj.contract.chat === false) return false;
     chatApi.sendUnreadCnt("sendChatInfo", obj, false);
   });
@@ -1094,6 +1100,23 @@ io.sockets.on('connection', function (socket) {
   socket.on("getCustomerInfo", function(data) {
     var obj = JSON.parse(data);
     emit.toClient('confirmCustomerInfo', obj, obj.siteKey);
+  });
+
+  socket.on("searchCustomerByAccessId", function(data){
+    var obj = JSON.parse(data);
+    var term = obj.term;
+    var result = [];
+    if('siteKey' in obj) {
+      var keys = Object.keys(customerList[obj.siteKey]);
+      if(keys && keys.length > 0) {
+        keys.forEach(function(key) {
+          if(key.indexOf(term) >= 0) {
+            result.push(customerList[obj.siteKey][key]);
+          }
+        });
+      }
+    }
+    emit.toMine('searchCustomerResult', result, socket);
   });
 
   socket.on("connectSuccessForClient", function (data) {
@@ -1209,6 +1232,7 @@ io.sockets.on('connection', function (socket) {
     }
 
     // TODO ここを要求したユーザのみに送るようにする
+    // FIXME 初回表示時リアルタイムモニタ表示なしの場合はこのデータを送らないようにする
     emit.toCompany("receiveAccessInfo", obj, obj.siteKey);
     if ( ('contract' in obj) && ('chat' in obj.contract) && obj.contract.chat === false) return false;
     chatApi.sendUnreadCnt("sendChatInfo", obj, false);
@@ -1272,6 +1296,9 @@ io.sockets.on('connection', function (socket) {
       }
       if ( getSessionId(obj.siteKey, obj.tabId, 'connectToken') ) {
         obj.connectToken = getSessionId(obj.siteKey, obj.tabId, 'connectToken'); // 接続トークンを企業側へ
+      }
+      if ( getSessionId(obj.siteKey, obj.tabId, 'coBrowseConnectToken') ) {
+        obj.coBrowseConnectToken = getSessionId(obj.siteKey, obj.tabId, 'coBrowseConnectToken'); // LiveAssist用接続トークンを企業側へ
       }
 
       emit.toCompany('syncNewInfo', obj, obj.siteKey);
@@ -2002,10 +2029,15 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   socket.on('assistAgentIsReady', function (data) {
     console.log("assistAgentIsReady >>> " + data);
     var obj = JSON.parse(data);
-    console.log("OBJ : " + JSON.stringify(data));
-    sincloCore[obj.siteKey][obj.to]['responderId'] = obj.responderId; // 対応ユーザーID
-    sincloCore[obj.siteKey][obj.to]['coBrowseParentSessionId'] = socket.id; // 企業側のsocket.id
-    emit.toUser('assistAgentIsReady', data, getSessionId(obj.siteKey, obj.to, 'sessionId'));
+    if (obj.to in sincloCore[obj.siteKey])  {
+      console.log("OBJ : " + JSON.stringify(data));
+      sincloCore[obj.siteKey][obj.to]['responderId'] = obj.responderId; // 対応ユーザーID
+      sincloCore[obj.siteKey][obj.to]['coBrowseParentSessionId'] = socket.id; // 企業側のsocket.id
+      emit.toUser('assistAgentIsReady', data, getSessionId(obj.siteKey, obj.to, 'sessionId'));
+    } else {
+      console.log("assistAgentIsReady >>> Tab ID : " + obj.to + " is NOT found.");
+      //FIXME  画面共有セッションは切れていない可能性もあるのでハンドリング方法を考える
+    }
   });
 
   /**
@@ -2521,6 +2553,16 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       }, timeout);
       // connectListから削除
       delete connectList[socket.id];
+
+      var keys = Object.keys(customerList[info.siteKey]);
+      if(keys && keys.length > 0) {
+        keys.forEach(function(key) {
+          if(key.indexOf(socket.id) >= 0) {
+            console.log("delete customerList[] : " + key);
+            delete customerList[info.siteKey][key];
+          }
+        });
+      }
     }
   });
 });
