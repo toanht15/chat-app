@@ -4,8 +4,6 @@
 </script>
 
 <?php
-$this->log('表側',LOG_DEBUG);
-$this->log($this->data['MUser']['settings'],LOG_DEBUG);
 $editFlg = true;
 if ( !empty($this->data['MUser']['edit_password']) ) {
   $editFlg = false;

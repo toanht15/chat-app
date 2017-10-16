@@ -72,28 +72,19 @@ class MChatSettingsController extends AppController {
 
     // バリデーションの為に、保存データの入った変数をモデルにセットする
     $this->MChatSetting->set($saveData);
-    $this->log($saveData,LOG_DEBUG);
 
     // チャット基本設定のバリデーション結果を変数に渡す
     $ret = $this->MChatSetting->validates();
-    $ret = '';
-    $this->log('ret',LOG_DEBUG);
-    $this->log($ret,LOG_DEBUG);
-
     // ユーザーへの同時対応数設定を複数行一括保存が出来るように加工する
     $saveData = $this->_makeSaveUserData($inputData);
     $userRet = true;
     if ( !empty($saveData) ) {
       $userRet = $this->MUser->saveAll($saveData, ['validate' => 'only']);
-      $this->log('userRet',LOG_DEBUG);
-      $this->log($userRet,LOG_DEBUG);
-      $this->log($saveData,LOG_DEBUG);
     }
 
     // ユーザーデータの一括バリデーションチェック
     // 何れかのバリデーションチェックでfalseだった場合は処理を中止する
     if ( !$userRet || !$ret ) {
-    $this->log('valivli',LOG_DEBUG);
       return false;
     }
 

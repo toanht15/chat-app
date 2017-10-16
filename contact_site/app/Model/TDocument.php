@@ -14,10 +14,6 @@ class TDocument extends AppModel {
         'rule' => ['maxLength', 30],
         'allowEmpty' => false,
         'message' => '資料名を30文字以内で入力してください'
-      ],
-      'prohibitedCharacters' => [
-         'rule' => '/^(?!.*(<|>|&|"|\')).*$/',
-         'message' => '<,>,&.",\'を含まずに設定してください。'
       ]
     ],
     'files' => [
@@ -35,78 +31,32 @@ class TDocument extends AppModel {
         'allowEmpty' => true,
         'message' => '10MB以上のファイルは添付できません'
       ],
-      'name' => [
-        'prohibitedCharacters' => [
-          'rule' => '/^(?!.*(<|>|&|"|\')).*$/',
-          'message' => '<,>,&.",\'を含まずに設定してください。'
-        ]
-      ],
-      'type' => [
-        'prohibitedCharacters' => [
-          'rule' => '/^(?!.*(<|>|&|"|\')).*$/',
-          'message' => '<,>,&.",\'を含まずに設定してください。'
-        ]
-      ],
-      'tmp_name' => [
-        'prohibitedCharacters' => [
-          'rule' => '/^(?!.*(<|>|&|"|\')).*$/',
-          'message' => '<,>,&.",\'を含まずに設定してください。'
-        ]
-      ],
-      'error' => [
-        'prohibitedCharacters' => [
-          'rule' => '/^(?!.*(<|>|&|"|\')).*$/',
-          'message' => '<,>,&.",\'を含まずに設定してください。'
-        ]
-      ],
-      'size' => [
-        'prohibitedCharacters' => [
-          'rule' => '/^(?!.*(<|>|&|"|\')).*$/',
-          'message' => '<,>,&.",\'を含まずに設定してください。'
-        ]
-      ]
     ],
     'overview' => [
       'maxLength' => [
         'rule' => ['maxLength', 300],
         'allowEmpty' => true,
         'message' => '概要を300文字以内で入力してください'
-      ],
-      'prohibitedCharacters' => [
-         'rule' => '/^(?!.*(<|>|&|"|\')).*$/',
-         'message' => '<,>,&.",\'を含まずに設定してください。'
       ]
     ],
-    /*'settings' => [
+    'settings' => [
       'prohibitedCharacters' => [
-         'rule' => '/^(?!.*(<|>|"|\')).*$/',
-         'message' => '<,>,&.",\'を含まずに設定してください。'
+         'rule' => '/^(?!.*(<|>|&|\')).*$/',
+         'message' => '<,>,&,\'を含まずに設定してください。'
       ]
-    ],*/
-    /*'rotation' => [
-      'prohibitedCharacters' => [
-         'rule' => '/^(?!.*(<|>|&|"|\')).*$/',
-         'message' => '<,>,&.",\'を含まずに設定してください。'
-      ]
-    ],*/
-    /*'manuscript' => [
-      'prohibitedCharacters' => [
-         'rule' => '/^(?!.*(<|>)).*$/',
-         'message' => '<,>,&.",\'を含まずに設定してください。'
-      ]
-     ],*/
-    'download_flg' => [
+    ],
+    'rotation' => [
       'prohibitedCharacters' => [
          'rule' => '/^(?!.*(<|>|&|"|\')).*$/',
-         'message' => '<,>,&.",\'を含まずに設定してください。'
+         'message' => '<,>,&,\'を含まずに設定してください。'
       ]
-     ],
-    'pagenation_flg' => [
-       'prohibitedCharacters' => [
-          'rule' => '/^(?!.*(<|>|&|"|\')).*$/',
-          'message' => '<,>,&.",\'を含まずに設定してください。'
-       ]
-    ]
+    ],
+    'manuscript' => [
+      'prohibitedCharacters' => [
+         'rule' => '/^(?!.*(<|>|&|\')).*$/',
+         'message' => '<,>,&,",\'を含まずに設定してください。'
+      ]
+     ]
   ];
 
   // ファイルの存在チェック（登録時のみ）

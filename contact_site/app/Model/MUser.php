@@ -46,7 +46,7 @@ class MUser extends AppModel {
             'isUniqueChk' => [
                 'rule' => 'isUniqueChk',
                 'message' => '既に登録されているアドレスです。'
-            ],
+            ]
         ],
         'new_password' => [
             'minLength' => [
@@ -75,7 +75,7 @@ class MUser extends AppModel {
             'notBlank' => [
                 'rule' => 'notBlank',
                 'message' => '権限レベルを選択してください。'
-            ],
+            ]
         ],
         'sc_num' => [
           'range' => [
@@ -119,7 +119,7 @@ class MUser extends AppModel {
             'email' => [
                 'rule' => 'email',
                 'message' => 'メールアドレスの形式が不正です。'
-            ],
+            ]
         ],
         'new_password' => [
             'minLength' => [
@@ -159,7 +159,7 @@ class MUser extends AppModel {
                 'rule' => 'isCurrentPw',
                 'allowEmpty' => false,
                 'message' => '現在のパスワードが一致しません。'
-            ],
+            ]
         ],
         'confirm_password' => [
             'checkConfirmPw' => [
