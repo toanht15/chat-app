@@ -86,7 +86,16 @@ class MUsersController extends AppController {
     if (!empty($this->request->data['userId'])) {
       $this->MUser->recursive = -1;
       $tmpData = $this->MUser->read(null, $this->request->data['userId']);
-      $insertFlg = false;
+      $this->log('tmpData',LOG_DEBUG);
+      $this->log($tmpData,LOG_DEBUG);
+      $tmpData['MUser']['m_companies_id'] = 4;
+      if($tmpData['MUser']['m_companies_id'] == $this->userInfo['MCompany']['id'] && $tmpData['MUser']['permission_level'] != 99 && $tmpData['MUser']['del_flg'] != 1) {
+        $insertFlg = false;
+      }
+      else {
+        $this->response->statusCode(403); //Forbidden
+        return;
+      }
     }
     else {
       $this->MUser->create();

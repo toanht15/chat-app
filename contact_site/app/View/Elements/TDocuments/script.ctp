@@ -177,6 +177,8 @@ var slideJsApi,slideJsApi2,frameSize,slideJsCNST;
       this.rotation = rotation;
       this.filePath = filePath;
       this.manuscript = JSON.parse(htmlEntities( this.manuscript, 'decode' ));
+      console.log('資料チェック');
+      console.log(this.manuscript);
       this.makePage(); // 初期スライドを作成
       var limitPage = (this.currentPage + 3 > this.maxPage) ? this.maxPage : this.currentPage + 3 ;
 
@@ -659,6 +661,8 @@ var slideJsApi,slideJsApi2,frameSize,slideJsCNST;
       this.manuscript = JSON.parse(doc.manuscript);
       var settings = JSON.parse(doc.settings);
       this.maxPage = settings.pages;
+      console.log('maxpage');
+      console.log(maxpage);
       this.rotation = (settings.hasOwnProperty('rotation')) ? settings.rotation : "";
 
       divCanvas = document.createElement("div");
@@ -703,20 +707,12 @@ var slideJsApi,slideJsApi2,frameSize,slideJsCNST;
   $(document).ready(function(){
     <?php if ( !empty($this->data['TDocument']['file_name']) ):
       $settings = $this->data['TDocument']['settings'];
-      $this->log('settings',LOG_DEBUG);
-      $this->log(htmlspecialchars_decode($settings, ENT_QUOTES),LOG_DEBUG);
-      $this->log((array)json_decode(htmlspecialchars_decode($settings, ENT_QUOTES)),LOG_DEBUG);
       $settings = (array)json_decode(htmlspecialchars_decode($settings, ENT_QUOTES));
-      if(preg_match('/^(?!.*(<|>|&|"|\')).*$/',$settings['rotation']) && preg_match('/^(?!.*(<|>|&|"|\')).*$/',$settings['pages'])) {
-        $this->log('これよく見て',LOG_DEBUG);
-      /*preg_match('/pages&quot;:(\w+)/', $settings, $pages);
-      preg_match('/rotation&quot;:&quot;(\w+)/', $settings, $rotation);
-      $pages = (isset($pages[1])) ? $pages[1] : 1;
-      $rotation = (isset($rotation[1])) ? $rotation[1] : 0;*/
-      $pages = (isset($settings['pages'])) ? $settings['pages'] : 1;
-      $rotation = (isset($settings['rotation'])) ? $settings['rotation'] : 0;
-      $filePath = C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/svg_".pathinfo(h($this->data['TDocument']['file_name']), PATHINFO_FILENAME);
-    }
+      if(!preg_match('/^(?=.*(<|>|&|"|\')).*$/',$settings['rotation']) && !preg_match('/^(?=.*(<|>|&|"|\')).*$/',$settings['pages'])) {
+        $pages = (isset($settings['pages'])) ? $settings['pages'] : 1;
+        $rotation = (isset($settings['rotation'])) ? $settings['rotation'] : 0;
+        $filePath = C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/svg_".pathinfo(h($this->data['TDocument']['file_name']), PATHINFO_FILENAME);
+      }
     ?>
 
     slideJsApi.init("<?=$filePath?>", "<?=$pages?>", "<?=$rotation?>");

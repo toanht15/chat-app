@@ -51,6 +51,9 @@ class TDocumentsController extends AppController {
     $this->_radioConfiguration();
     if($this->userInfo['permission_level'] == 1) {
       if($this->request->is('post')) {
+        $this->request->data['TDocument']['settings'] = htmlspecialchars_decode( $this->request->data['TDocument']['settings']);
+        $this->request->data['TDocument']['rotation'] = htmlspecialchars_decode( $this->request->data['TDocument']['rotation']);
+        $this->request->data['TDocument']['manuscript'] = htmlspecialchars_decode( $this->request->data['TDocument']['manuscript']);
         $this->_entry($this->request->data);
         $errors = $this->TDocument->validationErrors;
         $this->set('errors', $errors);
@@ -73,7 +76,10 @@ class TDocumentsController extends AppController {
     $this->_radioConfiguration();
     if($this->userInfo['permission_level'] == 1) {
       if($this->request->is('post') || $this->request->is('put')) {
-        $this->request->data['TDocument']['rotation'] = "</script><script>alert('おはよ');</script>";
+        //$this->request->data['TDocument']['rotation'] = "</script><script>alert('おはよ');</script>";
+        $this->request->data['TDocument']['settings'] = htmlspecialchars_decode( $this->request->data['TDocument']['settings']);
+        $this->request->data['TDocument']['rotation'] = htmlspecialchars_decode( $this->request->data['TDocument']['rotation']);
+        $this->request->data['TDocument']['manuscript'] = htmlspecialchars_decode( $this->request->data['TDocument']['manuscript']);
         $this->_entry($this->request->data);
         $errors = $this->TDocument->validationErrors;
         $this->set('errors', $errors);
@@ -166,6 +172,9 @@ class TDocumentsController extends AppController {
    * */
   private function _entry($saveData) {
     $nowData = [];
+    $this->log('validationチェック',LOG_DEBUG);
+    $this->log($saveData,LOG_DEBUG);
+
     if(!empty($saveData['TDocument']['tag'])) {
       $inputData = $saveData['TDocument']['tag'];
       $saveData['TDocument']['tag'] = $this->jsonEncode($inputData);

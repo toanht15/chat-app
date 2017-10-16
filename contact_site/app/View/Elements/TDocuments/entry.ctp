@@ -55,7 +55,7 @@
               <textarea id="pages-text"></textarea>
               <textarea id="pages-attention" disabled>資料保存後にページ単位で原稿を設定することができます。</textarea>
             </manuscript-input-area>
-            <?=$this->Form->hidden('manuscript')?>
+            <?=$this->Form->hidden('manuscript',['error' => false])?>
           </content>
         </documentArea>
       </li>
@@ -63,6 +63,7 @@
       <?php if ( $this->Form->isFieldError('file_name') ) echo $this->Form->error('file_name', null, ['wrap' => 'li']); ?>
       <?php if ( $this->Form->isFieldError('settings') ) echo $this->Form->error('settings', null, ['wrap' => 'li']); ?>
       <?php if ( $this->Form->isFieldError('rotation') ) echo $this->Form->error('rotation', null, ['wrap' => 'li']); ?>
+      <?php if ( $this->Form->isFieldError('manuscript') ) echo $this->Form->error('manuscript', null, ['wrap' => 'li']); ?>
       <!-- 資料 -->
 
       <!-- ダウンロードフラグ -->
