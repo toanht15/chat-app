@@ -10,32 +10,34 @@
   <div id='muser_menu' class="p20trl">
     <?php if( $limitUserNum > $userListCnt ): ?>
       <div class="fLeft" >
-        <span>
-          <a>
-            <?= $this->Html->image('add.png', array(
-                'alt' => '登録',
-                'id'=>'m_users_add_btn',
-                'class' => 'btn-shadow disOffgreenBtn commontooltip',
-                'data-text' => '新規追加',
-                'data-balloon-position' => '36',
-                'width' => 45,
-                'height' => 45,
-                'onclick' => 'openAddDialog()',
-            )) ?>
-          </a>
-        </span>
-        <span>
-          <a>
-            <?= $this->Html->image('dustbox.png', array(
-                'alt' => '削除',
-                'id'=>'m_users_dustbox_btn',
-                'class' => 'btn-shadow disOffgrayBtn commontooltip',
-                'data-text' => '削除する',
-                'data-balloon-position' => '35',
-                'width' => 45,
-                'height' => 45)) ?>
-          </a>
-        </span>
+        <div class="btnSet" >
+          <span>
+            <a>
+              <?= $this->Html->image('add.png', array(
+                  'alt' => '登録',
+                  'id'=>'m_users_add_btn',
+                  'class' => 'btn-shadow disOffgreenBtn commontooltip',
+                  'data-text' => '新規追加',
+                  'data-balloon-position' => '36',
+                  'width' => 45,
+                  'height' => 45,
+                  'onclick' => 'openAddDialog()',
+              )) ?>
+            </a>
+          </span>
+          <span>
+            <a>
+              <?= $this->Html->image('dustbox.png', array(
+                  'alt' => '削除',
+                  'id'=>'m_users_dustbox_btn',
+                  'class' => 'btn-shadow disOffgrayBtn commontooltip',
+                  'data-text' => '削除する',
+                  'data-balloon-position' => '35',
+                  'width' => 45,
+                  'height' => 45)) ?>
+            </a>
+          </span>
+        </div>
       </div>
     <?php endif;?>
     <!-- 検索窓 -->
@@ -70,10 +72,10 @@
           <label for="allCheck"></label>
         </th>
 <!-- UI/UX統合対応end -->
-        <th>No</th>
-        <th>氏名</th>
-        <th>表示名</th>
-        <th>権限</th>
+        <th width=" 5%">No</th>
+        <th width=" 15%">氏名</th>
+        <th width=" 20%">表示名</th>
+        <th width=" 10%">権限</th>
         <th>メールアドレス</th>
 <!--
         <th>操作</th>

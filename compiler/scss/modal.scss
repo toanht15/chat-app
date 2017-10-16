@@ -854,6 +854,11 @@
 /* ユーザ管理レイアウト調整 */
 #muser_idx{
   #muser_menu{
+    .btnSet{
+      position: relative;
+      top: -6px;
+      left: -4px;
+    }
   }
   #muser_list{
     .tCenter{
@@ -864,11 +869,28 @@
   }
 }
 
+#tooltip_m_users_add_btn.tooltips {
+  position: fixed;
+  left: 78px !important;
+  width: 6em;
+}
+
+#tooltip_m_users_dustbox_btn.tooltips {
+  position: fixed;
+  left: 126px !important;
+  width: 6em;
+}
+
 /* キャンペーン設定レイアウト調整 */
 #tcampaigns_idx{
   #tcampaigns_description{
   }
   #tcampaigns_menu{
+    .btnSet{
+      position: relative;
+      top: -6px;
+      left: -3px;
+    }
   }
   #tcampaigns_list{
     .tCenter{
@@ -879,9 +901,32 @@
   }
 }
 
+#tooltip_tcampaigns_add_btn.tooltips {
+  position: fixed;
+  left: 78px !important;
+  width: 6em;
+}
+
+#tooltip_tcampaigns_copy_btn.tooltips {
+  position: fixed;
+  left: 108.5px !important;
+  width: 9em;
+}
+
+#tooltip_tcampaigns_dustbox_btn.tooltips {
+  position: fixed;
+  left: 176px !important;
+  width: 6em;
+}
+
 /* チャット通知設定レイアウト調整 */
 #chat_notifications_idx{
   #chat_notifications_menu{
+    .btnSet{
+      position: relative;
+      top: -6px;
+      left: -2px;
+    }
   }
   #chat_notifications_list{
     .t-link{
@@ -890,6 +935,17 @@
   }
 }
 
+#tooltip_chat_notifications_add_btn.tooltips {
+  position: fixed;
+  left: 78px !important;
+  width: 6em;
+}
+
+#tooltip_chat_notifications_dustbox_btn.tooltips {
+  position: fixed;
+  left: 126px !important;
+  width: 6em;
+}
 
 /* 定型文機能 */
 #tdictionaries_idx{

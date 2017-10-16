@@ -14,44 +14,46 @@
 
   <div id='tcampaigns_menu' style= 'padding-left: 20px;'>
     <ul class="fLeft" >
-      <span>
-        <a>
-          <?= $this->Html->image('add.png', array(
-              'alt' => '登録',
-              'id'=>'tcampaigns_add_btn',
-              'class' => 'btn-shadow disOffgreenBtn commontooltip',
-              'data-text' => '新規追加',
-              'data-balloon-position' => '36',
-              'width' => 45,
-              'height' => 45,
-              'onclick' => 'openAddDialog()',
-          )) ?>
-        </a>
-      </span>
-      <span>
-        <a>
-          <?= $this->Html->image('copy.png', array(
-              'alt' => 'コピー',
-              'id'=>'tcampaigns_copy_btn',
-              'class' => 'btn-shadow disOffgrayBtn commontooltip',
-              'data-text' => 'コピー（複製）',
-              'data-balloon-position' => '41',
-              'width' => 45,
-              'height' => 45)) ?>
-        </a>
-      </span>
-      <span>
-        <a>
-          <?= $this->Html->image('dustbox.png', array(
-              'alt' => '削除',
-              'id'=>'tcampaigns_dustbox_btn',
-              'class' => 'btn-shadow disOffgrayBtn commontooltip',
-              'data-text' => '削除する',
-              'data-balloon-position' => '35',
-              'width' => 45,
-              'height' => 45)) ?>
-        </a>
-      </span>
+      <div class="btnSet">
+        <span>
+          <a>
+            <?= $this->Html->image('add.png', array(
+                'alt' => '登録',
+                'id'=>'tcampaigns_add_btn',
+                'class' => 'btn-shadow disOffgreenBtn commontooltip',
+                'data-text' => '新規追加',
+                'data-balloon-position' => '36',
+                'width' => 45,
+                'height' => 45,
+                'onclick' => 'openAddDialog()',
+            )) ?>
+          </a>
+        </span>
+        <span>
+          <a>
+            <?= $this->Html->image('copy.png', array(
+                'alt' => 'コピー',
+                'id'=>'tcampaigns_copy_btn',
+                'class' => 'btn-shadow disOffgrayBtn commontooltip',
+                'data-text' => 'コピー（複製）',
+                'data-balloon-position' => '41',
+                'width' => 45,
+                'height' => 45)) ?>
+          </a>
+        </span>
+        <span>
+          <a>
+            <?= $this->Html->image('dustbox.png', array(
+                'alt' => '削除',
+                'id'=>'tcampaigns_dustbox_btn',
+                'class' => 'btn-shadow disOffgrayBtn commontooltip',
+                'data-text' => '削除する',
+                'data-balloon-position' => '35',
+                'width' => 45,
+                'height' => 45)) ?>
+          </a>
+        </span>
+      </div>
     </ul>
   </div>
 

@@ -3687,7 +3687,7 @@ ul.naviBtn {
       a {
         width: 30px;
         height: 30px;
-        margin-right: 10px;
+        /*margin-right: 10px;*/
         border-radius: 15px;
         img {
           margin: -1px 0 0px -1px; /* TODO: 綺麗な画像を頂ければ削除予定 */
@@ -3696,6 +3696,68 @@ ul.naviBtn {
     }
   }
   #chat_notifications_list {
+      td:not(.noClick) {
+        cursor: pointer;
+      }
+
+      .bgGrey {
+        background-color: #DEDEDE;
+      }
+
+      .lineCtrl {
+        text-align: center;
+
+        div {
+          display: inline-block;
+          a {
+            float: left;
+            margin-bottom: 5px;
+            margin-top: 5px;
+          }
+        }
+      }
+
+      :not(.lineCtrl) a { text-decoration: underline; }
+
+      input[type='checkbox'] {
+        display: none;
+
+        &:checked + label {
+          background-color: $main-color;
+          border: 1px solid $main-color;
+          position: relative;
+          cursor: pointer;
+
+          &:after {
+            content: "";
+            font-weight: bold;
+            border-right: 4px solid #FFF;
+            border-bottom: 4px solid #FFF;
+            width: 6px;
+            height: 10px;
+            position: absolute;
+            top: 0;
+            right: 4px;
+            transform: rotate(45deg);
+          }
+        }
+
+        & + label {
+          width: 20px;
+          height: 20px;
+          display: block;
+          margin: 0 auto;
+          background-color: #FFF;
+          padding: 1px;
+          border: 1px solid #828282;
+          cursor: pointer;
+        }
+      }
+
+      th input[type='checkbox']:checked + label {
+        border: 1px solid #FFF;
+      }
+
       .ctrlBtnArea {
           width: 120px;
           a {
