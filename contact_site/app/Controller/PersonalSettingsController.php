@@ -39,6 +39,9 @@ class PersonalSettingsController extends AppController {
    * @return void
    * */
   private function _update($inputData) {
+    $this->request->data['MUser']['current_password'] = '';
+    $this->request->data['MUser']['new_password'] = '';
+    $this->request->data['MUser']['confirm_password'] = '';
     $errors = [];
     // パスワードを変更する場合
     if ( !empty($inputData['MUser']['edit_password']) ) {

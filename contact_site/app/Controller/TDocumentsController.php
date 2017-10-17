@@ -18,24 +18,29 @@ class TDocumentsController extends AppController {
    * @return void
    * */
   public function index() {
-    $documentList =  $this->TDocument->find('all', [
-      'conditions' => [
-        'TDocument.m_companies_id' => $this->userInfo['MCompany']['id']
-      ]
-    ]);
-    $labelList = $this->MDocumentTag->find('list', ['fields'=> ['id','name']]);
-    $showDocumentList = [];
-    foreach ($documentList as $key => $document){
-      $tags = [];
-      foreach((array)json_decode($document['TDocument']['tag'],true) as $id){
-        if ( !empty($labelList[$id]) ) {
-          $tags[] = $labelList[$id];
+    if($this->userInfo['permission_level'] == 1) {
+      $documentList =  $this->TDocument->find('all', [
+        'conditions' => [
+          'TDocument.m_companies_id' => $this->userInfo['MCompany']['id']
+        ]
+      ]);
+      $labelList = $this->MDocumentTag->find('list', ['fields'=> ['id','name']]);
+      $showDocumentList = [];
+      foreach ($documentList as $key => $document){
+        $tags = [];
+        foreach((array)json_decode($document['TDocument']['tag'],true) as $id){
+          if ( !empty($labelList[$id]) ) {
+            $tags[] = $labelList[$id];
+          }
         }
+        $document['TDocument']['tag'] = $tags;
+        $showDocumentList[$key] = $document;
       }
-      $document['TDocument']['tag'] = $tags;
-      $showDocumentList[$key] = $document;
+      $this->set('documentList', $showDocumentList);
     }
-    $this->set('documentList', $showDocumentList);
+    else {
+      $this->redirect($this->referer());
+    }
   }
 
   /* *
@@ -44,16 +49,23 @@ class TDocumentsController extends AppController {
    * */
   public function add() {
     $this->_radioConfiguration();
-
-    if($this->request->is('post')) {
-      $this->_entry($this->request->data);
-      $errors = $this->TDocument->validationErrors;
-      $this->set('errors', $errors);
+    if($this->userInfo['permission_level'] == 1) {
+      if($this->request->is('post')) {
+        $this->request->data['TDocument']['settings'] = htmlspecialchars_decode( $this->request->data['TDocument']['settings']);
+        $this->request->data['TDocument']['rotation'] = htmlspecialchars_decode( $this->request->data['TDocument']['rotation']);
+        $this->request->data['TDocument']['manuscript'] = htmlspecialchars_decode( $this->request->data['TDocument']['manuscript']);
+        $this->_entry($this->request->data);
+        $errors = $this->TDocument->validationErrors;
+        $this->set('errors', $errors);
+      }
+      /*　タグリスト　*/
+      $status = ['fields'=> ['id','name']];
+      $tagList = $this->MDocumentTag->find('list',$status);
+      $this->set('tagList',$tagList);
     }
-    /*　タグリスト　*/
-    $status = ['fields'=> ['id','name']];
-    $tagList = $this->MDocumentTag->find('list',$status);
-    $this->set('tagList',$tagList);
+    else {
+      $this->redirect($this->referer());
+    }
   }
 
   /* *
@@ -62,35 +74,47 @@ class TDocumentsController extends AppController {
    * */
   public function edit($id) {
     $this->_radioConfiguration();
-
-    if($this->request->is('post') || $this->request->is('put')) {
-      $this->_entry($this->request->data);
-      $errors = $this->TDocument->validationErrors;
-      $this->set('errors', $errors);
-      /*　タグリスト　*/
-      $status = ['fields'=> ['id','name']];
-      $tagList = $this->MDocumentTag->find('list',$status);
-      $this->set('tagList',$tagList);
-    }
-    else {
-      /* 更新画面　タグリスト表示 */
-      $this->TDocument->id = $id;
-      $tags = json_decode($this->TDocument->read(null,$id)['TDocument'] ['tag'],true);
-      $this->request->data = $this->TDocument->read(null,$id);
-      $tagList = $this->MDocumentTag->find('list', ['fields'=> ['id','name']]);
-      $documentList = [];
-      $tags = [];
-      foreach((array)json_decode($this->request->data['TDocument']['tag'],true) as $id){
-        if ( !empty($tagList[$id]) ) {
-          $tags[] = $id;
+    if($this->userInfo['permission_level'] == 1) {
+      if($this->request->is('post') || $this->request->is('put')) {
+        $this->request->data['TDocument']['settings'] = htmlspecialchars_decode( $this->request->data['TDocument']['settings']);
+        $this->request->data['TDocument']['rotation'] = htmlspecialchars_decode( $this->request->data['TDocument']['rotation']);
+        $this->request->data['TDocument']['manuscript'] = htmlspecialchars_decode( $this->request->data['TDocument']['manuscript']);
+        $this->_entry($this->request->data);
+        $errors = $this->TDocument->validationErrors;
+        $this->set('errors', $errors);
+        /*　タグリスト　*/
+        $status = ['fields'=> ['id','name']];
+        $tagList = $this->MDocumentTag->find('list',$status);
+        $this->set('tagList',$tagList);
+      }
+      else {
+        /* 更新画面　タグリスト表示 */
+        $this->TDocument->id = $id;
+        $tags = json_decode($this->TDocument->read(null,$id)['TDocument'] ['tag'],true);
+        $this->request->data = $this->TDocument->read(null,$id);
+        if($this->request->data['TDocument']['m_companies_id'] == $this->userInfo['MCompany']['id']) {
+          $tagList = $this->MDocumentTag->find('list', ['fields'=> ['id','name']]);
+          $documentList = [];
+          $tags = [];
+          foreach((array)json_decode($this->request->data['TDocument']['tag'],true) as $id){
+            if ( !empty($tagList[$id]) ) {
+              $tags[] = $id;
+            }
+          }
+          $this->request->data['TDocument']['tag'] = $tags;
+          $status = ['fields'=> ['id','name']];
+          $tagList = $this->MDocumentTag->find('list',$status);
+          $selectedTagList = $tags;
+          $this->set('selectedTagList', $selectedTagList);
+          $this->set('tagList',$tagList);
+        }
+        else {
+          $this->redirect($this->referer());
         }
       }
-      $this->request->data['TDocument']['tag'] = $tags;
-      $status = ['fields'=> ['id','name']];
-      $tagList = $this->MDocumentTag->find('list',$status);
-      $selectedTagList = $tags;
-      $this->set('selectedTagList', $selectedTagList);
-      $this->set('tagList',$tagList);
+    }
+    else {
+      $this->redirect($this->referer());
     }
   }
 

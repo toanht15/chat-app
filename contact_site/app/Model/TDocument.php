@@ -30,7 +30,7 @@ class TDocument extends AppModel {
         'rule' => ['fileSize', '<=', '10MB'],
         'allowEmpty' => true,
         'message' => '10MB以上のファイルは添付できません'
-      ]
+      ],
     ],
     'overview' => [
       'maxLength' => [
@@ -38,7 +38,25 @@ class TDocument extends AppModel {
         'allowEmpty' => true,
         'message' => '概要を300文字以内で入力してください'
       ]
-    ]
+    ],
+    'settings' => [
+      'prohibitedCharacters' => [
+         'rule' => '/^(?!.*(<|>|&|\')).*$/',
+         'message' => '<,>,&,\'を含まずに設定してください。'
+      ]
+    ],
+    'rotation' => [
+      'prohibitedCharacters' => [
+         'rule' => '/^(?!.*(<|>|&|"|\')).*$/',
+         'message' => '<,>,&,\'を含まずに設定してください。'
+      ]
+    ],
+    'manuscript' => [
+      'prohibitedCharacters' => [
+         'rule' => '/^(?!.*(<|>|&|\')).*$/',
+         'message' => '<,>,&,",\'を含まずに設定してください。'
+      ]
+     ]
   ];
 
   // ファイルの存在チェック（登録時のみ）
