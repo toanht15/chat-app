@@ -37,6 +37,7 @@ define('C_COMPANY_USE_DOCUMENT', 'document'); // オペレーターが待機中�
 define('C_COMPANY_USE_VIDEO_CHAT', 'videochat'); // ビデオチャット
 define('C_COMPANY_USE_CHAT_LIMITER', 'chatLimitation'); // チャット同時対応数上限
 define('C_COMPANY_USE_HISTORY_EXPORTING', 'exportHistory'); // 履歴エクスポート
+define('C_COMPANY_USE_HISTORY_DELETE', 'deleteHistory'); // 履歴削除
 define('C_COMPANY_USE_STATISTICS', 'statistics'); // 統計
 define('C_COMPANY_USE_DICTIONARY_CATEGORY', 'dictionaryCategory'); // 定型文カテゴリ
 
@@ -175,6 +176,17 @@ define('C_MINIMIZED_DESIGN_ALL_SIMPLE', 3); // すべての端末でシンプル
 
 //背景の影初期値
 define('C_BOX_SHADOW', 0);//影なし
+
+//閉じるボタン有効無効
+define('C_CLOSE_BUTTON_SETTING_OFF', 1);//無効にする
+define('C_CLOSE_BUTTON_SETTING_ON', 2);//有効にする
+
+//小さなバナー表示
+define('C_CLOSE_BUTTON_SETTING_MODE_TYPE_BANNER', 1);//小さなバナー表示
+define('C_CLOSE_BUTTON_SETTING_MODE_TYPE_HIDDEN', 2);//非表示
+
+//バナーテキスト初期値
+define('C_BANNER_TEXT', "チャットで相談");//バナー文言
 
 /* ユーザー権限（単体あり：C_AUTHORITY_%） */
 $config['Authority'] = [
