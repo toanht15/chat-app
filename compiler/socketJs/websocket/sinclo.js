@@ -1179,6 +1179,7 @@
       if ( !check.isset(userInfo.coBrowseConnectToken) ) return false;
 
       storage.s.unset("coBrowseConnectToken");
+      userInfo.coBrowseConnectToken = "";
       if (!document.getElementById('sincloBox')) {
         common.makeAccessIdTag();
       }
