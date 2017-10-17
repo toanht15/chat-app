@@ -272,14 +272,22 @@
     <div id="closeBtn" ng-click="switchWidget(4)" ng-class="{closeButtonSetting: closeButtonSettingToggle === '2'}"></div>
     <div id='descriptionSet' class="widgetOpener notSelect" ng-hide=" spHeaderLightToggle() || mainImageToggle == '2' && subTitleToggle == '2' && descriptionToggle == '2'">
       <!-- サブタイトル -->
+<!-- 仕様変更、常に高度な設定が当たっている状態とする -->
+<!--
       <p ng-if="subTitleToggle == '1' && color_setting_type === '0' || color_setting_type === false"" id="widgetSubTitle" >{{sub_title}}</p>
       <p ng-if="subTitleToggle == '1' && color_setting_type === '1' || color_setting_type === true" id="widgetSubTitle" class="details">{{sub_title}}</p>
+ -->
+      <p ng-if="subTitleToggle == '1'" id="widgetSubTitle" class="details">{{sub_title}}</p>
       <p ng-if="subTitleToggle == '2'" id="widgetSubTitle"></p>
       <!-- サブタイトル -->
 
       <!-- 説明文 -->
+<!-- 仕様変更、常に高度な設定が当たっている状態とする -->
+<!--
       <p ng-if="descriptionToggle == '1' && color_setting_type === '0' || color_setting_type === false" id="widgetDescription" >{{description}}</p>
       <p ng-if="descriptionToggle == '1' && color_setting_type === '1' || color_setting_type === true" id="widgetDescription" class="details" ng-class="{ notNone:widget_inside_border_none === ''||widget_inside_border_none === false}">{{description}}</p>
+ -->
+      <p ng-if="descriptionToggle == '1'" id="widgetDescription" class="details" ng-class="{ notNone:widget_inside_border_none === ''||widget_inside_border_none === false}">{{description}}</p>
       <p ng-if="descriptionToggle == '2'" id="widgetDescription"></p>
       <!-- 説明文 -->
     </div>
@@ -287,51 +295,60 @@
     <?php if ( $coreSettings[C_COMPANY_USE_CHAT] && ($coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT])) ) :?>
       <section id="navigation" ng-hide="showWidgetType === 3" ng-class="{ middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">
         <ul ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">
+<!-- 仕様変更、常に高度な設定が当たっている状態とする -->
+<!--
           <li data-tab="chat" class="widgetCtrl notSelect" ng-class="{ notNone:widget_inside_border_none === ''||widget_inside_border_none === false, details: color_setting_type === '1' || color_setting_type === true, selected: widget.showTab == 'chat'}">チャットでの受付</li>
           <li data-tab="call" class="widgetCtrl notSelect" ng-class="{ notNone:widget_inside_border_none === ''||widget_inside_border_none === false, details: color_setting_type === '1' || color_setting_type === true, selected: widget.showTab == 'call'}">電話での受付</li>
+ -->
+          <li data-tab="chat" class="widgetCtrl notSelect details" ng-class="{ notNone:widget_inside_border_none === ''||widget_inside_border_none === false, selected: widget.showTab == 'chat'}">チャットでの受付</li>
+          <li data-tab="call" class="widgetCtrl notSelect details" ng-class="{ notNone:widget_inside_border_none === ''||widget_inside_border_none === false, selected: widget.showTab == 'call'}">電話での受付</li>
         </ul>
       </section>
     <?php endif; ?>
     <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
-      <section id="chatTab" ng-hide="widget.showTab !== 'chat'" ng-class="{ notNone:widget_inside_border_none === ''||widget_inside_border_none === false, details: color_setting_type === '1' || color_setting_type === true,middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">
-        <ul id="chatTalk" ng-class="{ details: color_setting_type === '1' || color_setting_type === true,middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}" ng-if="chat_message_copy == '0'">
+      <section id="chatTab" ng-hide="widget.showTab !== 'chat'" class="details" ng-class="{ notNone:widget_inside_border_none === ''||widget_inside_border_none === false, middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">
+        <ul id="chatTalk" class="details" ng-class="{ middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}" ng-if="chat_message_copy == '0'">
           <div style="height: auto!important; padding:0;" ng-class="{liLeft: chat_message_design_type == 1, liRight: chat_message_design_type == 2}" >
-          <li class="sinclo_se chat_right" ng-class="{ notNone:se_border_none === '' || se_border_none === false,details: color_setting_type === '1' || color_setting_type === true,middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3',boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}" ><span ng-class="{ details: color_setting_type === '1' || color_setting_type === true}">○○について質問したいのですが</span></li>
+          <li class="sinclo_se chat_right details" ng-class="{ notNone:se_border_none === '' || se_border_none === false, middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3',boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}" ><span ng-class="{ details: color_setting_type === '1' || color_setting_type === true}">○○について質問したいのですが</span></li>
           </div>
           <div style="height: auto!important; padding:0;">
-            <li class="sinclo_re chat_left" ng-style="{backgroundColor:makeFaintColor()}" ng-class="{ notNone:re_border_none === '' || re_border_none === false, middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3',boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}"><span class="cName" ng-if="show_name == 1" ng-class="{ details: color_setting_type === '1' || color_setting_type === true, middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}"><?=$userInfo['display_name']?></span><span class="cName" ng-if="show_name == 2" ng-class="{ details: color_setting_type === '1' || color_setting_type === true, middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">{{sub_title}}</span><span ng-class="{ details: color_setting_type === '1' || color_setting_type === true}">こんにちは</span></li>
+            <li class="sinclo_re chat_left" ng-style="{backgroundColor:makeFaintColor()}" ng-class="{ notNone:re_border_none === '' || re_border_none === false, middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3',boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}"><span class="cName details" ng-if="show_name == 1" ng-class="{ middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}"><?=$userInfo['display_name']?></span><span class="cName details" ng-if="show_name == 2" ng-class="{ middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">{{sub_title}}</span><span class="details">こんにちは</span></li>
           </div>
           <div style="height: auto!important; padding:0;">
-            <li class="showAnimationSample sinclo_re chat_left" ng-style="{ notNone:re_border_none === '' || re_border_none === false, backgroundColor:makeFaintColor()}" ng-class="{ notNone:re_border_none === '' || re_border_none === false, middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3',boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}"><span class="cName" ng-if="show_name == 1" ng-class="{ details: color_setting_type === '1' || color_setting_type === true, middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}"><?=$userInfo['display_name']?></span><span class="cName" ng-if="show_name == 2" ng-class="{ details: color_setting_type === '1' || color_setting_type === true, middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">{{sub_title}}</span><span ng-class="{ details: color_setting_type === '1' || color_setting_type === true}">○○についてですね<br>どのようなご質問でしょうか？</span></li>
+            <li class="showAnimationSample sinclo_re chat_left" ng-style="{backgroundColor:makeFaintColor()}" ng-class="{ notNone:re_border_none === '' || re_border_none === false, middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3',boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}"><span class="cName details" ng-if="show_name == 1" ng-class="{ middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}"><?=$userInfo['display_name']?></span><span class="cName details" ng-if="show_name == 2" ng-class="{ middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">{{sub_title}}</span><span class="details">○○についてですね<br>どのようなご質問でしょうか？</span></li>
           </div>
         </ul>
-        <ul id="chatTalk" ng-class="{ details: color_setting_type === '1' || color_setting_type === true,middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}" ng-if="chat_message_copy == '1'" style = "user-select: none;-moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;">
+        <ul id="chatTalk" class="details" ng-class="{ middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}" ng-if="chat_message_copy == '1'" style = "user-select: none;-moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;">
           <div style="height: auto!important; padding:0;" ng-class="{liLeft: chat_message_design_type == 1, liRight: chat_message_design_type == 2}" >
-            <li class="sinclo_se chat_right" ng-class="{ notNone:se_border_none === '' || se_border_none === false,details: color_setting_type === '1' || color_setting_type === true,middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3',boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}" ><span ng-class="{ details: color_setting_type === '1' || color_setting_type === true}">○○について質問したいのですが</span></li>
+            <li class="sinclo_se chat_right details" ng-class="{ notNone:se_border_none === '' || se_border_none === false, middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3',boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}" ><span class="details">○○について質問したいのですが</span></li>
           </div>
           <div style="height: auto!important; padding:0;">
-            <li class="sinclo_re chat_left" ng-style="{backgroundColor:makeFaintColor()}" ng-class="{ notNone:re_border_none === '' || re_border_none === false, middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3',boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}"><span class="cName" ng-if="show_name == 1" ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}"><?=$userInfo['display_name']?></span><span class="cName" ng-if="show_name == 2" ng-class="{ details: color_setting_type === '1' || color_setting_type === true}"ng-class="{ details: color_setting_type === '1' || color_setting_type === true, middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">{{sub_title}}</span><span ng-class="{ details: color_setting_type === '1' || color_setting_type === true}">こんにちは</span></li>
+            <li class="sinclo_re chat_left" ng-style="{backgroundColor:makeFaintColor()}" ng-class="{ notNone:re_border_none === '' || re_border_none === false, middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3',boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}"><span class="cName details" ng-if="show_name == 1" ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}"><?=$userInfo['display_name']?></span><span class="cName details" ng-if="show_name == 2" ng-class="{ middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">{{sub_title}}</span><span class="details">こんにちは</span></li>
           </div>
           <div style="height: auto!important; padding:0;">
-            <li class="showAnimationSample sinclo_re chat_left" ng-style="{ notNone:re_border_none === '' || re_border_none === false, backgroundColor:makeFaintColor()}" ng-class="{ notNone:re_border_none === '' || re_border_none === false, middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3',boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}"><span class="cName" ng-if="show_name == 1" ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}"><?=$userInfo['display_name']?></span><span class="cName" ng-if="show_name == 2" ng-class="{ details: color_setting_type === '1' || color_setting_type === true, middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">{{sub_title}}</span><span ng-class="{ details: color_setting_type === '1' || color_setting_type === true}">○○についてですね<br>どのようなご質問でしょうか？</span></li>
+            <li class="showAnimationSample sinclo_re chat_left" ng-style="{backgroundColor:makeFaintColor()}" ng-class="{ notNone:re_border_none === '' || re_border_none === false, middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3',boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}"><span class="cName details" ng-if="show_name == 1" ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}"><?=$userInfo['display_name']?></span><span class="cName details" ng-if="show_name == 2" ng-class="{ middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">{{sub_title}}</span><span class="details">○○についてですね<br>どのようなご質問でしょうか？</span></li>
           </div>
         </ul>
-        <div id="messageBox" class="messageBox" ng-if="chat_message_copy == '1'" ng-class="{ notNone:widget_inside_border_none === ''||widget_inside_border_none === false,details: color_setting_type === '1' || color_setting_type === true }" style="user-select: none; -moz-user-select: none; -webkit-user-select: none; -ms-user-select: none;">
-          <textarea name="sincloChat" id="sincloChatMessage" ng-class="{ notNone:message_box_border_none === ''||message_box_border_none === false, details: color_setting_type === '1' || color_setting_type === true}" placeholder="メッセージを入力してください&#13;&#10;{{chat_area_placeholder_pc}}"></textarea>
-          <a id="sincloChatSendBtn" class="notSelect" ng-class="{details: color_setting_type === '1' || color_setting_type === true ,middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}"><span ng-class="{details: color_setting_type === '1' || color_setting_type === true}">送信</span></a>
+        <div id="messageBox" class="messageBox details" ng-if="chat_message_copy == '1'" ng-class="{ notNone:widget_inside_border_none === ''||widget_inside_border_none === false }" style="user-select: none; -moz-user-select: none; -webkit-user-select: none; -ms-user-select: none;">
+          <textarea name="sincloChat" id="sincloChatMessage" class="details" ng-class="{ notNone:message_box_border_none === ''||message_box_border_none === false}" placeholder="メッセージを入力してください&#13;&#10;{{chat_area_placeholder_pc}}"></textarea>
+          <a id="sincloChatSendBtn" class="notSelect details" ng-class="{ middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}"><span class="details">送信</span></a>
         </div>
-        <div id="messageBox" class="messageBox" ng-if="chat_message_copy == '0'" ng-class="{ notNone:widget_inside_border_none === ''||widget_inside_border_none === false,details: color_setting_type === '1' || color_setting_type === true }">
-          <textarea name="sincloChat" id="sincloChatMessage" ng-class="{ notNone:message_box_border_none === ''||message_box_border_none === false, details: color_setting_type === '1' || color_setting_type === true}" placeholder="メッセージを入力してください&#13;&#10;{{chat_area_placeholder_pc}}"></textarea>
-          <a id="sincloChatSendBtn" class="notSelect" ng-class="{details: color_setting_type === '1' || color_setting_type === true ,middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}"><span ng-class="{details: color_setting_type === '1' || color_setting_type === true}">送信</span></a>
+        <div id="messageBox" class="messageBox details" ng-if="chat_message_copy == '0'" ng-class="{ notNone:widget_inside_border_none === ''||widget_inside_border_none === false }">
+          <textarea name="sincloChat" id="sincloChatMessage" class="details" ng-class="{ notNone:message_box_border_none === ''||message_box_border_none === false}" placeholder="メッセージを入力してください&#13;&#10;{{chat_area_placeholder_pc}}"></textarea>
+          <a id="sincloChatSendBtn" class="notSelect details" ng-class="{ middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}"><span class="details">送信</span></a>
         </div>
       <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT]) ) :?>
-        <span id="sincloAccessInfo" ng-if="chat_message_copy == '1'" ng-class="{ notNone:widget_inside_border_none === ''||widget_inside_border_none === false,details: color_setting_type === '1' || color_setting_type === true }" style="user-select: none;-moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;" ng-hide="showWidgetType === 3">ウェブ接客コード：●●●●</span>
-        <span id="sincloAccessInfo" ng-if="chat_message_copy == '0'" ng-class="{ notNone:widget_inside_border_none === ''||widget_inside_border_none === false,details: color_setting_type === '1' || color_setting_type === true }" ng-hide="showWidgetType === 3">ウェブ接客コード：●●●●</span>
+        <span id="sincloAccessInfo" ng-if="chat_message_copy == '1'" class="details" ng-class="{ notNone:widget_inside_border_none === ''||widget_inside_border_none === false }" style="user-select: none;-moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;" ng-hide="showWidgetType === 3">ウェブ接客コード：●●●●</span>
+        <span id="sincloAccessInfo" ng-if="chat_message_copy == '0'" class="details" ng-class="{ notNone:widget_inside_border_none === ''||widget_inside_border_none === false }" ng-hide="showWidgetType === 3">ウェブ接客コード：●●●●</span>
         <?php endif; ?>
       </section>
     <?php endif; ?>
     <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT]) ) :?>
+<!-- 仕様変更、常に高度な設定が当たっている状態とする -->
+<!--
       <section id="callTab" ng-hide="widget.showTab !== 'call'" ng-class="{details: color_setting_type === '1' || color_setting_type === true, middleSize: widgetSizeTypeToggle === '2',largeSize: widgetSizeTypeToggle === '3'}">
+ -->
+      <section id="callTab" ng-hide="widget.showTab !== 'call'" class="details" ng-class="{ middleSize: widgetSizeTypeToggle === '2',largeSize: widgetSizeTypeToggle === '3'}">
         <div style="height: 50px;margin: 15px 25px;">
         <!-- アイコン -->
         <span id="telIcon"><img width="19.5" height="33" src="<?=C_PATH_NODE_FILE_SERVER?>/img/call.png" style="margin: 6px 12px"></span>
@@ -511,35 +528,36 @@
  -->
     <div id="miniTarget">
       <section id="chatTab">
-        <ul id="chatTalk" ng-class="{ details: color_setting_type === '1' || color_setting_type === true }" ng-if="chat_message_copy == '0'">
+        <ul id="chatTalk" class="details" ng-if="chat_message_copy == '0'">
           <div style="height: auto!important; padding:0;" ng-class="{liLeft: chat_message_design_type == 1, liRight: chat_message_design_type == 2}">
-            <li class="sinclo_se chat_right" ng-class="{notNone:se_border_none === '' || se_border_none === false, details: color_setting_type === '1' || color_setting_type === true, boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}"><span ng-class="{ details: color_setting_type === '1' || color_setting_type === true}">○○について質問したいのですが</span></li>
+            <li class="sinclo_se chat_right details" ng-class="{notNone:se_border_none === '' || se_border_none === false, boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}"><span class="details" >○○について質問したいのですが</span></li>
           </div>
           <div style="height: auto!important; padding:0;">
-            <li class="sinclo_re chat_left" ng-class="{notNone:re_border_none === '' || re_border_none === false, boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}" ng-style="{backgroundColor:makeFaintColor()}"><span class="cName" ng-class="{ details: color_setting_type === '1' || color_setting_type === true }">{{sub_title}}</span><span ng-class="{ details: color_setting_type === '1' || color_setting_type === true}">こんにちは</span></li>
+            <li class="sinclo_re chat_left" ng-class="{notNone:re_border_none === '' || re_border_none === false, boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}" ng-style="{backgroundColor:makeFaintColor()}"><span class="cName details" >{{sub_title}}</span><span class="details">こんにちは</span></li>
           </div>
           <div style="height: auto!important; padding:0;">
-            <li class="showAnimationSample sinclo_re chat_left" ng-class="{notNone:re_border_none === '' || re_border_none === false, boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}" ng-style="{backgroundColor:makeFaintColor()}"><span class="cName" ng-class="{ details: color_setting_type === '1' || color_setting_type === true }">{{sub_title}}</span><span ng-class="{ details: color_setting_type === '1' || color_setting_type === true}">○○についてですね<br>どのようなご質問でしょうか？</span></li>
+            <li class="showAnimationSample sinclo_re chat_left" ng-class="{notNone:re_border_none === '' || re_border_none === false, boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}" ng-style="{backgroundColor:makeFaintColor()}"><span class="cName details" >{{sub_title}}</span><span class="details">○○についてですね<br>どのようなご質問でしょうか？</span></li>
           </div>
         </ul>
-        <ul id="chatTalk" ng-class="{ details: color_setting_type === '1' || color_setting_type === true }" ng-if="chat_message_copy == '1'" style = "user-select: none;-moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;" >
+        <ul id="chatTalk" class="details" ng-if="chat_message_copy == '1'" style = "user-select: none;-moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;" >
           <div style="height: auto!important; padding:0;" ng-class="{liLeft: chat_message_design_type == 1, liRight: chat_message_design_type == 2}">
-            <li class="sinclo_se chat_right" ng-class="{notNone:se_border_none === '' || se_border_none === false, details: color_setting_type === '1' || color_setting_type === true, boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}"><span ng-class="{ details: color_setting_type === '1' || color_setting_type === true}">○○について質問したいのですが</span></li>
+            <li class="sinclo_se chat_right details" ng-class="{notNone:se_border_none === '' || se_border_none === false, boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}"><span class="details">○○について質問したいのですが</span></li>
           </div>
           <div style="height: auto!important; padding:0;">
-            <li class="sinclo_re chat_left" ng-class="{notNone:re_border_none === '' || re_border_none === false, boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}" ng-style="{backgroundColor:makeFaintColor()}"><span class="cName" ng-class="{ details: color_setting_type === '1' || color_setting_type === true }">{{sub_title}}</span><span ng-class="{ details: color_setting_type === '1' || color_setting_type === true}">こんにちは</span></li>
+            <li class="sinclo_re chat_left" ng-class="{notNone:re_border_none === '' || re_border_none === false, boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}" ng-style="{backgroundColor:makeFaintColor()}"><span class="cName details" >{{sub_title}}</span><span class="details">こんにちは</span></li>
           </div>
           <div style="height: auto!important; padding:0;">
-            <li class="showAnimationSample sinclo_re chat_left" ng-class="{notNone:re_border_none === '' || re_border_none === false, boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}" ng-style="{backgroundColor:makeFaintColor()}"><span class="cName" ng-class="{ details: color_setting_type === '1' || color_setting_type === true }">{{sub_title}}</span><span ng-class="{ details: color_setting_type === '1' || color_setting_type === true}">○○についてですね<br>どのようなご質問でしょうか？</span></li>
+            <li class="showAnimationSample sinclo_re chat_left" ng-class="{notNone:re_border_none === '' || re_border_none === false, boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}" ng-style="{backgroundColor:makeFaintColor()}"><span class="cName details" >{{sub_title}}</span><span class="details">○○についてですね<br>どのようなご質問でしょうか？</span></li>
           </div>
         </ul>
-        <div id="messageBox" class="messageBox" ng-class="{ notNone:widget_inside_border_none === ''||widget_inside_border_none === false,details: color_setting_type === '1' || color_setting_type === true }">
-          <textarea name="sincloChat" id="sincloChatMessage" ng-class="{ notNone:message_box_border_none === ''||message_box_border_none === false, details: color_setting_type === '1' || color_setting_type === true}" placeholder="メッセージを入力してください{{chat_area_placeholder_sp}}"></textarea>
-          <a id="sincloChatSendBtn" class="notSelect" ng-class="{details: color_setting_type === '1' || color_setting_type === true }"><span ng-class="{details: color_setting_type === '1' || color_setting_type === true }">送信</span></a>
+        <div id="messageBox" class="messageBox details" ng-class="{ notNone:widget_inside_border_none === ''||widget_inside_border_none === false }">
+          <textarea name="sincloChat" id="sincloChatMessage" class="details" ng-class="{ notNone:message_box_border_none === ''||message_box_border_none === false}" placeholder="メッセージを入力してください{{chat_area_placeholder_sp}}"></textarea>
+          <a id="sincloChatSendBtn" class="notSelect details" ><span class="details">送信</span></a>
         </div>
       </section>
     </div>
   </div>
 <?php endif; ?>
 <!-- スマホ版 -->
+
 </section>
