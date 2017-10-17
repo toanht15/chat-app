@@ -112,6 +112,12 @@ class MWidgetSettingsController extends AppController {
       else{
         $this->set('widget_inside_border_color_flg', true);
       }
+      //仕様変更常に高度な設定の設定値が反映されるようにする
+      if(array_key_exists ('color_setting_type',$json)){
+        if($json['color_setting_type'] === '1'){
+          $inputData['MWidgetSetting']['color_setting_type'] = '0';
+        }
+      }
       $this->data = $inputData;
     }
     $titleLength = 12;
@@ -215,6 +221,9 @@ class MWidgetSettingsController extends AppController {
     else {
       $this->request->data['MWidgetSetting']['main_image'] = "";
     }
+
+    //仕様変更常に高度な設定の設定値が反映されるようにする
+    $this->request->data['MWidgetSetting']['color_setting_type'] = "1";
 
     //ウィジットサイズが中もしくは大の場合バリデーションの上限をトップタイトル、企業名、説明文のみ可変とする
     if($inputData['MWidgetSetting']['widget_size_type'] !== '1'){
