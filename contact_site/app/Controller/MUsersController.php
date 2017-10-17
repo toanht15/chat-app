@@ -57,6 +57,13 @@ class MUsersController extends AppController {
     if ( strcmp($this->request->data['type'], 2) === 0 ) {
       $this->MUser->recursive = -1;
       $this->request->data = $this->MUser->read(null, $this->request->data['id']);
+      if($this->request->data['MUser']['m_companies_id'] == $this->userInfo['MCompany']['id'] && $this->request->data['MUser']['permission_level'] != 99 && $this->request->data['MUser']['del_flg'] != 1) {
+        $this->render('/MUsers/remoteEntryUser');
+      }
+      else {
+        $this->response->statusCode(403); //Forbidden
+        return;
+      }
     }
     $this->render('/MUsers/remoteEntryUser');
   }
@@ -79,7 +86,13 @@ class MUsersController extends AppController {
     if (!empty($this->request->data['userId'])) {
       $this->MUser->recursive = -1;
       $tmpData = $this->MUser->read(null, $this->request->data['userId']);
-      $insertFlg = false;
+      if($tmpData['MUser']['m_companies_id'] == $this->userInfo['MCompany']['id'] && $tmpData['MUser']['permission_level'] != 99 && $tmpData['MUser']['del_flg'] != 1) {
+        $insertFlg = false;
+      }
+      else {
+        $this->response->statusCode(403); //Forbidden
+        return;
+      }
     }
     else {
       $this->MUser->create();

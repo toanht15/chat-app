@@ -1,3 +1,8 @@
+<script type = "text/javascript">
+  <?php  $this->request->data['TDocument']['manuscript'] = "'".htmlspecialchars($this->request->data['TDocument']['manuscript'], ENT_QUOTES, 'UTF-8')."'";?>
+  <?php  $this->request->data['TDocument']['rotation'] = htmlspecialchars($this->request->data['TDocument']['rotation'], ENT_QUOTES, 'UTF-8');?>
+  <?php    $this->request->data['TDocument']['settings'] = htmlspecialchars($this->request->data['TDocument']['settings'], ENT_QUOTES, 'UTF-8');?>
+</script>
 <?php echo $this->Html->script("jquery-ui.min.js"); ?>
 <?php echo $this->element('TDocuments/script'); ?>
 
