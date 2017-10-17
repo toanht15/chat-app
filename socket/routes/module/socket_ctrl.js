@@ -2016,7 +2016,6 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   socket.on('beginToCoBrowse', function (data) {
     console.log("beginToCoBrowse >>> " + data);
     var obj = JSON.parse(data);
-    laSessionCounter.countUp(obj.siteKey);
     emit.toCompany('beginToCoBrowse', data, obj.siteKey);
   });
 
@@ -2030,6 +2029,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     sincloCore[obj.siteKey][obj.tabId].coBrowseConnectToken = obj.coBrowseConnectToken;
     emit.toUser('readyToCoBrowse', data, getSessionId(obj.siteKey, obj.tabId, 'coBrowseParentSessionId'));
     emit.toCompany('syncNewInfo', data, obj.siteKey);
+    laSessionCounter.countUp(obj.siteKey);
   });
 
   /**
