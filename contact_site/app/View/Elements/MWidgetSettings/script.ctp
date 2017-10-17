@@ -34,6 +34,11 @@ sincloApp.controller('WidgetCtrl', function($scope){
       }
 
       if ( Number(num) !== 2 ) { // ｽﾏｰﾄﾌｫﾝ（横）以外は最大化する
+        if(sincloBox){
+          if(sincloBox.style.display == 'none'){
+            sincloBox.style.display = 'block';
+          }
+        }
         /* ウィジェットが最小化されていたら最大化する */
         if ( !$scope.openFlg ) { // 最小化されている場合
           var main = document.getElementById("miniTarget");  // 非表示対象エリア
@@ -47,12 +52,74 @@ sincloApp.controller('WidgetCtrl', function($scope){
           }
         }
       }
-
+      if( Number(num) !== 4 ){
+        document.getElementById("switch_widget").value = num;
+      }
       $scope.openFlg = true;
+    }
+
+    //バナーから通常の表示に戻るときの処理
+    $scope.bannerSwitchWidget = function(){
+      var lastSwitchWidget = Number(document.getElementById("switch_widget").value);
+      sincloBox.style.display = 'block';
+      $scope.switchWidget(lastSwitchWidget);
+      $scope.openFlg = false;
+      return;
     }
 
     $scope.showChooseImg = function(){
       return $scope.mainImageToggle == '1';
+    }
+
+    $scope.showcloseButtonMode = function(){
+      if($scope.closeButtonSettingToggle == '2' && $scope.mainImageToggle != '4'){
+        $("#closeButtonMode").show();
+      }
+      else{
+        $("#closeButtonMode").hide();
+      }
+      return;
+    }
+
+    //小さなバナーの横幅を求める関数
+    /*
+     * 　もともとバナーの横幅はwidth: fit-content;で値を動的に持たせていたが、IEでこの実装は動作しなかったため
+     * 現在の横幅を算出して当てはめる方法にした経緯がある。
+     * 　しかし、各ブラウザごとにfontサイズの扱いが異なるため、この実装においても、サファリなどで見た目に差異が
+     * 生まれてしまっていた。そのため、ブラウザごとに微調整できるようにし、現在に至る。
+     */
+    $scope.getBannerWidth = function(){
+      $('#sincloBanner').css("width","40px");
+      var text = $scope.bannertext;
+      var oneByteCount = 0;
+      var towByteCount = 0;
+
+      if(text.length === 0) {
+        $('#sincloBanner').css("width","38px");
+        return;
+      }
+
+      for (var i=0; i<text.length; i++){
+        var n = escape(text.charAt(i));
+        if (n.length < 4){
+          oneByteCount++;
+        }
+        else{
+          towByteCount++;
+        }
+      }
+
+      //いったん文字数でのサイズ調整を行い、その後spanタグの長さで調整（span内で文字が折り返さないように）
+      var bannerWidth = (oneByteCount * 8) + (towByteCount * 12.7) + 40;
+      $('#sincloBanner').css("width", bannerWidth + "px");
+
+      var targetSpan = $('#bannertext').get(0);
+
+      if(targetSpan) {
+        console.log(targetSpan.offsetWidth);
+        bannerWidth = targetSpan.offsetWidth + 40;
+        $('#sincloBanner').css("width", bannerWidth + "px");
+      }
     }
 
     $scope.$watch('chat_trigger', function(){
@@ -278,6 +345,24 @@ sincloApp.controller('WidgetCtrl', function($scope){
           }
         }
         break;
+      }
+      if($scope.openFlg){
+        //最大化時
+        $("#minimizeBtn").show();
+        $("#addBtn").hide();
+        $("#closeBtn").hide();
+      }
+      else{
+        //最小化時
+        $("#addBtn").show();
+        $("#minimizeBtn").hide();
+        if($scope.closeButtonSettingToggle === '2'){
+          $("#closeBtn").show();
+        }
+        else{
+          $("#closeBtn").hide();
+        }
+        document.getElementById("switch_widget").value = $scope.showWidgetType;
       }
       return res;
     };

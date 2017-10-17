@@ -47,6 +47,21 @@ $config['default'] = [
       "minimizeDesignType" => "1",
       //最小化時デザイン対応
 
+      //閉じるボタン対応
+      /**
+       * 閉じるボタン有効無効
+       */
+      "closeButtonSetting" => "2",
+      /**
+       * 小さなバナー表示有効無効
+       */
+      "closeButtonModeType" => "1",
+      /**
+       * バナーテキスト
+       */
+      "bannertext" => "お問い合わせはこちら",
+      //閉じるボタン対応
+
       /**
        * トップタイトル
        */
@@ -128,6 +143,12 @@ $config['default'] = [
        * 1: 有効、0: 無効
        */
       "chatMessageWithAnimation"=>"1",
+
+      /**
+       * チャット本文コピー
+       * 0: コピーできる、1: コピーできない
+       */
+      "chatMessageCopy"=>"0",
 
       /**
        * スマートフォンウィジェット表示

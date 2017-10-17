@@ -575,22 +575,22 @@ $( function() {
     //全てのタブの要素を取得
     var allTabList = document.querySelectorAll('[id^="ui-id-"]');
     for (var i = 0; i < allTabList.length; i++) {
-      var tab_w = allTabList[i].clientWidth;
+      var tab_w = allTabList[i].clientWidth  + allTabList[i].text.length * 0.5;
       if(tab_w < 104){
         allTabList[i].style.width = '104px';
         allTabList[i].style.textAlign = 'center';
+        tab_w = 104;
       }
       else{
-        var tab_w = allTabList[i].clientWidth;
         if(allTabList[i].clientWidth > 40){
-          var px_str = tab_w+'px'
+          var px_str = tab_w +'px'
           allTabList[i].style.width = px_str;
           allTabList[i].style.textAlign = 'center';
         }
       }
       if(e.type === 'load') {
-        $(allTabList[i]).data('defaultWidth', allTabList[i].clientWidth);
-        allDefaultTabWidth += allTabList[i].clientWidth + 1;
+        $(allTabList[i]).data('defaultWidth', tab_w);
+        allDefaultTabWidth += tab_w;
       }
     }
 
@@ -599,9 +599,8 @@ $( function() {
     for (var i = 0; i < allTabList.length; i++) {
       var tabWidth = $(allTabList[i]).data('defaultWidth');
       var ratio = tabWidth / allDefaultTabWidth;
-
       if (tabDisplayWidth * ratio >  tabWidth) {
-        allTabList[i].style.width = tabWidth - 2 + "px";
+        allTabList[i].style.width = tabWidth + "px";
         if(typeof minimumWidgetSizeList[i] !== 'undefined') {
           delete minimumWidgetSizeList[i];
         }
