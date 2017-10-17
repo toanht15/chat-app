@@ -55,6 +55,10 @@
                         }
                     });
                 }
+                console.log('success');
+            },
+            error: function(data) {
+              console.log('error');
             }
         });
     };

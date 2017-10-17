@@ -30,7 +30,7 @@ class TDocument extends AppModel {
         'rule' => ['fileSize', '<=', '10MB'],
         'allowEmpty' => true,
         'message' => '10MB以上のファイルは添付できません'
-      ],
+      ]
     ],
     'overview' => [
       'maxLength' => [
@@ -54,7 +54,7 @@ class TDocument extends AppModel {
     'manuscript' => [
       'prohibitedCharacters' => [
          'rule' => '/^(?!.*(<|>|&|\')).*$/',
-         'message' => '<,>,&,",\'を含まずに設定してください。'
+         'message' => '<,>,&,\'を含まずに設定してください。'
       ]
      ]
   ];

@@ -175,6 +175,7 @@ var slideJsApi,slideJsApi2,frameSize,slideJsCNST;
       this.maxPage = page;
       this.rotation = rotation;
       this.filePath = filePath;
+      console.log(this.manuscript);
       this.manuscript = JSON.parse(htmlEntities( this.manuscript, 'decode' ));
       this.makePage(); // 初期スライドを作成
       var limitPage = (this.currentPage + 3 > this.maxPage) ? this.maxPage : this.currentPage + 3 ;
@@ -190,8 +191,13 @@ var slideJsApi,slideJsApi2,frameSize,slideJsCNST;
 
       // 原稿
       var textarea = document.getElementById('pages-text');
+      console.log('textArea');
+      console.log(textarea);
+      console.log('this.manuscript');
+      console.log(this.manuscript);
       if ( this.currentPage in this.manuscript ) {
         textarea.value = this.manuscript[this.currentPage];
+        console.log(textarea.value);
       }
 
       textarea.addEventListener('blur',function(e){

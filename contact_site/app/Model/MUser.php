@@ -148,10 +148,6 @@ class MUser extends AppModel {
             'notBlank' => [
                 'rule' => 'notBlank',
                 'message' => '権限レベルを選択してください。'
-            ],
-            'prohibitedCharacters' => [
-                'rule' => '/^(?!.*(<|>|&|"|\')).*$/',
-                'message' => '<,>,&.",\'を含まずに設定してください。'
             ]
         ],
         'current_password' => [
