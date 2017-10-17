@@ -683,7 +683,7 @@
           emit('readyToCoBrowse', params);
         }
       }).fail(function(e){
-        this.coBrowseErrorProcess();
+        _self.coBrowseErrorProcess();
       });
     },
     coBrowseErrorProcess: function() {

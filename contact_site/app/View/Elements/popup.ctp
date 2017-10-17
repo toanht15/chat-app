@@ -84,7 +84,7 @@ var popupEvent = {
                         return popupEvent.closePopup(1);
                       };
                 <?php if (isset($coreSettings[C_COMPANY_USE_LA_CO_BROWSE]) && $coreSettings[C_COMPANY_USE_LA_CO_BROWSE]): ?>
-                      var closeBtn = _wideButton("画面キャプチャ共有(β版)");
+                      var closeBtn = _wideButton("画面キャプチャ共有");
                       closeBtn.onclick = function(){
                         return popupEvent.closePopup(2);
                       };
