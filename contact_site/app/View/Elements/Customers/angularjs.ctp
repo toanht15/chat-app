@@ -407,7 +407,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     };
 
     $scope.searchResult = [];
+    $scope.beforeInputValue = '';
     $scope.search = function(array, forceResult){
+      console.log("search processing...");
       var isHideRealTimeMonitor = contract.hideRealtimeMonitor;
       var result = {}, targetField;
       targetField = ( Number($scope.fillterTypeId) === 2 ) ? 'ipAddress' : 'accessId';
@@ -416,9 +418,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         if(forceResult) {
           $scope.searchResult = array;
           result = array;
-        } else if($scope.searchText.length > 0 && $scope.searchResult.length === 0) {
-          $scope.searchProcess($scope.searchText);
-          return [];
+        } else if($scope.searchText.length > 0 && $scope.searchResult.length === 0 && $scope.searchText !== $scope.beforeInputValue) {
+          $scope.searchProcess($scope.searchText, $scope.fillterTypeId);
+          result = [];
         } else if($scope.searchText.length === 0) {
           $scope.searchResult = [];
           result = [];
@@ -440,13 +442,15 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           result = array;
         }
       }
+      $scope.beforeInputValue = $scope.searchText;
       return result;
     };
 
     // 検索用
-    $scope.searchProcess = function(term) {
-      emit('searchCustomerByAccessId', {
-        term: term
+    $scope.searchProcess = function(term, filterType) {
+      emit('searchCustomer', {
+        term: term,
+        filterType: filterType
       });
     };
 
