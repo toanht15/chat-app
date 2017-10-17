@@ -1405,7 +1405,7 @@ var socket, // socket.io
       }
 
       // 画面同期中は表示しない
-      if ( check.isset(userInfo.connectToken) ) {
+      if ( check.isset(userInfo.connectToken) || check.isset(userInfo.coBrowseConnectToken) ) {
         window.sincloInfo.widgetDisplay = false;
       }
 
@@ -2224,6 +2224,9 @@ var socket, // socket.io
             parentId: userInfo.parentId,
             tabId: userInfo.tabId
           });
+        }
+        if ( check.isset(storage.s.get('coBrowseConnectToken')) ) {
+          userInfo.coBrowseConnectToken = storage.s.get('coBrowseConnectToken');
         }
       }
     },
@@ -3214,6 +3217,18 @@ var socket, // socket.io
       sinclo.getWindowInfo(obj);
     }); // socket-on: getWindowInfo
 
+    // 画面共有(LiveAssist)
+    socket.on('startCoBrowseOpen', function(d){
+      var obj = common.jParse(d);
+      sinclo.startCoBrowseOpen(obj);
+    }); // socket-on: getWindowInfo
+
+    // 画面共有準備完了
+    socket.on('assistAgentIsReady', function(d){
+      var obj = common.jParse(d);
+      sinclo.assistAgentIsReady(obj);
+    });
+
     // 画面共有(iframeバージョン)
     socket.on('startWindowSync', function(d){
       var obj = common.jParse(d);
@@ -3334,6 +3349,10 @@ var socket, // socket.io
     socket.on('syncStop', function(d){
       sinclo.syncStop(d);
     }); // socket-on: syncStop
+
+    socket.on('stopCoBrowse', function(d){
+      sinclo.stopCoBrowse(d);
+    }); // socket-on: stopCoBrowse
 
     socket.on('sincloReconnect', function(d){ // socket再接続
       socket.disconnect();
@@ -3498,7 +3517,7 @@ function now(){
 }
 
 // get type
-var myTag = document.querySelector("script[src='" + sincloInfo.site.files + "/client/" + sincloInfo.site.key + ".js']");
+var myTag = document.querySelector("script[src$='/client/" + sincloInfo.site.key + ".js']");
 if (myTag.getAttribute('data-hide')) {
     sincloInfo.dataset.hide = myTag.getAttribute('data-hide');
 }

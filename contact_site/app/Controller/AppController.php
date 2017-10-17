@@ -65,7 +65,8 @@ class AppController extends Controller {
     C_COMPANY_USE_CHAT_LIMITER => false, // 同時対応数上限
     C_COMPANY_USE_HISTORY_EXPORTING => false, // 履歴エクスポート
     C_COMPANY_USE_STATISTICS => false, // 統計
-    C_COMPANY_USE_DICTIONARY_CATEGORY => false // 統計
+    C_COMPANY_USE_DICTIONARY_CATEGORY => false, // 定型文カテゴリ
+    C_COMPANY_USE_HIDE_REALTIME_MONITOR => false
   ];
 
   public function beforeFilter(){

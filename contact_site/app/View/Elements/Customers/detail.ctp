@@ -163,7 +163,7 @@
         </div>
 
         <div class="connectionBtn" ng-if="showConnectionBtn()">
-          <a href="javascript:void(0)" ng-click="windowOpen(detailId, detail.accessId)">接続する</a>
+          <a href="javascript:void(0)" ng-click="confirmSharingWindowOpen(detailId, detail.accessId)">接続する</a>
         </div>
         <?php endif; ?>
         <div class="hardInfo card">
