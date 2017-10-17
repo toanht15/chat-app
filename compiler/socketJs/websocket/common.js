@@ -878,7 +878,6 @@ var socket, // socket.io
       else {
         html += '      #sincloBox #fotter { text-align: center; color: #A1A1A1!important; background-color: #FFF; margin: 0;border-top: none; }';
       }
-      html += '      #sincloBox section#navigation ul li::before{ background-color: #BCBCBC; content: " "; display: inline-block; position: relative; background-size: contain; vertical-align: middle; background-repeat: no-repeat }';
       html += '      #sincloBox section#navigation ul li { position: relative; overflow: hidden; cursor: pointer; color: ' + colorList['otherTextColor'] + '; text-align: center; display: table-cell; }';
       html += '      #sincloBox section#navigation ul li.selected { background-color: ' + colorList['chatTalkBackgroundColor'] + '; }';
       html += '      #sincloBox section#navigation ul li::before{ color: #BCBCBC; content: " "; display: inline-block; position: relative; background-size: contain; vertical-align: middle; background-repeat: no-repeat }';
