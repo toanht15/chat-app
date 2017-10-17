@@ -1553,7 +1553,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     };
 
     socket.on('syncNewInfo', function (data) {
-      if(!contract.hideRealtimeMonitor) {
         var obj = JSON.parse(data);
 
         var tabId = ( obj.subWindow ) ? obj.to : obj.tabId;
@@ -1562,7 +1561,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         }
         // 消費者
         if ($scope.monitorList.hasOwnProperty(tabId)) {
-
           if ('widget' in obj) {
             $scope.monitorList[tabId].widget = obj.widget;
             if (chatApi.tabId === tabId) {
@@ -1589,7 +1587,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             $scope.monitorList[tabId].responderId = obj.responderId;
           }
         }
-      }
     });
 
     socket.on('windowSyncInfo', function (data) {
