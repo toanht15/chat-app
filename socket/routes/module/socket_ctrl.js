@@ -43,10 +43,9 @@ var LaSessionCounter = function() {
   var _key_maxCount = 'max';
   var countList = {};
   var _initializeCountList = function(siteKey) {
-    countList[siteKey] = {
-      _key_currentCount: 0,
-      _key_maxCount: 0
-    };
+    countList[siteKey] = {};
+    countList[siteKey][_key_currentCount] = 0;
+    countList[siteKey][_key_maxCount] = 0;
     _printCurrentState(siteKey, '_initializeCountList');
   }
   var _getMaxCount = function(siteKey) {
@@ -66,6 +65,7 @@ var LaSessionCounter = function() {
         _initializeCountList(siteKey);
       }
       countList[siteKey][_key_maxCount] = maxCount;
+      _printCurrentState(siteKey, "setMaxCount");
     },
     getMaxCount: function(siteKey) {
       return _getMaxCount(siteKey);
@@ -79,6 +79,7 @@ var LaSessionCounter = function() {
         this.initializeCurrentCount(siteKey);
       }
       if(!this.isLimit(siteKey)) {
+        console.log("DEBUG2 : " + JSON.stringify(countList[siteKey]));
         countList[siteKey][_key_currentCount]++;
       }
       _printCurrentState(siteKey, "countUp");
@@ -365,6 +366,16 @@ function trimFrame(str){
 // 数値チェック
 function isNumber(n){
   return RegExp(/^(\+|\-)?\d+(.\d+)?$/).test(n);
+}
+
+// objectのマージ
+function extend(obj1, obj2) {
+  for (key in obj2) {
+    if (obj2.hasOwnProperty(key)) {
+      obj1[key] = obj2[key];
+    }
+  }
+  return obj1;
 }
 
 // emit用
@@ -1090,7 +1101,7 @@ io.sockets.on('connection', function (socket) {
 
     emit.toCompany("sendCustomerInfo", obj, obj.siteKey);
 
-    customerList[obj.siteKey][obj.accessId + '_' + socket.id] = obj;
+    customerList[obj.siteKey][obj.accessId + '_' + obj.ipAddress + '_' + socket.id] = obj;
     console.log("customerList : " + JSON.stringify(customerList[obj.siteKey]));
 
     if ( ('contract' in obj) && ('chat' in obj.contract) && obj.contract.chat === false) return false;
@@ -1102,7 +1113,7 @@ io.sockets.on('connection', function (socket) {
     emit.toClient('confirmCustomerInfo', obj, obj.siteKey);
   });
 
-  socket.on("searchCustomerByAccessId", function(data){
+  socket.on("searchCustomer", function(data){
     var obj = JSON.parse(data);
     var term = obj.term;
     var result = [];
@@ -1113,7 +1124,9 @@ io.sockets.on('connection', function (socket) {
           var splitedKey = key.split("_");
           if(splitedKey[0]) {
             if(splitedKey[0].indexOf(term) === 0) { // 前方一致検索
-              result.push(customerList[obj.siteKey][key]);
+              var mergedObject = extend(customerList[obj.siteKey][key], sincloCore[obj.siteKey][customerList[obj.siteKey][key]['tabId']]);
+              console.log("debug => " + JSON.stringify(mergedObject));
+              result.push(mergedObject);
             }
           }
         });
@@ -1121,6 +1134,8 @@ io.sockets.on('connection', function (socket) {
     }
     emit.toMine('searchCustomerResult', result, socket);
   });
+
+
 
   socket.on("connectSuccessForClient", function (data) {
     var obj = JSON.parse(data);
