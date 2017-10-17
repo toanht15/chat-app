@@ -593,53 +593,63 @@ sincloApp.controller('WidgetCtrl', function($scope){
 
     $scope.makeFaintColor = function(){
       var defColor = "#F1F5C8";
-      if($scope.color_setting_type === '1'){
-        defColor = $scope.re_background_color;
-      }
-      else{
-        if ( $scope.main_color.indexOf("#") >= 0 ) {
-          var code = $scope.main_color.substr(1), r,g,b;
-          if (code.length === 3) {
-            r = String(code.substr(0,1)) + String(code.substr(0,1));
-            g = String(code.substr(1,1)) + String(code.substr(1,1));
-            b = String(code.substr(2)) + String(code.substr(2));
-          }
-          else {
-            r = String(code.substr(0,2));
-            g = String(code.substr(2,2));
-            b = String(code.substr(4));
-          }
-          var balloonR = String(Math.floor(255 - (255 - parseInt(r,16)) * 0.1));
-          var balloonG = String(Math.floor(255 - (255 - parseInt(g,16)) * 0.1));
-          var balloonB = String(Math.floor(255 - (255 - parseInt(b,16)) * 0.1));
-          defColor = 'rgb(' + balloonR  + ', ' +  balloonG  + ', ' +  balloonB + ')';
-//          defColor = "rgba(" + parseInt(r,16) + ", " + parseInt(g,16) + ", " + parseInt(b,16) + ", 0.1)";
-        }
-      }
+      //仕様変更、常に高度な設定が当たっている状態とする
+      defColor = $scope.re_background_color;
+//       if($scope.color_setting_type === '1'){
+//         defColor = $scope.re_background_color;
+//       }
+//       else{
+//         if ( $scope.main_color.indexOf("#") >= 0 ) {
+//           var code = $scope.main_color.substr(1), r,g,b;
+//           if (code.length === 3) {
+//             r = String(code.substr(0,1)) + String(code.substr(0,1));
+//             g = String(code.substr(1,1)) + String(code.substr(1,1));
+//             b = String(code.substr(2)) + String(code.substr(2));
+//           }
+//           else {
+//             r = String(code.substr(0,2));
+//             g = String(code.substr(2,2));
+//             b = String(code.substr(4));
+//           }
+//           var balloonR = String(Math.floor(255 - (255 - parseInt(r,16)) * 0.1));
+//           var balloonG = String(Math.floor(255 - (255 - parseInt(g,16)) * 0.1));
+//           var balloonB = String(Math.floor(255 - (255 - parseInt(b,16)) * 0.1));
+//           defColor = 'rgb(' + balloonR  + ', ' +  balloonG  + ', ' +  balloonB + ')';
+//         }
+//       }
       return defColor;
     };
 
     $scope.getTalkBorderColor = function(chk){
       var defColor = "#E8E7E0";
-      if($scope.color_setting_type === '1'){
-        if(chk === 're'){
-          defColor = $scope.re_border_color;
-        }
-        else{
-          defColor = $scope.se_border_color;
-        }
+      //仕様変更、常に高度な設定が当たっている状態とする
+      if(chk === 're'){
+        defColor = $scope.re_border_color;
       }
       else{
-        defColor = $scope.chat_talk_border_color;
+        defColor = $scope.se_border_color;
       }
+//       if($scope.color_setting_type === '1'){
+//         if(chk === 're'){
+//           defColor = $scope.re_border_color;
+//         }
+//         else{
+//           defColor = $scope.se_border_color;
+//         }
+//       }
+//       else{
+//         defColor = $scope.chat_talk_border_color;
+//       }
       return defColor;
     }
 
     $scope.getSeBackgroundColor = function(){
       var defColor = "#FFFFFF";
-      if($scope.color_setting_type === '1'){
-        defColor = $scope.se_background_color;
-      }
+      //仕様変更、常に高度な設定が当たっている状態とする
+      defColor = $scope.se_background_color;
+//       if($scope.color_setting_type === '1'){
+//         defColor = $scope.se_background_color;
+//       }
       return defColor;
     }
 
@@ -1137,16 +1147,16 @@ sincloApp.controller('WidgetCtrl', function($scope){
         element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
       }
     });
-//     //高度な設定を行う行わないを制御するチェックボックス
-//     $("#MWidgetSettingColorSettingType").on("click", function(e){
-//       var checked = $(this).prop('checked');
-//       if(checked) {
-//         $('#color_setting_details').show();
-//       }
-//       else{
-//         $('#color_setting_details').hide();
-//       }
-//     });
+    //高度な設定を行う行わないを制御するチェックボックス
+    $("#MWidgetSettingColorSettingType").on("click", function(e){
+      var checked = $(this).prop('checked');
+      if(checked) {
+        $scope.color_setting_type = '1';
+      }
+      else{
+        $scope.color_setting_type = '0';
+      }
+    });
 
     angular.element(window).on("focus", ".showSp", function(e){
         $scope.switchWidget(3);
