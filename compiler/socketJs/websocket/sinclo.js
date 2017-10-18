@@ -255,6 +255,12 @@
         }
         return false;
       }
+      // LiveAssistのSDKがあれば、このタイミングでイベントハンドラをセットしておき
+      if(AssistSDK) {
+        console.log("Assist SDK found. initSDKCallbacks");
+        laUtil.initSDKCallbacks();
+      }
+
       // connectフラグ
       browserInfo.connectFlg = true;
 

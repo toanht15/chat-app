@@ -475,12 +475,12 @@
       },
 
       _getAll: function() {
-        var json = localStorage.getItem(this.saveDir);
+        var json = sessionStorage.getItem(this.saveDir);
         return json ? JSON.parse(json) : {};
       },
 
       _save: function(obj) {
-        localStorage.setItem(this.saveDir, JSON.stringify(obj));
+        sessionStorage.setItem(this.saveDir, JSON.stringify(obj));
       },
 
       _get: function(key) {
@@ -777,18 +777,6 @@
     });
 
     init();
-//    if(val['k']) {
-//      StorageUtil.setShortcode(val['k']);
-//
-//      getAgentSessionInfo().then(getCorrelationId(val['k'])).then(function(cid){
-//        AssistAgentSDK.startSupport({
-//          correlationId: cid,
-//          sessionToken: StorageUtil.getSessionId(),
-//          url: "https://sdk005.live-assist.jp",
-//          additionalAttribute: config.additionalAttribute
-//        })
-//      });
-//    }
   });
   // -->
 </script>
