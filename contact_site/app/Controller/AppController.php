@@ -76,11 +76,13 @@ class AppController extends Controller {
       $this->checkPort();
     }
 
-    if (empty($_SERVER['HTTPS'])) {
+    //if (empty($_SERVER['HTTPS'])) {
+    if(strcmp($_SERVER['HTTP_X_FORWARDED_PORT'],443) !== 0){
       if(!isset($_SESSION)){
         session_name("http");
+        session_id($_COOKIE['CAKEPHP']);
         session_start();
-        session_regenerate_id();
+        session_regenerate_id(false);
       }
     }
     else {
