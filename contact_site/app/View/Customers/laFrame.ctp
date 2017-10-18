@@ -408,7 +408,7 @@
       var accessList = sessionStorage.getItem('accessList');
     });
 
-    socket.on('syncStop', function(d){
+    socket.on('stopCoBrowse', function(d){
       var obj = JSON.parse(d);
       if ('message' in obj) {
         // ポップアップが表示されていれば、続行しない
@@ -417,14 +417,11 @@
         }
         modalOpen.call(window, obj.message, 'p-alert', 'メッセージ');
         popupEvent.closeNoPopup = function(){
-          popupEvent.close();
-          window.open('about:blank', '_self').close();
-          window.close();
+          windowClose();
         };
       }
       else {
-        window.open('about:blank', '_self').close();
-        window.close();
+        windowClose();
       }
     });
 
@@ -433,13 +430,15 @@
       if ( obj.tabId !== tabId ) return false;
       modalOpen.call(window, '切断を検知しました。再接続をしますか？', 'p-confirm', 'メッセージ');
       popupEvent.closePopup = function(){
-        emit('syncReconnectConfirm', {to: tabId});
+        emit('coBrowseReconnectConfirm', {
+          to: tabId,
+          responderId: "<?= $muserId?>"
+        });
         popupEvent.close();
       };
       popupEvent.closeNoPopup = function(){
         popupEvent.close();
-        window.open('about:blank', '_self').close();
-        window.close();
+        windowClose();
       };
     });
 
@@ -557,6 +556,21 @@
           "role": "agent",
           "name": "<?= h($userInfo['display_name']) ?>"
         }
+      };
+      config.connectionStatusCallbacks = {
+        onDisconnect: function(error, connector) {
+          console.log("onDisconnect -----------");
+          if (error.code > 0) {
+            console.log("reconnecting");
+            connector.reconnect();
+          } else {
+            console.log("terminate");
+            connector.terminate(error);
+          }
+        },
+        onConnect: function(){},
+        onTerminated: function(){},
+        willRetry: function(inSeconds, retryAttemptNumber, maxRetryAttempts, connector){}
       };
     }
 

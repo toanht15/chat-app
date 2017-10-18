@@ -406,23 +406,23 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       tabInfoNotificationMessage: <?php echo json_encode($tabStatusNotificationMessageList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?> // タブ状態の通知用メッセージ
     };
 
-    $scope.searchResult = [];
     $scope.beforeInputValue = '';
+    $scope.searchResult = [];
     $scope.search = function(array, forceResult){
       console.log("search processing...");
       var isHideRealTimeMonitor = contract.hideRealtimeMonitor;
       var result = {}, targetField;
       targetField = ( Number($scope.fillterTypeId) === 2 ) ? 'ipAddress' : 'accessId';
       if(isHideRealTimeMonitor) {
-        var result = $scope.searchResult;
-        if(forceResult) {
+        if (forceResult) {
           $scope.searchResult = array;
           result = array;
-        } else if($scope.searchText.length > 0 && $scope.searchResult.length === 0 && $scope.searchText !== $scope.beforeInputValue) {
+        } else if ($scope.searchText.length > 0 && $scope.searchText !== $scope.beforeInputValue) {
           $scope.searchProcess($scope.searchText, $scope.fillterTypeId);
           result = [];
+        } else if ($scope.searchText.length > 0 && $scope.searchResult.length > 0) {
+          result = $scope.searchResult;
         } else if($scope.searchText.length === 0) {
-          $scope.searchResult = [];
           result = [];
         }
       } else {

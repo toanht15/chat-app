@@ -198,9 +198,11 @@ function getCompanyList(){
     for ( var i = 0; key.length > i; i++ ) {
       var row = rows[key[i]];
       companyList[row.company_key] = row.id;
-      customerList[row.company_key] = {};
-      //FIXME DBから取得した値を当てはめる
       laSessionCounter.setMaxCount(row.company_key, row.la_limit_users);
+      if(!(row.company_key in customerList)) {
+        console.log("new customerList : " + row.company_key);
+        customerList[row.company_key] = {};
+      }
     }
   });
 }
@@ -260,6 +262,14 @@ function syncStopCtrl(siteKey, tabId, unsetFlg){
     }
   }
 
+  for ( var key in customerList[siteKey] ){
+    if(tabId.indexOf(customerList[siteKey][key]['tabId']) === 0) {
+      for (var i = 0; keys.length > i; i++) {
+        delete customerList[siteKey][key][keys[i]];
+      }
+      break;
+    }
+  }
 }
 
 function coBrowseStopCtrl(siteKey, tabId, unsetFlg){
@@ -287,6 +297,15 @@ function coBrowseStopCtrl(siteKey, tabId, unsetFlg){
   for (var i = 0; keys.length > i; i++) {
     if ( getSessionId(siteKey, tabId, keys[i]) ) {
       delete sincloCore[siteKey][tabId][keys[i]];
+    }
+  }
+
+  for ( var key in customerList[siteKey] ){
+    if(tabId.indexOf(customerList[siteKey][key]['tabId']) === 0) {
+      for (var i = 0; keys.length > i; i++) {
+        delete customerList[siteKey][key][keys[i]];
+      }
+      break;
     }
   }
 
@@ -1102,7 +1121,6 @@ io.sockets.on('connection', function (socket) {
     emit.toCompany("sendCustomerInfo", obj, obj.siteKey);
 
     customerList[obj.siteKey][obj.accessId + '_' + obj.ipAddress + '_' + socket.id] = obj;
-    console.log("customerList : " + JSON.stringify(customerList[obj.siteKey]));
 
     if ( ('contract' in obj) && ('chat' in obj.contract) && obj.contract.chat === false) return false;
     chatApi.sendUnreadCnt("sendChatInfo", obj, false);
@@ -1125,7 +1143,6 @@ io.sockets.on('connection', function (socket) {
           if(splitedKey[0]) {
             if(splitedKey[0].indexOf(term) === 0) { // 前方一致検索
               var mergedObject = extend(customerList[obj.siteKey][key], sincloCore[obj.siteKey][customerList[obj.siteKey][key]['tabId']]);
-              console.log("debug => " + JSON.stringify(mergedObject));
               result.push(mergedObject);
             }
           }
@@ -2016,7 +2033,6 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   socket.on('beginToCoBrowse', function (data) {
     console.log("beginToCoBrowse >>> " + data);
     var obj = JSON.parse(data);
-    laSessionCounter.countUp(obj.siteKey);
     emit.toCompany('beginToCoBrowse', data, obj.siteKey);
   });
 
@@ -2030,6 +2046,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     sincloCore[obj.siteKey][obj.tabId].coBrowseConnectToken = obj.coBrowseConnectToken;
     emit.toUser('readyToCoBrowse', data, getSessionId(obj.siteKey, obj.tabId, 'coBrowseParentSessionId'));
     emit.toCompany('syncNewInfo', data, obj.siteKey);
+    laSessionCounter.countUp(obj.siteKey);
   });
 
   /**
@@ -2056,6 +2073,24 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       console.log("assistAgentIsReady >>> Tab ID : " + obj.to + " is NOT found.");
       //FIXME  画面共有セッションは切れていない可能性もあるのでハンドリング方法を考える
     }
+  });
+
+  socket.on('coBrowseReconnectConfirm', function (data) {
+    var obj = JSON.parse(data), timer, i = 1;
+    timer = setInterval(function(){
+      var sessionId = getSessionId(obj.siteKey, obj.to, 'sessionId');
+      if ( sessionId && connectList[sessionId] ) {
+        emit.toUser('assistAgentIsReady', data, getSessionId(obj.siteKey, obj.to, 'sessionId'));
+        clearInterval(timer);
+        // sessionIdが消えてる可能性があるため、企業側フレームのsocket.idを再セット
+        sincloCore[obj.siteKey][obj.to].coBrowseParentSessionId = socket.id;
+      }
+      if ( i === 5 ) {
+        clearInterval(timer);
+        emit.toUser('stopCoBrowse', {message: "接続できませんでした。"}, socket.id);
+      }
+      i++;
+    }, 1000);
   });
 
   /**
@@ -2222,6 +2257,10 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             str = obj.str;
           }
           console.log(str);
+          break;
+        case 6: // reset LiveAssist current count socket.emit('settingReload', JSON.stringify({type:6, targetKey: "demo", siteKey: "master"}));
+          console.log("settingReload >>> reset LiveAssist current count");
+          laSessionCounter.initializeCurrentCount(obj.targetKey);
           break;
         default:
       }
@@ -2549,7 +2588,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
           }
 
           if ( 'coBrowseConnectToken' in core ) {
-            emit.toUser('unsetUser', {siteKey: info.siteKey, tabId: info.tabId}, core.syncFrameSessionId);
+            emit.toUser('unsetUser', {siteKey: info.siteKey, tabId: info.tabId}, core.coBrowseParentSessionId);
             coBrowseStopCtrl(info.siteKey, info.tabId);
           }
 
