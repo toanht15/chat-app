@@ -84,7 +84,9 @@ class AppController extends Controller {
         }
     }
     else {
-      setcookie("CAKEPHP", $_COOKIE['CAKEPHP'], 0 ,"","",1);
+      if(empty(session_get_cookie_params()['secure'])) {
+        setcookie("CAKEPHP", $_COOKIE['CAKEPHP'], 0 ,"","",1);
+      }
     }
 
     // 通知メッセージをセット
