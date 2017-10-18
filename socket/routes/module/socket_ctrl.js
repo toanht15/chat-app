@@ -260,6 +260,14 @@ function syncStopCtrl(siteKey, tabId, unsetFlg){
     }
   }
 
+  for ( var key in customerList[siteKey] ){
+    if(tabId.indexOf(customerList[siteKey][key]['tabId']) === 0) {
+      for (var i = 0; keys.length > i; i++) {
+        delete customerList[siteKey][key][keys[i]];
+      }
+      break;
+    }
+  }
 }
 
 function coBrowseStopCtrl(siteKey, tabId, unsetFlg){
@@ -287,6 +295,15 @@ function coBrowseStopCtrl(siteKey, tabId, unsetFlg){
   for (var i = 0; keys.length > i; i++) {
     if ( getSessionId(siteKey, tabId, keys[i]) ) {
       delete sincloCore[siteKey][tabId][keys[i]];
+    }
+  }
+
+  for ( var key in customerList[siteKey] ){
+    if(tabId.indexOf(customerList[siteKey][key]['tabId']) === 0) {
+      for (var i = 0; keys.length > i; i++) {
+        delete customerList[siteKey][key][keys[i]];
+      }
+      break;
     }
   }
 
@@ -1125,7 +1142,6 @@ io.sockets.on('connection', function (socket) {
           if(splitedKey[0]) {
             if(splitedKey[0].indexOf(term) === 0) { // 前方一致検索
               var mergedObject = extend(customerList[obj.siteKey][key], sincloCore[obj.siteKey][customerList[obj.siteKey][key]['tabId']]);
-              console.log("debug => " + JSON.stringify(mergedObject));
               result.push(mergedObject);
             }
           }
@@ -2058,6 +2074,24 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     }
   });
 
+  socket.on('coBrowseReconnectConfirm', function (data) {
+    var obj = JSON.parse(data), timer, i = 1;
+    timer = setInterval(function(){
+      var sessionId = getSessionId(obj.siteKey, obj.to, 'sessionId');
+      if ( sessionId && connectList[sessionId] ) {
+        emit.toUser('assistAgentIsReady', data, getSessionId(obj.siteKey, obj.to, 'sessionId'));
+        clearInterval(timer);
+        // sessionIdが消えてる可能性があるため、企業側フレームのsocket.idを再セット
+        sincloCore[obj.siteKey][obj.to].coBrowseParentSessionId = socket.id;
+      }
+      if ( i === 5 ) {
+        clearInterval(timer);
+        emit.toUser('stopCoBrowse', {message: "接続できませんでした。"}, socket.id);
+      }
+      i++;
+    }, 1000);
+  });
+
   /**
    *
    * 企業フレーム:1, 消費者フレーム:2,企業インライン:3, 消費者インライン:4
@@ -2222,6 +2256,10 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             str = obj.str;
           }
           console.log(str);
+          break;
+        case 6: // reset LiveAssist current count socket.emit('settingReload', JSON.stringify({type:6, targetKey: "demo", siteKey: "master"}));
+          console.log("settingReload >>> reset LiveAssist current count");
+          laSessionCounter.initializeCurrentCount(obj.targetKey);
           break;
         default:
       }
