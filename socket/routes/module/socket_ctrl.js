@@ -199,7 +199,7 @@ function getCompanyList(){
       var row = rows[key[i]];
       companyList[row.company_key] = row.id;
       laSessionCounter.setMaxCount(row.company_key, row.la_limit_users);
-      if((row.company_key in customerList)) {
+      if(!(row.company_key in customerList)) {
         console.log("new customerList : " + row.company_key);
         customerList[row.company_key] = {};
       }
@@ -1121,7 +1121,6 @@ io.sockets.on('connection', function (socket) {
     emit.toCompany("sendCustomerInfo", obj, obj.siteKey);
 
     customerList[obj.siteKey][obj.accessId + '_' + obj.ipAddress + '_' + socket.id] = obj;
-    console.log("customerList : " + JSON.stringify(customerList[obj.siteKey]));
 
     if ( ('contract' in obj) && ('chat' in obj.contract) && obj.contract.chat === false) return false;
     chatApi.sendUnreadCnt("sendChatInfo", obj, false);
