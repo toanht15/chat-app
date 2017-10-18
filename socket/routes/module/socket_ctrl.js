@@ -198,9 +198,11 @@ function getCompanyList(){
     for ( var i = 0; key.length > i; i++ ) {
       var row = rows[key[i]];
       companyList[row.company_key] = row.id;
-      customerList[row.company_key] = {};
-      //FIXME DBから取得した値を当てはめる
       laSessionCounter.setMaxCount(row.company_key, row.la_limit_users);
+      if((row.company_key in customerList)) {
+        console.log("new customerList : " + row.company_key);
+        customerList[row.company_key] = {};
+      }
     }
   });
 }
