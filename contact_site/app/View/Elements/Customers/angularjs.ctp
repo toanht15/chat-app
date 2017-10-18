@@ -418,7 +418,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         if(forceResult) {
           $scope.searchResult = array;
           result = array;
-        } else if($scope.searchText.length > 0 && $scope.searchResult.length === 0 && $scope.searchText !== $scope.beforeInputValue) {
+        } else if($scope.searchText.length > 0 && $scope.searchText !== $scope.beforeInputValue) {
           $scope.searchProcess($scope.searchText, $scope.fillterTypeId);
           result = [];
         } else if($scope.searchText.length === 0) {
