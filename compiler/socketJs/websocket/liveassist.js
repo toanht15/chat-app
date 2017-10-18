@@ -36,7 +36,6 @@ var LaUtility = function() {
    */
   this.initAndStart = function(operatorId) {
     this.operatorId = operatorId;
-    this.initSDKCallbacks();
     return this.createShortCode().then(this.getSessionId.bind(this)).then(this.connect.bind(this));
   };
 
@@ -97,7 +96,7 @@ var LaUtility = function() {
       sessionToken : sessionToken,
       correlationId : correlationId,
       allowedIframeOrigins : false,
-      disableLogging : true
+      disableLogging : false
     });
   };
 
