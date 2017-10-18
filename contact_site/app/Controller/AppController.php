@@ -80,9 +80,9 @@ class AppController extends Controller {
     if(strcmp($_SERVER['HTTP_X_FORWARDED_PORT'],443) !== 0){
       if(!isset($_SESSION)){
         session_name("http");
-        session_id($_COOKIE['CAKEPHP']);
         session_start();
         session_regenerate_id(false);
+        $this->Session->renew();
       }
     }
     else {
