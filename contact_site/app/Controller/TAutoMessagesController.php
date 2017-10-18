@@ -75,27 +75,103 @@ class TAutoMessagesController extends AppController {
     $this->_viewElement();
   }
 
+  /* *
+   * 削除
+   * @return void
+   * */
   public function remoteDelete(){
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
 
-    $id = (isset($this->request->data['id'])) ? $this->request->data['id'] : "";
-    $ret = $this->TAutoMessage->find('first', [
-      'fields' => 'TAutoMessage.*',
-      'conditions' => [
-        'TAutoMessage.del_flg' => 0,
-        'TAutoMessage.id' => $id,
-        'TAutoMessage.m_companies_id' => $this->userInfo['MCompany']['id']
-      ],
-      'recursive' => -1
-    ]);
-    if ( count($ret) === 1 ) {
-      if ( $this->TAutoMessage->logicalDelete($id) ) {
-        $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
+    $selectedList = $this->request->data['selectedList'];
+    $this->TAutoMessage->begin();
+    $res = true;
+    foreach($selectedList as $key => $val){
+      $id = (isset($val)) ? $val: "";
+      $ret = $this->TAutoMessage->find('first', [
+        'fields' => 'TAutoMessage.*',
+        'conditions' => [
+          'TAutoMessage.del_flg' => 0,
+          'TAutoMessage.id' => $id,
+          'TAutoMessage.m_companies_id' => $this->userInfo['MCompany']['id']
+        ],
+        'recursive' => -1
+      ]);
+      if ( count($ret) === 1 ) {
+        if (! $this->TAutoMessage->delete($val) ) {
+          $res = false;
+        }
       }
-      else {
-        $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
+    }
+    if($res){
+      $this->TAutoMessage->commit();
+      $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
+    }
+    else {
+      $this->TAutoMessage->rollback();
+      $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
+    }
+//     $id = (isset($this->request->data['id'])) ? $this->request->data['id'] : "";
+//     $ret = $this->TAutoMessage->find('first', [
+//       'fields' => 'TAutoMessage.*',
+//       'conditions' => [
+//         'TAutoMessage.del_flg' => 0,
+//         'TAutoMessage.id' => $id,
+//         'TAutoMessage.m_companies_id' => $this->userInfo['MCompany']['id']
+//       ],
+//       'recursive' => -1
+//     ]);
+//     if ( count($ret) === 1 ) {
+//       if ( $this->TAutoMessage->logicalDelete($id) ) {
+//         $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
+//       }
+//       else {
+//         $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
+//       }
+//     }
+  }
+
+  /* *
+   * コピー処理
+   * @return void
+   * */
+  public function remoteCopyEntryForm() {
+    Configure::write('debug', 0);
+    $this->autoRender = FALSE;
+    $this->layout = 'ajax';
+    $selectedList = $this->request->data['selectedList'];
+    //コピー元のオートメッセージリスト取得
+    foreach($selectedList as $value){
+      $copyData[] = $this->TAutoMessage->read(null, $value);
+    }
+    $errorMessage = [];
+    //コピー元のオートメッセージリストの数だけ繰り返し
+    $res = true;
+    foreach($copyData as $value){
+      $this->TAutoMessage->create();
+      $saveData = [];
+      $saveData['TAutoMessage']['m_companies_id'] = $value['TAutoMessage']['m_companies_id'];
+      $saveData['TAutoMessage']['name'] = $value['TAutoMessage']['name'];
+      $saveData['TAutoMessage']['trigger_type'] = $value['TAutoMessage']['trigger_type'];
+      $saveData['TAutoMessage']['activity'] = $value['TAutoMessage']['activity'];
+      $saveData['TAutoMessage']['action_type'] = $value['TAutoMessage']['action_type'];
+      $saveData['TAutoMessage']['active_flg'] = $value['TAutoMessage']['active_flg'];
+      $saveData['TAutoMessage']['del_flg'] = $value['TAutoMessage']['del_flg'];
+      $this->TAutoMessage->set($saveData);
+      $this->TAutoMessage->begin();
+      // バリデーションチェックでエラーが出た場合
+      if($res){
+        if (! $this->TAutoMessage->save() ) {
+          $res = false;
+          $errorMessage = $this->TAutoMessage->validationErrors;
+          $this->TAutoMessage->rollback();
+        }
+        else{
+          $this->TAutoMessage->commit();
+          $this->Session->delete('dstoken');
+          $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
+        }
       }
     }
   }

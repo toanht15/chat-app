@@ -840,6 +840,52 @@
   }
 }
 
+/* オートメッセージ設定レイアウト調整 */
+#tautomessages_idx{
+  #tautomessages_menu{
+    .btnSet{
+      position: relative;
+      top: 0px;
+      left: -3.5px;
+    }
+    .pointer{
+      position: relative;
+      top: 5px;
+      left: -3px;
+    }
+  }
+}
+
+#tooltip_tautomessages_add_btn.tooltips {
+  position: fixed;
+  left: 79px !important;
+  width: 6em;
+}
+
+#tooltip_tautomessages_copy_btn.tooltips {
+  position: fixed;
+  left: 106px !important;
+  width: 9em;
+}
+
+#tooltip_tautomessages_check_btn.tooltips {
+  position: fixed;
+  left: 161px !important;
+  width: 7em;
+}
+
+#tooltip_tautomessages_inactive_btn.tooltips {
+  position: fixed;
+  left: 207px !important;
+  width: 7em;
+}
+
+#tooltip_tautomessages_dustbox_btn.tooltips {
+  position: fixed;
+  left: 259px !important;
+  width: 6em;
+}
+
 /*資料共有　プレビュー */
 .p-tdocument-preview {
   width: 900px;

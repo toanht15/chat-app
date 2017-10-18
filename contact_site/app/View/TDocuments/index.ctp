@@ -47,7 +47,7 @@ $prevCnt = ($params['page'] - 1);
         <!-- 資料設定の並び替えモード -->
         <div class="tabpointer">
           <label class="pointer">
-            <?= $this->Form->checkbox('sort', array('onchange' => 'toggleSort()')); ?><span id="sortText">資料設定の並び替え</span><span id="sortTextMessage" style="display: none; font-size: 1.1em; color: rgb(192, 0, 0); font-weight: bold; ">（！）定型文を並び替え中（保存する場合はチェックを外してください）</span>
+            <?= $this->Form->checkbox('sort', array('onchange' => 'toggleSort()')); ?><span id="sortText">資料設定の並び替え</span><span id="sortTextMessage" style="display: none; font-size: 1.1em; color: rgb(192, 0, 0); font-weight: bold; ">（！）資料設定を並び替え中（保存する場合はチェックを外してください）</span>
           </label>
         </div>
         <!-- 資料設定の並び替えモード -->

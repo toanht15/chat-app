@@ -3,7 +3,6 @@
 $params = $this->Paginator->params();
 $prevCnt = ($params['page'] - 1) * $params['limit'];
 ?>
-
 <div id='tautomessages_idx' class="card-shadow">
 
   <div id='tautomessages_title'>
@@ -13,9 +12,84 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
 
   <div id='tautomessages_menu' class="p20trl">
     <div class="fLeft ctrlBtnArea" >
-      <?= $this->Html->image('add.png', ['url' => ['controller'=>'TAutoMessages', 'action' => 'add'], 'alt' => '登録', 'class' => 'btn-shadow greenBtn', 'width' => 30, 'height' => 30]) ?>
-      <?= $this->Html->image('check.png', ['url' => 'javascript:void(0)', 'onclick'=>'toActive(true)', 'alt' => '有効にする', 'class' => 'btn-shadow greenBtn actCtrlBtn', 'width' => 30, 'height' => 30]) ?>
-      <?= $this->Html->image('inactive.png', ['url' => 'javascript:void(0)', 'onclick'=>'toActive(false)', 'alt' => '無効にする', 'class' => 'btn-shadow redBtn actCtrlBtn', 'width' => 30, 'height' => 30]) ?>
+      <div class="btnSet">
+        <span>
+          <a>
+            <?= $this->Html->image('add.png', array(
+                'alt' => '登録',
+                'id'=>'tautomessages_add_btn',
+                'class' => 'btn-shadow disOffgreenBtn commontooltip',
+                'data-text' => '新規追加',
+                'data-balloon-position' => '36',
+                'width' => 45,
+                'height' => 45,
+                'onclick' => 'openAdd()',
+            )) ?>
+          </a>
+        </span>
+        <span>
+          <a>
+            <?= $this->Html->image('copy.png', array(
+                'alt' => 'コピー',
+                'id'=>'tautomessages_copy_btn',
+                'class' => 'btn-shadow disOffgrayBtn commontooltip',
+                'data-text' => 'コピー（複製）',
+                'data-balloon-position' => '41',
+                'width' => 45,
+                'height' => 45
+            )) ?>
+          </a>
+        </span>
+        <span>
+          <a>
+            <?= $this->Html->image('check.png', array(
+                'alt' => '有効',
+                'id'=>'tautomessages_check_btn',
+                'class' => 'btn-shadow disOffgrayBtn commontooltip',
+                'data-text' => '有効にする',
+                'data-balloon-position' => '38',
+                'width' => 45,
+                'height' => 45,
+                'onclick'=>'toActive(true)'
+            )) ?>
+          </a>
+        </span>
+        <span>
+          <a>
+            <?= $this->Html->image('inactive.png', array(
+                'alt' => '無効',
+                'id'=>'tautomessages_inactive_btn',
+                'class' => 'btn-shadow disOffgrayBtn commontooltip',
+                'data-text' => '無効にする',
+                'data-balloon-position' => '38',
+                'width' => 45,
+                'height' => 45,
+                'onclick'=>'toActive(false)'
+            )) ?>
+          </a>
+        </span>
+        <span>
+          <a>
+            <?= $this->Html->image('dustbox.png', array(
+                'alt' => '削除',
+                'id'=>'tautomessages_dustbox_btn',
+                'class' => 'btn-shadow disOffgrayBtn commontooltip',
+                'data-text' => '削除する',
+                'data-balloon-position' => '36',
+                'width' => 45,
+                'height' => 45)) ?>
+          </a>
+        </span>
+      </div>
+      <!-- オートメッセージ設定の並び替えモード -->
+<!--
+      <div class="tabpointer">
+        <label class="pointer">
+          <?= $this->Form->checkbox('sort', array('onchange' => 'toggleSort()')); ?><span id="sortText"> オートメッセージ設定の並び替え</span><span id="sortTextMessage" style="display: none; font-size: 1.1em; color: rgb(192, 0, 0); font-weight: bold; ">（！）オートメッセージ設定を並び替え中（保存する場合はチェックを外してください）</span>
+        </label>
+      </div>
+ -->
+      <!-- オートメッセージ設定の並び替えモード -->
     </div>
     <!-- 検索窓 -->
     <div id="paging" class="fRight">
@@ -48,9 +122,14 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
         <th width="20%">名称</th>
         <th width="25%">条件</th>
         <th width="25%">アクション</th>
+<!--
         <th width="15%">操作</th>
+ -->
       </tr>
       </thead>
+<!--
+      <tbody class="sortable">
+ -->
       <tbody>
       <?php $allCondList = []; ?>
       <?php $allActionList = []; ?>
@@ -95,7 +174,10 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
         }
         $no = $prevCnt + h($key+1);
         ?>
-        <tr class="<?=$class?>" data-id="<?=h($id)?>" onclick="event.stopPropagation(); jumpTo(<?="'".$this->Html->url(['controller'=>'TAutoMessages', 'action'=>'edit', $id])."'";?>)">
+<!--
+        <tr class="pointer <?=$class?>" data-sort="<?=$val['TAutoMessage']['sort']?>" data-id="<?=h($id)?>" onclick="openEdit(<?= $id ?>)">
+ -->
+        <tr class="<?=$class?>" data-id="<?=h($id)?>" onclick="openEdit(<?= $id ?>)">
           <td class="tCenter" onclick="event.stopPropagation();">
             <input type="checkbox" name="selectTab" id="selectTab<?=h($id)?>" value="<?=h($id)?>">
             <label for="selectTab<?=h($id)?>"></label>
@@ -110,6 +192,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
             <span class="actionTypeLabel m10b">対象</span><span class="m10b actionValue"><?=h($outMessageActionType[$val['TAutoMessage']['action_type']])?></span>
             <?=$activity_detail?>
           </td>
+<!--
           <td class="p10x lineCtrl">
             <div>
               <?php if ($val['TAutoMessage']['active_flg']) { ?>
@@ -120,6 +203,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
               <a href="javascript:void(0)" class="btn-shadow redBtn fRight m10r" onclick="event.stopPropagation(); removeAct('<?=$no?>', '<?=$id?>')"><img src="/img/trash.png" alt="削除" width="30" height="30"></a>
             </div>
           </td>
+ -->
         </tr>
       <?php endforeach; ?>
       <?php if ( count($settingList) === 0 ) : ?>
