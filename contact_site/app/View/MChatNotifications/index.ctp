@@ -13,30 +13,30 @@
   ※ Safariは <b>"通知のアイコン指定"</b> に対応しておりません</span>
     <div class="fLeft" >
       <div class="btnSet">
-      <span style="display:inline; padding: 0;">
-        <a href="<?= $this->Html->url('/MChatNotifications/add') ?>" style="text-decoration: none;">
-          <?= $this->Html->image('add.png', array(
-              'alt' => '登録',
-              'id'=>'chat_notifications_add_btn',
-              'class' => 'btn-shadow disOffgreenBtn commontooltip',
-              'data-text' => '新規追加',
-              'data-balloon-position' => '36',
-              'width' => 45,
-              'height' => 45)) ?>
-        </a>
-      </span>
-      <span style="display:inline; padding: 0;">
-        <a>
-          <?= $this->Html->image('dustbox.png', array(
-              'alt' => '削除',
-              'id'=>'chat_notifications_dustbox_btn',
-              'class' => 'btn-shadow disOffgrayBtn commontooltip',
-              'data-text' => '削除する',
-              'data-balloon-position' => '35',
-              'width' => 45,
-              'height' => 45)) ?>
-        </a>
-      </span>
+        <span style="display:inline; padding: 0;">
+          <a href="<?= $this->Html->url('/MChatNotifications/add') ?>" style="text-decoration: none;">
+            <?= $this->Html->image('add.png', array(
+                'alt' => '登録',
+                'id'=>'chat_notifications_add_btn',
+                'class' => 'btn-shadow disOffgreenBtn commontooltip',
+                'data-text' => '新規追加',
+                'data-balloon-position' => '36',
+                'width' => 45,
+                'height' => 45)) ?>
+          </a>
+        </span>
+        <span style="display:inline; padding: 0;">
+          <a>
+            <?= $this->Html->image('dustbox.png', array(
+                'alt' => '削除',
+                'id'=>'chat_notifications_dustbox_btn',
+                'class' => 'btn-shadow disOffgrayBtn commontooltip',
+                'data-text' => '削除する',
+                'data-balloon-position' => '35',
+                'width' => 45,
+                'height' => 45)) ?>
+          </a>
+        </span>
       </div>
     </div>
   </div>

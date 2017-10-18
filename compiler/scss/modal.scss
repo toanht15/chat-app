@@ -851,6 +851,38 @@
   }
 }
 
+/* 資料設定レイアウト調整 */
+#tdocument_idx{
+  #tdocument_menu{
+    .btnSet{
+      position: relative;
+      top: 0px;
+      left: -2.5px;
+    }
+    .tabpointer{
+      position: relative;
+      top: -4px;
+      left: -13px;
+      padding: 10px;
+    }
+  }
+  #tdocument_list{
+
+  }
+}
+
+#tooltip_tdocument_add_btn.tooltips {
+  position: fixed;
+  left: 79px !important;
+  width: 6em;
+}
+
+#tooltip_tdocument_dustbox_btn.tooltips {
+  position: fixed;
+  left: 128px !important;
+  width: 6em;
+}
+
 /* ユーザ管理レイアウト調整 */
 #muser_idx{
   #muser_menu{

@@ -18,11 +18,12 @@ class TDocumentsController extends AppController {
    * @return void
    * */
   public function index() {
-    $documentList =  $this->TDocument->find('all', [
-      'conditions' => [
-        'TDocument.m_companies_id' => $this->userInfo['MCompany']['id']
-      ]
-    ]);
+//     $documentList =  $this->TDocument->find('all', [
+//       'conditions' => [
+//         'TDocument.m_companies_id' => $this->userInfo['MCompany']['id']
+//       ]
+//     ]);
+    $documentList = $this->TDocument->find('all', $this->_setParams());
     $labelList = $this->MDocumentTag->find('list', ['fields'=> ['id','name']]);
     $showDocumentList = [];
     foreach ($documentList as $key => $document){
@@ -140,6 +141,172 @@ class TDocumentsController extends AppController {
     }
   }
 
+  /* *
+   * 一覧からの選択して削除
+   * */
+  public function remoteDeleteDocuments(){
+    Configure::write('debug', 0);
+    $this->autoRender = FALSE;
+    $this->layout = 'ajax';
+    $this->TDocument->recursive = -1;
+    $selectedList = $this->request->data['selectedList'];
+    $this->TDocument->begin();
+    $res = true;
+    foreach($selectedList as $key => $val){
+      $id = $val;
+      $ret = $this->TDocument->find('first', [
+          'fields' => 'TDocument.*',
+          'conditions' => [
+              'TDocument.del_flg' => 0,
+              'TDocument.id' => $id,
+              'TDocument.m_companies_id' => $this->userInfo['MCompany']['id']
+          ],
+          'recursive' => -1
+      ]);
+      if ( !empty($ret) ) {
+        if (! $this->TDocument->delete($val) ) {
+          $res = false;
+        }
+      }
+    }
+    if($res){
+      $this->TDocument->commit();
+      $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
+    }
+    else{
+      $this->TDocument->rollback();
+      $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
+    }
+  }
+
+  /**
+   * 資料設定ソート順更新
+   *
+   * */
+  public function remoteSaveSort(){
+    Configure::write('debug', 2);
+    $this->autoRender = FALSE;
+    $this->layout = 'ajax';
+    if ( !$this->request->is('ajax') ) return false;
+    if ( !empty($this->params->data['list']) ) {
+      $this->TDocument->begin();
+      $list = $this->params->data['list'];
+      $this->log($list,LOG_DEBUG);
+      /* 現在の並び順を取得 */
+      $params = $this->_setParams();
+      $params['fields'] = [
+          'TDocument.id',
+          'TDocument.sort'
+      ];
+      unset($params['limit']);
+      $prevSort = $this->TDocument->find('list', $params);
+      //新しくソート順を設定したため、空で来ることがある
+      $reset_flg = false;
+      foreach($prevSort as $key => $val){
+        //設定されていない値'0'が一つでも入っていたらsortをリセット
+        if($val === '0' || $val === 0 || $val === null){
+          $reset_flg = true;
+        }
+      }
+      if($reset_flg){
+        //ソート順のリセットはID順とする
+        $i = 1;
+        foreach($prevSort as $key => $val){
+          $prevSort[$key] = strval($i);
+          $i++;
+        }
+      }
+      $prevSortKeys = am($prevSort);
+      $this->log($prevSortKeys,LOG_DEBUG);
+      /* アップデート分の並び順を設定 */
+      $ret = true;
+      for ($i = 0; count($list) > $i; $i++) {
+        $id = $list[$i];
+        if ( isset($prevSort[$id]) ) {
+          $saveData = [
+              'TDocument' => [
+                  'id' => $id,
+                  'sort' => $prevSortKeys[$i]
+              ]
+          ];
+          if (!$this->TDocument->validates()) {
+            $ret = false;
+            break;
+          }
+          if (!$this->TDocument->save($saveData)) {
+            $ret = false;
+            break;
+          }
+        } else {
+          // 送信された資料設定と現在DBに存在する資料設定に差がある場合
+          $this->TDocument->rollback();
+          $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.configChanged'));
+          return;
+        }
+      }
+      if ($ret) {
+        $this->TDocument->commit();
+        $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
+      }
+      else {
+        $this->TDocument->rollback();
+        $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.saveFailed'));
+      }
+    }
+  }
+
+  /**
+   * 資料設定ソート順を現在のID順でセット
+   *
+   * */
+  public function remoteSetSort(){
+    $this->TDocument->begin();
+    /* 現在の並び順を取得 */
+    $params = $this->_setParams();
+    $params['fields'] = [
+        'TDocument.id',
+        'TDocument.sort'
+    ];
+    unset($params['limit']);
+    $prevSort = $this->TDocument->find('list', $params);
+    //ソート順のリセットはID順とする
+    $i = 1;
+    foreach($prevSort as $key => $val){
+      $prevSort[$key] = strval($i);
+      $i++;
+    }
+    $prevSortKeys = am($prevSort);
+    $this->log($prevSortKeys,LOG_DEBUG);
+    $i = 0;
+    $ret = true;
+    foreach($prevSort as $key => $val){
+      $id = $key;
+      $saveData = [
+          'TDocument' => [
+              'id' => $id,
+              'sort' => $prevSortKeys[$i]
+          ]
+      ];
+      if (!$this->TDocument->validates()) {
+        $ret = false;
+        break;
+      }
+      if (!$this->TDocument->save($saveData)) {
+        $ret = false;
+        break;
+      }
+      $i++;
+    }
+    if ($ret) {
+      $this->TDocument->commit();
+      return true;
+    }
+    else {
+      $this->TDocument->rollback();
+      return false;
+    }
+  }
+
   /**
    * 保存機能
    * @param array $inputData
@@ -155,10 +322,42 @@ class TDocumentsController extends AppController {
     $saveData['TDocument']['m_companies_id'] = $this->userInfo['MCompany']['id'];
     $this->TDocument->begin();
     if ( empty($saveData['TDocument']['id']) ) {
+      //新規追加
       $this->TDocument->create();
       if ( !isset($saveData['TDocument']['files']) ) {
         $saveData['TDocument']['files'] = [];
       }
+      $params = [
+          'fields' => [
+              'TDocument.sort'
+          ],
+          'conditions' => [
+              'TDocument.m_companies_id' => $this->userInfo['MCompany']['id']
+          ],
+          'order' => [
+              'TDocument.sort' => 'desc',
+              'TDocument.id' => 'desc'
+          ],
+          'limit' => 1,
+          'recursive' => -1
+      ];
+      $lastData = $this->TDocument->find('first', $params);
+      if($lastData['TDocument']['sort'] === '0'
+          || $lastData['TDocument']['sort'] === 0
+          || $lastData['TDocument']['sort'] === null){
+        //ソート順が登録されていなかったらソート順をセットする
+        if(! $this->remoteSetSort()){
+          $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
+          return false;
+        }
+        //もう一度ソートの最大値を取り直す
+        $lastData = $this->TDocument->find('first', $params);
+      }
+      $nextSort = 1;
+      if (!empty($lastData)) {
+        $nextSort = intval($lastData['TDocument']['sort']) + 1;
+      }
+      $saveData['TDocument']['sort'] = $nextSort;
     }
     else {
       // ファイルがアップロードされなかった場合はunset
@@ -307,6 +506,24 @@ class TDocumentsController extends AppController {
 
     $this->set('download', $download);
     $this->set('pagenation', $pagenation);
+  }
+
+  private function _setParams(){
+    //TDocument
+    $params = [
+        'order' => [
+            'TDocument.sort' => 'asc',
+            'TDocument.id' => 'asc'
+        ],
+        'fields' => [
+            'TDocument.*'
+        ],
+        'conditions' => [
+            'TDocument.m_companies_id' => $this->userInfo['MCompany']['id']
+        ],
+        'recursive' => -1
+    ];
+    return $params;
   }
 
     /**

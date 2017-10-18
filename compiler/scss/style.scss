@@ -4359,9 +4359,9 @@ ul.naviBtn {
   }
 
   #tdocument_menu {
-    img[class$='Btn'] {
+    /*img[class$='Btn'] {
       border-radius: 15px;
-    }
+    }*/
   }
 
   #tdocument_list {
@@ -4419,6 +4419,68 @@ ul.naviBtn {
         padding: 0.25em 0;
         z-index: 1;
       }
+    }
+
+    td:not(.noClick) {
+      cursor: pointer;
+    }
+
+    .bgGrey {
+      background-color: #DEDEDE;
+    }
+
+    .lineCtrl {
+      text-align: center;
+
+      div {
+        display: inline-block;
+        a {
+          float: left;
+          margin-bottom: 5px;
+          margin-top: 5px;
+        }
+      }
+    }
+
+    :not(.lineCtrl) a { text-decoration: underline; }
+
+    input[type='checkbox'] {
+      display: none;
+
+      &:checked + label {
+        background-color: $main-color;
+        border: 1px solid $main-color;
+        position: relative;
+        cursor: pointer;
+
+        &:after {
+            content: "";
+            font-weight: bold;
+            border-right: 4px solid #FFF;
+            border-bottom: 4px solid #FFF;
+            width: 6px;
+            height: 10px;
+            position: absolute;
+            top: 0;
+            right: 4px;
+            transform: rotate(45deg);
+        }
+      }
+
+      & + label {
+        width: 20px;
+        height: 20px;
+        display: block;
+        margin: 0 auto;
+        background-color: #FFF;
+        padding: 1px;
+        border: 1px solid #828282;
+        cursor: pointer;
+      }
+    }
+
+    th input[type='checkbox']:checked + label {
+      border: 1px solid #FFF;
     }
   }
 
