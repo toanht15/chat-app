@@ -2549,7 +2549,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
           }
 
           if ( 'coBrowseConnectToken' in core ) {
-            emit.toUser('unsetUser', {siteKey: info.siteKey, tabId: info.tabId}, core.syncFrameSessionId);
+            emit.toUser('unsetUser', {siteKey: info.siteKey, tabId: info.tabId}, core.coBrowseParentSessionId);
             coBrowseStopCtrl(info.siteKey, info.tabId);
           }
 
