@@ -64,6 +64,7 @@ class AppController extends Controller {
     C_COMPANY_USE_VIDEO_CHAT => false, // ビデオチャット機能有効（ただし未実装）
     C_COMPANY_USE_CHAT_LIMITER => false, // 同時対応数上限
     C_COMPANY_USE_HISTORY_EXPORTING => false, // 履歴エクスポート
+    C_COMPANY_USE_HISTORY_DELETE => false, // 履歴削除
     C_COMPANY_USE_STATISTICS => false, // 統計
     C_COMPANY_USE_DICTIONARY_CATEGORY => false, // 定型文カテゴリ
     C_COMPANY_USE_HIDE_REALTIME_MONITOR => false
@@ -108,6 +109,7 @@ class AppController extends Controller {
       return $this->redirect(['controller'=>'Login', 'action' => 'index']);
     }
     $this->coreSettings = $this->mergeCoreSettings(json_decode($this->userInfo['MCompany']['core_settings'], true));
+    $this->log($this->coreSettings,LOG_DEBUG);
     $this->log("SHIMIZU : coreSettings => ".var_export($this->coreSettings,TRUE),LOG_DEBUG);
     $this->set('coreSettings', $this->coreSettings);
 
@@ -330,6 +332,6 @@ class AppController extends Controller {
   }
 
   protected function mergeCoreSettings($coreSettings) {
-  	return array_merge($this->defaultCoreSettings, $coreSettings);
+    return array_merge($this->defaultCoreSettings, $coreSettings);
   }
 }

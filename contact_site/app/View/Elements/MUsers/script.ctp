@@ -16,7 +16,7 @@ function openEntryDialog(setting){
     success: function(html){
       modalOpen.call(window, html, 'p-muser-entry', 'ユーザー情報', 'moment');
     },
-    error: function() {
+    error: function(html) {
       console.log('error');
     }
   });
