@@ -87,7 +87,7 @@ class AppController extends Controller {
     }
     else {
       if(empty(session_get_cookie_params()['secure'])) {
-        setcookie("CAKEPHP", $_COOKIE['CAKEPHP'], 0 ,"","",1);
+        setcookie("CAKEPHP", $_COOKIE['CAKEPHP'], 0 ,"/","",1);
       }
     }
 
