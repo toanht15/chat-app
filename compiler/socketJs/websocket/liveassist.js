@@ -96,7 +96,7 @@ var LaUtility = function() {
       sessionToken : sessionToken,
       correlationId : correlationId,
       allowedIframeOrigins : false,
-      disableLogging : false
+      disableLogging : true
     });
   };
 
