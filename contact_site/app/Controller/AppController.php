@@ -64,6 +64,7 @@ class AppController extends Controller {
     C_COMPANY_USE_VIDEO_CHAT => false, // ビデオチャット機能有効（ただし未実装）
     C_COMPANY_USE_CHAT_LIMITER => false, // 同時対応数上限
     C_COMPANY_USE_HISTORY_EXPORTING => false, // 履歴エクスポート
+    //C_COMPANY_USE_HISTORY_DELETE => false, // 履歴削除
     C_COMPANY_USE_STATISTICS => false, // 統計
     C_COMPANY_USE_DICTIONARY_CATEGORY => false // 統計
   ];
@@ -73,6 +74,17 @@ class AppController extends Controller {
     // プロトコルチェック(本番のみ)
     if ( APP_MODE_DEV === false && !( strpos($this->referer(), '/Customers/frame') )  ) {
       $this->checkPort();
+    }
+
+    if (empty($_SERVER['HTTPS'])) {
+        if(!isset($_SESSION)){
+          session_name("http");
+          session_start();
+          session_regenerate_id();
+        }
+    }
+    else {
+      setcookie("CAKEPHP", $_COOKIE['CAKEPHP'], 0 ,"","",1);
     }
 
     // 通知メッセージをセット
@@ -107,6 +119,7 @@ class AppController extends Controller {
       return $this->redirect(['controller'=>'Login', 'action' => 'index']);
     }
     $this->coreSettings = $this->mergeCoreSettings(json_decode($this->userInfo['MCompany']['core_settings'], true));
+    $this->log($this->coreSettings,LOG_DEBUG);
     $this->log("SHIMIZU : coreSettings => ".var_export($this->coreSettings,TRUE),LOG_DEBUG);
     $this->set('coreSettings', $this->coreSettings);
 
@@ -178,7 +191,7 @@ class AppController extends Controller {
           $this->redirect("/");
         }
         break;
-    }
+    };
   }
 
   /**
@@ -329,6 +342,6 @@ class AppController extends Controller {
   }
 
   protected function mergeCoreSettings($coreSettings) {
-  	return array_merge($this->defaultCoreSettings, $coreSettings);
+    return array_merge($this->defaultCoreSettings, $coreSettings);
   }
 }
