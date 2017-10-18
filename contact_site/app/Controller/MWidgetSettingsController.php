@@ -223,7 +223,7 @@ class MWidgetSettingsController extends AppController {
     }
 
     //仕様変更常に高度な設定の設定値が反映されるようにする
-    $this->request->data['MWidgetSetting']['color_setting_type'] = "1";
+    $inputData['MWidgetSetting']['color_setting_type'] = "1";
 
     //ウィジットサイズが中もしくは大の場合バリデーションの上限をトップタイトル、企業名、説明文のみ可変とする
     if($inputData['MWidgetSetting']['widget_size_type'] !== '1'){
