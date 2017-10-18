@@ -76,19 +76,6 @@ class AppController extends Controller {
       $this->checkPort();
     }
 
-    if (empty($_SERVER['HTTPS'])) {
-        if(!isset($_SESSION)){
-          session_name("http");
-          session_start();
-          session_regenerate_id();
-        }
-    }
-    else {
-      if(empty(session_get_cookie_params()['secure'])) {
-        setcookie("CAKEPHP", $_COOKIE['CAKEPHP'], 0 ,"","",1);
-      }
-    }
-
     // 通知メッセージをセット
     if ($this->Session->check('global.message')) {
       $this->set('alertMessage', $this->Session->read('global.message'));
