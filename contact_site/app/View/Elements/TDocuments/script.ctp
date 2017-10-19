@@ -134,6 +134,15 @@ $(function(){
   $('#tagList').multiSelect({});
 });
 
+function htmlEntities( str, proc ) {
+  if ( 'encode' === proc ) {
+    str = $('<div/>').text( str ).html();
+    return str.replace( '\'', '&apos;' ).replace( '"', '&quot;' );
+  } else {
+    return $("<div/>").html( str ).text();
+  }
+}
+
 <?php
 $manuscript = (!empty($this->data['TDocument']['manuscript'])) ? $this->data['TDocument']['manuscript'] : '{}';
 ?>
@@ -166,6 +175,7 @@ var slideJsApi,slideJsApi2,frameSize,slideJsCNST;
       this.maxPage = page;
       this.rotation = rotation;
       this.filePath = filePath;
+      this.manuscript = JSON.parse(htmlEntities( this.manuscript, 'decode' ));
       this.makePage(); // 初期スライドを作成
       var limitPage = (this.currentPage + 3 > this.maxPage) ? this.maxPage : this.currentPage + 3 ;
 
@@ -691,10 +701,13 @@ var slideJsApi,slideJsApi2,frameSize,slideJsCNST;
 
   $(document).ready(function(){
     <?php if ( !empty($this->data['TDocument']['file_name']) ):
-      $settings = (array)json_decode($this->data['TDocument']['settings']);
-      $pages = (isset($settings['pages'])) ? $settings['pages'] : 1;
-      $rotation = (isset($settings['rotation'])) ? $settings['rotation'] : 0;
-      $filePath = C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/svg_".pathinfo(h($this->data['TDocument']['file_name']), PATHINFO_FILENAME);
+      $settings = $this->data['TDocument']['settings'];
+      $settings = (array)json_decode(htmlspecialchars_decode($settings, ENT_QUOTES));
+      if(!preg_match('/^(?=.*(<|>|&|"|\')).*$/',$settings['rotation']) && !preg_match('/^(?=.*(<|>|&|"|\')).*$/',$settings['pages'])) {
+        $pages = (isset($settings['pages'])) ? $settings['pages'] : 1;
+        $rotation = (isset($settings['rotation'])) ? $settings['rotation'] : 0;
+        $filePath = C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/svg_".pathinfo(h($this->data['TDocument']['file_name']), PATHINFO_FILENAME);
+      }
     ?>
 
     slideJsApi.init("<?=$filePath?>", "<?=$pages?>", "<?=$rotation?>");

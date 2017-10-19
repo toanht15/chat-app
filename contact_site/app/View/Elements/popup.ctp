@@ -172,6 +172,16 @@ var popupEvent = {
                         return popupEvent.closePopup();
                     };
                     break;
+                case 'p-history-del':
+                    var closeBtn = _button("はい");
+                    closeBtn.onclick = function(){
+                      return popupEvent.closePopup();
+                    };
+                    var cancelBtn = _button("いいえ");
+                    cancelBtn.onclick = function(){
+                      return popupEvent.cancelClicked();
+                    };
+                    break;
                 case 'p-category-dictionary-edit':
 //                     var closeBtn = _button("カテゴリの削除");
 //                     closeBtn.onclick = function(){

@@ -1,4 +1,10 @@
 <script type="text/javascript">
+<?php $this->request->data['MUser']['user_name'] = htmlspecialchars($this->request->data['MUser']['user_name'], ENT_QUOTES, 'UTF-8');?>
+<?php $this->request->data['MUser']['display_name'] = htmlspecialchars($this->request->data['MUser']['display_name'], ENT_QUOTES, 'UTF-8');?>
+<?php $this->request->data['MUser']['mail_address'] = htmlspecialchars($this->request->data['MUser']['mail_address'], ENT_QUOTES, 'UTF-8');?>
+<?php $this->request->data['MUser']['password'] = htmlspecialchars($this->request->data['MUser']['password'], ENT_QUOTES, 'UTF-8');?>
+<?php $this->request->data['MUser']['permission_level'] = htmlspecialchars($this->request->data['MUser']['permission_level'], ENT_QUOTES, 'UTF-8');?>
+
     popupEvent.closePopup = function(){
         var userId = document.getElementById('MUserId').value;
         var userName = document.getElementById('MUserUserName').value;
@@ -49,6 +55,9 @@
                         }
                     });
                 }
+            },
+            error: function(data) {
+              console.log('error');
             }
         });
     };
