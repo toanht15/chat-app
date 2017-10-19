@@ -96,10 +96,17 @@ router.get("/", function(req, res, next) {
                 if(('chatMessageWithAnimation' in settings)) {
                   chatMessageWithAnimation = isNumeric(settings.chatMessageWithAnimation);
                 }
+
                 // チャット本文コピー設定が存在しない場合は「コピー可」
-                var chatMessageCopy = 1;
+                var chatMessageCopy = 0;
                	if(('chatMessageCopy' in settings)) {
                   chatMessageCopy = isNumeric(settings.chatMessageCopy);
+                }
+
+                //閉じるボタン設定が存在しないときは「閉じるボタン無効」
+                var closeButtonSetting = 1;
+                if(('closeButtonSetting' in settings)) {
+                  closeButtonSetting = isNumeric(settings.closeButtonSetting);
                 }
 
                 sendData['widget'] = {
@@ -130,6 +137,11 @@ router.get("/", function(req, res, next) {
                   boxShadow: isNumeric(settings.boxShadow),
                   //最小化時デザイン対応
                   minimizeDesignType: isNumeric(settings.minimizeDesignType),
+                  //閉じるボタン start
+                  closeButtonSetting: closeButtonSetting,
+                  closeButtonModeType: isNumeric(settings.closeButtonModeType),
+                  bannertext: settings.bannertext,
+                  //閉じるボタン end
                   spShowFlg: isNumeric(settings.spShowFlg),
                   spHeaderLightFlg: isNumeric(settings.spHeaderLightFlg),
                   spAutoOpenFlg: isNumeric(settings.spAutoOpenFlg),

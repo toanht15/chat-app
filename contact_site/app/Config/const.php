@@ -38,6 +38,7 @@ define('C_COMPANY_USE_VIDEO_CHAT', 'videochat'); // ビデオチャット
 define('C_COMPANY_USE_LA_CO_BROWSE', 'laCoBrowse'); // ビデオチャット
 define('C_COMPANY_USE_CHAT_LIMITER', 'chatLimitation'); // チャット同時対応数上限
 define('C_COMPANY_USE_HISTORY_EXPORTING', 'exportHistory'); // 履歴エクスポート
+define('C_COMPANY_USE_HISTORY_DELETE', 'deleteHistory'); // 履歴削除
 define('C_COMPANY_USE_STATISTICS', 'statistics'); // 統計
 define('C_COMPANY_USE_DICTIONARY_CATEGORY', 'dictionaryCategory'); // 定型文カテゴリ
 define('C_COMPANY_USE_HIDE_REALTIME_MONITOR', 'hideRealtimeMonitor'); // リアルタイムモニター非表示
@@ -77,8 +78,8 @@ define('C_WIDGET_CHAT_MESSAGE_DESIGN_TYPE_BOX', 1); // BOX型（サイズ固定�
 define('C_WIDGET_CHAT_MESSAGE_DESIGN_TYPE_BALLOON', 2); // 吹き出し型（サイズ可変）
 
 // チャット本文コピー
-define('C_WIDGET_CHAT_MESSAGE_CAN_COPY', 1); // コピーできる
-define('C_WIDGET_CHAT_MESSAGE_CANT_COPY', 2); // コピーできない
+define('C_WIDGET_CHAT_MESSAGE_CAN_COPY', 0); // コピーできる
+define('C_WIDGET_CHAT_MESSAGE_CANT_COPY', 1); // コピーできない
 
 // ラジオボタン選択時の動作種別
 define('C_WIDGET_RADIO_CLICK_SEND', 1); // 文字列が送信される
@@ -178,6 +179,17 @@ define('C_MINIMIZED_DESIGN_ALL_SIMPLE', 3); // すべての端末でシンプル
 //背景の影初期値
 define('C_BOX_SHADOW', 0);//影なし
 
+//閉じるボタン有効無効
+define('C_CLOSE_BUTTON_SETTING_OFF', 1);//無効にする
+define('C_CLOSE_BUTTON_SETTING_ON', 2);//有効にする
+
+//小さなバナー表示
+define('C_CLOSE_BUTTON_SETTING_MODE_TYPE_BANNER', 1);//小さなバナー表示
+define('C_CLOSE_BUTTON_SETTING_MODE_TYPE_HIDDEN', 2);//非表示
+
+//バナーテキスト初期値
+define('C_BANNER_TEXT', "チャットで相談");//バナー文言
+
 /* ユーザー権限（単体あり：C_AUTHORITY_%） */
 $config['Authority'] = [
     C_AUTHORITY_ADMIN => "管理者",
@@ -245,12 +257,6 @@ $config['widgetShowNameType'] = [
 $config['chatMessageDesignType'] = [
   C_WIDGET_CHAT_MESSAGE_DESIGN_TYPE_BOX => "BOX型（サイズ固定）",
   C_WIDGET_CHAT_MESSAGE_DESIGN_TYPE_BALLOON => "吹き出し型（サイズ可変）"
-];
-
-/* ウィジェット設定 － チャット本文コピー */
-$config['chatMessageCopy'] = [
-  C_WIDGET_CHAT_MESSAGE_CAN_COPY => "コピー可<br>　<s>※サイト訪問者がチャット本文をコピー出来るようにします</s>",
-  C_WIDGET_CHAT_MESSAGE_CANT_COPY => "コピー不可<br>　<s>※サイト訪問者がチャット本文をコピー出来ないようにします</s>"
 ];
 
 /* ウィジェット設定 － ラジオボタン操作時の動作種別 */

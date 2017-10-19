@@ -12,7 +12,7 @@ class MWidgetSettingsController extends AppController {
     'common' => [
       'show_timing', 'max_show_timing_site', 'max_show_timing_page',
       'show_time', 'max_show_time', 'max_show_time_page', 'show_position', 'widget_size_type', 'title', 'show_subtitle', 'sub_title', 'show_description', 'description',
-      'main_color', 'string_color', 'show_main_image', 'main_image', 'radius_ratio', 'box_shadow', 'minimize_design_type'
+      'main_color', 'string_color', 'show_main_image', 'main_image', 'radius_ratio', 'box_shadow', 'minimize_design_type','close_button_setting','close_button_mode_type','bannertext'
     ],
     'synclo' => ['tel', 'content', 'display_time_flg', 'time_text'],
     'chat' => ['chat_radio_behavior', 'chat_trigger', 'show_name',  'chat_message_design_type', 'chat_message_with_animation', 'chat_message_copy', 'sp_show_flg', 'sp_header_light_flg', 'sp_auto_open_flg',],
@@ -60,7 +60,7 @@ class MWidgetSettingsController extends AppController {
     $titleLength = 12;
     $subTitleLength = 15;
     $descriptionLength = 15;
-    switch ($json['widget_size_type']) {
+    switch ($inputData['MWidgetSetting']['widget_size_type']) {
       //大きさによってトップタイトル、企業名、説明文のmaxlengthを可変とする
       case '1': //小
         $titleLength = 12;
@@ -412,6 +412,20 @@ class MWidgetSettingsController extends AppController {
             if ( strcmp($v, 'box_shadow') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['box_shadow'] = C_BOX_SHADOW; // デフォルト値
             }
+            //閉じるボタン
+            //閉じるボタン有効無効
+            if ( strcmp($v, 'close_button_setting') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['close_button_setting'] = C_CLOSE_BUTTON_SETTING_OFF; // デフォルト値
+            }
+            //小さなバナー表示有効無効
+            if ( strcmp($v, 'close_button_mode_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['close_button_mode_type'] = C_CLOSE_BUTTON_SETTING_MODE_TYPE_HIDDEN; // デフォルト値
+            }
+            //バナーテキスト
+            if ( strcmp($v, 'bannertext') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['bannertext'] = C_BANNER_TEXT; // デフォルト値
+            }
+            //閉じるボタン
 
             if ( isset($json[$v]) ) {
               $d[$v] = $json[$v];

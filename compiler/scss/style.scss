@@ -1277,7 +1277,7 @@ ul.naviBtn {
 
   #customer_sub_pop {
     display: none;
-    $content-width: 25em;
+    $content-width: 30em;
 
     &[data-contract='full'], &[data-contract='chatOnly'] {
       $content-col: 2;
@@ -1321,8 +1321,8 @@ ul.naviBtn {
           dt,dd {
             float: left;
             margin: 0;
-            height: 1.5em;
-            font-size: 0.8em;
+            height: 1.6em;
+            font-size: 0.83em;
           }
           dt {
             width: 40%;
@@ -1341,7 +1341,7 @@ ul.naviBtn {
 
       @mixin miniFont {
         label, input, textarea {
-          font-size: 0.8em!important;
+          font-size: 0.83em!important;
         }
       }
 
@@ -1426,9 +1426,13 @@ ul.naviBtn {
               padding: 0.3em 3em 0.3em 3em;
               box-shadow: 0px -1px 1px rgba(0,0,0,0.2);
               cursor: pointer;
+              width:16.5em;
+              text-align:center;
 
               &.on {
                 background-color: $main-color;
+                width:16.5em;
+                text-align:center;
               }
             }
           }
@@ -1471,7 +1475,7 @@ ul.naviBtn {
                 }
 
                 .chatList ul {
-                    height: 20em!important;
+                    height: 21.5em!important;
 
                     span {
                       display: block;
@@ -1494,7 +1498,7 @@ ul.naviBtn {
             }
 
             #chatTalk {
-              height: 250px;
+              height: 283px;
               border: 1px solid #8F8F8F;
               overflow-x: hidden;
               overflow-y: scroll;
@@ -1575,7 +1579,7 @@ ul.naviBtn {
                   text-align: left;
                   margin: 10px 0 0;
                   padding: 8px;
-                  font-size: 12px;
+                  font-size: 13px;
                   border: 1px solid #C9C9C9;
                   color: #333333;
                   white-space: pre-wrap!important;
@@ -1787,7 +1791,7 @@ ul.naviBtn {
               }
 
               #sinclo_sendbtn {
-                width: 18em;
+                width: 21em;
                 background-color: #aeca74;
 
                 &:hover, &.on {
@@ -1797,7 +1801,7 @@ ul.naviBtn {
               }
 
               #sinclo_chatEndBtn {
-                width: 4em;
+                width: 6em;
               }
             }
 
@@ -1812,7 +1816,7 @@ ul.naviBtn {
               width: 100%;
 
               li {
-                height: 1.5em;
+                height: 1.6em;
                 margin: 0.25em 0;
                 label {
                   width: 35%;

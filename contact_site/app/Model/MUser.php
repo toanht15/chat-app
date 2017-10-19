@@ -21,6 +21,10 @@ class MUser extends AppModel {
                 'rule' => ['maxLength', 50],
                 'allowEmpty' => false,
                 'message' => 'ユーザー名は５０文字以内で設定してください。'
+            ],
+            'prohibitedCharacters' => [
+                'rule' => '/^(?!.*(<|>|&|"|\')).*$/',
+                'message' => '<,>,&.",\'を含まずに設定してください。'
             ]
         ],
         'display_name' => [
@@ -28,6 +32,10 @@ class MUser extends AppModel {
                 'rule' => ['maxLength', 10],
                 'allowEmpty' => false,
                 'message' => '表示名は１０文字以内で設定してください。'
+            ],
+            'prohibitedCharacters' => [
+                'rule' => '/^(?!.*(<|>|&|"|\')).*$/',
+                'message' => '<,>,&.",\'を含まずに設定してください。'
             ]
         ],
         'mail_address' => [
@@ -46,10 +54,22 @@ class MUser extends AppModel {
                 'allowEmpty' => false,
                 'message' => 'パスワードは６～１２文字の間で設定してください。'
             ],
-            'alphaNumeric' => [
-                'rule' => 'alphaNumeric',
-                'message' => 'パスワードは英数字で設定してください。'
-            ]
+            'checkLargeAlphabet' => [
+                'rule' =>  '/[A-Z]/',//半角英大小文字、数字のみ
+                'message' => 'パスワードは英大小文字、数字を含んで設定してください。'
+            ],
+            'checkSmallAlphabet' => [
+                'rule' =>  '/[a-z]/',//半角英大小文字、数字のみ
+                'message' => 'パスワードはパスワードは英大小文字、数字を含んで設定してください。'
+            ],
+            'checkNumber' => [
+                'rule' =>  '/[0-9]/',//半角英大小文字、数字のみ
+                'message' => 'パスワードは英大小文字、数字を含んで設定してください。'
+            ],
+            'checkOverlapMail' => [
+              'rule' => 'notOverlapMail',
+              'message' => 'メールアドレスを含めずに設定してください'
+            ],
         ],
         'permission_level' => [
             'notBlank' => [
@@ -63,6 +83,12 @@ class MUser extends AppModel {
             'allowEmpty' => false,
             'message' => '０～９９以内で設定してください。'
           ]
+        ],
+        'settings' => [
+            'prohibitedCharacters' => [
+                'rule' => '/^(?!.*(<|>|&|\')).*$/',
+                'message' => '<,>,&,\'を含まずに設定してください。'
+            ]
         ]
     ];
 
@@ -72,6 +98,10 @@ class MUser extends AppModel {
                 'rule' => ['maxLength', 50],
                 'allowEmpty' => false,
                 'message' => 'ユーザー名は５０文字以内で設定してください。'
+            ],
+            'prohibitedCharacters' => [
+                'rule' => '/^(?!.*(<|>|&|"|\')).*$/',
+                'message' => '<,>,&.",\'を含まずに設定してください。'
             ]
         ],
         'display_name' => [
@@ -79,6 +109,10 @@ class MUser extends AppModel {
                 'rule' => ['maxLength', 10],
                 'allowEmpty' => false,
                 'message' => '表示名は１０文字以内で設定してください。'
+            ],
+            'prohibitedCharacters' => [
+                'rule' => '/^(?!.*(<|>|&|"|\')).*$/',
+                'message' => '<,>,&.",\'を含まずに設定してください。'
             ]
         ],
         'mail_address' => [
@@ -93,10 +127,22 @@ class MUser extends AppModel {
                 'allowEmpty' => false,
                 'message' => 'パスワードは６～１２文字の間で設定してください。'
             ],
-            'alphaNumeric' => [
-                'rule' => 'alphaNumeric',
-                'message' => 'パスワードは英数字で設定してください。'
-            ]
+            'checkLargeAlphabet' => [
+                'rule' =>  '/[A-Z]/',//半角英大小文字、数字のみ
+                'message' => 'パスワードは英大小文字、数字を含んで設定してください。'
+            ],
+            'checkSmallAlphabet' => [
+                'rule' =>  '/[a-z]/',//半角英大小文字、数字のみ
+                'message' => 'パスワードはパスワードは英大小文字、数字を含んで設定してください。'
+            ],
+            'checkNumber' => [
+                'rule' =>  '/[0-9]/',//半角英大小文字、数字のみ
+                'message' => 'パスワードは英大小文字、数字を含んで設定してください。'
+            ],
+            'checkOverlapMail' => [
+              'rule' => 'notOverlapMail',
+              'message' => 'メールアドレスを含めずに設定してください'
+            ],
         ],
         'permission_level' => [
             'notBlank' => [
@@ -116,6 +162,12 @@ class MUser extends AppModel {
                 'rule' => 'canMatchConfirmPw',
                 'allowEmpty' => false,
                 'message' => '新しいパスワードが一致しません。'
+            ]
+        ],
+        'settings' => [
+            'prohibitedCharacters' => [
+                'rule' => '/^(?!.*(<|>|&|\')).*$/',
+                'message' => '<,>,&,\'を含まずに設定してください。'
             ]
         ]
     ];
@@ -139,6 +191,16 @@ class MUser extends AppModel {
             return true;
         }
         return false;
+    }
+
+    public function notOverlapMail(){
+      $data = $this->data['MUser'];
+      if ( !empty($data['new_password'])) {
+        if(strpos($data['new_password'],(substr($data['mail_address'],0,strpos($data['mail_address'],'@')))) === false){
+          return true;
+        }
+        return false;
+      }
     }
 
     public function canMatchConfirmPw(){
