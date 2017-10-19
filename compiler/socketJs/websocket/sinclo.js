@@ -387,7 +387,7 @@
         return false;
       }
       // LiveAssistのSDKがあれば、このタイミングでイベントハンドラをセットしておき
-      if(AssistSDK) {
+      if(typeof(AssistSDK) !== 'undefined') {
         console.log("Assist SDK found. initSDKCallbacks");
         laUtil.initSDKCallbacks();
       }
