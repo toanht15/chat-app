@@ -139,7 +139,7 @@
         </tr>
       </thead>
       <tbody ng-cloak>
-        <tr ng-repeat="monitor in search(monitorList) | orderObjectBy : '-chatUnreadId'" ng-dblclick="showDetail(monitor.tabId)" id="monitor_{{monitor.tabId}}">
+        <tr ng-repeat="monitor in search(monitorList) | orderObjectBy : '-chat' | orderObjectBy : '-chatUnreadId'" ng-dblclick="showDetail(monitor.tabId)" id="monitor_{{monitor.tabId}}">
           <!-- /* 状態 */ -->
           <td class="tCenter">
             <span ng-if="monitor.status === jsConst.tabInfo.open"><?=$this->Html->image('tab_status_open.png', ['alt'=>'', 'width'=>20, 'height'=>20])?></span>
@@ -154,16 +154,11 @@
           <td class='tCenter'>
             <?php if ( strcmp($userInfo['permission_level'], C_AUTHORITY_SUPER) !== 0) :?>
               <span ng-if="monitor.widget">
-                <span ng-if="!monitor.connectToken&&!monitor.docShare" id="shareToolBtn">
-                  <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
-                    <a class='monitorBtn blueBtn btn-shadow' href='javascript:void(0)' ng-click='windowOpen(monitor.tabId, monitor.accessId)' >画面共有</a>
-                  <?php endif; ?>
-                  <?php if ( isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT] ) :?>
-                    <a class='monitorBtn blueBtn btn-shadow' href='javascript:void(0)' ng-click='documentOpen(monitor.tabId, monitor.accessId)' >資料共有</a>
-                  <?php endif; ?>
+                <span ng-if="!monitor.connectToken&&!monitor.docShare&&!monitor.coBrowseConnectToken" id="shareToolBtn">
+                  <a class='monitorBtn blueBtn btn-shadow' href='javascript:void(0)' ng-click='confirmSharingWindowOpen(monitor.tabId, monitor.accessId)' >共有</a>
                 </span>
               </span>
-              <span ng-if="monitor.connectToken||monitor.docShare">
+              <span ng-if="monitor.connectToken||monitor.docShare||monitor.coBrowseConnectToken">
                 <span class="monitorOn" ng-if="!monitor.responderId">対応中...</span>
                 <span class="monitorOn" ng-if="monitor.responderId"><span class="bold">対応中</span><br>（{{setName(monitor.responderId)}}）</span>
               </span>
