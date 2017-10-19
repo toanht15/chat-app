@@ -70,27 +70,11 @@ class AppController extends Controller {
   ];
 
   public function beforeFilter(){
+
     // プロトコルチェック(本番のみ)
     if ( APP_MODE_DEV === false && !( strpos($this->referer(), '/Customers/frame') )  ) {
       $this->checkPort();
     }
-
-  if (empty($_SERVER['HTTPS'])) {
-    $this->log('aaaaaaaaa',LOG_DEBUG);
-    $this->log($this->name,LOG_DEBUG);
-    $this->log($_COOKIE['CAKEPHP'],LOG_DEBUG);
-    $this->log('cccccccc',LOG_DEBUG);
-    $this->log($_SERVER,LOG_DEBUG);
-    Configure::write('Session', array(
-      'defaults' => 'php',
-      'cookie' => 'CAKEPHP2',
-      'timeout' => 1440, // 24 hours
-      'ini' => array(
-        'session.gc_maxlifetime' =>  86400 // 24 hours
-     )
-    ));
-  }
-
 
     //if (empty($_SERVER['HTTPS'])) {
     if(strcmp($_SERVER['HTTP_X_FORWARDED_PORT'],443) == 0){
