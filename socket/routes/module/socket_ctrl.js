@@ -1118,7 +1118,11 @@ io.sockets.on('connection', function (socket) {
       obj.ipAddress = getIp(socket);
     }
 
-    emit.toCompany("sendCustomerInfo", obj, obj.siteKey);
+    if( ('contract' in obj) && ('hideRealtimeMonitor' in obj.contract) && obj.contract.hideRealtimeMonitor === true) {
+
+    } else {
+      emit.toCompany("sendCustomerInfo", obj, obj.siteKey);
+    }
 
     customerList[obj.siteKey][obj.accessId + '_' + obj.ipAddress + '_' + socket.id] = obj;
 
@@ -1150,6 +1154,11 @@ io.sockets.on('connection', function (socket) {
       }
     }
     emit.toMine('searchCustomerResult', result, socket);
+    // チャット未読
+    for(var i=0; i < result.length; i++) {
+      if ( ('contract' in result[i]) && ('chat' in result[i].contract) && result[i].contract.chat === false) break;
+      chatApi.sendUnreadCnt("sendChatInfo", result[i], false);
+    }
   });
 
 
