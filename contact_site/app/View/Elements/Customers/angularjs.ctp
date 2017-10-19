@@ -409,7 +409,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     $scope.beforeInputValue = '';
     $scope.searchResult = [];
     $scope.search = function(array, forceResult){
-      console.log("search processing...");
       var isHideRealTimeMonitor = contract.hideRealtimeMonitor;
       var result = {}, targetField;
       targetField = ( Number($scope.fillterTypeId) === 2 ) ? 'ipAddress' : 'accessId';
@@ -417,12 +416,20 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         if (forceResult) {
           $scope.searchResult = array;
           result = array;
-        } else if ($scope.searchText.length > 0 && $scope.searchText !== $scope.beforeInputValue) {
+        } else if ($scope.searchText.length > 1 && $scope.searchText !== $scope.beforeInputValue) {
           $scope.searchProcess($scope.searchText, $scope.fillterTypeId);
+          $scope.monitorList = [];
+          $scope.chatList = [];
           result = [];
         } else if ($scope.searchText.length > 0 && $scope.searchResult.length > 0) {
           result = $scope.searchResult;
         } else if($scope.searchText.length === 0) {
+          if($scope.monitorList.length > 0) {
+            $scope.monitorList = [];
+          }
+          if($scope.chatList > 0) {
+            $scope.chatList = [];
+          }
           result = [];
         }
       } else {
