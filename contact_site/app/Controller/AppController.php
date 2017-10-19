@@ -75,14 +75,50 @@ class AppController extends Controller {
       $this->checkPort();
     }
 
+  if (empty($_SERVER['HTTPS'])) {
+    $this->log('aaaaaaaaa',LOG_DEBUG);
+    $this->log($this->name,LOG_DEBUG);
+    $this->log($_COOKIE['CAKEPHP'],LOG_DEBUG);
+    $this->log('cccccccc',LOG_DEBUG);
+    $this->log($_SERVER,LOG_DEBUG);
+    Configure::write('Session', array(
+      'defaults' => 'php',
+      'cookie' => 'CAKEPHP2',
+      'timeout' => 1440, // 24 hours
+      'ini' => array(
+        'session.gc_maxlifetime' =>  86400 // 24 hours
+     )
+    ));
+  }
+
+
     //if (empty($_SERVER['HTTPS'])) {
     if(strcmp($_SERVER['HTTP_X_FORWARDED_PORT'],443) == 0){
+      Configure::write('Session', array(
+        'defaults' => 'php',
+        'cookie' => 'CAKEPHP',
+        'timeout' => 1440, // 24 hours
+        'ini' => array(
+          'session.gc_maxlifetime' =>  86400 // 24 hours
+        )
+      ));
+
       if(empty(session_get_cookie_params()['secure'])) {
         setcookie("CAKEPHP", $_COOKIE['CAKEPHP'], 0 ,"/","",1);
         $pass = $this->_createPass();
         setcookie("CAKEPHP2", $pass , 0 ,"/","");
         copy('/var/lib/php/session/sess_'.$_COOKIE['CAKEPHP'] , '/var/lib/php/session/sess_'.$pass);
       }
+    }
+    else {
+      Configure::write('Session', array(
+        'defaults' => 'php',
+        'cookie' => 'CAKEPHP2',
+        'timeout' => 1440, // 24 hours
+        'ini' => array(
+          'session.gc_maxlifetime' =>  86400 // 24 hours
+        )
+      ));
     }
 
     // 通知メッセージをセット
