@@ -211,16 +211,16 @@ var socket, // socket.io
           reBackgroundColor: reBackgroundColor,
           //13.企業側吹き出し枠線色 ※基本設定 6.吹き出し枠線色を使用
           reBorderColor: widget.chatTalkBorderColor,
-          //14.企業側吹き出し枠線なし ※通常設定の時は必ず0
-          reBorderNone: 0,
+          //14.企業側吹き出し枠線なし ※通常設定の時は必ず1
+          reBorderNone: 1,
           //15.訪問者側吹き出し文字色 ※基本設定 3.吹き出し文字色を使用
           seTextColor: widget.messageTextColor,
           //16.訪問者側吹き出し背景色 ※デフォルトカラー白に設定
-          seBackgroundColor: "#FFFFFF",
+          seBackgroundColor: "#E7E7E7",
           //17.訪問者側吹き出し枠線色 ※基本設定 6.吹き出し枠線色を使用
           seBorderColor: widget.chatTalkBorderColor,
-          //18.訪問者側吹き出し枠線色 ※通常設定の時は必ず0
-          seBorderNone: 0,
+          //18.訪問者側吹き出し枠線色 ※通常設定の時は必ず1
+          seBorderNone: 1,
           //19.メッセージエリア背景色 ※デフォルトカラー白に設定
           chatMessageBackgroundColor: "#FFFFFF",
           //20.メッセージBOX文字色 ※基本設定 4.その他文字色を使用
@@ -238,7 +238,9 @@ var socket, // socket.io
           //26.ウィジット内枠線色 ※基本設定ウィジェット枠線色を使用
           widgetInsideBorderColor: widget.widgetBorderColor,
           //27.ウィジット内枠線なし ※通常設定の時は必ず0
-          widgetInsideBorderNone: 0
+          widgetInsideBorderNone: 0,
+          //28.ウィジット外枠線なし ※通常設定の時は必ず0
+          widgetBorderNone: 0
         };
       }
       else{
@@ -266,6 +268,14 @@ var socket, // socket.io
         else{
           var messageBoxBorderColor = widget.messageBoxBorderColor;
           var messageBoxBorderNone = 0;
+        }
+        if(widget.widgetBorderColor === undefined || widget.widgetBorderColor === 'none'){
+          var widgetBorderColor = "#FFFFFF"; //念のため
+          var widgetBorderNone = 1;
+        }
+        else{
+          var widgetBorderColor = widget.widgetBorderColor;
+          var widgetBorderNone = 0;
         }
         if(widget.widgetInsideBorderColor === undefined || widget.widgetInsideBorderColor === 'none'){
           var widgetInsideBorderColor = "#FFFFFF"; //念のため
@@ -330,7 +340,9 @@ var socket, // socket.io
           //26.ウィジット内枠線色
           widgetInsideBorderColor: widgetInsideBorderColor,
           //27.ウィジット内枠線なし
-          widgetInsideBorderNone: widgetInsideBorderNone
+          widgetInsideBorderNone: widgetInsideBorderNone,
+          //28.ウィジット外枠線なし
+          widgetBorderNone: widgetBorderNone
         };
       }
       return portioneArray;
@@ -860,10 +872,10 @@ var socket, // socket.io
         html += '      #sincloBox section#chatTab sinclo-div #sincloChatSendBtn span { color: ' + colorList['chatSendBtnTextColor'] + '; }';
         if( window.sincloInfo.contract.sinclo || (window.sincloInfo.contract.hasOwnProperty("document") && window.sincloInfo.contract.document ) ) {
           if(widget.chatMessageCopy === 1) {
-            html += '      #sincloBox section#chatTab #sincloAccessInfo { height: '+ sizeList['sincloAccessInfoHeight'] +'px; text-align: left; padding-left: 0.5em; padding-top: 5px; padding-bottom: 5px; font-size: 0.9em; border-top: 1px solid #E8E7E0; user-select: none;-moz-user-select: none;-webkit-user-select: none;-ms-user-select: none; }';
+            html += '      #sincloBox section#chatTab #sincloAccessInfo { height: '+ sizeList['sincloAccessInfoHeight'] +'px; text-align: left; padding-left: 0.5em; padding-top: 5px; padding-bottom: 5px; font-size: 0.9em; border-top: 1px solid ' + colorList['widgetInsideBorderColor'] + '; user-select: none;-moz-user-select: none;-webkit-user-select: none;-ms-user-select: none; }';
           }
           else {
-            html += '      #sincloBox section#chatTab #sincloAccessInfo { height: '+ sizeList['sincloAccessInfoHeight'] +'px; text-align: left; padding-left: 0.5em; padding-top: 5px; padding-bottom: 5px; font-size: 0.9em; border-top: 1px solid #E8E7E0 }';
+            html += '      #sincloBox section#chatTab #sincloAccessInfo { height: '+ sizeList['sincloAccessInfoHeight'] +'px; text-align: left; padding-left: 0.5em; padding-top: 5px; padding-bottom: 5px; font-size: 0.9em; border-top: 1px solid ' + colorList['widgetInsideBorderColor'] + ' }';
           }
           if(colorList['widgetInsideBorderNone'] === 1){
             html += '      #sincloBox section#chatTab #sincloAccessInfo { border-top: none!important; }';
@@ -970,11 +982,20 @@ var socket, // socket.io
           if(widget.widgetSizeType !== 1){
             html += '#sincloBox p#widgetSubTitle { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }';
           }
+          if(colorList['widgetBorderNone'] === 1){
+            html += '#sincloBox p#widgetSubTitle { border:none; }';
+          }
           html += '#sincloBox p#widgetDescription { background-color: #FFF; margin: 0; padding-bottom: ' + (7 * ratio) + 'px; border-width: 0 ' + (1 * ratio) + 'px ' + (1 * ratio) + 'px ' + (1 * ratio) + 'px; padding-left: ' + (77 * ratio) + 'px; height: ' + (23 * ratio) + 'px; text-align: left; border-color: '+ colorList['widgetBorderColor'] +'; border-style: solid; color: ' + colorList['descriptionTextColor'] + '; border-bottom-color:'+ colorList['widgetInsideBorderColor'] +'; }';
           if(widget.widgetSizeType !== 1){
             html += '#sincloBox p#widgetDescription { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }';
           }
-          html += '#sincloBox section { border: ' + (1 * ratio) + 'px solid '+ colorList['widgetBorderColor'] +'; border-top: none; border-bottom-color:'+ colorList['widgetInsideBorderColor'] +';}';
+          if(colorList['widgetBorderNone'] === 1){
+            html += '#sincloBox p#widgetDescription { border-left:none; border-right:none; }';
+          }
+          html += '#sincloBox section { border: ' + (1 * ratio) + 'px solid '+ colorList['widgetBorderColor'] +'; border-top: none; border-bottom: ' + (1 * ratio) + 'px solid '+ colorList['widgetInsideBorderColor'] +';}';
+          if(colorList['widgetBorderNone'] === 1){
+            html += '#sincloBox section { border-top: none; border-left:none; border-right:none; }'
+          }
           if(colorList['widgetInsideBorderNone'] === 1){
             html += '#sincloBox section { border-bottom:none!important;}';
           }
@@ -1032,12 +1053,18 @@ var socket, // socket.io
           html += '#sincloBox section#navigation ul { margin: 0 0 0 -' + (1 * ratio) + 'px; height: ' + (40 * ratio) + 'px; }';
           html += '#sincloBox section#navigation ul li { padding: ' + (10 * ratio) + 'px 0; border-left: ' + (1 * ratio) + 'px solid #E8E7E0; height: ' + (40 * ratio) + 'px;  }';
           html += '#sincloBox section#navigation ul li:last-child { border-right: ' + (1 * ratio) + 'px solid '+ colorList['widgetBorderColor'] +'; }';
+          if(colorList['widgetBorderNone'] === 1){
+            html += '#sincloBox section#navigation ul li:last-child { border-right:none; }';
+          }
           html += '#sincloBox section#navigation ul li:not(.selected) { border-bottom: ' + (1 * ratio) + 'px solid '+ colorList['widgetInsideBorderColor'] +'; }';
           if(colorList['widgetInsideBorderNone'] === 1){
             html += '#sincloBox section#navigation ul li:not(.selected) { border-bottom: none!important;}';
           }
           html += '#sincloBox section#navigation ul li.selected::after { border-bottom: ' + (2 * ratio) + 'px solid ' + colorList['mainColor'] + '; left: ' + (5 * ratio) + 'px; }';
           html += '#sincloBox #fotter { padding: ' + (5 * ratio) + 'px 0; border: ' + (1 * ratio) + 'px solid '+ colorList['widgetBorderColor'] +'; font-size: ' + (11 * ratio) + 'px; border-top: none;}';
+          if(colorList['widgetBorderNone'] === 1){
+            html += '#sincloBox #fotter { border:none; }';
+          }
           html += '#sincloBox section#navigation ul li::before { margin-right: ' + (5 * ratio) + 'px; width: ' + (18 * ratio) + 'px; height: ' + (18 * ratio) + 'px; }';
           //閉じるボタン設定が有効かつバナー表示設定になっているかどうか
           if(Number(widget.closeButtonSetting) === 2 && Number(widget.closeButtonModeType) === 1){
@@ -1155,8 +1182,17 @@ var socket, // socket.io
         html += '      #sincloBox p#widgetTitle #sincloChatUnread { width: 25px; height: 25px; font-size: '+ sizeList['d13font'] +'px; border-radius: 15px; margin: 2.5px 6px; padding: 3px; }';
         html += '      #sincloBox p#widgetTitle:after { background-position-y: 3px; top: '+ sizeList['widgetTitleTop'] +'px; right: 10px; bottom: 6px; width: 20px; height: 20px; }';
         html += '      #sincloBox p#widgetSubTitle { background-color: #FFF; margin: 0; padding: 7px 0; text-align: left; border-width: 0 1px 0 1px; border-color: '+ colorList['widgetBorderColor'] +'; border-style: solid; padding-left: 77px; font-weight: bold; color: ' + colorList['subTitleTextColor'] + '; height: '+ sizeList['widgetSubTitleHeight'] +'px }';
+        if(colorList['widgetBorderNone'] === 1){
+          html += '#sincloBox p#widgetSubTitle { border:none; }';
+        }
         html += '      #sincloBox p#widgetDescription { background-color: #FFF; margin: 0; padding-bottom: 7px; text-align: left; border-width: 0 1px 1px 1px; border-color: '+ colorList['widgetBorderColor'] +'; border-style: solid; padding-left: 77px; height: '+ sizeList['widgetDescriptionHeight'] +'px; color: ' + colorList['descriptionTextColor'] + '; border-bottom-color:'+ colorList['widgetInsideBorderColor'] +';}';
-        html += '      #sincloBox section { background-color: #FFF; border: 1px solid '+ colorList['widgetBorderColor'] +'; border-top: none; border-bottom-color:'+ colorList['widgetInsideBorderColor'] +'; }';
+        if(colorList['widgetBorderNone'] === 1){
+          html += '#sincloBox p#widgetDescription { border-left:none; border-right:none; }';
+        }
+        html += '      #sincloBox section { background-color: #FFF; border: 1px solid '+ colorList['widgetBorderColor'] +'; border-top: none; border-bottom: 1px solid '+ colorList['widgetInsideBorderColor'] +'; }';
+        if(colorList['widgetBorderNone'] === 1){
+          html += '      #sincloBox section { border-top: none; border-left:none; border-right:none; }';
+        }
         if(colorList['widgetInsideBorderNone'] === 1){
           html += '      #sincloBox section { border-bottom: none!important; }';
         }
@@ -1207,7 +1243,13 @@ var socket, // socket.io
         html += '      #sincloBox section#navigation { border-width: 0 1px; height: '+ sizeList['navigationHeight'] +'px; }';
         html += '      #sincloBox section#navigation ul { margin: 0 0 0 -1px; height: '+ sizeList['navigationHeight'] +'px;}';
         html += '      #sincloBox section#navigation ul li { width: 50%; padding: 10px 0; border-left: 1px solid '+ colorList['widgetBorderColor'] +'; height: '+ sizeList['navigationHeight'] +'px }';
+        if(colorList['widgetBorderNone'] === 1){
+          html += '      #sincloBox section#navigation ul li { border-left:none; }';
+        }
         html += '      #sincloBox section#navigation ul li:last-child { border-right: 1px solid '+ colorList['widgetBorderColor'] +'; border-left: 1px solid '+ colorList['widgetInsideBorderColor'] +'; }';
+        if(colorList['widgetBorderNone'] === 1){
+          html += '      #sincloBox section#navigation ul li:last-child { border-right:none; }';
+        }
         if(colorList['widgetInsideBorderNone'] === 1){
           html += '      #sincloBox section#navigation ul li:last-child { border-left: none!important; }';
         }
@@ -1217,6 +1259,9 @@ var socket, // socket.io
         }
         html += '      #sincloBox section#navigation ul li.selected::after{ border-bottom: 2px solid ' + colorList['mainColor'] + '; }';
         html += '      #sincloBox #fotter { height: '+ sizeList['fotterHeight'] +'px; padding: 5px 0; border: 1px solid '+ colorList['widgetBorderColor'] +'; font-size: '+ sizeList['d11font'] +'px; border-top: none; }';
+        if(colorList['widgetBorderNone'] === 1){
+          html += '      #sincloBox #fotter { border:none }';
+        }
         html += '      #sincloBox section#navigation ul li::before{ margin-right: 5px; width: 18px; height: 18px; }';
 
       }

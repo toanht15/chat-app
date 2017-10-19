@@ -71,7 +71,10 @@ class MWidgetSettingsController extends AppController {
         }
       }
       else{
-        $this->set('re_border_color_flg', true);
+        //初回読み込み時
+        $this->set('re_border_color_flg', false);
+        $inputData['MWidgetSetting']['re_border_color'] = 'なし';
+        $inputData['MWidgetSetting']['re_border_none'] = true;
       }
       if(array_key_exists ('se_border_color',$json)){
         if($json['se_border_color'] === 'none'){
@@ -84,7 +87,10 @@ class MWidgetSettingsController extends AppController {
         }
       }
       else{
-        $this->set('se_border_color_flg', true);
+        //初回読み込み時
+        $this->set('se_border_color_flg', false);
+        $inputData['MWidgetSetting']['se_border_color'] = 'なし';
+        $inputData['MWidgetSetting']['se_border_none'] = true;
       }
       if(array_key_exists ('message_box_border_color',$json)){
         if($json['message_box_border_color'] === 'none'){
@@ -99,6 +105,21 @@ class MWidgetSettingsController extends AppController {
       else{
         $this->set('message_box_border_color_flg', true);
       }
+      //ウィジェット外枠線
+      if(array_key_exists ('widget_border_color',$json)){
+        if($json['widget_border_color'] === 'none'){
+          $this->set('widget_border_color_flg', false);
+          $inputData['MWidgetSetting']['widget_border_color'] = 'なし';
+          $inputData['MWidgetSetting']['widget_outside_border_none'] = true;
+        }
+        else{
+          $this->set('widget_border_color_flg', true);
+        }
+      }
+      else{
+        $this->set('widget_border_color_flg', true);
+      }
+      //ウィジェット内枠線
       if(array_key_exists ('widget_inside_border_color',$json)){
         if($json['widget_inside_border_color'] === 'none'){
           $this->set('widget_inside_border_color_flg', false);
@@ -201,6 +222,10 @@ class MWidgetSettingsController extends AppController {
     //メッセージBOX枠線色
     if($inputData['MWidgetSetting']['message_box_border_color'] === 'なし'){
       $inputData['MWidgetSetting']['message_box_border_color'] = 'none';
+    }
+    //ウィジェット外枠線色
+    if($inputData['MWidgetSetting']['widget_border_color'] === 'なし'){
+      $inputData['MWidgetSetting']['widget_border_color'] = 'none';
     }
     //ウィジェット内枠線色
     if($inputData['MWidgetSetting']['widget_inside_border_color'] === 'なし'){

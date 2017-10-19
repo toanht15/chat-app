@@ -199,13 +199,13 @@ define('RE_TEXT_COLOR', "#333333");
 //12.企業側吹き出し背景色
 define('RE_BACKGROUND_COLOR', "#FAF6E6");
 //13.企業側吹き出し枠線色
-define('RE_BORDER_COLOR', "#C9C9C9");
+define('RE_BORDER_COLOR', "なし");
 //15.訪問者側吹き出し文字色
 define('SE_TEXT_COLOR', "#333333");
 //16.訪問者側吹き出し背景色
-define('SE_BACKGROUND_COLOR', "#FFFFFF");
+define('SE_BACKGROUND_COLOR', "#E7E7E7");
 //17.訪問者側吹き出し枠線色
-define('SE_BORDER_COLOR', "#C9C9C9");
+define('SE_BORDER_COLOR', "なし");
 //19.メッセージエリア背景色
 define('CHAT_MESSAGE_BACKGROUND_COLOR', "#FFFFFF");
 //20.メッセージBOX文字色
@@ -213,7 +213,7 @@ define('MESSAGE_BOX_TEXT_COLOR', "#666666");
 //21.メッセージBOX背景色
 define('MESSAGE_BOX_BACKGROUND_COLOR', "#FFFFFF");
 //22.メッセージBOX枠線色
-define('MESSAGE_BOX_BORDER_COLOR', "#C9C9C9");
+define('MESSAGE_BOX_BORDER_COLOR', "#D4D4D4");
 //24.送信ボタン文字色
 define('CHAT_SEND_BTN_TEXT_COLOR', "#FFFFFF");
 //25.送信ボタン背景色

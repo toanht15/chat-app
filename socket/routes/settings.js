@@ -179,16 +179,12 @@ router.get("/", function(req, res, next) {
                   reBackgroundColor: settings.reBackgroundColor,
                   //13.企業側吹き出し枠線色
                   reBorderColor: settings.reBorderColor,
-                  //14.企業側吹き出し枠線なし
-                  reBorderNone: settings.reBorderNone,
                   //15.訪問者側吹き出し文字色
                   seTextColor: settings.seTextColor,
                   //16.訪問者側吹き出し背景色
                   seBackgroundColor: settings.seBackgroundColor,
                   //17.訪問者側吹き出し枠線色
                   seBorderColor: settings.seBorderColor,
-                  //18.訪問者側吹き出し枠線なし
-                  seBorderNone: settings.seBorderNone,
                   //19.メッセージエリア背景色
                   chatMessageBackgroundColor: settings.chatMessageBackgroundColor,
                   //20.メッセージBOX文字色
@@ -197,16 +193,12 @@ router.get("/", function(req, res, next) {
                   messageBoxBackgroundColor: settings.messageBoxBackgroundColor,
                   //22.メッセージBOX枠線色
                   messageBoxBorderColor: settings.messageBoxBorderColor,
-                  //23.メッセージBOX枠線なし
-                  messageBoxBorderNone: settings.messageBoxBorderNone,
                   //24.送信ボタン文字色
                   chatSendBtnTextColor: settings.chatSendBtnTextColor,
                   //25.送信ボタン背景色
                   chatSendBtnBackgroundColor: settings.chatSendBtnBackgroundColor,
                   //26.ウィジット内枠線色
                   widgetInsideBorderColor: settings.widgetInsideBorderColor,
-                  //27.ウィジット内枠線なし
-                  widgetInsideBorderNone: settings.widgetInsideBorderNone,
                   /* カラー設定end */
 
                   showMainImage: settings.showMainImage,
