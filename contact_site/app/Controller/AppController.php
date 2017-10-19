@@ -109,7 +109,6 @@ class AppController extends Controller {
       return $this->redirect(['controller'=>'Login', 'action' => 'index']);
     }
     $this->coreSettings = $this->mergeCoreSettings(json_decode($this->userInfo['MCompany']['core_settings'], true));
-    $this->log("SHIMIZU : coreSettings => ".var_export($this->coreSettings,TRUE),LOG_DEBUG);
     $this->set('coreSettings', $this->coreSettings);
 
 
