@@ -252,8 +252,8 @@
       #sincloBox span#sincloAccessInfo{ height: 26.5px; display: block; padding-left: 0.5em; padding-top: 5px; padding-bottom: 5px; border-top: 1px solid {{widget_border_color}}; font-size: 0.9em; }
       #sincloBox span#sincloAccessInfo.details{ border-top: 1px solid {{widget_inside_border_color}}; }
       #sincloBox span#sincloAccessInfo.details:not(.notNone){ border-top: none; }
-      #sincloBox #footer{ height: 26.5px; padding: 5px 0; text-align: center; border: 1px solid {{widget_border_color}}; color:#A1A1A1!important; font-size: 11px;margin: 0; border-top: none; }
     <?php endif; ?>
+      #sincloBox #footer{ height: 26.5px; padding: 5px 0; text-align: center; border: 1px solid {{widget_border_color}}; color:#A1A1A1!important; font-size: 11px;margin: 0; border-top: none; }
     </style>
     <!-- 画像 -->
     <span id="mainImage" class="widgetOpener" ng-hide="spHeaderLightToggle() || mainImageToggle !== '1'">

@@ -1181,6 +1181,15 @@ sincloApp.controller('WidgetCtrl', function($scope){
       }
     });
 
+    //メッセージBOXにフォーカスが当たった、外れた時の処理
+    $("#MWidgetSettingMessageBoxTextColor")
+    .focusin(function(e) {
+      $("#sincloChatMessage").val("カラーテスト");
+    })
+    .focusout(function(e) {
+      $("#sincloChatMessage").val("");
+    });
+
     angular.element(window).on("focus", ".showSp", function(e){
         $scope.switchWidget(3);
     });
