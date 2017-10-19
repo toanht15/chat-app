@@ -275,6 +275,8 @@ class HistoriesController extends AppController {
     $userList = $this->_userList($historyList);
     //THistoryChatLogの「firstURL」と「count」をと取ってくる
     $stayList = $this->_stayList($userList);
+    //最終発言時間を取得
+    $lastSpeechList = $this->_lastSpeechTimeList($historyList);
 
     // ヘッダー
     $csv[] = [
@@ -289,6 +291,7 @@ class HistoriesController extends AppController {
     ];
 
     if ( $this->coreSettings[C_COMPANY_USE_CHAT] ) {
+      $csv[0][] = "最終発言後離脱時間";
       $csv[0][] = "成果";
       $csv[0][] = "チャット担当者";
     }
@@ -343,6 +346,8 @@ class HistoriesController extends AppController {
       // 滞在時間
       $row['visitTime'] = $this->calcTime($history['THistory']['access_date'], $history['THistory']['out_date']);
       if ( $this->coreSettings[C_COMPANY_USE_CHAT] ) {
+        // 最終発言
+        $row['lastSpeechTime'] = $this->calcTime($lastSpeechList[$history['THistory']['id']], $history['THistory']['out_date']);
         // 成果
         $row['achievement'] = "";
         if ($history['THistoryChatLog2']['achievementFlg']){
@@ -1486,6 +1491,36 @@ class HistoriesController extends AppController {
       ];
     }
     return $stayList;
+  }
+
+  private function _lastSpeechTimeList($historyList) {
+    $historyIdList = [];
+    foreach($historyList as $val){
+      $historyIdList[] = $val['THistory']['id'];
+    }
+    $chatList = $this->THistoryChatLog->find('all',[
+      'fields' => [
+        'THistoryChatLog.t_histories_id',
+        'THistoryChatLog.message_type',
+        'MAX(created) as created'
+      ],
+      'order' => [
+        'THistoryChatLog.t_histories_id' => 'asc'
+      ],
+      'conditions' => [
+        'AND' => array(
+          't_histories_id' => $historyIdList,
+          'message_type != 98',
+          'message_type != 99')
+      ],
+      'group' => ['THistoryChatLog.t_histories_id']
+    ]);
+
+    $list = [];
+    foreach($chatList as $k => $chat) {
+      $list[$chat['THistoryChatLog']['t_histories_id']] = $chat[0]['created'];
+    }
+    return $list;
   }
 
     /**
