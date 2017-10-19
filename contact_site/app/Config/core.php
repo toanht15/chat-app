@@ -218,8 +218,6 @@
 	// Configure::write('Session', array(
 	// 	'defaults' => 'php'
 	// ));
-	//Configure::write('Session.cookie', 'CAKEPHP');
-	//Configure::write('Session.cookie', 'CAKEPHP2');
 
 	//if (empty($_SERVER['HTTPS'])) {
 	if(strcmp($_SERVER['HTTP_X_FORWARDED_PORT'],443) !== 0){
