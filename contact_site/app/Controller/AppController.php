@@ -70,24 +70,18 @@ class AppController extends Controller {
   ];
 
   public function beforeFilter(){
-
     // プロトコルチェック(本番のみ)
     if ( APP_MODE_DEV === false && !( strpos($this->referer(), '/Customers/frame') )  ) {
       $this->checkPort();
     }
 
     //if (empty($_SERVER['HTTPS'])) {
-    if(strcmp($_SERVER['HTTP_X_FORWARDED_PORT'],443) !== 0){
-      if(!isset($_SESSION)){
-        session_name("http");
-        session_start();
-        session_regenerate_id(false);
-        $this->Session->renew();
-      }
-    }
-    else {
+    if(strcmp($_SERVER['HTTP_X_FORWARDED_PORT'],443) == 0){
       if(empty(session_get_cookie_params()['secure'])) {
         setcookie("CAKEPHP", $_COOKIE['CAKEPHP'], 0 ,"/","",1);
+        $pass = $this->_createPass();
+        setcookie("CAKEPHP2", $pass , 0 ,"/","");
+        copy('/var/lib/php/session/sess_'.$_COOKIE['CAKEPHP'] , '/var/lib/php/session/sess_'.$pass);
       }
     }
 
@@ -347,5 +341,30 @@ class AppController extends Controller {
 
   protected function mergeCoreSettings($coreSettings) {
     return array_merge($this->defaultCoreSettings, $coreSettings);
+  }
+
+  private function _createPass(){
+    $pwd = array();
+    $pwd_strings = array(
+      "sletter" => range('a', 'z'),
+      "number"  => range('0', '9'),
+    );
+
+    //logic
+    while (count($pwd) < 26) {
+      // 4種類必ず入れる
+      if (count($pwd) < 2) {
+          $key = key($pwd_strings);
+          next($pwd_strings);
+      } else {
+      // 後はランダムに取得
+          $key = array_rand($pwd_strings);
+      }
+      $pwd[] = $pwd_strings[$key][array_rand($pwd_strings[$key])];
+    }
+    // 生成したパスワードの順番をランダムに並び替え
+    shuffle($pwd);
+
+    return implode($pwd);
   }
 }

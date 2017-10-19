@@ -218,13 +218,30 @@
 	// Configure::write('Session', array(
 	// 	'defaults' => 'php'
 	// ));
-	Configure::write('Session', array(
-		'defaults' => 'php',
-		'timeout' => 1440, // 24 hours
-		'ini' => array(
-			'session.gc_maxlifetime' =>  86400 // 24 hours
-		)
-	));
+	//Configure::write('Session.cookie', 'CAKEPHP');
+	//Configure::write('Session.cookie', 'CAKEPHP2');
+
+	//if (empty($_SERVER['HTTPS'])) {
+	if(strcmp($_SERVER['HTTP_X_FORWARDED_PORT'],443) !== 0){
+		Configure::write('Session', array(
+			'cookie' => 'CAKEPHP2',
+			'defaults' => 'php',
+			'timeout' => 1440, // 24 hours
+			'ini' => array(
+				'session.gc_maxlifetime' =>  86400 // 24 hours
+			)
+		));
+	}
+	else{
+		Configure::write('Session', array(
+			'cookie' => 'CAKEPHP',
+			'defaults' => 'php',
+			'timeout' => 1440, // 24 hours
+			'ini' => array(
+				'session.gc_maxlifetime' =>  86400 // 24 hours
+			)
+		));
+	}
 
 /**
  * A random string used in security hashing methods.
