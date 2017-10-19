@@ -1262,6 +1262,7 @@ io.sockets.on('connection', function (socket) {
   // -----------------------------------------------------------------------
   socket.on("sendAccessInfo", function (data) {
     var obj = JSON.parse(data);
+    if( ('contract' in obj) && ('hideRealtimeMonitor' in obj.contract) && obj.contract.hideRealtimeMonitor === true) return false;
     obj.term = timeCalculator(obj);
 
     obj = getConnectInfo(obj);
