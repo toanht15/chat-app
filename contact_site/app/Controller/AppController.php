@@ -76,7 +76,7 @@ class AppController extends Controller {
       $this->checkPort();
     }
 
-    //if (empty($_SERVER['HTTPS'])) {
+    //if (!empty($_SERVER['HTTPS'])) {
     if(strcmp($_SERVER['HTTP_X_FORWARDED_PORT'],443) == 0){
       Configure::write('Session', array(
         'defaults' => 'php',
@@ -87,17 +87,19 @@ class AppController extends Controller {
         )
       ));
 
-      if(empty(session_get_cookie_params()['secure'])) {
-        setcookie("CAKEPHP", $_COOKIE['CAKEPHP'], 0 ,"/","",1);
-        $pass = $this->_createPass();
-        setcookie("CAKEPHP2", $pass , 0 ,"/","");
-        copy('/var/lib/php/session/sess_'.$_COOKIE['CAKEPHP'] , '/var/lib/php/session/sess_'.$pass);
+      if(isset($_COOKIE['CAKEPHP'])) {
+        if(empty(session_get_cookie_params()['secure'])) {
+          setcookie("CAKEPHP", $_COOKIE['CAKEPHP'], 0 ,"/","",1);
+          $pass = $this->_createPass();
+          setcookie("CAKE_HTTP", $pass , 0 ,"/","");
+          copy('/var/lib/php/session/sess_'.$_COOKIE['CAKEPHP'] , '/var/lib/php/session/sess_'.$pass);
+        }
       }
     }
     else {
       Configure::write('Session', array(
         'defaults' => 'php',
-        'cookie' => 'CAKEPHP2',
+        'cookie' => 'CAKE_HTTP',
         'timeout' => 1440, // 24 hours
         'ini' => array(
           'session.gc_maxlifetime' =>  86400 // 24 hours
@@ -371,7 +373,7 @@ class AppController extends Controller {
     );
 
     //logic
-    while (count($pwd) < 26) {
+    while (count($pwd) < 32) {
       // 4種類必ず入れる
       if (count($pwd) < 2) {
           $key = key($pwd_strings);
