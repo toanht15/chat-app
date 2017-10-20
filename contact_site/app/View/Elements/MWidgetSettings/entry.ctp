@@ -294,6 +294,7 @@ $headerNo = 1;
               [
                 'entity' => 'MWidgetSetting.other_text_color'
               ]) ?></span><br>
+              <hr class="separator">
               <!-- 12.企業側吹き出し背景色 -->
               <span style="height: 35px;"><label>企業側吹き出し背景色　　</label><?= $this->ngForm->input('re_background_color', [
                 'type' => 'text',
@@ -322,6 +323,7 @@ $headerNo = 1;
               [
                 'entity' => 'MWidgetSetting.re_text_color'
               ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('re_text_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -50px; left: 295px;" >標準に戻す</span></span>
+                <hr class="separator">
               <!-- 16.訪問者側吹き出し背景色 -->
               <span style="height: 35px;"><label>訪問者側吹き出し背景色</label><?= $this->ngForm->input('se_background_color', [
                 'type' => 'text',
@@ -388,7 +390,7 @@ $headerNo = 1;
               <!-- 基本設定色end -->
               <!-- 0.通常設定・高度設定 -->
               <!-- 高度な設定を行う行わないを制御するチェックボックス -->
-              <pre><label class="pointer"><?= $this->ngForm->input('color_setting_type', [
+              <pre style="margin-top: 30px; margin-left: -3px;"><label class="pointer"><?= $this->ngForm->input('color_setting_type', [
                 'type' => 'checkbox',
                 'legend' => false,
                 'ng-checked' => 'color_setting_type === "'.COLOR_SETTING_TYPE_ON.'"',
@@ -453,6 +455,7 @@ $headerNo = 1;
                 [
                   'entity' => 'MWidgetSetting.chat_talk_background_color'
                 ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('chat_talk_background_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -50px; left: 295px;" >標準に戻す</span></span>
+                <hr class="separator">
                 <!-- 10.企業名担当者名文字色 -->
                 <span style="height: 35px;"><label>企業名／担当者名文字色</label><?= $this->ngForm->input('c_name_text_color', [
                   'type' => 'text',
@@ -544,6 +547,7 @@ $headerNo = 1;
                 [
                   'entity' => 'MWidgetSetting.re_border_none'
                 ]) ?></label></pre>
+                <hr class="separator">
                 <!-- 15.訪問者側吹き出し文字色 -->
 <!--
                 <span style="height: 35px;"><label>訪問者側吹き出し文字色</label><?= $this->ngForm->input('se_text_color', [
@@ -642,6 +646,7 @@ $headerNo = 1;
                 [
                   'entity' => 'MWidgetSetting.chat_message_background_color'
                 ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('chat_message_background_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -50px; left: 295px;" >標準に戻す</span></span>
+                <hr class="separator">
                 <!-- 21.メッセージBOX背景色 -->
                 <span style="height: 35px;"><label>メッセージBOX背景色　</label><?= $this->ngForm->input('message_box_background_color', [
                   'type' => 'text',
@@ -715,6 +720,7 @@ $headerNo = 1;
                 [
                   'entity' => 'MWidgetSetting.message_box_border_none'
                 ]) ?></label></pre>
+                <hr class="separator">
                 <!-- 25.送信ボタン背景色 -->
                 <span style="height: 35px;"><label>送信ボタン背景色</label><?= $this->ngForm->input('chat_send_btn_background_color', [
                   'type' => 'text',
