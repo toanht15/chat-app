@@ -78,6 +78,36 @@ class AppController extends Controller {
       $this->checkPort();
     }
 
+    //HTTPSの場合
+    if(!empty($_SERVER['HTTP_X_FORWARDED_PORT']) && strcmp($_SERVER['HTTP_X_FORWARDED_PORT'],443) == 0){
+      Configure::write('Session', array(
+        'defaults' => 'php',
+        'cookie' => 'CAKEPHP',
+        'timeout' => 1440, // 24 hours
+        'ini' => array(
+          'session.gc_maxlifetime' =>  86400 // 24 hours
+        )
+      ));
+      if(!empty($_COOKIE['CAKEPHP'])) {
+        if(empty(session_get_cookie_params()['secure'])) {
+          setcookie("CAKEPHP", $_COOKIE['CAKEPHP'], 0 ,"/","",1,1);
+          $pass = $this->_createPass();
+          setcookie("CAKE_HTTP", $pass , 0 ,"/","",0,1);
+          copy('/var/lib/php/session/sess_'.$_COOKIE['CAKEPHP'] , '/var/lib/php/session/sess_'.$pass);
+        }
+      }
+    }
+    else {
+      Configure::write('Session', array(
+        'defaults' => 'php',
+        'cookie' => 'CAKE_HTTP',
+        'timeout' => 1440, // 24 hours
+        'ini' => array(
+          'session.gc_maxlifetime' =>  86400 // 24 hours
+        )
+      ));
+    }
+
     // 通知メッセージをセット
     if ($this->Session->check('global.message')) {
       $this->set('alertMessage', $this->Session->read('global.message'));
@@ -332,5 +362,30 @@ class AppController extends Controller {
 
   protected function mergeCoreSettings($coreSettings) {
     return array_merge($this->defaultCoreSettings, $coreSettings);
+  }
+
+  private function _createPass(){
+    $pwd = array();
+    $pwd_strings = array(
+      "sletter" => range('a', 'z'),
+      "number"  => range('0', '9'),
+    );
+
+    //logic
+    while (count($pwd) < 32) {
+      // 4種類必ず入れる
+      if (count($pwd) < 2) {
+          $key = key($pwd_strings);
+          next($pwd_strings);
+      } else {
+      // 後はランダムに取得
+          $key = array_rand($pwd_strings);
+      }
+      $pwd[] = $pwd_strings[$key][array_rand($pwd_strings[$key])];
+    }
+    // 生成したパスワードの順番をランダムに並び替え
+    shuffle($pwd);
+
+    return implode($pwd);
   }
 }
