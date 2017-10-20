@@ -96,8 +96,8 @@ var popupEvent = {
                       closeBtn.onclick = function(){
                         return popupEvent.closePopup(3);
                       };
-                      break;
                 <?php endif; ?>
+                      break;
                 case 'p-cus-detail':
                     var closeBtn = _button("チャットを終了する");
                     closeBtn.onclick = function(){
