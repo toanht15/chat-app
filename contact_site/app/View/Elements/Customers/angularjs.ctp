@@ -416,14 +416,14 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         if (forceResult) {
           $scope.searchResult = array;
           result = array;
-        } else if ($scope.searchText.length > 1 && $scope.searchText !== $scope.beforeInputValue) {
+        } else if ($scope.searchText.length === 4 && $scope.searchText !== $scope.beforeInputValue) {
           $scope.searchProcess($scope.searchText, $scope.fillterTypeId);
           $scope.monitorList = [];
           $scope.chatList = [];
           result = [];
-        } else if ($scope.searchText.length > 0 && $scope.searchResult.length > 0) {
+        } else if ($scope.searchText.length === 4 && $scope.searchResult.length > 0) {
           result = $scope.searchResult;
-        } else if($scope.searchText.length === 0) {
+        } else if($scope.searchText.length < 4) {
           if($scope.monitorList.length > 0) {
             $scope.monitorList = [];
           }
