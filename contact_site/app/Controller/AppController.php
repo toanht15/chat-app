@@ -77,7 +77,7 @@ class AppController extends Controller {
     }
 
     //HTTPSの場合
-    if(!empty($_SERVER['HTTP_X_FORWARDED_PORT'] && strcmp($_SERVER['HTTP_X_FORWARDED_PORT'],443) == 0){
+    if(!empty($_SERVER['HTTP_X_FORWARDED_PORT']) && strcmp($_SERVER['HTTP_X_FORWARDED_PORT'],443) == 0){
       Configure::write('Session', array(
         'defaults' => 'php',
         'cookie' => 'CAKEPHP',
