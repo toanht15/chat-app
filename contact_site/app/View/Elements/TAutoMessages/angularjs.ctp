@@ -236,7 +236,7 @@ function addOption(type){
 }
 
 
-function removeAct(){
+function removeAct(lastPage){
     modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', 'オートメッセージ設定', 'moment');
     popupEvent.closePopup = function(){
         $.ajax({
@@ -247,7 +247,8 @@ function removeAct(){
             cache: false,
             url: "<?= $this->Html->url('/TAutoMessages/remoteDelete') ?>",
             success: function(){
-                location.href = "<?= $this->Html->url('/TAutoMessages/index') ?>";
+                var url = "<?= $this->Html->url('/TAutoMessages/index') ?>";
+                location.href = url + "/page:" + lastPage;
             }
         });
     };

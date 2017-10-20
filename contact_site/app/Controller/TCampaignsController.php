@@ -80,11 +80,69 @@ class TCampaignsController extends AppController {
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
     $this->TCampaign->recursive = -1;
-    if ( $this->TCampaign->delete($this->request->data['id']) ) {
+    $selectedList = $this->request->data['selectedList'];
+    $this->TCampaign->begin();
+    $res = true;
+    foreach($selectedList as $key => $val){
+      if (! $this->TCampaign->delete($val) ) {
+        $res = false;
+      }
+    }
+    if($res){
+      $this->TCampaign->commit();
       $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
     }
-    else {
+    else{
+      $this->TCampaign->rollback();
       $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
+    }
+//     if ( $this->TCampaign->delete($this->request->data['id']) ) {
+//       $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
+//     }
+//     else {
+//       $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
+//     }
+  }
+
+  /* *
+   * コピー処理
+   * @return void
+   * */
+  public function remoteCopyEntryForm() {
+    Configure::write('debug', 0);
+    $this->autoRender = FALSE;
+    $this->layout = 'ajax';
+//    $this->TCampaign->recursive = -1;
+    $selectedList = $this->request->data['selectedList'];
+    //コピー元のキャンペーンリスト取得
+    foreach($selectedList as $value){
+      $copyData[] = $this->TCampaign->read(null, $value);
+    }
+    $errorMessage = [];
+    //コピー元のキャンペーンリストの数だけ繰り返し
+    $res = true;
+    foreach($copyData as $value){
+      $this->TCampaign->create();
+      $saveData = [];
+      $saveData['TCampaign']['m_companies_id'] = $value['TCampaign']['m_companies_id'];
+      $saveData['TCampaign']['name'] = $value['TCampaign']['name'];
+      $saveData['TCampaign']['parameter'] = $value['TCampaign']['parameter'];
+      $saveData['TCampaign']['comment'] = $value['TCampaign']['comment'];
+      $this->TCampaign->set($saveData);
+      $this->TCampaign->begin();
+      // バリデーションチェックでエラーが出た場合
+      if($res){
+        if (! $this->TCampaign->save() ) {
+          $res = false;
+          $errorMessage = $this->TCampaign->validationErrors;
+          $this->TCampaign->rollback();
+        }
+        else{
+          $this->TCampaign->commit();
+          $this->Session->delete('dstoken');
+          $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
+        }
+      }
     }
   }
 
