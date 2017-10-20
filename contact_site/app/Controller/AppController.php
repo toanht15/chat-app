@@ -87,7 +87,7 @@ class AppController extends Controller {
         )
       ));
 
-      if(isset($_COOKIE['CAKEPHP'])) {
+      if(!empty($_COOKIE['CAKEPHP'])) {
         if(empty(session_get_cookie_params()['secure'])) {
           setcookie("CAKEPHP", $_COOKIE['CAKEPHP'], 0 ,"/","",1);
           $pass = $this->_createPass();
