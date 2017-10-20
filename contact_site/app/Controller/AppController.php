@@ -86,12 +86,11 @@ class AppController extends Controller {
           'session.gc_maxlifetime' =>  86400 // 24 hours
         )
       ));
-
       if(!empty($_COOKIE['CAKEPHP'])) {
         if(empty(session_get_cookie_params()['secure'])) {
-          setcookie("CAKEPHP", $_COOKIE['CAKEPHP'], 0 ,"/","",1);
+          setcookie("CAKEPHP", $_COOKIE['CAKEPHP'], 0 ,"/","",1,1);
           $pass = $this->_createPass();
-          setcookie("CAKE_HTTP", $pass , 0 ,"/","");
+          setcookie("CAKE_HTTP", $pass , 0 ,"/","",0,1);
           copy('/var/lib/php/session/sess_'.$_COOKIE['CAKEPHP'] , '/var/lib/php/session/sess_'.$pass);
         }
       }
