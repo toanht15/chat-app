@@ -8,8 +8,11 @@ class TAutoMessagesController extends AppController {
   public $helpers = ['AutoMessage'];
   public $paginate = [
     'TAutoMessage' => [
-      'limit' => 10,
-      'order' => ['TAutoMessage.id' => 'asc'],
+      'limit' => 100,
+      'order' => [
+          'TAutoMessage.sort' => 'asc',
+          'TAutoMessage.id' => 'asc'
+      ],
       'fields' => ['TAutoMessage.*'],
       'conditions' => ['TAutoMessage.del_flg != ' => 1],
       'recursive' => -1
@@ -30,6 +33,7 @@ class TAutoMessagesController extends AppController {
    * @return void
    * */
   public function index() {
+
     $this->paginate['TAutoMessage']['conditions']['TAutoMessage.m_companies_id'] = $this->userInfo['MCompany']['id'];
     $this->set('settingList', $this->paginate('TAutoMessage'));
     $this->_viewElement();
@@ -83,6 +87,30 @@ class TAutoMessagesController extends AppController {
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
+    $id = (isset($this->request->data['id'])) ? $this->request->data['id'] : "";
+    $ret = $this->TAutoMessage->find('first', [
+      'fields' => 'TAutoMessage.*',
+      'conditions' => [
+        'TAutoMessage.del_flg' => 0,
+        'TAutoMessage.id' => $id,
+        'TAutoMessage.m_companies_id' => $this->userInfo['MCompany']['id']
+      ],
+      'recursive' => -1
+    ]);
+    if ( count($ret) === 1 ) {
+      if ( $this->TAutoMessage->logicalDelete($id) ) {
+        $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
+      }
+      else {
+        $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
+      }
+    }
+  }
+
+  public function chkRemoteDelete(){
+    Configure::write('debug', 0);
+    $this->autoRender = FALSE;
+    $this->layout = 'ajax';
 
     $selectedList = $this->request->data['selectedList'];
     $this->TAutoMessage->begin();
@@ -90,13 +118,13 @@ class TAutoMessagesController extends AppController {
     foreach($selectedList as $key => $val){
       $id = (isset($val)) ? $val: "";
       $ret = $this->TAutoMessage->find('first', [
-        'fields' => 'TAutoMessage.*',
-        'conditions' => [
-          'TAutoMessage.del_flg' => 0,
-          'TAutoMessage.id' => $id,
-          'TAutoMessage.m_companies_id' => $this->userInfo['MCompany']['id']
-        ],
-        'recursive' => -1
+          'fields' => 'TAutoMessage.*',
+          'conditions' => [
+              'TAutoMessage.del_flg' => 0,
+              'TAutoMessage.id' => $id,
+              'TAutoMessage.m_companies_id' => $this->userInfo['MCompany']['id']
+          ],
+          'recursive' => -1
       ]);
       if ( count($ret) === 1 ) {
         if (! $this->TAutoMessage->delete($val) ) {
@@ -112,24 +140,6 @@ class TAutoMessagesController extends AppController {
       $this->TAutoMessage->rollback();
       $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
     }
-//     $id = (isset($this->request->data['id'])) ? $this->request->data['id'] : "";
-//     $ret = $this->TAutoMessage->find('first', [
-//       'fields' => 'TAutoMessage.*',
-//       'conditions' => [
-//         'TAutoMessage.del_flg' => 0,
-//         'TAutoMessage.id' => $id,
-//         'TAutoMessage.m_companies_id' => $this->userInfo['MCompany']['id']
-//       ],
-//       'recursive' => -1
-//     ]);
-//     if ( count($ret) === 1 ) {
-//       if ( $this->TAutoMessage->logicalDelete($id) ) {
-//         $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
-//       }
-//       else {
-//         $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
-//       }
-//     }
   }
 
   /* *
@@ -177,6 +187,150 @@ class TAutoMessagesController extends AppController {
   }
 
   /**
+   * オートメッセージ設定ソート順更新
+   *
+   * */
+  public function remoteSaveSort(){
+    Configure::write('debug', 2);
+    $this->autoRender = FALSE;
+    $this->layout = 'ajax';
+    if ( !$this->request->is('ajax') ) return false;
+    if ( !empty($this->params->data['list']) ) {
+      $this->TAutoMessage->begin();
+      $list = $this->params->data['list'];
+      $this->log($list,LOG_DEBUG);
+      /* 現在の並び順を取得 */
+      $this->paginate['TAutoMessage']['conditions']['TAutoMessage.m_companies_id'] = $this->userInfo['MCompany']['id'];
+      $params = $this->paginate('TAutoMessage');
+      $params['fields'] = [
+          'TAutoMessage.id',
+          'TAutoMessage.sort'
+      ];
+      unset($params['limit']);
+      $prevSort = $this->TAutoMessage->find('list', $params);
+      //新しくソート順を設定したため、空で来ることがある
+      $reset_flg = false;
+      foreach($prevSort as $key => $val){
+        //設定されていない値'0'が一つでも入っていたらsortをリセット
+        if($val === '0' || $val === 0 || $val === null){
+          $reset_flg = true;
+        }
+      }
+      if($reset_flg){
+        //ソート順のリセットはID順とする
+        $i = 1;
+        foreach($prevSort as $key => $val){
+          $prevSort[$key] = strval($i);
+          $i++;
+        }
+      }
+      $prevSortKeys = am($prevSort);
+      $this->log($prevSortKeys,LOG_DEBUG);
+      /* アップデート分の並び順を設定 */
+      $ret = true;
+      for ($i = 0; count($list) > $i; $i++) {
+        $id = $list[$i];
+        if ( isset($prevSort[$id]) ) {
+          $saveData = [
+              'TAutoMessage' => [
+                  'id' => $id,
+                  'sort' => $prevSortKeys[$i]
+              ]
+          ];
+          if (!$this->TAutoMessage->validates()) {
+            $ret = false;
+            break;
+          }
+          if (!$this->TAutoMessage->save($saveData)) {
+            $ret = false;
+            break;
+          }
+        } else {
+          // 送信されたオートメッセージ設定と現在DBに存在するオートメッセージ設定に差がある場合
+          $this->TAutoMessage->rollback();
+          $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.configChanged'));
+          return;
+        }
+      }
+      if ($ret) {
+        $this->TAutoMessage->commit();
+        $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
+      }
+      else {
+        $this->TAutoMessage->rollback();
+        $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.saveFailed'));
+      }
+    }
+  }
+
+  /**
+   * オートメッセージ設定ソート順を現在のID順でセット
+   *
+   * */
+  public function remoteSetSort(){
+    $this->TAutoMessage->begin();
+    /* 現在の並び順を取得 */
+    $this->paginate['TAutoMessage']['conditions']['TAutoMessage.m_companies_id'] = $this->userInfo['MCompany']['id'];
+    $params = [
+        'fields' => [
+            'TAutoMessage.sort'
+        ],
+        'conditions' => [
+            'TAutoMessage.m_companies_id' => $this->userInfo['MCompany']['id'],
+            'TAutoMessage.del_flg != ' => 1
+        ],
+        'order' => [
+            'TAutoMessage.sort' => 'asc',
+            'TAutoMessage.id' => 'asc'
+        ],
+        'limit' => 1,
+        'recursive' => -1
+    ];
+    $params['fields'] = [
+        'TAutoMessage.id',
+        'TAutoMessage.sort'
+    ];
+    unset($params['limit']);
+    $prevSort = $this->TAutoMessage->find('list', $params);
+    //ソート順のリセットはID順とする
+    $i = 1;
+    foreach($prevSort as $key => $val){
+      $prevSort[$key] = strval($i);
+      $i++;
+    }
+    $prevSortKeys = am($prevSort);
+    $this->log($prevSortKeys,LOG_DEBUG);
+    $i = 0;
+    $ret = true;
+    foreach($prevSort as $key => $val){
+      $id = $key;
+      $saveData = [
+          'TAutoMessage' => [
+              'id' => $id,
+              'sort' => $prevSortKeys[$i]
+          ]
+      ];
+      if (!$this->TAutoMessage->validates()) {
+        $ret = false;
+        break;
+      }
+      if (!$this->TAutoMessage->save($saveData)) {
+        $ret = false;
+        break;
+      }
+      $i++;
+    }
+    if ($ret) {
+      $this->TAutoMessage->commit();
+      return true;
+    }
+    else {
+      $this->TAutoMessage->rollback();
+      return false;
+    }
+  }
+
+  /**
    * ステータス更新
    * @return void
    * */
@@ -208,10 +362,44 @@ class TAutoMessagesController extends AppController {
   private function _entry($saveData) {
     $errors = [];
     $saveData['TAutoMessage']['m_companies_id'] = $this->userInfo['MCompany']['id'];
+    $nextPage = $saveData[lastPage];
 
     $this->TAutoMessage->begin();
     if ( empty($saveData['TAutoMessage']['id']) ) {
+      //新規追加
       $this->TAutoMessage->create();
+      $params = [
+          'fields' => [
+              'TAutoMessage.sort'
+          ],
+          'conditions' => [
+              'TAutoMessage.m_companies_id' => $this->userInfo['MCompany']['id'],
+              'TAutoMessage.del_flg != ' => 1
+          ],
+          'order' => [
+              'TAutoMessage.sort' => 'desc',
+              'TAutoMessage.id' => 'desc'
+          ],
+          'limit' => 1,
+          'recursive' => -1
+      ];
+      $lastData = $this->TAutoMessage->find('first', $params);
+      if($lastData['TAutoMessage']['sort'] === '0'
+          || $lastData['TAutoMessage']['sort'] === 0
+          || $lastData['TAutoMessage']['sort'] === null){
+        //ソート順が登録されていなかったらソート順をセットする
+        if(! $this->remoteSetSort()){
+          $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
+          return false;
+        }
+        //もう一度ソートの最大値を取り直す
+        $lastData = $this->TAutoMessage->find('first', $params);
+      }
+      $nextSort = 1;
+      if (!empty($lastData)) {
+        $nextSort = intval($lastData['TAutoMessage']['sort']) + 1;
+      }
+      $saveData['TAutoMessage']['sort'] = $nextSort;
     }
 
     $this->TAutoMessage->set($saveData);
@@ -238,13 +426,14 @@ class TAutoMessagesController extends AppController {
     if ( $validate && $this->TAutoMessage->save(false) ) {
       $this->TAutoMessage->commit();
       $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
-      $this->redirect('/TAutoMessages/index');
+      $this->redirect('/TAutoMessages/index/page:'.$nextPage);
     }
     else {
       $this->TAutoMessage->rollback();
       $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
     }
     $this->set('errors', $errors);
+    $this->set('lastPage', $nextPage);
   }
 
   /**
@@ -265,6 +454,11 @@ class TAutoMessagesController extends AppController {
     $this->set('outMessageWidgetOpenType', Configure::read('outMessageWidgetOpenType'));
     // 有効無効
     $this->set('outMessageAvailableType', Configure::read('outMessageAvailableType'));
+    // 最後に表示していたページ番号
+    $test = $this->request->query['lastpage'];
+    if(!empty($this->request->query['lastpage'])){
+      $this->set('lastPage', $this->request->query['lastpage']);
+    }
   }
 
 

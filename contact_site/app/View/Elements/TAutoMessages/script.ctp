@@ -1,25 +1,25 @@
 <script type="text/javascript">
 document.body.onload = function(){
   //ソートタブの準備
-//   var getSort = function(){
-//     var list = [];
-//     $(".sortable tr").each(function(e){
-//       list.push($(this).data('id'));
-//     });
-//     list = $.grep(list, function(e){return e;});
-//     return JSON.parse(JSON.stringify(list));
-//   };
+  var getSort = function(){
+    var list = [];
+    $(".sortable tr").each(function(e){
+      list.push($(this).data('id'));
+    });
+    list = $.grep(list, function(e){return e;});
+    return JSON.parse(JSON.stringify(list));
+  };
 
-//   $(document).ready(function(){
-//     $(".sortable").sortable({
-//       axis: "y",
-//       tolerance: "pointer",
-//       containment: "parent",
-//       cursor: 'move',
-//       revert: 100
-//     });
-//     $(".sortable").sortable("disable");
-//   });
+  $(document).ready(function(){
+    $(".sortable").sortable({
+      axis: "y",
+      tolerance: "pointer",
+      containment: "parent",
+      cursor: 'move',
+      revert: 100
+    });
+    $(".sortable").sortable("disable");
+  });
 
 	// 全選択用チェックボックス
 	var allCheckElm = document.getElementById('allCheck');
@@ -158,7 +158,11 @@ var sendActiveRequest = function(data){
 		data: data,
 		dataType: 'html',
 		success: function(html){
-			location.href = "/TAutoMessages/index"
+      //現在のページ番号
+      var index = Number("<?= $this->Paginator->params()["page"] ?>");
+      var url = "<?= $this->Html->url('/TAutoMessages/index') ?>";
+      location.href = url + "/page:" + index;
+//			location.href = "/TAutoMessages/index"
 		}
 	});
 };
@@ -233,7 +237,7 @@ function openConfirmDialog(){
       data: {
         selectedList: selectedList
       },
-      url: "<?= $this->Html->url('/TAutoMessages/remoteDelete') ?>",
+      url: "<?= $this->Html->url('/TAutoMessages/chkRemoteDelete') ?>",
       success: function(){
         $(".p-dictionary-del #popup-button a").prop("disabled", true);
         var url = "<?= $this->Html->url('/TAutoMessages/index') ?>";
@@ -267,7 +271,10 @@ function openCopyDialog(){
       },
       url: "<?= $this->Html->url('/TAutoMessages/remoteCopyEntryForm') ?>",
       success: function(){
-        location.href = "<?= $this->Html->url('/TAutoMessages/index') ?>";
+        //現在のページ番号
+        var index = Number("<?= $this->Paginator->params()["page"] ?>");
+        var url = "<?= $this->Html->url('/TAutoMessages/index') ?>";
+        location.href = url + "/page:" + index;
       },
       error: function() {
         console.log('error');
@@ -293,8 +300,10 @@ var toExecutableOnce = function(f){
 function openAdd(){
   //オートメッセージ設定並べ替えチェックボックスが入っているときはリンク無効とする
   if (!document.getElementById("sort").checked) {
+    //現在のページ番号
+    var index = Number("<?= $this->Paginator->params()["page"] ?>");
     var url = "<?= $this->Html->url('/TAutoMessages/add') ?>";
-    location.href = url;
+    location.href = url + "?lastpage="+index;
   }
   else{
     return false;
@@ -305,83 +314,87 @@ function openAdd(){
 function openEdit(id){
   //オートメッセージ設定並べ替えチェックボックスが入っているときはリンク無効とする
   if (!document.getElementById("sort").checked) {
+    //現在のページ番号
+    var index = Number("<?= $this->Paginator->params()["page"] ?>");
     var url = "<?= $this->Html->url('/TAutoMessages/edit') ?>";
-    location.href = url + "/" + id;
+    location.href = url + "/" + id + "?lastpage="+index;
   }
   else{
     return false;
   }
 }
 
-// //オートメッセージ設定のソートモード
-// function toggleSort(){
-//   if (!document.getElementById("sort").checked) {
-//     confirmSort();
-//   }
-//   else {
-//     $('[id^="selectTab"]').prop('checked', false);
-//     allCheckCtrl();
-//     actBtnShow();
-//     //ソートモードon
-//     $(".sortable").addClass("move").sortable("enable");
-//     //資料設定ソートモードメッセージ表示
-//     document.getElementById("sortText").style.display="none";
-//     document.getElementById("sortTextMessage").style.display="";
+//オートメッセージ設定のソートモード
+function toggleSort(){
+  if (!document.getElementById("sort").checked) {
+    confirmSort();
+  }
+  else {
+    $('[id^="selectTab"]').prop('checked', false);
+    allCheckCtrl();
+    actBtnShow();
+    //ソートモードon
+    $(".sortable").addClass("move").sortable("enable");
+    //資料設定ソートモードメッセージ表示
+    document.getElementById("sortText").style.display="none";
+    document.getElementById("sortTextMessage").style.display="";
 
-//     //各ボタン及び動作をモード中は動かなくする
-//     //資料設定登録ボタン押下不可
-//     document.getElementById('tdocument_add_btn').className="btn-shadow disOffgrayBtn";
-//     //全て選択チェックボックス選択不可
-//     document.getElementById('allCheck').disabled = "disabled";
-//     //項目チェックボックス選択不可
-//     var checkBoxList = document.querySelectorAll('[id^="selectTab"]');
-//     for (var i = 0; i < checkBoxList.length; i++) {
-//       checkBoxList[i].disabled = "disabled";
-//     }
-//     $("table tbody.sortable tr td").css('cursor', 'move');
-//     $("table tbody.sortable tr td a").css('cursor', 'move');
-//   }
-// }
+    //各ボタン及び動作をモード中は動かなくする
+    //オートメッセージ設定登録ボタン押下不可
+    document.getElementById('tautomessages_add_btn').className="btn-shadow disOffgrayBtn";
+    //全て選択チェックボックス選択不可
+    document.getElementById('allCheck').disabled = "disabled";
+    //項目チェックボックス選択不可
+    var checkBoxList = document.querySelectorAll('[id^="selectTab"]');
+    for (var i = 0; i < checkBoxList.length; i++) {
+      checkBoxList[i].disabled = "disabled";
+    }
+    $("table tbody.sortable tr td").css('cursor', 'move');
+    $("table tbody.sortable tr td a").css('cursor', 'move');
+  }
+}
 
-// //オートメッセージ設定のソート順を保存
-// var confirmSort = function(){
-//   modalOpen.call(window, "編集内容を保存します。<br/><br/>よろしいですか？<br/>", 'p-sort-save-confirm', '資料設定並び替えの保存', 'moment');
-//   popupEvent.saveClicked = function(){
-//     saveToggleSort();
-//   }
-//   popupEvent.cancelClicked = function(){
-//    var url = "<?= $this->Html->url('/TDocuments/index') ?>";
-//     location.href = url;
-//   }
-//   $(".p-sort-save-confirm #popupCloseBtn").click(function(){
-//     $("#sort").prop('checked', true);
-//   });
-// };
+//オートメッセージ設定のソート順を保存
+var confirmSort = function(){
+  modalOpen.call(window, "編集内容を保存します。<br/><br/>よろしいですか？<br/>", 'p-sort-save-confirm', 'オートメッセージ設定並び替えの保存', 'moment');
+  popupEvent.saveClicked = function(){
+    saveToggleSort();
+  }
+  popupEvent.cancelClicked = function(){
+    var url = "<?= $this->Html->url('/TAutoMessages/index') ?>";
+    location.href = url;
+  }
+  $(".p-sort-save-confirm #popupCloseBtn").click(function(){
+    $("#sort").prop('checked', true);
+  });
+};
 
-// //オートメッセージ設定ソートを保存
-// var saveToggleSort = toExecutableOnce(function(){
-//   var list = getSort();
-//   $.ajax({
-//     type: "POST",
-//    url: "<?= $this->Html->url(['controller' => 'TDocuments', 'action' => 'remoteSaveSort']) ?>",
-//     data: {
-//       list : list
-//     },
-//     dataType: "html",
-//     success: function(){
-//      var url = "<?= $this->Html->url('/TDocuments/index') ?>";
-//       location.href = url;
-//     }
-//   });
-// });
+//オートメッセージ設定ソートを保存
+var saveToggleSort = toExecutableOnce(function(){
+  var list = getSort();
+  $.ajax({
+    type: "POST",
+    url: "<?= $this->Html->url(['controller' => 'TAutoMessages', 'action' => 'remoteSaveSort']) ?>",
+    data: {
+      list : list
+    },
+    dataType: "html",
+    success: function(){
+      //現在のページ番号
+      var index = Number("<?= $this->Paginator->params()["page"] ?>");
+      var url = "<?= $this->Html->url('/TAutoMessages/index') ?>";
+      location.href = url + "/page:" + index;
+    }
+  });
+});
 
-// //オートメッセージ設定のソート順を取得
-// var getSort = function(){
-//   var list = [];
-//   $(".sortable tr").each(function(e){
-//     list.push($(this).data('id'));
-//   });
-//   list = $.grep(list, function(e){return e;});
-//   return JSON.parse(JSON.stringify(list));
-// };
+//オートメッセージ設定のソート順を取得
+var getSort = function(){
+  var list = [];
+  $(".sortable tr").each(function(e){
+    list.push($(this).data('id'));
+  });
+  list = $.grep(list, function(e){return e;});
+  return JSON.parse(JSON.stringify(list));
+};
 </script>

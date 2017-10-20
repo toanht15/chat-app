@@ -1,3 +1,4 @@
+<?php echo $this->Html->script("jquery-ui.min.js"); ?>
 <?php echo $this->element('TAutoMessages/script'); ?>
 <?php
 $params = $this->Paginator->params();
@@ -82,13 +83,11 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
         </span>
       </div>
       <!-- オートメッセージ設定の並び替えモード -->
-<!--
       <div class="tabpointer">
         <label class="pointer">
-          <?= $this->Form->checkbox('sort', array('onchange' => 'toggleSort()')); ?><span id="sortText"> オートメッセージ設定の並び替え</span><span id="sortTextMessage" style="display: none; font-size: 1.1em; color: rgb(192, 0, 0); font-weight: bold; ">（！）オートメッセージ設定を並び替え中（保存する場合はチェックを外してください）</span>
+          <?= $this->Form->checkbox('sort', array('onchange' => 'toggleSort()')); ?><span id="sortText"> オートメッセージ設定の並び替え</span><span id="sortTextMessage" style="display: none; font-size: 1.1em; color: rgb(192, 0, 0); font-weight: bold; float: right; position: relative; top: 4px; left: 0px;">（！）オートメッセージ設定を並び替え中（保存する場合はチェックを外してください）</span>
         </label>
       </div>
- -->
       <!-- オートメッセージ設定の並び替えモード -->
     </div>
     <!-- 検索窓 -->
@@ -128,9 +127,9 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
       </tr>
       </thead>
 <!--
-      <tbody class="sortable">
- -->
       <tbody>
+ -->
+      <tbody class="sortable">
       <?php $allCondList = []; ?>
       <?php $allActionList = []; ?>
       <?php foreach((array)$settingList as $key => $val): ?>
@@ -175,9 +174,9 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
         $no = $prevCnt + h($key+1);
         ?>
 <!--
-        <tr class="pointer <?=$class?>" data-sort="<?=$val['TAutoMessage']['sort']?>" data-id="<?=h($id)?>" onclick="openEdit(<?= $id ?>)">
- -->
         <tr class="<?=$class?>" data-id="<?=h($id)?>" onclick="openEdit(<?= $id ?>)">
+ -->
+        <tr class="pointer <?=$class?>" data-sort="<?=$val['TAutoMessage']['sort']?>" data-id="<?=h($id)?>" onclick="openEdit(<?= $id ?>)">
           <td class="tCenter" onclick="event.stopPropagation();">
             <input type="checkbox" name="selectTab" id="selectTab<?=h($id)?>" value="<?=h($id)?>">
             <label for="selectTab<?=h($id)?>"></label>
