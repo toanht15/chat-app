@@ -520,11 +520,14 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     };
 
     $scope.nn = function(tabId){
-      var res = 1, num = $scope.monitorList[tabId].stayCount;
-      if ( angular.isNumber(num) && Number(num) > 0 ) {
-        res = num;
+      var res = 1;
+      if($scope.monitorList[tabId]) {
+        var num = $scope.monitorList[tabId].stayCount;
+        if (angular.isNumber(num) && Number(num) > 0) {
+          res = num;
+        }
+        $scope.monitorList[tabId].stayCount = res;
       }
-      $scope.monitorList[tabId].stayCount = res;
       return res;
     };
 

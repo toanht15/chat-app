@@ -79,21 +79,25 @@ var popupEvent = {
                     };
                     break;
                 case 'p-cus-select-sharing-mode':
+                <?php if (isset($coreSettings[C_COMPANY_USE_SYNCLO]) && $coreSettings[C_COMPANY_USE_SYNCLO]): ?>
                       var closeBtn = _button("ブラウジング共有");
                       closeBtn.onclick = function(){
                         return popupEvent.closePopup(1);
                       };
+                <?php endif; ?>
                 <?php if (isset($coreSettings[C_COMPANY_USE_LA_CO_BROWSE]) && $coreSettings[C_COMPANY_USE_LA_CO_BROWSE]): ?>
                       var closeBtn = _wideButton("画面キャプチャ共有");
                       closeBtn.onclick = function(){
                         return popupEvent.closePopup(2);
                       };
                 <?php endif; ?>
+                <?php if (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT]): ?>
                       var closeBtn = _button("資料共有");
                       closeBtn.onclick = function(){
                         return popupEvent.closePopup(3);
                       };
                       break;
+                <?php endif; ?>
                 case 'p-cus-detail':
                     var closeBtn = _button("チャットを終了する");
                     closeBtn.onclick = function(){
