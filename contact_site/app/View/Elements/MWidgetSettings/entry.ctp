@@ -231,7 +231,11 @@ $headerNo = 1;
             <span class="require"><label>カラー</label></span>
             <div style="display: flex; flex-direction: column; padding: 0 0 0 5px;">
               <!-- 基本設定色start -->
+              <?php if($coreSettings[C_COMPANY_USE_CHAT]){ ?>
               <div style="height: 240px;">
+              <?php }else{?>
+              <div style="height: 100px;">
+              <?php }?>
               <!-- 1.メインカラー -->
               <span style="height: 20px;"><label>メインカラー</label><?= $this->ngForm->input('main_color', [
                 'type' => 'text',
@@ -294,6 +298,7 @@ $headerNo = 1;
               [
                 'entity' => 'MWidgetSetting.other_text_color'
               ]) ?></span><br>
+              <?php if($coreSettings[C_COMPANY_USE_CHAT]): ?>
               <!-- 12.企業側吹き出し背景色 -->
               <span style="height: 35px;"><label>企業側吹き出し背景色　　</label><?= $this->ngForm->input('re_background_color', [
                 'type' => 'text',
@@ -350,6 +355,7 @@ $headerNo = 1;
               [
                 'entity' => 'MWidgetSetting.se_text_color'
               ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('se_text_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -50px; left: 295px;" >標準に戻す</span></span>
+              <?php endif;?>
               <!-- 5.ウィジェット枠線色 -->
 <!--
               <span style="height: 20px;"><label>ウィジェット枠線色</label><?= $this->ngForm->input('widget_border_color', [
@@ -436,6 +442,7 @@ $headerNo = 1;
                 </div>
                 <!-- ヘッダー部end -->
 
+                <?php if($coreSettings[C_COMPANY_USE_CHAT]): ?>
                 <!-- チャットエリア部start -->
                 <div style=" background-color: #ECF4DA; cursor: pointer; border-color: #C3D69B; border-style: solid; border-width: 1px 0 1px 0; font-weight: bold; padding: 5px 0 5px 10px; width: 396px !important;">チャットエリア部</div><br>
                 <div style=" position: relative; top: 0px;">
@@ -745,7 +752,7 @@ $headerNo = 1;
                 ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('chat_send_btn_text_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -50px; left: 295px;" >標準に戻す</span></span>
                 </div>
                 <!-- メッセージエリア部end -->
-
+                <?php endif;?>
                 <!-- その他部start -->
                 <div style=" background-color: #ECF4DA; cursor: pointer; border-color: #C3D69B; border-style: solid; border-width: 1px 0 1px 0; font-weight: bold; padding: 5px 0 5px 10px; width: 396px !important; position: relative;top: 20px;">その他</div>
                 <div style=" position: relative; top: 30px;">

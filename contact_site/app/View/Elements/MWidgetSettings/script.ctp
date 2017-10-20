@@ -19,6 +19,7 @@ sincloApp.directive('stringToNumber', function() {
 });
 
 sincloApp.controller('WidgetCtrl', function($scope){
+    var coreSettingsChat = "<?= $coreSettings[C_COMPANY_USE_CHAT]?>";
     $scope.main_image = "<?=$this->formEx->val($this->data['MWidgetSetting'], 'main_image')?>";
 
     $scope.showWidgetType = 1; // デフォルト表示するウィジェット
@@ -53,14 +54,22 @@ sincloApp.controller('WidgetCtrl', function($scope){
         }
       }
       if( Number(num) !== 4 ){
-        document.getElementById("switch_widget").value = num;
+        if(coreSettingsChat){
+          document.getElementById("switch_widget").value = num;
+        }
       }
       $scope.openFlg = true;
     }
 
     //バナーから通常の表示に戻るときの処理
     $scope.bannerSwitchWidget = function(){
-      var lastSwitchWidget = Number(document.getElementById("switch_widget").value);
+      var coreSettingsChat = "<?= $coreSettings[C_COMPANY_USE_CHAT]?>";
+      if(coreSettingsChat){
+        var lastSwitchWidget = Number(document.getElementById("switch_widget").value);
+      }
+      else{
+        var lastSwitchWidget = 1;
+      }
       sincloBox.style.display = 'block';
       $scope.switchWidget(lastSwitchWidget);
       $scope.openFlg = false;
@@ -921,7 +930,10 @@ sincloApp.controller('WidgetCtrl', function($scope){
         else{
           $("#closeBtn").hide();
         }
-        document.getElementById("switch_widget").value = $scope.showWidgetType;
+        var coreSettingsChat = "<?= $coreSettings[C_COMPANY_USE_CHAT]?>";
+        if(coreSettingsChat){
+          document.getElementById("switch_widget").value = $scope.showWidgetType;
+        }
       }
       return res;
     };
