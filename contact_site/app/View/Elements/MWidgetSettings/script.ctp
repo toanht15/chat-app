@@ -25,6 +25,8 @@ sincloApp.controller('WidgetCtrl', function($scope){
     $scope.showWidgetType = 1; // デフォルト表示するウィジェット
     $scope.openFlg = true;
 
+    $scope.changeFlg = false;
+
     $scope.switchWidget = function(num){
       $scope.showWidgetType = num;
       sincloChatMessagefocusFlg = true;
@@ -1086,6 +1088,16 @@ sincloApp.controller('WidgetCtrl', function($scope){
 
     angular.element(window).on('load',function(e){
       $('[name="data[MWidgetSetting][show_timing]"]:checked').trigger('change');
+      // formのどこかを変更したらフラグを立てる
+      $("form").change(function(e){
+        console.log("changed");
+        $scope.changeFlg = true;
+      });
+      $(window).on('beforeunload', function(e) {
+        if($scope.changeFlg) {
+          return '行った変更が保存されない可能性があります。';
+        }
+      });
     });
 
     angular.element('#MWidgetSettingUploadImage').change(function(e){
@@ -1347,6 +1359,8 @@ sincloApp.controller('WidgetCtrl', function($scope){
     }, true);
 
     $scope.saveAct = function (){
+      // 保存ボタンが押されたらconfirmを出さない
+      $scope.changeFlg = false;
         $('#widgetShowTab').val($scope.widget.showTab);
         $('#MWidgetSettingMainImage').val($scope.main_image);
         $('#MWidgetSettingIndexForm').submit();
