@@ -60,7 +60,7 @@ class MUser extends AppModel {
             ],
             'checkSmallAlphabet' => [
                 'rule' =>  '/[a-z]/',//半角英大小文字、数字のみ
-                'message' => 'パスワードはパスワードは英大小文字、数字を含んで設定してください。'
+                'message' => 'パスワードは英大小文字、数字を含んで設定してください。'
             ],
             'checkNumber' => [
                 'rule' =>  '/[0-9]/',//半角英大小文字、数字のみ
@@ -133,7 +133,7 @@ class MUser extends AppModel {
             ],
             'checkSmallAlphabet' => [
                 'rule' =>  '/[a-z]/',//半角英大小文字、数字のみ
-                'message' => 'パスワードはパスワードは英大小文字、数字を含んで設定してください。'
+                'message' => 'パスワードは英大小文字、数字を含んで設定してください。'
             ],
             'checkNumber' => [
                 'rule' =>  '/[0-9]/',//半角英大小文字、数字のみ

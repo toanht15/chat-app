@@ -98,7 +98,7 @@ $(function(){
   ?>
   <?php if ( intval($val['THistoryChatLog']['message_type']) < 90 ) { ?>
     <?php //権限が管理者、削除された履歴の場合
-    if(strcmp($permissionLevel,1) === 0 && strcmp($val['THistoryChatLog']['delete_flg'], 1) === 0) { ?>
+    if(strcmp($val['THistoryChatLog']['delete_flg'], 1) === 0) { ?>
       <li class="<?=$className?>" style = "color:#bdbdbd"><span style = "color:#bdbdbd"><?= $this->Time->format($val['THistoryChatLog']['created'], "%Y/%m/%d %H:%M:%S")?></span><span style = "color:#bdbdbd"><?=h($name)?></span><?=$this->htmlEx->makeChatView("(このメッセージは $deleted に $deletedUserDisplayName さんによって削除されました。)")?></li>
     <?php } //権限が管理者、削除されていない履歴の場合
     else if(strcmp($permissionLevel,1) === 0 && strcmp($val['THistoryChatLog']['delete_flg'], 0) === 0) { ?>
