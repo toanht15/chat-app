@@ -3054,6 +3054,15 @@ ul.naviBtn {
         padding: 1em;
       }
 
+      hr.separator {
+        margin-top: 0.1em;
+        margin-bottom: 1em;
+        display: block;
+        width: 396px;
+        height: 1px;
+        background-color: #DDD;
+        border: 0;  /*デフォルトデザインでは線がある場合があるので、消しておく。*/
+      }
     }
 
     #m_widget_setting_action {
@@ -3082,7 +3091,6 @@ ul.naviBtn {
         margin-bottom: 0.5em;
       }
     }
-
 
   }
 }
