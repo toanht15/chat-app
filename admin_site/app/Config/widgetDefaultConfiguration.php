@@ -151,17 +151,12 @@ $config['default'] = [
       /**
        * 12.企業側吹き出し背景色
        */
-      "reBackgroundColor" => "#FAF6E6",
+      "reBackgroundColor" => "#F6FAE6",
 
       /**
        * 13.企業側吹き出し枠線色
        */
-      "reBorderColor" => "#C9C9C9",
-
-      /**
-       * 14.企業側吹き出し枠線なし
-       */
-      "reBorderNone" => "0",
+      "reBorderColor" => "none",
 
       /**
        * 15.訪問者側吹き出し文字色
@@ -171,17 +166,12 @@ $config['default'] = [
       /**
        * 16.訪問者側吹き出し背景色
        */
-      "seBackgroundColor" => "#FFFFFF",
+      "seBackgroundColor" => "#E7E7E7",
 
       /**
        * 17.訪問者側吹き出し枠線色
        */
-      "seBorderColor" => "#C9C9C9",
-
-      /**
-       * 18.訪問者側吹き出し枠線なし
-       */
-      "seBorderNone" => "0",
+      "seBorderColor" => "none",
 
       /**
        * 19.メッセージエリア背景色
@@ -201,12 +191,7 @@ $config['default'] = [
       /**
        * 22.メッセージBOX枠線色
        */
-      "messageBoxBorderColor" => "#C9C9C9",
-
-      /**
-       * 23.メッセージBOX枠線なし
-       */
-      "messageBoxBorderNone" => "0",
+      "messageBoxBorderColor" => "#D4D4D4",
 
       /**
        * 24.送信ボタン文字色
@@ -223,10 +208,6 @@ $config['default'] = [
        */
       "widgetInsideBorderColor" => "#E8E7E0",
 
-      /**
-       * 27.ウィジット内枠線なし
-       */
-      "widgetInsideBorderNone" => "0",
       /* カラー設定end */
 
         /**

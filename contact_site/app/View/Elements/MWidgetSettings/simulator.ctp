@@ -109,11 +109,14 @@
       #sincloBox:not(.open) p#widgetTitle:after { transform: rotate(180deg); }
 */
       #sincloBox p#widgetSubTitle { background-color: #FFF; margin: 0; padding: 7px 0; text-align: left; border-width: 0 1px 0 1px; border-color: {{widget_border_color}}; border-style: solid; padding-left: 77px; font-weight: bold; color: {{main_color}}; height: 29px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      #sincloBox p#widgetSubTitle:not(.notNoneWidgetOutsideBorder) { border:none; }
       #sincloBox p#widgetSubTitle.details { color: {{sub_title_text_color}}; }
       #sincloBox p#widgetDescription { background-color: #FFF; margin: 0; padding-bottom: 7px; text-align: left; border-width: 0 1px 1px 1px; border-color: {{widget_border_color}}; border-style: solid; padding-left: 77px; height: 23px; color: {{other_text_color}}; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      #sincloBox p#widgetDescription:not(.notNoneWidgetOutsideBorder) { border-left:none; border-right:none; }
       #sincloBox p#widgetDescription.details { color: {{description_text_color}}; border-bottom-color: {{widget_inside_border_color}}; }
       #sincloBox p#widgetDescription.details:not(.notNone) { border-bottom:none }
       #sincloBox section { display: inline-block; width: 285px; border: 1px solid {{widget_border_color}}; border-top: none; }
+      #sincloBox section:not(.notNoneWidgetOutsideBorder) { border: 1px solid {{widget_inside_border_color}};  border-top: none; border-left:none; border-right:none; }
       #sincloBox section.details { border-bottom-color: {{widget_inside_border_color}}; }
       #sincloBox section.details:not(.notNone) { border-bottom:none }
       #sincloBox section.middleSize { width: 342.5px; }
@@ -177,6 +180,7 @@
       #sincloBox section#chatTab #sincloChatSendBtn span { color: {{string_color}} }
       #sincloBox section#chatTab #sincloChatSendBtn span.details { color: {{chat_send_btn_text_color}} }
       #sincloBox section#chatTab #messageBox.messageBox{border-top: 1px solid {{widget_border_color}}; padding: 0.5em;}
+      #sincloBox section#chatTab #messageBox.messageBox:not(.notNoneWidgetOutsideBorder) { border-top:none; }
       #sincloBox section#chatTab #messageBox.messageBox.details{ background-color: {{chat_message_background_color}}; border-top: 1px solid {{widget_inside_border_color}}; }
       #sincloBox section#chatTab #messageBox.messageBox.details:not(.notNone){ border-top: none; }
     <?php endif; ?>
@@ -224,9 +228,12 @@
       #sincloBox section#navigation ul.largeSize { width: 400px }
       #sincloBox section#navigation ul li { position: relative; overflow: hidden; cursor: pointer; color: {{other_text_color}}; width: 50%; text-align: center; display: table-cell; padding: 10px 0; height: 40px }
       #sincloBox section#navigation ul li:not(.details) { border-left: 1px solid {{widget_border_color}}; }
+      #sincloBox section#navigation ul li:not(.details):not(.notNoneWidgetOutsideBorder) { border-left:none; }
       #sincloBox section#navigation ul li:last-child { border-right: 1px solid {{widget_border_color}}; }
+      #sincloBox section#navigation ul li:last-child:not(.notNoneWidgetOutsideBorder) { border-right:none; }
       #sincloBox section#navigation ul li.selected { background-color: #FFFFFF; z-index: -1; }
       #sincloBox section#navigation ul li:not(.selected) { border-bottom: 1px solid {{widget_border_color}}; }
+      #sincloBox section#navigation ul li:not(.selected):not(.notNoneWidgetOutsideBorder) { border-bottom:none; }
 
       #sincloBox section#navigation ul li.selected.details { background-color: {{chat_talk_background_color}}; }
       #sincloBox section#navigation ul li:not(.selected).details {  }
@@ -250,10 +257,12 @@
     <?php endif; ?>
     <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT]) ) :?>
       #sincloBox span#sincloAccessInfo{ height: 26.5px; display: block; padding-left: 0.5em; padding-top: 5px; padding-bottom: 5px; border-top: 1px solid {{widget_border_color}}; font-size: 0.9em; }
+      #sincloBox span#sincloAccessInfo:not(.notNoneWidgetOutsideBorder) { border-top:none; }
       #sincloBox span#sincloAccessInfo.details{ border-top: 1px solid {{widget_inside_border_color}}; }
       #sincloBox span#sincloAccessInfo.details:not(.notNone){ border-top: none; }
-      #sincloBox #footer{ height: 26.5px; padding: 5px 0; text-align: center; border: 1px solid {{widget_border_color}}; color:#A1A1A1!important; font-size: 11px;margin: 0; border-top: none; }
     <?php endif; ?>
+      #sincloBox #footer{ height: 26.5px; padding: 5px 0; text-align: center; border: 1px solid {{widget_border_color}}; color:#A1A1A1!important; font-size: 11px;margin: 0; border-top: none; }
+      #sincloBox #footer:not(.notNoneWidgetOutsideBorder) { border:none; }
     </style>
     <!-- 画像 -->
     <span id="mainImage" class="widgetOpener" ng-hide="spHeaderLightToggle() || mainImageToggle !== '1'">
@@ -277,8 +286,8 @@
       <p ng-if="subTitleToggle == '1' && color_setting_type === '0' || color_setting_type === false"" id="widgetSubTitle" >{{sub_title}}</p>
       <p ng-if="subTitleToggle == '1' && color_setting_type === '1' || color_setting_type === true" id="widgetSubTitle" class="details">{{sub_title}}</p>
  -->
-      <p ng-if="subTitleToggle == '1'" id="widgetSubTitle" class="details">{{sub_title}}</p>
-      <p ng-if="subTitleToggle == '2'" id="widgetSubTitle"></p>
+      <p ng-if="subTitleToggle == '1'" id="widgetSubTitle" ng-class="{ notNoneWidgetOutsideBorder:widget_outside_border_none === ''||widget_outside_border_none === false}" class="details">{{sub_title}}</p>
+      <p ng-if="subTitleToggle == '2'" id="widgetSubTitle" ng-class="{ notNoneWidgetOutsideBorder:widget_outside_border_none === ''||widget_outside_border_none === false}"></p>
       <!-- サブタイトル -->
 
       <!-- 説明文 -->
@@ -287,26 +296,26 @@
       <p ng-if="descriptionToggle == '1' && color_setting_type === '0' || color_setting_type === false" id="widgetDescription" >{{description}}</p>
       <p ng-if="descriptionToggle == '1' && color_setting_type === '1' || color_setting_type === true" id="widgetDescription" class="details" ng-class="{ notNone:widget_inside_border_none === ''||widget_inside_border_none === false}">{{description}}</p>
  -->
-      <p ng-if="descriptionToggle == '1'" id="widgetDescription" class="details" ng-class="{ notNone:widget_inside_border_none === ''||widget_inside_border_none === false}">{{description}}</p>
-      <p ng-if="descriptionToggle == '2'" id="widgetDescription"></p>
+      <p ng-if="descriptionToggle == '1'" id="widgetDescription" class="details" ng-class="{notNoneWidgetOutsideBorder:widget_outside_border_none === ''||widget_outside_border_none === false, notNone:widget_inside_border_none === ''||widget_inside_border_none === false}">{{description}}</p>
+      <p ng-if="descriptionToggle == '2'" id="widgetDescription" ng-class="{ notNoneWidgetOutsideBorder:widget_outside_border_none === ''||widget_outside_border_none === false}"></p>
       <!-- 説明文 -->
     </div>
     <div id="miniTarget">
     <?php if ( $coreSettings[C_COMPANY_USE_CHAT] && ($coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT])) ) :?>
-      <section id="navigation" ng-hide="showWidgetType === 3" ng-class="{ middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">
+      <section id="navigation" ng-hide="showWidgetType === 3" ng-class="{ notNoneWidgetOutsideBorder:widget_outside_border_none === ''||widget_outside_border_none === false, middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">
         <ul ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">
 <!-- 仕様変更、常に高度な設定が当たっている状態とする -->
 <!--
           <li data-tab="chat" class="widgetCtrl notSelect" ng-class="{ notNone:widget_inside_border_none === ''||widget_inside_border_none === false, details: color_setting_type === '1' || color_setting_type === true, selected: widget.showTab == 'chat'}">チャットでの受付</li>
           <li data-tab="call" class="widgetCtrl notSelect" ng-class="{ notNone:widget_inside_border_none === ''||widget_inside_border_none === false, details: color_setting_type === '1' || color_setting_type === true, selected: widget.showTab == 'call'}">電話での受付</li>
  -->
-          <li data-tab="chat" class="widgetCtrl notSelect details" ng-class="{ notNone:widget_inside_border_none === ''||widget_inside_border_none === false, selected: widget.showTab == 'chat'}">チャットでの受付</li>
-          <li data-tab="call" class="widgetCtrl notSelect details" ng-class="{ notNone:widget_inside_border_none === ''||widget_inside_border_none === false, selected: widget.showTab == 'call'}">電話での受付</li>
+          <li data-tab="chat" class="widgetCtrl notSelect details" ng-class="{ notNoneWidgetOutsideBorder:widget_outside_border_none === ''||widget_outside_border_none === false, notNone:widget_inside_border_none === ''||widget_inside_border_none === false, selected: widget.showTab == 'chat'}">チャットでの受付</li>
+          <li data-tab="call" class="widgetCtrl notSelect details" ng-class="{ notNoneWidgetOutsideBorder:widget_outside_border_none === ''||widget_outside_border_none === false, notNone:widget_inside_border_none === ''||widget_inside_border_none === false, selected: widget.showTab == 'call'}">電話での受付</li>
         </ul>
       </section>
     <?php endif; ?>
     <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
-      <section id="chatTab" ng-hide="widget.showTab !== 'chat'" class="details" ng-class="{ notNone:widget_inside_border_none === ''||widget_inside_border_none === false, middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">
+      <section id="chatTab" ng-hide="widget.showTab !== 'chat'" class="details" ng-class="{ notNoneWidgetOutsideBorder:widget_outside_border_none === ''||widget_outside_border_none === false, notNone:widget_inside_border_none === ''||widget_inside_border_none === false, middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">
 
 <!-- chat_message_copy 0 stayt -->
         <ul id="chatTalk" class="details" ng-class="{ middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}" ng-if="chat_message_copy == '0'">
@@ -337,14 +346,14 @@
 <!-- chat_message_copy 1 end -->
 
 <!-- chat_message_copy 0 stayt -->
-        <div id="messageBox" class="messageBox details" ng-if="chat_message_copy == '1'" ng-class="{ notNone:widget_inside_border_none === ''||widget_inside_border_none === false }" style="user-select: none; -moz-user-select: none; -webkit-user-select: none; -ms-user-select: none;">
+        <div id="messageBox" class="messageBox details" ng-if="chat_message_copy == '1'" ng-class="{ notNoneWidgetOutsideBorder:widget_outside_border_none === ''||widget_outside_border_none === false, notNone:widget_inside_border_none === ''||widget_inside_border_none === false }" style="user-select: none; -moz-user-select: none; -webkit-user-select: none; -ms-user-select: none;">
           <textarea name="sincloChat" id="sincloChatMessage" class="details" ng-class="{ notNone:message_box_border_none === ''||message_box_border_none === false}" placeholder="メッセージを入力してください&#13;&#10;{{chat_area_placeholder_pc}}"></textarea>
           <a id="sincloChatSendBtn" class="notSelect details" ng-class="{ middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}"><span class="details">送信</span></a>
         </div>
 <!-- chat_message_copy 0 end -->
 
 <!-- chat_message_copy 1 stayt -->
-        <div id="messageBox" class="messageBox details" ng-if="chat_message_copy == '0'" ng-class="{ notNone:widget_inside_border_none === ''||widget_inside_border_none === false }">
+        <div id="messageBox" class="messageBox details" ng-if="chat_message_copy == '0'" ng-class="{ notNoneWidgetOutsideBorder:widget_outside_border_none === ''||widget_outside_border_none === false, notNone:widget_inside_border_none === ''||widget_inside_border_none === false }">
           <textarea name="sincloChat" id="sincloChatMessage" class="details" ng-class="{ notNone:message_box_border_none === ''||message_box_border_none === false}" placeholder="メッセージを入力してください&#13;&#10;{{chat_area_placeholder_pc}}"></textarea>
           <a id="sincloChatSendBtn" class="notSelect details" ng-class="{ middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}"><span class="details">送信</span></a>
         </div>
@@ -353,11 +362,11 @@
       <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT]) ) :?>
 
 <!-- chat_message_copy 0 stayt -->
-        <span id="sincloAccessInfo" ng-if="chat_message_copy == '1'" class="details" ng-class="{ notNone:widget_inside_border_none === ''||widget_inside_border_none === false }" style="user-select: none;-moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;" ng-hide="showWidgetType === 3">ウェブ接客コード：●●●●</span>
+        <span id="sincloAccessInfo" ng-if="chat_message_copy == '1'" class="details" ng-class="{ notNoneWidgetOutsideBorder:widget_outside_border_none === ''||widget_outside_border_none === false, notNone:widget_inside_border_none === ''||widget_inside_border_none === false }" style="user-select: none;-moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;" ng-hide="showWidgetType === 3">ウェブ接客コード：●●●●</span>
 <!-- chat_message_copy 0 end -->
 
 <!-- chat_message_copy 1 stayt -->
-        <span id="sincloAccessInfo" ng-if="chat_message_copy == '0'" class="details" ng-class="{ notNone:widget_inside_border_none === ''||widget_inside_border_none === false }" ng-hide="showWidgetType === 3">ウェブ接客コード：●●●●</span>
+        <span id="sincloAccessInfo" ng-if="chat_message_copy == '0'" class="details" ng-class="{ notNoneWidgetOutsideBorder:widget_outside_border_none === ''||widget_outside_border_none === false, notNone:widget_inside_border_none === ''||widget_inside_border_none === false }" ng-hide="showWidgetType === 3">ウェブ接客コード：●●●●</span>
 <!-- chat_message_copy 1 end -->
 
         <?php endif; ?>
@@ -368,7 +377,7 @@
 <!--
       <section id="callTab" ng-hide="widget.showTab !== 'call'" ng-class="{details: color_setting_type === '1' || color_setting_type === true, middleSize: widgetSizeTypeToggle === '2',largeSize: widgetSizeTypeToggle === '3'}">
  -->
-      <section id="callTab" ng-hide="widget.showTab !== 'call'" class="details" ng-class="{ middleSize: widgetSizeTypeToggle === '2',largeSize: widgetSizeTypeToggle === '3'}">
+      <section id="callTab" ng-hide="widget.showTab !== 'call'" class="details" ng-class="{ notNoneWidgetOutsideBorder:widget_outside_border_none === ''||widget_outside_border_none === false,middleSize: widgetSizeTypeToggle === '2',largeSize: widgetSizeTypeToggle === '3'}">
         <div style="height: 50px;margin: 15px 25px;">
         <!-- アイコン -->
         <span id="telIcon"><img width="19.5" height="33" src="<?=C_PATH_NODE_FILE_SERVER?>/img/call.png" style="margin: 6px 12px"></span>
@@ -394,11 +403,11 @@
       </section>
     <?php endif; ?>
 <!-- chat_message_copy 0 stayt -->
-      <p id="footer" ng-if="chat_message_copy == '1'" style="user-select: none;-moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;">Powered by <a target="sinclo" href="https://sinclo.medialink-ml.co.jp/lp/?utm_medium=web-widget&utm_campaign=widget-referral">sinclo</a></p>
+      <p id="footer" ng-if="chat_message_copy == '1'" ng-class="{ notNoneWidgetOutsideBorder:widget_outside_border_none === ''||widget_outside_border_none === false}" style="user-select: none;-moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;">Powered by <a target="sinclo" href="https://sinclo.medialink-ml.co.jp/lp/?utm_medium=web-widget&utm_campaign=widget-referral">sinclo</a></p>
 <!-- chat_message_copy 0 end -->
 
 <!-- chat_message_copy 1 stayt -->
-      <p id="footer" ng-if="chat_message_copy == '0'" >Powered by <a target="sinclo" href="https://sinclo.medialink-ml.co.jp/lp/?utm_medium=web-widget&utm_campaign=widget-referral">sinclo</a></p>
+      <p id="footer" ng-if="chat_message_copy == '0'" ng-class="{ notNoneWidgetOutsideBorder:widget_outside_border_none === ''||widget_outside_border_none === false}" >Powered by <a target="sinclo" href="https://sinclo.medialink-ml.co.jp/lp/?utm_medium=web-widget&utm_campaign=widget-referral">sinclo</a></p>
 <!-- chat_message_copy 1 end -->
     </div>
   </div>
@@ -490,6 +499,7 @@
       #sincloBox:not(.open) p#widgetTitle:after { transform: rotate(180deg); }
 */
       #sincloBox section { display: inline-block; width: 285px; border: 1px solid {{widget_border_color}}; border-top: none; }
+      #sincloBox section:not(.notNoneWidgetOutsideBorder) { border:none }
       #sincloBox section.noDisplay { display: none }
       #sincloBox div#miniTarget { overflow: hidden; transition: height 200ms linear; }
       @keyframes leftEffect { 0% { transform :translate3d(-20px, 0px, 0px) scale(0.8); opacity :0; } 69% {} 100% { transform :translate3d(0px, 0px, 0px); opacity :1; } }
@@ -534,6 +544,7 @@
       #sincloBox section#chatTab #sincloChatSendBtn span { color: {{string_color}} }
       #sincloBox section#chatTab #sincloChatSendBtn span.details { color: {{chat_send_btn_text_color}} }
       #sincloBox section#chatTab #messageBox.messageBox{border-top: 1px solid {{widget_border_color}}; padding: 0.5em;}
+      #sincloBox section#chatTab #messageBox.messageBox:not(.notNoneWidgetOutsideBorder) { border:none }
       #sincloBox section#chatTab #messageBox.messageBox.details{ background-color: {{chat_message_background_color}}; border-top: 1px solid {{widget_inside_border_color}}; }
       #sincloBox section#chatTab #messageBox.messageBox.details:not(.notNone){ border-top: none; }
     </style>
@@ -558,7 +569,7 @@
     <div id="addBtn" class="widgetOpener"></div>
  -->
     <div id="miniTarget">
-      <section id="chatTab">
+      <section id="chatTab" ng-class="{ notNoneWidgetOutsideBorder:widget_outside_border_none === ''||widget_outside_border_none === false}">
 
 <!-- chat_message_copy 0 stayt -->
         <ul id="chatTalk" class="details" ng-if="chat_message_copy == '0'">
@@ -588,7 +599,7 @@
         </ul>
 <!-- chat_message_copy 1 end -->
 
-        <div id="messageBox" class="messageBox details" ng-class="{ notNone:widget_inside_border_none === ''||widget_inside_border_none === false }">
+        <div id="messageBox" class="messageBox details" ng-class="{ notNoneWidgetOutsideBorder:widget_outside_border_none === ''||widget_outside_border_none === false, notNone:widget_inside_border_none === ''||widget_inside_border_none === false }">
           <textarea name="sincloChat" id="sincloChatMessage" class="details" ng-class="{ notNone:message_box_border_none === ''||message_box_border_none === false}" placeholder="メッセージを入力してください{{chat_area_placeholder_sp}}"></textarea>
           <a id="sincloChatSendBtn" class="notSelect details" ><span class="details">送信</span></a>
         </div>

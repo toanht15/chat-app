@@ -201,7 +201,8 @@ sincloApp.controller('WidgetCtrl', function($scope){
     //吹き出し文字色
     $scope.changeMessageTextColor = function(){
       //現在設定されている吹き出し文字色に変更
-      var colorid = $scope.message_text_color;
+      //var colorid = $scope.message_text_color;
+      var colorid = "<?= MESSAGE_TEXT_COLOR ?>";
       //企業側吹き出し文字色
       $scope.re_text_color = colorid;
       var rgb = $scope.checkRgbColor(colorid);
@@ -231,18 +232,18 @@ sincloApp.controller('WidgetCtrl', function($scope){
       jscolor.installByClassName("jscolor");
     }
     //ウィジェット枠線色
-    $scope.changeWidgetBorderColor = function(){
-      //現在設定されているウィジェット枠線色に変更
-      var colorid = $scope.widget_border_color;
-      //ウィジェット内枠線色
-      $scope.widget_inside_border_color = colorid;
-      var rgb = $scope.checkRgbColor(colorid);
-      var rgbcode = 'rgb(' + rgb['r']  + ', ' +  rgb['g']  + ', ' +  rgb['b'] + ')';
-      var element = document.getElementById('MWidgetSettingWidgetInsideBorderColor');
-      element.style.backgroundColor = rgbcode;
-      element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
-      jscolor.installByClassName("jscolor");
-    }
+//     $scope.changeWidgetBorderColor = function(){
+//       //現在設定されているウィジェット枠線色に変更
+//       var colorid = $scope.widget_border_color;
+//       //ウィジェット内枠線色
+//       $scope.widget_inside_border_color = colorid;
+//       var rgb = $scope.checkRgbColor(colorid);
+//       var rgbcode = 'rgb(' + rgb['r']  + ', ' +  rgb['g']  + ', ' +  rgb['b'] + ')';
+//       var element = document.getElementById('MWidgetSettingWidgetInsideBorderColor');
+//       element.style.backgroundColor = rgbcode;
+//       element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+//       jscolor.installByClassName("jscolor");
+//     }
     //吹き出し枠線色
     $scope.changeChatTalkBorderColor = function(){
       //現在設定されている吹き出し枠線色に変更
@@ -276,7 +277,8 @@ sincloApp.controller('WidgetCtrl', function($scope){
           jscolor.installByClassName("jscolor");
         }
         element.jscolor.show();
-        var colorid = $scope.chat_talk_border_color;
+        //var colorid = $scope.chat_talk_border_color;
+        var colorid = "<?= CHAT_TALK_BORDER_COLOR ?>";
         $scope.re_border_color = colorid;
         var rgb = $scope.checkRgbColor(colorid);
         element.style.backgroundColor = colorid;
@@ -295,7 +297,8 @@ sincloApp.controller('WidgetCtrl', function($scope){
           jscolor.installByClassName("jscolor");
         }
         element.jscolor.show();
-        var colorid = $scope.chat_talk_border_color;
+        //var colorid = $scope.chat_talk_border_color;
+        var colorid = "<?= CHAT_TALK_BORDER_COLOR ?>";
         $scope.se_border_color = colorid;
         var rgb = $scope.checkRgbColor(colorid);
         element.style.backgroundColor = colorid;
@@ -314,13 +317,34 @@ sincloApp.controller('WidgetCtrl', function($scope){
           jscolor.installByClassName("jscolor");
         }
         element.jscolor.show();
-        var colorid = $scope.chat_talk_border_color;
+        //var colorid = $scope.chat_talk_border_color;
+        var colorid = "<?= CHAT_TALK_BORDER_COLOR ?>";
         $scope.message_box_border_color = colorid;
         var rgb = $scope.checkRgbColor(colorid);
         element.style.backgroundColor = colorid;
         element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
         document.getElementById('MWidgetSettingMessageBoxBorderNone').checked = false;
         $scope.message_box_border_none = false;
+      }
+    }
+    //ウィジェット外枠線色
+    $scope.changeWidgetBorderColor = function(){
+      var chk = document.getElementById('MWidgetSettingWidgetOutsideBorderNone').checked;
+      if(chk){
+        var element = document.getElementById('MWidgetSettingWidgetBorderColor');
+        if(!element.classList.contains("jscolor{hash:true}")){
+          element.classList.add("jscolor{hash:true}");
+          jscolor.installByClassName("jscolor");
+        }
+        element.jscolor.show();
+        //var colorid = $scope.widget_border_color;
+        var colorid = "<?= WIDGET_BORDER_COLOR ?>";
+        $scope.widget_border_color = colorid;
+        var rgb = $scope.checkRgbColor(colorid);
+        element.style.backgroundColor = colorid;
+        element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+        document.getElementById('MWidgetSettingWidgetOutsideBorderNone').checked = false;
+        $scope.widget_outside_border_none = false;
       }
     }
     //ウィジェット内枠線色
@@ -333,7 +357,8 @@ sincloApp.controller('WidgetCtrl', function($scope){
           jscolor.installByClassName("jscolor");
         }
         element.jscolor.show();
-        var colorid = $scope.widget_border_color;
+        //var colorid = $scope.widget_border_color;
+        var colorid = "<?= WIDGET_INSIDE_BORDER_COLOR ?>";
         $scope.widget_inside_border_color = colorid;
         var rgb = $scope.checkRgbColor(colorid);
         element.style.backgroundColor = colorid;
@@ -377,6 +402,17 @@ sincloApp.controller('WidgetCtrl', function($scope){
     * 23.ウィジット内枠線色'widget_inside_border_color':現在設定されているウィジェット枠線色に変更ok
     */
     $scope.returnStandardColor = function(id){
+      if(id === 'widget_border_color'){
+        var colorid = "<?= WIDGET_BORDER_COLOR ?>";
+        $scope.widget_border_color = colorid;
+        $scope.changeWidgetBorderColor();
+        //MWidgetSettingWidgetInsideBorderColor
+        var rgb = $scope.checkRgbColor(colorid);
+        var rgbcode = 'rgb(' + rgb['r']  + ', ' +  rgb['g']  + ', ' +  rgb['b'] + ')';
+        var element = document.getElementById('MWidgetSettingWidgetBorderColor');
+        element.style.backgroundColor = rgbcode;
+        element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+      }
       if(id === 'chat_send_btn_text_color'){
         //現在設定されているタイトルバー文字色に変更
         var colorid = $scope.string_color;
@@ -390,7 +426,8 @@ sincloApp.controller('WidgetCtrl', function($scope){
       }
       if(id === 'widget_inside_border_color'){
         //現在設定されているウィジェット枠線色に変更
-        var colorid = $scope.widget_border_color;
+        //var colorid = $scope.widget_border_color;
+        var colorid = "<?= WIDGET_INSIDE_BORDER_COLOR ?>";
         $scope.widget_inside_border_color = colorid;
         $scope.changeWidgetInsideBorderColor();
         //MWidgetSettingWidgetInsideBorderColor
@@ -455,7 +492,9 @@ sincloApp.controller('WidgetCtrl', function($scope){
       }
       if(id === 're_text_color' || id === 'se_text_color'){
         //現在設定されている吹き出し文字色に変更
-        var colorid = $scope.message_text_color;
+//        var colorid = $scope.message_text_color;
+        var colorid = "<?= MESSAGE_TEXT_COLOR ?>";
+
         switch (id) {
           case "re_text_color":
             $scope.re_text_color = colorid;
@@ -479,7 +518,8 @@ sincloApp.controller('WidgetCtrl', function($scope){
       }
       if(id === 're_border_color' || id === 'se_border_color' || id === 'message_box_border_color'){
         //現在設定されている吹き出し枠線色に変更
-        var colorid = $scope.chat_talk_border_color;
+//        var colorid = $scope.chat_talk_border_color;
+        var colorid = "<?= CHAT_TALK_BORDER_COLOR ?>";
         switch (id) {
           case "re_border_color":
             $scope.re_border_color = colorid;
@@ -502,6 +542,7 @@ sincloApp.controller('WidgetCtrl', function($scope){
             element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
             break;
           case "message_box_border_color":
+            colorid = "<?= MESSAGE_BOX_BORDER_COLOR ?>";
             $scope.message_box_border_color = colorid;
             $scope.changeMessageBoxBorderColor();
             //MWidgetSettingMessageBoxBorderColor
@@ -1097,13 +1138,16 @@ sincloApp.controller('WidgetCtrl', function($scope){
         $scope.re_border_color = "なし"
       }
       else{
-        $scope.re_border_none = false;
-        //現在設定されている吹き出し枠線色に変更
-        var colorid = $scope.chat_talk_border_color;
-        $scope.re_border_color = colorid;
-        var rgb = $scope.checkRgbColor(colorid);
-        element.style.backgroundColor = colorid;
-        element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+//         $scope.re_border_none = false;
+//         //現在設定されている吹き出し枠線色に変更
+//         //var colorid = $scope.chat_talk_border_color;
+//        var colorid = "<?= CHAT_TALK_BORDER_COLOR ?>";
+//         $scope.re_border_color = colorid;
+//         var rgb = $scope.checkRgbColor(colorid);
+//         element.style.backgroundColor = colorid;
+//         element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+        document.getElementById('MWidgetSettingReBorderNone').checked = true;
+        $scope.changeReBorderColor();
       }
     });
     $("#MWidgetSettingReBorderNone").on("load", function(e){
@@ -1121,13 +1165,16 @@ sincloApp.controller('WidgetCtrl', function($scope){
         $scope.se_border_color = "なし"
       }
       else{
-        $scope.se_border_none = false;
-        //現在設定されている吹き出し枠線色に変更
-        var colorid = $scope.chat_talk_border_color;
-        $scope.se_border_color = colorid;
-        var rgb = $scope.checkRgbColor(colorid);
-        element.style.backgroundColor = colorid;
-        element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+//         $scope.se_border_none = false;
+//         //現在設定されている吹き出し枠線色に変更
+//         //var colorid = $scope.chat_talk_border_color;
+//        var colorid = "<?= CHAT_TALK_BORDER_COLOR ?>";
+//         $scope.se_border_color = colorid;
+//         var rgb = $scope.checkRgbColor(colorid);
+//         element.style.backgroundColor = colorid;
+//         element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+        document.getElementById('MWidgetSettingSeBorderNone').checked = true;
+        $scope.changeSeBorderColor();
       }
     });
     $("#MWidgetSettingMessageBoxBorderNone").on("click", function(e){
@@ -1141,17 +1188,46 @@ sincloApp.controller('WidgetCtrl', function($scope){
         $scope.message_box_border_color = "なし"
       }
       else{
-        $scope.message_box_border_none = false;
-        //現在設定されている吹き出し枠線色に変更
-        var colorid = $scope.chat_talk_border_color;
-        $scope.message_box_border_color = colorid;
-        var rgb = $scope.checkRgbColor(colorid);
-        element.style.backgroundColor = colorid;
-        element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+//         $scope.message_box_border_none = false;
+//         //現在設定されている吹き出し枠線色に変更
+//         //var colorid = $scope.chat_talk_border_color;
+//        var colorid = "<?= CHAT_TALK_BORDER_COLOR ?>";
+//         $scope.message_box_border_color = colorid;
+//         var rgb = $scope.checkRgbColor(colorid);
+//         element.style.backgroundColor = colorid;
+//         element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+        document.getElementById('MWidgetSettingMessageBoxBorderNone').checked = true;
+        $scope.changeMessageBoxBorderColor();
       }
     });
+
+    $("#MWidgetSettingWidgetOutsideBorderNone").on("click", function(e){
+      //ウィジェット外枠線なし
+      var chk = document.getElementById('MWidgetSettingWidgetOutsideBorderNone').checked;
+      var element = document.getElementById('MWidgetSettingWidgetBorderColor');
+      if(chk) {
+        $scope.widget_outside_border_none = true;
+        element.style.backgroundColor = "#FFFFFF";
+        element.style.color = "#909090";
+        $scope.widget_border_color = "なし"
+      }
+      else{
+//         $scope.widget_outside_border_none = false;
+//         //現在設定されているウィジェット枠線色に変更
+//         //var colorid = $scope.widget_border_color;
+//         //初期値に変更
+//        var colorid = "<?= WIDGET_BORDER_COLOR ?>";
+//         $scope.widget_border_color = colorid;
+//         var rgb = $scope.checkRgbColor(colorid);
+//         element.style.backgroundColor = colorid;
+//         element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+        document.getElementById('MWidgetSettingWidgetOutsideBorderNone').checked = true;
+        $scope.changeWidgetBorderColor();
+      }
+    });
+
     $("#MWidgetSettingWidgetInsideBorderNone").on("click", function(e){
-      //ウィジット内枠線なし
+      //ウィジェット内枠線なし
       var chk = document.getElementById('MWidgetSettingWidgetInsideBorderNone').checked;
       var element = document.getElementById('MWidgetSettingWidgetInsideBorderColor');
       if(chk) {
@@ -1161,13 +1237,17 @@ sincloApp.controller('WidgetCtrl', function($scope){
         $scope.widget_inside_border_color = "なし"
       }
       else{
-        $scope.widget_inside_border_none = false;
-        //現在設定されているウィジェット枠線色に変更
-        var colorid = $scope.widget_border_color;
-        $scope.widget_inside_border_color = colorid;
-        var rgb = $scope.checkRgbColor(colorid);
-        element.style.backgroundColor = colorid;
-        element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+//         $scope.widget_inside_border_none = false;
+//         //現在設定されているウィジェット枠線色に変更
+//         //var colorid = $scope.widget_border_color;
+//         //初期値に変更
+//        var colorid = "<?= WIDGET_INSIDE_BORDER_COLOR ?>";
+//         $scope.widget_inside_border_color = colorid;
+//         var rgb = $scope.checkRgbColor(colorid);
+//         element.style.backgroundColor = colorid;
+//         element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+        document.getElementById('MWidgetSettingWidgetInsideBorderNone').checked = true;
+        $scope.changeWidgetInsideBorderColor();
       }
     });
     //高度な設定を行う行わないを制御するチェックボックス
@@ -1179,6 +1259,15 @@ sincloApp.controller('WidgetCtrl', function($scope){
       else{
         $scope.color_setting_type = '0';
       }
+    });
+
+    //メッセージBOXにフォーカスが当たった、外れた時の処理
+    $("#MWidgetSettingMessageBoxTextColor")
+    .focusin(function(e) {
+      $("#sincloChatMessage").val("カラーテスト");
+    })
+    .focusout(function(e) {
+      $("#sincloChatMessage").val("");
     });
 
     angular.element(window).on("focus", ".showSp", function(e){
