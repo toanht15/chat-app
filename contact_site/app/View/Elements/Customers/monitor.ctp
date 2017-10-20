@@ -76,7 +76,9 @@
           ?>
 
         </ul>
+        <?php if(empty($coreSettings[C_COMPANY_USE_HIDE_REALTIME_MONITOR]) || !$coreSettings[C_COMPANY_USE_HIDE_REALTIME_MONITOR] ): ?>
         <p class="tRight <?=$nowCntClass?>" ng-cloak>現在 <b>{{objCnt(monitorList)}}</b>名がサイト訪問中</p>
+        <?php endif; ?>
     </div>
 </div>
 
@@ -100,7 +102,7 @@
                   </div>
                 </th>
                 <th style="width: 3em" ng-hide="labelHideList.accessId">ID</th>
-        <?php if (  $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
+        <?php if (  $coreSettings[C_COMPANY_USE_SYNCLO] || $coreSettings[C_COMPANY_USE_DOCUMENT] || $coreSettings[C_COMPANY_USE_LA_CO_BROWSE] ) :?>
                 <th style="width: 7em">操作</th>
         <?php endif ; ?>
                 <th style="width: 7em">詳細</th>
@@ -123,7 +125,7 @@
         <tr>
                 <th style="width: 5em">状態</th>
                 <th ng-hide="labelHideList.accessId" style="width: 3em">ID</th>
-        <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
+        <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT]) || (isset($coreSettings[C_COMPANY_USE_LA_CO_BROWSE]) && $coreSettings[C_COMPANY_USE_LA_CO_BROWSE]) ) :?>
                 <th style="width: 7em">操作</th>
         <?php endif; ?>
                 <th style="width: 7em">詳細</th>
@@ -149,7 +151,7 @@
           </td>
           <!-- /* ID */ -->
           <td ng-hide="labelHideList.accessId" class="tCenter">{{monitor.accessId}}</td>
-        <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT]) ) :?>
+        <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT]) || (isset($coreSettings[C_COMPANY_USE_LA_CO_BROWSE]) && $coreSettings[C_COMPANY_USE_LA_CO_BROWSE]) ) :?>
           <!-- /* 操作 */ -->
           <td class='tCenter'>
             <?php if ( strcmp($userInfo['permission_level'], C_AUTHORITY_SUPER) !== 0) :?>
