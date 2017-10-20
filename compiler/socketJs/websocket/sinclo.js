@@ -386,6 +386,12 @@
         }
         return false;
       }
+      // LiveAssistのSDKがあれば、このタイミングでイベントハンドラをセットしておき
+      if(typeof(AssistSDK) !== 'undefined') {
+        console.log("Assist SDK found. initSDKCallbacks");
+        laUtil.initSDKCallbacks();
+      }
+
       // connectフラグ
       browserInfo.connectFlg = true;
 
@@ -605,6 +611,101 @@
         this.remove();
       };
       popup.set(title, content);
+    },
+    startCoBrowseOpen : function(obj) {
+      if ( userInfo.accessType !== Number(cnst.access_type.guest) ) return false;
+      var title = location.host + 'の内容';
+      var content = location.host + 'が閲覧ページへのアクセスを求めています。<br>許可しますか';
+      popup.ok = function() {
+        var sincloBox = document.getElementById("sincloBox");
+        if( sincloBox ){
+          sincloBox.style.display = "none";
+        }
+        userInfo.coBrowseConnectToken = obj.coBrowseConnectToken;
+        storage.s.set('coBrowseConnectToken', obj.coBrowseConnectToken);
+        var params = {
+          userId: userInfo.userId,
+          tabId: userInfo.tabId,
+          coBrowseConnectToken: userInfo.coBrowseConnectToken
+        };
+        emit('beginToCoBrowse', params);
+        this.remove();
+      }
+      popup.set(title, content);
+    },
+    assistAgentIsReady: function(d) {
+      console.log('assistAgentIsReady');
+      var operatorId = d.responderId;
+      var _self = this;
+      laUtil.setOnErrorCallback(function(error){
+        _self.coBrowseErrorProcess();
+      });
+      laUtil.setOnAgentLeftCallback(function(){
+        if ( !check.isset(userInfo.coBrowseConnectToken) ) return false;
+
+        storage.s.unset("coBrowseConnectToken");
+        if (!document.getElementById('sincloBox')) {
+          common.makeAccessIdTag();
+        }
+
+        // 終了通知
+        var title = location.host + 'の内容';
+        var content = location.host + 'との画面共有を終了しました';
+        popup.ok = function(){
+          laUtil.disconnect();
+          this.remove();
+        };
+        popup.set(title, content, popup.const.action.alert);
+
+        var timer = setInterval(function(){
+          if (window.sincloInfo.widgetDisplay === false) {
+            clearInterval(timer);
+            laUtil.disconnect();
+            return false;
+          }
+          var sincloBox = document.getElementById('sincloBox');
+          // チャット未契約のときはウィジェットを非表示
+          if (sincloBox && (window.sincloInfo.contract.chat || window.sincloInfo.contract.synclo || (window.sincloInfo.contract.hasOwnProperty('document') && window.sincloInfo.contract.document)) ) {
+            common.widgetHandler.show();
+            sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
+            sinclo.widget.condifiton.set(false);
+            clearInterval(timer);
+          }
+        }, 500);
+      });
+      laUtil.initAndStart(operatorId).then(function() {
+        // shortcode取得
+        var shortcode = laUtil.shortcode;
+        if (shortcode !== undefined && shortcode !== null && shortcode !== "") {
+          console.log("Fire readyToCoBrowse");
+          var params = {
+            userId: userInfo.userId,
+            tabId: userInfo.tabId,
+            responderId: operatorId,
+            url: location.href,
+            coBrowseConnectToken: userInfo.coBrowseConnectToken,
+            shortcode: laUtil.shortcode
+          };
+          emit('readyToCoBrowse', params);
+        }
+      }).fail(function(e){
+        _self.coBrowseErrorProcess();
+      });
+    },
+    coBrowseErrorProcess: function() {
+      // 終了通知
+      emit('coBrowseFailed', {
+        userId: userInfo.userId,
+        tabId: userInfo.tabId,
+        connectToken: userInfo.coBrowseConnectToken
+      });
+      var title = location.host + 'の内容';
+      var content = '接続時にエラーが発生しました。<br>再度お試しください。';
+      popup.ok = function(){
+        laUtil.disconnect();
+        this.remove();
+      };
+      popup.set(title, content, popup.const.action.alert);
     },
     windowSyncInfo: function(d) {
       var obj = common.jParse(d);
@@ -1046,6 +1147,7 @@
       if ( !check.isset(userInfo.connectToken) ) return false;
 
       window.clearTimeout(sinclo.syncTimeout);
+
       userInfo.syncInfo.unset();
       if (!document.getElementById('sincloBox')) {
         common.makeAccessIdTag();
@@ -1062,6 +1164,45 @@
       var timer = setInterval(function(){
         if (window.sincloInfo.widgetDisplay === false) {
           clearInterval(timer);
+          return false;
+        }
+        var sincloBox = document.getElementById('sincloBox');
+        // チャット未契約のときはウィジェットを非表示
+        if (sincloBox && (window.sincloInfo.contract.chat || window.sincloInfo.contract.synclo || (window.sincloInfo.contract.hasOwnProperty('document') && window.sincloInfo.contract.document)) ) {
+          common.widgetHandler.show();
+          sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
+          sinclo.widget.condifiton.set(false);
+          clearInterval(timer);
+        }
+      }, 500);
+    },
+    stopCoBrowse: function(d){
+      var obj = common.jParse(d);
+      if ( (userInfo.gFrame && Number(userInfo.accessType) === Number(cnst.access_type.guest)) ) {
+        window.parent.close();
+        return false;
+      }
+      if ( !check.isset(userInfo.coBrowseConnectToken) ) return false;
+
+      storage.s.unset("coBrowseConnectToken");
+      userInfo.coBrowseConnectToken = "";
+      if (!document.getElementById('sincloBox')) {
+        common.makeAccessIdTag();
+      }
+
+      // 終了通知
+      var title = location.host + 'の内容';
+      var content = location.host + 'との画面共有を終了しました';
+      popup.ok = function(){
+        laUtil.disconnect();
+        this.remove();
+      };
+      popup.set(title, content, popup.const.action.alert);
+
+      var timer = setInterval(function(){
+        if (window.sincloInfo.widgetDisplay === false) {
+          clearInterval(timer);
+          laUtil.disconnect();
           return false;
         }
         var sincloBox = document.getElementById('sincloBox');
@@ -2267,6 +2408,16 @@
               }
             }
         }
+    },
+    // 外部連携API
+    api: {
+      getAccessId : function() {
+        var value = "";
+        if(userInfo && userInfo.accessId) {
+          value = userInfo.accessId;
+        }
+        return value;
+      }
     }
   };
 

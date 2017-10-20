@@ -215,6 +215,26 @@
       }
 
       &.p-cus-connection {
+         width: 500px;
+
+         div#popup-main { text-align: center }
+
+         div#popup-button {
+           display: flex;
+           flex-direction: row;
+           justify-content: space-around;
+
+           a {
+             flex-basis: 140px;
+             height: 2em;
+             margin: 0 5px;
+             padding: 0.25em 0;
+             font-size: 1.1em;
+           }
+         }
+      }
+
+      &.p-cus-select-sharing-mode {
         width: 500px;
 
         div#popup-main { text-align: center }
@@ -230,6 +250,9 @@
             margin: 0 5px;
             padding: 0.25em 0;
             font-size: 1.1em;
+            &.large {
+              flex-basis: 178px;
+            }
           }
         }
       }
