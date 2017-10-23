@@ -218,14 +218,20 @@ class TAutoMessagesController extends AppController {
       }
       if($reset_flg){
         //ソート順のリセットはID順とする
-        $i = 1;
-        foreach($prevSort as $key => $val){
-          $prevSort[$key] = strval($i);
-          $i++;
+//         $i = 1;
+//         foreach($prevSort as $key => $val){
+//           $prevSort[$key] = strval($i);
+//           $i++;
+//         }
+        //ソート順が登録されていなかったらソート順をセットする
+        if(! $this->remoteSetSort()){
+          $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
+          return false;
         }
+        $prevSort = $this->TAutoMessage->find('list', $params);
       }
-      $prevSortKeys = am($prevSort);
-      $this->log($prevSortKeys,LOG_DEBUG);
+//       $prevSortKeys = am($prevSort);
+//       $this->log($prevSortKeys,LOG_DEBUG);
       /* アップデート分の並び順を設定 */
       $ret = true;
       for ($i = 0; count($list) > $i; $i++) {
@@ -234,7 +240,7 @@ class TAutoMessagesController extends AppController {
           $saveData = [
               'TAutoMessage' => [
                   'id' => $id,
-                  'sort' => $prevSortKeys[$i]
+                  'sort' => $prevSort[$id]
               ]
           ];
           if (!$this->TAutoMessage->validates()) {
@@ -455,7 +461,6 @@ class TAutoMessagesController extends AppController {
     // 有効無効
     $this->set('outMessageAvailableType', Configure::read('outMessageAvailableType'));
     // 最後に表示していたページ番号
-    $test = $this->request->query['lastpage'];
     if(!empty($this->request->query['lastpage'])){
       $this->set('lastPage', $this->request->query['lastpage']);
     }
