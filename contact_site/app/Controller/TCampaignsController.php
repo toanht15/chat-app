@@ -191,7 +191,7 @@ class TCampaignsController extends AppController {
       }
       $saveData['TCampaign']['sort'] = $nextSort;
       $saveData['TCampaign']['m_companies_id'] = $value['TCampaign']['m_companies_id'];
-      $saveData['TCampaign']['name'] = $value['TCampaign']['name'];
+      $saveData['TCampaign']['name'] = $value['TCampaign']['name'].'コピー';
       $saveData['TCampaign']['parameter'] = $value['TCampaign']['parameter'];
       $saveData['TCampaign']['comment'] = $value['TCampaign']['comment'];
       $this->TCampaign->set($saveData);
