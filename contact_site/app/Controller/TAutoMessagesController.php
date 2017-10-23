@@ -161,6 +161,38 @@ class TAutoMessagesController extends AppController {
     foreach($copyData as $value){
       $this->TAutoMessage->create();
       $saveData = [];
+      $params = [
+          'fields' => [
+              'TAutoMessage.sort'
+          ],
+          'conditions' => [
+              'TAutoMessage.m_companies_id' => $this->userInfo['MCompany']['id'],
+              'TAutoMessage.del_flg != ' => 1
+          ],
+          'order' => [
+              'TAutoMessage.sort' => 'desc',
+              'TAutoMessage.id' => 'desc'
+          ],
+          'limit' => 1,
+          'recursive' => -1
+      ];
+      $lastData = $this->TAutoMessage->find('first', $params);
+      if($lastData['TAutoMessage']['sort'] === '0'
+          || $lastData['TAutoMessage']['sort'] === 0
+          || $lastData['TAutoMessage']['sort'] === null){
+            //ソート順が登録されていなかったらソート順をセットする
+            if(! $this->remoteSetSort()){
+              $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
+              return false;
+            }
+            //もう一度ソートの最大値を取り直す
+            $lastData = $this->TAutoMessage->find('first', $params);
+      }
+      $nextSort = 1;
+      if (!empty($lastData)) {
+        $nextSort = intval($lastData['TAutoMessage']['sort']) + 1;
+      }
+      $saveData['TAutoMessage']['sort'] = $nextSort;
       $saveData['TAutoMessage']['m_companies_id'] = $value['TAutoMessage']['m_companies_id'];
       $saveData['TAutoMessage']['name'] = $value['TAutoMessage']['name'];
       $saveData['TAutoMessage']['trigger_type'] = $value['TAutoMessage']['trigger_type'];
