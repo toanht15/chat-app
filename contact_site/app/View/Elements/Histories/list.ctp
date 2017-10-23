@@ -11,7 +11,9 @@
             <th width=" 5%">閲覧<br>ページ数</th>
             <th width=" 5%">滞在時間</th>
         <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
-            <th width=" 7%">最終発言後<br>離脱時間</th>
+            <th id="lastSpeechLabel" width=" 7%">最終発言後<br>離脱時間<div class="questionBalloon questionBalloonPosition13">
+                <icon class="questionBtn">？</icon>
+              </div></th>
             <th width=" 5%">成果</th>
             <th width="10%">チャット</th>
             <th width="10%">担当者</th>
@@ -78,3 +80,12 @@ if ( isset($history['THistory']['visitors_id']) ) {
 <?php endforeach; ?>
     </tbody>
 </table>
+<?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
+<div id='lastSpeechTooltip' class="explainTooltip">
+  <icon-annotation>
+    <ul>
+      <li><span>サイト訪問者が最後に発言してからページを離脱するまでの時間</span></li>
+    </ul>
+  </icon-annotation>
+</div>
+<?php endif; ?>
