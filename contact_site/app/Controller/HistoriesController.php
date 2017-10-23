@@ -201,7 +201,7 @@ class HistoriesController extends AppController {
    * */
   public function calcTime($startDateTime, $endDateTime){
     Configure::write('debug', 0);
-    if ( empty($startDateTime) || empty($endDateTime) ) {
+    if ( empty($startDateTime) || empty($endDateTime) || strtotime($startDateTime) > strtotime($endDateTime) ) {
       return "-";
     }
     $start = new DateTime($startDateTime);
