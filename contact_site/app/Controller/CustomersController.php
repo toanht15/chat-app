@@ -105,7 +105,8 @@ class CustomersController extends AppController {
     $this->layout = null;
     $labelList = [
       'accessId' => 'ID',
-      'ipAddress' => '訪問ユーザ',
+      'ipAddress' => 'IPアドレス',
+      'customer' => '訪問ユーザ',
       'ua' => 'プラットフォーム／ブラウザ',
       'stayCount' => '訪問回数',
       'time' => 'アクセス日時',
