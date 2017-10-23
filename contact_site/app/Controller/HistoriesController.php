@@ -279,6 +279,7 @@ class HistoriesController extends AppController {
     // ヘッダー
     $csv[] = [
       "日時",
+      "IPアドレス",
       "訪問ユーザ",
       "プラットフォーム",
       "ブラウザ",
@@ -313,22 +314,24 @@ class HistoriesController extends AppController {
       // 日時
       $dateTime = date_format(date_create($history['THistory']['access_date']), "Y/m/d\nH:i:s");
       $row['date'] = $dateTime;
-      // 訪問ユーザ
-      $row['ip'] = "";
-      if ( !empty($history['MCustomer']['informations']) ) {
-        $informations = (array)json_decode($history['MCustomer']['informations']);
-        if ( isset($informations['company']) && $informations['company'] !== "" ) {
-          $row['ip'] .= $informations['company'];
-        }
-        if (isset($informations['name']) && $informations['name'] !== "" ) {
-          if ( $row['ip'] !== "" ) $row['ip'] .= "\n";
-          $row['ip'] .= $informations['name'];
-        }
-      }
+      // IPアドレス
       if ($history['THistory']['ip_address'] !== "" ) {
         if ( $row['ip'] !== "" ) $row['ip'] .= "\n";
         $row['ip'] .= $history['THistory']['ip_address'];
       }
+      // 訪問ユーザ
+      $row['customer'] = "";
+      if ( !empty($history['MCustomer']['informations']) ) {
+        $informations = (array)json_decode($history['MCustomer']['informations']);
+        if ( isset($informations['company']) && $informations['company'] !== "" ) {
+          $row['customer'] .= $informations['company'];
+        }
+        if (isset($informations['name']) && $informations['name'] !== "" ) {
+          if ( $row['customer'] !== "" ) $row['customer'] .= "\n";
+          $row['customer'] .= $informations['name'];
+        }
+      }
+
       // OS
       $row['os'] = $this->_userAgentCheckOs($history);
       // ブラウザ
@@ -384,6 +387,7 @@ class HistoriesController extends AppController {
     // ヘッダー
     $csv[] = [
       "訪問日時",
+      "IPアドレス",
       "訪問ユーザ",
       "プラットフォーム",
       "ブラウザ",
@@ -399,21 +403,22 @@ class HistoriesController extends AppController {
       // 日時
       $dateTime = $val['THistory']['access_date'];
       $row['date'] = $dateTime;
-      //訪問ユーザ
-      $row['ip'] = "";
-      if ( !empty($val['MCustomer']['informations']) ) {
-        $informations = (array)json_decode($val['MCustomer']['informations']);
-        if ( isset($informations['company']) && $informations['company'] !== "" ) {
-          $row['ip'] .= $informations['company'];
-        }
-        if (isset($informations['name']) && $informations['name'] !== "" ) {
-          if ( $row['ip'] !== "" ) $row['ip'] .= "\n";
-          $row['ip'] .= $informations['name'];
-        }
-      }
+      //IPアドレス
       if ($val['THistory']['ip_address'] !== "" ) {
         if ( $row['ip'] !== "" ) $row['ip'] .= "\n";
         $row['ip'] .= $val['THistory']['ip_address'];
+      }
+      //訪問ユーザ
+      $row['customer'] = "";
+      if ( !empty($val['MCustomer']['informations']) ) {
+        $informations = (array)json_decode($val['MCustomer']['informations']);
+        if ( isset($informations['company']) && $informations['company'] !== "" ) {
+          $row['customer'] .= $informations['company'];
+        }
+        if (isset($informations['name']) && $informations['name'] !== "" ) {
+          if ( $row['customer'] !== "" ) $row['customer'] .= "\n";
+          $row['customer'] .= $informations['name'];
+        }
       }
       // OS
       $row['os'] = $this->_userAgentCheckOs($val);

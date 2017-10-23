@@ -549,6 +549,12 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       return userAgentChk.pre(str);
     };
 
+    $scope.ip = function(m){
+      var showData = [];
+      showData.push(m.ipAddress); // IPアドレス
+      return showData.join("\n");
+    };
+
     $scope.ui = function(m){
       var showData = [];
       if ( $scope.customerList.hasOwnProperty(m.userId) && isset($scope.customerList[m.userId]) ) {
@@ -559,10 +565,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         if ( ('name' in c) && c.name.length > 0 ) {
           showData.push(c.name); // 名前
         }
-      }
-      // 顧客情報未登録の場合
-      if ( showData.length === 0 ) {
-        showData.push(m.ipAddress); // IPアドレス
       }
       return showData.join("\n");
     };

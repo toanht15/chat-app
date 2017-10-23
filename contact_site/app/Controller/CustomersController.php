@@ -9,7 +9,7 @@ class CustomersController extends AppController {
     'THistory', 'THistoryChatLog', 'TCampaign', 'TDocument', 'TDictionary', 'TDictionaryCategory'
   ];
 
-  public $tmpLabelHideList = ["accessId", "ipAddress", "ua", "stayCount", "time", "campaign", "stayTime", "page", "title", "referrer"];
+  public $tmpLabelHideList = ["accessId", "ipAddress", "customer", "ua", "stayCount", "time", "campaign", "stayTime", "page", "title", "referrer"];
 
   public function beforeRender(){
     $this->set('siteKey', $this->userInfo['MCompany']['company_key']);
