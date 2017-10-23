@@ -1250,7 +1250,7 @@ $headerNo = 1;
   <!-- /* 操作 */ -->
   <section>
     <div id="m_widget_setting_action" class="fotterBtnArea">
-      <?= $this->Html->link('元に戻す', 'javascript:window.location.reload()', ['class' => 'whiteBtn btn-shadow']) ?>
+      <?= $this->Html->link('元に戻す', 'javascript:void(0)', ['ng-click' => 'reloadAct()','class' => 'whiteBtn btn-shadow']) ?>
       <?= $this->Html->link('更新', 'javascript:void(0)', ['ng-click' => 'saveAct()', 'class' => 'greenBtn btn-shadow']) ?>
       <?= $this->Html->link('dummy', 'javascript:void(0)', ['ng-click' => '', 'class' => 'whiteBtn btn-shadow', 'style' => 'visibility: hidden;']) ?>
     </div>
