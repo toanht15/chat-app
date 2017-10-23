@@ -3197,6 +3197,11 @@ ul.naviBtn {
         height: 1px;
         background-color: #DDD;
         border: 0;  /*デフォルトデザインでは線がある場合があるので、消しておく。*/
+        &.indent {
+          width: 384px;
+          position: relative;
+          left: -5px;
+        }
       }
     }
 

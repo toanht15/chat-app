@@ -1366,6 +1366,12 @@ sincloApp.controller('WidgetCtrl', function($scope){
         $('#MWidgetSettingIndexForm').submit();
     }
 
+    $scope.reloadAct = function (){
+      // 元に戻すボタンが押されたらconfirmを出さない
+      $scope.changeFlg = false;
+      window.location.reload();
+    }
+
     angular.element(window).on("click", ".widgetOpener", function(){
       var sincloBox = document.getElementById("sincloBox");
       var nextFlg = true;
