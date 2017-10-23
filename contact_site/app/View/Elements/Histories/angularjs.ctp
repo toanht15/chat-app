@@ -8,6 +8,12 @@
       return userAgentChk.pre(str);
     };
 
+    $scope.ip = function(ip){
+      var showData = [];
+      showData.push(ip); // IPアドレス
+      return showData.join("\n");
+    };
+
     $scope.ui = function(ip, id){
       var showData = [];
 
@@ -20,7 +26,6 @@
           showData.push(c.name); // 名前
         }
       }
-      showData.push(ip); // IPアドレス
       return showData.join("\n");
     };
 

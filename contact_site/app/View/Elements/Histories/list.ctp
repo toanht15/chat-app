@@ -3,8 +3,9 @@
         <tr>
             <th width=" 9%">日時</th>
             <th width=" 6%" class="noOutCsv">詳細</th>
-            <th width="15%">訪問ユーザ</th>
-            <th width="15%">プラットフォーム<br>ブラウザ</th>
+            <th width="10%">IPアドレス</th>
+            <th width="10%">訪問ユーザ</th>
+            <th width="10%">プラットフォーム<br>ブラウザ</th>
             <th width=" 7%">キャンペーン</th>
             <th width="10%">参照元URL</th>
             <th width=" 5%">閲覧<br>ページ数</th>
@@ -40,6 +41,7 @@ if ( isset($history['THistory']['visitors_id']) ) {
         <tr>
             <td class="tRight pre"><?=date_format(date_create($history['THistory']['access_date']), "Y/m/d\nH:i:s")?></td>
             <td class="tCenter"><ng-show-detail data-id="<?=h($history['THistory']['id'])?>"></ng-show-detail></td>
+            <td class="tLeft pre">{{ ip('<?=h($history['THistory']['ip_address'])?>') }}</td>
             <td class="tLeft pre">{{ ui('<?=h($history['THistory']['ip_address'])?>', '<?=$visitorsId?>') }}</td>
             <td class="tLeft pre">{{ ua('<?=h($history['THistory']['user_agent'])?>') }}</td>
             <td class="tCenter pre"><?=$campaignParam?></td>

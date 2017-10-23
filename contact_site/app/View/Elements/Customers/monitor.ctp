@@ -106,7 +106,8 @@
                 <th style="width: 7em">操作</th>
         <?php endif ; ?>
                 <th style="width: 7em">詳細</th>
-                <th style="width: 8em" ng-hide="labelHideList.ipAddress">訪問ユーザ</th>
+                <th style="width: 8em" ng-hide="labelHideList.ipAddress">IPアドレス</th>
+                <th style="width: 8em" ng-hide="labelHideList.customer">訪問ユーザ</th>
                 <th style="width: 9em" ng-hide="labelHideList.ua">プラットフォーム<br>ブラウザ</th>
                 <th style="width: 5em" ng-hide="labelHideList.stayCount">訪問回数</th>
                 <th style="width: 6em" ng-hide="labelHideList.time">アクセス日時</th>
@@ -129,7 +130,8 @@
                 <th style="width: 7em">操作</th>
         <?php endif; ?>
                 <th style="width: 7em">詳細</th>
-                <th ng-hide="labelHideList.ipAddress" style="width: 8em">訪問ユーザ</th>
+                <th ng-hide="labelHideList.ipAddress" style="width: 8em">IPアドレス</th>
+                <th ng-hide="labelHideList.customer" style="width: 8em">訪問ユーザ</th>
                 <th ng-hide="labelHideList.ua" style="width: 9em">プラットフォーム<br>ブラウザ</th>
                 <th ng-hide="labelHideList.stayCount" style="width: 5em">訪問回数</th>
                 <th ng-hide="labelHideList.time" style="width: 6em">アクセス日時</th>
@@ -188,9 +190,10 @@
               </span>
             <?php endif; ?>
           </td>
-
           <!-- /* 訪問ユーザ */ -->
-          <td ng-hide="labelHideList.ipAddress" class="tCenter pre">{{ui(monitor)}}</td>
+          <td ng-hide="labelHideList.ipAddress" class="tCenter pre">{{ip(monitor)}}</td>
+          <!-- /* 訪問ユーザ */ -->
+          <td ng-hide="labelHideList.customer" class="tCenter pre">{{ui(monitor)}}</td>
           <!-- /* ユーザー環境 */ -->
           <td ng-hide="labelHideList.ua" class="tCenter pre">{{ua(monitor.userAgent)}}</td>
           <!-- /* 訪問回数 */ -->
