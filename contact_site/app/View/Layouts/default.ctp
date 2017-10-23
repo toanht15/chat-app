@@ -105,6 +105,10 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
       echo $this->Html->css('jquery-ui.css');
       echo $this->Html->script("jquery-ui.js");
     }
+    if ( strcmp($this->name, 'TCampaigns') === 0 ) {
+      echo $this->Html->css('jquery-ui.css');
+      echo $this->Html->script("jquery-ui.js");
+    }
 
 ?>
 

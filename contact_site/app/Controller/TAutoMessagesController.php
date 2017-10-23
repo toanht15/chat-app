@@ -166,8 +166,8 @@ class TAutoMessagesController extends AppController {
               'TAutoMessage.sort'
           ],
           'conditions' => [
-              'TAutoMessage.m_companies_id' => $this->userInfo['MCompany']['id'],
-              'TAutoMessage.del_flg != ' => 1
+              'TAutoMessage.m_companies_id' => $this->userInfo['MCompany']['id']
+              //'TAutoMessage.del_flg != ' => 1
           ],
           'order' => [
               'TAutoMessage.sort' => 'desc',
@@ -426,8 +426,8 @@ class TAutoMessagesController extends AppController {
               'TAutoMessage.sort'
           ],
           'conditions' => [
-              'TAutoMessage.m_companies_id' => $this->userInfo['MCompany']['id'],
-              'TAutoMessage.del_flg != ' => 1
+              'TAutoMessage.m_companies_id' => $this->userInfo['MCompany']['id']
+//              'TAutoMessage.del_flg != ' => 1
           ],
           'order' => [
               'TAutoMessage.sort' => 'desc',
