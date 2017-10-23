@@ -400,7 +400,7 @@ $headerNo = 1;
               <!-- 基本設定色end -->
               <!-- 0.通常設定・高度設定 -->
               <!-- 高度な設定を行う行わないを制御するチェックボックス -->
-              <pre style="margin-top: 30px; margin-left: -3px;"><label class="pointer"><?= $this->ngForm->input('color_setting_type', [
+              <pre style="margin-top: 30px; margin-left: -3px;"><hr class="separator" style="margin: 5px 0 5px 0;"><label class="pointer"><?= $this->ngForm->input('color_setting_type', [
                 'type' => 'checkbox',
                 'legend' => false,
                 'ng-checked' => 'color_setting_type === "'.COLOR_SETTING_TYPE_ON.'"',
@@ -416,7 +416,7 @@ $headerNo = 1;
               <div id="color_setting_details" ng-class="{chooseImg: showColorSettingDetails()}" style="margin:display: none;">
                 <!-- ヘッダー部start -->
                 <div style=" background-color: #ECF4DA; cursor: pointer; border-color: #C3D69B; border-style: solid; border-width: 1px 0 1px 0; font-weight: bold; padding: 5px 0 5px 10px; width: 396px !important;">ヘッダー部</div><br>
-                <div style=" position: relative; top: -10px;">
+                <div style=" position: relative; top: -10px; left: 10px;">
                 <!-- 7.企業名文字色 -->
                 <span style="height: 35px;"><label>企業名文字色</label><?= $this->ngForm->input('sub_title_text_color', [
                   'type' => 'text',
@@ -430,7 +430,7 @@ $headerNo = 1;
                 ],
                 [
                   'entity' => 'MWidgetSetting.sub_title_text_color'
-                ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('sub_title_text_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -28px; left: 295px;" >標準に戻す</span></span>
+                ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('sub_title_text_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -28px; left: 285px;" >標準に戻す</span></span>
                 <!-- 8.説明文文字色 -->
                 <span style="height: 35px;"><label>説明文文字色</label><?= $this->ngForm->input('description_text_color', [
                   'type' => 'text',
@@ -444,7 +444,7 @@ $headerNo = 1;
                 ],
                 [
                   'entity' => 'MWidgetSetting.description_text_color'
-                ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('description_text_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -28px; left: 295px;" >標準に戻す</span></span>
+                ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('description_text_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -28px; left: 285px;" >標準に戻す</span></span>
                 </div>
                 <!-- ヘッダー部end -->
 
@@ -455,7 +455,7 @@ $headerNo = 1;
                 <?php }?>
                   <!-- チャットエリア部start -->
                   <div style=" background-color: #ECF4DA; cursor: pointer; border-color: #C3D69B; border-style: solid; border-width: 1px 0 1px 0; font-weight: bold; padding: 5px 0 5px 10px; width: 396px !important;">チャットエリア部</div><br>
-                  <div style=" position: relative; top: 0px;">
+                  <div style=" position: relative; top: 0px; left: 10px;">
                   <!-- 9.チャットエリア背景色 -->
                   <span style="height: 35px;"><label>チャットエリア背景色　　</label><?= $this->ngForm->input('chat_talk_background_color', [
                     'type' => 'text',
@@ -469,8 +469,8 @@ $headerNo = 1;
                   ],
                   [
                     'entity' => 'MWidgetSetting.chat_talk_background_color'
-                  ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('chat_talk_background_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -50px; left: 295px;" >標準に戻す</span></span>
-                  <hr class="separator">
+                  ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('chat_talk_background_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -50px; left: 285px;" >標準に戻す</span></span>
+                  <hr class="separator indent">
                   <!-- 10.企業名担当者名文字色 -->
                   <span style="height: 35px;"><label>企業名／担当者名文字色</label><?= $this->ngForm->input('c_name_text_color', [
                     'type' => 'text',
@@ -484,7 +484,7 @@ $headerNo = 1;
                   ],
                   [
                     'entity' => 'MWidgetSetting.c_name_text_color'
-                  ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('c_name_text_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -50px; left: 295px;" >標準に戻す</span></span>
+                  ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('c_name_text_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -50px; left: 285px;" >標準に戻す</span></span>
                   <!-- 11.企業側吹き出し文字色 -->
   <!--
                   <span style="height: 35px;"><label>企業側吹き出し文字色　　</label><?= $this->ngForm->input('re_text_color', [
@@ -549,7 +549,7 @@ $headerNo = 1;
                       'entity' => 'MWidgetSetting.re_border_color'
                     ]) ?>
                   <?php }?>
-                  <span class="greenBtn btn-shadow" ng-click="returnStandardColor('re_border_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -50px; left: 295px;" >標準に戻す</span></span>
+                  <span class="greenBtn btn-shadow" ng-click="returnStandardColor('re_border_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -50px; left: 285px;" >標準に戻す</span></span>
                   <!-- 14.企業側吹き出し枠線なし -->
                   <pre><label class="pointer" style="position: relative; left: 141px; top: -5px;"><?= $this->ngForm->input('re_border_none', [
                     'type' => 'checkbox',
@@ -562,7 +562,7 @@ $headerNo = 1;
                   [
                     'entity' => 'MWidgetSetting.re_border_none'
                   ]) ?></label></pre>
-                  <hr class="separator">
+                  <hr class="separator indent">
                   <!-- 15.訪問者側吹き出し文字色 -->
   <!--
                   <span style="height: 35px;"><label>訪問者側吹き出し文字色</label><?= $this->ngForm->input('se_text_color', [
@@ -627,7 +627,7 @@ $headerNo = 1;
                       'entity' => 'MWidgetSetting.se_border_color'
                     ]) ?>
                   <?php }?>
-                  <span class="greenBtn btn-shadow" ng-click="returnStandardColor('se_border_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -50px; left: 295px;" >標準に戻す</span></span>
+                  <span class="greenBtn btn-shadow" ng-click="returnStandardColor('se_border_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -50px; left: 285px;" >標準に戻す</span></span>
                   <!-- 18.訪問者側吹き出し枠線なし -->
                   <pre><label class="pointer" style="position: relative; left: 141px; top: -5px;"><?= $this->ngForm->input('se_border_none', [
                     'type' => 'checkbox',
@@ -646,7 +646,7 @@ $headerNo = 1;
 
                   <!-- メッセージエリア部start -->
                   <div style=" background-color: #ECF4DA; cursor: pointer; border-color: #C3D69B; border-style: solid; border-width: 1px 0 1px 0; font-weight: bold; padding: 5px 0 5px 10px; width: 396px !important;">メッセージエリア部</div>
-                  <div style=" position: relative; top: 15px;">
+                  <div style=" position: relative; top: 15px; left: 10px;">
                   <!-- 19.メッセージエリア背景色 -->
                   <span style="height: 35px;"><label>メッセージエリア背景色</label><?= $this->ngForm->input('chat_message_background_color', [
                     'type' => 'text',
@@ -660,8 +660,8 @@ $headerNo = 1;
                   ],
                   [
                     'entity' => 'MWidgetSetting.chat_message_background_color'
-                  ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('chat_message_background_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -50px; left: 295px;" >標準に戻す</span></span>
-                  <hr class="separator">
+                  ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('chat_message_background_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -50px; left: 285px;" >標準に戻す</span></span>
+                  <hr class="separator indent">
                   <!-- 21.メッセージBOX背景色 -->
                   <span style="height: 35px;"><label>メッセージBOX背景色　</label><?= $this->ngForm->input('message_box_background_color', [
                     'type' => 'text',
@@ -675,7 +675,7 @@ $headerNo = 1;
                   ],
                   [
                     'entity' => 'MWidgetSetting.message_box_background_color'
-                  ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('message_box_background_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -50px; left: 295px;" >標準に戻す</span></span>
+                  ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('message_box_background_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -50px; left: 285px;" >標準に戻す</span></span>
                   <!-- 20.メッセージBOX文字色 -->
                   <span style="height: 35px;"><label>メッセージBOX文字色　</label><?= $this->ngForm->input('message_box_text_color', [
                     'type' => 'text',
@@ -689,7 +689,7 @@ $headerNo = 1;
                   ],
                   [
                     'entity' => 'MWidgetSetting.message_box_text_color'
-                  ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('message_box_text_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -50px; left: 295px;" >標準に戻す</span></span>
+                  ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('message_box_text_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -50px; left: 285px;" >標準に戻す</span></span>
                   <!-- 22.メッセージBOX枠線色 -->
                   <span style="height: 35px;"><label>メッセージBOX枠線色</label>
                   <?php if($message_box_border_color_flg){?>
@@ -722,7 +722,7 @@ $headerNo = 1;
                       'entity' => 'MWidgetSetting.message_box_border_color'
                     ]) ?>
                   <?php }?>
-                  <span class="greenBtn btn-shadow" ng-click="returnStandardColor('message_box_border_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -50px; left: 295px;" >標準に戻す</span></span>
+                  <span class="greenBtn btn-shadow" ng-click="returnStandardColor('message_box_border_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -50px; left: 285px;" >標準に戻す</span></span>
                   <!-- 23.メッセージBOX枠線なし -->
                   <pre><label class="pointer" style="position: relative; left: 141px; top: -5px;"><?= $this->ngForm->input('message_box_border_none', [
                     'type' => 'checkbox',
@@ -735,7 +735,7 @@ $headerNo = 1;
                   [
                     'entity' => 'MWidgetSetting.message_box_border_none'
                   ]) ?></label></pre>
-                  <hr class="separator">
+                  <hr class="separator indent">
                   <!-- 25.送信ボタン背景色 -->
                   <span style="height: 35px;"><label>送信ボタン背景色</label><?= $this->ngForm->input('chat_send_btn_background_color', [
                     'type' => 'text',
@@ -749,7 +749,7 @@ $headerNo = 1;
                   ],
                   [
                     'entity' => 'MWidgetSetting.chat_send_btn_background_color'
-                  ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('chat_send_btn_background_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -50px; left: 295px;" >標準に戻す</span></span>
+                  ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('chat_send_btn_background_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -50px; left: 285px;" >標準に戻す</span></span>
                   <!-- 24.送信ボタン文字色 -->
                   <span style="height: 35px;"><label>送信ボタン文字色</label><?= $this->ngForm->input('chat_send_btn_text_color', [
                     'type' => 'text',
@@ -763,13 +763,13 @@ $headerNo = 1;
                   ],
                   [
                     'entity' => 'MWidgetSetting.chat_send_btn_text_color'
-                  ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('chat_send_btn_text_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -50px; left: 295px;" >標準に戻す</span></span>
+                  ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('chat_send_btn_text_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -50px; left: 285px;" >標準に戻す</span></span>
                   </div>
                   <!-- メッセージエリア部end -->
                 </div>
                 <!-- その他部start -->
                 <div style=" background-color: #ECF4DA; cursor: pointer; border-color: #C3D69B; border-style: solid; border-width: 1px 0 1px 0; font-weight: bold; padding: 5px 0 5px 10px; width: 396px !important; position: relative;top: 20px;">その他</div>
-                <div style=" position: relative; top: 30px;">
+                <div style=" position: relative; top: 30px; left: 10px;">
                 <!-- 5.ウィジェット枠線色 -->
                 <span style="height: 35px;"><label>ウィジェット外枠線色</label>
                 <?php if($widget_border_color_flg){?>
@@ -802,7 +802,7 @@ $headerNo = 1;
                     'entity' => 'MWidgetSetting.widget_border_color'
                   ]) ?>
                 <?php }?>
-                <span class="greenBtn btn-shadow" ng-click="returnStandardColor('widget_border_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px ; font-size: 0.9em; position: relative; top: -50px; left: 295px;" >標準に戻す</span></span>
+                <span class="greenBtn btn-shadow" ng-click="returnStandardColor('widget_border_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px ; font-size: 0.9em; position: relative; top: -50px; left: 285px;" >標準に戻す</span></span>
                 <!-- 28.ウィジット外枠線なし -->
                 <pre><label class="pointer" style="position: relative; left: 141px; top: -5px;"><?= $this->ngForm->input('widget_outside_border_none', [
                   'type' => 'checkbox',
@@ -847,7 +847,7 @@ $headerNo = 1;
                     'entity' => 'MWidgetSetting.widget_inside_border_color'
                   ]) ?>
                 <?php }?>
-                <span class="greenBtn btn-shadow" ng-click="returnStandardColor('widget_inside_border_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px ; font-size: 0.9em; position: relative; top: -50px; left: 295px;" >標準に戻す</span></span>
+                <span class="greenBtn btn-shadow" ng-click="returnStandardColor('widget_inside_border_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px ; font-size: 0.9em; position: relative; top: -50px; left: 285px;" >標準に戻す</span></span>
                 <!-- 27.ウィジット内枠線なし -->
                 <pre><label class="pointer" style="position: relative; left: 141px; top: -30px;"><?= $this->ngForm->input('widget_inside_border_none', [
                   'type' => 'checkbox',
