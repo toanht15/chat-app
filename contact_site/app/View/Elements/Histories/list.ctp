@@ -55,7 +55,9 @@ if ( isset($history['THistory']['visitors_id']) ) {
             <td class="tRight"><?=$this->htmlEx->calcTime($history['THistory']['access_date'], $history['THistory']['out_date']) ?></td>
         <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
             <td class="tRight"><?php
-            if ($history['LastSpeechTime']['lastSpeechTime']){
+            if ($history['LastSpeechTime']['lastSpeechTime']
+              && $history['THistory']['access_date'] !== $history['THistory']['out_date']
+              && strtotime($history['LastSpeechTime']['lastSpeechTime']) <= strtotime($history['THistory']['out_date'])){
               echo $this->htmlEx->calcTime($history['LastSpeechTime']['lastSpeechTime'], $history['THistory']['out_date']);
             }
             ?></td>
