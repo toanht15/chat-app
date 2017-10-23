@@ -166,8 +166,8 @@ class TAutoMessagesController extends AppController {
               'TAutoMessage.sort'
           ],
           'conditions' => [
-              'TAutoMessage.m_companies_id' => $this->userInfo['MCompany']['id'],
-              'TAutoMessage.del_flg != ' => 1
+              'TAutoMessage.m_companies_id' => $this->userInfo['MCompany']['id']
+              //'TAutoMessage.del_flg != ' => 1
           ],
           'order' => [
               'TAutoMessage.sort' => 'desc',
@@ -410,7 +410,12 @@ class TAutoMessagesController extends AppController {
   private function _entry($saveData) {
     $errors = [];
     $saveData['TAutoMessage']['m_companies_id'] = $this->userInfo['MCompany']['id'];
-    $nextPage = $saveData[lastPage];
+    if(array_key_exists ('lastPage',$saveData)){
+      $nextPage = $saveData['lastPage'];
+    }
+    else{
+      $nextPage = '1';
+    }
 
     $this->TAutoMessage->begin();
     if ( empty($saveData['TAutoMessage']['id']) ) {
@@ -421,8 +426,8 @@ class TAutoMessagesController extends AppController {
               'TAutoMessage.sort'
           ],
           'conditions' => [
-              'TAutoMessage.m_companies_id' => $this->userInfo['MCompany']['id'],
-              'TAutoMessage.del_flg != ' => 1
+              'TAutoMessage.m_companies_id' => $this->userInfo['MCompany']['id']
+//              'TAutoMessage.del_flg != ' => 1
           ],
           'order' => [
               'TAutoMessage.sort' => 'desc',
@@ -432,16 +437,18 @@ class TAutoMessagesController extends AppController {
           'recursive' => -1
       ];
       $lastData = $this->TAutoMessage->find('first', $params);
-      if($lastData['TAutoMessage']['sort'] === '0'
-          || $lastData['TAutoMessage']['sort'] === 0
-          || $lastData['TAutoMessage']['sort'] === null){
-        //ソート順が登録されていなかったらソート順をセットする
-        if(! $this->remoteSetSort()){
-          $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
-          return false;
+      if($lastData){
+        if($lastData['TAutoMessage']['sort'] === '0'
+            || $lastData['TAutoMessage']['sort'] === 0
+            || $lastData['TAutoMessage']['sort'] === null){
+              //ソート順が登録されていなかったらソート順をセットする
+              if(! $this->remoteSetSort()){
+                $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
+                return false;
+              }
+              //もう一度ソートの最大値を取り直す
+              $lastData = $this->TAutoMessage->find('first', $params);
         }
-        //もう一度ソートの最大値を取り直す
-        $lastData = $this->TAutoMessage->find('first', $params);
       }
       $nextSort = 1;
       if (!empty($lastData)) {

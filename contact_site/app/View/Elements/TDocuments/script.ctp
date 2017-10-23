@@ -1030,22 +1030,20 @@ window.onload = function(){
     'top': "4em"
   });
   $("#pageListToggleBtn").click(function(){
-  if ( $(this).is('.on') ) {
-    $(this).removeClass('on');
-    $("#slidesArea").css('top', '-140px');
-    $("#slidesArea").css('opacity', 0);
-  }
-  else {
-    $(this).addClass('on');
-    $("#slidesArea").css('top', '40px');
-    $("#slidesArea").css('opacity', 1);
-    toggleSlick('set');
-    $("#slideList").slick('setPosition');
-  }
-});
-};
+    if ( $(this).is('.on') ) {
+      $(this).removeClass('on');
+      $("#slidesArea").css('top', '-140px');
+      $("#slidesArea").css('opacity', 0);
+    }
+    else {
+      $(this).addClass('on');
+      $("#slidesArea").css('top', '40px');
+      $("#slidesArea").css('opacity', 1);
+      toggleSlick('set');
+      $("#slideList").slick('setPosition');
+    }
+  });
 
-document.body.onload = function(){
   //ソートタブの準備
   var getSort = function(){
     var list = [];

@@ -54,6 +54,13 @@
           </a>
         </span>
       </div>
+      <!-- キャンペーン設定の並び替えモード -->
+      <div class="tabpointer">
+        <label class="pointer">
+          <?= $this->Form->checkbox('sort', array('onchange' => 'toggleSort()')); ?><span id="sortText">キャンペーン設定の並び替え</span><span id="sortTextMessage" style="display: none; font-size: 1.1em; color: rgb(192, 0, 0); font-weight: bold; ">（！）キャンペーン設定を並び替え中（保存する場合はチェックを外してください）</span>
+        </label>
+      </div>
+      <!-- キャンペーン設定の並び替えモード -->
     </ul>
   </div>
 
@@ -77,7 +84,7 @@
       </thead>
       <tbody class="sortable">
       <?php foreach((array)$tCampaignList as $key => $val): ?>
-        <tr class="pointer" data-id="<?=$val['TCampaign']['id']?>" onclick="openEditDialog('<?=h($val['TCampaign']['id'])?>')">
+        <tr class="pointer" data-id="<?=$val['TCampaign']['id']?>" data-sort="<?=$val['TCampaign']['sort']?>" onclick="openEditDialog('<?=h($val['TCampaign']['id'])?>')">
 <!-- UI/UX統合対応start -->
           <td class="tCenter" onclick="event.stopPropagation();">
             <input type="checkbox" name="selectTab" id="selectTab<?=$key?>" value="<?=$val['TCampaign']['id']?>">
