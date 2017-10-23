@@ -1090,6 +1090,9 @@ sincloApp.controller('WidgetCtrl', function($scope){
       $('[name="data[MWidgetSetting][show_timing]"]:checked').trigger('change');
       // formのどこかを変更したらフラグを立てる
       $("form").change(function(e){
+        if(e.target.id === 'MWidgetSettingColorSettingType') {
+          return;
+        }
         console.log("changed");
         $scope.changeFlg = true;
       });
