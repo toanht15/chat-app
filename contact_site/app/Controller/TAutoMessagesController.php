@@ -194,7 +194,7 @@ class TAutoMessagesController extends AppController {
       }
       $saveData['TAutoMessage']['sort'] = $nextSort;
       $saveData['TAutoMessage']['m_companies_id'] = $value['TAutoMessage']['m_companies_id'];
-      $saveData['TAutoMessage']['name'] = $value['TAutoMessage']['name'];
+      $saveData['TAutoMessage']['name'] = $value['TAutoMessage']['name'].'コピー';
       $saveData['TAutoMessage']['trigger_type'] = $value['TAutoMessage']['trigger_type'];
       $saveData['TAutoMessage']['activity'] = $value['TAutoMessage']['activity'];
       $saveData['TAutoMessage']['action_type'] = $value['TAutoMessage']['action_type'];

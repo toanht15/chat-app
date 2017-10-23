@@ -1,5 +1,5 @@
 <?php
-class AddColumnSortTCampaignsCakeMigration {
+class AddColumnSortTCampaignsCakeMigration extends CakeMigration {
 
   /**
    * Migration description

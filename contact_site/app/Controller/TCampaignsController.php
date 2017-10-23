@@ -67,16 +67,18 @@ class TCampaignsController extends AppController {
           'recursive' => -1
       ];
       $lastData = $this->TCampaign->find('first', $params);
-      if($lastData['TCampaign']['sort'] === '0'
-          || $lastData['TCampaign']['sort'] === 0
-          || $lastData['TCampaign']['sort'] === null){
-            //ソート順が登録されていなかったらソート順をセットする
-            if(! $this->remoteSetSort()){
-              $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
-              return false;
-            }
-            //もう一度ソートの最大値を取り直す
-            $lastData = $this->TCampaign->find('first', $params);
+      if($lastData){
+        if($lastData['TCampaign']['sort'] === '0'
+            || $lastData['TCampaign']['sort'] === 0
+            || $lastData['TCampaign']['sort'] === null){
+              //ソート順が登録されていなかったらソート順をセットする
+              if(! $this->remoteSetSort()){
+                $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
+                return false;
+              }
+              //もう一度ソートの最大値を取り直す
+              $lastData = $this->TCampaign->find('first', $params);
+        }
       }
       $nextSort = 1;
       if (!empty($lastData)) {
@@ -189,7 +191,7 @@ class TCampaignsController extends AppController {
       }
       $saveData['TCampaign']['sort'] = $nextSort;
       $saveData['TCampaign']['m_companies_id'] = $value['TCampaign']['m_companies_id'];
-      $saveData['TCampaign']['name'] = $value['TCampaign']['name'];
+      $saveData['TCampaign']['name'] = $value['TCampaign']['name'].'コピー';
       $saveData['TCampaign']['parameter'] = $value['TCampaign']['parameter'];
       $saveData['TCampaign']['comment'] = $value['TCampaign']['comment'];
       $this->TCampaign->set($saveData);
