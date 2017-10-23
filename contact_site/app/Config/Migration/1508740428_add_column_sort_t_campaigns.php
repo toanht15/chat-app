@@ -17,7 +17,7 @@ class AddColumnSortTCampaignsCakeMigration {
       'up' => array(
           'create_field' => array(
               't_campaigns' => array(
-                  'sort' => array('type' => 'integer', 'null' => true, 'default' => '999', 'unsigned' => false, 'comment' => 'ソート順', 'after' => 'comment'),
+                  'sort' => array('type' => 'integer', 'null' => true, 'default' => '0', 'unsigned' => false, 'comment' => 'ソート順', 'after' => 'comment'),
               )
           )
       ),
