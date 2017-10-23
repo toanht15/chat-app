@@ -1146,8 +1146,9 @@ io.sockets.on('connection', function (socket) {
       if(keys && keys.length > 0) {
         keys.forEach(function(key) {
           var splitedKey = key.split("_");
-          if(splitedKey[0]) {
-            if(splitedKey[0].indexOf(term) === 0) { // 前方一致検索
+          var targetTerm = obj.filterType === 1 ? splitedKey[0] : splitedKey[1];
+          if(targetTerm) {
+            if(targetTerm.indexOf(term) === 0) { // 前方一致検索
               var mergedObject = extend(customerList[obj.siteKey][key], sincloCore[obj.siteKey][customerList[obj.siteKey][key]['tabId']]);
               result.push(mergedObject);
             }
