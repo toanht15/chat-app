@@ -17,10 +17,10 @@ class AddColumnSortTAutoMessagesAndTDocuments extends CakeMigration {
       'up' => array(
           'create_field' => array(
               't_auto_messages' => array(
-                  'sort' => array('type' => 'integer', 'null' => true, 'default' => '999', 'unsigned' => false, 'comment' => 'ソート順', 'after' => 'del_flg'),
+                  'sort' => array('type' => 'integer', 'null' => true, 'default' => '0', 'unsigned' => false, 'comment' => 'ソート順', 'after' => 'del_flg'),
               ),
               't_documents' => array(
-                  'sort' => array('type' => 'integer', 'null' => true, 'default' => '999', 'unsigned' => false, 'comment' => 'ソート順', 'after' => 'del_flg'),
+                  'sort' => array('type' => 'integer', 'null' => true, 'default' => '0', 'unsigned' => false, 'comment' => 'ソート順', 'after' => 'del_flg'),
               ),
           )
       ),
