@@ -9,8 +9,9 @@
             <th width=" 7%">キャンペーン</th>
             <th width="10%">参照元URL</th>
             <th width=" 5%">閲覧<br>ページ数</th>
-            <th width=" 8%">滞在時間</th>
+            <th width=" 5%">滞在時間</th>
         <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
+            <th width=" 7%">最終発言後<br>離脱時間</th>
             <th width=" 5%">成果</th>
             <th width="10%">チャット</th>
             <th width="10%">担当者</th>
@@ -53,6 +54,11 @@ if ( isset($history['THistory']['visitors_id']) ) {
             </td>
             <td class="tRight"><?=$this->htmlEx->calcTime($history['THistory']['access_date'], $history['THistory']['out_date']) ?></td>
         <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
+            <td class="tRight"><?php
+            if ($history['LastSpeechTime']['lastSpeechTime']){
+              echo $this->htmlEx->calcTime($history['LastSpeechTime']['lastSpeechTime'], $history['THistory']['out_date']);
+            }
+            ?></td>
             <td class="tCenter"><?php
               if ($history['THistoryChatLog']['achievementFlg']){
                 echo $achievementType[h($history['THistoryChatLog']['achievementFlg'])];
