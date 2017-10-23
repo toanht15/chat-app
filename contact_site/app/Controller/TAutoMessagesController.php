@@ -198,6 +198,8 @@ class TAutoMessagesController extends AppController {
     if ( !empty($this->params->data['list']) ) {
       $this->TAutoMessage->begin();
       $list = $this->params->data['list'];
+      $sortNoList = $this->params->data['sortNolist'];
+      sort($sortNoList);
       $this->log($list,LOG_DEBUG);
       /* 現在の並び順を取得 */
       $this->paginate['TAutoMessage']['conditions']['TAutoMessage.m_companies_id'] = $this->userInfo['MCompany']['id'];
@@ -229,6 +231,14 @@ class TAutoMessagesController extends AppController {
           return false;
         }
         $prevSort = $this->TAutoMessage->find('list', $params);
+        //この時$sortNoListは空なので作成する
+        if(empty($sortNoList)){
+          for ($i = 0; count($list) > $i; $i++) {
+            $id = $list[$i];
+            $sortNoList[] = $prevSort[$id];
+          }
+          sort($sortNoList);
+        }
       }
 //       $prevSortKeys = am($prevSort);
 //       $this->log($prevSortKeys,LOG_DEBUG);
@@ -240,7 +250,7 @@ class TAutoMessagesController extends AppController {
           $saveData = [
               'TAutoMessage' => [
                   'id' => $id,
-                  'sort' => $prevSort[$id]
+                  'sort' => $sortNoList[$i]
               ]
           ];
           if (!$this->TAutoMessage->validates()) {
@@ -282,8 +292,8 @@ class TAutoMessagesController extends AppController {
             'TAutoMessage.sort'
         ],
         'conditions' => [
-            'TAutoMessage.m_companies_id' => $this->userInfo['MCompany']['id'],
-            'TAutoMessage.del_flg != ' => 1
+            'TAutoMessage.m_companies_id' => $this->userInfo['MCompany']['id']
+//            'TAutoMessage.del_flg != ' => 1
         ],
         'order' => [
             'TAutoMessage.sort' => 'asc',
