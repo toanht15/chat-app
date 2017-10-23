@@ -428,16 +428,12 @@
     socket.on('unsetUser', function(d){
       var obj = JSON.parse(d);
       if ( obj.tabId !== tabId ) return false;
-      modalOpen.call(window, '切断を検知しました。再接続をしますか？', 'p-confirm', 'メッセージ');
-      popupEvent.closePopup = function(){
-        emit('coBrowseReconnectConfirm', {
-          to: tabId,
-          responderId: "<?= $muserId?>"
-        });
-        popupEvent.close();
-      };
+      // ポップアップが表示されていれば、続行しない
+      if ( $("#popup").is(".popup-on") ) {
+        return false;
+      }
+      modalOpen.call(window, '切断を検知しました。再度お試し下さい。', 'p-alert', 'メッセージ');
       popupEvent.closeNoPopup = function(){
-        popupEvent.close();
         windowClose();
       };
     });
@@ -578,6 +574,7 @@
       AssistAED.setConfig(config);
     }
 
+    var customerTimeoutTimer = null;
     function setAssistAgentCallbacks() {
       AssistAgentSDK.setFormCallBack(function(formElement) {
         if (formElement) {
@@ -586,9 +583,19 @@
       });
 
       AssistAgentSDK.setConsumerJoinedCallback(function(){
+        if(customerTimeoutTimer) clearTimeout(customerTimeoutTimer);
         console.log("CONSUMER JOINED");
         loading.load.finish();
         AssistAgentSDK.requestScreenShare();
+      });
+
+      AssistAgentSDK.setConsumerLeftCallback(function(){
+        customerTimeoutTimer = setTimeout(function(){
+          modalOpen.call(window, '切断を検知しました。再度お試し下さい。', 'p-alert', 'メッセージ');
+          popupEvent.closeNoPopup = function(){
+            windowClose();
+          };
+        }, 5000); // タイムアウト5秒
       });
 
       AssistAgentSDK.setRemoteViewCallBack(function(x,y){
