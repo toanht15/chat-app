@@ -194,7 +194,7 @@ function openCopyDialog(){
   });
 }
 
-//資料設定のソートモード
+//キャンペーン設定のソートモード
 function toggleSort(){
   if (!document.getElementById("sort").checked) {
     confirmSort();
@@ -205,12 +205,12 @@ function toggleSort(){
     actBtnShow();
     //ソートモードon
     $(".sortable").addClass("move").sortable("enable");
-    //資料設定ソートモードメッセージ表示
+    //キャンペーン設定ソートモードメッセージ表示
     document.getElementById("sortText").style.display="none";
     document.getElementById("sortTextMessage").style.display="";
 
     //各ボタン及び動作をモード中は動かなくする
-    //資料設定登録ボタン押下不可
+    //キャンペーン設定登録ボタン押下不可
     document.getElementById('tcampaigns_add_btn').className="btn-shadow disOffgrayBtn";
     //コピーボタン無効
     document.getElementById("tcampaigns_copy_btn").className="btn-shadow disOffgrayBtn";
@@ -227,9 +227,9 @@ function toggleSort(){
   }
 }
 
-//資料設定のソート順を保存
+//キャンペーン設定のソート順を保存
 var confirmSort = function(){
-  modalOpen.call(window, "編集内容を保存します。<br/><br/>よろしいですか？<br/>", 'p-sort-save-confirm', '資料設定並び替えの保存', 'moment');
+  modalOpen.call(window, "編集内容を保存します。<br/><br/>よろしいですか？<br/>", 'p-sort-save-confirm', 'キャンペーン設定並び替えの保存', 'moment');
   popupEvent.saveClicked = function(){
     saveToggleSort();
   }
@@ -242,7 +242,7 @@ var confirmSort = function(){
   });
 };
 
-//資料設定ソートを保存
+//キャンペーン設定ソートを保存
 var saveToggleSort = toExecutableOnce(function(){
   var list = getSort();
   $.ajax({
@@ -259,7 +259,7 @@ var saveToggleSort = toExecutableOnce(function(){
   });
 });
 
-//資料設定のソート順を取得
+//キャンペーン設定のソート順を取得
 var getSort = function(){
   var list = [];
   $(".sortable tr").each(function(e){
