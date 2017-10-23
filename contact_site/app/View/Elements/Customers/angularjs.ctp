@@ -422,8 +422,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           $scope.chatList = [];
           result = [];
         } else if ($scope.searchText.length === 4 && $scope.searchResult.length > 0) {
-          result = $scope.searchResult;
+          result = $scope.monitorList;
         } else if($scope.searchText.length < 4) {
+          $scope.searchResult = [];
           if($scope.monitorList.length > 0) {
             $scope.monitorList = [];
           }
