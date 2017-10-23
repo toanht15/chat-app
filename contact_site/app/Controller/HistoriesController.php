@@ -886,7 +886,7 @@ class HistoriesController extends AppController {
 
       $joinToLastSpeechChatTime = [
         'type' => 'LEFT',
-        'table' => '(SELECT t_histories_id, message_type, MAX(created) as created FROM t_history_chat_logs WHERE message_type != 98 AND message_type != 99 GROUP BY t_histories_id)',
+        'table' => '(SELECT t_histories_id, message_type, MAX(created) as created FROM t_history_chat_logs WHERE message_type = 1 GROUP BY t_histories_id)',
         'alias' => 'LastSpeechTime',
         'field' => 'created as lastSpeechTime',
         'conditions' => [
@@ -1510,8 +1510,7 @@ class HistoriesController extends AppController {
       'conditions' => [
         'AND' => array(
           't_histories_id' => $historyIdList,
-          'message_type != 98',
-          'message_type != 99')
+          'message_type = 1')
       ],
       'group' => ['THistoryChatLog.t_histories_id']
     ]);
