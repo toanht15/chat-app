@@ -177,17 +177,17 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
         <tr class="<?=$class?>" data-id="<?=h($id)?>" onclick="openEdit(<?= $id ?>)">
  -->
         <tr class="pointer <?=$class?>" data-sort="<?=$val['TAutoMessage']['sort']?>" data-id="<?=h($id)?>" onclick="openEdit(<?= $id ?>)">
-          <td class="tCenter" onclick="event.stopPropagation();">
+          <td class="tCenter" onclick="event.stopPropagation();" width=" 5%">
             <input type="checkbox" name="selectTab" id="selectTab<?=h($id)?>" value="<?=h($id)?>">
             <label for="selectTab<?=h($id)?>"></label>
           </td>
-          <td class="tCenter"><?=$no?></td>
-          <td class="tCenter"><?= $val['TAutoMessage']['name']; ?></td>
-          <td class="targetBalloon">
+          <td class="tCenter" width="10%"><?=$no?></td>
+          <td class="tCenter" width="20%"><?= $val['TAutoMessage']['name']; ?></td>
+          <td class="targetBalloon" width="25%">
             <span class="conditionTypeLabel m10b">条件</span><span class="m10b actionValue"><?=h($conditionType)?></span>
             <span class="conditionValueLabel m10b">設定</span><span class="m10b actionValue"><?=h($conditions)?></span>
           </td>
-          <td class="p10x">
+          <td class="p10x" width="25%">
             <span class="actionTypeLabel m10b">対象</span><span class="m10b actionValue"><?=h($outMessageActionType[$val['TAutoMessage']['action_type']])?></span>
             <?=$activity_detail?>
           </td>

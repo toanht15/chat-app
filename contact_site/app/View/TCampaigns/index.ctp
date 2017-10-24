@@ -76,7 +76,7 @@
 <!-- UI/UX統合対応end -->
         <th style="width:30em;">キャンペーン名</th>
         <th style="width:20em;">URLパラメータ</th>
-        <th>コメント</th>
+        <th style="width:auto;">コメント</th>
 <!--
         <th>操作</th>
  -->
@@ -86,14 +86,14 @@
       <?php foreach((array)$tCampaignList as $key => $val): ?>
         <tr class="pointer" data-id="<?=$val['TCampaign']['id']?>" data-sort="<?=$val['TCampaign']['sort']?>" onclick="openEditDialog('<?=h($val['TCampaign']['id'])?>')">
 <!-- UI/UX統合対応start -->
-          <td class="tCenter" onclick="event.stopPropagation();">
+          <td width=" 5%" class="tCenter" onclick="event.stopPropagation();">
             <input type="checkbox" name="selectTab" id="selectTab<?=$key?>" value="<?=$val['TCampaign']['id']?>">
             <label for="selectTab<?=$key?>"></label>
           </td>
 <!-- UI/UX統合対応end -->
-          <td class="tCenter"><?=h($val['TCampaign']['name'])?></td>
-          <td class="tCenter"><?=h($val['TCampaign']['parameter'])?></td>
-          <td class="tLeft pre"><?=h($val['TCampaign']['comment'])?></td>
+          <td style="width:30em;" class="tCenter"><?=h($val['TCampaign']['name'])?></td>
+          <td style="width:20em;" class="tCenter"><?=h($val['TCampaign']['parameter'])?></td>
+          <td style="width:auto;" class="tLeft pre"><?=h($val['TCampaign']['comment'])?></td>
 <!--
           <td class="tCenter ctrlBtnArea">
             <?php

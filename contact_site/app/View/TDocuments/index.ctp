@@ -85,13 +85,13 @@ $prevCnt = ($params['page'] - 1);
           ?>
           <tr class="pointer" data-id="<?=h($id)?>" data-sort="<?=$val['TDocument']['sort']?>" onclick="openEdit(<?=$id;?>)">
 <!-- UI/UX統合対応start -->
-            <td class="tCenter" onclick="event.stopPropagation();">
+            <td class="tCenter" onclick="event.stopPropagation();" width=" 5%">
               <input type="checkbox" name="selectTab" id="selectTab<?=$key?>" value="<?=$val['TDocument']['id']?>">
               <label for="selectTab<?=$key?>"></label>
             </td>
 <!-- UI/UX統合対応end -->
-            <td class="tCenter"><?=$no?></td>
-            <td class="tCenter">
+            <td class="tCenter" width=" 5%"><?=$no?></td>
+            <td class="tCenter" width="15%">
               <div class = "document_image" ng-click="$event.stopPropagation(); openDocumentList3(<?=$id?>)">
                 <?php
                 $settings = (!empty($val['TDocument']['settings'])) ? (array)json_decode($val['TDocument']['settings']) : [];
@@ -112,8 +112,8 @@ $prevCnt = ($params['page'] - 1);
                 <?= $this->Html->image(C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/".C_PREFIX_DOCUMENT.pathinfo(h($val['TDocument']['file_name']), PATHINFO_FILENAME).".jpg", ['style' => $matrix]);?>
               </div>
             </td>
-            <td class="tCenter"><?=h($val['TDocument']['name'])?></td>
-            <td class="tCenter"><?=h($val['TDocument']['overview'])?></td>
+            <td class="tCenter" width="25%"><?=h($val['TDocument']['name'])?></td>
+            <td class="tCenter" width="40%"><?=h($val['TDocument']['overview'])?></td>
             <!-- <td class="tCenter"><span><?=implode("</span>、<span>",$val['TDocument']['tag'])?></span></td> -->
 <!--
             <td class="p10x noClick lineCtrl">
