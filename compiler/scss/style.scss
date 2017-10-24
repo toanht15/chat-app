@@ -3324,6 +3324,9 @@ ul.naviBtn {
         }
     }
 
+    .ui-sortable-helper {
+        display: table;
+    }
   }
 
   #tautomessages_form {
@@ -3942,6 +3945,10 @@ ul.naviBtn {
     th input[type='checkbox']:checked + label {
       border: 1px solid #FFF;
     }
+
+    .ui-sortable-helper {
+      display: table;
+    }
   }
 
   #tcampaigns_list .ctrlBtnArea {
@@ -4482,6 +4489,10 @@ ul.naviBtn {
 
     th input[type='checkbox']:checked + label {
       border: 1px solid #FFF;
+    }
+
+    .ui-sortable-helper {
+      display: table;
     }
   }
 
