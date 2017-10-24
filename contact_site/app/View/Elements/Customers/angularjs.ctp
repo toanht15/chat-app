@@ -3031,19 +3031,29 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var attribute2 =  splitedOrder[1];
       array.sort(function(a, b){
         // 未読あり > 未読ありの対応中 > 対応中 > 何もない
-        var a1 = (isNaN(parseInt(a[attribute1]))) ? 0 : 10000;
-        var b1 = (isNaN(parseInt(b[attribute1]))) ? 0 : 10000;
-        var a2 = (isNaN(parseInt(a[attribute2]))) ? 0 : 10;
-        var b2 = (isNaN(parseInt(b[attribute2]))) ? 0 : 10;
-        var calc = Math.abs(a1 - a2) - Math.abs(b1 - b2);
-        console.log(a);
+        var a1 = (isNaN(parseInt(a[attribute1]))) ? 0 : 10000,
+            b1 = (isNaN(parseInt(b[attribute1]))) ? 0 : 10000,
+            a2 = (isNaN(parseInt(a[attribute2]))) ? 0 : 10,
+            b2 = (isNaN(parseInt(b[attribute2]))) ? 0 : 10,
+            calc = Math.abs(a1 - a2) - Math.abs(b1 - b2);
         if(calc > 0) {
           return -1;
         } else if (calc < 0) {
           return 1;
-        }  else {
-          var atime = (isNaN(parseInt(a['time']))) ? 0 : parseInt(a['time']);
-          var btime = (isNaN(parseInt(b['time']))) ? 0 : parseInt(b['time']);
+        } else if(a1 === 0 && b1 === 0 && a2 === 0 && b2 === 0) {
+          // 各優先順位でステータス（ウィジェットオープン　＞　ウィジェット最小化　＞　ウィジェット非表示　＞　非アクティブ）で並び替え
+          var astatus = (isNaN(parseInt(a['status']))) ? 0 : parseInt(a['status']),
+              bstatus = (isNaN(parseInt(b['status']))) ? 0 : parseInt(b['status']);
+          if(astatus !== bstatus) {
+            return astatus - bstatus;
+          } else {
+            var atime = (isNaN(parseInt(a['time']))) ? 0 : parseInt(a['time']),
+                btime = (isNaN(parseInt(b['time']))) ? 0 : parseInt(b['time']);
+            return btime - atime;
+          }
+        } else {
+          var atime = (isNaN(parseInt(a['time']))) ? 0 : parseInt(a['time']),
+              btime = (isNaN(parseInt(b['time']))) ? 0 : parseInt(b['time']);
           return btime - atime;
         }
       });

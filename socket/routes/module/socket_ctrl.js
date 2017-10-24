@@ -74,7 +74,7 @@ var LaSessionCounter = function() {
       return _getCurrentCount(siteKey);
     },
     countUp : function(siteKey, tabId) { // サイト訪問者側のIDを入れる
-      if(this.currentCountExists(siteKey)) {
+      if(!this.currentCountExists(siteKey)) {
         // まずはゼロ代入
         this.initializeCurrentCount(siteKey);
       }
@@ -96,7 +96,7 @@ var LaSessionCounter = function() {
       countList[siteKey][_key_currentCount] = [];
     },
     currentCountExists : function(siteKey) {
-      return (siteKey in countList) && (_key_currentCount in countList[siteKey]);
+      return (siteKey in countList) && (_key_currentCount in countList[siteKey]) && (typeof(countList[siteKey][_key_currentCount] === 'object'));
     },
     isLimit : function(siteKey) {
       var current = this.getCurrentCount(siteKey);
@@ -2018,7 +2018,6 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   socket.on('requestCoBrowseOpen', function (data) {
     console.log("requestCoBrowseOpen >>> " + data);
     var obj = JSON.parse(data);
-    console.log(data);
     if ( !getSessionId(obj.siteKey, obj.tabId, 'sessionId') ) return false;
     if(laSessionCounter.isLimit(obj.siteKey)) {
       emit.toMine('coBrowseSessionLimit', data, socket);
