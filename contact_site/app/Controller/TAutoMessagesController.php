@@ -234,12 +234,12 @@ class TAutoMessagesController extends AppController {
       sort($sortNoList);
       $this->log($list,LOG_DEBUG);
       /* 現在の並び順を取得 */
-      $this->paginate['TAutoMessage']['conditions']['m_companies_id'] = $this->userInfo['MCompany']['id'];
       $params = $this->paginate['TAutoMessage'];
       $params['fields'] = [
           'TAutoMessage.id',
           'TAutoMessage.sort'
       ];
+      $params['conditions']['TAutoMessage.m_companies_id'] = $this->userInfo['MCompany']['id'];
       unset($params['limit']);
       $prevSort = $this->TAutoMessage->find('list', $params);
       //新しくソート順を設定したため、空で来ることがある
