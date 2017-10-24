@@ -289,7 +289,7 @@ sincloApp.controller('WidgetCtrl', function($scope){
         }
         element.jscolor.show();
         //var colorid = $scope.chat_talk_border_color;
-        var colorid = "<?= CHAT_TALK_BORDER_COLOR ?>";
+        var colorid = "#E8E7E0";
         $scope.re_border_color = colorid;
         var rgb = $scope.checkRgbColor(colorid);
         element.style.backgroundColor = colorid;
@@ -309,7 +309,7 @@ sincloApp.controller('WidgetCtrl', function($scope){
         }
         element.jscolor.show();
         //var colorid = $scope.chat_talk_border_color;
-        var colorid = "<?= CHAT_TALK_BORDER_COLOR ?>";
+        var colorid = "#E8E7E0";
         $scope.se_border_color = colorid;
         var rgb = $scope.checkRgbColor(colorid);
         element.style.backgroundColor = colorid;
@@ -530,7 +530,7 @@ sincloApp.controller('WidgetCtrl', function($scope){
       if(id === 're_border_color' || id === 'se_border_color' || id === 'message_box_border_color'){
         //現在設定されている吹き出し枠線色に変更
 //        var colorid = $scope.chat_talk_border_color;
-        var colorid = "<?= CHAT_TALK_BORDER_COLOR ?>";
+        var colorid = "#E8E7E0";
         switch (id) {
           case "re_border_color":
             $scope.re_border_color = colorid;

@@ -91,7 +91,7 @@ $config['default'] = [
       /**
        * 0.通常設定・高度設定
        */
-      "colorSettingType" => "0",
+      "colorSettingType" => "1",
 
       /**
        * 1.メインカラー

@@ -201,13 +201,13 @@ define('RE_TEXT_COLOR', "#333333");
 //12.企業側吹き出し背景色
 define('RE_BACKGROUND_COLOR', "#FAF6E6");
 //13.企業側吹き出し枠線色
-define('RE_BORDER_COLOR', "なし");
+define('RE_BORDER_COLOR', "#C9C9C9");
 //15.訪問者側吹き出し文字色
 define('SE_TEXT_COLOR', "#333333");
 //16.訪問者側吹き出し背景色
-define('SE_BACKGROUND_COLOR', "#E7E7E7");
+define('SE_BACKGROUND_COLOR', "#FFFFFF");
 //17.訪問者側吹き出し枠線色
-define('SE_BORDER_COLOR', "なし");
+define('SE_BORDER_COLOR', "#C9C9C9");
 //19.メッセージエリア背景色
 define('CHAT_MESSAGE_BACKGROUND_COLOR', "#FFFFFF");
 //20.メッセージBOX文字色
