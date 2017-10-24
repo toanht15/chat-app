@@ -400,7 +400,7 @@ $headerNo = 1;
               <!-- 基本設定色end -->
               <!-- 0.通常設定・高度設定 -->
               <!-- 高度な設定を行う行わないを制御するチェックボックス -->
-              <pre style="margin-top: 30px; margin-left: -3px;"><hr class="separator" style="margin: 5px 0 5px 0;"><label class="pointer"><?= $this->ngForm->input('color_setting_type', [
+              <pre style="margin-top: 30px; margin-left: -3px; margin-bottom: 5px;"><hr class="separator" style="margin: 5px 0 5px 0;"><label class="pointer"><?= $this->ngForm->input('color_setting_type', [
                 'type' => 'checkbox',
                 'legend' => false,
                 'ng-checked' => 'color_setting_type === "'.COLOR_SETTING_TYPE_ON.'"',
