@@ -3017,26 +3017,27 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
   // 参考 http://stackoverflow.com/questions/14478106/angularjs-sorting-by-property
   sincloApp.filter('orderObjectBy', function(){
-   return function(input, atr) {
+    return function(input, atr) {
       if (!angular.isObject(input)) return input;
       var array = [];
       for(var objectKey in input) {
-          array.push(input[objectKey]);
+        array.push(input[objectKey]);
       }
-      var sortAsc = (atr.match(/^-{1}/) === null);
-      var attribute = (sortAsc) ? atr : atr.substr(1);
+      var sortAsc = (atr.match(/^-{1}-{2}/) === null);
+      var splitedOrder = atr.split("-").slice(1);
+      var attribute1 =  splitedOrder[0];
+      var attribute2 =  splitedOrder[1];
       array.sort(function(a, b){
-          a = (isNaN(parseInt(a[attribute]))) ? 0 : parseInt(a[attribute]);
-          b = (isNaN(parseInt(b[attribute]))) ? 0 : parseInt(b[attribute]);
-          if (sortAsc) {
-            return a - b;
-          }
-          else {
-            return b - a;
-          }
+        // 未読ありの対応中 > 未読あり > 対応中 > 何もない
+        var a1 = (isNaN(parseInt(a[attribute1]))) ? 0 : 10000;
+        var b1 = (isNaN(parseInt(b[attribute1]))) ? 0 : 10000;
+        var a2 = (isNaN(parseInt(a[attribute2]))) ? 0 : 10;
+        var b2 = (isNaN(parseInt(b[attribute2]))) ? 0 : 10;
+        return (a1 + a2) - (b1 + b2) > 0 ? -1 : 1;
       });
+      //console.log(JSON.stringify(array));
       return array;
-   }
+    }
   });
 
   function _numPad(str){
