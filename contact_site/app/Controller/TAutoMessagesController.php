@@ -234,8 +234,8 @@ class TAutoMessagesController extends AppController {
       sort($sortNoList);
       $this->log($list,LOG_DEBUG);
       /* 現在の並び順を取得 */
-      $this->paginate['TAutoMessage']['conditions']['TAutoMessage.m_companies_id'] = $this->userInfo['MCompany']['id'];
-      $params = $this->paginate('TAutoMessage');
+      $this->paginate['TAutoMessage']['conditions']['m_companies_id'] = $this->userInfo['MCompany']['id'];
+      $params = $this->paginate['TAutoMessage'];
       $params['fields'] = [
           'TAutoMessage.id',
           'TAutoMessage.sort'
