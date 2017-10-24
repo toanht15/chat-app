@@ -3028,12 +3028,22 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var attribute1 =  splitedOrder[0];
       var attribute2 =  splitedOrder[1];
       array.sort(function(a, b){
-        // 未読ありの対応中 > 未読あり > 対応中 > 何もない
+        // 未読あり > 未読ありの対応中 > 対応中 > 何もない
         var a1 = (isNaN(parseInt(a[attribute1]))) ? 0 : 10000;
         var b1 = (isNaN(parseInt(b[attribute1]))) ? 0 : 10000;
         var a2 = (isNaN(parseInt(a[attribute2]))) ? 0 : 10;
         var b2 = (isNaN(parseInt(b[attribute2]))) ? 0 : 10;
-        return (a1 + a2) - (b1 + b2) > 0 ? -1 : 1;
+        var calc = Math.abs(a1 - a2) - Math.abs(b1 - b2);
+        console.log(a);
+        if(calc > 0) {
+          return -1;
+        } else if (calc < 0) {
+          return 1;
+        }  else {
+          var atime = (isNaN(parseInt(a['time']))) ? 0 : parseInt(a['time']);
+          var btime = (isNaN(parseInt(b['time']))) ? 0 : parseInt(b['time']);
+          return btime - atime;
+        }
       });
       //console.log(JSON.stringify(array));
       return array;
