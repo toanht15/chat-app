@@ -74,7 +74,7 @@ sincloApp.controller('WidgetCtrl', function($scope){
       }
       sincloBox.style.display = 'block';
       $scope.switchWidget(lastSwitchWidget);
-      $scope.openFlg = false;
+      $scope.openFlg = true;
       return;
     }
 

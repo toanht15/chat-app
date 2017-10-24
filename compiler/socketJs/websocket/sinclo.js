@@ -213,6 +213,7 @@
         //最小化時ボタン表示
         common.whenMinimizedBtnShow();
         sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
+        sinclo.operatorInfo.ev();
       },
       widgetHide: function(e) {
         if(e) e.stopPropagation();
