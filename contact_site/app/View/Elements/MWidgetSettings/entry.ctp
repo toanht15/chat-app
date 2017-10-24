@@ -229,7 +229,7 @@ $headerNo = 1;
           <!-- カラー -->
           <li>
             <span class="require"><label>カラー</label></span>
-            <div style="display: flex; width: 420px; flex-direction: column; padding: 0 0 0 5px;">
+            <div style="display: flex; flex-direction: column; padding: 0 0 0 5px;">
               <!-- 基本設定色start -->
               <?php if($coreSettings[C_COMPANY_USE_CHAT]){ ?>
               <div style="height: 240px;">
@@ -400,7 +400,7 @@ $headerNo = 1;
               <!-- 基本設定色end -->
               <!-- 0.通常設定・高度設定 -->
               <!-- 高度な設定を行う行わないを制御するチェックボックス -->
-              <pre style="margin-top: 30px; margin-left: -3px;"><hr class="separator" style="margin: 5px 0 5px 3px;"><label class="pointer"><?= $this->ngForm->input('color_setting_type', [
+              <pre style="margin-top: 30px; margin-left: -3px; margin-bottom: 5px;"><hr class="separator" style="margin: 5px 0 5px 0;"><label class="pointer"><?= $this->ngForm->input('color_setting_type', [
                 'type' => 'checkbox',
                 'legend' => false,
                 'ng-checked' => 'color_setting_type === "'.COLOR_SETTING_TYPE_ON.'"',
@@ -415,8 +415,8 @@ $headerNo = 1;
               <!-- 高度な設定を行う制御 start-->
               <div id="color_setting_details" ng-class="{chooseImg: showColorSettingDetails()}" style="margin:display: none;">
                 <!-- ヘッダー部start -->
-                <div style=" background-color: #ECF4DA; cursor: pointer; border-color: #C3D69B; border-style: solid; border-width: 1px 0 1px 0; font-weight: bold; margin-left: 15px; padding: 5px 0 5px 10px; width: 396px !important;">ヘッダー部</div><br>
-                <div style=" position: relative; top: -10px; left: 25px;">
+                <div style=" background-color: #ECF4DA; cursor: pointer; border-color: #C3D69B; border-style: solid; border-width: 1px 0 1px 0; font-weight: bold; padding: 5px 0 5px 10px; width: 396px !important;">ヘッダー部</div><br>
+                <div style=" position: relative; top: -10px; left: 10px;">
                 <!-- 7.企業名文字色 -->
                 <span style="height: 35px;"><label>企業名文字色</label><?= $this->ngForm->input('sub_title_text_color', [
                   'type' => 'text',
@@ -454,8 +454,8 @@ $headerNo = 1;
                   <div style="display: none">
                 <?php }?>
                   <!-- チャットエリア部start -->
-                  <div style=" background-color: #ECF4DA; cursor: pointer; border-color: #C3D69B; border-style: solid; border-width: 1px 0 1px 0; font-weight: bold; margin-left: 15px; padding: 5px 0 5px 10px; width: 396px !important;">チャットエリア部</div><br>
-                  <div style=" position: relative; top: 0px; left: 25px;">
+                  <div style=" background-color: #ECF4DA; cursor: pointer; border-color: #C3D69B; border-style: solid; border-width: 1px 0 1px 0; font-weight: bold; padding: 5px 0 5px 10px; width: 396px !important;">チャットエリア部</div><br>
+                  <div style=" position: relative; top: 0px; left: 10px;">
                   <!-- 9.チャットエリア背景色 -->
                   <span style="height: 35px;"><label>チャットエリア背景色　　</label><?= $this->ngForm->input('chat_talk_background_color', [
                     'type' => 'text',
@@ -645,8 +645,8 @@ $headerNo = 1;
                   <!-- チャットエリア部end -->
 
                   <!-- メッセージエリア部start -->
-                  <div style=" background-color: #ECF4DA; cursor: pointer; border-color: #C3D69B; border-style: solid; border-width: 1px 0 1px 0; font-weight: bold; margin-left: 15px; padding: 5px 0 5px 10px; width: 396px !important;">メッセージエリア部</div>
-                  <div style=" position: relative; top: 15px; left: 25px;">
+                  <div style=" background-color: #ECF4DA; cursor: pointer; border-color: #C3D69B; border-style: solid; border-width: 1px 0 1px 0; font-weight: bold; padding: 5px 0 5px 10px; width: 396px !important;">メッセージエリア部</div>
+                  <div style=" position: relative; top: 15px; left: 10px;">
                   <!-- 19.メッセージエリア背景色 -->
                   <span style="height: 35px;"><label>メッセージエリア背景色</label><?= $this->ngForm->input('chat_message_background_color', [
                     'type' => 'text',
@@ -768,8 +768,8 @@ $headerNo = 1;
                   <!-- メッセージエリア部end -->
                 </div>
                 <!-- その他部start -->
-                <div style=" background-color: #ECF4DA; cursor: pointer; border-color: #C3D69B; border-style: solid; border-width: 1px 0 1px 0; font-weight: bold; margin-left: 15px; padding: 5px 0 5px 10px; width: 396px !important; position: relative;top: 20px;">その他</div>
-                <div style=" position: relative; top: 30px; left: 25px;">
+                <div style=" background-color: #ECF4DA; cursor: pointer; border-color: #C3D69B; border-style: solid; border-width: 1px 0 1px 0; font-weight: bold; padding: 5px 0 5px 10px; width: 396px !important; position: relative;top: 20px;">その他</div>
+                <div style=" position: relative; top: 30px; left: 10px;">
                 <!-- 5.ウィジェット枠線色 -->
                 <span style="height: 35px;"><label>ウィジェット外枠線色</label>
                 <?php if($widget_border_color_flg){?>

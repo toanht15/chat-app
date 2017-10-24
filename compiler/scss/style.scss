@@ -3193,15 +3193,14 @@ ul.naviBtn {
         margin-top: 0.1em;
         margin-bottom: 1em;
         display: block;
-        width: 395px;
-        margin-left: 0px;
+        width: 396px;
         height: 1px;
         background-color: #DDD;
         border: 0;  /*デフォルトデザインでは線がある場合があるので、消しておく。*/
         &.indent {
-          width: 386px;
+          width: 384px;
           position: relative;
-          left: 0px;
+          left: -5px;
         }
       }
     }
