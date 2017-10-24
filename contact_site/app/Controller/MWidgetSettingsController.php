@@ -72,9 +72,10 @@ class MWidgetSettingsController extends AppController {
       }
       else{
         //初回読み込み時
-        $this->set('re_border_color_flg', false);
-        $inputData['MWidgetSetting']['re_border_color'] = 'なし';
-        $inputData['MWidgetSetting']['re_border_none'] = true;
+//         $this->set('re_border_color_flg', false);
+//         $inputData['MWidgetSetting']['re_border_color'] = 'なし';
+//         $inputData['MWidgetSetting']['re_border_none'] = true;
+        $this->set('re_border_color_flg', true);
       }
       if(array_key_exists ('se_border_color',$json)){
         if($json['se_border_color'] === 'none'){
@@ -88,9 +89,10 @@ class MWidgetSettingsController extends AppController {
       }
       else{
         //初回読み込み時
-        $this->set('se_border_color_flg', false);
-        $inputData['MWidgetSetting']['se_border_color'] = 'なし';
-        $inputData['MWidgetSetting']['se_border_none'] = true;
+//         $this->set('se_border_color_flg', false);
+//         $inputData['MWidgetSetting']['se_border_color'] = 'なし';
+//         $inputData['MWidgetSetting']['se_border_none'] = true;
+        $this->set('se_border_color_flg', true);
       }
       if(array_key_exists ('message_box_border_color',$json)){
         if($json['message_box_border_color'] === 'none'){

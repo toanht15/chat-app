@@ -211,16 +211,16 @@ var socket, // socket.io
           reBackgroundColor: reBackgroundColor,
           //13.企業側吹き出し枠線色 ※基本設定 6.吹き出し枠線色を使用
           reBorderColor: widget.chatTalkBorderColor,
-          //14.企業側吹き出し枠線なし ※通常設定の時は必ず1
-          reBorderNone: 1,
+          //14.企業側吹き出し枠線なし ※通常設定の時は必ず0
+          reBorderNone: 0,
           //15.訪問者側吹き出し文字色 ※基本設定 3.吹き出し文字色を使用
           seTextColor: widget.messageTextColor,
           //16.訪問者側吹き出し背景色 ※デフォルトカラー白に設定
-          seBackgroundColor: "#E7E7E7",
+          seBackgroundColor: "#FFFFFF",
           //17.訪問者側吹き出し枠線色 ※基本設定 6.吹き出し枠線色を使用
           seBorderColor: widget.chatTalkBorderColor,
-          //18.訪問者側吹き出し枠線色 ※通常設定の時は必ず1
-          seBorderNone: 1,
+          //18.訪問者側吹き出し枠線色 ※通常設定の時は必ず0
+          seBorderNone: 0,
           //19.メッセージエリア背景色 ※デフォルトカラー白に設定
           chatMessageBackgroundColor: "#FFFFFF",
           //20.メッセージBOX文字色 ※基本設定 4.その他文字色を使用
@@ -246,7 +246,7 @@ var socket, // socket.io
       else{
         //高度な設定
         if(widget.reBorderColor === undefined || widget.reBorderColor === 'none'){
-          var reBorderColor = "#FFFFFF"; //念のため
+          var reBorderColor = "#E8E7E0"; //念のため
           var reBorderNone = 1;
         }
         else{
@@ -254,7 +254,7 @@ var socket, // socket.io
           var reBorderNone = 0;
         }
         if(widget.seBorderColor === undefined || widget.seBorderColor === 'none'){
-          var seBorderColor = "#FFFFFF"; //念のため
+          var seBorderColor = "#E8E7E0"; //念のため
           var seBorderNone = 1;
         }
         else{
@@ -262,7 +262,7 @@ var socket, // socket.io
           var seBorderNone = 0;
         }
         if(widget.messageBoxBorderColor === undefined || widget.messageBoxBorderColor === 'none'){
-          var messageBoxBorderColor = "#FFFFFF"; //念のため
+          var messageBoxBorderColor = "#E8E7E0"; //念のため
           var messageBoxBorderNone = 1;
         }
         else{
@@ -270,7 +270,7 @@ var socket, // socket.io
           var messageBoxBorderNone = 0;
         }
         if(widget.widgetBorderColor === undefined || widget.widgetBorderColor === 'none'){
-          var widgetBorderColor = "#FFFFFF"; //念のため
+          var widgetBorderColor = "#E8E7E0"; //念のため
           var widgetBorderNone = 1;
         }
         else{
@@ -278,7 +278,7 @@ var socket, // socket.io
           var widgetBorderNone = 0;
         }
         if(widget.widgetInsideBorderColor === undefined || widget.widgetInsideBorderColor === 'none'){
-          var widgetInsideBorderColor = "#FFFFFF"; //念のため
+          var widgetInsideBorderColor = "#E8E7E0"; //念のため
           var widgetInsideBorderNone = 1;
         }
         else{
