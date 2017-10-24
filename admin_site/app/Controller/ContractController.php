@@ -402,6 +402,7 @@ class ContractController extends AppController
           "trigger_type" => $item['trigger_type'],
           "activity" => $this->convertActivityToJSON($item['activity']),
           "action_type" => $item['action_type'],
+          "sort" => $item['sort'],
           "active_flg" => $item['active_type']
         ]);
         $this->TAutoMessages->save();
