@@ -992,13 +992,14 @@ var socket, // socket.io
             html += '#sincloBox p#widgetDescription { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }';
           }
           if(colorList['widgetBorderNone'] === 1){
-            html += '#sincloBox p#widgetDescription { border-left:none; border-right:none; }';
+            html += '#sincloBox p#widgetDescription { border-left:none; border-right:none;}';
           }
           html += '#sincloBox section { border: ' + (1 * ratio) + 'px solid '+ colorList['widgetBorderColor'] +'; border-top: none; border-bottom: ' + (1 * ratio) + 'px solid '+ colorList['widgetInsideBorderColor'] +';}';
           if(colorList['widgetBorderNone'] === 1){
             html += '#sincloBox section { border-top: none; border-left:none; border-right:none; }'
           }
           if(colorList['widgetInsideBorderNone'] === 1){
+            html += '#sincloBox p#widgetDescription { border-bottom:none!important;}';
             html += '#sincloBox section { border-bottom:none!important;}';
           }
           // 画像がセットされている場合のスタイル
@@ -1189,13 +1190,14 @@ var socket, // socket.io
         }
         html += '      #sincloBox p#widgetDescription { background-color: #FFF; margin: 0; padding-bottom: 7px; text-align: left; border-width: 0 1px 1px 1px; border-color: '+ colorList['widgetBorderColor'] +'; border-style: solid; padding-left: 77px; height: '+ sizeList['widgetDescriptionHeight'] +'px; color: ' + colorList['descriptionTextColor'] + '; border-bottom-color:'+ colorList['widgetInsideBorderColor'] +';}';
         if(colorList['widgetBorderNone'] === 1){
-          html += '#sincloBox p#widgetDescription { border-left:none; border-right:none; }';
+          html += '#sincloBox p#widgetDescription { border-left:none; border-right:none;}';
         }
         html += '      #sincloBox section { background-color: #FFF; border: 1px solid '+ colorList['widgetBorderColor'] +'; border-top: none; border-bottom: 1px solid '+ colorList['widgetInsideBorderColor'] +'; }';
         if(colorList['widgetBorderNone'] === 1){
           html += '      #sincloBox section { border-top: none; border-left:none; border-right:none; }';
         }
         if(colorList['widgetInsideBorderNone'] === 1){
+          html += '#sincloBox p#widgetDescription { border-bottom:none!important;}';
           html += '      #sincloBox section { border-bottom: none!important; }';
         }
         // 画像がセットされている場合のスタイル

@@ -41,6 +41,37 @@ class MWidgetSettingsController extends AppController {
         $this->redirect(['controller' =>'MWidgetSettings', 'action' => 'index', 'showTab' => $this->request->data['widget']['showTab']]);
       }
       else {
+        $mWidgetSetting = $this->request->data['MWidgetSetting'];
+        if($mWidgetSetting['re_border_none'] === '1'){
+          $this->set('re_border_color_flg', false);
+        }
+        else{
+          $this->set('re_border_color_flg', true);
+        }
+        if($mWidgetSetting['se_border_none'] === '1'){
+          $this->set('se_border_color_flg', false);
+        }
+        else{
+          $this->set('se_border_color_flg', true);
+        }
+        if($mWidgetSetting['message_box_border_none'] === '1'){
+          $this->set('message_box_border_color_flg', false);
+        }
+        else{
+          $this->set('message_box_border_color_flg', true);
+        }
+        if($mWidgetSetting['widget_outside_border_none'] === '1'){
+          $this->set('widget_border_color_flg', false);
+        }
+        else{
+          $this->set('widget_border_color_flg', true);
+        }
+        if($mWidgetSetting['widget_inside_border_none'] === '1'){
+          $this->set('widget_inside_border_color_flg', false);
+        }
+        else{
+          $this->set('widget_inside_border_color_flg', true);
+        }
         $this->set('alertMessage', ['type' => C_MESSAGE_TYPE_ERROR, 'text' => Configure::read('message.const.saveFailed')]);
       }
     }
