@@ -1397,7 +1397,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       if ( receiveAccessInfoToken !== obj.receiveAccessInfoToken ) return false;
       pushToList(obj);
       if ( 'chat' in obj && String(obj.chat) === "<?=$muserId?>" ) {
-        pushToChatList(obj.sincloSessionId);
+        pushToChatList(obj.tabId);
       }
     });
 
@@ -1615,10 +1615,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
 
       if ( obj.userId === myUserId && obj.ret ) {
-        pushToChatList(obj.sincloSessionId);
+        pushToChatList(obj.tabId);
         // $("#sendMessage").focus();
         // 既読にする
-        chatApi.isReadMessage($scope.monitorList[obj.sincloSessionId]);
+        chatApi.isReadMessage($scope.monitorList[obj.tabId]);
       }
       else {
         $scope.chatList = $scope.chatList.filter(function(v){
