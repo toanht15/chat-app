@@ -1332,6 +1332,9 @@
                 this.sound.volume = 0.3;
             }
 
+            // 複数回イベントが登録されるケースがあるためいったんOFFにする
+            $(document).off('click', "input[name^='sinclo-radio']");
+
             $(document)
               .on('focus', "#sincloChatMessage",function(e){
                 if(e) e.stopPropagation();
