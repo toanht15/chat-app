@@ -533,24 +533,36 @@ sincloApp.controller('WidgetCtrl', function($scope){
         var colorid = "#E8E7E0";
         switch (id) {
           case "re_border_color":
-            $scope.re_border_color = colorid;
-            $scope.changeReBorderColor();
-            //MWidgetSettingReBorderColor
-            var rgb = $scope.checkRgbColor(colorid);
-            var rgbcode = 'rgb(' + rgb['r']  + ', ' +  rgb['g']  + ', ' +  rgb['b'] + ')';
-            var element = document.getElementById('MWidgetSettingReBorderColor');
-            element.style.backgroundColor = rgbcode;
-            element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+//             $scope.re_border_color = colorid;
+//             $scope.changeReBorderColor();
+//             //MWidgetSettingReBorderColor
+//             var rgb = $scope.checkRgbColor(colorid);
+//             var rgbcode = 'rgb(' + rgb['r']  + ', ' +  rgb['g']  + ', ' +  rgb['b'] + ')';
+//             var element = document.getElementById('MWidgetSettingReBorderColor');
+//             element.style.backgroundColor = rgbcode;
+//             element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+              //document.getElementById('MWidgetSettingReBorderNone').checked;
+              var element = document.getElementById('MWidgetSettingReBorderColor');
+              $scope.re_border_none = true;
+              element.style.backgroundColor = "#FFFFFF";
+              element.style.color = "#909090";
+              $scope.re_border_color = "なし"
             break;
           case "se_border_color":
-            $scope.se_border_color = colorid;
-            $scope.changeSeBorderColor();
-            //MWidgetSettingSeBorderColor
-            var rgb = $scope.checkRgbColor(colorid);
-            var rgbcode = 'rgb(' + rgb['r']  + ', ' +  rgb['g']  + ', ' +  rgb['b'] + ')';
-            var element = document.getElementById('MWidgetSettingSeBorderColor');
-            element.style.backgroundColor = rgbcode;
-            element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+//             $scope.se_border_color = colorid;
+//             $scope.changeSeBorderColor();
+//             //MWidgetSettingSeBorderColor
+//             var rgb = $scope.checkRgbColor(colorid);
+//             var rgbcode = 'rgb(' + rgb['r']  + ', ' +  rgb['g']  + ', ' +  rgb['b'] + ')';
+//             var element = document.getElementById('MWidgetSettingSeBorderColor');
+//             element.style.backgroundColor = rgbcode;
+//             element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+              //document.getElementById('MWidgetSettingSeBorderNone').checked;
+              var element = document.getElementById('MWidgetSettingSeBorderColor');
+              $scope.se_border_none = true;
+              element.style.backgroundColor = "#FFFFFF";
+              element.style.color = "#909090";
+              $scope.se_border_color = "なし"
             break;
           case "message_box_border_color":
             colorid = "<?= MESSAGE_BOX_BORDER_COLOR ?>";
@@ -582,7 +594,8 @@ sincloApp.controller('WidgetCtrl', function($scope){
             element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
             break;
           case "se_background_color":
-            var colorid = '<?=SE_BACKGROUND_COLOR?>';
+            //var colorid = '<?=SE_BACKGROUND_COLOR?>';
+            var colorid = '#E7E7E7';
             $scope.se_background_color = colorid;
             //MWidgetSettingSeBackgroundColor
             var rgb = $scope.checkRgbColor(colorid);
