@@ -770,6 +770,16 @@
       if ( obj.sincloSessionId !== userInfo.sincloSessionId && obj.tabId !== userInfo.tabId ) return false;
       var elm = document.getElementById('sincloChatMessage'), cn, userName = "";
       if ( obj.ret ) {
+        if(obj.messageType === sinclo.chatApi.messageType.customer && storage.s.get('chatAct') !== "true") {
+          // 別タブで送信した自分のメッセージを受けたのでチャット応対中とする
+          console.log("self message received. set chatAct = true");
+          storage.s.set('chatAct', true);
+        }
+        if(obj.messageType === sinclo.chatApi.messageType.customer && storage.s.get('chatEmit') !== "true") {
+          // 別タブで送信した自分のメッセージを受けたのでチャット応対中とする
+          console.log("self message received. set chatEmit = true");
+          storage.s.set('chatEmit', true) ;
+        }
         // スマートフォンの場合はメッセージ送信時に、到達確認タイマーをリセットする
         if ( sinclo.chatApi.sendErrCatchTimer !== null ) {
           clearTimeout(sinclo.chatApi.sendErrCatchTimer);
