@@ -201,7 +201,7 @@ class HistoriesController extends AppController {
    * */
   public function calcTime($startDateTime, $endDateTime){
     Configure::write('debug', 0);
-    if ( empty($startDateTime) || empty($endDateTime) ) {
+    if ( empty($startDateTime) || empty($endDateTime) || strtotime($startDateTime) > strtotime($endDateTime) ) {
       return "-";
     }
     $start = new DateTime($startDateTime);
@@ -275,10 +275,13 @@ class HistoriesController extends AppController {
     $userList = $this->_userList($historyList);
     //THistoryChatLogの「firstURL」と「count」をと取ってくる
     $stayList = $this->_stayList($userList);
+    //最終発言時間を取得
+    $lastSpeechList = $this->_lastSpeechTimeList($historyList);
 
     // ヘッダー
     $csv[] = [
       "日時",
+      "IPアドレス",
       "訪問ユーザ",
       "プラットフォーム",
       "ブラウザ",
@@ -289,6 +292,7 @@ class HistoriesController extends AppController {
     ];
 
     if ( $this->coreSettings[C_COMPANY_USE_CHAT] ) {
+      $csv[0][] = "最終発言後離脱時間";
       $csv[0][] = "成果";
       $csv[0][] = "チャット担当者";
     }
@@ -313,22 +317,24 @@ class HistoriesController extends AppController {
       // 日時
       $dateTime = date_format(date_create($history['THistory']['access_date']), "Y/m/d\nH:i:s");
       $row['date'] = $dateTime;
-      // 訪問ユーザ
-      $row['ip'] = "";
-      if ( !empty($history['MCustomer']['informations']) ) {
-        $informations = (array)json_decode($history['MCustomer']['informations']);
-        if ( isset($informations['company']) && $informations['company'] !== "" ) {
-          $row['ip'] .= $informations['company'];
-        }
-        if (isset($informations['name']) && $informations['name'] !== "" ) {
-          if ( $row['ip'] !== "" ) $row['ip'] .= "\n";
-          $row['ip'] .= $informations['name'];
-        }
-      }
+      // IPアドレス
       if ($history['THistory']['ip_address'] !== "" ) {
         if ( $row['ip'] !== "" ) $row['ip'] .= "\n";
         $row['ip'] .= $history['THistory']['ip_address'];
       }
+      // 訪問ユーザ
+      $row['customer'] = "";
+      if ( !empty($history['MCustomer']['informations']) ) {
+        $informations = (array)json_decode($history['MCustomer']['informations']);
+        if ( isset($informations['company']) && $informations['company'] !== "" ) {
+          $row['customer'] .= $informations['company'];
+        }
+        if (isset($informations['name']) && $informations['name'] !== "" ) {
+          if ( $row['customer'] !== "" ) $row['customer'] .= "\n";
+          $row['customer'] .= $informations['name'];
+        }
+      }
+
       // OS
       $row['os'] = $this->_userAgentCheckOs($history);
       // ブラウザ
@@ -343,6 +349,8 @@ class HistoriesController extends AppController {
       // 滞在時間
       $row['visitTime'] = $this->calcTime($history['THistory']['access_date'], $history['THistory']['out_date']);
       if ( $this->coreSettings[C_COMPANY_USE_CHAT] ) {
+        // 最終発言
+        $row['lastSpeechTime'] = $this->calcTime($lastSpeechList[$history['THistory']['id']], $history['THistory']['out_date']);
         // 成果
         $row['achievement'] = "";
         if ($history['THistoryChatLog2']['achievementFlg']){
@@ -384,6 +392,7 @@ class HistoriesController extends AppController {
     // ヘッダー
     $csv[] = [
       "訪問日時",
+      "IPアドレス",
       "訪問ユーザ",
       "プラットフォーム",
       "ブラウザ",
@@ -399,21 +408,22 @@ class HistoriesController extends AppController {
       // 日時
       $dateTime = $val['THistory']['access_date'];
       $row['date'] = $dateTime;
-      //訪問ユーザ
-      $row['ip'] = "";
-      if ( !empty($val['MCustomer']['informations']) ) {
-        $informations = (array)json_decode($val['MCustomer']['informations']);
-        if ( isset($informations['company']) && $informations['company'] !== "" ) {
-          $row['ip'] .= $informations['company'];
-        }
-        if (isset($informations['name']) && $informations['name'] !== "" ) {
-          if ( $row['ip'] !== "" ) $row['ip'] .= "\n";
-          $row['ip'] .= $informations['name'];
-        }
-      }
+      //IPアドレス
       if ($val['THistory']['ip_address'] !== "" ) {
         if ( $row['ip'] !== "" ) $row['ip'] .= "\n";
         $row['ip'] .= $val['THistory']['ip_address'];
+      }
+      //訪問ユーザ
+      $row['customer'] = "";
+      if ( !empty($val['MCustomer']['informations']) ) {
+        $informations = (array)json_decode($val['MCustomer']['informations']);
+        if ( isset($informations['company']) && $informations['company'] !== "" ) {
+          $row['customer'] .= $informations['company'];
+        }
+        if (isset($informations['name']) && $informations['name'] !== "" ) {
+          if ( $row['customer'] !== "" ) $row['customer'] .= "\n";
+          $row['customer'] .= $informations['name'];
+        }
       }
       // OS
       $row['os'] = $this->_userAgentCheckOs($val);
@@ -879,9 +889,21 @@ class HistoriesController extends AppController {
         $joinToChat['type'] = "INNER";
       }
 
+      $joinToLastSpeechChatTime = [
+        'type' => 'LEFT',
+        'table' => '(SELECT t_histories_id, message_type, MAX(created) as created FROM t_history_chat_logs WHERE message_type = 1 GROUP BY t_histories_id)',
+        'alias' => 'LastSpeechTime',
+        'field' => 'created as lastSpeechTime',
+        'conditions' => [
+          'LastSpeechTime.t_histories_id = THistoryChatLog.t_histories_id',
+        ],
+      ];
+
       $this->paginate['THistory']['fields'][] = 'THistoryChatLog.*';
+      $this->paginate['THistory']['fields'][] = 'LastSpeechTime.created as lastSpeechTime';
 
       $this->paginate['THistory']['joins'][] = $joinToChat;
+      $this->paginate['THistory']['joins'][] = $joinToLastSpeechChatTime;
     }
 
     $historyList = $this->paginate('THistory');
@@ -1474,6 +1496,35 @@ class HistoriesController extends AppController {
       ];
     }
     return $stayList;
+  }
+
+  private function _lastSpeechTimeList($historyList) {
+    $historyIdList = [];
+    foreach($historyList as $val){
+      $historyIdList[] = $val['THistory']['id'];
+    }
+    $chatList = $this->THistoryChatLog->find('all',[
+      'fields' => [
+        'THistoryChatLog.t_histories_id',
+        'THistoryChatLog.message_type',
+        'MAX(created) as created'
+      ],
+      'order' => [
+        'THistoryChatLog.t_histories_id' => 'asc'
+      ],
+      'conditions' => [
+        'AND' => array(
+          't_histories_id' => $historyIdList,
+          'message_type = 1')
+      ],
+      'group' => ['THistoryChatLog.t_histories_id']
+    ]);
+
+    $list = [];
+    foreach($chatList as $k => $chat) {
+      $list[$chat['THistoryChatLog']['t_histories_id']] = $chat[0]['created'];
+    }
+    return $list;
   }
 
     /**

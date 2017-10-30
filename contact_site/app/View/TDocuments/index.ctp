@@ -15,7 +15,42 @@ $prevCnt = ($params['page'] - 1);
 
     <div id='tdocument_menu' class="p20trl">
       <div class="fLeft" >
+<!--
         <?= $this->Html->image('add.png', ['url' => ['controller'=>'TDocuments', 'action' => 'add'], 'alt' => '登録', 'class' => 'btn-shadow greenBtn', 'width' => 30, 'height' => 30]) ?>
+ -->
+        <div class="btnSet">
+          <span style="display:inline; padding: 0;">
+            <a style="text-decoration: none;">
+              <?= $this->Html->image('add.png', array(
+                  'alt' => '登録',
+                  'id'=>'tdocument_add_btn',
+                  'class' => 'btn-shadow disOffgreenBtn commontooltip',
+                  'data-text' => '新規追加',
+                  'data-balloon-position' => '36',
+                  'width' => 45,
+                  'height' => 45)) ?>
+            </a>
+          </span>
+          <span style="display:inline; padding: 0;">
+            <a>
+              <?= $this->Html->image('dustbox.png', array(
+                  'alt' => '削除',
+                  'id'=>'tdocument_dustbox_btn',
+                  'class' => 'btn-shadow disOffgrayBtn commontooltip',
+                  'data-text' => '削除する',
+                  'data-balloon-position' => '35',
+                  'width' => 45,
+                  'height' => 45)) ?>
+            </a>
+          </span>
+        </div>
+        <!-- 資料設定の並び替えモード -->
+        <div class="tabpointer">
+          <label class="pointer">
+            <?= $this->Form->checkbox('sort', array('onchange' => 'toggleSort()')); ?><span id="sortText">並び替え</span><span id="sortTextMessage" style="display: none; font-size: 1.1em; color: rgb(192, 0, 0); font-weight: bold; ">（！）並び替え中（保存する場合はチェックを外してください）</span>
+          </label>
+        </div>
+        <!-- 資料設定の並び替えモード -->
       </div>
     </div>
 
@@ -24,14 +59,22 @@ $prevCnt = ($params['page'] - 1);
       <table>
         <thead>
         <tr>
+<!-- UI/UX統合対応start -->
+          <th width=" 5%">
+            <input type="checkbox" name="allCheck" id="allCheck" >
+            <label for="allCheck"></label>
+          </th>
+<!-- UI/UX統合対応end -->
           <th width="5%">No</th>
           <th width="15%">資料</th>
           <th width="25%">資料名</th>
           <th width="40%">概要</th>
+<!--
           <th width="15%">操作</th>
+ -->
         </tr>
         </thead>
-        <tbody>
+        <tbody class="sortable">
         <?php
         foreach((array)$documentList as $key => $val):
           $id = "";
@@ -40,9 +83,15 @@ $prevCnt = ($params['page'] - 1);
           }
           $no = $prevCnt + h($key+1);
           ?>
-          <tr class="pointer" data-id="<?=h($id)?>" onclick="jumpTo(<?="'".$this->Html->url(['controller'=>'TDocuments', 'action'=>'edit', $id])."'";?>)">
-            <td class="tCenter"><?=$no?></td>
-            <td class="tCenter">
+          <tr class="pointer" data-id="<?=h($id)?>" data-sort="<?=$val['TDocument']['sort']?>" onclick="openEdit(<?=$id;?>)">
+<!-- UI/UX統合対応start -->
+            <td class="tCenter" onclick="event.stopPropagation();" width=" 5%">
+              <input type="checkbox" name="selectTab" id="selectTab<?=$key?>" value="<?=$val['TDocument']['id']?>">
+              <label for="selectTab<?=$key?>"></label>
+            </td>
+<!-- UI/UX統合対応end -->
+            <td class="tCenter" width=" 5%"><?=$no?></td>
+            <td class="tCenter" width="15%">
               <div class = "document_image" ng-click="$event.stopPropagation(); openDocumentList3(<?=$id?>)">
                 <?php
                 $settings = (!empty($val['TDocument']['settings'])) ? (array)json_decode($val['TDocument']['settings']) : [];
@@ -63,14 +112,16 @@ $prevCnt = ($params['page'] - 1);
                 <?= $this->Html->image(C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/".C_PREFIX_DOCUMENT.pathinfo(h($val['TDocument']['file_name']), PATHINFO_FILENAME).".jpg", ['style' => $matrix]);?>
               </div>
             </td>
-            <td class="tCenter"><?=h($val['TDocument']['name'])?></td>
-            <td class="tCenter"><?=h($val['TDocument']['overview'])?></td>
+            <td class="tCenter" width="25%"><?=h($val['TDocument']['name'])?></td>
+            <td class="tCenter" width="40%"><?=h($val['TDocument']['overview'])?></td>
             <!-- <td class="tCenter"><span><?=implode("</span>、<span>",$val['TDocument']['tag'])?></span></td> -->
+<!--
             <td class="p10x noClick lineCtrl">
               <div>
                 <a href="javascript:void(0)" class="btn-shadow redBtn m10r10l fRight" onclick="event.stopPropagation(); removeAct('<?=$id?>')"><img src="/img/trash.png" alt="削除" width="30" height="30"></a>
               </div>
             </td>
+ -->
           </tr>
         <?php endforeach; ?>
         <?php if ( count($documentList) === 0 ) :?>

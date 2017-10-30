@@ -213,6 +213,7 @@
         //最小化時ボタン表示
         common.whenMinimizedBtnShow();
         sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
+        sinclo.operatorInfo.ev();
       },
       widgetHide: function(e) {
         if(e) e.stopPropagation();
@@ -390,9 +391,9 @@
       if(typeof(AssistSDK) !== 'undefined') {
         console.log("Assist SDK found. initSDKCallbacks");
         laUtil.initSDKCallbacks();
-        if(storage.l.get('assist-localstorage-config') && !storage.s.get('assist-sessionstorage-config')) {
+        if(storage.l.get('assist-localstorage-config') && !storage.s.get('assist-session-config')) {
           console.log("LA localstorage found. but sessionstorage not found. deleting");
-          storage.l.unset('assist-localstorage-config')
+          storage.l.unset('assist-localstorage-config');
         }
       }
 
@@ -1331,6 +1332,9 @@
             if ( this.sound ) {
                 this.sound.volume = 0.3;
             }
+
+            // 複数回イベントが登録されるケースがあるためいったんOFFにする
+            $(document).off('click', "input[name^='sinclo-radio']");
 
             $(document)
               .on('focus', "#sincloChatMessage",function(e){

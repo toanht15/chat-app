@@ -171,6 +171,59 @@ define('C_WIDGET_SIZE_TYPE_SMALL', 1); // 小
 define('C_WIDGET_SIZE_TYPE_MEDIUM', 2); // 中
 define('C_WIDGET_SIZE_TYPE_LARGE', 3); // 大
 
+/* カラー設定初期値styat */
+//0.通常設定・高度設定
+define('COLOR_SETTING_TYPE_OFF', 0);
+define('COLOR_SETTING_TYPE_ON', 1);
+
+//1.メインカラー
+define('MAIN_COLOR', "#ABCD05");
+//2.タイトル文字色
+define('STRING_COLOR', "#FFFFFF");
+//3.吹き出し文字色
+define('MESSAGE_TEXT_COLOR', "#333333");
+//4.その他文字色
+define('OTHER_TEXT_COLOR', "#666666");
+//5.ウィジェット枠線色
+define('WIDGET_BORDER_COLOR', "#E8E7E0");
+//6.吹き出し枠線色
+define('CHAT_TALK_BORDER_COLOR', "#C9C9C9");
+//7.企業名文字色
+define('SUB_TITLE_TEXT_COLOR', "#ABCD05");
+//8.説明文文字色
+define('DESCRIPTION_TEXT_COLOR', "#666666");
+//9.チャットエリア背景色
+define('CHAT_TALK_BACKGROUND_COLOR', "#FFFFFF");
+//10.企業名担当者名文字色
+define('C_NAME_TEXT_COLOR', "#ABCD05");
+//11.企業側吹き出し文字色
+define('RE_TEXT_COLOR', "#333333");
+//12.企業側吹き出し背景色
+define('RE_BACKGROUND_COLOR', "#FAF6E6");
+//13.企業側吹き出し枠線色
+define('RE_BORDER_COLOR', "#C9C9C9");
+//15.訪問者側吹き出し文字色
+define('SE_TEXT_COLOR', "#333333");
+//16.訪問者側吹き出し背景色
+define('SE_BACKGROUND_COLOR', "#FFFFFF");
+//17.訪問者側吹き出し枠線色
+define('SE_BORDER_COLOR', "#C9C9C9");
+//19.メッセージエリア背景色
+define('CHAT_MESSAGE_BACKGROUND_COLOR', "#FFFFFF");
+//20.メッセージBOX文字色
+define('MESSAGE_BOX_TEXT_COLOR', "#666666");
+//21.メッセージBOX背景色
+define('MESSAGE_BOX_BACKGROUND_COLOR', "#FFFFFF");
+//22.メッセージBOX枠線色
+define('MESSAGE_BOX_BORDER_COLOR', "#D4D4D4");
+//24.送信ボタン文字色
+define('CHAT_SEND_BTN_TEXT_COLOR', "#FFFFFF");
+//25.送信ボタン背景色
+define('CHAT_SEND_BTN_BACKGROUND_COLOR', "#ABCD05");
+//26.ウィジット内枠線色
+define('WIDGET_INSIDE_BORDER_COLOR', "#E8E7E0");
+/* カラー設定初期値end */
+
 //最小化時のデザインタイプ
 define('C_MINIMIZED_DESIGN_NO_SIMPLE', 1); // シンプル表示しない
 define('C_MINIMIZED_DESIGN_SP_SIMPLE', 2); // スマホのみシンプル表示する
