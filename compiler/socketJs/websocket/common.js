@@ -3535,6 +3535,7 @@ function emit(evName, data){
     data.accessId = userInfo.accessId;
     data.userId = userInfo.userId;
     data.status = browserInfo.getActiveWindow();
+    data.sincloSessionId = userInfo.sincloSessionId;
   }
   if (evName === "connected" || evName === "getChatMessage") {
     data.token = common.token;
