@@ -128,6 +128,7 @@
   text-decoration: none;
   overflow: hidden;
   outline: none;
+  height: 28px;
 }
 .ui-tabs .ui-tabs-nav li.ui-tabs-active {
   margin-bottom: -1px;
@@ -135,7 +136,8 @@
 }
 #soteTabs.ui-tabs .ui-tabs-nav li.ui-tabs-active {
   margin-bottom: -1px;
-  padding-bottom: 2px;
+  padding-bottom: 1px;
+  height: 31px;
 }
 .ui-tabs .ui-tabs-nav li.ui-tabs-active .ui-tabs-anchor,
 .ui-tabs .ui-tabs-nav li.ui-state-disabled .ui-tabs-anchor,

@@ -408,21 +408,74 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       tabInfoNotificationMessage: <?php echo json_encode($tabStatusNotificationMessageList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?> // タブ状態の通知用メッセージ
     };
 
-    $scope.search = function(array){
+    $scope.beforeInputValue = '';
+    $scope.searchResult = [];
+    $scope.search = function(array, forceResult){
+      var isHideRealTimeMonitor = contract.hideRealtimeMonitor;
       var result = {}, targetField;
       targetField = ( Number($scope.fillterTypeId) === 2 ) ? 'ipAddress' : 'accessId';
-      if ( $scope.searchText ) {
-        angular.forEach(array, function(value, key) {
-          if ( value[targetField].indexOf($scope.searchText) === 0) {
-            result[key] = value;
+      if(isHideRealTimeMonitor) {
+        if (forceResult) {
+          $scope.searchResult = array;
+          result = array;
+        } else if ($scope.searchText.length >= 4 && $scope.searchText !== $scope.beforeInputValue) {
+          $scope.searchProcess($scope.searchText, $scope.fillterTypeId);
+          $scope.monitorList = [];
+          $scope.chatList = [];
+          result = [];
+        } else if ($scope.searchText.length >= 4 && $scope.searchResult.length > 0) {
+          result = $scope.monitorList;
+        } else if($scope.searchText.length < 4) {
+          $scope.searchResult = [];
+          if($scope.monitorList.length > 0) {
+            $scope.monitorList = [];
+          }
+          if($scope.chatList > 0) {
+            $scope.chatList = [];
+          }
+          result = [];
+        }
+      } else {
+        if ( $scope.searchText ) {
+          if(isHideRealTimeMonitor && $scope.searchText.length < 3 ) {
+            // 何もしない
+          } else {
+            angular.forEach(array, function(value, key) {
+              if ( value[targetField].indexOf($scope.searchText) === 0) {
+                result[key] = value;
+              }
+            });
+          }
+        } else if(isHideRealTimeMonitor) {
+          // 検索状態じゃない場合で通常時リアルタイムモニタ非表示であれば非表示にする
+        } else {
+          result = array;
+        }
+      }
+      $scope.beforeInputValue = $scope.searchText;
+      return result;
+    };
+
+    // 検索用
+    $scope.searchProcess = function(term, filterType) {
+      emit('searchCustomer', {
+        term: term,
+        filterType: filterType
+      });
+    };
+
+    socket.on('searchCustomerResult', function(result){
+      var obj = JSON.parse(result);
+      $scope.search(obj, true);
+      if(obj && obj.length > 0) {
+        obj.forEach(function(targetObj){
+          pushToList(targetObj);
+          if ('chat' in targetObj && String(targetObj.chat) === "<?=$muserId?>") {
+            pushToChatList(targetObj.tabId);
           }
         });
       }
-      else {
-        result = array;
-      }
-      return result;
-    };
+    });
 
     $scope.$watch('searchWord', function(n,o){
       if ( n !== o ) {
@@ -470,11 +523,14 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     };
 
     $scope.nn = function(tabId){
-      var res = 1, num = $scope.monitorList[tabId].stayCount;
-      if ( angular.isNumber(num) && Number(num) > 0 ) {
-        res = num;
+      var res = 1;
+      if($scope.monitorList[tabId]) {
+        var num = $scope.monitorList[tabId].stayCount;
+        if (angular.isNumber(num) && Number(num) > 0) {
+          res = num;
+        }
+        $scope.monitorList[tabId].stayCount = res;
       }
-      $scope.monitorList[tabId].stayCount = res;
       return res;
     };
 
@@ -495,6 +551,12 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       return userAgentChk.pre(str);
     };
 
+    $scope.ip = function(m){
+      var showData = [];
+      showData.push(m.ipAddress); // IPアドレス
+      return showData.join("\n");
+    };
+
     $scope.ui = function(m){
       var showData = [];
       if ( $scope.customerList.hasOwnProperty(m.userId) && isset($scope.customerList[m.userId]) ) {
@@ -505,10 +567,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         if ( ('name' in c) && c.name.length > 0 ) {
           showData.push(c.name); // 名前
         }
-      }
-      // 顧客情報未登録の場合
-      if ( showData.length === 0 ) {
-        showData.push(m.ipAddress); // IPアドレス
       }
       return showData.join("\n");
     };
@@ -630,6 +688,63 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     /**************************************************************
      *  資料共有　ここまで
      * ************************************************************/
+
+    /**************************************************************
+     *　画面共有（LA）
+     * ************************************************************/
+    $scope.coBrowseOpen = function(tabId, accessId){
+        var message = "アクセスID【" + accessId + "】のユーザーに接続しますか？<br><br>";
+        var ua = $scope.monitorList[tabId].userAgent.toLowerCase();
+        var smartphone = (ua.indexOf('iphone') > 0 || ua.indexOf('ipod') > 0 || ua.indexOf('android') > 0);
+        var popupClass = "p-cus-connection";
+        message += "<span style='color: #FF7B7B'><?=Configure::read('message.const.chatStartConfirm')?></span>";
+        modalOpen.call(window, message, popupClass, 'メッセージ');
+        popupEvent.closePopup = function(type){
+            coBrowseConnectToken = makeToken();
+            socket.emit('requestCoBrowseOpen', {
+                tabId: tabId,
+                type: type,
+                coBrowseConnectToken: coBrowseConnectToken
+            });
+        };
+    };
+
+    $scope.confirmSharingWindowOpen = function(tabId, accessId) {
+      var message = "アクセスID【" + accessId + "】のユーザーと共有するモードを選択してください。<br><br>";
+      var ua = $scope.monitorList[tabId].userAgent.toLowerCase();
+      var smartphone = (ua.indexOf('iphone') > 0 || ua.indexOf('ipod') > 0 || ua.indexOf('android') > 0);
+      var popupClass = "p-cus-select-sharing-mode";
+      message += "<span style='color: #FF7B7B'><?=Configure::read('message.const.chatStartConfirm')?></span>";
+      modalOpen.call(window, message, popupClass, 'メッセージ');
+      popupEvent.closePopup = function(type) {
+        switch(type) {
+          case 1: // ブラウジング共有
+            sessionStorage.clear();
+            popupEvent.close();
+            connectToken = makeToken();
+            socket.emit('requestWindowSync', {
+              tabId: tabId,
+              type: type,
+              connectToken: connectToken
+            });
+            break;
+          case 2: // 画面キャプチャ共有
+            coBrowseConnectToken = makeToken();
+            socket.emit('requestCoBrowseOpen', {
+              tabId: tabId,
+              type: type,
+              coBrowseConnectToken: coBrowseConnectToken
+            });
+            break;
+          case 3: // 資料共有
+            modalClose();
+            $scope.documentOpen(tabId, accessId);
+            break;
+          default:
+            break;
+        }
+      };
+    };
 
     // 成果表示チェック
     $scope.showAchievement = function (){
@@ -1314,6 +1429,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         $scope.monitorList[obj.tabId].responderId = obj.responderId; // ここいる？
       }
 
+      if ( 'coBrowseConnectToken' in obj && 'responderId' in obj) {
+        $scope.monitorList[obj.tabId].coBrowseConnectToken = obj.coBrowseConnectToken;
+        $scope.monitorList[obj.tabId].responderId = obj.responderId; // ここいる？
+      }
+
       if ( 'docShareId' in obj ) {
         $scope.monitorList[obj.tabId].docShare = true;
         $scope.monitorList[obj.tabId].responderId = obj.docShareId;
@@ -1395,11 +1515,13 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     });
 
     socket.on('receiveAccessInfo', function (data) {
-      var obj = JSON.parse(data);
-      if ( receiveAccessInfoToken !== obj.receiveAccessInfoToken ) return false;
-      pushToList(obj);
-      if ( 'chat' in obj && String(obj.chat) === "<?=$muserId?>" ) {
-        pushToChatList(obj.tabId);
+      if(!contract.hideRealtimeMonitor) {
+        var obj = JSON.parse(data);
+        if (receiveAccessInfoToken !== obj.receiveAccessInfoToken) return false;
+        pushToList(obj);
+        if ('chat' in obj && String(obj.chat) === "<?=$muserId?>") {
+          pushToChatList(obj.tabId);
+        }
       }
     });
 
@@ -1457,28 +1579,40 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     };
 
     socket.on('syncNewInfo', function (data) {
-      var obj = JSON.parse(data);
+        var obj = JSON.parse(data);
 
-      var tabId = ( obj.subWindow ) ? obj.to : obj.tabId;
-      if ( angular.isDefined(tabId) && tabId.length > 0 && tabId.indexOf('_frame') > -1 ) {
-        tabId = tabId.substr(0, tabId.indexOf('_frame'));
-      }
-      // 消費者
-      if ( $scope.monitorList.hasOwnProperty(tabId) ) {
+        var tabId = ( obj.subWindow ) ? obj.to : obj.tabId;
+        if (angular.isDefined(tabId) && tabId.length > 0 && tabId.indexOf('_frame') > -1) {
+          tabId = tabId.substr(0, tabId.indexOf('_frame'));
+        }
+        // 消費者
+        if ($scope.monitorList.hasOwnProperty(tabId)) {
+          if ('widget' in obj) {
+            $scope.monitorList[tabId].widget = obj.widget;
+            if (chatApi.tabId === tabId) {
+              chatApi.observeType.emit(chatApi.tabId, chatApi.observeType.status);
 
-        if ( 'widget' in obj ) {
-          $scope.monitorList[tabId].widget = obj.widget;
-          if ( chatApi.tabId === tabId ) {
-            chatApi.observeType.emit(chatApi.tabId, chatApi.observeType.status);
-
+            }
+          }
+          if ('connectToken' in obj) {
+            $scope.monitorList[tabId].connectToken = obj.connectToken;
+          }
+          if ('coBrowseConnectToken' in obj) {
+            $scope.monitorList[tabId].coBrowseConnectToken = obj.coBrowseConnectToken;
+          }
+          if ('prev' in obj) {
+            $scope.monitorList[tabId].prev = obj.prev;
+          }
+          if ('title' in obj) {
+            $scope.monitorList[tabId].title = obj.title;
+          }
+          if ('url' in obj) {
+            $scope.monitorList[tabId].url = obj.url;
+          }
+          if ('responderId' in obj) {
+            $scope.monitorList[tabId].responderId = obj.responderId;
           }
         }
-        if ( 'connectToken' in obj ) { $scope.monitorList[tabId].connectToken = obj.connectToken; }
-        if ( 'prev' in obj ) { $scope.monitorList[tabId].prev = obj.prev; }
-        if ( 'title' in obj ) { $scope.monitorList[tabId].title = obj.title; }
-        if ( 'url' in obj ) { $scope.monitorList[tabId].url = obj.url; }
-        if ( 'responderId' in obj ) { $scope.monitorList[tabId].responderId = obj.responderId; }
-      }
     });
 
     socket.on('windowSyncInfo', function (data) {
@@ -1497,6 +1631,33 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           tabId: obj.tabId,
           width: 300,
           height: 300
+        }
+      });
+    });
+
+    socket.on('requestCoBrowseAllowed', function (data) {
+      sessionStorage.clear();
+      popupEvent.close();
+    });
+
+    socket.on('coBrowseSessionLimit', function (data) {
+      modalOpen.call(window, '画面キャプチャ共有の同時利用数上限に達しています。', "p-alert", 'お知らせ', 'moment');
+    });
+
+    socket.on('beginToCoBrowse', function (data) {
+      // 担当しているユーザーかチェック
+      var obj = JSON.parse(data), url;
+      if (coBrowseConnectToken !== obj.coBrowseConnectToken) return false;
+
+      var url = "<?= $this->Html->url(array('controller'=>'Customers', 'action'=>'laFrame')) ?>?k=begin";
+      url += "&userId=" + obj.userId;
+      url += "&connectToken=" + obj.coBrowseConnectToken + "&id=" + obj.tabId;
+      modalFunc.set.call({
+        option: {
+          url: url,
+          tabId: obj.tabId,
+          width: 1028,
+          height: 680
         }
       });
     });
@@ -1525,13 +1686,20 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       }
     });
 
+    socket.on('stopCoBrowse', function(data){
+      var obj = JSON.parse(data);
+      if ( obj.tabId !== undefined && angular.isDefined($scope.monitorList[obj.tabId])) {
+        $scope.monitorList[obj.tabId].coBrowseConnectToken = "";
+      }
+    });
+
     socket.on('docShareConnect', function(data){ // 資料共有開始
       var obj = JSON.parse(data);
       if ( obj.tabId !== undefined && angular.isDefined($scope.monitorList[obj.tabId])) {
         $scope.monitorList[obj.tabId].docShare = true;
         $scope.monitorList[obj.tabId].responderId = obj.responderId;
       }
-    })
+    });
 
     socket.on('docDisconnect', function(data){ // 資料共有終了
       var obj = JSON.parse(data);
@@ -1994,7 +2162,46 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
               }
 
               $('#popup-frame').draggable({
-                handle: "#popup-title"
+                handle: "#popup-title",
+                stop: function() {
+                  // スクロールを使用するか
+                  var subCon = document.getElementById('popup-frame');
+                  // 詳細画面が表示されている場合
+                  if (document.getElementById('customer_sub_pop').style.display === "block") {
+                    /* position-top */
+                    if ($("#popup-frame").css("top").indexOf('px') < 0) return false;
+                    var subConTop = Number($("#popup-frame").css("top").replace("px", ""));
+
+                    // ポップアップが画面外（上）に潜った場合の対処
+                    var calc = subConTop - 60;
+                    if (calc < 0) {
+                      subCon.style.top = "60px";
+                    }
+
+                    // ポップアップが画面外（下）に潜った場合の対処
+                    var subHeader = document.getElementById('popup-title'); // モーダル内のヘッダー
+                    var calc = window.innerHeight - (subConTop + Number(subHeader.offsetHeight));
+                    if (calc < 0) {
+                      subCon.style.top = window.innerHeight - Number(subHeader.offsetHeight) + "px";
+                    }
+
+                    /* position-left */
+                    if ($("#popup-frame").css("left").indexOf('px') < 0) return false;
+
+                    var subConLeft = Number($("#popup-frame").css("left").replace("px", ""));
+                    // ポップアップが画面外（左）に潜った場合の対処
+                    if (subConLeft < 0) {
+                      subCon.style.left = "0";
+                    }
+
+                    // ポップアップが画面外（右）に潜った場合の対処
+                    var sideBar = document.getElementById('sidebar-main');
+                    var widthArea = window.innerWidth - Number(sideBar.offsetWidth); // 有効横幅
+                    if ((widthArea - subConLeft) < 50) {
+                      subCon.style.left = widthArea - 80 + "px";
+                    }
+                  }
+                }
               });
 
               //カテゴリースクロール対応
@@ -2835,26 +3042,47 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
   // 参考 http://stackoverflow.com/questions/14478106/angularjs-sorting-by-property
   sincloApp.filter('orderObjectBy', function(){
-   return function(input, atr) {
+    return function(input, atr) {
       if (!angular.isObject(input)) return input;
       var array = [];
       for(var objectKey in input) {
-          array.push(input[objectKey]);
+        array.push(input[objectKey]);
       }
-      var sortAsc = (atr.match(/^-{1}/) === null);
-      var attribute = (sortAsc) ? atr : atr.substr(1);
+      var sortAsc = (atr.match(/^-{1}-{2}/) === null);
+      var splitedOrder = atr.split("-").slice(1);
+      var attribute1 =  splitedOrder[0];
+      var attribute2 =  splitedOrder[1];
       array.sort(function(a, b){
-          a = (isNaN(parseInt(a[attribute]))) ? 0 : parseInt(a[attribute]);
-          b = (isNaN(parseInt(b[attribute]))) ? 0 : parseInt(b[attribute]);
-          if (sortAsc) {
-            return a - b;
+        // 未読あり > 未読ありの対応中 > 対応中 > 何もない
+        var a1 = (isNaN(parseInt(a[attribute1]))) ? 0 : 10000,
+            b1 = (isNaN(parseInt(b[attribute1]))) ? 0 : 10000,
+            a2 = (isNaN(parseInt(a[attribute2]))) ? 0 : 10,
+            b2 = (isNaN(parseInt(b[attribute2]))) ? 0 : 10,
+            calc = Math.abs(a1 - a2) - Math.abs(b1 - b2);
+        if(calc > 0) {
+          return -1;
+        } else if (calc < 0) {
+          return 1;
+        } else if(a1 === 0 && b1 === 0 && a2 === 0 && b2 === 0) {
+          // 各優先順位でステータス（ウィジェットオープン　＞　ウィジェット最小化　＞　ウィジェット非表示　＞　非アクティブ）で並び替え
+          var astatus = (isNaN(parseInt(a['status']))) ? 0 : parseInt(a['status']),
+              bstatus = (isNaN(parseInt(b['status']))) ? 0 : parseInt(b['status']);
+          if(astatus !== bstatus) {
+            return astatus - bstatus;
+          } else {
+            var atime = (isNaN(parseInt(a['time']))) ? 0 : parseInt(a['time']),
+                btime = (isNaN(parseInt(b['time']))) ? 0 : parseInt(b['time']);
+            return btime - atime;
           }
-          else {
-            return b - a;
-          }
+        } else {
+          var atime = (isNaN(parseInt(a['time']))) ? 0 : parseInt(a['time']),
+              btime = (isNaN(parseInt(b['time']))) ? 0 : parseInt(b['time']);
+          return btime - atime;
+        }
       });
+      //console.log(JSON.stringify(array));
       return array;
-   }
+    }
   });
 
   function _numPad(str){

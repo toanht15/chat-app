@@ -76,7 +76,9 @@
           ?>
 
         </ul>
+        <?php if(empty($coreSettings[C_COMPANY_USE_HIDE_REALTIME_MONITOR]) || !$coreSettings[C_COMPANY_USE_HIDE_REALTIME_MONITOR] ): ?>
         <p class="tRight <?=$nowCntClass?>" ng-cloak>現在 <b>{{objCnt(monitorList)}}</b>名がサイト訪問中</p>
+        <?php endif; ?>
     </div>
 </div>
 
@@ -100,11 +102,12 @@
                   </div>
                 </th>
                 <th style="width: 3em" ng-hide="labelHideList.accessId">ID</th>
-        <?php if (  $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
+        <?php if (  $coreSettings[C_COMPANY_USE_SYNCLO] || $coreSettings[C_COMPANY_USE_DOCUMENT] || $coreSettings[C_COMPANY_USE_LA_CO_BROWSE] ) :?>
                 <th style="width: 7em">操作</th>
         <?php endif ; ?>
                 <th style="width: 7em">詳細</th>
-                <th style="width: 8em" ng-hide="labelHideList.ipAddress">訪問ユーザ</th>
+                <th style="width: 8em" ng-hide="labelHideList.ipAddress">IPアドレス</th>
+                <th style="width: 8em" ng-hide="labelHideList.customer">訪問ユーザ</th>
                 <th style="width: 9em" ng-hide="labelHideList.ua">プラットフォーム<br>ブラウザ</th>
                 <th style="width: 5em" ng-hide="labelHideList.stayCount">訪問回数</th>
                 <th style="width: 6em" ng-hide="labelHideList.time">アクセス日時</th>
@@ -123,11 +126,12 @@
         <tr>
                 <th style="width: 5em">状態</th>
                 <th ng-hide="labelHideList.accessId" style="width: 3em">ID</th>
-        <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
+        <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT]) || (isset($coreSettings[C_COMPANY_USE_LA_CO_BROWSE]) && $coreSettings[C_COMPANY_USE_LA_CO_BROWSE]) ) :?>
                 <th style="width: 7em">操作</th>
         <?php endif; ?>
                 <th style="width: 7em">詳細</th>
-                <th ng-hide="labelHideList.ipAddress" style="width: 8em">訪問ユーザ</th>
+                <th ng-hide="labelHideList.ipAddress" style="width: 8em">IPアドレス</th>
+                <th ng-hide="labelHideList.customer" style="width: 8em">訪問ユーザ</th>
                 <th ng-hide="labelHideList.ua" style="width: 9em">プラットフォーム<br>ブラウザ</th>
                 <th ng-hide="labelHideList.stayCount" style="width: 5em">訪問回数</th>
                 <th ng-hide="labelHideList.time" style="width: 6em">アクセス日時</th>
@@ -139,7 +143,7 @@
         </tr>
       </thead>
       <tbody ng-cloak>
-        <tr ng-repeat="monitor in search(monitorList) | orderObjectBy : '-chatUnreadId'" ng-dblclick="showDetail(monitor.tabId, monitor.sincloSessionId)" id="monitor_{{monitor.tabId}}">
+        <tr ng-repeat="monitor in search(monitorList) | orderObjectBy : '-chatUnreadId-chat'" ng-dblclick="showDetail(monitor.tabId, monitor.sincloSessionId)" id="monitor_{{monitor.tabId}}">
           <!-- /* 状態 */ -->
           <td class="tCenter">
             <span ng-if="monitor.status === jsConst.tabInfo.open"><?=$this->Html->image('tab_status_open.png', ['alt'=>'', 'width'=>20, 'height'=>20])?></span>
@@ -149,21 +153,16 @@
           </td>
           <!-- /* ID */ -->
           <td ng-hide="labelHideList.accessId" class="tCenter">{{monitor.accessId}}</td>
-        <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT]) ) :?>
+        <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT]) || (isset($coreSettings[C_COMPANY_USE_LA_CO_BROWSE]) && $coreSettings[C_COMPANY_USE_LA_CO_BROWSE]) ) :?>
           <!-- /* 操作 */ -->
           <td class='tCenter'>
             <?php if ( strcmp($userInfo['permission_level'], C_AUTHORITY_SUPER) !== 0) :?>
               <span ng-if="monitor.widget">
-                <span ng-if="!monitor.connectToken&&!monitor.docShare" id="shareToolBtn">
-                  <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
-                    <a class='monitorBtn blueBtn btn-shadow' href='javascript:void(0)' ng-click='windowOpen(monitor.tabId, monitor.accessId)' >画面共有</a>
-                  <?php endif; ?>
-                  <?php if ( isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT] ) :?>
-                    <a class='monitorBtn blueBtn btn-shadow' href='javascript:void(0)' ng-click='documentOpen(monitor.tabId, monitor.accessId)' >資料共有</a>
-                  <?php endif; ?>
+                <span ng-if="!monitor.connectToken&&!monitor.docShare&&!monitor.coBrowseConnectToken" id="shareToolBtn">
+                  <a class='monitorBtn blueBtn btn-shadow' href='javascript:void(0)' ng-click='confirmSharingWindowOpen(monitor.tabId, monitor.accessId)' >共有</a>
                 </span>
               </span>
-              <span ng-if="monitor.connectToken||monitor.docShare">
+              <span ng-if="monitor.connectToken||monitor.docShare||monitor.coBrowseConnectToken">
                 <span class="monitorOn" ng-if="!monitor.responderId">対応中...</span>
                 <span class="monitorOn" ng-if="monitor.responderId"><span class="bold">対応中</span><br>（{{setName(monitor.responderId)}}）</span>
               </span>
@@ -191,9 +190,10 @@
               </span>
             <?php endif; ?>
           </td>
-
           <!-- /* 訪問ユーザ */ -->
-          <td ng-hide="labelHideList.ipAddress" class="tCenter pre">{{ui(monitor)}}</td>
+          <td ng-hide="labelHideList.ipAddress" class="tCenter pre">{{ip(monitor)}}</td>
+          <!-- /* 訪問ユーザ */ -->
+          <td ng-hide="labelHideList.customer" class="tCenter pre">{{ui(monitor)}}</td>
           <!-- /* ユーザー環境 */ -->
           <td ng-hide="labelHideList.ua" class="tCenter pre">{{ua(monitor.userAgent)}}</td>
           <!-- /* 訪問回数 */ -->

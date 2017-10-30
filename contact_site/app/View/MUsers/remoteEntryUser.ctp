@@ -1,5 +1,12 @@
 <script type="text/javascript">
+<?php $this->request->data['MUser']['user_name'] = htmlspecialchars($this->request->data['MUser']['user_name'], ENT_QUOTES, 'UTF-8');?>
+<?php $this->request->data['MUser']['display_name'] = htmlspecialchars($this->request->data['MUser']['display_name'], ENT_QUOTES, 'UTF-8');?>
+<?php $this->request->data['MUser']['mail_address'] = htmlspecialchars($this->request->data['MUser']['mail_address'], ENT_QUOTES, 'UTF-8');?>
+<?php $this->request->data['MUser']['password'] = htmlspecialchars($this->request->data['MUser']['password'], ENT_QUOTES, 'UTF-8');?>
+<?php $this->request->data['MUser']['permission_level'] = htmlspecialchars($this->request->data['MUser']['permission_level'], ENT_QUOTES, 'UTF-8');?>
+
     popupEvent.closePopup = function(){
+        var page = Number("<?=$page?>");
         var userId = document.getElementById('MUserId').value;
         var userName = document.getElementById('MUserUserName').value;
         var displayName = document.getElementById('MUserDisplayName').value;
@@ -25,7 +32,9 @@
                 $(".error-message").remove();
 
                 if ( keys.length === 0 ) {
-                    location.href = "<?=$this->Html->url(array('controller' => 'MUsers', 'action' => 'index'))?>";
+                    var url = "<?= $this->Html->url('/MUsers/index') ?>";
+                    location.href = url + "/page:" + page;
+//                    location.href = "<?=$this->Html->url(array('controller' => 'MUsers', 'action' => 'index'))?>";
                     return false;
                 }
                 for (var i = 0; i < keys.length; i++) {
@@ -49,6 +58,9 @@
                         }
                     });
                 }
+            },
+            error: function(data) {
+              console.log('error');
             }
         });
     };

@@ -2,7 +2,7 @@
 <?php echo $this->element('TDictionaries/script'); ?>
 
 <input type="hidden" id="stint_flg" value="<?= $stint_flg ?>">
-<div id='tdictionaries_idx' class="card-shadow" style="min-width: <?= count((array)$nameList) * 42 + 42 + 40; ?>px!important;">
+<div id='tdictionaries_idx' class="card-shadow" style="min-width: <?= count((array)$nameList) * 47 + 42 + 40; ?>px!important;">
 
 <div id='tdictionaries_add_title'>
   <div class="fLeft"><?= $this->Html->image('dictionary_g.png', array('alt' => '定型文メッセージ管理', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?></div>
@@ -16,7 +16,7 @@
     <li>
     <div>
     <p>
-      <span><input type="text" class="" size="35" id="input_category_value" placeholder="追加するカテゴリ名を入力してください" onKeyUp="inputValue(this)"></span>
+      <span><input type="text" class="" size="36" id="input_category_value" placeholder="追加するカテゴリ名を入力してください" onKeyUp="inputValue(this)"></span>
       <span>
         <input type="button" class="disOffgrayBtn btn-shadow" id="input_category_btn" value="カテゴリを追加" disabled="disabled" onClick="saveCategoryAddDialog()">
       </span>
@@ -171,7 +171,7 @@
                   </a>
                 </li>
                 <li class="t-link">
-                  <a href="javascript:void(0)" onclick="openCategoryDeleteDialog(<?=$nameList[$i]['id']?>)">
+                  <a href="javascript:void(0)" onclick="<?php if(count((array)$nameList) >= 2): ?>openCategoryDeleteDialog(<?=$nameList[$i]['id']?>)<?php endif;?>">
                     カテゴリを削除する
                   </a>
                 </li>

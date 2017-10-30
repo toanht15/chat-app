@@ -25,10 +25,16 @@
       success: function(data){
         var keys = Object.keys(data), num = 0;
         $(".error-message").remove();
-
-        if ( keys.length === 0 ) {
-          location.href = "<?=$this->Html->url(array('controller' => 'TDictionaries', 'action' => 'index', 'tabindex' => $tabindex))?>";
-          return false;
+        if ( data.success ) {
+          if(data.showIndex == Number("<?= $tabindex ?>")) {
+            location.href = "<?=$this->Html->url(array('controller' => 'TDictionaries', 'action' => 'index', 'tabindex' => $tabindex))?>";
+            return false;
+          }
+          else {
+            var url = "<?= $this->Html->url('/TDictionaries/index') ?>";
+            location.href = url + "/tabindex:" + (typeof(data.showIndex) === "undefined" ? "0" : data.showIndex);
+            return false;
+          }
         }
         for (var i = 0; i < keys.length; i++) {
           if ( data[keys[i]].length > 0 ) {
@@ -51,6 +57,12 @@
             }
           });
         }
+      },
+      error: function() {
+        console.log('error');
+        TabIndex = document.getElementById("select_tab_index").value;
+        var url = "<?= $this->Html->url('/TDictionaries/index') ?>";
+        location.href = url + "/tabindex:" + 0;
       }
     });
   };

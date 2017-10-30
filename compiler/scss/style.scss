@@ -95,7 +95,8 @@ li {
 }
 
 table {
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing:0;
   border: none;
 
   tbody.sortable {
@@ -339,6 +340,10 @@ a {
 
 .tCenter {
   text-align: center;
+}
+
+.blockCenter {
+  margin: 0 auto;
 }
 
 .fRight {
@@ -1273,7 +1278,7 @@ ul.naviBtn {
 
   #customer_sub_pop {
     display: none;
-    $content-width: 25em;
+    $content-width: 30em;
 
     &[data-contract='full'], &[data-contract='chatOnly'] {
       $content-col: 2;
@@ -1317,8 +1322,8 @@ ul.naviBtn {
           dt,dd {
             float: left;
             margin: 0;
-            height: 1.5em;
-            font-size: 0.8em;
+            height: 1.6em;
+            font-size: 0.83em;
           }
           dt {
             width: 40%;
@@ -1337,7 +1342,7 @@ ul.naviBtn {
 
       @mixin miniFont {
         label, input, textarea {
-          font-size: 0.8em!important;
+          font-size: 0.83em!important;
         }
       }
 
@@ -1422,9 +1427,13 @@ ul.naviBtn {
               padding: 0.3em 3em 0.3em 3em;
               box-shadow: 0px -1px 1px rgba(0,0,0,0.2);
               cursor: pointer;
+              width:16.5em;
+              text-align:center;
 
               &.on {
                 background-color: $main-color;
+                width:16.5em;
+                text-align:center;
               }
             }
           }
@@ -1467,7 +1476,7 @@ ul.naviBtn {
                 }
 
                 .chatList ul {
-                    height: 20em!important;
+                    height: 21.5em!important;
 
                     span {
                       display: block;
@@ -1490,7 +1499,7 @@ ul.naviBtn {
             }
 
             #chatTalk {
-              height: 250px;
+              height: 283px;
               border: 1px solid #8F8F8F;
               overflow-x: hidden;
               overflow-y: scroll;
@@ -1569,9 +1578,9 @@ ul.naviBtn {
 
               li {
                   text-align: left;
-                  margin: 10px 0 0 0;
+                  margin: 10px 0 0;
                   padding: 8px;
-                  font-size: 12px;
+                  font-size: 13px;
                   border: 1px solid #C9C9C9;
                   color: #333333;
                   white-space: pre-wrap!important;
@@ -1581,7 +1590,6 @@ ul.naviBtn {
                   }
                   &.sinclo_re {
                       display: inline-block;
-                      text-align: right;
                       margin-right: 10px;
                       border-radius: 5px 5px 5px 0;
                       background-color: #F1F5C8;
@@ -1784,7 +1792,7 @@ ul.naviBtn {
               }
 
               #sinclo_sendbtn {
-                width: 18em;
+                width: 21em;
                 background-color: #aeca74;
 
                 &:hover, &.on {
@@ -1794,7 +1802,7 @@ ul.naviBtn {
               }
 
               #sinclo_chatEndBtn {
-                width: 4em;
+                width: 6em;
               }
             }
 
@@ -1809,7 +1817,7 @@ ul.naviBtn {
               width: 100%;
 
               li {
-                height: 1.5em;
+                height: 1.6em;
                 margin: 0.25em 0;
                 label {
                   width: 35%;
@@ -2184,6 +2192,29 @@ ul.naviBtn {
   }
 }
 
+#sync_tools {
+  #sub_menu {
+    margin-top: 1em;
+  }
+
+  .separator {
+    margin-top: 0.75em;
+    margin-bottom: calc(0.75em + 5px);
+    display: block;
+    width: 85%;
+    height: 1px;
+    background-color: #777;
+    border: 0;  /*デフォルトデザインでは線がある場合があるので、消しておく。*/
+  }
+
+  .bottom {
+    display: inline-block;
+    position: fixed;
+    bottom: 0;
+    margin: auto 5px;
+  }
+}
+
 /* 画面同期 - 資料共有 */
 #document_share, #document_preview {
 
@@ -2545,7 +2576,16 @@ ul.naviBtn {
   position: fixed;
   top: 0;
   left: 100px;
+  right: 0;
+  bottom: 0;
+
+  #remoteScreenViewContainer {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
 }
+
 #tabStatusMessage {
   display: none;
   position: fixed;
@@ -2742,6 +2782,77 @@ ul.naviBtn {
     margin-top:30px;
   }
 
+  .questionBalloon {
+    display: inline-block;
+    position: relative;
+    padding-left: 5px;
+
+    icon {
+      border-radius: 20px;
+      width: 1.5em;
+      height: 1.5em;
+      font-size: 0.9em!important;
+    }
+  }
+
+  .explainTooltip {
+    z-index: 10;
+    position: absolute;
+
+    icon-annotation {
+      width: 16em;
+      height: 2.1em;
+      display: none;
+
+      /* 矢印 */
+      &:before {
+        content: " ";
+        border: none;
+        border-top: 10px solid rgba(0, 0, 0, 0.13);
+        border-left: 9px solid transparent;
+        border-right: 9px solid transparent;
+        position: absolute;
+        bottom: -28px;
+        left: 5px;
+        z-index: 1;
+      }
+
+      &:after {
+        content: " ";
+        border: none;
+        border-top: 10px solid white;
+        border-left: 9px solid transparent;
+        border-right: 9px solid transparent;
+        position: absolute;
+        bottom: -26px;
+        left: 5px;
+        z-index: 3;
+      }
+
+
+      ul {
+        margin: 0;
+        padding: 0;
+        text-align: left;
+        background-color: #FFF;
+        box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+        padding: 0.5em;
+        font-weight: normal;
+        border-radius: 5px;
+
+        img {
+          margin-bottom: -0.2em;
+          width:1em;
+          height:1em;
+        }
+
+        span {
+          font-size: 0.9em;
+        }
+      }
+    }
+  }
+
   #noseach_menu{
     visibility:hidden;
     margin-top: -3em;
@@ -2828,19 +2939,80 @@ ul.naviBtn {
 /* ユーザマスタ */
 
 #muser_menu img[class$='Btn'] {
-  border-radius: 15px;
+  /*border-radius: 15px;*/
+}
+
+#muser_list {
+  td:not(.noClick) {
+    cursor: pointer;
+  }
+
+  .bgGrey {
+    background-color: #DEDEDE;
+  }
+
+  .lineCtrl {
+    text-align: center;
+
+    div {
+      display: inline-block;
+      a {
+        float: left;
+        margin-bottom: 5px;
+        margin-top: 5px;
+      }
+    }
+  }
+
+  :not(.lineCtrl) a { text-decoration: underline; }
+
+  input[type='checkbox'] {
+      display: none;
+
+      &:checked + label {
+          background-color: $main-color;
+          border: 1px solid $main-color;
+          position: relative;
+          cursor: pointer;
+
+          &:after {
+              content: "";
+              font-weight: bold;
+              border-right: 4px solid #FFF;
+              border-bottom: 4px solid #FFF;
+              width: 6px;
+              height: 10px;
+              position: absolute;
+              top: 0;
+              right: 4px;
+              transform: rotate(45deg);
+          }
+      }
+
+      & + label {
+          width: 20px;
+          height: 20px;
+          display: block;
+          margin: 0 auto;
+          background-color: #FFF;
+          padding: 1px;
+          border: 1px solid #828282;
+          cursor: pointer;
+      }
+  }
+
+  th input[type='checkbox']:checked + label {
+      border: 1px solid #FFF;
+  }
 }
 
 #muser_list table td:last-child {
   width: 100px;
-/*
   a {
     width: 35px;
     height: 35px;
-    margin: 5px;
     padding: 2px;
   }
-*/
 }
 
 /* 個人設定 */
@@ -3018,6 +3190,20 @@ ul.naviBtn {
         padding: 1em;
       }
 
+      hr.separator {
+        margin-top: 0.1em;
+        margin-bottom: 1em;
+        display: block;
+        width: 396px;
+        height: 1px;
+        background-color: #DDD;
+        border: 0;  /*デフォルトデザインでは線がある場合があるので、消しておく。*/
+        &.indent {
+          width: 384px;
+          position: relative;
+          left: -5px;
+        }
+      }
     }
 
     #m_widget_setting_action {
@@ -3046,7 +3232,6 @@ ul.naviBtn {
         margin-bottom: 0.5em;
       }
     }
-
 
   }
 }
@@ -3122,12 +3307,13 @@ ul.naviBtn {
   $list-color: #ECF4DA;
 
   #tautomessages_menu {
-    img[class$='Btn'] {
+    height: 85px;
+    /*img[class$='Btn'] {
         border-radius: 15px;
-    }
+    }*/
 
     div.ctrlBtnArea {
-        width: 100px;
+        /* width: 100px; */
         a {
           float: left;
           img.actCtrlBtn{ display: none }
@@ -3258,6 +3444,9 @@ ul.naviBtn {
         }
     }
 
+    .ui-sortable-helper {
+        display: table;
+    }
   }
 
   #tautomessages_form {
@@ -3622,7 +3811,7 @@ ul.naviBtn {
       a {
         width: 30px;
         height: 30px;
-        margin-right: 10px;
+        /*margin-right: 10px;*/
         border-radius: 15px;
         img {
           margin: -1px 0 0px -1px; /* TODO: 綺麗な画像を頂ければ削除予定 */
@@ -3631,12 +3820,73 @@ ul.naviBtn {
     }
   }
   #chat_notifications_list {
+      td:not(.noClick) {
+        cursor: pointer;
+      }
+
+      .bgGrey {
+        background-color: #DEDEDE;
+      }
+
+      .lineCtrl {
+        text-align: center;
+
+        div {
+          display: inline-block;
+          a {
+            float: left;
+            margin-bottom: 5px;
+            margin-top: 5px;
+          }
+        }
+      }
+
+      :not(.lineCtrl) a { text-decoration: underline; }
+
+      input[type='checkbox'] {
+        display: none;
+
+        &:checked + label {
+          background-color: $main-color;
+          border: 1px solid $main-color;
+          position: relative;
+          cursor: pointer;
+
+          &:after {
+            content: "";
+            font-weight: bold;
+            border-right: 4px solid #FFF;
+            border-bottom: 4px solid #FFF;
+            width: 6px;
+            height: 10px;
+            position: absolute;
+            top: 0;
+            right: 4px;
+            transform: rotate(45deg);
+          }
+        }
+
+        & + label {
+          width: 20px;
+          height: 20px;
+          display: block;
+          margin: 0 auto;
+          background-color: #FFF;
+          padding: 1px;
+          border: 1px solid #828282;
+          cursor: pointer;
+        }
+      }
+
+      th input[type='checkbox']:checked + label {
+        border: 1px solid #FFF;
+      }
+
       .ctrlBtnArea {
           width: 120px;
           a {
             width: 35px;
             height: 35px;
-            margin: 5px;
             padding: 2px;
           }
       }
@@ -3645,10 +3895,10 @@ ul.naviBtn {
       }
       table {
         th, td {
-          /*padding: 0 1em;*/
+          padding: 0 1em;
         }
         td {
-          /*height: 45px!important;*/
+          height: 45px!important;
         }
       }
   }
@@ -3752,13 +4002,80 @@ ul.naviBtn {
     }
   }
 
+  #tcampaigns_list{
+    td:not(.noClick) {
+      cursor: pointer;
+    }
+
+    .bgGrey {
+      background-color: #DEDEDE;
+    }
+
+    .lineCtrl {
+      text-align: center;
+
+      div {
+        display: inline-block;
+        a {
+          float: left;
+          margin-bottom: 5px;
+          margin-top: 5px;
+        }
+      }
+    }
+
+    :not(.lineCtrl) a { text-decoration: underline; }
+
+    input[type='checkbox'] {
+      display: none;
+
+      &:checked + label {
+        background-color: $main-color;
+        border: 1px solid $main-color;
+        position: relative;
+        cursor: pointer;
+
+        &:after {
+          content: "";
+          font-weight: bold;
+          border-right: 4px solid #FFF;
+          border-bottom: 4px solid #FFF;
+          width: 6px;
+          height: 10px;
+          position: absolute;
+          top: 0;
+          right: 4px;
+          transform: rotate(45deg);
+        }
+      }
+
+      & + label {
+        width: 20px;
+        height: 20px;
+        display: block;
+        margin: 0 auto;
+        background-color: #FFF;
+        padding: 1px;
+        border: 1px solid #828282;
+        cursor: pointer;
+      }
+    }
+
+    th input[type='checkbox']:checked + label {
+      border: 1px solid #FFF;
+    }
+
+    .ui-sortable-helper {
+      display: table;
+    }
+  }
+
   #tcampaigns_list .ctrlBtnArea {
     width: 100px;
 
     a {
       width: 35px;
       height: 35px;
-      margin: 5px;
       padding: 2px;
     }
   }
@@ -4168,9 +4485,9 @@ ul.naviBtn {
   }
 
   #tdocument_menu {
-    img[class$='Btn'] {
+    /*img[class$='Btn'] {
       border-radius: 15px;
-    }
+    }*/
   }
 
   #tdocument_list {
@@ -4228,6 +4545,72 @@ ul.naviBtn {
         padding: 0.25em 0;
         z-index: 1;
       }
+    }
+
+    td:not(.noClick) {
+      cursor: pointer;
+    }
+
+    .bgGrey {
+      background-color: #DEDEDE;
+    }
+
+    .lineCtrl {
+      text-align: center;
+
+      div {
+        display: inline-block;
+        a {
+          float: left;
+          margin-bottom: 5px;
+          margin-top: 5px;
+        }
+      }
+    }
+
+    :not(.lineCtrl) a { text-decoration: underline; }
+
+    input[type='checkbox'] {
+      display: none;
+
+      &:checked + label {
+        background-color: $main-color;
+        border: 1px solid $main-color;
+        position: relative;
+        cursor: pointer;
+
+        &:after {
+            content: "";
+            font-weight: bold;
+            border-right: 4px solid #FFF;
+            border-bottom: 4px solid #FFF;
+            width: 6px;
+            height: 10px;
+            position: absolute;
+            top: 0;
+            right: 4px;
+            transform: rotate(45deg);
+        }
+      }
+
+      & + label {
+        width: 20px;
+        height: 20px;
+        display: block;
+        margin: 0 auto;
+        background-color: #FFF;
+        padding: 1px;
+        border: 1px solid #828282;
+        cursor: pointer;
+      }
+    }
+
+    th input[type='checkbox']:checked + label {
+      border: 1px solid #FFF;
+    }
+
+    .ui-sortable-helper {
+      display: table;
     }
   }
 
@@ -5297,9 +5680,9 @@ ul.naviBtn {
             border-left: 9px solid transparent;
             border-right: 9px solid transparent;
             position: absolute;
-            bottom: -0.7em;
-            left: 147px;
-            z-index: 1;;
+            bottom: -28px;
+            left: 5px;
+            z-index: 1;
           }
 
           &:after {
@@ -5309,8 +5692,8 @@ ul.naviBtn {
             border-left: 9px solid transparent;
             border-right: 9px solid transparent;
             position: absolute;
-            bottom: -0.7em;
-            left: 147px;
+            bottom: -26px;
+            left: 5px;
             z-index: 3;
           }
 

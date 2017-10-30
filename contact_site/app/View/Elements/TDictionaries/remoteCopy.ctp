@@ -11,6 +11,7 @@
       //カテゴリ編集処理
       var url = "<?= $this->Html->url('/TDictionaries/remoteCategoryEdit') ?>";
       var name = document.getElementById("edit_category_value").value;
+      nextTabIndex = document.getElementById("select_tab_index").value;
       break;
     case '2':
       //カテゴリ削除処理
@@ -52,15 +53,27 @@
 //        nextTabIndex: nextTabIndex
       },
       url: url,
-      success: function(){
-        if(type == '3' || type == '4'){
+      success: function(xhr){
+        var showIndex = (xhr) ? Number(xhr) : 0;
+        if(type == '1' || type == '3' || type == '4'){
           //location.href = "<?=$this->Html->url(array('controller' => 'TDictionaries', 'action' => 'index', 'tabindex' => $this->Session->read('tabindex')))?>";
           var url = "<?= $this->Html->url('/TDictionaries/index') ?>";
-          location.href = url + "/tabindex:" + nextTabIndex;
+          if(showIndex === Number(nextTabIndex)) {
+            location.href = url + "/tabindex:" + (nextTabIndex === "" ? "0" : nextTabIndex);
+          }
+          else {
+            location.href = url + "/tabindex:" + showIndex;
+          }
         }
         else{
           location.href = "<?= $this->Html->url('/TDictionaries/index') ?>";
         }
+      },
+      error: function() {
+        console.log('error');
+        var tabIndex = 0;
+        var url = "<?= $this->Html->url('/TDictionaries/index') ?>";
+      　　location.href = url + "/tabindex:" + tabIndex;
       }
     });
   }

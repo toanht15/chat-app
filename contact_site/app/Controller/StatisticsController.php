@@ -1646,24 +1646,21 @@ class StatisticsController extends AppController {
     $requestNumberData = [];
 
     //チャットリクエスト件数
-    $requestNumber = "SELECT
+      $requestNumber = "SELECT
       date_format(th.access_date, ?) as date,
-        count(th.id) as request_count
-    FROM (select t_histories_id,m_companies_id,message_request_flg from t_history_chat_logs force index(idx_t_history_chat_logs_request_flg_companies_id)
-      where message_request_flg = ? and m_companies_id = ?)as thcl,t_histories as th
-    WHERE
-      
-      thcl.t_histories_id = th.id
-    
-    AND
-      th.access_date between ? and ?
-    ";
+      count(th.id) as request_count
+      FROM (select t_histories_id,m_companies_id,message_request_flg from
+      t_history_chat_logs force index(idx_t_history_chat_logs_request_flg_companies_id)
+      where message_request_flg = ? and m_companies_id = ?)
+      as thcl,t_histories as th
+      WHERE
+        thcl.t_histories_id = th.id
+      AND
+        th.access_date between ? and ?
+      group by date";
 
-    $requestNumber = $this->exclusionIpAddress($requestNumber,'th');
-
-    $requestNumber .= ' group by date';
-
-    $requestNumber = $this->THistory->query($requestNumber, array($date_format,$this->chatMessageType['requestFlg']['effectiveness'],$this->userInfo['MCompany']['id'],
+    $requestNumber = $this->THistory->query($requestNumber, array($date_format,
+      $this->chatMessageType['requestFlg']['effectiveness'],$this->userInfo['MCompany']['id'],
       $correctStartDate,$correctEndDate));
 
     foreach($requestNumber as $k => $v) {

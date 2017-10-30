@@ -79,6 +79,8 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
     }
     echo $this->Html->script("jquery.multi-select.js");
     if ( strcmp($this->name, 'TAutoMessages') === 0 ) {
+      echo $this->Html->css('jquery-ui.css');
+      echo $this->Html->script("jquery-ui.js");
       echo $this->Html->script("clockpicker.js");
     }
     echo $this->Html->script("common.js");
@@ -103,6 +105,10 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
       echo $this->Html->css('jquery-ui.css');
       echo $this->Html->script("jquery-ui.js");
     }
+    if ( strcmp($this->name, 'TCampaigns') === 0 ) {
+      echo $this->Html->css('jquery-ui.css');
+      echo $this->Html->script("jquery-ui.js");
+    }
 
 ?>
 
@@ -116,6 +122,7 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
       <?php endif ;?>
     </div>
     <div id="content" style="<?=$contentStyle?>">
+      <?= $this->element('popupOverlap') ?>
       <?= $this->element('popup') ?>
       <?php echo $this->Flash->render(); ?>
 
