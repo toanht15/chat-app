@@ -1408,7 +1408,7 @@
             }
           },
           emit: function(status, message){ // 状態の送信処理
-            emit('sendTypeCond', { type: 2, status: status, message: message });
+            emit('sendTypeCond', { type: 2, status: status, message: message, sincloSessionId: userInfo.sincloSessionId });
           }
         },
         sendErrCatchFlg: false,

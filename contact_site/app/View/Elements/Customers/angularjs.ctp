@@ -770,6 +770,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         $("#customer_sub_pop").css("display", "none");
         $scope.customerMainClass = "";
         $scope.detailId = "";
+        $scope.sincloSessionId = "";
         if ( contract.chat ) {
           $scope.typingMessageSe = "";
           $scope.achievement = "";
@@ -793,6 +794,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         setPositionOfPopup(); // ポップアップの位置調整
         $scope.customerMainClass = "showDetail";
         $scope.detailId = tabId;
+        $scope.sincloSessionId = sincloSessionId;
         chatApi.tabId = tabId;
         chatApi.sincloSessionId = sincloSessionId;
         // チャット契約の場合
@@ -1816,7 +1818,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     socket.on('receiveTypeCond', function(d){
       var obj = JSON.parse(d);
       // 対象のタブを開いていないとき
-      if ( obj.tabId !== chatApi.tabId ) return false;
+      if ( obj.tabId !== chatApi.tabId && obj.sincloSessionId !== chatApi.sincloSessionId ) return false;
 
       if ( obj.status === false && Number(obj.type) !== chatApi.observeType.cnst.company ) {
         obj.message = "";
@@ -1839,7 +1841,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       }
       // 消費者側がメッセージ入力中
       else {
-        $scope.typingMessageRe[obj.tabId] = obj.message;
+        $scope.typingMessageRe[obj.sincloSessionId] = obj.message;
       }
       if(!isShowChatReceiver()) {
         scDown();
