@@ -773,15 +773,17 @@ io.sockets.on('connection', function (socket) {
     },
     calcScNum: function(obj, userId){ /* sincloCoreから対象ユーザーのチャット対応状態を算出 */
       var scNum = 0;
+      var sincloSessionIds = [];
       if ( !sincloCore.hasOwnProperty(obj.siteKey) ) return scNum;
       var tabIds = Object.keys(sincloCore[obj.siteKey]);
       for (var i = 0; i < tabIds.length; i++) {
         var tabData = sincloCore[obj.siteKey][tabIds[i]];
         if ( tabData.hasOwnProperty("chat") && isNumber(tabData.chat) ) {
-          if ( Number(tabData.chat) === Number(userId) ) {
+          // 同一のsincloSessionIdを保有するユーザーは同時応対数１とする
+          if ( Number(tabData.chat) === Number(userId) && sincloSessionIds.indexOf(tabData.sincloSessionId) === -1) {
             scNum++;
+            sincloSessionIds.push(tabData.sincloSessionId);
           }
-
         }
       }
       return scNum;
