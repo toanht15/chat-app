@@ -597,6 +597,7 @@ io.sockets.on('connection', function (socket) {
                   // 書き込みが成功したら企業側に結果を返す
                   emit.toCompany('sendChatResult', {
                     tabId: d.tabId,
+                    sincloSessionId: sincloSessionId,
                     opFlg: sendData.opFlg,
                     chatId: results.insertId,
                     sort: fullDateTime(insertData.created),
@@ -636,7 +637,19 @@ io.sockets.on('connection', function (socket) {
                 emit.toSameUser('sendChatResult', sendData, d.siteKey, sincloSessionId);
                 if (Number(insertData.message_type) === 3) return false;
                 // 書き込みが成功したら企業側に結果を返す
-                emit.toCompany('sendChatResult', {tabId: d.tabId, chatId: results.insertId, sort: fullDateTime(insertData.created), created: insertData.created, userId: insertData.m_users_id, messageType: d.messageType, ret: true, message: d.chatMessage, siteKey: d.siteKey, notifyToCompany: d.notifyToCompany}, d.siteKey);
+                emit.toCompany('sendChatResult', {
+                  tabId: d.tabId,
+                  sincloSessionId: sincloSessionId,
+                  chatId: results.insertId,
+                  sort: fullDateTime(insertData.created),
+                  created: insertData.created,
+                  userId: insertData.m_users_id,
+                  messageType: d.messageType,
+                  ret: true,
+                  message: d.chatMessage,
+                  siteKey: d.siteKey,
+                  notifyToCompany: d.notifyToCompany
+                }, d.siteKey);
               }
 
               //オペレータリクエスト件数
@@ -1565,8 +1578,14 @@ console.log("chatStart-2: [" + logToken + "] " + JSON.stringify({ret: false, sit
       var sendData = {ret: true, messageType: type, tabId: obj.tabId, siteKey: obj.siteKey, userId: obj.userId, hide:false, created: now};
       var scInfo = "";
 
-      sincloCore[obj.siteKey][obj.tabId].chat = obj.userId;
-      sincloCore[obj.siteKey][obj.tabId].chatSessionId = socket.id;
+      // 同じsincloSessionIdを持つユーザーは全員当該の企業側ユーザーが応対していることにする
+      Object.keys(sincloCore[obj.siteKey]).forEach(function(key) {
+        if(obj.sincloSessionId === sincloCore[obj.siteKey][key].sincloSessionId) {
+          sincloCore[obj.siteKey][key].chat = obj.userId;
+          sincloCore[obj.siteKey][key].chatSessionId = socket.id;
+        }
+      });
+
       // サイトとして初チャット開始
       if ( !(obj.siteKey in c_connectList) ) {
         c_connectList[obj.siteKey] = {};
@@ -1648,6 +1667,7 @@ console.log("chatStart-3: [" + logToken + "] " + logData3);
                 scInfo: scInfo,
                 siteKey: obj.siteKey,
                 tabId: obj.tabId,
+                sincloSessionId: obj.sincloSessionId,
                 visitorsId: (ids.length > 1) ? ids[0] : "",
                 userId: obj.userId,
                 chatMessage: "入室",
@@ -1684,8 +1704,12 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     /* チャット対応上限の処理（対応人数減算の処理） */
 
     if ( isset(sincloCore[obj.siteKey]) && isset(sincloCore[obj.siteKey][obj.tabId].chat) ) {
-      sincloCore[obj.siteKey][obj.tabId].chat = null;
-      sincloCore[obj.siteKey][obj.tabId].chatSessionId = null;
+      Object.keys(sincloCore[obj.siteKey]).forEach(function(key) {
+        if(obj.sincloSessionId === sincloCore[obj.siteKey][key].sincloSessionId) {
+          sincloCore[obj.siteKey][key].chat = null;
+          sincloCore[obj.siteKey][key].chatSessionId = null;
+        }
+      });
       scInfo = ( scList.hasOwnProperty(obj.siteKey) ) ? scList[obj.siteKey].cnt : {};
 
       //emit.toUser("chatEndResult", {ret: true, messageType: type}, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
@@ -1713,6 +1737,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             scInfo: scInfo,
             siteKey: obj.siteKey,
             tabId: obj.tabId,
+            sincloSessionId: obj.sincloSessionId,
             visitorsId: (ids.length > 1) ? ids[0] : "",
             userId: obj.userId,
             chatMessage: "退室",
