@@ -458,6 +458,10 @@
         userInfo.setTabId();
       }
 
+      if ( !check.isset(userInfo.sincloSessionId) && check.isset(obj.sincloSessionId) ) {
+        userInfo.set(cnst.info_type.sincloSessionId, obj.sincloSessionId, "sincloSessionId");
+      }
+
       obj.prev = userInfo.prev;
       obj.stayCount = userInfo.getStayCount();
       if ( (userInfo.gFrame && Number(userInfo.accessType) === Number(cnst.access_type.guest)) === false ) {
@@ -1021,9 +1025,19 @@
     },
     sendChatResult: function(d){
       var obj = JSON.parse(d);
-      if ( obj.tabId !== userInfo.tabId ) return false;
+      if ( obj.sincloSessionId !== userInfo.sincloSessionId && obj.tabId !== userInfo.tabId ) return false;
       var elm = document.getElementById('sincloChatMessage'), cn, userName = "";
       if ( obj.ret ) {
+        if(obj.messageType === sinclo.chatApi.messageType.customer && storage.s.get('chatAct') !== "true") {
+          // 別タブで送信した自分のメッセージを受けたのでチャット応対中とする
+          console.log("self message received. set chatAct = true");
+          storage.s.set('chatAct', true);
+        }
+        if(obj.messageType === sinclo.chatApi.messageType.customer && storage.s.get('chatEmit') !== "true") {
+          // 別タブで送信した自分のメッセージを受けたのでチャット応対中とする
+          console.log("self message received. set chatEmit = true");
+          storage.s.set('chatEmit', true) ;
+        }
         // スマートフォンの場合はメッセージ送信時に、到達確認タイマーをリセットする
         if ( sinclo.chatApi.sendErrCatchTimer !== null ) {
           clearTimeout(sinclo.chatApi.sendErrCatchTimer);
@@ -1083,7 +1097,6 @@
     sendReqAutoChatMessages: function(d){
       // 自動メッセージの情報を渡す（保存の為）
       var obj = common.jParse(d);
-      debugger;
       emit("sendAutoChatMessages", {messages: sinclo.chatApi.autoMessages, sendTo: obj.sendTo});
       var value = "";
       if (window.sincloInfo.widgetDisplay) {
@@ -1696,7 +1709,7 @@
             }
           },
           emit: function(status, message){ // 状態の送信処理
-            emit('sendTypeCond', { type: 2, status: status, message: message });
+            emit('sendTypeCond', { type: 2, status: status, message: message, sincloSessionId: userInfo.sincloSessionId });
           }
         },
         sendErrCatchFlg: false,
