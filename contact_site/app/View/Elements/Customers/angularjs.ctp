@@ -1622,10 +1622,13 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
 
       if ( obj.userId === myUserId && obj.ret ) {
-        pushToChatList(obj.tabId);
-        // $("#sendMessage").focus();
-        // 既読にする
-        chatApi.isReadMessage($scope.monitorList[obj.tabId]);
+        Object.keys($scope.monitorList).forEach(function(key) {
+          if(obj.sincloSessionId === $scope.monitorList[key].sincloSessionId) {
+            pushToChatList(key);
+            // 既読にする
+            chatApi.isReadMessage($scope.monitorList[key]);
+          }
+        });
       }
       else {
         $scope.chatList = $scope.chatList.filter(function(v){
@@ -1667,8 +1670,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var obj = JSON.parse(d);
       if ( 'tabId' in obj && obj.tabId in $scope.monitorList && 'chat' in $scope.monitorList[obj.tabId] ) {
         $scope.chatList = $scope.chatList.filter(function(v){
-          return (v !== this.t);
-        }, {t: obj.tabId});
+          // sincloSessionIdを取得
+          var sincloSessionId = $scope.monitorList[v].sincloSessionId;
+          return this.t !== sincloSessionId;
+        }, {t: obj.sincloSessionId});
         Object.keys($scope.monitorList).forEach(function(key) {
           if(obj.sincloSessionId === $scope.monitorList[key].sincloSessionId) {
             $scope.monitorList[key].chat = null;
