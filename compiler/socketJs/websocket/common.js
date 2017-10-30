@@ -613,6 +613,9 @@ var socket, // socket.io
           $('#sincloBox p#widgetTitle').addClass("notSimple");
         }
       }
+      if((Number(window.sincloInfo.widget.showMainImage) === 2 || window.sincloInfo.widget.mainImage === "")) {
+        $('#sincloBox p#widgetTitle').addClass("noImage");
+      }
     },
     //ヘッダ非表示（シンプル表示）
     abridgementTypehide: function() {
@@ -637,9 +640,12 @@ var socket, // socket.io
       }
       else{
         //PC時
-        if($('#sincloBox p#widgetTitle').hasClass("notSimple")){
+        if ($('#sincloBox p#widgetTitle').hasClass("notSimple")) {
           $('#sincloBox p#widgetTitle').removeClass("notSimple");
         }
+      }
+      if((Number(window.sincloInfo.widget.showMainImage) === 2 || window.sincloInfo.widget.mainImage === "")) {
+        $('#sincloBox p#widgetTitle').addClass("noImage");
       }
     },
     //最大化時ボタン表示
@@ -1004,6 +1010,8 @@ var socket, // socket.io
           }
           // 画像がセットされている場合のスタイル
           html += '#sincloBox p#widgetTitle.notSimple { padding-left: ' + (70 * ratio) + 'px; text-indent: 1em; }';
+          // 画像がセットされていない場合のスタイル
+          html += '#sincloBox p#widgetTitle.noImage { padding-left: ' + (30 * ratio) + 'px; text-indent: 1em; }';
           html += '#sincloBox #mainImage em { top: -' + (10 * ratio) + 'px; right: -' + (10 * ratio) + 'px; width: ' + (25 * ratio) + 'px; height: ' + (20 * ratio) + 'px; font-size: ' + (11 * ratio) + 'px; padding: ' + (1 * ratio) + 'px; }';
           html += '#sincloBox ul#chatTalk { padding: ' + (5 * ratio) + 'px; height: ' + (194 * ratio) + 'px; background-color: '+ colorList['chatTalkBackgroundColor'] +' }';
           html += '#sincloBox ul#chatTalk li { border-radius: ' + (5 * ratio) + 'px; margin: ' + (5 * ratio) + 'px 0; padding: ' + (5 * ratio) + 'px; font-size: ' + (12 * ratio) + 'px; }';
@@ -1202,6 +1210,8 @@ var socket, // socket.io
         }
         // 画像がセットされている場合のスタイル
         html += '      #sincloBox p#widgetTitle.notSimple { padding-left: 70px; }';
+        // 画像がセットされていない場合のスタイル
+        html += '      #sincloBox p#widgetTitle.noImage { padding-left: 30px; }';
         // チャットを使用する際
         if ( window.sincloInfo.contract.chat ) {
           html += '      #sincloBox #mainImage em { top: -10px; right: -10px; width: 25px; height: 20px; font-size: '+ sizeList['d11font'] +'px; padding: 1px; }';
