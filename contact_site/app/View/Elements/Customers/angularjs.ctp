@@ -1774,12 +1774,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     socket.on("chatStartResult", function(d){
       var obj = JSON.parse(d);
       var prev = angular.copy($scope.monitorList[obj.tabId].chat);
-      // 同じsincloSessionIdのデータにすべてuserIdを紐付ける
-      Object.keys($scope.monitorList).forEach(function(key) {
-        if(obj.sincloSessionId === $scope.monitorList[key].sincloSessionId) {
-          $scope.monitorList[key].chat = obj.userId;
-        }
-      });
+      $scope.monitorList[obj.tabId].chat = obj.userId;
 
       if ( Number(obj.messageType) === 98 ) {
         $scope.chatOpList.push(obj.userId);
@@ -1790,13 +1785,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
 
       if ( obj.userId === myUserId && obj.ret ) {
-        Object.keys($scope.monitorList).forEach(function(key) {
-          if(obj.sincloSessionId === $scope.monitorList[key].sincloSessionId) {
-            pushToChatList(key);
-            // 既読にする
-            chatApi.isReadMessage($scope.monitorList[key]);
-          }
-        });
+        pushToChatList(obj.tabId);
+        // 既読にする
+        chatApi.isReadMessage($scope.monitorList[obj.tabId]);
       }
       else {
         $scope.chatList = $scope.chatList.filter(function(v){
@@ -1838,15 +1829,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var obj = JSON.parse(d);
       if ( 'tabId' in obj && obj.tabId in $scope.monitorList && 'chat' in $scope.monitorList[obj.tabId] ) {
         $scope.chatList = $scope.chatList.filter(function(v){
-          // sincloSessionIdを取得
-          var sincloSessionId = $scope.monitorList[v].sincloSessionId;
-          return this.t !== sincloSessionId;
-        }, {t: obj.sincloSessionId});
-        Object.keys($scope.monitorList).forEach(function(key) {
-          if(obj.sincloSessionId === $scope.monitorList[key].sincloSessionId) {
-            $scope.monitorList[key].chat = null;
-          }
-        });
+          return (v !== this.t);
+        }, {t: obj.tabId});
+        $scope.monitorList[obj.tabId].chat = null;
       }
       if ( obj.tabId === chatApi.tabId ) {
         var chat = {
@@ -1930,14 +1915,14 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         }
 
         // 未読数加算（自分が対応していないとき）
-        if((obj.hasOwnProperty('notifyToCompany') && obj.notifyToCompany) && obj.sincloSessionId !== chatApi.sincloSessionId) {
+        if((obj.hasOwnProperty('notifyToCompany') && obj.notifyToCompany)) {
           $scope.monitorList[obj.tabId].chatUnreadCnt++;
           $scope.monitorList[obj.tabId].chatUnreadId = obj.chatId;
           $scope.ngChatApi.notification($scope.monitorList[obj.tabId]);
         }
 
         // 既読にする(対象のタブを開いている、且つ自分が対応しており、フォーカスが当たっているとき)
-        if ( obj.sincloSessionId === chatApi.sincloSessionId && $scope.monitorList[obj.tabId].chat === myUserId && $("#sendMessage").is(":focus") ) {
+        if ( obj.tabId === chatApi.tabId && $scope.monitorList[obj.tabId].chat === myUserId && $("#sendMessage").is(":focus") ) {
             chatApi.isReadMessage($scope.monitorList[obj.tabId]);
         }
 

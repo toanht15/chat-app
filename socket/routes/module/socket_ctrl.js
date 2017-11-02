@@ -1764,14 +1764,8 @@ console.log("chatStart-2: [" + logToken + "] " + JSON.stringify({ret: false, sit
       var sendData = {ret: true, messageType: type, tabId: obj.tabId, siteKey: obj.siteKey, userId: obj.userId, hide:false, created: now};
       var scInfo = "";
 
-      // 同じsincloSessionIdを持つユーザーは全員当該の企業側ユーザーが応対していることにする
-      Object.keys(sincloCore[obj.siteKey]).forEach(function(key) {
-        if(obj.sincloSessionId === sincloCore[obj.siteKey][key].sincloSessionId) {
-          sincloCore[obj.siteKey][key].chat = obj.userId;
-          sincloCore[obj.siteKey][key].chatSessionId = socket.id;
-        }
-      });
-
+      sincloCore[obj.siteKey][obj.tabId].chat = obj.userId;
+      sincloCore[obj.siteKey][obj.tabId].chatSessionId = socket.id;
       // サイトとして初チャット開始
       if ( !(obj.siteKey in c_connectList) ) {
         c_connectList[obj.siteKey] = {};
@@ -1890,12 +1884,8 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     /* チャット対応上限の処理（対応人数減算の処理） */
 
     if ( isset(sincloCore[obj.siteKey]) && isset(sincloCore[obj.siteKey][obj.tabId].chat) ) {
-      Object.keys(sincloCore[obj.siteKey]).forEach(function(key) {
-        if(obj.sincloSessionId === sincloCore[obj.siteKey][key].sincloSessionId) {
-          sincloCore[obj.siteKey][key].chat = null;
-          sincloCore[obj.siteKey][key].chatSessionId = null;
-        }
-      });
+      sincloCore[obj.siteKey][obj.tabId].chat = null;
+      sincloCore[obj.siteKey][obj.tabId].chatSessionId = null;
       scInfo = ( scList.hasOwnProperty(obj.siteKey) ) ? scList[obj.siteKey].cnt : {};
 
       //emit.toUser("chatEndResult", {ret: true, messageType: type}, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
