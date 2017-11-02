@@ -719,7 +719,14 @@ io.sockets.on('connection', function (socket) {
               if ( !isset(sincloCore[d.siteKey][d.tabId].sessionId)) return false;
               var sId = sincloCore[d.siteKey][d.tabId].sessionId;
               var sendData = {
-                tabId: d.tabId, chatId: results.insertId, messageType: d.messageType, created: insertData.created, ret: true, chatMessage: d.chatMessage, siteKey: d.siteKey
+                tabId: d.tabId,
+                chatId: results.insertId,
+                messageType: d.messageType,
+                created: insertData.created,
+                ret: true,
+                chatMessage: d.chatMessage,
+                siteKey: d.siteKey,
+                matchAutoSpeech: !d.notifyToCompany
               };
 
               // 担当者のいない消費者からのメッセージの場合

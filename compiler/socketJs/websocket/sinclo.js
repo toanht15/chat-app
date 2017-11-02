@@ -1032,7 +1032,7 @@
       if ( obj.sincloSessionId !== userInfo.sincloSessionId && obj.tabId !== userInfo.tabId ) return false;
       var elm = document.getElementById('sincloChatMessage'), cn, userName = "";
       if ( obj.ret ) {
-        if(obj.messageType === sinclo.chatApi.messageType.customer && storage.s.get('chatAct') !== "true") {
+        if(obj.messageType === sinclo.chatApi.messageType.customer && storage.s.get('chatAct') !== "true" && !obj.matchAutoSpeech) {
           // 別タブで送信した自分のメッセージを受けたのでチャット応対中とする
           console.log("self message received. set chatAct = true");
           storage.s.set('chatAct', true);
