@@ -3558,7 +3558,6 @@ function emit(evName, data){
   }
   if (evName === "connectSuccess" || evName === "sendWindowInfo" || evName === "sendAutoChat" || evName === "sendChat") {
     data.userId = userInfo.userId;
-    data.sincloSessionId = userInfo.sincloSessionId;
   }
   if (   evName === "connectSuccess" || evName === "sendWindowInfo" || evName === "sendAutoChatMessages" ||
          evName === "getChatMessage" || evName === "sendChat" || evName === "sendAutoChatMessage"
@@ -3599,6 +3598,7 @@ function emit(evName, data){
     if ( userInfo.tabId !== "" ) {
       clearInterval(timer);
       data.tabId = userInfo.tabId; // タブの識別ID
+      data.sincloSessionId = userInfo.sincloSessionId;
       socket.emit(evName, JSON.stringify(data));
     }
   }, 100);
