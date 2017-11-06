@@ -400,6 +400,10 @@
       // connectフラグ
       browserInfo.connectFlg = true;
 
+      if(check.isset(userInfo.accessId)) {
+        emitData.accessId = userInfo.accessId;
+      }
+
       emit('connected', {
         type: 'user',
         data: emitData
