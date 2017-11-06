@@ -299,19 +299,6 @@
       <!-- 説明文 -->
     </div>
     <div id="miniTarget">
-    <?php if ( $coreSettings[C_COMPANY_USE_CHAT] && ($coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT])) ) :?>
-      <section id="navigation" ng-hide="showWidgetType === 3" ng-class="{ notNoneWidgetOutsideBorder:widget_outside_border_none === ''||widget_outside_border_none === false, middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">
-        <ul ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">
-<!-- 仕様変更、常に高度な設定が当たっている状態とする -->
-<!--
-          <li data-tab="chat" class="widgetCtrl notSelect" ng-class="{ notNone:widget_inside_border_none === ''||widget_inside_border_none === false, details: color_setting_type === '1' || color_setting_type === true, selected: widget.showTab == 'chat'}">チャットでの受付</li>
-          <li data-tab="call" class="widgetCtrl notSelect" ng-class="{ notNone:widget_inside_border_none === ''||widget_inside_border_none === false, details: color_setting_type === '1' || color_setting_type === true, selected: widget.showTab == 'call'}">電話での受付</li>
- -->
-          <li data-tab="chat" class="widgetCtrl notSelect details" ng-class="{ notNoneWidgetOutsideBorder:widget_outside_border_none === ''||widget_outside_border_none === false, notNone:widget_inside_border_none === ''||widget_inside_border_none === false, selected: widget.showTab == 'chat'}">チャットでの受付</li>
-          <li data-tab="call" class="widgetCtrl notSelect details" ng-class="{ notNoneWidgetOutsideBorder:widget_outside_border_none === ''||widget_outside_border_none === false, notNone:widget_inside_border_none === ''||widget_inside_border_none === false, selected: widget.showTab == 'call'}">電話での受付</li>
-        </ul>
-      </section>
-    <?php endif; ?>
     <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
       <section id="chatTab" ng-hide="widget.showTab !== 'chat'" class="details" ng-class="{ notNoneWidgetOutsideBorder:widget_outside_border_none === ''||widget_outside_border_none === false, notNone:widget_inside_border_none === ''||widget_inside_border_none === false, middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">
 

@@ -125,7 +125,9 @@ var socket, // socket.io
       var widget = window.sincloInfo.widget, displaySet = "";
       var css = this.widgetCssTemplate(widget),
           header = this.widgetHeaderTemplate(widget),
-          navi = this.widgetNaviTemplate(widget),
+          //プレミアムプランであってもナビゲションを非表示にする
+          //navi = this.widgetNaviTemplate(widget),
+          navi = "",
           chat = this.chatWidgetTemplate(widget),
           call = this.widgetTemplate(widget),
           fotter = '<p id="fotter">Powered by <a target="sinclo" href="https://sinclo.medialink-ml.co.jp/lp/?utm_medium=web-widget&utm_campaign=widget-referral">sinclo</a></p>';
