@@ -400,6 +400,10 @@
       // connectフラグ
       browserInfo.connectFlg = true;
 
+      if(check.isset(userInfo.accessId)) {
+        emitData.accessId = userInfo.accessId;
+      }
+
       emit('connected', {
         type: 'user',
         data: emitData
@@ -1493,6 +1497,7 @@
             var strings = val.split('\n');
             var radioCnt = 1;
             var linkReg = RegExp(/http(s)?:\/\/[!-~.a-z]*/);
+            var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
             var radioName = "sinclo-radio" + chatList.children.length;
             var content = "";
             if ( check.isset(cName) === false ) {
@@ -1525,8 +1530,21 @@
                     var a = "<a href='" + url + "' target='_blank'>" + url + "</a>";
                     str = str.replace(url, a);
                 }
+                // 電話番号（スマホのみリンク化）
+                var tel = str.match(telnoTagReg);
+                if( tel !== null ) {
+                  var telno = tel[1];
+                  if(check.smartphone()) {
+                    // リンクとして有効化
+                    var a = "<a href='tel:" + telno + "'>" + telno + "</a>";
+                    str = str.replace(tel[0], a);
+                  } else {
+                    // ただの文字列にする
+                    var span = "<span class='telno'>" + telno + "</span>";
+                    str = str.replace(tel[0], span);
+                  }
+                }
                 content += str + "\n";
-
             }
 
             if ( cs === "sinclo_re" ) {
