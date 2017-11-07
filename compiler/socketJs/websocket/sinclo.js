@@ -1808,10 +1808,10 @@
                     setTimeout(function(){
                       sinclo.trigger.setAction(message.id, message.action_type, message.activity);
                       sinclo.trigger.processing = false;
-                      if(conditionKey === 7) {
-                        // 自動返信実行後はチャット中のフラグを立てる
-                        storage.s.set('chatAct','true');
-                      }
+                      // if(conditionKey === 7) {
+                      //   // 自動返信実行後はチャット中のフラグを立てる
+                      //   storage.s.set('chatAct','true');
+                      // }
                     }, ret);
                 } else if(ret && typeof(ret) === 'object') {
                     sinclo.trigger.timerTriggeredList[message.id] = false;
@@ -1865,10 +1865,10 @@
                         }
                       }
                       sinclo.trigger.setAction(message.id, message.action_type, message.activity);
-                      if(conditionKey === 7) {
-                        // 自動返信実行後はチャット中のフラグを立てる
-                        storage.s.set('chatAct','true');
-                      }
+                      // if(conditionKey === 7) {
+                      //   // 自動返信実行後はチャット中のフラグを立てる
+                      //   storage.s.set('chatAct','true');
+                      // }
                       sinclo.trigger.processing = false;
                     }, ret);
                 }
