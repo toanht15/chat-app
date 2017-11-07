@@ -8,9 +8,9 @@
   </div>
 
   <div id='muser_menu' class="p20trl">
-    <?php if( $limitUserNum > $userListCnt ): ?>
       <div class="fLeft" >
         <div class="btnSet" >
+          <?php if( $limitUserNum > $userListCnt ): ?>
           <span>
             <a>
               <?= $this->Html->image('add.png', array(
@@ -25,6 +25,7 @@
               )) ?>
             </a>
           </span>
+          <?php endif;?>
           <span>
             <a>
               <?= $this->Html->image('dustbox.png', array(
@@ -39,7 +40,6 @@
           </span>
         </div>
       </div>
-    <?php endif;?>
     <!-- 検索窓 -->
     <div id="paging" class="fRight">
       <?php
