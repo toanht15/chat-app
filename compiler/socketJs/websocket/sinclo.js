@@ -472,6 +472,16 @@
         ipAddress: userInfo.getIp(),
         referrer: userInfo.referrer
       });
+
+      // customEvent
+      if(document.createEvent) {
+        var evt = document.createEvent('HTMLEvents');
+        evt.initEvent('sinclo:connected', true, true);
+        document.dispatchEvent(evt);
+      } else {
+        var evt = document.createEventObject();
+        document.fireEvent('sinclo:connected', evt);
+      }
     },
     setHistoryId: function(){
         var createStartTimer,
