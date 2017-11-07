@@ -143,7 +143,7 @@
         </tr>
       </thead>
       <tbody ng-cloak>
-        <tr ng-repeat="monitor in search(monitorList) | orderObjectBy : '-chatUnreadId-chat'" ng-dblclick="showDetail(monitor.tabId, monitor.sincloSessionId)" id="monitor_{{monitor.tabId}}">
+        <tr ng-repeat="monitor in search(monitorList) | orderObjectBy : '-chatUnreadId-chat'" ng-dblclick="showDetail(monitor.tabId)" id="monitor_{{monitor.tabId}}">
           <!-- /* 状態 */ -->
           <td class="tCenter">
             <span ng-if="monitor.status === jsConst.tabInfo.open"><?=$this->Html->image('tab_status_open.png', ['alt'=>'', 'width'=>20, 'height'=>20])?></span>
@@ -180,11 +180,11 @@
               <span class="monitorOn" ng-if="isset(monitor.chat) && monitor.chat !== <?= h($muserId)?>"><span class="bold">対応中</span><br>（{{setName(monitor.chat)}}）</span>
               <?php endif; ?>
 
-              <span ng-if="monitor.tabId != detailId" ng-click="showDetail(monitor.tabId, monitor.sincloSessionId)" class="btn-shadow blueBtn ">
+              <span ng-if="monitor.tabId != detailId" ng-click="showDetail(monitor.tabId)" class="btn-shadow blueBtn ">
                 詳細を開く
                 <div class="unread" ng-if="monitor.chatUnreadCnt > 0">{{monitor.chatUnreadCnt}}</div>
               </span>
-              <span ng-if="monitor.tabId == detailId" ng-click="showDetail(monitor.tabId, monitor.sincloSessionId)" class="btn-shadow redBtn ">
+              <span ng-if="monitor.tabId == detailId" ng-click="showDetail(monitor.tabId)" class="btn-shadow redBtn ">
                 詳細を閉じる
                 <div class="unread" ng-if="monitor.chatUnreadCnt > 0">{{monitor.chatUnreadCnt}}</div>
               </span>

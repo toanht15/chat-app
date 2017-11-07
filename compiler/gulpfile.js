@@ -68,7 +68,6 @@ gulp.task('js-minify', function(){
 gulp.task('js-minify-dev', function(){
   //console.logを表示した状態にする
   uglifyOpt.compress.drop_console = false;
-  uglifyOpt.compress.drop_debugger = false;
   return gulp.src(path.js)
     .pipe(uglify(uglifyOpt))
     .pipe(rename({

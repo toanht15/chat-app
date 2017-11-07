@@ -32,7 +32,7 @@
                     <li class="sinclo_se typeing_message" ng-if="typingMessageSe !== ''">{{typingMessageSe}}</li>
                   </div>
                   <div style="text-align:left; height: auto!important; padding:0;">
-                    <li class="sinclo_re typeing_message" ng-if="typingMessageRe[sincloSessionId] && typingMessageRe[sincloSessionId] !== ''">{{typingMessageRe[sincloSessionId]}}</li>
+                    <li class="sinclo_re typeing_message" ng-if="typingMessageRe[detailId] && typingMessageRe[detailId] !== ''">{{typingMessageRe[detailId]}}</li>
                   </div>
                 </typing-message>
                 <chat-receiver>
@@ -90,7 +90,7 @@
                   </div>
 
                   <div id="sendMessageAreaBtn" ng-class="{showOption: chatOptionDisabled(detailId)}">
-                    <span id="sinclo_chatEndBtn" class="btn-shadow redBtn ng-binding" ng-click="confirmDisConnect(detailId, detail.sincloSessionId)">退室</span>
+                    <span id="sinclo_chatEndBtn" class="btn-shadow redBtn ng-binding" ng-click="confirmDisConnect(detailId)">退室</span>
                     <span id="sinclo_sendbtn" class="btn-shadow" onclick="chatApi.pushMessage()">{{chatSendBtnName()}}</span>
                   </div>
                 <?php endif; ?>

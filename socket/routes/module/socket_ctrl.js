@@ -125,13 +125,6 @@ function getSessionId(siteKey, tabId, key){
   }
 }
 
-// sincloCoreオブジェクトからチャットで関連するセッションID群を取得する関数
-function getChatSessionIds(siteKey, sincloSessionId, key){
-  if ( (siteKey in sincloCore) && (sincloSessionId in sincloCore[siteKey]) && (key in sincloCore[siteKey][sincloSessionId]) ) {
-    return sincloCore[siteKey][sincloSessionId][key];
-  }
-}
-
 function now(){
   var d = new Date();
   return "【" + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds() + "】";
@@ -374,11 +367,6 @@ function getConnectInfo(o){
   if ( isset(docShareId) ) {
     o.docShareId = docShareId;
   }
-  var sincloSessionId = getSessionId(o.siteKey, o.tabId, 'sincloSessionId');
-  if ( isset(sincloSessionId) ) {
-    o.sincloSessionId = sincloSessionId;
-  }
-  console.log('>>>>> getConnectInfo : ' + JSON.stringify(o));
   return o;
 }
 
@@ -426,7 +414,7 @@ var emit = {
       return d;
     }
   },
-  toMine: function(ev, d, s){ // 送り主に返信（そのタブのみ）
+  toMine: function(ev, d, s){ // 送り主に返信
     var obj = this._convert(d);
     return s.emit(ev, obj);
   },
@@ -435,17 +423,6 @@ var emit = {
     if ( !isset(sId) ) return false;
     if ( !isset(io.sockets.connected[sId]) ) return false;
     return io.sockets.connected[sId].emit(ev, obj);
-  },
-  toSameUser: function(ev, d, siteKey, sessionId){ // 対象ユーザーに送信(sId = the session id)
-    var obj = this._convert(d);
-    var sessionIds = getChatSessionIds(siteKey, sessionId, 'sessionIds');
-    if ( !isset(sessionIds) ) return false;
-    var result = false;
-    for (var index in sessionIds) {
-      console.log("emit to same user sessionId => " + sessionIds[index]);
-      if ( !isset(io.sockets.connected[sessionIds[index]]) ) continue;
-      io.sockets.connected[sessionIds[index]].emit(ev, obj);
-    }
   },
   toClient: function(ev, d, rName) { // 対象企業を閲覧中のユーザーに送信(rName = the room's name)
     var obj = this._convert(d);
@@ -546,16 +523,14 @@ var db = {
     if ( isset(obj.tabId) && isset(obj.siteKey) ) {
       if ( !isset(companyList[obj.siteKey]) || obj.subWindow ) return false;
       var siteId = companyList[obj.siteKey];
-      console.log('SHIMIZU : ' + JSON.stringify(obj));
-      pool.query('SELECT * FROM t_histories WHERE m_companies_id = ? AND tab_id = ? AND visitors_id = ? ORDER BY id DESC LIMIT 1;', [siteId, obj.sincloSessionId, obj.userId], function(err, rows){
+      pool.query('SELECT * FROM t_histories WHERE m_companies_id = ? AND tab_id = ? AND visitors_id = ? ORDER BY id DESC LIMIT 1;', [siteId, obj.tabId, obj.userId], function(err, rows){
         if ( err !== null && err !== '' ) return false; // DB接続断対応
         var now = formatDateParse();
-        if ( !(obj.sincloSessionId in sincloCore[obj.siteKey]) ) {
-          sincloCore[obj.siteKey][obj.sincloSessionId] = {};
+        if ( !(obj.tabId in sincloCore[obj.siteKey]) ) {
+          sincloCore[obj.siteKey][obj.tabId] = {};
         }
 
         if ( isset(rows) && isset(rows[0]) ) {
-          sincloCore[obj.siteKey][obj.sincloSessionId].historyId = rows[0].id;
           sincloCore[obj.siteKey][obj.tabId].historyId = rows[0].id;
           timeUpdate(rows[0].id, obj, now);
           obj.historyId = rows[0].id;
@@ -566,7 +541,7 @@ var db = {
           var insertData = {
             m_companies_id: siteId,
             visitors_id: obj.userId,
-            tab_id: obj.sincloSessionId,
+            tab_id: obj.tabId,
             ip_address: obj.ipAddress,
             user_agent: obj.userAgent,
             access_date: formatDateParse(obj.time),
@@ -579,7 +554,6 @@ var db = {
             function (error,results,fields){
               if ( err !== null && err !== '' ) return false; // DB接続断対応
               var historyId = results.insertId;
-              sincloCore[obj.siteKey][obj.sincloSessionId].historyId = historyId;
               sincloCore[obj.siteKey][obj.tabId].historyId = historyId;
               timeUpdate(historyId, obj, now);
               obj.historyId = historyId;
@@ -733,15 +707,11 @@ io.sockets.on('connection', function (socket) {
                 chatApi.sendCheck(d, function(err, ret){
                   sendData.opFlg = ret.opFlg;
                   // 書き込みが成功したら顧客側に結果を返す
-                  //emit.toUser('sendChatResult', sendData, sId);
-                  var sincloSessionId = sincloCore[d.siteKey][d.tabId].sincloSessionId;
-                  sendData.sincloSessionId = sincloSessionId;
-                  emit.toSameUser('sendChatResult', sendData, d.siteKey, sincloSessionId);
+                  emit.toUser('sendChatResult', sendData, sId);
                   if (Number(insertData.message_type) === 3) return false;
                   // 書き込みが成功したら企業側に結果を返す
                   emit.toCompany('sendChatResult', {
                     tabId: d.tabId,
-                    sincloSessionId: sincloSessionId,
                     opFlg: sendData.opFlg,
                     chatId: results.insertId,
                     sort: fullDateTime(insertData.created),
@@ -776,24 +746,10 @@ io.sockets.on('connection', function (socket) {
               }
               else {
                 // 書き込みが成功したら顧客側に結果を返す
-                var sincloSessionId = sincloCore[d.siteKey][d.tabId].sincloSessionId;
-                sendData.sincloSessionId = sincloSessionId;
-                emit.toSameUser('sendChatResult', sendData, d.siteKey, sincloSessionId);
+                emit.toUser('sendChatResult', sendData, sId);
                 if (Number(insertData.message_type) === 3) return false;
                 // 書き込みが成功したら企業側に結果を返す
-                emit.toCompany('sendChatResult', {
-                  tabId: d.tabId,
-                  sincloSessionId: sincloSessionId,
-                  chatId: results.insertId,
-                  sort: fullDateTime(insertData.created),
-                  created: insertData.created,
-                  userId: insertData.m_users_id,
-                  messageType: d.messageType,
-                  ret: true,
-                  message: d.chatMessage,
-                  siteKey: d.siteKey,
-                  notifyToCompany: d.notifyToCompany
-                }, d.siteKey);
+                emit.toCompany('sendChatResult', {tabId: d.tabId, chatId: results.insertId, sort: fullDateTime(insertData.created), created: insertData.created, userId: insertData.m_users_id, messageType: d.messageType, ret: true, message: d.chatMessage, siteKey: d.siteKey, notifyToCompany: d.notifyToCompany}, d.siteKey);
               }
 
               //オペレータリクエスト件数
@@ -917,17 +873,15 @@ io.sockets.on('connection', function (socket) {
     },
     calcScNum: function(obj, userId){ /* sincloCoreから対象ユーザーのチャット対応状態を算出 */
       var scNum = 0;
-      var sincloSessionIds = [];
       if ( !sincloCore.hasOwnProperty(obj.siteKey) ) return scNum;
       var tabIds = Object.keys(sincloCore[obj.siteKey]);
       for (var i = 0; i < tabIds.length; i++) {
         var tabData = sincloCore[obj.siteKey][tabIds[i]];
         if ( tabData.hasOwnProperty("chat") && isNumber(tabData.chat) ) {
-          // 同一のsincloSessionIdを保有するユーザーは同時応対数１とする
-          if ( Number(tabData.chat) === Number(userId) && sincloSessionIds.indexOf(tabData.sincloSessionId) === -1) {
+          if ( Number(tabData.chat) === Number(userId) ) {
             scNum++;
-            sincloSessionIds.push(tabData.sincloSessionId);
           }
+
         }
       }
       return scNum;
@@ -1000,7 +954,6 @@ io.sockets.on('connection', function (socket) {
     if ( res.type !== 'admin' ) {
       if ( data.userId === undefined || data.userId === '' || data.userId === null ) {
         send.userId = makeUserId();
-        send.sincloSessionId = send.userId;
       }
       if ( data.accessId === undefined || data.accessId === '' || data.accessId === null ) {
         send.accessId = ('000' + Math.floor(Math.random() * 10000)).slice(-4);
@@ -1224,10 +1177,7 @@ io.sockets.on('connection', function (socket) {
       sincloCore[obj.siteKey] = {};
     }
     if ( !isset(sincloCore[obj.siteKey][obj.tabId]) ) {
-      sincloCore[obj.siteKey][obj.tabId] = {sincloSessionId: null, sessionId: null, subWindow: false};
-    }
-    if ( !isset(sincloCore[obj.siteKey][obj.sincloSessionId]) ) {
-      sincloCore[obj.siteKey][obj.sincloSessionId] = {sessionIds: []};
+      sincloCore[obj.siteKey][obj.tabId] = {sessionId: null, subWindow: false};
     }
     if ('timeoutTimer' in sincloCore[obj.siteKey][obj.tabId]) {
       clearTimeout(sincloCore[obj.siteKey][obj.tabId].timeoutTimer);
@@ -1236,8 +1186,6 @@ io.sockets.on('connection', function (socket) {
 
     connectList[socket.id] = {siteKey: obj.siteKey, tabId: obj.tabId, userId: null};
     sincloCore[obj.siteKey][obj.tabId].sessionId = socket.id;
-    sincloCore[obj.siteKey][obj.tabId].sincloSessionId = obj.sincloSessionId;
-    sincloCore[obj.siteKey][obj.sincloSessionId].sessionIds.push(socket.id);
     if ( obj.subWindow ) {
       sincloCore[obj.siteKey][obj.tabId].toTabId = obj.to;
       sincloCore[obj.siteKey][obj.tabId].connectToken = obj.connectToken;
@@ -1755,7 +1703,7 @@ var logToken = makeToken();
 console.log("chatStart-0: [" + logToken + "] >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 console.log("chatStart-1: [" + logToken + "] " + d);
     if ( sincloCore[obj.siteKey][obj.tabId] === null ) {
-      emit.toMine("chatStartResult", {ret: false, siteKey: obj.siteKey, userId: sincloCore[obj.siteKey][obj.tabId].chat, sincloSessionId: obj.sincloSessionId}, socket);
+      emit.toMine("chatStartResult", {ret: false, siteKey: obj.siteKey, userId: sincloCore[obj.siteKey][obj.tabId].chat}, socket);
 
       var userId = ( getSessionId(obj.siteKey,obj.tabId,'chat') ) ? sincloCore[obj.siteKey][obj.tabId].chat : "undefined userId.";
 console.log("chatStart-2: [" + logToken + "] " + JSON.stringify({ret: false, siteKey: obj.siteKey, userId: userId}));
@@ -1764,14 +1712,8 @@ console.log("chatStart-2: [" + logToken + "] " + JSON.stringify({ret: false, sit
       var sendData = {ret: true, messageType: type, tabId: obj.tabId, siteKey: obj.siteKey, userId: obj.userId, hide:false, created: now};
       var scInfo = "";
 
-      // 同じsincloSessionIdを持つユーザーは全員当該の企業側ユーザーが応対していることにする
-      Object.keys(sincloCore[obj.siteKey]).forEach(function(key) {
-        if(obj.sincloSessionId === sincloCore[obj.siteKey][key].sincloSessionId) {
-          sincloCore[obj.siteKey][key].chat = obj.userId;
-          sincloCore[obj.siteKey][key].chatSessionId = socket.id;
-        }
-      });
-
+      sincloCore[obj.siteKey][obj.tabId].chat = obj.userId;
+      sincloCore[obj.siteKey][obj.tabId].chatSessionId = socket.id;
       // サイトとして初チャット開始
       if ( !(obj.siteKey in c_connectList) ) {
         c_connectList[obj.siteKey] = {};
@@ -1815,8 +1757,7 @@ console.log("chatStart-3: [" + logToken + "] " + logData3);
           }
 
           c_connectList[obj.siteKey][obj.tabId][now] = {messageType: type, type:"start", userName: userName, userId: obj.userId};
-          //emit.toUser("chatStartResult", sendData, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
-          emit.toSameUser("chatStartResult", sendData, obj.siteKey, obj.sincloSessionId);
+          emit.toUser("chatStartResult", sendData, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
 
           /* チャット対応上限の処理（対応人数加算の処理） */
           if ( scList.hasOwnProperty(obj.siteKey) && scList[obj.siteKey].cnt.hasOwnProperty(obj.userId) ) {
@@ -1853,7 +1794,6 @@ console.log("chatStart-3: [" + logToken + "] " + logData3);
                 scInfo: scInfo,
                 siteKey: obj.siteKey,
                 tabId: obj.tabId,
-                sincloSessionId: obj.sincloSessionId,
                 visitorsId: (ids.length > 1) ? ids[0] : "",
                 userId: obj.userId,
                 chatMessage: "入室",
@@ -1872,6 +1812,7 @@ console.log("chatStart-4: [" + logToken + "] " + logData4);
         var logData5 = ( sincloCore.hasOwnProperty(obj.siteKey) && typeof(sincloCore[obj.siteKey]) === 'object' ) ? JSON.stringify(sincloCore[obj.siteKey]) : "typeof: " + typeof(sincloCore[obj.siteKey]) ;
 console.log("chatStart-5: [" + logToken + "] " + JSON.stringify(sincloCore[obj.siteKey]));
 console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+
       });
     }
   });
@@ -1890,16 +1831,11 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     /* チャット対応上限の処理（対応人数減算の処理） */
 
     if ( isset(sincloCore[obj.siteKey]) && isset(sincloCore[obj.siteKey][obj.tabId].chat) ) {
-      Object.keys(sincloCore[obj.siteKey]).forEach(function(key) {
-        if(obj.sincloSessionId === sincloCore[obj.siteKey][key].sincloSessionId) {
-          sincloCore[obj.siteKey][key].chat = null;
-          sincloCore[obj.siteKey][key].chatSessionId = null;
-        }
-      });
+      sincloCore[obj.siteKey][obj.tabId].chat = null;
+      sincloCore[obj.siteKey][obj.tabId].chatSessionId = null;
       scInfo = ( scList.hasOwnProperty(obj.siteKey) ) ? scList[obj.siteKey].cnt : {};
 
-      //emit.toUser("chatEndResult", {ret: true, messageType: type}, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
-      emit.toSameUser("chatEndResult", {ret: true, messageType: type}, obj.siteKey, obj.sincloSessionId);
+      emit.toUser("chatEndResult", {ret: true, messageType: type}, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
       // DBに書き込み
       var ids = obj.tabId.split("_");
 
@@ -1923,7 +1859,6 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             scInfo: scInfo,
             siteKey: obj.siteKey,
             tabId: obj.tabId,
-            sincloSessionId: obj.sincloSessionId,
             visitorsId: (ids.length > 1) ? ids[0] : "",
             userId: obj.userId,
             chatMessage: "退室",

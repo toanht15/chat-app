@@ -16,7 +16,6 @@ process.env.TZ = 'Asia/Tokyo';
 
 process.on('uncaughtException', function(err) {
   console.log(err);
-  console.log(err.stack);
 });
 
 // socket
