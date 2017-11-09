@@ -480,6 +480,16 @@
         ipAddress: userInfo.getIp(),
         referrer: userInfo.referrer
       });
+
+      // customEvent
+      if(document.createEvent) {
+        var evt = document.createEvent('HTMLEvents');
+        evt.initEvent('sinclo:connected', true, true);
+        document.dispatchEvent(evt);
+      } else {
+        var evt = document.createEventObject();
+        document.fireEvent('sinclo:connected', evt);
+      }
     },
     setHistoryId: function(){
         var createStartTimer,
@@ -1839,10 +1849,10 @@
                     setTimeout(function(){
                       sinclo.trigger.setAction(message.id, message.action_type, message.activity);
                       sinclo.trigger.processing = false;
-                      if(conditionKey === 7) {
-                        // 自動返信実行後はチャット中のフラグを立てる
-                        storage.s.set('chatAct','true');
-                      }
+                      // if(conditionKey === 7) {
+                      //   // 自動返信実行後はチャット中のフラグを立てる
+                      //   storage.s.set('chatAct','true');
+                      // }
                     }, ret);
                 } else if(ret && typeof(ret) === 'object') {
                     sinclo.trigger.timerTriggeredList[message.id] = false;
@@ -1896,10 +1906,10 @@
                         }
                       }
                       sinclo.trigger.setAction(message.id, message.action_type, message.activity);
-                      if(conditionKey === 7) {
-                        // 自動返信実行後はチャット中のフラグを立てる
-                        storage.s.set('chatAct','true');
-                      }
+                      // if(conditionKey === 7) {
+                      //   // 自動返信実行後はチャット中のフラグを立てる
+                      //   storage.s.set('chatAct','true');
+                      // }
                       sinclo.trigger.processing = false;
                     }, ret);
                 }
