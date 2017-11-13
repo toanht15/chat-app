@@ -1114,7 +1114,6 @@ var socket, // socket.io
       return html;
     },
     judgeShowWidget: function(){
-      console.log('いるよ');
       window.sincloInfo.widgetDisplay = null; // デフォルト表示しない
       // チャット契約、画面同期中であれば表示
       if ( window.sincloInfo.contract.chat ) {
@@ -1126,9 +1125,7 @@ var socket, // socket.io
       }
       // オペレーターの数に応じて表示する
       else if ( ('display_type' in window.sincloInfo.widget) && window.sincloInfo.widget.display_type === 2 ) {
-        console.log('待機中');
         if ( Number(window.sincloInfo.activeOperatorCnt) > 0 ) {
-          console.log('待機中2')
           window.sincloInfo.widgetDisplay = true;
           console.log(window.sincloInfo.widgetDisplay);
         }
@@ -1137,58 +1134,17 @@ var socket, // socket.io
         var d = new Date(date);
         return Date.parse(d);
       }
-
-      var serverDate = "";
-      //　営業時間外は表示しない
-      console.log('ここここwwwww');
-      var d = new Date(), date, dateParse, nowDay, nextDay, keys, dayList = [];
-      var request = new XMLHttpRequest();
-      request.open('HEAD', window.location.href, true);
-      request.send();
-      console.log('ここここ');
-      request.onreadystatechange = function() {
-        console.log('こここええええ');
-        if (this.readyState === 4) {
-          serverDate = new Date(request.getResponseHeader('Date'));
-          console.log(serverDate);
-          // 例) => Wed Feb 16 2017 12:00:00 GMT+0900
-        }
-      }
-
-      setTimeout(function(){
-      // 今日の曜日
-      nowDay = d.getDay();
-      dateParse = Date.parse(d);
-      date = d.getFullYear() + "/" + (d.getMonth()+1) + "/" + d.getDate() + " ";
-      var startDate = makeDate(date + "09:00");
-      var endDate = makeDate(date + "23:30");
-      if ( ('display_type' in window.sincloInfo.widget) && window.sincloInfo.widget.display_type === 4) {
-        if( startDate <= dateParse && dateParse < endDate ) {
-          console.log('入ってる');
-          window.sincloInfo.widgetDisplay = true;
-          console.log(window.sincloInfo.widgetDisplay);
-        }
-        else {
-          console.log('入ってる2');
-          window.sincloInfo.widgetDisplay = false;
-        }
-      }
-      console.log(2)}, 100);
-
       // 画面同期中は表示しない
       if ( check.isset(userInfo.connectToken) || check.isset(userInfo.coBrowseConnectToken) ) {
-        console.log('入ってる3');
         window.sincloInfo.widgetDisplay = false;
       }
 
       // 同時対応上限数の設定があり、超えている場合
       if ( window.sincloInfo.hasOwnProperty('opFlg') && window.sincloInfo.opFlg === false ) {
-        console.log('入ってる4');
         window.sincloInfo.widgetDisplay = false;
       }
       // 同期対象とするが、ウィジェットは表示しない
       if (check.isset(window.sincloInfo.dataset) && (check.isset(window.sincloInfo.dataset.hide) && window.sincloInfo.dataset.hide === "1")) {
-        console.log('入ってる5');
         window.sincloInfo.widgetDisplay = false;
       }
 
@@ -1224,7 +1180,6 @@ var socket, // socket.io
       }
     },
     makeAccessIdTag: function(){
-      console.log('ここまではいるよね');
       if ( !check.browser() ) return false;
       if ( !('widget' in window.sincloInfo) ) return false;
       if (!this.judgeShowWidget()) {
@@ -1320,7 +1275,6 @@ var socket, // socket.io
 //          storage.s.unset("bannerAct");
         }
         if(closeAct === "true"){
-          console.log('非表示ナウ');
           //強制的に非表示とする
           //チャットを閉じる
           $("#sincloWidgetBox").hide();
@@ -2291,14 +2245,6 @@ var socket, // socket.io
         }
         // ウィジェット非表示中
         if ( !sincloBox || ( sincloBox && sincloBox.style.display !== "block" ) ) {
-          console.log(sincloInfo);
-          console.log('非表示なうなう');
-        var request = new XMLHttpRequest;
-        request.open('HEAD', '#', false);
-        request.send(null);
-        var req_t = new Date(request.getResponseHeader('Date'));
-        console.log('頼む');
-        console.log(req_t);
           tabStatus = cnst.tab_type.none;
         }
         //バナー表示中
