@@ -8,6 +8,9 @@
   <?php endif; ?>
 
   <div id='moperating_hours_add_title'>
+     <div class="fLeft">
+        <?= $this->Html->image('operating_hour_g.png', array('alt' => 'チャット基本設定', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?>
+      </div>
     <h1>営業時間設定<span id="sortMessage"></span></h1>
   </div>
   <div id='moperating_hours_form' class="p20x">
@@ -41,14 +44,14 @@
       <div id="detail_content">
         <dl>
           <dt>条件設定<dt-detail></dt-detail></dt>
-            <dd>
-              <li>
-                <label class="pointer"><?=  $this->Form->input('type', array('type' => 'radio', 'default' => '1','onclick' => 'entryChange1();', 'name' => 'data[MOperatingHour][type]', 'label' => false, 'legend' => false,'options' => array('1' => '毎日', '2' => '平日/週末'))); ?></label>
-              </li>
-            </dd>
-            <?php
-              echo $this->Form->hidden('outputData',array('value' => $operatingHourData['MOperatingHour']['time_settings']));
-            ?>
+          <dd>
+            <li>
+              <label class="pointer"><?=  $this->Form->input('type', array('type' => 'radio', 'default' => '1','onclick' => 'entryChange1();', 'name' => 'data[MOperatingHour][type]', 'label' => false, 'legend' => false,'options' => array('1' => '毎日', '2' => '平日/週末'))); ?></label>
+            </li>
+          </dd>
+          <?php
+            echo $this->Form->hidden('outputData',array('value' => $operatingHourData['MOperatingHour']['time_settings']));
+          ?>
           <dt>時間設定</dt>
           <dd>
             <div id='moperating_hours_list'>
@@ -112,12 +115,12 @@
                     else {
                   ?>
                     <td class="tCenter dayOfWeek"><span class = "green day" id = "<?= $v2.'day' ?>"><?= $dayOfWeek ?></span></td>
-                  <?php } ?>
-                    <td id = "<?= $v2 ?>" class = "time">
+                     <?php } ?>
+                      <td id = "<?= $v2 ?>" class = "time">
                       <?php
                         echo $day; ?>
-                    </td>
-                    <td>
+                      </td>
+                      <td>
                       <?php echo $this->Html->link(
                         $this->Html->image(
                           'edit.png',
@@ -135,89 +138,89 @@
                           'escape' => false
                         )
                       ); ?>
-                    </td>
-                  </tr>
-                <?php } ?>
-              </tbody>
-            </table>
+                      </td>
+                    </tr>
+                 <?php } ?>
+               </tbody>
+              </table>
 
-            <?php
-            if($operatingHourData['MOperatingHour']['type'] == 2) { ?>
-              <table class = "weekly" id = "secondTable">
-            <?php
-            } else { ?>
-              <table class = "weekly" id = "secondTable" style = "display:none;">
-            <?php } ?>
-            <tbody>
               <?php
-                foreach($weekly as $v2) {
-                  if($v2 == 'week') {
-                    $dayOfWeek = '平日';
-                  }
-                  if($v2 == 'weekend') {
-                    $dayOfWeek = '週末';
-                  }
-                  if($v2 == 'weekpub') {
-                    $dayOfWeek = '祝日';
-                  }
-              ?>
-              <tr>
+              if($operatingHourData['MOperatingHour']['type'] == 2) { ?>
+                <table class = "weekly" id = "secondTable">
               <?php
-                $day = "";
-                foreach($timeData2->{$v2} as $v) {
-                  if(empty($day)) {
-                    if(empty($v->start) && empty($v->end)) {
-                      $day = "休み";
+              } else { ?>
+                <table class = "weekly" id = "secondTable" style = "display:none;">
+              <?php } ?>
+              <tbody>
+                <?php
+                  foreach($weekly as $v2) {
+                    if($v2 == 'week') {
+                      $dayOfWeek = '平日';
+                    }
+                    if($v2 == 'weekend') {
+                      $dayOfWeek = '週末';
+                    }
+                    if($v2 == 'weekpub') {
+                      $dayOfWeek = '祝日';
+                    }
+                ?>
+                <tr>
+                <?php
+                  $day = "";
+                  foreach($timeData2->{$v2} as $v) {
+                    if(empty($day)) {
+                      if(empty($v->start) && empty($v->end)) {
+                        $day = "休み";
+                      }
+                      else {
+                        $day = $v->start.'-'.$v->end;
+                      }
                     }
                     else {
-                      $day = $v->start.'-'.$v->end;
+                      $day = $day."　".$v->start.'-'.$v->end;
                     }
                   }
-                  else {
-                    $day = $day."　".$v->start.'-'.$v->end;
-                  }
-                }
-              ?>
-              <?php if($day == "休み") { ?>
-                <td class="tCenter dayOfWeek"><span class = "green holiday day" id = "<?= $v2.'day' ?>"><?= $dayOfWeek ?></span></td>
-              <?php }
-                else { ?>
-                <td class="tCenter dayOfWeek"><span class = "green day" id = "<?= $v2.'day' ?>"><?= $dayOfWeek ?></span></td>
-              <?php } ?>
-              <td id = "<?= $v2 ?>" class = "time">
-              <?php
-                echo $day; ?>
-              </td>
-              <td>
-                <?php echo $this->Html->link(
-                  $this->Html->image(
-                    'edit.png',
-                    array(
-                      'alt' => '編集',
-                      'width' => 30,
-                      'height' => 30
-                    )
-                  ),
-                  'javascript:void(0)',
-                  array(
-                    'class' => 'btn-shadow greenBtn fRight',
-                    'style' => 'width: 35px; height: 35px; padding: 2px;',
-                    'onclick' => "openAddDialog('$v2','$day');",
-                    'escape' => false
-                  )
-                );
                 ?>
-              </td>
-            </tr>
-          <?php } ?>
-        </tbody>
-      </table>
-    </div>
-    </dd>
-  </dl>
-<!-- /* 操作 */ -->
-  <div id="m_widget_setting_action" class="fotterBtnArea">
-   <?= $this->Form->end(); ?>
-    <?= $this->Html->link('更新', 'javascript:void(0)', ['onclick' => 'saveAct()', 'class' => 'greenBtn btn-shadow']) ?>
+                <?php if($day == "休み") { ?>
+                  <td class="tCenter dayOfWeek"><span class = "green holiday day" id = "<?= $v2.'day' ?>"><?= $dayOfWeek ?></span></td>
+                <?php }
+                  else { ?>
+                  <td class="tCenter dayOfWeek"><span class = "green day" id = "<?= $v2.'day' ?>"><?= $dayOfWeek ?></span></td>
+                <?php } ?>
+                  <td id = "<?= $v2 ?>" class = "time">
+                  <?php
+                  echo $day; ?>
+                 </td>
+                  <td>
+                  <?php echo $this->Html->link(
+                    $this->Html->image(
+                      'edit.png',
+                      array(
+                        'alt' => '編集',
+                        'width' => 30,
+                        'height' => 30
+                      )
+                    ),
+                    'javascript:void(0)',
+                    array(
+                      'class' => 'btn-shadow greenBtn fRight',
+                      'style' => 'width: 35px; height: 35px; padding: 2px;',
+                      'onclick' => "openAddDialog('$v2','$day');",
+                      'escape' => false
+                    )
+                  );
+                  ?>
+                  </td>
+                </tr>
+              <?php } ?>
+            </tbody>
+          </table>
+        </div>
+      </dd>
+    </dl>
   </div>
+  </div>
+<!-- /* 操作 */ -->
+  <?= $this->Form->end(); ?>
+  <?= $this->Html->link('更新', 'javascript:void(0)', ['onclick' => 'saveAct()', 'class' => 'greenBtn btn-shadow inlineSaveBtn']) ?>
 </div>

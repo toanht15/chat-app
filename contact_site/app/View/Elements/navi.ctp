@@ -119,7 +119,7 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
         <?= $this->htmlEx->naviLink('表示除外設定', 'exclusion.png', ['href' => ['controller' => 'DisplayExclusions', 'action' => 'index']]) ?>
       </div>
        <div class="icon">
-        <?= $this->htmlEx->naviLink('営業時間設定', 'exclusion.png', ['href' => ['controller' => 'MOperatingHours', 'action' => 'index']]) ?>
+        <?= $this->htmlEx->naviLink('営業時間設定', 'operating_hour.png', ['href' => ['controller' => 'MOperatingHours', 'action' => 'index']]) ?>
       </div>
     <?php endif; ?>
     </div>
