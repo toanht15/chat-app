@@ -110,6 +110,7 @@ sincloApp.controller('MainController', function($scope) {
         return true;
     };
 });
+
 // http://stackoverflow.com/questions/17035621/what-is-the-angular-way-of-displaying-a-tooltip-lightbox
 sincloApp.directive('ngShowonhover',function() {
     return {

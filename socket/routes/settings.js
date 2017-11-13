@@ -55,7 +55,6 @@ router.get("/", function(req, res, next) {
     var sendData = { status: true, widget: {}, messages: {}, contract: {}};
     pool.query(getWidgetSettingSql, siteKey,
         function(err, rows){
-          console.log('ueueueueueu');
             function isNumeric(str){
                 var num = Number(str);
                 if (isNaN(num)){

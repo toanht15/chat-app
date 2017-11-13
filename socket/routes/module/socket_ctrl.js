@@ -703,7 +703,6 @@ io.sockets.on('connection', function (socket) {
 
                 // 応対可能かチェック(対応できるのであれば trueが返る)
                 chatApi.sendCheck(d, function(err, ret){
-                  console.log('応対可能チェック');
                   sendData.opFlg = ret.opFlg;
                   // 書き込みが成功したら顧客側に結果を返す
                   emit.toUser('sendChatResult', sendData, sId);
@@ -722,23 +721,17 @@ io.sockets.on('connection', function (socket) {
                     siteKey: d.siteKey,
                     notifyToCompany: d.notifyToCompany
                   }, d.siteKey);
-                  console.log('応対可能チェック2');
                   if ( ret.opFlg === true ) return false;
-                  console.log('応対可能チェック3');
                   // 応対不可だった場合、既読にする
                   historyId = sincloCore[d.siteKey][d.tabId].historyId;
                   pool.query("UPDATE t_history_chat_logs SET message_read_flg = 1 WHERE t_histories_id = ? AND message_type = 1 AND id <= ?;",
                     [historyId, results.insertId], function(err, ret, fields){}
                   );
 
-                  console.log('ret');
-                  console.log(ret);
-
                   // 自動応対メッセージではなく、Sorryメッセージがある場合は送る
                   if ( ret.message !== "" && (!d.hasOwnProperty('isAutoSpeech') || !d.isAutoSpeech)) {
                     chatApi.sendCheckTimerList[d.tabId] = setTimeout(function(){
                       delete chatApi.sendCheckTimerList[d.tabId];
-                      console.log('sorryメッセージ');
                       // Sorryメッセージを送る
                       var obj = d;
                       obj.chatMessage = ret.message;
@@ -913,6 +906,7 @@ io.sockets.on('connection', function (socket) {
     sendCheck: function(d, callback){ return this.scCheck(2, d, callback) }, // Sorryメッセージ送信チェック
     scCheck: function(type, d, callback){
       var companyId = companyList[d.siteKey];
+
       var getUserSQL = "SELECT IFNULL(chat.sc_flg, 2) as sc_flg, sorry_message, widget.display_type FROM m_companies AS comp LEFT JOIN m_widget_settings AS widget ON ( comp.id = widget.m_companies_id ) LEFT JOIN m_chat_settings AS chat ON ( chat.m_companies_id = widget.m_companies_id ) WHERE comp.id = ?;";
       pool.query(getUserSQL, [companyId], function(err, rows){
         if ( err !== null && err !== '' ) return false; // DB接続断対応
@@ -1807,11 +1801,7 @@ io.sockets.on('connection', function (socket) {
 
   // 都度：チャットデータ取得(オートメッセージのみ)
   socket.on("sendAutoChatMessage", function(d){
-    console.log('d');
-    console.log(d);
     var obj = JSON.parse(d);
-    console.log('automessage');
-    console.log(obj);
     var chat = JSON.parse(JSON.stringify(obj));
     chat.messageType = obj.isAutoSpeech ? chatApi.cnst.observeType.autoSpeech : chatApi.cnst.observeType.auto;
     chat.created = new Date();
@@ -1822,11 +1812,7 @@ io.sockets.on('connection', function (socket) {
 
   // 一括：チャットデータ取得(オートメッセージのみ)
   socket.on("getAutoChatMessages", function(d){
-    console.log('d');
-    console.log(d);
     var obj = JSON.parse(d);
-    console.log('automessage');
-    console.log(obj);
     if (!getSessionId(obj.siteKey, obj.tabId, 'sessionId')) return false;
     var sId = getSessionId(obj.siteKey, obj.tabId, 'sessionId');
     obj.messageType = chatApi.cnst.observeType.auto;
@@ -1843,7 +1829,7 @@ io.sockets.on('connection', function (socket) {
   // 一括：チャットデータ取得(オートメッセージのみ)
   socket.on("sendAutoChatMessages", function(d){
     var obj = JSON.parse(d);
-    console.log('オートメッセ時');
+
     var setList = {};
     for (var i = 0; i < obj.messages.length; i++) {
       var created = new Date(obj.messages[i].created);
