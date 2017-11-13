@@ -1127,12 +1127,7 @@ var socket, // socket.io
       else if ( ('display_type' in window.sincloInfo.widget) && window.sincloInfo.widget.display_type === 2 ) {
         if ( Number(window.sincloInfo.activeOperatorCnt) > 0 ) {
           window.sincloInfo.widgetDisplay = true;
-          console.log(window.sincloInfo.widgetDisplay);
         }
-      }
-      function makeDate(date){
-        var d = new Date(date);
-        return Date.parse(d);
       }
       // 画面同期中は表示しない
       if ( check.isset(userInfo.connectToken) || check.isset(userInfo.coBrowseConnectToken) ) {

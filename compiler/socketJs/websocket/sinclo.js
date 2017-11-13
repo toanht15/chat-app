@@ -1037,8 +1037,6 @@
           this.chatApi.scDown();
           return false;
         }
-        console.log(obj.messageType);
-        console.log(sinclo.chatApi.messageType.sorry);
         if (obj.messageType === sinclo.chatApi.messageType.sorry) {
           cn = "sinclo_re";
           sinclo.chatApi.call();
@@ -1048,7 +1046,6 @@
           } else {
             this.chatApi.scDown();
           }
-          console.log('ueeeeeiueeeei');
           // チャットの契約をしている場合
           if ( window.sincloInfo.contract.chat ) {
             //sorryメッセージを出した数
@@ -1091,8 +1088,6 @@
     },
     resAutoChatMessage: function(d){
         var obj = JSON.parse(d);
-        console.log('iiiiiiiiiiiii');
-        console.log(obj);
 
         sinclo.chatApi.autoMessages.push({
             chatId:obj.chatId,
@@ -1596,7 +1591,6 @@
         },
         pushFlg: false,
         push: function(){
-          console.log('pushpush');
           if (this.pushFlg) return false;
           this.pushFlg = true;
           sinclo.operatorInfo.reCreateWidgetMessage = ""; // 送信したら空にする
@@ -1886,8 +1880,6 @@
          * return 即時実行(0)、タイマー実行(ミリ秒)、非実行(null)
          */
         setAndSetting: function(key, setting, callback) {
-          console.log('eeeeeeeeeeeeeeeeeオートメッセージ');
-          console.log(setting);
           console.log("setAndSettings key : " + key + " setting: " + setting);
             var keys = Object.keys(setting.conditions);
             // 発言内容条件を一番最後にする
@@ -1904,9 +1896,6 @@
             for(var i = 0; keys.length > i; i++){
 
                 var conditions = setting.conditions[keys[i]];
-                console.log('automessages');
-                console.log(new Date());
-                console.log(conditions);
                 var last = (keys.length === Number(i+1)) ? true : false;
                 switch(Number(keys[i])) {
                     case 1: // 滞在時間
@@ -1976,10 +1965,6 @@
                     break;
                   case 10: // 営業時間
                     this.judge.operating_hours(conditions[0], function(err, timer){
-                      console.log('timer');
-                      console.log(timer);
-                      console.log('err');
-                      console.log(err);
                         if (err) ret = null;
                     });
                   break;
@@ -1998,10 +1983,8 @@
          * return 即時実行(0)、タイマー実行(ミリ秒)、非実行(null)
          */
         setOrSetting: function(key, setting, callback) {
-          console.log('uuuuuuuuuuuuuu');
           console.log("setOrSetting key : " + key + " setting : " + JSON.stringify(setting));
             var keys = Object.keys(setting.conditions);
-            console.log(key);
             var ret = null;
             for(var i = 0; keys.length > i; i++){
                 var conditions = setting.conditions[keys[i]], u;
@@ -2238,8 +2221,6 @@
         judge: {
             speechContentRegEx: [],
             stayTime: function(cond, callback){
-              console.log('qqqqqqqqqqqqqqqqqqq');
-              console.log('はいってるううまっくす');
                 if (!('stayTimeCheckType' in cond) || !('stayTimeType' in cond) || !('stayTimeRange' in cond )) return callback(true, null);
                 var time = 0;
                 switch(Number(cond.stayTimeType)) {
@@ -2273,11 +2254,9 @@
             stayCount: function(cond, callback){
                 if (!('visitCntCond' in cond) || !('visitCnt' in cond )) return callback(true, null);
                 if (sinclo.trigger.common.numMatch(cond.visitCntCond, userInfo.getStayCount(), cond.visitCnt)) {
-                    console.log('訪問回数false');
                     callback(false, 0);
                 }
                 else {
-                    console.log('訪問回数true');
                     callback(true, null);
                 }
             },
