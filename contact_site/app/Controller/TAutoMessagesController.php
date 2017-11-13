@@ -30,8 +30,6 @@ class TAutoMessagesController extends AppController {
    * @return void
    * */
   public function index() {
-    $this->log('オートメッセージ情報',LOG_DEBUG);
-    $this->log($this->paginate('TAutoMessage'),LOG_DEBUG);
     $this->paginate['TAutoMessage']['conditions']['TAutoMessage.m_companies_id'] = $this->userInfo['MCompany']['id'];
     $this->set('settingList', $this->paginate('TAutoMessage'));
     $this->_viewElement();

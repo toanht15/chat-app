@@ -1568,8 +1568,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     socket.on('syncNewInfo', function (data) {
         var obj = JSON.parse(data);
-        console.log('obj');
-        console.log(obj);
 
         var tabId = ( obj.subWindow ) ? obj.to : obj.tabId;
         if (angular.isDefined(tabId) && tabId.length > 0 && tabId.indexOf('_frame') > -1) {

@@ -1037,6 +1037,7 @@
           this.chatApi.scDown();
           return false;
         }
+
         if (obj.messageType === sinclo.chatApi.messageType.sorry) {
           cn = "sinclo_re";
           sinclo.chatApi.call();
@@ -1975,8 +1976,6 @@
                 }
                 if (ret === null) break;
             }
-            console.log('ret');
-            console.log(ret);
             callback(null, null, key, ret);
         },
         /**

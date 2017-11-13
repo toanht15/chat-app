@@ -1129,6 +1129,7 @@ var socket, // socket.io
           window.sincloInfo.widgetDisplay = true;
         }
       }
+
       // 画面同期中は表示しない
       if ( check.isset(userInfo.connectToken) || check.isset(userInfo.coBrowseConnectToken) ) {
         window.sincloInfo.widgetDisplay = false;

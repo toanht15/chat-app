@@ -110,8 +110,6 @@ sincloApp.controller('MainController', function($scope) {
         return true;
     };
 });
-console.log('オートメッセージはいってるうううう');
-console.log(<?= $operatingHourData ?>);
 // http://stackoverflow.com/questions/17035621/what-is-the-angular-way-of-displaying-a-tooltip-lightbox
 sincloApp.directive('ngShowonhover',function() {
     return {
@@ -120,8 +118,6 @@ sincloApp.directive('ngShowonhover',function() {
         link : function(scope, element, attrs) {
             var balloon = $("div.balloon");
             var itemsTag = element.closest("li");
-            console.log('わっしょい');
-            console.log(Object.keys(scope.$parent.itemForm.$error));
             element.parent().bind('mouseenter', function(e) {
                 if ( scope.$parent === null || !('itemForm' in scope.$parent) ) { return false; }
                 if (Object.keys(scope.$parent.itemForm.$error).length === 0) { return false; }
@@ -137,7 +133,6 @@ sincloApp.directive('ngShowonhover',function() {
             });
 
             var createBalloon = function(key, form){
-              console.log('様チェック');
                 var messageList = [];
                 $("div.balloonContent").children().remove();
 

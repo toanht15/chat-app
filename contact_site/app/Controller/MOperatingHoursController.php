@@ -24,8 +24,6 @@ class MOperatingHoursController extends AppController {
       'm_companies_id' => $this->userInfo['MCompany']['id']
     ]]);
     if($this->request->is('post')) {
-      $this->log('送られてきたデータ',LOG_DEBUG);
-      $this->log($this->request->data,LOG_DEBUG);
       $saveData = $this->MOperatingHour->read(null, $operatingHourData['MOperatingHour']['id']);
       $saveData['MOperatingHour']['active_flg'] = $this->request->data['MOperatingHour']['active_flg'];
       if($this->request->data['MOperatingHour']['active_flg'] == 1) {
@@ -151,9 +149,7 @@ class MOperatingHoursController extends AppController {
         2 => 'weekpub'
         );
     }
-    $this->log('祝日チェック',LOG_DEBUG);
     if($this->request->data['day'] == 'weekpub') {
-      $this->log('祝日チェック2',LOG_DEBUG);
       $this->request->data['day'] = '祝日';
     }
 
