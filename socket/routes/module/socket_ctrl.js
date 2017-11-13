@@ -884,23 +884,6 @@ io.sockets.on('connection', function (socket) {
       }
       return scNum;
     },
-    calcScNum2: function(obj, userId){ /* sincloCoreから対象ユーザーのチャット対応状態を算出 */
-      var scNum = 0;
-      if ( !sincloCore.hasOwnProperty(obj) ) return scNum;
-      var tabIds = Object.keys(sincloCore[obj]);
-      var respondingUsers = [];
-      for (var i = 0; i < tabIds.length; i++) {
-        var tabData = sincloCore[obj][tabIds[i]];
-        if ( tabData.hasOwnProperty("chat") && isNumber(tabData.chat) ) {
-          respondingUsers.push(tabData);
-          if ( Number(tabData.chat) === Number(userId) ) {
-            scNum++;
-          }
-
-        }
-      }
-      return respondingUsers;
-    },
     sendCheckTimerList: {},
     widgetCheck: function(d, callback){ return this.scCheck(1, d, callback) }, // ウィジェット表示チェック
     sendCheck: function(d, callback){ return this.scCheck(2, d, callback) }, // Sorryメッセージ送信チェック

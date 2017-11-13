@@ -143,7 +143,7 @@ var popupEvent = {
                     };
                     break;
                 case 'p-tdictionary-entry':
-                    var entryBtn = _button("保存する");
+                    var entryBtn = _button("保存");
                     entryBtn.onclick = function(){
                         return popupEvent.closePopup();
                     };
