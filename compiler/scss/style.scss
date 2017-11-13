@@ -5516,3 +5516,143 @@ ul#anotherWindow_color-bar-right {
 .anotherWindow_idx {
   margin: 0px 15px 0 15px;
 }
+
+/* 営業時間 */
+#moperating_hours_idx {
+
+  #tcampaigns_menu ul {
+    margin: 0;
+    padding: 0;
+
+    li {
+      padding: 5px 0;
+
+      img {
+        border-radius: 15px;
+      }
+    }
+  }
+
+  .content {
+
+    #detail_content {
+      margin-left: 2em;
+
+      dl {
+        overflow: hidden;
+        -webkit-transition:
+        height 200ms linear;
+        transition: height 200ms linear;
+
+          dt {
+            border-left: 5px solid #a2a2a2;
+            padding: 0.25em 0.5em;
+            font-weight: bold;
+            background-color: #eee;
+            width: 30em;
+          }
+
+        dd{
+          -webkit-margin-start: 0px;
+          display: block;
+          -webkit-margin-before: 1em;
+          -webkit-margin-after: 1em;
+          -webkit-margin-start: 0px;
+          -webkit-margin-end: 0px;
+          li {
+          }
+        }
+
+          #moperating_hours_list {
+            table.everyday {
+              width: 30% !important;
+              tbody {
+                tr {
+                  .dayOfWeek {
+                    width:5em !important;
+                    height:50px !important;
+                    .day {
+                      display: inline-block;
+                      width: 50px;
+                      height: 24px;
+                      line-height: 24px;
+                      text-align: center;
+                      font-weight:bold;
+                    }
+                    .holiday {
+                      color:#d99694;
+                    }
+                  }
+                  .time {
+                    font-weight:bold !important;
+                    padding-left: 18px;
+                    padding-top:3px;
+                  }
+                }
+              }
+            }
+            table.weekly {
+              width: 30% !important;
+              tbody {
+                tr {
+                  .dayOfWeek {
+                    width:5em !important;
+                    height:50px !important;
+                    .day {
+                      display: inline-block;
+                      width: 50px;
+                      height: 24px;
+                      line-height: 24px;
+                      text-align: center;
+                      font-weight:bold;
+                    }
+                    .holiday {
+                      color:#d99694;
+                    }
+                  }
+                  .time {
+                    font-weight:bold !important;
+                    padding-left: 18px;
+                    padding-top:3px;
+                  }
+                }
+              }
+            }
+          }
+      }
+    }
+  }
+
+  #moperating_hours_form {
+
+    h3 {
+      border-bottom: 3px solid #C3D69B;
+      padding-left: 5px;
+      font-size: 13px;
+    }
+  }
+
+  #moperating_hours_list .ctrlBtnArea {
+    width: 100px;
+
+    a {
+      width: 35px;
+      height: 35px;
+      padding: 2px;
+    }
+  }
+
+  #tcampaigns_description {
+    height: auto !important;
+    padding: 0.5em 20px 0 20px;
+
+    span {
+      padding: 1em;
+      display: block;
+      line-height: 2em;
+    }
+  }
+}
+#detail_content dl.detail_hidden {
+  height: 0 !important;
+}

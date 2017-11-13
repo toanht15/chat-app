@@ -143,7 +143,7 @@ var popupEvent = {
                     };
                     break;
                 case 'p-tdictionary-entry':
-                    var entryBtn = _button("保存");
+                    var entryBtn = _button("変更する");
                     entryBtn.onclick = function(){
                         return popupEvent.closePopup();
                     };
@@ -216,6 +216,22 @@ var popupEvent = {
                     var closeBtn = _button("削除する");
                     closeBtn.onclick = function(){
                         return popupEvent.closePopup();
+                    };
+                    break;
+                case 'p-operatinghours-entry':
+                    var entryBtn = _button("変更する");
+                    entryBtn.onclick = function(){
+                        return popupEvent.closePopup();
+                    };
+                    var closeBtn = _button("閉じる");
+                    closeBtn.onclick = function(){
+                        return popupEvent.close();
+                    };
+                    break;
+                case 'p-operatinghours-error':
+                    var closeBtn = _button("閉じる");
+                    closeBtn.onclick = function(){
+                        return popupEvent.close();
                     };
                     break;
                 case 'p-alert':

@@ -4,7 +4,7 @@
  * ユーザーマスタ
  */
 class TAutoMessagesController extends AppController {
-  public $uses = ['TAutoMessage'];
+  public $uses = ['TAutoMessage','MOperatingHour'];
   public $helpers = ['AutoMessage'];
   public $paginate = [
     'TAutoMessage' => [
@@ -30,6 +30,8 @@ class TAutoMessagesController extends AppController {
    * @return void
    * */
   public function index() {
+    $this->log('オートメッセージ情報',LOG_DEBUG);
+    $this->log($this->paginate('TAutoMessage'),LOG_DEBUG);
     $this->paginate['TAutoMessage']['conditions']['TAutoMessage.m_companies_id'] = $this->userInfo['MCompany']['id'];
     $this->set('settingList', $this->paginate('TAutoMessage'));
     $this->_viewElement();
@@ -43,6 +45,13 @@ class TAutoMessagesController extends AppController {
     if ( $this->request->is('post') ) {
       $this->_entry($this->request->data);
     }
+    $operatingHourData = $this->MOperatingHour->find('first', ['conditions' => [
+      'm_companies_id' => $this->userInfo['MCompany']['id']
+    ]]);
+    if(empty($operatingHourData)) {
+      $operatingHourData['MOperatingHour']['active_flg'] = 2;
+    }
+    $this->set('operatingHourData',$operatingHourData['MOperatingHour']['active_flg']);
     $this->_viewElement();
   }
 
@@ -70,6 +79,13 @@ class TAutoMessagesController extends AppController {
       $this->request->data['TAutoMessage']['condition_type'] = (!empty($json['conditionType'])) ? $json['conditionType'] : "";
       $this->request->data['TAutoMessage']['action'] = (!empty($json['message'])) ? $json['message'] : "";
       $this->request->data['TAutoMessage']['widget_open'] = (!empty($json['widgetOpen'])) ? $json['widgetOpen'] : "";
+      $operatingHourData = $this->MOperatingHour->find('first', ['conditions' => [
+        'm_companies_id' => $this->userInfo['MCompany']['id']
+      ]]);
+      if(empty($operatingHourData)) {
+        $operatingHourData['MOperatingHour']['active_flg'] = 2;
+      }
+      $this->set('operatingHourData',$operatingHourData['MOperatingHour']['active_flg']);
     }
 
     $this->_viewElement();

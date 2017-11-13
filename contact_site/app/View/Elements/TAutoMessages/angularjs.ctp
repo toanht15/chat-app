@@ -110,7 +110,8 @@ sincloApp.controller('MainController', function($scope) {
         return true;
     };
 });
-
+console.log('オートメッセージはいってるうううう');
+console.log(<?= $operatingHourData ?>);
 // http://stackoverflow.com/questions/17035621/what-is-the-angular-way-of-displaying-a-tooltip-lightbox
 sincloApp.directive('ngShowonhover',function() {
     return {
@@ -119,6 +120,8 @@ sincloApp.directive('ngShowonhover',function() {
         link : function(scope, element, attrs) {
             var balloon = $("div.balloon");
             var itemsTag = element.closest("li");
+            console.log('わっしょい');
+            console.log(Object.keys(scope.$parent.itemForm.$error));
             element.parent().bind('mouseenter', function(e) {
                 if ( scope.$parent === null || !('itemForm' in scope.$parent) ) { return false; }
                 if (Object.keys(scope.$parent.itemForm.$error).length === 0) { return false; }
@@ -134,6 +137,7 @@ sincloApp.directive('ngShowonhover',function() {
             });
 
             var createBalloon = function(key, form){
+              console.log('様チェック');
                 var messageList = [];
                 $("div.balloonContent").children().remove();
 
@@ -211,6 +215,11 @@ sincloApp.directive('ngShowonhover',function() {
                     if ('pattern' in form.triggerTimeSec.$error) {
                       messageList.push("時間は1～60までの半角数字で指定できます");
                     }
+                }
+
+                /* 営業時間 */
+                if( 'notOperatingHour' in form) {
+                    messageList.push("営業時間設定を利用していません");
                 }
 
                 for( var i = 0; i <  messageList.length; i++ ){

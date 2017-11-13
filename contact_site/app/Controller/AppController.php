@@ -68,7 +68,8 @@ class AppController extends Controller {
     C_COMPANY_USE_STATISTICS => false, // 統計
     C_COMPANY_USE_DICTIONARY_CATEGORY => false, // 定型文カテゴリ
     C_COMPANY_USE_LA_CO_BROWSE => false, // 画面キャプチャ共有
-    C_COMPANY_USE_HIDE_REALTIME_MONITOR => false // 通常時リアルタイムモニタ非表示
+    C_COMPANY_USE_HIDE_REALTIME_MONITOR => false, // 通常時リアルタイムモニタ非表示
+    C_COMPANY_USE_OPERATING_HOUR => false //営業時間設定
   ];
 
   public function beforeFilter(){

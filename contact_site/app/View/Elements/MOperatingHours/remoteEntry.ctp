@@ -29,6 +29,17 @@ else{
 }
 
 popupEvent.closePopup = function(){
+  //空チェック
+  if (document.getElementById("MOperatingHourInfoHoliday").checked == false) {
+    for (i = 0; i < 5; i++) {
+      if(document.getElementById('form' + i).style.display != "none" && (document.getElementsByName("startTime" + i)[0].value == "" || document.getElementsByName("endTime" + i)[0].value == "")) {
+        document.getElementById('error').style.display = "block";
+        $('#error').text("条件を設定してください");
+        return;
+      }
+    }
+  }
+
   var timeInfo = "";
   var day = '<?= $date ?>';
   var check = [];
@@ -53,6 +64,7 @@ popupEvent.closePopup = function(){
         jsonData.everyday.<?= $date ?>.push({start: document.getElementsByName("startTime0")[0].value, end: document.getElementsByName("endTime0")[0].value});
         for(i=0; i<check.length;i++) {
           jsonData.everyday[check[i]].push({start: document.getElementsByName("startTime0")[0].value, end: document.getElementsByName("endTime0")[0].value});
+          document.getElementById(check[i] + 'day').style.color = "#595959";
         }
       }
       if(document.getElementById('form1').style.display != "none"){
@@ -60,6 +72,7 @@ popupEvent.closePopup = function(){
         jsonData.everyday.<?= $date ?>.push({start: document.getElementsByName("startTime1")[0].value, end: document.getElementsByName("endTime1")[0].value});
         for(i=0; i<check.length;i++) {
           jsonData.everyday[check[i]].push({start: document.getElementsByName("startTime1")[0].value, end: document.getElementsByName("endTime1")[0].value});
+          document.getElementById(check[i] + 'day').style.color = "#595959";
         }
       }
       if(document.getElementById('form2').style.display != "none"){
@@ -67,6 +80,7 @@ popupEvent.closePopup = function(){
         jsonData.everyday.<?= $date ?>.push({start: document.getElementsByName("startTime2")[0].value, end: document.getElementsByName("endTime2")[0].value});
         for(i=0; i<check.length;i++) {
           jsonData.everyday[check[i]].push({start: document.getElementsByName("startTime2")[0].value, end: document.getElementsByName("endTime2")[0].value});
+          document.getElementById(check[i] + 'day').style.color = "#595959";
         }
       }
       if(document.getElementById('form3').style.display != "none"){
@@ -74,6 +88,7 @@ popupEvent.closePopup = function(){
         jsonData.everyday.<?= $date ?>.push({start: document.getElementsByName("startTime3")[0].value, end: document.getElementsByName("endTime3")[0].value});
         for(i=0; i<check.length;i++) {
           jsonData.everyday[check[i]].push({start: document.getElementsByName("startTime3")[0].value, end: document.getElementsByName("endTime3")[0].value});
+          document.getElementById(check[i] + 'day').style.color = "#595959";
         }
       }
       if(document.getElementById('form4').style.display != "none"){
@@ -81,14 +96,20 @@ popupEvent.closePopup = function(){
         jsonData.everyday.<?= $date ?>.push({start: document.getElementsByName("startTime4")[0].value, end: document.getElementsByName("endTime4")[0].value});
         for(i=0; i<check.length;i++) {
           jsonData.everyday[check[i]].push({start: document.getElementsByName("startTime4")[0].value, end: document.getElementsByName("endTime4")[0].value});
+          document.getElementById(check[i] + 'day').style.color = "#595959";
         }
       }
+      document.getElementById('<?= $date ?>' + 'day').style.color = "#595959";
     }
     //休業日のチェックボックスにチェックがついている場合
     else {
       timeInfo = "休み";
       jsonData.everyday.<?= $date ?>.push({start: "", end: ""});
       document.getElementById('<?= $date ?>' + 'day').style.color = "#d99694";
+      for(i=0; i<check.length;i++) {
+        jsonData.everyday[check[i]].push({start: "", end: ""});
+        document.getElementById(check[i] + 'day').style.color = "#d99694";
+      }
     }
   }
   //条件設定が平日/休日の場合
@@ -104,6 +125,7 @@ popupEvent.closePopup = function(){
         jsonData.weekly.<?= $date ?>.push({start: document.getElementsByName("startTime0")[0].value, end: document.getElementsByName("endTime0")[0].value});
         for(i=0; i<check.length;i++) {
           jsonData.weekly[check[i]].push({start: document.getElementsByName("startTime0")[0].value, end: document.getElementsByName("endTime0")[0].value});
+          document.getElementById(check[i] + 'day').style.color = "#595959";
         }
       }
       if(document.getElementById('form1').style.display != "none"){
@@ -111,6 +133,7 @@ popupEvent.closePopup = function(){
         jsonData.weekly.<?= $date ?>.push({start: document.getElementsByName("startTime1")[0].value, end: document.getElementsByName("endTime1")[0].value});
         for(i=0; i<check.length;i++) {
           jsonData.weekly[check[i]].push({start: document.getElementsByName("startTime1")[0].value, end: document.getElementsByName("endTime1")[0].value});
+          document.getElementById(check[i] + 'day').style.color = "#595959";
         }
       }
       if(document.getElementById('form2').style.display != "none"){
@@ -118,6 +141,7 @@ popupEvent.closePopup = function(){
         jsonData.weekly.<?= $date ?>.push({start: document.getElementsByName("startTime2")[0].value, end: document.getElementsByName("endTime2")[0].value});
         for(i=0; i<check.length;i++) {
           jsonData.weekly[check[i]].push({start: document.getElementsByName("startTime2")[0].value, end: document.getElementsByName("endTime2")[0].value});
+          document.getElementById(check[i] + 'day').style.color = "#595959";
         }
       }
       if(document.getElementById('form3').style.display != "none"){
@@ -125,6 +149,7 @@ popupEvent.closePopup = function(){
         jsonData.weekly.<?= $date ?>.push({start: document.getElementsByName("startTime3")[0].value, end: document.getElementsByName("endTime3")[0].value});
         for(i=0; i<check.length;i++) {
           jsonData.weekly[check[i]].push({start: document.getElementsByName("startTime3")[0].value, end: document.getElementsByName("endTime3")[0].value});
+          document.getElementById(check[i] + 'day').style.color = "#595959";
         }
       }
       if(document.getElementById('form4').style.display != "none"){
@@ -132,25 +157,32 @@ popupEvent.closePopup = function(){
         jsonData.weekly.<?= $date ?>.push({start: document.getElementsByName("startTime4")[0].value, end: document.getElementsByName("endTime4")[0].value});
         for(i=0; i<check.length;i++) {
           jsonData.weekly[check[i]].push({start: document.getElementsByName("startTime4")[0].value, end: document.getElementsByName("endTime4")[0].value});
+          document.getElementById(check[i] + 'day').style.color = "#595959";
         }
       }
+      document.getElementById('<?= $date ?>' + 'day').style.color = "#595959";
     }
     //休業日のチェックボックスにチェックがついている場合
     else {
       timeInfo = "休み";
       jsonData.weekly.<?= $date ?>.push({start: "", end: ""});
       document.getElementById('<?= $date ?>' + 'day').style.color = "#d99694";
+      for(i=0; i<check.length;i++) {
+        jsonData.weekly[check[i]].push({start: "", end: ""});
+        document.getElementById(check[i] + 'day').style.color = "#d99694";
+      }
     }
   }
 
   jsonData = JSON.stringify(jsonData);
   //一覧画面のフォーム情報に変更した情報を記入
-  document.getElementById("MOperatingHourOutputData][]").value = jsonData;
+  document.getElementById("MOperatingHourOutputData").value = jsonData;
   //一覧画面に変更した情報を記入
   var td = document.getElementById(day);
   td.innerHTML = timeInfo;
   //チェックボックスでチェックを入れた曜日も同じように変更
   for(i=0; i<check.length;i++) {
+    console.log(check[i]);
     td = document.getElementById(check[i]);
     td.innerHTML = timeInfo;
   }
@@ -160,11 +192,15 @@ popupEvent.closePopup = function(){
 //時間追加
 function addLine(number){
   document.getElementById('form' + (number +1)).style.display = "";
+  document.getElementById('add' + number).style.display = "none";
+  document.getElementById('delete' + number).style.marginLeft = "245px";
 }
 
 //時間削除
 function deleteLine(number){
   document.getElementById('form' + number).style.display = "none";
+  document.getElementById('add' + (number-1)).style.display = "block";
+  //document.getElementById('delete' + (number-1)).style.marginLeft = "272px";
 }
 </script>
 
@@ -187,7 +223,9 @@ else {
         <?= $this->Form->checkbox('holiday', array('onchange' => 'holidayCheck()','style' => 'margin-left:21px; margin-top:1px; cursor:pointer;')) ?><span id="tabsortText" style = "margin-top:1px;">休業日</span>
     </li>
   </div>
-  <?php foreach($timeData->{$date} as $key => $v) { ?>
+  <?php
+  $number = count($timeData->{$date}) -1;
+  foreach($timeData->{$date} as $key => $v) { ?>
     <li id = <?= "form".$key ?>>
       <?php if($key === 0) { ?>
         <label style = "font-weight:bold;">営業時間</label>
@@ -217,18 +255,20 @@ else {
         <?php }
         else { ?>
           <input type="text" value = <?= $v->end; ?> class="form-control" name=<?= "endTime".$key ?>>
-        <?php } ?>
+        <?php }
+         if($key == $number && $key != 4) { ?>
           <a>
             <?= $this->Html->image('add.png', array(
               'alt' => '登録',
               'class' => 'btn-shadow disOffgreenBtn',
               'width' => 22,
               'height' => 22,
+              'id' => 'add'.$key,
               'onclick' => 'addLine('.$key.')',
               'style' => 'padding:2px !important; display: block; margin-left: 245px; margin-top: -25px;'
             )) ?>
           </a>
-        <?php if($key != 0) { ?>
+        <?php } if($key == $number && $key != 4) { ?>
             <a>
             <?= $this->Html->image('dustbox.png', array(
               'alt' => '削除',
@@ -236,6 +276,7 @@ else {
               'data-balloon-position' => '35',
               'width' => 22,
               'height' => 22,
+              'id' => 'delete'.$key,
               'onclick' => 'deleteLine('.$key.')',
               'style' => 'padding:2px !important; display: block; margin-left: 272px; margin-top: -22px;')) ?>
             </a>
@@ -246,7 +287,7 @@ else {
       $('.clockpicker').clockpicker({
         donetext:'設定',
         placement: 'orignal',
-        align: 'original2'
+        align: 'originalTime'
       });
     </script>
   <?php }
@@ -265,6 +306,7 @@ else {
                 'class' => 'btn-shadow disOffgreenBtn',
                 'width' => 22,
                 'height' => 22,
+                'id' => 'add'.$i,
                 'onclick' => 'addLine('.$i.')',
                 'style' => 'padding:2px !important; display: block; margin-left: 245px; margin-top: -25px;'
               )) ?>
@@ -276,6 +318,7 @@ else {
                 'data-balloon-position' => '35',
                 'width' => 22,
                 'height' => 22,
+                'id' => 'delete'.$i,
                 'onclick' => 'deleteLine('.$i.')',
                 'style' => 'padding:2px !important; display: block; margin-left: 272px; margin-top: -22px;'))
               ?>
@@ -284,6 +327,9 @@ else {
       </span>
     </li>
   <?php } ?>
+  <li>
+  <div id = "error"></div>
+  </li>
   <li>
     <span id = "top">他の曜日も同様に設定する</span>
   </li>
@@ -319,10 +365,10 @@ else {
       if($v == 'weekend') {
         $v2 = '週末';
       }
-      if($v == 'pub2') {
+      if($v == 'weekpub') {
         $v2 = '祝日';
       }
-      if($v != 'week' && $v != 'weekend' && $v != 'pub2' && mb_substr($dayOfWeek, 0, 1) != $v2) { ?>
+      if($v != 'week' && $v != 'weekend' && $v != 'weekpub' && mb_substr($dayOfWeek, 0, 1) != $v2) { ?>
         <label class="pointer">
           <?= $this->ngForm->input('day_of_week', [
             'type' => 'checkbox',
@@ -335,7 +381,7 @@ else {
           ]) ?>
         </label>
       <?php }
-        else if(($v == 'week' || $v == 'weekend' || $v == 'pub2') && $dayOfWeek != $v2) { ?>
+        else if(($v == 'week' || $v == 'weekend' || $v == 'weekpub') && $dayOfWeek != $v2) {?>
         <label class="pointer">
           <?= $this->ngForm->input('day_of_week', [
             'type' => 'checkbox',

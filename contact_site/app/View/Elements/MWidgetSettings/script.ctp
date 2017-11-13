@@ -478,6 +478,11 @@ sincloApp.controller('WidgetCtrl', function($scope){
       }
     });
 
+    //営業時間設定を利用しないに設定している場合
+    if(<?= $operatingHourData ?> == 2) {
+      $scope.settingShowTimeRadioButtonDisable($('#MWidgetSettingDisplayType4'));
+    }
+
     angular.element(window).on('load',function(e){
       $('[name="data[MWidgetSetting][show_timing]"]:checked').trigger('change');
     });

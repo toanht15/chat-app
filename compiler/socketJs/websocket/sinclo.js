@@ -1037,7 +1037,8 @@
           this.chatApi.scDown();
           return false;
         }
-
+        console.log(obj.messageType);
+        console.log(sinclo.chatApi.messageType.sorry);
         if (obj.messageType === sinclo.chatApi.messageType.sorry) {
           cn = "sinclo_re";
           sinclo.chatApi.call();
@@ -1047,6 +1048,7 @@
           } else {
             this.chatApi.scDown();
           }
+          console.log('ueeeeeiueeeei');
           // チャットの契約をしている場合
           if ( window.sincloInfo.contract.chat ) {
             //sorryメッセージを出した数
@@ -1089,6 +1091,8 @@
     },
     resAutoChatMessage: function(d){
         var obj = JSON.parse(d);
+        console.log('iiiiiiiiiiiii');
+        console.log(obj);
 
         sinclo.chatApi.autoMessages.push({
             chatId:obj.chatId,
@@ -1592,6 +1596,7 @@
         },
         pushFlg: false,
         push: function(){
+          console.log('pushpush');
           if (this.pushFlg) return false;
           this.pushFlg = true;
           sinclo.operatorInfo.reCreateWidgetMessage = ""; // 送信したら空にする
@@ -1881,10 +1886,12 @@
          * return 即時実行(0)、タイマー実行(ミリ秒)、非実行(null)
          */
         setAndSetting: function(key, setting, callback) {
+          console.log('eeeeeeeeeeeeeeeeeオートメッセージ');
+          console.log(setting);
           console.log("setAndSettings key : " + key + " setting: " + setting);
             var keys = Object.keys(setting.conditions);
             // 発言内容条件を一番最後にする
-            var arrayForSort = ["1","2","3","4","5","6","8","9","7"];
+            var arrayForSort = ["1","2","3","4","5","6","8","9","10","7"];
             var tmpKey = [];
             arrayForSort.forEach(function(element, index, array ){
                 if(keys.indexOf(element) >= 0) {
@@ -1897,6 +1904,9 @@
             for(var i = 0; keys.length > i; i++){
 
                 var conditions = setting.conditions[keys[i]];
+                console.log('automessages');
+                console.log(new Date());
+                console.log(conditions);
                 var last = (keys.length === Number(i+1)) ? true : false;
                 switch(Number(keys[i])) {
                     case 1: // 滞在時間
@@ -1964,6 +1974,15 @@
                       if (err) ret = null;
                     });
                     break;
+                  case 10: // 営業時間
+                    this.judge.operating_hours(conditions[0], function(err, timer){
+                      console.log('timer');
+                      console.log(timer);
+                      console.log('err');
+                      console.log(err);
+                        if (err) ret = null;
+                    });
+                  break;
                   default:
                     console.error("automessage condition is not defined : " + Number(keys[i]));
                     ret = null;
@@ -1971,14 +1990,18 @@
                 }
                 if (ret === null) break;
             }
+            console.log('ret');
+            console.log(ret);
             callback(null, null, key, ret);
         },
         /**
          * return 即時実行(0)、タイマー実行(ミリ秒)、非実行(null)
          */
         setOrSetting: function(key, setting, callback) {
+          console.log('uuuuuuuuuuuuuu');
           console.log("setOrSetting key : " + key + " setting : " + JSON.stringify(setting));
             var keys = Object.keys(setting.conditions);
+            console.log(key);
             var ret = null;
             for(var i = 0; keys.length > i; i++){
                 var conditions = setting.conditions[keys[i]], u;
@@ -2069,6 +2092,15 @@
                           if (!err) {
                             ret = 0;
                           }
+                        });
+                      }
+                      break;
+                    case 10: // ページ
+                      for (u = 0; u < conditions.length; u++) {
+                        this.judge.operating_hours(conditions[u], function(err, timer){
+                            if ( !err ) {
+                                ret = 0;
+                            }
                         });
                       }
                       break;
@@ -2206,6 +2238,8 @@
         judge: {
             speechContentRegEx: [],
             stayTime: function(cond, callback){
+              console.log('qqqqqqqqqqqqqqqqqqq');
+              console.log('はいってるううまっくす');
                 if (!('stayTimeCheckType' in cond) || !('stayTimeType' in cond) || !('stayTimeRange' in cond )) return callback(true, null);
                 var time = 0;
                 switch(Number(cond.stayTimeType)) {
@@ -2239,9 +2273,11 @@
             stayCount: function(cond, callback){
                 if (!('visitCntCond' in cond) || !('visitCnt' in cond )) return callback(true, null);
                 if (sinclo.trigger.common.numMatch(cond.visitCntCond, userInfo.getStayCount(), cond.visitCnt)) {
+                    console.log('訪問回数false');
                     callback(false, 0);
                 }
                 else {
+                    console.log('訪問回数true');
                     callback(true, null);
                 }
             },
@@ -2406,7 +2442,109 @@
               else {
                 callback(true, null);
               }
-            }
+            },
+            operating_hours: function(cond, callback){
+              if (!('operatingHoursTime' in cond)) return callback(true, null);
+              var check = "";
+              var now = cond.now;
+              var nowDay = cond.nowDay;
+              var dateParse = cond.dateParse;
+              var date = cond.date;
+              var today = cond.today;
+              //営業時間設定の条件が「毎日」の場合
+              if(cond.type == 1) {
+                var day = { 0:'sun', 1:'mon', 2:'tue', 3:'wed', 4:'thu', 5:'fri', 6:'sat'};
+                day = day[nowDay];
+                timeData = cond.everyday[day];
+                publicHolidayData = cond.everyday['pub'];
+              }
+              //営業時間設定の条件が「平日・週末」の場合
+              else {
+                var day = { 0:'sun', 1:'mon', 2:'tue', 3:'wed', 4:'thu', 5:'fri', 6:'sat'};
+                if(nowDay == 1 || nowDay == 2 || nowDay == 3 || nowDay == 4 || nowDay == 5) {
+                  var day = 'week';
+                }
+                else {
+                  var day = 'weekend';
+                }
+                timeData = cond.weekly[day];
+                publicHolidayData = cond.weekly['weekpub'];
+              }
+              publicHoliday = cond.publicHoliday;
+
+              //営業時間設定を利用している場合
+              if(cond.operatingHoursTime == 1) {
+                //祝日の場合
+                for(var i2=0; i2<publicHoliday.length; i2++) {
+                  if(today == publicHoliday[i2].month + publicHoliday[i2].day) {
+                    check = true;
+                    if(publicHolidayData[0].start != null && publicHolidayData[0].end != null) {
+                      for(var i=0; i<publicHolidayData.length; i++){
+                        if( Date.parse(new Date(date + publicHolidayData[i].start)) <= dateParse && dateParse < Date.parse(new Date(date + publicHolidayData[i].end)) ) {
+                          callback(false, 0);
+                          return;
+                        }
+                      }
+                    }
+                  }
+                }
+                if(check != true) {
+                  //営業時間設定を「休み」に設定している場合
+                  if( timeData[0].start === null && timeData[0].end === null) {
+                    callback(true, null);
+                    return;
+                  }
+                  else {
+                    for(var i=0; i<timeData.length; i++){
+                      if( Date.parse(new Date(date + timeData[i].start)) <= dateParse && dateParse < Date.parse(new Date(date + timeData[i].end)) ) {
+                        callback(false, 0);
+                        return;
+                      }
+                      else {
+                        callback(true, null);
+                        return;
+                      }
+                    }
+                  }
+                }
+              }
+              //営業時間設定を利用していない場合
+              else if(cond.operatingHoursTime == 2) {
+                //祝日の場合
+                for(var i2=0; i2<publicHoliday.length; i2++) {
+                  if(today == publicHoliday[i2].month + publicHoliday[i2].day) {
+                    check = true;
+                    if(publicHolidayData[0].start != null && publicHolidayData[0].end != null) {
+                      for(var i=0; i<publicHolidayData.length; i++){
+                        if( Date.parse(new Date(date + publicHolidayData[i].start)) <= dateParse && dateParse < Date.parse(new Date(date + publicHolidayData[i].end)) ) {
+                          callback(true, null);
+                          return;
+                        }
+                      }
+                    }
+                  }
+                }
+                if(check != true) {
+                  //営業時間設定を「休み」に設定している場合
+                  if(timeData[0].start === null && timeData[0].end === null)  {
+                    callback(false, 0);
+                    return;
+                  }
+                  else {
+                    for(var i=0; i<timeData.length; i++){
+                      if( Date.parse(new Date(date + timeData[i].start)) <= dateParse && dateParse < Date.parse(new Date(date + timeData[i].end)) ) {
+                        callback(true, null);
+                        return;
+                      }
+                      else {
+                        callback(false, 0);
+                        return;
+                      }
+                    }
+                  }
+                }
+              }
+          }
         }
     },
     // 外部連携API

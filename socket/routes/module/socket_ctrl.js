@@ -703,6 +703,7 @@ io.sockets.on('connection', function (socket) {
 
                 // 応対可能かチェック(対応できるのであれば trueが返る)
                 chatApi.sendCheck(d, function(err, ret){
+                  console.log('応対可能チェック');
                   sendData.opFlg = ret.opFlg;
                   // 書き込みが成功したら顧客側に結果を返す
                   emit.toUser('sendChatResult', sendData, sId);
@@ -721,17 +722,23 @@ io.sockets.on('connection', function (socket) {
                     siteKey: d.siteKey,
                     notifyToCompany: d.notifyToCompany
                   }, d.siteKey);
+                  console.log('応対可能チェック2');
                   if ( ret.opFlg === true ) return false;
+                  console.log('応対可能チェック3');
                   // 応対不可だった場合、既読にする
                   historyId = sincloCore[d.siteKey][d.tabId].historyId;
                   pool.query("UPDATE t_history_chat_logs SET message_read_flg = 1 WHERE t_histories_id = ? AND message_type = 1 AND id <= ?;",
                     [historyId, results.insertId], function(err, ret, fields){}
                   );
 
+                  console.log('ret');
+                  console.log(ret);
+
                   // 自動応対メッセージではなく、Sorryメッセージがある場合は送る
                   if ( ret.message !== "" && (!d.hasOwnProperty('isAutoSpeech') || !d.isAutoSpeech)) {
                     chatApi.sendCheckTimerList[d.tabId] = setTimeout(function(){
                       delete chatApi.sendCheckTimerList[d.tabId];
+                      console.log('sorryメッセージ');
                       // Sorryメッセージを送る
                       var obj = d;
                       obj.chatMessage = ret.message;
@@ -884,58 +891,208 @@ io.sockets.on('connection', function (socket) {
       }
       return scNum;
     },
+    calcScNum2: function(obj, userId){ /* sincloCoreから対象ユーザーのチャット対応状態を算出 */
+      var scNum = 0;
+      if ( !sincloCore.hasOwnProperty(obj) ) return scNum;
+      var tabIds = Object.keys(sincloCore[obj]);
+      var respondingUsers = [];
+      for (var i = 0; i < tabIds.length; i++) {
+        var tabData = sincloCore[obj][tabIds[i]];
+        if ( tabData.hasOwnProperty("chat") && isNumber(tabData.chat) ) {
+          respondingUsers.push(tabData);
+          if ( Number(tabData.chat) === Number(userId) ) {
+            scNum++;
+          }
+
+        }
+      }
+      return respondingUsers;
+    },
     sendCheckTimerList: {},
     widgetCheck: function(d, callback){ return this.scCheck(1, d, callback) }, // ウィジェット表示チェック
     sendCheck: function(d, callback){ return this.scCheck(2, d, callback) }, // Sorryメッセージ送信チェック
     scCheck: function(type, d, callback){
       var companyId = companyList[d.siteKey];
-
       var getUserSQL = "SELECT IFNULL(chat.sc_flg, 2) as sc_flg, sorry_message, widget.display_type FROM m_companies AS comp LEFT JOIN m_widget_settings AS widget ON ( comp.id = widget.m_companies_id ) LEFT JOIN m_chat_settings AS chat ON ( chat.m_companies_id = widget.m_companies_id ) WHERE comp.id = ?;";
       pool.query(getUserSQL, [companyId], function(err, rows){
         if ( err !== null && err !== '' ) return false; // DB接続断対応
         var ret = false, message = null;
-
-        if ( rows && rows[0] ) {
-          message = rows[0].sorry_message;
-          // ウィジェットが非表示の場合
-          if ( rows[0].display_type === 3 ) {
-            return callback(true, {opFlg: false, message: message});
-          }
-          // ウィジェット表示のジャッジの場合、常に表示は必ずtrue
-          if ( type === 1 && rows[0].display_type === 1 ) {
-            return callback(true, {opFlg: true, message: message});
-          }
-          // チャット上限数を設定していない場合
-          if ( Number(rows[0].sc_flg) === 2 ) {
-            // オペレーターが待機している場合
-            if ( (rows[0].display_type === 2 && getOperatorCnt(d.siteKey) > 0) ||
-                 (rows[0].display_type === 1 && (company.info.hasOwnProperty(d.siteKey) && Object.keys(company.info[d.siteKey]).length > 0))
-            ) {
-              ret = true;
+        now = new Date();
+        nowDay = now.getDay();
+        var timeData = [];
+        var active_flg = "";
+        var check = "";
+        dateParse = Date.parse(now);
+        date = now.getFullYear() + "/" + (now.getMonth()+1) + "/" + now.getDate() + " ";
+        var getOperatingHourSQL = "SELECT * FROM m_operating_hours where m_companies_id = ?;";
+        pool.query(getOperatingHourSQL, [companyId] , function(err,result){
+          var getPublicHolidaySQL = "SELECT * FROM public_holidays where year = ?;";
+          pool.query(getPublicHolidaySQL, now.getFullYear() , function(err, results){
+            for(var i=0; i<result.length; i++){
+              dayType = JSON.parse(result[i].type);
+              //営業時間設定の条件が「毎日」の場合
+              if(dayType == 1) {
+                var day = { 0:'sun', 1:'mon', 2:'tue', 3:'wed', 4:'thu', 5:'fri', 6:'sat'};
+                day = day[nowDay];
+                timeData = JSON.parse(result[i].time_settings).everyday[day];
+                publicHolidayData = JSON.parse(result[i].time_settings).everyday['pub'];
+              }
+              //営業時間設定の条件が「平日・週末」の場合
+              else {
+                var day = { 0:'sun', 1:'mon', 2:'tue', 3:'wed', 4:'thu', 5:'fri', 6:'sat'};
+                if(nowDay == 1 || nowDay == 2 || nowDay == 3 || nowDay == 4 || nowDay == 5) {
+                  var day = 'week';
+                }
+                else {
+                  var day = 'weekend';
+                }
+                timeData = JSON.parse(result[i].time_settings).weekly[day];
+                publicHolidayData = JSON.parse(result[i].time_settings).weekly['weekpub'];
+              }
+              active_flg = JSON.parse(result[i].active_flg);
             }
-          }
-          // チャット上限数を設定している場合
-          else if ( Number(rows[0].sc_flg) === 1 ) {
-            /* チャット上限数をみる */
-            if ( scList.hasOwnProperty(d.siteKey) ) {
-              var userIds = Object.keys(scList[d.siteKey].user);
-              if ( userIds.length !== 0 ) {
-                for (var i = 0; i < userIds.length; i++) {
-                  if ( Number(scList[d.siteKey].user[userIds[i]]) === Number(scList[d.siteKey].cnt[userIds[i]]) ) continue;
-                  ret = true; break;
+            if( rows && rows[0] ) {
+              message = rows[0].sorry_message;
+              // ウィジェットが非表示の場合
+              if ( rows[0].display_type === 3 ) {
+                return callback(true, {opFlg: false, message: message});
+              }
+              // ウィジェット表示のジャッジの場合、常に表示は必ずtrue
+              if ( type === 1 && rows[0].display_type === 1 ) {
+                return callback(true, {opFlg: true, message: message});
+              }
+              // ウィジェット表示のジャッジの場合、営業時間内のみ表示するの場合、営業時間内の場合はtrue
+              if ( type === 1 && rows[0].display_type === 4 && active_flg == 1) {
+                // 祝日の場合
+                for(var i2=0; i2<results.length; i2++) {
+                  if((now.getMonth()+1) + now.getDate() == results[i2].month + results[i2].day) {
+                    if(publicHolidayData[0].start != null && publicHolidayData[0].end != null) {
+                      for(var i=0; i<publicHolidayData.length; i++){
+                        if( Date.parse(new Date(date + publicHolidayData[i].start)) <= dateParse && dateParse < Date.parse(new Date(date + publicHolidayData[i].end))) {
+                          return callback(true, {opFlg: true, message: message});
+                          break;
+                        }
+                      }
+                    }
+                    return callback(true, {opFlg: false, message: message});
+                  }
+                }
+                if(timeData[0].start != null && timeData[0].end != null) {
+                  for(var i=0; i<timeData.length; i++){
+                    // 営業時間内の場合
+                    if( Date.parse(new Date(date + timeData[i].start)) <= dateParse && dateParse < Date.parse(new Date(date + timeData[i].end))) {
+                      return callback(true, {opFlg: true, message: message});
+                      break;
+                    }
+                  }
+                }
+                return callback(true, {opFlg: false, message: message});
+              }
+              // チャット上限数を設定していない場合
+              if ( Number(rows[0].sc_flg) === 2 ) {
+                // オペレーターが待機している場合
+                if ( (rows[0].display_type === 2 && getOperatorCnt(d.siteKey) > 0) ||
+                     (rows[0].display_type === 1 && (company.info.hasOwnProperty(d.siteKey) && Object.keys(company.info[d.siteKey]).length > 0)) ||
+                     (rows[0].display_type === 4 && (company.info.hasOwnProperty(d.siteKey) && Object.keys(company.info[d.siteKey]).length > 0))
+                ) {
+                  // 営業時間外の場合sorryメッセージを返す
+                  if ( type === 2 && active_flg === 1) {
+                    for(var i2=0; i2<results.length; i2++) {
+                      if((now.getMonth()+1) + now.getDate() == results[i2].month + results[i2].day) {
+                        check = true;
+                        if(publicHolidayData[0].start != null && publicHolidayData[0].end != null) {
+                          for(var i=0; i<publicHolidayData.length; i++){
+                            if( Date.parse(new Date(date + publicHolidayData[i].start)) <= dateParse && dateParse < Date.parse(new Date(date + publicHolidayData[i].end)) ) {
+                              ret = true;
+                              break;
+                            }
+                          }
+                        }
+                      }
+                    }
+                    if(check != true) {
+                      //営業時間設定が「休み」の場合
+                      if(timeData[0].start == null && timeData[0].end == null) {
+                        ret = false;
+                      }
+                      else {
+                        for(var i=0; i<timeData.length; i++){
+                          if( Date.parse(new Date(date + timeData[i].start)) <= dateParse && dateParse < Date.parse(new Date(date + timeData[i].end)) ) {
+                            ret = true;
+                            break;
+                          }
+                        }
+                        // 営業時間内の場合
+                        if(ret != true) {
+                          ret = false;
+                        }
+                      }
+                    }
+                  }
+                  else {
+                    ret = true;
+                  }
                 }
               }
+              // チャット上限数を設定している場合
+              else if ( Number(rows[0].sc_flg) === 1 ) {
+                /* チャット上限数をみる */
+                if ( scList.hasOwnProperty(d.siteKey) ) {
+                  var userIds = Object.keys(scList[d.siteKey].user);
+                  if ( userIds.length !== 0 ) {
+                    for (var i = 0; i < userIds.length; i++) {
+                      if ( Number(scList[d.siteKey].user[userIds[i]]) === Number(scList[d.siteKey].cnt[userIds[i]]) ) continue;
+                      /* 営業時間外の場合sorryメッセージを返す */
+                      if ( type === 2 && active_flg === 1) {
+                        for(var i2=0; i2<results.length; i2++) {
+                          if((now.getMonth()+1) + now.getDate() == results[i2].month + results[i2].day) {
+                            check = true;
+                            if(publicHolidayData[0].start != null && publicHolidayData[0].end != null) {
+                              for(var i=0; i<publicHolidayData.length; i++){
+                                if( Date.parse(new Date(date + publicHolidayData[i].start)) <= dateParse && dateParse < Date.parse(new Date(date + publicHolidayData[i].end)) ) {
+                                  ret = true;
+                                  break;
+                                }
+                              }
+                            }
+                          }
+                        }
+                        if(check != true) {
+                          if(timeData[0].start === null && timeData[0].end === null) {
+                            ret = false;
+                          }
+                          else {
+                            for(var i=0; i<timeData.length; i++){
+                              if( Date.parse(new Date(date + timeData[i].start)) <= dateParse && dateParse < Date.parse(new Date(date + timeData[i].end)) ) {
+                                ret = true;
+                                break;
+                              }
+                            }
+                            /* 営業時間内の場合 */
+                            if(ret != true) {
+                              ret = false;
+                            }
+                          }
+                        }
+                      }
+                      else {
+                        ret = true;　break;
+                      }
+                    }
+                  }
+                }
+                /* チャット上限数をみる */
+              }
+              return callback(true, {opFlg: ret, message: message});
             }
-            /* チャット上限数をみる */
-          }
-          return callback(true, {opFlg: ret, message: message});
-        }
-        else {
-          if ( type === 1 ) { // ウィジェット
-            ret = true;
-          }
-          return callback(false, {ret: ret, message: null});
-        }
+            else {
+              if ( type === 1 ) { // ウィジェット
+                ret = true;
+              }
+              return callback(false, {ret: ret, message: null});
+            }
+          });
+        });
       });
     }
   };
@@ -1650,7 +1807,11 @@ io.sockets.on('connection', function (socket) {
 
   // 都度：チャットデータ取得(オートメッセージのみ)
   socket.on("sendAutoChatMessage", function(d){
+    console.log('d');
+    console.log(d);
     var obj = JSON.parse(d);
+    console.log('automessage');
+    console.log(obj);
     var chat = JSON.parse(JSON.stringify(obj));
     chat.messageType = obj.isAutoSpeech ? chatApi.cnst.observeType.autoSpeech : chatApi.cnst.observeType.auto;
     chat.created = new Date();
@@ -1661,7 +1822,11 @@ io.sockets.on('connection', function (socket) {
 
   // 一括：チャットデータ取得(オートメッセージのみ)
   socket.on("getAutoChatMessages", function(d){
+    console.log('d');
+    console.log(d);
     var obj = JSON.parse(d);
+    console.log('automessage');
+    console.log(obj);
     if (!getSessionId(obj.siteKey, obj.tabId, 'sessionId')) return false;
     var sId = getSessionId(obj.siteKey, obj.tabId, 'sessionId');
     obj.messageType = chatApi.cnst.observeType.auto;
@@ -1678,7 +1843,7 @@ io.sockets.on('connection', function (socket) {
   // 一括：チャットデータ取得(オートメッセージのみ)
   socket.on("sendAutoChatMessages", function(d){
     var obj = JSON.parse(d);
-
+    console.log('オートメッセ時');
     var setList = {};
     for (var i = 0; i < obj.messages.length; i++) {
       var created = new Date(obj.messages[i].created);
