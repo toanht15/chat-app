@@ -9,14 +9,5 @@ class MOperatingHour extends AppModel {
 
   public $name = 'MOperatingHour';
 
-  public $validate = [
-    'startTime0' => [
-        'maxLength' => [
-            'rule' => ['maxLength', 5],
-            'allowEmpty' => false,
-            'message' => '条件を設定してください。'
-        ]
-    ]
-  ];
 }
 

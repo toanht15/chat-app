@@ -20,12 +20,14 @@ class MOperatingHoursController extends AppController {
     $operatingHourData = $this->MOperatingHour->find('first', ['conditions' => [
       'm_companies_id' => $this->userInfo['MCompany']['id']
     ]]);
+    //ウィジェット情報
     $widgetData = $this->MWidgetSetting->find('first', ['conditions' => [
       'm_companies_id' => $this->userInfo['MCompany']['id']
     ]]);
     if($this->request->is('post')) {
       $saveData = $this->MOperatingHour->read(null, $operatingHourData['MOperatingHour']['id']);
       $saveData['MOperatingHour']['active_flg'] = $this->request->data['MOperatingHour']['active_flg'];
+      //営業時間設定を利用する場合
       if($this->request->data['MOperatingHour']['active_flg'] == 1) {
         $saveData['MOperatingHour']['time_settings'] = $this->request->data['MOperatingHour']['outputData'];
         $saveData['MOperatingHour']['type'] = $this->request->data['MOperatingHour']['type'];
@@ -64,6 +66,7 @@ class MOperatingHoursController extends AppController {
         }
         $this->set('operatingHourData',$saveData);
       }
+      //ページ読み込み時
       else {
         $this->request->data['MOperatingHour']['active_flg'] = $operatingHourData['MOperatingHour']['active_flg'];
         $this->request->data['MOperatingHour']['type'] = $operatingHourData['MOperatingHour']['type'];
