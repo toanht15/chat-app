@@ -5,7 +5,7 @@
  */
 class HistoriesController extends AppController {
   public $helpers = ['Time'];
-  public $uses = ['MUser', 'MCompany', 'MCustomer', 'TCampaign', 'THistory', 'THistoryChatLog', 'THistoryStayLog', 'THistoryShareDisplay'];
+  public $uses = ['MUser', 'MCompany', 'MCustomer', 'TCampaign', 'THistory', 'THistoryChatLog', 'THistoryStayLog', 'THistoryShareDisplay', 'MLandscapeData'];
   public $paginate = [
     'THistory' => [
       'limit' => 100,
@@ -54,6 +54,9 @@ class HistoriesController extends AppController {
     }*/
 
     $this->set('siteKey', $this->userInfo['MCompany']['company_key']);
+    if(true) { ///FIXME プラン別制御（企業詳細情報連携）
+      $this->set('token', $this->userInfo['accessToken']);
+    }
     $this->set('title_for_layout', '履歴');
   }
 
@@ -320,7 +323,13 @@ class HistoriesController extends AppController {
       // IPアドレス
       if ($history['THistory']['ip_address'] !== "" ) {
         if ( $row['ip'] !== "" ) $row['ip'] .= "\n";
-        $row['ip'] .= $history['THistory']['ip_address'];
+        if ($history['LandscapeData']['org_name'] !== "") {
+          $row['ip'] .= $history['LandscapeData']['org_name'];
+          $row['ip'] .= "\n";
+          $row['ip'] .= '('.$history['THistory']['ip_address'].')';
+        } else {
+          $row['ip'] .= $history['THistory']['ip_address'];
+        }
       }
       // 訪問ユーザ
       $row['customer'] = "";
@@ -838,6 +847,16 @@ class HistoriesController extends AppController {
       }
     }
 
+    $joinToLandscapeData = [
+        'type' => 'LEFT',
+        'table' => 'm_landscape_data',
+        'alias' => 'LandscapeData',
+        'field' => ['lbc_code','ip_address','org_name'],
+        'conditions' => [
+            'LandscapeData.ip_address = THistory.ip_address',
+        ],
+    ];
+
     // 3) チャットに関する検索条件
     if ( $this->coreSettings[C_COMPANY_USE_CHAT] ) {
 
@@ -899,9 +918,11 @@ class HistoriesController extends AppController {
         ],
       ];
 
+      $this->paginate['THistory']['fields'][] = 'LandscapeData.*';
       $this->paginate['THistory']['fields'][] = 'THistoryChatLog.*';
       $this->paginate['THistory']['fields'][] = 'LastSpeechTime.created as lastSpeechTime';
 
+      $this->paginate['THistory']['joins'][] = $joinToLandscapeData;
       $this->paginate['THistory']['joins'][] = $joinToChat;
       $this->paginate['THistory']['joins'][] = $joinToLastSpeechChatTime;
     }
@@ -1207,6 +1228,14 @@ class HistoriesController extends AppController {
         'conditions' => [
           'THistory.visitors_id = MCustomer.visitors_id'
         ]
+      ],
+      [ // FIXME
+          'type' => 'left',
+          'alias' => 'LandscapeData',
+          'table' => 'm_landscape_data',
+          'conditions' => [
+              'THistory.ip_address = LandscapeData.ip_address'
+          ]
       ]
     ];
     $userCond = [

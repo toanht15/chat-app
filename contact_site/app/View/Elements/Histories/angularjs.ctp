@@ -8,9 +8,13 @@
       return userAgentChk.pre(str);
     };
 
-    $scope.ip = function(ip){
+    $scope.ip = function(ip, issetCompanyName){
       var showData = [];
-      showData.push(ip); // IPアドレス
+      if(issetCompanyName) {
+        showData.push('(' + ip + ')'); // IPアドレス
+      } else {
+        showData.push(ip); // IPアドレス
+      }
       return showData.join("\n");
     };
 
@@ -82,6 +86,24 @@
       dataType: 'html',
       success: function(html){
         modalOpen.call(window, html, 'p-history-logs', 'ページ移動履歴');
+      }
+    });
+  };
+
+  window.openCompanyDetailInfo = function(lbc){
+    var retList = {};
+    $.ajax({
+      type: 'POST',
+      cache: false,
+      url: "<?= $this->Html->url(array('controller' => 'CompanyData', 'action' => 'getDetailInfo')) ?>",
+      data: JSON.stringify({
+        accessToken: "<?=$token?>",
+        lbc: lbc,
+        format: 'popupElement'
+      }),
+      dataType: 'html',
+      success: function(html){
+        modalOpen.call(window, html, 'p-cus-company-detail', '企業詳細情報');
       }
     });
   };
