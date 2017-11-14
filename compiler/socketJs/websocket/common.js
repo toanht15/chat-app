@@ -586,9 +586,9 @@ var socket, // socket.io
           html += '      #sincloBox section#chatTab #sincloAccessInfo { height: '+ sizeList['sincloAccessInfoHeight'] +'px; text-align: left; padding-left: 0.5em; padding-top: 5px; padding-bottom: 5px; font-size: 0.9em; border-top: 1px solid #E8E7E0 }';
         }
       }
-      html += '      #sincloBox section#navigation { position: relative; display: block; }';
+      html += '      #sincloBox section#navigation { position: relative; display: block; top: 0px!important; background: #FFF!important; }';
       html += '      #sincloBox section#navigation ul { display: table; padding: 0; position: absolute; top: 0; left: 0; }';
-      html += '      #sincloBox section#navigation ul li { position: relative; overflow: hidden; cursor: pointer; color: ' + systemTextColor + '; text-align: center; display: table-cell; }';
+      html += '      #sincloBox section#navigation ul li { position: relative; overflow: hidden; cursor: pointer; color: ' + systemTextColor + '; text-align: center; display: table-cell; line-height: inherit!important; }';
       html += '      #sincloBox section#navigation ul li.selected { background-color: #FFFFFF; }';
       html += '      #sincloBox #fotter { text-align: center; color: #A1A1A1!important; background-color: #FFF; margin: 0;border-top: none; }';
       html += '      #sincloBox section#navigation ul li::before{ background-color: #BCBCBC; content: " "; display: inline-block; position: relative; background-size: contain; vertical-align: middle; background-repeat: no-repeat }';
