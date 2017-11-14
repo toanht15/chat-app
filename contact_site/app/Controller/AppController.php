@@ -68,7 +68,8 @@ class AppController extends Controller {
     C_COMPANY_USE_STATISTICS => false, // 統計
     C_COMPANY_USE_DICTIONARY_CATEGORY => false, // 定型文カテゴリ
     C_COMPANY_USE_LA_CO_BROWSE => false, // 画面キャプチャ共有
-    C_COMPANY_USE_HIDE_REALTIME_MONITOR => false // 通常時リアルタイムモニタ非表示
+    C_COMPANY_USE_HIDE_REALTIME_MONITOR => false, // 通常時リアルタイムモニタ非表示
+    C_COMPANY_REF_COMPANY_DATA => false // 企業情報参照（Landscape）
   ];
 
   public function beforeFilter(){
@@ -120,10 +121,6 @@ class AppController extends Controller {
     // ログイン情報をオブジェクトに格納
     if ( $this->Session->check('global.userInfo') ) {
       $this->userInfo = $this->Session->read('global.userInfo');
-      if(true) { //FIXME プラン別制御（企業詳細情報連携）
-        $this->userInfo['accessToken'] = 'x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK';
-        $this->Session->write('global.userInfo.accessToken');
-      }
       $this->set('userInfo', $this->userInfo);
     }
 
@@ -147,6 +144,10 @@ class AppController extends Controller {
     $this->coreSettings = $this->mergeCoreSettings(json_decode($this->userInfo['MCompany']['core_settings'], true));
     $this->set('coreSettings', $this->coreSettings);
 
+    if(isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) {
+      $this->userInfo['accessToken'] = 'x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK';
+      $this->Session->write('global.userInfo.accessToken');
+    }
 
     // コンフィグにユーザーIDを設定
     Configure::write('logged_user_id', $this->Auth->user('id'));

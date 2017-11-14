@@ -52,8 +52,10 @@ class CustomersController extends AppController {
     /* 企業ユーザーリストを取得 */
     $this->set('responderList', $this->MUser->coFind('list',["fields" => ["MUser.id", "MUser.display_name"], "recursive" => -1]));
 
-    if(true) { ///FIXME プラン別制御（企業詳細情報連携）
+    if(isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) {
       $this->set('token', $this->userInfo['accessToken']);
+    } else {
+      $this->set('token', '');
     }
 
     $this->_viewElement();

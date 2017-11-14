@@ -54,8 +54,10 @@ class HistoriesController extends AppController {
     }*/
 
     $this->set('siteKey', $this->userInfo['MCompany']['company_key']);
-    if(true) { ///FIXME プラン別制御（企業詳細情報連携）
+    if(isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) {
       $this->set('token', $this->userInfo['accessToken']);
+    } else {
+      $this->set('token', '');
     }
     $this->set('title_for_layout', '履歴');
   }
@@ -420,7 +422,13 @@ class HistoriesController extends AppController {
       //IPアドレス
       if ($val['THistory']['ip_address'] !== "" ) {
         if ( $row['ip'] !== "" ) $row['ip'] .= "\n";
-        $row['ip'] .= $val['THistory']['ip_address'];
+        if ($val['LandscapeData']['org_name'] !== "") {
+          $row['ip'] .= $val['LandscapeData']['org_name'];
+          $row['ip'] .= "\n";
+          $row['ip'] .= '('.$val['THistory']['ip_address'].')';
+        } else {
+          $row['ip'] .= $val['THistory']['ip_address'];
+        }
       }
       //訪問ユーザ
       $row['customer'] = "";
@@ -847,15 +855,17 @@ class HistoriesController extends AppController {
       }
     }
 
-    $joinToLandscapeData = [
-        'type' => 'LEFT',
-        'table' => 'm_landscape_data',
-        'alias' => 'LandscapeData',
-        'field' => ['lbc_code','ip_address','org_name'],
-        'conditions' => [
-            'LandscapeData.ip_address = THistory.ip_address',
-        ],
-    ];
+    if(isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) {
+      $joinToLandscapeData = [
+          'type' => 'LEFT',
+          'table' => 'm_landscape_data',
+          'alias' => 'LandscapeData',
+          'field' => ['lbc_code', 'ip_address', 'org_name'],
+          'conditions' => [
+              'LandscapeData.ip_address = THistory.ip_address',
+          ],
+      ];
+    }
 
     // 3) チャットに関する検索条件
     if ( $this->coreSettings[C_COMPANY_USE_CHAT] ) {
@@ -918,13 +928,16 @@ class HistoriesController extends AppController {
         ],
       ];
 
-      $this->paginate['THistory']['fields'][] = 'LandscapeData.*';
+
       $this->paginate['THistory']['fields'][] = 'THistoryChatLog.*';
       $this->paginate['THistory']['fields'][] = 'LastSpeechTime.created as lastSpeechTime';
-
-      $this->paginate['THistory']['joins'][] = $joinToLandscapeData;
       $this->paginate['THistory']['joins'][] = $joinToChat;
       $this->paginate['THistory']['joins'][] = $joinToLastSpeechChatTime;
+
+      if(isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) {
+        $this->paginate['THistory']['fields'][] = 'LandscapeData.*';
+        $this->paginate['THistory']['joins'][] = $joinToLandscapeData;
+      }
     }
 
     $historyList = $this->paginate('THistory');
@@ -1228,16 +1241,18 @@ class HistoriesController extends AppController {
         'conditions' => [
           'THistory.visitors_id = MCustomer.visitors_id'
         ]
-      ],
-      [ // FIXME
+      ]
+    ];
+    if(isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) {
+      $joinList[] = [
           'type' => 'left',
           'alias' => 'LandscapeData',
           'table' => 'm_landscape_data',
           'conditions' => [
               'THistory.ip_address = LandscapeData.ip_address'
           ]
-      ]
-    ];
+      ];
+    }
     $userCond = [
       'm_companies_id' => $this->userInfo['MCompany']['id']
     ];

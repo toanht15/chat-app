@@ -42,6 +42,7 @@ define('C_COMPANY_USE_HISTORY_DELETE', 'deleteHistory'); // 履歴削除
 define('C_COMPANY_USE_STATISTICS', 'statistics'); // 統計
 define('C_COMPANY_USE_DICTIONARY_CATEGORY', 'dictionaryCategory'); // 定型文カテゴリ
 define('C_COMPANY_USE_HIDE_REALTIME_MONITOR', 'hideRealtimeMonitor'); // リアルタイムモニター非表示
+define('C_COMPANY_REF_COMPANY_DATA', 'refCompanyData'); // 企業情報参照（Landscape）
 
 
 // 簡易メッセージ入力機能種別

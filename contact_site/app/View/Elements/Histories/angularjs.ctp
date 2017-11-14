@@ -90,6 +90,7 @@
     });
   };
 
+  <?php if(isset($coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $coreSettings[C_COMPANY_REF_COMPANY_DATA]): ?>
   window.openCompanyDetailInfo = function(lbc){
     var retList = {};
     $.ajax({
@@ -107,6 +108,7 @@
       }
     });
   };
+  <?php endif; ?>
 
   <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
     window.openChatById = function(id){
