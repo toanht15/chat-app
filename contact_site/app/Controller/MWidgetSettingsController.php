@@ -12,10 +12,15 @@ class MWidgetSettingsController extends AppController {
     'common' => [
       'show_timing', 'max_show_timing_site', 'max_show_timing_page',
       'show_time', 'max_show_time', 'max_show_time_page', 'show_position', 'widget_size_type', 'title', 'show_subtitle', 'sub_title', 'show_description', 'description',
-      'main_color', 'string_color', 'show_main_image', 'main_image', 'radius_ratio', 'box_shadow', 'minimize_design_type'
+      'show_main_image', 'main_image', 'radius_ratio', 'box_shadow', 'minimize_design_type','close_button_setting','close_button_mode_type','bannertext',
+      /* カラー設定styat */
+      'color_setting_type','main_color','string_color','message_text_color','other_text_color','widget_border_color','chat_talk_border_color','sub_title_text_color','description_text_color',
+      'chat_talk_background_color','c_name_text_color','re_text_color','re_background_color','re_border_color','re_border_none','se_text_color','se_background_color','se_border_color','se_border_none','chat_message_background_color',
+      'message_box_text_color','message_box_background_color','message_box_border_color','message_box_border_none','chat_send_btn_text_color','chat_send_btn_background_color','widget_inside_border_color','widget_inside_border_none'
+      /* カラー設定end */
     ],
     'synclo' => ['tel', 'content', 'display_time_flg', 'time_text'],
-    'chat' => ['chat_radio_behavior', 'chat_trigger', 'show_name',  'chat_message_design_type',  'chat_message_with_animation', 'sp_show_flg', 'sp_header_light_flg', 'sp_auto_open_flg',],
+    'chat' => ['chat_radio_behavior', 'chat_trigger', 'show_name',  'chat_message_design_type', 'chat_message_with_animation', 'chat_message_copy', 'sp_show_flg', 'sp_header_light_flg', 'sp_auto_open_flg',],
   ];
 
   public function beforeRender(){
@@ -36,6 +41,37 @@ class MWidgetSettingsController extends AppController {
         $this->redirect(['controller' =>'MWidgetSettings', 'action' => 'index', 'showTab' => $this->request->data['widget']['showTab']]);
       }
       else {
+        $mWidgetSetting = $this->request->data['MWidgetSetting'];
+        if($mWidgetSetting['re_border_none'] === '1'){
+          $this->set('re_border_color_flg', false);
+        }
+        else{
+          $this->set('re_border_color_flg', true);
+        }
+        if($mWidgetSetting['se_border_none'] === '1'){
+          $this->set('se_border_color_flg', false);
+        }
+        else{
+          $this->set('se_border_color_flg', true);
+        }
+        if($mWidgetSetting['message_box_border_none'] === '1'){
+          $this->set('message_box_border_color_flg', false);
+        }
+        else{
+          $this->set('message_box_border_color_flg', true);
+        }
+        if($mWidgetSetting['widget_outside_border_none'] === '1'){
+          $this->set('widget_border_color_flg', false);
+        }
+        else{
+          $this->set('widget_border_color_flg', true);
+        }
+        if($mWidgetSetting['widget_inside_border_none'] === '1'){
+          $this->set('widget_inside_border_color_flg', false);
+        }
+        else{
+          $this->set('widget_inside_border_color_flg', true);
+        }
         $this->set('alertMessage', ['type' => C_MESSAGE_TYPE_ERROR, 'text' => Configure::read('message.const.saveFailed')]);
       }
     }
@@ -55,12 +91,93 @@ class MWidgetSettingsController extends AppController {
         $json = $this->_settingToObj($ret['MWidgetSetting']['style_settings']);
         $inputData['MWidgetSetting'] = $this->_setStyleSetting($inputData['MWidgetSetting'], $json);
       }
+      if(array_key_exists ('re_border_color',$json)){
+        if($json['re_border_color'] === 'none'){
+          $this->set('re_border_color_flg', false);
+          $inputData['MWidgetSetting']['re_border_color'] = 'なし';
+          $inputData['MWidgetSetting']['re_border_none'] = true;
+        }
+        else{
+          $this->set('re_border_color_flg', true);
+        }
+      }
+      else{
+        //初回読み込み時
+//         $this->set('re_border_color_flg', false);
+//         $inputData['MWidgetSetting']['re_border_color'] = 'なし';
+//         $inputData['MWidgetSetting']['re_border_none'] = true;
+        $this->set('re_border_color_flg', true);
+      }
+      if(array_key_exists ('se_border_color',$json)){
+        if($json['se_border_color'] === 'none'){
+          $this->set('se_border_color_flg', false);
+          $inputData['MWidgetSetting']['se_border_color'] = 'なし';
+          $inputData['MWidgetSetting']['se_border_none'] = true;
+        }
+        else{
+          $this->set('se_border_color_flg', true);
+        }
+      }
+      else{
+        //初回読み込み時
+//         $this->set('se_border_color_flg', false);
+//         $inputData['MWidgetSetting']['se_border_color'] = 'なし';
+//         $inputData['MWidgetSetting']['se_border_none'] = true;
+        $this->set('se_border_color_flg', true);
+      }
+      if(array_key_exists ('message_box_border_color',$json)){
+        if($json['message_box_border_color'] === 'none'){
+          $this->set('message_box_border_color_flg', false);
+          $inputData['MWidgetSetting']['message_box_border_color'] = 'なし';
+          $inputData['MWidgetSetting']['message_box_border_none'] = true;
+        }
+        else{
+          $this->set('message_box_border_color_flg', true);
+        }
+      }
+      else{
+        $this->set('message_box_border_color_flg', true);
+      }
+      //ウィジェット外枠線
+      if(array_key_exists ('widget_border_color',$json)){
+        if($json['widget_border_color'] === 'none'){
+          $this->set('widget_border_color_flg', false);
+          $inputData['MWidgetSetting']['widget_border_color'] = 'なし';
+          $inputData['MWidgetSetting']['widget_outside_border_none'] = true;
+        }
+        else{
+          $this->set('widget_border_color_flg', true);
+        }
+      }
+      else{
+        $this->set('widget_border_color_flg', true);
+      }
+      //ウィジェット内枠線
+      if(array_key_exists ('widget_inside_border_color',$json)){
+        if($json['widget_inside_border_color'] === 'none'){
+          $this->set('widget_inside_border_color_flg', false);
+          $inputData['MWidgetSetting']['widget_inside_border_color'] = 'なし';
+          $inputData['MWidgetSetting']['widget_inside_border_none'] = true;
+        }
+        else{
+          $this->set('widget_inside_border_color_flg', true);
+        }
+      }
+      else{
+        $this->set('widget_inside_border_color_flg', true);
+      }
+      //仕様変更常に高度な設定の設定値が反映されるようにする
+      if(array_key_exists ('color_setting_type',$json)){
+        if($json['color_setting_type'] === '1'){
+          $inputData['MWidgetSetting']['color_setting_type'] = '0';
+        }
+      }
       $this->data = $inputData;
     }
     $titleLength = 12;
     $subTitleLength = 15;
     $descriptionLength = 15;
-    switch ($json['widget_size_type']) {
+    switch ($inputData['MWidgetSetting']['widget_size_type']) {
       //大きさによってトップタイトル、企業名、説明文のmaxlengthを可変とする
       case '1': //小
         $titleLength = 12;
@@ -110,6 +227,7 @@ class MWidgetSettingsController extends AppController {
     $this->set('widgetShowNameType', Configure::read('widgetShowNameType'));
     $this->set('chatMessageDesignType', Configure::read('chatMessageDesignType'));
     $this->set('widgetSendActType', Configure::read('widgetSendActType'));
+    $this->set('chatMessageCopy', Configure::read('chatMessageCopy'));
     $this->set('normalChoices', Configure::read('normalChoices')); // はい・いいえ
     $this->set('widgetRadioBtnBehaviorType', Configure::read('widgetRadioBtnBehaviorType'));
     $this->set('gallaryPath', C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT.'/img/widget/');
@@ -125,6 +243,28 @@ class MWidgetSettingsController extends AppController {
     $errors = [];
     $filename = null;
 
+    //各枠線なしチェックボックスが入っていた場合対応するカラーの値を置き換える
+    //企業側吹き出し枠線色
+    if($inputData['MWidgetSetting']['re_border_color'] === 'なし'){
+      $inputData['MWidgetSetting']['re_border_color'] = 'none';
+    }
+    //訪問者側吹き出し枠線色
+    if($inputData['MWidgetSetting']['se_border_color'] === 'なし'){
+      $inputData['MWidgetSetting']['se_border_color'] = 'none';
+    }
+    //メッセージBOX枠線色
+    if($inputData['MWidgetSetting']['message_box_border_color'] === 'なし'){
+      $inputData['MWidgetSetting']['message_box_border_color'] = 'none';
+    }
+    //ウィジェット外枠線色
+    if($inputData['MWidgetSetting']['widget_border_color'] === 'なし'){
+      $inputData['MWidgetSetting']['widget_border_color'] = 'none';
+    }
+    //ウィジェット内枠線色
+    if($inputData['MWidgetSetting']['widget_inside_border_color'] === 'なし'){
+      $inputData['MWidgetSetting']['widget_inside_border_color'] = 'none';
+    }
+
     $uploadImage = $inputData['MWidgetSetting']['uploadImage'];
 
     $prevFileInfo = mb_split("/", $inputData['MWidgetSetting']['main_image']);
@@ -139,6 +279,9 @@ class MWidgetSettingsController extends AppController {
     else {
       $this->request->data['MWidgetSetting']['main_image'] = "";
     }
+
+    //仕様変更常に高度な設定の設定値が反映されるようにする
+    $inputData['MWidgetSetting']['color_setting_type'] = "1";
 
     //ウィジットサイズが中もしくは大の場合バリデーションの上限をトップタイトル、企業名、説明文のみ可変とする
     if($inputData['MWidgetSetting']['widget_size_type'] !== '1'){
@@ -346,6 +489,9 @@ class MWidgetSettingsController extends AppController {
             if ( strcmp($v, 'chat_message_with_animation') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['chat_message_with_animation'] = C_CHECK_OFF; // デフォルト値（非選択状態：アニメーション無効）
             }
+            if ( strcmp($v, 'chat_message_copy') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['chat_message_copy'] = C_WIDGET_CHAT_MESSAGE_CAN_COPY; // デフォルト値
+            }
             if ( strcmp($v, 'sp_show_flg') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['sp_show_flg'] = C_SELECT_CAN; // デフォルト値
             }
@@ -408,6 +554,182 @@ class MWidgetSettingsController extends AppController {
             if ( strcmp($v, 'box_shadow') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['box_shadow'] = C_BOX_SHADOW; // デフォルト値
             }
+            //閉じるボタン
+            //閉じるボタン有効無効
+            if ( strcmp($v, 'close_button_setting') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['close_button_setting'] = C_CLOSE_BUTTON_SETTING_OFF; // デフォルト値
+            }
+            //小さなバナー表示有効無効
+            if ( strcmp($v, 'close_button_mode_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['close_button_mode_type'] = C_CLOSE_BUTTON_SETTING_MODE_TYPE_HIDDEN; // デフォルト値
+            }
+            //バナーテキスト
+            if ( strcmp($v, 'bannertext') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['bannertext'] = C_BANNER_TEXT; // デフォルト値
+            }
+            //閉じるボタン
+            /* カラー設定styat */
+            //0.通常設定・高度設定
+            if ( strcmp($v, 'color_setting_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['color_setting_type'] = COLOR_SETTING_TYPE_OFF; // デフォルト値
+            }
+            //1.メインカラー
+            if ( strcmp($v, 'main_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['main_color'] = MAIN_COLOR; // デフォルト値
+            }
+            //2.タイトル文字色
+            if ( strcmp($v, 'string_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['string_color'] = STRING_COLOR; // デフォルト値
+            }
+            //3.吹き出し文字色
+            if ( strcmp($v, 'message_text_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['message_text_color'] = MESSAGE_TEXT_COLOR; // デフォルト値
+            }
+            //4.その他文字色
+            if ( strcmp($v, 'other_text_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['other_text_color'] = OTHER_TEXT_COLOR; // デフォルト値
+            }
+            //5.ウィジェット枠線色
+            if ( strcmp($v, 'widget_border_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['widget_border_color'] = WIDGET_BORDER_COLOR; // デフォルト値
+            }
+            //6.吹き出し枠線色
+            if ( strcmp($v, 'chat_talk_border_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['chat_talk_border_color'] = CHAT_TALK_BORDER_COLOR; // デフォルト値
+            }
+            //7.企業名文字色
+            if ( strcmp($v, 'sub_title_text_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              if($json['main_color'] && $json['main_color'] !== MAIN_COLOR){
+                $d['sub_title_text_color'] = $json['main_color'];
+              }
+              else{
+                $d['sub_title_text_color'] = SUB_TITLE_TEXT_COLOR; // デフォルト値
+              }
+            }
+            //8.説明文文字色
+            if ( strcmp($v, 'description_text_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['description_text_color'] = DESCRIPTION_TEXT_COLOR; // デフォルト値
+            }
+            //9.チャットエリア背景色
+            if ( strcmp($v, 'chat_talk_background_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['chat_talk_background_color'] = CHAT_TALK_BACKGROUND_COLOR; // デフォルト値
+            }
+            //10.企業名担当者名文字色
+            if ( strcmp($v, 'c_name_text_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              if($json['main_color'] && $json['main_color'] !== MAIN_COLOR){
+                $d['c_name_text_color'] = $json['main_color'];
+              }
+              else{
+                $d['c_name_text_color'] = C_NAME_TEXT_COLOR; // デフォルト値
+              }
+            }
+            //11.企業側吹き出し文字色
+            if ( strcmp($v, 're_text_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['re_text_color'] = RE_TEXT_COLOR; // デフォルト値
+            }
+            //12.企業側吹き出し背景色
+            if ( strcmp($v, 're_background_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              if($json['main_color'] || $json['main_color'] !== MAIN_COLOR){
+                //企業側吹き出し用の色をメインカラーから算出
+                $main_color = $json['main_color'];
+                $code = substr($main_color,1);
+                if(strlen($code) === 3){
+                  $r = substr($code,0,1).substr($code,0,1);
+                  $g = substr($code,1,1).substr($code,1,1);
+                  $b = substr($code,2).substr($code,2);
+                }
+                else{
+                  $r = substr($code,0,2);
+                  $g = substr($code,2,2);
+                  $b = substr($code,4);
+                }
+
+                $balloonR = dechex(255 - (255 - intval($r,16)) * 0.1);
+                $balloonG = dechex(255 - (255 - intval($g,16)) * 0.1);
+                $balloonB = dechex(255 - (255 - intval($b,16)) * 0.1);
+                $defColor = '#'.$balloonR.$balloonG.$balloonB;
+                $d['re_background_color'] = $defColor;
+              }
+              else{
+                $d['re_background_color'] = RE_BACKGROUND_COLOR; // デフォルト値
+              }
+            }
+            //13.企業側吹き出し枠線色
+            if ( strcmp($v, 're_border_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+//               if($json['re_border_color'] === 'false'){
+//                 $d['re_border_color'] = 'false';
+//               }
+//               else{
+                $d['re_border_color'] = RE_BORDER_COLOR; // デフォルト値
+//               }
+            }
+//             //14.企業側吹き出し枠線なし
+//             if ( strcmp($v, 're_border_none') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+//               $d['re_border_none'] = COLOR_SETTING_TYPE_OFF; // デフォルト値
+//             }
+            //15.訪問者側吹き出し文字色
+            if ( strcmp($v, 'se_text_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['se_text_color'] = SE_TEXT_COLOR; // デフォルト値
+            }
+            //16.訪問者側吹き出し背景色
+            if ( strcmp($v, 'se_background_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['se_background_color'] = SE_BACKGROUND_COLOR; // デフォルト値
+            }
+            //17.訪問者側吹き出し枠線色
+            if ( strcmp($v, 'se_border_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['se_border_color'] = SE_BORDER_COLOR; // デフォルト値
+            }
+//             //18.訪問者側吹き出し枠線なし
+//             if ( strcmp($v, 'se_border_none') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+//               $d['se_border_none'] = COLOR_SETTING_TYPE_OFF; // デフォルト値
+//             }
+            //19.メッセージエリア背景色
+            if ( strcmp($v, 'chat_message_background_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['chat_message_background_color'] = CHAT_MESSAGE_BACKGROUND_COLOR; // デフォルト値
+            }
+            //20.メッセージBOX文字色
+            if ( strcmp($v, 'message_box_text_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['message_box_text_color'] = MESSAGE_BOX_TEXT_COLOR; // デフォルト値
+            }
+            //21.メッセージBOX背景色
+            if ( strcmp($v, 'message_box_background_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['message_box_background_color'] = MESSAGE_BOX_BACKGROUND_COLOR; // デフォルト値
+            }
+            //22.メッセージBOX枠線色
+            if ( strcmp($v, 'message_box_border_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['message_box_border_color'] = MESSAGE_BOX_BORDER_COLOR; // デフォルト値
+            }
+//             //23.メッセージBOX枠線なし
+//             if ( strcmp($v, 'message_box_border_none') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+//               $d['message_box_border_none'] = COLOR_SETTING_TYPE_OFF; // デフォルト値
+//             }
+            //24.送信ボタン文字色
+            if ( strcmp($v, 'chat_send_btn_text_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              if($json['string_color'] && $json['string_color'] !== STRING_COLOR){
+                $d['chat_send_btn_text_color'] = $json['string_color'];
+              }
+              else{
+                $d['chat_send_btn_text_color'] = CHAT_SEND_BTN_TEXT_COLOR; // デフォルト値
+              }
+            }
+            //25.送信ボタン背景色
+            if ( strcmp($v, 'chat_send_btn_background_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              if($json['main_color'] && $json['main_color'] !== MAIN_COLOR){
+                $d['chat_send_btn_background_color'] = $json['main_color'];
+              }
+              else{
+                $d['chat_send_btn_background_color'] = CHAT_SEND_BTN_BACKGROUND_COLOR; // デフォルト値
+              }
+            }
+            //26.ウィジット内枠線色
+            if ( strcmp($v, 'widget_inside_border_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['widget_inside_border_color'] = WIDGET_INSIDE_BORDER_COLOR; // デフォルト値
+            }
+//             //26.ウィジット内枠線色
+//             if ( strcmp($v, 'widget_inside_border_none') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+//               $d['widget_inside_border_none'] = COLOR_SETTING_TYPE_OFF; // デフォルト値
+//             }
+            /* カラー設定end */
 
             if ( isset($json[$v]) ) {
               $d[$v] = $json[$v];

@@ -24,9 +24,59 @@ class MWidgetSetting extends AppModel {
       'show_subtitle' => "showSubtitle",
       'sub_title' => "subTitle",
       'description' => "description",
+
+      /* カラー設定styat */
+      //0.通常設定・高度設定
+      'color_setting_type' => "colorSettingType",
+      //1.メインカラー
       'main_color' => "mainColor",
+      //2.タイトル文字色
       'string_color' => "stringColor",
-      'show_main_image' => "showMainImage",
+      //3.吹き出し文字色
+      'message_text_color' => "messageTextColor",
+      //4.その他文字色
+      'other_text_color' => "otherTextColor",
+      //5.ウィジェット枠線色
+      'widget_border_color' => "widgetBorderColor",
+      //6.吹き出し枠線色
+      'chat_talk_border_color' => "chatTalkBorderColor",
+      //7.企業名文字色
+      'sub_title_text_color' => "subTitleTextColor",
+      //8.説明文文字色
+      'description_text_color' => "descriptionTextColor",
+      //9.チャットエリア背景色
+      'chat_talk_background_color' => "chatTalkBackgroundColor",
+      //10.企業名担当者名文字色
+      'c_name_text_color' => "cNameTextColor",
+      //11.企業側吹き出し文字色
+      're_text_color' => "reTextColor",
+      //12.企業側吹き出し背景色
+      're_background_color' => "reBackgroundColor",
+      //13.企業側吹き出し枠線色
+      're_border_color' => "reBorderColor",
+      //14.訪問者側吹き出し文字色
+      'se_text_color' => "seTextColor",
+      //15.訪問者側吹き出し背景色
+      'se_background_color' => "seBackgroundColor",
+      //16.訪問者側吹き出し枠線色
+      'se_border_color' => "seBorderColor",
+      //17.メッセージエリア背景色
+      'chat_message_background_color' => "chatMessageBackgroundColor",
+      //18.メッセージBOX文字色
+      'message_box_text_color' => "messageBoxTextColor",
+      //19.メッセージBOX背景色
+      'message_box_background_color' => "messageBoxBackgroundColor",
+      //20.メッセージBOX枠線色
+      'message_box_border_color' => "messageBoxBorderColor",
+      //21.送信ボタン文字色
+      'chat_send_btn_text_color' => "chatSendBtnTextColor",
+      //22.送信ボタン背景色
+      'chat_send_btn_background_color' => "chatSendBtnBackgroundColor",
+      //23.ウィジット内枠線色
+      'widget_inside_border_color' => "widgetInsideBorderColor",
+      /* カラー設定end */
+
+        'show_main_image' => "showMainImage",
       'main_image' => "mainImage",
       'radius_ratio' => "radiusRatio",
       //背景の影
@@ -35,6 +85,11 @@ class MWidgetSetting extends AppModel {
       //最小化時デザイン対応
       'minimize_design_type' => "minimizeDesignType",
       //最小化時デザイン対応
+      //閉じるボタン対応
+      'close_button_setting' => "closeButtonSetting",
+      'close_button_mode_type' => "closeButtonModeType",
+      'bannertext' => "bannertext",
+      //閉じるボタン対応
       'tel' => "tel",
       'show_name' => "showName",
       'chat_message_design_type' => "chatMessageDesignType",
@@ -44,6 +99,7 @@ class MWidgetSetting extends AppModel {
       'time_text' => "timeText",
       'chat_radio_behavior' => "chatRadioBehavior",
       'chat_trigger' => "chatTrigger",
+      'chat_message_copy' => 'chatMessageCopy',
       'sp_show_flg' => "spShowFlg",
       'sp_header_light_flg' => "spHeaderLightFlg",
       'sp_auto_open_flg' => "spAutoOpenFlg",
@@ -201,6 +257,14 @@ class MWidgetSetting extends AppModel {
                 'rule' => ['maxLength', 13],
                 'allowEmpty' => true,
                 'message' => '１３文字以内で設定してください。'
+            ]
+        ],
+        //バナー用テキスト
+        'bannertext' => [
+            'maxLength' => [
+                'rule' => ['maxLength', 15],
+                'allowEmpty' => true,
+                'message' => '１５文字以内で設定してください'
             ]
         ],
         'content' => [

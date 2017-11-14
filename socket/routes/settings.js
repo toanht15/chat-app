@@ -97,6 +97,44 @@ router.get("/", function(req, res, next) {
                   chatMessageWithAnimation = isNumeric(settings.chatMessageWithAnimation);
                 }
 
+                // チャット本文コピー設定が存在しない場合は「コピー可」
+                var chatMessageCopy = 0;
+               	if(('chatMessageCopy' in settings)) {
+                  chatMessageCopy = isNumeric(settings.chatMessageCopy);
+                }
+
+                //閉じるボタン設定が存在しないときは「閉じるボタン無効」
+                var closeButtonSetting = 1;
+                if(('closeButtonSetting' in settings)) {
+                  closeButtonSetting = isNumeric(settings.closeButtonSetting);
+                }
+
+                // 通常設定・高度設定が存在しない場合は「通常設定」
+                var colorSettingType = 0;
+                if(('colorSettingType' in settings)) {
+                  colorSettingType = isNumeric(settings.colorSettingType);
+                }
+                // 吹き出し文字色が存在しない場合はデフォルト色を設定
+                var messageTextColor = "#333333";
+                if(('messageTextColor' in settings)) {
+                  messageTextColor = settings.messageTextColor;
+                }
+                // その他文字色が存在しない場合はデフォルト色を設定
+                var otherTextColor = "#666666";
+                if(('otherTextColor' in settings)) {
+                  otherTextColor = settings.otherTextColor;
+                }
+                // ウィジェット枠線色が存在しない場合はデフォルト色を設定
+                var widgetBorderColor = "#E8E7E0";
+                if(('widgetBorderColor' in settings)) {
+                  widgetBorderColor = settings.widgetBorderColor;
+                }
+                // 吹き出し枠線色が存在しない場合はデフォルト色を設定
+                var chatTalkBorderColor = "#C9C9C9";
+                if(('chatTalkBorderColor' in settings)) {
+                  chatTalkBorderColor = settings.chatTalkBorderColor;
+                }
+
                 sendData['widget'] = {
                   showTiming: showTimingSetting,
                   display_type: isNumeric(rows[0].display_type),
@@ -111,8 +149,58 @@ router.get("/", function(req, res, next) {
                   subTitle: settings.subTitle,
                   showDescription: isNumeric(settings.showDescription),
                   description: settings.description,
+
+                  /* カラー設定styat */
+                  //0.通常設定・高度設定
+                  colorSettingType: colorSettingType,
+                  //1.メインカラー
                   mainColor: settings.mainColor,
+                  //2.タイトル文字色
                   stringColor: settings.stringColor,
+                  //3.吹き出し文字色
+                  messageTextColor: messageTextColor,
+                  //4.その他文字色
+                  otherTextColor: otherTextColor,
+                  //5.ウィジェット枠線色
+                  widgetBorderColor: widgetBorderColor,
+                  //6.吹き出し枠線色
+                  chatTalkBorderColor: chatTalkBorderColor,
+                  //7.企業名文字色
+                  subTitleTextColor: settings.subTitleTextColor,
+                  //8.説明文文字色
+                  descriptionTextColor: settings.descriptionTextColor,
+                  //9.チャットエリア背景色
+                  chatTalkBackgroundColor: settings.chatTalkBackgroundColor,
+                  //10.企業名担当者名文字色
+                  cNameTextColor: settings.cNameTextColor,
+                  //11.企業側吹き出し文字色
+                  reTextColor: settings.reTextColor,
+                  //12.企業側吹き出し背景色
+                  reBackgroundColor: settings.reBackgroundColor,
+                  //13.企業側吹き出し枠線色
+                  reBorderColor: settings.reBorderColor,
+                  //15.訪問者側吹き出し文字色
+                  seTextColor: settings.seTextColor,
+                  //16.訪問者側吹き出し背景色
+                  seBackgroundColor: settings.seBackgroundColor,
+                  //17.訪問者側吹き出し枠線色
+                  seBorderColor: settings.seBorderColor,
+                  //19.メッセージエリア背景色
+                  chatMessageBackgroundColor: settings.chatMessageBackgroundColor,
+                  //20.メッセージBOX文字色
+                  messageBoxTextColor: settings.messageBoxTextColor,
+                  //21.メッセージBOX背景色
+                  messageBoxBackgroundColor: settings.messageBoxBackgroundColor,
+                  //22.メッセージBOX枠線色
+                  messageBoxBorderColor: settings.messageBoxBorderColor,
+                  //24.送信ボタン文字色
+                  chatSendBtnTextColor: settings.chatSendBtnTextColor,
+                  //25.送信ボタン背景色
+                  chatSendBtnBackgroundColor: settings.chatSendBtnBackgroundColor,
+                  //26.ウィジット内枠線色
+                  widgetInsideBorderColor: settings.widgetInsideBorderColor,
+                  /* カラー設定end */
+
                   showMainImage: settings.showMainImage,
                   mainImage: settings.mainImage,
                   chatRadioBehavior: isNumeric(settings.chatRadioBehavior),
@@ -125,9 +213,15 @@ router.get("/", function(req, res, next) {
                   boxShadow: isNumeric(settings.boxShadow),
                   //最小化時デザイン対応
                   minimizeDesignType: isNumeric(settings.minimizeDesignType),
+                  //閉じるボタン start
+                  closeButtonSetting: closeButtonSetting,
+                  closeButtonModeType: isNumeric(settings.closeButtonModeType),
+                  bannertext: settings.bannertext,
+                  //閉じるボタン end
                   spShowFlg: isNumeric(settings.spShowFlg),
                   spHeaderLightFlg: isNumeric(settings.spHeaderLightFlg),
-                  spAutoOpenFlg: isNumeric(settings.spAutoOpenFlg)
+                  spAutoOpenFlg: isNumeric(settings.spAutoOpenFlg),
+                  chatMessageCopy: chatMessageCopy
                 };
 
                 actionTypeList = [];

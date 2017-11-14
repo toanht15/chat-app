@@ -42,6 +42,7 @@ class LoginController extends AppController {
         $loginInfo['TLogin']['ip_address'] = $ipAddress;
         $loginInfo['TLogin']['user_agent'] = $userAgent;
         $loginInfo['TLogin']['created'] = date("Y/m/d H:i:s");
+        $this->request->data['MUser']['password'] = '';
         $this->TLogin->begin();
         $this->TLogin->set($loginInfo);
         if($this->TLogin->save()) {
@@ -53,6 +54,7 @@ class LoginController extends AppController {
         return $this->redirect(['controller' => 'Customers', 'action' => 'index']);
       }
     }
+    $this->request->data['MUser']['password'] = '';
     $this->render('index');
   }
 

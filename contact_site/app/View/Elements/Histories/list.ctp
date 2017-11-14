@@ -3,13 +3,17 @@
         <tr>
             <th width=" 9%">日時</th>
             <th width=" 6%" class="noOutCsv">詳細</th>
-            <th width="15%">訪問ユーザ</th>
-            <th width="15%">プラットフォーム<br>ブラウザ</th>
+            <th width="10%">IPアドレス</th>
+            <th width="10%">訪問ユーザ</th>
+            <th width="10%">プラットフォーム<br>ブラウザ</th>
             <th width=" 7%">キャンペーン</th>
             <th width="10%">参照元URL</th>
             <th width=" 5%">閲覧<br>ページ数</th>
-            <th width=" 8%">滞在時間</th>
+            <th width=" 5%">滞在時間</th>
         <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
+            <th id="lastSpeechLabel" width=" 7%">最終発言後<br>離脱時間<div class="questionBalloon questionBalloonPosition13">
+                <icon class="questionBtn">？</icon>
+              </div></th>
             <th width=" 5%">成果</th>
             <th width="10%">チャット</th>
             <th width="10%">担当者</th>
@@ -40,6 +44,7 @@ if ( isset($history['THistory']['visitors_id']) ) {
         <tr>
             <td class="tRight pre"><?=date_format(date_create($history['THistory']['access_date']), "Y/m/d\nH:i:s")?></td>
             <td class="tCenter"><ng-show-detail data-id="<?=h($history['THistory']['id'])?>"></ng-show-detail></td>
+            <td class="tLeft pre">{{ ip('<?=h($history['THistory']['ip_address'])?>') }}</td>
             <td class="tLeft pre">{{ ui('<?=h($history['THistory']['ip_address'])?>', '<?=$visitorsId?>') }}</td>
             <td class="tLeft pre">{{ ua('<?=h($history['THistory']['user_agent'])?>') }}</td>
             <td class="tCenter pre"><?=$campaignParam?></td>
@@ -51,6 +56,13 @@ if ( isset($history['THistory']['visitors_id']) ) {
             </td>
             <td class="tRight"><?=$this->htmlEx->calcTime($history['THistory']['access_date'], $history['THistory']['out_date']) ?></td>
         <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
+            <td class="tRight"><?php
+            if ($history['LastSpeechTime']['lastSpeechTime']
+              && $history['THistory']['access_date'] !== $history['THistory']['out_date']
+              && strtotime($history['LastSpeechTime']['lastSpeechTime']) <= strtotime($history['THistory']['out_date'])){
+              echo $this->htmlEx->calcTime($history['LastSpeechTime']['lastSpeechTime'], $history['THistory']['out_date']);
+            }
+            ?></td>
             <td class="tCenter"><?php
               if ($history['THistoryChatLog']['achievementFlg']){
                 echo $achievementType[h($history['THistoryChatLog']['achievementFlg'])];
@@ -68,3 +80,12 @@ if ( isset($history['THistory']['visitors_id']) ) {
 <?php endforeach; ?>
     </tbody>
 </table>
+<?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
+<div id='lastSpeechTooltip' class="explainTooltip">
+  <icon-annotation>
+    <ul>
+      <li><span>サイト訪問者が最後に発言してからページを離脱するまでの時間</span></li>
+    </ul>
+  </icon-annotation>
+</div>
+<?php endif; ?>

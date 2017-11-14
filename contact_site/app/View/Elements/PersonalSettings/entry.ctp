@@ -1,3 +1,8 @@
+<script type="text/javascript">
+<?php $this->request->data['MUser']['user_name'] = htmlspecialchars($this->request->data['MUser']['user_name'], ENT_QUOTES, 'UTF-8');?>
+<?php $this->request->data['MUser']['display_name'] = htmlspecialchars($this->request->data['MUser']['display_name'], ENT_QUOTES, 'UTF-8');?>
+</script>
+
 <?php
 $editFlg = true;
 if ( !empty($this->data['MUser']['edit_password']) ) {
@@ -5,7 +10,9 @@ if ( !empty($this->data['MUser']['edit_password']) ) {
 }
 $settings = [];
 if ( !empty($this->data['MUser']['settings']) ) {
-  $settings = (array)json_decode($this->data['MUser']['settings']);
+  if(!preg_match('/^(?=.*(<|>|&|\')).*$/',$this->data['MUser']['settings'])) {
+    $settings = (array)json_decode($this->data['MUser']['settings']);
+  }
 }
 ?>
 <?= $this->Form->create('MUser', array('type' => 'post', 'url' => array('controller' => 'PersonalSettings', 'action' => 'index'))); ?>
@@ -28,9 +35,11 @@ if ( !empty($this->data['MUser']['settings']) ) {
                 <?php if ( $coreSettings[C_COMPANY_USE_CHAT] && !empty($mChatSetting['MChatSetting']) && strcmp($mChatSetting['MChatSetting']['sc_flg'], C_SC_ENABLED) === 0 ) : ?>
                   <li>
                       <div class="labelArea fLeft"><span><label>チャット同時対応数</label></span></div>
-                      <span><?php echo ( !empty($settings['sc_num']) ) ? $settings['sc_num'] : 0 ?></span>
-                      <?=$this->Form->hidden('settings')?>
+                      <span><?php
+                      echo ( !empty($settings['sc_num']) ) ? $settings['sc_num'] : 0 ?></span>
+                      <?=$this->Form->hidden('settings',array('error' => false))?>
                   </li>
+                  <?php if ( $this->Form->isFieldError('settings') ) echo $this->Form->error('settings', null, array('wrap' => 'li')); ?>
                 <?php endif; ?>
 
                 <li>

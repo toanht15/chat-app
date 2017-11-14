@@ -47,6 +47,21 @@ $config['default'] = [
       "minimizeDesignType" => "1",
       //最小化時デザイン対応
 
+      //閉じるボタン対応
+      /**
+       * 閉じるボタン有効無効
+       */
+      "closeButtonSetting" => "2",
+      /**
+       * 小さなバナー表示有効無効
+       */
+      "closeButtonModeType" => "1",
+      /**
+       * バナーテキスト
+       */
+      "bannertext" => "お問い合わせはこちら",
+      //閉じるボタン対応
+
       /**
        * トップタイトル
        */
@@ -72,15 +87,128 @@ $config['default'] = [
        */
       "description" => "説明文を入力して下さい",
 
+      /* カラー設定styat */
       /**
-       * メインカラー
+       * 0.通常設定・高度設定
+       */
+      "colorSettingType" => "1",
+
+      /**
+       * 1.メインカラー
        */
       "mainColor" => "#ABCD05",
 
       /**
-       * 文字色
+       * 2.タイトル文字色
        */
       "stringColor" => "#FFFFFF",
+
+      /**
+       * 3.吹き出し文字色
+       */
+      "messageTextColor" => "#333333",
+
+      /**
+       * 4.その他文字色
+       */
+      "otherTextColor" => "#666666",
+
+      /**
+       * 5.ウィジェット枠線色
+       */
+      "widgetBorderColor" => "#E8E7E0",
+
+      /**
+       * 6.吹き出し枠線色
+       */
+      "chatTalkBorderColor" => "#C9C9C9",
+
+      /**
+       * 7.企業名文字色
+       */
+      "subTitleTextColor" => "#ABCD05",
+
+      /**
+       * 8.説明文文字色
+       */
+      "descriptionTextColor" => "#666666",
+
+      /**
+       * 9.チャットエリア背景色
+       */
+      "chatTalkBackgroundColor" => "#FFFFFF",
+
+      /**
+       * 10.企業名担当者名文字色
+       */
+      "cNameTextColor" => "#ABCD05",
+
+      /**
+       * 11.企業側吹き出し文字色
+       */
+      "reTextColor" => "#333333",
+
+      /**
+       * 12.企業側吹き出し背景色
+       */
+      "reBackgroundColor" => "#F6FAE6",
+
+      /**
+       * 13.企業側吹き出し枠線色
+       */
+      "reBorderColor" => "none",
+
+      /**
+       * 15.訪問者側吹き出し文字色
+       */
+      "seTextColor" => "#333333",
+
+      /**
+       * 16.訪問者側吹き出し背景色
+       */
+      "seBackgroundColor" => "#E7E7E7",
+
+      /**
+       * 17.訪問者側吹き出し枠線色
+       */
+      "seBorderColor" => "none",
+
+      /**
+       * 19.メッセージエリア背景色
+       */
+      "chatMessageBackgroundColor" => "#FFFFFF",
+
+      /**
+       * 20.メッセージBOX文字色
+       */
+      "messageBoxTextColor" => "#666666",
+
+      /**
+       * 21.メッセージBOX背景色
+       */
+      "messageBoxBackgroundColor" => "#FFFFFF",
+
+      /**
+       * 22.メッセージBOX枠線色
+       */
+      "messageBoxBorderColor" => "#D4D4D4",
+
+      /**
+       * 24.送信ボタン文字色
+       */
+      "chatSendBtnTextColor" => "#FFFFFF",
+
+      /**
+       * 25.送信ボタン背景色
+       */
+      "chatSendBtnBackgroundColor" => "#ABCD05",
+
+      /**
+       * 26.ウィジット内枠線色
+       */
+      "widgetInsideBorderColor" => "#E8E7E0",
+
+      /* カラー設定end */
 
         /**
          * 画像の設定
@@ -128,6 +256,12 @@ $config['default'] = [
        * 1: 有効、0: 無効
        */
       "chatMessageWithAnimation"=>"1",
+
+      /**
+       * チャット本文コピー
+       * 0: コピーできる、1: コピーできない
+       */
+      "chatMessageCopy"=>"0",
 
       /**
        * スマートフォンウィジェット表示

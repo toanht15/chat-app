@@ -9,7 +9,7 @@ class CustomersController extends AppController {
     'THistory', 'THistoryChatLog', 'TCampaign', 'TDocument', 'TDictionary', 'TDictionaryCategory'
   ];
 
-  public $tmpLabelHideList = ["accessId", "ipAddress", "ua", "stayCount", "time", "campaign", "stayTime", "page", "title", "referrer"];
+  public $tmpLabelHideList = ["accessId", "ipAddress", "customer", "ua", "stayCount", "time", "campaign", "stayTime", "page", "title", "referrer"];
 
   public function beforeRender(){
     $this->set('siteKey', $this->userInfo['MCompany']['company_key']);
@@ -66,7 +66,7 @@ class CustomersController extends AppController {
   }
 
   /* *
-   * モニタリング画面(資料共有用)
+   * モニタリング画面(資料)
    * @return void
    * */
   public function docFrame() {
@@ -74,6 +74,16 @@ class CustomersController extends AppController {
     $this->set('docData', $this->TDocument->read(null, $this->params->query['docId']));
     $this->set('tabInfo', $this->params->query['tabInfo']);
     return $this->render('/Customers/docFrame');
+  }
+
+  /* *
+   * モニタリング画面(画面キャプチャ共有用)
+   * @return void
+   * */
+  public function laFrame() {
+    $this->layout = 'frame';
+    $this->set('query', $this->params->query);
+    return $this->render('/Customers/laFrame');
   }
 
   /* *
@@ -95,7 +105,8 @@ class CustomersController extends AppController {
     $this->layout = null;
     $labelList = [
       'accessId' => 'ID',
-      'ipAddress' => '訪問ユーザ',
+      'ipAddress' => 'IPアドレス',
+      'customer' => '訪問ユーザ',
       'ua' => 'プラットフォーム／ブラウザ',
       'stayCount' => '訪問回数',
       'time' => 'アクセス日時',

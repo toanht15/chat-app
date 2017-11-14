@@ -53,10 +53,19 @@ class MUsersController extends AppController {
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
     $this->_viewElement();
+    //$this->request->
+    $this->set('page', $this->request->data['index']);
     // const
     if ( strcmp($this->request->data['type'], 2) === 0 ) {
       $this->MUser->recursive = -1;
       $this->request->data = $this->MUser->read(null, $this->request->data['id']);
+      if($this->request->data['MUser']['m_companies_id'] == $this->userInfo['MCompany']['id'] && $this->request->data['MUser']['permission_level'] != 99 && $this->request->data['MUser']['del_flg'] != 1) {
+        $this->render('/MUsers/remoteEntryUser');
+      }
+      else {
+        $this->response->statusCode(403); //Forbidden
+        return;
+      }
     }
     $this->render('/MUsers/remoteEntryUser');
   }
@@ -79,7 +88,13 @@ class MUsersController extends AppController {
     if (!empty($this->request->data['userId'])) {
       $this->MUser->recursive = -1;
       $tmpData = $this->MUser->read(null, $this->request->data['userId']);
-      $insertFlg = false;
+      if($tmpData['MUser']['m_companies_id'] == $this->userInfo['MCompany']['id'] && $tmpData['MUser']['permission_level'] != 99 && $tmpData['MUser']['del_flg'] != 1) {
+        $insertFlg = false;
+      }
+      else {
+        $this->response->statusCode(403); //Forbidden
+        return;
+      }
     }
     else {
       $this->MUser->create();
@@ -154,12 +169,28 @@ class MUsersController extends AppController {
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
     $this->MUser->recursive = -1;
-    if ( $this->MUser->logicalDelete($this->request->data['id']) ) {
+    $selectedList = $this->request->data['selectedList'];
+    $this->MUser->begin();
+    $res = true;
+    foreach($selectedList as $key => $val){
+      if (! $this->MUser->delete($val) ) {
+        $res = false;
+      }
+    }
+    if($res){
+      $this->MUser->commit();
       $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
     }
-    else {
+    else{
+      $this->MUser->rollback();
       $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
     }
+//     if ( $this->MUser->logicalDelete($this->request->data['id']) ) {
+//       $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
+//     }
+//     else {
+//       $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
+//     }
   }
 
   private function _viewElement(){
