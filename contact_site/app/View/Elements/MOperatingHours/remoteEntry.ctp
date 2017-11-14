@@ -29,10 +29,12 @@ else{
 }
 
 popupEvent.closePopup = function(){
+  //formの数
+  var length = $('.timeData').length;
   //空チェック
   if (document.getElementById("MOperatingHourInfoHoliday").checked == false) {
-    for (i = 0; i < 5; i++) {
-      if(document.getElementById('form' + i).style.display != "none" && (document.getElementsByName("startTime" + i)[0].value == "" || document.getElementsByName("endTime" + i)[0].value == "")) {
+    for (i = 0; i < length; i++) {
+      if((document.getElementsByName("startTime" + i)[0].value == "" || document.getElementsByName("endTime" + i)[0].value == "")) {
         document.getElementById('error').style.display = "block";
         $('#error').text("条件を設定してください");
         return;
@@ -59,7 +61,7 @@ popupEvent.closePopup = function(){
     }
     //休業日のチェックボックスにチェックがついていない場合
     if(document.getElementById("MOperatingHourInfoHoliday").checked == false) {
-      if(document.getElementById('form0').style.display != "none"){
+      if(document.getElementById('form0') != null){
         timeInfo = timeInfo + document.getElementsByName("startTime0")[0].value + '-' + document.getElementsByName("endTime0")[0].value;
         jsonData.everyday.<?= $date ?>.push({start: document.getElementsByName("startTime0")[0].value, end: document.getElementsByName("endTime0")[0].value});
         for(i=0; i<check.length;i++) {
@@ -67,7 +69,7 @@ popupEvent.closePopup = function(){
           document.getElementById(check[i] + 'day').style.color = "#595959";
         }
       }
-      if(document.getElementById('form1').style.display != "none"){
+      if(document.getElementById('form1') != null){
         timeInfo = timeInfo + "　"　+ document.getElementsByName("startTime1")[0].value + '-' + document.getElementsByName("endTime1")[0].value;
         jsonData.everyday.<?= $date ?>.push({start: document.getElementsByName("startTime1")[0].value, end: document.getElementsByName("endTime1")[0].value});
         for(i=0; i<check.length;i++) {
@@ -75,7 +77,7 @@ popupEvent.closePopup = function(){
           document.getElementById(check[i] + 'day').style.color = "#595959";
         }
       }
-      if(document.getElementById('form2').style.display != "none"){
+      if(document.getElementById('form2') != null){
         timeInfo = timeInfo + "　"　+ document.getElementsByName("startTime2")[0].value + '-' + document.getElementsByName("endTime2")[0].value;
         jsonData.everyday.<?= $date ?>.push({start: document.getElementsByName("startTime2")[0].value, end: document.getElementsByName("endTime2")[0].value});
         for(i=0; i<check.length;i++) {
@@ -83,7 +85,7 @@ popupEvent.closePopup = function(){
           document.getElementById(check[i] + 'day').style.color = "#595959";
         }
       }
-      if(document.getElementById('form3').style.display != "none"){
+      if(document.getElementById('form3') != null){
         timeInfo = timeInfo + "　"　+ document.getElementsByName("startTime3")[0].value + '-' + document.getElementsByName("endTime3")[0].value;
         jsonData.everyday.<?= $date ?>.push({start: document.getElementsByName("startTime3")[0].value, end: document.getElementsByName("endTime3")[0].value});
         for(i=0; i<check.length;i++) {
@@ -91,7 +93,7 @@ popupEvent.closePopup = function(){
           document.getElementById(check[i] + 'day').style.color = "#595959";
         }
       }
-      if(document.getElementById('form4').style.display != "none"){
+      if(document.getElementById('form4') != null){
         timeInfo = timeInfo + "　"　+ document.getElementsByName("startTime4")[0].value + '-' + document.getElementsByName("endTime4")[0].value;
         jsonData.everyday.<?= $date ?>.push({start: document.getElementsByName("startTime4")[0].value, end: document.getElementsByName("endTime4")[0].value});
         for(i=0; i<check.length;i++) {
@@ -120,7 +122,7 @@ popupEvent.closePopup = function(){
     }
     //休業日のチェックボックスにチェックがついていない場合
     if(document.getElementById("MOperatingHourInfoHoliday").checked == false) {
-      if(document.getElementById('form0').style.display != "none"){
+      if(document.getElementById('form0') != null){
         timeInfo = timeInfo + document.getElementsByName("startTime0")[0].value + '-' + document.getElementsByName("endTime0")[0].value;
         jsonData.weekly.<?= $date ?>.push({start: document.getElementsByName("startTime0")[0].value, end: document.getElementsByName("endTime0")[0].value});
         for(i=0; i<check.length;i++) {
@@ -128,7 +130,7 @@ popupEvent.closePopup = function(){
           document.getElementById(check[i] + 'day').style.color = "#595959";
         }
       }
-      if(document.getElementById('form1').style.display != "none"){
+      if(document.getElementById('form1') != null){
         timeInfo = timeInfo + "　"　+ document.getElementsByName("startTime1")[0].value + '-' + document.getElementsByName("endTime1")[0].value;
         jsonData.weekly.<?= $date ?>.push({start: document.getElementsByName("startTime1")[0].value, end: document.getElementsByName("endTime1")[0].value});
         for(i=0; i<check.length;i++) {
@@ -136,7 +138,7 @@ popupEvent.closePopup = function(){
           document.getElementById(check[i] + 'day').style.color = "#595959";
         }
       }
-      if(document.getElementById('form2').style.display != "none"){
+      if(document.getElementById('form2') != null){
         timeInfo = timeInfo + "　"　+ document.getElementsByName("startTime2")[0].value + '-' + document.getElementsByName("endTime2")[0].value;
         jsonData.weekly.<?= $date ?>.push({start: document.getElementsByName("startTime2")[0].value, end: document.getElementsByName("endTime2")[0].value});
         for(i=0; i<check.length;i++) {
@@ -144,7 +146,7 @@ popupEvent.closePopup = function(){
           document.getElementById(check[i] + 'day').style.color = "#595959";
         }
       }
-      if(document.getElementById('form3').style.display != "none"){
+      if(document.getElementById('form3') != null){
         timeInfo = timeInfo + "　"　+ document.getElementsByName("startTime3")[0].value + '-' + document.getElementsByName("endTime3")[0].value;
         jsonData.weekly.<?= $date ?>.push({start: document.getElementsByName("startTime3")[0].value, end: document.getElementsByName("endTime3")[0].value});
         for(i=0; i<check.length;i++) {
@@ -152,7 +154,7 @@ popupEvent.closePopup = function(){
           document.getElementById(check[i] + 'day').style.color = "#595959";
         }
       }
-      if(document.getElementById('form4').style.display != "none"){
+      if(document.getElementById('form4') != null){
         timeInfo = timeInfo + "　"　+ document.getElementsByName("startTime4")[0].value + '-' + document.getElementsByName("endTime4")[0].value;
         jsonData.weekly.<?= $date ?>.push({start: document.getElementsByName("startTime4")[0].value, end: document.getElementsByName("endTime4")[0].value});
         for(i=0; i<check.length;i++) {
@@ -190,17 +192,103 @@ popupEvent.closePopup = function(){
 };
 
 //時間追加
-function addLine(number){
-  document.getElementById('form' + (number +1)).style.display = "";
-  document.getElementById('add' + number).style.display = "none";
-  document.getElementById('delete' + number).style.marginLeft = "245px";
+function addLine(event){
+  number = Number(event.target.id.substr(event.target.id.indexOf("_")+1));
+  if(number < 3) {
+    document.getElementById('add_' + number).style.display = "none";
+    if(number != 0) {
+      document.getElementById('delete_' + number).style.marginLeft = "245px";
+    }
+    $(
+      '<li id = form' + (number+1) + '>' +
+        '<span class = "form timeData">' +
+        '<span class= "input-group clockpicker bt0">' +
+        '<input type= text value = "" id = "startForm'+(number+1)+'" class="form-control" name= startTime' + (number+1) + '>' +
+        '</span>' +
+        '<span class="bt0">' +
+        '<span>' +
+        ' ～ ' +
+        '</span>' +
+        '</span>' +
+        '<span class="input-group clockpicker bt0">' +
+        '<input type="text" value = "" id = "endForm'+(number+1)+'" class="form-control" name= endTime' + (number+1) + '>' +
+        '<a>' +
+        '<img src= /img/add.png alt=登録 class="btn-shadow disOffgreenBtn" width=22 height=22 onclick=addLine(event) style="padding:2px !important; display: block; margin-left: 245px; margin-top: -25px;" id=add_'+(number+1)+'>' +
+        '</a>' +
+        '<a>' +
+        '<img src= /img/dustbox.png alt=削除 class="btn-shadow redBtn" width=22 height=22 onclick="deleteLine(event)" style="padding:2px !important; display: block; margin-left: 272px; margin-top: -22px;" id=delete_'+(number+1)+'>' +
+        '</a>' +
+        '</span>' +
+        '</li>'
+    )
+    .appendTo('.allForm');
+    $('.clockpicker').clockpicker({
+      donetext:'設定',
+      placement: 'orignal',
+      align: 'originalTime'
+    });
+  }
+  //1番最後(5番目)のフォーム作成の場合
+  else if(number == 3 ) {
+    document.getElementById('add_' + number).style.display = "none";
+    document.getElementById('delete_' + number).style.marginLeft = "245px";
+    $(
+      '<li id = form' + (number+1) + '>' +
+        '<span class = "form timeData">' +
+        '<span class= "input-group clockpicker bt0">' +
+        '<input type= text value = "" id = "startForm'+(number+1)+'" class="form-control" name= startTime' + (number+1) + '>' +
+        '</span>' +
+        '<span class="bt0">' +
+        '<span>'+
+        ' ～ '+
+        '</span>' +
+        '</span>' +
+        '<span class="input-group clockpicker bt0">' +
+        '<input type="text" value = "" id = "endForm'+(number+1)+'" class="form-control" name= endTime' + (number+1) + '>' +
+        '<a>' +
+        '<img src= /img/add.png alt=登録 class="btn-shadow disOffgreenBtn" width=22 height=22 onclick=addLine(event) style="display:none; padding:2px !important; display: block; margin-left: 245px; margin-top: -25px;" id=add_'+(number+1)+'>' +
+        '</a>' +
+        '<a>' +
+        '<img src= /img/dustbox.png alt=削除 class="btn-shadow redBtn" width=22 height=22 onclick=deleteLine(event) style="padding:2px !important; display: block; margin-left: 245px; margin-top: -22px;" id=delete_'+(number+1)+'>' +
+        '</a>' +
+        '</span>' +
+        '</li>'    )
+    .appendTo('.allForm');
+    $('.clockpicker').clockpicker({
+        donetext:'設定',
+        placement: 'orignal',
+        align: 'originalTime'
+    });
+  }
 }
 
 //時間削除
-function deleteLine(number){
-  document.getElementById('form' + number).style.display = "none";
-  document.getElementById('add' + (number-1)).style.display = "block";
-  //document.getElementById('delete' + (number-1)).style.marginLeft = "272px";
+function deleteLine(event){
+  number = Number(event.target.id.substr(event.target.id.indexOf("_")+1));
+  document.getElementById('form' + number).remove();
+  var length = $('.timeData').length;
+  //削除した下の行を全て一つ上げる
+  for(i=number + 1; i<=length;i++) {
+    document.getElementById('form' + i).id = 'form' + (i-1);
+    document.getElementById('add_' + i).id = 'add_' + (i-1);
+    document.getElementById('delete_' + i).id = 'delete_' + (i-1);
+    document.getElementById('startForm' + i).name = 'startTime' + (i-1);
+    document.getElementById('startForm' + i).id = 'startForm' + (i-1);
+    document.getElementById('endForm' + i).name = 'endTime' + (i-1);
+    document.getElementById('endForm' + i).id = 'endForm' + (i-1);
+  }
+  //一番下を削除した場合
+  if(number == length) {
+    document.getElementById('add_' + (number-1)).style.display = "block";
+    if(number != 1) {
+      document.getElementById('delete_' + (number-1)).style.marginLeft = "272px";
+    }
+  }
+  //一番下ではないところを削除した場合
+  else {
+    document.getElementById('add_' + (length-1)).style.display = "block";
+    document.getElementById('delete_' + (length-1)).style.marginLeft = "272px";
+  }
 }
 </script>
 
@@ -223,6 +311,7 @@ else {
         <?= $this->Form->checkbox('holiday', array('onchange' => 'holidayCheck()','style' => 'margin-left:21px; margin-top:1px; cursor:pointer;')) ?><span id="tabsortText" style = "margin-top:1px;">休業日</span>
     </li>
   </div>
+  <span class = "allForm">
   <?php
   $number = count($timeData->{$date}) -1;
   foreach($timeData->{$date} as $key => $v) { ?>
@@ -231,10 +320,10 @@ else {
         <label style = "font-weight:bold;">営業時間</label>
       <?php }
       if($key === 0) { ?>
-        <span class = "firstForm">
+        <span class = "firstForm timeData">
       <?php }
       else { ?>
-        <span class = "form">
+        <span class = "form timeData">
       <?php }
       if($key === 0 && empty($v->start) && empty($v->end)) {
         $v->start = "";
@@ -243,18 +332,18 @@ else {
 
       <span class="input-group clockpicker bt0">
         <?php if($key === 0 && empty($v->start) && empty($v->end)) { ?>
-          <input type="text" value = "" class="form-control" name=<?= "startTime".$key ?>>
+          <input type="text" value = "" class="form-control" name=<?= "startTime".$key ?> id=<?= "startForm".$key ?>>
         <?php } else { ?>
-          <input type="text" value = <?= $v->start; ?>  class="form-control" name=<?= "startTime".$key ?> >
+          <input type="text" value = <?= $v->start; ?>  class="form-control" name=<?= "startTime".$key ?> id=<?= "startForm".$key ?>>
         <?php } ?>
       </span>
       <span class="bt0"><span>～</span></span>
       <span class="input-group clockpicker bt0">
         <?php if($key === 0 && empty($v->start) && empty($v->end)) { ?>
-          <input type="text" value = "" class="form-control" name=<?= "endTime".$key ?>>
+          <input type="text" value = "" class="form-control" name=<?= "endTime".$key ?> id=<?= "endForm".$key ?>>
         <?php }
         else { ?>
-          <input type="text" value = <?= $v->end; ?> class="form-control" name=<?= "endTime".$key ?>>
+          <input type="text" value = <?= $v->end; ?> class="form-control" name=<?= "endTime".$key ?> id=<?= "endForm".$key ?>>
         <?php }
          if($key == $number && $key != 4) { ?>
           <a>
@@ -263,12 +352,24 @@ else {
               'class' => 'btn-shadow disOffgreenBtn',
               'width' => 22,
               'height' => 22,
-              'id' => 'add'.$key,
-              'onclick' => 'addLine('.$key.')',
+              'id' => 'add_'.$key,
+              'onclick' => 'addLine(event)',
               'style' => 'padding:2px !important; display: block; margin-left: 245px; margin-top: -25px;'
             )) ?>
           </a>
-        <?php } if($key == $number && $key != 4) { ?>
+        <?php } else { ?>
+          <a>
+            <?= $this->Html->image('add.png', array(
+              'alt' => '登録',
+              'class' => 'btn-shadow disOffgreenBtn',
+              'width' => 22,
+              'height' => 22,
+              'id' => 'add_'.$key,
+              'onclick' => 'addLine(event)',
+              'style' => 'padding:2px !important; display: none; margin-left: 245px; margin-top: -25px;'
+            )) ?>
+          </a>
+         <?php } if(($key != 0 && $key != $number) || $key == 4) { ?>
             <a>
             <?= $this->Html->image('dustbox.png', array(
               'alt' => '削除',
@@ -276,8 +377,21 @@ else {
               'data-balloon-position' => '35',
               'width' => 22,
               'height' => 22,
-              'id' => 'delete'.$key,
-              'onclick' => 'deleteLine('.$key.')',
+              'id' => 'delete_'.$key,
+              'onclick' => 'deleteLine(event)',
+              'style' => 'padding:2px !important; display: block; margin-left: 245px; margin-top: -22px;')) ?>
+            </a>
+        <?php }
+        else if($key != 0) {?>
+            <a>
+            <?= $this->Html->image('dustbox.png', array(
+              'alt' => '削除',
+              'class' => 'btn-shadow redBtn',
+              'data-balloon-position' => '35',
+              'width' => 22,
+              'height' => 22,
+              'id' => 'delete_'.$key,
+              'onclick' => 'deleteLine(event)',
               'style' => 'padding:2px !important; display: block; margin-left: 272px; margin-top: -22px;')) ?>
             </a>
         <?php } ?>
@@ -290,43 +404,8 @@ else {
         align: 'originalTime'
       });
     </script>
-  <?php }
-  for ($i = $key+1; $i <= 4; $i++) { ?>
-    <li id = <?= "form".$i ?> style = "display:none;">
-      <span class = "form">
-        <span class="input-group clockpicker bt0">
-          <input type="text" value = "" class="form-control" name=<?= "startTime".$i ?>>
-        </span>
-        <span class="bt0"><span>～</span></span>
-        <span class="input-group clockpicker bt0">
-          <input type="text" value = "" class="form-control" name=<?= "endTime".$i ?>>
-            <a>
-              <?= $this->Html->image('add.png', array(
-                'alt' => '登録',
-                'class' => 'btn-shadow disOffgreenBtn',
-                'width' => 22,
-                'height' => 22,
-                'id' => 'add'.$i,
-                'onclick' => 'addLine('.$i.')',
-                'style' => 'padding:2px !important; display: block; margin-left: 245px; margin-top: -25px;'
-              )) ?>
-            </a>
-            <a>
-              <?= $this->Html->image('dustbox.png', array(
-                'alt' => '削除',
-                'class' => 'btn-shadow redBtn',
-                'data-balloon-position' => '35',
-                'width' => 22,
-                'height' => 22,
-                'id' => 'delete'.$i,
-                'onclick' => 'deleteLine('.$i.')',
-                'style' => 'padding:2px !important; display: block; margin-left: 272px; margin-top: -22px;'))
-              ?>
-            </a>
-        </span>
-      </span>
-    </li>
   <?php } ?>
+  </span>
   <li>
   <div id = "error"></div>
   </li>
