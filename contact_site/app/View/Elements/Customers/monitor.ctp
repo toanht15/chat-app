@@ -191,7 +191,11 @@
             <?php endif; ?>
           </td>
           <!-- /* 訪問ユーザ */ -->
-          <td ng-hide="labelHideList.ipAddress" class="tCenter pre">{{ip(monitor)}}</td>
+          <td ng-hide="labelHideList.ipAddress" class="tCenter pre">
+            <a href="javascript:void(0)" ng-click="openCompanyDetailInfo(monitor)" ng-if="monitor.orgName && monitor.lbcCode">{{monitor.orgName}}</a>
+            <span ng-if="monitor.orgName && !monitor.lbcCode">{{monitor.orgName}}</span>
+            {{ip(monitor)}}
+          </td>
           <!-- /* 訪問ユーザ */ -->
           <td ng-hide="labelHideList.customer" class="tCenter pre">{{ui(monitor)}}</td>
           <!-- /* ユーザー環境 */ -->

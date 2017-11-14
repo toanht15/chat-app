@@ -1,4 +1,5 @@
 var database = require('../database');
+var api = require('../api');
 
 // mysql
 var mysql = require('mysql'),
@@ -367,6 +368,14 @@ function getConnectInfo(o){
   if ( isset(docShareId) ) {
     o.docShareId = docShareId;
   }
+  var orgName = getSessionId(o.siteKey, o.tabId, 'orgName');
+  if ( isset(orgName) ) {
+    o.orgName = orgName;
+  }
+  var lbcCode = getSessionId(o.siteKey, o.tabId, 'lbcCode');
+  if ( isset(lbcCode) ) {
+    o.lbcCode = lbcCode;
+  }
   return o;
 }
 
@@ -377,6 +386,41 @@ function getIp(socket){
     ip = socket.handshake.headers['x-forwarded-for'];
   }
   return ip;
+}
+
+// Landscapeの企業情報取得
+function getCompanyInfoFromApi(ip, callback) {
+  //requestをrequire
+  var http = require('http');
+
+  //ヘッダーを定義
+  var headers = {
+    'Content-Type':'application/json'
+  };
+
+  //オプションを定義
+  var options = {
+    host: process.env.GET_CD_API_HOST,
+    port: process.env.GET_CD_API_PORT,
+    path: process.env.GET_CD_API_PATH,
+    method: 'POST',
+    headers: headers,
+    json: true
+  };
+
+  if(process.env.DB_HOST === 'localhost') {
+    options.rejectUnauthorized = false;
+  }
+
+  //リクエスト送信
+  var req = http.request(options, function (response) {
+    response.setEncoding('utf8');
+    response.on('data', function(body) {
+      callback(body);
+    });
+  });
+  req.write(JSON.stringify({"accessToken":"x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK", "ipAddress":ip}));
+  req.end();
 }
 
 // Frameの削除
@@ -1218,7 +1262,16 @@ io.sockets.on('connection', function (socket) {
       if ( !(('ipAddress' in obj) && isset(obj.ipAddress)) ) {
         obj.ipAddress = getIp(socket);
       }
-      emit.toCompany('syncNewInfo', obj, obj.siteKey);
+
+      //FIXME 企業別機能設定（企業情報連携）
+      getCompanyInfoFromApi(obj.ipAddress, function(body){
+        var response = JSON.parse(body);
+        obj.orgName = response.data.orgName;
+        obj.lbcCode = response.data.lbcCode;
+        sincloCore[obj.siteKey][obj.tabId].orgName = response.data.orgName;
+        sincloCore[obj.siteKey][obj.tabId].lbcCode = response.data.lbcCode;
+        emit.toCompany('syncNewInfo', obj, obj.siteKey);
+      });
     }
   });
   // ウィジェットが生成されたことを企業側に通知する

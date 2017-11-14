@@ -8,14 +8,19 @@
 
 class CompanyDataController extends AppController
 {
-  public $components = ['Landscape'];
+  public $components = ['Landscape', 'Auth'];
   private $secretKey = 'x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK';
 
   const PARAM_ACCESS_TOKEN = 'accessToken';
   const PARAM_IP_ADDRESS = 'ipAddress';
   const PARAM_LBC = 'lbc';
 
+  public function beforeFilter() {
+    $this->Auth->allow('getDetailInfo');
+  }
+
   public function getDetailInfo() {
+    Configure::write('debug', 0);
     $this->autoRender = false;
     $this->layout = "ajax";
 
@@ -33,10 +38,15 @@ class CompanyDataController extends AppController
           'data' => []
       ));
     }
-    return json_encode(array(
-        'success' => true,
-        'data' => $result
-    ));
+    if(isset($jsonObj['format']) && strcmp($jsonObj['format'], 'popupElement') === 0) {
+      $this->set('data', $result);
+      $this->render('/Elements/Customers/companyDetailInfoView');
+    } else {
+      return json_encode(array(
+          'success' => true,
+          'data' => $result
+      ));
+    }
   }
 
   private function isValidAccessToken($token) {

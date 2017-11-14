@@ -1,6 +1,6 @@
 <?php
 
-App::uses('HttpSocket', 'Network/Http', 'Component', 'Controller');
+App::uses('HttpSocket', 'Network/Http', 'Component', 'Controller', 'Utility/Validation');
 
 /**
  * Class LandscapeComponent
@@ -38,6 +38,7 @@ class LandscapeComponent extends Component
   private $apiData;
 
   private $defaultOutputData = array(
+    'lbcCode' => '',
     'ipAddress' => '',
     'orgName' => '',
     'orgZipCode' => '',
@@ -58,7 +59,7 @@ class LandscapeComponent extends Component
   );
 
   private $apiOutputKeyMap = array(
-    'LBC' => 'lbc_code',
+    'LBC' => 'lbcCode',
     'IP' => 'ipAddress',
     'HoujinBangou_3.OrgCode' => 'orgCode',
     'HoujinBangou_4.HoujinBangou' => 'houjinBangou',
@@ -158,12 +159,14 @@ class LandscapeComponent extends Component
   }
 
   private function validateLbcCode($lbcCode) {
+    /* FIXME !!!
     if(!Validation::maxLength($lbcCode, self::LBC_CODE_LENGTH)) {
       throw new InvalidArgumentException('定義されたLBCコードの長さではありません。 value: '.$lbcCode);
     }
     if(!Validation::numeric($lbcCode)) {
       throw new InvalidArgumentException('定義されたLBCコードに含んでいない文字があります。 value: '.$lbcCode);
     }
+    */
   }
 
   private function setLbcCode($lbcCode) {
@@ -173,7 +176,7 @@ class LandscapeComponent extends Component
   private function findDataFromDbBy($targetColumn) {
     $conditions = $this->createConditionsByColumn($targetColumn);
     $MLandscapeData = ClassRegistry::init('MLandscapeData');
-    $this->dbData = $MLandscapeData->find('all', array(
+    $this->dbData = $MLandscapeData->find('first', array(
         'fields' => '*',
         'conditions' => $conditions
     ));
@@ -216,8 +219,10 @@ class LandscapeComponent extends Component
       $MLandscapeData = ClassRegistry::init('MLandscapeData');
       $MLandscapeData->create();
       $MLandscapeData->set($this->convertAllKeyToUnderscore($this->apiData));
-      $MLandscapeData->set('updated', date('Y-m-d H:i:s'));
+      $updated = date('Y-m-d H:i:s');
+      $MLandscapeData->set('updated', $updated);
       $MLandscapeData->save();
+      $this->apiData['updated'] = $updated;
     }
   }
 

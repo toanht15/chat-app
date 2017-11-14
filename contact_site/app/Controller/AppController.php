@@ -120,8 +120,13 @@ class AppController extends Controller {
     // ログイン情報をオブジェクトに格納
     if ( $this->Session->check('global.userInfo') ) {
       $this->userInfo = $this->Session->read('global.userInfo');
+      if(true) { //FIXME プラン別制御（企業詳細情報連携）
+        $this->userInfo['accessToken'] = 'x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK';
+        $this->Session->write('global.userInfo.accessToken');
+      }
       $this->set('userInfo', $this->userInfo);
     }
+
     // 多重ログインチェック
     if ( isset($this->userInfo['id']) && isset($this->userInfo['session_rand_str']) ) {
       $newInfo = $this->MUser->read(null, $this->userInfo['id']);
