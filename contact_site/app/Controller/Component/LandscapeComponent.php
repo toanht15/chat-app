@@ -8,6 +8,7 @@ App::uses('HttpSocket', 'Network/Http', 'Component', 'Controller', 'Utility/Vali
  */
 class LandscapeComponent extends Component
 {
+  const API_CALL_TIMEOUT = 5;
   const LANDSCAPE_DATA_EXPIRE_SEC = 60 * 60 * 24 * 90; // 90日
 
   const PATTERN_IP = "/^[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}$/";
@@ -195,12 +196,18 @@ class LandscapeComponent extends Component
   }
 
   private function findDataFromAPI() {
-    $socket = new HttpSocket();
+    $socket = new HttpSocket(array(
+        'timeout' => self::API_CALL_TIMEOUT
+    ));
     $result = $socket->get(self::LANDSCAPE_API_URL, $this->parameter);
     $this->log('request param => '.var_export($this->parameter,TRUE), 'request');
     $this->apiData = json_decode($result->body(), TRUE);
+    $this->log('response param => '.var_export($this->apiData,TRUE), 'response');
     if(empty($this->apiData) || strcmp($this->apiData['result_code'], self::STATUS_ERR) === 0) {
       throw new Exception('API呼び出し時にエラーを取得しました => body: '.$result->body(), 502);
+    } else if (empty($this->apiData['lbc_code'])) {
+      // データは無いが当該IPからアクセスされると何度もAPIをコールしてしまうためIPアドレスのみデータを入れる
+      // throw new Exception('検索条件に該当するデータが存在しません => body: '.$result->body(), 404);
     }
   }
 

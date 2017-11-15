@@ -551,7 +551,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     $scope.ip = function(m){
       var showData = [];
-      if('orgName' in m && contract.refCompanyData) {
+      if(contract.refCompanyData && 'orgName' in m && m.orgName !== '') {
         showData.push('(' + m.ipAddress + ')'); // IPアドレス
       } else {
         showData.push(m.ipAddress); // IPアドレス
