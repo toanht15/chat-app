@@ -8,14 +8,14 @@ App::uses('HttpSocket', 'Network/Http', 'Component', 'Controller', 'Utility/Vali
  */
 class LandscapeComponent extends Component
 {
-  // FIXME 設定化
-  const LANDSCAPE_DATA_EXPIRE_SEC = 60 * 60 * 24 * 180; // 180日
+  const LANDSCAPE_DATA_EXPIRE_SEC = 60 * 60 * 24 * 90; // 90日
 
   const PATTERN_IP = "/^[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}$/";
   const PATTERN_LBC_CODE = "/^[0-9]+$/";
   const LBC_CODE_LENGTH = 11;
 
   const LANDSCAPE_API_URL = "https://api.cladb.usonar.jp/lbcinfoex/getlbc";
+//  const LANDSCAPE_API_URL = "http://127.0.0.1/testdata.json";
   const LANDSCAPE_API_KEY1 = "BN7WjEygVK32UqSV";
   const LANDSCAPE_API_KEY2 = "null";
 
@@ -124,6 +124,8 @@ class LandscapeComponent extends Component
     if($this->isExpiredDbData()) {
       $this->findDataFromAPI();
       $this->saveToTable();
+      // DBの値は古いため、APIの値を返却するためdbDataは削除する
+      $this->dbData = null;
     }
   }
 
@@ -194,10 +196,10 @@ class LandscapeComponent extends Component
 
   private function findDataFromAPI() {
     $socket = new HttpSocket();
-    $result = $socket->post(self::LANDSCAPE_API_URL, $this->parameter);
-    $this->log('request param => '.$this->parameter, 'request');
+    $result = $socket->get(self::LANDSCAPE_API_URL, $this->parameter);
+    $this->log('request param => '.var_export($this->parameter,TRUE), 'request');
     $this->apiData = json_decode($result->body(), TRUE);
-    if(strcmp($this->apiData['result_code'], self::STATUS_ERR) === 0) {
+    if(empty($this->apiData) || strcmp($this->apiData['result_code'], self::STATUS_ERR) === 0) {
       throw new Exception('API呼び出し時にエラーを取得しました => body: '.$result->body(), 502);
     }
   }
@@ -226,13 +228,27 @@ class LandscapeComponent extends Component
 
   private function saveToTable() {
     if(!empty($this->apiData)) {
+      $this->apiData['updated'] = date('Y-m-d H:i:s');
       $MLandscapeData = ClassRegistry::init('MLandscapeData');
-      $MLandscapeData->create();
-      $MLandscapeData->set($this->convertAllKeyToUnderscore($this->apiData));
-      $updated = date('Y-m-d H:i:s');
-      $MLandscapeData->set('updated', $updated);
-      $MLandscapeData->save();
-      $this->apiData['updated'] = $updated;
+      $data = $this->convertAllKeyToUnderscore($this->apiData);
+      if($this->isEmptyDbData()) { //事前にDB情報を参照していない or データが無かった => 新規追加
+        $MLandscapeData->create();
+        $MLandscapeData->save($data);
+      } else {
+        // 更新 CakePHP 2.xでは複合プライマリキーに対応していないため自前で用意
+        $db = $MLandscapeData->getDataSource();
+        $columns = array_keys($MLandscapeData->getColumnTypes());
+        $query = '';
+        $query .= 'UPDATE m_landscape_data set ';
+        foreach($data as $k => $v) {
+          if(in_array($k, $columns)) {
+            $query .= '`'.$k.'` = "'.$v.'",';
+          }
+        }
+        $query = rtrim($query,',');
+        $query .= ' WHERE `lbc_code`= "'.$data['lbc_code'].'" AND `ip_address` = "'.$data['ip_address'].'"';
+        $MLandscapeData->query($query);
+      }
     }
   }
 
