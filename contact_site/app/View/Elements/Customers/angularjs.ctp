@@ -719,7 +719,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var smartphone = (ua.indexOf('iphone') > 0 || ua.indexOf('ipod') > 0 || ua.indexOf('android') > 0);
       var popupClass = "p-cus-select-sharing-mode";
       message += "<span style='color: #FF7B7B'><?=Configure::read('message.const.chatStartConfirm')?></span>";
-      modalOpen.call(window, message, popupClass, 'メッセージ');
+      modalOpen.call(window, message, popupClass, 'メッセージ', null, $scope.monitorList[tabId].userAgent);
       popupEvent.closePopup = function(type) {
         switch(type) {
           case 1: // ブラウジング共有
