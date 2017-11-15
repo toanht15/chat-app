@@ -35,6 +35,8 @@ class TAutoMessage extends AppModel {
 
 	public function checkActivity($json){
 		$activity = json_decode($json['activity'], true);
+    $this->log('オートメッセージデータ',LOG_DEBUG);
+    $this->log($activity,LOG_DEBUG);
 		$type = (!empty($activity['conditionType'])) ? $activity['conditionType'] : "";
 		$detail = (!empty($activity['conditions'])) ? $activity['conditions'] : "";
 

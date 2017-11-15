@@ -212,8 +212,8 @@ router.get("/", function(req, res, next) {
                           if ( !(rows[i].trigger_type in sendData['messages']) ) {
                             sendData['messages'] = [];
                           }
-                          if(JSON.parse(rows[i].activity).conditions[10] != null) {
-                            for(var i2=0; i2<result.length; i2++){
+                          for(var i2=0; i2<result.length; i2++){
+                            if(result[i2].active_flg == 1 && JSON.parse(rows[i].activity).conditions[10] != null) {
                               var jsonData = JSON.parse(rows[i].activity);
                               if(result[i2].type === 1) {
                                 jsonData.conditions[10][0].everyday = JSON.parse(result[i2].time_settings).everyday;

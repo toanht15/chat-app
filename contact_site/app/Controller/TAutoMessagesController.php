@@ -172,6 +172,12 @@ class TAutoMessagesController extends AppController {
           $errors['triggers'][$setting['key']] = sprintf($tmpMessage, $this->outMessageIfType[$activity->conditionType], $setting['label'], $setting['createLimit'][$activity->conditionType]);
         }
       }
+      $operatingHourData = $this->MOperatingHour->find('first', ['conditions' => [
+        'm_companies_id' => $this->userInfo['MCompany']['id']
+      ]]);
+      if(!empty($operatingHourData) && $operatingHourData['MOperatingHour']['active_flg'] == 2)  {
+        $validate = false;
+      }
     }
     if ( $validate && $this->TAutoMessage->save(false) ) {
       $this->TAutoMessage->commit();
@@ -180,6 +186,7 @@ class TAutoMessagesController extends AppController {
     }
     else {
       $this->TAutoMessage->rollback();
+      $this->set('operatingHourData',$operatingHourData['MOperatingHour']['active_flg']);
       $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
     }
     $this->set('errors', $errors);
