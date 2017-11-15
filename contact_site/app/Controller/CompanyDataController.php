@@ -38,6 +38,7 @@ class CompanyDataController extends AppController
           'data' => []
       ));
     }
+    $this->response->statusCode(200);
     if(isset($jsonObj['format']) && strcmp($jsonObj['format'], 'popupElement') === 0) {
       $this->set('data', $result);
       $this->render('/Elements/Customers/companyDetailInfoView');

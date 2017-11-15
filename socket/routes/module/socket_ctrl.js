@@ -414,12 +414,23 @@ function getCompanyInfoFromApi(ip, callback) {
 
   //リクエスト送信
   var req = http.request(options, function (response) {
-    response.setEncoding('utf8');
-    response.on('data', function(body) {
-      var response = JSON.parse(body);
-      callback(response.data);
-    });
+    if(response.statusCode === 200) {
+      response.setEncoding('utf8');
+      response.on('data', function(body) {
+        var response = JSON.parse(body);
+        callback(response.data);
+      });
+    } else {
+      console.log('企業詳細情報取得時にエラーが返却されました。 errorCode : ' + response.statusCode);
+      callback(false);
+    }
   });
+
+  req.on('error', function(error) {
+    console.log('企業詳細情報取得時にHTTPレベルのエラーが発生しました。 message : ' + error.message);
+    callback(false);
+  });
+
   req.write(JSON.stringify({"accessToken":"x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK", "ipAddress":ip}));
   req.end();
 }
@@ -1264,10 +1275,12 @@ io.sockets.on('connection', function (socket) {
 
       //FIXME 企業別機能設定（企業情報連携）
       getCompanyInfoFromApi(obj.ipAddress, function(data){
-        obj.orgName = data.orgName;
-        obj.lbcCode = data.lbcCode;
-        sincloCore[obj.siteKey][obj.tabId].orgName = obj.orgName;
-        sincloCore[obj.siteKey][obj.tabId].lbcCode = obj.lbcCode;
+        if(data) {
+          obj.orgName = data.orgName;
+          obj.lbcCode = data.lbcCode;
+          sincloCore[obj.siteKey][obj.tabId].orgName = obj.orgName;
+          sincloCore[obj.siteKey][obj.tabId].lbcCode = obj.lbcCode;
+        }
         emit.toCompany('syncNewInfo', obj, obj.siteKey);
       });
     }

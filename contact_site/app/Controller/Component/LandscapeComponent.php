@@ -227,28 +227,32 @@ class LandscapeComponent extends Component
 
 
   private function saveToTable() {
-    if(!empty($this->apiData)) {
-      $this->apiData['updated'] = date('Y-m-d H:i:s');
-      $MLandscapeData = ClassRegistry::init('MLandscapeData');
-      $data = $this->convertAllKeyToUnderscore($this->apiData);
-      if($this->isEmptyDbData()) { //事前にDB情報を参照していない or データが無かった => 新規追加
-        $MLandscapeData->create();
-        $MLandscapeData->save($data);
-      } else {
-        // 更新 CakePHP 2.xでは複合プライマリキーに対応していないため自前で用意
-        $db = $MLandscapeData->getDataSource();
-        $columns = array_keys($MLandscapeData->getColumnTypes());
-        $query = '';
-        $query .= 'UPDATE m_landscape_data set ';
-        foreach($data as $k => $v) {
-          if(in_array($k, $columns)) {
-            $query .= '`'.$k.'` = "'.$v.'",';
+    try {
+      if (!empty($this->apiData)) {
+        $this->apiData['updated'] = date('Y-m-d H:i:s');
+        $MLandscapeData = ClassRegistry::init('MLandscapeData');
+        $data = $this->convertAllKeyToUnderscore($this->apiData);
+        if ($this->isEmptyDbData()) { //事前にDB情報を参照していない or データが無かった => 新規追加
+          $MLandscapeData->create();
+          $MLandscapeData->save($data);
+        } else {
+          // 更新 CakePHP 2.xでは複合プライマリキーに対応していないため自前で用意
+          $db = $MLandscapeData->getDataSource();
+          $columns = array_keys($MLandscapeData->getColumnTypes());
+          $query = '';
+          $query .= 'UPDATE m_landscape_data set ';
+          foreach ($data as $k => $v) {
+            if (in_array($k, $columns)) {
+              $query .= '`' . $k . '` = "' . $v . '",';
+            }
           }
+          $query = rtrim($query, ',');
+          $query .= ' WHERE `lbc_code`= "' . $data['lbc_code'] . '" AND `ip_address` = "' . $data['ip_address'] . '"';
+          $MLandscapeData->query($query);
         }
-        $query = rtrim($query,',');
-        $query .= ' WHERE `lbc_code`= "'.$data['lbc_code'].'" AND `ip_address` = "'.$data['ip_address'].'"';
-        $MLandscapeData->query($query);
       }
+    } catch(Exception $e) {
+      throw new Exception('DBセーブ時にエラーが発生しました。 message : '.$e->getMessage(), 500);
     }
   }
 
