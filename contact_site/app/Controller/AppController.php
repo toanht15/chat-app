@@ -150,11 +150,15 @@ class AppController extends Controller {
     Configure::write('logged_company_id', $this->userInfo['MCompany']['id']);
     // ウィジェットの情報をビューへ渡す
     $widgetInfo = $this->MWidgetSetting->coFind('first', []);
+    $this->log('widget情報',LOG_DEBUG);
+    $this->log($widgetInfo,LOG_DEBUG);
 
     /* オペレーター待ち状態 */
     // 在籍/退席
     $opStatus = C_OPERATOR_PASSIVE; // 退席（デフォルト）
-    if ( !empty($widgetInfo['MWidgetSetting']['display_type']) && strcmp($widgetInfo['MWidgetSetting']['display_type'], C_WIDGET_DISPLAY_CODE_OPER) === 0 ) {
+    if ( !empty($widgetInfo['MWidgetSetting']['display_type']) && (strcmp($widgetInfo['MWidgetSetting']['display_type'], C_WIDGET_DISPLAY_CODE_OPER) === 0 ||
+     strcmp($widgetInfo['MWidgetSetting']['display_type'], C_WIDGET_DISPLAY_CODE_SHOW) === 0 ||
+     strcmp($widgetInfo['MWidgetSetting']['display_type'], C_WIDGET_DISPLAY_CODE_TIME) === 0) ) {
       // セッションから
       if ( $this->Session->check('widget.operator.status') ) {
         $opStatus = $this->Session->read('widget.operator.status');
