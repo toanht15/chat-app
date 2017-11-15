@@ -17,6 +17,61 @@
 <script type="text/javascript">
 'use strict';
 
+<?php if (isset($coreSettings[C_COMPANY_USE_LA_CO_BROWSE]) && $coreSettings[C_COMPANY_USE_LA_CO_BROWSE]): ?>
+function enableCoBrowse(ua) {
+  var browser = getBrowser(ua);
+  var version = getBrowserVersion(ua);
+
+  if (browser == "Chrome") {
+    return version >= 33;
+  }
+  if (browser == "Firefox") {
+    return version >= 28;
+  }
+  if (browser == "IE") {
+    return version >= 11;
+  }
+  if (browser == "Safari") {
+    return version >= 8;
+  }
+  if (browser == "Opera") {
+    return version >= 37;
+  }
+  return false;
+}
+
+//This method adapted from code at http://stackoverflow.com/questions/5916900/detect-version-of-browser
+function getBrowser(ua) {
+  var tem,M=ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
+  if(/trident/i.test(M[1])){
+    return 'IE';
+  }
+  if(M[1]==='Chrome'){
+    tem=ua.match(/\bOPR\/(\d+)/)
+    if(tem!=null)   {return 'Opera';}
+  }
+  M=M[2]? [M[1], M[2]]: [navigator.appName, navigator.appVersion, '-?'];
+  if((tem=ua.match(/version\/(\d+)/i))!=null) {M.splice(1,1,tem[1]);}
+  return M[0];
+}
+
+//This method adapted from code at http://stackoverflow.com/questions/5916900/detect-version-of-browser
+function getBrowserVersion(ua) {
+  var tem,M=ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
+  if(/trident/i.test(M[1])){
+    tem=/\brv[ :]+(\d+)/g.exec(ua) || [];
+    return (tem[1]||'');
+  }
+  if(M[1]==='Chrome'){
+    tem=ua.match(/\bOPR\/(\d+)/)
+    if(tem!=null)   {return tem[1];}
+  }
+  M=M[2]? [M[1], M[2]]: [navigator.appName, navigator.appVersion, '-?'];
+  if((tem=ua.match(/version\/(\d+)/i))!=null) {M.splice(1,1,tem[1]);}
+  return M[1];
+}
+<?php endif; ?>
+
 var popupEvent = {
         id: null,
         title: null,
@@ -24,6 +79,7 @@ var popupEvent = {
         closePopup: null,
         customizeBtn: null,
         moveType: null, // スクロール
+        ua: null,
         closeNoPopup: function(){
           return popupEvent.close();
         },
@@ -87,9 +143,15 @@ var popupEvent = {
                 <?php endif; ?>
                 <?php if (isset($coreSettings[C_COMPANY_USE_LA_CO_BROWSE]) && $coreSettings[C_COMPANY_USE_LA_CO_BROWSE]): ?>
                       var closeBtn = _wideButton("画面キャプチャ共有");
-                      closeBtn.onclick = function(){
-                        return popupEvent.closePopup(2);
-                      };
+                      if(enableCoBrowse(this.ua)) {
+                        closeBtn.onclick = function(){
+                          return popupEvent.closePopup(2);
+                        };
+                      } else {
+                        closeBtn.classList.remove('greenBtn');
+                        closeBtn.classList.add('grayBtn');
+                        $('#popup-warning').html('サイト訪問者のブラウザまたはバージョンが<br>画面キャプチャ共有非対応のため利用できません。<br>').css('height','4em');
+                      }
                 <?php endif; ?>
                 <?php if (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT]): ?>
                       var closeBtn = _button("資料共有");
@@ -258,6 +320,8 @@ var popupEvent = {
             $('#popup-main').html(this.contents);
             // タイトルをセット
             $('#popup-title').text(this.title);
+            // 警告表示をリセット
+            $('#popup-warning').html('').css('height','');
             this.create();
             // 出現初期位置をセット
             this.elm.popup.classList.add(this.id);
@@ -359,11 +423,14 @@ var popupEvent = {
     };
 
 !function(pe, se){
-    window.modalOpen = function(contents, id, title, type){
+    window.modalOpen = function(contents, id, title, type, ua){
         if (typeof(type) !== 'undefined') {
             pe.moveType = type;
         } else {
             pe.moveType = 'moveup';
+        }
+        if (typeof(ua) !== 'undefinded') {
+          pe.ua = ua;
         }
         pe.init();
         return pe.open(contents, id, title);
@@ -408,8 +475,8 @@ if ( isset($alertMessage) && !empty($alertMessage) ) {
             </div>
             <div id="popup-title"></div>
             <div id="popup-main"></div>
-            <div id="popup-button">
-            </div>
+            <div id="popup-button"></div>
+            <div id="popup-warning" style="color: #FF7B7B; text-align:center;"></div>
         </div>
     </div>
   </div>
