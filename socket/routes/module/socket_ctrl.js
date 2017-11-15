@@ -416,7 +416,8 @@ function getCompanyInfoFromApi(ip, callback) {
   var req = http.request(options, function (response) {
     response.setEncoding('utf8');
     response.on('data', function(body) {
-      callback(body);
+      var response = JSON.parse(body);
+      callback(response.data);
     });
   });
   req.write(JSON.stringify({"accessToken":"x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK", "ipAddress":ip}));
@@ -1208,8 +1209,6 @@ io.sockets.on('connection', function (socket) {
     }
   });
 
-
-
   socket.on("connectSuccessForClient", function (data) {
     var obj = JSON.parse(data);
     // sincloCore[obj.siteKey][obj.tabId].sessionId = socket.id;
@@ -1264,12 +1263,11 @@ io.sockets.on('connection', function (socket) {
       }
 
       //FIXME 企業別機能設定（企業情報連携）
-      getCompanyInfoFromApi(obj.ipAddress, function(body){
-        var response = JSON.parse(body);
-        obj.orgName = response.data.orgName;
-        obj.lbcCode = response.data.lbcCode;
-        sincloCore[obj.siteKey][obj.tabId].orgName = response.data.orgName;
-        sincloCore[obj.siteKey][obj.tabId].lbcCode = response.data.lbcCode;
+      getCompanyInfoFromApi(obj.ipAddress, function(data){
+        obj.orgName = data.orgName;
+        obj.lbcCode = data.lbcCode;
+        sincloCore[obj.siteKey][obj.tabId].orgName = obj.orgName;
+        sincloCore[obj.siteKey][obj.tabId].lbcCode = obj.lbcCode;
         emit.toCompany('syncNewInfo', obj, obj.siteKey);
       });
     }

@@ -176,10 +176,20 @@ class LandscapeComponent extends Component
   private function findDataFromDbBy($targetColumn) {
     $conditions = $this->createConditionsByColumn($targetColumn);
     $MLandscapeData = ClassRegistry::init('MLandscapeData');
-    $this->dbData = $MLandscapeData->find('first', array(
+    $this->dbData = $MLandscapeData->find('all', array(
         'fields' => '*',
-        'conditions' => $conditions
+        'conditions' => $conditions,
+        'order' => 'updated desc'
     ));
+    $baseRecord = [];
+    foreach($this->dbData as $k => $record) {
+      if(empty($baseRecord)) {
+        $baseRecord = $record;
+        continue;
+      }
+      $baseRecord['MLandscapeData']['ip_address'] .= ','.$record['MLandscapeData']['ip_address'];
+    }
+    $this->dbData = $baseRecord;
   }
 
   private function findDataFromAPI() {

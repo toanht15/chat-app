@@ -380,9 +380,18 @@
 
           .right-area {
             margin-left: 10px;
+            .address-view {
+              word-break: break-all;
+            }
             .ip-view {
               height: 14em;
-              overflow-y: auto;
+              .ip-show-area {
+                overflow-y: auto;
+                .ip-row {
+                  display:block;
+                  margin-bottom: 0.5em;
+                }
+              }
             }
           }
 

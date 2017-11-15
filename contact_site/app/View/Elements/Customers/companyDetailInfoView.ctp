@@ -52,7 +52,7 @@ App::uses('LandscapeCodeMapper', 'Vendor/Util/Landscape');
     <span><?=$data['lbcCode']?></span>
   </li>
   <li>
-    <p><span>本社住所</span></p>
+    <p><span class="address-view">本社住所</span></p>
     <span><?=$data['orgAddress']?></span>
   </li>
   <li>
@@ -65,6 +65,15 @@ App::uses('LandscapeCodeMapper', 'Vendor/Util/Landscape');
   </li>
   <li class="ip-view">
     <p><span>IPアドレス</span></p>
-    <span><?=$data['ipAddress'];?></span>
+    <span class="ip-show-area" style="display:block;">
+      <?php
+      if(isset($data['ipAddress'])) {
+        $splitedIpaddress = explode(',', $data['ipAddress']);
+        foreach($splitedIpaddress as $k => $v) {
+          echo '<span class="ip-row">'.$v.'</span>';
+        }
+      }
+      ?>
+    </span>
   </li>
 </ul>
