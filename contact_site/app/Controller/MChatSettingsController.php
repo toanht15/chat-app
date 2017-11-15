@@ -4,7 +4,7 @@
  * チャット基本設定
  */
 class MChatSettingsController extends AppController {
-  public $uses = ['MChatSetting', 'MUser'];
+  public $uses = ['MChatSetting', 'MUser','MOperatingHour'];
 
   public function beforeFilter(){
     parent::beforeFilter();
@@ -31,6 +31,10 @@ class MChatSettingsController extends AppController {
       $this->request->data = $this->MChatSetting->find('first', ['conditions' => [
         'm_companies_id' => $this->userInfo['MCompany']['id']
       ]]);
+      $operatingHourData = $this->MOperatingHour->find('first', ['conditions' => [
+        'm_companies_id' => $this->userInfo['MCompany']['id']
+      ]]);
+      $this->set('operatingHourData',$operatingHourData['MOperatingHour']['active_flg']);
     }
 
     $this->set('mUserList', $this->MUser->getUser()); // ユーザーのリスト

@@ -4539,7 +4539,21 @@ ul.naviBtn {
       padding-left: 5px;
     }
     .content { margin: 0 0 2em 2em; }
-    #MChatSettingSorryMessage {
+    #MChatSettingOutsideHoursSorryMessage {
+      width: 22em;
+      height: 8em;
+      resize: none;
+      font-size: 1em;
+      padding: 0.5em;
+    }
+    #MChatSettingWatingCallSorryMessage {
+      width: 22em;
+      height: 8em;
+      resize: none;
+      font-size: 1em;
+      padding: 0.5em;
+    }
+    #MChatSettingNoStandbySorryMessage {
       width: 22em;
       height: 8em;
       resize: none;
