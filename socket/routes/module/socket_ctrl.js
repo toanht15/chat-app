@@ -1,4 +1,5 @@
 var database = require('../database');
+var api = require('../api');
 
 // mysql
 var mysql = require('mysql'),
@@ -378,6 +379,14 @@ function getConnectInfo(o){
   if ( isset(sincloSessionId) ) {
     o.sincloSessionId = sincloSessionId;
   }
+  var orgName = getSessionId(o.siteKey, o.tabId, 'orgName');
+  if ( isset(orgName) ) {
+    o.orgName = orgName;
+  }
+  var lbcCode = getSessionId(o.siteKey, o.tabId, 'lbcCode');
+  if ( isset(lbcCode) ) {
+    o.lbcCode = lbcCode;
+  } 
   console.log('>>>>> getConnectInfo : ' + JSON.stringify(o));
   return o;
 }
@@ -389,6 +398,53 @@ function getIp(socket){
     ip = socket.handshake.headers['x-forwarded-for'];
   }
   return ip;
+}
+
+// Landscapeの企業情報取得
+function getCompanyInfoFromApi(ip, callback) {
+  //requestをrequire
+  var http = require('http');
+
+  //ヘッダーを定義
+  var headers = {
+    'Content-Type':'application/json'
+  };
+
+  //オプションを定義
+  var options = {
+    host: process.env.GET_CD_API_HOST,
+    port: process.env.GET_CD_API_PORT,
+    path: process.env.GET_CD_API_PATH,
+    method: 'POST',
+    headers: headers,
+    json: true
+  };
+
+  if(process.env.DB_HOST === 'localhost') {
+    options.rejectUnauthorized = false;
+  }
+
+  //リクエスト送信
+  var req = http.request(options, function (response) {
+    if(response.statusCode === 200) {
+      response.setEncoding('utf8');
+      response.on('data', function(body) {
+        var response = JSON.parse(body);
+        callback(response.data);
+      });
+    } else {
+      console.log('企業詳細情報取得時にエラーが返却されました。 errorCode : ' + response.statusCode);
+      callback(false);
+    }
+  });
+
+  req.on('error', function(error) {
+    console.log('企業詳細情報取得時にHTTPレベルのエラーが発生しました。 message : ' + error.message);
+    callback(false);
+  });
+
+  req.write(JSON.stringify({"accessToken":"x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK", "ipAddress":ip}));
+  req.end();
 }
 
 // Frameの削除
@@ -1218,8 +1274,6 @@ io.sockets.on('connection', function (socket) {
     }
   });
 
-
-
   socket.on("connectSuccessForClient", function (data) {
     var obj = JSON.parse(data);
     // sincloCore[obj.siteKey][obj.tabId].sessionId = socket.id;
@@ -1277,7 +1331,17 @@ io.sockets.on('connection', function (socket) {
       if ( !(('ipAddress' in obj) && isset(obj.ipAddress)) ) {
         obj.ipAddress = getIp(socket);
       }
-      emit.toCompany('syncNewInfo', obj, obj.siteKey);
+
+      //FIXME 企業別機能設定（企業情報連携）
+      getCompanyInfoFromApi(obj.ipAddress, function(data){
+        if(data) {
+          obj.orgName = data.orgName;
+          obj.lbcCode = data.lbcCode;
+          sincloCore[obj.siteKey][obj.tabId].orgName = obj.orgName;
+          sincloCore[obj.siteKey][obj.tabId].lbcCode = obj.lbcCode;
+        }
+        emit.toCompany('syncNewInfo', obj, obj.siteKey);
+      });
     }
   });
   // ウィジェットが生成されたことを企業側に通知する

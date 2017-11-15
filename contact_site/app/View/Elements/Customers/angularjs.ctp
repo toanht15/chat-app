@@ -553,7 +553,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     $scope.ip = function(m){
       var showData = [];
-      showData.push(m.ipAddress); // IPアドレス
+      if('orgName' in m && contract.refCompanyData) {
+        showData.push('(' + m.ipAddress + ')'); // IPアドレス
+      } else {
+        showData.push(m.ipAddress); // IPアドレス
+      }
       return showData.join("\n");
     };
 
@@ -778,6 +782,25 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           }
         }
       }
+    };
+
+    $scope.openCompanyDetailInfo = function(monitor){
+      if(!contract.refCompanyData) return false;
+      var retList = {};
+      $.ajax({
+        type: 'POST',
+        cache: false,
+        url: "<?= $this->Html->url(array('controller' => 'CompanyData', 'action' => 'getDetailInfo')) ?>",
+        data: JSON.stringify({
+          accessToken: "<?=$token?>",
+          lbc: monitor.lbcCode,
+          format: 'popupElement'
+        }),
+        dataType: 'html',
+        success: function(html){
+          modalOpen.call(window, html, 'p-cus-company-detail', '企業詳細情報');
+        }
+      });
     };
 
     $scope.openHistory = function(monitor){
@@ -1620,6 +1643,12 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           }
           if ('responderId' in obj) {
             $scope.monitorList[tabId].responderId = obj.responderId;
+          }
+          if ('orgName' in obj) {
+            $scope.monitorList[tabId].orgName = obj.orgName;
+          }
+          if ('lbcCode' in obj) {
+            $scope.monitorList[tabId].lbcCode = obj.lbcCode;
           }
         }
     });

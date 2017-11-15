@@ -44,7 +44,16 @@ if ( isset($history['THistory']['visitors_id']) ) {
         <tr>
             <td class="tRight pre"><?=date_format(date_create($history['THistory']['access_date']), "Y/m/d\nH:i:s")?></td>
             <td class="tCenter"><ng-show-detail data-id="<?=h($history['THistory']['id'])?>"></ng-show-detail></td>
-            <td class="tLeft pre">{{ ip('<?=h($history['THistory']['ip_address'])?>') }}</td>
+            <td class="tLeft">
+              <?php if(isset($coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $coreSettings[C_COMPANY_REF_COMPANY_DATA]): ?>
+                <?php if(isset($history['LandscapeData']['org_name']) && isset($history['LandscapeData']['lbc_code'])): ?>
+                    <a href="javascript:void(0)" onclick="openCompanyDetailInfo('<?=$history['LandscapeData']['lbc_code']?>')"><?=h($history['LandscapeData']['org_name'])?></a><br>
+                <?php elseif(isset($history['LandscapeData']['org_name'])): ?>
+                    <p><?=h($history['LandscapeData']['org_name'])?></p><?='\n'?>
+                <?php endif; ?>
+              <?php endif; ?>
+              {{ ip('<?=h($history['THistory']['ip_address'])?>', <?php echo isset($history['LandscapeData']['org_name']) ? 'true' : 'false' ?>) }}
+            </td>
             <td class="tLeft pre">{{ ui('<?=h($history['THistory']['ip_address'])?>', '<?=$visitorsId?>') }}</td>
             <td class="tLeft pre">{{ ua('<?=h($history['THistory']['user_agent'])?>') }}</td>
             <td class="tCenter pre"><?=$campaignParam?></td>
