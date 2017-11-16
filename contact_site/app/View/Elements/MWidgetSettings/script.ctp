@@ -659,6 +659,16 @@ sincloApp.controller('WidgetCtrl', function($scope){
             break;
         }
       }
+      if(id === 'header_background_color') {
+        var colorid = '#FFFFFF';
+        $scope.header_background_color = colorid;
+        //MWidgetSettingSeBackgroundColor
+        var rgb = $scope.checkRgbColor(colorid);
+        var rgbcode = 'rgb(' + rgb['r']  + ', ' +  rgb['g']  + ', ' +  rgb['b'] + ')';
+        var element = document.getElementById('MWidgetSettingHeaderBackgroundColor');
+        element.style.backgroundColor = rgbcode;
+        element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+      }
       jscolor.installByClassName("jscolor");
     }
 

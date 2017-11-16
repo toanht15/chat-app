@@ -106,10 +106,10 @@
       #sincloBox.open p#widgetTitle:after { transform: rotate(0deg); }
       #sincloBox:not(.open) p#widgetTitle:after { transform: rotate(180deg); }
 */
-      #sincloBox p#widgetSubTitle { background-color: #FFF; margin: 0; padding: 7px 0; text-align: left; border-width: 0 1px 0 1px; border-color: {{widget_border_color}}; border-style: solid; padding-left: 77px; font-weight: bold; color: {{main_color}}; height: 29px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      #sincloBox p#widgetSubTitle { background-color: {{header_background_color}}; margin: 0; padding: 7px 0; text-align: left; border-width: 0 1px 0 1px; border-color: {{widget_border_color}}; border-style: solid; padding-left: 77px; font-weight: bold; color: {{main_color}}; height: 29px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
       #sincloBox p#widgetSubTitle:not(.notNoneWidgetOutsideBorder) { border:none; }
       #sincloBox p#widgetSubTitle.details { color: {{sub_title_text_color}}; }
-      #sincloBox p#widgetDescription { background-color: #FFF; margin: 0; padding-bottom: 7px; text-align: left; border-width: 0 1px 1px 1px; border-color: {{widget_border_color}}; border-style: solid; padding-left: 77px; height: 23px; color: {{other_text_color}}; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      #sincloBox p#widgetDescription { background-color: {{header_background_color}}; margin: 0; padding-bottom: 7px; text-align: left; border-width: 0 1px 1px 1px; border-color: {{widget_border_color}}; border-style: solid; padding-left: 77px; height: 23px; color: {{other_text_color}}; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
       #sincloBox p#widgetDescription:not(.notNoneWidgetOutsideBorder) { border-left:none; border-right:none; }
       #sincloBox p#widgetDescription.details { color: {{description_text_color}}; border-bottom-color: {{widget_inside_border_color}}; }
       #sincloBox p#widgetDescription.details:not(.notNone) { border-bottom:none }
