@@ -442,7 +442,6 @@ var emit = {
     if ( !isset(sessionIds) ) return false;
     var result = false;
     for (var index in sessionIds) {
-      console.log("emit to same user sessionId => " + sessionIds[index]);
       if ( !isset(io.sockets.connected[sessionIds[index]]) ) continue;
       io.sockets.connected[sessionIds[index]].emit(ev, obj);
     }
@@ -2048,7 +2047,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       // 消費者へ送る
       delete obj.message;
       if ( ('sendToCustomer' in obj) && String(obj.sendToCustomer) === "false" ) return false;
-      emit.toUser('receiveTypeCond', obj, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
+      emit.toSameUser('receiveTypeCond', obj, getSessionId(obj.siteKey, obj.tabId, 'sincloSessionId'));
     }
     // 送り主が消費者の場合
     else {
@@ -2543,7 +2542,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
           // 企業へ送る
           emit.toCompany('receiveTypeCond', {status: false, type: 1, tabId: tabId, message: ""}, userInfo.siteKey);
           // 消費者へ送る
-          emit.toUser('receiveTypeCond', {status: false, type: 1, tabId: tabId, message: ""}, tab.sessionId);
+          emit.toSameUser('receiveTypeCond', {status: false, type: 1, tabId: tabId, message: ""}, tab.sincloSessionId);
         }
 
       }
