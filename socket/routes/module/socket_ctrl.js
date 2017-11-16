@@ -387,7 +387,6 @@ function getConnectInfo(o){
   if ( isset(lbcCode) ) {
     o.lbcCode = lbcCode;
   } 
-  console.log('>>>>> getConnectInfo : ' + JSON.stringify(o));
   return o;
 }
 
@@ -601,7 +600,6 @@ var db = {
     if ( isset(obj.tabId) && isset(obj.siteKey) ) {
       if ( !isset(companyList[obj.siteKey]) || obj.subWindow ) return false;
       var siteId = companyList[obj.siteKey];
-      console.log('SHIMIZU : ' + JSON.stringify(obj));
       pool.query('SELECT * FROM t_histories WHERE m_companies_id = ? AND tab_id = ? AND visitors_id = ? ORDER BY id DESC LIMIT 1;', [siteId, obj.sincloSessionId, obj.userId], function(err, rows){
         if ( err !== null && err !== '' ) return false; // DB接続断対応
         var now = formatDateParse();
@@ -2754,6 +2752,23 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             delete customerList[info.siteKey][key];
           }
         });
+      }
+
+      var sincloSessionId = sincloCore[info.siteKey][info.tabId].sincloSessionId;
+      if(sincloSessionId) {
+        var sessionIds = sincloCore[info.siteKey][sincloSessionId].sessionIds;
+        if(sessionIds && sessionIds.length > 0) {
+          sessionIds.some(function(v, i){
+            if(v.indexOf(socket.id) >= 0) {
+              sessionIds.splice(i,1);
+              sincloCore[info.siteKey][sincloSessionId].sessionIds.splice(i,1);
+              return true;
+            }
+          });
+          if(sessionIds.length === 0) {
+            delete sincloCore[info.siteKey][sincloSessionId];
+          }
+        }
       }
     }
   });
