@@ -40,6 +40,8 @@ class MWidgetSetting extends AppModel {
       'widget_border_color' => "widgetBorderColor",
       //6.吹き出し枠線色
       'chat_talk_border_color' => "chatTalkBorderColor",
+      //6.ヘッダー背景色
+      'header_background_color' => "headerBackgroundColor",
       //7.企業名文字色
       'sub_title_text_color' => "subTitleTextColor",
       //8.説明文文字色

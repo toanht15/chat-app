@@ -188,6 +188,8 @@ define('OTHER_TEXT_COLOR', "#666666");
 define('WIDGET_BORDER_COLOR', "#E8E7E0");
 //6.吹き出し枠線色
 define('CHAT_TALK_BORDER_COLOR', "#C9C9C9");
+//6.ヘッダー背景色
+define('HEADER_BACKGROUND_COLOR', "#FFFFFF");
 //7.企業名文字色
 define('SUB_TITLE_TEXT_COLOR', "#ABCD05");
 //8.説明文文字色

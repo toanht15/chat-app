@@ -199,6 +199,8 @@ var socket, // socket.io
           widgetBorderColor: widget.widgetBorderColor,
           //6.吹き出し枠線色
           chatTalkBorderColor: widget.chatTalkBorderColor,
+          //ヘッダー背景色
+          headerBackgroundColor: "#FFFFFF",
           //7.企業名文字色 ※基本設定 1.メインカラーを使用
           subTitleTextColor: widget.mainColor,
           //8.説明文文字色 ※基本設定 4.その他文字色を使用
@@ -300,7 +302,8 @@ var socket, // socket.io
           widgetBorderColor: widget.widgetBorderColor,
           //6.吹き出し枠線色
           chatTalkBorderColor: widget.chatTalkBorderColor,
-
+          //ヘッダー背景色
+          headerBackgroundColor: widget.headerBackgroundColor,
           //7.企業名文字色
           subTitleTextColor: widget.subTitleTextColor,
           //8.説明文文字色
@@ -988,14 +991,14 @@ var socket, // socket.io
 */
             html += '#sincloBox div#closeBtn { display: none; top: ' + (7 * ratio) + 'px; right: ' + (10 * ratio) + 'px; bottom: ' + (6 * ratio) + 'px; width: ' + (18 * ratio) + 'px; height: ' + (18 * ratio) + 'px; z-index: 2; }';
           }
-          html += '#sincloBox p#widgetSubTitle { background-color: #FFF; border-color: '+ colorList['widgetBorderColor'] +'; font-weight: bold; color: ' + colorList['subTitleTextColor'] + '; border-style: solid; text-align: left; margin: 0; padding: ' + (7 * ratio) + 'px 0; border-width: 0 ' + (1 * ratio) + 'px 0 ' + (1 * ratio) + 'px; padding-left: ' + (77 * ratio) + 'px; height: ' + (29 * ratio) + 'px; }';
+          html += '#sincloBox p#widgetSubTitle { background-color: '+ colorList['headerBackgroundColor'] +'; border-color: '+ colorList['widgetBorderColor'] +'; font-weight: bold; color: ' + colorList['subTitleTextColor'] + '; border-style: solid; text-align: left; margin: 0; padding: ' + (7 * ratio) + 'px 0; border-width: 0 ' + (1 * ratio) + 'px 0 ' + (1 * ratio) + 'px; padding-left: ' + (77 * ratio) + 'px; height: ' + (29 * ratio) + 'px; }';
           if(widget.widgetSizeType !== 1){
             html += '#sincloBox p#widgetSubTitle { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }';
           }
           if(colorList['widgetBorderNone'] === 1){
             html += '#sincloBox p#widgetSubTitle { border:none; }';
           }
-          html += '#sincloBox p#widgetDescription { background-color: #FFF; margin: 0; padding-bottom: ' + (7 * ratio) + 'px; border-width: 0 ' + (1 * ratio) + 'px ' + (1 * ratio) + 'px ' + (1 * ratio) + 'px; padding-left: ' + (77 * ratio) + 'px; height: ' + (23 * ratio) + 'px; text-align: left; border-color: '+ colorList['widgetBorderColor'] +'; border-style: solid; color: ' + colorList['descriptionTextColor'] + '; border-bottom-color:'+ colorList['widgetInsideBorderColor'] +'; }';
+          html += '#sincloBox p#widgetDescription { background-color: '+ colorList['headerBackgroundColor'] +'; margin: 0; padding-bottom: ' + (7 * ratio) + 'px; border-width: 0 ' + (1 * ratio) + 'px ' + (1 * ratio) + 'px ' + (1 * ratio) + 'px; padding-left: ' + (77 * ratio) + 'px; height: ' + (23 * ratio) + 'px; text-align: left; border-color: '+ colorList['widgetBorderColor'] +'; border-style: solid; color: ' + colorList['descriptionTextColor'] + '; border-bottom-color:'+ colorList['widgetInsideBorderColor'] +'; }';
           if(widget.widgetSizeType !== 1){
             html += '#sincloBox p#widgetDescription { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }';
           }
@@ -1194,11 +1197,11 @@ var socket, // socket.io
         html += '      #sincloBox p#widgetTitle { border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px 0 0; border: 1px solid ' + colorList['mainColor'] + '; font-size: '+ sizeList['d14font'] +'px;padding: '+ sizeList['widgetTitlePadding'] +'px 30px; height: '+ sizeList['widgetTitleHeight'] +'px }';
         html += '      #sincloBox p#widgetTitle #sincloChatUnread { width: 25px; height: 25px; font-size: '+ sizeList['d13font'] +'px; border-radius: 15px; margin: 2.5px 6px; padding: 3px; }';
         html += '      #sincloBox p#widgetTitle:after { background-position-y: 3px; top: '+ sizeList['widgetTitleTop'] +'px; right: 10px; bottom: 6px; width: 20px; height: 20px; }';
-        html += '      #sincloBox p#widgetSubTitle { background-color: #FFF; margin: 0; padding: 7px 0; text-align: left; border-width: 0 1px 0 1px; border-color: '+ colorList['widgetBorderColor'] +'; border-style: solid; padding-left: 77px; font-weight: bold; color: ' + colorList['subTitleTextColor'] + '; height: '+ sizeList['widgetSubTitleHeight'] +'px }';
+        html += '      #sincloBox p#widgetSubTitle { background-color: '+ colorList['headerBackgroundColor'] +'; margin: 0; padding: 7px 0; text-align: left; border-width: 0 1px 0 1px; border-color: '+ colorList['widgetBorderColor'] +'; border-style: solid; padding-left: 77px; font-weight: bold; color: ' + colorList['subTitleTextColor'] + '; height: '+ sizeList['widgetSubTitleHeight'] +'px }';
         if(colorList['widgetBorderNone'] === 1){
           html += '#sincloBox p#widgetSubTitle { border:none; }';
         }
-        html += '      #sincloBox p#widgetDescription { background-color: #FFF; margin: 0; padding-bottom: 7px; text-align: left; border-width: 0 1px 1px 1px; border-color: '+ colorList['widgetBorderColor'] +'; border-style: solid; padding-left: 77px; height: '+ sizeList['widgetDescriptionHeight'] +'px; color: ' + colorList['descriptionTextColor'] + '; border-bottom-color:'+ colorList['widgetInsideBorderColor'] +';}';
+        html += '      #sincloBox p#widgetDescription { background-color: '+ colorList['headerBackgroundColor'] +'; margin: 0; padding-bottom: 7px; text-align: left; border-width: 0 1px 1px 1px; border-color: '+ colorList['widgetBorderColor'] +'; border-style: solid; padding-left: 77px; height: '+ sizeList['widgetDescriptionHeight'] +'px; color: ' + colorList['descriptionTextColor'] + '; border-bottom-color:'+ colorList['widgetInsideBorderColor'] +';}';
         if(colorList['widgetBorderNone'] === 1){
           html += '#sincloBox p#widgetDescription { border-left:none; border-right:none;}';
         }

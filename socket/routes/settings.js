@@ -134,6 +134,11 @@ router.get("/", function(req, res, next) {
                 if(('chatTalkBorderColor' in settings)) {
                   chatTalkBorderColor = settings.chatTalkBorderColor;
                 }
+                // ヘッダー背景色が存在しない場合はデフォルト色を設定
+                var headerBackgroundColor = "#FFFFFF";
+                if(('headerBackgroundColor' in settings)) {
+                  headerBackgroundColor = settings.headerBackgroundColor;
+                }
 
                 sendData['widget'] = {
                   showTiming: showTimingSetting,
@@ -165,6 +170,8 @@ router.get("/", function(req, res, next) {
                   widgetBorderColor: widgetBorderColor,
                   //6.吹き出し枠線色
                   chatTalkBorderColor: chatTalkBorderColor,
+                  //ヘッダー背景色
+                  headerBackgroundColor: headerBackgroundColor,
                   //7.企業名文字色
                   subTitleTextColor: settings.subTitleTextColor,
                   //8.説明文文字色
