@@ -118,11 +118,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           chatApi.observeType.send(false);
         },
         send: function(status){
-          chatApi.observeType.emit(chatApi.tabId, status);
+          chatApi.observeType.emit(chatApi.tabId, chatApi.sincloSessionId, status);
           chatApi.observeType.status = status;
         },
         prevStatus: false,
-        emit: function(tabId, status){
+        emit: function(tabId, sincloSessionId, status){
           if ( tabId === "" ) return false;
           var sendToCustomer = true;
           if ( this.prevStatus === status ) {sendToCustomer = false};
@@ -134,6 +134,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           emit('sendTypeCond', {
             type: chatApi.observeType.cnst.company, // company
             tabId: tabId,
+            sincloSessionId: sincloSessionId,
             sendToCustomer: sendToCustomer,
             message: value,
             status: status
@@ -891,7 +892,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           $scope.achievement = "";
           $scope.messageList = [];
           chatApi.userId = "";
-          chatApi.observeType.emit(chatApi.tabId, false);
+          chatApi.observeType.emit(chatApi.tabId, chatApi.sincloSessionId, false);
           $("#chatTalk message-list").children().remove();
         }
 
@@ -1590,7 +1591,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           if ('widget' in obj) {
             $scope.monitorList[tabId].widget = obj.widget;
             if (chatApi.tabId === tabId) {
-              chatApi.observeType.emit(chatApi.tabId, chatApi.observeType.status);
+              chatApi.observeType.emit(chatApi.tabId, chatApi.sincloSessionId, chatApi.observeType.status);
 
             }
           }
@@ -1999,7 +2000,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
          $scope.monitorList[obj.tabId].chat === myUserId &&
          obj.message !== document.getElementById('sendMessage').value
         ) {
-          chatApi.observeType.emit(chatApi.tabId, status);
+          chatApi.observeType.emit(chatApi.tabId, chatApi.sincloSessionId, status);
         }
         else {
           $scope.typingMessageSe = obj.message;
