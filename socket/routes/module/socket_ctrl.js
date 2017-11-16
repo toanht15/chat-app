@@ -2111,7 +2111,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       // 消費者へ送る
       delete obj.message;
       if ( ('sendToCustomer' in obj) && String(obj.sendToCustomer) === "false" ) return false;
-      emit.toSameUser('receiveTypeCond', obj, getSessionId(obj.siteKey, obj.tabId, 'sincloSessionId'));
+      emit.toSameUser('receiveTypeCond', obj, obj.siteKey, getSessionId(obj.siteKey, obj.tabId, 'sincloSessionId'));
     }
     // 送り主が消費者の場合
     else {
@@ -2606,7 +2606,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
           // 企業へ送る
           emit.toCompany('receiveTypeCond', {status: false, type: 1, tabId: tabId, message: ""}, userInfo.siteKey);
           // 消費者へ送る
-          emit.toSameUser('receiveTypeCond', {status: false, type: 1, tabId: tabId, message: ""}, tab.sincloSessionId);
+          emit.toSameUser('receiveTypeCond', {status: false, type: 1, tabId: tabId, message: ""}, userInfo.siteKey, tab.sincloSessionId);
         }
 
       }
