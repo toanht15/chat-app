@@ -213,6 +213,7 @@
         //最小化時ボタン表示
         common.whenMinimizedBtnShow();
         sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
+        sinclo.operatorInfo.ev();
       },
       widgetHide: function(e) {
         if(e) e.stopPropagation();
@@ -390,6 +391,10 @@
       if(typeof(AssistSDK) !== 'undefined') {
         console.log("Assist SDK found. initSDKCallbacks");
         laUtil.initSDKCallbacks();
+        if(storage.l.get('assist-localstorage-config') && !storage.s.get('assist-session-config')) {
+          console.log("LA localstorage found. but sessionstorage not found. deleting");
+          storage.l.unset('assist-localstorage-config');
+        }
       }
 
       // connectフラグ
@@ -467,6 +472,16 @@
         ipAddress: userInfo.getIp(),
         referrer: userInfo.referrer
       });
+
+      // customEvent
+      if(document.createEvent) {
+        var evt = document.createEvent('HTMLEvents');
+        evt.initEvent('sinclo:connected', true, true);
+        document.dispatchEvent(evt);
+      } else {
+        var evt = document.createEventObject();
+        document.fireEvent('sinclo:connected', evt);
+      }
     },
     setHistoryId: function(){
         var createStartTimer,
@@ -1328,6 +1343,9 @@
                 this.sound.volume = 0.3;
             }
 
+            // 複数回イベントが登録されるケースがあるためいったんOFFにする
+            $(document).off('click', "input[name^='sinclo-radio']");
+
             $(document)
               .on('focus', "#sincloChatMessage",function(e){
                 if(e) e.stopPropagation();
@@ -1800,10 +1818,10 @@
                     setTimeout(function(){
                       sinclo.trigger.setAction(message.id, message.action_type, message.activity);
                       sinclo.trigger.processing = false;
-                      if(conditionKey === 7) {
-                        // 自動返信実行後はチャット中のフラグを立てる
-                        storage.s.set('chatAct','true');
-                      }
+                      // if(conditionKey === 7) {
+                      //   // 自動返信実行後はチャット中のフラグを立てる
+                      //   storage.s.set('chatAct','true');
+                      // }
                     }, ret);
                 } else if(ret && typeof(ret) === 'object') {
                     sinclo.trigger.timerTriggeredList[message.id] = false;
@@ -1857,10 +1875,10 @@
                         }
                       }
                       sinclo.trigger.setAction(message.id, message.action_type, message.activity);
-                      if(conditionKey === 7) {
-                        // 自動返信実行後はチャット中のフラグを立てる
-                        storage.s.set('chatAct','true');
-                      }
+                      // if(conditionKey === 7) {
+                      //   // 自動返信実行後はチャット中のフラグを立てる
+                      //   storage.s.set('chatAct','true');
+                      // }
                       sinclo.trigger.processing = false;
                     }, ret);
                 }

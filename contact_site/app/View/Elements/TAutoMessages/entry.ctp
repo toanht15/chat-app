@@ -14,6 +14,7 @@
           'maxlength' => 50
         ]) ?>
       <?php if (!empty($errors['name'])) echo "<li class='error-message'>" . h($errors['name'][0]) . "</li>"; ?>
+      <input type="hidden" name="lastPage" value="<?= $lastPage?>">
       </li>
       <!-- 名称 -->
 
@@ -147,7 +148,7 @@
   <section>
     <?=$this->Form->hidden('id')?>
     <div id="tautomessages_actions" class="fotterBtnArea">
-      <?=$this->Html->link('戻る','/TAutoMessages/index', ['class'=>'whiteBtn btn-shadow'])?>
+      <?=$this->Html->link('戻る','/TAutoMessages/index/page:'.$lastPage, ['class'=>'whiteBtn btn-shadow'])?>
       <a href="javascript:void(0)" ng-click="main.saveAct()" class="greenBtn btn-shadow">保存</a>
       <?php
       $class = "";
@@ -155,7 +156,7 @@
         $class = "vHidden";
       }
       ?>
-        <a href="javascript:void(0)" onclick="removeAct()" class="redBtn btn-shadow <?=$class?>">削除</a>
+        <a href="javascript:void(0)" onclick="removeAct(<?= $lastPage?>)" class="redBtn btn-shadow <?=$class?>">削除</a>
     </div>
   </section>
 
