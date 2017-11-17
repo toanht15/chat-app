@@ -43,6 +43,7 @@ define('C_COMPANY_USE_STATISTICS', 'statistics'); // 統計
 define('C_COMPANY_USE_DICTIONARY_CATEGORY', 'dictionaryCategory'); // 定型文カテゴリ
 define('C_COMPANY_USE_HIDE_REALTIME_MONITOR', 'hideRealtimeMonitor'); // リアルタイムモニター非表示
 define('C_COMPANY_USE_OPERATING_HOUR', 'operatingHour'); // 営業時間
+define('C_COMPANY_REF_COMPANY_DATA', 'refCompanyData'); // 企業情報参照（Landscape）
 
 
 // 簡易メッセージ入力機能種別

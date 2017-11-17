@@ -112,6 +112,12 @@ CakeLog::config('error', array(
 	'types' => array('warning', 'error', 'critical', 'alert', 'emergency'),
 	'file' => 'error',
 ));
+CakeLog::config('apiLog', array(
+    'engine' => 'File',
+    'types' => array('request', 'response', 'api-error'),
+    'file' => date('Ymd') . '_' . 'apiLog',
+    'rotate' => '10'
+));
 
 if (!isset($_SERVER['SERVER_NAME'])) {
     $_SERVER['SERVER_NAME'] = php_uname("n");

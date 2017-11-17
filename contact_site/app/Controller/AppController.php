@@ -70,6 +70,7 @@ class AppController extends Controller {
     C_COMPANY_USE_LA_CO_BROWSE => false, // 画面キャプチャ共有
     C_COMPANY_USE_HIDE_REALTIME_MONITOR => false, // 通常時リアルタイムモニタ非表示
     C_COMPANY_USE_OPERATING_HOUR => false //営業時間設定
+    C_COMPANY_REF_COMPANY_DATA => false // 企業情報参照（Landscape）
   ];
 
   public function beforeFilter(){
@@ -123,6 +124,7 @@ class AppController extends Controller {
       $this->userInfo = $this->Session->read('global.userInfo');
       $this->set('userInfo', $this->userInfo);
     }
+
     // 多重ログインチェック
     if ( isset($this->userInfo['id']) && isset($this->userInfo['session_rand_str']) ) {
       $newInfo = $this->MUser->read(null, $this->userInfo['id']);
@@ -143,6 +145,10 @@ class AppController extends Controller {
     $this->coreSettings = $this->mergeCoreSettings(json_decode($this->userInfo['MCompany']['core_settings'], true));
     $this->set('coreSettings', $this->coreSettings);
 
+    if(isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) {
+      $this->userInfo['accessToken'] = 'x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK';
+      $this->Session->write('global.userInfo.accessToken');
+    }
 
     // コンフィグにユーザーIDを設定
     Configure::write('logged_user_id', $this->Auth->user('id'));
