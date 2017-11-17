@@ -373,6 +373,7 @@ class HistoriesController extends AppController {
       $csv[] = $row;
     }
     $this->_outputCSV($name, $csv);
+    $this->printProcessTimetoLog('END   outputCSVOfHistory');
   }
 
   public function outputCSVOfChatHistory(){
