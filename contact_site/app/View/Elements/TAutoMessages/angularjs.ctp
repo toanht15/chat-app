@@ -14,12 +14,16 @@ sincloApp.controller('MainController', function($scope) {
         this.setItemList = setItemListTmp['conditions'];
     }
     this.keys = function(obj){
-        if (angular.isObject(obj)) {
-            return Object.keys(obj).length;
-        }
-        else {
-            return obj.length;
-        }
+      //営業時間を利用しない場合
+      if(<?= $operatingHourData ?> == 2) {
+        delete obj[10];
+      }
+      if (angular.isObject(obj)) {
+          return Object.keys(obj).length;
+      }
+      else {
+          return obj.length;
+      }
     };
 
     this.tmpList = <?php echo json_encode($outMessageTriggerList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
@@ -29,6 +33,10 @@ sincloApp.controller('MainController', function($scope) {
     });
 
     this.checkDisabled = function(itemId){
+        //営業時間設定を利用しない場合
+        if(<?= $operatingHourData ?> == 2 && itemId == 10) {
+          return true;
+        }
         return (itemId in this.setItemList && this.setItemList[itemId].length >= this.tmpList[itemId].createLimit[this.condition_type]);
     };
 
@@ -39,6 +47,10 @@ sincloApp.controller('MainController', function($scope) {
             }
             else if (tmpId in this.setItemList && this.setItemList[tmpId].length >= this.tmpList[tmpId].createLimit[this.condition_type]) {
                 return false;
+            }
+            //営業時間設定を利用しない場合
+            if(<?= $operatingHourData ?> == 2 && tmpId == 10) {
+              return false;
             }
             this.setItemList[tmpId].push(angular.copy(this.tmpList[tmpId].default));
         }

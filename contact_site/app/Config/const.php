@@ -99,6 +99,10 @@ define('C_SC_DISABLED', 2); // 利用しない
 define('C_ACTIVE_ENABLED', 1); // 利用する
 define('C_ACTIVE_DISABLED', 2); // 利用しない
 
+// 営業時間設定
+define('C_TYPE_EVERY', 1); // 毎日
+define('C_TYPE_WEEKLY', 2); // 平日/週末
+
 // チャット通知の種別
 define('C_NOTIFICATION_TYPE_TITLE', 1); // タイトル
 define('C_NOTIFICATION_TYPE_URL', 2); // URL

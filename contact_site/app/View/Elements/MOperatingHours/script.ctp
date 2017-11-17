@@ -1,14 +1,15 @@
 <script type="text/javascript">
-
 function entryChange1(){
   radio = document.getElementsByName('data[MOperatingHour][type]');
   //営業時間設定の条件が「毎日」か「平日・週末」のどちらか確認
   if(radio[0].checked) {
     document.getElementById('secondTable').style.display = "none";
     document.getElementById('firstTable').style.display = "";
+    document.getElementById('moperating_hours_table').style.height = "49em";
   }else if(radio[1].checked) {
     document.getElementById('firstTable').style.display = "none";
     document.getElementById('secondTable').style.display = "";
+    document.getElementById('moperating_hours_table').style.height = "24em";
   }
 }
 
@@ -44,13 +45,11 @@ function activeSettingToggle(){
   if ( $("#MOperatingHourActiveFlg1").prop("checked") ) {
     // 営業時間設定を利用する場合
     $("#detail_content dl").removeClass("detail_hidden");
-    $("#moperating_hours_list table").removeClass("detail_hidden");
     $("#detail_content input").prop("disabled", false);
   }
   else {
     // 営業時間設定を利用しない場合
     $("#detail_content dl").addClass("detail_hidden");
-    $("#moperating_hours_list table").addClass("detail_hidden");
     $("#detail_content input").prop("disabled", true);
   }
 }
@@ -59,6 +58,9 @@ $(document).ready(function(){
   // 営業時間設定のON/OFFの切り替わりを監視
   $(document).on('change', '[name="data[MOperatingHour][active_flg]"]', activeSettingToggle);
   activeSettingToggle(); // 初回のみ
+  if(<?= $widgetData ?> == 4　|| '<?= $check ?>' == 'included') {
+    $("#MOperatingHourActiveFlg2").prop("disabled", true);
+  }
 });
 // 保存処理
 function saveAct(){

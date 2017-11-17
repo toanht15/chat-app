@@ -164,11 +164,17 @@
         var text = $this.attr('data-text');
         var baloonPosition = $this.attr('data-balloon-position'); // 吹き出しの＜の部分
         var noleft = $this.attr('noleft');
+        var operatingHours = $this.attr('operatingHours');
         var $tooltip = $('<div class="tooltips">'+text+'</div>');
         //行数をカウント
         var id = $this.attr('id');
         var brcount = (text.split("<br>")).length;
-        var toppx = 39;
+        if(operatingHours == 'koko') {
+          var toppx = 69;
+        }
+        else {
+          var toppx = 39;
+        }
         if(brcount > 1){
           toppx = toppx+((brcount-1)*15);
         }

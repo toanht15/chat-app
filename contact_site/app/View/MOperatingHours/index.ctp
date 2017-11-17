@@ -1,11 +1,13 @@
+<?php
+//
+$detailHiddenClass = "";
+if ( !(!empty($this->data['MOperatingHour']['active_flg']) && strcmp($this->data['MOperatingHour']['active_flg'],C_ACTIVE_ENABLED) === 0) ) {
+  $detailHiddenClass = "detail_hidden";
+}
+?>
 <?= $this->element('MOperatingHours/script') ?>
 
 <div id='moperating_hours_idx' class="card-shadow">
-  <?php if(!$coreSettings[C_COMPANY_USE_OPERATING_HOUR]): ?>
-    <div id="modal" style="display: table; position: absolute; top:15px; left:15px; width: calc(100% - 30px); height: calc(100% - 30px); z-index: 5; background-color: rgba(0, 0, 0, 0.8);">
-      <p style="font-size: 15px; color: #FFF; display: table-cell; vertical-align: middle; text-align: center;">こちらの機能はスタンダードプランからご利用いただけます。</p>
-    </div>
-  <?php endif; ?>
 
   <div id='moperating_hours_add_title'>
      <div class="fLeft">
@@ -17,18 +19,25 @@
   <?= $this->Form->create('MOperatingHour', ['type' => 'post','name' => 'operatingHours', 'url' => ['controller' => 'MOperatingHours', 'action' => 'index', '']]); ?>
     <div class ="content">
       <div>
-        <label style="display:inline-block;" <?php echo $coreSettings[C_COMPANY_USE_OPERATING_HOUR] ? '' : 'style="color: #CCCCCC;" '?>>
+        <label style="display:inline-block;
+        <?php echo (($widgetData == C_WIDGET_DISPLAY_CODE_TIME || $check == 'included') || !$coreSettings[C_COMPANY_USE_OPERATING_HOUR]) ? 'color: #CCCCCC;' : '';?>"
+        <?php echo ($widgetData == C_WIDGET_DISPLAY_CODE_TIME || $coreSettings[C_COMPANY_USE_OPERATING_HOUR] || $check == true) ? 'class=commontooltip' : '';?>
+        <?php echo ($check == 'included' && $coreSettings[C_COMPANY_USE_OPERATING_HOUR]) ? 'data-text=オートメッセージ設定の「条件設定」に「営業時間設定」が含まれているメッセージがあります' : '';?>
+        <?php echo ($widgetData == C_WIDGET_DISPLAY_CODE_TIME && $coreSettings[C_COMPANY_USE_OPERATING_HOUR]) ? 'data-text=ウィジェット設定の「表示する条件」を「営業時間内のみ表示する」から変更してください' : '';?>
+        <?php echo (($widgetData == C_WIDGET_DISPLAY_CODE_TIME || $check == 'included') && $coreSettings[C_COMPANY_USE_OPERATING_HOUR]) ? 'data-balloon-position=31.5' : '';?>
+        <?php echo (($widgetData == C_WIDGET_DISPLAY_CODE_TIME || $check == 'included') && $coreSettings[C_COMPANY_USE_OPERATING_HOUR]) ? 'operatingHours=koko' : '';?>
+        >
           <?php
             $settings = [
               'type' => 'radio',
               'options' => $scFlgOpt,
               'default' => C_ACTIVE_ENABLED,
               'legend' => false,
-              'separator' => '</label><br><label style="display:inline-block;"'.($coreSettings[C_COMPANY_USE_OPERATING_HOUR] ? '' : ' style="color: #CCCCCC;" class="commontooltip" data-text="こちらの機能はスタンダードプラン<br>からご利用いただけます。" data-balloon-position="34.5"').'>',
+              'separator' => '</label><br><label style="display:inline-block;"'.($coreSettings[C_COMPANY_USE_OPERATING_HOUR] ? '' : 'style="color: #CCCCCC;" class="commontooltip" data-text="こちらの機能はスタンダードプラン<br>からご利用いただけます。" data-balloon-position="34.5"').'>',
               'label' => false,
               'div' => false,
               'disabled' => !$coreSettings[C_COMPANY_USE_OPERATING_HOUR],
-              'class' => 'pointer'
+              'class' => "pointer"
             ];
             echo $this->Form->input('active_flg',$settings);
           ?>
@@ -42,7 +51,7 @@
       </div>
 
       <div id="detail_content">
-        <dl>
+        <dl class="<?=$detailHiddenClass?>" id = "moperating_hours_table" <?php echo ($this->data['MOperatingHour']['type'] == C_TYPE_EVERY) ? 'style="height:49em"' : 'style="height:24em"';?>>
           <dt>条件設定<dt-detail></dt-detail></dt>
           <dd>
             <li>
@@ -56,8 +65,8 @@
           <dd>
             <div id='moperating_hours_list'>
               <?php
-              $timeData = json_decode($operatingHourData['MOperatingHour']['time_settings'])->everyday;
-              $timeData2 = json_decode($operatingHourData['MOperatingHour']['time_settings'])->weekly;
+              $everydayData = json_decode($operatingHourData['MOperatingHour']['time_settings'])->everyday;
+              $weeklyData = json_decode($operatingHourData['MOperatingHour']['time_settings'])->weekly;
               if($operatingHourData['MOperatingHour']['type'] == 1) {
                ?>
               <table class = "everyday" id = "firstTable">
@@ -95,7 +104,7 @@
                   <tr>
                   <?php
                     $day = "";
-                    foreach($timeData->{$v2} as $v) {
+                    foreach($everydayData->{$v2} as $v) {
                       if(empty($day)) {
                         if(empty($v->start) && empty($v->end)) {
                           $day = "休み";
@@ -105,7 +114,7 @@
                         }
                       }
                       else {
-                        $day = $day."　".$v->start.'-'.$v->end;
+                        $day = $day."　/　".$v->start.'-'.$v->end;
                       }
                     }
                     if($day == "休み") {
@@ -167,7 +176,7 @@
                 <tr>
                 <?php
                   $day = "";
-                  foreach($timeData2->{$v2} as $v) {
+                  foreach($weeklyData   ->{$v2} as $v) {
                     if(empty($day)) {
                       if(empty($v->start) && empty($v->end)) {
                         $day = "休み";

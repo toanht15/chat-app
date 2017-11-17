@@ -5554,9 +5554,9 @@ ul#anotherWindow_color-bar-right {
 
       dl {
         overflow: hidden;
-        -webkit-transition:
-        height 200ms linear;
+        -webkit-transition: height 200ms linear;
         transition: height 200ms linear;
+        height: 49em;
 
           dt {
             border-left: 5px solid #a2a2a2;
@@ -5575,7 +5575,7 @@ ul#anotherWindow_color-bar-right {
 
           #moperating_hours_list {
             table.everyday {
-              width: 30% !important;
+              width: 34% !important;
               tbody {
                 tr {
                   .dayOfWeek {
@@ -5602,7 +5602,7 @@ ul#anotherWindow_color-bar-right {
               }
             }
             table.weekly {
-              width: 30% !important;
+              width: 34% !important;
               tbody {
                 tr {
                   .dayOfWeek {
@@ -5640,6 +5640,10 @@ ul#anotherWindow_color-bar-right {
       padding-left: 5px;
       font-size: 13px;
     }
+  }
+
+  label {
+    cursor:pointer;
   }
 
   #moperating_hours_list .ctrlBtnArea {

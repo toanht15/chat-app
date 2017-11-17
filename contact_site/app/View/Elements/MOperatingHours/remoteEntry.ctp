@@ -22,6 +22,8 @@ if(radio[0].checked) {
   if(jsonData.everyday.<?= $date ?>[0].start == "" && jsonData.everyday.<?= $date ?>[0].end == "") {
     document.getElementById("MOperatingHourInfoHoliday").checked = true;
     $(".form-control").prop("disabled", true);
+    $('.disOffgreenBtn').css('pointer-events','none'); //追加ボタン制御
+    $('.deleteBtn').css('pointer-events','none'); //削除ボタン制御
   }
 }
 //条件設定が平日/休日の場合
@@ -31,16 +33,22 @@ else{
     $(".form-control").prop("disabled", true);
   }
 }
+var error = 0;
 
 popupEvent.closePopup = function(){
   //formの数
   var length = $('.timeData').length;
+
   //空チェック
   if (document.getElementById("MOperatingHourInfoHoliday").checked == false) {
     for (i = 0; i < length; i++) {
       if((document.getElementsByName("startTime" + i)[0].value == "" || document.getElementsByName("endTime" + i)[0].value == "")) {
         document.getElementById('error').style.display = "block";
         $('#error').text("条件を設定してください");
+        error = error + 1;
+        if(error == 1) {
+          document.getElementById('popup-frame').style.height = (parseInt($('#popup-frame').css('height'),10) + 15) + 'px';
+        }
         return;
       }
     }
@@ -71,7 +79,7 @@ popupEvent.closePopup = function(){
             timeInfo = timeInfo + document.getElementsByName("startTime" + i)[0].value + '-' + document.getElementsByName("endTime" + i)[0].value;
           }
           else {
-            timeInfo = timeInfo + "　"　+ document.getElementsByName("startTime" + i)[0].value + '-' + document.getElementsByName("endTime" + i)[0].value;
+            timeInfo = timeInfo + "　/　"　+ document.getElementsByName("startTime" + i)[0].value + '-' + document.getElementsByName("endTime" + i)[0].value;
           }
           jsonData.everyday.<?= $date ?>.push({start: document.getElementsByName("startTime" + i)[0].value, end: document.getElementsByName("endTime" + i)[0].value});
           for(i2=0; i2<check.length;i2++) {
@@ -107,7 +115,7 @@ popupEvent.closePopup = function(){
             timeInfo = timeInfo + document.getElementsByName("startTime" + i)[0].value + '-' + document.getElementsByName("endTime" + i)[0].value;
           }
           else {
-            timeInfo = timeInfo + "　"　+ document.getElementsByName("startTime" + i)[0].value + '-' + document.getElementsByName("endTime" + i)[0].value;
+            timeInfo = timeInfo + "　/　"　+ document.getElementsByName("startTime" + i)[0].value + '-' + document.getElementsByName("endTime" + i)[0].value;
           }
           jsonData.weekly.<?= $date ?>.push({start: document.getElementsByName("startTime" + i)[0].value, end: document.getElementsByName("endTime" + i)[0].value});
           for(i2=0; i2<check.length;i2++) {
@@ -147,6 +155,7 @@ popupEvent.closePopup = function(){
 
 //時間追加
 function addLine(event){
+  document.getElementById('popup-frame').style.height = (parseInt($('#popup-frame').css('height'),10) + 41) + 'px';
   number = Number(event.target.id.substr(event.target.id.indexOf("_")+1));
   var marginLeft;
   var display;
@@ -178,10 +187,10 @@ function addLine(event){
       '<span class="input-group clockpicker bt0">' +
       '<input type="text" value = "" id = "endForm'+(number+1)+'" class="form-control" name= endTime' + (number+1) + '>' +
       '<a>' +
-      '<img src= /img/add.png alt=登録 class="btn-shadow disOffgreenBtn" width=22 height=22 onclick=addLine(event) style="padding:2px !important; display: '+display+'; margin-left: 245px; margin-top: -25px;" id=add_'+(number+1)+'>' +
+      '<img src= /img/add.png alt=登録 class="btn-shadow disOffgreenBtn" width=25 height=25 onclick=addLine(event) style="padding:2px !important; display: '+display+'; margin-left: 245px; margin-top: -25px;" id=add_'+(number+1)+'>' +
       '</a>' +
       '<a>' +
-      '<img src= /img/dustbox.png alt=削除 class="btn-shadow redBtn deleteBtn" width=22 height=22 onclick="deleteLine(event)" style="padding:2px !important; display: block; margin-left:'+ marginLeft+'; margin-top: -22px;" id=delete_'+(number+1)+'>' +
+      '<img src= /img/dustbox.png alt=削除 class="btn-shadow redBtn deleteBtn" width=25 height=25 onclick="deleteLine(event)" style="padding:2px !important; display: block; margin-left:'+ marginLeft+'; margin-top: -25px;" id=delete_'+(number+1)+'>' +
       '</a>' +
       '</span>' +
       '</li>'
@@ -196,6 +205,7 @@ function addLine(event){
 
 //時間削除
 function deleteLine(event){
+  document.getElementById('popup-frame').style.height = (parseInt($('#popup-frame').css('height'),10) - 41) + 'px';
   number = Number(event.target.id.substr(event.target.id.indexOf("_")+1));
   document.getElementById('form' + number).remove();
   var length = $('.timeData').length;
@@ -288,8 +298,8 @@ else {
             <?= $this->Html->image('add.png', array(
               'alt' => '登録',
               'class' => 'btn-shadow disOffgreenBtn',
-              'width' => 22,
-              'height' => 22,
+              'width' => 25,
+              'height' => 25,
               'id' => 'add_'.$key,
               'onclick' => 'addLine(event)',
               'style' => 'padding:2px !important; display: '.$display.'; margin-left: 245px; margin-top: -25px;'
@@ -310,11 +320,11 @@ else {
               'alt' => '削除',
               'class' => 'btn-shadow redBtn deleteBtn',
               'data-balloon-position' => '35',
-              'width' => 22,
-              'height' => 22,
+              'width' => 25,
+              'height' => 25,
               'id' => 'delete_'.$key,
               'onclick' => 'deleteLine(event)',
-              'style' => 'padding:2px !important; display: block; margin-left: '.$marginLeft.'; margin-top: -22px;')) ?>
+              'style' => 'padding:2px !important; display: block; margin-left: '.$marginLeft.'; margin-top: -25px;')) ?>
             </a>
           <?php } ?>
       </span>

@@ -892,8 +892,6 @@ io.sockets.on('connection', function (socket) {
 
       var getUserSQL = "SELECT IFNULL(chat.sc_flg, 2) as sc_flg, outside_hours_sorry_message, wating_call_sorry_message, no_standby_sorry_message, widget.display_type FROM m_companies AS comp LEFT JOIN m_widget_settings AS widget ON ( comp.id = widget.m_companies_id ) LEFT JOIN m_chat_settings AS chat ON ( chat.m_companies_id = widget.m_companies_id ) WHERE comp.id = ?;";
       pool.query(getUserSQL, [companyId], function(err, rows){
-        console.log('rows');
-        console.log(rows);
         if ( err !== null && err !== '' ) return false; // DB接続断対応
         var ret = false, message = null;
         now = new Date();
@@ -1019,8 +1017,15 @@ io.sockets.on('connection', function (socket) {
               }
 
 
+
+
               // チャット上限数を設定していない場合
               if ( Number(rows[0].sc_flg) === 2 ) {
+                // オペレーターが待機している場合
+                if ( type === 1 && (rows[0].display_type === 2 && getOperatorCnt(d.siteKey) > 0)
+                ) {
+                  return callback(true, {opFlg: true, message: outside_hours_sorry_message});
+                }
                 // 営業時間設定を利用している場合
                 if (active_flg === 1) {
                   //祝日の場合
@@ -1034,8 +1039,8 @@ io.sockets.on('connection', function (socket) {
                           if( Date.parse(new Date(date + publicHolidayData[i].start)) <= dateParse && dateParse < Date.parse(new Date(date + publicHolidayData[i].end)) ) {
                             // オペレータが待機している場合
                             if ( (rows[0].display_type === 2 && getOperatorCnt(d.siteKey) > 0) ||
-                            (rows[0].display_type === 1 && (company.info.hasOwnProperty(d.siteKey) && Object.keys(company.info[d.siteKey]).length > 0)) ||
-                            (rows[0].display_type === 4 && (company.info.hasOwnProperty(d.siteKey) && Object.keys(company.info[d.siteKey]).length > 0))
+                            (rows[0].display_type === 1 && getOperatorCnt(d.siteKey) > 0) ||
+                            (rows[0].display_type === 4 && getOperatorCnt(d.siteKey) > 0)
                             ) {
                               ret = true;
                               break;
@@ -1071,8 +1076,8 @@ io.sockets.on('connection', function (socket) {
                           check = true;
                           //オペレータが待機している場合
                           if ( (rows[0].display_type === 2 && getOperatorCnt(d.siteKey) > 0) ||
-                          (rows[0].display_type === 1 && (company.info.hasOwnProperty(d.siteKey) && Object.keys(company.info[d.siteKey]).length > 0)) ||
-                          (rows[0].display_type === 4 && (company.info.hasOwnProperty(d.siteKey) && Object.keys(company.info[d.siteKey]).length > 0))
+                          (rows[0].display_type === 1 && getOperatorCnt(d.siteKey) > 0) ||
+                          (rows[0].display_type === 4 && getOperatorCnt(d.siteKey) > 0)
                           ) {
                             ret = true;
                             break;
@@ -1096,8 +1101,8 @@ io.sockets.on('connection', function (socket) {
                 else　if(active_flg === 2) {
                   //オペレータが待機している場合
                   if ( (rows[0].display_type === 2 && getOperatorCnt(d.siteKey) > 0) ||
-                  (rows[0].display_type === 1 && (company.info.hasOwnProperty(d.siteKey) && Object.keys(company.info[d.siteKey]).length > 0)) ||
-                  (rows[0].display_type === 4 && (company.info.hasOwnProperty(d.siteKey) && Object.keys(company.info[d.siteKey]).length > 0))
+                  (rows[0].display_type === 1 && getOperatorCnt(d.siteKey) > 0) ||
+                  (rows[0].display_type === 4 && getOperatorCnt(d.siteKey) > 0)
                   ) {
                     ret = true;
                   }
@@ -1112,6 +1117,15 @@ io.sockets.on('connection', function (socket) {
 
               // チャット上限数を設定している場合
               else if ( Number(rows[0].sc_flg) === 1 ) {
+                if ( type === 1 && rows[0].display_type === 2 && scList.hasOwnProperty(d.siteKey) ) {
+                  var userIds = Object.keys(scList[d.siteKey].user);
+                  if ( userIds.length !== 0 ) {
+                    for (var i = 0; i < userIds.length; i++) {
+                      if ( Number(scList[d.siteKey].user[userIds[i]]) === Number(scList[d.siteKey].cnt[userIds[i]]) ) continue;
+                      return callback(true, {opFlg: true, message: outside_hours_sorry_message});
+                    }
+                  }
+                }
                 //営業時間設定を利用している場合
                 if (active_flg === 1) {
                   for(var i2=0; i2<results.length; i2++) {

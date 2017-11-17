@@ -24,13 +24,11 @@ function scSettingToggle(){
 
 // 保存処理
 function saveAct(){
-  console.log('aaaaaaaaaaaaaa');
   document.getElementById('MChatSettingIndexForm').submit();
 }
 
 $(document).ready(function(){
   if(<?= $operatingHourData ?> == 1) {
-    console.log('11111111111');
     $("#MChatSettingOutsideHoursSorryMessage").prop("disabled", false); // 対応上限数のsorryメッセージをenabled
     $('#outside_hours').css('color','#595959'); // 対応上限数のsorryメッセージの文字色を変更
   }

@@ -957,6 +957,7 @@
     }
     #dayList {
       margin-top:-15px;
+      margin-bottom: 7px;
     }
     #error {
       display:none;
@@ -1277,7 +1278,7 @@
 
 #popup #popup-frame-base #popup-frame.p-operatinghours-entry {
   width: 415px;
-  height: 480px !important;
+  /*height: 480px !important;*/
 }
 
 #popup #popup-frame-base #popup-frame.p-copy {

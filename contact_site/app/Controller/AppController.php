@@ -156,9 +156,10 @@ class AppController extends Controller {
     /* オペレーター待ち状態 */
     // 在籍/退席
     $opStatus = C_OPERATOR_PASSIVE; // 退席（デフォルト）
-    if ( !empty($widgetInfo['MWidgetSetting']['display_type']) && (strcmp($widgetInfo['MWidgetSetting']['display_type'], C_WIDGET_DISPLAY_CODE_OPER) === 0 ||
-     strcmp($widgetInfo['MWidgetSetting']['display_type'], C_WIDGET_DISPLAY_CODE_SHOW) === 0 ||
-     strcmp($widgetInfo['MWidgetSetting']['display_type'], C_WIDGET_DISPLAY_CODE_TIME) === 0) ) {
+    if ( !empty($widgetInfo['MWidgetSetting']['display_type']) && (isset($this->coreSettings[C_COMPANY_USE_CHAT]) && $this->coreSettings[C_COMPANY_USE_CHAT])
+      && (strcmp($widgetInfo['MWidgetSetting']['display_type'], C_WIDGET_DISPLAY_CODE_OPER) === 0 ||
+      strcmp($widgetInfo['MWidgetSetting']['display_type'], C_WIDGET_DISPLAY_CODE_SHOW) === 0 ||
+     strcmp($widgetInfo['MWidgetSetting']['display_type'], C_WIDGET_DISPLAY_CODE_TIME) === 0)  ) {
       // セッションから
       if ( $this->Session->check('widget.operator.status') ) {
         $opStatus = $this->Session->read('widget.operator.status');

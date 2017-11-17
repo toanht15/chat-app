@@ -4,7 +4,7 @@
  * 営業時間設定
  */
 class MOperatingHoursController extends AppController {
-  public $uses = ['MOperatingHour','MWidgetSetting'];
+  public $uses = ['MOperatingHour','MWidgetSetting','TAutoMessage'];
 
   public function beforeFilter(){
     parent::beforeFilter();
@@ -16,7 +16,6 @@ class MOperatingHoursController extends AppController {
    * @return void
    * */
   public function index() {
-
     $operatingHourData = $this->MOperatingHour->find('first', ['conditions' => [
       'm_companies_id' => $this->userInfo['MCompany']['id']
     ]]);
@@ -24,6 +23,19 @@ class MOperatingHoursController extends AppController {
     $widgetData = $this->MWidgetSetting->find('first', ['conditions' => [
       'm_companies_id' => $this->userInfo['MCompany']['id']
     ]]);
+    //オートメッセージ情報
+    $autoMessageData = $this->TAutoMessage->find('all', ['conditions' => [
+      'm_companies_id' => $this->userInfo['MCompany']['id'],
+      'active_flg' => 0
+    ]]);
+    $check = '';
+    foreach($autoMessageData as $v){
+      //オートメッセージの条件に営業時間設定が入っているかチェック
+      if(!empty(json_decode($v['TAutoMessage']['activity'],true)['conditions'][10])) {
+        $check = 'included';
+      }
+    }
+
     if($this->request->is('post')) {
       $saveData = $this->MOperatingHour->read(null, $operatingHourData['MOperatingHour']['id']);
       $saveData['MOperatingHour']['active_flg'] = $this->request->data['MOperatingHour']['active_flg'];
@@ -88,6 +100,7 @@ class MOperatingHoursController extends AppController {
         $this->set('days',$days);
         $this->set('weekly',$weekly);
       }
+      $this->set('check',$check);
       $this->set('operatingHourData',$operatingHourData);
       $this->set('widgetData',$widgetData['MWidgetSetting']['display_type']);
     }
