@@ -4,7 +4,7 @@
  * 営業時間設定
  */
 class MOperatingHoursController extends AppController {
-  public $uses = ['MOperatingHour','MWidgetSetting'];
+  public $uses = ['MOperatingHour','MWidgetSetting','TAutoMessage'];
 
   public function beforeFilter(){
     parent::beforeFilter();
@@ -16,44 +16,91 @@ class MOperatingHoursController extends AppController {
    * @return void
    * */
   public function index() {
-
     $operatingHourData = $this->MOperatingHour->find('first', ['conditions' => [
       'm_companies_id' => $this->userInfo['MCompany']['id']
     ]]);
+    //ウィジェット情報
     $widgetData = $this->MWidgetSetting->find('first', ['conditions' => [
       'm_companies_id' => $this->userInfo['MCompany']['id']
     ]]);
+    //オートメッセージ情報
+    $autoMessageData = $this->TAutoMessage->find('all', ['conditions' => [
+      'm_companies_id' => $this->userInfo['MCompany']['id'],
+      'active_flg' => 0
+    ]]);
+    $check = '';
+    foreach($autoMessageData as $v){
+      //オートメッセージの条件に営業時間設定が入っているかチェック
+      if(!empty(json_decode($v['TAutoMessage']['activity'],true)['conditions'][10])) {
+        $check = 'included';
+      }
+    }
+
     if($this->request->is('post')) {
-      $this->log('送られてきたデータ',LOG_DEBUG);
-      $this->log($this->request->data,LOG_DEBUG);
       $saveData = $this->MOperatingHour->read(null, $operatingHourData['MOperatingHour']['id']);
       $saveData['MOperatingHour']['active_flg'] = $this->request->data['MOperatingHour']['active_flg'];
+      //営業時間設定を利用する場合
       if($this->request->data['MOperatingHour']['active_flg'] == 1) {
-        $saveData['MOperatingHour']['time_settings'] = $this->request->data['MOperatingHour']['outputData'][0];
+        $saveData['MOperatingHour']['time_settings'] = $this->request->data['MOperatingHour']['outputData'];
         $saveData['MOperatingHour']['type'] = $this->request->data['MOperatingHour']['type'];
       }
       $this->MOperatingHour->set($saveData);
       $this->MOperatingHour->begin();
-      if ( $this->MOperatingHour->save() ) {
-        $this->MOperatingHour->commit();
-        $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
-        $this->redirect(['controller' => $this->name, 'action' => 'index']);
-      }
-      else {
-        $this->MOperatingHour->rollback();
-        $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.saveFailed'));
-        $this->redirect(['controller' => $this->name, 'action' => 'index']);
-      }
+        if ( $this->MOperatingHour->save() ) {
+          $this->MOperatingHour->commit();
+          $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
+          $this->redirect(['controller' => $this->name, 'action' => 'index']);
+        }
+        else {
+          $this->MOperatingHour->rollback();
+          $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.saveFailed'));
+          $this->redirect(['controller' => $this->name, 'action' => 'index']);
+        }
       $this->set('operatingHourData',$saveData);
     }
     else {
+      //デフォルト設定
       if(empty($operatingHourData)) {
-
+        $saveData['MOperatingHour']['m_companies_id'] = $this->userInfo['MCompany']['id'];
+        $saveData['MOperatingHour']['time_settings'] = "{\"everyday\":{\"mon\":[{\"start\":\"09:00\",\"end\":\"18:00\"}],\"tue\":[{\"start\":\"09:00\",\"end\":\"18:00\"}],\"wed\":[{\"start\":\"09:00\",\"end\":\"18:00\"}],\"thu\":[{\"start\":\"09:00\",\"end\":\"18:00\"}],\"fri\":[{\"start\":\"09:00\",\"end\":\"18:00\"}],\"sat\":[{\"start\":\"\",\"end\":\"\"}],\"sun\":[{\"start\":\"\",\"end\":\"\"}],\"pub\":[{\"start\":\"09:00\",\"end\":\"18:00\"}]},\"weekly\":{\"week\":[{\"start\":\"09:00\",\"end\":\"18:00\"}],\"weekend\":[{\"start\":\"09:00\",\"end\":\"18:00\"}],\"weekpub\":[{\"start\":\"\",\"end\":\"\"}]}}";
+        $saveData['MOperatingHour']['active_flg'] = C_ACTIVE_DISABLED;
+        $saveData['MOperatingHour']['type'] = 1;
+        $this->MOperatingHour->create();
+        $this->MOperatingHour->set($saveData);
+        $this->MOperatingHour->begin();
+        if ( $this->MOperatingHour->save() ) {
+          $this->MOperatingHour->commit();
+          $this->redirect(['controller' => $this->name, 'action' => 'index']);
+        }
+        else {
+          $this->MOperatingHour->rollback();
+          $this->redirect(['controller' => $this->name, 'action' => 'index']);
+        }
+        $this->set('operatingHourData',$saveData);
       }
+      //ページ読み込み時
       else {
         $this->request->data['MOperatingHour']['active_flg'] = $operatingHourData['MOperatingHour']['active_flg'];
         $this->request->data['MOperatingHour']['type'] = $operatingHourData['MOperatingHour']['type'];
+        $days = array(
+          0 => 'mon',
+          1 => 'tue',
+          2 => 'wed',
+          3 => 'thu',
+          4 => 'fri',
+          5 => 'sat',
+          6 => 'sun',
+          7 => 'pub'
+        );
+        $weekly = array(
+          0 => 'week',
+          1 => 'weekend',
+          2 => 'weekpub'
+        );
+        $this->set('days',$days);
+        $this->set('weekly',$weekly);
       }
+      $this->set('check',$check);
       $this->set('operatingHourData',$operatingHourData);
       $this->set('widgetData',$widgetData['MWidgetSetting']['display_type']);
     }
@@ -100,7 +147,7 @@ class MOperatingHoursController extends AppController {
       $this->request->data['day'] = '週末';
     }
 
-    if($this->request->data['day'] != '平日' && $this->request->data['day'] != '週末' && $this->request->data['day'] != 'pub2') {
+    if($this->request->data['day'] != '平日' && $this->request->data['day'] != '週末' && $this->request->data['day'] != 'weekpub') {
       $days = array(
         0 => 'sun',
         1 => 'mon',
@@ -115,10 +162,10 @@ class MOperatingHoursController extends AppController {
       $days = array(
         0 => 'week',
         1 => 'weekend',
-        2 => 'pub2'
+        2 => 'weekpub'
         );
     }
-    if($this->request->data['day'] == 'pub2') {
+    if($this->request->data['day'] == 'weekpub') {
       $this->request->data['day'] = '祝日';
     }
 

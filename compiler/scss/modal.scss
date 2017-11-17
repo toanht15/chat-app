@@ -966,6 +966,94 @@
   width: 6em;
 }
 
+/*営業時間 */
+.p-operatinghours-entry {
+  .form01 {
+    > div {
+      display: flex;
+      flex-direction: column;
+
+      &:last-child {
+        padding-top: 1em;
+      }
+
+      #day {
+        font-weight:bold;
+        margin-left: 22px;
+      }
+
+      label {
+        width: 5em!important;
+        display: block;
+        font-weight: bold;
+      }
+    }
+    .firstForm {
+      margin-left: 33px;
+    }
+    .form {
+      margin-left: 81px;
+    }
+    .form-control{
+      width: 8em;
+      text-align:center;
+    }
+    #top {
+      margin-top:15px;
+    }
+    #dayList {
+      margin-top:-15px;
+      margin-bottom: 7px;
+    }
+    #error {
+      display:none;
+      /*margin-top: 15px;*/
+      margin-left: 130px;
+      color:#F57E7E;
+    }
+  }
+  #popup-button {
+    width:30em;
+    margin: 0 auto;
+
+    .textBtn {
+      font-size: 1.1em;
+      width: 8em;
+      margin: 0 2.8em;
+      float: left;
+    }
+  }
+}
+
+.p-operatinghours-error {
+  width:35em;
+  .form01 {
+    > div {
+      display: flex;
+      flex-direction: column;
+
+      &:last-child {
+        padding-top: 1em;
+      }
+      label {
+        width: 5em!important;
+        display: block;
+        font-weight: bold;
+      }
+    }
+  }
+  #popup-button {
+    width:30em;
+    margin: 0 auto;
+
+    .textBtn {
+      font-size: 1.1em;
+      width: 8em;
+      margin:0 auto;
+    }
+  }
+}
+
 /*資料共有　プレビュー */
 .p-tdocument-preview {
   width: 900px;
@@ -1326,6 +1414,11 @@
 #popup #popup-frame-base #popup-frame.p-tdictionary-entry {
   width: 500px;
   height: 450px !important;
+}
+
+#popup #popup-frame-base #popup-frame.p-operatinghours-entry {
+  width: 415px;
+  /*height: 480px !important;*/
 }
 
 #popup #popup-frame-base #popup-frame.p-copy {
