@@ -64,22 +64,7 @@ $(document).ready(function(){
 });
 // 保存処理
 function saveAct(){
-  setting = {title: "営業時間設定エラー"};
-  //ウィジェット設定が「営業時間のみ表示する」で、「利用しない」を選択して更新ボタンを押した場合
-  if(<?= $widgetData ?> == 4 && $("#MOperatingHourActiveFlg1").prop("checked") == false) {
-    $.ajax({
-      type: 'post',
-      dataType: 'html',
-      cache: false,
-      url: "<?= $this->Html->url('/MOperatingHours/remoteOpenError') ?>",
-      success: function(html){
-        modalOpen.call(window, html, 'p-operatinghours-error', setting.title, 'moment');
-      }
-    });
-  }
-  else {
-    document.getElementById('MOperatingHourIndexForm').submit();
-  }
+  document.getElementById('MOperatingHourIndexForm').submit();
 }
 
 </script>

@@ -2095,7 +2095,7 @@
                         });
                       }
                       break;
-                    case 10: // ページ
+                    case 10: // 営業時間設定
                       for (u = 0; u < conditions.length; u++) {
                         this.judge.operating_hours(conditions[u], function(err, timer){
                             if ( !err ) {

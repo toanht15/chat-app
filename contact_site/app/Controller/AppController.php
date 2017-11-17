@@ -156,8 +156,6 @@ class AppController extends Controller {
     Configure::write('logged_company_id', $this->userInfo['MCompany']['id']);
     // ウィジェットの情報をビューへ渡す
     $widgetInfo = $this->MWidgetSetting->coFind('first', []);
-    $this->log('widget情報',LOG_DEBUG);
-    $this->log($widgetInfo,LOG_DEBUG);
 
     /* オペレーター待ち状態 */
     // 在籍/退席
