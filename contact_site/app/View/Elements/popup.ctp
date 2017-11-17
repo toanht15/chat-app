@@ -228,12 +228,6 @@ var popupEvent = {
                         return popupEvent.close();
                     };
                     break;
-                case 'p-operatinghours-error':
-                    var closeBtn = _button("閉じる");
-                    closeBtn.onclick = function(){
-                        return popupEvent.close();
-                    };
-                    break;
                 case 'p-alert':
                     var closeBtn = _button("閉じる");
                     closeBtn.onclick = function(){

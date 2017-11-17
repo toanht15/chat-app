@@ -169,7 +169,7 @@
         //行数をカウント
         var id = $this.attr('id');
         var brcount = (text.split("<br>")).length;
-        if(operatingHours == 'koko') {
+        if(operatingHours == 'operatingHoursPage') {
           var toppx = 69;
         }
         else {
