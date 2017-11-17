@@ -280,6 +280,16 @@ var popupEvent = {
                         return popupEvent.closePopup();
                     };
                     break;
+                case 'p-operatinghours-entry':
+                    var entryBtn = _button("変更する");
+                    entryBtn.onclick = function(){
+                        return popupEvent.closePopup();
+                    };
+                    var closeBtn = _button("閉じる");
+                    closeBtn.onclick = function(){
+                        return popupEvent.close();
+                    };
+                    break;
                 case 'p-alert':
                     var closeBtn = _button("閉じる");
                     closeBtn.onclick = function(){

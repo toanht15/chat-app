@@ -59,7 +59,7 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
     echo $this->Html->css("bootstrap.css");
     echo $this->Html->css("multi-select.css");
     echo $this->Html->css("standalone.css");
-    if ( strcmp($this->name, 'TAutoMessages') === 0 ) {
+    if ( strcmp($this->name, 'TAutoMessages') === 0 || strcmp($this->name, 'MOperatingHours') === 0) {
       echo $this->Html->css("clockpicker.css");
     }
     echo $this->Html->css("style.css");
@@ -78,7 +78,7 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
       echo $this->Html->script("jquery-ui.js");
     }
     echo $this->Html->script("jquery.multi-select.js");
-    if ( strcmp($this->name, 'TAutoMessages') === 0 ) {
+    if ( strcmp($this->name, 'TAutoMessages') === 0 || strcmp($this->name, 'MOperatingHours') === 0) {
       echo $this->Html->css('jquery-ui.css');
       echo $this->Html->script("jquery-ui.js");
       echo $this->Html->script("clockpicker.js");
