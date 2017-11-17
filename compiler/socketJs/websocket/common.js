@@ -774,6 +774,7 @@ var socket, // socket.io
       //html += '      #sincloBox a { color: #8a8a8a }';
       html += '      #sincloBox .sinclo_se a { color: '+ colorList['seTextColor'] +' }';
       html += '      #sincloBox .sinclo_re a { color: '+ colorList['reTextColor'] +' }';
+      html += '      #sincloBox ul#chatTalk li.sinclo_re span.telno { color: ' + colorList['reTextColor'] + '; }';
       html += '      #sincloBox sinclo-div {display: block; }';
       html += '      #sincloBox label { display: inline; max-width: 100%; margin-bottom: 0; font-weight: normal;}';
       html += '      #sincloBox a:hover { color: ' + colorList['mainColor'] + '; }';

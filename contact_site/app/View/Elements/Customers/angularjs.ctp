@@ -1164,6 +1164,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         var strings = message.split('\n');
         var custom = "";
         var linkReg = RegExp(/http(s)?:\/\/[!-~.a-z]*/);
+        var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
         var radioName = "sinclo-radio" + Object.keys(chat).length;
         var option = ( typeof(opt) !== 'object' ) ? { radio: true } : opt;
         for (var i = 0; strings.length > i; i++) {
@@ -1181,6 +1182,14 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                 var url = link[0];
                 var a = "<a href='" + url + "' target='_blank'>"  + url + "</a>";
                 str = str.replace(url, a);
+            }
+            // 電話番号（スマホのみリンク化）
+            var tel = str.match(telnoTagReg);
+            if( tel !== null ) {
+              var telno = tel[1];
+              // ただの文字列にする
+              var span = "<span class='telno'>" + telno + "</span>";
+              str = str.replace(tel[0], span);
             }
             custom += str + "\n";
 

@@ -249,6 +249,22 @@ function addOption(type){
             }
             sendMessage.value += "[] ";
             sendMessage.focus();
+            break;
+        case 2:
+          if (sendMessage.value.length > 0) {
+            sendMessage.value += "\n";
+          }
+          sendMessage.value += "<telno></telno>";
+          sendMessage.focus();
+          // 開始と終了タブの真ん中にカーソルを配置する
+          if (sendMessage.createTextRange) {
+            var range = sendMessage.createTextRange();
+            range.move('character', sendMessage.value.length-8);
+            range.select();
+          } else if (sendMessage.setSelectionRange) {
+            sendMessage.setSelectionRange(sendMessage.value.length, sendMessage.value.length-8);
+          }
+          break;
     }
 }
 
