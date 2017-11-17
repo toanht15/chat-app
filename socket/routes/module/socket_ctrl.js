@@ -2697,8 +2697,8 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         if(sessionIds && sessionIds.length > 0) {
           sessionIds.some(function(v, i){
             if(v.indexOf(socket.id) >= 0) {
+              // オブジェクトは参照渡しなので取得したsessionIdsのみ消去する
               sessionIds.splice(i,1);
-              sincloCore[info.siteKey][sincloSessionId].sessionIds.splice(i,1);
               return true;
             }
           });
