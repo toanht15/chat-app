@@ -789,7 +789,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           url: "<?= $this->Html->url(array('controller' => 'Customers', 'action' => 'remoteGetStayLogs')) ?>",
           data: {
             visitorsId: monitor.userId,
-            tabId: monitor.tabId
+            tabId: monitor.sincloSessionId
           },
           dataType: 'html',
           success: function(html){
