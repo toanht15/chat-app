@@ -304,11 +304,12 @@ class HistoriesController extends AppController {
     //除外パラメーターリスト
     $excludeList = $this->MCompany->getExcludeList($this->userInfo['MCompany']['id']);
 
+    $campaignList = $this->TCampaign->getList();
     foreach($userList as $key => $history){
       $campaignParam = "";
       $tmp = mb_strstr($stayList[$history['THistory']['id']]['THistoryStayLog']['firstURL'], '?');
       if ( $tmp !== "" ) {
-        foreach($this->TCampaign->getList() as $k => $v){
+        foreach($campaignList as $k => $v){
           if ( strpos($tmp, $k) !== false ) {
             if ( $campaignParam !== "" ) {
               $campaignParam .= "\n";
