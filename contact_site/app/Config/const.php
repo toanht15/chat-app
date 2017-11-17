@@ -43,6 +43,7 @@ define('C_COMPANY_USE_STATISTICS', 'statistics'); // 統計
 define('C_COMPANY_USE_DICTIONARY_CATEGORY', 'dictionaryCategory'); // 定型文カテゴリ
 define('C_COMPANY_USE_HIDE_REALTIME_MONITOR', 'hideRealtimeMonitor'); // リアルタイムモニター非表示
 define('C_COMPANY_USE_OPERATING_HOUR', 'operatingHour'); // 営業時間
+define('C_COMPANY_REF_COMPANY_DATA', 'refCompanyData'); // 企業情報参照（Landscape）
 
 
 // 簡易メッセージ入力機能種別
@@ -199,6 +200,8 @@ define('OTHER_TEXT_COLOR', "#666666");
 define('WIDGET_BORDER_COLOR', "#E8E7E0");
 //6.吹き出し枠線色
 define('CHAT_TALK_BORDER_COLOR', "#C9C9C9");
+//6.ヘッダー背景色
+define('HEADER_BACKGROUND_COLOR', "#FFFFFF");
 //7.企業名文字色
 define('SUB_TITLE_TEXT_COLOR', "#ABCD05");
 //8.説明文文字色

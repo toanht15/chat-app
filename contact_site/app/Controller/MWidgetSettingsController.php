@@ -14,7 +14,7 @@ class MWidgetSettingsController extends AppController {
       'show_time', 'max_show_time', 'max_show_time_page', 'show_position', 'widget_size_type', 'title', 'show_subtitle', 'sub_title', 'show_description', 'description',
       'show_main_image', 'main_image', 'radius_ratio', 'box_shadow', 'minimize_design_type','close_button_setting','close_button_mode_type','bannertext',
       /* カラー設定styat */
-      'color_setting_type','main_color','string_color','message_text_color','other_text_color','widget_border_color','chat_talk_border_color','sub_title_text_color','description_text_color',
+      'color_setting_type','main_color','string_color','message_text_color','other_text_color','widget_border_color','chat_talk_border_color','header_background_color','sub_title_text_color','description_text_color',
       'chat_talk_background_color','c_name_text_color','re_text_color','re_background_color','re_border_color','re_border_none','se_text_color','se_background_color','se_border_color','se_border_none','chat_message_background_color',
       'message_box_text_color','message_box_background_color','message_box_border_color','message_box_border_none','chat_send_btn_text_color','chat_send_btn_background_color','widget_inside_border_color','widget_inside_border_none'
       /* カラー設定end */
@@ -601,6 +601,10 @@ class MWidgetSettingsController extends AppController {
             //5.ウィジェット枠線色
             if ( strcmp($v, 'widget_border_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['widget_border_color'] = WIDGET_BORDER_COLOR; // デフォルト値
+            }
+            //6.ヘッダー背景色
+            if ( strcmp($v, 'header_background_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['header_background_color'] = HEADER_BACKGROUND_COLOR; // デフォルト値
             }
             //6.吹き出し枠線色
             if ( strcmp($v, 'chat_talk_border_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
