@@ -28,7 +28,9 @@ class CompanyDataController extends AppController
     try {
       $this->isValidAccessToken($jsonObj[self::PARAM_ACCESS_TOKEN]);
       $component = new LandscapeComponent();
-      $result = $component->getFrom($jsonObj[self::PARAM_IP_ADDRESS], $jsonObj[self::PARAM_LBC]);
+      $ipAddress = !empty($jsonObj[self::PARAM_IP_ADDRESS]) ? $jsonObj[self::PARAM_IP_ADDRESS] : null;
+      $lbcCode = !empty($jsonObj[self::PARAM_LBC]) ? $jsonObj[self::PARAM_LBC] : null;
+      $result = $component->getFrom($ipAddress, $lbcCode);
     } catch(Exception $e) {
       $this->log('getDetailInfo呼び出し時にエラーが発生しました。 エラーメッセージ: '.$e->getMessage().' エラー番号 '.$e->getCode(), 'api-error');
       $this->response->statusCode($e->getCode());
