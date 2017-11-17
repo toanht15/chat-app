@@ -936,10 +936,20 @@
         margin-left: 22px;
       }
 
-      label {
-        width: 5em!important;
-        display: block;
-        font-weight: bold;
+      li {
+        #dayOfWeek {
+          width: 5em!important;
+          display: block;
+          font-weight: bold;
+        }
+        #holiday {
+          cursor:pointer;
+          display: block;
+          position: relative;
+        }
+        #position {
+          margin-left: 32px;
+        }
       }
     }
     .firstForm {
@@ -975,35 +985,6 @@
       width: 8em;
       margin: 0 2.8em;
       float: left;
-    }
-  }
-}
-
-.p-operatinghours-error {
-  width:35em;
-  .form01 {
-    > div {
-      display: flex;
-      flex-direction: column;
-
-      &:last-child {
-        padding-top: 1em;
-      }
-      label {
-        width: 5em!important;
-        display: block;
-        font-weight: bold;
-      }
-    }
-  }
-  #popup-button {
-    width:30em;
-    margin: 0 auto;
-
-    .textBtn {
-      font-size: 1.1em;
-      width: 8em;
-      margin:0 auto;
     }
   }
 }

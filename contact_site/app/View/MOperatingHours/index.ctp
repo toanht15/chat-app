@@ -55,7 +55,23 @@ if ( !(!empty($this->data['MOperatingHour']['active_flg']) && strcmp($this->data
           <dt>条件設定<dt-detail></dt-detail></dt>
           <dd>
             <li>
-              <label class="pointer"><?=  $this->Form->input('type', array('type' => 'radio', 'default' => '1','onclick' => 'entryChange1();', 'name' => 'data[MOperatingHour][type]', 'label' => false, 'legend' => false,'options' => array('1' => '毎日', '2' => '平日/週末'))); ?></label>
+              <label style="display:inline-block;">
+                <?php
+                  $settings = [
+                    'type' => 'radio',
+                    'options' =>  array('1' => '毎日', '2' => '平日/週末'),
+                    'default' => C_TYPE_EVERY,
+                    'legend' => false,
+                    'separator' => '</label><label class="pointer">',
+                    'onclick' => 'entryChange1();',
+                    'name' => 'data[MOperatingHour][type]',
+                    'label' => false,
+                    'div' => false,
+                    'class' => "pointer"
+                  ];
+                  echo $this->Form->input('type',$settings);
+                ?>
+              </label>
             </li>
           </dd>
           <?php
