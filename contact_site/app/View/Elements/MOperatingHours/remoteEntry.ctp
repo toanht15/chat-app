@@ -146,7 +146,6 @@ popupEvent.closePopup = function(){
   td.innerHTML = timeInfo;
   //チェックボックスでチェックを入れた曜日も同じように変更
   for(i=0; i<check.length;i++) {
-    console.log(check[i]);
     td = document.getElementById(check[i]);
     td.innerHTML = timeInfo;
   }
@@ -248,9 +247,13 @@ else {
   <?= $this->Form->input('id', array('type' => 'hidden')); ?>
   <div>
     <li>
-      <label>対象曜日</label>
+      <label id = "dayOfWeek">対象曜日</label>
       <span id = "day"><?= $dayOfWeek; ?></span>
-        <?= $this->Form->checkbox('holiday', array('onchange' => 'holidayCheck()','style' => 'margin-left:21px; margin-top:1px; cursor:pointer;')) ?><span id="tabsortText" style = "margin-top:1px;">休業日</span>
+      <label id = "holiday">
+        <?= $this->Form->checkbox('holiday', array('onchange' => 'holidayCheck()',
+        'style' => 'margin-left: -10px; cursor: pointer; position: absolute; top: -3px; bottom: 0; width: 5em;')) ?>
+        <span id = position>休業日</span>
+      </label>
     </li>
   </div>
   <span class = "allForm">
@@ -388,7 +391,8 @@ else {
             'label' => $v2,
             'div' => false,
             'value' => $v,
-            'error' => false
+            'error' => false,
+            'id' => 'check'.$v
           ]) ?>
         </label>
       <?php }
@@ -401,7 +405,8 @@ else {
             'label' => $v2,
             'div' => false,
             'value' => $v,
-            'error' => false
+            'error' => false,
+            'id' => 'check'.$v
           ]) ?>
         </label>
       <?php  }
