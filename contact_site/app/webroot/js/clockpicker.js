@@ -428,8 +428,11 @@
       case 'original':
         styles.left = element[0].offsetLeft;
         break;
+      case 'originalTime':
+        styles.top = '-22em';
+        styles.left = element[0].offsetLeft -70;
+        break;
     }
-
     popover.css(styles);
   };
 
