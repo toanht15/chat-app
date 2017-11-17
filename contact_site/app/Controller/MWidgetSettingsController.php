@@ -4,7 +4,7 @@
  * ウィジェット設定マスタ
  */
 class MWidgetSettingsController extends AppController {
-  public $uses = ['MWidgetSetting'];
+  public $uses = ['MWidgetSetting','MOperatingHour'];
   public $helpers = ['ngForm'];
 
   public $coreSettings = null;
@@ -173,6 +173,15 @@ class MWidgetSettingsController extends AppController {
         }
       }
       $this->data = $inputData;
+
+      //営業時間設定確認
+      $operatingHourData = $this->MOperatingHour->find('first', ['conditions' => [
+        'm_companies_id' => $this->userInfo['MCompany']['id']
+      ]]);
+      if(empty($operatingHourData)) {
+        $operatingHourData['MOperatingHour']['active_flg'] = 2;
+      }
+      $this->set('operatingHourData',$operatingHourData['MOperatingHour']['active_flg']);
     }
     $titleLength = 12;
     $subTitleLength = 15;

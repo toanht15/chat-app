@@ -71,6 +71,13 @@ class autoMessageHelper extends AppHelper {
 				3 => "不一致（若しくは取得できなかった場合）"
 			]
 		],
+		'operatingHoursTime' => [
+			'label' => '条件',
+			'dataList' => [
+				1 => "営業時間内",
+				2 => "営業時間外"
+			]
+		],
     'speechContentCond' => [
       'label' => '条件',
         'dataList' => [
