@@ -62,6 +62,7 @@ router.get("/", function(req, res, next) {
                 }
                 return num;
             }
+            var m_companies_id = rows[0].m_companies_id;
 
             try {
               // IPアドレス制限
@@ -99,7 +100,7 @@ router.get("/", function(req, res, next) {
 
                 // チャット本文コピー設定が存在しない場合は「コピー可」
                 var chatMessageCopy = 0;
-               	if(('chatMessageCopy' in settings)) {
+                if(('chatMessageCopy' in settings)) {
                   chatMessageCopy = isNumeric(settings.chatMessageCopy);
                 }
 
@@ -282,18 +283,54 @@ router.get("/", function(req, res, next) {
 
                 pool.query(getTriggerListSql, [siteKey, actionTypeList.join(",")],
                   function(err, rows){
-                    for(var i=0; i<rows.length; i++){
-                      if ( !(rows[i].trigger_type in sendData['messages']) ) {
-                          sendData['messages'] = [];
-                      }
-                      sendData['messages'].push({
-                        "id": rows[i].id,
-                        "sitekey": siteKey,
-                        "activity": JSON.parse(rows[i].activity),
-                        "action_type": isNumeric(rows[i].action_type),
+                    now = new Date();
+                    nowDay = now.getDay();
+                    dateParse = Date.parse(now);
+                    date = now.getFullYear() + "/" + (now.getMonth()+1) + "/" + now.getDate() + " ";
+                    today = (now.getMonth()+1) + now.getDate();
+                    var getOperatingHourSQL = "SELECT * FROM m_operating_hours where m_companies_id = ?;";
+                    pool.query(getOperatingHourSQL, m_companies_id , function(error,result){
+                      var getPublicHolidaySQL = "SELECT * FROM public_holidays where year = ?;";
+                      pool.query(getPublicHolidaySQL, now.getFullYear() , function(err, results){
+                        for(var i=0; i<rows.length; i++){
+                          if ( !(rows[i].trigger_type in sendData['messages']) ) {
+                            sendData['messages'] = [];
+                          }
+                          for(var i2=0; i2<result.length; i2++){
+                            if(result[i2].active_flg == 1 && JSON.parse(rows[i].activity).conditions[10] != null) {
+                              var jsonData = JSON.parse(rows[i].activity);
+                              if(result[i2].type === 1) {
+                                jsonData.conditions[10][0].everyday = JSON.parse(result[i2].time_settings).everyday;
+                                jsonData.conditions[10][0].publicHolidayConditions = JSON.parse(result[i2].time_settings).everyday.pub;
+                                jsonData.conditions[10][0].now = now;
+                                jsonData.conditions[10][0].nowDay = nowDay;
+                                jsonData.conditions[10][0].dateParse = dateParse;
+                                jsonData.conditions[10][0].date = date;
+                                jsonData.conditions[10][0].today = today;
+                              }
+                              else {
+                                jsonData.conditions[10][0].weekly = JSON.parse(result[i2].time_settings).weekly;
+                                jsonData.conditions[10][0].publicHolidayConditions = JSON.parse(result[i2].time_settings).weekly.weekpub;
+                                jsonData.conditions[10][0].now = now;
+                                jsonData.conditions[10][0].dateParse = dateParse;
+                                jsonData.conditions[10][0].date = date;
+                                jsonData.conditions[10][0].today = today;
+                              }
+                              jsonData.conditions[10][0].publicHoliday = results;
+                              jsonData.conditions[10][0].type = result[i2].type;
+                              rows[i].activity = JSON.stringify(jsonData);
+                            }
+                          }
+                          sendData['messages'].push({
+                            "id": rows[i].id,
+                            "sitekey": siteKey,
+                            "activity": JSON.parse(rows[i].activity),
+                            "action_type": isNumeric(rows[i].action_type),
+                          });
+                        }
+                        res.send(sendData);
                       });
-                    }
-                    res.send(sendData);
+                    });
                   }
                 );
               }

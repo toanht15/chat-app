@@ -42,6 +42,7 @@ define('C_COMPANY_USE_HISTORY_DELETE', 'deleteHistory'); // 履歴削除
 define('C_COMPANY_USE_STATISTICS', 'statistics'); // 統計
 define('C_COMPANY_USE_DICTIONARY_CATEGORY', 'dictionaryCategory'); // 定型文カテゴリ
 define('C_COMPANY_USE_HIDE_REALTIME_MONITOR', 'hideRealtimeMonitor'); // リアルタイムモニター非表示
+define('C_COMPANY_USE_OPERATING_HOUR', 'operatingHour'); // 営業時間
 define('C_COMPANY_REF_COMPANY_DATA', 'refCompanyData'); // 企業情報参照（Landscape）
 
 
@@ -59,6 +60,7 @@ define('C_WIDGET_SHOW_TIMING_IMMEDIATELY', 4);       // すぐに表示
 define('C_WIDGET_DISPLAY_CODE_SHOW', 1); // 常に表示する
 define('C_WIDGET_DISPLAY_CODE_OPER', 2); // オペレーターが待機中の時のみ表示する
 define('C_WIDGET_DISPLAY_CODE_HIDE', 3); // 表示しない
+define('C_WIDGET_DISPLAY_CODE_TIME', 4); // 営業時間内のみ表示する
 
 // 自動表示条件種別
 define('C_WIDGET_AUTO_OPEN_TYPE_ON', 3); // 常に自動で最大化する
@@ -93,6 +95,14 @@ define('C_WIDGET_SEND_ACT_PUSH_BTN', 2); // ボタンのみ
 // チャット対応数制限
 define('C_SC_ENABLED', 1); // 利用する
 define('C_SC_DISABLED', 2); // 利用しない
+
+// 営業時間設定
+define('C_ACTIVE_ENABLED', 1); // 利用する
+define('C_ACTIVE_DISABLED', 2); // 利用しない
+
+// 営業時間設定
+define('C_TYPE_EVERY', 1); // 毎日
+define('C_TYPE_WEEKLY', 2); // 平日/週末
 
 // チャット通知の種別
 define('C_NOTIFICATION_TYPE_TITLE', 1); // タイトル
@@ -135,6 +145,7 @@ define('C_AUTO_TRIGGER_SEARCH_KEY', 6); // 検索キーワード
 define('C_AUTO_TRIGGER_SPEECH_CONTENT', 7); // 発言内容
 define('C_AUTO_TRIGGER_STAY_PAGE_OF_FIRST', 8); // 最初の滞在ページ
 define('C_AUTO_TRIGGER_STAY_PAGE_OF_PREVIOUS', 9); // 前のページ
+define('C_AUTO_TRIGGER_OPERATING_HOURS', 10); // 営業時間
 
 // オートメッセージ機能－アクション種別コード
 define('C_AUTO_ACTION_TYPE_SENDMESSAGE', 1); // チャットメッセージを送る
@@ -293,6 +304,7 @@ $config['normalChoices'] = [
 /* ウィジェット設定 － 表示設定種別 */
 $config['WidgetDisplayType'] = [
     1 => "常に表示する",
+    4 => "営業時間内のみ表示する",
     2 => "オペレーターが待機中の時のみ表示する",
     3 => "表示しない"
 ];
@@ -452,6 +464,15 @@ $config['outMessageTriggerList'] = [
          "keyword" => "",
          "targetName" => 1,
          "stayPageCond" => 2
+      ]
+    ],
+    // 営業時間設定
+    C_AUTO_TRIGGER_OPERATING_HOURS => [
+      'label' => '営業時間設定',
+      'createLimit' => [C_COINCIDENT => 1, C_SOME_EITHER => 1],
+      'key' => 'operating_hours',
+      'default' => [
+         "operatingHoursTime" => 1
       ]
     ]
 ];

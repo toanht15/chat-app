@@ -897,7 +897,7 @@ var socket, // socket.io
           }
         }
       }
-      html += '      #sincloBox section#navigation { position: relative; display: block; }';
+      html += '      #sincloBox section#navigation { position: relative; display: block; top: 0px!important; background: #FFF!important; }';
       html += '      #sincloBox section#navigation ul { display: table; padding: 0; position: absolute; top: 0; left: 0; }';
       if(widget.chatMessageCopy === 1) {
         html += '      #sincloBox #fotter { text-align: center; color: #A1A1A1!important; background-color: #FFF; margin: 0;border-top: none; user-select: none;-moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;}';
@@ -905,7 +905,7 @@ var socket, // socket.io
       else {
         html += '      #sincloBox #fotter { text-align: center; color: #A1A1A1!important; background-color: #FFF; margin: 0;border-top: none; }';
       }
-      html += '      #sincloBox section#navigation ul li { position: relative; overflow: hidden; cursor: pointer; color: ' + colorList['otherTextColor'] + '; text-align: center; display: table-cell; }';
+      html += '      #sincloBox section#navigation ul li { position: relative; overflow: hidden; cursor: pointer; color: ' + colorList['otherTextColor'] + '; text-align: center; display: table-cell; line-height: inherit!important; }';
       html += '      #sincloBox section#navigation ul li.selected { background-color: ' + colorList['chatTalkBackgroundColor'] + '; }';
       html += '      #sincloBox section#navigation ul li::before{ color: #BCBCBC; content: " "; display: inline-block; position: relative; background-size: contain; vertical-align: middle; background-repeat: no-repeat }';
       html += '      #sincloBox section#navigation ul li.selected::after{ content: " "; position: absolute; bottom: 0px; left: 5px; right: 5px; }';

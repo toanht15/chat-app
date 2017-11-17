@@ -4,7 +4,7 @@
  * チャット基本設定
  */
 class MChatSettingsController extends AppController {
-  public $uses = ['MChatSetting', 'MUser'];
+  public $uses = ['MChatSetting', 'MUser','MOperatingHour'];
 
   public function beforeFilter(){
     parent::beforeFilter();
@@ -24,6 +24,12 @@ class MChatSettingsController extends AppController {
         $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
         $this->redirect(['controller' => $this->name, 'action' => 'index']);
       }
+      else {
+        $operatingHourData = $this->MOperatingHour->find('first', ['conditions' => [
+          'm_companies_id' => $this->userInfo['MCompany']['id']
+        ]]);
+        $this->set('operatingHourData',$operatingHourData['MOperatingHour']['active_flg']);
+      }
     }
     // 表示処理
     else {
@@ -31,6 +37,22 @@ class MChatSettingsController extends AppController {
       $this->request->data = $this->MChatSetting->find('first', ['conditions' => [
         'm_companies_id' => $this->userInfo['MCompany']['id']
       ]]);
+
+      $operatingHourData = $this->MOperatingHour->find('first', ['conditions' => [
+        'm_companies_id' => $this->userInfo['MCompany']['id']
+      ]]);
+      $this->set('operatingHourData',$operatingHourData['MOperatingHour']['active_flg']);
+
+      //デフォルト設定
+      if(!empty($this->request->data['MChatSetting']['sorry_message'])) {
+        if($operatingHourData['MOperatingHour']['active_flg'] == 1){
+          $this->request->data['MChatSetting']['outside_hours_sorry_message'] = $this->request->data['MChatSetting']['sorry_message'];
+        }
+        if($this->request->data['MChatSetting']['sc_flg'] == 1) {
+          $this->request->data['MChatSetting']['wating_call_sorry_message'] = $this->request->data['MChatSetting']['sorry_message'];
+        }
+        $this->request->data['MChatSetting']['no_standby_sorry_message'] = $this->request->data['MChatSetting']['sorry_message'];
+      }
     }
 
     $this->set('mUserList', $this->MUser->getUser()); // ユーザーのリスト
@@ -57,6 +79,9 @@ class MChatSettingsController extends AppController {
     }
     // 保存用変数にチャット基本設定のみセット
     $saveData['MChatSetting'] = $inputData['MChatSetting'];
+
+    //sorry_messageデフォルト値削除
+    $saveData['MChatSetting']['sorry_message'] = "";
 
     // 同時対応上限数を利用しない場合
     if ( strcmp($saveData['MChatSetting']['sc_flg'], C_SC_DISABLED) === 0 ) {
