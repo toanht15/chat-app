@@ -143,13 +143,9 @@ popupEvent.closePopup = function(){
   document.getElementById("MOperatingHourOutputData").value = jsonData;
   //一覧画面に変更した情報を記入
   var td = document.getElementById(day);
-  console.log('timeInfo');
-  console.log(timeInfo);
-  console.log(check);
   td.innerHTML = timeInfo;
   //チェックボックスでチェックを入れた曜日も同じように変更
   for(i=0; i<check.length;i++) {
-    console.log(check[i]);
     td = document.getElementById(check[i]);
     td.innerHTML = timeInfo;
   }
