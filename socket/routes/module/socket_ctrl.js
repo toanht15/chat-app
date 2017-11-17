@@ -44,7 +44,7 @@ var LaSessionCounter = function() {
   var countList = {};
   var _initializeCountList = function(siteKey) {
     countList[siteKey] = {};
-    countList[siteKey][_key_currentCount] = 0;
+    countList[siteKey][_key_currentCount] = [];
     countList[siteKey][_key_maxCount] = 0;
     _printCurrentState(siteKey, '_initializeCountList');
   }
@@ -52,7 +52,7 @@ var LaSessionCounter = function() {
     return (siteKey in countList && _key_maxCount in countList[siteKey]) ? countList[siteKey][_key_maxCount] : 0;
   };
   var _getCurrentCount = function(siteKey) {
-    return (siteKey in countList && _key_currentCount in countList[siteKey]) ? countList[siteKey][_key_currentCount] : 0;
+    return (siteKey in countList && _key_currentCount in countList[siteKey]) ? countList[siteKey][_key_currentCount].length : 0;
   };
   var _printCurrentState = function(siteKey, functionName) {
     var current = _getCurrentCount(siteKey);
@@ -73,28 +73,30 @@ var LaSessionCounter = function() {
     getCurrentCount: function(siteKey) {
       return _getCurrentCount(siteKey);
     },
-    countUp : function(siteKey) {
-      if(this.currentCountExists(siteKey)) {
+    countUp : function(siteKey, tabId) { // サイト訪問者側のIDを入れる
+      if(!this.currentCountExists(siteKey)) {
         // まずはゼロ代入
         this.initializeCurrentCount(siteKey);
       }
       if(!this.isLimit(siteKey)) {
         console.log("DEBUG2 : " + JSON.stringify(countList[siteKey]));
-        countList[siteKey][_key_currentCount]++;
+        countList[siteKey][_key_currentCount].push(tabId);
       }
       _printCurrentState(siteKey, "countUp");
     },
-    countDown : function(siteKey) {
-      if(countList[siteKey][_key_currentCount] <= 0) return;
-      countList[siteKey][_key_currentCount]--;
+    countDown : function(siteKey, tabId) { // サイト訪問者側のIDを入れる
+      if(countList[siteKey][_key_currentCount].length <= 0) return;
+      countList[siteKey][_key_currentCount].some(function(v, i){
+        if (v === tabId) countList[siteKey][_key_currentCount].splice(i,1);
+      });
       _printCurrentState(siteKey, "countDown");
 
     },
     initializeCurrentCount : function(siteKey) {
-      countList[siteKey][_key_currentCount] = 0;
+      countList[siteKey][_key_currentCount] = [];
     },
     currentCountExists : function(siteKey) {
-      return (siteKey in countList) && (_key_currentCount in countList[siteKey]);
+      return (siteKey in countList) && (_key_currentCount in countList[siteKey]) && (typeof(countList[siteKey][_key_currentCount] === 'object'));
     },
     isLimit : function(siteKey) {
       var current = this.getCurrentCount(siteKey);
@@ -308,7 +310,7 @@ function coBrowseStopCtrl(siteKey, tabId, unsetFlg){
       break;
     }
   }
-
+  laSessionCounter.countDown(siteKey, tabId);
 }
 
 function getOperatorCnt(siteKey) {
@@ -1456,8 +1458,9 @@ io.sockets.on('connection', function (socket) {
       if(keys && keys.length > 0) {
         keys.forEach(function(key) {
           var splitedKey = key.split("_");
-          if(splitedKey[0]) {
-            if(splitedKey[0].indexOf(term) === 0) { // 前方一致検索
+          var targetTerm = obj.filterType === 1 ? splitedKey[0] : splitedKey[1];
+          if(targetTerm) {
+            if(targetTerm.indexOf(term) === 0) { // 前方一致検索
               var mergedObject = extend(customerList[obj.siteKey][key], sincloCore[obj.siteKey][customerList[obj.siteKey][key]['tabId']]);
               result.push(mergedObject);
             }
@@ -2327,7 +2330,6 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   socket.on('requestCoBrowseOpen', function (data) {
     console.log("requestCoBrowseOpen >>> " + data);
     var obj = JSON.parse(data);
-    console.log(data);
     if ( !getSessionId(obj.siteKey, obj.tabId, 'sessionId') ) return false;
     if(laSessionCounter.isLimit(obj.siteKey)) {
       emit.toMine('coBrowseSessionLimit', data, socket);
@@ -2368,7 +2370,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     sincloCore[obj.siteKey][obj.tabId].coBrowseConnectToken = obj.coBrowseConnectToken;
     emit.toUser('readyToCoBrowse', data, getSessionId(obj.siteKey, obj.tabId, 'coBrowseParentSessionId'));
     emit.toCompany('syncNewInfo', data, obj.siteKey);
-    laSessionCounter.countUp(obj.siteKey);
+    laSessionCounter.countUp(obj.siteKey, obj.tabId);
   });
 
   /**
@@ -2469,7 +2471,6 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
       // 企業一括
       emit.toCompany('stopCoBrowse', compData, obj.siteKey); // リアルタイムモニタを更新する為
-      laSessionCounter.countDown(obj.siteKey);
     }
     else {
       emit.toCompany('unsetUser', data, obj.siteKey);
@@ -2937,7 +2938,6 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       if(keys && keys.length > 0) {
         keys.forEach(function(key) {
           if(key.indexOf(socket.id) >= 0) {
-            console.log("delete customerList[] : " + key);
             delete customerList[info.siteKey][key];
           }
         });

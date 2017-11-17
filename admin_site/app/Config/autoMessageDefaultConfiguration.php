@@ -31,7 +31,8 @@ $config['default'] = [
         'message' => 'ご訪問誠にありがとうございます。'
       ],
       'action_type' => 1,
-      'active_type' => 0
+      'active_type' => 0,
+      'sort' => 1
     ],
     [
       'name' => '2回目以降訪問3秒後',
@@ -57,7 +58,8 @@ $config['default'] = [
         'message' => '再訪問ありがとうございます。'
       ],
       'action_type' => 1,
-      'active_type' => 0
+      'active_type' => 0,
+      'sort' => 2
     ],
     [
       'name' => 'ページ滞在10秒後',
@@ -78,7 +80,8 @@ $config['default'] = [
 ご不明な点などございましたら、お気軽にご質問ください。'
       ],
       'action_type' => 1,
-      'active_type' => 0
+      'active_type' => 0,
+      'sort' => 3
     ],
     [
       'name' => 'ページ滞在20秒後',
@@ -103,7 +106,8 @@ xx-xxx-xxx（平日9:00-18:00）
 [] まずはチャットで相談'
       ],
       'action_type' => 1,
-      'active_type' => 1
+      'active_type' => 1,
+      'sort' => 4
     ],
 
     [
@@ -124,7 +128,8 @@ xx-xxx-xxx（平日9:00-18:00）
         'message' => '資料送付をご希望の際は、会社名・お名前・連絡先（メールアドレス）をご記入ください。'
       ],
       'action_type' => 1,
-      'active_type' => 1
+      'active_type' => 1,
+      'sort' => 5
     ],
     [
       'name' => 'ページ滞在2分後',
@@ -148,7 +153,8 @@ xx-xxx-xxx（平日9:00-18:00）
 [] その他'
       ],
       'action_type' => 1,
-      'active_type' => 1
+      'active_type' => 1,
+      'sort' => 6
     ],
   ]
 ];

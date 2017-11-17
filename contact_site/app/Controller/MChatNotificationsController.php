@@ -219,12 +219,28 @@ class MChatNotificationsController extends AppController {
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
     $this->MChatNotification->recursive = -1;
-    if ( $this->MChatNotification->logicalDelete($this->request->data['id']) ) {
+    $selectedList = $this->request->data['selectedList'];
+    $this->MChatNotification->begin();
+    $res = true;
+    foreach($selectedList as $key => $val){
+      if (! $this->MChatNotification->delete($val) ) {
+        $res = false;
+      }
+    }
+    if($res){
+      $this->MChatNotification->commit();
       $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
     }
-    else {
+    else{
+      $this->MChatNotification->rollback();
       $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
     }
+//     if ( $this->MChatNotification->logicalDelete($this->request->data['id']) ) {
+//       $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
+//     }
+//     else {
+//       $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
+//     }
   }
 
   private function _viewElement(){

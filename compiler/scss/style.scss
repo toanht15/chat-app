@@ -95,7 +95,8 @@ li {
 }
 
 table {
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing:0;
   border: none;
 
   tbody.sortable {
@@ -2781,6 +2782,77 @@ ul.naviBtn {
     margin-top:30px;
   }
 
+  .questionBalloon {
+    display: inline-block;
+    position: relative;
+    padding-left: 5px;
+
+    icon {
+      border-radius: 20px;
+      width: 1.5em;
+      height: 1.5em;
+      font-size: 0.9em!important;
+    }
+  }
+
+  .explainTooltip {
+    z-index: 10;
+    position: absolute;
+
+    icon-annotation {
+      width: 16em;
+      height: 2.1em;
+      display: none;
+
+      /* 矢印 */
+      &:before {
+        content: " ";
+        border: none;
+        border-top: 10px solid rgba(0, 0, 0, 0.13);
+        border-left: 9px solid transparent;
+        border-right: 9px solid transparent;
+        position: absolute;
+        bottom: -28px;
+        left: 5px;
+        z-index: 1;
+      }
+
+      &:after {
+        content: " ";
+        border: none;
+        border-top: 10px solid white;
+        border-left: 9px solid transparent;
+        border-right: 9px solid transparent;
+        position: absolute;
+        bottom: -26px;
+        left: 5px;
+        z-index: 3;
+      }
+
+
+      ul {
+        margin: 0;
+        padding: 0;
+        text-align: left;
+        background-color: #FFF;
+        box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+        padding: 0.5em;
+        font-weight: normal;
+        border-radius: 5px;
+
+        img {
+          margin-bottom: -0.2em;
+          width:1em;
+          height:1em;
+        }
+
+        span {
+          font-size: 0.9em;
+        }
+      }
+    }
+  }
+
   #noseach_menu{
     visibility:hidden;
     margin-top: -3em;
@@ -2867,7 +2939,71 @@ ul.naviBtn {
 /* ユーザマスタ */
 
 #muser_menu img[class$='Btn'] {
-  border-radius: 15px;
+  /*border-radius: 15px;*/
+}
+
+#muser_list {
+  td:not(.noClick) {
+    cursor: pointer;
+  }
+
+  .bgGrey {
+    background-color: #DEDEDE;
+  }
+
+  .lineCtrl {
+    text-align: center;
+
+    div {
+      display: inline-block;
+      a {
+        float: left;
+        margin-bottom: 5px;
+        margin-top: 5px;
+      }
+    }
+  }
+
+  :not(.lineCtrl) a { text-decoration: underline; }
+
+  input[type='checkbox'] {
+      display: none;
+
+      &:checked + label {
+          background-color: $main-color;
+          border: 1px solid $main-color;
+          position: relative;
+          cursor: pointer;
+
+          &:after {
+              content: "";
+              font-weight: bold;
+              border-right: 4px solid #FFF;
+              border-bottom: 4px solid #FFF;
+              width: 6px;
+              height: 10px;
+              position: absolute;
+              top: 0;
+              right: 4px;
+              transform: rotate(45deg);
+          }
+      }
+
+      & + label {
+          width: 20px;
+          height: 20px;
+          display: block;
+          margin: 0 auto;
+          background-color: #FFF;
+          padding: 1px;
+          border: 1px solid #828282;
+          cursor: pointer;
+      }
+  }
+
+  th input[type='checkbox']:checked + label {
+      border: 1px solid #FFF;
+  }
 }
 
 #muser_list table td:last-child {
@@ -3054,6 +3190,20 @@ ul.naviBtn {
         padding: 1em;
       }
 
+      hr.separator {
+        margin-top: 0.1em;
+        margin-bottom: 1em;
+        display: block;
+        width: 396px;
+        height: 1px;
+        background-color: #DDD;
+        border: 0;  /*デフォルトデザインでは線がある場合があるので、消しておく。*/
+        &.indent {
+          width: 384px;
+          position: relative;
+          left: -5px;
+        }
+      }
     }
 
     #m_widget_setting_action {
@@ -3082,7 +3232,6 @@ ul.naviBtn {
         margin-bottom: 0.5em;
       }
     }
-
 
   }
 }
@@ -3158,12 +3307,13 @@ ul.naviBtn {
   $list-color: #ECF4DA;
 
   #tautomessages_menu {
-    img[class$='Btn'] {
+    height: 85px;
+    /*img[class$='Btn'] {
         border-radius: 15px;
-    }
+    }*/
 
     div.ctrlBtnArea {
-        width: 100px;
+        /* width: 100px; */
         a {
           float: left;
           img.actCtrlBtn{ display: none }
@@ -3294,6 +3444,9 @@ ul.naviBtn {
         }
     }
 
+    .ui-sortable-helper {
+        display: table;
+    }
   }
 
   #tautomessages_form {
@@ -3658,7 +3811,7 @@ ul.naviBtn {
       a {
         width: 30px;
         height: 30px;
-        margin-right: 10px;
+        /*margin-right: 10px;*/
         border-radius: 15px;
         img {
           margin: -1px 0 0px -1px; /* TODO: 綺麗な画像を頂ければ削除予定 */
@@ -3667,6 +3820,68 @@ ul.naviBtn {
     }
   }
   #chat_notifications_list {
+      td:not(.noClick) {
+        cursor: pointer;
+      }
+
+      .bgGrey {
+        background-color: #DEDEDE;
+      }
+
+      .lineCtrl {
+        text-align: center;
+
+        div {
+          display: inline-block;
+          a {
+            float: left;
+            margin-bottom: 5px;
+            margin-top: 5px;
+          }
+        }
+      }
+
+      :not(.lineCtrl) a { text-decoration: underline; }
+
+      input[type='checkbox'] {
+        display: none;
+
+        &:checked + label {
+          background-color: $main-color;
+          border: 1px solid $main-color;
+          position: relative;
+          cursor: pointer;
+
+          &:after {
+            content: "";
+            font-weight: bold;
+            border-right: 4px solid #FFF;
+            border-bottom: 4px solid #FFF;
+            width: 6px;
+            height: 10px;
+            position: absolute;
+            top: 0;
+            right: 4px;
+            transform: rotate(45deg);
+          }
+        }
+
+        & + label {
+          width: 20px;
+          height: 20px;
+          display: block;
+          margin: 0 auto;
+          background-color: #FFF;
+          padding: 1px;
+          border: 1px solid #828282;
+          cursor: pointer;
+        }
+      }
+
+      th input[type='checkbox']:checked + label {
+        border: 1px solid #FFF;
+      }
+
       .ctrlBtnArea {
           width: 120px;
           a {
@@ -3784,6 +3999,74 @@ ul.naviBtn {
       img {
         border-radius: 15px;
       }
+    }
+  }
+
+  #tcampaigns_list{
+    td:not(.noClick) {
+      cursor: pointer;
+    }
+
+    .bgGrey {
+      background-color: #DEDEDE;
+    }
+
+    .lineCtrl {
+      text-align: center;
+
+      div {
+        display: inline-block;
+        a {
+          float: left;
+          margin-bottom: 5px;
+          margin-top: 5px;
+        }
+      }
+    }
+
+    :not(.lineCtrl) a { text-decoration: underline; }
+
+    input[type='checkbox'] {
+      display: none;
+
+      &:checked + label {
+        background-color: $main-color;
+        border: 1px solid $main-color;
+        position: relative;
+        cursor: pointer;
+
+        &:after {
+          content: "";
+          font-weight: bold;
+          border-right: 4px solid #FFF;
+          border-bottom: 4px solid #FFF;
+          width: 6px;
+          height: 10px;
+          position: absolute;
+          top: 0;
+          right: 4px;
+          transform: rotate(45deg);
+        }
+      }
+
+      & + label {
+        width: 20px;
+        height: 20px;
+        display: block;
+        margin: 0 auto;
+        background-color: #FFF;
+        padding: 1px;
+        border: 1px solid #828282;
+        cursor: pointer;
+      }
+    }
+
+    th input[type='checkbox']:checked + label {
+      border: 1px solid #FFF;
+    }
+
+    .ui-sortable-helper {
+      display: table;
     }
   }
 
@@ -4202,9 +4485,9 @@ ul.naviBtn {
   }
 
   #tdocument_menu {
-    img[class$='Btn'] {
+    /*img[class$='Btn'] {
       border-radius: 15px;
-    }
+    }*/
   }
 
   #tdocument_list {
@@ -4262,6 +4545,72 @@ ul.naviBtn {
         padding: 0.25em 0;
         z-index: 1;
       }
+    }
+
+    td:not(.noClick) {
+      cursor: pointer;
+    }
+
+    .bgGrey {
+      background-color: #DEDEDE;
+    }
+
+    .lineCtrl {
+      text-align: center;
+
+      div {
+        display: inline-block;
+        a {
+          float: left;
+          margin-bottom: 5px;
+          margin-top: 5px;
+        }
+      }
+    }
+
+    :not(.lineCtrl) a { text-decoration: underline; }
+
+    input[type='checkbox'] {
+      display: none;
+
+      &:checked + label {
+        background-color: $main-color;
+        border: 1px solid $main-color;
+        position: relative;
+        cursor: pointer;
+
+        &:after {
+            content: "";
+            font-weight: bold;
+            border-right: 4px solid #FFF;
+            border-bottom: 4px solid #FFF;
+            width: 6px;
+            height: 10px;
+            position: absolute;
+            top: 0;
+            right: 4px;
+            transform: rotate(45deg);
+        }
+      }
+
+      & + label {
+        width: 20px;
+        height: 20px;
+        display: block;
+        margin: 0 auto;
+        background-color: #FFF;
+        padding: 1px;
+        border: 1px solid #828282;
+        cursor: pointer;
+      }
+    }
+
+    th input[type='checkbox']:checked + label {
+      border: 1px solid #FFF;
+    }
+
+    .ui-sortable-helper {
+      display: table;
     }
   }
 
@@ -5345,9 +5694,9 @@ ul.naviBtn {
             border-left: 9px solid transparent;
             border-right: 9px solid transparent;
             position: absolute;
-            bottom: -0.7em;
-            left: 147px;
-            z-index: 1;;
+            bottom: -28px;
+            left: 5px;
+            z-index: 1;
           }
 
           &:after {
@@ -5357,8 +5706,8 @@ ul.naviBtn {
             border-left: 9px solid transparent;
             border-right: 9px solid transparent;
             position: absolute;
-            bottom: -0.7em;
-            left: 147px;
+            bottom: -26px;
+            left: 5px;
             z-index: 3;
           }
 
