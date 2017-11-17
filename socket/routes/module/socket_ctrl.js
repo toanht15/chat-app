@@ -1,5 +1,6 @@
 var database = require('../database');
 var api = require('../api');
+var uuid = require('node-uuid');
 
 // mysql
 var mysql = require('mysql'),
@@ -1060,7 +1061,7 @@ io.sockets.on('connection', function (socket) {
     if ( res.type !== 'admin' ) {
       if ( data.userId === undefined || data.userId === '' || data.userId === null ) {
         send.userId = makeUserId();
-        send.sincloSessionId = send.userId;
+        send.sincloSessionId = uuid.v4();
       }
       if ( data.accessId === undefined || data.accessId === '' || data.accessId === null ) {
         send.accessId = ('000' + Math.floor(Math.random() * 10000)).slice(-4);
