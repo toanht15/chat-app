@@ -62,7 +62,7 @@ class MOperatingHoursController extends AppController {
       //デフォルト設定
       if(empty($operatingHourData)) {
         $saveData['MOperatingHour']['m_companies_id'] = $this->userInfo['MCompany']['id'];
-        $saveData['MOperatingHour']['time_settings'] = "{\"everyday\":{\"mon\":[{\"start\":\"09:00\",\"end\":\"18:00\"}],\"tue\":[{\"start\":\"09:00\",\"end\":\"18:00\"}],\"wed\":[{\"start\":\"09:00\",\"end\":\"18:00\"}],\"thu\":[{\"start\":\"09:00\",\"end\":\"18:00\"}],\"fri\":[{\"start\":\"09:00\",\"end\":\"18:00\"}],\"sat\":[{\"start\":\"\",\"end\":\"\"}],\"sun\":[{\"start\":\"\",\"end\":\"\"}],\"pub\":[{\"start\":\"09:00\",\"end\":\"18:00\"}]},\"weekly\":{\"week\":[{\"start\":\"09:00\",\"end\":\"18:00\"}],\"weekend\":[{\"start\":\"09:00\",\"end\":\"18:00\"}],\"weekpub\":[{\"start\":\"\",\"end\":\"\"}]}}";
+        $saveData['MOperatingHour']['time_settings'] = "{\"everyday\":{\"mon\":[{\"start\":\"09:00\",\"end\":\"18:00\"}],\"tue\":[{\"start\":\"09:00\",\"end\":\"18:00\"}],\"wed\":[{\"start\":\"09:00\",\"end\":\"18:00\"}],\"thu\":[{\"start\":\"09:00\",\"end\":\"18:00\"}],\"fri\":[{\"start\":\"09:00\",\"end\":\"18:00\"}],\"sat\":[{\"start\":\"\",\"end\":\"\"}],\"sun\":[{\"start\":\"\",\"end\":\"\"}],\"pub\":[{\"start\":\"\",\"end\":\"\"}]},\"weekly\":{\"week\":[{\"start\":\"09:00\",\"end\":\"18:00\"}],\"weekend\":[{\"start\":\"09:00\",\"end\":\"18:00\"}],\"weekpub\":[{\"start\":\"\",\"end\":\"\"}]}}";
         $saveData['MOperatingHour']['active_flg'] = C_ACTIVE_DISABLED;
         $saveData['MOperatingHour']['type'] = 1;
         $this->MOperatingHour->create();
