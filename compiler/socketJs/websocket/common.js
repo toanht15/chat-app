@@ -1628,7 +1628,7 @@ var socket, // socket.io
           //最小化時と最大化時の状態を取得
           var abridgementType = common.getAbridgementType();
           //ウィジェットの再生成処理呼び出しでなければ最小化表示設定で呼び出す
-          if(!reCreateWidget) {
+          if(!reCreateWidget && dataOpenflg === "false") {
             sinclo.widget.condifiton.set(false);
             //ログ書き込み用にメッセージ送信
             emit("sendWidgetShown",{widget:true});
@@ -1668,6 +1668,7 @@ var socket, // socket.io
           }
           else{
             if(dataOpenflg === "false"){
+              console.log("saisyouka");
               //最小化
               if(abridgementType['MinRes']){
                 //ヘッダ非表示（シンプル表示）
@@ -1681,6 +1682,7 @@ var socket, // socket.io
               common.whenMinimizedBtnShow();
             }
             else{
+              console.log("saidaika");
               //最大化
               if(abridgementType['MaxRes']){
                 //ヘッダ非表示（シンプル表示）

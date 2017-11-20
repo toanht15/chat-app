@@ -1373,7 +1373,18 @@ io.sockets.on('connection', function (socket) {
     if ( res.type !== 'admin' ) {
       if ( data.userId === undefined || data.userId === '' || data.userId === null ) {
         send.userId = makeUserId();
+
+      }
+      if ( (res.sincloSessionId === undefined || res.sincloSessionId === '' || res.sincloSessionId === null)
+        || !(res.siteKey in sincloCore)
+        || !(res.sincloSessionId in sincloCore[res.siteKey])
+        || sincloCore[res.siteKey][res.sincloSessionId].sessionIds === undefined
+        || sincloCore[res.siteKey][res.sincloSessionId].sessionIds.length === 0) {
         send.sincloSessionId = uuid.v4();
+        console.log("new sinclosession : " + send.sincloSessionId);
+        send.sincloSessionIdIsNew = true;
+      } else {
+        send.sincloSessionIdIsNew = false;
       }
       if ( data.accessId === undefined || data.accessId === '' || data.accessId === null ) {
         send.accessId = ('000' + Math.floor(Math.random() * 10000)).slice(-4);
@@ -1602,6 +1613,16 @@ io.sockets.on('connection', function (socket) {
     }
     if ('timeoutTimer' in sincloCore[obj.siteKey][obj.tabId]) {
       clearTimeout(sincloCore[obj.siteKey][obj.tabId].timeoutTimer);
+      var oldSessionId = sincloCore[obj.siteKey][obj.tabId].sessionId;
+      var sessionIds = sincloCore[obj.siteKey][obj.sincloSessionId].sessionIds;
+      sessionIds.some(function(v, i){
+        if(v.indexOf(oldSessionId) >= 0) {
+          // オブジェクトは参照渡しなので取得したsessionIdsのみ消去する
+          console.log("DELETE sessionId : " + oldSessionId);
+          sessionIds.splice(i,1);
+          return true;
+        }
+      });
       sincloCore[obj.siteKey][obj.tabId].timeoutTimer = null;
     }
 
@@ -2971,7 +2992,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       // 消費者側の履歴更新
       if ( !('subWindow' in core) || ('subWindow' in core) && !core.subWindow && !core.shareWindowFlg ) {
         // 履歴の更新
-        pool.query('SELECT * FROM t_histories WHERE m_companies_id = ? AND tab_id = ? AND visitors_id = ? ORDER BY id DESC LIMIT 1;', [siteId, info.tabId, info.userId], function(err, rows){
+        pool.query('SELECT * FROM t_histories WHERE m_companies_id = ? AND tab_id = ? AND visitors_id = ? ORDER BY id DESC LIMIT 1;', [siteId, info.sincloSessionId, info.userId], function(err, rows){
           if ( err !== null && err !== '' ) return false; // DB接続断対応
 
           if ( isset(rows) && isset(rows[0]) ) {
@@ -2988,6 +3009,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
       sincloCore[info.siteKey][info.tabId].timeoutTimer = setTimeout(function(){
         var historyId = sincloCore[info.siteKey][info.tabId].historyId;
+        var sincloSessionId = sincloCore[info.siteKey][info.tabId].sincloSessionId;
         // sincloCoreから情報削除
         delete sincloCore[info.siteKey][info.tabId];
         // c_connectListから情報削除
@@ -3052,8 +3074,25 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             sendData.scInfo = scList[info.siteKey].cnt;
           }
           emit.toCompany('unsetUser', sendData, info.siteKey);
-        }
 
+          if(sincloSessionId) {
+            var sessionIds = sincloCore[info.siteKey][sincloSessionId].sessionIds;
+            if(sessionIds && sessionIds.length > 0) {
+              sessionIds.some(function(v, i){
+                if(v.indexOf(socket.id) >= 0) {
+                  // オブジェクトは参照渡しなので取得したsessionIdsのみ消去する
+                  console.log("DELETE sessionId : " + socket.id);
+                  sessionIds.splice(i,1);
+                  return true;
+                }
+              });
+              if(sessionIds.length === 0) {
+                console.log("DELETE sincloSessionId : " + sincloSessionId);
+                delete sincloCore[info.siteKey][sincloSessionId];
+              }
+            }
+          }
+        }
       }, timeout);
       // connectListから削除
       delete connectList[socket.id];
@@ -3065,23 +3104,6 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             delete customerList[info.siteKey][key];
           }
         });
-      }
-
-      var sincloSessionId = sincloCore[info.siteKey][info.tabId].sincloSessionId;
-      if(sincloSessionId) {
-        var sessionIds = sincloCore[info.siteKey][sincloSessionId].sessionIds;
-        if(sessionIds && sessionIds.length > 0) {
-          sessionIds.some(function(v, i){
-            if(v.indexOf(socket.id) >= 0) {
-              // オブジェクトは参照渡しなので取得したsessionIdsのみ消去する
-              sessionIds.splice(i,1);
-              return true;
-            }
-          });
-          if(sessionIds.length === 0) {
-            delete sincloCore[info.siteKey][sincloSessionId];
-          }
-        }
       }
     }
   });
