@@ -2421,7 +2421,6 @@ var socket, // socket.io
         cnst.info_type.referrer,
         cnst.info_type.connect,
         cnst.info_type.tab,
-        cnst.info_type.prev,
         cnst.info_type.gFrame,
         cnst.info_type.parentId
       ];
@@ -2479,6 +2478,26 @@ var socket, // socket.io
         storage.s.set(code, JSON.stringify(userInfo.prev));
       }
     },
+    writePrevToLocalStorage: function(){
+      var code = this.getCode(cnst.info_type.prev);
+      var prev = [];
+      if(typeof(userInfo.oldSincloSessionId) !== 'undefined') {
+        console.log("oldSincloSessionId is found. : " + userInfo.oldSincloSessionId + " overwrite.");
+        prev = common.jParse(storage.s.get(code));
+        storage.l.set(code, JSON.stringify(prev));
+      } else {
+        prev = common.jParse(storage.l.get(code));
+        if (!check.isset(prev)) {
+          prev = [];
+        }
+        // IE8対応コード
+        if (prev.length === 0 || location.href !== prev[prev.length - 1].url) {
+          prev.push({url: location.href, title: common.title()});
+          storage.l.set(code, JSON.stringify(prev));
+        }
+      }
+      return prev;
+    },
     setConnect: function(val){
       this.set(cnst.info_type.connect, val, true);
     },
@@ -2493,10 +2512,12 @@ var socket, // socket.io
       return this.unset(cnst.info_type.connect);
     },
     getSendList: function() {
+      var code = this.getCode(cnst.info_type.prev);
+      var prev = common.jParse(storage.l.get(code));
       return {
         ipAddress: this.getIp(),
         time: this.getTime(),
-        prev: this.prev,
+        prev: prev,
         referrer: this.referrer,
         userAgent: window.navigator.userAgent,
         chatCnt: document.getElementsByClassName('sinclo_se').length,
@@ -3287,6 +3308,11 @@ var socket, // socket.io
     // 接続直後（ユーザＩＤ、アクセスコード発番等）
     socket.on("accessInfo", function(d){
       sinclo.accessInfo(d);
+    }); // socket-on: accessInfo
+
+    // 接続直後（ユーザＩＤ、アクセスコード発番等）
+    socket.on("syncUserInfo", function(d){
+      sinclo.syncUserInfo(d);
     }); // socket-on: accessInfo
 
     // 履歴ID割り振り後

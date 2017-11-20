@@ -1444,6 +1444,12 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         $scope.monitorList[obj.tabId].sincloSessionId = obj.sincloSessionId;
       }
 
+      Object.keys($scope.monitorList).forEach(function(key, index, array){
+        if($scope.monitorList[key].sincloSessionId === obj.sincloSessionId) {
+          $scope.monitorList[key].prev = obj.prev;
+        }
+      });
+
     }
 
     var changeStatusTimer = null;

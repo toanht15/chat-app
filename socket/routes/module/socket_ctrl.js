@@ -670,6 +670,18 @@ io.sockets.on('connection', function (socket) {
                 }
                 setList[fullDateTime(messages[i].created)] = messages[i];
               }
+              var autoMessages = [];
+              if(obj.sincloSessionId in sincloCore[obj.siteKey] && 'autoMessages' in sincloCore[obj.siteKey][obj.sincloSessionId] ) {
+                autoMessages = sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages;
+              }
+              for (var i = 0; i < autoMessages.length; i++) {
+                var date = autoMessages[i].created;
+                date = new Date(date);
+                if ( ('userName' in autoMessages[i]) && obj.showName !== 1 ) {
+                  delete autoMessages[i].userName;
+                }
+                setList[fullDateTime(autoMessages[i].created)] = autoMessages[i];
+              }
               chatData.messages = objectSort(setList);
               obj.chat = chatData;
               emit.toMine('chatMessageData', obj, socket);
@@ -742,6 +754,8 @@ io.sockets.on('connection', function (socket) {
                   var sincloSessionId = sincloCore[d.siteKey][d.tabId].sincloSessionId;
                   sendData.sincloSessionId = sincloSessionId;
                   emit.toSameUser('sendChatResult', sendData, d.siteKey, sincloSessionId);
+                  // 保持していたオートメッセージを空にする
+                  sincloCore[d.siteKey][sincloSessionId].autoMessages;
                   if (Number(insertData.message_type) === 3) return false;
                   // 書き込みが成功したら企業側に結果を返す
                   emit.toCompany('sendChatResult', {
@@ -1243,7 +1257,7 @@ io.sockets.on('connection', function (socket) {
       sincloCore[obj.siteKey][obj.tabId] = {sincloSessionId: null, sessionId: null, subWindow: false};
     }
     if ( !isset(sincloCore[obj.siteKey][obj.sincloSessionId]) ) {
-      sincloCore[obj.siteKey][obj.sincloSessionId] = {sessionIds: []};
+      sincloCore[obj.siteKey][obj.sincloSessionId] = {sessionIds: [], autoMessages: []};
     }
     if ('timeoutTimer' in sincloCore[obj.siteKey][obj.tabId]) {
       clearTimeout(sincloCore[obj.siteKey][obj.tabId].timeoutTimer);
@@ -1736,8 +1750,9 @@ io.sockets.on('connection', function (socket) {
     chat.messageType = obj.isAutoSpeech ? chatApi.cnst.observeType.autoSpeech : chatApi.cnst.observeType.auto;
     chat.created = new Date();
     chat.sort = fullDateTime(chat.created);
+    sincloCore[chat.siteKey][chat.sincloSessionId].autoMessages.push(chat);
     emit.toCompany('resAutoChatMessage', chat, chat.siteKey);
-    emit.toMine('resAutoChatMessage', chat, socket);
+    emit.toSameUser('resAutoChatMessage', chat, chat.siteKey, chat.sincloSessionId);
   });
 
   // 一括：チャットデータ取得(オートメッセージのみ)
