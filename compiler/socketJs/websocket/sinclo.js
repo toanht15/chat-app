@@ -1343,16 +1343,32 @@
             list.push(obj);
             storage.s.set('amsg', JSON.stringify(list));
           },
-          get: function() {
+          get: function(allData) {
             var json = storage.s.get('amsg');
+            var returnData = [];
             if(json) {
-              return JSON.parse(json);
-            } else {
-              return [];
+              var array = JSON.parse(json);
+              array.forEach(function(elm, index, ar) {
+                if(allData && !elm.deleted) {
+                  returnData.push(elm);
+                }
+              });
             }
+            return returnData;
+          },
+          exists: function(chatId) {
+            var list = this.get(true);
+            return list.some(function(elm){
+              return elm.chatId === chatId;
+            });
           },
           unset: function() {
-            storage.s.set('amsg', JSON.stringify([]));
+            // 論理的にフラグを付ける
+            var list = this.get();
+            list.forEach(function(elm, index, arr) {
+              elm.deleted = true;
+            });
+            storage.s.set('amsg', JSON.stringify(list));
           }
         },
         init: function(){
@@ -2191,6 +2207,10 @@
             }
 
             if ( String(type) === "1" && ('message' in cond) && (String(chatActFlg) === "false") ) {
+                if(sinclo.chatApi.autoMessages.exists(id)){
+                  console.log("exists id : " + id);
+                  return;
+                }
                 sinclo.chatApi.createMessageUnread("sinclo_re", cond.message, sincloInfo.widget.subTitle);
                 sinclo.chatApi.scDown();
                 var prev = sinclo.chatApi.autoMessages.get();
