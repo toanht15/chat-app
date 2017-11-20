@@ -8,12 +8,10 @@
     widget: {
       condifiton: {
         get: function(){
-          var sincloBox = document.getElementById('sincloBox');
-          return sincloBox.getAttribute('data-openflg');
+          return storage.s.get("widgetMaximized");
         },
         set: function(flg){
-          var sincloBox = document.getElementById('sincloBox');
-          sincloBox.setAttribute('data-openflg', flg);
+          storage.s.set("widgetMaximized", flg);
         }
       }
     },
@@ -503,9 +501,6 @@
                 }
                 else {
                   common.widgetHandler.show();
-                }
-                if(storage.s.get('bannerAct') !== "true") {
-                  sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
                 }
                 // ウィジェット表示
                 sinclo.chatApi.widgetOpen();
