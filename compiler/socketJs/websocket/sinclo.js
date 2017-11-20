@@ -462,7 +462,8 @@
         userInfo.setTabId();
       }
 
-      if ( !check.isset(userInfo.sincloSessionId) && check.isset(obj.sincloSessionId) ) {
+      if ( obj.sincloSessionIdIsNew || (!check.isset(userInfo.sincloSessionId) && check.isset(obj.sincloSessionId)) ) {
+        if(obj.sincloSessionIdIsNew) console.log("sincloSessionIdIsNew");
         userInfo.set(cnst.info_type.sincloSessionId, obj.sincloSessionId, "sincloSessionId");
       }
 
