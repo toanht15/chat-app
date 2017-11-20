@@ -1,4 +1,5 @@
 <script type="text/javascript">
+<?= $this->element('TDocuments/loadScreen'); ?>
 function entryChange1(){
   radio = document.getElementsByName('data[MOperatingHour][type]');
   //営業時間設定の条件が「毎日」か「平日・週末」のどちらか確認
@@ -64,6 +65,8 @@ $(document).ready(function(){
 });
 // 保存処理
 function saveAct(){
+  //loading画像
+  loading.load.start();
   document.getElementById('MOperatingHourIndexForm').submit();
 }
 

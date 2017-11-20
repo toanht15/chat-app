@@ -3,6 +3,8 @@
 $scHiddenClass = "";
 if ( !(!empty($this->data['MChatSetting']['sc_flg']) && strcmp($this->data['MChatSetting']['sc_flg'],C_SC_ENABLED) === 0) ) {
   $scHiddenClass = "sc_hidden";
+  $this->log('送られてくるデータ',LOG_DEBUG);
+  $this->log($this->data,LOG_DEBUG);
 }
 ?>
 <script type="text/javascript">
@@ -12,12 +14,14 @@ function scSettingToggle(){
     $("#sc_content dl").removeClass("sc_hidden"); // ユーザーリストを表示
     $("#sc_content input").prop("disabled", false); // ユーザーリストの数字項目をenabled
     $("#MChatSettingWatingCallSorryMessage").prop("disabled", false); // 対応上限数のsorryメッセージをenabled
+    document.getElementById("MChatSettingWatingCallSorryMessage").innerHTML = "<?= $this->data['MChatSetting']['wating_call_sorry_message'] ?>";
     $('#wating_call').css('color','#595959'); // 対応上限数のsorryメッセージの文字色を変更
   }
   else { // 同時対応数上限を利用しない場合
     $("#sc_content dl").addClass("sc_hidden"); // ユーザーリストを非表示
     $("#sc_content input").prop("disabled", true); // ユーザーリストの数字項目をdisabled
     $("#MChatSettingWatingCallSorryMessage").prop("disabled", true); // 対応上限数のsorryメッセージをdisabled
+    $("#MChatSettingWatingCallSorryMessage").text("");
     $('#wating_call').css('color','rgb(204, 204, 204)'); // 対応上限数のsorryメッセージの文字色を変更
   }
 }
@@ -114,24 +118,30 @@ $(document).ready(function(){
       <section>
         <h3 class="require">２．Sorryメッセージ</h3>
         <div class="content">
-          <pre>このメッセージは下記の場合に自動送信されます</pre>
-
+          <pre style = "padding: 0 0 15px 0;">このメッセージは下記の場合に自動送信されます</pre>
+          <li style = "padding: 0 0 15px 0;">
           <pre id = "outside_hours">(1)営業時間外にチャットが受信された場合</pre>
           <?=$this->Form->textarea('outside_hours_sorry_message')?>
           <?php if ( $this->Form->isFieldError('outside_hours_sorry_message') ) echo $this->Form->error('outside_hours_sorry_message', null, ['wrap' => 'p', 'style' => 'margin: 0;']); ?>
+          </li>
+          <li style = "padding: 0 0 15px 0;">
         <pre id = "wating_call">(2)対応上限数を超えてのチャットが受信された場合</pre>
           <?=$this->Form->textarea('wating_call_sorry_message')?>
           <?php if ( $this->Form->isFieldError('wating_call_sorry_message') ) echo $this->Form->error('wating_call_sorry_message', null, ['wrap' => 'p', 'style' => 'margin: 0;']); ?>
-
+          </li>
+          <li style = "padding: 0 0 15px 0;">
          <pre id = "no_standby">(3)在席オペレーターが居ない場合にチャットが受信された場合</pre>
           <?=$this->Form->textarea('no_standby_sorry_message')?>
           <?php if ( $this->Form->isFieldError('no_standby_sorry_message') ) echo $this->Form->error('no_standby_sorry_message', null, ['wrap' => 'p', 'style' => 'margin: 0;']); ?>
+        </li>
         </div>
       </section>
       <?=$this->Form->input('MChatSetting.id', ['type' => 'hidden'])?>
 
     <?= $this->Form->end(); ?>
-    <?= $this->Html->link('更新', 'javascript:void(0)', ['onclick' => 'saveAct()', 'class' => 'greenBtn btn-shadow inlineSaveBtn']) ?>
+    <div id="m_widget_setting_action" class="fotterBtnArea">
+    <?= $this->Html->link('更新', 'javascript:void(0)', ['onclick' => 'saveAct()', 'class' => 'greenBtn btn-shadow']) ?>
+  </div>
   </div>
 
 

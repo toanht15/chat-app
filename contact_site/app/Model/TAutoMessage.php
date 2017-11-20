@@ -37,6 +37,8 @@ class TAutoMessage extends AppModel {
 		$activity = json_decode($json['activity'], true);
 		$type = (!empty($activity['conditionType'])) ? $activity['conditionType'] : "";
 		$detail = (!empty($activity['conditions'])) ? $activity['conditions'] : "";
+    $this->log('このなかって見れたっけ',LOG_DEBUG);
+    $this->log($detail,LOG_DEBUG);
 
 		// 条件が設定されていない場合
 		if ( count($detail) === 0 ) return false;
@@ -48,8 +50,12 @@ class TAutoMessage extends AppModel {
 		// 条件ごと
 		foreach( (array)$detail as $itemType => $items ){
 			// 条件が見つからない場合
-			if (!isset($triggerList[$itemType])) return false;
+			//if (!isset($triggerList[$itemType])) return false;
 			// 初期条件が見つからない場合
+      $this->log('条件チェック',LOG_DEBUG);
+      //$this->log($triggerList,LOG_DEBUG);
+      //$this->log($triggerList[$itemType],LOG_DEBUG);
+      $this->log($itemType,LOG_DEBUG);
 			if (!isset($triggerList[$itemType]['default'])) return false;
 			// 条件単位の設定が設定されていない場合
 			if ( count($items) === 0 ) return false;
@@ -123,6 +129,7 @@ class TAutoMessage extends AppModel {
 
 		// 条件が一つも入っていなかった場合
 		if ( empty($defaultList) ) {
+      $this->log('ここに入っちゃってるんだな',LOG_DEBUG);
 			return false;
 		}
 		return true;

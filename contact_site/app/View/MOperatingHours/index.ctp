@@ -8,7 +8,6 @@ if ( !(!empty($this->data['MOperatingHour']['active_flg']) && strcmp($this->data
 <?= $this->element('MOperatingHours/script') ?>
 
 <div id='moperating_hours_idx' class="card-shadow">
-
   <div id='moperating_hours_add_title'>
      <div class="fLeft">
         <?= $this->Html->image('operating_hour_g.png', array('alt' => 'チャット基本設定', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?>
@@ -19,8 +18,7 @@ if ( !(!empty($this->data['MOperatingHour']['active_flg']) && strcmp($this->data
   <?= $this->Form->create('MOperatingHour', ['type' => 'post','name' => 'operatingHours', 'url' => ['controller' => 'MOperatingHours', 'action' => 'index', '']]); ?>
     <div class ="content">
       <div>
-        <label style="display:inline-block;
-        <?php echo (($widgetData == C_WIDGET_DISPLAY_CODE_TIME || $check == 'included') || !$coreSettings[C_COMPANY_USE_OPERATING_HOUR]) ? 'color: #CCCCCC;' : '';?>"
+        <label style="display:inline-block;color: #595959;"
         <?php echo ($widgetData == C_WIDGET_DISPLAY_CODE_TIME || $coreSettings[C_COMPANY_USE_OPERATING_HOUR] || $check == true) ? 'class=commontooltip' : '';?>
         <?php echo ($check == 'included' && $coreSettings[C_COMPANY_USE_OPERATING_HOUR]) ? 'data-text=オートメッセージ設定の「条件設定」に「営業時間設定」が含まれているメッセージがあります' : '';?>
         <?php echo ($widgetData == C_WIDGET_DISPLAY_CODE_TIME && $coreSettings[C_COMPANY_USE_OPERATING_HOUR]) ? 'data-text=ウィジェット設定の「表示する条件」を「営業時間内のみ表示する」から変更してください' : '';?>
@@ -33,7 +31,7 @@ if ( !(!empty($this->data['MOperatingHour']['active_flg']) && strcmp($this->data
               'options' => $scFlgOpt,
               'default' => C_ACTIVE_ENABLED,
               'legend' => false,
-              'separator' => '</label><br><label style="display:inline-block;"'.($coreSettings[C_COMPANY_USE_OPERATING_HOUR] ? '' : 'style="color: #CCCCCC;" class="commontooltip" data-text="こちらの機能はスタンダードプラン<br>からご利用いただけます。" data-balloon-position="34.5"').'>',
+              'separator' => '</label><br><label style="display:inline-block;"'.($coreSettings[C_COMPANY_USE_OPERATING_HOUR] ? '' : '"color: #CCCCCC;" class="commontooltip" data-text="こちらの機能はスタンダードプラン<br>からご利用いただけます。" data-balloon-position="34.5"').'>',
               'label' => false,
               'div' => false,
               'disabled' => !$coreSettings[C_COMPANY_USE_OPERATING_HOUR],
@@ -46,7 +44,8 @@ if ( !(!empty($this->data['MOperatingHour']['active_flg']) && strcmp($this->data
         // radioボタンがdisabledの場合POSTで値が送信されないため、hiddenで送信すべき値を補填する
         if(!$coreSettings[C_COMPANY_USE_OPERATING_HOUR]):
           ?>
-          <input type="hidden" name="data[OperatingHour][active_flg]" value="2"/>
+        <?php $this->log('ここには入っているか',LOG_DEBUG); ?>
+          <input type="hidden" name="data[MOperatingHour][active_flg]" value="2"/>
         <?php endif; ?>
       </div>
 
@@ -247,5 +246,7 @@ if ( !(!empty($this->data['MOperatingHour']['active_flg']) && strcmp($this->data
   </div>
 <!-- /* 操作 */ -->
   <?= $this->Form->end(); ?>
-  <?= $this->Html->link('更新', 'javascript:void(0)', ['onclick' => 'saveAct()', 'class' => 'greenBtn btn-shadow inlineSaveBtn']) ?>
+  <div id="m_widget_setting_action" class="fotterBtnArea">
+    <?= $this->Html->link('更新', 'javascript:void(0)', ['onclick' => 'saveAct()', 'class' => 'greenBtn btn-shadow']) ?>
+  </div>
 </div>

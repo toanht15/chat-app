@@ -26,9 +26,12 @@ class MOperatingHoursController extends AppController {
     //オートメッセージ情報
     $autoMessageData = $this->TAutoMessage->find('all', ['conditions' => [
       'm_companies_id' => $this->userInfo['MCompany']['id'],
-      'active_flg' => 0
+      'active_flg' => 0,
+      'del_flg' => 0
     ]]);
     $check = '';
+    $this->log('オートメッセージバグ',LOG_DEBUG);
+    $this->log($autoMessageData,LOG_DEBUG);
     foreach($autoMessageData as $v){
       //オートメッセージの条件に営業時間設定が入っているかチェック
       if(!empty(json_decode($v['TAutoMessage']['activity'],true)['conditions'][10])) {
@@ -37,6 +40,8 @@ class MOperatingHoursController extends AppController {
     }
 
     if($this->request->is('post')) {
+      $this->log('あっははは',LOG_DEBUG);
+      $this->log($this->request->data,LOG_DEBUG);
       $saveData = $this->MOperatingHour->read(null, $operatingHourData['MOperatingHour']['id']);
       $saveData['MOperatingHour']['active_flg'] = $this->request->data['MOperatingHour']['active_flg'];
       //営業時間設定を利用する場合
@@ -177,12 +182,5 @@ class MOperatingHoursController extends AppController {
     $this->set('type', $this->request->data['dayType']);
     //二重操作防止
     $this->render('/Elements/MOperatingHours/remoteEntry');
-  }
-
-  public function remoteOpenError() {
-    Configure::write('debug', 0);
-    $this->autoRender = FALSE;
-    $this->layout = 'ajax';
-    $this->render('/Elements/MOperatingHours/remoteError');
   }
 }
