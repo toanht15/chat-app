@@ -10,20 +10,21 @@ var check = false;
 var SorryMessageData;
 // 同時対応数上限のON/OFF
 function scSettingToggle(){
+  //対応上限数のsorryメッセージデータ
   if(check == false) {
     check  = true;
-    SorryMessageData = document.getElementById("MChatSettingWatingCallSorryMessage").value;
+    SorryMessageData = $("#MChatSettingWatingCallSorryMessage").val();
   }
   if ( $("#MChatSettingScFlg1").prop("checked") ) { // 同時対応数上限を利用する場合
     $("#sc_content dl").removeClass("sc_hidden"); // ユーザーリストを表示
     $("#sc_content input").prop("disabled", false); // ユーザーリストの数字項目をenabled
     $("#MChatSettingWatingCallSorryMessage").prop("disabled", false); // 対応上限数のsorryメッセージをenabled
-    $("#MChatSettingWatingCallSorryMessage").text(SorryMessageData);
+    $("#MChatSettingWatingCallSorryMessage").val(SorryMessageData);　// 対応上限数のsorryメッセージを入れる
     $('#wating_call').css('color','#595959'); // 対応上限数のsorryメッセージの文字色を変更
   }
   else { // 同時対応数上限を利用しない場合
     $("#sc_content dl").addClass("sc_hidden"); // ユーザーリストを非表示
-    $("#MChatSettingWatingCallSorryMessage").text("");
+    $("#MChatSettingWatingCallSorryMessage").val(""); // 対応上限数のsorryメッセージを空にする
     $("#sc_content input").prop("disabled", true); // ユーザーリストの数字項目をdisabled
     $("#MChatSettingWatingCallSorryMessage").prop("disabled", true); // 対応上限数のsorryメッセージをdisabled
     $('#wating_call').css('color','rgb(204, 204, 204)'); // 対応上限数のsorryメッセージの文字色を変更
@@ -42,13 +43,13 @@ function reloadAct(){
 
 $(document).ready(function(){
   if(<?= $operatingHourData ?> == 1) {
-    $("#MChatSettingOutsideHoursSorryMessage").prop("disabled", false); // 対応上限数のsorryメッセージをenabled
-    $('#outside_hours').css('color','#595959'); // 対応上限数のsorryメッセージの文字色を変更
+    $("#MChatSettingOutsideHoursSorryMessage").prop("disabled", false); // 営業時間設定のsorryメッセージをenabled
+    $('#outside_hours').css('color','#595959'); // 営業時間設定のsorryメッセージの文字色を変更
   }
   if(<?= $operatingHourData ?> == 2) {
-    $("#MChatSettingOutsideHoursSorryMessage").text("");
-    $("#MChatSettingOutsideHoursSorryMessage").prop("disabled", true); // 対応上限数のsorryメッセージをdisabled
-    $('#outside_hours').css('color','rgb(204, 204, 204)'); // 対応上限数のsorryメッセージの文字色を変更
+    $("#MChatSettingOutsideHoursSorryMessage").text(""); // 営業時間設定のsorryメッセージを空にする
+    $("#MChatSettingOutsideHoursSorryMessage").prop("disabled", true); // 営業時間設定のsorryメッセージをdisabled
+    $('#outside_hours').css('color','rgb(204, 204, 204)'); // 営業時間設定のsorryメッセージの文字色を変更
   }
 
   // 同時対応数上限のON/OFFの切り替わりを監視

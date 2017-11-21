@@ -13,6 +13,7 @@ function entryChange1(){
     document.getElementById('secondTable').style.display = "";
     document.getElementById('moperating_hours_table').style.height = "24em";
   }
+  //ページ遷移の際にアラート出す
   changeFlg = true;
   if(changeFlg == true) {
     window.addEventListener('beforeunload', onBeforeunloadHandler, false);
@@ -45,6 +46,7 @@ function openEntryDialog(setting){
       modalOpen.call(window, html, 'p-operatinghours-entry', setting.title, 'moment');
     }
   });
+  //ページ遷移の際にアラート出す
   changeFlg = true;
   if(changeFlg == true) {
     window.addEventListener('beforeunload', onBeforeunloadHandler, false);
@@ -62,6 +64,7 @@ function activeSettingToggle(){
     $("#detail_content dl").addClass("detail_hidden");
     $("#detail_content input").prop("disabled", true);
   }
+  //ページ遷移の際にアラート出す
   changeFlg = true;
   if(changeFlg == true) {
     window.addEventListener('beforeunload', onBeforeunloadHandler, false);
@@ -93,6 +96,10 @@ function saveAct(){
 
 // 元に戻す処理
 function reloadAct(){
+  changeFlg = false;
+  if(changeFlg == false) {
+    window.removeEventListener('beforeunload', onBeforeunloadHandler, false);
+  }
   window.location.reload();
 }
 

@@ -1824,7 +1824,6 @@
             if ( !('messages' in window.sincloInfo) || (('messages' in window.sincloInfo) && typeof(window.sincloInfo.messages) !== "object" ) ) return false;
             this.flg = true;
             var messages = window.sincloInfo.messages;
-
             console.log("MESSAGES : " + JSON.stringify(messages));
             var andFunc = function(conditionKey, condition, key, ret){
                 if(conditionKey === 7) {
