@@ -172,6 +172,9 @@
         if(operatingHours == 'operatingHoursPage') {
           var toppx = 69;
         }
+        else if(operatingHours == 'widgetHoursPage') {
+          var toppx = 54;
+        }
         else {
           var toppx = 39;
         }

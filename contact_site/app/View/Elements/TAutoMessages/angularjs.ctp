@@ -16,7 +16,7 @@ sincloApp.controller('MainController', function($scope) {
     this.keys = function(obj){
       //営業時間を利用しない場合
       if(<?= $operatingHourData ?> == 2) {
-        delete obj[10];
+        delete obj[4];
       }
       if (angular.isObject(obj)) {
           return Object.keys(obj).length;
@@ -34,7 +34,7 @@ sincloApp.controller('MainController', function($scope) {
 
     this.checkDisabled = function(itemId){
         //営業時間設定を利用しない場合
-        if(<?= $operatingHourData ?> == 2 && itemId == 10) {
+        if(<?= $operatingHourData ?> == 2 && itemId == 4) {
           return true;
         }
         return (itemId in this.setItemList && this.setItemList[itemId].length >= this.tmpList[itemId].createLimit[this.condition_type]);
@@ -49,7 +49,7 @@ sincloApp.controller('MainController', function($scope) {
                 return false;
             }
             //営業時間設定を利用しない場合
-            if(<?= $operatingHourData ?> == 2 && tmpId == 10) {
+            if(<?= $operatingHourData ?> == 2 && tmpId == 4) {
               return false;
             }
             this.setItemList[tmpId].push(angular.copy(this.tmpList[tmpId].default));
@@ -109,8 +109,8 @@ sincloApp.controller('MainController', function($scope) {
                     delete setList['conditions']["<?=C_AUTO_TRIGGER_DAY_TIME?>"][i]['endTime'];
                 }
             }
-        }
 
+        }
         $('#TAutoMessageActivity').val(JSON.stringify(setList));
         submitAct();
     };
