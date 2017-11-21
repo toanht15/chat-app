@@ -8,9 +8,16 @@
     widget: {
       condifiton: {
         get: function(){
-          return storage.s.get("widgetMaximized");
+          var sincloBox = document.getElementById('sincloBox');
+          if(storage.s.get("widgetMaximized") !== null && sincloBox.getAttribute('data-openflg') !== storage.s.get("widgetMaximized")) {
+            return storage.s.get("widgetMaximized");
+          } else {
+            return sincloBox.getAttribute('data-openflg');
+          }
         },
         set: function(flg){
+          var sincloBox = document.getElementById('sincloBox');
+          sincloBox.setAttribute('data-openflg', flg);
           storage.s.set("widgetMaximized", flg);
         }
       }
