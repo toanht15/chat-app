@@ -139,9 +139,7 @@
   </li>
 </ul>
 
-<?php /* 営業時間｜C_AUTO_TRIGGER_OPERATING_HOURS */
-      $this->log('営業時間設定',LOG_DEBUG);
-      $this->log(C_AUTO_TRIGGER_OPERATING_HOURS,LOG_DEBUG); ?>
+<?php /* 営業時間｜C_AUTO_TRIGGER_OPERATING_HOURS */ ?>
 <ul ng-if="itemType == '<?=C_AUTO_TRIGGER_OPERATING_HOURS?>'" class="setStayPage" >
   <li>
     <?=$this->AutoMessage->radio('operatingHoursTime');?>

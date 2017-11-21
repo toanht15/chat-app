@@ -1824,13 +1824,9 @@
             if ( !('messages' in window.sincloInfo) || (('messages' in window.sincloInfo) && typeof(window.sincloInfo.messages) !== "object" ) ) return false;
             this.flg = true;
             var messages = window.sincloInfo.messages;
-            console.log('メッセージ');
-            console.log(messages);
 
             console.log("MESSAGES : " + JSON.stringify(messages));
             var andFunc = function(conditionKey, condition, key, ret){
-                console.log('コンディションズキー');
-                console.log(conditionKey);
                 if(conditionKey === 7) {
                   // 自動返信のトリガーの場合は処理中フラグを立てる
                   sinclo.trigger.processing = true;
@@ -1910,8 +1906,6 @@
             for( var i = 0; messages.length > i; i++ ){
                 // AND
                 if ( Number(messages[i].activity.conditionType) === 1 ) {
-                    console.log('messageチェック');
-                    console.log(messages[i].activity);
                     this.setAndSetting(i, messages[i].activity, andFunc);
                 }
                 // OR
@@ -1926,8 +1920,6 @@
         setAndSetting: function(key, setting, callback) {
           console.log("setAndSettings key : " + key + " setting: " + setting);
             var keys = Object.keys(setting.conditions);
-            console.log('keys');
-            console.log(keys);
             // 発言内容条件を一番最後にする
             var arrayForSort = ["1","2","3","4","5","6","8","9","10","7"];
             var tmpKey = [];

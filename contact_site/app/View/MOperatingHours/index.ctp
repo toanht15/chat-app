@@ -44,8 +44,7 @@ if ( !(!empty($this->data['MOperatingHour']['active_flg']) && strcmp($this->data
         <?php
         // radioボタンがdisabledの場合POSTで値が送信されないため、hiddenで送信すべき値を補填する
         if(!$coreSettings[C_COMPANY_USE_OPERATING_HOUR]):
-          ?>
-        <?php $this->log('ここには入っているか',LOG_DEBUG); ?>
+        ?>
           <input type="hidden" name="data[MOperatingHour][active_flg]" value="2"/>
         <?php endif; ?>
       </div>

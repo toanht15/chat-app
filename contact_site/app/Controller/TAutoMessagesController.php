@@ -45,8 +45,6 @@ class TAutoMessagesController extends AppController {
    * */
   public function add() {
     if ( $this->request->is('post') ) {
-      $this->log('オートメッセージデータ',LOG_DEBUG);
-      $this->log($this->request->data,LOG_DEBUG);
       $this->_entry($this->request->data);
     }
     $operatingHourData = $this->MOperatingHour->find('first', ['conditions' => [
@@ -505,7 +503,6 @@ class TAutoMessagesController extends AppController {
         $setting = $this->outMessageTriggerList[$key];
         if ( !isset($setting['createLimit'][$activity->conditionType]) ) continue;
         if ( count($val) > intval($setting['createLimit'][$activity->conditionType]) ) {
-          $this->log('validate1',LOG_DEBUG);
           $validate = false;
           $errors['triggers'][$setting['key']] = sprintf($tmpMessage, $this->outMessageIfType[$activity->conditionType], $setting['label'], $setting['createLimit'][$activity->conditionType]);
         }
@@ -514,7 +511,6 @@ class TAutoMessagesController extends AppController {
         'm_companies_id' => $this->userInfo['MCompany']['id']
       ]]);
       if(!empty($operatingHourData) && $operatingHourData['MOperatingHour']['active_flg'] == 2)  {
-        $this->log('validate2',LOG_DEBUG);
         $validate = false;
       }
     }
@@ -567,11 +563,8 @@ class TAutoMessagesController extends AppController {
     $this->set('outMessageWidgetOpenType', Configure::read('outMessageWidgetOpenType'));
     // 有効無効
     $this->set('outMessageAvailableType', Configure::read('outMessageAvailableType'));
-    $this->log('入ってるかチェック1',LOG_DEBUG);
-    $this->log($this->request->query,LOG_DEBUG);
     // 最後に表示していたページ番号
     if(!empty($this->request->query['lastpage'])){
-      $this->log('入ってるかチェック2',LOG_DEBUG);
       $this->set('lastPage', $this->request->query['lastpage']);
     }
   }
