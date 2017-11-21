@@ -15,10 +15,12 @@
             return sincloBox.getAttribute('data-openflg');
           }
         },
-        set: function(flg){
+        set: function(flg, overwrite){
           var sincloBox = document.getElementById('sincloBox');
           sincloBox.setAttribute('data-openflg', flg);
-          storage.s.set("widgetMaximized", flg);
+          if(overwrite) {
+            storage.s.set("widgetMaximized", flg);
+          }
         }
       }
     },
@@ -61,7 +63,7 @@
               //ヘッダ表示（通常表示）
               common.abridgementTypeShow();
             }
-            sinclo.widget.condifiton.set(true);
+            sinclo.widget.condifiton.set(true, true);
             if ( check.smartphone() && window.sincloInfo.contract.chat && (window.screen.availHeight < window.screen.availWidth) ) {
               //スマホ横
               height = window.innerHeight * (document.body.clientWidth / window.innerWidth);
@@ -97,7 +99,7 @@
               common.abridgementTypeShow();
             }
             height = this.header.offsetHeight;
-            sinclo.widget.condifiton.set(false);
+            sinclo.widget.condifiton.set(false, true);
           }
             elm.animate({
               height: height + "px"
@@ -283,12 +285,12 @@
           document.getElementById('sincloChatMessage').value = sinclo.operatorInfo.reCreateWidgetMessage;
           sincloBox.style.opacity = 0;
           sinclo.operatorInfo.header = document.getElementById('widgetHeader');
-          sinclo.widget.condifiton.set(openFlg);
+          sinclo.widget.condifiton.set(openFlg, true);
           common.widgetHandler.show(true);
           sinclo.operatorInfo.widgetHide();
 
           if ( String(openFlg) === "true" ) {
-            sinclo.widget.condifiton.set(true);
+            sinclo.widget.condifiton.set(true, true);
 
             if ( window.screen.availHeight < window.screen.availWidth ) {
               sincloBox.style.height = document.documentElement.clientHeight + "px";
@@ -303,7 +305,7 @@
             //ここでもしバナーだったら二段階表示防止のために以下の処理を避ける
             var bannerAct = storage.s.get('bannerAct');
             if(bannerAct !== "true"){
-              sinclo.widget.condifiton.set(false);
+              sinclo.widget.condifiton.set(false, true);
               sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
             }
           }
@@ -695,7 +697,7 @@
           if (sincloBox && (window.sincloInfo.contract.chat || window.sincloInfo.contract.synclo || (window.sincloInfo.contract.hasOwnProperty('document') && window.sincloInfo.contract.document)) ) {
             common.widgetHandler.show();
             sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
-            sinclo.widget.condifiton.set(false);
+            sinclo.widget.condifiton.set(false, true);
             clearInterval(timer);
           }
         }, 500);
@@ -1236,7 +1238,7 @@
         if (sincloBox && (window.sincloInfo.contract.chat || window.sincloInfo.contract.synclo || (window.sincloInfo.contract.hasOwnProperty('document') && window.sincloInfo.contract.document)) ) {
           common.widgetHandler.show();
           sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
-          sinclo.widget.condifiton.set(false);
+          sinclo.widget.condifiton.set(false, true);
           clearInterval(timer);
         }
       }, 500);
@@ -1263,7 +1265,7 @@
         this.remove();
       };
       popup.set(title, content, popup.const.action.alert);
-
+      laUtil.disconnect();
       var timer = setInterval(function(){
         if (window.sincloInfo.widgetDisplay === false) {
           clearInterval(timer);
@@ -1275,7 +1277,7 @@
         if (sincloBox && (window.sincloInfo.contract.chat || window.sincloInfo.contract.synclo || (window.sincloInfo.contract.hasOwnProperty('document') && window.sincloInfo.contract.document)) ) {
           common.widgetHandler.show();
           sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
-          sinclo.widget.condifiton.set(false);
+          sinclo.widget.condifiton.set(false, true);
           clearInterval(timer);
         }
       }, 500);
