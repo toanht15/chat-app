@@ -110,6 +110,9 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
         </div>
     <?php if ( $adminFlg ): ?>
         <div class="icon">
+          <?= $this->htmlEx->naviLink('営業時間設定', 'operating_hour.png', ['href' => ['controller' => 'MOperatingHours', 'action' => 'index']]) ?>
+        </div>
+        <div class="icon">
             <?= $this->htmlEx->naviLink('ウィジェット', 'widget.png', ['href' => ['controller' => 'MWidgetSettings', 'action' => 'index']]) ?>
         </div>
       <div class="icon">
@@ -117,9 +120,6 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
       </div>
       <div class="icon">
         <?= $this->htmlEx->naviLink('表示除外設定', 'exclusion.png', ['href' => ['controller' => 'DisplayExclusions', 'action' => 'index']]) ?>
-      </div>
-       <div class="icon">
-        <?= $this->htmlEx->naviLink('営業時間設定', 'operating_hour.png', ['href' => ['controller' => 'MOperatingHours', 'action' => 'index']]) ?>
       </div>
     <?php endif; ?>
     </div>
