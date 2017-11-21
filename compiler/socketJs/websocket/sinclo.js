@@ -10,6 +10,7 @@
         get: function(){
           var sincloBox = document.getElementById('sincloBox');
           if(storage.s.get("widgetMaximized") !== null && sincloBox.getAttribute('data-openflg') !== storage.s.get("widgetMaximized")) {
+            sincloBox.setAttribute('data-openflg', storage.s.get("widgetMaximized"));
             return storage.s.get("widgetMaximized");
           } else {
             return sincloBox.getAttribute('data-openflg');
@@ -18,7 +19,7 @@
         set: function(flg, overwrite){
           var sincloBox = document.getElementById('sincloBox');
           sincloBox.setAttribute('data-openflg', flg);
-          if(overwrite) {
+          if(overwrite || storage.s.get("widgetMaximized") === null) {
             storage.s.set("widgetMaximized", flg);
           }
         }
