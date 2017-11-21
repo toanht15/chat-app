@@ -1532,6 +1532,7 @@ var socket, // socket.io
           var html = common.createWidget();
           $('body').append(html);
           emit('syncReady', {widget: window.sincloInfo.widgetDisplay});
+          sincloBox = document.getElementById('sincloBox');
           sinclo.widget.condifiton.set(false, false);
           sinclo.operatorInfo.header = document.querySelector('#sincloBox #widgetHeader');
 
