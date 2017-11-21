@@ -3,25 +3,29 @@
 $scHiddenClass = "";
 if ( !(!empty($this->data['MChatSetting']['sc_flg']) && strcmp($this->data['MChatSetting']['sc_flg'],C_SC_ENABLED) === 0) ) {
   $scHiddenClass = "sc_hidden";
-  $this->log('送られてくるデータ',LOG_DEBUG);
-  $this->log($this->data,LOG_DEBUG);
 }
 ?>
 <script type="text/javascript">
+var check = false;
+var SorryMessageData;
 // 同時対応数上限のON/OFF
 function scSettingToggle(){
+  if(check == false) {
+    check  = true;
+    SorryMessageData = document.getElementById("MChatSettingWatingCallSorryMessage").value;
+  }
   if ( $("#MChatSettingScFlg1").prop("checked") ) { // 同時対応数上限を利用する場合
     $("#sc_content dl").removeClass("sc_hidden"); // ユーザーリストを表示
     $("#sc_content input").prop("disabled", false); // ユーザーリストの数字項目をenabled
     $("#MChatSettingWatingCallSorryMessage").prop("disabled", false); // 対応上限数のsorryメッセージをenabled
-    document.getElementById("MChatSettingWatingCallSorryMessage").innerHTML = "<?= $this->data['MChatSetting']['wating_call_sorry_message'] ?>";
+    $("#MChatSettingWatingCallSorryMessage").text(SorryMessageData);
     $('#wating_call').css('color','#595959'); // 対応上限数のsorryメッセージの文字色を変更
   }
   else { // 同時対応数上限を利用しない場合
     $("#sc_content dl").addClass("sc_hidden"); // ユーザーリストを非表示
+    $("#MChatSettingWatingCallSorryMessage").text("");
     $("#sc_content input").prop("disabled", true); // ユーザーリストの数字項目をdisabled
     $("#MChatSettingWatingCallSorryMessage").prop("disabled", true); // 対応上限数のsorryメッセージをdisabled
-    $("#MChatSettingWatingCallSorryMessage").text("");
     $('#wating_call').css('color','rgb(204, 204, 204)'); // 対応上限数のsorryメッセージの文字色を変更
   }
 }
@@ -31,12 +35,18 @@ function saveAct(){
   document.getElementById('MChatSettingIndexForm').submit();
 }
 
+// 元に戻す処理
+function reloadAct(){
+  window.location.reload();
+}
+
 $(document).ready(function(){
   if(<?= $operatingHourData ?> == 1) {
     $("#MChatSettingOutsideHoursSorryMessage").prop("disabled", false); // 対応上限数のsorryメッセージをenabled
     $('#outside_hours').css('color','#595959'); // 対応上限数のsorryメッセージの文字色を変更
   }
   if(<?= $operatingHourData ?> == 2) {
+    $("#MChatSettingOutsideHoursSorryMessage").text("");
     $("#MChatSettingOutsideHoursSorryMessage").prop("disabled", true); // 対応上限数のsorryメッセージをdisabled
     $('#outside_hours').css('color','rgb(204, 204, 204)'); // 対応上限数のsorryメッセージの文字色を変更
   }
@@ -140,8 +150,10 @@ $(document).ready(function(){
 
     <?= $this->Form->end(); ?>
     <div id="m_widget_setting_action" class="fotterBtnArea">
-    <?= $this->Html->link('更新', 'javascript:void(0)', ['onclick' => 'saveAct()', 'class' => 'greenBtn btn-shadow']) ?>
-  </div>
+      <?= $this->Html->link('元に戻す', 'javascript:void(0)', ['onclick' => 'reloadAct()','class' => 'whiteBtn btn-shadow']) ?>
+      <?= $this->Html->link('更新', 'javascript:void(0)', ['onclick' => 'saveAct()', 'class' => 'greenBtn btn-shadow']) ?>
+      <?= $this->Html->link('dummy', 'javascript:void(0)', ['onclick' => '', 'class' => 'whiteBtn btn-shadow', 'style' => 'visibility: hidden;']) ?>
+    </div>
   </div>
 
 

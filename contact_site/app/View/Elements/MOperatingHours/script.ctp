@@ -1,5 +1,6 @@
 <script type="text/javascript">
 <?= $this->element('TDocuments/loadScreen'); ?>
+var changeFlg = false;
 function entryChange1(){
   radio = document.getElementsByName('data[MOperatingHour][type]');
   //営業時間設定の条件が「毎日」か「平日・週末」のどちらか確認
@@ -11,6 +12,10 @@ function entryChange1(){
     document.getElementById('firstTable').style.display = "none";
     document.getElementById('secondTable').style.display = "";
     document.getElementById('moperating_hours_table').style.height = "24em";
+  }
+  changeFlg = true;
+  if(changeFlg == true) {
+    window.addEventListener('beforeunload', onBeforeunloadHandler, false);
   }
 }
 
@@ -40,6 +45,10 @@ function openEntryDialog(setting){
       modalOpen.call(window, html, 'p-operatinghours-entry', setting.title, 'moment');
     }
   });
+  changeFlg = true;
+  if(changeFlg == true) {
+    window.addEventListener('beforeunload', onBeforeunloadHandler, false);
+  }
 }
 
 function activeSettingToggle(){
@@ -53,21 +62,38 @@ function activeSettingToggle(){
     $("#detail_content dl").addClass("detail_hidden");
     $("#detail_content input").prop("disabled", true);
   }
+  changeFlg = true;
+  if(changeFlg == true) {
+    window.addEventListener('beforeunload', onBeforeunloadHandler, false);
+  }
 }
+
+var onBeforeunloadHandler = function(e) {
+  e.returnValue = 'まだ保存されておりません。離脱してもよろしいでしょうか';
+};
 
 $(document).ready(function(){
   // 営業時間設定のON/OFFの切り替わりを監視
   $(document).on('change', '[name="data[MOperatingHour][active_flg]"]', activeSettingToggle);
-  activeSettingToggle(); // 初回のみ
+  $(document).on('change', '[name="data[MOperatingHour][type]"]', entryChange1);
   if(<?= $widgetData ?> == 4　|| '<?= $check ?>' == 'included') {
     $("#MOperatingHourActiveFlg2").prop("disabled", true);
   }
 });
 // 保存処理
 function saveAct(){
+  changeFlg = false;
+  if(changeFlg == false) {
+    window.removeEventListener('beforeunload', onBeforeunloadHandler, false);
+  }
   //loading画像
   loading.load.start();
   document.getElementById('MOperatingHourIndexForm').submit();
+}
+
+// 元に戻す処理
+function reloadAct(){
+  window.location.reload();
 }
 
 </script>

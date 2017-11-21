@@ -15,7 +15,7 @@ if ( !(!empty($this->data['MOperatingHour']['active_flg']) && strcmp($this->data
     <h1>営業時間設定<span id="sortMessage"></span></h1>
   </div>
   <div id='moperating_hours_form' class="p20x">
-  <?= $this->Form->create('MOperatingHour', ['type' => 'post','name' => 'operatingHours', 'url' => ['controller' => 'MOperatingHours', 'action' => 'index', '']]); ?>
+  <?= $this->Form->create('MOperatingHour', ['type' => 'post','name' => 'operatingHours', 'url' => ['controller' => 'MOperatingHours','action' => 'index', '']]); ?>
     <div class ="content">
       <div>
         <label style="display:inline-block;color: #595959;"
@@ -33,6 +33,7 @@ if ( !(!empty($this->data['MOperatingHour']['active_flg']) && strcmp($this->data
               'legend' => false,
               'separator' => '</label><br><label style="display:inline-block;"'.($coreSettings[C_COMPANY_USE_OPERATING_HOUR] ? '' : '"color: #CCCCCC;" class="commontooltip" data-text="こちらの機能はスタンダードプラン<br>からご利用いただけます。" data-balloon-position="34.5"').'>',
               'label' => false,
+              'onclick' => 'activeSettingToggle();',
               'div' => false,
               'disabled' => !$coreSettings[C_COMPANY_USE_OPERATING_HOUR],
               'class' => "pointer"
@@ -247,6 +248,8 @@ if ( !(!empty($this->data['MOperatingHour']['active_flg']) && strcmp($this->data
 <!-- /* 操作 */ -->
   <?= $this->Form->end(); ?>
   <div id="m_widget_setting_action" class="fotterBtnArea">
+    <?= $this->Html->link('元に戻す', 'javascript:void(0)', ['onclick' => 'reloadAct()','class' => 'whiteBtn btn-shadow']) ?>
     <?= $this->Html->link('更新', 'javascript:void(0)', ['onclick' => 'saveAct()', 'class' => 'greenBtn btn-shadow']) ?>
+    <?= $this->Html->link('dummy', 'javascript:void(0)', ['onclick' => '', 'class' => 'whiteBtn btn-shadow', 'style' => 'visibility: hidden;']) ?>
   </div>
 </div>

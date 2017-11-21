@@ -567,8 +567,11 @@ class TAutoMessagesController extends AppController {
     $this->set('outMessageWidgetOpenType', Configure::read('outMessageWidgetOpenType'));
     // 有効無効
     $this->set('outMessageAvailableType', Configure::read('outMessageAvailableType'));
+    $this->log('入ってるかチェック1',LOG_DEBUG);
+    $this->log($this->request->query,LOG_DEBUG);
     // 最後に表示していたページ番号
     if(!empty($this->request->query['lastpage'])){
+      $this->log('入ってるかチェック2',LOG_DEBUG);
       $this->set('lastPage', $this->request->query['lastpage']);
     }
   }
