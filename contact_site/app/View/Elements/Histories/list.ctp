@@ -47,7 +47,7 @@ if ( isset($history['THistory']['visitors_id']) ) {
             <td class="tLeft">
               <?php if(isset($coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $coreSettings[C_COMPANY_REF_COMPANY_DATA]): ?>
                 <?php if(!empty($history['LandscapeData']['org_name']) && !empty($history['LandscapeData']['lbc_code'])): ?>
-                    <a href="javascript:void(0)" onclick="openCompanyDetailInfo('<?=$history['LandscapeData']['lbc_code']?>')"><?=h($history['LandscapeData']['org_name'])?></a><br>
+                    <a href="javascript:void(0)" class="underL" onclick="openCompanyDetailInfo('<?=$history['LandscapeData']['lbc_code']?>')"><?=h($history['LandscapeData']['org_name'])?></a><br>
                 <?php elseif(!empty($history['LandscapeData']['org_name'])): ?>
                     <p><?=h($history['LandscapeData']['org_name'])?></p><?='\n'?>
                 <?php endif; ?>
