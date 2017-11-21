@@ -9,8 +9,10 @@
       condifiton: {
         get: function(){
           var sincloBox = document.getElementById('sincloBox');
-          if(sincloBox.getAttribute('data-openflg') !== storage.s.get("widgetMaximized")) {
-            storage.s.get("widgetMaximized");
+          if(storage.s.get("widgetMaximized") !== null && sincloBox.getAttribute('data-openflg') !== storage.s.get("widgetMaximized")) {
+            return storage.s.get("widgetMaximized");
+          } else {
+            return sincloBox.getAttribute('data-openflg');
           }
         },
         set: function(flg){
