@@ -1532,7 +1532,7 @@ var socket, // socket.io
           var html = common.createWidget();
           $('body').append(html);
           emit('syncReady', {widget: window.sincloInfo.widgetDisplay});
-          sinclo.widget.condifiton.set(false);
+          sinclo.widget.condifiton.set(false, false);
           sinclo.operatorInfo.header = document.querySelector('#sincloBox #widgetHeader');
 
           $("#sincloBox .widgetCtrl").click(function(){
@@ -1628,7 +1628,7 @@ var socket, // socket.io
           var abridgementType = common.getAbridgementType();
           //ウィジェットの再生成処理呼び出しでなければ最小化表示設定で呼び出す
           if(!reCreateWidget && dataOpenflg === "false") {
-            sinclo.widget.condifiton.set(false);
+            sinclo.widget.condifiton.set(false, true);
             //ログ書き込み用にメッセージ送信
             emit("sendWidgetShown",{widget:true});
             //最小化
