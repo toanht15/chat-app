@@ -2612,7 +2612,7 @@ var socket, // socket.io
       var closeAct = storage.s.get('closeAct');
       if ( document.getElementById('sincloBox') ) {
         sincloBox = document.getElementById('sincloBox');
-        var tmp = sincloBox.getAttribute('data-openflg');
+        var tmp = sinclo.widget.condifiton.get();
         if ( String(tmp) === "true" ) {
           widgetFlg = true;
         }
