@@ -967,7 +967,8 @@
       // チャットの契約をしている場合
       if ( window.sincloInfo.contract.chat ) {
         //OPが入室した数
-        if(typeof ga == "function"){
+        //入室数についてはタブでカウントする
+        if(typeof ga == "function" && obj.tabId === userInfo.tabId){
           ga('send', 'event', 'sinclo', 'チャット対応', sinclo.chatApi.opUser);
         }
       }
@@ -983,7 +984,6 @@
       }
       check.escape_html(opUser); // エスケープ
       sinclo.chatApi.createNotifyMessage(opUser + "が退室しました");
-      sinclo.chatApi.opUser = "";
       //退室した後に同じ消費者からメッセージが来た場合、それもGAのイベントとしてカウントするため
       sessionStorage.removeItem('chatEmit');
     },
@@ -1111,7 +1111,8 @@
           // チャットの契約をしている場合
           if ( window.sincloInfo.contract.chat ) {
             //sorryメッセージを出した数
-            if(typeof ga == "function"){
+            //sorryメッセージ受信数はメッセージを送信した対象のタブでカウントする
+            if(typeof ga == "function" && obj.tabId !== userInfo.tabId){
               ga('send', 'event', 'sinclo', 'チャット拒否', location.href);
             }
           }
