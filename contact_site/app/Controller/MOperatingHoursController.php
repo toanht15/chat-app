@@ -26,7 +26,8 @@ class MOperatingHoursController extends AppController {
     //オートメッセージ情報
     $autoMessageData = $this->TAutoMessage->find('all', ['conditions' => [
       'm_companies_id' => $this->userInfo['MCompany']['id'],
-      'active_flg' => 0
+      'active_flg' => 0,
+      'del_flg' => 0
     ]]);
     $check = '';
     foreach($autoMessageData as $v){
@@ -177,12 +178,5 @@ class MOperatingHoursController extends AppController {
     $this->set('type', $this->request->data['dayType']);
     //二重操作防止
     $this->render('/Elements/MOperatingHours/remoteEntry');
-  }
-
-  public function remoteOpenError() {
-    Configure::write('debug', 0);
-    $this->autoRender = FALSE;
-    $this->layout = 'ajax';
-    $this->render('/Elements/MOperatingHours/remoteError');
   }
 }
