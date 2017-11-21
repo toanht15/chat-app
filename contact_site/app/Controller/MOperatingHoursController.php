@@ -26,7 +26,8 @@ class MOperatingHoursController extends AppController {
     //オートメッセージ情報
     $autoMessageData = $this->TAutoMessage->find('all', ['conditions' => [
       'm_companies_id' => $this->userInfo['MCompany']['id'],
-      'active_flg' => 0
+      'active_flg' => 0,
+      'del_flg' => 0
     ]]);
     $check = '';
     foreach($autoMessageData as $v){
@@ -62,7 +63,7 @@ class MOperatingHoursController extends AppController {
       //デフォルト設定
       if(empty($operatingHourData)) {
         $saveData['MOperatingHour']['m_companies_id'] = $this->userInfo['MCompany']['id'];
-        $saveData['MOperatingHour']['time_settings'] = "{\"everyday\":{\"mon\":[{\"start\":\"09:00\",\"end\":\"18:00\"}],\"tue\":[{\"start\":\"09:00\",\"end\":\"18:00\"}],\"wed\":[{\"start\":\"09:00\",\"end\":\"18:00\"}],\"thu\":[{\"start\":\"09:00\",\"end\":\"18:00\"}],\"fri\":[{\"start\":\"09:00\",\"end\":\"18:00\"}],\"sat\":[{\"start\":\"\",\"end\":\"\"}],\"sun\":[{\"start\":\"\",\"end\":\"\"}],\"pub\":[{\"start\":\"09:00\",\"end\":\"18:00\"}]},\"weekly\":{\"week\":[{\"start\":\"09:00\",\"end\":\"18:00\"}],\"weekend\":[{\"start\":\"09:00\",\"end\":\"18:00\"}],\"weekpub\":[{\"start\":\"\",\"end\":\"\"}]}}";
+        $saveData['MOperatingHour']['time_settings'] = "{\"everyday\":{\"mon\":[{\"start\":\"09:00\",\"end\":\"18:00\"}],\"tue\":[{\"start\":\"09:00\",\"end\":\"18:00\"}],\"wed\":[{\"start\":\"09:00\",\"end\":\"18:00\"}],\"thu\":[{\"start\":\"09:00\",\"end\":\"18:00\"}],\"fri\":[{\"start\":\"09:00\",\"end\":\"18:00\"}],\"sat\":[{\"start\":\"\",\"end\":\"\"}],\"sun\":[{\"start\":\"\",\"end\":\"\"}],\"pub\":[{\"start\":\"\",\"end\":\"\"}]},\"weekly\":{\"week\":[{\"start\":\"09:00\",\"end\":\"18:00\"}],\"weekend\":[{\"start\":\"09:00\",\"end\":\"18:00\"}],\"weekpub\":[{\"start\":\"\",\"end\":\"\"}]}}";
         $saveData['MOperatingHour']['active_flg'] = C_ACTIVE_DISABLED;
         $saveData['MOperatingHour']['type'] = 1;
         $this->MOperatingHour->create();
@@ -177,12 +178,5 @@ class MOperatingHoursController extends AppController {
     $this->set('type', $this->request->data['dayType']);
     //二重操作防止
     $this->render('/Elements/MOperatingHours/remoteEntry');
-  }
-
-  public function remoteOpenError() {
-    Configure::write('debug', 0);
-    $this->autoRender = FALSE;
-    $this->layout = 'ajax';
-    $this->render('/Elements/MOperatingHours/remoteError');
   }
 }

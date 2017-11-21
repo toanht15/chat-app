@@ -417,6 +417,19 @@ $headerNo = 1;
                 <!-- ヘッダー部start -->
                 <div style=" background-color: #ECF4DA; cursor: pointer; border-color: #C3D69B; border-style: solid; border-width: 1px 0 1px 0; font-weight: bold; padding: 5px 0 5px 10px; width: 396px !important;">ヘッダー部</div><br>
                 <div style=" position: relative; top: -10px; left: 10px;">
+                <span style="height: 35px;"><label>背景色</label><?= $this->ngForm->input('header_background_color', [
+                      'type' => 'text',
+                      'placeholder' => '背景色',
+                      'div' => false,
+                      'class' => 'jscolor {hash:true}',
+                      'label' => false,
+                      'maxlength' => 7,
+                      'error' => false,
+                      'style' => 'width: 120px; position: relative; left: 106px;'
+                  ],
+                  [
+                      'entity' => 'MWidgetSetting.header_background_color'
+                  ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('header_background_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -28px; left: 285px;" >標準に戻す</span></span>
                 <!-- 7.企業名文字色 -->
                 <span style="height: 35px;"><label>企業名文字色</label><?= $this->ngForm->input('sub_title_text_color', [
                   'type' => 'text',
@@ -1172,7 +1185,10 @@ $headerNo = 1;
       </section>
       <?php endif; ?>
 
-      <?php if($coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT])): ?>
+      <?php
+        // 以下はシェアリングプランのみ表示する
+        if(!$coreSettings[C_COMPANY_USE_CHAT] && ($coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT]))):
+      ?>
       <h3><?php echo mb_convert_kana($headerNo, "N", "utf-8"); $headerNo++ ?>．電話ウィンドウ設定</h3>
       <section>
         <ul class="settingList">

@@ -72,10 +72,26 @@ class TAutoMessagesController extends AppController {
           'TAutoMessage.id' => $id
         ]
       ]);
+      //オートメッセージ　営業時間を4番目に入れたので並び替え処理
+      $changeEditData = json_decode($editData[0]['TAutoMessage']['activity'], true);
+      foreach($changeEditData['conditions'] as $key => $val){
+        if($key >= 4 && $key != 10) {
+          unset($changeEditData['conditions'][$key]);
+          $changeEditData['conditions'][$key+1] = json_decode($editData[0]['TAutoMessage']['activity'], true)['conditions'][$key];
+        }
+        if($key === 10) {
+          unset($changeEditData['conditions'][10]);
+          $changeEditData['conditions'][4] = json_decode($editData[0]['TAutoMessage']['activity'], true)['conditions'][10];
+        }
+      }
+
       if (empty($editData) || (!empty($editData) && empty($editData[0]))) {
         $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.notFoundId'));
         $this->redirect('/TAutoMessages/index');
       }
+
+      $changeEditData = json_encode($changeEditData);
+      $editData[0]['TAutoMessage']['activity'] = $changeEditData;
       $json = json_decode($editData[0]['TAutoMessage']['activity'], true);
       $this->request->data = $editData[0];
       $this->request->data['TAutoMessage']['condition_type'] = (!empty($json['conditionType'])) ? $json['conditionType'] : "";
@@ -498,10 +514,27 @@ class TAutoMessagesController extends AppController {
         $validate = false;
       }
     }
-    if ( $validate && $this->TAutoMessage->save(false) ) {
-      $this->TAutoMessage->commit();
-      $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
-      $this->redirect('/TAutoMessages/index/page:'.$nextPage);
+
+    if ($validate) {
+      //オートメッセージ　営業時間を4番目に入れたので並び替え処理
+      $changeEditData = json_decode($saveData['TAutoMessage']['activity'],true);
+      foreach($changeEditData['conditions'] as $key => $val){
+        if($key === 4) {
+          unset($changeEditData['conditions'][4]);
+          $changeEditData['conditions'][10] = json_decode($saveData['TAutoMessage']['activity'],true)['conditions'][4];
+        }
+        if($key >= 5) {
+          unset($changeEditData['conditions'][$key]);
+          $changeEditData['conditions'][$key-1] = json_decode($saveData['TAutoMessage']['activity'],true)['conditions'][$key];
+        }
+      }
+      $changeEditData = json_encode($changeEditData);
+      $saveData['TAutoMessage']['activity'] = $changeEditData;
+      if( $this->TAutoMessage->save($saveData,false) ) {
+        $this->TAutoMessage->commit();
+        $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
+        $this->redirect('/TAutoMessages/index/page:'.$nextPage);
+      }
     }
     else {
       $this->TAutoMessage->rollback();

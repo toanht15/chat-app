@@ -139,13 +139,13 @@ define('C_AUTO_TRIGGER_TYPE_BODYLOAD', 1); // 画面読み込み時
 define('C_AUTO_TRIGGER_STAY_TIME',  1); // 滞在時間
 define('C_AUTO_TRIGGER_VISIT_CNT',  2); // 訪問回数
 define('C_AUTO_TRIGGER_STAY_PAGE',  3); // ページ
-define('C_AUTO_TRIGGER_DAY_TIME',   4); // 曜日・時間
-define('C_AUTO_TRIGGER_REFERRER',   5); // 参照元URL（リファラー）
-define('C_AUTO_TRIGGER_SEARCH_KEY', 6); // 検索キーワード
-define('C_AUTO_TRIGGER_SPEECH_CONTENT', 7); // 発言内容
-define('C_AUTO_TRIGGER_STAY_PAGE_OF_FIRST', 8); // 最初の滞在ページ
-define('C_AUTO_TRIGGER_STAY_PAGE_OF_PREVIOUS', 9); // 前のページ
-define('C_AUTO_TRIGGER_OPERATING_HOURS', 10); // 営業時間
+define('C_AUTO_TRIGGER_OPERATING_HOURS', 4); // 営業時間
+define('C_AUTO_TRIGGER_DAY_TIME',   5); // 曜日・時間
+define('C_AUTO_TRIGGER_REFERRER',   6); // 参照元URL（リファラー）
+define('C_AUTO_TRIGGER_SEARCH_KEY', 7); // 検索キーワード
+define('C_AUTO_TRIGGER_SPEECH_CONTENT', 8); // 発言内容
+define('C_AUTO_TRIGGER_STAY_PAGE_OF_FIRST', 9); // 最初の滞在ページ
+define('C_AUTO_TRIGGER_STAY_PAGE_OF_PREVIOUS', 10); // 前のページ
 
 // オートメッセージ機能－アクション種別コード
 define('C_AUTO_ACTION_TYPE_SENDMESSAGE', 1); // チャットメッセージを送る
@@ -200,6 +200,8 @@ define('OTHER_TEXT_COLOR', "#666666");
 define('WIDGET_BORDER_COLOR', "#E8E7E0");
 //6.吹き出し枠線色
 define('CHAT_TALK_BORDER_COLOR', "#C9C9C9");
+//6.ヘッダー背景色
+define('HEADER_BACKGROUND_COLOR', "#FFFFFF");
 //7.企業名文字色
 define('SUB_TITLE_TEXT_COLOR', "#ABCD05");
 //8.説明文文字色
@@ -466,7 +468,7 @@ $config['outMessageTriggerList'] = [
     ],
     // 営業時間設定
     C_AUTO_TRIGGER_OPERATING_HOURS => [
-      'label' => '営業時間設定',
+      'label' => '営業時間',
       'createLimit' => [C_COINCIDENT => 1, C_SOME_EITHER => 1],
       'key' => 'operating_hours',
       'default' => [
