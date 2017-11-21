@@ -1526,8 +1526,7 @@ var socket, // socket.io
           var html = common.createWidget();
           $('body').append(html);
           emit('syncReady', {widget: window.sincloInfo.widgetDisplay});
-          sincloBox = document.getElementById('sincloBox');
-          sincloBox.setAttribute('data-openflg', false);
+          sinclo.widget.condifiton.set(false);
           sinclo.operatorInfo.header = document.querySelector('#sincloBox #widgetHeader');
 
           $("#sincloBox .widgetCtrl").click(function(){
