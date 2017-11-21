@@ -472,7 +472,7 @@
 
       if ( obj.sincloSessionIdIsNew || (!check.isset(userInfo.sincloSessionId) && check.isset(obj.sincloSessionId)) ) {
         if(obj.sincloSessionIdIsNew) console.log("sincloSessionIdIsNew");
-        userInfo.oldSincloSessionId = userInfo.sincloSessionId;
+        userInfo.oldSincloSessionId = userInfo.sincloSessionId ? userInfo.sincloSessionId : "";
         userInfo.set(cnst.info_type.sincloSessionId, obj.sincloSessionId, "sincloSessionId");
       }
 
