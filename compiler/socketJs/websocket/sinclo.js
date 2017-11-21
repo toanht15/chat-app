@@ -999,7 +999,8 @@
             this.chatApi.autoMessages.push(chat.chatId, {
               chatId: chat.chatId,
               message: chat.message,
-              created: chat.created
+              created: chat.created,
+              applied: chat.applied ? chat.applied : false
             });
           }
 
@@ -1388,7 +1389,7 @@
             if(json) {
               var array = JSON.parse(json);
               Object.keys(array).forEach(function(id, index, ar) {
-                if(allData || !array[id].deleted) {
+                if(allData || !array[id].applied) {
                   returnData.push(array[id]);
                 }
               });
@@ -1405,7 +1406,7 @@
             var list = this.get();
             Object.keys(list).forEach(function(id, index, arr) {
               
-              list[id]['deleted'] = true;
+              list[id]['applied'] = true;
             });
             storage.s.set('amsg', JSON.stringify(list));
           }

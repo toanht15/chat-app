@@ -672,7 +672,11 @@ io.sockets.on('connection', function (socket) {
               }
               var autoMessages = [];
               if(obj.sincloSessionId in sincloCore[obj.siteKey] && 'autoMessages' in sincloCore[obj.siteKey][obj.sincloSessionId] ) {
-                autoMessages = sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages;
+                var autoMessageArray = sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages;
+                for(var key in autoMessageArray) {
+                  autoMessages.push(autoMessageArray[key]);
+                }
+                console.log("automessages : " + JSON.stringify(autoMessages));
               }
               for (var i = 0; i < autoMessages.length; i++) {
                 var date = autoMessages[i].created;
@@ -1257,7 +1261,7 @@ io.sockets.on('connection', function (socket) {
       sincloCore[obj.siteKey][obj.tabId] = {sincloSessionId: null, sessionId: null, subWindow: false};
     }
     if ( !isset(sincloCore[obj.siteKey][obj.sincloSessionId]) ) {
-      sincloCore[obj.siteKey][obj.sincloSessionId] = {sessionIds: [], autoMessages: []};
+      sincloCore[obj.siteKey][obj.sincloSessionId] = {sessionIds: [], autoMessages: {}};
     }
     if ('timeoutTimer' in sincloCore[obj.siteKey][obj.tabId]) {
       clearTimeout(sincloCore[obj.siteKey][obj.tabId].timeoutTimer);
@@ -1750,7 +1754,8 @@ io.sockets.on('connection', function (socket) {
     chat.messageType = obj.isAutoSpeech ? chatApi.cnst.observeType.autoSpeech : chatApi.cnst.observeType.auto;
     chat.created = new Date();
     chat.sort = fullDateTime(chat.created);
-    sincloCore[chat.siteKey][chat.sincloSessionId].autoMessages.push(chat);
+
+    sincloCore[chat.siteKey][chat.sincloSessionId].autoMessages[chat.chatId] = chat;
     emit.toCompany('resAutoChatMessage', chat, chat.siteKey);
     emit.toSameUser('resAutoChatMessage', chat, chat.siteKey, chat.sincloSessionId);
   });
@@ -2034,6 +2039,10 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         for (var i = 0; obj.messageList.length > i; i++) {
             var message = obj.messageList[i];
             pool.query("SELECT *, ? as inputed, ? as auto_message_type FROM t_auto_messages WHERE id = ?  AND m_companies_id = ? AND del_flg = 0 AND active_flg = 0 AND action_type = 1", [message.created, message.isAutoSpeech ? chatApi.cnst.observeType.autoSpeech : chatApi.cnst.observeType.auto, message.chatId, companyList[obj.siteKey]], loop);
+            if(message.chatId in sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages) {
+              console.log("applied chatid: " + message.chatId);
+              sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages[message.chatId]['applied'] = true;
+            }
         }
       }
     });
