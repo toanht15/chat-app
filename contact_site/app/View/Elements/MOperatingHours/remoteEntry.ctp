@@ -13,6 +13,15 @@ function holidayCheck(){
   }
 }
 
+var os, ua = navigator.userAgent;
+var userAgent = window.navigator.userAgent.toLowerCase();
+//Mac Chrome処理
+if (ua.match(/Mac|PPC/)) {
+  if(userAgent.indexOf('chrome') != -1) {
+    document.getElementById('MOperatingHourInfoHoliday').style.marginLeft = "10px";
+  }
+}
+
 //ポップアップを開いた際の休業日のチェックボックスの状態
 var jsonData = '<?= $jsonData ?>';
 jsonData = JSON.parse(jsonData);
@@ -150,6 +159,7 @@ popupEvent.closePopup = function(){
     td.innerHTML = timeInfo;
   }
   popupEvent.close();
+
 };
 
 //時間追加
@@ -251,7 +261,7 @@ else {
       <span id = "day"><?= $dayOfWeek; ?></span>
       <label id = "holiday">
         <?= $this->Form->checkbox('holiday', array('onchange' => 'holidayCheck()',
-        'style' => 'margin-left: -10px; cursor: pointer; position: absolute; top: -3px; bottom: 0; width: 5em;')) ?>
+        'style' => 'cursor: pointer; position: absolute; top: -3px; bottom: 0; width: 5em;')) ?>
         <span id = position>休業日</span>
       </label>
     </li>
