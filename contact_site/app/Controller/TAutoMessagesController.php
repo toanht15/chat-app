@@ -222,6 +222,23 @@ class TAutoMessagesController extends AppController {
       if (!empty($lastData)) {
         $nextSort = intval($lastData['TAutoMessage']['sort']) + 1;
       }
+
+    //オートメッセージ　営業時間を4番目に入れたので並び替え処理
+      $changeEditData = json_decode($value['TAutoMessage']['activity'], true);
+      foreach($changeEditData['conditions'] as $key => $val){
+        if($key >= 4 && $key != 10) {
+          unset($changeEditData['conditions'][$key]);
+          $changeEditData['conditions'][$key+1] = json_decode($value['TAutoMessage']['activity'], true)['conditions'][$key];
+        }
+        if($key === 10) {
+          unset($changeEditData['conditions'][10]);
+          $changeEditData['conditions'][4] = json_decode($value['TAutoMessage']['activity'], true)['conditions'][10];
+        }
+      }
+
+      $changeEditData = json_encode($changeEditData);
+      $value['TAutoMessage']['activity'] = $changeEditData;
+
       $saveData['TAutoMessage']['sort'] = $nextSort;
       $saveData['TAutoMessage']['m_companies_id'] = $value['TAutoMessage']['m_companies_id'];
       $saveData['TAutoMessage']['name'] = $value['TAutoMessage']['name'].'コピー';
@@ -230,19 +247,37 @@ class TAutoMessagesController extends AppController {
       $saveData['TAutoMessage']['action_type'] = $value['TAutoMessage']['action_type'];
       $saveData['TAutoMessage']['active_flg'] = $value['TAutoMessage']['active_flg'];
       $saveData['TAutoMessage']['del_flg'] = $value['TAutoMessage']['del_flg'];
+
       $this->TAutoMessage->set($saveData);
       $this->TAutoMessage->begin();
       // バリデーションチェックでエラーが出た場合
       if($res){
-        if (! $this->TAutoMessage->save() ) {
+        if(!$this->TAutoMessage->validates()) {
           $res = false;
           $errorMessage = $this->TAutoMessage->validationErrors;
           $this->TAutoMessage->rollback();
         }
         else{
-          $this->TAutoMessage->commit();
-          $this->Session->delete('dstoken');
-          $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
+          //オートメッセージ　営業時間を4番目に入れたので並び替え処理
+          $changeEditData = json_decode($saveData['TAutoMessage']['activity'],true);
+          foreach($changeEditData['conditions'] as $key => $val){
+            if($key === 4) {
+              unset($changeEditData['conditions'][4]);
+              $changeEditData['conditions'][10] = json_decode($saveData['TAutoMessage']['activity'],true)['conditions'][4];
+            }
+            if($key >= 5) {
+              unset($changeEditData['conditions'][$key]);
+              $changeEditData['conditions'][$key-1] = json_decode($saveData['TAutoMessage']['activity'],true)['conditions'][$key];
+            }
+          }
+          $changeEditData = json_encode($changeEditData);
+          $saveData['TAutoMessage']['activity'] = $changeEditData;
+
+          if( $this->TAutoMessage->save($saveData,false) ) {
+            $this->TAutoMessage->commit();
+            $this->Session->delete('dstoken');
+            $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
+          }
         }
       }
     }
