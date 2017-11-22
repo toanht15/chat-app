@@ -1161,7 +1161,7 @@ io.sockets.on('connection', function (socket) {
                   }
                 }
                 //営業時間設定を利用していない場合
-                else　if(active_flg === 2) {
+                else {
                   //オペレータが待機している場合
                   if ( (rows[0].display_type === 2 && getOperatorCnt(d.siteKey) > 0) ||
                   (rows[0].display_type === 1 && getOperatorCnt(d.siteKey) > 0) ||
@@ -1282,7 +1282,7 @@ io.sockets.on('connection', function (socket) {
                   }
                 }
                 //営業時間設定を利用しない場合
-                else　if(active_flg === 2) {
+                else {
                   // チャット上限数をみる
                   if ( scList.hasOwnProperty(d.siteKey) ) {
                     var userIds = Object.keys(scList[d.siteKey].user);
