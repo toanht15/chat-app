@@ -287,7 +287,7 @@ router.get("/", function(req, res, next) {
                     nowDay = now.getDay();
                     dateParse = Date.parse(now);
                     date = now.getFullYear() + "/" + (now.getMonth()+1) + "/" + now.getDate() + " ";
-                    today = (now.getMonth()+1) + now.getDate();
+                    today = (now.getMonth()+1) + '/' + now.getDate();
                     var getOperatingHourSQL = "SELECT * FROM m_operating_hours where m_companies_id = ?;";
                     pool.query(getOperatingHourSQL, m_companies_id , function(error,result){
                       var getPublicHolidaySQL = "SELECT * FROM public_holidays where year = ?;";
@@ -312,6 +312,7 @@ router.get("/", function(req, res, next) {
                                 jsonData.conditions[10][0].weekly = JSON.parse(result[i2].time_settings).weekly;
                                 jsonData.conditions[10][0].publicHolidayConditions = JSON.parse(result[i2].time_settings).weekly.weekpub;
                                 jsonData.conditions[10][0].now = now;
+                                jsonData.conditions[10][0].nowDay = nowDay;
                                 jsonData.conditions[10][0].dateParse = dateParse;
                                 jsonData.conditions[10][0].date = date;
                                 jsonData.conditions[10][0].today = today;
