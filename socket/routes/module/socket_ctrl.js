@@ -1167,6 +1167,7 @@ io.sockets.on('connection', function (socket) {
                   (rows[0].display_type === 1 && getOperatorCnt(d.siteKey) > 0) ||
                   (rows[0].display_type === 4 && getOperatorCnt(d.siteKey) > 0)
                   ) {
+                    console.log('true');
                     ret = true;
                   }
                   //オペレータが待機していない場合
