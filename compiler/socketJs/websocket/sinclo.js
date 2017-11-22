@@ -504,6 +504,7 @@
     setHistoryId: function(){
         var createStartTimer,
             createStart = function(){
+                console.log("create start");
                 var sincloBox = document.getElementById('sincloBox');
                 if ( window.sincloInfo.contract.chat && check.smartphone() ) {
                   common.widgetHandler.show();
@@ -676,6 +677,10 @@
         storage.s.unset("coBrowseConnectToken");
         if (!document.getElementById('sincloBox')) {
           common.makeAccessIdTag();
+          if ( window.sincloInfo.contract.chat ) {
+            // チャット情報読み込み
+            sinclo.chatApi.init();
+          }
         }
 
         // 終了通知
@@ -1220,6 +1225,10 @@
       userInfo.syncInfo.unset();
       if (!document.getElementById('sincloBox')) {
         common.makeAccessIdTag();
+        if ( window.sincloInfo.contract.chat ) {
+          // チャット情報読み込み
+          sinclo.chatApi.init();
+        }
       }
 
       // 終了通知
@@ -1257,6 +1266,10 @@
       userInfo.coBrowseConnectToken = "";
       if (!document.getElementById('sincloBox')) {
         common.makeAccessIdTag();
+        if ( window.sincloInfo.contract.chat ) {
+          // チャット情報読み込み
+          sinclo.chatApi.init();
+        }
       }
 
       // 終了通知
@@ -2233,7 +2246,7 @@
             };
 
             
-            if(!sinclo.chatApi.autoMessages.exists(data.chatId)) {
+            if(!sinclo.chatApi.autoMessages.exists(data.chatId) && !isSpeechContent) {
               //resAutoMessagesで表示判定をするためにidをkeyとして空Objectを入れる
               sinclo.chatApi.autoMessages.push(data.chatId, {});
             }
