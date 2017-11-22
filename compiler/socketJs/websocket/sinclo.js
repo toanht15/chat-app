@@ -2578,13 +2578,14 @@
                   else {
                     for(var i=0; i<timeData.length; i++){
                       if( Date.parse(new Date(date + timeData[i].start)) <= dateParse && dateParse < Date.parse(new Date(date + timeData[i].end)) ) {
+                        checkHour = true;
                         callback(true, null);
                         return;
                       }
-                      else {
-                        callback(false, 0);
-                        return;
-                      }
+                    }
+                    if(checkHour != true) {
+                      callback(false, 0);
+                      return;
                     }
                   }
                 }
