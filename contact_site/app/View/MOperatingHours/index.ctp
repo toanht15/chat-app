@@ -201,7 +201,7 @@ if ( !(!empty($this->data['MOperatingHour']['active_flg']) && strcmp($this->data
                       }
                     }
                     else {
-                      $day = $day."　".$v->start.'-'.$v->end;
+                      $day = $day."　/　".$v->start.'-'.$v->end;
                     }
                   }
                 ?>
