@@ -983,6 +983,8 @@ io.sockets.on('connection', function (socket) {
                 }
                 timeData = JSON.parse(result[i].time_settings).weekly[day];
                 publicHolidayData = JSON.parse(result[i].time_settings).weekly['weekpub'];
+                console.log('祝日データ');
+                console.log(publicHolidayData);
               }
               active_flg = JSON.parse(result[i].active_flg);
             }
@@ -1003,9 +1005,10 @@ io.sockets.on('connection', function (socket) {
                 if(active_flg == 1) {
                   for(var i2=0; i2<results.length; i2++) {
                     //祝日の場合
-                    if((now.getMonth()+1) + now.getDate() == results[i2].month + results[i2].day) {
+                    if((now.getMonth()+1) +'/'+ now.getDate() == results[i2].month +'/'+ results[i2].day) {
+                      console.log('大正解');
                       //祝日の営業時間設定が「休み」でない場合
-                      if(publicHolidayData[0].start != null && publicHolidayData[0].end != null) {
+                      if(publicHolidayData[0].start != "" && publicHolidayData[0].end != "") {
                         for(var i=0; i<publicHolidayData.length; i++){
                           // 営業時間内の場合
                           if( Date.parse(new Date(date + publicHolidayData[i].start)) <= dateParse && dateParse < Date.parse(new Date(date + publicHolidayData[i].end))) {
@@ -1019,7 +1022,8 @@ io.sockets.on('connection', function (socket) {
                     }
                   }
                   // 祝日でない場合、営業時間設定が「休み」でない場合
-                  if(timeData[0].start != null && timeData[0].end != null) {
+                  if(timeData[0].start != "" && timeData[0].end != "") {
+                    console.log('大失敗');
                     for(var i=0; i<timeData.length; i++){
                       // 営業時間内の場合
                       if( Date.parse(new Date(date + timeData[i].start)) <= dateParse && dateParse < Date.parse(new Date(date + timeData[i].end))) {
@@ -1049,8 +1053,9 @@ io.sockets.on('connection', function (socket) {
               if ( type === 1 && rows[0].display_type === 4 && active_flg == 1) {
                 // 祝日の場合
                 for(var i2=0; i2<results.length; i2++) {
-                  if((now.getMonth()+1) + now.getDate() == results[i2].month + results[i2].day) {
-                    if(publicHolidayData[0].start != null && publicHolidayData[0].end != null) {
+                  if((now.getMonth()+1) +'/'+ now.getDate() == results[i2].month +'/'+ results[i2].day) {
+                    console.log('祝日決定！');
+                    if(publicHolidayData[0].start != "" && publicHolidayData[0].end != "") {
                       for(var i=0; i<publicHolidayData.length; i++){
                         if( Date.parse(new Date(date + publicHolidayData[i].start)) <= dateParse && dateParse < Date.parse(new Date(date + publicHolidayData[i].end))) {
                           return callback(true, {opFlg: true, message: no_standby_sorry_message});
@@ -1062,7 +1067,8 @@ io.sockets.on('connection', function (socket) {
                   }
                 }
                 // 祝日でない場合、営業時間設定が「休み」でない場合
-                if(timeData[0].start != null && timeData[0].end != null) {
+                if(timeData[0].start != "" && timeData[0].end != "") {
+                  console.log('あれ祝日設定になってないよ');
                   for(var i=0; i<timeData.length; i++){
                     // 営業時間内の場合
                     if( Date.parse(new Date(date + timeData[i].start)) <= dateParse && dateParse < Date.parse(new Date(date + timeData[i].end))) {
@@ -1088,10 +1094,16 @@ io.sockets.on('connection', function (socket) {
                 if (active_flg === 1) {
                   //祝日の場合
                   for(var i2=0; i2<results.length; i2++) {
-                    if((now.getMonth()+1) + now.getDate() == results[i2].month + results[i2].day) {
+                    if((now.getMonth()+1) +'/'+ now.getDate() == results[i2].month +'/'+ results[i2].day) {
+                      console.log('祝日万歳qqqq！');
+                      console.log(publicHolidayData[0].start);
+                      console.log(publicHolidayData[0].end);
+                      publicHolidayData[0].start = '';
+                      publicHolidayData[0].end = '';
                       check = true;
                       //祝日の営業時間設定が「休み」でない場合
-                      if(publicHolidayData[0].start != null && publicHolidayData[0].end != null) {
+                      if(publicHolidayData[0].start != "" && publicHolidayData[0].end != "") {
+                        console.log('ここ入っちゃってるよ！');
                         for(var i=0; i<publicHolidayData.length; i++){
                           //営業時間内の場合
                           if( Date.parse(new Date(date + publicHolidayData[i].start)) <= dateParse && dateParse < Date.parse(new Date(date + publicHolidayData[i].end)) ) {
@@ -1109,10 +1121,16 @@ io.sockets.on('connection', function (socket) {
                               message = no_standby_sorry_message;
                             }
                           }
+                          //営業時間外の場合
+                          else {
+                            ret = false;
+                            message = outside_hours_sorry_message;
+                          }
                         }
                       }
                       //祝日の営業時間設定が「休み」の場合
                       else {
+                        console.log('祝日休み万歳！');
                         ret = false;
                         message = outside_hours_sorry_message;
                       }
@@ -1122,7 +1140,7 @@ io.sockets.on('connection', function (socket) {
                   //祝日でない場合
                   if(check != true) {
                     //営業時間設定が「休み」の場合
-                    if(timeData[0].start == null && timeData[0].end == null) {
+                    if(timeData[0].start == "" && timeData[0].end == "") {
                       ret = false;
                       message = outside_hours_sorry_message;
                     }
@@ -1175,6 +1193,7 @@ io.sockets.on('connection', function (socket) {
 
               // チャット上限数を設定している場合
               else if ( Number(rows[0].sc_flg) === 1 ) {
+                console.log('ここまでは入ってる？');
                 if ( type === 1 && rows[0].display_type === 2 && scList.hasOwnProperty(d.siteKey) ) {
                   var userIds = Object.keys(scList[d.siteKey].user);
                   if ( userIds.length !== 0 ) {
@@ -1188,10 +1207,14 @@ io.sockets.on('connection', function (socket) {
                 if (active_flg === 1) {
                   for(var i2=0; i2<results.length; i2++) {
                     //祝日の場合
-                    if((now.getMonth()+1) + now.getDate() == results[i2].month + results[i2].day) {
+                    if((now.getMonth()+1) +'/'+ now.getDate() == results[i2].month +'/'+ results[i2].day) {
+                      console.log('祝日万歳！');
                       check = true;
+                      console.log(publicHolidayData[0].start);
+                      console.log(publicHolidayData[0].end);
                       //祝日の営業時間設定が「休み」でない場合
-                      if(publicHolidayData[0].start != null && publicHolidayData[0].end != null) {
+                      if(publicHolidayData[0].start　!= "" && publicHolidayData[0].end != "") {
+                        console.log('祝日に入っているね');
                         for(var i=0; i<publicHolidayData.length; i++){
                           //営業時間内の場合
                           if( Date.parse(new Date(date + publicHolidayData[i].start)) <= dateParse && dateParse < Date.parse(new Date(date + publicHolidayData[i].end)) ) {
@@ -1219,10 +1242,17 @@ io.sockets.on('connection', function (socket) {
                           }
                           //営業時間外の場合
                           else {
+                            console.log('祝日休み万歳232！');
                             ret = false;
                             message = outside_hours_sorry_message;
                           }
                         }
+                      }
+                      //休みの設定にしているとき
+                      else {
+                        console.log('ここに入ってる～');
+                        ret = false;
+                        message = outside_hours_sorry_message;
                       }
                     }
                   }
@@ -1230,7 +1260,8 @@ io.sockets.on('connection', function (socket) {
                   //祝日でない場合
                   if(check != true) {
                     //営業時間設定が「休み」の場合
-                    if(timeData[0].start === null && timeData[0].end === null) {
+                    if(timeData[0].start === "" && timeData[0].end === "") {
+                      console.log('休みだよ～');
                       ret = false;
                       message = outside_hours_sorry_message;
                     }
