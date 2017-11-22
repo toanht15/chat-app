@@ -170,7 +170,6 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
           $condList = $this->AutoMessage->setAutoMessage($activity['conditions']);
           $allCondList[$id] = $condList;
           $conditions = implode($condList, ", ");
-
         }
         $no = $prevCnt + h($key+1);
         ?>

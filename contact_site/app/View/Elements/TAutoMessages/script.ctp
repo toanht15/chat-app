@@ -271,7 +271,6 @@ function openCopyDialog(){
       },
       url: "<?= $this->Html->url('/TAutoMessages/remoteCopyEntryForm') ?>",
       success: function(){
-        console.log('success');
         //現在のページ番号
         var index = Number("<?= $this->Paginator->params()["page"] ?>");
         var url = "<?= $this->Html->url('/TAutoMessages/index') ?>";

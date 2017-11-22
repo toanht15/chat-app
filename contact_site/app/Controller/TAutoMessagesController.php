@@ -222,8 +222,7 @@ class TAutoMessagesController extends AppController {
       if (!empty($lastData)) {
         $nextSort = intval($lastData['TAutoMessage']['sort']) + 1;
       }
-      $this->log('value',LOG_DEBUG);
-      $this->log($value,LOG_DEBUG);
+
     //オートメッセージ　営業時間を4番目に入れたので並び替え処理
       $changeEditData = json_decode($value['TAutoMessage']['activity'], true);
       foreach($changeEditData['conditions'] as $key => $val){
@@ -254,7 +253,6 @@ class TAutoMessagesController extends AppController {
       // バリデーションチェックでエラーが出た場合
       if($res){
         if(!$this->TAutoMessage->validates()) {
-          $this->log('validateError',LOG_DEBUG);
           $res = false;
           $errorMessage = $this->TAutoMessage->validationErrors;
           $this->TAutoMessage->rollback();
