@@ -288,8 +288,6 @@ router.get("/", function(req, res, next) {
                     dateParse = Date.parse(now);
                     date = now.getFullYear() + "/" + (now.getMonth()+1) + "/" + now.getDate() + " ";
                     today = (now.getMonth()+1) + '/' + now.getDate();
-                    console.log('today');
-                    console.log(today);
                     var getOperatingHourSQL = "SELECT * FROM m_operating_hours where m_companies_id = ?;";
                     pool.query(getOperatingHourSQL, m_companies_id , function(error,result){
                       var getPublicHolidaySQL = "SELECT * FROM public_holidays where year = ?;";
