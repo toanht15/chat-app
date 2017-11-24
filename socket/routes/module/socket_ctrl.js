@@ -800,7 +800,7 @@ io.sockets.on('connection', function (socket) {
               };
 
               // 担当者のいない消費者からのメッセージの場合
-              if ( d.messageType === 1 && !getSessionId(d.siteKey, d.tabId, 'chat') ) {
+              if ( d.messageType === 1 && !getChatSessionIds(d.siteKey, d.sincloSessionId, 'chat') ) {
                 if (chatApi.sendCheckTimerList.hasOwnProperty(d.tabId)) {
                   clearTimeout(chatApi.sendCheckTimerList[d.tabId]);
                   chatApi.sendCheckTimerList[d.tabId] = null;
@@ -2197,6 +2197,7 @@ console.log("chatStart-2: [" + logToken + "] " + JSON.stringify({ret: false, sit
       var scInfo = "";
 
       sincloCore[obj.siteKey][obj.tabId].chat = obj.userId;
+      sincloCore[obj.siteKey][obj.sincloSessionId].chat = obj.userId;
       sincloCore[obj.siteKey][obj.tabId].chatSessionId = socket.id;
       // サイトとして初チャット開始
       if ( !(obj.siteKey in c_connectList) ) {
