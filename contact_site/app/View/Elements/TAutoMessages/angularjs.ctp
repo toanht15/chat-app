@@ -291,4 +291,26 @@ function submitAct(){
   $('#TAutoMessageEntryForm').submit();
 }
 
+$(document).ready(function(){
+  // ツールチップの表示制御
+  $('.questionBtn').off("mouseenter").on('mouseenter',function(event){
+    console.log('入った');
+    var parentTdId = $(this).parent().parent().attr('id');
+    console.log(parentTdId);
+    var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
+    console.log(targetObj);
+    targetObj.find('icon-annotation').css('display','block');
+    targetObj.css({
+      top: ($(this).offset().top - targetObj.find('ul').outerHeight() + 39) + 'px',
+      left: $(this).offset().left - 101 + 'px'
+    });
+  });
+
+  $('.questionBtn').off("mouseleave").on('mouseleave',function(event){
+    console.log('離れた');
+    var parentTdId = $(this).parent().parent().attr('id');
+    var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
+    targetObj.find('icon-annotation').css('display','none');
+  });
+});
 </script>

@@ -41,6 +41,34 @@ function reloadAct(){
   window.location.reload();
 }
 
+function addOption(type){
+    var sendMessage = document.getElementById('MChatSettingOutsideHoursSorryMessage');
+    switch(type){
+        case 1:
+            if (sendMessage.value.length > 0) {
+                sendMessage.value += "\n";
+            }
+            sendMessage.value += "[] ";
+            sendMessage.focus();
+            break;
+        case 2:
+          if (sendMessage.value.length > 0) {
+            sendMessage.value += "\n";
+          }
+          sendMessage.value += "<telno></telno>";
+          sendMessage.focus();
+          // 開始と終了タブの真ん中にカーソルを配置する
+          if (sendMessage.createTextRange) {
+            var range = sendMessage.createTextRange();
+            range.move('character', sendMessage.value.length-8);
+            range.select();
+          } else if (sendMessage.setSelectionRange) {
+            sendMessage.setSelectionRange(sendMessage.value.length, sendMessage.value.length-8);
+          }
+          break;
+    }
+}
+
 $(document).ready(function(){
   if(<?= $operatingHourData ?> == 1) {
     $("#MChatSettingOutsideHoursSorryMessage").prop("disabled", false); // 営業時間設定のsorryメッセージをenabled
@@ -55,6 +83,25 @@ $(document).ready(function(){
   // 同時対応数上限のON/OFFの切り替わりを監視
   $(document).on('change', '[name="data[MChatSetting][sc_flg]"]', scSettingToggle);
   scSettingToggle(); // 初回のみ
+
+    // ツールチップの表示制御
+  $('.questionBtn').off("mouseenter").on('mouseenter',function(event){
+    var parentTdId = $(this).parent().parent().attr('id');
+    console.log(parentTdId);
+    var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
+    console.log(targetObj);
+    targetObj.find('icon-annotation').css('display','block');
+    targetObj.css({
+      top: ($(this).offset().top - targetObj.find('ul').outerHeight() - 70) + 'px',
+      left: $(this).offset().left - 65 + 'px'
+    });
+  });
+
+  $('.questionBtn').off("mouseleave").on('mouseleave',function(event){
+    var parentTdId = $(this).parent().parent().attr('id');
+    var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
+    targetObj.find('icon-annotation').css('display','none');
+  });
 });
 
 
@@ -131,20 +178,22 @@ $(document).ready(function(){
         <div class="content">
           <pre style = "padding: 0 0 15px 0;">このメッセージは下記の場合に自動送信されます</pre>
           <li style = "padding: 0 0 15px 0;">
-          <pre id = "outside_hours">(1)営業時間外にチャットが受信された場合</pre>
-          <?=$this->Form->textarea('outside_hours_sorry_message')?>
-          <?php if ( $this->Form->isFieldError('outside_hours_sorry_message') ) echo $this->Form->error('outside_hours_sorry_message', null, ['wrap' => 'p', 'style' => 'margin: 0;']); ?>
+            <pre id = "outside_hours">(1)営業時間外にチャットが受信された場合</pre>
+            <?=$this->Form->textarea('outside_hours_sorry_message')?>
+              <span class="greenBtn btn-shadow actBtn" onclick="addOption(1)" id = "choiceButton">選択肢を追加する</span>
+              <span class="greenBtn btn-shadow actBtn" onclick="addOption(2)" id = "lastSpeechLabel">電話番号を追加する<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></span>
+            <?php if ( $this->Form->isFieldError('outside_hours_sorry_message') ) echo $this->Form->error('outside_hours_sorry_message', null, ['wrap' => 'p', 'style' => 'margin: 0;']); ?>
           </li>
           <li style = "padding: 0 0 15px 0;">
-        <pre id = "wating_call">(2)対応上限数を超えてのチャットが受信された場合</pre>
-          <?=$this->Form->textarea('wating_call_sorry_message')?>
-          <?php if ( $this->Form->isFieldError('wating_call_sorry_message') ) echo $this->Form->error('wating_call_sorry_message', null, ['wrap' => 'p', 'style' => 'margin: 0;']); ?>
+            <pre id = "wating_call">(2)対応上限数を超えてのチャットが受信された場合</pre>
+            <?=$this->Form->textarea('wating_call_sorry_message')?>
+            <?php if ( $this->Form->isFieldError('wating_call_sorry_message') ) echo $this->Form->error('wating_call_sorry_message', null, ['wrap' => 'p', 'style' => 'margin: 0;']); ?>
           </li>
           <li style = "padding: 0 0 15px 0;">
-         <pre id = "no_standby">(3)在席オペレーターが居ない場合にチャットが受信された場合</pre>
-          <?=$this->Form->textarea('no_standby_sorry_message')?>
-          <?php if ( $this->Form->isFieldError('no_standby_sorry_message') ) echo $this->Form->error('no_standby_sorry_message', null, ['wrap' => 'p', 'style' => 'margin: 0;']); ?>
-        </li>
+            <pre id = "no_standby">(3)在席オペレーターが居ない場合にチャットが受信された場合</pre>
+            <?=$this->Form->textarea('no_standby_sorry_message')?>
+            <?php if ( $this->Form->isFieldError('no_standby_sorry_message') ) echo $this->Form->error('no_standby_sorry_message', null, ['wrap' => 'p', 'style' => 'margin: 0;']); ?>
+          </li>
         </div>
       </section>
       <?=$this->Form->input('MChatSetting.id', ['type' => 'hidden'])?>
@@ -155,6 +204,14 @@ $(document).ready(function(){
       <?= $this->Html->link('更新', 'javascript:void(0)', ['onclick' => 'saveAct()', 'class' => 'greenBtn btn-shadow']) ?>
       <?= $this->Html->link('dummy', 'javascript:void(0)', ['onclick' => '', 'class' => 'whiteBtn btn-shadow', 'style' => 'visibility: hidden;']) ?>
     </div>
+    <div id='lastSpeechTooltip' class="explainTooltip">
+      <icon-annotation>
+        <ul>
+          <li><span>このボタンを押すと挿入される＜telno＞タグの間に電話番号を記入すると、スマホの場合にタップで発信できるようになります</span></li>
+        </ul>
+      </icon-annotation>
+    </div>
   </div>
+
 
 
