@@ -387,7 +387,7 @@ function getConnectInfo(o){
   var lbcCode = getSessionId(o.siteKey, o.tabId, 'lbcCode');
   if ( isset(lbcCode) ) {
     o.lbcCode = lbcCode;
-  } 
+  }
   return o;
 }
 
@@ -686,7 +686,7 @@ io.sockets.on('connection', function (socket) {
         noFlg: 0
       }
     },
-    set: function(d){ // メッセージが渡されてきたとき
+    set: function(d){ // メッセージが渡されてきたと
       if ( !getSessionId(d.siteKey, d.tabId, 'sessionId') ) {
         sincloReconnect(socket);
         return false;
@@ -699,6 +699,7 @@ io.sockets.on('connection', function (socket) {
       // チャットidがある
       else {
         // DBへ書き込む
+        console.log("SET : " + JSON.stringify(d));
         this.commit(d);
       }
     },
@@ -740,8 +741,9 @@ io.sockets.on('connection', function (socket) {
                 if ( ('userName' in autoMessages[i]) && obj.showName !== 1 ) {
                   delete autoMessages[i].userName;
                 }
-                setList[fullDateTime(autoMessages[i].created)] = autoMessages[i];
+                setList[fullDateTime(autoMessages[i].created) + '_'] = autoMessages[i];
               }
+              console.log("merged : " + JSON.stringify(setList));
               chatData.messages = objectSort(setList);
               obj.chat = chatData;
               emit.toMine('chatMessageData', obj, socket);
@@ -783,6 +785,8 @@ io.sockets.on('connection', function (socket) {
             insertData.message_read_flg = 1;
             insertData.message_distinction = d.messageDistinction;
           }
+
+          console.log("INSERT DATA message : " + insertData.message + " created : " + insertData.created);
 
           pool.query('INSERT INTO t_history_chat_logs SET ?', insertData, function(error,results,fields){
             if ( !isset(error) ) {
@@ -1396,12 +1400,19 @@ io.sockets.on('connection', function (socket) {
         send = {},
         type = "",
         siteKey = "",
-        data = res.data;
+        data = res.data,
+        newTabId = "";
         send = data;
+
     if ( res.type !== 'admin' ) {
+      if (res.tabId && (isset(sincloCore[res.siteKey]) && isset(sincloCore[res.siteKey][res.tabId]) && !isset(sincloCore[res.siteKey][res.tabId].timeoutTimer))) {
+        // 別タブを開いたときに情報がコピーされてしまっている状態
+        console.log("tabId is duplicate. change firstConnection flg " + res.tabId);
+        data.firstConnection = true;
+      }
+
       if ( data.userId === undefined || data.userId === '' || data.userId === null ) {
         send.userId = makeUserId();
-
       }
       if ( (res.sincloSessionId === undefined || res.sincloSessionId === '' || res.sincloSessionId === null)
         || !(res.siteKey in sincloCore)
@@ -1414,7 +1425,7 @@ io.sockets.on('connection', function (socket) {
       } else {
         send.sincloSessionIdIsNew = false;
       }
-      if ( data.accessId === undefined || data.accessId === '' || data.accessId === null ) {
+      if ( data.firstConnection || data.accessId === undefined || data.accessId === '' || data.accessId === null ) {
         send.accessId = ('000' + Math.floor(Math.random() * 10000)).slice(-4);
       }
       if ( res.token !== undefined ) {
@@ -1534,6 +1545,9 @@ io.sockets.on('connection', function (socket) {
             }
           }
           socket.join(res.siteKey + emit.roomKey.client);
+          if(newTabId !== "") {
+            send.newTabId = newTabId;
+          }
           emit.toMine('accessInfo', send, socket);
 
         });
