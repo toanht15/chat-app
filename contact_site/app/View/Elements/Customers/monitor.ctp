@@ -157,7 +157,7 @@
           <!-- /* 操作 */ -->
           <td class='tCenter'>
             <?php if ( strcmp($userInfo['permission_level'], C_AUTHORITY_SUPER) !== 0) :?>
-              <span ng-if="monitor.widget">
+              <span>
                 <span ng-if="!monitor.connectToken&&!monitor.docShare&&!monitor.coBrowseConnectToken" id="shareToolBtn">
                   <a class='monitorBtn blueBtn btn-shadow' href='javascript:void(0)' ng-click='confirmSharingWindowOpen(monitor.tabId, monitor.accessId)' >共有</a>
                 </span>
@@ -191,7 +191,7 @@
             <?php endif; ?>
           </td>
           <!-- /* 訪問ユーザ */ -->
-          <td ng-hide="labelHideList.ipAddress" class="tCenter pre">{{ip(monitor)}}</td>
+          <td ng-hide="labelHideList.ipAddress" class="tCenter ref"><?php if ( isset($coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $coreSettings[C_COMPANY_REF_COMPANY_DATA] ) :?><a href="javascript:void(0)"  class="underL" ng-click="openCompanyDetailInfo(monitor)" ng-if="monitor.orgName && monitor.lbcCode">{{monitor.orgName}}</a><span ng-if="monitor.orgName && !monitor.lbcCode">{{monitor.orgName}}</span><br ng-if="monitor.orgName"><?php endif; ?>{{ip(monitor)}}</td>
           <!-- /* 訪問ユーザ */ -->
           <td ng-hide="labelHideList.customer" class="tCenter pre">{{ui(monitor)}}</td>
           <!-- /* ユーザー環境 */ -->

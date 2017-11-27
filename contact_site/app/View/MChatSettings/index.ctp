@@ -6,15 +6,28 @@ if ( !(!empty($this->data['MChatSetting']['sc_flg']) && strcmp($this->data['MCha
 }
 ?>
 <script type="text/javascript">
+var check = false;
+var SorryMessageData;
 // 同時対応数上限のON/OFF
 function scSettingToggle(){
+  //対応上限数のsorryメッセージデータ
+  if(check == false) {
+    check  = true;
+    SorryMessageData = $("#MChatSettingWatingCallSorryMessage").val();
+  }
   if ( $("#MChatSettingScFlg1").prop("checked") ) { // 同時対応数上限を利用する場合
     $("#sc_content dl").removeClass("sc_hidden"); // ユーザーリストを表示
     $("#sc_content input").prop("disabled", false); // ユーザーリストの数字項目をenabled
+    $("#MChatSettingWatingCallSorryMessage").prop("disabled", false); // 対応上限数のsorryメッセージをenabled
+    $("#MChatSettingWatingCallSorryMessage").val(SorryMessageData);　// 対応上限数のsorryメッセージを入れる
+    $('#wating_call').css('color','#595959'); // 対応上限数のsorryメッセージの文字色を変更
   }
   else { // 同時対応数上限を利用しない場合
     $("#sc_content dl").addClass("sc_hidden"); // ユーザーリストを非表示
+    $("#MChatSettingWatingCallSorryMessage").val(""); // 対応上限数のsorryメッセージを空にする
     $("#sc_content input").prop("disabled", true); // ユーザーリストの数字項目をdisabled
+    $("#MChatSettingWatingCallSorryMessage").prop("disabled", true); // 対応上限数のsorryメッセージをdisabled
+    $('#wating_call').css('color','rgb(204, 204, 204)'); // 対応上限数のsorryメッセージの文字色を変更
   }
 }
 
@@ -23,11 +36,28 @@ function saveAct(){
   document.getElementById('MChatSettingIndexForm').submit();
 }
 
+// 元に戻す処理
+function reloadAct(){
+  window.location.reload();
+}
+
 $(document).ready(function(){
+  if(<?= $operatingHourData ?> == 1) {
+    $("#MChatSettingOutsideHoursSorryMessage").prop("disabled", false); // 営業時間設定のsorryメッセージをenabled
+    $('#outside_hours').css('color','#595959'); // 営業時間設定のsorryメッセージの文字色を変更
+  }
+  if(<?= $operatingHourData ?> == 2) {
+    $("#MChatSettingOutsideHoursSorryMessage").text(""); // 営業時間設定のsorryメッセージを空にする
+    $("#MChatSettingOutsideHoursSorryMessage").prop("disabled", true); // 営業時間設定のsorryメッセージをdisabled
+    $('#outside_hours').css('color','rgb(204, 204, 204)'); // 営業時間設定のsorryメッセージの文字色を変更
+  }
+
   // 同時対応数上限のON/OFFの切り替わりを監視
   $(document).on('change', '[name="data[MChatSetting][sc_flg]"]', scSettingToggle);
   scSettingToggle(); // 初回のみ
 });
+
+
 
 </script>
 <div id='m_chat_settings_idx' class="card-shadow">
@@ -99,18 +129,32 @@ $(document).ready(function(){
       <section>
         <h3 class="require">２．Sorryメッセージ</h3>
         <div class="content">
-          <pre>このメッセージは下記の場合に自動送信されます
-
-・対応上限数を超えてのチャットが受信された場合
-・在席オペレーターが居ない場合にチャットが受信された場合</pre>
-          <?=$this->Form->textarea('sorry_message')?>
-          <?php if ( $this->Form->isFieldError('sorry_message') ) echo $this->Form->error('sorry_message', null, ['wrap' => 'p', 'style' => 'margin: 0;']); ?>
+          <pre style = "padding: 0 0 15px 0;">このメッセージは下記の場合に自動送信されます</pre>
+          <li style = "padding: 0 0 15px 0;">
+          <pre id = "outside_hours">(1)営業時間外にチャットが受信された場合</pre>
+          <?=$this->Form->textarea('outside_hours_sorry_message')?>
+          <?php if ( $this->Form->isFieldError('outside_hours_sorry_message') ) echo $this->Form->error('outside_hours_sorry_message', null, ['wrap' => 'p', 'style' => 'margin: 0;']); ?>
+          </li>
+          <li style = "padding: 0 0 15px 0;">
+        <pre id = "wating_call">(2)対応上限数を超えてのチャットが受信された場合</pre>
+          <?=$this->Form->textarea('wating_call_sorry_message')?>
+          <?php if ( $this->Form->isFieldError('wating_call_sorry_message') ) echo $this->Form->error('wating_call_sorry_message', null, ['wrap' => 'p', 'style' => 'margin: 0;']); ?>
+          </li>
+          <li style = "padding: 0 0 15px 0;">
+         <pre id = "no_standby">(3)在席オペレーターが居ない場合にチャットが受信された場合</pre>
+          <?=$this->Form->textarea('no_standby_sorry_message')?>
+          <?php if ( $this->Form->isFieldError('no_standby_sorry_message') ) echo $this->Form->error('no_standby_sorry_message', null, ['wrap' => 'p', 'style' => 'margin: 0;']); ?>
+        </li>
         </div>
       </section>
       <?=$this->Form->input('MChatSetting.id', ['type' => 'hidden'])?>
 
     <?= $this->Form->end(); ?>
-    <?= $this->Html->link('更新', 'javascript:void(0)', ['onclick' => 'saveAct()', 'class' => 'greenBtn btn-shadow inlineSaveBtn']) ?>
+    <div id="m_widget_setting_action" class="fotterBtnArea">
+      <?= $this->Html->link('元に戻す', 'javascript:void(0)', ['onclick' => 'reloadAct()','class' => 'whiteBtn btn-shadow']) ?>
+      <?= $this->Html->link('更新', 'javascript:void(0)', ['onclick' => 'saveAct()', 'class' => 'greenBtn btn-shadow']) ?>
+      <?= $this->Html->link('dummy', 'javascript:void(0)', ['onclick' => '', 'class' => 'whiteBtn btn-shadow', 'style' => 'visibility: hidden;']) ?>
+    </div>
   </div>
 
 

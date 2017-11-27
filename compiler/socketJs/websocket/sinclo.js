@@ -1634,6 +1634,7 @@
             var strings = val.split('\n');
             var radioCnt = 1;
             var linkReg = RegExp(/http(s)?:\/\/[!-~.a-z]*/);
+            var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
             var radioName = "sinclo-radio" + chatList.children.length;
             var content = "";
             if ( check.isset(cName) === false ) {
@@ -1666,8 +1667,21 @@
                     var a = "<a href='" + url + "' target='_blank'>" + url + "</a>";
                     str = str.replace(url, a);
                 }
+                // 電話番号（スマホのみリンク化）
+                var tel = str.match(telnoTagReg);
+                if( tel !== null ) {
+                  var telno = tel[1];
+                  if(check.smartphone()) {
+                    // リンクとして有効化
+                    var a = "<a href='tel:" + telno + "'>" + telno + "</a>";
+                    str = str.replace(tel[0], a);
+                  } else {
+                    // ただの文字列にする
+                    var span = "<span class='telno'>" + telno + "</span>";
+                    str = str.replace(tel[0], span);
+                  }
+                }
                 content += str + "\n";
-
             }
 
             if ( cs === "sinclo_re" ) {
@@ -2046,7 +2060,7 @@
           console.log("setAndSettings key : " + key + " setting: " + setting);
             var keys = Object.keys(setting.conditions);
             // 発言内容条件を一番最後にする
-            var arrayForSort = ["1","2","3","4","5","6","8","9","7"];
+            var arrayForSort = ["1","2","3","4","5","6","8","9","10","7"];
             var tmpKey = [];
             arrayForSort.forEach(function(element, index, array ){
                 if(keys.indexOf(element) >= 0) {
@@ -2126,6 +2140,11 @@
                       if (err) ret = null;
                     });
                     break;
+                  case 10: // 営業時間
+                    this.judge.operating_hours(conditions[0], function(err, timer){
+                        if (err) ret = null;
+                    });
+                  break;
                   default:
                     console.error("automessage condition is not defined : " + Number(keys[i]));
                     ret = null;
@@ -2231,6 +2250,15 @@
                           if (!err) {
                             ret = 0;
                           }
+                        });
+                      }
+                      break;
+                    case 10: // 営業時間設定
+                      for (u = 0; u < conditions.length; u++) {
+                        this.judge.operating_hours(conditions[u], function(err, timer){
+                            if ( !err ) {
+                                ret = 0;
+                            }
                         });
                       }
                       break;
@@ -2578,7 +2606,140 @@
               else {
                 callback(true, null);
               }
-            }
+            },
+            operating_hours: function(cond, callback){
+              if (!('operatingHoursTime' in cond)) return callback(true, null);
+              var check = "";
+              var checkHour = "";
+              var now = cond.now;
+              var nowDay = cond.nowDay;
+              var dateParse = cond.dateParse;
+              var date = cond.date;
+              var today = cond.today;
+              //営業時間設定の条件が「毎日」の場合
+              if(cond.type == 1) {
+                var day = { 0:'sun', 1:'mon', 2:'tue', 3:'wed', 4:'thu', 5:'fri', 6:'sat'};
+                day = day[nowDay];
+                timeData = cond.everyday[day];
+                publicHolidayData = cond.everyday['pub'];
+              }
+              //営業時間設定の条件が「平日・週末」の場合
+              else {
+                var day = { 0:'sun', 1:'mon', 2:'tue', 3:'wed', 4:'thu', 5:'fri', 6:'sat'};
+                if(nowDay == 1 || nowDay == 2 || nowDay == 3 || nowDay == 4 || nowDay == 5) {
+                  var day = 'week';
+                }
+                else {
+                  var day = 'weekend';
+                }
+                timeData = cond.weekly[day];
+                publicHolidayData = cond.weekly['weekpub'];
+              }
+              publicHoliday = cond.publicHoliday;
+
+              //条件が営業時間内の場合
+              if(cond.operatingHoursTime == 1) {
+                //祝日の場合
+                for(var i2=0; i2<publicHoliday.length; i2++) {
+                  if(today == publicHoliday[i2].month + '/' + publicHoliday[i2].day) {
+                    check = true;
+                    if(publicHolidayData[0].start != "" && publicHolidayData[0].end != "") {
+                      for(var i=0; i<publicHolidayData.length; i++){
+                        //営業時間内の場合
+                        if( Date.parse(new Date(date + publicHolidayData[i].start)) <= dateParse && dateParse < Date.parse(new Date(date + publicHolidayData[i].end)) ) {
+                          checkHour = true;
+                          callback(false, 0);
+                          return;
+                        }
+                      }
+                    }
+                    //営業時間設定を「休み」に設定している場合
+                    else {
+                      callback(true, null);
+                      return;
+                    }
+                  }
+                }
+                if(check == true && checkHour != true) {
+                  callback(true, null);
+                  return;
+                }
+
+
+                //祝日ではない場合
+                if(check != true) {
+                  //営業時間設定を「休み」に設定している場合
+                  if( timeData[0].start === "" && timeData[0].end === "") {
+                    callback(true, null);
+                    return;
+                  }
+                  else {
+                    for(var i=0; i<timeData.length; i++){
+                      //営業時間内の場合
+                      if( Date.parse(new Date(date + timeData[i].start)) <= dateParse && dateParse < Date.parse(new Date(date + timeData[i].end)) ) {
+                        checkHour = true;
+                        callback(false, 0);
+                        return;
+                      }
+                    }
+                    //営業時間外の場合
+                    if(checkHour != true) {
+                      callback(true, null);
+                      return;
+                    }
+                  }
+                }
+              }
+              //条件が営業時間外の場合
+              else if(cond.operatingHoursTime == 2) {
+                //祝日の場合
+                for(var i2=0; i2<publicHoliday.length; i2++) {
+                  if(today == publicHoliday[i2].month + '/' + publicHoliday[i2].day) {
+                    check = true;
+                    if(publicHolidayData[0].start != "" && publicHolidayData[0].end != "") {
+                      for(var i=0; i<publicHolidayData.length; i++){
+                        //営業時間内の場合
+                        if( Date.parse(new Date(date + publicHolidayData[i].start)) <= dateParse && dateParse < Date.parse(new Date(date + publicHolidayData[i].end)) ) {
+                          checkHour = true;
+                          callback(true, null);
+                          return;
+                        }
+                      }
+                    }
+                    //営業時間設定を「休み」に設定している場合
+                    else {
+                      callback(false, 0);
+                      return;
+                    }
+                  }
+                }
+                if(check == true && checkHour != true) {
+                  callback(false, 0);
+                  return;
+                }
+
+                //祝日でない場合
+                if(check != true) {
+                  //営業時間設定を「休み」に設定している場合
+                  if(timeData[0].start === "" && timeData[0].end === "")  {
+                    callback(false, 0);
+                    return;
+                  }
+                  else {
+                    for(var i=0; i<timeData.length; i++){
+                      if( Date.parse(new Date(date + timeData[i].start)) <= dateParse && dateParse < Date.parse(new Date(date + timeData[i].end)) ) {
+                        callback(true, null);
+                        return;
+                      }
+                      else {
+                        callback(false, 0);
+                        return;
+                      }
+                    }
+                  }
+                }
+              }
+          }
         }
     },
     // 外部連携API

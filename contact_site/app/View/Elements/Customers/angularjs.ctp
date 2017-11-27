@@ -554,7 +554,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     $scope.ip = function(m){
       var showData = [];
-      showData.push(m.ipAddress); // IPアドレス
+      if(contract.refCompanyData && 'orgName' in m && m.orgName !== '') {
+        showData.push('(' + m.ipAddress + ')'); // IPアドレス
+      } else {
+        showData.push(m.ipAddress); // IPアドレス
+      }
       return showData.join("\n");
     };
 
@@ -716,7 +720,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var smartphone = (ua.indexOf('iphone') > 0 || ua.indexOf('ipod') > 0 || ua.indexOf('android') > 0);
       var popupClass = "p-cus-select-sharing-mode";
       message += "<span style='color: #FF7B7B'><?=Configure::read('message.const.chatStartConfirm')?></span>";
-      modalOpen.call(window, message, popupClass, 'メッセージ');
+      modalOpen.call(window, message, popupClass, 'メッセージ', null, $scope.monitorList[tabId].userAgent);
       popupEvent.closePopup = function(type) {
         switch(type) {
           case 1: // ブラウジング共有
@@ -779,6 +783,25 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           }
         }
       }
+    };
+
+    $scope.openCompanyDetailInfo = function(monitor){
+      if(!contract.refCompanyData) return false;
+      var retList = {};
+      $.ajax({
+        type: 'POST',
+        cache: false,
+        url: "<?= $this->Html->url(array('controller' => 'CompanyData', 'action' => 'getDetailInfo')) ?>",
+        data: JSON.stringify({
+          accessToken: "<?=$token?>",
+          lbc: monitor.lbcCode,
+          format: 'popupElement'
+        }),
+        dataType: 'html',
+        success: function(html){
+          modalOpen.call(window, html, 'p-cus-company-detail', '企業詳細情報');
+        }
+      });
     };
 
     $scope.openHistory = function(monitor){
@@ -1147,6 +1170,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         var strings = message.split('\n');
         var custom = "";
         var linkReg = RegExp(/http(s)?:\/\/[!-~.a-z]*/);
+        var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
         var radioName = "sinclo-radio" + Object.keys(chat).length;
         var option = ( typeof(opt) !== 'object' ) ? { radio: true } : opt;
         for (var i = 0; strings.length > i; i++) {
@@ -1164,6 +1188,14 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                 var url = link[0];
                 var a = "<a href='" + url + "' target='_blank'>"  + url + "</a>";
                 str = str.replace(url, a);
+            }
+            // 電話番号（スマホのみリンク化）
+            var tel = str.match(telnoTagReg);
+            if( tel !== null ) {
+              var telno = tel[1];
+              // ただの文字列にする
+              var span = "<span class='telno'>" + telno + "</span>";
+              str = str.replace(tel[0], span);
             }
             custom += str + "\n";
 
@@ -1618,6 +1650,12 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           }
           if ('responderId' in obj) {
             $scope.monitorList[tabId].responderId = obj.responderId;
+          }
+          if ('orgName' in obj) {
+            $scope.monitorList[tabId].orgName = obj.orgName;
+          }
+          if ('lbcCode' in obj) {
+            $scope.monitorList[tabId].lbcCode = obj.lbcCode;
           }
         }
     });

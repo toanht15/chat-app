@@ -14,12 +14,16 @@ sincloApp.controller('MainController', function($scope) {
         this.setItemList = setItemListTmp['conditions'];
     }
     this.keys = function(obj){
-        if (angular.isObject(obj)) {
-            return Object.keys(obj).length;
-        }
-        else {
-            return obj.length;
-        }
+      //営業時間を利用しない場合
+      if(<?= $operatingHourData ?> == 2) {
+        delete obj[4];
+      }
+      if (angular.isObject(obj)) {
+          return Object.keys(obj).length;
+      }
+      else {
+          return obj.length;
+      }
     };
 
     this.tmpList = <?php echo json_encode($outMessageTriggerList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
@@ -29,6 +33,10 @@ sincloApp.controller('MainController', function($scope) {
     });
 
     this.checkDisabled = function(itemId){
+        //営業時間設定を利用しない場合
+        if(<?= $operatingHourData ?> == 2 && itemId == 4) {
+          return true;
+        }
         return (itemId in this.setItemList && this.setItemList[itemId].length >= this.tmpList[itemId].createLimit[this.condition_type]);
     };
 
@@ -39,6 +47,10 @@ sincloApp.controller('MainController', function($scope) {
             }
             else if (tmpId in this.setItemList && this.setItemList[tmpId].length >= this.tmpList[tmpId].createLimit[this.condition_type]) {
                 return false;
+            }
+            //営業時間設定を利用しない場合
+            if(<?= $operatingHourData ?> == 2 && tmpId == 4) {
+              return false;
             }
             this.setItemList[tmpId].push(angular.copy(this.tmpList[tmpId].default));
         }
@@ -97,8 +109,8 @@ sincloApp.controller('MainController', function($scope) {
                     delete setList['conditions']["<?=C_AUTO_TRIGGER_DAY_TIME?>"][i]['endTime'];
                 }
             }
-        }
 
+        }
         $('#TAutoMessageActivity').val(JSON.stringify(setList));
         submitAct();
     };
@@ -213,6 +225,11 @@ sincloApp.directive('ngShowonhover',function() {
                     }
                 }
 
+                /* 営業時間 */
+                if( 'notOperatingHour' in form) {
+                    messageList.push("営業時間設定を利用していません");
+                }
+
                 for( var i = 0; i <  messageList.length; i++ ){
                     var element = document.createElement("p");
                     element.textContent = "● " + messageList[i];
@@ -232,6 +249,22 @@ function addOption(type){
             }
             sendMessage.value += "[] ";
             sendMessage.focus();
+            break;
+        case 2:
+          if (sendMessage.value.length > 0) {
+            sendMessage.value += "\n";
+          }
+          sendMessage.value += "<telno></telno>";
+          sendMessage.focus();
+          // 開始と終了タブの真ん中にカーソルを配置する
+          if (sendMessage.createTextRange) {
+            var range = sendMessage.createTextRange();
+            range.move('character', sendMessage.value.length-8);
+            range.select();
+          } else if (sendMessage.setSelectionRange) {
+            sendMessage.setSelectionRange(sendMessage.value.length, sendMessage.value.length-8);
+          }
+          break;
     }
 }
 

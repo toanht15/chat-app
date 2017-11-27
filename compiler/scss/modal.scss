@@ -147,7 +147,6 @@
         }
       }
 
-
       /* リアルタイムモニタ-移動履歴用 */
       &.p-cus-history {
         width: 400px;
@@ -357,6 +356,94 @@
 
           a {
             width: 10em;
+            margin: 0 auto;
+          }
+        }
+      }
+
+      /* リアルタイムモニタ、履歴一覧-企業詳細情報用*/
+      &.p-cus-company-detail {
+        width: 94em;
+
+        #popup-main {
+          padding: 1.5em;
+          display: flex;
+          display: -moz-flex;
+          display: -o-flex;
+          display: -webkit-flex;
+          display: -ms-flex;
+          flex-direction: row;
+          -moz-flex-direction: row;
+          -o-flex-direction: row;
+          -webkit-flex-direction: row;
+          -ms-flex-direction: row;
+
+          .right-area {
+            margin-left: 10px;
+            .address-view {
+              word-break: break-all;
+            }
+            .ip-view {
+              height: 14em;
+              .ip-show-area {
+                overflow-y: auto;
+                .ip-row {
+                  display:block;
+                  margin-bottom: 0.5em;
+                }
+              }
+            }
+          }
+
+          ul {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            width: 45em;
+
+            li {
+              display: flex;
+              flex-direction: row;
+              border-bottom: 1px solid #FFF;
+
+              > * {
+                padding: 0.5em;
+                margin: 0;
+              }
+
+              p {
+                width: 12em;
+                background-color: #AFAFAF;
+
+                span {
+                  color: #FFF;
+                }
+              }
+
+              > span {
+                background-color: #F0F0F0;
+                width: 33em;
+                display: block;
+
+                textarea, input[type='text'] {
+                  width: 100%;
+                  resize: none;
+                }
+              }
+
+
+            }
+
+          }
+        }
+
+        #popup-button {
+          display: flex;
+          padding-bottom: 25px;
+
+          a {
+            width: 75px;
             margin: 0 auto;
           }
         }
@@ -966,6 +1053,80 @@
   width: 6em;
 }
 
+/*営業時間 */
+.p-operatinghours-entry {
+  .form01 {
+    > div {
+      display: flex;
+      flex-direction: column;
+
+      &:last-child {
+        padding-top: 1em;
+      }
+
+      #day {
+        font-weight:bold;
+        margin-left: 22px;
+      }
+
+      li {
+        #dayOfWeek {
+          width: 5em!important;
+          display: block;
+          font-weight: bold;
+        }
+        #holiday {
+          cursor:pointer;
+          display: block;
+          position: relative;
+
+            #MOperatingHourInfoHoliday{
+              margin-left:-10px;
+            }
+
+        }
+        #position {
+          margin-left: 32px;
+        }
+      }
+    }
+    .firstForm {
+      margin-left: 33px;
+    }
+    .form {
+      margin-left: 81px;
+    }
+    .form-control{
+      width: 8em;
+      text-align:center;
+    }
+    #top {
+      margin-top:15px;
+    }
+    #dayList {
+      margin-top:-15px;
+      margin-bottom: 7px;
+    }
+    #error {
+      display:none;
+      /*margin-top: 15px;*/
+      margin-left: 130px;
+      color:#F57E7E;
+    }
+  }
+  #popup-button {
+    width:30em;
+    margin: 0 auto;
+
+    .textBtn {
+      font-size: 1.1em;
+      width: 8em;
+      margin: 0 2.8em;
+      float: left;
+    }
+  }
+}
+
 /*資料共有　プレビュー */
 .p-tdocument-preview {
   width: 900px;
@@ -1326,6 +1487,11 @@
 #popup #popup-frame-base #popup-frame.p-tdictionary-entry {
   width: 500px;
   height: 450px !important;
+}
+
+#popup #popup-frame-base #popup-frame.p-operatinghours-entry {
+  width: 415px;
+  /*height: 480px !important;*/
 }
 
 #popup #popup-frame-base #popup-frame.p-copy {
