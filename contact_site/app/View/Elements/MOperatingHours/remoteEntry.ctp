@@ -112,7 +112,7 @@ popupEvent.closePopup = function(){
       }
       else {
         document.getElementById('error').style.display = "block";
-          $('#error').text("終了時間は「00:00」の形で入力してください");
+          $('#error').text("時間は「00:00」の形で入力してください");
           error = error + 1;
           document.getElementById('error').style.marginLeft = '84px';
           if(error == 1) {
