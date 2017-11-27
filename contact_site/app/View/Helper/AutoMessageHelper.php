@@ -71,6 +71,13 @@ class autoMessageHelper extends AppHelper {
 				3 => "不一致（若しくは取得できなかった場合）"
 			]
 		],
+		'operatingHoursTime' => [
+			'label' => '条件',
+			'dataList' => [
+				1 => "営業時間内",
+				2 => "営業時間外"
+			]
+		],
     'speechContentCond' => [
       'label' => '条件',
         'dataList' => [
@@ -116,6 +123,7 @@ class autoMessageHelper extends AppHelper {
 		C_AUTO_TRIGGER_STAY_TIME => "%s滞在時間が %d%s経過",
 		C_AUTO_TRIGGER_VISIT_CNT => "訪問回数が %d回%s",
 		C_AUTO_TRIGGER_STAY_PAGE => "ページの%sにて「%s」という文字列が%s",
+		C_AUTO_TRIGGER_OPERATING_HOURS => "%s",
 		C_AUTO_TRIGGER_DAY_TIME => [
 			C_SELECT_CAN => "曜日が「%s」曜日で「%s～%s」の間",
 			C_SELECT_CAN_NOT => "曜日が「%s」曜日",
@@ -178,6 +186,19 @@ class autoMessageHelper extends AppHelper {
 
 
 	public function setAutoMessage($list = []){
+		//営業時間が4番目なので順番変更
+		$changeEditData = $list;
+		foreach($changeEditData as $key => $val){
+			if($key >= 4 && $key != 10) {
+				unset($changeEditData[$key]);
+				$changeEditData[$key+1] = $list[$key];
+			}
+			if($key === 10) {
+				unset($changeEditData[10]);
+				$changeEditData[4] = $list[10];
+			}
+		}
+		$list = $changeEditData;
 		$retList = [];
 		$dayList = $this->dataList['day']['nameList'];
 		foreach( (array)$list as $itemId => $items ){
@@ -217,6 +238,17 @@ class autoMessageHelper extends AppHelper {
 								$this->dataList['targetName']['dataList'][$v['targetName']],
 								$v['keyword'],
 								$this->dataList['stayPageCond']['dataList'][$v['stayPageCond']]
+							);
+						}
+					}
+					break;
+
+				case C_AUTO_TRIGGER_OPERATING_HOURS: // 営業時間
+					foreach((array)$items as $v) {
+						if (isset($v['operatingHoursTime']) && !empty($this->dataList['operatingHoursTime']['dataList'][$v['operatingHoursTime']])) {
+							$retList[] = sprintf(
+								$this->labelList[$itemId],
+								$this->dataList['operatingHoursTime']['dataList'][$v['operatingHoursTime']]
 							);
 						}
 					}

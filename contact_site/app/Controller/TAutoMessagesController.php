@@ -4,7 +4,7 @@
  * ユーザーマスタ
  */
 class TAutoMessagesController extends AppController {
-  public $uses = ['TAutoMessage'];
+  public $uses = ['TAutoMessage','MOperatingHour'];
   public $helpers = ['AutoMessage'];
   public $paginate = [
     'TAutoMessage' => [
@@ -47,6 +47,13 @@ class TAutoMessagesController extends AppController {
     if ( $this->request->is('post') ) {
       $this->_entry($this->request->data);
     }
+    $operatingHourData = $this->MOperatingHour->find('first', ['conditions' => [
+      'm_companies_id' => $this->userInfo['MCompany']['id']
+    ]]);
+    if(empty($operatingHourData)) {
+      $operatingHourData['MOperatingHour']['active_flg'] = 2;
+    }
+    $this->set('operatingHourData',$operatingHourData['MOperatingHour']['active_flg']);
     $this->_viewElement();
   }
 
@@ -65,15 +72,38 @@ class TAutoMessagesController extends AppController {
           'TAutoMessage.id' => $id
         ]
       ]);
+      //オートメッセージ　営業時間を4番目に入れたので並び替え処理
+      $changeEditData = json_decode($editData[0]['TAutoMessage']['activity'], true);
+      foreach($changeEditData['conditions'] as $key => $val){
+        if($key >= 4 && $key != 10) {
+          unset($changeEditData['conditions'][$key]);
+          $changeEditData['conditions'][$key+1] = json_decode($editData[0]['TAutoMessage']['activity'], true)['conditions'][$key];
+        }
+        if($key === 10) {
+          unset($changeEditData['conditions'][10]);
+          $changeEditData['conditions'][4] = json_decode($editData[0]['TAutoMessage']['activity'], true)['conditions'][10];
+        }
+      }
+
       if (empty($editData) || (!empty($editData) && empty($editData[0]))) {
         $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.notFoundId'));
         $this->redirect('/TAutoMessages/index');
       }
+
+      $changeEditData = json_encode($changeEditData);
+      $editData[0]['TAutoMessage']['activity'] = $changeEditData;
       $json = json_decode($editData[0]['TAutoMessage']['activity'], true);
       $this->request->data = $editData[0];
       $this->request->data['TAutoMessage']['condition_type'] = (!empty($json['conditionType'])) ? $json['conditionType'] : "";
       $this->request->data['TAutoMessage']['action'] = (!empty($json['message'])) ? $json['message'] : "";
       $this->request->data['TAutoMessage']['widget_open'] = (!empty($json['widgetOpen'])) ? $json['widgetOpen'] : "";
+      $operatingHourData = $this->MOperatingHour->find('first', ['conditions' => [
+        'm_companies_id' => $this->userInfo['MCompany']['id']
+      ]]);
+      if(empty($operatingHourData)) {
+        $operatingHourData['MOperatingHour']['active_flg'] = 2;
+      }
+      $this->set('operatingHourData',$operatingHourData['MOperatingHour']['active_flg']);
     }
 
     $this->_viewElement();
@@ -192,6 +222,23 @@ class TAutoMessagesController extends AppController {
       if (!empty($lastData)) {
         $nextSort = intval($lastData['TAutoMessage']['sort']) + 1;
       }
+
+    //オートメッセージ　営業時間を4番目に入れたので並び替え処理
+      $changeEditData = json_decode($value['TAutoMessage']['activity'], true);
+      foreach($changeEditData['conditions'] as $key => $val){
+        if($key >= 4 && $key != 10) {
+          unset($changeEditData['conditions'][$key]);
+          $changeEditData['conditions'][$key+1] = json_decode($value['TAutoMessage']['activity'], true)['conditions'][$key];
+        }
+        if($key === 10) {
+          unset($changeEditData['conditions'][10]);
+          $changeEditData['conditions'][4] = json_decode($value['TAutoMessage']['activity'], true)['conditions'][10];
+        }
+      }
+
+      $changeEditData = json_encode($changeEditData);
+      $value['TAutoMessage']['activity'] = $changeEditData;
+
       $saveData['TAutoMessage']['sort'] = $nextSort;
       $saveData['TAutoMessage']['m_companies_id'] = $value['TAutoMessage']['m_companies_id'];
       $saveData['TAutoMessage']['name'] = $value['TAutoMessage']['name'].'コピー';
@@ -200,19 +247,37 @@ class TAutoMessagesController extends AppController {
       $saveData['TAutoMessage']['action_type'] = $value['TAutoMessage']['action_type'];
       $saveData['TAutoMessage']['active_flg'] = $value['TAutoMessage']['active_flg'];
       $saveData['TAutoMessage']['del_flg'] = $value['TAutoMessage']['del_flg'];
+
       $this->TAutoMessage->set($saveData);
       $this->TAutoMessage->begin();
       // バリデーションチェックでエラーが出た場合
       if($res){
-        if (! $this->TAutoMessage->save() ) {
+        if(!$this->TAutoMessage->validates()) {
           $res = false;
           $errorMessage = $this->TAutoMessage->validationErrors;
           $this->TAutoMessage->rollback();
         }
         else{
-          $this->TAutoMessage->commit();
-          $this->Session->delete('dstoken');
-          $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
+          //オートメッセージ　営業時間を4番目に入れたので並び替え処理
+          $changeEditData = json_decode($saveData['TAutoMessage']['activity'],true);
+          foreach($changeEditData['conditions'] as $key => $val){
+            if($key === 4) {
+              unset($changeEditData['conditions'][4]);
+              $changeEditData['conditions'][10] = json_decode($saveData['TAutoMessage']['activity'],true)['conditions'][4];
+            }
+            if($key >= 5) {
+              unset($changeEditData['conditions'][$key]);
+              $changeEditData['conditions'][$key-1] = json_decode($saveData['TAutoMessage']['activity'],true)['conditions'][$key];
+            }
+          }
+          $changeEditData = json_encode($changeEditData);
+          $saveData['TAutoMessage']['activity'] = $changeEditData;
+
+          if( $this->TAutoMessage->save($saveData,false) ) {
+            $this->TAutoMessage->commit();
+            $this->Session->delete('dstoken');
+            $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
+          }
         }
       }
     }
@@ -477,14 +542,38 @@ class TAutoMessagesController extends AppController {
           $errors['triggers'][$setting['key']] = sprintf($tmpMessage, $this->outMessageIfType[$activity->conditionType], $setting['label'], $setting['createLimit'][$activity->conditionType]);
         }
       }
+      $operatingHourData = $this->MOperatingHour->find('first', ['conditions' => [
+        'm_companies_id' => $this->userInfo['MCompany']['id']
+      ]]);
+      if(!empty($operatingHourData) && $operatingHourData['MOperatingHour']['active_flg'] == 2)  {
+        $validate = false;
+      }
     }
-    if ( $validate && $this->TAutoMessage->save(false) ) {
-      $this->TAutoMessage->commit();
-      $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
-      $this->redirect('/TAutoMessages/index/page:'.$nextPage);
+
+    if ($validate) {
+      //オートメッセージ　営業時間を4番目に入れたので並び替え処理
+      $changeEditData = json_decode($saveData['TAutoMessage']['activity'],true);
+      foreach($changeEditData['conditions'] as $key => $val){
+        if($key === 4) {
+          unset($changeEditData['conditions'][4]);
+          $changeEditData['conditions'][10] = json_decode($saveData['TAutoMessage']['activity'],true)['conditions'][4];
+        }
+        if($key >= 5) {
+          unset($changeEditData['conditions'][$key]);
+          $changeEditData['conditions'][$key-1] = json_decode($saveData['TAutoMessage']['activity'],true)['conditions'][$key];
+        }
+      }
+      $changeEditData = json_encode($changeEditData);
+      $saveData['TAutoMessage']['activity'] = $changeEditData;
+      if( $this->TAutoMessage->save($saveData,false) ) {
+        $this->TAutoMessage->commit();
+        $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
+        $this->redirect('/TAutoMessages/index/page:'.$nextPage);
+      }
     }
     else {
       $this->TAutoMessage->rollback();
+      $this->set('operatingHourData',$operatingHourData['MOperatingHour']['active_flg']);
       $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
     }
     $this->set('errors', $errors);

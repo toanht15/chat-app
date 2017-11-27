@@ -18,6 +18,7 @@ switch ($this->name) {
     case 'ScriptSettings':
     case 'TCampaigns':
     case 'DisplayExclusions':
+    case 'MOperatingHours':
         $settingSelected = "selected";
         break;
     case 'MChatSettings':
@@ -108,6 +109,9 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
             <?= $this->htmlEx->naviLink($codeAndDemoTitle, 'script.png', ['href' => ['controller' => 'ScriptSettings', 'action' => 'index']]) ?>
         </div>
     <?php if ( $adminFlg ): ?>
+        <div class="icon">
+          <?= $this->htmlEx->naviLink('営業時間設定', 'operating_hour.png', ['href' => ['controller' => 'MOperatingHours', 'action' => 'index']]) ?>
+        </div>
         <div class="icon">
             <?= $this->htmlEx->naviLink('ウィジェット', 'widget.png', ['href' => ['controller' => 'MWidgetSettings', 'action' => 'index']]) ?>
         </div>
