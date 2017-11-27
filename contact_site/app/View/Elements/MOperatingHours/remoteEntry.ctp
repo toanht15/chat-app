@@ -103,9 +103,9 @@ popupEvent.closePopup = function(){
           document.getElementById('error').style.display = "block";
           $('#error').text("日を跨いでの設定は出来ません");
           error = error + 1;
+          document.getElementById('error').style.marginLeft = '112px';
           if(error == 1) {
             document.getElementById('popup-frame').style.height = (parseInt($('#popup-frame').css('height'),10) + 15) + 'px';
-            document.getElementById('error').style.marginLeft = '112px';
           }
           return;
         }
@@ -114,9 +114,9 @@ popupEvent.closePopup = function(){
         document.getElementById('error').style.display = "block";
           $('#error').text("終了時間は「00:00」の形で入力してください");
           error = error + 1;
+          document.getElementById('error').style.marginLeft = '84px';
           if(error == 1) {
             document.getElementById('popup-frame').style.height = (parseInt($('#popup-frame').css('height'),10) + 15) + 'px';
-            document.getElementById('error').style.marginLeft = '84px';
           }
           return;
       }
