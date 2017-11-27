@@ -1924,8 +1924,17 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           }
         }
         chat.sort = Number(key);
-        $scope.messageList.push(chat);
-        scDown(); // チャットのスクロール
+        var exists = false;
+        $scope.messageList.some(function(obj){
+          if(obj.id === chat.id) {
+            exists = true;
+            return true;
+          }
+        });
+        if(!exists) {
+          $scope.messageList.push(chat);
+          scDown(); // チャットのスクロール
+        }
       }
 
       if ( $scope.monitorList[obj.tabId].chat === myUserId ) {
