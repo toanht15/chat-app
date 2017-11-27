@@ -95,30 +95,38 @@ popupEvent.closePopup = function(){
         }
         return;
       }
-      //入力チェック
-      if ( document.getElementsByName("startTime" + i)[0].value.match(/^(24:00|2[0-3]:[0-5][0-9]|[0-1]?[0-9]:[0-5][0-9])$/)
-        && document.getElementsByName("endTime" + i)[0].value.match(/^(24:00|2[0-3]:[0-5][0-9]|[0-1]?[0-9]:[0-5][0-9])$/)) {
-        //日跨ぎチェック
-        if(Date.parse(new Date(date + document.getElementsByName("startTime" + i)[0].value)) >= Date.parse(new Date(date + document.getElementsByName("endTime" + i)[0].value))) {
-          document.getElementById('error').style.display = "block";
-          $('#error').text("日を跨いでの設定は出来ません");
-          error = error + 1;
-          document.getElementById('error').style.marginLeft = '112px';
-          if(error == 1) {
-            document.getElementById('popup-frame').style.height = (parseInt($('#popup-frame').css('height'),10) + 15) + 'px';
-          }
-          return;
-        }
-      }
-      else {
+      //入力チェック(開始時間)
+      if ( !document.getElementsByName("startTime" + i)[0].value.match(/^(24:00|2[0-3]:[0-5][0-9]|[0-1]?[0-9]:[0-5][0-9])$/)) {
         document.getElementById('error').style.display = "block";
-          $('#error').text("時間は「00:00」の形で入力してください");
+          $('#error').text("開始時間は「00:00」-「23:59」の中の値で入力してください");
           error = error + 1;
           document.getElementById('error').style.marginLeft = '84px';
           if(error == 1) {
             document.getElementById('popup-frame').style.height = (parseInt($('#popup-frame').css('height'),10) + 15) + 'px';
           }
           return;
+      }
+      //入力チェック(終了時間)
+      if ( !document.getElementsByName("endTime" + i)[0].value.match(/^(24:00|2[0-3]:[0-5][0-9]|[0-1]?[0-9]:[0-5][0-9])$/)) {
+        document.getElementById('error').style.display = "block";
+          $('#error').text("終了時間は「00:01」-「24:00」の中の値で入力してください");
+          error = error + 1;
+          document.getElementById('error').style.marginLeft = '84px';
+          if(error == 1) {
+            document.getElementById('popup-frame').style.height = (parseInt($('#popup-frame').css('height'),10) + 15) + 'px';
+          }
+          return;
+      }
+      //日跨ぎチェック
+      if(Date.parse(new Date(date + document.getElementsByName("startTime" + i)[0].value)) >= Date.parse(new Date(date + document.getElementsByName("endTime" + i)[0].value))) {
+        document.getElementById('error').style.display = "block";
+        $('#error').text("日を跨いでの設定は出来ません");
+        error = error + 1;
+        document.getElementById('error').style.marginLeft = '112px';
+        if(error == 1) {
+          document.getElementById('popup-frame').style.height = (parseInt($('#popup-frame').css('height'),10) + 15) + 'px';
+        }
+        return;
       }
     }
   }
