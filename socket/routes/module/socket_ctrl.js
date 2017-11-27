@@ -1704,27 +1704,20 @@ io.sockets.on('connection', function (socket) {
       sincloCore[obj.siteKey][obj.tabId] = {sincloSessionId: null, sessionId: null, subWindow: false};
     }
     if ( !isset(sincloCore[obj.siteKey][obj.sincloSessionId]) ) {
-      sincloCore[obj.siteKey][obj.sincloSessionId] = {sessionIds: [], autoMessages: {}};
+      sincloCore[obj.siteKey][obj.sincloSessionId] = {sessionIds: {}, autoMessages: {}};
     }
     if ('timeoutTimer' in sincloCore[obj.siteKey][obj.tabId]) {
       clearTimeout(sincloCore[obj.siteKey][obj.tabId].timeoutTimer);
       var oldSessionId = sincloCore[obj.siteKey][obj.tabId].sessionId;
       var sessionIds = sincloCore[obj.siteKey][obj.sincloSessionId].sessionIds;
-      sessionIds.some(function(v, i){
-        if(v.indexOf(oldSessionId) >= 0) {
-          // オブジェクトは参照渡しなので取得したsessionIdsのみ消去する
-          console.log("DELETE sessionId : " + oldSessionId);
-          sessionIds.splice(i,1);
-          return true;
-        }
-      });
+      delete sessionIds[oldSessionId];
       sincloCore[obj.siteKey][obj.tabId].timeoutTimer = null;
     }
 
     connectList[socket.id] = {siteKey: obj.siteKey, tabId: obj.tabId, userId: null};
     sincloCore[obj.siteKey][obj.tabId].sessionId = socket.id;
     sincloCore[obj.siteKey][obj.tabId].sincloSessionId = obj.sincloSessionId;
-    sincloCore[obj.siteKey][obj.sincloSessionId].sessionIds.push(socket.id);
+    sincloCore[obj.siteKey][obj.sincloSessionId].sessionIds[socket.id] = socket.id;
     if ( obj.subWindow ) {
       sincloCore[obj.siteKey][obj.tabId].toTabId = obj.to;
       sincloCore[obj.siteKey][obj.tabId].connectToken = obj.connectToken;
@@ -3180,16 +3173,10 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
           if(sincloSessionId) {
             var sessionIds = sincloCore[info.siteKey][sincloSessionId].sessionIds;
-            if(sessionIds && sessionIds.length > 0) {
-              sessionIds.some(function(v, i){
-                if(v.indexOf(socket.id) >= 0) {
-                  // オブジェクトは参照渡しなので取得したsessionIdsのみ消去する
-                  console.log("DELETE sessionId : " + socket.id);
-                  sessionIds.splice(i,1);
-                  return true;
-                }
-              });
-              if(sessionIds.length === 0) {
+            if(sessionIds && Object.keys(sessionIds).length > 0) {
+              console.log("DELETE sessionId : " + socket.id);
+              delete sessionIds[socket.id];
+              if(Object.keys(sessionIds).length === 0) {
                 console.log("DELETE sincloSessionId : " + sincloSessionId);
                 delete sincloCore[info.siteKey][sincloSessionId];
               }
