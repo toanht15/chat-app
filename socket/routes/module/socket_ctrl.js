@@ -630,7 +630,7 @@ io.sockets.on('connection', function (socket) {
         noFlg: 0
       }
     },
-    set: function(d){ // メッセージが渡されてきたとき
+    set: function(d){ // メッセージが渡されてきたと
       if ( !getSessionId(d.siteKey, d.tabId, 'sessionId') ) {
         sincloReconnect(socket);
         return false;
@@ -643,6 +643,7 @@ io.sockets.on('connection', function (socket) {
       // チャットidがある
       else {
         // DBへ書き込む
+        console.log("SET : " + JSON.stringify(d));
         this.commit(d);
       }
     },
@@ -684,8 +685,9 @@ io.sockets.on('connection', function (socket) {
                 if ( ('userName' in autoMessages[i]) && obj.showName !== 1 ) {
                   delete autoMessages[i].userName;
                 }
-                setList[fullDateTime(autoMessages[i].created)] = autoMessages[i];
+                setList[fullDateTime(autoMessages[i].created) + '_'] = autoMessages[i];
               }
+              console.log("merged : " + JSON.stringify(setList));
               chatData.messages = objectSort(setList);
               obj.chat = chatData;
               emit.toMine('chatMessageData', obj, socket);
@@ -727,6 +729,8 @@ io.sockets.on('connection', function (socket) {
             insertData.message_read_flg = 1;
             insertData.message_distinction = d.messageDistinction;
           }
+
+          console.log("INSERT DATA message : " + insertData.message + " created : " + insertData.created);
 
           pool.query('INSERT INTO t_history_chat_logs SET ?', insertData, function(error,results,fields){
             if ( !isset(error) ) {
@@ -1023,7 +1027,7 @@ io.sockets.on('connection', function (socket) {
         send = data;
 
     if ( res.type !== 'admin' ) {
-      if (res.tabId && !isset(sincloCore[res.siteKey][res.tabId].timeoutTimer)) {
+      if (res.tabId && (isset(sincloCore[res.siteKey]) && isset(sincloCore[res.siteKey][res.tabId]) && !isset(sincloCore[res.siteKey][res.tabId].timeoutTimer))) {
         // 別タブを開いたときに情報がコピーされてしまっている状態
         console.log("tabId is duplicate. change firstConnection flg " + res.tabId);
         data.firstConnection = true;
