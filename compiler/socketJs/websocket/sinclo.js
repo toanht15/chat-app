@@ -1009,14 +1009,28 @@
 
           // オートメッセージは格納しとく
           if (Number(chat.messageType) === 3 && 'chatId' in chat) {
-            console.log("push " + chat.chatId);
-
-            this.chatApi.autoMessages.push(chat.chatId, {
-              chatId: chat.chatId,
-              message: chat.message,
-              created: chat.created,
-              applied: chat.applied ? chat.applied : false
-            });
+            if(check.isset(window.sincloInfo.messages)) {
+              var found = false;
+              for(var index in window.sincloInfo.messages) {
+                if(window.sincloInfo.messages[index].id === chat.chatId) {
+                  console.log("push " + chat.chatId);
+                  this.chatApi.autoMessages.push(chat.chatId, {
+                    chatId: chat.chatId,
+                    message: chat.message,
+                    created: chat.created,
+                    applied: chat.applied ? chat.applied : false
+                  });
+                  found = true;
+                  break;
+                }
+              }
+              if(!found){
+                // オートメッセージ設定で無効 or 削除された
+                console.log("delete " + chat.chatId);
+                window.sinclo.chatApi.autoMessages.delete(chat.chatId);
+                continue;
+              }
+            }
           }
 
           // オートメッセージか、Sorryメッセージ、企業からのメッセージで表示名を使用しない場合
@@ -1382,7 +1396,6 @@
         },
         autoMessages: {
           push: function(id, obj) {
-
             var list = this.get(true);
             if(!this.exists(id)) {
               list[id] = obj;
@@ -1431,9 +1444,13 @@
             // 論理的にフラグを付ける
             var list = this.get();
             Object.keys(list).forEach(function(id, index, arr) {
-
               list[id]['applied'] = true;
             });
+            storage.s.set('amsg', JSON.stringify(list));
+          },
+          delete: function(id) {
+            var list = this.get();
+            delete list[id];
             storage.s.set('amsg', JSON.stringify(list));
           }
         },
@@ -2275,7 +2292,6 @@
                 isAutoSpeech: isSpeechContent
             };
 
-
             if(!sinclo.chatApi.autoMessages.exists(data.chatId) && !isSpeechContent) {
               //resAutoMessagesで表示判定をするためにidをkeyとして空Objectを入れる
               sinclo.chatApi.autoMessages.push(data.chatId, {});
@@ -2301,7 +2317,6 @@
             }
 
             if ( String(type) === "1" && ('message' in cond) && (String(chatActFlg) === "false") ) {
-
                 if(sinclo.chatApi.autoMessages.exists(id)){
                   console.log("exists id : " + id);
                   return;
@@ -2402,7 +2417,7 @@
                 }
 
                 // ページ
-                if ( Number(cond.stayTimeCheckType) === 1 ) {
+                if ( Number(cond.stayTimeCheckType) === 2 ) {
                     callback(false, time);
                 }
                 // サイト
@@ -2709,13 +2724,14 @@
                   else {
                     for(var i=0; i<timeData.length; i++){
                       if( Date.parse(new Date(date + timeData[i].start)) <= dateParse && dateParse < Date.parse(new Date(date + timeData[i].end)) ) {
+                        checkHour = true;
                         callback(true, null);
                         return;
                       }
-                      else {
-                        callback(false, 0);
-                        return;
-                      }
+                    }
+                    if(checkHour != true) {
+                      callback(false, 0);
+                      return;
                     }
                   }
                 }
