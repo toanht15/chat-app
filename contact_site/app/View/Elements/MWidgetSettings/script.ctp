@@ -1113,7 +1113,7 @@ sincloApp.controller('WidgetCtrl', function($scope){
     if(<?= $operatingHourData ?> == 2) {
       $scope.settingShowTimeRadioButtonDisable($('#MWidgetSettingDisplayType4'));
       $("#MWidgetSettingDisplayType4").parent().addClass("commontooltip");
-      $('#MWidgetSettingDisplayType4').parent().attr('data-text', 'この機能は営業時間設定で「利用す<br>る」を選択すると、ご利用いただけます。');
+      $('#MWidgetSettingDisplayType4').parent().attr('data-text', 'こちらの機能は営業時間設定で「利<br>用する」を選択すると、ご利用いただけます。');
       $('#MWidgetSettingDisplayType4').parent().attr('data-balloon-position', '14');
       $('#MWidgetSettingDisplayType4').parent().attr('operatingHours', 'widgetHoursPage');
     }

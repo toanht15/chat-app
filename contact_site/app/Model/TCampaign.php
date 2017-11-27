@@ -37,6 +37,7 @@ class TCampaign extends AppModel {
       "conditions" => [
         "m_companies_id" => Configure::read('logged_company_id')
       ],
+      'order' => array('sort'),
       "recursive" => -1
     ]);
     return $ret;
