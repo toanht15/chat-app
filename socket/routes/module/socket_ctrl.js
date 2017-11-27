@@ -1018,12 +1018,19 @@ io.sockets.on('connection', function (socket) {
         send = {},
         type = "",
         siteKey = "",
-        data = res.data;
+        data = res.data,
+        newTabId = "";
         send = data;
+
     if ( res.type !== 'admin' ) {
+      if (res.tabId && !isset(sincloCore[res.siteKey][res.tabId].timeoutTimer)) {
+        // 別タブを開いたときに情報がコピーされてしまっている状態
+        console.log("tabId is duplicate. change firstConnection flg " + res.tabId);
+        data.firstConnection = true;
+      }
+
       if ( data.userId === undefined || data.userId === '' || data.userId === null ) {
         send.userId = makeUserId();
-
       }
       if ( (res.sincloSessionId === undefined || res.sincloSessionId === '' || res.sincloSessionId === null)
         || !(res.siteKey in sincloCore)
@@ -1036,7 +1043,7 @@ io.sockets.on('connection', function (socket) {
       } else {
         send.sincloSessionIdIsNew = false;
       }
-      if ( data.accessId === undefined || data.accessId === '' || data.accessId === null ) {
+      if ( data.firstConnection || data.accessId === undefined || data.accessId === '' || data.accessId === null ) {
         send.accessId = ('000' + Math.floor(Math.random() * 10000)).slice(-4);
       }
       if ( res.token !== undefined ) {
@@ -1156,6 +1163,9 @@ io.sockets.on('connection', function (socket) {
             }
           }
           socket.join(res.siteKey + emit.roomKey.client);
+          if(newTabId !== "") {
+            send.newTabId = newTabId;
+          }
           emit.toMine('accessInfo', send, socket);
 
         });
