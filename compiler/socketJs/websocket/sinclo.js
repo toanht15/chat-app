@@ -1026,7 +1026,9 @@
           else if ( Number(chat.messageType) === 2 ) {
             userName = chat.userName;
           }
-          this.chatApi.createMessage(cn, chat.message, userName);
+          if(!chat.applied) {
+            this.chatApi.createMessage(cn, chat.message, userName);
+          }
           this.chatApi.scDown();
         }
         else {
