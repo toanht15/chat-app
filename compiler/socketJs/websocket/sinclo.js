@@ -1009,14 +1009,28 @@
 
           // オートメッセージは格納しとく
           if (Number(chat.messageType) === 3 && 'chatId' in chat) {
-            console.log("push " + chat.chatId);
-
-            this.chatApi.autoMessages.push(chat.chatId, {
-              chatId: chat.chatId,
-              message: chat.message,
-              created: chat.created,
-              applied: chat.applied ? chat.applied : false
-            });
+            if(check.isset(window.sincloInfo.messages)) {
+              var found = false;
+              for(var index in window.sincloInfo.messages) {
+                if(window.sincloInfo.messages[index].id === chat.chatId) {
+                  console.log("push " + chat.chatId);
+                  this.chatApi.autoMessages.push(chat.chatId, {
+                    chatId: chat.chatId,
+                    message: chat.message,
+                    created: chat.created,
+                    applied: chat.applied ? chat.applied : false
+                  });
+                  found = true;
+                  break;
+                }
+              }
+              if(!found){
+                // オートメッセージ設定で無効 or 削除された
+                console.log("delete " + chat.chatId);
+                window.sinclo.chatApi.autoMessages.delete(chat.chatId);
+                continue;
+              }
+            }
           }
 
           // オートメッセージか、Sorryメッセージ、企業からのメッセージで表示名を使用しない場合
@@ -1026,6 +1040,8 @@
           else if ( Number(chat.messageType) === 2 ) {
             userName = chat.userName;
           }
+
+          if(key.indexOf('_') >= 0 && 'applied' in chat && chat.applied) continue;
           this.chatApi.createMessage(cn, chat.message, userName);
           this.chatApi.scDown();
         }
@@ -1430,6 +1446,11 @@
             Object.keys(list).forEach(function(id, index, arr) {
               list[id]['applied'] = true;
             });
+            storage.s.set('amsg', JSON.stringify(list));
+          },
+          delete: function(id) {
+            var list = this.get();
+            delete list[id];
             storage.s.set('amsg', JSON.stringify(list));
           }
         },
