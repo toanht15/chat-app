@@ -254,7 +254,7 @@ class LandscapeComponent extends Component
             }
           }
           $query = rtrim($query, ',');
-          $query .= ' WHERE `lbc_code`= "' . $data['lbc_code'] . '" AND `ip_address` = "' . $data['ip_address'] . '"';
+          $query .= ' WHERE `ip_address` = "' . $data['ip_address'] . '"'; // LBCコードが存在していないものを更新対象とする
           $MLandscapeData->query($query);
         }
       }
@@ -264,7 +264,7 @@ class LandscapeComponent extends Component
   }
 
   private function printDebugLog($msg) {
-    $this->log('LandscapeComponent::DEBUG '.$msg, LOG_DEBUG);
+    $this->log('LandscapeComponent::DEBUG '.$msg, 'request');
   }
 
   private function convertDataToArray() {
