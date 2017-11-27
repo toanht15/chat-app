@@ -20,6 +20,8 @@ function scSettingToggle(){
     $("#sc_content input").prop("disabled", false); // ユーザーリストの数字項目をenabled
     $("#MChatSettingWatingCallSorryMessage").prop("disabled", false); // 対応上限数のsorryメッセージをenabled
     $("#MChatSettingWatingCallSorryMessage").val(SorryMessageData);　// 対応上限数のsorryメッセージを入れる
+    $('.settingWatingCallChoice').css('pointer-events','auto'); //追加ボタン制御解除
+    $('.settingWatingCallPhone').css('pointer-events','auto'); //追加ボタン制御解除
     $('#wating_call').css('color','#595959'); // 対応上限数のsorryメッセージの文字色を変更
   }
   else { // 同時対応数上限を利用しない場合
@@ -27,6 +29,8 @@ function scSettingToggle(){
     $("#MChatSettingWatingCallSorryMessage").val(""); // 対応上限数のsorryメッセージを空にする
     $("#sc_content input").prop("disabled", true); // ユーザーリストの数字項目をdisabled
     $("#MChatSettingWatingCallSorryMessage").prop("disabled", true); // 対応上限数のsorryメッセージをdisabled
+    $('.settingWatingCallChoice').css('pointer-events','none'); //追加ボタン制御
+    $(".settingWatingCallPhone").css('pointer-events','none'); //追加ボタン制御
     $('#wating_call').css('color','rgb(204, 204, 204)'); // 対応上限数のsorryメッセージの文字色を変更
   }
 }
@@ -41,8 +45,8 @@ function reloadAct(){
   window.location.reload();
 }
 
-function addOption(type){
-    var sendMessage = document.getElementById('MChatSettingOutsideHoursSorryMessage');
+function addOption(type,sorryMessageName){
+    sendMessage = document.getElementById(sorryMessageName);
     switch(type){
         case 1:
             if (sendMessage.value.length > 0) {
@@ -73,11 +77,15 @@ $(document).ready(function(){
   if(<?= $operatingHourData ?> == 1) {
     $("#MChatSettingOutsideHoursSorryMessage").prop("disabled", false); // 営業時間設定のsorryメッセージをenabled
     $('#outside_hours').css('color','#595959'); // 営業時間設定のsorryメッセージの文字色を変更
+    $('.settingOutsideHoursChoise').css('pointer-events','auto'); //追加ボタン制御解除
+    $('.settingOutsideHoursPhone').css('pointer-events','auto'); //追加ボタン制御解除
   }
   if(<?= $operatingHourData ?> == 2) {
     $("#MChatSettingOutsideHoursSorryMessage").text(""); // 営業時間設定のsorryメッセージを空にする
     $("#MChatSettingOutsideHoursSorryMessage").prop("disabled", true); // 営業時間設定のsorryメッセージをdisabled
     $('#outside_hours').css('color','rgb(204, 204, 204)'); // 営業時間設定のsorryメッセージの文字色を変更
+    $('.settingOutsideHoursChoise').css('pointer-events','none'); //追加ボタン制御
+    $('.settingOutsideHoursPhone').css('pointer-events','none'); //追加ボタン制御
   }
 
   // 同時対応数上限のON/OFFの切り替わりを監視
@@ -179,18 +187,22 @@ $(document).ready(function(){
           <pre style = "padding: 0 0 15px 0;">このメッセージは下記の場合に自動送信されます</pre>
           <li style = "padding: 0 0 15px 0;">
             <pre id = "outside_hours">(1)営業時間外にチャットが受信された場合</pre>
+              <span class="greenBtn btn-shadow actBtn choiseButton settingOutsideHoursChoise" onclick="addOption(1,'MChatSettingOutsideHoursSorryMessage')">選択肢を追加する</span>
+              <span class="greenBtn btn-shadow actBtn phoneButton settingOutsideHoursPhone" onclick="addOption(2,'MChatSettingOutsideHoursSorryMessage')" id = "lastSpeechLabel">電話番号を追加する<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></span>
             <?=$this->Form->textarea('outside_hours_sorry_message')?>
-              <span class="greenBtn btn-shadow actBtn" onclick="addOption(1)" id = "choiceButton">選択肢を追加する</span>
-              <span class="greenBtn btn-shadow actBtn" onclick="addOption(2)" id = "lastSpeechLabel">電話番号を追加する<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></span>
             <?php if ( $this->Form->isFieldError('outside_hours_sorry_message') ) echo $this->Form->error('outside_hours_sorry_message', null, ['wrap' => 'p', 'style' => 'margin: 0;']); ?>
           </li>
           <li style = "padding: 0 0 15px 0;">
             <pre id = "wating_call">(2)対応上限数を超えてのチャットが受信された場合</pre>
+              <span class="greenBtn btn-shadow actBtn choiseButton settingWatingCallChoice" onclick="addOption(1,'MChatSettingWatingCallSorryMessage')">選択肢を追加する</span>
+              <span class="greenBtn btn-shadow actBtn phoneButton settingWatingCallPhone" onclick="addOption(2,'MChatSettingWatingCallSorryMessage')" id = "lastSpeechLabel">電話番号を追加する<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></span>
             <?=$this->Form->textarea('wating_call_sorry_message')?>
             <?php if ( $this->Form->isFieldError('wating_call_sorry_message') ) echo $this->Form->error('wating_call_sorry_message', null, ['wrap' => 'p', 'style' => 'margin: 0;']); ?>
           </li>
           <li style = "padding: 0 0 15px 0;">
             <pre id = "no_standby">(3)在席オペレーターが居ない場合にチャットが受信された場合</pre>
+              <span class="greenBtn btn-shadow actBtn choiseButton" onclick="addOption(1,'MChatSettingNoStandbySorryMessage')">選択肢を追加する</span>
+              <span class="greenBtn btn-shadow actBtn phoneButton" onclick="addOption(2,'MChatSettingNoStandbySorryMessage')" id = "lastSpeechLabel">電話番号を追加する<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></span>
             <?=$this->Form->textarea('no_standby_sorry_message')?>
             <?php if ( $this->Form->isFieldError('no_standby_sorry_message') ) echo $this->Form->error('no_standby_sorry_message', null, ['wrap' => 'p', 'style' => 'margin: 0;']); ?>
           </li>
