@@ -84,6 +84,8 @@ class TAutoMessage extends AppModel {
 
 						// 曜日・日時の開始/終了時間のチェック
 						if ((strcmp($field, "startTime") === 0 || strcmp($field, "endTime") === 0)) {
+              $this->log('曜日時間チェック',LOG_DEBUG);
+              $this->log($item[$field],LOG_DEBUG);
 							if ( !preg_match(C_MATCH_RULE_TIME, $item[$field]) ) {
 								return false;
 							}

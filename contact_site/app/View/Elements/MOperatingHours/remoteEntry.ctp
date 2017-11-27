@@ -44,13 +44,48 @@ else{
 }
 var error = 0;
 
+$(document).ready(function(){
+  $("#endForm0" ).change(function() {
+    if(document.getElementById("endForm0").value == "00:00") {
+      document.getElementById("endForm0").value = "24:00";
+    }
+  });
+  $("#endForm1" ).change(function() {
+    console.log('hey');
+    if(document.getElementById("endForm1").value == "00:00") {
+      document.getElementById("endForm1").value = "24:00";
+    }
+  });
+  $("#endForm2" ).change(function() {
+    if(document.getElementById("endForm2").value == "00:00") {
+      document.getElementById("endForm2").value = "24:00";
+    }
+  });
+  $("#endForm3" ).change(function() {
+    if(document.getElementById("endForm3").value == "00:00") {
+      document.getElementById("endForm3").value = "24:00";
+    }
+  });
+  $("#endForm4" ).change(function() {
+    if(document.getElementById("endForm4").value == "00:00") {
+      document.getElementById("endForm4").value = "24:00";
+    }
+  });
+});
+
 popupEvent.closePopup = function(){
   //formの数
   var length = $('.timeData').length;
-
-  //空チェック
+  var now = new Date();
+  var date = now.getFullYear() + "/" + (now.getMonth()+1) + "/" + now.getDate() + " ";
+  //validation
   if (document.getElementById("MOperatingHourInfoHoliday").checked == false) {
     for (i = 0; i < length; i++) {
+      console.log(document.getElementsByName("endTime" + i));
+      if(document.getElementsByName("startTime" + i)[0].value.substring(0, 2) == "00" && document.getElementsByName("endTime" + i)[0].value == "00:00") {
+        document.getElementsByName("endTime" + i)[0].value = "24:00";
+      }
+      //空チェック
       if((document.getElementsByName("startTime" + i)[0].value == "" || document.getElementsByName("endTime" + i)[0].value == "")) {
         document.getElementById('error').style.display = "block";
         $('#error').text("条件を設定してください");
@@ -59,6 +94,31 @@ popupEvent.closePopup = function(){
           document.getElementById('popup-frame').style.height = (parseInt($('#popup-frame').css('height'),10) + 15) + 'px';
         }
         return;
+      }
+      //入力チェック
+      if ( document.getElementsByName("startTime" + i)[0].value.match(/^(24:00|2[0-3]:[0-5][0-9]|[0-1]?[0-9]:[0-5][0-9])$/)
+        && document.getElementsByName("endTime" + i)[0].value.match(/^(24:00|2[0-3]:[0-5][0-9]|[0-1]?[0-9]:[0-5][0-9])$/)) {
+        //日跨ぎチェック
+        if(Date.parse(new Date(date + document.getElementsByName("startTime" + i)[0].value)) >= Date.parse(new Date(date + document.getElementsByName("endTime" + i)[0].value))) {
+          document.getElementById('error').style.display = "block";
+          $('#error').text("日を跨いでの設定は出来ません");
+          error = error + 1;
+          if(error == 1) {
+            document.getElementById('popup-frame').style.height = (parseInt($('#popup-frame').css('height'),10) + 15) + 'px';
+            document.getElementById('error').style.marginLeft = '112px';
+          }
+          return;
+        }
+      }
+      else {
+        document.getElementById('error').style.display = "block";
+          $('#error').text("終了時間は「00:00」の形で入力してください");
+          error = error + 1;
+          if(error == 1) {
+            document.getElementById('popup-frame').style.height = (parseInt($('#popup-frame').css('height'),10) + 15) + 'px';
+            document.getElementById('error').style.marginLeft = '84px';
+          }
+          return;
       }
     }
   }
@@ -210,6 +270,33 @@ function addLine(event){
     placement: 'orignal',
     align: 'originalTime'
   });
+
+  $("#endForm0" ).change(function() {
+    if(document.getElementById("endForm0").value == "00:00") {
+      document.getElementById("endForm0").value = "24:00";
+    }
+  });
+  $("#endForm1" ).change(function() {
+    console.log('hey1');
+    if(document.getElementById("endForm1").value == "00:00") {
+      document.getElementById("endForm1").value = "24:00";
+    }
+  });
+  $("#endForm2" ).change(function() {
+    if(document.getElementById("endForm2").value == "00:00") {
+      document.getElementById("endForm2").value = "24:00";
+    }
+  });
+  $("#endForm3" ).change(function() {
+    if(document.getElementById("endForm3").value == "00:00") {
+      document.getElementById("endForm3").value = "24:00";
+    }
+  });
+  $("#endForm4" ).change(function() {
+    if(document.getElementById("endForm4").value == "00:00") {
+      document.getElementById("endForm4").value = "24:00";
+    }
+  });
 }
 
 //時間削除
@@ -240,6 +327,40 @@ function deleteLine(event){
     document.getElementById('add_' + (length-1)).style.display = "block";
     document.getElementById('delete_' + (length-1)).style.marginLeft = "272px";
   }
+
+  //changeイベントを削除
+  $("#endForm0").unbind("change");
+  $("#endForm1").unbind("change");
+  $("#endForm2").unbind("change");
+  $("#endForm3").unbind("change");
+  $("#endForm4").unbind("change");
+
+  $("#endForm0" ).change(function() {
+    if(document.getElementById("endForm0").value == "00:00") {
+      document.getElementById("endForm0").value = "24:00";
+    }
+  });
+  $("#endForm1" ).change(function() {
+    console.log(document.getElementById("endForm1").value);
+    if(document.getElementById("endForm1").value == "00:00") {
+      document.getElementById("endForm1").value = "24:00";
+    }
+  });
+  $("#endForm2" ).change(function() {
+    if(document.getElementById("endForm2").value == "00:00") {
+      document.getElementById("endForm2").value = "24:00";
+    }
+  });
+  $("#endForm3" ).change(function() {
+    if(document.getElementById("endForm3").value == "00:00") {
+      document.getElementById("endForm3").value = "24:00";
+    }
+  });
+  $("#endForm4" ).change(function() {
+    if(document.getElementById("endForm4").value == "00:00") {
+      document.getElementById("endForm4").value = "24:00";
+    }
+  });
 }
 </script>
 

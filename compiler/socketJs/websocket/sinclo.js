@@ -1380,7 +1380,7 @@
         },
         autoMessages: {
           push: function(id, obj) {
-            
+
             var list = this.get(true);
             if(!this.exists(id)) {
               list[id] = obj;
@@ -1429,7 +1429,7 @@
             // 論理的にフラグを付ける
             var list = this.get();
             Object.keys(list).forEach(function(id, index, arr) {
-              
+
               list[id]['applied'] = true;
             });
             storage.s.set('amsg', JSON.stringify(list));
@@ -2273,7 +2273,7 @@
                 isAutoSpeech: isSpeechContent
             };
 
-            
+
             if(!sinclo.chatApi.autoMessages.exists(data.chatId) && !isSpeechContent) {
               //resAutoMessagesで表示判定をするためにidをkeyとして空Objectを入れる
               sinclo.chatApi.autoMessages.push(data.chatId, {});
@@ -2299,7 +2299,7 @@
             }
 
             if ( String(type) === "1" && ('message' in cond) && (String(chatActFlg) === "false") ) {
-              
+
                 if(sinclo.chatApi.autoMessages.exists(id)){
                   console.log("exists id : " + id);
                   return;

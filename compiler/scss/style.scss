@@ -4965,6 +4965,7 @@ ul.naviBtn {
       resize: none;
       font-size: 1em;
       padding: 0.5em;
+      margin-top: 1em;
     }
     #MChatSettingWatingCallSorryMessage {
       width: 30em;
@@ -4972,6 +4973,7 @@ ul.naviBtn {
       resize: none;
       font-size: 1em;
       padding: 0.5em;
+      margin-top: 1em;
     }
     #MChatSettingNoStandbySorryMessage {
       width: 30em;
@@ -4979,20 +4981,21 @@ ul.naviBtn {
       resize: none;
       font-size: 1em;
       padding: 0.5em;
+      margin-top: 1em;
     }
 
-    #choiceButton{
+    .choiseButton{
       width: 10em;
       text-align: center;
-      margin: 1em 0 0 1em;
       cursor: pointer;
+      margin: 1em 0 0 1em;
     }
 
-    #lastSpeechLabel {
+    .phoneButton {
       width: 12em;
       text-align: center;
-      margin: 1em 0 0 1em;
       cursor: pointer;
+      margin: -1.4em 0 0 12em;
     }
 
     .questionBalloon {
