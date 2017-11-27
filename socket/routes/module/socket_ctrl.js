@@ -1017,7 +1017,7 @@ io.sockets.on('connection', function (socket) {
     scCheck: function(type, d, callback){
       var companyId = companyList[d.siteKey];
 
-      var getUserSQL = "SELECT IFNULL(chat.sc_flg, 2) as sc_flg, outside_hours_sorry_message, wating_call_sorry_message, no_standby_sorry_message, widget.display_type FROM m_companies AS comp LEFT JOIN m_widget_settings AS widget ON ( comp.id = widget.m_companies_id ) LEFT JOIN m_chat_settings AS chat ON ( chat.m_companies_id = widget.m_companies_id ) WHERE comp.id = ?;";
+      var getUserSQL = "SELECT IFNULL(chat.sc_flg, 2) as sc_flg,sorry_message, outside_hours_sorry_message, wating_call_sorry_message, no_standby_sorry_message, widget.display_type FROM m_companies AS comp LEFT JOIN m_widget_settings AS widget ON ( comp.id = widget.m_companies_id ) LEFT JOIN m_chat_settings AS chat ON ( chat.m_companies_id = widget.m_companies_id ) WHERE comp.id = ?;";
       pool.query(getUserSQL, [companyId], function(err, rows){
         if ( err !== null && err !== '' ) return false; // DB接続断対応
         var ret = false, message = null;
@@ -1032,6 +1032,8 @@ io.sockets.on('connection', function (socket) {
         pool.query(getOperatingHourSQL, [companyId] , function(err,result){
           var getPublicHolidaySQL = "SELECT * FROM public_holidays where year = ?;";
           pool.query(getPublicHolidaySQL, now.getFullYear() , function(err, results){
+            console.log('sorryメッセージたち');
+            console.log(rows[0].sorry_message);
             for(var i=0; i<result.length; i++){
               dayType = JSON.parse(result[i].type);
               //営業時間設定の条件が「毎日」の場合
@@ -1056,12 +1058,23 @@ io.sockets.on('connection', function (socket) {
               active_flg = JSON.parse(result[i].active_flg);
             }
             if( rows && rows[0] ) {
-              //営業時間外sorryメッセージ
-              var outside_hours_sorry_message = rows[0].outside_hours_sorry_message;
-              //待ち呼sorryメッセージ
-              var wating_call_sorry_message = rows[0].wating_call_sorry_message;
-              //待機なしsorryメッセージ
-              var no_standby_sorry_message = rows[0].no_standby_sorry_message;
+
+              if(rows[0].sorry_message == "") {
+                //営業時間外sorryメッセージ
+                var outside_hours_sorry_message = rows[0].outside_hours_sorry_message;
+                //待ち呼sorryメッセージ
+                var wating_call_sorry_message = rows[0].wating_call_sorry_message;
+                //待機なしsorryメッセージ
+                var no_standby_sorry_message = rows[0].no_standby_sorry_message;
+              }
+              else {
+                //営業時間外sorryメッセージ
+                var outside_hours_sorry_message = rows[0].sorry_message;
+                //待ち呼sorryメッセージ
+                var wating_call_sorry_message = rows[0].sorry_message;
+                //待機なしsorryメッセージ
+                var no_standby_sorry_message = rows[0].sorry_message;
+              }
 
               // ウィジェットが非表示の場合
               if (　type ==1 && rows[0].display_type === 3 ) {
@@ -1076,8 +1089,13 @@ io.sockets.on('connection', function (socket) {
                       //祝日の営業時間設定が「休み」でない場合
                       if(publicHolidayData[0].start != "" && publicHolidayData[0].end != "") {
                         for(var i=0; i<publicHolidayData.length; i++){
+                           var endTime = publicHolidayData[i].end;
+                            // 営業時間の終了時刻が24:00の場合
+                            if(publicHolidayData[i].end == "24:00") {
+                              endTime = "23:59:59";
+                            }
                           // 営業時間内の場合
-                          if( Date.parse(new Date(date + publicHolidayData[i].start)) <= dateParse && dateParse < Date.parse(new Date(date + publicHolidayData[i].end))) {
+                          if( Date.parse(new Date(date + publicHolidayData[i].start)) <= dateParse && dateParse < Date.parse(new Date(date + endTime))) {
                             return callback(true, {opFlg: false, message: no_standby_sorry_message});
                             break;
                           }
@@ -1090,8 +1108,13 @@ io.sockets.on('connection', function (socket) {
                   // 祝日でない場合、営業時間設定が「休み」でない場合
                   if(timeData[0].start != "" && timeData[0].end != "") {
                     for(var i=0; i<timeData.length; i++){
+                      var endTime = timeData[i].end;
+                      // 営業時間の終了時刻が024:00の場合
+                      if(timeData[i].end == "24:00") {
+                        endTime = "23:59:59";
+                      }
                       // 営業時間内の場合
-                      if( Date.parse(new Date(date + timeData[i].start)) <= dateParse && dateParse < Date.parse(new Date(date + timeData[i].end))) {
+                      if( Date.parse(new Date(date + timeData[i].start)) <= dateParse && dateParse < Date.parse(new Date(date + endTime))) {
                         check = true;
                         return callback(true, {opFlg: false, message: no_standby_sorry_message});
                         break;
@@ -1121,7 +1144,12 @@ io.sockets.on('connection', function (socket) {
                   if((now.getMonth()+1) +'/'+ now.getDate() == results[i2].month +'/'+ results[i2].day) {
                     if(publicHolidayData[0].start != "" && publicHolidayData[0].end != "") {
                       for(var i=0; i<publicHolidayData.length; i++){
-                        if( Date.parse(new Date(date + publicHolidayData[i].start)) <= dateParse && dateParse < Date.parse(new Date(date + publicHolidayData[i].end))) {
+                        var endTime = publicHolidayData[i].end;
+                        // 営業時間の終了時刻が24:00の場合
+                        if(publicHolidayData[i].end == "24:00") {
+                          endTime = "23:59:59";
+                        }
+                        if( Date.parse(new Date(date + publicHolidayData[i].start)) <= dateParse && dateParse < Date.parse(new Date(date + endTime))) {
                           return callback(true, {opFlg: true, message: no_standby_sorry_message});
                           break;
                         }
@@ -1133,8 +1161,13 @@ io.sockets.on('connection', function (socket) {
                 // 祝日でない場合、営業時間設定が「休み」でない場合
                 if(timeData[0].start != "" && timeData[0].end != "") {
                   for(var i=0; i<timeData.length; i++){
+                    var endTime = timeData[i].end;
+                    // 営業時間の終了時刻が24:00の場合
+                    if(timeData[i].end == "24:00") {
+                      endTime = "23:59:59";
+                    }
                     // 営業時間内の場合
-                    if( Date.parse(new Date(date + timeData[i].start)) <= dateParse && dateParse < Date.parse(new Date(date + timeData[i].end))) {
+                    if( Date.parse(new Date(date + timeData[i].start)) <= dateParse && dateParse < Date.parse(new Date(date + endTime))) {
                       return callback(true, {opFlg: true, message: no_standby_sorry_message});
                       break;
                     }
@@ -1162,6 +1195,11 @@ io.sockets.on('connection', function (socket) {
                       //祝日の営業時間設定が「休み」でない場合
                       if(publicHolidayData[0].start != "" && publicHolidayData[0].end != "") {
                         for(var i=0; i<publicHolidayData.length; i++){
+                          var endTime = publicHolidayData[i].end;
+                          // 営業時間の終了時刻が24:00の場合
+                          if(publicHolidayData[i].end == "24:00") {
+                            endTime = "23:59:59";
+                          }
                           //営業時間内の場合
                           if( Date.parse(new Date(date + publicHolidayData[i].start)) <= dateParse && dateParse < Date.parse(new Date(date + publicHolidayData[i].end)) ) {
                             // オペレータが待機している場合
@@ -1203,8 +1241,13 @@ io.sockets.on('connection', function (socket) {
                     //営業時間設定が「休み」でない場合
                     else {
                       for(var i=0; i<timeData.length; i++){
+                        var endTime = timeData[i].end;
+                        // 営業時間の終了時刻が24:00の場合
+                        if(timeData[i].end == "24:00") {
+                          endTime = "23:59:59";
+                        }
                         //営業時間内
-                        if( Date.parse(new Date(date + timeData[i].start)) <= dateParse && dateParse < Date.parse(new Date(date + timeData[i].end)) ) {
+                        if( Date.parse(new Date(date + timeData[i].start)) <= dateParse && dateParse < Date.parse(new Date(date + endTime)) ) {
                           check = true;
                           //オペレータが待機している場合
                           if ( (rows[0].display_type === 2 && getOperatorCnt(d.siteKey) > 0) ||
@@ -1267,8 +1310,13 @@ io.sockets.on('connection', function (socket) {
                       //祝日の営業時間設定が「休み」でない場合
                       if(publicHolidayData[0].start　!= "" && publicHolidayData[0].end != "") {
                         for(var i=0; i<publicHolidayData.length; i++){
+                          var endTime = publicHolidayData[i].end;
+                          // 営業時間の終了時刻が24:00の場合
+                          if(publicHolidayData[i].end == "24:00") {
+                            endTime = "23:59:59";
+                          }
                           //営業時間内の場合
-                          if( Date.parse(new Date(date + publicHolidayData[i].start)) <= dateParse && dateParse < Date.parse(new Date(date + publicHolidayData[i].end)) ) {
+                          if( Date.parse(new Date(date + publicHolidayData[i].start)) <= dateParse && dateParse < Date.parse(new Date(date + endTime)) ) {
                             // チャット上限数をみる
                             if ( scList.hasOwnProperty(d.siteKey) ) {
                               var userIds = Object.keys(scList[d.siteKey].user);
@@ -1316,8 +1364,13 @@ io.sockets.on('connection', function (socket) {
                     //営業時間設定が「休み」でない場合
                     else {
                       for(var i=0; i<timeData.length; i++){
+                        var endTime = timeData[i].end;
+                        // 営業時間の終了時刻が24:00の場合
+                        if(timeData[i].end == "24:00") {
+                          endTime = "23:59:59";
+                        }
                         //営業時間内の場合
-                        if( Date.parse(new Date(date + timeData[i].start)) <= dateParse && dateParse < Date.parse(new Date(date + timeData[i].end)) ) {
+                        if( Date.parse(new Date(date + timeData[i].start)) <= dateParse && dateParse < Date.parse(new Date(date + endTime)) ) {
                           check = true;
                           // チャット上限数をみる
                           if ( scList.hasOwnProperty(d.siteKey) ) {
