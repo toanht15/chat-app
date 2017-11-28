@@ -729,7 +729,6 @@ io.sockets.on('connection', function (socket) {
               var autoMessages = [];
               if(obj.sincloSessionId in sincloCore[obj.siteKey] && 'autoMessages' in sincloCore[obj.siteKey][obj.sincloSessionId] ) {
                 var autoMessageArray = sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages;
-                console.log(autoMessageArray);
                 for(var key in autoMessageArray) {
                   autoMessages.push(autoMessageArray[key]);
                 }
@@ -1034,6 +1033,8 @@ io.sockets.on('connection', function (socket) {
         pool.query(getOperatingHourSQL, [companyId] , function(err,result){
           var getPublicHolidaySQL = "SELECT * FROM public_holidays where year = ?;";
           pool.query(getPublicHolidaySQL, now.getFullYear() , function(err, results){
+            console.log('sorryメッセージたち');
+            console.log(rows[0].sorry_message);
             for(var i=0; i<result.length; i++){
               dayType = JSON.parse(result[i].type);
               //営業時間設定の条件が「毎日」の場合
@@ -2600,7 +2601,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   });
 
   /**
-   * サイト訪問者側で画面キャプチャ共のリクエストを許可したときに送信する
+   * サイト訪問者側で画面キャプチャ共有のリクエストを許可したときに送信する
    */
   socket.on('beginToCoBrowse', function (data) {
     console.log("beginToCoBrowse >>> " + data);
