@@ -1,7 +1,7 @@
 <?= $this->element('Customers/userAgentCheck') ?>
 <?= $this->element('Histories/angularjs') ?>
 <?= $this->element('Histories/script') ?>
-<div id='history_idx' class="card-shadow setClockPicker" ng-app="sincloApp" ng-controller="MainController">
+<div id='history_idx' class="card-shadow" ng-app="sincloApp" ng-controller="MainController">
   <div id='history_title'>
     <div class="fLeft"><?= $this->Html->image('history_g.png', array('alt' => '履歴一覧', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?></div>
       <h1>履歴一覧</h1>

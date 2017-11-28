@@ -73,8 +73,6 @@ class HistoriesController extends AppController {
     }
     $isChat = $this->Session->read('authenticity');
     $this->_searchProcessing(3);
-    $this->log('成果',LOG_DEBUG);
-    $this->log(Configure::read('achievementType'),LOG_DEBUG);
     // 成果の名称リスト
     $this->set('achievementType', Configure::read('achievementType'));
     $this->_setList($isChat);
@@ -927,9 +925,6 @@ class HistoriesController extends AppController {
           'THistoryChatLog.t_histories_id = THistory.id'
         ]
       ];
-
-      $this->log('chatstatelist',LOG_DEBUG);
-      $this->log($chatStateList,LOG_DEBUG);
 
       // チャットのみ表示との切り替え（担当者検索の場合、強制的にINNER）
       if ( strcmp($type, 'false') === 0 && !(!empty($data['THistoryChatLog']) && !empty(array_filter($data['THistoryChatLog']))) ) {

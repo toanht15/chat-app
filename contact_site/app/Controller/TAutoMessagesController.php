@@ -475,8 +475,6 @@ class TAutoMessagesController extends AppController {
    * @return void
    * */
   private function _entry($saveData) {
-    $this->log('オートメッセージデータ',LOG_DEBUG);
-    $this->log($saveData,LOG_DEBUG);
     $errors = [];
     $saveData['TAutoMessage']['m_companies_id'] = $this->userInfo['MCompany']['id'];
     if(array_key_exists ('lastPage',$saveData)){
@@ -569,8 +567,6 @@ class TAutoMessagesController extends AppController {
       }
       $changeEditData = json_encode($changeEditData);
       $saveData['TAutoMessage']['activity'] = $changeEditData;
-      $this->log('オートメッセージデータ2',LOG_DEBUG);
-      $this->log($saveData,LOG_DEBUG);
       if( $this->TAutoMessage->save($saveData,false) ) {
         $this->TAutoMessage->commit();
         $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));

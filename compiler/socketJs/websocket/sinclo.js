@@ -1164,8 +1164,6 @@
     resAutoChatMessage: function(d){
         console.log("resAutoChatMessage : " + JSON.stringify(d));
         var obj = JSON.parse(d);
-        console.log('ふふっふふふ');
-        console.log(obj);
         if(!sinclo.chatApi.autoMessages.exists(obj.chatId)) {
           sinclo.chatApi.createMessage("sinclo_re", obj.message, sincloInfo.widget.subTitle);
         }
@@ -2265,8 +2263,6 @@
             callback(null, null, key, ret);
         },
         setAutoMessage: function(id, cond){
-            console.log('様チェックや！');
-            console.log(cond);
             if(sincloInfo.widget.showTiming === 3) {
               console.log("オートメッセージ表示処理発動");
               // 初回オートメッセージ表示時にフラグを立てる
@@ -2322,7 +2318,6 @@
         },
         setAction: function(id, type, cond){
             console.log("setAction id : " + id + " type : " + type + " cond : " + JSON.stringify(cond));
-
             // TODO 今のところはメッセージ送信のみ、拡張予定
             var chatActFlg = storage.s.get('chatAct');
             console.log("chatActFlg : " + chatActFlg);
@@ -2335,7 +2330,6 @@
                   console.log("exists id : " + id);
                   return;
                 }
-
                 sinclo.chatApi.createMessageUnread("sinclo_re", cond.message, sincloInfo.widget.subTitle);
                 sinclo.chatApi.scDown();
                 var prev = sinclo.chatApi.autoMessages.getByArray();
