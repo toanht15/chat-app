@@ -726,9 +726,11 @@ io.sockets.on('connection', function (socket) {
                 }
                 setList[fullDateTime(messages[i].created)] = messages[i];
               }
+              console.log('automessage通るよ！');
               var autoMessages = [];
               if(obj.sincloSessionId in sincloCore[obj.siteKey] && 'autoMessages' in sincloCore[obj.siteKey][obj.sincloSessionId] ) {
                 var autoMessageArray = sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages;
+                console.log(autoMessageArray);
                 for(var key in autoMessageArray) {
                   autoMessages.push(autoMessageArray[key]);
                 }
@@ -744,6 +746,8 @@ io.sockets.on('connection', function (socket) {
               }
               chatData.messages = objectSort(setList);
               obj.chat = chatData;
+              console.log('objChatchat');
+              console.log(obj);
               emit.toMine('chatMessageData', obj, socket);
             });
         }
@@ -761,7 +765,8 @@ io.sockets.on('connection', function (socket) {
         message: d.chatMessage,
         message_type: d.messageType,
         message_distinction: d.messageDistinction,
-        message_request_flg: d.messageRequestFlg
+        message_request_flg: d.messageRequestFlg,
+        achievement_flg: d.achievementFlg
       };
 
       pool.query('SELECT * FROM t_history_stay_logs WHERE t_histories_id = ? ORDER BY id DESC LIMIT 1;', insertData.t_histories_id,
@@ -784,6 +789,7 @@ io.sockets.on('connection', function (socket) {
             insertData.message_distinction = d.messageDistinction;
           }
 
+          console.log('あやしいあやしい');
           pool.query('INSERT INTO t_history_chat_logs SET ?', insertData, function(error,results,fields){
             if ( !isset(error) ) {
               if ( !isset(sincloCore[d.siteKey][d.tabId].sessionId)) return false;
@@ -1032,8 +1038,6 @@ io.sockets.on('connection', function (socket) {
         pool.query(getOperatingHourSQL, [companyId] , function(err,result){
           var getPublicHolidaySQL = "SELECT * FROM public_holidays where year = ?;";
           pool.query(getPublicHolidaySQL, now.getFullYear() , function(err, results){
-            console.log('sorryメッセージたち');
-            console.log(rows[0].sorry_message);
             for(var i=0; i<result.length; i++){
               dayType = JSON.parse(result[i].type);
               //営業時間設定の条件が「毎日」の場合
@@ -1618,6 +1622,17 @@ io.sockets.on('connection', function (socket) {
 
   });
 
+  socket.on('example', function (data) {
+    console.log('websocket!');
+    var obj = JSON.parse(data);
+    console.log(obj);
+    pool.query('SELECT id FROM t_history_chat_logs WHERE t_histories_id = ? and message = ?',
+      [obj.historyId,obj.message],function (err, rows4) {
+      console.log('THISTORYID!');
+      console.log(rows4);
+    });
+  });
+
   socket.on("customerInfo", function (data) {
     var obj = JSON.parse(data);
     obj.term = timeCalculator(obj);
@@ -2182,13 +2197,17 @@ io.sockets.on('connection', function (socket) {
 
   // 一括：チャットデータ取得
   socket.on("getChatMessage", function(d){
+    console.log('一括！');
     var obj = JSON.parse(d);
+    console.log(obj);
     chatApi.get(obj);
   });
 
   // 都度：チャットデータ取得(オートメッセージのみ)
   socket.on("sendAutoChatMessage", function(d){
+    console.log('ひいいいいいいい');
     var obj = JSON.parse(d);
+    console.log(obj);
     var chat = JSON.parse(JSON.stringify(obj));
     chat.messageType = obj.isAutoSpeech ? chatApi.cnst.observeType.autoSpeech : chatApi.cnst.observeType.auto;
     chat.created = new Date();
@@ -2201,6 +2220,7 @@ io.sockets.on('connection', function (socket) {
 
   // 一括：チャットデータ取得(オートメッセージのみ)
   socket.on("getAutoChatMessages", function(d){
+    console.log('222222222');
     var obj = JSON.parse(d);
     if (!getSessionId(obj.siteKey, obj.tabId, 'sessionId')) return false;
     var sId = getSessionId(obj.siteKey, obj.tabId, 'sessionId');
@@ -2217,6 +2237,7 @@ io.sockets.on('connection', function (socket) {
 
   // 一括：チャットデータ取得(オートメッセージのみ)
   socket.on("sendAutoChatMessages", function(d){
+    console.log('3333333');
     var obj = JSON.parse(d);
 
     var setList = {};
@@ -2417,6 +2438,8 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   //新着チャット
   socket.on("sendChat", function(d){
     var obj = JSON.parse(d);
+    console.log('新着チャット');
+    console.log(obj);
     //応対件数検索、登録
     getConversationCountUser(obj.userId,function(results) {
       if(results !== null) {
@@ -2463,7 +2486,11 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         var loop = function(err, rows){
           if ( !err && (rows && rows[0]) ) {
               var activity = JSON.parse(rows[0].activity);
-              var ret = {
+              console.log('まとめたオートメッセージデータ');
+              console.log(activity);
+              if(activity.cv == 1) {
+                console.log('こっち1だよ');
+                var ret = {
                   siteKey: obj.siteKey,
                   tabId: obj.tabId,
                   userId: obj.userId,
@@ -2472,7 +2499,23 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                   messageType: rows[0].auto_message_type,
                   created: rows[0].inputed ? rows[0].inputed : new Date(),
                   messageDistinction: messageDistinction,
-              };
+                  achievementFlg: 3
+                };
+              }
+              else {
+                console.log('こっち2だよ');
+                var ret = {
+                    siteKey: obj.siteKey,
+                    tabId: obj.tabId,
+                    userId: obj.userId,
+                    mUserId: null,
+                    chatMessage: activity.message,
+                    messageType: rows[0].auto_message_type,
+                    created: rows[0].inputed ? rows[0].inputed : new Date(),
+                    messageDistinction: messageDistinction,
+                };
+              }
+              console.log(ret);
               chatApi.set(ret);
           }
         };
@@ -2585,7 +2628,8 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   });
 
   /**
-   * サイト訪問者側で画面キャプチャ共有のリクエストを許可したときに送信する
+   * サイト訪問者側で画面キャプチャ共
+   のリクエストを許可したときに送信する
    */
   socket.on('beginToCoBrowse', function (data) {
     console.log("beginToCoBrowse >>> " + data);

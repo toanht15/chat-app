@@ -74,6 +74,8 @@ if ( isset($history['THistory']['visitors_id']) ) {
             ?></td>
             <td class="tCenter"><?php
               if ($history['THistoryChatLog']['achievementFlg']){
+                $this->log('achevementFlg',LOG_DEBUG);
+                $this->log($history['THistoryChatLog']['achievementFlg'],LOG_DEBUG);
                 echo $achievementType[h($history['THistoryChatLog']['achievementFlg'])];
               }
             ?></td>

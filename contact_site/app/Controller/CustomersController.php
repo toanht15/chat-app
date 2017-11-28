@@ -466,6 +466,9 @@ class CustomersController extends AppController {
     $this->layout = null;
     $ret = ["result" => false];
     $query = $this->params->query;
+    $this->log('成果欄！',LOG_DEBUG);
+    $this->log($query,LOG_DEBUG);
+    $this->log($this->request->data,LOG_DEBUG);
     if ( !empty($query['chatId']) && isset($query['value']) && !empty($query['userId'] ) ) {
       $params = [
         'conditions' => [

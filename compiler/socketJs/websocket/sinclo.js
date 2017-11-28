@@ -955,6 +955,9 @@
       storage.s.set('chatAct', true); // オートメッセージを表示しない
       storage.s.set('operatorEntered', true); // オペレータが入室した
 
+      //サイト訪問者側のテキストエリア表示
+      sinclo.displayTextarea();
+
       if ( sincloInfo.widget.showName === 1 ) {
         sinclo.chatApi.opUser = obj.userName;
         opUser = obj.userName;
@@ -1161,13 +1164,16 @@
     resAutoChatMessage: function(d){
         console.log("resAutoChatMessage : " + JSON.stringify(d));
         var obj = JSON.parse(d);
+        console.log('ふふっふふふ');
+        console.log(obj);
         if(!sinclo.chatApi.autoMessages.exists(obj.chatId)) {
           sinclo.chatApi.createMessage("sinclo_re", obj.message, sincloInfo.widget.subTitle);
         }
         sinclo.chatApi.autoMessages.push(obj.chatId, {
           chatId:obj.chatId,
           message: obj.message,
-          created: obj.created
+          created: obj.created,
+          achievementFlg: obj.achievementFlg
         });
     },
     confirmVideochatStart: function(obj) {
@@ -1296,6 +1302,18 @@
           clearInterval(timer);
         }
       }, 500);
+    },
+    displayTextarea {
+      document.getElementById("flexBoxHeight").style.display = '';
+      if(chatTalk.clientHeight == 269 || chatTalk.clientHeight == 359 || chatTalk.clientHeight == 449) {
+        document.getElementById("chatTalk").style.height = chatTalk.clientHeight - 75 + 'px';
+      }
+    },
+    hideTextarea {
+      document.getElementById("flexBoxHeight").style.display = 'none';
+      if(chatTalk.clientHeight == 194 || chatTalk.clientHeight == 284 || chatTalk.clientHeight == 374) {
+        document.getElementById("chatTalk").style.height = chatTalk.clientHeight + 75 + 'px';
+      }
     },
     syncApi: {
       init : function(type){
@@ -2247,6 +2265,8 @@
             callback(null, null, key, ret);
         },
         setAutoMessage: function(id, cond){
+            console.log('様チェックや！');
+            console.log(cond);
             if(sincloInfo.widget.showTiming === 3) {
               console.log("オートメッセージ表示処理発動");
               // 初回オートメッセージ表示時にフラグを立てる
@@ -2265,11 +2285,25 @@
 
             console.log("IS SPEECH CONTENT : " + isSpeechContent);
 
-            var data = {
+            //CVに登録するオートメッセージの場合
+            if(cond.cv == 1) {
+              var data = {
                 chatId:id,
                 message:cond.message,
-                isAutoSpeech: isSpeechContent
-            };
+                isAutoSpeech: isSpeechContent,
+                achievementFlg: 3
+              };
+              emit("sendAutoChat", {messageList: sinclo.chatApi.autoMessages.getByArray()});
+              sinclo.chatApi.autoMessages.unset();
+              sinclo.chatApi.saveFlg = true;
+            }
+            else {
+              var data = {
+                  chatId:id,
+                  message:cond.message,
+                  isAutoSpeech: isSpeechContent
+              };
+            }
 
             if(!sinclo.chatApi.autoMessages.exists(data.chatId) && !isSpeechContent) {
               //resAutoMessagesで表示判定をするためにidをkeyとして空Objectを入れる
@@ -2288,6 +2322,7 @@
         },
         setAction: function(id, type, cond){
             console.log("setAction id : " + id + " type : " + type + " cond : " + JSON.stringify(cond));
+
             // TODO 今のところはメッセージ送信のみ、拡張予定
             var chatActFlg = storage.s.get('chatAct');
             console.log("chatActFlg : " + chatActFlg);
@@ -2300,6 +2335,7 @@
                   console.log("exists id : " + id);
                   return;
                 }
+
                 sinclo.chatApi.createMessageUnread("sinclo_re", cond.message, sincloInfo.widget.subTitle);
                 sinclo.chatApi.scDown();
                 var prev = sinclo.chatApi.autoMessages.getByArray();
@@ -2324,6 +2360,14 @@
                     }
                 }, 1);
 
+              //チャットのテキストエリア表示
+              if(Number(cond.chatTextarea) === 1 ) {
+                sinclo.displayTextarea();
+              }
+              //チャットのテキストエリア非表示
+              else {
+                sinclo.hideTextarea();
+              }
             }
         },
         fireChatEnterEvent: function(msg) {
