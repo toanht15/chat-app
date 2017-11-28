@@ -1436,7 +1436,7 @@ var socket, // socket.io
       }
       html += '  <section id="chatTab" class="flexBox">';
       html += '    <ul id="chatTalk"><sinclo-chat></sinclo-chat><sinclo-typing></sinclo-typing><sinclo-chat-receiver><span id="receiveMessage">テストメッセージです</span></sinclo-chat-receiver></ul>';
-      html += '    <sinclo-div class="flexBoxRow">';
+      html += '    <sinclo-div class="flexBoxRow" id = "flexBoxHeight">';
       html += '      <textarea name="sincloChat" id="sincloChatMessage" maxlength="300" placeholder=" ' + placeholder + ' "></textarea>';
       html += '      <a id="sincloChatSendBtn" class="notSelect" onclick="sinclo.chatApi.push()">送信</a>';
       if ( spFlg ) { // スマートフォンの場合

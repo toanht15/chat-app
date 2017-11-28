@@ -929,6 +929,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           }, 300);
         }
         chatApi.tabId = "";
+        chatApi.sincloSessionId = "";
       }
       // ポップアップを開く
       else {
