@@ -2386,6 +2386,9 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     if ( isset(sincloCore[obj.siteKey]) && isset(sincloCore[obj.siteKey][obj.tabId].chat) ) {
       sincloCore[obj.siteKey][obj.tabId].chat = null;
       sincloCore[obj.siteKey][obj.tabId].chatSessionId = null;
+      if( isset(sincloCore[obj.siteKey]) && isset(sincloCore[obj.siteKey][obj.sincloSessionId]) && isset(sincloCore[obj.siteKey][obj.sincloSessionId].chat) ) {
+        sincloCore[obj.siteKey][obj.sincloSessionId].chat = null;
+      }
       scInfo = ( scList.hasOwnProperty(obj.siteKey) ) ? scList[obj.siteKey].cnt : {};
 
       //emit.toUser("chatEndResult", {ret: true, messageType: type}, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
