@@ -686,7 +686,7 @@ io.sockets.on('connection', function (socket) {
         noFlg: 0
       }
     },
-    set: function(d){ // メッセージが渡されてきたとき
+    set: function(d){ // メッセージが渡されてきたと
       if ( !getSessionId(d.siteKey, d.tabId, 'sessionId') ) {
         sincloReconnect(socket);
         return false;
@@ -699,6 +699,7 @@ io.sockets.on('connection', function (socket) {
       // チャットidがある
       else {
         // DBへ書き込む
+        console.log("SET : " + JSON.stringify(d));
         this.commit(d);
       }
     },
@@ -740,8 +741,9 @@ io.sockets.on('connection', function (socket) {
                 if ( ('userName' in autoMessages[i]) && obj.showName !== 1 ) {
                   delete autoMessages[i].userName;
                 }
-                setList[fullDateTime(autoMessages[i].created)] = autoMessages[i];
+                setList[fullDateTime(autoMessages[i].created) + '_'] = autoMessages[i];
               }
+              console.log("merged : " + JSON.stringify(setList));
               chatData.messages = objectSort(setList);
               obj.chat = chatData;
               emit.toMine('chatMessageData', obj, socket);
@@ -784,6 +786,8 @@ io.sockets.on('connection', function (socket) {
             insertData.message_read_flg = 1;
             insertData.message_distinction = d.messageDistinction;
           }
+
+          console.log("INSERT DATA message : " + insertData.message + " created : " + insertData.created);
 
           pool.query('INSERT INTO t_history_chat_logs SET ?', insertData, function(error,results,fields){
             if ( !isset(error) ) {
@@ -1450,12 +1454,19 @@ io.sockets.on('connection', function (socket) {
         send = {},
         type = "",
         siteKey = "",
-        data = res.data;
+        data = res.data,
+        newTabId = "";
         send = data;
+
     if ( res.type !== 'admin' ) {
+      if (res.tabId && (isset(sincloCore[res.siteKey]) && isset(sincloCore[res.siteKey][res.tabId]) && !isset(sincloCore[res.siteKey][res.tabId].timeoutTimer))) {
+        // 別タブを開いたときに情報がコピーされてしまっている状態
+        console.log("tabId is duplicate. change firstConnection flg " + res.tabId);
+        data.firstConnection = true;
+      }
+
       if ( data.userId === undefined || data.userId === '' || data.userId === null ) {
         send.userId = makeUserId();
-
       }
       if ( (res.sincloSessionId === undefined || res.sincloSessionId === '' || res.sincloSessionId === null)
         || !(res.siteKey in sincloCore)
@@ -1468,7 +1479,7 @@ io.sockets.on('connection', function (socket) {
       } else {
         send.sincloSessionIdIsNew = false;
       }
-      if ( data.accessId === undefined || data.accessId === '' || data.accessId === null ) {
+      if ( data.firstConnection || data.accessId === undefined || data.accessId === '' || data.accessId === null ) {
         send.accessId = ('000' + Math.floor(Math.random() * 10000)).slice(-4);
       }
       if ( res.token !== undefined ) {
@@ -1588,6 +1599,9 @@ io.sockets.on('connection', function (socket) {
             }
           }
           socket.join(res.siteKey + emit.roomKey.client);
+          if(newTabId !== "") {
+            send.newTabId = newTabId;
+          }
           emit.toMine('accessInfo', send, socket);
 
         });
@@ -1691,27 +1705,20 @@ io.sockets.on('connection', function (socket) {
       sincloCore[obj.siteKey][obj.tabId] = {sincloSessionId: null, sessionId: null, subWindow: false};
     }
     if ( !isset(sincloCore[obj.siteKey][obj.sincloSessionId]) ) {
-      sincloCore[obj.siteKey][obj.sincloSessionId] = {sessionIds: [], autoMessages: {}};
+      sincloCore[obj.siteKey][obj.sincloSessionId] = {sessionIds: {}, autoMessages: {}};
     }
     if ('timeoutTimer' in sincloCore[obj.siteKey][obj.tabId]) {
       clearTimeout(sincloCore[obj.siteKey][obj.tabId].timeoutTimer);
       var oldSessionId = sincloCore[obj.siteKey][obj.tabId].sessionId;
       var sessionIds = sincloCore[obj.siteKey][obj.sincloSessionId].sessionIds;
-      sessionIds.some(function(v, i){
-        if(v.indexOf(oldSessionId) >= 0) {
-          // オブジェクトは参照渡しなので取得したsessionIdsのみ消去する
-          console.log("DELETE sessionId : " + oldSessionId);
-          sessionIds.splice(i,1);
-          return true;
-        }
-      });
+      delete sessionIds[oldSessionId];
       sincloCore[obj.siteKey][obj.tabId].timeoutTimer = null;
     }
 
     connectList[socket.id] = {siteKey: obj.siteKey, tabId: obj.tabId, userId: null};
     sincloCore[obj.siteKey][obj.tabId].sessionId = socket.id;
     sincloCore[obj.siteKey][obj.tabId].sincloSessionId = obj.sincloSessionId;
-    sincloCore[obj.siteKey][obj.sincloSessionId].sessionIds.push(socket.id);
+    sincloCore[obj.siteKey][obj.sincloSessionId].sessionIds[socket.id] = socket.id;
     if ( obj.subWindow ) {
       sincloCore[obj.siteKey][obj.tabId].toTabId = obj.to;
       sincloCore[obj.siteKey][obj.tabId].connectToken = obj.connectToken;
@@ -3182,16 +3189,10 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
           if(sincloSessionId) {
             var sessionIds = sincloCore[info.siteKey][sincloSessionId].sessionIds;
-            if(sessionIds && sessionIds.length > 0) {
-              sessionIds.some(function(v, i){
-                if(v.indexOf(socket.id) >= 0) {
-                  // オブジェクトは参照渡しなので取得したsessionIdsのみ消去する
-                  console.log("DELETE sessionId : " + socket.id);
-                  sessionIds.splice(i,1);
-                  return true;
-                }
-              });
-              if(sessionIds.length === 0) {
+            if(sessionIds && Object.keys(sessionIds).length > 0) {
+              console.log("DELETE sessionId : " + socket.id);
+              delete sessionIds[socket.id];
+              if(Object.keys(sessionIds).length === 0) {
                 console.log("DELETE sincloSessionId : " + sincloSessionId);
                 delete sincloCore[info.siteKey][sincloSessionId];
               }

@@ -2511,6 +2511,10 @@ var socket, // socket.io
       var val = userInfo.userId + "_" + common.makeToken();
       this.set(cnst.info_type.tab, val, true);
     },
+    changeTabId: function(tabId){
+      console.log("CHANGE TAB ID");
+      this.set(cnst.info_type.tab, tabId, true);
+    },
     unsetAccessId: function(){
       return this.unset(cnst.info_type.access);
     },
@@ -3306,6 +3310,12 @@ var socket, // socket.io
       }, 700);
     }); // socket-on: connect
 
+    socket.on("changeTabId", function(d){
+      var obj = common.jParse(d);
+      userInfo.tabId = obj.newTabId;
+      userInfo.changeTabId(obj.newTabId);
+    });
+
     // 接続直後（ユーザＩＤ、アクセスコード発番等）
     socket.on("retConnectedForSync", function(d){
       sinclo.retConnectedForSync(d);
@@ -3558,6 +3568,7 @@ function f_url(url){
 }
 
 function emit(evName, data){
+  console.log("EMIT : " + evName);
   /* ここから：イベント名指定なし */
   data.siteKey = sincloInfo.site.key; // サイトの識別キー
   if ( check.isset(userInfo.sendTabId) ) {

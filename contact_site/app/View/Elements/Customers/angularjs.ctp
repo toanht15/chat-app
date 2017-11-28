@@ -55,6 +55,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       sincloSessionId: null,
       userId: null,
       token: null,
+      getMessageToken: null,
       messageType: {
         customer: 1,
         company: 2,
@@ -154,7 +155,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       },
       getMessage: function(obj){
         // オートメッセージの取得
-        emit('getAutoChatMessages', {userId: obj.userId, mUserId: myUserId, tabId: obj.tabId});
+        this.getMessageToken = makeToken();
+        emit('getAutoChatMessages', {userId: obj.userId, mUserId: myUserId, tabId: obj.tabId, chatToken: this.getMessageToken});
       },
       addOption: function(type){
         var sendMessage = document.getElementById('sendMessage');
@@ -927,6 +929,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           }, 300);
         }
         chatApi.tabId = "";
+        chatApi.sincloSessionId = "";
       }
       // ポップアップを開く
       else {
@@ -972,7 +975,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           $.ajax({
             type: "GET",
             url: "<?=$this->Html->url(['controller' => 'Customers', 'action' => 'remoteGetHistoriesId'])?>",
-            data: {tabId: tabId},
+            data: {tabId: data.sincloSessionId},
             dataType: "json",
             success: function(ret){
               if ( isset(ret) ) return $scope.getOldChat(ret, false);
@@ -1567,10 +1570,13 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     socket.on('resAutoChatMessages', function(d){
         var obj = JSON.parse(d);
 
+        if(obj.chatToken !== chatApi.getMessageToken) return false;
+
         if ( ('historyId' in obj) ) {
           socket.emit('getChatMessage', {
             siteKey: obj.siteKey,
-            tabId: obj.tabId
+            tabId: obj.tabId,
+            getMessageToken: chatApi.getMessageToken
           });
           for (var key in obj.messages) {
             var chat = obj.messages[key];
@@ -1902,6 +1908,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     socket.on("chatMessageData", function(d){
       var obj = JSON.parse(d); $scope.achievement = "", $scope.chatOpList = [];
 
+      if(obj.getMessageToken !== chatApi.getMessageToken) return;
+
       for (var key in obj.chat.messages) {
         var chat = {};
         if ( typeof(obj.chat.messages[key]) === "object" ) {
@@ -1917,8 +1925,17 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           }
         }
         chat.sort = Number(key);
-        $scope.messageList.push(chat);
-        scDown(); // チャットのスクロール
+        var exists = false;
+        $scope.messageList.some(function(obj){
+          if(obj.id === chat.id) {
+            exists = true;
+            return true;
+          }
+        });
+        if(!exists) {
+          $scope.messageList.push(chat);
+          scDown(); // チャットのスクロール
+        }
       }
 
       if ( $scope.monitorList[obj.tabId].chat === myUserId ) {
@@ -3139,7 +3156,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
         function countUp(){
           // 存在しないユーザーなら、カウントを止める
-          if ( !scope.$parent.hasOwnProperty('monitorList') || (scope.$parent.hasOwnProperty('monitorList') && !scope.$parent.monitorList.hasOwnProperty(scope.monitor.tabId)) ) return false;
+          if ( !scope.$parent || !scope.$parent.hasOwnProperty('monitorList') || (scope.$parent.hasOwnProperty('monitorList') && !scope.$parent.monitorList.hasOwnProperty(scope.monitor.tabId)) ) return false;
           scope.monitor.term = Number(scope.monitor.term) + term;
           var hour = parseInt(scope.monitor.term / 3600),
               min = parseInt((scope.monitor.term / 60) % 60),
