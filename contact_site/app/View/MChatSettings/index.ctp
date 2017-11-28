@@ -10,6 +10,8 @@ var check = false;
 var SorryMessageData;
 // 同時対応数上限のON/OFF
 function scSettingToggle(){
+  var y = window.pageYOffset ;
+  console.log(y);
   //対応上限数のsorryメッセージデータ
   if(check == false) {
     check  = true;
@@ -72,7 +74,6 @@ function addOption(type,sorryMessageName){
           break;
     }
 }
-
 $(document).ready(function(){
   if(<?= $operatingHourData ?> == 1) {
     $("#MChatSettingOutsideHoursSorryMessage").prop("disabled", false); // 営業時間設定のsorryメッセージをenabled
@@ -88,19 +89,35 @@ $(document).ready(function(){
     $('.settingOutsideHoursPhone').css('pointer-events','none'); //追加ボタン制御
   }
 
+  console.log('oaksii');
+
+  $(window).scroll(function () {
+    console.log('入ってくれ');
+    var y = window.pageYOffset ;
+    console.log(y);
+  });
   // 同時対応数上限のON/OFFの切り替わりを監視
   $(document).on('change', '[name="data[MChatSetting][sc_flg]"]', scSettingToggle);
   scSettingToggle(); // 初回のみ
 
     // ツールチップの表示制御
   $('.questionBtn').off("mouseenter").on('mouseenter',function(event){
+      var y = window.pageYOffset ;
+  console.log(y);
     var parentTdId = $(this).parent().parent().attr('id');
     console.log(parentTdId);
     var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
     console.log(targetObj);
     targetObj.find('icon-annotation').css('display','block');
+    var aaa = $('#eee').outerHeight();
+    console.log('fight');
+    console.log( targetObj.find('ul').outerHeight());
+    var rect = this.getBoundingClientRect();
+    console.log('scroll');
+    var y = window.pageYOffset ;
+    console.log(y);
     targetObj.css({
-      top: ($(this).offset().top - targetObj.find('ul').outerHeight() - 70) + 'px',
+      top: ($(this).offset().top - targetObj.find('ul').outerHeight() -70 + window.pageYOffset) + 'px',
       left: $(this).offset().left - 65 + 'px'
     });
   });
@@ -188,7 +205,7 @@ $(document).ready(function(){
           <li style = "padding: 0 0 15px 0;">
             <pre id = "outside_hours">(1)営業時間外にチャットが受信された場合</pre>
               <span class="greenBtn btn-shadow actBtn choiseButton settingOutsideHoursChoise" onclick="addOption(1,'MChatSettingOutsideHoursSorryMessage')">選択肢を追加する</span>
-              <span class="greenBtn btn-shadow actBtn phoneButton settingOutsideHoursPhone" onclick="addOption(2,'MChatSettingOutsideHoursSorryMessage')" id = "lastSpeechLabel">電話番号を追加する<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></span>
+              <span class="greenBtn btn-shadow actBtn phoneButton settingOutsideHoursPhone" onclick="addOption(2,'MChatSettingOutsideHoursSorryMessage')" id = "lastSpeechLabel">電話番号を追加する<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn" id = "eee">?</icon></div></span>
             <?=$this->Form->textarea('outside_hours_sorry_message')?>
             <?php if ( $this->Form->isFieldError('outside_hours_sorry_message') ) echo $this->Form->error('outside_hours_sorry_message', null, ['wrap' => 'p', 'style' => 'margin: 0;']); ?>
           </li>

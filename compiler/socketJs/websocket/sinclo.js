@@ -2384,7 +2384,7 @@
                 sinclo.displayTextarea();
               }
               //チャットのテキストエリア非表示
-              else {
+              else if(Number(cond.chatTextarea) === 2 ) {
                 sinclo.hideTextarea();
               }
             }
