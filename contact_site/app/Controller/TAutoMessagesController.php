@@ -97,6 +97,8 @@ class TAutoMessagesController extends AppController {
       $this->request->data['TAutoMessage']['condition_type'] = (!empty($json['conditionType'])) ? $json['conditionType'] : "";
       $this->request->data['TAutoMessage']['action'] = (!empty($json['message'])) ? $json['message'] : "";
       $this->request->data['TAutoMessage']['widget_open'] = (!empty($json['widgetOpen'])) ? $json['widgetOpen'] : "";
+      $this->request->data['TAutoMessage']['chat_textarea'] = (!empty($json['chatTextarea'])) ? $json['chatTextarea'] : "";
+      $this->request->data['TAutoMessage']['cv'] = (!empty($json['cv'])) ? $json['cv'] : "";
       $operatingHourData = $this->MOperatingHour->find('first', ['conditions' => [
         'm_companies_id' => $this->userInfo['MCompany']['id']
       ]]);
@@ -596,6 +598,10 @@ class TAutoMessagesController extends AppController {
     $this->set('outMessageActionType', Configure::read('outMessageActionType'));
     // ウィジェット種別
     $this->set('outMessageWidgetOpenType', Configure::read('outMessageWidgetOpenType'));
+    // テキストエリア
+    $this->set('outMessageTextarea', Configure::read('outMessageTextarea'));
+    //cv
+    $this->set('outMessageCvType', Configure::read('outMessageCvType'));
     // 有効無効
     $this->set('outMessageAvailableType', Configure::read('outMessageAvailableType'));
     // 最後に表示していたページ番号

@@ -955,6 +955,9 @@
       storage.s.set('chatAct', true); // オートメッセージを表示しない
       storage.s.set('operatorEntered', true); // オペレータが入室した
 
+      //サイト訪問者側のテキストエリア表示
+      sinclo.displayTextarea();
+
       if ( sincloInfo.widget.showName === 1 ) {
         sinclo.chatApi.opUser = obj.userName;
         opUser = obj.userName;
@@ -1183,7 +1186,8 @@
         sinclo.chatApi.autoMessages.push(obj.chatId, {
           chatId:obj.chatId,
           message: obj.message,
-          created: obj.created
+          created: obj.created,
+          achievementFlg: obj.achievementFlg
         });
     },
     confirmVideochatStart: function(obj) {
@@ -1312,6 +1316,18 @@
           clearInterval(timer);
         }
       }, 500);
+    },
+    displayTextarea : function(){
+      document.getElementById("flexBoxHeight").style.display = '';
+      if(chatTalk.clientHeight == 269 || chatTalk.clientHeight == 359 || chatTalk.clientHeight == 449) {
+        document.getElementById("chatTalk").style.height = chatTalk.clientHeight - 75 + 'px';
+      }
+    },
+    hideTextarea : function(){
+      document.getElementById("flexBoxHeight").style.display = 'none';
+      if(chatTalk.clientHeight == 194 || chatTalk.clientHeight == 284 || chatTalk.clientHeight == 374) {
+        document.getElementById("chatTalk").style.height = chatTalk.clientHeight + 75 + 'px';
+      }
     },
     syncApi: {
       init : function(type){
@@ -2286,11 +2302,25 @@
 
             console.log("IS SPEECH CONTENT : " + isSpeechContent);
 
-            var data = {
+            //CVに登録するオートメッセージの場合
+            if(cond.cv == 1) {
+              var data = {
                 chatId:id,
                 message:cond.message,
-                isAutoSpeech: isSpeechContent
-            };
+                isAutoSpeech: isSpeechContent,
+                achievementFlg: 3
+              };
+              emit("sendAutoChat", {messageList: sinclo.chatApi.autoMessages.getByArray()});
+              sinclo.chatApi.autoMessages.unset();
+              sinclo.chatApi.saveFlg = true;
+            }
+            else {
+              var data = {
+                  chatId:id,
+                  message:cond.message,
+                  isAutoSpeech: isSpeechContent
+              };
+            }
 
             if(!sinclo.chatApi.autoMessages.exists(data.chatId) && !isSpeechContent) {
               //resAutoMessagesで表示判定をするためにidをkeyとして空Objectを入れる
@@ -2345,6 +2375,14 @@
                     }
                 }, 1);
 
+              //チャットのテキストエリア表示
+              if(Number(cond.chatTextarea) === 1 ) {
+                sinclo.displayTextarea();
+              }
+              //チャットのテキストエリア非表示
+              else {
+                sinclo.hideTextarea();
+              }
             }
         },
         fireChatEnterEvent: function(msg) {
