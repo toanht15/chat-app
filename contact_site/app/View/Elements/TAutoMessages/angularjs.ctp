@@ -99,7 +99,9 @@ sincloApp.controller('MainController', function($scope) {
                 'conditions': angular.copy(this.setItemList),
                 'widgetOpen': Number(this.widget_open),
                  // TODO 後々動的に
-                'message': angular.element("#TAutoMessageAction").val()
+                'message': angular.element("#TAutoMessageAction").val(),
+                'chatTextarea': Number(this.chat_textarea),
+                'cv': Number(this.cv),
         };
         var keys = Object.keys(setList['conditions']);
         if ("<?=C_AUTO_TRIGGER_DAY_TIME?>" in setList['conditions']) {

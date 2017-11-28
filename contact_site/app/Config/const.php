@@ -154,6 +154,14 @@ define('C_AUTO_ACTION_TYPE_SENDMESSAGE', 1); // チャットメッセージを�
 define('C_AUTO_WIDGET_TYPE_OPEN', 1); // 自動で最大化する
 define('C_AUTO_WIDGET_TYPE_CLOSE', 2); // 自動で最大化しない
 
+// オートメッセージ機能－cv種別コード
+define('C_AUTO_CV_EFFECTIVENESS', 1); // cv登録する
+define('C_AUTO_CV_DISABLED', 2); // cv登録しない
+
+// オートメッセージ機能－テキストエリア種別コード
+define('C_AUTO_WIDGET_TEXTAREA_OPEN', 1); // 自由入力可
+define('C_AUTO_WIDGET_TEXTAREA_CLOSE', 2); // 自由入力不可
+
 // する/しない設定
 define('C_SELECT_CAN', 1); // する
 define('C_SELECT_CAN_NOT', 2); // しない
@@ -173,6 +181,7 @@ define('C_STATUS_UNAVAILABLE', 1); // 無効
 // 成果
 define('C_ACHIEVEMENT_UNAVAILABLE', 1); // なし
 define('C_ACHIEVEMENT_AVAILABLE', 2); // あり
+define('C_ACHIEVEMENT_CV', 3); // CV
 
 // ダウンロード設定
 define('C_YES', 1); // 可
@@ -488,8 +497,21 @@ $config['outMessageWidgetOpenType'] = [
     C_AUTO_WIDGET_TYPE_CLOSE => "自動で最大化しない"
 ];
 
+/* オートメッセージ － 自由入力種別 */
+$config['outMessageTextarea'] = [
+    C_AUTO_WIDGET_TEXTAREA_OPEN => "ON(自由入力可)",
+    C_AUTO_WIDGET_TEXTAREA_CLOSE => "OFF(自由入力不可)"
+];
+
+/* オートメッセージ － cv種別 */
+$config['outMessageCvType'] = [
+    C_AUTO_CV_EFFECTIVENESS => "する",
+    C_AUTO_CV_DISABLED => "しない"
+];
+
 /* 成果種別 */
 $config['achievementType'] = [
   C_ACHIEVEMENT_UNAVAILABLE => "無効",
-  C_ACHIEVEMENT_AVAILABLE => "有効"
+  C_ACHIEVEMENT_AVAILABLE => "有効",
+  C_ACHIEVEMENT_CV => "CV"
 ];

@@ -131,6 +131,36 @@
       </li>
       <!-- メッセージ -->
 
+      <!-- 自由入力エリア -->
+      <li class="bt0">
+        <span class="require"><label>自由入力エリア</label></span>
+        <label class="pointer"><?= $this->ngForm->input('main.chat_textarea', [
+          'type' => 'radio',
+          'options' => $outMessageTextarea,
+          'separator' => '</label><label class="pointer">',
+          'error' => false
+        ], [
+          'entity' => 'chat_textarea',
+          'default' => (!empty($this->data['TAutoMessage']['chat_textarea'])) ? $this->data['TAutoMessage']['chat_textarea'] : C_AUTO_WIDGET_TEXTAREA_OPEN,
+        ]); ?></label>
+      </li>
+      <!-- 自由入力エリア -->
+
+      <!-- cv -->
+      <li class="bt0">
+        <span class="require"><label>成果にCVとして登録する</label></span>
+        <label class="pointer"><?= $this->ngForm->input('main.cv', [
+          'type' => 'radio',
+          'options' => $outMessageCvType,
+          'separator' => '</label><label class="pointer">',
+          'error' => false
+        ], [
+          'entity' => 'cv',
+          'default' => (!empty($this->data['TAutoMessage']['cv'])) ? $this->data['TAutoMessage']['cv'] : C_AUTO_CV_DISABLED,
+        ]); ?></label>
+      </li>
+      <!-- cv -->
+
       <!-- 状態 -->
       <li>
         <span class="require"><label>状態</label></span>
