@@ -996,6 +996,7 @@
       sessionStorage.removeItem('chatEmit');
     },
     chatMessageData:function(d){
+      console.log("chatMessgeData");
       var obj = JSON.parse(d);
       if ( obj.token !== common.token ) return false;
       this.chatApi.historyId = obj.chat.historyId;
@@ -1321,8 +1322,6 @@
       }, 500);
     },
     displayTextarea : function(){
-      console.log('ここに入っているか確認');
-      console.log(chatTalk.clientHeight);
       document.getElementById("flexBoxHeight").style.display = '';
       if(chatTalk.clientHeight == 269 || chatTalk.clientHeight == 359 || chatTalk.clientHeight == 449) {
         document.getElementById("chatTalk").style.height = chatTalk.clientHeight - 75 + 'px';
