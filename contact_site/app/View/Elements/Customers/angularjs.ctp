@@ -1911,8 +1911,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       if(obj.getMessageToken !== chatApi.getMessageToken) return;
 
       for (var key in obj.chat.messages) {
-        console.log('通知！');
-        sinclo.displayTextarea();
         var chat = {};
         if ( typeof(obj.chat.messages[key]) === "object" ) {
           chat = obj.chat.messages[key];
