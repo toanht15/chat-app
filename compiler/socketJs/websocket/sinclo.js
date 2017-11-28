@@ -1317,13 +1317,13 @@
         }
       }, 500);
     },
-    displayTextarea {
+    displayTextarea : function(){
       document.getElementById("flexBoxHeight").style.display = '';
       if(chatTalk.clientHeight == 269 || chatTalk.clientHeight == 359 || chatTalk.clientHeight == 449) {
         document.getElementById("chatTalk").style.height = chatTalk.clientHeight - 75 + 'px';
       }
     },
-    hideTextarea {
+    hideTextarea : function(){
       document.getElementById("flexBoxHeight").style.display = 'none';
       if(chatTalk.clientHeight == 194 || chatTalk.clientHeight == 284 || chatTalk.clientHeight == 374) {
         document.getElementById("chatTalk").style.height = chatTalk.clientHeight + 75 + 'px';
