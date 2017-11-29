@@ -1002,8 +1002,6 @@ class HistoriesController extends AppController {
       ]
     ]);
 
-    $this->log('historyList',LOG_DEBUG);
-    //$this->log($historyList,LOG_DEBUG);
     $this->set('data', $data);
     $this->set('historyList', $historyList);
     $this->set('stayList', $stayList);
@@ -1327,7 +1325,7 @@ class HistoriesController extends AppController {
 
     // 検索条件に成果がある場合
     if ( isset($data['THistoryChatLog']['achievement_flg']) && $data['THistoryChatLog']['achievement_flg'] !== "" ) {
-      //$chatLogCond['chat.achievementFlg'] = $data['THistoryChatLog']['achievement_flg'];
+      $chatLogCond['chat.achievementFlg'] = $data['THistoryChatLog']['achievement_flg'];
     }
 
     // 検索条件にメッセージがある場合
