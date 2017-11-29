@@ -1636,8 +1636,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             $scope.monitorList[tabId].widget = obj.widget;
             if (chatApi.tabId === tabId) {
               chatApi.observeType.emit(chatApi.tabId, chatApi.sincloSessionId, chatApi.observeType.status);
-
             }
+          }
+          if ('sincloSessionId' in obj) {
+            $scope.monitorList[tabId].sincloSessionId = obj.sincloSessionId;
           }
           if ('connectToken' in obj) {
             $scope.monitorList[tabId].connectToken = obj.connectToken;
