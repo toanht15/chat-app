@@ -957,6 +957,7 @@
 
       //サイト訪問者側のテキストエリア表示
       sinclo.displayTextarea();
+      storage.s.set('textareaOpend', 'open');
 
       if ( sincloInfo.widget.showName === 1 ) {
         sinclo.chatApi.opUser = obj.userName;
@@ -1164,6 +1165,11 @@
       }
       else {
         alert('メッセージの送信に失敗しました。');
+      }
+      //通知した際に自由入力エリア表示
+      if(obj.opFlg == true && obj.matchAutoSpeech == false) {
+        sinclo.displayTextarea();
+        storage.s.set('textareaOpend', 'open');
       }
     },
     sendReqAutoChatMessages: function(d){
@@ -2345,7 +2351,15 @@
             if ( !check.isset(chatActFlg) ) {
               chatActFlg = "false";
             }
-
+            var textareaOpend = storage.s.get('textareaOpend');
+            //チャットのテキストエリア表示
+            if( textareaOpend == 'close') {
+              sinclo.hideTextarea();
+            }
+            //チャットのテキストエリア非表示
+            else {
+              sinclo.displayTextarea();
+            }
             if ( String(type) === "1" && ('message' in cond) && (String(chatActFlg) === "false") ) {
                 if(sinclo.chatApi.autoMessages.exists(id)){
                   console.log("exists id : " + id);
@@ -2374,14 +2388,15 @@
                       }
                     }
                 }, 1);
-
               //チャットのテキストエリア表示
               if(Number(cond.chatTextarea) === 1 ) {
                 sinclo.displayTextarea();
+                storage.s.set('textareaOpend', 'open');
               }
               //チャットのテキストエリア非表示
-              else {
+              else if(Number(cond.chatTextarea) === 2 ) {
                 sinclo.hideTextarea();
+                storage.s.set('textareaOpend', 'close');
               }
             }
         },
