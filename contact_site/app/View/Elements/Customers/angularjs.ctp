@@ -923,9 +923,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
         $("#customer_list tr.on").removeClass('on');
 
-        if ( chatApi.tabId !== tabId ) {
+        if ( chatApi.tabId !== tabId || chatApi.sincloSessionId !== sincloSessionId ) {
           window.setTimeout(function(){
-            $scope.showDetail(tabId);
+            $scope.showDetail(tabId, sincloSessionId);
           }, 300);
         }
         chatApi.tabId = "";
