@@ -923,7 +923,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
         $("#customer_list tr.on").removeClass('on');
 
-        if ( chatApi.tabId !== tabId || chatApi.sincloSessionId !== sincloSessionId ) {
+        if ( chatApi.tabId !== tabId ) {
           window.setTimeout(function(){
             $scope.showDetail(tabId, sincloSessionId);
           }, 300);
@@ -1422,7 +1422,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         nInstance.onclick = function(){
           window.focus(); // 現在のタブにフォーカスを当てる
           if ( chatApi.tabId !== monitor.tabId ) {
-            $scope.showDetail(monitor.tabId); // 詳細を開く
+            $scope.showDetail(monitor.tabId, monitor.sincloSessionId); // 詳細を開く
           }
           else {
             scDown();
@@ -1443,7 +1443,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     $scope.$watch('monitorList', function(){
       if ( angular.isDefined($scope.detailId) && !($scope.detailId in $scope.monitorList) ) {
-        $scope.showDetail($scope.detailId);
+        $scope.showDetail($scope.detailId, $scope.sincloSessionId);
       }
     });
 
