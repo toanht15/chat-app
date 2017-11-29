@@ -548,12 +548,6 @@ class TAutoMessagesController extends AppController {
           $errors['triggers'][$setting['key']] = sprintf($tmpMessage, $this->outMessageIfType[$activity->conditionType], $setting['label'], $setting['createLimit'][$activity->conditionType]);
         }
       }
-      $operatingHourData = $this->MOperatingHour->find('first', ['conditions' => [
-        'm_companies_id' => $this->userInfo['MCompany']['id']
-      ]]);
-      if(!empty($operatingHourData) && $operatingHourData['MOperatingHour']['active_flg'] == 2)  {
-        $validate = false;
-      }
     }
 
     if ($validate) {
