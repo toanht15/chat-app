@@ -89,33 +89,17 @@ $(document).ready(function(){
     $('.settingOutsideHoursPhone').css('pointer-events','none'); //追加ボタン制御
   }
 
-  console.log('oaksii');
-
-  $(window).scroll(function () {
-    console.log('入ってくれ');
-    var y = window.pageYOffset ;
-    console.log(y);
-  });
   // 同時対応数上限のON/OFFの切り替わりを監視
   $(document).on('change', '[name="data[MChatSetting][sc_flg]"]', scSettingToggle);
   scSettingToggle(); // 初回のみ
 
     // ツールチップの表示制御
   $('.questionBtn').off("mouseenter").on('mouseenter',function(event){
-      var y = window.pageYOffset ;
-  console.log(y);
     var parentTdId = $(this).parent().parent().attr('id');
     console.log(parentTdId);
     var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
     console.log(targetObj);
     targetObj.find('icon-annotation').css('display','block');
-    var aaa = $('#eee').outerHeight();
-    console.log('fight');
-    console.log( targetObj.find('ul').outerHeight());
-    var rect = this.getBoundingClientRect();
-    console.log('scroll');
-    var y = window.pageYOffset ;
-    console.log(y);
     targetObj.css({
       top: ($(this).offset().top - targetObj.find('ul').outerHeight() -70 + window.pageYOffset) + 'px',
       left: $(this).offset().left - 65 + 'px'

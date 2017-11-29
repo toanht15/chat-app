@@ -997,7 +997,6 @@ class HistoriesController extends AppController {
 
     $this->set('data', $data);
     $this->set('historyList', $historyList);
-    $this->log($historyList,LOG_DEBUG);
     $this->set('stayList', $stayList);
     $this->set('mCustomerList', $mCustomerList);
     $this->set('chatUserList', $this->_getChatUser(array_keys($stayList))); // チャット担当者リスト
