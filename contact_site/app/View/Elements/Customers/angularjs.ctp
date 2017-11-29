@@ -1442,7 +1442,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     };
 
     $scope.$watch('monitorList', function(){
-      if ( angular.isDefined($scope.detailId) && !($scope.detailId in $scope.monitorList) && !($scope.sincloSessionId in $scope.monitorList) ) {
+      if ( angular.isDefined($scope.detailId) && !($scope.detailId in $scope.monitorList) ) {
         $scope.showDetail($scope.detailId, $scope.sincloSessionId);
       }
     });
