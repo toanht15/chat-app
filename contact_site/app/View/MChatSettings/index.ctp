@@ -10,8 +10,6 @@ var check = false;
 var SorryMessageData;
 // 同時対応数上限のON/OFF
 function scSettingToggle(){
-  var y = window.pageYOffset ;
-  console.log(y);
   //対応上限数のsorryメッセージデータ
   if(check == false) {
     check  = true;
@@ -74,6 +72,7 @@ function addOption(type,sorryMessageName){
           break;
     }
 }
+
 $(document).ready(function(){
   if(<?= $operatingHourData ?> == 1) {
     $("#MChatSettingOutsideHoursSorryMessage").prop("disabled", false); // 営業時間設定のsorryメッセージをenabled
@@ -101,7 +100,7 @@ $(document).ready(function(){
     console.log(targetObj);
     targetObj.find('icon-annotation').css('display','block');
     targetObj.css({
-      top: ($(this).offset().top - targetObj.find('ul').outerHeight() -70 + window.pageYOffset) + 'px',
+      top: ($(this).offset().top - targetObj.find('ul').outerHeight() -70) + 'px',
       left: $(this).offset().left - 65 + 'px'
     });
   });
@@ -189,7 +188,7 @@ $(document).ready(function(){
           <li style = "padding: 0 0 15px 0;">
             <pre id = "outside_hours">(1)営業時間外にチャットが受信された場合</pre>
               <span class="greenBtn btn-shadow actBtn choiseButton settingOutsideHoursChoise" onclick="addOption(1,'MChatSettingOutsideHoursSorryMessage')">選択肢を追加する</span>
-              <span class="greenBtn btn-shadow actBtn phoneButton settingOutsideHoursPhone" onclick="addOption(2,'MChatSettingOutsideHoursSorryMessage')" id = "lastSpeechLabel">電話番号を追加する<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn" id = "eee">?</icon></div></span>
+              <span class="greenBtn btn-shadow actBtn phoneButton settingOutsideHoursPhone" onclick="addOption(2,'MChatSettingOutsideHoursSorryMessage')" id = "lastSpeechLabel">電話番号を追加する<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></span>
             <?=$this->Form->textarea('outside_hours_sorry_message')?>
             <?php if ( $this->Form->isFieldError('outside_hours_sorry_message') ) echo $this->Form->error('outside_hours_sorry_message', null, ['wrap' => 'p', 'style' => 'margin: 0;']); ?>
           </li>
