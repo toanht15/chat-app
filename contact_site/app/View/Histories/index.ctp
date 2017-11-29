@@ -74,15 +74,15 @@
         <span id ='mainDatePeriod' name = 'datefilter' class='date'>過去一ヵ月間 : <?= h($historySearchConditions['start_day']) ?>-<?= h($historySearchConditions['finish_day']) ?></span>
     <?php } ?>
     <?php
-      //セッションクリア（履歴一覧ボタン、条件クリアボタンを押下した時、日付検索だけを行った場合)
-      if(
-        empty($data['History']['ip_address'])&&empty($data['History']['company_name'])
-        &&empty($data['History']['customer_name'])&&empty($data['History']['telephone_number'])
-        &&empty($data['History']['mail_address'])&&empty($data['THistoryChatLog']['responsible_name'])
-        &&empty($data['THistoryChatLog']['achievement_flg'])&&empty($data['THistoryChatLog']['message'])){
-        $noseach_menu = 'noseach_menu';
-        $seach_menu='　';
-      }
+        if(
+          empty($data['History']['ip_address'])&&empty($data['History']['company_name'])
+          &&empty($data['History']['customer_name'])&&empty($data['History']['telephone_number'])
+          &&empty($data['History']['mail_address'])&&empty($data['THistoryChatLog']['responsible_name'])
+          &&($data['THistoryChatLog']['achievement_flg'] === "")
+          &&empty($data['THistoryChatLog']['message'])){
+          $noseach_menu = 'noseach_menu';
+          $seach_menu='　';
+        }
     ?>
 
     <div class=<?= $seach_menu; ?> id=<?= $noseach_menu ?>>
@@ -124,7 +124,7 @@
             <span class="value"><?= h($data['THistoryChatLog']['responsible_name']) ?></span>
           </li>
         <?php } ?>
-        <?php if(isset($data['THistoryChatLog']['achievement_flg']) && $data['THistoryChatLog']['achievement_flg'] !== "" ) { ?>
+        <?php if(isset($data['THistoryChatLog']['achievement_flg']) && ($data['THistoryChatLog']['achievement_flg'] !== "" || $data['THistoryChatLog']['achievement_flg'] == 0)) { ?>
           <li>
             <label>成果</label>
             <span class="value"><?= $achievementType[h($data['THistoryChatLog']['achievement_flg'])] ?></span>
