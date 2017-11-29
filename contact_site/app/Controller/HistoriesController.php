@@ -907,7 +907,7 @@ class HistoriesController extends AppController {
       $dbo2 = $this->THistoryChatLog->getDataSource();
       $chatStateList = $dbo2->buildStatement(
         [
-          'table' => '(SELECT t_histories_id, COUNT(*) AS count, MAX(achievement_flg) AS achievementFlg, SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp, SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech FROM t_history_chat_logs AS THistoryChatLog GROUP BY t_histories_id ORDER BY t_histories_id)',
+          'table' => '(SELECT t_histories_id, COUNT(*) AS count, MAX(achievement_flg) AS achievementFlg, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff,SUM(CASE WHEN achievement_flg = 3 THEN 1 ELSE 0 END) cv,SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp, SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech FROM t_history_chat_logs AS THistoryChatLog GROUP BY t_histories_id ORDER BY t_histories_id)',
           'alias' => 'chat',
           'fields' => [
             'chat.*',

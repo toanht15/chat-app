@@ -1165,6 +1165,10 @@
       else {
         alert('メッセージの送信に失敗しました。');
       }
+      //通知した際に自由入力エリア表示
+      if(obj.opFlg == true) {
+        sinclo.displayTextarea();
+      }
     },
     sendReqAutoChatMessages: function(d){
       // 自動メッセージの情報を渡す（保存の為）
@@ -2380,7 +2384,7 @@
                 sinclo.displayTextarea();
               }
               //チャットのテキストエリア非表示
-              else {
+              else if(Number(cond.chatTextarea) === 2 ) {
                 sinclo.hideTextarea();
               }
             }

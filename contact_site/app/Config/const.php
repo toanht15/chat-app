@@ -44,6 +44,8 @@ define('C_COMPANY_USE_DICTIONARY_CATEGORY', 'dictionaryCategory'); // 定型文�
 define('C_COMPANY_USE_HIDE_REALTIME_MONITOR', 'hideRealtimeMonitor'); // リアルタイムモニター非表示
 define('C_COMPANY_USE_OPERATING_HOUR', 'operatingHour'); // 営業時間
 define('C_COMPANY_REF_COMPANY_DATA', 'refCompanyData'); // 企業情報参照（Landscape）
+define('C_COMPANY_USE_FREE_INPUT', 'freeInput'); // 自由入力エリア
+define('C_COMPANY_USE_CV', 'cv'); // CV
 
 
 // 簡易メッセージ入力機能種別
@@ -515,3 +517,4 @@ $config['achievementType'] = [
   C_ACHIEVEMENT_AVAILABLE => "有効",
   C_ACHIEVEMENT_CV => "CV"
 ];
+
