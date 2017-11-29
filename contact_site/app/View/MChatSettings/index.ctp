@@ -73,6 +73,14 @@ function addOption(type,sorryMessageName){
     }
 }
 
+//スクロール位置把握
+var topPosition = 0;
+window.onload = function() {
+  document.querySelector('#content').onscroll = function() {
+    topPosition = this.scrollTop;
+  };
+};
+
 $(document).ready(function(){
   if(<?= $operatingHourData ?> == 1) {
     $("#MChatSettingOutsideHoursSorryMessage").prop("disabled", false); // 営業時間設定のsorryメッセージをenabled
@@ -80,7 +88,7 @@ $(document).ready(function(){
     $('.settingOutsideHoursChoise').css('pointer-events','auto'); //追加ボタン制御解除
     $('.settingOutsideHoursPhone').css('pointer-events','auto'); //追加ボタン制御解除
   }
-  if(<?= $operatingHourData ?> == 2) {
+  if(<?= $operatingHourData ?> == 2 || <?= $operatingHourData ?> == 3) {
     $("#MChatSettingOutsideHoursSorryMessage").text(""); // 営業時間設定のsorryメッセージを空にする
     $("#MChatSettingOutsideHoursSorryMessage").prop("disabled", true); // 営業時間設定のsorryメッセージをdisabled
     $('#outside_hours').css('color','rgb(204, 204, 204)'); // 営業時間設定のsorryメッセージの文字色を変更
@@ -100,7 +108,7 @@ $(document).ready(function(){
     console.log(targetObj);
     targetObj.find('icon-annotation').css('display','block');
     targetObj.css({
-      top: ($(this).offset().top - targetObj.find('ul').outerHeight() - 70) + 'px',
+      top: ($(this).offset().top - targetObj.find('ul').outerHeight() - 70 + topPosition) + 'px',
       left: $(this).offset().left - 65 + 'px'
     });
   });
