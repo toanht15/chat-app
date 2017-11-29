@@ -905,9 +905,16 @@ class HistoriesController extends AppController {
       );
 
       $dbo2 = $this->THistoryChatLog->getDataSource();
+      if(empty($chatLogCond) || $chatLogCond['chat.achievementFlg'] == 1 || $chatLogCond['chat.achievementFlg'] == 2) {
+        $value = 'MAX';
+      }
+      //成果でCVを検索する場合
+      else if(!empty($chatLogCond) && $chatLogCond['chat.achievementFlg'] == 0) {
+        $value = 'MIN';
+      }
       $chatStateList = $dbo2->buildStatement(
         [
-          'table' => '(SELECT t_histories_id, COUNT(*) AS count, MAX(achievement_flg) AS achievementFlg, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff,SUM(CASE WHEN achievement_flg = 3 THEN 1 ELSE 0 END) cv,SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp, SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech FROM t_history_chat_logs AS THistoryChatLog GROUP BY t_histories_id ORDER BY t_histories_id)',
+          'table' => "(SELECT t_histories_id, COUNT(*) AS count, ".$value."(achievement_flg) AS achievementFlg, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff,SUM(CASE WHEN achievement_flg = 0 THEN 1 ELSE 0 END) cv,SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp, SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech FROM t_history_chat_logs AS THistoryChatLog GROUP BY t_histories_id ORDER BY t_histories_id)",
           'alias' => 'chat',
           'fields' => [
             'chat.*',
@@ -917,6 +924,7 @@ class HistoriesController extends AppController {
         ],
         $this->THistoryChatLog
       );
+
       $joinToChat = [
         'type' => 'INNER',
         'table' => "({$chatStateList})",
@@ -925,7 +933,6 @@ class HistoriesController extends AppController {
           'THistoryChatLog.t_histories_id = THistory.id'
         ]
       ];
-
       // チャットのみ表示との切り替え（担当者検索の場合、強制的にINNER）
       if ( strcmp($type, 'false') === 0 && !(!empty($data['THistoryChatLog']) && !empty(array_filter($data['THistoryChatLog']))) ) {
         $joinToChat['type'] = "LEFT";
@@ -995,6 +1002,8 @@ class HistoriesController extends AppController {
       ]
     ]);
 
+    $this->log('historyList',LOG_DEBUG);
+    //$this->log($historyList,LOG_DEBUG);
     $this->set('data', $data);
     $this->set('historyList', $historyList);
     $this->set('stayList', $stayList);
@@ -1318,7 +1327,7 @@ class HistoriesController extends AppController {
 
     // 検索条件に成果がある場合
     if ( isset($data['THistoryChatLog']['achievement_flg']) && $data['THistoryChatLog']['achievement_flg'] !== "" ) {
-      $chatLogCond['chat.achievementFlg'] = $data['THistoryChatLog']['achievement_flg'];
+      //$chatLogCond['chat.achievementFlg'] = $data['THistoryChatLog']['achievement_flg'];
     }
 
     // 検索条件にメッセージがある場合

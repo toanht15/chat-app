@@ -2312,7 +2312,7 @@
                 chatId:id,
                 message:cond.message,
                 isAutoSpeech: isSpeechContent,
-                achievementFlg: 3
+                achievementFlg: 0
               };
               emit("sendAutoChat", {messageList: sinclo.chatApi.autoMessages.getByArray()});
               sinclo.chatApi.autoMessages.unset();
