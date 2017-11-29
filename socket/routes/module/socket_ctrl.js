@@ -763,7 +763,8 @@ io.sockets.on('connection', function (socket) {
         message: d.chatMessage,
         message_type: d.messageType,
         message_distinction: d.messageDistinction,
-        message_request_flg: d.messageRequestFlg
+        message_request_flg: d.messageRequestFlg,
+        achievement_flg: d.achievementFlg
       };
 
       pool.query('SELECT * FROM t_history_stay_logs WHERE t_histories_id = ? ORDER BY id DESC LIMIT 1;', insertData.t_histories_id,
@@ -2379,6 +2380,9 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     if ( isset(sincloCore[obj.siteKey]) && isset(sincloCore[obj.siteKey][obj.tabId].chat) ) {
       sincloCore[obj.siteKey][obj.tabId].chat = null;
       sincloCore[obj.siteKey][obj.tabId].chatSessionId = null;
+      if( isset(sincloCore[obj.siteKey]) && isset(sincloCore[obj.siteKey][obj.sincloSessionId]) && isset(sincloCore[obj.siteKey][obj.sincloSessionId].chat) ) {
+        sincloCore[obj.siteKey][obj.sincloSessionId].chat = null;
+      }
       scInfo = ( scList.hasOwnProperty(obj.siteKey) ) ? scList[obj.siteKey].cnt : {};
 
       //emit.toUser("chatEndResult", {ret: true, messageType: type}, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
@@ -2470,7 +2474,8 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         var loop = function(err, rows){
           if ( !err && (rows && rows[0]) ) {
               var activity = JSON.parse(rows[0].activity);
-              var ret = {
+              if(activity.cv == 1) {
+                var ret = {
                   siteKey: obj.siteKey,
                   tabId: obj.tabId,
                   userId: obj.userId,
@@ -2479,7 +2484,21 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                   messageType: rows[0].auto_message_type,
                   created: rows[0].inputed ? rows[0].inputed : new Date(),
                   messageDistinction: messageDistinction,
-              };
+                  achievementFlg: 3
+                };
+              }
+              else {
+                var ret = {
+                    siteKey: obj.siteKey,
+                    tabId: obj.tabId,
+                    userId: obj.userId,
+                    mUserId: null,
+                    chatMessage: activity.message,
+                    messageType: rows[0].auto_message_type,
+                    created: rows[0].inputed ? rows[0].inputed : new Date(),
+                    messageDistinction: messageDistinction,
+                };
+              }
               chatApi.set(ret);
           }
         };
