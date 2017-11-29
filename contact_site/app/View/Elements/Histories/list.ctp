@@ -73,8 +73,15 @@ if ( isset($history['THistory']['visitors_id']) ) {
             }
             ?></td>
             <td class="tCenter"><?php
-              if ($history['THistoryChatLog']['achievementFlg']){
-                echo $achievementType[h($history['THistoryChatLog']['achievementFlg'])];
+              if($history['THistoryChatLog']['eff'] == 0 || $history['THistoryChatLog']['cv'] == 0 ) {
+                if ($history['THistoryChatLog']['achievementFlg']){
+                  echo $achievementType[h($history['THistoryChatLog']['achievementFlg'])];
+                }
+              }
+              else if ($history['THistoryChatLog']['eff'] != 0 && $history['THistoryChatLog']['cv'] != 0) {
+                if ($history['THistoryChatLog']['achievementFlg']){
+                  echo $achievementType[2].','.$achievementType[3];
+                }
               }
             ?></td>
             <td class="tCenter">

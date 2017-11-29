@@ -70,7 +70,9 @@ class AppController extends Controller {
     C_COMPANY_USE_LA_CO_BROWSE => false, // 画面キャプチャ共有
     C_COMPANY_USE_HIDE_REALTIME_MONITOR => false, // 通常時リアルタイムモニタ非表示
     C_COMPANY_USE_OPERATING_HOUR => false, //営業時間設定
-    C_COMPANY_REF_COMPANY_DATA => false // 企業情報参照（Landscape）
+    C_COMPANY_REF_COMPANY_DATA => false, // 企業情報参照（Landscape）
+    C_COMPANY_USE_FREE_INPUT => false, //自由入力エリア
+    C_COMPANY_USE_CV => false, //CV
   ];
 
   public function beforeFilter(){
