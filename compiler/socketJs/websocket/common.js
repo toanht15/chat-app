@@ -1454,8 +1454,8 @@ var socket, // socket.io
     },
     judgeShowWidget: function(){
       window.sincloInfo.widgetDisplay = null; // デフォルト表示しない
-      // チャット契約、画面同期中であれば表示
-      if ( window.sincloInfo.contract.chat ) {
+      // チャット契約、画面同期契約、画面同期中であれば表示
+      if ( window.sincloInfo.contract.chat || window.sincloInfo.contract.synclo) {
         window.sincloInfo.widgetDisplay = true;
       }
       // ウィジェットを常に表示する
@@ -2511,10 +2511,6 @@ var socket, // socket.io
       var val = userInfo.userId + "_" + common.makeToken();
       this.set(cnst.info_type.tab, val, true);
     },
-    changeTabId: function(tabId){
-      console.log("CHANGE TAB ID");
-      this.set(cnst.info_type.tab, tabId, true);
-    },
     unsetAccessId: function(){
       return this.unset(cnst.info_type.access);
     },
@@ -3310,12 +3306,6 @@ var socket, // socket.io
       }, 700);
     }); // socket-on: connect
 
-    socket.on("changeTabId", function(d){
-      var obj = common.jParse(d);
-      userInfo.tabId = obj.newTabId;
-      userInfo.changeTabId(obj.newTabId);
-    });
-
     // 接続直後（ユーザＩＤ、アクセスコード発番等）
     socket.on("retConnectedForSync", function(d){
       sinclo.retConnectedForSync(d);
@@ -3568,7 +3558,6 @@ function f_url(url){
 }
 
 function emit(evName, data){
-  console.log("EMIT : " + evName);
   /* ここから：イベント名指定なし */
   data.siteKey = sincloInfo.site.key; // サイトの識別キー
   if ( check.isset(userInfo.sendTabId) ) {
