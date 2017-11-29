@@ -1167,7 +1167,7 @@
         alert('メッセージの送信に失敗しました。');
       }
       //通知した際に自由入力エリア表示
-      if(obj.opFlg == true) {
+      if(obj.opFlg == true && obj.matchAutoSpeech == false) {
         sinclo.displayTextarea();
         storage.s.set('textareaOpend', 'open');
       }
