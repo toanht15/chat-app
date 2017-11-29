@@ -40,26 +40,28 @@ class MOperatingHoursController extends AppController {
     if($this->request->is('post')) {
       $saveData = $this->MOperatingHour->read(null, $operatingHourData['MOperatingHour']['id']);
 
-      //営業時間 「毎日」validateチェック
-      $time_settings = json_decode($this->request->data['MOperatingHour']['outputData'],true);
-      foreach($time_settings['everyday'] as $key => $v) {
-        foreach($v as $key => $v2) {
-          if( ($v2['start'] != "" && !preg_match(C_MATCH_RULE_TIME, $v2['start']))
-          || ($v2['end'] != "" && !preg_match(C_MATCH_RULE_TIME, $v2['end']))) {
-            $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.saveFailed'));
-            $this->redirect(['controller' => $this->name, 'action' => 'index']);
-            return;
+      if(isset($this->request->data['MOperatingHour']['outputData'])) {
+        //営業時間 「毎日」validateチェック
+        $time_settings = json_decode($this->request->data['MOperatingHour']['outputData'],true);
+        foreach($time_settings['everyday'] as $key => $v) {
+          foreach($v as $key => $v2) {
+            if( ($v2['start'] != "" && !preg_match(C_MATCH_RULE_TIME, $v2['start']))
+            || ($v2['end'] != "" && !preg_match(C_MATCH_RULE_TIME, $v2['end']))) {
+              $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.saveFailed'));
+              $this->redirect(['controller' => $this->name, 'action' => 'index']);
+              return;
+            }
           }
         }
-      }
-      //営業時間 「平日・週末」validateチェック
-      foreach($time_settings['weekly'] as $key => $v) {
-        foreach($v as $key => $v2) {
-          if( ($v2['start'] != "" && !preg_match(C_MATCH_RULE_TIME, $v2['start']))
-          || ($v2['end'] != "" && !preg_match(C_MATCH_RULE_TIME, $v2['end']))) {
-            $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.saveFailed'));
-            $this->redirect(['controller' => $this->name, 'action' => 'index']);
-            return;
+        //営業時間 「平日・週末」validateチェック
+        foreach($time_settings['weekly'] as $key => $v) {
+          foreach($v as $key => $v2) {
+            if( ($v2['start'] != "" && !preg_match(C_MATCH_RULE_TIME, $v2['start']))
+            || ($v2['end'] != "" && !preg_match(C_MATCH_RULE_TIME, $v2['end']))) {
+              $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.saveFailed'));
+              $this->redirect(['controller' => $this->name, 'action' => 'index']);
+              return;
+            }
           }
         }
       }
