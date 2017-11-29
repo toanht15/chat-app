@@ -72,15 +72,19 @@ class TAutoMessagesController extends AppController {
           'TAutoMessage.id' => $id
         ]
       ]);
+
       //オートメッセージ　営業時間を4番目に入れたので並び替え処理
       $changeEditData = json_decode($editData[0]['TAutoMessage']['activity'], true);
       foreach($changeEditData['conditions'] as $key => $val){
-        if($key >= 4 && $key != 10) {
+        if($key >= 4) {
           unset($changeEditData['conditions'][$key]);
           $changeEditData['conditions'][$key+1] = json_decode($editData[0]['TAutoMessage']['activity'], true)['conditions'][$key];
         }
-        if($key === 10) {
-          unset($changeEditData['conditions'][10]);
+      }
+
+      foreach($changeEditData['conditions'] as $key => $val){
+        if($key === 11) {
+          unset($changeEditData['conditions'][11]);
           $changeEditData['conditions'][4] = json_decode($editData[0]['TAutoMessage']['activity'], true)['conditions'][10];
         }
       }

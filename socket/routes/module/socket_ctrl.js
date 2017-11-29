@@ -2314,16 +2314,16 @@ console.log("chatStart-3: [" + logToken + "] " + logData3);
           /* チャット対応上限の処理（対応人数加算の処理） */
 
           // DBに書き込み
-          var ids = obj.tabId.split("_");
+          var visitorId = connectList[sincloCore[obj.siteKey][obj.tabId].sessionId].userId ? connectList[sincloCore[obj.siteKey][obj.tabId].sessionId].userId : "";
 
           //応対数検索、登録
-          getConversationCountUser((ids.length > 1) ? ids[0] : "",function(results) {
+          getConversationCountUser(visitorId,function(results) {
             if(results !== null){
               //カウント数が取れなかったとき
               if (Object.keys(results) && Object.keys(results).length === 0) {
                 obj.messageDistinction = 1;
                 //visitors_id,カウント数一件を登録
-                pool.query('INSERT INTO t_conversation_count(visitors_id,conversation_count) VALUES(?,?)',[(ids.length > 1) ? ids[0] : "",1],function(err,result) {
+                pool.query('INSERT INTO t_conversation_count(visitors_id,conversation_count) VALUES(?,?)',[visitorId, 1],function(err,result) {
                   if(isset(err)){
                     console.log("RECORD INSERT ERROR: t_convertsation_count(visitors_id,conversation_count):" + err);
                     return false;
@@ -2342,7 +2342,7 @@ console.log("chatStart-3: [" + logToken + "] " + logData3);
                 siteKey: obj.siteKey,
                 tabId: obj.tabId,
                 sincloSessionId: obj.sincloSessionId,
-                visitorsId: (ids.length > 1) ? ids[0] : "",
+                visitorsId: visitorId,
                 userId: obj.userId,
                 chatMessage: "入室",
                 messageType: 98,
@@ -2380,21 +2380,24 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     if ( isset(sincloCore[obj.siteKey]) && isset(sincloCore[obj.siteKey][obj.tabId].chat) ) {
       sincloCore[obj.siteKey][obj.tabId].chat = null;
       sincloCore[obj.siteKey][obj.tabId].chatSessionId = null;
+      if( isset(sincloCore[obj.siteKey]) && isset(sincloCore[obj.siteKey][obj.sincloSessionId]) && isset(sincloCore[obj.siteKey][obj.sincloSessionId].chat) ) {
+        sincloCore[obj.siteKey][obj.sincloSessionId].chat = null;
+      }
       scInfo = ( scList.hasOwnProperty(obj.siteKey) ) ? scList[obj.siteKey].cnt : {};
 
       //emit.toUser("chatEndResult", {ret: true, messageType: type}, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
       emit.toSameUser("chatEndResult", {ret: true, messageType: type}, obj.siteKey, obj.sincloSessionId);
       // DBに書き込み
-      var ids = obj.tabId.split("_");
+      var visitorId = connectList[sincloCore[obj.siteKey][obj.tabId].sessionId].userId ? connectList[sincloCore[obj.siteKey][obj.tabId].sessionId].userId : "";
 
       //応対数検索、登録
-      getConversationCountUser((ids.length > 1) ? ids[0] : "",function(results) {
+      getConversationCountUser(visitorId, function(results) {
         if(results !== null){
           //カウントが取れたとき
           if ( Object.keys(results) && Object.keys(results).length !== 0) {
             obj.messageDistinction = results[0].conversation_count;
             //カウント数一件追加
-            pool.query('UPDATE t_conversation_count SET conversation_count = ? WHERE visitors_id = ?',[results[0].conversation_count + 1,(ids.length > 1) ? ids[0] : ""],function(err,result) {
+            pool.query('UPDATE t_conversation_count SET conversation_count = ? WHERE visitors_id = ?',[results[0].conversation_count + 1, visitorId],function(err,result) {
               if(isset(err)){
                 console.log("RECORD UPDATE ERROR: t_conversation_count(conversation_count):" + err);
                 return false;
@@ -2408,7 +2411,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             siteKey: obj.siteKey,
             tabId: obj.tabId,
             sincloSessionId: obj.sincloSessionId,
-            visitorsId: (ids.length > 1) ? ids[0] : "",
+            visitorsId: visitorId,
             userId: obj.userId,
             chatMessage: "退室",
             messageType: type,
