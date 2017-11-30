@@ -397,6 +397,7 @@ class HistoriesController extends AppController {
 
   public function outputCSVOfChatHistory(){
     Configure::write('debug', 0);
+    ini_set("max_execution_time", 180);
 
     //$returnData:$historyListで使うjoinのリストとconditionsの検索条件
     $returnData = $this->_searchConditions();
@@ -572,7 +573,6 @@ class HistoriesController extends AppController {
 
   public function outputCSVOfChat($id = null){
     Configure::write('debug', 0);
-    ini_set("max_execution_time", 180);
 
     if (empty($id)) return false;
     $name = "sinclo-chat-history";
