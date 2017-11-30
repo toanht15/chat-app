@@ -1224,8 +1224,17 @@ class HistoriesController extends AppController {
     $this->layout = 'ajax';
     $this->data = $this->Session->read('Thistory');
 
-    // 成果種別リスト
-    $this->set('achievementType', Configure::read('achievementType'));
+
+    // 成果種別リスト スタンダードプラン以上
+    if(isset($this->coreSettings[C_COMPANY_USE_CV]) && $this->coreSettings[C_COMPANY_USE_CV]) {
+      $this->set('achievementType', Configure::read('achievementType'));
+    }
+    // 成果種別リスト スタンダードプラン以下
+    else {
+      $achievementType = Configure::read('achievementType');
+      unset($achievementType[0]);
+      $this->set('achievementType', $achievementType);
+    }
     // const
     $this->render('/Elements/Histories/remoteSearchCustomerInfo');
   }
