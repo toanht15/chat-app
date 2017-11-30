@@ -279,7 +279,7 @@ class TAutoMessagesController extends AppController {
           }
 
           foreach($changeEditData['conditions'] as $key => $val){
-            if($key != 11) {
+            if($key >= 4 && $key != 11) {
               unset($changeEditData['conditions'][$key]);
               $changeEditData['conditions'][$key-1] = json_decode($value['TAutoMessage']['activity'], true)['conditions'][$key];
             }
