@@ -1324,16 +1324,30 @@
       }, 500);
     },
     displayTextarea : function(){
+      console.log('ウィジェット高さ');
+      console.log(chatTalk.clientHeight);
+      widgetWidth = $(window).width() - 20;
+      ratio = widgetWidth * (1/285);
+      console.log(194 * ratio);
+      console.log('横幅');
+      console.log($(window).width() - 20);
       document.getElementById("flexBoxHeight").style.display = '';
       if(chatTalk.clientHeight == 269 || chatTalk.clientHeight == 359 || chatTalk.clientHeight == 449) {
         document.getElementById("chatTalk").style.height = chatTalk.clientHeight - 75 + 'px';
       }
       //スマホの場合
       if ( check.smartphone() ) {
-        widgetWidth = $(window).width() - 20;
-        ratio = widgetWidth * (1/285);
-        if(chatTalk.clientHeight == (194 * ratio) + 75) {
-          document.getElementById("chatTalk").style.height = chatTalk.clientHeight - 75 + 'px';
+        // 縦の場合
+        if ( $(window).height() > $(window).width() ) {
+          widgetWidth = $(window).width() - 20;
+          ratio = widgetWidth * (1/285);
+          document.getElementById("chatTalk").style.height = (194 * ratio) + 'px';
+        }
+        //横の場合
+        else {
+          var chatAreaHeight = window.innerHeight * (document.body.clientWidth / window.innerWidth);
+          var hRatio = chatAreaHeight * 0.07;
+          document.getElementById("chatTab").style.height = chatAreaHeight - (6.5 * hRatio) + 'px';
         }
       }
     },
@@ -1344,10 +1358,17 @@
       }
       //スマホの場合
       if ( check.smartphone() ) {
-        widgetWidth = $(window).width() - 20;
-        ratio = widgetWidth * (1/285);
-        if(chatTalk.clientHeight == 194 * ratio) {
-          document.getElementById("chatTalk").style.height = chatTalk.clientHeight + 75 + 'px';
+        // 縦の場合
+        if ( $(window).height() > $(window).width() ) {
+          widgetWidth = $(window).width() - 20;
+          ratio = widgetWidth * (1/285);
+          document.getElementById("chatTalk").style.height = (194 * ratio) + 75 + 'px';
+        }
+        //横の場合
+        else {
+          var chatAreaHeight = window.innerHeight * (document.body.clientWidth / window.innerWidth);
+          var hRatio = chatAreaHeight * 0.07;
+          document.getElementById("chatTab").style.height = (chatAreaHeight - (6.5 * hRatio)) - 75 + 'px';
         }
       }
     },
