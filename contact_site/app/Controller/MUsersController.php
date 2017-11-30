@@ -59,7 +59,7 @@ class MUsersController extends AppController {
     if ( strcmp($this->request->data['type'], 2) === 0 ) {
       $this->MUser->recursive = -1;
       $this->request->data = $this->MUser->read(null, $this->request->data['id']);
-      if($this->request->data['MUser']['m_companies_id'] == $this->userInfo['MCompany']['id'] && $this->request->data['MUser']['permission_level'] != 99 && $this->request->data['MUser']['del_flg'] != 1) {
+      if($this->request->data['MUser']['m_companies_id'] == $this->userInfo['MCompany']['id']  && $this->request->data['MUser']['del_flg'] != 1) {
         $this->render('/MUsers/remoteEntryUser');
       }
       else {
