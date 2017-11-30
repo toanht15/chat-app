@@ -1340,7 +1340,7 @@
         else {
           var chatAreaHeight = window.innerHeight * (document.body.clientWidth / window.innerWidth);
           var hRatio = chatAreaHeight * 0.07;
-          document.getElementById("chatTab").style.height = (chatAreaHeight - (6.5 * hRatio)) + 'px';
+          document.getElementById("chatTalk").style.height = (chatAreaHeight - (6.5 * hRatio))  - 75+ 'px';
         }
       }
     },
@@ -1361,7 +1361,7 @@
         else {
           var chatAreaHeight = window.innerHeight * (document.body.clientWidth / window.innerWidth);
           var hRatio = chatAreaHeight * 0.07;
-          document.getElementById("chatTab").style.height = (chatAreaHeight - (6.5 * hRatio)) + 75 + 'px';
+          document.getElementById("chatTalk").style.height = (chatAreaHeight - (6.5 * hRatio)) + 'px';
         }
       }
     },
