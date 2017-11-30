@@ -124,7 +124,7 @@
             <span class="value"><?= h($data['THistoryChatLog']['responsible_name']) ?></span>
           </li>
         <?php } ?>
-        <?php if(isset($data['THistoryChatLog']['achievement_flg']) && ($data['THistoryChatLog']['achievement_flg'] !== "" || $data['THistoryChatLog']['achievement_flg'] == 0)) { ?>
+        <?php if(isset($data['THistoryChatLog']['achievement_flg']) && ($data['THistoryChatLog']['achievement_flg'] !== "" || $data['THistoryChatLog']['achievement_flg'] === 0)) { ?>
           <li>
             <label>成果</label>
             <span class="value"><?= $achievementType[h($data['THistoryChatLog']['achievement_flg'])] ?></span>
