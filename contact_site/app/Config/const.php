@@ -382,7 +382,7 @@ $config['outMessageTriggerList'] = [
         'createLimit' => [C_COINCIDENT => 1, C_SOME_EITHER => 1],
         'key' => 'stay_time',
         'default' => [
-            "stayTimeCheckType" => 1,
+            "stayTimeCheckType" => 2,
             "stayTimeType" => "1",
             "stayTimeRange" => 3
         ]
