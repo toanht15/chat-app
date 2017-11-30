@@ -88,7 +88,7 @@ $(document).ready(function(){
     $('.settingOutsideHoursChoise').css('pointer-events','auto'); //追加ボタン制御解除
     $('.settingOutsideHoursPhone').css('pointer-events','auto'); //追加ボタン制御解除
   }
-  if(<?= $operatingHourData ?> == 2 || <?= $operatingHourData ?> == 3) {
+  if(<?= $operatingHourData ?> == 2) {
     $("#MChatSettingOutsideHoursSorryMessage").text(""); // 営業時間設定のsorryメッセージを空にする
     $("#MChatSettingOutsideHoursSorryMessage").prop("disabled", true); // 営業時間設定のsorryメッセージをdisabled
     $('#outside_hours').css('color','rgb(204, 204, 204)'); // 営業時間設定のsorryメッセージの文字色を変更
