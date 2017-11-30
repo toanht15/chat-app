@@ -617,7 +617,7 @@ var db = {
           var insertData = {
             m_companies_id: siteId,
             visitors_id: obj.userId,
-            tab_id: obj.sincloSessionId,
+            tab_id: obj.sincloSessionId || obj.tabId,
             ip_address: obj.ipAddress,
             user_agent: obj.userAgent,
             access_date: formatDateParse(obj.time),
@@ -628,9 +628,11 @@ var db = {
 
           pool.query("INSERT INTO t_histories SET ?", insertData,
             function (error,results,fields){
-              if ( err !== null && err !== '' ) return false; // DB接続断対応
+              if ( error !== null && error !== '' ) return false; // DB接続断対応
               var historyId = results.insertId;
-              sincloCore[obj.siteKey][obj.sincloSessionId].historyId = historyId;
+              if(isset(obj.sincloSessionId)) {
+                sincloCore[obj.siteKey][obj.sincloSessionId].historyId = historyId;
+              }
               sincloCore[obj.siteKey][obj.tabId].historyId = historyId;
               timeUpdate(historyId, obj, now);
               obj.historyId = historyId;
@@ -1705,7 +1707,7 @@ io.sockets.on('connection', function (socket) {
     if ( !isset(sincloCore[obj.siteKey][obj.tabId]) ) {
       sincloCore[obj.siteKey][obj.tabId] = {sincloSessionId: null, sessionId: null, subWindow: false};
     }
-    if ( !isset(sincloCore[obj.siteKey][obj.sincloSessionId]) ) {
+    if ( isset(obj.sincloSessionId) && !isset(sincloCore[obj.siteKey][obj.sincloSessionId]) ) {
       sincloCore[obj.siteKey][obj.sincloSessionId] = {sessionIds: {}, autoMessages: {}};
     }
     if ('timeoutTimer' in sincloCore[obj.siteKey][obj.tabId]) {
@@ -1714,7 +1716,7 @@ io.sockets.on('connection', function (socket) {
     }
 
     var oldSessionId = sincloCore[obj.siteKey][obj.tabId].sessionId;
-    if(oldSessionId) {
+    if(oldSessionId && isset(obj.sincloSessionId)) {
       var sessionIds = sincloCore[obj.siteKey][obj.sincloSessionId].sessionIds;
       console.log("delete id : " + oldSessionId);
       delete sessionIds[oldSessionId];
@@ -1723,8 +1725,10 @@ io.sockets.on('connection', function (socket) {
 
     connectList[socket.id] = {siteKey: obj.siteKey, tabId: obj.tabId, userId: null};
     sincloCore[obj.siteKey][obj.tabId].sessionId = socket.id;
-    sincloCore[obj.siteKey][obj.tabId].sincloSessionId = obj.sincloSessionId;
-    sincloCore[obj.siteKey][obj.sincloSessionId].sessionIds[socket.id] = socket.id;
+    if (isset(obj.sincloSessionId)) {
+      sincloCore[obj.siteKey][obj.tabId].sincloSessionId = obj.sincloSessionId;
+      sincloCore[obj.siteKey][obj.sincloSessionId].sessionIds[socket.id] = socket.id;
+    }
     if ( obj.subWindow ) {
       sincloCore[obj.siteKey][obj.tabId].toTabId = obj.to;
       sincloCore[obj.siteKey][obj.tabId].connectToken = obj.connectToken;
