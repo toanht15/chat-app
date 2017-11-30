@@ -293,6 +293,17 @@
           if ( String(openFlg) === "true" ) {
             sinclo.widget.condifiton.set(true, true);
 
+            //自由入力エリアが閉まっているか空いているかチェック
+            var textareaOpend = storage.s.get('textareaOpend');
+            //チャットのテキストエリア表示
+            if( textareaOpend == 'close') {
+              sinclo.hideTextarea();
+            }
+            //チャットのテキストエリア非表示
+            else {
+              sinclo.displayTextarea();
+            }
+
             if ( window.screen.availHeight < window.screen.availWidth ) {
               sincloBox.style.height = document.documentElement.clientHeight + "px";
             }
@@ -1361,7 +1372,7 @@
         else {
           var chatAreaHeight = window.innerHeight * (document.body.clientWidth / window.innerWidth);
           var hRatio = chatAreaHeight * 0.07;
-          document.getElementById("chatTalk").style.height = (chatAreaHeight - (6.5 * hRatio)) + 75 + 'px';
+          document.getElementById("chatTalk").style.height = (chatAreaHeight - (6.5 * hRatio)) + (hRatio * 4 ) + 'px';
         }
       }
     },

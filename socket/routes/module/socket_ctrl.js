@@ -1476,8 +1476,7 @@ io.sockets.on('connection', function (socket) {
       if ( (res.sincloSessionId === undefined || res.sincloSessionId === '' || res.sincloSessionId === null)
         || !(res.siteKey in sincloCore)
         || !(res.sincloSessionId in sincloCore[res.siteKey])
-        || sincloCore[res.siteKey][res.sincloSessionId].sessionIds === undefined
-        || sincloCore[res.siteKey][res.sincloSessionId].sessionIds.length === 0) {
+        || sincloCore[res.siteKey][res.sincloSessionId].sessionIds === undefined ) {
         send.sincloSessionId = uuid.v4();
         send.sincloSessionIdIsNew = true;
       } else {
@@ -1713,14 +1712,15 @@ io.sockets.on('connection', function (socket) {
     }
     if ('timeoutTimer' in sincloCore[obj.siteKey][obj.tabId]) {
       clearTimeout(sincloCore[obj.siteKey][obj.tabId].timeoutTimer);
-      var oldSessionId = sincloCore[obj.siteKey][obj.tabId].sessionId;
-      if(isset(obj.sincloSessionId)) {
-        var sessionIds = sincloCore[obj.siteKey][obj.sincloSessionId].sessionIds;
-        console.log("delete id : " + oldSessionId);
-        delete sessionIds[oldSessionId];
-        console.log("remains : " + Object.keys(sessionIds).length);
-      }
       sincloCore[obj.siteKey][obj.tabId].timeoutTimer = null;
+    }
+
+    var oldSessionId = sincloCore[obj.siteKey][obj.tabId].sessionId;
+    if(oldSessionId && isset(obj.sincloSessionId)) {
+      var sessionIds = sincloCore[obj.siteKey][obj.sincloSessionId].sessionIds;
+      console.log("delete id : " + oldSessionId);
+      delete sessionIds[oldSessionId];
+      console.log("remains : " + Object.keys(sessionIds).length);
     }
 
     connectList[socket.id] = {siteKey: obj.siteKey, tabId: obj.tabId, userId: null};
@@ -3131,9 +3131,9 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         clearTimeout(sincloCore[info.siteKey][info.tabId].timeoutTimer);
       }
 
+      var sincloSessionId = sincloCore[info.siteKey][info.tabId].sincloSessionId;
       sincloCore[info.siteKey][info.tabId].timeoutTimer = setTimeout(function(){
         var historyId = sincloCore[info.siteKey][info.tabId].historyId;
-        var sincloSessionId = sincloCore[info.siteKey][info.tabId].sincloSessionId;
         // sincloCoreから情報削除
         delete sincloCore[info.siteKey][info.tabId];
         // c_connectListから情報削除
@@ -3201,17 +3201,22 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
           if(sincloSessionId) {
             var sessionIds = sincloCore[info.siteKey][sincloSessionId].sessionIds;
-            if(sessionIds && Object.keys(sessionIds).length > 0) {
-              delete sessionIds[socket.id];
-              if(Object.keys(sessionIds).length === 0) {
-                delete sincloCore[info.siteKey][sincloSessionId];
-              }
+            delete sessionIds[socket.id];
+            if(Object.keys(sessionIds).length === 0) {
+              delete sincloCore[info.siteKey][sincloSessionId];
             }
           }
         }
       }, timeout);
       // connectListから削除
       delete connectList[socket.id];
+
+      if(sincloSessionId) {
+        var sessionIds = sincloCore[info.siteKey][sincloSessionId].sessionIds;
+        if(sessionIds && Object.keys(sessionIds).length > 0) {
+          delete sessionIds[socket.id];
+        }
+      }
 
       var keys = Object.keys(customerList[info.siteKey]);
       if(keys && keys.length > 0) {
