@@ -26,7 +26,8 @@ class MOperatingHoursController extends AppController {
     //オートメッセージ情報
     $autoMessageData = $this->TAutoMessage->find('all', ['conditions' => [
       'm_companies_id' => $this->userInfo['MCompany']['id'],
-      'active_flg' => 0
+      'active_flg' => 0,
+      'del_flg' => 0
     ]]);
     $check = '';
     foreach($autoMessageData as $v){
@@ -38,7 +39,34 @@ class MOperatingHoursController extends AppController {
 
     if($this->request->is('post')) {
       $saveData = $this->MOperatingHour->read(null, $operatingHourData['MOperatingHour']['id']);
+
+      if(isset($this->request->data['MOperatingHour']['outputData'])) {
+        //営業時間 「毎日」validateチェック
+        $time_settings = json_decode($this->request->data['MOperatingHour']['outputData'],true);
+        foreach($time_settings['everyday'] as $key => $v) {
+          foreach($v as $key => $v2) {
+            if( ($v2['start'] != "" && !preg_match(C_MATCH_RULE_TIME, $v2['start']))
+            || ($v2['end'] != "" && !preg_match(C_MATCH_RULE_TIME, $v2['end']))) {
+              $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.saveFailed'));
+              $this->redirect(['controller' => $this->name, 'action' => 'index']);
+              return;
+            }
+          }
+        }
+        //営業時間 「平日・週末」validateチェック
+        foreach($time_settings['weekly'] as $key => $v) {
+          foreach($v as $key => $v2) {
+            if( ($v2['start'] != "" && !preg_match(C_MATCH_RULE_TIME, $v2['start']))
+            || ($v2['end'] != "" && !preg_match(C_MATCH_RULE_TIME, $v2['end']))) {
+              $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.saveFailed'));
+              $this->redirect(['controller' => $this->name, 'action' => 'index']);
+              return;
+            }
+          }
+        }
+      }
       $saveData['MOperatingHour']['active_flg'] = $this->request->data['MOperatingHour']['active_flg'];
+
       //営業時間設定を利用する場合
       if($this->request->data['MOperatingHour']['active_flg'] == 1) {
         $saveData['MOperatingHour']['time_settings'] = $this->request->data['MOperatingHour']['outputData'];
@@ -62,7 +90,7 @@ class MOperatingHoursController extends AppController {
       //デフォルト設定
       if(empty($operatingHourData)) {
         $saveData['MOperatingHour']['m_companies_id'] = $this->userInfo['MCompany']['id'];
-        $saveData['MOperatingHour']['time_settings'] = "{\"everyday\":{\"mon\":[{\"start\":\"09:00\",\"end\":\"18:00\"}],\"tue\":[{\"start\":\"09:00\",\"end\":\"18:00\"}],\"wed\":[{\"start\":\"09:00\",\"end\":\"18:00\"}],\"thu\":[{\"start\":\"09:00\",\"end\":\"18:00\"}],\"fri\":[{\"start\":\"09:00\",\"end\":\"18:00\"}],\"sat\":[{\"start\":\"\",\"end\":\"\"}],\"sun\":[{\"start\":\"\",\"end\":\"\"}],\"pub\":[{\"start\":\"09:00\",\"end\":\"18:00\"}]},\"weekly\":{\"week\":[{\"start\":\"09:00\",\"end\":\"18:00\"}],\"weekend\":[{\"start\":\"09:00\",\"end\":\"18:00\"}],\"weekpub\":[{\"start\":\"\",\"end\":\"\"}]}}";
+        $saveData['MOperatingHour']['time_settings'] = "{\"everyday\":{\"mon\":[{\"start\":\"09:00\",\"end\":\"18:00\"}],\"tue\":[{\"start\":\"09:00\",\"end\":\"18:00\"}],\"wed\":[{\"start\":\"09:00\",\"end\":\"18:00\"}],\"thu\":[{\"start\":\"09:00\",\"end\":\"18:00\"}],\"fri\":[{\"start\":\"09:00\",\"end\":\"18:00\"}],\"sat\":[{\"start\":\"\",\"end\":\"\"}],\"sun\":[{\"start\":\"\",\"end\":\"\"}],\"pub\":[{\"start\":\"\",\"end\":\"\"}]},\"weekly\":{\"week\":[{\"start\":\"09:00\",\"end\":\"18:00\"}],\"weekend\":[{\"start\":\"\",\"end\":\"\"}],\"weekpub\":[{\"start\":\"\",\"end\":\"\"}]}}";
         $saveData['MOperatingHour']['active_flg'] = C_ACTIVE_DISABLED;
         $saveData['MOperatingHour']['type'] = 1;
         $this->MOperatingHour->create();
@@ -177,12 +205,5 @@ class MOperatingHoursController extends AppController {
     $this->set('type', $this->request->data['dayType']);
     //二重操作防止
     $this->render('/Elements/MOperatingHours/remoteEntry');
-  }
-
-  public function remoteOpenError() {
-    Configure::write('debug', 0);
-    $this->autoRender = FALSE;
-    $this->layout = 'ajax';
-    $this->render('/Elements/MOperatingHours/remoteError');
   }
 }

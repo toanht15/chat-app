@@ -3461,6 +3461,62 @@ ul.naviBtn {
     section {
 
       ul.settingList {
+        .explainTooltip {
+          z-index: 10;
+          position: absolute;
+
+          icon-annotation {
+            width: 16em;
+            height: 2.1em;
+            display: none;
+
+            &:before {
+              content: " ";
+              border: none;
+              border-top: 10px solid rgba(0, 0, 0, 0.13);
+              border-left: 9px solid transparent;
+              border-right: 9px solid transparent;
+              position: absolute;
+              bottom: -55px;
+              left: 5px;
+              z-index: 1;
+            }
+
+            &:after {
+              content: " ";
+              border: none;
+              border-top: 10px solid white;
+              border-left: 9px solid transparent;
+              border-right: 9px solid transparent;
+              position: absolute;
+              bottom: -53px;
+              left: 5px;
+              z-index: 3;
+            }
+
+            ul {
+              margin: 0;
+              padding: 0;
+              text-align: left;
+              background-color: #FFF;
+              box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+              padding: 0.5em;
+              font-weight: normal;
+              border-radius: 5px;
+
+              img {
+                margin-bottom: -0.2em;
+                width:1em;
+                height:1em;
+              }
+
+              span {
+                font-size: 0.9em;
+              }
+            }
+          }
+        }
+
         > li {
           padding: 15px 0;
 
@@ -3472,8 +3528,23 @@ ul.naviBtn {
             border-top: none;
           }
 
+          .questionBalloon {
+            display: inline-block;
+            position: relative;
+            float:right;
+            margin-right: 3.5px;
+            /*padding-left: 5px;*/
+
+            icon {
+              border-radius: 20px;
+              width: 1.3em;
+              height: 1.3em;
+              font-size: 0.9em!important;
+            }
+          }
+
           .actBtn {
-            width: 10em;
+            width: 11.5em;
             text-align: center;
             margin: 1em 0 0 1em;
             cursor: pointer;
@@ -3658,14 +3729,14 @@ ul.naviBtn {
               background-size: 100%;
               background-repeat: no-repeat;
               float: left;
-              margin: 112px 3em;
+              margin: 130px 3em;
             }
 
             > div {
               float: left;
 
               ul {
-                height: 325px;
+                height: 361px;
                 border: 1px solid #969696;
                 overflow-x: hidden;
                 overflow-y: auto;
@@ -4889,26 +4960,59 @@ ul.naviBtn {
     }
     .content { margin: 0 0 2em 2em; }
     #MChatSettingOutsideHoursSorryMessage {
-      width: 22em;
+      width: 30em;
       height: 8em;
       resize: none;
       font-size: 1em;
       padding: 0.5em;
+      margin-top: 1em;
     }
     #MChatSettingWatingCallSorryMessage {
-      width: 22em;
+      width: 30em;
       height: 8em;
       resize: none;
       font-size: 1em;
       padding: 0.5em;
+      margin-top: 1em;
     }
     #MChatSettingNoStandbySorryMessage {
-      width: 22em;
+      width: 30em;
       height: 8em;
       resize: none;
       font-size: 1em;
       padding: 0.5em;
+      margin-top: 1em;
     }
+
+    .choiseButton{
+      width: 10em;
+      text-align: center;
+      cursor: pointer;
+      margin: 1em 0 0 1em;
+    }
+
+    .phoneButton {
+      width: 11.5em;
+      text-align: center;
+      cursor: pointer;
+      margin: -1.4em 0 0 12em;
+    }
+
+    .questionBalloon {
+      display: inline-block;
+      position: relative;
+      float:right;
+      margin-right: 3.5px;
+      /*padding-left: 5px;*/
+
+      icon {
+        border-radius: 20px;
+        width: 1.3em;
+        height: 1.3em;
+        font-size: 0.9em!important;
+      }
+    }
+
     #sc_content {
       margin-left: 2em;
 
@@ -4959,6 +5063,64 @@ ul.naviBtn {
           display: block;
         }
 
+      }
+    }
+  }
+
+  .explainTooltip {
+    z-index: 10;
+    position: absolute;
+
+    icon-annotation {
+      width: 16em;
+      height: 2.1em;
+      display: none;
+
+      /* 矢印 */
+      &:before {
+        content: " ";
+        border: none;
+        border-top: 10px solid rgba(0, 0, 0, 0.13);
+        border-left: 9px solid transparent;
+        border-right: 9px solid transparent;
+        position: absolute;
+        bottom: -59px;
+        left: 5px;
+        z-index: 1;
+      }
+
+      &:after {
+        content: " ";
+        border: none;
+        border-top: 10px solid white;
+        border-left: 9px solid transparent;
+        border-right: 9px solid transparent;
+        position: absolute;
+        bottom: -57px;
+        left: 5px;
+        z-index: 3;
+      }
+
+
+      ul {
+        margin: 0;
+        padding: 0;
+        text-align: left;
+        background-color: #FFF;
+        box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+        padding: 0.5em;
+        font-weight: normal;
+        border-radius: 5px;
+
+        img {
+          margin-bottom: -0.2em;
+          width:1em;
+          height:1em;
+        }
+
+        span {
+          font-size: 0.9em;
+        }
       }
     }
   }

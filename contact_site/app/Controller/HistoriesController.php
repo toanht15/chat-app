@@ -263,8 +263,9 @@ class HistoriesController extends AppController {
     $name = "sinclo-history";
 
     //$returnData:$historyListで使うjoinのリストとconditionsの検索条件
+    $this->printProcessTimetoLog('BEGIN _searchConditions');
     $returnData = $this->_searchConditions();
-
+    $this->printProcessTimetoLog('BEGIN $this->THistory->find');
     $historyList = $this->THistory->find('all', [
       'order' => [
         'THistory.access_date' => 'desc',
@@ -277,10 +278,13 @@ class HistoriesController extends AppController {
       'conditions' => $returnData['conditions']
     ]);
     //$historyListに担当者を追加
+    $this->printProcessTimetoLog('BEGIN $this->_userList($historyList)');
     $userList = $this->_userList($historyList);
     //THistoryChatLogの「firstURL」と「count」をと取ってくる
+    $this->printProcessTimetoLog('BEGIN $this->_stayList($userList)');
     $stayList = $this->_stayList($userList);
     //最終発言時間を取得
+    $this->printProcessTimetoLog('BEGIN $this->_lastSpeechTimeList($historyList)');
     $lastSpeechList = $this->_lastSpeechTimeList($historyList);
 
     // ヘッダー
@@ -305,11 +309,12 @@ class HistoriesController extends AppController {
     //除外パラメーターリスト
     $excludeList = $this->MCompany->getExcludeList($this->userInfo['MCompany']['id']);
 
+    $campaignList = $this->TCampaign->getList();
     foreach($userList as $key => $history){
       $campaignParam = "";
       $tmp = mb_strstr($stayList[$history['THistory']['id']]['THistoryStayLog']['firstURL'], '?');
       if ( $tmp !== "" ) {
-        foreach($this->TCampaign->getList() as $k => $v){
+        foreach($campaignList as $k => $v){
           if ( strpos($tmp, $k) !== false ) {
             if ( $campaignParam !== "" ) {
               $campaignParam .= "\n";
@@ -324,7 +329,12 @@ class HistoriesController extends AppController {
       $row['date'] = $dateTime;
       // IPアドレス
       if ($history['THistory']['ip_address'] !== "" ) {
-        if ( $row['ip'] !== "" ) $row['ip'] .= "\n";
+        if(empty($row['ip'])) {
+          $row['ip'] = "";
+        }
+        if ( $row['ip'] !== "" ){
+          $row['ip'] .= "\n";
+        }
         if ((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && !empty($history['LandscapeData']['org_name'])) {
           $row['ip'] .= $history['LandscapeData']['org_name'];
           $row['ip'] .= "\n";
@@ -361,11 +371,18 @@ class HistoriesController extends AppController {
       $row['visitTime'] = $this->calcTime($history['THistory']['access_date'], $history['THistory']['out_date']);
       if ( $this->coreSettings[C_COMPANY_USE_CHAT] ) {
         // 最終発言
-        $row['lastSpeechTime'] = $this->calcTime($lastSpeechList[$history['THistory']['id']], $history['THistory']['out_date']);
+        $row['lastSpeechTime'] = $this->calcTime(!empty($lastSpeechList[$history['THistory']['id']]) ? $lastSpeechList[$history['THistory']['id']] : "", $history['THistory']['out_date']);
         // 成果
         $row['achievement'] = "";
-        if ($history['THistoryChatLog2']['achievementFlg']){
-          $row['achievement'] = Configure::read('achievementType')[h($history['THistoryChatLog2']['achievementFlg'])];
+        if($history['THistoryChatLog2']['eff'] == 0 || $history['THistoryChatLog2']['cv'] == 0 ) {
+          if (isset($history['THistoryChatLog2']['achievementFlg'])){
+            $row['achievement'] = Configure::read('achievementType')[h($history['THistoryChatLog2']['achievementFlg'])];
+          }
+        }
+        else if ($history['THistoryChatLog2']['eff'] != 0 && $history['THistoryChatLog2']['cv'] != 0) {
+          if (isset($history['THistoryChatLog2']['achievementFlg'])){
+            $row['achievement'] = Configure::read('achievementType')[2].','.Configure::read('achievementType')[0];
+          }
         }
         //　担当者
         $row['user'] =  $history['User'];
@@ -374,6 +391,7 @@ class HistoriesController extends AppController {
       $csv[] = $row;
     }
     $this->_outputCSV($name, $csv);
+    $this->printProcessTimetoLog('END   outputCSVOfHistory');
   }
 
   public function outputCSVOfChatHistory(){
@@ -421,7 +439,12 @@ class HistoriesController extends AppController {
       $row['date'] = $dateTime;
       //IPアドレス
       if ($val['THistory']['ip_address'] !== "" ) {
-        if ( $row['ip'] !== "" ) $row['ip'] .= "\n";
+        if(empty($row['ip'])) {
+          $row['ip'] = "";
+        }
+        if ( $row['ip'] !== "" ){
+          $row['ip'] .= "\n";
+        }
         if ((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && !empty($val['LandscapeData']['org_name'])) {
           $row['ip'] .= $val['LandscapeData']['org_name'];
           $row['ip'] .= "\n";
@@ -889,9 +912,16 @@ class HistoriesController extends AppController {
       );
 
       $dbo2 = $this->THistoryChatLog->getDataSource();
+      if(empty($chatLogCond) || $chatLogCond['chat.achievementFlg'] == 1 || $chatLogCond['chat.achievementFlg'] == 2) {
+        $value = 'MAX';
+      }
+      //成果でCVを検索する場合
+      else if(!empty($chatLogCond) && $chatLogCond['chat.achievementFlg'] == 0) {
+        $value = 'MIN';
+      }
       $chatStateList = $dbo2->buildStatement(
         [
-          'table' => '(SELECT t_histories_id, COUNT(*) AS count, MAX(achievement_flg) AS achievementFlg, SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp, SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech FROM t_history_chat_logs AS THistoryChatLog GROUP BY t_histories_id ORDER BY t_histories_id)',
+          'table' => "(SELECT t_histories_id, COUNT(*) AS count, ".$value."(achievement_flg) AS achievementFlg, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff,SUM(CASE WHEN achievement_flg = 0 THEN 1 ELSE 0 END) cv,SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp, SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech FROM t_history_chat_logs AS THistoryChatLog GROUP BY t_histories_id ORDER BY t_histories_id)",
           'alias' => 'chat',
           'fields' => [
             'chat.*',
@@ -901,6 +931,7 @@ class HistoriesController extends AppController {
         ],
         $this->THistoryChatLog
       );
+
       $joinToChat = [
         'type' => 'INNER',
         'table' => "({$chatStateList})",
@@ -909,7 +940,6 @@ class HistoriesController extends AppController {
           'THistoryChatLog.t_histories_id = THistory.id'
         ]
       ];
-
       // チャットのみ表示との切り替え（担当者検索の場合、強制的にINNER）
       if ( strcmp($type, 'false') === 0 && !(!empty($data['THistoryChatLog']) && !empty(array_filter($data['THistoryChatLog']))) ) {
         $joinToChat['type'] = "LEFT";
@@ -1194,8 +1224,17 @@ class HistoriesController extends AppController {
     $this->layout = 'ajax';
     $this->data = $this->Session->read('Thistory');
 
-    // 成果種別リスト
-    $this->set('achievementType', Configure::read('achievementType'));
+
+    // 成果種別リスト スタンダードプラン以上
+    if(isset($this->coreSettings[C_COMPANY_USE_CV]) && $this->coreSettings[C_COMPANY_USE_CV]) {
+      $this->set('achievementType', Configure::read('achievementType'));
+    }
+    // 成果種別リスト スタンダードプラン以下
+    else {
+      $achievementType = Configure::read('achievementType');
+      unset($achievementType[0]);
+      $this->set('achievementType', $achievementType);
+    }
     // const
     $this->render('/Elements/Histories/remoteSearchCustomerInfo');
   }
@@ -1396,9 +1435,16 @@ class HistoriesController extends AppController {
       );
 
       $dbo2 = $this->THistoryChatLog->getDataSource();
+      if(empty($chatLogCond) || $chatLogCond['chat.achievementFlg'] == 1 || $chatLogCond['chat.achievementFlg'] == 2) {
+        $value = 'MAX';
+      }
+      //成果でCVを検索する場合
+      else if(!empty($chatLogCond) && $chatLogCond['chat.achievementFlg'] == 0) {
+        $value = 'MIN';
+      }
       $chatStateList = $dbo2->buildStatement(
         [
-          'table' => '(SELECT t_histories_id, COUNT(*) AS count, MAX(achievement_flg) AS achievementFlg, SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp, SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus FROM t_history_chat_logs AS THistoryChatLog GROUP BY t_histories_id ORDER BY t_histories_id)',
+          'table' => '(SELECT t_histories_id, COUNT(*) AS count,  '.$value.'(achievement_flg) AS achievementFlg, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff,SUM(CASE WHEN achievement_flg = 0 THEN 1 ELSE 0 END) cv, SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp, SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus FROM t_history_chat_logs AS THistoryChatLog GROUP BY t_histories_id ORDER BY t_histories_id)',
           'alias' => 'chat',
           'fields' => [
             'chat.*',
@@ -1481,7 +1527,7 @@ class HistoriesController extends AppController {
       $tmp['User'] = '';
       if(isset($users[$value2['THistory']['id']])) {
         foreach($users[$value2['THistory']['id']] as $val3){
-          $userName = $userNameList[$val3];
+          $userName = !empty($userNameList[$val3]) ? $userNameList[$val3] : null;
           if(!empty($tmp['User'])){
             $tmp['User'] .='、'."\n";
           }
@@ -1807,5 +1853,12 @@ class HistoriesController extends AppController {
       $browser = "Safari";
     }
     return $browser;
+  }
+
+  private function printProcessTimetoLog($prefix) {
+    //microtimeを.で分割
+    $arrTime = explode('.',microtime(true));
+    //日時＋ミリ秒
+    $this->log($prefix.'::PROCESS_TIME '.date('Y-m-d H:i:s', $arrTime[0]) . '.' .$arrTime[1], LOG_DEBUG);
   }
 }

@@ -70,7 +70,9 @@ class AppController extends Controller {
     C_COMPANY_USE_LA_CO_BROWSE => false, // 画面キャプチャ共有
     C_COMPANY_USE_HIDE_REALTIME_MONITOR => false, // 通常時リアルタイムモニタ非表示
     C_COMPANY_USE_OPERATING_HOUR => false, //営業時間設定
-    C_COMPANY_REF_COMPANY_DATA => false // 企業情報参照（Landscape）
+    C_COMPANY_REF_COMPANY_DATA => false, // 企業情報参照（Landscape）
+    C_COMPANY_USE_FREE_INPUT => false, //自由入力エリア
+    C_COMPANY_USE_CV => false, //CV
   ];
 
   public function beforeFilter(){
@@ -160,10 +162,12 @@ class AppController extends Controller {
     /* オペレーター待ち状態 */
     // 在籍/退席
     $opStatus = C_OPERATOR_PASSIVE; // 退席（デフォルト）
-    if ( !empty($widgetInfo['MWidgetSetting']['display_type']) && (isset($this->coreSettings[C_COMPANY_USE_CHAT]) && $this->coreSettings[C_COMPANY_USE_CHAT])
+    if ( (!empty($widgetInfo['MWidgetSetting']['display_type']) && (isset($this->coreSettings[C_COMPANY_USE_CHAT]) && $this->coreSettings[C_COMPANY_USE_CHAT])
       && (strcmp($widgetInfo['MWidgetSetting']['display_type'], C_WIDGET_DISPLAY_CODE_OPER) === 0 ||
       strcmp($widgetInfo['MWidgetSetting']['display_type'], C_WIDGET_DISPLAY_CODE_SHOW) === 0 ||
-     strcmp($widgetInfo['MWidgetSetting']['display_type'], C_WIDGET_DISPLAY_CODE_TIME) === 0)  ) {
+     strcmp($widgetInfo['MWidgetSetting']['display_type'], C_WIDGET_DISPLAY_CODE_TIME) === 0))
+      || (!empty($widgetInfo['MWidgetSetting']['display_type']) && (empty($this->coreSettings[C_COMPANY_USE_CHAT]))
+      && strcmp($widgetInfo['MWidgetSetting']['display_type'], C_WIDGET_DISPLAY_CODE_OPER) === 0) ) {
       // セッションから
       if ( $this->Session->check('widget.operator.status') ) {
         $opStatus = $this->Session->read('widget.operator.status');

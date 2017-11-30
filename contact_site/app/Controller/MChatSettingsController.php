@@ -41,17 +41,39 @@ class MChatSettingsController extends AppController {
       $operatingHourData = $this->MOperatingHour->find('first', ['conditions' => [
         'm_companies_id' => $this->userInfo['MCompany']['id']
       ]]);
+      if(empty($operatingHourData)) {
+        $operatingHourData['MOperatingHour']['active_flg'] = 3;
+      }
       $this->set('operatingHourData',$operatingHourData['MOperatingHour']['active_flg']);
 
       //デフォルト設定
       if(!empty($this->request->data['MChatSetting']['sorry_message'])) {
+        $saveData = $this->request->data;
         if($operatingHourData['MOperatingHour']['active_flg'] == 1){
           $this->request->data['MChatSetting']['outside_hours_sorry_message'] = $this->request->data['MChatSetting']['sorry_message'];
+          $saveData['MChatSetting']['outside_hours_sorry_message'] = $this->request->data['MChatSetting']['sorry_message'];
+        }
+        else {
+          $saveData['MChatSetting']['outside_hours_sorry_message'] = $this->request->data['MChatSetting']['sorry_message'];
         }
         if($this->request->data['MChatSetting']['sc_flg'] == 1) {
           $this->request->data['MChatSetting']['wating_call_sorry_message'] = $this->request->data['MChatSetting']['sorry_message'];
+          $saveData['MChatSetting']['wating_call_sorry_message'] = $this->request->data['MChatSetting']['sorry_message'];
+        }
+        else {
+          $saveData['MChatSetting']['wating_call_sorry_message'] = $this->request->data['MChatSetting']['sorry_message'];
         }
         $this->request->data['MChatSetting']['no_standby_sorry_message'] = $this->request->data['MChatSetting']['sorry_message'];
+        $saveData['MChatSetting']['no_standby_sorry_message'] = $this->request->data['MChatSetting']['sorry_message'];
+        $saveData['MChatSetting']['sorry_message'] = "";
+
+        $this->MChatSetting->set($saveData);
+        if ( $this->MChatSetting->save($saveData,true) ) {
+          $this->MChatSetting->commit();
+        }
+        else {
+          $this->MChatSetting->rollback();
+        }
       }
     }
 

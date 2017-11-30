@@ -143,7 +143,7 @@
         </tr>
       </thead>
       <tbody ng-cloak>
-        <tr ng-repeat="monitor in search(monitorList) | orderObjectBy : '-chatUnreadId-chat'" ng-dblclick="showDetail(monitor.tabId)" id="monitor_{{monitor.tabId}}">
+        <tr ng-repeat="monitor in search(monitorList) | orderObjectBy : '-chatUnreadId-chat'" ng-dblclick="showDetail(monitor.tabId, monitor.sincloSessionId)" id="monitor_{{monitor.tabId}}">
           <!-- /* 状態 */ -->
           <td class="tCenter">
             <span ng-if="monitor.status === jsConst.tabInfo.open"><?=$this->Html->image('tab_status_open.png', ['alt'=>'', 'width'=>20, 'height'=>20])?></span>
@@ -157,7 +157,7 @@
           <!-- /* 操作 */ -->
           <td class='tCenter'>
             <?php if ( strcmp($userInfo['permission_level'], C_AUTHORITY_SUPER) !== 0) :?>
-              <span ng-if="monitor.widget">
+              <span>
                 <span ng-if="!monitor.connectToken&&!monitor.docShare&&!monitor.coBrowseConnectToken" id="shareToolBtn">
                   <a class='monitorBtn blueBtn btn-shadow' href='javascript:void(0)' ng-click='confirmSharingWindowOpen(monitor.tabId, monitor.accessId)' >共有</a>
                 </span>
@@ -180,18 +180,18 @@
               <span class="monitorOn" ng-if="isset(monitor.chat) && monitor.chat !== <?= h($muserId)?>"><span class="bold">対応中</span><br>（{{setName(monitor.chat)}}）</span>
               <?php endif; ?>
 
-              <span ng-if="monitor.tabId != detailId" ng-click="showDetail(monitor.tabId)" class="btn-shadow blueBtn ">
+              <span ng-if="monitor.tabId != detailId" ng-click="showDetail(monitor.tabId, monitor.sincloSessionId)" class="btn-shadow blueBtn ">
                 詳細を開く
                 <div class="unread" ng-if="monitor.chatUnreadCnt > 0">{{monitor.chatUnreadCnt}}</div>
               </span>
-              <span ng-if="monitor.tabId == detailId" ng-click="showDetail(monitor.tabId)" class="btn-shadow redBtn ">
+              <span ng-if="monitor.tabId == detailId" ng-click="showDetail(monitor.tabId, monitor.sincloSessionId)" class="btn-shadow redBtn ">
                 詳細を閉じる
                 <div class="unread" ng-if="monitor.chatUnreadCnt > 0">{{monitor.chatUnreadCnt}}</div>
               </span>
             <?php endif; ?>
           </td>
           <!-- /* 訪問ユーザ */ -->
-          <td ng-hide="labelHideList.ipAddress" class="tCenter ref"><?php if ( isset($coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $coreSettings[C_COMPANY_REF_COMPANY_DATA] ) :?><a href="javascript:void(0)" ng-click="openCompanyDetailInfo(monitor)" ng-if="monitor.orgName && monitor.lbcCode">{{monitor.orgName}}</a><span ng-if="monitor.orgName && !monitor.lbcCode">{{monitor.orgName}}</span><br ng-if="monitor.orgName"><?php endif; ?>{{ip(monitor)}}</td>
+          <td ng-hide="labelHideList.ipAddress" class="tCenter ref"><?php if ( isset($coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $coreSettings[C_COMPANY_REF_COMPANY_DATA] ) :?><a href="javascript:void(0)"  class="underL" ng-click="openCompanyDetailInfo(monitor)" ng-if="monitor.orgName && monitor.lbcCode">{{monitor.orgName}}</a><span ng-if="monitor.orgName && !monitor.lbcCode">{{monitor.orgName}}</span><br ng-if="monitor.orgName"><?php endif; ?>{{ip(monitor)}}</td>
           <!-- /* 訪問ユーザ */ -->
           <td ng-hide="labelHideList.customer" class="tCenter pre">{{ui(monitor)}}</td>
           <!-- /* ユーザー環境 */ -->

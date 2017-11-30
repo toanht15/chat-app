@@ -16,7 +16,7 @@ sincloApp.controller('MainController', function($scope) {
     this.keys = function(obj){
       //営業時間を利用しない場合
       if(<?= $operatingHourData ?> == 2) {
-        delete obj[10];
+        delete obj[4];
       }
       if (angular.isObject(obj)) {
           return Object.keys(obj).length;
@@ -34,7 +34,7 @@ sincloApp.controller('MainController', function($scope) {
 
     this.checkDisabled = function(itemId){
         //営業時間設定を利用しない場合
-        if(<?= $operatingHourData ?> == 2 && itemId == 10) {
+        if(<?= $operatingHourData ?> == 2 && itemId == 4) {
           return true;
         }
         return (itemId in this.setItemList && this.setItemList[itemId].length >= this.tmpList[itemId].createLimit[this.condition_type]);
@@ -49,7 +49,7 @@ sincloApp.controller('MainController', function($scope) {
                 return false;
             }
             //営業時間設定を利用しない場合
-            if(<?= $operatingHourData ?> == 2 && tmpId == 10) {
+            if(<?= $operatingHourData ?> == 2 && tmpId == 4) {
               return false;
             }
             this.setItemList[tmpId].push(angular.copy(this.tmpList[tmpId].default));
@@ -99,7 +99,9 @@ sincloApp.controller('MainController', function($scope) {
                 'conditions': angular.copy(this.setItemList),
                 'widgetOpen': Number(this.widget_open),
                  // TODO 後々動的に
-                'message': angular.element("#TAutoMessageAction").val()
+                'message': angular.element("#TAutoMessageAction").val(),
+                'chatTextarea': Number(this.chat_textarea),
+                'cv': Number(this.cv),
         };
         var keys = Object.keys(setList['conditions']);
         if ("<?=C_AUTO_TRIGGER_DAY_TIME?>" in setList['conditions']) {
@@ -109,8 +111,8 @@ sincloApp.controller('MainController', function($scope) {
                     delete setList['conditions']["<?=C_AUTO_TRIGGER_DAY_TIME?>"][i]['endTime'];
                 }
             }
-        }
 
+        }
         $('#TAutoMessageActivity').val(JSON.stringify(setList));
         submitAct();
     };
@@ -291,4 +293,32 @@ function submitAct(){
   $('#TAutoMessageEntryForm').submit();
 }
 
+//スクロール位置把握
+var topPosition = 0;
+window.onload = function() {
+  document.querySelector('#content').onscroll = function() {
+    topPosition = this.scrollTop;
+  };
+};
+
+$(document).ready(function(){
+  // ツールチップの表示制御
+  $('.questionBtn').off("mouseenter").on('mouseenter',function(event){
+    var parentTdId = $(this).parent().parent().attr('id');
+    console.log(parentTdId);
+    var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
+    console.log(targetObj);
+    targetObj.find('icon-annotation').css('display','block');
+    targetObj.css({
+      top: ($(this).offset().top - targetObj.find('ul').outerHeight() - 170 + topPosition) + 'px',
+      left: $(this).offset().left - 101 + 'px'
+    });
+  });
+
+  $('.questionBtn').off("mouseleave").on('mouseleave',function(event){
+    var parentTdId = $(this).parent().parent().attr('id');
+    var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
+    targetObj.find('icon-annotation').css('display','none');
+  });
+});
 </script>

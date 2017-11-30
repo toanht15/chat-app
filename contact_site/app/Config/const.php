@@ -44,6 +44,8 @@ define('C_COMPANY_USE_DICTIONARY_CATEGORY', 'dictionaryCategory'); // 定型文�
 define('C_COMPANY_USE_HIDE_REALTIME_MONITOR', 'hideRealtimeMonitor'); // リアルタイムモニター非表示
 define('C_COMPANY_USE_OPERATING_HOUR', 'operatingHour'); // 営業時間
 define('C_COMPANY_REF_COMPANY_DATA', 'refCompanyData'); // 企業情報参照（Landscape）
+define('C_COMPANY_USE_FREE_INPUT', 'freeInput'); // 自由入力エリア
+define('C_COMPANY_USE_CV', 'cv'); // CV
 
 
 // 簡易メッセージ入力機能種別
@@ -139,13 +141,13 @@ define('C_AUTO_TRIGGER_TYPE_BODYLOAD', 1); // 画面読み込み時
 define('C_AUTO_TRIGGER_STAY_TIME',  1); // 滞在時間
 define('C_AUTO_TRIGGER_VISIT_CNT',  2); // 訪問回数
 define('C_AUTO_TRIGGER_STAY_PAGE',  3); // ページ
-define('C_AUTO_TRIGGER_DAY_TIME',   4); // 曜日・時間
-define('C_AUTO_TRIGGER_REFERRER',   5); // 参照元URL（リファラー）
-define('C_AUTO_TRIGGER_SEARCH_KEY', 6); // 検索キーワード
-define('C_AUTO_TRIGGER_SPEECH_CONTENT', 7); // 発言内容
-define('C_AUTO_TRIGGER_STAY_PAGE_OF_FIRST', 8); // 最初の滞在ページ
-define('C_AUTO_TRIGGER_STAY_PAGE_OF_PREVIOUS', 9); // 前のページ
-define('C_AUTO_TRIGGER_OPERATING_HOURS', 10); // 営業時間
+define('C_AUTO_TRIGGER_OPERATING_HOURS', 4); // 営業時間
+define('C_AUTO_TRIGGER_DAY_TIME',   5); // 曜日・時間
+define('C_AUTO_TRIGGER_REFERRER',   6); // 参照元URL（リファラー）
+define('C_AUTO_TRIGGER_SEARCH_KEY', 7); // 検索キーワード
+define('C_AUTO_TRIGGER_SPEECH_CONTENT', 8); // 発言内容
+define('C_AUTO_TRIGGER_STAY_PAGE_OF_FIRST', 9); // 最初の滞在ページ
+define('C_AUTO_TRIGGER_STAY_PAGE_OF_PREVIOUS', 10); // 前のページ
 
 // オートメッセージ機能－アクション種別コード
 define('C_AUTO_ACTION_TYPE_SENDMESSAGE', 1); // チャットメッセージを送る
@@ -153,6 +155,14 @@ define('C_AUTO_ACTION_TYPE_SENDMESSAGE', 1); // チャットメッセージを�
 // オートメッセージ機能－ウィジェット種別コード
 define('C_AUTO_WIDGET_TYPE_OPEN', 1); // 自動で最大化する
 define('C_AUTO_WIDGET_TYPE_CLOSE', 2); // 自動で最大化しない
+
+// オートメッセージ機能－cv種別コード
+define('C_AUTO_CV_EFFECTIVENESS', 1); // cv登録する
+define('C_AUTO_CV_DISABLED', 2); // cv登録しない
+
+// オートメッセージ機能－テキストエリア種別コード
+define('C_AUTO_WIDGET_TEXTAREA_OPEN', 1); // 自由入力可
+define('C_AUTO_WIDGET_TEXTAREA_CLOSE', 2); // 自由入力不可
 
 // する/しない設定
 define('C_SELECT_CAN', 1); // する
@@ -171,6 +181,7 @@ define('C_STATUS_AVAILABLE', 0); // 有効
 define('C_STATUS_UNAVAILABLE', 1); // 無効
 
 // 成果
+define('C_ACHIEVEMENT_CV', 0); // CV
 define('C_ACHIEVEMENT_UNAVAILABLE', 1); // なし
 define('C_ACHIEVEMENT_AVAILABLE', 2); // あり
 
@@ -371,7 +382,7 @@ $config['outMessageTriggerList'] = [
         'createLimit' => [C_COINCIDENT => 1, C_SOME_EITHER => 1],
         'key' => 'stay_time',
         'default' => [
-            "stayTimeCheckType" => 1,
+            "stayTimeCheckType" => 2,
             "stayTimeType" => "1",
             "stayTimeRange" => 3
         ]
@@ -468,7 +479,7 @@ $config['outMessageTriggerList'] = [
     ],
     // 営業時間設定
     C_AUTO_TRIGGER_OPERATING_HOURS => [
-      'label' => '営業時間設定',
+      'label' => '営業時間',
       'createLimit' => [C_COINCIDENT => 1, C_SOME_EITHER => 1],
       'key' => 'operating_hours',
       'default' => [
@@ -488,8 +499,22 @@ $config['outMessageWidgetOpenType'] = [
     C_AUTO_WIDGET_TYPE_CLOSE => "自動で最大化しない"
 ];
 
+/* オートメッセージ － 自由入力種別 */
+$config['outMessageTextarea'] = [
+    C_AUTO_WIDGET_TEXTAREA_OPEN => "ON(自由入力可)",
+    C_AUTO_WIDGET_TEXTAREA_CLOSE => "OFF(自由入力不可)"
+];
+
+/* オートメッセージ － cv種別 */
+$config['outMessageCvType'] = [
+    C_AUTO_CV_EFFECTIVENESS => "する",
+    C_AUTO_CV_DISABLED => "しない"
+];
+
 /* 成果種別 */
 $config['achievementType'] = [
+  C_ACHIEVEMENT_CV => "CV",
   C_ACHIEVEMENT_UNAVAILABLE => "無効",
   C_ACHIEVEMENT_AVAILABLE => "有効"
 ];
+

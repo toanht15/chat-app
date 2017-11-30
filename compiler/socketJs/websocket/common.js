@@ -40,6 +40,7 @@ var socket, // socket.io
       gFrame: 11,
       sendTabId: 12,
       parentId: 13,
+      sincloSessionId: 14
     },
     sync_type: { inner: 1, outer: 2 }
   };
@@ -1435,7 +1436,7 @@ var socket, // socket.io
       }
       html += '  <section id="chatTab" class="flexBox">';
       html += '    <ul id="chatTalk"><sinclo-chat></sinclo-chat><sinclo-typing></sinclo-typing><sinclo-chat-receiver><span id="receiveMessage">テストメッセージです</span></sinclo-chat-receiver></ul>';
-      html += '    <sinclo-div class="flexBoxRow">';
+      html += '    <sinclo-div class="flexBoxRow" id = "flexBoxHeight">';
       html += '      <textarea name="sincloChat" id="sincloChatMessage" maxlength="300" placeholder=" ' + placeholder + ' "></textarea>';
       html += '      <a id="sincloChatSendBtn" class="notSelect" onclick="sinclo.chatApi.push()">送信</a>';
       if ( spFlg ) { // スマートフォンの場合
@@ -1453,8 +1454,8 @@ var socket, // socket.io
     },
     judgeShowWidget: function(){
       window.sincloInfo.widgetDisplay = null; // デフォルト表示しない
-      // チャット契約、画面同期中であれば表示
-      if ( window.sincloInfo.contract.chat ) {
+      // チャット契約、画面同期契約、画面同期中であれば表示
+      if ( window.sincloInfo.contract.chat || window.sincloInfo.contract.synclo) {
         window.sincloInfo.widgetDisplay = true;
       }
       // ウィジェットを常に表示する
@@ -1532,7 +1533,7 @@ var socket, // socket.io
           $('body').append(html);
           emit('syncReady', {widget: window.sincloInfo.widgetDisplay});
           sincloBox = document.getElementById('sincloBox');
-          sincloBox.setAttribute('data-openflg', false);
+          sinclo.widget.condifiton.set(false, false);
           sinclo.operatorInfo.header = document.querySelector('#sincloBox #widgetHeader');
 
           $("#sincloBox .widgetCtrl").click(function(){
@@ -1627,8 +1628,8 @@ var socket, // socket.io
           //最小化時と最大化時の状態を取得
           var abridgementType = common.getAbridgementType();
           //ウィジェットの再生成処理呼び出しでなければ最小化表示設定で呼び出す
-          if(!reCreateWidget) {
-            sinclo.widget.condifiton.set(false);
+          if(!reCreateWidget && dataOpenflg === "false") {
+            sinclo.widget.condifiton.set(false, true);
             //ログ書き込み用にメッセージ送信
             emit("sendWidgetShown",{widget:true});
             //最小化
@@ -1667,6 +1668,7 @@ var socket, // socket.io
           }
           else{
             if(dataOpenflg === "false"){
+              console.log("saisyouka");
               //最小化
               if(abridgementType['MinRes']){
                 //ヘッダ非表示（シンプル表示）
@@ -1680,6 +1682,7 @@ var socket, // socket.io
               common.whenMinimizedBtnShow();
             }
             else{
+              console.log("saidaika");
               //最大化
               if(abridgementType['MaxRes']){
                 //ヘッダ非表示（シンプル表示）
@@ -2141,6 +2144,30 @@ var socket, // socket.io
       unset: function(name){
         localStorage.removeItem(name);
       }
+    },
+    c: {
+      prefix: '___',
+      get: function(name){
+        var cookies = document.cookie;
+        var cookieItem = cookies.split(";");
+        var cookieValue = "";
+
+        for (var i = 0; i < cookieItem.length; i++) {
+          var elem = cookieItem[i].split("=");
+          if (elem[0].trim() === this.prefix + name) {
+            cookieValue = decodeURIComponent(elem[1]);
+          } else {
+            continue;
+          }
+        }
+        return cookieValue;
+      },
+      set: function(name, val){
+        document.cookie = this.prefix + name + '=' + encodeURIComponent(val);
+      },
+      unset: function(name){
+        localStorage.removeItem(name);
+      }
     }
   };
 
@@ -2341,14 +2368,18 @@ var socket, // socket.io
           return "sendTabId";
         case cnst.info_type.parentId:
           return "parentId";
+        case cnst.info_type.sincloSessionId:
+          return "sincloSessionId";
       }
     },
     set: function(type, val, session){
       var code = this.getCode(type);
-      if ( !session ) {
+      if ( typeof(session) === 'undefined' ) {
         storage.l.set(code, val);
-      }
-      else {
+      } else if ( session === 'sincloSessionId' ) {
+        console.log('sincloSessionId is set : ' + val);
+        storage.c.set(code, val);
+      } else {
         storage.s.set(code, val);
       }
       userInfo[code] = val;
@@ -2360,6 +2391,8 @@ var socket, // socket.io
       }
       else if (check.isset(storage.s.get(code))) {
         return storage.s.get(code);
+      } else if (check.isset(storage.c.get(code))) {
+        return storage.c.get(code);
       }
     },
     unset: function(type){
@@ -2381,6 +2414,8 @@ var socket, // socket.io
         }
         else if (check.isset(storage.s.get(code))) {
           userInfo[code] = storage.s.get(code);
+        } else if (check.isset(storage.c.get(code))) {
+          userInfo[code] = storage.c.get(code);
         }
       }
     },
@@ -2392,7 +2427,6 @@ var socket, // socket.io
         cnst.info_type.referrer,
         cnst.info_type.connect,
         cnst.info_type.tab,
-        cnst.info_type.prev,
         cnst.info_type.gFrame,
         cnst.info_type.parentId
       ];
@@ -2450,12 +2484,36 @@ var socket, // socket.io
         storage.s.set(code, JSON.stringify(userInfo.prev));
       }
     },
+    writePrevToLocalStorage: function(){
+      var code = this.getCode(cnst.info_type.prev);
+      var prev = [];
+      if(typeof(userInfo.oldSincloSessionId) !== 'undefined') {
+        console.log("oldSincloSessionId is found. : " + userInfo.oldSincloSessionId + " overwrite.");
+        prev = common.jParse(storage.s.get(code));
+        storage.l.set(code, JSON.stringify(prev));
+      } else {
+        prev = common.jParse(storage.l.get(code));
+        if (!check.isset(prev)) {
+          prev = [];
+        }
+        // IE8対応コード
+        if (prev.length === 0 || location.href !== prev[prev.length - 1].url) {
+          prev.push({url: location.href, title: common.title()});
+          storage.l.set(code, JSON.stringify(prev));
+        }
+      }
+      return prev;
+    },
     setConnect: function(val){
       this.set(cnst.info_type.connect, val, true);
     },
     setTabId: function(){
       var val = userInfo.userId + "_" + common.makeToken();
       this.set(cnst.info_type.tab, val, true);
+    },
+    changeTabId: function(tabId){
+      console.log("CHANGE TAB ID");
+      this.set(cnst.info_type.tab, tabId, true);
     },
     unsetAccessId: function(){
       return this.unset(cnst.info_type.access);
@@ -2464,10 +2522,12 @@ var socket, // socket.io
       return this.unset(cnst.info_type.connect);
     },
     getSendList: function() {
+      var code = this.getCode(cnst.info_type.prev);
+      var prev = common.jParse(storage.l.get(code));
       return {
         ipAddress: this.getIp(),
         time: this.getTime(),
-        prev: this.prev,
+        prev: prev,
         referrer: this.referrer,
         userAgent: window.navigator.userAgent,
         chatCnt: document.getElementsByClassName('sinclo_se').length,
@@ -2563,7 +2623,7 @@ var socket, // socket.io
       var closeAct = storage.s.get('closeAct');
       if ( document.getElementById('sincloBox') ) {
         sincloBox = document.getElementById('sincloBox');
-        var tmp = sincloBox.getAttribute('data-openflg');
+        var tmp = sinclo.widget.condifiton.get();
         if ( String(tmp) === "true" ) {
           widgetFlg = true;
         }
@@ -3250,6 +3310,12 @@ var socket, // socket.io
       }, 700);
     }); // socket-on: connect
 
+    socket.on("changeTabId", function(d){
+      var obj = common.jParse(d);
+      userInfo.tabId = obj.newTabId;
+      userInfo.changeTabId(obj.newTabId);
+    });
+
     // 接続直後（ユーザＩＤ、アクセスコード発番等）
     socket.on("retConnectedForSync", function(d){
       sinclo.retConnectedForSync(d);
@@ -3258,6 +3324,11 @@ var socket, // socket.io
     // 接続直後（ユーザＩＤ、アクセスコード発番等）
     socket.on("accessInfo", function(d){
       sinclo.accessInfo(d);
+    }); // socket-on: accessInfo
+
+    // 接続直後（ユーザＩＤ、アクセスコード発番等）
+    socket.on("syncUserInfo", function(d){
+      sinclo.syncUserInfo(d);
     }); // socket-on: accessInfo
 
     // 履歴ID割り振り後
@@ -3508,6 +3579,7 @@ function emit(evName, data){
     data.accessId = userInfo.accessId;
     data.userId = userInfo.userId;
     data.status = browserInfo.getActiveWindow();
+    data.sincloSessionId = userInfo.sincloSessionId;
   }
   if (evName === "connected" || evName === "getChatMessage") {
     data.token = common.token;
@@ -3570,6 +3642,8 @@ function emit(evName, data){
     if ( userInfo.tabId !== "" ) {
       clearInterval(timer);
       data.tabId = userInfo.tabId; // タブの識別ID
+      data.sincloSessionId = userInfo.sincloSessionId;
+      console.log("EMIT : " + evName + "data : " + JSON.stringify(data));
       socket.emit(evName, JSON.stringify(data));
     }
   }, 100);

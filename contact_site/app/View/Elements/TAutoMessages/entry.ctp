@@ -123,13 +123,49 @@
           <span>
             <label class="require">メッセージ</label>
             <span class="greenBtn btn-shadow actBtn" onclick="addOption(1)">選択肢を追加する</span>
-            <span class="greenBtn btn-shadow actBtn" onclick="addOption(2)">電話番号を追加する</span>
+            <span class="greenBtn btn-shadow actBtn" onclick="addOption(2)" id = "lastSpeechLabel">電話番号を追加する<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></span>
           </span>
           <?=$this->ngForm->input('action', ['type'=>'textarea', 'maxlength'=>300],['entiry'=>'action'])?>
           <?php if (!empty($errors['action'])) echo "<pre class='error-message'>" . h($errors['action'][0]) . "</pre>"; ?>
 
       </li>
       <!-- メッセージ -->
+
+      <!-- 自由入力エリア -->
+      <li class="bt0">
+        <span class="require"><label>自由入力エリア</label></span>
+        <label class="pointer"><?= $this->ngForm->input('main.chat_textarea', [
+          'type' => 'radio',
+          'options' => $outMessageTextarea,
+          'separator' => '</label><br><label style="display:inline-block;"'.($coreSettings[C_COMPANY_USE_FREE_INPUT] ? '' : '"color: #CCCCCC;" class="commontooltip" data-text="こちらの機能はスタンダードプラン<br>からご利用いただけます。" data-balloon-position="20.5"').'>',
+          'error' => false,
+          'disabled' => !$coreSettings[C_COMPANY_USE_FREE_INPUT],
+        ], [
+          'entity' => 'chat_textarea',
+          'default' => (!empty($this->data['TAutoMessage']['chat_textarea'])) ? $this->data['TAutoMessage']['chat_textarea'] : C_AUTO_WIDGET_TEXTAREA_OPEN,
+        ]); ?></label>
+      </li>
+      <!-- 自由入力エリア -->
+
+      <!-- cv -->
+      <li class="bt0">
+        <span class="require"><label>成果にCVとして登録する</label></span>
+        <label style="cursor:pointer;" <?php echo ($coreSettings[C_COMPANY_USE_CV]) ? '' : 'class=commontooltip';?>
+        <?php echo ($coreSettings[C_COMPANY_USE_CV]) ? '' : 'data-text=こちらの機能はスタンダードプランからご利用いただけます。';?>
+        <?php echo ($coreSettings[C_COMPANY_USE_CV]) ? '' : 'data-balloon-position=40.5';?>
+        <?php echo ($coreSettings[C_COMPANY_USE_CV]) ? '' : 'operatingHours=widgetHoursPage';?>>
+        <?= $this->ngForm->input('main.cv', [
+          'type' => 'radio',
+          'options' => $outMessageCvType,
+          'separator' => '</label><label class="pointer">',
+          'error' => false,
+          'disabled' => !$coreSettings[C_COMPANY_USE_CV],
+        ], [
+          'entity' => 'cv',
+          'default' => (!empty($this->data['TAutoMessage']['cv'])) ? $this->data['TAutoMessage']['cv'] : C_AUTO_CV_DISABLED,
+        ]); ?></label>
+      </li>
+      <!-- cv -->
 
       <!-- 状態 -->
       <li>
@@ -143,6 +179,13 @@
         ]); ?></label>
       </li>
       <!-- 状態 -->
+      <div id='lastSpeechTooltip' class="explainTooltip">
+        <icon-annotation>
+          <ul>
+            <li><span>このボタンを押すと挿入される＜telno＞タグの間に電話番号を記入すると、スマホの場合にタップで発信できるようになります</span></li>
+          </ul>
+        </icon-annotation>
+      </div>
     </ul>
   </section>
 
