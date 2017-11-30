@@ -1002,12 +1002,14 @@ io.sockets.on('connection', function (socket) {
       if ( !sincloCore.hasOwnProperty(obj.siteKey) ) return scNum;
       var tabIds = Object.keys(sincloCore[obj.siteKey]);
       for (var i = 0; i < tabIds.length; i++) {
-        var tabData = sincloCore[obj.siteKey][tabIds[i]];
-        if ( tabData.hasOwnProperty("chat") && isNumber(tabData.chat) ) {
-          // 同一のsincloSessionIdを保有するユーザーは同時応対数１とする
-          if ( Number(tabData.chat) === Number(userId) && sincloSessionIds.indexOf(tabData.sincloSessionId) === -1) {
-            scNum++;
-            sincloSessionIds.push(tabData.sincloSessionId);
+        if(tabIds[i] && tabIds[i].indexOf("_") >= 0) {
+          var tabData = sincloCore[obj.siteKey][tabIds[i]];
+          if (tabData.hasOwnProperty("chat") && isNumber(tabData.chat)) {
+            // 同一のsincloSessionIdを保有するユーザーは同時応対数１とする
+            if (Number(tabData.chat) === Number(userId) && sincloSessionIds.indexOf(tabData.sincloSessionId) === -1) {
+              scNum++;
+              sincloSessionIds.push(tabData.sincloSessionId);
+            }
           }
         }
       }
