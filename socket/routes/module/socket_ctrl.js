@@ -2270,7 +2270,10 @@ console.log("chatStart-2: [" + logToken + "] " + JSON.stringify({ret: false, sit
       var scInfo = "";
 
       sincloCore[obj.siteKey][obj.tabId].chat = obj.userId;
-      sincloCore[obj.siteKey][obj.sincloSessionId].chat = obj.userId;
+      if(!isset(sincloCore[obj.siteKey][obj.sincloSessionId].chat)) {
+        sincloCore[obj.siteKey][obj.sincloSessionId].chat = {};
+      }
+      sincloCore[obj.siteKey][obj.sincloSessionId].chat[obj.tabId] = obj.userId;
       sincloCore[obj.siteKey][obj.tabId].chatSessionId = socket.id;
       // サイトとして初チャット開始
       if ( !(obj.siteKey in c_connectList) ) {
@@ -2393,7 +2396,10 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       sincloCore[obj.siteKey][obj.tabId].chat = null;
       sincloCore[obj.siteKey][obj.tabId].chatSessionId = null;
       if( isset(sincloCore[obj.siteKey]) && isset(sincloCore[obj.siteKey][obj.sincloSessionId]) && isset(sincloCore[obj.siteKey][obj.sincloSessionId].chat) ) {
-        sincloCore[obj.siteKey][obj.sincloSessionId].chat = null;
+        delete sincloCore[obj.siteKey][obj.sincloSessionId].chat[obj.tabId];
+        if(Object.keys(sincloCore[obj.siteKey][obj.sincloSessionId].chat).length === 0) {
+          delete sincloCore[obj.siteKey][obj.sincloSessionId].chat;
+        }
       }
       scInfo = ( scList.hasOwnProperty(obj.siteKey) ) ? scList[obj.siteKey].cnt : {};
 
