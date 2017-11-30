@@ -4,7 +4,7 @@
  * ユーザーマスタ
  */
 class TAutoMessagesController extends AppController {
-  public $uses = ['TAutoMessage'];
+  public $uses = ['TAutoMessage','MOperatingHour'];
   public $helpers = ['AutoMessage'];
   public $paginate = [
     'TAutoMessage' => [
@@ -47,6 +47,13 @@ class TAutoMessagesController extends AppController {
     if ( $this->request->is('post') ) {
       $this->_entry($this->request->data);
     }
+    $operatingHourData = $this->MOperatingHour->find('first', ['conditions' => [
+      'm_companies_id' => $this->userInfo['MCompany']['id']
+    ]]);
+    if(empty($operatingHourData)) {
+      $operatingHourData['MOperatingHour']['active_flg'] = 2;
+    }
+    $this->set('operatingHourData',$operatingHourData['MOperatingHour']['active_flg']);
     $this->_viewElement();
   }
 
@@ -74,6 +81,13 @@ class TAutoMessagesController extends AppController {
       $this->request->data['TAutoMessage']['condition_type'] = (!empty($json['conditionType'])) ? $json['conditionType'] : "";
       $this->request->data['TAutoMessage']['action'] = (!empty($json['message'])) ? $json['message'] : "";
       $this->request->data['TAutoMessage']['widget_open'] = (!empty($json['widgetOpen'])) ? $json['widgetOpen'] : "";
+      $operatingHourData = $this->MOperatingHour->find('first', ['conditions' => [
+        'm_companies_id' => $this->userInfo['MCompany']['id']
+      ]]);
+      if(empty($operatingHourData)) {
+        $operatingHourData['MOperatingHour']['active_flg'] = 2;
+      }
+      $this->set('operatingHourData',$operatingHourData['MOperatingHour']['active_flg']);
     }
 
     $this->_viewElement();
@@ -477,6 +491,12 @@ class TAutoMessagesController extends AppController {
           $errors['triggers'][$setting['key']] = sprintf($tmpMessage, $this->outMessageIfType[$activity->conditionType], $setting['label'], $setting['createLimit'][$activity->conditionType]);
         }
       }
+      $operatingHourData = $this->MOperatingHour->find('first', ['conditions' => [
+        'm_companies_id' => $this->userInfo['MCompany']['id']
+      ]]);
+      if(!empty($operatingHourData) && $operatingHourData['MOperatingHour']['active_flg'] == 2)  {
+        $validate = false;
+      }
     }
     if ( $validate && $this->TAutoMessage->save(false) ) {
       $this->TAutoMessage->commit();
@@ -485,6 +505,7 @@ class TAutoMessagesController extends AppController {
     }
     else {
       $this->TAutoMessage->rollback();
+      $this->set('operatingHourData',$operatingHourData['MOperatingHour']['active_flg']);
       $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
     }
     $this->set('errors', $errors);

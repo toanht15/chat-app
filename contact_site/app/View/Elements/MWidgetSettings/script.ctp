@@ -659,6 +659,16 @@ sincloApp.controller('WidgetCtrl', function($scope){
             break;
         }
       }
+      if(id === 'header_background_color') {
+        var colorid = '#FFFFFF';
+        $scope.header_background_color = colorid;
+        //MWidgetSettingSeBackgroundColor
+        var rgb = $scope.checkRgbColor(colorid);
+        var rgbcode = 'rgb(' + rgb['r']  + ', ' +  rgb['g']  + ', ' +  rgb['b'] + ')';
+        var element = document.getElementById('MWidgetSettingHeaderBackgroundColor');
+        element.style.backgroundColor = rgbcode;
+        element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+      }
       jscolor.installByClassName("jscolor");
     }
 
@@ -1098,6 +1108,14 @@ sincloApp.controller('WidgetCtrl', function($scope){
           break;
       }
     });
+
+    //営業時間設定を利用しないに設定している場合
+    if(<?= $operatingHourData ?> == 2) {
+      $scope.settingShowTimeRadioButtonDisable($('#MWidgetSettingDisplayType4'));
+      $("#MWidgetSettingDisplayType4").parent().addClass("commontooltip");
+      $('#MWidgetSettingDisplayType4').parent().attr('data-text', '営業時間設定が「利用しない」を、<br>設定されています');
+      $('#MWidgetSettingDisplayType4').parent().attr('data-balloon-position', '14');
+    }
 
     angular.element(window).on('load',function(e){
       $('[name="data[MWidgetSetting][show_timing]"]:checked').trigger('change');
