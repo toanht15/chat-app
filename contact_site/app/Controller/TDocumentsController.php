@@ -18,7 +18,7 @@ class TDocumentsController extends AppController {
    * @return void
    * */
   public function index() {
-    if($this->userInfo['permission_level'] == 1) {
+    if($this->userInfo['permission_level'] == 1 || $this->userInfo['permission_level'] == 99) {
       $documentList = $this->TDocument->find('all', $this->_setParams());
       $labelList = $this->MDocumentTag->find('list', ['fields'=> ['id','name']]);
       $showDocumentList = [];
@@ -45,7 +45,7 @@ class TDocumentsController extends AppController {
    * */
   public function add() {
     $this->_radioConfiguration();
-    if($this->userInfo['permission_level'] == 1) {
+    if($this->userInfo['permission_level'] == 1 || $this->userInfo['permission_level'] == 99) {
       if($this->request->is('post')) {
         $this->request->data['TDocument']['settings'] = htmlspecialchars_decode( $this->request->data['TDocument']['settings']);
         $this->request->data['TDocument']['rotation'] = htmlspecialchars_decode( $this->request->data['TDocument']['rotation']);
@@ -70,7 +70,7 @@ class TDocumentsController extends AppController {
    * */
   public function edit($id) {
     $this->_radioConfiguration();
-    if($this->userInfo['permission_level'] == 1) {
+    if($this->userInfo['permission_level'] == 1 || $this->userInfo['permission_level'] == 99) {
       if($this->request->is('post') || $this->request->is('put')) {
         $this->request->data['TDocument']['settings'] = htmlspecialchars_decode( $this->request->data['TDocument']['settings']);
         $this->request->data['TDocument']['rotation'] = htmlspecialchars_decode( $this->request->data['TDocument']['rotation']);
