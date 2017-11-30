@@ -1328,11 +1328,41 @@
       if(chatTalk.clientHeight == 269 || chatTalk.clientHeight == 359 || chatTalk.clientHeight == 449) {
         document.getElementById("chatTalk").style.height = chatTalk.clientHeight - 75 + 'px';
       }
+      //スマホの場合
+      if ( check.smartphone() ) {
+        // 縦の場合
+        if ( $(window).height() > $(window).width() ) {
+          widgetWidth = $(window).width() - 20;
+          ratio = widgetWidth * (1/285);
+          document.getElementById("chatTalk").style.height = (194 * ratio) + 'px';
+        }
+        //横の場合
+        else {
+          var chatAreaHeight = window.innerHeight * (document.body.clientWidth / window.innerWidth);
+          var hRatio = chatAreaHeight * 0.07;
+          document.getElementById("chatTab").style.height = chatAreaHeight - (6.5 * hRatio) + 'px';
+        }
+      }
     },
     hideTextarea : function(){
       document.getElementById("flexBoxHeight").style.display = 'none';
       if(chatTalk.clientHeight == 194 || chatTalk.clientHeight == 284 || chatTalk.clientHeight == 374) {
         document.getElementById("chatTalk").style.height = chatTalk.clientHeight + 75 + 'px';
+      }
+      //スマホの場合
+      if ( check.smartphone() ) {
+        // 縦の場合
+        if ( $(window).height() > $(window).width() ) {
+          widgetWidth = $(window).width() - 20;
+          ratio = widgetWidth * (1/285);
+          document.getElementById("chatTalk").style.height = (194 * ratio) + 75 + 'px';
+        }
+        //横の場合
+        else {
+          var chatAreaHeight = window.innerHeight * (document.body.clientWidth / window.innerWidth);
+          var hRatio = chatAreaHeight * 0.07;
+          document.getElementById("chatTab").style.height = (chatAreaHeight - (6.5 * hRatio)) - 75 + 'px';
+        }
       }
     },
     syncApi: {
@@ -2470,7 +2500,7 @@
                 }
 
                 // ページ
-                if ( Number(cond.stayTimeCheckType) === 2 ) {
+                if ( Number(cond.stayTimeCheckType) === 1 ) {
                     callback(false, time);
                 }
                 // サイト
