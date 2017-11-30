@@ -73,6 +73,14 @@ class MWidgetSettingsController extends AppController {
           $this->set('widget_inside_border_color_flg', true);
         }
         $this->set('alertMessage', ['type' => C_MESSAGE_TYPE_ERROR, 'text' => Configure::read('message.const.saveFailed')]);
+        //営業時間設定確認
+        $operatingHourData = $this->MOperatingHour->find('first', ['conditions' => [
+          'm_companies_id' => $this->userInfo['MCompany']['id']
+        ]]);
+        if(empty($operatingHourData)) {
+          $operatingHourData['MOperatingHour']['active_flg'] = 2;
+        }
+        $this->set('operatingHourData',$operatingHourData['MOperatingHour']['active_flg']);
       }
     }
     else {
@@ -382,7 +390,6 @@ class MWidgetSettingsController extends AppController {
             unlink($file);
           }
         }
-
       }
     }
     else {
