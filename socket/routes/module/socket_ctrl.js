@@ -696,7 +696,6 @@ io.sockets.on('connection', function (socket) {
       // チャットidがある
       else {
         // DBへ書き込む
-        console.log("SET : " + JSON.stringify(d));
         this.commit(d);
       }
     },
@@ -730,7 +729,6 @@ io.sockets.on('connection', function (socket) {
                 for(var key in autoMessageArray) {
                   autoMessages.push(autoMessageArray[key]);
                 }
-                console.log("automessages : " + JSON.stringify(autoMessages));
               }
               for (var i = 0; i < autoMessages.length; i++) {
                 var date = autoMessages[i].created;
@@ -740,7 +738,6 @@ io.sockets.on('connection', function (socket) {
                 }
                 setList[fullDateTime(autoMessages[i].created) + '_'] = autoMessages[i];
               }
-              console.log("merged : " + JSON.stringify(setList));
               chatData.messages = objectSort(setList);
               obj.chat = chatData;
               emit.toMine('chatMessageData', obj, socket);
@@ -783,8 +780,6 @@ io.sockets.on('connection', function (socket) {
             insertData.message_read_flg = 1;
             insertData.message_distinction = d.messageDistinction;
           }
-
-          console.log("INSERT DATA message : " + insertData.message + " created : " + insertData.created);
 
           pool.query('INSERT INTO t_history_chat_logs SET ?', insertData, function(error,results,fields){
             if ( !isset(error) ) {
@@ -1034,8 +1029,6 @@ io.sockets.on('connection', function (socket) {
         pool.query(getOperatingHourSQL, [companyId] , function(err,result){
           var getPublicHolidaySQL = "SELECT * FROM public_holidays where year = ?;";
           pool.query(getPublicHolidaySQL, now.getFullYear() , function(err, results){
-            console.log('sorryメッセージたち');
-            console.log(rows[0].sorry_message);
             if(result != "") {
               for(var i=0; i<result.length; i++){
                 dayType = JSON.parse(result[i].type);
@@ -1468,11 +1461,8 @@ io.sockets.on('connection', function (socket) {
         if(currentSincloSessionId) {
           var oldSessionId = sincloCore[res.siteKey][res.tabId].sessionId;
           var sessionIds = sincloCore[res.siteKey][currentSincloSessionId].sessionIds;
-          console.log("delete id : " + oldSessionId + "from : " + currentSincloSessionId);
           delete sessionIds[oldSessionId];
-          console.log("remains : " + Object.keys(sessionIds).length);
           if(currentSincloSessionId !== res.sincloSessionId && Object.keys(sessionIds).length === 0) {
-            console.log("DELETE currentSincloSessionId : " + currentSincloSessionId);
             delete sincloCore[res.siteKey][currentSincloSessionId];
           }
         }
@@ -1487,7 +1477,6 @@ io.sockets.on('connection', function (socket) {
         || sincloCore[res.siteKey][res.sincloSessionId].sessionIds === undefined
         || sincloCore[res.siteKey][res.sincloSessionId].sessionIds.length === 0) {
         send.sincloSessionId = uuid.v4();
-        console.log("new sinclosession : " + send.sincloSessionId);
         send.sincloSessionIdIsNew = true;
       } else {
         send.sincloSessionIdIsNew = false;
@@ -2521,7 +2510,6 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             var message = obj.messageList[i];
             pool.query("SELECT *, ? as inputed, ? as auto_message_type FROM t_auto_messages WHERE id = ?  AND m_companies_id = ? AND del_flg = 0 AND active_flg = 0 AND action_type = 1", [message.created, message.isAutoSpeech ? chatApi.cnst.observeType.autoSpeech : chatApi.cnst.observeType.auto, message.chatId, companyList[obj.siteKey]], loop);
             if(message.chatId in sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages) {
-              console.log("applied chatid: " + message.chatId);
               sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages[message.chatId]['applied'] = true;
             }
         }
@@ -3208,10 +3196,8 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
           if(sincloSessionId) {
             var sessionIds = sincloCore[info.siteKey][sincloSessionId].sessionIds;
             if(sessionIds && Object.keys(sessionIds).length > 0) {
-              console.log("DELETE sessionId : " + socket.id);
               delete sessionIds[socket.id];
               if(Object.keys(sessionIds).length === 0) {
-                console.log("DELETE sincloSessionId : " + sincloSessionId);
                 delete sincloCore[info.siteKey][sincloSessionId];
               }
             }
