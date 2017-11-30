@@ -18,7 +18,7 @@ class TDocumentsController extends AppController {
    * @return void
    * */
   public function index() {
-    if($this->userInfo['permission_level'] == 1) {
+    if($this->userInfo['permission_level'] == 1 || $this->userInfo['permission_level'] == 99) {
       $documentList = $this->TDocument->find('all', $this->_setParams());
       $labelList = $this->MDocumentTag->find('list', ['fields'=> ['id','name']]);
       $showDocumentList = [];
