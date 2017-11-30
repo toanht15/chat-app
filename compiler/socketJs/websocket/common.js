@@ -1454,8 +1454,8 @@ var socket, // socket.io
     },
     judgeShowWidget: function(){
       window.sincloInfo.widgetDisplay = null; // デフォルト表示しない
-      // チャット契約、画面同期中であれば表示
-      if ( window.sincloInfo.contract.chat ) {
+      // チャット契約、画面同期契約、画面同期中であれば表示
+      if ( window.sincloInfo.contract.chat || window.sincloInfo.contract.synclo) {
         window.sincloInfo.widgetDisplay = true;
       }
       // ウィジェットを常に表示する
@@ -3568,7 +3568,6 @@ function f_url(url){
 }
 
 function emit(evName, data){
-  console.log("EMIT : " + evName);
   /* ここから：イベント名指定なし */
   data.siteKey = sincloInfo.site.key; // サイトの識別キー
   if ( check.isset(userInfo.sendTabId) ) {
@@ -3644,6 +3643,7 @@ function emit(evName, data){
       clearInterval(timer);
       data.tabId = userInfo.tabId; // タブの識別ID
       data.sincloSessionId = userInfo.sincloSessionId;
+      console.log("EMIT : " + evName + "data : " + JSON.stringify(data));
       socket.emit(evName, JSON.stringify(data));
     }
   }, 100);
