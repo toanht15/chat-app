@@ -1769,8 +1769,8 @@ io.sockets.on('connection', function (socket) {
           var response = JSON.parse(data);
           obj.orgName = response.data.orgName;
           obj.lbcCode = response.data.lbcCode;
-          sincloCore[obj.siteKey][obj.tabId].orgName = response.obj.orgName;
-          sincloCore[obj.siteKey][obj.tabId].lbcCode = response.obj.lbcCode;
+          sincloCore[obj.siteKey][obj.tabId].orgName = obj.orgName;
+          sincloCore[obj.siteKey][obj.tabId].lbcCode = obj.lbcCode;
         }
         emit.toCompany('syncNewInfo', obj, obj.siteKey);
       });
