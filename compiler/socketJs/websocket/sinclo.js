@@ -1324,13 +1324,6 @@
       }, 500);
     },
     displayTextarea : function(){
-      console.log('ウィジェット高さ');
-      console.log(chatTalk.clientHeight);
-      widgetWidth = $(window).width() - 20;
-      ratio = widgetWidth * (1/285);
-      console.log(194 * ratio);
-      console.log('横幅');
-      console.log($(window).width() - 20);
       document.getElementById("flexBoxHeight").style.display = '';
       if(chatTalk.clientHeight == 269 || chatTalk.clientHeight == 359 || chatTalk.clientHeight == 449) {
         document.getElementById("chatTalk").style.height = chatTalk.clientHeight - 75 + 'px';
