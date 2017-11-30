@@ -604,9 +604,6 @@ var db = {
       pool.query('SELECT * FROM t_histories WHERE m_companies_id = ? AND tab_id = ? AND visitors_id = ? ORDER BY id DESC LIMIT 1;', [siteId, obj.sincloSessionId, obj.userId], function(err, rows){
         if ( err !== null && err !== '' ) return false; // DB接続断対応
         var now = formatDateParse();
-        if ( !(obj.sincloSessionId in sincloCore[obj.siteKey]) ) {
-          sincloCore[obj.siteKey][obj.sincloSessionId] = {};
-        }
 
         if ( isset(rows) && isset(rows[0]) ) {
           sincloCore[obj.siteKey][obj.sincloSessionId].historyId = rows[0].id;
@@ -1466,6 +1463,20 @@ io.sockets.on('connection', function (socket) {
         console.log("tabId is duplicate. change firstConnection flg " + res.tabId);
         data.firstConnection = true;
       }
+      if (res.tabId && (isset(sincloCore[res.siteKey]) && isset(sincloCore[res.siteKey][res.tabId]) && 'timeoutTimer' in sincloCore[res.siteKey][res.tabId]) ) {
+        var currentSincloSessionId = sincloCore[res.siteKey][res.tabId].sincloSessionId;
+        if(currentSincloSessionId) {
+          var oldSessionId = sincloCore[res.siteKey][res.tabId].sessionId;
+          var sessionIds = sincloCore[res.siteKey][currentSincloSessionId].sessionIds;
+          console.log("delete id : " + oldSessionId + "from : " + currentSincloSessionId);
+          delete sessionIds[oldSessionId];
+          console.log("remains : " + Object.keys(sessionIds).length);
+          if(currentSincloSessionId !== res.sincloSessionId && Object.keys(sessionIds).length === 0) {
+            console.log("DELETE currentSincloSessionId : " + currentSincloSessionId);
+            delete sincloCore[res.siteKey][currentSincloSessionId];
+          }
+        }
+      }
 
       if ( data.userId === undefined || data.userId === '' || data.userId === null ) {
         send.userId = makeUserId();
@@ -1713,7 +1724,9 @@ io.sockets.on('connection', function (socket) {
       clearTimeout(sincloCore[obj.siteKey][obj.tabId].timeoutTimer);
       var oldSessionId = sincloCore[obj.siteKey][obj.tabId].sessionId;
       var sessionIds = sincloCore[obj.siteKey][obj.sincloSessionId].sessionIds;
+      console.log("delete id : " + oldSessionId);
       delete sessionIds[oldSessionId];
+      console.log("remains : " + Object.keys(sessionIds).length);
       sincloCore[obj.siteKey][obj.tabId].timeoutTimer = null;
     }
 

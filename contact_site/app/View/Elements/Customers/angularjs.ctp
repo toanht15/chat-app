@@ -925,7 +925,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
         if ( chatApi.tabId !== tabId ) {
           window.setTimeout(function(){
-            $scope.showDetail(tabId);
+            $scope.showDetail(tabId, sincloSessionId);
           }, 300);
         }
         chatApi.tabId = "";
@@ -1422,7 +1422,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         nInstance.onclick = function(){
           window.focus(); // 現在のタブにフォーカスを当てる
           if ( chatApi.tabId !== monitor.tabId ) {
-            $scope.showDetail(monitor.tabId); // 詳細を開く
+            $scope.showDetail(monitor.tabId, monitor.sincloSessionId); // 詳細を開く
           }
           else {
             scDown();
@@ -1443,7 +1443,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     $scope.$watch('monitorList', function(){
       if ( angular.isDefined($scope.detailId) && !($scope.detailId in $scope.monitorList) ) {
-        $scope.showDetail($scope.detailId);
+        $scope.showDetail($scope.detailId, $scope.sincloSessionId);
       }
     });
 
@@ -1636,8 +1636,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             $scope.monitorList[tabId].widget = obj.widget;
             if (chatApi.tabId === tabId) {
               chatApi.observeType.emit(chatApi.tabId, chatApi.sincloSessionId, chatApi.observeType.status);
-
             }
+          }
+          if ('sincloSessionId' in obj) {
+            $scope.monitorList[tabId].sincloSessionId = obj.sincloSessionId;
           }
           if ('connectToken' in obj) {
             $scope.monitorList[tabId].connectToken = obj.connectToken;

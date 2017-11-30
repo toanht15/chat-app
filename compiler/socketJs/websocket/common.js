@@ -3568,7 +3568,6 @@ function f_url(url){
 }
 
 function emit(evName, data){
-  console.log("EMIT : " + evName);
   /* ここから：イベント名指定なし */
   data.siteKey = sincloInfo.site.key; // サイトの識別キー
   if ( check.isset(userInfo.sendTabId) ) {
@@ -3644,6 +3643,7 @@ function emit(evName, data){
       clearInterval(timer);
       data.tabId = userInfo.tabId; // タブの識別ID
       data.sincloSessionId = userInfo.sincloSessionId;
+      console.log("EMIT : " + evName + "data : " + JSON.stringify(data));
       socket.emit(evName, JSON.stringify(data));
     }
   }, 100);
