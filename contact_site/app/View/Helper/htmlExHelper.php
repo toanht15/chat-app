@@ -77,6 +77,10 @@ class htmlExHelper extends AppHelper {
                 $ret = preg_replace_callback('/http(s)?:\/\/[!-~.a-z]*/', [$this, 'addLink'], $tmp);
                 $str = preg_replace('/http(s)?:\/\/[!-~.a-z]*/', $ret, $tmp);
             }
+            if ( preg_match('/<telno>([\s\S]*?)<\/telno>/', $tmp)) {
+                $ret = "<span style='font-weight: normal;'>". preg_replace('/^<telno>|<\/telno>$/', "", $tmp) . "</span>";
+                $str = preg_replace('/<telno>([\s\S]*?)<\/telno>/', $ret, $tmp);
+            }
             $content .= $str."\n";
         }
         return $content;
