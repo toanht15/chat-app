@@ -1328,11 +1328,27 @@
       if(chatTalk.clientHeight == 269 || chatTalk.clientHeight == 359 || chatTalk.clientHeight == 449) {
         document.getElementById("chatTalk").style.height = chatTalk.clientHeight - 75 + 'px';
       }
+      //スマホの場合
+      if ( check.smartphone() ) {
+        widgetWidth = $(window).width() - 20;
+        ratio = widgetWidth * (1/285);
+        if(chatTalk.clientHeight == (194 * ratio) + 75) {
+          document.getElementById("chatTalk").style.height = chatTalk.clientHeight - 75 + 'px';
+        }
+      }
     },
     hideTextarea : function(){
       document.getElementById("flexBoxHeight").style.display = 'none';
       if(chatTalk.clientHeight == 194 || chatTalk.clientHeight == 284 || chatTalk.clientHeight == 374) {
         document.getElementById("chatTalk").style.height = chatTalk.clientHeight + 75 + 'px';
+      }
+      //スマホの場合
+      if ( check.smartphone() ) {
+        widgetWidth = $(window).width() - 20;
+        ratio = widgetWidth * (1/285);
+        if(chatTalk.clientHeight == 194 * ratio) {
+          document.getElementById("chatTalk").style.height = chatTalk.clientHeight + 75 + 'px';
+        }
       }
     },
     syncApi: {
@@ -2470,7 +2486,7 @@
                 }
 
                 // ページ
-                if ( Number(cond.stayTimeCheckType) === 2 ) {
+                if ( Number(cond.stayTimeCheckType) === 1 ) {
                     callback(false, time);
                 }
                 // サイト
