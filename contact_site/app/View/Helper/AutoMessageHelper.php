@@ -13,8 +13,8 @@ class autoMessageHelper extends AppHelper {
 		'stayTimeCheckType' => [
 			'label' => '種類',
 			'dataList' => [
-				1 => "サイト",
-				2 => "ページ"
+				2 => "サイト",
+				1 => "ページ"
 			]
 		],
 		'stayTimeType' => [
