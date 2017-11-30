@@ -1366,7 +1366,7 @@
         if ( $(window).height() > $(window).width() ) {
           widgetWidth = $(window).width() - 20;
           ratio = widgetWidth * (1/285);
-          document.getElementById("chatTalk").style.height = (194 * ratio) + 75 + 'px';
+          document.getElementById("chatTalk").style.height = (194 * ratio) + (60*ratio) + 'px';
         }
         //横の場合
         else {
