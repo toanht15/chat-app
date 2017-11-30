@@ -604,9 +604,6 @@ var db = {
       pool.query('SELECT * FROM t_histories WHERE m_companies_id = ? AND tab_id = ? AND visitors_id = ? ORDER BY id DESC LIMIT 1;', [siteId, obj.sincloSessionId, obj.userId], function(err, rows){
         if ( err !== null && err !== '' ) return false; // DB接続断対応
         var now = formatDateParse();
-        if ( !(obj.sincloSessionId in sincloCore[obj.siteKey]) ) {
-          sincloCore[obj.siteKey][obj.sincloSessionId] = {};
-        }
 
         if ( isset(rows) && isset(rows[0]) ) {
           sincloCore[obj.siteKey][obj.sincloSessionId].historyId = rows[0].id;
@@ -1039,28 +1036,30 @@ io.sockets.on('connection', function (socket) {
           pool.query(getPublicHolidaySQL, now.getFullYear() , function(err, results){
             console.log('sorryメッセージたち');
             console.log(rows[0].sorry_message);
-            for(var i=0; i<result.length; i++){
-              dayType = JSON.parse(result[i].type);
-              //営業時間設定の条件が「毎日」の場合
-              if(dayType == 1) {
-                var day = { 0:'sun', 1:'mon', 2:'tue', 3:'wed', 4:'thu', 5:'fri', 6:'sat'};
-                day = day[nowDay];
-                timeData = JSON.parse(result[i].time_settings).everyday[day];
-                publicHolidayData = JSON.parse(result[i].time_settings).everyday['pub'];
-              }
-              //営業時間設定の条件が「平日・週末」の場合
-              else {
-                var day = { 0:'sun', 1:'mon', 2:'tue', 3:'wed', 4:'thu', 5:'fri', 6:'sat'};
-                if(nowDay == 1 || nowDay == 2 || nowDay == 3 || nowDay == 4 || nowDay == 5) {
-                  var day = 'week';
+            if(result != "") {
+              for(var i=0; i<result.length; i++){
+                dayType = JSON.parse(result[i].type);
+                //営業時間設定の条件が「毎日」の場合
+                if(dayType == 1) {
+                  var day = { 0:'sun', 1:'mon', 2:'tue', 3:'wed', 4:'thu', 5:'fri', 6:'sat'};
+                  day = day[nowDay];
+                  timeData = JSON.parse(result[i].time_settings).everyday[day];
+                  publicHolidayData = JSON.parse(result[i].time_settings).everyday['pub'];
                 }
+                //営業時間設定の条件が「平日・週末」の場合
                 else {
-                  var day = 'weekend';
+                  var day = { 0:'sun', 1:'mon', 2:'tue', 3:'wed', 4:'thu', 5:'fri', 6:'sat'};
+                  if(nowDay == 1 || nowDay == 2 || nowDay == 3 || nowDay == 4 || nowDay == 5) {
+                    var day = 'week';
+                  }
+                  else {
+                    var day = 'weekend';
+                  }
+                  timeData = JSON.parse(result[i].time_settings).weekly[day];
+                  publicHolidayData = JSON.parse(result[i].time_settings).weekly['weekpub'];
                 }
-                timeData = JSON.parse(result[i].time_settings).weekly[day];
-                publicHolidayData = JSON.parse(result[i].time_settings).weekly['weekpub'];
+                active_flg = JSON.parse(result[i].active_flg);
               }
-              active_flg = JSON.parse(result[i].active_flg);
             }
             if( rows && rows[0] ) {
 
@@ -1326,7 +1325,7 @@ io.sockets.on('connection', function (socket) {
                             if ( scList.hasOwnProperty(d.siteKey) ) {
                               var userIds = Object.keys(scList[d.siteKey].user);
                               if ( userIds.length !== 0 ) {
-                                for (var i = 0; i < userIds.length; i++) {
+                                for (var i3 = 0; i3 < userIds.length; i3++) {
                                   if ( Number(scList[d.siteKey].user[userIds[i]]) === Number(scList[d.siteKey].cnt[userIds[i]]) ) continue;
                                   ret = true;
                                   break;
@@ -1381,7 +1380,7 @@ io.sockets.on('connection', function (socket) {
                           if ( scList.hasOwnProperty(d.siteKey) ) {
                             var userIds = Object.keys(scList[d.siteKey].user);
                             if ( userIds.length !== 0 ) {
-                              for (var i = 0; i < userIds.length; i++) {
+                              for (var i2 = 0; i2 < userIds.length; i2++) {
                                 if ( Number(scList[d.siteKey].user[userIds[i]]) === Number(scList[d.siteKey].cnt[userIds[i]]) ) continue;
                                 ret = true;
                                 break;
@@ -1463,6 +1462,20 @@ io.sockets.on('connection', function (socket) {
         // 別タブを開いたときに情報がコピーされてしまっている状態
         console.log("tabId is duplicate. change firstConnection flg " + res.tabId);
         data.firstConnection = true;
+      }
+      if (res.tabId && (isset(sincloCore[res.siteKey]) && isset(sincloCore[res.siteKey][res.tabId]) && 'timeoutTimer' in sincloCore[res.siteKey][res.tabId]) ) {
+        var currentSincloSessionId = sincloCore[res.siteKey][res.tabId].sincloSessionId;
+        if(currentSincloSessionId) {
+          var oldSessionId = sincloCore[res.siteKey][res.tabId].sessionId;
+          var sessionIds = sincloCore[res.siteKey][currentSincloSessionId].sessionIds;
+          console.log("delete id : " + oldSessionId + "from : " + currentSincloSessionId);
+          delete sessionIds[oldSessionId];
+          console.log("remains : " + Object.keys(sessionIds).length);
+          if(currentSincloSessionId !== res.sincloSessionId && Object.keys(sessionIds).length === 0) {
+            console.log("DELETE currentSincloSessionId : " + currentSincloSessionId);
+            delete sincloCore[res.siteKey][currentSincloSessionId];
+          }
+        }
       }
 
       if ( data.userId === undefined || data.userId === '' || data.userId === null ) {
@@ -1711,7 +1724,9 @@ io.sockets.on('connection', function (socket) {
       clearTimeout(sincloCore[obj.siteKey][obj.tabId].timeoutTimer);
       var oldSessionId = sincloCore[obj.siteKey][obj.tabId].sessionId;
       var sessionIds = sincloCore[obj.siteKey][obj.sincloSessionId].sessionIds;
+      console.log("delete id : " + oldSessionId);
       delete sessionIds[oldSessionId];
+      console.log("remains : " + Object.keys(sessionIds).length);
       sincloCore[obj.siteKey][obj.tabId].timeoutTimer = null;
     }
 
