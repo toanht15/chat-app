@@ -404,10 +404,9 @@ function getIp(socket){
 }
 
 // Landscapeの企業情報取得
+//requestをrequire
+var http = require('http');
 function getCompanyInfoFromApi(ip, callback) {
-  //requestをrequire
-  var http = require('http');
-
   //ヘッダーを定義
   var headers = {
     'Content-Type':'application/json'
@@ -431,10 +430,7 @@ function getCompanyInfoFromApi(ip, callback) {
   var req = http.request(options, function (response) {
     if(response.statusCode === 200) {
       response.setEncoding('utf8');
-      response.on('data', function(body) {
-        var response = JSON.parse(body);
-        callback(response.data);
-      });
+      response.on('data', callback);
     } else {
       console.log('企業詳細情報取得時にエラーが返却されました。 errorCode : ' + response.statusCode);
       callback(false);
@@ -1770,10 +1766,11 @@ io.sockets.on('connection', function (socket) {
       //FIXME 企業別機能設定（企業情報連携）
       getCompanyInfoFromApi(obj.ipAddress, function(data){
         if(data) {
-          obj.orgName = data.orgName;
-          obj.lbcCode = data.lbcCode;
-          sincloCore[obj.siteKey][obj.tabId].orgName = obj.orgName;
-          sincloCore[obj.siteKey][obj.tabId].lbcCode = obj.lbcCode;
+          var response = JSON.parse(data);
+          obj.orgName = response.data.orgName;
+          obj.lbcCode = response.data.lbcCode;
+          sincloCore[obj.siteKey][obj.tabId].orgName = response.obj.orgName;
+          sincloCore[obj.siteKey][obj.tabId].lbcCode = response.obj.lbcCode;
         }
         emit.toCompany('syncNewInfo', obj, obj.siteKey);
       });
