@@ -2470,7 +2470,7 @@
                 }
 
                 // ページ
-                if ( Number(cond.stayTimeCheckType) === 2 ) {
+                if ( Number(cond.stayTimeCheckType) === 1 ) {
                     callback(false, time);
                 }
                 // サイト
