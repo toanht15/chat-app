@@ -137,8 +137,9 @@
         <label class="pointer"><?= $this->ngForm->input('main.chat_textarea', [
           'type' => 'radio',
           'options' => $outMessageTextarea,
-          'separator' => '</label><label class="pointer">',
-          'error' => false
+          'separator' => '</label><br><label style="display:inline-block;"'.($coreSettings[C_COMPANY_USE_FREE_INPUT] ? '' : '"color: #CCCCCC;" class="commontooltip" data-text="こちらの機能はスタンダードプラン<br>からご利用いただけます。" data-balloon-position="20.5"').'>',
+          'error' => false,
+          'disabled' => !$coreSettings[C_COMPANY_USE_FREE_INPUT],
         ], [
           'entity' => 'chat_textarea',
           'default' => (!empty($this->data['TAutoMessage']['chat_textarea'])) ? $this->data['TAutoMessage']['chat_textarea'] : C_AUTO_WIDGET_TEXTAREA_OPEN,
@@ -149,11 +150,16 @@
       <!-- cv -->
       <li class="bt0">
         <span class="require"><label>成果にCVとして登録する</label></span>
-        <label class="pointer"><?= $this->ngForm->input('main.cv', [
+        <label style="cursor:pointer;" <?php echo ($coreSettings[C_COMPANY_USE_CV]) ? '' : 'class=commontooltip';?>
+        <?php echo ($coreSettings[C_COMPANY_USE_CV]) ? '' : 'data-text=こちらの機能はスタンダードプランからご利用いただけます。';?>
+        <?php echo ($coreSettings[C_COMPANY_USE_CV]) ? '' : 'data-balloon-position=40.5';?>
+        <?php echo ($coreSettings[C_COMPANY_USE_CV]) ? '' : 'operatingHours=widgetHoursPage';?>>
+        <?= $this->ngForm->input('main.cv', [
           'type' => 'radio',
           'options' => $outMessageCvType,
           'separator' => '</label><label class="pointer">',
-          'error' => false
+          'error' => false,
+          'disabled' => !$coreSettings[C_COMPANY_USE_CV],
         ], [
           'entity' => 'cv',
           'default' => (!empty($this->data['TAutoMessage']['cv'])) ? $this->data['TAutoMessage']['cv'] : C_AUTO_CV_DISABLED,

@@ -1029,28 +1029,30 @@ io.sockets.on('connection', function (socket) {
         pool.query(getOperatingHourSQL, [companyId] , function(err,result){
           var getPublicHolidaySQL = "SELECT * FROM public_holidays where year = ?;";
           pool.query(getPublicHolidaySQL, now.getFullYear() , function(err, results){
-            for(var i=0; i<result.length; i++){
-              dayType = JSON.parse(result[i].type);
-              //営業時間設定の条件が「毎日」の場合
-              if(dayType == 1) {
-                var day = { 0:'sun', 1:'mon', 2:'tue', 3:'wed', 4:'thu', 5:'fri', 6:'sat'};
-                day = day[nowDay];
-                timeData = JSON.parse(result[i].time_settings).everyday[day];
-                publicHolidayData = JSON.parse(result[i].time_settings).everyday['pub'];
-              }
-              //営業時間設定の条件が「平日・週末」の場合
-              else {
-                var day = { 0:'sun', 1:'mon', 2:'tue', 3:'wed', 4:'thu', 5:'fri', 6:'sat'};
-                if(nowDay == 1 || nowDay == 2 || nowDay == 3 || nowDay == 4 || nowDay == 5) {
-                  var day = 'week';
+            if(result != "") {
+              for(var i=0; i<result.length; i++){
+                dayType = JSON.parse(result[i].type);
+                //営業時間設定の条件が「毎日」の場合
+                if(dayType == 1) {
+                  var day = { 0:'sun', 1:'mon', 2:'tue', 3:'wed', 4:'thu', 5:'fri', 6:'sat'};
+                  day = day[nowDay];
+                  timeData = JSON.parse(result[i].time_settings).everyday[day];
+                  publicHolidayData = JSON.parse(result[i].time_settings).everyday['pub'];
                 }
+                //営業時間設定の条件が「平日・週末」の場合
                 else {
-                  var day = 'weekend';
+                  var day = { 0:'sun', 1:'mon', 2:'tue', 3:'wed', 4:'thu', 5:'fri', 6:'sat'};
+                  if(nowDay == 1 || nowDay == 2 || nowDay == 3 || nowDay == 4 || nowDay == 5) {
+                    var day = 'week';
+                  }
+                  else {
+                    var day = 'weekend';
+                  }
+                  timeData = JSON.parse(result[i].time_settings).weekly[day];
+                  publicHolidayData = JSON.parse(result[i].time_settings).weekly['weekpub'];
                 }
-                timeData = JSON.parse(result[i].time_settings).weekly[day];
-                publicHolidayData = JSON.parse(result[i].time_settings).weekly['weekpub'];
+                active_flg = JSON.parse(result[i].active_flg);
               }
-              active_flg = JSON.parse(result[i].active_flg);
             }
             if( rows && rows[0] ) {
 
@@ -1316,7 +1318,7 @@ io.sockets.on('connection', function (socket) {
                             if ( scList.hasOwnProperty(d.siteKey) ) {
                               var userIds = Object.keys(scList[d.siteKey].user);
                               if ( userIds.length !== 0 ) {
-                                for (var i = 0; i < userIds.length; i++) {
+                                for (var i3 = 0; i3 < userIds.length; i3++) {
                                   if ( Number(scList[d.siteKey].user[userIds[i]]) === Number(scList[d.siteKey].cnt[userIds[i]]) ) continue;
                                   ret = true;
                                   break;
@@ -1371,7 +1373,7 @@ io.sockets.on('connection', function (socket) {
                           if ( scList.hasOwnProperty(d.siteKey) ) {
                             var userIds = Object.keys(scList[d.siteKey].user);
                             if ( userIds.length !== 0 ) {
-                              for (var i = 0; i < userIds.length; i++) {
+                              for (var i2 = 0; i2 < userIds.length; i2++) {
                                 if ( Number(scList[d.siteKey].user[userIds[i]]) === Number(scList[d.siteKey].cnt[userIds[i]]) ) continue;
                                 ret = true;
                                 break;
@@ -2486,7 +2488,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                   messageType: rows[0].auto_message_type,
                   created: rows[0].inputed ? rows[0].inputed : new Date(),
                   messageDistinction: messageDistinction,
-                  achievementFlg: 3
+                  achievementFlg: 0
                 };
               }
               else {

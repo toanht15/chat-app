@@ -293,6 +293,14 @@ function submitAct(){
   $('#TAutoMessageEntryForm').submit();
 }
 
+//スクロール位置把握
+var topPosition = 0;
+window.onload = function() {
+  document.querySelector('#content').onscroll = function() {
+    topPosition = this.scrollTop;
+  };
+};
+
 $(document).ready(function(){
   // ツールチップの表示制御
   $('.questionBtn').off("mouseenter").on('mouseenter',function(event){
@@ -302,7 +310,7 @@ $(document).ready(function(){
     console.log(targetObj);
     targetObj.find('icon-annotation').css('display','block');
     targetObj.css({
-      top: ($(this).offset().top - targetObj.find('ul').outerHeight() + 39) + 'px',
+      top: ($(this).offset().top - targetObj.find('ul').outerHeight() - 170 + topPosition) + 'px',
       left: $(this).offset().left - 101 + 'px'
     });
   });
