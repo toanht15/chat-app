@@ -836,6 +836,7 @@
                 $('input[type="checkbox"]').eq(n).prop("checked", obj.checkboxInfo[n]);
               }
               for ( i in obj.radioInfo ) {
+                console.log('ここここここここっこっこ');
                 n = Number(i);
                 $('input[type="radio"]').eq(n).prop("checked", obj.radioInfo[n]);
               }
@@ -1576,11 +1577,18 @@
                   sinclo.chatApi.send(e.target.value.trim());
                 }
                 else {
-                  var message = document.getElementById('sincloChatMessage');
-                  if ( check.isset(message.value) ) {
-                    message.value += "\n";
+                  var textareaOpend = storage.s.get('textareaOpend');
+                  //チャットのテキストエリアが閉まっているときは即時送信
+                  if( textareaOpend == 'close') {
+                    sinclo.chatApi.send(e.target.value.trim());
                   }
-                  message.value += e.target.value.trim();
+                  else {
+                    var message = document.getElementById('sincloChatMessage');
+                    if ( check.isset(message.value) ) {
+                      message.value += "\n";
+                    }
+                    message.value += e.target.value.trim();
+                  }
                 }
               });
 
