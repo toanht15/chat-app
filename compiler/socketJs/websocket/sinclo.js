@@ -1701,7 +1701,7 @@
             chatList.appendChild(div);
             var strings = val.split('\n');
             var radioCnt = 1;
-            var linkReg = RegExp(/http(s)?:\/\/[!-~.a-z]*/);
+            var linkReg = RegExp(/(http(s)?:\/\/[\w\-\.\/\?\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/);
             var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
             var radioName = "sinclo-radio" + chatList.children.length;
             var content = "";
