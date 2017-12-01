@@ -2163,7 +2163,7 @@ var socket, // socket.io
         return cookieValue;
       },
       set: function(name, val){
-        document.cookie = this.prefix + name + '=' + encodeURIComponent(val);
+        document.cookie = this.prefix + name + '=' + encodeURIComponent(val) + '; path=/';
       },
       unset: function(name){
         localStorage.removeItem(name);

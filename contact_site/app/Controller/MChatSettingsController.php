@@ -28,6 +28,9 @@ class MChatSettingsController extends AppController {
         $operatingHourData = $this->MOperatingHour->find('first', ['conditions' => [
           'm_companies_id' => $this->userInfo['MCompany']['id']
         ]]);
+        if(empty($operatingHourData)) {
+          $operatingHourData['MOperatingHour']['active_flg'] = 2;
+        }
         $this->set('operatingHourData',$operatingHourData['MOperatingHour']['active_flg']);
       }
     }
@@ -42,7 +45,7 @@ class MChatSettingsController extends AppController {
         'm_companies_id' => $this->userInfo['MCompany']['id']
       ]]);
       if(empty($operatingHourData)) {
-        $operatingHourData['MOperatingHour']['active_flg'] = 3;
+        $operatingHourData['MOperatingHour']['active_flg'] = 2;
       }
       $this->set('operatingHourData',$operatingHourData['MOperatingHour']['active_flg']);
 

@@ -21,7 +21,10 @@ var errlogger = log4js.getLogger('error'); // エラー用のロガー取得
 var deblogger = log4js.getLogger('debug'); // デバッグ用のロガー取得
 
 //サーバインスタンス作成
-var io = require('socket.io')(process.env.WS_PORT),
+var io = require('socket.io')(process.env.WS_PORT,{
+    pingInterval: 5000,
+    pingTimeout: 10000
+    }),
     activeOperator = {}, // 待機中オペレーター
     sincloCore = {}, // socketIDの管理
     connectList = {}, // socketIDをキーとした管理
@@ -401,10 +404,9 @@ function getIp(socket){
 }
 
 // Landscapeの企業情報取得
+//requestをrequire
+var http = require('http');
 function getCompanyInfoFromApi(ip, callback) {
-  //requestをrequire
-  var http = require('http');
-
   //ヘッダーを定義
   var headers = {
     'Content-Type':'application/json'
@@ -428,10 +430,7 @@ function getCompanyInfoFromApi(ip, callback) {
   var req = http.request(options, function (response) {
     if(response.statusCode === 200) {
       response.setEncoding('utf8');
-      response.on('data', function(body) {
-        var response = JSON.parse(body);
-        callback(response.data);
-      });
+      response.on('data', callback);
     } else {
       console.log('企業詳細情報取得時にエラーが返却されました。 errorCode : ' + response.statusCode);
       callback(false);
@@ -999,12 +998,14 @@ io.sockets.on('connection', function (socket) {
       if ( !sincloCore.hasOwnProperty(obj.siteKey) ) return scNum;
       var tabIds = Object.keys(sincloCore[obj.siteKey]);
       for (var i = 0; i < tabIds.length; i++) {
-        var tabData = sincloCore[obj.siteKey][tabIds[i]];
-        if ( tabData.hasOwnProperty("chat") && isNumber(tabData.chat) ) {
-          // 同一のsincloSessionIdを保有するユーザーは同時応対数１とする
-          if ( Number(tabData.chat) === Number(userId) && sincloSessionIds.indexOf(tabData.sincloSessionId) === -1) {
-            scNum++;
-            sincloSessionIds.push(tabData.sincloSessionId);
+        if(tabIds[i] && tabIds[i].indexOf("_") >= 0) {
+          var tabData = sincloCore[obj.siteKey][tabIds[i]];
+          if (tabData.hasOwnProperty("chat") && isNumber(tabData.chat)) {
+            // 同一のsincloSessionIdを保有するユーザーは同時応対数１とする
+            if (Number(tabData.chat) === Number(userId) && sincloSessionIds.indexOf(tabData.sincloSessionId) === -1) {
+              scNum++;
+              sincloSessionIds.push(tabData.sincloSessionId);
+            }
           }
         }
       }
@@ -1476,8 +1477,7 @@ io.sockets.on('connection', function (socket) {
       if ( (res.sincloSessionId === undefined || res.sincloSessionId === '' || res.sincloSessionId === null)
         || !(res.siteKey in sincloCore)
         || !(res.sincloSessionId in sincloCore[res.siteKey])
-        || sincloCore[res.siteKey][res.sincloSessionId].sessionIds === undefined
-        || sincloCore[res.siteKey][res.sincloSessionId].sessionIds.length === 0) {
+        || sincloCore[res.siteKey][res.sincloSessionId].sessionIds === undefined ) {
         send.sincloSessionId = uuid.v4();
         send.sincloSessionIdIsNew = true;
       } else {
@@ -1713,14 +1713,15 @@ io.sockets.on('connection', function (socket) {
     }
     if ('timeoutTimer' in sincloCore[obj.siteKey][obj.tabId]) {
       clearTimeout(sincloCore[obj.siteKey][obj.tabId].timeoutTimer);
-      var oldSessionId = sincloCore[obj.siteKey][obj.tabId].sessionId;
-      if(isset(obj.sincloSessionId)) {
-        var sessionIds = sincloCore[obj.siteKey][obj.sincloSessionId].sessionIds;
-        console.log("delete id : " + oldSessionId);
-        delete sessionIds[oldSessionId];
-        console.log("remains : " + Object.keys(sessionIds).length);
-      }
       sincloCore[obj.siteKey][obj.tabId].timeoutTimer = null;
+    }
+
+    var oldSessionId = sincloCore[obj.siteKey][obj.tabId].sessionId;
+    if(oldSessionId && isset(obj.sincloSessionId)) {
+      var sessionIds = sincloCore[obj.siteKey][obj.sincloSessionId].sessionIds;
+      console.log("delete id : " + oldSessionId);
+      delete sessionIds[oldSessionId];
+      console.log("remains : " + Object.keys(sessionIds).length);
     }
 
     connectList[socket.id] = {siteKey: obj.siteKey, tabId: obj.tabId, userId: null};
@@ -1765,8 +1766,9 @@ io.sockets.on('connection', function (socket) {
       //FIXME 企業別機能設定（企業情報連携）
       getCompanyInfoFromApi(obj.ipAddress, function(data){
         if(data) {
-          obj.orgName = data.orgName;
-          obj.lbcCode = data.lbcCode;
+          var response = JSON.parse(data);
+          obj.orgName = response.data.orgName;
+          obj.lbcCode = response.data.lbcCode;
           sincloCore[obj.siteKey][obj.tabId].orgName = obj.orgName;
           sincloCore[obj.siteKey][obj.tabId].lbcCode = obj.lbcCode;
         }
@@ -2268,7 +2270,10 @@ console.log("chatStart-2: [" + logToken + "] " + JSON.stringify({ret: false, sit
       var scInfo = "";
 
       sincloCore[obj.siteKey][obj.tabId].chat = obj.userId;
-      sincloCore[obj.siteKey][obj.sincloSessionId].chat = obj.userId;
+      if(!isset(sincloCore[obj.siteKey][obj.sincloSessionId].chat)) {
+        sincloCore[obj.siteKey][obj.sincloSessionId].chat = {};
+      }
+      sincloCore[obj.siteKey][obj.sincloSessionId].chat[obj.tabId] = obj.userId;
       sincloCore[obj.siteKey][obj.tabId].chatSessionId = socket.id;
       // サイトとして初チャット開始
       if ( !(obj.siteKey in c_connectList) ) {
@@ -2391,7 +2396,10 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       sincloCore[obj.siteKey][obj.tabId].chat = null;
       sincloCore[obj.siteKey][obj.tabId].chatSessionId = null;
       if( isset(sincloCore[obj.siteKey]) && isset(sincloCore[obj.siteKey][obj.sincloSessionId]) && isset(sincloCore[obj.siteKey][obj.sincloSessionId].chat) ) {
-        sincloCore[obj.siteKey][obj.sincloSessionId].chat = null;
+        delete sincloCore[obj.siteKey][obj.sincloSessionId].chat[obj.tabId];
+        if(Object.keys(sincloCore[obj.siteKey][obj.sincloSessionId].chat).length === 0) {
+          delete sincloCore[obj.siteKey][obj.sincloSessionId].chat;
+        }
       }
       scInfo = ( scList.hasOwnProperty(obj.siteKey) ) ? scList[obj.siteKey].cnt : {};
 
@@ -3131,9 +3139,9 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         clearTimeout(sincloCore[info.siteKey][info.tabId].timeoutTimer);
       }
 
+      var sincloSessionId = sincloCore[info.siteKey][info.tabId].sincloSessionId;
       sincloCore[info.siteKey][info.tabId].timeoutTimer = setTimeout(function(){
         var historyId = sincloCore[info.siteKey][info.tabId].historyId;
-        var sincloSessionId = sincloCore[info.siteKey][info.tabId].sincloSessionId;
         // sincloCoreから情報削除
         delete sincloCore[info.siteKey][info.tabId];
         // c_connectListから情報削除
@@ -3201,17 +3209,22 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
           if(sincloSessionId) {
             var sessionIds = sincloCore[info.siteKey][sincloSessionId].sessionIds;
-            if(sessionIds && Object.keys(sessionIds).length > 0) {
-              delete sessionIds[socket.id];
-              if(Object.keys(sessionIds).length === 0) {
-                delete sincloCore[info.siteKey][sincloSessionId];
-              }
+            delete sessionIds[socket.id];
+            if(Object.keys(sessionIds).length === 0) {
+              delete sincloCore[info.siteKey][sincloSessionId];
             }
           }
         }
       }, timeout);
       // connectListから削除
       delete connectList[socket.id];
+
+      if(sincloSessionId) {
+        var sessionIds = sincloCore[info.siteKey][sincloSessionId].sessionIds;
+        if(sessionIds && Object.keys(sessionIds).length > 0) {
+          delete sessionIds[socket.id];
+        }
+      }
 
       var keys = Object.keys(customerList[info.siteKey]);
       if(keys && keys.length > 0) {
