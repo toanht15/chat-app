@@ -294,7 +294,7 @@
             sinclo.widget.condifiton.set(true, true);
 
             //自由入力エリアが閉まっているか空いているかチェック
-            var textareaOpend = storage.s.get('textareaOpend');
+            var textareaOpend = storage.l.get('textareaOpend');
             //チャットのテキストエリア表示
             if( textareaOpend == 'close') {
               sinclo.hideTextarea();
@@ -485,6 +485,7 @@
         if(obj.sincloSessionIdIsNew) console.log("sincloSessionIdIsNew");
         userInfo.oldSincloSessionId = userInfo.sincloSessionId ? userInfo.sincloSessionId : "";
         userInfo.set(cnst.info_type.sincloSessionId, obj.sincloSessionId, "sincloSessionId");
+        storage.l.set('textareaOpend', 'open');
       }
 
       obj.prev = userInfo.writePrevToLocalStorage();
@@ -968,7 +969,7 @@
 
       //サイト訪問者側のテキストエリア表示
       sinclo.displayTextarea();
-      storage.s.set('textareaOpend', 'open');
+      storage.l.set('textareaOpend', 'open');
 
       if ( sincloInfo.widget.showName === 1 ) {
         sinclo.chatApi.opUser = obj.userName;
@@ -1094,6 +1095,7 @@
       sinclo.chatApi.showUnreadCnt();
     },
     sendChatResult: function(d){
+      console.log('ここか？？2');
       var obj = JSON.parse(d);
       if ( obj.sincloSessionId !== userInfo.sincloSessionId && obj.tabId !== userInfo.tabId ) return false;
       var elm = document.getElementById('sincloChatMessage'), cn, userName = "";
@@ -1180,7 +1182,7 @@
       //通知した際に自由入力エリア表示
       if(obj.opFlg == true && obj.matchAutoSpeech == false) {
         sinclo.displayTextarea();
-        storage.s.set('textareaOpend', 'open');
+        storage.l.set('textareaOpend', 'open');
       }
     },
     sendReqAutoChatMessages: function(d){
@@ -1576,7 +1578,7 @@
                   sinclo.chatApi.send(e.target.value.trim());
                 }
                 else {
-                  var textareaOpend = storage.s.get('textareaOpend');
+                  var textareaOpend = storage.l.get('textareaOpend');
                   //チャットのテキストエリアが閉まっているときは即時送信
                   if( textareaOpend == 'close') {
                     sinclo.chatApi.send(e.target.value.trim());
@@ -1850,6 +1852,7 @@
           this.pushFlg = false;
         },
         send: function(value){
+          console.log('ここか？？3')
           // 自動返信の処理中でなければ
           if(!sinclo.trigger.processing) {
             storage.s.set('chatAct', true); // オートメッセージを表示しない
@@ -2399,7 +2402,7 @@
             if ( !check.isset(chatActFlg) ) {
               chatActFlg = "false";
             }
-            var textareaOpend = storage.s.get('textareaOpend');
+            var textareaOpend = storage.l.get('textareaOpend');
             //チャットのテキストエリア表示
             if( textareaOpend == 'close') {
               sinclo.hideTextarea();
@@ -2439,12 +2442,12 @@
               //チャットのテキストエリア表示
               if(Number(cond.chatTextarea) === 1 ) {
                 sinclo.displayTextarea();
-                storage.s.set('textareaOpend', 'open');
+                storage.l.set('textareaOpend', 'open');
               }
               //チャットのテキストエリア非表示
               else if(Number(cond.chatTextarea) === 2 ) {
                 sinclo.hideTextarea();
-                storage.s.set('textareaOpend', 'close');
+                storage.l.set('textareaOpend', 'close');
               }
             }
         },
