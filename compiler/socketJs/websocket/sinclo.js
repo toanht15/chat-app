@@ -1095,7 +1095,6 @@
       sinclo.chatApi.showUnreadCnt();
     },
     sendChatResult: function(d){
-      console.log('ここか？？2');
       var obj = JSON.parse(d);
       if ( obj.sincloSessionId !== userInfo.sincloSessionId && obj.tabId !== userInfo.tabId ) return false;
       var elm = document.getElementById('sincloChatMessage'), cn, userName = "";
@@ -1852,7 +1851,6 @@
           this.pushFlg = false;
         },
         send: function(value){
-          console.log('ここか？？3')
           // 自動返信の処理中でなければ
           if(!sinclo.trigger.processing) {
             storage.s.set('chatAct', true); // オートメッセージを表示しない
