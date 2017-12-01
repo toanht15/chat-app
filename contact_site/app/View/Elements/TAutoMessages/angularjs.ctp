@@ -35,6 +35,15 @@ sincloApp.controller('MainController', function($scope) {
     this.checkDisabled = function(itemId){
         //営業時間設定を利用しない場合
         if(<?= $operatingHourData ?> == 2 && itemId == 4) {
+          //ツールチップ表示
+          $('#triggerList div ul li').each(function(i){
+            if(i == 3) {
+              $(this).addClass("commontooltip");
+              $(this).attr('data-text', 'こちらの機能は営業時間設定で「利<br>用する」を選択すると、ご利用いただけます。');
+              $(this).attr('data-balloon-position', '14');
+              $(this).attr('operatingHours', 'widgetHoursPage');
+            }
+          });
           return true;
         }
         return (itemId in this.setItemList && this.setItemList[itemId].length >= this.tmpList[itemId].createLimit[this.condition_type]);
