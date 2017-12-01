@@ -836,7 +836,6 @@
                 $('input[type="checkbox"]').eq(n).prop("checked", obj.checkboxInfo[n]);
               }
               for ( i in obj.radioInfo ) {
-                console.log('ここここここここっこっこ');
                 n = Number(i);
                 $('input[type="radio"]').eq(n).prop("checked", obj.radioInfo[n]);
               }
