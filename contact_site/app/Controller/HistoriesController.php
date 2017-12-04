@@ -106,12 +106,17 @@ class HistoriesController extends AppController {
       ];
       $tHistoryCountData = $this->THistory->find('first', $params);
 
+      //$this->log('tHistoryCountDatatHistoryCountData',LOG_DEBUG);
+      //$this->log($tHistoryCountData,LOG_DEBUG);
+
       $mCusData = ['MCustomer' => []];
       if ( !empty($tHistoryData['THistory']['visitors_id']) ) {
         $mCusData = $this->MCustomer->getCustomerInfoForVisitorId($this->userInfo['MCompany']['id'], $tHistoryData['THistory']['visitors_id']);
       }
 
       $data = am($tHistoryData, ['THistoryCount' => $tHistoryCountData[0]], $mCusData);
+      //$this->log('datadata',LOG_DEBUG);
+      //$this->log($data,LOG_DEBUG);
     }
     $this->set('data', $data);
     // 顧客情報のテンプレート
@@ -260,7 +265,7 @@ class HistoriesController extends AppController {
   public function outputCSVOfHistory(){
     Configure::write('debug', 0);
     ini_set("max_execution_time", 180);
-
+    $this->log('入っているかチェック',LOG_DEBUG);
     $name = "sinclo-history";
 
     //$returnData:$historyListで使うjoinのリストとconditionsの検索条件
@@ -296,8 +301,10 @@ class HistoriesController extends AppController {
       "プラットフォーム",
       "ブラウザ",
       "キャンペーン",
+      "流入ページタイトル",
       "参照元URL",
       "閲覧ページ数",
+      "訪問回数",
       "滞在時間"
     ];
 
@@ -311,6 +318,8 @@ class HistoriesController extends AppController {
     $excludeList = $this->MCompany->getExcludeList($this->userInfo['MCompany']['id']);
 
     $campaignList = $this->TCampaign->getList();
+    //$this->log('userList',LOG_DEBUG);
+    //$this->log($userList,LOG_DEBUG);
     foreach($userList as $key => $history){
       $campaignParam = "";
       $tmp = mb_strstr($stayList[$history['THistory']['id']]['THistoryStayLog']['firstURL'], '?');
@@ -363,11 +372,26 @@ class HistoriesController extends AppController {
       $row['browser'] = $this->_userAgentCheckBrowser($history);
       //キャンペーン
       $row['campaign'] = $campaignParam;
+      //ランディングページ
+      $row['landing'] = $stayList[$history['THistory']['id']]['THistoryStayLog']['title'];
       // 参照元URL
       $params = $excludeList['params'];
       $row['referrer'] = $this->trimToURL($params, $history['THistory']['referrer_url']);
       // 閲覧ページ数
       $row['pageCnt'] = $stayList[$history['THistory']['id']]['THistoryStayLog']['count'];
+      //訪問回数
+      $params = [
+        'fields' => [
+          'count(*) as cnt'
+        ],
+        'conditions' => [
+          'visitors_id = '.$history['THistory']['visitors_id'],
+          'm_companies_id' => $this->userInfo['MCompany']['id'],
+          'id <= '.$history['THistory']['id']
+        ]
+      ];
+      $tHistoryCountData = $this->THistory->find('first', $params);
+      $row['historyCount'] =  $tHistoryCountData[0]['cnt'];
       // 滞在時間
       $row['visitTime'] = $this->calcTime($history['THistory']['access_date'], $history['THistory']['out_date']);
       if ( $this->coreSettings[C_COMPANY_USE_CHAT] ) {
@@ -977,9 +1001,22 @@ class HistoriesController extends AppController {
     // TODO 良いやり方が無いか模索する
     $historyIdList = [];
     $customerIdList = [];
-    foreach($historyList as $val){
+    foreach($historyList as $key => $val){
       $historyIdList[] = $val['THistory']['id'];
       $customerIdList[$val['THistory']['visitors_id']] = true;
+      //訪問回数
+      $params = [
+        'fields' => [
+          'count(*) as cnt'
+        ],
+        'conditions' => [
+          'visitors_id = '.$val['THistory']['visitors_id'],
+          'm_companies_id' => $this->userInfo['MCompany']['id'],
+          'id <= '.$val['THistory']['id']
+        ]
+      ];
+     $tHistoryCountData = $this->THistory->find('first', $params);
+     $historyList[$key]['THistory']['count'] = $tHistoryCountData[0]['cnt'];
     }
     $tHistoryStayLogList = $this->THistoryStayLog->find('all', [
       'fields' => [
