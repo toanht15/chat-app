@@ -106,17 +106,12 @@ class HistoriesController extends AppController {
       ];
       $tHistoryCountData = $this->THistory->find('first', $params);
 
-      //$this->log('tHistoryCountDatatHistoryCountData',LOG_DEBUG);
-      //$this->log($tHistoryCountData,LOG_DEBUG);
-
       $mCusData = ['MCustomer' => []];
       if ( !empty($tHistoryData['THistory']['visitors_id']) ) {
         $mCusData = $this->MCustomer->getCustomerInfoForVisitorId($this->userInfo['MCompany']['id'], $tHistoryData['THistory']['visitors_id']);
       }
 
       $data = am($tHistoryData, ['THistoryCount' => $tHistoryCountData[0]], $mCusData);
-      //$this->log('datadata',LOG_DEBUG);
-      //$this->log($data,LOG_DEBUG);
     }
     $this->set('data', $data);
     // 顧客情報のテンプレート
@@ -265,7 +260,6 @@ class HistoriesController extends AppController {
   public function outputCSVOfHistory(){
     Configure::write('debug', 0);
     ini_set("max_execution_time", 180);
-    //$this->log('入っているかチェック',LOG_DEBUG);
     $name = "sinclo-history";
 
     //$returnData:$historyListで使うjoinのリストとconditionsの検索条件
@@ -318,8 +312,6 @@ class HistoriesController extends AppController {
     $excludeList = $this->MCompany->getExcludeList($this->userInfo['MCompany']['id']);
 
     $campaignList = $this->TCampaign->getList();
-    //$this->log('userList',LOG_DEBUG);
-    //$this->log($userList,LOG_DEBUG);
     foreach($userList as $key => $history){
       $campaignParam = "";
       $tmp = mb_strstr($stayList[$history['THistory']['id']]['THistoryStayLog']['firstURL'], '?');
@@ -554,7 +546,6 @@ class HistoriesController extends AppController {
    * @return 検索条件にチャット履歴出力のために必要なテーブルを追加
    * */
   private function _searchConditionsChat($returnData){
-    $this->log('検索する瞬間！',LOG_DEBUG);
     //message,messagetypeを使うためTHistoryChatLogとjoin
     $returnData['joinList'][] =  [
       'type' => 'LEFT',
