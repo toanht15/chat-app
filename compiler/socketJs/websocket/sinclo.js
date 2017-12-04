@@ -486,6 +486,7 @@
         userInfo.oldSincloSessionId = userInfo.sincloSessionId ? userInfo.sincloSessionId : "";
         userInfo.set(cnst.info_type.sincloSessionId, obj.sincloSessionId, "sincloSessionId");
         storage.l.set('textareaOpend', 'open');
+        storage.l.set('leaveFlg', 'false');
       }
 
       obj.prev = userInfo.writePrevToLocalStorage();
@@ -966,6 +967,7 @@
       this.chatApi.online = true;
       storage.s.set('chatAct', true); // オートメッセージを表示しない
       storage.s.set('operatorEntered', true); // オペレータが入室した
+      storage.l.set('leaveFlg', 'false'); // オペレータが入室した
 
       //サイト訪問者側のテキストエリア表示
       sinclo.displayTextarea();
@@ -999,6 +1001,7 @@
       this.chatApi.online = false;
       storage.s.set('operatorEntered', false); // オペレータが退室した
       storage.s.set('chatAct', false); // オートメッセージを表示してもいい
+      storage.l.set('leaveFlg', 'true'); // オペレータが退室した
       var opUser = sinclo.chatApi.opUser;
       if ( check.isset(opUser) === false ) {
         opUser = "オペレーター";
@@ -2034,6 +2037,17 @@
             this.flg = true;
             var messages = window.sincloInfo.messages;
             console.log("MESSAGES : " + JSON.stringify(messages));
+
+            var textareaOpend = storage.l.get('textareaOpend');
+            //チャットのテキストエリア表示
+            if( textareaOpend == 'close') {
+              sinclo.hideTextarea();
+            }
+            //チャットのテキストエリア非表示
+            else {
+              sinclo.displayTextarea();
+            }
+
             var andFunc = function(conditionKey, condition, key, ret){
                 if(conditionKey === 7) {
                   // 自動返信のトリガーの場合は処理中フラグを立てる
@@ -2400,15 +2414,7 @@
             if ( !check.isset(chatActFlg) ) {
               chatActFlg = "false";
             }
-            var textareaOpend = storage.l.get('textareaOpend');
-            //チャットのテキストエリア表示
-            if( textareaOpend == 'close') {
-              sinclo.hideTextarea();
-            }
-            //チャットのテキストエリア非表示
-            else {
-              sinclo.displayTextarea();
-            }
+
             if ( String(type) === "1" && ('message' in cond) && (String(chatActFlg) === "false") ) {
                 if(sinclo.chatApi.autoMessages.exists(id)){
                   console.log("exists id : " + id);
@@ -2438,7 +2444,7 @@
                     }
                 }, 1);
               //チャットのテキストエリア表示
-              if(Number(cond.chatTextarea) === 1 ) {
+              if(Number(cond.chatTextarea) === 1 ||  cond.chatTextarea === undefined || storage.l.get('leaveFlg') == 'true' ) {
                 sinclo.displayTextarea();
                 storage.l.set('textareaOpend', 'open');
               }
