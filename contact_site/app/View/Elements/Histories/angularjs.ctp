@@ -44,6 +44,7 @@
       var targetParams = <?php echo json_encode(array_flip($excludeList['params']), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
       $scope.trimToURL = function (url,type){
         if ( typeof(url) !== 'string' ) return "";
+        //表示するURLの場合
         if(type == 2) {
           //メッセージが30文字以上の場合3点リーダー表示
           if(url.length > 30) {
