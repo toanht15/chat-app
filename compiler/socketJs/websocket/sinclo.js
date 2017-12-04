@@ -967,6 +967,7 @@
       this.chatApi.online = true;
       storage.s.set('chatAct', true); // オートメッセージを表示しない
       storage.s.set('operatorEntered', true); // オペレータが入室した
+      storage.l.set('leaveFlg', 'false'); // オペレータが入室した
 
       //サイト訪問者側のテキストエリア表示
       sinclo.displayTextarea();
