@@ -973,8 +973,6 @@ class HistoriesController extends AppController {
     }
 
     $historyList = $this->paginate('THistory');
-    $this->log('historyList',LOG_DEBUG);
-    //$this->log($historyList,LOG_DEBUG);
 
     // TODO 良いやり方が無いか模索する
     $historyIdList = [];
@@ -1006,9 +1004,6 @@ class HistoriesController extends AppController {
         ]
       ];
     }
-
-    //$this->log('stayList',LOG_DEBUG);
-    //$this->log($stayList,LOG_DEBUG);
 
     $mCustomerList = $this->MCustomer->find('list', [
       'fields' => ['visitors_id', 'informations'],

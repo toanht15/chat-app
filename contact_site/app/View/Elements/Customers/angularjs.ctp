@@ -1457,7 +1457,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       $scope.getCustomerInfoFromMonitor(obj);
 
       if ( 'referrer' in obj && 'referrer' in obj) {
-        console.log('refeler');
         var url = $scope.trimToURL(obj.referrer);
         //メッセージが10文字以上の場合3点リーダー表示
         if(url.length > 150) {
