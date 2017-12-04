@@ -209,7 +209,7 @@
           <!-- /* 閲覧中ページ */ -->
           <td ng-hide="labelHideList.title" class="tLeft omit"><a href={{trimToURL(monitor.url)}} target="_blank" class="underL" ng-if="monitor.title">{{monitor.title}}</a><span ng-if="!monitor.title">{{trimToURL(monitor.url)}}</span></td>
           <!-- /* 参照元URL */ -->
-          <td ng-hide="labelHideList.referrer" class="tLeft omit"><a href="{{::monitor.ref}}" target="_blank" class="underL" ng-if="monitor.ref">{{::monitor.ref}}</a></td>
+          <td ng-hide="labelHideList.referrer" class="tLeft omit"><a href="{{::monitor.ref}}" target="_blank" class="underL" ng-if="monitor.processedRef">{{::monitor.processedRef}}</a></td>
         </tr>
       </tbody>
     </table>
