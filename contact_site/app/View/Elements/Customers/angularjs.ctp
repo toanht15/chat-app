@@ -1459,8 +1459,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       if ( 'referrer' in obj && 'referrer' in obj) {
         var url = $scope.trimToURL(obj.referrer);
         //メッセージが30文字以上の場合3点リーダー表示
-        if(url.length > 30) {
-          url = url.substr(0,30)　+ '...';
+        if(url.length > 50) {
+          url = url.substr(0,50)　+ '...';
         }
         $scope.monitorList[obj.tabId].processedRef = url;
         $scope.monitorList[obj.tabId].ref = $scope.trimToURL(obj.referrer);

@@ -265,7 +265,7 @@ class HistoriesController extends AppController {
   public function outputCSVOfHistory(){
     Configure::write('debug', 0);
     ini_set("max_execution_time", 180);
-    $this->log('入っているかチェック',LOG_DEBUG);
+    //$this->log('入っているかチェック',LOG_DEBUG);
     $name = "sinclo-history";
 
     //$returnData:$historyListで使うjoinのリストとconditionsの検索条件
@@ -302,8 +302,8 @@ class HistoriesController extends AppController {
       "ブラウザ",
       "キャンペーン",
       "流入ページタイトル",
-      "参照元URL",
       "閲覧ページ数",
+      "参照元URL",
       "訪問回数",
       "滞在時間"
     ];
@@ -374,11 +374,11 @@ class HistoriesController extends AppController {
       $row['campaign'] = $campaignParam;
       //ランディングページ
       $row['landing'] = $stayList[$history['THistory']['id']]['THistoryStayLog']['title'];
+      // 閲覧ページ数
+      $row['pageCnt'] = $stayList[$history['THistory']['id']]['THistoryStayLog']['count'];
       // 参照元URL
       $params = $excludeList['params'];
       $row['referrer'] = $this->trimToURL($params, $history['THistory']['referrer_url']);
-      // 閲覧ページ数
-      $row['pageCnt'] = $stayList[$history['THistory']['id']]['THistoryStayLog']['count'];
       //訪問回数
       $params = [
         'fields' => [
@@ -554,6 +554,7 @@ class HistoriesController extends AppController {
    * @return 検索条件にチャット履歴出力のために必要なテーブルを追加
    * */
   private function _searchConditionsChat($returnData){
+    $this->log('検索する瞬間！',LOG_DEBUG);
     //message,messagetypeを使うためTHistoryChatLogとjoin
     $returnData['joinList'][] =  [
       'type' => 'LEFT',
@@ -814,9 +815,29 @@ class HistoriesController extends AppController {
 
       /* 顧客情報に関する検索条件 会社名、名前、電話、メール検索 */
       if((isset($data['History']['company_name']) && $data['History']['company_name'] !== "") || (isset($data['History']['customer_name']) && $data['History']['customer_name'] !== "") || (isset($data['History']['telephone_number']) && $data['History']['telephone_number'] !== "") || (isset($data['History']['mail_address']) && $data['History']['mail_address'] !== "") ) {
-        $visitorsIds = $this->_searchCustomer($data['History']);
-        $this->paginate['THistory']['conditions']['THistory.visitors_id'] = $visitorsIds;
-        $chatCond['visitors_id'] = $visitorsIds;
+        //会社名が入っている場合
+        if((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && (isset($data['History']['company_name']) && $data['History']['company_name'] !== "")) {
+          //会社名がランドスケープテーブルに登録されている場合
+          $companyData = $this->MLandscapeData->find('all', [
+            'fields' => '*',
+            'conditions' => [
+              'MLandscapeData.org_name LIKE' => '%'. $data['History']['company_name'].'%'
+            ]
+          ]);
+          if(!empty($companyData)) {
+            $this->paginate['THistory']['conditions']['THistory.ip_address LIKE'] = '%'.$companyData[0]['MLandscapeData']['ip_address'].'%';
+          }
+          else {
+            $visitorsIds = $this->_searchCustomer($data['History']);
+            $this->paginate['THistory']['conditions']['THistory.visitors_id'] = $visitorsIds;
+            $chatCond['visitors_id'] = $visitorsIds;
+          }
+        }
+        else {
+          $visitorsIds = $this->_searchCustomer($data['History']);
+          $this->paginate['THistory']['conditions']['THistory.visitors_id'] = $visitorsIds;
+          $chatCond['visitors_id'] = $visitorsIds;
+        }
       }
 
       // 担当者に関する検索条件
@@ -1366,11 +1387,35 @@ class HistoriesController extends AppController {
 
     /* 顧客情報に関する検索条件 会社名、名前、電話、メール検索 */
     if((isset($data['History']['company_name']) && $data['History']['company_name'] !== "") || (isset($data['History']['customer_name']) && $data['History']['customer_name'] !== "") || (isset($data['History']['telephone_number']) && $data['History']['telephone_number'] !== "") || (isset($data['History']['mail_address']) && $data['History']['mail_address'] !== "") ) {
-      $visitorsIds = $this->_searchCustomer($data['History']);
-      $conditions[] = [
-        'THistory.visitors_id' => $visitorsIds
-      ];
-      $chatCond['visitors_id'] = $visitorsIds;
+      //会社名が入っている場合
+      if((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && (isset($data['History']['company_name']) && $data['History']['company_name'] !== "")) {
+        //会社名がランドスケープテーブルに登録されている場合
+        $companyData = $this->MLandscapeData->find('all', [
+          'fields' => '*',
+          'conditions' => [
+            'MLandscapeData.org_name LIKE' => '%'. $data['History']['company_name'].'%'
+          ]
+        ]);
+        if(!empty($companyData)) {
+          $conditions[] = [
+            'THistory.ip_address LIKE' => '%'.$companyData[0]['MLandscapeData']['ip_address'].'%',
+          ];
+        }
+        else {
+          $visitorsIds = $this->_searchCustomer($data['History']);
+          $conditions[] = [
+            'THistory.visitors_id' => $visitorsIds
+          ];
+          $chatCond['visitors_id'] = $visitorsIds;
+        }
+      }
+      else {
+        $visitorsIds = $this->_searchCustomer($data['History']);
+        $conditions[] = [
+          'THistory.visitors_id' => $visitorsIds
+        ];
+        $chatCond['visitors_id'] = $visitorsIds;
+      }
     }
 
     $joinType = 'LEFT';
