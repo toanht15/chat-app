@@ -2410,7 +2410,6 @@
             console.log("setAction id : " + id + " type : " + type + " cond : " + JSON.stringify(cond));
             // TODO 今のところはメッセージ送信のみ、拡張予定
             var chatActFlg = storage.s.get('chatAct');
-;
             console.log("chatActFlg : " + chatActFlg);
             if ( !check.isset(chatActFlg) ) {
               chatActFlg = "false";
