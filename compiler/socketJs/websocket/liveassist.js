@@ -95,7 +95,7 @@ var LaUtility = function() {
       sdkPath : window.sincloInfo.site.la + "/assistserver/sdk/web/consumer",
       sessionToken : sessionToken,
       correlationId : correlationId,
-      allowedIframeOrigins : false,
+      allowedIframeOrigins : ['*'],
       disableLogging : true
     });
   };
