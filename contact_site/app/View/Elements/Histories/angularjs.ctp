@@ -44,6 +44,10 @@
       var targetParams = <?php echo json_encode(array_flip($excludeList['params']), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
       $scope.trimToURL = function (url){
         if ( typeof(url) !== 'string' ) return "";
+        //メッセージが10文字以上の場合3点リーダー表示
+        if(url.length > 32) {
+          url = url.substr(0,32)　+ '...';
+        }
         return trimToURL(targetParams, url);
       };
   });

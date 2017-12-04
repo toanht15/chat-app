@@ -973,6 +973,8 @@ class HistoriesController extends AppController {
     }
 
     $historyList = $this->paginate('THistory');
+    $this->log('historyList',LOG_DEBUG);
+    //$this->log($historyList,LOG_DEBUG);
 
     // TODO 良いやり方が無いか模索する
     $historyIdList = [];
@@ -985,6 +987,7 @@ class HistoriesController extends AppController {
       'fields' => [
         't_histories_id',
         'url AS firstURL',
+        'title',
         'COUNT(t_histories_id) AS count '
       ],
       'conditions' => [
@@ -998,10 +1001,14 @@ class HistoriesController extends AppController {
       $stayList[$val['THistoryStayLog']['t_histories_id']] = [
         'THistoryStayLog' => [
           'firstURL' => $val['THistoryStayLog']['firstURL'],
+          'title' => $val['THistoryStayLog']['title'],
           'count' => $val[0]['count']
         ]
       ];
     }
+
+    //$this->log('stayList',LOG_DEBUG);
+    //$this->log($stayList,LOG_DEBUG);
 
     $mCustomerList = $this->MCustomer->find('list', [
       'fields' => ['visitors_id', 'informations'],
@@ -1569,6 +1576,7 @@ class HistoriesController extends AppController {
     $tHistoryStayLogList = $this->THistoryStayLog->find('all', [
       'fields' => [
         't_histories_id',
+        'title',
         'url AS firstURL',
         'COUNT(t_histories_id) AS count '
       ],
@@ -1583,6 +1591,7 @@ class HistoriesController extends AppController {
       $stayList[$val['THistoryStayLog']['t_histories_id']] = [
         'THistoryStayLog' => [
           'firstURL' => $val['THistoryStayLog']['firstURL'],
+          'title' => $val['THistoryStayLog']['title'],
           'count' => $val[0]['count']
         ]
       ];
