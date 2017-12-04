@@ -181,11 +181,11 @@
               <?php endif; ?>
 
               <span ng-if="monitor.tabId != detailId" ng-click="showDetail(monitor.tabId, monitor.sincloSessionId)" class="btn-shadow blueBtn ">
-                詳細を開く
+                開く
                 <div class="unread" ng-if="monitor.chatUnreadCnt > 0">{{monitor.chatUnreadCnt}}</div>
               </span>
               <span ng-if="monitor.tabId == detailId" ng-click="showDetail(monitor.tabId, monitor.sincloSessionId)" class="btn-shadow redBtn ">
-                詳細を閉じる
+                閉じる
                 <div class="unread" ng-if="monitor.chatUnreadCnt > 0">{{monitor.chatUnreadCnt}}</div>
               </span>
             <?php endif; ?>
