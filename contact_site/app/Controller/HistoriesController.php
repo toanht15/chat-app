@@ -298,7 +298,6 @@ class HistoriesController extends AppController {
       "流入ページタイトル",
       "閲覧ページ数",
       "参照元URL",
-      "訪問回数",
       "滞在時間"
     ];
 
@@ -371,19 +370,6 @@ class HistoriesController extends AppController {
       // 参照元URL
       $params = $excludeList['params'];
       $row['referrer'] = $this->trimToURL($params, $history['THistory']['referrer_url']);
-      //訪問回数
-      $params = [
-        'fields' => [
-          'count(*) as cnt'
-        ],
-        'conditions' => [
-          'visitors_id = '.$history['THistory']['visitors_id'],
-          'm_companies_id' => $this->userInfo['MCompany']['id'],
-          'id <= '.$history['THistory']['id']
-        ]
-      ];
-      $tHistoryCountData = $this->THistory->find('first', $params);
-      $row['historyCount'] =  $tHistoryCountData[0]['cnt'];
       // 滞在時間
       $row['visitTime'] = $this->calcTime($history['THistory']['access_date'], $history['THistory']['out_date']);
       if ( $this->coreSettings[C_COMPANY_USE_CHAT] ) {
@@ -791,6 +777,7 @@ class HistoriesController extends AppController {
       $data = $this->Session->read('Thistory');
       /* ○ 検索処理 */
 
+      $this->log('check1',LOG_DEBUG);
       //ipアドレス
       if(isset($data['History']['ip_address']) && $data['History']['ip_address'] !== "") {
         $this->paginate['THistory']['conditions']['THistory.ip_address LIKE'] = '%'.$data['History']['ip_address'].'%';
@@ -816,7 +803,11 @@ class HistoriesController extends AppController {
             ]
           ]);
           if(!empty($companyData)) {
-            $this->paginate['THistory']['conditions']['THistory.ip_address'] = $companyData[0]['MLandscapeData']['ip_address'];
+            $ipAddressList = [];
+            foreach($companyData as $k => $v) {
+              $ipAddressList[] = $v['MLandscapeData']['ip_address'];
+            }
+            $this->paginate['THistory']['conditions']['THistory.ip_address'] = $ipAddressList;
           }
           else {
             $visitorsIds = $this->_searchCustomer($data['History']);
@@ -830,7 +821,7 @@ class HistoriesController extends AppController {
           $chatCond['visitors_id'] = $visitorsIds;
         }
       }
-
+      $this->log('check2',LOG_DEBUG);
       // 担当者に関する検索条件
       $joinType = 'LEFT';
       if ( isset($data['THistoryChatLog']['responsible_name']) && $data['THistoryChatLog']['responsible_name'] !== "" ) {
@@ -869,6 +860,7 @@ class HistoriesController extends AppController {
           'conditions' => 'message.t_histories_id = THistory.id'
         ];
       }
+      $this->log('check2',LOG_DEBUG);
 
       if ( !empty($data['THistoryChatLog']) && !empty(array_filter($data['THistoryChatLog'])) ) {
         // 対象ユーザーのIDリストを取得するサブクエリを作成
@@ -1016,19 +1008,6 @@ class HistoriesController extends AppController {
     foreach($historyList as $key => $val){
       $historyIdList[] = $val['THistory']['id'];
       $customerIdList[$val['THistory']['visitors_id']] = true;
-      //訪問回数
-      $params = [
-        'fields' => [
-          'count(*) as cnt'
-        ],
-        'conditions' => [
-          'visitors_id = '.$val['THistory']['visitors_id'],
-          'm_companies_id' => $this->userInfo['MCompany']['id'],
-          'id <= '.$val['THistory']['id']
-        ]
-      ];
-     $tHistoryCountData = $this->THistory->find('first', $params);
-     $historyList[$key]['THistory']['count'] = $tHistoryCountData[0]['cnt'];
     }
     $tHistoryStayLogList = $this->THistoryStayLog->find('all', [
       'fields' => [
@@ -1061,6 +1040,7 @@ class HistoriesController extends AppController {
         'visitors_id' => array_keys($customerIdList),
       ]
     ]);
+    $this->log('check5',LOG_DEBUG);
 
     $this->set('data', $data);
     $this->set('historyList', $historyList);
@@ -1388,8 +1368,12 @@ class HistoriesController extends AppController {
           ]
         ]);
         if(!empty($companyData)) {
+          $ipAddressList = [];
+          foreach($companyData as $k => $v) {
+            $ipAddressList[] = $v['MLandscapeData']['ip_address'];
+          }
           $conditions[] = [
-            'THistory.ip_address' => $companyData[0]['MLandscapeData']['ip_address']
+            'THistory.ip_address' =>  $ipAddressList
           ];
         }
         else {
