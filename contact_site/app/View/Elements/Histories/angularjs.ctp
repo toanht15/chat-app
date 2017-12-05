@@ -312,6 +312,19 @@ $(document).ready(function(){
     $('#mainDatePeriod').html(historySearchConditions.History.period + ' : ' + historySearchConditions.History.start_day + '-' + historySearchConditions.History.finish_day);
   });
 
+  var prevBoldTarget = null;
+  $('.underL.showBold').on('click', function(e){
+    $(this).parents('tr').find('td').each(function(index){
+      $(this).css("font-weight", "bold");
+    });
+    if(prevBoldTarget) {
+      prevBoldTarget.parents('tr').find('td').each(function(index){
+        $(this).css("font-weight", "normal");
+      });
+    }
+    prevBoldTarget = $(this);
+  });
+
   //検索ボタン
   $('#mainDatePeriod').on('apply.daterangepicker', function(ev, picker) {
     var search_day  = $('.active').val();
