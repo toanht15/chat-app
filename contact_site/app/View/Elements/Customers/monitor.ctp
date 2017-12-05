@@ -106,7 +106,11 @@
                 <th style="width: 7em">操作</th>
         <?php endif ; ?>
                 <th style="width: 7em">詳細</th>
-                <th style="width: 8em" ng-hide="labelHideList.ipAddress">IPアドレス</th>
+                <?php if((isset($coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $coreSettings[C_COMPANY_REF_COMPANY_DATA])) { ?>
+                  <th style="width: 12em" ng-hide="labelHideList.ipAddress">IPアドレス</th>
+                <?php } else { ?>
+                   <th style="width: 8em" ng-hide="labelHideList.ipAddress">IPアドレス</th>
+                <?php } ?>
                 <th style="width: 8em" ng-hide="labelHideList.customer">訪問ユーザ</th>
                 <th style="width: 9em" ng-hide="labelHideList.ua">プラットフォーム<br>ブラウザ</th>
                 <th style="width: 5em" ng-hide="labelHideList.stayCount">訪問回数</th>
@@ -130,7 +134,11 @@
                 <th style="width: 7em">操作</th>
         <?php endif; ?>
                 <th style="width: 7em">詳細</th>
-                <th ng-hide="labelHideList.ipAddress" style="width: 8em">IPアドレス</th>
+                <?php if((isset($coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $coreSettings[C_COMPANY_REF_COMPANY_DATA])) { ?>
+                  <th ng-hide="labelHideList.ipAddress" style="width: 12em">IPアドレス</th>
+                <?php } else { ?>
+                  <th ng-hide="labelHideList.ipAddress" style="width: 8em">IPアドレス</th>
+                <?php } ?>
                 <th ng-hide="labelHideList.customer" style="width: 8em">訪問ユーザ</th>
                 <th ng-hide="labelHideList.ua" style="width: 9em">プラットフォーム<br>ブラウザ</th>
                 <th ng-hide="labelHideList.stayCount" style="width: 5em">訪問回数</th>
