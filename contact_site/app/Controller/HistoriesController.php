@@ -260,7 +260,6 @@ class HistoriesController extends AppController {
   public function outputCSVOfHistory(){
     Configure::write('debug', 0);
     ini_set("max_execution_time", 180);
-
     $name = "sinclo-history";
 
     //$returnData:$historyListで使うjoinのリストとconditionsの検索条件
@@ -296,8 +295,10 @@ class HistoriesController extends AppController {
       "プラットフォーム",
       "ブラウザ",
       "キャンペーン",
-      "参照元URL",
+      "流入ページタイトル",
       "閲覧ページ数",
+      "参照元URL",
+      "訪問回数",
       "滞在時間"
     ];
 
@@ -363,11 +364,26 @@ class HistoriesController extends AppController {
       $row['browser'] = $this->_userAgentCheckBrowser($history);
       //キャンペーン
       $row['campaign'] = $campaignParam;
+      //ランディングページ
+      $row['landing'] = $stayList[$history['THistory']['id']]['THistoryStayLog']['title'];
+      // 閲覧ページ数
+      $row['pageCnt'] = $stayList[$history['THistory']['id']]['THistoryStayLog']['count'];
       // 参照元URL
       $params = $excludeList['params'];
       $row['referrer'] = $this->trimToURL($params, $history['THistory']['referrer_url']);
-      // 閲覧ページ数
-      $row['pageCnt'] = $stayList[$history['THistory']['id']]['THistoryStayLog']['count'];
+      //訪問回数
+      $params = [
+        'fields' => [
+          'count(*) as cnt'
+        ],
+        'conditions' => [
+          'visitors_id = '.$history['THistory']['visitors_id'],
+          'm_companies_id' => $this->userInfo['MCompany']['id'],
+          'id <= '.$history['THistory']['id']
+        ]
+      ];
+      $tHistoryCountData = $this->THistory->find('first', $params);
+      $row['historyCount'] =  $tHistoryCountData[0]['cnt'];
       // 滞在時間
       $row['visitTime'] = $this->calcTime($history['THistory']['access_date'], $history['THistory']['out_date']);
       if ( $this->coreSettings[C_COMPANY_USE_CHAT] ) {
@@ -790,9 +806,29 @@ class HistoriesController extends AppController {
 
       /* 顧客情報に関する検索条件 会社名、名前、電話、メール検索 */
       if((isset($data['History']['company_name']) && $data['History']['company_name'] !== "") || (isset($data['History']['customer_name']) && $data['History']['customer_name'] !== "") || (isset($data['History']['telephone_number']) && $data['History']['telephone_number'] !== "") || (isset($data['History']['mail_address']) && $data['History']['mail_address'] !== "") ) {
-        $visitorsIds = $this->_searchCustomer($data['History']);
-        $this->paginate['THistory']['conditions']['THistory.visitors_id'] = $visitorsIds;
-        $chatCond['visitors_id'] = $visitorsIds;
+        //会社名が入っている場合
+        if((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && (isset($data['History']['company_name']) && $data['History']['company_name'] !== "")) {
+          //会社名がランドスケープテーブルに登録されている場合
+          $companyData = $this->MLandscapeData->find('all', [
+            'fields' => 'lbc_code,ip_address,org_name',
+            'conditions' => [
+              'MLandscapeData.org_name LIKE' => '%'. $data['History']['company_name'].'%'
+            ]
+          ]);
+          if(!empty($companyData)) {
+            $this->paginate['THistory']['conditions']['THistory.ip_address'] = $companyData[0]['MLandscapeData']['ip_address'];
+          }
+          else {
+            $visitorsIds = $this->_searchCustomer($data['History']);
+            $this->paginate['THistory']['conditions']['THistory.visitors_id'] = $visitorsIds;
+            $chatCond['visitors_id'] = $visitorsIds;
+          }
+        }
+        else {
+          $visitorsIds = $this->_searchCustomer($data['History']);
+          $this->paginate['THistory']['conditions']['THistory.visitors_id'] = $visitorsIds;
+          $chatCond['visitors_id'] = $visitorsIds;
+        }
       }
 
       // 担当者に関する検索条件
@@ -977,14 +1013,28 @@ class HistoriesController extends AppController {
     // TODO 良いやり方が無いか模索する
     $historyIdList = [];
     $customerIdList = [];
-    foreach($historyList as $val){
+    foreach($historyList as $key => $val){
       $historyIdList[] = $val['THistory']['id'];
       $customerIdList[$val['THistory']['visitors_id']] = true;
+      //訪問回数
+      $params = [
+        'fields' => [
+          'count(*) as cnt'
+        ],
+        'conditions' => [
+          'visitors_id = '.$val['THistory']['visitors_id'],
+          'm_companies_id' => $this->userInfo['MCompany']['id'],
+          'id <= '.$val['THistory']['id']
+        ]
+      ];
+     $tHistoryCountData = $this->THistory->find('first', $params);
+     $historyList[$key]['THistory']['count'] = $tHistoryCountData[0]['cnt'];
     }
     $tHistoryStayLogList = $this->THistoryStayLog->find('all', [
       'fields' => [
         't_histories_id',
         'url AS firstURL',
+        'title',
         'COUNT(t_histories_id) AS count '
       ],
       'conditions' => [
@@ -998,6 +1048,7 @@ class HistoriesController extends AppController {
       $stayList[$val['THistoryStayLog']['t_histories_id']] = [
         'THistoryStayLog' => [
           'firstURL' => $val['THistoryStayLog']['firstURL'],
+          'title' => $val['THistoryStayLog']['title'],
           'count' => $val[0]['count']
         ]
       ];
@@ -1327,11 +1378,35 @@ class HistoriesController extends AppController {
 
     /* 顧客情報に関する検索条件 会社名、名前、電話、メール検索 */
     if((isset($data['History']['company_name']) && $data['History']['company_name'] !== "") || (isset($data['History']['customer_name']) && $data['History']['customer_name'] !== "") || (isset($data['History']['telephone_number']) && $data['History']['telephone_number'] !== "") || (isset($data['History']['mail_address']) && $data['History']['mail_address'] !== "") ) {
-      $visitorsIds = $this->_searchCustomer($data['History']);
-      $conditions[] = [
-        'THistory.visitors_id' => $visitorsIds
-      ];
-      $chatCond['visitors_id'] = $visitorsIds;
+      //会社名が入っている場合
+      if((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && (isset($data['History']['company_name']) && $data['History']['company_name'] !== "")) {
+        //会社名がランドスケープテーブルに登録されている場合
+        $companyData = $this->MLandscapeData->find('all', [
+          'fields' => 'lbc_code,ip_address,org_name',
+          'conditions' => [
+            'MLandscapeData.org_name LIKE' => '%'. $data['History']['company_name'].'%'
+          ]
+        ]);
+        if(!empty($companyData)) {
+          $conditions[] = [
+            'THistory.ip_address' => $companyData[0]['MLandscapeData']['ip_address']
+          ];
+        }
+        else {
+          $visitorsIds = $this->_searchCustomer($data['History']);
+          $conditions[] = [
+            'THistory.visitors_id' => $visitorsIds
+          ];
+          $chatCond['visitors_id'] = $visitorsIds;
+        }
+      }
+      else {
+        $visitorsIds = $this->_searchCustomer($data['History']);
+        $conditions[] = [
+          'THistory.visitors_id' => $visitorsIds
+        ];
+        $chatCond['visitors_id'] = $visitorsIds;
+      }
     }
 
     $joinType = 'LEFT';
@@ -1569,6 +1644,7 @@ class HistoriesController extends AppController {
     $tHistoryStayLogList = $this->THistoryStayLog->find('all', [
       'fields' => [
         't_histories_id',
+        'title',
         'url AS firstURL',
         'COUNT(t_histories_id) AS count '
       ],
@@ -1583,6 +1659,7 @@ class HistoriesController extends AppController {
       $stayList[$val['THistoryStayLog']['t_histories_id']] = [
         'THistoryStayLog' => [
           'firstURL' => $val['THistoryStayLog']['firstURL'],
+          'title' => $val['THistoryStayLog']['title'],
           'count' => $val[0]['count']
         ]
       ];

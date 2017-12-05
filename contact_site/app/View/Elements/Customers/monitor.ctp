@@ -106,7 +106,11 @@
                 <th style="width: 7em">操作</th>
         <?php endif ; ?>
                 <th style="width: 7em">詳細</th>
-                <th style="width: 8em" ng-hide="labelHideList.ipAddress">IPアドレス</th>
+                <?php if((isset($coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $coreSettings[C_COMPANY_REF_COMPANY_DATA])) { ?>
+                  <th style="width: 12em" ng-hide="labelHideList.ipAddress">IPアドレス</th>
+                <?php } else { ?>
+                   <th style="width: 8em" ng-hide="labelHideList.ipAddress">IPアドレス</th>
+                <?php } ?>
                 <th style="width: 8em" ng-hide="labelHideList.customer">訪問ユーザ</th>
                 <th style="width: 9em" ng-hide="labelHideList.ua">プラットフォーム<br>ブラウザ</th>
                 <th style="width: 5em" ng-hide="labelHideList.stayCount">訪問回数</th>
@@ -130,7 +134,11 @@
                 <th style="width: 7em">操作</th>
         <?php endif; ?>
                 <th style="width: 7em">詳細</th>
-                <th ng-hide="labelHideList.ipAddress" style="width: 8em">IPアドレス</th>
+                <?php if((isset($coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $coreSettings[C_COMPANY_REF_COMPANY_DATA])) { ?>
+                  <th ng-hide="labelHideList.ipAddress" style="width: 12em">IPアドレス</th>
+                <?php } else { ?>
+                  <th ng-hide="labelHideList.ipAddress" style="width: 8em">IPアドレス</th>
+                <?php } ?>
                 <th ng-hide="labelHideList.customer" style="width: 8em">訪問ユーザ</th>
                 <th ng-hide="labelHideList.ua" style="width: 9em">プラットフォーム<br>ブラウザ</th>
                 <th ng-hide="labelHideList.stayCount" style="width: 5em">訪問回数</th>
@@ -181,11 +189,11 @@
               <?php endif; ?>
 
               <span ng-if="monitor.tabId != detailId" ng-click="showDetail(monitor.tabId, monitor.sincloSessionId)" class="btn-shadow blueBtn ">
-                詳細を開く
+                開く
                 <div class="unread" ng-if="monitor.chatUnreadCnt > 0">{{monitor.chatUnreadCnt}}</div>
               </span>
               <span ng-if="monitor.tabId == detailId" ng-click="showDetail(monitor.tabId, monitor.sincloSessionId)" class="btn-shadow redBtn ">
-                詳細を閉じる
+                閉じる
                 <div class="unread" ng-if="monitor.chatUnreadCnt > 0">{{monitor.chatUnreadCnt}}</div>
               </span>
             <?php endif; ?>
@@ -209,7 +217,7 @@
           <!-- /* 閲覧中ページ */ -->
           <td ng-hide="labelHideList.title" class="tLeft omit"><a href={{trimToURL(monitor.url)}} target="_blank" class="underL" ng-if="monitor.title">{{monitor.title}}</a><span ng-if="!monitor.title">{{trimToURL(monitor.url)}}</span></td>
           <!-- /* 参照元URL */ -->
-          <td ng-hide="labelHideList.referrer" class="tLeft omit"><a href="{{::monitor.ref}}" target="_blank" class="underL" ng-if="monitor.ref">{{::monitor.ref}}</a></td>
+          <td ng-hide="labelHideList.referrer" class="tLeft omit"><a href="{{::monitor.ref}}" target="_blank" class="underL" ng-if="monitor.processedRef">{{::monitor.processedRef}}</a></td>
         </tr>
       </tbody>
     </table>
