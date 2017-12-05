@@ -88,7 +88,7 @@ if ( isset($history['THistory']['visitors_id']) ) {
             ?></td>
             <td class="tCenter">
               <?php if( is_numeric($history['THistoryChatLog']['count']) ): ?>
-                  <a class="underL" href="javascript:void(0)" onclick="openChatById('<?=h($history['THistory']['id'])?>')" >履歴<?php if (!empty($history['THistoryChatLog']['type'])) { echo "（".h($history['THistoryChatLog']['type'])."）"; } ?></a>
+                  <a class="underL showBold" href="javascript:void(0)" onclick="openChatById('<?=h($history['THistory']['id'])?>')" >履歴<?php if (!empty($history['THistoryChatLog']['type'])) { echo "（".h($history['THistoryChatLog']['type'])."）"; } ?></a>
               <?php endif; ?>
               <?php if( !is_numeric($history['THistoryChatLog']['count']) ): ?>（未対応）<?php endif; ?>
             </td>
