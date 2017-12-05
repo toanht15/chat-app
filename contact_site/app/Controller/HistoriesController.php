@@ -777,7 +777,6 @@ class HistoriesController extends AppController {
       $data = $this->Session->read('Thistory');
       /* ○ 検索処理 */
 
-      $this->log('check1',LOG_DEBUG);
       //ipアドレス
       if(isset($data['History']['ip_address']) && $data['History']['ip_address'] !== "") {
         $this->paginate['THistory']['conditions']['THistory.ip_address LIKE'] = '%'.$data['History']['ip_address'].'%';
@@ -821,7 +820,6 @@ class HistoriesController extends AppController {
           $chatCond['visitors_id'] = $visitorsIds;
         }
       }
-      $this->log('check2',LOG_DEBUG);
       // 担当者に関する検索条件
       $joinType = 'LEFT';
       if ( isset($data['THistoryChatLog']['responsible_name']) && $data['THistoryChatLog']['responsible_name'] !== "" ) {
@@ -860,7 +858,6 @@ class HistoriesController extends AppController {
           'conditions' => 'message.t_histories_id = THistory.id'
         ];
       }
-      $this->log('check2',LOG_DEBUG);
 
       if ( !empty($data['THistoryChatLog']) && !empty(array_filter($data['THistoryChatLog'])) ) {
         // 対象ユーザーのIDリストを取得するサブクエリを作成
@@ -1040,7 +1037,6 @@ class HistoriesController extends AppController {
         'visitors_id' => array_keys($customerIdList),
       ]
     ]);
-    $this->log('check5',LOG_DEBUG);
 
     $this->set('data', $data);
     $this->set('historyList', $historyList);
