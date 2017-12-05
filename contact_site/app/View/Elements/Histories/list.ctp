@@ -1,21 +1,23 @@
 <table>
     <thead>
         <tr>
-            <th width=" 9%">日時</th>
-            <th width=" 6%" class="noOutCsv">詳細</th>
+            <th width=" 4%">日時</th>
+            <th width=" 4%" class="noOutCsv">詳細</th>
             <th width="10%">IPアドレス</th>
             <th width="10%">訪問ユーザ</th>
             <th width="10%">プラットフォーム<br>ブラウザ</th>
-            <th width=" 7%">キャンペーン</th>
-            <th width="10%">参照元URL</th>
+            <th width=" 6%">キャンペーン</th>
+            <th width=" 10%">流入ページタイトル</th>
             <th width=" 5%">閲覧<br>ページ数</th>
+            <th width="10%">参照元URL</th>
+            <th width=" 3%">訪問回数</th>
             <th width=" 5%">滞在時間</th>
         <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
-            <th id="lastSpeechLabel" width=" 7%">最終発言後<br>離脱時間<div class="questionBalloon questionBalloonPosition13">
+            <th id="lastSpeechLabel" width=" 6%">最終発言後<br>離脱時間<div class="questionBalloon questionBalloonPosition13">
                 <icon class="questionBtn">？</icon>
               </div></th>
-            <th width=" 5%">成果</th>
-            <th width="10%">チャット</th>
+            <th width=" 4%">成果</th>
+            <th width="7%">チャット</th>
             <th width="10%">担当者</th>
         <?php endif; ?>
         </tr>
@@ -57,12 +59,14 @@ if ( isset($history['THistory']['visitors_id']) ) {
             <td class="tLeft pre">{{ ui('<?=h($history['THistory']['ip_address'])?>', '<?=$visitorsId?>') }}</td>
             <td class="tLeft pre">{{ ua('<?=h($history['THistory']['user_agent'])?>') }}</td>
             <td class="tCenter pre"><?=$campaignParam?></td>
-            <td class="tLeft omit"><a href="{{::trimToURL('<?=h($history['THistory']['referrer_url'])?>')}}" target="history">{{::trimToURL("<?=h($history['THistory']['referrer_url'])?>")}}</a></td>
+            <td class="tCenter pre"><a href = "<?=h($stayList[$history['THistory']['id']]['THistoryStayLog']['firstURL'])?>" target = "landing"><?= $stayList[$history['THistory']['id']]['THistoryStayLog']['title'] ?></a></td>
             <td class="tCenter">
                 <?php if( is_numeric($stayList[$history['THistory']['id']]['THistoryStayLog']['count']) ): ?>
                     <a class="underL" href="javascript:void(0)" onclick="openHistoryById('<?=h($history['THistory']['id'])?>')" ><?=h($stayList[$history['THistory']['id']]['THistoryStayLog']['count'])?></a>
                 <?php endif; ?>
             </td>
+            <td class="tLeft omit"><a href="{{::trimToURL('<?=h($history['THistory']['referrer_url'])?>',1)}}" target="history">{{::trimToURL("<?=h($history['THistory']['referrer_url'])?>",2)}}</a></td>
+             <td class="tCenter pre"><?=h($history['THistory']['count'])?></td>
             <td class="tRight"><?=$this->htmlEx->calcTime($history['THistory']['access_date'], $history['THistory']['out_date']) ?></td>
         <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
             <td class="tRight"><?php
