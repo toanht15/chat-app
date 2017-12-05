@@ -487,6 +487,7 @@
         userInfo.set(cnst.info_type.sincloSessionId, obj.sincloSessionId, "sincloSessionId");
         storage.l.set('textareaOpend', 'open');
         storage.l.set('leaveFlg', 'false');
+        storage.s.unset('amsg');
       }
 
       obj.prev = userInfo.writePrevToLocalStorage();
