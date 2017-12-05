@@ -313,7 +313,7 @@ $(document).ready(function(){
   });
 
   var prevBoldTarget = null;
-  $('.underL showBold').on('click', function(e){
+  $('.underL.showBold').on('click', function(e){
     $(this).parents('tr').find('td').each(function(index){
       $(this).css("font-weight", "bold");
     });
