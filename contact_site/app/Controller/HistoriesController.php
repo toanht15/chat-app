@@ -810,13 +810,13 @@ class HistoriesController extends AppController {
         if((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && (isset($data['History']['company_name']) && $data['History']['company_name'] !== "")) {
           //会社名がランドスケープテーブルに登録されている場合
           $companyData = $this->MLandscapeData->find('all', [
-            'fields' => '*',
+            'fields' => 'lbc_code,ip_address,org_name',
             'conditions' => [
               'MLandscapeData.org_name LIKE' => '%'. $data['History']['company_name'].'%'
             ]
           ]);
           if(!empty($companyData)) {
-            $this->paginate['THistory']['conditions']['THistory.ip_address LIKE'] = '%'.$companyData[0]['MLandscapeData']['ip_address'].'%';
+            $this->paginate['THistory']['conditions']['THistory.ip_address'] = $companyData[0]['MLandscapeData']['ip_address'];
           }
           else {
             $visitorsIds = $this->_searchCustomer($data['History']);
@@ -1382,14 +1382,14 @@ class HistoriesController extends AppController {
       if((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && (isset($data['History']['company_name']) && $data['History']['company_name'] !== "")) {
         //会社名がランドスケープテーブルに登録されている場合
         $companyData = $this->MLandscapeData->find('all', [
-          'fields' => '*',
+          'fields' => 'lbc_code,ip_address,org_name',
           'conditions' => [
             'MLandscapeData.org_name LIKE' => '%'. $data['History']['company_name'].'%'
           ]
         ]);
         if(!empty($companyData)) {
           $conditions[] = [
-            'THistory.ip_address LIKE' => '%'.$companyData[0]['MLandscapeData']['ip_address'].'%',
+            'THistory.ip_address' => $companyData[0]['MLandscapeData']['ip_address']
           ];
         }
         else {
