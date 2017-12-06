@@ -117,7 +117,7 @@ if ( window.hasOwnProperty('io') ) {
 
   <?php if ($widgetCheck) { ?>
     data.data.opFlg = true;
-    data.data.status = "<?=$opStatus?>";
+    data.data.status = $('#operatorStatus').data('status') ? $('#operatorStatus').data('status') : "<?=$opStatus?>";
   <?php } else { ?>
     data.data.opFlg = false;
   <?php } ?>
