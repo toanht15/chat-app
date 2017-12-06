@@ -1363,20 +1363,22 @@
       }
     },
     hideTextarea : function(){
-      document.getElementById("flexBoxHeight").style.display = 'none';
       if(chatTalk.clientHeight == 194 || chatTalk.clientHeight == 284 || chatTalk.clientHeight == 374) {
+        document.getElementById("flexBoxHeight").style.display = 'none';
         document.getElementById("chatTalk").style.height = chatTalk.clientHeight + 75 + 'px';
       }
       //スマホの場合
       if ( check.smartphone() ) {
         // 縦の場合
         if ( $(window).height() > $(window).width() ) {
+          document.getElementById("flexBoxHeight").style.display = 'none';
           widgetWidth = $(window).width() - 20;
           ratio = widgetWidth * (1/285);
           document.getElementById("chatTalk").style.height = (194 * ratio) + (60*ratio) + 'px';
         }
         //横の場合
         else {
+          document.getElementById("flexBoxHeight").style.display = 'none';
           var chatAreaHeight = window.innerHeight * (document.body.clientWidth / window.innerWidth);
           var hRatio = chatAreaHeight * 0.07;
           document.getElementById("chatTalk").style.height = (chatAreaHeight - (6.5 * hRatio)) + (hRatio * 4 ) + 'px';
@@ -1644,6 +1646,17 @@
               console.log("訪問後表示");
               window.sincloInfo.widgetDisplay = true;
               common.widgetHandler.show();
+
+              //自由入力エリアが閉まっているか空いているかチェック
+              var textareaOpend = storage.l.get('textareaOpend');
+              //チャットのテキストエリア表示
+              if( textareaOpend == 'close') {
+                sinclo.hideTextarea();
+              }
+              //チャットのテキストエリア非表示
+              else {
+                sinclo.displayTextarea();
+              }
             },common.widgetHandler.getRemainingTimeMsec());
           }
         },
@@ -2363,6 +2376,17 @@
               common.widgetHandler.show();
             }
 
+            //チャットのテキストエリア表示
+            if(Number(cond.chatTextarea) === 1 ||  cond.chatTextarea === undefined || storage.l.get('leaveFlg') == 'true' ) {
+              sinclo.displayTextarea();
+              storage.l.set('textareaOpend', 'open');
+            }
+            //チャットのテキストエリア非表示
+            else if(Number(cond.chatTextarea) === 2 ) {
+              sinclo.hideTextarea();
+              storage.l.set('textareaOpend', 'close');
+            }
+
             // 発言内容によるオートメッセージかチェックする
             var isSpeechContent = false;
             for(var key in cond.conditions) {
@@ -2446,16 +2470,6 @@
                       }
                     }
                 }, 1);
-              //チャットのテキストエリア表示
-              if(Number(cond.chatTextarea) === 1 ||  cond.chatTextarea === undefined || storage.l.get('leaveFlg') == 'true' ) {
-                sinclo.displayTextarea();
-                storage.l.set('textareaOpend', 'open');
-              }
-              //チャットのテキストエリア非表示
-              else if(Number(cond.chatTextarea) === 2 ) {
-                sinclo.hideTextarea();
-                storage.l.set('textareaOpend', 'close');
-              }
             }
         },
         fireChatEnterEvent: function(msg) {
