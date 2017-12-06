@@ -2,8 +2,8 @@
   $(function(){
     var popWinObj;
     $('.loginLink').on("click",function(){
-      var mailAddress = $(this).parent().find('.adminId').text();
-      var pass = $(this).parent().find('.adminPass').text();
+      var mailAddress = $(this).parents('tr').find('.adminId').text();
+      var pass = $(this).parents('tr').find('.adminPass').text();
       $('#postjump').remove();
       if( (popWinObj) && (!popWinObj.closed) ){
         popWinObj.close();
