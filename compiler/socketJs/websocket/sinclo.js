@@ -489,6 +489,7 @@
         storage.l.set('textareaOpend', 'open');
         storage.l.set('leaveFlg', 'false');
         storage.s.unset('amsg');
+        userInfo.setPrevpage(true);
       }
 
       obj.prev = userInfo.writePrevToLocalStorage();
