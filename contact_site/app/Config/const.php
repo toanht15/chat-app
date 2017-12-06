@@ -9,6 +9,12 @@ define('C_AWS_S3_REGION', 'ap-northeast-1'); // ウィジェット用参照先
 define('C_AWS_S3_STORAGE', 'STANDARD'); // ウィジェット用参照先
 define('C_AWS_S3_HOSTNAME', 'https://s3-'.C_AWS_S3_REGION.'.amazonaws.com/'); // S3パス
 
+// AWS: SES
+define('C_AWS_SES_SMTP_SERVER_NAME', 'email-smtp.us-east-1.amazonaws.com');
+define('C_AWS_SES_SMTP_PORT', '587');
+define('C_AWS_SES_SMTP_USER_NAME', 'AKIAJ67HG3PEJKXCEOAA');
+define('C_AWS_SES_SMTP_CREDENTIAL', 'ArIMSQ34vzldCknzesVVe/a8cDhYB5buPFyjzyo6tnVR');
+
 // サムネイル用接頭辞
 define('C_PREFIX_DOCUMENT', 'thumb_'); // 資料
 
