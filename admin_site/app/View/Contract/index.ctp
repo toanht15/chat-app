@@ -29,7 +29,7 @@
         ?>
         <tbody>
           <tr ondblclick= "location.href = '<?=$this->Html->url(array('controller' => 'Contract', 'action' => 'edit', $val['MCompany']['id']))?>';">
-            <td><?=h($val['MCompany']['company_name'])?></td>
+            <td><a href="#" class="loginLink"><?=h($val['MCompany']['company_name'])?></a></td>
             <td><?=h($val['MCompany']['company_key'])?></td>
             <?php if(h($val['MCompany']['m_contact_types_id']) == 1){ ?>
               <td>プレミアムプラン</td>
@@ -44,8 +44,8 @@
               <td>ベーシックプラン</td>
             <?php } ?>
             <td><?= h($val['MUser']['user_account'])?> / <?=h($val['MCompany']['limit_users'])?></td>
-            <td><?= h($val['AdminUser']['mail_address']) ?></td>
-            <td><?= h($val['MAgreement']['admin_password']) ?></td>
+            <td class="adminId"><?= h($val['AdminUser']['mail_address']) ?></td>
+            <td class="adminPass"><?= h($val['MAgreement']['admin_password']) ?></td>
             <td><?= intval($val['MCompany']['trial_flg']) === 1 ? "トライアル" : "本契約" ?></td>
             <td><?= intval($val['MCompany']['trial_flg']) === 1 ?  h($val['MAgreement']['trial_start_day']) : h($val['MAgreement']['agreement_start_day']) ?></td>
             <td><?= intval($val['MCompany']['trial_flg']) === 1 ?  h($val['MAgreement']['trial_end_day']) : h($val['MAgreement']['agreement_end_day']) ?></td>
