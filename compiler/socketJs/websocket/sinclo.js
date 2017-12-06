@@ -1096,6 +1096,7 @@
       if((Number(window.sincloInfo.widget.showTiming) === 3 && Object.keys(window.sinclo.chatApi.autoMessages.get(true)).length > 0)) {
         // オートメッセージ発動済みのため表示する
         common.widgetHandler.saveShownFlg();
+        window.sincloInfo.widgetDisplay = true;
         common.widgetHandler.show();
         //自由入力エリアが閉まっているか空いているかチェック
         var textareaOpend = storage.l.get('textareaOpend');
