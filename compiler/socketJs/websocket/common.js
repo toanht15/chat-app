@@ -2469,10 +2469,10 @@ var socket, // socket.io
         }
       }
     },
-    setPrevpage: function(){
+    setPrevpage: function(reset){
       var code = this.getCode(cnst.info_type.prev);
       userInfo.prev = common.jParse(storage.s.get(code));
-      if ( !check.isset(userInfo.prev) ) {
+      if ( !check.isset(userInfo.prev) || reset ) {
         userInfo.prev = [];
       }
       // IE8対応コード
