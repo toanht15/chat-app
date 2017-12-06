@@ -406,6 +406,7 @@ function getIp(socket){
 // Landscapeの企業情報取得
 //requestをrequire
 var http = require('http');
+http.globalAgent.maxSockets = 100;
 function getCompanyInfoFromApi(ip, callback) {
   //ヘッダーを定義
   var headers = {
@@ -419,7 +420,8 @@ function getCompanyInfoFromApi(ip, callback) {
     path: process.env.GET_CD_API_PATH,
     method: 'POST',
     headers: headers,
-    json: true
+    json: true,
+    agent: false
   };
 
   if(process.env.DB_HOST === 'localhost') {
@@ -431,15 +433,18 @@ function getCompanyInfoFromApi(ip, callback) {
     if(response.statusCode === 200) {
       response.setEncoding('utf8');
       response.on('data', callback);
+      return;
     } else {
       console.log('企業詳細情報取得時にエラーが返却されました。 errorCode : ' + response.statusCode);
       callback(false);
+      return;
     }
   });
 
   req.on('error', function(error) {
     console.log('企業詳細情報取得時にHTTPレベルのエラーが発生しました。 message : ' + error.message);
     callback(false);
+    return;
   });
 
   req.write(JSON.stringify({"accessToken":"x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK", "ipAddress":ip}));
@@ -600,12 +605,14 @@ var db = {
     if ( isset(obj.tabId) && isset(obj.siteKey) ) {
       if ( !isset(companyList[obj.siteKey]) || obj.subWindow ) return false;
       var siteId = companyList[obj.siteKey];
-      pool.query('SELECT * FROM t_histories WHERE m_companies_id = ? AND tab_id = ? AND visitors_id = ? ORDER BY id DESC LIMIT 1;', [siteId, obj.sincloSessionId, obj.userId], function(err, rows){
+      pool.query('SELECT * FROM t_histories WHERE m_companies_id = ? AND tab_id = ? AND visitors_id = ? ORDER BY id DESC LIMIT 1;', [siteId, obj.sincloSessionId || obj.tabId, obj.userId], function(err, rows){
         if ( err !== null && err !== '' ) return false; // DB接続断対応
         var now = formatDateParse();
 
         if ( isset(rows) && isset(rows[0]) ) {
-          sincloCore[obj.siteKey][obj.sincloSessionId].historyId = rows[0].id;
+          if(isset(obj.sincloSessionId)) {
+            sincloCore[obj.siteKey][obj.sincloSessionId].historyId = rows[0].id;
+          }
           sincloCore[obj.siteKey][obj.tabId].historyId = rows[0].id;
           timeUpdate(rows[0].id, obj, now);
           obj.historyId = rows[0].id;
@@ -1796,7 +1803,7 @@ io.sockets.on('connection', function (socket) {
     var obj = JSON.parse(d);
     //ウィジェット件数登録処理
     if(obj.widget === true) {
-      pool.query('SELECT * FROM t_history_widget_displays WHERE tab_id = ?',[obj.sincloSessionId], function (err, results) {
+      pool.query('SELECT * FROM t_history_widget_displays WHERE tab_id = ?',[obj.sincloSessionId || obj.tabId], function (err, results) {
         if(isset(err)) {
           console.log("RECORD SElECT ERROR: t_history_widget_displays(tab_id):" + err);
           return false;
@@ -1804,7 +1811,7 @@ io.sockets.on('connection', function (socket) {
         //ウィジェットが初めて表示された場合
         if (Object.keys(results).length === 0) {
           //tabId登録
-          pool.query('INSERT INTO t_history_widget_displays(m_companies_id,tab_id,created) VALUES(?,?,?)',[companyList[obj.siteKey],obj.sincloSessionId,new Date()],function(err,results) {
+          pool.query('INSERT INTO t_history_widget_displays(m_companies_id,tab_id,created) VALUES(?,?,?)',[companyList[obj.siteKey],obj.sincloSessionId || obj.tabId,new Date()],function(err,results) {
             if(isset(err)) {
               console.log("RECORD INSERT ERROR: t_history_widget_displays(tab_id):" + err);
               return false;
