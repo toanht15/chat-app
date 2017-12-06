@@ -361,6 +361,7 @@
           emitData.connectToken = userInfo.connectToken;
           userInfo.syncInfo.get();
           common.judgeShowWidget();
+
           emit('connectSuccess', {prevList: userInfo.prevList, prev: userInfo.prev});
           emit('connectedForSync', {});
 
@@ -1596,6 +1597,16 @@
                 }
               });
 
+              var textareaOpend = storage.l.get('textareaOpend');
+              //チャットのテキストエリア表示
+              if( textareaOpend == 'close') {
+                sinclo.hideTextarea();
+              }
+              //チャットのテキストエリア非表示
+              else {
+                sinclo.displayTextarea();
+              }
+
             emit('getChatMessage', {showName: sincloInfo.widget.showName});
         },
         widgetOpen: function(){
@@ -2038,16 +2049,6 @@
             this.flg = true;
             var messages = window.sincloInfo.messages;
             console.log("MESSAGES : " + JSON.stringify(messages));
-
-            var textareaOpend = storage.l.get('textareaOpend');
-            //チャットのテキストエリア表示
-            if( textareaOpend == 'close') {
-              sinclo.hideTextarea();
-            }
-            //チャットのテキストエリア非表示
-            else {
-              sinclo.displayTextarea();
-            }
 
             var andFunc = function(conditionKey, condition, key, ret){
                 if(conditionKey === 7) {
