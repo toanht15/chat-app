@@ -2373,7 +2373,6 @@
               common.widgetHandler.show();
             }
 
-            console.log('おおおおおおおおおおおおおおおおおおおおおおおおお');
             //チャットのテキストエリア表示
             if(Number(cond.chatTextarea) === 1 ||  cond.chatTextarea === undefined || storage.l.get('leaveFlg') == 'true' ) {
               sinclo.displayTextarea();
