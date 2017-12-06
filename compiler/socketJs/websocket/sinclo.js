@@ -1370,12 +1370,14 @@
       if ( check.smartphone() ) {
         // 縦の場合
         if ( $(window).height() > $(window).width() ) {
+          document.getElementById("flexBoxHeight").style.display = 'none';
           widgetWidth = $(window).width() - 20;
           ratio = widgetWidth * (1/285);
           document.getElementById("chatTalk").style.height = (194 * ratio) + (60*ratio) + 'px';
         }
         //横の場合
         else {
+          document.getElementById("flexBoxHeight").style.display = 'none';
           var chatAreaHeight = window.innerHeight * (document.body.clientWidth / window.innerWidth);
           var hRatio = chatAreaHeight * 0.07;
           document.getElementById("chatTalk").style.height = (chatAreaHeight - (6.5 * hRatio)) + (hRatio * 4 ) + 'px';
