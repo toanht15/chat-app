@@ -1093,6 +1093,22 @@
           }
         }
       }
+      if((Number(window.sincloInfo.widget.showTiming) === 3 && Object.keys(window.sinclo.chatApi.autoMessages.get(true)).length > 0)) {
+        // オートメッセージ発動済みのため表示する
+        common.widgetHandler.saveShownFlg();
+        window.sincloInfo.widgetDisplay = true;
+        common.widgetHandler.show();
+        //自由入力エリアが閉まっているか空いているかチェック
+        var textareaOpend = storage.l.get('textareaOpend');
+        //チャットのテキストエリア表示
+        if( textareaOpend == 'close') {
+          sinclo.hideTextarea();
+        }
+        //チャットのテキストエリア非表示
+        else {
+          sinclo.displayTextarea();
+        }
+      }
       if ( !this.chatApi.online && !sinclo.trigger.flg ) {
         // オートメッセージ読み込み
         sinclo.trigger.init();
