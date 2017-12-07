@@ -75,6 +75,8 @@ class AppController extends Controller {
     C_COMPANY_USE_CV => false, //CV
   ];
 
+  private $secretKey = 'x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK';
+
   public function beforeFilter(){
 
     // プロトコルチェック(本番のみ)
@@ -376,6 +378,23 @@ class AppController extends Controller {
 
   protected function mergeCoreSettings($coreSettings) {
     return array_merge($this->defaultCoreSettings, $coreSettings);
+  }
+
+  protected function isValidAccessToken($token) {
+    if(strcmp($this->secretKey, $token) !== 0) {
+      throw new Exception('アクセストークンが不正です', 400);
+    }
+  }
+
+  /**
+   * @return mixed
+   */
+  protected function getRequestJSONData()
+  {
+    $data = file_get_contents('php://input');
+    $this->log('リクエストデータ: '. $data, 'request');
+    $jsonObj = json_decode($data, TRUE);
+    return $jsonObj;
   }
 
   private function _createPass(){
