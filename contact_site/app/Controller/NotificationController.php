@@ -34,15 +34,16 @@ class NotificationController extends AppController {
       $targetStayLog = $this->getTargetStayLogById($targetChatLog['THistoryChatLog']['t_history_stay_logs_id']);
       $campaign = $this->getAllCampaign($targetHistory['THistory']['m_companies_id']);
       $targetLandscapeData = null;
-//      if($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) { FIX : 企業マスタから取得必須
-//        $targetLandscapeData = $this->getTargetLandScapeDataByIpAddress($targetHistory->getIpAddress);
-//      }
+      if(true) { //FIX : 企業マスタから取得必須
+        $targetLandscapeData = $this->getTargetLandScapeDataByIpAddress($targetHistory['THistory']['ip_address']);
+      }
       $component = new AutoMessageMailTemplateComponent();
       $component->setRequiredData($targetAutoMessage['TAutoMessage']['m_mail_template_id'], $allChatLogs, $targetStayLog, $campaign, $targetLandscapeData);
       $component->createMessageBody();
 
       $transmission = $this->getTransmissionConfigById($targetAutoMessage['TAutoMessage']['m_mail_transmission_settings_id']);
       $sender = new MailSenderComponent();
+      $sender->setFromName($transmission['MMailTransmissionSetting']['from_name']);
       $sender->setTo($transmission['MMailTransmissionSetting']['to_address']);
       $sender->setSubject($transmission['MMailTransmissionSetting']['subject']);
       $sender->setBody($component->getBody());
