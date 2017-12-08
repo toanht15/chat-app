@@ -182,7 +182,7 @@ class AppSchema extends CakeSchema {
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
 	);
 
-	public $m_mail_template = array(
+	public $m_mail_templates = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary'),
 		'm_companies_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false),
 		'mail_type_cd' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 5, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
@@ -309,6 +309,7 @@ class AppSchema extends CakeSchema {
 		'trigger_type' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'comment' => 'トリガーの種類'),
 		'activity' => array('type' => 'text', 'null' => true, 'default' => null, 'collate' => 'utf8_general_ci', 'comment' => 'オートメッセージ設定内容', 'charset' => 'utf8'),
 		'action_type' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'comment' => 'アクションの種類'),
+		'send_mail_flg' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'm_mail_transmission_settings_id' => array('type' => 'integer', 'null' => true, 'default' => '0', 'unsigned' => false),
 		'm_mail_template_id' => array('type' => 'integer', 'null' => true, 'default' => '0', 'unsigned' => false),
 		'active_flg' => array('type' => 'integer', 'null' => false, 'default' => '0', 'unsigned' => false, 'comment' => '0:有効、1:無効'),
@@ -487,7 +488,7 @@ class AppSchema extends CakeSchema {
 		'message_read_flg' => array('type' => 'integer', 'null' => true, 'default' => '0', 'unsigned' => false, 'comment' => '既読フラグ'),
 		'achievement_flg' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false, 'key' => 'index', 'comment' => '成果フラグ(1:有効, 2:無効, null: 指定なし)'),
 		'send_mail_flg' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
-		't_mail_transmission_log_id' => array('type' => 'integer', 'null' => false, 'default' => '0', 'unsigned' => false),
+		't_mail_transmission_logs_id' => array('type' => 'integer', 'null' => false, 'default' => '0', 'unsigned' => false),
 		'delete_flg' => array('type' => 'integer', 'null' => false, 'default' => '0', 'unsigned' => false),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => null, 'length' => 2),
 		'deleted' => array('type' => 'datetime', 'null' => true, 'default' => null),
@@ -582,7 +583,7 @@ class AppSchema extends CakeSchema {
 
 	public $t_mail_transmission_logs = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary'),
-		'm_companies_Id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false),
+		'm_companies_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false),
 		'mail_type_cd' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 5, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'from_address' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 200, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'from_name' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 300, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
