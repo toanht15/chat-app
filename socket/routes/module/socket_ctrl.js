@@ -451,6 +451,50 @@ function getCompanyInfoFromApi(ip, callback) {
   req.end();
 }
 
+function sendMail(autoMessageId, lastChatLogId, callback) {
+  //ヘッダーを定義
+  var headers = {
+    'Content-Type':'application/json'
+  };
+
+  //オプションを定義
+  var options = {
+    host: process.env.SEND_AUTO_MESSAGE_MAIL_API_HOST,
+    port: process.env.SEND_AUTO_MESSAGE_MAIL_API_PORT,
+    path: process.env.SEND_AUTO_MESSAGE_MAIL_API_PATH,
+    method: 'POST',
+    headers: headers,
+    json: true,
+    agent: false
+  };
+
+  if(process.env.DB_HOST === 'localhost') {
+    options.rejectUnauthorized = false;
+  }
+
+  //リクエスト送信
+  var req = http.request(options, function (response) {
+    if(response.statusCode === 200) {
+      response.setEncoding('utf8');
+      response.on('data', callback);
+      return;
+    } else {
+      console.log('企業詳細情報取得時にエラーが返却されました。 errorCode : ' + response.statusCode);
+      callback(false);
+      return;
+    }
+  });
+
+  req.on('error', function(error) {
+    console.log('企業詳細情報取得時にHTTPレベルのエラーが発生しました。 message : ' + error.message);
+    callback(false);
+    return;
+  });
+
+  req.write(JSON.stringify({"accessToken":"x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK", "autoMessageId":autoMessageId, "lastChatLogId":lastChatLogId}));
+  req.end();
+}
+
 // Frameの削除
 function trimFrame(str){
   return str.replace("_frame", "");
@@ -821,6 +865,11 @@ io.sockets.on('connection', function (socket) {
                   emit.toSameUser('sendChatResult', sendData, d.siteKey, sincloSessionId);
                   // 保持していたオートメッセージを空にする
                   sincloCore[d.siteKey][sincloSessionId].autoMessages;
+                  if(d.sendMailFlg) {
+                    sendMail(d.autoMessageId, results.insertId, function(){
+                      console.log("send mail");
+                    });
+                  }
                   if (Number(insertData.message_type) === 3) return false;
                   // 書き込みが成功したら企業側に結果を返す
                   emit.toCompany('sendChatResult', {
@@ -878,6 +927,11 @@ io.sockets.on('connection', function (socket) {
                   siteKey: d.siteKey,
                   notifyToCompany: d.notifyToCompany
                 }, d.siteKey);
+                if(d.sendMailFlg) {
+                  sendMail(d.autoMessageId, results.insertId, function(){
+                    console.log("send mail");
+                  });
+                }
               }
 
               //オペレータリクエスト件数
@@ -891,7 +945,10 @@ io.sockets.on('connection', function (socket) {
                     //対応数上限設定ある場合
                     if(Number(result[0].sc_flg) == 1) {
                       //オペレータがいる場合
-                      if(Object.keys(scList[d.siteKey].user) && Object.keys(scList[d.siteKey].user).length !== 0) {
+                      if(isset(scList[d.siteKey])
+                        && isset(scList[d.siteKey].user)
+                        && Object.keys(scList[d.siteKey].user)
+                        && Object.keys(scList[d.siteKey].user).length !== 0) {
                         for (key in Object.keys(scList[d.siteKey].user)) {
                           var userId = Object.keys(scList[d.siteKey].user)[key];
                           //対応数がMAX人数か確認
@@ -904,7 +961,9 @@ io.sockets.on('connection', function (socket) {
                     //対応数上限設定していない場合
                     else {
                       //オペレータがいる場合
-                      if(Object.keys(company.info[d.siteKey]) && Object.keys(company.info[d.siteKey]).length !== 0) {
+                      if(isset(company.info[d.siteKey])
+                        && Object.keys(company.info[d.siteKey])
+                        && Object.keys(company.info[d.siteKey]).length !== 0) {
                         for (key in Object.keys(company.info[d.siteKey])) {
                           var userId = Object.keys(company.info[d.siteKey])[key];
                           addChatActiveUser(results.insertId,userId,d.siteKey);
@@ -2509,7 +2568,9 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                   messageType: rows[0].auto_message_type,
                   created: rows[0].inputed ? rows[0].inputed : new Date(),
                   messageDistinction: messageDistinction,
-                  achievementFlg: 0
+                  achievementFlg: 0,
+                  sendMailFlg: rows[0].send_mail_flg,
+                  autoMessageId: rows[0].id
                 };
               }
               else {
@@ -2522,6 +2583,8 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                     messageType: rows[0].auto_message_type,
                     created: rows[0].inputed ? rows[0].inputed : new Date(),
                     messageDistinction: messageDistinction,
+                    sendMailFlg: rows[0].send_mail_flg,
+                    autoMessageId: rows[0].id
                 };
               }
               chatApi.set(ret);
