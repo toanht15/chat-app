@@ -73,6 +73,7 @@ class AppController extends Controller {
     C_COMPANY_REF_COMPANY_DATA => false, // 企業情報参照（Landscape）
     C_COMPANY_USE_FREE_INPUT => false, //自由入力エリア
     C_COMPANY_USE_CV => false, //CV
+    C_COMPANY_USE_AUTOMESSAGE_SEND_MAIL => false, //メール送信（オートメッセージ）
   ];
 
   private $secretKey = 'x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK';

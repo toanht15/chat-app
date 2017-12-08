@@ -167,6 +167,102 @@
       </li>
       <!-- cv -->
 
+      <!-- メール送信 -->
+      <li class="bt0">
+        <?= $this->ngForm->input('main.send_mail_flg', [
+              'type' => 'checkbox',
+              'error' => false,
+              'disabled' => !$coreSettings[C_COMPANY_USE_AUTOMESSAGE_SEND_MAIL],
+              'label' => 'これまでのチャット内容をメールで送信する'
+          ], [
+              'entity' => 'send_mail_flg',
+              'default' => (!empty($this->data['TAutoMessage']['send_mail_flg'])) ? $this->data['TAutoMessage']['send_mail_flg'] : C_CHECK_OFF,
+          ]); ?>
+      </li>
+      <li class="bt0 sendMailSettings" id="mailAddressSetting" style="display:none">
+        <span><label class="require">送信先メールアドレス</label></span>
+        <div id="fromMailAddressSettings">
+          <span class="bt0 mailAddressBlock"><?= $this->Form->input('main.mail_address_1', [
+             'type' => 'text',
+             'error' => false
+          ], [
+            'entity' => 'mail_address_1'
+          ]); ?>
+            <span class="btnBlock">
+              <a><img src= /img/add.png alt=登録 class="btn-shadow disOffgreenBtn" width=25 height=25 style="padding:2px !important;"></a>
+              <a><img src= /img/dustbox.png alt=削除 class="btn-shadow redBtn deleteBtn" width=25 height=25 style="padding:2px !important;"></a>
+            </span>
+          </span>
+          <span class="bt0 mailAddressBlock"><?= $this->Form->input('main.mail_address_2', [
+                'type' => 'text',
+                'error' => false
+            ], [
+                'entity' => 'mail_address_2'
+            ]); ?>
+            <span class="btnBlock">
+              <a><img src= /img/add.png alt=登録 class="btn-shadow disOffgreenBtn" width=25 height=25 style="padding:2px !important;"></a>
+              <a><img src= /img/dustbox.png alt=削除 class="btn-shadow redBtn deleteBtn" width=25 height=25 style="padding:2px !important;"></a>
+            </span>
+          </span>
+          <span class="bt0 mailAddressBlock"><?= $this->Form->input('main.mail_address_3', [
+                'type' => 'text',
+                'error' => false
+            ], [
+                'entity' => 'mail_address_3'
+            ]); ?>
+            <span class="btnBlock">
+              <a><img src= /img/add.png alt=登録 class="btn-shadow disOffgreenBtn" width=25 height=25 style="padding:2px !important;"></a>
+              <a><img src= /img/dustbox.png alt=削除 class="btn-shadow redBtn deleteBtn" width=25 height=25 style="padding:2px !important;"></a>
+            </span>
+          </span>
+          <span class="bt0 mailAddressBlock"><?= $this->Form->input('main.mail_address_4', [
+                'type' => 'text',
+                'error' => false
+            ], [
+                'entity' => 'mail_address_4'
+            ]); ?>
+            <span class="btnBlock">
+              <a><img src= /img/add.png alt=登録 class="btn-shadow disOffgreenBtn" width=25 height=25 style="padding:2px !important;"></a>
+              <a><img src= /img/dustbox.png alt=削除 class="btn-shadow redBtn deleteBtn" width=25 height=25 style="padding:2px !important;"></a>
+            </span>
+          </span>
+          <span class="bt0 mailAddressBlock"><?= $this->Form->input('main.mail_address_5', [
+                'type' => 'text',
+                'error' => false
+            ], [
+                'entity' => 'mail_address_5'
+            ]); ?>
+            <span class="btnBlock">
+              <a><img src= /img/add.png alt=登録 class="btn-shadow disOffgreenBtn" width=25 height=25 style="padding:2px !important;"></a>
+              <a><img src= /img/dustbox.png alt=削除 class="btn-shadow redBtn deleteBtn" width=25 height=25 style="padding:2px !important;"></a>
+            </span>
+          </span>
+        </div>
+        <li class="bt0 sendMailSettings" id="subjectBlock" style="display:none">
+          <span><label class="require">メールタイトル</label></span>
+          <span class="bt0"><?= $this->Form->input('main.subject', [
+                'type' => 'text',
+                'error' => false
+            ], [
+                'entity' => 'subject',
+                'default' => 'チャット通知（sinclo）'
+            ]); ?>
+          </span>
+        </li>
+        <li class="bt0 sendMailSettings" id="fromNameBlock" style="display:none">
+        <span><label class="require">差出人名</label></span>
+        <span class="bt0"><?= $this->Form->input('main.from_name', [
+              'type' => 'text',
+              'error' => false
+          ], [
+              'entity' => 'from_name',
+              'default' => 'チャット（sinclo）'
+          ]); ?>
+        </span>
+        </li>
+      </li>
+      <!-- cv -->
+
       <!-- 状態 -->
       <li>
         <span class="require"><label>状態</label></span>

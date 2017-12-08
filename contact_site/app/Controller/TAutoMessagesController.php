@@ -4,7 +4,7 @@
  * ユーザーマスタ
  */
 class TAutoMessagesController extends AppController {
-  public $uses = ['TAutoMessage','MOperatingHour'];
+  public $uses = ['TAutoMessage','MOperatingHour', 'MMailTransmissionSetting', 'MMailTemplate'];
   public $helpers = ['AutoMessage'];
   public $paginate = [
     'TAutoMessage' => [
@@ -541,6 +541,60 @@ class TAutoMessagesController extends AppController {
       $saveData['TAutoMessage']['sort'] = $nextSort;
     }
 
+    // メール送信設定の値を抜く
+    $toAddresses = '';
+    $subject = '';
+    $fromName = '';
+    $templateId = 0;
+    if(!empty($saveData['main']['send_mail_flg']) && intval($saveData['main']['send_mail_flg']) === C_CHECK_ON) {
+      $saveData['TAutoMessage']['send_mail_flg'] = intval($saveData['main']['send_mail_flg']);
+      foreach($saveData['main'] as $k => $v) {
+        if(preg_match('/mail_address_[1-5]/', $k)) {
+          if(!empty($v)) {
+            if($toAddresses !== '') {
+              $toAddresses .= ',';
+            }
+            $toAddresses .= $v;
+          }
+        }
+        if(strpos($k, 'subject') === 0) {
+          $subject = $v;
+        }
+        if(strpos($k, 'from_name') === 0) {
+          $fromName = $v;
+        }
+      }
+      $this->MMailTransmissionSetting->begin();
+      $this->MMailTransmissionSetting->create();
+      $this->MMailTransmissionSetting->set([
+        'm_companies_id' => $this->userInfo['MCompany']['id'],
+        'from_name' => $fromName,
+        'to_address' => $toAddresses,
+        'subject' => $subject
+      ]);
+      $validate = $this->MMailTransmissionSetting->validates();
+      $errors = $this->MMailTransmissionSetting->validationErrors;
+      if(empty($errors)){
+        $this->MMailTransmissionSetting->save();
+        $saveData['TAutoMessage']['m_mail_transmission_settings_id'] = $this->MMailTransmissionSetting->getLastInsertId();
+        $templateData = $this->MMailTemplate->find('first',[
+          'conditions' => [
+            'm_companies_id' => $this->userInfo['MCompany']['id'],
+            'mail_type_cd' => 'AM001'
+          ]
+        ]);
+        if(!empty($templateData)) {
+          $saveData['TAutoMessage']['m_mail_template_id'] = $templateData['MMailTemplate']['id'];
+        }
+      } else {
+        //FIXME
+      }
+    } else {
+      $saveData['main']['send_mail_flg'] = 0;
+      $saveData['main']['m_mail_transmission_settings_id'] = 0;
+      $saveData['main']['m_mail_template_id'] = 0;
+    }
+
     $this->TAutoMessage->set($saveData);
 
     $validate = $this->TAutoMessage->validates();
@@ -580,13 +634,15 @@ class TAutoMessagesController extends AppController {
       $saveData['TAutoMessage']['activity'] = $changeEditData;
       if( $this->TAutoMessage->save($saveData,false) ) {
         $this->TAutoMessage->commit();
+        $this->MMailTransmissionSetting->commit();
         $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
         $this->redirect('/TAutoMessages/index/page:'.$nextPage);
       }
     }
     else {
       $this->TAutoMessage->rollback();
-      $this->set('operatingHourData',$operatingHourData['MOperatingHour']['active_flg']);
+      $this->MMailTransmissionSetting->rollback();
+      $this->set('operatingHourData', $operatingHourData['MOperatingHour']['active_flg']);
       $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
     }
     $this->set('errors', $errors);

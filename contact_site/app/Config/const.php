@@ -52,6 +52,7 @@ define('C_COMPANY_USE_OPERATING_HOUR', 'operatingHour'); // 営業時間
 define('C_COMPANY_REF_COMPANY_DATA', 'refCompanyData'); // 企業情報参照（Landscape）
 define('C_COMPANY_USE_FREE_INPUT', 'freeInput'); // 自由入力エリア
 define('C_COMPANY_USE_CV', 'cv'); // CV
+define('C_COMPANY_USE_AUTOMESSAGE_SEND_MAIL', 'autoMessageSendMail'); // メール送信（オートメッセージ）
 
 
 // 簡易メッセージ入力機能種別
