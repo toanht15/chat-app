@@ -12,7 +12,7 @@ class NotificationController extends AppController {
   const PARAM_LAST_CHAT_LOG_ID = 'lastChatLogId';
 
   public $components = ['AutoMessageMailTemplate', 'MailSender', 'Auth'];
-  public $uses = ['TAutoMessage','TCampaign', 'THistory', 'THistoryChatLog', 'THistoryStayLog', 'MLandscapeData', 'MMailTransmissionSetting'];
+  public $uses = ['TAutoMessage','TCampaign', 'THistory', 'THistoryChatLog', 'THistoryStayLog', 'MLandscapeData', 'MMailTransmissionSetting', 'TMailTransmissionLog'];
 
   public function beforeFilter() {
     $this->Auth->allow('autoMessages');
@@ -42,12 +42,38 @@ class NotificationController extends AppController {
       $component->createMessageBody();
 
       $transmission = $this->getTransmissionConfigById($targetAutoMessage['TAutoMessage']['m_mail_transmission_settings_id']);
+
+      // 送信前にログを生成
+      $this->TMailTransmissionLog->create();
+      $this->TMailTransmissionLog->set([
+          'm_companies_id' => $targetHistory['THistory']['m_companies_id'],
+          'mail_type_cd' => AutoMessageMailTemplateComponent::MAIL_TYPE_CD,
+          'from_address' => MailSenderComponent::MAIL_SYSTEM_FROM_ADDRESS,
+          'from_name' => $transmission['MMailTransmissionSetting']['from_name'],
+          'to_address' => $transmission['MMailTransmissionSetting']['to_address'],
+          'subject' => $transmission['MMailTransmissionSetting']['subject'],
+          'body' => $component->getBody(),
+          'send_flg' => 0
+      ]);
+      $this->TMailTransmissionLog->save();
+      $lastInsertId = $this->TMailTransmissionLog->getLastInsertId();
+
       $sender = new MailSenderComponent();
+      $sender->setFrom(MailSenderComponent::MAIL_SYSTEM_FROM_ADDRESS);
       $sender->setFromName($transmission['MMailTransmissionSetting']['from_name']);
       $sender->setTo($transmission['MMailTransmissionSetting']['to_address']);
       $sender->setSubject($transmission['MMailTransmissionSetting']['subject']);
       $sender->setBody($component->getBody());
       $sender->send();
+
+      // 送信ログを作る
+      $now = new DateTime('now', new DateTimeZone('Asia/Tokyo'));
+      $this->TMailTransmissionLog->read(null, $lastInsertId);
+      $this->TMailTransmissionLog->set([
+        'send_flg' => 1,
+        'sent_datetime' => $now->format("Y/m/d H:i:s")
+      ]);
+      $this->TMailTransmissionLog->save();
 
     } catch(Exception $e) {
       $this->log('Notification/autoMessages呼び出し時にエラーが発生しました。 エラーメッセージ: '.$e->getMessage().' エラー番号 '.$e->getCode(), 'api-error');

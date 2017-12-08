@@ -27,6 +27,10 @@ class MailSenderComponent extends Component
     $this->setDefaultSettings();
   }
 
+  public function setFrom($from) {
+    $this->from = $from;
+  }
+
   public function setFromName($name) {
     $this->fromName = $name;
   }

@@ -20,6 +20,8 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
   const DATETIME_FORMAT = 'Y/m/d H:i:s';
   const MESSAGE_SEPARATOR = '=====';
 
+  const MAIL_TYPE_CD = 'AM001';
+
   private $templateId;
   private $template;
   private $chatLogs;
