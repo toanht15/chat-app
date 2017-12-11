@@ -327,6 +327,7 @@ router.get("/", function(req, res, next) {
                             "sitekey": siteKey,
                             "activity": JSON.parse(rows[i].activity),
                             "action_type": isNumeric(rows[i].action_type),
+                            "send_mail_flg": isNumeric(rows[i].send_mail_flg)
                           });
                         }
                         res.send(sendData);
