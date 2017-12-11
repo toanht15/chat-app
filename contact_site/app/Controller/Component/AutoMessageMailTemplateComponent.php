@@ -18,7 +18,7 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
   const REPLACE_TARGET_AUTO_MESSAGE_BLOCK_DELIMITER = '##AUTO_MESSAGE_BLOCK##';
 
   const DATETIME_FORMAT = 'Y/m/d H:i:s';
-  const MESSAGE_SEPARATOR = '=====';
+  const MESSAGE_SEPARATOR = '=================================================================';
 
   const MAIL_TYPE_CD = 'AM001';
 
