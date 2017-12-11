@@ -2427,7 +2427,17 @@
               sinclo.chatApi.autoMessages.unset();
               sinclo.chatApi.saveFlg = true;
             }
-            else {
+            else if(sendMail) {
+              var data = {
+                chatId:id,
+                message:cond.message,
+                isAutoSpeech: isSpeechContent,
+                sendMailFlg: sendMail
+              };
+              emit("sendAutoChat", {messageList: sinclo.chatApi.autoMessages.getByArray()});
+              sinclo.chatApi.autoMessages.unset();
+              sinclo.chatApi.saveFlg = true;
+            } else {
               var data = {
                   chatId:id,
                   message:cond.message,
