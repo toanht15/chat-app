@@ -12,7 +12,7 @@ class NotificationController extends AppController {
   const PARAM_LAST_CHAT_LOG_ID = 'lastChatLogId';
 
   public $components = ['AutoMessageMailTemplate', 'MailSender', 'Auth'];
-  public $uses = ['TAutoMessage','TCampaign', 'THistory', 'THistoryChatLog', 'THistoryStayLog', 'MLandscapeData', 'MMailTransmissionSetting', 'TMailTransmissionLog'];
+  public $uses = ['TAutoMessage','TCampaign', 'THistory', 'THistoryChatLog', 'THistoryStayLog', 'MLandscapeData', 'MMailTransmissionSetting', 'TMailTransmissionLog', 'MCompany'];
 
   public function beforeFilter() {
     $this->Auth->allow('autoMessages');
@@ -28,13 +28,20 @@ class NotificationController extends AppController {
     try {
       $this->isValidAccessToken($jsonObj[self::PARAM_ACCESS_TOKEN]);
       $targetAutoMessage = $this->getTargetAutoMessageById($jsonObj[self::PARAM_AUTO_MESSAGE_ID]);
+      if(empty($targetAutoMessage)) {
+        throw new InvalidArgumentException('指定のAutoMessageId : '.$jsonObj[self::PARAM_AUTO_MESSAGE_ID].' のオートメッセージが存在しません');
+      }
       $targetChatLog = $this->getTargetChatLogById($jsonObj[self::PARAM_LAST_CHAT_LOG_ID]);
+      if(empty($targetAutoMessage)) {
+        throw new InvalidArgumentException('指定のchatLogId : '.$jsonObj[self::PARAM_LAST_CHAT_LOG_ID].' のチャットログが存在しません');
+      }
       $allChatLogs = $this->getAllChatLogsByEntity($targetChatLog);
       $targetHistory = $this->getTargetHistoryById($targetChatLog['THistoryChatLog']['t_histories_id']);
       $targetStayLog = $this->getTargetStayLogById($targetChatLog['THistoryChatLog']['t_history_stay_logs_id']);
       $campaign = $this->getAllCampaign($targetHistory['THistory']['m_companies_id']);
+      $coreSettings = $this->getCoreSettingsById($targetHistory['THistory']['m_companies_id']);
       $targetLandscapeData = null;
-      if(true) { //FIX : 企業マスタから取得必須
+      if(!empty($coreSettings) && array_key_exists(C_COMPANY_REF_COMPANY_DATA, $coreSettings) && $coreSettings[C_COMPANY_REF_COMPANY_DATA]) { //FIX : 企業マスタから取得必須
         $targetLandscapeData = $this->getTargetLandScapeDataByIpAddress($targetHistory['THistory']['ip_address']);
       }
       $component = new AutoMessageMailTemplateComponent();
@@ -148,6 +155,15 @@ class NotificationController extends AppController {
        'conditions' => array('TCampaign.m_companies_id' => $m_companies_id),
        'order' => array('sort')
     ));
+  }
+
+  private function getCoreSettingsById($m_companies_id) {
+    $data = $this->MCompany->findById($m_companies_id);
+    if(!empty($data)) {
+      return json_decode($data['MCompany']['core_settings'], TRUE);
+    } else {
+      return [];
+    }
   }
 
   private function getTransmissionConfigById($id) {
