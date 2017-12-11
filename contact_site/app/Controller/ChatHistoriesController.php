@@ -1174,7 +1174,7 @@ class ChatHistoriesController extends AppController {
     $data=json_encode($data);
     $this->set('data', $data);
     //ポップアップの呼び出し
-    $this->render('/Elements/Histories/remoteDelete');
+    $this->render('/Elements/ChatHistories/remoteDelete');
   }
 
   /* *

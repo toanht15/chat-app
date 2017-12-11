@@ -4,7 +4,7 @@
 popupEventOverlap.closePopup = function(){
   var data=JSON.parse('<?php echo  $data; ?>');
   //履歴削除処理
-  var url = "<?= $this->Html->url('/Histories/remoteDeleteChat') ?>";
+  var url = "<?= $this->Html->url('/ChatHistories/remoteDeleteChat') ?>";
   $.ajax({
     type: 'post',
     cache: false,
@@ -17,7 +17,7 @@ popupEventOverlap.closePopup = function(){
       //履歴呼び直し
       $.ajax({
         type: 'GET',
-        url: "<?= $this->Html->url(array('controller' => 'Histories', 'action' => 'remoteGetChatLogs')) ?>",
+        url: "<?= $this->Html->url(array('controller' => 'ChatHistories', 'action' => 'remoteGetChatLogs')) ?>",
         cache: false,
         data: {
           historyId: data.historyId
@@ -35,9 +35,8 @@ popupEventOverlap.closePopup = function(){
 <div class="form01">
   <!--　履歴削除  -->
     <br/>
-    <div style="text-align:center;">
-      <?= date('Y/m/d H:i:s',strtotime(json_decode($data,true)['created']));?>「<?= json_decode($data,true)['message']; ?>」の履歴を削除します。<br/><br/>
-     <span style ="font-size: 1.1em;color: rgb(192, 0, 0);font-weight: bold;">一度削除されたメッセージは元に戻りません。</span><br/><br/>削除してよろしいですか？</font><br>
+    <div style="text-align:center;">「選択されたチャット履歴を削除します。<br/><br/>
+     <span style ="font-size: 1.1em;color: rgb(192, 0, 0);font-weight: bold;">一度削除されたチャット履歴は元に戻りません。</span><br/><br/>削除してよろしいですか？</font><br>
     </div>
     <br/>
   <!-- 履歴削除 -->

@@ -1,33 +1,5 @@
-<div id = "list_header">
-  <table>
-    <thead>
-      <tr>
-        <th width=" 3%"></th>
-        <th width=" 6%">種別</th>
-        <th id = "firstTimeReceivingLabel" width=" 6%">初回チャット<br>受信日時<div class="questionBalloon questionBalloonPosition13">
-          <icon class="questionBtn">？</icon>
-        </div></th>
-        <th width="10%">IPアドレス</th>
-        <th width="10%">訪問ユーザ</th>
-        <th width=" 8%">キャンペーン</th>
-        <th id = "sendChatPageLabel" width=" 17%">チャット送信ページ<div class="questionBalloon questionBalloonPosition8">
-          <icon class="questionBtn">？</icon>
-        </div></th>
-        <th width=" 5%">成果</th>
-        <th id = "manualReceivingLabel" width="6%">有人チャット<br>受信日時<div class="questionBalloon questionBalloonPosition13">
-          <icon class="questionBtn">？</icon>
-          </div></th>
-      <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
-        <th id="lastSpeechLabel" width=" 6%">最終発言後<br>離脱時間<div class="questionBalloon questionBalloonPosition13">
-            <icon class="questionBtn">？</icon>
-          </div></th>
-        <th width="10%">担当者</th>
-      <?php endif; ?>
-      </tr>
-    </thead>
-  </table>
-</div>
 <div id = "list_body">
+<div id = "list_height" style = "height:500px !important;">
   <table>
       <thead>
           <tr>
@@ -135,40 +107,9 @@
       </tbody>
   </table>
 </div>
-<?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
-<div id='lastSpeechTooltip' class="explainTooltip">
-  <icon-annotation>
-    <ul>
-      <li><span>サイト訪問者が最後に発言してからページを離脱するまでの時間</span></li>
-    </ul>
-  </icon-annotation>
-</div>
-<div id='sendChatPageTooltip' class="opThreeLineExplainTooltip">
-  <icon-annotation>
-    <ul>
-      <li><span>サイト訪問者が一番最初にチャット送信（ラジオボタン操作を含む）したページ</span></li>
-    </ul>
-  </icon-annotation>
-</div>
-<div id='firstTimeReceivingTooltip' class="opThreeLineExplainTooltip">
-  <icon-annotation>
-    <ul>
-      <li><span>サイト訪問者が一番最初にチャット送信（ラジオボタン操作を含む）した日時</span></li>
-    </ul>
-  </icon-annotation>
-</div>
-<div id='manualReceivingTooltip' class="opThreeLineExplainTooltip">
-  <icon-annotation>
-    <ul>
-      <li><span>サイト訪問者が送信したチャットが、最初にオペレータに通知された日時</span></li>
-    </ul>
-  </icon-annotation>
-</div>
-<?php endif; ?>
-
-<div style = "width: 140.5em; height: 42em; top: 222px; position: absolute; background-color: #f2f2f2; border-top: 3px solid #7f7f7f;">
+<div id = "detail" style = "width: 101.6%; margin-left:-34px; background-color: #f2f2f2;">
   <div id="cus_info_contents" class="flexBoxCol">
-    <div id="leftContents" style = "padding:1em 1em 1em 0em;;">
+    <div id="leftContents" style = "padding:1em 1.8em 1em 0em;">
       <ul id="showChatTab" class="tabStyle flexBoxCol noSelect">
         <li class="on" data-type="currentChat">チャット内容</li>
         <li data-type="oldChat">過去のチャット</li>
@@ -216,23 +157,21 @@
           </div>
         </div>
         <div id="rightContents">
-          <div class="nowInfo card">
-          <dl>
-            <dt>状態</dt>
-              <dd>{{tabStatusStr(detailId)}}</dd>
-            <dt>閲覧中ページ</dt>
-              <dd class="w100"><a href={{trimToURL(detail.url)}} target="_blank" class="underL" ng-if="detail.title">{{detail.title}}</a><span ng-if="!detail.title">{{trimToURL(detail.url)}}</span></dd>
-            <dt>訪問回数</dt>
-              <dd>{{detail.stayCount}} 回</dd>
-            <dt>閲覧ページ数</dt>
-              <dd>{{detail.prev.length}}（<a href="javascript:void(0)" ng-click="openHistory(detail)">移動履歴</a>）</dd>
+          <div class="nowInfo card" style = "border-bottom: 1px solid #bfbfbf;">
+          <dl >
+            <dt>ユーザID</dt><dd>20171122141125995</dd>
+            <dt>IPアドレス</dt><dd>ABC商事（49.98.153.80）</dd>
+            <dt>訪問回数</dt><dd>5回</dd>
+            <dt>プラットフォーム</dt><dd>Windows 8.1 | IE（ver.11.0）</dd>
           </dl>
         </div>
         <div class="hardInfo card">
           <dl>
-            <dt>プラットフォーム</dt><dd>{{os(detail.userAgent)}}</dd>
-            <dt>ブラウザ</dt><dd>{{browser(detail.userAgent)}}</dd>
-            <dt>IPアドレス</dt><dd>{{detail.ipAddress}}</dd>
+            <dt>キャンペーン</dt><dd>GSN | 広告_MC</dd>
+            <dt>ランディングページ</dt><dd>MediaSeries | 企業の成長を加速させる次世代型コミュニケーションサービス</dd>
+            <dt>チャット送信ページ</dt><dd>驚異のコストで導入可能 - 選ばれる理由 | MediaVoice</dd>
+            <dt>離脱ページ</dt><dd>オフィスのフリーアドレス化を実現 - 導入事例 | MediaSeries</dd>
+            <dt>閲覧ページ数</dt><dd>6（移動履歴）</dd>
           </dl>
         </div>
         <div class="detailForm card">
@@ -254,11 +193,75 @@
               <input type="text" id="ng-customer-mail" ng-blur="saveCusInfo('mail', customData)" ng-model="customData.mail" placeholder="メールアドレスを追加" />
             </li>
             <li>
-              <label for="ng-customer-memo">メモ</label>
+              <label for="ng-customer-memo" style = "width:60% !important">メモ</label>
               <textarea rows="7" id="ng-customer-memo" ng-blur="saveCusInfo('memo', customData)" ng-model="customData.memo" placeholder="メモを追加"></textarea>
             </li>
           </ul>
+          <div id="personal_action">
+              <?= $this->Html->link('元に戻す', 'javascript:void(0)', ['onclick' => 'loading.ev(saveAct)', 'class' => 'whiteBtn btn-shadow lineUpSaveBtn historyReturnButton']) ?>
+              <?= $this->Html->link('更新', 'javascript:void(0)', ['onclick' => 'loading.ev(saveAct)', 'class' => 'greenBtn btn-shadow lineUpSaveBtn hitoryUpdateButton']) ?>
+          </div>
         </div>
       </div>
       </div>
 </div>
+</div>
+<div id = "list_header">
+  <table>
+    <thead>
+      <tr>
+        <th width=" 3%"></th>
+        <th width=" 6%">種別</th>
+        <th id = "firstTimeReceivingLabel" width=" 6%">初回チャット<br>受信日時<div class="questionBalloon questionBalloonPosition13">
+          <icon class="questionBtn">？</icon>
+        </div></th>
+        <th width="10%">IPアドレス</th>
+        <th width="10%">訪問ユーザ</th>
+        <th width=" 8%">キャンペーン</th>
+        <th id = "sendChatPageLabel" width=" 17%">チャット送信ページ<div class="questionBalloon questionBalloonPosition8">
+          <icon class="questionBtn">？</icon>
+        </div></th>
+        <th width=" 5%">成果</th>
+        <th id = "manualReceivingLabel" width="6%">有人チャット<br>受信日時<div class="questionBalloon questionBalloonPosition13">
+          <icon class="questionBtn">？</icon>
+          </div></th>
+      <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
+        <th id="lastSpeechLabel" width=" 6%">最終発言後<br>離脱時間<div class="questionBalloon questionBalloonPosition13">
+            <icon class="questionBtn">？</icon>
+          </div></th>
+        <th width="10%">担当者</th>
+      <?php endif; ?>
+      </tr>
+    </thead>
+  </table>
+</div>
+<?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
+<div id='lastSpeechTooltip' class="explainTooltip">
+  <icon-annotation>
+    <ul>
+      <li><span>サイト訪問者が最後に発言してからページを離脱するまでの時間</span></li>
+    </ul>
+  </icon-annotation>
+</div>
+<div id='sendChatPageTooltip' class="opThreeLineExplainTooltip">
+  <icon-annotation>
+    <ul>
+      <li><span>サイト訪問者が一番最初にチャット送信（ラジオボタン操作を含む）したページ</span></li>
+    </ul>
+  </icon-annotation>
+</div>
+<div id='firstTimeReceivingTooltip' class="opThreeLineExplainTooltip">
+  <icon-annotation>
+    <ul>
+      <li><span>サイト訪問者が一番最初にチャット送信（ラジオボタン操作を含む）した日時</span></li>
+    </ul>
+  </icon-annotation>
+</div>
+<div id='manualReceivingTooltip' class="opThreeLineExplainTooltip">
+  <icon-annotation>
+    <ul>
+      <li><span>サイト訪問者が送信したチャットが、最初にオペレータに通知された日時</span></li>
+    </ul>
+  </icon-annotation>
+</div>
+<?php endif; ?>

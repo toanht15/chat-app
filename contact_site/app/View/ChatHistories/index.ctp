@@ -85,7 +85,7 @@
         }
     ?>
 
-    <div class=<?= $seach_menu; ?> id=<?= $noseach_menu ?>>
+    <div class=<?= $seach_menu; ?> id=<?= $noseach_menu ?> style = "height: 37px !important;">
       <label class='searchConditions'>検索条件</label>
       <ul ng-non-bindable>
         <?php if(!empty($data['History']['ip_address'])) { ?>
@@ -166,10 +166,38 @@
       <?=  $this->Form->create('History',['id' => 'historySearch','type' => 'post','url' => '/Histories']); ?>
     </div>
   </div>
+   <div class="btnSet" style = "height: 85px;">
+        <span>
+          <a>
+            <?= $this->Html->image('csv.png', array(
+                'alt' => 'CSV出力',
+                'id'=>'history_csv_btn',
+                'class' => 'btn-shadow disOffgrayBtn commontooltip',
+                'data-text' => 'CSV出力',
+                'data-balloon-position' => '36',
+                'width' => 45,
+                'height' => 45,
+                'onclick' => 'openAdd()',
+                'style' => 'margin-left: -17em;margin-top:6px;'
+            )) ?>
+          </a>
+        </span>
+        <span>
+          <a>
+            <?= $this->Html->image('dustbox.png', array(
+                'alt' => '削除',
+                'id'=>' height:100%;ory_dustbox_btn',
+                'class' => 'btn-shadow disOffgrayBtn commontooltip',
+                'data-text' => '削除する',
+                'data-balloon-position' => '36',
+                'width' => 45,
+                'height' => 45)) ?>
+          </a>
+        </span>
+      </div>
 
-  <div id='history_list' class="p20x" style = "position:relative;">
+  <div id='history_list' class="p20x" style = "position:relative; height:710px;">
     <?=$this->element('ChatHistories/list')?>
-    <?php //echo $this->element('Customers/detail') ?>
     <a href="javascript:void(0)" style="display:none" id="modalCtrl"></a>
   </div>
 </div>

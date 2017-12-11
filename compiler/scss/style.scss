@@ -525,6 +525,14 @@ a {
   text-align: center;
 }
 
+.lineUpSaveBtn {
+  width: 8em;
+  padding: 0.7em 1em;
+  /*margin: 0 auto;*/
+  float:left;
+  text-align: center;
+}
+
 @mixin defaultBtnStyle {
   cursor: pointer!important;
   display: block;
@@ -2644,7 +2652,7 @@ ul.naviBtn {
       margin-left: 3.3em;
       margin-top: -1.1em;
       margin-left: 2.6em;
-      width:60em;
+      width:66em;
       height: 37em;
 
       section {
@@ -2828,19 +2836,20 @@ ul.naviBtn {
   }
 
   #rightContents {
-    width: 69em;
-    border-left: 1px solid #000000;
+    width: 88.2em;
+    border-left: 1px solid #bfbfbf;
+    font-size:11.6px;
 
     .detailForm {
       ul {
         display: inline-block;
         width: 100%;
+        margin-left:-24px;
 
         li {
-          height: 1.6em;
           margin: 0.25em 0;
           label {
-            width: 17%;
+            width: 20%;
             display: block;
             float: left;
             clear: both;
@@ -2851,7 +2860,7 @@ ul.naviBtn {
             padding: 0.25em 0.5em;
           }
           textarea {
-            width: 44%;
+            width: 65%;
             resize: none;
             margin-top: 0.5em;
           }
@@ -2860,9 +2869,17 @@ ul.naviBtn {
     }
 
     .nowInfo  {
+      border-bottom: 1px solid #bfbfbf;
 
       dt {
-        margin-left:43px;
+        width: 19%;
+        margin: 0 0 0 24px;
+        float: left;
+      }
+      dd {
+        margin: 0;
+        height: 1.6em;
+        font-weight: bold;
       }
       /*@include dl2column;*/
 
@@ -2901,9 +2918,17 @@ ul.naviBtn {
 
     }
     .hardInfo {
+      border-bottom: 1px solid #bfbfbf;
       /*@include dl2column;*/
       dt {
-        margin-left:43px;
+        width: 19%;
+        margin: 0 0 0 24px;
+        float: left;
+      }
+      dd {
+        margin: 0;
+        height: 1.6em;
+        font-weight: bold;
       }
     }
   }
@@ -2928,7 +2953,7 @@ ul.naviBtn {
     }
   }
   #history_menu {
-    height: auto;
+    height: 37px !important;
 
     #mainDatePeriod {
       margin-left: 5em;
@@ -2989,7 +3014,7 @@ ul.naviBtn {
       display: block;
       position: relative;
       padding: 1px 0 15px 20px;
-      margin-top: 7px;
+      margin-top: 45px;
 
       #g_chat {
         position: absolute;
@@ -3055,14 +3080,15 @@ ul.naviBtn {
       position: absolute;left: 0;
       right: 0;
       top: 0;
-      margin: 38px 36px 20px 20px;
+      margin: 0px 15px 20px 20px;
       z-index: 3;
     }
 
     #list_body {
-      overflow-y: auto;
+      overflow-y: hidden;
       overflow-x: hidden;
       width:100%;
+      top:34px !important;
     }
     td, th {
       height: 30px!important;
@@ -3283,6 +3309,13 @@ ul.naviBtn {
     padding: 5px 10px;
     margin-bottom: 4px;
     font-size: 14px;
+  }
+
+  .historyReturnButton {
+    margin-left:56px;
+  }
+  .hitoryUpdateButton {
+    margin-left:36px  ;
   }
 }
 
