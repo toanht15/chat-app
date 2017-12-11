@@ -626,6 +626,7 @@ class TAutoMessagesController extends AppController {
       $saveData['main']['send_mail_flg'] = 0;
       $saveData['main']['m_mail_transmission_settings_id'] = 0;
       $saveData['main']['m_mail_template_id'] = 0;
+      $saveData['TAutoMessage']['send_mail_flg'] = 0;
     }
 
     $this->TAutoMessage->set($saveData);
