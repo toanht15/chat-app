@@ -169,14 +169,14 @@
 
       <!-- メール送信 -->
       <li class="bt0">
-        <?= $this->ngForm->input('main.send_mail_flg', [
+        <?= $this->Form->input('main.send_mail_flg', [
               'type' => 'checkbox',
               'error' => false,
               'disabled' => !$coreSettings[C_COMPANY_USE_AUTOMESSAGE_SEND_MAIL],
+              'checked' => (!empty($this->data['TAutoMessage']['send_mail_flg'])) ? intval($this->data['TAutoMessage']['send_mail_flg']) : C_CHECK_OFF,
               'label' => 'これまでのチャット内容をメールで送信する'
           ], [
-              'entity' => 'send_mail_flg',
-              'default' => (!empty($this->data['TAutoMessage']['send_mail_flg'])) ? $this->data['TAutoMessage']['send_mail_flg'] : C_CHECK_OFF,
+              'entity' => 'send_mail_flg'
           ]); ?>
       </li>
       <li class="bt0 sendMailSettings" id="mailAddressSetting" style="display:none">
@@ -184,7 +184,8 @@
         <div id="fromMailAddressSettings">
           <span class="bt0 mailAddressBlock"><?= $this->Form->input('main.mail_address_1', [
              'type' => 'text',
-             'error' => false
+             'error' => false,
+              'value' => (!empty($this->data['TAutoMessage']['mail_address_1'])) ? $this->data['TAutoMessage']['mail_address_1'] : ""
           ], [
             'entity' => 'mail_address_1'
           ]); ?>
@@ -195,7 +196,8 @@
           </span>
           <span class="bt0 mailAddressBlock"><?= $this->Form->input('main.mail_address_2', [
                 'type' => 'text',
-                'error' => false
+                'error' => false,
+                'value' => (!empty($this->data['TAutoMessage']['mail_address_2'])) ? $this->data['TAutoMessage']['mail_address_2'] : ""
             ], [
                 'entity' => 'mail_address_2'
             ]); ?>
@@ -206,7 +208,8 @@
           </span>
           <span class="bt0 mailAddressBlock"><?= $this->Form->input('main.mail_address_3', [
                 'type' => 'text',
-                'error' => false
+                'error' => false,
+                'value' => (!empty($this->data['TAutoMessage']['mail_address_3'])) ? $this->data['TAutoMessage']['mail_address_3'] : ""
             ], [
                 'entity' => 'mail_address_3'
             ]); ?>
@@ -217,7 +220,8 @@
           </span>
           <span class="bt0 mailAddressBlock"><?= $this->Form->input('main.mail_address_4', [
                 'type' => 'text',
-                'error' => false
+                'error' => false,
+                'value' => (!empty($this->data['TAutoMessage']['mail_address_4'])) ? $this->data['TAutoMessage']['mail_address_4'] : ""
             ], [
                 'entity' => 'mail_address_4'
             ]); ?>
@@ -228,7 +232,8 @@
           </span>
           <span class="bt0 mailAddressBlock"><?= $this->Form->input('main.mail_address_5', [
                 'type' => 'text',
-                'error' => false
+                'error' => false,
+                'value' => (!empty($this->data['TAutoMessage']['mail_address_5'])) ? $this->data['TAutoMessage']['mail_address_5'] : ""
             ], [
                 'entity' => 'mail_address_5'
             ]); ?>
@@ -242,10 +247,10 @@
           <span><label class="require">メールタイトル</label></span>
           <span class="bt0"><?= $this->Form->input('main.subject', [
                 'type' => 'text',
-                'error' => false
+                'error' => false,
+                'value' => (!empty($this->data['TAutoMessage']['subject'])) ? $this->data['TAutoMessage']['subject'] : "チャット通知（sinclo）"
             ], [
-                'entity' => 'subject',
-                'default' => 'チャット通知（sinclo）'
+                'entity' => 'subject'
             ]); ?>
           </span>
         </li>
@@ -253,10 +258,10 @@
         <span><label class="require">差出人名</label></span>
         <span class="bt0"><?= $this->Form->input('main.from_name', [
               'type' => 'text',
-              'error' => false
+              'error' => false,
+              'value' => (!empty($this->data['TAutoMessage']['from_name'])) ? $this->data['TAutoMessage']['from_name'] : "チャット（sinclo）"
           ], [
-              'entity' => 'from_name',
-              'default' => 'チャット（sinclo）'
+              'entity' => 'from_name'
           ]); ?>
         </span>
         </li>

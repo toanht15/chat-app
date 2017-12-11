@@ -332,6 +332,12 @@ $(document).ready(function(){
 
   // これまでのチャット内容をメールで送信する
   var initializeFromMailAddressArea = function() {
+    var checked = $('#mainSendMailFlg').prop('checked');
+    if(checked) {
+      $('.sendMailSettings').css('display', '');
+    } else {
+      $('.sendMailSettings').css('display', 'none');
+    }
     var atFirst = true;
     var prevObj = undefined;
     $('.mailAddressBlock').each(function(index){
@@ -357,15 +363,9 @@ $(document).ready(function(){
       prevObj = $(this);
     });
 
-  }
+  };
 
   $('#mainSendMailFlg').on('change', function(event){
-    var checked = $(this).prop('checked');
-    if(checked) {
-      $('.sendMailSettings').css('display', '');
-    } else {
-      $('.sendMailSettings').css('display', 'none');
-    }
     initializeFromMailAddressArea();
   });
 
@@ -391,8 +391,7 @@ $(document).ready(function(){
       $('#mailAddressSetting').find('span.show').first().find('.disOffgreenBtn').css('display', 'block');
       $('#mailAddressSetting').find('span.show').first().find('.redBtn').css('display', 'none');
     }
-
-    initializeFromMailAddressArea();
   });
+  initializeFromMailAddressArea();
 });
 </script>

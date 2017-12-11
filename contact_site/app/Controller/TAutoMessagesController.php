@@ -103,6 +103,20 @@ class TAutoMessagesController extends AppController {
       $this->request->data['TAutoMessage']['widget_open'] = (!empty($json['widgetOpen'])) ? $json['widgetOpen'] : "";
       $this->request->data['TAutoMessage']['chat_textarea'] = (!empty($json['chatTextarea'])) ? $json['chatTextarea'] : "";
       $this->request->data['TAutoMessage']['cv'] = (!empty($json['cv'])) ? $json['cv'] : "";
+      if (!empty($editData[0]['TAutoMessage']['send_mail_flg'])) {
+        $this->request->data['TAutoMessage']['send_mail_flg'] = $editData[0]['TAutoMessage']['send_mail_flg'];
+        $transmissionData = $this->MMailTransmissionSetting->findById($editData[0]['TAutoMessage']['m_mail_transmission_settings_id']);
+        if(!empty($transmissionData)) {
+          $splitedMailAddresses = explode(',',$transmissionData['MMailTransmissionSetting']['to_address']);
+          $this->request->data['TAutoMessage']['mail_address_1'] = !empty($splitedMailAddresses[0]) ? $splitedMailAddresses[0] : "";
+          $this->request->data['TAutoMessage']['mail_address_2'] = !empty($splitedMailAddresses[1]) ? $splitedMailAddresses[1] : "";
+          $this->request->data['TAutoMessage']['mail_address_3'] = !empty($splitedMailAddresses[2]) ? $splitedMailAddresses[2] : "";
+          $this->request->data['TAutoMessage']['mail_address_4'] = !empty($splitedMailAddresses[3]) ? $splitedMailAddresses[3] : "";
+          $this->request->data['TAutoMessage']['mail_address_5'] = !empty($splitedMailAddresses[4]) ? $splitedMailAddresses[4] : "";
+          $this->request->data['TAutoMessage']['subject'] = !empty($transmissionData['MMailTransmissionSetting']['subject']) ? $transmissionData['MMailTransmissionSetting']['subject'] : "";
+          $this->request->data['TAutoMessage']['from_name'] = !empty($transmissionData['MMailTransmissionSetting']['from_name']) ? $transmissionData['MMailTransmissionSetting']['from_name'] : "";
+        }
+      }
       $operatingHourData = $this->MOperatingHour->find('first', ['conditions' => [
         'm_companies_id' => $this->userInfo['MCompany']['id']
       ]]);
