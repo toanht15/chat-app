@@ -393,7 +393,7 @@ class AppController extends Controller {
   protected function getRequestJSONData()
   {
     $data = file_get_contents('php://input');
-    $this->log('リクエストデータ: '. $data, 'request');
+    $this->log('リクエストデータ: '. $data, 'mail-request');
     $jsonObj = json_decode($data, TRUE);
     return $jsonObj;
   }

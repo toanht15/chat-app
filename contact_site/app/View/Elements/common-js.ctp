@@ -163,6 +163,7 @@
         var $this = $(self);
         var text = $this.attr('data-text');
         var baloonPosition = $this.attr('data-balloon-position'); // 吹き出しの＜の部分
+        var contentPositionLeft = $this.attr('data-content-position-left') ? Number($this.attr('data-content-position-left')) : 0;
         var noleft = $this.attr('noleft');
         var operatingHours = $this.attr('operatingHours');
         var $tooltip = $('<div class="tooltips">'+text+'</div>');
@@ -196,7 +197,7 @@
           height: $tooltip.outerHeight()
         };
 
-        var leftCoordinate = offset.left + size.width / 2 - ttSize.width / 2;
+        var leftCoordinate = (offset.left + size.width / 2 - ttSize.width / 2) + contentPositionLeft;
         var isOverWidth = (leftCoordinate + ttSize.width + 40) > $(window).outerWidth();
         if(isOverWidth) {
           leftCoordinate = (offset.left + size.width)  - ttSize.width;

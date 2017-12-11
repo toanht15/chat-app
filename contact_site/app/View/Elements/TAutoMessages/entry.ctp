@@ -169,15 +169,21 @@
 
       <!-- メール送信 -->
       <li class="bt0">
+        <label style="display:inline-block; <?php echo $coreSettings[C_COMPANY_USE_AUTOMESSAGE_SEND_MAIL] ? '"' : 'color: #CCCCCC;" class="commontooltip" data-text="こちらの機能はスタンダードプラン<br>からご利用いただけます。" data-content-position-left="-33" data-balloon-position="5"'?> >
         <?= $this->Form->input('main.send_mail_flg', [
               'type' => 'checkbox',
               'error' => false,
               'disabled' => !$coreSettings[C_COMPANY_USE_AUTOMESSAGE_SEND_MAIL],
               'checked' => (!empty($this->data['TAutoMessage']['send_mail_flg'])) ? intval($this->data['TAutoMessage']['send_mail_flg']) : C_CHECK_OFF,
-              'label' => 'これまでのチャット内容をメールで送信する'
+              'label' => false
           ], [
               'entity' => 'send_mail_flg'
           ]); ?>
+          これまでのチャット内容をメールで送信する
+        </label>
+        <?php if(!$coreSettings[C_COMPANY_USE_AUTOMESSAGE_SEND_MAIL]) : ?>
+            <input type="hidden" name="data[main][send_mail_flg]" value="0"/>
+        <?php endif; ?>
       </li>
       <li class="bt0 sendMailSettings" id="mailAddressSetting" style="display:none">
         <span><label class="require">送信先メールアドレス</label></span>
