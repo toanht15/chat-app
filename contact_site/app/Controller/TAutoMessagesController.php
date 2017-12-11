@@ -26,6 +26,13 @@ class TAutoMessagesController extends AppController {
     $this->set('title_for_layout', 'オートメッセージ機能');
     $this->outMessageIfType = Configure::read('outMessageIfType');
     $this->outMessageTriggerList = Configure::read('outMessageTriggerList');
+    $operatingHourData = $this->MOperatingHour->find('first', ['conditions' => [
+        'm_companies_id' => $this->userInfo['MCompany']['id']
+    ]]);
+    if(empty($operatingHourData)) {
+      $operatingHourData['MOperatingHour']['active_flg'] = 2;
+    }
+    $this->set('operatingHourData',$operatingHourData['MOperatingHour']['active_flg']);
   }
 
   /**
@@ -107,6 +114,7 @@ class TAutoMessagesController extends AppController {
         $this->request->data['TAutoMessage']['send_mail_flg'] = $editData[0]['TAutoMessage']['send_mail_flg'];
         $transmissionData = $this->MMailTransmissionSetting->findById($editData[0]['TAutoMessage']['m_mail_transmission_settings_id']);
         if(!empty($transmissionData)) {
+          $this->request->data['TAutoMessage']['m_mail_transmission_settings_id'] = $editData[0]['TAutoMessage']['m_mail_transmission_settings_id'];
           $splitedMailAddresses = explode(',',$transmissionData['MMailTransmissionSetting']['to_address']);
           $this->request->data['TAutoMessage']['mail_address_1'] = !empty($splitedMailAddresses[0]) ? $splitedMailAddresses[0] : "";
           $this->request->data['TAutoMessage']['mail_address_2'] = !empty($splitedMailAddresses[1]) ? $splitedMailAddresses[1] : "";
@@ -116,14 +124,8 @@ class TAutoMessagesController extends AppController {
           $this->request->data['TAutoMessage']['subject'] = !empty($transmissionData['MMailTransmissionSetting']['subject']) ? $transmissionData['MMailTransmissionSetting']['subject'] : "";
           $this->request->data['TAutoMessage']['from_name'] = !empty($transmissionData['MMailTransmissionSetting']['from_name']) ? $transmissionData['MMailTransmissionSetting']['from_name'] : "";
         }
+        $this->request->data['TAutoMessage']['m_mail_template_id'] = $editData[0]['TAutoMessage']['m_mail_template_id'];
       }
-      $operatingHourData = $this->MOperatingHour->find('first', ['conditions' => [
-        'm_companies_id' => $this->userInfo['MCompany']['id']
-      ]]);
-      if(empty($operatingHourData)) {
-        $operatingHourData['MOperatingHour']['active_flg'] = 2;
-      }
-      $this->set('operatingHourData',$operatingHourData['MOperatingHour']['active_flg']);
     }
 
     $this->_viewElement();
@@ -561,9 +563,11 @@ class TAutoMessagesController extends AppController {
     $fromName = '';
     $templateId = 0;
     if(!empty($saveData['main']['send_mail_flg']) && intval($saveData['main']['send_mail_flg']) === C_CHECK_ON) {
+      $this->request->data['TAutoMessage']['send_mail_flg'] = intval($saveData['main']['send_mail_flg']);
       $saveData['TAutoMessage']['send_mail_flg'] = intval($saveData['main']['send_mail_flg']);
       foreach($saveData['main'] as $k => $v) {
         if(preg_match('/mail_address_[1-5]/', $k)) {
+          $this->request->data['TAutoMessage'][$k] = $v;
           if(!empty($v)) {
             if($toAddresses !== '') {
               $toAddresses .= ',';
@@ -572,14 +576,20 @@ class TAutoMessagesController extends AppController {
           }
         }
         if(strpos($k, 'subject') === 0) {
+          $this->request->data['TAutoMessage']['subject'] = $v;
           $subject = $v;
         }
         if(strpos($k, 'from_name') === 0) {
+          $this->request->data['TAutoMessage']['from_name'] = $v;
           $fromName = $v;
         }
       }
       $this->MMailTransmissionSetting->begin();
-      $this->MMailTransmissionSetting->create();
+      if(empty($saveData['TAutoMessage']['m_mail_transmission_settings_id'])) {
+        $this->MMailTransmissionSetting->create();
+      } else {
+        $this->MMailTransmissionSetting->read(null, $saveData['TAutoMessage']['m_mail_transmission_settings_id']);
+      }
       $this->MMailTransmissionSetting->set([
         'm_companies_id' => $this->userInfo['MCompany']['id'],
         'from_name' => $fromName,
@@ -590,18 +600,27 @@ class TAutoMessagesController extends AppController {
       $errors = $this->MMailTransmissionSetting->validationErrors;
       if(empty($errors)){
         $this->MMailTransmissionSetting->save();
-        $saveData['TAutoMessage']['m_mail_transmission_settings_id'] = $this->MMailTransmissionSetting->getLastInsertId();
-        $templateData = $this->MMailTemplate->find('first',[
-          'conditions' => [
-            'm_companies_id' => $this->userInfo['MCompany']['id'],
-            'mail_type_cd' => 'AM001'
-          ]
-        ]);
-        if(!empty($templateData)) {
-          $saveData['TAutoMessage']['m_mail_template_id'] = $templateData['MMailTemplate']['id'];
+        if(empty($saveData['TAutoMessage']['m_mail_transmission_settings_id'])) {
+          $saveData['TAutoMessage']['m_mail_transmission_settings_id'] = $this->MMailTransmissionSetting->getLastInsertId();
+        }
+        if(empty($saveData['TAutoMessage']['m_mail_template_id'])) {
+          $templateData = $this->MMailTemplate->find('first',[
+              'conditions' => [
+                  'm_companies_id' => $this->userInfo['MCompany']['id'],
+                  'mail_type_cd' => 'AM001'
+              ]
+          ]);
+          if(!empty($templateData)) {
+            $saveData['TAutoMessage']['m_mail_template_id'] = $templateData['MMailTemplate']['id'];
+          }
         }
       } else {
-        //FIXME
+        $this->TAutoMessage->rollback();
+        $this->MMailTransmissionSetting->rollback();
+        $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
+        $this->set('errors', $errors);
+        $this->set('lastPage', $nextPage);
+        return;
       }
     } else {
       $saveData['main']['send_mail_flg'] = 0;
@@ -656,7 +675,6 @@ class TAutoMessagesController extends AppController {
     else {
       $this->TAutoMessage->rollback();
       $this->MMailTransmissionSetting->rollback();
-      $this->set('operatingHourData', $operatingHourData['MOperatingHour']['active_flg']);
       $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
     }
     $this->set('errors', $errors);

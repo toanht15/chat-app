@@ -242,6 +242,7 @@
               <a><img src= /img/dustbox.png alt=削除 class="btn-shadow redBtn deleteBtn" width=25 height=25 style="padding:2px !important;"></a>
             </span>
           </span>
+          <?php if (!empty($errors['to_address'])) echo "<pre class='error-message'>" . h($errors['to_address'][0]) . "</pre>"; ?>
         </div>
         <li class="bt0 sendMailSettings" id="subjectBlock" style="display:none">
           <span><label class="require">メールタイトル</label></span>
@@ -253,6 +254,7 @@
                 'entity' => 'subject'
             ]); ?>
           </span>
+          <?php if (!empty($errors['subject'])) echo "<pre class='error-message'>" . h($errors['subject'][0]) . "</pre>"; ?>
         </li>
         <li class="bt0 sendMailSettings" id="fromNameBlock" style="display:none">
         <span><label class="require">差出人名</label></span>
@@ -264,6 +266,7 @@
               'entity' => 'from_name'
           ]); ?>
         </span>
+        <?php if (!empty($errors['from_name'])) echo "<pre class='error-message'>" . h($errors['from_name'][0]) . "</pre>"; ?>
         </li>
       </li>
       <!-- cv -->
@@ -292,6 +295,8 @@
 
   <section>
     <?=$this->Form->hidden('id')?>
+    <?=$this->Form->hidden('m_mail_transmission_settings_id')?>
+    <?=$this->Form->hidden('m_mail_template_id')?>
     <div id="tautomessages_actions" class="fotterBtnArea">
       <?=$this->Html->link('戻る','/TAutoMessages/index/page:'.$lastPage, ['class'=>'whiteBtn btn-shadow'])?>
       <a href="javascript:void(0)" ng-click="main.saveAct()" class="greenBtn btn-shadow">保存</a>
