@@ -114,7 +114,7 @@ CakeLog::config('error', array(
 ));
 CakeLog::config('apiLog', array(
     'engine' => 'File',
-    'types' => array('api-error'),
+    'types' => array('mail-request', 'mail-response', 'api-error'),
     'file' => date('Ymd') . '_' . 'apiLog',
     'rotate' => '10'
 ));
