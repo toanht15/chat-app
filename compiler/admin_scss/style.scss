@@ -67,6 +67,15 @@ table {
     th {
       color: #fff;
     }
+    td {
+      a.loginLink {
+        color:#595959;
+        text-decoration: underline;
+        &:hover {
+          color: #C3D69B;
+        }
+      }
+    }
   }
 }
 
