@@ -114,9 +114,10 @@ CakeLog::config('error', array(
 ));
 CakeLog::config('apiLog', array(
     'engine' => 'File',
-    'types' => array('mail-request', 'mail-response', 'api-error'),
-    'file' => date('Ymd') . '_' . 'apiLog',
-    'rotate' => '10'
+    'types' => array('mail-request', 'mail-response', 'mail-api-error'),
+    'file' => 'apiLog',
+    'size' => '10MB',
+    'rotate' => 10,
 ));
 
 if (!isset($_SERVER['SERVER_NAME'])) {

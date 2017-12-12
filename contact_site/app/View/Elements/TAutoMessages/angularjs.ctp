@@ -344,27 +344,28 @@ $(document).ready(function(){
     var prevObj = undefined;
     $('.mailAddressBlock').each(function(index){
       var mailAddress = $(this).find('input[type="text"]').val();
-      if(atFirst) {
+      if(mailAddress !== "") {
         $(this).css('display', 'inline-flex').addClass('show');
-        if(mailAddress !== "") {
-          $(this).find('.disOffgreenBtn').css('display', 'none');
-          $(this).find('.deleteBtn').css('display', 'block');
-        } else {
+        $(this).find('.disOffgreenBtn').css('display', 'none');
+        $(this).find('.deleteBtn').css('display', 'block');
+        if(index !== 0 && index < 4) {
+          prevObj.find('.disOffgreenBtn').css('display', 'none');
+          $(this).find('.disOffgreenBtn').css('display', 'block');
+        } else if(prevObj) {
+          prevObj.find('.disOffgreenBtn').css('display', 'none');
+        }
+      } else {
+        if(index === 0) {
+          $(this).css('display', 'inline-flex').addClass('show');
           $(this).find('.disOffgreenBtn').css('display', 'block');
           $(this).find('.deleteBtn').css('display', 'none');
-        }
-        atFirst = false;
-      } else if(mailAddress !== "") {
-        $(this).css('display', 'inline-flex').addClass('show');
-        if($('.mailAddressBlock').length-1 === index) {
-          $(this).find('.disOffgreenBtn').css('display', 'none');
+        } else if(index === 1) {
+          $(this).css('display', 'none').removeClass('show');
+          prevObj.find('.disOffgreenBtn').css('display', 'block');
+          prevObj.find('.deleteBtn').css('display', 'none');
         } else {
-          $(this).find('.disOffgreenBtn').css('display', 'block');
+          $(this).css('display', 'none').removeClass('show');
         }
-        $(this).find('.deleteBtn').css('display', 'block');
-        prevObj.find('.disOffgreenBtn').css('display', 'none');
-      } else {
-        $(this).css('display', 'none').removeClass('show');
       }
       prevObj = $(this);
     });

@@ -19,6 +19,7 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
 
   const DATETIME_FORMAT = 'Y/m/d H:i:s';
   const MESSAGE_SEPARATOR = '=================================================================';
+  const CAMPAIGN_SEPARATOR = "｜";
 
   const MAIL_TYPE_CD = 'AM001';
 
@@ -89,7 +90,7 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
       foreach($this->campaigns as $k => $v){
         if ( strpos($tmp, $v['TCampaign']['parameter']) !== false ) {
           if ( $campaignParam !== "" ) {
-            $campaignParam .= "、";
+            $campaignParam .= self::CAMPAIGN_SEPARATOR;
           }
           $campaignParam .= $v['TCampaign']['name'];
         }
