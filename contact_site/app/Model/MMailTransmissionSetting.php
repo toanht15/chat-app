@@ -33,7 +33,7 @@ class MMailTransmissionSetting extends AppModel {
         'message' => '<,>,&.",\'を含まずに設定してください。'
       ]
     ],
-    'to_name' => [
+    'from_name' => [
       'maxLength' => [
         'rule' => ['maxLength', 100],
         'allowEmpty' => false,
