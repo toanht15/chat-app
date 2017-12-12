@@ -4,6 +4,9 @@
   var mCustomerInfoList = <?php echo json_encode($mCustomerList);?>;
   var sincloApp = angular.module('sincloApp', ['ngSanitize']);
   sincloApp.controller('MainController', function($scope) {
+    console.log('まずチェック！');
+    console.log($scope);
+    console.log($scope.fillterTypeId);
     $scope.ua = function(str){
       return userAgentChk.pre(str);
     };
@@ -119,7 +122,7 @@
 
   <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
     window.openChatById = function(id){
-      $.ajax({
+      /*$.ajax({
         type: 'GET',
         url: "<?= $this->Html->url(array('controller' => 'Histories', 'action' => 'remoteGetChatLogs')) ?>",
         cache: false,
@@ -131,13 +134,14 @@
           modalOpen.call(window, html, 'p-chat-logs', 'チャット履歴');
           $(".p-chat-logs #popup-main ul").scrollTop(0);
         }
-      });
+      });*/
     };
   <?php endif; ?>
 
 }());
 
 $(document).ready(function(){
+
   // ツールチップの表示制御
   $('.questionBtn').off("mouseenter").on('mouseenter',function(event){
     var parentTdId = $(this).parent().parent().attr('id');

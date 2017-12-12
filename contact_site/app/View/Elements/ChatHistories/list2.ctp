@@ -1,30 +1,22 @@
-<div id = "list_body2" style = "padding: 0px 0px 0 20px; height:53em; overflow-y: auto; overflow-x: hidden;">
-<div id = "list_height" style = "height:100%">
+<div id = "list_body">
+<div id = "list_height" style = "height:500px !important;">
   <table>
       <thead>
-        <tr>
-          <th width=" 3%"></th>
-          <th width=" 6%">種別</th>
-          <th id = "firstTimeReceivingLabel" width=" 6%">初回チャット<br>受信日時<div class="questionBalloon questionBalloonPosition13">
-            <icon class="questionBtn">？</icon>
-          </div></th>
-          <th width="10%">IPアドレス</th>
-          <th width="10%">訪問ユーザ</th>
-          <th width=" 8%">キャンペーン</th>
-          <th id = "sendChatPageLabel" width=" 17%">チャット送信ページ<div class="questionBalloon questionBalloonPosition8">
-            <icon class="questionBtn">？</icon>
-          </div></th>
-          <th width=" 5%">成果</th>
-          <th id = "manualReceivingLabel" width="6%">有人チャット<br>受信日時<div class="questionBalloon questionBalloonPosition13">
-            <icon class="questionBtn">？</icon>
-            </div></th>
-        <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
-          <th id="lastSpeechLabel" width=" 6%">最終発言後<br>離脱時間<div class="questionBalloon questionBalloonPosition13">
-              <icon class="questionBtn">？</icon>
-            </div></th>
-          <th width="10%">担当者</th>
-        <?php endif; ?>
-      </tr>
+          <tr>
+              <th width=" 3%"></th>
+              <th width=" 6%">種別</th>
+              <th width=" 6%">初回チャット<br>受信日時</th>
+              <th width="10%">IPアドレス</th>
+              <th width="10%">訪問ユーザ</th>
+              <th width=" 8%">キャンペーン</th>
+              <th width=" 17%">チャット送信ページ<div class="questionBalloon questionBalloonPosition8"></th>
+              <th width=" 5%">成果</th>
+              <th width="6%">有人チャット<br>受信日時</th>
+          <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
+              <th width=" 6%">最終発言後<br>離脱時間</th>
+              <th width="10%">担当者</th>
+          <?php endif; ?>
+          </tr>
       </thead>
       <tbody ng-cloak id = "chatHistory">
   <?php foreach($historyList as $key => $history): ?>
@@ -115,49 +107,18 @@
       </tbody>
   </table>
 </div>
-</div>
-<div id = "list_header" style = "margin: 126px 15px 20px 20px;">
-  <table>
-    <thead>
-      <tr>
-        <th width=" 3%"></th>
-        <th width=" 6%">種別</th>
-        <th id = "firstTimeReceivingLabel" width=" 6%">初回チャット<br>受信日時<div class="questionBalloon questionBalloonPosition13">
-          <icon class="questionBtn">？</icon>
-        </div></th>
-        <th width="10%">IPアドレス</th>
-        <th width="10%">訪問ユーザ</th>
-        <th width=" 8%">キャンペーン</th>
-        <th id = "sendChatPageLabel" width=" 17%">チャット送信ページ<div class="questionBalloon questionBalloonPosition8">
-          <icon class="questionBtn">？</icon>
-        </div></th>
-        <th width=" 5%">成果</th>
-        <th id = "manualReceivingLabel" width="6%">有人チャット<br>受信日時<div class="questionBalloon questionBalloonPosition13">
-          <icon class="questionBtn">？</icon>
-          </div></th>
-      <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
-        <th id="lastSpeechLabel" width=" 6%">最終発言後<br>離脱時間<div class="questionBalloon questionBalloonPosition13">
-            <icon class="questionBtn">？</icon>
-          </div></th>
-        <th width="10%">担当者</th>
-      <?php endif; ?>
-      </tr>
-    </thead>
-  </table>
-</div>
-</div>
-<div id = "detail2" style = "width: 100%; height: 64em; margin-left:-34px; background-color: #f2f2f2;">
-  <div id="cus_info_contents"  class="flexBoxCol">
-    <div id="leftContents" style = "width: 100%;padding:1em 1.8em 1em 0em; margin-top:102px;">
+<div id = "detail" style = "width: 101.6%; margin-left:-34px; background-color: #f2f2f2;">
+  <div id="cus_info_contents" class="flexBoxCol">
+    <div id="leftContents" style = "padding:1em 1.8em 1em 0em;">
       <ul id="showChatTab" class="tabStyle flexBoxCol noSelect">
-        <li class="on" data-type="currentChat" style = "width:20em;">チャット内容</li>
-        <li data-type="oldChat" style = "width:20em;">過去のチャット</li>
+        <li class="on" data-type="currentChat">チャット内容</li>
+        <li data-type="oldChat">過去のチャット</li>
       </ul>
-      <div id="chatContent" style = "width:96% !important; height:50em;">
+      <div id="chatContent">
 
       <!-- 現在のチャット -->
       <section class="on" id="currentChat">
-        <ul id="chatTalk" class="chatView" style = "height:568px;">
+        <ul id="chatTalk" class="chatView">
           <message-list>
             <ng-create-message ng-repeat="chat in messageList | orderBy: 'sort'"></ng-create-message>
           </message-list>
@@ -195,9 +156,9 @@
 
           </div>
         </div>
-        <div id="rightContents2" style = "width:100% !important; margin-top: 128px;">
-        <div class = "form01 fRight">
-          <ul class="switch" ng-init = "fillterTypeId = 2" style = "box-shadow:none;">
+        <div id="rightContents2">
+          <div class = "form01 fRight">
+          <ul class="switch" style = "box-shadow:none;">
               <li ng-class="{on:fillterTypeId===1}" ng-click="fillterTypeId = 1" style = "margin-top:0; width:6em !important;">
                 <span ng-if = "fillterTypeId == 1">
                  <?= $this->Html->link(
@@ -219,43 +180,34 @@
                 <?= $this->Html->link(
                     $this->Html->image('dock_right_color.png', array('alt' => 'メニュー', 'width'=>30, 'height'=>30)),
                     'javascript:void(0)',
-                    array('escape' => false,'onclick' => 'bbb()','id' => 'ddd',
+                    array('escape' => false,'id' => 'eeee',
                       'style' => 'display: inline-block; height: 30px;')); ?>
                 </span>
                <span ng-if = "fillterTypeId == 2">
                 <?= $this->Html->link(
                     $this->Html->image('dock_right.png', array('alt' => 'メニュー', 'width'=>30, 'height'=>30)),
                     'javascript:void(0)',
-                    array('escape' => false,
+                    array('escape' => false,'id' => 'uuu',
                       'style' => 'display: inline-block; height: 30px;')); ?>
                 </span>
               </li>
             </ul>
         </div>
-          <div class="nowInfo card" style = "border-bottom: 1px solid #bfbfbf; width:100%;">
-          <dl>
-            <dt style = "text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">ユーザID</dt>
-            <dd style = "width: 30%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">20171122141125995</dd>
-            <dt style = "text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">IPアドレス</dt>
-            <dd style = "width: 30%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">ABC商事（49.98.153.80）</dd>
-            <dt style = "text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">訪問回数</dt>
-            <dd style = "width: 30%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">5回</dd>
-            <dt style = "text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">プラットフォーム</dt>
-            <dd style = "width: 30%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">Windows 8.1 | IE（ver.11.0）</dd>
+          <div class="nowInfo card" style = "border-bottom: 1px solid #bfbfbf;">
+          <dl >
+            <dt>ユーザID</dt><dd>20171122141125995</dd>
+            <dt>IPアドレス</dt><dd>ABC商事（49.98.153.80）</dd>
+            <dt>訪問回数</dt><dd>5回</dd>
+            <dt>プラットフォーム</dt><dd>Windows 8.1 | IE（ver.11.0）</dd>
           </dl>
         </div>
-        <div class="hardInfo card" style = "width:100%;">
+        <div class="hardInfo card">
           <dl>
-            <dt style = "text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">キャンペーン</dt>
-            <dd style = "width: 70%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">GSN | 広告_MC</dd>
-            <dt style = "text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">ランディングページ</dt>
-            <dd style = "width: 70%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">MediaSeries | 企業の成長を加速させる次世代型コミュニケーションサービス</dd>
-            <dt style = "text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">チャット送信ページ</dt>
-            <dd style = "width: 70%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">驚異のコストで導入可能 - 選ばれる理由 | MediaVoice</dd>
-            <dt style = "text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">離脱ページ</dt>
-            <dd style = "width: 70%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">オフィスのフリーアドレス化を実現 - 導入事例 | MediaSeries</dd>
-            <dt style = "text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">閲覧ページ数</dt>
-            <dd style = "width: 70%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">6（移動履歴）</dd>
+            <dt>キャンペーン</dt><dd>GSN | 広告_MC</dd>
+            <dt>ランディングページ</dt><dd>MediaSeries | 企業の成長を加速させる次世代型コミュニケーションサービス</dd>
+            <dt>チャット送信ページ</dt><dd>驚異のコストで導入可能 - 選ばれる理由 | MediaVoice</dd>
+            <dt>離脱ページ</dt><dd>オフィスのフリーアドレス化を実現 - 導入事例 | MediaSeries</dd>
+            <dt>閲覧ページ数</dt><dd>6（移動履歴）</dd>
           </dl>
         </div>
         <div class="detailForm card">
@@ -287,7 +239,37 @@
           </div>
         </div>
       </div>
+      </div>
 </div>
+</div>
+<div id = "list_header">
+  <table>
+    <thead>
+      <tr>
+        <th width=" 3%"></th>
+        <th width=" 6%">種別</th>
+        <th id = "firstTimeReceivingLabel" width=" 6%">初回チャット<br>受信日時<div class="questionBalloon questionBalloonPosition13">
+          <icon class="questionBtn">？</icon>
+        </div></th>
+        <th width="10%">IPアドレス</th>
+        <th width="10%">訪問ユーザ</th>
+        <th width=" 8%">キャンペーン</th>
+        <th id = "sendChatPageLabel" width=" 17%">チャット送信ページ<div class="questionBalloon questionBalloonPosition8">
+          <icon class="questionBtn">？</icon>
+        </div></th>
+        <th width=" 5%">成果</th>
+        <th id = "manualReceivingLabel" width="6%">有人チャット<br>受信日時<div class="questionBalloon questionBalloonPosition13">
+          <icon class="questionBtn">？</icon>
+          </div></th>
+      <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
+        <th id="lastSpeechLabel" width=" 6%">最終発言後<br>離脱時間<div class="questionBalloon questionBalloonPosition13">
+            <icon class="questionBtn">？</icon>
+          </div></th>
+        <th width="10%">担当者</th>
+      <?php endif; ?>
+      </tr>
+    </thead>
+  </table>
 </div>
 <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
 <div id='lastSpeechTooltip' class="explainTooltip">

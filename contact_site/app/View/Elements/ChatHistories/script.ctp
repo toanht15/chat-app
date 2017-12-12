@@ -33,6 +33,10 @@ $(window).resize(function(){
   changeSizeOfTbl();
 });
 
+$("#detail").resize(function(){
+  console.log('まっさっか');
+});
+
 document.body.onload = function(){
 
   // チェックボックス群
@@ -91,20 +95,86 @@ function openDeleteDialog(){
   });
 };
 
+function aaa() {
+  console.log('わっしょい');
+  //document.getElementById('history_list2').style.display = "none";
+};
+
+function bbb() {
+  console.log('ちぇえええええっく');
+  //document.getElementById('history_list2').style.display = "";
+  //document.getElementById('history_menu').style.display = "none";
+  //document.getElementById('history_list').style.display = "none";
+  /*document.getElementById('historyBody').style.left = "";
+  document.getElementById('check').style.left = Number($('#check').css('left').slice(0,-2)) + 94   + 'px';
+  document.getElementById('historyBody').style.width = Number($('#historyBody').css('width').slice(0,-2)) + 62 + 'px';
+  document.getElementById('detail').style.width = Number($('#detail').css('width').slice(0,-2)) - 62 + 'px';*/
+};
+
+var splitterObj = null;
 $(function(){
-$("#list_body").splitter({
+
+/*$("#history_list2").splitter({
+  "orientation": "horizontal",
+  "limit": 605,
+  "barwidth": 8,
+});
+
+
+document.getElementById('historyBody').style.left = "";
+document.getElementById('check').style.left = Number($('#check').css('left').slice(0,-2)) + 94   + 'px';
+document.getElementById('historyBody').style.width = Number($('#historyBody').css('width').slice(0,-2)) + 62 + 'px';
+document.getElementById('detail').style.width = Number($('#detail').css('width').slice(0,-2)) - 62 + 'px';*/
+
+$('#ccc').click(function(){
+    console.log('ああああああ');
+    //$("#history_list2").unbind( "splitter");
+    splitterObj.release();
+     //$("#history_list2").remove();
+
+document.getElementById('history_list2').style.display = "none";
+document.getElementById('history_menu').style.display = "";
+document.getElementById('history_list').style.display = "";
+splitterObj = $("#list_body").splitter({
+  "orientation": "vertical",
+  "limit": 110
+});
+
+});
+
+$('#eeee').click(function(){
+    console.log('うううううううううううううう');
+    splitterObj.release();
+
+  /*$("#history_list2").splitter({
+    "orientation": "horizontal",
+    "limit": 605,
+    "barwidth": 8,
+  });*/
+
+});
+
+console.log('再度はないよね？');
+/*$("#list_body").splitter({
   "orientation": "vertical",
   "limit": 110,
-  //"keepLeft": false
+  "keepLeft": false
 });
 
 document.getElementById('check').style.marginLeft = '-35px';
 document.getElementById('check').style.width = '101.6%';
 document.getElementById('check').style.backgroundColor = '#7f7f7f';
-document.getElementById('check').style.height = '6px';
-console.log('高さ');
-//$('#check').height($('#detail').height() + 40);
-//console.log(document.getElementById('detail').style.height);
-//$('#history_title').enhsplitter({minSize: 0, vertical: false});
+document.getElementById('check').style.height = '6px';*/
+splitterObj = $("#history_list2").splitter({
+  "orientation": "horizontal",
+  "limit": 605,
+  "barwidth": 8,
+});
+
+
+document.getElementById('historyBody').style.left = "";
+document.getElementById('check').style.left = Number($('#check').css('left').slice(0,-2)) + 94   + 'px';
+document.getElementById('historyBody').style.width = Number($('#historyBody').css('width').slice(0,-2)) + 62 + 'px';
+document.getElementById('detail2').style.width = Number($('#detail2').css('width').slice(0,-2)) - 62 + 'px';
 });
 </script>
