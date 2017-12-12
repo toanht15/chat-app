@@ -255,7 +255,7 @@
           <span class="bt0"><?= $this->Form->input('main.subject', [
                 'type' => 'text',
                 'error' => false,
-                'value' => (!empty($this->data['TAutoMessage']['subject'])) ? $this->data['TAutoMessage']['subject'] : "チャット通知（sinclo）"
+                'value' => (!empty($this->data['TAutoMessage']['subject'])) ? $this->data['TAutoMessage']['subject'] : "sincloから新着チャットが届きました"
             ], [
                 'entity' => 'subject'
             ]); ?>
@@ -267,7 +267,7 @@
         <span class="bt0"><?= $this->Form->input('main.from_name', [
               'type' => 'text',
               'error' => false,
-              'value' => (!empty($this->data['TAutoMessage']['from_name'])) ? $this->data['TAutoMessage']['from_name'] : "チャット（sinclo）"
+              'value' => (!empty($this->data['TAutoMessage']['from_name'])) ? $this->data['TAutoMessage']['from_name'] : "sinclo（シンクロ）"
           ], [
               'entity' => 'from_name'
           ]); ?>
