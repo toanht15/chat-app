@@ -170,7 +170,15 @@
           <dl>
             <dt>プラットフォーム</dt><dd>{{os(detail.userAgent)}}</dd>
             <dt>ブラウザ</dt><dd>{{browser(detail.userAgent)}}</dd>
-            <dt>IPアドレス</dt><dd>{{detail.ipAddress}}</dd>
+            <dt>IPアドレス</dt>
+            <?php if ( $coreSettings[C_COMPANY_REF_COMPANY_DATA] ) :?>
+            <dd ng-if="detail.lbcCode && detail.orgName">
+              <a href="#" ng-click="openCompanyDetailInfo(detail)">{{detail.orgName}}</a>（{{detail.ipAddress}}）
+            </dd>
+            <dd ng-if="!detail.lbcCode || !detail.orgName">{{detail.ipAddress}}</dd>
+            <?php else: ?>
+            <dd>{{detail.ipAddress}}</dd>
+            <?php endif; ?>
           </dl>
         </div>
       </div>
