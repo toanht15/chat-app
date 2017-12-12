@@ -260,6 +260,7 @@ class HistoriesController extends AppController {
   public function outputCSVOfHistory(){
     Configure::write('debug', 0);
     ini_set("max_execution_time", 180);
+    ini_set('memory_limit', '-1'); // 無制限
     $name = "sinclo-history";
 
     //$returnData:$historyListで使うjoinのリストとconditionsの検索条件
@@ -400,6 +401,7 @@ class HistoriesController extends AppController {
   public function outputCSVOfChatHistory(){
     Configure::write('debug', 0);
     ini_set("max_execution_time", 180);
+    ini_set('memory_limit', '-1'); // 無制限
 
     //$returnData:$historyListで使うjoinのリストとconditionsの検索条件
     $returnData = $this->_searchConditions();
@@ -1555,18 +1557,13 @@ class HistoriesController extends AppController {
       'order' => [
         'THistoryChatLog.t_histories_id' => 'asc'
       ],
-      'joins' => [
-        [
-          'type' => 'LEFT',
-          'table' => '(SELECT * FROM t_histories WHERE m_companies_id = '.$this->userInfo['MCompany']['id'].')',
-          'alias' => 'THistory',
-          'conditions' => 'THistoryChatLog.t_histories_id = THistory.id'
-        ],
-      ],
       'conditions' => [
         'OR' => [
           array('THistoryChatLog.message_type' => 98),
           array('THistoryChatLog.message_type' => 5)
+        ],
+        'AND' => [
+          array('THistoryChatLog.m_companies_id' => $this->userInfo['MCompany']['id'])
         ]
       ],
       'group' => ['THistoryChatLog.t_histories_id','THistoryChatLog.m_users_id']
