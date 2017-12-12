@@ -110,7 +110,7 @@ class TAutoMessagesController extends AppController {
       $this->request->data['TAutoMessage']['widget_open'] = (!empty($json['widgetOpen'])) ? $json['widgetOpen'] : "";
       $this->request->data['TAutoMessage']['chat_textarea'] = (!empty($json['chatTextarea'])) ? $json['chatTextarea'] : "";
       $this->request->data['TAutoMessage']['cv'] = (!empty($json['cv'])) ? $json['cv'] : "";
-      if (!empty($editData[0]['TAutoMessage']['send_mail_flg'])) {
+      if (array_key_exists('send_mail_flg', $editData[0]['TAutoMessage'])) {
         $this->request->data['TAutoMessage']['send_mail_flg'] = $editData[0]['TAutoMessage']['send_mail_flg'];
         $transmissionData = $this->MMailTransmissionSetting->findById($editData[0]['TAutoMessage']['m_mail_transmission_settings_id']);
         if(!empty($transmissionData)) {
@@ -626,6 +626,7 @@ class TAutoMessagesController extends AppController {
       $saveData['main']['send_mail_flg'] = 0;
       $saveData['main']['m_mail_transmission_settings_id'] = 0;
       $saveData['main']['m_mail_template_id'] = 0;
+      $saveData['TAutoMessage']['send_mail_flg'] = 0;
     }
 
     $this->TAutoMessage->set($saveData);
