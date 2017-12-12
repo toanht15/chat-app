@@ -69,7 +69,9 @@ class MMailTransmissionSetting extends AppModel {
       $explode = explode(',', $toAddress);
       foreach($explode as $mailAddress) {
         if($result) {
-          $result = array_key_exists($mailAddress, $array);
+          if(count($array) !== 0) {
+            $result = !array_key_exists($mailAddress, $array);
+          }
           if(!$result) break;
           $array[$mailAddress] = "";
         }
