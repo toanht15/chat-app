@@ -91,7 +91,7 @@ class NotificationController extends AppController {
       $this->THistoryChatLog->save();
 
     } catch(Exception $e) {
-      $this->log('Notification/autoMessages呼び出し時にエラーが発生しました。 エラーメッセージ: '.$e->getMessage().' エラー番号 '.$e->getCode(), 'api-error');
+      $this->log('【MAIL_SEND_ERROR】Notification/autoMessages呼び出し時にエラーが発生しました。 エラーメッセージ: '.$e->getMessage().' エラー番号 '.$e->getCode().' パラメータ: '.json_encode($jsonObj), 'api-error');
       $this->response->statusCode($e->getCode());
       return json_encode(array(
           'success' => false,
