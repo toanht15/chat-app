@@ -3548,8 +3548,12 @@ ul.naviBtn {
 
           &#sendMailSettingCheckBox {
             padding: 15px 0 0 0;
+            label {
+              cursor: pointer;
+            }
             input[type="checkbox"] {
               margin-left: 0px;
+              cursor: pointer;
             }
           }
 
