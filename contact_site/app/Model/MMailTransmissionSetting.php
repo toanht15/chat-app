@@ -33,6 +33,17 @@ class MMailTransmissionSetting extends AppModel {
         'message' => '<,>,&.",\'を含まずに設定してください。'
       ]
     ],
+    'from_name' => [
+      'maxLength' => [
+        'rule' => ['maxLength', 100],
+        'allowEmpty' => false,
+        'message' => '差出人名は１００文字以内で設定してください。'
+      ],
+      'prohibitedCharacters' => [
+        'rule' => '/^(?!.*(<|>|&|"|\')).*$/',
+        'message' => '<,>,&.",\'を含まずに設定してください。'
+      ]
+    ]
   ];
 
   public function isValidAllEmails($toAddresses){

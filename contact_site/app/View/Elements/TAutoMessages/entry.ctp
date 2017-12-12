@@ -168,7 +168,7 @@
       <!-- cv -->
 
       <!-- メール送信 -->
-      <li class="bt0">
+      <li class="bt0" id="sendMailSettingCheckBox">
         <label style="display:inline-block; <?php echo $coreSettings[C_COMPANY_USE_AUTOMESSAGE_SEND_MAIL] ? '"' : 'color: #CCCCCC;" class="commontooltip" data-text="こちらの機能はスタンダードプラン<br>からご利用いただけます。" data-content-position-left="-33" data-balloon-position="5"'?> >
         <?= $this->Form->input('main.send_mail_flg', [
               'type' => 'checkbox',
@@ -255,7 +255,7 @@
           <span class="bt0"><?= $this->Form->input('main.subject', [
                 'type' => 'text',
                 'error' => false,
-                'value' => (!empty($this->data['TAutoMessage']['subject'])) ? $this->data['TAutoMessage']['subject'] : "チャット通知（sinclo）"
+                'value' => (!empty($this->data['TAutoMessage']['subject'])) ? $this->data['TAutoMessage']['subject'] : "sincloから新着チャットが届きました"
             ], [
                 'entity' => 'subject'
             ]); ?>
@@ -267,7 +267,7 @@
         <span class="bt0"><?= $this->Form->input('main.from_name', [
               'type' => 'text',
               'error' => false,
-              'value' => (!empty($this->data['TAutoMessage']['from_name'])) ? $this->data['TAutoMessage']['from_name'] : "チャット（sinclo）"
+              'value' => (!empty($this->data['TAutoMessage']['from_name'])) ? $this->data['TAutoMessage']['from_name'] : "sinclo（シンクロ）"
           ], [
               'entity' => 'from_name'
           ]); ?>
