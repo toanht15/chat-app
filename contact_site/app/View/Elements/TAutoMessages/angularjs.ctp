@@ -335,8 +335,10 @@ $(document).ready(function(){
     var checked = $('#mainSendMailFlg').prop('checked');
     if(checked) {
       $('.sendMailSettings').css('display', '');
+      $('#sendMailSettingCheckBox').css("padding","15px 0 0 0");
     } else {
       $('.sendMailSettings').css('display', 'none');
+      $('#sendMailSettingCheckBox').css("padding","15px 0 15px 0");
     }
     var atFirst = true;
     var prevObj = undefined;
@@ -353,10 +355,14 @@ $(document).ready(function(){
         }
         atFirst = false;
       } else if(mailAddress !== "") {
-        $(this).css('display', 'inline-flex');
-        $(this).find('.disOffgreenBtn').css('display', 'block');
+        $(this).css('display', 'inline-flex').addClass('show');
+        if($('.mailAddressBlock').length-1 === index) {
+          $(this).find('.disOffgreenBtn').css('display', 'none');
+        } else {
+          $(this).find('.disOffgreenBtn').css('display', 'block');
+        }
         $(this).find('.deleteBtn').css('display', 'block');
-        prevObj.find('.disOffgreenBtn').css('display', 'block');
+        prevObj.find('.disOffgreenBtn').css('display', 'none');
       } else {
         $(this).css('display', 'none').removeClass('show');
       }

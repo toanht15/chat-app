@@ -168,7 +168,7 @@
       <!-- cv -->
 
       <!-- メール送信 -->
-      <li class="bt0">
+      <li class="bt0" id="sendMailSettingCheckBox">
         <label style="display:inline-block; <?php echo $coreSettings[C_COMPANY_USE_AUTOMESSAGE_SEND_MAIL] ? '"' : 'color: #CCCCCC;" class="commontooltip" data-text="こちらの機能はスタンダードプラン<br>からご利用いただけます。" data-content-position-left="-33" data-balloon-position="5"'?> >
         <?= $this->Form->input('main.send_mail_flg', [
               'type' => 'checkbox',
