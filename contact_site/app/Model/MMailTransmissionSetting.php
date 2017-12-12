@@ -20,6 +20,10 @@ class MMailTransmissionSetting extends AppModel {
       'validEmails' => [
         'rule' => 'isValidAllEmails',
         'message' => 'メールアドレスではない設定が含まれています。'
+      ],
+      'isNOTDuplicateEmails' => [
+          'rule' => 'isNOTDuplicateEmails',
+          'message' => '同一のメールアドレスは設定できません。'
       ]
     ],
     'subject' => [
@@ -51,11 +55,26 @@ class MMailTransmissionSetting extends AppModel {
     foreach($toAddresses as $toAddress) {
       $explode = explode(',', $toAddress);
       foreach($explode as $mailAddress) {
+        $result = Validation::email($mailAddress);
+        if(!$result) break;
+      }
+    }
+    return $result;
+  }
+
+  public function isNOTDuplicateEmails($toAddresses) {
+    $result = true;
+    $array = [];
+    foreach($toAddresses as $toAddress) {
+      $explode = explode(',', $toAddress);
+      foreach($explode as $mailAddress) {
         if($result) {
-          $result = Validation::email($mailAddress);
+          $result = array_key_exists($mailAddress, $array);
+          if(!$result) break;
+          $array[$mailAddress] = "";
         }
       }
     }
     return $result;
   }
-}
+ }
