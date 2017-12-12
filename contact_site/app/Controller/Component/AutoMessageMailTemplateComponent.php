@@ -69,10 +69,10 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
 
   private function createMetaDataMessage() {
     $this->autoMessageBlock  = "チャット送信ページタイトル：".$this->stayLog['THistoryStayLog']['title']."\n";
-    $this->autoMessageBlock .= "チャット送信ページURL：".$this->stayLog['THistoryStayLog']['url']."\n";
-    $this->autoMessageBlock .= "キャンペーン：".$this->concatCampaign($this->stayLog['THistoryStayLog']['url'])."\n";
+    $this->autoMessageBlock .= "チャット送信ページＵＲＬ　：".$this->stayLog['THistoryStayLog']['url']."\n";
+    $this->autoMessageBlock .= "キャンペーン　　　　　　　：".$this->concatCampaign($this->stayLog['THistoryStayLog']['url'])."\n";
     if(!empty($this->landscapeData) && !empty($this->landscapeData['MLandscapeData']['org_name'])) {
-      $this->autoMessageBlock .= "企業名：".$this->landscapeData['MLandscapeData']['org_name']."\n";
+    $this->autoMessageBlock .= "企業名　　　　　　　　　　：".$this->landscapeData['MLandscapeData']['org_name']."\n";
     }
   }
 
