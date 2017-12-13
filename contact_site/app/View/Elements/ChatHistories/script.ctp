@@ -17,25 +17,6 @@ function sessionClear(){
   location.href = "<?=$this->Html->url(array('controller' => 'Histories', 'action' => 'portionClearSession'))?>";
 }
 
-function changeSizeOfTbl(){
-  // リアルタイムモニタの高さを指定
-  //$("#list_body").height($(window).height() - $("#history_list").offset().top - 60);
-  //$("#list_body").height($(window).height() - $("#history_list").offset().top - 60);
-  $('#history_list').height($('#history_list').height() - 30);
-  //$('#list_body').height($('#list_body').height() + 30);
-}
-
-$(document).ready(function(){
-  changeSizeOfTbl();
-});
-
-$(window).resize(function(){
-  changeSizeOfTbl();
-});
-
-$("#detail").resize(function(){
-  console.log('まっさっか');
-});
 
 document.body.onload = function(){
 
@@ -56,9 +37,7 @@ var actBtnShow = function(){
     document.getElementById("history_csv_btn").addEventListener('click', openCopyDialog, false);
     //削除ボタン有効
     document.getElementById("history_dustbox_btn").className="btn-shadow disOffredBtn";
-    console.log('ここまで入ってることを確認');
     document.getElementById("history_dustbox_btn").addEventListener('click', openDeleteDialog, false);
-    console.log('終了');
   }
   else {
     //一つもチェックが無かったら
@@ -71,13 +50,8 @@ var actBtnShow = function(){
   }
 };
 
-
-function openCopyDialog() {
-  console.log('eeeeeeeeeeee');
-}
 //履歴削除モーダル画面
 function openDeleteDialog(){
-  console.log('ここまで入ってることを確認aaaaaaaaaaaaa');
   $.ajax({
     type: 'post',
     dataType: 'html',
@@ -95,89 +69,76 @@ function openDeleteDialog(){
   });
 };
 
-function aaa() {
-  console.log('わっしょい');
-  //document.getElementById('history_list2').style.display = "none";
-};
 
-function bbb() {
-  console.log('ちぇえええええっく');
-  //document.getElementById('history_list2').style.display = "";
-  //document.getElementById('history_menu').style.display = "none";
-  //document.getElementById('history_list').style.display = "none";
-  /*document.getElementById('historyBody').style.left = "";
-  document.getElementById('check').style.left = Number($('#check').css('left').slice(0,-2)) + 94   + 'px';
-  document.getElementById('historyBody').style.width = Number($('#historyBody').css('width').slice(0,-2)) + 62 + 'px';
-  document.getElementById('detail').style.width = Number($('#detail').css('width').slice(0,-2)) - 62 + 'px';*/
-};
-
-var splitterObj = null;
+//var splitterObj = null;
 $(function(){
 
-/*$("#history_list2").splitter({
-  "orientation": "horizontal",
-  "limit": 605,
-  "barwidth": 8,
-});
+  //リサイズ処理
+  $(window).resize(function() {
+  $("#history_list_vertical").css('height', window.innerHeight - 150);
+  $("#history_list_side").css('height', window.innerHeight - 150);
+  $("#chatContent").css('height', window.innerHeight - 235);
+  });
 
+  //画面を縦に並べる場合
+  $(document).on('click', '#vertical', function(){
+      $("#check").remove();
+      document.getElementById('history_list_side').style.display = "none";
+      //var $historyList2 = $('#history_list2').clone();
+      var historyListSide = $("#history_list_side").detach();
+      //$("#history_list2").remove();
+      $("#history_list_vertical").splitter({
+        "orientation": "vertical",
+        "limit": 110
+      });
+      historyListSide.appendTo('#chat_history_idx');
+      document.getElementById('history_list_vertical').style.display = "";
+      document.getElementById('history_body_vertical').style.top = "";
+      document.getElementById('history_body_vertical').style.overflow = "hidden";
+      document.getElementById('check').style.top = Number($('#check').css('top').slice(0,-2)) + 80 + 'px';
+      document.getElementById('check').style.left = 0;
+      document.getElementById('detail').style.left = 0;
+      document.getElementById('detail').style.width = "100%";
+      document.getElementById('detail').style.height = Number($('#detail').css('height').slice(0,-2)) - 115 + 'px';
+      $("#history_list_vertical").css('height', window.innerHeight - 150);
+  });
 
-document.getElementById('historyBody').style.left = "";
-document.getElementById('check').style.left = Number($('#check').css('left').slice(0,-2)) + 94   + 'px';
-document.getElementById('historyBody').style.width = Number($('#historyBody').css('width').slice(0,-2)) + 62 + 'px';
-document.getElementById('detail').style.width = Number($('#detail').css('width').slice(0,-2)) - 62 + 'px';*/
-
-$(document).on('click', '#ccc', function(){
-    console.log('ああああああ');
-    //$("#history_list2").unbind( "splitter");
-    splitterObj.release();
+  //画面を横に並べる場合
+  $(document).on('click', '#side', function(){
     $("#check").remove();
-document.getElementById('history_list2').style.display = "none";
-document.getElementById('history_menu').style.display = "";
-document.getElementById('history_list').style.display = "";;
-splitterObj = $("#list_body").splitter({
-  "orientation": "vertical",
-  "limit": 110
-});
-});
+    document.getElementById('history_list_vertical').style.display = "none";
+    //var $historyList3 = $('#history_list3').clone();
+    var historyListVertical = $("#history_list_vertical").detach();
+      $("#history_list_side").splitter({
+      "orientation": "horizontal",
+      "limit": 625,
+      "barwidth": 8,
+    });
+    historyListVertical.appendTo('#chat_history_idx');
+    document.getElementById('history_list_side').style.display = "";
+    document.getElementById('detail').style.width = Number($('#detail').css('width').slice(0,-2)) - 10 + 'px';
+    document.getElementById('check').style.height = Number($('#check').css('height').slice(0,-2)) -120   + 'px';
+    document.getElementById('check').style.left = Number($('#check').css('left').slice(0,-2)) + 22   + 'px';
+    document.getElementById('detail').style.width = Number($('#detail').css('width').slice(0,-2)) - 22 + 'px';
+    document.getElementById('detail').style.right = "15px";
+  });
 
-$(document).on('click', '#eeee', function(){
-  console.log('いよｓっしゃああああ');
-  // clickイベントで発動する処理
-  splitterObj = $("#history_list2").splitter({
-  "orientation": "horizontal",
-  "limit": 605,
-  "barwidth": 8,
-});
-  document.getElementById('history_list2').style.display = "";
-document.getElementById('history_menu').style.display = "none";
-document.getElementById('history_list').style.display = "none";
-document.getElementById('check').style.height = Number($('#check').css('height').slice(0,-2)) -120   + 'px';
-document.getElementById('check').style.left = Number($('#check').css('left').slice(0,-2)) + 22   + 'px';
-document.getElementById('detail').style.width = Number($('#detail').css('width').slice(0,-2)) - 22 + 'px';
-});
 
-console.log('再度はないよね？');
-/*$("#list_body").splitter({
-  "orientation": "vertical",
-  "limit": 110,
-  "keepLeft": false
-});
-
-document.getElementById('check').style.marginLeft = '-35px';
-document.getElementById('check').style.width = '101.6%';
-document.getElementById('check').style.backgroundColor = '#7f7f7f';
-document.getElementById('check').style.height = '6px';*/
-splitterObj = $("#history_list2").splitter({
-  "orientation": "horizontal",
-  "limit": 605,
-  "barwidth": 8,
-});
-
-document.getElementById('check').style.height = Number($('#check').css('height').slice(0,-2)) - 97 + 'px';
-document.getElementById('historyBody').style.left = "";
-document.getElementById('check').style.left = Number($('#check').css('left').slice(0,-2)) + 94   + 'px';
-document.getElementById('historyBody').style.width = Number($('#historyBody').css('width').slice(0,-2)) + 62 + 'px';
-document.getElementById('detail').style.width = Number($('#detail').css('width').slice(0,-2)) - 62 + 'px';
-document.getElementById('history_list2').style.height = Number($('#history_list2').css('height').slice(0,-2)) - 100 + 'px';
+  //初期設定
+  $("#history_list_side").splitter({
+    "orientation": "horizontal",
+    "limit": 625,
+    "barwidth": 8
+  });
+  document.getElementById('history_body_side').style.overflow = "hidden";
+  document.getElementById('check').style.height = Number($('#check').css('height').slice(0,-2)) - 97 + 'px';
+  document.getElementById('history_body_side').style.left = "";
+  document.getElementById('detail').style.right = "15px";
+  document.getElementById('check').style.left = Number($('#check').css('left').slice(0,-2)) + 94   + 'px';
+  document.getElementById('history_body_side').style.width = Number($('#history_body_side').css('width').slice(0,-2)) + 82 + 'px';
+  document.getElementById('detail').style.width = Number($('#detail').css('width').slice(0,-2)) - 62 + 'px';
+  $("#history_list_side").css('height', window.innerHeight - 150);
+  $("#chatContent").css('height', window.innerHeight - 235);
+  $("#list_body").css('height', '100%');
 });
 </script>

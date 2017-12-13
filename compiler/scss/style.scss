@@ -2613,7 +2613,6 @@ ul.naviBtn {
 
   .flexBoxCol {
     display: flex;
-    margin-left: -0.7em;
   }
 
   #leftContents {
@@ -2637,6 +2636,7 @@ ul.naviBtn {
           background-color: $main-color;
           width:18.5em;
           text-align:center;
+          margin-left: -40px;
         }
       }
     }
@@ -2649,11 +2649,7 @@ ul.naviBtn {
 
     #chatContent {
       box-shadow: 0 0 1px rgba(0,0,0,0.25);
-      margin-left: 3.3em;
       margin-top: -1.1em;
-      margin-left: 2.6em;
-      width:66em;
-      height: 37em;
 
       section {
         display: none;
@@ -2933,104 +2929,6 @@ ul.naviBtn {
     }
   }
 
-
-  #rightContents2 {
-    width: 88.2em;
-    border-left: 1px solid #bfbfbf;
-    font-size:13px;
-
-    .detailForm {
-      ul {
-        display: inline-block;
-        width: 100%;
-        margin-left:-24px;
-
-        li {
-          margin: 0.25em 0;
-          label {
-            width: 20%;
-            display: block;
-            float: left;
-            clear: both;
-            padding: 0.25em 0.5em;
-          }
-          input {
-            width: 44%;
-            padding: 0.25em 0.5em;
-          }
-          textarea {
-            width: 65%;
-            resize: none;
-            margin-top: 0.5em;
-          }
-        }
-      }
-    }
-
-    .nowInfo  {
-      border-bottom: 1px solid #bfbfbf;
-
-      dt {
-        width: 19%;
-        margin: 0 0 0 24px;
-        float: left;
-      }
-      dd {
-        margin: 0;
-        height: 1.6em;
-        font-weight: bold;
-      }
-      /*@include dl2column;*/
-
-      dd.w100 a{
-        /*width: ($content-width - 3) / 0.8!important;*/
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        color: $string-color;
-        display: block;
-
-        &:hover {
-          color: $main-color;
-        }
-      }
-    }
-
-    .connectionBtn {
-      text-align:center;
-
-      a {
-        border-radius: 5px;
-        text-decoration: none;
-        background-color: #8a9dd4;
-        color: #FFF;
-        font-weight: normal;
-        width: 100%;
-        padding: 5px;
-        display: block;
-        box-shadow: 0 0 1px rgba(0,0,0,0.25);
-
-        &:hover {
-          background-color: #788DCA;
-        }
-      }
-
-    }
-    .hardInfo {
-      border-bottom: 1px solid #bfbfbf;
-      /*@include dl2column;*/
-      dt {
-        width: 19%;
-        margin: 0 0 0 24px;
-        float: left;
-      }
-      dd {
-        margin: 0;
-        height: 1.6em;
-        font-weight: bold;
-      }
-    }
-  }
   #history_title {
     position: relative;
     #outputCSV {
@@ -3166,120 +3064,6 @@ ul.naviBtn {
     }
   }
 
-  #history_menu2 {
-    height: 37px !important;
-
-    #mainDatePeriod {
-      margin-left: 5em;
-      margin-top: -1.4em;
-      cursor: pointer;
-      border-bottom: 1px solid #909090;
-      font-size: 1.1em;
-      width: 20em !important;
-      display: block;
-      text-align: left;
-      position: relative;
-      padding-left: 0.5em;
-    }
-
-    span#mainDatePeriod:after {
-      content: " ";
-      display: block;
-      position: absolute;
-      right: 10px;
-      top: 5px;
-      border-left: 5px solid transparent;
-      border-right: 5px solid transparent;
-      border-top: 8px solid #848282;
-      width: 0;
-      height: 1em;
-    }
-
-    span#searchPeriod {
-      font-size: 1.1em;
-    }
-    ul {
-      display: flex;
-      flex-direction: row;
-      padding: 0;
-      flex-wrap: wrap;
-
-      li {
-        display: flex;
-
-        label {
-          display: block;
-          padding: 0.5em 1em 0em 1em;
-          color: #224;
-          text-align: center;
-          font-size: 13px;
-          background: #eee;
-          margin-bottom: 4px;
-          border-bottom: #eee 1px solid;
-          border-right: #eee 1px solid;
-          min-height: 16px;
-          margin-left: 25px;
-          width: 7em;
-        }
-      }
-    }
-
-    & label[for='g_chat'] {
-      display: block;
-      position: relative;
-      padding: 1px 0 15px 20px;
-      margin-top: 45px;
-
-      #g_chat {
-        position: absolute;
-        display: none;
-        top: 0;
-        left: 0;
-      }
-
-      &:before {
-        content: " ";
-        border: 2px solid $main-color;
-        background-color: #FFF;
-        width: 13px;
-        height: 13px;
-        display: block;
-        position: absolute;
-        top: 0;
-        left: 0;
-        bottom: 0;
-      }
-
-      &:after {
-        content: " ";
-        border: 1px solid #FFF;
-        position: absolute;
-        top: 3px;
-        left: 2px;
-        bottom: 0;
-        display: block;
-        width: 9px;
-        height: 4px;
-        border-width: 0 0 3px 3px;
-        transform: rotate(-45deg);
-        padding: 0px;
-        opacity: 0;
-      }
-
-
-      &.checked {
-        &:before {
-          border: 2px solid $main-color;
-          background-color: $main-color;
-        }
-
-        &:after {
-          opacity: 1;
-        }
-      }
-
-    }
-  }
   .detailBtn {
     text-decoration: none;
     font-weight: bold;
@@ -3289,126 +3073,80 @@ ul.naviBtn {
     display: block;
     text-align: center;
   }
-  #history_list {
-    #list_header {
-      position: absolute;left: 0;
-      right: 0;
-      top: 0;
-      margin: 0px 15px 20px 20px;
-      z-index: 3;
-    }
 
-    #list_body {
-      overflow-y: hidden;
-      overflow-x: hidden;
-      width:100%;
-      top:34px !important;
-    }
-
-    td, th {
-      height: 30px!important;
-      line-height: 1.5;
-      padding: 0 3px;
-    }
-    tr{
-      cursor:pointer;
-    }
-
-    input[type='checkbox'] {
-        display: none;
-
-        &:checked + label {
-            background-color: $main-color;
-            border: 1px solid $main-color;
-            position: relative;
-            cursor: pointer;
-
-            &:after {
-                content: "";
-                font-weight: bold;
-                border-right: 4px solid #FFF;
-                border-bottom: 4px solid #FFF;
-                width: 6px;
-                height: 10px;
-                position: absolute;
-                top: 0;
-                right: 4px;
-                transform: rotate(45deg);
-            }
-        }
-
-        & + label {
-            width: 20px;
-            height: 20px;
-            display: block;
-            margin: 0 auto;
-            background-color: #FFF;
-            padding: 1px;
-            border: 1px solid #828282;
-            cursor: pointer;
-        }
-    }
+  #list_header {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    margin: 126px 35px 20px 20px;
+    z-index: 3;
   }
 
-  #history_list2 {
-    #list_header {
-      position: absolute;left: 0;
-      right: 0;
-      top: 0;
-      margin: 0px 15px 20px 20px;
-      z-index: 3;
-    }
-
-    #list_body2 {
-      overflow-y: hidden;
-      overflow-x: hidden;
-      width:100%;
-      top:34px !important;
-    }
-    td, th {
-      height: 30px!important;
-      line-height: 1.5;
-      padding: 0 3px;
-    }
-    tr{
-      cursor:pointer;
-    }
-
-    input[type='checkbox'] {
-        display: none;
-
-        &:checked + label {
-            background-color: $main-color;
-            border: 1px solid $main-color;
-            position: relative;
-            cursor: pointer;
-
-            &:after {
-                content: "";
-                font-weight: bold;
-                border-right: 4px solid #FFF;
-                border-bottom: 4px solid #FFF;
-                width: 6px;
-                height: 10px;
-                position: absolute;
-                top: 0;
-                right: 4px;
-                transform: rotate(45deg);
-            }
-        }
-
-        & + label {
-            width: 20px;
-            height: 20px;
-            display: block;
-            margin: 0 auto;
-            background-color: #FFF;
-            padding: 1px;
-            border: 1px solid #828282;
-            cursor: pointer;
-        }
-    }
+  #list_body {
+    overflow-y: hidden;
+    overflow-x: hidden;
+    width:100%;
+    top:34px !important;
   }
+
+  td, th {
+    height: 30px!important;
+    line-height: 1.5;
+    padding: 0 3px;
+  }
+
+  thead {
+    display: inline-block;
+    width: 100%;
+  }
+
+  tr{
+    cursor:pointer;
+  }
+
+  tbody#chatHistory {
+    display: inline-block;
+    overflow-y: scroll;
+    height: 45em;
+    width: 100%;
+  }
+
+  input[type='checkbox'] {
+      display: none;
+
+      &:checked + label {
+          background-color: $main-color;
+          border: 1px solid $main-color;
+          position: relative;
+          cursor: pointer;
+
+          &:after {
+              content: "";
+              font-weight: bold;
+              border-right: 4px solid #FFF;
+              border-bottom: 4px solid #FFF;
+              width: 6px;
+              height: 10px;
+              position: absolute;
+              top: 0;
+              right: 4px;
+              transform: rotate(45deg);
+          }
+      }
+
+      & + label {
+          width: 20px;
+          height: 20px;
+          display: block;
+          margin: 0 auto;
+          background-color: #FFF;
+          padding: 1px;
+          border: 1px solid #828282;
+          cursor: pointer;
+      }
+  }
+
 
   a#searchRefine {
     position: absolute;

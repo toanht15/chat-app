@@ -1,5 +1,172 @@
-<div id = "list_body2" style = "padding: 0px 0px 0 20px; height:53em; overflow-y: auto; overflow-x: hidden;">
-<div id = "list_height" style = "height:100%">
+<div id='history_menu' class="p20trl">
+  <div id="paging" class="fRight">
+    <?=
+        $this->Paginator->prev(
+        $this->Html->image('paging.png', array('alt' => '前のページへ', 'width'=>25, 'height'=>25)),
+        array('escape' => false, 'class' => 'btn-shadow greenBtn tr180'),
+        null,
+        array('class' => 'grayBtn tr180')
+      );
+    ?>
+    <span style="width: auto!important;padding: 10px 0 0;"> <?= $this->Paginator->counter('{:page} / {:pages}'); ?> </span>
+    <?=
+        $this->Paginator->next(
+        $this->Html->image('paging.png', array('alt' => '次のページへ', 'width'=>25, 'height'=>25)),
+        array('escape' => false, 'class' => 'btn-shadow greenBtn'),
+        null,
+        array('escape' => false, 'class' => 'grayBtn')
+      );
+    ?>
+  </div>
+
+  <?= $this->Html->link(
+    '高度な検索',
+    'javascript:void(0)',
+    array('escape' => false, 'class'=>'skyBlueBtn btn-shadow','id' => 'searchRefine','onclick' => 'openSearchRefine()','style' => 'position: absolute;
+  top: 15px;
+  left: 32em;
+  width: 8em;
+  padding: 0.25em 0.5em;
+  text-align: center;'));
+  ?>
+  <span id="searchPeriod">検索期間</span>
+  <?php
+    //検索条件表示：非表示
+    $noseach_menu = '';
+    $seach_menu = 'seach_menu';
+  ?>
+  <?php //検索をした時の表示
+    if(!empty($data['History']['start_day'])||!empty($data['History ']['finish_day'])) { ?>
+      <span id ='mainDatePeriod' name = 'datefilter'><?= h($data['History']['period']) ?> : <?= h($data['History']['start_day']) ?>-<?= h($data['History']['finish_day']) ?></span>
+  <?php } ?>
+  <?php //セッションをクリアしたときの表示(履歴一覧ボタンを押下した時)
+    if(empty($data['History']['start_day'])&&empty($data['History ']['finish_day'])) { ?>
+      <span id ='mainDatePeriod' name = 'datefilter' class='date'>過去一ヵ月間 : <?= h($historySearchConditions['start_day']) ?>-<?= h($historySearchConditions['finish_day']) ?></span>
+  <?php } ?>
+  <?php
+      if(
+        empty($data['History']['ip_address'])&&empty($data['History']['company_name'])
+        &&empty($data['History']['customer_name'])&&empty($data['History']['telephone_number'])
+        &&empty($data['History']['mail_address'])&&empty($data['THistoryChatLog']['responsible_name'])
+        &&($data['THistoryChatLog']['achievement_flg'] === "")
+        &&empty($data['THistoryChatLog']['message'])){
+        $noseach_menu = 'noseach_menu';
+        $seach_menu='　';
+      }
+  ?>
+
+  <div class=<?= $seach_menu; ?> id=<?= $noseach_menu ?> style = "height: 37px !important;">
+    <label class='searchConditions'>検索条件</label>
+    <ul ng-non-bindable>
+      <?php if(!empty($data['History']['ip_address'])) { ?>
+        <li>
+          <label>IPｱﾄﾞﾚｽ</label>
+          <span class="value"><?= h($data['History']['ip_address']) ?></span>
+        </li>
+      <?php } ?>
+      <?php if(!empty($data['History']['company_name'])) { ?>
+        <li>
+          <label>会社名</label>
+          <span class="value"><?= h($data['History']['company_name']) ?></span>
+        </li>
+      <?php } ?>
+      <?php if(!empty($data['History']['customer_name'])) { ?>
+        <li>
+          <label class="label">名前</label>
+          <span class="value"><?= h($data['History']['customer_name']) ?></span>
+        </li>
+      <?php } ?>
+      <?php if(!empty($data['History']['telephone_number'])) { ?>
+        <li>
+          <label>電話番号</label>
+          <span class="value"><?= h($data['History']['telephone_number']) ?></span>
+        </li>
+      <?php } ?>
+      <?php if(!empty($data['History']['mail_address'])) { ?>
+        <li>
+          <label>ﾒｰﾙｱﾄﾞﾚｽ</label>
+          <span class="value"><?= h($data['History']['mail_address']) ?></span>
+        </li>
+      <?php } ?>
+      <?php if(!empty($data['THistoryChatLog']['responsible_name'])) { ?>
+        <li>
+          <label>担当者</label>
+          <span class="value"><?= h($data['THistoryChatLog']['responsible_name']) ?></span>
+        </li>
+      <?php } ?>
+      <?php if(isset($data['THistoryChatLog']['achievement_flg']) && ($data['THistoryChatLog']['achievement_flg'] !== "" || $data['THistoryChatLog']['achievement_flg'] === 0)) { ?>
+        <li>
+          <label>成果</label>
+          <span class="value"><?= $achievementType[h($data['THistoryChatLog']['achievement_flg'])] ?></span>
+        </li>
+      <?php } ?>
+      <?php if(!empty($data['THistoryChatLog']['message'])) { ?>
+        <li>
+          <label>ﾁｬｯﾄ内容</label>
+          <span class="value"><?= h($data['THistoryChatLog']['message']) ?></span>
+        </li>
+      <?php } ?>
+
+      <?= $this->Html->link(
+        '条件クリア',
+        'javascript:void(0)',
+        ['escape' => false, 'class'=>'skyBlueBtn btn-shadow','id' => 'sessionClear','onclick' => 'sessionClear()']);
+      ?>
+    </ul>
+  </div>
+    <!-- 検索窓 -->
+    <div class='fLeft'>
+      <?php
+        if ($coreSettings[C_COMPANY_USE_CHAT]) :
+        $checked = "";
+        $class = "";
+        if (strcmp($groupByChatChecked, 'false') !== 0) {
+          $class = "";
+          $checked = "checked=\"\"";
+        }
+      ?>
+        <label for="g_chat" class="pointer <?=$class?>">
+          <input type="checkbox" id="g_chat" name="group_by_chat" <?=$checked?> />
+          CV(コンバージョン)のみ表示する
+        </label>
+      <?php endif; ?>
+      <?=$this->Form->create('History', ['action' => 'index']);?>
+        <?=$this->Form->hidden('outputData')?>
+      <?=$this->Form->end();?>
+      <?=  $this->Form->create('History',['id' => 'historySearch','type' => 'post','url' => '/Histories']); ?>
+    </div>
+  </div>
+  <div class="btnSet">
+       <span>
+         <a>
+           <?= $this->Html->image('csv.png', array(
+               'alt' => 'CSV出力',
+               'id'=>'history_csv_btn',
+               'class' => 'btn-shadow disOffgrayBtn commontooltip',
+               'data-text' => 'CSV出力',
+               'data-balloon-position' => '36',
+               'width' => 45,
+               'height' => 45,
+               'onclick' => 'openAdd()',
+               'style' => 'margin-left: -17em;margin-top:6px;'
+           )) ?>
+         </a>
+       </span>
+       <span>
+         <a>
+           <?= $this->Html->image('dustbox.png', array(
+               'alt' => '削除',
+               'id'=>' height:100%;ory_dustbox_btn',
+               'class' => 'btn-shadow disOffgrayBtn commontooltip',
+               'data-text' => '削除する',
+               'data-balloon-position' => '36',
+               'width' => 45,
+               'height' => 45)) ?>
+         </a>
+       </span>
+  </div>
+
+<div id = "list_body" style = "padding: 0px 20px 0 20px; height:53em; overflow-y: auto; overflow-x: hidden;">
   <table>
       <thead>
         <tr>
@@ -11,7 +178,7 @@
           <th width="10%">IPアドレス</th>
           <th width="10%">訪問ユーザ</th>
           <th width=" 8%">キャンペーン</th>
-          <th id = "sendChatPageLabel" width=" 17%">チャット送信ページ<div class="questionBalloon questionBalloonPosition8">
+          <th width=" 17%" id = "sendChatPageLabel">チャット送信ページ<div class="questionBalloon questionBalloonPosition8">
             <icon class="questionBtn">？</icon>
           </div></th>
           <th width=" 5%">成果</th>
@@ -115,9 +282,9 @@
       </tbody>
   </table>
 </div>
-</div>
-<div id = "list_header" style = "margin: 126px 15px 20px 20px;">
-  <table>
+
+<div id = "list_header">
+  <table  style = "width:100%;">
     <thead>
       <tr>
         <th width=" 3%"></th>
@@ -146,18 +313,20 @@
   </table>
 </div>
 </div>
-<div id = "detail" class = "detail" style = "width: 100%; height: 64em; margin-left:-34px; background-color: #f2f2f2;">
+
+
+<div id = "detail" class = "detail" style = "width: 100%; background-color: #f2f2f2;">
   <div id="cus_info_contents"  class="flexBoxCol">
-    <div id="leftContents" style = "width: 100%;padding:1em 1.8em 1em 0em; margin-right:15px !important;">
-      <ul id="showChatTab" class="tabStyle flexBoxCol noSelect">
-        <li class="on" data-type="currentChat" style = "width:20em;">チャット内容</li>
-        <li data-type="oldChat" style = "width:20em;">過去のチャット</li>
+    <div id="leftContents" style = "width: 100%;padding: 1em 1.5em 1em 1.5em;">
+      <ul id="showChatTab" class="tabStyle flexBoxCol noSelect" style = "width:100%">
+        <li class="on" data-type="currentChat">チャット内容</li>
+        <li data-type="oldChat">過去のチャット</li>
       </ul>
-      <div id="chatContent" style = "width:96% !important; height:59em;">
+      <div id="chatContent" style = "width:100%; height:100% ">
 
       <!-- 現在のチャット -->
-      <section class="on" id="currentChat">
-        <ul id="chatTalk" class="chatView" style = "height:677px;">
+      <section class="on" id="currentChat" style = "height:100%;">
+        <ul id="chatTalk" class="chatView" style = "height:100%;">
           <message-list>
             <ng-create-message ng-repeat="chat in messageList | orderBy: 'sort'"></ng-create-message>
           </message-list>
@@ -195,10 +364,10 @@
 
           </div>
         </div>
-        <div id="rightContents2" style = "width:100% !important;">
+        <div id="rightContents" style = "width:100% !important;">
         <div class = "form01 fRight">
           <ul class="switch" ng-init = "fillterTypeId = 2" style = "box-shadow:none;">
-              <li ng-class="{on:fillterTypeId===1}" ng-click="fillterTypeId = 1" style = "margin-top:0; width:6em !important;">
+              <li id = "uuu" ng-class="{on:fillterTypeId===1}" ng-click="fillterTypeId = 1" style = "margin-top:0; width:6em !important;">
                 <span ng-if = "fillterTypeId == 1">
                  <?= $this->Html->link(
                     $this->Html->image('dock_bottom.png', array('alt' => 'メニュー', 'width'=>40, 'height'=>40)),
@@ -210,16 +379,16 @@
                   <?= $this->Html->link(
                     $this->Html->image('dock_bottom_color.png', array('alt' => 'メニュー', 'width'=>40, 'height'=>40)),
                     'javascript:void(0)',
-                    array('escape' => false,'onclick' => 'aaa()','id' => 'ccc',
+                    array('escape' => false,'id' => 'vertical',
                       'style' => 'display: inline-block; height: 30px;')); ?>
                 </span>
               </li>
-              <li ng-class="{on:fillterTypeId===2}" ng-click="fillterTypeId = 2" style = "margin-top:0; width:6em !important;">
+              <li id = "eee" ng-class="{on:fillterTypeId===2}" ng-click="fillterTypeId = 2" style = "margin-top:0; width:6em !important;">
               <span ng-if = "fillterTypeId == 1">
                 <?= $this->Html->link(
                     $this->Html->image('dock_right_color.png', array('alt' => 'メニュー', 'width'=>40, 'height'=>40)),
                     'javascript:void(0)',
-                    array('escape' => false,'onclick' => 'bbb()','id' => 'ddd',
+                    array('escape' => false,'id' => 'side',
                       'style' => 'display: inline-block; height: 30px;')); ?>
                 </span>
                <span ng-if = "fillterTypeId == 2">
