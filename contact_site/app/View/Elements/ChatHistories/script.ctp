@@ -126,32 +126,34 @@ document.getElementById('check').style.left = Number($('#check').css('left').sli
 document.getElementById('historyBody').style.width = Number($('#historyBody').css('width').slice(0,-2)) + 62 + 'px';
 document.getElementById('detail').style.width = Number($('#detail').css('width').slice(0,-2)) - 62 + 'px';*/
 
-$('#ccc').click(function(){
+$(document).on('click', '#ccc', function(){
     console.log('ああああああ');
     //$("#history_list2").unbind( "splitter");
     splitterObj.release();
-     //$("#history_list2").remove();
-
+    $("#check").remove();
 document.getElementById('history_list2').style.display = "none";
 document.getElementById('history_menu').style.display = "";
-document.getElementById('history_list').style.display = "";
+document.getElementById('history_list').style.display = "";;
 splitterObj = $("#list_body").splitter({
   "orientation": "vertical",
   "limit": 110
 });
-
 });
 
-$('#eeee').click(function(){
-    console.log('うううううううううううううう');
-    splitterObj.release();
-
-  /*$("#history_list2").splitter({
-    "orientation": "horizontal",
-    "limit": 605,
-    "barwidth": 8,
-  });*/
-
+$(document).on('click', '#eeee', function(){
+  console.log('いよｓっしゃああああ');
+  // clickイベントで発動する処理
+  splitterObj = $("#history_list2").splitter({
+  "orientation": "horizontal",
+  "limit": 605,
+  "barwidth": 8,
+});
+  document.getElementById('history_list2').style.display = "";
+document.getElementById('history_menu').style.display = "none";
+document.getElementById('history_list').style.display = "none";
+document.getElementById('check').style.height = Number($('#check').css('height').slice(0,-2)) -120   + 'px';
+document.getElementById('check').style.left = Number($('#check').css('left').slice(0,-2)) + 22   + 'px';
+document.getElementById('detail').style.width = Number($('#detail').css('width').slice(0,-2)) - 22 + 'px';
 });
 
 console.log('再度はないよね？');
@@ -171,10 +173,11 @@ splitterObj = $("#history_list2").splitter({
   "barwidth": 8,
 });
 
-
+document.getElementById('check').style.height = Number($('#check').css('height').slice(0,-2)) - 97 + 'px';
 document.getElementById('historyBody').style.left = "";
 document.getElementById('check').style.left = Number($('#check').css('left').slice(0,-2)) + 94   + 'px';
 document.getElementById('historyBody').style.width = Number($('#historyBody').css('width').slice(0,-2)) + 62 + 'px';
-document.getElementById('detail2').style.width = Number($('#detail2').css('width').slice(0,-2)) - 62 + 'px';
+document.getElementById('detail').style.width = Number($('#detail').css('width').slice(0,-2)) - 62 + 'px';
+document.getElementById('history_list2').style.height = Number($('#history_list2').css('height').slice(0,-2)) - 100 + 'px';
 });
 </script>

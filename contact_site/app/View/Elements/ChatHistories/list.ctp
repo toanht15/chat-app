@@ -146,18 +146,18 @@
   </table>
 </div>
 </div>
-<div id = "detail2" style = "width: 100%; height: 64em; margin-left:-34px; background-color: #f2f2f2;">
+<div id = "detail" class = "detail" style = "width: 100%; height: 64em; margin-left:-34px; background-color: #f2f2f2;">
   <div id="cus_info_contents"  class="flexBoxCol">
-    <div id="leftContents" style = "width: 100%;padding:1em 1.8em 1em 0em; margin-top:102px;">
+    <div id="leftContents" style = "width: 100%;padding:1em 1.8em 1em 0em; margin-right:15px !important;">
       <ul id="showChatTab" class="tabStyle flexBoxCol noSelect">
         <li class="on" data-type="currentChat" style = "width:20em;">チャット内容</li>
         <li data-type="oldChat" style = "width:20em;">過去のチャット</li>
       </ul>
-      <div id="chatContent" style = "width:96% !important; height:50em;">
+      <div id="chatContent" style = "width:96% !important; height:59em;">
 
       <!-- 現在のチャット -->
       <section class="on" id="currentChat">
-        <ul id="chatTalk" class="chatView" style = "height:568px;">
+        <ul id="chatTalk" class="chatView" style = "height:677px;">
           <message-list>
             <ng-create-message ng-repeat="chat in messageList | orderBy: 'sort'"></ng-create-message>
           </message-list>
@@ -195,20 +195,20 @@
 
           </div>
         </div>
-        <div id="rightContents2" style = "width:100% !important; margin-top: 128px;">
+        <div id="rightContents2" style = "width:100% !important;">
         <div class = "form01 fRight">
           <ul class="switch" ng-init = "fillterTypeId = 2" style = "box-shadow:none;">
               <li ng-class="{on:fillterTypeId===1}" ng-click="fillterTypeId = 1" style = "margin-top:0; width:6em !important;">
                 <span ng-if = "fillterTypeId == 1">
                  <?= $this->Html->link(
-                    $this->Html->image('dock_bottom.png', array('alt' => 'メニュー', 'width'=>30, 'height'=>30)),
+                    $this->Html->image('dock_bottom.png', array('alt' => 'メニュー', 'width'=>40, 'height'=>40)),
                     'javascript:void(0)',
                     array('escape' => false,
                       'style' => 'display: inline-block; height: 30px;')); ?>
                 </span>
                 <span ng-if = "fillterTypeId == 2">
                   <?= $this->Html->link(
-                    $this->Html->image('dock_bottom_color.png', array('alt' => 'メニュー', 'width'=>30, 'height'=>30)),
+                    $this->Html->image('dock_bottom_color.png', array('alt' => 'メニュー', 'width'=>40, 'height'=>40)),
                     'javascript:void(0)',
                     array('escape' => false,'onclick' => 'aaa()','id' => 'ccc',
                       'style' => 'display: inline-block; height: 30px;')); ?>
@@ -217,14 +217,14 @@
               <li ng-class="{on:fillterTypeId===2}" ng-click="fillterTypeId = 2" style = "margin-top:0; width:6em !important;">
               <span ng-if = "fillterTypeId == 1">
                 <?= $this->Html->link(
-                    $this->Html->image('dock_right_color.png', array('alt' => 'メニュー', 'width'=>30, 'height'=>30)),
+                    $this->Html->image('dock_right_color.png', array('alt' => 'メニュー', 'width'=>40, 'height'=>40)),
                     'javascript:void(0)',
                     array('escape' => false,'onclick' => 'bbb()','id' => 'ddd',
                       'style' => 'display: inline-block; height: 30px;')); ?>
                 </span>
                <span ng-if = "fillterTypeId == 2">
                 <?= $this->Html->link(
-                    $this->Html->image('dock_right.png', array('alt' => 'メニュー', 'width'=>30, 'height'=>30)),
+                    $this->Html->image('dock_right.png', array('alt' => 'メニュー', 'width'=>40, 'height'=>40)),
                     'javascript:void(0)',
                     array('escape' => false,
                       'style' => 'display: inline-block; height: 30px;')); ?>
@@ -232,7 +232,7 @@
               </li>
             </ul>
         </div>
-          <div class="nowInfo card" style = "border-bottom: 1px solid #bfbfbf; width:100%;">
+          <div class="nowInfo card" style = "border-bottom: 1px solid #bfbfbf; width:100%; margin-top: 58px;">
           <dl>
             <dt style = "text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">ユーザID</dt>
             <dd style = "width: 30%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">20171122141125995</dd>

@@ -107,7 +107,7 @@
       </tbody>
   </table>
 </div>
-<div id = "detail" style = "width: 101.6%; margin-left:-34px; background-color: #f2f2f2;">
+<div id = "detail" class = "detail" style = "width: 101.6%; margin-left:-34px; background-color: #f2f2f2;">
   <div id="cus_info_contents" class="flexBoxCol">
     <div id="leftContents" style = "padding:1em 1.8em 1em 0em;">
       <ul id="showChatTab" class="tabStyle flexBoxCol noSelect">
@@ -156,20 +156,20 @@
 
           </div>
         </div>
-        <div id="rightContents2">
+        <div id="rightContents">
           <div class = "form01 fRight">
           <ul class="switch" style = "box-shadow:none;">
               <li ng-class="{on:fillterTypeId===1}" ng-click="fillterTypeId = 1" style = "margin-top:0; width:6em !important;">
                 <span ng-if = "fillterTypeId == 1">
                  <?= $this->Html->link(
-                    $this->Html->image('dock_bottom.png', array('alt' => 'メニュー', 'width'=>30, 'height'=>30)),
+                    $this->Html->image('dock_bottom.png', array('alt' => 'メニュー', 'width'=>40, 'height'=>40)),
                     'javascript:void(0)',
                     array('escape' => false,
                       'style' => 'display: inline-block; height: 30px;')); ?>
                 </span>
                 <span ng-if = "fillterTypeId == 2">
                   <?= $this->Html->link(
-                    $this->Html->image('dock_bottom_color.png', array('alt' => 'メニュー', 'width'=>30, 'height'=>30)),
+                    $this->Html->image('dock_bottom_color.png', array('alt' => 'メニュー', 'width'=>40, 'height'=>40)),
                     'javascript:void(0)',
                     array('escape' => false,'onclick' => 'aaa()','id' => 'ccc',
                       'style' => 'display: inline-block; height: 30px;')); ?>
@@ -178,14 +178,14 @@
               <li ng-class="{on:fillterTypeId===2}" ng-click="fillterTypeId = 2" style = "margin-top:0; width:6em !important;">
               <span ng-if = "fillterTypeId == 1">
                 <?= $this->Html->link(
-                    $this->Html->image('dock_right_color.png', array('alt' => 'メニュー', 'width'=>30, 'height'=>30)),
+                    $this->Html->image('dock_right_color.png', array('alt' => 'メニュー', 'width'=>40, 'height'=>40)),
                     'javascript:void(0)',
                     array('escape' => false,'id' => 'eeee',
                       'style' => 'display: inline-block; height: 30px;')); ?>
                 </span>
                <span ng-if = "fillterTypeId == 2">
                 <?= $this->Html->link(
-                    $this->Html->image('dock_right.png', array('alt' => 'メニュー', 'width'=>30, 'height'=>30)),
+                    $this->Html->image('dock_right.png', array('alt' => 'メニュー', 'width'=>40, 'height'=>40)),
                     'javascript:void(0)',
                     array('escape' => false,'id' => 'uuu',
                       'style' => 'display: inline-block; height: 30px;')); ?>
