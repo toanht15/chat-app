@@ -388,9 +388,13 @@ $(document).ready(function(){
     $('#mailAddressSetting').find('span.show').last().css('display','none').removeClass('show');
     var targetObj = $(this).parents('.mailAddressBlock').find('input[type="text"]');
     targetObj.val('');
-    $(this).parents('.mailAddressBlock').nextAll('span').each(function(idx){
+    var nextAllObj = $(this).parents('.mailAddressBlock').nextAll('span');
+    nextAllObj.each(function(idx){
       targetObj.val($(this).find('input[type="text"]').val());
       targetObj = $(this).find('input[type="text"]');
+      if(nextAllObj.length-1 === idx) {
+        targetObj.val('');
+      }
     });
 
     $('#mailAddressSetting').find('span.show').last().find('.disOffgreenBtn').css('display', 'block');
