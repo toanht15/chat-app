@@ -200,6 +200,7 @@ class ContractController extends AppController
       $this->addDefaultWidgetSettings($addedCompanyInfo['id'], $companyInfo);
       $this->addDefaultAutoMessages($addedCompanyInfo['id'], $companyInfo);
       $this->addDefaultDictionaries($addedCompanyInfo['id'], $companyInfo);
+      $this->addDefaultMailTemplate($addedCompanyInfo['id'], $companyInfo);
       $this->addCompanyJSFile($addedCompanyInfo['companyKey']);
     } catch (Exception $e) {
       $this->TransactionManager->rollback($transaction);
@@ -214,6 +215,7 @@ class ContractController extends AppController
     } else if (strcmp($beforeContactTypeId, C_CONTRACT_CHAT_BASIC_PLAN_ID) === 0
       && strcmp($afterContactTypeId, C_CONTRACT_CHAT_PLAN_ID) === 0) {
       // ベーシック => スタンダード
+      $this->addDefaultMailTemplate($targetCompanyId, $companyInfo);
     } else if (strcmp($beforeContactTypeId, C_CONTRACT_CHAT_BASIC_PLAN_ID) === 0
       && strcmp($afterContactTypeId, C_CONTRACT_SCREEN_SHARING_ID) === 0) {
       // ベーシック => シェアリング
@@ -247,6 +249,7 @@ class ContractController extends AppController
       $this->addDefaultChatPersonalSettings($targetCompanyId, $companyInfo);
       $this->addDefaultAutoMessages($targetCompanyId, $companyInfo);
       $this->addDefaultDictionaries($targetCompanyId, $companyInfo);
+      $this->addDefaultMailTemplate($targetCompanyId, $companyInfo);
     } else if (strcmp($beforeContactTypeId, C_CONTRACT_SCREEN_SHARING_ID) === 0
       && strcmp($afterContactTypeId, C_CONTRACT_FULL_PLAN_ID) === 0) {
       // シェアリング => プレミアム
@@ -254,6 +257,7 @@ class ContractController extends AppController
       $this->addDefaultChatPersonalSettings($targetCompanyId, $companyInfo);
       $this->addDefaultAutoMessages($targetCompanyId, $companyInfo);
       $this->addDefaultDictionaries($targetCompanyId, $companyInfo);
+      $this->addDefaultMailTemplate($targetCompanyId, $companyInfo);
     } else if (strcmp($beforeContactTypeId, C_CONTRACT_FULL_PLAN_ID) === 0
       && strcmp($afterContactTypeId, C_CONTRACT_CHAT_BASIC_PLAN_ID) === 0) {
       // プレミアム => ベーシック
@@ -445,6 +449,20 @@ class ContractController extends AppController
     }
   }
 
+  private function addDefaultMailTemplate($m_companies_id, $companyInfo) {
+    if(!$this->isAdvancedChatEnable($companyInfo['m_contact_types_id'])) return;
+    $default = $this->getDefaultMailTemplateConfigurations();
+    foreach($default as $key => $item) {
+      $this->MMailTemplate->create();
+      $this->MMailTemplate->set([
+         'm_companies_id' => $m_companies_id,
+         'mail_type_cd' => $key,
+         'template' => $item
+      ]);
+      $this->MMailTemplate->save();
+    }
+  }
+
   private function addCompanyJSFile($companyKey) {
     $templateData = new File(C_COMPANY_JS_TEMPLATE_FILE);
     $contents = $templateData->read();
@@ -590,10 +608,19 @@ class ContractController extends AppController
     return Configure::read('default.autoMessages');
   }
 
+  private function getDefaultMailTemplateConfigurations() {
+    return Configure::read('default.mail.templates');
+  }
+
   private function isChatEnable($m_contact_types_id) {
     return $m_contact_types_id === C_CONTRACT_FULL_PLAN_ID
         || $m_contact_types_id === C_CONTRACT_CHAT_PLAN_ID
         || $m_contact_types_id === C_CONTRACT_CHAT_BASIC_PLAN_ID;
+  }
+
+  private function isAdvancedChatEnable($m_contact_types_id) {
+    return $m_contact_types_id === C_CONTRACT_FULL_PLAN_ID
+        || $m_contact_types_id === C_CONTRACT_CHAT_PLAN_ID;
   }
 
   private function convertActivityToJSON($activity) {
