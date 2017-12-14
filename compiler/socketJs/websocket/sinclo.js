@@ -2026,21 +2026,20 @@
                 //未読表示位置がシンプル設定か否かによって異なる
                 if (! abridgementType['MinRes'] ) {
                     //通常時
-                    mainImg.appendChild(em);
+                    if(mainImg) mainImg.appendChild(em);
                 }
                 else {
                     //シンプルデザイン時
-                    titleElm.appendChild(em);
+                    if(titleElm) titleElm.appendChild(em);
                 }
-//                if ( mainImg ) {
-//                  //通常時
-//                  mainImg.appendChild(em);
-//                }
-//                else if ( titleElm ) {
-//                    //シンプルデザイン時
-//                    titleElm.appendChild(em);
-//                }
             }
+        },
+        retReadFromCustomer: function (d) {
+          var obj = JSON.parse(d);
+          if(obj.sincloSessionId === userInfo.sincloSessionId) {
+            sinclo.chatApi.unread = 0;
+            sinclo.chatApi.showUnreadCnt();
+          }
         },
         KEY_TRIGGERED_AUTO_SPEECH: "triggeredAutoSpeech",
         _getAutoSpeechTriggeredList: function () {

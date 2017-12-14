@@ -3464,6 +3464,11 @@ var socket, // socket.io
       sinclo.chatApi.createTypingMessage(d);
     }); // socket-on: receiveTypeCond
 
+    // 既読操作後のレスポンス
+    socket.on('retReadFromCustomer', function (d) {
+      sinclo.chatApi.retReadFromCustomer(d);
+    });
+
     // 画面共有
     socket.on('confirmVideochatStart', function(d){
       var obj = common.jParse(d);
