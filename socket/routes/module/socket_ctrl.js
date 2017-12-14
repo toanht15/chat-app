@@ -749,6 +749,9 @@ io.sockets.on('connection', function (socket) {
       else {
         // DBへ書き込む
         this.commit(d);
+        if(d.messageType === this.cnst.observeType.company) {
+          sincloCore[d.siteKey][d.tabId].chatUnreadCnt++;
+        }
       }
     },
     get: function(obj){ // 最初にデータを取得するとき
@@ -1041,16 +1044,26 @@ io.sockets.on('connection', function (socket) {
       );
     },
     sendUnreadCnt: function(evName, obj, toUserFlg){
-      var sql, ret = {tabId: obj.tabId, chatUnreadId:null, chatUnreadCnt:0}, tabId = obj.tabId, siteId = companyList[obj.siteKey];
+      var sql, ret = {tabId: obj.tabId, sincloSessionId: obj.sincloSessionId, chatUnreadId:null, chatUnreadCnt:0}, sincloSessionId = obj.sincloSessionId, siteId = companyList[obj.siteKey];
       sql  = " SELECT chat.id AS chatId, his.visitors_id, his.tab_id, chat.message FROM t_histories AS his";
       sql += " INNER JOIN t_history_chat_logs AS chat ON ( his.id = chat.t_histories_id )";
       sql += " WHERE his.tab_id = ? AND his.m_companies_id = ? AND chat.message_type = 1";
       sql += "   AND chat.m_users_id IS NULL AND chat.message_read_flg != 1 ORDER BY chat.id desc";
-      pool.query(sql, [tabId, siteId], function(err, rows){
+      pool.query(sql, [sincloSessionId, siteId], function(err, rows){
         if ( err !== null && err !== '' ) return false; // DB接続断対応
         if ( !isset(err) && (rows.length > 0 && isset(rows[0].chatId))) {
           ret.chatUnreadId = rows[0].chatId;
-          ret.chatUnreadCnt = rows.length;
+          if(isset(sincloCore[obj.siteKey])
+            && isset(sincloCore[obj.siteKey][obj.tabId])
+            && isset(sincloCore[obj.siteKey][obj.tabId].chatUnreadCnt)) {
+            if (rows.length > 0 && sincloCore[obj.siteKey][obj.tabId].chatUnreadCnt === 0) {
+              ret.chatUnreadCnt = rows.length;
+            } else {
+              ret.chatUnreadCnt = sincloCore[obj.siteKey][obj.tabId].chatUnreadCnt;
+            }
+          } else {
+            ret.chatUnreadCnt = rows.length;
+          }
         }
         emit.toCompany(evName, ret, obj.siteKey);
         if ( toUserFlg ) {
@@ -1772,7 +1785,7 @@ io.sockets.on('connection', function (socket) {
       sincloCore[obj.siteKey] = {};
     }
     if ( !isset(sincloCore[obj.siteKey][obj.tabId]) ) {
-      sincloCore[obj.siteKey][obj.tabId] = {sincloSessionId: null, sessionId: null, subWindow: false};
+      sincloCore[obj.siteKey][obj.tabId] = {sincloSessionId: null, sessionId: null, subWindow: false, chatUnreadCnt: 0};
     }
     if ( isset(obj.sincloSessionId) && !isset(sincloCore[obj.siteKey][obj.sincloSessionId]) ) {
       sincloCore[obj.siteKey][obj.sincloSessionId] = {sessionIds: {}, autoMessages: {}};
@@ -2609,7 +2622,15 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       obj.historyId = sincloCore[obj.siteKey][obj.tabId].historyId;
       pool.query("UPDATE t_history_chat_logs SET message_read_flg = 1 WHERE t_histories_id = ? AND message_type = 1 AND id <= ?;",
         [obj.historyId, obj.chatId], function(err, ret, fields){
+          if(isset(sincloCore[obj.siteKey]) && isset(sincloCore[obj.siteKey][obj.tabId])) {
+            sincloCore[obj.siteKey][obj.tabId].chatUnreadCnt = 0;
+          }
           chatApi.sendUnreadCnt('retReadChatMessage', obj, true);
+          Object.keys(sincloCore[obj.siteKey]).forEach(function(key) {
+            if (sincloCore[obj.siteKey][key].sincloSessionId === obj.sincloSessionId) {
+              sincloCore[obj.siteKey][key].chatUnreadCnt = 0;
+            }
+          });
         }
       );
     }
@@ -2622,6 +2643,10 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       obj.historyId = sincloCore[obj.siteKey][obj.tabId].historyId;
       pool.query("UPDATE t_history_chat_logs SET message_read_flg = 1 WHERE t_histories_id = ? AND message_type != 1;",
         [obj.historyId], function(err, ret, fields){
+          emit.toSameUser('retReadFromCustomer', {
+            tabId: obj.tabId,
+            sincloSessionId: obj.sincloSessionId
+          }, obj.siteKey, obj.sincloSessionId);
         }
       );
     }
