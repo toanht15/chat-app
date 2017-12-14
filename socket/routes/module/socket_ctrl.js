@@ -1053,8 +1053,14 @@ io.sockets.on('connection', function (socket) {
         if ( err !== null && err !== '' ) return false; // DB接続断対応
         if ( !isset(err) && (rows.length > 0 && isset(rows[0].chatId))) {
           ret.chatUnreadId = rows[0].chatId;
-          if(isset(sincloCore[obj.siteKey]) && isset(sincloCore[obj.siteKey][obj.tabId]) && isset(sincloCore[obj.siteKey][obj.tabId].chatUnreadCnt)) {
-            ret.chatUnreadCnt = sincloCore[obj.siteKey][obj.tabId].chatUnreadCnt;
+          if(isset(sincloCore[obj.siteKey])
+            && isset(sincloCore[obj.siteKey][obj.tabId])
+            && isset(sincloCore[obj.siteKey][obj.tabId].chatUnreadCnt)) {
+            if (rows.length > 0 && sincloCore[obj.siteKey][obj.tabId].chatUnreadCnt === 0) {
+              ret.chatUnreadCnt = rows.length;
+            } else {
+              ret.chatUnreadCnt = sincloCore[obj.siteKey][obj.tabId].chatUnreadCnt;
+            }
           } else {
             ret.chatUnreadCnt = rows.length;
           }
