@@ -1061,7 +1061,6 @@ io.sockets.on('connection', function (socket) {
             } else {
               ret.chatUnreadCnt = sincloCore[obj.siteKey][obj.tabId].chatUnreadCnt;
             }
-            ret.chatUnreadCnt = sincloCore[obj.siteKey][obj.tabId].chatUnreadCnt;
           } else {
             ret.chatUnreadCnt = rows.length;
           }
