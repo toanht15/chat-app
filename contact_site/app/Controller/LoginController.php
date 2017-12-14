@@ -5,6 +5,7 @@
  */
 App::uses('SimplePasswordHasher', 'Controller/Component/Auth');
 class LoginController extends AppController {
+  public $components = ['MailSender'];
   public $uses = ['MUser','TLogin'];
 
   public function beforeFilter(){
