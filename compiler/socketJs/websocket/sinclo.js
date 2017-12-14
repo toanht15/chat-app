@@ -1747,7 +1747,7 @@
             chatList.appendChild(div);
             var strings = val.split('\n');
             var radioCnt = 1;
-            var linkReg = RegExp(/(http(s)?:\/\/[\w\-\.\/\?\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/);
+            var linkReg = RegExp(/(http(s)?:\/\/[\w\-\.\/\?\=\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/);
             var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
             var radioName = "sinclo-radio" + chatList.children.length;
             var content = "";
@@ -2026,21 +2026,20 @@
                 //未読表示位置がシンプル設定か否かによって異なる
                 if (! abridgementType['MinRes'] ) {
                     //通常時
-                    mainImg.appendChild(em);
+                    if(mainImg) mainImg.appendChild(em);
                 }
                 else {
                     //シンプルデザイン時
-                    titleElm.appendChild(em);
+                    if(titleElm) titleElm.appendChild(em);
                 }
-//                if ( mainImg ) {
-//                  //通常時
-//                  mainImg.appendChild(em);
-//                }
-//                else if ( titleElm ) {
-//                    //シンプルデザイン時
-//                    titleElm.appendChild(em);
-//                }
             }
+        },
+        retReadFromCustomer: function (d) {
+          var obj = JSON.parse(d);
+          if(obj.sincloSessionId === userInfo.sincloSessionId) {
+            sinclo.chatApi.unread = 0;
+            sinclo.chatApi.showUnreadCnt();
+          }
         },
         KEY_TRIGGERED_AUTO_SPEECH: "triggeredAutoSpeech",
         _getAutoSpeechTriggeredList: function () {
@@ -2089,7 +2088,7 @@
                 var message = messages[key];
                 if (typeof(ret) === 'number') {
                     setTimeout(function(){
-                      sinclo.trigger.setAction(message.id, message.action_type, message.activity);
+                      sinclo.trigger.setAction(message.id, message.action_type, message.activity, message.send_mail_flg);
                       sinclo.trigger.processing = false;
                       // if(conditionKey === 7) {
                       //   // 自動返信実行後はチャット中のフラグを立てる
@@ -2384,7 +2383,7 @@
 
             callback(null, null, key, ret);
         },
-        setAutoMessage: function(id, cond){
+        setAutoMessage: function(id, cond, sendMail){
             if(sincloInfo.widget.showTiming === 3) {
               console.log("オートメッセージ表示処理発動");
               // 初回オートメッセージ表示時にフラグを立てる
@@ -2420,17 +2419,29 @@
                 chatId:id,
                 message:cond.message,
                 isAutoSpeech: isSpeechContent,
-                achievementFlg: 3
+                achievementFlg: 3,
+                sendMailFlg: sendMail
               };
               emit("sendAutoChat", {messageList: sinclo.chatApi.autoMessages.getByArray()});
               sinclo.chatApi.autoMessages.unset();
               sinclo.chatApi.saveFlg = true;
             }
-            else {
+            else if(sendMail) {
+              var data = {
+                chatId:id,
+                message:cond.message,
+                isAutoSpeech: isSpeechContent,
+                sendMailFlg: sendMail
+              };
+              emit("sendAutoChat", {messageList: sinclo.chatApi.autoMessages.getByArray()});
+              sinclo.chatApi.autoMessages.unset();
+              sinclo.chatApi.saveFlg = true;
+            } else {
               var data = {
                   chatId:id,
                   message:cond.message,
-                  isAutoSpeech: isSpeechContent
+                  isAutoSpeech: isSpeechContent,
+                  sendMailFlg: sendMail
               };
             }
 
@@ -2449,7 +2460,7 @@
                 emit('sendAutoChatMessage', data);
             }
         },
-        setAction: function(id, type, cond){
+        setAction: function(id, type, cond, sendMail){
             console.log("setAction id : " + id + " type : " + type + " cond : " + JSON.stringify(cond));
             // TODO 今のところはメッセージ送信のみ、拡張予定
             var chatActFlg = storage.s.get('chatAct');
@@ -2472,7 +2483,7 @@
                     var date = common.fullDateTime();
                     if ( prev.length === 0 || (prev.length > 0 && prev[prev.length - 1].created !== date) ) {
                       clearInterval(setAutoMessageTimer);
-                      sinclo.trigger.setAutoMessage(id, cond);
+                      sinclo.trigger.setAutoMessage(id, cond, sendMail);
                       // 自動最大化
                       if ( !('widgetOpen' in cond) || (check.smartphone() && sincloInfo.widget.hasOwnProperty('spAutoOpenFlg') && Number(sincloInfo.widget.spAutoOpenFlg) === 1) ) return false;
                       var flg = sinclo.widget.condifiton.get();

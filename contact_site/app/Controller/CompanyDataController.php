@@ -9,7 +9,6 @@
 class CompanyDataController extends AppController
 {
   public $components = ['Landscape', 'Auth'];
-  private $secretKey = 'x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK';
 
   const PARAM_ACCESS_TOKEN = 'accessToken';
   const PARAM_IP_ADDRESS = 'ipAddress';
@@ -50,22 +49,5 @@ class CompanyDataController extends AppController
           'data' => $result
       ));
     }
-  }
-
-  private function isValidAccessToken($token) {
-    if(strcmp($this->secretKey, $token) !== 0) {
-      throw new Exception('アクセストークンが不正です', 400);
-    }
-  }
-
-  /**
-   * @return mixed
-   */
-  private function getRequestJSONData()
-  {
-    $data = file_get_contents('php://input');
-    $this->log('リクエストデータ: '. $data, 'request');
-    $jsonObj = json_decode($data, TRUE);
-    return $jsonObj;
   }
 }

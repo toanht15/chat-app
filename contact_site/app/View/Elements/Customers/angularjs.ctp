@@ -206,6 +206,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         if ( isset(monitor.chatUnreadCnt) && monitor.chatUnreadCnt > 0 ) {
           emit('isReadChatMessage', {
             tabId: monitor.tabId,
+            sincloSessionId: monitor.sincloSessionId,
             chatId: monitor.chatUnreadId
           });
         }
@@ -214,6 +215,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         // メッセージを既読にする
         emit('isReadChatMessage', {
           tabId: monitor.tabId,
+          sincloSessionId: monitor.sincloSessionId,
           chatId: monitor.chatUnreadId
         });
       }
@@ -2017,8 +2019,12 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     // チャットメッセージ既読処理結果関数
     socket.on('retReadChatMessage', function(d){
       var obj = JSON.parse(d);
-      $scope.monitorList[obj.tabId].chatUnreadId = null;
-      $scope.monitorList[obj.tabId].chatUnreadCnt = 0;
+      Object.keys($scope.monitorList).forEach(function(key) {
+        if ($scope.monitorList[key].sincloSessionId === obj.sincloSessionId) {
+          $scope.monitorList[key].chatUnreadId = null;
+          $scope.monitorList[key].chatUnreadCnt = 0;
+        }
+      });
     });
 
     // チャット入力中ステータスの要求リクエスト
