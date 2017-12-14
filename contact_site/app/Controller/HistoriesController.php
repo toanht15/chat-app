@@ -338,8 +338,6 @@ class HistoriesController extends AppController {
         }
         if ((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && !empty($history['LandscapeData']['org_name'])) {
           $row['ip'] .= $history['LandscapeData']['org_name'];
-          $row['ip'] .= "\n";
-          $row['ip'] .= '('.$history['THistory']['ip_address'].')';
         } else {
           $row['ip'] .= $history['THistory']['ip_address'];
         }
@@ -451,8 +449,6 @@ class HistoriesController extends AppController {
         }
         if ((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && !empty($val['LandscapeData']['org_name'])) {
           $row['ip'] .= $val['LandscapeData']['org_name'];
-          $row['ip'] .= "\n";
-          $row['ip'] .= '('.$val['THistory']['ip_address'].')';
         } else {
           $row['ip'] .= $val['THistory']['ip_address'];
         }
