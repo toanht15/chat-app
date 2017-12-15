@@ -1454,7 +1454,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       }
 
       $scope.monitorList[obj.tabId] = obj;
-      $scope.getCustomerInfoFromMonitor(obj);
+      //$scope.getCustomerInfoFromMonitor(obj);
 
       if ( 'referrer' in obj && 'referrer' in obj) {
         var url = $scope.trimToURL(obj.referrer);
@@ -1565,11 +1565,13 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     socket.on('receiveAccessInfo', function (data) {
       if(!contract.hideRealtimeMonitor) {
         var obj = JSON.parse(data);
-        if (receiveAccessInfoToken !== obj.receiveAccessInfoToken) return false;
-        pushToList(obj);
-        if ('chat' in obj && String(obj.chat) === "<?=$muserId?>") {
-          pushToChatList(obj.tabId);
-        }
+        //if (receiveAccessInfoToken !== obj.receiveAccessInfoToken) return false;
+        obj.forEach(function(elm, index, arr) {
+          pushToList(elm);
+          if ('chat' in elm && String(elm.chat) === "<?=$muserId?>") {
+            pushToChatList(elm.tabId);
+          }
+        });
       }
     });
 

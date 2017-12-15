@@ -3586,6 +3586,7 @@ function emit(evName, data){
   }
   if (evName === "connectSuccess") {
     data.widget = window.sincloInfo.widgetDisplay;
+    data.accessId = userInfo.accessId;
   }
   if (evName === "customerInfo" || evName === "sendAccessInfo") {
     data.contract = window.sincloInfo.contract;

@@ -14,7 +14,7 @@ var mysql = require('mysql'),
 // log4js
 var log4js = require('log4js'); // log4jsモジュール読み込み
 
-log4js.configure('./log4js_setting.json'); // 設定ファイル読み込み
+log4js.configure('/var/www/sinclo/socket/log4js_setting.json'); // 設定ファイル読み込み
 
 var reqlogger = log4js.getLogger('request'); // リクエスト用のロガー取得
 var errlogger = log4js.getLogger('error'); // エラー用のロガー取得
@@ -1593,10 +1593,25 @@ io.sockets.on('connection', function (socket) {
         data.userCnt = cnt.length;
         data.onlineUserCnt = opKeys.length;
 
-        // 消費者にアクセス情報要求
-        emit.toClient('getAccessInfo', send, res.siteKey);
         // 企業側に情報提供
         emit.toCompany('getAccessInfo', data, res.siteKey);
+        // 消費者にアクセス情報要求
+        //emit.toClient('getAccessInfo', send, res.siteKey);
+        var arr = [];
+        var counter = 0;
+        var chunkSize = 50;
+        Object.keys(customerList[res.siteKey]).forEach(function(key){
+          arr.push(getConnectInfo(customerList[res.siteKey][key]));
+          counter++;
+          if(counter === chunkSize) {
+            emit.toMine("receiveAccessInfo", arr, socket);
+            counter = 0;
+            arr = [];
+          }
+        });
+        if(arr.length > 0) {
+          emit.toMine("receiveAccessInfo", arr, socket);
+        }
       }
       else {
         chatApi.widgetCheck(res, function(err, ret){
@@ -1778,6 +1793,8 @@ io.sockets.on('connection', function (socket) {
           obj.lbcCode = response.data.lbcCode;
           sincloCore[obj.siteKey][obj.tabId].orgName = obj.orgName;
           sincloCore[obj.siteKey][obj.tabId].lbcCode = obj.lbcCode;
+          customerList[obj.siteKey][obj.accessId + '_' + obj.ipAddress + '_' + socket.id]['orgName'] = obj.orgName;
+          customerList[obj.siteKey][obj.accessId + '_' + obj.ipAddress + '_' + socket.id]['lbcCode'] = obj.lbcCode;
         }
         emit.toCompany('syncNewInfo', obj, obj.siteKey);
       });
