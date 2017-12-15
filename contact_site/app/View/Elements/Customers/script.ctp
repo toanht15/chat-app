@@ -118,7 +118,13 @@ if ( window.hasOwnProperty('io') ) {
 
   <?php if ($widgetCheck) { ?>
     data.data.opFlg = true;
-    data.data.status = $('#operatorStatus').data('status') ? String($('#operatorStatus').data('status')) : "<?=$opStatus?>";
+    if($('#operatorStatus').hasClass('opWait')) {
+      data.data.status = "1";
+    } else if($('#operatorStatus').hasClass('opStop')) {
+      data.data.status = "0";
+    } else {
+      data.data.status = "<?=$opStatus?>";
+    }
   <?php } else { ?>
     data.data.opFlg = false;
   <?php } ?>

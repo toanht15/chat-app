@@ -329,5 +329,80 @@ $(document).ready(function(){
     var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
     targetObj.find('icon-annotation').css('display','none');
   });
+
+  // これまでのチャット内容をメールで送信する
+  var initializeFromMailAddressArea = function() {
+    var checked = $('#mainSendMailFlg').prop('checked');
+    if(checked) {
+      $('.sendMailSettings').css('display', '');
+      $('#sendMailSettingCheckBox').css("padding","15px 0 0 0");
+    } else {
+      $('.sendMailSettings').css('display', 'none');
+      $('#sendMailSettingCheckBox').css("padding","15px 0 15px 0");
+    }
+    var atFirst = true;
+    var prevObj = undefined;
+    $('.mailAddressBlock').each(function(index){
+      var mailAddress = $(this).find('input[type="text"]').val();
+      if(mailAddress !== "") {
+        $(this).css('display', 'inline-flex').addClass('show');
+        $(this).find('.disOffgreenBtn').css('display', 'none');
+        $(this).find('.deleteBtn').css('display', 'block');
+        if(index !== 0 && index < 4) {
+          prevObj.find('.disOffgreenBtn').css('display', 'none');
+          $(this).find('.disOffgreenBtn').css('display', 'block');
+        } else if(prevObj) {
+          prevObj.find('.disOffgreenBtn').css('display', 'none');
+        }
+      } else {
+        if(index === 0) {
+          $(this).css('display', 'inline-flex').addClass('show');
+          $(this).find('.disOffgreenBtn').css('display', 'block');
+          $(this).find('.deleteBtn').css('display', 'none');
+        } else if(index === 1) {
+          $(this).css('display', 'none').removeClass('show');
+          prevObj.find('.disOffgreenBtn').css('display', 'block');
+          prevObj.find('.deleteBtn').css('display', 'none');
+        } else {
+          $(this).css('display', 'none').removeClass('show');
+        }
+      }
+      prevObj = $(this);
+    });
+
+  };
+
+  $('#mainSendMailFlg').on('change', function(event){
+    initializeFromMailAddressArea();
+  });
+
+  $('.disOffgreenBtn').on('click', function(ev){
+    $(this).parents('.mailAddressBlock').next('span').css('display', 'inline-flex').addClass('show').find('input[type="text"]').val('');
+    $(this).css('display','none').parents('.btnBlock').find('.redBtn').css('display', 'block');
+    if($('#fromMailAddressSettings').find('.show').length === 5) {
+      $(this).parents('.mailAddressBlock').next('span').find('.disOffgreenBtn').css('display', 'none');
+    }
+  });
+
+  $('.deleteBtn').on('click', function(ev){
+    $('#mailAddressSetting').find('span.show').last().css('display','none').removeClass('show');
+    var targetObj = $(this).parents('.mailAddressBlock').find('input[type="text"]');
+    targetObj.val('');
+    var nextAllObj = $(this).parents('.mailAddressBlock').nextAll('span');
+    nextAllObj.each(function(idx){
+      targetObj.val($(this).find('input[type="text"]').val());
+      targetObj = $(this).find('input[type="text"]');
+      if(nextAllObj.length-1 === idx) {
+        targetObj.val('');
+      }
+    });
+
+    $('#mailAddressSetting').find('span.show').last().find('.disOffgreenBtn').css('display', 'block');
+    if($('#fromMailAddressSettings').find('.show').length === 1) {
+      $('#mailAddressSetting').find('span.show').first().find('.disOffgreenBtn').css('display', 'block');
+      $('#mailAddressSetting').find('span.show').first().find('.redBtn').css('display', 'none');
+    }
+  });
+  initializeFromMailAddressArea();
 });
 </script>
