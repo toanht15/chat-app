@@ -103,7 +103,8 @@ if ( window.hasOwnProperty('io') ) {
         data: {
             token: receiveAccessInfoToken,
             authority: <?=$userInfo['permission_level']?>,
-            userId: '<?=$muserId?>'
+            userId: '<?=$muserId?>',
+            contract: contract
         }
     };
 
