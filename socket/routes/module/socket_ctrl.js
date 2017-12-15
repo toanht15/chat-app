@@ -1696,7 +1696,9 @@ io.sockets.on('connection', function (socket) {
         //emit.toClient('getAccessInfo', send, res.siteKey);
         var arr = [];
         var counter = 0;
+        var totalCounter = 0;
         var chunkSize = 100;
+        var keyLength = Object.keys(customerList[res.siteKey]).length;
         Object.keys(customerList[res.siteKey]).forEach(function(key){
           var val = getConnectInfo(customerList[res.siteKey][key]);
           if(isset(data.contract.chat) && data.contract.chat) {
@@ -1720,11 +1722,12 @@ io.sockets.on('connection', function (socket) {
               arr = [];
             }
           }
+          if(totalCounter === keyLength-1) {
+            emit.toMine("receiveAccessInfo", arr, socket);
+            arr = [];
+          }
+          totalCounter++;
         });
-        if(arr.length > 0) {
-          emit.toMine("receiveAccessInfo", arr, socket);
-          arr = [];
-        }
       }
       else {
         chatApi.widgetCheck(res, function(err, ret){
