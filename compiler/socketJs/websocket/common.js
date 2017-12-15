@@ -1232,6 +1232,8 @@ var socket, // socket.io
           }
           html += '      #sincloBox ul#chatTalk li span.cName { font-size: '+ sizeList['d13font'] +'px; margin: 0 0 5px 0 }';
           html += '      #sincloBox section#chatTab sinclo-div { height: '+ sizeList['classFlexBoxRowHeight'] +'px!important; padding: 5px }';
+          html += '      #sincloBox section#chatTab sinclo-chat-alert { display: none; position: absolute; background-color: rgba(0,0,0,0.6); color: #FFF; text-align: center; }';
+          html += '      #sincloBox section#chatTab sinclo-div sinclo-chat-alert { left: 5px; right: 5px; height:64px; border-radius: 5px; line-height: 46px; color: #FFF; padding: 10px 0; }';
           html += '      #sincloBox section#chatTab #sincloChatMessage { color: ' + chatContentTextColor + '!important; padding: 5px; height: 100%; min-height: 100%!important; }';
           if(colorList['messageBoxBorderNone'] === 0){
             html += '      #sincloBox section#chatTab #sincloChatMessage { border: 1px solid '+ colorList['messageBoxBorderColor'] +'!important; border-radius: 5px 0 0 5px!important; }';
@@ -1439,9 +1441,7 @@ var socket, // socket.io
       html += '    <sinclo-div class="flexBoxRow" id = "flexBoxHeight">';
       html += '      <textarea name="sincloChat" id="sincloChatMessage" maxlength="300" placeholder=" ' + placeholder + ' "></textarea>';
       html += '      <a id="sincloChatSendBtn" class="notSelect" onclick="sinclo.chatApi.push()">送信</a>';
-      if ( spFlg ) { // スマートフォンの場合
-        html += '      <sinclo-chat-alert onclick="return location.href = location.href;">通信が切断されました。<br>こちらをタップすると再接続します。</sinclo-chat-alert>';
-      }
+      html += '      <sinclo-chat-alert onclick="return location.href = location.href;">通信が切断されました。<br>こちらをタップすると再接続します。</sinclo-chat-alert>';
       html += '    </sinclo-div>';
       if(!check.smartphone() && (window.sincloInfo.contract.synclo || (window.sincloInfo.contract.hasOwnProperty('document') && window.sincloInfo.contract.document))) {
         html += '    <span id="sincloAccessInfo">ウェブ接客コード：' + userInfo.accessId + '</span>';
@@ -2630,6 +2630,7 @@ var socket, // socket.io
       }
       // タブがアクティブ
       if ( tabFlg ) {
+        sinclo.chatApi.clearInactiveTimeout();
         // ウィジェットが開いている
         if ( widgetFlg ) {
           tabStatus = cnst.tab_type.open;
@@ -2652,6 +2653,7 @@ var socket, // socket.io
       }
       else {
         tabStatus = cnst.tab_type.disable;
+        sinclo.chatApi.startInactiveTimeout();
       }
       return tabStatus;
     }
@@ -3498,7 +3500,7 @@ var socket, // socket.io
       var sincloBox = document.getElementById('sincloBox');
       if ( sincloBox ) {
         // sincloBox.parentNode.removeChild(sincloBox);
-        common.widgetHandler.hide();
+        //common.widgetHandler.hide();
       }
       popup.remove();
     });

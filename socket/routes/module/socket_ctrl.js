@@ -1599,7 +1599,7 @@ io.sockets.on('connection', function (socket) {
         //emit.toClient('getAccessInfo', send, res.siteKey);
         var arr = [];
         var counter = 0;
-        var chunkSize = 50;
+        var chunkSize = 100;
         Object.keys(customerList[res.siteKey]).forEach(function(key){
           arr.push(getConnectInfo(customerList[res.siteKey][key]));
           counter++;
@@ -1611,6 +1611,7 @@ io.sockets.on('connection', function (socket) {
         });
         if(arr.length > 0) {
           emit.toMine("receiveAccessInfo", arr, socket);
+          arr = [];
         }
       }
       else {

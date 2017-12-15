@@ -1988,9 +1988,29 @@
             clearTimeout(this.sendErrCatchTimer);
           }
           this.sendErrCatchTimer = setTimeout(function(){
-            $("sinclo-chat-alert").css('display', 'block');
-            sinclo.chatApi.sendErrCatchFlg = true;
+              $("sinclo-chat-alert").css('display', 'block');
+              sinclo.chatApi.sendErrCatchFlg = true;
           }, 5000);
+        },
+        inactiveTimer: null,
+        startInactiveTimeout: function(){
+          if(!this.inactiveTimer) {
+            console.log("start inactive timer");
+            this.inactiveTimer = setTimeout(function(){
+              if(socket) {
+                console.log("close socket");
+                socket.close();
+              }
+              $("sinclo-chat-alert").css('display', 'block').text('クリックして再接続');
+            }, 90 * 60 * 1000);
+          }
+        },
+        clearInactiveTimeout: function() {
+          if(this.inactiveTimer) {
+            console.log("clear inactive timer");
+            clearTimeout(this.inactiveTimer);
+            this.inactiveTimer = null;
+          }
         },
         sound: null,
         call: function(){
