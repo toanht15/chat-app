@@ -314,14 +314,14 @@ $(document).ready(function(){
 
   var prevBoldTarget = null;
   $('.underL.showBold').on('click', function(e){
-    $(this).parents('tr').find('td').each(function(index){
-      $(this).css("font-weight", "bold");
-    });
     if(prevBoldTarget) {
       prevBoldTarget.parents('tr').find('td').each(function(index){
         $(this).css("font-weight", "normal");
       });
     }
+    $(this).parents('tr').find('td').each(function(index){
+      $(this).css("font-weight", "bold");
+    });
     prevBoldTarget = $(this);
   });
 
