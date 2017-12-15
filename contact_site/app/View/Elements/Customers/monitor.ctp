@@ -151,7 +151,7 @@
         </tr>
       </thead>
       <tbody ng-cloak>
-        <tr ng-repeat="monitor in search(monitorList) | orderObjectBy : '-chatUnreadId-chat' | limitTo : 50" ng-dblclick="showDetail(monitor.tabId, monitor.sincloSessionId)" id="monitor_{{monitor.tabId}}">
+        <tr ng-repeat="monitor in search(monitorList) | orderObjectBy : '-chatUnreadId-chat' | limitTo : 50:this" ng-dblclick="showDetail(monitor.tabId, monitor.sincloSessionId)" id="monitor_{{monitor.tabId}}">
           <!-- /* 状態 */ -->
           <td class="tCenter">
             <span ng-if="monitor.status === jsConst.tabInfo.open"><?=$this->Html->image('tab_status_open.png', ['alt'=>'', 'width'=>20, 'height'=>20])?></span>

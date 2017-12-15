@@ -1613,6 +1613,9 @@ io.sockets.on('connection', function (socket) {
           emit.toMine("receiveAccessInfo", arr, socket);
           arr = [];
         }
+        Object.keys(customerList[res.siteKey]).forEach(function(key){
+          chatApi.sendUnreadCnt("sendChatInfo", getConnectInfo(customerList[res.siteKey][key]), false);
+        });
       }
       else {
         chatApi.widgetCheck(res, function(err, ret){
@@ -1794,8 +1797,10 @@ io.sockets.on('connection', function (socket) {
           obj.lbcCode = response.data.lbcCode;
           sincloCore[obj.siteKey][obj.tabId].orgName = obj.orgName;
           sincloCore[obj.siteKey][obj.tabId].lbcCode = obj.lbcCode;
-          customerList[obj.siteKey][obj.accessId + '_' + obj.ipAddress + '_' + socket.id]['orgName'] = obj.orgName;
-          customerList[obj.siteKey][obj.accessId + '_' + obj.ipAddress + '_' + socket.id]['lbcCode'] = obj.lbcCode;
+          if(isset(customerList[obj.siteKey][obj.accessId + '_' + obj.ipAddress + '_' + socket.id])) {
+            customerList[obj.siteKey][obj.accessId + '_' + obj.ipAddress + '_' + socket.id]['orgName'] = obj.orgName;
+            customerList[obj.siteKey][obj.accessId + '_' + obj.ipAddress + '_' + socket.id]['lbcCode'] = obj.lbcCode;
+          }
         }
         emit.toCompany('syncNewInfo', obj, obj.siteKey);
       });

@@ -390,6 +390,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     $scope.oprWaitCnt = 0; // 総オペレーター人数
     $scope.labelHideList = <?php echo json_encode($labelHideList) ?>;
     $scope.monitorList = {};
+    $scope.requestedCustomerList = [];
     $scope.customerList = {};
     $scope.messageList = [];
     $scope.chatOpList = [];
@@ -1454,7 +1455,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       }
 
       $scope.monitorList[obj.tabId] = obj;
-      $scope.getCustomerInfoFromMonitor(obj);
+      //$scope.getCustomerInfoFromMonitor(obj);
 
       if ( 'referrer' in obj && 'referrer' in obj) {
         var url = $scope.trimToURL(obj.referrer);
@@ -3096,6 +3097,21 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       }
     };
   }]);
+
+  sincloApp.filter('limitTo', function(){
+    return function(input, limit, scope) {
+      var returnValue = input.slice(0, limit);
+      returnValue.forEach(function(elm, index, array){
+        if(!isset(scope.customerList[elm.userId])) {
+          if(scope.requestedCustomerList.indexOf(elm.userId) === -1) {
+            scope.getCustomerInfoFromMonitor(elm);
+            scope.requestedCustomerList.push(elm.userId);
+          }
+        }
+      });
+      return returnValue;
+    }
+  });
 
   // 参考 http://stackoverflow.com/questions/14478106/angularjs-sorting-by-property
   sincloApp.filter('orderObjectBy', function(){
