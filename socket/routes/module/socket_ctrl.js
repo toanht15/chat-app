@@ -1071,6 +1071,31 @@ io.sockets.on('connection', function (socket) {
         }
       });
     },
+    getUnreadCnt: function(obj, callback){
+      var sql, ret = {tabId: obj.tabId, sincloSessionId: obj.sincloSessionId, chatUnreadId:null, chatUnreadCnt:0}, sincloSessionId = obj.sincloSessionId, siteId = companyList[obj.siteKey];
+      sql  = " SELECT chat.id AS chatId, his.visitors_id, his.tab_id, chat.message FROM t_histories AS his";
+      sql += " INNER JOIN t_history_chat_logs AS chat ON ( his.id = chat.t_histories_id )";
+      sql += " WHERE his.tab_id = ? AND his.m_companies_id = ? AND chat.message_type = 1";
+      sql += "   AND chat.m_users_id IS NULL AND chat.message_read_flg != 1 ORDER BY chat.id desc";
+      pool.query(sql, [sincloSessionId, siteId], function(err, rows){
+        if ( err !== null && err !== '' ) return false; // DB接続断対応
+        if ( !isset(err) && (rows.length > 0 && isset(rows[0].chatId))) {
+          ret.chatUnreadId = rows[0].chatId;
+          if(isset(sincloCore[obj.siteKey])
+            && isset(sincloCore[obj.siteKey][obj.tabId])
+            && isset(sincloCore[obj.siteKey][obj.tabId].chatUnreadCnt)) {
+            if (rows.length > 0 && sincloCore[obj.siteKey][obj.tabId].chatUnreadCnt === 0) {
+              ret.chatUnreadCnt = rows.length;
+            } else {
+              ret.chatUnreadCnt = sincloCore[obj.siteKey][obj.tabId].chatUnreadCnt;
+            }
+          } else {
+            ret.chatUnreadCnt = rows.length;
+          }
+        }
+        callback(ret);
+      });
+    },
     calcScNum: function(obj, userId){ /* sincloCoreから対象ユーザーのチャット対応状態を算出 */
       var scNum = 0;
       var sincloSessionIds = [];
@@ -1673,22 +1698,32 @@ io.sockets.on('connection', function (socket) {
         var counter = 0;
         var chunkSize = 100;
         Object.keys(customerList[res.siteKey]).forEach(function(key){
-          arr.push(getConnectInfo(customerList[res.siteKey][key]));
-          counter++;
-          if(counter === chunkSize) {
-            emit.toMine("receiveAccessInfo", arr, socket);
-            counter = 0;
-            arr = [];
+          var val = getConnectInfo(customerList[res.siteKey][key]);
+          if(isset(data.contract.chat) && data.contract.chat) {
+            chatApi.getUnreadCnt(val, function (ret) {
+              val['chatUnreadId'] = ret.chatUnreadId;
+              val['chatUnreadCnt'] = ret.chatUnreadCnt;
+              arr.push(val);
+              counter++;
+              if (counter === chunkSize) {
+                emit.toMine("receiveAccessInfo", arr, socket);
+                counter = 0;
+                arr = [];
+              }
+            });
+          } else {
+            arr.push(val);
+            counter++;
+            if (counter === chunkSize) {
+              emit.toMine("receiveAccessInfo", arr, socket);
+              counter = 0;
+              arr = [];
+            }
           }
         });
         if(arr.length > 0) {
           emit.toMine("receiveAccessInfo", arr, socket);
           arr = [];
-        }
-        if(isset(data.contract.chat) && data.contract.chat) {
-          Object.keys(customerList[res.siteKey]).forEach(function(key){
-            chatApi.sendUnreadCnt("sendChatInfo", getConnectInfo(customerList[res.siteKey][key]), false);
-          });
         }
       }
       else {

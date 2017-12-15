@@ -1457,6 +1457,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       }
 
       $scope.monitorList[obj.tabId] = obj;
+
       //$scope.getCustomerInfoFromMonitor(obj);
 
       if ( 'referrer' in obj && 'referrer' in obj) {
