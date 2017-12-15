@@ -1613,9 +1613,11 @@ io.sockets.on('connection', function (socket) {
           emit.toMine("receiveAccessInfo", arr, socket);
           arr = [];
         }
-        Object.keys(customerList[res.siteKey]).forEach(function(key){
-          chatApi.sendUnreadCnt("sendChatInfo", getConnectInfo(customerList[res.siteKey][key]), false);
-        });
+        if(isset(data.contract.chat) && data.contract.chat) {
+          Object.keys(customerList[res.siteKey]).forEach(function(key){
+            chatApi.sendUnreadCnt("sendChatInfo", getConnectInfo(customerList[res.siteKey][key]), false);
+          });
+        }
       }
       else {
         chatApi.widgetCheck(res, function(err, ret){
