@@ -2636,7 +2636,6 @@ ul.naviBtn {
           background-color: $main-color;
           width:18.5em;
           text-align:center;
-          margin-left: -40px;
         }
       }
     }
@@ -2794,14 +2793,20 @@ ul.naviBtn {
           }
           &.sinclo_re {
               display: inline-block;
-              margin-right: 10px;
               border-radius: 5px 5px 5px 0;
+              /*margin-right: 10px;
+              background-color: #F1F5C8;*/
+              margin: 0 55px 10px 20px;
+              border-bottom-left-radius: 0;
               background-color: #F1F5C8;
           }
           &.sinclo_se, &.sinclo_auto {
               display: inline-block;
               border-radius: 5px 5px 0;
-              margin-left: 10px;
+              /*margin-left: 10px;
+              background-color: #FFF;*/
+              margin: 0 20px 10px 55px;
+              border-bottom-right-radius: 0;
               background-color: #FFF;
               span.cName {
                 display: block;
@@ -3079,7 +3084,7 @@ ul.naviBtn {
     left: 0;
     right: 0;
     top: 0;
-    margin: 126px 35px 20px 20px;
+    margin: 126px 15px 20px 0px;
     z-index: 3;
   }
 
@@ -3097,8 +3102,8 @@ ul.naviBtn {
   }
 
   thead {
-    display: inline-block;
-    width: 100%;
+    /*display: inline-block;
+    width: 100%;*/
   }
 
   tr{
@@ -3106,10 +3111,10 @@ ul.naviBtn {
   }
 
   tbody#chatHistory {
-    display: inline-block;
+    /*display: inline-block;
     overflow-y: scroll;
     height: 45em;
-    width: 100%;
+    width: 100%;*/
   }
 
   input[type='checkbox'] {

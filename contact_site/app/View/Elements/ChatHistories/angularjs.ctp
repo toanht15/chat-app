@@ -7,8 +7,117 @@
     console.log('まずチェック！');
     console.log($scope);
     console.log($scope.fillterTypeId);
+
     $scope.ua = function(str){
       return userAgentChk.pre(str);
+    };
+
+    $(document).ready(function(){
+      console.log('まず入ってるか確認しましょう！');
+      $scope.messageList = [];
+      $.ajax({
+        type: "GET",
+        url: "<?=$this->Html->url(['controller'=>'Customers', 'action' => 'remoteGetOldChat'])?>",
+        data: {
+          historyId: '<?=$historyList[0]['THistory']['id']?>'
+        },
+        dataType: "json",
+        success: function(json){
+          console.log('jsonData');
+          console.log(json);
+          //if ( oldFlg ) { // 過去チャットの場合
+            angular.element("message-list-descript").attr("class", "off");
+            $scope.messageList = json;
+            $scope.$apply();
+          }
+        });
+      //}
+      /*else {
+        className = "currentChat";
+      }
+      $("#showChatTab > li[data-type='" + className + "']").addClass("on");
+      $("#chatContent > section").removeClass("on");
+      $("#chatContent > #" + className).addClass("on");*/
+    });
+
+    // 過去チャットと現行チャット
+    $(document).on("click", "#showChatTab > li", function(e){
+      var className = $(this).data('type');
+      angular.element("#showChatTab > li").removeClass("on");
+
+      if ( className === "oldChat" ) {
+        $scope.chatLogList = [];
+        $scope.chatLogMessageList = [];
+        angular.element("message-list-descript").attr("class", "off");
+        $.ajax({
+          type: 'GET',
+          url: "<?= $this->Html->url(array('controller' => 'Customers', 'action' => 'remoteGetChatList')) ?>",
+          cache: false,
+          data: {
+            userId: $('#visitorsId').text()
+          },
+          dataType: 'json',
+          success: function(json){
+            $scope.chatLogList = json;
+            angular.element("message-list-descript").attr("class", "on");
+            $scope.$apply();
+          }
+        });
+      }
+      else {
+        className = "currentChat";
+      }
+      $("#showChatTab > li[data-type='" + className + "']").addClass("on");
+      $("#chatContent > section").removeClass("on");
+      $("#chatContent > #" + className).addClass("on");
+    });
+
+    // 顧客の詳細情報を取得する
+    $scope.getOldChat = function(historyId, oldFlg){
+      console.log('履歴変更！');
+      console.log(historyId);
+      console.log(oldFlg);
+      //console.log(hisotryId);
+      //console.log(oldFlg);
+      $scope.chatLogMessageList = [];
+      $.ajax({
+        type: "GET",
+        url: "<?=$this->Html->url(['controller'=>'Customers', 'action' => 'remoteGetOldChat'])?>",
+        data: {
+          historyId:  historyId
+        },
+        dataType: "json",
+        success: function(json){
+          console.log('jsonData');
+          console.log(json);
+          if ( oldFlg ) { // 過去チャットの場合
+            angular.element("message-list-descript").attr("class", "off");
+            $scope.chatLogMessageList = json;
+            $scope.$apply();
+          }
+          else {
+            $scope.messageList = json;
+
+            $scope.chatLogList = [];
+            $scope.chatLogMessageList = [];
+            angular.element("message-list-descript").attr("class", "off");
+            $.ajax({
+              type: 'GET',
+              url: "<?= $this->Html->url(array('controller' => 'Customers', 'action' => 'remoteGetChatList')) ?>",
+              cache: false,
+              data: {
+                userId: $('#visitorsId').text()
+              },
+              dataType: 'json',
+              success: function(json){
+                $scope.chatLogList = json;
+                angular.element("message-list-descript").attr("class", "on");
+                $scope.$apply();
+              }
+            });
+          }
+        }
+      });
     };
 
     $scope.ip = function(ip, issetCompanyName){
@@ -19,6 +128,129 @@
         showData.push(ip); // IPアドレス
       }
       return showData.join("\n");
+    };
+
+        // 【チャット】テキストの構築
+    $scope.createTextOfMessage = function(chat, message, opt) {
+        var strings = message.split('\n');
+        var custom = "";
+        var linkReg = RegExp(/http(s)?:\/\/[!-~.a-z]*/);
+        var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
+        var radioName = "sinclo-radio" + Object.keys(chat).length;
+        var option = ( typeof(opt) !== 'object' ) ? { radio: true } : opt;
+        for (var i = 0; strings.length > i; i++) {
+            var str = escape_html(strings[i]);
+            // ラジオボタン
+            var radio = str.indexOf('[]');
+            if ( option.radio && radio > -1 ) {
+                var val = str.slice(radio+2);
+                str = "<input type='radio' name='" + radioName + "' id='" + radioName + "-" + i + "' class='sinclo-chat-radio' value='" + val + "' disabled=''>";
+                str += "<label class='pointer' for='" + radioName + "-" + i + "'>" + val + "</label>";
+            }
+            // リンク
+            var link = str.match(linkReg);
+            if ( link !== null ) {
+                var url = link[0];
+                var a = "<a href='" + url + "' target='_blank'>"  + url + "</a>";
+                str = str.replace(url, a);
+            }
+            // 電話番号（スマホのみリンク化）
+            var tel = str.match(telnoTagReg);
+            if( tel !== null ) {
+              var telno = tel[1];
+              // ただの文字列にする
+              var span = "<span class='telno'>" + telno + "</span>";
+              str = str.replace(tel[0], span);
+            }
+            custom += str + "\n";
+
+        }
+        return custom;
+      };
+
+    // 【チャット】チャット枠の構築
+    $scope.createMessage = function(elem, chat){
+    var chatApi = {
+      connect: false,
+      tabId: null,
+      sincloSessionId: null,
+      userId: null,
+      token: null,
+      getMessageToken: null,
+      messageType: {
+        customer: 1,
+        company: 2,
+        auto: 3,
+        sorry: 4,
+        autoSpeech: 5,
+        start: 98,
+        end: 99,
+      }
+    }
+      console.log('ここで作ってるよ！');
+      var cn = "";
+      var div = document.createElement('div');
+      var li = document.createElement('li');
+      var content = "";
+
+      var type = Number(chat.messageType);
+      var message = chat.message;
+      var userId = Number(chat.userId);
+      // 消費者からのメッセージの場合
+      if ( type === chatApi.messageType.customer) {
+        cn = "sinclo_re";
+        div.style.textAlign = 'left';
+        div.style.height = 'auto';
+        div.style.padding = '0';
+        li.className = cn;
+        content = $scope.createTextOfMessage(chat, message, {radio: false});
+      }
+      // オートメッセージの場合
+      else if ( type === chatApi.messageType.company) {
+        cn = "sinclo_se";
+        div.style.textAlign = 'right';
+        div.style.height = 'auto';
+        div.style.padding = '0';
+        var chatName = widget.subTitle;
+        if ( Number(widget.showName) === <?=C_WIDGET_SHOW_NAME?> ) {
+          chatName = userList[Number(userId)];
+        }
+        content = "<span class='cName'>" + chatName + "</span>";
+        content += $scope.createTextOfMessage(chat, message);
+      }
+      else if ( type === chatApi.messageType.auto || type === chatApi.messageType.sorry) {
+        cn = "sinclo_auto";
+        div.style.textAlign = 'right';
+        div.style.height = 'auto';
+        div.style.padding = '0';
+        content = "<span class='cName'>自動応答</span>";
+        content += $scope.createTextOfMessage(chat, message);
+      }
+      else if ( type === chatApi.messageType.autoSpeech ) {
+        cn = "sinclo_auto";
+        div.style.textAlign = 'right';
+        div.style.height = 'auto';
+        div.style.padding = '0';
+        content = "<span class='cName'>自動返信</span>";
+        content += $scope.createTextOfMessage(chat, message);
+      }
+      else  {
+        cn = "sinclo_etc";
+        var userName = "オペレーター";
+        if ( Number(widget.showName) === <?=C_WIDGET_SHOW_NAME?> && userList.hasOwnProperty(Number(userId)) ) {
+          userName = userList[Number(userId)];
+        }
+        if ( type === chatApi.messageType.start ) {
+          content = "－　" + userName + "が入室しました　－";
+        }
+        if ( type === chatApi.messageType.end ) {
+          content = "－　" + userName + "が退室しました　－";
+        }
+      }
+      li.className = cn;
+      li.innerHTML = content;
+      div.appendChild(li);
+      $(elem).append(div);
     };
 
     $scope.ui = function(ip, id){
@@ -38,7 +270,7 @@
 
   <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
     angular.element('label[for="g_chat"]').on('change', function(e){
-      var url = "<?=$this->Html->url(['controller' => 'Histories', 'action'=>'index'])?>?isChat=" + e.target.checked;
+      var url = "<?=$this->Html->url(['controller' => 'ChatHistories', 'action'=>'index'])?>?isChat=" + e.target.checked;
       location.href = url;
     });
   <?php endif; ?>
@@ -57,6 +289,17 @@
         return trimToURL(targetParams, url);
       };
   });
+
+
+  sincloApp.directive('ngCreateMessage', [function(){
+    return {
+      restrict: 'E',
+      link: function(scope, elem, attr) {
+        scope.createMessage(elem, scope.chat);
+
+      }
+    };
+  }]);
 
   sincloApp.directive('ngShowDetail', function(){
     return {
@@ -122,19 +365,21 @@
 
   <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
     window.openChatById = function(id){
-      /*$.ajax({
+      $.ajax({
         type: 'GET',
-        url: "<?= $this->Html->url(array('controller' => 'Histories', 'action' => 'remoteGetChatLogs')) ?>",
+        url: "<?= $this->Html->url(array('controller' => 'ChatHistories', 'action' => 'remoteGetChatLogs')) ?>",
         cache: false,
         data: {
           historyId: id
         },
         dataType: 'html',
         success: function(html){
-          modalOpen.call(window, html, 'p-chat-logs', 'チャット履歴');
-          $(".p-chat-logs #popup-main ul").scrollTop(0);
+          //modalOpen.call(window, html, 'p-chat-logs', 'チャット履歴');
+          //$(".p-chat-logs #popup-main ul").scrollTop(0);
+          console.log('成功');
+          console.log(html);
         }
-      });*/
+      });
     };
   <?php endif; ?>
 

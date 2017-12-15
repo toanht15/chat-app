@@ -1,4 +1,4 @@
-<div id='history_menu' class="p20trl">
+<div id='history_menu' style = "padding: 20px 20px 0 0;">
   <div id="paging" class="fRight">
     <?=
         $this->Paginator->prev(
@@ -166,8 +166,8 @@
        </span>
   </div>
 
-<div id = "list_body" style = "padding: 0px 20px 0 20px; height:53em; overflow-y: auto; overflow-x: hidden;">
-  <table>
+<div id = "list_body" style = "height:53em; overflow-y: auto; overflow-x: hidden;">
+  <table class = "scroll">
       <thead>
         <tr>
           <th width=" 3%"></th>
@@ -214,7 +214,7 @@
     $visitorsId = $history['THistory']['visitors_id'];
   }
   ?>
-          <tr onclick="openChatById('<?=h($history['THistory']['id'])?>')">
+          <tr ng-click="getOldChat('<?=h($history['THistory']['id'])?>', false)" onclick="openChatById('<?=h($history['THistory']['id'])?>')">
               <td class="tCenter" onclick="event.stopPropagation();" width=" 3%">
                 <input type="checkbox" name="selectTab" id="selectTab<?=h($history['THistory']['id'])?>" value="<?=h($history['THistory']['id'])?>">
                 <label for="selectTab<?=h($history['THistory']['id'])?>"></label>
@@ -240,7 +240,7 @@
                       }
                    endif; ?>
               </td>
-              <td class="tRight pre"><?=date_format(date_create($history['THistory']['access_date']), "Y/m/d\nH:i:s")?></td>
+              <td class="tRight pre"><?=date_format(date_create($history['LastSpeechTime']['firstSpeechTime']), "Y/m/d\nH:i:s")?></td>
               <td class="tLeft">
                 <?php if(isset($coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $coreSettings[C_COMPANY_REF_COMPANY_DATA]): ?>
                   <?php if(!empty($history['LandscapeData']['org_name']) && !empty($history['LandscapeData']['lbc_code'])): ?>
@@ -253,7 +253,7 @@
               </td>
               <td class="tLeft pre">{{ ui('<?=h($history['THistory']['ip_address'])?>', '<?=$visitorsId?>') }}</td>
               <td class="tCenter pre"><?=$campaignParam?></td>
-              <td class="pre" style = "font-size:11px;padding:8px 5px !important"><a href = "<?=h($stayList[$history['THistory']['id']]['THistoryStayLog']['firstURL'])?>" target = "landing"><?= $stayList[$history['THistory']['id']]['THistoryStayLog']['title'] ?></a></td>
+              <td class="pre" style = "font-size:11px;padding:8px 5px !important"><a href = "<?=h($history['FirstSpeechSendPage']['url'])?>" target = "landing"><?= $history['FirstSpeechSendPage']['title'] ?></a></td>
               <td class="tCenter"><?php
                 if($history['THistoryChatLog']['eff'] == 0 || $history['THistoryChatLog']['cv'] == 0 ) {
                   if (isset($history['THistoryChatLog']['achievementFlg'])){
@@ -315,14 +315,15 @@
 </div>
 
 
-<div id = "detail" class = "detail" style = "width: 100%; background-color: #f2f2f2;">
+<div ng-aa id = "detail" class = "detail" style = "width: 100%; background-color: #f2f2f2;">
   <div id="cus_info_contents"  class="flexBoxCol">
     <div id="leftContents" style = "width: 100%;padding: 1em 1.5em 1em 1.5em;">
       <ul id="showChatTab" class="tabStyle flexBoxCol noSelect" style = "width:100%">
-        <li class="on" data-type="currentChat">チャット内容</li>
+        <li class="on" data-type="currentChat" style = "margin-left:-40px;">チャット内容</li>
         <li data-type="oldChat">過去のチャット</li>
       </ul>
       <div id="chatContent" style = "width:100%; height:100% ">
+
 
       <!-- 現在のチャット -->
       <section class="on" id="currentChat" style = "height:100%;">
@@ -331,16 +332,7 @@
             <ng-create-message ng-repeat="chat in messageList | orderBy: 'sort'"></ng-create-message>
           </message-list>
           <typing-message>
-            <div style="text-align:right; height: auto!important; padding:0;">
-              <li class="sinclo_se typeing_message" ng-if="typingMessageSe !== ''">{{typingMessageSe}}</li>
-            </div>
-            <div style="text-align:left; height: auto!important; padding:0;">
-              <li class="sinclo_re typeing_message" ng-if="typingMessageRe[sincloSessionId] && typingMessageRe[sincloSessionId] !== ''">{{typingMessageRe[sincloSessionId]}}</li>
-            </div>
           </typing-message>
-          <chat-receiver>
-            <span id="receiveMessage">テストメッセージです</span>
-          </chat-receiver>
         </ul>
       </section>
       <!-- 現在のチャット -->
@@ -404,60 +396,88 @@
           <div class="nowInfo card" style = "border-bottom: 1px solid #bfbfbf; width:100%; margin-top: 58px;">
           <dl>
             <dt style = "text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">ユーザID</dt>
-            <dd style = "width: 30%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">20171122141125995</dd>
+            <dd id = "visitorsId" style = "width: 30%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;"><?= $history['THistory']['visitors_id'] ?></dd>
             <dt style = "text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">IPアドレス</dt>
-            <dd style = "width: 30%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">ABC商事（49.98.153.80）</dd>
+            <dd id = "LandscapeData" style = "width: 30%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; height: auto;">
+            <?php if(isset($coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $coreSettings[C_COMPANY_REF_COMPANY_DATA]): ?>
+                  <?php if(!empty($history['LandscapeData']['org_name']) && !empty($history['LandscapeData']['lbc_code'])): ?>
+                      <a href="javascript:void(0)" class="underL" onclick="openCompanyDetailInfo('<?=$history['LandscapeData']['lbc_code']?>')">
+                      <span id = "Landscape"><?=h($history['LandscapeData']['org_name'])?></span></a><br>
+                  <?php elseif(!empty($history['LandscapeData']['org_name'])): ?>
+                      <p><?=h($history['LandscapeData']['org_name'])?></p><?='\n'?>
+                  <?php endif; ?>
+                <?php endif; ?>
+                <span id= "ipAddress">{{ ip('<?=h($history['THistory']['ip_address'])?>', <?php echo !empty($history['LandscapeData']['org_name']) ? 'true' : 'false' ?>) }}</span></dd>
             <dt style = "text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">訪問回数</dt>
-            <dd style = "width: 30%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">5回</dd>
+            <dd id = "visitCounts" style = "width: 30%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; height: auto;">5回</dd>
             <dt style = "text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">プラットフォーム</dt>
-            <dd style = "width: 30%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">Windows 8.1 | IE（ver.11.0）</dd>
+            <dd style = "width: 70%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; height: auto;">
+              {{ ua('<?=h($history['THistory']['user_agent'])?>') }}
+            </dd>
           </dl>
         </div>
         <div class="hardInfo card" style = "width:100%;">
           <dl>
             <dt style = "text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">キャンペーン</dt>
-            <dd style = "width: 70%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">GSN | 広告_MC</dd>
+            <dd style = "width: 70%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;"><?=$campaignParam?></dd>
             <dt style = "text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">ランディングページ</dt>
-            <dd style = "width: 70%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">MediaSeries | 企業の成長を加速させる次世代型コミュニケーションサービス</dd>
+            <dd id = "landing" style = "width: 70%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
+            <a href = "<?=h($stayList[$history['THistory']['id']]['THistoryStayLog']['firstURL'])?>" target = "landing">
+            <span id = "landingPage"><?= $stayList[$history['THistory']['id']]['THistoryStayLog']['title'] ?></span></a></dd>
             <dt style = "text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">チャット送信ページ</dt>
-            <dd style = "width: 70%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">驚異のコストで導入可能 - 選ばれる理由 | MediaVoice</dd>
+            <dd id = "chatSending" style = "width: 70%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
+            <a href = "<?=h($history['FirstSpeechSendPage']['url'])?>" target = "landing">
+            <span id = "chatSendingPage"><?= $history['FirstSpeechSendPage']['title'] ?></span></a></dd>
             <dt style = "text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">離脱ページ</dt>
-            <dd style = "width: 70%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">オフィスのフリーアドレス化を実現 - 導入事例 | MediaSeries</dd>
+            <dd id = "separation" style = "width: 70%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
+            <a href = "<?=h($history['LastSpeechSendPage']['url'])?>" target = "landing">
+            <span id = "separationPage"><?= $history['LastSpeechSendPage']['title'] ?></span></a></dd></dd>
             <dt style = "text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">閲覧ページ数</dt>
-            <dd style = "width: 70%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">6（移動履歴）</dd>
+            <dd style = "width: 70%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
+            <?php if( is_numeric($stayList[$history['THistory']['id']]['THistoryStayLog']['count']) ): ?>
+              <?=h($stayList[$history['THistory']['id']]['THistoryStayLog']['count'])?><a class="underL" href="javascript:void(0)" onclick="openHistoryById('<?=h($history['THistory']['id'])?>')" >(移動履歴)</a>
+            <?php endif; ?></dd>
           </dl>
         </div>
         <div class="detailForm card">
           <ul>
             <li>
               <label for="ng-customer-company">会社名</label>
-              <input type="text" id="ng-customer-company" ng-blur="saveCusInfo('company', customData)" ng-model="customData.company" placeholder="会社名を追加" />
+              <input type="text"  data-key='company' class="infoData" id="ng-customer-company" ng-blur="saveCusInfo('company', customData)" ng-model="customData.company" placeholder="会社名を追加" />
             </li>
             <li>
               <label for="ng-customer-name">名前</label>
-              <input type="text" id="ng-customer-name" ng-blur="saveCusInfo('name', customData)" ng-model="customData.name" placeholder="名前を追加">
+              <input type="text" data-key='name' class = "infoData" id="ng-customer-name" ng-blur="saveCusInfo('name', customData)" ng-model="customData.name" placeholder="名前を追加">
             </li>
             <li>
               <label for="ng-customer-tel">電話番号</label>
-              <input type="text" id="ng-customer-tel" ng-blur="saveCusInfo('tel', customData)" ng-model="customData.tel" placeholder="電話番号を追加" />
+              <input type="text" data-key='tel' class = "infoData" id="ng-customer-tel" ng-blur="saveCusInfo('tel', customData)" ng-model="customData.tel" placeholder="電話番号を追加" />
             </li>
             <li>
               <label for="ng-customer-mail">メールアドレス</label>
-              <input type="text" id="ng-customer-mail" ng-blur="saveCusInfo('mail', customData)" ng-model="customData.mail" placeholder="メールアドレスを追加" />
+              <input type="text" data-key='mail' class = "infoData" id="ng-customer-mail" ng-blur="saveCusInfo('mail', customData)" ng-model="customData.mail" placeholder="メールアドレスを追加" />
             </li>
             <li>
               <label for="ng-customer-memo" style = "width:60% !important">メモ</label>
-              <textarea rows="7" id="ng-customer-memo" ng-blur="saveCusInfo('memo', customData)" ng-model="customData.memo" placeholder="メモを追加"></textarea>
+              <textarea rows="7" data-key='memo' class = "infoData" id="ng-customer-memo" ng-blur="saveCusInfo('memo', customData)" ng-model="customData.memo" placeholder="メモを追加"></textarea>
             </li>
           </ul>
           <div id="personal_action">
-              <?= $this->Html->link('元に戻す', 'javascript:void(0)', ['onclick' => 'loading.ev(saveAct)', 'class' => 'whiteBtn btn-shadow lineUpSaveBtn historyReturnButton']) ?>
-              <?= $this->Html->link('更新', 'javascript:void(0)', ['onclick' => 'loading.ev(saveAct)', 'class' => 'greenBtn btn-shadow lineUpSaveBtn hitoryUpdateButton']) ?>
+              <?= $this->Html->link('元に戻す', 'javascript:void(0)', ['onclick' => 'reloadAct()', 'class' => 'whiteBtn btn-shadow lineUpSaveBtn historyReturnButton']) ?>
+              <?= $this->Html->link('更新', 'javascript:void(0)', ['onclick' => 'customerInfoSave()', 'class' => 'greenBtn btn-shadow lineUpSaveBtn hitoryUpdateButton']) ?>
           </div>
         </div>
       </div>
 </div>
 </div>
+<?php
+/*$customerId = "";
+if ( isset($data['MCustomer']['id']) ) {
+  $customerId = $data['MCustomer']['id'];
+}*/
+echo $this->Form->input('customerId', ['type'=>'hidden', 'id' => 'customerId', 'value' => "", 'label' => false, 'div'=> false]);
+?>
+
 <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
 <div id='lastSpeechTooltip' class="explainTooltip">
   <icon-annotation>
