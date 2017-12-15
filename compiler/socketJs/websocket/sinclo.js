@@ -1993,11 +1993,13 @@
           }, 5000);
         },
         inactiveTimer: null,
+        inactiveCloseFlg: false,
         startInactiveTimeout: function(){
           if(!this.inactiveTimer) {
             console.log("start inactive timer");
             this.inactiveTimer = setTimeout(function(){
               if(socket) {
+                this.inactiveCloseFlg = true;
                 console.log("close socket");
                 socket.close();
               }

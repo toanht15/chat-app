@@ -3502,10 +3502,12 @@ var socket, // socket.io
     }); // socket-on: sincloReconnect
 
     socket.on('disconnect', function(data) {
-      var sincloBox = document.getElementById('sincloBox');
-      if ( sincloBox ) {
-        // sincloBox.parentNode.removeChild(sincloBox);
-        //common.widgetHandler.hide();
+      if(!sinclo.chatApi.inactiveCloseFlg) {
+        var sincloBox = document.getElementById('sincloBox');
+        if ( sincloBox ) {
+          //sincloBox.parentNode.removeChild(sincloBox);
+          common.widgetHandler.hide();
+        }
       }
       popup.remove();
     });
