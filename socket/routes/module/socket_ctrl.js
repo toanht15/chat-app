@@ -1960,9 +1960,16 @@ io.sockets.on('connection', function (socket) {
   socket.on("sendTabInfo", function(d){
     var obj = JSON.parse(d);
     emit.toCompany('retTabInfo', d, obj.siteKey);
+
     // 画面同期中は同期フレーム本体に送る
     if ( ('connectToken' in obj) && isset(obj.connectToken) ) {
       emit.toUser('retTabInfo', obj, getSessionId(obj.siteKey, obj.tabId, 'syncFrameSessionId'));
+    }
+    for ( var key in customerList[obj.siteKey] ){
+      if(obj.tabId.indexOf(customerList[obj.siteKey][key]['tabId']) === 0) {
+        customerList[obj.siteKey][key]['status'] = obj.status;
+        break;
+      }
     }
   });
   //ウィジェットを開いた事を通知する
