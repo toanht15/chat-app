@@ -1877,6 +1877,13 @@ io.sockets.on('connection', function (socket) {
       console.log("delete id : " + oldSessionId);
       delete sessionIds[oldSessionId];
       console.log("remains : " + Object.keys(sessionIds).length);
+      Object.keys(sessionIds).forEach(function (key) {
+        if (!isset(io.sockets.connected[key])) {
+          console.log("delete not exist sessionId : " + key);
+          delete sessionIds[key];
+          console.log("remains : " + Object.keys(sessionIds).length);
+        }
+      });
     }
 
     connectList[socket.id] = {siteKey: obj.siteKey, tabId: obj.tabId, userId: null};
