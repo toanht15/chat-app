@@ -367,6 +367,7 @@ function getConnectInfo(o){
   var connectToken = getSessionId(o.siteKey, o.tabId, 'connectToken');
   var coBrowseConnectToken = getSessionId(o.siteKey, o.tabId, 'coBrowseConnectToken');
   var responderId = getSessionId(o.siteKey, o.tabId, 'responderId');
+  var chatUserId = getSessionId(o.siteKey, o.tabId, 'chat');
   if ( isset(responderId) && isset(connectToken) ) {
     o.responderId = responderId;
     o.connectToken = connectToken;
@@ -374,6 +375,9 @@ function getConnectInfo(o){
   if ( isset(responderId) && isset(coBrowseConnectToken) ) {
     o.responderId = responderId;
     o.coBrowseConnectToken = coBrowseConnectToken;
+  }
+  if( isset(chatUserId) ) {
+    o.chat = chatUserId;
   }
   var docShareId = getSessionId(o.siteKey, o.tabId, 'docShareId');
   if ( isset(docShareId) ) {
