@@ -1712,6 +1712,11 @@ io.sockets.on('connection', function (socket) {
                 counter = 0;
                 arr = [];
               }
+              if(totalCounter === keyLength-1) {
+                emit.toMine("receiveAccessInfo", arr, socket);
+                arr = [];
+              }
+              totalCounter++;
             });
           } else {
             arr.push(val);
@@ -1721,12 +1726,12 @@ io.sockets.on('connection', function (socket) {
               counter = 0;
               arr = [];
             }
+            if(totalCounter === keyLength-1) {
+              emit.toMine("receiveAccessInfo", arr, socket);
+              arr = [];
+            }
+            totalCounter++;
           }
-          if(totalCounter === keyLength-1) {
-            emit.toMine("receiveAccessInfo", arr, socket);
-            arr = [];
-          }
-          totalCounter++;
         });
       }
       else {
