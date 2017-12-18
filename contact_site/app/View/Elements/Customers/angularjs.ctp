@@ -1578,7 +1578,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
               }
             });
           });
-        }, 500);
+        }, 100);
       }
     });
 
