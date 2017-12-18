@@ -1882,6 +1882,15 @@ io.sockets.on('connection', function (socket) {
           console.log("delete not exist sessionId : " + key);
           delete sessionIds[key];
           console.log("remains : " + Object.keys(sessionIds).length);
+          var keys = Object.keys(customerList[obj.siteKey]);
+          if(keys && keys.length > 0) {
+            keys.forEach(function(customerListId) {
+              if(customerListId.indexOf(key) >= 0) {
+                console.log("delete not exist customerList : " + customerListId);
+                delete customerList[info.siteKey][customerListId];
+              }
+            });
+          }
         }
       });
     }
@@ -3296,9 +3305,9 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       return false;
     }
     // タグ入りページからのアクセスの場合
-    if ( !(socket.id in connectList) ) return false;
+    //if ( !(socket.id in connectList) ) return false;
     info = connectList[socket.id];
-    if (getSessionId(info.siteKey, info.tabId, 'sessionId')) {
+    if (info && getSessionId(info.siteKey, info.tabId, 'sessionId')) {
       var core = sincloCore[info.siteKey][info.tabId];
       var siteId = companyList[info.siteKey];
       var timeout = ('connectToken' in core) ? 10000 : 5000;
@@ -3417,25 +3426,47 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         });
       }
     } else {
-      console.log("SESSION ID IS NULL info : " + JSON.stringify(info) + " info.siteKey : " + info.siteKey + " info.tabId " + info.tabId + " sincloSessionId " + sincloCore[info.siteKey][info.tabId].sincloSessionId);
-      if(isset(info.siteKey) && isset(info.tabId)) {
-        var sincloSessionId = sincloCore[info.siteKey][info.tabId].sincloSessionId;
-        // sincloCoreから情報削除
-        delete sincloCore[info.siteKey][info.tabId];
-        if(isset(sincloCore[info.siteKey][sincloSessionId]) && isset(sincloCore[info.siteKey][sincloSessionId].sessionIds)) {
-          var sessionIds = sincloCore[info.siteKey][sincloSessionId].sessionIds;
-          Object.keys(sessionIds).forEach(function (key) {
-            if (!isset(io.sockets.connected[key])) {
-              console.log("delete not exist sessionId : " + key);
-              delete sessionIds[key];
-              console.log("remains : " + Object.keys(sessionIds).length);
-              if (Object.keys(sessionIds).length === 0) {
-                delete sincloCore[info.siteKey][sincloSessionId];
+      if(info && isset(sincloCore[info.siteKey][info.tabId])) {
+        console.log("SESSION ID IS NULL info : " + JSON.stringify(info) + " info.siteKey : " + info.siteKey + " info.tabId " + info.tabId + " sincloSessionId " + sincloCore[info.siteKey][info.tabId].sincloSessionId);
+        if(isset(info.siteKey) && isset(info.tabId)) {
+          var sincloSessionId = sincloCore[info.siteKey][info.tabId].sincloSessionId;
+          // sincloCoreから情報削除
+          delete sincloCore[info.siteKey][info.tabId];
+          if (isset(sincloCore[info.siteKey][sincloSessionId]) && isset(sincloCore[info.siteKey][sincloSessionId].sessionIds)) {
+            var sessionIds = sincloCore[info.siteKey][sincloSessionId].sessionIds;
+            Object.keys(sessionIds).forEach(function (key) {
+              if (!isset(io.sockets.connected[key])) {
+                console.log("delete not exist sessionId : " + key);
+                delete sessionIds[key];
+                console.log("remains : " + Object.keys(sessionIds).length);
+                if (Object.keys(sessionIds).length === 0) {
+                  delete sincloCore[info.siteKey][sincloSessionId];
+                }
               }
+            });
+          } else {
+            console.log("sessionIds is null");
+            delete connectList[socket.id];
+            var keys = Object.keys(customerList[info.siteKey]);
+            if (keys && keys.length > 0) {
+              keys.forEach(function (key) {
+                if (key.indexOf(socket.id) >= 0) {
+                  delete customerList[info.siteKey][key];
+                }
+              });
+            }
+          }
+        }
+      } else {
+        console.log("sincloCore[info.siteKey][info.tabId] is null");
+        delete connectList[socket.id];
+        var keys = Object.keys(customerList[info.siteKey]);
+        if(keys && keys.length > 0) {
+          keys.forEach(function(key) {
+            if(key.indexOf(socket.id) >= 0) {
+              delete customerList[info.siteKey][key];
             }
           });
-        } else {
-          console.log("sessionIds is null");
         }
       }
     }
