@@ -362,6 +362,7 @@
           userInfo.syncInfo.get();
           common.judgeShowWidget();
 
+          emit('customerInfo', userInfo.getSendList());
           emit('connectSuccess', {prevList: userInfo.prevList, prev: userInfo.prev});
           emit('connectedForSync', {});
 
