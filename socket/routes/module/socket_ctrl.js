@@ -749,9 +749,6 @@ io.sockets.on('connection', function (socket) {
       else {
         // DBへ書き込む
         this.commit(d);
-        if(d.messageType === this.cnst.observeType.company) {
-          sincloCore[d.siteKey][d.tabId].chatUnreadCnt++;
-        }
       }
     },
     get: function(obj){ // 最初にデータを取得するとき
@@ -889,11 +886,18 @@ io.sockets.on('connection', function (socket) {
                     siteKey: d.siteKey,
                     notifyToCompany: d.notifyToCompany
                   }, d.siteKey);
+                  if(d.messageType === 1 && insertData.message_read_flg != 1) {
+                    sincloCore[d.siteKey][d.tabId].chatUnreadCnt++;
+                  }
                   if ( ret.opFlg === true ) return false;
                   // 応対不可だった場合、既読にする
                   historyId = sincloCore[d.siteKey][d.tabId].historyId;
                   pool.query("UPDATE t_history_chat_logs SET message_read_flg = 1 WHERE t_histories_id = ? AND message_type = 1 AND id <= ?;",
-                    [historyId, results.insertId], function(err, ret, fields){}
+                    [historyId, results.insertId], function(err, ret, fields){
+                      if(d.messageType === 1) {
+                        sincloCore[d.siteKey][d.tabId].chatUnreadCnt > 0 ? sincloCore[d.siteKey][d.tabId].chatUnreadCnt-- : 0;
+                      }
+                    }
                   );
 
                   // 自動応対メッセージではなく、Sorryメッセージがある場合は送る
@@ -935,6 +939,9 @@ io.sockets.on('connection', function (socket) {
                   siteKey: d.siteKey,
                   notifyToCompany: d.notifyToCompany
                 }, d.siteKey);
+                if(d.messageType === 1) {
+                  sincloCore[d.siteKey][d.tabId].chatUnreadCnt++;
+                }
               }
 
               //オペレータリクエスト件数
