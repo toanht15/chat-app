@@ -1568,14 +1568,17 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     socket.on('receiveAccessInfo', function (data) {
       if(!contract.hideRealtimeMonitor) {
-        var obj = JSON.parse(data);
-        //if (receiveAccessInfoToken !== obj.receiveAccessInfoToken) return false;
-        obj.forEach(function(elm, index, arr) {
-          pushToList(elm);
-          if ('chat' in elm && String(elm.chat) === "<?=$muserId?>") {
-            pushToChatList(elm.tabId);
-          }
-        });
+        setTimeout(function(){
+          $scope.$apply(function(){
+            var obj = JSON.parse(data);
+            obj.forEach(function(elm, index, arr) {
+              pushToList(elm);
+              if ('chat' in elm && String(elm.chat) === "<?=$muserId?>") {
+                pushToChatList(elm.tabId);
+              }
+            });
+          });
+        }, 500);
       }
     });
 
