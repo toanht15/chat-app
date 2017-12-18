@@ -1999,7 +1999,7 @@
             console.log("start inactive timer");
             this.inactiveTimer = setTimeout(function(){
               if(socket) {
-                this.inactiveCloseFlg = true;
+                sinclo.chatApi.inactiveCloseFlg = true;
                 console.log("close socket");
                 socket.close();
               }
