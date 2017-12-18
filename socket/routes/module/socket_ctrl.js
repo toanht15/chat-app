@@ -3409,6 +3409,28 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
           }
         });
       }
+    } else {
+      console.log("SESSION ID IS NULL info : " + JSON.stringify(info) + " info.siteKey : " + info.siteKey + " info.tabId " + info.tabId + " sincloSessionId " + sincloCore[info.siteKey][info.tabId].sincloSessionId);
+      if(isset(info.siteKey) && isset(info.tabId)) {
+        var sincloSessionId = sincloCore[info.siteKey][info.tabId].sincloSessionId;
+        // sincloCoreから情報削除
+        delete sincloCore[info.siteKey][info.tabId];
+        if(isset(sincloCore[info.siteKey][sincloSessionId]) && isset(sincloCore[info.siteKey][sincloSessionId].sessionIds)) {
+          var sessionIds = sincloCore[info.siteKey][sincloSessionId].sessionIds;
+          Object.keys(sessionIds).forEach(function (key) {
+            if (!isset(io.sockets.connected[key])) {
+              console.log("delete not exist sessionId : " + key);
+              delete sessionIds[key];
+              console.log("remains : " + Object.keys(sessionIds).length);
+              if (Object.keys(sessionIds).length === 0) {
+                delete sincloCore[info.siteKey][sincloSessionId];
+              }
+            }
+          });
+        } else {
+          console.log("sessionIds is null");
+        }
+      }
     }
   });
 });
