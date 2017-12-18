@@ -352,6 +352,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
   // http://weathercook.hatenadiary.jp/entry/2013/12/02/062136
   sincloApp.factory('angularSocket', function ($rootScope) {
+    if(socket) {
+      socket.open();
+    }
     return {
       on: function (eventName, callback) {
         if ( !window.hasOwnProperty('socket') ) return false;
