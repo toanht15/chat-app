@@ -3467,13 +3467,17 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       } else {
         console.log("sincloCore[info.siteKey][info.tabId] is null");
         delete connectList[socket.id];
-        var keys = Object.keys(customerList[info.siteKey]);
-        if(keys && keys.length > 0) {
-          keys.forEach(function(key) {
-            if(key.indexOf(socket.id) >= 0) {
-              delete customerList[info.siteKey][key];
-            }
-          });
+        if(info) {
+          var keys = Object.keys(customerList[info.siteKey]);
+          if (keys && keys.length > 0) {
+            keys.forEach(function (key) {
+              if (key.indexOf(socket.id) >= 0) {
+                delete customerList[info.siteKey][key];
+              }
+            });
+          }
+        } else {
+          console.log("info is null socket.id : " + socket.id);
         }
       }
     }
