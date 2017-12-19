@@ -425,6 +425,11 @@
         emitData.accessId = userInfo.accessId;
       }
 
+      if(check.isset(storage.s.get('inactiveTimeout')) && storage.s.get('inactiveTimeout') === "true") {
+        // 再接続扱いとする
+        data.inactiveReconnect = true;
+      }
+
       emit('connected', {
         type: 'user',
         data: emitData
@@ -2001,6 +2006,8 @@
             this.inactiveTimer = setTimeout(function(){
               if(socket) {
                 sinclo.chatApi.inactiveCloseFlg = true;
+                storage.s.set('chatAct', false);
+                storage.s.set('inactiveTimeout', true);
                 sinclo.displayTextarea();
                 console.log("close socket");
                 socket.close();

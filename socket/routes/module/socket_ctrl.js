@@ -1592,7 +1592,8 @@ io.sockets.on('connection', function (socket) {
       if ( (res.sincloSessionId === undefined || res.sincloSessionId === '' || res.sincloSessionId === null)
         || !(res.siteKey in sincloCore)
         || !(res.sincloSessionId in sincloCore[res.siteKey])
-        || sincloCore[res.siteKey][res.sincloSessionId].sessionIds === undefined ) {
+        || sincloCore[res.siteKey][res.sincloSessionId].sessionIds === undefined
+        || !res.inactiveReconnect) {
         send.sincloSessionId = uuid.v4();
         send.sincloSessionIdIsNew = true;
         data.firstConnection = true;
