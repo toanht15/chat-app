@@ -1597,6 +1597,7 @@ var socket, // socket.io
         }
       } else {
         // socketオブジェクトが無いためページを再読込
+        storage.s.set('chatAct', false);
         return location.href = location.href;
       }
     },
