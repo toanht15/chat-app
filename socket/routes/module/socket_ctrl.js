@@ -3406,10 +3406,13 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
           emit.toCompany('unsetUser', sendData, info.siteKey);
 
           if(sincloSessionId) {
-            var sessionIds = sincloCore[info.siteKey][sincloSessionId].sessionIds;
-            delete sessionIds[socket.id];
-            if(Object.keys(sessionIds).length === 0) {
-              delete sincloCore[info.siteKey][sincloSessionId];
+            if(isset(sincloCore[info.siteKey][sincloSessionId])
+              && isset(sincloCore[info.siteKey][sincloSessionId]['sessionIds'])) {
+              var sessionIds = sincloCore[info.siteKey][sincloSessionId].sessionIds;
+              delete sessionIds[socket.id];
+              if(Object.keys(sessionIds).length === 0) {
+                delete sincloCore[info.siteKey][sincloSessionId];
+              }
             }
           }
         }
