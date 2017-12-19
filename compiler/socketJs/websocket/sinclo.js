@@ -1997,7 +1997,12 @@
             clearTimeout(this.sendErrCatchTimer);
           }
           this.sendErrCatchTimer = setTimeout(function(){
-              $("sinclo-chat-alert").css('display', 'block');
+              $("sinclo-chat-alert").css('display', 'block').html('通信が切断されました。<br>こちらをタップすると再接続します。').on('click', function(){
+                var result = common.reconnectManual();
+                if(result) {
+                  $("sinclo-chat-alert").css('display', 'none');
+                }
+              });
               sinclo.chatApi.sendErrCatchFlg = true;
           }, 5000);
         },
@@ -2011,11 +2016,15 @@
                 sinclo.chatApi.inactiveCloseFlg = true;
                 storage.s.set('chatAct', false);
                 storage.s.set('inactiveTimeout', true);
-                sinclo.displayTextarea();
                 console.log("close socket");
                 socket.close();
               }
-              $("sinclo-chat-alert").css('display', 'block').text('クリックして再接続');
+              $("sinclo-chat-alert").css('display', 'block').html('クリックして再接続').on('click', function(){
+                var result = common.reconnectManual();
+                if(result) {
+                  $("sinclo-chat-alert").css('display', 'none');
+                }
+              });
             }, 90 * 60 * 1000);
           }
         },
