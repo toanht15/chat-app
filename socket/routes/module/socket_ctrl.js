@@ -1589,7 +1589,7 @@ io.sockets.on('connection', function (socket) {
       if ( data.userId === undefined || data.userId === '' || data.userId === null ) {
         send.userId = makeUserId();
       }
-      if ( !res.inactiveReconnect && ((res.sincloSessionId === undefined || res.sincloSessionId === '' || res.sincloSessionId === null)
+      if ( !data.inactiveReconnect && ((res.sincloSessionId === undefined || res.sincloSessionId === '' || res.sincloSessionId === null)
         || !(res.siteKey in sincloCore)
         || !(res.sincloSessionId in sincloCore[res.siteKey])
         || sincloCore[res.siteKey][res.sincloSessionId].sessionIds === undefined)) {
