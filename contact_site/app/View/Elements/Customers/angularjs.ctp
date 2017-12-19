@@ -845,7 +845,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     $scope.confirmFlg = false;
     $scope.sendMessageConnectConfirm = function(detailId){
         var monitor = $scope.monitorList[detailId], message = "";
-        if ( $scope.confirmFlg ) return false;
+        if ( $scope.confirmFlg || !isset(monitor)) return false;
         $scope.confirmFlg = true;
 
         // 対応者切替の場合
