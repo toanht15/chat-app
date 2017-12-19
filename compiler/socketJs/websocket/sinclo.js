@@ -2014,7 +2014,6 @@
             this.inactiveTimer = setTimeout(function(){
               if(socket) {
                 sinclo.chatApi.inactiveCloseFlg = true;
-                storage.s.set('chatAct', false);
                 storage.s.set('inactiveTimeout', true);
                 console.log("close socket");
                 socket.close();
@@ -2023,6 +2022,7 @@
                 var result = common.reconnectManual();
                 if(result) {
                   $("sinclo-chat-alert").css('display', 'none');
+                  storage.s.set('inactiveTimeout', false);
                 }
               });
             }, 90 * 60 * 1000);
