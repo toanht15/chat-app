@@ -427,7 +427,7 @@
 
       if(check.isset(storage.s.get('inactiveTimeout')) && storage.s.get('inactiveTimeout') === "true") {
         // 再接続扱いとする
-        data.inactiveReconnect = true;
+        emitData.inactiveReconnect = true;
       }
 
       emit('connected', {
