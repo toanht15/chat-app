@@ -262,6 +262,16 @@ class TAutoMessagesController extends AppController {
         }
       }
 
+      $mailTransmissionData = $this->MMailTransmissionSetting->findById($value['TAutoMessage']['m_mail_transmission_settings_id']);
+      if(!empty($mailTransmissionData)) {
+        $this->MMailTransmissionSetting->create();
+        $mailTransmissionData['MMailTransmissionSetting']['id'] = null;
+        $this->MMailTransmissionSetting->set($mailTransmissionData);
+        $this->MMailTransmissionSetting->begin();
+        $result = $this->MMailTransmissionSetting->save();
+        $value['TAutoMessage']['m_mail_transmission_settings_id'] = $this->MMailTransmissionSetting->getLastInsertId();
+      }
+
       $changeEditData = json_encode($changeEditData);
 
       $value['TAutoMessage']['activity'] = $changeEditData;
@@ -273,15 +283,20 @@ class TAutoMessagesController extends AppController {
       $saveData['TAutoMessage']['activity'] = $value['TAutoMessage']['activity'];
       $saveData['TAutoMessage']['action_type'] = $value['TAutoMessage']['action_type'];
       $saveData['TAutoMessage']['active_flg'] = $value['TAutoMessage']['active_flg'];
+      $saveData['TAutoMessage']['send_mail_flg'] = $value['TAutoMessage']['send_mail_flg'];
+      $saveData['TAutoMessage']['m_mail_transmission_settings_id'] = $value['TAutoMessage']['m_mail_transmission_settings_id'];
+      $saveData['TAutoMessage']['m_mail_template_id'] = $value['TAutoMessage']['m_mail_template_id'];
       $saveData['TAutoMessage']['del_flg'] = $value['TAutoMessage']['del_flg'];
 
       $this->TAutoMessage->set($saveData);
       $this->TAutoMessage->begin();
+
       // バリデーションチェックでエラーが出た場合
       if($res){
         if(!$this->TAutoMessage->validates()) {
           $res = false;
           $errorMessage = $this->TAutoMessage->validationErrors;
+          $this->MMailTransmissionSetting->rollback();
           $this->TAutoMessage->rollback();
         }
         else{
@@ -309,6 +324,7 @@ class TAutoMessagesController extends AppController {
           $saveData['TAutoMessage']['activity'] = $changeEditData;
 
           if( $this->TAutoMessage->save($saveData,false) ) {
+            $this->MMailTransmissionSetting->commit();
             $this->TAutoMessage->commit();
             $this->Session->delete('dstoken');
             $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
