@@ -1589,11 +1589,10 @@ io.sockets.on('connection', function (socket) {
       if ( data.userId === undefined || data.userId === '' || data.userId === null ) {
         send.userId = makeUserId();
       }
-      if ( (res.sincloSessionId === undefined || res.sincloSessionId === '' || res.sincloSessionId === null)
+      if ( !res.inactiveReconnect && ((res.sincloSessionId === undefined || res.sincloSessionId === '' || res.sincloSessionId === null)
         || !(res.siteKey in sincloCore)
         || !(res.sincloSessionId in sincloCore[res.siteKey])
-        || sincloCore[res.siteKey][res.sincloSessionId].sessionIds === undefined
-        || !res.inactiveReconnect) {
+        || sincloCore[res.siteKey][res.sincloSessionId].sessionIds === undefined)) {
         send.sincloSessionId = uuid.v4();
         send.sincloSessionIdIsNew = true;
         data.firstConnection = true;
