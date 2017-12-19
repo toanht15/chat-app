@@ -1751,6 +1751,7 @@ io.sockets.on('connection', function (socket) {
           send.activeOperatorCnt = getOperatorCnt(res.siteKey);
           send.widget = ret.opFlg;
           send.opFlg = true;
+          send.inactiveReconnect = Boolean(data.inactiveReconnect);
           if ( ret.opFlg === false ) {
             send.opFlg = false;
             if ( res.hasOwnProperty('tabId') && isset(getSessionId(res.siteKey, res.tabId, 'chat')) ) {
@@ -1900,6 +1901,14 @@ io.sockets.on('connection', function (socket) {
     if (isset(obj.sincloSessionId)) {
       sincloCore[obj.siteKey][obj.tabId].sincloSessionId = obj.sincloSessionId;
       sincloCore[obj.siteKey][obj.sincloSessionId].sessionIds[socket.id] = socket.id;
+    }
+    if (isset(obj.tmpAutoMessages)) {
+      for(var key in obj.tmpAutoMessages) {
+        if(typeof(obj.tmpAutoMessages[key]['created']) === "string") {
+          obj.tmpAutoMessages[key]['created'] = new Date(obj.tmpAutoMessages[key]['created']);
+        }
+        sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages[key] = obj.tmpAutoMessages[key];
+      }
     }
     if ( obj.subWindow ) {
       sincloCore[obj.siteKey][obj.tabId].toTabId = obj.to;

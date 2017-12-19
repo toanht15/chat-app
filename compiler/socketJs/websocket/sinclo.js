@@ -504,7 +504,7 @@
       if ( (userInfo.gFrame && Number(userInfo.accessType) === Number(cnst.access_type.guest)) === false ) {
         emit('customerInfo', obj);
       }
-      emit('connectSuccess', {
+      var connectSuccessData = {
         confirm: false,
         widget: window.sincloInfo.widgetDisplay,
         prevList: userInfo.prevList,
@@ -512,7 +512,14 @@
         time: userInfo.time,
         ipAddress: userInfo.getIp(),
         referrer: userInfo.referrer
-      });
+      };
+
+      if(obj.inactiveReconnect) {
+        var tmpAutoMessages = sinclo.chatApi.autoMessages.get(true);
+        connectSuccessData.tmpAutoMessages = tmpAutoMessages;
+      }
+
+      emit('connectSuccess', connectSuccessData);
 
       // customEvent
       if(document.createEvent) {
@@ -1230,12 +1237,7 @@
         if(!sinclo.chatApi.autoMessages.exists(obj.chatId)) {
           sinclo.chatApi.createMessage("sinclo_re", obj.message, sincloInfo.widget.subTitle);
         }
-        sinclo.chatApi.autoMessages.push(obj.chatId, {
-          chatId:obj.chatId,
-          message: obj.message,
-          created: obj.created,
-          achievementFlg: obj.achievementFlg
-        });
+        sinclo.chatApi.autoMessages.push(obj.chatId, obj);
     },
     confirmVideochatStart: function(obj) {
       // ビデオチャット開始に必要な情報をオペレータ側から受信し、セットする
@@ -1510,7 +1512,7 @@
             if(json) {
               var array = JSON.parse(json);
               Object.keys(array).forEach(function(id, index, ar) {
-                if(allData || !array[id].deleted) {
+                if(allData || !array[id].applied) {
                   returnData[id] = array[id];
                 }
               });
