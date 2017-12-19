@@ -1066,7 +1066,7 @@ var socket, // socket.io
           }
 
           html += '#sincloBox section#chatTab #sincloChatSendBtn { padding:  ' + (16.5 * ratio) + 'px 0; border: ' + ratio + 'px solid ' + colorList['chatSendBtnBackgroundColor'] + '; }';
-          html += '#sincloBox section#chatTab sinclo-chat-alert { left: 20%; right: 20%; bottom: 50%; border-radius: ' + (5 * ratio) + 'px; color: #FFF; padding: ' + (10 * ratio) + 'px 0; }';
+          html += '#sincloBox section#chatTab sinclo-chat-alert { left: 10%; right: 10%; bottom: 50%; border-radius: ' + (5 * ratio) + 'px; color: #FFF; padding: ' + (10 * ratio) + 'px 0; }';
           html += '#sincloBox section#navigation { border-width: 0 ' + (1 * ratio) + 'px; height: ' + (40 * ratio) + 'px; }';
           html += '#sincloBox section#navigation ul { margin: 0 0 0 -' + (1 * ratio) + 'px; height: ' + (40 * ratio) + 'px; }';
           html += '#sincloBox section#navigation ul li { padding: ' + (10 * ratio) + 'px 0; border-left: ' + (1 * ratio) + 'px solid #E8E7E0; height: ' + (40 * ratio) + 'px;  }';
@@ -1163,7 +1163,7 @@ var socket, // socket.io
             html += '#sincloBox #sincloChatMessage { height: 100%;  min-height: 100%!important; border-radius: 5px 0 0 5px!important; font-size: 1.5em }';
           }
           html += '      #sincloBox section#chatTab #sincloChatSendBtn { padding: 0.6em 0; border: 1px solid ' + colorList['chatSendBtnBackgroundColor'] + '; }';
-          html += '      #sincloBox section#chatTab sinclo-chat-alert { left: 20%; right: 20%; bottom: 50%; border-radius: 5px; color: #FFF; text-align: center; padding: 0.25em 0; }';
+          html += '      #sincloBox section#chatTab sinclo-chat-alert { left: 10%; right: 10%; bottom: 50%; border-radius: 5px; color: #FFF; text-align: center; padding: 0.25em 0; }';
           if(colorList['messageBoxBorderNone'] === 0){
             html += '#sincloBox section#chatTab #sincloChatMessage { border-radius: ' + (5 * ratio) +'px 0 0 ' + (5 * ratio) +'px!important; border: ' + (1 * ratio) + 'px solid '+ colorList['messageBoxBorderColor'] +'!important; }';
           }
