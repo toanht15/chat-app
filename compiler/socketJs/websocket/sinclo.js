@@ -2001,6 +2001,7 @@
             this.inactiveTimer = setTimeout(function(){
               if(socket) {
                 sinclo.chatApi.inactiveCloseFlg = true;
+                sinclo.displayTextarea();
                 console.log("close socket");
                 socket.close();
               }
