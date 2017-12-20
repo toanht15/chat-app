@@ -352,6 +352,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
   // http://weathercook.hatenadiary.jp/entry/2013/12/02/062136
   sincloApp.factory('angularSocket', function ($rootScope) {
+    if(socket) {
+      socket.open();
+    }
     return {
       on: function (eventName, callback) {
         if ( !window.hasOwnProperty('socket') ) return false;
@@ -392,6 +395,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     $scope.oprWaitCnt = 0; // 総オペレーター人数
     $scope.labelHideList = <?php echo json_encode($labelHideList) ?>;
     $scope.monitorList = {};
+    $scope.requestedCustomerList = [];
     $scope.customerList = {};
     $scope.messageList = [];
     $scope.chatOpList = [];
@@ -841,7 +845,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     $scope.confirmFlg = false;
     $scope.sendMessageConnectConfirm = function(detailId){
         var monitor = $scope.monitorList[detailId], message = "";
-        if ( $scope.confirmFlg ) return false;
+        if ( $scope.confirmFlg || !isset(monitor)) return false;
         $scope.confirmFlg = true;
 
         // 対応者切替の場合
@@ -1456,7 +1460,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       }
 
       $scope.monitorList[obj.tabId] = obj;
-      $scope.getCustomerInfoFromMonitor(obj);
+
+      //$scope.getCustomerInfoFromMonitor(obj);
 
       if ( 'referrer' in obj && 'referrer' in obj) {
         var url = $scope.trimToURL(obj.referrer);
@@ -1566,12 +1571,17 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     socket.on('receiveAccessInfo', function (data) {
       if(!contract.hideRealtimeMonitor) {
-        var obj = JSON.parse(data);
-        if (receiveAccessInfoToken !== obj.receiveAccessInfoToken) return false;
-        pushToList(obj);
-        if ('chat' in obj && String(obj.chat) === "<?=$muserId?>") {
-          pushToChatList(obj.tabId);
-        }
+        setTimeout(function(){
+          $scope.$apply(function(){
+            var obj = JSON.parse(data);
+            obj.forEach(function(elm, index, arr) {
+              pushToList(elm);
+              if ('chat' in elm && String(elm.chat) === "<?=$muserId?>") {
+                pushToChatList(elm.tabId);
+              }
+            });
+          });
+        }, 100);
       }
     });
 
@@ -3100,6 +3110,21 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       }
     };
   }]);
+
+  sincloApp.filter('limitTo', function(){
+    return function(input, limit, scope) {
+      var returnValue = input.slice(0, limit);
+      returnValue.forEach(function(elm, index, array){
+        if(!isset(scope.customerList[elm.userId])) {
+          if(scope.requestedCustomerList.indexOf(elm.userId) === -1) {
+            scope.getCustomerInfoFromMonitor(elm);
+            scope.requestedCustomerList.push(elm.userId);
+          }
+        }
+      });
+      return returnValue;
+    }
+  });
 
   // 参考 http://stackoverflow.com/questions/14478106/angularjs-sorting-by-property
   sincloApp.filter('orderObjectBy', function(){

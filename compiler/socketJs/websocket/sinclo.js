@@ -362,6 +362,7 @@
           userInfo.syncInfo.get();
           common.judgeShowWidget();
 
+          emit('customerInfo', userInfo.getSendList());
           emit('connectSuccess', {prevList: userInfo.prevList, prev: userInfo.prev});
           emit('connectedForSync', {});
 
@@ -422,6 +423,12 @@
 
       if(check.isset(userInfo.accessId)) {
         emitData.accessId = userInfo.accessId;
+      }
+
+      if(check.isset(storage.s.get('inactiveTimeout')) && storage.s.get('inactiveTimeout') === "true") {
+        // 再接続扱いとする
+        emitData.inactiveReconnect = true;
+        storage.s.set('inactiveTimeout', false);
       }
 
       emit('connected', {
@@ -497,7 +504,7 @@
       if ( (userInfo.gFrame && Number(userInfo.accessType) === Number(cnst.access_type.guest)) === false ) {
         emit('customerInfo', obj);
       }
-      emit('connectSuccess', {
+      var connectSuccessData = {
         confirm: false,
         widget: window.sincloInfo.widgetDisplay,
         prevList: userInfo.prevList,
@@ -505,7 +512,14 @@
         time: userInfo.time,
         ipAddress: userInfo.getIp(),
         referrer: userInfo.referrer
-      });
+      };
+
+      if(obj.inactiveReconnect) {
+        var tmpAutoMessages = sinclo.chatApi.autoMessages.get(true);
+        connectSuccessData.tmpAutoMessages = tmpAutoMessages;
+      }
+
+      emit('connectSuccess', connectSuccessData);
 
       // customEvent
       if(document.createEvent) {
@@ -1223,12 +1237,7 @@
         if(!sinclo.chatApi.autoMessages.exists(obj.chatId)) {
           sinclo.chatApi.createMessage("sinclo_re", obj.message, sincloInfo.widget.subTitle);
         }
-        sinclo.chatApi.autoMessages.push(obj.chatId, {
-          chatId:obj.chatId,
-          message: obj.message,
-          created: obj.created,
-          achievementFlg: obj.achievementFlg
-        });
+        sinclo.chatApi.autoMessages.push(obj.chatId, obj);
     },
     confirmVideochatStart: function(obj) {
       // ビデオチャット開始に必要な情報をオペレータ側から受信し、セットする
@@ -1503,7 +1512,7 @@
             if(json) {
               var array = JSON.parse(json);
               Object.keys(array).forEach(function(id, index, ar) {
-                if(allData || !array[id].deleted) {
+                if(allData || !array[id].applied) {
                   returnData[id] = array[id];
                 }
               });
@@ -1988,9 +1997,43 @@
             clearTimeout(this.sendErrCatchTimer);
           }
           this.sendErrCatchTimer = setTimeout(function(){
-            $("sinclo-chat-alert").css('display', 'block');
-            sinclo.chatApi.sendErrCatchFlg = true;
+              $("sinclo-chat-alert").css('display', 'block').html('通信が切断されました。<br>こちらをタップすると再接続します。').on('click', function(){
+                var result = common.reconnectManual();
+                if(result) {
+                  $("sinclo-chat-alert").css('display', 'none');
+                }
+              });
+              sinclo.chatApi.sendErrCatchFlg = true;
           }, 5000);
+        },
+        inactiveTimer: null,
+        inactiveCloseFlg: false,
+        startInactiveTimeout: function(){
+          if(!this.inactiveTimer) {
+            console.log("start inactive timer");
+            this.inactiveTimer = setTimeout(function(){
+              if(socket) {
+                sinclo.chatApi.inactiveCloseFlg = true;
+                storage.s.set('inactiveTimeout', true);
+                console.log("close socket");
+                socket.close();
+              }
+              $("sinclo-chat-alert").css('display', 'block').html('クリックして再接続').on('click', function(){
+                var result = common.reconnectManual();
+                if(result) {
+                  $("sinclo-chat-alert").css('display', 'none');
+                  storage.s.set('inactiveTimeout', false);
+                }
+              });
+            }, 90 * 60 * 1000);
+          }
+        },
+        clearInactiveTimeout: function() {
+          if(this.inactiveTimer) {
+            console.log("clear inactive timer");
+            clearTimeout(this.inactiveTimer);
+            this.inactiveTimer = null;
+          }
         },
         sound: null,
         call: function(){

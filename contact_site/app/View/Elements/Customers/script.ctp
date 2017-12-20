@@ -8,9 +8,11 @@ var _access_type_guest = 1, _access_type_host = 2, userAgentChk, notificationSta
     connectToken = null, coBrowseConnectToken = null, receiveAccessInfoToken = null, isset, myUserId = <?= h($muserId)?>;
 
 if ( window.hasOwnProperty('io') ) {
-  socket = io.connect("<?=C_NODE_SERVER_ADDR.C_NODE_SERVER_WS_PORT?>");
+  // sincloApp.factory('angularSocket') で接続処理を開始している
+  socket = io("<?=C_NODE_SERVER_ADDR.C_NODE_SERVER_WS_PORT?>",{
+    autoConnect: false
+  });
 }
-
 
 (function(){
   // -----------------------------------------------------------------------------
@@ -103,7 +105,8 @@ if ( window.hasOwnProperty('io') ) {
         data: {
             token: receiveAccessInfoToken,
             authority: <?=$userInfo['permission_level']?>,
-            userId: '<?=$muserId?>'
+            userId: '<?=$muserId?>',
+            contract: <?= json_encode($coreSettings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>
         }
     };
 
