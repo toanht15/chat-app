@@ -3,19 +3,20 @@
 //はいをクリック
 popupEventOverlap.closePopup = function(){
   var data=JSON.parse('<?php echo  $data; ?>');
+  console.log('idDataだよ！');
+  console.log(data);
   //履歴削除処理
   var url = "<?= $this->Html->url('/ChatHistories/remoteDeleteChat') ?>";
   $.ajax({
     type: 'post',
     cache: false,
     data: {
-      id:data.id,
-      message:data.message
+      id:data.selectedList
     },
     url: url,
     success: function(xhr){
       //履歴呼び直し
-      $.ajax({
+      /*$.ajax({
         type: 'GET',
         url: "<?= $this->Html->url(array('controller' => 'ChatHistories', 'action' => 'remoteGetChatLogs')) ?>",
         cache: false,
@@ -24,10 +25,10 @@ popupEventOverlap.closePopup = function(){
         },
         dataType: 'html',
         success: function(html){
-          modalOpen.call(window, html, 'p-chat-logs', 'チャット履歴','moment');
-          $(".p-chat-logs #popup-main ul").scrollTop(0);
+          location.href = location.href;
         }
-      });
+      });*/
+      location.href = location.href;
     }
   });
 }

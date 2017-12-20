@@ -2671,6 +2671,8 @@ ul.naviBtn {
                 padding: 0.5em;
                 background-color: #FFF;
                 cursor: pointer;
+                margin-left: -32px ;
+                font-size: 13px;
 
                 &:hover, &.on {
                     background-color: #f6fee6;
@@ -2679,7 +2681,7 @@ ul.naviBtn {
           }
 
           .chatList ul {
-            height: 21.5em!important;
+            height: 100%!important;
 
             span {
               display: block;
@@ -2695,7 +2697,7 @@ ul.naviBtn {
     ul {
       overflow-y: auto;
       overflow-x: hidden;
-      height: 20em;
+      height: 28em;
       width: 100%;
       border: 1px solid #909090;
       margin-bottom: 0.5em;
@@ -2784,7 +2786,7 @@ ul.naviBtn {
           margin: 10px 0 0;
           padding: 8px;
           font-size: 13px;
-          border: 1px solid #C9C9C9;
+          /*border: 1px solid #C9C9C9;*/
           color: #333333;
           white-space: pre-wrap!important;
           word-break: break-all!important;
@@ -2792,41 +2794,90 @@ ul.naviBtn {
               margin-bottom: 20px;
           }
           &.sinclo_re {
-              display: inline-block;
-              border-radius: 5px 5px 5px 0;
+              /*display: inline-block;*/
+              /*border-radius: 2px !important;*/
               /*margin-right: 10px;
               background-color: #F1F5C8;*/
-              margin: 0 55px 10px 20px;
+              margin: 0 0px 10px 0px;
               border-bottom-left-radius: 0;
-              background-color: #F1F5C8;
-          }
-          &.sinclo_se, &.sinclo_auto {
-              display: inline-block;
-              border-radius: 5px 5px 0;
-              /*margin-left: 10px;
-              background-color: #FFF;*/
-              margin: 0 20px 10px 55px;
-              border-bottom-right-radius: 0;
-              background-color: #FFF;
+              background-color: #fff;
               span.cName {
-                display: block;
-                color: $main-color;
+                display: inline-block;
+                color: #C3D69B;
                 font-weight: bold;
                 font-size: 13px;
                 margin: 0 0 5px 0;
               }
+              span.cTime {
+                display: inline-block;
+                color: #595959 !important;
+                font-size: 11px;
+                margin: 0px 0 5px 14px;
+              }
+              span.cChat {
+                display: block;
+                font-size: 13px;
+                color: #333333;
+              }
+          }
+          &.sinclo_se, &.sinclo_auto {
+              /*display: inline-block;*/
+              /*border-radius: 2px !important;*/
+              /*margin-left: 10px;
+              background-color: #FFF;*/
+              margin: 0 0px 5px 0px;
+              border-bottom-right-radius: 0;
+              background-color: #f2f2f2;
+              span.cName {
+                display: inline-block;
+                color: #C3D69B;
+                font-weight: bold;
+                font-size: 13px;
+                margin: 0 0 5px 0;
+              }
+              span.cTime {
+                display: inline-block;
+                color: #595959 !important;
+                font-size: 11px;
+                margin: 0px 0 10px 14px;
+              }
+              span.cChat {
+                display: block;
+                font-size: 13px;
+                color: #333333;
+              }
           }
           &.sinclo_se span.cName{
-            color: #c3d69b!important;
+            color: #333333 !important;;
           }
           &.sinclo_auto span.cName{
-            color: #C9C9C9!important;
+            color: #404040!important;
           }
           &.sinclo_etc {
               border: none;
-              text-align: center;
+              /*text-align: center;*/
               margin: 0 auto;
               font-weight: bold;
+              color: #9bbb59 !important;
+              span.cName {
+                display: inline-block;
+                color: #C3D69B;
+                font-weight: bold;
+                font-size: 13px;
+                margin: 0 0 5px 0;
+              }
+              span.cTime {
+                display: inline-block;
+                color: #595959 !important;
+                font-size: 11px;
+                margin: 0px 0 10px 14px;
+                font-weight:normal;
+              }
+              span.cChat {
+                display: block;
+                font-size: 13px;
+                color: #333333;
+              }
           }
           &.typeing_message {
             background-color: #e8e8e8!important;
@@ -3086,6 +3137,7 @@ ul.naviBtn {
     top: 0;
     margin: 126px 15px 20px 0px;
     z-index: 3;
+    padding:0 20px;
   }
 
   #list_body {

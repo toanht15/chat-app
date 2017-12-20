@@ -6,7 +6,7 @@ function openSearchRefine(){
     type: 'post',
     dataType: 'html',
     cache: false,
-    url: "<?= $this->Html->url(['controller' => 'Histories', 'action' => 'remoteSearchCustomerInfo']) ?>",
+    url: "<?= $this->Html->url(['controller' => 'ChatHistories', 'action' => 'remoteSearchCustomerInfo']) ?>",
     success: function(html){
       modalOpen.call(window, html, 'p-thistory-entry', '高度な検索', 'moment');
     }
@@ -15,7 +15,7 @@ function openSearchRefine(){
 
 //セッションクリア(条件クリア)
 function sessionClear(){
-  location.href = "<?=$this->Html->url(array('controller' => 'Histories', 'action' => 'portionClearSession'))?>";
+  location.href = "<?=$this->Html->url(array('controller' => 'ChatHistories', 'action' => 'portionClearSession'))?>";
 }
 
 function customerInfoSave() {
@@ -57,10 +57,20 @@ document.body.onload = function(){
 var actBtnShow = function(){
   // 選択中の場合
   if ( $('input[name="selectTab"]').is(":checked") ) {
+    console.log('ここには入ってる');
+    var list = document.querySelectorAll('input[name^="selectTab"]:checked');
+    var url = "/ChatHistories/outputCSVOfChat";
+    for (var i = 0; i < list.length; i++){
+      url = url + "/" + Number(list[i].value);
+    }
+    console.log('url');
+    console.log(url);
+     $("#outputCsv a").attr("href", url);
+
     //一つでもチェックが入ったら
     //コピーボタン有効
     document.getElementById("history_csv_btn").className="btn-shadow disOffgreenBtn";
-    document.getElementById("history_csv_btn").addEventListener('click', openCopyDialog, false);
+    //document.getElementById("history_csv_btn").addEventListener('click', openCopyDialog, false);
     //削除ボタン有効
     document.getElementById("history_dustbox_btn").className="btn-shadow disOffredBtn";
     document.getElementById("history_dustbox_btn").addEventListener('click', openDeleteDialog, false);
@@ -78,19 +88,65 @@ var actBtnShow = function(){
 
 //履歴削除モーダル画面
 function openDeleteDialog(){
+  //チェックボックスのチェック状態の取得
+  var list = document.querySelectorAll('input[name^="selectTab"]:checked');
+  var selectedList = [];
+  for (var i = 0; i < list.length; i++){
+    selectedList.push(Number(list[i].value));
+  }
+
   $.ajax({
     type: 'post',
     dataType: 'html',
     data: {
-      //id:id,
-      //historyId:historyId,
-      //message:message,
-      //created:created
+      selectedList:selectedList
     },
     cache: false,
-    url: "<?= $this->Html->url('/ChatHistories/openEntryDelete') ?>",
+    url: "<?= $this->Html->url('/ChatHistories/openChatEntryDelete') ?>",
     success: function(html){
       modalOpenOverlap.call(window, html, 'p-history-del', 'チャット履歴の削除', 'moment');
+    }
+  });
+};
+
+//選択したチャット履歴CSV出力
+function selectedOutputCSV(){
+  //チェックボックスのチェック状態の取得
+  var list = document.querySelectorAll('input[name^="selectTab"]:checked');
+  var selectedList = [];
+  for (var i = 0; i < list.length; i++){
+    selectedList.push(Number(list[i].value));
+  }
+
+  $.ajax({
+    type: 'post',
+    dataType: 'html',
+    data: {
+      selectedList:selectedList
+    },
+    cache: false,
+    url: "<?= $this->Html->url('/ChatHistories/outputCSVOfChat') ?>",
+    success: function(html){
+      //modalOpenOverlap.call(window, html, 'p-history-del', 'チャット履歴の削除', 'moment');
+      console.log('成功');
+
+      //window.location.reload();
+     /*var xhr = new XMLHttpRequest();
+      xhr.open('GET', '/download', true);
+      xhr.responseType = 'arraybuffer';
+      xhr.onload = function(e) {
+          var blob = new Blob([this.response]);
+          var url = window.URL || window.webkitURL;
+          var blobURL = url.createObjectURL(blob);
+
+          var a = document.createElement('a');
+          a.download = "hoge2.csv";
+          a.href = blobURL;
+          a.click();
+      };
+
+      xhr.send();*/
+
     }
   });
 };
@@ -159,14 +215,16 @@ $(window).resize(function() {
 $(function(){
 
   //リサイズ処理
-  $(window).resize(function() {
-  $("#history_list_vertical").css('height', window.innerHeight - 150);
+  $(window).resize(function() {;
   $("#history_list_side").css('height', window.innerHeight - 150);
   $("#chatContent").css('height', window.innerHeight - 235);
+  $("#chatContent").css('max-height', '47em');
+  $("#pastChatTalk").css('height', window.innerHeight - 410);
+  $("#pastChatTalk").css('max-height', '32.3em');
   });
 
   //画面を縦に並べる場合
-  $(document).on('click', '#vertical', function(){
+  /*$(document).on('click', '#vertical', function(){
       $("#check").remove();
       document.getElementById('history_list_side').style.display = "none";
       //var $historyList2 = $('#history_list2').clone();
@@ -186,10 +244,56 @@ $(function(){
       document.getElementById('detail').style.width = "100%";
       document.getElementById('detail').style.height = Number($('#detail').css('height').slice(0,-2)) - 85 + 'px';
       $("#history_list_vertical").css('height', window.innerHeight - 150);
-  });
+  });*/
+
+  $(document).on('click', '#vertical', function(){
+    splitterObj.destroy();
+    splitterObj = null;
+    splitterObj = $("#history_list_side").height(800).split({
+      "orientation": "horizontal",
+      "limit": 50,
+      "position": "40%"
+    });
+    splitterObj.refresh();
+    document.getElementById('history_body_side').style.width = "100%";
+    document.getElementById('chatTable').style.width = "100%";
+    document.getElementById('detail').style.width = "100%";
+    $.ajax({
+      type: 'post',
+      dataType: 'html',
+      cache: false,
+      url: "<?= $this->Html->url('/ChatHistories/changeScreen') ?>",
+      success: function(html){
+        //modalOpenOverlap.call(window, html, 'p-history-del', '履歴の削除', 'moment');
+      }
+    });
+ });
+
+  $(document).on('click', '#side', function(){
+    splitterObj.destroy();
+    splitterObj = null;
+    splitterObj = $("#history_list_side").height(800).split({
+      "orientation": "vertical",
+      "limit": 50,
+      "position": "35%"
+    });
+    splitterObj.refresh();
+    document.getElementById('history_body_side').style.height = "100%";
+    document.getElementById('detail').style.height = "100%";
+    $.ajax({
+      type: 'post',
+      dataType: 'html',
+      cache: false,
+      url: "<?= $this->Html->url('/ChatHistories/changeScreen') ?>",
+      success: function(html){
+        //modalOpenOverlap.call(window, html, 'p-history-del', '履歴の削除', 'moment');
+      }
+    });
+ });
+
 
   //画面を横に並べる場合
-  $(document).on('click', '#side', function(){
+  /*$(document).on('click', '#side', function(){
     $("#check").remove();
     document.getElementById('history_list_vertical').style.display = "none";
     //var $historyList3 = $('#history_list3').clone();
@@ -207,11 +311,10 @@ $(function(){
     document.getElementById('check').style.left = Number($('#check').css('left').slice(0,-2)) + 57   + 'px';
     document.getElementById('detail').style.width = Number($('#detail').css('width').slice(0,-2)) - 22 + 'px';
     document.getElementById('detail').style.right = "15px";
-  });
-
+  });*/
 
   //初期設定
-  $("#history_list_side").splitter({
+  /*$("#history_list_side").splitter({
     "orientation": "horizontal",
     "limit": 625,
     "barwidth": 8
@@ -226,6 +329,25 @@ $(function(){
   $("#history_list_side").css('height', window.innerHeight - 150);
   $("#chatContent").css('height', window.innerHeight - 235);
   $("#list_body").css('height', '100%');
+});*/
+
+    //横並びの場合
+    if(<?= $screenFlg ?> == 1) {
+      var splitterObj = $("#history_list_side").height(800).split({
+        "orientation": "vertical",
+        "limit": 500,
+        "position": "35%"
+      });
+    }
+
+    //縦並びの場合
+    if(<?= $screenFlg ?> == 2) {
+      splitterObj = $("#history_list_side").height(800).split({
+        "orientation": "horizontal",
+        "limit": 50,
+        "position": "40%"
+      });
+    }
 });
 
 var onBeforeunloadHandler = function(e) {
@@ -241,6 +363,22 @@ function reloadAct(){
   window.location.reload();
 }
 
-
-
+//履歴チャット削除モーダル画面
+function openChatDeleteDialog(id,historyId,message,created){
+  $.ajax({
+    type: 'post',
+    dataType: 'html',
+    data: {
+      id:id,
+      historyId:historyId,
+      message:message,
+      created:created
+    },
+    cache: false,
+    url: "<?= $this->Html->url('/ChatHistories/openChatSentenceEntryDelete') ?>",
+    success: function(html){
+      modalOpenOverlap.call(window, html, 'p-history-del', '履歴の削除', 'moment');
+    }
+  });
+}
 </script>

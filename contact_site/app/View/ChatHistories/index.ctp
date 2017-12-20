@@ -29,14 +29,9 @@
       ?>
     <?php endif; ?>
   </div>
-  <div id = "history_list_side" style = "padding: 0px 20px 0 20px;">
-    <div id = "history_body_side" style = "width:100%; height:87%;">
+  <div id = "history_list_side">
+    <div id = "history_body_side" style = "width:100%; padding:0 20px;">
       <?=$this->element('ChatHistories/list')?>
       <a href="javascript:void(0)" style="display:none" id="modalCtrl"></a>
     </div>
-    <div id = "history_list_vertical" style = "display:none;　height:auto !important; padding: 10px 20px 20px 20px;">
-      <div id = "history_body_vertical" style = "height:360px !important; width: 96.5%;">
-        <?=$this->element('ChatHistories/list')?>
-        <a href="javascript:void(0)" style="display:none" id="modalCtrl"></a>
-      </div>
-    </div>
+  </div>

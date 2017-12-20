@@ -119,7 +119,7 @@
       <?php
         if ($coreSettings[C_COMPANY_USE_CHAT]) :
         $checked = "";
-        $class = "";
+        $class = "checked";
         if (strcmp($groupByChatChecked, 'false') !== 0) {
           $class = "";
           $checked = "checked=\"\"";
@@ -137,8 +137,7 @@
     </div>
   </div>
   <div class="btnSet">
-       <span>
-         <a>
+       <span id = "outputCsv">
            <?= $this->Html->image('csv.png', array(
                'alt' => 'CSV出力',
                'id'=>'history_csv_btn',
@@ -147,16 +146,16 @@
                'data-balloon-position' => '36',
                'width' => 45,
                'height' => 45,
-               'onclick' => 'openAdd()',
-               'style' => 'margin-left: -17em;margin-top:6px;'
+               //'onclick' => 'selectedOutputCSV()',
+               'style' => 'margin-left: -17em;margin-top:6px;',
+               'url'=>array('controller'=>'ChatHistories','action'=>'outputCSVOfChat','1435')
            )) ?>
-         </a>
        </span>
        <span>
          <a>
            <?= $this->Html->image('dustbox.png', array(
                'alt' => '削除',
-               'id'=>' height:100%;ory_dustbox_btn',
+               'id'=>'history_dustbox_btn',
                'class' => 'btn-shadow disOffgrayBtn commontooltip',
                'data-text' => '削除する',
                'data-balloon-position' => '36',
@@ -166,8 +165,8 @@
        </span>
   </div>
 
-<div id = "list_body" style = "height:53em; overflow-y: auto; overflow-x: hidden;">
-  <table class = "scroll">
+<div id = "list_body" style = "overflow-y: auto; overflow-x: hidden;">
+  <table class = "scroll" id = "chatTable">
       <thead>
         <tr>
           <th width=" 3%"></th>
@@ -214,7 +213,12 @@
     $visitorsId = $history['THistory']['visitors_id'];
   }
   ?>
-          <tr ng-click="getOldChat('<?=h($history['THistory']['id'])?>', false)" onclick="openChatById('<?=h($history['THistory']['id'])?>')">
+            <?php
+            if ((isset($history['THistoryChatLog']['type']) && isset($data['History']['chat_type']) && isset($chatType) &&
+              $history['THistoryChatLog']['type'] === $chatType[$data['History']['chat_type']]) || empty($chatType)) {
+
+              if((!empty($campaignParam) && !empty($data['History']['campaign']) && $data['History']['campaign'] == $campaignParam) || empty($data['History']['campaign'])) { ?>
+          <tr ng-click="getOldChat('<?=h($history['THistory']['id'])?>', false)" class = "showBold">
               <td class="tCenter" onclick="event.stopPropagation();" width=" 3%">
                 <input type="checkbox" name="selectTab" id="selectTab<?=h($history['THistory']['id'])?>" value="<?=h($history['THistory']['id'])?>">
                 <label for="selectTab<?=h($history['THistory']['id'])?>"></label>
@@ -253,7 +257,7 @@
               </td>
               <td class="tLeft pre">{{ ui('<?=h($history['THistory']['ip_address'])?>', '<?=$visitorsId?>') }}</td>
               <td class="tCenter pre"><?=$campaignParam?></td>
-              <td class="pre" style = "font-size:11px;padding:8px 5px !important"><a href = "<?=h($history['FirstSpeechSendPage']['url'])?>" target = "landing"><?= $history['FirstSpeechSendPage']['title'] ?></a></td>
+              <td class="pre" style = "font-size:11px;padding:8px 5px !important"><a href = "<?=h($history['THistoryStayLog']['url'])?>" target = "landing"><?= $history['THistoryStayLog']['title'] ?></a></td>
               <td class="tCenter"><?php
                 if($history['THistoryChatLog']['eff'] == 0 || $history['THistoryChatLog']['cv'] == 0 ) {
                   if (isset($history['THistoryChatLog']['achievementFlg'])){
@@ -267,7 +271,8 @@
                 }
               ?></td>
           <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
-              <td class="tRight pre"><?=date_format(date_create($history['THistory']['access_date']), "Y/m/d\nH:i:s")?></td>
+              <td class="tRight pre"><?php if (!empty($history['NoticeChatTime']['NoticeChatTime'])){ ?><?=date_format(date_create($history['NoticeChatTime']['NoticeChatTime']), "Y/m/d\nH:i:s")?><?php } ?>
+              </td>
               <td class="tCenter"><?php
               if ($history['LastSpeechTime']['lastSpeechTime']
                 && $history['THistory']['access_date'] !== $history['THistory']['out_date']
@@ -278,6 +283,7 @@
               <td class="tCenter pre"><?php if (isset($chatUserList[$history['THistory']['id']])) { echo $chatUserList[$history['THistory']['id']]; } ?></td>
           <?php endif; ?>
           </tr>
+          <?php } } ?>
   <?php endforeach; ?>
       </tbody>
   </table>
@@ -322,7 +328,7 @@
         <li class="on" data-type="currentChat" style = "margin-left:-40px;">チャット内容</li>
         <li data-type="oldChat">過去のチャット</li>
       </ul>
-      <div id="chatContent" style = "width:100%; height:100% ">
+      <div id="chatContent" style = "width:100%; height: 47em !important;">
 
 
       <!-- 現在のチャット -->
@@ -331,26 +337,21 @@
           <message-list>
             <ng-create-message ng-repeat="chat in messageList | orderBy: 'sort'"></ng-create-message>
           </message-list>
-          <typing-message>
-          </typing-message>
         </ul>
       </section>
       <!-- 現在のチャット -->
 
       <!-- 過去のチャット -->
-      <section id="oldChat">
+      <section id="oldChat" style = "height:100%">
         <ul class="historyList">
-          <li ng-click="getOldChat(historyId, true)" ng-repeat="(historyId, firstDate) in chatLogList"><span>{{firstDate | date:'yyyy年M月d日（EEE）a hh時mm分ss秒' }}</span></li>
+          <li class = "pastChatShowBold" ng-click="getOldChat(historyId, true)" ng-repeat="(historyId, firstDate) in chatLogList"><span>{{firstDate | date:'yyyy年M月d日（EEE）a hh時mm分ss秒' }}</span></li>
         </ul>
-        <div class="chatList">
-          <ul>
-            <message-list class="chatView">
+          <ul class="chatView" id = "pastChatTalk" style = "height: 100%; max-height: 32.3em;">
+            <message-list>
               <message-list-descript>上から、表示したいチャット対応日時をクリックしてください</message-list-descript>
-              <ng-create-message ng-repeat="chat in chatLogMessageList | orderBy: 'sort'">
-              </ng-create-message>
+              <ng-create-message ng-repeat="chat in chatLogMessageList | orderBy: 'sort'"></ng-create-message>
             </message-list>
           </ul>
-        </div>
       </section>
       <!-- 過去のチャット -->
 
@@ -358,7 +359,15 @@
         </div>
         <div id="rightContents" style = "width:100% !important;">
         <div class = "form01 fRight">
+        <?php
+        $this->log('screenFLg!',LOG_DEBUG);
+        $this->log($screenFlg,LOG_DEBUG);
+        if($screenFlg == C_CHAT_HISTORY_SIDE) { ?>
           <ul class="switch" ng-init = "fillterTypeId = 2" style = "box-shadow:none;">
+        <?php }
+        if($screenFlg == C_CHAT_HISTORY_VERTICAL) { ?>
+          <ul class="switch" ng-init = "fillterTypeId = 1" style = "box-shadow:none;">
+        <?php } ?>
               <li id = "uuu" ng-class="{on:fillterTypeId===1}" ng-click="fillterTypeId = 1" style = "margin-top:0; width:6em !important;">
                 <span ng-if = "fillterTypeId == 1">
                  <?= $this->Html->link(
@@ -393,7 +402,7 @@
               </li>
             </ul>
         </div>
-          <div class="nowInfo card" style = "border-bottom: 1px solid #bfbfbf; width:100%; margin-top: 58px;">
+          <div class="nowInfo card" style = "border-bottom: 1px solid #bfbfbf; width:100%; margin-top: 25px;">
           <dl>
             <dt style = "text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">ユーザID</dt>
             <dd id = "visitorsId" style = "width: 30%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;"><?= $history['THistory']['visitors_id'] ?></dd>
@@ -426,8 +435,8 @@
             <span id = "landingPage"><?= $stayList[$history['THistory']['id']]['THistoryStayLog']['title'] ?></span></a></dd>
             <dt style = "text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">チャット送信ページ</dt>
             <dd id = "chatSending" style = "width: 70%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
-            <a href = "<?=h($history['FirstSpeechSendPage']['url'])?>" target = "landing">
-            <span id = "chatSendingPage"><?= $history['FirstSpeechSendPage']['title'] ?></span></a></dd>
+            <a href = "<?=h($history['THistoryStayLog']['url'])?>" target = "landing">
+            <span id = "chatSendingPage"><?= $history['THistoryStayLog']['title'] ?></span></a></dd>
             <dt style = "text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">離脱ページ</dt>
             <dd id = "separation" style = "width: 70%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
             <a href = "<?=h($history['LastSpeechSendPage']['url'])?>" target = "landing">
