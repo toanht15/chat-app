@@ -201,6 +201,10 @@ define('C_WIDGET_SIZE_TYPE_SMALL', 1); // 小
 define('C_WIDGET_SIZE_TYPE_MEDIUM', 2); // 中
 define('C_WIDGET_SIZE_TYPE_LARGE', 3); // 大
 
+// ファイル送信設定タイプ
+define('C_FILE_TRANSFER_SETTING_TYPE_BASIC', 1);
+define('C_FILE_TRANSFER_SETTING_TYPE_EXTEND', 2);
+
 /* カラー設定初期値styat */
 //0.通常設定・高度設定
 define('COLOR_SETTING_TYPE_OFF', 0);
@@ -523,5 +527,12 @@ $config['achievementType'] = [
   C_ACHIEVEMENT_CV => "CV",
   C_ACHIEVEMENT_UNAVAILABLE => "無効",
   C_ACHIEVEMENT_AVAILABLE => "有効"
+];
+
+/* ファイル送信設定 - ファイル送信許可設定 */
+/* 通常選択肢 */
+$config['fileTransferSettingType'] = [
+  C_FILE_TRANSFER_SETTING_TYPE_BASIC => "基本設定<br>　<s>※送信できるファイルはPDF（pdf）、PowerPoint（ppt, pptx）、JPEG（jpg）、PNG（png）、GIF（gif）に制限されます。</s>",
+  C_FILE_TRANSFER_SETTING_TYPE_EXTEND => "拡張設定<br>　<s>※基本設定で送信できるファイルに加えて、指定したファイルの種類を許可します。</s>"
 ];
 

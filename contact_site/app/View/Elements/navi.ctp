@@ -140,6 +140,11 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
         <div class="icon">
           <?= $this->htmlEx->naviLink('定型文', 'dictionary.png', ['href' => ['controller' => 'TDictionaries', 'action' => 'index']]) ?>
         </div>
+      <?php if ( $adminFlg ): ?>
+        <div class="icon">
+          <?= $this->htmlEx->naviLink('ファイル送信', 'dictionary.png', ['href' => ['controller' => 'MFileTransferSetting', 'action' => 'index']]) ?>
+        </div>
+      <?php endif; ?>
         <div class="icon">
           <?= $this->htmlEx->naviLink('チャット通知', 'notification.png', ['href' => ['controller' => 'MChatNotifications', 'action' => 'index']]) ?>
         </div>

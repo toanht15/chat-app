@@ -4101,6 +4101,57 @@ ul.naviBtn {
   }
 }
 
+/* ファイル送信設定 */
+#mfiletransfersetting_idx {
+  #mfiletransfersetting_content {
+    h3 {
+      border-bottom: 3px solid #C3D69B;
+      padding-left: 5px;
+      font-size: 13px;
+    }
+    ul {
+      li {
+        display: flex;
+        label {
+          cursor: pointer;
+          s {
+            margin-left: 0.8em;
+          }
+        }
+      }
+    }
+  }
+  #extension_setting_area {
+    padding-left: 5em;
+    height: 11em;
+    transition: height 200ms linear;
+    overflow: hidden;
+    s {
+      display: block;
+    }
+    textarea {
+      resize: none;
+      width:  30em;
+      height: 10em;
+    }
+    &.hidden {
+      height: 0;
+    }
+  }
+  #mtransfersetting_action {
+    padding: 10px;
+    clear: both;
+
+    a {
+      width: 100px;
+      padding: 10px;
+      display: block;
+      margin: 0 auto;
+      text-align: center;
+    }
+  }
+}
+
 /* キャンペーン　*/
 #tcampaigns_idx {
 
