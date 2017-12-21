@@ -454,7 +454,7 @@
         width: 50em;
 
         #popup-main {
-          #fileDropArea {
+          .upload-select-menu {
             width: 100%;
             background-color: #aeca74;
             border-radius: 5px;
@@ -470,7 +470,9 @@
             &:hover {
               background-color: #B8D47E;
             }
+          }
 
+          #fileDropArea {
             img {
               display: block;
               margin: 0 auto;
@@ -482,6 +484,19 @@
               margin-bottom: 2em;
             }
           }
+          #fileSelectArea {
+            margin-top: 1em;
+            height: 3em;
+            span {
+              display: block;
+              line-height: 1.7em;
+              height: 100%;
+              color: #FFF;
+              font-size: 1.5em;
+              margin-bottom: 2em;
+            }
+          }
+
           #fileUploadConfirmArea {
 
           }

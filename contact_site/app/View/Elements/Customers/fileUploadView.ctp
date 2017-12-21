@@ -15,6 +15,8 @@ App::uses('LandscapeCodeMapper', 'Vendor/Util/Landscape');
     }
 
     var droppable = $("#fileDropArea");
+    var selectFileBtn = $('#fileSelectArea');
+    var selectInput = $('#selectFileInput');
     var fileObj = null;
     var loadData = null;
 
@@ -33,6 +35,28 @@ App::uses('LandscapeCodeMapper', 'Vendor/Util/Landscape');
     // dragenter, dragover イベントのデフォルト処理をキャンセルします.
     droppable.on("dragenter", cancelEvent);
     droppable.on("dragover", cancelEvent);
+
+    selectFileBtn.on('click', function(event){
+      selectInput.trigger('click');
+    });
+
+    selectInput.on("click", function(event){
+      $(this).val(null);
+    }).on("change",function(event){
+      if(selectInput[0].files[0]) {
+        fileObj = selectInput[0].files[0];
+        // ファイルの内容は FileReader で読み込みます.
+        var fileReader = new FileReader();
+        fileReader.onload = function (event) {
+          // event.target.result に読み込んだファイルの内容が入っています.
+          // ドラッグ＆ドロップでファイルアップロードする場合は result の内容を Ajax でサーバに送信しましょう!
+          $('#fileUploadConfirmArea').html("【" + fileObj.name + "】をアップロードします。<br>よろしいですか？");
+          loadData = event.target.result;
+          toggleViewArea();
+        }
+        fileReader.readAsArrayBuffer(fileObj);
+      }
+    });
 
     // ドロップ時のイベントハンドラを設定します.
     var handleDroppedFile = function(event) {
@@ -68,11 +92,15 @@ App::uses('LandscapeCodeMapper', 'Vendor/Util/Landscape');
 </script>
 <div id="fileUploadPopupContent">
   <div id="fileUploadMenuArea">
-    <div id="fileDropArea">
+    <div class="upload-select-menu" id="fileDropArea">
       <?= $this->Html->image('file.png', array('alt' => 'CakePHP', 'width' => '250', 'height' => '250')); ?>
       <span>送信するファイルをここにドロップしてください</span>
+    </div>
+    <div class="upload-select-menu" id="fileSelectArea">
+      <span>ダイアログを表示してファイルを選択する</span>
     </div>
   </div>
   <div id="fileUploadConfirmArea" style="display:none;">
   </div>
+  <input type="file" id="selectFileInput" name="uploadFile" style="display:none "/>
 </div>
