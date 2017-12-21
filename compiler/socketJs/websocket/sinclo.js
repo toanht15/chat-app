@@ -1078,7 +1078,12 @@
           }
 
           if(key.indexOf('_') >= 0 && 'applied' in chat && chat.applied) continue;
-          this.chatApi.createMessage(cn, chat.message, userName);
+          if( Number(chat.messageType) === 6 ) {
+            // ファイル送信チャット表示
+            this.chatApi.createSendFileMessage(JSON.parse(chat.message), userName);
+          } else {
+            this.chatApi.createMessage(cn, chat.message, userName);
+          }
           this.chatApi.scDown();
         }
         else {
@@ -1170,6 +1175,12 @@
             // 別タブで送信されたオートメッセージは何もしない
             return false;
           }
+        }
+        if (obj.messageType === sinclo.chatApi.messageType.sendFile) {
+          sinclo.chatApi.call();
+          this.chatApi.createSendFileMessage(JSON.parse(obj.chatMessage), sincloInfo.widget.subTitle);
+          this.chatApi.scDown();
+          return false;
         }
 
         if (obj.messageType === sinclo.chatApi.messageType.sorry) {
@@ -1488,6 +1499,7 @@
             auto: 3,
             sorry: 4,
             autoSpeech: 5,
+            sendFile: 6,
             start: 98,
             end: 99
         },
@@ -1815,6 +1827,22 @@
 
             li.className = cs;
             li.innerHTML = content;
+        },
+        createSendFileMessage: function(data, cName) {
+          // kari
+          var chatList = document.getElementsByTagName('sinclo-chat')[0];
+          var div = document.createElement('div');
+          var li = document.createElement('li');
+          div.appendChild(li);
+          chatList.appendChild(div);
+          div.addEventListener('click', function(){
+            window.open(data.downloadUrl);
+          });
+          var content = "";
+          content += "<span class='cName'>" + cName + "</span>";
+          content += 'ファイルきたよ！<br>'+'ファイル名：'+data.fileName+'<br>サイズ：'+data.fileSize;
+          li.className = 'sinclo_re';
+          li.innerHTML = content;
         },
         createMessageUnread: function(cs, val, name){
             if ( cs === "sinclo_re" ) {

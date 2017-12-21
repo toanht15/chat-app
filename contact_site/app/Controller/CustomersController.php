@@ -646,4 +646,10 @@ class CustomersController extends AppController {
     $this->set('notificationList', $this->jsonEncode($settings));
   }
 
+  public function popupFileUploadElement() {
+    $this->autoRender = false;
+    $this->layout = "ajax";
+    $this->render('/Elements/Customers/fileUploadView');
+  }
+
 }

@@ -38,6 +38,10 @@
                 <chat-receiver>
                   <span id="receiveMessage">テストメッセージです</span>
                 </chat-receiver>
+                <upload-notification>
+                  <span class="message-area" id="uploadMessage">アップロード中... {{uploadProgress}}％</span>
+                  <span class="message-area" id="processingMessage">サーバー処理中です。</span>
+                </upload-notification>
               </ul>
               <chat-detail ng-class="{showOption: showAchievement()}">
                 <span>成果</span>
@@ -73,6 +77,7 @@
                       ])?>Enterキーで送信する</label>
                 </chat-menu-child>
                 <chat-menu-child id="chatMenu" class="p05tb" >
+                  <span class="greenBtn btn-shadow" onclick="chatApi.openFileUploadDialog()">ファイル送信</span>
                   <span class="greenBtn btn-shadow" onclick="chatApi.addOption(1)">選択肢を追加する</span>
                 </chat-menu-child>
               </chat-menu>
