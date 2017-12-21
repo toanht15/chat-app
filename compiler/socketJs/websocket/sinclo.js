@@ -2022,7 +2022,6 @@
                 var result = common.reconnectManual();
                 if(result) {
                   $("sinclo-chat-alert").css('display', 'none');
-                  storage.s.set('inactiveTimeout', false);
                 }
               });
             }, 90 * 60 * 1000);
