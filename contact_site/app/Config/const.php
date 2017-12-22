@@ -53,6 +53,7 @@ define('C_COMPANY_REF_COMPANY_DATA', 'refCompanyData'); // 企業情報参照（
 define('C_COMPANY_USE_FREE_INPUT', 'freeInput'); // 自由入力エリア
 define('C_COMPANY_USE_CV', 'cv'); // CV
 define('C_COMPANY_USE_AUTOMESSAGE_SEND_MAIL', 'autoMessageSendMail'); // メール送信（オートメッセージ）
+define('C_COMPANY_USE_SEND_FILE', 'sendFile'); // ファイル送信
 
 
 // 簡易メッセージ入力機能種別
