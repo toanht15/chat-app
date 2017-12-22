@@ -1840,7 +1840,7 @@
           });
           var content = "";
           content += "<span class='cName'>" + cName + "</span>";
-          content += 'ファイルきたよ！<br>'+'ファイル名：'+data.fileName+'<br>サイズ：'+data.fileSize;
+          content += 'ファイルきたよ！<br>'+'ファイル名：'+data.fileName+'<br>サイズ：'+common.formatBytes(data.fileSize, 2);
           li.className = 'sinclo_re';
           li.innerHTML = content;
         },

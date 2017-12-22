@@ -12,6 +12,7 @@ class FileController extends AppController
 
   const ENCRYPT_SECRET_KEY = "FoW3wLKXUB4HiCDC0fpIb63E066L03R57f3r6wwk3VyxTp3AGp68lBb7bghmRU80";
   const ENCRYPT_PARAM_DELIMITER = "@@";
+  const EXPIRE_SEC = 3600; // ここを変更する場合はS3のライフサイクル設定も見直すこと。
 
   const PARAM_FILE = "file";
   const PARAM_TARGET_USER_ID = "targetUserId";
@@ -23,7 +24,8 @@ class FileController extends AppController
   public $components = ['Amazon'];
 
   public function beforeFilter() {
-    $this->Auth->allow('download', 'upload');
+    parent::beforeFilter();
+    $this->Auth->allow('download');
   }
 
   public function upload() {
@@ -41,11 +43,14 @@ class FileController extends AppController
 
   public function download() {
     $this->autoRender = false;
-
+    $this->validateGetMethod();
     $param = $this->request->query(self::PARAM_PARAM);
     if(!empty($param)) {
       $decryptParameters = $this->decryptParameterForDownload($param);
-      // FIXME 有効期限チェック
+      if($this->isExpire($decryptParameters['created'])) {
+        $this->response->statusCode(404);
+        throw new NotFoundException('ファイルは削除されたか有効期限切れです。');
+      }
       $file = $this->getFileByFileId($decryptParameters['fileId']);
       $this->response->type($this->getExtension($file['record']['file_name']));
       $this->response->length($file['fileObj']['ContentLength']);
@@ -54,21 +59,21 @@ class FileController extends AppController
       $this->updateDownloadDataById($decryptParameters['fileId']);
     } else {
       $this->response->statusCode(400);
-      throw New Exception('指定のパラメータでのアクセスではありません。');
+      throw new BadRequestException('指定のパラメータでのアクセスではありません。');
     }
   }
 
   private function validatePostMethod() {
     if(!$this->request->is('post')) {
       $this->response->statusCode(405);
-      throw new InvalidArgumentException('許可されていないメソッドでリクエストされました。');
+      throw new MethodNotAllowedException('許可されていないメソッドでリクエストされました。');
     }
   }
 
   private function validateGetMethod() {
     if(!$this->request->is('get')) {
       $this->response->statusCode(405);
-      throw new InvalidArgumentException('許可されていないメソッドでリクエストされました。');
+      throw new MethodNotAllowedException('許可されていないメソッドでリクエストされました。');
     }
   }
 
@@ -110,7 +115,7 @@ class FileController extends AppController
       $this->TUploadTransferFile->create();
       $this->TUploadTransferFile->begin();
       $this->TUploadTransferFile->set([
-        'm_companies_id' => 1,//$this->userInfo['MCompany']['id'],
+        'm_companies_id' => $this->userInfo['MCompany']['id'],
         'saved_file_key' => $saveFileName,
         'file_path' => $filePath,
         'file_name' => $file['name'],
@@ -127,17 +132,26 @@ class FileController extends AppController
       $this->TUploadTransferFile->save();
       $this->TUploadTransferFile->commit();
       return json_encode([
-          'success' => true,
-          'downloadUrl' => $this->TUploadTransferFile->field('download_url'),
-          'fileName' => $file['name'],
-          'fileSize' => $file['size'],
-          'extension' => $this->getExtension($file['name'])
+        'success' => true,
+        'downloadUrl' => $this->TUploadTransferFile->field('download_url'),
+        'fileName' => $file['name'],
+        'fileSize' => $file['size'],
+        'extension' => $this->getExtension($file['name']),
+        'expired' => $this->getExpiredDatetime($created)
       ]);
     } catch(Exception $e) {
       $this->TUploadTransferFile->rollback();
       //FIXME レスポンスデータ
       throw $e;
     }
+  }
+
+  private function getExpiredDatetime($created) {
+    return date('Y-m-d H:i:s', strtotime($created) + self::EXPIRE_SEC);
+  }
+
+  private function isExpire($created) {
+    return (time() - strtotime($created)) >= self::EXPIRE_SEC;
   }
 
   private function createDownloadUrl($created, $fileId) {

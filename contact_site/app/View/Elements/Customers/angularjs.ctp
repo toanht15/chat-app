@@ -1190,41 +1190,112 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     // 【チャット】テキストの構築
     $scope.createTextOfMessage = function(chat, message, opt) {
-        var strings = message.split('\n');
-        var custom = "";
-        var linkReg = RegExp(/http(s)?:\/\/[!-~.a-z]*/);
-        var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
-        var radioName = "sinclo-radio" + Object.keys(chat).length;
-        var option = ( typeof(opt) !== 'object' ) ? { radio: true } : opt;
-        for (var i = 0; strings.length > i; i++) {
-            var str = escape_html(strings[i]);
-            // ラジオボタン
-            var radio = str.indexOf('[]');
-            if ( option.radio && radio > -1 ) {
-                var val = str.slice(radio+2);
-                str = "<input type='radio' name='" + radioName + "' id='" + radioName + "-" + i + "' class='sinclo-chat-radio' value='" + val + "' disabled=''>";
-                str += "<label class='pointer' for='" + radioName + "-" + i + "'>" + val + "</label>";
-            }
-            // リンク
-            var link = str.match(linkReg);
-            if ( link !== null ) {
-                var url = link[0];
-                var a = "<a href='" + url + "' target='_blank'>"  + url + "</a>";
-                str = str.replace(url, a);
-            }
-            // 電話番号（スマホのみリンク化）
-            var tel = str.match(telnoTagReg);
-            if( tel !== null ) {
-              var telno = tel[1];
-              // ただの文字列にする
-              var span = "<span class='telno'>" + telno + "</span>";
-              str = str.replace(tel[0], span);
-            }
-            custom += str + "\n";
-
+      var strings = message.split('\n');
+      var custom = "";
+      var linkReg = RegExp(/http(s)?:\/\/[!-~.a-z]*/);
+      var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
+      var radioName = "sinclo-radio" + Object.keys(chat).length;
+      var option = ( typeof(opt) !== 'object' ) ? { radio: true } : opt;
+      for (var i = 0; strings.length > i; i++) {
+        var str = escape_html(strings[i]);
+        // ラジオボタン
+        var radio = str.indexOf('[]');
+        if ( option.radio && radio > -1 ) {
+          var val = str.slice(radio+2);
+          str = "<input type='radio' name='" + radioName + "' id='" + radioName + "-" + i + "' class='sinclo-chat-radio' value='" + val + "' disabled=''>";
+          str += "<label class='pointer' for='" + radioName + "-" + i + "'>" + val + "</label>";
         }
-        return custom;
-      };
+        // リンク
+        var link = str.match(linkReg);
+        if ( link !== null ) {
+          var url = link[0];
+          var a = "<a href='" + url + "' target='_blank'>"  + url + "</a>";
+          str = str.replace(url, a);
+        }
+        // 電話番号（スマホのみリンク化）
+        var tel = str.match(telnoTagReg);
+        if( tel !== null ) {
+          var telno = tel[1];
+          // ただの文字列にする
+          var span = "<span class='telno'>" + telno + "</span>";
+          str = str.replace(tel[0], span);
+        }
+        custom += str + "\n";
+
+      }
+      return custom;
+    };
+
+    $scope.createTextOfSendFile = function(chat, url, name, size, extension, isExpired) {
+      var thumbnail = "";
+      if (extension.match(/(jpeg|jpg|gif|png)$/) != null && !isExpired) {
+        thumbnail = "<img src='" + url + "' class='sendFileThumbnail' width='64' height='64'>";
+      } else {
+        thumbnail = "<i class='fa " + selectFontIconClassFromExtension(extension) + " fa-4x sendFileThumbnail' aria-hidden='true'></i>";
+      }
+
+      var content = "<span class='cName'>ファイル送信" + (isExpired ? "（ダウンロード有効期限切れ）" : "") + "</span>";
+      content    += "<div class='sendFileContent'>";
+      content    += "  <div class='sendFileThumbnailArea'>" + thumbnail + "</div>";
+      content    += "  <div class='sendFileMetaArea'>";
+      content    += "    <span class='data sendFileName'>" + name + "</span>";
+      content    += "    <span class='data sendFileSize'>" + formatBytes(size,2) + "</span>";
+      content    += "  </div>";
+      content    += "</div>";
+
+      return content;
+    };
+
+    function selectFontIconClassFromExtension(ext) {
+      var selectedClass = "",
+        icons = {
+          image: 'fa-file-image-o',
+          pdf: 'fa-file-pdf-o',
+          word: 'fa-file-word-o',
+          powerpoint: 'fa-file-powerpoint-o',
+          excel: 'fa-file-excel-o',
+          audio: 'fa-file-audio-o',
+          video: 'fa-file-video-o',
+          zip: 'fa-file-zip-o',
+          code: 'fa-file-code-o',
+          text: 'fa-file-text-o',
+          file: 'fa-file-o'
+        },
+        extensions = {
+          gif: icons.image,
+          jpeg: icons.image,
+          jpg: icons.image,
+          png: icons.image,
+          pdf: icons.pdf,
+          doc: icons.word,
+          docx: icons.word,
+          ppt: icons.powerpoint,
+          pptx: icons.powerpoint,
+          xls: icons.excel,
+          xlsx: icons.excel,
+          aac: icons.audio,
+          mp3: icons.audio,
+          ogg: icons.audio,
+          avi: icons.video,
+          flv: icons.video,
+          mkv: icons.video,
+          mp4: icons.video,
+          gz: icons.zip,
+          zip: icons.zip,
+          css: icons.code,
+          html: icons.code,
+          js: icons.code,
+          txt: icons.text,
+          csv: icons.csv,
+          file: icons.file
+        };
+      if(isset(extensions[ext])) {
+        selectedClass = extensions[ext]
+      } else {
+        selectedClass = extensions['file'];
+      }
+      return selectedClass;
+    }
 
     // 【チャット】チャット枠の構築
     $scope.createMessage = function(elem, chat){
@@ -1255,8 +1326,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         if ( Number(widget.showName) === <?=C_WIDGET_SHOW_NAME?> ) {
           chatName = userList[Number(userId)];
         }
-        content = "<span class='cName'>" + chatName + "</span>";
-        content += $scope.createTextOfMessage(chat, message);
+
+        content = $scope.createTextOfMessage(chat, message);
       }
       else if ( type === chatApi.messageType.auto || type === chatApi.messageType.sorry) {
         cn = "sinclo_auto";
@@ -1273,6 +1344,23 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         div.style.padding = '0';
         content = "<span class='cName'>自動返信</span>";
         content += $scope.createTextOfMessage(chat, message);
+      }
+      else if ( type === chatApi.messageType.sendFile ) {
+        // ファイル送信はmessageがJSONなのでparseする
+        message = JSON.parse(message);
+        cn = "sinclo_se";
+        div.style.textAlign = 'right';
+        div.style.height = 'auto';
+        div.style.padding = '0';
+//        var chatName = widget.subTitle;
+//        if ( Number(widget.showName) === <?//=C_WIDGET_SHOW_NAME?>// ) {
+//          chatName = userList[Number(userId)];
+//        }
+        var isExpired = Math.floor((new Date()).getTime() / 1000) >=  (Date.parse( message.expired.replace( /-/g, '/') ) / 1000);
+        content = $scope.createTextOfSendFile(chat, message.downloadUrl, message.fileName, message.fileSize, message.extension, isExpired);
+        if(!isExpired) {
+          li.addEventListener("click", function(event){window.open(message.downloadUrl)});
+        }
       }
       else  {
         cn = "sinclo_etc";

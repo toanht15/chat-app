@@ -53,7 +53,7 @@ App::uses('LandscapeCodeMapper', 'Vendor/Util/Landscape');
           $('#fileUploadConfirmArea').html("【" + fileObj.name + "】をアップロードします。<br>よろしいですか？");
           loadData = event.target.result;
           toggleViewArea();
-        }
+        };
         fileReader.readAsArrayBuffer(fileObj);
       }
     });

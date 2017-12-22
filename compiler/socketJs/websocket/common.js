@@ -121,6 +121,9 @@ var socket, // socket.io
       if ( d === undefined ) return d;
       return JSON.parse(d);
     },
+    // バイト表示をKB, MB, GBに変更する
+    // https://stackoverflow.com/questions/15900485/correct-way-to-convert-size-in-bytes-to-kb-mb-gb-in-javascript
+    formatBytes : function(a,b){if(0==a)return"0 Bytes";var c=1024,d=b||2,e=["Bytes","KB","MB","GB","TB","PB","EB","ZB","YB"],f=Math.floor(Math.log(a)/Math.log(c));return parseFloat((a/Math.pow(c,f)).toFixed(d))+" "+e[f]},
     createWidget: function(){
       var widget = window.sincloInfo.widget, displaySet = "";
       var css = this.widgetCssTemplate(widget),
