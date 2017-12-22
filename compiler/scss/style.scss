@@ -2892,6 +2892,25 @@ ul.naviBtn {
     border-left: 1px solid #bfbfbf;
     font-size:11.6px;
 
+    .form01 {
+      display: flex;
+      flex-direction: row;
+      top:10px;
+
+      ul {
+        padding: 0;
+        margin: 2px 2px 4px 0;
+        height: 38px;
+
+        li {
+          margin: 0;
+          padding: 0.3em 0.5em 0.2em 1em;
+          text-align: center!important;
+          border-right: none;
+        }
+      }
+    }
+
     .detailForm {
       ul {
         display: inline-block;
@@ -2901,20 +2920,21 @@ ul.naviBtn {
         li {
           margin: 0.25em 0;
           label {
-            width: 20%;
+            width: 13.7em;
             display: block;
             float: left;
             clear: both;
-            padding: 0.25em 0.5em;
+            padding: 0.25em 0.8em;
           }
           input {
-            width: 44%;
+            width: 60%;
             padding: 0.25em 0.5em;
           }
           textarea {
-            width: 65%;
+            width: 98%;
             resize: none;
             margin-top: 0.5em;
+            margin-left: 0.7em;
           }
         }
       }
@@ -2924,14 +2944,24 @@ ul.naviBtn {
       border-bottom: 1px solid #bfbfbf;
 
       dt {
-        width: 19%;
+        width: 13em;
         margin: 0 0 0 24px;
         float: left;
+        text-overflow:
+        ellipsis;
+        overflow:
+        hidden;
+        white-space:
+        nowrap;
       }
       dd {
         margin: 0;
         height: 1.6em;
         font-weight: bold;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        height: auto;
       }
       /*@include dl2column;*/
 
@@ -2973,14 +3003,23 @@ ul.naviBtn {
       border-bottom: 1px solid #bfbfbf;
       /*@include dl2column;*/
       dt {
-        width: 19%;
+        width: 13em;
         margin: 0 0 0 24px;
         float: left;
+        text-overflow:
+        ellipsis;
+        overflow:
+        hidden;
+        white-space: nowrap;
       }
       dd {
         margin: 0;
         height: 1.6em;
         font-weight: bold;
+        text-overflow:
+        ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
       }
     }
   }
@@ -3067,7 +3106,7 @@ ul.naviBtn {
       display: block;
       position: relative;
       padding: 1px 0 15px 20px;
-      margin-top: 45px;
+      /*margin-top: 45px;*/
 
       #g_chat {
         position: absolute;
@@ -3132,12 +3171,14 @@ ul.naviBtn {
 
   #list_header {
     position: absolute;
+    z-index: 3;
     left: 0;
     right: 0;
-    top: 0;
-    margin: 126px 15px 20px 0px;
-    z-index: 3;
-    padding:0 20px;
+    margin: 0px 20px 0px 20px;
+  }
+
+  .scroll {
+    width:100%;
   }
 
   #list_body {
@@ -3255,7 +3296,7 @@ ul.naviBtn {
       width: 16em;
       height: 2.1em;
       display: none;
-      top: -10.7em;
+      top: -5.5em;
       left: -1.3em;
       position: absolute;
 
@@ -3316,7 +3357,7 @@ ul.naviBtn {
       width: 16em;
       height: 2.1em;
       display: none;
-      top: -10.8em;
+      top: -5.5em;
       left: -1.3em;
       position: absolute;
 

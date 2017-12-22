@@ -1,388 +1,316 @@
-(function (factory) {
-  if(typeof module === "object" && typeof module.exports === "object") {
-    module.exports = factory(require("jquery"), window, document);
-  } else {
-    factory(jQuery, window, document);
-  }
-}(function($, window, document, undefined) {
-	function SplitterManager() {
-		var splitters = [],
-			current = null,
-			bgColor = null,
-			dragObj = null,
-			overlay = null;
+/*!
+ * JQuery Spliter Plugin version 0.24.0
+ * Copyright (C) 2010-2016 Jakub Jankiewicz <http://jcubic.pl>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+(function($, undefined) {
+    var count = 0;
+    var splitter_id = null;
+    var splitters = [];
+    var current_splitter = null;
+    $.fn.split = function(options) {
+        var data = this.data('splitter');
+        if (data) {
+            return data;
+        }
+        var panel_1;
+        var panel_2;
+        var settings = $.extend({
+            limit: 100,
+            orientation: 'horizontal',
+            position: '50%',
+            invisible: false,
+            onDragStart: $.noop,
+            onDragEnd: $.noop,
+            onDrag: $.noop
+        }, options || {});
+        this.settings = settings;
+        var cls;
+        var children = this.children();
+        if (settings.orientation == 'vertical') {
+            panel_1 = children.first().addClass('left_panel');
+            panel_2 = panel_1.next().addClass('right_panel');
+            cls = 'vsplitter';
+        } else if (settings.orientation == 'horizontal') {
+            console.log('こっこまではいってるですね4');
+            panel_1 = children.first().addClass('top_panel');
+            panel_2 = panel_1.next().addClass('bottom_panel');
+            cls = 'hsplitter';
+        }
+        if (settings.invisible) {
+            cls += ' splitter-invisible';
+        }
+        var width = this.width();
+        var height = this.height();
+        var id = count++;
+        this.addClass('splitter_panel');
+        var splitter = $('<div/>').addClass(cls).bind('mouseenter touchstart', function() {
+            splitter_id = id;
+        }).bind('mouseleave touchend', function() {
+            splitter_id = null;
+        }).insertAfter(panel_1);
+        var position;
 
-		function doResize(current, ev) {
-			var parent = current.parent;
-			var div1 = current.div1;
-			var div2 = current.div2;
-			var horizontal = current.orientation() == "horizontal";
-			var rbSize = 0;
-			if (current.resizebar) {
-				rbSize = horizontal ? current.resizebar.outerWidth(true) : current.resizebar.outerHeight(true);
-			}
-			var keepLeft = current.keepLeft();
+        function get_position(position) {
+            if (typeof position === 'number') {
+                return position;
+            } else if (typeof position === 'string') {
+                var match = position.match(/^([0-9\.]+)(px|%)$/);
+                if (match) {
+                    if (match[2] == 'px') {
+                        return +match[1];
+                    } else {
+                        if (settings.orientation == 'vertical') {
+                            return (width * +match[1]) / 100;
+                        } else if (settings.orientation == 'horizontal') {
+                            return (height * +match[1]) / 100;
+                        }
+                    }
+                } else {
+                    //throw position + ' is invalid value';
+                }
+            } else {
+                //throw 'position have invalid type';
+            }
+        }
 
-			if (horizontal) {
-				var cw = parent.width();
-				var l, r;
-				if (keepLeft) {
-					l = div1.outerWidth(true);
-					if (l > cw) {
-						l = cw;
-					}
-					r = cw - l - rbSize;
-					if (r < 0) {
-						r = 0;
-					}
-				} else {
-					r = div2.outerWidth(true);
-					if (r > cw) {
-						r = cw;
-					}
-					l = cw - r - rbSize;
-					if (l < 0) {
-						l = 0;
-					}
-				}
-				current.position(l);
-			} else {
-				var ch = parent.height();
-				var t, b;
-				if (keepLeft) {
-					t = div1.outerHeight(true);
-					if (t > ch) {
-						t = ch;
-					}
-					b = ch - t - rbSize;
-					if (b < 0) {
-						b = 0;
-					}
-				} else {
-					b = div2.outerHeight(true);
-					if (b > ch) {
-						b = ch;
-					}
-					t = ch - b - rbSize;
-					if (t < 0) {
-						t = 0;
-					}
-				}
-				current.position(t);
-			}
-			if (current.windowResized()) {
-				curent.windowResized()(ev);
-			}
-		}
-
-		$(document.documentElement).mousedown(function(ev) {
-			var buttonState = typeof(ev.buttons) === "undefined" ? ev.which : ev.buttons;
-			if (buttonState !== 1) {
-				return;
-			}
-			dragObj = current;
-			if (dragObj) {
-				bgColor = dragObj.resizebar.css("background-color");
-				dragObj.resizebar.css("background-color", '#696969');
-				var $body = $('body');
-				$body.css('cursor', dragObj.resizebar.css("cursor"));
-				if (!overlay) {
-					overlay = $("<div class='splitter-overlay'/>").css({
-						position: "absolute",
-						width: "100%",
-						height: "100%",
-						left: 0,
-						top: 0,
-						"z-index": 9999
-					});
-				}
-				$body.append(overlay);
-				return false;
-			}
-		}).mouseup(function() {
-			if (dragObj) {
-				dragObj.resizebar.css("background-color", bgColor);
-				$('body').css('cursor', 'auto');
-			}
-			if (overlay) {
-				overlay.remove();
-				overlay = null;
-			}
-			dragObj = null;
-		}).mousemove(function(ev) {
-			if (!dragObj) {
-				return;
-			}
-			var buttonState = typeof(ev.buttons) === "undefined" ? ev.which : ev.buttons;
-			if (!buttonState) {
-				dragObj = null;
-				return;
-			}
-			var horizontal = dragObj.orientation() == "horizontal";
-			if (horizontal) {
-				var pw = dragObj.parent.width();
-				var x = ev.clientX - dragObj.parent.offset().left;
-				if (x < 0) {
-					x = 0;
-				} else if (x > pw) {
-					x = pw;
-				}
-				dragObj.position(x);
-			} else {
-				var ph = dragObj.parent.height();
-				var y = ev.clientY - dragObj.parent.offset().top;
-				if (y < 0) {
-					y = 0;
-				} else if (y > ph) {
-					y = ph;
-				}
-				dragObj.position(y);
-			}
-			if (dragObj.paneResized()) {
-				dragObj.paneResized()(ev);
-			}
-			for (var i=0; i<splitters.length; i++) {
-				var pane = splitters[i];
-				if (pane != current) {
-					doResize(pane, ev);
-				}
-			}
-		});
-
-		$(window).resize(function(ev){
-			for (var i=0; i<splitters.length; i++) {
-				doResize(splitters[i], ev);
-			}
-		});
-		function setCurrent(c) {
-			current = c;
-		}
-		function add(splitter) {
-			splitters.push(splitter);
-		}
-		function release(splitter) {
-			var idx = -1;
-			for (var i=0; i<splitters.length; i++) {
-				if (splitters[i] == splitter) {
-					idx = i;
-					break;
-				}
-			}
-			if (idx >= 0) {
-				splitters.splice(idx, 1);
-			}
-		}
-		$.extend(this, {
-			"size": function() {
-				return splitters.length;
-			},
-			"setCurrent" : setCurrent,
-			"add" : add,
-			"release" : release
-		});
-	}
-	/**
-	 * The splitter for element
-	 * @param parrent - parent element
-	 * @param div1 - The element which placed in above or left in parent element
-	 * @param div1 - The element which placed in below or right in parent element
-	 * @param horizontal - If true, this makes horizontal split, or vertical split.
-	 */
-	function Splitter(parent, div1, div2, horizontal, barwidth) {
-		console.log('check');
-		console.log(horizontal);
-		if (!manager) {
-			manager = new SplitterManager();
-		}
-		manager.add(this);
-		var self = this,
-			keepLeft = true,
-			limit = 0,
-			paneResized = null,
-			windowResized = null,
-			parent = $(parent),
-			div1 = $(div1),
-			div2 = $(div2),
-			resizebar = $("<div class='splitter-resizebar' id = 'check'></div>").appendTo(parent);
-		resizebar.addClass("splitter-" + manager.size);
-		resizebar.css({
-			"background-color" : "#a9a9a9",
-			"position" : "absolute",
-			"z-index" : 20,
-			"overflow" : "hidden"
-		}).mouseenter(function() {
-			manager.setCurrent(self);
-		}).mouseleave(function() {
-			manager.setCurrent(null);
-		});
-		if (horizontal) {
-			console.log('縦に変更');
-			var w1 = div1.outerWidth(true);
-			var w2 = parent.width() - w1;
-			div1.css({
-				"position" : "absolute",
-				"overflow-x" : "auto",
-				"left" : 0,
-				"width" : w1
-			});
-			resizebar.css({
-				"left" : w1,
-				"width" : barwidth,
-				"height" : "100%",
-				"cursor" : "col-resize"
-			});
-			var w3 = resizebar.outerWidth(true);
-			div2.css({
-				"position" : "absolute",
-				"overflow-x" : "auto",
-				"right" : 0,
-				"width" : w2 - w3
-			});
-			console.log(div1);
-			console.log(div2);
-		} else {
-			var h1 = div1.outerHeight(true);
-			var h2 = div2.outerHeight(true);
-			div1.css({
-				"position" : "absolute",
-				"overflow-y" : "auto",
-				"top" : 0,
-				"height" : h1
-			});
-			resizebar.css({
-				"top" : h1,
-				"width" : "100%",
-				"height" : barwidth,
-				"cursor" : "row-resize"
-			});
-			var h3 = resizebar.outerHeight(true);
-			div2.css({
-				"position" : "absolute",
-				"overflow-y" : "auto",
-				"bottom" : 0,
-				"height" : h2 - h3
-			});
-		}
-		$.extend(this, {
-			"parent" : parent,
-			"div1" : div1,
-			"div2" : div2,
-			"resizebar" : resizebar,
-			"orientation" : function() {
-				var cursor = self.resizebar.css("cursor").toLowerCase();
-				return cursor == "col-resize" ? "horizontal" : "vertical";
-			},
-			"paneResized" : function(func) {
-				if (func === undefined) {
-					return paneResized;
-				} else {
-					paneResized = func;
-					return self;
-				}
-			},
-			"windowResized" : function(func) {
-				if (func === undefined) {
-					return windowResized;
-				} else {
-					windowResized = func;
-					return self;
-				}
-			},
-			"keepLeft" : function(b) {
-				if (b === undefined) {
-					return keepLeft;
-				} else {
-					keepLeft = b;
-					return self;
-				}
-			},
-			"limit" : function(n) {
-				if (n === undefined) {
-					return limit;
-				} else {
-					limit = n;
-					return self;
-				}
-			},
-			"position" : function(n) {
-				if (self.orientation() == "horizontal") {
-					if (n === undefined) {
-						return resizebar.css("left");
-					} else {
-						var low = limit;
-						var high = parent.width() - limit;
-						if (n < low) {
-							n = low;
-						} else if (n > high) {
-							n = high;
-						}
-						resizebar.css("left", n + 30);
-						div1.css("width", n);
-						div2.css("width", parent.width() - resizebar.outerWidth(true) - n);
-					}
-				} else {
-					if (n === undefined) {
-						return resizebar.css("top");
-					} else {
-						var low = limit;
-						var high = parent.height() - limit;
-						if (n < low) {
-							n = low;
-						} else if (n > high) {
-							n = high;
-						}
-						resizebar.css("top", n);
-						div1.css("height", n);
-						div2.css("height", parent.height() - resizebar.outerHeight(true) - n + 40);
-					}
-				}
-				return self;
-			},
-			"release" : function() {
-				manager.release(self);
-				return self;
-			}
-		});
-	}
-	var manager = null;
-
-	$.fn.splitter = function(options) {
-		var div1 = this.children().first();
-		var div2 = div1.next();
-		var settings = {
-			"div1" : div1,
-			"div2" : div2,
-			"orientation" : "horizontal",
-			"limit" : 0,
-			"keepLeft" : true,
-			"paneResized" : null,
-			"windowResized" : null,
-			"barwidth": 4
-		};
-		if (options) {
-			$.extend(settings, options);
-		}
-		if (settings.orientation === "horizontal") {
-			this.css("width", "100%");
-			if (div1.width() === this.width()) {
-				div1.css("width", Math.floor(this.width() / 10 * 3));
-			}
-		} else {
-			this.css("height", "100%");
-			var h1 = div1.height();
-			if (h1 < (this.height() / 10) || settings.limit > 0 && h1 < settings.limit) {
-				h1 = settings.limit || 200;
-				div1.css("height", settings.limit || 200);
-			}
-			div2.css("height", this.height() - h1 + 40);
-		}
-		var splitter = new Splitter(this, settings.div1, settings.div2, settings.orientation == "horizontal", settings.barwidth);
-		splitter.limit(settings.limit);
-		splitter.keepLeft(settings.keepLeft);
-		console.log('pageResize3');
-		console.log(settings.paneResized);
-		splitter.paneResized(settings.paneResized);
-		splitter.windowResized(settings.windowResized);
-		return splitter;
-	}
-}));
+        var self = $.extend(this, {
+            refresh: function() {
+                var new_width = this.width();
+                var new_height = this.height();
+                if (width != new_width || height != new_height) {
+                    width = this.width();
+                    height = this.height();
+                    self.position(position);
+                }
+            },
+            position: (function() {
+                if (settings.orientation == 'vertical') {
+                    return function(n, silent) {
+                        if (n === undefined) {
+                            return position;
+                        } else {
+                            position = get_position(n);
+                            var sw = splitter.width();
+                            var sw2 = sw/2, pw;
+                            if (settings.invisible) {
+                                pw = panel_1.width(position).outerWidth();
+                                panel_2.width(self.width()-pw);
+                                splitter.css('left', pw-sw2);
+                            } else {
+                                pw = panel_1.width(position-sw2).outerWidth();
+                                panel_2.width(self.width()-pw-sw);
+                                splitter.css('left', pw);
+                            }
+                            panel_1.find('.splitter_panel').eq(0).height(self.height());
+                            panel_2.find('.splitter_panel').eq(0).height(self.height());
+                        }
+                        if (!silent) {
+                            self.trigger('splitter.resize');
+                            self.find('.splitter_panel').trigger('splitter.resize');
+                        }
+                        return self;
+                    };
+                } else if (settings.orientation == 'horizontal') {
+                    return function(n, silent) {
+                        if (n === undefined) {
+                            return position;
+                        } else {
+                            position = get_position(n);
+                            var sw = splitter.height();
+                            var sw2 = sw/2, pw;
+                            if (settings.invisible) {
+                                pw = panel_1.height(position).outerHeight();
+                                panel_2.height(self.height()-pw);
+                                splitter.css('top', pw-sw2);
+                            } else {
+                                pw = panel_1.height(position-sw2).outerHeight();
+                                panel_2.height(self.height()-pw-sw);
+                                splitter.css('top', pw);
+                            }
+                        }
+                        if (!silent) {
+                            self.trigger('splitter.resize');
+                            self.find('.splitter_panel').trigger('splitter.resize');
+                        }
+                        return self;
+                    };
+                } else {
+                    return $.noop;
+                }
+            })(),
+            orientation: settings.orientation,
+            limit: settings.limit,
+            isActive: function() {
+                return splitter_id === id;
+            },
+            destroy: function() {
+                self.removeClass('splitter_panel');
+                splitter.unbind('mouseenter');
+                splitter.unbind('mouseleave');
+                splitter.unbind('touchstart');
+                splitter.unbind('touchmove');
+                splitter.unbind('touchend');
+                splitter.unbind('touchleave');
+                splitter.unbind('touchcancel');
+                if (settings.orientation == 'vertical') {
+                    panel_1.removeClass('left_panel');
+                    panel_2.removeClass('right_panel');
+                } else if (settings.orientation == 'horizontal') {
+                    panel_1.removeClass('top_panel');
+                    panel_2.removeClass('bottom_panel');
+                }
+                self.unbind('splitter.resize');
+                self.trigger('splitter.resize');
+                self.find('.splitter_panel').trigger('splitter.resize');
+                splitters[id] = null;
+                count--;
+                splitter.remove();
+                self.removeData('splitter');
+                var not_null = false;
+                for (var i=splitters.length; i--;) {
+                    if (splitters[i] !== null) {
+                        not_null = true;
+                        break;
+                    }
+                }
+                //remove document events when no splitters
+                if (!not_null) {
+                    $(document.documentElement).unbind('.splitter');
+                    $(window).unbind('resize.splitter');
+                    splitters = [];
+                    count = 0;
+                }
+            }
+        });
+        self.bind('splitter.resize', function(e) {
+            var pos = self.position();
+            if (self.orientation == 'vertical' &&
+                pos > self.width()) {
+                pos = self.width() - self.limit-1;
+            } else if (self.orientation == 'horizontal' &&
+                       pos > self.height()) {
+                pos = self.height() - self.limit-1;
+            }
+            if (pos < self.limit) {
+                pos = self.limit + 1;
+            }
+            e.stopPropagation();
+            self.position(pos, true);
+        });
+        //inital position of splitter
+        var pos;
+        if (settings.orientation == 'vertical') {
+            if (pos > width-settings.limit) {
+                pos = width-settings.limit;
+            } else {
+                pos = get_position(settings.position);
+            }
+        } else if (settings.orientation == 'horizontal') {
+            //position = height/2;
+            if (pos > height-settings.limit) {
+                pos = height-settings.limit;
+            } else {
+                pos = get_position(settings.position);
+            }
+        }
+        if (pos < settings.limit) {
+            pos = settings.limit;
+        }
+        self.position(pos, true);
+    var parent = this.closest('.splitter_panel');
+        if (parent.length) {
+            this.height(parent.height());
+        }
+        // bind events to document if no splitters
+        if (splitters.filter(Boolean).length === 0) {
+            $(window).bind('resize.splitter', function() {
+                $.each(splitters, function(i, splitter) {
+                    if (splitter) {
+                        splitter.refresh();
+                    }
+                });
+            });
+            $(document.documentElement).on('mousedown.splitter touchstart.splitter', function(e) {
+                if (splitter_id !== null) {
+                    e.preventDefault();
+                    current_splitter = splitters[splitter_id];
+                    setTimeout(function() {
+                        $('<div class="splitterMask"></div>').
+                            css('cursor', current_splitter.children().eq(1).css('cursor')).
+                            insertAfter(current_splitter);
+                    });
+                    current_splitter.settings.onDragStart(e);
+                }
+            }).bind('mouseup.splitter touchend.splitter touchleave.splitter touchcancel.splitter', function(e) {
+                if (current_splitter) {
+                    setTimeout(function() {
+                        $('.splitterMask').remove();
+                    });
+                    current_splitter.settings.onDragEnd(e);
+                    current_splitter = null;
+                }
+            }).bind('mousemove.splitter touchmove.splitter', function(e) {
+                if (current_splitter !== null) {
+                    var limit = current_splitter.limit;
+                    var offset = current_splitter.offset();
+                    if (current_splitter.orientation == 'vertical') {
+                        var pageX = e.pageX;
+                        if(e.originalEvent && e.originalEvent.changedTouches){
+                          pageX = e.originalEvent.changedTouches[0].pageX;
+                        }
+                        var x = pageX - offset.left;
+                        if (x <= current_splitter.limit) {
+                            x = current_splitter.limit + 1;
+                        } else if (x >= current_splitter.width() - limit) {
+                            x = current_splitter.width() - limit - 1;
+                        }
+                        if (x > current_splitter.limit &&
+                            x < current_splitter.width()-limit) {
+                            current_splitter.position(x, true);
+                            current_splitter.trigger('splitter.resize');
+                            current_splitter.find('.splitter_panel').
+                                trigger('splitter.resize');
+                            //e.preventDefault();
+                        }
+                    } else if (current_splitter.orientation == 'horizontal') {
+                        var pageY = e.pageY;
+                        if(e.originalEvent && e.originalEvent.changedTouches){
+                          pageY = e.originalEvent.changedTouches[0].pageY;
+                        }
+                        var y = pageY-offset.top;
+                        if (y <= current_splitter.limit) {
+                            y = current_splitter.limit + 1;
+                        } else if (y >= current_splitter.height() - limit) {
+                            y = current_splitter.height() - limit - 1;
+                        }
+                        if (y > current_splitter.limit &&
+                            y < current_splitter.height()-limit) {
+                            current_splitter.position(y, true);
+                            current_splitter.trigger('splitter.resize');
+                            current_splitter.find('.splitter_panel').
+                                trigger('splitter.resize');
+                            //e.preventDefault();
+                        }
+                    }
+                    current_splitter.settings.onDrag(e);
+                }
+            });//*/
+        }
+        splitters[id] = self;
+        self.data('splitter', self);
+        return self;
+    };
+})(jQuery);

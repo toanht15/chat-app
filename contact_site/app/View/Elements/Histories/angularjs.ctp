@@ -35,6 +35,9 @@
 
   <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
     angular.element('label[for="g_chat"]').on('change', function(e){
+      console.log('true or false');
+      console.log(e.target.checked);
+      //e.target.checked = 'true';
       var url = "<?=$this->Html->url(['controller' => 'Histories', 'action'=>'index'])?>?isChat=" + e.target.checked;
       location.href = url;
     });
