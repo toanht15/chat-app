@@ -784,14 +784,10 @@ io.sockets.on('connection', function (socket) {
             insertData.message_request_flg = chatApi.cnst.requestFlg.noFlg;
             insertData.message_distinction = d.messageDistinction;
           } else if(Number(insertData.message_type)  === 1 && d.hasOwnProperty('notifyToCompany') && !d.notifyToCompany) {
-            console.log('通知しないよー');
           // サイト訪問者からのチャットで通知しない場合は既読にする
             insertData.message_read_flg = 1;
             insertData.message_distinction = d.messageDistinction;
           }
-          console.log('怪しいやつ');
-          console.log(d.notifyToCompany);
-          console.log(!d.notifyToCompany);
 
           pool.query('INSERT INTO t_history_chat_logs SET ?', insertData, function(error,results,fields){
             if ( !isset(error) ) {
@@ -2495,8 +2491,6 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   // オートチャット
   socket.on("sendAutoChat", function(d){
     var obj = JSON.parse(d);
-    console.log('オートチャット情報チェック');
-    console.log(obj);
     //応対数検索、登録
     getConversationCountUser(obj.userId,function(results) {
       var messageDistinction;

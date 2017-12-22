@@ -72,8 +72,6 @@ class HistoriesController extends AppController {
       $this->Session->write('authenticity',$this->params->query['isChat']);
     }
     $isChat = $this->Session->read('authenticity');
-    $this->log('isChat',LOG_DEBUG);
-    $this->log($isChat,LOG_DEBUG);
     $this->_searchProcessing(3);
     // 成果の名称リスト
     $this->set('achievementType', Configure::read('achievementType'));
@@ -176,8 +174,6 @@ class HistoriesController extends AppController {
     $permissionLevel = $this->userInfo['permission_level'];
     $this->set('THistoryChatLog', $ret);
     $this->set('permissionLevel',$permissionLevel);
-    $this->log('ほんまチェックやで',LOG_DEBUG);
-    $this->log($ret,LOG_DEBUG);
     return $this->render('/Elements/Histories/remoteGetChatLogs');
   }
 
@@ -583,8 +579,6 @@ class HistoriesController extends AppController {
     if (empty($id)) return false;
     $name = "sinclo-chat-history";
     $ret = $this->_getChatLog($id);
-    $this->log('ret',LOG_DEBUG);
-    $this->log($ret,LOG_DEBUG);
 
     // ヘッダー
     $csv[] = [
@@ -622,8 +616,6 @@ class HistoriesController extends AppController {
           break;
       }
       $csv[] = $row;
-      $this->log('outputcsv前',LOG_DEBUG);
-      $this->log($csv,LOG_DEBUG);
     }
     $this->_outputCSV($name, $csv);
   }
@@ -654,10 +646,6 @@ class HistoriesController extends AppController {
 
     //Content-Typeを指定
     $this->response->type('csv');
-
-
-     $this->log('CSV終了前！',LOG_DEBUG);
-     $this->log($csv,LOG_DEBUG);
 
     //CSVをエクセルで開くことを想定して文字コードをSJIS-win
     $csv = mb_convert_encoding($csv,'SJIS-win','utf8');
@@ -777,8 +765,6 @@ class HistoriesController extends AppController {
   }
 
   private function _setList($type=true){
-    $this->log('setTYPE',LOG_DEBUG);
-    $this->log($type,LOG_DEBUG);
     $data = '';
     $userCond = [
       'm_companies_id' => $this->userInfo['MCompany']['id']
