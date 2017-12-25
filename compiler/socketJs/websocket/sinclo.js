@@ -1829,20 +1829,96 @@
             li.innerHTML = content;
         },
         createSendFileMessage: function(data, cName) {
-          // kari
           var chatList = document.getElementsByTagName('sinclo-chat')[0];
           var div = document.createElement('div');
           var li = document.createElement('li');
+          var thumbnail = "";
+          var isExpired = Math.floor((new Date()).getTime() / 1000) >=  (Date.parse( data.expired.replace( /-/g, '/') ) / 1000);
+
           div.appendChild(li);
           chatList.appendChild(div);
-          div.addEventListener('click', function(){
-            window.open(data.downloadUrl);
-          });
-          var content = "";
-          content += "<span class='cName'>" + cName + "</span>";
-          content += 'ファイルきたよ！<br>'+'ファイル名：'+data.fileName+'<br>サイズ：'+common.formatBytes(data.fileSize, 2);
+
+          if (data.extension.match(/(jpeg|jpg|gif|png)$/) != null && !isExpired) {
+            thumbnail = "<img src='" + url + "' class='sendFileThumbnail' width='64' height='64'>";
+          } else {
+            thumbnail = "<i class='sinclo-fa " + this._selectFontIconClassFromExtension(data.extension) + " fa-4x sendFileThumbnail' aria-hidden='true'></i>";
+          }
+
+          var content = "<span class='cName'>ファイル送信" + (isExpired ? "（ダウンロード有効期限切れ）" : "") + "</span>";
+          content    += "<div class='sendFileContent'>";
+          content    += "  <div class='sendFileThumbnailArea'>" + thumbnail + "</div>";
+          content    += "  <div class='sendFileMetaArea'>";
+          content    += "    <span class='data sendFileName'>" + data.fileName + "</span>";
+          content    += "    <span class='data sendFileSize'>" + common.formatBytes(data.fileSize,2) + "</span>";
+          content    += "  </div>";
+          content    += "</div>";
+
+          // kari
+          var colorList = common.getColorList(window.sincloInfo.widget);
+          if(!isExpired) {
+            div.addEventListener('click', function(){
+              window.open(data.downloadUrl);
+            });
+            div.addEventListener('mouseenter', function(){
+              li.style.backgroundColor = common.toRGBAcolor(colorList['reBackgroundColor'], 0.5);
+            });
+            div.addEventListener('mouseleave', function(){
+              li.style.backgroundColor = colorList['reBackgroundColor'];
+            });
+          }
+
           li.className = 'sinclo_re';
           li.innerHTML = content;
+        },
+        _selectFontIconClassFromExtension: function(ext) {
+          var selectedClass = "",
+            icons = {
+              image: 'fa-file-image-o',
+              pdf: 'fa-file-pdf-o',
+              word: 'fa-file-word-o',
+              powerpoint: 'fa-file-powerpoint-o',
+              excel: 'fa-file-excel-o',
+              audio: 'fa-file-audio-o',
+              video: 'fa-file-video-o',
+              zip: 'fa-file-zip-o',
+              code: 'fa-file-code-o',
+              text: 'fa-file-text-o',
+              file: 'fa-file-o'
+            },
+            extensions = {
+              gif: icons.image,
+              jpeg: icons.image,
+              jpg: icons.image,
+              png: icons.image,
+              pdf: icons.pdf,
+              doc: icons.word,
+              docx: icons.word,
+              ppt: icons.powerpoint,
+              pptx: icons.powerpoint,
+              xls: icons.excel,
+              xlsx: icons.excel,
+              aac: icons.audio,
+              mp3: icons.audio,
+              ogg: icons.audio,
+              avi: icons.video,
+              flv: icons.video,
+              mkv: icons.video,
+              mp4: icons.video,
+              gz: icons.zip,
+              zip: icons.zip,
+              css: icons.code,
+              html: icons.code,
+              js: icons.code,
+              txt: icons.text,
+              csv: icons.csv,
+              file: icons.file
+            };
+          if(check.isset(extensions[ext])) {
+            selectedClass = extensions[ext]
+          } else {
+            selectedClass = extensions['file'];
+          }
+          return selectedClass;
         },
         createMessageUnread: function(cs, val, name){
             if ( cs === "sinclo_re" ) {

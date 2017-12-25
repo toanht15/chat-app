@@ -85,7 +85,7 @@ class FileController extends AppController
     return $this->userInfo['MCompany']['company_key']."-".date("YmdHis").".".$this->getExtension($file['name']);
   }
 
-  private function putFile($file, $saveFileName, $expire) {
+  private function putFile($file, $saveFileName) {
     return $this->Amazon->putObject($this->getSaveKey($saveFileName), $file['tmp_name']);
   }
 
