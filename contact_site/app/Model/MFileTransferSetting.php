@@ -24,12 +24,26 @@ class MFileTransferSetting extends AppModel
           ]
       ],
       'allow_extensions' => [
+          'isAlplaNumeric' => [
+            'rule' => 'isAlplaNumeric',
+            'message' => 'ドットを含めない拡張子をカンマ区切りで設定して下さい。'
+          ],
           'validCharacter' => [
             'rule' => 'validCharacter',
             'message' => '利用できない文字が含まれています。'
           ]
       ]
   ];
+
+  public function isAlplaNumeric($val) {
+    $splited = explode(",", $val['allow_extensions']);
+    foreach ($splited as $k => $v) {
+      if(!Validation::alphaNumeric($v)) {
+        return false;
+      }
+    }
+    return true;
+  }
 
   public function validType($type) {
     $data = intval($type['type']);
