@@ -1844,7 +1844,7 @@
             thumbnail = "<i class='sinclo-fa " + this._selectFontIconClassFromExtension(data.extension) + " fa-4x sendFileThumbnail' aria-hidden='true'></i>";
           }
 
-          var content = "<span class='cName'>ファイル送信" + (isExpired ? "（ダウンロード有効期限切れ）" : "") + "</span>";
+          var content = "<span class='cName'>ファイルが送信されました" + (isExpired ? "（ダウンロード有効期限切れ）" : "") + "</span>";
           content    += "<div class='sendFileContent'>";
           content    += "  <div class='sendFileThumbnailArea'>" + thumbnail + "</div>";
           content    += "  <div class='sendFileMetaArea'>";
