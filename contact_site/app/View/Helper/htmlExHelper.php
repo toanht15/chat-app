@@ -40,6 +40,19 @@ class htmlExHelper extends AppHelper {
                 $a .= " target='" . h((string)$urlOpt['target']) . "'";
             }
         }
+        //commontooltip用
+        if ( !empty($urlOpt['class'])) {
+          $a .= " class='" . h((string)$urlOpt['class']) . "'";
+        }
+        if ( !empty($urlOpt['data-text'])) {
+          $a .= " data-text='" . h((string)$urlOpt['data-text']) . "'";
+        }
+        if ( !empty($urlOpt['data-balloon-position'])) {
+          $a .= " data-balloon-position='" . h((string)$urlOpt['data-balloon-position']) . "'";
+        }
+        if ( !empty($urlOpt['data-content-position-left'])) {
+          $a .= " data-content-position-left='" . h((string)$urlOpt['data-content-position-left']) . "'";
+        }
         return sprintf($_tmp, $a, $this->Html->image($img['src'], $img['option']), $title);
     }
 
