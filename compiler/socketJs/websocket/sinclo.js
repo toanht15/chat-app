@@ -1831,6 +1831,7 @@
         createSendFileMessage: function(data, cName) {
           var chatList = document.getElementsByTagName('sinclo-chat')[0];
           var div = document.createElement('div');
+          div.style.cursor = "pointer";
           var li = document.createElement('li');
           var thumbnail = "";
           var isExpired = Math.floor((new Date()).getTime() / 1000) >=  (Date.parse( data.expired.replace( /-/g, '/') ) / 1000);
