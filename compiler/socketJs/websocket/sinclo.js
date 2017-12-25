@@ -1839,7 +1839,7 @@
           chatList.appendChild(div);
 
           if (data.extension.match(/(jpeg|jpg|gif|png)$/) != null && !isExpired) {
-            thumbnail = "<img src='" + url + "' class='sendFileThumbnail' width='64' height='64'>";
+            thumbnail = "<img src='" + data.downloadUrl + "' class='sendFileThumbnail' width='64' height='64'>";
           } else {
             thumbnail = "<i class='sinclo-fa " + this._selectFontIconClassFromExtension(data.extension) + " fa-4x sendFileThumbnail' aria-hidden='true'></i>";
           }
