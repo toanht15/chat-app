@@ -65,6 +65,13 @@ class FileController extends AppController
       }
     } catch(Exception $e) {
       echo $e->getMessage();
+      // IEのデフォルトエラーページが表示される対応
+      // @see http://kiririmode.hatenablog.jp/entry/20160205/1454598000
+      $str = '';
+      for($i = 0; $i < 512; $i++) {
+        $str .= ' ';
+      }
+      echo $str;
     }
   }
 
