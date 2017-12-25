@@ -64,7 +64,7 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
     }
     echo $this->Html->css("style.css");
     echo $this->Html->css("modal.css");
-    if ( strcmp($this->name, 'Histories') === 0 ) {
+    if ( strcmp($this->name, 'Histories') === 0 || strcmp($this->name, 'ChatHistories') === 0) {
       echo $this->Html->css("daterangepicker.css");
     }
     if ( strcmp($this->name, 'Statistics') === 0 ) {
@@ -90,7 +90,7 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
     echo $this->Html->script("cidr2regex.js");
     echo $this->element("common-js");
     echo $this->Html->script("moment.min.js");
-    if ( strcmp($this->name, 'Histories') === 0 ) {
+    if ( strcmp($this->name, 'Histories') === 0 || strcmp($this->name, 'ChatHistories') === 0) {
       echo $this->Html->script("daterangepicker.js");
     }
     if ( strcmp($this->name, 'TDocuments') === 0 ) {
@@ -108,6 +108,12 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
     if ( strcmp($this->name, 'TCampaigns') === 0 ) {
       echo $this->Html->css('jquery-ui.css');
       echo $this->Html->script("jquery-ui.js");
+    }
+    if ( strcmp($this->name, 'ChatHistories') === 0 ) {
+      echo $this->Html->css('jquery.enhsplitter.css');
+      echo $this->Html->css('jquery.splitter.css');
+      echo $this->Html->script("jquery.splitter.js");
+      //echo $this->Html->script("jquery.enhsplitter.js");
     }
 
 ?>
