@@ -236,8 +236,6 @@ $this->log('LandscapdData前',LOG_DEBUG);
     $this->layout = 'ajax';
     $ret = true;
     $data = $this->params->query;
-    $this->log('datadata',LOG_DEBUG);
-    $this->log($data,LOG_DEBUG);
     if ( !isset($data['visitorsId']) ) return false;
 
     $inputData = []; // 顧客情報リスト
@@ -462,8 +460,6 @@ $this->log('LandscapdData前',LOG_DEBUG);
     $this->printProcessTimetoLog('BEGIN $this->_lastSpeechTimeList($historyList)');
     $lastSpeechList = $this->_lastSpeechTimeList($historyList);
 
-    //$this->log('history333',LOG_DEBUG);
-    //$this->log($userList,LOG_DEBUG);
     // ヘッダー
     $csv[] = [
       "種別",
@@ -500,8 +496,6 @@ $this->log('LandscapdData前',LOG_DEBUG);
 
       if ((isset($history['THistoryChatLog2']['type']) && isset($infoData['History']['chat_type']) &&
         $history['THistoryChatLog2']['type'] === Configure::read('chatType')[$infoData['History']['chat_type']]) || empty($infoData['History']['chat_type'])) {
-        $this->log('チェックだぜ',LOG_DEBUG);
-        $this->log($history['THistoryChatLog2']['type'],LOG_DEBUG);
       if((!empty($infoData['History']['campaign']) && $infoData['History']['campaign'] == $campaignParam) || empty($infoData['History']['campaign'])) {
       $row = [];
       if($history['THistoryChatLog2']['type'] == "自動返信") {
@@ -1273,9 +1267,6 @@ $this->log('LandscapdData前',LOG_DEBUG);
         'group' => 't_histories_id'
       ];
 
-      $this->log('ろぐ！',LOG_DEBUG);
-       $this->log($this->THistory->getDataSource()->getLog(),LOG_DEBUG);
-
       $joinToLastSpeechSendPage = [
         'type' => 'LEFT',
         'table' => '(SELECT id,t_histories_id,title,url,MAX(created) as created FROM t_history_stay_logs GROUP BY t_histories_id)',
@@ -1305,8 +1296,6 @@ $this->log('LandscapdData前',LOG_DEBUG);
 
     $historyList = $this->paginate('THistory');
 
-    $this->log('historyList',LOG_DEBUG);
-    $this->log($historyList,LOG_DEBUG);
     // TODO 良いやり方が無いか模索する
     $historyIdList = [];
     $customerIdList = [];
@@ -1326,7 +1315,6 @@ $this->log('LandscapdData前',LOG_DEBUG);
       else {
         if((isset($val['THistoryChatLog']['type']) && isset($data['History']['chat_type']) && isset($chatType)
         && $val['THistoryChatLog']['type'] === $chatType[$data['History']['chat_type']] && $check == 'false')) {
-          $this->log('こっちはいっちゃってるね',LOG_DEBUG);
           $defaultHistoryList = $val;
           $defaultCheck = 'true';
         }
@@ -1434,7 +1422,6 @@ $this->log('LandscapdData前',LOG_DEBUG);
     }
 
     $userInfo = $this->MUser->read(null, $this->userInfo['id']);
-    $this->log($userInfo,LOG_DEBUG);
 
     $this->set('data', $data);
     $this->set('historyList', $historyList);
@@ -1982,8 +1969,6 @@ $this->log('LandscapdData前',LOG_DEBUG);
 
 
       $joinToChat['type'] = "INNER";
-      $this->log('joinToChat',LOG_DEBUG);
-      $this->log($joinToChat,LOG_DEBUG);
 
       $joinToLastSpeechChatTime = [
         'type' => 'LEFT',

@@ -182,9 +182,6 @@
           end: 99,
         }
       }
-      console.log('chatlist');
-      console.log(chat);
-      console.log(elem);
       var cn = "";
       var div = document.createElement('div');
       var li = document.createElement('li');
@@ -213,15 +210,9 @@
         else {
           content = "<span class='cName' style = 'color:#333333; !important'>ゲスト(" + Number($('#visitorsId').text()) + ")</span>";
           content += "<span class='cTime'>"+chat.created+"</span>";
-          console.log('coreSettings');
-          //console.log(coreSettings);
           if(coreSettings === "") {
-            console.log('ieeeeeeeeeeei');
             content += '<img src= /img/close_b.png alt=履歴削除 class = \"commontooltip disabled\" data-text=\"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+chat.message+'","'+created+'") width=21 height=21 style="cursor:pointer; float:right; color: #fff !important; padding:2px !important; margin-right: auto;">'
           }
-          /*if(chat.permissionLevel == 1) {
-            content += '<img src= /img/close_b.png alt=履歴削除 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+chat.message+'","'+created+'") width=21 height=21 style="cursor:pointer; float:right; color: #fff !important; padding:2px !important; margin-right: auto;">'
-          }*/
           content +=  "<span class='cChat'>"+$scope.createTextOfMessage(chat, message, {radio: false})+"</span>";
         }
       }
@@ -717,8 +708,6 @@ $(document).ready(function(){
   var prevBoldTarget = null;
   $('.showBold').on('click', function(e){
     if(prevBoldTarget) {
-      console.log('まずこっちに入っているか確認');
-      console.log(prevBoldTarget);
       prevBoldTarget.find('td').each(function(index){
         $(this).css("background-color", "#fff");
         $(this).css("font-weight", "normal");
