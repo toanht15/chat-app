@@ -1860,14 +1860,16 @@
               window.open(data.downloadUrl);
             });
             div.addEventListener('mouseenter', function(){
-              li.style.backgroundColor = common.toRGBAcolor(colorList['reBackgroundColor'], 0.5);
+              var changeColor = common.toRGBAcolor(colorList['reBackgroundColor'], 0.9);
+              li.style.backgroundColor = changeColor;
             });
             div.addEventListener('mouseleave', function(){
-              li.style.backgroundColor = colorList['reBackgroundColor'];
+              var changeColor = colorList['reBackgroundColor'];
+              li.style.backgroundColor = changeColor;
             });
           }
 
-          li.className = 'sinclo_re';
+          li.className = 'sinclo_re effect_left';
           li.innerHTML = content;
         },
         _selectFontIconClassFromExtension: function(ext) {
