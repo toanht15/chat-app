@@ -42,24 +42,28 @@ class FileController extends AppController
   }
 
   public function download() {
-    $this->autoRender = false;
-    $this->validateGetMethod();
-    $param = $this->request->query(self::PARAM_PARAM);
-    if(!empty($param)) {
-      $decryptParameters = $this->decryptParameterForDownload($param);
-      if($this->isExpire($decryptParameters['created'])) {
-        $this->response->statusCode(404);
-        throw new NotFoundException('ファイルは削除されたか有効期限切れです。');
+    try {
+      $this->autoRender = false;
+      $this->validateGetMethod();
+      $param = $this->request->query(self::PARAM_PARAM);
+      if (!empty($param)) {
+        $decryptParameters = $this->decryptParameterForDownload($param);
+        if ($this->isExpire($decryptParameters['created'])) {
+          $this->response->statusCode(404);
+          throw new NotFoundException('有効期限切れのURLです。');
+        }
+        $file = $this->getFileByFileId($decryptParameters['fileId']);
+        $this->response->type($this->getExtension($file['record']['file_name']));
+        $this->response->length($file['fileObj']['ContentLength']);
+        $this->response->header('Content-Disposition', 'attachment; filename=' . $file['record']['file_name']);
+        $this->response->body($file['fileObj']['Body']);
+        $this->updateDownloadDataById($decryptParameters['fileId']);
+      } else {
+        $this->response->statusCode(400);
+        throw new BadRequestException('指定のパラメータでのアクセスではありません。');
       }
-      $file = $this->getFileByFileId($decryptParameters['fileId']);
-      $this->response->type($this->getExtension($file['record']['file_name']));
-      $this->response->length($file['fileObj']['ContentLength']);
-      $this->response->header('Content-Disposition', 'attachment; filename='.$file['record']['file_name']);
-      $this->response->body($file['fileObj']['Body']);
-      $this->updateDownloadDataById($decryptParameters['fileId']);
-    } else {
-      $this->response->statusCode(400);
-      throw new BadRequestException('指定のパラメータでのアクセスではありません。');
+    } catch(Exception $e) {
+      echo $e->getMessage();
     }
   }
 
@@ -81,7 +85,7 @@ class FileController extends AppController
     return $this->userInfo['MCompany']['company_key']."-".date("YmdHis").".".$this->getExtension($file['name']);
   }
 
-  private function putFile($file, $saveFileName) {
+  private function putFile($file, $saveFileName, $expire) {
     return $this->Amazon->putObject($this->getSaveKey($saveFileName), $file['tmp_name']);
   }
 
@@ -90,11 +94,26 @@ class FileController extends AppController
   }
 
   private function getFileByFileId($fileId) {
-    $data = $this->TUploadTransferFile->findById($fileId);
-    $file = $this->Amazon->getObject($this->getSaveKey($data['TUploadTransferFile']['saved_file_key']));
-    if(empty($file)) {
-      throw new Exception('ファイルがありません');
+    try {
+      $data = $this->TUploadTransferFile->findById($fileId);
+      $file = $this->Amazon->getObject($this->getSaveKey($data['TUploadTransferFile']['saved_file_key']));
+      if(empty($file)) {
+        $this->log('Aws::getObject時のデータが空です。 fileId : '.$fileId, LOG_WARNING);
+        throw new NotFoundException('ファイルが存在しません。');
+      }
+    } catch (\Aws\S3\Exception\S3Exception $e) {
+      if(strcmp($e->getAwsErrorCode(), 'NoSuchKey') !== 0) {
+        $this->log('Aws::getObjectで不明なエラー : '.$e->getMessage(), LOG_WARNING);
+      }
+      throw new NotFoundException('ファイルが存在しません。');
+    } catch (\Aws\Exception\AwsException $e) {
+      $this->log('AWSで不明なエラー : '.$e->getMessage(), LOG_WARNING);
+      throw new NotFoundException('ファイルが存在しません。');
+    } catch (Exception $e) {
+      $this->log('FileControll::getFileByFileIdで不明なエラー : '.$e->getMessage(), LOG_WARNING);
+      throw new NotFoundException('ファイルが存在しません。');
     }
+
     return array(
       'fileObj' => $file,
       'record' => $data['TUploadTransferFile']
