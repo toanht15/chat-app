@@ -842,6 +842,7 @@ var socket, // socket.io
         html += '      #sincloBox ul#chatTalk li div.sendFileThumbnailArea .sinclo-fa.fa-file-text-o:before { content: "\\f0f6" }';
         // ------------ファイルフォントアイコン
         html += '      #sincloBox ul#chatTalk li div.sendFileContent { display: table; table-layout:fixed; width: 100%; height: 64px; white-space: initial; margin-bottom: 0; }';
+        html += '      #sincloBox ul#chatTalk li div.sendFileContent * { color: '+ colorList['reTextColor'] +' }';
         html += '      #sincloBox ul#chatTalk li div.sendFileThumbnailArea { display: table-cell; width: 64px; height: 64px; border: 1px solid #D9D9D9; }';
         html += '      #sincloBox ul#chatTalk li div.sendFileMetaArea { display:table-cell; vertical-align: middle; margin-left: 10px; margin-bottom: 0px; }';
         html += '      #sincloBox ul#chatTalk li div.sendFileThumbnailArea .sendFileThumbnail { text-align: center; vertical-align: middle; display: inline-block; width: 100%; height: auto; margin-left: 0; margin-bottom: 0px; margin-right: auto; }';
