@@ -551,7 +551,7 @@ $config['chatType'] = [
 /* ファイル送信設定 - ファイル送信許可設定 */
 /* 通常選択肢 */
 $config['fileTransferSettingType'] = [
-  C_FILE_TRANSFER_SETTING_TYPE_BASIC => "基本設定<br>　<s>※送信できるファイルはPDF（pdf）、PowerPoint（ppt, pptx）、JPEG（jpg）、PNG（png）、GIF（gif）に制限されます。</s>",
-  C_FILE_TRANSFER_SETTING_TYPE_EXTEND => "拡張設定<br>　<s>※基本設定で送信できるファイルに加えて、指定したファイルの種類を許可します。</s>"
+  C_FILE_TRANSFER_SETTING_TYPE_BASIC => "基本設定<br>　<s>※ 送信できるファイルはPDF（pdf）、PowerPoint（ppt, pptx）、JPEG（jpg）、PNG（png）、GIF（gif）に制限されます。</s>",
+  C_FILE_TRANSFER_SETTING_TYPE_EXTEND => "拡張設定<br>　<s>※ 基本設定で送信できるファイルに加えて、指定したファイルの種類を許可します。</s>"
 ];
 

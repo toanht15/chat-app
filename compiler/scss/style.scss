@@ -5019,6 +5019,7 @@ ul.naviBtn {
         label {
           cursor: pointer;
           s {
+            font-size: 11px;
             margin-left: 0.8em;
           }
         }
@@ -5037,6 +5038,22 @@ ul.naviBtn {
       resize: none;
       width:  30em;
       height: 10em;
+      ::-webkit-input-placeholder {
+        text-align:left;
+        font-size:11px;
+      }
+      :-moz-placeholder { /* Firefox 18- */
+        text-align:left;
+        font-size:11px;
+      }
+      ::-moz-placeholder {  /* Firefox 19+ */
+        text-align:left;
+        font-size:11px;
+      }
+      :-ms-input-placeholder {
+        text-align:left;
+        font-size:11px;
+      }
     }
     &.hidden {
       height: 0;
