@@ -167,6 +167,116 @@
       </li>
       <!-- cv -->
 
+      <!-- メール送信 -->
+      <li class="bt0" id="sendMailSettingCheckBox">
+        <label style="display:inline-block; <?php echo $coreSettings[C_COMPANY_USE_AUTOMESSAGE_SEND_MAIL] ? '"' : 'color: #CCCCCC;" class="commontooltip" data-text="こちらの機能はスタンダードプラン<br>からご利用いただけます。" data-content-position-left="-33" data-balloon-position="5"'?> >
+        <?= $this->Form->input('main.send_mail_flg', [
+              'type' => 'checkbox',
+              'error' => false,
+              'disabled' => !$coreSettings[C_COMPANY_USE_AUTOMESSAGE_SEND_MAIL],
+              'checked' => (!empty($this->data['TAutoMessage']['send_mail_flg'])) ? intval($this->data['TAutoMessage']['send_mail_flg']) : C_CHECK_OFF,
+              'label' => false
+          ], [
+              'entity' => 'send_mail_flg'
+          ]); ?>
+          これまでのチャット内容をメールで送信する
+        </label>
+        <?php if(!$coreSettings[C_COMPANY_USE_AUTOMESSAGE_SEND_MAIL]) : ?>
+            <input type="hidden" name="data[main][send_mail_flg]" value="0"/>
+        <?php endif; ?>
+      </li>
+      <li class="bt0 sendMailSettings" id="mailAddressSetting" style="display:none">
+        <span><label class="require">送信先メールアドレス</label></span>
+        <div id="fromMailAddressSettings">
+          <span class="bt0 mailAddressBlock"><?= $this->Form->input('main.mail_address_1', [
+             'type' => 'text',
+             'error' => false,
+              'value' => (!empty($this->data['TAutoMessage']['mail_address_1'])) ? $this->data['TAutoMessage']['mail_address_1'] : ""
+          ], [
+            'entity' => 'mail_address_1'
+          ]); ?>
+            <span class="btnBlock">
+              <a><img src= /img/add.png alt=登録 class="btn-shadow disOffgreenBtn" width=25 height=25 style="padding:2px !important;"></a>
+              <a><img src= /img/dustbox.png alt=削除 class="btn-shadow redBtn deleteBtn" width=25 height=25 style="padding:2px !important;"></a>
+            </span>
+          </span>
+          <span class="bt0 mailAddressBlock"><?= $this->Form->input('main.mail_address_2', [
+                'type' => 'text',
+                'error' => false,
+                'value' => (!empty($this->data['TAutoMessage']['mail_address_2'])) ? $this->data['TAutoMessage']['mail_address_2'] : ""
+            ], [
+                'entity' => 'mail_address_2'
+            ]); ?>
+            <span class="btnBlock">
+              <a><img src= /img/add.png alt=登録 class="btn-shadow disOffgreenBtn" width=25 height=25 style="padding:2px !important;"></a>
+              <a><img src= /img/dustbox.png alt=削除 class="btn-shadow redBtn deleteBtn" width=25 height=25 style="padding:2px !important;"></a>
+            </span>
+          </span>
+          <span class="bt0 mailAddressBlock"><?= $this->Form->input('main.mail_address_3', [
+                'type' => 'text',
+                'error' => false,
+                'value' => (!empty($this->data['TAutoMessage']['mail_address_3'])) ? $this->data['TAutoMessage']['mail_address_3'] : ""
+            ], [
+                'entity' => 'mail_address_3'
+            ]); ?>
+            <span class="btnBlock">
+              <a><img src= /img/add.png alt=登録 class="btn-shadow disOffgreenBtn" width=25 height=25 style="padding:2px !important;"></a>
+              <a><img src= /img/dustbox.png alt=削除 class="btn-shadow redBtn deleteBtn" width=25 height=25 style="padding:2px !important;"></a>
+            </span>
+          </span>
+          <span class="bt0 mailAddressBlock"><?= $this->Form->input('main.mail_address_4', [
+                'type' => 'text',
+                'error' => false,
+                'value' => (!empty($this->data['TAutoMessage']['mail_address_4'])) ? $this->data['TAutoMessage']['mail_address_4'] : ""
+            ], [
+                'entity' => 'mail_address_4'
+            ]); ?>
+            <span class="btnBlock">
+              <a><img src= /img/add.png alt=登録 class="btn-shadow disOffgreenBtn" width=25 height=25 style="padding:2px !important;"></a>
+              <a><img src= /img/dustbox.png alt=削除 class="btn-shadow redBtn deleteBtn" width=25 height=25 style="padding:2px !important;"></a>
+            </span>
+          </span>
+          <span class="bt0 mailAddressBlock"><?= $this->Form->input('main.mail_address_5', [
+                'type' => 'text',
+                'error' => false,
+                'value' => (!empty($this->data['TAutoMessage']['mail_address_5'])) ? $this->data['TAutoMessage']['mail_address_5'] : ""
+            ], [
+                'entity' => 'mail_address_5'
+            ]); ?>
+            <span class="btnBlock">
+              <a><img src= /img/add.png alt=登録 class="btn-shadow disOffgreenBtn" width=25 height=25 style="padding:2px !important;"></a>
+              <a><img src= /img/dustbox.png alt=削除 class="btn-shadow redBtn deleteBtn" width=25 height=25 style="padding:2px !important;"></a>
+            </span>
+          </span>
+          <?php if (!empty($errors['to_address'])) echo "<pre class='error-message'>" . h($errors['to_address'][0]) . "</pre>"; ?>
+        </div>
+        <li class="bt0 sendMailSettings" id="subjectBlock" style="display:none">
+          <span><label class="require">メールタイトル</label></span>
+          <span class="bt0"><?= $this->Form->input('main.subject', [
+                'type' => 'text',
+                'error' => false,
+                'value' => (!empty($this->data['TAutoMessage']['subject'])) ? $this->data['TAutoMessage']['subject'] : "sincloから新着チャットが届きました"
+            ], [
+                'entity' => 'subject'
+            ]); ?>
+          </span>
+          <?php if (!empty($errors['subject'])) echo "<pre class='error-message'>" . h($errors['subject'][0]) . "</pre>"; ?>
+        </li>
+        <li class="bt0 sendMailSettings" id="fromNameBlock" style="display:none">
+        <span><label class="require">差出人名</label></span>
+        <span class="bt0"><?= $this->Form->input('main.from_name', [
+              'type' => 'text',
+              'error' => false,
+              'value' => (!empty($this->data['TAutoMessage']['from_name'])) ? $this->data['TAutoMessage']['from_name'] : "sinclo（シンクロ）"
+          ], [
+              'entity' => 'from_name'
+          ]); ?>
+        </span>
+        <?php if (!empty($errors['from_name'])) echo "<pre class='error-message'>" . h($errors['from_name'][0]) . "</pre>"; ?>
+        </li>
+      </li>
+      <!-- cv -->
+
       <!-- 状態 -->
       <li>
         <span class="require"><label>状態</label></span>
@@ -191,6 +301,8 @@
 
   <section>
     <?=$this->Form->hidden('id')?>
+    <?=$this->Form->hidden('m_mail_transmission_settings_id')?>
+    <?=$this->Form->hidden('m_mail_template_id')?>
     <div id="tautomessages_actions" class="fotterBtnArea">
       <?=$this->Html->link('戻る','/TAutoMessages/index/page:'.$lastPage, ['class'=>'whiteBtn btn-shadow'])?>
       <a href="javascript:void(0)" ng-click="main.saveAct()" class="greenBtn btn-shadow">保存</a>

@@ -362,6 +362,7 @@
           userInfo.syncInfo.get();
           common.judgeShowWidget();
 
+          emit('customerInfo', userInfo.getSendList());
           emit('connectSuccess', {prevList: userInfo.prevList, prev: userInfo.prev});
           emit('connectedForSync', {});
 
@@ -422,6 +423,12 @@
 
       if(check.isset(userInfo.accessId)) {
         emitData.accessId = userInfo.accessId;
+      }
+
+      if(check.isset(storage.s.get('inactiveTimeout')) && storage.s.get('inactiveTimeout') === "true") {
+        // 再接続扱いとする
+        emitData.inactiveReconnect = true;
+        storage.s.set('inactiveTimeout', false);
       }
 
       emit('connected', {
@@ -497,7 +504,7 @@
       if ( (userInfo.gFrame && Number(userInfo.accessType) === Number(cnst.access_type.guest)) === false ) {
         emit('customerInfo', obj);
       }
-      emit('connectSuccess', {
+      var connectSuccessData = {
         confirm: false,
         widget: window.sincloInfo.widgetDisplay,
         prevList: userInfo.prevList,
@@ -505,7 +512,14 @@
         time: userInfo.time,
         ipAddress: userInfo.getIp(),
         referrer: userInfo.referrer
-      });
+      };
+
+      if(obj.inactiveReconnect) {
+        var tmpAutoMessages = sinclo.chatApi.autoMessages.get(true);
+        connectSuccessData.tmpAutoMessages = tmpAutoMessages;
+      }
+
+      emit('connectSuccess', connectSuccessData);
 
       // customEvent
       if(document.createEvent) {
@@ -1223,12 +1237,7 @@
         if(!sinclo.chatApi.autoMessages.exists(obj.chatId)) {
           sinclo.chatApi.createMessage("sinclo_re", obj.message, sincloInfo.widget.subTitle);
         }
-        sinclo.chatApi.autoMessages.push(obj.chatId, {
-          chatId:obj.chatId,
-          message: obj.message,
-          created: obj.created,
-          achievementFlg: obj.achievementFlg
-        });
+        sinclo.chatApi.autoMessages.push(obj.chatId, obj);
     },
     confirmVideochatStart: function(obj) {
       // ビデオチャット開始に必要な情報をオペレータ側から受信し、セットする
@@ -1503,7 +1512,7 @@
             if(json) {
               var array = JSON.parse(json);
               Object.keys(array).forEach(function(id, index, ar) {
-                if(allData || !array[id].deleted) {
+                if(allData || !array[id].applied) {
                   returnData[id] = array[id];
                 }
               });
@@ -1988,9 +1997,42 @@
             clearTimeout(this.sendErrCatchTimer);
           }
           this.sendErrCatchTimer = setTimeout(function(){
-            $("sinclo-chat-alert").css('display', 'block');
-            sinclo.chatApi.sendErrCatchFlg = true;
+              $("sinclo-chat-alert").css('display', 'block').html('通信が切断されました。<br>こちらをタップすると再接続します。').on('click', function(){
+                var result = common.reconnectManual();
+                if(result) {
+                  $("sinclo-chat-alert").css('display', 'none');
+                }
+              });
+              sinclo.chatApi.sendErrCatchFlg = true;
           }, 5000);
+        },
+        inactiveTimer: null,
+        inactiveCloseFlg: false,
+        startInactiveTimeout: function(){
+          if(!this.inactiveTimer) {
+            console.log("start inactive timer");
+            this.inactiveTimer = setTimeout(function(){
+              if(socket) {
+                sinclo.chatApi.inactiveCloseFlg = true;
+                storage.s.set('inactiveTimeout', true);
+                console.log("close socket");
+                socket.close();
+              }
+              $("sinclo-chat-alert").css('display', 'block').html('クリックして再接続').on('click', function(){
+                var result = common.reconnectManual();
+                if(result) {
+                  $("sinclo-chat-alert").css('display', 'none');
+                }
+              });
+            }, 90 * 60 * 1000);
+          }
+        },
+        clearInactiveTimeout: function() {
+          if(this.inactiveTimer) {
+            console.log("clear inactive timer");
+            clearTimeout(this.inactiveTimer);
+            this.inactiveTimer = null;
+          }
         },
         sound: null,
         call: function(){
@@ -2026,21 +2068,20 @@
                 //未読表示位置がシンプル設定か否かによって異なる
                 if (! abridgementType['MinRes'] ) {
                     //通常時
-                    mainImg.appendChild(em);
+                    if(mainImg) mainImg.appendChild(em);
                 }
                 else {
                     //シンプルデザイン時
-                    titleElm.appendChild(em);
+                    if(titleElm) titleElm.appendChild(em);
                 }
-//                if ( mainImg ) {
-//                  //通常時
-//                  mainImg.appendChild(em);
-//                }
-//                else if ( titleElm ) {
-//                    //シンプルデザイン時
-//                    titleElm.appendChild(em);
-//                }
             }
+        },
+        retReadFromCustomer: function (d) {
+          var obj = JSON.parse(d);
+          if(obj.sincloSessionId === userInfo.sincloSessionId) {
+            sinclo.chatApi.unread = 0;
+            sinclo.chatApi.showUnreadCnt();
+          }
         },
         KEY_TRIGGERED_AUTO_SPEECH: "triggeredAutoSpeech",
         _getAutoSpeechTriggeredList: function () {
@@ -2089,7 +2130,7 @@
                 var message = messages[key];
                 if (typeof(ret) === 'number') {
                     setTimeout(function(){
-                      sinclo.trigger.setAction(message.id, message.action_type, message.activity);
+                      sinclo.trigger.setAction(message.id, message.action_type, message.activity, message.send_mail_flg);
                       sinclo.trigger.processing = false;
                       // if(conditionKey === 7) {
                       //   // 自動返信実行後はチャット中のフラグを立てる
@@ -2384,7 +2425,7 @@
 
             callback(null, null, key, ret);
         },
-        setAutoMessage: function(id, cond){
+        setAutoMessage: function(id, cond, sendMail){
             if(sincloInfo.widget.showTiming === 3) {
               console.log("オートメッセージ表示処理発動");
               // 初回オートメッセージ表示時にフラグを立てる
@@ -2420,17 +2461,29 @@
                 chatId:id,
                 message:cond.message,
                 isAutoSpeech: isSpeechContent,
-                achievementFlg: 3
+                achievementFlg: 3,
+                sendMailFlg: sendMail
               };
               emit("sendAutoChat", {messageList: sinclo.chatApi.autoMessages.getByArray()});
               sinclo.chatApi.autoMessages.unset();
               sinclo.chatApi.saveFlg = true;
             }
-            else {
+            else if(sendMail) {
+              var data = {
+                chatId:id,
+                message:cond.message,
+                isAutoSpeech: isSpeechContent,
+                sendMailFlg: sendMail
+              };
+              emit("sendAutoChat", {messageList: sinclo.chatApi.autoMessages.getByArray()});
+              sinclo.chatApi.autoMessages.unset();
+              sinclo.chatApi.saveFlg = true;
+            } else {
               var data = {
                   chatId:id,
                   message:cond.message,
-                  isAutoSpeech: isSpeechContent
+                  isAutoSpeech: isSpeechContent,
+                  sendMailFlg: sendMail
               };
             }
 
@@ -2449,7 +2502,7 @@
                 emit('sendAutoChatMessage', data);
             }
         },
-        setAction: function(id, type, cond){
+        setAction: function(id, type, cond, sendMail){
             console.log("setAction id : " + id + " type : " + type + " cond : " + JSON.stringify(cond));
             // TODO 今のところはメッセージ送信のみ、拡張予定
             var chatActFlg = storage.s.get('chatAct');
@@ -2472,7 +2525,7 @@
                     var date = common.fullDateTime();
                     if ( prev.length === 0 || (prev.length > 0 && prev[prev.length - 1].created !== date) ) {
                       clearInterval(setAutoMessageTimer);
-                      sinclo.trigger.setAutoMessage(id, cond);
+                      sinclo.trigger.setAutoMessage(id, cond, sendMail);
                       // 自動最大化
                       if ( !('widgetOpen' in cond) || (check.smartphone() && sincloInfo.widget.hasOwnProperty('spAutoOpenFlg') && Number(sincloInfo.widget.spAutoOpenFlg) === 1) ) return false;
                       var flg = sinclo.widget.condifiton.get();

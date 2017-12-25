@@ -4359,6 +4359,49 @@ ul.naviBtn {
             border-top: none;
           }
 
+          #fromMailAddressSettings {
+            width: 250px;
+            span {
+              &.mailAddressBlock {
+                display: inline-flex;
+                margin-bottom: 0.5em;
+              }
+              &.btnBlock {
+                padding-left: 0.75em;
+                display: inline-flex;
+              }
+            }
+            input[type="text"] {
+              display: block;
+              width: 22em;
+            }
+          }
+
+          &#sendMailSettingCheckBox {
+            padding: 15px 0 0 0;
+            label {
+              cursor: pointer;
+            }
+            input[type="checkbox"] {
+              margin-left: 0px;
+              cursor: pointer;
+            }
+          }
+
+          &.sendMailSettings {
+            padding: 0.9em 0 0 0;
+            span {
+              padding-left: 1.5em;
+            }
+            &#fromNameBlock {
+              padding: 0.75em 0 30px 0;
+            }
+            input[type="text"] {
+              display: block;
+              width: 22em;
+            }
+          }
+
           .questionBalloon {
             display: inline-block;
             position: relative;
@@ -4384,6 +4427,7 @@ ul.naviBtn {
           > span:first-child {
             width: 15em;
             display: block;
+            padding-top: 0.5em;
           }
 
           &#tautomessages_triggers {
