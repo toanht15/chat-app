@@ -67,7 +67,7 @@ class HistoriesController extends AppController {
    * @return void
    * */
   public function index() {
-    $isChat = 'true';
+    $isChat = 'false';
     if ( !empty($this->params->query['isChat']) ) {
       $this->Session->write('authenticity',$this->params->query['isChat']);
     }
@@ -967,10 +967,10 @@ class HistoriesController extends AppController {
       ];
       // チャットのみ表示との切り替え（担当者検索の場合、強制的にINNER）
       if ( strcmp($type, 'false') === 0 && !(!empty($data['THistoryChatLog']) && !empty(array_filter($data['THistoryChatLog']))) ) {
-        $joinToChat['type'] = "LEFT";
+        $joinToChat['type'] = "INNER";
       }
       else {
-        $joinToChat['type'] = "INNER";
+        $joinToChat['type'] = "LEFT";
       }
 
       $joinToLastSpeechChatTime = [

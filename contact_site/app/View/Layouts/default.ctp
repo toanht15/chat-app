@@ -111,10 +111,8 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
       echo $this->Html->script("jquery-ui.js");
     }
     if ( strcmp($this->name, 'ChatHistories') === 0 ) {
-      echo $this->Html->css('jquery.enhsplitter.css');
       echo $this->Html->css('jquery.splitter.css');
       echo $this->Html->script("jquery.splitter.js");
-      //echo $this->Html->script("jquery.enhsplitter.js");
     }
 
 ?>
