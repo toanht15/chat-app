@@ -319,7 +319,7 @@
                 }
               ?></td>
           <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
-              <td class="tRight pre"><?php if (!empty($history['NoticeChatTime']['NoticeChatTime'])){ ?><?=date_format(date_create($history['NoticeChatTime']['NoticeChatTime']), "Y/m/d\nH:i:s")?><?php } ?>
+              <td class="tRight pre"><?php if (!empty($history['NoticeChatTime']['created'])){ ?><?=date_format(date_create($history['NoticeChatTime']['created']), "Y/m/d\nH:i:s")?><?php } ?>
               </td>
               <td class="tCenter"><?php
               if ($history['LastSpeechTime']['lastSpeechTime']

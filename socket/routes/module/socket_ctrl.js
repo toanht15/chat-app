@@ -898,7 +898,7 @@ io.sockets.on('connection', function (socket) {
                   //通知された場合
                   if(ret.opFlg === true) {
                     pool.query("UPDATE t_history_chat_logs SET notice_flg = 1 WHERE t_histories_id = ? AND message_type = 1 AND id = ?;",
-                      [historyId, results.insertId], function(err, ret, fields){}
+                      [sincloCore[d.siteKey][d.tabId].historyId, results.insertId], function(err, ret, fields){}
                     );
                     return false;
                   }
@@ -1722,7 +1722,7 @@ io.sockets.on('connection', function (socket) {
         var keyLength = Object.keys(customerList[res.siteKey]).length;
         Object.keys(customerList[res.siteKey]).forEach(function(key){
           var val = getConnectInfo(customerList[res.siteKey][key]);
-          if(isset(data.contract.chat) && data.contract.chat) {
+          if(isset(data.contract.chat) && data.contract.checkat) {
             chatApi.getUnreadCnt(val, function (ret) {
               val['chatUnreadId'] = ret.chatUnreadId;
               val['chatUnreadCnt'] = ret.chatUnreadCnt;

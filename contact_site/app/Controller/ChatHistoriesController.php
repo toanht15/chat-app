@@ -1222,7 +1222,7 @@ $this->log('LandscapdData前',LOG_DEBUG);
         'type' => 'LEFT',
         'table' => '(SELECT t_histories_id, message_type, notice_flg,created FROM t_history_chat_logs WHERE message_type = 1 AND notice_flg = 1 GROUP BY t_histories_id)',
         'alias' => 'NoticeChatTime',
-        'field' => 'created as NoticeChatTime',
+        'field' => 'created',
         'conditions' => [
           'NoticeChatTime.t_histories_id = THistoryChatLog.t_histories_id'
         ],
@@ -1278,6 +1278,9 @@ $this->log('LandscapdData前',LOG_DEBUG);
     }
 
     $historyList = $this->paginate('THistory');
+    $this->log('historyList',LOG_DEBUG);
+    $this->log($historyList,LOG_DEBUG);
+
     // TODO 良いやり方が無いか模索する
     $historyIdList = [];
     $customerIdList = [];
