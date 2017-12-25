@@ -1117,6 +1117,7 @@
         common.widgetHandler.saveShownFlg();
         window.sincloInfo.widgetDisplay = true;
         common.widgetHandler.show();
+        console.log('通ch通知1');
         //自由入力エリアが閉まっているか空いているかチェック
         var textareaOpend = storage.l.get('textareaOpend');
         //チャットのテキストエリア表示
@@ -1137,6 +1138,8 @@
     },
     sendChatResult: function(d){
       var obj = JSON.parse(d);
+      console.log('通知間');
+      console.log(obj);
       if ( obj.sincloSessionId !== userInfo.sincloSessionId && obj.tabId !== userInfo.tabId ) return false;
       var elm = document.getElementById('sincloChatMessage'), cn, userName = "";
       if ( obj.ret ) {
@@ -2126,7 +2129,6 @@
                 var result = common.reconnectManual();
                 if(result) {
                   $("sinclo-chat-alert").css('display', 'none');
-                  storage.s.set('inactiveTimeout', false);
                 }
               });
             }, 90 * 60 * 1000);

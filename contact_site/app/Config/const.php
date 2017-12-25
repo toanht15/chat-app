@@ -184,6 +184,10 @@ define("C_CHECK_ON", 1);
 define('C_COINCIDENT', 1); // 全て一致
 define('C_SOME_EITHER', 2); // いずれかが一致
 
+// チャット履歴画面
+define('C_CHAT_HISTORY_SIDE', 1); // 横並び
+define('C_CHAT_HISTORY_VERTICAL', 2); // 縦並び
+
 // 有効/無効設定
 define('C_STATUS_AVAILABLE', 0); // 有効
 define('C_STATUS_UNAVAILABLE', 1); // 無効
@@ -192,6 +196,12 @@ define('C_STATUS_UNAVAILABLE', 1); // 無効
 define('C_ACHIEVEMENT_CV', 0); // CV
 define('C_ACHIEVEMENT_UNAVAILABLE', 1); // なし
 define('C_ACHIEVEMENT_AVAILABLE', 2); // あり
+
+// 種別
+define('C_CHAT_AUTO', 1); // 自動応答
+define('C_CHAT_MANUAL', 2); // 対応
+define('C_CHAT_NOENTRY', 3); // 未入室
+define('C_CHAT_SORRY', 4); // sorryメッセージ
 
 // ダウンロード設定
 define('C_YES', 1); // 可
@@ -528,6 +538,14 @@ $config['achievementType'] = [
   C_ACHIEVEMENT_CV => "CV",
   C_ACHIEVEMENT_UNAVAILABLE => "無効",
   C_ACHIEVEMENT_AVAILABLE => "有効"
+];
+
+/* 種別 */
+$config['chatType'] = [
+  C_CHAT_AUTO => "自動返信",
+  C_CHAT_MANUAL => "",
+  C_CHAT_NOENTRY => "未入室",
+  C_CHAT_SORRY => "拒否"
 ];
 
 /* ファイル送信設定 - ファイル送信許可設定 */
