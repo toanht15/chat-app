@@ -2481,22 +2481,4 @@ $this->log('LandscapdData前',LOG_DEBUG);
     //日時＋ミリ秒
     $this->log($prefix.'::PROCESS_TIME '.date('Y-m-d H:i:s', $arrTime[0]) . '.' .$arrTime[1], LOG_DEBUG);
   }
-
-  private function prettyByte2Str($bytes)
-  {
-    if ($bytes >= 1073741824) {
-      $bytes = number_format($bytes / 1073741824, 2) . ' GB';
-    } elseif ($bytes >= 1048576) {
-      $bytes = number_format($bytes / 1048576, 2) . ' MB';
-    } elseif ($bytes >= 1024) {
-      $bytes = number_format($bytes / 1024, 2) . ' KB';
-    } elseif ($bytes > 1) {
-      $bytes = $bytes . ' bytes';
-    } elseif ($bytes == 1) {
-      $bytes = $bytes . ' byte';
-    } else {
-      $bytes = '0 bytes';
-    }
-    return $bytes;
-  }
 }
