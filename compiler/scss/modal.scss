@@ -449,6 +449,89 @@
         }
       }
 
+      /* リアルタイムモニタ、ファイル送信ポップアップ用*/
+      &.p-cus-file-upload {
+        width: 50em;
+
+        #popup-main {
+          .upload-select-menu {
+            width: 100%;
+            background-color: #aeca74;
+            border-radius: 5px;
+            padding: 0.25em 0.25em 1.7em;
+            color: #FFF;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+            display: block;
+            text-align: center;
+            &:hover {
+              background-color: #B8D47E;
+            }
+            &.hovering {
+              background-color: #B8D47E;
+            }
+          }
+
+          #fileUploadPopupContent {
+            text-align: center;
+          }
+
+          #fileUploadMenuArea {
+            .error-message {
+              padding-top: 1em;
+              display: none;
+            }
+          }
+
+          #fileDropArea {
+            img {
+              display: block;
+              margin: 0 auto;
+            }
+
+            span {
+              color: #FFF;
+              font-size: 1.5em;
+              margin-bottom: 2em;
+            }
+          }
+          #fileSelectArea {
+            margin-top: 1em;
+            height: 3em;
+            span {
+              display: block;
+              line-height: 1.7em;
+              height: 100%;
+              color: #FFF;
+              font-size: 1.5em;
+              margin-bottom: 2em;
+            }
+          }
+
+          #fileUploadConfirmArea {
+
+          }
+        }
+        #popup-button {
+          width: 30em;
+          margin: 0 auto;
+          a {
+            width: 10em;
+
+            &:nth-child(odd) {
+              float: left;
+            }
+
+            &:nth-child(even) {
+              float: right;
+            }
+          }
+        }
+      }
+
       /* 履歴一覧-ポップアップ用 */
       &.p-history-logs {
         width: 600px;
