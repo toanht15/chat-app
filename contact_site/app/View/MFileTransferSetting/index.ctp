@@ -42,7 +42,7 @@ if ( !(!empty($this->data['MFileTransferSetting']['type']) && strcmp($this->data
         </li>
       </ul>
       <div id="extension_setting_area" class="<?=$fileTypeAreaHiddenClass?>">
-        <s>※複数設定する場合は、カンマを使ってファイルの種類を区切ります。</s>
+        <s>※ 複数設定する場合は、カンマを使ってファイルの種類を区切ります。</s>
         <?= $this->Form->textarea('MFileTransferSetting.allow_extensions',[
             'placeholder' => 'pdf,ppt,pptx,jpg,png,gif',
             'error' => false

@@ -5038,21 +5038,22 @@ ul.naviBtn {
       resize: none;
       width:  30em;
       height: 10em;
+      font-size: 12px;
       ::-webkit-input-placeholder {
         text-align:left;
-        font-size:11px;
+        font-size:12px;
       }
       :-moz-placeholder { /* Firefox 18- */
         text-align:left;
-        font-size:11px;
+        font-size:12px;
       }
       ::-moz-placeholder {  /* Firefox 19+ */
         text-align:left;
-        font-size:11px;
+        font-size:12px;
       }
       :-ms-input-placeholder {
         text-align:left;
-        font-size:11px;
+        font-size:12px;
       }
     }
     &.hidden {
