@@ -110,6 +110,7 @@ var popupEvent = {
         help: function(){},
         create: function () {
             var area = popupEvent.elm.btnArea;
+            area.style.display = "";
             for (var i =area.childNodes.length-1; i>=0; i--) {
                 area.removeChild(area.childNodes[i]);
             }
@@ -170,6 +171,18 @@ var popupEvent = {
                         return popupEvent.closeNoPopup();
                     };
                     break;
+                case 'p-cus-file-upload':
+                  var uploadBtn = _button("アップロード");
+                  uploadBtn.onclick = function(){
+                    return popupEvent.closePopup();
+                  };
+                  var cancelBtn = _button("キャンセル");
+                  cancelBtn.onclick = function(){
+                    return popupEvent.closeNoPopup();
+                  };
+                  // 初期表示時はボタンエリア非表示
+                  area.style.display = "none";
+                  break;
                 case 'p-show-gallary':
                     var closeBtn = _button("閉じる");
                     closeBtn.onclick = function(){
@@ -391,6 +404,10 @@ var popupEvent = {
                     }
                 );
             }
+        },
+        resize: function() {
+          var contHeight = $('#popup-content').height();
+          $('#popup-frame').css('top', 0).css('height', contHeight);
         }
     },
     shortMessage = {

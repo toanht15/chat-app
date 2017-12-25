@@ -53,6 +53,7 @@ define('C_COMPANY_REF_COMPANY_DATA', 'refCompanyData'); // 企業情報参照（
 define('C_COMPANY_USE_FREE_INPUT', 'freeInput'); // 自由入力エリア
 define('C_COMPANY_USE_CV', 'cv'); // CV
 define('C_COMPANY_USE_AUTOMESSAGE_SEND_MAIL', 'autoMessageSendMail'); // メール送信（オートメッセージ）
+define('C_COMPANY_USE_SEND_FILE', 'sendFile'); // ファイル送信
 
 
 // 簡易メッセージ入力機能種別
@@ -210,6 +211,10 @@ define('C_IMPROPER', 2); // 不可
 define('C_WIDGET_SIZE_TYPE_SMALL', 1); // 小
 define('C_WIDGET_SIZE_TYPE_MEDIUM', 2); // 中
 define('C_WIDGET_SIZE_TYPE_LARGE', 3); // 大
+
+// ファイル送信設定タイプ
+define('C_FILE_TRANSFER_SETTING_TYPE_BASIC', 1);
+define('C_FILE_TRANSFER_SETTING_TYPE_EXTEND', 2);
 
 /* カラー設定初期値styat */
 //0.通常設定・高度設定
@@ -541,5 +546,12 @@ $config['chatType'] = [
   C_CHAT_MANUAL => "",
   C_CHAT_NOENTRY => "未入室",
   C_CHAT_SORRY => "拒否"
+];
+
+/* ファイル送信設定 - ファイル送信許可設定 */
+/* 通常選択肢 */
+$config['fileTransferSettingType'] = [
+  C_FILE_TRANSFER_SETTING_TYPE_BASIC => "基本設定<br>　<s>※ 送信できるファイルはPDF（pdf）、PowerPoint（ppt, pptx）、JPEG（jpg）、PNG（png）、GIF（gif）に制限されます。</s>",
+  C_FILE_TRANSFER_SETTING_TYPE_EXTEND => "拡張設定<br>　<s>※ 基本設定で送信できるファイルに加えて、指定したファイルの種類を許可します。</s>"
 ];
 
