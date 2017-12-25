@@ -5,40 +5,25 @@
   var sincloApp = angular.module('sincloApp', ['ngSanitize']);
   sincloApp.controller('MainController', function($scope) {
     var userList = <?php echo json_encode($responderList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
-    console.log('まずチェック！');
-    console.log($scope);
-    console.log($scope.fillterTypeId);
-
     $scope.ua = function(str){
       return userAgentChk.pre(str);
     };
 
     $(document).ready(function(){
-      console.log('まず入ってるか確認しましょう！');
       $scope.messageList = [];
       $.ajax({
         type: "GET",
         url: "<?=$this->Html->url(['controller'=>'ChatHistories', 'action' => 'remoteGetOldChat'])?>",
         data: {
-          historyId: '<?=$historyList[0]['THistory']['id']?>'
+          historyId: '<?=$historyId?>'
         },
         dataType: "json",
         success: function(json){
-          console.log('jsonData');
-          console.log(json);
-          //if ( oldFlg ) { // 過去チャットの場合
-            angular.element("message-list-descript").attr("class", "off");
-            $scope.messageList = json;
-            $scope.$apply();
-          }
-        });
-      //}
-      /*else {
-        className = "currentChat";
-      }
-      $("#showChatTab > li[data-type='" + className + "']").addClass("on");
-      $("#chatContent > section").removeClass("on");
-      $("#chatContent > #" + className).addClass("on");*/
+          angular.element("message-list-descript").attr("class", "off");
+          $scope.messageList = json;
+          $scope.$apply();
+        }
+      });
     });
 
     // 過去チャットと現行チャット
@@ -76,12 +61,6 @@
 
     // 顧客の詳細情報を取得する
     $scope.getOldChat = function(historyId, oldFlg){
-      console.log('履歴変更！');
-      console.log(historyId);
-      console.log(oldFlg);
-
-      //console.log(hisotryId);
-      //console.log(oldFlg);
       $scope.chatLogMessageList = [];
       $.ajax({
         type: "GET",
@@ -91,16 +70,12 @@
         },
         dataType: "json",
         success: function(json){
-          console.log('jsonData');
-          console.log(json);
           if ( oldFlg ) { // 過去チャットの場合
-            console.log('色々ありすぎてわかんねえ！');
             angular.element("message-list-descript").attr("class", "off");
             $scope.chatLogMessageList = json;
             $scope.$apply();
           }
           else {
-            console.log('色々ありすぎて最高！');
             $scope.messageList = json;
 
             $scope.chatLogList = [];
@@ -135,66 +110,62 @@
       return showData.join("\n");
     };
 
-        // 【チャット】テキストの構築
+    // 【チャット】テキストの構築
     $scope.createTextOfMessage = function(chat, message, opt) {
-        var strings = message.split('\n');
-        var custom = "";
-        var linkReg = RegExp(/http(s)?:\/\/[!-~.a-z]*/);
-        var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
-        var radioName = "sinclo-radio" + Object.keys(chat).length;
-        var option = ( typeof(opt) !== 'object' ) ? { radio: true } : opt;
-        for (var i = 0; strings.length > i; i++) {
-            var str = escape_html(strings[i]);
-            // ラジオボタン
-            var radio = str.indexOf('[]');
-            if ( option.radio && radio > -1 ) {
-                var val = str.slice(radio+2);
-                str = "<input type='radio' name='" + radioName + "' id='" + radioName + "-" + i + "' class='sinclo-chat-radio' value='" + val + "' disabled=''>";
-                str += "<label class='pointer' for='" + radioName + "-" + i + "'>" + val + "</label>";
-            }
-            // リンク
-            var link = str.match(linkReg);
-            if ( link !== null ) {
-                var url = link[0];
-                var a = "<a href='" + url + "' target='_blank'>"  + url + "</a>";
-                str = str.replace(url, a);
-            }
-            // 電話番号（スマホのみリンク化）
-            var tel = str.match(telnoTagReg);
-            if( tel !== null ) {
-              var telno = tel[1];
-              // ただの文字列にする
-              var span = "<span class='telno'>" + telno + "</span>";
-              str = str.replace(tel[0], span);
-            }
-            custom += str + "\n";
-
+      var strings = message.split('\n');
+      var custom = "";
+      var linkReg = RegExp(/http(s)?:\/\/[!-~.a-z]*/);
+      var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
+      var radioName = "sinclo-radio" + Object.keys(chat).length;
+      var option = ( typeof(opt) !== 'object' ) ? { radio: true } : opt;
+      for (var i = 0; strings.length > i; i++) {
+          var str = escape_html(strings[i]);
+          // ラジオボタン
+          var radio = str.indexOf('[]');
+          if ( option.radio && radio > -1 ) {
+              var val = str.slice(radio+2);
+              str = "<input type='radio' name='" + radioName + "' id='" + radioName + "-" + i + "' class='sinclo-chat-radio' value='" + val + "' disabled=''>";
+              str += "<label class='pointer' for='" + radioName + "-" + i + "'>" + val + "</label>";
+          }
+          // リンク
+          var link = str.match(linkReg);
+          if ( link !== null ) {
+              var url = link[0];
+              var a = "<a href='" + url + "' target='_blank'>"  + url + "</a>";
+              str = str.replace(url, a);
+          }
+          // 電話番号（スマホのみリンク化）
+          var tel = str.match(telnoTagReg);
+          if( tel !== null ) {
+            var telno = tel[1];
+            // ただの文字列にする
+            var span = "<span class='telno'>" + telno + "</span>";
+            str = str.replace(tel[0], span);
+          }
+          custom += str + "\n";
         }
-        return custom;
-      };
+      return custom;
+    };
 
     // 【チャット】チャット枠の構築
     $scope.createMessage = function(elem, chat){
-      console.log('chatData');
-      console.log(chat);
-    var chatApi = {
-      connect: false,
-      tabId: null,
-      sincloSessionId: null,
-      userId: null,
-      token: null,
-      getMessageToken: null,
-      messageType: {
-        customer: 1,
-        company: 2,
-        auto: 3,
-        sorry: 4,
-        autoSpeech: 5,
-        start: 98,
-        end: 99,
+      var chatApi = {
+        connect: false,
+        tabId: null,
+        sincloSessionId: null,
+        userId: null,
+        token: null,
+        getMessageToken: null,
+        messageType: {
+          customer: 1,
+          company: 2,
+          auto: 3,
+          sorry: 4,
+          autoSpeech: 5,
+          start: 98,
+          end: 99,
+        }
       }
-    }
-      console.log('ここで作ってるよ！');
       var cn = "";
       var div = document.createElement('div');
       var li = document.createElement('li');
@@ -203,12 +174,8 @@
       var type = Number(chat.messageType);
       var message = chat.message;
       var userId = Number(chat.userId);
-      console.log('userId');
-      console.log(userId);
-      console.log($('#visitorsId').text());
       // 消費者からのメッセージの場合
       if ( type === chatApi.messageType.customer) {
-        console.log('消費者からのメッセージ');
         var created = chat.created.replace(" ","%");
         cn = "sinclo_re";
         div.style.textAlign = 'left';
@@ -217,14 +184,21 @@
         div.style.borderBottom = '1px solid #bfbfbf';
         div.style.marginTop = '6px';
         li.className = cn;
-        content = "<span class='cName' style = 'color:#333333; !important'>ゲスト(" + Number($('#visitorsId').text()) + ")</span>";
-        content += "<span class='cTime'>"+chat.created+"</span>";
-        content += '<img src= /img/close_b.png alt=履歴削除 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+chat.message+'","'+created+'") width=21 height=21 style="cursor:pointer; float:right; color: #fff !important; padding:2px !important; margin-right: auto;">'
-        content +=  "<span class='cChat'>"+$scope.createTextOfMessage(chat, message, {radio: false})+"</span>";
+        if(chat.delete_flg == 1) {
+          var deleteUser = userList[Number(chat.deleted_user_id)];
+          content = "<span class='cName' style = 'color:#bdbdbd !important;'>ゲスト(" + Number($('#visitorsId').text()) + ")</span>";
+          content += "<span class='cTime' style = 'color:#bdbdbd !important;'>"+chat.created+"</span>";
+          content +=  "<span class='cChat' style = 'color:#bdbdbd;'>(このメッセージは"+chat.deleted+"に"+deleteUser+"さんによって削除されました。)</span>";
+        }
+        else {
+          content = "<span class='cName' style = 'color:#333333; !important'>ゲスト(" + Number($('#visitorsId').text()) + ")</span>";
+          content += "<span class='cTime'>"+chat.created+"</span>";
+          content += '<img src= /img/close_b.png alt=履歴削除 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+chat.message+'","'+created+'") width=21 height=21 style="cursor:pointer; float:right; color: #fff !important; padding:2px !important; margin-right: auto;">'
+          content +=  "<span class='cChat'>"+$scope.createTextOfMessage(chat, message, {radio: false})+"</span>";
+        }
       }
       // オートメッセージの場合
       else if ( type === chatApi.messageType.company) {
-        console.log('オートメッセージ');
         var created = chat.created.replace(" ","%");
         var message2 = chat.message.replace(/\r?\n/g,"");
         cn = "sinclo_se";
@@ -233,19 +207,24 @@
         div.style.padding = '0';
         div.style.borderBottom = '1px solid #bfbfbf';
         div.style.marginTop = '6px';
-        console.log('userList');
-        console.log(userList);
        // var chatName = widget.subTitle;
         if ( chat.userId !== null ) {
           var chatName = userList[Number(chat.userId)];
         }
-        content = "<span class='cName'>" + chatName + "</span>";
-        content += "<span class='cTime'>"+chat.created+"</span>";
-        content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+message2+'","'+created+'") style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
-        content += "<span class='cChat'>"+$scope.createTextOfMessage(chat, message)+"</span>";
+        if(chat.delete_flg == 1) {
+          var deleteUser = userList[Number(chat.deleted_user_id)];
+          content = "<span class='cName' style = 'color:#bdbdbd !important;'>"+ chatName +"</span>";
+          content += "<span class='cTime' style = 'color:#bdbdbd !important;'>"+chat.created+"</span>";
+          content +=  "<span class='cChat' style = 'color:#bdbdbd;'>(このメッセージは"+chat.deleted+"に"+deleteUser+"さんによって削除されました。)</span>";
+        }
+        else {
+          content = "<span class='cName'>" + chatName + "</span>";
+          content += "<span class='cTime'>"+chat.created+"</span>";
+          content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+message2+'","'+created+'") style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
+          content += "<span class='cChat'>"+$scope.createTextOfMessage(chat, message)+"</span>";
+        }
       }
       else if ( type === chatApi.messageType.auto || type === chatApi.messageType.sorry) {
-        console.log('自動応答');
         cn = "sinclo_auto";
         var created = chat.created.replace(" ","%");
         var message2 = chat.message.replace(/\r?\n/g,"");
@@ -254,13 +233,20 @@
         div.style.padding = '0';
         div.style.borderBottom = '1px solid #bfbfbf';
         div.style.marginTop = '6px';
-        content = "<span class='cName'>自動応答</span>";
-        content += "<span class='cTime'>"+chat.created+"</span>";
-        content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+message2+'","'+created+'") style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
-        content += "<span class='cChat'>"+$scope.createTextOfMessage(chat, message)+"</span>";
+        if(chat.delete_flg == 1) {
+          var deleteUser = userList[Number(chat.deleted_user_id)];
+          content = "<span class='cName' style = 'color:#bdbdbd !important;'>自動応答(" + Number($('#visitorsId').text()) + ")</span>";
+          content += "<span class='cTime' style = 'color:#bdbdbd !important;'>"+chat.created+"</span>";
+          content +=  "<span class='cChat' style = 'color:#bdbdbd;'>(このメッセージは"+chat.deleted+"に"+deleteUser+"さんによって削除されました。)</span>";
+        }
+        else {
+          content = "<span class='cName'>自動応答</span>";
+          content += "<span class='cTime'>"+chat.created+"</span>";
+          content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+message2+'","'+created+'") style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
+          content += "<span class='cChat'>"+$scope.createTextOfMessage(chat, message)+"</span>";
+        }
       }
       else if ( type === chatApi.messageType.autoSpeech ) {
-        console.log('自動返信');
         cn = "sinclo_auto";
         var created = chat.created.replace(" ","%");
         var message2 = chat.message.replace(/\r?\n/g,"");
@@ -269,12 +255,20 @@
         div.style.padding = '0';
         div.style.borderBottom = '1px solid #bfbfbf';
         div.style.marginTop = '6px';
-        content = "<span class='cName'>自動返信</span>";
-        content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+message2+'","'+created+'") style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
-        content += $scope.createTextOfMessage(chat, message);
+        if(chat.delete_flg == 1) {
+          var deleteUser = userList[Number(chat.deleted_user_id)];
+          content = "<span class='cName' style = 'color:#bdbdbd !important;'>自動返信(" + Number($('#visitorsId').text()) + ")</span>";
+          content += "<span class='cTime' style = 'color:#bdbdbd !important;'>"+chat.created+"</span>";
+          content +=  "<span class='cChat' style = 'color:#bdbdbd;'>(このメッセージは"+chat.deleted+"に"+deleteUser+"さんによって削除されました。)</span>";
+        }
+        else {
+          content = "<span class='cName'>自動返信</span>";
+          content += "<span class='cTime'>"+chat.created+"</span>";
+          content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+message2+'","'+created+'") style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
+          content += "<span class='cChat'>"+$scope.createTextOfMessage(chat, message)+"</span>";
+        }
       }
       else  {
-        console.log('入室退室系');
         cn = "sinclo_etc";
         div.style.borderBottom = '1px solid #bfbfbf';
         div.style.marginTop = '6px';
@@ -418,10 +412,6 @@
         },
         dataType: 'html',
         success: function(html){
-          //modalOpen.call(window, html, 'p-chat-logs', 'チャット履歴');
-          //$(".p-chat-logs #popup-main ul").scrollTop(0);
-          console.log('成功');
-          console.log(html);
         }
       });
     };
@@ -607,8 +597,6 @@ $(document).ready(function(){
 
   var prevBoldTarget = null;
   $('.showBold').on('click', function(e){
-    console.log('eeeeeeeeeeeeeee');
-    console.log(e);
     if(prevBoldTarget) {
       prevBoldTarget.find('td').each(function(index){
         //$(this).css("font-weight", "normal");
@@ -616,20 +604,32 @@ $(document).ready(function(){
       });
     }
     $(this).find('td').each(function(index){
-      console.log($(this).find('td'));
-      console.log('入っているかチェック！しようぜBABY');
-      //$(this).css("font-weight", "bold");
       $(this).css("background-color", "#ebf6f9");
     });
     prevBoldTarget = $(this);
+    var eee = JSON.stringify(prevBoldTarget.find('td'));
+    //window.sessionStorage.setItem(['prevBoldTarget'],[eee]);
   });
 
-  $('.showBold').find('td').each(function(index){
-    if( index < 11 ) {
-       $(this).css("background-color", "#ebf6f9");
+
+  $('.showBold').each(function(index){
+    if((location.search.split("?")[1]) !== undefined && location.search.split("?")[1].match(/id/)) {
+      if ((location.search.split("?")[1]).substr(3) == $(this)[0]['id']) {
+        $(this).find('td').each(function(index){
+          $(this).css("background-color", "#ebf6f9");
+        });
+      }
+    }
+    else {
+      $('.showBold').find('td').each(function(index){
+        if(index < 11) {
+          $(this).css("background-color", "#ebf6f9");
+        }
+      });
     }
   });
-  var prevBoldTarget = $(this);
+  prevBoldTarget = $(this);
+
 
   //検索ボタン
   $('#mainDatePeriod').on('apply.daterangepicker', function(ev, picker) {
