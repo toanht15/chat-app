@@ -150,10 +150,10 @@ function openChatById(id) {
     success: function(html){
       var customerData = JSON.parse(html);
       document.getElementById("visitorsId").innerHTML= customerData.THistory.visitors_id;LandscapeData
-      document.getElementById("ipAddress").innerHTML= customerData.THistory.ip_address;
+      document.getElementById("ipAddress").innerHTML= "("+customerData.THistory.ip_address+")";
       document.getElementById("Landscape").innerHTML= customerData.LandscapeData.org_name;
       $("#LandscapeData a").attr('onclick',"openCompanyDetailInfo("+customerData.LandscapeData.lbc_code+")");
-      document.getElementById("visitCounts").innerHTML= customerData.THistoryCount.cnt;
+      document.getElementById("visitCounts").innerHTML= customerData.THistoryCount.cnt + "回";
       document.getElementById("platform").innerHTML= userAgentChk.pre(customerData.THistory.user_agent);
       document.getElementById("landingPage").innerHTML= customerData.tHistoryChatSendingPageData.FirstSpeechSendPage.title;
       $("#landing a").attr("href", customerData.tHistoryChatSendingPageData.FirstSpeechSendPage.url);

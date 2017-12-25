@@ -190,6 +190,7 @@
       var type = Number(chat.messageType);
       var message = chat.message;
       var userId = Number(chat.userId);
+      var coreSettings = "<?= $coreSettings[C_COMPANY_USE_HISTORY_DELETE] ?>";
       // 消費者からのメッセージの場合
       if ( type === chatApi.messageType.customer) {
         var created = chat.created.replace(" ","%");
@@ -209,7 +210,9 @@
         else {
           content = "<span class='cName' style = 'color:#333333; !important'>ゲスト(" + Number($('#visitorsId').text()) + ")</span>";
           content += "<span class='cTime'>"+chat.created+"</span>";
-          content += '<img src= /img/close_b.png alt=履歴削除 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+chat.message+'","'+created+'") width=21 height=21 style="cursor:pointer; float:right; color: #fff !important; padding:2px !important; margin-right: auto;">'
+          if(coreSettings === "") {
+            content += '<img src= /img/close_b.png alt=履歴削除 class = \"commontooltip disabled\" data-text=\"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+chat.message+'","'+created+'") width=21 height=21 style="cursor:pointer; float:right; color: #fff !important; padding:2px !important; margin-right: auto;">'
+          }
           content +=  "<span class='cChat'>"+$scope.createTextOfMessage(chat, message, {radio: false})+"</span>";
         }
       }
@@ -236,7 +239,9 @@
         else {
           content = "<span class='cName'>" + chatName + "</span>";
           content += "<span class='cTime'>"+chat.created+"</span>";
-          content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+message2+'","'+created+'") style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
+          if(chat.permissionLevel == 1) {
+            content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+message2+'","'+created+'") style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
+          }
           content += "<span class='cChat'>"+$scope.createTextOfMessage(chat, message)+"</span>";
         }
       }
@@ -258,7 +263,9 @@
         else {
           content = "<span class='cName'>自動応答</span>";
           content += "<span class='cTime'>"+chat.created+"</span>";
-          content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+message2+'","'+created+'") style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
+          if(chat.permissionLevel == 1) {
+            content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+message2+'","'+created+'") style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
+          }
           content += "<span class='cChat'>"+$scope.createTextOfMessage(chat, message)+"</span>";
         }
       }
@@ -280,7 +287,9 @@
         else {
           content = "<span class='cName'>自動返信</span>";
           content += "<span class='cTime'>"+chat.created+"</span>";
-          content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+message2+'","'+created+'") style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
+          if(chat.permissionLevel == 1) {
+            content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+message2+'","'+created+'") style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
+          }
           content += "<span class='cChat'>"+$scope.createTextOfMessage(chat, message)+"</span>";
         }
       } else if ( type === chatApi.messageType.sendFile ) {
@@ -700,24 +709,26 @@ $(document).ready(function(){
   $('.showBold').on('click', function(e){
     if(prevBoldTarget) {
       prevBoldTarget.find('td').each(function(index){
-        //$(this).css("font-weight", "normal");
         $(this).css("background-color", "#fff");
+        $(this).css("font-weight", "normal");
       });
     }
     $(this).find('td').each(function(index){
-      $(this).css("background-color", "#ebf6f9");
+      if(index < 11) {
+        $(this).css("background-color", "#ebf6f9");
+        $(this).css("font-weight", "bold");
+      }
     });
     prevBoldTarget = $(this);
-    var eee = JSON.stringify(prevBoldTarget.find('td'));
-    //window.sessionStorage.setItem(['prevBoldTarget'],[eee]);
   });
-
-
   $('.showBold').each(function(index){
     if((location.search.split("?")[1]) !== undefined && location.search.split("?")[1].match(/id/)) {
       if ((location.search.split("?")[1]).substr(3) == $(this)[0]['id']) {
         $(this).find('td').each(function(index){
-          $(this).css("background-color", "#ebf6f9");
+          if(index < 11) {
+            $(this).css("background-color", "#ebf6f9");
+            $(this).css("font-weight", "bold");
+          }
         });
       }
     }
@@ -725,6 +736,7 @@ $(document).ready(function(){
       $('.showBold').find('td').each(function(index){
         if(index < 11) {
           $(this).css("background-color", "#ebf6f9");
+          $(this).css("font-weight", "bold");
         }
       });
     }
