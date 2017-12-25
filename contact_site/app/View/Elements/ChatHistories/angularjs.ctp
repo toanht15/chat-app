@@ -100,6 +100,21 @@
       });
     };
 
+    $scope.isset = function(value){
+      var result;
+      if ( angular.isUndefined(value) ) {
+        result = false;
+      }
+      if ( angular.isNumber(value) && value > 0 ) {
+        result = true;
+      }
+      else {
+        result = false;
+      }
+      return result;
+    };
+
+
     $scope.ip = function(ip, issetCompanyName){
       var showData = [];
       if(issetCompanyName) {
@@ -162,6 +177,7 @@
           auto: 3,
           sorry: 4,
           autoSpeech: 5,
+          sendFile: 6,
           start: 98,
           end: 99,
         }
@@ -267,8 +283,22 @@
           content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+message2+'","'+created+'") style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
           content += "<span class='cChat'>"+$scope.createTextOfMessage(chat, message)+"</span>";
         }
-      }
-      else  {
+      } else if ( type === chatApi.messageType.sendFile ) {
+        // ファイル送信はmessageがJSONなのでparseする
+        message = JSON.parse(message);
+        cn = "sinclo_se";
+        div.style.textAlign = 'right';
+        div.style.height = 'auto';
+        div.style.padding = '0';
+        div.style.borderBottom = '1px solid #bfbfbf';
+        div.style.marginTop = '6px';
+//        var chatName = widget.subTitle;
+//        if ( Number(widget.showName) === <?//=C_WIDGET_SHOW_NAME?>// ) {
+//          chatName = userList[Number(userId)];
+//        }
+        var isExpired = Math.floor((new Date()).getTime() / 1000) >=  (Date.parse( message.expired.replace( /-/g, '/') ) / 1000);
+        content = $scope.createTextOfSendFile(chat, message.downloadUrl, message.fileName, message.fileSize, message.extension, isExpired);
+      } else  {
         cn = "sinclo_etc";
         div.style.borderBottom = '1px solid #bfbfbf';
         div.style.marginTop = '6px';
@@ -290,6 +320,77 @@
       div.appendChild(li);
       $(elem).append(div);
     };
+
+    $scope.createTextOfSendFile = function(chat, url, name, size, extension, isExpired) {
+      var thumbnail = "";
+      if (extension.match(/(jpeg|jpg|gif|png)$/) != null && !isExpired) {
+        thumbnail = "<img src='" + url + "' class='sendFileThumbnail' width='64' height='64'>";
+      } else {
+        thumbnail = "<i class='fa " + selectFontIconClassFromExtension(extension) + " fa-4x sendFileThumbnail' aria-hidden='true'></i>";
+      }
+
+      var content = "<span class='cName'>ファイル送信" + (isExpired ? "（ダウンロード有効期限切れ）" : "") + "</span>";
+      content    += "<div class='sendFileContent'>";
+      content    += "  <div class='sendFileThumbnailArea'>" + thumbnail + "</div>";
+      content    += "  <div class='sendFileMetaArea'>";
+      content    += "    <span class='data sendFileName'>" + name + "</span>";
+      content    += "    <span class='data sendFileSize'>" + formatBytes(size,2) + "</span>";
+      content    += "  </div>";
+      content    += "</div>";
+
+      return content;
+    };
+
+    function selectFontIconClassFromExtension(ext) {
+      var selectedClass = "",
+        icons = {
+          image:      'fa-file-image-o',
+          pdf:        'fa-file-pdf-o',
+          word:       'fa-file-word-o',
+          powerpoint: 'fa-file-powerpoint-o',
+          excel:      'fa-file-excel-o',
+          audio:      'fa-file-audio-o',
+          video:      'fa-file-video-o',
+          zip:        'fa-file-zip-o',
+          code:       'fa-file-code-o',
+          text:       'fa-file-text-o',
+          file:       'fa-file-o'
+        },
+        extensions = {
+          gif: icons.image,
+          jpeg: icons.image,
+          jpg: icons.image,
+          png: icons.image,
+          pdf: icons.pdf,
+          doc: icons.word,
+          docx: icons.word,
+          ppt: icons.powerpoint,
+          pptx: icons.powerpoint,
+          xls: icons.excel,
+          xlsx: icons.excel,
+          aac: icons.audio,
+          mp3: icons.audio,
+          ogg: icons.audio,
+          avi: icons.video,
+          flv: icons.video,
+          mkv: icons.video,
+          mp4: icons.video,
+          gz: icons.zip,
+          zip: icons.zip,
+          css: icons.code,
+          html: icons.code,
+          js: icons.code,
+          txt: icons.text,
+          csv: icons.csv,
+          file: icons.file
+        };
+      if(extensions[ext]) {
+        selectedClass = extensions[ext]
+      } else {
+        selectedClass = extensions['file'];
+      }
+      return selectedClass;
+    }
 
     $scope.ui = function(ip, id){
       var showData = [];

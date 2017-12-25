@@ -502,6 +502,12 @@ class HistoriesController extends AppController {
         $row['transmissionKind'] = '自動返信';
         $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
       }
+      if($val['THistoryChatLog']['message_type'] == 6) {
+        $row['transmissionKind'] = 'ファイル送信';
+        $row['transmissionPerson'] = $val['MUser']['display_name'];
+        $json = json_decode($val['THistoryChatLog']['message'], TRUE);
+        $val['THistoryChatLog']['message'] = $json['fileName']."\n".$this->prettyByte2Str($json['fileSize']);
+      }
       if($val['THistoryChatLog']['message_type'] == 98 || $val['THistoryChatLog']['message_type'] == 99) {
         $row['transmissionKind'] = '通知メッセージ';
         $row['transmissionPerson'] = "";
@@ -607,6 +613,10 @@ class HistoriesController extends AppController {
           break;
         case 5: // 自動返信
           $row = $this->_setData($date, "自動返信", $this->userInfo['MCompany']['company_name'], $message);
+        case 6: // ファイル送信
+          $json = json_decode($val['THistoryChatLog']['message'], TRUE);
+          $message = $json['fileName']."\n".$this->prettyByte2Str($json['fileSize']);
+          $row = $this->_setData($date, "ファイル送信", $val['MUser']['display_name'], $message);
           break;
         case 98: // 入室メッセージ
         case 99: // 退室メッセージ

@@ -117,10 +117,13 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
       <thead>
       <tr>
         <th width=" 5%"><input type="checkbox" name="allCheck" id="allCheck"><label for="allCheck"></label></th>
-        <th width="10%">No</th>
+        <th width=" 5%">No</th>
         <th width="20%">名称</th>
-        <th width="25%">条件</th>
-        <th width="25%">アクション</th>
+        <th width="23%">条件</th>
+        <th width="20%">アクション</th>
+        <th width="10%">自由入力エリア</th>
+        <th width=" 5%">CV</th>
+        <th width=" 7%">メール送信</th>
 <!--
         <th width="15%">操作</th>
  -->
@@ -181,15 +184,42 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
             <input type="checkbox" name="selectTab" id="selectTab<?=h($id)?>" value="<?=h($id)?>">
             <label for="selectTab<?=h($id)?>"></label>
           </td>
-          <td class="tCenter" width="10%"><?=$no?></td>
+          <td class="tCenter" width=" 5%"><?=$no?></td>
           <td class="tCenter" width="20%"><?= $val['TAutoMessage']['name']; ?></td>
-          <td class="targetBalloon" width="25%">
+          <td class="targetBalloon" width="23%">
             <span class="conditionTypeLabel m10b">条件</span><span class="m10b actionValue"><?=h($conditionType)?></span>
             <span class="conditionValueLabel m10b">設定</span><span class="m10b actionValue"><?=h($conditions)?></span>
           </td>
-          <td class="p10x" width="25%">
+          <td class="p10x" width="20%">
             <span class="actionTypeLabel m10b">対象</span><span class="m10b actionValue"><?=h($outMessageActionType[$val['TAutoMessage']['action_type']])?></span>
             <?=$activity_detail?>
+          </td>
+          <td class="p10x tCenter" style="font-size: 1em; font-weight: bold;" width="10%">
+            <?php
+              if(isset($activity['chatTextarea']) && $activity['chatTextarea'] === 2) {
+                echo '<span class="m10b">OFF</span>';
+              } else {
+                echo '<span class="m10b">ON</span>';
+              }
+            ?>
+          </td>
+          <td class="p10x tCenter" style="font-size: 2em;" width=" 5%">
+            <?php
+            if(isset($activity['cv']) && $activity['cv'] === 1) {
+              echo '<span class="m10b"><i class="fa fa-check" aria-hidden="true" style="color:#595959;"></i></span>';
+            } else {
+              echo '<span class="m10b"></span>';
+            }
+            ?>
+          </td>
+          <td class="p10x tCenter" style="font-size: 2em;" width="7%">
+            <?php
+            if(isset($val['TAutoMessage']['send_mail_flg']) && $val['TAutoMessage']['send_mail_flg']) {
+              echo '<span class="m10b"><i class="fa fa-check" aria-hidden="true" style="color:#595959;"></i></span>';
+            } else {
+              echo '<span class="m10b"></span>';
+            }
+            ?>
           </td>
 <!--
           <td class="p10x lineCtrl">
