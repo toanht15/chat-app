@@ -197,6 +197,6 @@ class FileController extends AppController
   }
 
   private function getExtension($filename) {
-    return pathinfo($filename, PATHINFO_EXTENSION);
+    return mb_strtolower(pathinfo($filename, PATHINFO_EXTENSION));
   }
 }
