@@ -31,19 +31,23 @@ if ( !(!empty($this->data['MFileTransferSetting']['type']) && strcmp($this->data
                 'separator' => '</label><br><label style="display:inline-block;">',
                 'label' => false,
                 'div' => false,
+                'error' => false,
                 'class' => 'pointer'
               ];
               echo $this->Form->input('MFileTransferSetting.type',$settings);
               ?>
             </label>
           </div>
+          <?php if (!empty($errors['type'])) echo "<li class='error-message'>" . h($errors['type'][0]) . "</li>"; ?>
         </li>
       </ul>
       <div id="extension_setting_area" class="<?=$fileTypeAreaHiddenClass?>">
         <s>※複数設定する場合は、カンマを使ってファイルの種類を区切ります。</s>
         <?= $this->Form->textarea('MFileTransferSetting.allow_extensions',[
-            'placeholder' => 'pdf,ppt,pptx,jpg,png,gif'
+            'placeholder' => 'pdf,ppt,pptx,jpg,png,gif',
+            'error' => false
         ]);?>
+        <?php if (!empty($errors['allow_extensions'])) echo "<li class='error-message'>" . h($errors['allow_extensions'][0]) . "</li>"; ?>
       </div>
     </section>
     <?php $this->Form->end(); ?>

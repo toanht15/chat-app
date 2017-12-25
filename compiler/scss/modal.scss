@@ -470,6 +470,20 @@
             &:hover {
               background-color: #B8D47E;
             }
+            &.hovering {
+              background-color: #B8D47E;
+            }
+          }
+
+          #fileUploadPopupContent {
+            text-align: center;
+          }
+
+          #fileUploadMenuArea {
+            .error-message {
+              padding-top: 1em;
+              display: none;
+            }
           }
 
           #fileDropArea {

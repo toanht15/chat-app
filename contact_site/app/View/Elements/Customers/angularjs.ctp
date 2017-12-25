@@ -1259,7 +1259,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           zip:        'fa-file-zip-o',
           code:       'fa-file-code-o',
           text:       'fa-file-text-o',
-          file:       'fa-file-o',
+          file:       'fa-file-o'
         },
         extensions = {
           gif: icons.image,

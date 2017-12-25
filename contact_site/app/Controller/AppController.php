@@ -197,6 +197,7 @@ class AppController extends Controller {
         case "TAutoMessages":
         case "TCampaigns":
         case "DisplayExclusions":
+        case "MFileTransferSetting":
         // 一先ずトップ画面へ
         $this->redirect("/");
         default:
@@ -213,6 +214,7 @@ class AppController extends Controller {
       case "TAutoMessages":
       case "MChatNotifications":
       case "MChatSettings":
+      case "MFileTransferSetting":
         if ( !(isset($this->coreSettings[C_COMPANY_USE_CHAT]) && $this->coreSettings[C_COMPANY_USE_CHAT]) ) {
           $this->redirect("/");
         }

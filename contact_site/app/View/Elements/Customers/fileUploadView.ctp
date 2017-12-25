@@ -20,27 +20,62 @@ App::uses('LandscapeCodeMapper', 'Vendor/Util/Landscape');
     var fileObj = null;
     var loadData = null;
 
+    var allowExtensions = <?= json_encode($allowExtensions); ?>;
+
     // File API が使用できない場合は諦めます.
     if(!window.FileReader) {
       $("#fileDropArea").css('display', 'none');
     }
 
     // イベントをキャンセルするハンドラです.
-    var cancelEvent = function(event) {
+    var enterEvent = function(event) {
       event.preventDefault();
       event.stopPropagation();
       return false;
+    };
+
+    // イベントをキャンセルするハンドラです.
+    var overEvent = function(event) {
+      hideInvalidError();
+      $(this).addClass("hovering");
+      event.preventDefault();
+      event.stopPropagation();
+      return false;
+    };
+
+    // イベントをキャンセルするハンドラです.
+    var leaveEvent = function(event) {
+      $(this).removeClass("hovering");
+      return false;
     }
 
+    var validExtension = function(filename) {
+      var split = filename.split(".");
+      var targetExtension = split[split.length-1];
+      return $.inArray(targetExtension, allowExtensions) >= 0
+    };
+
+    showInvalidError = function() {
+      $('#fileUploadError').css('display','inline-block');
+      popupEvent.resize();
+    };
+
+    hideInvalidError = function() {
+      $('#fileUploadError').css('display','none');
+      popupEvent.resize();
+    };
+
     // dragenter, dragover イベントのデフォルト処理をキャンセルします.
-    droppable.on("dragenter", cancelEvent);
-    droppable.on("dragover", cancelEvent);
+    droppable.on("dragenter", enterEvent);
+    droppable.on("dragover", overEvent);
+    droppable.on("dragleave", leaveEvent);
 
     selectFileBtn.on('click', function(event){
       selectInput.trigger('click');
     });
 
     selectInput.on("click", function(event){
+      hideInvalidError();
       $(this).val(null);
     }).on("change",function(event){
       if(selectInput[0].files[0]) {
@@ -48,6 +83,10 @@ App::uses('LandscapeCodeMapper', 'Vendor/Util/Landscape');
         // ファイルの内容は FileReader で読み込みます.
         var fileReader = new FileReader();
         fileReader.onload = function (event) {
+          if(!validExtension(fileObj.name)) {
+            showInvalidError();
+            return;
+          }
           // event.target.result に読み込んだファイルの内容が入っています.
           // ドラッグ＆ドロップでファイルアップロードする場合は result の内容を Ajax でサーバに送信しましょう!
           $('#fileUploadConfirmArea').html("【" + fileObj.name + "】をアップロードします。<br>よろしいですか？");
@@ -60,12 +99,17 @@ App::uses('LandscapeCodeMapper', 'Vendor/Util/Landscape');
 
     // ドロップ時のイベントハンドラを設定します.
     var handleDroppedFile = function(event) {
+      hideInvalidError();
       // ファイルは複数ドロップされる可能性がありますが, ここでは 1 つ目のファイルを扱います.
       fileObj = event.originalEvent.dataTransfer.files[0];
 
       // ファイルの内容は FileReader で読み込みます.
       var fileReader = new FileReader();
       fileReader.onload = function(event) {
+        if(!validExtension(fileObj.name)) {
+          showInvalidError();
+          return;
+        }
         // event.target.result に読み込んだファイルの内容が入っています.
         // ドラッグ＆ドロップでファイルアップロードする場合は result の内容を Ajax でサーバに送信しましょう!
         $('#fileUploadConfirmArea').html("【"+fileObj.name+"】をアップロードします。<br>よろしいですか？");
@@ -76,7 +120,7 @@ App::uses('LandscapeCodeMapper', 'Vendor/Util/Landscape');
       fileReader.readAsArrayBuffer(fileObj);
 
       // デフォルトの処理をキャンセルします.
-      cancelEvent(event);
+      enterEvent(event);
       return false;
     }
 
@@ -99,6 +143,7 @@ App::uses('LandscapeCodeMapper', 'Vendor/Util/Landscape');
     <div class="upload-select-menu" id="fileSelectArea">
       <span>ダイアログを表示してファイルを選択する</span>
     </div>
+    <span class="error-message" id="fileUploadError">指定のファイルは送信を許可されていません。</span>
   </div>
   <div id="fileUploadConfirmArea" style="display:none;">
   </div>

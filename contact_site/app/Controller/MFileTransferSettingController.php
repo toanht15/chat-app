@@ -12,6 +12,15 @@ class MFileTransferSettingController extends AppController
 {
   public $uses = ['MFileTransferSetting'];
 
+  private $defaultAllowExtensions = array(
+    'pdf',
+    'ppt',
+    'pptx',
+    'jpg',
+    'png',
+    'gif'
+  );
+
   public function beforeFilter() {
     parent::beforeFilter();
     $this->set('title_for_layout', 'ファイル送信設定');
@@ -24,6 +33,17 @@ class MFileTransferSettingController extends AppController
       $this->renderView();
     }
     $this->set('typeSelect', Configure::read('fileTransferSettingType'));
+  }
+
+  public function getAllowExtensions() {
+    $default = $this->defaultAllowExtensions;
+    $myData = $this->MFileTransferSetting->find('first', array("condition" => array('MFileTransferSetting.m_companies_id' => $this->userInfo['MCompany']['id'])));
+    if(!empty($myData) && strcmp($myData['MFileTransferSetting']['type'], C_FILE_TRANSFER_SETTING_TYPE_EXTEND) === 0) {
+      // 拡張設定利用中であれば拡張する
+      $myExtensions = explode(',',$myData['MFileTransferSetting']['allow_extensions']);
+      $default = array_merge($default, $myExtensions);
+    }
+    return array_values(array_unique($default));
   }
 
   private function upsert() {
@@ -45,33 +65,50 @@ class MFileTransferSettingController extends AppController
   }
 
   private function insert() {
-    $this->request->data['MFileTransferSetting']['m_companies_id'] = $this->userInfo['MCompany']['id'];
-    $this->MFileTransferSetting->create();
-    $this->MFileTransferSetting->begin();
-    $this->MFileTransferSetting->set($this->request->data);
-    $errors = []; // $this->MFileTransferSetting->validates();
-    if(!empty($errors)) {
+    try {
+      $this->request->data['MFileTransferSetting']['m_companies_id'] = $this->userInfo['MCompany']['id'];
+      $this->MFileTransferSetting->create();
+      $this->MFileTransferSetting->begin();
+      $this->MFileTransferSetting->set($this->request->data);
+      $this->doValidate();
+      if (!empty($errors)) {
+        $this->MFileTransferSetting->rollback();
+        throw new Exception($errors);
+      }
+      if (!$this->MFileTransferSetting->save()) {
+        $this->MFileTransferSetting->rollback();
+        throw new Exception('DB登録時にエラーが発生しました。');
+      }
+      $this->MFileTransferSetting->commit();
+      $this->request->data['MFileTransferSetting']['id'] = $this->MFileTransferSetting->getLastInsertId();
+    } catch(Exception $e) {
       $this->MFileTransferSetting->rollback();
-      throw new Exception($errors);
+      if($this->MFileTransferSetting->validationErrors) {
+        $this->set('errors', $this->MFileTransferSetting->validationErrors);
+      }
+      throw $e;
     }
-    if(!$this->MFileTransferSetting->save()) {
-      $this->MFileTransferSetting->rollback();
-      throw new Exception('DB登録時にエラーが発生しました。');
-    }
-    $this->MFileTransferSetting->commit();
-    $this->request->data['MFileTransferSetting']['id'] = $this->MFileTransferSetting->getLastInsertId();
   }
 
   private function update() {
-    $this->MFileTransferSetting->read(null, $this->request->data['MFileTransferSetting']['id']);
-    if($this->MFileTransferSetting->field('m_companies_id') !== $this->userInfo['MCompany']['id']) {
-      throw new Exception('不正な更新処理です。');
+    try {
+      $this->MFileTransferSetting->read(null, $this->request->data['MFileTransferSetting']['id']);
+      if ($this->MFileTransferSetting->field('m_companies_id') !== $this->userInfo['MCompany']['id']) {
+        throw new Exception('不正な更新処理です。');
+      }
+      $this->MFileTransferSetting->set([
+          'type' => $this->request->data['MFileTransferSetting']['type'],
+          'allow_extensions' => $this->request->data['MFileTransferSetting']['allow_extensions']
+      ]);
+      $this->doValidate();
+      $this->MFileTransferSetting->save();
+    } catch(Exception $e) {
+      $this->MFileTransferSetting->rollback();
+      if($this->MFileTransferSetting->validationErrors) {
+        $this->set('errors', $this->MFileTransferSetting->validationErrors);
+      }
+      throw $e;
     }
-    $this->MFileTransferSetting->set([
-      'type' => $this->request->data['MFileTransferSetting']['type'],
-      'allow_extensions' => $this->request->data['MFileTransferSetting']['allow_extensions']
-    ]);
-    $this->MFileTransferSetting->save();
   }
 
   private function getMyFileTransferSetting() {
@@ -90,5 +127,13 @@ class MFileTransferSettingController extends AppController
         'allow_extensions' => '',
       ]
     ];
+  }
+
+  private function doValidate() {
+    if(!$this->MFileTransferSetting->validates()) {
+      //NG
+      throw new InvalidArgumentException('バリデーションエラー');
+    }
+    // OK
   }
 }

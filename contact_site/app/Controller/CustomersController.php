@@ -3,6 +3,9 @@
  * CustomersController controller.
  * モニタリング機能
  */
+
+App::uses('MFileTransferSettingController', 'Controller');
+
 class CustomersController extends AppController {
   public $uses = [
     'MCompany', 'MUser', 'MCustomer', 'MWidgetSetting', 'MChatNotification', 'MChatSetting',
@@ -649,6 +652,8 @@ class CustomersController extends AppController {
   public function popupFileUploadElement() {
     $this->autoRender = false;
     $this->layout = "ajax";
+    $controller = new MFileTransferSettingController();
+    $this->set('allowExtensions', $controller->getAllowExtensions());
     $this->render('/Elements/Customers/fileUploadView');
   }
 
