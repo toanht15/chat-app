@@ -712,6 +712,12 @@ $this->log('LandscapdData前',LOG_DEBUG);
         $row['transmissionKind'] = '自動返信';
         $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
       }
+      if($val['THistoryChatLog']['message_type'] == 6) {
+        $row['transmissionKind'] = 'ファイル送信';
+        $row['transmissionPerson'] = $val['MUser']['display_name']."さん";
+        $json = json_decode($val['THistoryChatLog']['message'], TRUE);
+        $val['THistoryChatLog']['message'] = $json['fileName']."\n".$this->prettyByte2Str($json['fileSize']);
+      }
       if($val['THistoryChatLog']['message_type'] == 98 || $val['THistoryChatLog']['message_type'] == 99) {
         $row['transmissionKind'] = '通知メッセージ';
         $row['transmissionPerson'] = "";
@@ -1969,18 +1975,13 @@ $this->log('LandscapdData前',LOG_DEBUG);
       'order' => [
         'THistoryChatLog.t_histories_id' => 'asc'
       ],
-      'joins' => [
-        [
-          'type' => 'LEFT',
-          'table' => '(SELECT * FROM t_histories WHERE m_companies_id = '.$this->userInfo['MCompany']['id'].')',
-          'alias' => 'THistory',
-          'conditions' => 'THistoryChatLog.t_histories_id = THistory.id'
-        ],
-      ],
       'conditions' => [
         'OR' => [
           array('THistoryChatLog.message_type' => 98),
           array('THistoryChatLog.message_type' => 5)
+        ],
+        'AND' => [
+          array('THistoryChatLog.m_companies_id' => $this->userInfo['MCompany']['id'])
         ]
       ],
       'group' => ['THistoryChatLog.t_histories_id','THistoryChatLog.m_users_id']

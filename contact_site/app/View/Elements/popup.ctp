@@ -110,7 +110,7 @@ var popupEvent = {
         help: function(){},
         create: function () {
             var area = popupEvent.elm.btnArea;
-            area.style.display = "flex";
+            area.style.display = "";
             for (var i =area.childNodes.length-1; i>=0; i--) {
                 area.removeChild(area.childNodes[i]);
             }

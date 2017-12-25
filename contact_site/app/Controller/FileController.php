@@ -55,7 +55,8 @@ class FileController extends AppController
         $file = $this->getFileByFileId($decryptParameters['fileId']);
         $this->response->type($this->getExtension($file['record']['file_name']));
         $this->response->length($file['fileObj']['ContentLength']);
-        $this->response->header('Content-Disposition', 'attachment; filename=' . $file['record']['file_name']);
+        $this->response->header('Content-Disposition', 'attachment; filename*=UTF-8\'\'' . rawurlencode($file['record']['file_name']));
+        $this->response->download();
         $this->response->body($file['fileObj']['Body']);
         $this->updateDownloadDataById($decryptParameters['fileId']);
       } else {
@@ -64,6 +65,13 @@ class FileController extends AppController
       }
     } catch(Exception $e) {
       echo $e->getMessage();
+      // IEのデフォルトエラーページが表示される対応
+      // @see http://kiririmode.hatenablog.jp/entry/20160205/1454598000
+      $str = '';
+      for($i = 0; $i < 512; $i++) {
+        $str .= ' ';
+      }
+      echo $str;
     }
   }
 
@@ -197,6 +205,6 @@ class FileController extends AppController
   }
 
   private function getExtension($filename) {
-    return pathinfo($filename, PATHINFO_EXTENSION);
+    return mb_strtolower(pathinfo($filename, PATHINFO_EXTENSION));
   }
 }
