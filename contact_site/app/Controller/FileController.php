@@ -55,7 +55,8 @@ class FileController extends AppController
         $file = $this->getFileByFileId($decryptParameters['fileId']);
         $this->response->type($this->getExtension($file['record']['file_name']));
         $this->response->length($file['fileObj']['ContentLength']);
-        $this->response->header('Content-Disposition', 'attachment; filename=' . $file['record']['file_name']);
+        $this->response->header('Content-Disposition', 'attachment; filename*=UTF-8\'\'' . rawurlencode($file['record']['file_name']));
+        $this->response->download();
         $this->response->body($file['fileObj']['Body']);
         $this->updateDownloadDataById($decryptParameters['fileId']);
       } else {
