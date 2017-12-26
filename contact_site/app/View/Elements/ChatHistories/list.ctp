@@ -378,7 +378,8 @@
 
           </div>
         </div>
-        <div id="rightContents" style = "width:100% !important;">
+        <div id="customerInfoScrollArea" style = "width:100% !important;">
+          <div id="rightContents" style = "width:100% !important; margin-bottom: 4em;">
         <div class = "form01 fRight" style = "right:20px;">
         <?php
         $this->log('screenFLg!',LOG_DEBUG);
@@ -497,23 +498,23 @@
           <ul>
             <li>
               <label for="ng-customer-company">会社名</label>
-              <input type="text"  data-key='company' class="infoData" id="ng-customer-company" value ="<?= $mCusData['informations']['company'] ?>" ng-blur="saveCusInfo('company', customData)"  placeholder="会社名を追加" />
+              <input type="text"  data-key='company' class="infoData" id="ng-customer-company" value ="<?= !empty($mCusData) ? $mCusData['informations']['company'] : "" ?>" ng-blur="saveCusInfo('company', customData)"  placeholder="会社名を追加" />
             </li>
             <li>
               <label for="ng-customer-name">名前</label>
-              <input type="text" data-key='name' class = "infoData" id="ng-customer-name" value ="<?= $mCusData['informations']['name'] ?>" ng-blur="saveCusInfo('name', customData)" placeholder="名前を追加">
+              <input type="text" data-key='name' class = "infoData" id="ng-customer-name" value ="<?= !empty($mCusData) ? $mCusData['informations']['name'] : "" ?>" ng-blur="saveCusInfo('name', customData)" placeholder="名前を追加">
             </li>
             <li>
               <label for="ng-customer-tel">電話番号</label>
-              <input type="text" data-key='tel' class = "infoData" id="ng-customer-tel" value ="<?= $mCusData['informations']['tel'] ?>" ng-blur="saveCusInfo('tel', customData)"  placeholder="電話番号を追加" />
+              <input type="text" data-key='tel' class = "infoData" id="ng-customer-tel" value ="<?= !empty($mCusData) ? $mCusData['informations']['tel'] : "" ?>" ng-blur="saveCusInfo('tel', customData)"  placeholder="電話番号を追加" />
             </li>
             <li>
               <label for="ng-customer-mail">メールアドレス</label>
-              <input type="text" data-key='mail' class = "infoData" id="ng-customer-mail" value ="<?= $mCusData['informations']['mail'] ?>" ng-blur="saveCusInfo('mail', customData)" placeholder="メールアドレスを追加" />
+              <input type="text" data-key='mail' class = "infoData" id="ng-customer-mail" value ="<?= !empty($mCusData) ? $mCusData['informations']['mail'] : "" ?>" ng-blur="saveCusInfo('mail', customData)" placeholder="メールアドレスを追加" />
             </li>
             <li>
               <label for="ng-customer-memo" style = "width:60% !important">メモ</label>
-              <textarea rows="7" data-key='memo' class = "infoData" id="ng-customer-memo" placeholder="メモを追加"><?= $mCusData['informations']['memo'] ?></textarea>
+              <textarea rows="7" data-key='memo' class = "infoData" id="ng-customer-memo" placeholder="メモを追加"><?= !empty($mCusData) ? $mCusData['informations']['memo'] : "" ?></textarea>
             </li>
           </ul>
           <div id="personal_action">
@@ -523,6 +524,7 @@
           <?php } ?>
         </div>
       </div>
+        </div>
 </div>
 </div>
 <?php

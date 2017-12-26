@@ -227,11 +227,13 @@ $(function(){
     //$("#pastChatTalk").css('height', window.innerHeight - 364);
     $("#chatContent").css('height', window.innerHeight - 200);
     $("#chatHistory").css('height',window.innerHeight - 355);
+    $("#customerInfoScrollArea").css('height',window.innerHeight - 200);
   }
   //縦並びの場合
   if(<?= $screenFlg ?> == 2) {
     $("#chatContent").css('height', $("#detail").outerHeight() - 65);
     $("#chatHistory").css('height',$("#history_body_side").outerHeight() - 170);
+    $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
     //$("#pastChatTalk").css('height', window.innerHeight - 540);
   }
   });
@@ -250,6 +252,7 @@ $(function(){
     document.getElementById('chatTable').style.width = "100%";
     document.getElementById('detail').style.width = "100%";
     $("#chatContent").css('height', $("#detail").outerHeight() - 65);
+    $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
     $("#chatHistory").css('height',$("#history_body_side").outerHeight() - 170);
     //$("#pastChatTalk").css('height', window.innerHeight - 540);
     $.ajax({
@@ -277,6 +280,7 @@ $(function(){
     document.getElementById('detail').style.height = "100%";
     //$("#pastChatTalk").css('height', window.innerHeight - 364);
     $("#chatContent").css('height', window.innerHeight - 200);
+    $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
     $("#chatHistory").css('height',window.innerHeight - 355);
     $.ajax({
       type: 'post',
@@ -299,6 +303,7 @@ $(function(){
       });
       //$("#pastChatTalk").css('height', window.innerHeight - 364);
       $("#chatContent").css('height', window.innerHeight - 200);
+      $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
       $("#chatHistory").css('height',window.innerHeight - 355);
     }
     //縦並びの場合
@@ -314,6 +319,7 @@ $(function(){
       //$("#chatContent").css('height', window.innerHeight - 365);
       console.log($("#detail").outerHeight());
       $("#chatContent").css('height', $("#detail").outerHeight() - 65);
+      $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
       console.log($("#history_body_side").css('height'));
       $("#chatHistory").css('height',$("#history_body_side").outerHeight() - 170);
       //$("#pastChatTalk").css('height', window.innerHeight - 540);

@@ -2711,6 +2711,9 @@ ul.naviBtn {
 
 #chat_history_idx {
 
+  #detail {
+    overflow: hidden;
+  }
 
   .flexBoxCol {
     display: flex;
@@ -3034,150 +3037,157 @@ ul.naviBtn {
     }
   }
 
-  #rightContents {
-    width: 88.2em;
+  #customerInfoScrollArea {
+    height: 300px;
+    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
     border-left: 1px solid #bfbfbf;
-    font-size:11.6px;
+    #rightContents {
+      width: 88.2em;
+      font-size:11.6px;
 
-    .form01 {
-      display: flex;
-      flex-direction: row;
-      top:10px;
+      .form01 {
+        display: flex;
+        flex-direction: row;
+        top:10px;
 
-      ul {
-        padding: 0;
-        margin: 2px 2px 4px 0;
-        height: 38px;
+        ul {
+          padding: 0;
+          margin: 2px 2px 4px 0;
+          height: 38px;
+
+          li {
+            margin: 0;
+            padding: 0.3em 0.5em 0.2em 1em;
+            text-align: center!important;
+            border-right: none;
+          }
+        }
+      }
+
+      .detailForm {
+        ul {
+          display: inline-block;
+          width: 100%;
+          margin-left:-24px;
+
+          li {
+            margin: 10px 0;
+            label {
+              max-width: 12.6em;
+              width:40%;
+              display: block;
+              float: left;
+              clear: both;
+              padding: 0.25em 0.8em;
+            }
+            input {
+              width: 60%;
+              padding: 0.25em 0.5em;
+            }
+            textarea {
+              width: 98%;
+              resize: none;
+              margin-top: 0.5em;
+              margin-left: 0.7em;
+            }
+          }
+        }
+      }
+
+      .nowInfo  {
+        border-bottom: 1px solid #bfbfbf;
 
         li {
+          margin-top:10px;
+        }
+
+        dt {
+          width: 12em;
+          margin: 0 0 0 24px;
+          float: left;
+          text-overflow:
+                  ellipsis;
+          overflow:
+                  hidden;
+          white-space:
+                  nowrap;
+        }
+        dd {
           margin: 0;
-          padding: 0.3em 0.5em 0.2em 1em;
-          text-align: center!important;
-          border-right: none;
+          height: 1.6em;
+          font-weight: bold;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          white-space: nowrap;
+          height: auto;
+        }
+        /*@include dl2column;*/
+
+        dd.w100 a{
+          /*width: ($content-width - 3) / 0.8!important;*/
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          color: $string-color;
+          display: block;
+
+          &:hover {
+            color: $main-color;
+          }
         }
       }
-    }
 
-    .detailForm {
-      ul {
-        display: inline-block;
-        width: 100%;
-        margin-left:-24px;
+      .connectionBtn {
+        text-align:center;
 
+        a {
+          border-radius: 5px;
+          text-decoration: none;
+          background-color: #8a9dd4;
+          color: #FFF;
+          font-weight: normal;
+          width: 100%;
+          padding: 5px;
+          display: block;
+          box-shadow: 0 0 1px rgba(0,0,0,0.25);
+
+          &:hover {
+            background-color: #788DCA;
+          }
+        }
+
+      }
+      .hardInfo {
+        border-bottom: 1px solid #bfbfbf;
         li {
-          margin: 10px 0;
-          label {
-            max-width: 12.6em;
-            width:40%;
-            display: block;
-            float: left;
-            clear: both;
-            padding: 0.25em 0.8em;
-          }
-          input {
-            width: 60%;
-            padding: 0.25em 0.5em;
-          }
-          textarea {
-            width: 98%;
-            resize: none;
-            margin-top: 0.5em;
-            margin-left: 0.7em;
-          }
+          margin-top:10px;
         }
-      }
-    }
-
-    .nowInfo  {
-      border-bottom: 1px solid #bfbfbf;
-
-      li {
-        margin-top:10px;
-      }
-
-      dt {
-        width: 12em;
-        margin: 0 0 0 24px;
-        float: left;
-        text-overflow:
-        ellipsis;
-        overflow:
-        hidden;
-        white-space:
-        nowrap;
-      }
-      dd {
-        margin: 0;
-        height: 1.6em;
-        font-weight: bold;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        white-space: nowrap;
-        height: auto;
-      }
-      /*@include dl2column;*/
-
-      dd.w100 a{
-        /*width: ($content-width - 3) / 0.8!important;*/
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        color: $string-color;
-        display: block;
-
-        &:hover {
-          color: $main-color;
+        /*@include dl2column;*/
+        dt {
+          width: 12em;
+          margin: 0 0 0 24px;
+          float: left;
+          text-overflow:
+                  ellipsis;
+          overflow:
+                  hidden;
+          white-space: nowrap;
         }
-      }
-    }
-
-    .connectionBtn {
-      text-align:center;
-
-      a {
-        border-radius: 5px;
-        text-decoration: none;
-        background-color: #8a9dd4;
-        color: #FFF;
-        font-weight: normal;
-        width: 100%;
-        padding: 5px;
-        display: block;
-        box-shadow: 0 0 1px rgba(0,0,0,0.25);
-
-        &:hover {
-          background-color: #788DCA;
+        dd {
+          margin: 0;
+          height: 1.6em;
+          font-weight: bold;
+          text-overflow:
+                  ellipsis;
+          overflow: hidden;
+          white-space: nowrap;
         }
-      }
-
-    }
-    .hardInfo {
-      border-bottom: 1px solid #bfbfbf;
-      li {
-        margin-top:10px;
-      }
-      /*@include dl2column;*/
-      dt {
-        width: 12em;
-        margin: 0 0 0 24px;
-        float: left;
-        text-overflow:
-        ellipsis;
-        overflow:
-        hidden;
-        white-space: nowrap;
-      }
-      dd {
-        margin: 0;
-        height: 1.6em;
-        font-weight: bold;
-        text-overflow:
-        ellipsis;
-        overflow: hidden;
-        white-space: nowrap;
       }
     }
   }
+
 
   #history_title {
     position: relative;
