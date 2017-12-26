@@ -143,12 +143,18 @@ function openChatById(id) {
       $("#LandscapeData a").attr('onclick',"openCompanyDetailInfo("+customerData.LandscapeData.lbc_code+")");
       document.getElementById("visitCounts").innerHTML= customerData.THistoryCount.cnt + "回";
       document.getElementById("platform").innerHTML= userAgentChk.pre(customerData.THistory.user_agent);
-      document.getElementById("landingPage").innerHTML= customerData.tHistoryChatSendingPageData.FirstSpeechSendPage.title;
-      $("#landing a").attr("href", customerData.tHistoryChatSendingPageData.FirstSpeechSendPage.url);
-      document.getElementById("chatSendingPage").innerHTML= customerData.tHistoryChatSendingPageData.FirstSpeechSendPage.title;
-      $("#chatSending a").attr("href", customerData.tHistoryChatSendingPageData.FirstSpeechSendPage.url);
-      document.getElementById("separationPage").innerHTML= customerData.tHistoryChatLastPageData.LastSpeechSendPage.title;
-      $("#separation a").attr("href", customerData.tHistoryChatLastPageData.LastSpeechSendPage.url);
+      document.getElementById("campaignParam").innerHTML= customerData.campaignParam;
+      document.getElementById("landingPage").innerHTML= customerData.THistoryStayLog.title;
+      $("#landing a").attr("href", customerData.THistoryStayLog.url);
+      if(customerData.tHistoryChatSendingPageData !== null) {
+        document.getElementById("chatSendingPage").innerHTML= customerData.tHistoryChatSendingPageData.FirstSpeechSendPage.title;
+        $("#chatSending a").attr("href", customerData.tHistoryChatSendingPageData.FirstSpeechSendPage.url);
+      }
+      else {
+        document.getElementById("chatSendingPage").innerHTML= "";
+      }
+      document.getElementById("separationPage").innerHTML= customerData.tHistoryChatLastPageData.title;
+      $("#separation a").attr("href", customerData.tHistoryChatLastPageData.url);
       $("#customerInfo").attr('onclick',"customerInfoSave("+customerData.THistory.id+")");
       document.getElementById("pageCount").innerHTML= customerData.pageCount[0].count;
       $("#moveHistory").attr('onclick',"openHistoryById("+customerData.THistory.id+")");
@@ -182,7 +188,11 @@ $(window).resize(function() {
 
 
 $(function(){
+  var calcHeaderHeight = function() {
+    return $('#history_menu').outerHeight() + $('div.btnSet').outerHeight() + $('label[for="g_chat"]').outerHeight() + $('.dataTables_scrollHead').outerHeight();
+  };
 
+  var tableObj = null;
   $(window).on('load', function() {
     document.getElementById("history_body_side").style.display = "block";
     document.getElementById("detail").style.display = "block";
@@ -196,6 +206,29 @@ $(function(){
       $("#leftContents ul.tabStyle li").css("width", "13em");
       $("#leftContents ul.tabStyle li.on").css("width", "13em");
     }
+
+    $.extend( $.fn.dataTable.defaults, {
+      language: { url: "/lib/datatables/Japanese.JSON" }
+    });
+
+    tableObj = $("#chatTable").DataTable({
+      searching: false,
+      scroller:true,
+      responsive:true,
+      scrollX: true,
+      scrollY: '64vh',
+      scrollCollapse: true,
+      paging: false,
+      info: false,
+      ordering: false,
+      columnDefs: [
+        { width: 120, targets: 0 }
+      ]
+    });
+
+    tableObj.on('draw', function(){
+      $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - calcHeaderHeight() - 15);
+    });
   });
 
   //選択したチャット履歴CSV出力
@@ -221,34 +254,45 @@ $(function(){
 
   //リサイズ処理
   $(window).resize(function() {
-  //$("#history_list_side").css('height', window.innerHeight - 150);
-  //横並びの場合
-  if(<?= $screenFlg ?> == 1) {
-    $("#pastChatTalk").css('height', window.innerHeight - 385);
-    $("#chatContent").css('height', window.innerHeight - 210);
-  }
-  //縦並びの場合
-  if(<?= $screenFlg ?> == 2) {
-    $("#chatContent").css('height', window.innerHeight - 365);
-    $("#pastChatTalk").css('height', window.innerHeight - 540);
-  }
+    $("#history_list_side").css('height', window.innerHeight - 145);
+    //横並びの場合
+    if(<?= $screenFlg ?> == 1) {
+      //$("#pastChatTalk").css('height', window.innerHeight - 364);
+      document.getElementById('history_body_side').style.width = $('#history_body_side').outerWidth() + 'px';
+      document.getElementById('history_body_side').style.height = $('#history_list_side').outerHeight() + 'px';
+      $("#chatContent").css('height', window.innerHeight - 200);
+      $("#chatHistory").css('height',window.innerHeight - 355);
+      $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
+    }
+    //縦並びの場合
+    if(<?= $screenFlg ?> == 2) {
+      document.getElementById('history_body_side').style.width = $('#history_list_side').outerWidth() + 'px';
+      $("#chatContent").css('height', $("#detail").outerHeight() - 65);
+      $("#chatHistory").css('height',$("#history_body_side").outerHeight() - 170);
+      $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
+      //$("#pastChatTalk").css('height', window.innerHeight - 540);
+    }
   });
 
   //縦並びをクリックした場合
   $(document).on('click', '.vertical', function(){
     splitterObj.destroy();
     splitterObj = null;
-    splitterObj = $("#history_list_side").height(window.innerHeight-150).split({
+    splitterObj = $("#history_list_side").split({
       "orientation": "horizontal",
       //"limit": 50,
       "position": "40%"
-    });
+    }).on('splitter.resize', function(){
+      tableObj.columns.adjust().draw();
+    });;
     splitterObj.refresh();
-    document.getElementById('history_body_side').style.width = "100%";
-    document.getElementById('chatTable').style.width = "100%";
+    document.getElementById('history_body_side').style.width = $('#history_list_side').outerWidth() + 'px';
+    document.getElementById('chatTable').style.width = $('#history_body_side').outerWidth() + 'px';
     document.getElementById('detail').style.width = "100%";
-    $("#chatContent").css('height', window.innerHeight - 365);
-    $("#pastChatTalk").css('height', window.innerHeight - 540);
+    $("#chatContent").css('height', $("#detail").outerHeight() - 65);
+    $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
+    $("#chatHistory").css('height',$("#history_body_side").outerHeight() - 170);
+    //$("#pastChatTalk").css('height', window.innerHeight - 540);
     $.ajax({
       type: 'post',
       dataType: 'html',
@@ -258,22 +302,29 @@ $(function(){
         //modalOpenOverlap.call(window, html, 'p-history-del', '履歴の削除', 'moment');
       }
     });
+    tableObj.columns.adjust().draw();
+    $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - calcHeaderHeight() - 15);
  });
 
   //横並びをクリックした場合
   $(document).on('click', '.side', function(){
     splitterObj.destroy();
     splitterObj = null;
-    splitterObj = $("#history_list_side").height(window.innerHeight-150).split({
+    splitterObj = $("#history_list_side").split({
       "orientation": "vertical",
       "limit": 50,
       "position": "45%"
+    }).on('splitter.resize', function(){
+      tableObj.columns.adjust().draw();
     });
     splitterObj.refresh();
-    document.getElementById('history_body_side').style.height = "100%";
+    document.getElementById('history_body_side').style.width = $('#history_body_side').outerWidth() + 'px';
+    document.getElementById('history_body_side').style.height = $('#history_list_side').outerHeight() + 'px';
     document.getElementById('detail').style.height = "100%";
-     $("#pastChatTalk").css('height', window.innerHeight - 385);
-      $("#chatContent").css('height', window.innerHeight - 210);
+    //$("#pastChatTalk").css('height', window.innerHeight - 364);
+    $("#chatContent").css('height', window.innerHeight - 200);
+    $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
+    $("#chatHistory").css('height',window.innerHeight - 355);
     $.ajax({
       type: 'post',
       dataType: 'html',
@@ -283,31 +334,42 @@ $(function(){
         //modalOpenOverlap.call(window, html, 'p-history-del', '履歴の削除', 'moment');
       }
     });
+    tableObj.columns.adjust().draw();
+    $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - calcHeaderHeight() - 20);
  });
+
 
     //横並びの場合
     if(<?= $screenFlg ?> == 1) {
-      var splitterObj = $("#history_list_side").height(window.innerHeight-150).split({
+      var splitterObj = $("#history_list_side").split({
         "orientation": "vertical",
         //"limit": 500,
         "position": "45%"
-      });
-      $("#pastChatTalk").css('height', window.innerHeight - 374);
-      $("#chatContent").css('height', window.innerHeight - 210);
+      }).on('splitter.resize', function(){
+        tableObj.columns.adjust().draw();
+      });;
+      //$("#pastChatTalk").css('height', window.innerHeight - 364);
+      $("#chatContent").css('height', window.innerHeight - 200);
+      $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
+      $("#chatHistory").css('height',window.innerHeight - 355);
+      $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 170);
     }
-
     //縦並びの場合
     if(<?= $screenFlg ?> == 2) {
-      splitterObj = $("#history_list_side").height(window.innerHeight-150).split({
+      splitterObj = $("#history_list_side").split({
         "orientation": "horizontal",
         //"limit": 50,
         "position": "40%"
-      });
-      document.getElementById('history_body_side').style.width = "100%";
-      document.getElementById('chatTable').style.width = "100%";
+      }).on('splitter.resize', function(){
+        tableObj.columns.adjust().draw();
+      });;
+      document.getElementById('history_body_side').style.width = $('#history_body_side').outerWidth() + 'px';
+      document.getElementById('chatTable').style.width = $('#history_body_side').outerWidth() - 40 + 'px';
       document.getElementById('detail').style.width = "100%";
-      $("#chatContent").css('height', window.innerHeight - 365);
-      $("#pastChatTalk").css('height', window.innerHeight - 540);
+      $("#chatContent").css('height', $("#detail").outerHeight() - 65);
+      $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
+      console.log($("#history_body_side").css('height'));
+      //$("#chatHistory").css('height',$("#history_body_side").outerHeight() - 170);
     }
 });
 

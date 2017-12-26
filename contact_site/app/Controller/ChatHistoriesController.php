@@ -120,32 +120,35 @@ class ChatHistoriesController extends AppController {
         )
       );
 
-      //チャット離脱ページ
+      //離脱ページ
       $tHistoryChatLastPageData = $this->THistoryChatLog->find('all', array(
         'fields' => array(
+          'LastSpeechSendPage.created',
           'THistoryChatLog.t_histories_id',
+          'LastSpeechSendPage.id',
           'LastSpeechSendPage.title',
           'LastSpeechSendPage.url'
         ),
         'joins' => array(
             array(
                 'type' => 'LEFT',
-                'table' => '(SELECT id,t_histories_id,title,url,MAX(created) as created FROM t_history_stay_logs GROUP BY t_histories_id)',
+                'table' => '(SELECT id,t_histories_id,title,url,created FROM t_history_stay_logs)',
                 'alias' => 'LastSpeechSendPage',
                 'conditions' => [
-                  'LastSpeechSendPage.id = THistoryChatLog.t_history_stay_logs_id',
+                  'LastSpeechSendPage.t_histories_id = THistoryChatLog.t_histories_id',
                 ]
             ),
         ),
         'conditions' => array(
-            'm_companies_id' => $this->userInfo['MCompany']['id'],
-            'THistoryChatLog.t_histories_id' => $this->params->query['historyId'],
-            'THistoryChatLog.message_type' => 1
+            'THistoryChatLog.m_companies_id' => $this->userInfo['MCompany']['id'],
+            'THistoryChatLog.t_histories_id' => $this->params->query['historyId']
           ),
-        'group' => 'THistoryChatLog.message_type',
+        'order' => array('LastSpeechSendPage.created' => 'desc'),
+        'limit' => 1,
         'recursive' => -1
         )
       );
+
 
       //ランディングページ
       $landingData = $this->THistoryStayLog->find('all', array(
@@ -221,7 +224,21 @@ $this->log('LandscapdData前',LOG_DEBUG);
         'group' => 't_histories_id'
       ]);
 
-      $data = am($tHistoryData, ['THistoryCount' => $tHistoryCountData[0]], $mCusData,['tHistoryChatSendingPageData' => $tHistoryChatSendingPageData[0]],['tHistoryChatLastPageData' => $tHistoryChatLastPageData[0]],$landingData[0],$LandscapeData[0],['pageCount' => $pageCount[0]]);
+      $campaignList = $this->TCampaign->getList();
+      $campaignParam = "";
+      $tmp = mb_strstr($landingData[0]['THistoryStayLog']['url'], '?');
+      if ( $tmp !== "" ) {
+        foreach($campaignList as $k => $v){
+          if ( strpos($tmp, $k) !== false ) {
+            if ( $campaignParam !== "" ) {
+              $campaignParam .= "\n";
+            }
+            $campaignParam .= h($v);
+          }
+        }
+      }
+
+      $data = am($tHistoryData, ['THistoryCount' => $tHistoryCountData[0]], $mCusData,['tHistoryChatSendingPageData' => $tHistoryChatSendingPageData[0]],['tHistoryChatLastPageData' => $tHistoryChatLastPageData[0]['LastSpeechSendPage']],$landingData[0],$LandscapeData[0],['pageCount' => $pageCount[0]],['campaignParam' => $campaignParam]);
     }
     $this->set('data', $data);
     // 顧客情報のテンプレート
@@ -1223,7 +1240,7 @@ $this->log('LandscapdData前',LOG_DEBUG);
       ];
       $joinToLastSpeechChatTime = [
         'type' => 'LEFT',
-        'table' => '(SELECT t_histories_id, message_type, MIN(created) as firstSpeechTime, MAX(created) as created FROM t_history_chat_logs WHERE message_type = 1 GROUP BY t_histories_id)',
+        'table' => '(SELECT t_histories_id, t_history_stay_logs_id,message_type, MIN(created) as firstSpeechTime, MAX(created) as created FROM t_history_chat_logs WHERE message_type = 1 GROUP BY t_histories_id)',
         'alias' => 'LastSpeechTime',
         'field' => 'created as lastSpeechTime',
         'conditions' => [
@@ -1255,38 +1272,31 @@ $this->log('LandscapdData前',LOG_DEBUG);
         'type' => $join,
         'table' => "({$chatSendingPage})",
         'alias' => 'THistoryStayLog',
+        'field' => "title,url",
         'conditions' => [
-          'THistoryChatLog.message_type' => 1,
-          'THistoryStayLog.id = THistoryChatLog.t_history_stay_logs_id'
+          'THistoryStayLog.id = LastSpeechTime.t_history_stay_logs_id'
         ],
       ];
-      $joinToLastSpeechSendPage = [
-        'type' => 'LEFT',
-        'table' => '(SELECT id,t_histories_id,title,url,MAX(created) as created FROM t_history_stay_logs GROUP BY t_histories_id)',
-        'alias' => 'LastSpeechSendPage',
-        'field' => 'created,title,url',
-        'conditions' => [
-          'LastSpeechSendPage.id = THistoryChatLog.t_history_stay_logs_id'
-        ],
-      ];
+
       $this->paginate['THistory']['fields'][] = 'THistoryChatLog.*';
       $this->paginate['THistory']['fields'][] = 'LastSpeechTime.created as lastSpeechTime,LastSpeechTime.firstSpeechTime';
       $this->paginate['THistory']['fields'][] = 'NoticeChatTime.created';
       $this->paginate['THistory']['fields'][] = 'THistoryStayLog.title,THistoryStayLog.url';
-      $this->paginate['THistory']['fields'][] = 'LastSpeechSendPage.title,LastSpeechSendPage.url';
+      //$this->paginate['THistory']['fields'][] = 'LastSpeechSendPage.title,LastSpeechSendPage.url';
       $this->paginate['THistory']['joins'][] = $joinToChat;
       $this->paginate['THistory']['joins'][] = $joinToLastSpeechChatTime;
       $this->paginate['THistory']['joins'][] = $joinToNoticeChatTime;
       $this->paginate['THistory']['joins'][] = $joinToFirstSpeechSendPage;
-      $this->paginate['THistory']['joins'][] = $joinToLastSpeechSendPage;
+      //$this->paginate['THistory']['joins'][] = $joinToLastSpeechSendPage;
 
       if(isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) {
         $this->paginate['THistory']['fields'][] = 'LandscapeData.*';
         $this->paginate['THistory']['joins'][] = $joinToLandscapeData;
       }
     }
-
     $historyList = $this->paginate('THistory');
+
+
     // TODO 良いやり方が無いか模索する
     $historyIdList = [];
     $customerIdList = [];
@@ -1310,8 +1320,6 @@ $this->log('LandscapdData前',LOG_DEBUG);
           $defaultCheck = 'true';
         }
         if($key == 0) {
-          //$this->log('こっちはいっちゃってるね',LOG_DEBUG);
-          //$this->log($val,LOG_DEBUG);
           $defaultHistoryList = $val;
         }
       }
@@ -1357,7 +1365,6 @@ $this->log('LandscapdData前',LOG_DEBUG);
     //チャット履歴削除、ユーザー情報更新
     if(!empty($this->params->query['id'])) {
       $historyId = $this->params->query['id'];
-      $this->set('historyId', $this->params->query['id']);
       $visitors_id = $this->THistory->find('first', [
         'fields' => 'visitors_id',
         'conditions' => [
@@ -1367,6 +1374,36 @@ $this->log('LandscapdData前',LOG_DEBUG);
         'recursive' => -1
       ]);
       $visitors_id = $visitors_id ['THistory']['visitors_id'];
+      //離脱ページ
+      $tHistoryChatLastPageData = $this->THistoryChatLog->find('all', array(
+        'fields' => array(
+          'LastSpeechSendPage.created',
+          'THistoryChatLog.t_histories_id',
+          'LastSpeechSendPage.id',
+          'LastSpeechSendPage.title',
+          'LastSpeechSendPage.url'
+        ),
+        'joins' => array(
+            array(
+                'type' => 'LEFT',
+                'table' => '(SELECT id,t_histories_id,title,url,created FROM t_history_stay_logs)',
+                'alias' => 'LastSpeechSendPage',
+                'conditions' => [
+                  'LastSpeechSendPage.t_histories_id = THistoryChatLog.t_histories_id',
+                ]
+            ),
+        ),
+        'conditions' => array(
+            'THistoryChatLog.m_companies_id' => $this->userInfo['MCompany']['id'],
+            'THistoryChatLog.t_histories_id' => $this->params->query['id']
+          ),
+        'order' => array('LastSpeechSendPage.created' => 'desc'),
+        'limit' => 1,
+        'recursive' => -1
+        )
+      );
+      $this->set('historyId', $this->params->query['id']);
+      $this->set('tHistoryChatLastPageData', $tHistoryChatLastPageData[0]['LastSpeechSendPage']);
     }
     else {
       if(!empty($historyList)) {
@@ -1376,7 +1413,36 @@ $this->log('LandscapdData前',LOG_DEBUG);
         }
         else {
           $historyId = $historyList[0]['THistory']['id'];
+          //離脱ページ
+          $tHistoryChatLastPageData = $this->THistoryChatLog->find('all', array(
+            'fields' => array(
+              'LastSpeechSendPage.created',
+              'THistoryChatLog.t_histories_id',
+              'LastSpeechSendPage.id',
+              'LastSpeechSendPage.title',
+              'LastSpeechSendPage.url'
+            ),
+            'joins' => array(
+                array(
+                    'type' => 'LEFT',
+                    'table' => '(SELECT id,t_histories_id,title,url,created FROM t_history_stay_logs)',
+                    'alias' => 'LastSpeechSendPage',
+                    'conditions' => [
+                      'LastSpeechSendPage.t_histories_id = THistoryChatLog.t_histories_id',
+                    ]
+                ),
+            ),
+            'conditions' => array(
+                'THistoryChatLog.m_companies_id' => $this->userInfo['MCompany']['id'],
+                'THistoryChatLog.t_histories_id' => $historyId
+              ),
+            'order' => array('LastSpeechSendPage.created' => 'desc'),
+            'limit' => 1,
+            'recursive' => -1
+            )
+          );
           $this->set('historyId', $historyList[0]['THistory']['id']);
+          $this->set('tHistoryChatLastPageData', $tHistoryChatLastPageData[0]['LastSpeechSendPage']);
         }
         $customerId = array_keys($customerIdList);
         $visitors_id = array_shift($customerId);
@@ -1961,7 +2027,7 @@ $this->log('LandscapdData前',LOG_DEBUG);
 
       $joinToLastSpeechChatTime = [
         'type' => 'LEFT',
-        'table' => '(SELECT t_histories_id, message_type, MIN(created) as firstSpeechTime, MAX(created) as created FROM t_history_chat_logs WHERE message_type = 1 GROUP BY t_histories_id)',
+        'table' => '(SELECT t_histories_id, t_history_stay_logs_id,message_type, MIN(created) as firstSpeechTime, MAX(created) as created FROM t_history_chat_logs WHERE message_type = 1 GROUP BY t_histories_id)',
         'alias' => 'LastSpeechTime',
         'field' => 'created as lastSpeechTime',
         'conditions' => [
@@ -1972,7 +2038,7 @@ $this->log('LandscapdData前',LOG_DEBUG);
 
       $chatSendingPage = $dbo2->buildStatement(
         [
-          'table' => "(SELECT id,t_histories_id,title,url,MIN(created) as created FROM t_history_stay_logs  GROUP BY t_histories_id)",
+          'table' => "(SELECT id,t_histories_id,title,url,created as created FROM t_history_stay_logs)",
           'alias' => 'stayLogs',
           'fields' => [
             '*'
@@ -1987,8 +2053,7 @@ $this->log('LandscapdData前',LOG_DEBUG);
         'table' => "({$chatSendingPage})",
         'alias' => 'THistoryStayLog',
         'conditions' => [
-          'THistoryStayLog.id = THistoryChatLog2.t_history_stay_logs_id',
-          'THistoryChatLog2.message_type = 1'
+          'THistoryStayLog.id = LastSpeechTime.t_history_stay_logs_id'
         ]
       ];
       $joinList[] = $joinToFirstSpeechSendPage;
