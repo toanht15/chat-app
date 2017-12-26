@@ -1935,7 +1935,7 @@ io.sockets.on('connection', function (socket) {
       }
     }
     else if ( !getSessionId(obj.siteKey, obj.tabId, 'parentTabId') ) {
-      connectList[socket.id] = {siteKey: obj.siteKey, tabId: obj.tabId, userId: obj.userId};
+      connectList[socket.id] = {siteKey: obj.siteKey, tabId: obj.tabId, userId: obj.userId, sincloSessionId: obj.sincloSessionId};
       if ( ('reconnect' in obj) && obj.reconnect ) {
         socket.join(obj.siteKey + emit.roomKey.client);
 
@@ -3224,6 +3224,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
   // ユーザーのアウトを感知
   socket.on('disconnect', function () {
+    console.log("【" + socket.id + "】ON DISCONNECT > " + JSON.stringify(connectList));
     var info = {};
     // 資料共有の場合
     if ( doc_connectList.socketId.hasOwnProperty(socket.id) ) {
@@ -3497,6 +3498,22 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
           if (keys && keys.length > 0) {
             keys.forEach(function (key) {
               if (key.indexOf(socket.id) >= 0) {
+                console.log("delete customer sitekey : " + info.siteKey + " key : " + key);
+                var customer = customerList[info.siteKey][key];
+                delete customerList[info.siteKey][key];
+                if(isset(customer) && customer.sincloSessionId) {
+                  var sincloSessionId = customer.sincloSessionId;
+                  if(isset(sincloCore[info.siteKey][sincloSessionId])
+                    && isset(sincloCore[info.siteKey][sincloSessionId]['sessionIds'])) {
+                    console.log("target sincloSessionId > " + sincloSessionId + " : " + JSON.stringify(sincloCore[info.siteKey][sincloSessionId]));
+                    var sessionIds = sincloCore[info.siteKey][sincloSessionId].sessionIds;
+                    delete sessionIds[socket.id];
+                    if(Object.keys(sessionIds).length === 0) {
+                      console.log("delete sincloSessionId > " + sincloSessionId);
+                      delete sincloCore[info.siteKey][sincloSessionId];
+                    }
+                  }
+                }
                 delete customerList[info.siteKey][key];
               }
             });
