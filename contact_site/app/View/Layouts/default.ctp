@@ -68,7 +68,7 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
     if ( strcmp($this->name, 'Histories') === 0 || strcmp($this->name, 'ChatHistories') === 0) {
       echo $this->Html->css("daterangepicker.css");
     }
-    if ( strcmp($this->name, 'Statistics') === 0 ) {
+    if ( strcmp($this->name, 'Statistics') === 0 || strcmp($this->name, 'ChatHistories') === 0 ) {
       echo $this->Html->css("jquery.dataTables.css");
       echo $this->Html->css("//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css");
     }
@@ -98,7 +98,7 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
       echo $this->Html->script("//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.min.js");
       echo $this->Html->css("//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.css");
     }
-    if ( strcmp($this->name, 'Statistics') === 0 ) {
+    if ( strcmp($this->name, 'Statistics') === 0 || strcmp($this->name, 'ChatHistories') === 0 ) {
       echo $this->Html->script('jquery.dataTables.min.js');
       echo $this->Html->script("dataTables.fixedColumns.min.js");
     }

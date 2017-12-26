@@ -29,7 +29,7 @@
       ?>
     <?php endif; ?>
   </div>
-  <div id = "history_list_side">
+  <div id = "history_list_side" style = "height:calc(100vh - 142px);">
     <div id = "history_body_side" style = "width:100%; padding:0 20px; display:none;">
       <?=$this->element('ChatHistories/list')?>
       <a href="javascript:void(0)" style="display:none" id="modalCtrl"></a>

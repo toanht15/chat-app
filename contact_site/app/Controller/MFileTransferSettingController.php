@@ -26,7 +26,7 @@ class MFileTransferSettingController extends AppController
     $this->set('title_for_layout', 'ファイル送信設定');
   }
 
-  public function index() {
+  public function edit() {
     if($this->request->is('post')) {
       $this->upsert();
     } else {

@@ -44,7 +44,6 @@
             panel_2 = panel_1.next().addClass('right_panel');
             cls = 'vsplitter';
         } else if (settings.orientation == 'horizontal') {
-            console.log('こっこまではいってるですね4');
             panel_1 = children.first().addClass('top_panel');
             panel_2 = panel_1.next().addClass('bottom_panel');
             cls = 'hsplitter';
@@ -139,6 +138,10 @@
                                 pw = panel_1.height(position-sw2).outerHeight();
                                 panel_2.height(self.height()-pw-sw);
                                 splitter.css('top', pw);
+                                $("#chatContent").css('height', $("#detail").outerHeight() - 65);
+                                $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
+                                $("#chatHistory").css('height',$("#history_body_side").outerHeight() - 170);
+                                $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 170);
                             }
                         }
                         if (!silent) {
