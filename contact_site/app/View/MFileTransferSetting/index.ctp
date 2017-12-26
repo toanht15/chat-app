@@ -9,7 +9,7 @@ if ( !(!empty($this->data['MFileTransferSetting']['type']) && strcmp($this->data
 <div id='mfiletransfersetting_idx' class="card-shadow">
 
   <div id='mfiletransfersetting_title'>
-    <div class="fLeft"><?= $this->Html->image('file_transfer_setting_menu.png', array('alt' => 'ファイル送信設定', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?></div>
+    <div class="fLeft"><?= $this->Html->image('file_transfer_setting_top.png', array('alt' => 'ファイル送信設定', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?></div>
     <h1>ファイル送信設定</h1>
   </div>
 

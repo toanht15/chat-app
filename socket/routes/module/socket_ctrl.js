@@ -3082,6 +3082,15 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
           console.log("settingReload >>> reset LiveAssist current count");
           laSessionCounter.initializeCurrentCount(obj.targetKey);
           break;
+        case 7: // view all Obj socket.emit('settingReload', JSON.stringify({type:7, targetKey: "demo", siteKey: "master"}));
+          console.log("getAllObj --------------------------------------------------");
+          console.log("sincloCore : " + JSON.stringify(sincloCore[obj.targetKey]));
+          console.log("connectList : " + JSON.stringify(connectList));
+          console.log("c_connectList : " + JSON.stringify(c_connectList));
+          console.log("doc_connectList : " + JSON.stringify(doc_connectList));
+          console.log("customerList : " + JSON.stringify(customerList[obj.targetKey]));
+          console.log("End --------------------------------------------------------");
+          break;
         default:
       }
     }
@@ -3224,7 +3233,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
   // ユーザーのアウトを感知
   socket.on('disconnect', function () {
-    console.log("【" + socket.id + "】ON DISCONNECT > " + JSON.stringify(connectList));
+    console.log("【" + socket.id + "】ON DISCONNECT");
     var info = {};
     // 資料共有の場合
     if ( doc_connectList.socketId.hasOwnProperty(socket.id) ) {

@@ -1651,6 +1651,7 @@
                 }
               }
             });
+          $("input[name^='sinclo-radio']").prop('disabled', false);
         },
         removeAllEvent: function() {
           if ( window.sincloInfo.contract.chat ) {
@@ -1675,6 +1676,7 @@
             .off('focus', "#sincloChatMessage")
             .off('blur', "#sincloChatMessage")
             .off("click", "input[name^='sinclo-radio']");
+          $("input[name^='sinclo-radio']").prop('disabled', true);
         },
         widgetOpen: function(){
           console.log("chatApi.widgetOpen start");
