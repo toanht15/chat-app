@@ -19,7 +19,6 @@
             <li data-type="oldChat">過去のチャット</li>
           </ul>
           <div id="chatContent">
-
           <!-- 現在のチャット -->
             <section class="on" id="currentChat">
               <ul id="chatTalk" class="chatView">
@@ -78,7 +77,7 @@
                 </chat-menu-child>
                 <chat-menu-child id="chatMenu" class="p05tb" >
                   <?php if(isset($coreSettings[C_COMPANY_USE_SEND_FILE]) && $coreSettings[C_COMPANY_USE_SEND_FILE]): ?>
-                  <span class="greenBtn btn-shadow" onclick="chatApi.openFileUploadDialog()">ファイル送信</span>
+                  <span class="greenBtn btn-shadow" id="selectFileBtn">ファイル送信</span>
                   <?php else: ?>
                   <span class="grayBtn btn-shadow commontooltip" data-text="こちらの機能はスタンダードプラン<br>からご利用いただけます。">ファイル送信</span>
                   <?php endif; ?>
@@ -104,6 +103,13 @@
                   </div>
                 <?php endif; ?>
               </div>
+              <?php if(isset($coreSettings[C_COMPANY_USE_SEND_FILE]) && $coreSettings[C_COMPANY_USE_SEND_FILE]): ?>
+              <div id="fileUploadDropArea">
+                <?= $this->Html->image('file.png', array('alt' => 'CakePHP', 'width' => '250', 'height' => '250')); ?>
+                <span>送信するファイルをここにドロップしてください</span>
+              </div>
+              <input type="file" id="selectFileInput" name="uploadFile" style="display:none "/>
+              <?php endif; ?>
             </section>
             <!-- 現在のチャット -->
 
