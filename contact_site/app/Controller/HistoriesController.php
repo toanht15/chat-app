@@ -613,6 +613,7 @@ class HistoriesController extends AppController {
           break;
         case 5: // 自動返信
           $row = $this->_setData($date, "自動返信", $this->userInfo['MCompany']['company_name'], $message);
+          break;
         case 6: // ファイル送信
           $json = json_decode($val['THistoryChatLog']['message'], TRUE);
           $message = $json['fileName']."\n".$this->prettyByte2Str($json['fileSize']);
