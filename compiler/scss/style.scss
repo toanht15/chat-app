@@ -2711,6 +2711,7 @@ ul.naviBtn {
 
 #chat_history_idx {
 
+
   .flexBoxCol {
     display: flex;
   }
@@ -2951,7 +2952,7 @@ ul.naviBtn {
                 display: inline-block;
                 color: #C3D69B;
                 font-weight: bold;
-                font-size: 13px;
+                /*font-size: 13px;*/
                 margin: 0 0 5px 0;
               }
               span.cTime {
@@ -2978,7 +2979,7 @@ ul.naviBtn {
                 display: inline-block;
                 color: #C3D69B;
                 font-weight: bold;
-                font-size: 13px;
+                /*font-size: 13px;*/
                 margin: 0 0 5px 0;
               }
               span.cTime {
@@ -3066,7 +3067,8 @@ ul.naviBtn {
         li {
           margin: 10px 0;
           label {
-            width: 13.7em;
+            max-width: 12.6em;
+            width:40%;
             display: block;
             float: left;
             clear: both;
@@ -3094,7 +3096,7 @@ ul.naviBtn {
       }
 
       dt {
-        width: 13em;
+        width: 12em;
         margin: 0 0 0 24px;
         float: left;
         text-overflow:
@@ -3156,7 +3158,7 @@ ul.naviBtn {
       }
       /*@include dl2column;*/
       dt {
-        width: 13em;
+        width: 12em;
         margin: 0 0 0 24px;
         float: left;
         text-overflow:

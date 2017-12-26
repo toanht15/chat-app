@@ -1127,7 +1127,6 @@ $this->log('LandscapdData前',LOG_DEBUG);
           ],
           $this->MUser
         );
-
         // 対象ユーザーが対応した履歴のリストを取得するサブクエリを作成
         $chatLogQuery = $this->THistoryChatLog->getDataSource();
         $historyIdListQuery = $chatLogQuery->buildStatement(
@@ -1214,7 +1213,6 @@ $this->log('LandscapdData前',LOG_DEBUG);
         ],
         $this->THistoryChatLog
       );
-
       $joinToChat = [
         'type' => 'INNER',
         'table' => "({$chatStateList})",
@@ -1223,7 +1221,6 @@ $this->log('LandscapdData前',LOG_DEBUG);
           'THistoryChatLog.t_histories_id = THistory.id'
         ]
       ];
-
       $joinToLastSpeechChatTime = [
         'type' => 'LEFT',
         'table' => '(SELECT t_histories_id, message_type, MIN(created) as firstSpeechTime, MAX(created) as created FROM t_history_chat_logs WHERE message_type = 1 GROUP BY t_histories_id)',
@@ -1233,7 +1230,6 @@ $this->log('LandscapdData前',LOG_DEBUG);
           'LastSpeechTime.t_histories_id = THistoryChatLog.t_histories_id'
         ],
       ];
-
       $joinToNoticeChatTime = [
         'type' => 'LEFT',
         'table' => '(SELECT t_histories_id, message_type, notice_flg,created FROM t_history_chat_logs WHERE message_type = 1 AND notice_flg = 1 GROUP BY t_histories_id)',
@@ -1243,7 +1239,6 @@ $this->log('LandscapdData前',LOG_DEBUG);
           'NoticeChatTime.t_histories_id = THistoryChatLog.t_histories_id'
         ],
       ];
-
       $chatSendingPage = $dbo2->buildStatement(
         [
           'table' => "(SELECT id,t_histories_id,title,url,created as created FROM t_history_stay_logs)",
@@ -1265,7 +1260,6 @@ $this->log('LandscapdData前',LOG_DEBUG);
           'THistoryStayLog.id = THistoryChatLog.t_history_stay_logs_id'
         ],
       ];
-
       $joinToLastSpeechSendPage = [
         'type' => 'LEFT',
         'table' => '(SELECT id,t_histories_id,title,url,MAX(created) as created FROM t_history_stay_logs GROUP BY t_histories_id)',
@@ -1275,7 +1269,6 @@ $this->log('LandscapdData前',LOG_DEBUG);
           'LastSpeechSendPage.id = THistoryChatLog.t_history_stay_logs_id'
         ],
       ];
-
       $this->paginate['THistory']['fields'][] = 'THistoryChatLog.*';
       $this->paginate['THistory']['fields'][] = 'LastSpeechTime.created as lastSpeechTime,LastSpeechTime.firstSpeechTime';
       $this->paginate['THistory']['fields'][] = 'NoticeChatTime.created';
@@ -1283,7 +1276,7 @@ $this->log('LandscapdData前',LOG_DEBUG);
       $this->paginate['THistory']['fields'][] = 'LastSpeechSendPage.title,LastSpeechSendPage.url';
       $this->paginate['THistory']['joins'][] = $joinToChat;
       $this->paginate['THistory']['joins'][] = $joinToLastSpeechChatTime;
-      $this->paginate['THistory']['joins'][] = $joinToNoticeChatTime  ;
+      $this->paginate['THistory']['joins'][] = $joinToNoticeChatTime;
       $this->paginate['THistory']['joins'][] = $joinToFirstSpeechSendPage;
       $this->paginate['THistory']['joins'][] = $joinToLastSpeechSendPage;
 
@@ -1294,7 +1287,6 @@ $this->log('LandscapdData前',LOG_DEBUG);
     }
 
     $historyList = $this->paginate('THistory');
-
     // TODO 良いやり方が無いか模索する
     $historyIdList = [];
     $customerIdList = [];
@@ -1362,7 +1354,6 @@ $this->log('LandscapdData前',LOG_DEBUG);
         'visitors_id' => array_keys($customerIdList),
       ]
     ]);
-
     //チャット履歴削除、ユーザー情報更新
     if(!empty($this->params->query['id'])) {
       $historyId = $this->params->query['id'];
@@ -1421,7 +1412,6 @@ $this->log('LandscapdData前',LOG_DEBUG);
     }
 
     $userInfo = $this->MUser->read(null, $this->userInfo['id']);
-
     $this->set('data', $data);
     $this->set('historyList', $historyList);
     $this->set('historyChat', $historyChat);
