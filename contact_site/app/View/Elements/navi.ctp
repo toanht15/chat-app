@@ -143,7 +143,7 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
       <?php if ( $adminFlg ): ?>
         <?php if ($coreSettings[C_COMPANY_USE_CHAT] && $coreSettings[C_COMPANY_USE_SEND_FILE]): ?>
         <div class="icon">
-          <?= $this->htmlEx->naviLink('ファイル送信', 'file_transfer_setting_menu.png', ['href' => ['controller' => 'MFileTransferSetting', 'action' => 'index']]) ?>
+          <?= $this->htmlEx->naviLink('ファイル送信', 'file_transfer_setting_menu.png', ['href' => ['controller' => 'MFileTransferSetting', 'action' => 'edit']]) ?>
         </div>
         <?php elseif($coreSettings[C_COMPANY_USE_CHAT]): ?>
         <div class="icon">
