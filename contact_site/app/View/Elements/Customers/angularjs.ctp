@@ -1536,148 +1536,131 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     // ===========
     // ファイル送信
     // ===========
-    var dragArea = $("#sub_contents");
-    var droppable = $("#fileUploadDropArea").css('display', 'none');
-    var selectFileBtn = $('#selectFileBtn');
-    var selectInput = $('#selectFileInput');
-    var fileObj = null;
-    var loadData = null;
-    var allowExtensions = <?= json_encode($allowExtensions); ?>;
+    $scope.fileUploader = {
+      isDisable: false,
+      dragging: false,
+      dragArea: $("#sub_contents"),
+      droppable: $("#fileUploadDropArea").css('display', 'none'),
+      selectFileBtn: $('#selectFileBtn'),
+      selectInput: $('#selectFileInput'),
+      fileObj: null,
+      loadData: null,
+      allowExtensions: <?= json_encode($allowExtensions); ?>,
 
-    // File API が使用できない場合は諦めます.
-    if(!window.FileReader) {
-      $("#fileUploadDropArea").css('display', 'none');
-    }
+      init: function() {
+        if(window.FileReader) {
+          this._addDragAndDropEvents();
+        } else {
+          this.isDisable = true;
+        }
+        this._addSelectFileEvents();
+      },
+      _addDragAndDropEvents: function() {
+        this.dragArea.on("dragenter", this._enterEvent);
+        this.dragArea.on("dragover", this._overEvent);
+        this.dragArea.on("dragleave", this._leaveEvent);
+        this.dragArea.on("drop", function(){ $scope.fileUploader.droppable.css('display', 'none'); event.preventDefault(); event.stopPropagation(); return false;});
+        this.droppable.on("drop", this._handleDroppedFile);
+      },
+      _addSelectFileEvents: function() {
+        this.selectFileBtn.on('click', function(event){
+          $scope.fileUploader.selectInput.trigger('click');
+        });
+        this.selectInput.on("click", function(event){
+          $scope.fileUploader._hideInvalidError();
+          $(this).val(null);
+        }).on("change",function(event){
+          if($scope.fileUploader.selectInput[0].files[0]) {
+            $scope.fileUploader.fileObj = $scope.fileUploader.selectInput[0].files[0];
+            // ファイルの内容は FileReader で読み込みます.
+            var fileReader = new FileReader();
+            fileReader.onload = function (event) {
+              if(!$scope.fileUploader._validExtension($scope.fileUploader.fileObj.name)) {
+                $scope.fileUploader._showInvalidError();
+                return;
+              }
+              // event.target.result に読み込んだファイルの内容が入っています.
+              // ドラッグ＆ドロップでファイルアップロードする場合は result の内容を Ajax でサーバに送信しましょう!
+              $scope.fileUploader.loadData = event.target.result;
+              $scope.fileUploader._showConfirmDialog("【" + $scope.fileUploader.fileObj.name + "】をアップロードします。<br>よろしいですか？");
+            };
+            fileReader.readAsArrayBuffer($scope.fileUploader.fileObj);
+          }
+        });
+      },
+      _enterEvent: function(event) {
+        $scope.fileUploader.dragging = true;
+        $scope.fileUploader._cancelEvent(event);
+        return false;
+      },
+      _overEvent: function(event) {
+        $scope.fileUploader.dragging = false;
+        $scope.fileUploader.droppable.css('display', 'flex');
+        $scope.fileUploader._cancelEvent(event);
+        return false;
+      },
+      _leaveEvent: function(event) {
+        if($scope.fileUploader.dragging) {
+          $scope.fileUploader.dragging = false;
+        } else {
+          $scope.fileUploader.droppable.css('display', 'none');
+        }
+        $scope.fileUploader._cancelEvent(event);
+        return false;
+      },
+      _handleDroppedFile: function(event) {
+        $scope.fileUploader.droppable.css('display', 'none');
+        $scope.fileUploader._hideInvalidError();
+        // ファイルは複数ドロップされる可能性がありますが, ここでは 1 つ目のファイルを扱います.
+        $scope.fileUploader.fileObj = event.originalEvent.dataTransfer.files[0];
 
-    var isDetailEnabled = function() {
-      if ( isset(this.tabId) && isset(this.userId) && isset(this.sincloSessionId)) {
-        emit("chatStart", {tabId: this.tabId, userId: myUserId, sincloSessionId: this.sincloSessionId});
-      }
-    }
-
-
-    var dragFlg = false;
-    // イベントをキャンセルするハンドラです.
-    var enterEvent = function(event) {
-      dragFlg = true;
-      event.preventDefault();
-      event.stopPropagation();
-      return false;
-    };
-
-    // イベントをキャンセルするハンドラです.
-    var overEvent = function(event) {
-      dragFlg = false;
-      droppable.css('display', 'flex');
-      event.preventDefault();
-      event.stopPropagation();
-      return false;
-    };
-
-    // イベントをキャンセルするハンドラです.
-    var leaveEvent = function(event) {
-      if(dragFlg) {
-        dragFlg = false;
-      } else {
-        droppable.css('display', 'none');
-      }
-      event.preventDefault();
-      event.stopPropagation();
-      return false;
-    }
-
-    var validExtension = function(filename) {
-      var split = filename.split(".");
-      var targetExtension = split[split.length-1];
-      var regex = new RegExp(allowExtensions.join("|"), 'i');
-      return regex.test(targetExtension);
-    };
-
-    var showInvalidError = function() {
-      var span = document.createElement("span");
-      span.classList.add('errorMsg');
-      span.textContent = "指定のファイルは送信を許可されていません。";
-      $("#sendMessageArea").append(span);
-    };
-
-    var hideInvalidError = function() {
-      $('#sendMessageArea').find('span.errorMsg').remove();
-    };
-
-    var showConfirmDialog = function(message) {
-      modalOpen.call(window, message, 'p-cus-file-upload', '確認', 'moment');
-      popupEvent.closePopup = function() {
-        $scope.uploadFile(fileObj, loadData);
-        popupEvent.close();
-      };
-    };
-
-    // dragenter, dragover イベントのデフォルト処理をキャンセルします.
-    dragArea.on("dragenter", enterEvent);
-    dragArea.on("dragover", overEvent);
-    dragArea.on("dragleave", leaveEvent);
-    dragArea.on("drop", function(){ droppable.css('display', 'none'); event.preventDefault(); event.stopPropagation(); return false;});
-
-    selectFileBtn.on('click', function(event){
-      selectInput.trigger('click');
-    });
-
-    selectInput.on("click", function(event){
-      hideInvalidError();
-      $(this).val(null);
-    }).on("change",function(event){
-      if(selectInput[0].files[0]) {
-        fileObj = selectInput[0].files[0];
         // ファイルの内容は FileReader で読み込みます.
         var fileReader = new FileReader();
-        fileReader.onload = function (event) {
-          if(!validExtension(fileObj.name)) {
-            showInvalidError();
+        fileReader.onload = function(event) {
+          if(!$scope.fileUploader._validExtension($scope.fileUploader.fileObj.name)) {
+            $scope.fileUploader._showInvalidError();
             return;
           }
           // event.target.result に読み込んだファイルの内容が入っています.
           // ドラッグ＆ドロップでファイルアップロードする場合は result の内容を Ajax でサーバに送信しましょう!
-          loadData = event.target.result;
-          showConfirmDialog("【" + fileObj.name + "】をアップロードします。<br>よろしいですか？");
-        };
-        fileReader.readAsArrayBuffer(fileObj);
-      }
-    });
-
-    // ドロップ時のイベントハンドラを設定します.
-    var handleDroppedFile = function(event) {
-      droppable.css('display', 'none');
-      hideInvalidError();
-      // ファイルは複数ドロップされる可能性がありますが, ここでは 1 つ目のファイルを扱います.
-      fileObj = event.originalEvent.dataTransfer.files[0];
-
-      // ファイルの内容は FileReader で読み込みます.
-      var fileReader = new FileReader();
-      fileReader.onload = function(event) {
-        if(!validExtension(fileObj.name)) {
-          showInvalidError();
-          return;
+          $scope.fileUploader.loadData = event.target.result;
+          $scope.fileUploader._showConfirmDialog("【" + $scope.fileUploader.fileObj.name + "】をアップロードします。<br>よろしいですか？");
         }
-        // event.target.result に読み込んだファイルの内容が入っています.
-        // ドラッグ＆ドロップでファイルアップロードする場合は result の内容を Ajax でサーバに送信しましょう!
-        loadData = event.target.result;
-        showConfirmDialog("【" + fileObj.name + "】をアップロードします。<br>よろしいですか？");
+        fileReader.readAsArrayBuffer($scope.fileUploader.fileObj);
+
+        // デフォルトの処理をキャンセルします.
+        $scope.fileUploader._cancelEvent(event);
+        return false;
+      },
+      _cancelEvent: function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+      },
+      _validExtension: function(filename) {
+        var split = filename.split(".");
+        var targetExtension = split[split.length-1];
+        var regex = new RegExp(this.allowExtensions.join("|"), 'i');
+        return regex.test(targetExtension);
+      },
+      _showInvalidError: function() {
+        var span = document.createElement("span");
+        span.classList.add('errorMsg');
+        span.textContent = "指定のファイルは送信を許可されていません。";
+        $("#sendMessageArea").append(span);
+      },
+      _hideInvalidError: function() {
+        $('#sendMessageArea').find('span.errorMsg').remove();
+      },
+      _showConfirmDialog: function(message) {
+        modalOpen.call(window, message, 'p-cus-file-upload', '確認', 'moment');
+        popupEvent.closePopup = function() {
+          $scope.uploadFile($scope.fileUploader.fileObj, $scope.fileUploader.loadData);
+          popupEvent.close();
+        };
       }
-      fileReader.readAsArrayBuffer(fileObj);
-
-      // デフォルトの処理をキャンセルします.
-      enterEvent(event);
-      return false;
-    }
-
-    // ドロップ時のイベントハンドラを設定します.
-    droppable.on("drop", handleDroppedFile);
-
-    // override
-    popupEvent.closePopup = function() {
-      angular.element('#customer_idx').scope().uploadFile(fileObj, loadData);
-      popupEvent.close();
-    }
+    };
+    
+    $scope.fileUploader.init();
     // =====================
     // ファイル送信（ここまで）
     // =====================
