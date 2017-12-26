@@ -180,8 +180,6 @@ var popupEvent = {
                   cancelBtn.onclick = function(){
                     return popupEvent.closeNoPopup();
                   };
-                  // 初期表示時はボタンエリア非表示
-                  area.style.display = "none";
                   break;
                 case 'p-show-gallary':
                     var closeBtn = _button("閉じる");
