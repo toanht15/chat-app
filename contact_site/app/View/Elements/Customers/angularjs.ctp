@@ -1624,7 +1624,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           // event.target.result に読み込んだファイルの内容が入っています.
           // ドラッグ＆ドロップでファイルアップロードする場合は result の内容を Ajax でサーバに送信しましょう!
           $scope.fileUploader.loadData = event.target.result;
-          $scope.fileUploader._showConfirmDialog("【" + $scope.fileUploader.fileObj.name + "】をアップロードします。<br>よろしいですか？");
+          $scope.fileUploader._showConfirmDialog("<p style='text-align:center;'><span style='line-height: 2em;'>【" + $scope.fileUploader.fileObj.name + "】をアップロードします。<br>よろしいですか？</span></p>");
         }
         fileReader.readAsArrayBuffer($scope.fileUploader.fileObj);
 
@@ -1653,6 +1653,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       },
       _showConfirmDialog: function(message) {
         modalOpen.call(window, message, 'p-cus-file-upload', '確認', 'moment');
+        $('#')
         popupEvent.closePopup = function() {
           $scope.uploadFile($scope.fileUploader.fileObj, $scope.fileUploader.loadData);
           popupEvent.close();
