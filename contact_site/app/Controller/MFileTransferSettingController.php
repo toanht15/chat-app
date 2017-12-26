@@ -29,6 +29,7 @@ class MFileTransferSettingController extends AppController
   public function index() {
     if($this->request->is('post')) {
       $this->upsert();
+      $this->redirect(['controller' => $this->name, 'action' => 'index']);
     } else {
       $this->renderView();
     }
