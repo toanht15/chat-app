@@ -143,12 +143,18 @@ function openChatById(id) {
       $("#LandscapeData a").attr('onclick',"openCompanyDetailInfo("+customerData.LandscapeData.lbc_code+")");
       document.getElementById("visitCounts").innerHTML= customerData.THistoryCount.cnt + "回";
       document.getElementById("platform").innerHTML= userAgentChk.pre(customerData.THistory.user_agent);
-      document.getElementById("landingPage").innerHTML= customerData.tHistoryChatSendingPageData.FirstSpeechSendPage.title;
-      $("#landing a").attr("href", customerData.tHistoryChatSendingPageData.FirstSpeechSendPage.url);
-      document.getElementById("chatSendingPage").innerHTML= customerData.tHistoryChatSendingPageData.FirstSpeechSendPage.title;
-      $("#chatSending a").attr("href", customerData.tHistoryChatSendingPageData.FirstSpeechSendPage.url);
-      document.getElementById("separationPage").innerHTML= customerData.tHistoryChatLastPageData.LastSpeechSendPage.title;
-      $("#separation a").attr("href", customerData.tHistoryChatLastPageData.LastSpeechSendPage.url);
+      document.getElementById("campaignParam").innerHTML= customerData.campaignParam;
+      document.getElementById("landingPage").innerHTML= customerData.THistoryStayLog.title;
+      $("#landing a").attr("href", customerData.THistoryStayLog.url);
+      if(customerData.tHistoryChatSendingPageData !== null) {
+        document.getElementById("chatSendingPage").innerHTML= customerData.tHistoryChatSendingPageData.FirstSpeechSendPage.title;
+        $("#chatSending a").attr("href", customerData.tHistoryChatSendingPageData.FirstSpeechSendPage.url);
+      }
+      else {
+        document.getElementById("chatSendingPage").innerHTML= "";
+      }
+      document.getElementById("separationPage").innerHTML= customerData.tHistoryChatLastPageData.title;
+      $("#separation a").attr("href", customerData.tHistoryChatLastPageData.url);
       $("#customerInfo").attr('onclick',"customerInfoSave("+customerData.THistory.id+")");
       document.getElementById("pageCount").innerHTML= customerData.pageCount[0].count;
       $("#moveHistory").attr('onclick',"openHistoryById("+customerData.THistory.id+")");
@@ -360,13 +366,10 @@ $(function(){
       document.getElementById('history_body_side').style.width = $('#history_body_side').outerWidth() + 'px';
       document.getElementById('chatTable').style.width = $('#history_body_side').outerWidth() - 40 + 'px';
       document.getElementById('detail').style.width = "100%";
-      //$("#chatContent").css('height', window.innerHeight - 365);
-      console.log($("#detail").outerHeight());
       $("#chatContent").css('height', $("#detail").outerHeight() - 65);
       $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
       console.log($("#history_body_side").css('height'));
-      $("#chatHistory").css('height',$("#history_body_side").outerHeight() - 170);
-      //$("#pastChatTalk").css('height', window.innerHeight - 540);
+      //$("#chatHistory").css('height',$("#history_body_side").outerHeight() - 170);
     }
 });
 

@@ -232,6 +232,23 @@
   if ( isset($history['THistory']['visitors_id']) ) {
     $visitorsId = $history['THistory']['visitors_id'];
   }
+
+  if($historyId == $history['THistory']['id']) {
+    $userCampaignParam = "";
+    $tmp = mb_strstr($stayList[$history['THistory']['id']]['THistoryStayLog']['firstURL'], '?');
+    $this->log('tmp',LOG_DEBUG);
+    $this->log($tmp,LOG_DEBUG);
+    if ( $tmp !== "" ) {
+      foreach($campaignList as $k => $v){
+        if ( strpos($tmp, $k) !== false ) {
+          if ( $userCampaignParam !== "" ) {
+            $userCampaignParam .= "\n";
+          }
+          $userCampaignParam .= h($v);
+        }
+      }
+    }
+  }
   ?>
             <?php
             if ((isset($history['THistoryChatLog']['type']) && isset($data['History']['chat_type']) && isset($chatType) &&
@@ -353,8 +370,6 @@
           <div id="rightContents" style = "width:100% !important; margin-bottom: 4em;">
         <div class = "form01 fRight" style = "right:20px;">
         <?php
-        $this->log('screenFLg!',LOG_DEBUG);
-        $this->log($screenFlg,LOG_DEBUG);
         if($screenFlg == C_CHAT_HISTORY_SIDE) { ?>
           <ul class="switch" ng-init = "fillterTypeId = 2" style = "box-shadow:none;">
         <?php }
@@ -433,7 +448,7 @@
           <dl>
           <li>
             <dt>キャンペーン</dt>
-            <dd><?=$campaignParam?></dd>
+            <dd id = "campaignParam"><?=$userCampaignParam?></dd>
           </li>
           <li>
             <dt>ランディングページ</dt>
@@ -450,8 +465,8 @@
           <li>
             <dt>離脱ページ</dt>
             <dd id = "separation">
-            <a href = "<?=h($defaultHistoryList['LastSpeechSendPage']['url'])?>" target = "landing">
-            <span id = "separationPage"><?= $defaultHistoryList['LastSpeechSendPage']['title'] ?></span></a></dd></dd>
+            <a href = "<?=h($tHistoryChatLastPageData['url'])?>" target = "landing">
+            <span id = "separationPage"><?= $tHistoryChatLastPageData['title'] ?></span></a></dd></dd>
           </li>
           <li>
             <dt>閲覧ページ数</dt>
