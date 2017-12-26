@@ -1637,8 +1637,9 @@ var socket, // socket.io
           socket.open();
           return true;
         } else {
-          console.log("socket is NOT disconnected");
-          return false;
+          socket.close();
+          socket.open();
+          return true;
         }
       } else {
         // socketオブジェクトが無いためページを再読込
