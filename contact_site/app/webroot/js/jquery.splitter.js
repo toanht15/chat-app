@@ -139,7 +139,9 @@
                                 panel_2.height(self.height()-pw-sw);
                                 splitter.css('top', pw);
                                 $("#chatContent").css('height', $("#detail").outerHeight() - 65);
+                                $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
                                 $("#chatHistory").css('height',$("#history_body_side").outerHeight() - 170);
+                                $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 170);
                             }
                         }
                         if (!silent) {
