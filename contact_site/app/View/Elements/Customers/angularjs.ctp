@@ -1460,7 +1460,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           // フォーカスが外れたら時にPlaceholderを表示（Edge対応）
           var sendPattarnStr = ( $scope.settings.sendPattarn ) ? "Shift + Enter": "Enter";
           chatApi.observeType.end();
-          this.placeholder="ここにメッセージ入力してください。\n・" + sendPattarnStr + "で改行されます\n・下矢印キー(↓)で定型文が開きます<?php if(isset($coreSettings[C_COMPANY_USE_SEND_FILE]) && $coreSettings[C_COMPANY_USE_SEND_FILE]): ?>\n・ここにファイルをドロップするとファイルを送信できます。<?php endif;?>";
+          this.placeholder="ここにメッセージ入力してください。\n・" + sendPattarnStr + "で改行されます\n・下矢印キー(↓)で定型文が開きます<?php if(isset($coreSettings[C_COMPANY_USE_SEND_FILE]) && $coreSettings[C_COMPANY_USE_SEND_FILE]): ?>\n・ここにファイルをドロップするとファイルを送信できます<?php endif;?>";
           $scope.chatPsFlg = true;
 
         });
@@ -3610,7 +3610,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         scope.chatPs = function(){
           var sendPattarnStr = ( scope.settings.sendPattarn ) ? "Shift + Enter": "Enter";
           if ( scope.chatPsFlg ) {
-            return "ここにメッセージ入力してください。\n・" + sendPattarnStr + "で改行されます\n・下矢印キー(↓)で定型文が開きます<?php if(isset($coreSettings[C_COMPANY_USE_SEND_FILE]) && $coreSettings[C_COMPANY_USE_SEND_FILE]): ?>\n・ここにファイルをドロップするとファイルを送信できます。<?php endif;?>";
+            return "ここにメッセージ入力してください。\n・" + sendPattarnStr + "で改行されます\n・下矢印キー(↓)で定型文が開きます<?php if(isset($coreSettings[C_COMPANY_USE_SEND_FILE]) && $coreSettings[C_COMPANY_USE_SEND_FILE]): ?>\n・ここにファイルをドロップするとファイルを送信できます<?php endif;?>";
           }
           else {
             return "";
