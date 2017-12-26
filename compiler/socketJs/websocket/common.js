@@ -3569,6 +3569,7 @@ var socket, // socket.io
           //sincloBox.parentNode.removeChild(sincloBox);
           common.widgetHandler.hide();
         }
+        sinclo.chatApi.inactiveCloseFlg = true;
       }
       popup.remove();
     });
