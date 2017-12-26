@@ -1081,6 +1081,8 @@ io.sockets.on('connection', function (socket) {
             } else {
               ret.chatUnreadCnt = sincloCore[obj.siteKey][obj.tabId].chatUnreadCnt;
             }
+            console.log("set unreadCnt " + obj.tabId + " " + ret.chatUnreadCnt);
+            sincloCore[obj.siteKey][obj.tabId].chatUnreadCnt = ret.chatUnreadCnt;
           } else {
             ret.chatUnreadCnt = rows.length;
           }
@@ -1722,10 +1724,10 @@ io.sockets.on('connection', function (socket) {
         var keyLength = Object.keys(customerList[res.siteKey]).length;
         Object.keys(customerList[res.siteKey]).forEach(function(key){
           var val = getConnectInfo(customerList[res.siteKey][key]);
-          if(isset(data.contract.chat) && data.contract.checkat) {
+          if(isset(data.contract.chat) && data.contract.chat) {
             chatApi.getUnreadCnt(val, function (ret) {
               val['chatUnreadId'] = ret.chatUnreadId;
-              val['chatUnreadCnt'] = ret.chatUnreadCnt;
+              val['chatUnreadCnt'] = ret.chatUnreadCnt ? ret.chatUnreadCnt : 0;
               arr.push(val);
               counter++;
               if (counter === chunkSize) {
@@ -1905,7 +1907,7 @@ io.sockets.on('connection', function (socket) {
       });
     }
 
-    connectList[socket.id] = {siteKey: obj.siteKey, tabId: obj.tabId, userId: null};
+    connectList[socket.id] = {siteKey: obj.siteKey, tabId: obj.tabId, userId: null, sincloSessionId: obj.sincloSessionId};
     sincloCore[obj.siteKey][obj.tabId].sessionId = socket.id;
     if (isset(obj.sincloSessionId)) {
       sincloCore[obj.siteKey][obj.tabId].sincloSessionId = obj.sincloSessionId;
@@ -2033,12 +2035,15 @@ io.sockets.on('connection', function (socket) {
     if ( !(('ipAddress' in obj) && isset(obj.ipAddress)) ) {
       obj.ipAddress = getIp(socket);
     }
-
-    // TODO ここを要求したユーザのみに送るようにする
-    // FIXME 初回表示時リアルタイムモニタ表示なしの場合はこのデータを送らないようにする
-    emit.toCompany("receiveAccessInfo", obj, obj.siteKey);
-    if ( ('contract' in obj) && ('chat' in obj.contract) && obj.contract.chat === false) return false;
-    chatApi.sendUnreadCnt("sendChatInfo", obj, false);
+    chatApi.getUnreadCnt(obj, function (ret) {
+      obj['chatUnreadId'] = ret.chatUnreadId;
+      obj['chatUnreadCnt'] = ret.chatUnreadCnt ? ret.chatUnreadCnt : 0;
+      // TODO ここを要求したユーザのみに送るようにする
+      // FIXME 初回表示時リアルタイムモニタ表示なしの場合はこのデータを送らないようにする
+      emit.toCompany("receiveAccessInfo", obj, obj.siteKey);
+      if (('contract' in obj) && ('chat' in obj.contract) && obj.contract.chat === false) return false;
+      chatApi.sendUnreadCnt("sendChatInfo", obj, false);
+    });
   });
   // -----------------------------------------------------------------------
   //  モニタリング通信接続前
@@ -3487,7 +3492,6 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         }
       } else {
         console.log("sincloCore[info.siteKey][info.tabId] is null");
-        delete connectList[socket.id];
         if(info) {
           var keys = Object.keys(customerList[info.siteKey]);
           if (keys && keys.length > 0) {
@@ -3497,8 +3501,10 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
               }
             });
           }
+          delete connectList[socket.id];
         } else {
           console.log("info is null socket.id : " + socket.id);
+          delete connectList[socket.id];
         }
       }
     }

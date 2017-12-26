@@ -110,9 +110,9 @@ class htmlExHelper extends AppHelper {
 
       $thumbnail = "";
       if(preg_match('/(jpeg|jpg|gif|png)$/', $value['extension']) && !$this->isExpire($value['expired'])) {
-        $thumbnail .= "<img src='" + $value['downloadUrl'] + "' class='sendFileThumbnail' width='64' height='64'>";
+        $thumbnail = "<img src='" . $value['downloadUrl'] . "' class='sendFileThumbnail' width='64' height='64'>";
       } else {
-        $thumbnail .= "<i class='fa " . $this->selectFontIconClassFromExtension($value['extension']) . " fa-4x sendFileThumbnail' aria-hidden='true'></i>";
+        $thumbnail = "<i class='fa " . $this->selectFontIconClassFromExtension($value['extension']) . " fa-4x sendFileThumbnail' aria-hidden='true'></i>";
       }
       $content.= "<span class='cName'>ファイル送信" . ($this->isExpire($value['expired']) ? "（ダウンロード有効期限切れ）" : "") . "</span>";
       $content.= "<div class='sendFileContent'>";
