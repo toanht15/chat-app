@@ -186,39 +186,10 @@
     </div>
   </div>
 <div id = "list_body" style = "overflow-y: auto; overflow-x: hidden;">
-  <div id = "list_header">
-  <table  style = "width:100%;">
-    <thead>
-      <tr>
-        <th style = "width:2%"><input type="checkbox" name="allCheck" id="allCheck"><label for="allCheck"></label></th>
-        <th style = "width:3%">種別</th>
-        <th id = "firstTimeReceivingLabel" style = "width:5%">初回チャット<br>受信日時<div class="questionBalloon questionBalloonPosition13">
-          <icon class="questionBtn">？</icon>
-        </div></th>
-        <th style = "width:5%">IPアドレス</th>
-        <th style = "width:5%">訪問ユーザ</th>
-        <th style = "width:4%">キャンペーン</th>
-        <th id = "sendChatPageLabel" style = "width:8%">チャット送信ページ<div class="questionBalloon questionBalloonPosition8">
-          <icon class="questionBtn">？</icon>
-        </div></th>
-        <th style = "width:4%">成果</th>
-        <th id = "manualReceivingLabel" style = "width:5%">有人チャット<br>受信日時<div class="questionBalloon questionBalloonPosition13">
-          <icon class="questionBtn">？</icon>
-          </div></th>
-      <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
-        <th id="lastSpeechLabel" style = "width:5%">最終発言後<br>離脱時間<div class="questionBalloon questionBalloonPosition13">
-            <icon class="questionBtn">？</icon>
-          </div></th>
-        <th style = "width:6%">担当者</th>
-      <?php endif; ?>
-      </tr>
-    </thead>
-  </table>
-</div>
   <table class = "scroll" id = "chatTable">
       <thead>
         <tr>
-          <th style = "width:2%"></th>
+          <th style = "width:2%"><input type="checkbox" name="allCheck" id="allCheck"><label for="allCheck"></label></th>
           <th width = "3%" style = "width:3%">種別</th>
           <th id = "firstTimeReceivingLabel" style = "width:5%">初回チャット<br>受信日時<div class="questionBalloon questionBalloonPosition13">
             <icon class="questionBtn">？</icon>
@@ -311,7 +282,7 @@
               <td class="tCenter" style = "width:7%"><?php
                 if($history['THistoryChatLog']['eff'] == 0 || $history['THistoryChatLog']['cv'] == 0 ) {
                   if (isset($history['THistoryChatLog']['achievementFlg'])){
-                    echo $achievementType[h($history['THistoryChatLog']['achievementFlg'])];
+                    echo !empty($achievementType[h($history['THistoryChatLog']['achievementFlg'])]) ? $achievementType[h($history['THistoryChatLog']['achievementFlg'])] : "";
                   }
                 }
                 else if ($history['THistoryChatLog']['eff'] != 0 && $history['THistoryChatLog']['cv'] != 0) {

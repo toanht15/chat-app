@@ -3351,10 +3351,12 @@ ul.naviBtn {
     overflow-x: hidden;
     width:100%;
     top:34px !important;
+    .dataTables_scrollBody {
+      border-bottom: initial;
+    }
   }
 
   td, th {
-    height: 30px!important;
     line-height: 1.5;
     padding: 0 3px;
     width: 5%;
@@ -3363,17 +3365,10 @@ ul.naviBtn {
   thead {
     /*display: inline-block;
     width: 100%;*/
-    display: block;
   }
 
   tr{
     cursor:pointer;
-  }
-
-  tbody#chatHistory {
-    display: block;
-    overflow-y: scroll;
-    height: 49em;
   }
 
   input[type='checkbox'] {
