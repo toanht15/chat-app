@@ -707,10 +707,33 @@ $(document).ready(function(){
 
   var prevBoldTarget = null;
   $('.showBold').on('click', function(e){
-    if(prevBoldTarget) {
+    $('.showBold').each(function(index){
+      if((location.search.split("?")[1]) !== undefined && location.search.split("?")[1].match(/id/)) {
+        if ((location.search.split("?")[1]).substr(3) == $(this)[0]['id']) {
+          $(this).find('td').each(function(index){
+            if(index < 11) {
+              $(this).css("background-color", "#fff");
+              $(this).css("font-weight", "normal");
+            }
+          });
+        }
+      }
+      else {
+      $('.showBold').find('td').each(function(index){
+        if(index < 11) {
+          $(this).css("background-color", "#fff");
+          $(this).css("font-weight", "normal");
+        }
+      });
+    }
+    });
+    if(prevBoldTarget != null) {
+      console.log('一応入っている');
       prevBoldTarget.find('td').each(function(index){
-        $(this).css("background-color", "#fff");
-        $(this).css("font-weight", "normal");
+        if(index < 11) {
+          $(this).css("background-color", "#fff");
+          $(this).css("font-weight", "normal");
+        }
       });
     }
     $(this).find('td').each(function(index){
@@ -721,6 +744,7 @@ $(document).ready(function(){
     });
     prevBoldTarget = $(this);
   });
+
   $('.showBold').each(function(index){
     if((location.search.split("?")[1]) !== undefined && location.search.split("?")[1].match(/id/)) {
       if ((location.search.split("?")[1]).substr(3) == $(this)[0]['id']) {
