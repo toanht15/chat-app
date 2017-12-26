@@ -256,7 +256,7 @@ $(function(){
       document.getElementById('history_body_side').style.height = $('#history_list_side').outerHeight() + 'px';
       $("#chatContent").css('height', window.innerHeight - 200);
       $("#chatHistory").css('height',window.innerHeight - 355);
-      $("#customerInfoScrollArea").css('height',window.innerHeight - 200);
+      $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
     }
     //縦並びの場合
     if(<?= $screenFlg ?> == 2) {
