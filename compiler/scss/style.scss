@@ -2946,7 +2946,7 @@ ul.naviBtn {
               background-color: #FFF;*/
               margin: 0 0px 5px 0px;
               border-bottom-right-radius: 0;
-              background-color: #f2f2f2;
+              background-color: #DADADA;
               span.cName {
                 display: inline-block;
                 color: #C3D69B;
@@ -2957,7 +2957,7 @@ ul.naviBtn {
               span.cTime {
                 display: inline-block;
                 color: #595959 !important;
-                font-size: 11px;
+                font-size: 12px;
                 margin: 0px 0 10px 14px;
               }
               span.cChat {
@@ -3037,7 +3037,7 @@ ul.naviBtn {
         margin-left:-24px;
 
         li {
-          margin: 0.25em 0;
+          margin: 10px 0;
           label {
             width: 13.7em;
             display: block;
@@ -3061,6 +3061,10 @@ ul.naviBtn {
 
     .nowInfo  {
       border-bottom: 1px solid #bfbfbf;
+
+      li {
+        margin-top:10px;
+      }
 
       dt {
         width: 13em;
@@ -3120,6 +3124,9 @@ ul.naviBtn {
     }
     .hardInfo {
       border-bottom: 1px solid #bfbfbf;
+      li {
+        margin-top:10px;
+      }
       /*@include dl2column;*/
       dt {
         width: 13em;

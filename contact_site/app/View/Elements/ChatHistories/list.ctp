@@ -145,23 +145,24 @@
                'data-balloon-position' => '36',
                'width' => 45,
                'height' => 45,
-               'onclick' => 'selectedOutputCSV()',
                'url'=>array('controller'=>'ChatHistories','action'=>'outputCSVOfChat')
            )) ?>
        </span>
-       <span>
-         <a>
-           <?= $this->Html->image('dustbox.png', array(
-               'alt' => '削除',
-               'id'=>'history_dustbox_btn',
-               'class' => 'btn-shadow disOffgrayBtn commontooltip',
-               'data-text' => '削除する',
-               'data-balloon-position' => '36',
-               'onclick' => 'selectDeleteChat()',
-               'width' => 45,
-               'height' => 45)) ?>
-         </a>
-       </span>
+       <?php if($permission_level == 1) { ?>
+        <span>
+          <a>
+            <?= $this->Html->image('dustbox.png', array(
+                'alt' => '削除',
+                'id'=>'history_dustbox_btn',
+                'class' => 'btn-shadow disOffgrayBtn commontooltip',
+                'data-text' => '削除する',
+                'data-balloon-position' => '36',
+                'onclick' => 'selectDeleteChat()',
+                'width' => 45,
+                'height' => 45)) ?>
+          </a>
+        </span>
+      <?php } ?>
   </div>
 
       <?php
@@ -274,7 +275,8 @@
               <td class="tCenter">
                 <?php if( is_numeric($history['THistoryChatLog']['count']) ): ?>
                     <?php
-                     if (!empty($history['THistoryChatLog']['type']) && $history['THistoryChatLog']['type'] == "自動返信") { ?>
+                     if ((!empty($history['THistoryChatLog']['type']) && $history['THistoryChatLog']['type'] == "自動返信")
+                      || ($history['THistoryChatLog']['cmp'] == 0 && $history['THistoryChatLog']['sry'] == 0 && $history['THistoryChatLog']['cus'] == 0)) { ?>
                       <span style = "color:#4bacc6; font-weight:bold;">Auto</span>
                     <?php
                     }
@@ -421,54 +423,77 @@
               </li>
             </ul>
         </div>
-          <div class="nowInfo card" style = "border-bottom: 1px solid #bfbfbf; width:100%; margin-top: 25px;">
-          <dl>
-            <dt>ユーザID</dt>
-            <dd id = "visitorsId"><?= $defaultHistoryList['THistory']['visitors_id'] ?></dd>
-            <dt>IPアドレス</dt>
-            <dd id = "LandscapeData">
-            <?php if(isset($coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $coreSettings[C_COMPANY_REF_COMPANY_DATA]): ?>
-                  <?php if(!empty($defaultHistoryList['LandscapeData']['org_name']) && !empty($defaultHistoryList['LandscapeData']['lbc_code'])): ?>
-                      <a href="javascript:void(0)" class="underL" onclick="openCompanyDetailInfo('<?=$defaultHistoryList['LandscapeData']['lbc_code']?>')">
-                      <span id = "Landscape"><?=h($defaultHistoryList['LandscapeData']['org_name'])?></span></a><br>
-                  <?php elseif(!empty($defaultHistoryList['LandscapeData']['org_name'])): ?>
-                      <p><?=h($defaultHistoryList['LandscapeData']['org_name'])?></p><?='\n'?>
+        <?php if(!empty($defaultHistoryList) && !empty($tHistoryCountData)) { ?>
+          <div class="nowInfo card" style = "border-bottom: 1px solid #bfbfbf; width:100%; margin-top: 20px;">
+            <dl>
+            <li>
+              <dt>ユーザID</dt>
+              <dd id = "visitorsId"><?= $defaultHistoryList['THistory']['visitors_id'] ?></dd>
+            </li>
+            <li>
+              <dt>IPアドレス</dt>
+              <dd id = "LandscapeData">
+              <?php if(isset($coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $coreSettings[C_COMPANY_REF_COMPANY_DATA]): ?>
+                    <?php if(!empty($defaultHistoryList['LandscapeData']['org_name']) && !empty($defaultHistoryList['LandscapeData']['lbc_code'])): ?>
+                        <a href="javascript:void(0)" class="underL" onclick="openCompanyDetailInfo('<?=$defaultHistoryList['LandscapeData']['lbc_code']?>')">
+                        <span id = "Landscape"><?=h($defaultHistoryList['LandscapeData']['org_name'])?></span></a><br>
+                    <?php elseif(!empty($defaultHistoryList['LandscapeData']['org_name'])): ?>
+                        <p><?=h($defaultHistoryList['LandscapeData']['org_name'])?></p><?='\n'?>
+                    <?php endif; ?>
                   <?php endif; ?>
-                <?php endif; ?>
-                <span id= "ipAddress">{{ ip('<?=h($defaultHistoryList['THistory']['ip_address'])?>', <?php echo !empty($defaultHistoryList['LandscapeData']['org_name']) ? 'true' : 'false' ?>) }}</span></dd>
-            <dt>訪問回数</dt>
-            <dd id = "visitCounts"><?= $tHistoryCountData.'回' ?></dd>
-            <dt>プラットフォーム</dt>
-            <dd id = "platform">
-              {{ ua('<?=h($defaultHistoryList['THistory']['user_agent'])?>') }}
-            </dd>
-          </dl>
-        </div>
+                  <span id= "ipAddress">{{ ip('<?=h($defaultHistoryList['THistory']['ip_address'])?>', <?php echo !empty($defaultHistoryList['LandscapeData']['org_name']) ? 'true' : 'false' ?>) }}</span></dd>
+            </li>
+            <li>
+              <dt>訪問回数</dt>
+              <dd id = "visitCounts"><?= $tHistoryCountData.'回' ?></dd>
+            </li>
+            <li>
+              <dt>プラットフォーム</dt>
+              <dd id = "platform">
+                {{ ua('<?=h($defaultHistoryList['THistory']['user_agent'])?>') }}
+              </dd>
+            </li>
+            </dl>
+          </div>
+        <?php } ?>
         <div class="hardInfo card" style = "width:100%;">
+        <?php if(!empty($defaultHistoryList) && !empty($tHistoryCountData)) { ?>
           <dl>
+          <li>
             <dt>キャンペーン</dt>
             <dd><?=$campaignParam?></dd>
+          </li>
+          <li>
             <dt>ランディングページ</dt>
             <dd id = "landing">
             <a href = "<?=h($stayList[$defaultHistoryList['THistory']['id']]['THistoryStayLog']['firstURL'])?>" target = "landing">
             <span id = "landingPage"><?= $stayList[$defaultHistoryList['THistory']['id']]['THistoryStayLog']['title'] ?></span></a></dd>
+          </li>
+          <li>
             <dt>チャット送信ページ</dt>
             <dd id = "chatSending">
             <a href = "<?=h($defaultHistoryList['THistoryStayLog']['url'])?>" target = "landing">
             <span id = "chatSendingPage"><?= $defaultHistoryList['THistoryStayLog']['title'] ?></span></a></dd>
+          </li>
+          <li>
             <dt>離脱ページ</dt>
             <dd id = "separation">
             <a href = "<?=h($defaultHistoryList['LastSpeechSendPage']['url'])?>" target = "landing">
             <span id = "separationPage"><?= $defaultHistoryList['LastSpeechSendPage']['title'] ?></span></a></dd></dd>
+          </li>
+          <li>
             <dt>閲覧ページ数</dt>
             <dd>
             <?php if( is_numeric($stayList[$defaultHistoryList['THistory']['id']]['THistoryStayLog']['count']) ): ?>
               <span id = "pageCount"><?=h($stayList[$defaultHistoryList['THistory']['id']]['THistoryStayLog']['count'])?></span>
               <a id = "moveHistory" class="underL" href="javascript:void(0)" onclick="openHistoryById('<?=h($defaultHistoryList['THistory']['id'])?>')" >(移動履歴)</a>
             <?php endif; ?></dd>
+          </li>
           </dl>
+           <?php } ?>
         </div>
         <div class="detailForm card">
+        <?php if(!empty($defaultHistoryList) && !empty($tHistoryCountData)) { ?>
           <ul>
             <li>
               <label for="ng-customer-company">会社名</label>
@@ -495,12 +520,17 @@
               <?= $this->Html->link('元に戻す', 'javascript:void(0)', ['onclick' => 'reloadAct()', 'class' => 'whiteBtn btn-shadow lineUpSaveBtn historyReturnButton']) ?>
               <?= $this->Html->link('更新', 'javascript:void(0)', ['onclick' => 'customerInfoSave('.$historyId.')','id' => 'customerInfo', 'class' => 'greenBtn btn-shadow lineUpSaveBtn hitoryUpdateButton']) ?>
           </div>
+          <?php } ?>
         </div>
       </div>
 </div>
 </div>
 <?php
-echo $this->Form->input('customerId', ['type'=>'hidden', 'id' => 'customerId', 'value' => "", 'label' => false, 'div'=> false]);
+$customerId = "";
+if ( isset($mCusData['MCustomer']['id']) ) {
+  $customerId = $mCusData['MCustomer']['id'];
+}
+echo $this->Form->input('customerId', ['type'=>'hidden','id' => 'customerId', 'value' => $customerId, 'label' => false, 'div'=> false]);
 ?>
 
 <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
