@@ -2135,12 +2135,12 @@
                 var result = common.reconnectManual();
                 if(result) {
                   $("sinclo-chat-alert").css('display', 'none');
-                  this.initEvent();
+                  sinclo.chatApi.initEvent();
                   sinclo.chatApi.sendErrCatchFlg = false;
                 }
               });
               sinclo.chatApi.sendErrCatchFlg = true;
-              this.removeAllEvent();
+            sinclo.chatApi.removeAllEvent();
           }, 5000);
         },
         inactiveTimer: null,
@@ -2159,10 +2159,10 @@
                 var result = common.reconnectManual();
                 if(result) {
                   $("sinclo-chat-alert").css('display', 'none');
-                  this.initEvent();
+                  sinclo.chatApi.initEvent();
                 }
               });
-              this.removeAllEvent();
+              sinclo.chatApi.removeAllEvent();
             }, 90 * 60 * 1000);
           }
         },
