@@ -3570,7 +3570,6 @@ var socket, // socket.io
           //sincloBox.parentNode.removeChild(sincloBox);
           common.widgetHandler.hide();
         }
-        storage.s.set('inactiveTimeout', true);
       }
       popup.remove();
     });
