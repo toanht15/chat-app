@@ -3570,7 +3570,7 @@ var socket, // socket.io
           //sincloBox.parentNode.removeChild(sincloBox);
           common.widgetHandler.hide();
         }
-        sinclo.chatApi.inactiveCloseFlg = true;
+        storage.s.set('inactiveTimeout', true);
       }
       popup.remove();
     });
