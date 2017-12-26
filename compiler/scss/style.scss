@@ -2711,6 +2711,20 @@ ul.naviBtn {
 
 #chat_history_idx {
 
+  /* override splitter design */
+  .splitter_panel {
+    .vsplitter {
+      background-color: #F0F0F0;
+      border-left: 1px solid #bfbfbf;
+      border-right: 1px solid #bfbfbf;
+    }
+    .hsplitter {
+      background-color: #F0F0F0;
+      border-top: 1px solid #bfbfbf;
+      border-bottom: 1px solid #bfbfbf;
+    }
+  }
+
   #detail {
     overflow: hidden;
   }
@@ -4318,6 +4332,7 @@ ul.naviBtn {
 
     td:not(.noClick) {
       cursor: pointer;
+      position: relative;
     }
 
     .bgGrey {
@@ -4399,7 +4414,7 @@ ul.naviBtn {
         display: block;
         padding: 4px 8px;
         margin-bottom: 5px;
-        width: 16em;
+        width: 70%;
       }
 
       &.conditionTypeLabel, &.actionTypeLabel {

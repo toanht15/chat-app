@@ -362,8 +362,9 @@
           userInfo.syncInfo.get();
           common.judgeShowWidget();
 
-          emit('customerInfo', userInfo.getSendList());
-          emit('connectSuccess', {prevList: userInfo.prevList, prev: userInfo.prev});
+          emit('connectSuccess', {prevList: userInfo.prevList, prev: userInfo.prev},function(ev){
+            emit('customerInfo', userInfo.getSendList());
+          });
           emit('connectedForSync', {});
 
           // チャットの契約をしている場合はウィジェット表示
@@ -501,9 +502,6 @@
 
       obj.prev = userInfo.writePrevToLocalStorage();
       obj.stayCount = userInfo.getStayCount();
-      if ( (userInfo.gFrame && Number(userInfo.accessType) === Number(cnst.access_type.guest)) === false ) {
-        emit('customerInfo', obj);
-      }
       var connectSuccessData = {
         confirm: false,
         widget: window.sincloInfo.widgetDisplay,
@@ -519,7 +517,11 @@
         connectSuccessData.tmpAutoMessages = tmpAutoMessages;
       }
 
-      emit('connectSuccess', connectSuccessData);
+      emit('connectSuccess', connectSuccessData, function(ev) {
+        if ( (userInfo.gFrame && Number(userInfo.accessType) === Number(cnst.access_type.guest)) === false ) {
+          emit('customerInfo', obj);
+        }
+      });
 
       // customEvent
       if(document.createEvent) {
@@ -1651,6 +1653,7 @@
                 }
               }
             });
+          $("input[name^='sinclo-radio']").prop('disabled', false);
         },
         removeAllEvent: function() {
           if ( window.sincloInfo.contract.chat ) {
@@ -1675,6 +1678,7 @@
             .off('focus', "#sincloChatMessage")
             .off('blur', "#sincloChatMessage")
             .off("click", "input[name^='sinclo-radio']");
+          $("input[name^='sinclo-radio']").prop('disabled', true);
         },
         widgetOpen: function(){
           console.log("chatApi.widgetOpen start");
