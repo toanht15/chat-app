@@ -1905,7 +1905,7 @@ io.sockets.on('connection', function (socket) {
       });
     }
 
-    connectList[socket.id] = {siteKey: obj.siteKey, tabId: obj.tabId, userId: null};
+    connectList[socket.id] = {siteKey: obj.siteKey, tabId: obj.tabId, userId: null, sincloSessionId: obj.sincloSessionId};
     sincloCore[obj.siteKey][obj.tabId].sessionId = socket.id;
     if (isset(obj.sincloSessionId)) {
       sincloCore[obj.siteKey][obj.tabId].sincloSessionId = obj.sincloSessionId;
@@ -3487,7 +3487,6 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         }
       } else {
         console.log("sincloCore[info.siteKey][info.tabId] is null");
-        delete connectList[socket.id];
         if(info) {
           var keys = Object.keys(customerList[info.siteKey]);
           if (keys && keys.length > 0) {
@@ -3497,8 +3496,10 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
               }
             });
           }
+          delete connectList[socket.id];
         } else {
           console.log("info is null socket.id : " + socket.id);
+          delete connectList[socket.id];
         }
       }
     }
