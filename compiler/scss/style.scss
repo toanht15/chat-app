@@ -4312,6 +4312,7 @@ ul.naviBtn {
 
     td:not(.noClick) {
       cursor: pointer;
+      position: relative;
     }
 
     .bgGrey {
@@ -4393,7 +4394,7 @@ ul.naviBtn {
         display: block;
         padding: 4px 8px;
         margin-bottom: 5px;
-        width: 16em;
+        width: 70%;
       }
 
       &.conditionTypeLabel, &.actionTypeLabel {
