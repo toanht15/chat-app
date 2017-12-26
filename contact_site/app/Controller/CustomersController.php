@@ -33,6 +33,11 @@ class CustomersController extends AppController {
     $scFlg = ( !empty($chatSetting['MChatSetting']['sc_flg']) ) ? intval($chatSetting['MChatSetting']['sc_flg']) : C_SC_DISABLED;
     $this->set('scFlg', $scFlg);
 
+    if(isset($this->coreSettings[C_COMPANY_USE_SEND_FILE]) && $this->coreSettings[C_COMPANY_USE_SEND_FILE]) {
+      $controller = new MFileTransferSettingController();
+      $this->set('allowExtensions', $controller->getAllowExtensions());
+    }
+
     /* 個人設定を読み込む */
     // ユーザーの最新情報を取得
     $mUser = $this->MUser->coFind('first', ['fields', 'conditions' => ['id' => $this->userInfo['id']], 'recursive' => -1]);
@@ -652,8 +657,6 @@ class CustomersController extends AppController {
   public function popupFileUploadElement() {
     $this->autoRender = false;
     $this->layout = "ajax";
-    $controller = new MFileTransferSettingController();
-    $this->set('allowExtensions', $controller->getAllowExtensions());
     $this->render('/Elements/Customers/fileUploadView');
   }
 
