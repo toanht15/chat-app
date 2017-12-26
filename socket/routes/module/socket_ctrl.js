@@ -1867,7 +1867,7 @@ io.sockets.on('connection', function (socket) {
     // sincloCore[obj.siteKey][obj.tabId].sessionId = socket.id;
   });
 
-  socket.on("connectSuccess", function (data) {
+  socket.on("connectSuccess", function (data, ack) {
     var obj = JSON.parse(data);
     if ( !isset(sincloCore[obj.siteKey]) ) {
       sincloCore[obj.siteKey] = {};
@@ -1970,6 +1970,7 @@ io.sockets.on('connection', function (socket) {
         emit.toCompany('syncNewInfo', obj, obj.siteKey);
       });
     }
+    ack(data);
   });
   // ウィジェットが生成されたことを企業側に通知する
   socket.on("syncReady", function(data){
