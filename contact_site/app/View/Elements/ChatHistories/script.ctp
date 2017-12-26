@@ -108,18 +108,6 @@ function openDeleteDialog(){
   });
 };
 
-//選択したチャット履歴CSV出力
-function selectedOutputCSV(){
-  //チェックボックスのチェック状態の取得
-  var list = document.querySelectorAll('input[name^="selectTab"]:checked');
-  var selectedList = [];
-  document.getElementById("allCheck").checked = false;
-  for (var i = 0; i < list.length; i++){
-    selectedList.push(Number(list[i].value));
-    document.getElementById("selectTab"+Number(list[i].value)).checked = false;
-  }
-};
-
 //選択したチャット履歴削除
 function selectedOutputCSV(){
   document.getElementById("selectDeleteChat").checked = false;
@@ -194,38 +182,41 @@ $(window).resize(function() {
 
 
 $(function(){
-  $(document).ready(function(){
-    //横並びの場合
-    if(<?= $screenFlg ?> == 1) {
-      $("#chatContent").css('height', window.innerHeight - 210);
-    }
-    //縦並びの場合
-    if(<?= $screenFlg ?> == 2) {
-      $("#chatContent").css('height', window.innerHeight - 495);
-    }
-    $("#pastChatTalk").css('height', window.innerHeight - 390);
-    $("#history_list_side").css('height', window.innerHeight - 150);
-  });
 
+  //選択したチャット履歴CSV出力
+  $('#history_csv_btn').click(function(){
+    //チェックボックスのチェック状態の取得
+    var list = document.querySelectorAll('input[name^="selectTab"]:checked');
+    if(list.length == 0) {
+      return false;
+    }
+    var selectedList = [];
+    document.getElementById("allCheck").checked = false;
+    for (var i = 0; i < list.length; i++){
+      selectedList.push(Number(list[i].value));
+      document.getElementById("selectTab"+Number(list[i].value)).checked = false;
+    }
+    document.getElementById("history_dustbox_btn").className="btn-shadow disOffgrayBtn";
+    document.getElementById("history_csv_btn").className="btn-shadow disOffgrayBtn";
+  })
 
   // 全選択用チェックボックス
   var allCheckElm = document.getElementById('allCheck');
   allCheckElm.addEventListener('click', setAllCheck); // 全選択
 
   //リサイズ処理
-  $(window).resize(function() {;
-  $("#history_list_side").css('height', window.innerHeight - 150);
+  $(window).resize(function() {
+  //$("#history_list_side").css('height', window.innerHeight - 150);
   //横並びの場合
   if(<?= $screenFlg ?> == 1) {
+    $("#pastChatTalk").css('height', window.innerHeight - 385);
     $("#chatContent").css('height', window.innerHeight - 210);
   }
   //縦並びの場合
   if(<?= $screenFlg ?> == 2) {
-    $("#chatContent").css('height', window.innerHeight - 495);
+    $("#chatContent").css('height', window.innerHeight - 365);
+    $("#pastChatTalk").css('height', window.innerHeight - 540);
   }
-  //$("#chatContent").css('max-height', '62em');
-  $("#pastChatTalk").css('height', window.innerHeight - 410);
-  $("#pastChatTalk").css('max-height', '32.3em');
   });
 
   //縦並びをクリックした場合
@@ -241,7 +232,8 @@ $(function(){
     document.getElementById('history_body_side').style.width = "100%";
     document.getElementById('chatTable').style.width = "100%";
     document.getElementById('detail').style.width = "100%";
-    $("#chatContent").css('height', window.innerHeight - 495);
+    $("#chatContent").css('height', window.innerHeight - 365);
+    $("#pastChatTalk").css('height', window.innerHeight - 540);
     $.ajax({
       type: 'post',
       dataType: 'html',
@@ -265,7 +257,8 @@ $(function(){
     splitterObj.refresh();
     document.getElementById('history_body_side').style.height = "100%";
     document.getElementById('detail').style.height = "100%";
-    $("#chatContent").css('height', window.innerHeight - 210);
+     $("#pastChatTalk").css('height', window.innerHeight - 385);
+      $("#chatContent").css('height', window.innerHeight - 210);
     $.ajax({
       type: 'post',
       dataType: 'html',
@@ -284,15 +277,22 @@ $(function(){
         //"limit": 500,
         "position": "45%"
       });
+      $("#pastChatTalk").css('height', window.innerHeight - 385);
+      $("#chatContent").css('height', window.innerHeight - 210);
     }
 
     //縦並びの場合
     if(<?= $screenFlg ?> == 2) {
       splitterObj = $("#history_list_side").height(800).split({
         "orientation": "horizontal",
-        "limit": 50,
+        //"limit": 50,
         "position": "40%"
       });
+      document.getElementById('history_body_side').style.width = "100%";
+      document.getElementById('chatTable').style.width = "100%";
+      document.getElementById('detail').style.width = "100%";
+      $("#chatContent").css('height', window.innerHeight - 365);
+      $("#pastChatTalk").css('height', window.innerHeight - 540);
     }
 });
 

@@ -3037,7 +3037,7 @@ ul.naviBtn {
         margin-left:-24px;
 
         li {
-          margin: 0.25em 0;
+          margin: 10px 0;
           label {
             width: 13.7em;
             display: block;
@@ -3061,6 +3061,10 @@ ul.naviBtn {
 
     .nowInfo  {
       border-bottom: 1px solid #bfbfbf;
+
+      li {
+        margin-top:10px;
+      }
 
       dt {
         width: 13em;
@@ -3120,6 +3124,9 @@ ul.naviBtn {
     }
     .hardInfo {
       border-bottom: 1px solid #bfbfbf;
+      li {
+        margin-top:10px;
+      }
       /*@include dl2column;*/
       dt {
         width: 13em;

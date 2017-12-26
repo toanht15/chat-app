@@ -103,7 +103,7 @@ class ChatHistoriesController extends AppController {
         'joins' => array(
             array(
                 'type' => 'LEFT',
-                'table' => '(SELECT id,t_histories_id,title,url,MIN(created) as created FROM t_history_stay_logs GROUP BY t_histories_id)',
+                'table' => '(SELECT id,t_histories_id,title,url,created as created FROM t_history_stay_logs)',
                 'alias' => 'FirstSpeechSendPage',
                 'conditions' => [
                   'FirstSpeechSendPage.id = THistoryChatLog.t_history_stay_logs_id',
@@ -1246,7 +1246,7 @@ $this->log('LandscapdData前',LOG_DEBUG);
 
       $chatSendingPage = $dbo2->buildStatement(
         [
-          'table' => "(SELECT id,t_histories_id,title,url,MIN(created) as created FROM t_history_stay_logs  GROUP BY t_histories_id)",
+          'table' => "(SELECT id,t_histories_id,title,url,created as created FROM t_history_stay_logs)",
           'alias' => 'stayLogs',
           'fields' => [
             '*'
@@ -1264,7 +1264,6 @@ $this->log('LandscapdData前',LOG_DEBUG);
           'THistoryChatLog.message_type' => 1,
           'THistoryStayLog.id = THistoryChatLog.t_history_stay_logs_id'
         ],
-        'group' => 't_histories_id'
       ];
 
       $joinToLastSpeechSendPage = [

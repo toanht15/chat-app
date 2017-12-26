@@ -1359,6 +1359,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         var isExpired = Math.floor((new Date()).getTime() / 1000) >=  (Date.parse( message.expired.replace( /-/g, '/') ) / 1000);
         content = $scope.createTextOfSendFile(chat, message.downloadUrl, message.fileName, message.fileSize, message.extension, isExpired);
         if(!isExpired) {
+          li.style.cursor = "pointer";
           li.addEventListener("click", function(event){window.open(message.downloadUrl)});
         }
       }
