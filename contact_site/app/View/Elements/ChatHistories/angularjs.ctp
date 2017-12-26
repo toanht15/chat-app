@@ -31,6 +31,7 @@
       var className = $(this).data('type');
       angular.element("#showChatTab > li").removeClass("on");
 
+
       if ( className === "oldChat" ) {
         $scope.chatLogList = [];
         $scope.chatLogMessageList = [];
@@ -48,6 +49,15 @@
             angular.element("message-list-descript").attr("class", "on");
             $("#oldChat").css('height', $("#oldChat").css('height') - 80);
             $scope.$apply();
+            if(1024 < window.parent.screen.width && window.parent.screen.width < 1367) {
+              $("#oldChatList *").css("fontSize", "7px");
+            }
+            else if(window.parent.screen.width <= 1024) {
+              $("#oldChatList *").css("fontSize", "4px");
+            }
+            else {
+              $("#oldChatList *").css("fontSize", "13px");
+            }
           }
         });
       }
@@ -190,7 +200,21 @@
       var type = Number(chat.messageType);
       var message = chat.message;
       var userId = Number(chat.userId);
+      var fontSize;
+      var timeFontSize;
       var coreSettings = "<?= $coreSettings[C_COMPANY_USE_HISTORY_DELETE] ?>";
+      if(1024 < window.parent.screen.width && window.parent.screen.width < 1367) {
+        fontSize = '7px';
+        timeFontSize = '6px';
+      }
+      else if(window.parent.screen.width <= 1024) {
+        fontSize = '4px';
+        timeFontSize = '3px';
+      }
+      else {
+        fontSize = '13px';
+        timeFontSize = '12px';
+      }
       // 消費者からのメッセージの場合
       if ( type === chatApi.messageType.customer) {
         var created = chat.created.replace(" ","%");
@@ -203,17 +227,17 @@
         li.className = cn;
         if(chat.delete_flg == 1) {
           var deleteUser = userList[Number(chat.deleted_user_id)];
-          content = "<span class='cName' style = 'color:#bdbdbd !important;'>ゲスト(" + Number($('#visitorsId').text()) + ")</span>";
-          content += "<span class='cTime' style = 'color:#bdbdbd !important;'>"+chat.created+"</span>";
-          content +=  "<span class='cChat' style = 'color:#bdbdbd;'>(このメッセージは"+chat.deleted+"に"+deleteUser+"さんによって削除されました。)</span>";
+          content = "<span class='cName' style = 'color:#bdbdbd !important;font-size:"+fontSize+"'>ゲスト(" + Number($('#visitorsId').text()) + ")</span>";
+          content += "<span class='cTime' style = 'color:#bdbdbd !important; font-size:"+timeFontSize+"'>"+chat.created+"</span>";
+          content +=  "<span class='cChat' style = 'color:#bdbdbd; font-size:"+fontSize+"'>(このメッセージは"+chat.deleted+"に"+deleteUser+"さんによって削除されました。)</span>";
         }
         else {
-          content = "<span class='cName' style = 'color:#333333; !important'>ゲスト(" + Number($('#visitorsId').text()) + ")</span>";
-          content += "<span class='cTime'>"+chat.created+"</span>";
+          content = "<span class='cName' style = 'color:#333333 !important; font-size:"+fontSize+"'>ゲスト(" + Number($('#visitorsId').text()) + ")</span>";
+          content += "<span class='cTime' style = 'font-size:"+timeFontSize+"'>"+chat.created+"</span>";
           if(coreSettings === "") {
             content += '<img src= /img/close_b.png alt=履歴削除 class = \"commontooltip disabled\" data-text=\"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+chat.message+'","'+created+'") width=21 height=21 style="cursor:pointer; float:right; color: #fff !important; padding:2px !important; margin-right: auto;">'
           }
-          content +=  "<span class='cChat'>"+$scope.createTextOfMessage(chat, message, {radio: false})+"</span>";
+          content +=  "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message, {radio: false})+"</span>";
         }
       }
       // オートメッセージの場合
@@ -232,17 +256,17 @@
         }
         if(chat.delete_flg == 1) {
           var deleteUser = userList[Number(chat.deleted_user_id)];
-          content = "<span class='cName' style = 'color:#bdbdbd !important;'>"+ chatName +"</span>";
-          content += "<span class='cTime' style = 'color:#bdbdbd !important;'>"+chat.created+"</span>";
-          content +=  "<span class='cChat' style = 'color:#bdbdbd;'>(このメッセージは"+chat.deleted+"に"+deleteUser+"さんによって削除されました。)</span>";
+          content = "<span class='cName' style = 'color:#bdbdbd !important; font-size:"+fontSize+"'>"+ chatName +"</span>";
+          content += "<span class='cTime' style = 'color:#bdbdbd !important; font-size:"+timeFontSize+"''>"+chat.created+"</span>";
+          content +=  "<span class='cChat' style = 'color:#bdbdbd; font-size:"+fontSize+"'>(このメッセージは"+chat.deleted+"に"+deleteUser+"さんによって削除されました。)</span>";
         }
         else {
-          content = "<span class='cName'>" + chatName + "</span>";
-          content += "<span class='cTime'>"+chat.created+"</span>";
+          content = "<span class='cName' style = 'font-size:"+fontSize+"'>" + chatName + "</span>";
+          content += "<span class='cTime' style = 'font-size:"+timeFontSize+"'>"+chat.created+"</span>";
           if(chat.permissionLevel == 1) {
             content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+message2+'","'+created+'") style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
           }
-          content += "<span class='cChat'>"+$scope.createTextOfMessage(chat, message)+"</span>";
+          content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message)+"</span>";
         }
       }
       else if ( type === chatApi.messageType.auto || type === chatApi.messageType.sorry) {
@@ -256,17 +280,17 @@
         div.style.marginTop = '6px';
         if(chat.delete_flg == 1) {
           var deleteUser = userList[Number(chat.deleted_user_id)];
-          content = "<span class='cName' style = 'color:#bdbdbd !important;'>自動応答(" + Number($('#visitorsId').text()) + ")</span>";
-          content += "<span class='cTime' style = 'color:#bdbdbd !important;'>"+chat.created+"</span>";
-          content +=  "<span class='cChat' style = 'color:#bdbdbd;'>(このメッセージは"+chat.deleted+"に"+deleteUser+"さんによって削除されました。)</span>";
+          content = "<span class='cName' style = 'color:#bdbdbd !important; font-size:"+fontSize+"'>自動応答(" + Number($('#visitorsId').text()) + ")</span>";
+          content += "<span class='cTime' style = 'color:#bdbdbd !important;font-size:"+timeFontSize+"'>"+chat.created+"</span>";
+          content +=  "<span class='cChat' style = 'color:#bdbdbd; font-size:"+fontSize+"'>(このメッセージは"+chat.deleted+"に"+deleteUser+"さんによって削除されました。)</span>";
         }
         else {
-          content = "<span class='cName'>自動応答</span>";
-          content += "<span class='cTime'>"+chat.created+"</span>";
+          content = "<span class='cName' style = 'font-size:"+fontSize+"'>自動応答</span>";
+          content += "<span class='cTime' style = 'font-size:"+timeFontSize+"'>"+chat.created+"</span>";
           if(chat.permissionLevel == 1) {
             content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+message2+'","'+created+'") style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
           }
-          content += "<span class='cChat'>"+$scope.createTextOfMessage(chat, message)+"</span>";
+          content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message)+"</span>";
         }
       }
       else if ( type === chatApi.messageType.autoSpeech ) {
@@ -280,17 +304,17 @@
         div.style.marginTop = '6px';
         if(chat.delete_flg == 1) {
           var deleteUser = userList[Number(chat.deleted_user_id)];
-          content = "<span class='cName' style = 'color:#bdbdbd !important;'>自動返信(" + Number($('#visitorsId').text()) + ")</span>";
-          content += "<span class='cTime' style = 'color:#bdbdbd !important;'>"+chat.created+"</span>";
-          content +=  "<span class='cChat' style = 'color:#bdbdbd;'>(このメッセージは"+chat.deleted+"に"+deleteUser+"さんによって削除されました。)</span>";
+          content = "<span class='cName' style = 'color:#bdbdbd !important; font-size:"+fontSize+"'>自動返信(" + Number($('#visitorsId').text()) + ")</span>";
+          content += "<span class='cTime' style = 'color:#bdbdbd !important; font-size:"+timeFontSize+"'>"+chat.created+"</span>";
+          content +=  "<span class='cChat' style = 'color:#bdbdbd; font-size:"+fontSize+"'>(このメッセージは"+chat.deleted+"に"+deleteUser+"さんによって削除されました。)</span>";
         }
         else {
-          content = "<span class='cName'>自動返信</span>";
-          content += "<span class='cTime'>"+chat.created+"</span>";
+          content = "<span class='cName' style = 'font-size:"+fontSize+"'>自動返信</span>";
+          content += "<span class='cTime' style = 'font-size:"+timeFontSize+"'>"+chat.created+"</span>";
           if(chat.permissionLevel == 1) {
             content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+message2+'","'+created+'") style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
           }
-          content += "<span class='cChat'>"+$scope.createTextOfMessage(chat, message)+"</span>";
+          content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message)+"</span>";
         }
       } else if ( type === chatApi.messageType.sendFile ) {
         // ファイル送信はmessageがJSONなのでparseする
@@ -316,12 +340,12 @@
           userName = userList[Number(chat.userId)];
         }
         if ( type === chatApi.messageType.start ) {
-          content = "－　" + userName + "が入室しました　－";
-          content += "<span class='cTime'>"+chat.created+"</span>";
+          content = "<span style = 'color:#9bbb59 !important; font-size:"+fontSize+"'>－　" + userName + "が入室しました　－</span>";
+          content += "<span class='cTime' style = 'font-size:"+timeFontSize+"'>"+chat.created+"</span>";
         }
         if ( type === chatApi.messageType.end ) {
-          content = "－　" + userName + "が退室しました　－";
-          content += "<span class='cTime'>"+chat.created+"</span>";
+          content = "<span style = 'color:#9bbb59 !important; font-size:"+fontSize+"'>－　" + userName + "が退室しました　－</span>";
+          content += "<span class='cTime' style = 'font-size:"+timeFontSize+"'>"+chat.created+"</span>";
         }
       }
       li.className = cn;
@@ -728,7 +752,6 @@ $(document).ready(function(){
     }
     });
     if(prevBoldTarget != null) {
-      console.log('一応入っている');
       prevBoldTarget.find('td').each(function(index){
         if(index < 11) {
           $(this).css("background-color", "#fff");

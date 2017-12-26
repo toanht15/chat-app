@@ -183,6 +183,21 @@ $(window).resize(function() {
 
 $(function(){
 
+  $(window).on('load', function() {
+    document.getElementById("history_body_side").style.display = "block";
+    document.getElementById("detail").style.display = "block";
+    if(1024 < window.parent.screen.width && window.parent.screen.width < 1367) {
+      $("#history_list_side *").css("fontSize", "7px");
+      $("#leftContents ul.tabStyle li").css("width", "14.5em");
+      $("#leftContents ul.tabStyle li.on").css("width", "14.5em");
+    }
+    else if(window.parent.screen.width <= 1024) {
+      $("#history_list_side *").css("fontSize", "4px");
+      $("#leftContents ul.tabStyle li").css("width", "13em");
+      $("#leftContents ul.tabStyle li.on").css("width", "13em");
+    }
+  });
+
   //選択したチャット履歴CSV出力
   $('#history_csv_btn').click(function(){
     //チェックボックスのチェック状態の取得
@@ -223,7 +238,7 @@ $(function(){
   $(document).on('click', '.vertical', function(){
     splitterObj.destroy();
     splitterObj = null;
-    splitterObj = $("#history_list_side").height(800).split({
+    splitterObj = $("#history_list_side").height(window.innerHeight-150).split({
       "orientation": "horizontal",
       //"limit": 50,
       "position": "40%"
@@ -249,7 +264,7 @@ $(function(){
   $(document).on('click', '.side', function(){
     splitterObj.destroy();
     splitterObj = null;
-    splitterObj = $("#history_list_side").height(800).split({
+    splitterObj = $("#history_list_side").height(window.innerHeight-150).split({
       "orientation": "vertical",
       "limit": 50,
       "position": "45%"
@@ -272,18 +287,18 @@ $(function(){
 
     //横並びの場合
     if(<?= $screenFlg ?> == 1) {
-      var splitterObj = $("#history_list_side").height(800).split({
+      var splitterObj = $("#history_list_side").height(window.innerHeight-150).split({
         "orientation": "vertical",
         //"limit": 500,
         "position": "45%"
       });
-      $("#pastChatTalk").css('height', window.innerHeight - 385);
+      $("#pastChatTalk").css('height', window.innerHeight - 374);
       $("#chatContent").css('height', window.innerHeight - 210);
     }
 
     //縦並びの場合
     if(<?= $screenFlg ?> == 2) {
-      splitterObj = $("#history_list_side").height(800).split({
+      splitterObj = $("#history_list_side").height(window.innerHeight-150).split({
         "orientation": "horizontal",
         //"limit": 50,
         "position": "40%"
