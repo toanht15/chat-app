@@ -1724,7 +1724,7 @@ io.sockets.on('connection', function (socket) {
         var keyLength = Object.keys(customerList[res.siteKey]).length;
         Object.keys(customerList[res.siteKey]).forEach(function(key){
           var val = getConnectInfo(customerList[res.siteKey][key]);
-          if(isset(data.contract.chat) && data.contract.checkat) {
+          if(isset(data.contract.chat) && data.contract.chat) {
             chatApi.getUnreadCnt(val, function (ret) {
               val['chatUnreadId'] = ret.chatUnreadId;
               val['chatUnreadCnt'] = ret.chatUnreadCnt ? ret.chatUnreadCnt : 0;
