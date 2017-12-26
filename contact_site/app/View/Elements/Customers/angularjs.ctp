@@ -1460,7 +1460,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           // フォーカスが外れたら時にPlaceholderを表示（Edge対応）
           var sendPattarnStr = ( $scope.settings.sendPattarn ) ? "Shift + Enter": "Enter";
           chatApi.observeType.end();
-          this.placeholder="ここにメッセージ入力してください。\n・" + sendPattarnStr + "で改行されます\n・下矢印キー(↓)で定型文が開きます";
+          this.placeholder="ここにメッセージ入力してください。\n・" + sendPattarnStr + "で改行されます\n・下矢印キー(↓)で定型文が開きます<?php if(isset($coreSettings[C_COMPANY_USE_SEND_FILE]) && $coreSettings[C_COMPANY_USE_SEND_FILE]): ?>\n・ここにファイルをドロップするとファイルを送信できます<?php endif;?>";
           $scope.chatPsFlg = true;
 
         });
@@ -1624,7 +1624,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           // event.target.result に読み込んだファイルの内容が入っています.
           // ドラッグ＆ドロップでファイルアップロードする場合は result の内容を Ajax でサーバに送信しましょう!
           $scope.fileUploader.loadData = event.target.result;
-          $scope.fileUploader._showConfirmDialog("【" + $scope.fileUploader.fileObj.name + "】をアップロードします。<br>よろしいですか？");
+          $scope.fileUploader._showConfirmDialog("<p style='text-align:center;'><span style='line-height: 2em;'>【" + $scope.fileUploader.fileObj.name + "】をアップロードします。<br>よろしいですか？</span></p>");
         }
         fileReader.readAsArrayBuffer($scope.fileUploader.fileObj);
 
@@ -1653,6 +1653,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       },
       _showConfirmDialog: function(message) {
         modalOpen.call(window, message, 'p-cus-file-upload', '確認', 'moment');
+        $('#')
         popupEvent.closePopup = function() {
           $scope.uploadFile($scope.fileUploader.fileObj, $scope.fileUploader.loadData);
           popupEvent.close();
@@ -3610,7 +3611,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         scope.chatPs = function(){
           var sendPattarnStr = ( scope.settings.sendPattarn ) ? "Shift + Enter": "Enter";
           if ( scope.chatPsFlg ) {
-            return "ここにメッセージ入力してください。\n・" + sendPattarnStr + "で改行されます\n・下矢印キー(↓)で定型文が開きます";
+            return "ここにメッセージ入力してください。\n・" + sendPattarnStr + "で改行されます\n・下矢印キー(↓)で定型文が開きます<?php if(isset($coreSettings[C_COMPANY_USE_SEND_FILE]) && $coreSettings[C_COMPANY_USE_SEND_FILE]): ?>\n・ここにファイルをドロップするとファイルを送信できます<?php endif;?>";
           }
           else {
             return "";

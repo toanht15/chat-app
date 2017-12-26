@@ -3352,8 +3352,9 @@ var socket, // socket.io
         sinclo.trigger.flg = true;
         var emitData = userInfo.getSendList();
         emitData.widget = window.sincloInfo.widgetDisplay;
-        emit('customerInfo', emitData);
-        emit('connectSuccess', {confirm: false, reconnect: true, widget: window.sincloInfo.widgetDisplay});
+        emit('connectSuccess', {confirm: false, reconnect: true, widget: window.sincloInfo.widgetDisplay}, function(ev){
+          emit('customerInfo', emitData);
+        });
         common.widgetHandler.show();
       }
       else {
@@ -3570,7 +3571,6 @@ var socket, // socket.io
           //sincloBox.parentNode.removeChild(sincloBox);
           common.widgetHandler.hide();
         }
-        storage.s.set('inactiveTimeout', true);
       }
       popup.remove();
     });
@@ -3639,7 +3639,7 @@ function f_url(url){
   return url.substr(0,num);
 }
 
-function emit(evName, data){
+function emit(evName, data, callback){
   /* ここから：イベント名指定なし */
   data.siteKey = sincloInfo.site.key; // サイトの識別キー
   if ( check.isset(userInfo.sendTabId) ) {
@@ -3717,7 +3717,7 @@ function emit(evName, data){
       data.tabId = userInfo.tabId; // タブの識別ID
       data.sincloSessionId = userInfo.sincloSessionId;
       console.log("EMIT : " + evName + "data : " + JSON.stringify(data));
-      socket.emit(evName, JSON.stringify(data));
+      socket.emit(evName, JSON.stringify(data), callback);
     }
   }, 100);
 }

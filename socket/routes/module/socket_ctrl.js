@@ -1867,7 +1867,7 @@ io.sockets.on('connection', function (socket) {
     // sincloCore[obj.siteKey][obj.tabId].sessionId = socket.id;
   });
 
-  socket.on("connectSuccess", function (data) {
+  socket.on("connectSuccess", function (data, ack) {
     var obj = JSON.parse(data);
     if ( !isset(sincloCore[obj.siteKey]) ) {
       sincloCore[obj.siteKey] = {};
@@ -1935,7 +1935,7 @@ io.sockets.on('connection', function (socket) {
       }
     }
     else if ( !getSessionId(obj.siteKey, obj.tabId, 'parentTabId') ) {
-      connectList[socket.id] = {siteKey: obj.siteKey, tabId: obj.tabId, userId: obj.userId};
+      connectList[socket.id] = {siteKey: obj.siteKey, tabId: obj.tabId, userId: obj.userId, sincloSessionId: obj.sincloSessionId};
       if ( ('reconnect' in obj) && obj.reconnect ) {
         socket.join(obj.siteKey + emit.roomKey.client);
 
@@ -1970,6 +1970,7 @@ io.sockets.on('connection', function (socket) {
         emit.toCompany('syncNewInfo', obj, obj.siteKey);
       });
     }
+    ack(data);
   });
   // ウィジェットが生成されたことを企業側に通知する
   socket.on("syncReady", function(data){
@@ -3082,6 +3083,15 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
           console.log("settingReload >>> reset LiveAssist current count");
           laSessionCounter.initializeCurrentCount(obj.targetKey);
           break;
+        case 7: // view all Obj socket.emit('settingReload', JSON.stringify({type:7, targetKey: "demo", siteKey: "master"}));
+          console.log("getAllObj --------------------------------------------------");
+          console.log("sincloCore : " + JSON.stringify(sincloCore[obj.targetKey]));
+          console.log("connectList : " + JSON.stringify(connectList));
+          console.log("c_connectList : " + JSON.stringify(c_connectList));
+          console.log("doc_connectList : " + JSON.stringify(doc_connectList));
+          console.log("customerList : " + JSON.stringify(customerList[obj.targetKey]));
+          console.log("End --------------------------------------------------------");
+          break;
         default:
       }
     }
@@ -3224,6 +3234,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
   // ユーザーのアウトを感知
   socket.on('disconnect', function () {
+    console.log("【" + socket.id + "】ON DISCONNECT");
     var info = {};
     // 資料共有の場合
     if ( doc_connectList.socketId.hasOwnProperty(socket.id) ) {
@@ -3497,6 +3508,22 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
           if (keys && keys.length > 0) {
             keys.forEach(function (key) {
               if (key.indexOf(socket.id) >= 0) {
+                console.log("delete customer sitekey : " + info.siteKey + " key : " + key);
+                var customer = customerList[info.siteKey][key];
+                delete customerList[info.siteKey][key];
+                if(isset(customer) && customer.sincloSessionId) {
+                  var sincloSessionId = customer.sincloSessionId;
+                  if(isset(sincloCore[info.siteKey][sincloSessionId])
+                    && isset(sincloCore[info.siteKey][sincloSessionId]['sessionIds'])) {
+                    console.log("target sincloSessionId > " + sincloSessionId + " : " + JSON.stringify(sincloCore[info.siteKey][sincloSessionId]));
+                    var sessionIds = sincloCore[info.siteKey][sincloSessionId].sessionIds;
+                    delete sessionIds[socket.id];
+                    if(Object.keys(sessionIds).length === 0) {
+                      console.log("delete sincloSessionId > " + sincloSessionId);
+                      delete sincloCore[info.siteKey][sincloSessionId];
+                    }
+                  }
+                }
                 delete customerList[info.siteKey][key];
               }
             });
