@@ -1725,7 +1725,7 @@ io.sockets.on('connection', function (socket) {
           if(isset(data.contract.chat) && data.contract.checkat) {
             chatApi.getUnreadCnt(val, function (ret) {
               val['chatUnreadId'] = ret.chatUnreadId;
-              val['chatUnreadCnt'] = ret.chatUnreadCnt;
+              val['chatUnreadCnt'] = ret.chatUnreadCnt ? ret.chatUnreadCnt : 0;
               arr.push(val);
               counter++;
               if (counter === chunkSize) {
