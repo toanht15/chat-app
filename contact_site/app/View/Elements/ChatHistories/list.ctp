@@ -190,26 +190,26 @@
   <table  style = "width:100%;">
     <thead>
       <tr>
-        <th width=" 4%"><input type="checkbox" name="allCheck" id="allCheck"><label for="allCheck"></label></th>
-        <th width=" 6%">種別</th>
-        <th id = "firstTimeReceivingLabel" width=" 6%">初回チャット<br>受信日時<div class="questionBalloon questionBalloonPosition13">
+        <th style = "width:2%"><input type="checkbox" name="allCheck" id="allCheck"><label for="allCheck"></label></th>
+        <th style = "width:3%">種別</th>
+        <th id = "firstTimeReceivingLabel" style = "width:5%">初回チャット<br>受信日時<div class="questionBalloon questionBalloonPosition13">
           <icon class="questionBtn">？</icon>
         </div></th>
-        <th width="10%">IPアドレス</th>
-        <th width="10%">訪問ユーザ</th>
-        <th width=" 8%">キャンペーン</th>
-        <th id = "sendChatPageLabel" width=" 17%">チャット送信ページ<div class="questionBalloon questionBalloonPosition8">
+        <th style = "width:5%">IPアドレス</th>
+        <th style = "width:5%">訪問ユーザ</th>
+        <th style = "width:4%">キャンペーン</th>
+        <th id = "sendChatPageLabel" style = "width:8%">チャット送信ページ<div class="questionBalloon questionBalloonPosition8">
           <icon class="questionBtn">？</icon>
         </div></th>
-        <th width=" 5%">成果</th>
-        <th id = "manualReceivingLabel" width="6%">有人チャット<br>受信日時<div class="questionBalloon questionBalloonPosition13">
+        <th style = "width:4%">成果</th>
+        <th id = "manualReceivingLabel" style = "width:5%">有人チャット<br>受信日時<div class="questionBalloon questionBalloonPosition13">
           <icon class="questionBtn">？</icon>
           </div></th>
       <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
-        <th id="lastSpeechLabel" width=" 6%">最終発言後<br>離脱時間<div class="questionBalloon questionBalloonPosition13">
+        <th id="lastSpeechLabel" style = "width:5%">最終発言後<br>離脱時間<div class="questionBalloon questionBalloonPosition13">
             <icon class="questionBtn">？</icon>
           </div></th>
-        <th width="10%">担当者</th>
+        <th style = "width:6%">担当者</th>
       <?php endif; ?>
       </tr>
     </thead>
@@ -218,26 +218,26 @@
   <table class = "scroll" id = "chatTable">
       <thead>
         <tr>
-          <th width=" 3%"></th>
-          <th width=" 6%">種別</th>
-          <th id = "firstTimeReceivingLabel" width=" 6%">初回チャット<br>受信日時<div class="questionBalloon questionBalloonPosition13">
+          <th style = "width:2%"></th>
+          <th width = "3%" style = "width:3%">種別</th>
+          <th id = "firstTimeReceivingLabel" style = "width:5%">初回チャット<br>受信日時<div class="questionBalloon questionBalloonPosition13">
             <icon class="questionBtn">？</icon>
           </div></th>
-          <th width="10%">IPアドレス</th>
-          <th width="10%">訪問ユーザ</th>
-          <th width=" 8%">キャンペーン</th>
-          <th width=" 17%" id = "sendChatPageLabel">チャット送信ページ<div class="questionBalloon questionBalloonPosition8">
+          <th style = "width:5%">IPアドレス</th>
+          <th style = "width:5%">訪問ユーザ</th>
+          <th style = "width:4%">キャンペーン</th>
+          <th id = "sendChatPageLabel" style = "width:8%">チャット送信ページ<div class="questionBalloon questionBalloonPosition8">
             <icon class="questionBtn">？</icon>
           </div></th>
-          <th width=" 5%">成果</th>
-          <th id = "manualReceivingLabel" width="6%">有人チャット<br>受信日時<div class="questionBalloon questionBalloonPosition13">
+          <th style = "width:4%">成果</th>
+          <th style = "width:5%" id = "manualReceivingLabel">有人チャット<br>受信日時<div class="questionBalloon questionBalloonPosition13">
             <icon class="questionBtn">？</icon>
             </div></th>
         <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
-          <th id="lastSpeechLabel" width=" 6%">最終発言後<br>離脱時間<div class="questionBalloon questionBalloonPosition13">
+          <th style = "width:5%" id="lastSpeechLabel">最終発言後<br>離脱時間<div class="questionBalloon questionBalloonPosition13">
               <icon class="questionBtn">？</icon>
             </div></th>
-          <th width="10%">担当者</th>
+          <th style = "width:6%">担当者</th>
         <?php endif; ?>
       </tr>
       </thead>
@@ -268,11 +268,11 @@
 
               if((!empty($campaignParam) && !empty($data['History']['campaign']) && $data['History']['campaign'] == $campaignParam) || empty($data['History']['campaign'])) { ?>
           <tr id = "<?=h($history['THistory']['id'])?>" ng-click="getOldChat('<?=h($history['THistory']['id'])?>', false)" onclick="openChatById('<?=h($history['THistory']['id'])?>');" class = "showBold">
-              <td class="tCenter" onclick="event.stopPropagation();" width=" 3%">
+              <td class="tCenter" onclick="event.stopPropagation();" width=" 3%" style = "width:3%">
                 <input type="checkbox" name="selectTab" id="selectTab<?=h($history['THistory']['id'])?>" value="<?=h($history['THistory']['id'])?>">
                 <label for="selectTab<?=h($history['THistory']['id'])?>"></label>
               </td>
-              <td class="tCenter">
+              <td class="tCenter" style = "width:5%">
                 <?php if( is_numeric($history['THistoryChatLog']['count']) ): ?>
                     <?php
                      if ((!empty($history['THistoryChatLog']['type']) && $history['THistoryChatLog']['type'] == "自動返信")
@@ -294,8 +294,8 @@
                       }
                    endif; ?>
               </td>
-              <td class="tRight pre"><?php if (!empty($history['LastSpeechTime']['firstSpeechTime'])){ ?><?=date_format(date_create($history['LastSpeechTime']['firstSpeechTime']), "Y/m/d\nH:i:s")?><?php } ?></td>
-              <td class="tLeft">
+              <td class="tRight pre" style = "width:9%"><?php if (!empty($history['LastSpeechTime']['firstSpeechTime'])){ ?><?=date_format(date_create($history['LastSpeechTime']['firstSpeechTime']), "Y/m/d\nH:i:s")?><?php } ?></td>
+              <td class="tLeft" style = "width:11%">
                 <?php if(isset($coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $coreSettings[C_COMPANY_REF_COMPANY_DATA]): ?>
                   <?php if(!empty($history['LandscapeData']['org_name']) && !empty($history['LandscapeData']['lbc_code'])): ?>
                       <a href="javascript:void(0)" class="underL" onclick="openCompanyDetailInfo('<?=$history['LandscapeData']['lbc_code']?>')"><?=h($history['LandscapeData']['org_name'])?></a><br>
@@ -305,10 +305,10 @@
                 <?php endif; ?>
                 {{ ip('<?=h($history['THistory']['ip_address'])?>', <?php echo !empty($history['LandscapeData']['org_name']) ? 'true' : 'false' ?>) }}
               </td>
-              <td class="tLeft pre">{{ ui('<?=h($history['THistory']['ip_address'])?>', '<?=$visitorsId?>') }}</td>
-              <td class="tCenter pre"><?=$campaignParam?></td>
-              <td class="pre" style = "font-size:11px;padding:8px 5px !important"><a href = "<?=h($history['THistoryStayLog']['url'])?>" target = "landing"><?= $history['THistoryStayLog']['title'] ?></a></td>
-              <td class="tCenter"><?php
+              <td class="tLeft pre" style = "width:11%">{{ ui('<?=h($history['THistory']['ip_address'])?>', '<?=$visitorsId?>') }}</td>
+              <td class="tCenter pre" style = "width:10%"><?=$campaignParam?></td>
+              <td class="pre" style = "font-size:11px;padding:8px 5px !important;width:20%;"><a href = "<?=h($history['THistoryStayLog']['url'])?>" target = "landing"><?= $history['THistoryStayLog']['title'] ?></a></td>
+              <td class="tCenter" style = "width:7%"><?php
                 if($history['THistoryChatLog']['eff'] == 0 || $history['THistoryChatLog']['cv'] == 0 ) {
                   if (isset($history['THistoryChatLog']['achievementFlg'])){
                     echo $achievementType[h($history['THistoryChatLog']['achievementFlg'])];
@@ -321,16 +321,16 @@
                 }
               ?></td>
           <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
-              <td class="tRight pre"><?php if (!empty($history['NoticeChatTime']['created'])){ ?><?=date_format(date_create($history['NoticeChatTime']['created']), "Y/m/d\nH:i:s")?><?php } ?>
+              <td class="tRight pre" style = "width:9%"><?php if (!empty($history['NoticeChatTime']['created'])){ ?><?=date_format(date_create($history['NoticeChatTime']['created']), "Y/m/d\nH:i:s")?><?php } ?>
               </td>
-              <td class="tCenter"><?php
+              <td class="tCenter" style = "width:9%"><?php
               if ($history['LastSpeechTime']['lastSpeechTime']
                 && $history['THistory']['access_date'] !== $history['THistory']['out_date']
                 && strtotime($history['LastSpeechTime']['lastSpeechTime']) <= strtotime($history['THistory']['out_date'])){
                 echo $this->htmlEx->calcTime($history['LastSpeechTime']['lastSpeechTime'], $history['THistory']['out_date']);
               }
               ?></td>
-              <td class="tCenter pre"><?php if (isset($chatUserList[$history['THistory']['id']])) { echo $chatUserList[$history['THistory']['id']]; } ?></td>
+              <td class="tCenter pre" style = "width:12%"><?php if (isset($chatUserList[$history['THistory']['id']])) { echo $chatUserList[$history['THistory']['id']]; } ?></td>
           <?php endif; ?>
           </tr>
           <?php } } ?>

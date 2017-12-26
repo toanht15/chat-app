@@ -221,16 +221,18 @@ $(function(){
 
   //リサイズ処理
   $(window).resize(function() {
-  //$("#history_list_side").css('height', window.innerHeight - 150);
+  $("#history_list_side").css('height', window.innerHeight - 145);
   //横並びの場合
   if(<?= $screenFlg ?> == 1) {
-    $("#pastChatTalk").css('height', window.innerHeight - 385);
-    $("#chatContent").css('height', window.innerHeight - 210);
+    //$("#pastChatTalk").css('height', window.innerHeight - 364);
+    $("#chatContent").css('height', window.innerHeight - 200);
+    $("#chatHistory").css('height',window.innerHeight - 355);
   }
   //縦並びの場合
   if(<?= $screenFlg ?> == 2) {
-    $("#chatContent").css('height', window.innerHeight - 365);
-    $("#pastChatTalk").css('height', window.innerHeight - 540);
+    $("#chatContent").css('height', $("#detail").outerHeight() - 65);
+    $("#chatHistory").css('height',$("#history_body_side").outerHeight() - 170);
+    //$("#pastChatTalk").css('height', window.innerHeight - 540);
   }
   });
 
@@ -238,7 +240,7 @@ $(function(){
   $(document).on('click', '.vertical', function(){
     splitterObj.destroy();
     splitterObj = null;
-    splitterObj = $("#history_list_side").height(window.innerHeight-150).split({
+    splitterObj = $("#history_list_side").split({
       "orientation": "horizontal",
       //"limit": 50,
       "position": "40%"
@@ -247,8 +249,9 @@ $(function(){
     document.getElementById('history_body_side').style.width = "100%";
     document.getElementById('chatTable').style.width = "100%";
     document.getElementById('detail').style.width = "100%";
-    $("#chatContent").css('height', window.innerHeight - 365);
-    $("#pastChatTalk").css('height', window.innerHeight - 540);
+    $("#chatContent").css('height', $("#detail").outerHeight() - 65);
+    $("#chatHistory").css('height',$("#history_body_side").outerHeight() - 170);
+    //$("#pastChatTalk").css('height', window.innerHeight - 540);
     $.ajax({
       type: 'post',
       dataType: 'html',
@@ -264,7 +267,7 @@ $(function(){
   $(document).on('click', '.side', function(){
     splitterObj.destroy();
     splitterObj = null;
-    splitterObj = $("#history_list_side").height(window.innerHeight-150).split({
+    splitterObj = $("#history_list_side").split({
       "orientation": "vertical",
       "limit": 50,
       "position": "45%"
@@ -272,8 +275,9 @@ $(function(){
     splitterObj.refresh();
     document.getElementById('history_body_side').style.height = "100%";
     document.getElementById('detail').style.height = "100%";
-     $("#pastChatTalk").css('height', window.innerHeight - 385);
-      $("#chatContent").css('height', window.innerHeight - 210);
+    //$("#pastChatTalk").css('height', window.innerHeight - 364);
+    $("#chatContent").css('height', window.innerHeight - 200);
+    $("#chatHistory").css('height',window.innerHeight - 355);
     $.ajax({
       type: 'post',
       dataType: 'html',
@@ -285,20 +289,21 @@ $(function(){
     });
  });
 
+
     //横並びの場合
     if(<?= $screenFlg ?> == 1) {
-      var splitterObj = $("#history_list_side").height(window.innerHeight-150).split({
+      var splitterObj = $("#history_list_side").split({
         "orientation": "vertical",
         //"limit": 500,
         "position": "45%"
       });
-      $("#pastChatTalk").css('height', window.innerHeight - 374);
-      $("#chatContent").css('height', window.innerHeight - 210);
+      //$("#pastChatTalk").css('height', window.innerHeight - 364);
+      $("#chatContent").css('height', window.innerHeight - 200);
+      $("#chatHistory").css('height',window.innerHeight - 355);
     }
-
     //縦並びの場合
     if(<?= $screenFlg ?> == 2) {
-      splitterObj = $("#history_list_side").height(window.innerHeight-150).split({
+      splitterObj = $("#history_list_side").split({
         "orientation": "horizontal",
         //"limit": 50,
         "position": "40%"
@@ -306,8 +311,12 @@ $(function(){
       document.getElementById('history_body_side').style.width = "100%";
       document.getElementById('chatTable').style.width = "100%";
       document.getElementById('detail').style.width = "100%";
-      $("#chatContent").css('height', window.innerHeight - 365);
-      $("#pastChatTalk").css('height', window.innerHeight - 540);
+      //$("#chatContent").css('height', window.innerHeight - 365);
+      console.log($("#detail").outerHeight());
+      $("#chatContent").css('height', $("#detail").outerHeight() - 65);
+      console.log($("#history_body_side").css('height'));
+      $("#chatHistory").css('height',$("#history_body_side").outerHeight() - 170);
+      //$("#pastChatTalk").css('height', window.innerHeight - 540);
     }
 });
 

@@ -2739,7 +2739,7 @@ ul.naviBtn {
           }
 
           .historyList {
-              height: 10em!important;
+              height: 20%;
               li {
                 border-bottom: 1px solid #bababa;
                 padding: 0.5em;
@@ -2817,7 +2817,7 @@ ul.naviBtn {
     ul {
       overflow-y: auto;
       overflow-x: hidden;
-      height: 28em;
+      height: 78%;
       width: 100%;
       border: 1px solid #909090;
       margin-bottom: 0.5em;
@@ -3320,11 +3320,13 @@ ul.naviBtn {
     height: 30px!important;
     line-height: 1.5;
     padding: 0 3px;
+    width: 5%;
   }
 
   thead {
     /*display: inline-block;
     width: 100%;*/
+    display: block;
   }
 
   tr{
@@ -3332,10 +3334,9 @@ ul.naviBtn {
   }
 
   tbody#chatHistory {
-    /*display: inline-block;
+    display: block;
     overflow-y: scroll;
-    height: 45em;
-    width: 100%;*/
+    height: 49em;
   }
 
   input[type='checkbox'] {
