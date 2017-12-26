@@ -294,7 +294,7 @@
                       }
                    endif; ?>
               </td>
-              <td class="tRight pre"><?=date_format(date_create($history['LastSpeechTime']['firstSpeechTime']), "Y/m/d\nH:i:s")?></td>
+              <td class="tRight pre"><?php if (!empty($history['LastSpeechTime']['firstSpeechTime'])){ ?><?=date_format(date_create($history['LastSpeechTime']['firstSpeechTime']), "Y/m/d\nH:i:s")?><?php } ?></td>
               <td class="tLeft">
                 <?php if(isset($coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $coreSettings[C_COMPANY_REF_COMPANY_DATA]): ?>
                   <?php if(!empty($history['LandscapeData']['org_name']) && !empty($history['LandscapeData']['lbc_code'])): ?>
@@ -342,7 +342,7 @@
 </div>
 
 
-<div ng-aa id = "detail" class = "detail" style = "width: 100%; background-color: #f2f2f2;">
+<div ng-aa id = "detail" class = "detail" style = "width: 100%; background-color: #f2f2f2; display:none;">
   <div id="cus_info_contents"  class="flexBoxCol">
     <div id="leftContents" style = "width: 100%;padding: 1em 1.5em 1em 1.5em;">
       <ul id="showChatTab" class="tabStyle flexBoxCol noSelect" style = "width:100%">
@@ -364,8 +364,8 @@
 
       <!-- 過去のチャット -->
       <section id="oldChat" style = "height:100%">
-        <ul class="historyList">
-          <li class = "pastChatShowBold" ng-click="getOldChat(historyId, true)" ng-repeat="(historyId, firstDate) in chatLogList"><span>{{firstDate | date:'yyyy年M月d日（EEE）a hh時mm分ss秒' }}</span></li>
+        <ul class="historyList" style = "margin-top: 0;">
+          <li class = "pastChatShowBold" id = "oldChatList" ng-click="getOldChat(historyId, true)" ng-repeat="(historyId, firstDate) in chatLogList"><span>{{firstDate | date:'yyyy年M月d日（EEE）a hh時mm分ss秒' }}</span></li>
         </ul>
           <ul class="chatView" id = "pastChatTalk" >
             <message-list>
