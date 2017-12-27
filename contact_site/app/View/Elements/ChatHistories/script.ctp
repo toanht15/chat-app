@@ -128,6 +128,7 @@ var setAllCheck = function() {
 
 //ユーザー情報表示変更
 function openChatById(id) {
+  clearChatAndPersonalInfo();
   $.ajax({
     type: 'GET',
     url: "<?= $this->Html->url(array('controller' => 'ChatHistories', 'action' => 'remoteGetCustomerInfo')) ?>",
@@ -137,7 +138,7 @@ function openChatById(id) {
     dataType: 'html',
     success: function(html){
       var customerData = JSON.parse(html);
-      document.getElementById("visitorsId").innerHTML= customerData.THistory.visitors_id;LandscapeData
+      document.getElementById("visitorsId").innerHTML= customerData.THistory.visitors_id;
       document.getElementById("ipAddress").innerHTML= "("+customerData.THistory.ip_address+")";
       document.getElementById("Landscape").innerHTML= customerData.LandscapeData.org_name;
       $("#LandscapeData a").attr('onclick',"openCompanyDetailInfo("+customerData.LandscapeData.lbc_code+")");
@@ -167,6 +168,26 @@ function openChatById(id) {
     }
   });
 }
+
+function clearChatAndPersonalInfo() {
+  document.getElementById("visitorsId").innerHTML= "";
+  document.getElementById("ipAddress").innerHTML= "";
+  document.getElementById("Landscape").innerHTML= "";
+  document.getElementById("visitCounts").innerHTML= "";
+  document.getElementById("platform").innerHTML= "";
+  document.getElementById("campaignParam").innerHTML= "";
+  document.getElementById("landingPage").innerHTML= "";
+  document.getElementById("chatSendingPage").innerHTML= "";
+  document.getElementById("separationPage").innerHTML= "";
+  document.getElementById("pageCount").innerHTML= "";
+  document.getElementById("ng-customer-company").value= "";
+  document.getElementById("ng-customer-name").value= "";
+  document.getElementById("ng-customer-tel").value= "";
+  document.getElementById("ng-customer-mail").value= "";
+  document.getElementById("ng-customer-memo").value= "";
+  document.getElementById('customerId').value= "";
+}
+
 // Change the selector if needed
 var  table = $('.scroll');
 var  bodyCells = table.find('tbody tr:first').children();
@@ -253,29 +274,36 @@ $(function(){
   allCheckElm.addEventListener('click', setAllCheck); // 全選択
 
   //リサイズ処理
+  var screenMode = <?= $screenFlg ?>;
+
   $(window).resize(function() {
     $("#history_list_side").css('height', window.innerHeight - 145);
     //横並びの場合
-    if(<?= $screenFlg ?> == 1) {
+    if(screenMode == 1) {
       //$("#pastChatTalk").css('height', window.innerHeight - 364);
       document.getElementById('history_body_side').style.width = $('#history_body_side').outerWidth() + 'px';
       document.getElementById('history_body_side').style.height = $('#history_list_side').outerHeight() + 'px';
-      $("#chatContent").css('height', window.innerHeight - 200);
+      $("#chatContent").css('height', $("#detail").outerHeight() - 105);
+      $("#customerInfoScrollArea").css('height', $("#detail").outerHeight() - 105);
       $("#chatHistory").css('height',window.innerHeight - 355);
       $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
     }
     //縦並びの場合
-    if(<?= $screenFlg ?> == 2) {
+    if(screenMode == 2) {
       document.getElementById('history_body_side').style.width = $('#history_list_side').outerWidth() + 'px';
       $("#chatContent").css('height', $("#detail").outerHeight() - 65);
       $("#chatHistory").css('height',$("#history_body_side").outerHeight() - 170);
       $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
       //$("#pastChatTalk").css('height', window.innerHeight - 540);
     }
+    if(splitterObj) {
+      splitterObj.refresh();
+    }
   });
 
   //縦並びをクリックした場合
   $(document).on('click', '.vertical', function(){
+    screenMode = 2;
     splitterObj.destroy();
     splitterObj = null;
     splitterObj = $("#history_list_side").split({
@@ -289,7 +317,7 @@ $(function(){
     document.getElementById('history_body_side').style.width = $('#history_list_side').outerWidth() + 'px';
     document.getElementById('chatTable').style.width = $('#history_body_side').outerWidth() + 'px';
     document.getElementById('detail').style.width = "100%";
-    $("#chatContent").css('height', $("#detail").outerHeight() - 65);
+    $("#chatContent").css('height', $("#detail").outerHeight() - 105);
     $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
     $("#chatHistory").css('height',$("#history_body_side").outerHeight() - 170);
     //$("#pastChatTalk").css('height', window.innerHeight - 540);
@@ -308,12 +336,13 @@ $(function(){
 
   //横並びをクリックした場合
   $(document).on('click', '.side', function(){
+    screenMode = 1;
     splitterObj.destroy();
     splitterObj = null;
     splitterObj = $("#history_list_side").split({
       "orientation": "vertical",
       "limit": 50,
-      "position": "45%"
+      "position": "70%"
     }).on('splitter.resize', function(){
       tableObj.columns.adjust().draw();
     });
@@ -322,8 +351,8 @@ $(function(){
     document.getElementById('history_body_side').style.height = $('#history_list_side').outerHeight() + 'px';
     document.getElementById('detail').style.height = "100%";
     //$("#pastChatTalk").css('height', window.innerHeight - 364);
-    $("#chatContent").css('height', window.innerHeight - 200);
-    $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
+    $("#chatContent").css('height', $("#detail").outerHeight() - 105);
+    $("#customerInfoScrollArea").css('height', $("#detail").outerHeight() - 105);
     $("#chatHistory").css('height',window.innerHeight - 355);
     $.ajax({
       type: 'post',
@@ -344,13 +373,14 @@ $(function(){
       var splitterObj = $("#history_list_side").split({
         "orientation": "vertical",
         //"limit": 500,
-        "position": "45%"
+        "position": "70%"
       }).on('splitter.resize', function(){
         tableObj.columns.adjust().draw();
       });;
       //$("#pastChatTalk").css('height', window.innerHeight - 364);
-      $("#chatContent").css('height', window.innerHeight - 200);
-      $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
+      document.getElementById('detail').style.height = "100%";
+      $("#chatContent").css('height', $("#detail").outerHeight() - 105);
+      $("#customerInfoScrollArea").css('height', $("#detail").outerHeight() - 105);
       $("#chatHistory").css('height',window.innerHeight - 355);
       $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 170);
     }
@@ -368,8 +398,6 @@ $(function(){
       document.getElementById('detail').style.width = "100%";
       $("#chatContent").css('height', $("#detail").outerHeight() - 65);
       $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
-      console.log($("#history_body_side").css('height'));
-      //$("#chatHistory").css('height',$("#history_body_side").outerHeight() - 170);
     }
 });
 

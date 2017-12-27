@@ -10,7 +10,7 @@ class ChatHistoriesController extends AppController {
     'THistory' => [
       'limit' => 100,
       'order' => [
-        'THistoryChatLog.created' => 'desc',
+        'THistory.access_date' => 'desc',
         'THistory.id' => 'desc'
       ],
       'fields' => [
@@ -330,7 +330,7 @@ $this->log('LandscapdData前',LOG_DEBUG);
     return $this->render('/Elements/Histories/remoteGetStayLogs');
   }
 
-    public function remoteGetOldChat(){
+  public function remoteGetOldChat(){
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = null;
@@ -1282,20 +1282,18 @@ $this->log('LandscapdData前',LOG_DEBUG);
       $this->paginate['THistory']['fields'][] = 'LastSpeechTime.created as lastSpeechTime,LastSpeechTime.firstSpeechTime';
       $this->paginate['THistory']['fields'][] = 'NoticeChatTime.created';
       $this->paginate['THistory']['fields'][] = 'THistoryStayLog.title,THistoryStayLog.url';
-      //$this->paginate['THistory']['fields'][] = 'LastSpeechSendPage.title,LastSpeechSendPage.url';
       $this->paginate['THistory']['joins'][] = $joinToChat;
       $this->paginate['THistory']['joins'][] = $joinToLastSpeechChatTime;
       $this->paginate['THistory']['joins'][] = $joinToNoticeChatTime;
       $this->paginate['THistory']['joins'][] = $joinToFirstSpeechSendPage;
-      //$this->paginate['THistory']['joins'][] = $joinToLastSpeechSendPage;
 
       if(isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) {
         $this->paginate['THistory']['fields'][] = 'LandscapeData.*';
         $this->paginate['THistory']['joins'][] = $joinToLandscapeData;
       }
     }
-    $historyList = $this->paginate('THistory');
 
+    $historyList = $this->paginate('THistory');
 
     // TODO 良いやり方が無いか模索する
     $historyIdList = [];
