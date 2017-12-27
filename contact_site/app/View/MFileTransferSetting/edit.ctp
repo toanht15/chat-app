@@ -14,7 +14,7 @@ if ( !(!empty($this->data['MFileTransferSetting']['type']) && strcmp($this->data
   </div>
 
   <div id='mfiletransfersetting_content' class="p20x">
-    <?= $this->Form->create('MFileTransferSetting', ['type' => 'post', 'url' => ['controller' => 'MFileTransferSetting', 'action' => 'index', '']]); ?>
+    <?= $this->Form->create('MFileTransferSetting', ['type' => 'post', 'url' => ['controller' => 'MFileTransferSetting', 'action' => 'edit', '']]); ?>
     <?= $this->Form->input('MFileTransferSetting.id', ['type' => 'hidden']); ?>
     <section>
       <h3>ファイル送信許可設定</h3>
