@@ -618,6 +618,8 @@ $this->log('LandscapdData前',LOG_DEBUG);
     Configure::write('debug', 0);
     ini_set("max_execution_time", 180);
     ini_set('memory_limit', '-1');
+    $this->log('入ってきてる？',LOG_DEBUG);
+
 
     //$returnData:$historyListで使うjoinのリストとconditionsの検索条件
     $returnData = $this->_searchConditions();
@@ -655,8 +657,9 @@ $this->log('LandscapdData前',LOG_DEBUG);
       "メッセージ",
       "担当者"
      ];
+     $this->log('入ってきてる？2',LOG_DEBUG);
     foreach($userList as $val){
-    $campaignParam = "";
+    /*$campaignParam = "";
       $tmp = mb_strstr($stayList[$val['THistory']['id']]['THistoryStayLog']['firstURL'], '?');
       if ( $tmp !== "" ) {
         foreach($campaignList as $k => $v){
@@ -667,7 +670,7 @@ $this->log('LandscapdData前',LOG_DEBUG);
             $campaignParam .= $v;
           }
         }
-      }
+      }*/
       $infoData = $this->Session->read('Thistory');
        if ((isset($val['THistoryChatLog2']['type']) && isset($infoData['History']['chat_type']) &&
         $val['THistoryChatLog2']['type'] === Configure::read('chatType')[$infoData['History']['chat_type']]) || empty($infoData['History']['chat_type'])) {
@@ -741,10 +744,16 @@ $this->log('LandscapdData前',LOG_DEBUG);
         $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
       }
       if($val['THistoryChatLog']['message_type'] == 6) {
+        $this->log('ここまで入ってる？3',LOG_DEBUG);
         $row['transmissionKind'] = 'ファイル送信';
         $row['transmissionPerson'] = $val['MUser']['display_name']."さん";
+        $this->log('ここまで入ってる？4',LOG_DEBUG);
         $json = json_decode($val['THistoryChatLog']['message'], TRUE);
+        $this->log('ここまで入ってる？5',LOG_DEBUG);
+        $this->log($json,LOG_DEBUG);
+        $this->log($this->prettyByte2Str($json['fileSize']),LOG_DEBUG);
         $val['THistoryChatLog']['message'] = $json['fileName']."\n".$this->prettyByte2Str($json['fileSize']);
+        $this->log('ここまで入ってる？6',LOG_DEBUG);
       }
       if($val['THistoryChatLog']['message_type'] == 98 || $val['THistoryChatLog']['message_type'] == 99) {
         $row['transmissionKind'] = '通知メッセージ';
@@ -754,6 +763,10 @@ $this->log('LandscapdData前',LOG_DEBUG);
       // チャットメッセージ
       if($val['THistoryChatLog']['delete_flg'] == 1) {
         $row['message'] = "(このメッセージは ".$val['THistoryChatLog']['deleted']." に ".$val['DeleteMUser']['display_name']." さんによって削除されました。)";
+      }
+      else if($val['THistoryChatLog']['message_type'] == 6) {
+        $this->log('CSVメッセージ',LOG_DEBUG);
+        $this->log($val['THistoryChatLog']['message'],LOG_DEBUG);
       }
       else {
         $row['message'] = $val['THistoryChatLog']['message'];
@@ -853,6 +866,11 @@ $this->log('LandscapdData前',LOG_DEBUG);
           case 5: // 自動返信
             $row = $this->_setData($date, "自動返信", $this->userInfo['MCompany']['company_name'], $message);
             break;
+          case 6: // ファイル送信
+            $json = json_decode($val['THistoryChatLog']['message'], TRUE);
+            $message = $json['fileName']."\n".$this->prettyByte2Str($json['fileSize']);
+            $row = $this->_setData($date, "ファイル送信", $val['MUser']['display_name'], $message);
+          break;
           case 98: // 入室メッセージ
           case 99: // 退室メッセージ
             $row = $this->_setData($date, "通知メッセージ", "", " - ".$val['MUser']['display_name']."が".$message."しました - ");

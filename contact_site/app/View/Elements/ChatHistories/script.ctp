@@ -57,6 +57,13 @@ document.body.onload = function(){
 
 // 有効/無効ボタンの表示/非表示
 var actBtnShow = function(){
+  var authorityDelete = "<?= $coreSettings[C_COMPANY_USE_HISTORY_DELETE] ?>";
+  var authorityCsv = "<?= $coreSettings[C_COMPANY_USE_HISTORY_EXPORTING] ?>";
+
+  if(authorityDelete == "" && authorityCsv == "") {
+    return false;
+  }
+
   // 選択中の場合
   if ( $('input[name="selectTab"]').is(":checked") ) {
     var list = document.querySelectorAll('input[name^="selectTab"]:checked');
@@ -67,16 +74,20 @@ var actBtnShow = function(){
     $("#outputCsv a").attr("href", url);
 
     //一つでもチェックが入ったら
-    //コピーボタン有効
-    document.getElementById("history_csv_btn").className="btn-shadow disOffgreenBtn";
+    //CSVボタン有効
+    if(authorityCsv == 1) {
+      document.getElementById("history_csv_btn").className="btn-shadow disOffgreenBtn";
+    }
     //document.getElementById("history_csv_btn").addEventListener('click', openCopyDialog, false);
     //削除ボタン有効
-    document.getElementById("history_dustbox_btn").className="btn-shadow disOffredBtn";
-    document.getElementById("history_dustbox_btn").addEventListener('click', openDeleteDialog, false);
+    if(authorityDelete == 1) {
+      document.getElementById("history_dustbox_btn").className="btn-shadow disOffredBtn";
+      document.getElementById("history_dustbox_btn").addEventListener('click', openDeleteDialog, false);
+    }
   }
   else {
     //一つもチェックが無かったら
-    //コピーボタン無効
+    //CSVボタン無効
     document.getElementById("history_csv_btn").className="btn-shadow disOffgrayBtn";
     //document.getElementById("tautomessages_copy_btn").removeEventListener('click', openCopyDialog, false);
     //削除ボタン無効
