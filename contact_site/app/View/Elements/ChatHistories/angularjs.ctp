@@ -394,11 +394,10 @@
           else if(chat.permissionLevel == 1 && coreSettings == "") {
             content += '<img src= /img/close_b.png alt=履歴削除 class = \"commontooltip disabled\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\"  width=21 height=21 style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
           }
-        // ファイル送信はmessageがJSONなのでparseする
-        essage = JSON.parse(message);
-        var isExpired = Math.floor((new Date()).getTime() / 1000) >=  (Date.parse( message.expired.replace( /-/g, '/') ) / 1000);
-        content += $scope.createTextOfSendFile(chat, message.downloadUrl, message.fileName, message.fileSize, message.extension, isExpired);
-      }
+
+          var isExpired = Math.floor((new Date()).getTime() / 1000) >=  (Date.parse( message.expired.replace( /-/g, '/') ) / 1000);
+          content += $scope.createTextOfSendFile(chat, message.downloadUrl, message.fileName, message.fileSize, message.extension, isExpired);
+        }
       } else  {
         cn = "sinclo_etc";
         div.style.borderBottom = '1px solid #bfbfbf';
