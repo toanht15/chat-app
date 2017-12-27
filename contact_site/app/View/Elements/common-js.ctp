@@ -207,7 +207,7 @@
           $('body').find(".tooltips").remove();
         }, true); //radioボタンのdisableに対応するためuseCaptureを利用
       });
-    },10);
+    },1);
   }
 
   $(document).ready(function(){
