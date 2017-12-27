@@ -382,7 +382,6 @@ $this->log('LandscapdData前',LOG_DEBUG);
         $unionRet[] = array_merge($ret[$key],$permissionLevel);
       }
     }
-    $this->log('終了',LOG_DEBUG);
     return new CakeResponse(['body' => json_encode($unionRet)]);
   }
 
@@ -1294,10 +1293,7 @@ $this->log('LandscapdData前',LOG_DEBUG);
       }
     }
 
-    $this->log('どうせここでしょ',LOG_DEBUG);
     $historyList = $this->paginate('THistory');
-    $this->log('ねやっぱり',LOG_DEBUG);
-
 
     // TODO 良いやり方が無いか模索する
     $historyIdList = [];
@@ -1480,7 +1476,6 @@ $this->log('LandscapdData前',LOG_DEBUG);
     }
 
     $userInfo = $this->MUser->read(null, $this->userInfo['id']);
-    $this->log('終了',LOG_DEBUG);
     $this->set('data', $data);
     $this->set('historyList', $historyList);
     $this->set('historyChat', $historyChat);
