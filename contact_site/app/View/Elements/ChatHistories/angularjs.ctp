@@ -100,6 +100,7 @@
             angular.element("message-list-descript").attr("class", "off");
             $scope.chatLogMessageList = json;
             $scope.$apply();
+            addTooltipEvent();
           }
           else {
             $scope.messageList = json;
@@ -120,6 +121,7 @@
                 $scope.chatLogList = json;
                 angular.element("message-list-descript").attr("class", "on");
                 $scope.$apply();
+                addTooltipEvent();
               }
             });
           }
@@ -155,8 +157,6 @@
     // 【チャット】テキストの構築
     $scope.createTextOfMessage = function(chat, message, opt) {
       var strings = message.split('\n');
-      console.log('aaaa');
-      //console.log(strings);
       var custom = "";
       var linkReg = RegExp(/http(s)?:\/\/[!-~.a-z]*/);
       var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
@@ -188,7 +188,6 @@
           }
           custom += str + "\n";
         }
-        console.log(custom);
       return custom;
     };
 
@@ -254,9 +253,12 @@
         else {
           content = "<span class='cName' style = 'color:#333333 !important; font-size:"+fontSize+"'>ゲスト(" + Number($('#visitorsId').text()) + ")</span>";
           content += "<span class='cTime' style = 'font-size:"+timeFontSize+"'>"+chat.created+"</span>";
-          //if(coreSettings === "") {
-            content += '<img src= /img/close_b.png alt=履歴削除 class = \"commontooltip disabled\" data-text=\"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+chat.message+'","'+created+'") width=21 height=21 style="cursor:pointer; float:right; color: #fff !important; padding:2px !important; margin-right: auto;">'
-          //}
+          if(chat.permissionLevel == 1 && coreSettings == 1) {
+            content += '<img src= /img/close_b.png alt=履歴削除 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+chat.message+'","'+created+'") width=21 height=21 style="cursor:pointer; float:right; color: #fff !important; padding:2px !important; margin-right: auto;">'
+          }
+          else if(chat.permissionLevel == 1 && coreSettings == "") {
+            content += '<img src= /img/close_b.png alt=履歴削除 class = \"commontooltip disabled\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" data-balloon-position = \"45\"  width=21 height=21 style="cursor:pointer; float:right; color: #fff !important; padding:2px !important; margin-right: auto;">'
+          }
           content +=  "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message, {radio: false})+"</span>";
         }
       }
@@ -289,8 +291,11 @@
         else {
           content = "<span class='cName' style = 'font-size:"+fontSize+"'>" + chatName + "</span>";
           content += "<span class='cTime' style = 'font-size:"+timeFontSize+"'>"+chat.created+"</span>";
-          if(chat.permissionLevel == 1) {
-            content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+forDeletionMessage+'","'+created+'") style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
+          if(chat.permissionLevel == 1 && coreSettings == 1) {
+            content += '<img src= /img/close_b.png alt=履歴削除 width=21 height=21 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+forDeletionMessage+'","'+created+'") style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
+          }
+          else if(chat.permissionLevel == 1 && coreSettings == "") {
+            content += '<img src= /img/close_b.png alt=履歴削除 class = \"commontooltip disabled\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" data-balloon-position = \"45\"  width=21 height=21 style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
           }
           content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message)+"</span>";
         }
@@ -319,8 +324,11 @@
         else {
           content = "<span class='cName' style = 'font-size:"+fontSize+"'>自動応答</span>";
           content += "<span class='cTime' style = 'font-size:"+timeFontSize+"'>"+chat.created+"</span>";
-          if(chat.permissionLevel == 1) {
-            content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+forDeletionMessage+'","'+created+'") style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
+          if(chat.permissionLevel == 1 && coreSettings == 1) {
+            content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+forDeletionMessage+'","'+created+'") style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">';
+          }
+          else if(chat.permissionLevel == 1 && coreSettings == "") {
+            content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 class = \"commontooltip disabled\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" data-balloon-position = \"45\" style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">';
           }
           content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message)+"</span>";
         }
@@ -349,8 +357,11 @@
         else {
           content = "<span class='cName' style = 'font-size:"+fontSize+"'>自動返信</span>";
           content += "<span class='cTime' style = 'font-size:"+timeFontSize+"'>"+chat.created+"</span>";
-          if(chat.permissionLevel == 1) {
-            content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+forDeletionMessage+'","'+created+'") style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
+          if(chat.permissionLevel == 1 && coreSettings == 1) {
+            content += '<img src= /img/close_b.png alt=履歴削除 width=21 height=21 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+forDeletionMessage+'","'+created+'") style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
+          }
+          else if(chat.permissionLevel == 1 && coreSettings == "") {
+            content += '<img src= /img/close_b.png alt=履歴削除 class = \"commontooltip disabled\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\"　data-balloon-position = \"45\"  width=21 height=21 style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
           }
           content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message)+"</span>";
         }
@@ -361,21 +372,33 @@
         div.style.padding = '0';
         div.style.borderBottom = '1px solid #bfbfbf';
         div.style.marginTop = '6px';
+        var created = chat.created.replace(" ","%");
 //        var chatName = widget.subTitle;
 //        if ( Number(widget.showName) === <?//=C_WIDGET_SHOW_NAME?>// ) {
 //          chatName = userList[Number(userId)];
 //        }
         if(chat.delete_flg == 1) {
           var deleteUser = userList[Number(chat.deleted_user_id)];
-          content = "<span class='cName' style = 'color:#bdbdbd !important;font-size:"+fontSize+"'>ファイル送信</span>";
+          content = "<span class='cName' style = 'color:#bdbdbd !important; font-size:"+fontSize+"'>ファイル送信"+ (isExpired ? "（ダウンロード有効期限切れ）" : "") + "</span>";
           content += "<span class='cTime' style = 'color:#bdbdbd !important; font-size:"+timeFontSize+"'>"+chat.created+"</span>";
           content +=  "<span class='cChat' style = 'color:#bdbdbd; font-size:"+fontSize+"'>(このメッセージは"+chat.deleted+"に"+deleteUser+"さんによって削除されました。)</span>";
-        } else {
+        }
+        else {
           // ファイル送信はmessageがJSONなのでparseする
           message = JSON.parse(message);
-          var isExpired = Math.floor((new Date()).getTime() / 1000) >=  (Date.parse( message.expired.replace( /-/g, '/') ) / 1000);
-          content = $scope.createTextOfSendFile(chat, message.downloadUrl, message.fileName, message.fileSize, message.extension, isExpired);
-        }
+          content = "<span class='cName' style = 'font-size:"+fontSize+"'>ファイル送信" + (isExpired ? "（ダウンロード有効期限切れ）" : "") + "</span>";
+          content += "<span class='cTime' style = 'font-size:"+timeFontSize+"'>"+chat.created+"</span>";
+          if(chat.permissionLevel == 1 && coreSettings == 1) {
+            content += '<img src= /img/close_b.png alt=履歴削除 width=21 height=21 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+message.fileName+'","'+created+'") style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
+          }
+          else if(chat.permissionLevel == 1 && coreSettings == "") {
+            content += '<img src= /img/close_b.png alt=履歴削除 class = \"commontooltip disabled\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\"  width=21 height=21 style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
+          }
+        // ファイル送信はmessageがJSONなのでparseする
+        essage = JSON.parse(message);
+        var isExpired = Math.floor((new Date()).getTime() / 1000) >=  (Date.parse( message.expired.replace( /-/g, '/') ) / 1000);
+        content += $scope.createTextOfSendFile(chat, message.downloadUrl, message.fileName, message.fileSize, message.extension, isExpired);
+      }
       } else  {
         cn = "sinclo_etc";
         div.style.borderBottom = '1px solid #bfbfbf';
@@ -407,8 +430,8 @@
         thumbnail = "<i class='fa " + selectFontIconClassFromExtension(extension) + " fa-4x sendFileThumbnail' aria-hidden='true'></i>";
       }
 
-      var content = "<span class='cName'>ファイル送信" + (isExpired ? "（ダウンロード有効期限切れ）" : "") + "</span>";
-      content    += "<div class='sendFileContent'>";
+      //var content = "<span class='cName'>ファイル送信" + (isExpired ? "（ダウンロード有効期限切れ）" : "") + "</span>";
+      var content    = "<div class='sendFileContent'>";
       content    += "  <div class='sendFileThumbnailArea'>" + thumbnail + "</div>";
       content    += "  <div class='sendFileMetaArea'>";
       content    += "    <span class='data sendFileName'>" + name + "</span>";
@@ -921,5 +944,4 @@ $(document).ready(function(){
     });
   });
 });
-
 </script>
