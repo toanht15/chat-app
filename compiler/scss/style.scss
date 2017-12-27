@@ -2725,6 +2725,18 @@ ul.naviBtn {
     }
   }
 
+  #history_body_side {
+    /* override datatables design */
+    table.dataTable {
+      &.no-footer {
+        border-bottom: initial;
+      }
+      thead th, table.dataTable thead td {
+        border-bottom: 1px solid #8B8B8B;
+      }
+    }
+  }
+
   #detail {
     overflow: hidden;
   }
@@ -2732,6 +2744,8 @@ ul.naviBtn {
   .flexBoxCol {
     display: flex;
   }
+
+
 
   #leftContents {
 
