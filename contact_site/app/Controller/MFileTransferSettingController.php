@@ -26,7 +26,7 @@ class MFileTransferSettingController extends AppController
     $this->set('title_for_layout', 'ファイル送信設定');
   }
 
-  public function index() {
+  public function edit() {
     if($this->request->is('post')) {
       $this->upsert();
     } else {
@@ -54,10 +54,10 @@ class MFileTransferSettingController extends AppController
         $this->update();
       }
     } catch (Exception $e) {
-      $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.saveFailed'));
+      $this->set('alertMessage', ['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
       return;
     }
-    $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
+    $this->set('alertMessage', ['type' => C_MESSAGE_TYPE_SUCCESS, 'text'=>Configure::read('message.const.saveSuccessful')]);
   }
 
   private function renderView() {
@@ -69,7 +69,14 @@ class MFileTransferSettingController extends AppController
       $this->request->data['MFileTransferSetting']['m_companies_id'] = $this->userInfo['MCompany']['id'];
       $this->MFileTransferSetting->create();
       $this->MFileTransferSetting->begin();
-      $this->MFileTransferSetting->set($this->request->data);
+      $insertData = [
+        'type' => $this->request->data['MFileTransferSetting']['type']
+      ];
+
+      if(intval($insertData['type']) === C_FILE_TRANSFER_SETTING_TYPE_EXTEND) {
+        $insertData['allow_extensions'] = $this->request->data['MFileTransferSetting']['allow_extensions'];
+      }
+      $this->MFileTransferSetting->set($insertData);
       $this->doValidate();
       if (!empty($errors)) {
         $this->MFileTransferSetting->rollback();
@@ -96,10 +103,14 @@ class MFileTransferSettingController extends AppController
       if ($this->MFileTransferSetting->field('m_companies_id') !== $this->userInfo['MCompany']['id']) {
         throw new Exception('不正な更新処理です。');
       }
-      $this->MFileTransferSetting->set([
-          'type' => $this->request->data['MFileTransferSetting']['type'],
-          'allow_extensions' => $this->request->data['MFileTransferSetting']['allow_extensions']
-      ]);
+      $updateData = [
+          'type' => $this->request->data['MFileTransferSetting']['type']
+      ];
+
+      if(intval($updateData['type']) === C_FILE_TRANSFER_SETTING_TYPE_EXTEND) {
+        $updateData['allow_extensions'] = $this->request->data['MFileTransferSetting']['allow_extensions'];
+      }
+      $this->MFileTransferSetting->set($updateData);
       $this->doValidate();
       $this->MFileTransferSetting->save();
     } catch(Exception $e) {

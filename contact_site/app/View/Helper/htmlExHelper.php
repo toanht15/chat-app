@@ -170,7 +170,7 @@ class htmlExHelper extends AppHelper {
         "html" => $icons['code'],
         "js"   => $icons['code'],
         "txt"  => $icons['text'],
-        "csv"  => $icons['csv'],
+        "csv"  => $icons['text'],
         "file" => $icons['file']
       ];
       if(array_key_exists($ext, $extensions)) {
