@@ -247,8 +247,8 @@ $(function(){
       searching: false,
       scroller:true,
       responsive:true,
-      scrollX: true,
-      scrollY: '64vh',
+      scrollX: false,
+      scrollY: true,
       scrollCollapse: true,
       paging: false,
       info: false,
@@ -259,7 +259,7 @@ $(function(){
     });
 
     tableObj.on('draw', function(){
-      $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - calcHeaderHeight() - 15);
+      $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - calcHeaderHeight() - 20);
     });
   });
 
@@ -306,9 +306,8 @@ $(function(){
       $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
       //$("#pastChatTalk").css('height', window.innerHeight - 540);
     }
-    if(splitterObj) {
-      splitterObj.refresh();
-    }
+    $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - calcHeaderHeight() - 20);
+    tableObj.columns.adjust();
   });
 
   //縦並びをクリックした場合
@@ -319,10 +318,11 @@ $(function(){
     splitterObj = $("#history_list_side").split({
       "orientation": "horizontal",
       //"limit": 50,
-      "position": "40%"
-    }).on('splitter.resize', function(){
-      tableObj.columns.adjust().draw();
-    });;
+      "position": "40%",
+      onDrag: function(ev) {
+        tableObj.columns.adjust();
+      }
+    });
     splitterObj.refresh();
     document.getElementById('history_body_side').style.width = $('#history_list_side').outerWidth() + 'px';
     document.getElementById('chatTable').style.width = $('#history_body_side').outerWidth() + 'px';
@@ -340,7 +340,7 @@ $(function(){
         //modalOpenOverlap.call(window, html, 'p-history-del', '履歴の削除', 'moment');
       }
     });
-    tableObj.columns.adjust().draw();
+    tableObj.columns.adjust();
     $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - calcHeaderHeight() - 15);
  });
 
@@ -352,9 +352,10 @@ $(function(){
     splitterObj = $("#history_list_side").split({
       "orientation": "vertical",
       "limit": 50,
-      "position": "70%"
-    }).on('splitter.resize', function(){
-      tableObj.columns.adjust().draw();
+      "position": "70%",
+      onDrag: function(ev) {
+        tableObj.columns.adjust();
+      }
     });
     splitterObj.refresh();
     document.getElementById('history_body_side').style.width = $('#history_body_side').outerWidth() + 'px';
@@ -374,7 +375,7 @@ $(function(){
         //modalOpenOverlap.call(window, html, 'p-history-del', '履歴の削除', 'moment');
       }
     });
-    tableObj.columns.adjust().draw();
+    tableObj.columns.adjust();
     $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - calcHeaderHeight() - 20);
  });
 
@@ -384,9 +385,10 @@ $(function(){
       var splitterObj = $("#history_list_side").split({
         "orientation": "vertical",
         //"limit": 500,
-        "position": "70%"
-      }).on('splitter.resize', function(){
-        tableObj.columns.adjust().draw();
+        "position": "70%",
+        onDrag: function(ev) {
+          tableObj.columns.adjust();
+        }
       });
       //$("#pastChatTalk").css('height', window.innerHeight - 364);
       document.getElementById('detail').style.height = "100%";
@@ -400,10 +402,11 @@ $(function(){
       splitterObj = $("#history_list_side").split({
         "orientation": "horizontal",
         //"limit": 50,
-        "position": "40%"
-      }).on('splitter.resize', function(){
-        tableObj.columns.adjust().draw();
-      });;
+        "position": "40%",
+        onDrag: function(ev) {
+          tableObj.columns.adjust();
+        }
+      });
       document.getElementById('history_body_side').style.width = $('#history_body_side').outerWidth() + 'px';
       document.getElementById('chatTable').style.width = $('#history_body_side').outerWidth() - 40 + 'px';
       document.getElementById('detail').style.width = "100%";
@@ -413,7 +416,7 @@ $(function(){
 
     setTimeout(function(){
       // 初期表示時にテーブルのヘッダとボディがズレることがあるのでタイミングをずらして再描画
-      tableObj.columns.adjust().draw();
+      tableObj.columns.adjust();
     }, 500);
 });
 

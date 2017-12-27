@@ -298,7 +298,7 @@
               $history['THistoryChatLog']['type'] === $chatType[$data['History']['chat_type']]) || empty($chatType)) {
 
               if((!empty($campaignParam) && !empty($data['History']['campaign']) && $data['History']['campaign'] == $campaignParam) || empty($data['History']['campaign'])) { ?>
-          <tr id = "<?=h($history['THistory']['id'])?>" ng-click="getOldChat('<?=h($history['THistory']['id'])?>', false)" onclick="openChatById('<?=h($history['THistory']['id'])?>');" class = "showBold">
+          <tr id = "<?=h($history['THistory']['id'])?>" ng-click="getOldChat('<?=h($history['THistory']['id'])?>', false)" onclick="openChatById('<?=h($history['THistory']['id'])?>');" class = "showBold" style="height:50px;">
               <td class="tCenter" onclick="event.stopPropagation();" width=" 3%" style = "width:3%">
                 <input type="checkbox" name="selectTab" id="selectTab<?=h($history['THistory']['id'])?>" value="<?=h($history['THistory']['id'])?>">
                 <label for="selectTab<?=h($history['THistory']['id'])?>"></label>
@@ -326,7 +326,7 @@
                    endif; ?>
               </td>
               <td class="tRight pre" style = "width:9%"><?php if (!empty($history['LastSpeechTime']['firstSpeechTime'])){ ?><?=date_format(date_create($history['LastSpeechTime']['firstSpeechTime']), "Y/m/d\nH:i:s")?><?php } ?></td>
-              <td class="tLeft" style = "width:11%">
+              <td class="tLeft ip-address" style = "width:11%">
                 <?php if(isset($coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $coreSettings[C_COMPANY_REF_COMPANY_DATA]): ?>
                   <?php if(!empty($history['LandscapeData']['org_name']) && !empty($history['LandscapeData']['lbc_code'])): ?>
                       <a href="javascript:void(0)" class="underL" onclick="openCompanyDetailInfo('<?=$history['LandscapeData']['lbc_code']?>')"><?=h($history['LandscapeData']['org_name'])?></a><br>
