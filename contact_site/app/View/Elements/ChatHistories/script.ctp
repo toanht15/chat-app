@@ -274,29 +274,35 @@ $(function(){
   allCheckElm.addEventListener('click', setAllCheck); // 全選択
 
   //リサイズ処理
+  var screenMode = <?= $screenFlg ?>;
+
   $(window).resize(function() {
     $("#history_list_side").css('height', window.innerHeight - 145);
     //横並びの場合
-    if(<?= $screenFlg ?> == 1) {
+    if(screenMode == 1) {
       //$("#pastChatTalk").css('height', window.innerHeight - 364);
       document.getElementById('history_body_side').style.width = $('#history_body_side').outerWidth() + 'px';
       document.getElementById('history_body_side').style.height = $('#history_list_side').outerHeight() + 'px';
-      $("#chatContent").css('height', window.innerHeight - 200);
+      $("#chatContent").css('height', $("#detail").outerHeight() - 105);
+      $("#customerInfoScrollArea").css('height', $("#detail").outerHeight() - 39);
       $("#chatHistory").css('height',window.innerHeight - 355);
-      $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
     }
     //縦並びの場合
-    if(<?= $screenFlg ?> == 2) {
+    if(screenMode == 2) {
       document.getElementById('history_body_side').style.width = $('#history_list_side').outerWidth() + 'px';
       $("#chatContent").css('height', $("#detail").outerHeight() - 65);
       $("#chatHistory").css('height',$("#history_body_side").outerHeight() - 170);
       $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
       //$("#pastChatTalk").css('height', window.innerHeight - 540);
     }
+    if(splitterObj) {
+      splitterObj.refresh();
+    }
   });
 
   //縦並びをクリックした場合
   $(document).on('click', '.vertical', function(){
+    screenMode = 2;
     splitterObj.destroy();
     splitterObj = null;
     splitterObj = $("#history_list_side").split({
@@ -310,7 +316,7 @@ $(function(){
     document.getElementById('history_body_side').style.width = $('#history_list_side').outerWidth() + 'px';
     document.getElementById('chatTable').style.width = $('#history_body_side').outerWidth() + 'px';
     document.getElementById('detail').style.width = "100%";
-    $("#chatContent").css('height', $("#detail").outerHeight() - 65);
+    $("#chatContent").css('height', $("#detail").outerHeight() - 105);
     $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
     $("#chatHistory").css('height',$("#history_body_side").outerHeight() - 170);
     //$("#pastChatTalk").css('height', window.innerHeight - 540);
@@ -329,12 +335,13 @@ $(function(){
 
   //横並びをクリックした場合
   $(document).on('click', '.side', function(){
+    screenMode = 1;
     splitterObj.destroy();
     splitterObj = null;
     splitterObj = $("#history_list_side").split({
       "orientation": "vertical",
       "limit": 50,
-      "position": "45%"
+      "position": "70%"
     }).on('splitter.resize', function(){
       tableObj.columns.adjust().draw();
     });
@@ -343,8 +350,8 @@ $(function(){
     document.getElementById('history_body_side').style.height = $('#history_list_side').outerHeight() + 'px';
     document.getElementById('detail').style.height = "100%";
     //$("#pastChatTalk").css('height', window.innerHeight - 364);
-    $("#chatContent").css('height', window.innerHeight - 200);
-    $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
+    $("#chatContent").css('height', $("#detail").outerHeight() - 105);
+    $("#customerInfoScrollArea").css('height', $("#detail").outerHeight() - 39);
     $("#chatHistory").css('height',window.innerHeight - 355);
     $.ajax({
       type: 'post',
@@ -365,13 +372,14 @@ $(function(){
       var splitterObj = $("#history_list_side").split({
         "orientation": "vertical",
         //"limit": 500,
-        "position": "45%"
+        "position": "70%"
       }).on('splitter.resize', function(){
         tableObj.columns.adjust().draw();
       });;
       //$("#pastChatTalk").css('height', window.innerHeight - 364);
-      $("#chatContent").css('height', window.innerHeight - 200);
-      $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
+      document.getElementById('detail').style.height = "100%";
+      $("#chatContent").css('height', $("#detail").outerHeight() - 105);
+      $("#customerInfoScrollArea").css('height', $("#detail").outerHeight() - 39);
       $("#chatHistory").css('height',window.innerHeight - 355);
       $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 170);
     }

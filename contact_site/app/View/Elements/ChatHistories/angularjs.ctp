@@ -69,6 +69,18 @@
       $("#chatContent > #" + className).addClass("on");
     });
 
+    $scope.setDetailMode = function(mode) {
+      $scope.switchDetailMode = mode;
+    }
+
+    $scope.judgeShowChatContent = function() {
+      return $scope.fillterTypeId === 1 || $scope.switchDetailMode === 1;
+    };
+
+    $scope.judgeShowCustomerContent = function() {
+      return $scope.fillterTypeId === 1 || $scope.switchDetailMode === 2;
+    };
+
     // 顧客の詳細情報を取得する
     $scope.getOldChat = function(historyId, oldFlg){
       $scope.chatLogMessageList = [];

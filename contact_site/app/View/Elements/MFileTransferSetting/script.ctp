@@ -10,7 +10,7 @@ $(function(){
   }
 
   function saveAct(){
-    document.getElementById('MFileTransferSettingIndexForm').submit();
+    document.getElementById('MFileTransferSettingEditForm').submit();
   }
 
   function reloadAct(){
