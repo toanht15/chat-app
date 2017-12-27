@@ -139,8 +139,8 @@
     setTimeout(function(){
       // 共通ツールチップの配置（内容はdata-textで指定する）
       $(".commontooltip").each(function(index){
+        $(this).off('mouseenter').off('mouseleave');
         var self = this;
-        console.log(this);
         this.addEventListener('mouseenter', function(e){
           var $this = $(self);
           var text = $this.attr('data-text');
