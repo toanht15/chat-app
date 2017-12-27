@@ -128,6 +128,7 @@ var setAllCheck = function() {
 
 //ユーザー情報表示変更
 function openChatById(id) {
+  clearChatAndPersonalInfo();
   $.ajax({
     type: 'GET',
     url: "<?= $this->Html->url(array('controller' => 'ChatHistories', 'action' => 'remoteGetCustomerInfo')) ?>",
@@ -137,7 +138,7 @@ function openChatById(id) {
     dataType: 'html',
     success: function(html){
       var customerData = JSON.parse(html);
-      document.getElementById("visitorsId").innerHTML= customerData.THistory.visitors_id;LandscapeData
+      document.getElementById("visitorsId").innerHTML= customerData.THistory.visitors_id;
       document.getElementById("ipAddress").innerHTML= "("+customerData.THistory.ip_address+")";
       document.getElementById("Landscape").innerHTML= customerData.LandscapeData.org_name;
       $("#LandscapeData a").attr('onclick',"openCompanyDetailInfo("+customerData.LandscapeData.lbc_code+")");
@@ -167,6 +168,26 @@ function openChatById(id) {
     }
   });
 }
+
+function clearChatAndPersonalInfo() {
+  document.getElementById("visitorsId").innerHTML= "";
+  document.getElementById("ipAddress").innerHTML= "";
+  document.getElementById("Landscape").innerHTML= "";
+  document.getElementById("visitCounts").innerHTML= "";
+  document.getElementById("platform").innerHTML= "";
+  document.getElementById("campaignParam").innerHTML= "";
+  document.getElementById("landingPage").innerHTML= "";
+  document.getElementById("chatSendingPage").innerHTML= "";
+  document.getElementById("separationPage").innerHTML= "";
+  document.getElementById("pageCount").innerHTML= "";
+  document.getElementById("ng-customer-company").value= "";
+  document.getElementById("ng-customer-name").value= "";
+  document.getElementById("ng-customer-tel").value= "";
+  document.getElementById("ng-customer-mail").value= "";
+  document.getElementById("ng-customer-memo").value= "";
+  document.getElementById('customerId').value= "";
+}
+
 // Change the selector if needed
 var  table = $('.scroll');
 var  bodyCells = table.find('tbody tr:first').children();

@@ -3,7 +3,7 @@
   var historySearchConditions = <?php echo json_encode($data);?>;
   var mCustomerInfoList = <?php echo json_encode($mCustomerList);?>;
   var sincloApp = angular.module('sincloApp', ['ngSanitize']);
-  sincloApp.controller('MainController', function($scope) {
+  sincloApp.controller('MainController', ['$scope', '$timeout', function($scope, $timeout) {
     var userList = <?php echo json_encode($responderList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
     $scope.ua = function(str){
       return userAgentChk.pre(str);
@@ -72,6 +72,10 @@
     // 顧客の詳細情報を取得する
     $scope.getOldChat = function(historyId, oldFlg){
       $scope.chatLogMessageList = [];
+      $scope.messageList = [];
+      $timeout(function(){
+        $scope.$apply();
+      });
       $.ajax({
         type: "GET",
         url: "<?=$this->Html->url(['controller'=>'ChatHistories', 'action' => 'remoteGetOldChat'])?>",
@@ -91,6 +95,7 @@
 
             $scope.chatLogList = [];
             $scope.chatLogMessageList = [];
+            $scope.$apply();
             angular.element("message-list-descript").attr("class", "off");
             $.ajax({
               type: 'GET',
@@ -377,7 +382,8 @@
           else if(chat.permissionLevel == 1 && coreSettings == "") {
             content += '<img src= /img/close_b.png alt=履歴削除 class = \"commontooltip disabled\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\"  width=21 height=21 style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
           }
-
+        // ファイル送信はmessageがJSONなのでparseする
+        essage = JSON.parse(message);
         var isExpired = Math.floor((new Date()).getTime() / 1000) >=  (Date.parse( message.expired.replace( /-/g, '/') ) / 1000);
         content += $scope.createTextOfSendFile(chat, message.downloadUrl, message.fileName, message.fileSize, message.extension, isExpired);
       }
@@ -510,7 +516,7 @@
         };
         return trimToURL(targetParams, url);
       };
-  });
+  }]);
 
 
   sincloApp.directive('ngCreateMessage', [function(){

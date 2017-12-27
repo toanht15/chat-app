@@ -3263,6 +3263,7 @@ ul.naviBtn {
 
       li {
         display: flex;
+        height: 40px;
 
         label {
           display: block;
@@ -3282,7 +3283,6 @@ ul.naviBtn {
     }
 
     & label[for='g_chat'] {
-      display: block;
       position: relative;
       padding: 1px 0 15px 20px;
       /*margin-top: 45px;*/
