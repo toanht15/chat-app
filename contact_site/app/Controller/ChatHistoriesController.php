@@ -618,7 +618,6 @@ $this->log('LandscapdData前',LOG_DEBUG);
     Configure::write('debug', 0);
     ini_set("max_execution_time", 180);
     ini_set('memory_limit', '-1');
-    $this->log('入ってきてる？',LOG_DEBUG);
 
 
     //$returnData:$historyListで使うjoinのリストとconditionsの検索条件
@@ -657,7 +656,6 @@ $this->log('LandscapdData前',LOG_DEBUG);
       "メッセージ",
       "担当者"
      ];
-     $this->log('入ってきてる？2',LOG_DEBUG);
     foreach($userList as $val){
     /*$campaignParam = "";
       $tmp = mb_strstr($stayList[$val['THistory']['id']]['THistoryStayLog']['firstURL'], '?');
@@ -744,16 +742,10 @@ $this->log('LandscapdData前',LOG_DEBUG);
         $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
       }
       if($val['THistoryChatLog']['message_type'] == 6) {
-        $this->log('ここまで入ってる？3',LOG_DEBUG);
         $row['transmissionKind'] = 'ファイル送信';
         $row['transmissionPerson'] = $val['MUser']['display_name']."さん";
-        $this->log('ここまで入ってる？4',LOG_DEBUG);
         $json = json_decode($val['THistoryChatLog']['message'], TRUE);
-        $this->log('ここまで入ってる？5',LOG_DEBUG);
-        $this->log($json,LOG_DEBUG);
-        $this->log($this->prettyByte2Str($json['fileSize']),LOG_DEBUG);
         $val['THistoryChatLog']['message'] = $json['fileName']."\n".$this->prettyByte2Str($json['fileSize']);
-        $this->log('ここまで入ってる？6',LOG_DEBUG);
       }
       if($val['THistoryChatLog']['message_type'] == 98 || $val['THistoryChatLog']['message_type'] == 99) {
         $row['transmissionKind'] = '通知メッセージ';
@@ -763,10 +755,6 @@ $this->log('LandscapdData前',LOG_DEBUG);
       // チャットメッセージ
       if($val['THistoryChatLog']['delete_flg'] == 1) {
         $row['message'] = "(このメッセージは ".$val['THistoryChatLog']['deleted']." に ".$val['DeleteMUser']['display_name']." さんによって削除されました。)";
-      }
-      else if($val['THistoryChatLog']['message_type'] == 6) {
-        $this->log('CSVメッセージ',LOG_DEBUG);
-        $this->log($val['THistoryChatLog']['message'],LOG_DEBUG);
       }
       else {
         $row['message'] = $val['THistoryChatLog']['message'];
