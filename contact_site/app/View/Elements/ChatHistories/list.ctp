@@ -22,7 +22,7 @@
   <?= $this->Html->link(
     '高度な検索',
     'javascript:void(0)',
-    array('escape' => false, 'class'=>'skyBlueBtn btn-shadow','id' => 'searchRefine','onclick' => 'openSearchRefine()','style' => 'position: absolute;
+    array('escape' => false,'class'=>'btn-shadow skyBlueBtn','id' => 'searchRefine','onclick' => 'openSearchRefine()','style' => 'position: absolute;
   top: 15px;
   left: 32em;
   width: 8em;
@@ -134,7 +134,7 @@
     </ul>
   </div>
     <!-- 検索窓 -->
-    <div class='fLeft'>
+    <div class='fLeft' style="width:100%;">
       <div class="btnSet">
        <span id = "outputCsv">
            <?= $this->Html->image('csv.png', array(
@@ -155,7 +155,8 @@
                 'alt' => '削除',
                 'id'=>'history_dustbox_btn',
                 'class' => 'btn-shadow disOffgrayBtn commontooltip',
-                'data-text' => '削除する',
+                'disabled' => !$coreSettings[C_COMPANY_USE_HISTORY_DELETE],
+                'data-text' => $coreSettings[C_COMPANY_USE_HISTORY_DELETE] ? "削除する" : "こちらの機能はスタンダードプラン<br>からご利用いただけます。",
                 'data-balloon-position' => '36',
                 'onclick' => 'selectDeleteChat()',
                 'width' => 45,
@@ -178,13 +179,55 @@
           <input type="checkbox" id="g_chat" name="group_by_chat" <?=$checked?> />
           CV(コンバージョン)のみ表示する
         </label>
+        <div class = "form01 fRight" style = "margin-top: -37px; display:inline-block; height: 40px; margin-bottom:22px;">
+            <?php
+            if($screenFlg == C_CHAT_HISTORY_SIDE) { ?>
+            <ul class="switch" ng-init = "fillterTypeId = 2" style = "box-shadow:none;">
+              <?php }
+              if($screenFlg == C_CHAT_HISTORY_VERTICAL) { ?>
+              <ul class="switch" ng-init = "fillterTypeId = 1" style = "box-shadow:none;">
+                <?php } ?>
+                <li ng-class="{on:fillterTypeId===1}" ng-click="fillterTypeId = 1" style = "margin-top:0; width:5em !important;">
+                <span class = 'vertical' ng-if = "fillterTypeId == 1">
+                 <?= $this->Html->link(
+                     $this->Html->image('dock_bottom.png', array('alt' => 'メニュー', 'width'=>50, 'height'=>50)),
+                     'javascript:void(0)',
+                     array('escape' => false,
+                         'style' => 'display: inline-block; height: 30px; margin-top:-5px;')); ?>
+                </span>
+                  <span class = 'vertical' ng-if = "fillterTypeId == 2">
+                  <?= $this->Html->link(
+                      $this->Html->image('dock_bottom_color.png', array('alt' => 'メニュー', 'width'=>50, 'height'=>50)),
+                      'javascript:void(0)',
+                      array('escape' => false,
+                          'style' => 'display: inline-block; height: 30px;margin-top:-5px;')); ?>
+                </span>
+                </li>
+                <li ng-class="{on:fillterTypeId===2}" ng-click="fillterTypeId = 2" style = "margin-top:0; width:5em !important;">
+              <span class = 'side' ng-if = "fillterTypeId == 1">
+                <?= $this->Html->link(
+                    $this->Html->image('dock_right_color.png', array('alt' => 'メニュー', 'width'=>50, 'height'=>50)),
+                    'javascript:void(0)',
+                    array('escape' => false,
+                        'style' => 'display: inline-block; height: 30px;margin-top:-5px;')); ?>
+                </span>
+                  <span class = 'side' ng-if = "fillterTypeId == 2">
+                <?= $this->Html->link(
+                    $this->Html->image('dock_right.png', array('alt' => 'メニュー', 'width'=>50, 'height'=>50)),
+                    'javascript:void(0)',
+                    array('escape' => false,
+                        'style' => 'display: inline-block; height: 30px;margin-top:-5px;')); ?>
+                </span>
+                </li>
+              </ul>
+          </div>
       <?php endif; ?>
       <?=$this->Form->create('History', ['action' => 'index']);?>
         <?=$this->Form->hidden('outputData')?>
       <?=$this->Form->end();?>
       <?=  $this->Form->create('History',['id' => 'historySearch','type' => 'post','url' => '/Histories']); ?>
     </div>
-  </div>
+</div>
 <div id = "list_body" style = "overflow-y: auto; overflow-x: hidden;">
   <table class = "scroll" id = "chatTable">
       <thead>
@@ -255,7 +298,7 @@
               $history['THistoryChatLog']['type'] === $chatType[$data['History']['chat_type']]) || empty($chatType)) {
 
               if((!empty($campaignParam) && !empty($data['History']['campaign']) && $data['History']['campaign'] == $campaignParam) || empty($data['History']['campaign'])) { ?>
-          <tr id = "<?=h($history['THistory']['id'])?>" ng-click="getOldChat('<?=h($history['THistory']['id'])?>', false)" onclick="openChatById('<?=h($history['THistory']['id'])?>');" class = "showBold">
+          <tr id = "<?=h($history['THistory']['id'])?>" ng-click="getOldChat('<?=h($history['THistory']['id'])?>', false)" onclick="openChatById('<?=h($history['THistory']['id'])?>');" class = "showBold" style="height:50px;">
               <td class="tCenter" onclick="event.stopPropagation();" width=" 3%" style = "width:3%">
                 <input type="checkbox" name="selectTab" id="selectTab<?=h($history['THistory']['id'])?>" value="<?=h($history['THistory']['id'])?>">
                 <label for="selectTab<?=h($history['THistory']['id'])?>"></label>
@@ -283,7 +326,7 @@
                    endif; ?>
               </td>
               <td class="tRight pre" style = "width:9%"><?php if (!empty($history['LastSpeechTime']['firstSpeechTime'])){ ?><?=date_format(date_create($history['LastSpeechTime']['firstSpeechTime']), "Y/m/d\nH:i:s")?><?php } ?></td>
-              <td class="tLeft" style = "width:11%">
+              <td class="tLeft ip-address" style = "width:11%">
                 <?php if(isset($coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $coreSettings[C_COMPANY_REF_COMPANY_DATA]): ?>
                   <?php if(!empty($history['LandscapeData']['org_name']) && !empty($history['LandscapeData']['lbc_code'])): ?>
                       <a href="javascript:void(0)" class="underL" onclick="openCompanyDetailInfo('<?=$history['LandscapeData']['lbc_code']?>')"><?=h($history['LandscapeData']['org_name'])?></a><br>
@@ -330,9 +373,22 @@
 </div>
 
 
-<div ng-aa id = "detail" class = "detail" style = "width: 100%; background-color: #f2f2f2; display:none;">
+<div id = "detail" class = "detail" style = "width: 100%; background-color: #f2f2f2; display:none;">
+  <div id="verticalToggleMenu" ng-init = "setDetailMode(1)" ng-if="fillterTypeId === 2" class = "form01" style = "">
+    <ul class="switch" style = "box-shadow:none; padding-left: 17px; margin-bottom: 0;">
+      <li ng-class="{on:switchDetailMode===1}" ng-click="setDetailMode(1)" style = "margin-top:0; margin-bottom:0; width:9em !important;">
+        <span ng-if="switchDetailMode===1" style="margin: 0; padding: 5px 0; color: #FFFFFF;">チャット内容</span>
+        <span ng-if="switchDetailMode===2" style="margin: 0; padding: 5px 0; color: #c3d69b;">チャット内容</span>
+      </li>
+      <li ng-class="{on:switchDetailMode===2}" ng-click="setDetailMode(2)" style = "margin-top:0; margin-bottom:0; width:9em !important;">
+        <span ng-if="switchDetailMode===1" style="margin: 0; padding: 5px 0; color: #c3d69b;">詳細情報</span>
+        <span ng-if="switchDetailMode===2" style="margin: 0; padding: 5px 0; color: #FFFFFF;">詳細情報</span>
+      </li>
+    </ul>
+  </div>
+
   <div id="cus_info_contents"  class="flexBoxCol">
-    <div id="leftContents" style = "width: 100%;padding: 1em 1.5em 1em 1.5em;">
+    <div id="leftContents" ng-show="judgeShowChatContent()" style = "width: 100%;padding: 1em 1.5em 1em 1.5em;">
       <ul id="showChatTab" class="tabStyle flexBoxCol noSelect" style = "width:100%">
         <li class="on" data-type="currentChat" style = "margin-left:-40px;">チャット内容</li>
         <li data-type="oldChat">過去のチャット</li>
@@ -366,50 +422,8 @@
 
           </div>
         </div>
-        <div id="customerInfoScrollArea" style = "width:100% !important;">
+        <div id="customerInfoScrollArea" ng-show="judgeShowCustomerContent()" style = "width:100% !important;">
           <div id="rightContents" style = "width:100% !important; margin-bottom: 4em;">
-        <div class = "form01 fRight" style = "right:20px;">
-        <?php
-        if($screenFlg == C_CHAT_HISTORY_SIDE) { ?>
-          <ul class="switch" ng-init = "fillterTypeId = 2" style = "box-shadow:none;">
-        <?php }
-        if($screenFlg == C_CHAT_HISTORY_VERTICAL) { ?>
-          <ul class="switch" ng-init = "fillterTypeId = 1" style = "box-shadow:none;">
-        <?php } ?>
-              <li ng-class="{on:fillterTypeId===1}" ng-click="fillterTypeId = 1" style = "margin-top:0; width:5em !important;">
-                <span class = 'vertical' ng-if = "fillterTypeId == 1">
-                 <?= $this->Html->link(
-                    $this->Html->image('dock_bottom.png', array('alt' => 'メニュー', 'width'=>50, 'height'=>50)),
-                    'javascript:void(0)',
-                    array('escape' => false,
-                      'style' => 'display: inline-block; height: 30px; margin-top:-9px;')); ?>
-                </span>
-                <span class = 'vertical' ng-if = "fillterTypeId == 2">
-                  <?= $this->Html->link(
-                    $this->Html->image('dock_bottom_color.png', array('alt' => 'メニュー', 'width'=>50, 'height'=>50)),
-                    'javascript:void(0)',
-                    array('escape' => false,
-                      'style' => 'display: inline-block; height: 30px;margin-top:-9px;')); ?>
-                </span>
-              </li>
-              <li ng-class="{on:fillterTypeId===2}" ng-click="fillterTypeId = 2" style = "margin-top:0; width:5em !important;">
-              <span class = 'side' ng-if = "fillterTypeId == 1">
-                <?= $this->Html->link(
-                    $this->Html->image('dock_right_color.png', array('alt' => 'メニュー', 'width'=>50, 'height'=>50)),
-                    'javascript:void(0)',
-                    array('escape' => false,
-                      'style' => 'display: inline-block; height: 30px;margin-top:-9px;')); ?>
-                </span>
-               <span class = 'side' ng-if = "fillterTypeId == 2">
-                <?= $this->Html->link(
-                    $this->Html->image('dock_right.png', array('alt' => 'メニュー', 'width'=>50, 'height'=>50)),
-                    'javascript:void(0)',
-                    array('escape' => false,
-                      'style' => 'display: inline-block; height: 30px;margin-top:-9px;')); ?>
-                </span>
-              </li>
-            </ul>
-        </div>
         <?php if(!empty($defaultHistoryList) && !empty($tHistoryCountData)) { ?>
           <div class="nowInfo card" style = "border-bottom: 1px solid #bfbfbf; width:100%; margin-top: 20px;">
             <dl>

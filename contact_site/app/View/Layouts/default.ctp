@@ -70,6 +70,8 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
     }
     if ( strcmp($this->name, 'Statistics') === 0 || strcmp($this->name, 'ChatHistories') === 0 ) {
       echo $this->Html->css("jquery.dataTables.css");
+    }
+    if ( strcmp($this->name, 'Statistics') === 0) {
       echo $this->Html->css("//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css");
     }
     echo $this->Html->script("//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js");

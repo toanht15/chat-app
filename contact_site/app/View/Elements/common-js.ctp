@@ -135,6 +135,81 @@
     <?php } ?>
   }
 
+  function addTooltipEvent() {
+    setTimeout(function(){
+      // 共通ツールチップの配置（内容はdata-textで指定する）
+      $(".commontooltip").each(function(index){
+        $(this).off('mouseenter').off('mouseleave');
+        var self = this;
+        this.addEventListener('mouseenter', function(e){
+          var $this = $(self);
+          var text = $this.attr('data-text');
+          var baloonPosition = $this.attr('data-balloon-position'); // 吹き出しの＜の部分
+          var contentPositionLeft = $this.attr('data-content-position-left') ? Number($this.attr('data-content-position-left')) : 0;
+          var noleft = $this.attr('noleft');
+          var operatingHours = $this.attr('operatingHours');
+          var $tooltip = $('<div class="tooltips">'+text+'</div>');
+          //行数をカウント
+          var id = $this.attr('id');
+          var brcount = (text.split("<br>")).length;
+          if(operatingHours == 'operatingHoursPage') {
+            var toppx = 69;
+          }
+          else if(operatingHours == 'widgetHoursPage') {
+            var toppx = 54;
+          }
+          else {
+            var toppx = 39;
+          }
+          if(brcount > 1){
+            toppx = toppx+((brcount-1)*15);
+          }
+          $('body').append($tooltip);// 要素の表示位置
+          var offset = $this.offset();
+
+          // 要素のサイズ
+          var size = {
+            width: $this.outerWidth(),
+            height: $this.outerHeight()
+          };
+
+          // ツールチップのサイズ
+          var ttSize = {
+            width: $tooltip.outerWidth(),
+            height: $tooltip.outerHeight()
+          };
+
+          var leftCoordinate = (offset.left + size.width / 2 - ttSize.width / 2) + contentPositionLeft;
+          var isOverWidth = (leftCoordinate + ttSize.width + 40) > $(window).outerWidth();
+          if(isOverWidth) {
+            leftCoordinate = (offset.left + size.width)  - ttSize.width;
+          }
+
+          // 要素の上に横中央で配置
+          if(! noleft){
+            $tooltip.css({
+              top: offset.top - ttSize.height - 12, // 三角部分の高さ
+              left: leftCoordinate
+            });
+          }
+          else{
+            $tooltip.css({
+              top: offset.top - ttSize.height - 12 // 三角部分の高さ
+            });
+          }
+          if(baloonPosition) {
+            $tooltip.append('<style>.tooltips:after{left:' + baloonPosition + '%!important; top:' + toppx + 'px!important;}</style>');
+            $tooltip.attr("id","tooltip_"+id)
+          }
+        }, true); //radioボタンのdisableに対応するためuseCaptureを利用
+
+        this.addEventListener('mouseleave',function(e){
+          $('body').find(".tooltips").remove();
+        }, true); //radioボタンのdisableに対応するためuseCaptureを利用
+      });
+    },1);
+  }
+
   $(document).ready(function(){
     /* Angularの描画 */
 
@@ -159,76 +234,7 @@
       }, 500);
     }
 
-
-    // 共通ツールチップの配置（内容はdata-textで指定する）
-    $(".commontooltip").each(function(index){
-      var self = this;
-      this.addEventListener('mouseenter', function(e){
-        var $this = $(self);
-        var text = $this.attr('data-text');
-        var baloonPosition = $this.attr('data-balloon-position'); // 吹き出しの＜の部分
-        var contentPositionLeft = $this.attr('data-content-position-left') ? Number($this.attr('data-content-position-left')) : 0;
-        var noleft = $this.attr('noleft');
-        var operatingHours = $this.attr('operatingHours');
-        var $tooltip = $('<div class="tooltips">'+text+'</div>');
-        //行数をカウント
-        var id = $this.attr('id');
-        var brcount = (text.split("<br>")).length;
-        if(operatingHours == 'operatingHoursPage') {
-          var toppx = 69;
-        }
-        else if(operatingHours == 'widgetHoursPage') {
-          var toppx = 54;
-        }
-        else {
-          var toppx = 39;
-        }
-        if(brcount > 1){
-          toppx = toppx+((brcount-1)*15);
-        }
-        $('body').append($tooltip);// 要素の表示位置
-        var offset = $this.offset();
-
-        // 要素のサイズ
-        var size = {
-          width: $this.outerWidth(),
-          height: $this.outerHeight()
-        };
-
-        // ツールチップのサイズ
-        var ttSize = {
-          width: $tooltip.outerWidth(),
-          height: $tooltip.outerHeight()
-        };
-
-        var leftCoordinate = (offset.left + size.width / 2 - ttSize.width / 2) + contentPositionLeft;
-        var isOverWidth = (leftCoordinate + ttSize.width + 40) > $(window).outerWidth();
-        if(isOverWidth) {
-          leftCoordinate = (offset.left + size.width)  - ttSize.width;
-        }
-
-        // 要素の上に横中央で配置
-        if(! noleft){
-          $tooltip.css({
-            top: offset.top - ttSize.height - 12, // 三角部分の高さ
-            left: leftCoordinate
-          });
-        }
-        else{
-          $tooltip.css({
-            top: offset.top - ttSize.height - 12 // 三角部分の高さ
-          });
-        }
-        if(baloonPosition) {
-          $tooltip.append('<style>.tooltips:after{left:' + baloonPosition + '%!important; top:' + toppx + 'px!important;}</style>');
-          $tooltip.attr("id","tooltip_"+id)
-        }
-      }, true); //radioボタンのdisableに対応するためuseCaptureを利用
-
-      this.addEventListener('mouseleave',function(e){
-        $('body').find(".tooltips").remove();
-      }, true); //radioボタンのdisableに対応するためuseCaptureを利用
-    });
+    addTooltipEvent();
 
     /* フッター設置ボタンの位置調整 */
     var target = document.getElementsByClassName("fotterBtnArea"), fotterBtnAreaResizeTimer = null;
