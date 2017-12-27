@@ -138,6 +138,8 @@
     // 【チャット】テキストの構築
     $scope.createTextOfMessage = function(chat, message, opt) {
       var strings = message.split('\n');
+      console.log('aaaa');
+      //console.log(strings);
       var custom = "";
       var linkReg = RegExp(/http(s)?:\/\/[!-~.a-z]*/);
       var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
@@ -169,6 +171,7 @@
           }
           custom += str + "\n";
         }
+        console.log(custom);
       return custom;
     };
 
@@ -234,16 +237,22 @@
         else {
           content = "<span class='cName' style = 'color:#333333 !important; font-size:"+fontSize+"'>ゲスト(" + Number($('#visitorsId').text()) + ")</span>";
           content += "<span class='cTime' style = 'font-size:"+timeFontSize+"'>"+chat.created+"</span>";
-          if(coreSettings === "") {
+          //if(coreSettings === "") {
             content += '<img src= /img/close_b.png alt=履歴削除 class = \"commontooltip disabled\" data-text=\"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+chat.message+'","'+created+'") width=21 height=21 style="cursor:pointer; float:right; color: #fff !important; padding:2px !important; margin-right: auto;">'
-          }
+          //}
           content +=  "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message, {radio: false})+"</span>";
         }
       }
       // オートメッセージの場合
       else if ( type === chatApi.messageType.company) {
         var created = chat.created.replace(" ","%");
-        var message2 = chat.message.replace(/\r?\n/g,"");
+        var forDeletionMessage = chat.message.replace(/\r?\n/g,"");
+        if(message.indexOf('<') > -1){
+          forDeletionMessage = forDeletionMessage.replace(/</g, '&lt;');
+        }
+        if(message.indexOf('>') > -1) {
+          forDeletionMessage = forDeletionMessage.replace(/>/g, '&gt;');
+        }
         cn = "sinclo_se";
         div.style.textAlign = 'right';
         div.style.height = 'auto';
@@ -264,7 +273,7 @@
           content = "<span class='cName' style = 'font-size:"+fontSize+"'>" + chatName + "</span>";
           content += "<span class='cTime' style = 'font-size:"+timeFontSize+"'>"+chat.created+"</span>";
           if(chat.permissionLevel == 1) {
-            content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+message2+'","'+created+'") style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
+            content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+forDeletionMessage+'","'+created+'") style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
           }
           content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message)+"</span>";
         }
@@ -272,7 +281,13 @@
       else if ( type === chatApi.messageType.auto || type === chatApi.messageType.sorry) {
         cn = "sinclo_auto";
         var created = chat.created.replace(" ","%");
-        var message2 = chat.message.replace(/\r?\n/g,"");
+        var forDeletionMessage = chat.message.replace(/\r?\n/g,"");
+        if(message.indexOf('<') > -1){
+          forDeletionMessage = forDeletionMessage.replace(/</g, '&lt;');
+        }
+        if(message.indexOf('>') > -1) {
+          forDeletionMessage = forDeletionMessage.replace(/>/g, '&gt;');
+        }
         div.style.textAlign = 'right';
         div.style.height = 'auto';
         div.style.padding = '0';
@@ -288,7 +303,7 @@
           content = "<span class='cName' style = 'font-size:"+fontSize+"'>自動応答</span>";
           content += "<span class='cTime' style = 'font-size:"+timeFontSize+"'>"+chat.created+"</span>";
           if(chat.permissionLevel == 1) {
-            content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+message2+'","'+created+'") style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
+            content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+forDeletionMessage+'","'+created+'") style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
           }
           content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message)+"</span>";
         }
@@ -296,7 +311,13 @@
       else if ( type === chatApi.messageType.autoSpeech ) {
         cn = "sinclo_auto";
         var created = chat.created.replace(" ","%");
-        var message2 = chat.message.replace(/\r?\n/g,"");
+        var forDeletionMessage = chat.message.replace(/\r?\n/g,"");
+        if(message.indexOf('<') > -1){
+          forDeletionMessage = forDeletionMessage.replace(/</g, '&lt;');
+        }
+        if(message.indexOf('>') > -1) {
+          forDeletionMessage = forDeletionMessage.replace(/>/g, '&gt;');
+        }
         div.style.textAlign = 'right';
         div.style.height = 'auto';
         div.style.padding = '0';
@@ -312,7 +333,7 @@
           content = "<span class='cName' style = 'font-size:"+fontSize+"'>自動返信</span>";
           content += "<span class='cTime' style = 'font-size:"+timeFontSize+"'>"+chat.created+"</span>";
           if(chat.permissionLevel == 1) {
-            content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+message2+'","'+created+'") style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
+            content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+forDeletionMessage+'","'+created+'") style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
           }
           content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message)+"</span>";
         }
