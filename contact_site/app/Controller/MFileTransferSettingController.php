@@ -103,7 +103,13 @@ class MFileTransferSettingController extends AppController
       if ($this->MFileTransferSetting->field('m_companies_id') !== $this->userInfo['MCompany']['id']) {
         throw new Exception('不正な更新処理です。');
       }
+      $updateData = [
+          'type' => $this->request->data['MFileTransferSetting']['type']
+      ];
 
+      if(intval($updateData['type']) === C_FILE_TRANSFER_SETTING_TYPE_EXTEND) {
+        $updateData['allow_extensions'] = $this->request->data['MFileTransferSetting']['allow_extensions'];
+      }
       $this->MFileTransferSetting->set($updateData);
       $this->doValidate();
       $this->MFileTransferSetting->save();
