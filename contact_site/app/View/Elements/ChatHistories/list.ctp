@@ -155,7 +155,8 @@
                 'alt' => '削除',
                 'id'=>'history_dustbox_btn',
                 'class' => 'btn-shadow disOffgrayBtn commontooltip',
-                'data-text' => '削除する',
+                'disabled' => !$coreSettings[C_COMPANY_USE_HISTORY_DELETE],
+                'data-text' => $coreSettings[C_COMPANY_USE_HISTORY_DELETE] ? "削除する" : "こちらの機能はスタンダードプラン<br>からご利用いただけます。",
                 'data-balloon-position' => '36',
                 'onclick' => 'selectDeleteChat()',
                 'width' => 45,
@@ -297,7 +298,7 @@
               $history['THistoryChatLog']['type'] === $chatType[$data['History']['chat_type']]) || empty($chatType)) {
 
               if((!empty($campaignParam) && !empty($data['History']['campaign']) && $data['History']['campaign'] == $campaignParam) || empty($data['History']['campaign'])) { ?>
-          <tr id = "<?=h($history['THistory']['id'])?>" ng-click="getOldChat('<?=h($history['THistory']['id'])?>', false)" onclick="openChatById('<?=h($history['THistory']['id'])?>');" class = "showBold">
+          <tr id = "<?=h($history['THistory']['id'])?>" ng-click="getOldChat('<?=h($history['THistory']['id'])?>', false)" onclick="openChatById('<?=h($history['THistory']['id'])?>');" class = "showBold" style="height:50px;">
               <td class="tCenter" onclick="event.stopPropagation();" width=" 3%" style = "width:3%">
                 <input type="checkbox" name="selectTab" id="selectTab<?=h($history['THistory']['id'])?>" value="<?=h($history['THistory']['id'])?>">
                 <label for="selectTab<?=h($history['THistory']['id'])?>"></label>

@@ -21,17 +21,18 @@ if ( !(!empty($this->data['MFileTransferSetting']['type']) && strcmp($this->data
       <ul>
         <li>
           <div id='setting_type_area'>
-            <label style="display:inline-block;">
+            <label style="display:inline-block;"<?=($coreSettings[C_COMPANY_USE_SEND_FILE] ? '' : ' style="color: #CCCCCC;" class="commontooltip" data-text="こちらの機能はスタンダードプラン<br>からご利用いただけます。" data-balloon-position="13" data-content-position-left="-240"') ?>>
               <?php
               $settings = [
                 'type' => 'radio',
                 'options' => $typeSelect,
                 'default' => C_FILE_TRANSFER_SETTING_TYPE_BASIC,
                 'legend' => false,
-                'separator' => '</label><br><label style="display:inline-block;">',
+                'separator' => '</label><br><label style="display:inline-block;"'.($coreSettings[C_COMPANY_USE_SEND_FILE] ? '' : ' style="color: #CCCCCC;" class="commontooltip" data-text="こちらの機能はスタンダードプラン<br>からご利用いただけます。" data-balloon-position="9" data-content-position-left="-130"').'>',
                 'label' => false,
                 'div' => false,
                 'error' => false,
+                'disabled' => !$coreSettings[C_COMPANY_USE_SEND_FILE],
                 'class' => 'pointer'
               ];
               echo $this->Form->input('MFileTransferSetting.type',$settings);
@@ -53,8 +54,10 @@ if ( !(!empty($this->data['MFileTransferSetting']['type']) && strcmp($this->data
     <?php $this->Form->end(); ?>
   </div>
   <div id="mtransfersetting_action" class="fotterBtnArea">
+    <?php if($coreSettings[C_COMPANY_USE_SEND_FILE]): ?>
     <?= $this->Html->link('元に戻す', 'javascript:void(0)', ['id' => 'reloadBtn','class' => 'whiteBtn btn-shadow']) ?>
     <?= $this->Html->link('更新', 'javascript:void(0)', ['id' => 'updateBtn', 'class' => 'greenBtn btn-shadow']) ?>
     <?= $this->Html->link('dummy', 'javascript:void(0)', ['onclick' => '', 'class' => 'whiteBtn btn-shadow', 'style' => 'visibility: hidden;']) ?>
+    <?php endif; ?>
   </div>
 </div>

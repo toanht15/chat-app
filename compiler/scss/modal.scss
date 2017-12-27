@@ -1183,6 +1183,18 @@
   width: 6em;
 }
 
+#tooltip_history_csv_btn.tooltips {
+  position: fixed;
+  left: 73px !important;
+  width: 7em;
+}
+
+#tooltip_history_dustbox_btn.tooltips {
+  position: fixed;
+  left: 125px !important;
+  width: 7em;
+}
+
 /*営業時間 */
 .p-operatinghours-entry {
   .form01 {
