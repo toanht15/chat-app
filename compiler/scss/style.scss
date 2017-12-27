@@ -2711,6 +2711,20 @@ ul.naviBtn {
 
 #chat_history_idx {
 
+  /* override splitter design */
+  .splitter_panel {
+    .vsplitter {
+      background-color: #F0F0F0;
+      border-left: 1px solid #bfbfbf;
+      border-right: 1px solid #bfbfbf;
+    }
+    .hsplitter {
+      background-color: #F0F0F0;
+      border-top: 1px solid #bfbfbf;
+      border-bottom: 1px solid #bfbfbf;
+    }
+  }
+
   #detail {
     overflow: hidden;
   }
@@ -3249,6 +3263,7 @@ ul.naviBtn {
 
       li {
         display: flex;
+        height: 40px;
 
         label {
           display: block;
@@ -3268,7 +3283,6 @@ ul.naviBtn {
     }
 
     & label[for='g_chat'] {
-      display: block;
       position: relative;
       padding: 1px 0 15px 20px;
       /*margin-top: 45px;*/
