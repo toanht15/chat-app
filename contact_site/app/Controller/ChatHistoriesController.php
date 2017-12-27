@@ -447,6 +447,7 @@ $this->log('LandscapdData前',LOG_DEBUG);
   public function outputCSVOfHistory(){
     Configure::write('debug', 0);
     ini_set("max_execution_time", 180);
+    ini_set('memory_limit', '-1');
     $name = "sinclo-history";
 
     //$returnData:$historyListで使うjoinのリストとconditionsの検索条件
@@ -616,6 +617,7 @@ $this->log('LandscapdData前',LOG_DEBUG);
   public function outputCSVOfChatHistory(){
     Configure::write('debug', 0);
     ini_set("max_execution_time", 180);
+    ini_set('memory_limit', '-1');
 
     //$returnData:$historyListで使うjoinのリストとconditionsの検索条件
     $returnData = $this->_searchConditions();

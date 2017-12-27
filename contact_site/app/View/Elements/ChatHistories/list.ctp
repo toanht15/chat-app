@@ -512,7 +512,7 @@
               <input type="text" data-key='mail' class = "infoData" id="ng-customer-mail" value ="<?= !empty($mCusData) ? $mCusData['informations']['mail'] : "" ?>" ng-blur="saveCusInfo('mail', customData)" placeholder="メールアドレスを追加" />
             </li>
             <li>
-              <label for="ng-customer-memo" class = "commontooltip" data-text = "aaaaaaaaaaaa" style = "width:60% !important">メモ</label>
+              <label for="ng-customer-memo" style = "width:60% !important">メモ</label>
               <textarea rows="7" data-key='memo' class = "infoData" id="ng-customer-memo" placeholder="メモを追加"><?= !empty($mCusData) ? $mCusData['informations']['memo'] : "" ?></textarea>
             </li>
           </ul>
