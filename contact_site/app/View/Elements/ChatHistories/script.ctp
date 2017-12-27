@@ -349,6 +349,7 @@ $(function(){
     document.getElementById('history_body_side').style.width = $('#history_body_side').outerWidth() + 'px';
     document.getElementById('history_body_side').style.height = $('#history_list_side').outerHeight() + 'px';
     document.getElementById('detail').style.height = "100%";
+
     //$("#pastChatTalk").css('height', window.innerHeight - 364);
     $("#chatContent").css('height', $("#detail").outerHeight() - 105);
     $("#customerInfoScrollArea").css('height', $("#detail").outerHeight() - 39);
@@ -375,7 +376,7 @@ $(function(){
         "position": "70%"
       }).on('splitter.resize', function(){
         tableObj.columns.adjust().draw();
-      });;
+      });
       //$("#pastChatTalk").css('height', window.innerHeight - 364);
       document.getElementById('detail').style.height = "100%";
       $("#chatContent").css('height', $("#detail").outerHeight() - 105);
@@ -383,7 +384,7 @@ $(function(){
       $("#chatHistory").css('height',window.innerHeight - 355);
       $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 170);
     }
-    //縦並びの場合
+    //縦並びの場合$this.attr('data-balloon-position');
     if(<?= $screenFlg ?> == 2) {
       splitterObj = $("#history_list_side").split({
         "orientation": "horizontal",
