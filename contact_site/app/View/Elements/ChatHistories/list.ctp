@@ -297,7 +297,7 @@
               $history['THistoryChatLog']['type'] === $chatType[$data['History']['chat_type']]) || empty($chatType)) {
 
               if((!empty($campaignParam) && !empty($data['History']['campaign']) && $data['History']['campaign'] == $campaignParam) || empty($data['History']['campaign'])) { ?>
-          <tr id = "<?=h($history['THistory']['id'])?>" ng-click="getOldChat('<?=h($history['THistory']['id'])?>', false)" onclick="openChatById('<?=h($history['THistory']['id'])?>');" class = "showBold">
+          <tr id = "<?=h($history['THistory']['id'])?>" ng-click="getOldChat('<?=h($history['THistory']['id'])?>', false)" onclick="openChatById('<?=h($history['THistory']['id'])?>');" class = "showBold" style="height:50px;">
               <td class="tCenter" onclick="event.stopPropagation();" width=" 3%" style = "width:3%">
                 <input type="checkbox" name="selectTab" id="selectTab<?=h($history['THistory']['id'])?>" value="<?=h($history['THistory']['id'])?>">
                 <label for="selectTab<?=h($history['THistory']['id'])?>"></label>
