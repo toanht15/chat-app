@@ -14,7 +14,7 @@ var mysql = require('mysql'),
 // log4js
 var log4js = require('log4js'); // log4jsモジュール読み込み
 
-log4js.configure('/var/www/sinclo/socket/log4js_setting.json'); // 設定ファイル読み込み
+log4js.configure('./log4js_setting.json'); // 設定ファイル読み込み
 
 var reqlogger = log4js.getLogger('request'); // リクエスト用のロガー取得
 var errlogger = log4js.getLogger('error'); // エラー用のロガー取得
@@ -890,10 +890,19 @@ io.sockets.on('connection', function (socket) {
                     siteKey: d.siteKey,
                     notifyToCompany: d.notifyToCompany
                   }, d.siteKey);
+
                   if(d.messageType === 1 && insertData.message_read_flg != 1) {
                     sincloCore[d.siteKey][d.tabId].chatUnreadCnt++;
                   }
-                  if ( ret.opFlg === true ) return false;
+
+                  //通知された場合
+                  if(ret.opFlg === true) {
+                    pool.query("UPDATE t_history_chat_logs SET notice_flg = 1 WHERE t_histories_id = ? AND message_type = 1 AND id = ?;",
+                      [sincloCore[d.siteKey][d.tabId].historyId, results.insertId], function(err, ret, fields){}
+                    );
+                    return false;
+                  }
+
                   // 応対不可だった場合、既読にする
                   historyId = sincloCore[d.siteKey][d.tabId].historyId;
                   pool.query("UPDATE t_history_chat_logs SET message_read_flg = 1 WHERE t_histories_id = ? AND message_type = 1 AND id <= ?;",
@@ -1072,6 +1081,8 @@ io.sockets.on('connection', function (socket) {
             } else {
               ret.chatUnreadCnt = sincloCore[obj.siteKey][obj.tabId].chatUnreadCnt;
             }
+            console.log("set unreadCnt " + obj.tabId + " " + ret.chatUnreadCnt);
+            sincloCore[obj.siteKey][obj.tabId].chatUnreadCnt = ret.chatUnreadCnt;
           } else {
             ret.chatUnreadCnt = rows.length;
           }
@@ -1716,7 +1727,7 @@ io.sockets.on('connection', function (socket) {
           if(isset(data.contract.chat) && data.contract.chat) {
             chatApi.getUnreadCnt(val, function (ret) {
               val['chatUnreadId'] = ret.chatUnreadId;
-              val['chatUnreadCnt'] = ret.chatUnreadCnt;
+              val['chatUnreadCnt'] = ret.chatUnreadCnt ? ret.chatUnreadCnt : 0;
               arr.push(val);
               counter++;
               if (counter === chunkSize) {
@@ -1856,7 +1867,7 @@ io.sockets.on('connection', function (socket) {
     // sincloCore[obj.siteKey][obj.tabId].sessionId = socket.id;
   });
 
-  socket.on("connectSuccess", function (data) {
+  socket.on("connectSuccess", function (data, ack) {
     var obj = JSON.parse(data);
     if ( !isset(sincloCore[obj.siteKey]) ) {
       sincloCore[obj.siteKey] = {};
@@ -1896,7 +1907,7 @@ io.sockets.on('connection', function (socket) {
       });
     }
 
-    connectList[socket.id] = {siteKey: obj.siteKey, tabId: obj.tabId, userId: null};
+    connectList[socket.id] = {siteKey: obj.siteKey, tabId: obj.tabId, userId: null, sincloSessionId: obj.sincloSessionId};
     sincloCore[obj.siteKey][obj.tabId].sessionId = socket.id;
     if (isset(obj.sincloSessionId)) {
       sincloCore[obj.siteKey][obj.tabId].sincloSessionId = obj.sincloSessionId;
@@ -1924,7 +1935,7 @@ io.sockets.on('connection', function (socket) {
       }
     }
     else if ( !getSessionId(obj.siteKey, obj.tabId, 'parentTabId') ) {
-      connectList[socket.id] = {siteKey: obj.siteKey, tabId: obj.tabId, userId: obj.userId};
+      connectList[socket.id] = {siteKey: obj.siteKey, tabId: obj.tabId, userId: obj.userId, sincloSessionId: obj.sincloSessionId};
       if ( ('reconnect' in obj) && obj.reconnect ) {
         socket.join(obj.siteKey + emit.roomKey.client);
 
@@ -1959,6 +1970,7 @@ io.sockets.on('connection', function (socket) {
         emit.toCompany('syncNewInfo', obj, obj.siteKey);
       });
     }
+    ack(data);
   });
   // ウィジェットが生成されたことを企業側に通知する
   socket.on("syncReady", function(data){
@@ -2024,12 +2036,15 @@ io.sockets.on('connection', function (socket) {
     if ( !(('ipAddress' in obj) && isset(obj.ipAddress)) ) {
       obj.ipAddress = getIp(socket);
     }
-
-    // TODO ここを要求したユーザのみに送るようにする
-    // FIXME 初回表示時リアルタイムモニタ表示なしの場合はこのデータを送らないようにする
-    emit.toCompany("receiveAccessInfo", obj, obj.siteKey);
-    if ( ('contract' in obj) && ('chat' in obj.contract) && obj.contract.chat === false) return false;
-    chatApi.sendUnreadCnt("sendChatInfo", obj, false);
+    chatApi.getUnreadCnt(obj, function (ret) {
+      obj['chatUnreadId'] = ret.chatUnreadId;
+      obj['chatUnreadCnt'] = ret.chatUnreadCnt ? ret.chatUnreadCnt : 0;
+      // TODO ここを要求したユーザのみに送るようにする
+      // FIXME 初回表示時リアルタイムモニタ表示なしの場合はこのデータを送らないようにする
+      emit.toCompany("receiveAccessInfo", obj, obj.siteKey);
+      if (('contract' in obj) && ('chat' in obj.contract) && obj.contract.chat === false) return false;
+      chatApi.sendUnreadCnt("sendChatInfo", obj, false);
+    });
   });
   // -----------------------------------------------------------------------
   //  モニタリング通信接続前
@@ -3068,6 +3083,15 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
           console.log("settingReload >>> reset LiveAssist current count");
           laSessionCounter.initializeCurrentCount(obj.targetKey);
           break;
+        case 7: // view all Obj socket.emit('settingReload', JSON.stringify({type:7, targetKey: "demo", siteKey: "master"}));
+          console.log("getAllObj --------------------------------------------------");
+          console.log("sincloCore : " + JSON.stringify(sincloCore[obj.targetKey]));
+          console.log("connectList : " + JSON.stringify(connectList));
+          console.log("c_connectList : " + JSON.stringify(c_connectList));
+          console.log("doc_connectList : " + JSON.stringify(doc_connectList));
+          console.log("customerList : " + JSON.stringify(customerList[obj.targetKey]));
+          console.log("End --------------------------------------------------------");
+          break;
         default:
       }
     }
@@ -3210,6 +3234,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
   // ユーザーのアウトを感知
   socket.on('disconnect', function () {
+    console.log("【" + socket.id + "】ON DISCONNECT");
     var info = {};
     // 資料共有の場合
     if ( doc_connectList.socketId.hasOwnProperty(socket.id) ) {
@@ -3478,18 +3503,35 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         }
       } else {
         console.log("sincloCore[info.siteKey][info.tabId] is null");
-        delete connectList[socket.id];
         if(info) {
           var keys = Object.keys(customerList[info.siteKey]);
           if (keys && keys.length > 0) {
             keys.forEach(function (key) {
               if (key.indexOf(socket.id) >= 0) {
+                console.log("delete customer sitekey : " + info.siteKey + " key : " + key);
+                var customer = customerList[info.siteKey][key];
+                delete customerList[info.siteKey][key];
+                if(isset(customer) && customer.sincloSessionId) {
+                  var sincloSessionId = customer.sincloSessionId;
+                  if(isset(sincloCore[info.siteKey][sincloSessionId])
+                    && isset(sincloCore[info.siteKey][sincloSessionId]['sessionIds'])) {
+                    console.log("target sincloSessionId > " + sincloSessionId + " : " + JSON.stringify(sincloCore[info.siteKey][sincloSessionId]));
+                    var sessionIds = sincloCore[info.siteKey][sincloSessionId].sessionIds;
+                    delete sessionIds[socket.id];
+                    if(Object.keys(sessionIds).length === 0) {
+                      console.log("delete sincloSessionId > " + sincloSessionId);
+                      delete sincloCore[info.siteKey][sincloSessionId];
+                    }
+                  }
+                }
                 delete customerList[info.siteKey][key];
               }
             });
           }
+          delete connectList[socket.id];
         } else {
           console.log("info is null socket.id : " + socket.id);
+          delete connectList[socket.id];
         }
       }
     }

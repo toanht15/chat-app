@@ -3,6 +3,9 @@
  * CustomersController controller.
  * モニタリング機能
  */
+
+App::uses('MFileTransferSettingController', 'Controller');
+
 class CustomersController extends AppController {
   public $uses = [
     'MCompany', 'MUser', 'MCustomer', 'MWidgetSetting', 'MChatNotification', 'MChatSetting',
@@ -29,6 +32,11 @@ class CustomersController extends AppController {
     $chatSetting = $this->MChatSetting->coFind('first', [], false);
     $scFlg = ( !empty($chatSetting['MChatSetting']['sc_flg']) ) ? intval($chatSetting['MChatSetting']['sc_flg']) : C_SC_DISABLED;
     $this->set('scFlg', $scFlg);
+
+    if(isset($this->coreSettings[C_COMPANY_USE_SEND_FILE]) && $this->coreSettings[C_COMPANY_USE_SEND_FILE]) {
+      $controller = new MFileTransferSettingController();
+      $this->set('allowExtensions', $controller->getAllowExtensions());
+    }
 
     /* 個人設定を読み込む */
     // ユーザーの最新情報を取得
@@ -644,6 +652,12 @@ class CustomersController extends AppController {
       $settings[$key] = $val['MChatNotification'];
     }
     $this->set('notificationList', $this->jsonEncode($settings));
+  }
+
+  public function popupFileUploadElement() {
+    $this->autoRender = false;
+    $this->layout = "ajax";
+    $this->render('/Elements/Customers/fileUploadView');
   }
 
 }

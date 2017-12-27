@@ -26,6 +26,7 @@ class AmazonComponent extends Component {
         'SourceFile'   => $file,
         'StorageClass' => C_AWS_S3_STORAGE,
       ]);
+
       return $result['ObjectURL'];
     } catch (Exception $e) {
       echo $e->getMessage();
@@ -53,6 +54,19 @@ class AmazonComponent extends Component {
     } catch (Exception $e) {
       echo $e->getMessage();
     }
+  }
+
+  function getObject($key) {
+    $credentials = new Credentials(C_AWS_S3_KEY, C_AWS_S3_SECURITY);
+    $aws = S3Client::factory([
+        'version'    => C_AWS_S3_VERSION,
+        'credentials' => $credentials,
+        'region' => C_AWS_S3_REGION,
+    ]);
+    return $aws->getObject(array(
+        'Bucket' => C_AWS_S3_BUCKET,
+        'Key'    => $key
+    ));
   }
 }
 

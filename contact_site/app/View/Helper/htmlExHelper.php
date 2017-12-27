@@ -40,6 +40,19 @@ class htmlExHelper extends AppHelper {
                 $a .= " target='" . h((string)$urlOpt['target']) . "'";
             }
         }
+        //commontooltip用
+        if ( !empty($urlOpt['class'])) {
+          $a .= " class='" . h((string)$urlOpt['class']) . "'";
+        }
+        if ( !empty($urlOpt['data-text'])) {
+          $a .= " data-text='" . h((string)$urlOpt['data-text']) . "'";
+        }
+        if ( !empty($urlOpt['data-balloon-position'])) {
+          $a .= " data-balloon-position='" . h((string)$urlOpt['data-balloon-position']) . "'";
+        }
+        if ( !empty($urlOpt['data-content-position-left'])) {
+          $a .= " data-content-position-left='" . h((string)$urlOpt['data-content-position-left']) . "'";
+        }
         return sprintf($_tmp, $a, $this->Html->image($img['src'], $img['option']), $title);
     }
 
@@ -64,7 +77,10 @@ class htmlExHelper extends AppHelper {
         return "<a href='".$matches[0]."' target='_blank'>".$matches[0]."</a>";
     }
 
-    public function makeChatView($value){
+    public function makeChatView($value, $isSendFile){
+        if($isSendFile) {
+          return $this->makeSendChatView($value);
+        }
         $content = null;
 
         foreach(explode("\n", $value) as $key => $tmp){
@@ -85,4 +101,101 @@ class htmlExHelper extends AppHelper {
         }
         return $content;
     }
+
+    private function makeSendChatView($value){
+      $content = "";
+
+      // ファイル送信メッセージはJSONが入ってくる
+      $value = json_decode($value, TRUE);
+
+      $thumbnail = "";
+      if(preg_match('/(jpeg|jpg|gif|png)$/', $value['extension']) && !$this->isExpire($value['expired'])) {
+        $thumbnail = "<img src='" . $value['downloadUrl'] . "' class='sendFileThumbnail' width='64' height='64'>";
+      } else {
+        $thumbnail = "<i class='fa " . $this->selectFontIconClassFromExtension($value['extension']) . " fa-4x sendFileThumbnail' aria-hidden='true'></i>";
+      }
+      $content.= "<span class='cName'>ファイル送信" . ($this->isExpire($value['expired']) ? "（ダウンロード有効期限切れ）" : "") . "</span>";
+      $content.= "<div class='sendFileContent'>";
+      $content.= "  <div class='sendFileThumbnailArea'>" . $thumbnail . "</div>";
+      $content.= "  <div class='sendFileMetaArea'>";
+      $content.= "    <span class='data sendFileName'>" . $value['fileName'] . "</span>";
+      $content.= "    <span class='data sendFileSize'>" . $this->prettyByte2Str($value['fileSize']) . "</span>";
+      $content.= "  </div>";
+      $content.= "</div>";
+
+      return $content;
+    }
+
+    private function isExpire($expired) {
+      return time() >= strtotime($expired);
+    }
+
+    private function selectFontIconClassFromExtension($ext) {
+      $selectedClass = "";
+      $icons = [
+        "image" =>     'fa-file-image-o',
+        "pdf"   =>     'fa-file-pdf-o',
+        "word"  =>     'fa-file-word-o',
+        "powerpoint" => 'fa-file-powerpoint-o',
+        "excel" =>      'fa-file-excel-o',
+        "audio" =>      'fa-file-audio-o',
+        "video" =>      'fa-file-video-o',
+        "zip" =>        'fa-file-zip-o',
+        "code" =>       'fa-file-code-o',
+        "text" =>       'fa-file-text-o',
+        "file" =>       'fa-file-o'
+      ];
+      $extensions = [
+        "gif"  => $icons['image'],
+        "jpeg" => $icons['image'],
+        "jpg"  => $icons['image'],
+        "png"  => $icons['image'],
+        "pdf"  => $icons['pdf'],
+        "doc"  => $icons['word'],
+        "docx" => $icons['word'],
+        "ppt"  => $icons['powerpoint'],
+        "pptx" => $icons['powerpoint'],
+        "xls"  => $icons['excel'],
+        "xlsx" => $icons['excel'],
+        "aac"  => $icons['audio'],
+        "mp3"  => $icons['audio'],
+        "ogg"  => $icons['audio'],
+        "avi"  => $icons['video'],
+        "flv"  => $icons['video'],
+        "mkv"  => $icons['video'],
+        "mp4"  => $icons['video'],
+        "gz"   => $icons['zip'],
+        "zip"  => $icons['zip'],
+        "css"  => $icons['code'],
+        "html" => $icons['code'],
+        "js"   => $icons['code'],
+        "txt"  => $icons['text'],
+        "csv"  => $icons['text'],
+        "file" => $icons['file']
+      ];
+      if(array_key_exists($ext, $extensions)) {
+        $selectedClass = $extensions[$ext];
+      } else {
+        $selectedClass = $extensions['file'];
+      }
+      return $selectedClass;
+    }
+
+  private function prettyByte2Str($bytes) {
+    if ($bytes >= 1073741824) {
+      $bytes = number_format($bytes / 1073741824, 2) . ' GB';
+    } elseif ($bytes >= 1048576) {
+      $bytes = number_format($bytes / 1048576, 2) . ' MB';
+    } elseif ($bytes >= 1024) {
+      $bytes = number_format($bytes / 1024, 2) . ' KB';
+    } elseif ($bytes > 1) {
+      $bytes = $bytes . ' bytes';
+    } elseif ($bytes == 1) {
+      $bytes = $bytes . ' byte';
+    } else {
+      $bytes = '0 bytes';
+    }
+    return $bytes;
+  }
 }
+

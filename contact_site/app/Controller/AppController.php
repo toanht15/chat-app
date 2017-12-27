@@ -74,6 +74,7 @@ class AppController extends Controller {
     C_COMPANY_USE_FREE_INPUT => false, //自由入力エリア
     C_COMPANY_USE_CV => false, //CV
     C_COMPANY_USE_AUTOMESSAGE_SEND_MAIL => false, //メール送信（オートメッセージ）
+    C_COMPANY_USE_SEND_FILE => false //ファイル送信
   ];
 
   private $secretKey = 'x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK';
@@ -196,6 +197,7 @@ class AppController extends Controller {
         case "TAutoMessages":
         case "TCampaigns":
         case "DisplayExclusions":
+        case "MFileTransferSetting":
         // 一先ずトップ画面へ
         $this->redirect("/");
         default:
@@ -212,6 +214,7 @@ class AppController extends Controller {
       case "TAutoMessages":
       case "MChatNotifications":
       case "MChatSettings":
+      case "MFileTransferSetting":
         if ( !(isset($this->coreSettings[C_COMPANY_USE_CHAT]) && $this->coreSettings[C_COMPANY_USE_CHAT]) ) {
           $this->redirect("/");
         }
@@ -396,6 +399,24 @@ class AppController extends Controller {
     $this->log('リクエストデータ: '. $data, 'mail-request');
     $jsonObj = json_decode($data, TRUE);
     return $jsonObj;
+  }
+
+  protected function prettyByte2Str($bytes)
+  {
+    if ($bytes >= 1073741824) {
+      $bytes = number_format($bytes / 1073741824, 2) . ' GB';
+    } elseif ($bytes >= 1048576) {
+      $bytes = number_format($bytes / 1048576, 2) . ' MB';
+    } elseif ($bytes >= 1024) {
+      $bytes = number_format($bytes / 1024, 2) . ' KB';
+    } elseif ($bytes > 1) {
+      $bytes = $bytes . ' bytes';
+    } elseif ($bytes == 1) {
+      $bytes = $bytes . ' byte';
+    } else {
+      $bytes = '0 bytes';
+    }
+    return $bytes;
   }
 
   private function _createPass(){
