@@ -372,9 +372,22 @@
 </div>
 
 
-<div ng-aa id = "detail" class = "detail" style = "width: 100%; background-color: #f2f2f2; display:none;">
+<div id = "detail" class = "detail" style = "width: 100%; background-color: #f2f2f2; display:none;">
+  <div id="verticalToggleMenu" ng-init = "setDetailMode(1)" ng-if="fillterTypeId === 2" class = "form01" style = "">
+    <ul class="switch" style = "box-shadow:none; padding-left: 17px; margin-bottom: 0;">
+      <li ng-class="{on:switchDetailMode===1}" ng-click="setDetailMode(1)" style = "margin-top:0; margin-bottom:0; width:9em !important;">
+        <span ng-if="switchDetailMode===1" style="margin: 0; padding: 5px 0; color: #FFFFFF;">チャット内容</span>
+        <span ng-if="switchDetailMode===2" style="margin: 0; padding: 5px 0; color: #c3d69b;">チャット内容</span>
+      </li>
+      <li ng-class="{on:switchDetailMode===2}" ng-click="setDetailMode(2)" style = "margin-top:0; margin-bottom:0; width:9em !important;">
+        <span ng-if="switchDetailMode===1" style="margin: 0; padding: 5px 0; color: #c3d69b;">詳細情報</span>
+        <span ng-if="switchDetailMode===2" style="margin: 0; padding: 5px 0; color: #FFFFFF;">詳細情報</span>
+      </li>
+    </ul>
+  </div>
+
   <div id="cus_info_contents"  class="flexBoxCol">
-    <div id="leftContents" style = "width: 100%;padding: 1em 1.5em 1em 1.5em;">
+    <div id="leftContents" ng-show="judgeShowChatContent()" style = "width: 100%;padding: 1em 1.5em 1em 1.5em;">
       <ul id="showChatTab" class="tabStyle flexBoxCol noSelect" style = "width:100%">
         <li class="on" data-type="currentChat" style = "margin-left:-40px;">チャット内容</li>
         <li data-type="oldChat">過去のチャット</li>
@@ -408,7 +421,7 @@
 
           </div>
         </div>
-        <div id="customerInfoScrollArea" style = "width:100% !important;">
+        <div id="customerInfoScrollArea" ng-show="judgeShowCustomerContent()" style = "width:100% !important;">
           <div id="rightContents" style = "width:100% !important; margin-bottom: 4em;">
         <?php if(!empty($defaultHistoryList) && !empty($tHistoryCountData)) { ?>
           <div class="nowInfo card" style = "border-bottom: 1px solid #bfbfbf; width:100%; margin-top: 20px;">
