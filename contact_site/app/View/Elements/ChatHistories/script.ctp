@@ -236,8 +236,8 @@ $(function(){
       searching: false,
       scroller:true,
       responsive:true,
-      scrollX: true,
-      scrollY: '64vh',
+      scrollX: false,
+      scrollY: true,
       scrollCollapse: true,
       paging: false,
       info: false,
@@ -248,7 +248,7 @@ $(function(){
     });
 
     tableObj.on('draw', function(){
-      $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - calcHeaderHeight() - 15);
+      $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - calcHeaderHeight() - 20);
     });
   });
 
@@ -295,6 +295,7 @@ $(function(){
       $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
       //$("#pastChatTalk").css('height', window.innerHeight - 540);
     }
+    $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - calcHeaderHeight() - 20);
     tableObj.columns.adjust();
   });
 
