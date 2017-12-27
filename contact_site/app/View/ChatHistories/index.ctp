@@ -1,6 +1,7 @@
 <?= $this->element('Customers/userAgentCheck') ?>
 <?= $this->element('ChatHistories/angularjs') ?>
 <?= $this->element('ChatHistories/script') ?>
+<?= $this->element("common-js"); ?>
 <div id='chat_history_idx' class="card-shadow" ng-app="sincloApp" ng-controller="MainController" >
   <div id='history_title'>
     <div class="fLeft"><?= $this->Html->image('history_g.png', array('alt' => '履歴一覧', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?></div>

@@ -334,7 +334,6 @@ $this->log('LandscapdData前',LOG_DEBUG);
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = null;
-    $this->log('スタート',LOG_DEBUG);
     $ret = [];
     if ( !empty($this->params->query['historyId'] ) ) {
 

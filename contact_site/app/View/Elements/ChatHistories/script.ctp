@@ -368,8 +368,6 @@ $(function(){
       document.getElementById('detail').style.width = "100%";
       $("#chatContent").css('height', $("#detail").outerHeight() - 65);
       $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
-      console.log($("#history_body_side").css('height'));
-      //$("#chatHistory").css('height',$("#history_body_side").outerHeight() - 170);
     }
 });
 
