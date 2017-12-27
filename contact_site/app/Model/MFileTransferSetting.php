@@ -24,6 +24,10 @@ class MFileTransferSetting extends AppModel
           ]
       ],
       'allow_extensions' => [
+          'validNOTBlankAndType' => [
+            'rule' => 'validNOTBlankAndType',
+            'message' => '拡張設定の場合は指定が必要です。'
+          ],
           'isAlplaNumeric' => [
             'rule' => 'isAlplaNumeric',
             'message' => 'ドットを含めない拡張子をカンマ区切りで設定して下さい。'
@@ -35,7 +39,16 @@ class MFileTransferSetting extends AppModel
       ]
   ];
 
+  public function validNOTBlankAndType($val) {
+    if(intval($this->data['MFileTransferSetting']['type']) === C_FILE_TRANSFER_SETTING_TYPE_BASIC) {
+      return true;
+    } else if(intval($this->data['MFileTransferSetting']['type']) === C_FILE_TRANSFER_SETTING_TYPE_EXTEND) {
+      return Validation::notBlank($val);
+    }
+  }
+
   public function isAlplaNumeric($val) {
+    if(intval($this->data['MFileTransferSetting']['type']) === C_FILE_TRANSFER_SETTING_TYPE_BASIC) return true;
     $splited = explode(",", $val['allow_extensions']);
     foreach ($splited as $k => $v) {
       if(!Validation::alphaNumeric($v)) {
@@ -53,6 +66,7 @@ class MFileTransferSetting extends AppModel
   // 拡張子設定にファイル名に利用できない文字が混ざっていないかチェック
   // https://support.microsoft.com/ja-jp/help/879749
   public function validCharacter($allow_extensions) {
+    if(intval($this->data['MFileTransferSetting']['type']) === C_FILE_TRANSFER_SETTING_TYPE_BASIC) return true;
     $result = preg_match('/[\/\\<>\*\?\"\|\:\;\.]/', $allow_extensions['allow_extensions']);
     return $result === 0; // 含まない
   }
