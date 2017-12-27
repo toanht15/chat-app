@@ -619,6 +619,7 @@ $this->log('LandscapdData前',LOG_DEBUG);
     ini_set("max_execution_time", 180);
     ini_set('memory_limit', '-1');
 
+
     //$returnData:$historyListで使うjoinのリストとconditionsの検索条件
     $returnData = $this->_searchConditions();
     $campaignList = $this->TCampaign->getList();
@@ -656,7 +657,7 @@ $this->log('LandscapdData前',LOG_DEBUG);
       "担当者"
      ];
     foreach($userList as $val){
-    $campaignParam = "";
+    /*$campaignParam = "";
       $tmp = mb_strstr($stayList[$val['THistory']['id']]['THistoryStayLog']['firstURL'], '?');
       if ( $tmp !== "" ) {
         foreach($campaignList as $k => $v){
@@ -667,7 +668,7 @@ $this->log('LandscapdData前',LOG_DEBUG);
             $campaignParam .= $v;
           }
         }
-      }
+      }*/
       $infoData = $this->Session->read('Thistory');
        if ((isset($val['THistoryChatLog2']['type']) && isset($infoData['History']['chat_type']) &&
         $val['THistoryChatLog2']['type'] === Configure::read('chatType')[$infoData['History']['chat_type']]) || empty($infoData['History']['chat_type'])) {
@@ -853,6 +854,11 @@ $this->log('LandscapdData前',LOG_DEBUG);
           case 5: // 自動返信
             $row = $this->_setData($date, "自動返信", $this->userInfo['MCompany']['company_name'], $message);
             break;
+          case 6: // ファイル送信
+            $json = json_decode($val['THistoryChatLog']['message'], TRUE);
+            $message = $json['fileName']."\n".$this->prettyByte2Str($json['fileSize']);
+            $row = $this->_setData($date, "ファイル送信", $val['MUser']['display_name'], $message);
+          break;
           case 98: // 入室メッセージ
           case 99: // 退室メッセージ
             $row = $this->_setData($date, "通知メッセージ", "", " - ".$val['MUser']['display_name']."が".$message."しました - ");
