@@ -3,7 +3,7 @@
   var historySearchConditions = <?php echo json_encode($data);?>;
   var mCustomerInfoList = <?php echo json_encode($mCustomerList);?>;
   var sincloApp = angular.module('sincloApp', ['ngSanitize']);
-  sincloApp.controller('MainController', function($scope) {
+  sincloApp.controller('MainController', ['$scope', '$timeout', function($scope, $timeout) {
     var userList = <?php echo json_encode($responderList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
     $scope.ua = function(str){
       return userAgentChk.pre(str);
@@ -72,6 +72,10 @@
     // 顧客の詳細情報を取得する
     $scope.getOldChat = function(historyId, oldFlg){
       $scope.chatLogMessageList = [];
+      $scope.messageList = [];
+      $timeout(function(){
+        $scope.$apply();
+      });
       $.ajax({
         type: "GET",
         url: "<?=$this->Html->url(['controller'=>'ChatHistories', 'action' => 'remoteGetOldChat'])?>",
@@ -90,6 +94,7 @@
 
             $scope.chatLogList = [];
             $scope.chatLogMessageList = [];
+            $scope.$apply();
             angular.element("message-list-descript").attr("class", "off");
             $.ajax({
               type: 'GET',
@@ -338,8 +343,6 @@
           content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message)+"</span>";
         }
       } else if ( type === chatApi.messageType.sendFile ) {
-        // ファイル送信はmessageがJSONなのでparseする
-        message = JSON.parse(message);
         cn = "sinclo_se";
         div.style.textAlign = 'right';
         div.style.height = 'auto';
@@ -350,8 +353,17 @@
 //        if ( Number(widget.showName) === <?//=C_WIDGET_SHOW_NAME?>// ) {
 //          chatName = userList[Number(userId)];
 //        }
-        var isExpired = Math.floor((new Date()).getTime() / 1000) >=  (Date.parse( message.expired.replace( /-/g, '/') ) / 1000);
-        content = $scope.createTextOfSendFile(chat, message.downloadUrl, message.fileName, message.fileSize, message.extension, isExpired);
+        if(chat.delete_flg == 1) {
+          var deleteUser = userList[Number(chat.deleted_user_id)];
+          content = "<span class='cName' style = 'color:#bdbdbd !important;font-size:"+fontSize+"'>ファイル送信</span>";
+          content += "<span class='cTime' style = 'color:#bdbdbd !important; font-size:"+timeFontSize+"'>"+chat.created+"</span>";
+          content +=  "<span class='cChat' style = 'color:#bdbdbd; font-size:"+fontSize+"'>(このメッセージは"+chat.deleted+"に"+deleteUser+"さんによって削除されました。)</span>";
+        } else {
+          // ファイル送信はmessageがJSONなのでparseする
+          message = JSON.parse(message);
+          var isExpired = Math.floor((new Date()).getTime() / 1000) >=  (Date.parse( message.expired.replace( /-/g, '/') ) / 1000);
+          content = $scope.createTextOfSendFile(chat, message.downloadUrl, message.fileName, message.fileSize, message.extension, isExpired);
+        }
       } else  {
         cn = "sinclo_etc";
         div.style.borderBottom = '1px solid #bfbfbf';
@@ -481,7 +493,7 @@
         };
         return trimToURL(targetParams, url);
       };
-  });
+  }]);
 
 
   sincloApp.directive('ngCreateMessage', [function(){
