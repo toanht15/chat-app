@@ -87,45 +87,46 @@
       $scope.messageList = [];
       $timeout(function(){
         $scope.$apply();
-      });
-      $.ajax({
-        type: "GET",
-        url: "<?=$this->Html->url(['controller'=>'ChatHistories', 'action' => 'remoteGetOldChat'])?>",
-        data: {
-          historyId:  historyId
-        },
-        dataType: "json",
-        success: function(json){
-          if ( oldFlg ) { // 過去チャットの場合
-            angular.element("message-list-descript").attr("class", "off");
-            $scope.chatLogMessageList = json;
-            $scope.$apply();
-            addTooltipEvent();
-          }
-          else {
-            $scope.messageList = json;
+      }).then(function(){
+        $.ajax({
+          type: "GET",
+          url: "<?=$this->Html->url(['controller'=>'ChatHistories', 'action' => 'remoteGetOldChat'])?>",
+          data: {
+            historyId:  historyId
+          },
+          dataType: "json",
+          success: function(json){
+            if ( oldFlg ) { // 過去チャットの場合
+              angular.element("message-list-descript").attr("class", "off");
+              $scope.chatLogMessageList = json;
+              $scope.$apply();
+              addTooltipEvent();
+            }
+            else {
+              $scope.messageList = json;
 
-            $scope.chatLogList = [];
-            $scope.chatLogMessageList = [];
-            $scope.$apply();
-            angular.element("message-list-descript").attr("class", "off");
-            $.ajax({
-              type: 'GET',
-              url: "<?= $this->Html->url(array('controller' => 'Customers', 'action' => 'remoteGetChatList')) ?>",
-              cache: false,
-              data: {
-                userId: $('#visitorsId').text()
-              },
-              dataType: 'json',
-              success: function(json){
-                $scope.chatLogList = json;
-                angular.element("message-list-descript").attr("class", "on");
-                $scope.$apply();
-                addTooltipEvent();
-              }
-            });
+              $scope.chatLogList = [];
+              $scope.chatLogMessageList = [];
+              $scope.$apply();
+              angular.element("message-list-descript").attr("class", "off");
+              $.ajax({
+                type: 'GET',
+                url: "<?= $this->Html->url(array('controller' => 'Customers', 'action' => 'remoteGetChatList')) ?>",
+                cache: false,
+                data: {
+                  userId: $('#visitorsId').text()
+                },
+                dataType: 'json',
+                success: function(json){
+                  $scope.chatLogList = json;
+                  angular.element("message-list-descript").attr("class", "on");
+                  $scope.$apply();
+                  addTooltipEvent();
+                }
+              });
+            }
           }
-        }
+        });
       });
     };
 

@@ -3386,8 +3386,11 @@ ul.naviBtn {
 
   td, th {
     line-height: 1.5;
-    padding: 0 3px;
+    padding: 6px 3px;
     width: 5%;
+    &.ip-address {
+      padding-left: 8px;
+    }
   }
 
   thead {
