@@ -10,7 +10,7 @@ class ChatHistoriesController extends AppController {
     'THistory' => [
       'limit' => 100,
       'order' => [
-        'THistoryChatLog.created' => 'desc',
+        'THistory.access_date' => 'desc',
         'THistory.id' => 'desc'
       ],
       'fields' => [
@@ -330,7 +330,7 @@ $this->log('LandscapdData前',LOG_DEBUG);
     return $this->render('/Elements/Histories/remoteGetStayLogs');
   }
 
-    public function remoteGetOldChat(){
+  public function remoteGetOldChat(){
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = null;
@@ -447,6 +447,7 @@ $this->log('LandscapdData前',LOG_DEBUG);
   public function outputCSVOfHistory(){
     Configure::write('debug', 0);
     ini_set("max_execution_time", 180);
+    ini_set('memory_limit', '-1');
     $name = "sinclo-history";
 
     //$returnData:$historyListで使うjoinのリストとconditionsの検索条件
@@ -616,6 +617,8 @@ $this->log('LandscapdData前',LOG_DEBUG);
   public function outputCSVOfChatHistory(){
     Configure::write('debug', 0);
     ini_set("max_execution_time", 180);
+    ini_set('memory_limit', '-1');
+
 
     //$returnData:$historyListで使うjoinのリストとconditionsの検索条件
     $returnData = $this->_searchConditions();
@@ -654,7 +657,7 @@ $this->log('LandscapdData前',LOG_DEBUG);
       "担当者"
      ];
     foreach($userList as $val){
-    $campaignParam = "";
+    /*$campaignParam = "";
       $tmp = mb_strstr($stayList[$val['THistory']['id']]['THistoryStayLog']['firstURL'], '?');
       if ( $tmp !== "" ) {
         foreach($campaignList as $k => $v){
@@ -665,7 +668,7 @@ $this->log('LandscapdData前',LOG_DEBUG);
             $campaignParam .= $v;
           }
         }
-      }
+      }*/
       $infoData = $this->Session->read('Thistory');
        if ((isset($val['THistoryChatLog2']['type']) && isset($infoData['History']['chat_type']) &&
         $val['THistoryChatLog2']['type'] === Configure::read('chatType')[$infoData['History']['chat_type']]) || empty($infoData['History']['chat_type'])) {
@@ -851,6 +854,11 @@ $this->log('LandscapdData前',LOG_DEBUG);
           case 5: // 自動返信
             $row = $this->_setData($date, "自動返信", $this->userInfo['MCompany']['company_name'], $message);
             break;
+          case 6: // ファイル送信
+            $json = json_decode($val['THistoryChatLog']['message'], TRUE);
+            $message = $json['fileName']."\n".$this->prettyByte2Str($json['fileSize']);
+            $row = $this->_setData($date, "ファイル送信", $val['MUser']['display_name'], $message);
+          break;
           case 98: // 入室メッセージ
           case 99: // 退室メッセージ
             $row = $this->_setData($date, "通知メッセージ", "", " - ".$val['MUser']['display_name']."が".$message."しました - ");
@@ -1282,20 +1290,18 @@ $this->log('LandscapdData前',LOG_DEBUG);
       $this->paginate['THistory']['fields'][] = 'LastSpeechTime.created as lastSpeechTime,LastSpeechTime.firstSpeechTime';
       $this->paginate['THistory']['fields'][] = 'NoticeChatTime.created';
       $this->paginate['THistory']['fields'][] = 'THistoryStayLog.title,THistoryStayLog.url';
-      //$this->paginate['THistory']['fields'][] = 'LastSpeechSendPage.title,LastSpeechSendPage.url';
       $this->paginate['THistory']['joins'][] = $joinToChat;
       $this->paginate['THistory']['joins'][] = $joinToLastSpeechChatTime;
       $this->paginate['THistory']['joins'][] = $joinToNoticeChatTime;
       $this->paginate['THistory']['joins'][] = $joinToFirstSpeechSendPage;
-      //$this->paginate['THistory']['joins'][] = $joinToLastSpeechSendPage;
 
       if(isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) {
         $this->paginate['THistory']['fields'][] = 'LandscapeData.*';
         $this->paginate['THistory']['joins'][] = $joinToLandscapeData;
       }
     }
-    $historyList = $this->paginate('THistory');
 
+    $historyList = $this->paginate('THistory');
 
     // TODO 良いやり方が無いか模索する
     $historyIdList = [];

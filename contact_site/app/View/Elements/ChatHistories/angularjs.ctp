@@ -3,7 +3,7 @@
   var historySearchConditions = <?php echo json_encode($data);?>;
   var mCustomerInfoList = <?php echo json_encode($mCustomerList);?>;
   var sincloApp = angular.module('sincloApp', ['ngSanitize']);
-  sincloApp.controller('MainController', function($scope) {
+  sincloApp.controller('MainController', ['$scope', '$timeout', function($scope, $timeout) {
     var userList = <?php echo json_encode($responderList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
     $scope.ua = function(str){
       return userAgentChk.pre(str);
@@ -22,6 +22,7 @@
           angular.element("message-list-descript").attr("class", "off");
           $scope.messageList = json;
           $scope.$apply();
+          addTooltipEvent();
         }
       });
     });
@@ -69,44 +70,64 @@
       $("#chatContent > #" + className).addClass("on");
     });
 
+    $scope.setDetailMode = function(mode) {
+      $scope.switchDetailMode = mode;
+    }
+
+    $scope.judgeShowChatContent = function() {
+      return $scope.fillterTypeId === 1 || $scope.switchDetailMode === 1;
+    };
+
+    $scope.judgeShowCustomerContent = function() {
+      return $scope.fillterTypeId === 1 || $scope.switchDetailMode === 2;
+    };
+
     // 顧客の詳細情報を取得する
     $scope.getOldChat = function(historyId, oldFlg){
       $scope.chatLogMessageList = [];
-      $.ajax({
-        type: "GET",
-        url: "<?=$this->Html->url(['controller'=>'ChatHistories', 'action' => 'remoteGetOldChat'])?>",
-        data: {
-          historyId:  historyId
-        },
-        dataType: "json",
-        success: function(json){
-          if ( oldFlg ) { // 過去チャットの場合
-            angular.element("message-list-descript").attr("class", "off");
-            $scope.chatLogMessageList = json;
-            $scope.$apply();
-          }
-          else {
-            $scope.messageList = json;
+      $scope.messageList = [];
+      $timeout(function(){
+        $scope.$apply();
+      }).then(function(){
+        $.ajax({
+          type: "GET",
+          url: "<?=$this->Html->url(['controller'=>'ChatHistories', 'action' => 'remoteGetOldChat'])?>",
+          data: {
+            historyId:  historyId
+          },
+          dataType: "json",
+          success: function(json){
+            if ( oldFlg ) { // 過去チャットの場合
+              angular.element("message-list-descript").attr("class", "off");
+              $scope.chatLogMessageList = json;
+              $scope.$apply();
+              addTooltipEvent();
+            }
+            else {
+              $scope.messageList = json;
 
-            $scope.chatLogList = [];
-            $scope.chatLogMessageList = [];
-            angular.element("message-list-descript").attr("class", "off");
-            $.ajax({
-              type: 'GET',
-              url: "<?= $this->Html->url(array('controller' => 'Customers', 'action' => 'remoteGetChatList')) ?>",
-              cache: false,
-              data: {
-                userId: $('#visitorsId').text()
-              },
-              dataType: 'json',
-              success: function(json){
-                $scope.chatLogList = json;
-                angular.element("message-list-descript").attr("class", "on");
-                $scope.$apply();
-              }
-            });
+              $scope.chatLogList = [];
+              $scope.chatLogMessageList = [];
+              $scope.$apply();
+              angular.element("message-list-descript").attr("class", "off");
+              $.ajax({
+                type: 'GET',
+                url: "<?= $this->Html->url(array('controller' => 'Customers', 'action' => 'remoteGetChatList')) ?>",
+                cache: false,
+                data: {
+                  userId: $('#visitorsId').text()
+                },
+                dataType: 'json',
+                success: function(json){
+                  $scope.chatLogList = json;
+                  angular.element("message-list-descript").attr("class", "on");
+                  $scope.$apply();
+                  addTooltipEvent();
+                }
+              });
+            }
           }
-        }
+        });
       });
     };
 
@@ -202,7 +223,16 @@
       var userId = Number(chat.userId);
       var fontSize;
       var timeFontSize;
+      var dataBaloon;
       var coreSettings = "<?= $coreSettings[C_COMPANY_USE_HISTORY_DELETE] ?>";
+      //横並びの場合
+      if(<?= $screenFlg ?> == 1) {
+        dataBaloon = 89;
+      }
+      //縦並びの場合
+      if(<?= $screenFlg ?> == 2) {
+        dataBaloon = 45;
+      }
       if(1024 < window.parent.screen.width && window.parent.screen.width < 1367) {
         fontSize = '7px';
         timeFontSize = '6px';
@@ -218,6 +248,7 @@
       // 消費者からのメッセージの場合
       if ( type === chatApi.messageType.customer) {
         var created = chat.created.replace(" ","%");
+        var forDeletionMessage = chat.message.replace(/\r?\n?\s+/g,"");
         cn = "sinclo_re";
         div.style.textAlign = 'left';
         div.style.height = 'auto';
@@ -234,8 +265,11 @@
         else {
           content = "<span class='cName' style = 'color:#333333 !important; font-size:"+fontSize+"'>ゲスト(" + Number($('#visitorsId').text()) + ")</span>";
           content += "<span class='cTime' style = 'font-size:"+timeFontSize+"'>"+chat.created+"</span>";
-          if(coreSettings === "") {
-            content += '<img src= /img/close_b.png alt=履歴削除 class = \"commontooltip disabled\" data-text=\"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+chat.message+'","'+created+'") width=21 height=21 style="cursor:pointer; float:right; color: #fff !important; padding:2px !important; margin-right: auto;">'
+          if(chat.permissionLevel == 1 && coreSettings == 1) {
+            content += '<img src= /img/close_b.png alt=履歴削除 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+forDeletionMessage+'","'+created+'") width=21 height=21 style="cursor:pointer; float:right; color: #fff !important; padding:2px !important; margin-right: auto;">'
+          }
+          else if(chat.permissionLevel == 1 && coreSettings == "") {
+            content += '<img src= /img/close_b.png alt=履歴削除 class = \"commontooltip disabled\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" data-balloon-position = \"'+dataBaloon+'\"  width=21 height=21 style="cursor:pointer; float:right; color: #fff !important; padding:2px !important; margin-right: auto;">'
           }
           content +=  "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message, {radio: false})+"</span>";
         }
@@ -243,7 +277,13 @@
       // オートメッセージの場合
       else if ( type === chatApi.messageType.company) {
         var created = chat.created.replace(" ","%");
-        var message2 = chat.message.replace(/\r?\n/g,"");
+        var forDeletionMessage = chat.message.replace(/\r?\n?\s+/g,"");
+        if(message.indexOf('<') > -1){
+          forDeletionMessage = forDeletionMessage.replace(/</g, '&lt;');
+        }
+        if(message.indexOf('>') > -1) {
+          forDeletionMessage = forDeletionMessage.replace(/>/g, '&gt;');
+        }
         cn = "sinclo_se";
         div.style.textAlign = 'right';
         div.style.height = 'auto';
@@ -263,8 +303,11 @@
         else {
           content = "<span class='cName' style = 'font-size:"+fontSize+"'>" + chatName + "</span>";
           content += "<span class='cTime' style = 'font-size:"+timeFontSize+"'>"+chat.created+"</span>";
-          if(chat.permissionLevel == 1) {
-            content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+message2+'","'+created+'") style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
+          if(chat.permissionLevel == 1 && coreSettings == 1) {
+            content += '<img src= /img/close_b.png alt=履歴削除 width=21 height=21 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+forDeletionMessage+'","'+created+'") style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
+          }
+          else if(chat.permissionLevel == 1 && coreSettings == "") {
+            content += '<img src= /img/close_b.png alt=履歴削除 class = \"commontooltip disabled\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" data-balloon-position = \"'+dataBaloon+'\"  width=21 height=21 style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
           }
           content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message)+"</span>";
         }
@@ -272,7 +315,13 @@
       else if ( type === chatApi.messageType.auto || type === chatApi.messageType.sorry) {
         cn = "sinclo_auto";
         var created = chat.created.replace(" ","%");
-        var message2 = chat.message.replace(/\r?\n/g,"");
+        var forDeletionMessage = chat.message.replace(/\r?\n?\s+/g,"");
+        if(message.indexOf('<') > -1){
+          forDeletionMessage = forDeletionMessage.replace(/</g, '&lt;');
+        }
+        if(message.indexOf('>') > -1) {
+          forDeletionMessage = forDeletionMessage.replace(/>/g, '&gt;');
+        }
         div.style.textAlign = 'right';
         div.style.height = 'auto';
         div.style.padding = '0';
@@ -287,8 +336,11 @@
         else {
           content = "<span class='cName' style = 'font-size:"+fontSize+"'>自動応答</span>";
           content += "<span class='cTime' style = 'font-size:"+timeFontSize+"'>"+chat.created+"</span>";
-          if(chat.permissionLevel == 1) {
-            content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+message2+'","'+created+'") style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
+          if(chat.permissionLevel == 1 && coreSettings == 1) {
+            content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+forDeletionMessage+'","'+created+'") style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">';
+          }
+          else if(chat.permissionLevel == 1 && coreSettings == "") {
+            content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 class = \"commontooltip disabled\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" data-balloon-position = \"'+dataBaloon+'\" style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">';
           }
           content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message)+"</span>";
         }
@@ -296,7 +348,13 @@
       else if ( type === chatApi.messageType.autoSpeech ) {
         cn = "sinclo_auto";
         var created = chat.created.replace(" ","%");
-        var message2 = chat.message.replace(/\r?\n/g,"");
+        var forDeletionMessage = chat.message.replace(/\r?\n?\s+/g,"");
+        if(message.indexOf('<') > -1){
+          forDeletionMessage = forDeletionMessage.replace(/</g, '&lt;');
+        }
+        if(message.indexOf('>') > -1) {
+          forDeletionMessage = forDeletionMessage.replace(/>/g, '&gt;');
+        }
         div.style.textAlign = 'right';
         div.style.height = 'auto';
         div.style.padding = '0';
@@ -311,26 +369,47 @@
         else {
           content = "<span class='cName' style = 'font-size:"+fontSize+"'>自動返信</span>";
           content += "<span class='cTime' style = 'font-size:"+timeFontSize+"'>"+chat.created+"</span>";
-          if(chat.permissionLevel == 1) {
-            content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+message2+'","'+created+'") style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
+          if(chat.permissionLevel == 1 && coreSettings == 1) {
+            content += '<img src= /img/close_b.png alt=履歴削除 width=21 height=21 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+forDeletionMessage+'","'+created+'") style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
+          }
+          else if(chat.permissionLevel == 1 && coreSettings == "") {
+            content += '<img src= /img/close_b.png alt=履歴削除 class = \"commontooltip disabled\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\"　data-balloon-position = \"'+dataBaloon+'\"  width=21 height=21 style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
           }
           content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message)+"</span>";
         }
       } else if ( type === chatApi.messageType.sendFile ) {
-        // ファイル送信はmessageがJSONなのでparseする
-        message = JSON.parse(message);
         cn = "sinclo_se";
         div.style.textAlign = 'right';
         div.style.height = 'auto';
         div.style.padding = '0';
         div.style.borderBottom = '1px solid #bfbfbf';
         div.style.marginTop = '6px';
+        var created = chat.created.replace(" ","%");
 //        var chatName = widget.subTitle;
 //        if ( Number(widget.showName) === <?//=C_WIDGET_SHOW_NAME?>// ) {
 //          chatName = userList[Number(userId)];
 //        }
-        var isExpired = Math.floor((new Date()).getTime() / 1000) >=  (Date.parse( message.expired.replace( /-/g, '/') ) / 1000);
-        content = $scope.createTextOfSendFile(chat, message.downloadUrl, message.fileName, message.fileSize, message.extension, isExpired);
+        if(chat.delete_flg == 1) {
+          var deleteUser = userList[Number(chat.deleted_user_id)];
+          content = "<span class='cName' style = 'color:#bdbdbd !important; font-size:"+fontSize+"'>ファイル送信"+ (isExpired ? "（ダウンロード有効期限切れ）" : "") + "</span>";
+          content += "<span class='cTime' style = 'color:#bdbdbd !important; font-size:"+timeFontSize+"'>"+chat.created+"</span>";
+          content +=  "<span class='cChat' style = 'color:#bdbdbd; font-size:"+fontSize+"'>(このメッセージは"+chat.deleted+"に"+deleteUser+"さんによって削除されました。)</span>";
+        }
+        else {
+          // ファイル送信はmessageがJSONなのでparseする
+          message = JSON.parse(message);
+          content = "<span class='cName' style = 'font-size:"+fontSize+"'>ファイル送信" + (isExpired ? "（ダウンロード有効期限切れ）" : "") + "</span>";
+          content += "<span class='cTime' style = 'font-size:"+timeFontSize+"'>"+chat.created+"</span>";
+          if(chat.permissionLevel == 1 && coreSettings == 1) {
+            content += '<img src= /img/close_b.png alt=履歴削除 width=21 height=21 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+message.fileName+'","'+created+'") style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
+          }
+          else if(chat.permissionLevel == 1 && coreSettings == "") {
+            content += '<img src= /img/close_b.png alt=履歴削除 class = \"commontooltip disabled\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" data-balloon-position = \"'+dataBaloon+'\"  width=21 height=21 style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
+          }
+
+          var isExpired = Math.floor((new Date()).getTime() / 1000) >=  (Date.parse( message.expired.replace( /-/g, '/') ) / 1000);
+          content += $scope.createTextOfSendFile(chat, message.downloadUrl, message.fileName, message.fileSize, message.extension, isExpired);
+        }
       } else  {
         cn = "sinclo_etc";
         div.style.borderBottom = '1px solid #bfbfbf';
@@ -362,8 +441,8 @@
         thumbnail = "<i class='fa " + selectFontIconClassFromExtension(extension) + " fa-4x sendFileThumbnail' aria-hidden='true'></i>";
       }
 
-      var content = "<span class='cName'>ファイル送信" + (isExpired ? "（ダウンロード有効期限切れ）" : "") + "</span>";
-      content    += "<div class='sendFileContent'>";
+      //var content = "<span class='cName'>ファイル送信" + (isExpired ? "（ダウンロード有効期限切れ）" : "") + "</span>";
+      var content    = "<div class='sendFileContent'>";
       content    += "  <div class='sendFileThumbnailArea'>" + thumbnail + "</div>";
       content    += "  <div class='sendFileMetaArea'>";
       content    += "    <span class='data sendFileName'>" + name + "</span>";
@@ -460,7 +539,7 @@
         };
         return trimToURL(targetParams, url);
       };
-  });
+  }]);
 
 
   sincloApp.directive('ngCreateMessage', [function(){
@@ -869,12 +948,11 @@ $(document).ready(function(){
       dataType: 'html',
       data:historySearchConditions,
       cache: false,
-      url: "<?= $this->Html->url(['controller' => 'Histories', 'action' => 'index']) ?>",
+      url: "<?= $this->Html->url(['controller' => 'ChatHistories', 'action' => 'index']) ?>",
       success: function(html){
-        location.href ="<?= $this->Html->url(['controller' => 'Histories', 'action' => 'index']) ?>";
+        location.href ="<?= $this->Html->url(['controller' => 'ChatHistories', 'action' => 'index']) ?>";
       }
     });
   });
 });
-
 </script>

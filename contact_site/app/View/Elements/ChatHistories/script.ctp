@@ -57,6 +57,13 @@ document.body.onload = function(){
 
 // 有効/無効ボタンの表示/非表示
 var actBtnShow = function(){
+  var authorityDelete = "<?= $coreSettings[C_COMPANY_USE_HISTORY_DELETE] ?>";
+  var authorityCsv = "<?= $coreSettings[C_COMPANY_USE_HISTORY_EXPORTING] ?>";
+
+  if(authorityDelete == "" && authorityCsv == "") {
+    return false;
+  }
+
   // 選択中の場合
   if ( $('input[name="selectTab"]').is(":checked") ) {
     var list = document.querySelectorAll('input[name^="selectTab"]:checked');
@@ -67,16 +74,20 @@ var actBtnShow = function(){
     $("#outputCsv a").attr("href", url);
 
     //一つでもチェックが入ったら
-    //コピーボタン有効
-    document.getElementById("history_csv_btn").className="btn-shadow disOffgreenBtn";
+    //CSVボタン有効
+    if(authorityCsv == 1) {
+      document.getElementById("history_csv_btn").className="btn-shadow disOffgreenBtn";
+    }
     //document.getElementById("history_csv_btn").addEventListener('click', openCopyDialog, false);
     //削除ボタン有効
-    document.getElementById("history_dustbox_btn").className="btn-shadow disOffredBtn";
-    document.getElementById("history_dustbox_btn").addEventListener('click', openDeleteDialog, false);
+    if(authorityDelete == 1) {
+      document.getElementById("history_dustbox_btn").className="btn-shadow disOffredBtn";
+      document.getElementById("history_dustbox_btn").addEventListener('click', openDeleteDialog, false);
+    }
   }
   else {
     //一つもチェックが無かったら
-    //コピーボタン無効
+    //CSVボタン無効
     document.getElementById("history_csv_btn").className="btn-shadow disOffgrayBtn";
     //document.getElementById("tautomessages_copy_btn").removeEventListener('click', openCopyDialog, false);
     //削除ボタン無効
@@ -128,6 +139,7 @@ var setAllCheck = function() {
 
 //ユーザー情報表示変更
 function openChatById(id) {
+  clearChatAndPersonalInfo();
   $.ajax({
     type: 'GET',
     url: "<?= $this->Html->url(array('controller' => 'ChatHistories', 'action' => 'remoteGetCustomerInfo')) ?>",
@@ -137,7 +149,7 @@ function openChatById(id) {
     dataType: 'html',
     success: function(html){
       var customerData = JSON.parse(html);
-      document.getElementById("visitorsId").innerHTML= customerData.THistory.visitors_id;LandscapeData
+      document.getElementById("visitorsId").innerHTML= customerData.THistory.visitors_id;
       document.getElementById("ipAddress").innerHTML= "("+customerData.THistory.ip_address+")";
       document.getElementById("Landscape").innerHTML= customerData.LandscapeData.org_name;
       $("#LandscapeData a").attr('onclick',"openCompanyDetailInfo("+customerData.LandscapeData.lbc_code+")");
@@ -167,6 +179,26 @@ function openChatById(id) {
     }
   });
 }
+
+function clearChatAndPersonalInfo() {
+  document.getElementById("visitorsId").innerHTML= "";
+  document.getElementById("ipAddress").innerHTML= "";
+  document.getElementById("Landscape").innerHTML= "";
+  document.getElementById("visitCounts").innerHTML= "";
+  document.getElementById("platform").innerHTML= "";
+  document.getElementById("campaignParam").innerHTML= "";
+  document.getElementById("landingPage").innerHTML= "";
+  document.getElementById("chatSendingPage").innerHTML= "";
+  document.getElementById("separationPage").innerHTML= "";
+  document.getElementById("pageCount").innerHTML= "";
+  document.getElementById("ng-customer-company").value= "";
+  document.getElementById("ng-customer-name").value= "";
+  document.getElementById("ng-customer-tel").value= "";
+  document.getElementById("ng-customer-mail").value= "";
+  document.getElementById("ng-customer-memo").value= "";
+  document.getElementById('customerId').value= "";
+}
+
 // Change the selector if needed
 var  table = $('.scroll');
 var  bodyCells = table.find('tbody tr:first').children();
@@ -215,8 +247,8 @@ $(function(){
       searching: false,
       scroller:true,
       responsive:true,
-      scrollX: true,
-      scrollY: '64vh',
+      scrollX: false,
+      scrollY: true,
       scrollCollapse: true,
       paging: false,
       info: false,
@@ -227,7 +259,7 @@ $(function(){
     });
 
     tableObj.on('draw', function(){
-      $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - calcHeaderHeight() - 15);
+      $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - calcHeaderHeight() - 20);
     });
   });
 
@@ -253,43 +285,49 @@ $(function(){
   allCheckElm.addEventListener('click', setAllCheck); // 全選択
 
   //リサイズ処理
+  var screenMode = <?= $screenFlg ?>;
+
   $(window).resize(function() {
     $("#history_list_side").css('height', window.innerHeight - 145);
     //横並びの場合
-    if(<?= $screenFlg ?> == 1) {
+    if(screenMode == 1) {
       //$("#pastChatTalk").css('height', window.innerHeight - 364);
       document.getElementById('history_body_side').style.width = $('#history_body_side').outerWidth() + 'px';
       document.getElementById('history_body_side').style.height = $('#history_list_side').outerHeight() + 'px';
-      $("#chatContent").css('height', window.innerHeight - 200);
+      $("#chatContent").css('height', $("#detail").outerHeight() - 105);
+      $("#customerInfoScrollArea").css('height', $("#detail").outerHeight() - 39);
       $("#chatHistory").css('height',window.innerHeight - 355);
-      $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
     }
     //縦並びの場合
-    if(<?= $screenFlg ?> == 2) {
+    if(screenMode == 2) {
       document.getElementById('history_body_side').style.width = $('#history_list_side').outerWidth() + 'px';
       $("#chatContent").css('height', $("#detail").outerHeight() - 65);
       $("#chatHistory").css('height',$("#history_body_side").outerHeight() - 170);
       $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
       //$("#pastChatTalk").css('height', window.innerHeight - 540);
     }
+    $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - calcHeaderHeight() - 20);
+    tableObj.columns.adjust();
   });
 
   //縦並びをクリックした場合
   $(document).on('click', '.vertical', function(){
+    screenMode = 2;
     splitterObj.destroy();
     splitterObj = null;
     splitterObj = $("#history_list_side").split({
       "orientation": "horizontal",
       //"limit": 50,
-      "position": "40%"
-    }).on('splitter.resize', function(){
-      tableObj.columns.adjust().draw();
-    });;
+      "position": "40%",
+      onDrag: function(ev) {
+        tableObj.columns.adjust();
+      }
+    });
     splitterObj.refresh();
     document.getElementById('history_body_side').style.width = $('#history_list_side').outerWidth() + 'px';
     document.getElementById('chatTable').style.width = $('#history_body_side').outerWidth() + 'px';
     document.getElementById('detail').style.width = "100%";
-    $("#chatContent").css('height', $("#detail").outerHeight() - 65);
+    $("#chatContent").css('height', $("#detail").outerHeight() - 105);
     $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
     $("#chatHistory").css('height',$("#history_body_side").outerHeight() - 170);
     //$("#pastChatTalk").css('height', window.innerHeight - 540);
@@ -302,28 +340,31 @@ $(function(){
         //modalOpenOverlap.call(window, html, 'p-history-del', '履歴の削除', 'moment');
       }
     });
-    tableObj.columns.adjust().draw();
+    tableObj.columns.adjust();
     $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - calcHeaderHeight() - 15);
  });
 
   //横並びをクリックした場合
   $(document).on('click', '.side', function(){
+    screenMode = 1;
     splitterObj.destroy();
     splitterObj = null;
     splitterObj = $("#history_list_side").split({
       "orientation": "vertical",
       "limit": 50,
-      "position": "45%"
-    }).on('splitter.resize', function(){
-      tableObj.columns.adjust().draw();
+      "position": "70%",
+      onDrag: function(ev) {
+        tableObj.columns.adjust();
+      }
     });
     splitterObj.refresh();
     document.getElementById('history_body_side').style.width = $('#history_body_side').outerWidth() + 'px';
     document.getElementById('history_body_side').style.height = $('#history_list_side').outerHeight() + 'px';
     document.getElementById('detail').style.height = "100%";
+
     //$("#pastChatTalk").css('height', window.innerHeight - 364);
-    $("#chatContent").css('height', window.innerHeight - 200);
-    $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
+    $("#chatContent").css('height', $("#detail").outerHeight() - 105);
+    $("#customerInfoScrollArea").css('height', $("#detail").outerHeight() - 39);
     $("#chatHistory").css('height',window.innerHeight - 355);
     $.ajax({
       type: 'post',
@@ -334,7 +375,7 @@ $(function(){
         //modalOpenOverlap.call(window, html, 'p-history-del', '履歴の削除', 'moment');
       }
     });
-    tableObj.columns.adjust().draw();
+    tableObj.columns.adjust();
     $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - calcHeaderHeight() - 20);
  });
 
@@ -344,33 +385,39 @@ $(function(){
       var splitterObj = $("#history_list_side").split({
         "orientation": "vertical",
         //"limit": 500,
-        "position": "45%"
-      }).on('splitter.resize', function(){
-        tableObj.columns.adjust().draw();
-      });;
+        "position": "70%",
+        onDrag: function(ev) {
+          tableObj.columns.adjust();
+        }
+      });
       //$("#pastChatTalk").css('height', window.innerHeight - 364);
-      $("#chatContent").css('height', window.innerHeight - 200);
-      $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
+      document.getElementById('detail').style.height = "100%";
+      $("#chatContent").css('height', $("#detail").outerHeight() - 105);
+      $("#customerInfoScrollArea").css('height', $("#detail").outerHeight() - 39);
       $("#chatHistory").css('height',window.innerHeight - 355);
       $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 170);
     }
-    //縦並びの場合
+    //縦並びの場合$this.attr('data-balloon-position');
     if(<?= $screenFlg ?> == 2) {
       splitterObj = $("#history_list_side").split({
         "orientation": "horizontal",
         //"limit": 50,
-        "position": "40%"
-      }).on('splitter.resize', function(){
-        tableObj.columns.adjust().draw();
-      });;
+        "position": "40%",
+        onDrag: function(ev) {
+          tableObj.columns.adjust();
+        }
+      });
       document.getElementById('history_body_side').style.width = $('#history_body_side').outerWidth() + 'px';
       document.getElementById('chatTable').style.width = $('#history_body_side').outerWidth() - 40 + 'px';
       document.getElementById('detail').style.width = "100%";
       $("#chatContent").css('height', $("#detail").outerHeight() - 65);
       $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
-      console.log($("#history_body_side").css('height'));
-      //$("#chatHistory").css('height',$("#history_body_side").outerHeight() - 170);
     }
+
+    setTimeout(function(){
+      // 初期表示時にテーブルのヘッダとボディがズレることがあるのでタイミングをずらして再描画
+      tableObj.columns.adjust();
+    }, 500);
 });
 
 var onBeforeunloadHandler = function(e) {
