@@ -284,9 +284,8 @@ $(function(){
       document.getElementById('history_body_side').style.width = $('#history_body_side').outerWidth() + 'px';
       document.getElementById('history_body_side').style.height = $('#history_list_side').outerHeight() + 'px';
       $("#chatContent").css('height', $("#detail").outerHeight() - 105);
-      $("#customerInfoScrollArea").css('height', $("#detail").outerHeight() - 105);
+      $("#customerInfoScrollArea").css('height', $("#detail").outerHeight() - 39);
       $("#chatHistory").css('height',window.innerHeight - 355);
-      $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
     }
     //縦並びの場合
     if(screenMode == 2) {
@@ -352,7 +351,7 @@ $(function(){
     document.getElementById('detail').style.height = "100%";
     //$("#pastChatTalk").css('height', window.innerHeight - 364);
     $("#chatContent").css('height', $("#detail").outerHeight() - 105);
-    $("#customerInfoScrollArea").css('height', $("#detail").outerHeight() - 105);
+    $("#customerInfoScrollArea").css('height', $("#detail").outerHeight() - 39);
     $("#chatHistory").css('height',window.innerHeight - 355);
     $.ajax({
       type: 'post',
@@ -380,7 +379,7 @@ $(function(){
       //$("#pastChatTalk").css('height', window.innerHeight - 364);
       document.getElementById('detail').style.height = "100%";
       $("#chatContent").css('height', $("#detail").outerHeight() - 105);
-      $("#customerInfoScrollArea").css('height', $("#detail").outerHeight() - 105);
+      $("#customerInfoScrollArea").css('height', $("#detail").outerHeight() - 39);
       $("#chatHistory").css('height',window.innerHeight - 355);
       $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 170);
     }
