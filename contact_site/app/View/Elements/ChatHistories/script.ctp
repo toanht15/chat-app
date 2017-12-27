@@ -399,6 +399,11 @@ $(function(){
       $("#chatContent").css('height', $("#detail").outerHeight() - 65);
       $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
     }
+
+    setTimeout(function(){
+      // 初期表示時にテーブルのヘッダとボディがズレることがあるのでタイミングをずらして再描画
+      tableObj.columns.adjust().draw();
+    }, 500);
 });
 
 var onBeforeunloadHandler = function(e) {
