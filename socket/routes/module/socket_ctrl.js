@@ -1976,7 +1976,9 @@ io.sockets.on('connection', function (socket) {
         emit.toCompany('syncNewInfo', obj, obj.siteKey);
       });
     }
-    ack(data);
+    if(ack) {
+      ack(data);
+    }
   });
   // ウィジェットが生成されたことを企業側に通知する
   socket.on("syncReady", function(data){

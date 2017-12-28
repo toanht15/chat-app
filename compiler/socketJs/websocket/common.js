@@ -2588,7 +2588,7 @@ var socket, // socket.io
       return {
         ipAddress: this.getIp(),
         time: this.getTime(),
-        prev: prev,
+        prev: prev ? prev : this.prev,
         stayCount: this.getStayCount(),
         referrer: this.referrer,
         userAgent: window.navigator.userAgent,
