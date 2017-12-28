@@ -1724,6 +1724,9 @@ io.sockets.on('connection', function (socket) {
         var keyLength = Object.keys(customerList[res.siteKey]).length;
         Object.keys(customerList[res.siteKey]).forEach(function(key){
           var val = getConnectInfo(customerList[res.siteKey][key]);
+          if(val.time) {
+            val.term = timeCalculator(val);
+          }
           if(isset(data.contract.chat) && data.contract.chat) {
             chatApi.getUnreadCnt(val, function (ret) {
               val['chatUnreadId'] = ret.chatUnreadId;
@@ -1848,6 +1851,9 @@ io.sockets.on('connection', function (socket) {
           if(targetTerm) {
             if(targetTerm.indexOf(term) === 0) { // 前方一致検索
               var mergedObject = extend(customerList[obj.siteKey][key], sincloCore[obj.siteKey][customerList[obj.siteKey][key]['tabId']]);
+              if(mergedObject.time) {
+                mergedObject.term = timeCalculator(mergedObject);
+              }
               result.push(mergedObject);
             }
           }
