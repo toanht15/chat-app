@@ -24,10 +24,10 @@ class MFileTransferSetting extends AppModel
           ]
       ],
       'allow_extensions' => [
-          'validNOTBlankAndType' => [
-            'rule' => 'validNOTBlankAndType',
-            'message' => '拡張設定の場合は指定が必要です。'
-          ],
+//          'validNOTBlankAndType' => [
+//            'rule' => 'validNOTBlankAndType',
+//            'message' => '拡張設定の場合は指定が必要です。'
+//          ],
           'isAlplaNumeric' => [
             'rule' => 'isAlplaNumeric',
             'message' => 'ドットを含めない拡張子をカンマ区切りで設定して下さい。'
