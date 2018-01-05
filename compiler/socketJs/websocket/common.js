@@ -813,7 +813,7 @@ var socket, // socket.io
 
       html += '      #sincloWidgetBox > section { background-color: #FFF; border-top: none; }';
       html += '      #sincloBox ul#chatTalk li a, #sincloBox #fotter a {  text-decoration: underline; }';
-      html += '      #sincloBox section { display: none; padding: 0!important; }';
+      html += '      #sincloBox section { display: none; padding: 0!important; top:0px!important; }';
       html += '      #sincloBox .flexBox { position: relative; display: -ms-flexbox; display: -webkit-flex; display: flex; -ms-flex-direction: column; -webkit-flex-direction: column; flex-direction: column }';
       if(widget.chatMessageCopy === 1) {
         html += '      #sincloBox .flexBoxRow { display: -ms-flexbox; display: -webkit-flex; display: flex; -ms-flex-direction: row; -webkit-flex-direction: row; flex-direction: row; user-select: none;-moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;}';
