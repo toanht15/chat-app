@@ -55,13 +55,21 @@ document.body.onload = function(){
   }
 };
 
+var selectCsv = function(){
+
+}
+
 // 有効/無効ボタンの表示/非表示
 var actBtnShow = function(){
   var authorityDelete = "<?= $coreSettings[C_COMPANY_USE_HISTORY_DELETE] ?>";
   var authorityCsv = "<?= $coreSettings[C_COMPANY_USE_HISTORY_EXPORTING] ?>";
-
-  if(authorityDelete == "" && authorityCsv == "") {
+  if(authorityDelete == "" ) {
     return false;
+  }
+  if(authorityCsv == "") {
+    $("#disabled_history_csv_btn").click(function(){
+      return false;
+    })
   }
 
   // 選択中の場合
@@ -151,8 +159,10 @@ function openChatById(id) {
       var customerData = JSON.parse(html);
       document.getElementById("visitorsId").innerHTML= customerData.THistory.visitors_id;
       document.getElementById("ipAddress").innerHTML= "("+customerData.THistory.ip_address+")";
-      document.getElementById("Landscape").innerHTML= customerData.LandscapeData.org_name;
-      $("#LandscapeData a").attr('onclick',"openCompanyDetailInfo("+customerData.LandscapeData.lbc_code+")");
+      if(customerData.LandscapeData) {
+        document.getElementById("Landscape").innerHTML= customerData.LandscapeData.org_name;
+        $("#LandscapeData a").attr('onclick',"openCompanyDetailInfo("+customerData.LandscapeData.lbc_code+")");
+      }
       document.getElementById("visitCounts").innerHTML= customerData.THistoryCount.cnt + "回";
       document.getElementById("platform").innerHTML= userAgentChk.pre(customerData.THistory.user_agent);
       document.getElementById("campaignParam").innerHTML= customerData.campaignParam;
@@ -168,6 +178,7 @@ function openChatById(id) {
       document.getElementById("separationPage").innerHTML= customerData.tHistoryChatLastPageData.title;
       $("#separation a").attr("href", customerData.tHistoryChatLastPageData.url);
       $("#customerInfo").attr('onclick',"customerInfoSave("+customerData.THistory.id+")");
+      $("#restore").attr('onclick',"reloadAct("+customerData.THistory.id+")");
       document.getElementById("pageCount").innerHTML= customerData.pageCount[0].count;
       $("#moveHistory").attr('onclick',"openHistoryById("+customerData.THistory.id+")");
       document.getElementById("ng-customer-company").value = customerData.informations.company;
@@ -183,7 +194,9 @@ function openChatById(id) {
 function clearChatAndPersonalInfo() {
   document.getElementById("visitorsId").innerHTML= "";
   document.getElementById("ipAddress").innerHTML= "";
-  document.getElementById("Landscape").innerHTML= "";
+  if(document.getElementById("Landscape") !== null) {
+    document.getElementById("Landscape").innerHTML= "";
+  }
   document.getElementById("visitCounts").innerHTML= "";
   document.getElementById("platform").innerHTML= "";
   document.getElementById("campaignParam").innerHTML= "";
@@ -220,6 +233,10 @@ $(window).resize(function() {
 
 
 $(function(){
+  $("#disabled_history_csv_btn").click(function(){
+    return false;
+  });
+
   var calcHeaderHeight = function() {
     return $('#history_menu').outerHeight() + $('div.btnSet').outerHeight() + $('label[for="g_chat"]').outerHeight() + $('.dataTables_scrollHead').outerHeight();
   };
@@ -265,6 +282,13 @@ $(function(){
 
   //選択したチャット履歴CSV出力
   $('#history_csv_btn').click(function(){
+    //return false;
+    var authorityCsv = "<?= $coreSettings[C_COMPANY_USE_HISTORY_EXPORTING] ?>";
+    if(authorityCsv == "") {
+      $("#disabled_history_csv_btn").click(function(){
+        return false;
+      })
+    }
     //チェックボックスのチェック状態の取得
     var list = document.querySelectorAll('input[name^="selectTab"]:checked');
     if(list.length == 0) {
@@ -425,12 +449,12 @@ var onBeforeunloadHandler = function(e) {
 };
 
 // 元に戻す処理
-function reloadAct(){
+function reloadAct(historyId){
   changeFlg = false;
   if(changeFlg == false) {
     window.removeEventListener('beforeunload', onBeforeunloadHandler, false);
   }
-  window.location.reload();
+  location.href = "<?= $this->Html->url(['controller' => 'ChatHistories', 'action' => 'index']) ?>?id="+ historyId
 }
 
 //履歴チャット削除モーダル画面

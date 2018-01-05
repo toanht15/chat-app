@@ -139,12 +139,14 @@
        <span id = "outputCsv">
            <?= $this->Html->image('csv.png', array(
                'alt' => 'CSV出力',
-               'id'=>'history_csv_btn',
+               'id'=>$coreSettings[C_COMPANY_USE_HISTORY_EXPORTING] ? "history_csv_btn" : "disabled_history_csv_btn",
                'class' => 'btn-shadow disOffgrayBtn commontooltip',
-               'data-text' => 'CSV出力',
+               'disabled' => !$coreSettings[C_COMPANY_USE_HISTORY_EXPORTING],
+               'data-text' => $coreSettings[C_COMPANY_USE_HISTORY_EXPORTING] ? "CSV出力" : "こちらの機能はスタンダードプラン<br>からご利用いただけます。",
                'data-balloon-position' => '36',
                'width' => 45,
                'height' => 45,
+               'onclick' => 'selectCsv()',
                'url'=>array('controller'=>'ChatHistories','action'=>'outputCSVOfChat')
            )) ?>
        </span>
@@ -153,7 +155,7 @@
           <a>
             <?= $this->Html->image('dustbox.png', array(
                 'alt' => '削除',
-                'id'=>'history_dustbox_btn',
+                'id'=>$coreSettings[C_COMPANY_USE_HISTORY_DELETE] ? "history_dustbox_btn" : "disabled_history_dustbox_btn",
                 'class' => 'btn-shadow disOffgrayBtn commontooltip',
                 'disabled' => !$coreSettings[C_COMPANY_USE_HISTORY_DELETE],
                 'data-text' => $coreSettings[C_COMPANY_USE_HISTORY_DELETE] ? "削除する" : "こちらの機能はスタンダードプラン<br>からご利用いただけます。",
@@ -279,8 +281,6 @@
   if($historyId == $history['THistory']['id']) {
     $userCampaignParam = "";
     $tmp = mb_strstr($stayList[$history['THistory']['id']]['THistoryStayLog']['firstURL'], '?');
-    $this->log('tmp',LOG_DEBUG);
-    $this->log($tmp,LOG_DEBUG);
     if ( $tmp !== "" ) {
       foreach($campaignList as $k => $v){
         if ( strpos($tmp, $k) !== false ) {
@@ -372,8 +372,22 @@
 
 </div>
 
-
 <div id = "detail" class = "detail" style = "width: 100%; background-color: #f2f2f2; display:none;">
+
+    <div id="verticalToggleMenu" ng-init = "setDetailMode(1)" ng-if="fillterTypeId === 1" class = "form01" style = "">
+    <ul class="switch" style = "box-shadow:none; padding-left: 17px; margin-bottom: 0;">
+      <li ng-class="{on:switchDetailMode===1}" ng-click="setDetailMode(1)" style = "margin-top:0; margin-bottom:0; width:9em !important;">
+        <span ng-if="switchDetailMode===1" style="margin: 0; padding: 5px 0; color: #FFFFFF;">チャット内容</span>
+        <span ng-if="switchDetailMode===2" style="margin: 0; padding: 5px 0; color: #c3d69b;">チャット内容</span>
+      </li>
+      <li ng-class="{on:switchDetailMode===2}" ng-click="setDetailMode(2)" style = "margin-top:0; margin-bottom:0; width:9em !important;">
+        <span ng-if="switchDetailMode===1" style="margin: 0; padding: 5px 0; color: #c3d69b;">詳細情報</span>
+        <span ng-if="switchDetailMode===2" style="margin: 0; padding: 5px 0; color: #FFFFFF;">詳細情報</span>
+      </li>
+    </ul>
+  </div>
+
+
   <div id="verticalToggleMenu" ng-init = "setDetailMode(1)" ng-if="fillterTypeId === 2" class = "form01" style = "">
     <ul class="switch" style = "box-shadow:none; padding-left: 17px; margin-bottom: 0;">
       <li ng-class="{on:switchDetailMode===1}" ng-click="setDetailMode(1)" style = "margin-top:0; margin-bottom:0; width:9em !important;">
@@ -518,7 +532,7 @@
             </li>
           </ul>
           <div id="personal_action">
-              <?= $this->Html->link('元に戻す', 'javascript:void(0)', ['onclick' => 'reloadAct()', 'class' => 'whiteBtn btn-shadow lineUpSaveBtn historyReturnButton']) ?>
+              <?= $this->Html->link('元に戻す', 'javascript:void(0)', ['onclick' => 'reloadAct('.$historyId.')', 'id' => 'restore','class' => 'whiteBtn btn-shadow lineUpSaveBtn historyReturnButton']) ?>
               <?= $this->Html->link('更新', 'javascript:void(0)', ['onclick' => 'customerInfoSave('.$historyId.')','id' => 'customerInfo', 'class' => 'greenBtn btn-shadow lineUpSaveBtn hitoryUpdateButton']) ?>
           </div>
           <?php } ?>

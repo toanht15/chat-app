@@ -1660,7 +1660,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         };
       }
     };
-    
+
     $scope.fileUploader.init();
     // =====================
     // ファイル送信（ここまで）

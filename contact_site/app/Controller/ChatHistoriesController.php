@@ -290,7 +290,6 @@ $this->log('LandscapdData前',LOG_DEBUG);
       $ret = false;
       $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.saveFailed'));
     }
-    //return new CakeResponse(['body' => json_encode($ret)]);
     return $data['historyId'];
   }
 
@@ -1021,6 +1020,7 @@ $this->log('LandscapdData前',LOG_DEBUG);
     $visitorsIds = [];
     $chatCond = [];
     $stayCond = [];
+    $stayCond2 = [];
     $chatLogCond = [];
     //履歴検索機能
     if ($this->Session->check('Thistory')) {
@@ -1033,15 +1033,26 @@ $this->log('LandscapdData前',LOG_DEBUG);
         $this->set('chatType', Configure::read('chatType'));
         if($data['History']['chat_type'] == 1) {
           $data['History']['chat_type_name'] = "Auto";
+          $chatLogCond['chat.sry'] = 0;
+          $chatLogCond['chat.cmp'] = 0;
+          //$chatLogCond['chat.auto_speech >'] = 0;
         }
         if($data['History']['chat_type'] == 2) {
           $data['History']['chat_type_name'] = "Manual";
+          $chatLogCond['chat.cmp >'] = 0;
         }
         if($data['History']['chat_type'] == 3) {
           $data['History']['chat_type_name'] = "NoEntry";
+          $chatLogCond['chat.cus >'] = 0;
+          $chatLogCond['chat.sry'] = 0;
+          $chatLogCond['chat.cmp'] = 0;
+          $chatLogCond['chat.auto_speech'] = 0;
         }
         if($data['History']['chat_type'] == 4) {
           $data['History']['chat_type_name'] = "Sorry";
+          $chatLogCond['chat.cus >'] = 0;
+          $chatLogCond['chat.sry >'] = 0;
+          $chatLogCond['chat.cmp'] = 0;
         }
       }
 
@@ -1089,9 +1100,27 @@ $this->log('LandscapdData前',LOG_DEBUG);
         }
       }
 
-      // チャット送信ページに関する検索条件
-      if ( isset($data['THistoryChatLog']['send_chat_page']) && $data['THistoryChatLog']['send_chat_page'] !== "" ) {
-        $stayCond['stayLogs.title LIKE'] = '%'.$data['THistoryChatLog']['send_chat_page']."%";
+      //  キャンペーンに関する検索条件
+      if ( (isset($data['History']['campaign']) && $data['History']['campaign'] !== "") ||
+       (isset($data['THistoryChatLog']['send_chat_page']) && $data['THistoryChatLog']['send_chat_page'] !== "")) {
+        if ( isset($data['History']['campaign']) && $data['History']['campaign'] !== "") {
+          $campaignList = $this->TCampaign->getList();
+          $campaignParam = "";
+          foreach($campaignList as $k => $v){
+            if ( strpos($data['History']['campaign'], $v) !== false ) {
+              if ( $campaignParam !== "" ) {
+                $campaignParam .= "\n";
+              }
+              $campaignParam .= h($k);
+            }
+          }
+          $stayCond['stayLogs.url LIKE'] = '%'.$campaignParam."%";
+        }
+
+        if ( isset($data['THistoryChatLog']['send_chat_page']) && $data['THistoryChatLog']['send_chat_page'] !== "" ) {
+          $stayCond['stayLogs.title LIKE'] = '%'.$data['THistoryChatLog']['send_chat_page']."%";
+        }
+
         $join = "INNER";
       }
       else {
@@ -1219,11 +1248,11 @@ $this->log('LandscapdData前',LOG_DEBUG);
       );
 
       $dbo2 = $this->THistoryChatLog->getDataSource();
-      if(empty($chatLogCond) || $chatLogCond['chat.achievementFlg'] == 1 || $chatLogCond['chat.achievementFlg'] == 2) {
+      if(empty($chatLogCond['chat.achievementFlg']) || $chatLogCond['chat.achievementFlg'] == 1 || $chatLogCond['chat.achievementFlg'] == 2) {
         $value = 'MAX';
       }
       //成果でCVを検索する場合
-      else if(!empty($chatLogCond) && $chatLogCond['chat.achievementFlg'] == 0) {
+      else if(!empty($chatLogCond['chat.achievementFlg']) && $chatLogCond['chat.achievementFlg'] == 0) {
         $value = 'MIN';
       }
       $chatStateList = $dbo2->buildStatement(
@@ -1232,12 +1261,16 @@ $this->log('LandscapdData前',LOG_DEBUG);
           'alias' => 'chat',
           'fields' => [
             'chat.*',
-            '( CASE  WHEN chat.cus > 0 AND chat.sry = 0 AND chat.cmp = 0 AND auto_speech = 0 THEN "未入室" WHEN chat.cus > 0 AND chat.sry = 0 AND chat.cmp = 0 AND auto_speech > 0 THEN "自動返信" WHEN chat.cus = 0 AND chat.sry = 0 AND chat.cmp = 0 AND auto_speech = 0 AND auto_message > 0 THEN "自動返信" WHEN chat.cus > 0 AND chat.sry > 0 THEN "拒否" ELSE "" END ) AS type',
+            '( CASE  WHEN chat.cus > 0 AND chat.sry = 0 AND chat.cmp = 0 AND auto_speech = 0 THEN "未入室" WHEN chat.cus > 0 AND chat.sry = 0 AND chat.cmp = 0 AND auto_speech > 0 THEN "自動返信" WHEN chat.cus = 0 AND chat.sry = 0 AND chat.cmp = 0 AND auto_speech = 0 AND auto_message > 0 THEN "自動返信" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry > 0 THEN "拒否" ELSE "" END ) AS type',
           ],
           'conditions' => $chatLogCond
         ],
         $this->THistoryChatLog
       );
+
+      $this->log('スタート',LOG_DEBUG);
+
+      $this->log("BEGIN getAccessData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
       $joinToChat = [
         'type' => 'INNER',
         'table' => "({$chatStateList})",
@@ -1246,6 +1279,9 @@ $this->log('LandscapdData前',LOG_DEBUG);
           'THistoryChatLog.t_histories_id = THistory.id'
         ]
       ];
+      $this->log("END   getAccessData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
+
+      $this->log("BEGIN getAccessData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
       $joinToLastSpeechChatTime = [
         'type' => 'LEFT',
         'table' => '(SELECT t_histories_id, t_history_stay_logs_id,message_type, MIN(created) as firstSpeechTime, MAX(created) as created FROM t_history_chat_logs WHERE message_type = 1 GROUP BY t_histories_id)',
@@ -1255,6 +1291,9 @@ $this->log('LandscapdData前',LOG_DEBUG);
           'LastSpeechTime.t_histories_id = THistoryChatLog.t_histories_id'
         ],
       ];
+      $this->log("END   getAccessData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
+
+      $this->log("BEGIN getAccessData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
       $joinToNoticeChatTime = [
         'type' => 'LEFT',
         'table' => '(SELECT t_histories_id, message_type, notice_flg,created FROM t_history_chat_logs WHERE message_type = 1 AND notice_flg = 1 GROUP BY t_histories_id)',
@@ -1264,6 +1303,9 @@ $this->log('LandscapdData前',LOG_DEBUG);
           'NoticeChatTime.t_histories_id = THistoryChatLog.t_histories_id'
         ],
       ];
+      $this->log("END   getAccessData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
+
+      $this->log("BEGIN getAccessData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
       $chatSendingPage = $dbo2->buildStatement(
         [
           'table' => "(SELECT id,t_histories_id,title,url,created as created FROM t_history_stay_logs)",
@@ -1271,11 +1313,27 @@ $this->log('LandscapdData前',LOG_DEBUG);
           'fields' => [
             '*'
           ],
-          'conditions' => $stayCond
+          'conditions' =>$stayCond
         ],
         $this->THistoryStayLog
       );
+      $this->log("END   getAccessData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
 
+      $this->log($chatSendingPage,LOG_DEBUG);
+
+      /*$campaign = $dbo2->buildStatement(
+        [
+          'table' => "(SELECT id,t_histories_id,title,url,created as created FROM t_history_stay_logs)",
+          'alias' => 'stayLogs2',
+          'fields' => [
+            '*'
+          ],
+          'conditions' => $stayCond2
+        ],
+        $this->THistoryStayLog
+      );*/
+
+      $this->log("BEGIN getAccessData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
       $joinToFirstSpeechSendPage = [
         'type' => $join,
         'table' => "({$chatSendingPage})",
@@ -1285,15 +1343,29 @@ $this->log('LandscapdData前',LOG_DEBUG);
           'THistoryStayLog.id = LastSpeechTime.t_history_stay_logs_id'
         ],
       ];
+      $this->log("END   getAccessData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
 
+      /*$joinToCampaign = [
+        'type' => $join,
+        'table' => "({$campaign})",
+        'alias' => 'THistoryStayLog2',
+        'field' => "title,url",
+        'conditions' => [
+          'THistoryStayLog2.id = LastSpeechTime.t_history_stay_logs_id'
+        ],
+      ];*/
+
+      $this->log("BEGIN getAccessData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
       $this->paginate['THistory']['fields'][] = 'THistoryChatLog.*';
       $this->paginate['THistory']['fields'][] = 'LastSpeechTime.created as lastSpeechTime,LastSpeechTime.firstSpeechTime';
       $this->paginate['THistory']['fields'][] = 'NoticeChatTime.created';
       $this->paginate['THistory']['fields'][] = 'THistoryStayLog.title,THistoryStayLog.url';
+      //$this->paginate['THistory']['fields'][] = 'THistoryStayLog2.title,THistoryStayLog2.url';
       $this->paginate['THistory']['joins'][] = $joinToChat;
       $this->paginate['THistory']['joins'][] = $joinToLastSpeechChatTime;
       $this->paginate['THistory']['joins'][] = $joinToNoticeChatTime;
       $this->paginate['THistory']['joins'][] = $joinToFirstSpeechSendPage;
+      $this->log("END   getAccessData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
 
       if(isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) {
         $this->paginate['THistory']['fields'][] = 'LandscapeData.*';
@@ -1301,7 +1373,9 @@ $this->log('LandscapdData前',LOG_DEBUG);
       }
     }
 
+    $this->log("BEGIN historyList : ".$this->getDateWithMilliSec(),LOG_DEBUG);
     $historyList = $this->paginate('THistory');
+    $this->log("END   historyList : ".$this->getDateWithMilliSec(),LOG_DEBUG);
 
     // TODO 良いやり方が無いか模索する
     $historyIdList = [];
@@ -1311,6 +1385,7 @@ $this->log('LandscapdData前',LOG_DEBUG);
     $searchHistoryId = "";
     $check = 'false';
     $defaultCheck = 'false';
+    $this->log("BEGIN userInfo : ".$this->getDateWithMilliSec(),LOG_DEBUG);
     foreach($historyList as $key => $val){
       if($key == 0) {
         $historyChat[] = $this->_getChatLog($val['THistory']['id']);
@@ -1337,6 +1412,7 @@ $this->log('LandscapdData前',LOG_DEBUG);
       $historyIdList[] = $val['THistory']['id'];
       $customerIdList[$val['THistory']['visitors_id']] = true;
     }
+    $this->log("BEGIN tHistoryStayLogList : ".$this->getDateWithMilliSec(),LOG_DEBUG);
     $tHistoryStayLogList = $this->THistoryStayLog->find('all', [
       'fields' => [
         't_histories_id',
@@ -1349,6 +1425,7 @@ $this->log('LandscapdData前',LOG_DEBUG);
       ],
       'group' => 't_histories_id'
     ]);
+    $this->log("END tHistoryStayLogList : ".$this->getDateWithMilliSec(),LOG_DEBUG);
 
     $stayList = [];
     foreach($tHistoryStayLogList as $val){
@@ -1380,6 +1457,8 @@ $this->log('LandscapdData前',LOG_DEBUG);
         'recursive' => -1
       ]);
       $visitors_id = $visitors_id ['THistory']['visitors_id'];
+
+      $this->log("BEGIN tHistoryChatLastPageData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
       //離脱ページ
       $tHistoryChatLastPageData = $this->THistoryChatLog->find('all', array(
         'fields' => array(
@@ -1408,6 +1487,7 @@ $this->log('LandscapdData前',LOG_DEBUG);
         'recursive' => -1
         )
       );
+      $this->log("END tHistoryChatLastPageData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
       $this->set('historyId', $this->params->query['id']);
       $this->set('tHistoryChatLastPageData', $tHistoryChatLastPageData[0]['LastSpeechSendPage']);
     }
@@ -1415,10 +1495,7 @@ $this->log('LandscapdData前',LOG_DEBUG);
       if(!empty($historyList)) {
         if(!empty($searchHistoryId)) {
           $historyId = $searchHistoryId;
-          $this->set('historyId', $searchHistoryId);
-        }
-        else {
-          $historyId = $historyList[0]['THistory']['id'];
+          $this->log("BEGIN tHistoryChatLastPageData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
           //離脱ページ
           $tHistoryChatLastPageData = $this->THistoryChatLog->find('all', array(
             'fields' => array(
@@ -1447,6 +1524,42 @@ $this->log('LandscapdData前',LOG_DEBUG);
             'recursive' => -1
             )
           );
+          $this->log("END tHistoryChatLastPageData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
+          $this->set('historyId', $searchHistoryId);
+          $this->set('tHistoryChatLastPageData', $tHistoryChatLastPageData[0]['LastSpeechSendPage']);
+        }
+        else {
+          $historyId = $historyList[0]['THistory']['id'];
+          $this->log("BEGIN tHistoryChatLastPageData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
+          //離脱ページ
+          $tHistoryChatLastPageData = $this->THistoryChatLog->find('all', array(
+            'fields' => array(
+              'THistoryChatLog.t_histories_id',
+              'LastSpeechSendPage.id',
+              'LastSpeechSendPage.title',
+              'LastSpeechSendPage.url',
+              'LastSpeechSendPage.created'
+            ),
+            'joins' => array(
+                array(
+                    'type' => 'LEFT',
+                    'table' => '(SELECT id,t_histories_id,title,url,created FROM t_history_stay_logs)',
+                    'alias' => 'LastSpeechSendPage',
+                    'conditions' => [
+                      'LastSpeechSendPage.t_histories_id = THistoryChatLog.t_histories_id',
+                    ]
+                ),
+            ),
+            'conditions' => array(
+                'THistoryChatLog.m_companies_id' => $this->userInfo['MCompany']['id'],
+                'THistoryChatLog.t_histories_id' => $historyId
+              ),
+            'order' => array('LastSpeechSendPage.created' => 'desc'),
+            'limit' => 1,
+            'recursive' => -1
+            )
+          );
+          $this->log("END tHistoryChatLastPageData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
           $this->set('historyId', $historyList[0]['THistory']['id']);
           $this->set('tHistoryChatLastPageData', $tHistoryChatLastPageData[0]['LastSpeechSendPage']);
         }
@@ -1482,6 +1595,7 @@ $this->log('LandscapdData前',LOG_DEBUG);
       if ( !empty(array_keys($customerIdList)) ) {
         $mCusData = $this->MCustomer->getCustomerInfoForVisitorId($this->userInfo['MCompany']['id'], $visitors_id );
     }
+    $this->log("END userInfo : ".$this->getDateWithMilliSec(),LOG_DEBUG);
 
     $userInfo = $this->MUser->read(null, $this->userInfo['id']);
     $this->set('data', $data);
@@ -1501,6 +1615,7 @@ $this->log('LandscapdData前',LOG_DEBUG);
     $this->set('responderList', $this->MUser->coFind('list',["fields" => ["MUser.id", "MUser.display_name"], "recursive" => -1]));
     /* 除外情報取得 */
     $this->set('excludeList', $this->MCompany->getExcludeList($this->userInfo['MCompany']['id']));
+    $this->log('終了',LOG_DEBUG);
   }
 
   /**
@@ -1808,18 +1923,28 @@ $this->log('LandscapdData前',LOG_DEBUG);
     if(isset($data['History']['chat_type']) && $data['History']['chat_type'] !== "") {
       $this->set('chatType', Configure::read('chatType'));
       if($data['History']['chat_type'] == 1) {
-        $data['History']['chat_type_name'] = "Auto";
+          $data['History']['chat_type_name'] = "Auto";
+          $chatLogCond['chat.sry'] = 0;
+          $chatLogCond['chat.cmp'] = 0;
+        }
+        if($data['History']['chat_type'] == 2) {
+          $data['History']['chat_type_name'] = "Manual";
+          $chatLogCond['chat.cmp >'] = 0;
+        }
+        if($data['History']['chat_type'] == 3) {
+          $data['History']['chat_type_name'] = "NoEntry";
+          $chatLogCond['chat.cus >'] = 0;
+          $chatLogCond['chat.sry'] = 0;
+          $chatLogCond['chat.cmp'] = 0;
+          $chatLogCond['chat.auto_speech'] = 0;
+        }
+        if($data['History']['chat_type'] == 4) {
+          $data['History']['chat_type_name'] = "Sorry";
+          $chatLogCond['chat.cus >'] = 0;
+          $chatLogCond['chat.sry >'] = 0;
+          $chatLogCond['chat.cmp'] = 0;
+        }
       }
-      if($data['History']['chat_type'] == 2) {
-        $data['History']['chat_type_name'] = "Manual";
-      }
-      if($data['History']['chat_type'] == 3) {
-        $data['History']['chat_type_name'] = "NoEntry";
-      }
-      if($data['History']['chat_type'] == 4) {
-        $data['History']['chat_type_name'] = "Sorry";
-      }
-    }
 
     //IPアドレス
     if(isset($data['History']['ip_address']) && $data['History']['ip_address'] !== "") {
@@ -1878,6 +2003,21 @@ $this->log('LandscapdData前',LOG_DEBUG);
         ];
         $chatCond['visitors_id'] = $visitorsIds;
       }
+    }
+
+    // キャンペーンに関する検索条件
+    if ( isset($data['History']['campaign']) && $data['History']['campaign'] !== "" ) {
+      /*$tmp = mb_strstr($stayList[$history['THistory']['id']]['THistoryStayLog']['firstURL'], '?');
+      if ( $tmp !== "" ) {
+        foreach($campaignList as $k => $v){
+          if ( strpos($tmp, $k) !== false ) {
+            if ( $campaignParam !== "" ) {
+              $campaignParam .= "\n";
+            }
+            $campaignParam .= h($v);
+          }
+        }
+      }*/
     }
 
     // チャット送信ページに関する検索条件
@@ -2007,7 +2147,7 @@ $this->log('LandscapdData前',LOG_DEBUG);
           'alias' => 'chat',
           'fields' => [
             'chat.*',
-            '( CASE  WHEN chat.cus > 0 AND chat.sry = 0 AND chat.cmp = 0 AND auto_speech = 0 THEN "未入室" WHEN chat.cus > 0 AND chat.sry = 0 AND chat.cmp = 0 AND auto_speech > 0 THEN "自動返信" WHEN chat.cus = 0 AND chat.sry = 0 AND chat.cmp = 0 AND auto_speech = 0 AND auto_message > 0 THEN "自動返信" WHEN chat.cus > 0 AND chat.sry > 0 THEN "拒否" ELSE "" END ) AS type',
+            '( CASE  WHEN chat.cus > 0 AND chat.sry = 0 AND chat.cmp = 0 AND auto_speech = 0 THEN "未入室" WHEN chat.cus > 0 AND chat.sry = 0 AND chat.cmp = 0 AND auto_speech > 0 THEN "自動返信" WHEN chat.cus = 0 AND chat.sry = 0 AND chat.cmp = 0 AND auto_speech = 0 AND auto_message > 0 THEN "自動返信" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry > 0 THEN "拒否" ELSE "" END ) AS type',
           ],
           'conditions' => $chatLogCond
         ],
@@ -2608,5 +2748,11 @@ $this->log('LandscapdData前',LOG_DEBUG);
     $arrTime = explode('.',microtime(true));
     //日時＋ミリ秒
     $this->log($prefix.'::PROCESS_TIME '.date('Y-m-d H:i:s', $arrTime[0]) . '.' .$arrTime[1], LOG_DEBUG);
+  }
+
+  private function getDateWithMilliSec() {
+    //microtimeを.で分割
+    $arrTime = explode('.',microtime(true));
+    return date('Y-m-d H:i:s', $arrTime[0]) . '.' .$arrTime[1];
   }
 }
