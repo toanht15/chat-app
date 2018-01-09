@@ -3487,6 +3487,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       if(keys && keys.length > 0) {
         keys.forEach(function(key) {
           if(key.indexOf(socket.id) >= 0) {
+            console.log("delete customerList[" + info.siteKey + "]["+key+"]");
             delete customerList[info.siteKey][key];
           }
         });
