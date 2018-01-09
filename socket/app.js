@@ -15,7 +15,7 @@ var app = express();
 process.env.TZ = 'Asia/Tokyo';
 
 process.on('uncaughtException', function(err) {
-  console.log(err);
+  console.log("[" + Date.now() + "]" + err);
   console.log(err.stack);
 });
 
