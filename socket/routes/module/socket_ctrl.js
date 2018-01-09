@@ -1470,10 +1470,15 @@ io.sockets.on('connection', function (socket) {
         var currentSincloSessionId = sincloCore[res.siteKey][res.tabId].sincloSessionId;
         if(currentSincloSessionId) {
           var oldSessionId = sincloCore[res.siteKey][res.tabId].sessionId;
-          var sessionIds = sincloCore[res.siteKey][currentSincloSessionId].sessionIds;
-          delete sessionIds[oldSessionId];
-          if(currentSincloSessionId !== res.sincloSessionId && Object.keys(sessionIds).length === 0) {
-            delete sincloCore[res.siteKey][currentSincloSessionId];
+          var sincloSession = sincloCore[res.siteKey][currentSincloSessionId];
+          if(isset(sincloSession)) {
+            var sessionIds = sincloSession.sessionIds;
+            delete sessionIds[oldSessionId];
+            if(currentSincloSessionId !== res.sincloSessionId && Object.keys(sessionIds).length === 0) {
+              delete sincloCore[res.siteKey][currentSincloSessionId];
+            }
+          } else {
+            console.log("currentSincloSession : " + currentSincloSessionId + " is null.");
           }
         }
       }
@@ -2221,7 +2226,13 @@ io.sockets.on('connection', function (socket) {
     chat.created = new Date();
     chat.sort = fullDateTime(chat.created);
 
-    sincloCore[chat.siteKey][chat.sincloSessionId].autoMessages[chat.chatId] = chat;
+    var sincloSession = sincloCore[chat.siteKey][chat.sincloSessionId];
+    if(isset(sincloSession) && isset(sincloSession.autoMessages)) {
+      sincloCore[chat.siteKey][chat.sincloSessionId].autoMessages[chat.chatId] = chat;
+    } else {
+      console.log("sendAutoChatMessage::sincloSession : " + chat.sincloSessionId + "is null.");
+      return false;
+    }
     emit.toCompany('resAutoChatMessage', chat, chat.siteKey);
     emit.toSameUser('resAutoChatMessage', chat, chat.siteKey, chat.sincloSessionId);
   });
@@ -3227,9 +3238,11 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       delete connectList[socket.id];
 
       if(sincloSessionId) {
-        var sessionIds = sincloCore[info.siteKey][sincloSessionId].sessionIds;
-        if(sessionIds && Object.keys(sessionIds).length > 0) {
-          delete sessionIds[socket.id];
+        var sincloSession = sincloCore[info.siteKey][sincloSessionId];
+        if(isset(sincloSession) && isset(sincloSession.sessionIds) && Object.keys(sincloSession.sessionIds).length > 0) {
+          delete sincloSession.sessionIds[socket.id];
+        } else {
+          console.log("sincloSession : " + sincloSessionId + " is null.");
         }
       }
 
