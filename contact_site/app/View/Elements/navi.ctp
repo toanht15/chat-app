@@ -87,6 +87,7 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
         </div>
       </div>
     </div>
+  <div id="supportNumberArea" style="width:100%; color:#FFF; position: absolute; bottom: 5px; text-align: center;"></div>
 </div>
 <!-- /* サイドバー１（ここまで） */ -->
 
@@ -139,6 +140,11 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
         <div class="icon">
           <?= $this->htmlEx->naviLink('定型文', 'dictionary.png', ['href' => ['controller' => 'TDictionaries', 'action' => 'index']]) ?>
         </div>
+      <?php if ( $adminFlg ): ?>
+        <div class="icon">
+          <?= $this->htmlEx->naviLink('ファイル送信', 'file_transfer_setting_menu.png', ['href' => ['controller' => 'MFileTransferSetting', 'action' => 'edit']]) ?>
+        </div>
+      <?php endif; ?>
         <div class="icon">
           <?= $this->htmlEx->naviLink('チャット通知', 'notification.png', ['href' => ['controller' => 'MChatNotifications', 'action' => 'index']]) ?>
         </div>
@@ -189,3 +195,15 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
 
   });
 </script>
+<?php if(strcmp($_SERVER['SERVER_NAME'], '	sinclo.jp') === 0): ?>
+<script type='text/javascript' src='https://ws1.sinclo.jp/client/5a2e2a75cb7e3.js' data-hide='1'></script>
+<script>
+  document.addEventListener('sinclo:connected', function(evt) {
+// この部分が動作したタイミングは
+// sincloの接続処理が完了して番号を取得できる状態となっている
+    var accessId = window.sinclo.api.getAccessId();
+// 上記のaccessIdの値を表示したい箇所に挿入
+    $('#supportNumberArea').text(accessId);
+  });
+</script>
+<?php endif; ?>

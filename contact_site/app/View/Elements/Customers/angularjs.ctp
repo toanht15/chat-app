@@ -62,6 +62,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         auto: 3,
         sorry: 4,
         autoSpeech: 5,
+        sendFile: 6,
         start: 98,
         end: 99,
       },
@@ -158,6 +159,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         this.getMessageToken = makeToken();
         emit('getAutoChatMessages', {userId: obj.userId, mUserId: myUserId, tabId: obj.tabId, chatToken: this.getMessageToken});
       },
+      openFileUploadDialog: function() {
+
+      },
       addOption: function(type){
         var sendMessage = document.getElementById('sendMessage');
         switch(type){
@@ -209,6 +213,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         if ( isset(monitor.chatUnreadCnt) && monitor.chatUnreadCnt > 0 ) {
           emit('isReadChatMessage', {
             tabId: monitor.tabId,
+            sincloSessionId: monitor.sincloSessionId,
             chatId: monitor.chatUnreadId
           });
         }
@@ -217,6 +222,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         // メッセージを既読にする
         emit('isReadChatMessage', {
           tabId: monitor.tabId,
+          sincloSessionId: monitor.sincloSessionId,
           chatId: monitor.chatUnreadId
         });
       }
@@ -353,6 +359,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
   // http://weathercook.hatenadiary.jp/entry/2013/12/02/062136
   sincloApp.factory('angularSocket', function ($rootScope) {
+    if(socket) {
+      socket.open();
+    }
     return {
       on: function (eventName, callback) {
         if ( !window.hasOwnProperty('socket') ) return false;
@@ -393,12 +402,14 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     $scope.oprWaitCnt = 0; // 総オペレーター人数
     $scope.labelHideList = <?php echo json_encode($labelHideList) ?>;
     $scope.monitorList = {};
+    $scope.requestedCustomerList = [];
     $scope.customerList = {};
     $scope.messageList = [];
     $scope.chatOpList = [];
     $scope.chatList = [];
     $scope.typingMessageSe = "";
     $scope.typingMessageRe = {};
+    $scope.uploadProgress = 0;
     $scope.scInfo = { remain: 0 };
     $scope.chatLogList = []; // 詳細情報のチャットログリスト
     $scope.chatLogMessageList = []; // 詳細情報のチャットログメッセージリスト
@@ -842,7 +853,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     $scope.confirmFlg = false;
     $scope.sendMessageConnectConfirm = function(detailId){
         var monitor = $scope.monitorList[detailId], message = "";
-        if ( $scope.confirmFlg ) return false;
+        if ( $scope.confirmFlg || !isset(monitor)) return false;
         $scope.confirmFlg = true;
 
         // 対応者切替の場合
@@ -1175,41 +1186,112 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     // 【チャット】テキストの構築
     $scope.createTextOfMessage = function(chat, message, opt) {
-        var strings = message.split('\n');
-        var custom = "";
-        var linkReg = RegExp(/http(s)?:\/\/[!-~.a-z]*/);
-        var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
-        var radioName = "sinclo-radio" + Object.keys(chat).length;
-        var option = ( typeof(opt) !== 'object' ) ? { radio: true } : opt;
-        for (var i = 0; strings.length > i; i++) {
-            var str = escape_html(strings[i]);
-            // ラジオボタン
-            var radio = str.indexOf('[]');
-            if ( option.radio && radio > -1 ) {
-                var val = str.slice(radio+2);
-                str = "<input type='radio' name='" + radioName + "' id='" + radioName + "-" + i + "' class='sinclo-chat-radio' value='" + val + "' disabled=''>";
-                str += "<label class='pointer' for='" + radioName + "-" + i + "'>" + val + "</label>";
-            }
-            // リンク
-            var link = str.match(linkReg);
-            if ( link !== null ) {
-                var url = link[0];
-                var a = "<a href='" + url + "' target='_blank'>"  + url + "</a>";
-                str = str.replace(url, a);
-            }
-            // 電話番号（スマホのみリンク化）
-            var tel = str.match(telnoTagReg);
-            if( tel !== null ) {
-              var telno = tel[1];
-              // ただの文字列にする
-              var span = "<span class='telno'>" + telno + "</span>";
-              str = str.replace(tel[0], span);
-            }
-            custom += str + "\n";
-
+      var strings = message.split('\n');
+      var custom = "";
+      var linkReg = RegExp(/http(s)?:\/\/[!-~.a-z]*/);
+      var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
+      var radioName = "sinclo-radio" + Object.keys(chat).length;
+      var option = ( typeof(opt) !== 'object' ) ? { radio: true } : opt;
+      for (var i = 0; strings.length > i; i++) {
+        var str = escape_html(strings[i]);
+        // ラジオボタン
+        var radio = str.indexOf('[]');
+        if ( option.radio && radio > -1 ) {
+          var val = str.slice(radio+2);
+          str = "<input type='radio' name='" + radioName + "' id='" + radioName + "-" + i + "' class='sinclo-chat-radio' value='" + val + "' disabled=''>";
+          str += "<label class='pointer' for='" + radioName + "-" + i + "'>" + val + "</label>";
         }
-        return custom;
-      };
+        // リンク
+        var link = str.match(linkReg);
+        if ( link !== null ) {
+          var url = link[0];
+          var a = "<a href='" + url + "' target='_blank'>"  + url + "</a>";
+          str = str.replace(url, a);
+        }
+        // 電話番号（スマホのみリンク化）
+        var tel = str.match(telnoTagReg);
+        if( tel !== null ) {
+          var telno = tel[1];
+          // ただの文字列にする
+          var span = "<span class='telno'>" + telno + "</span>";
+          str = str.replace(tel[0], span);
+        }
+        custom += str + "\n";
+
+      }
+      return custom;
+    };
+
+    $scope.createTextOfSendFile = function(chat, url, name, size, extension, isExpired) {
+      var thumbnail = "";
+      if (extension.match(/(jpeg|jpg|gif|png)$/) != null && !isExpired) {
+        thumbnail = "<img src='" + url + "' class='sendFileThumbnail' width='64' height='64'>";
+      } else {
+        thumbnail = "<i class='fa " + selectFontIconClassFromExtension(extension) + " fa-4x sendFileThumbnail' aria-hidden='true'></i>";
+      }
+
+      var content = "<span class='cName'>ファイル送信" + (isExpired ? "（ダウンロード有効期限切れ）" : "") + "</span>";
+      content    += "<div class='sendFileContent'>";
+      content    += "  <div class='sendFileThumbnailArea'>" + thumbnail + "</div>";
+      content    += "  <div class='sendFileMetaArea'>";
+      content    += "    <span class='data sendFileName'>" + name + "</span>";
+      content    += "    <span class='data sendFileSize'>" + formatBytes(size,2) + "</span>";
+      content    += "  </div>";
+      content    += "</div>";
+
+      return content;
+    };
+
+    function selectFontIconClassFromExtension(ext) {
+      var selectedClass = "",
+        icons = {
+          image:      'fa-file-image-o',
+          pdf:        'fa-file-pdf-o',
+          word:       'fa-file-word-o',
+          powerpoint: 'fa-file-powerpoint-o',
+          excel:      'fa-file-excel-o',
+          audio:      'fa-file-audio-o',
+          video:      'fa-file-video-o',
+          zip:        'fa-file-zip-o',
+          code:       'fa-file-code-o',
+          text:       'fa-file-text-o',
+          file:       'fa-file-o'
+        },
+        extensions = {
+          gif: icons.image,
+          jpeg: icons.image,
+          jpg: icons.image,
+          png: icons.image,
+          pdf: icons.pdf,
+          doc: icons.word,
+          docx: icons.word,
+          ppt: icons.powerpoint,
+          pptx: icons.powerpoint,
+          xls: icons.excel,
+          xlsx: icons.excel,
+          aac: icons.audio,
+          mp3: icons.audio,
+          ogg: icons.audio,
+          avi: icons.video,
+          flv: icons.video,
+          mkv: icons.video,
+          mp4: icons.video,
+          gz: icons.zip,
+          zip: icons.zip,
+          css: icons.code,
+          html: icons.code,
+          js: icons.code,
+          txt: icons.text,
+          csv: icons.csv,
+          file: icons.file
+        };
+      if(isset(extensions[ext])) {
+        selectedClass = extensions[ext]
+      } else {
+        selectedClass = extensions['file'];
+      }
+      return selectedClass;
+    }
 
     // 【チャット】チャット枠の構築
     $scope.createMessage = function(elem, chat){
@@ -1240,8 +1322,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         if ( Number(widget.showName) === <?=C_WIDGET_SHOW_NAME?> ) {
           chatName = userList[Number(userId)];
         }
-        content = "<span class='cName'>" + chatName + "</span>";
-        content += $scope.createTextOfMessage(chat, message);
+
+        content = $scope.createTextOfMessage(chat, message);
       }
       else if ( type === chatApi.messageType.auto || type === chatApi.messageType.sorry) {
         cn = "sinclo_auto";
@@ -1258,6 +1340,24 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         div.style.padding = '0';
         content = "<span class='cName'>自動返信</span>";
         content += $scope.createTextOfMessage(chat, message);
+      }
+      else if ( type === chatApi.messageType.sendFile ) {
+        // ファイル送信はmessageがJSONなのでparseする
+        message = JSON.parse(message);
+        cn = "sinclo_se";
+        div.style.textAlign = 'right';
+        div.style.height = 'auto';
+        div.style.padding = '0';
+//        var chatName = widget.subTitle;
+//        if ( Number(widget.showName) === <?//=C_WIDGET_SHOW_NAME?>// ) {
+//          chatName = userList[Number(userId)];
+//        }
+        var isExpired = Math.floor((new Date()).getTime() / 1000) >=  (Date.parse( message.expired.replace( /-/g, '/') ) / 1000);
+        content = $scope.createTextOfSendFile(chat, message.downloadUrl, message.fileName, message.fileSize, message.extension, isExpired);
+        if(!isExpired) {
+          li.style.cursor = "pointer";
+          li.addEventListener("click", function(event){window.open(message.downloadUrl)});
+        }
       }
       else  {
         cn = "sinclo_etc";
@@ -1365,7 +1465,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           // フォーカスが外れたら時にPlaceholderを表示（Edge対応）
           var sendPattarnStr = ( $scope.settings.sendPattarn ) ? "Shift + Enter": "Enter";
           chatApi.observeType.end();
-          this.placeholder="ここにメッセージ入力してください。\n・" + sendPattarnStr + "で改行されます\n・下矢印キー(↓)で定型文が開きます";
+          this.placeholder="ここにメッセージ入力してください。\n・" + sendPattarnStr + "で改行されます\n・下矢印キー(↓)で定型文が開きます<?php if(isset($coreSettings[C_COMPANY_USE_SEND_FILE]) && $coreSettings[C_COMPANY_USE_SEND_FILE]): ?>\n・ここにファイルをドロップするとファイルを送信できます<?php endif;?>";
           $scope.chatPsFlg = true;
 
         });
@@ -1437,6 +1537,141 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       }
     };
 
+    <?php if(isset($coreSettings[C_COMPANY_USE_SEND_FILE]) && $coreSettings[C_COMPANY_USE_SEND_FILE]): ?>
+    // ===========
+    // ファイル送信
+    // ===========
+    $scope.fileUploader = {
+      isDisable: false,
+      dragging: false,
+      dragArea: $("#sub_contents"),
+      droppable: $("#fileUploadDropArea").css('display', 'none'),
+      selectFileBtn: $('#selectFileBtn'),
+      selectInput: $('#selectFileInput'),
+      fileObj: null,
+      loadData: null,
+      allowExtensions: <?= json_encode($allowExtensions); ?>,
+
+      init: function() {
+        if(window.FileReader) {
+          this._addDragAndDropEvents();
+        } else {
+          this.isDisable = true;
+        }
+        this._addSelectFileEvents();
+      },
+      _addDragAndDropEvents: function() {
+        this.dragArea.on("dragenter", this._enterEvent);
+        this.dragArea.on("dragover", this._overEvent);
+        this.dragArea.on("dragleave", this._leaveEvent);
+        this.dragArea.on("drop", function(){ $scope.fileUploader.droppable.css('display', 'none'); event.preventDefault(); event.stopPropagation(); return false;});
+        this.droppable.on("drop", this._handleDroppedFile);
+      },
+      _addSelectFileEvents: function() {
+        this.selectFileBtn.on('click', function(event){
+          $scope.fileUploader.selectInput.trigger('click');
+        });
+        this.selectInput.on("click", function(event){
+          $scope.fileUploader._hideInvalidError();
+          $(this).val(null);
+        }).on("change",function(event){
+          if($scope.fileUploader.selectInput[0].files[0]) {
+            $scope.fileUploader.fileObj = $scope.fileUploader.selectInput[0].files[0];
+            // ファイルの内容は FileReader で読み込みます.
+            var fileReader = new FileReader();
+            fileReader.onload = function (event) {
+              if(!$scope.fileUploader._validExtension($scope.fileUploader.fileObj.name)) {
+                $scope.fileUploader._showInvalidError();
+                return;
+              }
+              // event.target.result に読み込んだファイルの内容が入っています.
+              // ドラッグ＆ドロップでファイルアップロードする場合は result の内容を Ajax でサーバに送信しましょう!
+              $scope.fileUploader.loadData = event.target.result;
+              $scope.fileUploader._showConfirmDialog("【" + $scope.fileUploader.fileObj.name + "】をアップロードします。<br>よろしいですか？");
+            };
+            fileReader.readAsArrayBuffer($scope.fileUploader.fileObj);
+          }
+        });
+      },
+      _enterEvent: function(event) {
+        $scope.fileUploader.dragging = true;
+        $scope.fileUploader._cancelEvent(event);
+        return false;
+      },
+      _overEvent: function(event) {
+        $scope.fileUploader.dragging = false;
+        $scope.fileUploader.droppable.css('display', 'flex');
+        $scope.fileUploader._cancelEvent(event);
+        return false;
+      },
+      _leaveEvent: function(event) {
+        if($scope.fileUploader.dragging) {
+          $scope.fileUploader.dragging = false;
+        } else {
+          $scope.fileUploader.droppable.css('display', 'none');
+        }
+        $scope.fileUploader._cancelEvent(event);
+        return false;
+      },
+      _handleDroppedFile: function(event) {
+        $scope.fileUploader.droppable.css('display', 'none');
+        $scope.fileUploader._hideInvalidError();
+        // ファイルは複数ドロップされる可能性がありますが, ここでは 1 つ目のファイルを扱います.
+        $scope.fileUploader.fileObj = event.originalEvent.dataTransfer.files[0];
+
+        // ファイルの内容は FileReader で読み込みます.
+        var fileReader = new FileReader();
+        fileReader.onload = function(event) {
+          if(!$scope.fileUploader._validExtension($scope.fileUploader.fileObj.name)) {
+            $scope.fileUploader._showInvalidError();
+            return;
+          }
+          // event.target.result に読み込んだファイルの内容が入っています.
+          // ドラッグ＆ドロップでファイルアップロードする場合は result の内容を Ajax でサーバに送信しましょう!
+          $scope.fileUploader.loadData = event.target.result;
+          $scope.fileUploader._showConfirmDialog("<p style='text-align:center;'><span style='line-height: 2em;'>【" + $scope.fileUploader.fileObj.name + "】をアップロードします。<br>よろしいですか？</span></p>");
+        }
+        fileReader.readAsArrayBuffer($scope.fileUploader.fileObj);
+
+        // デフォルトの処理をキャンセルします.
+        $scope.fileUploader._cancelEvent(event);
+        return false;
+      },
+      _cancelEvent: function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+      },
+      _validExtension: function(filename) {
+        var split = filename.split(".");
+        var targetExtension = split[split.length-1];
+        var regex = new RegExp(this.allowExtensions.join("|"), 'i');
+        return regex.test(targetExtension);
+      },
+      _showInvalidError: function() {
+        var span = document.createElement("span");
+        span.classList.add('errorMsg');
+        span.textContent = "指定のファイルは送信を許可されていません。";
+        $("#sendMessageArea").append(span);
+      },
+      _hideInvalidError: function() {
+        $('#sendMessageArea').find('span.errorMsg').remove();
+      },
+      _showConfirmDialog: function(message) {
+        modalOpen.call(window, message, 'p-cus-file-upload', '確認', 'moment');
+        $('#')
+        popupEvent.closePopup = function() {
+          $scope.uploadFile($scope.fileUploader.fileObj, $scope.fileUploader.loadData);
+          popupEvent.close();
+        };
+      }
+    };
+    
+    $scope.fileUploader.init();
+    // =====================
+    // ファイル送信（ここまで）
+    // =====================
+    <?php endif; ?>
+
     $scope.ngCameraApi = {
       connect: function(obj){
         cameraApi.connect(obj);
@@ -1445,6 +1680,73 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         cameraApi.disConnect(obj);
       }
     };
+
+    // ファイル送信
+    $scope.uploadFile = function(fileObj, loadFile) {
+      var fd = new FormData();
+      var blob = new Blob([loadFile], {type: fileObj.type});
+      var target = $('upload-notification');
+      fd.append("targetUserId", chatApi.userId);
+      fd.append("file", blob, fileObj.name);
+
+      $.ajax({
+        url  : "<?= $this->Html->url('/File/upload') ?>",
+        type : "POST",
+        data : fd,
+        cache       : false,
+        contentType : false,
+        processData : false,
+        dataType    : "json",
+        xhr : function(){
+          var XHR = $.ajaxSettings.xhr();
+          if(XHR.upload){
+            XHR.upload.addEventListener('progress',function(e){
+              $scope.uploadProgress = parseInt(e.loaded/e.total*10000)/100;
+              console.log($scope.uploadProgress);
+              if($scope.uploadProgress === 100) {
+                $('#uploadMessage').css('display', 'none');
+                $('#processingMessage').css('display', 'block');
+              }
+              $scope.$apply();
+            }, false);
+          }
+          return XHR;
+        }
+      })
+      .done(function(data, textStatus, jqXHR){
+        console.log(JSON.stringify(data));
+        target.css('display', 'none');
+        $('#uploadMessage').css('display', 'block');
+        $('#processingMessage').css('display', 'none');
+        $scope.uploadProgress = 0;
+        $scope.$apply();
+        var noFlg = 0;
+        emit('sendChat', {
+          token: chatApi.token,
+          tabId: chatApi.tabId,
+          sincloSessionId: chatApi.sincloSessionId,
+          userId: chatApi.userId,
+          chatMessage: JSON.stringify(data),
+          mUserId: myUserId,
+          messageType: chatApi.messageType.sendFile,
+          messageRequestFlg: noFlg
+        });
+      })
+      .fail(function(jqXHR, textStatus, errorThrown){
+        alert("fail");
+        $('#uploadMessage').css('display', 'block');
+        $('#processingMessage').css('display', 'none');
+        $scope.uploadProgress = 0;
+        $scope.$apply();
+      });
+      var targetHeight = target.outerHeight();
+      target.css('display', 'block');
+      target.css('top',$('#chatTalk').outerHeight() - targetHeight);
+    };
+
+    function updateProgress(evt) {
+      console.log(evt.loaded / evt.total);
+    }
 
     $scope.$watch('monitorList', function(){
       if ( angular.isDefined($scope.detailId) && !($scope.detailId in $scope.monitorList) ) {
@@ -1459,7 +1761,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       }
 
       $scope.monitorList[obj.tabId] = obj;
-      $scope.getCustomerInfoFromMonitor(obj);
+
+      //$scope.getCustomerInfoFromMonitor(obj);
 
       if ( 'referrer' in obj && 'referrer' in obj) {
         var url = $scope.trimToURL(obj.referrer);
@@ -1569,12 +1872,17 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     socket.on('receiveAccessInfo', function (data) {
       if(!contract.hideRealtimeMonitor) {
-        var obj = JSON.parse(data);
-        if (receiveAccessInfoToken !== obj.receiveAccessInfoToken) return false;
-        pushToList(obj);
-        if ('chat' in obj && String(obj.chat) === "<?=$muserId?>") {
-          pushToChatList(obj.tabId);
-        }
+        setTimeout(function(){
+          $scope.$apply(function(){
+            var obj = JSON.parse(data);
+            obj.forEach(function(elm, index, arr) {
+              pushToList(elm);
+              if ('chat' in elm && String(elm.chat) === "<?=$muserId?>") {
+                pushToChatList(elm.tabId);
+              }
+            });
+          });
+        }, 100);
       }
     });
 
@@ -2023,8 +2331,12 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     // チャットメッセージ既読処理結果関数
     socket.on('retReadChatMessage', function(d){
       var obj = JSON.parse(d);
-      $scope.monitorList[obj.tabId].chatUnreadId = null;
-      $scope.monitorList[obj.tabId].chatUnreadCnt = 0;
+      Object.keys($scope.monitorList).forEach(function(key) {
+        if ($scope.monitorList[key].sincloSessionId === obj.sincloSessionId) {
+          $scope.monitorList[key].chatUnreadId = null;
+          $scope.monitorList[key].chatUnreadCnt = 0;
+        }
+      });
     });
 
     // チャット入力中ステータスの要求リクエスト
@@ -3101,6 +3413,21 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     };
   }]);
 
+  sincloApp.filter('limitTo', function(){
+    return function(input, limit, scope) {
+      var returnValue = input.slice(0, limit);
+      returnValue.forEach(function(elm, index, array){
+        if(!isset(scope.customerList[elm.userId])) {
+          if(scope.requestedCustomerList.indexOf(elm.userId) === -1) {
+            scope.getCustomerInfoFromMonitor(elm);
+            scope.requestedCustomerList.push(elm.userId);
+          }
+        }
+      });
+      return returnValue;
+    }
+  });
+
   // 参考 http://stackoverflow.com/questions/14478106/angularjs-sorting-by-property
   sincloApp.filter('orderObjectBy', function(){
     return function(input, atr) {
@@ -3290,7 +3617,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         scope.chatPs = function(){
           var sendPattarnStr = ( scope.settings.sendPattarn ) ? "Shift + Enter": "Enter";
           if ( scope.chatPsFlg ) {
-            return "ここにメッセージ入力してください。\n・" + sendPattarnStr + "で改行されます\n・下矢印キー(↓)で定型文が開きます";
+            return "ここにメッセージ入力してください。\n・" + sendPattarnStr + "で改行されます\n・下矢印キー(↓)で定型文が開きます<?php if(isset($coreSettings[C_COMPANY_USE_SEND_FILE]) && $coreSettings[C_COMPANY_USE_SEND_FILE]): ?>\n・ここにファイルをドロップするとファイルを送信できます<?php endif;?>";
           }
           else {
             return "";
