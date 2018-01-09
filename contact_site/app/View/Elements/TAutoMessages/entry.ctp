@@ -1,7 +1,7 @@
 <?php echo $this->element('TAutoMessages/angularjs'); ?>
 
-<?php $this->Form->inputDefaults(['label'=>false, 'div' => false, 'error' => false, 'legend' => false ]);?>
 <div class="form01" ng-app="sincloApp" ng-controller="MainController as main" ng-cloak>
+  <?php $this->Form->inputDefaults(['label'=>false, 'div' => false, 'error' => false, 'legend' => false ]);?>
   <section>
     <h3>１．基本設定</h3>
     <ul class="settingList pl30">
@@ -91,6 +91,10 @@
 
     </ul>
     <?=$this->ngForm->input('activity', ['type'=>'hidden'])?>
+    <?=$this->ngForm->input('widget.showTab', ['type' => 'hidden'], ['entity' => 'widget.showTab']) ?>
+    <?=$this->Form->input('widgetSettings', ['type' => 'hidden','value' => json_encode($this->data['widgetSettings'])],[
+        'entity' => ''
+    ])?>
   </section>
 
   <h3>３．実行設定</h3>
@@ -315,5 +319,9 @@
         <a href="javascript:void(0)" onclick="removeAct(<?= $lastPage?>)" class="redBtn btn-shadow <?=$class?>">削除</a>
     </div>
   </section>
+  <?= $this->Form->end(); ?>
 
+  <div id="tautomessages_simulator">
+    <?= $this->element('TAutoMessages/simulator'); ?>
+  </div><!-- /tautomessages_simulator -->
 </div>

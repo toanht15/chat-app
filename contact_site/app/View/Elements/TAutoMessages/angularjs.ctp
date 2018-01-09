@@ -132,6 +132,449 @@ sincloApp.controller('MainController', function($scope) {
         }
         return true;
     };
+
+    var json = JSON.parse(document.getElementById('TAutoMessageWidgetSettings').value);
+    var widgetSettings = [];
+    for (var item in json) {
+      widgetSettings[item] = json[item];
+    }
+    $scope.widgetSettings = widgetSettings;
+    console.log($scope.widgetSettings);
+
+    var coreSettingsChat = "<?= $coreSettings[C_COMPANY_USE_CHAT]?>";
+    $scope.main_image = $scope.widgetSettings['main_image'];
+
+    $scope.showWidgetType = 1; // デフォルト表示するウィジェット
+    $scope.openFlg = true;
+
+    $scope.changeFlg = false;
+
+    $scope.showTiming = $scope.widgetSettings['show_timing'];
+    $scope.showTime = $scope.widgetSettings['show_time'];
+    $scope.widgetSizeTypeToggle = $scope.widgetSettings['widget_size_type'];
+    $scope.subTitleToggle = $scope.widgetSettings['show_subtitle'];
+    $scope.descriptionToggle = $scope.widgetSettings['show_description'];
+    $scope.mainImageToggle = $scope.widgetSettings['show_main_image'];
+    $scope.minimizedDesignToggle = $scope.widgetSettings['minimize_design_type'];
+    $scope.closeButtonSettingToggle = $scope.widgetSettings['close_button_setting'];
+    $scope.closeButtonModeTypeToggle = $scope.widgetSettings['close_button_mode_type'];
+    $scope.timeTextToggle = $scope.widgetSettings['display_time_flg'];
+
+    $scope.chat_message_copy = $scope.widgetSettings['chat_message_copy'];
+    $scope.chat_message_design_type = $scope.widgetSettings['chat_message_design_type'];
+    $scope.widget_outside_border_none = !$scope.widgetSettings['widget_border_color'];
+    $scope.widget_inside_border_none = !$scope.widgetSettings['widget_inside_border_color'];
+    $scope.re_border_none = !$scope.widgetSettings['re_border_color'];
+    $scope.se_border_none = !$scope.widgetSettings['se_border_color'];
+    $scope.show_name = $scope.widgetSettings['show_name'];
+    $scope.message_box_border_none = !$scope.widgetSettings['message_box_border_color'];
+
+    $scope.switchWidget = function(num){
+      $scope.showWidgetType = num;
+      sincloChatMessagefocusFlg = true;
+      var sincloBox = document.getElementById("sincloBox");
+
+      if ( Number(num) === 3 ) { // ｽﾏｰﾄﾌｫﾝ（縦）の表示
+        $scope.widget.showTab = 'chat'; // 強制でチャットにする
+      }
+
+      if ( Number(num) !== 2 ) { // ｽﾏｰﾄﾌｫﾝ（横）以外は最大化する
+        if(sincloBox){
+          if(sincloBox.style.display == 'none'){
+            sincloBox.style.display = 'block';
+          }
+        }
+        /* ウィジェットが最小化されていたら最大化する */
+        if ( !$scope.openFlg ) { // 最小化されている場合
+          var main = document.getElementById("miniTarget");  // 非表示対象エリア
+          var height = 0;
+          if(main){
+            for(var i = 0; main.children.length > i; i++){ // 非表示エリアのサイズを計測する
+              if ( Number(num) === 3 && main.children[i].id === 'navigation' ) continue; // SPの場合はナビゲーションは基本表示しない
+              height += main.children[i].offsetHeight;
+            }
+            main.style.height = height + "px";
+          }
+        }
+      }
+      if( Number(num) !== 4 ){
+        if(coreSettingsChat){
+          document.getElementById("switch_widget").value = num;
+        }
+      }
+      $scope.openFlg = true;
+    }
+
+    //バナーから通常の表示に戻るときの処理
+    $scope.bannerSwitchWidget = function(){
+      var coreSettingsChat = "<?= $coreSettings[C_COMPANY_USE_CHAT]?>";
+      if(coreSettingsChat){
+        var lastSwitchWidget = Number(document.getElementById("switch_widget").value);
+      }
+      else{
+        var lastSwitchWidget = 1;
+      }
+      sincloBox.style.display = 'block';
+      $scope.switchWidget(lastSwitchWidget);
+      $scope.openFlg = true;
+      return;
+    }
+
+    $scope.showChooseImg = function(){
+      return $scope.mainImageToggle == '1';
+    }
+
+    $scope.showcloseButtonMode = function(){
+      if($scope.closeButtonSettingToggle == '2' && $scope.mainImageToggle != '4'){
+        $("#closeButtonMode").show();
+      }
+      else{
+        $("#closeButtonMode").hide();
+      }
+      return;
+    }
+
+    //小さなバナーの横幅を求める関数
+    /*
+     * 　もともとバナーの横幅はwidth: fit-content;で値を動的に持たせていたが、IEでこの実装は動作しなかったため
+     * 現在の横幅を算出して当てはめる方法にした経緯がある。
+     * 　しかし、各ブラウザごとにfontサイズの扱いが異なるため、この実装においても、サファリなどで見た目に差異が
+     * 生まれてしまっていた。そのため、ブラウザごとに微調整できるようにし、現在に至る。
+     */
+    $scope.getBannerWidth = function(){
+      $('#sincloBanner').css("width","40px");
+      var text = $scope.bannertext;
+      var oneByteCount = 0;
+      var towByteCount = 0;
+
+      if(text.length === 0) {
+        $('#sincloBanner').css("width","38px");
+        return;
+      }
+
+      for (var i=0; i<text.length; i++){
+        var n = escape(text.charAt(i));
+        if (n.length < 4){
+          oneByteCount++;
+        }
+        else{
+          towByteCount++;
+        }
+      }
+
+      //いったん文字数でのサイズ調整を行い、その後spanタグの長さで調整（span内で文字が折り返さないように）
+      var bannerWidth = (oneByteCount * 8) + (towByteCount * 12.7) + 40;
+      $('#sincloBanner').css("width", bannerWidth + "px");
+
+      var targetSpan = $('#bannertext').get(0);
+
+      if(targetSpan) {
+        console.log(targetSpan.offsetWidth);
+        bannerWidth = targetSpan.offsetWidth + 40;
+        $('#sincloBanner').css("width", bannerWidth + "px");
+      }
+    }
+
+    $scope.$watch('chat_trigger', function(){
+      if ( Number($scope.widgetSettings.chat_trigger) === 1 ) {
+        $scope.widgetSettings.chat_area_placeholder_pc = "（Shift+Enterで改行/Enterで送信）";
+        $scope.widgetSettings.chat_area_placeholder_sp = "（改行で送信）";
+      }
+      else {
+        $scope.widgetSettings.chat_area_placeholder_pc = "";
+        $scope.widgetSettings.chat_area_placeholder_sp = "";
+      }
+    });
+
+    $scope.makeFaintColor = function(){
+      var defColor = "#F1F5C8";
+      //仕様変更、常に高度な設定が当たっている状態とする
+      defColor = $scope.widgetSettings.re_background_color;
+//       if($scope.color_setting_type === '1'){
+//         defColor = $scope.re_background_color;
+//       }
+//       else{
+//         if ( $scope.main_color.indexOf("#") >= 0 ) {
+//           var code = $scope.main_color.substr(1), r,g,b;
+//           if (code.length === 3) {
+//             r = String(code.substr(0,1)) + String(code.substr(0,1));
+//             g = String(code.substr(1,1)) + String(code.substr(1,1));
+//             b = String(code.substr(2)) + String(code.substr(2));
+//           }
+//           else {
+//             r = String(code.substr(0,2));
+//             g = String(code.substr(2,2));
+//             b = String(code.substr(4));
+//           }
+//           var balloonR = String(Math.floor(255 - (255 - parseInt(r,16)) * 0.1));
+//           var balloonG = String(Math.floor(255 - (255 - parseInt(g,16)) * 0.1));
+//           var balloonB = String(Math.floor(255 - (255 - parseInt(b,16)) * 0.1));
+//           defColor = 'rgb(' + balloonR  + ', ' +  balloonG  + ', ' +  balloonB + ')';
+//         }
+//       }
+      return defColor;
+    };
+
+    $scope.getTalkBorderColor = function(chk){
+      var defColor = "#E8E7E0";
+      //仕様変更、常に高度な設定が当たっている状態とする
+      if(chk === 're'){
+        defColor = $scope.widgetSettings.re_border_color;
+      }
+      else{
+        defColor = $scope.widgetSettings.se_border_color;
+      }
+//       if($scope.color_setting_type === '1'){
+//         if(chk === 're'){
+//           defColor = $scope.re_border_color;
+//         }
+//         else{
+//           defColor = $scope.se_border_color;
+//         }
+//       }
+//       else{
+//         defColor = $scope.chat_talk_border_color;
+//       }
+      return defColor;
+    }
+
+    $scope.getSeBackgroundColor = function(){
+      var defColor = "#FFFFFF";
+      //仕様変更、常に高度な設定が当たっている状態とする
+      defColor = $scope.widgetSettings.se_background_color;
+//       if($scope.color_setting_type === '1'){
+//         defColor = $scope.se_background_color;
+//       }
+      return defColor;
+    }
+
+    $scope.inputInitToggle = function(item){
+      return (item) ? 1 : 2;
+    };
+
+    //シンプル表示判定
+    /*
+    * 最小化時のデザイン
+    * $scope.minimizedDesignToggle = 1/2/3:シンプル表示しない/スマホのみシンプル表示する/すべての端末でシンプル表示する
+    * $scope.showWidgetType = 1/3:通常/スマホ（縦）
+    * 最大時のシンプル表示(スマホ)
+    * $scope.sp_header_light_flg = 0/1:しない/する
+    * $scope.openFlg = true/false:最大化/最小化
+    */
+    $scope.spHeaderLightToggle = function(){
+      switch ($scope.minimizedDesignToggle) {
+      case "1": //シンプル表示しない
+        if($scope.showWidgetType === 1){
+          //通常（PC）
+          if($scope.widgetSettings.sp_header_light_flg === '<?=C_SELECT_CAN?>'){
+            //最大時のシンプル表示(スマホ)する
+            if(!$scope.openFlg){
+              //最小化中
+              var res = false;
+            }
+            else{
+              //最大化中
+              var res = false;
+            }
+          }
+          else{
+            //最大時のシンプル表示(スマホ)しない
+            if(!$scope.openFlg){
+              //最小化中
+              var res = false;
+            }
+            else{
+              //最大化中
+              var res = false;
+            }
+          }
+        }
+        else{
+          //スマホ（縦）
+          if($scope.widgetSettings.sp_header_light_flg === '<?=C_SELECT_CAN?>'){
+            //最大時のシンプル表示(スマホ)する
+            if(!$scope.openFlg){
+              //最小化中
+              var res = false;
+            }
+            else{
+              //最大化中
+              var res = true;
+            }
+          }
+          else{
+            //最大時のシンプル表示(スマホ)しない
+            if(!$scope.openFlg){
+              //最小化中
+              var res = false;
+            }
+            else{
+              //最大化中
+              var res = false;
+            }
+          }
+        }
+        break;
+      case "2": //スマホのみシンプル表示する
+        if($scope.showWidgetType === 1){
+          //通常（PC）
+          if($scope.widgetSettings.sp_header_light_flg === '<?=C_SELECT_CAN?>'){
+            //最大時のシンプル表示(スマホ)する
+            if(!$scope.openFlg){
+              //最小化中
+              var res = false;
+            }
+            else{
+              //最大化中
+              var res = false;
+            }
+          }
+          else{
+            //最大時のシンプル表示(スマホ)しない
+            if(!$scope.openFlg){
+              //最小化中
+              var res = false;
+            }
+            else{
+              //最大化中
+              var res = false;
+            }
+          }
+        }
+        else{
+          //スマホ（縦）
+          if($scope.widgetSettings.sp_header_light_flg === '<?=C_SELECT_CAN?>'){
+            //最大時のシンプル表示(スマホ)する
+            if(!$scope.openFlg){
+              //最小化中
+              var res = true;
+            }
+            else{
+              //最大化中
+              var res = true;
+            }
+          }
+          else{
+            //最大時のシンプル表示(スマホ)しない
+            if(!$scope.openFlg){
+              //最小化中
+              var res = true;
+            }
+            else{
+              //最大化中
+              var res = false;
+            }
+          }
+        }
+        break;
+      case "3": //すべての端末でシンプル表示する
+        if($scope.showWidgetType === 1){
+          //通常（PC）
+          if($scope.widgetSettings.sp_header_light_flg === '<?=C_SELECT_CAN?>'){
+            //最大時のシンプル表示(スマホ)する
+            if(!$scope.openFlg){
+              //最小化中
+              var res = true;
+            }
+            else{
+              //最大化中
+              var res = false;
+            }
+          }
+          else{
+            //最大時のシンプル表示(スマホ)しない
+            if(!$scope.openFlg){
+              //最小化中
+              var res = true;
+            }
+            else{
+              //最大化中
+              var res = false;
+            }
+          }
+        }
+        else{
+          //スマホ（縦）
+          if($scope.widgetSettings.sp_header_light_flg === '<?=C_SELECT_CAN?>'){
+            //最大時のシンプル表示(スマホ)する
+            if(!$scope.openFlg){
+              //最小化中
+              var res = true;
+            }
+            else{
+              //最大化中
+              var res = true;
+            }
+          }
+          else{
+            //最大時のシンプル表示(スマホ)しない
+            if(!$scope.openFlg){
+              //最小化中
+              var res = true;
+            }
+            else{
+              //最大化中
+              var res = false;
+            }
+          }
+        }
+        break;
+      }
+      if($scope.openFlg){
+        //最大化時
+        $("#minimizeBtn").show();
+        $("#addBtn").hide();
+        $("#closeBtn").hide();
+      }
+      else{
+        //最小化時
+        $("#addBtn").show();
+        $("#minimizeBtn").hide();
+        if($scope.closeButtonSettingToggle === '2'){
+          $("#closeBtn").show();
+        }
+        else{
+          $("#closeBtn").hide();
+        }
+        var coreSettingsChat = "<?= $coreSettings[C_COMPANY_USE_CHAT]?>";
+        if(coreSettingsChat){
+          document.getElementById("switch_widget").value = $scope.showWidgetType;
+        }
+      }
+      return res;
+    };
+
+    //位置調整
+    $scope.$watch(function(){
+      return {'openFlg': $scope.openFlg, 'showWidgetType': $scope.showWidgetType, 'widgetSizeType': $scope.widgetSizeTypeToggle, 'chat_radio_behavior': $scope.widgetSettings.chat_radio_behavior, 'chat_trigger': $scope.chat_trigger, 'show_name': $scope.widgetSettings.show_name, 'widget.showTab': $scope.widget.showTab};
+    },
+    function(){
+      var main = document.getElementById("miniTarget");
+      if ( !main ) return false;
+      if ( $scope.openFlg ) {
+        setTimeout(function(){
+          angular.element("#sincloBox").addClass("open");
+          var height = 0;
+          for(var i = 0; main.children.length > i; i++){
+              height += main.children[i].offsetHeight;
+          }
+          main.style.height = height + "px";
+        }, 0);
+      }
+      else {
+        angular.element("#sincloBox").removeClass("open");
+        main.style.height = "0";
+      }
+    }, true);
+
+    //位置調整
+    $scope.$watch(function(){
+      return {'widgetSizeType': $scope.widgetSizeTypeToggle};
+    },
+    function(){
+      $scope.switchWidget(1); // 標準に切り替える
+    }, true);
+
 });
 
 // http://stackoverflow.com/questions/17035621/what-is-the-angular-way-of-displaying-a-tooltip-lightbox
@@ -416,4 +859,16 @@ $(document).ready(function(){
   });
   initializeFromMailAddressArea();
 });
+
+/* [ #2243 ] IE緊急対応 */
+// TODO 仮対応のため正式な対応をする
+var sincloChatMessagefocusFlg = true;
+$("body").on('focus', '#sincloChatMessage', function(e){
+  if ( sincloChatMessagefocusFlg ) {
+    e.target.value = "";
+    sincloChatMessagefocusFlg = false;
+  }
+});
+/* [ #2243 ] IE緊急対応 */
+
 </script>
