@@ -2153,7 +2153,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     // チャット接続結果
     socket.on("chatStartResult", function(d){
-      return false;
       var obj = JSON.parse(d);
       var prev = angular.copy($scope.monitorList[obj.tabId].chat);
       $scope.monitorList[obj.tabId].chat = obj.userId;
