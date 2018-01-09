@@ -56,6 +56,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       userId: null,
       token: null,
       getMessageToken: null,
+      shownErrorTabIdList: {},
       messageType: {
         customer: 1,
         company: 2,
@@ -198,9 +199,13 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         span.classList.add('errorMsg');
         span.textContent = "処理に失敗しました。再読み込みしてください。";
         $("#sendMessageArea").append(span);
+        this.shownErrorTabIdList[this.tabId] = this.tabId;
       },
       clearErrorChatStart: function() {
         $(".errorMsg").remove();
+      },
+      isShownErrorChatStart: function(tabId) {
+        return typeof(this.shownErrorTabIdList[tabId]) !== undefined;
       },
       isReadMessage: function(monitor){
         // フォーカスが入っているもののみ
@@ -911,6 +916,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       $("#sendMessage").attr('value', '');
       // エラーはとりあえず消す
       chatApi.clearErrorChatStart();
+      if(chatApi.isShownErrorChatStart(tabId)) {
+        // 既にエラー表示済みであれば再表示
+        chatApi.errorChatStart();
+      }
       // ポップアップを閉じる
       if ( $scope.customerMainClass !== "" ) {
         $("#customer_sub_pop").css("display", "none");
