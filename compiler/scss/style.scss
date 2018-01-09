@@ -5198,6 +5198,88 @@ ul.naviBtn {
   }
 }
 
+/* ファイル送信設定 */
+#msecuritysettings_idx {
+  #msecuritysettings_content {
+    h3 {
+      border-bottom: 3px solid #C3D69B;
+      padding-left: 5px;
+      font-size: 13px;
+    }
+    ul {
+      li {
+        display: flex;
+        label {
+          cursor: pointer;
+          s {
+            font-size: 11px;
+            margin-left: 0.8em;
+          }
+        }
+      }
+    }
+  }
+  #ip_filter_settings_area {
+    padding-left: 5em;
+    height: 30em;
+    transition: height 200ms linear;
+    overflow: hidden;
+    pre {
+      margin: 0.1em 0;
+    }
+    p {
+      margin-bottom: 0.5em;
+    }
+    s {
+      display: block;
+    }
+    textarea {
+      resize: none;
+      width:  30em;
+      height: 10em;
+      font-size: 12px;
+      ::-webkit-input-placeholder {
+        text-align:left;
+        font-size:12px;
+      }
+      :-moz-placeholder { /* Firefox 18- */
+        text-align:left;
+        font-size:12px;
+      }
+      ::-moz-placeholder {  /* Firefox 19+ */
+        text-align:left;
+        font-size:12px;
+      }
+      :-ms-input-placeholder {
+        text-align:left;
+        font-size:12px;
+      }
+      &.disabled {
+        background-color: rgb(204, 204, 204);
+      }
+    }
+    &.hidden {
+      height: 0;
+    }
+    .error-message {
+      margin-top: 1em;
+      margin-left: 0;
+    }
+  }
+  #mtransfersetting_action {
+    padding: 10px;
+    clear: both;
+
+    a {
+      width: 100px;
+      padding: 10px;
+      display: block;
+      margin: 0 auto;
+      text-align: center;
+    }
+  }
+}
+
 /* キャンペーン　*/
 #tcampaigns_idx {
 

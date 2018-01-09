@@ -555,3 +555,9 @@ $config['fileTransferSettingType'] = [
   C_FILE_TRANSFER_SETTING_TYPE_EXTEND => "拡張設定<br>　<s>※ 基本設定で送信できるファイルに加えて、指定したファイルの種類を許可します。</s>"
 ];
 
+/* セキュリティ設定 - ログインIP許可設定 */
+/* 通常選択肢 */
+$config['securityEnableLoginIpFilterSetting'] = [
+    0 => "利用しない", // FIXME 定数化
+    1 => "利用する"
+];
