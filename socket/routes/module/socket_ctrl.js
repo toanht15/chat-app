@@ -2466,6 +2466,7 @@ io.sockets.on('connection', function (socket) {
 
     var setList = {};
     for (var i = 0; i < obj.messages.length; i++) {
+      if(isset(obj.messages[i]) && isset(obj.messages[i].created)) continue;
       var created = new Date(obj.messages[i].created);
       obj.messages[i].messageType = chatApi.cnst.observeType.auto;
       setList[fullDateTime(Date.parse(created))] = obj.messages[i];
