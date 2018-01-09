@@ -209,7 +209,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         $(".errorMsg").remove();
       },
       isShownErrorChatStart: function(tabId) {
-        return typeof(this.shownErrorTabIdList[tabId]) !== undefined;
+        return typeof(this.shownErrorTabIdList[tabId]) !== 'undefined';
       },
       isReadMessage: function(monitor){
         // フォーカスが入っているもののみ
