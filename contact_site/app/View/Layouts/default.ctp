@@ -59,16 +59,19 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
     echo $this->Html->css("bootstrap.css");
     echo $this->Html->css("multi-select.css");
     echo $this->Html->css("standalone.css");
+    echo $this->Html->css('font-awesome.min');
     if ( strcmp($this->name, 'TAutoMessages') === 0 || strcmp($this->name, 'MOperatingHours') === 0) {
       echo $this->Html->css("clockpicker.css");
     }
     echo $this->Html->css("style.css");
     echo $this->Html->css("modal.css");
-    if ( strcmp($this->name, 'Histories') === 0 ) {
+    if ( strcmp($this->name, 'Histories') === 0 || strcmp($this->name, 'ChatHistories') === 0) {
       echo $this->Html->css("daterangepicker.css");
     }
-    if ( strcmp($this->name, 'Statistics') === 0 ) {
+    if ( strcmp($this->name, 'Statistics') === 0 || strcmp($this->name, 'ChatHistories') === 0 ) {
       echo $this->Html->css("jquery.dataTables.css");
+    }
+    if ( strcmp($this->name, 'Statistics') === 0) {
       echo $this->Html->css("//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css");
     }
     echo $this->Html->script("//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js");
@@ -90,14 +93,14 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
     echo $this->Html->script("cidr2regex.js");
     echo $this->element("common-js");
     echo $this->Html->script("moment.min.js");
-    if ( strcmp($this->name, 'Histories') === 0 ) {
+    if ( strcmp($this->name, 'Histories') === 0 || strcmp($this->name, 'ChatHistories') === 0) {
       echo $this->Html->script("daterangepicker.js");
     }
     if ( strcmp($this->name, 'TDocuments') === 0 ) {
       echo $this->Html->script("//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.min.js");
       echo $this->Html->css("//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.css");
     }
-    if ( strcmp($this->name, 'Statistics') === 0 ) {
+    if ( strcmp($this->name, 'Statistics') === 0 || strcmp($this->name, 'ChatHistories') === 0 ) {
       echo $this->Html->script('jquery.dataTables.min.js');
       echo $this->Html->script("dataTables.fixedColumns.min.js");
     }
@@ -108,6 +111,10 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
     if ( strcmp($this->name, 'TCampaigns') === 0 ) {
       echo $this->Html->css('jquery-ui.css');
       echo $this->Html->script("jquery-ui.js");
+    }
+    if ( strcmp($this->name, 'ChatHistories') === 0 ) {
+      echo $this->Html->css('jquery.splitter.css');
+      echo $this->Html->script("jquery.splitter.js");
     }
 
 ?>

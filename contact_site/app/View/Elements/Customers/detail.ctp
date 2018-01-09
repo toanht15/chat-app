@@ -19,7 +19,6 @@
             <li data-type="oldChat">過去のチャット</li>
           </ul>
           <div id="chatContent">
-
           <!-- 現在のチャット -->
             <section class="on" id="currentChat">
               <ul id="chatTalk" class="chatView">
@@ -38,6 +37,10 @@
                 <chat-receiver>
                   <span id="receiveMessage">テストメッセージです</span>
                 </chat-receiver>
+                <upload-notification>
+                  <span class="message-area" id="uploadMessage">アップロード中... {{uploadProgress}}％</span>
+                  <span class="message-area" id="processingMessage">サーバー処理中です。</span>
+                </upload-notification>
               </ul>
               <chat-detail ng-class="{showOption: showAchievement()}">
                 <span>成果</span>
@@ -73,6 +76,11 @@
                       ])?>Enterキーで送信する</label>
                 </chat-menu-child>
                 <chat-menu-child id="chatMenu" class="p05tb" >
+                  <?php if(isset($coreSettings[C_COMPANY_USE_SEND_FILE]) && $coreSettings[C_COMPANY_USE_SEND_FILE]): ?>
+                  <span class="greenBtn btn-shadow" id="selectFileBtn">ファイル送信</span>
+                  <?php else: ?>
+                  <span class="grayBtn btn-shadow commontooltip" data-text="こちらの機能はスタンダードプラン<br>からご利用いただけます。">ファイル送信</span>
+                  <?php endif; ?>
                   <span class="greenBtn btn-shadow" onclick="chatApi.addOption(1)">選択肢を追加する</span>
                 </chat-menu-child>
               </chat-menu>
@@ -95,6 +103,13 @@
                   </div>
                 <?php endif; ?>
               </div>
+              <?php if(isset($coreSettings[C_COMPANY_USE_SEND_FILE]) && $coreSettings[C_COMPANY_USE_SEND_FILE]): ?>
+              <div id="fileUploadDropArea">
+                <?= $this->Html->image('file.png', array('alt' => 'CakePHP', 'width' => '250', 'height' => '250')); ?>
+                <span>送信するファイルをここにドロップしてください</span>
+              </div>
+              <input type="file" id="selectFileInput" name="uploadFile" style="display:none "/>
+              <?php endif; ?>
             </section>
             <!-- 現在のチャット -->
 
@@ -168,9 +183,17 @@
         <?php endif; ?>
         <div class="hardInfo card">
           <dl>
+            <dt>IPアドレス</dt>
+            <?php if ( $coreSettings[C_COMPANY_REF_COMPANY_DATA] ) :?>
+              <dd ng-if="detail.lbcCode && detail.orgName" style="height:auto;">
+                <a href="#" ng-click="openCompanyDetailInfo(detail)">{{detail.orgName}}</a>（{{detail.ipAddress}}）
+              </dd>
+              <dd ng-if="!detail.lbcCode || !detail.orgName">{{detail.ipAddress}}</dd>
+            <?php else: ?>
+              <dd>{{detail.ipAddress}}</dd>
+            <?php endif; ?>
             <dt>プラットフォーム</dt><dd>{{os(detail.userAgent)}}</dd>
             <dt>ブラウザ</dt><dd>{{browser(detail.userAgent)}}</dd>
-            <dt>IPアドレス</dt><dd>{{detail.ipAddress}}</dd>
           </dl>
         </div>
       </div>

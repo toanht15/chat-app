@@ -46,6 +46,7 @@ $(function(){
     $created = "";
     $deleted = "";
     $deletedUserDisplayName = "";
+    $isSendFile = false;
 
     if ( strcmp($val['THistoryChatLog']['message_type'], 1) === 0 ) {
       $className = "sinclo_re";
@@ -86,6 +87,16 @@ $(function(){
       $deleted = $val['THistoryChatLog']['deleted'];
       $deletedUserDisplayName = $val['DeleteMUser']['display_name'];
     }
+    else if ( strcmp($val['THistoryChatLog']['message_type'], 6) === 0 ) {
+      $className = "sinclo_se";
+      $id = $val['THistoryChatLog']['id'];
+      $historyId = $val['THistoryChatLog']['t_histories_id'];
+      $deleteMessage = str_replace(PHP_EOL, '', $val['THistoryChatLog']['message']);
+      $created = $val['THistoryChatLog']['created'];
+      $deleted = $val['THistoryChatLog']['deleted'];
+      $deletedUserDisplayName = $val['DeleteMUser']['display_name'];
+      $isSendFile = true;
+    }
     else if ( strcmp($val['THistoryChatLog']['message_type'], 98) === 0 ) {
       $className = "sinclo_etc";
       $message = "- ". $val['MUser']['display_name'] . "が入室しました -";
@@ -102,10 +113,10 @@ $(function(){
       <li class="<?=$className?>" style = "color:#bdbdbd"><span style = "color:#bdbdbd"><?= $this->Time->format($val['THistoryChatLog']['created'], "%Y/%m/%d %H:%M:%S")?></span><span style = "color:#bdbdbd"><?=h($name)?></span><?=$this->htmlEx->makeChatView("(このメッセージは $deleted に $deletedUserDisplayName さんによって削除されました。)")?></li>
     <?php } //権限が管理者、削除されていない履歴の場合
     else if(strcmp($permissionLevel,1) === 0 && strcmp($val['THistoryChatLog']['delete_flg'], 0) === 0) { ?>
-      <li class="<?=$className?>"><span><?= $this->Time->format($val['THistoryChatLog']['created'], "%Y/%m/%d %H:%M:%S")?></span><?= $this->Html->image('close_b.png', array('class' => ($coreSettings[C_COMPANY_USE_HISTORY_DELETE] ? "" : "commontooltip"),'data-text' => $coreSettings[C_COMPANY_USE_HISTORY_DELETE] ? "" : "こちらの機能はスタンダードプラン<br>からご利用いただけます。",'data-balloon-position' => '43.5','alt' => '履歴一覧','width' => 17,'height' => 17,'style' => 'margin-top: -24px; float:right; margin-right:1px; opacity:0.7; cursor:pointer','onclick' => !$coreSettings[C_COMPANY_USE_HISTORY_DELETE] ? "" : 'openDeleteDialog('.$id.','.$historyId.',"'.$deleteMessage.'","'.$created.'")')) ?><span><?=h($name)?></span><?=$this->htmlEx->makeChatView($val['THistoryChatLog']['message'])?></li>
+      <li class="<?=$className?>"><span><?= $this->Time->format($val['THistoryChatLog']['created'], "%Y/%m/%d %H:%M:%S")?></span><?= $this->Html->image('close_b.png', array('class' => ($coreSettings[C_COMPANY_USE_HISTORY_DELETE] ? "" : "commontooltip"),'data-text' => $coreSettings[C_COMPANY_USE_HISTORY_DELETE] ? "" : "こちらの機能はスタンダードプラン<br>からご利用いただけます。",'data-balloon-position' => '43.5','alt' => '履歴一覧','width' => 17,'height' => 17,'style' => 'margin-top: -24px; float:right; margin-right:1px; opacity:0.7; cursor:pointer','onclick' => !$coreSettings[C_COMPANY_USE_HISTORY_DELETE] ? "" : 'openDeleteDialog('.$id.','.$historyId.',"'.(intval($val['THistoryChatLog']['message_type']) === 6 ? json_decode($deleteMessage, TRUE)["fileName"] : $deleteMessage).'","'.$created.'")')) ?><span><?=h($name)?></span><?=$this->htmlEx->makeChatView($val['THistoryChatLog']['message'],$isSendFile)?></li>
     <?php }
     else { //権限が一般の場合 ?>
-      <li class="<?=$className?>"><span><?= $this->Time->format($val['THistoryChatLog']['created'], "%Y/%m/%d %H:%M:%S")?></span><span><?=h($name)?></span><?=$this->htmlEx->makeChatView($val['THistoryChatLog']['message'])?></li>
+      <li class="<?=$className?>"><span><?= $this->Time->format($val['THistoryChatLog']['created'], "%Y/%m/%d %H:%M:%S")?></span><span><?=h($name)?></span><?=$this->htmlEx->makeChatView($val['THistoryChatLog']['message'],$isSendFile)?></li>
   <?php }
   } else { ?>
     <li class="<?=$className?>"><span><?= $this->Time->format($val['THistoryChatLog']['created'], "%Y/%m/%d %H:%M:%S")?></span><?=h($message)?></li>
