@@ -6,7 +6,7 @@
 App::uses('SimplePasswordHasher', 'Controller/Component/Auth');
 class LoginController extends AppController {
   public $components = ['MailSender'];
-  public $uses = ['MUser','TLogin'];
+  public $uses = ['MUser','TLogin', 'MIpFilterSetting'];
 
   public function beforeFilter(){
     parent::beforeFilter();
@@ -37,8 +37,7 @@ class LoginController extends AppController {
         $ipAddress = $this->request->clientIp(false);
         $userAgent = $this->request->header('User-Agent');
 
-        //if(!$this->isValidIpFilter($ipAddress, $this->Auth->login())) {
-        if(false) {
+        if(!$this->isValidIpFilter($ipAddress, $this->Auth->user())) {
           $this->processLogout();
           $this->set('alertMessage', ['type'=>C_MESSAGE_TYPE_ERROR, 'text' => "この端末のIPアドレスからはログインできません"]);
           $this->request->data['MUser']['password'] = '';
@@ -67,6 +66,7 @@ class LoginController extends AppController {
     }
     $this->request->data['MUser']['password'] = '';
     $this->render('index');
+    return;
   }
 
   public function logout(){
@@ -157,20 +157,21 @@ class LoginController extends AppController {
 
   public function isValidIpFilter($ipAddress, $userInfo) {
     // FIXME ML用アカウントは必ずtrueにする
+    if(strcmp($userInfo['permission_level'], C_AUTHORITY_SUPER) === 0 ) return true;
     $mcompany = $userInfo['MCompany'];
     $ipSettings = $this->MIpFilterSetting->find('first', array(
       'conditions' => array(
         'm_companies_id' => $mcompany['id']
       )
     ));
-    if(empty($ipSettings) || $ipSettings['MIpFilterSetting']['enabled'] === 0) { // FIXME 定数化
+    if(empty($ipSettings) || !$ipSettings['MIpFilterSetting']['active_flg']) {
       // 設定なし or 無効設定
       return true;
-    } else if($ipSettings['MIpFilterSetting']['enabled'] === 1) { // FIXME 定数化
+    } else if($ipSettings['MIpFilterSetting']['active_flg']) {
       // 設定あり
-      if($ipSettings['MIpFilterSetting']['filter_type'] === 1) { // FIXME 定数化（ホワイトリスト）
+      if($ipSettings['MIpFilterSetting']['filter_type'] === "1") { // FIXME 定数化（ホワイトリスト）
         return $this->isValidIpWhitelistFilter($ipAddress, $ipSettings['MIpFilterSetting']['ips']);
-      } else if($ipSettings['MIpFilterSetting']['filter_type'] === 2) { // FIXME 定数化（ブラックリスト）
+      } else if($ipSettings['MIpFilterSetting']['filter_type'] === "2") { // FIXME 定数化（ブラックリスト）
         return $this->isValidIpBlacklistFilter($ipAddress, $ipSettings['MIpFilterSetting']['ips']);
       } else {
         return false; // 設定が有効なのにfilter_typeが無いのは異常系
@@ -183,11 +184,11 @@ class LoginController extends AppController {
   private function isValidIpWhitelistFilter($ip, $setting) {
     $result = false;
     foreach( explode("\n", trim($setting)) as $v ){
-      if ( preg_match("/^[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}$/", trim($v)) ) {
+      if ( preg_match("/^[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}$/", trim($v)) && strcmp($v, $ip) === 0 ) {
         $result = true;
         break;
       }
-      if($this->inCIDR($ip, $v)) {
+      else if(preg_match("/^[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}\/[0-9]{1,3}$/", trim($v)) && $this->inCIDR($ip, $v)) {
         $result = true;
         break;
       }
@@ -198,11 +199,11 @@ class LoginController extends AppController {
   private function isValidIpBlacklistFilter($ip, $setting) {
     $result = true;
     foreach( explode("\n", trim($setting)) as $v ){
-      if ( preg_match("/^[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}$/", trim($v)) && strpos($v, $ip) === 0) {
+      if ( preg_match("/^[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}$/", trim($v)) && strcmp($v, $ip) === 0) {
         $result = false;
         break;
       }
-      if($this->inCIDR($ip, $v)) {
+      else if(preg_match("/^[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}\/[0-9]{1,3}$/", trim($v)) && $this->inCIDR($ip, $v)) {
         $result = false;
         break;
       }
@@ -211,6 +212,7 @@ class LoginController extends AppController {
   }
 
   /**
+   * 指定のIPアドレス（v4）がcidrで指定したIPレンジの中にあるかどうかを判定する
    * @see http://unoh.github.io/2009/03/18/ip.html
    * @param $ip
    * @param $cidr
@@ -219,6 +221,8 @@ class LoginController extends AppController {
   private function inCIDR($ip, $cidr) {
     list($network, $mask_bit_len) = explode('/', $cidr);
     $host = 32 - $mask_bit_len;
+    $netlong = ip2long($network);
+    $ipnetlong = ip2long($ip);
     $net = ip2long($network) >> $host << $host; // 11000000101010000000000000000000
     $ip_net = ip2long($ip) >> $host << $host; // 11000000101010000000000000000000
     return $net === $ip_net;
