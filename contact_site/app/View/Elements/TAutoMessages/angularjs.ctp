@@ -203,6 +203,10 @@ sincloApp.controller('MainController', function($scope) {
         }
       }
       $scope.openFlg = true;
+
+      setTimeout(function(){
+        $scope.createMessage($scope.action, $scope.showWidgetType != 1);
+      },0);
     }
 
     //バナーから通常の表示に戻るときの処理
@@ -632,6 +636,9 @@ sincloApp.controller('MainController', function($scope) {
       $scope.createMessage($scope.action, $scope.showWidgetType != 1);
     }
     $scope.createMessage = function(val="", isSmartphone=false) {
+      var messageElement = document.querySelector('#chatTalk .sinclo_re .details:not(.cName)');
+      if(!messageElement) return;
+
       var strings = val.split('\n');
       var radioCnt = 1;
       var linkReg = RegExp(/(http(s)?:\/\/[\w\-\.\/\?\=\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/);
@@ -672,7 +679,7 @@ sincloApp.controller('MainController', function($scope) {
         }
         content += str + "\n";
       }
-      document.querySelector('#chatTalk .sinclo_re .details:not(.cName)').innerHTML = content.replace(/\n$/, '');
+      messageElement.innerHTML = content.replace(/\n$/, '');
     }
 });
 
