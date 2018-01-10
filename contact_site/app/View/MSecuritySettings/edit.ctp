@@ -14,8 +14,8 @@ if ( !(!empty($this->data['MFileTransferSetting']['type']) && strcmp($this->data
   </div>
 
   <div id='msecuritysettings_content' class="p20x">
-    <?= $this->Form->create('MFileTransferSetting', ['type' => 'post', 'url' => ['controller' => 'MFileTransferSetting', 'action' => 'edit', '']]); ?>
-    <?= $this->Form->input('MFileTransferSetting.id', ['type' => 'hidden']); ?>
+    <?= $this->Form->create('MSecuritySettings', ['type' => 'post', 'url' => ['controller' => 'MSecuritySettings', 'action' => 'edit', '']]); ?>
+    <?= $this->Form->input('MSecuritySettings.id', ['type' => 'hidden']); ?>
     <section>
       <h3>ログイン時IP制御設定</h3>
       <ul>
@@ -39,7 +39,7 @@ if ( !(!empty($this->data['MFileTransferSetting']['type']) && strcmp($this->data
               ?>
             </label>
           </div>
-          <?php if (!empty($errors['type'])) echo "<li class='error-message'>" . h($errors['type'][0]) . "</li>"; ?>
+          <?php if (!empty($errors['active_flg'])) echo "<li class='error-message'>" . h($errors['active_flg'][0]) . "</li>"; ?>
         </li>
       </ul>
       <div id="ip_filter_settings_area" class="<?=$fileTypeAreaHiddenClass?>">

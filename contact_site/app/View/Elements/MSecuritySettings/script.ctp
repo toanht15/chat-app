@@ -39,7 +39,7 @@ $(function(){
   }
 
   function saveAct(){
-    document.getElementById('MFileTransferSettingEditForm').submit();
+    document.getElementById('MSecuritySettingsEditForm').submit();
   }
 
   function reloadAct(){

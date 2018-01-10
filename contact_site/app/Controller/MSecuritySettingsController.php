@@ -4,13 +4,13 @@
  * User: masashi_shimizu
  * Date: 2017/12/21
  * Time: 11:44
- * @property MFileTransferSetting $MFileTransferSetting
+ * @property MIpFilterSetting $MIpFilterSetting
  */
 
 
 class MSecuritySettingsController extends AppController
 {
-  public $uses = ['MFileTransferSetting'];
+  public $uses = ['MIpFilterSetting'];
 
   private $defaultAllowExtensions = array(
     'pdf',
@@ -26,6 +26,9 @@ class MSecuritySettingsController extends AppController
     $this->set('title_for_layout', 'ファイル送信設定');
   }
 
+  /**
+   * POSTされる"MSecuritySetting"はダミーのmodelで、このControllerで各テーブルに分割してデータを管理する設計としている。
+   */
   public function edit() {
     if($this->request->is('post')) {
       $this->upsert();
@@ -37,10 +40,10 @@ class MSecuritySettingsController extends AppController
 
   public function getAllowExtensions() {
     $default = $this->defaultAllowExtensions;
-    $myData = $this->MFileTransferSetting->find('first', array("condition" => array('MFileTransferSetting.m_companies_id' => $this->userInfo['MCompany']['id'])));
-    if(!empty($myData) && strcmp($myData['MFileTransferSetting']['type'], C_FILE_TRANSFER_SETTING_TYPE_EXTEND) === 0) {
+    $myData = $this->MIpFilterSetting->find('first', array("condition" => array('MIpFilterSetting.m_companies_id' => $this->userInfo['MCompany']['id'])));
+    if(!empty($myData) && strcmp($myData['MIpFilterSetting']['type'], C_FILE_TRANSFER_SETTING_TYPE_EXTEND) === 0) {
       // 拡張設定利用中であれば拡張する
-      $myExtensions = explode(',',$myData['MFileTransferSetting']['allow_extensions']);
+      $myExtensions = explode(',',$myData['MIpFilterSetting']['allow_extensions']);
       $default = array_merge($default, $myExtensions);
     }
     return array_values(array_unique($default));
@@ -48,7 +51,7 @@ class MSecuritySettingsController extends AppController
 
   private function upsert() {
     try {
-      if (empty($this->request->data['MFileTransferSetting']['id'])) {
+      if (empty($this->request->data['MSecuritySettings']['id'])) {
         $this->insert();
       } else {
         $this->update();
@@ -61,38 +64,37 @@ class MSecuritySettingsController extends AppController
   }
 
   private function renderView() {
-    $this->request->data = $this->getMyFileTransferSetting();
+    $this->request->data = $this->getMySecuritySettings();
   }
 
   private function insert() {
     try {
-      $this->request->data['MFileTransferSetting']['m_companies_id'] = $this->userInfo['MCompany']['id'];
-      $this->MFileTransferSetting->create();
-      $this->MFileTransferSetting->begin();
+      $this->request->data['MIpFilterSetting']['m_companies_id'] = $this->userInfo['MCompany']['id'];
+      $this->MIpFilterSetting->create();
+      $this->MIpFilterSetting->begin();
       $insertData = [
         'm_companies_id' => $this->userInfo['MCompany']['id'],
-        'type' => $this->request->data['MFileTransferSetting']['type']
+        'active_flg' => $this->request->data['MSecuritySettings']['ip_filter_enabled'],
+        'filter_type' => $this->getIpFilterType(),
+        'ips' => $this->getIpSetting()
       ];
 
-      if(intval($insertData['type']) === C_FILE_TRANSFER_SETTING_TYPE_EXTEND) {
-        $insertData['allow_extensions'] = $this->request->data['MFileTransferSetting']['allow_extensions'];
-      }
-      $this->MFileTransferSetting->set($insertData);
+      $this->MIpFilterSetting->set($insertData);
       $this->doValidate();
       if (!empty($errors)) {
-        $this->MFileTransferSetting->rollback();
+        $this->MIpFilterSetting->rollback();
         throw new Exception($errors);
       }
-      if (!$this->MFileTransferSetting->save()) {
-        $this->MFileTransferSetting->rollback();
+      if (!$this->MIpFilterSetting->save()) {
+        $this->MIpFilterSetting->rollback();
         throw new Exception('DB登録時にエラーが発生しました。');
       }
-      $this->MFileTransferSetting->commit();
-      $this->request->data['MFileTransferSetting']['id'] = $this->MFileTransferSetting->getLastInsertId();
+      $this->MIpFilterSetting->commit();
+      $this->request->data['MSecuritySettings']['id'] = $this->MIpFilterSetting->getLastInsertId();
     } catch(Exception $e) {
-      $this->MFileTransferSetting->rollback();
-      if($this->MFileTransferSetting->validationErrors) {
-        $this->set('errors', $this->MFileTransferSetting->validationErrors);
+      $this->MIpFilterSetting->rollback();
+      if($this->MIpFilterSetting->validationErrors) {
+        $this->set('errors', $this->MIpFilterSetting->validationErrors);
       }
       throw $e;
     }
@@ -100,52 +102,89 @@ class MSecuritySettingsController extends AppController
 
   private function update() {
     try {
-      $this->MFileTransferSetting->read(null, $this->request->data['MFileTransferSetting']['id']);
-      if ($this->MFileTransferSetting->field('m_companies_id') !== $this->userInfo['MCompany']['id']) {
+      $updateData = $this->MIpFilterSetting->find('first', array(
+          "condition" => array( 'm_companies_id' => $this->userInfo['MCompany']['id'])
+      ));
+      if ($updateData['MIpFilterSetting']['m_companies_id'] !== $this->userInfo['MCompany']['id']) {
         throw new Exception('不正な更新処理です。');
       }
-      $updateData = [
-          'type' => $this->request->data['MFileTransferSetting']['type']
-      ];
+      $updateData['MIpFilterSetting']['active_flg'] = $this->request->data['MSecuritySettings']['ip_filter_enabled'];
+      $updateData['MIpFilterSetting']['filter_type'] = $this->getIpFilterType();
+      $updateData['MIpFilterSetting']['ips'] = $this->getIpSetting();
 
-      if(intval($updateData['type']) === C_FILE_TRANSFER_SETTING_TYPE_EXTEND) {
-        $updateData['allow_extensions'] = $this->request->data['MFileTransferSetting']['allow_extensions'];
-      }
-      $this->MFileTransferSetting->set($updateData);
+      $this->MIpFilterSetting->set($updateData);
       $this->doValidate();
-      $this->MFileTransferSetting->save();
+      $this->MIpFilterSetting->save();
     } catch(Exception $e) {
-      $this->MFileTransferSetting->rollback();
-      if($this->MFileTransferSetting->validationErrors) {
-        $this->set('errors', $this->MFileTransferSetting->validationErrors);
+      $this->MIpFilterSetting->rollback();
+      if($this->MIpFilterSetting->validationErrors) {
+        $this->set('errors', $this->MIpFilterSetting->validationErrors);
       }
       throw $e;
     }
   }
 
-  private function getMyFileTransferSetting() {
-    $val = $this->MFileTransferSetting->findByMCompaniesId($this->userInfo['MCompany']['id']);
+  private function getMySecuritySettings() {
+    $val = $this->MIpFilterSetting->findByMCompaniesId($this->userInfo['MCompany']['id']);
     if(empty($val)) {
       $val = $this->getDefaultTransferSetting();
     }
-    return $val;
+    return [
+        'MSecuritySettings' => [
+            'id' => (!empty($val['MIpFilterSetting']['id'])) ? $val['MIpFilterSetting']['id'] : "",
+            'ip_filter_enabled' => $val['MIpFilterSetting']['active_flg'],
+            'ip_filter_whitelist' => (strcmp($val['MIpFilterSetting']['filter_type'], 1) === 0) ? $val['MIpFilterSetting']['ips'] : "",
+            'ip_filter_blacklist' => (strcmp($val['MIpFilterSetting']['filter_type'], 2) === 0) ? $val['MIpFilterSetting']['ips'] : ""
+        ]
+    ];
   }
 
   private function getDefaultTransferSetting() {
     return [
-      'MFileTransferSetting' => [
-        'm_companies_id' => $this->userInfo['MCompany']['id'],
-        'type' => C_FILE_TRANSFER_SETTING_TYPE_BASIC,
-        'allow_extensions' => '',
+      'MIpFilterSetting' => [
+        'active_flg' => 0,
+        'filter_type' => 0,
+        'ips' => ''
       ]
     ];
   }
 
   private function doValidate() {
-    if(!$this->MFileTransferSetting->validates()) {
+    if(!$this->MIpFilterSetting->validates()) {
       //NG
       throw new InvalidArgumentException('バリデーションエラー');
     }
     // OK
+  }
+
+  private function getIpFilterType() {
+    $filterType = 0;
+    if(!empty($this->request->data['MSecuritySettings'])) {
+      $whitelistData = $this->request->data['MSecuritySettings']['ip_filter_whitelist'];
+      $blacklistData = $this->request->data['MSecuritySettings']['ip_filter_blacklist'];
+      if(!empty($whitelistData) && !empty($blacklistData)) {
+        throw new BadRequestException('ホワイトリストとブラックリストはいずれかの設定のみ可能です。');
+      } else if(!empty($whitelistData) && empty($blacklistData)) {
+        $filterType = 1; // FIXME 定数化
+      } else if(empty($whitelistData) && !empty($blacklistData)) {
+        $filterType = 2; // FIXME 定数化
+      } else if(strcmp($this->request->data['MSecuritySettings']['ip_filter_enabled'], 0) === 0) {
+        throw new BadRequestException('設定を有効にする場合はホワイトリストまたはブラックリストのいずれかの指定が必須です。');
+      } else {
+        // 設定無効状態なので未設定として扱う
+      }
+    }
+    return $filterType;
+  }
+
+  private function getIpSetting() {
+    $ips = "";
+    $filterType = $this->getIpFilterType();
+    if(strcmp($filterType, 1) === 0) {
+      $ips = $this->request->data['MSecuritySettings']['ip_filter_whitelist'];
+    } else if(strcmp($filterType, 2) === 0) {
+      $ips = $this->request->data['MSecuritySettings']['ip_filter_blacklist'];
+    }
+    return $ips;
   }
 }
