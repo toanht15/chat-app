@@ -127,8 +127,8 @@
           <li class="pl30 bt0">
               <span>
                 <label class="require">メッセージ</label>
-                <span class="greenBtn btn-shadow actBtn" onclick="addOption(1)">選択肢を追加する</span>
-                <span class="greenBtn btn-shadow actBtn" onclick="addOption(2)" id = "lastSpeechLabel">電話番号を追加する<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></span>
+                <span class="greenBtn btn-shadow actBtn" ng-click="addOption(1)">選択肢を追加する</span>
+                <span class="greenBtn btn-shadow actBtn" ng-click="addOption(2)" id = "lastSpeechLabel">電話番号を追加する<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></span>
               </span>
               <?=$this->ngForm->input('action', ['type'=>'textarea', 'maxlength'=>300, 'cols' => 48, 'rows' => 15],['entity'=>'TAutoMessage.action'])?>
               <?php if (!empty($errors['action'])) echo "<pre class='error-message'>" . h($errors['action'][0]) . "</pre>"; ?>

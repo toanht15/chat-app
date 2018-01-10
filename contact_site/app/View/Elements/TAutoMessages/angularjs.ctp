@@ -140,7 +140,6 @@ sincloApp.controller('MainController', function($scope) {
       widgetSettings[item] = json[item];
     }
     $scope.widgetSettings = widgetSettings;
-    console.log($scope.widgetSettings);
 
     var coreSettingsChat = "<?= $coreSettings[C_COMPANY_USE_CHAT]?>";
     $scope.main_image = $scope.widgetSettings['main_image'];
@@ -167,7 +166,7 @@ sincloApp.controller('MainController', function($scope) {
     $scope.widget_inside_border_none = !$scope.widgetSettings['widget_inside_border_color'];
     $scope.re_border_none = !$scope.widgetSettings['re_border_color'];
     $scope.se_border_none = !$scope.widgetSettings['se_border_color'];
-    $scope.show_name = $scope.widgetSettings['show_name'];
+    $scope.show_name = <?=C_WIDGET_SHOW_COMP?>; // オートメッセージは企業名で表示する
     $scope.message_box_border_none = !$scope.widgetSettings['message_box_border_color'];
 
     $scope.switchWidget = function(num){
@@ -568,6 +567,35 @@ sincloApp.controller('MainController', function($scope) {
       }
     }, true);
 
+    $scope.addOption = function(type) {
+      var sendMessage = document.getElementById('TAutoMessageAction');
+      switch(type){
+        case 1:
+          if (sendMessage.value.length > 0) {
+              sendMessage.value += "\n";
+          }
+          sendMessage.value += "[] ";
+          sendMessage.focus();
+          break;
+        case 2:
+          if (sendMessage.value.length > 0) {
+            sendMessage.value += "\n";
+          }
+          sendMessage.value += "<telno></telno>";
+          sendMessage.focus();
+          // 開始と終了タブの真ん中にカーソルを配置する
+          if (sendMessage.createTextRange) {
+            var range = sendMessage.createTextRange();
+            range.move('character', sendMessage.value.length-8);
+            range.select();
+          } else if (sendMessage.setSelectionRange) {
+            sendMessage.setSelectionRange(sendMessage.value.length, sendMessage.value.length-8);
+          }
+          break;
+      }
+      $scope.action = sendMessage.value;
+    }
+
     //位置調整
     $scope.$watch(function(){
       return {'widgetSizeType': $scope.widgetSizeTypeToggle};
@@ -576,6 +604,76 @@ sincloApp.controller('MainController', function($scope) {
       $scope.switchWidget(1); // 標準に切り替える
     }, true);
 
+    // シミュレーター上のメッセージ表示切替
+    angular.element(window).on('load', function(e) {
+      $scope.$watch('action', function(value) {
+        $scope.createMessage(value, $scope.showWidgetType != 1);
+      });
+      $scope.initMessage($scope.action, $scope.showWidgetType != 1);
+    });
+    $scope.initMessage = function(val="", isSmartphone=false) {
+      var strings = val.split('\n');
+      var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
+      var message = "";
+
+      for (var i = 0; strings.length > i; i++) {
+        var str = strings[i];
+        var tel = str.match(telnoTagReg);
+        if( tel !== null ) {
+          var telno = tel[1];
+          // ただの文字列にする
+          var span = "<telno>" + telno + "</telno>";
+          str = str.replace(tel[0], span);
+        }
+        message += str + "\n";
+      }
+      document.getElementById('TAutoMessageAction').value = message.replace(/\n$/, '');
+      $scope.action = message;
+      $scope.createMessage($scope.action, $scope.showWidgetType != 1);
+    }
+    $scope.createMessage = function(val="", isSmartphone=false) {
+      var strings = val.split('\n');
+      var radioCnt = 1;
+      var linkReg = RegExp(/(http(s)?:\/\/[\w\-\.\/\?\=\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/);
+      var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
+      var radioName = "sinclo-radio0";
+      var content = "";
+
+      for (var i = 0; strings.length > i; i++) {
+        var str = escape_html(strings[i]);
+
+        // ラジオボタン
+        var radio = str.indexOf('[]');
+        if ( radio > -1 ) {
+            var name = str.slice(radio+2);
+            str = "<span class='sinclo-radio'><input type='radio' name='" + radioName + "' id='" + radioName + "-" + i + "' class='sinclo-chat-radio' value='" + name + "'>";
+            str += "<label for='" + radioName + "-" + i + "'>" + name + "</label></span>";
+        }
+        // リンク
+        var link = str.match(linkReg);
+        if ( link !== null ) {
+            var url = link[0];
+            var a = "<a href='" + url + "' target='_blank'>" + url + "</a>";
+            str = str.replace(url, a);
+        }
+        // 電話番号（スマホのみリンク化）
+        var tel = str.match(telnoTagReg);
+        if( tel !== null ) {
+          var telno = tel[1];
+          if(isSmartphone) {
+            // リンクとして有効化
+            var a = "<a href='tel:" + telno + "'>" + telno + "</a>";
+            str = str.replace(tel[0], a);
+          } else {
+            // ただの文字列にする
+            var span = "<span class='telno'>" + telno + "</span>";
+            str = str.replace(tel[0], span);
+          }
+        }
+        content += str + "\n";
+      }
+      document.querySelector('#chatTalk .sinclo_re .details:not(.cName)').innerHTML = content.replace(/\n$/, '');
+    }
 });
 
 // http://stackoverflow.com/questions/17035621/what-is-the-angular-way-of-displaying-a-tooltip-lightbox
@@ -706,34 +804,23 @@ sincloApp.directive('ngShowonhover',function() {
     };
 });
 
-function addOption(type){
-    var sendMessage = document.getElementById('TAutoMessageAction');
-    switch(type){
-        case 1:
-            if (sendMessage.value.length > 0) {
-                sendMessage.value += "\n";
-            }
-            sendMessage.value += "[] ";
-            sendMessage.focus();
-            break;
-        case 2:
-          if (sendMessage.value.length > 0) {
-            sendMessage.value += "\n";
-          }
-          sendMessage.value += "<telno></telno>";
-          sendMessage.focus();
-          // 開始と終了タブの真ん中にカーソルを配置する
-          if (sendMessage.createTextRange) {
-            var range = sendMessage.createTextRange();
-            range.move('character', sendMessage.value.length-8);
-            range.select();
-          } else if (sendMessage.setSelectionRange) {
-            sendMessage.setSelectionRange(sendMessage.value.length, sendMessage.value.length-8);
-          }
-          break;
-    }
+function escape_html(unescapedString) {
+  if(typeof unescapedString !== 'string') {
+    return unescapedString;
+  }
+  var string = unescapedString.replace(/(<br>|<br \/>)/gi, '\n');
+  string = string.replace(/[&'`"<>]/g, function(match) {
+    return {
+      '&': '&amp;',
+      "'": '&#x27;',
+      '`': '&#x60;',
+      '"': '&quot;',
+      '<': '&lt;',
+      '>': '&gt;',
+    }[match];
+  });
+  return string;
 }
-
 
 function removeAct(lastPage){
     modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', 'オートメッセージ設定', 'moment');
