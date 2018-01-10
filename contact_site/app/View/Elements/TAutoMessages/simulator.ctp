@@ -8,17 +8,6 @@
     .showType4.largeSize{
       width: 400px;
     }
-    /* 一時的なstyle, 後で削除する */
-    #tautomessages_idx #tautomessages_form #tautomessages_simulator {
-      position: fixed;
-      bottom: 56px;
-      left: 60%;
-      margin: 10px 0 0 30px;
-      margin-left: 30px;
-    }
-    #tautomessages_idx #tautomessages_form #tautomessages_simulator section#switch_widget.showBanner{
-      margin-bottom: 3em;
-    }
     #tautomessages_idx #tautomessages_form #tautomessages_simulator section .ulTab li {
       display: initial;
     }
