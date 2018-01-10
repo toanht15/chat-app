@@ -4,9 +4,14 @@ $(document).ready(function(){
     var dataList = {},
         customerId = document.getElementById('customerId').value;
         visitorsId = document.getElementById('visitorsId').value;
+        //console.log('infoData');
+        //console.log($(".infoData"));
     $(".infoData").each(function(){
+    	console.log($(this).data('key'));
       dataList[$(this).data('key')] = this.value;
     });
+    console.log('dataList');
+    console.log(dataList);
     $.ajax({
       type: 'GET',
       url: "<?= $this->Html->url(array('controller' => 'Histories', 'action' => 'remoteSaveCustomerInfo')) ?>",
@@ -17,7 +22,7 @@ $(document).ready(function(){
       },
       dataType: 'json',
       success: function(ret){
-        location.href = location.href;
+        //location.href = location.href;
       }
     });
   }

@@ -8,7 +8,7 @@ var mysql = require('mysql'),
       host: process.env.DB_HOST || 'localhost',
       user: process.env.DB_USER || 'root',
       password: process.env.DB_PASS || 'password',
-      database: process.env.DB_NAME || 'sinclo_db'
+      database: process.env.DB_NAME || 'sinclo_db2'
     });
 
 // log4js
@@ -762,7 +762,7 @@ io.sockets.on('connection', function (socket) {
             chatData.historyId = historyId;
 
             var sql  = "SELECT";
-                sql += " chat.id, chat.message, chat.message_type as messageType, chat.achievement_flg as achievementFlg, chat.m_users_id as userId, mu.display_name as userName, chat.message_read_flg as messageReadFlg, chat.created ";
+                sql += " chat.id, chat.message, chat.message_type as messageType, chat.achievement_flg as achievementFlg,chat.delete_flg as deleteFlg, chat.m_users_id as userId, mu.display_name as userName, chat.message_read_flg as messageReadFlg, chat.created ";
                 sql += "FROM t_history_chat_logs AS chat ";
                 sql += "LEFT JOIN m_users AS mu ON ( mu.id = chat.m_users_id ) ";
                 sql += "WHERE t_histories_id = ? ORDER BY created";

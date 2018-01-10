@@ -141,7 +141,7 @@
                                 $("#chatContent").css('height', $("#detail").outerHeight() - 65);
                                 $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
                                 $("#chatHistory").css('height',$("#history_body_side").outerHeight() - 170);
-                                $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 170);
+                                $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 129);
                             }
                         }
                         if (!silent) {

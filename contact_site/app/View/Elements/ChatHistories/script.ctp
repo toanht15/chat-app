@@ -74,6 +74,8 @@ var actBtnShow = function(){
 
   // 選択中の場合
   if ( $('input[name="selectTab"]').is(":checked") ) {
+    console.log('チェック！');
+    $("#btnSet").css('display', 'block');
     var list = document.querySelectorAll('input[name^="selectTab"]:checked');
     var url = "/ChatHistories/outputCSVOfChat";
     for (var i = 0; i < list.length; i++){
@@ -100,7 +102,8 @@ var actBtnShow = function(){
     //document.getElementById("tautomessages_copy_btn").removeEventListener('click', openCopyDialog, false);
     //削除ボタン無効
     document.getElementById("history_dustbox_btn").className="btn-shadow disOffgrayBtn";
-    document.getElementById("history_dustbox_btn").removeEventListener('click', openDeleteDialog, false);;
+    document.getElementById("history_dustbox_btn").removeEventListener('click', openDeleteDialog, false);
+    $("#btnSet").css('display', 'none');
   }
 };
 
@@ -144,9 +147,288 @@ var setAllCheck = function() {
   actBtnShow();
 }
 
+// Change the selector if needed
+var  table = $('.scroll');
+var  bodyCells = table.find('tbody tr:first').children();
+var  colWidth;
+
+// Adjust the width of thead cells when window resizes
+$(window).resize(function() {
+    // Get the tbody columns width array
+    colWidth = bodyCells.map(function() {
+        return $(this).width();
+    }).get();
+
+    // Set the width of thead columns
+    table.find('thead tr').children().each(function(i, v) {
+      $(v).width(colWidth[i]);
+    });
+}).resize(); // Trigger resize handler
+//var splitterObj = null;
+
+
+$(function(){
+
+  $("#disabled_history_csv_btn").click(function(){
+    return false;
+  });
+
+  var calcHeaderHeight = function() {
+    return $('#history_menu').outerHeight() + $('div.btnSet').outerHeight() + $('label[for="g_chat"]').outerHeight() + $('.dataTables_scrollHead').outerHeight();
+  };
+
+  var tableObj = null;
+  $(window).on('load', function() {
+    document.getElementById("history_body_side").style.display = "block";
+    document.getElementById("detail").style.display = "block";
+    if(1024 < window.parent.screen.width && window.parent.screen.width < 1367) {
+      $("#history_list_side *").css("fontSize", "7px");
+      $("#leftContents ul.tabStyle li").css("width", "14.5em");
+      $("#leftContents ul.tabStyle li.on").css("width", "14.5em");
+    }
+    else if(window.parent.screen.width <= 1024) {
+      $("#history_list_side *").css("fontSize", "4px");
+      $("#leftContents ul.tabStyle li").css("width", "13em");
+      $("#leftContents ul.tabStyle li.on").css("width", "13em");
+    }
+
+    $.extend( $.fn.dataTable.defaults, {
+      language: { url: "/lib/datatables/Japanese.JSON" }
+    });
+
+    tableObj = $("#chatTable").DataTable({
+      searching: false,
+      scroller:true,
+      responsive:true,
+      scrollX: false,
+      scrollY: true,
+      scrollCollapse: true,
+      paging: false,
+      info: false,
+      ordering: false,
+      columnDefs: [
+        { width: 120, targets: 0 }
+      ]
+    });
+
+    tableObj.on('draw', function(){
+      if(<?= $screenFlg ?> == 1) {
+        $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 170);
+      }
+      if(<?= $screenFlg ?> == 2) {
+        $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 129);
+      }
+    });
+  });
+
+  //選択したチャット履歴CSV出力
+  $('#history_csv_btn').click(function(){
+    //return false;
+    var authorityCsv = "<?= $coreSettings[C_COMPANY_USE_HISTORY_EXPORTING] ?>";
+    if(authorityCsv == "") {
+      $("#disabled_history_csv_btn").click(function(){
+        return false;
+      })
+    }
+    //チェックボックスのチェック状態の取得
+    var list = document.querySelectorAll('input[name^="selectTab"]:checked');
+    if(list.length == 0) {
+      return false;
+    }
+    var selectedList = [];
+    document.getElementById("allCheck").checked = false;
+    for (var i = 0; i < list.length; i++){
+      selectedList.push(Number(list[i].value));
+      document.getElementById("selectTab"+Number(list[i].value)).checked = false;
+    }
+    document.getElementById("history_dustbox_btn").className="btn-shadow disOffgrayBtn";
+    document.getElementById("history_csv_btn").className="btn-shadow disOffgrayBtn";
+    $("#btnSet").css('display', 'none');
+  })
+
+  // 全選択用チェックボックス
+  var allCheckElm = document.getElementById('allCheck');
+  allCheckElm.addEventListener('click', setAllCheck); // 全選択
+
+  //リサイズ処理
+  var screenMode = <?= $screenFlg ?>;
+
+  $(window).resize(function() {
+    $("#history_list_side").css('height', window.innerHeight - 145);
+    //横並びの場合
+    if(screenMode == 1) {
+      //$("#pastChatTalk").css('height', window.innerHeight - 364);
+      document.getElementById('history_body_side').style.width = $('#history_body_side').outerWidth() + 'px';
+      document.getElementById('history_body_side').style.height = $('#history_list_side').outerHeight() + 'px';
+      $("#chatContent").css('height', $("#detail").outerHeight() - 105);
+      $("#customerInfoScrollArea").css('height', $("#detail").outerHeight() - 39);
+      $("#chatHistory").css('height',window.innerHeight - 355);
+    }
+    //縦並びの場合
+    if(screenMode == 2) {
+      document.getElementById('history_body_side').style.width = $('#history_list_side').outerWidth() + 'px';
+      $("#chatContent").css('height', $("#detail").outerHeight() - 65);
+      $("#chatHistory").css('height',$("#history_body_side").outerHeight() - 170);
+      $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
+      //$("#pastChatTalk").css('height', window.innerHeight - 540);
+    }
+    $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - calcHeaderHeight() - 20);
+    tableObj.columns.adjust();
+  });
+
+  //縦並びをクリックした場合
+  $(document).on('click', '.vertical', function(){
+    screenMode = 2;
+    splitterObj.destroy();
+    splitterObj = null;
+    splitterObj = $("#history_list_side").split({
+      "orientation": "horizontal",
+      //"limit": 50,
+      "position": "40%",
+      onDrag: function(ev) {
+        tableObj.columns.adjust();
+      }
+    });
+    splitterObj.refresh();
+    document.getElementById('history_body_side').style.width = $('#history_list_side').outerWidth() + 'px';
+    document.getElementById('chatTable').style.width = $('#history_body_side').outerWidth() + 'px';
+    document.getElementById('detail').style.width = "100%";
+    document.getElementById('verticalToggleMenu').style.display = "none";
+    $("#chatContent").css('height', $("#detail").outerHeight() - 65);
+    $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
+    $("#chatHistory").css('height',$("#history_body_side").outerHeight() - 170);
+    //$("#pastChatTalk").css('height', window.innerHeight - 540);
+    $.ajax({
+      type: 'post',
+      dataType: 'html',
+      cache: false,
+      url: "<?= $this->Html->url('/ChatHistories/changeScreen') ?>",
+      success: function(html){
+        //modalOpenOverlap.call(window, html, 'p-history-del', '履歴の削除', 'moment');
+      }
+    });
+    tableObj.columns.adjust();
+    $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - calcHeaderHeight() - 15);
+ });
+
+  //横並びをクリックした場合
+  $(document).on('click', '.side', function(){
+    screenMode = 1;
+    splitterObj.destroy();
+    splitterObj = null;
+    splitterObj = $("#history_list_side").split({
+      "orientation": "vertical",
+      "limit": 50,
+      "position": "70%",
+      onDrag: function(ev) {
+        tableObj.columns.adjust();
+      }
+    });
+    splitterObj.refresh();
+    document.getElementById('history_body_side').style.width = $('#history_body_side').outerWidth() + 'px';
+    document.getElementById('history_body_side').style.height = $('#history_list_side').outerHeight() + 'px';
+    document.getElementById('detail').style.height = "100%";
+    document.getElementById('verticalToggleMenu').style.display = "block";
+
+    //$("#pastChatTalk").css('height', window.innerHeight - 364);
+    $("#chatContent").css('height', $("#detail").outerHeight() - 105);
+    $("#customerInfoScrollArea").css('height', $("#detail").outerHeight() - 39);
+    $("#chatHistory").css('height',window.innerHeight - 355);
+    $.ajax({
+      type: 'post',
+      dataType: 'html',
+      cache: false,
+      url: "<?= $this->Html->url('/ChatHistories/changeScreen') ?>",
+      success: function(html){
+        //modalOpenOverlap.call(window, html, 'p-history-del', '履歴の削除', 'moment');
+      }
+    });
+    tableObj.columns.adjust();
+    //$(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - calcHeaderHeight() - 20);
+    $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 170);
+ });
+
+
+    //横並びの場合
+    if(<?= $screenFlg ?> == 1) {
+      var splitterObj = $("#history_list_side").split({
+        "orientation": "vertical",
+        //"limit": 500,
+        "position": "70%",
+        onDrag: function(ev) {
+          tableObj.columns.adjust();
+        }
+      });
+      //$("#pastChatTalk").css('height', window.innerHeight - 364);
+      document.getElementById('detail').style.height = "100%";
+      document.getElementById('verticalToggleMenu').style.display = "block";
+      $("#chatContent").css('height', $("#detail").outerHeight() - 105);
+      $("#customerInfoScrollArea").css('height', $("#detail").outerHeight() - 39);
+      $("#chatHistory").css('height',window.innerHeight - 355);
+      $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 170);
+    }
+    //縦並びの場合$this.attr('data-balloon-position');
+    if(<?= $screenFlg ?> == 2) {
+      splitterObj = $("#history_list_side").split({
+        "orientation": "horizontal",
+        //"limit": 50,
+        "position": "40%",
+        onDrag: function(ev) {
+          tableObj.columns.adjust();
+        }
+      });
+      document.getElementById('history_body_side').style.width = $('#history_body_side').outerWidth() + 'px';
+      document.getElementById('chatTable').style.width = $('#history_body_side').outerWidth() - 40 + 'px';
+      document.getElementById('detail').style.width = "100%";
+      document.getElementById('verticalToggleMenu').style.display = "none";
+      $("#chatContent").css('height', $("#detail").outerHeight() - 65);
+      $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
+      console.log('ここにははいている');
+      console.log($("#history_body_side").outerHeight());
+      //$(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 129);
+    }
+
+    setTimeout(function(){
+      // 初期表示時にテーブルのヘッダとボディがズレることがあるのでタイミングをずらして再描画
+      tableObj.columns.adjust();
+    }, 500);
+});
+
+var onBeforeunloadHandler = function(e) {
+  e.returnValue = 'まだ保存されておりません。離脱してもよろしいでしょうか';
+};
+
+// 元に戻す処理
+function reloadAct(historyId){
+  changeFlg = false;
+  if(changeFlg == false) {
+    window.removeEventListener('beforeunload', onBeforeunloadHandler, false);
+  }
+  location.href = "<?= $this->Html->url(['controller' => 'ChatHistories', 'action' => 'index']) ?>?id="+ historyId
+}
+
+//履歴チャット削除モーダル画面
+function openChatDeleteDialog(id,historyId,message,created){
+  $.ajax({
+    type: 'post',
+    dataType: 'html',
+    data: {
+      id:id,
+      historyId:historyId,
+      message:message,
+      created:created
+    },
+    cache: false,
+    url: "<?= $this->Html->url('/ChatHistories/openChatSentenceEntryDelete') ?>",
+    success: function(html){
+      modalOpenOverlap.call(window, html, 'p-history-del', '履歴の削除', 'moment');
+    }
+  });
+}
 
 //ユーザー情報表示変更
 function openChatById(id) {
+  console.log('入っているかチェック');
   clearChatAndPersonalInfo();
   $.ajax({
     type: 'GET',
@@ -157,9 +439,11 @@ function openChatById(id) {
     dataType: 'html',
     success: function(html){
       var customerData = JSON.parse(html);
+      console.log('customerData');
+      console.log(customerData);
       document.getElementById("visitorsId").innerHTML= customerData.THistory.visitors_id;
       document.getElementById("ipAddress").innerHTML= "("+customerData.THistory.ip_address+")";
-      if(customerData.LandscapeData) {
+      if(customerData.LandscapeData.lbc_code != null && customerData.LandscapeData.org_name != null) {
         document.getElementById("Landscape").innerHTML= customerData.LandscapeData.org_name;
         $("#LandscapeData a").attr('onclick',"openCompanyDetailInfo("+customerData.LandscapeData.lbc_code+")");
       }
@@ -210,269 +494,5 @@ function clearChatAndPersonalInfo() {
   document.getElementById("ng-customer-mail").value= "";
   document.getElementById("ng-customer-memo").value= "";
   document.getElementById('customerId').value= "";
-}
-
-// Change the selector if needed
-var  table = $('.scroll');
-var  bodyCells = table.find('tbody tr:first').children();
-var  colWidth;
-
-// Adjust the width of thead cells when window resizes
-$(window).resize(function() {
-    // Get the tbody columns width array
-    colWidth = bodyCells.map(function() {
-        return $(this).width();
-    }).get();
-
-    // Set the width of thead columns
-    table.find('thead tr').children().each(function(i, v) {
-      $(v).width(colWidth[i]);
-    });
-}).resize(); // Trigger resize handler
-//var splitterObj = null;
-
-
-$(function(){
-  $("#disabled_history_csv_btn").click(function(){
-    return false;
-  });
-
-  var calcHeaderHeight = function() {
-    return $('#history_menu').outerHeight() + $('div.btnSet').outerHeight() + $('label[for="g_chat"]').outerHeight() + $('.dataTables_scrollHead').outerHeight();
-  };
-
-  var tableObj = null;
-  $(window).on('load', function() {
-    document.getElementById("history_body_side").style.display = "block";
-    document.getElementById("detail").style.display = "block";
-    if(1024 < window.parent.screen.width && window.parent.screen.width < 1367) {
-      $("#history_list_side *").css("fontSize", "7px");
-      $("#leftContents ul.tabStyle li").css("width", "14.5em");
-      $("#leftContents ul.tabStyle li.on").css("width", "14.5em");
-    }
-    else if(window.parent.screen.width <= 1024) {
-      $("#history_list_side *").css("fontSize", "4px");
-      $("#leftContents ul.tabStyle li").css("width", "13em");
-      $("#leftContents ul.tabStyle li.on").css("width", "13em");
-    }
-
-    $.extend( $.fn.dataTable.defaults, {
-      language: { url: "/lib/datatables/Japanese.JSON" }
-    });
-
-    tableObj = $("#chatTable").DataTable({
-      searching: false,
-      scroller:true,
-      responsive:true,
-      scrollX: false,
-      scrollY: true,
-      scrollCollapse: true,
-      paging: false,
-      info: false,
-      ordering: false,
-      columnDefs: [
-        { width: 120, targets: 0 }
-      ]
-    });
-
-    tableObj.on('draw', function(){
-      $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - calcHeaderHeight() - 20);
-    });
-  });
-
-  //選択したチャット履歴CSV出力
-  $('#history_csv_btn').click(function(){
-    //return false;
-    var authorityCsv = "<?= $coreSettings[C_COMPANY_USE_HISTORY_EXPORTING] ?>";
-    if(authorityCsv == "") {
-      $("#disabled_history_csv_btn").click(function(){
-        return false;
-      })
-    }
-    //チェックボックスのチェック状態の取得
-    var list = document.querySelectorAll('input[name^="selectTab"]:checked');
-    if(list.length == 0) {
-      return false;
-    }
-    var selectedList = [];
-    document.getElementById("allCheck").checked = false;
-    for (var i = 0; i < list.length; i++){
-      selectedList.push(Number(list[i].value));
-      document.getElementById("selectTab"+Number(list[i].value)).checked = false;
-    }
-    document.getElementById("history_dustbox_btn").className="btn-shadow disOffgrayBtn";
-    document.getElementById("history_csv_btn").className="btn-shadow disOffgrayBtn";
-  })
-
-  // 全選択用チェックボックス
-  var allCheckElm = document.getElementById('allCheck');
-  allCheckElm.addEventListener('click', setAllCheck); // 全選択
-
-  //リサイズ処理
-  var screenMode = <?= $screenFlg ?>;
-
-  $(window).resize(function() {
-    $("#history_list_side").css('height', window.innerHeight - 145);
-    //横並びの場合
-    if(screenMode == 1) {
-      //$("#pastChatTalk").css('height', window.innerHeight - 364);
-      document.getElementById('history_body_side').style.width = $('#history_body_side').outerWidth() + 'px';
-      document.getElementById('history_body_side').style.height = $('#history_list_side').outerHeight() + 'px';
-      $("#chatContent").css('height', $("#detail").outerHeight() - 105);
-      $("#customerInfoScrollArea").css('height', $("#detail").outerHeight() - 39);
-      $("#chatHistory").css('height',window.innerHeight - 355);
-    }
-    //縦並びの場合
-    if(screenMode == 2) {
-      document.getElementById('history_body_side').style.width = $('#history_list_side').outerWidth() + 'px';
-      $("#chatContent").css('height', $("#detail").outerHeight() - 65);
-      $("#chatHistory").css('height',$("#history_body_side").outerHeight() - 170);
-      $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
-      //$("#pastChatTalk").css('height', window.innerHeight - 540);
-    }
-    $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - calcHeaderHeight() - 20);
-    tableObj.columns.adjust();
-  });
-
-  //縦並びをクリックした場合
-  $(document).on('click', '.vertical', function(){
-    screenMode = 2;
-    splitterObj.destroy();
-    splitterObj = null;
-    splitterObj = $("#history_list_side").split({
-      "orientation": "horizontal",
-      //"limit": 50,
-      "position": "40%",
-      onDrag: function(ev) {
-        tableObj.columns.adjust();
-      }
-    });
-    splitterObj.refresh();
-    document.getElementById('history_body_side').style.width = $('#history_list_side').outerWidth() + 'px';
-    document.getElementById('chatTable').style.width = $('#history_body_side').outerWidth() + 'px';
-    document.getElementById('detail').style.width = "100%";
-    $("#chatContent").css('height', $("#detail").outerHeight() - 105);
-    $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
-    $("#chatHistory").css('height',$("#history_body_side").outerHeight() - 170);
-    //$("#pastChatTalk").css('height', window.innerHeight - 540);
-    $.ajax({
-      type: 'post',
-      dataType: 'html',
-      cache: false,
-      url: "<?= $this->Html->url('/ChatHistories/changeScreen') ?>",
-      success: function(html){
-        //modalOpenOverlap.call(window, html, 'p-history-del', '履歴の削除', 'moment');
-      }
-    });
-    tableObj.columns.adjust();
-    $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - calcHeaderHeight() - 15);
- });
-
-  //横並びをクリックした場合
-  $(document).on('click', '.side', function(){
-    screenMode = 1;
-    splitterObj.destroy();
-    splitterObj = null;
-    splitterObj = $("#history_list_side").split({
-      "orientation": "vertical",
-      "limit": 50,
-      "position": "70%",
-      onDrag: function(ev) {
-        tableObj.columns.adjust();
-      }
-    });
-    splitterObj.refresh();
-    document.getElementById('history_body_side').style.width = $('#history_body_side').outerWidth() + 'px';
-    document.getElementById('history_body_side').style.height = $('#history_list_side').outerHeight() + 'px';
-    document.getElementById('detail').style.height = "100%";
-
-    //$("#pastChatTalk").css('height', window.innerHeight - 364);
-    $("#chatContent").css('height', $("#detail").outerHeight() - 105);
-    $("#customerInfoScrollArea").css('height', $("#detail").outerHeight() - 39);
-    $("#chatHistory").css('height',window.innerHeight - 355);
-    $.ajax({
-      type: 'post',
-      dataType: 'html',
-      cache: false,
-      url: "<?= $this->Html->url('/ChatHistories/changeScreen') ?>",
-      success: function(html){
-        //modalOpenOverlap.call(window, html, 'p-history-del', '履歴の削除', 'moment');
-      }
-    });
-    tableObj.columns.adjust();
-    $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - calcHeaderHeight() - 20);
- });
-
-
-    //横並びの場合
-    if(<?= $screenFlg ?> == 1) {
-      var splitterObj = $("#history_list_side").split({
-        "orientation": "vertical",
-        //"limit": 500,
-        "position": "70%",
-        onDrag: function(ev) {
-          tableObj.columns.adjust();
-        }
-      });
-      //$("#pastChatTalk").css('height', window.innerHeight - 364);
-      document.getElementById('detail').style.height = "100%";
-      $("#chatContent").css('height', $("#detail").outerHeight() - 105);
-      $("#customerInfoScrollArea").css('height', $("#detail").outerHeight() - 39);
-      $("#chatHistory").css('height',window.innerHeight - 355);
-      $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 170);
-    }
-    //縦並びの場合$this.attr('data-balloon-position');
-    if(<?= $screenFlg ?> == 2) {
-      splitterObj = $("#history_list_side").split({
-        "orientation": "horizontal",
-        //"limit": 50,
-        "position": "40%",
-        onDrag: function(ev) {
-          tableObj.columns.adjust();
-        }
-      });
-      document.getElementById('history_body_side').style.width = $('#history_body_side').outerWidth() + 'px';
-      document.getElementById('chatTable').style.width = $('#history_body_side').outerWidth() - 40 + 'px';
-      document.getElementById('detail').style.width = "100%";
-      $("#chatContent").css('height', $("#detail").outerHeight() - 65);
-      $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
-    }
-
-    setTimeout(function(){
-      // 初期表示時にテーブルのヘッダとボディがズレることがあるのでタイミングをずらして再描画
-      tableObj.columns.adjust();
-    }, 500);
-});
-
-var onBeforeunloadHandler = function(e) {
-  e.returnValue = 'まだ保存されておりません。離脱してもよろしいでしょうか';
-};
-
-// 元に戻す処理
-function reloadAct(historyId){
-  changeFlg = false;
-  if(changeFlg == false) {
-    window.removeEventListener('beforeunload', onBeforeunloadHandler, false);
-  }
-  location.href = "<?= $this->Html->url(['controller' => 'ChatHistories', 'action' => 'index']) ?>?id="+ historyId
-}
-
-//履歴チャット削除モーダル画面
-function openChatDeleteDialog(id,historyId,message,created){
-  $.ajax({
-    type: 'post',
-    dataType: 'html',
-    data: {
-      id:id,
-      historyId:historyId,
-      message:message,
-      created:created
-    },
-    cache: false,
-    url: "<?= $this->Html->url('/ChatHistories/openChatSentenceEntryDelete') ?>",
-    success: function(html){
-      modalOpenOverlap.call(window, html, 'p-history-del', '履歴の削除', 'moment');
-    }
-  });
 }
 </script>

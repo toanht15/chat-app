@@ -398,10 +398,11 @@
         else {
           // ファイル送信はmessageがJSONなのでparseする
           message = JSON.parse(message);
+          var forDeletionMessage = message.fileName.replace(/\r?\n?\s+/g,"");
           content = "<span class='cName' style = 'font-size:"+fontSize+"'>ファイル送信" + (isExpired ? "（ダウンロード有効期限切れ）" : "") + "</span>";
           content += "<span class='cTime' style = 'font-size:"+timeFontSize+"'>"+chat.created+"</span>";
           if(chat.permissionLevel == 1 && coreSettings == 1) {
-            content += '<img src= /img/close_b.png alt=履歴削除 width=21 height=21 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+message.fileName+'","'+created+'") style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
+            content += '<img src= /img/close_b.png alt=履歴削除 width=21 height=21 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+forDeletionMessage+'","'+created+'") style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
           }
           else if(chat.permissionLevel == 1 && coreSettings == "") {
             content += '<img src= /img/close_b.png alt=履歴削除 class = \"commontooltip disabled\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" data-balloon-position = \"'+dataBaloon+'\"  width=21 height=21 style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
@@ -814,7 +815,7 @@ $(document).ready(function(){
       if((location.search.split("?")[1]) !== undefined && location.search.split("?")[1].match(/id/)) {
         if ((location.search.split("?")[1]).substr(3) == $(this)[0]['id']) {
           $(this).find('td').each(function(index){
-            if(index < 11) {
+            if(index < 7) {
               $(this).css("background-color", "#fff");
               $(this).css("font-weight", "normal");
             }
@@ -823,7 +824,7 @@ $(document).ready(function(){
       }
       else {
       $('.showBold').find('td').each(function(index){
-        if(index < 11) {
+        if(index < 7) {
           $(this).css("background-color", "#fff");
           $(this).css("font-weight", "normal");
         }
@@ -832,26 +833,28 @@ $(document).ready(function(){
     });
     if(prevBoldTarget != null) {
       prevBoldTarget.find('td').each(function(index){
-        if(index < 11) {
+        if(index < 7) {
           $(this).css("background-color", "#fff");
           $(this).css("font-weight", "normal");
         }
       });
     }
     $(this).find('td').each(function(index){
-      if(index < 11) {
+      if(index < 7) {
         $(this).css("background-color", "#ebf6f9");
         $(this).css("font-weight", "bold");
       }
     });
     prevBoldTarget = $(this);
+    console.log('チェック');
+    console.log(prevBoldTarget);
   });
 
   $('.showBold').each(function(index){
     if((location.search.split("?")[1]) !== undefined && location.search.split("?")[1].match(/id/)) {
       if ((location.search.split("?")[1]).substr(3) == $(this)[0]['id']) {
         $(this).find('td').each(function(index){
-          if(index < 11) {
+          if(index < 7) {
             $(this).css("background-color", "#ebf6f9");
             $(this).css("font-weight", "bold");
           }
@@ -860,7 +863,7 @@ $(document).ready(function(){
     }
     else {
       $('.showBold').find('td').each(function(index){
-        if(index < 11) {
+        if(index < 7) {
           $(this).css("background-color", "#ebf6f9");
           $(this).css("font-weight", "bold");
         }
@@ -868,6 +871,94 @@ $(document).ready(function(){
     }
   });
   prevBoldTarget = $(this);
+
+  var prevBoldTarget2 = 0;
+  var id;
+  var number = 1;
+  var scrollHeight = 1;
+  $(window).on('keydown', function(e) {
+    console.log(number);
+    var check = parseInt($(".dataTables_scrollBody").css('height'))/2;
+    console.log('うおい！');
+    console.log(check);
+    if(e.keyCode === 40) { // ↓
+      number = number + 1;
+      console.log('下向きでアール');
+      $('.showBold').find('td').each(function(index){
+        if(index < prevBoldTarget2 + 7) {
+          $(this).css("background-color", "#fff");
+          $(this).css("font-weight", "normal");
+        }
+        if(index > prevBoldTarget2 + 6 && index < prevBoldTarget2 + 14) {
+          $(this).css("background-color", "#ebf6f9");
+          $(this).css("font-weight", "bold");
+          id = $(this).parent('tr')[0]['id'];
+        }
+      });
+      prevBoldTarget2 = prevBoldTarget2 + 7;
+      //チャット情報取得
+      var element = document.getElementById("chat_history_idx");
+      // jQueryかjqLiteが有効な場合はセレクタを使える
+      // var $scope = angular.element('#myElement').scope()
+      var $scope = angular.element(element).scope();
+      $scope.getOldChat(id, false);
+      //ユーザー情報取得
+      openChatById(id);
+      console.log('高さ');
+      //console.log(number);
+
+      if(scrollHeight == 1) {
+        if(parseInt($(".dataTables_scrollBody").css('height')) < (67*number)) {
+          //console.log('いええええええい！');
+          //console.log(check);
+          $(".dataTables_scrollBody").scrollTop(check * scrollHeight);
+          number = 1;
+          check = check - 1;
+          scrollHeight = scrollHeight + 1;
+        }
+      }
+      else {
+        console.log('ちぇっくやで！');
+        console.log(parseInt($(".dataTables_scrollBody").css('height'))/2);
+        console.log(67*number);
+        if(parseInt($(".dataTables_scrollBody").css('height'))/2 < (67*number)) {
+          console.log('ちぇっくやで！');
+          //console.log(check);
+          $(".dataTables_scrollBody").scrollTop(check * scrollHeight);
+          number = 0;
+          check = check - 1;
+          scrollHeight = scrollHeight + 1;
+        }
+      }
+    }
+    if(e.keyCode === 38) { // ↑キーを押したら
+      console.log('上向きでアール');
+      if(prevBoldTarget2 != 0) {
+        $('.showBold').find('td').each(function(index){
+          //console.log(index);
+          console.log(prevBoldTarget2);
+          if(index < prevBoldTarget2 + 7) {
+            $(this).css("background-color", "#fff");
+            $(this).css("font-weight", "normal");
+          }
+          if(index > prevBoldTarget2 - 8 && index < prevBoldTarget2) {
+            $(this).css("background-color", "#ebf6f9");
+            $(this).css("font-weight", "bold");
+            id = $(this).parent('tr')[0]['id'];
+          }
+        });
+        prevBoldTarget2 = prevBoldTarget2 - 7;
+        }
+      //ユーザー情報取得
+      openChatById(id);
+      //チャット情報取得
+      var element = document.getElementById("chat_history_idx");
+      // jQueryかjqLiteが有効な場合はセレクタを使える
+      // var $scope = angular.element('#myElement').scope()
+      var $scope = angular.element(element).scope();
+      $scope.getOldChat(id, false);
+    }
+  });
 
 
   //検索ボタン
@@ -955,4 +1046,5 @@ $(document).ready(function(){
     });
   });
 });
+
 </script>

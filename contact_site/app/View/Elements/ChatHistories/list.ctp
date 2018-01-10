@@ -135,7 +135,7 @@
   </div>
     <!-- 検索窓 -->
     <div class='fLeft' style="width:100%;">
-      <div class="btnSet">
+      <div id="btnSet">
        <span id = "outputCsv">
            <?= $this->Html->image('csv.png', array(
                'alt' => 'CSV出力',
@@ -181,7 +181,7 @@
           <input type="checkbox" id="g_chat" name="group_by_chat" <?=$checked?> />
           CV(コンバージョン)のみ表示する
         </label>
-        <div class = "form01 fRight" style = "margin-top: -37px; display:inline-block; height: 40px; margin-bottom:22px;">
+        <div class = "form01 fRight" style = "margin-top: -48px; display:inline-block; height: 40px; margin-bottom:22px; margin-right: 124px;">
             <?php
             if($screenFlg == C_CHAT_HISTORY_SIDE) { ?>
             <ul class="switch" ng-init = "fillterTypeId = 2" style = "box-shadow:none;">
@@ -235,13 +235,8 @@
       <thead>
         <tr>
           <th style = "width:2%"><input type="checkbox" name="allCheck" id="allCheck"><label for="allCheck"></label></th>
-          <th width = "3%" style = "width:3%">種別</th>
-          <th id = "firstTimeReceivingLabel" style = "width:5%">初回チャット<br>受信日時<div class="questionBalloon questionBalloonPosition13">
-            <icon class="questionBtn">？</icon>
-          </div></th>
-          <th style = "width:5%">IPアドレス</th>
-          <th style = "width:5%">訪問ユーザ</th>
-          <th style = "width:4%">キャンペーン</th>
+          <th width = "3%" style = "width:25%">情報</th>
+          <th style = "width:3%">キャンペーン</th>
           <th id = "sendChatPageLabel" style = "width:8%">チャット送信ページ<div class="questionBalloon questionBalloonPosition8">
             <icon class="questionBtn">？</icon>
           </div></th>
@@ -253,7 +248,6 @@
           <th style = "width:5%" id="lastSpeechLabel">最終発言後<br>離脱時間<div class="questionBalloon questionBalloonPosition13">
               <icon class="questionBtn">？</icon>
             </div></th>
-          <th style = "width:6%">担当者</th>
         <?php endif; ?>
       </tr>
       </thead>
@@ -303,12 +297,12 @@
                 <input type="checkbox" name="selectTab" id="selectTab<?=h($history['THistory']['id'])?>" value="<?=h($history['THistory']['id'])?>">
                 <label for="selectTab<?=h($history['THistory']['id'])?>"></label>
               </td>
-              <td class="tCenter" style = "width:5%">
+              <td class="tCenter" style = "width:43%">
                 <?php if( is_numeric($history['THistoryChatLog']['count']) ): ?>
                     <?php
                      if ((!empty($history['THistoryChatLog']['type']) && $history['THistoryChatLog']['type'] == "自動返信")
                       || ($history['THistoryChatLog']['cmp'] == 0 && $history['THistoryChatLog']['sry'] == 0 && $history['THistoryChatLog']['cus'] == 0)) { ?>
-                      <span style = "color:#4bacc6; font-weight:bold;">Auto</span>
+                      <span style = "color:#4bacc6; font-weight:bold;">Auto(<?php if (isset($chatUserList[$history['THistory']['id']])) { echo $chatUserList[$history['THistory']['id']]; } ?>)</span>
                     <?php
                     }
                     else if(!empty($history['THistoryChatLog']['type']) && $history['THistoryChatLog']['type'] == "拒否") { ?>
@@ -316,7 +310,7 @@
                     <?php
                     }
                     else if($history['THistoryChatLog']['type'] == "") { ?>
-                      <span style = "color:#9bbb59; font-weight:bold;">Manual</span>
+                      <span style = "color:#9bbb59; font-weight:bold;">Manual(<?php if (isset($chatUserList[$history['THistory']['id']])) { echo $chatUserList[$history['THistory']['id']]; } ?>)</span>
                     <?php
                     }
                     else if($history['THistoryChatLog']['type'] == "未入室") { ?>
@@ -324,10 +318,18 @@
                     <?php
                       }
                    endif; ?>
-              </td>
-              <td class="tRight pre" style = "width:9%"><?php if (!empty($history['LastSpeechTime']['firstSpeechTime'])){ ?><?=date_format(date_create($history['LastSpeechTime']['firstSpeechTime']), "Y/m/d\nH:i:s")?><?php } ?></td>
-              <td class="tLeft ip-address" style = "width:11%">
+                <span id = "firstChatTime">
+                <?php if (!empty($history['LastSpeechTime']['firstSpeechTime']) && date('Y/m/d') == date_format(date_create($history['LastSpeechTime']['firstSpeechTime']), "Y/m/d")){ ?>
+                 <?=date_format(date_create($history['LastSpeechTime']['firstSpeechTime']), "H:i")?>
+                <?php }
+                else if(!empty($history['LastSpeechTime']['firstSpeechTime']) && date('Y/m/d') != date_format(date_create($history['LastSpeechTime']['firstSpeechTime']), "Y/m/d")) {
+                  $firstSpeechTimeMonth = date_format(date_create($history['LastSpeechTime']['firstSpeechTime']), "m月");
+                  $firstSpeechTimeDay = date_format(date_create($history['LastSpeechTime']['firstSpeechTime']), "d日"); ?>
+                  <?=ltrim($firstSpeechTimeMonth, '0').ltrim($firstSpeechTimeDay, '0');?>
+                <?php } ?>
+                </span>
                 <?php if(isset($coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $coreSettings[C_COMPANY_REF_COMPANY_DATA]): ?>
+                  <br>
                   <?php if(!empty($history['LandscapeData']['org_name']) && !empty($history['LandscapeData']['lbc_code'])): ?>
                       <a href="javascript:void(0)" class="underL" onclick="openCompanyDetailInfo('<?=$history['LandscapeData']['lbc_code']?>')"><?=h($history['LandscapeData']['org_name'])?></a><br>
                   <?php elseif(!empty($history['LandscapeData']['org_name'])): ?>
@@ -335,10 +337,10 @@
                   <?php endif; ?>
                 <?php endif; ?>
                 {{ ip('<?=h($history['THistory']['ip_address'])?>', <?php echo !empty($history['LandscapeData']['org_name']) ? 'true' : 'false' ?>) }}
-              </td>
-              <td class="tLeft pre" style = "width:11%">{{ ui('<?=h($history['THistory']['ip_address'])?>', '<?=$visitorsId?>') }}</td>
+                <br>
+                {{ ui('<?=h($history['THistory']['ip_address'])?>', '<?=$visitorsId?>') }}</td>
               <td class="tCenter pre" style = "width:10%"><?=$campaignParam?></td>
-              <td class="pre" style = "font-size:11px;padding:8px 5px !important;width:20%;"><a href = "<?=h($history['THistoryStayLog']['url'])?>" target = "landing"><?= $history['THistoryStayLog']['title'] ?></a></td>
+              <td class="pre" style = "font-size:11px;padding:8px 5px !important;width:20%;"><a href = "<?=h($stayList2[$history['THistoryChatLog']['t_history_stay_logs_id']]['THistoryStayLog']['url'])?>" target = "landing"><?= $stayList2[$history['THistoryChatLog']['t_history_stay_logs_id']]['THistoryStayLog']['title'] ?></a></td>
               <td class="tCenter" style = "width:7%"><?php
                 if($history['THistoryChatLog']['eff'] == 0 || $history['THistoryChatLog']['cv'] == 0 ) {
                   if (isset($history['THistoryChatLog']['achievementFlg'])){
@@ -361,7 +363,6 @@
                 echo $this->htmlEx->calcTime($history['LastSpeechTime']['lastSpeechTime'], $history['THistory']['out_date']);
               }
               ?></td>
-              <td class="tCenter pre" style = "width:12%"><?php if (isset($chatUserList[$history['THistory']['id']])) { echo $chatUserList[$history['THistory']['id']]; } ?></td>
           <?php endif; ?>
           </tr>
           <?php } } ?>
@@ -486,15 +487,16 @@
           </li>
           <li>
             <dt>チャット送信ページ</dt>
+            <?php $this->log('tHistoryStayLogList3',LOG_DEBUG); $this->log($stayList2[$defaultHistoryList['THistoryChatLog']['t_history_stay_logs_id']],LOG_DEBUG); ?>
             <dd id = "chatSending">
-            <a href = "<?=h($defaultHistoryList['THistoryStayLog']['url'])?>" target = "landing">
-            <span id = "chatSendingPage"><?= $defaultHistoryList['THistoryStayLog']['title'] ?></span></a></dd>
+            <a href = "<?=h($stayList2[$defaultHistoryList['THistoryChatLog']['t_history_stay_logs_id']]['THistoryStayLog']['url'])?>" target = "landing">
+            <span id = "chatSendingPage"><?= $stayList2[$defaultHistoryList['THistoryChatLog']['t_history_stay_logs_id']]['THistoryStayLog']['title'] ?></span></a></dd>
           </li>
           <li>
             <dt>離脱ページ</dt>
             <dd id = "separation">
-            <a href = "<?=h($tHistoryChatLastPageData['url'])?>" target = "landing">
-            <span id = "separationPage"><?= $tHistoryChatLastPageData['title'] ?></span></a></dd></dd>
+            <a href = "<?=h($tHistoryStayLogList3[0]['THistoryStayLog']['url'])?>" target = "landing">
+            <span id = "separationPage"><?= $tHistoryStayLogList3[0]['THistoryStayLog']['title'] ?></span></a></dd></dd>
           </li>
           <li>
             <dt>閲覧ページ数</dt>
