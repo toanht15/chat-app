@@ -84,15 +84,6 @@ class TAutoMessagesController extends AppController {
     if ( $this->request->is('post') ) {
       $this->_entry($this->request->data);
     }
-    else {
-      // シミュレーター表示用ウィジェット設定の取得
-      $this->request->data['widgetSettings'] = $this->_getWidgetSettings();
-
-      $this->set('titleLength_maxlength', $titleLength);
-      $this->set('subTitleLength_maxlength', $subTitleLength);
-      $this->set('descriptionLength_maxlength', $descriptionLength);
-      $this->recurse_array_HTML_safe($this->request->data);
-    }
 
     $operatingHourData = $this->MOperatingHour->find('first', ['conditions' => [
       'm_companies_id' => $this->userInfo['MCompany']['id']
@@ -101,6 +92,10 @@ class TAutoMessagesController extends AppController {
       $operatingHourData['MOperatingHour']['active_flg'] = 2;
     }
     $this->set('operatingHourData',$operatingHourData['MOperatingHour']['active_flg']);
+
+    // シミュレーター表示用ウィジェット設定の取得
+    $this->request->data['widgetSettings'] = $this->_getWidgetSettings();
+
     $this->_viewElement();
   }
 
@@ -168,10 +163,10 @@ class TAutoMessagesController extends AppController {
         }
         $this->request->data['TAutoMessage']['m_mail_template_id'] = $editData[0]['TAutoMessage']['m_mail_template_id'];
       }
-
-      // シミュレーター表示用ウィジェット設定の取得
-      $this->request->data['widgetSettings'] = $this->_getWidgetSettings();
     }
+
+    // シミュレーター表示用ウィジェット設定の取得
+    $this->request->data['widgetSettings'] = $this->_getWidgetSettings();
 
     $this->_viewElement();
   }
@@ -964,7 +959,7 @@ class TAutoMessagesController extends AppController {
   private function _getWidgetSettings() {
     $inputData = [];
     $ret = $this->MWidgetSetting->coFind('first');
-    $inputData = $ret;
+    $inputData = $ret['MWidgetSetting'];
 
     // 表示ウィジェットのセット
     $inputData = $this->_setShowTab($inputData);
@@ -972,13 +967,13 @@ class TAutoMessagesController extends AppController {
     // 詳細設定
     if ( isset($ret['MWidgetSetting']['style_settings']) ) {
       $json = $this->_settingToObj($ret['MWidgetSetting']['style_settings']);
-      $inputData['MWidgetSetting'] = $this->_setStyleSetting($inputData['MWidgetSetting'], $json);
+      $inputData = $this->_setStyleSetting($inputData, $json);
     }
     if(array_key_exists ('re_border_color',$json)){
       if($json['re_border_color'] === 'none'){
         $this->set('re_border_color_flg', false);
-        $inputData['MWidgetSetting']['re_border_color'] = 'なし';
-        $inputData['MWidgetSetting']['re_border_none'] = true;
+        $inputData['re_border_color'] = 'なし';
+        $inputData['re_border_none'] = true;
       }
       else{
         $this->set('re_border_color_flg', true);
@@ -987,15 +982,15 @@ class TAutoMessagesController extends AppController {
     else{
       //初回読み込み時
 //         $this->set('re_border_color_flg', false);
-//         $inputData['MWidgetSetting']['re_border_color'] = 'なし';
-//         $inputData['MWidgetSetting']['re_border_none'] = true;
+//         $inputData['re_border_color'] = 'なし';
+//         $inputData]['re_border_none'] = true;
       $this->set('re_border_color_flg', true);
     }
     if(array_key_exists ('se_border_color',$json)){
       if($json['se_border_color'] === 'none'){
         $this->set('se_border_color_flg', false);
-        $inputData['MWidgetSetting']['se_border_color'] = 'なし';
-        $inputData['MWidgetSetting']['se_border_none'] = true;
+        $inputData['se_border_color'] = 'なし';
+        $inputData['se_border_none'] = true;
       }
       else{
         $this->set('se_border_color_flg', true);
@@ -1004,15 +999,15 @@ class TAutoMessagesController extends AppController {
     else{
       //初回読み込み時
 //         $this->set('se_border_color_flg', false);
-//         $inputData['MWidgetSetting']['se_border_color'] = 'なし';
-//         $inputData['MWidgetSetting']['se_border_none'] = true;
+//         $inputData['se_border_color'] = 'なし';
+//         $inputData['se_border_none'] = true;
       $this->set('se_border_color_flg', true);
     }
     if(array_key_exists ('message_box_border_color',$json)){
       if($json['message_box_border_color'] === 'none'){
         $this->set('message_box_border_color_flg', false);
-        $inputData['MWidgetSetting']['message_box_border_color'] = 'なし';
-        $inputData['MWidgetSetting']['message_box_border_none'] = true;
+        $inputData['message_box_border_color'] = 'なし';
+        $inputData['message_box_border_none'] = true;
       }
       else{
         $this->set('message_box_border_color_flg', true);
@@ -1025,8 +1020,8 @@ class TAutoMessagesController extends AppController {
     if(array_key_exists ('widget_border_color',$json)){
       if($json['widget_border_color'] === 'none'){
         $this->set('widget_border_color_flg', false);
-        $inputData['MWidgetSetting']['widget_border_color'] = 'なし';
-        $inputData['MWidgetSetting']['widget_outside_border_none'] = true;
+        $inputData['widget_border_color'] = 'なし';
+        $inputData['widget_outside_border_none'] = true;
       }
       else{
         $this->set('widget_border_color_flg', true);
@@ -1039,8 +1034,8 @@ class TAutoMessagesController extends AppController {
     if(array_key_exists ('widget_inside_border_color',$json)){
       if($json['widget_inside_border_color'] === 'none'){
         $this->set('widget_inside_border_color_flg', false);
-        $inputData['MWidgetSetting']['widget_inside_border_color'] = 'なし';
-        $inputData['MWidgetSetting']['widget_inside_border_none'] = true;
+        $inputData['widget_inside_border_color'] = 'なし';
+        $inputData['widget_inside_border_none'] = true;
       }
       else{
         $this->set('widget_inside_border_color_flg', true);
@@ -1052,10 +1047,9 @@ class TAutoMessagesController extends AppController {
     //仕様変更常に高度な設定の設定値が反映されるようにする
     if(array_key_exists ('color_setting_type',$json)){
       if($json['color_setting_type'] === '1'){
-        $inputData['MWidgetSetting']['color_setting_type'] = '0';
+        $inputData['color_setting_type'] = '0';
       }
     }
-    $this->data = $inputData;
 
     //営業時間設定確認
     $operatingHourData = $this->MOperatingHour->find('first', ['conditions' => [
@@ -1068,7 +1062,7 @@ class TAutoMessagesController extends AppController {
     $titleLength = 12;
     $subTitleLength = 15;
     $descriptionLength = 15;
-    switch ($inputData['MWidgetSetting']['widget_size_type']) {
+    switch ($inputData['widget_size_type']) {
       //大きさによってトップタイトル、企業名、説明文のmaxlengthを可変とする
       case '1': //小
         $titleLength = 12;
@@ -1087,7 +1081,7 @@ class TAutoMessagesController extends AppController {
         break;
     }
 
-    return $inputData['MWidgetSetting'];
+    return $inputData;
   }
 
   /**

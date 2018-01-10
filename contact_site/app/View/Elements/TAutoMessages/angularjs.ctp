@@ -133,6 +133,7 @@ sincloApp.controller('MainController', function($scope) {
         return true;
     };
 
+    // ウィジェットのシミュレーター表示
     var json = JSON.parse(document.getElementById('TAutoMessageWidgetSettings').value);
     var widgetSettings = [];
     for (var item in json) {
@@ -243,7 +244,7 @@ sincloApp.controller('MainController', function($scope) {
      */
     $scope.getBannerWidth = function(){
       $('#sincloBanner').css("width","40px");
-      var text = $scope.bannertext;
+      var text = $scope.widgetSettings.bannertext;
       var oneByteCount = 0;
       var towByteCount = 0;
 
