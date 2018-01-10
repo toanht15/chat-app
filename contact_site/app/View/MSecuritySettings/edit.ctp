@@ -9,7 +9,7 @@ if ( !(!empty($this->data['MFileTransferSetting']['type']) && strcmp($this->data
 <div id='msecuritysettings_idx' class="card-shadow">
 
   <div id='msecuritysettings_title'>
-    <div class="fLeft"><?= $this->Html->image('file_transfer_setting_top.png', array('alt' => 'ファイル送信設定', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?></div>
+    <div class="fLeft"><?= $this->Html->image('security_settings_top.png', array('alt' => 'セキュリティ設定', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?></div>
     <h1>セキュリティ設定</h1>
   </div>
 
@@ -21,23 +21,30 @@ if ( !(!empty($this->data['MFileTransferSetting']['type']) && strcmp($this->data
       <ul>
         <li>
           <div id='ip_filter_enable_select_area'>
-            <label style="display:inline-block;"<?=($coreSettings[C_COMPANY_USE_SEND_FILE] ? '' : ' style="color: #CCCCCC;" class="commontooltip" data-text="こちらの機能はスタンダードプラン<br>からご利用いただけます。" data-balloon-position="13" data-content-position-left="-240"') ?>>
+            <label style="display:inline-block;">
               <?php
               $settings = [
                 'type' => 'radio',
                 'options' => $typeSelect,
                 'default' => 0, //FIXME 定数化
                 'legend' => false,
-                'separator' => '</label><br><label style="display:inline-block;"'.($coreSettings[C_COMPANY_USE_SEND_FILE] ? '' : ' style="color: #CCCCCC;" class="commontooltip" data-text="こちらの機能はスタンダードプラン<br>からご利用いただけます。" data-balloon-position="9" data-content-position-left="-130"').'>',
+                'separator' => '</label><br><label style="display:inline-block;"'.(isset($coreSettings[C_COMPANY_USE_SECURITY_LOGIN_IP_FILTER]) && $coreSettings[C_COMPANY_USE_SECURITY_LOGIN_IP_FILTER] ? '' : ' style="color: #CCCCCC;" class="commontooltip" data-text="こちらの機能はスタンダードプラン<br>からご利用いただけます。" data-balloon-position="34.5"').'>',
                 'label' => false,
                 'div' => false,
                 'error' => false,
-                'disabled' => !$coreSettings[C_COMPANY_USE_SEND_FILE],
+                'disabled' => !(isset($coreSettings[C_COMPANY_USE_SECURITY_LOGIN_IP_FILTER]) && $coreSettings[C_COMPANY_USE_SECURITY_LOGIN_IP_FILTER]),
                 'class' => 'pointer'
               ];
               echo $this->Form->input('MSecuritySettings.ip_filter_enabled',$settings);
               ?>
             </label>
+
+            <?php
+              // radioボタンがdisabledの場合POSTで値が送信されないため、hiddenで送信すべき値を補填する
+              if(!(isset($coreSettings[C_COMPANY_USE_SECURITY_LOGIN_IP_FILTER]) && $coreSettings[C_COMPANY_USE_SECURITY_LOGIN_IP_FILTER])):
+            ?>
+            <input type="hidden" name="data[MSecuritySettings][ip_filter_enabled]" value="0"/>
+            <?php endif; ?>
           </div>
           <?php if (!empty($errors['active_flg'])) echo "<li class='error-message'>" . h($errors['active_flg'][0]) . "</li>"; ?>
         </li>

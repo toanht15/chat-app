@@ -54,6 +54,7 @@ define('C_COMPANY_USE_FREE_INPUT', 'freeInput'); // 自由入力エリア
 define('C_COMPANY_USE_CV', 'cv'); // CV
 define('C_COMPANY_USE_AUTOMESSAGE_SEND_MAIL', 'autoMessageSendMail'); // メール送信（オートメッセージ）
 define('C_COMPANY_USE_SEND_FILE', 'sendFile'); // ファイル送信
+define('C_COMPANY_USE_SECURITY_LOGIN_IP_FILTER', 'loginIpFilter'); // セキュリティ設定（IPフィルタ）
 
 
 // 簡易メッセージ入力機能種別
