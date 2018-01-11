@@ -147,10 +147,6 @@ sincloApp.controller('MainController', function($scope) {
     $scope.showWidgetType = 1; // デフォルト表示するウィジェット
     $scope.openFlg = true;
 
-    $scope.changeFlg = false;
-
-    $scope.showTiming = $scope.widgetSettings['show_timing'];
-    $scope.showTime = $scope.widgetSettings['show_time'];
     $scope.widgetSizeTypeToggle = $scope.widgetSettings['widget_size_type'];
     $scope.subTitleToggle = $scope.widgetSettings['show_subtitle'];
     $scope.descriptionToggle = $scope.widgetSettings['show_description'];
@@ -208,76 +204,6 @@ sincloApp.controller('MainController', function($scope) {
         $scope.createMessage($scope.showWidgetType != 1);
         $scope.toggleChatTextareaView($scope.main.chat_textarea);
       },0);
-    }
-
-    //バナーから通常の表示に戻るときの処理
-    $scope.bannerSwitchWidget = function(){
-      var coreSettingsChat = "<?= $coreSettings[C_COMPANY_USE_CHAT]?>";
-      if(coreSettingsChat){
-        var lastSwitchWidget = Number(document.getElementById("switch_widget").value);
-      }
-      else{
-        var lastSwitchWidget = 1;
-      }
-      sincloBox.style.display = 'block';
-      $scope.switchWidget(lastSwitchWidget);
-      $scope.openFlg = true;
-      return;
-    }
-
-    $scope.showChooseImg = function(){
-      return $scope.mainImageToggle == '1';
-    }
-
-    $scope.showcloseButtonMode = function(){
-      if($scope.closeButtonSettingToggle == '2' && $scope.mainImageToggle != '4'){
-        $("#closeButtonMode").show();
-      }
-      else{
-        $("#closeButtonMode").hide();
-      }
-      return;
-    }
-
-    //小さなバナーの横幅を求める関数
-    /*
-     * 　もともとバナーの横幅はwidth: fit-content;で値を動的に持たせていたが、IEでこの実装は動作しなかったため
-     * 現在の横幅を算出して当てはめる方法にした経緯がある。
-     * 　しかし、各ブラウザごとにfontサイズの扱いが異なるため、この実装においても、サファリなどで見た目に差異が
-     * 生まれてしまっていた。そのため、ブラウザごとに微調整できるようにし、現在に至る。
-     */
-    $scope.getBannerWidth = function(){
-      $('#sincloBanner').css("width","40px");
-      var text = $scope.widgetSettings.bannertext;
-      var oneByteCount = 0;
-      var towByteCount = 0;
-
-      if(text.length === 0) {
-        $('#sincloBanner').css("width","38px");
-        return;
-      }
-
-      for (var i=0; i<text.length; i++){
-        var n = escape(text.charAt(i));
-        if (n.length < 4){
-          oneByteCount++;
-        }
-        else{
-          towByteCount++;
-        }
-      }
-
-      //いったん文字数でのサイズ調整を行い、その後spanタグの長さで調整（span内で文字が折り返さないように）
-      var bannerWidth = (oneByteCount * 8) + (towByteCount * 12.7) + 40;
-      $('#sincloBanner').css("width", bannerWidth + "px");
-
-      var targetSpan = $('#bannertext').get(0);
-
-      if(targetSpan) {
-        console.log(targetSpan.offsetWidth);
-        bannerWidth = targetSpan.offsetWidth + 40;
-        $('#sincloBanner').css("width", bannerWidth + "px");
-      }
     }
 
     $scope.$watch('chat_trigger', function(){
@@ -352,10 +278,6 @@ sincloApp.controller('MainController', function($scope) {
 //       }
       return defColor;
     }
-
-    $scope.inputInitToggle = function(item){
-      return (item) ? 1 : 2;
-    };
 
     //シンプル表示判定
     /*
@@ -608,16 +530,6 @@ sincloApp.controller('MainController', function($scope) {
     function(){
       $scope.switchWidget(1); // 標準に切り替える
     }, true);
-
-    angular.element(window).on("click", ".widgetOpener", function(){
-      var sincloBox = document.getElementById("sincloBox");
-      var nextFlg = true;
-      if ( $scope.openFlg ) {
-        nextFlg = false;
-      }
-      $scope.openFlg = nextFlg;
-      $scope.$apply();
-    });
 
     // シミュレーター上のメッセージ表示更新
     angular.element(window).on('load', function(e) {

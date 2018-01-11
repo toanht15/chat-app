@@ -28,7 +28,6 @@
     <li ng-class="{choose: showWidgetType === 1}" ng-click="switchWidget(1)">通常</li>
     <li ng-class="{choose: showWidgetType === 3}" ng-click="switchWidget(3)">ｽﾏｰﾄﾌｫﾝ(縦)</li>
     <li ng-class="{choose: showWidgetType === 2}" ng-click="switchWidget(2)">ｽﾏｰﾄﾌｫﾝ(横)</li>
-    <li ng-class="{choose: showWidgetType === 4}" ng-click="switchWidget(4)">非表示</li>
   </ul>
   <input type="hidden" id="switch_widget" value="">
 </section>
@@ -36,7 +35,6 @@
 <section id="switch_widget" ng-cloak ng-hide="closeButtonSettingToggle !== '2'" ng-class="{showBanner:closeButtonModeTypeToggle === '1' && closeButtonSettingToggle === '2' && showWidgetType === 4}">
   <ul class="ulTab showType4" data-col=3  ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">
     <li ng-class="{choose: showWidgetType === 1}" ng-click="switchWidget(1)">通常</li>
-    <li ng-class="{choose: showWidgetType === 4}" ng-click="switchWidget(4)">非表示</li>
   </ul>
   <input type="hidden" id="switch_widget" value="">
 </section>
@@ -286,7 +284,7 @@
 <!--
     <div id="addBtn" class="widgetOpener" ng-class="{closeButtonSetting: closeButtonSettingToggle === '2'}" style="display: none;"></div>
  -->
-    <div id="closeBtn" ng-click="switchWidget(4)" ng-class="{closeButtonSetting: closeButtonSettingToggle === '2'}"></div>
+    <div id="closeBtn" ng-class="{closeButtonSetting: closeButtonSettingToggle === '2'}"></div>
     <div id='descriptionSet' class="widgetOpener notSelect" ng-hide=" spHeaderLightToggle() || mainImageToggle == '2' && subTitleToggle == '2' && descriptionToggle == '2'">
       <!-- サブタイトル -->
 <!-- 仕様変更、常に高度な設定が当たっている状態とする -->
@@ -406,74 +404,6 @@
 <!-- chat_message_copy 1 end -->
     </div>
   </div>
-  <!-- バナー -->
-  <style>
-    @font-face {
-      font-family: 'SincloFont';
-      src: url('https://netdna.bootstrapcdn.com/font-awesome/4.0.3/fonts/fontawesome-webfont.eot?v=4.0.3');
-      src: url('https://netdna.bootstrapcdn.com/font-awesome/4.0.3/fonts/fontawesome-webfont.eot?#iefix&v=4.0.3') format('embedded-opentype'), url('https://netdna.bootstrapcdn.com/font-awesome/4.0.3/fonts/fontawesome-webfont.woff?v=4.0.3') format('woff'), url('https://netdna.bootstrapcdn.com/font-awesome/4.0.3/fonts/fontawesome-webfont.ttf?v=4.0.3') format('truetype'), url('https://netdna.bootstrapcdn.com/font-awesome/4.0.3/fonts/fontawesome-webfont.svg?v=4.0.3#fontawesomeregular') format('svg');
-      font-weight: normal;
-      font-style: normal
-    }
-
-    .sinclo-fa {
-      display: inline-block;
-      font-family: SincloFont;
-      font-style: normal;
-      font-weight: normal;
-      line-height: 1;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      cursor: pointer;
-    }
-
-    .sinclo-fa .fa-comment:before {
-      content: "\f075"
-    }
-    #sincloBanner {
-      position: relative;
-      z-index: 1;
-      height: 42px;
-      width : {{getBannerWidth()}};
-      background-color: {{widgetSettings.main_color}};
-      box-shadow: 0px 0px {{widgetSettings.box_shadow}}px {{widgetSettings.box_shadow}}px rgba(0,0,0,0.1);
-      border-radius: {{widgetSettings.radius_ratio}}px {{widgetSettings.radius_ratio}}px {{widgetSettings.radius_ratio}}px {{widgetSettings.radius_ratio}}px;
-      color: {{widgetSettings.string_color}};
-      margin: auto;
-      filter:alpha(opacity=90);
-      -moz-opacity: 0.9;
-      opacity: 0.9;
-      top: -30px;
-      cursor: pointer;
-    }
-    #sincloBannerText{
-      line-height: 42px;
-      height: auto!important;
-      width: auto!important;
-      padding:0;
-    }
-    #sincloBanner i{
-      color: {{widgetSettings.string_color}};
-    }
-    #sincloBanner #sinclo-comment{
-      transform: scale( 1 , 1.4 );
-      font-size: 17.5px;
-      padding: 0 2px 0 7px;
-      cursor: pointer;
-    }
-    #sincloBanner, #bannertext{
-      font-size: 12.5px;
-      padding: 0 0 0 3px;
-      cursor: pointer;
-      color: {{widgetSettings.string_color}};
-    }
-  </style>
-  <div id="sincloBanner" ng-click="bannerSwitchWidget()" ng-if="closeButtonModeTypeToggle === '1' && closeButtonSettingToggle === '2' && showWidgetType === 4">
-    <div id="sincloBannerText" ng-click="bannerSwitchWidget()">
-      <div ng-click="bannerSwitchWidget()"><i id="sinclo-comment" class="sinclo-fa fa-comment">&#xf075;</i><span id="bannertext">{{widgetSettings.bannertext}}</span></div>
-    </div>
-  </div>
-  <!-- バナー -->
 
 <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
 <!-- スマホ版 -->
