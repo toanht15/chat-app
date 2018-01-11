@@ -125,7 +125,7 @@
             <span class="greenBtn btn-shadow actBtn" onclick="addOption(1)">選択肢を追加する</span>
             <span class="greenBtn btn-shadow actBtn" onclick="addOption(2)" id = "lastSpeechLabel">電話番号を追加する<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></span>
           </span>
-          <?=$this->ngForm->input('action', ['type'=>'textarea', 'maxlength'=>300],['entiry'=>'action'])?>
+          <?=$this->ngForm->input('action', ['type'=>'textarea', 'maxlength'=>300],['entity'=>'TAutoMessage.action'])?>
           <?php if (!empty($errors['action'])) echo "<pre class='error-message'>" . h($errors['action'][0]) . "</pre>"; ?>
 
       </li>

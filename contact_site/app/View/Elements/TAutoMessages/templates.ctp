@@ -28,12 +28,34 @@
     <?=$this->AutoMessage->radio('targetName')?>
   </li>
   <li>
-    <span><label>キーワード</label></span>
-    <input type="text" ng-model="setItem.keyword" maxlength="300" name="keyword" required="">
+    <span style="padding-top:5px;"><label>キーワード</label></span>
+    <div class="keywordWrapper">
+      <div class="containsSetting">
+        <input type="text" ng-model="setItem.keyword_contains" name="keyword" maxlength="20" required="">
+        <select ng-model="setItem.keyword_contains_type" class="searchKeywordContainsTypeSelect">
+          <option value="1">をすべて含む</option>
+          <option value="2">のいずれかを含む</option>
+        </select>
+        <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
+      </div>
+      <p>かつ</p>
+      <div class="exclusionSetting">
+        <input type="text" ng-model="setItem.keyword_exclusions" name="keyword" maxlength="20" required="">
+        <select ng-model="setItem.keyword_exclusions_type" class="searchKeywordExclusionsTypeSelect">
+          <option value="1">をすべて含まない</option>
+          <option value="2">のいずれかを含まない</option>
+        </select>
+        <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
+      </div>
+    </div>
   </li>
   <li>
     <?=$this->AutoMessage->radio('stayPageCond')?>
   </li>
+  <div class="explainWrapper">
+    <s>※キーワードに入力した内容を完全一致で扱うか、部分一致で扱うかを選択します。</s>
+    <s>　（完全一致を選択した場合、ワイルドカードとして「*」の使用が可能です）</s>
+  </div>
 </ul>
 
 <?php /* 曜日・時間｜C_AUTO_TRIGGER_DAY_TIME */ ?>
@@ -71,12 +93,34 @@
 <?php /* 参照元URL（リファラー）｜C_AUTO_TRIGGER_REFERRER */ ?>
 <ul ng-if="itemType == '<?=C_AUTO_TRIGGER_REFERRER?>'" class="setReferrer">
   <li>
-    <span><label>URL</label></span>
-    <input type="text" ng-model="setItem.keyword" maxlength="300" name="keyword" required="">
+    <span style="padding-top:5px;"><label>URL</label></span>
+    <div class="keywordWrapper">
+      <div class="containsSetting">
+        <input type="text" ng-model="setItem.keyword_contains" name="keyword" maxlength="20" required="">
+        <select ng-model="setItem.keyword_contains_type" class="searchKeywordContainsTypeSelect">
+          <option value="1">をすべて含む</option>
+          <option value="2">のいずれかを含む</option>
+        </select>
+        <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
+      </div>
+      <p>かつ</p>
+      <div class="exclusionSetting">
+        <input type="text" ng-model="setItem.keyword_exclusions" name="keyword" maxlength="20" required="">
+        <select ng-model="setItem.keyword_exclusions_type" class="searchKeywordExclusionsTypeSelect">
+          <option value="1">をすべて含まない</option>
+          <option value="2">のいずれかを含まない</option>
+        </select>
+        <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
+      </div>
+    </div>
   </li>
   <li>
     <?=$this->AutoMessage->radio('referrerCond')?>
   </li>
+  <div class="explainWrapper">
+    <s>※キーワードに入力した内容を完全一致で扱うか、部分一致で扱うかを選択します。</s>
+    <s>　（完全一致を選択した場合、ワイルドカードとして「*」の使用が可能です）</s>
+  </div>
 </ul>
 
 <?php /* 検索キーワード｜C_AUTO_TRIGGER_SEARCH_KEY */ ?>
@@ -93,12 +137,34 @@
 <?php /* 発言内容｜C_AUTO_TRIGGER_SPEECH_CONTENT */ ?>
 <ul ng-if="itemType == '<?=C_AUTO_TRIGGER_SPEECH_CONTENT?>'" class="setSpeechKeyword">
   <li>
-    <span><label>発言内容</label></span>
-    <input type="text" ng-model="setItem.speechContent" name="speechContent" maxlength="20" required="">
+    <span style="padding-top:5px;"><label>発言内容</label></span>
+    <div class="keywordWrapper">
+      <div class="containsSetting">
+        <input type="text" ng-model="setItem.keyword_contains" name="keyword" maxlength="20" required="">
+        <select g-model="setItem.keyword_contains_type" class="searchKeywordContainsTypeSelect">
+          <option value="1">をすべて含む</option>
+          <option value="2">のいずれかを含む</option>
+        </select>
+        <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
+      </div>
+      <p>かつ</p>
+      <div class="exclusionSetting">
+        <input type="text" ng-model="setItem.keyword_exclusions" name="keyword" maxlength="20" required="">
+        <select g-model="setItem.keyword_exclusions_type" class="searchKeywordExclusionsTypeSelect">
+          <option value="1">をすべて含まない</option>
+          <option value="2">のいずれかを含まない</option>
+        </select>
+        <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
+      </div>
+    </div>
   </li>
   <li>
     <?=$this->AutoMessage->radio('speechContentCond')?>
   </li>
+  <div class="explainWrapper">
+    <s>※キーワードに入力した内容を完全一致で扱うか、部分一致で扱うかを選択します。</s>
+    <s>　（完全一致を選択した場合、ワイルドカードとして「*」の使用が可能です）</s>
+  </div>
   <li>
     <span><label>自動返信までの間隔</label></span>
     <label for="triggerTimeSec">
@@ -117,12 +183,34 @@
     <?=$this->AutoMessage->radio('targetName')?>
   </li>
   <li>
-    <span><label>キーワード</label></span>
-    <input type="text" ng-model="setItem.keyword" maxlength="300" name="keyword" required="">
+    <span style="padding-top:5px;"><label>キーワード</label></span>
+    <div class="keywordWrapper">
+      <div class="containsSetting">
+        <input type="text" ng-model="setItem.keyword_contains" name="keyword" maxlength="20" required="">
+        <select class="searchKeywordContainsTypeSelect">
+          <option value="1">をすべて含む</option>
+          <option value="2">のいずれかを含む</option>
+        </select>
+        <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
+      </div>
+      <p>かつ</p>
+      <div class="exclusionSetting">
+        <input type="text" ng-model="setItem.keyword_exclusions" name="keyword" maxlength="20" required="">
+        <select class="searchKeywordExclusionsTypeSelect">
+          <option value="1">をすべて含まない</option>
+          <option value="2">のいずれかを含まない</option>
+        </select>
+        <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
+      </div>
+    </div>
   </li>
   <li>
     <?=$this->AutoMessage->radio('stayPageCond')?>
   </li>
+  <div class="explainWrapper">
+    <s>※キーワードに入力した内容を完全一致で扱うか、部分一致で扱うかを選択します。</s>
+    <s>　（完全一致を選択した場合、ワイルドカードとして「*」の使用が可能です）</s>
+  </div>
 </ul>
 
 <?php /* 前のページ｜C_AUTO_TRIGGER_STAY_PAGE_OF_PREVIOUS */ ?>
@@ -131,12 +219,34 @@
     <?=$this->AutoMessage->radio('targetName')?>
   </li>
   <li>
-    <span><label>キーワード</label></span>
-    <input type="text" ng-model="setItem.keyword" maxlength="300" name="keyword" required="">
+    <span style="padding-top:5px;"><label>キーワード</label></span>
+    <div class="keywordWrapper">
+      <div class="containsSetting">
+        <input type="text" ng-model="setItem.keyword_contains" name="keyword" maxlength="20" required="">
+        <select class="searchKeywordContainsTypeSelect">
+          <option value="1">をすべて含む</option>
+          <option value="2">のいずれかを含む</option>
+        </select>
+        <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
+      </div>
+      <p>かつ</p>
+      <div class="exclusionSetting">
+        <input type="text" ng-model="setItem.keyword_exclusions" name="keyword" maxlength="20" required="">
+        <select class="searchKeywordExclusionsTypeSelect">
+          <option value="1">をすべて含まない</option>
+          <option value="2">のいずれかを含まない</option>
+        </select>
+        <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
+      </div>
+    </div>
   </li>
   <li>
     <?=$this->AutoMessage->radio('stayPageCond')?>
   </li>
+  <div class="explainWrapper">
+    <s>※キーワードに入力した内容を完全一致で扱うか、部分一致で扱うかを選択します。</s>
+    <s>　（完全一致を選択した場合、ワイルドカードとして「*」の使用が可能です）</s>
+  </div>
 </ul>
 
 <?php /* 営業時間｜C_AUTO_TRIGGER_OPERATING_HOURS */ ?>

@@ -44,8 +44,7 @@ class autoMessageHelper extends AppHelper {
 			'label' => '条件',
 			'dataList' => [
 				1 => "完全一致",
-				2 => "部分一致",
-				3 => "不一致"
+				2 => "部分一致"
 			]
 		],
 		'timeSetting' => [
@@ -59,8 +58,7 @@ class autoMessageHelper extends AppHelper {
 			'label' => '条件',
 			'dataList' => [
 				1 => "完全一致",
-				2 => "部分一致",
-				3 => "不一致"
+				2 => "部分一致"
 			]
 		],
 		'searchCond' => [
@@ -82,8 +80,7 @@ class autoMessageHelper extends AppHelper {
       'label' => '条件',
         'dataList' => [
           1 => "完全一致",
-          2 => "部分一致",
-          3 => "不一致"
+          2 => "部分一致"
         ]
     ],
     'speechTriggerCond' => [

@@ -4628,7 +4628,7 @@ ul.naviBtn {
           }
 
           #setTriggerList {
-            width: 31em;
+            width: 60em;
             position: relative;
 
             > ul {
@@ -4708,7 +4708,37 @@ ul.naviBtn {
                 div {
                   padding: 0.5em;
                   border-top: 1px solid $main-color;
-
+                  &.explainWrapper {
+                    padding: 0;
+                    border-top: initial;
+                    margin-left: 11em;
+                    s {
+                      display: block;
+                    }
+                  }
+                  &.keywordWrapper {
+                    padding: 0;
+                    border-top: initial;
+                    width: 46em;
+                    div {
+                      padding: inherit;
+                      border-top: inherit;
+                    }
+                    input[type="text"] {
+                      width: 33em;
+                    }
+                    p {
+                      margin: 0.5em 0;
+                    }
+                    s {
+                      display: inline-block;
+                    }
+                    select {
+                      float: right;
+                      width: 14em;
+                      margin-top: 0.5em;
+                    }
+                  }
                   ul {
                     > li {
                       padding: 0.5em;
