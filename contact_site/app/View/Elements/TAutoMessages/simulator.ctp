@@ -8,11 +8,13 @@
     .showType4.largeSize{
       width: 400px;
     }
-    #tautomessages_idx #tautomessages_form #tautomessages_simulator section .ulTab li {
+    #tautomessages_idx #tautomessages_form #tautomessages_action_simulator section .ulTab li {
       display: initial;
     }
-    #tautomessages_idx #tautomessages_form #tautomessages_simulator section ul#chatTalk li {
+    #tautomessages_idx #tautomessages_form #tautomessages_action_simulator section ul#chatTalk li {
       display: block;
+      word-break: break-all;
+      white-space: pre-wrap;
     }
 </style>
 <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ){?>

@@ -205,7 +205,7 @@ sincloApp.controller('MainController', function($scope) {
       $scope.openFlg = true;
 
       setTimeout(function(){
-        $scope.createMessage($scope.action, $scope.showWidgetType != 1);
+        $scope.createMessage($scope.showWidgetType != 1);
         $scope.toggleChatTextareaView($scope.main.chat_textarea);
       },0);
     }
@@ -622,7 +622,7 @@ sincloApp.controller('MainController', function($scope) {
     // シミュレーター上のメッセージ表示更新
     angular.element(window).on('load', function(e) {
       $scope.$watch('action', function(value) {
-        $scope.createMessage(value, $scope.showWidgetType != 1);
+        $scope.createMessage($scope.showWidgetType != 1);
       });
       $scope.$watch('main.chat_textarea', function(value) {
         $scope.toggleChatTextareaView(value);
@@ -632,7 +632,7 @@ sincloApp.controller('MainController', function($scope) {
       $scope.toggleChatTextareaView($scope.main.chat_textarea);
     });
     $scope.initMessage = function(val="", isSmartphone=false) {
-      var strings = val.split('\n');
+      var strings = document.getElementById('TAutoMessageAction').value.split('\n');
       var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
       var message = "";
 
@@ -647,11 +647,12 @@ sincloApp.controller('MainController', function($scope) {
         }
         message += str + "\n";
       }
-      document.getElementById('TAutoMessageAction').value = message.replace(/\n$/, '');
-      $scope.action = message;
-      $scope.createMessage($scope.action, $scope.showWidgetType != 1);
+      message = message.replace(/[\n]+$/, '');
+      document.getElementById('TAutoMessageAction').value = message;
+      $scope.createMessage($scope.showWidgetType != 1);
     }
-    $scope.createMessage = function(val="", isSmartphone=false) {
+    $scope.createMessage = function(isSmartphone=false) {
+      var val = document.getElementById('TAutoMessageAction').value;
       var messageElement = document.querySelector('#chatTalk .sinclo_re .details:not(.cName)');
       if(!messageElement) return;
 

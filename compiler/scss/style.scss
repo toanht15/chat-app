@@ -4482,8 +4482,7 @@ ul.naviBtn {
     }
     ul { padding: 0 }
     li { margin: 0 }
-    #tautomessages_entry {
-      max-width: 70%;
+    section {
 
       ul.settingList {
         #TAutoMessageName {
@@ -4875,17 +4874,22 @@ ul.naviBtn {
           }
         }
       }
-    }
 
-    #tautomessages_simulator {
-      position: fixed;
-      bottom: 56px;
-      left: 70%;
-      margin: 10px 0 0 30px;
-      margin-left: 30px;
+      &.section3 {
+        display: flex;
+      
+        #tautomessages_action_entry {
+          flex-grow: 1;
+        }
 
-      section#switch_widget {
-        margin-bottom: 0.5em;
+        #tautomessages_action_simulator {
+          flex-basis: auto;
+          margin: auto 0 6px 20px;
+
+          section#switch_widget {
+            margin-bottom: 0.5em;
+          }
+        }
       }
     }
   }
