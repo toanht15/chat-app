@@ -4556,6 +4556,10 @@ ul.naviBtn {
             border-top: none;
           }
 
+          > input[type="text"] {
+            width: 35em;
+          }
+
           #fromMailAddressSettings {
             width: 250px;
             span {
