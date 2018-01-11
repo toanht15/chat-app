@@ -104,13 +104,13 @@ sincloApp.controller('MainController', function($scope) {
 
     this.saveAct = function(){
         var setList = {
-                'conditionType': Number(this.condition_type),
-                'conditions': angular.copy(this.setItemList),
-                'widgetOpen': Number(this.widget_open),
-                 // TODO 後々動的に
-                'message': angular.element("#TAutoMessageAction").val(),
-                'chatTextarea': Number(this.chat_textarea),
-                'cv': Number(this.cv),
+            'conditionType': Number(this.condition_type),
+            'conditions': angular.copy(this.setItemList),
+            'widgetOpen': Number(this.widget_open),
+             // TODO 後々動的に
+            'message': angular.element("#TAutoMessageAction").val(),
+            'chatTextarea': Number(this.chat_textarea),
+            'cv': Number(this.cv),
         };
         var keys = Object.keys(setList['conditions']);
         if ("<?=C_AUTO_TRIGGER_DAY_TIME?>" in setList['conditions']) {
@@ -187,14 +187,25 @@ sincloApp.directive('ngShowonhover',function() {
                         messageList.push("訪問回数は「1回未満」という設定はできません");
                     }
                 }
-                /* ページ・リファラー・検索キーワード・最初に訪れたページ・前のページ */
+                /* リファラー */
                 if ( 'keyword' in form ) {
                     if (String(key) === '<?=h(C_AUTO_TRIGGER_REFERRER)?>' && 'required' in form.keyword.$error) {
                         messageList.push("URLが未入力です");
                     }
-                    else if (String(key) !== '<?=h(C_AUTO_TRIGGER_REFERRER)?>' && 'required' in form.keyword.$error) {
+                    else if (String(key) !== '<?=h(C_AUTO_TRIGGER_REFERRER)?>' && 'required' in form.keyword_contains.$error) {
                         messageList.push("キーワードが未入力です");
                     }
+                }
+                /* ページ・リファラー・発言内容・最初に訪れたページ・前のページ */
+                if ( 'keyword_contains' in form && 'keyword_exclusions' in form ) {
+                  if (String(key) === '<?=h(C_AUTO_TRIGGER_REFERRER)?>' && 'required' in form.keyword_contains.$error && 'required' in form.keyword_exclusions.$error) {
+                    messageList.push("URLはいずれかの指定が必要です。");
+                  } else if (String(key) === '<?=h(C_AUTO_TRIGGER_SPEECH_CONTENT)?>' && 'required' in form.keyword_contains.$error && 'required' in form.keyword_exclusions.$error) {
+                    messageList.push("発言内容はいずれかの指定が必要です。");
+                  }
+                  else if ('required' in form.keyword_contains.$error && 'required' in form.keyword_exclusions.$error) {
+                    messageList.push("キーワードはいずれかの指定が必要です。");
+                  }
                 }
                 /* 曜日・日時 */
                 if ( 'day' in form ) {

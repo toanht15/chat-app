@@ -42,7 +42,21 @@ class TAutoMessagesController extends AppController {
   public function index() {
 
     $this->paginate['TAutoMessage']['conditions']['TAutoMessage.m_companies_id'] = $this->userInfo['MCompany']['id'];
-    $this->set('settingList', $this->paginate('TAutoMessage'));
+    $data = $this->paginate('TAutoMessage');
+    foreach($data as $index => $value) {
+      $activity = json_decode($value['TAutoMessage']['activity'], true);
+      foreach($activity['conditions'] as $key => $val){
+        $targetKey = $key;
+        if($targetKey >= 4) {
+          $targetKey = $targetKey+1;
+        } else if($targetKey === 10) {
+          $targetKey = 4;
+        }
+        $activity = $this->convertOldIFData($targetKey, $val, $activity, $key);
+      }
+      $data[$index]['TAutoMessage']['activity'] = json_encode($activity);
+    }
+    $this->set('settingList', $data);
     $this->_viewElement();
   }
 
@@ -95,178 +109,7 @@ class TAutoMessagesController extends AppController {
           unset($changeEditData['conditions'][11]);
           $changeEditData['conditions'][4] = json_decode($editData[0]['TAutoMessage']['activity'], true)['conditions'][10];
         }
-        // ページ、参照元URL、発言内容、最初に訪れたページ、前のページの旧IF対応
-        if($key === C_AUTO_TRIGGER_STAY_PAGE) {
-          $arr = array();
-          foreach($val as $index => $settings) {
-            if( array_key_exists('keyword', $settings)) {
-              $newSettings = array(
-                "targetName" => "1",
-                "keyword_contains" => "",
-                "keyword_contains_type" => "1",
-                "keyword_exclusions" => "",
-                "keyword_exclusions_type" => "1",
-                "stayPageCond" => 1
-              );
-              $newSettings["targetName"] = $settings['targetName'];
-              switch($settings['stayPageCond']) {
-                case 1: // 完全一致
-                  $newSettings["keyword_contains"] = $settings['keyword'];
-                  $newSettings["stayPageCond"] = 1;
-                  break;
-                case 2: // 部分一致
-                  $newSettings["keyword_contains"] = $settings['keyword'];
-                  $newSettings["stayPageCond"] = 2;
-                  break;
-                case 3: // 不一致
-                  $newSettings["keyword_exclusions"] = $settings['keyword'];
-                  $newSettings["stayPageCond"] = 1;
-                  break;
-              }
-              array_push($arr, $newSettings);
-            } else {
-              array_push($arr, $settings);
-            }
-          }
-          $changeEditData['conditions'][$key] = $arr;
-        }
-        if($key === C_AUTO_TRIGGER_REFERRER) {
-          $arr = array();
-          foreach($val as $index => $settings) {
-            if( array_key_exists('keyword', $settings)) {
-              $newSettings = array(
-                  "keyword_contains" => "",
-                  "keyword_contains_type" => "1",
-                  "keyword_exclusions" => "",
-                  "keyword_exclusions_type" => "1",
-                  "referrerCond" => 2
-              );
-              switch($settings['referrerCond']) {
-                case 1: // 完全一致
-                  $newSettings["keyword_contains"] = $settings['keyword'];
-                  $newSettings["referrerCond"] = 1;
-                  break;
-                case 2: // 部分一致
-                  $newSettings["keyword_contains"] = $settings['keyword'];
-                  $newSettings["referrerCond"] = 2;
-                  break;
-                case 3: // 不一致
-                  $newSettings["keyword_exclusions"] = $settings['keyword'];
-                  $newSettings["referrerCond"] = 1;
-                  break;
-              }
-              array_push($arr, $newSettings);
-            } else {
-              array_push($arr, $settings);
-            }
-          }
-          $changeEditData['conditions'][$key] = $arr;
-        }
-        if($key === C_AUTO_TRIGGER_SPEECH_CONTENT) {
-          $arr = array();
-          foreach($val as $index => $settings) {
-            if( array_key_exists('speechContent', $settings)) {
-              $newSettings = array(
-                  "keyword_contains" => "",
-                  "keyword_contains_type" => "1",
-                  "keyword_exclusions" => "",
-                  "keyword_exclusions_type" => "1",
-                  "speechContentCond" => "1",
-                  "triggerTimeSec" => 3,
-                  "speechTriggerCond" => "1"
-              );
-              $newSettings['speechContentCond'] = $settings['speechContentCond'];
-              $newSettings['triggerTimeSec'] = $settings['triggerTimeSec'];
-              $newSettings['speechTriggerCond'] = $settings['speechTriggerCond'];
-              switch($settings['speechContentCond']) {
-                case 1: // 完全一致
-                  $newSettings["keyword_contains"] = $settings['speechContent'];
-                  $newSettings["speechContentCond"] = 1;
-                  break;
-                case 2: // 部分一致
-                  $newSettings["keyword_contains"] = $settings['speechContent'];
-                  $newSettings["speechContentCond"] = 2;
-                  break;
-                case 3: // 不一致
-                  $newSettings["keyword_exclusions"] = $settings['speechContent'];
-                  $newSettings["speechContentCond"] = 1;
-                  break;
-              }
-              array_push($arr, $newSettings);
-            } else {
-              array_push($arr, $settings);
-            }
-          }
-          $changeEditData['conditions'][$key] = $arr;
-        }
-        if($key === C_AUTO_TRIGGER_STAY_PAGE_OF_FIRST) {
-          $arr = array();
-          foreach($val as $index => $settings) {
-            if( array_key_exists('keyword', $settings)) {
-              $newSettings = array(
-                  "targetName" => "1",
-                  "keyword_contains" => "",
-                  "keyword_contains_type" => "1",
-                  "keyword_exclusions" => "",
-                  "keyword_exclusions_type" => "1",
-                  "stayPageCond" => 1
-              );
-              $newSettings["targetName"] = $settings['targetName'];
-              switch($settings['stayPageCond']) {
-                case 1: // 完全一致
-                  $newSettings["keyword_contains"] = $settings['keyword'];
-                  $newSettings["stayPageCond"] = 1;
-                  break;
-                case 2: // 部分一致
-                  $newSettings["keyword_contains"] = $settings['keyword'];
-                  $newSettings["stayPageCond"] = 2;
-                  break;
-                case 3: // 不一致
-                  $newSettings["keyword_exclusions"] = $settings['keyword'];
-                  $newSettings["stayPageCond"] = 1;
-                  break;
-              }
-              array_push($arr, $newSettings);
-            } else {
-              array_push($arr, $settings);
-            }
-          }
-          $changeEditData['conditions'][$key] = $arr;
-        }
-        if($key === C_AUTO_TRIGGER_STAY_PAGE_OF_PREVIOUS) {
-          $arr = array();
-          foreach($val as $index => $settings) {
-            if( array_key_exists('keyword', $settings)) {
-              $newSettings = array(
-                  "targetName" => "1",
-                  "keyword_contains" => "",
-                  "keyword_contains_type" => "1",
-                  "keyword_exclusions" => "",
-                  "keyword_exclusions_type" => "1",
-                  "stayPageCond" => 1
-              );
-              $newSettings["targetName"] = $settings['targetName'];
-              switch($settings['stayPageCond']) {
-                case 1: // 完全一致
-                  $newSettings["keyword_contains"] = $settings['keyword'];
-                  $newSettings["stayPageCond"] = 1;
-                  break;
-                case 2: // 部分一致
-                  $newSettings["keyword_contains"] = $settings['keyword'];
-                  $newSettings["stayPageCond"] = 2;
-                  break;
-                case 3: // 不一致
-                  $newSettings["keyword_exclusions"] = $settings['keyword'];
-                  $newSettings["stayPageCond"] = 1;
-                  break;
-              }
-              array_push($arr, $newSettings);
-            } else {
-              array_push($arr, $settings);
-            }
-          }
-          $changeEditData['conditions'][$key] = $arr;
-        }
+        $changeEditData = $this->convertOldIFData($key, $val, $changeEditData, $key);
       }
 
       if (empty($editData) || (!empty($editData) && empty($editData[0]))) {
@@ -899,6 +742,188 @@ class TAutoMessagesController extends AppController {
     }
   }
 
+  /**
+   * @param $type
+   * @param $conditions
+   * @param $activity
+   * @return mixed
+   */
+  private function convertOldIFData($type, $conditions, $activity, $actualType)
+  {
+    // ページ、参照元URL、発言内容、最初に訪れたページ、前のページの旧IF対応
+    if ($type === C_AUTO_TRIGGER_STAY_PAGE) {
+      $arr = array();
+      foreach ($conditions as $index => $settings) {
+        if (array_key_exists('keyword', $settings)) {
+          $newSettings = array(
+              "targetName" => "1",
+              "keyword_contains" => "",
+              "keyword_contains_type" => "1",
+              "keyword_exclusions" => "",
+              "keyword_exclusions_type" => "1",
+              "stayPageCond" => 1
+          );
+          $newSettings["targetName"] = $settings['targetName'];
+          switch ($settings['stayPageCond']) {
+            case 1: // 完全一致
+              $newSettings["keyword_contains"] = $settings['keyword'];
+              $newSettings["stayPageCond"] = 1;
+              break;
+            case 2: // 部分一致
+              $newSettings["keyword_contains"] = $settings['keyword'];
+              $newSettings["stayPageCond"] = 2;
+              break;
+            case 3: // 不一致
+              $newSettings["keyword_exclusions"] = $settings['keyword'];
+              $newSettings["stayPageCond"] = 1;
+              break;
+          }
+          array_push($arr, $newSettings);
+        } else {
+          array_push($arr, $settings);
+        }
+      }
+      $activity['conditions'][$actualType] = $arr;
+    }
+    if ($type === C_AUTO_TRIGGER_REFERRER) {
+      $arr = array();
+      foreach ($conditions as $index => $settings) {
+        if (array_key_exists('keyword', $settings)) {
+          $newSettings = array(
+              "keyword_contains" => "",
+              "keyword_contains_type" => "1",
+              "keyword_exclusions" => "",
+              "keyword_exclusions_type" => "1",
+              "referrerCond" => 2
+          );
+          switch ($settings['referrerCond']) {
+            case 1: // 完全一致
+              $newSettings["keyword_contains"] = $settings['keyword'];
+              $newSettings["referrerCond"] = 1;
+              break;
+            case 2: // 部分一致
+              $newSettings["keyword_contains"] = $settings['keyword'];
+              $newSettings["referrerCond"] = 2;
+              break;
+            case 3: // 不一致
+              $newSettings["keyword_exclusions"] = $settings['keyword'];
+              $newSettings["referrerCond"] = 1;
+              break;
+          }
+          array_push($arr, $newSettings);
+        } else {
+          array_push($arr, $settings);
+        }
+      }
+      $activity['conditions'][$actualType] = $arr;
+    }
+    if ($type === C_AUTO_TRIGGER_SPEECH_CONTENT) {
+      $arr = array();
+      foreach ($conditions as $index => $settings) {
+        if (array_key_exists('speechContent', $settings)) {
+          $newSettings = array(
+              "keyword_contains" => "",
+              "keyword_contains_type" => "1",
+              "keyword_exclusions" => "",
+              "keyword_exclusions_type" => "1",
+              "speechContentCond" => "1",
+              "triggerTimeSec" => 3,
+              "speechTriggerCond" => "1"
+          );
+          $newSettings['speechContentCond'] = $settings['speechContentCond'];
+          $newSettings['triggerTimeSec'] = $settings['triggerTimeSec'];
+          $newSettings['speechTriggerCond'] = $settings['speechTriggerCond'];
+          switch ($settings['speechContentCond']) {
+            case 1: // 完全一致
+              $newSettings["keyword_contains"] = $settings['speechContent'];
+              $newSettings["speechContentCond"] = 1;
+              break;
+            case 2: // 部分一致
+              $newSettings["keyword_contains"] = $settings['speechContent'];
+              $newSettings["speechContentCond"] = 2;
+              break;
+            case 3: // 不一致
+              $newSettings["keyword_exclusions"] = $settings['speechContent'];
+              $newSettings["speechContentCond"] = 1;
+              break;
+          }
+          array_push($arr, $newSettings);
+        } else {
+          array_push($arr, $settings);
+        }
+      }
+      $activity['conditions'][$actualType] = $arr;
+    }
+    if ($type === C_AUTO_TRIGGER_STAY_PAGE_OF_FIRST) {
+      $arr = array();
+      foreach ($conditions as $index => $settings) {
+        if (array_key_exists('keyword', $settings)) {
+          $newSettings = array(
+              "targetName" => "1",
+              "keyword_contains" => "",
+              "keyword_contains_type" => "1",
+              "keyword_exclusions" => "",
+              "keyword_exclusions_type" => "1",
+              "stayPageCond" => 1
+          );
+          $newSettings["targetName"] = $settings['targetName'];
+          switch ($settings['stayPageCond']) {
+            case 1: // 完全一致
+              $newSettings["keyword_contains"] = $settings['keyword'];
+              $newSettings["stayPageCond"] = 1;
+              break;
+            case 2: // 部分一致
+              $newSettings["keyword_contains"] = $settings['keyword'];
+              $newSettings["stayPageCond"] = 2;
+              break;
+            case 3: // 不一致
+              $newSettings["keyword_exclusions"] = $settings['keyword'];
+              $newSettings["stayPageCond"] = 1;
+              break;
+          }
+          array_push($arr, $newSettings);
+        } else {
+          array_push($arr, $settings);
+        }
+      }
+      $activity['conditions'][$actualType] = $arr;
+    }
+    if ($type === C_AUTO_TRIGGER_STAY_PAGE_OF_PREVIOUS) {
+      $arr = array();
+      foreach ($conditions as $index => $settings) {
+        if (array_key_exists('keyword', $settings)) {
+          $newSettings = array(
+              "targetName" => "1",
+              "keyword_contains" => "",
+              "keyword_contains_type" => "1",
+              "keyword_exclusions" => "",
+              "keyword_exclusions_type" => "1",
+              "stayPageCond" => 1
+          );
+          $newSettings["targetName"] = $settings['targetName'];
+          switch ($settings['stayPageCond']) {
+            case 1: // 完全一致
+              $newSettings["keyword_contains"] = $settings['keyword'];
+              $newSettings["stayPageCond"] = 1;
+              break;
+            case 2: // 部分一致
+              $newSettings["keyword_contains"] = $settings['keyword'];
+              $newSettings["stayPageCond"] = 2;
+              break;
+            case 3: // 不一致
+              $newSettings["keyword_exclusions"] = $settings['keyword'];
+              $newSettings["stayPageCond"] = 1;
+              break;
+          }
+          array_push($arr, $newSettings);
+        } else {
+          array_push($arr, $settings);
+        }
+      }
+      $activity['conditions'][$actualType] = $arr;
+    }
+    return $activity;
+  }
 
 
 }

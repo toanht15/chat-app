@@ -113,23 +113,33 @@ class autoMessageHelper extends AppHelper {
 		],
 	];
 
+	public $containsList = [
+    1 => "をすべて含む",
+    2 => "のいずれかを含む"
+  ];
+
+  public $exclusionsList = [
+      1 => "をすべて含まない",
+      2 => "のいずれかを含まない"
+  ];
+
 	/** *
 	 * 説明用のフォーマットリスト
 	 *  */
 	public $labelList = [
 		C_AUTO_TRIGGER_STAY_TIME => "%s滞在時間が %d%s経過",
 		C_AUTO_TRIGGER_VISIT_CNT => "訪問回数が %d回%s",
-		C_AUTO_TRIGGER_STAY_PAGE => "ページの%sにて「%s」という文字列が%s",
+		C_AUTO_TRIGGER_STAY_PAGE => "ページの%sにて「%s」という文字列を%s%s（内容は%s）",
 		C_AUTO_TRIGGER_OPERATING_HOURS => "%s",
 		C_AUTO_TRIGGER_DAY_TIME => [
 			C_SELECT_CAN => "曜日が「%s」曜日で「%s～%s」の間",
 			C_SELECT_CAN_NOT => "曜日が「%s」曜日",
 		],
-		C_AUTO_TRIGGER_REFERRER => "参照元URLにて「%s」という文字列が%s",
+		C_AUTO_TRIGGER_REFERRER => "参照元URLにて「%s」という文字列%s%s（内容は%s）",
 		C_AUTO_TRIGGER_SEARCH_KEY => "検索キーワードにて「%s」という文字列が%s",
-    C_AUTO_TRIGGER_SPEECH_CONTENT => "発言内容が「%s」という文字列が%s",
-    C_AUTO_TRIGGER_STAY_PAGE_OF_FIRST => "最初に訪れたページの%sにて「%s」という文字列が%s",
-    C_AUTO_TRIGGER_STAY_PAGE_OF_PREVIOUS => "前のページの%sにて「%s」という文字列が%s"
+    C_AUTO_TRIGGER_SPEECH_CONTENT => "発言内容が「%s」という文字列%s%s（内容は%s）",
+    C_AUTO_TRIGGER_STAY_PAGE_OF_FIRST => "最初に訪れたページの%sにて「%s」という文字列%s%s（内容は%s）",
+    C_AUTO_TRIGGER_STAY_PAGE_OF_PREVIOUS => "前のページの%sにて「%s」という文字列を%s%s（内容は%s）"
   ];
 
 	public function select($itemKey=null) {
@@ -226,16 +236,38 @@ class autoMessageHelper extends AppHelper {
 
 				case C_AUTO_TRIGGER_STAY_PAGE: // ページ
 					foreach((array)$items as $v) {
-						if (isset($v['keyword'])
+						if ((isset($v['keyword_contains']) || isset($v['keyword_exclusions']))
 							&& isset($v['targetName']) && !empty($this->dataList['targetName']['dataList'][$v['targetName']])
 							&& isset($v['stayPageCond']) && !empty($this->dataList['stayPageCond']['dataList'][$v['stayPageCond']])
-						) {
-							$retList[] = sprintf(
-								$this->labelList[$itemId],
-								$this->dataList['targetName']['dataList'][$v['targetName']],
-								$v['keyword'],
-								$this->dataList['stayPageCond']['dataList'][$v['stayPageCond']]
-							);
+						) { //ページの%sにて「%s」という文字列を%s%s（内容は%s）
+              if(!empty($v['keyword_contains']) && !empty($v['keyword_exclusions'])) {
+                $retList[] = sprintf(
+                    $this->labelList[$itemId],
+                    $this->dataList['targetName']['dataList'][$v['targetName']],
+                    $v['keyword_contains'],
+                    $this->containsList[intval($v['keyword_contains_type'])],
+                    sprintf('、ただし「%s」を%s', $v['keyword_exclusions'], $this->exclusionsList[intval($v['keyword_exclusions_type'])]),
+                    $this->dataList['stayPageCond']['dataList'][$v['stayPageCond']]
+                );
+              } else if(!empty($v['keyword_contains'])) {
+                $retList[] = sprintf(
+                    $this->labelList[$itemId],
+                    $this->dataList['targetName']['dataList'][$v['targetName']],
+                    $v['keyword_contains'],
+                    $this->containsList[intval($v['keyword_contains_type'])],
+                    "",
+                    $this->dataList['stayPageCond']['dataList'][$v['stayPageCond']]
+                );
+              } else if(!empty($v['keyword_exclusions'])) {
+                $retList[] = sprintf(
+                    $this->labelList[$itemId],
+                    $this->dataList['targetName']['dataList'][$v['targetName']],
+                    $v['keyword_exclusions'],
+                    $this->containsList[intval($v['keyword_exclusions_type'])],
+                    "",
+                    $this->dataList['stayPageCond']['dataList'][$v['stayPageCond']]
+                );
+              }
 						}
 					}
 					break;
@@ -284,14 +316,34 @@ class autoMessageHelper extends AppHelper {
 
 				case C_AUTO_TRIGGER_REFERRER: // 参照元URL（リファラー）
 					foreach((array)$items as $v) {
-						if ( isset($v['keyword'])
-							&& isset($v['referrerCond']) && !empty($this->dataList['referrerCond']['dataList'][$v['referrerCond']])
+						if ( (isset($v['keyword_contains']) || isset($v['keyword_exclusions']))
+                && isset($v['referrerCond']) && !empty($this->dataList['referrerCond']['dataList'][$v['referrerCond']])
 						) {
-							$retList[] = sprintf(
-								$this->labelList[$itemId],
-								$v['keyword'],
-								$this->dataList['referrerCond']['dataList'][$v['referrerCond']]
-							);
+              if(!empty($v['keyword_contains']) && !empty($v['keyword_exclusions'])) {
+                $retList[] = sprintf(
+                    $this->labelList[$itemId],
+                    $v['keyword_contains'],
+                    $this->containsList[intval($v['keyword_contains_type'])],
+                    sprintf('、ただし「%s」を%s', $v['keyword_exclusions'], $this->exclusionsList[intval($v['keyword_exclusions_type'])]),
+                    $this->dataList['referrerCond']['dataList'][$v['referrerCond']]
+                );
+              } else if(!empty($v['keyword_contains'])) {
+                $retList[] = sprintf(
+                    $this->labelList[$itemId],
+                    $v['keyword_contains'],
+                    $this->containsList[intval($v['keyword_contains_type'])],
+                    "",
+                    $this->dataList['referrerCond']['dataList'][$v['referrerCond']]
+                );
+              } else if(!empty($v['keyword_exclusions'])) {
+                $retList[] = sprintf(
+                    $this->labelList[$itemId],
+                    $v['keyword_exclusions'],
+                    $this->containsList[intval($v['keyword_exclusions_type'])],
+                    "",
+                    $this->dataList['referrerCond']['dataList'][$v['referrerCond']]
+                );
+              }
 
 						}
 					}
@@ -315,14 +367,34 @@ class autoMessageHelper extends AppHelper {
 
         case C_AUTO_TRIGGER_SPEECH_CONTENT: // 発言内容
           foreach((array)$items as $v) {
-            if ( isset($v['speechContent'])
-                && isset($v['speechTriggerCond']) && !empty($this->dataList['speechContentCond']['dataList'][$v['speechContentCond']])
+            if ( (isset($v['keyword_contains']) || isset($v['keyword_exclusions']))
+                && isset($v['speechContentCond']) && !empty($this->dataList['speechContentCond']['dataList'][$v['speechContentCond']])
             ) {
-              $retList[] = sprintf(
-                  $this->labelList[$itemId],
-                  $v['speechContent'],
-                  $this->dataList['speechContentCond']['dataList'][$v['speechContentCond']]
-              );
+              if(!empty($v['keyword_contains']) && !empty($v['keyword_exclusions'])) {
+                $retList[] = sprintf(
+                    $this->labelList[$itemId],
+                    $v['keyword_contains'],
+                    $this->containsList[intval($v['keyword_contains_type'])],
+                    sprintf('、ただし「%s」を%s', $v['keyword_exclusions'], $this->exclusionsList[intval($v['keyword_exclusions_type'])]),
+                    $this->dataList['speechContentCond']['dataList'][$v['speechContentCond']]
+                );
+              } else if(!empty($v['keyword_contains'])) {
+                $retList[] = sprintf(
+                    $this->labelList[$itemId],
+                    $v['keyword_contains'],
+                    $this->containsList[intval($v['keyword_contains_type'])],
+                    "",
+                    $this->dataList['speechContentCond']['dataList'][$v['speechContentCond']]
+                );
+              } else if(!empty($v['keyword_exclusions'])) {
+                $retList[] = sprintf(
+                    $this->labelList[$itemId],
+                    $v['keyword_exclusions'],
+                    $this->containsList[intval($v['keyword_exclusions_type'])],
+                    "",
+                    $this->dataList['speechContentCond']['dataList'][$v['speechContentCond']]
+                );
+              }
 
             }
           }
@@ -331,32 +403,76 @@ class autoMessageHelper extends AppHelper {
 
         case C_AUTO_TRIGGER_STAY_PAGE_OF_FIRST: // 最初に訪れたページ
           foreach((array)$items as $v) {
-            if (isset($v['keyword'])
+            if ((isset($v['keyword_contains']) || isset($v['keyword_exclusions']))
                 && isset($v['targetName']) && !empty($this->dataList['targetName']['dataList'][$v['targetName']])
                 && isset($v['stayPageCond']) && !empty($this->dataList['stayPageCond']['dataList'][$v['stayPageCond']])
             ) {
-              $retList[] = sprintf(
-                  $this->labelList[$itemId],
-                  $this->dataList['targetName']['dataList'][$v['targetName']],
-                  $v['keyword'],
-                  $this->dataList['stayPageCond']['dataList'][$v['stayPageCond']]
-              );
+              if(!empty($v['keyword_contains']) && !empty($v['keyword_exclusions'])) {
+                $retList[] = sprintf(
+                    $this->labelList[$itemId],
+                    $this->dataList['targetName']['dataList'][$v['targetName']],
+                    $v['keyword_contains'],
+                    $this->containsList[intval($v['keyword_contains_type'])],
+                    sprintf('、ただし「%s」を%s', $v['keyword_exclusions'], $this->exclusionsList[intval($v['keyword_exclusions_type'])]),
+                    $this->dataList['stayPageCond']['dataList'][$v['stayPageCond']]
+                );
+              } else if(!empty($v['keyword_contains'])) {
+                $retList[] = sprintf(
+                    $this->labelList[$itemId],
+                    $this->dataList['targetName']['dataList'][$v['targetName']],
+                    $v['keyword_contains'],
+                    $this->containsList[intval($v['keyword_contains_type'])],
+                    "",
+                    $this->dataList['stayPageCond']['dataList'][$v['stayPageCond']]
+                );
+              } else if(!empty($v['keyword_exclusions'])) {
+                $retList[] = sprintf(
+                    $this->labelList[$itemId],
+                    $this->dataList['targetName']['dataList'][$v['targetName']],
+                    $v['keyword_exclusions'],
+                    $this->containsList[intval($v['keyword_exclusions_type'])],
+                    "",
+                    $this->dataList['stayPageCond']['dataList'][$v['stayPageCond']]
+                );
+              }
             }
           }
           break;
 
         case C_AUTO_TRIGGER_STAY_PAGE_OF_PREVIOUS: // 前のページ
           foreach((array)$items as $v) {
-            if (isset($v['keyword'])
+            if ((isset($v['keyword_contains']) || isset($v['keyword_exclusions']))
                 && isset($v['targetName']) && !empty($this->dataList['targetName']['dataList'][$v['targetName']])
                 && isset($v['stayPageCond']) && !empty($this->dataList['stayPageCond']['dataList'][$v['stayPageCond']])
             ) {
-              $retList[] = sprintf(
-                  $this->labelList[$itemId],
-                  $this->dataList['targetName']['dataList'][$v['targetName']],
-                  $v['keyword'],
-                  $this->dataList['stayPageCond']['dataList'][$v['stayPageCond']]
-              );
+              if(!empty($v['keyword_contains']) && !empty($v['keyword_exclusions'])) {
+                $retList[] = sprintf(
+                    $this->labelList[$itemId],
+                    $this->dataList['targetName']['dataList'][$v['targetName']],
+                    $v['keyword_contains'],
+                    $this->containsList[intval($v['keyword_contains_type'])],
+                    sprintf('、ただし「%s」を%s', $v['keyword_exclusions'], $this->exclusionsList[intval($v['keyword_exclusions_type'])]),
+                    $this->dataList['stayPageCond']['dataList'][$v['stayPageCond']]
+                );
+              } else if(!empty($v['keyword_contains'])) {
+                $retList[] = sprintf(
+                    $this->labelList[$itemId],
+                    $this->dataList['targetName']['dataList'][$v['targetName']],
+                    $v['keyword_contains'],
+                    $this->containsList[intval($v['keyword_contains_type'])],
+                    "",
+                    $this->dataList['stayPageCond']['dataList'][$v['stayPageCond']]
+                );
+              } else if(!empty($v['keyword_exclusions'])) {
+                $retList[] = sprintf(
+                    $this->labelList[$itemId],
+                    $this->dataList['targetName']['dataList'][$v['targetName']],
+                    $v['keyword_exclusions'],
+                    $this->containsList[intval($v['keyword_exclusions_type'])],
+                    "",
+                    $this->dataList['stayPageCond']['dataList'][$v['stayPageCond']]
+                );
+              }
             }
           }
           break;

@@ -31,7 +31,7 @@
     <span style="padding-top:5px;"><label>キーワード</label></span>
     <div class="keywordWrapper">
       <div class="containsSetting">
-        <input type="text" ng-model="setItem.keyword_contains" name="keyword" maxlength="20" required="">
+        <input type="text" ng-model="setItem.keyword_contains" name="keyword_contains" maxlength="100" ng-required="!((setItem.keyword_contains.length > 0) || (setItem.keyword_exclusions.length > 0))">
         <select ng-model="setItem.keyword_contains_type" class="searchKeywordContainsTypeSelect">
           <option value="1">をすべて含む</option>
           <option value="2">のいずれかを含む</option>
@@ -40,7 +40,7 @@
       </div>
       <p>かつ</p>
       <div class="exclusionSetting">
-        <input type="text" ng-model="setItem.keyword_exclusions" name="keyword" maxlength="20" required="">
+        <input type="text" ng-model="setItem.keyword_exclusions" name="keyword_exclusions" maxlength="100" ng-required="!((setItem.keyword_contains.length > 0) || (setItem.keyword_exclusions.length > 0))">
         <select ng-model="setItem.keyword_exclusions_type" class="searchKeywordExclusionsTypeSelect">
           <option value="1">をすべて含まない</option>
           <option value="2">のいずれかを含まない</option>
@@ -96,7 +96,7 @@
     <span style="padding-top:5px;"><label>URL</label></span>
     <div class="keywordWrapper">
       <div class="containsSetting">
-        <input type="text" ng-model="setItem.keyword_contains" name="keyword" maxlength="20" required="">
+        <input type="text" ng-model="setItem.keyword_contains" name="keyword_contains" maxlength="100" ng-required="!((setItem.keyword_contains.length > 0) || (setItem.keyword_exclusions.length > 0))">
         <select ng-model="setItem.keyword_contains_type" class="searchKeywordContainsTypeSelect">
           <option value="1">をすべて含む</option>
           <option value="2">のいずれかを含む</option>
@@ -105,7 +105,7 @@
       </div>
       <p>かつ</p>
       <div class="exclusionSetting">
-        <input type="text" ng-model="setItem.keyword_exclusions" name="keyword" maxlength="20" required="">
+        <input type="text" ng-model="setItem.keyword_exclusions" name="keyword_exclusions" maxlength="100" ng-required="!((setItem.keyword_contains.length > 0) || (setItem.keyword_exclusions.length > 0))">
         <select ng-model="setItem.keyword_exclusions_type" class="searchKeywordExclusionsTypeSelect">
           <option value="1">をすべて含まない</option>
           <option value="2">のいずれかを含まない</option>
@@ -140,7 +140,7 @@
     <span style="padding-top:5px;"><label>発言内容</label></span>
     <div class="keywordWrapper">
       <div class="containsSetting">
-        <input type="text" ng-model="setItem.keyword_contains" name="keyword" maxlength="20" required="">
+        <input type="text" ng-model="setItem.keyword_contains" name="keyword_contains" maxlength="100" ng-required="!((setItem.keyword_contains.length > 0) || (setItem.keyword_exclusions.length > 0))">
         <select g-model="setItem.keyword_contains_type" class="searchKeywordContainsTypeSelect">
           <option value="1">をすべて含む</option>
           <option value="2">のいずれかを含む</option>
@@ -149,7 +149,7 @@
       </div>
       <p>かつ</p>
       <div class="exclusionSetting">
-        <input type="text" ng-model="setItem.keyword_exclusions" name="keyword" maxlength="20" required="">
+        <input type="text" ng-model="setItem.keyword_exclusions" name="keyword_exclusions" maxlength="100" ng-required="!((setItem.keyword_contains.length > 0) || (setItem.keyword_exclusions.length > 0))">
         <select g-model="setItem.keyword_exclusions_type" class="searchKeywordExclusionsTypeSelect">
           <option value="1">をすべて含まない</option>
           <option value="2">のいずれかを含まない</option>
@@ -186,7 +186,7 @@
     <span style="padding-top:5px;"><label>キーワード</label></span>
     <div class="keywordWrapper">
       <div class="containsSetting">
-        <input type="text" ng-model="setItem.keyword_contains" name="keyword" maxlength="20" required="">
+        <input type="text" ng-model="setItem.keyword_contains" name="keyword_contains" maxlength="100" ng-required="!((setItem.keyword_contains.length > 0) || (setItem.keyword_exclusions.length > 0))">
         <select class="searchKeywordContainsTypeSelect">
           <option value="1">をすべて含む</option>
           <option value="2">のいずれかを含む</option>
@@ -195,7 +195,7 @@
       </div>
       <p>かつ</p>
       <div class="exclusionSetting">
-        <input type="text" ng-model="setItem.keyword_exclusions" name="keyword" maxlength="20" required="">
+        <input type="text" ng-model="setItem.keyword_exclusions" name="keyword_exclusions" maxlength="100" ng-required="!((setItem.keyword_contains.length > 0) || (setItem.keyword_exclusions.length > 0))">
         <select class="searchKeywordExclusionsTypeSelect">
           <option value="1">をすべて含まない</option>
           <option value="2">のいずれかを含まない</option>
@@ -222,7 +222,7 @@
     <span style="padding-top:5px;"><label>キーワード</label></span>
     <div class="keywordWrapper">
       <div class="containsSetting">
-        <input type="text" ng-model="setItem.keyword_contains" name="keyword" maxlength="20" required="">
+        <input type="text" ng-model="setItem.keyword_contains" name="keyword_contains" maxlength="100" ng-required="!((setItem.keyword_contains.length > 0) || (setItem.keyword_exclusions.length > 0))">
         <select class="searchKeywordContainsTypeSelect">
           <option value="1">をすべて含む</option>
           <option value="2">のいずれかを含む</option>
@@ -231,7 +231,7 @@
       </div>
       <p>かつ</p>
       <div class="exclusionSetting">
-        <input type="text" ng-model="setItem.keyword_exclusions" name="keyword" maxlength="20" required="">
+        <input type="text" ng-model="setItem.keyword_exclusions" name="keyword_exclusions" maxlength="100" ng-required="!((setItem.keyword_contains.length > 0) || (setItem.keyword_exclusions.length > 0))">
         <select class="searchKeywordExclusionsTypeSelect">
           <option value="1">をすべて含まない</option>
           <option value="2">のいずれかを含まない</option>
