@@ -4485,6 +4485,9 @@ ul.naviBtn {
     section {
 
       ul.settingList {
+        #TAutoMessageName {
+          width: 46.5em;
+        }
         .explainTooltip {
           z-index: 10;
           position: absolute;
@@ -4628,7 +4631,7 @@ ul.naviBtn {
           }
 
           #setTriggerList {
-            width: 60em;
+            width: 57.5em;
             position: relative;
 
             > ul {
@@ -4667,7 +4670,7 @@ ul.naviBtn {
                     }
                     &.labelArea  {
                       display: block;
-                      width: 25.5em;
+                      width: 52em;
                       margin-left: 2.5em;
                       padding: 9px 0.25em;
                       height: 34px;
@@ -4711,7 +4714,7 @@ ul.naviBtn {
                   &.explainWrapper {
                     padding: 0;
                     border-top: initial;
-                    margin-left: 11em;
+                    margin-left: 9em;
                     s {
                       display: block;
                     }
@@ -4719,7 +4722,7 @@ ul.naviBtn {
                   &.keywordWrapper {
                     padding: 0;
                     border-top: initial;
-                    width: 46em;
+                    width: 44.5em;
                     div {
                       padding: inherit;
                       border-top: inherit;
@@ -4728,7 +4731,7 @@ ul.naviBtn {
                       width: 33em;
                     }
                     p {
-                      margin: 0.5em 0;
+                      margin: 0.5em 0 0;
                     }
                     s {
                       display: inline-block;
@@ -4743,7 +4746,7 @@ ul.naviBtn {
                     > li {
                       padding: 0.5em;
                       > span:first-child {
-                        width: 10em;
+                        width: 8em;
                         display: block;
                       }
                     }
@@ -4756,7 +4759,7 @@ ul.naviBtn {
                         }
 
                         div.clockpicker {
-                          width:45%;
+                          width:20%;
 
                           input {
                             width: 100%;
