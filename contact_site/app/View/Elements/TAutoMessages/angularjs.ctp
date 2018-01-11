@@ -206,6 +206,7 @@ sincloApp.controller('MainController', function($scope) {
 
       setTimeout(function(){
         $scope.createMessage($scope.action, $scope.showWidgetType != 1);
+        $scope.toggleChatTextareaView($scope.main.chat_textarea);
       },0);
     }
 
@@ -608,12 +609,17 @@ sincloApp.controller('MainController', function($scope) {
       $scope.switchWidget(1); // 標準に切り替える
     }, true);
 
-    // シミュレーター上のメッセージ表示切替
+    // シミュレーター上のメッセージ表示更新
     angular.element(window).on('load', function(e) {
       $scope.$watch('action', function(value) {
         $scope.createMessage(value, $scope.showWidgetType != 1);
       });
+      $scope.$watch('main.chat_textarea', function(value) {
+        $scope.toggleChatTextareaView(value);
+      });
+
       $scope.initMessage($scope.action, $scope.showWidgetType != 1);
+      $scope.toggleChatTextareaView($scope.main.chat_textarea);
     });
     $scope.initMessage = function(val="", isSmartphone=false) {
       var strings = val.split('\n');
@@ -679,7 +685,39 @@ sincloApp.controller('MainController', function($scope) {
         }
         content += str + "\n";
       }
-      messageElement.innerHTML = content.replace(/\n$/, '');
+      messageElement.innerHTML = content.replace(/\n\n$/, '\n');
+    }
+
+    // 自由入力エリアの表示・非表示切替
+    $scope.toggleChatTextareaView = function(value) {
+      var chatTalkHeight = 194;
+      var messageBoxHeight = 75;
+
+      switch($scope.showWidgetType) {
+      case 1: // 通常
+        if($scope.widgetSettings.widget_size_type == 2) {
+          chatTalkHeight = 274;
+        } else if($scope.widgetSettings.widget_size_type == 3) {
+          chatTalkHeight = 364;
+        }
+        break;
+      case 2:  // スマートフォン(横)
+        chatTalkHeight = 90;
+        messageBoxHeight = 62;
+        break;
+      case 3:  // スマートフォン(縦)
+        chatTalkHeight = 184;
+        messageBoxHeight = 72;
+        break;
+      }
+
+      if (value == <?= C_AUTO_WIDGET_TEXTAREA_OPEN ?>) {
+        document.getElementById('messageBox').style.display = "block";
+        document.getElementById('chatTalk').style.height = chatTalkHeight + "px";
+      } else {
+        document.getElementById('messageBox').style.display = "none";
+        document.getElementById('chatTalk').style.height = chatTalkHeight + messageBoxHeight + "px";
+      }
     }
 });
 
