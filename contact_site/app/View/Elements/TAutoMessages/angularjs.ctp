@@ -609,6 +609,16 @@ sincloApp.controller('MainController', function($scope) {
       $scope.switchWidget(1); // 標準に切り替える
     }, true);
 
+    angular.element(window).on("click", ".widgetOpener", function(){
+      var sincloBox = document.getElementById("sincloBox");
+      var nextFlg = true;
+      if ( $scope.openFlg ) {
+        nextFlg = false;
+      }
+      $scope.openFlg = nextFlg;
+      $scope.$apply();
+    });
+
     // シミュレーター上のメッセージ表示更新
     angular.element(window).on('load', function(e) {
       $scope.$watch('action', function(value) {
