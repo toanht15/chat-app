@@ -565,7 +565,7 @@ sincloApp.controller('MainController', function($scope) {
     }
     $scope.createMessage = function(isSmartphone=false) {
       var val = document.getElementById('TAutoMessageAction').value;
-      var messageElement = document.querySelector('#chatTalk .sinclo_re .details:not(.cName)');
+      var messageElement = document.querySelector('#sample_widget_re_message .details:not(.cName)');
       if(!messageElement) return;
 
       var strings = val.split('\n');
@@ -608,7 +608,15 @@ sincloApp.controller('MainController', function($scope) {
         }
         content += str + "\n";
       }
-      messageElement.innerHTML = content.replace(/\n\n$/, '\n');
+      content = content.replace(/\n\n$/, '\n');
+
+      // プレビューの吹き出し表示制御
+      if(content.length > 1) {
+        document.getElementById('sample_widget_re_message').style.display = "";
+        messageElement.innerHTML = content;
+      } else {
+        document.getElementById('sample_widget_re_message').style.display = "none";
+      }
     }
 
     // 自由入力エリアの表示・非表示切替
