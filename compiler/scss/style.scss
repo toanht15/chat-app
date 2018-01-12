@@ -4555,10 +4555,6 @@ ul.naviBtn {
             border-top: none;
           }
 
-          > input[type="text"] {
-            width: 35em;
-          }
-
           #fromMailAddressSettings {
             width: 250px;
             span {
@@ -4877,7 +4873,7 @@ ul.naviBtn {
 
       &.section3 {
         display: flex;
-      
+
         #tautomessages_action_entry {
           flex-grow: 1;
         }
