@@ -4486,7 +4486,10 @@ ul.naviBtn {
 
       ul.settingList {
         #TAutoMessageName {
-          width: 46.5em;
+          width: 37.7em;
+        }
+        #TAutoMessageTrigger {
+          width: 13em;
         }
         .explainTooltip {
           z-index: 10;
@@ -4728,7 +4731,7 @@ ul.naviBtn {
                       border-top: inherit;
                     }
                     input[type="text"] {
-                      width: 33em;
+                      width: 28em;
                     }
                     p {
                       margin: 0.5em 0 0;
@@ -4738,7 +4741,7 @@ ul.naviBtn {
                     }
                     select {
                       float: right;
-                      width: 14em;
+                      width: 10.5em;
                       margin-top: 0.5em;
                     }
                   }
