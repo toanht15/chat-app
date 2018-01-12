@@ -617,18 +617,23 @@ sincloApp.controller('MainController', function($scope) {
       var messageBoxHeight = 75;
 
       switch($scope.showWidgetType) {
-      case 1: // 通常
+      case 1: // 表示タブ：通常
+        // ウィジェットサイズごとにサイズを変更する
         if($scope.widgetSettings.widget_size_type == 2) {
           chatTalkHeight = 274;
         } else if($scope.widgetSettings.widget_size_type == 3) {
           chatTalkHeight = 364;
         }
+        // プレミアムプラン以外の場合、高さを調整する
+        <?php if ( !$coreSettings[C_COMPANY_USE_SYNCLO] && (!isset($coreSettings[C_COMPANY_USE_DOCUMENT]) || !$coreSettings[C_COMPANY_USE_DOCUMENT]) ): ?>
+          messageBoxHeight -= 3;
+        <?php endif; ?>
         break;
-      case 2:  // スマートフォン(横)
+      case 2:  // 表示タブ：スマートフォン(横)
         chatTalkHeight = 90;
         messageBoxHeight = 62;
         break;
-      case 3:  // スマートフォン(縦)
+      case 3:  // 表示タブ：スマートフォン(縦)
         chatTalkHeight = 184;
         messageBoxHeight = 72;
         break;
