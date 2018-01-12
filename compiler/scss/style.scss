@@ -4486,7 +4486,7 @@ ul.naviBtn {
 
       ul.settingList {
         #TAutoMessageName {
-          width: 37.7em;
+          width: 36.4em;
         }
         #TAutoMessageTrigger {
           width: 13em;
@@ -4634,7 +4634,7 @@ ul.naviBtn {
           }
 
           #setTriggerList {
-            width: 57.5em;
+            width: 55.5em;
             position: relative;
 
             > ul {
@@ -4650,6 +4650,7 @@ ul.naviBtn {
               }
               > items li.triggerItem {
                 display: block;
+                padding-bottom: 15px;
                 position: relative;
                 overflow: hidden;
                 transition: height 200ms linear;
@@ -4673,7 +4674,7 @@ ul.naviBtn {
                     }
                     &.labelArea  {
                       display: block;
-                      width: 52em;
+                      width: 50em;
                       margin-left: 2.5em;
                       padding: 9px 0.25em;
                       height: 34px;
@@ -4717,7 +4718,7 @@ ul.naviBtn {
                   &.explainWrapper {
                     padding: 0;
                     border-top: initial;
-                    margin-left: 9em;
+                    margin-left: 11em;
                     s {
                       display: block;
                     }
@@ -4725,31 +4726,32 @@ ul.naviBtn {
                   &.keywordWrapper {
                     padding: 0;
                     border-top: initial;
-                    width: 44.5em;
+                    width: 43em;
                     div {
                       padding: inherit;
                       border-top: inherit;
                     }
                     input[type="text"] {
-                      width: 28em;
+                      width: 26em;
                     }
                     p {
                       margin: 0.5em 0 0;
                     }
                     s {
                       display: inline-block;
+                      padding-top: 6px;
                     }
                     select {
                       float: right;
                       width: 10.5em;
-                      margin-top: 0.5em;
+                      padding: 3px 0 5px;
                     }
                   }
                   ul {
                     > li {
                       padding: 0.5em;
                       > span:first-child {
-                        width: 8em;
+                        width: 10em;
                         display: block;
                       }
                     }
