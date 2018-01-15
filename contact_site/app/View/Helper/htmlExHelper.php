@@ -77,7 +77,7 @@ class htmlExHelper extends AppHelper {
         return "<a href='".$matches[0]."' target='_blank'>".$matches[0]."</a>";
     }
 
-    public function makeChatView($value, $isSendFile){
+    public function makeChatView($value, $isSendFile = false){
         if($isSendFile) {
           return $this->makeSendChatView($value);
         }
@@ -89,9 +89,9 @@ class htmlExHelper extends AppHelper {
                 $str = "<input type='radio' id='radio".$key."' disabled=''>";
                 $str .= "<label class='pointer' for='radio".$key."'>".trim(preg_replace("/^\[\]/", "", $tmp))."</label>";
             }
-            if ( preg_match('/(http(s)?:\/\/[\w\-\.\/\?\=\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/', $tmp) ) {
-                $ret = preg_replace_callback('/(http(s)?:\/\/[\w\-\.\/\?\=\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/', [$this, 'addLink'], $tmp);
-                $str = preg_replace('/(http(s)?:\/\/[\w\-\.\/\?\=\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/', $ret, $tmp);
+            if ( preg_match('/(http(s)?:\/\/[\w\-\.\/\?\=\,\#\:\%\!\(\)\<\>\"\x3000-\x30FE\x4E00-\x9FA0\xFF01-\xFFE3]+)/', $tmp) ) {
+                $ret = preg_replace_callback('/(http(s)?:\/\/[\w\-\.\/\?\=\,\#\:\%\!\(\)\<\>\"\x3000-\x30FE\x4E00-\x9FA0\xFF01-\xFFE3]+)/', [$this, 'addLink'], $tmp);
+                $str = preg_replace('/(http(s)?:\/\/[\w\-\.\/\?\=\,\#\:\%\!\(\)\<\>\"\x3000-\x30FE\x4E00-\x9FA0\xFF01-\xFFE3]+)/', $ret, $tmp);
             }
             if ( preg_match('/<telno>([\s\S]*?)<\/telno>/', $tmp)) {
                 $ret = "<span style='font-weight: normal;'>". preg_replace('/^<telno>|<\/telno>$/', "", $tmp) . "</span>";
