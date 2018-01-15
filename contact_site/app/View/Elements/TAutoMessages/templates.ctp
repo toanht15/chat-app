@@ -36,8 +36,8 @@
           <option value="1">をすべて含む</option>
           <option value="2">のいずれかを含む</option>
         </select>
-        <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
       </div>
+      <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
       <p>かつ</p>
       <div class="exclusionSetting">
         <input type="text" ng-model="setItem.keyword_exclusions" name="keyword_exclusions" maxlength="100" ng-required="!((setItem.keyword_contains.length > 0) || (setItem.keyword_exclusions.length > 0))">
@@ -45,8 +45,8 @@
           <option value="1">をすべて含まない</option>
           <option value="2">のいずれかを含まない</option>
         </select>
-        <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
       </div>
+      <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
     </div>
   </li>
   <li>
@@ -101,8 +101,8 @@
           <option value="1">をすべて含む</option>
           <option value="2">のいずれかを含む</option>
         </select>
-        <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
       </div>
+      <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
       <p>かつ</p>
       <div class="exclusionSetting">
         <input type="text" ng-model="setItem.keyword_exclusions" name="keyword_exclusions" maxlength="100" ng-required="!((setItem.keyword_contains.length > 0) || (setItem.keyword_exclusions.length > 0))">
@@ -110,8 +110,8 @@
           <option value="1">をすべて含まない</option>
           <option value="2">のいずれかを含まない</option>
         </select>
-        <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
       </div>
+      <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
     </div>
   </li>
   <li>
@@ -145,8 +145,8 @@
           <option value="1">をすべて含む</option>
           <option value="2">のいずれかを含む</option>
         </select>
-        <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
       </div>
+      <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
       <p>かつ</p>
       <div class="exclusionSetting">
         <input type="text" ng-model="setItem.keyword_exclusions" name="keyword_exclusions" maxlength="100" ng-required="!((setItem.keyword_contains.length > 0) || (setItem.keyword_exclusions.length > 0))">
@@ -154,8 +154,8 @@
           <option value="1">をすべて含まない</option>
           <option value="2">のいずれかを含まない</option>
         </select>
-        <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
       </div>
+      <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
     </div>
   </li>
   <li>
@@ -191,8 +191,8 @@
           <option value="1">をすべて含む</option>
           <option value="2">のいずれかを含む</option>
         </select>
-        <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
       </div>
+      <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
       <p>かつ</p>
       <div class="exclusionSetting">
         <input type="text" ng-model="setItem.keyword_exclusions" name="keyword_exclusions" maxlength="100" ng-required="!((setItem.keyword_contains.length > 0) || (setItem.keyword_exclusions.length > 0))">
@@ -200,8 +200,8 @@
           <option value="1">をすべて含まない</option>
           <option value="2">のいずれかを含まない</option>
         </select>
-        <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
       </div>
+      <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
     </div>
   </li>
   <li>
@@ -227,8 +227,8 @@
           <option value="1">をすべて含む</option>
           <option value="2">のいずれかを含む</option>
         </select>
-        <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
       </div>
+      <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
       <p>かつ</p>
       <div class="exclusionSetting">
         <input type="text" ng-model="setItem.keyword_exclusions" name="keyword_exclusions" maxlength="100" ng-required="!((setItem.keyword_contains.length > 0) || (setItem.keyword_exclusions.length > 0))">
@@ -236,8 +236,8 @@
           <option value="1">をすべて含まない</option>
           <option value="2">のいずれかを含まない</option>
         </select>
-        <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
       </div>
+      <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
     </div>
   </li>
   <li>
