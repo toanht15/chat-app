@@ -4485,6 +4485,12 @@ ul.naviBtn {
     section {
 
       ul.settingList {
+        #TAutoMessageName {
+          width: 36.4em;
+        }
+        #TAutoMessageTrigger {
+          width: 13em;
+        }
         .explainTooltip {
           z-index: 10;
           position: absolute;
@@ -4628,7 +4634,7 @@ ul.naviBtn {
           }
 
           #setTriggerList {
-            width: 31em;
+            width: 55.5em;
             position: relative;
 
             > ul {
@@ -4644,6 +4650,7 @@ ul.naviBtn {
               }
               > items li.triggerItem {
                 display: block;
+                padding-bottom: 15px;
                 position: relative;
                 overflow: hidden;
                 transition: height 200ms linear;
@@ -4667,7 +4674,7 @@ ul.naviBtn {
                     }
                     &.labelArea  {
                       display: block;
-                      width: 25.5em;
+                      width: 50em;
                       margin-left: 2.5em;
                       padding: 9px 0.25em;
                       height: 34px;
@@ -4708,7 +4715,38 @@ ul.naviBtn {
                 div {
                   padding: 0.5em;
                   border-top: 1px solid $main-color;
-
+                  &.explainWrapper {
+                    padding: 0;
+                    border-top: initial;
+                    margin-left: 11em;
+                    s {
+                      display: block;
+                    }
+                  }
+                  &.keywordWrapper {
+                    padding: 0;
+                    border-top: initial;
+                    width: 43em;
+                    div {
+                      padding: inherit;
+                      border-top: inherit;
+                    }
+                    input[type="text"] {
+                      width: 26em;
+                    }
+                    p {
+                      margin: 0.5em 0 0;
+                    }
+                    s {
+                      display: inline-block;
+                      padding-top: 6px;
+                    }
+                    select {
+                      float: right;
+                      width: 10.5em;
+                      padding: 3px 0 5px;
+                    }
+                  }
                   ul {
                     > li {
                       padding: 0.5em;
@@ -4726,7 +4764,7 @@ ul.naviBtn {
                         }
 
                         div.clockpicker {
-                          width:45%;
+                          width:20%;
 
                           input {
                             width: 100%;
@@ -4756,7 +4794,7 @@ ul.naviBtn {
             div.balloon {
               position: absolute;
               top: 0;
-              left: 31em;
+              left: 58em;
               background-color: #FF8E9E;
               z-index: $sub-sidebar-z-index;
               display: none;
@@ -4837,9 +4875,25 @@ ul.naviBtn {
           }
         }
       }
+
+      &.section3 {
+        display: flex;
+
+        #tautomessages_action_entry {
+          flex-basis: 60%;
+        }
+
+        #tautomessages_action_simulator {
+          flex-basis: auto;
+          margin: auto 0 6px 20px;
+
+          section#switch_widget {
+            margin-bottom: 0.5em;
+          }
+        }
+      }
     }
   }
-
 }
 
 #tdictionaries_idx {

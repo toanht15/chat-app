@@ -425,7 +425,10 @@ $config['outMessageTriggerList'] = [
         'createLimit' => [C_COINCIDENT => 1, C_SOME_EITHER => 1],
         'key' => 'speech_content',
         'default' => [
-            "speechContent" => "",
+            "keyword_contains" => "",
+            "keyword_contains_type" => "1",
+            "keyword_exclusions" => "",
+            "keyword_exclusions_type" => "1",
             "speechContentCond" => "1",
             "triggerTimeSec" => 3,
             "speechTriggerCond" => "1"
@@ -437,8 +440,11 @@ $config['outMessageTriggerList'] = [
         'createLimit' => [C_COINCIDENT => 1, C_SOME_EITHER => 1],
         'key' => 'stay_page',
         'default' => [
-            "keyword" => "",
             "targetName" => 1,
+            "keyword_contains" => "",
+            "keyword_contains_type" => "1",
+            "keyword_exclusions" => "",
+            "keyword_exclusions_type" => "1",
             "stayPageCond" => 2
         ]
     ],
@@ -463,8 +469,11 @@ $config['outMessageTriggerList'] = [
         'createLimit' => [C_COINCIDENT => 1, C_SOME_EITHER => 1],
         'key' => 'referrer',
         'default' => [
-           "keyword" => "",
-           "referrerCond" => "1"
+            "keyword_contains" => "",
+            "keyword_contains_type" => "1",
+            "keyword_exclusions" => "",
+            "keyword_exclusions_type" => "1",
+            "referrerCond" => 2
         ]
     ],
     // 検索キーワード
@@ -483,8 +492,11 @@ $config['outMessageTriggerList'] = [
       'createLimit' => [C_COINCIDENT => 1, C_SOME_EITHER => 1],
       'key' => 'stay_page_of_first',
       'default' => [
-          "keyword" => "",
           "targetName" => 1,
+          "keyword_contains" => "",
+          "keyword_contains_type" => 1,
+          "keyword_exclusions" => "",
+          "keyword_exclusions_type" => 1,
           "stayPageCond" => 2
       ]
     ],
@@ -494,9 +506,12 @@ $config['outMessageTriggerList'] = [
       'createLimit' => [C_COINCIDENT => 1, C_SOME_EITHER => 1],
       'key' => 'stay_page_of_previous',
       'default' => [
-         "keyword" => "",
-         "targetName" => 1,
-         "stayPageCond" => 2
+          "targetName" => 1,
+          "keyword_contains" => "",
+          "keyword_contains_type" => 1,
+          "keyword_exclusions" => "",
+          "keyword_exclusions_type" => 1,
+          "stayPageCond" => 2
       ]
     ],
     // 営業時間設定
