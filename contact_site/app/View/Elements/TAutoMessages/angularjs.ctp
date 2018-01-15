@@ -158,12 +158,12 @@ sincloApp.controller('MainController', function($scope) {
 
     $scope.chat_message_copy = $scope.widgetSettings['chat_message_copy'];
     $scope.chat_message_design_type = $scope.widgetSettings['chat_message_design_type'];
-    $scope.widget_outside_border_none = !$scope.widgetSettings['widget_border_color'];
-    $scope.widget_inside_border_none = !$scope.widgetSettings['widget_inside_border_color'];
-    $scope.re_border_none = !$scope.widgetSettings['re_border_color'];
-    $scope.se_border_none = !$scope.widgetSettings['se_border_color'];
+    $scope.widget_outside_border_none = $scope.widgetSettings['widget_border_color'] === 'なし';
+    $scope.widget_inside_border_none = $scope.widgetSettings['widget_inside_border_color'] === 'なし';
+    $scope.re_border_none = $scope.widgetSettings['re_border_color'] === 'なし';
+    $scope.se_border_none = $scope.widgetSettings['se_border_color'] === 'なし';
     $scope.show_name = <?=C_WIDGET_SHOW_COMP?>; // オートメッセージは企業名で表示する
-    $scope.message_box_border_none = !$scope.widgetSettings['message_box_border_color'];
+    $scope.message_box_border_none = $scope.widgetSettings['message_box_border_color'] === 'なし';
 
     $scope.switchWidget = function(num){
       $scope.showWidgetType = num;
