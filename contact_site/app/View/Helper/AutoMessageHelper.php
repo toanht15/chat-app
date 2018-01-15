@@ -246,7 +246,7 @@ class autoMessageHelper extends AppHelper {
                     $this->dataList['targetName']['dataList'][$v['targetName']],
                     $v['keyword_contains'],
                     $this->containsList[intval($v['keyword_contains_type'])],
-                    sprintf('、ただし「%s」を%s', $v['keyword_exclusions'], $this->exclusionsList[intval($v['keyword_exclusions_type'])]),
+                    sprintf('、ただし「%s」%s', $v['keyword_exclusions'], $this->exclusionsList[intval($v['keyword_exclusions_type'])]),
                     $this->dataList['stayPageCond']['dataList'][$v['stayPageCond']]
                 );
               } else if(!empty($v['keyword_contains'])) {
@@ -324,7 +324,7 @@ class autoMessageHelper extends AppHelper {
                     $this->labelList[$itemId],
                     $v['keyword_contains'],
                     $this->containsList[intval($v['keyword_contains_type'])],
-                    sprintf('、ただし「%s」を%s', $v['keyword_exclusions'], $this->exclusionsList[intval($v['keyword_exclusions_type'])]),
+                    sprintf('、ただし「%s」%s', $v['keyword_exclusions'], $this->exclusionsList[intval($v['keyword_exclusions_type'])]),
                     $this->dataList['referrerCond']['dataList'][$v['referrerCond']]
                 );
               } else if(!empty($v['keyword_contains'])) {
@@ -375,7 +375,7 @@ class autoMessageHelper extends AppHelper {
                     $this->labelList[$itemId],
                     $v['keyword_contains'],
                     $this->containsList[intval($v['keyword_contains_type'])],
-                    sprintf('、ただし「%s」を%s', $v['keyword_exclusions'], $this->exclusionsList[intval($v['keyword_exclusions_type'])]),
+                    sprintf('、ただし「%s」%s', $v['keyword_exclusions'], $this->exclusionsList[intval($v['keyword_exclusions_type'])]),
                     $this->dataList['speechContentCond']['dataList'][$v['speechContentCond']]
                 );
               } else if(!empty($v['keyword_contains'])) {
@@ -413,7 +413,7 @@ class autoMessageHelper extends AppHelper {
                     $this->dataList['targetName']['dataList'][$v['targetName']],
                     $v['keyword_contains'],
                     $this->containsList[intval($v['keyword_contains_type'])],
-                    sprintf('、ただし「%s」を%s', $v['keyword_exclusions'], $this->exclusionsList[intval($v['keyword_exclusions_type'])]),
+                    sprintf('、ただし「%s」%s', $v['keyword_exclusions'], $this->exclusionsList[intval($v['keyword_exclusions_type'])]),
                     $this->dataList['stayPageCond']['dataList'][$v['stayPageCond']]
                 );
               } else if(!empty($v['keyword_contains'])) {
@@ -451,7 +451,7 @@ class autoMessageHelper extends AppHelper {
                     $this->dataList['targetName']['dataList'][$v['targetName']],
                     $v['keyword_contains'],
                     $this->containsList[intval($v['keyword_contains_type'])],
-                    sprintf('、ただし「%s」を%s', $v['keyword_exclusions'], $this->exclusionsList[intval($v['keyword_exclusions_type'])]),
+                    sprintf('、ただし「%s」%s', $v['keyword_exclusions'], $this->exclusionsList[intval($v['keyword_exclusions_type'])]),
                     $this->dataList['stayPageCond']['dataList'][$v['stayPageCond']]
                 );
               } else if(!empty($v['keyword_contains'])) {
