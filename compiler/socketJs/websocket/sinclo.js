@@ -2759,9 +2759,9 @@
                   result = preg.test(val);
                   break;
               }
-              if((result && typeObj.containsType === 2)) { // いずれかを含まない
+              if((result && typeObj.containsType === 2)) { // いずれかを含む
                 break;
-              } else if((!result && typeObj.containsType === 1)) { // すべてを含まない
+              } else if((!result && typeObj.containsType === 1)) { // すべてを含む
                 break;
               }
             }
