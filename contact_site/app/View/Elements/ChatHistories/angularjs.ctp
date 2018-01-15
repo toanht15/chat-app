@@ -13,7 +13,7 @@
       $scope.messageList = [];
       $.ajax({
         type: "GET",
-        url: "<?=$this->Html->url(['controller'=>'ChatHistories', 'action' => 'remoteGetOldChat'])?>",
+        url: "<?=$this->Html->url(['controller'=>'ChatHistories', 'action' => 'getOldChat'])?>",
         data: {
           historyId: '<?=$historyId?>'
         },
@@ -91,7 +91,7 @@
       }).then(function(){
         $.ajax({
           type: "GET",
-          url: "<?=$this->Html->url(['controller'=>'ChatHistories', 'action' => 'remoteGetOldChat'])?>",
+          url: "<?=$this->Html->url(['controller'=>'ChatHistories', 'action' => 'getOldChat'])?>",
           data: {
             historyId:  historyId
           },
@@ -565,7 +565,7 @@
         scope.showDetail = function(id){
           $.ajax({
             type: 'GET',
-            url: "<?= $this->Html->url(array('controller' => 'Histories', 'action' => 'remoteGetCustomerInfo')) ?>",
+            url: "<?= $this->Html->url(array('controller' => 'Histories', 'action' => 'getCustomerInfo')) ?>",
             data: {
               historyId: id
             },
@@ -584,7 +584,7 @@
   window.openHistoryById = function(id){
     $.ajax({
       type: 'GET',
-      url: "<?= $this->Html->url(array('controller' => 'Histories', 'action' => 'remoteGetStayLogs')) ?>",
+      url: "<?= $this->Html->url(array('controller' => 'ChatHistories', 'action' => 'remoteGetStayLogs')) ?>",
       data: {
         historyId: id
       },
@@ -619,7 +619,7 @@
     window.openChatById = function(id){
       $.ajax({
         type: 'GET',
-        url: "<?= $this->Html->url(array('controller' => 'ChatHistories', 'action' => 'remoteGetChatLogs')) ?>",
+        url: "<?= $this->Html->url(array('controller' => 'ChatHistories', 'action' => 'getChatLogs')) ?>",
         cache: false,
         data: {
           historyId: id
@@ -809,13 +809,17 @@ $(document).ready(function(){
     $('#mainDatePeriod').html(historySearchConditions.History.period + ' : ' + historySearchConditions.History.start_day + '-' + historySearchConditions.History.finish_day);
   });
 
+  var number = 1;
   var prevBoldTarget = null;
+  var numberLines;
   $('.showBold').on('click', function(e){
+    var getTopPosition  = $(".dataTables_scrollBody").scrollTop();
+    //number = Math.floor($(this)[0]['offsetTop']/67) + 1;
     $('.showBold').each(function(index){
       if((location.search.split("?")[1]) !== undefined && location.search.split("?")[1].match(/id/)) {
         if ((location.search.split("?")[1]).substr(3) == $(this)[0]['id']) {
           $(this).find('td').each(function(index){
-            if(index < 7) {
+            if(index < 12) {
               $(this).css("background-color", "#fff");
               $(this).css("font-weight", "normal");
             }
@@ -824,7 +828,7 @@ $(document).ready(function(){
       }
       else {
       $('.showBold').find('td').each(function(index){
-        if(index < 7) {
+        if(index < 12) {
           $(this).css("background-color", "#fff");
           $(this).css("font-weight", "normal");
         }
@@ -833,28 +837,29 @@ $(document).ready(function(){
     });
     if(prevBoldTarget != null) {
       prevBoldTarget.find('td').each(function(index){
-        if(index < 7) {
+        if(index < 12) {
           $(this).css("background-color", "#fff");
           $(this).css("font-weight", "normal");
         }
       });
     }
     $(this).find('td').each(function(index){
-      if(index < 7) {
+      if(index < 12) {
         $(this).css("background-color", "#ebf6f9");
         $(this).css("font-weight", "bold");
       }
     });
     prevBoldTarget = $(this);
-    console.log('チェック');
-    console.log(prevBoldTarget);
   });
 
   $('.showBold').each(function(index){
     if((location.search.split("?")[1]) !== undefined && location.search.split("?")[1].match(/id/)) {
       if ((location.search.split("?")[1]).substr(3) == $(this)[0]['id']) {
         $(this).find('td').each(function(index){
-          if(index < 7) {
+          if(index < 12) {
+            if(index == 0) {
+              prevBoldTarget = $(this).parent('tr');
+            }
             $(this).css("background-color", "#ebf6f9");
             $(this).css("font-weight", "bold");
           }
@@ -863,92 +868,96 @@ $(document).ready(function(){
     }
     else {
       $('.showBold').find('td').each(function(index){
-        if(index < 7) {
+        if(index < 12) {
+          if(index == 0) {
+            prevBoldTarget = $(this).parent('tr');
+          }
           $(this).css("background-color", "#ebf6f9");
           $(this).css("font-weight", "bold");
         }
       });
     }
   });
-  prevBoldTarget = $(this);
 
   var prevBoldTarget2 = 0;
   var id;
-  var number = 1;
   var scrollHeight = 1;
+  var focusHeigt;
   $(window).on('keydown', function(e) {
-    console.log(number);
-    var check = parseInt($(".dataTables_scrollBody").css('height'))/2;
-    console.log('うおい！');
-    console.log(check);
+    var check = parseInt($(".dataTables_scrollBody").css('height'));
     if(e.keyCode === 40) { // ↓
+      e.preventDefault();
       number = number + 1;
-      console.log('下向きでアール');
-      $('.showBold').find('td').each(function(index){
-        if(index < prevBoldTarget2 + 7) {
-          $(this).css("background-color", "#fff");
-          $(this).css("font-weight", "normal");
-        }
-        if(index > prevBoldTarget2 + 6 && index < prevBoldTarget2 + 14) {
-          $(this).css("background-color", "#ebf6f9");
-          $(this).css("font-weight", "bold");
-          id = $(this).parent('tr')[0]['id'];
-        }
-      });
-      prevBoldTarget2 = prevBoldTarget2 + 7;
-      //チャット情報取得
-      var element = document.getElementById("chat_history_idx");
-      // jQueryかjqLiteが有効な場合はセレクタを使える
-      // var $scope = angular.element('#myElement').scope()
-      var $scope = angular.element(element).scope();
-      $scope.getOldChat(id, false);
-      //ユーザー情報取得
-      openChatById(id);
-      console.log('高さ');
-      //console.log(number);
-
-      if(scrollHeight == 1) {
-        if(parseInt($(".dataTables_scrollBody").css('height')) < (67*number)) {
-          //console.log('いええええええい！');
-          //console.log(check);
-          $(".dataTables_scrollBody").scrollTop(check * scrollHeight);
-          number = 1;
-          check = check - 1;
-          scrollHeight = scrollHeight + 1;
-        }
-      }
-      else {
-        console.log('ちぇっくやで！');
-        console.log(parseInt($(".dataTables_scrollBody").css('height'))/2);
-        console.log(67*number);
-        if(parseInt($(".dataTables_scrollBody").css('height'))/2 < (67*number)) {
-          console.log('ちぇっくやで！');
-          //console.log(check);
-          $(".dataTables_scrollBody").scrollTop(check * scrollHeight);
-          number = 0;
-          check = check - 1;
-          scrollHeight = scrollHeight + 1;
-        }
-      }
-    }
-    if(e.keyCode === 38) { // ↑キーを押したら
-      console.log('上向きでアール');
-      if(prevBoldTarget2 != 0) {
-        $('.showBold').find('td').each(function(index){
-          //console.log(index);
-          console.log(prevBoldTarget2);
-          if(index < prevBoldTarget2 + 7) {
+      if(prevBoldTarget.next("tr")[0] != null) {
+        prevBoldTarget.find('td').each(function(index){
+          console.log('index1');
+          console.log(index);
+          if(index < 12) {
             $(this).css("background-color", "#fff");
             $(this).css("font-weight", "normal");
           }
-          if(index > prevBoldTarget2 - 8 && index < prevBoldTarget2) {
+        });
+        prevBoldTarget.next("tr").find('td').each(function(index){
+          if(index < 12) {
+            if(index == 0) {
+              id = $(this).parent('tr')[0]['id'];
+              prevBoldTarget = $(this).parent('tr');
+              focusHeigt = $(this).offset().top;
+            }
             $(this).css("background-color", "#ebf6f9");
             $(this).css("font-weight", "bold");
-            id = $(this).parent('tr')[0]['id'];
           }
         });
-        prevBoldTarget2 = prevBoldTarget2 - 7;
-        }
+      }
+
+      //チャット情報取得
+      var element = document.getElementById("chat_history_idx");
+      // jQueryかjqLiteが有効な場合はセレクタを使える
+      // var $scope = angular.element('#myElement').scope()
+      var $scope = angular.element(element).scope();
+      $scope.getOldChat(id, false);
+      //ユーザー情報取得
+      openChatById(id);
+
+      var row = chatTable.rows.length;
+      if(prevBoldTarget.next("tr")[0] != null && parseInt($(".dataTables_scrollBody").css('height')) - (focusHeigt - ($('.dataTables_scroll').offset()['top']+49) + prevBoldTarget.next("tr")[0]['clientHeight']) < 0 ) {
+          $(".dataTables_scrollBody").scrollTop($(".dataTables_scrollBody").scrollTop()+prevBoldTarget.next("tr")[0]['clientHeight']);
+          if(scrollHeight < (row-number)) {
+            scrollHeight = scrollHeight + 1;
+          }
+          number = number -1;
+      }
+      else if(prevBoldTarget.next("tr")[0] == null) {
+        $(".dataTables_scrollBody").scrollTop($(".dataTables_scrollBody").scrollTop()+prevBoldTarget[0]['clientHeight']);
+      }
+    }
+    if(e.keyCode === 38) { // ↑キーを押したら
+      e.preventDefault();
+      if(number > 0) {
+        number = number - 1;
+      }
+      if(prevBoldTarget.prev("tr")[0] != null) {
+        prevBoldTarget.find('td').each(function(index){
+          if(index < 12) {
+            if(index == 0) {
+              focusHeigt = $(this).offset().top;
+            }
+            $(this).css("background-color", "#fff");
+            $(this).css("font-weight", "normal");
+          }
+        });
+        prevBoldTarget.prev("tr").find('td').each(function(index){
+          if(index < 12) {
+            if(index == 0) {
+              id = $(this).parent('tr')[0]['id'];
+              prevBoldTarget = $(this).parent('tr');
+            }
+            $(this).css("background-color", "#ebf6f9");
+            $(this).css("font-weight", "bold");
+          }
+        });
+      }
+
       //ユーザー情報取得
       openChatById(id);
       //チャット情報取得
@@ -957,6 +966,14 @@ $(document).ready(function(){
       // var $scope = angular.element('#myElement').scope()
       var $scope = angular.element(element).scope();
       $scope.getOldChat(id, false);
+      if( prevBoldTarget.prev("tr")[0] != null && focusHeigt-($('.dataTables_scroll').offset()['top']+49)-prevBoldTarget.prev("tr")[0]['clientHeight'] < 0) {
+        console.log($(".dataTables_scrollBody").scrollTop());
+        console.log(prevBoldTarget.prev("tr")[0]['clientHeight']);
+        $(".dataTables_scrollBody").scrollTop($(".dataTables_scrollBody").scrollTop()-prevBoldTarget.prev("tr")[0]['clientHeight']);
+      }
+      else if(prevBoldTarget.prev("tr")[0] == null) {
+        $(".dataTables_scrollBody").scrollTop(0);
+      }
     }
   });
 
