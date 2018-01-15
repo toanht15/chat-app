@@ -1723,6 +1723,14 @@ io.sockets.on('connection', function (socket) {
         var chunkSize = 100;
         var keyLength = Object.keys(customerList[res.siteKey]).length;
         Object.keys(customerList[res.siteKey]).forEach(function(key){
+          var splitedKey = key.split("_");
+          if (splitedKey.length === 3 && isset(splitedKey[1])) {
+            if(!io.sockets.connected[splitedKey[3]]) {
+              console.log("customerList key : " + key + " client is not exist. deleting.");
+              delete customerList[key];
+              return;
+            }
+          }
           var val = getConnectInfo(customerList[res.siteKey][key]);
           if(isset(data.contract.chat) && data.contract.chat) {
             chatApi.getUnreadCnt(val, function (ret) {
