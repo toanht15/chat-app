@@ -2740,7 +2740,7 @@
             var result = false;
 
             // 含む方
-            var splitedContains = contains.replaceAll("　", " ").split(" ");
+            var splitedContains = contains.replace(/　/g, " ").split(" ");
             for(var i=0; i < splitedContains.length; i++) {
               var preg = "";
               var word = "";
@@ -2767,7 +2767,7 @@
             }
 
             // 含まない方
-            var splitedExclusions = exclusions.replaceAll("　", " ").split(" ");
+            var splitedExclusions = exclusions.replace(/　/g, " ").split(" ");
             for(var i=0; i < splitedExclusions.length; i++) {
               var preg = "";
               var word = "";
