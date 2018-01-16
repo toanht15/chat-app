@@ -2742,6 +2742,10 @@
             // 含む方
             var splitedContains = contains.replace(/　/g, " ").split(" ");
             for(var i=0; i < splitedContains.length; i++) {
+              if(splitedContains[i] === "") {
+                result = true;
+                continue;
+              }
               var preg = "";
               var word = "";
               switch(Number(typeObj.wordType)) {
@@ -2766,9 +2770,15 @@
               }
             }
 
+            if(!result) return false; // 含む方と含まない方はAND条件なので、ここでダメならマッチエラーを返す
+
             // 含まない方
             var splitedExclusions = exclusions.replace(/　/g, " ").split(" ");
             for(var i=0; i < splitedExclusions.length; i++) {
+              if(splitedExclusions[i] === "") {
+                result = true;
+                continue;
+              }
               var preg = "";
               var word = "";
               switch(Number(typeObj.wordType)) {
