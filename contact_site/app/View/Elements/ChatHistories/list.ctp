@@ -30,6 +30,48 @@
   text-align: center;'));
   ?>
   <span id="searchPeriod">検索期間</span>
+    <div class = "form01 fRight"  style = "margin-top: -19px; display:inline-block; height: 40px; margin-bottom:22px; margin-right: 24px;">
+    <?php
+    if($screenFlg == C_CHAT_HISTORY_SIDE) { ?>
+    <ul class="switch" ng-init = "fillterTypeId = 2" style = "box-shadow:none;">
+      <?php }
+      if($screenFlg == C_CHAT_HISTORY_VERTICAL) { ?>
+      <ul class="switch" ng-init = "fillterTypeId = 1" style = "box-shadow:none;">
+        <?php } ?>
+        <li ng-class="{on:fillterTypeId===1}" ng-click="fillterTypeId = 1" style = "margin-top:0; width:5em !important;">
+        <span class = 'vertical' ng-if = "fillterTypeId == 1">
+         <?= $this->Html->link(
+             $this->Html->image('dock_bottom.png', array('alt' => 'メニュー', 'width'=>50, 'height'=>50)),
+             'javascript:void(0)',
+             array('escape' => false,
+                 'style' => 'display: inline-block; height: 30px; margin-top:-5px;')); ?>
+        </span>
+          <span class = 'vertical' ng-if = "fillterTypeId == 2">
+          <?= $this->Html->link(
+              $this->Html->image('dock_bottom_color.png', array('alt' => 'メニュー', 'width'=>50, 'height'=>50)),
+              'javascript:void(0)',
+              array('escape' => false,
+                  'style' => 'display: inline-block; height: 30px;margin-top:-5px;')); ?>
+        </span>
+        </li>
+        <li ng-class="{on:fillterTypeId===2}" ng-click="fillterTypeId = 2" style = "margin-top:0; width:5em !important;">
+      <span class = 'side' ng-if = "fillterTypeId == 1">
+        <?= $this->Html->link(
+            $this->Html->image('dock_right_color.png', array('alt' => 'メニュー', 'width'=>50, 'height'=>50)),
+            'javascript:void(0)',
+            array('escape' => false,
+                'style' => 'display: inline-block; height: 30px;margin-top:-5px;')); ?>
+        </span>
+          <span class = 'side' ng-if = "fillterTypeId == 2">
+        <?= $this->Html->link(
+            $this->Html->image('dock_right.png', array('alt' => 'メニュー', 'width'=>50, 'height'=>50)),
+            'javascript:void(0)',
+            array('escape' => false,
+                'style' => 'display: inline-block; height: 30px;margin-top:-5px;')); ?>
+        </span>
+        </li>
+      </ul>
+  </div>
   <?php
     //検索条件表示：非表示
     $noseach_menu = '';
@@ -134,7 +176,7 @@
     </ul>
   </div>
     <!-- 検索窓 -->
-    <div class='fLeft' style="width:100%;">
+    <div class='fLeft' style="width:100%;margin-bottom: 10px;margin-top: -10px;">
       <div id="btnSet">
        <span id = "outputCsv">
            <?= $this->Html->image('csv.png', array(
@@ -147,7 +189,8 @@
                'width' => 45,
                'height' => 45,
                'onclick' => 'selectCsv()',
-               'url'=>array('controller'=>'ChatHistories','action'=>'outputCSVOfChat')
+               'url'=>array('controller'=>'ChatHistories','action'=>'outputCSVOfChat'),
+               'style' => 'margin-left:-4px;'
            )) ?>
        </span>
        <?php if($permission_level == 1) { ?>
@@ -181,48 +224,6 @@
           <input type="checkbox" id="g_chat" name="group_by_chat" <?=$checked?> />
           CV(コンバージョン)のみ表示する
         </label>
-        <div class = "form01 fRight" style = "margin-top: -48px; display:inline-block; height: 40px; margin-bottom:22px; margin-right: 124px;">
-            <?php
-            if($screenFlg == C_CHAT_HISTORY_SIDE) { ?>
-            <ul class="switch" ng-init = "fillterTypeId = 2" style = "box-shadow:none;">
-              <?php }
-              if($screenFlg == C_CHAT_HISTORY_VERTICAL) { ?>
-              <ul class="switch" ng-init = "fillterTypeId = 1" style = "box-shadow:none;">
-                <?php } ?>
-                <li ng-class="{on:fillterTypeId===1}" ng-click="fillterTypeId = 1" style = "margin-top:0; width:5em !important;">
-                <span class = 'vertical' ng-if = "fillterTypeId == 1">
-                 <?= $this->Html->link(
-                     $this->Html->image('dock_bottom.png', array('alt' => 'メニュー', 'width'=>50, 'height'=>50)),
-                     'javascript:void(0)',
-                     array('escape' => false,
-                         'style' => 'display: inline-block; height: 30px; margin-top:-5px;')); ?>
-                </span>
-                  <span class = 'vertical' ng-if = "fillterTypeId == 2">
-                  <?= $this->Html->link(
-                      $this->Html->image('dock_bottom_color.png', array('alt' => 'メニュー', 'width'=>50, 'height'=>50)),
-                      'javascript:void(0)',
-                      array('escape' => false,
-                          'style' => 'display: inline-block; height: 30px;margin-top:-5px;')); ?>
-                </span>
-                </li>
-                <li ng-class="{on:fillterTypeId===2}" ng-click="fillterTypeId = 2" style = "margin-top:0; width:5em !important;">
-              <span class = 'side' ng-if = "fillterTypeId == 1">
-                <?= $this->Html->link(
-                    $this->Html->image('dock_right_color.png', array('alt' => 'メニュー', 'width'=>50, 'height'=>50)),
-                    'javascript:void(0)',
-                    array('escape' => false,
-                        'style' => 'display: inline-block; height: 30px;margin-top:-5px;')); ?>
-                </span>
-                  <span class = 'side' ng-if = "fillterTypeId == 2">
-                <?= $this->Html->link(
-                    $this->Html->image('dock_right.png', array('alt' => 'メニュー', 'width'=>50, 'height'=>50)),
-                    'javascript:void(0)',
-                    array('escape' => false,
-                        'style' => 'display: inline-block; height: 30px;margin-top:-5px;')); ?>
-                </span>
-                </li>
-              </ul>
-          </div>
       <?php endif; ?>
       <?=$this->Form->create('History', ['action' => 'index']);?>
         <?=$this->Form->hidden('outputData')?>
@@ -338,7 +339,7 @@
                   <?php if(isset($coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $coreSettings[C_COMPANY_REF_COMPANY_DATA]): ?>
                     <br>
                     <?php if(!empty($history['LandscapeData']['org_name']) && !empty($history['LandscapeData']['lbc_code'])): ?>
-                        <a href="javascript:void(0)" class="underL" onclick="openCompanyDetailInfo('<?=$history['LandscapeData']['lbc_code']?>')"><?=h($history['LandscapeData']['org_name'])?></a><br>
+                        <a href="javascript:void(0)" class="underL" onclick="openCompanyDetailInfo('<?=$history['LandscapeData']['lbc_code']?>')"><?=h($history['LandscapeData']['org_name'])?></a>
                     <?php elseif(!empty($history['LandscapeData']['org_name'])): ?>
                         <p><?=h($history['LandscapeData']['org_name'])?></p><?='\n'?>
                     <?php endif; ?>
@@ -494,7 +495,7 @@
               <?php if(isset($coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $coreSettings[C_COMPANY_REF_COMPANY_DATA]): ?>
                     <?php if(!empty($defaultHistoryList['LandscapeData']['org_name']) && !empty($defaultHistoryList['LandscapeData']['lbc_code'])): ?>
                         <a href="javascript:void(0)" class="underL" onclick="openCompanyDetailInfo('<?=$defaultHistoryList['LandscapeData']['lbc_code']?>')">
-                        <span id = "Landscape"><?=h($defaultHistoryList['LandscapeData']['org_name'])?></span></a><br>
+                        <span id = "Landscape"><?=h($defaultHistoryList['LandscapeData']['org_name'])?></span></a>
                     <?php elseif(!empty($defaultHistoryList['LandscapeData']['org_name'])): ?>
                         <p><?=h($defaultHistoryList['LandscapeData']['org_name'])?></p><?='\n'?>
                     <?php endif; ?>

@@ -62,14 +62,6 @@ var selectCsv = function(){
 var actBtnShow = function(){
   var authorityDelete = "<?= $coreSettings[C_COMPANY_USE_HISTORY_DELETE] ?>";
   var authorityCsv = "<?= $coreSettings[C_COMPANY_USE_HISTORY_EXPORTING] ?>";
-  if(authorityDelete == "" ) {
-    return false;
-  }
-  if(authorityCsv == "") {
-    $("#disabled_history_csv_btn").click(function(){
-      return false;
-    })
-  }
 
   // 選択中の場合
   if ( $('input[name="selectTab"]').is(":checked") ) {
@@ -96,12 +88,24 @@ var actBtnShow = function(){
   else {
     //一つもチェックが無かったら
     //CSVボタン無効
-    document.getElementById("history_csv_btn").className="btn-shadow disOffgrayBtn";
+    if(authorityCsv == 1) {
+      document.getElementById("history_csv_btn").className="btn-shadow disOffgrayBtn";
+    }
     //document.getElementById("tautomessages_copy_btn").removeEventListener('click', openCopyDialog, false);
     //削除ボタン無効
-    document.getElementById("history_dustbox_btn").className="btn-shadow disOffgrayBtn";
-    document.getElementById("history_dustbox_btn").removeEventListener('click', openDeleteDialog, false);
+    if(authorityDelete == 1) {
+      document.getElementById("history_dustbox_btn").className="btn-shadow disOffgrayBtn";
+      document.getElementById("history_dustbox_btn").removeEventListener('click', openDeleteDialog, false);
+    }
     $("#btnSet").css('display', 'none');
+  }
+  if(authorityDelete == "" ) {
+    return false;
+  }
+  if(authorityCsv == "") {
+    $("#disabled_history_csv_btn").click(function(){
+      return false;
+    })
   }
 };
 
@@ -387,6 +391,18 @@ $(function(){
       document.getElementById('chatTable').style.width = $('#history_body_side').outerWidth() - 40 + 'px';
       document.getElementById('detail').style.width = "100%";
       document.getElementById('verticalToggleMenu').style.display = "none";
+      document.getElementById('info').style.display = "none";
+      document.getElementById('kind').style.display = "";
+      document.getElementById('firstTimeReceivingLabel').style.display = "";
+      document.getElementById('ip').style.display = "";
+      document.getElementById('visitor').style.display = "";
+      document.getElementById('responsible').style.display = "";
+      $(".eachInfo").css('display','none');
+      $(".eachKind").css('display','');
+      $(".eachFirstSpeechTime").css('display','');
+      $(".eachIpAddress").css('display','');
+      $(".eachVisitor").css('display','');
+      $(".responsible").css('display','');
       $("#chatContent").css('height', $("#detail").outerHeight() - 65);
       $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
     }
