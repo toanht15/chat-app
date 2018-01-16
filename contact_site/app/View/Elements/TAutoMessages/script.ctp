@@ -409,6 +409,80 @@ var getSortNo = function(){
   return JSON.parse(JSON.stringify(sortlist));
 };
 
+var fileObj = null;
+var loadData = null;
+var openSelectFile = function() {
+  var target = $('#selectFileInput');
+  target.on("click", function(event){
+    $(this).val(null);
+  }).on("change",function(event){
+    if(target[0].files[0]) {
+      fileObj = target[0].files[0];
+      // ファイルの内容は FileReader で読み込みます.
+      var fileReader = new FileReader();
+      fileReader.onload = function (event) {
+        // event.target.result に読み込んだファイルの内容が入っています.
+        // ドラッグ＆ドロップでファイルアップロードする場合は result の内容を Ajax でサーバに送信しましょう!
+        loadData = event.target.result;
+        _showConfirmDialog("指定されたファイル【" + fileObj.name + "】をアップロードします。<br>よろしいですか？");
+      };
+      fileReader.readAsArrayBuffer(fileObj);
+    }
+  });
+  $('#selectFileInput').trigger('click');
+};
+
+var _showConfirmDialog = function(message) {
+  modalOpen.call(window, message, 'p-cus-file-upload', 'インポート確認', 'moment');
+  popupEvent.closePopup = function() {
+    uploadFile(fileObj, loadData);
+  };
+};
+
+var uploadFile = function(fileObj, loadFile) {
+  var fd = new FormData();
+  var blob = new Blob([loadFile], {type: fileObj.type});
+  var index = Number("<?= $this->Paginator->params()["page"] ?>");
+  fd.append("type", 'speechContent');
+  fd.append("lastPage", index);
+  fd.append("file", blob, fileObj.name);
+
+  $('#popup-title').html('インポート処理中');
+  $('#popup-main').html('アップロード中（0％）');
+  $('#popup-button').css('display', 'none');
+
+  $.ajax({
+    url  : "<?= $this->Html->url('/TAutoMessages/import') ?>",
+    type : "POST",
+    data : fd,
+    cache       : false,
+    contentType : false,
+    processData : false,
+    dataType    : "json",
+    xhr : function(){
+      var XHR = $.ajaxSettings.xhr();
+      if(XHR.upload){
+        XHR.upload.addEventListener('progress',function(e){
+          var uploadProgress = parseInt(e.loaded/e.total*10000)/100;
+          $('#popup-main').html('アップロード中（' + uploadProgress + '％）');
+          if(uploadProgress === 100) {
+            $('#popup-main').html('インポート処理中です。しばらくお待ち下さい。');
+          }
+        }, false);
+      }
+      return XHR;
+    }
+  })
+  .done(function(data, textStatus, jqXHR){
+    console.log(JSON.stringify(data));
+    $('#popup-main').html('インポートが完了しました。<br>ページを再読み込みします。');
+    $('#popup-button').css('display', '');
+  })
+  .fail(function(jqXHR, textStatus, errorThrown){
+    alert("fail");
+  });
+}
+
 $(document).ready(function(){
   // ツールチップの表示制御
   $('.questionBtn').off("mouseenter").on('mouseenter',function(event){
@@ -428,5 +502,26 @@ $(document).ready(function(){
     var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
     targetObj.find('icon-annotation').css('display','none');
   });
+
+  var fadeOutLayerMenu = function() {
+    $("#autoMessageLayerMenu").fadeOut("fast");
+  };
+
+  var fadeInLayerMenu = function() {
+    $("#autoMessageLayerMenu").fadeIn("fast");
+  };
+
+  $('#importExcelBtn').on('click', function(e) {
+    e.stopPropagation();
+    var menu = document.getElementById("autoMessageLayerMenu").style.display;
+    if(menu == "block"){
+      fadeOutLayerMenu();
+    }
+    else{
+      fadeInLayerMenu();
+    }
+  });
+
+  $(document).on('click', fadeOutLayerMenu);
 });
 </script>

@@ -13,6 +13,8 @@
 App::import('Lib','Error/AutoMessageException');
 
 class TAutoMessagesController extends AppController {
+  const TEMPLATE_FILE_NAME = "template.xlsx";
+
   public $uses = ['TransactionManager', 'TAutoMessage','MOperatingHour', 'MMailTransmissionSetting', 'MMailTemplate', 'MWidgetSetting'];
   public $components = ['AutoMessageExcelParser'];
   public $helpers = ['AutoMessage'];
@@ -568,7 +570,7 @@ class TAutoMessagesController extends AppController {
     );
   }
 
-  public function importSpeechContent() {
+  public function import() {
     $this->autoRender = false;
     $this->layout = false;
 
@@ -576,8 +578,10 @@ class TAutoMessagesController extends AppController {
       'success' => false
     ];
 
-    $filePath = "/var/www/sinclo/contact_site/app/tmp/test.xlsx";
-    $component = new AutoMessageExcelParserComponent($filePath);
+    $file = $this->params['form']['file'];
+    $lastPage = $this->request->data['lastPage'];
+
+    $component = new AutoMessageExcelParserComponent($file['tmp_name']);
     $component->getImportData();
     $data = $component->toArray();
     $transactions = null;
@@ -589,6 +593,7 @@ class TAutoMessagesController extends AppController {
       foreach($data as $index => $row) {
         $saveData = [
           'TAutoMessage' => [
+            'lastPage' => $lastPage,
             'm_companies_id' => $this->userInfo['MCompany']['id'],
             'name' => $row['name'],
             'trigger_type' => 0, // 「画面読み込み時」固定
@@ -645,6 +650,13 @@ class TAutoMessagesController extends AppController {
       $this->TransactionManager->rollback($transactions);
     }
     return json_encode($result);
+  }
+
+  public function downloadTemplate() {
+    $this->autoRender = false;
+    $filePath = ROOT.DS.self::TEMPLATE_FILE_NAME;
+    $this->response->download(self::TEMPLATE_FILE_NAME);
+    $this->response->file($filePath);
   }
 
   /**
