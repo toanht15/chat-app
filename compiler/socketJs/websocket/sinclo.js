@@ -2766,6 +2766,8 @@
               }
             }
 
+            if(!result && splitedContains.length > 0) return false; // 含む方と含まない方はAND条件なので、ここでダメならマッチエラーを返す
+
             // 含まない方
             var splitedExclusions = exclusions.replace(/　/g, " ").split(" ");
             for(var i=0; i < splitedExclusions.length; i++) {
