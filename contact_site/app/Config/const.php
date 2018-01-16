@@ -178,6 +178,12 @@ define('C_AUTO_CV_DISABLED', 2); // cv登録しない
 define('C_AUTO_WIDGET_TEXTAREA_OPEN', 1); // 自由入力可
 define('C_AUTO_WIDGET_TEXTAREA_CLOSE', 2); // 自由入力不可
 
+// チャットボットシナリオ設定－アクションリスト
+define('C_SCENARIO_ACTION_TEXT', 1); // テキスト発言
+define('C_SCENARIO_ACTION_HEARING', 2); // ヒアリング
+define('C_SCENARIO_ACTION_SELECT_OPTION', 3); // 選択肢
+define('C_SCENARIO_ACTION_SEND_MAIL', 4); // メール送信
+
 // する/しない設定
 define('C_SELECT_CAN', 1); // する
 define('C_SELECT_CAN_NOT', 2); // しない
@@ -557,6 +563,25 @@ $config['outMessageTextarea'] = [
 $config['outMessageCvType'] = [
     C_AUTO_CV_EFFECTIVENESS => "する",
     C_AUTO_CV_DISABLED => "しない"
+];
+
+$config['chatbotScenarioActionList'] = [
+  // テキスト発言
+  C_SCENARIO_ACTION_TEXT => [
+    'label' => 'テキスト発言'
+  ],
+  // ヒアリング
+  C_SCENARIO_ACTION_HEARING => [
+    'label' => 'ヒアリング'
+  ],
+  // 選択肢
+  C_SCENARIO_ACTION_SELECT_OPTION => [
+    'label' => '選択肢'
+  ],
+  // メール送信
+  C_SCENARIO_ACTION_SEND_MAIL => [
+    'label' => 'メール送信'
+  ]
 ];
 
 /* 成果種別 */
