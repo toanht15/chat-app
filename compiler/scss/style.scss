@@ -6394,6 +6394,190 @@ ul.naviBtn {
   }
 }
 
+/* チャットボットシナリオ設定 */
+#tchatbotscenario_idx {
+
+  #tchatbotscenario_menu {
+    height: 85px;
+  }
+
+  /* チャットボットシナリオ設定(一覧) */
+  #tchatbotscenario_list {
+    input[type='checkbox'] {
+      display: none;
+
+      &:checked + label {
+          background-color: $main-color;
+          border: 1px solid $main-color;
+          position: relative;
+          cursor: pointer;
+
+          &:after {
+              content: "";
+              font-weight: bold;
+              border-right: 4px solid #FFF;
+              border-bottom: 4px solid #FFF;
+              width: 6px;
+              height: 10px;
+              position: absolute;
+              top: 0;
+              right: 4px;
+              transform: rotate(45deg);
+          }
+      }
+
+      & + label {
+          width: 20px;
+          height: 20px;
+          display: block;
+          margin: 0 auto;
+          background-color: #FFF;
+          padding: 1px;
+          border: 1px solid #828282;
+          cursor: pointer;
+      }
+    }
+  }
+
+  /* チャットボットシナリオ設定(追加・更新) */
+  #tchatbotscenario_form {
+    display: flex;
+
+    h3.tchatbotscenario_form_subtitle {
+      border-bottom: 3px solid $main-color;
+      padding-left: 5px;
+    }
+
+    /* チャットボットシナリオ設定(追加・更新): 基本設定 */
+    #tchatbotscenario_form_basic_settings {
+      flex-grow: 1;
+      border-right: 1px solid #B7B7B7;
+
+      ul {
+        padding: 0.5em;
+
+        li {
+          padding: 0.5em;
+          span {
+            display: block;
+          }
+          input[type='text'] {
+            height: 26px;
+            font-size: 12px;
+            padding-left: 4px;
+            margin: 10px 0;
+          }
+        }
+      }
+    }
+
+    /* チャットボットシナリオ設定(追加・更新): アクション */
+    #tchatbotscenario_form_action {
+      flex-grow: 2;
+
+      h3 {
+        text-align: center;
+        margin-top: 0;
+      }
+
+      #tchatbotscenario_form_action_header {
+        border-bottom: 1px solid #B7B7B7;
+
+        #tchatbotscenario_form_action_menulist {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          align-content: space-between;
+          a {
+            width: 10em;
+            padding: 10px;
+            text-align: center;
+            margin: 0 5px 5px 0;
+          }
+        }
+      }
+
+      #tchatbotscenario_form_action_body {
+        background-color: #f9f9f9;
+        margin: 0;
+
+        > li {
+          position: relative;
+          border: 1px solid #B7B7B7;
+          margin-bottom: 20px;
+
+          h4 {
+            background-color: $main-color;
+            color: #ffffff;
+            font-size: 15px;
+            padding: 6px;
+            margin: 0;
+          }
+          h4 + div {
+            background-color: #ffffff;
+            padding: 12px;
+
+            select {
+              padding: 3px 0 5px;
+            }
+
+            > ul {
+              margin: 0;
+              padding: 0;
+
+              li {
+                display: flex;
+                padding: 0.5em;
+
+                > span:first-child {
+                  flex-basis: 10em;
+                  margin: 0.5em;
+                  white-space: nowrap;
+                }
+
+                > table {
+                  th {
+                    background-color: white;
+                    text-align: center;
+                    font-weight: normal;
+                    border: none;
+                  }
+                  td {
+                    border: none;
+                  }
+                }
+              }
+            }
+          }
+          .closeBtn {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 30px;
+            height: 30px;
+            padding: 5px;
+            float: left;
+            margin-right: 5px;
+            border-radius: 15px;
+          }
+        }
+      }
+    }
+
+    /* チャットボットシナリオ設定(追加・更新): プレビュー */
+    #tchatbotscenario_form_preview{
+      flex-grow: 1;
+      border-left: 1px solid #B7B7B7;
+
+      div > li {
+        margin: 0px;
+        padding: 12px;
+        background-color: #f9f9f9;
+      }
+    }
+  }
+}
+
 /* ファイル送信設定 */
 #mfiletransfersetting_idx {
   #mfiletransfersetting_content {

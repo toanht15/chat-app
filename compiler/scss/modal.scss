@@ -1475,6 +1475,22 @@
   }
 }
 
+/* チャットボットシナリオ設定レイアウト調整 */
+#tchatbotscenario_idx {
+  #tchatbotscenario_menu {
+    .btnSet {
+      position: relative;
+      top: 0px;
+      left: -3.5px;
+    }
+    .pointer {
+      position: absolute;
+      top: 138px;
+      left: 31px;
+    }
+  }
+}
+
 #tooltip_chat_notifications_add_btn.tooltips {
   position: fixed;
   left: 78px !important;
