@@ -2766,6 +2766,8 @@
               }
             }
 
+            if(!result) return false; // この地点でダメだったらダメ
+
             // 含まない方
             var splitedExclusions = exclusions.replaceAll("　", " ").split(" ");
             for(var i=0; i < splitedExclusions.length; i++) {

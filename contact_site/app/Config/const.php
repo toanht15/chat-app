@@ -539,8 +539,8 @@ $config['outMessageWidgetOpenType'] = [
 
 /* オートメッセージ － 自由入力種別 */
 $config['outMessageTextarea'] = [
-    C_AUTO_WIDGET_TEXTAREA_OPEN => "ON(自由入力可)",
-    C_AUTO_WIDGET_TEXTAREA_CLOSE => "OFF(自由入力不可)"
+    C_AUTO_WIDGET_TEXTAREA_OPEN => "ON（自由入力可）",
+    C_AUTO_WIDGET_TEXTAREA_CLOSE => "OFF（自由入力不可）"
 ];
 
 /* オートメッセージ － cv種別 */
