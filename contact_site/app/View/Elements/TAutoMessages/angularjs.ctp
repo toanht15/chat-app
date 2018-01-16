@@ -540,29 +540,8 @@ sincloApp.controller('MainController', function($scope) {
         $scope.toggleChatTextareaView(value);
       });
 
-      $scope.initMessage($scope.action, $scope.showWidgetType != 1);
       $scope.toggleChatTextareaView($scope.main.chat_textarea);
     });
-    $scope.initMessage = function(val="", isSmartphone=false) {
-      var strings = document.getElementById('TAutoMessageAction').value.split('\n');
-      var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
-      var message = "";
-
-      for (var i = 0; strings.length > i; i++) {
-        var str = strings[i];
-        var tel = str.match(telnoTagReg);
-        if( tel !== null ) {
-          var telno = tel[1];
-          // ただの文字列にする
-          var span = "<telno>" + telno + "</telno>";
-          str = str.replace(tel[0], span);
-        }
-        message += str + "\n";
-      }
-      message = message.replace(/[\n]+$/, '');
-      document.getElementById('TAutoMessageAction').value = message;
-      $scope.createMessage($scope.showWidgetType != 1);
-    }
     $scope.createMessage = function(isSmartphone=false) {
       var val = document.getElementById('TAutoMessageAction').value;
       var messageElement = document.querySelector('#sample_widget_re_message .details:not(.cName)');
