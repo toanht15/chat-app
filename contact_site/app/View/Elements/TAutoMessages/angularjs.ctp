@@ -572,25 +572,27 @@ sincloApp.controller('MainController', function($scope) {
       var radioCnt = 1;
       var linkReg = RegExp(/(http(s)?:\/\/[\w\-\.\/\?\=\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/);
       var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
+      var htmlTagReg = RegExp(/<\/?("[^"]*"|'[^']*'|[^'">])*>/g)
       var radioName = "sinclo-radio0";
       var content = "";
 
       for (var i = 0; strings.length > i; i++) {
         var str = escape_html(strings[i]);
 
-        // ラジオボタン
-        var radio = str.indexOf('[]');
-        if ( radio > -1 ) {
-            var name = str.slice(radio+2);
-            str = "<span class='sinclo-radio'><input type='radio' name='" + radioName + "' id='" + radioName + "-" + i + "' class='sinclo-chat-radio' value='" + name + "'>";
-            str += "<label for='" + radioName + "-" + i + "'>" + name + "</label></span>";
-        }
         // リンク
         var link = str.match(linkReg);
         if ( link !== null ) {
             var url = link[0];
             var a = "<a href='" + url + "' target='_blank'>" + url + "</a>";
             str = str.replace(url, a);
+        }
+        // ラジオボタン
+        var radio = str.indexOf('[]');
+        if ( radio > -1 ) {
+            var value = str.slice(radio+2);
+            var name = value.replace(htmlTagReg, '');
+            str = "<span class='sinclo-radio'><input type='radio' name='" + radioName + "' id='" + radioName + "-" + i + "' class='sinclo-chat-radio' value='" + name + "'>";
+            str += "<label for='" + radioName + "-" + i + "'>" + value + "</label></span>";
         }
         // 電話番号（スマホのみリンク化）
         var tel = str.match(telnoTagReg);
