@@ -1032,11 +1032,7 @@
     },
     chatMessageData:function(d){
       console.log("chatMessgeData");
-      console.log('あ');
-      console.log(d);
       var obj = JSON.parse(d);
-      console.log('い');
-      console.log(obj);
       if ( obj.token !== common.token ) return false;
       this.chatApi.historyId = obj.chat.historyId;
       var keys = Object.keys(obj.chat.messages);
@@ -1085,8 +1081,6 @@
 
           if(key.indexOf('_') >= 0 && 'applied' in chat && chat.applied) continue;
           if( Number(chat.messageType) === 6 ) {
-            console.log('messagetype6');
-            console.log(chat);
             // ファイル送信チャット表示
             if(chat.deleteFlg === 0) {
               this.chatApi.createSendFileMessage(JSON.parse(chat.message), userName);

@@ -4,10 +4,7 @@ $(document).ready(function(){
     var dataList = {},
         customerId = document.getElementById('customerId').value;
         visitorsId = document.getElementById('visitorsId').value;
-        //console.log('infoData');
-        //console.log($(".infoData"));
     $(".infoData").each(function(){
-    	console.log($(this).data('key'));
       dataList[$(this).data('key')] = this.value;
     });
     console.log('dataList');
@@ -22,7 +19,7 @@ $(document).ready(function(){
       },
       dataType: 'json',
       success: function(ret){
-        //location.href = location.href;
+        location.href = location.href;
       }
     });
   }

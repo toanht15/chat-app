@@ -35,7 +35,6 @@ $(function(){
 <div id = "modalShortMessage">
 </div>
 <ul>
-<?php $this->log('チャットチェック',LOG_DEBUG); $this->log($THistoryChatLog,LOG_DEBUG); ?>
 <?php foreach($THistoryChatLog as $key => $val): ?>
   <?php
     $className = "";
