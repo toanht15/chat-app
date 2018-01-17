@@ -1,5 +1,6 @@
 <script type="text/javascript">
 var changeFlg = false;
+var changeScreenMode = "";
 //モーダル画面
 function openSearchRefine(){
   $.ajax({
@@ -57,7 +58,6 @@ document.body.onload = function(){
 var selectCsv = function(){
 
 }
-
 // 有効/無効ボタンの表示/非表示
 var actBtnShow = function(){
   var authorityDelete = "<?= $coreSettings[C_COMPANY_USE_HISTORY_DELETE] ?>";
@@ -65,6 +65,10 @@ var actBtnShow = function(){
 
   // 選択中の場合
   if ( $('input[name="selectTab"]').is(":checked") ) {
+    var screenMode = <?= $screenFlg ?>;
+    if(changeScreenMode != "" && screenMode != changeScreenMode) {
+      screenMode = changeScreenMode;
+    }
     $("#btnSet").css('display', 'block');
     var list = document.querySelectorAll('input[name^="selectTab"]:checked');
     var url = "/ChatHistories/outputCSVOfChat";
@@ -72,7 +76,6 @@ var actBtnShow = function(){
       url = url + "/" + Number(list[i].value);
     }
     $("#outputCsv a").attr("href", url);
-
     //一つでもチェックが入ったら
     //CSVボタン有効
     if(authorityCsv == 1) {
@@ -84,8 +87,22 @@ var actBtnShow = function(){
       document.getElementById("history_dustbox_btn").className="btn-shadow disOffredBtn";
       document.getElementById("history_dustbox_btn").addEventListener('click', openDeleteDialog, false);
     }
+    if(authorityCsv == 1 || authorityDelete == 1) {
+      //横並びの場合
+      if(screenMode == 1) {
+        $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 220);
+      }
+      //縦並びの場合
+      if(screenMode == 2) {
+        $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 177);
+      }
+    }
   }
   else {
+    var screenMode = <?= $screenFlg ?>;
+    if(changeScreenMode != "" && screenMode != changeScreenMode) {
+      screenMode = changeScreenMode;
+    }
     //一つもチェックが無かったら
     //CSVボタン無効
     if(authorityCsv == 1) {
@@ -96,6 +113,16 @@ var actBtnShow = function(){
     if(authorityDelete == 1) {
       document.getElementById("history_dustbox_btn").className="btn-shadow disOffgrayBtn";
       document.getElementById("history_dustbox_btn").removeEventListener('click', openDeleteDialog, false);
+    }
+    if(authorityCsv == 1 || authorityDelete == 1) {
+      //横並びの場合
+      if(screenMode == 1) {
+        $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 170);
+      }
+      //縦並びの場合
+      if(screenMode == 2) {
+        $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 129);
+      }
     }
     $("#btnSet").css('display', 'none');
   }
@@ -269,7 +296,6 @@ $(function(){
 
   //縦並びをクリックした場合
   $(document).on('click', '.vertical', function(){
-    screenMode = 2;
     splitterObj.destroy();
     splitterObj = null;
     splitterObj = $("#history_list_side").split({
@@ -311,11 +337,12 @@ $(function(){
     });
     tableObj.columns.adjust();
     $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - calcHeaderHeight() - 15);
+    screenMode = 2;
+    changeScreenMode = 2;
  });
 
   //横並びをクリックした場合
   $(document).on('click', '.side', function(){
-    screenMode = 1;
     splitterObj.destroy();
     splitterObj = null;
     splitterObj = $("#history_list_side").split({
@@ -357,6 +384,8 @@ $(function(){
     });
     tableObj.columns.adjust();
     $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 170);
+    screenMode = 1;
+    changeScreenMode = 1;
  });
 
 

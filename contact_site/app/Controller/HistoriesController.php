@@ -67,7 +67,7 @@ class HistoriesController extends AppController {
    * @return void
    * */
   public function index() {
-    $isChat = 'false';
+    $isChat = 'true';
     if ( !empty($this->params->query['isChat']) ) {
       $this->Session->write('authenticity',$this->params->query['isChat']);
     }
@@ -1004,7 +1004,7 @@ class HistoriesController extends AppController {
         $this->paginate['THistory']['joins'][] = $joinToLandscapeData;
       }
     }
-
+    $this->log($this->paginate,LOG_DEBUG);
     $historyList = $this->paginate('THistory');
 
     // TODO 良いやり方が無いか模索する
