@@ -2007,7 +2007,7 @@ $this->log('LandscapdData前',LOG_DEBUG);
           'alias' => 'chat',
           'fields' => [
             'chat.*',
-            '( CASE  WHEN chat.cus > 0 AND chat.sry = 0 AND chat.cmp = 0 AND auto_speech = 0 THEN "未入室" WHEN chat.cus > 0 AND chat.sry = 0 AND chat.cmp = 0 AND auto_speech > 0 THEN "自動返信" WHEN chat.cus = 0 AND chat.sry = 0 AND chat.cmp = 0 AND auto_speech = 0 AND auto_message > 0 THEN "自動返信" WHEN chat.cus > 0 AND chat.sry > 0 THEN "拒否" ELSE "" END ) AS type',
+            '( CASE  WHEN chat.cmp = 0 AND (notice > 0 OR chat.cus > chat.sry + chat.auto_speech) THEN "未入室" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry > 0 THEN "拒否" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry = 0 AND auto_speech > 0 THEN "自動返信" WHEN chat.cmp = 0 AND chat.cus = 0 AND chat.sry = 0 AND auto_speech = 0 AND auto_message > 0 THEN "自動返信" ELSE "" END ) AS type',
           ],
           'conditions' => $chatLogCond
         ],
