@@ -248,11 +248,11 @@
             <icon class="questionBtn">？</icon>
           </div></th>
           <th style = "width:4%; min-width:59px;">成果</th>
-          <th style = "width:5%; min-width:79px;" id = "manualReceivingLabel">有人チャット<br>受信日時<div class="questionBalloon questionBalloonPosition13">
+          <th style = "width:79px !important; min-width:79px;" id = "manualReceivingLabel">有人チャット<br>受信日時<div class="questionBalloon questionBalloonPosition13">
             <icon class="questionBtn">？</icon>
             </div></th>
         <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
-          <th style = "width:5%; min-width:71px;" id="lastSpeechLabel">最終発言後<br>離脱時間<div class="questionBalloon questionBalloonPosition13">
+          <th style = "width:71px; min-width:71px;" id="lastSpeechLabel">最終発言後<br>離脱時間<div class="questionBalloon questionBalloonPosition13">
               <icon class="questionBtn">？</icon>
             </div></th>
            <th style = "width:6%;display:none;" id = "responsible">担当者</th>
@@ -301,11 +301,11 @@
 
             if((!empty($campaignParam) && !empty($data['History']['campaign']) && $data['History']['campaign'] == $campaignParam) || empty($data['History']['campaign'])) { ?>
               <tr id = "<?=h($history['THistory']['id'])?>" ng-click="getOldChat('<?=h($history['THistory']['id'])?>', false)" onclick="openChatById('<?=h($history['THistory']['id'])?>');" class = "showBold" style="height:50px;">
-                <td class="tCenter" onclick="event.stopPropagation();" width=" 3%" style = "width:3%">
+                <td class="tCenter" onclick="event.stopPropagation();" width=" 3%" style = "width:6%">
                   <input type="checkbox" name="selectTab" id="selectTab<?=h($history['THistory']['id'])?>" value="<?=h($history['THistory']['id'])?>">
                   <label for="selectTab<?=h($history['THistory']['id'])?>"></label>
                 </td>
-                <td style = "width:38%; padding-left:10px;" class = "eachInfo">
+                <td style = "width:35%; padding-left:10px;" class = "eachInfo">
                   <?php if( is_numeric($history['THistoryChatLog']['count']) ): ?>
                       <?php
                        if ((!empty($history['THistoryChatLog']['type']) && $history['THistoryChatLog']['type'] == "自動返信")
@@ -322,7 +322,7 @@
                       <?php
                       }
                       else if($history['THistoryChatLog']['type'] == "未入室") { ?>
-                        <span style = "color:#f79646; font-weight:bold;">NoEntry</span>
+                        <span style = "color:#f79646; font-weight:bold;">NoEntry(＊未入室)</span>
                       <?php
                         }
                      endif; ?>
@@ -369,7 +369,7 @@
                       }
                    endif; ?>
                 </td>
-                <td class="tRight pre eachFirstSpeechTime" style = "width:8%;display:none;"><?php if (!empty($history['SpeechTime']['firstSpeechTime'])){ ?><?=date_format(date_create($history['SpeechTime']['firstSpeechTime']), "Y/m/d\nH:i:s")?><?php } ?></td>
+                <td class="tRight pre eachFirstSpeechTime" style = "width:5%;display:none;"><?php if (!empty($history['SpeechTime']['firstSpeechTime'])){ ?><?=date_format(date_create($history['SpeechTime']['firstSpeechTime']), "Y/m/d\nH:i:s")?><?php } ?></td>
                 <td class="tLeft ip-address eachIpAddress" style = "width:10%;display:none;">
                   <?php if(isset($coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $coreSettings[C_COMPANY_REF_COMPANY_DATA]): ?>
                     <?php if(!empty($history['LandscapeData']['org_name']) && !empty($history['LandscapeData']['lbc_code'])): ?>
@@ -396,9 +396,9 @@
                   }
                 ?></td>
                 <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
-                  <td class="tRight pre" style = "width:7%"><?php if (!empty($history['NoticeChatTime']['created'])){ ?><?=date_format(date_create($history['NoticeChatTime']['created']), "Y/m/d\nH:i:s")?><?php } ?>
+                  <td class="tRight pre" style = "width:5%;"><?php if (!empty($history['NoticeChatTime']['created'])){ ?><?=date_format(date_create($history['NoticeChatTime']['created']), "Y/m/d\nH:i:s")?><?php } ?>
                   </td>
-                  <td class="tCenter" style = "width:8%"><?php
+                  <td class="tCenter" style = "width:4%; max-width:72px;"><?php
                   if ($history['SpeechTime']['SpeechTime']
                     && $history['THistory']['access_date'] !== $history['THistory']['out_date']
                     && strtotime($history['SpeechTime']['SpeechTime']) <= strtotime($history['THistory']['out_date'])){
