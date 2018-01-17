@@ -201,7 +201,7 @@ sincloApp.controller('MainController', function($scope) {
       $scope.openFlg = true;
 
       setTimeout(function(){
-        $scope.createMessage($scope.showWidgetType != 1);
+        $scope.createMessage();
         $scope.toggleChatTextareaView($scope.main.chat_textarea);
       },0);
     }
@@ -533,16 +533,15 @@ sincloApp.controller('MainController', function($scope) {
 
     // シミュレーター上のメッセージ表示更新
     angular.element(window).on('load', function(e) {
-      $scope.$watch('action', function(value) {
-        $scope.createMessage($scope.showWidgetType != 1);
+      $('#TAutoMessageAction').on('keydown keyup', function(e) {
+        $scope.createMessage();
       });
       $scope.$watch('main.chat_textarea', function(value) {
         $scope.toggleChatTextareaView(value);
       });
-
-      $scope.toggleChatTextareaView($scope.main.chat_textarea);
     });
-    $scope.createMessage = function(isSmartphone=false) {
+    $scope.createMessage = function() {
+      var isSmartphone = $scope.showWidgetType != 1;
       var val = document.getElementById('TAutoMessageAction').value;
       var messageElement = document.querySelector('#sample_widget_re_message .details:not(.cName)');
       if(!messageElement) return;
@@ -589,7 +588,6 @@ sincloApp.controller('MainController', function($scope) {
         }
         content += str + "\n";
       }
-      content = content.replace(/\n\n$/, '\n');
 
       // プレビューの吹き出し表示制御
       if(content.length > 1) {
