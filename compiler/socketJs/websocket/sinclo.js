@@ -2715,26 +2715,96 @@
              * @return bool
              */
             pregMatch: function(type, a, b) {
-              console.log("pregMatch type: " + type + " a: " + a + " b: " + b);
-                var result = false;
-                var preg = "";
-                switch(Number(type)) {
-                    case 1: // 一致
-                      preg = new RegExp("^" + a + "$");
-                      result = preg.test(b);
-                      break;
-                    case 2: // 部分一致
-                      preg = new RegExp(a);
-                      result = preg.test(b);
-                      break;
-                    case 3: // 不一致
-                      preg = new RegExp("^" + a + "$");
-                      result = !preg.test(b);
-                      break;
-                }
-                console.log("result : " + result);
-                return result;
+            console.log("pregMatch type: " + type + " a: " + a + " b: " + b);
+            var result = false;
+            var preg = "";
+            switch(Number(type)) {
+              case 1: // 一致
+                preg = new RegExp("^" + a + "$");
+                result = preg.test(b);
+                break;
+              case 2: // 部分一致
+                preg = new RegExp(a);
+                result = preg.test(b);
+                break;
+              case 3: // 不一致
+                preg = new RegExp("^" + a + "$");
+                result = !preg.test(b);
+                break;
             }
+            console.log("result : " + result);
+            return result;
+          },
+          pregContainsAndExclsion: function(typeObj, contains, exclusions, val) {
+            console.log("pregContainsAndExclsion type: " + JSON.stringify(typeObj) + " contains: " + contains + " exclusions: " + exclusions + " val: " + val);
+            var result = false;
+
+            // 含む方
+            var splitedContains = contains.replace(/　/g, " ").split(" ");
+            for(var i=0; i < splitedContains.length; i++) {
+              if(splitedContains[i] === "") {
+                result = true;
+                continue;
+              }
+              var preg = "";
+              var word = "";
+              switch(Number(typeObj.wordType)) {
+                case 1: // 完全一致
+                  // アスタリスクを許容する
+                  word = splitedContains[i].replace(/\*/, ".*")
+                  // それ以外の文字は文字列として扱う
+                    .replace(/[-\/\\^$+?.()|[\]{}]/g, '\\$&');
+                  preg = new RegExp("^" + word + "$");
+                  result = preg.test(val);
+                  break;
+                case 2: // 部分一致
+                  word = splitedContains[i].replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+                  preg = new RegExp(word);
+                  result = preg.test(val);
+                  break;
+              }
+              if((result && typeObj.containsType === 2)) { // いずれかを含む
+                break;
+              } else if((!result && typeObj.containsType === 1)) { // すべてを含む
+                break;
+              }
+            }
+
+            if(!result) return false; // 含む方と含まない方はAND条件なので、ここでダメならマッチエラーを返す
+
+            // 含まない方
+            var splitedExclusions = exclusions.replace(/　/g, " ").split(" ");
+            for(var i=0; i < splitedExclusions.length; i++) {
+              if(splitedExclusions[i] === "") {
+                result = true;
+                continue;
+              }
+              var preg = "";
+              var word = "";
+              switch(Number(typeObj.wordType)) {
+                case 1: // 完全一致
+                  // アスタリスクを許容する
+                  word = splitedExclusions[i].replace(/\*/, ".*")
+                  // それ以外の文字は文字列として扱う
+                    .replace(/[-\/\\^$+?.()|[\]{}]/g, '\\$&');
+                  preg = new RegExp("^" + word + "$");
+                  result = !preg.test(val);
+                  break;
+                case 2: // 部分一致
+                  word = splitedExclusions[i].replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+                  preg = new RegExp(word);
+                  result = !preg.test(val);
+                  break;
+              }
+              if((result && typeObj.exclusionsType === 2)) { // いずれかを含まない
+                break;
+              } else if((!result && typeObj.exclusionsType === 1)) { // すべて含まない
+                break;
+              }
+            }
+
+            return result;
+          }
         },
         judge: {
             speechContentRegEx: [],
@@ -2779,9 +2849,16 @@
                 }
             },
             page: function(cond, callback){
-                if (!('keyword' in cond) || !('targetName' in cond ) || !('stayPageCond' in cond )) return callback(true, null);
+                if ((!'keyword_contains' in cond || !'keyword_contains_type' in cond)
+                  || (!'keyword_exclusions' in cond || !'keyword_exclusions_type' in cond)
+                  || !('stayPageCond' in cond )
+                  || !('targetName' in cond )) return callback(true, null);
                 var target = ( Number(cond.targetName) === 1 ) ? common.title() : location.href ;
-                if (sinclo.trigger.common.pregMatch(cond.stayPageCond, cond.keyword, target)) {
+                if (sinclo.trigger.common.pregContainsAndExclsion({
+                    wordType: Number(cond.stayPageCond),
+                    containsType: Number(cond.keyword_contains_type),
+                    exclusionsType: Number(cond.keyword_exclusions_type)
+                  }, cond.keyword_contains, cond.keyword_exclusions, target)) {
                     callback(false, 0);
                 }
                 else {
@@ -2857,9 +2934,16 @@
                 }
             },
             referrer: function(cond, callback){
-                if (!('keyword' in cond) || !('referrerCond' in cond )) return callback(true, null );
-                if ( userInfo.referrer === "" ) return callback(true, null );
-                if (sinclo.trigger.common.pregMatch(cond.referrerCond, cond.keyword, userInfo.referrer)) {
+              if ((!'keyword_contains' in cond || !'keyword_contains_type' in cond)
+                || (!'keyword_exclusions' in cond || !'keyword_exclusions_type' in cond)
+                || !('referrerCond' in cond )) return callback(true, null);
+              if ( userInfo.referrer === "" ) return callback(true, null );
+
+              if (sinclo.trigger.common.pregContainsAndExclsion({
+                  wordType: Number(cond.referrerCond),
+                  containsType: Number(cond.keyword_contains_type),
+                  exclusionsType: Number(cond.keyword_exclusions_type)
+                }, cond.keyword_contains, cond.keyword_exclusions, userInfo.referrer)) {
                     callback(false, 0);
                 }
                 else {
@@ -2878,11 +2962,18 @@
                 }
             },
             setMatchSpeechContent: function(conditionType, id, cond, callback) {
-              if (!('speechContent' in cond) || !('speechContentCond' in cond )) return false;
+              if ((!'keyword_contains' in cond || !'keyword_contains_type' in cond)
+                || (!'keyword_exclusions' in cond || !'keyword_exclusions_type' in cond)
+                || !('speechContentCond' in cond )) return false;
               this.speechContentRegEx.push({
                 id:  id,
-                type: cond.speechContentCond,
-                text: cond.speechContent,
+                typeObj: {
+                  wordType: Number(cond.speechContentCond),
+                  containsType: Number(cond.keyword_contains_type),
+                  exclusionsType: Number(cond.keyword_exclusions_type)
+                },
+                keyword_contains: cond.keyword_contains,
+                keyword_exclusions: cond.keyword_exclusions,
                 delay: cond.triggerTimeSec,
                 conditionType: conditionType,
                 callback: callback
@@ -2903,7 +2994,7 @@
                     continue;
                   }
                   console.log("matching judge + " + this.speechContentRegEx[index]);
-                  if(sinclo.trigger.common.pregMatch(this.speechContentRegEx[index].type, this.speechContentRegEx[index].text, msg)) {
+                  if(sinclo.trigger.common.pregContainsAndExclsion(this.speechContentRegEx[index].typeObj, this.speechContentRegEx[index].keyword_contains, this.speechContentRegEx[index].keyword_exclusions, msg)) {
                     this.speechContentRegEx[index].callback(false, this.speechContentRegEx[index].delay);
                     matched = true;
                   }
@@ -2915,9 +3006,16 @@
               }
             },
             pageOfFirst: function(cond, callback){
-              if (!('keyword' in cond) || !('targetName' in cond ) || !('stayPageCond' in cond )) return callback(true, null);
+              if ((!'keyword_contains' in cond || !'keyword_contains_type' in cond)
+                || (!'keyword_exclusions' in cond || !'keyword_exclusions_type' in cond)
+                || !('stayPageCond' in cond )
+                || !('targetName' in cond )) return callback(true, null);
               var target = ( Number(cond.targetName) === 1 ) ? userInfo.prev[0].title : userInfo.prev[0].url;
-              if (sinclo.trigger.common.pregMatch(cond.stayPageCond, cond.keyword, target)) {
+              if (sinclo.trigger.common.pregContainsAndExclsion({
+                  wordType: Number(cond.stayPageCond),
+                  containsType: Number(cond.keyword_contains_type),
+                  exclusionsType: Number(cond.keyword_exclusions_type)
+                }, cond.keyword_contains, cond.keyword_exclusions, target)) {
                 callback(false, 0);
               }
               else {
@@ -2925,7 +3023,10 @@
               }
             },
             pageOfPrevious: function(cond, callback){
-              if (!('keyword' in cond) || !('targetName' in cond ) || !('stayPageCond' in cond )) return callback(true, null);
+              if ((!'keyword_contains' in cond || !'keyword_contains_type' in cond)
+                || (!'keyword_exclusions' in cond || !'keyword_exclusions_type' in cond)
+                || !('stayPageCond' in cond )
+                || !('targetName' in cond )) return callback(true, null);
               var previousLength = userInfo.prev.length-2;
               if(previousLength < 0) {
                 // 前のページ情報が存在しないため実行しない
@@ -2933,7 +3034,11 @@
                 return;
               }
               var target = ( Number(cond.targetName) === 1 ) ? userInfo.prev[previousLength].title : userInfo.prev[previousLength].url;
-              if (sinclo.trigger.common.pregMatch(cond.stayPageCond, cond.keyword, target)) {
+              if (sinclo.trigger.common.pregContainsAndExclsion({
+                  wordType: Number(cond.stayPageCond),
+                  containsType: Number(cond.keyword_contains_type),
+                  exclusionsType: Number(cond.keyword_exclusions_type)
+                }, cond.keyword_contains, cond.keyword_exclusions, target)) {
                 callback(false, 0);
               }
               else {

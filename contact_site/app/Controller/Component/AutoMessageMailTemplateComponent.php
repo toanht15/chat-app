@@ -14,6 +14,7 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
   const SEND_NAME_AUTO_MESSAGE = '自動応答';
   const SEND_NAME_SORRY_MESSAGE = '自動応答（sorry）';
   const SEND_NAME_AUTO_SPEECH_MESSAGE = '自動返信';
+  const SEND_NAME_FILE_TRANSFER = 'ファイル送信';
 
   const REPLACE_TARGET_AUTO_MESSAGE_BLOCK_DELIMITER = '##AUTO_MESSAGE_BLOCK##';
 
@@ -117,6 +118,9 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
       case 5:
         $message = $this->generateAutoSpeechBlockStr($chatLog['created'],$chatLog['message']);
         break;
+      case 6:
+        $message = $this->generateFileSendBlockStr($chatLog['created'],$chatLog['message']);
+        break;
       case 98:
         $message = $this->generateOperatorEnteredBlockStr($chatLog['created'],$user['display_name']);
         break;
@@ -147,6 +151,13 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
     $message = self::MESSAGE_SEPARATOR."\n";
     $message .= $this->createMessageBlockHeader($date, self::SEND_NAME_AUTO_MESSAGE);
     $message .= $this->createMessageContent($content);
+    return $message;
+  }
+
+  private function generateFileSendBlockStr($date, $content) {
+    $message = self::MESSAGE_SEPARATOR."\n";
+    $message .= $this->createMessageBlockHeader($date, self::SEND_NAME_FILE_TRANSFER);
+    $message .= $this->createFileTransferMessageContent($content);
     return $message;
   }
 
@@ -197,6 +208,13 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
     foreach($lines as $line) {
       $message .= '　'.$line."\n";
     }
+    return $message;
+  }
+
+  private function createFileTransferMessageContent($content) {
+    $message = "";
+    $content = json_decode($content, TRUE);
+    $message .= "　ファイル名【".$content['fileName']."】\n";
     return $message;
   }
 

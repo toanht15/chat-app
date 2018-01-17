@@ -1589,10 +1589,15 @@ io.sockets.on('connection', function (socket) {
         var currentSincloSessionId = sincloCore[res.siteKey][res.tabId].sincloSessionId;
         if(currentSincloSessionId) {
           var oldSessionId = sincloCore[res.siteKey][res.tabId].sessionId;
-          var sessionIds = sincloCore[res.siteKey][currentSincloSessionId].sessionIds;
-          delete sessionIds[oldSessionId];
-          if(currentSincloSessionId !== res.sincloSessionId && Object.keys(sessionIds).length === 0) {
-            delete sincloCore[res.siteKey][currentSincloSessionId];
+          var sincloSession = sincloCore[res.siteKey][currentSincloSessionId];
+          if(isset(sincloSession)) {
+            var sessionIds = sincloSession.sessionIds;
+            delete sessionIds[oldSessionId];
+            if(currentSincloSessionId !== res.sincloSessionId && Object.keys(sessionIds).length === 0) {
+              delete sincloCore[res.siteKey][currentSincloSessionId];
+            }
+          } else {
+            console.log("currentSincloSession : " + currentSincloSessionId + " is null.");
           }
         }
       }
@@ -1736,6 +1741,9 @@ io.sockets.on('connection', function (socket) {
             }
           }
           var val = getConnectInfo(customerList[res.siteKey][key]);
+          if(val.time) {
+            val.term = timeCalculator(val);
+          }
           if(isset(data.contract.chat) && data.contract.chat) {
             chatApi.getUnreadCnt(val, function (ret) {
               val['chatUnreadId'] = ret.chatUnreadId;
@@ -1860,6 +1868,9 @@ io.sockets.on('connection', function (socket) {
           if(targetTerm) {
             if(targetTerm.indexOf(term) === 0) { // 前方一致検索
               var mergedObject = extend(customerList[obj.siteKey][key], sincloCore[obj.siteKey][customerList[obj.siteKey][key]['tabId']]);
+              if(mergedObject.time) {
+                mergedObject.term = timeCalculator(mergedObject);
+              }
               result.push(mergedObject);
             }
           }
@@ -1982,7 +1993,9 @@ io.sockets.on('connection', function (socket) {
         emit.toCompany('syncNewInfo', obj, obj.siteKey);
       });
     }
-    ack(data);
+    if(ack) {
+      ack(data);
+    }
   });
   // ウィジェットが生成されたことを企業側に通知する
   socket.on("syncReady", function(data){
@@ -2432,7 +2445,13 @@ io.sockets.on('connection', function (socket) {
     chat.created = new Date();
     chat.sort = fullDateTime(chat.created);
 
-    sincloCore[chat.siteKey][chat.sincloSessionId].autoMessages[chat.chatId] = chat;
+    var sincloSession = sincloCore[chat.siteKey][chat.sincloSessionId];
+    if(isset(sincloSession) && isset(sincloSession.autoMessages)) {
+      sincloCore[chat.siteKey][chat.sincloSessionId].autoMessages[chat.chatId] = chat;
+    } else {
+      console.log("sendAutoChatMessage::sincloSession : " + chat.sincloSessionId + "is null.");
+      return false;
+    }
     emit.toCompany('resAutoChatMessage', chat, chat.siteKey);
     emit.toSameUser('resAutoChatMessage', chat, chat.siteKey, chat.sincloSessionId);
   });
@@ -2459,6 +2478,7 @@ io.sockets.on('connection', function (socket) {
 
     var setList = {};
     for (var i = 0; i < obj.messages.length; i++) {
+      if(!isset(obj.messages[i]) || !isset(obj.messages[i].created)) continue;
       var created = new Date(obj.messages[i].created);
       obj.messages[i].messageType = chatApi.cnst.observeType.auto;
       setList[fullDateTime(Date.parse(created))] = obj.messages[i];
@@ -3467,9 +3487,11 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       delete connectList[socket.id];
 
       if(sincloSessionId) {
-        var sessionIds = sincloCore[info.siteKey][sincloSessionId].sessionIds;
-        if(sessionIds && Object.keys(sessionIds).length > 0) {
-          delete sessionIds[socket.id];
+        var sincloSession = sincloCore[info.siteKey][sincloSessionId];
+        if(isset(sincloSession) && isset(sincloSession.sessionIds) && Object.keys(sincloSession.sessionIds).length > 0) {
+          delete sincloSession.sessionIds[socket.id];
+        } else {
+          console.log("sincloSession : " + sincloSessionId + " is null.");
         }
       }
 
@@ -3477,6 +3499,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       if(keys && keys.length > 0) {
         keys.forEach(function(key) {
           if(key.indexOf(socket.id) >= 0) {
+            console.log("delete customerList[" + info.siteKey + "]["+key+"]");
             delete customerList[info.siteKey][key];
           }
         });

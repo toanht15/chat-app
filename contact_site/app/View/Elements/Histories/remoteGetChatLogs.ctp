@@ -46,6 +46,7 @@ $(function(){
     $created = "";
     $deleted = "";
     $deletedUserDisplayName = "";
+    $isSendFile = false;
 
     if ( strcmp($val['THistoryChatLog']['message_type'], 1) === 0 ) {
       $className = "sinclo_re";
