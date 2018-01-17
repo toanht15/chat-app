@@ -326,6 +326,7 @@ $(function(){
     $("#chatContent").css('height', $("#detail").outerHeight() - 65);
     $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
     $("#chatHistory").css('height',$("#history_body_side").outerHeight() - 170);
+    $(".deleteChat").attr('data-balloon-position',45);
 
     $.ajax({
       type: 'post',
@@ -374,6 +375,7 @@ $(function(){
     $("#chatContent").css('height', $("#detail").outerHeight() - 105);
     $("#customerInfoScrollArea").css('height', $("#detail").outerHeight() - 39);
     $("#chatHistory").css('height',window.innerHeight - 355);
+    $(".deleteChat").attr('data-balloon-position',89);
     $.ajax({
       type: 'post',
       dataType: 'html',
@@ -494,6 +496,7 @@ function openChatById(id) {
       }
       /* 必ず治す！！ */
       document.getElementById("visitCounts").innerHTML= customerData.THistoryCount.cnt + "回";
+      //document.getElementById("visitCounts").innerHTML= "2回";
       document.getElementById("platform").innerHTML= userAgentChk.pre(customerData.THistory.user_agent);
       document.getElementById("campaignParam").innerHTML= customerData.campaignParam;
       document.getElementById("landingPage").innerHTML= customerData.landingData.title;
