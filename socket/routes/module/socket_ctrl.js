@@ -1728,6 +1728,18 @@ io.sockets.on('connection', function (socket) {
         var chunkSize = 100;
         var keyLength = Object.keys(customerList[res.siteKey]).length;
         Object.keys(customerList[res.siteKey]).forEach(function(key){
+          var splitedKey = key.split("_");
+          if (splitedKey.length === 3 && isset(splitedKey[2])) {
+            if(!io.sockets.connected[splitedKey[2]]) {
+              var targetTabId = customerList[key].tabId;
+              console.log("【" + res.siteKey + "】 customerList key : " + key + " client is not exist. deleting. targetTabId : " + targetTabId);
+              if(targetTabId && targetTabId !== "") {
+                emit.toCompany('unsetUser', {siteKey: res.siteKey, tabId: targetTabId}, res.siteKey);
+              }
+              delete customerList[key];
+              return;
+            }
+          }
           var val = getConnectInfo(customerList[res.siteKey][key]);
           if(val.time) {
             val.term = timeCalculator(val);
