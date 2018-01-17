@@ -1724,9 +1724,13 @@ io.sockets.on('connection', function (socket) {
         var keyLength = Object.keys(customerList[res.siteKey]).length;
         Object.keys(customerList[res.siteKey]).forEach(function(key){
           var splitedKey = key.split("_");
-          if (splitedKey.length === 3 && isset(splitedKey[1])) {
-            if(!io.sockets.connected[splitedKey[3]]) {
-              console.log("customerList key : " + key + " client is not exist. deleting.");
+          if (splitedKey.length === 3 && isset(splitedKey[2])) {
+            if(!io.sockets.connected[splitedKey[2]]) {
+              var targetTabId = customerList[key].tabId;
+              console.log("【" + res.siteKey + "】 customerList key : " + key + " client is not exist. deleting. targetTabId : " + targetTabId);
+              if(targetTabId && targetTabId !== "") {
+                emit.toCompany('unsetUser', {siteKey: res.siteKey, tabId: targetTabId}, res.siteKey);
+              }
               delete customerList[key];
               return;
             }
