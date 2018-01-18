@@ -4630,12 +4630,15 @@ ul.naviBtn {
           }
 
           &#tautomessages_triggers {
+            display: flex;
             min-height: 300px;
           }
 
           #setTriggerList {
-            width: 55.5em;
             position: relative;
+            flex-grow: 1;
+            max-width: 70em;
+            min-width: 25.5em;
 
             > ul {
 
@@ -4674,9 +4677,8 @@ ul.naviBtn {
                     }
                     &.labelArea  {
                       display: block;
-                      width: 50em;
                       margin-left: 2.5em;
-                      padding: 9px 0.25em;
+                      padding: 9px 9px 9px 0.25em;
                       height: 34px;
                     }
 
@@ -4726,13 +4728,17 @@ ul.naviBtn {
                   &.keywordWrapper {
                     padding: 0;
                     border-top: initial;
-                    width: 43em;
+                    flex-grow: 1;
+                    max-width: 55.5em;
+                    min-width: 17em;
                     div {
+                      display: flex;
                       padding: inherit;
                       border-top: inherit;
                     }
                     input[type="text"] {
-                      width: 26em;
+                      flex-grow: 1;
+                      min-width: 2em;
                     }
                     p {
                       margin: 0.5em 0 0;
@@ -4742,16 +4748,19 @@ ul.naviBtn {
                       padding-top: 6px;
                     }
                     select {
-                      float: right;
-                      width: 10.5em;
+                      flex-basis: 12em;
+                      min-width: 12em;
                       padding: 3px 0 5px;
+                      margin-left: 15px;
                     }
                   }
                   ul {
                     > li {
                       padding: 0.5em;
+                      display: flex;
                       > span:first-child {
-                        width: 10em;
+                        flex-basis: 10em;
+                        min-width: 10em;
                         display: block;
                       }
                     }
@@ -4826,6 +4835,8 @@ ul.naviBtn {
           }
 
           #triggerList {
+            flex-basis: 364px;
+            min-width: 364px;
 
             span#pushImg {
               background-image: url("/img/push.png");
