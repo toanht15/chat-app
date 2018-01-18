@@ -1082,7 +1082,13 @@
           if(key.indexOf('_') >= 0 && 'applied' in chat && chat.applied) continue;
           if( Number(chat.messageType) === 6 ) {
             // ファイル送信チャット表示
-            this.chatApi.createSendFileMessage(JSON.parse(chat.message), userName);
+            if(chat.deleteFlg === 0) {
+              this.chatApi.createSendFileMessage(JSON.parse(chat.message), userName);
+            }
+            // ファイル送信チャットが削除されている場合
+            else if(chat.deleteFlg === 1) {
+              this.chatApi.createMessage(cn, chat.message, userName);
+            }
           } else {
             this.chatApi.createMessage(cn, chat.message, userName);
           }

@@ -108,7 +108,7 @@ table {
   }
 
   tr:hover, tr.on {
-    background-color: rgba(195, 214, 155, 0.1);
+    background-color: rgba(195, 214, 155, 0.1) !important;
   }
 
   th, td {
@@ -2737,6 +2737,193 @@ ul.naviBtn {
 
 #chat_history_idx {
 
+  @media screen and (max-width:1024px) {
+    /*　画面サイズが1024pxまではここを読み込む　*/
+    font-size:6px;
+    #history_list_side *{
+      font-size:6px !important;
+      #searchPeriod {
+        font-size: 1.1em !important;
+      }
+      #mainDatePeriod {
+        font-size: 1.1em !important;
+      }
+      #chatTalk * {
+        font-size:7px !important;
+        .fa-4x {
+          font-size:4em !important;
+        }
+      }
+    }
+    #leftContents ul.tabStyle li {
+      width:13em;
+    }
+
+    #leftContents ul.tabStyle li.on {
+      width:13em;
+    }
+  }
+  @media screen and (min-width:1024px) and ( max-width:1367px) {
+    /*　画面サイズが768pxから1024pxまではここを読み込む　*/
+    font-size:8px;
+    #history_list_side *{
+      font-size:8px !important;
+      #searchPeriod {
+        font-size: 1.1em !important;
+      }
+      #mainDatePeriod {
+        font-size: 1.1em !important;
+      }
+      #chatTalk * {
+        font-size:9px !important;
+        .fa-4x {
+          font-size:4em !important;
+        }
+      }
+    }
+    #leftContents ul.tabStyle li {
+      width:14.5em;
+    }
+
+    #leftContents ul.tabStyle li.on {
+      width:14.5em;
+    }
+  }
+  @media screen and (min-width:1368px) and ( max-width:2200px){
+    /*　画面サイズが1368pxからはここを読み込む　*/
+    font-size:12px;
+    #history_list_side *{
+      font-size:12px !important;
+      #searchPeriod {
+        font-size: 1.1em !important;
+      }
+      #mainDatePeriod {
+        font-size: 1.1em !important;
+      }
+      #chatTalk * {
+        font-size:13px !important;
+        .fa-4x {
+          font-size:4em !important;
+        }
+      }
+    }
+
+    #leftContents ul.tabStyle li {
+      width:18.5em;
+    }
+
+    #leftContents ul.tabStyle li.on {
+      width:18.5em;
+    }
+  }
+
+  @media screen and (min-width:2200px) and ( max-width:2860px){
+    /*　画面サイズが1368pxからはここを読み込む　*/
+    font-size:15px;
+    #history_list_side *{
+      font-size:15px !important;
+      #searchPeriod {
+        font-size: 1.1em !important;
+      }
+      #mainDatePeriod {
+        font-size: 1.1em !important;
+      }
+      #chatTalk * {
+        font-size:16px !important;
+        .fa-4x {
+          font-size:4em !important;
+        }
+      }
+    }
+    #leftContents ul.tabStyle li {
+      width:18.5em;
+    }
+
+    #leftContents ul.tabStyle li.on {
+      width:18.5em;
+    }
+  }
+
+  @media screen and (min-width:2861px) and ( max-width:3360px){
+    /*　画面サイズが1368pxからはここを読み込む　*/
+    font-size:19px;
+    #history_list_side *{
+      font-size:19px !important;
+      #searchPeriod {
+        font-size: 1.1em !important;
+      }
+      #mainDatePeriod {
+        font-size: 1.1em !important;
+      }
+      #chatTalk * {
+        font-size:20px !important;
+        .fa-4x {
+          font-size:4em !important;
+        }
+      }
+    }
+    #leftContents ul.tabStyle li {
+      width:18.5em;
+    }
+
+    #leftContents ul.tabStyle li.on {
+      width:18.5em;
+    }
+  }
+
+  @media screen and (min-width:3361px) and ( max-width:4060px) {
+    /*　画面サイズが1368pxからはここを読み込む　*/
+    font-size:23px;
+    #history_list_side *{
+      font-size:23px !important;
+      #searchPeriod {
+        font-size: 1.1em !important;
+      }
+      #mainDatePeriod {
+        font-size: 1.1em !important;
+      }
+      #chatTalk * {
+        font-size:24px !important;
+        .fa-4x {
+          font-size:4em !important;
+        }
+      }
+    }
+    #leftContents ul.tabStyle li {
+      width:18.5em;
+    }
+
+    #leftContents ul.tabStyle li.on {
+      width:18.5em;
+    }
+  }
+
+  @media screen and (min-width:4061px) {
+    /*　画面サイズが1368pxからはここを読み込む　*/
+    font-size:35px;
+    #history_list_side *{
+      font-size:35px !important;
+      #searchPeriod {
+        font-size: 1.1em !important;
+      }
+      #mainDatePeriod {
+        font-size: 1.1em !important;
+      }
+      #chatTalk * {
+        font-size:36px !important;
+        .fa-4x {
+          font-size:4em !important;
+        }
+      }
+    }
+    #leftContents ul.tabStyle li {
+      width:18.5em;
+    }
+
+    #leftContents ul.tabStyle li.on {
+      width:18.5em;
+    }
+  }
   /* override splitter design */
   .splitter_panel {
     .vsplitter {
@@ -3092,7 +3279,7 @@ ul.naviBtn {
   }
 
   #customerInfoScrollArea {
-    height: 300px;
+    height: 0px;
     overflow: hidden;
     overflow-x: hidden;
     overflow-y: auto;
@@ -3175,7 +3362,7 @@ ul.naviBtn {
           text-overflow: ellipsis;
           overflow: hidden;
           white-space: nowrap;
-          height: auto;
+          /*height: auto;*/
         }
         /*@include dl2column;*/
 
@@ -3265,6 +3452,10 @@ ul.naviBtn {
 
   #history_menu {
     height: 37px !important;
+
+    #btnSet {
+      display:none;
+    }
 
     #mainDatePeriod {
       margin-left: 5em;
@@ -3416,6 +3607,11 @@ ul.naviBtn {
     width: 5%;
     &.ip-address {
       padding-left: 8px;
+    }
+    #firstChatTime {
+      float:right;
+      margin-right:10px;
+      height:auto;
     }
   }
 
@@ -4656,12 +4852,15 @@ ul.naviBtn {
           }
 
           &#tautomessages_triggers {
+            display: flex;
             min-height: 300px;
           }
 
           #setTriggerList {
-            width: 55.5em;
             position: relative;
+            flex-grow: 1;
+            max-width: 70em;
+            min-width: 25.5em;
 
             > ul {
 
@@ -4700,9 +4899,8 @@ ul.naviBtn {
                     }
                     &.labelArea  {
                       display: block;
-                      width: 50em;
                       margin-left: 2.5em;
-                      padding: 9px 0.25em;
+                      padding: 9px 9px 9px 0.25em;
                       height: 34px;
                     }
 
@@ -4752,13 +4950,17 @@ ul.naviBtn {
                   &.keywordWrapper {
                     padding: 0;
                     border-top: initial;
-                    width: 43em;
+                    flex-grow: 1;
+                    max-width: 55.5em;
+                    min-width: 17em;
                     div {
+                      display: flex;
                       padding: inherit;
                       border-top: inherit;
                     }
                     input[type="text"] {
-                      width: 26em;
+                      flex-grow: 1;
+                      min-width: 2em;
                     }
                     p {
                       margin: 0.5em 0 0;
@@ -4768,16 +4970,19 @@ ul.naviBtn {
                       padding-top: 6px;
                     }
                     select {
-                      float: right;
-                      width: 10.5em;
+                      flex-basis: 12em;
+                      min-width: 12em;
                       padding: 3px 0 5px;
+                      margin-left: 15px;
                     }
                   }
                   ul {
                     > li {
                       padding: 0.5em;
+                      display: flex;
                       > span:first-child {
-                        width: 10em;
+                        flex-basis: 10em;
+                        min-width: 10em;
                         display: block;
                       }
                     }
@@ -4852,6 +5057,8 @@ ul.naviBtn {
           }
 
           #triggerList {
+            flex-basis: 364px;
+            min-width: 364px;
 
             span#pushImg {
               background-image: url("/img/push.png");
@@ -7483,4 +7690,10 @@ ul#anotherWindow_color-bar-right {
 }
 #detail_content dl.detail_hidden {
   height: 0 !important;
+}
+.fa-chevron-right:before {
+  content: "";
+}
+.fa-chevron-left:before {
+  content: "";
 }

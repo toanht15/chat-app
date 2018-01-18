@@ -141,7 +141,18 @@
                                 $("#chatContent").css('height', $("#detail").outerHeight() - 65);
                                 $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
                                 $("#chatHistory").css('height',$("#history_body_side").outerHeight() - 170);
-                                $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 170);
+                                if($("#btnSet").css('display') == "none" && $("#style")[0] == null) {
+                                  $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 129);
+                                }
+                                else if($("#btnSet").css('display') == "none" && $("#style")[0] != null) {
+                                  $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - (145 + parseInt($("#style").css('height'))));
+                                }
+                                else if($("#btnSet").css('display') == "block" && $("#style")[0] != null) {
+                                  $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - (194 + parseInt($("#style").css('height'))));
+                                }
+                                else {
+                                  $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 179);
+                                }
                             }
                         }
                         if (!silent) {
