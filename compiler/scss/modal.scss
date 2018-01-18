@@ -580,15 +580,13 @@
       }
 
       &.p-cus-operator-presence {
-        width: 50em;
+        width: 38em;
 
         #popup-main {
           padding: 1.5em;
           #presenceView {
             height: 400px;
             position: relative;
-            overflow-x: hidden;
-            overflow-y: scroll;
 
             table {
               width: 100%;
@@ -606,13 +604,39 @@
             #presenceViewheader {
               width: auto;
               position: absolute;
-              z-index: 3;
+              z-index: 30;
               left: 0;
               right: 0;
             }
-            #presenceViewBody {
-              width: auto;
-              top:34px !important;
+
+            #presenceViewBodyScroll {
+              position: relative;
+              height: 90%;
+              overflow-x: hidden;
+              overflow-y: scroll;
+              bottom: -36px;
+              #presenceViewBody {
+                thead {
+                  visibility: hidden;
+                  height: 0px;
+                  line-height: 0px;
+                }
+                width: auto;
+                td {
+                  font-size: 13px;
+                  span {
+                    &.presence-active {
+                      color: #9bbb59;
+                    }
+                    &.presence-inactive {
+                      color: #d99694;
+                    }
+                    &.presence-offline {
+                      color: #b5b5b5;
+                    }
+                  }
+                }
+              }
             }
           }
         }
