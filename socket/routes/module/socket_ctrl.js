@@ -14,7 +14,7 @@ var mysql = require('mysql'),
 // log4js
 var log4js = require('log4js'); // log4jsモジュール読み込み
 
-log4js.configure('/var/www/sinclo/socket/log4js_setting.json'); // 設定ファイル読み込み
+log4js.configure('./log4js_setting.json'); // 設定ファイル読み込み
 
 var reqlogger = log4js.getLogger('request'); // リクエスト用のロガー取得
 var errlogger = log4js.getLogger('error'); // エラー用のロガー取得
