@@ -969,7 +969,7 @@ class HistoriesController extends AppController {
       );
 
       $joinToChat = [
-        'type' => 'ingres_next_error()',
+        'type' => 'INNER',
         'table' => "({$chatStateList})",
         'alias' => 'THistoryChatLog',
         'conditions' => [

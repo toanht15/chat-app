@@ -90,11 +90,21 @@ var actBtnShow = function(){
     if(authorityCsv == 1 || authorityDelete == 1) {
       //横並びの場合
       if(screenMode == 1) {
-        $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 220);
+        if($("#style")[0] == null) {
+          $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 220);
+        }
+        else {
+          $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - (220 + parseInt($("#style").css('height'))));
+        }
       }
       //縦並びの場合
       if(screenMode == 2) {
-        $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 177);
+        if($("#style")[0] == null) {
+          $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 177);
+        }
+        else {
+          $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - (193 + parseInt($("#style").css('height'))));
+        }
       }
     }
   }
@@ -117,11 +127,21 @@ var actBtnShow = function(){
     if(authorityCsv == 1 || authorityDelete == 1) {
       //横並びの場合
       if(screenMode == 1) {
-        $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 170);
+        if($("#style")[0] == null) {
+          $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 170);
+        }
+        else {
+          $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - (170 + parseInt($("#style").css('height'))));
+        }
       }
       //縦並びの場合
       if(screenMode == 2) {
-        $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 129);
+        if($("#style")[0] == null) {
+          $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 129);
+        }
+        else {
+          $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - (145 + parseInt($("#style").css('height'))));
+        }
       }
     }
     $("#btnSet").css('display', 'none');
@@ -233,9 +253,15 @@ $(function(){
     tableObj.on('draw', function(){
       if(<?= $screenFlg ?> == 1) {
         $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 170);
+        if($("#style")[0] != null) {
+          $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - (170 + parseInt($("#style").css('height'))));
+        }
       }
       if(<?= $screenFlg ?> == 2) {
         $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 129);
+        if($("#style")[0] != null) {
+          $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - (145 + parseInt($("#style").css('height'))));
+        }
       }
     });
   });
@@ -385,7 +411,18 @@ $(function(){
       }
     });
     tableObj.columns.adjust();
-    $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 170);
+    if($("#btnSet").css('display') == "none" && $("#style")[0] == null) {
+      $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 170);
+    }
+    else if($("#btnSet").css('display') == "none" && $("#style")[0] != null) {
+      $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - (170 + parseInt($("#style").css('height'))));
+    }
+    else if($("#btnSet").css('display') == "block" && $("#style")[0] != null) {
+      $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - (220 + parseInt($("#style").css('height'))));
+    }
+    else {
+      $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 220);
+    }
     screenMode = 1;
     changeScreenMode = 1;
  });
@@ -496,7 +533,6 @@ function openChatById(id) {
       }
       /* 必ず治す！！ */
       document.getElementById("visitCounts").innerHTML= customerData.THistoryCount.cnt + "回";
-      //document.getElementById("visitCounts").innerHTML= "2回";
       document.getElementById("platform").innerHTML= userAgentChk.pre(customerData.THistory.user_agent);
       document.getElementById("campaignParam").innerHTML= customerData.campaignParam;
       document.getElementById("landingPage").innerHTML= customerData.landingData.title;

@@ -21,7 +21,7 @@
       'THistoryStayLog' => []
     ];
 
-    const LABEL_AUTO_SPEECH_OPERATOR = '＊自動返信対応';
+    const LABEL_AUTO_SPEECH_OPERATOR = '＊チャットボット対応';
 
     public function beforeFilter(){
       parent::beforeFilter();
@@ -91,7 +91,9 @@
             'm_companies_id' => $this->userInfo['MCompany']['id']
           ]
         ];
+        $this->log("BEGIN tHistoryData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
         $tHistoryData = $this->THistory->find('first', $params);
+        $this->log("END tHistoryData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
 
         $this->log("BEGIN チャット送信ページ : ".$this->getDateWithMilliSec(),LOG_DEBUG);
         //チャット送信ページ
@@ -261,11 +263,13 @@
         }
         $this->log("END キャンペーン : ".$this->getDateWithMilliSec(),LOG_DEBUG);
 
-        $data = am($tHistoryData, ['THistoryCount' => $tHistoryCountData[0]], $mCusData,['tHistoryChatSendingPageData' => $tHistoryChatSendingPageData[0]],['tHistoryChatLastPageData' => $tHistoryChatLastPageData[0]['LastSpeechSendPage']],['landingData' => $landingData[0]['landingPage'],$LandscapeData[0]],['pageCount' => $pageCount[0]],['campaignParam' => $campaignParam]);
+        $data = am($tHistoryData, ['THistoryCount' => $tHistoryCountData[0]], $mCusData,['tHistoryChatSendingPageData' => $tHistoryChatSendingPageData[0]],['tHistoryChatLastPageData' => $tHistoryChatLastPageData[0]['LastSpeechSendPage']],['landingData' => $landingData[0]['landingPage']],$LandscapeData[0],['pageCount' => $pageCount[0]],['campaignParam' => $campaignParam]);
       }
       $this->set('data', $data);
       // 顧客情報のテンプレート
+      $this->log("BEGIN 顧客情報 : ".$this->getDateWithMilliSec(),LOG_DEBUG);
       $this->set('infoList', $this->_getInfomationList());
+      $this->log("END 顧客情報 : ".$this->getDateWithMilliSec(),LOG_DEBUG);
       return json_encode($data);
     }
 
@@ -356,6 +360,7 @@
       $this->autoRender = FALSE;
       $this->layout = null;
       $ret = [];
+      $this->log("BEGIN getOldChat : ".$this->getDateWithMilliSec(),LOG_DEBUG);
       if ( !empty($this->params->query['historyId'] ) ) {
         $params = [
           'fields' => [
@@ -402,6 +407,7 @@
           $unionRet[] = array_merge($ret[$key],$permissionLevel);
         }
       }
+      $this->log("END getOldChat : ".$this->getDateWithMilliSec(),LOG_DEBUG);
       return new CakeResponse(['body' => json_encode($unionRet)]);
     }
 
@@ -650,10 +656,10 @@
          ]
       ]);
 
-      $stayList = $this->_stayList($userList);
-
       //$historyListに担当者を追加
       $userList = $this->_userList($historyList);
+
+      $stayList = $this->_stayList($userList);
 
       $name = "sinclo-chat-history";
 
@@ -673,23 +679,9 @@
        ];
 
       foreach($userList as $val){
-      /*$campaignParam = "";
-        $tmp = mb_strstr($stayList[$val['THistory']['id']]['THistoryStayLog']['firstURL'], '?');
-        if ( $tmp !== "" ) {
-          foreach($campaignList as $k => $v){
-            if ( strpos($tmp, $k) !== false ) {
-              if ( $campaignParam !== "" ) {
-                $campaignParam .= "\n";
-              }
-              $campaignParam .= $v;
-            }
-          }
-        }*/
         $infoData = $this->Session->read('Thistory');
          if ((isset($val['THistoryChatLog2']['type']) && isset($infoData['History']['chat_type']) &&
           $val['THistoryChatLog2']['type'] === Configure::read('chatType')[$infoData['History']['chat_type']]) || empty($infoData['History']['chat_type'])) {
-          if((!empty($infoData['History']['campaign']) && $infoData['History']['campaign'] == $campaignParam) || empty($infoData['History']['campaign'])) {
-
         $row = [];
         // 日時
         $dateTime = $val['THistory']['access_date'];
@@ -781,7 +773,6 @@
         }
         $csv[] = $row;
       }
-    }
       }
       $this->_outputCSV($name, $csv);
     }
@@ -1248,11 +1239,11 @@
         }
         $chatStateList = $dbo2->buildStatement(
           [
-            'table' => "(SELECT t_histories_id,t_history_stay_logs_id,m_companies_id,message_type, COUNT(*) AS count, ".$value."(achievement_flg) AS achievementFlg, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff,SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) cv,SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message, SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech FROM t_history_chat_logs AS THistoryChatLog GROUP BY t_histories_id ORDER BY t_histories_id)",
+            'table' => "(SELECT t_histories_id,t_history_stay_logs_id,m_companies_id,message_type,notice_flg, COUNT(*) AS count, ".$value."(achievement_flg) AS achievementFlg, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff,SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) cv,SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN notice_flg = 1 THEN 1 ELSE 0 END) notice,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message, SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech FROM t_history_chat_logs AS THistoryChatLog GROUP BY t_histories_id ORDER BY t_histories_id)",
             'alias' => 'chat',
             'fields' => [
               'chat.*',
-              '( CASE  WHEN chat.cus > 0 AND chat.sry = 0 AND chat.cmp = 0 AND auto_speech = 0 THEN "未入室" WHEN chat.cus > 0 AND chat.sry = 0 AND chat.cmp = 0 AND auto_speech > 0 THEN "自動返信" WHEN chat.cus = 0 AND chat.sry = 0 AND chat.cmp = 0 AND auto_speech = 0 AND auto_message > 0 THEN "自動返信" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry > 0 THEN "拒否" ELSE "" END ) AS type',
+              '( CASE  WHEN chat.cmp = 0 AND (notice > 0 OR chat.cus > chat.sry + chat.auto_speech) THEN "未入室" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry > 0 THEN "拒否" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry = 0 AND auto_speech > 0 THEN "自動返信" WHEN chat.cmp = 0 AND chat.cus = 0 AND chat.sry = 0 AND auto_speech = 0 AND auto_message > 0 THEN "自動返信" ELSE "" END ) AS type',
             ],
             'conditions' => $chatLogCond
           ],
@@ -1486,19 +1477,24 @@
       $this->log("END chatSendingPageList : ".$this->getDateWithMilliSec(),LOG_DEBUG);
 
       $this->log("BEGIN detailChatPagesData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
-      $detailChatPagesData = $this->THistoryStayLog->find('all', [
-        'fields' => [
-          'id',
-          't_histories_id',
-          'url',
-          'title'
-        ],
-        'conditions' => [
-          't_histories_id' => $historyIdList[0]
-        ],
-        'order' => array('created' => 'desc'),
-        'limit' => 1
-      ]);
+      if(!empty($historyIdList[0])) {
+        $detailChatPagesData = $this->THistoryStayLog->find('all', [
+          'fields' => [
+            'id',
+            't_histories_id',
+            'url',
+            'title'
+          ],
+          'conditions' => [
+            't_histories_id' => $historyIdList[0]
+          ],
+          'order' => array('created' => 'desc'),
+          'limit' => 1
+        ]);
+      }
+      else {
+        $detailChatPagesData = "";
+      }
       $stayList = [];
       $forChatSendingPageList = [];
       foreach($tHistoryStayLogList as $val){
@@ -1530,7 +1526,7 @@
         ]
       ]);
 
-      $this->log("BEGIN detailChatPagesData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
+      $this->log("BEGIN historyId : ".$this->getDateWithMilliSec(),LOG_DEBUG);
       //チャット履歴削除、ユーザー情報更新
       if(!empty($this->params->query['id'])) {
         $historyId = $this->params->query['id'];
@@ -1569,6 +1565,8 @@
           $visitors_id = "";
         }
       }
+      $this->log("END historyId : ".$this->getDateWithMilliSec(),LOG_DEBUG);
+      $this->log("BEGIN visitCount : ".$this->getDateWithMilliSec(),LOG_DEBUG);
       //訪問回数
       if(!empty($historyList)) {
         $params = [
@@ -1587,6 +1585,7 @@
       else {
         $tHistoryCountData = "";
       }
+      $this->log("END visitCount : ".$this->getDateWithMilliSec(),LOG_DEBUG);
       $mCusData = ['MCustomer' => []];
         if ( !empty(array_keys($customerIdList)) ) {
           $mCusData = $this->MCustomer->getCustomerInfoForVisitorId($this->userInfo['MCompany']['id'], $visitors_id );

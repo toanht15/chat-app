@@ -889,8 +889,6 @@ $(document).ready(function(){
       number = number + 1;
       if(prevBoldTarget.next("tr")[0] != null) {
         prevBoldTarget.find('td').each(function(index){
-          console.log('index1');
-          console.log(index);
           if(index < 12) {
             $(this).css("background-color", "#fff");
             $(this).css("font-weight", "normal");
@@ -966,8 +964,6 @@ $(document).ready(function(){
       var $scope = angular.element(element).scope();
       $scope.getOldChat(id, false);
       if( prevBoldTarget.prev("tr")[0] != null && focusHeigt-($('.dataTables_scroll').offset()['top']+49)-prevBoldTarget.prev("tr")[0]['clientHeight'] < 0) {
-        console.log($(".dataTables_scrollBody").scrollTop());
-        console.log(prevBoldTarget.prev("tr")[0]['clientHeight']);
         $(".dataTables_scrollBody").scrollTop($(".dataTables_scrollBody").scrollTop()-prevBoldTarget.prev("tr")[0]['clientHeight']);
       }
       else if(prevBoldTarget.prev("tr")[0] == null) {
