@@ -568,21 +568,35 @@ $config['outMessageCvType'] = [
 $config['chatbotScenarioActionList'] = [
   // テキスト発言
   C_SCENARIO_ACTION_TEXT => [
-    'label' => 'テキスト発言'
+    'label' => 'テキスト発言',
+    'default' => [
+      'message' => ''
+    ]
   ],
   // ヒアリング
   C_SCENARIO_ACTION_HEARING => [
     'label' => 'ヒアリング',
-    'cvCondition' => 1
+    'default' => [
+      'hearings' => '',
+      'errorMessage' => '',
+      'isConfirm' => 2,
+      'confirmMessage' => '',
+      'success' => '',
+      'cancel' => '',
+      'cv' => 2,
+      'cvCondition' => 1
+    ]
   ],
   // 選択肢
   C_SCENARIO_ACTION_SELECT_OPTION => [
-    'label' => '選択肢'
+    'label' => '選択肢',
   ],
   // メール送信
   C_SCENARIO_ACTION_SEND_MAIL => [
     'label' => 'メール送信',
-    'mailType' => 1,
+    'default' => [
+      'mailType' => 1
+    ]
   ]
 ];
 
