@@ -896,7 +896,7 @@ io.sockets.on('connection', function (socket) {
                   }
 
                   //通知された場合
-                  if(ret.opFlg === true) {
+                  if(ret.opFlg === true && d.notifyToCompany) {
                     pool.query("UPDATE t_history_chat_logs SET notice_flg = 1 WHERE t_histories_id = ? AND message_type = 1 AND id = ?;",
                       [sincloCore[d.siteKey][d.tabId].historyId, results.insertId], function(err, ret, fields){}
                     );

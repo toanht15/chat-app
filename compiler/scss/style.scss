@@ -3582,7 +3582,8 @@ ul.naviBtn {
     &.ip-address {
       padding-left: 8px;
     }
-    #firstChatTime {
+    .firstChatTime {
+      min-width:25px;
       float:right;
       margin-right:10px;
       height:auto;

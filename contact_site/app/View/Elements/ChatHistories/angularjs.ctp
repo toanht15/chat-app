@@ -39,7 +39,7 @@
         angular.element("message-list-descript").attr("class", "off");
         $.ajax({
           type: 'GET',
-          url: "<?= $this->Html->url(array('controller' => 'Customers', 'action' => 'remoteGetChatList')) ?>",
+          url: "<?= $this->Html->url(array('controller' => 'ChatHistories', 'action' => 'remoteGetChatList')) ?>",
           cache: false,
           data: {
             userId: $('#visitorsId').text()
@@ -104,15 +104,17 @@
               addTooltipEvent();
             }
             else {
+              console.time('処理時間10：');
               $scope.messageList = json;
 
               $scope.chatLogList = [];
               $scope.chatLogMessageList = [];
-              $scope.$apply();
+              //$scope.$apply();
               angular.element("message-list-descript").attr("class", "off");
+              console.timeEnd('処理時間10：');
               $.ajax({
                 type: 'GET',
-                url: "<?= $this->Html->url(array('controller' => 'Customers', 'action' => 'remoteGetChatList')) ?>",
+                url: "<?= $this->Html->url(array('controller' => 'ChatHistories', 'action' => 'remoteGetChatList')) ?>",
                 cache: false,
                 data: {
                   userId: $('#visitorsId').text()
@@ -653,6 +655,7 @@ $(document).ready(function(){
 
   var outputCSVBtn = document.getElementById('outputCSV');
   outputCSVBtn.addEventListener('click', function(){
+    console.log('CSV原因探索1');
     if($(outputCSVBtn).hasClass('disabled')) return false;
     var thead = document.querySelector('#list_body thead');
     var tbody = document.querySelector('#list_body tbody');
@@ -672,7 +675,7 @@ $(document).ready(function(){
         noCsvData[a] = "";
       }
     }
-
+    console.log('CSV原因探索2');
     for(var i = 0; i < tbody.children.length; i++){
       var tr = tbody.children[i];
       var tdList = tr.children;
@@ -695,6 +698,7 @@ $(document).ready(function(){
     }
     document.getElementById('HistoryOutputData').value = JSON.stringify(data);
     document.getElementById('HistoryIndexForm').action = '<?=$this->Html->url(["controller"=>"ChatHistories", "action" => "outputCSVOfHistory"])?>';
+    console.log('CSV原因探索2');
     document.getElementById('HistoryIndexForm').submit();
   });
 
@@ -813,7 +817,6 @@ $(document).ready(function(){
   var numberLines;
   $('.showBold').on('click', function(e){
     var getTopPosition  = $(".dataTables_scrollBody").scrollTop();
-    //number = Math.floor($(this)[0]['offsetTop']/67) + 1;
     $('.showBold').each(function(index){
       if((location.search.split("?")[1]) !== undefined && location.search.split("?")[1].match(/id/)) {
         if ((location.search.split("?")[1]).substr(3) == $(this)[0]['id']) {
@@ -825,14 +828,6 @@ $(document).ready(function(){
           });
         }
       }
-      else {
-      $('.showBold').find('td').each(function(index){
-        if(index < 12) {
-          $(this).css("background-color", "#fff");
-          $(this).css("font-weight", "normal");
-        }
-      });
-    }
     });
     if(prevBoldTarget != null) {
       prevBoldTarget.find('td').each(function(index){
@@ -856,6 +851,7 @@ $(document).ready(function(){
       if ((location.search.split("?")[1]).substr(3) == $(this)[0]['id']) {
         $(this).find('td').each(function(index){
           if(index < 12) {
+            console.time('処理時間4：');
             if(index == 0) {
               prevBoldTarget = $(this).parent('tr');
             }
@@ -866,19 +862,26 @@ $(document).ready(function(){
       }
     }
     else {
-      $('.showBold').find('td').each(function(index){
-        if(index < 12) {
-          if(index == 0) {
-            prevBoldTarget = $(this).parent('tr');
+      if(index == 0) {
+        $('.showBold').find('td').each(function(index2){
+          if(index2 < 12) {
+            if(index2 == 0) {
+              prevBoldTarget = $(this).parent('tr');
+            }
+            $(this).css("background-color", "#ebf6f9");
+            $(this).css("font-weight", "bold");
           }
-          $(this).css("background-color", "#ebf6f9");
-          $(this).css("font-weight", "bold");
-        }
-      });
+          else {
+            return false;
+          }
+        });
+      }
+      else {
+        return false;
+      }
     }
   });
 
-  var prevBoldTarget2 = 0;
   var id;
   var scrollHeight = 1;
   var focusHeigt;
