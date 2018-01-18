@@ -3,7 +3,7 @@
   <ul>
     <li class="styleFlexbox">
       <span><label>発言内容</label></span>
-      <textarea name="message" ng-model="setItem.message" cols="48" rows="4" placeholder="メッセージを入力してください"></textarea>
+      <textarea name="message" ng-model="setItem.message" cols="48" rows="4" placeholder="メッセージを入力してください" required></textarea>
     </li>
   </ul>
 </div>
@@ -14,10 +14,10 @@
     <li>
       <table cellspacing="5">
         <tr>
-          <th>変数名</th>
-          <th>タイプ</th>
-          <th>質問内容</th>
-          <th></th>
+          <th class="hearingVariableNameLabel">変数名<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></th>
+          <th class="hearingVariableTypeLabel">タイプ<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></th>
+          <th class="hearingVariableQuestionLabel">質問内容</th>
+          <th class="hearginVariableBtnGroupLabel"></th>
         </tr>
         <tr>
           <td><input type="text"></td>
@@ -37,32 +37,32 @@
       </table>
     </li>
     <li class="styleFlexbox">
-      <span><label>入力エラー時の<wbr>返信メッセージ</label></span>
+      <span><label class="hearingErrorMessageLabel">入力エラー時の<wbr>返信メッセージ<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></label></span>
       <textarea name="errorMessage" ng-model="setItem.errorMessage" cols="48" rows="4" placeholder="入力エラー時の返信メッセージを入力してください"></textarea>
     </li>
     <li>
-      <label><input type="checkbox" ng-model="setItem.isConfirm">入力内容の確認を行う</label>
+      <label><input type="checkbox" ng-model="setItem.isConfirm" ng-init="setItem.isConfirm = setItem.isConfirm == 1">入力内容の確認を行う</label>
       <ul ng-if="setItem.isConfirm == true" class="indentDown">
         <li class="styleFlexbox">
           <span><label>確認内容</label></span>
           <textarea name="confirmMessage" ng-model="setItem.confirmMessage" cols="48" rows="4" placeholder="確認内容のメッセージを入力してください"></textarea>
         </li>
         <li class="styleFlexbox">
-          <span><label>選択肢（OK）</label></span>
+          <span><label>選択肢（OK）<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></label></span>
           <input type="text" name="success" ng-model="setItem.success">
         </li>
         <li class="styleFlexbox">
-          <span><label>選択肢（NG）</label></span>
+          <span><label>選択肢（NG）<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></label></span>
           <input type="text" name="cancel" ng-model="setItem.cancel">
         </li>
       </ul>
     </li>
     <li>
-      <label><input type="checkbox" ng-model="setItem.cv">成果にCVとして登録する</label>
+      <label><input type="checkbox" ng-model="setItem.cv" ng-init="setItem.cv = setItem.cv == 1">成果にCVとして登録する</label>
       <div ng-if="setItem.cv == true" class="indentDown">
         <label class="styleBlock"><input type="radio" name="action_{{setActionId}}_cv_condition" value="1" ng-model="setItem.cvCondition">一部の項目でも正常に入力されたらCVとして登録する</label>
         <label class="styleBlock"><input type="radio" name="action_{{setActionId}}_cv_condition" value="2" ng-model="setItem.cvCondition">すべての項目が正常に入力された場合のみCVとして登録する</label>
-        <label class="styleBlock"><input type="radio" name="action_{{setActionId}}_cv_condition" value="3" ng-model="setItem.cvCondition">入力確認にて選択肢（OK）が選択された場合のみCVとして登録する</label>
+        <label class="styleBlock"><input type="radio" name="action_{{setActionId}}_cv_condition" value="3" ng-model="setItem.cvCondition" ng-disabled="!setItem.isConfirm">入力確認にて選択肢（OK）が選択された場合のみCVとして登録する</label>
       </div>
     </li>
   </ul>
@@ -72,7 +72,7 @@
 <div ng-if="setItem.actionType == 3" class="set_action_item_body">
   <ul>
     <li class="styleFlexbox">
-      <span><label>変数名</label></span>
+      <span><label class="hearingSelectVariableNameLabel">変数名<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></label></span>
       <input type="text">
     </li>
     <li class="styleFlexbox">
@@ -142,9 +142,9 @@
     <li class="styleFlexbox">
       <span><label>メール本文タイプ</label></span>
       <div>
-        <label class="styleBlock"><input type="radio" name="action_{{setActionId}}_mail_type" value="1" ng-model="setItem.mailType">メール内容をすべてメールする</label>
-        <label class="styleBlock"><input type="radio" name="action_{{setActionId}}_mail_type" value="2" ng-model="setItem.mailType">変数の値のみメールする</label>
-        <label class="styleBlock"><input type="radio" name="action_{{setActionId}}_mail_type" value="3" ng-model="setItem.mailType">メール本文をカスタマイズする</label>
+        <label class="styleBlock"><input type="radio" name="action_{{setActionId}}_mail_type" value="1" ng-model="setItem.mailType" ng-init="setItem.mailType = setItem.default.mailType">メール内容をすべてメールする</label>
+        <label class="styleBlock"><input type="radio" name="action_{{setActionId}}_mail_type" value="2" ng-model="setItem.mailType" ng-init="setItem.mailType = setItem.default.mailType">変数の値のみメールする</label>
+        <label class="styleBlock"><input type="radio" name="action_{{setActionId}}_mail_type" value="3" ng-model="setItem.mailType" ng-init="setItem.mailType = setItem.default.mailType">メール本文をカスタマイズする</label>
         <textarea ng-if="setItem.mailType == 3" cols="48" rows="4" placeholder="メール本文を入力してください"></textarea>
       </div>
     </li>
