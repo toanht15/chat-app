@@ -8,31 +8,21 @@ sincloApp.controller('MainController', function($scope) {
   var self = this;
 
   this.actionList = <?php echo json_encode($chatbotScenarioActionList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
+  this.setActionList = [];
 
   // アクションの追加
-  this.addItem = function(id) {
-    if (id in this.actionList) {
-      var parentElement = document.getElementById('tchatbotscenario_form_action_body');
-      var targetElement = document.querySelector(`#tchatbotscenario_action_templates .tchatbotscenario_form_action_template_${id}`);
-      parentElement.appendChild(targetElement.cloneNode(true));
+  this.addItem = function(actionType) {
+    if (actionType in this.actionList) {
+      var item = this.actionList[actionType];
+      item.actionType = actionType;
+      this.setActionList.push(angular.copy(item));
     }
   };
 
   // アクションの削除
-  this.removeItem = function() {
-    console.log(this);
+  this.removeItem = function(setActionId) {
+    this.setActionList.splice(setActionId, 1);
   }
-
-  $scope.onclick = function(e) {
-    console.log('=== onclick ===');
-    console.log(e);
-  }
-});
-
-$(document).ready(function() {
-  $('.closeBtn').on('click', function(ev) {
-    console.log($(this));
-  });
 });
 
 </script>

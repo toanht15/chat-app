@@ -6569,10 +6569,9 @@ ul.naviBtn {
       flex-grow: 1;
       border-left: 1px solid #B7B7B7;
 
-      div > li {
+      > ul {
         margin: 0px;
-        padding: 12px;
-        background-color: #f9f9f9;
+        padding: 0px;
       }
     }
   }
