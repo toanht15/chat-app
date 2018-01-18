@@ -321,11 +321,194 @@ router.get("/", function(req, res, next) {
                               jsonData.conditions[10][0].type = result[i2].type;
                               rows[i].activity = JSON.stringify(jsonData);
                             }
+
                           }
+                          // ページ、参照元URL、発言内容、最初に訪れたページ、前のページの旧IF対応
+                          var activityObj = JSON.parse(rows[i].activity),
+                              conditions = activityObj.conditions;
+                          Object.keys(conditions).forEach(function(index, elm, arr){
+                            if(index === "3") { // ページ
+                              var array = [],
+                                condition = conditions[index];
+                              Object.keys(condition).forEach(function(key, value, arr2){
+                                if(typeof(condition[value]['keyword']) !== 'undefined') {
+                                  var newSettings = {
+                                    targetName: 1,
+                                    keyword_contains: "",
+                                    keyword_contains_type: "1",
+                                    keyword_exclusions: "",
+                                    keyword_exclusions_type: "1",
+                                    stayPageCond: 1
+                                  };
+                                  newSettings.targetName = condition[value].targetName;
+                                  switch(Number(condition[value].stayPageCond)) {
+                                    case 1:
+                                      newSettings.keyword_contains = condition[value].keyword;
+                                      newSettings.stayPageCond = 1;
+                                      break;
+                                    case 2:
+                                      newSettings.keyword_contains = condition[value].keyword;
+                                      newSettings.stayPageCond = 2;
+                                      break;
+                                    case 3:
+                                      newSettings.keyword_exclusions = condition[value].keyword;
+                                      newSettings.stayPageCond = 1;
+                                      break;
+                                  }
+                                  array.push(newSettings);
+                                } else {
+                                  array.push(condition[value]);
+                                }
+                              });
+                              conditions[index] = array;
+                            }
+                            if(index === "5") { // 参照元URL
+                              var array = [],
+                                condition = conditions[index];
+                              Object.keys(condition).forEach(function(key, value, arr2){
+                                if(typeof(condition[value]['keyword']) !== 'undefined') {
+                                  var newSettings = {
+                                    keyword_contains: "",
+                                    keyword_contains_type: "1",
+                                    keyword_exclusions: "",
+                                    keyword_exclusions_type: "1",
+                                    referrerCond: 2
+                                  };
+                                  switch(Number(condition[value].referrerCond)) {
+                                    case 1:
+                                      newSettings.keyword_contains = condition[value].keyword;
+                                      newSettings.referrerCond = 1;
+                                      break;
+                                    case 2:
+                                      newSettings.keyword_contains = condition[value].keyword;
+                                      newSettings.referrerCond = 2;
+                                      break;
+                                    case 3:
+                                      newSettings.keyword_exclusions = condition[value].keyword;
+                                      newSettings.referrerCond = 1;
+                                      break;
+                                  }
+                                  array.push(newSettings);
+                                } else {
+                                  array.push(condition[value]);
+                                }
+                              });
+                              conditions[index] = array;
+                            }
+                            if(index === "7") { // 発言内容
+                              var array = [],
+                                condition = conditions[index];
+                              Object.keys(condition).forEach(function(key, value, arr2){
+                                if(typeof(condition[value]['speechContent']) !== 'undefined') {
+                                  var newSettings = {
+                                    keyword_contains: "",
+                                    keyword_contains_type: "1",
+                                    keyword_exclusions: "",
+                                    keyword_exclusions_type: "1",
+                                    speechContentCond: "1",
+                                    tirggerTimeSec: 3,
+                                    speechTriggerCond: "1"
+                                  };
+                                  newSettings.speechContentCond = condition[value].speechContentCond;
+                                  newSettings.tirggerTimeSec = condition[value].tirggerTimeSec;
+                                  newSettings.speechTriggerCond = condition[value].speechTriggerCond;
+                                  switch(Number(condition[value].speechContentCond)) {
+                                    case 1:
+                                      newSettings.keyword_contains = condition[value].speechContent;
+                                      newSettings.speechContentCond = 1;
+                                      break;
+                                    case 2:
+                                      newSettings.keyword_contains = condition[value].speechContent;
+                                      newSettings.speechContentCond = 2;
+                                      break;
+                                    case 3:
+                                      newSettings.keyword_exclusions = condition[value].speechContent;
+                                      newSettings.speechContentCond = 1;
+                                      break;
+                                  }
+                                  array.push(newSettings);
+                                } else {
+                                  array.push(condition[value]);
+                                }
+                              });
+                              conditions[index] = array;
+                            }
+                            if(index === "8") { // 最初に訪れたページ
+                              var array = [],
+                                condition = conditions[index];
+                              Object.keys(condition).forEach(function(key, value, arr2){
+                                if(typeof(condition[value]['keyword']) !== 'undefined') {
+                                  var newSettings = {
+                                    targetName: 1,
+                                    keyword_contains: "",
+                                    keyword_contains_type: "1",
+                                    keyword_exclusions: "",
+                                    keyword_exclusions_type: "1",
+                                    stayPageCond: 1
+                                  };
+                                  newSettings.targetName = condition[value].targetName;
+                                  switch(Number(condition[value].stayPageCond)) {
+                                    case 1:
+                                      newSettings.keyword_contains = condition[value].keyword;
+                                      newSettings.stayPageCond = 1;
+                                      break;
+                                    case 2:
+                                      newSettings.keyword_contains = condition[value].keyword;
+                                      newSettings.stayPageCond = 2;
+                                      break;
+                                    case 3:
+                                      newSettings.keyword_exclusions = condition[value].keyword;
+                                      newSettings.stayPageCond = 1;
+                                      break;
+                                  }
+                                  array.push(newSettings);
+                                } else {
+                                  array.push(condition[value]);
+                                }
+                              });
+                              conditions[index] = array;
+                            }
+                            if(index === "9") { // 前のページ
+                              var array = [],
+                                condition = conditions[index];
+                              Object.keys(condition).forEach(function(key, value, arr2){
+                                if(typeof(condition[value]['keyword']) !== 'undefined') {
+                                  var newSettings = {
+                                    targetName: 1,
+                                    keyword_contains: "",
+                                    keyword_contains_type: "1",
+                                    keyword_exclusions: "",
+                                    keyword_exclusions_type: "1",
+                                    stayPageCond: 1
+                                  };
+                                  newSettings.targetName = condition[value].targetName;
+                                  switch(Number(condition[value].stayPageCond)) {
+                                    case 1:
+                                      newSettings.keyword_contains = condition[value].keyword;
+                                      newSettings.stayPageCond = 1;
+                                      break;
+                                    case 2:
+                                      newSettings.keyword_contains = condition[value].keyword;
+                                      newSettings.stayPageCond = 2;
+                                      break;
+                                    case 3:
+                                      newSettings.keyword_exclusions = condition[value].keyword;
+                                      newSettings.stayPageCond = 1;
+                                      break;
+                                  }
+                                  array.push(newSettings);
+                                } else {
+                                  array.push(condition[value]);
+                                }
+                              });
+                              conditions[index] = array;
+                            }
+                          });
+                          activityObj.conditions = conditions;
                           sendData['messages'].push({
                             "id": rows[i].id,
                             "sitekey": siteKey,
-                            "activity": JSON.parse(rows[i].activity),
+                            "activity": activityObj,
                             "action_type": isNumeric(rows[i].action_type),
                             "send_mail_flg": isNumeric(rows[i].send_mail_flg)
                           });

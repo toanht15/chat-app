@@ -4681,6 +4681,12 @@ ul.naviBtn {
     section {
 
       ul.settingList {
+        #TAutoMessageName {
+          width: 36.4em;
+        }
+        #TAutoMessageTrigger {
+          width: 13em;
+        }
         .explainTooltip {
           z-index: 10;
           position: absolute;
@@ -4820,12 +4826,15 @@ ul.naviBtn {
           }
 
           &#tautomessages_triggers {
+            display: flex;
             min-height: 300px;
           }
 
           #setTriggerList {
-            width: 31em;
             position: relative;
+            flex-grow: 1;
+            max-width: 70em;
+            min-width: 25.5em;
 
             > ul {
 
@@ -4840,6 +4849,7 @@ ul.naviBtn {
               }
               > items li.triggerItem {
                 display: block;
+                padding-bottom: 15px;
                 position: relative;
                 overflow: hidden;
                 transition: height 200ms linear;
@@ -4863,9 +4873,8 @@ ul.naviBtn {
                     }
                     &.labelArea  {
                       display: block;
-                      width: 25.5em;
                       margin-left: 2.5em;
-                      padding: 9px 0.25em;
+                      padding: 9px 9px 9px 0.25em;
                       height: 34px;
                     }
 
@@ -4904,12 +4913,50 @@ ul.naviBtn {
                 div {
                   padding: 0.5em;
                   border-top: 1px solid $main-color;
-
+                  &.explainWrapper {
+                    padding: 0;
+                    border-top: initial;
+                    margin-left: 11em;
+                    s {
+                      display: block;
+                    }
+                  }
+                  &.keywordWrapper {
+                    padding: 0;
+                    border-top: initial;
+                    flex-grow: 1;
+                    max-width: 55.5em;
+                    min-width: 17em;
+                    div {
+                      display: flex;
+                      padding: inherit;
+                      border-top: inherit;
+                    }
+                    input[type="text"] {
+                      flex-grow: 1;
+                      min-width: 2em;
+                    }
+                    p {
+                      margin: 0.5em 0 0;
+                    }
+                    s {
+                      display: inline-block;
+                      padding-top: 6px;
+                    }
+                    select {
+                      flex-basis: 12em;
+                      min-width: 12em;
+                      padding: 3px 0 5px;
+                      margin-left: 15px;
+                    }
+                  }
                   ul {
                     > li {
                       padding: 0.5em;
+                      display: flex;
                       > span:first-child {
-                        width: 10em;
+                        flex-basis: 10em;
+                        min-width: 10em;
                         display: block;
                       }
                     }
@@ -4922,7 +4969,7 @@ ul.naviBtn {
                         }
 
                         div.clockpicker {
-                          width:45%;
+                          width:20%;
 
                           input {
                             width: 100%;
@@ -4952,7 +4999,7 @@ ul.naviBtn {
             div.balloon {
               position: absolute;
               top: 0;
-              left: 31em;
+              left: 58em;
               background-color: #FF8E9E;
               z-index: $sub-sidebar-z-index;
               display: none;
@@ -4984,6 +5031,8 @@ ul.naviBtn {
           }
 
           #triggerList {
+            flex-basis: 364px;
+            min-width: 364px;
 
             span#pushImg {
               background-image: url("/img/push.png");
@@ -5033,9 +5082,25 @@ ul.naviBtn {
           }
         }
       }
+
+      &.section3 {
+        display: flex;
+
+        #tautomessages_action_entry {
+          flex-basis: 60%;
+        }
+
+        #tautomessages_action_simulator {
+          flex-basis: auto;
+          margin: auto 0 6px 20px;
+
+          section#switch_widget {
+            margin-bottom: 0.5em;
+          }
+        }
+      }
     }
   }
-
 }
 
 #tdictionaries_idx {
@@ -5370,6 +5435,88 @@ ul.naviBtn {
       :-ms-input-placeholder {
         text-align:left;
         font-size:12px;
+      }
+    }
+    &.hidden {
+      height: 0;
+    }
+    .error-message {
+      margin-top: 1em;
+      margin-left: 0;
+    }
+  }
+  #mtransfersetting_action {
+    padding: 10px;
+    clear: both;
+
+    a {
+      width: 100px;
+      padding: 10px;
+      display: block;
+      margin: 0 auto;
+      text-align: center;
+    }
+  }
+}
+
+/* ファイル送信設定 */
+#msecuritysettings_idx {
+  #msecuritysettings_content {
+    h3 {
+      border-bottom: 3px solid #C3D69B;
+      padding-left: 5px;
+      font-size: 13px;
+    }
+    ul {
+      li {
+        display: flex;
+        label {
+          cursor: pointer;
+          s {
+            font-size: 11px;
+            margin-left: 0.8em;
+          }
+        }
+      }
+    }
+  }
+  #ip_filter_settings_area {
+    padding-left: 5em;
+    height: 36em;
+    transition: height 200ms linear;
+    overflow: hidden;
+    pre {
+      margin: 0.1em 0;
+    }
+    p {
+      margin-bottom: 0.5em;
+    }
+    s {
+      display: block;
+    }
+    textarea {
+      resize: none;
+      width:  30em;
+      height: 10em;
+      font-size: 12px;
+      ::-webkit-input-placeholder {
+        text-align:left;
+        font-size:12px;
+      }
+      :-moz-placeholder { /* Firefox 18- */
+        text-align:left;
+        font-size:12px;
+      }
+      ::-moz-placeholder {  /* Firefox 19+ */
+        text-align:left;
+        font-size:12px;
+      }
+      :-ms-input-placeholder {
+        text-align:left;
+        font-size:12px;
+      }
+      &.disabled {
+        background-color: rgb(204, 204, 204);
       }
     }
     &.hidden {
