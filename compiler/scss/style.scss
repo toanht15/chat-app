@@ -1280,6 +1280,32 @@ ul.naviBtn {
               }
             }
         }
+        &#showOperatorPresenceBtn {
+          display: inline-block;
+          margin-left: 3em;
+          padding: 0.3em 1.3em;
+          font-size: 14px!important;
+          font-weight: normal;
+          border-radius: 5px;
+          float: initial;
+
+          &.blueBtn {
+            background-color: $wait-color!important;
+            border-color: $wait-color!important;
+            &:hover {
+              background-color: #8cab4c !important;
+              border-color: #8cab4c !important;
+            }
+          }
+          &.redBtn {
+            background-color: $stop-color!important;
+            border-color: $stop-color!important;
+            &:hover {
+              background-color: #ca8785 !important;
+              border-color: #ca8785 !important;
+            }
+          }
+        }
       }
     }
   }

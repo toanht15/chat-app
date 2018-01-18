@@ -1718,6 +1718,9 @@ io.sockets.on('connection', function (socket) {
         data.userCnt = cnt.length;
         data.onlineUserCnt = opKeys.length;
 
+        data.activeOperatorList = activeOperator[res.siteKey];
+        data.onlineOperatorList = company.info[res.siteKey];
+
         // 企業側に情報提供
         emit.toCompany('getAccessInfo', data, res.siteKey);
         // 消費者にアクセス情報要求
@@ -3356,7 +3359,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
           // 新しいユーザーの人数を送る
           var cnt = Object.keys(company.info[userInfo.siteKey]);
-          emit.toCompany('outCompanyUser', {siteKey: userInfo.siteKey, userCnt: cnt.length}, userInfo.siteKey);
+          emit.toCompany('outCompanyUser', {siteKey: userInfo.siteKey, userCnt: cnt.length, userId: userInfo.userId}, userInfo.siteKey);
 
           // 受付中オペレータの情報削除
           if ( (userInfo.siteKey in activeOperator) && (userInfo.userId in activeOperator[userInfo.siteKey]) ) {
