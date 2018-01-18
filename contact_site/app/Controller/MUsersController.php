@@ -144,6 +144,36 @@ class MUsersController extends AppController {
     return new CakeResponse(['body' => json_encode($errorMessage)]);
   }
 
+  public function getList() {
+    $this->autoRender = false;
+    $this->layout = "ajax";
+    // 一般ユーザーはリストを返さない
+    $result = [];
+    if(strcmp($this->userInfo['permission_level'], C_AUTHORITY_NORMAL) === 0) {
+      return json_encode($result);
+    }
+    $list = $this->MUser->find('all', [
+      'conditions' => [
+        'MUser.m_companies_id' => intval($this->userInfo['MCompany']['id']),
+        'NOT' => [
+          'MUser.permission_level' => C_AUTHORITY_SUPER,
+          'MUser.del_flg' => 1
+        ]
+      ]
+    ]);
+    foreach($list as $index => $value) {
+      array_push($result, [
+        'id' => intval($value['MUser']['id']),
+        'user_name' => $value['MUser']['display_name'],
+        'display_name' => $value['MUser']['display_name'],
+        'mail_address' => $value['MUser']['mail_address'],
+        'permission_level' => intval($value['MUser']['permission_level'])
+      ]);
+    }
+    $this->set('userList', $result);
+    return $this->render('/Elements/Customers/presenceView');
+  }
+
   /**
    * _setChatSetting チャット関連設定
    * @param $tmpData array POSTデータ

@@ -15,6 +15,7 @@ popupEventOverlap.closePopup = function(){
     },
     url: url,
     success: function(historyId){
+      historyId = historyId.trim();
       location.href = "<?= $this->Html->url(['controller' => 'ChatHistories', 'action' => 'index']) ?>?id="+ historyId;
     }
   });

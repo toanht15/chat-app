@@ -1,5 +1,6 @@
 <script type="text/javascript">
 var changeFlg = false;
+var changeScreenMode = "";
 //モーダル画面
 function openSearchRefine(){
   $.ajax({
@@ -31,7 +32,7 @@ function customerInfoSave(historyId) {
   });
   $.ajax({
     type: 'GET',
-    url: "<?= $this->Html->url(array('controller' => 'ChatHistories', 'action' => 'remoteSaveCustomerInfo')) ?>",
+    url: "<?= $this->Html->url(array('controller' => 'ChatHistories', 'action' => 'saveCustomerInfo')) ?>",
     data: {
       customerId: customerId,
       historyId: historyId,
@@ -47,7 +48,6 @@ function customerInfoSave(historyId) {
 
 
 document.body.onload = function(){
-
   // チェックボックス群
   var checkBoxList = document.querySelectorAll('[id^="selectTab"]');
   for (var i = 0; i < checkBoxList.length; i++) {
@@ -55,24 +55,27 @@ document.body.onload = function(){
   }
 };
 
+var selectCsv = function(){
+
+}
 // 有効/無効ボタンの表示/非表示
 var actBtnShow = function(){
   var authorityDelete = "<?= $coreSettings[C_COMPANY_USE_HISTORY_DELETE] ?>";
   var authorityCsv = "<?= $coreSettings[C_COMPANY_USE_HISTORY_EXPORTING] ?>";
 
-  if(authorityDelete == "" && authorityCsv == "") {
-    return false;
-  }
-
   // 選択中の場合
   if ( $('input[name="selectTab"]').is(":checked") ) {
+    var screenMode = <?= $screenFlg ?>;
+    if(changeScreenMode != "" && screenMode != changeScreenMode) {
+      screenMode = changeScreenMode;
+    }
+    $("#btnSet").css('display', 'block');
     var list = document.querySelectorAll('input[name^="selectTab"]:checked');
     var url = "/ChatHistories/outputCSVOfChat";
     for (var i = 0; i < list.length; i++){
       url = url + "/" + Number(list[i].value);
     }
     $("#outputCsv a").attr("href", url);
-
     //一つでもチェックが入ったら
     //CSVボタン有効
     if(authorityCsv == 1) {
@@ -84,15 +87,72 @@ var actBtnShow = function(){
       document.getElementById("history_dustbox_btn").className="btn-shadow disOffredBtn";
       document.getElementById("history_dustbox_btn").addEventListener('click', openDeleteDialog, false);
     }
+    if(authorityCsv == 1 || authorityDelete == 1) {
+      //横並びの場合
+      if(screenMode == 1) {
+        if($("#style")[0] == null) {
+          $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 220);
+        }
+        else {
+          $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - (220 + parseInt($("#style").css('height'))));
+        }
+      }
+      //縦並びの場合
+      if(screenMode == 2) {
+        if($("#style")[0] == null) {
+          $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 177);
+        }
+        else {
+          $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - (193 + parseInt($("#style").css('height'))));
+        }
+      }
+    }
   }
   else {
+    var screenMode = <?= $screenFlg ?>;
+    if(changeScreenMode != "" && screenMode != changeScreenMode) {
+      screenMode = changeScreenMode;
+    }
     //一つもチェックが無かったら
     //CSVボタン無効
-    document.getElementById("history_csv_btn").className="btn-shadow disOffgrayBtn";
+    if(authorityCsv == 1) {
+      document.getElementById("history_csv_btn").className="btn-shadow disOffgrayBtn";
+    }
     //document.getElementById("tautomessages_copy_btn").removeEventListener('click', openCopyDialog, false);
     //削除ボタン無効
-    document.getElementById("history_dustbox_btn").className="btn-shadow disOffgrayBtn";
-    document.getElementById("history_dustbox_btn").removeEventListener('click', openDeleteDialog, false);;
+    if(authorityDelete == 1) {
+      document.getElementById("history_dustbox_btn").className="btn-shadow disOffgrayBtn";
+      document.getElementById("history_dustbox_btn").removeEventListener('click', openDeleteDialog, false);
+    }
+    if(authorityCsv == 1 || authorityDelete == 1) {
+      //横並びの場合
+      if(screenMode == 1) {
+        if($("#style")[0] == null) {
+          $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 170);
+        }
+        else {
+          $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - (170 + parseInt($("#style").css('height'))));
+        }
+      }
+      //縦並びの場合
+      if(screenMode == 2) {
+        if($("#style")[0] == null) {
+          $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 129);
+        }
+        else {
+          $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - (145 + parseInt($("#style").css('height'))));
+        }
+      }
+    }
+    $("#btnSet").css('display', 'none');
+  }
+  if(authorityDelete == "" ) {
+    return false;
+  }
+  if(authorityCsv == "") {
+    $("#disabled_history_csv_btn").click(function(){
+      return false;
+    })
   }
 };
 
@@ -136,69 +196,6 @@ var setAllCheck = function() {
   actBtnShow();
 }
 
-
-//ユーザー情報表示変更
-function openChatById(id) {
-  clearChatAndPersonalInfo();
-  $.ajax({
-    type: 'GET',
-    url: "<?= $this->Html->url(array('controller' => 'ChatHistories', 'action' => 'remoteGetCustomerInfo')) ?>",
-    data: {
-      historyId: id
-    },
-    dataType: 'html',
-    success: function(html){
-      var customerData = JSON.parse(html);
-      document.getElementById("visitorsId").innerHTML= customerData.THistory.visitors_id;
-      document.getElementById("ipAddress").innerHTML= "("+customerData.THistory.ip_address+")";
-      document.getElementById("Landscape").innerHTML= customerData.LandscapeData.org_name;
-      $("#LandscapeData a").attr('onclick',"openCompanyDetailInfo("+customerData.LandscapeData.lbc_code+")");
-      document.getElementById("visitCounts").innerHTML= customerData.THistoryCount.cnt + "回";
-      document.getElementById("platform").innerHTML= userAgentChk.pre(customerData.THistory.user_agent);
-      document.getElementById("campaignParam").innerHTML= customerData.campaignParam;
-      document.getElementById("landingPage").innerHTML= customerData.THistoryStayLog.title;
-      $("#landing a").attr("href", customerData.THistoryStayLog.url);
-      if(customerData.tHistoryChatSendingPageData !== null) {
-        document.getElementById("chatSendingPage").innerHTML= customerData.tHistoryChatSendingPageData.FirstSpeechSendPage.title;
-        $("#chatSending a").attr("href", customerData.tHistoryChatSendingPageData.FirstSpeechSendPage.url);
-      }
-      else {
-        document.getElementById("chatSendingPage").innerHTML= "";
-      }
-      document.getElementById("separationPage").innerHTML= customerData.tHistoryChatLastPageData.title;
-      $("#separation a").attr("href", customerData.tHistoryChatLastPageData.url);
-      $("#customerInfo").attr('onclick',"customerInfoSave("+customerData.THistory.id+")");
-      document.getElementById("pageCount").innerHTML= customerData.pageCount[0].count;
-      $("#moveHistory").attr('onclick',"openHistoryById("+customerData.THistory.id+")");
-      document.getElementById("ng-customer-company").value = customerData.informations.company;
-      document.getElementById("ng-customer-name").value = customerData.informations.name;
-      document.getElementById("ng-customer-tel").value = customerData.informations.tel;
-      document.getElementById("ng-customer-mail").value = customerData.informations.mail;
-      document.getElementById("ng-customer-memo").value = customerData.informations.memo;
-      document.getElementById('customerId').value = customerData.MCustomer.id;
-    }
-  });
-}
-
-function clearChatAndPersonalInfo() {
-  document.getElementById("visitorsId").innerHTML= "";
-  document.getElementById("ipAddress").innerHTML= "";
-  document.getElementById("Landscape").innerHTML= "";
-  document.getElementById("visitCounts").innerHTML= "";
-  document.getElementById("platform").innerHTML= "";
-  document.getElementById("campaignParam").innerHTML= "";
-  document.getElementById("landingPage").innerHTML= "";
-  document.getElementById("chatSendingPage").innerHTML= "";
-  document.getElementById("separationPage").innerHTML= "";
-  document.getElementById("pageCount").innerHTML= "";
-  document.getElementById("ng-customer-company").value= "";
-  document.getElementById("ng-customer-name").value= "";
-  document.getElementById("ng-customer-tel").value= "";
-  document.getElementById("ng-customer-mail").value= "";
-  document.getElementById("ng-customer-memo").value= "";
-  document.getElementById('customerId').value= "";
-}
-
 // Change the selector if needed
 var  table = $('.scroll');
 var  bodyCells = table.find('tbody tr:first').children();
@@ -220,6 +217,11 @@ $(window).resize(function() {
 
 
 $(function(){
+
+  $("#disabled_history_csv_btn").click(function(){
+    return false;
+  });
+
   var calcHeaderHeight = function() {
     return $('#history_menu').outerHeight() + $('div.btnSet').outerHeight() + $('label[for="g_chat"]').outerHeight() + $('.dataTables_scrollHead').outerHeight();
   };
@@ -228,16 +230,6 @@ $(function(){
   $(window).on('load', function() {
     document.getElementById("history_body_side").style.display = "block";
     document.getElementById("detail").style.display = "block";
-    if(1024 < window.parent.screen.width && window.parent.screen.width < 1367) {
-      $("#history_list_side *").css("fontSize", "7px");
-      $("#leftContents ul.tabStyle li").css("width", "14.5em");
-      $("#leftContents ul.tabStyle li.on").css("width", "14.5em");
-    }
-    else if(window.parent.screen.width <= 1024) {
-      $("#history_list_side *").css("fontSize", "4px");
-      $("#leftContents ul.tabStyle li").css("width", "13em");
-      $("#leftContents ul.tabStyle li.on").css("width", "13em");
-    }
 
     $.extend( $.fn.dataTable.defaults, {
       language: { url: "/lib/datatables/Japanese.JSON" }
@@ -259,12 +251,30 @@ $(function(){
     });
 
     tableObj.on('draw', function(){
-      $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - calcHeaderHeight() - 20);
+      if(<?= $screenFlg ?> == 1) {
+        $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 170);
+        if($("#style")[0] != null) {
+          $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - (170 + parseInt($("#style").css('height'))));
+        }
+      }
+      if(<?= $screenFlg ?> == 2) {
+        $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 129);
+        if($("#style")[0] != null) {
+          $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - (145 + parseInt($("#style").css('height'))));
+        }
+      }
     });
   });
 
   //選択したチャット履歴CSV出力
   $('#history_csv_btn').click(function(){
+    //return false;
+    var authorityCsv = "<?= $coreSettings[C_COMPANY_USE_HISTORY_EXPORTING] ?>";
+    if(authorityCsv == "") {
+      $("#disabled_history_csv_btn").click(function(){
+        return false;
+      })
+    }
     //チェックボックスのチェック状態の取得
     var list = document.querySelectorAll('input[name^="selectTab"]:checked');
     if(list.length == 0) {
@@ -278,6 +288,7 @@ $(function(){
     }
     document.getElementById("history_dustbox_btn").className="btn-shadow disOffgrayBtn";
     document.getElementById("history_csv_btn").className="btn-shadow disOffgrayBtn";
+    $("#btnSet").css('display', 'none');
   })
 
   // 全選択用チェックボックス
@@ -291,12 +302,12 @@ $(function(){
     $("#history_list_side").css('height', window.innerHeight - 145);
     //横並びの場合
     if(screenMode == 1) {
-      //$("#pastChatTalk").css('height', window.innerHeight - 364);
       document.getElementById('history_body_side').style.width = $('#history_body_side').outerWidth() + 'px';
       document.getElementById('history_body_side').style.height = $('#history_list_side').outerHeight() + 'px';
       $("#chatContent").css('height', $("#detail").outerHeight() - 105);
       $("#customerInfoScrollArea").css('height', $("#detail").outerHeight() - 39);
       $("#chatHistory").css('height',window.innerHeight - 355);
+      $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 170);
     }
     //縦並びの場合
     if(screenMode == 2) {
@@ -304,15 +315,13 @@ $(function(){
       $("#chatContent").css('height', $("#detail").outerHeight() - 65);
       $("#chatHistory").css('height',$("#history_body_side").outerHeight() - 170);
       $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
-      //$("#pastChatTalk").css('height', window.innerHeight - 540);
+      $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - calcHeaderHeight() - 15);
     }
-    $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - calcHeaderHeight() - 20);
     tableObj.columns.adjust();
   });
 
   //縦並びをクリックした場合
   $(document).on('click', '.vertical', function(){
-    screenMode = 2;
     splitterObj.destroy();
     splitterObj = null;
     splitterObj = $("#history_list_side").split({
@@ -327,32 +336,46 @@ $(function(){
     document.getElementById('history_body_side').style.width = $('#history_list_side').outerWidth() + 'px';
     document.getElementById('chatTable').style.width = $('#history_body_side').outerWidth() + 'px';
     document.getElementById('detail').style.width = "100%";
-    $("#chatContent").css('height', $("#detail").outerHeight() - 105);
+    document.getElementById('verticalToggleMenu').style.display = "none";
+    document.getElementById('info').style.display = "none";
+    document.getElementById('kind').style.display = "";
+    document.getElementById('firstTimeReceivingLabel').style.display = "";
+    document.getElementById('ip').style.display = "";
+    document.getElementById('visitor').style.display = "";
+    document.getElementById('responsible').style.display = "";
+    $(".eachInfo").css('display','none');
+    $(".eachKind").css('display','');
+    $(".eachFirstSpeechTime").css('display','');
+    $(".eachIpAddress").css('display','');
+    $(".eachVisitor").css('display','');
+    $(".responsible").css('display','');
+    $("#chatContent").css('height', $("#detail").outerHeight() - 65);
     $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
     $("#chatHistory").css('height',$("#history_body_side").outerHeight() - 170);
-    //$("#pastChatTalk").css('height', window.innerHeight - 540);
+    $(".deleteChat").attr('data-balloon-position',45);
+
     $.ajax({
       type: 'post',
       dataType: 'html',
       cache: false,
       url: "<?= $this->Html->url('/ChatHistories/changeScreen') ?>",
       success: function(html){
-        //modalOpenOverlap.call(window, html, 'p-history-del', '履歴の削除', 'moment');
       }
     });
     tableObj.columns.adjust();
     $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - calcHeaderHeight() - 15);
+    screenMode = 2;
+    changeScreenMode = 2;
  });
 
   //横並びをクリックした場合
   $(document).on('click', '.side', function(){
-    screenMode = 1;
     splitterObj.destroy();
     splitterObj = null;
     splitterObj = $("#history_list_side").split({
       "orientation": "vertical",
       "limit": 50,
-      "position": "70%",
+      "position": "55%",
       onDrag: function(ev) {
         tableObj.columns.adjust();
       }
@@ -361,22 +384,47 @@ $(function(){
     document.getElementById('history_body_side').style.width = $('#history_body_side').outerWidth() + 'px';
     document.getElementById('history_body_side').style.height = $('#history_list_side').outerHeight() + 'px';
     document.getElementById('detail').style.height = "100%";
+    document.getElementById('verticalToggleMenu').style.display = "block";
+    document.getElementById('info').style.display = "";
+    document.getElementById('kind').style.display = "none";
+    document.getElementById('firstTimeReceivingLabel').style.display = "none";
+    document.getElementById('ip').style.display = "none";
+    document.getElementById('visitor').style.display = "none";
+    document.getElementById('responsible').style.display = "none";
+    $(".eachInfo").css('display','');
+    $(".eachKind").css('display','none');
+    $(".eachFirstSpeechTime").css('display','none');
+    $(".eachIpAddress").css('display','none');
+    $(".eachVisitor").css('display','none');
+    $(".responsible").css('display','none');
 
-    //$("#pastChatTalk").css('height', window.innerHeight - 364);
     $("#chatContent").css('height', $("#detail").outerHeight() - 105);
     $("#customerInfoScrollArea").css('height', $("#detail").outerHeight() - 39);
     $("#chatHistory").css('height',window.innerHeight - 355);
+    $(".deleteChat").attr('data-balloon-position',89);
     $.ajax({
       type: 'post',
       dataType: 'html',
       cache: false,
       url: "<?= $this->Html->url('/ChatHistories/changeScreen') ?>",
       success: function(html){
-        //modalOpenOverlap.call(window, html, 'p-history-del', '履歴の削除', 'moment');
       }
     });
     tableObj.columns.adjust();
-    $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - calcHeaderHeight() - 20);
+    if($("#btnSet").css('display') == "none" && $("#style")[0] == null) {
+      $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 170);
+    }
+    else if($("#btnSet").css('display') == "none" && $("#style")[0] != null) {
+      $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - (170 + parseInt($("#style").css('height'))));
+    }
+    else if($("#btnSet").css('display') == "block" && $("#style")[0] != null) {
+      $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - (220 + parseInt($("#style").css('height'))));
+    }
+    else {
+      $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 220);
+    }
+    screenMode = 1;
+    changeScreenMode = 1;
  });
 
 
@@ -385,13 +433,13 @@ $(function(){
       var splitterObj = $("#history_list_side").split({
         "orientation": "vertical",
         //"limit": 500,
-        "position": "70%",
+        "position": "55%",
         onDrag: function(ev) {
           tableObj.columns.adjust();
         }
       });
-      //$("#pastChatTalk").css('height', window.innerHeight - 364);
       document.getElementById('detail').style.height = "100%";
+      document.getElementById('verticalToggleMenu').style.display = "block";
       $("#chatContent").css('height', $("#detail").outerHeight() - 105);
       $("#customerInfoScrollArea").css('height', $("#detail").outerHeight() - 39);
       $("#chatHistory").css('height',window.innerHeight - 355);
@@ -410,6 +458,19 @@ $(function(){
       document.getElementById('history_body_side').style.width = $('#history_body_side').outerWidth() + 'px';
       document.getElementById('chatTable').style.width = $('#history_body_side').outerWidth() - 40 + 'px';
       document.getElementById('detail').style.width = "100%";
+      document.getElementById('verticalToggleMenu').style.display = "none";
+      document.getElementById('info').style.display = "none";
+      document.getElementById('kind').style.display = "";
+      document.getElementById('firstTimeReceivingLabel').style.display = "";
+      document.getElementById('ip').style.display = "";
+      document.getElementById('visitor').style.display = "";
+      document.getElementById('responsible').style.display = "";
+      $(".eachInfo").css('display','none');
+      $(".eachKind").css('display','');
+      $(".eachFirstSpeechTime").css('display','');
+      $(".eachIpAddress").css('display','');
+      $(".eachVisitor").css('display','');
+      $(".responsible").css('display','');
       $("#chatContent").css('height', $("#detail").outerHeight() - 65);
       $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
     }
@@ -425,12 +486,12 @@ var onBeforeunloadHandler = function(e) {
 };
 
 // 元に戻す処理
-function reloadAct(){
+function reloadAct(historyId){
   changeFlg = false;
   if(changeFlg == false) {
     window.removeEventListener('beforeunload', onBeforeunloadHandler, false);
   }
-  window.location.reload();
+  location.href = "<?= $this->Html->url(['controller' => 'ChatHistories', 'action' => 'index']) ?>?id="+ historyId
 }
 
 //履歴チャット削除モーダル画面
@@ -450,5 +511,73 @@ function openChatDeleteDialog(id,historyId,message,created){
       modalOpenOverlap.call(window, html, 'p-history-del', '履歴の削除', 'moment');
     }
   });
+}
+
+//ユーザー情報表示変更
+function openChatById(id) {
+  clearChatAndPersonalInfo();
+  $.ajax({
+    type: 'GET',
+    url: "<?= $this->Html->url(array('controller' => 'ChatHistories', 'action' => 'getCustomerInfo')) ?>",
+    data: {
+      historyId: id
+    },
+    dataType: 'html',
+    success: function(html){
+      var customerData = JSON.parse(html);
+      document.getElementById("visitorsId").innerHTML= customerData.THistory.visitors_id;
+      document.getElementById("ipAddress").innerHTML= "("+customerData.THistory.ip_address+")";
+      if(customerData.LandscapeData != null) {
+        document.getElementById("Landscape").innerHTML= customerData.LandscapeData.org_name;
+        $("#LandscapeData a").attr('onclick',"openCompanyDetailInfo("+customerData.LandscapeData.lbc_code+")");
+      }
+      /* 必ず治す！！ */
+      document.getElementById("visitCounts").innerHTML= customerData.THistoryCount.cnt + "回";
+      document.getElementById("platform").innerHTML= userAgentChk.pre(customerData.THistory.user_agent);
+      document.getElementById("campaignParam").innerHTML= customerData.campaignParam;
+      document.getElementById("landingPage").innerHTML= customerData.landingData.title;
+      $("#landing a").attr("href", customerData.landingData.url);
+      if(customerData.tHistoryChatSendingPageData !== null) {
+        document.getElementById("chatSendingPage").innerHTML= customerData.tHistoryChatSendingPageData.FirstSpeechSendPage.title;
+        $("#chatSending a").attr("href", customerData.tHistoryChatSendingPageData.FirstSpeechSendPage.url);
+      }
+      else {
+        document.getElementById("chatSendingPage").innerHTML= "";
+      }
+      document.getElementById("separationPage").innerHTML= customerData.tHistoryChatLastPageData.title;
+      $("#separation a").attr("href", customerData.tHistoryChatLastPageData.url);
+      $("#customerInfo").attr('onclick',"customerInfoSave("+customerData.THistory.id+")");
+      $("#restore").attr('onclick',"reloadAct("+customerData.THistory.id+")");
+      document.getElementById("pageCount").innerHTML= customerData.pageCount[0].count;
+      $("#moveHistory").attr('onclick',"openHistoryById("+customerData.THistory.id+")");
+      document.getElementById("ng-customer-company").value = customerData.informations.company;
+      document.getElementById("ng-customer-name").value = customerData.informations.name;
+      document.getElementById("ng-customer-tel").value = customerData.informations.tel;
+      document.getElementById("ng-customer-mail").value = customerData.informations.mail;
+      document.getElementById("ng-customer-memo").value = customerData.informations.memo;
+      document.getElementById('customerId').value = customerData.MCustomer.id;
+    }
+  });
+}
+
+function clearChatAndPersonalInfo() {
+  document.getElementById("visitorsId").innerHTML= "";
+  document.getElementById("ipAddress").innerHTML= "";
+  if(document.getElementById("Landscape") !== null) {
+    document.getElementById("Landscape").innerHTML= "";
+  }
+  document.getElementById("visitCounts").innerHTML= "";
+  document.getElementById("platform").innerHTML= "";
+  document.getElementById("campaignParam").innerHTML= "";
+  document.getElementById("landingPage").innerHTML= "";
+  document.getElementById("chatSendingPage").innerHTML= "";
+  document.getElementById("separationPage").innerHTML= "";
+  document.getElementById("pageCount").innerHTML= "";
+  document.getElementById("ng-customer-company").value= "";
+  document.getElementById("ng-customer-name").value= "";
+  document.getElementById("ng-customer-tel").value= "";
+  document.getElementById("ng-customer-mail").value= "";
+  document.getElementById("ng-customer-memo").value= "";
+  document.getElementById('customerId').value= "";
 }
 </script>

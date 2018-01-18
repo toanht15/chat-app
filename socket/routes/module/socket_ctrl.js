@@ -762,7 +762,7 @@ io.sockets.on('connection', function (socket) {
             chatData.historyId = historyId;
 
             var sql  = "SELECT";
-                sql += " chat.id, chat.message, chat.message_type as messageType, chat.achievement_flg as achievementFlg, chat.m_users_id as userId, mu.display_name as userName, chat.message_read_flg as messageReadFlg, chat.created ";
+                sql += " chat.id, chat.message, chat.message_type as messageType, chat.achievement_flg as achievementFlg,chat.delete_flg as deleteFlg, chat.m_users_id as userId, mu.display_name as userName, chat.message_read_flg as messageReadFlg, chat.created ";
                 sql += "FROM t_history_chat_logs AS chat ";
                 sql += "LEFT JOIN m_users AS mu ON ( mu.id = chat.m_users_id ) ";
                 sql += "WHERE t_histories_id = ? ORDER BY created";
@@ -1717,6 +1717,9 @@ io.sockets.on('connection', function (socket) {
 
         data.userCnt = cnt.length;
         data.onlineUserCnt = opKeys.length;
+
+        data.activeOperatorList = activeOperator[res.siteKey];
+        data.onlineOperatorList = company.info[res.siteKey];
 
         // 企業側に情報提供
         emit.toCompany('getAccessInfo', data, res.siteKey);
@@ -3356,7 +3359,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
           // 新しいユーザーの人数を送る
           var cnt = Object.keys(company.info[userInfo.siteKey]);
-          emit.toCompany('outCompanyUser', {siteKey: userInfo.siteKey, userCnt: cnt.length}, userInfo.siteKey);
+          emit.toCompany('outCompanyUser', {siteKey: userInfo.siteKey, userCnt: cnt.length, userId: userInfo.userId}, userInfo.siteKey);
 
           // 受付中オペレータの情報削除
           if ( (userInfo.siteKey in activeOperator) && (userInfo.userId in activeOperator[userInfo.siteKey]) ) {

@@ -17,7 +17,7 @@ popupEvent.closePopup = function(){
     <?= $this->Form->hidden('finish_day',['label'=> false,'div' => false]); ?>
     <?= $this->Form->hidden('period',['label'=> false,'div' => false]); ?>
     <li>
-      <p><span>種類</span></p>
+      <p><span>種別</span></p>
       <span><?= $this->Form->input('chat_type',['label'=>false,'empty' => ' ', 'options' => $chatType,'div' => false]) ?></span>
     </li>
     <li>

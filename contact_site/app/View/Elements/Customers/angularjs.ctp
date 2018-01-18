@@ -416,6 +416,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     $scope.typingMessageRe = {};
     $scope.uploadProgress = 0;
     $scope.scInfo = { remain: 0 };
+    $scope.activeOperatorList = {};
+    $scope.onlineOperatorList = {};
     $scope.chatLogList = []; // 詳細情報のチャットログリスト
     $scope.chatLogMessageList = []; // 詳細情報のチャットログメッセージリスト
     /* 資料検索 */
@@ -825,6 +827,37 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       });
     };
 
+    $scope.showOperatorPresence = function() {
+      $.ajax({
+        type: 'POST',
+        cache: false,
+        url: "<?= $this->Html->url(array('controller' => 'MUsers', 'action' => 'getList')) ?>",
+        dataType: 'html',
+        success: function(html) {
+          modalOpen.call(window, html, 'p-cus-operator-presence', 'ユーザー状態一覧');
+          $scope.refreshUserPresences();
+        }
+      });
+    };
+
+    $scope.refreshUserPresences = function() {
+      if($('#presenceView').length !== 0) {
+        $("#presenceViewBody .presence-active").css('display', 'none');
+        $("#presenceViewBody .presence-inactive").css('display', 'none');
+        $("#presenceViewBody .presence-offline").css('display', '');
+        Object.keys($scope.onlineOperatorList).forEach(function(key){
+          if($scope.activeOperatorList[key]) {
+            $('#active'+key).css('display','');
+            $('#inactive'+key).css('display','none');
+          } else {
+            $('#active'+key).css('display','none');
+            $('#inactive'+key).css('display','');
+          }
+          $('#offline'+key).css('display','none');
+        });
+      }
+    }
+    
     $scope.openHistory = function(monitor){
         var retList = {};
         $.ajax({
@@ -1674,7 +1707,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         };
       }
     };
-    
+
     $scope.fileUploader.init();
     // =====================
     // ファイル送信（ここまで）
@@ -1856,9 +1889,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           $scope.oprCnt = ( $scope.oprCnt < 1 ) ? 0 : $scope.oprCnt;
         }
       }
+      $scope.activeOperatorList = obj.activeOperatorList;
+      $scope.onlineOperatorList = obj.onlineOperatorList;
+      $scope.refreshUserPresences();
 <?php endif; ?>
 <?php if ( $coreSettings[C_COMPANY_USE_CHAT] && strcmp(intval($scFlg), C_SC_ENABLED) === 0 ) :  ?>
-
       // チャット対応上限を設定
       if ( obj.hasOwnProperty('scNum') && Number("<?=$muserId?>") === Number(obj.userId) ) {
         $scope.scInfo.remain = Number(obj.scNum);
@@ -1877,6 +1912,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     socket.on('outCompanyUser', function (data) {
       var obj = JSON.parse(data);
       $scope.oprWaitCnt = obj.userCnt;
+      delete $scope.onlineOperatorList[obj.userId];
+      delete $scope.activeOperatorList[obj.userId];
+      $scope.refreshUserPresences();
+
     });
 
     socket.on('receiveAccessInfo', function (data) {
@@ -2103,6 +2142,13 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           chgOpStatusView("<?=C_OPERATOR_PASSIVE?>");
         }
       }
+      if ( obj.active ) {
+        $scope.activeOperatorList[obj.userId] = "active";
+      }
+      else {
+        delete $scope.activeOperatorList[obj.userId];
+      }
+      $scope.refreshUserPresences();
 
       <?php if ( $coreSettings[C_COMPANY_USE_CHAT] && strcmp(intval($scFlg), C_SC_ENABLED) === 0 ) :  ?>
             // チャット対応上限を設定
@@ -3593,9 +3639,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           }
           if ( ret ) {
             var data = {
-                v: scope.detail.userId,
-                i: value
-              };
+              v: scope.detail.userId,
+              i: value
+            };
             $.ajax({
               type: "POST",
               url: "<?=$this->Html->url(['controller'=>'Customers', 'action' => 'remoteSaveCusInfo'])?>",
