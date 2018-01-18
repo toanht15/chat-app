@@ -6,9 +6,7 @@
 </div>
 
 <div id='tchatbotscenario_entry'>
-  <?=$this->Form->create('TChatbotScenario', ['url'=>['controller' =>'TChatbotScenario', 'action'=>'add'], 'novalidate' => true, 'id'=>'TChatbotScenarioEntryForm', 'name'=>'TChatbotScenarioEntryForm'])?>
-    <?= $this->element('TChatbotScenario/entry'); ?>
-  <?=$this->Form->end();?>
+  <?= $this->element('TChatbotScenario/entry'); ?>
 </div><!-- /tchatbotscenario_form -->
 
 </div>

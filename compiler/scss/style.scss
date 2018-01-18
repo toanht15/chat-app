@@ -6397,11 +6397,11 @@ ul.naviBtn {
 /* チャットボットシナリオ設定 */
 #tchatbotscenario_idx {
 
+  /* チャットボットシナリオ設定(一覧) */
   #tchatbotscenario_menu {
     height: 85px;
   }
 
-  /* チャットボットシナリオ設定(一覧) */
   #tchatbotscenario_list {
     input[type='checkbox'] {
       display: none;
@@ -6440,138 +6440,231 @@ ul.naviBtn {
   }
 
   /* チャットボットシナリオ設定(追加・更新) */
-  #tchatbotscenario_form {
-    display: flex;
+  #tchatbotscenario_entry {
+    height: calc(100vh - 198px);
+    overflow-y: hidden;
 
-    h3.tchatbotscenario_form_subtitle {
-      border-bottom: 3px solid $main-color;
-      padding-left: 5px;
-    }
+    #TChatbotScenarioEntryForm {
+      display: flex;
+      height: 100%;
 
-    /* チャットボットシナリオ設定(追加・更新): 基本設定 */
-    #tchatbotscenario_form_basic_settings {
-      flex-grow: 1;
-      border-right: 1px solid #B7B7B7;
+      .tchatbotscenario_form_subtitle {
+        border-bottom: 3px solid $main-color;
+        padding-left: 5px;
+      }
 
-      ul {
-        padding: 0.5em;
+      /* チャットボットシナリオ設定(追加・更新): 基本設定 */
+      #tchatbotscenario_form_basic_settings {
+        flex-grow: 1;
 
-        li {
+        ul {
           padding: 0.5em;
-          span {
-            display: block;
-          }
-          input[type='text'] {
-            height: 26px;
-            font-size: 12px;
-            padding-left: 4px;
-            margin: 10px 0;
-          }
-        }
-      }
-    }
 
-    /* チャットボットシナリオ設定(追加・更新): アクション */
-    #tchatbotscenario_form_action {
-      flex-grow: 2;
-
-      h3 {
-        text-align: center;
-        margin-top: 0;
-      }
-
-      #tchatbotscenario_form_action_header {
-        border-bottom: 1px solid #B7B7B7;
-
-        #tchatbotscenario_form_action_menulist {
-          display: flex;
-          flex-wrap: wrap;
-          justify-content: center;
-          align-content: space-between;
-          a {
-            width: 10em;
-            padding: 10px;
-            text-align: center;
-            margin: 0 5px 5px 0;
+          li {
+            padding: 0.5em;
+            span {
+              display: block;
+            }
+            input[type='text'] {
+              height: 26px;
+              font-size: 12px;
+              padding-left: 4px;
+              margin: 10px 0;
+            }
           }
         }
       }
 
-      #tchatbotscenario_form_action_body {
-        background-color: #f9f9f9;
-        margin: 0;
+      /* チャットボットシナリオ設定(追加・更新): アクション */
+      #tchatbotscenario_form_action {
+        flex-grow: 2;
+        flex-basis: 50%;
+        border-left: 1px solid #B7B7B7;
+        border-right: 1px solid #B7B7B7;
 
-        > li {
-          position: relative;
-          border: 1px solid #B7B7B7;
-          margin-bottom: 20px;
+        h3 {
+          text-align: center;
+          margin-top: 0;
+        }
 
-          h4 {
-            background-color: $main-color;
-            color: #ffffff;
-            font-size: 15px;
-            padding: 6px;
-            margin: 0;
+        #tchatbotscenario_form_action_header {
+          border-bottom: 1px solid #B7B7B7;
+
+          #tchatbotscenario_form_action_menulist {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-content: space-between;
+
+            a {
+              width: 10em;
+              padding: 10px;
+              text-align: center;
+              margin: 0 5px 5px 0;
+            }
           }
-          h4 + div {
-            background-color: #ffffff;
-            padding: 12px;
+        }
 
-            select {
-              padding: 3px 0 5px;
+        #tchatbotscenario_form_action_body {
+          margin: 0;
+          background-color: #f9f9f9;
+          overflow-y: scroll;
+          height: calc(100vh - 293px);
+
+          .set_action_item {
+            position: relative;
+            border: 1px solid #B7B7B7;
+
+            &:not(:last-child) {
+              margin-bottom: 20px;
             }
 
-            > ul {
+            h4 {
+              background-color: $main-color;
+              color: #ffffff;
+              font-size: 15px;
+              padding: 6px;
               margin: 0;
-              padding: 0;
+            }
 
-              li {
+            .closeBtn {
+              position: absolute;
+              top: -10px;
+              right: -10px;
+              width: 30px;
+              height: 30px;
+              padding: 5px;
+              float: left;
+              margin-right: 5px;
+              border-radius: 15px;
+            }
+
+            .set_action_item_body {
+              background-color: #ffffff;
+              padding: 12px;
+
+              > ul > li:not(:last-child) {
+                padding-bottom: 1em;
+              }
+
+              > label {
+                margin: 0.5em;
+              }
+
+              ul {
+                margin: 0;
+                padding: 0;
+              }
+
+              select {
+                padding: 3px 0 5px;
+              }
+
+              table {
+                width: 100%;
+                table-layout: fixed;
+
+                th {
+                  background-color: #ffffff;
+                  text-align: center;
+                  font-weight: normal;
+                  border: none;
+                }
+                td {
+                  border: none;
+                }
+              }
+
+              .btnBlock {
+                display: inline-flex;
+                padding-left: 0.75em;
+                vertical-align: middle;
+              }
+
+              .styleBlock {
+                display: block;
+              }
+
+              .styleFlexbox {
                 display: flex;
-                padding: 0.5em;
 
                 > span:first-child {
-                  flex-basis: 10em;
-                  margin: 0.5em;
+                  flex-basis: 11.5em;
                   white-space: nowrap;
                 }
 
-                > table {
-                  th {
-                    background-color: white;
-                    text-align: center;
-                    font-weight: normal;
-                    border: none;
-                  }
-                  td {
-                    border: none;
+                > ul {
+                  flex-grow: 1;
+                }
+              }
+
+              .indentDown {
+                padding-left: 2em;
+
+                &:not(:first-child) {
+                  padding-top: 0.5em;
+                }
+
+                li.styleFlexbox {
+                  > span:first-child {
+                    flex-basis: 9.5em;
                   }
                 }
               }
             }
           }
-          .closeBtn {
-            position: absolute;
-            top: -10px;
-            right: -10px;
-            width: 30px;
-            height: 30px;
-            padding: 5px;
-            float: left;
-            margin-right: 5px;
-            border-radius: 15px;
-          }
         }
       }
-    }
 
-    /* チャットボットシナリオ設定(追加・更新): プレビュー */
-    #tchatbotscenario_form_preview{
-      flex-grow: 1;
-      border-left: 1px solid #B7B7B7;
+      /* チャットボットシナリオ設定(追加・更新): プレビュー */
+      #tchatbotscenario_form_preview{
+        flex-grow: 1;
+        min-width: 15em;
 
-      > ul {
-        margin: 0px;
-        padding: 0px;
+        #tchatbotscenario_form_preview_body {
+          overflow-y: scroll;
+          height: calc(100vh - 267px);
+
+          ul {
+            padding: 0px;
+
+            div {
+              display: block;
+              text-align: right;
+              margin: 5px;
+
+              li {
+                color: #333333;
+
+                &.preview_talk {
+                  display: inline-block;
+                  background-color: #FAF6E6;
+                  padding: 5px 15px;
+                  border-radius: 12px;
+                  position: relative;
+                  text-align: left;
+
+                  &::after {
+                    content: '';
+                    position: absolute;
+                    right: -7px;
+                    margin-top: -10px;
+                    bottom: 0px;
+                    border: 5px solid transparent;
+                    border-left: 5px solid #FAF6E6;
+                    border-bottom: 5px solid #FAF6E6;
+                  }
+                }
+
+                &.preview_talk_confirm {
+                  li {
+                    display: block;
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
   }
