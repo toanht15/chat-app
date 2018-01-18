@@ -74,7 +74,9 @@
             }
           }
           ?>
+          <?php if(strcmp($userInfo['permission_level'], C_AUTHORITY_NORMAL) !== 0): ?>
           <li id='showOperatorPresenceBtn' class='blueBtn btn-shadow' ng-click='showOperatorPresence()'>オペレータ一覧を開く</li>
+          <?php endif; ?>
         </ul>
         <?php if(empty($coreSettings[C_COMPANY_USE_HIDE_REALTIME_MONITOR]) || !$coreSettings[C_COMPANY_USE_HIDE_REALTIME_MONITOR] ): ?>
         <p class="tRight <?=$nowCntClass?>" ng-cloak>現在 <b>{{objCnt(monitorList)}}</b>名がサイト訪問中</p>
