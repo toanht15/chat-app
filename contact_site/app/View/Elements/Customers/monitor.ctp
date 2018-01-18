@@ -74,7 +74,7 @@
             }
           }
           ?>
-          <?php if(strcmp($userInfo['permission_level'], C_AUTHORITY_NORMAL) !== 0): ?>
+          <?php if($widgetCheck && strcmp($userInfo['permission_level'], C_AUTHORITY_NORMAL) !== 0): ?>
           <li id='showOperatorPresenceBtn' class='blueBtn btn-shadow' ng-click='showOperatorPresence()'>オペレータ一覧を開く</li>
           <?php endif; ?>
         </ul>
