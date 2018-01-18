@@ -146,6 +146,7 @@ class MUsersController extends AppController {
 
   public function getList() {
     $this->autoRender = false;
+    $this->layout = "ajax";
     // 一般ユーザーはリストを返さない
     $result = [];
     if(strcmp($this->userInfo['permission_level'], C_AUTHORITY_NORMAL) === 0) {
@@ -169,7 +170,8 @@ class MUsersController extends AppController {
         'permission_level' => intval($value['MUser']['permission_level'])
       ]);
     }
-    return json_encode($result);
+    $this->set('userList', $result);
+    return $this->render('/Elements/Customers/presenceView');
   }
 
   /**

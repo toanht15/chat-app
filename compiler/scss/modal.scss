@@ -579,6 +579,55 @@
         }
       }
 
+      &.p-cus-operator-presence {
+        width: 50em;
+
+        #popup-main {
+          padding: 1.5em;
+          #presenceView {
+            height: 400px;
+            position: relative;
+            overflow-x: hidden;
+            overflow-y: scroll;
+
+            table {
+              width: 100%;
+
+              th {
+                padding: 10px 20px;
+              }
+
+              td {
+                text-align: center;
+                padding: 10px 20px;
+              }
+            }
+
+            #presenceViewheader {
+              width: auto;
+              position: absolute;
+              z-index: 3;
+              left: 0;
+              right: 0;
+            }
+            #presenceViewBody {
+              width: auto;
+              top:34px !important;
+            }
+          }
+        }
+
+        #popup-button {
+          display: flex;
+          padding-bottom: 25px;
+
+          a {
+            width: 75px;
+            margin: 0 auto;
+          }
+        }
+      }
+
       /* 履歴一覧-ポップアップ用 */
       &.p-history-logs {
         width: 600px;
