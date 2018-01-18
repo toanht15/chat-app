@@ -15,7 +15,6 @@
         <tbody>
         <?php
         foreach($userList as $index => $user) {
-          for ($i=0; $i<50; $i++) {
             echo '<tr class="tableRow" >';
             echo '  <td class="tableData" style="width: 70%">' . $user['display_name'] . '</td>';
             echo '  <td class="tableData" style="width: 30%">';
@@ -24,7 +23,6 @@
             echo '    <span class="presence-offline" id="offline' . $user['id'] . '">オフライン</span>';
             echo '  </td>';
             echo '</tr>';
-          }
         }
         ?>
         </tbody>
