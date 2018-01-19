@@ -10,7 +10,7 @@
  * @property MWidgetSetting $MWidgetSetting
  */
 
-App::import('Lib','Error/AutoMessageException');
+App::uses('AutoMessageException','Lib/Error');
 
 class TAutoMessagesController extends AppController {
   const TEMPLATE_FILE_NAME = "template.xlsx";
@@ -603,9 +603,9 @@ class TAutoMessagesController extends AppController {
                 C_AUTO_TRIGGER_SPEECH_CONTENT => [ // 条件「発言内容」固定
                   [
                     'keyword_contains' => $row['keyword_contains'],
-                    'keyword_contains_type' => $row['keyword_contains_type'],
+                    'keyword_contains_type' => (string)$row['keyword_contains_type'],
                     'keyword_exclusions' => $row['keyword_exclusions'],
-                    'keyword_exclusions_type' => $row['keyword_exclusions_type'],
+                    'keyword_exclusions_type' => (string)$row['keyword_exclusions_type'],
                     'speechContentCond' => $row['keyword_exclusions_type'],
                     'triggerTimeSec' => $row['keyword_exclusions_type'],
                     'speechTriggerCond' => $row['keyword_exclusions_type']
@@ -626,13 +626,19 @@ class TAutoMessagesController extends AppController {
         $this->TAutoMessage->set($saveData);
         $validate = $this->TAutoMessage->validates();
         $errors = $this->TAutoMessage->validationErrors;
+        if(!empty($errors)) {
+          $errorFound = true;
+          $errorArray[$row['rowNum']] = $errors;
+        } else {
+          array_push($dataArray, $saveData);
+        }
       }
       $nextPage = '1';
       if(!$errorFound) {
         foreach ($dataArray as $index => $saveData) {
           $nextPage = $this->_entryForApi($saveData);
         }
-        $this->TransactionManager->commit($transactions);
+        $this->TransactionManager->commitTransaction($transactions);
         $result['success'] = true;
         $result['showPageNum'] = $nextPage;
       } else {
@@ -640,14 +646,14 @@ class TAutoMessagesController extends AppController {
       }
     } catch(AutoMessageException $e) {
       if($transactions) {
-        $this->TransactionManager->rollback($transactions);
+        $this->TransactionManager->rollbackTransaction($transactions);
       }
       $result['success'] = false;
       $result['errorCode'] = 400;
       $result['errorMessages'] = $e->getErrors();
     } catch(Exception $e) {
       if($transactions) {
-        $this->TransactionManager->rollback($transactions);
+        $this->TransactionManager->rollbackTransaction($transactions);
       }
       $result['success'] = false;
       $result['errorCode'] = 400;
@@ -673,19 +679,18 @@ class TAutoMessagesController extends AppController {
     $transactions = null;
     try {
       $transactions = $this->TransactionManager->begin();
-      $nextPage = $this->_entryForApi($saveData);
+      $nextPage = $this->_entryForApi($saveData);;
+      $this->TransactionManager->commitTransaction($transactions);
       $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
-      $this->TransactionManager->commit($transactions);
+      $this->redirect('/TAutoMessages/index/page:'.$nextPage);
     } catch(AutoMessageException $e) {
-      $this->TransactionManager->rollback($transactions);
+      $this->TransactionManager->rollbackTransaction($transactions);
       $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
       $this->set('errors', $e->getErrors());
       $this->set('lastPage', $e->getLastPage());
     } catch(Exception $e) {
-      $this->TransactionManager->rollback($transactions);
+      $this->TransactionManager->rollbackTransaction($transactions);
       $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
-    } finally {
-      $this->redirect('/TAutoMessages/index/page:'.$nextPage);
     }
   }
 
@@ -859,7 +864,15 @@ class TAutoMessagesController extends AppController {
       $exception->setLastPage($nextPage);
       throw $exception;
     }
-    return $nextPage;
+
+    $count = $this->TAutoMessage->find('first',[
+      'fields' => ['count(*) as count'],
+      'conditions' => ['TAutoMessage.del_flg != ' => 1, 'm_companies_id' => $this->userInfo['MCompany']['id']]
+    ]);
+
+    $page = floor((intval($count[0]['count']) + 100) / 100);
+
+    return $page >= 1 ? $page : 1;
   }
 
   /**

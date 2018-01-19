@@ -495,9 +495,9 @@ $config['outMessageTriggerList'] = [
       'default' => [
           "targetName" => 1,
           "keyword_contains" => "",
-          "keyword_contains_type" => 1,
+          "keyword_contains_type" => "1",
           "keyword_exclusions" => "",
-          "keyword_exclusions_type" => 1,
+          "keyword_exclusions_type" => "1",
           "stayPageCond" => 2
       ]
     ],
@@ -509,9 +509,9 @@ $config['outMessageTriggerList'] = [
       'default' => [
           "targetName" => 1,
           "keyword_contains" => "",
-          "keyword_contains_type" => 1,
+          "keyword_contains_type" => "1",
           "keyword_exclusions" => "",
-          "keyword_exclusions_type" => 1,
+          "keyword_exclusions_type" => "1",
           "stayPageCond" => 2
       ]
     ],

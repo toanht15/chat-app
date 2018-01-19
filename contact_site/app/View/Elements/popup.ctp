@@ -297,6 +297,31 @@
             return popupEvent.closePopup();
           };
           break;
+        case 'p-auto-importexcel-upload':
+          var uploadBtn = _button("アップロード");
+          uploadBtn.id = "uploadExcelBtn";
+          uploadBtn.onclick = function () {
+            popupEvent.uploadBtnClicked();
+          };
+          uploadBtn.style.display = "block";
+          var cancelBtn = _button("キャンセル");
+          cancelBtn.id = "uploadCancelBtn";
+          cancelBtn.onclick = function () {
+            return popupEvent.close();
+          };
+          cancelBtn.style.display = "block";
+          var uploadCloseBtn = _button("閉じる");
+          uploadCloseBtn.id = "uploadCloseBtn";
+          uploadCloseBtn.onclick = function () {
+            return popupEvent.close();
+          };
+          uploadCloseBtn.style.display = "none";
+          var reloadBtn = _button("再読み込み");
+          reloadBtn.id = "reloadBtn";
+          // 初期表示時は表示しない
+          reloadBtn.style.display = "none";
+          // reloadBtnのクリックイベントハンドラは利用側に実装
+          break;
         case 'p-operatinghours-entry':
           var entryBtn = _button("変更する");
           entryBtn.onclick = function () {

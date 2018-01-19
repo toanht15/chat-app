@@ -176,31 +176,31 @@ class AutoMessageExcelParserComponent extends ExcelParserComponent
       $this->addError($errors, self::ROW_CONTAINS,'キーワードはいずれかの指定が必須です');
     }
     if(empty($this->containsTypeMap[$data[self::ROW_CONTAINS_TYPE]])) {
-      $this->addError($errors, self::ROW_CONTAINS_TYPE,'「すべて含む」「いずれかを含む」のいずれかの指定のみ可能です');
+      $this->addError($errors, self::ROW_CONTAINS_TYPE,'すべて含む／いずれかを含む のいずれかの指定のみ可能です');
     }
     if(empty($this->exclusionsTypeMap[$data[self::ROW_EXCLUSIONS_TYPE]])) {
-      $this->addError($errors, self::ROW_EXCLUSIONS_TYPE,'「すべて含まない」「いずれかを含まない」のいずれかの指定のみ可能です');
+      $this->addError($errors, self::ROW_EXCLUSIONS_TYPE,'すべて含まない／いずれかを含まない のいずれかの指定のみ可能です');
     }
     if(empty($this->keywordConditionMap[$data[self::ROW_KEYWORD_CONDITION]])) {
-      $this->addError($errors, self::ROW_KEYWORD_CONDITION,'「完全一致」「部分一致」のいずれかの指定のみ可能です');
+      $this->addError($errors, self::ROW_KEYWORD_CONDITION,'完全一致／部分一致 のいずれかの指定のみ可能です');
     }
     if(!Validation::range($data[self::ROW_TRIGGER_TIME_SEC], 1, 60)) {
       $this->addError($errors, self::ROW_TRIGGER_TIME_SEC,'1から60までの数値指定のみ可能です');
     }
     if(empty($this->triggerConditionMap[$data[self::ROW_TRIGGER_CONDITION]])) {
-      $this->addError($errors, self::ROW_TRIGGER_CONDITION,'「１回のみ有効」「何度でも有効」のいずれかの指定のみ可能です');
+      $this->addError($errors, self::ROW_TRIGGER_CONDITION,'１回のみ有効／何度でも有効 のいずれかの指定のみ可能です');
     }
     if(empty($data[self::ROW_MESSAGE])) {
       $this->addError($errors, self::ROW_MESSAGE,'メッセージの指定は必須です。');
     }
     if(empty($this->triggerFreeInputMap[$data[self::ROW_FREE_INPUT]])) {
-      $this->addError($errors, self::ROW_KEYWORD_CONDITION,'「ON（自由入力可）」「OFF（自由入力不可）」のいずれかの指定のみ可能です');
+      $this->addError($errors, self::ROW_KEYWORD_CONDITION,'ON（自由入力可）／OFF（自由入力不可） のいずれかの指定のみ可能です');
     }
     if(empty($this->triggerCVMap[$data[self::ROW_CV]])) {
-      $this->addError($errors, self::ROW_CV,'「する」「しない」のいずれかの指定のみ可能です');
+      $this->addError($errors, self::ROW_CV,'する／しない のいずれかの指定のみ可能です');
     }
     if(empty($this->activeFlgMap[$data[self::ROW_ACTIVE]]) && @$this->activeFlgMap[$data[self::ROW_ACTIVE]] !== 0) {
-      $this->addError($errors, self::ROW_ACTIVE,'「有効」「無効」のいずれかの指定のみ可能です');
+      $this->addError($errors, self::ROW_ACTIVE,'有効／無効 のいずれかの指定のみ可能です');
     }
 
     return $errors;

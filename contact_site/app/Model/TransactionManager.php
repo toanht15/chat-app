@@ -12,11 +12,11 @@ class TransactionManager extends AppModel {
         return $dataSource;
     }
 
-    public function commit($_dataSource) {
+    public function commitTransaction($_dataSource) {
         $_dataSource->commit();
     }
 
-    public function rollback($_dataSource) {
+    public function rollbackTransaction($_dataSource) {
         $_dataSource->rollback();
     }
 

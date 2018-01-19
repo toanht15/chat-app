@@ -424,7 +424,7 @@ var openSelectFile = function() {
         // event.target.result に読み込んだファイルの内容が入っています.
         // ドラッグ＆ドロップでファイルアップロードする場合は result の内容を Ajax でサーバに送信しましょう!
         loadData = event.target.result;
-        _showConfirmDialog("指定されたファイル【" + fileObj.name + "】をアップロードします。<br>よろしいですか？");
+        _showConfirmDialog("<div class='confirm'>指定されたファイル【" + fileObj.name + "】をアップロードします。<br>よろしいですか？</div>");
       };
       fileReader.readAsArrayBuffer(fileObj);
     }
@@ -433,8 +433,9 @@ var openSelectFile = function() {
 };
 
 var _showConfirmDialog = function(message) {
-  modalOpen.call(window, message, 'p-cus-file-upload', 'インポート確認', 'moment');
-  popupEvent.closePopup = function() {
+  modalOpen.call(window, message, 'p-auto-importexcel-upload', 'インポート確認', 'moment');
+  popupEvent.uploadBtnClicked = function() {
+    $('#popupCloseBtn').css('display', 'none');
     uploadFile(fileObj, loadData);
   };
 };
@@ -448,8 +449,9 @@ var uploadFile = function(fileObj, loadFile) {
   fd.append("file", blob, fileObj.name);
 
   $('#popup-title').html('インポート処理中');
-  $('#popup-main').html('アップロード中（0％）');
+  $('#popup-main').html('<div class="confirm">アップロード中（0％）</div>');
   $('#popup-button').css('display', 'none');
+  popupEvent.resize();
 
   $.ajax({
     url  : "<?= $this->Html->url('/TAutoMessages/import') ?>",
@@ -464,9 +466,9 @@ var uploadFile = function(fileObj, loadFile) {
       if(XHR.upload){
         XHR.upload.addEventListener('progress',function(e){
           var uploadProgress = parseInt(e.loaded/e.total*10000)/100;
-          $('#popup-main').html('アップロード中（' + uploadProgress + '％）');
+          $('#popup-main').html('<div class="confirm">アップロード中（' + uploadProgress + '％）</div>');
           if(uploadProgress === 100) {
-            $('#popup-main').html('インポート処理中です。しばらくお待ち下さい。');
+            $('#popup-main').html('<div class="confirm">インポート処理中です。しばらくお待ち下さい。</div>');
           }
         }, false);
       }
@@ -476,18 +478,39 @@ var uploadFile = function(fileObj, loadFile) {
   .done(function(data, textStatus, jqXHR){
     console.log(JSON.stringify(data));
     if(data.success) {
-      $('#popup-main').html('インポートが完了しました。<br>ページを再読み込みします。');
+      $('#popup-main').html('<div class="confirm">インポートが完了しました。<br>ページを再読み込みします。</div>');
       $('#popup-button').css('display', '');
+      $('#uploadExcelBtn').css('display', 'none');
+      $('#uploadCancelBtn').css('display', 'none');
+      $('#reloadBtn').css('display', '').on('click', function(e){
+        $(this).css('display','none');
+        $('#popup-main').html('<div class="confirm">再読み込み中です</div>');
+        popupEvent.resize();
+        location.href = "<?= $this->Html->url(['controller'=>'TAutoMessages', 'action' => 'index/page:']) ?>" + data.showPageNum;
+      });
+      popupEvent.resize();
     } else {
       var html = '<p id="importErrorMessage">インポート時にエラーが発生ました。<br>以下のエラー内容を確認してください。</p>';
-      html += '<div id="errorList">';
+      html += '<div id="errorListScroll">';
+      html += '  <div id="errorList">';
       if(typeof(data.errorMessages) === 'object') {
         Object.keys(data.errorMessages).forEach(function(key){
-          html += '<span>'
+          Object.keys(data.errorMessages[key]).forEach(function(column) {
+            for(var i = 0; i < data.errorMessages[key][column].length; i++) {
+              html += '<p class="error-row"><span class="error-matrix">【' + key + ' 行目' + column + ' 列】</span><span class="error-content">' + data.errorMessages[key][column][i] + '</span></p>'
+            }
+          });
         });
       }
-      $('#popup-main').html();
-      $('#popup-button').css('display', '');
+      html += '  </div>';
+      html += '</div>';
+      $('#popupCloseBtn').css('display', 'block');
+      $('#uploadExcelBtn').css('display', 'none');
+      $('#uploadCancelBtn').css('display', 'none');
+      $('#uploadCloseBtn').css('display', 'block');
+      $('#popup-button').css('display', 'block');
+      $('#popup-main').html(html);
+      popupEvent.resize();
     }
   })
   .fail(function(jqXHR, textStatus, errorThrown){
