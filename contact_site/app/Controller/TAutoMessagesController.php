@@ -1,10 +1,22 @@
 <?php
 /**
  * TAutoMessagesController controller.
- * ユーザーマスタ
+ * オートメッセージコントローラー
+ * @property TransactionManager $TransactionManager
+ * @property TAutoMessage $TAutoMessage
+ * @property MOperatingHour $MOperatingHour
+ * @property MMailTransmissionSetting $MMailTransmissionSetting
+ * @property MMailTemplate $MMailTemplate
+ * @property MWidgetSetting $MWidgetSetting
  */
+
+App::uses('AutoMessageException','Lib/Error');
+
 class TAutoMessagesController extends AppController {
-  public $uses = ['TAutoMessage','MOperatingHour', 'MMailTransmissionSetting', 'MMailTemplate', 'MWidgetSetting'];
+  const TEMPLATE_FILE_NAME = "template.xlsx";
+
+  public $uses = ['TransactionManager', 'TAutoMessage','MOperatingHour', 'MMailTransmissionSetting', 'MMailTemplate', 'MWidgetSetting'];
+  public $components = ['AutoMessageExcelParser'];
   public $helpers = ['AutoMessage'];
   public $paginate = [
     'TAutoMessage' => [
@@ -558,12 +570,137 @@ class TAutoMessagesController extends AppController {
     );
   }
 
+  public function import() {
+    $this->autoRender = false;
+    $this->layout = false;
+
+    $result = [
+      'success' => false
+    ];
+
+    $file = $this->params['form']['file'];
+    $lastPage = $this->request->data['lastPage'];
+
+    $component = new AutoMessageExcelParserComponent($file['tmp_name']);
+    $component->getImportData();
+    $transactions = null;
+    try {
+      $data = $component->toArray();
+      $transactions = $this->TransactionManager->begin();
+      $dataArray = [];
+      $errorArray = [];
+      $errorFound = false;
+      foreach($data as $index => $row) {
+        $saveData = [
+          'TAutoMessage' => [
+            'lastPage' => $lastPage,
+            'm_companies_id' => $this->userInfo['MCompany']['id'],
+            'name' => $row['name'],
+            'trigger_type' => 0, // 「画面読み込み時」固定
+            'activity' => json_encode([
+              'conditionType' => 1, // 「全て一致」固定
+              'conditions' => [
+                C_AUTO_TRIGGER_SPEECH_CONTENT => [ // 条件「発言内容」固定
+                  [
+                    'keyword_contains' => $row['keyword_contains'],
+                    'keyword_contains_type' => (string)$row['keyword_contains_type'],
+                    'keyword_exclusions' => $row['keyword_exclusions'],
+                    'keyword_exclusions_type' => (string)$row['keyword_exclusions_type'],
+                    'speechContentCond' => $row['keyword_exclusions_type'],
+                    'triggerTimeSec' => $row['keyword_exclusions_type'],
+                    'speechTriggerCond' => $row['keyword_exclusions_type']
+                  ]
+                ]
+              ],
+              'widgetOpen' => 1, // 「最大化する」固定
+              'message' => $row['action'],
+              'chatTextarea' => $row['chat_textarea'],
+              'cv' => $row['cv']
+            ], JSON_UNESCAPED_UNICODE), // 日本語はエスケープしないで入れる仕様
+            'action_type' => 1, // 「チャットメッセージを送る」固定
+            'active_flg' => $row['active_flg'],
+            'del_flg' => 0
+          ]
+        ];
+
+        $this->TAutoMessage->set($saveData);
+        $validate = $this->TAutoMessage->validates();
+        $errors = $this->TAutoMessage->validationErrors;
+        if(!empty($errors)) {
+          $errorFound = true;
+          $errorArray[$row['rowNum']] = $errors;
+        } else {
+          array_push($dataArray, $saveData);
+        }
+      }
+      $nextPage = '1';
+      if(!$errorFound) {
+        foreach ($dataArray as $index => $saveData) {
+          $nextPage = $this->_entryForApi($saveData);
+        }
+        $this->TransactionManager->commitTransaction($transactions);
+        $result['success'] = true;
+        $result['showPageNum'] = $nextPage;
+      } else {
+        $result['errorMessage'] = []; // FIXME 何行目の何列がどうダメなのか返す
+      }
+    } catch(AutoMessageException $e) {
+      if($transactions) {
+        $this->TransactionManager->rollbackTransaction($transactions);
+      }
+      $result['success'] = false;
+      $result['errorCode'] = 400;
+      $result['errorMessages'] = $e->getErrors();
+    } catch(Exception $e) {
+      if($transactions) {
+        $this->TransactionManager->rollbackTransaction($transactions);
+      }
+      $result['success'] = false;
+      $result['errorCode'] = 400;
+      $result['errorMessages'] = [];
+    }
+    return json_encode($result);
+  }
+
+  public function downloadTemplate() {
+    $this->autoRender = false;
+    $filePath = ROOT.DS.self::TEMPLATE_FILE_NAME;
+    $this->response->download(self::TEMPLATE_FILE_NAME);
+    $this->response->file($filePath);
+  }
+
   /**
    * 保存機能
    * @param array $inputData
    * @return void
    * */
   private function _entry($saveData) {
+    $nextPage = '1';
+    $transactions = null;
+    try {
+      $transactions = $this->TransactionManager->begin();
+      $nextPage = $this->_entryForApi($saveData);;
+      $this->TransactionManager->commitTransaction($transactions);
+      $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
+      $this->redirect('/TAutoMessages/index/page:'.$nextPage);
+    } catch(AutoMessageException $e) {
+      $this->TransactionManager->rollbackTransaction($transactions);
+      $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
+      $this->set('errors', $e->getErrors());
+      $this->set('lastPage', $e->getLastPage());
+    } catch(Exception $e) {
+      $this->TransactionManager->rollbackTransaction($transactions);
+      $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
+    }
+  }
+
+  /**
+   * 保存機能
+   * トランザクションはこのメソッドの呼び出し元で管理している。（TransactionManager）
+   * @param array $inputData
+   * @return {String}
+   * */
+  private function _entryForApi($saveData) {
     $errors = [];
     $saveData['TAutoMessage']['m_companies_id'] = $this->userInfo['MCompany']['id'];
     if(array_key_exists ('lastPage',$saveData)){
@@ -573,7 +710,6 @@ class TAutoMessagesController extends AppController {
       $nextPage = '1';
     }
 
-    $this->TAutoMessage->begin();
     if ( empty($saveData['TAutoMessage']['id']) ) {
       //新規追加
       $this->TAutoMessage->create();
@@ -597,13 +733,13 @@ class TAutoMessagesController extends AppController {
         if($lastData['TAutoMessage']['sort'] === '0'
             || $lastData['TAutoMessage']['sort'] === 0
             || $lastData['TAutoMessage']['sort'] === null){
-              //ソート順が登録されていなかったらソート順をセットする
-              if(! $this->remoteSetSort()){
-                $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
-                return false;
-              }
-              //もう一度ソートの最大値を取り直す
-              $lastData = $this->TAutoMessage->find('first', $params);
+          //ソート順が登録されていなかったらソート順をセットする
+          if(! $this->remoteSetSort()){
+            $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
+            throw new AutoMessageException('ソート順が設定できませんでした。');
+          }
+          //もう一度ソートの最大値を取り直す
+          $lastData = $this->TAutoMessage->find('first', $params);
         }
       }
       $nextSort = 1;
@@ -640,17 +776,16 @@ class TAutoMessagesController extends AppController {
           $fromName = $v;
         }
       }
-      $this->MMailTransmissionSetting->begin();
       if(empty($saveData['TAutoMessage']['m_mail_transmission_settings_id'])) {
         $this->MMailTransmissionSetting->create();
       } else {
         $this->MMailTransmissionSetting->read(null, $saveData['TAutoMessage']['m_mail_transmission_settings_id']);
       }
       $this->MMailTransmissionSetting->set([
-        'm_companies_id' => $this->userInfo['MCompany']['id'],
-        'from_name' => $fromName,
-        'to_address' => $toAddresses,
-        'subject' => $subject
+          'm_companies_id' => $this->userInfo['MCompany']['id'],
+          'from_name' => $fromName,
+          'to_address' => $toAddresses,
+          'subject' => $subject
       ]);
       $validate = $this->MMailTransmissionSetting->validates();
       $errors = $this->MMailTransmissionSetting->validationErrors;
@@ -671,12 +806,10 @@ class TAutoMessagesController extends AppController {
           }
         }
       } else {
-        $this->TAutoMessage->rollback();
-        $this->MMailTransmissionSetting->rollback();
-        $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
-        $this->set('errors', $errors);
-        $this->set('lastPage', $nextPage);
-        return;
+        $exception = new AutoMessageException('バリデーションエラー');
+        $exception->setErrors($errors);
+        $exception->setLastPage($nextPage);
+        throw $exception;
       }
     } else {
       $saveData['main']['send_mail_flg'] = 0;
@@ -723,19 +856,23 @@ class TAutoMessagesController extends AppController {
       $changeEditData = json_encode($changeEditData);
       $saveData['TAutoMessage']['activity'] = $changeEditData;
       if( $this->TAutoMessage->save($saveData,false) ) {
-        $this->TAutoMessage->commit();
-        $this->MMailTransmissionSetting->commit();
-        $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
-        $this->redirect('/TAutoMessages/index/page:'.$nextPage);
       }
     }
     else {
-      $this->TAutoMessage->rollback();
-      $this->MMailTransmissionSetting->rollback();
-      $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
+      $exception = new AutoMessageException('バリデーションエラー');
+      $exception->setErrors($errors);
+      $exception->setLastPage($nextPage);
+      throw $exception;
     }
-    $this->set('errors', $errors);
-    $this->set('lastPage', $nextPage);
+
+    $count = $this->TAutoMessage->find('first',[
+      'fields' => ['count(*) as count'],
+      'conditions' => ['TAutoMessage.del_flg != ' => 1, 'm_companies_id' => $this->userInfo['MCompany']['id']]
+    ]);
+
+    $page = floor((intval($count[0]['count']) + 100) / 100);
+
+    return $page >= 1 ? $page : 1;
   }
 
   /**
