@@ -762,7 +762,7 @@ io.sockets.on('connection', function (socket) {
             chatData.historyId = historyId;
 
             var sql  = "SELECT";
-                sql += " chat.id, chat.message, chat.message_type as messageType, chat.achievement_flg as achievementFlg, chat.m_users_id as userId, mu.display_name as userName, chat.message_read_flg as messageReadFlg, chat.created ";
+                sql += " chat.id, chat.message, chat.message_type as messageType, chat.achievement_flg as achievementFlg,chat.delete_flg as deleteFlg, chat.m_users_id as userId, mu.display_name as userName, chat.message_read_flg as messageReadFlg, chat.created ";
                 sql += "FROM t_history_chat_logs AS chat ";
                 sql += "LEFT JOIN m_users AS mu ON ( mu.id = chat.m_users_id ) ";
                 sql += "WHERE t_histories_id = ? ORDER BY created";
@@ -896,7 +896,7 @@ io.sockets.on('connection', function (socket) {
                   }
 
                   //通知された場合
-                  if(ret.opFlg === true) {
+                  if(ret.opFlg === true && d.notifyToCompany) {
                     pool.query("UPDATE t_history_chat_logs SET notice_flg = 1 WHERE t_histories_id = ? AND message_type = 1 AND id = ?;",
                       [sincloCore[d.siteKey][d.tabId].historyId, results.insertId], function(err, ret, fields){}
                     );
@@ -1718,6 +1718,9 @@ io.sockets.on('connection', function (socket) {
         data.userCnt = cnt.length;
         data.onlineUserCnt = opKeys.length;
 
+        data.activeOperatorList = activeOperator[res.siteKey];
+        data.onlineOperatorList = company.info[res.siteKey];
+
         // 企業側に情報提供
         emit.toCompany('getAccessInfo', data, res.siteKey);
         // 消費者にアクセス情報要求
@@ -1728,6 +1731,18 @@ io.sockets.on('connection', function (socket) {
         var chunkSize = 100;
         var keyLength = Object.keys(customerList[res.siteKey]).length;
         Object.keys(customerList[res.siteKey]).forEach(function(key){
+          var splitedKey = key.split("_");
+          if (splitedKey.length === 3 && isset(splitedKey[2])) {
+            if(!io.sockets.connected[splitedKey[2]]) {
+              var targetTabId = customerList[key].tabId;
+              console.log("【" + res.siteKey + "】 customerList key : " + key + " client is not exist. deleting. targetTabId : " + targetTabId);
+              if(targetTabId && targetTabId !== "") {
+                emit.toCompany('unsetUser', {siteKey: res.siteKey, tabId: targetTabId}, res.siteKey);
+              }
+              delete customerList[key];
+              return;
+            }
+          }
           var val = getConnectInfo(customerList[res.siteKey][key]);
           if(val.time) {
             val.term = timeCalculator(val);
@@ -2466,6 +2481,7 @@ io.sockets.on('connection', function (socket) {
 
     var setList = {};
     for (var i = 0; i < obj.messages.length; i++) {
+      if(!isset(obj.messages[i]) || !isset(obj.messages[i].created)) continue;
       var created = new Date(obj.messages[i].created);
       obj.messages[i].messageType = chatApi.cnst.observeType.auto;
       setList[fullDateTime(Date.parse(created))] = obj.messages[i];
@@ -3343,7 +3359,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
           // 新しいユーザーの人数を送る
           var cnt = Object.keys(company.info[userInfo.siteKey]);
-          emit.toCompany('outCompanyUser', {siteKey: userInfo.siteKey, userCnt: cnt.length}, userInfo.siteKey);
+          emit.toCompany('outCompanyUser', {siteKey: userInfo.siteKey, userCnt: cnt.length, userId: userInfo.userId}, userInfo.siteKey);
 
           // 受付中オペレータの情報削除
           if ( (userInfo.siteKey in activeOperator) && (userInfo.userId in activeOperator[userInfo.siteKey]) ) {
@@ -3486,6 +3502,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       if(keys && keys.length > 0) {
         keys.forEach(function(key) {
           if(key.indexOf(socket.id) >= 0) {
+            console.log("delete customerList[" + info.siteKey + "]["+key+"]");
             delete customerList[info.siteKey][key];
           }
         });

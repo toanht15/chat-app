@@ -13,7 +13,7 @@
       $scope.messageList = [];
       $.ajax({
         type: "GET",
-        url: "<?=$this->Html->url(['controller'=>'ChatHistories', 'action' => 'remoteGetOldChat'])?>",
+        url: "<?=$this->Html->url(['controller'=>'ChatHistories', 'action' => 'getOldChat'])?>",
         data: {
           historyId: '<?=$historyId?>'
         },
@@ -91,7 +91,7 @@
       }).then(function(){
         $.ajax({
           type: "GET",
-          url: "<?=$this->Html->url(['controller'=>'ChatHistories', 'action' => 'remoteGetOldChat'])?>",
+          url: "<?=$this->Html->url(['controller'=>'ChatHistories', 'action' => 'getOldChat'])?>",
           data: {
             historyId:  historyId
           },
@@ -217,7 +217,6 @@
       var div = document.createElement('div');
       var li = document.createElement('li');
       var content = "";
-
       var type = Number(chat.messageType);
       var message = chat.message;
       var userId = Number(chat.userId);
@@ -269,7 +268,7 @@
             content += '<img src= /img/close_b.png alt=履歴削除 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+forDeletionMessage+'","'+created+'") width=21 height=21 style="cursor:pointer; float:right; color: #fff !important; padding:2px !important; margin-right: auto;">'
           }
           else if(chat.permissionLevel == 1 && coreSettings == "") {
-            content += '<img src= /img/close_b.png alt=履歴削除 class = \"commontooltip disabled\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" data-balloon-position = \"'+dataBaloon+'\"  width=21 height=21 style="cursor:pointer; float:right; color: #fff !important; padding:2px !important; margin-right: auto;">'
+            content += '<img src= /img/close_b.png alt=履歴削除 class = \"commontooltip disabled deleteChat\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" data-balloon-position = \"'+dataBaloon+'\"  width=21 height=21 style="cursor:pointer; float:right; color: #fff !important; padding:2px !important; margin-right: auto;">'
           }
           content +=  "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message, {radio: false})+"</span>";
         }
@@ -307,7 +306,7 @@
             content += '<img src= /img/close_b.png alt=履歴削除 width=21 height=21 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+forDeletionMessage+'","'+created+'") style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
           }
           else if(chat.permissionLevel == 1 && coreSettings == "") {
-            content += '<img src= /img/close_b.png alt=履歴削除 class = \"commontooltip disabled\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" data-balloon-position = \"'+dataBaloon+'\"  width=21 height=21 style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
+            content += '<img src= /img/close_b.png alt=履歴削除 class = \"commontooltip disabled deleteChat\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" data-balloon-position = \"'+dataBaloon+'\"  width=21 height=21 style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
           }
           content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message)+"</span>";
         }
@@ -340,7 +339,7 @@
             content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+forDeletionMessage+'","'+created+'") style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">';
           }
           else if(chat.permissionLevel == 1 && coreSettings == "") {
-            content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 class = \"commontooltip disabled\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" data-balloon-position = \"'+dataBaloon+'\" style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">';
+            content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 class = \"commontooltip disabled deleteChat\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" data-balloon-position = \"'+dataBaloon+'\" style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">';
           }
           content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message)+"</span>";
         }
@@ -373,7 +372,7 @@
             content += '<img src= /img/close_b.png alt=履歴削除 width=21 height=21 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+forDeletionMessage+'","'+created+'") style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
           }
           else if(chat.permissionLevel == 1 && coreSettings == "") {
-            content += '<img src= /img/close_b.png alt=履歴削除 class = \"commontooltip disabled\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\"　data-balloon-position = \"'+dataBaloon+'\"  width=21 height=21 style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
+            content += '<img src= /img/close_b.png alt=履歴削除 class = \"commontooltip disabled deleteChat\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\"　data-balloon-position = \"'+dataBaloon+'\"  width=21 height=21 style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
           }
           content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message)+"</span>";
         }
@@ -398,13 +397,14 @@
         else {
           // ファイル送信はmessageがJSONなのでparseする
           message = JSON.parse(message);
+          var forDeletionMessage = message.fileName.replace(/\r?\n?\s+/g,"");
           content = "<span class='cName' style = 'font-size:"+fontSize+"'>ファイル送信" + (isExpired ? "（ダウンロード有効期限切れ）" : "") + "</span>";
           content += "<span class='cTime' style = 'font-size:"+timeFontSize+"'>"+chat.created+"</span>";
           if(chat.permissionLevel == 1 && coreSettings == 1) {
-            content += '<img src= /img/close_b.png alt=履歴削除 width=21 height=21 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+message.fileName+'","'+created+'") style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
+            content += '<img src= /img/close_b.png alt=履歴削除 width=21 height=21 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+forDeletionMessage+'","'+created+'") style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
           }
           else if(chat.permissionLevel == 1 && coreSettings == "") {
-            content += '<img src= /img/close_b.png alt=履歴削除 class = \"commontooltip disabled\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" data-balloon-position = \"'+dataBaloon+'\"  width=21 height=21 style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
+            content += '<img src= /img/close_b.png alt=履歴削除 class = \"commontooltip disabled deleteChat\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" data-balloon-position = \"'+dataBaloon+'\"  width=21 height=21 style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
           }
 
           var isExpired = Math.floor((new Date()).getTime() / 1000) >=  (Date.parse( message.expired.replace( /-/g, '/') ) / 1000);
@@ -564,7 +564,7 @@
         scope.showDetail = function(id){
           $.ajax({
             type: 'GET',
-            url: "<?= $this->Html->url(array('controller' => 'Histories', 'action' => 'remoteGetCustomerInfo')) ?>",
+            url: "<?= $this->Html->url(array('controller' => 'Histories', 'action' => 'getCustomerInfo')) ?>",
             data: {
               historyId: id
             },
@@ -583,7 +583,7 @@
   window.openHistoryById = function(id){
     $.ajax({
       type: 'GET',
-      url: "<?= $this->Html->url(array('controller' => 'Histories', 'action' => 'remoteGetStayLogs')) ?>",
+      url: "<?= $this->Html->url(array('controller' => 'ChatHistories', 'action' => 'remoteGetStayLogs')) ?>",
       data: {
         historyId: id
       },
@@ -618,7 +618,7 @@
     window.openChatById = function(id){
       $.ajax({
         type: 'GET',
-        url: "<?= $this->Html->url(array('controller' => 'ChatHistories', 'action' => 'remoteGetChatLogs')) ?>",
+        url: "<?= $this->Html->url(array('controller' => 'ChatHistories', 'action' => 'getChatLogs')) ?>",
         cache: false,
         data: {
           historyId: id
@@ -808,13 +808,17 @@ $(document).ready(function(){
     $('#mainDatePeriod').html(historySearchConditions.History.period + ' : ' + historySearchConditions.History.start_day + '-' + historySearchConditions.History.finish_day);
   });
 
+  var number = 1;
   var prevBoldTarget = null;
+  var numberLines;
   $('.showBold').on('click', function(e){
+    var getTopPosition  = $(".dataTables_scrollBody").scrollTop();
+    //number = Math.floor($(this)[0]['offsetTop']/67) + 1;
     $('.showBold').each(function(index){
       if((location.search.split("?")[1]) !== undefined && location.search.split("?")[1].match(/id/)) {
         if ((location.search.split("?")[1]).substr(3) == $(this)[0]['id']) {
           $(this).find('td').each(function(index){
-            if(index < 11) {
+            if(index < 12) {
               $(this).css("background-color", "#fff");
               $(this).css("font-weight", "normal");
             }
@@ -823,7 +827,7 @@ $(document).ready(function(){
       }
       else {
       $('.showBold').find('td').each(function(index){
-        if(index < 11) {
+        if(index < 12) {
           $(this).css("background-color", "#fff");
           $(this).css("font-weight", "normal");
         }
@@ -832,14 +836,14 @@ $(document).ready(function(){
     });
     if(prevBoldTarget != null) {
       prevBoldTarget.find('td').each(function(index){
-        if(index < 11) {
+        if(index < 12) {
           $(this).css("background-color", "#fff");
           $(this).css("font-weight", "normal");
         }
       });
     }
     $(this).find('td').each(function(index){
-      if(index < 11) {
+      if(index < 12) {
         $(this).css("background-color", "#ebf6f9");
         $(this).css("font-weight", "bold");
       }
@@ -851,7 +855,10 @@ $(document).ready(function(){
     if((location.search.split("?")[1]) !== undefined && location.search.split("?")[1].match(/id/)) {
       if ((location.search.split("?")[1]).substr(3) == $(this)[0]['id']) {
         $(this).find('td').each(function(index){
-          if(index < 11) {
+          if(index < 12) {
+            if(index == 0) {
+              prevBoldTarget = $(this).parent('tr');
+            }
             $(this).css("background-color", "#ebf6f9");
             $(this).css("font-weight", "bold");
           }
@@ -860,14 +867,110 @@ $(document).ready(function(){
     }
     else {
       $('.showBold').find('td').each(function(index){
-        if(index < 11) {
+        if(index < 12) {
+          if(index == 0) {
+            prevBoldTarget = $(this).parent('tr');
+          }
           $(this).css("background-color", "#ebf6f9");
           $(this).css("font-weight", "bold");
         }
       });
     }
   });
-  prevBoldTarget = $(this);
+
+  var prevBoldTarget2 = 0;
+  var id;
+  var scrollHeight = 1;
+  var focusHeigt;
+  $(window).on('keydown', function(e) {
+    var check = parseInt($(".dataTables_scrollBody").css('height'));
+    if(e.keyCode === 40) { // ↓
+      e.preventDefault();
+      number = number + 1;
+      if(prevBoldTarget.next("tr")[0] != null) {
+        prevBoldTarget.find('td').each(function(index){
+          if(index < 12) {
+            $(this).css("background-color", "#fff");
+            $(this).css("font-weight", "normal");
+          }
+        });
+        prevBoldTarget.next("tr").find('td').each(function(index){
+          if(index < 12) {
+            if(index == 0) {
+              id = $(this).parent('tr')[0]['id'];
+              prevBoldTarget = $(this).parent('tr');
+              focusHeigt = $(this).offset().top;
+            }
+            $(this).css("background-color", "#ebf6f9");
+            $(this).css("font-weight", "bold");
+          }
+        });
+      }
+
+      //チャット情報取得
+      var element = document.getElementById("chat_history_idx");
+      // jQueryかjqLiteが有効な場合はセレクタを使える
+      // var $scope = angular.element('#myElement').scope()
+      var $scope = angular.element(element).scope();
+      $scope.getOldChat(id, false);
+      //ユーザー情報取得
+      openChatById(id);
+
+      var row = chatTable.rows.length;
+      if(prevBoldTarget.next("tr")[0] != null && parseInt($(".dataTables_scrollBody").css('height')) - (focusHeigt - ($('.dataTables_scroll').offset()['top']+49) + prevBoldTarget.next("tr")[0]['clientHeight']) < 0 ) {
+          $(".dataTables_scrollBody").scrollTop($(".dataTables_scrollBody").scrollTop()+prevBoldTarget.next("tr")[0]['clientHeight']);
+          if(scrollHeight < (row-number)) {
+            scrollHeight = scrollHeight + 1;
+          }
+          number = number -1;
+      }
+      else if(prevBoldTarget.next("tr")[0] == null) {
+        $(".dataTables_scrollBody").scrollTop($(".dataTables_scrollBody").scrollTop()+prevBoldTarget[0]['clientHeight']);
+      }
+    }
+    if(e.keyCode === 38) { // ↑キーを押したら
+      e.preventDefault();
+      if(number > 0) {
+        number = number - 1;
+      }
+      if(prevBoldTarget.prev("tr")[0] != null) {
+        prevBoldTarget.find('td').each(function(index){
+          if(index < 12) {
+            if(index == 0) {
+              focusHeigt = $(this).offset().top;
+            }
+            $(this).css("background-color", "#fff");
+            $(this).css("font-weight", "normal");
+          }
+        });
+        prevBoldTarget.prev("tr").find('td').each(function(index){
+          if(index < 12) {
+            if(index == 0) {
+              id = $(this).parent('tr')[0]['id'];
+              prevBoldTarget = $(this).parent('tr');
+            }
+            $(this).css("background-color", "#ebf6f9");
+            $(this).css("font-weight", "bold");
+          }
+        });
+      }
+
+      //ユーザー情報取得
+      openChatById(id);
+      //チャット情報取得
+      var element = document.getElementById("chat_history_idx");
+      // jQueryかjqLiteが有効な場合はセレクタを使える
+      // var $scope = angular.element('#myElement').scope()
+      var $scope = angular.element(element).scope();
+      $scope.getOldChat(id, false);
+      if( prevBoldTarget.prev("tr")[0] != null && focusHeigt-($('.dataTables_scroll').offset()['top']+49)-prevBoldTarget.prev("tr")[0]['clientHeight'] < 0) {
+        $(".dataTables_scrollBody").scrollTop($(".dataTables_scrollBody").scrollTop()-prevBoldTarget.prev("tr")[0]['clientHeight']);
+      }
+      else if(prevBoldTarget.prev("tr")[0] == null) {
+        $(".dataTables_scrollBody").scrollTop(0);
+      }
+    }
+  });
 
 
   //検索ボタン
@@ -955,4 +1058,5 @@ $(document).ready(function(){
     });
   });
 });
+
 </script>
