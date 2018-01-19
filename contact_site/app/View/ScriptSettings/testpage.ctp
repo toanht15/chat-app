@@ -23,7 +23,7 @@
         <pre class="p15l">他ページにて上記動作を試してみてください。</pre>
       </div>
     </div>
-    <?php echo $this->Html->script($fileName); ?>
+    <?php echo $this->Html->script($fileName, ['data-show-always' => 1]); ?>
 
 <?php     break; ?>
 <?php   case 2: ?>
@@ -38,7 +38,7 @@
         <span>画面同期を行う対象のページにしつつ、<br>ウィジェットの表示をさせないためのタグです。</span>
       </div>
     </div>
-    <?php echo $this->Html->script($fileName, ['data-hide' => 1]); ?>
+    <?php echo $this->Html->script($fileName, ['data-hide' => 1, 'data-show-always' => 1]); ?>
 <?php     break; ?>
 <?php   case 3: ?>
 
@@ -121,7 +121,7 @@
   <?= $this->Form->end(); ?>
       </div>
     </div>
-    <?php echo $this->Html->script($fileName, ['data-form' => 1]); ?>
+    <?php echo $this->Html->script($fileName, ['data-form' => 1, 'data-show-always' => 1]); ?>
 <?php     break; ?>
 <?php   case 4: ?>
     <div id="testpage_idx">
