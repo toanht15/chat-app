@@ -813,7 +813,7 @@ var socket, // socket.io
 
       html += '      #sincloWidgetBox > section { background-color: #FFF; border-top: none; }';
       html += '      #sincloBox ul#chatTalk li a, #sincloBox #fotter a {  text-decoration: underline; }';
-      html += '      #sincloBox section { display: none; padding: 0!important; }';
+      html += '      #sincloBox section { display: none; padding: 0!important; top:0px!important; }';
       html += '      #sincloBox .flexBox { position: relative; display: -ms-flexbox; display: -webkit-flex; display: flex; -ms-flex-direction: column; -webkit-flex-direction: column; flex-direction: column }';
       if(widget.chatMessageCopy === 1) {
         html += '      #sincloBox .flexBoxRow { display: -ms-flexbox; display: -webkit-flex; display: flex; -ms-flex-direction: row; -webkit-flex-direction: row; flex-direction: row; user-select: none;-moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;}';
@@ -1505,6 +1505,10 @@ var socket, // socket.io
       // 同時対応上限数の設定があり、超えている場合
       if ( window.sincloInfo.hasOwnProperty('opFlg') && window.sincloInfo.opFlg === false ) {
         window.sincloInfo.widgetDisplay = false;
+      }
+      // 常に表示する設定の値があれば必ず表示する
+      if (check.isset(window.sincloInfo.dataset) && (check.isset(window.sincloInfo.dataset.showAlways) && window.sincloInfo.dataset.showAlways === "1")) {
+        window.sincloInfo.widgetDisplay = true;
       }
       // 同期対象とするが、ウィジェットは表示しない
       if (check.isset(window.sincloInfo.dataset) && (check.isset(window.sincloInfo.dataset.hide) && window.sincloInfo.dataset.hide === "1")) {
@@ -2588,7 +2592,7 @@ var socket, // socket.io
       return {
         ipAddress: this.getIp(),
         time: this.getTime(),
-        prev: prev,
+        prev: prev ? prev : this.prev,
         stayCount: this.getStayCount(),
         referrer: this.referrer,
         userAgent: window.navigator.userAgent,
@@ -3734,4 +3738,8 @@ if (myTag.getAttribute('data-hide')) {
 }
 if (myTag.getAttribute('data-form')) {
     sincloInfo.dataset.form = myTag.getAttribute('data-form');
+}
+if (myTag.getAttribute('data-show-always')) {
+    // オペレータ存在条件や営業時間設定に依存せずtrueであれば表示
+    sincloInfo.dataset.showAlways = myTag.getAttribute('data-show-always');
 }

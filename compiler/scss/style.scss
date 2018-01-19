@@ -1280,6 +1280,32 @@ ul.naviBtn {
               }
             }
         }
+        &#showOperatorPresenceBtn {
+          display: inline-block;
+          margin-left: 3em;
+          padding: 0.3em 1.3em;
+          font-size: 14px!important;
+          font-weight: normal;
+          border-radius: 5px;
+          float: initial;
+
+          &.blueBtn {
+            background-color: $wait-color!important;
+            border-color: $wait-color!important;
+            &:hover {
+              background-color: #8cab4c !important;
+              border-color: #8cab4c !important;
+            }
+          }
+          &.redBtn {
+            background-color: $stop-color!important;
+            border-color: $stop-color!important;
+            &:hover {
+              background-color: #ca8785 !important;
+              border-color: #ca8785 !important;
+            }
+          }
+        }
       }
     }
   }
@@ -4582,6 +4608,58 @@ ul.naviBtn {
         }
     }
 
+    #rightContentWrap {
+      display: flex;
+      #importBtnAreaWrap {
+        display:table;
+        height:33px;
+        margin-right: 1em;
+        #importBtnArea {
+          display: table-cell;
+          vertical-align: middle;
+          #importExcelBtn {
+            width: 14em;
+            height: 2em;
+            padding: 0.25em 0.5em;
+            text-align: center;
+          }
+        }
+      }
+    }
+  }
+
+  #autoMessageLayerMenu {
+    display: none;
+    position: absolute;
+    top: 101px;
+    right: 152px;
+    width: 252px;
+    font-size: 12px;
+    z-index: 9999;
+    ul {
+      border: solid 1px #ccc;
+      display: block;
+      box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
+      padding: 5px 0px !important;
+      background: #fff;
+      li.t-link {
+        padding: 0px 0px 0px;
+        width: 100%;
+        height: 100%;
+        a:hover {
+          background-color: #C3D69B;
+          color: #fff;
+          text-decoration: none;
+          display: block;
+          padding: 10px 10px 10px
+        }
+        a{
+          text-decoration: none;
+          display: block;
+          padding: 10px 10px 10px
+        }
+      }
+    }
   }
 
   #tautomessages_list {
@@ -4724,6 +4802,12 @@ ul.naviBtn {
     section {
 
       ul.settingList {
+        #TAutoMessageName {
+          width: 36.4em;
+        }
+        #TAutoMessageTrigger {
+          width: 13em;
+        }
         .explainTooltip {
           z-index: 10;
           position: absolute;
@@ -4863,12 +4947,15 @@ ul.naviBtn {
           }
 
           &#tautomessages_triggers {
+            display: flex;
             min-height: 300px;
           }
 
           #setTriggerList {
-            width: 31em;
             position: relative;
+            flex-grow: 1;
+            max-width: 70em;
+            min-width: 25.5em;
 
             > ul {
 
@@ -4883,6 +4970,7 @@ ul.naviBtn {
               }
               > items li.triggerItem {
                 display: block;
+                padding-bottom: 15px;
                 position: relative;
                 overflow: hidden;
                 transition: height 200ms linear;
@@ -4906,9 +4994,8 @@ ul.naviBtn {
                     }
                     &.labelArea  {
                       display: block;
-                      width: 25.5em;
                       margin-left: 2.5em;
-                      padding: 9px 0.25em;
+                      padding: 9px 9px 9px 0.25em;
                       height: 34px;
                     }
 
@@ -4947,12 +5034,50 @@ ul.naviBtn {
                 div {
                   padding: 0.5em;
                   border-top: 1px solid $main-color;
-
+                  &.explainWrapper {
+                    padding: 0;
+                    border-top: initial;
+                    margin-left: 11em;
+                    s {
+                      display: block;
+                    }
+                  }
+                  &.keywordWrapper {
+                    padding: 0;
+                    border-top: initial;
+                    flex-grow: 1;
+                    max-width: 55.5em;
+                    min-width: 17em;
+                    div {
+                      display: flex;
+                      padding: inherit;
+                      border-top: inherit;
+                    }
+                    input[type="text"] {
+                      flex-grow: 1;
+                      min-width: 2em;
+                    }
+                    p {
+                      margin: 0.5em 0 0;
+                    }
+                    s {
+                      display: inline-block;
+                      padding-top: 6px;
+                    }
+                    select {
+                      flex-basis: 12em;
+                      min-width: 12em;
+                      padding: 3px 0 5px;
+                      margin-left: 15px;
+                    }
+                  }
                   ul {
                     > li {
                       padding: 0.5em;
+                      display: flex;
                       > span:first-child {
-                        width: 10em;
+                        flex-basis: 10em;
+                        min-width: 10em;
                         display: block;
                       }
                     }
@@ -4965,7 +5090,7 @@ ul.naviBtn {
                         }
 
                         div.clockpicker {
-                          width:45%;
+                          width:20%;
 
                           input {
                             width: 100%;
@@ -4995,7 +5120,7 @@ ul.naviBtn {
             div.balloon {
               position: absolute;
               top: 0;
-              left: 31em;
+              left: 58em;
               background-color: #FF8E9E;
               z-index: $sub-sidebar-z-index;
               display: none;
@@ -5027,6 +5152,8 @@ ul.naviBtn {
           }
 
           #triggerList {
+            flex-basis: 364px;
+            min-width: 364px;
 
             span#pushImg {
               background-image: url("/img/push.png");
@@ -5076,9 +5203,25 @@ ul.naviBtn {
           }
         }
       }
+
+      &.section3 {
+        display: flex;
+
+        #tautomessages_action_entry {
+          flex-basis: 60%;
+        }
+
+        #tautomessages_action_simulator {
+          flex-basis: auto;
+          margin: auto 0 6px 20px;
+
+          section#switch_widget {
+            margin-bottom: 0.5em;
+          }
+        }
+      }
     }
   }
-
 }
 
 #tdictionaries_idx {
@@ -5413,6 +5556,88 @@ ul.naviBtn {
       :-ms-input-placeholder {
         text-align:left;
         font-size:12px;
+      }
+    }
+    &.hidden {
+      height: 0;
+    }
+    .error-message {
+      margin-top: 1em;
+      margin-left: 0;
+    }
+  }
+  #mtransfersetting_action {
+    padding: 10px;
+    clear: both;
+
+    a {
+      width: 100px;
+      padding: 10px;
+      display: block;
+      margin: 0 auto;
+      text-align: center;
+    }
+  }
+}
+
+/* ファイル送信設定 */
+#msecuritysettings_idx {
+  #msecuritysettings_content {
+    h3 {
+      border-bottom: 3px solid #C3D69B;
+      padding-left: 5px;
+      font-size: 13px;
+    }
+    ul {
+      li {
+        display: flex;
+        label {
+          cursor: pointer;
+          s {
+            font-size: 11px;
+            margin-left: 0.8em;
+          }
+        }
+      }
+    }
+  }
+  #ip_filter_settings_area {
+    padding-left: 5em;
+    height: 36em;
+    transition: height 200ms linear;
+    overflow: hidden;
+    pre {
+      margin: 0.1em 0;
+    }
+    p {
+      margin-bottom: 0.5em;
+    }
+    s {
+      display: block;
+    }
+    textarea {
+      resize: none;
+      width:  30em;
+      height: 10em;
+      font-size: 12px;
+      ::-webkit-input-placeholder {
+        text-align:left;
+        font-size:12px;
+      }
+      :-moz-placeholder { /* Firefox 18- */
+        text-align:left;
+        font-size:12px;
+      }
+      ::-moz-placeholder {  /* Firefox 19+ */
+        text-align:left;
+        font-size:12px;
+      }
+      :-ms-input-placeholder {
+        text-align:left;
+        font-size:12px;
+      }
+      &.disabled {
+        background-color: rgb(204, 204, 204);
       }
     }
     &.hidden {

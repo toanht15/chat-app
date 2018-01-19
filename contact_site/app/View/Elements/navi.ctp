@@ -112,6 +112,9 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
         <div class="icon">
             <?= $this->htmlEx->naviLink('ユーザー管理', 'users.png', ['href' => ['controller' => 'MUsers', 'action' => 'index']]) ?>
         </div>
+        <div class="icon">
+          <?= $this->htmlEx->naviLink('セキュリティ', 'security_settings_menu.png', ['href' => ['controller' => 'MSecuritySettings', 'action' => 'edit']]) ?>
+        </div>
     <?php endif; ?>
         <div class="icon">
             <?= $this->htmlEx->naviLink($codeAndDemoTitle, 'script.png', ['href' => ['controller' => 'ScriptSettings', 'action' => 'index']]) ?>

@@ -109,6 +109,14 @@ class TAutoMessage extends AppModel {
               }
             }
 
+            if (strcmp($field, "keyword_contains") === 0 || strcmp($field, "keyword_exclusions") === 0) {
+						  if(empty($item["keyword_contains"]) && empty($item["keyword_exclusions"])) {
+						    return false;
+              } else {
+						    continue;
+              }
+            }
+
 						// 値が未入力のものはエラー
 						if ( strcmp($item[$field], "") === 0 ) {
 							return false;

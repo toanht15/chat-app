@@ -70,6 +70,7 @@ class MFileTransferSettingController extends AppController
       $this->MFileTransferSetting->create();
       $this->MFileTransferSetting->begin();
       $insertData = [
+        'm_companies_id' => $this->userInfo['MCompany']['id'],
         'type' => $this->request->data['MFileTransferSetting']['type']
       ];
 

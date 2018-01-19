@@ -161,6 +161,24 @@ class AppSchema extends CakeSchema {
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
 	);
 
+	public $m_ip_filter_settings = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary'),
+		'm_companies_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false),
+		'active_flg' => array('type' => 'boolean', 'null' => false, 'default' => '0', 'comment' => '0：無効、１：有効'),
+		'filter_type' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 2, 'unsigned' => false, 'comment' => '１：ホワイトリスト形式、２：ブラックリスト形式'),
+		'ips' => array('type' => 'text', 'null' => false, 'default' => null, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'created' => array('type' => 'datetime', 'null' => true, 'default' => null),
+		'created_user_id' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false),
+		'modified' => array('type' => 'datetime', 'null' => true, 'default' => null),
+		'modified_user_id' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false),
+		'deleted' => array('type' => 'datetime', 'null' => true, 'default' => null),
+		'deleted_user_id' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false),
+		'indexes' => array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1)
+		),
+		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
+	);
+
 	public $m_ip_informations = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary'),
 		'm_companies_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'index'),
@@ -264,7 +282,7 @@ class AppSchema extends CakeSchema {
 		'operation_list_columns' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 500, 'collate' => 'utf8_general_ci', 'comment' => 'リアルタイムモニタ一覧表示項目リスト', 'charset' => 'utf8'),
 		'history_list_columns' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 100, 'collate' => 'utf8_general_ci', 'comment' => '履歴一覧表示項目リスト', 'charset' => 'utf8'),
 		'session_rand_str' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 20, 'collate' => 'utf8_general_ci', 'comment' => '多重ログイン防止用文字列', 'charset' => 'utf8'),
-    'chat_history_screen_flg' => array('type' => 'integer', 'null' => false, 'default' => '1', 'unsigned' => false),
+		'chat_history_screen_flg' => array('type' => 'integer', 'null' => false, 'default' => '1', 'unsigned' => false),
 		'del_flg' => array('type' => 'integer', 'null' => true, 'default' => '0', 'unsigned' => false, 'comment' => '削除フラグ'),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => null, 'comment' => '登録日'),
 		'created_user_id' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false, 'comment' => '登録実行ユーザ'),
@@ -503,7 +521,7 @@ class AppSchema extends CakeSchema {
 		'message_type' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'index', 'comment' => 'メッセージ種別（1:訪問者から、2:企業側から）'),
 		'message_distinction' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false),
 		'message_request_flg' => array('type' => 'integer', 'null' => true, 'default' => '0', 'unsigned' => false, 'key' => 'index'),
-    'notice_flg' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false),
+		'notice_flg' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false),
 		'message_read_flg' => array('type' => 'integer', 'null' => true, 'default' => '0', 'unsigned' => false, 'comment' => '既読フラグ'),
 		'achievement_flg' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false, 'key' => 'index', 'comment' => '成果フラグ(1:有効, 2:無効, null: 指定なし)'),
 		'send_mail_flg' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
