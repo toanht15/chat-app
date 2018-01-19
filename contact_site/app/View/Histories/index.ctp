@@ -149,9 +149,9 @@
       <?php
         if ($coreSettings[C_COMPANY_USE_CHAT]) :
         $checked = "";
-        $class = "";
+        $class = "checked";
         if (strcmp($groupByChatChecked, 'false') !== 0) {
-          $class = "checked";
+          $class = "";
           $checked = "checked=\"\"";
         }
       ?>
