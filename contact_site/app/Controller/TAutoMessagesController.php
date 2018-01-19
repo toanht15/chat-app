@@ -583,9 +583,9 @@ class TAutoMessagesController extends AppController {
 
     $component = new AutoMessageExcelParserComponent($file['tmp_name']);
     $component->getImportData();
-    $data = $component->toArray();
     $transactions = null;
     try {
+      $data = $component->toArray();
       $transactions = $this->TransactionManager->begin();
       $dataArray = [];
       $errorArray = [];
@@ -626,12 +626,6 @@ class TAutoMessagesController extends AppController {
         $this->TAutoMessage->set($saveData);
         $validate = $this->TAutoMessage->validates();
         $errors = $this->TAutoMessage->validationErrors;
-        if(!empty($errors)) {
-          $errorFound = true;
-          $errorArray[$row['rowNum']] = $errors;
-        } else {
-          array_push($dataArray, $saveData);
-        }
       }
       $nextPage = '1';
       if(!$errorFound) {
@@ -645,9 +639,19 @@ class TAutoMessagesController extends AppController {
         $result['errorMessage'] = []; // FIXME 何行目の何列がどうダメなのか返す
       }
     } catch(AutoMessageException $e) {
-      $this->TransactionManager->rollback($transactions);
+      if($transactions) {
+        $this->TransactionManager->rollback($transactions);
+      }
+      $result['success'] = false;
+      $result['errorCode'] = 400;
+      $result['errorMessages'] = $e->getErrors();
     } catch(Exception $e) {
-      $this->TransactionManager->rollback($transactions);
+      if($transactions) {
+        $this->TransactionManager->rollback($transactions);
+      }
+      $result['success'] = false;
+      $result['errorCode'] = 400;
+      $result['errorMessages'] = [];
     }
     return json_encode($result);
   }

@@ -475,8 +475,20 @@ var uploadFile = function(fileObj, loadFile) {
   })
   .done(function(data, textStatus, jqXHR){
     console.log(JSON.stringify(data));
-    $('#popup-main').html('インポートが完了しました。<br>ページを再読み込みします。');
-    $('#popup-button').css('display', '');
+    if(data.success) {
+      $('#popup-main').html('インポートが完了しました。<br>ページを再読み込みします。');
+      $('#popup-button').css('display', '');
+    } else {
+      var html = '<p id="importErrorMessage">インポート時にエラーが発生ました。<br>以下のエラー内容を確認してください。</p>';
+      html += '<div id="errorList">';
+      if(typeof(data.errorMessages) === 'object') {
+        Object.keys(data.errorMessages).forEach(function(key){
+          html += '<span>'
+        });
+      }
+      $('#popup-main').html();
+      $('#popup-button').css('display', '');
+    }
   })
   .fail(function(jqXHR, textStatus, errorThrown){
     alert("fail");

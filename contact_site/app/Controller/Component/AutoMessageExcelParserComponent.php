@@ -6,6 +6,7 @@
  * Time: 16:05
  */
 
+App::uses('AutoMessageException','Lib/Error');
 App::uses('ExcelParserComponent', 'Controller/Component');
 
 class AutoMessageExcelParserComponent extends ExcelParserComponent
@@ -49,29 +50,36 @@ class AutoMessageExcelParserComponent extends ExcelParserComponent
     $importData = [];
     $isNextHeader = false;
     $isNextContent = false;
+    $errorFound = false;
     foreach($this->dataArray as $index => $row) {
       if($isNextContent) {
         // データ取得処理
         if($this->isEOLrow($row)) break; // EOL行であればbreak
         if(empty($row[self::ROW_NAME])) continue;
         // バリデーションは呼び出し元で実行すること
-        array_push($importData,[
-          'rowNum' => $index+1,
-          'name' => $row[self::ROW_NAME],
-          'keyword_contains' => !empty(trim($row[self::ROW_CONTAINS])) ? trim($row[self::ROW_CONTAINS]) : "",
-          'keyword_contains_type' => $this->containsTypeMap[$row[self::ROW_CONTAINS_TYPE]],
-          'keyword_exclusions' => !empty(trim($row[self::ROW_EXCLUSIONS])) ? trim($row[self::ROW_EXCLUSIONS]) : "",
-          'keyword_exclusions_type' => $this->exclusionsTypeMap[$row[self::ROW_EXCLUSIONS_TYPE]],
-          'speechContentCond' => $this->keywordConditionMap[$row[self::ROW_KEYWORD_CONDITION]],
-          'triggerTimeSec' => intval($row[self::ROW_TRIGGER_TIME_SEC]),
-          'speechTriggerCond' => $this->triggerConditionMap[$row[self::ROW_TRIGGER_CONDITION]],
-          'action' => $this->convertSpecialChars($row[self::ROW_MESSAGE]),
-          'chat_textarea' => $this->triggerFreeInputMap[$row[self::ROW_FREE_INPUT]],
-          'cv' => $this->triggerCVMap[$row[self::ROW_CV]],
-          // FIXME メール送信対応
-          'send_mail_flg' => 0,
-          'active_flg' => $this->activeFlgMap[$row[self::ROW_ACTIVE]]
-        ]);
+        $errors = $this->rowValidate($row);
+        if(!empty($errors)) {
+          $errorFound = true;
+          $errorArray[$index] = $errors;
+        } else if(!empty($row[self::ROW_NAME])) {
+          array_push($importData, [
+            'rowNum' => $index,
+            'name' => $row[self::ROW_NAME],
+            'keyword_contains' => !empty(trim($row[self::ROW_CONTAINS])) ? trim($row[self::ROW_CONTAINS]) : "",
+            'keyword_contains_type' => $this->containsTypeMap[$row[self::ROW_CONTAINS_TYPE]],
+            'keyword_exclusions' => !empty(trim($row[self::ROW_EXCLUSIONS])) ? trim($row[self::ROW_EXCLUSIONS]) : "",
+            'keyword_exclusions_type' => $this->exclusionsTypeMap[$row[self::ROW_EXCLUSIONS_TYPE]],
+            'speechContentCond' => $this->keywordConditionMap[$row[self::ROW_KEYWORD_CONDITION]],
+            'triggerTimeSec' => intval($row[self::ROW_TRIGGER_TIME_SEC]),
+            'speechTriggerCond' => $this->triggerConditionMap[$row[self::ROW_TRIGGER_CONDITION]],
+            'action' => $this->convertSpecialChars($row[self::ROW_MESSAGE]),
+            'chat_textarea' => $this->triggerFreeInputMap[$row[self::ROW_FREE_INPUT]],
+            'cv' => $this->triggerCVMap[$row[self::ROW_CV]],
+            // FIXME メール送信対応
+            'send_mail_flg' => 0,
+            'active_flg' => $this->activeFlgMap[$row[self::ROW_ACTIVE]]
+          ]);
+        }
       } else if(!$isNextContent && $this->isBOLrow($row)) {
         //BOLの文字列があったら次の行がヘッダー
         $isNextHeader = true;
@@ -80,6 +88,11 @@ class AutoMessageExcelParserComponent extends ExcelParserComponent
         $isNextHeader = false;
         $isNextContent = true;
       }
+    }
+    if($errorFound) {
+      $exception = new AutoMessageException("Excelデータバリデーションエラー", 200);
+      $exception->setErrors($errorArray);
+      throw $exception;
     }
     return $importData;
   }
@@ -152,5 +165,53 @@ class AutoMessageExcelParserComponent extends ExcelParserComponent
         }
       }
       return $action;
+  }
+
+  private function rowValidate($data) {
+    $errors = [];
+    if(!Validation::maxLength($data[self::ROW_NAME], 50)) {
+      $this->addError($errors, self::ROW_NAME,'５０文字以内で入力してください');
+    }
+    if(empty($data[self::ROW_CONTAINS]) && empty($data[self::ROW_EXCLUSIONS])) {
+      $this->addError($errors, self::ROW_CONTAINS,'キーワードはいずれかの指定が必須です');
+    }
+    if(empty($this->containsTypeMap[$data[self::ROW_CONTAINS_TYPE]])) {
+      $this->addError($errors, self::ROW_CONTAINS_TYPE,'「すべて含む」「いずれかを含む」のいずれかの指定のみ可能です');
+    }
+    if(empty($this->exclusionsTypeMap[$data[self::ROW_EXCLUSIONS_TYPE]])) {
+      $this->addError($errors, self::ROW_EXCLUSIONS_TYPE,'「すべて含まない」「いずれかを含まない」のいずれかの指定のみ可能です');
+    }
+    if(empty($this->keywordConditionMap[$data[self::ROW_KEYWORD_CONDITION]])) {
+      $this->addError($errors, self::ROW_KEYWORD_CONDITION,'「完全一致」「部分一致」のいずれかの指定のみ可能です');
+    }
+    if(!Validation::range($data[self::ROW_TRIGGER_TIME_SEC], 1, 60)) {
+      $this->addError($errors, self::ROW_TRIGGER_TIME_SEC,'1から60までの数値指定のみ可能です');
+    }
+    if(empty($this->triggerConditionMap[$data[self::ROW_TRIGGER_CONDITION]])) {
+      $this->addError($errors, self::ROW_TRIGGER_CONDITION,'「１回のみ有効」「何度でも有効」のいずれかの指定のみ可能です');
+    }
+    if(empty($data[self::ROW_MESSAGE])) {
+      $this->addError($errors, self::ROW_MESSAGE,'メッセージの指定は必須です。');
+    }
+    if(empty($this->triggerFreeInputMap[$data[self::ROW_FREE_INPUT]])) {
+      $this->addError($errors, self::ROW_KEYWORD_CONDITION,'「ON（自由入力可）」「OFF（自由入力不可）」のいずれかの指定のみ可能です');
+    }
+    if(empty($this->triggerCVMap[$data[self::ROW_CV]])) {
+      $this->addError($errors, self::ROW_CV,'「する」「しない」のいずれかの指定のみ可能です');
+    }
+    if(empty($this->activeFlgMap[$data[self::ROW_ACTIVE]]) && @$this->activeFlgMap[$data[self::ROW_ACTIVE]] !== 0) {
+      $this->addError($errors, self::ROW_ACTIVE,'「有効」「無効」のいずれかの指定のみ可能です');
+    }
+
+    return $errors;
+  }
+
+  /**
+   * @param $errors
+   */
+  private function addError(&$errors, $type, $message)
+  {
+    if (empty($errors[$type])) $errors[$type] = [];
+    array_push($errors[$type], $message);
   }
 }
