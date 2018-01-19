@@ -2745,10 +2745,16 @@ ul.naviBtn {
       #searchPeriod {
         font-size: 1.1em !important;
       }
+      .firstChatTime {
+        font-size:7px !important;
+      }
+      .largeCharacters {
+        font-size:8px !important;
+      }
       #mainDatePeriod {
         font-size: 1.1em !important;
       }
-      #chatTalk * {
+      #chatContent * {
         font-size:7px !important;
         .fa-4x {
           font-size:4em !important;
@@ -2771,10 +2777,16 @@ ul.naviBtn {
       #searchPeriod {
         font-size: 1.1em !important;
       }
+      .firstChatTime {
+        font-size:9px !important;
+      }
+      .largeCharacters {
+        font-size:10px !important;
+      }
       #mainDatePeriod {
         font-size: 1.1em !important;
       }
-      #chatTalk * {
+      #chatContent * {
         font-size:9px !important;
         .fa-4x {
           font-size:4em !important;
@@ -2797,10 +2809,16 @@ ul.naviBtn {
       #searchPeriod {
         font-size: 1.1em !important;
       }
+      .firstChatTime {
+        font-size:13px !important;
+      }
+      .largeCharacters {
+        font-size:14px !important;
+      }
       #mainDatePeriod {
         font-size: 1.1em !important;
       }
-      #chatTalk * {
+      #chatContent * {
         font-size:13px !important;
         .fa-4x {
           font-size:4em !important;
@@ -2825,10 +2843,16 @@ ul.naviBtn {
       #searchPeriod {
         font-size: 1.1em !important;
       }
+      .firstChatTime {
+        font-size:16px !important;
+      }
+      .largeCharacters {
+        font-size:17px !important;
+      }
       #mainDatePeriod {
         font-size: 1.1em !important;
       }
-      #chatTalk * {
+      #chatContent * {
         font-size:16px !important;
         .fa-4x {
           font-size:4em !important;
@@ -2852,10 +2876,16 @@ ul.naviBtn {
       #searchPeriod {
         font-size: 1.1em !important;
       }
+      .firstChatTime {
+        font-size:20px !important;
+      }
+      .largeCharacters {
+        font-size:21px !important;
+      }
       #mainDatePeriod {
         font-size: 1.1em !important;
       }
-      #chatTalk * {
+      #chatContent * {
         font-size:20px !important;
         .fa-4x {
           font-size:4em !important;
@@ -2879,10 +2909,16 @@ ul.naviBtn {
       #searchPeriod {
         font-size: 1.1em !important;
       }
+      .firstChatTime {
+        font-size:24px !important;
+      }
+      .largeCharacters {
+        font-size:25px !important;
+      }
       #mainDatePeriod {
         font-size: 1.1em !important;
       }
-      #chatTalk * {
+      #chatContent * {
         font-size:24px !important;
         .fa-4x {
           font-size:4em !important;
@@ -2906,10 +2942,16 @@ ul.naviBtn {
       #searchPeriod {
         font-size: 1.1em !important;
       }
+      .firstChatTime {
+        font-size:36px !important;
+      }
+      .largeCharacters {
+        font-size:37px !important;
+      }
       #mainDatePeriod {
         font-size: 1.1em !important;
       }
-      #chatTalk * {
+      #chatContent * {
         font-size:36px !important;
         .fa-4x {
           font-size:4em !important;
@@ -3603,12 +3645,13 @@ ul.naviBtn {
 
   td, th {
     line-height: 1.5;
-    padding: 6px 3px;
+    padding: 6px 3px 6px 3px;
     width: 5%;
     &.ip-address {
       padding-left: 8px;
     }
-    #firstChatTime {
+    .firstChatTime {
+      min-width:25px;
       float:right;
       margin-right:10px;
       height:auto;
