@@ -985,6 +985,9 @@ class HistoriesController extends AppController {
       if ( strcmp($type, 'true') === 0 && !(!empty($data['THistoryChatLog']) && !empty(array_filter($data['THistoryChatLog']))) ) {
         $joinToChat['type'] = "LEFT";
       }
+      else if(empty($type)) {
+        $joinToChat['type'] = "LEFT";
+      }
       else {
         $joinToChat['type'] = "INNER";
       }
