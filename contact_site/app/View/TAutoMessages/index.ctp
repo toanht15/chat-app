@@ -91,26 +91,58 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
       <!-- オートメッセージ設定の並び替えモード -->
     </div>
     <!-- 検索窓 -->
-    <div id="paging" class="fRight">
-      <?php
-      echo $this->Paginator->prev(
-        $this->Html->image('paging.png', array('alt' => '前のページへ', 'width'=>25, 'height'=>25)),
-        array('escape' => false, 'class' => 'btn-shadow greenBtn tr180'),
-        null,
-        array('class' => 'grayBtn tr180')
-      );
-      ?>
-      <span style="width: auto!important;padding: 10px 0 0;"> <?php echo $this->Paginator->counter('{:page} / {:pages}'); ?> </span>
-      <?php
-      echo $this->Paginator->next(
-        $this->Html->image('paging.png', array('alt' => '次のページへ', 'width'=>25, 'height'=>25)),
-        array('escape' => false, 'class' => 'btn-shadow greenBtn'),
-        null,
-        array('escape' => false, 'class' => 'grayBtn')
-      );
-      ?>
+    <div id="rightContentWrap" class="fRight">
+      <div id="importBtnAreaWrap">
+        <div id="importBtnArea">
+        <?= $this->Html->link(
+          '発言内容Excelインポート',
+          'javascript:void(0)',
+          array('escape' => false,
+            'class'=>'btn-shadow'.(true ? " skyBlueBtn" : " grayBtn disabled commontooltip"),
+            'id' => 'importExcelBtn',
+            'disabled' => !true,
+            'data-text' => true ? "" : "こちらの機能はスタンダードプラン<br>からご利用いただけます。",
+            'data-balloon-position' => '75'
+          ));
+        ?>
+        </div>
+      </div>
+      <div id="paging">
+        <?php
+        echo $this->Paginator->prev(
+          $this->Html->image('paging.png', array('alt' => '前のページへ', 'width' => 25, 'height' => 25)),
+          array('escape' => false, 'class' => 'btn-shadow greenBtn tr180'),
+          null,
+          array('class' => 'grayBtn tr180')
+        );
+        ?>
+        <span style="width: auto!important;padding: 10px 0 0;"> <?php echo $this->Paginator->counter('{:page} / {:pages}'); ?> </span>
+        <?php
+        echo $this->Paginator->next(
+          $this->Html->image('paging.png', array('alt' => '次のページへ', 'width'=>25, 'height'=>25)),
+          array('escape' => false, 'class' => 'btn-shadow greenBtn'),
+          null,
+          array('escape' => false, 'class' => 'grayBtn')
+        );
+        ?>
+      </div>
     </div>
   </div>
+  <div id="autoMessageLayerMenu">
+    <ul>
+      <li class="t-link">
+        <a href="javascript:void(0)" onclick="window.open('<?= $this->Html->url(['controller' => 'TAutoMessages', 'action' => 'downloadTemplate']) ?>')">
+          テンプレートファイルをダウンロードする
+        </a>
+      </li>
+      <li class="t-link">
+        <a href="javascript:void(0)" onclick="openSelectFile()">
+          テンプレートファイルをインポートする
+        </a>
+      </li>
+    </ul>
+  </div>
+  <input type="file" id="selectFileInput" name="uploadFile" style="display:none "/>
 
   <div id='tautomessages_list' class="p20x">
     <table style="table-layout: fixed;">

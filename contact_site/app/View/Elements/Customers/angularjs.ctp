@@ -1700,7 +1700,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       },
       _showConfirmDialog: function(message) {
         modalOpen.call(window, message, 'p-cus-file-upload', '確認', 'moment');
-        $('#')
         popupEvent.closePopup = function() {
           $scope.uploadFile($scope.fileUploader.fileObj, $scope.fileUploader.loadData);
           popupEvent.close();
