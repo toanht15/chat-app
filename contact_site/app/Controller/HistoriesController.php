@@ -521,7 +521,7 @@ class HistoriesController extends AppController {
         $row['message'] = $val['THistoryChatLog']['message'];
       }
       // チャット担当者
-      if($val['THistoryChatLog']['message_type'] == 2) {
+      if($val['THistoryChatLog']['message_type'] == 2 || $val['THistoryChatLog']['message_type'] == 6) {
         $row['user'] = $val['User'];
       }
       $csv[] = $row;
@@ -611,12 +611,17 @@ class HistoriesController extends AppController {
         case 3: // オートメッセージ
           $row = $this->_setData($date, "オートメッセージ", $this->userInfo['MCompany']['company_name'], $message);
           break;
+        case 4: //sorryメッセージ
+          $row = $this->_setData($date, "Sorryメッセージ", $this->userInfo['MCompany']['company_name'], $message);
+        break;
         case 5: // 自動返信
           $row = $this->_setData($date, "自動返信", $this->userInfo['MCompany']['company_name'], $message);
           break;
         case 6: // ファイル送信
           $json = json_decode($val['THistoryChatLog']['message'], TRUE);
-          $message = $json['fileName']."\n".$this->prettyByte2Str($json['fileSize']);
+          if($val['THistoryChatLog']['delete_flg'] != 1) {
+            $message = $json['fileName']."\n".$this->prettyByte2Str($json['fileSize']);
+          }
           $row = $this->_setData($date, "ファイル送信", $val['MUser']['display_name'], $message);
           break;
         case 98: // 入室メッセージ

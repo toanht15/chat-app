@@ -318,39 +318,38 @@
                       <?php } ?>
                     </div>
                     <div class = "info">
+                    <div>
                       <?php
                        if ((!empty($history['THistoryChatLog']['type']) && $history['THistoryChatLog']['type'] == "自動返信")
                         || ($history['THistoryChatLog']['cmp'] == 0 && $history['THistoryChatLog']['sry'] == 0 && $history['THistoryChatLog']['cus'] == 0)) { ?>
-                        <span style = "color:#4bacc6; font-weight:bold;">Auto(<?php if (isset($chatUserList[$history['THistory']['id']])) { echo $chatUserList[$history['THistory']['id']]; } ?>)</span>
+                        <span class = "largeCharacters" style = "color:#4bacc6; font-weight:bold;">Auto(<?php if (isset($chatUserList[$history['THistory']['id']])) { echo $chatUserList[$history['THistory']['id']]; } ?>)</span>
                       <?php
                       }
                       else if(!empty($history['THistoryChatLog']['type']) && $history['THistoryChatLog']['type'] == "拒否") { ?>
-                        <span style = "color:#a6a6a6; font-weight:bold;">Sorry</span>
+                        <span class = "largeCharacters" style = "color:#a6a6a6; font-weight:bold;">Sorry</span>
                       <?php
                       }
                       else if($history['THistoryChatLog']['type'] == "") { ?>
-                        <span style = "color:#9bbb59; font-weight:bold;">Manual(<?php if (isset($chatUserList[$history['THistory']['id']])) { echo $chatUserList[$history['THistory']['id']]; } ?>)</span>
+                        <span class = "largeCharacters" style = "color:#9bbb59; font-weight:bold;">Manual(<?php if (isset($chatUserList[$history['THistory']['id']])) { echo $chatUserList[$history['THistory']['id']]; } ?>)</span>
                       <?php
                       }
                       else if($history['THistoryChatLog']['type'] == "未入室") { ?>
-                        <span style = "color:#f79646; font-weight:bold;">NoEntry(＊未入室)</span>
+                        <span class = "largeCharacters" style = "color:#f79646; font-weight:bold;">NoEntry(＊未入室)</span>
                       <?php
                         }
-                     endif; ?>
+                     endif; ?></div>
                   <?php if(isset($coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $coreSettings[C_COMPANY_REF_COMPANY_DATA]) { ?>
-                    <br>
                     <?php if(!empty($history['LandscapeData']['org_name']) && !empty($history['LandscapeData']['lbc_code'])): ?>
-                        <a href="javascript:void(0)" class="underL" onclick="openCompanyDetailInfo('<?=$history['LandscapeData']['lbc_code']?>')"><?=h($history['LandscapeData']['org_name'])?></a>
+                        <div style = "padding-top:1px;"><a href="javascript:void(0)" class="underL largeCharacters" onclick="openCompanyDetailInfo('<?=$history['LandscapeData']['lbc_code']?>')"><?=h($history['LandscapeData']['org_name'])?></a>
                     <?php elseif(!empty($history['LandscapeData']['org_name'])): ?>
                         <p><?=h($history['LandscapeData']['org_name'])?></p><?='\n'?>
+                    <?php elseif(empty($history['LandscapeData']['org_name'])): ?>
+                    <div class = "largeCharacters" style = "padding-top:1px;">{{ ip('<?=h($history['THistory']['ip_address'])?>', <?php echo !empty($history['LandscapeData']['org_name']) ? 'true' : 'false' ?>) }}</div>
                     <?php endif; ?>
-                    {{ ip('<?=h($history['THistory']['ip_address'])?>', <?php echo !empty($history['LandscapeData']['org_name']) ? 'true' : 'false' ?>) }}
                   <?php } else { ?>
-                  <br>
-                  {{ ip('<?=h($history['THistory']['ip_address'])?>', <?php echo !empty($history['LandscapeData']['org_name']) ? 'true' : 'false' ?>) }}
+                  <div class = "largeCharacters" style = "padding-top:1px;">{{ ip('<?=h($history['THistory']['ip_address'])?>', <?php echo !empty($history['LandscapeData']['org_name']) ? 'true' : 'false' ?>) }}</div>
                   <?php } ?>
-                  <br>
-                  {{ ui('<?=h($history['THistory']['ip_address'])?>', '<?=$visitorsId?>') }}</div></td>
+                  <div style = "padding-top:1px;" class = "largeCharacters">{{ ui('<?=h($history['THistory']['ip_address'])?>','<?=$visitorsId?>') }}</div></div></td>
                   <td class="tCenter eachKind" style = "width:5%;display:none;">
                   <?php if( is_numeric($history['THistoryChatLog']['count']) ): ?>
                     <?php
@@ -502,9 +501,11 @@
                         <span id = "Landscape"><?=h($defaultHistoryList['LandscapeData']['org_name'])?></span></a>
                     <?php elseif(!empty($defaultHistoryList['LandscapeData']['org_name'])): ?>
                         <p><?=h($defaultHistoryList['LandscapeData']['org_name'])?></p><?='\n'?>
+                    <?php elseif(empty($defaultHistoryList['LandscapeData']['org_name'])): ?>
+                      <span id = "Landscape"></span>
                     <?php endif; ?>
                   <?php endif; ?>
-                  <span id= "ipAddress">{{ ip('<?=h($defaultHistoryList['THistory']['ip_address'])?>', <?php echo !empty($defaultHistoryList['LandscapeData']['org_name']) ? 'true' : 'false' ?>) }}</span></dd>
+                  <span id= "ipAddress">{{ ip('<?='('.h($defaultHistoryList['THistory']['ip_address']).')'?>', <?php echo !empty($defaultHistoryList['LandscapeData']['org_name']) ? 'true' : 'false' ?>) }}</span></dd>
             </li>
             <li>
               <dt>訪問回数</dt>

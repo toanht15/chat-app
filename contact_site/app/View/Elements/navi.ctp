@@ -56,9 +56,16 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
         <div class="icon <?=$monitorSelected?>">
             <?= $this->htmlEx->naviLink('ﾘｱﾙﾀｲﾑﾓﾆﾀ', 'monitor.png', ['href' => ['controller' => 'Customers', 'action' => 'index']]) ?>
         </div>
-        <div class="icon <?=$historySelected?> setting-icon" data-type="history">
+        <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
+          <div class="icon <?=$historySelected?> setting-icon" data-type="history">
             <?= $this->htmlEx->naviLink('履歴一覧', 'history.png') ?>
-        </div>
+          </div>
+        <?php endif; ?>
+        <?php if (!$coreSettings[C_COMPANY_USE_CHAT]) : ?>
+          <div class="icon <?=$historySelected?>">
+            <?= $this->htmlEx->naviLink('履歴一覧', 'history.png', ['href' => ['controller' => 'Histories', 'action' => 'clearSession']]) ?>
+          </div>
+        <?php endif; ?>
         <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
         <div class="icon <?=$statisticsSelected?> setting-icon" data-type="statistics" >
             <?= $this->htmlEx->naviLink('統計', 'graph.png') ?>
@@ -157,10 +164,10 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
         <div class="icon">
           <?= $this->htmlEx->naviLink('チャット履歴', 'chat_setting.png', ['href' => ['controller' => 'ChatHistories', 'action' => 'clearSession']]) ?>
         </div>
-      <?php endif; ?>
         <div class="icon">
           <?= $this->htmlEx->naviLink('アクセス履歴', 'personal.png', ['href' => ['controller' => 'Histories', 'action' => 'clearSession']]) ?>
         </div>
+      <?php endif; ?>
       </div>
     <!-- /* 履歴 */ -->
     <!-- /* 統計 */ -->

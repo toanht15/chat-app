@@ -27,11 +27,11 @@
       });
     });
 
+    var changeHistoryId = '<?=$historyId?>';
     // 過去チャットと現行チャット
     $(document).on("click", "#showChatTab > li", function(e){
       var className = $(this).data('type');
       angular.element("#showChatTab > li").removeClass("on");
-
 
       if ( className === "oldChat" ) {
         $scope.chatLogList = [];
@@ -64,6 +64,21 @@
       }
       else {
         className = "currentChat";
+        $scope.messageList = [];
+        $.ajax({
+          type: "GET",
+          url: "<?=$this->Html->url(['controller'=>'ChatHistories', 'action' => 'getOldChat'])?>",
+          data: {
+            historyId: changeHistoryId
+          },
+          dataType: "json",
+          success: function(json){
+            angular.element("message-list-descript").attr("class", "off");
+            $scope.messageList = json;
+            $scope.$apply();
+            addTooltipEvent();
+          }
+        });
       }
       $("#showChatTab > li[data-type='" + className + "']").addClass("on");
       $("#chatContent > section").removeClass("on");
@@ -84,6 +99,9 @@
 
     // 顧客の詳細情報を取得する
     $scope.getOldChat = function(historyId, oldFlg){
+      if(oldFlg == false) {
+        changeHistoryId = historyId;
+      }
       $scope.chatLogMessageList = [];
       $scope.messageList = [];
       $timeout(function(){
@@ -104,14 +122,12 @@
               addTooltipEvent();
             }
             else {
-              console.time('処理時間10：');
               $scope.messageList = json;
 
               $scope.chatLogList = [];
               $scope.chatLogMessageList = [];
               //$scope.$apply();
               angular.element("message-list-descript").attr("class", "off");
-              console.timeEnd('処理時間10：');
               $.ajax({
                 type: 'GET',
                 url: "<?= $this->Html->url(array('controller' => 'ChatHistories', 'action' => 'remoteGetChatList')) ?>",
@@ -518,7 +534,18 @@
           showData.push(c.name); // 名前
         }
       }
-      return showData.join("\n");
+      if(changeScreenMode == "" && <?= $screenFlg ?> == 1) {
+        return showData.join("　");
+      }
+      if(changeScreenMode == "" && <?= $screenFlg ?> == 2) {
+        return showData.join("\n");
+      }
+      if(changeScreenMode == 1) {
+        return showData.join("　");
+      }
+      if(changeScreenMode == 2) {
+        return showData.join("\n");
+      }
     };
 
   <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
@@ -812,6 +839,12 @@ $(document).ready(function(){
     $('#mainDatePeriod').html(historySearchConditions.History.period + ' : ' + historySearchConditions.History.start_day + '-' + historySearchConditions.History.finish_day);
   });
 
+  $("#chatHistory tr").hover(function(){
+    $(this).children('td').css("background-color", "rgba(235, 246, 249, 0.1)");
+  }, function(){
+    $(this).children('td').css("background-color", "#fff");
+  });
+
   var number = 1;
   var prevBoldTarget = null;
   var numberLines;
@@ -830,19 +863,21 @@ $(document).ready(function(){
       }
     });
     if(prevBoldTarget != null) {
-      prevBoldTarget.find('td').each(function(index){
-        if(index < 12) {
-          $(this).css("background-color", "#fff");
-          $(this).css("font-weight", "normal");
-        }
+      /* すべていったん白にしてリセット */
+      $(".showBold td").css("background-color", "#fff");
+      $(".showBold td").css("font-weight", "normal");
+      /* hoverの設定を追加 */
+      $("#chatHistory tr").hover(function(){
+        $(this).children('td').css("background-color", "rgba(235, 246, 249, 0.1)");
+      }, function(){
+        $(this).children('td').css("background-color", "#fff");
       });
+      /* クリックしたところだけ色を変える */
+      $(this).children('td').css("background-color", "#ebf6f9");
+      /* カーソルが外れても色を保つように */
+      $(this).unbind("mouseenter").unbind("mouseleave");
+      $(this).children('td').css("font-weight", "bold");
     }
-    $(this).find('td').each(function(index){
-      if(index < 12) {
-        $(this).css("background-color", "#ebf6f9");
-        $(this).css("font-weight", "bold");
-      }
-    });
     prevBoldTarget = $(this);
   });
 
@@ -851,11 +886,11 @@ $(document).ready(function(){
       if ((location.search.split("?")[1]).substr(3) == $(this)[0]['id']) {
         $(this).find('td').each(function(index){
           if(index < 12) {
-            console.time('処理時間4：');
             if(index == 0) {
               prevBoldTarget = $(this).parent('tr');
             }
             $(this).css("background-color", "#ebf6f9");
+            $(this).parent('tr').unbind("mouseenter").unbind("mouseleave");
             $(this).css("font-weight", "bold");
           }
         });
@@ -869,6 +904,7 @@ $(document).ready(function(){
               prevBoldTarget = $(this).parent('tr');
             }
             $(this).css("background-color", "#ebf6f9");
+            $(this).parent('tr').unbind("mouseenter").unbind("mouseleave");
             $(this).css("font-weight", "bold");
           }
           else {
@@ -891,23 +927,23 @@ $(document).ready(function(){
       e.preventDefault();
       number = number + 1;
       if(prevBoldTarget.next("tr")[0] != null) {
-        prevBoldTarget.find('td').each(function(index){
-          if(index < 12) {
-            $(this).css("background-color", "#fff");
-            $(this).css("font-weight", "normal");
-          }
+        /* すべていったん白にしてリセット */
+        $(".showBold td").css("background-color", "#fff");
+        $(".showBold td").css("font-weight", "normal");
+        /* hoverの設定を追加 */
+        $("#chatHistory tr").hover(function(){
+          $(this).children('td').css("background-color", "rgba(235, 246, 249, 0.1)");
+        }, function(){
+          $(this).children('td').css("background-color", "#fff");
         });
-        prevBoldTarget.next("tr").find('td').each(function(index){
-          if(index < 12) {
-            if(index == 0) {
-              id = $(this).parent('tr')[0]['id'];
-              prevBoldTarget = $(this).parent('tr');
-              focusHeigt = $(this).offset().top;
-            }
-            $(this).css("background-color", "#ebf6f9");
-            $(this).css("font-weight", "bold");
-          }
-        });
+        /* クリックしたところだけ色を変える */
+        prevBoldTarget.next("tr").children('td').css("background-color", "#ebf6f9");
+        /* カーソルが外れても色を保つように */
+        prevBoldTarget.next("tr").unbind("mouseenter").unbind("mouseleave");
+        prevBoldTarget.next("tr").children('td').css("font-weight", "bold");
+        id = prevBoldTarget.next("tr")[0]['id'];
+        focusHeigt = prevBoldTarget.next("tr").offset().top;
+        prevBoldTarget = prevBoldTarget.next("tr");
       }
 
       //チャット情報取得
@@ -937,25 +973,23 @@ $(document).ready(function(){
         number = number - 1;
       }
       if(prevBoldTarget.prev("tr")[0] != null) {
-        prevBoldTarget.find('td').each(function(index){
-          if(index < 12) {
-            if(index == 0) {
-              focusHeigt = $(this).offset().top;
-            }
-            $(this).css("background-color", "#fff");
-            $(this).css("font-weight", "normal");
-          }
+        /* すべていったん白にしてリセット */
+        $(".showBold td").css("background-color", "#fff");
+        $(".showBold td").css("font-weight", "normal");
+        /* hoverの設定を追加 */
+        $("#chatHistory tr").hover(function(){
+          $(this).children('td').css("background-color", "rgba(235, 246, 249, 0.1)");
+        }, function(){
+          $(this).children('td').css("background-color", "#fff");
         });
-        prevBoldTarget.prev("tr").find('td').each(function(index){
-          if(index < 12) {
-            if(index == 0) {
-              id = $(this).parent('tr')[0]['id'];
-              prevBoldTarget = $(this).parent('tr');
-            }
-            $(this).css("background-color", "#ebf6f9");
-            $(this).css("font-weight", "bold");
-          }
-        });
+        /* クリックしたところだけ色を変える */
+        prevBoldTarget.prev("tr").children('td').css("background-color", "#ebf6f9");
+        /* カーソルが外れても色を保つように */
+        prevBoldTarget.prev("tr").unbind("mouseenter").unbind("mouseleave");
+        prevBoldTarget.prev("tr").children('td').css("font-weight", "bold");
+        id = prevBoldTarget.prev("tr")[0]['id'];
+        focusHeigt = prevBoldTarget.prev("tr").offset().top;
+        prevBoldTarget = prevBoldTarget.prev("tr");
       }
 
       //ユーザー情報取得
