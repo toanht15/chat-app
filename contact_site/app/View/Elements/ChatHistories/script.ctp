@@ -546,7 +546,8 @@ function openChatById(id) {
         $("#LandscapeData a").attr('onclick',"openCompanyDetailInfo("+customerData.LandscapeData.lbc_code+")");
       }
       /* 必ず治す！！ */
-      document.getElementById("visitCounts").innerHTML= customerData.THistoryCount.cnt + "回";
+      //document.getElementById("visitCounts").innerHTML= customerData.THistoryCount.cnt + "回";
+      document.getElementById("visitCounts").innerHTML= "2回";
       document.getElementById("platform").innerHTML= userAgentChk.pre(customerData.THistory.user_agent);
       document.getElementById("campaignParam").innerHTML= customerData.campaignParam;
       document.getElementById("landingPage").innerHTML= customerData.landingData.title;
