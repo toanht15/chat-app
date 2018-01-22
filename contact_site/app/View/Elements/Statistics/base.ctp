@@ -69,6 +69,13 @@
           </ul>
         </icon-annotation>
       </div>
+      <div id='chatCVTooltip' class="explainTooltip">
+        <icon-annotation>
+          <ul>
+            <li><span>成果が「CV」として登録された件数</span></li>
+          </ul>
+        </icon-annotation>
+      </div>
       <div id='chatRequestAverageTimeTooltip' class="explainTooltip">
         <icon-annotation>
           <ul>
@@ -257,6 +264,22 @@
         <td><?php echo number_format($data['coherentDatas']['allEffectivenessNumberData']) ?></td>
       </tr>
       <tr>
+        <td id = 'chatCVLabel' class = 'tooltip'>チャットCV件数
+          <div class="questionBalloon questionBalloonPosition8s">
+            <icon class="questionBtn">？</icon>
+          </div>
+        </td>
+        <?php for ($i = $start; $i <= $end; $i++) { ?>
+          <?php if(is_int($data['coherentDatas']['cvNumberData'][$type.'-'.sprintf("%02d",$i)]) == 'true') { ?>
+            <td><?php echo number_format($data['coherentDatas']['cvNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
+          <?php }
+          else { ?>
+            <td><?php echo ($data['coherentDatas']['cvNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
+          <?php } ?>
+        <?php } ?>
+        <td><?php echo number_format($data['coherentDatas']['allCVNumberData']) ?></td>
+      </tr>
+      <tr>
         <td id = 'chatRequestAverageTimeLabel' class = 'tooltip'>平均チャットリクエスト時間
           <div class="questionBalloon questionBalloonPosition13">
             <icon class="questionBtn">？</icon>
@@ -440,6 +463,17 @@
             <td><?php echo $data['coherentDatas']['effectivenessNumberData'][sprintf("%02d",$i).':00'] ?></td>
           <?php } ?>
           <td><?php echo $data['coherentDatas']['allEffectivenessNumberData'] ?></td>
+        </tr>
+        <tr>
+          <td id = 'chatCVLabel' class = 'tooltip'>チャットCV件数
+            <div class="questionBalloon questionBalloonPosition8s">
+              <icon class="questionBtn">？</icon>
+            </div>
+          </td>
+          <?php for ($i = $start; $i <= $end; $i++) { ?>
+            <td><?php echo $data['coherentDatas']['cvNumberData'][sprintf("%02d",$i).':00'] ?></td>
+          <?php } ?>
+          <td><?php echo $data['coherentDatas']['allCVNumberData'] ?></td>
         </tr>
         <tr>
           <td id = 'chatRequestAverageTimeLabel' class = 'tooltip'>平均チャットリクエスト時間
