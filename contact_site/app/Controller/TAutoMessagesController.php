@@ -625,6 +625,17 @@ class TAutoMessagesController extends AppController {
           ]
         ];
 
+        if($row['send_mail_flg'] === 1) {
+          $saveData['main']['send_mail_flg'] = $row['send_mail_flg'];
+          $saveData['main']['mail_address_1'] = $row['mail_address_1'];
+          $saveData['main']['mail_address_2'] = $row['mail_address_2'];
+          $saveData['main']['mail_address_3'] = $row['mail_address_3'];
+          $saveData['main']['mail_address_4'] = $row['mail_address_4'];
+          $saveData['main']['mail_address_5'] = $row['mail_address_5'];
+          $saveData['main']['subject'] = $row['mail_subject'];
+          $saveData['main']['from_name'] = $row['mail_from_name'];
+        }
+
         $this->TAutoMessage->set($saveData);
         $validate = $this->TAutoMessage->validates();
         $errors = $this->TAutoMessage->validationErrors;
