@@ -571,6 +571,7 @@ class TAutoMessagesController extends AppController {
   }
 
   public function import() {
+    Configure::write('debug', 0);
     $this->autoRender = false;
     $this->layout = false;
 
@@ -579,12 +580,13 @@ class TAutoMessagesController extends AppController {
     ];
 
     $file = $this->params['form']['file'];
+
     $lastPage = $this->request->data['lastPage'];
 
     $component = new AutoMessageExcelParserComponent($file['tmp_name']);
-    $component->getImportData();
-    $transactions = null;
     try {
+      $component->getImportData();
+      $transactions = null;
       $data = $component->toArray();
       $transactions = $this->TransactionManager->begin();
       $dataArray = [];
@@ -657,7 +659,11 @@ class TAutoMessagesController extends AppController {
       }
       $result['success'] = false;
       $result['errorCode'] = 400;
-      $result['errorMessages'] = [];
+      $this->log("Excel import error found. message => ".$e->getMessage, LOG_WARNING);
+      $result['errorMessages'] = [
+        'type' => 'system',
+        'message' => 'ファイルの読み込みに失敗しました。'
+      ];
     }
     return json_encode($result);
   }
