@@ -421,10 +421,24 @@ var openSelectFile = function() {
       // ファイルの内容は FileReader で読み込みます.
       var fileReader = new FileReader();
       fileReader.onload = function (event) {
-        // event.target.result に読み込んだファイルの内容が入っています.
-        // ドラッグ＆ドロップでファイルアップロードする場合は result の内容を Ajax でサーバに送信しましょう!
-        loadData = event.target.result;
-        _showConfirmDialog("<div class='confirm'>指定されたファイル【" + fileObj.name + "】をアップロードします。<br>よろしいですか？</div>");
+        var split = fileObj.name.split(".");
+        var targetExtension = split[split.length-1];
+        if(targetExtension === "xlsx") {
+          // event.target.result に読み込んだファイルの内容が入っています.
+          // ドラッグ＆ドロップでファイルアップロードする場合は result の内容を Ajax でサーバに送信しましょう!
+          loadData = event.target.result;
+          _showConfirmDialog("<div class='confirm'>指定されたファイル【" + fileObj.name + "】をアップロードします。<br>よろしいですか？</div>");
+        } else {
+          _showConfirmDialog("<div class='confirm'>指定されたファイル【" + fileObj.name + "】は対応していません。</div>");
+          $('#popupCloseBtn').css('display', 'block');
+          $('#uploadCloseBtn').css('display', 'block');
+          $('#uploadExcelBtn').css('display', 'none');
+          $('#uploadCancelBtn').css('display', 'none');
+          $('#popup-button').css('display', 'block');
+          popupEvent.resize();
+          loadData = null;
+          fileObj = null;
+        }
       };
       fileReader.readAsArrayBuffer(fileObj);
     }
@@ -494,13 +508,17 @@ var uploadFile = function(fileObj, loadFile) {
       html += '<div id="errorListScroll">';
       html += '  <div id="errorList">';
       if(typeof(data.errorMessages) === 'object') {
-        Object.keys(data.errorMessages).forEach(function(key){
-          Object.keys(data.errorMessages[key]).forEach(function(column) {
-            for(var i = 0; i < data.errorMessages[key][column].length; i++) {
-              html += '<p class="error-row"><span class="error-matrix">【' + key + ' 行目' + column + ' 列】</span><span class="error-content">' + data.errorMessages[key][column][i] + '</span></p>'
-            }
+        if(data.errorMessages.hasOwnProperty('type')) {
+          html += '<p class="error-row"><span class="error-content">' + data.errorMessages.message + '</span></p>'
+        } else {
+          Object.keys(data.errorMessages).forEach(function(key){
+            Object.keys(data.errorMessages[key]).forEach(function(column) {
+              for(var i = 0; i < data.errorMessages[key][column].length; i++) {
+                html += '<p class="error-row"><span class="error-matrix">【' + key + ' 行目' + column + ' 列】</span><span class="error-content">' + data.errorMessages[key][column][i] + '</span></p>'
+              }
+            });
           });
-        });
+        }
       }
       html += '  </div>';
       html += '</div>';
