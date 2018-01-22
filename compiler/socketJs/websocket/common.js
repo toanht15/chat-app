@@ -1506,6 +1506,10 @@ var socket, // socket.io
       if ( window.sincloInfo.hasOwnProperty('opFlg') && window.sincloInfo.opFlg === false ) {
         window.sincloInfo.widgetDisplay = false;
       }
+      // 常に表示する設定の値があれば必ず表示する
+      if (check.isset(window.sincloInfo.dataset) && (check.isset(window.sincloInfo.dataset.showAlways) && window.sincloInfo.dataset.showAlways === "1")) {
+        window.sincloInfo.widgetDisplay = true;
+      }
       // 同期対象とするが、ウィジェットは表示しない
       if (check.isset(window.sincloInfo.dataset) && (check.isset(window.sincloInfo.dataset.hide) && window.sincloInfo.dataset.hide === "1")) {
         window.sincloInfo.widgetDisplay = false;
@@ -3734,4 +3738,8 @@ if (myTag.getAttribute('data-hide')) {
 }
 if (myTag.getAttribute('data-form')) {
     sincloInfo.dataset.form = myTag.getAttribute('data-form');
+}
+if (myTag.getAttribute('data-show-always')) {
+    // オペレータ存在条件や営業時間設定に依存せずtrueであれば表示
+    sincloInfo.dataset.showAlways = myTag.getAttribute('data-show-always');
 }

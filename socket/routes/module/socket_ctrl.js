@@ -1734,12 +1734,18 @@ io.sockets.on('connection', function (socket) {
           var splitedKey = key.split("_");
           if (splitedKey.length === 3 && isset(splitedKey[2])) {
             if(!io.sockets.connected[splitedKey[2]]) {
-              var targetTabId = customerList[key].tabId;
+              var targetTabId = customerList[res.siteKey][key].tabId;
               console.log("【" + res.siteKey + "】 customerList key : " + key + " client is not exist. deleting. targetTabId : " + targetTabId);
               if(targetTabId && targetTabId !== "") {
                 emit.toCompany('unsetUser', {siteKey: res.siteKey, tabId: targetTabId}, res.siteKey);
               }
-              delete customerList[key];
+              delete customerList[res.siteKey][key];
+
+              if(totalCounter === keyLength-1) {
+                emit.toMine("receiveAccessInfo", arr, socket);
+                arr = [];
+              }
+              totalCounter++;
               return;
             }
           }
