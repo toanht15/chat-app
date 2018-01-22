@@ -112,6 +112,18 @@
                                 pw = panel_1.width(position-sw2).outerWidth();
                                 panel_2.width(self.width()-pw-sw);
                                 splitter.css('left', pw);
+                                //スクロールバーがある場合
+                                if($('.dataTables_scrollBody').hasScrollBar()){
+                                  $(".dataTables_scrollHeadInner").css('width',$(".dataTables_scrollHead").outerWidth() - 17);
+                                }
+                                //スクロールバーがない場合
+                                else {
+                                  $(".dataTables_scrollHeadInner").css('width',$(".dataTables_scrollHead").outerWidth());
+                                }
+                                $("#manualReceivingLabel").css('width','');
+                                $("#lastSpeechLabel").css('width','');
+                                $("#achievement").css('width','');
+                                $("#chatHistory").css('height','100%');
                             }
                             panel_1.find('.splitter_panel').eq(0).height(self.height());
                             panel_2.find('.splitter_panel').eq(0).height(self.height());
@@ -140,18 +152,19 @@
                                 splitter.css('top', pw);
                                 $("#chatContent").css('height', $("#detail").outerHeight() - 65);
                                 $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
-                                $("#chatHistory").css('height',$("#history_body_side").outerHeight() - 170);
+                                //$("#chatHistory").css('height',$("#history_body_side").outerHeight() - 170);
+                                $("#chatHistory").css('height','100%');
                                 if($("#btnSet").css('display') == "none" && $("#style")[0] == null) {
-                                  $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 129);
+                                  $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 130);
                                 }
                                 else if($("#btnSet").css('display') == "none" && $("#style")[0] != null) {
-                                  $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - (145 + parseInt($("#style").css('height'))));
+                                  $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - (146 + parseInt($("#style").css('height'))));
                                 }
                                 else if($("#btnSet").css('display') == "block" && $("#style")[0] != null) {
-                                  $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - (194 + parseInt($("#style").css('height'))));
+                                  $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - (195 + parseInt($("#style").css('height'))));
                                 }
                                 else {
-                                  $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 179);
+                                  $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 180);
                                 }
                             }
                         }
@@ -209,6 +222,9 @@
                 }
             }
         });
+        jQuery.fn.hasScrollBar = function() {
+          return this.get(0) ? this.get(0).scrollHeight > this.innerHeight() : false;
+        }
         self.bind('splitter.resize', function(e) {
             var pos = self.position();
             if (self.orientation == 'vertical' &&
@@ -319,7 +335,8 @@
                             //e.preventDefault();
                         }
                     }
-                    current_splitter.settings.onDrag(e);
+                    //current_splitter.settings.onDrag(e);
+                    $("#dataTables_scrollHeadInner").css('width',$(".dataTables_scrollHead").outerHeight() - 17);
                 }
             });//*/
         }

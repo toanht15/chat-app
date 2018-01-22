@@ -100,10 +100,10 @@ var actBtnShow = function(){
       //縦並びの場合
       if(screenMode == 2) {
         if($("#style")[0] == null) {
-          $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 177);
+          $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 179);
         }
         else {
-          $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - (193 + parseInt($("#style").css('height'))));
+          $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - (195 + parseInt($("#style").css('height'))));
         }
       }
     }
@@ -137,10 +137,10 @@ var actBtnShow = function(){
       //縦並びの場合
       if(screenMode == 2) {
         if($("#style")[0] == null) {
-          $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 129);
+          $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 130);
         }
         else {
-          $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - (145 + parseInt($("#style").css('height'))));
+          $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - (146 + parseInt($("#style").css('height'))));
         }
       }
     }
@@ -201,21 +201,6 @@ var  table = $('.scroll');
 var  bodyCells = table.find('tbody tr:first').children();
 var  colWidth;
 
-// Adjust the width of thead cells when window resizes
-$(window).resize(function() {
-    // Get the tbody columns width array
-    colWidth = bodyCells.map(function() {
-        return $(this).width();
-    }).get();
-
-    // Set the width of thead columns
-    table.find('thead tr').children().each(function(i, v) {
-      $(v).width(colWidth[i]);
-    });
-}).resize(); // Trigger resize handler
-//var splitterObj = null;
-
-
 $(function(){
 
   $("#disabled_history_csv_btn").click(function(){
@@ -253,14 +238,17 @@ $(function(){
     tableObj.on('draw', function(){
       if(<?= $screenFlg ?> == 1) {
         $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 170);
+        $(".dataTables_scrollHeadInner").css('width',$(".dataTables_scrollHead").outerWidth() - 17);
+        $("#chatHistory").css('height','100%');
         if($("#style")[0] != null) {
           $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - (170 + parseInt($("#style").css('height'))));
         }
       }
       if(<?= $screenFlg ?> == 2) {
-        $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 129);
+        $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 130);
+        $("#chatHistory").css('height','100%');
         if($("#style")[0] != null) {
-          $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - (145 + parseInt($("#style").css('height'))));
+          $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - (146 + parseInt($("#style").css('height'))));
         }
       }
     });
@@ -289,6 +277,24 @@ $(function(){
     document.getElementById("history_dustbox_btn").className="btn-shadow disOffgrayBtn";
     document.getElementById("history_csv_btn").className="btn-shadow disOffgrayBtn";
     $("#btnSet").css('display', 'none');
+    //横並びの場合
+    if(screenMode == 1) {
+      if($("#style")[0] != null) {
+        $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - (170 + parseInt($("#style").css('height'))));
+      }
+      else {
+        $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 170);
+      }
+    }
+    //縦並びの場合
+    if(screenMode == 2) {
+      if($("#style")[0] != null) {
+        $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - (146 + parseInt($("#style").css('height'))));
+      }
+      else {
+        $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 130);
+      }
+    }
   })
 
   // 全選択用チェックボックス
@@ -306,14 +312,16 @@ $(function(){
       document.getElementById('history_body_side').style.height = $('#history_list_side').outerHeight() + 'px';
       $("#chatContent").css('height', $("#detail").outerHeight() - 105);
       $("#customerInfoScrollArea").css('height', $("#detail").outerHeight() - 39);
-      $("#chatHistory").css('height',window.innerHeight - 355);
+      //$("#chatHistory").css('height',window.innerHeight - 355);
+      $("#chatHistory").css('height','100%');
       $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 170);
     }
     //縦並びの場合
     if(screenMode == 2) {
       document.getElementById('history_body_side').style.width = $('#history_list_side').outerWidth() + 'px';
       $("#chatContent").css('height', $("#detail").outerHeight() - 65);
-      $("#chatHistory").css('height',$("#history_body_side").outerHeight() - 170);
+      //$("#chatHistory").css('height',$("#history_body_side").outerHeight() - 170);
+      $("#chatHistory").css('height','100%');
       $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
       $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - calcHeaderHeight() - 15);
     }
@@ -351,7 +359,8 @@ $(function(){
     $(".responsible").css('display','');
     $("#chatContent").css('height', $("#detail").outerHeight() - 65);
     $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
-    $("#chatHistory").css('height',$("#history_body_side").outerHeight() - 170);
+    //$("#chatHistory").css('height',$("#history_body_side").outerHeight() - 170);
+    $("#chatHistory").css('height','100%');
     $(".deleteChat").attr('data-balloon-position',45);
 
     $.ajax({
@@ -400,7 +409,8 @@ $(function(){
 
     $("#chatContent").css('height', $("#detail").outerHeight() - 105);
     $("#customerInfoScrollArea").css('height', $("#detail").outerHeight() - 39);
-    $("#chatHistory").css('height',window.innerHeight - 355);
+    //$("#chatHistory").css('height',window.innerHeight - 355);
+    $("#chatHistory").css('height','100%');
     $(".deleteChat").attr('data-balloon-position',89);
     $.ajax({
       type: 'post',
@@ -442,7 +452,8 @@ $(function(){
       document.getElementById('verticalToggleMenu').style.display = "block";
       $("#chatContent").css('height', $("#detail").outerHeight() - 105);
       $("#customerInfoScrollArea").css('height', $("#detail").outerHeight() - 39);
-      $("#chatHistory").css('height',window.innerHeight - 355);
+      //$("#chatHistory").css('height',window.innerHeight - 355);
+      $("#chatHistory").css('height','100%');
       $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 170);
     }
     //縦並びの場合$this.attr('data-balloon-position');
@@ -473,6 +484,7 @@ $(function(){
       $(".responsible").css('display','');
       $("#chatContent").css('height', $("#detail").outerHeight() - 65);
       $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
+      $("#chatHistory").css('height','100%');
     }
 
     setTimeout(function(){
@@ -525,6 +537,8 @@ function openChatById(id) {
     dataType: 'html',
     success: function(html){
       var customerData = JSON.parse(html);
+      console.log('customerData');
+      console.log(customerData);
       document.getElementById("visitorsId").innerHTML= customerData.THistory.visitors_id;
       document.getElementById("ipAddress").innerHTML= "("+customerData.THistory.ip_address+")";
       if(customerData.LandscapeData != null) {
