@@ -579,6 +579,79 @@
         }
       }
 
+      &.p-cus-operator-presence {
+        width: 38em;
+
+        #popup-main {
+          padding: 1.5em;
+          #presenceView {
+            height: 400px;
+            position: relative;
+
+            table {
+              width: 100%;
+
+              th {
+                padding: 10px 20px;
+              }
+
+              td {
+                text-align: center;
+                padding: 10px 20px;
+              }
+            }
+
+            #presenceViewheader {
+              width: auto;
+              position: absolute;
+              z-index: 30;
+              left: 0;
+              right: 0;
+            }
+
+            #presenceViewBodyScroll {
+              position: relative;
+              height: 90%;
+              overflow-x: hidden;
+              overflow-y: scroll;
+              bottom: -36px;
+              #presenceViewBody {
+                thead {
+                  visibility: hidden;
+                  height: 0px;
+                  line-height: 0px;
+                }
+                width: auto;
+                td {
+                  font-size: 13px;
+                  span {
+                    &.presence-active {
+                      color: #9bbb59;
+                    }
+                    &.presence-inactive {
+                      color: #d99694;
+                    }
+                    &.presence-offline {
+                      color: #b5b5b5;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        #popup-button {
+          display: flex;
+          padding-bottom: 25px;
+
+          a {
+            width: 75px;
+            margin: 0 auto;
+          }
+        }
+      }
+
       /* 履歴一覧-ポップアップ用 */
       &.p-history-logs {
         width: 600px;
@@ -800,6 +873,75 @@
             width: 6em;
             margin: 0 0.5em;
             float: left;
+          }
+        }
+      }
+
+      &.p-auto-importexcel-upload {
+        width: 50em;
+
+        #popup-main {
+          .confirm {
+            width: inherit;
+            height: inherit;
+            line-height: 3em;
+            text-align: center;
+          }
+          #errorListScroll {
+            border-radius: 5px !important;
+            border: 1px solid #909090 !important;
+            padding: 5px;
+            border:1px solid;
+            max-height:300px;
+            overflow-x: hidden;
+            overflow-y:auto;
+            #errorList {
+              .confirm {
+                width: inherit;
+                height: inherit;
+                line-height: 3em;
+                text-align: center;
+              }
+              .error-row {
+                margin-left: 1em;
+                display: flex;
+                flex-direction: row;
+                .error-matrix {
+                  flex-basis: 105px;
+                  display: inline-block;
+                  width:10em;
+                  font-weight:bold;
+                }
+                .error-content {
+                  white-space: nowrap;
+                }
+              }
+            }
+          }
+
+        }
+        #popup-button {
+          width: 30em;
+          margin: 0 auto;
+          a {
+            width: 10em;
+
+            &#uploadExcelBtn {
+              float: left;
+            }
+
+            &#uploadCancelBtn {
+              float: right;
+            }
+
+            &#reloadBtn {
+              margin: 0 auto;
+            }
+
+            &#uploadCloseBtn {
+              display: none;
+              margin: 0 auto;
+            }
           }
         }
       }

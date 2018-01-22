@@ -1082,7 +1082,13 @@
           if(key.indexOf('_') >= 0 && 'applied' in chat && chat.applied) continue;
           if( Number(chat.messageType) === 6 ) {
             // ファイル送信チャット表示
-            this.chatApi.createSendFileMessage(JSON.parse(chat.message), userName);
+            if(chat.deleteFlg === 0) {
+              this.chatApi.createSendFileMessage(JSON.parse(chat.message), userName);
+            }
+            // ファイル送信チャットが削除されている場合
+            else if(chat.deleteFlg === 1) {
+              this.chatApi.createMessage(cn, chat.message, userName);
+            }
           } else {
             this.chatApi.createMessage(cn, chat.message, userName);
           }
@@ -2740,8 +2746,12 @@
             var result = false;
 
             // 含む方
-            var splitedContains = contains.replaceAll("　", " ").split(" ");
+            var splitedContains = contains.replace(/　/g, " ").split(" ");
             for(var i=0; i < splitedContains.length; i++) {
+              if(splitedContains[i] === "") {
+                result = true;
+                continue;
+              }
               var preg = "";
               var word = "";
               switch(Number(typeObj.wordType)) {
@@ -2759,16 +2769,22 @@
                   result = preg.test(val);
                   break;
               }
-              if((result && typeObj.containsType === 2)) { // いずれかを含まない
+              if((result && typeObj.containsType === 2)) { // いずれかを含む
                 break;
-              } else if((!result && typeObj.containsType === 1)) { // すべてを含まない
+              } else if((!result && typeObj.containsType === 1)) { // すべてを含む
                 break;
               }
             }
 
+            if(!result) return false; // 含む方と含まない方はAND条件なので、ここでダメならマッチエラーを返す
+
             // 含まない方
-            var splitedExclusions = exclusions.replaceAll("　", " ").split(" ");
+            var splitedExclusions = exclusions.replace(/　/g, " ").split(" ");
             for(var i=0; i < splitedExclusions.length; i++) {
+              if(splitedExclusions[i] === "") {
+                result = true;
+                continue;
+              }
               var preg = "";
               var word = "";
               switch(Number(typeObj.wordType)) {

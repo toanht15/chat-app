@@ -28,6 +28,10 @@ sincloApp.controller('MainController', function($scope) {
 
     this.tmpList = <?php echo json_encode($outMessageTriggerList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
 
+    $scope.decodeHtmlSpecialChar = function(action) {
+      $scope.action = $("<div/>").html( action ).text();
+    };
+
     $scope.$watch(function(){
       return self.setItemList;
     });
@@ -158,12 +162,12 @@ sincloApp.controller('MainController', function($scope) {
 
     $scope.chat_message_copy = $scope.widgetSettings['chat_message_copy'];
     $scope.chat_message_design_type = $scope.widgetSettings['chat_message_design_type'];
-    $scope.widget_outside_border_none = !$scope.widgetSettings['widget_border_color'];
-    $scope.widget_inside_border_none = !$scope.widgetSettings['widget_inside_border_color'];
-    $scope.re_border_none = !$scope.widgetSettings['re_border_color'];
-    $scope.se_border_none = !$scope.widgetSettings['se_border_color'];
+    $scope.widget_outside_border_none = $scope.widgetSettings['widget_border_color'] === 'なし';
+    $scope.widget_inside_border_none = $scope.widgetSettings['widget_inside_border_color'] === 'なし';
+    $scope.re_border_none = $scope.widgetSettings['re_border_color'] === 'なし';
+    $scope.se_border_none = $scope.widgetSettings['se_border_color'] === 'なし';
     $scope.show_name = <?=C_WIDGET_SHOW_COMP?>; // オートメッセージは企業名で表示する
-    $scope.message_box_border_none = !$scope.widgetSettings['message_box_border_color'];
+    $scope.message_box_border_none = $scope.widgetSettings['message_box_border_color'] === 'なし';
 
     $scope.switchWidget = function(num){
       $scope.showWidgetType = num;
@@ -201,7 +205,7 @@ sincloApp.controller('MainController', function($scope) {
       $scope.openFlg = true;
 
       setTimeout(function(){
-        $scope.createMessage($scope.showWidgetType != 1);
+        $scope.createMessage();
         $scope.toggleChatTextareaView($scope.main.chat_textarea);
       },0);
     }
@@ -533,37 +537,15 @@ sincloApp.controller('MainController', function($scope) {
 
     // シミュレーター上のメッセージ表示更新
     angular.element(window).on('load', function(e) {
-      $scope.$watch('action', function(value) {
-        $scope.createMessage($scope.showWidgetType != 1);
+      $('#TAutoMessageAction').on('keydown keyup', function(e) {
+        $scope.createMessage();
       });
       $scope.$watch('main.chat_textarea', function(value) {
         $scope.toggleChatTextareaView(value);
       });
-
-      $scope.initMessage($scope.action, $scope.showWidgetType != 1);
-      $scope.toggleChatTextareaView($scope.main.chat_textarea);
     });
-    $scope.initMessage = function(val="", isSmartphone=false) {
-      var strings = document.getElementById('TAutoMessageAction').value.split('\n');
-      var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
-      var message = "";
-
-      for (var i = 0; strings.length > i; i++) {
-        var str = strings[i];
-        var tel = str.match(telnoTagReg);
-        if( tel !== null ) {
-          var telno = tel[1];
-          // ただの文字列にする
-          var span = "<telno>" + telno + "</telno>";
-          str = str.replace(tel[0], span);
-        }
-        message += str + "\n";
-      }
-      message = message.replace(/[\n]+$/, '');
-      document.getElementById('TAutoMessageAction').value = message;
-      $scope.createMessage($scope.showWidgetType != 1);
-    }
-    $scope.createMessage = function(isSmartphone=false) {
+    $scope.createMessage = function() {
+      var isSmartphone = $scope.showWidgetType != 1;
       var val = document.getElementById('TAutoMessageAction').value;
       var messageElement = document.querySelector('#sample_widget_re_message .details:not(.cName)');
       if(!messageElement) return;
@@ -572,25 +554,27 @@ sincloApp.controller('MainController', function($scope) {
       var radioCnt = 1;
       var linkReg = RegExp(/(http(s)?:\/\/[\w\-\.\/\?\=\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/);
       var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
+      var htmlTagReg = RegExp(/<\/?("[^"]*"|'[^']*'|[^'">])*>/g)
       var radioName = "sinclo-radio0";
       var content = "";
 
       for (var i = 0; strings.length > i; i++) {
         var str = escape_html(strings[i]);
 
-        // ラジオボタン
-        var radio = str.indexOf('[]');
-        if ( radio > -1 ) {
-            var name = str.slice(radio+2);
-            str = "<span class='sinclo-radio'><input type='radio' name='" + radioName + "' id='" + radioName + "-" + i + "' class='sinclo-chat-radio' value='" + name + "'>";
-            str += "<label for='" + radioName + "-" + i + "'>" + name + "</label></span>";
-        }
         // リンク
         var link = str.match(linkReg);
         if ( link !== null ) {
             var url = link[0];
             var a = "<a href='" + url + "' target='_blank'>" + url + "</a>";
             str = str.replace(url, a);
+        }
+        // ラジオボタン
+        var radio = str.indexOf('[]');
+        if ( radio > -1 ) {
+            var value = str.slice(radio+2);
+            var name = value.replace(htmlTagReg, '');
+            str = "<span class='sinclo-radio'><input type='radio' name='" + radioName + "' id='" + radioName + "-" + i + "' class='sinclo-chat-radio' value='" + name + "'>";
+            str += "<label for='" + radioName + "-" + i + "'>" + value + "</label></span>";
         }
         // 電話番号（スマホのみリンク化）
         var tel = str.match(telnoTagReg);
@@ -608,7 +592,6 @@ sincloApp.controller('MainController', function($scope) {
         }
         content += str + "\n";
       }
-      content = content.replace(/\n\n$/, '\n');
 
       // プレビューの吹き出し表示制御
       if(content.length > 1) {

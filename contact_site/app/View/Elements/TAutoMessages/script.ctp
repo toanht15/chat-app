@@ -409,6 +409,133 @@ var getSortNo = function(){
   return JSON.parse(JSON.stringify(sortlist));
 };
 
+var fileObj = null;
+var loadData = null;
+var openSelectFile = function() {
+  var target = $('#selectFileInput');
+  target.on("click", function(event){
+    $(this).val(null);
+  }).on("change",function(event){
+    if(target[0].files[0]) {
+      fileObj = target[0].files[0];
+      // ファイルの内容は FileReader で読み込みます.
+      var fileReader = new FileReader();
+      fileReader.onload = function (event) {
+        var split = fileObj.name.split(".");
+        var targetExtension = split[split.length-1];
+        if(targetExtension === "xlsx") {
+          // event.target.result に読み込んだファイルの内容が入っています.
+          // ドラッグ＆ドロップでファイルアップロードする場合は result の内容を Ajax でサーバに送信しましょう!
+          loadData = event.target.result;
+          _showConfirmDialog("<div class='confirm'>指定されたファイル【" + fileObj.name + "】をアップロードします。<br>よろしいですか？</div>");
+        } else {
+          _showConfirmDialog("<div class='confirm'>指定されたファイル【" + fileObj.name + "】は対応していません。</div>");
+          $('#popupCloseBtn').css('display', 'block');
+          $('#uploadCloseBtn').css('display', 'block');
+          $('#uploadExcelBtn').css('display', 'none');
+          $('#uploadCancelBtn').css('display', 'none');
+          $('#popup-button').css('display', 'block');
+          popupEvent.resize();
+          loadData = null;
+          fileObj = null;
+        }
+      };
+      fileReader.readAsArrayBuffer(fileObj);
+    }
+  });
+  $('#selectFileInput').trigger('click');
+};
+
+var _showConfirmDialog = function(message) {
+  modalOpen.call(window, message, 'p-auto-importexcel-upload', 'インポート確認', 'moment');
+  popupEvent.uploadBtnClicked = function() {
+    $('#popupCloseBtn').css('display', 'none');
+    uploadFile(fileObj, loadData);
+  };
+};
+
+var uploadFile = function(fileObj, loadFile) {
+  var fd = new FormData();
+  var blob = new Blob([loadFile], {type: fileObj.type});
+  var index = Number("<?= $this->Paginator->params()["page"] ?>");
+  fd.append("type", 'speechContent');
+  fd.append("lastPage", index);
+  fd.append("file", blob, fileObj.name);
+
+  $('#popup-title').html('インポート処理中');
+  $('#popup-main').html('<div class="confirm">アップロード中（0％）</div>');
+  $('#popup-button').css('display', 'none');
+  popupEvent.resize();
+
+  $.ajax({
+    url  : "<?= $this->Html->url('/TAutoMessages/import') ?>",
+    type : "POST",
+    data : fd,
+    cache       : false,
+    contentType : false,
+    processData : false,
+    dataType    : "json",
+    xhr : function(){
+      var XHR = $.ajaxSettings.xhr();
+      if(XHR.upload){
+        XHR.upload.addEventListener('progress',function(e){
+          var uploadProgress = parseInt(e.loaded/e.total*10000)/100;
+          $('#popup-main').html('<div class="confirm">アップロード中（' + uploadProgress + '％）</div>');
+          if(uploadProgress === 100) {
+            $('#popup-main').html('<div class="confirm">インポート処理中です。しばらくお待ち下さい。</div>');
+          }
+        }, false);
+      }
+      return XHR;
+    }
+  })
+  .done(function(data, textStatus, jqXHR){
+    console.log(JSON.stringify(data));
+    if(data.success) {
+      $('#popup-main').html('<div class="confirm">インポートが完了しました。<br>ページを再読み込みします。</div>');
+      $('#popup-button').css('display', '');
+      $('#uploadExcelBtn').css('display', 'none');
+      $('#uploadCancelBtn').css('display', 'none');
+      $('#reloadBtn').css('display', '').on('click', function(e){
+        $(this).css('display','none');
+        $('#popup-main').html('<div class="confirm">再読み込み中です</div>');
+        popupEvent.resize();
+        location.href = "<?= $this->Html->url(['controller'=>'TAutoMessages', 'action' => 'index/page:']) ?>" + data.showPageNum;
+      });
+      popupEvent.resize();
+    } else {
+      var html = '<p id="importErrorMessage">インポート時にエラーが発生ました。<br>以下のエラー内容を確認してください。</p>';
+      html += '<div id="errorListScroll">';
+      html += '  <div id="errorList">';
+      if(typeof(data.errorMessages) === 'object') {
+        if(data.errorMessages.hasOwnProperty('type')) {
+          html += '<p class="error-row"><span class="error-content">' + data.errorMessages.message + '</span></p>'
+        } else {
+          Object.keys(data.errorMessages).forEach(function(key){
+            Object.keys(data.errorMessages[key]).forEach(function(column) {
+              for(var i = 0; i < data.errorMessages[key][column].length; i++) {
+                html += '<p class="error-row"><span class="error-matrix">【' + key + ' 行目' + column + ' 列】</span><span class="error-content">' + data.errorMessages[key][column][i] + '</span></p>'
+              }
+            });
+          });
+        }
+      }
+      html += '  </div>';
+      html += '</div>';
+      $('#popupCloseBtn').css('display', 'block');
+      $('#uploadExcelBtn').css('display', 'none');
+      $('#uploadCancelBtn').css('display', 'none');
+      $('#uploadCloseBtn').css('display', 'block');
+      $('#popup-button').css('display', 'block');
+      $('#popup-main').html(html);
+      popupEvent.resize();
+    }
+  })
+  .fail(function(jqXHR, textStatus, errorThrown){
+    alert("fail");
+  });
+}
+
 $(document).ready(function(){
   // ツールチップの表示制御
   $('.questionBtn').off("mouseenter").on('mouseenter',function(event){
@@ -428,5 +555,26 @@ $(document).ready(function(){
     var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
     targetObj.find('icon-annotation').css('display','none');
   });
+
+  var fadeOutLayerMenu = function() {
+    $("#autoMessageLayerMenu").fadeOut("fast");
+  };
+
+  var fadeInLayerMenu = function() {
+    $("#autoMessageLayerMenu").fadeIn("fast");
+  };
+
+  $('#importExcelBtn').on('click', function(e) {
+    e.stopPropagation();
+    var menu = document.getElementById("autoMessageLayerMenu").style.display;
+    if(menu == "block"){
+      fadeOutLayerMenu();
+    }
+    else{
+      fadeInLayerMenu();
+    }
+  });
+
+  $(document).on('click', fadeOutLayerMenu);
 });
 </script>

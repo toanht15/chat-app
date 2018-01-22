@@ -30,6 +30,48 @@
   text-align: center;'));
   ?>
   <span id="searchPeriod">検索期間</span>
+    <div class = "form01 fRight"  style = "margin-top: -19px; display:inline-block; height: 40px; margin-bottom:22px; margin-right: 24px;">
+    <?php
+    if($screenFlg == C_CHAT_HISTORY_SIDE) { ?>
+    <ul class="switch" ng-init = "fillterTypeId = 2" style = "box-shadow:none;">
+      <?php }
+      if($screenFlg == C_CHAT_HISTORY_VERTICAL) { ?>
+      <ul class="switch" ng-init = "fillterTypeId = 1" style = "box-shadow:none;">
+        <?php } ?>
+        <li ng-class="{on:fillterTypeId===1}" ng-click="fillterTypeId = 1" style = "margin-top:0; width:5em !important;">
+        <span class = 'vertical' ng-if = "fillterTypeId == 1">
+         <?= $this->Html->link(
+             $this->Html->image('dock_bottom.png', array('alt' => 'メニュー', 'width'=>50, 'height'=>50)),
+             'javascript:void(0)',
+             array('escape' => false,
+                 'style' => 'display: inline-block; height: 30px; margin-top:-5px;')); ?>
+        </span>
+          <span class = 'vertical' ng-if = "fillterTypeId == 2">
+          <?= $this->Html->link(
+              $this->Html->image('dock_bottom_color.png', array('alt' => 'メニュー', 'width'=>50, 'height'=>50)),
+              'javascript:void(0)',
+              array('escape' => false,
+                  'style' => 'display: inline-block; height: 30px;margin-top:-5px;')); ?>
+        </span>
+        </li>
+        <li ng-class="{on:fillterTypeId===2}" ng-click="fillterTypeId = 2" style = "margin-top:0; width:5em !important;">
+      <span class = 'side' ng-if = "fillterTypeId == 1">
+        <?= $this->Html->link(
+            $this->Html->image('dock_right_color.png', array('alt' => 'メニュー', 'width'=>50, 'height'=>50)),
+            'javascript:void(0)',
+            array('escape' => false,
+                'style' => 'display: inline-block; height: 30px;margin-top:-5px;')); ?>
+        </span>
+          <span class = 'side' ng-if = "fillterTypeId == 2">
+        <?= $this->Html->link(
+            $this->Html->image('dock_right.png', array('alt' => 'メニュー', 'width'=>50, 'height'=>50)),
+            'javascript:void(0)',
+            array('escape' => false,
+                'style' => 'display: inline-block; height: 30px;margin-top:-5px;')); ?>
+        </span>
+        </li>
+      </ul>
+  </div>
   <?php
     //検索条件表示：非表示
     $noseach_menu = '';
@@ -134,18 +176,21 @@
     </ul>
   </div>
     <!-- 検索窓 -->
-    <div class='fLeft' style="width:100%;">
-      <div class="btnSet">
+    <div class='fLeft' style="width:100%;margin-bottom: 10px;margin-top: -10px;">
+      <div id="btnSet">
        <span id = "outputCsv">
            <?= $this->Html->image('csv.png', array(
                'alt' => 'CSV出力',
-               'id'=>'history_csv_btn',
+               'id'=>$coreSettings[C_COMPANY_USE_HISTORY_EXPORTING] ? "history_csv_btn" : "disabled_history_csv_btn",
                'class' => 'btn-shadow disOffgrayBtn commontooltip',
-               'data-text' => 'CSV出力',
+               'disabled' => !$coreSettings[C_COMPANY_USE_HISTORY_EXPORTING],
+               'data-text' => $coreSettings[C_COMPANY_USE_HISTORY_EXPORTING] ? "CSV出力" : "こちらの機能はスタンダードプラン<br>からご利用いただけます。",
                'data-balloon-position' => '36',
                'width' => 45,
                'height' => 45,
-               'url'=>array('controller'=>'ChatHistories','action'=>'outputCSVOfChat')
+               'onclick' => 'selectCsv()',
+               'url'=>array('controller'=>'ChatHistories','action'=>'outputCSVOfChat'),
+               'style' => 'margin-left:-4px;'
            )) ?>
        </span>
        <?php if($permission_level == 1) { ?>
@@ -153,7 +198,7 @@
           <a>
             <?= $this->Html->image('dustbox.png', array(
                 'alt' => '削除',
-                'id'=>'history_dustbox_btn',
+                'id'=>$coreSettings[C_COMPANY_USE_HISTORY_DELETE] ? "history_dustbox_btn" : "disabled_history_dustbox_btn",
                 'class' => 'btn-shadow disOffgrayBtn commontooltip',
                 'disabled' => !$coreSettings[C_COMPANY_USE_HISTORY_DELETE],
                 'data-text' => $coreSettings[C_COMPANY_USE_HISTORY_DELETE] ? "削除する" : "こちらの機能はスタンダードプラン<br>からご利用いただけます。",
@@ -179,48 +224,6 @@
           <input type="checkbox" id="g_chat" name="group_by_chat" <?=$checked?> />
           CV(コンバージョン)のみ表示する
         </label>
-        <div class = "form01 fRight" style = "margin-top: -37px; display:inline-block; height: 40px; margin-bottom:22px;">
-            <?php
-            if($screenFlg == C_CHAT_HISTORY_SIDE) { ?>
-            <ul class="switch" ng-init = "fillterTypeId = 2" style = "box-shadow:none;">
-              <?php }
-              if($screenFlg == C_CHAT_HISTORY_VERTICAL) { ?>
-              <ul class="switch" ng-init = "fillterTypeId = 1" style = "box-shadow:none;">
-                <?php } ?>
-                <li ng-class="{on:fillterTypeId===1}" ng-click="fillterTypeId = 1" style = "margin-top:0; width:5em !important;">
-                <span class = 'vertical' ng-if = "fillterTypeId == 1">
-                 <?= $this->Html->link(
-                     $this->Html->image('dock_bottom.png', array('alt' => 'メニュー', 'width'=>50, 'height'=>50)),
-                     'javascript:void(0)',
-                     array('escape' => false,
-                         'style' => 'display: inline-block; height: 30px; margin-top:-5px;')); ?>
-                </span>
-                  <span class = 'vertical' ng-if = "fillterTypeId == 2">
-                  <?= $this->Html->link(
-                      $this->Html->image('dock_bottom_color.png', array('alt' => 'メニュー', 'width'=>50, 'height'=>50)),
-                      'javascript:void(0)',
-                      array('escape' => false,
-                          'style' => 'display: inline-block; height: 30px;margin-top:-5px;')); ?>
-                </span>
-                </li>
-                <li ng-class="{on:fillterTypeId===2}" ng-click="fillterTypeId = 2" style = "margin-top:0; width:5em !important;">
-              <span class = 'side' ng-if = "fillterTypeId == 1">
-                <?= $this->Html->link(
-                    $this->Html->image('dock_right_color.png', array('alt' => 'メニュー', 'width'=>50, 'height'=>50)),
-                    'javascript:void(0)',
-                    array('escape' => false,
-                        'style' => 'display: inline-block; height: 30px;margin-top:-5px;')); ?>
-                </span>
-                  <span class = 'side' ng-if = "fillterTypeId == 2">
-                <?= $this->Html->link(
-                    $this->Html->image('dock_right.png', array('alt' => 'メニュー', 'width'=>50, 'height'=>50)),
-                    'javascript:void(0)',
-                    array('escape' => false,
-                        'style' => 'display: inline-block; height: 30px;margin-top:-5px;')); ?>
-                </span>
-                </li>
-              </ul>
-          </div>
       <?php endif; ?>
       <?=$this->Form->create('History', ['action' => 'index']);?>
         <?=$this->Form->hidden('outputData')?>
@@ -233,78 +236,122 @@
       <thead>
         <tr>
           <th style = "width:2%"><input type="checkbox" name="allCheck" id="allCheck"><label for="allCheck"></label></th>
-          <th width = "3%" style = "width:3%">種別</th>
-          <th id = "firstTimeReceivingLabel" style = "width:5%">初回チャット<br>受信日時<div class="questionBalloon questionBalloonPosition13">
+          <th width = "3%" id = "info" style = "width:20%">情報</th>
+          <th width = "3%" id = "kind" style = "width:5%; display:none;">種別</th>
+          <th id = "firstTimeReceivingLabel" style = "width:5%;display:none;min-width:79px;">初回チャット<br>受信日時<div class="questionBalloon questionBalloonPosition13">
             <icon class="questionBtn">？</icon>
           </div></th>
-          <th style = "width:5%">IPアドレス</th>
-          <th style = "width:5%">訪問ユーザ</th>
-          <th style = "width:4%">キャンペーン</th>
-          <th id = "sendChatPageLabel" style = "width:8%">チャット送信ページ<div class="questionBalloon questionBalloonPosition8">
+          <th style = "width:5%;display:none;" id = "ip">IPアドレス</th>
+          <th style = "width:5%;display:none;" id = "visitor">訪問ユーザ</th>
+          <th style = "width:3%">キャンペーン</th>
+          <th id = "sendChatPageLabel" style = "width:13%">チャット送信ページ<div class="questionBalloon questionBalloonPosition8">
             <icon class="questionBtn">？</icon>
           </div></th>
-          <th style = "width:4%">成果</th>
-          <th style = "width:5%" id = "manualReceivingLabel">有人チャット<br>受信日時<div class="questionBalloon questionBalloonPosition13">
+          <th style = "min-width:59px;" id = "achievement">成果</th>
+          <th style = "min-width:79px;" id = "manualReceivingLabel">有人チャット<br>受信日時<div class="questionBalloon questionBalloonPosition13">
             <icon class="questionBtn">？</icon>
             </div></th>
         <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
-          <th style = "width:5%" id="lastSpeechLabel">最終発言後<br>離脱時間<div class="questionBalloon questionBalloonPosition13">
+          <th style = "min-width:71px;" id="lastSpeechLabel">最終発言後<br>離脱時間<div class="questionBalloon questionBalloonPosition13">
               <icon class="questionBtn">？</icon>
             </div></th>
-          <th style = "width:6%">担当者</th>
+           <th style = "width:6%;display:none;" id = "responsible">担当者</th>
         <?php endif; ?>
       </tr>
       </thead>
       <tbody ng-cloak id = "chatHistory" >
-  <?php foreach($historyList as $key => $history): ?>
-  <?php
-  /* キャンペーン名の取得 */
-  $campaignParam = "";
-  $tmp = mb_strstr($stayList[$history['THistory']['id']]['THistoryStayLog']['firstURL'], '?');
-  if ( $tmp !== "" ) {
-    foreach($campaignList as $k => $v){
-      if ( strpos($tmp, $k) !== false ) {
-        if ( $campaignParam !== "" ) {
-          $campaignParam .= "\n";
-        }
-        $campaignParam .= h($v);
-      }
-    }
-  }
-  $visitorsId = "";
-  if ( isset($history['THistory']['visitors_id']) ) {
-    $visitorsId = $history['THistory']['visitors_id'];
-  }
-
-  if($historyId == $history['THistory']['id']) {
-    $userCampaignParam = "";
-    $tmp = mb_strstr($stayList[$history['THistory']['id']]['THistoryStayLog']['firstURL'], '?');
-    $this->log('tmp',LOG_DEBUG);
-    $this->log($tmp,LOG_DEBUG);
-    if ( $tmp !== "" ) {
-      foreach($campaignList as $k => $v){
-        if ( strpos($tmp, $k) !== false ) {
-          if ( $userCampaignParam !== "" ) {
-            $userCampaignParam .= "\n";
+        <?php foreach($historyList as $key => $history): ?>
+        <?php
+        /* キャンペーン名の取得 */
+        $campaignParam = "";
+        $tmp = mb_strstr($stayList[$history['THistory']['id']]['THistoryStayLog']['firstURL'], '?');
+        if ( $tmp !== "" ) {
+          foreach($campaignList as $k => $v){
+            if ( strpos($tmp, $k) !== false ) {
+              if ( $campaignParam !== "" ) {
+                $campaignParam .= "\n";
+              }
+              $campaignParam .= h($v);
+            }
           }
-          $userCampaignParam .= h($v);
         }
-      }
-    }
-  }
-  ?>
-            <?php
-            if ((isset($history['THistoryChatLog']['type']) && isset($data['History']['chat_type']) && isset($chatType) &&
-              $history['THistoryChatLog']['type'] === $chatType[$data['History']['chat_type']]) || empty($chatType)) {
+        $visitorsId = "";
+        if ( isset($history['THistory']['visitors_id']) ) {
+          $visitorsId = $history['THistory']['visitors_id'];
+        }
 
-              if((!empty($campaignParam) && !empty($data['History']['campaign']) && $data['History']['campaign'] == $campaignParam) || empty($data['History']['campaign'])) { ?>
-          <tr id = "<?=h($history['THistory']['id'])?>" ng-click="getOldChat('<?=h($history['THistory']['id'])?>', false)" onclick="openChatById('<?=h($history['THistory']['id'])?>');" class = "showBold" style="height:50px;">
-              <td class="tCenter" onclick="event.stopPropagation();" width=" 3%" style = "width:3%">
-                <input type="checkbox" name="selectTab" id="selectTab<?=h($history['THistory']['id'])?>" value="<?=h($history['THistory']['id'])?>">
-                <label for="selectTab<?=h($history['THistory']['id'])?>"></label>
-              </td>
-              <td class="tCenter" style = "width:5%">
-                <?php if( is_numeric($history['THistoryChatLog']['count']) ): ?>
+        if($historyId == $history['THistory']['id']) {
+          $userCampaignParam = "";
+          $tmp = mb_strstr($stayList[$history['THistory']['id']]['THistoryStayLog']['firstURL'], '?');
+          if ( $tmp !== "" ) {
+            foreach($campaignList as $k => $v){
+              if ( strpos($tmp, $k) !== false ) {
+                if ( $userCampaignParam !== "" ) {
+                  $userCampaignParam .= "\n";
+                }
+                $userCampaignParam .= h($v);
+              }
+            }
+          }
+        }
+        ?>
+        <?php
+        if ((isset($history['THistoryChatLog']['type']) && isset($data['History']['chat_type']) && isset($chatType) &&
+          $history['THistoryChatLog']['type'] === $chatType[$data['History']['chat_type']]) || empty($chatType)) {
+
+            if((!empty($campaignParam) && !empty($data['History']['campaign']) && $data['History']['campaign'] == $campaignParam) || empty($data['History']['campaign'])) { ?>
+              <tr id = "<?=h($history['THistory']['id'])?>" ng-click="getOldChat('<?=h($history['THistory']['id'])?>', false)" onclick="openChatById('<?=h($history['THistory']['id'])?>');" class = "showBold" style="height:50px;">
+                <td class="tCenter" onclick="event.stopPropagation();" width=" 3%" style = "width:6%">
+                  <input type="checkbox" name="selectTab" id="selectTab<?=h($history['THistory']['id'])?>" value="<?=h($history['THistory']['id'])?>">
+                  <label for="selectTab<?=h($history['THistory']['id'])?>"></label>
+                </td>
+                <td style = "width:38%; padding-left:10px;" class = "eachInfo">
+                  <?php if( is_numeric($history['THistoryChatLog']['count']) ): ?>
+                    <div class = "firstChatTime">
+                      <?php if (!empty($history['SpeechTime']['firstSpeechTime']) && date('Y/m/d') == date_format(date_create($history['SpeechTime']['firstSpeechTime']), "Y/m/d")){ ?>
+                       <?=date_format(date_create($history['SpeechTime']['firstSpeechTime']), "H:i")?>
+                      <?php }
+                      else if(!empty($history['SpeechTime']['firstSpeechTime']) && date('Y/m/d') != date_format(date_create($history['SpeechTime']['firstSpeechTime']), "Y/m/d")) {
+                        $firstSpeechTimeMonth = date_format(date_create($history['SpeechTime']['firstSpeechTime']), "m月");
+                        $firstSpeechTimeDay = date_format(date_create($history['SpeechTime']['firstSpeechTime']), "d日"); ?>
+                        <?=ltrim($firstSpeechTimeMonth, '0').ltrim($firstSpeechTimeDay, '0');?>
+                      <?php } ?>
+                    </div>
+                    <div class = "info">
+                    <div>
+                      <?php
+                       if ((!empty($history['THistoryChatLog']['type']) && $history['THistoryChatLog']['type'] == "自動返信")
+                        || ($history['THistoryChatLog']['cmp'] == 0 && $history['THistoryChatLog']['sry'] == 0 && $history['THistoryChatLog']['cus'] == 0)) { ?>
+                        <span class = "largeCharacters" style = "color:#4bacc6; font-weight:bold;">Auto(<?php if (isset($chatUserList[$history['THistory']['id']])) { echo $chatUserList[$history['THistory']['id']]; } ?>)</span>
+                      <?php
+                      }
+                      else if(!empty($history['THistoryChatLog']['type']) && $history['THistoryChatLog']['type'] == "拒否") { ?>
+                        <span class = "largeCharacters" style = "color:#a6a6a6; font-weight:bold;">Sorry</span>
+                      <?php
+                      }
+                      else if($history['THistoryChatLog']['type'] == "") { ?>
+                        <span class = "largeCharacters" style = "color:#9bbb59; font-weight:bold;">Manual(<?php if (isset($chatUserList[$history['THistory']['id']])) { echo $chatUserList[$history['THistory']['id']]; } ?>)</span>
+                      <?php
+                      }
+                      else if($history['THistoryChatLog']['type'] == "未入室") { ?>
+                        <span class = "largeCharacters" style = "color:#f79646; font-weight:bold;">NoEntry(＊未入室)</span>
+                      <?php
+                        }
+                     endif; ?></div>
+                  <?php if(isset($coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $coreSettings[C_COMPANY_REF_COMPANY_DATA]) { ?>
+                    <?php if(!empty($history['LandscapeData']['org_name']) && !empty($history['LandscapeData']['lbc_code'])): ?>
+                        <div style = "padding-top:1px;"><a href="javascript:void(0)" class="underL largeCharacters" onclick="openCompanyDetailInfo('<?=$history['LandscapeData']['lbc_code']?>')"><?=h($history['LandscapeData']['org_name'])?></a>
+                    <?php elseif(!empty($history['LandscapeData']['org_name'])): ?>
+                        <p><?=h($history['LandscapeData']['org_name'])?></p><?='\n'?>
+                    <?php elseif(empty($history['LandscapeData']['org_name'])): ?>
+                    <div class = "largeCharacters" style = "padding-top:1px;">{{ ip('<?=h($history['THistory']['ip_address'])?>', <?php echo !empty($history['LandscapeData']['org_name']) ? 'true' : 'false' ?>) }}</div>
+                    <?php endif; ?>
+                  <?php } else { ?>
+                  <div class = "largeCharacters" style = "padding-top:1px;">{{ ip('<?=h($history['THistory']['ip_address'])?>', <?php echo !empty($history['LandscapeData']['org_name']) ? 'true' : 'false' ?>) }}</div>
+                  <?php } ?>
+                  <div style = "padding-top:1px;" class = "largeCharacters">{{ ui('<?=h($history['THistory']['ip_address'])?>','<?=$visitorsId?>') }}</div></div></td>
+                  <td class="tCenter eachKind" style = "width:5%;display:none;">
+                  <?php if( is_numeric($history['THistoryChatLog']['count']) ): ?>
                     <?php
                      if ((!empty($history['THistoryChatLog']['type']) && $history['THistoryChatLog']['type'] == "自動返信")
                       || ($history['THistoryChatLog']['cmp'] == 0 && $history['THistoryChatLog']['sry'] == 0 && $history['THistoryChatLog']['cus'] == 0)) { ?>
@@ -324,56 +371,70 @@
                     <?php
                       }
                    endif; ?>
-              </td>
-              <td class="tRight pre" style = "width:9%"><?php if (!empty($history['LastSpeechTime']['firstSpeechTime'])){ ?><?=date_format(date_create($history['LastSpeechTime']['firstSpeechTime']), "Y/m/d\nH:i:s")?><?php } ?></td>
-              <td class="tLeft ip-address" style = "width:11%">
-                <?php if(isset($coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $coreSettings[C_COMPANY_REF_COMPANY_DATA]): ?>
-                  <?php if(!empty($history['LandscapeData']['org_name']) && !empty($history['LandscapeData']['lbc_code'])): ?>
-                      <a href="javascript:void(0)" class="underL" onclick="openCompanyDetailInfo('<?=$history['LandscapeData']['lbc_code']?>')"><?=h($history['LandscapeData']['org_name'])?></a><br>
-                  <?php elseif(!empty($history['LandscapeData']['org_name'])): ?>
-                      <p><?=h($history['LandscapeData']['org_name'])?></p><?='\n'?>
+                </td>
+                <td class="tRight pre eachFirstSpeechTime" style = "width:5%;display:none;"><?php if (!empty($history['SpeechTime']['firstSpeechTime'])){ ?><?=date_format(date_create($history['SpeechTime']['firstSpeechTime']), "Y/m/d\nH:i:s")?><?php } ?></td>
+                <td class="tLeft ip-address eachIpAddress" style = "width:10%;display:none;">
+                  <?php if(isset($coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $coreSettings[C_COMPANY_REF_COMPANY_DATA]): ?>
+                    <?php if(!empty($history['LandscapeData']['org_name']) && !empty($history['LandscapeData']['lbc_code'])): ?>
+                        <a href="javascript:void(0)" class="underL" onclick="openCompanyDetailInfo('<?=$history['LandscapeData']['lbc_code']?>')"><?=h($history['LandscapeData']['org_name'])?></a><br>
+                    <?php elseif(!empty($history['LandscapeData']['org_name'])): ?>
+                        <p><?=h($history['LandscapeData']['org_name'])?></p><?='\n'?>
+                    <?php endif; ?>
                   <?php endif; ?>
-                <?php endif; ?>
-                {{ ip('<?=h($history['THistory']['ip_address'])?>', <?php echo !empty($history['LandscapeData']['org_name']) ? 'true' : 'false' ?>) }}
-              </td>
-              <td class="tLeft pre" style = "width:11%">{{ ui('<?=h($history['THistory']['ip_address'])?>', '<?=$visitorsId?>') }}</td>
-              <td class="tCenter pre" style = "width:10%"><?=$campaignParam?></td>
-              <td class="pre" style = "font-size:11px;padding:8px 5px !important;width:20%;"><a href = "<?=h($history['THistoryStayLog']['url'])?>" target = "landing"><?= $history['THistoryStayLog']['title'] ?></a></td>
-              <td class="tCenter" style = "width:7%"><?php
-                if($history['THistoryChatLog']['eff'] == 0 || $history['THistoryChatLog']['cv'] == 0 ) {
-                  if (isset($history['THistoryChatLog']['achievementFlg'])){
-                    echo !empty($achievementType[h($history['THistoryChatLog']['achievementFlg'])]) ? $achievementType[h($history['THistoryChatLog']['achievementFlg'])] : "";
+                  {{ ip('<?=h($history['THistory']['ip_address'])?>', <?php echo !empty($history['LandscapeData']['org_name']) ? 'true' : 'false' ?>) }}
+                </td>
+                <td class="tLeft pre eachVisitor" style = "width:10%;display:none;">{{ ui('<?=h($history['THistory']['ip_address'])?>', '<?=$visitorsId?>') }}</td>
+                <td class="tCenter pre" style = "width:10%"><?=$campaignParam?></td>
+                <td class="pre" style = "font-size:11px;padding:8px 5px !important;width:32%;"><a href = "<?=h($forChatSendingPageList[$history['THistoryChatLog']['t_history_stay_logs_id']]['THistoryStayLog']['url'])?>" target = "landing"><?= $forChatSendingPageList[$history['THistoryChatLog']['t_history_stay_logs_id']]['THistoryStayLog']['title'] ?></a></td>
+                <td class="tCenter" style = "width:5%"><?php
+                  if($history['THistoryChatLog']['eff'] == 0 || $history['THistoryChatLog']['cv'] == 0 ) {
+                    if (isset($history['THistoryChatLog']['achievementFlg'])){
+                      echo !empty($achievementType[h($history['THistoryChatLog']['achievementFlg'])]) ? $achievementType[h($history['THistoryChatLog']['achievementFlg'])] : "";
+                    }
                   }
-                }
-                else if ($history['THistoryChatLog']['eff'] != 0 && $history['THistoryChatLog']['cv'] != 0) {
-                  if (isset($history['THistoryChatLog']['achievementFlg'])){
-                    echo $achievementType[2].nl2br("\n").$achievementType[0];
+                  else if ($history['THistoryChatLog']['eff'] != 0 && $history['THistoryChatLog']['cv'] != 0) {
+                    if (isset($history['THistoryChatLog']['achievementFlg'])){
+                      echo $achievementType[2].nl2br("\n").$achievementType[0];
+                    }
                   }
-                }
-              ?></td>
-          <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
-              <td class="tRight pre" style = "width:9%"><?php if (!empty($history['NoticeChatTime']['created'])){ ?><?=date_format(date_create($history['NoticeChatTime']['created']), "Y/m/d\nH:i:s")?><?php } ?>
-              </td>
-              <td class="tCenter" style = "width:9%"><?php
-              if ($history['LastSpeechTime']['lastSpeechTime']
-                && $history['THistory']['access_date'] !== $history['THistory']['out_date']
-                && strtotime($history['LastSpeechTime']['lastSpeechTime']) <= strtotime($history['THistory']['out_date'])){
-                echo $this->htmlEx->calcTime($history['LastSpeechTime']['lastSpeechTime'], $history['THistory']['out_date']);
-              }
-              ?></td>
-              <td class="tCenter pre" style = "width:12%"><?php if (isset($chatUserList[$history['THistory']['id']])) { echo $chatUserList[$history['THistory']['id']]; } ?></td>
-          <?php endif; ?>
+                ?></td>
+                <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
+                  <td class="tRight pre" style = "width:5%;"><?php if (!empty($history['NoticeChatTime']['created'])){ ?><?=date_format(date_create($history['NoticeChatTime']['created']), "Y/m/d\nH:i:s")?><?php } ?>
+                  </td>
+                  <td class="tCenter" style = "width:4%;"><?php
+                  if ($history['SpeechTime']['SpeechTime']
+                    && $history['THistory']['access_date'] !== $history['THistory']['out_date']
+                    && strtotime($history['SpeechTime']['SpeechTime']) <= strtotime($history['THistory']['out_date'])){
+                    echo $this->htmlEx->calcTime($history['SpeechTime']['SpeechTime'], $history['THistory']['out_date']);
+                  }
+                ?></td>
+                <td class="tCenter pre responsible" style = "width:10%;display:none;"><?php if (isset($chatUserList[$history['THistory']['id']])) { echo $chatUserList[$history['THistory']['id']]; } ?></td>
+              <?php endif; ?>
           </tr>
           <?php } } ?>
-  <?php endforeach; ?>
+        <?php endforeach; ?>
       </tbody>
   </table>
 </div>
 
 </div>
 
-
 <div id = "detail" class = "detail" style = "width: 100%; background-color: #f2f2f2; display:none;">
+
+    <div id="verticalToggleMenu" ng-init = "setDetailMode(1)" ng-if="fillterTypeId === 1" class = "form01" style = "">
+    <ul class="switch" style = "box-shadow:none; padding-left: 17px; margin-bottom: 0;">
+      <li ng-class="{on:switchDetailMode===1}" ng-click="setDetailMode(1)" style = "margin-top:0; margin-bottom:0; width:9em !important;">
+        <span ng-if="switchDetailMode===1" style="margin: 0; padding: 5px 0; color: #FFFFFF;">チャット内容</span>
+        <span ng-if="switchDetailMode===2" style="margin: 0; padding: 5px 0; color: #c3d69b;">チャット内容</span>
+      </li>
+      <li ng-class="{on:switchDetailMode===2}" ng-click="setDetailMode(2)" style = "margin-top:0; margin-bottom:0; width:9em !important;">
+        <span ng-if="switchDetailMode===1" style="margin: 0; padding: 5px 0; color: #c3d69b;">詳細情報</span>
+        <span ng-if="switchDetailMode===2" style="margin: 0; padding: 5px 0; color: #FFFFFF;">詳細情報</span>
+      </li>
+    </ul>
+  </div>
+
+
   <div id="verticalToggleMenu" ng-init = "setDetailMode(1)" ng-if="fillterTypeId === 2" class = "form01" style = "">
     <ul class="switch" style = "box-shadow:none; padding-left: 17px; margin-bottom: 0;">
       <li ng-class="{on:switchDetailMode===1}" ng-click="setDetailMode(1)" style = "margin-top:0; margin-bottom:0; width:9em !important;">
@@ -437,12 +498,14 @@
               <?php if(isset($coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $coreSettings[C_COMPANY_REF_COMPANY_DATA]): ?>
                     <?php if(!empty($defaultHistoryList['LandscapeData']['org_name']) && !empty($defaultHistoryList['LandscapeData']['lbc_code'])): ?>
                         <a href="javascript:void(0)" class="underL" onclick="openCompanyDetailInfo('<?=$defaultHistoryList['LandscapeData']['lbc_code']?>')">
-                        <span id = "Landscape"><?=h($defaultHistoryList['LandscapeData']['org_name'])?></span></a><br>
+                        <span id = "Landscape"><?=h($defaultHistoryList['LandscapeData']['org_name'])?></span></a>
                     <?php elseif(!empty($defaultHistoryList['LandscapeData']['org_name'])): ?>
                         <p><?=h($defaultHistoryList['LandscapeData']['org_name'])?></p><?='\n'?>
+                    <?php elseif(empty($defaultHistoryList['LandscapeData']['org_name'])): ?>
+                      <span id = "Landscape"></span>
                     <?php endif; ?>
                   <?php endif; ?>
-                  <span id= "ipAddress">{{ ip('<?=h($defaultHistoryList['THistory']['ip_address'])?>', <?php echo !empty($defaultHistoryList['LandscapeData']['org_name']) ? 'true' : 'false' ?>) }}</span></dd>
+                  <span id= "ipAddress">{{ ip('<?='('.h($defaultHistoryList['THistory']['ip_address']).')'?>', <?php echo !empty($defaultHistoryList['LandscapeData']['org_name']) ? 'true' : 'false' ?>) }}</span></dd>
             </li>
             <li>
               <dt>訪問回数</dt>
@@ -472,15 +535,16 @@
           </li>
           <li>
             <dt>チャット送信ページ</dt>
+            <?php $this->log('detailChatPagesData',LOG_DEBUG); $this->log($forChatSendingPageList[$defaultHistoryList['THistoryChatLog']['t_history_stay_logs_id']],LOG_DEBUG); ?>
             <dd id = "chatSending">
-            <a href = "<?=h($defaultHistoryList['THistoryStayLog']['url'])?>" target = "landing">
-            <span id = "chatSendingPage"><?= $defaultHistoryList['THistoryStayLog']['title'] ?></span></a></dd>
+            <a href = "<?=h($forChatSendingPageList[$defaultHistoryList['THistoryChatLog']['t_history_stay_logs_id']]['THistoryStayLog']['url'])?>" target = "landing">
+            <span id = "chatSendingPage"><?= $forChatSendingPageList[$defaultHistoryList['THistoryChatLog']['t_history_stay_logs_id']]['THistoryStayLog']['title'] ?></span></a></dd>
           </li>
           <li>
             <dt>離脱ページ</dt>
             <dd id = "separation">
-            <a href = "<?=h($tHistoryChatLastPageData['url'])?>" target = "landing">
-            <span id = "separationPage"><?= $tHistoryChatLastPageData['title'] ?></span></a></dd></dd>
+            <a href = "<?=h($detailChatPagesData[0]['THistoryStayLog']['url'])?>" target = "landing">
+            <span id = "separationPage"><?= $detailChatPagesData[0]['THistoryStayLog']['title'] ?></span></a></dd></dd>
           </li>
           <li>
             <dt>閲覧ページ数</dt>
@@ -518,7 +582,7 @@
             </li>
           </ul>
           <div id="personal_action">
-              <?= $this->Html->link('元に戻す', 'javascript:void(0)', ['onclick' => 'reloadAct()', 'class' => 'whiteBtn btn-shadow lineUpSaveBtn historyReturnButton']) ?>
+              <?= $this->Html->link('元に戻す', 'javascript:void(0)', ['onclick' => 'reloadAct('.$historyId.')', 'id' => 'restore','class' => 'whiteBtn btn-shadow lineUpSaveBtn historyReturnButton']) ?>
               <?= $this->Html->link('更新', 'javascript:void(0)', ['onclick' => 'customerInfoSave('.$historyId.')','id' => 'customerInfo', 'class' => 'greenBtn btn-shadow lineUpSaveBtn hitoryUpdateButton']) ?>
           </div>
           <?php } ?>
