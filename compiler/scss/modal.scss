@@ -579,6 +579,79 @@
         }
       }
 
+      &.p-cus-operator-presence {
+        width: 38em;
+
+        #popup-main {
+          padding: 1.5em;
+          #presenceView {
+            height: 400px;
+            position: relative;
+
+            table {
+              width: 100%;
+
+              th {
+                padding: 10px 20px;
+              }
+
+              td {
+                text-align: center;
+                padding: 10px 20px;
+              }
+            }
+
+            #presenceViewheader {
+              width: auto;
+              position: absolute;
+              z-index: 30;
+              left: 0;
+              right: 0;
+            }
+
+            #presenceViewBodyScroll {
+              position: relative;
+              height: 90%;
+              overflow-x: hidden;
+              overflow-y: scroll;
+              bottom: -36px;
+              #presenceViewBody {
+                thead {
+                  visibility: hidden;
+                  height: 0px;
+                  line-height: 0px;
+                }
+                width: auto;
+                td {
+                  font-size: 13px;
+                  span {
+                    &.presence-active {
+                      color: #9bbb59;
+                    }
+                    &.presence-inactive {
+                      color: #d99694;
+                    }
+                    &.presence-offline {
+                      color: #b5b5b5;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        #popup-button {
+          display: flex;
+          padding-bottom: 25px;
+
+          a {
+            width: 75px;
+            margin: 0 auto;
+          }
+        }
+      }
+
       /* 履歴一覧-ポップアップ用 */
       &.p-history-logs {
         width: 600px;
