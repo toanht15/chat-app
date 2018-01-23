@@ -5258,10 +5258,16 @@ ul.naviBtn {
 
         #tautomessages_action_simulator {
           flex-basis: auto;
-          margin: auto 0 6px 20px;
+          display: relative;
+          margin-left: 20px;
 
-          section#switch_widget {
-            margin-bottom: 0.5em;
+          > div {
+            position: absolute;
+            bottom: 6px;
+
+            section#switch_widget {
+              margin-bottom: 0.5em;
+            }
           }
         }
       }
