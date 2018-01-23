@@ -224,8 +224,7 @@
           ]
         ];
         /*必ず治す！！*/
-        //$tHistoryCountData = $this->THistory->find('first', $params);
-        $tHistoryCountData = 1;
+        $tHistoryCountData = $this->THistory->find('first', $params);
         $this->log("END tHistoryCountData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
 
         $mCusData = ['MCustomer' => []];
@@ -1281,16 +1280,6 @@
           ],
         ];*/
 
-      $joinToNoticeChatTime = [
-          'type' => 'LEFT',
-          'table' => '(SELECT t_histories_id, message_type,message_read_flg,created FROM t_history_chat_logs where id IN(302,298,292,277))',
-          'alias' => 'NoticeChatTime',
-          'field' => 'created',
-          'conditions' => [
-            'NoticeChatTime.t_histories_id = THistoryChatLog.t_histories_id'
-          ],
-        ];
-
         // キャンペーンに関する検索条件
         if ( isset($data['History']['campaign']) && $data['History']['campaign'] !== "") {
           $campaignList = $this->TCampaign->getList();
@@ -1418,7 +1407,6 @@
       $this->log("BEGIN historyList : ".$this->getDateWithMilliSec(),LOG_DEBUG);
       $historyList = $this->paginate('THistory');
       $this->log("END historyList : ".$this->getDateWithMilliSec(),LOG_DEBUG);
-      $this->log($historyList,LOG_DEBUG);
 
       // TODO 良いやり方が無いか模索する
       $historyIdList = [];
@@ -1472,6 +1460,7 @@
       $this->log("END tHistoryStayLogList : ".$this->getDateWithMilliSec(),LOG_DEBUG);
 
       $this->log("BEGIN noticeChatTime : ".$this->getDateWithMilliSec(),LOG_DEBUG);
+      //有人チャット受信日時
       $chatLogIdData = $this->THistoryChatLog->find('all', [
         'table' => '(SELECT t_histories_id,t_history_stay_logs_id, message_type FROM t_history_chat_logs)',
         'fields' => [
@@ -1488,22 +1477,51 @@
       ]);
 
       $noticeChatTime = [];
+      $saveNoticeChatTime = "";
+      $check = "";
       foreach($chatLogIdData as $key => $val) {
+        if(!empty($chatLogIdData[$key - 1]) && ($chatLogIdData[$key - 1]['THistoryChatLog']['t_histories_id'] != $val['THistoryChatLog']['t_histories_id'])) {
+          $check = "";
+        }
         if($val['THistoryChatLog']['message_type'] == 1) {
-          if(!empty($chatLogIdData[$key + 1])) {
-            if($chatLogIdData[$key + 1]['THistoryChatLog']['t_histories_id'] == $val['THistoryChatLog']['t_histories_id']) {
-              //message_type = 1の次のメッセージタイプが4,5ではないとき
-              if(($chatLogIdData[$key + 1]['THistoryChatLog']['message_type'] != 4 && $chatLogIdData[$key + 1]['THistoryChatLog']['message_type'] != 5) &&
-                ($chatLogIdData[$key + 2]['THistoryChatLog']['message_type'] != 4 && $chatLogIdData[$key + 2]['THistoryChatLog']['message_type'] != 5)) {
-                $noticeChatTime[$val['THistoryChatLog']['t_histories_id']] = $val['THistoryChatLog']['created'];
-              }
-            }
-            else {
+          //次のメッセージのt_hisotries_idチェック
+          if(!empty($chatLogIdData[$key + 1]) && !empty($chatLogIdData[$key + 2]) &&
+            $chatLogIdData[$key + 1]['THistoryChatLog']['t_histories_id'] == $val['THistoryChatLog']['t_histories_id'] &&
+            $chatLogIdData[$key + 2]['THistoryChatLog']['t_histories_id'] == $val['THistoryChatLog']['t_histories_id']) {
+            //message_type = 1の次のメッセージタイプが4,5ではないとき
+            if(($chatLogIdData[$key + 1]['THistoryChatLog']['message_type'] != 4 && $chatLogIdData[$key + 1]['THistoryChatLog']['message_type'] != 5) &&
+              ($chatLogIdData[$key + 2]['THistoryChatLog']['message_type'] != 4 && $chatLogIdData[$key + 2]['THistoryChatLog']['message_type'] != 5) &&
+               ($check != 'true')) {
               $noticeChatTime[$val['THistoryChatLog']['t_histories_id']] = $val['THistoryChatLog']['created'];
+              $saveNoticeChatTime =  $val['THistoryChatLog']['created'];
+              $check = 'true';
             }
           }
-          else {
-            $noticeChatTime[$val['THistoryChatLog']['t_histories_id']] = $val['THistoryChatLog']['created'];
+          //次のメッセージのt_hisotries_idチェック
+          else if(!empty($chatLogIdData[$key + 1]) && $chatLogIdData[$key + 1]['THistoryChatLog']['t_histories_id'] == $val['THistoryChatLog']['t_histories_id']) {
+            //message_type = 1の次のメッセージタイプが4,5ではないとき
+            if($chatLogIdData[$key + 1]['THistoryChatLog']['message_type'] != 4 && $chatLogIdData[$key + 1]['THistoryChatLog']['message_type'] != 5 && $check != 'true') {
+              $noticeChatTime[$val['THistoryChatLog']['t_histories_id']] = $val['THistoryChatLog']['created'];
+              $saveNoticeChatTime =  $val['THistoryChatLog']['created'];
+              $check = 'true';
+            }
+          }
+          //次のメッセージのt_hisotries_idチェック
+          else if(!empty($chatLogIdData[$key + 1]) && $chatLogIdData[$key + 1]['THistoryChatLog']['t_histories_id'] != $val['THistoryChatLog']['t_histories_id'])  {
+            if($chatLogIdData[$key - 1]['THistoryChatLog']['message_type'] != 1 && $check != 'true') {
+              $noticeChatTime[$val['THistoryChatLog']['t_histories_id']] = $val['THistoryChatLog']['created'];
+            }
+            else {
+              $noticeChatTime[$val['THistoryChatLog']['t_histories_id']] = $saveNoticeChatTime;
+            }
+          }
+          else if(empty($chatLogIdData[$key + 1]))  {
+            if($chatLogIdData[$key - 1]['THistoryChatLog']['message_type'] != 1 && $check != 'true') {
+              $noticeChatTime[$val['THistoryChatLog']['t_histories_id']] = $val['THistoryChatLog']['created'];
+            }
+            else {
+              $noticeChatTime[$val['THistoryChatLog']['t_histories_id']] = $saveNoticeChatTime;
+            }
           }
         }
       }
@@ -1627,8 +1645,7 @@
           ]
         ];
         /*必ず治す！！*/
-        //$tHistoryCountData = $this->THistory->find('first', $params)[0]['cnt'];
-        $tHistoryCountData = 1;
+        $tHistoryCountData = $this->THistory->find('first', $params)[0]['cnt'];
       }
       else {
         $tHistoryCountData = "";
@@ -2454,6 +2471,7 @@
         ];
       }
 
+      //有人チャット受信日時
       $chatLogIdData = $this->THistoryChatLog->find('all', [
         'table' => '(SELECT t_histories_id,t_history_stay_logs_id, message_type FROM t_history_chat_logs)',
         'fields' => [
