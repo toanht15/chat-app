@@ -974,7 +974,11 @@ var socket, // socket.io
       /* iPhone/iPod/Androidの場合 */
       if ( check.smartphone() ) {
         // TODO 関数化
-        widgetWidth = $(window).width() - 20;
+        if(widget.spMaximizeSizeType === 2) {
+          widgetWidth = $(window).width() - 5 ;
+        } else {
+          widgetWidth = $(window).width() - 20 ;
+        }
         ratio = widgetWidth * (1/285);
 
         html += '#sincloBox { -webkit-transition: 100ms linear 0ms;  transition: opacity 100ms linear 0ms; }';
@@ -989,7 +993,11 @@ var socket, // socket.io
 
         /* 縦の場合 */
         if ( $(window).height() > $(window).width() ) {
-          html += '#sincloBox { width: ' + widgetWidth + 'px; }';
+          if(widget.spMaximizeSizeType === 2) {
+            html += '#sincloBox { width: ' + ($(window).width()) + 'px; right: 0!important; }';
+          } else {
+            html += '#sincloBox { width: ' + widgetWidth + 'px; }';
+          }
           html += '#sincloWidgetBox { box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px 0 0;}';
           html += '#sincloBox * { font-size: ' + (12 * ratio) + 'px; }';
           html += '#sincloBox section { width: ' + widgetWidth + 'px }';
@@ -1046,7 +1054,11 @@ var socket, // socket.io
           // 画像がセットされていない場合のスタイル
           html += '#sincloBox p#widgetTitle.noImage { padding-left: ' + (30 * ratio) + 'px; text-indent: 1em; }';
           html += '#sincloBox #mainImage em { top: -' + (10 * ratio) + 'px; right: -' + (10 * ratio) + 'px; width: ' + (25 * ratio) + 'px; height: ' + (20 * ratio) + 'px; font-size: ' + (11 * ratio) + 'px; padding: ' + (1 * ratio) + 'px; }';
-          html += '#sincloBox ul#chatTalk { padding: ' + (5 * ratio) + 'px; height: ' + (194 * ratio) + 'px; background-color: '+ colorList['chatTalkBackgroundColor'] +' }';
+          if(widget.spMaximizeSizeType === 2) {
+            html += '#sincloBox ul#chatTalk { padding: ' + (5 * ratio) + 'px; height: ' + (194 * ratio) + 'px; background-color: '+ colorList['chatTalkBackgroundColor'] +' }';
+          } else {
+            html += '#sincloBox ul#chatTalk { padding: ' + (5 * ratio) + 'px; height: ' + (194 * ratio) + 'px; background-color: '+ colorList['chatTalkBackgroundColor'] +' }';
+          }
           html += '#sincloBox ul#chatTalk li { border-radius: ' + (5 * ratio) + 'px; margin: ' + (5 * ratio) + 'px 0; padding: ' + (5 * ratio) + 'px; font-size: ' + (12 * ratio) + 'px; }';
           html += '#sincloBox ul#chatTalk li div.sendFileThumbnailArea { display: table-cell; width: ' + (64 * ratio) + 'px; height: ' + (64 * ratio) + 'px; border: 1px solid #D9D9D9; }';
           if(colorList['seBorderNone'] === 0){

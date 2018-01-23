@@ -141,6 +141,11 @@ router.get("/", function(req, res, next) {
                   headerBackgroundColor = settings.headerBackgroundColor;
                 }
 
+                var spMaximizeSizeType = 1; // 余白を残して表示
+                if(('spMaximizeSizeType' in settings)) {
+                  spMaximizeSizeType = settings.spMaximizeSizeType;
+                }
+
                 sendData['widget'] = {
                   showTiming: showTimingSetting,
                   display_type: isNumeric(rows[0].display_type),
@@ -229,6 +234,7 @@ router.get("/", function(req, res, next) {
                   spShowFlg: isNumeric(settings.spShowFlg),
                   spHeaderLightFlg: isNumeric(settings.spHeaderLightFlg),
                   spAutoOpenFlg: isNumeric(settings.spAutoOpenFlg),
+                  spMaximizeSizeType: isNumeric(spMaximizeSizeType),
                   chatMessageCopy: chatMessageCopy
                 };
 

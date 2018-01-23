@@ -105,6 +105,7 @@ class MWidgetSetting extends AppModel {
       'sp_show_flg' => "spShowFlg",
       'sp_header_light_flg' => "spHeaderLightFlg",
       'sp_auto_open_flg' => "spAutoOpenFlg",
+      'sp_maximize_size_type' => "spMaximizeSizeType",
       'content' => "content"
     ];
 

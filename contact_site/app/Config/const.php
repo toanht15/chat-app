@@ -331,8 +331,8 @@ $config['dictionaryType'] = [
 
 /* 通常選択肢 */
 $config['normalChoices'] = [
-    C_SELECT_CAN => "する",
-    C_SELECT_CAN_NOT => "しない"
+  C_SELECT_CAN => "する",
+  C_SELECT_CAN_NOT => "しない"
 ];
 
 /* ウィジェット設定 － 表示設定種別 */
@@ -371,6 +371,11 @@ $config['widgetRadioBtnBehaviorType'] = [
 $config['widgetSendActType'] = [
     C_WIDGET_SEND_ACT_PUSH_KEY => "送信ボタン及びEnterキー（スマホの場合改行ボタン）",
     C_WIDGET_SEND_ACT_PUSH_BTN => "送信ボタンのみ"
+];
+
+$config['widgetSpMiximizeSizeType'] = [
+  C_SELECT_CAN => "余白を残して表示する",
+  C_SELECT_CAN_NOT => "画面いっぱいに表示する"
 ];
 
 /* オートメッセージ － トリガー種別 */
