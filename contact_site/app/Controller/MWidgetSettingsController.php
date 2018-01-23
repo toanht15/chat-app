@@ -20,7 +20,7 @@ class MWidgetSettingsController extends AppController {
       /* カラー設定end */
     ],
     'synclo' => ['tel', 'content', 'display_time_flg', 'time_text'],
-    'chat' => ['chat_radio_behavior', 'chat_trigger', 'show_name',  'chat_message_design_type', 'chat_message_with_animation', 'chat_message_copy', 'sp_show_flg', 'sp_header_light_flg', 'sp_auto_open_flg',],
+    'chat' => ['chat_radio_behavior', 'chat_trigger', 'show_name',  'chat_message_design_type', 'chat_message_with_animation', 'chat_message_copy', 'sp_show_flg', 'sp_header_light_flg', 'sp_auto_open_flg', 'sp_maximize_size_type'],
   ];
 
   public function beforeRender(){
@@ -248,6 +248,7 @@ class MWidgetSettingsController extends AppController {
     $this->set('normalChoices', Configure::read('normalChoices')); // はい・いいえ
     $this->set('widgetRadioBtnBehaviorType', Configure::read('widgetRadioBtnBehaviorType'));
     $this->set('gallaryPath', C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT.'/img/widget/');
+    $this->set('spMiximizeSizeType', Configure::read('widgetSpMiximizeSizeType'));
   }
 
   /* *
@@ -518,6 +519,10 @@ class MWidgetSettingsController extends AppController {
 
             if ( strcmp($v, 'sp_auto_open_flg') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['sp_auto_open_flg'] = C_CHECK_OFF; // デフォルト値
+            }
+
+            if ( strcmp($v, 'sp_maximize_size_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['sp_maximize_size_type'] = C_SELECT_CAN; // デフォルト値
             }
 
             if ( isset($json[$v]) ) {
