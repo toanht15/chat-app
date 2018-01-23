@@ -55,7 +55,8 @@ define('C_COMPANY_USE_CV', 'cv'); // CV
 define('C_COMPANY_USE_AUTOMESSAGE_SEND_MAIL', 'autoMessageSendMail'); // メール送信（オートメッセージ）
 define('C_COMPANY_USE_SEND_FILE', 'sendFile'); // ファイル送信
 define('C_COMPANY_USE_SECURITY_LOGIN_IP_FILTER', 'loginIpFilter'); // セキュリティ設定（IPフィルタ）
-
+define('C_COMPANY_USE_IMPORT_EXCEL_AUTO_MESSAGE', 'importExcelAutoMessage'); // オートメッセージインポート（発言内容のみ）
+define('C_COMPANY_USE_OPERATOR_PRESENCE_VIEW', 'operatorPresenceView'); // オペレータ在席状況確認
 
 // 簡易メッセージ入力機能種別
 define('C_DICTIONARY_TYPE_COMP', 1); // 企業で使用する

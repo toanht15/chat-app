@@ -3,7 +3,15 @@
     <div class="fLeft"><?= $this->Html->image('monitor_g.png', array('alt' => 'リアルタイムモニタ', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?></div>
     <h1>リアルタイムモニタ
 <?php if ( $widgetCheck ){ ?>
+  <?php if($userInfo['permission_level'] !== 1): ?>
+    <?php if(isset($coreSettings[C_COMPANY_USE_OPERATOR_PRESENCE_VIEW]) && $coreSettings[C_COMPANY_USE_OPERATOR_PRESENCE_VIEW]): ?>
+    <span class="commontooltip" data-text-center="true" data-balloon-width="210" data-balloon-position="48" data-text="オペレータステータス一覧を開く">（<a href="#" ng-click='showOperatorPresence()'>待機中の人数：{{oprCnt}}人／離席中の人数：{{oprWaitCnt-oprCnt}}人</a>）</span>
+    <?php else: ?>
+    <span class="commontooltip" data-balloon-width='278' data-text="オペレータステータス確認機能は<br>スタンダードプランからご利用いただけます。">（待機中の人数：{{oprCnt}}人／離席中の人数：{{oprWaitCnt-oprCnt}}人）</span>
+    <?php endif; ?>
+  <?php else: ?>
     <span>（待機中の人数：{{oprCnt}}人／離席中の人数：{{oprWaitCnt-oprCnt}}人）</span>
+  <?php endif; ?>
 <?php } else { ?>
     <span>（待機中のオペレータ人数：{{oprWaitCnt}}人）</span>
 <?php } ?>
