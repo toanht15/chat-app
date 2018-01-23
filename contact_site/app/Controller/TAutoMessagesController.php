@@ -608,9 +608,9 @@ class TAutoMessagesController extends AppController {
                     'keyword_contains_type' => (string)$row['keyword_contains_type'],
                     'keyword_exclusions' => $row['keyword_exclusions'],
                     'keyword_exclusions_type' => (string)$row['keyword_exclusions_type'],
-                    'speechContentCond' => $row['keyword_exclusions_type'],
-                    'triggerTimeSec' => $row['keyword_exclusions_type'],
-                    'speechTriggerCond' => $row['keyword_exclusions_type']
+                    'speechContentCond' => $row['speechContentCond'],
+                    'triggerTimeSec' => $row['triggerTimeSec'],
+                    'speechTriggerCond' => $row['speechTriggerCond']
                   ]
                 ]
               ],

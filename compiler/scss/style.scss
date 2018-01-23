@@ -1194,11 +1194,15 @@ ul.naviBtn {
       margin: 2px;
     }
 
+
+    $wait-color: #9bbb59;
+    $stop-color: #d99694;
+    #statusMenuWrap {
+      display: inline-block;
+    }
     ul {
       margin: 0;
       padding: 0;
-      $wait-color: #9bbb59;
-      $stop-color: #d99694;
 
       &#color-bar-left {
         font-size: 12px!important;
@@ -1280,30 +1284,34 @@ ul.naviBtn {
               }
             }
         }
-        &#showOperatorPresenceBtn {
-          display: inline-block;
-          margin-left: 3em;
-          padding: 0.3em 1.3em;
-          font-size: 14px!important;
-          font-weight: normal;
-          border-radius: 5px;
-          float: initial;
+      }
+    }
+    #presenceMenuWrap {
+      clear: both;
+      padding: 0.5em 0;
+      li#showOperatorPresenceBtn {
+        display: inline-block;
+        margin-left: 1.5em;
+        padding: 0.3em 1.3em;
+        font-size: inherit!important;
+        font-weight: normal;
+        border-radius: 5px;
+        float: initial;
 
-          &.blueBtn {
-            background-color: $wait-color!important;
-            border-color: $wait-color!important;
-            &:hover {
-              background-color: #8cab4c !important;
-              border-color: #8cab4c !important;
-            }
+        &.blueBtn {
+          background-color: $wait-color!important;
+          border-color: $wait-color!important;
+          &:hover {
+            background-color: #8cab4c !important;
+            border-color: #8cab4c !important;
           }
-          &.redBtn {
-            background-color: $stop-color!important;
-            border-color: $stop-color!important;
-            &:hover {
-              background-color: #ca8785 !important;
-              border-color: #ca8785 !important;
-            }
+        }
+        &.redBtn {
+          background-color: $stop-color!important;
+          border-color: $stop-color!important;
+          &:hover {
+            background-color: #ca8785 !important;
+            border-color: #ca8785 !important;
           }
         }
       }

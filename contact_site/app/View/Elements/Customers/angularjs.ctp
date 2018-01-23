@@ -834,7 +834,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         url: "<?= $this->Html->url(array('controller' => 'MUsers', 'action' => 'getList')) ?>",
         dataType: 'html',
         success: function(html) {
-          modalOpen.call(window, html, 'p-cus-operator-presence', 'ユーザー状態一覧');
+          modalOpen.call(window, html, 'p-cus-operator-presence', 'オペレータステータス一覧');
           $scope.refreshUserPresences();
         }
       });
