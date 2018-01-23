@@ -28,6 +28,10 @@ sincloApp.controller('MainController', function($scope) {
 
     this.tmpList = <?php echo json_encode($outMessageTriggerList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
 
+    $scope.decodeHtmlSpecialChar = function(action) {
+      $scope.action = $("<div/>").html( action ).text();
+    };
+
     $scope.$watch(function(){
       return self.setItemList;
     });

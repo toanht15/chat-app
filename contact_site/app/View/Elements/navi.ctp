@@ -56,9 +56,16 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
         <div class="icon <?=$monitorSelected?>">
             <?= $this->htmlEx->naviLink('ﾘｱﾙﾀｲﾑﾓﾆﾀ', 'monitor.png', ['href' => ['controller' => 'Customers', 'action' => 'index']]) ?>
         </div>
-        <div class="icon <?=$historySelected?> setting-icon" data-type="history">
+        <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
+          <div class="icon <?=$historySelected?> setting-icon" data-type="history">
             <?= $this->htmlEx->naviLink('履歴一覧', 'history.png') ?>
-        </div>
+          </div>
+        <?php endif; ?>
+        <?php if (!$coreSettings[C_COMPANY_USE_CHAT]) : ?>
+          <div class="icon <?=$historySelected?>">
+            <?= $this->htmlEx->naviLink('履歴一覧', 'history.png', ['href' => ['controller' => 'Histories', 'action' => 'clearSession']]) ?>
+          </div>
+        <?php endif; ?>
         <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
         <div class="icon <?=$statisticsSelected?> setting-icon" data-type="statistics" >
             <?= $this->htmlEx->naviLink('統計', 'graph.png') ?>
@@ -105,9 +112,6 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
         <div class="icon">
             <?= $this->htmlEx->naviLink('ユーザー管理', 'users.png', ['href' => ['controller' => 'MUsers', 'action' => 'index']]) ?>
         </div>
-        <div class="icon">
-          <?= $this->htmlEx->naviLink('セキュリティ', 'security_settings_menu.png', ['href' => ['controller' => 'MSecuritySettings', 'action' => 'edit']]) ?>
-        </div>
     <?php endif; ?>
         <div class="icon">
             <?= $this->htmlEx->naviLink($codeAndDemoTitle, 'script.png', ['href' => ['controller' => 'ScriptSettings', 'action' => 'index']]) ?>
@@ -124,6 +128,9 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
       </div>
       <div class="icon">
         <?= $this->htmlEx->naviLink('表示除外設定', 'exclusion.png', ['href' => ['controller' => 'DisplayExclusions', 'action' => 'index']]) ?>
+      </div>
+      <div class="icon">
+        <?= $this->htmlEx->naviLink('セキュリティ', 'security_settings_menu.png', ['href' => ['controller' => 'MSecuritySettings', 'action' => 'edit']]) ?>
       </div>
     <?php endif; ?>
     </div>
@@ -160,10 +167,10 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
         <div class="icon">
           <?= $this->htmlEx->naviLink('チャット履歴', 'chat_setting.png', ['href' => ['controller' => 'ChatHistories', 'action' => 'clearSession']]) ?>
         </div>
-      <?php endif; ?>
         <div class="icon">
           <?= $this->htmlEx->naviLink('アクセス履歴', 'personal.png', ['href' => ['controller' => 'Histories', 'action' => 'clearSession']]) ?>
         </div>
+      <?php endif; ?>
       </div>
     <!-- /* 履歴 */ -->
     <!-- /* 統計 */ -->

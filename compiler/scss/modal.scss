@@ -877,6 +877,75 @@
         }
       }
 
+      &.p-auto-importexcel-upload {
+        width: 50em;
+
+        #popup-main {
+          .confirm {
+            width: inherit;
+            height: inherit;
+            line-height: 3em;
+            text-align: center;
+          }
+          #errorListScroll {
+            border-radius: 5px !important;
+            border: 1px solid #909090 !important;
+            padding: 5px;
+            border:1px solid;
+            max-height:300px;
+            overflow-x: hidden;
+            overflow-y:auto;
+            #errorList {
+              .confirm {
+                width: inherit;
+                height: inherit;
+                line-height: 3em;
+                text-align: center;
+              }
+              .error-row {
+                margin-left: 1em;
+                display: flex;
+                flex-direction: row;
+                .error-matrix {
+                  flex-basis: 105px;
+                  display: inline-block;
+                  width:10em;
+                  font-weight:bold;
+                }
+                .error-content {
+                  white-space: nowrap;
+                }
+              }
+            }
+          }
+
+        }
+        #popup-button {
+          width: 30em;
+          margin: 0 auto;
+          a {
+            width: 10em;
+
+            &#uploadExcelBtn {
+              float: left;
+            }
+
+            &#uploadCancelBtn {
+              float: right;
+            }
+
+            &#reloadBtn {
+              margin: 0 auto;
+            }
+
+            &#uploadCloseBtn {
+              display: none;
+              margin: 0 auto;
+            }
+          }
+        }
+      }
+
       /* ユーザーマスタ-登録ダイアログ用 */
       &.p-muser-entry {
         width: 350px;

@@ -479,8 +479,6 @@
       //$returnData:$historyListで使うjoinのリストとconditionsの検索条件
       $this->printProcessTimetoLog('BEGIN _searchConditions');
       $returnData = $this->_searchConditions();
-      $this->log('returnData',LOG_DEBUG);
-      $this->log($returnData,LOG_DEBUG);
       $this->printProcessTimetoLog('BEGIN $this->THistory->find');
       $historyList = $this->THistory->find('all', [
         'order' => [
@@ -493,8 +491,6 @@
         'joins' =>  $returnData['joinList'],
         'conditions' => $returnData['conditions']
       ]);
-      $this->log('historyList',LOG_DEBUG);
-      //$this->log($historyList,LOG_DEBUG);
 
 
       //$historyListに担当者を追加
@@ -768,7 +764,7 @@
           $row['message'] = $val['THistoryChatLog']['message'];
         }
         // チャット担当者
-        if($val['THistoryChatLog']['message_type'] == 2) {
+        if($val['THistoryChatLog']['message_type'] == 2 || $val['THistoryChatLog']['message_type'] == 6) {
           $row['user'] = $val['User'];
         }
         $csv[] = $row;
@@ -858,12 +854,17 @@
             case 3: // オートメッセージ
               $row = $this->_setData($date, "オートメッセージ", $this->userInfo['MCompany']['company_name'], $message);
               break;
+            case 4: //sorryメッセージ
+              $row = $this->_setData($date, "Sorryメッセージ", $this->userInfo['MCompany']['company_name'], $message);
+              break;
             case 5: // 自動返信
               $row = $this->_setData($date, "自動返信", $this->userInfo['MCompany']['company_name'], $message);
               break;
             case 6: // ファイル送信
               $json = json_decode($val['THistoryChatLog']['message'], TRUE);
-              $message = $json['fileName']."\n".$this->prettyByte2Str($json['fileSize']);
+              if($val['THistoryChatLog']['delete_flg'] != 1) {
+                $message = $json['fileName']."\n".$this->prettyByte2Str($json['fileSize']);
+              }
               $row = $this->_setData($date, "ファイル送信", $val['MUser']['display_name'], $message);
             break;
             case 98: // 入室メッセージ
@@ -1239,11 +1240,11 @@
         }
         $chatStateList = $dbo2->buildStatement(
           [
-            'table' => "(SELECT t_histories_id,t_history_stay_logs_id,m_companies_id,message_type,notice_flg, COUNT(*) AS count, ".$value."(achievement_flg) AS achievementFlg, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff,SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) cv,SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN notice_flg = 1 THEN 1 ELSE 0 END) notice,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message, SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech FROM t_history_chat_logs AS THistoryChatLog GROUP BY t_histories_id ORDER BY t_histories_id)",
+            'table' => "(SELECT t_histories_id,t_history_stay_logs_id,m_companies_id,message_type, COUNT(*) AS count, ".$value."(achievement_flg) AS achievementFlg, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff,SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) cv,SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message, SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech FROM t_history_chat_logs AS THistoryChatLog GROUP BY t_histories_id ORDER BY t_histories_id)",
             'alias' => 'chat',
             'fields' => [
               'chat.*',
-              '( CASE  WHEN chat.cmp = 0 AND (notice > 0 OR chat.cus > chat.sry + chat.auto_speech) THEN "未入室" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry > 0 THEN "拒否" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry = 0 AND auto_speech > 0 THEN "自動返信" WHEN chat.cmp = 0 AND chat.cus = 0 AND chat.sry = 0 AND auto_speech = 0 AND auto_message > 0 THEN "自動返信" ELSE "" END ) AS type',
+              '( CASE  WHEN chat.cmp = 0 AND (chat.cus > chat.sry + chat.auto_speech) THEN "未入室" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry > 0 THEN "拒否" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry = 0 AND auto_speech > 0 THEN "自動返信" WHEN chat.cmp = 0 AND chat.cus = 0 AND chat.sry = 0 AND auto_speech = 0 AND auto_message > 0 THEN "自動返信" ELSE "" END ) AS type',
             ],
             'conditions' => $chatLogCond
           ],
@@ -2112,6 +2113,7 @@
           $this->THistoryChatLog
         );
 
+
       $dbo2 = $this->THistoryChatLog->getDataSource();
       if(empty($chatLogCond) || $chatLogCond['chat.achievementFlg'] == 1 || $chatLogCond['chat.achievementFlg'] == 2) {
         $value = 'MAX';
@@ -2841,4 +2843,41 @@
       $arrTime = explode('.',microtime(true));
       return date('Y-m-d H:i:s', $arrTime[0]) . '.' .$arrTime[1];
     }
+
+  public function remoteGetChatList(){
+    Configure::write('debug', 0);
+    $this->autoRender = FALSE;
+    $this->layout = null;
+    $ret = [];
+    $this->log("BEGIN getChatList : ".$this->getDateWithMilliSec(),LOG_DEBUG);
+    if ( !empty($this->params->query['userId'] ) ) {
+      $params = [
+        'fields' => [
+          'THistoryChatLog.t_histories_id',
+          'THistoryChatLog.created',
+        ],
+        'joins' => [
+          [
+            'type' => 'INNER',
+            'table' => 't_histories',
+            'alias' => 'THistory',
+            'conditions' => [
+              'THistory.id = THistoryChatLog.t_histories_id',
+              'THistory.m_companies_id' => $this->userInfo['MCompany']['id']
+            ]
+          ]
+        ],
+        'conditions' => [
+          'THistoryChatLog.m_companies_id' => $this->userInfo['MCompany']['id'],
+          'THistoryChatLog.visitors_id' => $this->params->query['userId']
+        ],
+        'order' => ['created' => 'desc'],
+        'group' => 't_histories_id',
+          'recursive' => -1
+      ];
+      $ret = $this->THistoryChatLog->find('list', $params);
+    }
+    $this->log("END getChatList : ".$this->getDateWithMilliSec(),LOG_DEBUG);
+    return new CakeResponse(['body' => json_encode($ret)]);
+  }
   }

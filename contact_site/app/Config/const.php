@@ -495,9 +495,9 @@ $config['outMessageTriggerList'] = [
       'default' => [
           "targetName" => 1,
           "keyword_contains" => "",
-          "keyword_contains_type" => 1,
+          "keyword_contains_type" => "1",
           "keyword_exclusions" => "",
-          "keyword_exclusions_type" => 1,
+          "keyword_exclusions_type" => "1",
           "stayPageCond" => 2
       ]
     ],
@@ -509,9 +509,9 @@ $config['outMessageTriggerList'] = [
       'default' => [
           "targetName" => 1,
           "keyword_contains" => "",
-          "keyword_contains_type" => 1,
+          "keyword_contains_type" => "1",
           "keyword_exclusions" => "",
-          "keyword_exclusions_type" => 1,
+          "keyword_exclusions_type" => "1",
           "stayPageCond" => 2
       ]
     ],
@@ -539,8 +539,8 @@ $config['outMessageWidgetOpenType'] = [
 
 /* オートメッセージ － 自由入力種別 */
 $config['outMessageTextarea'] = [
-    C_AUTO_WIDGET_TEXTAREA_OPEN => "ON(自由入力可)",
-    C_AUTO_WIDGET_TEXTAREA_CLOSE => "OFF(自由入力不可)"
+    C_AUTO_WIDGET_TEXTAREA_OPEN => "ON（自由入力可）",
+    C_AUTO_WIDGET_TEXTAREA_CLOSE => "OFF（自由入力不可）"
 ];
 
 /* オートメッセージ － cv種別 */

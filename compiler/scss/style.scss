@@ -2753,10 +2753,16 @@ ul.naviBtn {
       #searchPeriod {
         font-size: 1.1em !important;
       }
+      .firstChatTime {
+        font-size:7px !important;
+      }
+      .largeCharacters {
+        font-size:8px !important;
+      }
       #mainDatePeriod {
         font-size: 1.1em !important;
       }
-      #chatTalk * {
+      #chatContent * {
         font-size:7px !important;
         .fa-4x {
           font-size:4em !important;
@@ -2779,10 +2785,16 @@ ul.naviBtn {
       #searchPeriod {
         font-size: 1.1em !important;
       }
+      .firstChatTime {
+        font-size:9px !important;
+      }
+      .largeCharacters {
+        font-size:10px !important;
+      }
       #mainDatePeriod {
         font-size: 1.1em !important;
       }
-      #chatTalk * {
+      #chatContent * {
         font-size:9px !important;
         .fa-4x {
           font-size:4em !important;
@@ -2805,10 +2817,16 @@ ul.naviBtn {
       #searchPeriod {
         font-size: 1.1em !important;
       }
+      .firstChatTime {
+        font-size:13px !important;
+      }
+      .largeCharacters {
+        font-size:14px !important;
+      }
       #mainDatePeriod {
         font-size: 1.1em !important;
       }
-      #chatTalk * {
+      #chatContent * {
         font-size:13px !important;
         .fa-4x {
           font-size:4em !important;
@@ -2833,10 +2851,16 @@ ul.naviBtn {
       #searchPeriod {
         font-size: 1.1em !important;
       }
+      .firstChatTime {
+        font-size:16px !important;
+      }
+      .largeCharacters {
+        font-size:17px !important;
+      }
       #mainDatePeriod {
         font-size: 1.1em !important;
       }
-      #chatTalk * {
+      #chatContent * {
         font-size:16px !important;
         .fa-4x {
           font-size:4em !important;
@@ -2860,10 +2884,16 @@ ul.naviBtn {
       #searchPeriod {
         font-size: 1.1em !important;
       }
+      .firstChatTime {
+        font-size:20px !important;
+      }
+      .largeCharacters {
+        font-size:21px !important;
+      }
       #mainDatePeriod {
         font-size: 1.1em !important;
       }
-      #chatTalk * {
+      #chatContent * {
         font-size:20px !important;
         .fa-4x {
           font-size:4em !important;
@@ -2887,10 +2917,16 @@ ul.naviBtn {
       #searchPeriod {
         font-size: 1.1em !important;
       }
+      .firstChatTime {
+        font-size:24px !important;
+      }
+      .largeCharacters {
+        font-size:25px !important;
+      }
       #mainDatePeriod {
         font-size: 1.1em !important;
       }
-      #chatTalk * {
+      #chatContent * {
         font-size:24px !important;
         .fa-4x {
           font-size:4em !important;
@@ -2914,10 +2950,16 @@ ul.naviBtn {
       #searchPeriod {
         font-size: 1.1em !important;
       }
+      .firstChatTime {
+        font-size:36px !important;
+      }
+      .largeCharacters {
+        font-size:37px !important;
+      }
       #mainDatePeriod {
         font-size: 1.1em !important;
       }
-      #chatTalk * {
+      #chatContent * {
         font-size:36px !important;
         .fa-4x {
           font-size:4em !important;
@@ -3611,12 +3653,13 @@ ul.naviBtn {
 
   td, th {
     line-height: 1.5;
-    padding: 6px 3px;
+    padding: 6px 3px 6px 3px;
     width: 5%;
     &.ip-address {
       padding-left: 8px;
     }
-    #firstChatTime {
+    .firstChatTime {
+      min-width:25px;
       float:right;
       margin-right:10px;
       height:auto;
@@ -4573,6 +4616,58 @@ ul.naviBtn {
         }
     }
 
+    #rightContentWrap {
+      display: flex;
+      #importBtnAreaWrap {
+        display:table;
+        height:33px;
+        margin-right: 1em;
+        #importBtnArea {
+          display: table-cell;
+          vertical-align: middle;
+          #importExcelBtn {
+            width: 14em;
+            height: 2em;
+            padding: 0.25em 0.5em;
+            text-align: center;
+          }
+        }
+      }
+    }
+  }
+
+  #autoMessageLayerMenu {
+    display: none;
+    position: absolute;
+    top: 101px;
+    right: 152px;
+    width: 252px;
+    font-size: 12px;
+    z-index: 9999;
+    ul {
+      border: solid 1px #ccc;
+      display: block;
+      box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
+      padding: 5px 0px !important;
+      background: #fff;
+      li.t-link {
+        padding: 0px 0px 0px;
+        width: 100%;
+        height: 100%;
+        a:hover {
+          background-color: #C3D69B;
+          color: #fff;
+          text-decoration: none;
+          display: block;
+          padding: 10px 10px 10px
+        }
+        a{
+          text-decoration: none;
+          display: block;
+          padding: 10px 10px 10px
+        }
+      }
+    }
   }
 
   #tautomessages_list {

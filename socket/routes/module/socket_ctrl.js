@@ -896,7 +896,7 @@ io.sockets.on('connection', function (socket) {
                   }
 
                   //通知された場合
-                  if(ret.opFlg === true) {
+                  if(ret.opFlg === true && d.notifyToCompany) {
                     pool.query("UPDATE t_history_chat_logs SET notice_flg = 1 WHERE t_histories_id = ? AND message_type = 1 AND id = ?;",
                       [sincloCore[d.siteKey][d.tabId].historyId, results.insertId], function(err, ret, fields){}
                     );
@@ -1734,12 +1734,18 @@ io.sockets.on('connection', function (socket) {
           var splitedKey = key.split("_");
           if (splitedKey.length === 3 && isset(splitedKey[2])) {
             if(!io.sockets.connected[splitedKey[2]]) {
-              var targetTabId = customerList[key].tabId;
+              var targetTabId = customerList[res.siteKey][key].tabId;
               console.log("【" + res.siteKey + "】 customerList key : " + key + " client is not exist. deleting. targetTabId : " + targetTabId);
               if(targetTabId && targetTabId !== "") {
                 emit.toCompany('unsetUser', {siteKey: res.siteKey, tabId: targetTabId}, res.siteKey);
               }
-              delete customerList[key];
+              delete customerList[res.siteKey][key];
+
+              if(totalCounter === keyLength-1) {
+                emit.toMine("receiveAccessInfo", arr, socket);
+                arr = [];
+              }
+              totalCounter++;
               return;
             }
           }
