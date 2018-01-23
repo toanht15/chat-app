@@ -98,10 +98,10 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
           '発言内容Excelインポート',
           'javascript:void(0)',
           array('escape' => false,
-            'class'=>'btn-shadow'.(true ? " skyBlueBtn" : " grayBtn disabled commontooltip"),
+            'class'=>'btn-shadow'.($coreSettings[C_COMPANY_USE_IMPORT_EXCEL_AUTO_MESSAGE] ? " skyBlueBtn" : " grayBtn disabled commontooltip"),
             'id' => 'importExcelBtn',
-            'disabled' => !true,
-            'data-text' => true ? "" : "こちらの機能はスタンダードプラン<br>からご利用いただけます。",
+            'disabled' => !$coreSettings[C_COMPANY_USE_IMPORT_EXCEL_AUTO_MESSAGE],
+            'data-text' => $coreSettings[C_COMPANY_USE_IMPORT_EXCEL_AUTO_MESSAGE] ? "" : "こちらの機能はスタンダードプラン<br>からご利用いただけます。",
             'data-balloon-position' => '75'
           ));
         ?>
@@ -128,6 +128,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
       </div>
     </div>
   </div>
+  <?php if(isset($coreSettings[C_COMPANY_USE_IMPORT_EXCEL_AUTO_MESSAGE]) && $coreSettings[C_COMPANY_USE_IMPORT_EXCEL_AUTO_MESSAGE]): ?>
   <div id="autoMessageLayerMenu">
     <ul>
       <li class="t-link">
@@ -142,6 +143,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
       </li>
     </ul>
   </div>
+  <?php endif; ?>
   <input type="file" id="selectFileInput" name="uploadFile" style="display:none "/>
 
   <div id='tautomessages_list' class="p20x">
