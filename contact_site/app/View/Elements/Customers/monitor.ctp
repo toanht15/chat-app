@@ -54,6 +54,7 @@
         <!-- 機能 -->
     </div>
     <div>
+        <div id="statusMenuWrap">
         <ul id="color-bar-left" class="fLeft">
           <?php
           /*
@@ -74,10 +75,15 @@
             }
           }
           ?>
-          <?php if($widgetCheck && strcmp($userInfo['permission_level'], C_AUTHORITY_NORMAL) !== 0): ?>
-          <li id='showOperatorPresenceBtn' class='blueBtn btn-shadow' ng-click='showOperatorPresence()'>オペレータ一覧を開く</li>
-          <?php endif; ?>
         </ul>
+        <?php if($widgetCheck && strcmp($userInfo['permission_level'], C_AUTHORITY_NORMAL) !== 0): ?>
+          <div id="presenceMenuWrap">
+            <ul>
+              <li id='showOperatorPresenceBtn' class='blueBtn btn-shadow' ng-click='showOperatorPresence()'>オペレータステータス一覧を開く</li>
+            </ul>
+          </div>
+        </div>
+        <?php endif; ?>
         <?php if(empty($coreSettings[C_COMPANY_USE_HIDE_REALTIME_MONITOR]) || !$coreSettings[C_COMPANY_USE_HIDE_REALTIME_MONITOR] ): ?>
         <p class="tRight <?=$nowCntClass?>" ng-cloak>現在 <b>{{objCnt(monitorList)}}</b>名がサイト訪問中</p>
         <?php endif; ?>
