@@ -5561,6 +5561,25 @@ ul.naviBtn {
 /* ファイル送信設定 */
 #msecuritysettings_idx {
   #msecuritysettings_content {
+    #ip_filter_enable_select_area {
+      label {
+        padding-bottom: 2px;
+      }
+      .questionBalloon {
+        display: inline-block;
+        position: relative;
+        text-align: center;
+        float:right;
+        margin-left: 5px;
+
+        icon {
+          border-radius: 20px;
+          width: 1.3em;
+          height: 1.3em;
+          font-size: 0.9em!important;
+        }
+      }
+    }
     h2#contentExplain {
       font-weight: normal;
       font-size: 13px;
@@ -5633,7 +5652,7 @@ ul.naviBtn {
       margin-left: 0;
     }
   }
-  #mtransfersetting_action {
+  #msecuritysettings_action {
     padding: 10px;
     clear: both;
 
@@ -5643,6 +5662,95 @@ ul.naviBtn {
       display: block;
       margin: 0 auto;
       text-align: center;
+    }
+  }
+  .explainTooltip {
+    z-index: 10;
+    position: absolute;
+
+    icon-annotation {
+      width: 16em;
+      height: 2.1em;
+      display: none;
+
+      ul {
+        margin: 0;
+        padding: 0;
+        text-align: left;
+        background-color: #FFF;
+        box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+        padding: 0.5em;
+        font-weight: normal;
+        border-radius: 5px;
+
+        img {
+          margin-bottom: -0.2em;
+          width:1em;
+          height:1em;
+        }
+
+        span {
+          font-size: 0.9em;
+        }
+      }
+    }
+
+    &#filterType1Tooltip {
+      icon-annotation {
+        /* 矢印 */
+        &:before {
+          content: " ";
+          border: none;
+          border-top: 10px solid rgba(0, 0, 0, 0.13);
+          border-left: 9px solid transparent;
+          border-right: 9px solid transparent;
+          position: absolute;
+          bottom: -42px;
+          left: 5px;
+          z-index: 1;
+        }
+
+        &:after {
+          content: " ";
+          border: none;
+          border-top: 10px solid white;
+          border-left: 9px solid transparent;
+          border-right: 9px solid transparent;
+          position: absolute;
+          bottom: -40px;
+          left: 5px;
+          z-index: 3;
+        }
+      }
+    }
+
+    &#filterType2Tooltip {
+      icon-annotation {
+        /* 矢印 */
+        &:before {
+          content: " ";
+          border: none;
+          border-top: 10px solid rgba(0, 0, 0, 0.13);
+          border-left: 9px solid transparent;
+          border-right: 9px solid transparent;
+          position: absolute;
+          bottom: -28px;
+          left: 5px;
+          z-index: 1;
+        }
+
+        &:after {
+          content: " ";
+          border: none;
+          border-top: 10px solid white;
+          border-left: 9px solid transparent;
+          border-right: 9px solid transparent;
+          position: absolute;
+          bottom: -26px;
+          left: 5px;
+          z-index: 3;
+        }
+      }
     }
   }
 }
