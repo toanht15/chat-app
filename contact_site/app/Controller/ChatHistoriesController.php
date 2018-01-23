@@ -391,7 +391,8 @@
             ]
           ],
           'conditions' => [
-            'THistoryChatLog.t_histories_id' => $this->params->query['historyId']
+            'THistoryChatLog.t_histories_id' => $this->params->query['historyId'],
+            'THistoryChatLog.m_companies_id' => $this->userInfo['MCompany']['id']
           ],
           'order' => 'created',
           'recursive' => -1
@@ -491,7 +492,6 @@
         'joins' =>  $returnData['joinList'],
         'conditions' => $returnData['conditions']
       ]);
-
 
       //$historyListに担当者を追加
       $this->printProcessTimetoLog('BEGIN $this->_userList($historyList)');
@@ -607,9 +607,9 @@
               $row['achievement'] = Configure::read('achievementType')[2].','.Configure::read('achievementType')[0];
             }
           }
-          if(!empty($history['NoticeChatTime']['created'])) {
+          if(!empty($stayList['noticeChatTime'][$history['THistoryChatLog2']['t_histories_id']])) {
             // 有人チャット受信日時
-              $row['pageCnt'] = date_format(date_create($history['NoticeChatTime']['created']), "Y/m/d\nH:i:s");
+              $row['pageCnt'] = date_format(date_create($stayList['noticeChatTime'][$history['THistoryChatLog2']['t_histories_id']]), "Y/m/d\nH:i:s");
           }
           else {
             $row['pageCnt'] = "";
@@ -1053,9 +1053,7 @@
           if($data['History']['chat_type'] == 3) {
             $data['History']['chat_type_name'] = "NoEntry";
             $chatLogCond['chat.cus >'] = 0;
-            $chatLogCond['chat.sry'] = 0;
             $chatLogCond['chat.cmp'] = 0;
-            $chatLogCond['chat.auto_speech'] = 0;
           }
           //Sorryの場合
           if($data['History']['chat_type'] == 4) {
@@ -1240,11 +1238,11 @@
         }
         $chatStateList = $dbo2->buildStatement(
           [
-            'table' => "(SELECT t_histories_id,t_history_stay_logs_id,m_companies_id,message_type, COUNT(*) AS count, ".$value."(achievement_flg) AS achievementFlg, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff,SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) cv,SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message, SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech FROM t_history_chat_logs AS THistoryChatLog GROUP BY t_histories_id ORDER BY t_histories_id)",
+            'table' => "(SELECT t_histories_id,t_history_stay_logs_id,m_companies_id,message_type,created,message_read_flg, COUNT(*) AS count, ".$value."(achievement_flg) AS achievementFlg, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff,SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) cv,SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message, SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus,SUM(CASE WHEN message_type = 1 AND message_read_flg = 0 THEN 1 ELSE 0 END) unread, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech FROM t_history_chat_logs AS THistoryChatLog GROUP BY t_histories_id ORDER BY t_histories_id)",
             'alias' => 'chat',
             'fields' => [
               'chat.*',
-              '( CASE  WHEN chat.cmp = 0 AND (chat.cus > chat.sry + chat.auto_speech) THEN "未入室" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry > 0 THEN "拒否" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry = 0 AND auto_speech > 0 THEN "自動返信" WHEN chat.cmp = 0 AND chat.cus = 0 AND chat.sry = 0 AND auto_speech = 0 AND auto_message > 0 THEN "自動返信" ELSE "" END ) AS type',
+              '( CASE  WHEN chat.cmp = 0 AND (chat.cus > 0 AND chat.unread > 0 AND chat.cus > chat.sry + chat.auto_speech) THEN "未入室" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry > 0 THEN "拒否" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry = 0 AND auto_speech > 0 THEN "自動返信" WHEN chat.cmp = 0 AND chat.cus = 0 AND chat.sry = 0 AND auto_speech = 0 AND auto_message > 0 THEN "自動返信" ELSE "" END ) AS type'
             ],
             'conditions' => $chatLogCond
           ],
@@ -1272,7 +1270,7 @@
         ];
 
         //有人チャット受信日時
-        $joinToNoticeChatTime = [
+        /*$joinToNoticeChatTime = [
           'type' => 'LEFT',
           'table' => '(SELECT t_histories_id, message_type, notice_flg,created FROM t_history_chat_logs WHERE message_type = 1 AND notice_flg = 1 GROUP BY t_histories_id)',
           'alias' => 'NoticeChatTime',
@@ -1280,7 +1278,7 @@
           'conditions' => [
             'NoticeChatTime.t_histories_id = THistoryChatLog.t_histories_id'
           ],
-        ];
+        ];*/
 
         // キャンペーンに関する検索条件
         if ( isset($data['History']['campaign']) && $data['History']['campaign'] !== "") {
@@ -1384,7 +1382,6 @@
 
         $this->paginate['THistory']['fields'][] = 'THistoryChatLog.*';
         $this->paginate['THistory']['fields'][] = 'SpeechTime.created as SpeechTime,SpeechTime.firstSpeechTime';
-        $this->paginate['THistory']['fields'][] = 'NoticeChatTime.created';
         if ( isset($data['History']['campaign']) && $data['History']['campaign'] !== "") {
           $this->paginate['THistory']['fields'][] = 'Campaign.title,Campaign.url';
         }
@@ -1393,7 +1390,6 @@
         }
         $this->paginate['THistory']['joins'][] = $joinToChat;
         $this->paginate['THistory']['joins'][] = $joinToSpeechChatTime;
-        $this->paginate['THistory']['joins'][] = $joinToNoticeChatTime;
         if ( isset($data['History']['campaign']) && $data['History']['campaign'] !== "") {
           $this->paginate['THistory']['joins'][] = $joinToCampaign;
         }
@@ -1462,6 +1458,74 @@
         'group' => 't_histories_id'
       ]);
       $this->log("END tHistoryStayLogList : ".$this->getDateWithMilliSec(),LOG_DEBUG);
+
+      $this->log("BEGIN noticeChatTime : ".$this->getDateWithMilliSec(),LOG_DEBUG);
+      //有人チャット受信日時
+      $chatLogIdData = $this->THistoryChatLog->find('all', [
+        'table' => '(SELECT t_histories_id,t_history_stay_logs_id, message_type FROM t_history_chat_logs)',
+        'fields' => [
+          'id',
+          't_histories_id',
+          'message_type',
+          'created'
+        ],
+        'conditions' => [
+          't_histories_id' => $historyIdList,
+          'm_companies_id' =>$this->userInfo['MCompany']['id']
+        ],
+        'order' => 'created'
+      ]);
+
+      $noticeChatTime = [];
+      $saveNoticeChatTime = "";
+      $check = "";
+      foreach($chatLogIdData as $key => $val) {
+        if(!empty($chatLogIdData[$key - 1]) && ($chatLogIdData[$key - 1]['THistoryChatLog']['t_histories_id'] != $val['THistoryChatLog']['t_histories_id'])) {
+          $check = "";
+        }
+        if($val['THistoryChatLog']['message_type'] == 1) {
+          //次のメッセージのt_hisotries_idチェック
+          if(!empty($chatLogIdData[$key + 1]) && !empty($chatLogIdData[$key + 2]) &&
+            $chatLogIdData[$key + 1]['THistoryChatLog']['t_histories_id'] == $val['THistoryChatLog']['t_histories_id'] &&
+            $chatLogIdData[$key + 2]['THistoryChatLog']['t_histories_id'] == $val['THistoryChatLog']['t_histories_id']) {
+            //message_type = 1の次のメッセージタイプが4,5ではないとき
+            if(($chatLogIdData[$key + 1]['THistoryChatLog']['message_type'] != 4 && $chatLogIdData[$key + 1]['THistoryChatLog']['message_type'] != 5) &&
+              ($chatLogIdData[$key + 2]['THistoryChatLog']['message_type'] != 4 && $chatLogIdData[$key + 2]['THistoryChatLog']['message_type'] != 5) &&
+               ($check != 'true')) {
+              $noticeChatTime[$val['THistoryChatLog']['t_histories_id']] = $val['THistoryChatLog']['created'];
+              $saveNoticeChatTime =  $val['THistoryChatLog']['created'];
+              $check = 'true';
+            }
+          }
+          //次のメッセージのt_hisotries_idチェック
+          else if(!empty($chatLogIdData[$key + 1]) && $chatLogIdData[$key + 1]['THistoryChatLog']['t_histories_id'] == $val['THistoryChatLog']['t_histories_id']) {
+            //message_type = 1の次のメッセージタイプが4,5ではないとき
+            if($chatLogIdData[$key + 1]['THistoryChatLog']['message_type'] != 4 && $chatLogIdData[$key + 1]['THistoryChatLog']['message_type'] != 5 && $check != 'true') {
+              $noticeChatTime[$val['THistoryChatLog']['t_histories_id']] = $val['THistoryChatLog']['created'];
+              $saveNoticeChatTime =  $val['THistoryChatLog']['created'];
+              $check = 'true';
+            }
+          }
+          //次のメッセージのt_hisotries_idチェック
+          else if(!empty($chatLogIdData[$key + 1]) && $chatLogIdData[$key + 1]['THistoryChatLog']['t_histories_id'] != $val['THistoryChatLog']['t_histories_id'])  {
+            if($chatLogIdData[$key - 1]['THistoryChatLog']['message_type'] != 1 && $check != 'true') {
+              $noticeChatTime[$val['THistoryChatLog']['t_histories_id']] = $val['THistoryChatLog']['created'];
+            }
+            else {
+              $noticeChatTime[$val['THistoryChatLog']['t_histories_id']] = $saveNoticeChatTime;
+            }
+          }
+          else if(empty($chatLogIdData[$key + 1]))  {
+            if($chatLogIdData[$key - 1]['THistoryChatLog']['message_type'] != 1 && $check != 'true') {
+              $noticeChatTime[$val['THistoryChatLog']['t_histories_id']] = $val['THistoryChatLog']['created'];
+            }
+            else {
+              $noticeChatTime[$val['THistoryChatLog']['t_histories_id']] = $saveNoticeChatTime;
+            }
+          }
+        }
+      }
+      $this->log("END noticeChatTime : ".$this->getDateWithMilliSec(),LOG_DEBUG);
 
       $this->log("BEGIN chatSendingPageList : ".$this->getDateWithMilliSec(),LOG_DEBUG);
       $chatSendingPageList = $this->THistoryStayLog->find('all', [
@@ -1593,6 +1657,7 @@
       }
 
       $userInfo = $this->MUser->read(null, $this->userInfo['id']);
+      $this->set('noticeChatTime',$noticeChatTime);
       $this->set('data', $data);
       $this->set('historyList', $historyList);
       $this->set('historyChat', $historyChat);
@@ -1930,9 +1995,7 @@
         if($data['History']['chat_type'] == 3) {
           $data['History']['chat_type_name'] = "NoEntry";
           $chatLogCond['chat.cus >'] = 0;
-          $chatLogCond['chat.sry'] = 0;
           $chatLogCond['chat.cmp'] = 0;
-          $chatLogCond['chat.auto_speech'] = 0;
         }
         if($data['History']['chat_type'] == 4) {
           $data['History']['chat_type_name'] = "Sorry";
@@ -2124,11 +2187,11 @@
       }
       $chatStateList = $dbo2->buildStatement(
         [
-          'table' => "(SELECT t_histories_id,t_history_stay_logs_id,message_type, COUNT(*) AS count, ".$value."(achievement_flg) AS achievementFlg, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff,SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) cv,SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message, SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech FROM t_history_chat_logs AS THistoryChatLog GROUP BY t_histories_id ORDER BY t_histories_id)",
+          'table' => "(SELECT t_histories_id,t_history_stay_logs_id,m_companies_id,message_type,created,message_read_flg, COUNT(*) AS count, ".$value."(achievement_flg) AS achievementFlg, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff,SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) cv,SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message, SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus,SUM(CASE WHEN message_type = 1 AND message_read_flg = 0 THEN 1 ELSE 0 END) unread, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech FROM t_history_chat_logs AS THistoryChatLog GROUP BY t_histories_id ORDER BY t_histories_id)",
           'alias' => 'chat',
           'fields' => [
             'chat.*',
-            '( CASE  WHEN chat.cmp = 0 AND (notice > 0 OR chat.cus > chat.sry + chat.auto_speech) THEN "未入室" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry > 0 THEN "拒否" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry = 0 AND auto_speech > 0 THEN "自動返信" WHEN chat.cmp = 0 AND chat.cus = 0 AND chat.sry = 0 AND auto_speech = 0 AND auto_message > 0 THEN "自動返信" ELSE "" END ) AS type',
+            '( CASE  WHEN chat.cmp = 0 AND (chat.cus > 0 AND chat.unread > 0 AND chat.cus > chat.sry + chat.auto_speech) THEN "未入室" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry > 0 THEN "拒否" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry = 0 AND auto_speech > 0 THEN "自動返信" WHEN chat.cmp = 0 AND chat.cus = 0 AND chat.sry = 0 AND auto_speech = 0 AND auto_message > 0 THEN "自動返信" ELSE "" END ) AS type'
           ],
           'conditions' => $chatLogCond
         ],
@@ -2143,11 +2206,6 @@
         ]
       ];
       $joinList[] = $joinToChat;
-      // チャットのみ表示との切り替え（担当者検索の場合、強制的にINNER）
-      /*if ( strcmp($type, 'false') === 0 && !(!empty($data['THistoryChatLog']) && !empty(array_filter($data['THistoryChatLog']))) ) {
-        $joinToChat['type'] = "LEFT";
-      }
-      else {*/
 
 
         $joinToChat['type'] = "INNER";
@@ -2161,9 +2219,9 @@
             'SpeechTime.t_histories_id = THistoryChatLog2.t_histories_id'
           ],
         ];
-        $joinList[] = $joinToSpeechChatTime;
+        //$joinList[] = $joinToSpeechChatTime;
 
-        $joinToNoticeChatTime = [
+        /*$joinToNoticeChatTime = [
           'type' => 'LEFT',
           'table' => '(SELECT t_histories_id, message_type, notice_flg,created FROM t_history_chat_logs WHERE message_type = 1 AND notice_flg = 1 GROUP BY t_histories_id)',
           'alias' => 'NoticeChatTime',
@@ -2172,10 +2230,10 @@
             'NoticeChatTime.t_histories_id = THistoryChatLog2.t_histories_id'
           ],
         ];
-        $joinList[] = $joinToNoticeChatTime;
+        $joinList[] = $joinToNoticeChatTime;*/
 
         // キャンペーンに関する検索条件
-        if ( isset($data['History']['campaign']) && $data['History']['campaign'] !== "") {
+        /*if ( isset($data['History']['campaign']) && $data['History']['campaign'] !== "") {
           $campaignList = $this->TCampaign->getList();
           $campaignParam = "";
           foreach($campaignList as $k => $v){
@@ -2274,7 +2332,7 @@
             ],
           ];
           $joinList[] = $joinToFirstSpeechSendPage;
-        }
+        }*/
       }
       return ['joinList' => $joinList, 'conditions' => $conditions];
     }
@@ -2412,7 +2470,73 @@
           ]
         ];
       }
-      return ['stayList' => $stayList,'stayList2' => $stayList2];
+
+      //有人チャット受信日時
+      $chatLogIdData = $this->THistoryChatLog->find('all', [
+        'table' => '(SELECT t_histories_id,t_history_stay_logs_id, message_type FROM t_history_chat_logs)',
+        'fields' => [
+          'id',
+          't_histories_id',
+          'message_type',
+          'created'
+        ],
+        'conditions' => [
+          't_histories_id' => $historyIdList,
+          'm_companies_id' => $this->userInfo['MCompany']['id']
+        ],
+        'order' => 'created'
+      ]);
+
+      $noticeChatTime = [];
+      $saveNoticeChatTime = "";
+      $check = "";
+      foreach($chatLogIdData as $key => $val) {
+        if(!empty($chatLogIdData[$key - 1]) && ($chatLogIdData[$key - 1]['THistoryChatLog']['t_histories_id'] != $val['THistoryChatLog']['t_histories_id'])) {
+          $check = "";
+        }
+        if($val['THistoryChatLog']['message_type'] == 1) {
+          //次のメッセージのt_hisotries_idチェック
+          if(!empty($chatLogIdData[$key + 1]) && !empty($chatLogIdData[$key + 2]) &&
+            $chatLogIdData[$key + 1]['THistoryChatLog']['t_histories_id'] == $val['THistoryChatLog']['t_histories_id'] &&
+            $chatLogIdData[$key + 2]['THistoryChatLog']['t_histories_id'] == $val['THistoryChatLog']['t_histories_id']) {
+            //message_type = 1の次のメッセージタイプが4,5ではないとき
+            if(($chatLogIdData[$key + 1]['THistoryChatLog']['message_type'] != 4 && $chatLogIdData[$key + 1]['THistoryChatLog']['message_type'] != 5) &&
+              ($chatLogIdData[$key + 2]['THistoryChatLog']['message_type'] != 4 && $chatLogIdData[$key + 2]['THistoryChatLog']['message_type'] != 5) &&
+               ($check != 'true')) {
+              $noticeChatTime[$val['THistoryChatLog']['t_histories_id']] = $val['THistoryChatLog']['created'];
+              $saveNoticeChatTime =  $val['THistoryChatLog']['created'];
+              $check = 'true';
+            }
+          }
+          //次のメッセージのt_hisotries_idチェック
+          else if(!empty($chatLogIdData[$key + 1]) && $chatLogIdData[$key + 1]['THistoryChatLog']['t_histories_id'] == $val['THistoryChatLog']['t_histories_id']) {
+            //message_type = 1の次のメッセージタイプが4,5ではないとき
+            if($chatLogIdData[$key + 1]['THistoryChatLog']['message_type'] != 4 && $chatLogIdData[$key + 1]['THistoryChatLog']['message_type'] != 5 && $check != 'true') {
+              $noticeChatTime[$val['THistoryChatLog']['t_histories_id']] = $val['THistoryChatLog']['created'];
+              $saveNoticeChatTime =  $val['THistoryChatLog']['created'];
+              $check = 'true';
+            }
+          }
+          //次のメッセージのt_hisotries_idチェック
+          else if(!empty($chatLogIdData[$key + 1]) && $chatLogIdData[$key + 1]['THistoryChatLog']['t_histories_id'] != $val['THistoryChatLog']['t_histories_id'])  {
+            if($chatLogIdData[$key - 1]['THistoryChatLog']['message_type'] != 1 && $check != 'true') {
+              $noticeChatTime[$val['THistoryChatLog']['t_histories_id']] = $val['THistoryChatLog']['created'];
+            }
+            else {
+              $noticeChatTime[$val['THistoryChatLog']['t_histories_id']] = $saveNoticeChatTime;
+            }
+          }
+          else if(empty($chatLogIdData[$key + 1]))  {
+            if($chatLogIdData[$key - 1]['THistoryChatLog']['message_type'] != 1 && $check != 'true') {
+              $noticeChatTime[$val['THistoryChatLog']['t_histories_id']] = $val['THistoryChatLog']['created'];
+            }
+            else {
+              $noticeChatTime[$val['THistoryChatLog']['t_histories_id']] = $saveNoticeChatTime;
+            }
+          }
+        }
+      }
+      return ['stayList' => $stayList,'stayList2' => $stayList2,'noticeChatTime' => $noticeChatTime];
     }
 
       /**
