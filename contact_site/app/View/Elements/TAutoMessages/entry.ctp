@@ -305,7 +305,9 @@
       </div>
 
       <div id="tautomessages_action_simulator">
-        <?= $this->element('TAutoMessages/simulator'); ?>
+        <div>
+          <?= $this->element('TAutoMessages/simulator'); ?>
+        </div>
       </div><!-- /tautomessages_simulator -->
     </section>
 
