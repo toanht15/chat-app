@@ -74,7 +74,7 @@ class MSecuritySettingsController extends AppController
       $this->MIpFilterSetting->begin();
       $insertData = [
         'm_companies_id' => $this->userInfo['MCompany']['id'],
-        'active_flg' => $this->request->data['MSecuritySettings']['ip_filter_enabled'],
+        'active_flg' => $this->getIpFilterType(),
         'filter_type' => $this->getIpFilterType(),
         'ips' => $this->getIpSetting()
       ];
@@ -108,7 +108,7 @@ class MSecuritySettingsController extends AppController
       if ($updateData['MIpFilterSetting']['m_companies_id'] !== $this->userInfo['MCompany']['id']) {
         throw new Exception('不正な更新処理です。');
       }
-      $updateData['MIpFilterSetting']['active_flg'] = $this->request->data['MSecuritySettings']['ip_filter_enabled'];
+      $updateData['MIpFilterSetting']['active_flg'] = $this->getActiveFlg($this->request->data['MSecuritySettings']['ip_filter_enabled']);
       $updateData['MIpFilterSetting']['filter_type'] = $this->getIpFilterType();
       $updateData['MIpFilterSetting']['ips'] = $this->getIpSetting();
 
@@ -132,7 +132,7 @@ class MSecuritySettingsController extends AppController
     return [
         'MSecuritySettings' => [
             'id' => (!empty($val['MIpFilterSetting']['id'])) ? $val['MIpFilterSetting']['id'] : "",
-            'ip_filter_enabled' => $val['MIpFilterSetting']['active_flg'],
+            'ip_filter_enabled' => $val['MIpFilterSetting']['filter_type'],
             'ip_filter_whitelist' => (strcmp($val['MIpFilterSetting']['filter_type'], 1) === 0) ? $val['MIpFilterSetting']['ips'] : "",
             'ip_filter_blacklist' => (strcmp($val['MIpFilterSetting']['filter_type'], 2) === 0) ? $val['MIpFilterSetting']['ips'] : ""
         ]
@@ -159,21 +159,22 @@ class MSecuritySettingsController extends AppController
 
   private function getIpFilterType() {
     $filterType = 0;
-    if(!empty($this->request->data['MSecuritySettings'])) {
-      $whitelistData = $this->request->data['MSecuritySettings']['ip_filter_whitelist'];
-      $blacklistData = $this->request->data['MSecuritySettings']['ip_filter_blacklist'];
-      if(!empty($whitelistData) && !empty($blacklistData)) {
-        throw new BadRequestException('ホワイトリストとブラックリストはいずれかの設定のみ可能です。');
-      } else if(!empty($whitelistData) && empty($blacklistData)) {
-        $filterType = 1; // FIXME 定数化
-      } else if(empty($whitelistData) && !empty($blacklistData)) {
-        $filterType = 2; // FIXME 定数化
-      } else if(strcmp($this->request->data['MSecuritySettings']['ip_filter_enabled'], 0) === 0) {
-        throw new BadRequestException('設定を有効にする場合はホワイトリストまたはブラックリストのいずれかの指定が必須です。');
-      } else {
-        // 設定無効状態なので未設定として扱う
-      }
-    }
+//    if(!empty($this->request->data['MSecuritySettings'])) {
+//      $whitelistData = $this->request->data['MSecuritySettings']['ip_filter_whitelist'];
+//      $blacklistData = $this->request->data['MSecuritySettings']['ip_filter_blacklist'];
+//      if(!empty($whitelistData) && !empty($blacklistData)) {
+//        throw new BadRequestException('ホワイトリストとブラックリストはいずれかの設定のみ可能です。');
+//      } else if(!empty($whitelistData) && empty($blacklistData)) {
+//        $filterType = 1; // FIXME 定数化
+//      } else if(empty($whitelistData) && !empty($blacklistData)) {
+//        $filterType = 2; // FIXME 定数化
+//      } else if(strcmp($this->request->data['MSecuritySettings']['ip_filter_enabled'], 0) === 0) {
+//        throw new BadRequestException('設定を有効にする場合はホワイトリストまたはブラックリストのいずれかの指定が必須です。');
+//      } else {
+//        // 設定無効状態なので未設定として扱う
+//      }
+//    }
+    $filterType = $this->request->data['MSecuritySettings']['ip_filter_enabled'];
     return $filterType;
   }
 
@@ -186,5 +187,17 @@ class MSecuritySettingsController extends AppController
       $ips = $this->request->data['MSecuritySettings']['ip_filter_blacklist'];
     }
     return $ips;
+  }
+
+  /**
+   * @return mixed
+   */
+  private function getActiveFlg($ip_filter_enabled)
+  {
+    $val = 0;
+    if(strcmp($ip_filter_enabled, 1) === 0 || strcmp($ip_filter_enabled, 2) === 0) {
+      $val = 1;
+    }
+    return $val;
   }
 }

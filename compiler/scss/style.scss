@@ -1286,36 +1286,6 @@ ul.naviBtn {
         }
       }
     }
-    #presenceMenuWrap {
-      clear: both;
-      padding: 0.5em 0;
-      li#showOperatorPresenceBtn {
-        display: inline-block;
-        margin-left: 1.5em;
-        padding: 0.3em 1.3em;
-        font-size: inherit!important;
-        font-weight: normal;
-        border-radius: 5px;
-        float: initial;
-
-        &.blueBtn {
-          background-color: $wait-color!important;
-          border-color: $wait-color!important;
-          &:hover {
-            background-color: #8cab4c !important;
-            border-color: #8cab4c !important;
-          }
-        }
-        &.redBtn {
-          background-color: $stop-color!important;
-          border-color: $stop-color!important;
-          &:hover {
-            background-color: #ca8785 !important;
-            border-color: #ca8785 !important;
-          }
-        }
-      }
-    }
   }
 
   #customer_sub_pop {
@@ -5634,12 +5604,38 @@ ul.naviBtn {
 /* ファイル送信設定 */
 #msecuritysettings_idx {
   #msecuritysettings_content {
+    #ip_filter_enable_select_area {
+      label {
+        padding-bottom: 2px;
+      }
+      .questionBalloon {
+        display: inline-block;
+        position: relative;
+        text-align: center;
+        float:right;
+        margin-left: 5px;
+
+        icon {
+          border-radius: 20px;
+          width: 1.3em;
+          height: 1.3em;
+          font-size: 0.9em!important;
+        }
+      }
+    }
+    h2#contentExplain {
+      font-weight: normal;
+      font-size: 13px;
+      margin: 0 0 0.5em;
+    }
     h3 {
       border-bottom: 3px solid #C3D69B;
       padding-left: 5px;
       font-size: 13px;
     }
     ul {
+      padding: 0;
+      margin-left: 1em;
       li {
         display: flex;
         label {
@@ -5652,8 +5648,8 @@ ul.naviBtn {
       }
     }
   }
-  #ip_filter_settings_area {
-    padding-left: 5em;
+  #ip_white_filter_settings_area, #ip_black_filter_settings_area {
+    padding-left: 1em;
     height: 36em;
     transition: height 200ms linear;
     overflow: hidden;
@@ -5667,9 +5663,9 @@ ul.naviBtn {
       display: block;
     }
     textarea {
-      resize: none;
-      width:  30em;
-      height: 10em;
+      border-radius: 5px !important;
+      border: 1px solid #909090 !important;
+      padding: 5px;
       font-size: 12px;
       ::-webkit-input-placeholder {
         text-align:left;
@@ -5699,7 +5695,7 @@ ul.naviBtn {
       margin-left: 0;
     }
   }
-  #mtransfersetting_action {
+  #msecuritysettings_action {
     padding: 10px;
     clear: both;
 
@@ -5709,6 +5705,95 @@ ul.naviBtn {
       display: block;
       margin: 0 auto;
       text-align: center;
+    }
+  }
+  .explainTooltip {
+    z-index: 10;
+    position: absolute;
+
+    icon-annotation {
+      width: 16em;
+      height: 2.1em;
+      display: none;
+
+      ul {
+        margin: 0;
+        padding: 0;
+        text-align: left;
+        background-color: #FFF;
+        box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+        padding: 0.5em;
+        font-weight: normal;
+        border-radius: 5px;
+
+        img {
+          margin-bottom: -0.2em;
+          width:1em;
+          height:1em;
+        }
+
+        span {
+          font-size: 0.9em;
+        }
+      }
+    }
+
+    &#filterType1Tooltip {
+      icon-annotation {
+        /* 矢印 */
+        &:before {
+          content: " ";
+          border: none;
+          border-top: 10px solid rgba(0, 0, 0, 0.13);
+          border-left: 9px solid transparent;
+          border-right: 9px solid transparent;
+          position: absolute;
+          bottom: -42px;
+          left: 5px;
+          z-index: 1;
+        }
+
+        &:after {
+          content: " ";
+          border: none;
+          border-top: 10px solid white;
+          border-left: 9px solid transparent;
+          border-right: 9px solid transparent;
+          position: absolute;
+          bottom: -40px;
+          left: 5px;
+          z-index: 3;
+        }
+      }
+    }
+
+    &#filterType2Tooltip {
+      icon-annotation {
+        /* 矢印 */
+        &:before {
+          content: " ";
+          border: none;
+          border-top: 10px solid rgba(0, 0, 0, 0.13);
+          border-left: 9px solid transparent;
+          border-right: 9px solid transparent;
+          position: absolute;
+          bottom: -28px;
+          left: 5px;
+          z-index: 1;
+        }
+
+        &:after {
+          content: " ";
+          border: none;
+          border-top: 10px solid white;
+          border-left: 9px solid transparent;
+          border-right: 9px solid transparent;
+          position: absolute;
+          bottom: -26px;
+          left: 5px;
+          z-index: 3;
+        }
+      }
     }
   }
 }
