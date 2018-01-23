@@ -391,7 +391,8 @@
             ]
           ],
           'conditions' => [
-            'THistoryChatLog.t_histories_id' => $this->params->query['historyId']
+            'THistoryChatLog.t_histories_id' => $this->params->query['historyId'],
+            'THistoryChatLog.m_companies_id' => $this->userInfo['MCompany']['id']
           ],
           'order' => 'created',
           'recursive' => -1
@@ -491,7 +492,6 @@
         'joins' =>  $returnData['joinList'],
         'conditions' => $returnData['conditions']
       ]);
-
 
       //$historyListに担当者を追加
       $this->printProcessTimetoLog('BEGIN $this->_userList($historyList)');
@@ -1471,7 +1471,7 @@
         ],
         'conditions' => [
           't_histories_id' => $historyIdList,
-          'm_companies_id' => $this->userInfo['MCompany']['id']
+          'm_companies_id' =>$this->userInfo['MCompany']['id']
         ],
         'order' => 'created'
       ]);
@@ -2219,7 +2219,7 @@
             'SpeechTime.t_histories_id = THistoryChatLog2.t_histories_id'
           ],
         ];
-        $joinList[] = $joinToSpeechChatTime;
+        //$joinList[] = $joinToSpeechChatTime;
 
         /*$joinToNoticeChatTime = [
           'type' => 'LEFT',
@@ -2233,7 +2233,7 @@
         $joinList[] = $joinToNoticeChatTime;*/
 
         // キャンペーンに関する検索条件
-        if ( isset($data['History']['campaign']) && $data['History']['campaign'] !== "") {
+        /*if ( isset($data['History']['campaign']) && $data['History']['campaign'] !== "") {
           $campaignList = $this->TCampaign->getList();
           $campaignParam = "";
           foreach($campaignList as $k => $v){
@@ -2332,7 +2332,7 @@
             ],
           ];
           $joinList[] = $joinToFirstSpeechSendPage;
-        }
+        }*/
       }
       return ['joinList' => $joinList, 'conditions' => $conditions];
     }
@@ -2488,22 +2488,51 @@
       ]);
 
       $noticeChatTime = [];
+      $saveNoticeChatTime = "";
+      $check = "";
       foreach($chatLogIdData as $key => $val) {
+        if(!empty($chatLogIdData[$key - 1]) && ($chatLogIdData[$key - 1]['THistoryChatLog']['t_histories_id'] != $val['THistoryChatLog']['t_histories_id'])) {
+          $check = "";
+        }
         if($val['THistoryChatLog']['message_type'] == 1) {
-          if(!empty($chatLogIdData[$key + 1])) {
-            if($chatLogIdData[$key + 1]['THistoryChatLog']['t_histories_id'] == $val['THistoryChatLog']['t_histories_id']) {
-              //message_type = 1の次のメッセージタイプが4,5ではないとき
-              if(($chatLogIdData[$key + 1]['THistoryChatLog']['message_type'] != 4 && $chatLogIdData[$key + 1]['THistoryChatLog']['message_type'] != 5) &&
-                ($chatLogIdData[$key + 2]['THistoryChatLog']['message_type'] != 4 && $chatLogIdData[$key + 2]['THistoryChatLog']['message_type'] != 5)) {
-                $noticeChatTime[$val['THistoryChatLog']['t_histories_id']] = $val['THistoryChatLog']['created'];
-              }
-            }
-            else {
+          //次のメッセージのt_hisotries_idチェック
+          if(!empty($chatLogIdData[$key + 1]) && !empty($chatLogIdData[$key + 2]) &&
+            $chatLogIdData[$key + 1]['THistoryChatLog']['t_histories_id'] == $val['THistoryChatLog']['t_histories_id'] &&
+            $chatLogIdData[$key + 2]['THistoryChatLog']['t_histories_id'] == $val['THistoryChatLog']['t_histories_id']) {
+            //message_type = 1の次のメッセージタイプが4,5ではないとき
+            if(($chatLogIdData[$key + 1]['THistoryChatLog']['message_type'] != 4 && $chatLogIdData[$key + 1]['THistoryChatLog']['message_type'] != 5) &&
+              ($chatLogIdData[$key + 2]['THistoryChatLog']['message_type'] != 4 && $chatLogIdData[$key + 2]['THistoryChatLog']['message_type'] != 5) &&
+               ($check != 'true')) {
               $noticeChatTime[$val['THistoryChatLog']['t_histories_id']] = $val['THistoryChatLog']['created'];
+              $saveNoticeChatTime =  $val['THistoryChatLog']['created'];
+              $check = 'true';
             }
           }
-          else {
-            $noticeChatTime[$val['THistoryChatLog']['t_histories_id']] = $val['THistoryChatLog']['created'];
+          //次のメッセージのt_hisotries_idチェック
+          else if(!empty($chatLogIdData[$key + 1]) && $chatLogIdData[$key + 1]['THistoryChatLog']['t_histories_id'] == $val['THistoryChatLog']['t_histories_id']) {
+            //message_type = 1の次のメッセージタイプが4,5ではないとき
+            if($chatLogIdData[$key + 1]['THistoryChatLog']['message_type'] != 4 && $chatLogIdData[$key + 1]['THistoryChatLog']['message_type'] != 5 && $check != 'true') {
+              $noticeChatTime[$val['THistoryChatLog']['t_histories_id']] = $val['THistoryChatLog']['created'];
+              $saveNoticeChatTime =  $val['THistoryChatLog']['created'];
+              $check = 'true';
+            }
+          }
+          //次のメッセージのt_hisotries_idチェック
+          else if(!empty($chatLogIdData[$key + 1]) && $chatLogIdData[$key + 1]['THistoryChatLog']['t_histories_id'] != $val['THistoryChatLog']['t_histories_id'])  {
+            if($chatLogIdData[$key - 1]['THistoryChatLog']['message_type'] != 1 && $check != 'true') {
+              $noticeChatTime[$val['THistoryChatLog']['t_histories_id']] = $val['THistoryChatLog']['created'];
+            }
+            else {
+              $noticeChatTime[$val['THistoryChatLog']['t_histories_id']] = $saveNoticeChatTime;
+            }
+          }
+          else if(empty($chatLogIdData[$key + 1]))  {
+            if($chatLogIdData[$key - 1]['THistoryChatLog']['message_type'] != 1 && $check != 'true') {
+              $noticeChatTime[$val['THistoryChatLog']['t_histories_id']] = $val['THistoryChatLog']['created'];
+            }
+            else {
+              $noticeChatTime[$val['THistoryChatLog']['t_histories_id']] = $saveNoticeChatTime;
+            }
           }
         }
       }
