@@ -581,5 +581,6 @@ $config['fileTransferSettingType'] = [
 /* 通常選択肢 */
 $config['securityEnableLoginIpFilterSetting'] = [
     0 => "利用しない", // FIXME 定数化
-    1 => "利用する"
+    1 => "ホワイトリスト登録する",
+    2 => "ブラックリスト登録する"
 ];
