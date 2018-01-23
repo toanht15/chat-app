@@ -2776,6 +2776,25 @@ ul.naviBtn {
     #leftContents ul.tabStyle li.on {
       width:13em;
     }
+    .explainTooltip {
+      icon-annotation {
+        top: -6.7em !important;
+        left: -1.7em !important;
+        /* 矢印 */
+        &:before {
+          bottom: -27.3px !important;
+        }
+        &:after {
+          bottom: -25.3px !important;
+        }
+      }
+    }
+    .opThreeLineExplainTooltip {
+      icon-annotation {
+        top: -6.2em !important;
+        left: -1.6em !important;
+      }
+    }
   }
   @media screen and (min-width:1024px) and ( max-width:1367px) {
     /*　画面サイズが768pxから1024pxまではここを読み込む　*/
@@ -2804,9 +2823,27 @@ ul.naviBtn {
     #leftContents ul.tabStyle li {
       width:14.5em;
     }
-
     #leftContents ul.tabStyle li.on {
       width:14.5em;
+    }
+    .explainTooltip {
+      icon-annotation {
+        top: -6.7em !important;
+        left: -1.7em !important;
+        /* 矢印 */
+        &:before {
+          bottom: -27.3px !important;
+        }
+        &:after {
+          bottom: -25.3px !important;
+        }
+      }
+    }
+    .opThreeLineExplainTooltip {
+      icon-annotation {
+        top: -6.2em !important;
+        left: -1.6em !important;
+      }
     }
   }
   @media screen and (min-width:1368px) and ( max-width:2200px){
