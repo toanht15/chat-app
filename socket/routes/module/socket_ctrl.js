@@ -854,7 +854,8 @@ io.sockets.on('connection', function (socket) {
 
               // 担当者のいない消費者からのメッセージの場合
               if ( d.messageType === 1 && !getChatSessionIds(d.siteKey, d.sincloSessionId, 'chat') ) {
-                if (chatApi.sendCheckTimerList.hasOwnProperty(d.tabId)) {
+                // 自動返信（チャットボット）の対象ではないメッセージが到達し、sorryメッセージ発動用のタイマーがあればクリアする。（重複表示防止）
+                if (chatApi.sendCheckTimerList.hasOwnProperty(d.tabId) && (!d.hasOwnProperty('isAutoSpeech') || !d.isAutoSpeech)) {
                   clearTimeout(chatApi.sendCheckTimerList[d.tabId]);
                   chatApi.sendCheckTimerList[d.tabId] = null;
                 }
