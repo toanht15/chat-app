@@ -2770,10 +2770,9 @@
               var word = "";
               switch(Number(typeObj.wordType)) {
                 case 1: // 完全一致
-                  // アスタリスクを許容する
-                  word = splitedContains[i].replace(/\*/, ".*")
-                  // それ以外の文字は文字列として扱う
-                    .replace(/[-\/\\^$+?.()|[\]{}]/g, '\\$&');
+                  // アスタリスクを許容し、それ以外の文字は文字列として扱う
+                  word = splitedContains[i]
+                    .replace(/[-\/\\^$+?.()|[\]{}]/g, '\\$&').replace(/\*/g, ".*");
                   preg = new RegExp("^" + word + "$");
                   result = preg.test(val);
                   break;
@@ -2803,10 +2802,9 @@
               var word = "";
               switch(Number(typeObj.wordType)) {
                 case 1: // 完全一致
-                  // アスタリスクを許容する
-                  word = splitedExclusions[i].replace(/\*/, ".*")
-                  // それ以外の文字は文字列として扱う
-                    .replace(/[-\/\\^$+?.()|[\]{}]/g, '\\$&');
+                  word = splitedExclusions[i]
+                  // アスタリスクを許容し、それ以外の文字は文字列として扱う
+                    .replace(/[-\/\\^$+?.()|[\]{}]/g, '\\$&').replace(/\*/g, ".*");
                   preg = new RegExp("^" + word + "$");
                   result = !preg.test(val);
                   break;

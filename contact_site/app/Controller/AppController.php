@@ -74,7 +74,10 @@ class AppController extends Controller {
     C_COMPANY_USE_FREE_INPUT => false, //自由入力エリア
     C_COMPANY_USE_CV => false, //CV
     C_COMPANY_USE_AUTOMESSAGE_SEND_MAIL => false, //メール送信（オートメッセージ）
-    C_COMPANY_USE_SEND_FILE => false //ファイル送信
+    C_COMPANY_USE_SEND_FILE => false, //ファイル送信
+    C_COMPANY_USE_SECURITY_LOGIN_IP_FILTER => false, // セキュリティ設定（IP制限）
+    C_COMPANY_USE_IMPORT_EXCEL_AUTO_MESSAGE => false, // オートメッセージExcelインポート
+    C_COMPANY_USE_OPERATOR_PRESENCE_VIEW => false // オペレータ在席状況確認
   ];
 
   private $secretKey = 'x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK';

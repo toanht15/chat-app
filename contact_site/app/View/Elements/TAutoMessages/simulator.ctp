@@ -9,7 +9,7 @@
       width: 400px;
     }
     #tautomessages_idx #tautomessages_form #tautomessages_action_simulator section .ulTab li {
-      display: initial;
+      display: block;
     }
     #tautomessages_idx #tautomessages_form #tautomessages_action_simulator section ul#chatTalk li {
       word-break: break-all;
@@ -335,7 +335,7 @@
             <li class="sinclo_se chat_right details" ng-class="{ notNone:se_border_none === '' || se_border_none === false, middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3',boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}" ><span class="details">○○について質問したいのですが</span></li>
           </div> -->
           <div style="height: auto!important; padding:0;">
-            <li id="sample_widget_re_message" class="sinclo_re chat_left" ng-style="{backgroundColor:makeFaintColor()}" ng-class="{ notNone:re_border_none === '' || re_border_none === false, middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3',boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}"><span class="cName details" ng-if="show_name == 1" ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}"><?=$userInfo['display_name']?></span><span class="cName details" ng-if="show_name == 2" ng-class="{ middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">{{widgetSettings.sub_title}}</span><span class="details"></li>
+            <li id="sample_widget_re_message" class="sinclo_re chat_left" ng-style="{backgroundColor:makeFaintColor()}" ng-class="{ notNone:re_border_none === '' || re_border_none === false, middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3',boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}"><span class="cName details" ng-if="show_name == 1" ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}"><?=$userInfo['display_name']?></span><span class="cName details" ng-if="show_name == 2" ng-class="{ middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">{{widgetSettings.sub_title}}</span><span class="details"></span></li>
           </div>
           <!-- <div style="height: auto!important; padding:0;">
             <li class="showAnimationSample sinclo_re chat_left" ng-style="{backgroundColor:makeFaintColor()}" ng-class="{ notNone:re_border_none === '' || re_border_none === false, middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3',boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}"><span class="cName details" ng-if="show_name == 1" ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}"><?=$userInfo['display_name']?></span><span class="cName details" ng-if="show_name == 2" ng-class="{ middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">{{widgetSettings.sub_title}}</span><span class="details">○○についてですね<br>どのようなご質問でしょうか？</span></li>
@@ -516,7 +516,7 @@
             <li class="sinclo_se chat_right details" ng-class="{notNone:se_border_none === '' || se_border_none === false, boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}"><span class="details" >○○について質問したいのですが</span></li>
           </div> -->
           <div style="height: auto!important; padding:0;">
-            <li id="sample_widget_re_message" class="sinclo_re chat_left" ng-class="{notNone:re_border_none === '' || re_border_none === false, boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}" ng-style="{backgroundColor:makeFaintColor()}"><span class="cName details" >{{widgetSettings.sub_title}}</span><span class="details"></li>
+            <li id="sample_widget_re_message" class="sinclo_re chat_left" ng-class="{notNone:re_border_none === '' || re_border_none === false, boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}" ng-style="{backgroundColor:makeFaintColor()}"><span class="cName details" >{{widgetSettings.sub_title}}</span><span class="details"></span></li>
           </div>
           <!-- <div style="height: auto!important; padding:0;">
             <li class="showAnimationSample sinclo_re chat_left" ng-class="{notNone:re_border_none === '' || re_border_none === false, boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}" ng-style="{backgroundColor:makeFaintColor()}"><span class="cName details" >{{widgetSettings.sub_title}}</span><span class="details">○○についてですね<br>どのようなご質問でしょうか？</span></li>
@@ -530,7 +530,7 @@
             <li class="sinclo_se chat_right details" ng-class="{notNone:se_border_none === '' || se_border_none === false, boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}"><span class="details">○○について質問したいのですが</span></li>
           </div> -->
           <div style="height: auto!important; padding:0;">
-            <li id="sample_widget_re_message" class="sinclo_re chat_left" ng-class="{notNone:re_border_none === '' || re_border_none === false, boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}" ng-style="{backgroundColor:makeFaintColor()}"><span class="cName details" >{{widgetSettings.sub_title}}</span><span class="details"></li>
+            <li id="sample_widget_re_message" class="sinclo_re chat_left" ng-class="{notNone:re_border_none === '' || re_border_none === false, boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}" ng-style="{backgroundColor:makeFaintColor()}"><span class="cName details" >{{widgetSettings.sub_title}}</span><span class="details"></span></li>
           </div>
           <!-- <div style="height: auto!important; padding:0;">
             <li class="showAnimationSample sinclo_re chat_left" ng-class="{notNone:re_border_none === '' || re_border_none === false, boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}" ng-style="{backgroundColor:makeFaintColor()}"><span class="cName details" >{{widgetSettings.sub_title}}</span><span class="details">○○についてですね<br>どのようなご質問でしょうか？</span></li>

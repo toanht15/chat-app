@@ -556,6 +556,7 @@ $(document).ready(function(){
     targetObj.find('icon-annotation').css('display','none');
   });
 
+  <?php if(isset($coreSettings[C_COMPANY_USE_IMPORT_EXCEL_AUTO_MESSAGE]) && $coreSettings[C_COMPANY_USE_IMPORT_EXCEL_AUTO_MESSAGE]): ?>
   var fadeOutLayerMenu = function() {
     $("#autoMessageLayerMenu").fadeOut("fast");
   };
@@ -576,5 +577,6 @@ $(document).ready(function(){
   });
 
   $(document).on('click', fadeOutLayerMenu);
+  <?php endif; ?>
 });
 </script>

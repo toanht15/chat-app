@@ -105,9 +105,14 @@ CakeLog::config('debug', array(
 	'file' => 'debug',
 ));
 CakeLog::config('error', array(
-	'engine' => 'File',
-	'types' => array('warning', 'error', 'critical', 'alert', 'emergency'),
-	'file' => 'error',
+  'engine' => 'File',
+  'types' => array('warning', 'error', 'critical', 'alert', 'emergency'),
+  'file' => 'error',
+));
+CakeLog::config('refresh', array(
+  'engine' => 'File',
+  'types' => array('info'),
+  'file' => 'refresh'
 ));
 
 Configure::load("myConst");
