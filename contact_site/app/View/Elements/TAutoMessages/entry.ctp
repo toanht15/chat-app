@@ -255,19 +255,20 @@
               </span>
               <?php if (!empty($errors['to_address'])) echo "<pre class='error-message'>" . h($errors['to_address'][0]) . "</pre>"; ?>
             </div>
-            <li class="bt0 sendMailSettings" id="subjectBlock" style="display:none">
-              <span><label class="require">メールタイトル</label></span>
-              <span class="bt0"><?= $this->Form->input('main.subject', [
-                    'type' => 'text',
-                    'error' => false,
-                    'value' => (!empty($this->data['TAutoMessage']['subject'])) ? $this->data['TAutoMessage']['subject'] : "sincloから新着チャットが届きました"
-                ], [
-                    'entity' => 'subject'
-                ]); ?>
-              </span>
-              <?php if (!empty($errors['subject'])) echo "<pre class='error-message'>" . h($errors['subject'][0]) . "</pre>"; ?>
-            </li>
-            <li class="bt0 sendMailSettings" id="fromNameBlock" style="display:none">
+          </li>
+          <li class="bt0 sendMailSettings" id="subjectBlock" style="display:none">
+            <span><label class="require">メールタイトル</label></span>
+            <span class="bt0"><?= $this->Form->input('main.subject', [
+                  'type' => 'text',
+                  'error' => false,
+                  'value' => (!empty($this->data['TAutoMessage']['subject'])) ? $this->data['TAutoMessage']['subject'] : "sincloから新着チャットが届きました"
+              ], [
+                  'entity' => 'subject'
+              ]); ?>
+            </span>
+            <?php if (!empty($errors['subject'])) echo "<pre class='error-message'>" . h($errors['subject'][0]) . "</pre>"; ?>
+          </li>
+          <li class="bt0 sendMailSettings" id="fromNameBlock" style="display:none">
             <span><label class="require">差出人名</label></span>
             <span class="bt0"><?= $this->Form->input('main.from_name', [
                   'type' => 'text',
@@ -278,7 +279,6 @@
               ]); ?>
             </span>
             <?php if (!empty($errors['from_name'])) echo "<pre class='error-message'>" . h($errors['from_name'][0]) . "</pre>"; ?>
-            </li>
           </li>
           <!-- cv -->
 
@@ -327,5 +327,4 @@
           <a href="javascript:void(0)" onclick="removeAct(<?= $lastPage?>)" class="redBtn btn-shadow <?=$class?>">削除</a>
       </div>
     </section>
-  <?= $this->Form->end(); ?>
 </div>
