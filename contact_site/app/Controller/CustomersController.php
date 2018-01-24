@@ -541,6 +541,8 @@ class CustomersController extends AppController {
     $this->_getDictionaryCategoriesList();
     /* 定型文情報リスト取得 */
     $this->_getDictionaryList();
+    /* オペレータ一覧情報取得 */
+    $this->getOperatorList();
     /* 除外情報取得 */
     $this->set('excludeList', $this->MCompany->getExcludeList($this->userInfo['MCompany']['id']));
     /* 契約状態取得 */
@@ -658,6 +660,33 @@ class CustomersController extends AppController {
     $this->autoRender = false;
     $this->layout = "ajax";
     $this->render('/Elements/Customers/fileUploadView');
+  }
+
+  private function getOperatorList() {
+    // 一般ユーザーはリストを返さない
+    $result = [];
+    if(strcmp($this->userInfo['permission_level'], C_AUTHORITY_NORMAL) === 0) {
+      return json_encode($result);
+    }
+    $list = $this->MUser->find('all', [
+      'conditions' => [
+        'MUser.m_companies_id' => intval($this->userInfo['MCompany']['id']),
+        'NOT' => [
+          'MUser.permission_level' => C_AUTHORITY_SUPER,
+          'MUser.del_flg' => 1
+        ]
+      ]
+    ]);
+    foreach($list as $index => $value) {
+      array_push($result, [
+        'id' => intval($value['MUser']['id']),
+        'user_name' => $value['MUser']['display_name'],
+        'display_name' => $value['MUser']['display_name'],
+        'mail_address' => $value['MUser']['mail_address'],
+        'permission_level' => intval($value['MUser']['permission_level'])
+      ]);
+    }
+    $this->set('userList', $result);
   }
 
 }

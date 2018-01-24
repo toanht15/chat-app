@@ -828,17 +828,22 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     };
 
     $scope.showOperatorPresence = function() {
-      $.ajax({
-        type: 'POST',
-        cache: false,
-        url: "<?= $this->Html->url(array('controller' => 'MUsers', 'action' => 'getList')) ?>",
-        dataType: 'html',
-        success: function(html) {
-          modalOpen.call(window, html, 'p-cus-operator-presence', 'オペレータステータス一覧');
-          $scope.refreshUserPresences();
-        }
-      });
+      // ポップアップを閉じる
+      if ( $scope.presenceMainClass !== "" ) {
+        $("#operator_presence_pop").css("display", "none");
+        $scope.presenceMainClass = "";
+      }
+      // ポップアップを開く
+      else {
+        setPositionOfPresenceView(); // ポップアップの位置調整
+        setTimeout(function(){
+          $("#operator_presence_pop").css("display", "block");
+        }, 10);
+      }
     };
+
+    $scope.customerMainClass = "";
+    $scope.presenceMainClass = "";
 
     $scope.refreshUserPresences = function() {
       if($('#presenceView').length !== 0) {
@@ -885,8 +890,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var ret = Object.keys(list);
       return ret.length;
     };
-
-    $scope.customerMainClass = "";
 
     $scope.confirmFlg = false;
     $scope.sendMessageConnectConfirm = function(detailId){
@@ -3375,6 +3378,13 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     function setPositionOfPopup(){
       var subContent = document.getElementById("sub_contents");
       subContent.style.left = ((window.innerWidth-$("#sidebar-main").outerWidth()) - $("#sub_contents").outerWidth())/2 + "px";
+      subContent.style.top = "100px";
+    }
+
+    // ポップアップをセンターに表示
+    function setPositionOfPresenceView(){
+      var subContent = document.getElementById("presenceView");
+      subContent.style.left = ((window.innerWidth-$("#sidebar-main").outerWidth()) - $("#presenceView").outerWidth())/2 + "px";
       subContent.style.top = "100px";
     }
 
