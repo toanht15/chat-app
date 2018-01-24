@@ -11,8 +11,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', function($scope, $
   $scope.setActionList = [];
   $scope.test = ['a'];
   $scope.widgetSettings = getWidgetSettings();
-  console.log(typeof $scope.widgetSettings);
-  console.log($scope.widgetSettings);
 
   // アクションの追加
   this.addItem = function(actionType) {
@@ -61,6 +59,8 @@ sincloApp.controller('MainController', ['$scope', '$timeout', function($scope, $
         if(message === '') return;
         document.getElementById('action_' + index + '_confirm_message').innerHTML = createMessage(message);
       }
+      // メール
+      // TODO: 変更を検知して、処理を実行する。初期化は不要・・・かな $scope.$apply() がうまくきかないなんで・・・
     });
   }
 
@@ -74,6 +74,29 @@ sincloApp.controller('MainController', ['$scope', '$timeout', function($scope, $
     // TODO: 保存ボタン押下時の処理
     submitAct();
   };
+
+  this.initHearingSetting = function(actionIndex) {
+    var targetElmList = $('#action_' + actionIndex).find('.itemListGroup tr');
+    console.log(targetElmList);
+    $scope.setActionList[actionIndex].hearings = []; // TODO: 更新時の処理
+    var targetObjList = $scope.setActionList[actionIndex].hearings;
+    initListView(targetElmList, targetObjList)
+  }
+
+  this.initSelectOptionSetting = function(actionIndex) {
+    var targetElmList = $('#action_' + actionIndex).find('.itemListGroup li');
+    $scope.setActionList[actionIndex].selection = {}; // TODO: 更新時の処理
+    $scope.setActionList[actionIndex].selection.options = [];
+    var targetObjList = $scope.setActionList[actionIndex].selection.options;
+    initListView(targetElmList, targetObjList)
+  }
+
+  this.initMailSetting = function(actionIndex) {
+    var targetElmList = $('#action_' + actionIndex).find('.itemListGroup li');
+    $scope.setActionList[actionIndex].mailAddresses = []; // TODO: 更新時の処理
+    var targetObjList = $scope.setActionList[actionIndex].mailAddresses;
+    initListView(targetElmList, targetObjList)
+  }
 
   $scope.makeFaintColor = function(){
     var defColor = "#F1F5C8";
@@ -156,10 +179,6 @@ function submitAct() {
 
 $(document).ready(function() {
   // ツールチップの表示制御
-  addTooltipEvent();
-});
-
-function addTooltipEvent() {
   $(document).off('mouseenter','.questionBtn').on('mouseenter','.questionBtn', function(event){
     var parentClass = $(this).parent().parent().attr('class');
     var targetObj = $("#" + parentClass.replace(/Label/, "Tooltip"));
@@ -174,8 +193,52 @@ function addTooltipEvent() {
     var targetObj = $("#" + parentClass.replace(/Label/, "Tooltip"));
     targetObj.find('icon-annotation').css('display','none');
   });
-}
 
+  // ヒアリング、選択肢、メール送信のリスト追加処理
+  $(document).on('click', '.disOffgreenBtn', function() {
+    var itemList = $(this).parents('.itemListGroup').children('tr,li');
+    var targetElm = '';
+    var targetIndex = -1;
+
+    // リストの表示処理
+    angular.forEach(itemList, function(item, index) {
+      if (item.style.display == 'none' && targetElm == '') {
+        targetElm = item;
+        targetIndex = index;
+      }
+    });
+
+    // ボタンの表示制御
+    $(targetElm).show();
+    $(itemList).find('.btnBlock .deleteBtn').show();
+    $(itemList).find('.btnBlock .disOffgreenBtn').hide();
+    if (targetIndex < 4 && targetIndex >= 0) {
+      $(itemList[targetIndex]).find('.btnBlock .disOffgreenBtn').show();
+    }
+  });
+
+  // ヒアリング、選択肢、メール送信のリスト削除処理
+  $(document).on('click', '.deleteBtn', function() {
+    var itemList = $(this).parents('.itemListGroup').children('tr,li');
+    var targetElm = '';
+    var targetIndex = -1;
+
+    angular.forEach(itemList, function(item, index) {
+      if (item.style.display != 'none') {
+        targetElm = item;
+        targetIndex = index;
+      }
+    });
+
+    // ボタンの表示制御
+    $(targetElm).hide();
+    $(itemList).find('.btnBlock .deleteBtn').show();
+    $(itemList[targetIndex-1]).find('.btnBlock .disOffgreenBtn').show();
+    if (targetIndex <= 1) {
+      $(itemList[targetIndex-1]).find('.btnBlock .deleteBtn').hide();
+    }
+  });
+});
 
 function createMessage(val) {
   var strings = val.split('\n');
@@ -222,5 +285,20 @@ function createMessage(val) {
   }
 
   return content;
+}
+
+// ヒアリング、選択肢、メール送信のリスト表示初期化処理
+function initListView(targetElmList, targetObjList) {
+  angular.forEach(targetElmList, function(targetElm, index) {
+    if(typeof targetObjList[index] !== 'undefined' && (targetObjList[index])) {
+      $(targetElm).show()
+    } else {
+      $(targetElm).hide();
+      if (index == 0) {
+        $(targetElm).show()
+        $(targetElm).find('.btnBlock .deleteBtn').hide();
+      }
+    }
+  });
 }
 </script>

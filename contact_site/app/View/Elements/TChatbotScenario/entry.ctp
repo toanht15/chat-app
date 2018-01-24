@@ -41,7 +41,7 @@
       </div>
       <ul id="tchatbotscenario_form_action_body" class="p20x">
         <!-- アクション設定一覧 -->
-        <li ng-repeat="(setActionId, setItem) in setActionList" class="set_action_item">
+        <li ng-repeat="(setActionId, setItem) in setActionList" id="action_{{setActionId}}" class="set_action_item">
           <h4>{{setActionId + 1}}．{{setItem.label}}</h4>
           <?= $this->element('TChatbotScenario/templates'); ?>
           <a class="closeBtn redBtn" ng-click="main.removeItem(setActionId)"><?= $this->Html->image('close.png', array('alt' => '削除する', 'width' => 20, 'height' => 20, 'style' => 'margin: 0 auto')) ?></a>
