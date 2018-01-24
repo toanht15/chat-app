@@ -830,17 +830,24 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     $scope.showOperatorPresence = function() {
       // ポップアップを閉じる
       if ( $scope.presenceMainClass !== "" ) {
-        $("#operator_presence_pop").css("display", "none");
-        $scope.presenceMainClass = "";
-      }
-      // ポップアップを開く
-      else {
-        setPositionOfPresenceView(); // ポップアップの位置調整
-        setTimeout(function(){
-          $("#operator_presence_pop").css("display", "block");
-        }, 10);
-      }
-    };
+  $("#operator_presence_pop").css("display", "none");
+      $scope.presenceMainClass = "";
+    }
+    // ポップアップを開く
+  else {
+      $scope.presenceMainClass = "showPresence";
+      setPositionOfPresenceView(); // ポップアップの位置調整
+      setTimeout(function(){
+        $("#operator_presence_pop").css("display", "block");
+        $('#presenceTableWrap').css('height', $('#presenceViewheader').height() + $('#presenceViewBodyScroll').height() + 1 + "px");
+      }, 10);
+    }
+  };
+
+  $scope.closeOperatorPresence = function() {
+    $("#operator_presence_pop").css("display", "none");
+    $scope.presenceMainClass = "";
+  }
 
     $scope.customerMainClass = "";
     $scope.presenceMainClass = "";

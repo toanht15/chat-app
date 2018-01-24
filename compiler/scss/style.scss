@@ -2009,7 +2009,7 @@ ul.naviBtn {
 
       font-size: 14px;
       width: $content-width - 10em;
-      height: 400px;
+      min-height: 130px;
 
       background-color: #EFEFEF;
       box-shadow: 0 0 30px rgba(0,0,0,0.5);
@@ -2046,8 +2046,19 @@ ul.naviBtn {
 
       #presenceViewContents {
         padding: 10px;
-        overflow: hidden;
-        height: 100%;
+        max-height: 390px;
+        position: relative;
+        box-sizing: initial;
+
+        #presenceTableWrap {
+          overflow: hidden;
+          box-sizing: initial;
+          &:after {
+            content: "";
+            display: block;
+            clear: both;
+          }
+        }
 
         table {
           width: 100%;
@@ -2073,10 +2084,12 @@ ul.naviBtn {
 
         #presenceViewBodyScroll {
           position: relative;
-          height: 80%;
+          min-height: 40px;
+          max-height: 342px;
           overflow-x: hidden;
-          overflow-y: scroll;
+          overflow-y: auto;
           bottom: -37px;
+          left: 0;
           #presenceViewBody {
             thead {
               visibility: hidden;
