@@ -6003,13 +6003,13 @@ ul.naviBtn {
           }
 
           #triggerList {
-            flex-basis: 364px;
-            min-width: 364px;
+            flex-basis: 380px;
+            min-width: 380px;
 
             span#pushImg {
               background-image: url("/img/push.png");
               width: 50px;
-              display: block;
+              display: inline-block;
               height: 100px;
               background-size: 100%;
               background-repeat: no-repeat;
@@ -6018,7 +6018,7 @@ ul.naviBtn {
             }
 
             > div {
-              float: left;
+              display: inline-block;
 
               ul {
                 height: 361px;
@@ -6453,15 +6453,16 @@ ul.naviBtn {
         position: relative;
         text-align: center;
         float:right;
+        margin-top: 3px;
         margin-left: 11px;
-        line-height: 1.1em;
+        line-height: 1.2em;
 
         icon {
           border-radius: 20px;
           padding: 0.1em;
           width: 1.3em;
           height: 1.3em;
-          font-size: 12.5px!important;
+          font-size: 12px!important;
         }
       }
     }
