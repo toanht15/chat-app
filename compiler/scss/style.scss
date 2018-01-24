@@ -5887,7 +5887,7 @@ ul.naviBtn {
                   border-top: 1px solid $main-color;
                   &.explainWrapper {
                     padding: 0;
-                    border-top: initial;
+                    border-top: none;
                     margin-left: 11em;
                     s {
                       display: block;
@@ -5895,7 +5895,7 @@ ul.naviBtn {
                   }
                   &.keywordWrapper {
                     padding: 0;
-                    border-top: initial;
+                    border-top: none;
                     flex-grow: 1;
                     max-width: 55.5em;
                     min-width: 17em;

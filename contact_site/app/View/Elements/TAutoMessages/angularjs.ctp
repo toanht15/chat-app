@@ -654,8 +654,10 @@ sincloApp.directive('ngShowonhover',function() {
                 createBalloon(attrs['ngShowonhover'], scope.$parent.itemForm);
                 var top = itemsTag.prop('offsetTop');
                 var left = itemsTag.prop('offsetLeft');
+                var width = itemsTag.prop('offsetWidth');
                 balloon.css({
-                    "top": top + 10
+                    "top": top + 10,
+                    "left": width + left
                 }).show();
             });
             element.parent().bind('mouseleave', function() {
@@ -693,12 +695,9 @@ sincloApp.directive('ngShowonhover',function() {
                         messageList.push("訪問回数は「1回未満」という設定はできません");
                     }
                 }
-                /* リファラー */
+                /* 検索キーワード */
                 if ( 'keyword' in form ) {
-                    if (String(key) === '<?=h(C_AUTO_TRIGGER_REFERRER)?>' && 'required' in form.keyword.$error) {
-                        messageList.push("URLが未入力です");
-                    }
-                    else if (String(key) !== '<?=h(C_AUTO_TRIGGER_REFERRER)?>' && 'required' in form.keyword_contains.$error) {
+                    if (String(key) === '<?=h(C_AUTO_TRIGGER_SEARCH_KEY)?>' && 'required' in form.keyword.$error) {
                         messageList.push("キーワードが未入力です");
                     }
                 }
