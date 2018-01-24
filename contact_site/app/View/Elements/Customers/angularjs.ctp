@@ -3595,15 +3595,14 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             bStatus = b.status >= 0 ? b.status : -1,
           aDisplayName = a.display_name,
           bDisplayName = b.display_name;
+        // TODO 正常にソートさせるならよみがなが必要
         if(scope.operatorListSortMode === 'displayName') {
-          console.log("a : " + aStatus + "b : " + bStatus);
           if(scope.operatorListSortOrder === "asc") {
             return aDisplayName === bDisplayName ? 0 : aDisplayName > bDisplayName ? 1 : -1;
           } else { // desc
             return aDisplayName === bDisplayName ? 0 : aDisplayName > bDisplayName ? -1 : 1;
           }
         } else { // scope.operatorListSortMode === 'status'
-          console.log("a : " + aStatus + "b : " + bStatus);
           if(scope.operatorListSortOrder === "asc") {
             return aStatus === bStatus ? 0 : aStatus > bStatus ? 1 : -1;
           } else { // desc
