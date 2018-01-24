@@ -420,6 +420,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     $scope.onlineOperatorList = {};
     $scope.chatLogList = []; // 詳細情報のチャットログリスト
     $scope.chatLogMessageList = []; // 詳細情報のチャットログメッセージリスト
+    $scope.operatorList = <?= json_encode($userList) ?>;
+    $scope.operatorListSortMode = 'status';
+    $scope.operatorListSortOrder = 'desc';
+
     /* 資料検索 */
     $scope.tagList = {};
     $scope.documentList = {};
@@ -830,40 +834,65 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     $scope.showOperatorPresence = function() {
       // ポップアップを閉じる
       if ( $scope.presenceMainClass !== "" ) {
-  $("#operator_presence_pop").css("display", "none");
+        $("#operator_presence_pop").css("display", "none");
+            $scope.presenceMainClass = "";
+      }
+      // ポップアップを開く
+      else {
+        $scope.presenceMainClass = "showPresence";
+        setPositionOfPresenceView(); // ポップアップの位置調整
+        setTimeout(function(){
+          $("#operator_presence_pop").css("display", "block");
+          $('#presenceTableWrap').css('height', $('#presenceViewheader').height() + $('#presenceViewBodyScroll').height() + 1 + "px");
+        }, 10);
+      }
+    };
+
+    $scope.closeOperatorPresence = function() {
+      $("#operator_presence_pop").css("display", "none");
       $scope.presenceMainClass = "";
     }
-    // ポップアップを開く
-  else {
-      $scope.presenceMainClass = "showPresence";
-      setPositionOfPresenceView(); // ポップアップの位置調整
-      setTimeout(function(){
-        $("#operator_presence_pop").css("display", "block");
-        $('#presenceTableWrap').css('height', $('#presenceViewheader').height() + $('#presenceViewBodyScroll').height() + 1 + "px");
-      }, 10);
-    }
-  };
 
-  $scope.closeOperatorPresence = function() {
-    $("#operator_presence_pop").css("display", "none");
-    $scope.presenceMainClass = "";
-  }
+    $scope.changeDisplaySortMode = function() {
+      if($scope.operatorListSortMode !== 'displayName') {
+        $scope.operatorListSortMode = 'displayName';
+        $scope.operatorListSortOrder = 'asc';
+      } else {
+        if($scope.operatorListSortOrder === 'asc') {
+          $scope.operatorListSortOrder = 'desc';
+        } else {
+          $scope.operatorListSortOrder = 'asc';
+        }
+      }
+    }
+
+    $scope.changeStatusSortMode = function() {
+      if($scope.operatorListSortMode !== 'status') {
+        $scope.operatorListSortMode = 'status';
+        $scope.operatorListSortOrder = 'desc';
+      } else {
+        if($scope.operatorListSortOrder === 'asc') {
+          $scope.operatorListSortOrder = 'desc';
+        } else {
+          $scope.operatorListSortOrder = 'asc';
+        }
+      }
+    }
 
     $scope.customerMainClass = "";
     $scope.presenceMainClass = "";
 
     $scope.refreshUserPresences = function() {
       if($('#presenceView').length !== 0) {
-        $("#presenceViewBody .presence-active").css('display', 'none');
-        $("#presenceViewBody .presence-inactive").css('display', 'none');
-        $("#presenceViewBody .presence-offline").css('display', '');
+        Object.keys($scope.operatorList).forEach(function(key){
+          delete $scope.operatorList[key].status;
+        });
+
         Object.keys($scope.onlineOperatorList).forEach(function(key){
           if($scope.activeOperatorList[key]) {
-            $('#active'+key).css('display','');
-            $('#inactive'+key).css('display','none');
+            $scope.operatorList[key].status = 1;
           } else {
-            $('#active'+key).css('display','none');
-            $('#inactive'+key).css('display','');
+            $scope.operatorList[key].status = 0;
           }
           $('#offline'+key).css('display','none');
         });
@@ -1470,6 +1499,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           chgOpStatus();
       }
     };
+
+    $scope.isUndefined = function(value) {
+      return angular.isUndefined(value);
+    }
 
     $scope.isset = function(value){
       var result;
@@ -3546,6 +3579,42 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
   function _numPad(str){
     return ("0" + str).slice(-2);
   }
+
+  /**
+   * オペレータステータス一覧のソート処理
+   */
+  sincloApp.filter('orderOperatorStatus', function(){
+    return function(input, scope) {
+      if (!angular.isObject(input)) return input;
+      var array = [];
+      for(var objectKey in input) {
+        array.push(input[objectKey]);
+      }
+      array.sort(function(a, b){
+        var aStatus = a.status >= 0 ? a.status : -1,
+            bStatus = b.status >= 0 ? b.status : -1,
+          aDisplayName = a.display_name,
+          bDisplayName = b.display_name;
+        if(scope.operatorListSortMode === 'displayName') {
+          console.log("a : " + aStatus + "b : " + bStatus);
+          if(scope.operatorListSortOrder === "asc") {
+            return aDisplayName === bDisplayName ? 0 : aDisplayName > bDisplayName ? 1 : -1;
+          } else { // desc
+            return aDisplayName === bDisplayName ? 0 : aDisplayName > bDisplayName ? -1 : 1;
+          }
+        } else { // scope.operatorListSortMode === 'status'
+          console.log("a : " + aStatus + "b : " + bStatus);
+          if(scope.operatorListSortOrder === "asc") {
+            return aStatus === bStatus ? 0 : aStatus > bStatus ? 1 : -1;
+          } else { // desc
+            return aStatus === bStatus ? 0 : aStatus > bStatus ? -1 : 1;
+          }
+        }
+      });
+      //console.log(JSON.stringify(array));
+      return array;
+    }
+  });
 
   sincloApp.filter('customDate', function(){
     return function(input) {

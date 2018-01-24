@@ -678,13 +678,13 @@ class CustomersController extends AppController {
       ]
     ]);
     foreach($list as $index => $value) {
-      array_push($result, [
+      $result[intval($value['MUser']['id'])] = [
         'id' => intval($value['MUser']['id']),
         'user_name' => $value['MUser']['display_name'],
         'display_name' => $value['MUser']['display_name'],
         'mail_address' => $value['MUser']['mail_address'],
         'permission_level' => intval($value['MUser']['permission_level'])
-      ]);
+      ];
     }
     $this->set('userList', $result);
   }

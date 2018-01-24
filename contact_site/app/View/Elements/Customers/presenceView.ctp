@@ -16,8 +16,18 @@
         <table>
           <thead>
           <tr>
-            <th style="width: 70%">表示名</th>
-            <th style="width: 30%">状態</th>
+            <th style="width: 70%" id="displayNameHeader" ng-click="changeDisplaySortMode()">
+              表示名
+              <i class="fa fa-sort" aria-hidden="true" ng-if="operatorListSortMode === 'status'"></i>
+              <i class="fa fa-sort-asc" aria-hidden="true" ng-if="operatorListSortMode === 'displayName' && operatorListSortOrder === 'asc'"></i>
+              <i class="fa fa-sort-desc" aria-hidden="true" ng-if="operatorListSortMode === 'displayName' && operatorListSortOrder === 'desc'"></i>
+            </th>
+            <th style="width: 30%" id="statusHeader" ng-click="changeStatusSortMode()">
+              状態
+              <i class="fa fa-sort" aria-hidden="true" ng-if="operatorListSortMode === 'displayName'"></i>
+              <i class="fa fa-sort-asc" aria-hidden="true" ng-if="operatorListSortMode === 'status' && operatorListSortOrder === 'asc'"></i>
+              <i class="fa fa-sort-desc" aria-hidden="true" ng-if="operatorListSortMode === 'status' && operatorListSortOrder === 'desc'"></i>
+            </th>
           </tr>
           </thead>
         </table>
@@ -25,21 +35,14 @@
       <div id="presenceViewBodyScroll">
         <div id="presenceViewBody">
           <table>
-            <tbody>
-            <?php
-            foreach($userList as $index => $user) {
-  //            for($i = 0; $i<100; $i++) { for design fix
-                echo '<tr class="tableRow" >';
-                echo '  <td class="tableData" style="width: 70%">' . $user['display_name'] . '</td>';
-                echo '  <td class="tableData" style="width: 30%">';
-                echo '    <span class="presence-active" id="active' . $user['id'] . '" style="display:none">待機中</span>';
-                echo '    <span class="presence-inactive" id="inactive' . $user['id'] . '" style="display:none">離席中</span>';
-                echo '    <span class="presence-offline" id="offline' . $user['id'] . '">オフライン</span>';
-                echo '  </td>';
-                echo '</tr>';
-              }
-  //          } for design fix
-            ?>
+            <tbody ng-cloak>
+            <tr class="tableRow" ng-repeat="operator in operatorList | orderOperatorStatus : this">
+              <td class="tableData" style="width: 70%">{{operator.display_name}}</td>
+              <td class="tableData" style="width: 30%">
+                <span class="presence-active" ng-if="operator.status === 1">待機中</span>
+                <span class="presence-inactive" ng-if="operator.status === 0">離席中</span>
+                <span class="presence-offline" ng-if="isUndefined(operator.status)">オフライン</span>
+              </td>
             </tbody>
           </table>
         </div>
