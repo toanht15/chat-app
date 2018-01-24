@@ -152,7 +152,7 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
         </div>
       <?php if ( $adminFlg ): ?>
         <div class="icon">
-          <?= $this->htmlEx->naviLink('ファイル送信', 'file_transfer_setting_menu.png', ['href' => ['controller' => 'MFileTransferSetting', 'action' => 'index']]) ?>
+          <?= $this->htmlEx->naviLink('ファイル送信', 'file_transfer_setting_menu.png', ['href' => ['controller' => 'MFileTransferSetting', 'action' => 'edit']]) ?>
         </div>
       <?php endif; ?>
         <div class="icon">
