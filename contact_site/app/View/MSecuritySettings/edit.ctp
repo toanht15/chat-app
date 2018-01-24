@@ -62,6 +62,7 @@ if ( !(!empty($this->data['MFileTransferSetting']['type']) && strcmp($this->data
             'error' => false
           ]);?>
           <?php if (!empty($errors['allow_extensions'])) echo "<li class='error-message'>" . h($errors['allow_extensions'][0]) . "</li>"; ?>
+          <?php if (!empty($errors['ips'])) echo "<li class='error-message'>" . h($errors['ips'][0]) . "</li>"; ?>
         </div>
         <div id="ip_black_filter_settings_area" class="<?=$fileTypeAreaHiddenClass?>">
         <pre>
@@ -80,6 +81,7 @@ if ( !(!empty($this->data['MFileTransferSetting']['type']) && strcmp($this->data
             'error' => false
           ]);?>
           <?php if (!empty($errors['allow_extensions'])) echo "<li class='error-message'>" . h($errors['allow_extensions'][0]) . "</li>"; ?>
+          <?php if (!empty($errors['ips'])) echo "<li class='error-message'>" . h($errors['ips'][0]) . "</li>"; ?>
         </div>
       </div>
     </section>
