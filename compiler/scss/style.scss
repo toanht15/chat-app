@@ -6440,6 +6440,10 @@ ul.naviBtn {
 /* ファイル送信設定 */
 #msecuritysettings_idx {
   #msecuritysettings_content {
+    .content {
+      font-size: 12px;
+      margin-left: 1em;
+    }
     #ip_filter_enable_select_area {
       label {
         padding-bottom: 2px;
@@ -6449,19 +6453,21 @@ ul.naviBtn {
         position: relative;
         text-align: center;
         float:right;
-        margin-left: 5px;
+        margin-left: 11px;
+        line-height: 1.1em;
 
         icon {
           border-radius: 20px;
+          padding: 0.1em;
           width: 1.3em;
           height: 1.3em;
-          font-size: 0.9em!important;
+          font-size: 12.5px!important;
         }
       }
     }
     h2#contentExplain {
       font-weight: normal;
-      font-size: 13px;
+      font-size: 12px;
       margin: 0 0 0.5em;
     }
     h3 {
@@ -6471,7 +6477,6 @@ ul.naviBtn {
     }
     ul {
       padding: 0;
-      margin-left: 1em;
       li {
         display: flex;
         label {
@@ -6485,12 +6490,13 @@ ul.naviBtn {
     }
   }
   #ip_white_filter_settings_area, #ip_black_filter_settings_area {
-    padding-left: 1em;
     height: 36em;
     transition: height 200ms linear;
     overflow: hidden;
+    margin-left: 1.5em;
     pre {
       margin: 0.1em 0;
+      line-height: 1em;
     }
     p {
       margin-bottom: 0.5em;
