@@ -3385,7 +3385,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     function setPositionOfPresenceView(){
       var subContent = document.getElementById("presenceView");
       subContent.style.left = ((window.innerWidth-$("#sidebar-main").outerWidth()) - $("#presenceView").outerWidth())/2 + "px";
-      subContent.style.top = "100px";
+      subContent.style.top = window.innerHeight / 2 - 200 + "px";
     }
 
   }]);
