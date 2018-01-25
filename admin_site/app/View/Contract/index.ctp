@@ -10,14 +10,14 @@
     <table>
       <thead>
         <tr>
-          <th style="width:17em;">会社名</th>
-          <th style="width:17em;">キー</th>
-          <th style="width:17em;">プラン</th>
-          <th style="width:17em;">オプション</th>
-          <th style="width:15em;">ID数 / 最大ID数</th>
-          <th style="width:8em;">ML用アカウント</th>
+          <th style="width:23em;">会社名</th>
+          <th style="width:8em;">キー</th>
+          <th style="width:15em;">プラン</th>
+          <th style="width:20em;">オプション</th>
+          <th style="width:8em;">ID数<br>/ 最大ID数</th>
+          <th style="width:12em;">ML用アカウント</th>
           <th style="width:8em;">パスワード</th>
-          <th style="width:14em;">トライアル / 本契約</th>
+          <th style="width:8em;">トライアル<br>/ 本契約</th>
           <th style="width:8em;">開始日</th>
           <th style="width:8em;">終了日</th>
           <th style="width:8em;">登録日</th>
@@ -55,7 +55,7 @@
                     break;
                   case 'laCoBrowse':
                     if($enabled) {
-                      echo '<p>【画面キャプチャ連携（同時セッション：'.$val['MCompany']['la_limit_users'].'】</p>';
+                      echo '<p>【画面キャプチャ連携】<br>（同時セッション：'.$val['MCompany']['la_limit_users'].'）</p>';
                     }
                     break;
                   case 'hideRealtimeMonitor':

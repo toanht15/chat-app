@@ -19,7 +19,9 @@ var uglify = require('gulp-uglify'),
     rename = require("gulp-rename"),
     uglifyOpt = {
       mangle: true,
-      comments: false,
+      output: {
+        comments: false
+      },
       compress: {
         drop_console: true
       }
