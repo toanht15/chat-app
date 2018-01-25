@@ -1,7 +1,9 @@
 <?php
 /**
  * TChatbotScenarioController controller.
- * ユーザーマスタ
+ * シナリオ設定
+ * @property TChatbotScenario $TChatbotScenario
+ * @property MWidgetSetting $MWidgetSetting
  */
 class TChatbotScenarioController extends AppController {
   public $uses = ['TChatbotScenario', 'MWidgetSetting'];
@@ -36,7 +38,7 @@ class TChatbotScenarioController extends AppController {
 
   public function beforeFilter(){
     parent::beforeFilter();
-    $this->set('title_for_layout', 'チャットボット設定');
+    $this->set('title_for_layout', 'シナリオ設定');
     $this->chatbotScenarioActionList = Configure::read('chatbotScenarioActionList');
   }
 
