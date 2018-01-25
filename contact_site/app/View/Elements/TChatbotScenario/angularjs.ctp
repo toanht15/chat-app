@@ -30,38 +30,57 @@ sincloApp.controller('MainController', ['$scope', '$timeout', function($scope, $
   // アクションの追加・削除を検知する
   $scope.$watchCollection('setActionList', function() {
     $timeout(function() {
+      $scope.$apply();
+    }).then(function() {
       angular.forEach($scope.setActionList, $scope.watchSetActionList);
-    }, 10)
-  }, true);
+    });
+  });
 
   // アクション内の変更を検知する
   $scope.watchSetActionList = function(action, index) {
-    $scope.$watchCollection('setActionList[' + index + ']', function(newObject, oldObject) {
-      if(typeof newObject === 'undefined' || newObject === oldObject) return;
+    $scope.$watch('setActionList[' + index + ']', function(newObject, oldObject) {
+      console.log('=== call func watchSetActionList::setActionList ===');
+      if(typeof newObject === 'undefined' || newObject == oldObject) return;
 
       // 送信メッセージ
-      if(typeof newObject.message !== 'undefined' && newObject.message !== '') {
-        document.getElementById('action_' + index + '_message').innerHTML = createMessage(newObject.message);
+      if(typeof newObject.message !== 'undefined' && newObject.message !== '' && typeof newObject.selection === 'undefined') {
+        document.getElementById('action' + index + '_message').innerHTML = createMessage(newObject.message);
       }
       // エラーメッセージ
       if(typeof newObject.errorMessage !== 'undefined' && newObject.errorMessage !== '') {
-        document.getElementById('action_' + index + '_error_message').innerHTML = createMessage(newObject.errorMessage);
+        document.getElementById('action' + index + '_error_message').innerHTML = createMessage(newObject.errorMessage);
       }
       // 確認メッセージ
-      if(typeof newObject.confirmMessage !== 'undefined' || typeof newObject.success !== 'undefined' || typeof newObject.cancel !== 'undefined') {
+      if(typeof newObject.confirmMessage !== 'undefined' && typeof newObject.success !== 'undefined' && typeof newObject.cancel !== 'undefined') {
         var confirmMessage = newObject.confirmMessage;
-        var successMessage = newObject.success !== '' ? 'ｓ[] ' + newObject.success : '';
+        var successMessage = newObject.success !== '' ? '[] ' + newObject.success : '';
         var cancelMessage = newObject.cancel !== '' ? '[] ' + newObject.cancel : '';
 
         var message = [confirmMessage, successMessage, cancelMessage].filter( function(string) {
           return string !== '';
         }).join('\n');
-        if(message === '') return;
-        document.getElementById('action_' + index + '_confirm_message').innerHTML = createMessage(message);
+        if (message == '') return;
+        document.getElementById('action' + index + '_confirm_message').innerHTML = createMessage(message);
       }
-      // メール
-      // TODO: 変更を検知して、処理を実行する。初期化は不要・・・かな $scope.$apply() がうまくきかないなんで・・・
-    });
+      // 選択肢
+      if(typeof newObject.message !== 'undefied' && typeof newObject.selection !== 'undefined') {
+        var options = [];
+        angular.forEach(newObject.selection.options, function(option) {
+          if (option == '') return;
+          options.push('[] ' + option);
+        });
+        var message = options.unshift(newObject.message).filter( function(string) {
+          return typeof string !== 'undefined' && string !== '';
+        }).join('\n');
+        if (message == '') return;
+        document.getElementById('action' + index + '_message').innerHTML = createMessage(message || '');
+      }
+    }, true);
+  };
+
+  $scope.watchActionItemList = function(itemList) {
+      console.log('=== call fnc watchActionItemList ===');
+      console.log(itemList);
   }
 
   // シミュレーターの起動
@@ -75,28 +94,139 @@ sincloApp.controller('MainController', ['$scope', '$timeout', function($scope, $
     submitAct();
   };
 
-  this.initHearingSetting = function(actionIndex) {
-    var targetElmList = $('#action_' + actionIndex).find('.itemListGroup tr');
-    console.log(targetElmList);
-    $scope.setActionList[actionIndex].hearings = []; // TODO: 更新時の処理
-    var targetObjList = $scope.setActionList[actionIndex].hearings;
-    initListView(targetElmList, targetObjList)
-  }
+  this.controllHearingSettingView = function(actionIndex) {
+    $timeout(function() {
+      $scope.$apply();
+    }).then(function() {
+      var targetElmList = $('#action_' + actionIndex).find('.itemListGroup tr');
+      var targetObjList = $scope.setActionList[actionIndex].hearings;
+      self.controllListView(targetElmList, targetObjList)
+    });
+  };
 
-  this.initSelectOptionSetting = function(actionIndex) {
-    var targetElmList = $('#action_' + actionIndex).find('.itemListGroup li');
-    $scope.setActionList[actionIndex].selection = {}; // TODO: 更新時の処理
-    $scope.setActionList[actionIndex].selection.options = [];
-    var targetObjList = $scope.setActionList[actionIndex].selection.options;
-    initListView(targetElmList, targetObjList)
-  }
+  this.controllSelectOptionSetting = function(actionIndex) {
+    $timeout(function() {
+      $scope.$apply();
+    }).then(function() {
+      var targetElmList = $('#action_' + actionIndex).find('.itemListGroup li');
+      var targetObjList = $scope.setActionList[actionIndex].selection.options;
+      self.controllListView(targetElmList, targetObjList);
+    });
+  };
 
+  // TODO: 初期化方法によってはこの処理を消して、 controllMailSetting へ統一する
   this.initMailSetting = function(actionIndex) {
+    $scope.setActionList[actionIndex].mailAddresses = [''];
+
+    $timeout(function() {
+      $scope.$apply();
+    }).then(function() {
+      var targetElmList = $('#action_' + actionIndex).find('.itemListGroup li');
+      var targetObjList = $scope.setActionList[actionIndex].mailAddresses;
+      self.controllListView(targetElmList, targetObjList, 5)
+    });
+  };
+
+  this.controllMailSetting = function(actionIndex) {
     var targetElmList = $('#action_' + actionIndex).find('.itemListGroup li');
-    $scope.setActionList[actionIndex].mailAddresses = []; // TODO: 更新時の処理
-    var targetObjList = $scope.setActionList[actionIndex].mailAddresses;
-    initListView(targetElmList, targetObjList)
-  }
+    $timeout(function(){
+      $scope.$apply();
+    }).then(function() {
+      targetElmList = $('#action_' + actionIndex).find('.itemListGroup li');
+      var targetObjList = $scope.setActionList[actionIndex].mailAddresses;
+      self.controllListView(targetElmList, targetObjList, 5);
+    });
+  };
+
+  // ヒアリング、選択肢、メール送信のリスト追加
+  this.addActionItemList = function(actionIndex, listIndex) {
+    var actionType = $scope.setActionList[actionIndex].actionType;
+
+    if(actionType == <?= C_SCENARIO_ACTION_HEARING ?>) {
+      var src = $scope.setActionList[actionIndex].default.hearings[0];
+      var target = $scope.setActionList[actionIndex].hearings;
+      target.push(angular.copy(src));
+      this.controllHearingSettingView(actionIndex);
+
+    } else if(actionType == <?= C_SCENARIO_ACTION_SELECT_OPTION ?>) {
+      var src = $scope.setActionList[actionIndex].default.selection.options[0];
+      var target = $scope.setActionList[actionIndex].selection.options;
+      target.push(angular.copy(src));
+      this.controllSelectOptionSetting(actionIndex);
+
+    } else if(actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?>) {
+      var target = $scope.setActionList[actionIndex].mailAddresses;
+      if(target.length < 5) {
+        target.push(angular.copy(''));
+        this.controllMailSetting(actionIndex);
+      }
+    }
+  };
+
+  // ヒアリング、選択肢、メール送信のリスト削除
+  this.removeActionItemList = function(actionIndex, listIndex) {
+    var actionType = $scope.setActionList[actionIndex].actionType;
+    var targetObjList = "";
+    var selector = "";
+    var limitNum = 0;
+
+    if(actionType == <?= C_SCENARIO_ACTION_HEARING ?>) {
+      targetObjList = $scope.setActionList[actionIndex].hearings;
+      selector = '#action_' + actionIndex + ' .itemListGroup tr';
+    } else if(actionType == <?= C_SCENARIO_ACTION_SELECT_OPTION ?>) {
+      targetObjList = $scope.setActionList[actionIndex].selection.options;
+      selector = '#action_' + actionIndex + ' .itemListGroup li';
+    } else if(actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?>) {
+      targetObjList = $scope.setActionList[actionIndex].mailAddresses;
+      selector = '#action_' + actionIndex + ' .itemListGroup li';
+      limitNum = 5;
+    }
+
+    if(targetObjList !== "" && selector !== "") {
+      targetObjList.splice(listIndex, 1);
+
+      // 表示更新
+      $timeout(function() {
+        $scope.$apply();
+      }).then(function() {
+        self.controllListView($(selector), targetObjList, limitNum)
+      });
+    }
+  };
+
+  // ヒアリング、選択肢、メール送信のリスト表示の更新処理
+  this.controllListView = function(targetElmList, targetObjList, limitNum) {
+    if(typeof limitNum === 'undefined') {
+      limitNum = 0;
+    }
+    var elmNum = targetElmList.length;
+    var objNum = targetObjList.length;
+
+    angular.forEach(targetElmList, function(targetElm, index) {
+      if(index == elmNum-1) {
+        $(targetElm).find('.btnBlock .disOffgreenBtn').show();
+        if(index == 0) {
+          $(targetElm).find('.btnBlock .deleteBtn').hide();
+        } else if(index == limitNum-1) {
+          $(targetElm).find('.btnBlock .disOffgreenBtn').hide();
+        }
+      } else {
+        $(targetElm).find('.btnBlock .deleteBtn').show();
+        $(targetElm).find('.btnBlock .disOffgreenBtn').hide();
+      }
+    });
+  };
+
+  // 選択肢が、プレビュー表示可能かを返す
+  this.visibleSelectOptionSetting = function(param) {
+    var visible = false;
+    if(typeof param.selection !== 'undefined' && typeof param.selection.options !== 'undefined') {
+      angular.forEach(param.selection.options, function(option) {
+        visible = visible || option != '';
+      });
+    }
+    return visible;
+  };
 
   $scope.makeFaintColor = function(){
     var defColor = "#F1F5C8";
@@ -148,7 +278,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', function($scope, $
 //         defColor = $scope.chat_talk_border_color;
 //       }
     return defColor;
-  }
+  };
 
   $scope.getSeBackgroundColor = function(){
     var defColor = "#FFFFFF";
@@ -158,7 +288,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', function($scope, $
 //         defColor = $scope.se_background_color;
 //       }
     return defColor;
-  }
+  };
 }]);
 
 function getWidgetSettings() {
@@ -180,8 +310,11 @@ function submitAct() {
 $(document).ready(function() {
   // ツールチップの表示制御
   $(document).off('mouseenter','.questionBtn').on('mouseenter','.questionBtn', function(event){
+    console.log("=== show tooltip ==========");
     var parentClass = $(this).parent().parent().attr('class');
     var targetObj = $("#" + parentClass.replace(/Label/, "Tooltip"));
+    console.log(parentClass);
+    console.log(targetObj);
     targetObj.find('icon-annotation').css('display','block');
     targetObj.css({
       top: ($(this).offset().top - targetObj.find('ul').outerHeight() - 70) + 'px',
@@ -189,54 +322,12 @@ $(document).ready(function() {
     });
   });
   $(document).off('mouseleave','.questionBtn').on('mouseleave','.questionBtn', function(event){
+    console.log("=== hide tooltip ==========");
     var parentClass = $(this).parent().parent().attr('class');
     var targetObj = $("#" + parentClass.replace(/Label/, "Tooltip"));
+    console.log(parentClass);
+    console.log(targetObj);
     targetObj.find('icon-annotation').css('display','none');
-  });
-
-  // ヒアリング、選択肢、メール送信のリスト追加処理
-  $(document).on('click', '.disOffgreenBtn', function() {
-    var itemList = $(this).parents('.itemListGroup').children('tr,li');
-    var targetElm = '';
-    var targetIndex = -1;
-
-    // リストの表示処理
-    angular.forEach(itemList, function(item, index) {
-      if (item.style.display == 'none' && targetElm == '') {
-        targetElm = item;
-        targetIndex = index;
-      }
-    });
-
-    // ボタンの表示制御
-    $(targetElm).show();
-    $(itemList).find('.btnBlock .deleteBtn').show();
-    $(itemList).find('.btnBlock .disOffgreenBtn').hide();
-    if (targetIndex < 4 && targetIndex >= 0) {
-      $(itemList[targetIndex]).find('.btnBlock .disOffgreenBtn').show();
-    }
-  });
-
-  // ヒアリング、選択肢、メール送信のリスト削除処理
-  $(document).on('click', '.deleteBtn', function() {
-    var itemList = $(this).parents('.itemListGroup').children('tr,li');
-    var targetElm = '';
-    var targetIndex = -1;
-
-    angular.forEach(itemList, function(item, index) {
-      if (item.style.display != 'none') {
-        targetElm = item;
-        targetIndex = index;
-      }
-    });
-
-    // ボタンの表示制御
-    $(targetElm).hide();
-    $(itemList).find('.btnBlock .deleteBtn').show();
-    $(itemList[targetIndex-1]).find('.btnBlock .disOffgreenBtn').show();
-    if (targetIndex <= 1) {
-      $(itemList[targetIndex-1]).find('.btnBlock .deleteBtn').hide();
-    }
   });
 });
 
@@ -285,20 +376,5 @@ function createMessage(val) {
   }
 
   return content;
-}
-
-// ヒアリング、選択肢、メール送信のリスト表示初期化処理
-function initListView(targetElmList, targetObjList) {
-  angular.forEach(targetElmList, function(targetElm, index) {
-    if(typeof targetObjList[index] !== 'undefined' && (targetObjList[index])) {
-      $(targetElm).show()
-    } else {
-      $(targetElm).hide();
-      if (index == 0) {
-        $(targetElm).show()
-        $(targetElm).find('.btnBlock .deleteBtn').hide();
-      }
-    }
-  });
 }
 </script>
