@@ -9,8 +9,10 @@ sincloApp.controller('MainController', ['$scope', '$timeout', function($scope, $
 
   this.actionList = <?php echo json_encode($chatbotScenarioActionList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.setActionList = [];
-  $scope.test = ['a'];
   $scope.widgetSettings = getWidgetSettings();
+
+  // メッセージ間隔は同一の設定を各アクションに設定しているため、テキスト発言からデフォルト値を取得する
+  $scope.messageIntervalTimeSec = this.actionList[1].default.messageIntervalTimeSec;
 
   // アクションの追加
   this.addItem = function(actionType) {
@@ -64,12 +66,13 @@ sincloApp.controller('MainController', ['$scope', '$timeout', function($scope, $
       }
       // 選択肢
       if(typeof newObject.message !== 'undefied' && typeof newObject.selection !== 'undefined') {
-        var options = [];
+        var messageList = [newObject.message];
         angular.forEach(newObject.selection.options, function(option) {
           if (option == '') return;
-          options.push('[] ' + option);
+          messageList.push('[] ' + option);
         });
-        var message = options.unshift(newObject.message).filter( function(string) {
+
+        var message = messageList.filter( function(string) {
           return typeof string !== 'undefined' && string !== '';
         }).join('\n');
         if (message == '') return;
@@ -310,23 +313,17 @@ function submitAct() {
 $(document).ready(function() {
   // ツールチップの表示制御
   $(document).off('mouseenter','.questionBtn').on('mouseenter','.questionBtn', function(event){
-    console.log("=== show tooltip ==========");
     var parentClass = $(this).parent().parent().attr('class');
     var targetObj = $("#" + parentClass.replace(/Label/, "Tooltip"));
-    console.log(parentClass);
-    console.log(targetObj);
     targetObj.find('icon-annotation').css('display','block');
     targetObj.css({
       top: ($(this).offset().top - targetObj.find('ul').outerHeight() - 70) + 'px',
-      left: $(this).offset().left - 65 + 'px'
+      left: $(this).offset().left - 69 + 'px'
     });
   });
   $(document).off('mouseleave','.questionBtn').on('mouseleave','.questionBtn', function(event){
-    console.log("=== hide tooltip ==========");
     var parentClass = $(this).parent().parent().attr('class');
     var targetObj = $("#" + parentClass.replace(/Label/, "Tooltip"));
-    console.log(parentClass);
-    console.log(targetObj);
     targetObj.find('icon-annotation').css('display','none');
   });
 });
