@@ -571,6 +571,7 @@ class TAutoMessagesController extends AppController {
   }
 
   public function import() {
+    Configure::write('debug', 0);
     $this->autoRender = false;
     $this->layout = false;
 
@@ -579,12 +580,13 @@ class TAutoMessagesController extends AppController {
     ];
 
     $file = $this->params['form']['file'];
+
     $lastPage = $this->request->data['lastPage'];
 
     $component = new AutoMessageExcelParserComponent($file['tmp_name']);
-    $component->getImportData();
-    $transactions = null;
     try {
+      $component->getImportData();
+      $transactions = null;
       $data = $component->toArray();
       $transactions = $this->TransactionManager->begin();
       $dataArray = [];
@@ -606,9 +608,9 @@ class TAutoMessagesController extends AppController {
                     'keyword_contains_type' => (string)$row['keyword_contains_type'],
                     'keyword_exclusions' => $row['keyword_exclusions'],
                     'keyword_exclusions_type' => (string)$row['keyword_exclusions_type'],
-                    'speechContentCond' => $row['keyword_exclusions_type'],
-                    'triggerTimeSec' => $row['keyword_exclusions_type'],
-                    'speechTriggerCond' => $row['keyword_exclusions_type']
+                    'speechContentCond' => $row['speechContentCond'],
+                    'triggerTimeSec' => $row['triggerTimeSec'],
+                    'speechTriggerCond' => $row['speechTriggerCond']
                   ]
                 ]
               ],
@@ -622,6 +624,17 @@ class TAutoMessagesController extends AppController {
             'del_flg' => 0
           ]
         ];
+
+        if($row['send_mail_flg'] === 1) {
+          $saveData['main']['send_mail_flg'] = $row['send_mail_flg'];
+          $saveData['main']['mail_address_1'] = $row['mail_address_1'];
+          $saveData['main']['mail_address_2'] = $row['mail_address_2'];
+          $saveData['main']['mail_address_3'] = $row['mail_address_3'];
+          $saveData['main']['mail_address_4'] = $row['mail_address_4'];
+          $saveData['main']['mail_address_5'] = $row['mail_address_5'];
+          $saveData['main']['subject'] = $row['mail_subject'];
+          $saveData['main']['from_name'] = $row['mail_from_name'];
+        }
 
         $this->TAutoMessage->set($saveData);
         $validate = $this->TAutoMessage->validates();
@@ -657,7 +670,11 @@ class TAutoMessagesController extends AppController {
       }
       $result['success'] = false;
       $result['errorCode'] = 400;
-      $result['errorMessages'] = [];
+      $this->log("Excel import error found. message => ".$e->getMessage, LOG_WARNING);
+      $result['errorMessages'] = [
+        'type' => 'system',
+        'message' => 'ファイルの読み込みに失敗しました。'
+      ];
     }
     return json_encode($result);
   }

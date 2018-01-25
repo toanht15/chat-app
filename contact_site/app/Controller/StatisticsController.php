@@ -23,6 +23,7 @@ class StatisticsController extends AppController {
       'effectiveness' => 1
     ],
     'achievementFlg' => [
+      'cv' => 0,
       'invalid' => 1,
       'effectiveness' => 2
     ]
@@ -1847,6 +1848,7 @@ class StatisticsController extends AppController {
       $noneBaseData = $this->convertBaseDataForNone($baseData);
       return [
           'effectivenessNumberData' => $noneBaseData,
+          'cvNumberData' => $noneBaseData,
           'denialNumberData' => $noneBaseData,
           'effectivenessRate' => $noneBaseData,
           'allEffectivenessNumberData' => self::LABEL_NONE,
@@ -1855,13 +1857,14 @@ class StatisticsController extends AppController {
       ];
     }
     $effectivenessNumberData = [];
+    $cvNumberData = [];
     $denialNumberData = [];
     $effectivenessRate = [];
 
     //チャット有効件数
-    $effectiveness = "SELECT date_format(th.access_date, ?) as date,SUM(case when thcl.achievement_flg = ? THEN 1 ELSE 0 END) effectiveness
+    $effectiveness = "SELECT date_format(th.access_date, ?) as date,SUM(case when thcl.achievement_flg = ? THEN 1 ELSE 0 END) effectiveness, SUM(case when thcl.achievement_flg = ? THEN 1 ELSE 0 END) cv
     FROM (select t_histories_id, m_companies_id,achievement_flg from t_history_chat_logs
-     force index(idx_t_history_chat_logs_achievement_flg_companies_id) where achievement_flg = ? and m_companies_id = ?) as thcl,
+     force index(idx_t_history_chat_logs_achievement_flg_companies_id) where achievement_flg in (?, ?) and m_companies_id = ?) as thcl,
      t_histories as th
     WHERE
       thcl.t_histories_id = th.id
@@ -1869,8 +1872,8 @@ class StatisticsController extends AppController {
       th.access_date between ? and ?
     group by date";
 
-    $effectiveness = $this->THistory->query($effectiveness, array($date_format,$this->chatMessageType['achievementFlg']['effectiveness'],
-      $this->chatMessageType['achievementFlg']['effectiveness'],$this->userInfo['MCompany']['id'],
+    $effectiveness = $this->THistory->query($effectiveness, array($date_format,$this->chatMessageType['achievementFlg']['effectiveness'],$this->chatMessageType['achievementFlg']['cv'],
+      $this->chatMessageType['achievementFlg']['effectiveness'],$this->chatMessageType['achievementFlg']['cv'],$this->userInfo['MCompany']['id'],
       $correctStartDate,$correctEndDate));
 
     $denial = "SELECT date_format(th.access_date,?) as date,SUM(case when thcl.message_type = ? THEN 1 ELSE 0 END) denial
@@ -1890,6 +1893,7 @@ class StatisticsController extends AppController {
     if(!empty($effectiveness)) {
       foreach($effectiveness as $k => $v) {
         $effectivenessNumberData =  $effectivenessNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : intval($v[0]['effectiveness']));
+        $cvNumberData =  $cvNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : intval($v[0]['cv']));
         if( $v[0]['effectiveness'] != 0 and $requestNumberData[$v[0]['date']] != 0){
           $effectivenessRate = $effectivenessRate + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : round($v[0]['effectiveness']/$requestNumberData[$v[0]['date']]*100));
         } else if($requestNumberData[$v[0]['date']] === 0) {
@@ -1905,6 +1909,9 @@ class StatisticsController extends AppController {
     }
     //チャット有効件数
     $effectivenessNumberData = array_merge($baseData,$effectivenessNumberData);
+
+    //チャットCV件数
+    $cvNumberData = array_merge($baseData,$cvNumberData);
 
     //チャット拒否件数
     $denialNumberData = array_merge($baseData,$denialNumberData);
@@ -1922,6 +1929,9 @@ class StatisticsController extends AppController {
     //有効件数合計値
     $allEffectivenessNumberData = array_sum($effectivenessNumberData);
 
+    //CV件数合計値
+    $allCVNumberData = array_sum($cvNumberData);
+
     //拒否件数合計値
     $allDenialNumberData = array_sum($denialNumberData);
 
@@ -1937,8 +1947,15 @@ class StatisticsController extends AppController {
       $allEffectivenessRate = self::LABEL_INVALID;
     }
 
-    return ['effectivenessNumberData' => $effectivenessNumberData,'denialNumberData' => $denialNumberData,'effectivenessRate' => $effectivenessRate,
-    'allEffectivenessNumberData' => $allEffectivenessNumberData,'allDenialNumberData' => $allDenialNumberData,'allEffectivenessRate' => $allEffectivenessRate];
+    return ['effectivenessNumberData' => $effectivenessNumberData,
+      'cvNumberData' => $cvNumberData,
+      'denialNumberData' => $denialNumberData,
+      'effectivenessRate' => $effectivenessRate,
+      'allEffectivenessNumberData' => $allEffectivenessNumberData,
+      'allCVNumberData' => $allCVNumberData,
+      'allDenialNumberData' => $allDenialNumberData,
+      'allEffectivenessRate' => $allEffectivenessRate
+    ];
 
   }
 
@@ -2154,6 +2171,8 @@ class StatisticsController extends AppController {
     $noNumber[] = 'チャット拒否件数';
     $effectivenessNumber = [];
     $effectivenessNumber[] = 'チャット有効件数';
+    $cvNumber = [];
+    $cvNumber[] = 'チャットCV件数';
     $requestAvgTime = [];
     $requestAvgTime[] = '平均チャットリクエスト時間';
     $consumerWatingAvgTime = [];
@@ -2168,7 +2187,7 @@ class StatisticsController extends AppController {
     $effectivenessRate[] = 'チャット有効率';
 
     $csvData = $this->insertEachItemCsvData($csvData,$accessNumber,$widgetNumber,$requestNumber,
-            $responseNumber,$automaticResponseNumber, $noNumber,$effectivenessNumber,
+            $responseNumber,$automaticResponseNumber, $noNumber,$effectivenessNumber,$cvNumber,
             $requestAvgTime,$consumerWatingAvgTime,$responseAvgTime,$responseRate,$automaticResponseRate,
             $effectivenessRate);
 
@@ -2179,6 +2198,7 @@ class StatisticsController extends AppController {
     $csv[] = $csvData['automaticResponseNumber'];
     $csv[] = $csvData['noNumber'];
     $csv[] = $csvData['effectivenessNumber'];
+    $csv[] = $csvData['cvNumber'];
     $csv[] = $csvData['requestAvgTime'];
     $csv[] = $csvData['consumerWatingAvgTime'];
     $csv[] = $csvData['responseAvgTime'];
@@ -2190,7 +2210,7 @@ class StatisticsController extends AppController {
   }
 
   private function insertEachItemCsvData($csvData,$accessNumber,$widgetNumber,$requestNumber,
-    $responseNumber,$automaticResponseNumber, $noNumber,$effectivenessNumber,
+    $responseNumber,$automaticResponseNumber, $noNumber,$effectivenessNumber,$cvNumber,
     $requestAvgTime,$consumerWatingAvgTime,$responseAvgTime,$responseRate,$automaticResponseRate,
     $effectivenessRate) {
 
@@ -2228,6 +2248,11 @@ class StatisticsController extends AppController {
       $effectivenessNumber[] = $v;
     }
     $effectivenessNumber[] = $csvData['coherentDatas']['allEffectivenessNumberData'];
+
+    foreach($csvData['coherentDatas']['cvNumberData'] as $key => $v) {
+      $cvNumber[] = $v;
+    }
+    $cvNumber[] = $csvData['coherentDatas']['allCVNumberData'];
 
     foreach($csvData['avgRequestTimeDatas']['requestAvgTimeData'] as $key => $v) {
       $requestAvgTime[] = $v;
@@ -2285,7 +2310,7 @@ class StatisticsController extends AppController {
 
     return ['accessNumber' => $accessNumber,'widgetNumber' => $widgetNumber,'requestNumber' => $requestNumber,
       'responseNumber' => $responseNumber,'automaticResponseNumber' => $automaticResponseNumber, 'noNumber' =>$noNumber,
-      'effectivenessNumber' => $effectivenessNumber,'requestAvgTime' =>$requestAvgTime,'consumerWatingAvgTime' => $consumerWatingAvgTime,
+      'effectivenessNumber' => $effectivenessNumber,'cvNumber' => $cvNumber,'requestAvgTime' =>$requestAvgTime,'consumerWatingAvgTime' => $consumerWatingAvgTime,
       'responseAvgTime' => $responseAvgTime,'responseRate' => $responseRate,'automaticResponseRate' => $automaticResponseRate,
       'effectivenessRate' => $effectivenessRate];
   }

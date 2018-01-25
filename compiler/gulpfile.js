@@ -96,3 +96,5 @@ gulp.task('watch', function(){
 });
 
 gulp.task('dev', ['scss-compile', 'js-minify-dev', 'jade-compile', 'watch']);
+
+gulp.task('compile-all', ['scss-compile', 'js-minify', 'jade-compile']);

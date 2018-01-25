@@ -26,6 +26,13 @@ class AutoMessageExcelParserComponent extends ExcelParserComponent
   const ROW_FREE_INPUT = 'J';
   const ROW_CV = 'K';
   const ROW_ACTIVE = 'L';
+  const ROW_MAIL_ADDRESS_1 = 'M';
+  const ROW_MAIL_ADDRESS_2 = 'N';
+  const ROW_MAIL_ADDRESS_3 = 'O';
+  const ROW_MAIL_ADDRESS_4 = 'P';
+  const ROW_MAIL_ADDRESS_5 = 'Q';
+  const ROW_MAIL_TITLE = 'R';
+  const ROW_MAIL_FROM_NAME = 'S';
 
   private $containsTypeMap;
   private $exclusionsTypeMap;
@@ -75,8 +82,14 @@ class AutoMessageExcelParserComponent extends ExcelParserComponent
             'action' => $this->convertSpecialChars($row[self::ROW_MESSAGE]),
             'chat_textarea' => $this->triggerFreeInputMap[$row[self::ROW_FREE_INPUT]],
             'cv' => $this->triggerCVMap[$row[self::ROW_CV]],
-            // FIXME メール送信対応
-            'send_mail_flg' => 0,
+            'send_mail_flg' => $this->isSendMailFlgActive($row),
+            'mail_address_1' => !empty(trim($row[self::ROW_MAIL_ADDRESS_1])) ? trim($row[self::ROW_MAIL_ADDRESS_1]) : "",
+            'mail_address_2' => !empty(trim($row[self::ROW_MAIL_ADDRESS_2])) ? trim($row[self::ROW_MAIL_ADDRESS_2]) : "",
+            'mail_address_3' => !empty(trim($row[self::ROW_MAIL_ADDRESS_3])) ? trim($row[self::ROW_MAIL_ADDRESS_3]) : "",
+            'mail_address_4' => !empty(trim($row[self::ROW_MAIL_ADDRESS_4])) ? trim($row[self::ROW_MAIL_ADDRESS_4]) : "",
+            'mail_address_5' => !empty(trim($row[self::ROW_MAIL_ADDRESS_5])) ? trim($row[self::ROW_MAIL_ADDRESS_5]) : "",
+            'mail_subject' => !empty(trim($row[self::ROW_MAIL_TITLE])) ? trim($row[self::ROW_MAIL_TITLE]) : "",
+            'mail_from_name' => !empty(trim($row[self::ROW_MAIL_FROM_NAME])) ? trim($row[self::ROW_MAIL_FROM_NAME]) : "",
             'active_flg' => $this->activeFlgMap[$row[self::ROW_ACTIVE]]
           ]);
         }
@@ -148,6 +161,20 @@ class AutoMessageExcelParserComponent extends ExcelParserComponent
     return trim($str);
   }
 
+  private function isSendMailFlgActive($row) {
+    $return = 0;
+
+    // メールアドレス設定が１つでもあれば有効とする
+    if(!empty($row[self::ROW_MAIL_ADDRESS_1])
+      || !empty($row[self::ROW_MAIL_ADDRESS_2])
+      || !empty($row[self::ROW_MAIL_ADDRESS_3])
+      || !empty($row[self::ROW_MAIL_ADDRESS_4])
+      || !empty($row[self::ROW_MAIL_ADDRESS_5])) {
+      $return = 1;
+    }
+    return $return;
+  }
+
   private function convertSpecialChars($action) {
       $matches = [];
       if ( preg_match_all("/\[\[(.*?)\]\]/", $action, $matches) ) {
@@ -202,7 +229,36 @@ class AutoMessageExcelParserComponent extends ExcelParserComponent
     if(empty($this->activeFlgMap[$data[self::ROW_ACTIVE]]) && @$this->activeFlgMap[$data[self::ROW_ACTIVE]] !== 0) {
       $this->addError($errors, self::ROW_ACTIVE,'有効／無効 のいずれかの指定のみ可能です');
     }
-
+    if(!empty($data[self::ROW_MAIL_ADDRESS_1]) && !Validation::email($data[self::ROW_MAIL_ADDRESS_1])) {
+      $this->addError($errors, self::ROW_MAIL_ADDRESS_1,'メールアドレスのみ指定可能です');
+    }
+    if(!empty($data[self::ROW_MAIL_ADDRESS_2]) && !Validation::email($data[self::ROW_MAIL_ADDRESS_2])) {
+      $this->addError($errors, self::ROW_MAIL_ADDRESS_2,'メールアドレスのみ指定可能です');
+    }
+    if(!empty($data[self::ROW_MAIL_ADDRESS_3]) && !Validation::email($data[self::ROW_MAIL_ADDRESS_3])) {
+      $this->addError($errors, self::ROW_MAIL_ADDRESS_3,'メールアドレスのみ指定可能です');
+    }
+    if(!empty($data[self::ROW_MAIL_ADDRESS_4]) && !Validation::email($data[self::ROW_MAIL_ADDRESS_4])) {
+      $this->addError($errors, self::ROW_MAIL_ADDRESS_4,'メールアドレスのみ指定可能です');
+    }
+    if(!empty($data[self::ROW_MAIL_ADDRESS_5]) && !Validation::email($data[self::ROW_MAIL_ADDRESS_5])) {
+      $this->addError($errors, self::ROW_MAIL_ADDRESS_5,'メールアドレスのみ指定可能です');
+    }
+    if(!empty($data[self::ROW_MAIL_ADDRESS_5]) && !Validation::email($data[self::ROW_MAIL_ADDRESS_5])) {
+      $this->addError($errors, self::ROW_MAIL_ADDRESS_5,'メールアドレスのみ指定可能です');
+    }
+    if($this->isSendMailFlgActive($data) && empty($data[self::ROW_MAIL_TITLE])) {
+      $this->addError($errors, self::ROW_MAIL_TITLE,'メールタイトルの指定は必須です。');
+    }
+    if($this->isSendMailFlgActive($data) && !Validation::maxLength($data[self::ROW_MAIL_TITLE], 100)) {
+      $this->addError($errors, self::ROW_MAIL_TITLE,'メールタイトルは１００文字以内で設定してください。');
+    }
+    if($this->isSendMailFlgActive($data) && empty($data[self::ROW_MAIL_FROM_NAME])) {
+      $this->addError($errors, self::ROW_MAIL_FROM_NAME,'差出人名の指定は必須です。');
+    }
+    if($this->isSendMailFlgActive($data) && !Validation::maxLength($data[self::ROW_MAIL_FROM_NAME], 100)) {
+      $this->addError($errors, self::ROW_MAIL_FROM_NAME,'差出人名は１００文字以内で設定してください。');
+    }
     return $errors;
   }
 

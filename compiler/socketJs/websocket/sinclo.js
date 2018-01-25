@@ -1394,9 +1394,16 @@
       if ( check.smartphone() ) {
         // 縦の場合
         if ( $(window).height() > $(window).width() ) {
-          widgetWidth = $(window).width() - 20;
-          ratio = widgetWidth * (1/285);
-          document.getElementById("chatTalk").style.height = (194 * ratio) + 'px';
+          if(window.sincloInfo.widget.spMaximizeSizeType === 2) {
+            widgetWidth = $(window).width();
+            var fullHeight = ($(window).height() - $('#sincloBox #widgetHeader').height() - $('#flexBoxHeight').height() - $('#sincloBox #widgetDescription').height() - $('#sincloBox #fotter').height() - 30);
+            console.log(fullHeight);
+            document.getElementById("chatTalk").style.height = fullHeight + 'px';
+          } else {
+            widgetWidth = $(window).width() - 20;
+            ratio = widgetWidth * (1/285);
+            document.getElementById("chatTalk").style.height = (194 * ratio) + 'px';
+          }
         }
         //横の場合
         else {
@@ -1416,9 +1423,16 @@
         // 縦の場合
         if ( $(window).height() > $(window).width() ) {
           document.getElementById("flexBoxHeight").style.display = 'none';
-          widgetWidth = $(window).width() - 20;
           ratio = widgetWidth * (1/285);
-          document.getElementById("chatTalk").style.height = (194 * ratio) + (60*ratio) + 'px';
+          if(window.sincloInfo.widget.spMaximizeSizeType === 2) {
+            widgetWidth = $(window).width();
+            var fullHeight = ($(window).height() - $('#sincloBox #widgetHeader').height() - $('#sincloBox #widgetDescription').height() - $('#sincloBox #fotter').height() + 3*ratio);
+            console.log(fullHeight);
+            document.getElementById("chatTalk").style.height = fullHeight + 'px';
+          } else {
+            widgetWidth = $(window).width() - 20;
+            document.getElementById("chatTalk").style.height = (194 * ratio) + (60*ratio) + 'px';
+          }
         }
         //横の場合
         else {

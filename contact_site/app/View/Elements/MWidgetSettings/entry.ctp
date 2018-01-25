@@ -1181,6 +1181,27 @@ $headerNo = 1;
           </li>
           <?php if ( $this->Form->isFieldError('sp_auto_open_flg') ) echo $this->Form->error('sp_auto_open_flg', null, ['wrap' => 'li']); ?>
           <!-- 自動最大化の制御 -->
+
+          <!-- シンプル表示 -->
+          <li>
+            <span class="require"><label>最大化表示サイズ</label></span>
+            <pre><label class="pointer"><?= $this->ngForm->input('sp_maximize_size_type', [
+                  'type' => 'radio',
+                  'options' => $spMiximizeSizeType,
+                  'ng-disabled' => 'sp_show_flg !== "'.C_SELECT_CAN.'"',
+                  'legend' => false,
+                  'separator' => '</label><br><label class="pointer">',
+                  'class' => 'showSp',
+                  'div' => false,
+                  'label' => false,
+                  'error' => false
+                ],
+                  [
+                    'entity' => 'MWidgetSetting.sp_maximize_size_type'
+                  ]) ?></label></pre>
+          </li>
+          <?php if ( $this->Form->isFieldError('sp_maximize_size_type') ) echo $this->Form->error('sp_maximize_size_type', null, ['wrap' => 'li']); ?>
+          <!-- シンプル表示 -->
         </ul>
       </section>
       <?php endif; ?>
