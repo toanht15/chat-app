@@ -649,7 +649,7 @@ class TAutoMessagesController extends AppController {
       $nextPage = '1';
       if(!$errorFound) {
         foreach ($dataArray as $index => $saveData) {
-          $nextPage = $this->_entryForApi($saveData);
+          $nextPage = $this->_entryProcess($saveData);
         }
         $this->TransactionManager->commitTransaction($transactions);
         $result['success'] = true;
@@ -696,7 +696,7 @@ class TAutoMessagesController extends AppController {
     $transactions = null;
     try {
       $transactions = $this->TransactionManager->begin();
-      $nextPage = $this->_entryForApi($saveData);;
+      $nextPage = $this->_entryProcess($saveData);;
       $this->TransactionManager->commitTransaction($transactions);
       $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
       $this->redirect('/TAutoMessages/index/page:'.$nextPage);
@@ -717,7 +717,7 @@ class TAutoMessagesController extends AppController {
    * @param array $inputData
    * @return {String}
    * */
-  private function _entryForApi($saveData) {
+  private function _entryProcess($saveData) {
     $errors = [];
     $saveData['TAutoMessage']['m_companies_id'] = $this->userInfo['MCompany']['id'];
     if(array_key_exists ('lastPage',$saveData)){
