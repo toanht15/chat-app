@@ -1,41 +1,19 @@
 <script type="text/javascript">
+var topPosition = 0;
 $(function(){
   function onIpFilterEnableSettingChange(){
     if ( $("#MSecuritySettingsIpFilterEnabled0").prop("checked") ) { // 同時対応数上限を利用する場合
-      $("#ip_filter_settings_area").addClass("hidden");
+      $("#ip_white_filter_settings_area").addClass("hidden");
+      $("#ip_black_filter_settings_area").addClass("hidden");
     }
-    else { // 同時対応数上限を利用しない場合
-      $("#ip_filter_settings_area").removeClass("hidden");
+    else if($("#MSecuritySettingsIpFilterEnabled1").prop("checked")) { // 同時対応数上限を利用しない場合
+      $("#ip_white_filter_settings_area").removeClass("hidden");
+      $("#ip_black_filter_settings_area").addClass("hidden");
     }
-  }
-
-  function onIpFilterSettingChanged() {
-    var whitelistTextarea = $('[name="data[MSecuritySettings][ip_filter_whitelist]"]'),
-        blacklistTextarea = $('[name="data[MSecuritySettings][ip_filter_blacklist]"]'),
-        whitelistIsSetting = whitelistTextarea.val() !== "",
-        blacklistIsSetting = blacklistTextarea.val() !== "";
-    if(whitelistIsSetting && blacklistIsSetting) {
-      // 異常系
-      textareaEnabled(whitelistTextarea);
-      textareaEnabled(blacklistTextarea);
-    } else if(whitelistIsSetting) {
-      textareaEnabled(whitelistTextarea);
-      textareaDisabled(blacklistTextarea);
-    } else if(blacklistIsSetting) {
-      textareaDisabled(whitelistTextarea);
-      textareaEnabled(blacklistTextarea);
-    } else {
-      textareaEnabled(whitelistTextarea);
-      textareaEnabled(blacklistTextarea);
+    else if($("#MSecuritySettingsIpFilterEnabled2").prop("checked")) { // 同時対応数上限を利用しない場合
+      $("#ip_white_filter_settings_area").addClass("hidden");
+      $("#ip_black_filter_settings_area").removeClass("hidden");
     }
-  }
-
-  function textareaDisabled(textareaObj) {
-    textareaObj.prop('disabled', true).addClass('disabled');
-  }
-
-  function textareaEnabled(textareaObj) {
-    textareaObj.prop('disabled', false).removeClass('disabled');
   }
 
   function saveAct(){
@@ -49,11 +27,29 @@ $(function(){
   $("#reloadBtn").on("click", reloadAct);
   $("#updateBtn").on("click", saveAct);
 
-  // 同時対応数上限のON/OFFの切り替わりを監視
+  // ログイン時IP制御設定のラジオボタン変更時のイベントハンドラ
   $(document).on('change', '[name="data[MSecuritySettings][ip_filter_enabled]"]', onIpFilterEnableSettingChange);
-  $(document).on('change', '.ip-filter-list-area', onIpFilterSettingChanged);
-  onIpFilterEnableSettingChange(); // 初回のみ
-  onIpFilterSettingChanged(); // 初回のみ
+
+  // ツールチップの表示制御
+  $('.questionBtn').off("mouseenter").on('mouseenter',function(event){
+    var parentTdId = $(this).parent().attr('id');
+    console.log(parentTdId);
+    var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
+    console.log(targetObj);
+    targetObj.find('icon-annotation').css('display','block');
+    targetObj.css({
+      top: ($(this).offset().top - targetObj.find('ul').outerHeight() - 70 + topPosition) + 'px',
+      left: $(this).offset().left - 65 + 'px'
+    });
+  });
+
+  $('.questionBtn').off("mouseleave").on('mouseleave',function(event){
+    var parentTdId = $(this).parent().attr('id');
+    var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
+    targetObj.find('icon-annotation').css('display','none');
+  });
+
+  onIpFilterEnableSettingChange();
 
 })
 </script>

@@ -1386,6 +1386,7 @@
       }, 500);
     },
     displayTextarea : function(){
+      $(window).off('resize', sinclo.displayTextarea).off('resize', sinclo.hideTextarea).on('resize', sinclo.displayTextarea);
       document.getElementById("flexBoxHeight").style.display = '';
       if(chatTalk.clientHeight == 269 || chatTalk.clientHeight == 359 || chatTalk.clientHeight == 449) {
         document.getElementById("chatTalk").style.height = chatTalk.clientHeight - 75 + 'px';
@@ -1396,9 +1397,11 @@
         if ( $(window).height() > $(window).width() ) {
           if(window.sincloInfo.widget.spMaximizeSizeType === 2) {
             widgetWidth = $(window).width();
-            var fullHeight = ($(window).height() - $('#sincloBox #widgetHeader').height() - $('#flexBoxHeight').height() - $('#sincloBox #widgetDescription').height() - $('#sincloBox #fotter').height() - 30);
+            ratio = widgetWidth * (1/285);
+            var fullHeight = (window.innerHeight - $('#sincloBox #widgetHeader').height() - $('#flexBoxHeight').height() - $('#sincloBox #widgetDescription').height() - $('#sincloBox #fotter').height() - (5.5 * ratio));
             console.log(fullHeight);
             document.getElementById("chatTalk").style.height = fullHeight + 'px';
+            document.getElementById("sincloBox").style.height = window.innerHeight + 'px';
           } else {
             widgetWidth = $(window).width() - 20;
             ratio = widgetWidth * (1/285);
@@ -1414,6 +1417,7 @@
       }
     },
     hideTextarea : function(){
+      $(window).off('resize', sinclo.displayTextarea).off('resize', sinclo.hideTextarea).on('resize', sinclo.hideTextarea);
       if(chatTalk.clientHeight == 194 || chatTalk.clientHeight == 284 || chatTalk.clientHeight == 374) {
         document.getElementById("flexBoxHeight").style.display = 'none';
         document.getElementById("chatTalk").style.height = chatTalk.clientHeight + 75 + 'px';
@@ -1424,11 +1428,13 @@
         if ( $(window).height() > $(window).width() ) {
           document.getElementById("flexBoxHeight").style.display = 'none';
           ratio = widgetWidth * (1/285);
+          console.log("ratio : " + ratio);
           if(window.sincloInfo.widget.spMaximizeSizeType === 2) {
             widgetWidth = $(window).width();
-            var fullHeight = ($(window).height() - $('#sincloBox #widgetHeader').height() - $('#sincloBox #widgetDescription').height() - $('#sincloBox #fotter').height() + 3*ratio);
+            var fullHeight = (window.innerHeight - $('#sincloBox #widgetHeader').height() - $('#sincloBox #widgetDescription').height() - $('#sincloBox #fotter').height() + 3*ratio);
             console.log(fullHeight);
             document.getElementById("chatTalk").style.height = fullHeight + 'px';
+            document.getElementById("sincloBox").style.height = window.innerHeight + 'px';
           } else {
             widgetWidth = $(window).width() - 20;
             document.getElementById("chatTalk").style.height = (194 * ratio) + (60*ratio) + 'px';
@@ -2770,10 +2776,9 @@
               var word = "";
               switch(Number(typeObj.wordType)) {
                 case 1: // 完全一致
-                  // アスタリスクを許容する
-                  word = splitedContains[i].replace(/\*/, ".*")
-                  // それ以外の文字は文字列として扱う
-                    .replace(/[-\/\\^$+?.()|[\]{}]/g, '\\$&');
+                  // アスタリスクを許容し、それ以外の文字は文字列として扱う
+                  word = splitedContains[i]
+                    .replace(/[-\/\\^$+?.()|[\]{}]/g, '\\$&').replace(/\*/g, ".*");
                   preg = new RegExp("^" + word + "$");
                   result = preg.test(val);
                   break;
@@ -2803,10 +2808,9 @@
               var word = "";
               switch(Number(typeObj.wordType)) {
                 case 1: // 完全一致
-                  // アスタリスクを許容する
-                  word = splitedExclusions[i].replace(/\*/, ".*")
-                  // それ以外の文字は文字列として扱う
-                    .replace(/[-\/\\^$+?.()|[\]{}]/g, '\\$&');
+                  word = splitedExclusions[i]
+                  // アスタリスクを許容し、それ以外の文字は文字列として扱う
+                    .replace(/[-\/\\^$+?.()|[\]{}]/g, '\\$&').replace(/\*/g, ".*");
                   preg = new RegExp("^" + word + "$");
                   result = !preg.test(val);
                   break;

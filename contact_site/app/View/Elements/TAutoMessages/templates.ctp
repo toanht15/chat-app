@@ -30,23 +30,28 @@
   <li>
     <span style="padding-top:5px;"><label>キーワード</label></span>
     <div class="keywordWrapper">
-      <div class="containsSetting">
-        <input type="text" ng-model="setItem.keyword_contains" name="keyword_contains" maxlength="100" ng-required="!((setItem.keyword_contains.length > 0) || (setItem.keyword_exclusions.length > 0))">
-        <select ng-model="setItem.keyword_contains_type" class="searchKeywordContainsTypeSelect">
-          <option value="1">をすべて含む</option>
-          <option value="2">のいずれかを含む</option>
-        </select>
+      <label class="checkboxLabel"><input type="checkbox" ng-model="setItem.keyword_contains_enabled" ng-init="setItem.keyword_contains_enabled ? setItem.keyword_contains_enabled = setItem.keyword_contains_enabled : setItem.keyword_contains_enabled = (setItem.keyword_contains !== '')"/>含めるキーワードを設定する</label>
+      <div class="wrap" ng-if="setItem.keyword_contains_enabled">
+        <div class="containsSetting">
+          <input type="text" ng-model="setItem.keyword_contains" name="keyword_contains" maxlength="100" ng-required="!((setItem.keyword_contains.length > 0) || (setItem.keyword_exclusions.length > 0))">
+          <select ng-model="setItem.keyword_contains_type" class="searchKeywordContainsTypeSelect">
+            <option value="1">をすべて含む</option>
+            <option value="2">のいずれかを含む</option>
+          </select>
+        </div>
+        <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
       </div>
-      <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
-      <p>かつ</p>
-      <div class="exclusionSetting">
-        <input type="text" ng-model="setItem.keyword_exclusions" name="keyword_exclusions" maxlength="100" ng-required="!((setItem.keyword_contains.length > 0) || (setItem.keyword_exclusions.length > 0))">
-        <select ng-model="setItem.keyword_exclusions_type" class="searchKeywordExclusionsTypeSelect">
-          <option value="1">をすべて含まない</option>
-          <option value="2">のいずれかを含まない</option>
-        </select>
+      <label class="checkboxLabel"><input type="checkbox" ng-model="setItem.keyword_exclusions_enabled" ng-init="setItem.keyword_exclusions_enabled ? setItem.keyword_exclusions_enabled = setItem.keyword_exclusions_enabled : setItem.keyword_exclusions_enabled = (setItem.keyword_exclusions !== '')"/>含めないキーワードを設定する</label>
+      <div class="wrap" ng-if="setItem.keyword_exclusions_enabled">
+        <div class="exclusionSetting">
+          <input type="text" ng-model="setItem.keyword_exclusions" name="keyword_exclusions" maxlength="100" ng-required="!((setItem.keyword_contains.length > 0) || (setItem.keyword_exclusions.length > 0))">
+          <select ng-model="setItem.keyword_exclusions_type" class="searchKeywordExclusionsTypeSelect">
+            <option value="1">をすべて含まない</option>
+            <option value="2">のいずれかを含まない</option>
+          </select>
+        </div>
+        <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
       </div>
-      <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
     </div>
   </li>
   <li>
@@ -95,23 +100,28 @@
   <li>
     <span style="padding-top:5px;"><label>URL</label></span>
     <div class="keywordWrapper">
-      <div class="containsSetting">
-        <input type="text" ng-model="setItem.keyword_contains" name="keyword_contains" maxlength="100" ng-required="!((setItem.keyword_contains.length > 0) || (setItem.keyword_exclusions.length > 0))">
-        <select ng-model="setItem.keyword_contains_type" class="searchKeywordContainsTypeSelect">
-          <option value="1">をすべて含む</option>
-          <option value="2">のいずれかを含む</option>
-        </select>
+      <label class="checkboxLabel"><input type="checkbox" ng-model="setItem.keyword_contains_enabled" ng-init="setItem.keyword_contains_enabled ? setItem.keyword_contains_enabled = setItem.keyword_contains_enabled : setItem.keyword_contains_enabled = (setItem.keyword_contains !== '')"/>含めるキーワードを設定する</label>
+      <div class="wrap" ng-if="setItem.keyword_contains_enabled || setItem.keyword_contains !== ''">
+        <div class="containsSetting">
+          <input type="text" ng-model="setItem.keyword_contains" name="keyword_contains" maxlength="100" ng-required="!((setItem.keyword_contains.length > 0) || (setItem.keyword_exclusions.length > 0))">
+          <select ng-model="setItem.keyword_contains_type" class="searchKeywordContainsTypeSelect">
+            <option value="1">をすべて含む</option>
+            <option value="2">のいずれかを含む</option>
+          </select>
+        </div>
+        <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
       </div>
-      <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
-      <p>かつ</p>
-      <div class="exclusionSetting">
-        <input type="text" ng-model="setItem.keyword_exclusions" name="keyword_exclusions" maxlength="100" ng-required="!((setItem.keyword_contains.length > 0) || (setItem.keyword_exclusions.length > 0))">
-        <select ng-model="setItem.keyword_exclusions_type" class="searchKeywordExclusionsTypeSelect">
-          <option value="1">をすべて含まない</option>
-          <option value="2">のいずれかを含まない</option>
-        </select>
+      <label class="checkboxLabel"><input type="checkbox" ng-model="setItem.keyword_exclusions_enabled" ng-init="setItem.keyword_exclusions_enabled ? setItem.keyword_exclusions_enabled = setItem.keyword_exclusions_enabled : setItem.keyword_exclusions_enabled = (setItem.keyword_exclusions !== '')"/>含めないキーワードを設定する</label>
+      <div class="wrap" ng-if="setItem.keyword_exclusions_enabled || setItem.keyword_exclusions !== ''">
+        <div class="exclusionSetting">
+          <input type="text" ng-model="setItem.keyword_exclusions" name="keyword_exclusions" maxlength="100" ng-required="!((setItem.keyword_contains.length > 0) || (setItem.keyword_exclusions.length > 0))">
+          <select ng-model="setItem.keyword_exclusions_type" class="searchKeywordExclusionsTypeSelect">
+            <option value="1">をすべて含まない</option>
+            <option value="2">のいずれかを含まない</option>
+          </select>
+        </div>
+        <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
       </div>
-      <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
     </div>
   </li>
   <li>
@@ -139,23 +149,28 @@
   <li>
     <span style="padding-top:5px;"><label>発言内容</label></span>
     <div class="keywordWrapper">
-      <div class="containsSetting">
-        <input type="text" ng-model="setItem.keyword_contains" name="keyword_contains" maxlength="100" ng-required="!((setItem.keyword_contains.length > 0) || (setItem.keyword_exclusions.length > 0))">
-        <select ng-model="setItem.keyword_contains_type" class="searchKeywordContainsTypeSelect">
-          <option value="1">をすべて含む</option>
-          <option value="2">のいずれかを含む</option>
-        </select>
+      <label class="checkboxLabel"><input type="checkbox" ng-model="setItem.keyword_contains_enabled" ng-init="setItem.keyword_contains_enabled ? setItem.keyword_contains_enabled = setItem.keyword_contains_enabled : setItem.keyword_contains_enabled = (setItem.keyword_contains !== '')"/>含めるキーワードを設定する</label>
+      <div class="wrap" ng-if="setItem.keyword_contains_enabled">
+        <div class="containsSetting">
+          <input type="text" ng-model="setItem.keyword_contains" name="keyword_contains" maxlength="100" ng-required="!((setItem.keyword_contains.length > 0) || (setItem.keyword_exclusions.length > 0))">
+          <select ng-model="setItem.keyword_contains_type" class="searchKeywordContainsTypeSelect">
+            <option value="1">をすべて含む</option>
+            <option value="2">のいずれかを含む</option>
+          </select>
+        </div>
+        <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
       </div>
-      <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
-      <p>かつ</p>
-      <div class="exclusionSetting">
-        <input type="text" ng-model="setItem.keyword_exclusions" name="keyword_exclusions" maxlength="100" ng-required="!((setItem.keyword_contains.length > 0) || (setItem.keyword_exclusions.length > 0))">
-        <select ng-model="setItem.keyword_exclusions_type" class="searchKeywordExclusionsTypeSelect">
-          <option value="1">をすべて含まない</option>
-          <option value="2">のいずれかを含まない</option>
-        </select>
+      <label class="checkboxLabel"><input type="checkbox" ng-model="setItem.keyword_exclusions_enabled" ng-init="setItem.keyword_exclusions_enabled ? setItem.keyword_exclusions_enabled = setItem.keyword_exclusions_enabled : setItem.keyword_exclusions_enabled = (setItem.keyword_exclusions !== '')"/>含めないキーワードを設定する</label>
+      <div class="wrap" ng-if="setItem.keyword_exclusions_enabled">
+        <div class="exclusionSetting">
+          <input type="text" ng-model="setItem.keyword_exclusions" name="keyword_exclusions" maxlength="100" ng-required="!((setItem.keyword_contains.length > 0) || (setItem.keyword_exclusions.length > 0))">
+          <select ng-model="setItem.keyword_exclusions_type" class="searchKeywordExclusionsTypeSelect">
+            <option value="1">をすべて含まない</option>
+            <option value="2">のいずれかを含まない</option>
+          </select>
+        </div>
+        <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
       </div>
-      <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
     </div>
   </li>
   <li>
@@ -185,23 +200,30 @@
   <li>
     <span style="padding-top:5px;"><label>キーワード</label></span>
     <div class="keywordWrapper">
-      <div class="containsSetting">
-        <input type="text" ng-model="setItem.keyword_contains" name="keyword_contains" maxlength="100" ng-required="!((setItem.keyword_contains.length > 0) || (setItem.keyword_exclusions.length > 0))">
-        <select ng-model="setItem.keyword_contains_type" class="searchKeywordContainsTypeSelect">
-          <option value="1">をすべて含む</option>
-          <option value="2">のいずれかを含む</option>
-        </select>
+      <label class="checkboxLabel"><input type="checkbox" ng-model="setItem.keyword_contains_enabled" ng-init="setItem.keyword_contains_enabled ? setItem.keyword_contains_enabled = setItem.keyword_contains_enabled : setItem.keyword_contains_enabled = (setItem.keyword_contains !== '')"/>含めるキーワードを設定する</label>
+      <div class="wrap" ng-if="setItem.keyword_contains_enabled || setItem.keyword_contains !== ''">
+        <div class="containsSetting">
+          <input type="text" ng-model="setItem.keyword_contains" name="keyword_contains" maxlength="100" ng-required="!((setItem.keyword_contains.length > 0) || (setItem.keyword_exclusions.length > 0))">
+          <select ng-model="setItem.keyword_contains_type" class="searchKeywordContainsTypeSelect">
+            <option value="1">をすべて含む</option>
+            <option value="2">のいずれかを含む</option>
+          </select>
+        </div>
+        <br>
+        <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
       </div>
-      <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
-      <p>かつ</p>
-      <div class="exclusionSetting">
-        <input type="text" ng-model="setItem.keyword_exclusions" name="keyword_exclusions" maxlength="100" ng-required="!((setItem.keyword_contains.length > 0) || (setItem.keyword_exclusions.length > 0))">
-        <select ng-model="setItem.keyword_exclusions_type" class="searchKeywordExclusionsTypeSelect">
-          <option value="1">をすべて含まない</option>
-          <option value="2">のいずれかを含まない</option>
-        </select>
+      <label class="checkboxLabel"><input type="checkbox" ng-model="setItem.keyword_exclusions_enabled" ng-init="setItem.keyword_exclusions_enabled ? setItem.keyword_exclusions_enabled = setItem.keyword_exclusions_enabled : setItem.keyword_exclusions_enabled = (setItem.keyword_exclusions !== '')"/>含めないキーワードを設定する</label>
+      <div class="wrap" ng-if="setItem.keyword_exclusions_enabled || setItem.keyword_exclusions !== ''">
+        <div class="exclusionSetting">
+          <input type="text" ng-model="setItem.keyword_exclusions" name="keyword_exclusions" maxlength="100" ng-required="!((setItem.keyword_contains.length > 0) || (setItem.keyword_exclusions.length > 0))">
+          <select ng-model="setItem.keyword_exclusions_type" class="searchKeywordExclusionsTypeSelect">
+            <option value="1">をすべて含まない</option>
+            <option value="2">のいずれかを含まない</option>
+          </select>
+        </div>
+        <br>
+        <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
       </div>
-      <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
     </div>
   </li>
   <li>
@@ -221,23 +243,28 @@
   <li>
     <span style="padding-top:5px;"><label>キーワード</label></span>
     <div class="keywordWrapper">
-      <div class="containsSetting">
-        <input type="text" ng-model="setItem.keyword_contains" name="keyword_contains" maxlength="100" ng-required="!((setItem.keyword_contains.length > 0) || (setItem.keyword_exclusions.length > 0))">
-        <select ng-model="setItem.keyword_contains_type" class="searchKeywordContainsTypeSelect">
-          <option value="1">をすべて含む</option>
-          <option value="2">のいずれかを含む</option>
-        </select>
+      <label class="checkboxLabel"><input type="checkbox" ng-model="setItem.keyword_contains_enabled" ng-init="setItem.keyword_contains_enabled ? setItem.keyword_contains_enabled = setItem.keyword_contains_enabled : setItem.keyword_contains_enabled = (setItem.keyword_contains !== '')"/>含めるキーワードを設定する</label>
+      <div class="wrap" ng-if="setItem.keyword_contains_enabled || setItem.keyword_contains !== ''">
+        <div class="containsSetting">
+          <input type="text" ng-model="setItem.keyword_contains" name="keyword_contains" maxlength="100" ng-required="!((setItem.keyword_contains.length > 0) || (setItem.keyword_exclusions.length > 0))">
+          <select ng-model="setItem.keyword_contains_type" class="searchKeywordContainsTypeSelect">
+            <option value="1">をすべて含む</option>
+            <option value="2">のいずれかを含む</option>
+          </select>
+        </div>
+        <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
       </div>
-      <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
-      <p>かつ</p>
-      <div class="exclusionSetting">
-        <input type="text" ng-model="setItem.keyword_exclusions" name="keyword_exclusions" maxlength="100" ng-required="!((setItem.keyword_contains.length > 0) || (setItem.keyword_exclusions.length > 0))">
-        <select ng-model="setItem.keyword_exclusions_type" class="searchKeywordExclusionsTypeSelect">
-          <option value="1">をすべて含まない</option>
-          <option value="2">のいずれかを含まない</option>
-        </select>
+      <label class="checkboxLabel"><input type="checkbox" ng-model="setItem.keyword_exclusions_enabled" ng-init="setItem.keyword_exclusions_enabled ? setItem.keyword_exclusions_enabled = setItem.keyword_exclusions_enabled : setItem.keyword_exclusions_enabled = (setItem.keyword_exclusions !== '')"/>含めないキーワードを設定する</label>
+      <div class="wrap" ng-if="setItem.keyword_exclusions_enabled || setItem.keyword_exclusions !== ''">
+        <div class="exclusionSetting">
+          <input type="text" ng-model="setItem.keyword_exclusions" name="keyword_exclusions" maxlength="100" ng-required="!((setItem.keyword_contains.length > 0) || (setItem.keyword_exclusions.length > 0))">
+          <select ng-model="setItem.keyword_exclusions_type" class="searchKeywordExclusionsTypeSelect">
+            <option value="1">をすべて含まない</option>
+            <option value="2">のいずれかを含まない</option>
+          </select>
+        </div>
+        <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
       </div>
-      <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
     </div>
   </li>
   <li>

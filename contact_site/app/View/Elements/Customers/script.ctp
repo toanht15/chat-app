@@ -196,6 +196,15 @@ if ( window.hasOwnProperty('io') ) {
       }
     });
 
+    $("#presenceView").draggable({
+      // containment: "#content",
+      scroll: false,
+      cancel: "#cus_info_contents",
+      stop:function(event, ui) {
+        changePositionOfPopup();
+      }
+    });
+
   });
 
   $(window).resize(function(){

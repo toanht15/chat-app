@@ -23,7 +23,7 @@ else if ( !$coreSettings[C_COMPANY_USE_SYNCLO] && !$coreSettings[C_COMPANY_USE_C
 ?>
 
     <div id='customer_sub_pop' data-contract='<?=$cName?>' ng-show="detailId" ng-cloak><?php echo $this->element('Customers/detail') ?></div>
-
+    <div id='operator_presence_pop' ng-cloak><?php echo $this->element('Customers/presenceView', ["userList" => $userList]) ?></div>
     <div id='customer_tab' ng-cloak>
       <ul>
         <li ng-repeat="cInfo in chatList" ng-click="showDetail(monitorList[cInfo].tabId, monitorList[cInfo].sincloSessionId)" ng-class="{selected: cInfo == detailId}">{{monitorList[cInfo].accessId}}</li>
