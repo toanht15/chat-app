@@ -1364,7 +1364,7 @@ sincloApp.controller('WidgetCtrl', function($scope){
 
     //位置調整
     $scope.$watch(function(){
-      return {'openFlg': $scope.openFlg, 'showWidgetType': $scope.showWidgetType, 'widgetSizeType': $scope.widgetSizeTypeToggle, 'chat_radio_behavior': $scope.chat_radio_behavior, 'chat_trigger': $scope.chat_trigger, 'show_name': $scope.show_name, 'widget.showTab': $scope.widget.showTab};
+      return {'openFlg': $scope.openFlg, 'showWidgetType': $scope.showWidgetType, 'widgetSizeType': $scope.widgetSizeTypeToggle, 'chat_radio_behavior': $scope.chat_radio_behavior, 'chat_trigger': $scope.chat_trigger, 'show_name': $scope.show_name, 'widget.showTab': $scope.widget.showTab, 'sp_maximize_size_type': $scope.sp_maximize_size_type};
     },
     function(){
       var main = document.getElementById("miniTarget");

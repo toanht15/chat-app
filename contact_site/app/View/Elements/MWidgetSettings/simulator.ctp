@@ -68,6 +68,19 @@
       left: 5px;
       right: 5px;
     }
+
+    #sincloBox.sp-preview.fullSize {
+      position: absolute;
+      width: auto;
+      bottom: 0;
+      left: 0;
+      right: 0;
+    }
+
+    #sincloBox.sp-preview.fullSize #chatTalk {
+      height: 258px;
+    }
+
     #sincloBox.sp-preview.landscape {
       position: absolute;
       width: auto;
@@ -118,7 +131,6 @@
        border-radius:50px;
        border-top-left-radius: 0;
        border-top-right-radius: 0;
-       box-shadow:0 1px 24px #111;
     }
 
     #device.landscape {
@@ -130,7 +142,6 @@
       border-radius:50px;
       border-top-left-radius: 0;
       border-bottom-left-radius: 0;
-      box-shadow:0 1px 24px #111;
     }
 
     .mac #device.portrait {
@@ -148,11 +159,7 @@
       border:3px solid #333;
       border-radius:2px;
     }
-    #device.portrait #wrapper img#previewBack {
-      position: absolute;
-      width:100%;
-      border:0;
-    }
+
     #device.portrait #button {
       width:58px;
       height:58px;
@@ -167,11 +174,7 @@
       border:3px solid #333;
       border-radius:2px;
     }
-    #device.landscape #wrapper img#previewBack {
-      position: absolute;
-      width:100%;
-      border:0;
-    }
+
     #device.landscape #button {
       width:58px;
       height:58px;
@@ -190,7 +193,7 @@
     /* タブアイコンフォント化対応end */
   </style>
   <div id="device" class="portrait" ng-if="showWidgetType === 3">
-    <div id="wrapper"><?= $this->Html->image('sp-preview_page.png', ['id' => 'previewBack']) ?>
+    <div id="wrapper">
       <?= $this->element('MWidgetSettings/widget', ['isSpPreview' => true]); ?>
     </div>
     <div id="button"></div>
@@ -267,7 +270,7 @@
 
 <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
   <div id="device" class="landscape" ng-if="showWidgetType === 2">
-    <div id="wrapper"><?= $this->Html->image('sp-preview_page.png', ['id' => 'previewBack']) ?>
+    <div id="wrapper">
       <?= $this->element("MWidgetSettings/widget_sp_landscape", ['isSpPreview' => true]) ?>
     </div>
     <div id="button"></div>

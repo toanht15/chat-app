@@ -1,4 +1,4 @@
-<div id="sincloBox" <?= !empty($isSpPreview) ? 'class="sp-preview" ng-if="showWidgetType === 3"' : "ng-if=\"showWidgetType !== 2 && showWidgetType !== 3\"" ?>  ng-hide="showWidgetType === 4" ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">
+<div id="sincloBox" <?= !empty($isSpPreview) ? 'class="sp-preview" ng-class=\'{fullSize:sp_maximize_size_type==="2"}\' ng-if="showWidgetType === 3"' : "ng-if=\"showWidgetType !== 2 && showWidgetType !== 3\"" ?>  ng-hide="showWidgetType === 4" ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">
   <style>
     #sincloBox * { font-size: 12px; }
     #sincloBox.middleSize  * { font-size: 13px; }
