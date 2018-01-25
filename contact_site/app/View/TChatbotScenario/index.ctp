@@ -7,8 +7,7 @@
 <div id='tchatbotscenario_idx' class="card-shadow">
 
   <div id='tchatbotscenario_title'>
-    <!-- TODO: チャットボット用のアイコンに差し替える -->
-    <div class="fLeft"><?= $this->Html->image('dictionary_g.png', array('alt' => 'シナリオ一覧', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?></div>
+    <div class="fLeft"><?= $this->Html->image('scenario_setting_g.png', array('alt' => 'シナリオ一覧', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?></div>
     <h1>シナリオ一覧</h1>
   </div>
 
