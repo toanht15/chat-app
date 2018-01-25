@@ -322,32 +322,32 @@
                       <?php
                        if ((!empty($history['THistoryChatLog']['type']) && $history['THistoryChatLog']['type'] == "自動返信")
                         || ($history['THistoryChatLog']['cmp'] == 0 && $history['THistoryChatLog']['sry'] == 0 && $history['THistoryChatLog']['cus'] == 0)) { ?>
-                        <span class = "largeCharacters" style = "color:#4bacc6; font-weight:bold;">Auto(<?php if (isset($chatUserList[$history['THistory']['id']])) { echo $chatUserList[$history['THistory']['id']]; } ?>)</span>
+                        <span class = "largeCharacters" style = "color:#4bacc6; font-weight:bold;"><span class ="chatTypeName" style = "border: 1px solid #4bacc6;background-color:#4bacc6;border-radius:4px;padding:1px 3px;">Auto</span><span class = "largeCharacters" style ="margin-left:3px;color:#4bacc6"><?php if (isset($chatUserList[$history['THistory']['id']])) { echo '('.$chatUserList[$history['THistory']['id']].')'; } ?></span></span>
                       <?php
                       }
                       else if(!empty($history['THistoryChatLog']['type']) && $history['THistoryChatLog']['type'] == "拒否") { ?>
-                        <span class = "largeCharacters" style = "color:#a6a6a6; font-weight:bold;">Sorry</span>
+                        <span class = "largeCharacters" style = "color:#a6a6a6; font-weight:bold;"><span class ="chatTypeName" style = "border: 1px solid #a6a6a6;background-color:#a6a6a6;border-radius:4px;padding:1px 3px;">Sorry</span></span>
                       <?php
                       }
                       else if($history['THistoryChatLog']['type'] == "") { ?>
-                        <span class = "largeCharacters" style = "color:#9bbb59; font-weight:bold;">Manual(<?php if (isset($chatUserList[$history['THistory']['id']])) { echo $chatUserList[$history['THistory']['id']]; } ?>)</span>
+                        <span class = "largeCharacters" style = "color:#9bbb59; font-weight:bold;"><span class ="chatTypeName" style = "border: 1px solid #9bbb59;background-color:#9bbb59;border-radius:4px;padding:1px 3px;">Manual</span><span class = "largeCharacters" style ="margin-left:3px;color:#9bbb59">(<?php if (isset($chatUserList[$history['THistory']['id']])) { echo $chatUserList[$history['THistory']['id']]; } ?>)</span></span>
                       <?php
                       }
                       else if($history['THistoryChatLog']['type'] == "未入室") { ?>
-                        <span class = "largeCharacters" style = "color:#f79646; font-weight:bold;">NoEntry(＊未入室)</span>
+                        <span class = "largeCharacters" style = "color:#f79646; font-weight:bold;"><span class ="chatTypeName" style = "border: 1px solid #f79646;background-color:#f79646;border-radius:4px;padding:1px 3px;">NoEntry</span><span class = "largeCharacters" style ="margin-left:3px;color:#f79646">(＊未入室)</span></span>
                       <?php
                         }
                      endif; ?></div>
                   <?php if(isset($coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $coreSettings[C_COMPANY_REF_COMPANY_DATA]) { ?>
                     <?php if(!empty($history['LandscapeData']['org_name']) && !empty($history['LandscapeData']['lbc_code'])): ?>
-                        <div style = "padding-top:1px;"><a href="javascript:void(0)" class="underL largeCharacters" onclick="openCompanyDetailInfo('<?=$history['LandscapeData']['lbc_code']?>')"><?=h($history['LandscapeData']['org_name'])?></a>
+                        <div style = "padding-top:1px;"><a href="javascript:void(0)" style ="font-weight:bold;" class="underL largeCharacters" onclick="openCompanyDetailInfo('<?=$history['LandscapeData']['lbc_code']?>')"><?=h($history['LandscapeData']['org_name'])?></a>
                     <?php elseif(!empty($history['LandscapeData']['org_name'])): ?>
                         <p><?=h($history['LandscapeData']['org_name'])?></p><?='\n'?>
                     <?php elseif(empty($history['LandscapeData']['org_name'])): ?>
-                    <div class = "largeCharacters" style = "padding-top:1px;">{{ ip('<?=h($history['THistory']['ip_address'])?>', <?php echo !empty($history['LandscapeData']['org_name']) ? 'true' : 'false' ?>) }}</div>
+                    <div class = "largeCharacters" style = "padding-top:1px;font-weight:bold;">{{ ip('<?=h($history['THistory']['ip_address'])?>', <?php echo !empty($history['LandscapeData']['org_name']) ? 'true' : 'false' ?>) }}</div>
                     <?php endif; ?>
                   <?php } else { ?>
-                  <div class = "largeCharacters" style = "padding-top:1px;">{{ ip('<?=h($history['THistory']['ip_address'])?>', <?php echo !empty($history['LandscapeData']['org_name']) ? 'true' : 'false' ?>) }}</div>
+                  <div class = "largeCharacters" style = "padding-top:1px;font-weight:bold;">{{ ip('<?=h($history['THistory']['ip_address'])?>', <?php echo !empty($history['LandscapeData']['org_name']) ? 'true' : 'false' ?>) }}</div>
                   <?php } ?>
                   <div style = "padding-top:1px;" class = "largeCharacters">{{ ui('<?=h($history['THistory']['ip_address'])?>','<?=$visitorsId?>') }}</div></div></td>
                   <td class="tCenter eachKind" style = "width:5%;display:none;">
@@ -399,7 +399,7 @@
                   }
                 ?></td>
                 <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
-                  <td class="tRight pre" style = "width:5%;"><?php if (!empty($noticeChatTime[$history['THistoryChatLog']['t_histories_id']])){ ?><?=date_format(date_create($noticeChatTime[$history['THistoryChatLog']['t_histories_id']]), "Y/m/d\nH:i:s")?><?php } ?>
+                  <td class="tRight pre" style = "width:5%;"><?php if (!empty($history['NoticeChatTime']['created'])){ ?><?=date_format(date_create($history['NoticeChatTime']['created']), "Y/m/d\nH:i:s")?><?php } ?>
                   </td>
                   <td class="tCenter" style = "width:4%;"><?php
                   if ($history['SpeechTime']['SpeechTime']
@@ -434,14 +434,18 @@
     </ul>
   </div>
 
-
-  <div id="verticalToggleMenu" ng-init = "setDetailMode(1)" ng-if="fillterTypeId === 2" class = "form01" style = "">
+  <?php if(!empty($edit)) { ?>
+    <div id="verticalToggleMenu" ng-init = "setDetailMode(2)" ng-if="fillterTypeId === 2" class = "form01" style = "">
+  <?php }
+    else { ?>
+    <div id="verticalToggleMenu" ng-init = "setDetailMode(1)" ng-if="fillterTypeId === 2" class = "form01" style = "">
+  <?php } ?>
     <ul class="switch" style = "box-shadow:none; padding-left: 17px; margin-bottom: 0;">
       <li ng-class="{on:switchDetailMode===1}" ng-click="setDetailMode(1)" style = "margin-top:0; margin-bottom:0; width:9em !important;">
         <span ng-if="switchDetailMode===1" style="margin: 0; padding: 5px 0; color: #FFFFFF;">チャット内容</span>
         <span ng-if="switchDetailMode===2" style="margin: 0; padding: 5px 0; color: #c3d69b;">チャット内容</span>
       </li>
-      <li ng-class="{on:switchDetailMode===2}" ng-click="setDetailMode(2)" style = "margin-top:0; margin-bottom:0; width:9em !important;">
+      <li ng-class="{on:switchDetailMode===2}" ng-click="setDetailMode(2  )" style = "margin-top:0; margin-bottom:0; width:9em !important;">
         <span ng-if="switchDetailMode===1" style="margin: 0; padding: 5px 0; color: #c3d69b;">詳細情報</span>
         <span ng-if="switchDetailMode===2" style="margin: 0; padding: 5px 0; color: #FFFFFF;">詳細情報</span>
       </li>
@@ -505,7 +509,7 @@
                       <span id = "Landscape"></span>
                     <?php endif; ?>
                   <?php endif; ?>
-                  <span id= "ipAddress">{{ ip('<?='('.h($defaultHistoryList['THistory']['ip_address']).')'?>', <?php echo !empty($defaultHistoryList['LandscapeData']['org_name']) ? 'true' : 'false' ?>) }}</span></dd>
+                  <span id= "ipAddress">{{ ip('<?=h($defaultHistoryList['THistory']['ip_address'])?>', <?php echo !empty($defaultHistoryList['LandscapeData']['org_name']) ? 'true' : 'false' ?>) }}</span></dd>
             </li>
             <li>
               <dt>訪問回数</dt>
@@ -582,8 +586,8 @@
             </li>
           </ul>
           <div id="personal_action">
-              <?= $this->Html->link('元に戻す', 'javascript:void(0)', ['onclick' => 'reloadAct('.$historyId.')', 'id' => 'restore','class' => 'whiteBtn btn-shadow lineUpSaveBtn historyReturnButton']) ?>
-              <?= $this->Html->link('更新', 'javascript:void(0)', ['onclick' => 'customerInfoSave('.$historyId.')','id' => 'customerInfo', 'class' => 'greenBtn btn-shadow lineUpSaveBtn hitoryUpdateButton']) ?>
+              <?= $this->Html->link('元に戻す', 'javascript:void(0)', ['onclick' => 'reloadAct('.$historyId.',1)', 'id' => 'restore','class' => 'whiteBtn btn-shadow lineUpSaveBtn historyReturnButton']) ?>
+              <?= $this->Html->link('更新', 'javascript:void(0)', ['onclick' => 'customerInfoSave('.$historyId.',1)','id' => 'customerInfo', 'class' => 'greenBtn btn-shadow lineUpSaveBtn hitoryUpdateButton']) ?>
           </div>
           <?php } ?>
         </div>
