@@ -5899,21 +5899,33 @@ ul.naviBtn {
                     flex-grow: 1;
                     max-width: 55.5em;
                     min-width: 17em;
+                    .checkboxLabel {
+                      padding: 0.5em 0;
+                      display: block;
+                    }
                     div {
-                      display: flex;
                       padding: inherit;
                       border-top: inherit;
+                      div.wrap {
+                        display: block;
+                      }
+                      &:not(.wrap) {
+                        display: flex;
+                      }
                     }
+
                     input[type="text"] {
                       flex-grow: 1;
                       min-width: 2em;
+                      margin-left: 1.75em;
                     }
                     p {
                       margin: 0.5em 0 0;
                     }
                     s {
-                      display: inline-block;
+                      display: block;
                       padding-top: 6px;
+                      margin-left: 2em;
                     }
                     select {
                       flex-basis: 12em;
