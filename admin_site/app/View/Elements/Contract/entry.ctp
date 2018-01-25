@@ -22,6 +22,11 @@
   <?php $plans=array('1'=>'プレミアムプラン','4'=>'チャットベーシックプラン','2'=>'チャットスタンダードプラン','3'=>'シェアリングプラン'); ?>
   <?= $this->Form->input('MCompany.m_contact_types_id', array('type' => 'select', 'options' => $plans,'default' => 1,'label'=>false, 'div' => ['id' => 'planListArea'])) ?>
 </li>
+<!-- オプション -->
+<li>
+  <span><label>オプション</label></span>
+  <?= $this->Form->input('MCompany.options.refCompanyData', array('type' => 'checkbox', 'default' => false, 'label'=>'企業情報付与', 'div' => ['id' => 'refCompanyDataOptionArea'])) ?>
+</li>
 <!-- /* 契約ID数 */ -->
 <li>
   <div class="labelArea fLeft"><span class="require"><label>契約ID数</label></span></div>

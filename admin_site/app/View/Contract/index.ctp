@@ -13,6 +13,7 @@
           <th style="width:17em;">会社名</th>
           <th style="width:17em;">キー</th>
           <th style="width:17em;">プラン</th>
+          <th style="width:17em;">オプション</th>
           <th style="width:15em;">ID数 / 最大ID数</th>
           <th style="width:8em;">ML用アカウント</th>
           <th style="width:8em;">パスワード</th>
@@ -43,6 +44,28 @@
             <?php if(h($val['MCompany']['m_contact_types_id']) == 4){ ?>
               <td>ベーシックプラン</td>
             <?php } ?>
+            <td><?php
+              $coreSettings = json_decode($val['MCompany']['core_settings'], TRUE);
+              foreach($coreSettings as $coreSetting => $enabled) {
+                switch($coreSetting) {
+                  case 'refCompanyData':
+                    if($enabled) {
+                      echo '<p>【企業情報付与】</p>';
+                    }
+                    break;
+                  case 'laCoBrowse':
+                    if($enabled) {
+                      echo '<p>【画面キャプチャ連携（同時セッション：'.$val['MCompany']['la_limit_users'].'】</p>';
+                    }
+                    break;
+                  case 'hideRealtimeMonitor':
+                    if($enabled) {
+                      echo '<p>【リアルタイムモニタ非表示】</p>';
+                    }
+                    break;
+                }
+              }
+            ?></td>
             <td><?= h($val['MUser']['user_account'])?> / <?=h($val['MCompany']['limit_users'])?></td>
             <td class="adminId"><?= h($val['AdminUser']['mail_address']) ?></td>
             <td class="adminPass"><?= h($val['MAgreement']['admin_password']) ?></td>
