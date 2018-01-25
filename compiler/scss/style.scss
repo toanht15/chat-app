@@ -5370,6 +5370,10 @@ ul.naviBtn {
       section#switch_widget {
         margin-bottom: 0.5em;
       }
+
+      .ulTab {
+        margin: 0 auto;
+      }
     }
 
   }
@@ -6490,6 +6494,7 @@ ul.naviBtn {
     }
     ul {
       padding: 0;
+      margin-bottom: 5px;
       li {
         display: flex;
         label {

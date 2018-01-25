@@ -1194,7 +1194,8 @@ $headerNo = 1;
                   'class' => 'showSp',
                   'div' => false,
                   'label' => false,
-                  'error' => false
+                  'error' => false,
+                  'ng-change' => 'switchWidget(3)'
                 ],
                   [
                     'entity' => 'MWidgetSetting.sp_maximize_size_type'
