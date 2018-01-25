@@ -21,7 +21,7 @@ function sessionClear(){
 
 //ユーザー情報登録
 function customerInfoSave(historyId) {
-  var dataList = {},
+  var dataList = {};
   customerId = document.getElementById('customerId').value;
   visitorsId = $('#visitorsId').text();
 
@@ -40,8 +40,8 @@ function customerInfoSave(historyId) {
       saveData: dataList
     },
     dataType: 'json',
-    success: function(historyId){
-      location.href = "<?= $this->Html->url(['controller' => 'ChatHistories', 'action' => 'index']) ?>?id="+ historyId;
+    success: function(data){
+      location.href = "<?= $this->Html->url(['controller' => 'ChatHistories', 'action' => 'index']) ?>?id="+ historyId+'&edit';
     }
   });
 }
@@ -498,12 +498,12 @@ var onBeforeunloadHandler = function(e) {
 };
 
 // 元に戻す処理
-function reloadAct(historyId){
+function reloadAct(historyId,screen){
   changeFlg = false;
   if(changeFlg == false) {
     window.removeEventListener('beforeunload', onBeforeunloadHandler, false);
   }
-  location.href = "<?= $this->Html->url(['controller' => 'ChatHistories', 'action' => 'index']) ?>?id="+ historyId
+  location.href = "<?= $this->Html->url(['controller' => 'ChatHistories', 'action' => 'index']) ?>?id="+ historyId+'&edit';
 }
 
 //履歴チャット削除モーダル画面
