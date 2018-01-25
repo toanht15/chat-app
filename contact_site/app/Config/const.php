@@ -577,7 +577,11 @@ $config['chatbotScenarioActionList'] = [
   C_SCENARIO_ACTION_HEARING => [
     'label' => 'ヒアリング',
     'default' => [
-      'hearings' => '',
+      'hearings' => [[
+        'variableName' => '',
+        'inputType' => '1',
+        'message' => ''
+      ]],
       'errorMessage' => '',
       'isConfirm' => 2,
       'confirmMessage' => '',
@@ -590,6 +594,12 @@ $config['chatbotScenarioActionList'] = [
   // 選択肢
   C_SCENARIO_ACTION_SELECT_OPTION => [
     'label' => '選択肢',
+    'default' => [
+      'selection' => [
+        'variableName' => '',
+        'options' => ['']
+      ]
+    ]
   ],
   // メール送信
   C_SCENARIO_ACTION_SEND_MAIL => [

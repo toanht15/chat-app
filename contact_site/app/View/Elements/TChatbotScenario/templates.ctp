@@ -9,10 +9,10 @@
 </div>
 
 <?php /* ヒアリング | C_SCENARIO_ACTION_HEARING */ ?>
-<div ng-if="setItem.actionType == 2" class="set_action_item_body action_hearing" ng-init="main.initHearingSetting(setActionId)">
+<div ng-if="setItem.actionType == 2" class="set_action_item_body action_hearing" ng-init="main.controllHearingSettingView(setActionId)">
   <ul>
     <li>
-      <table cellspacing="5" class="hearing_settings">
+      <table cellspacing="5">
         <thead>
           <tr>
             <th class="hearingVariableNameLabel">変数名<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></th>
@@ -22,79 +22,19 @@
           </tr>
         </thead>
         <tbody class="itemListGroup">
-          <tr>
-            <td><input type="text"></td>
+          <tr ng-repeat="(listId, hearingItem) in setItem.hearings track by $index">
+            <td><input type="text" ng-model="hearingItem.variableName"></td>
             <td>
-              <select>
-                <option value="@text">@text</option>
-                <option value="@number">@number</option>
-                <option value="@email">@email</option>
-                <option value="@tel_number">@tel_number</option>
+              <select ng-model="hearingItem.inputType" ng-init="hearingItem.inputType = hearingItem.inputType">
+                <option value="1">@text</option>
+                <option value="2">@number</option>
+                <option value="3">@email</option>
+                <option value="4">@tel_number</option>
               </select>
             </td>
-            <td><input type="text"></td>
+            <td class="message"><input type="text" ng-model="hearingItem.message"></td>
             <td class="btnBlock">
-              <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px')) ?></a>
-            </td>
-          </tr>
-          <tr>
-            <td><input type="text"></td>
-            <td>
-              <select>
-                <option value="@text">@text</option>
-                <option value="@number">@number</option>
-                <option value="@email">@email</option>
-                <option value="@tel_number">@tel_number</option>
-              </select>
-            </td>
-            <td><input type="text"></td>
-            <td class="btnBlock">
-              <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px')) ?></a>
-            </td>
-          </tr>
-          <tr>
-            <td><input type="text"></td>
-            <td>
-              <select>
-                <option value="@text">@text</option>
-                <option value="@number">@number</option>
-                <option value="@email">@email</option>
-                <option value="@tel_number">@tel_number</option>
-              </select>
-            </td>
-            <td><input type="text"></td>
-            <td class="btnBlock">
-              <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px')) ?></a>
-            </td>
-          </tr>
-          <tr>
-            <td><input type="text"></td>
-            <td>
-              <select>
-                <option value="@text">@text</option>
-                <option value="@number">@number</option>
-                <option value="@email">@email</option>
-                <option value="@tel_number">@tel_number</option>
-              </select>
-            </td>
-            <td><input type="text"></td>
-            <td class="btnBlock">
-              <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px')) ?></a>
-            </td>
-          </tr>
-          <tr>
-            <td><input type="text"></td>
-            <td>
-              <select>
-                <option value="@text">@text</option>
-                <option value="@number">@number</option>
-                <option value="@email">@email</option>
-                <option value="@tel_number">@tel_number</option>
-              </select>
-            </td>
-            <td><input type="text"></td>
-            <td class="btnBlock">
-              <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px')) ?></a>
+              <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addActionItemList(setActionId, listId)')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.removeActionItemList(setActionId, listId)')) ?></a>
             </td>
           </tr>
         </tbody>
@@ -133,7 +73,7 @@
 </div>
 
 <?php /* 選択肢 | C_SCENARIO_ACTION_SELECT_OPTION */ ?>
-<div ng-if="setItem.actionType == 3" class="set_action_item_body action_select_option" ng-init="main.initSelectOptionSetting(setActionId)">
+<div ng-if="setItem.actionType == 3" class="set_action_item_body action_select_option" ng-init="main.controllSelectOptionSetting(setActionId)">
   <ul>
     <li class="styleFlexbox">
       <span><label class="hearingSelectVariableNameLabel">変数名<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></label></span>
@@ -144,40 +84,12 @@
       <textarea name="message" ng-model="setItem.message" cols="48" rows="4" placeholder="質問内容のメッセージを入力してください"></textarea>
     </li>
     <li>
-      <ul class="itemListGroup select_option_settings">
-        <li class="styleFlexbox">
-          <span><label>選択肢１</label></span>
-          <input type="text">
+      <ul class="itemListGroup">
+        <li ng-repeat="(listId, optionItem) in setItem.selection.options track by $index" class="styleFlexbox" ng-init="options = setItem.selection.options">
+          <span><label>選択肢 {{listId+1}}</label></span>
+          <input type="text" ng-model="setItem.selection.options[listId]">
           <div class="btnBlock">
-            <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px')) ?></a>
-          </div>
-        </li>
-        <li class="styleFlexbox">
-          <span><label>選択肢１</label></span>
-          <input type="text">
-          <div class="btnBlock">
-            <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px')) ?></a>
-          </div>
-        </li>
-        <li class="styleFlexbox">
-          <span><label>選択肢１</label></span>
-          <input type="text">
-          <div class="btnBlock">
-            <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px')) ?></a>
-          </div>
-        </li>
-        <li class="styleFlexbox">
-          <span><label>選択肢１</label></span>
-          <input type="text">
-          <div class="btnBlock">
-            <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px')) ?></a>
-          </div>
-        </li>
-        <li class="styleFlexbox">
-          <span><label>選択肢１</label></span>
-          <input type="text">
-          <div class="btnBlock">
-            <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px')) ?></a>
+            <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addActionItemList(setActionId, listId)')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.removeActionItemList(setActionId, listId)')) ?></a>
           </div>
         </li>
       </ul>
@@ -190,35 +102,11 @@
   <ul>
     <li class="styleFlexbox">
       <span><label>送信先メールアドレス</label></span>
-      <ul class="itemListGroup mail_address_settings">
-        <li>
-          <input type="text">
+      <ul class="itemListGroup">
+        <li ng-repeat="(listId, addressItem) in setItem.mailAddresses track by $index">
+          <input type="text" ng-model="addressItem">
           <div class="btnBlock">
-            <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px')) ?></a>
-          </div>
-        </li>
-        <li>
-          <input type="text">
-          <div class="btnBlock">
-            <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px')) ?></a>
-          </div>
-        </li>
-        <li>
-          <input type="text">
-          <div class="btnBlock">
-            <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px')) ?></a>
-          </div>
-        </li>
-        <li>
-          <input type="text">
-          <div class="btnBlock">
-            <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px')) ?></a>
-          </div>
-        </li>
-        <li>
-          <input type="text">
-          <div class="btnBlock">
-            <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px')) ?></a>
+            <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addActionItemList(setActionId, listId)')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.removeActionItemList(setActionId, listId)')) ?></a>
           </div>
         </li>
       </ul>

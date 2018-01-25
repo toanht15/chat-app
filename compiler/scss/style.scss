@@ -806,6 +806,65 @@ ul.ulTab {
 
 }
 
+/* tooltip */
+%tooltip {
+  .explainTooltip {
+    z-index: 10;
+    position: absolute;
+
+    icon-annotation {
+      width: 16em;
+      height: 2.1em;
+      display: none;
+
+      &:before {
+        content: "";
+        border: none;
+        border-top: 10px solid rgba(0, 0, 0, 0.13);
+        border-left: 9px solid transparent;
+        border-right: 9px solid transparent;
+        position: absolute;
+        bottom: -55px;
+        left: 5px;
+        z-index: 1;
+      }
+
+      &:after {
+        content: " ";
+        border: none;
+        border-top: 10px solid white;
+        border-left: 9px solid transparent;
+        border-right: 9px solid transparent;
+        position: absolute;
+        bottom: -53px;
+        left: 5px;
+        z-index: 3;
+      }
+
+      ul {
+        margin: 0;
+        padding: 0;
+        text-align: left;
+        background-color: #FFF;
+        box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+        padding: 0.5em;
+        font-weight: normal;
+        border-radius: 5px;
+
+        img {
+          margin-bottom: -0.2em;
+          width:1em;
+          height:1em;
+        }
+
+        span {
+          font-size: 0.9em;
+        }
+      }
+    }
+  }
+}
+
 /* ヘッダー */
 
 #sys-icon {
@@ -6089,55 +6148,9 @@ ul.naviBtn {
             }
           }
         }
-        .explainTooltip {
-          z-index: 10;
-          position: absolute;
 
-          icon-annotation {
-            width: 16em;
-            height: 2.1em;
-            display: none;
-
-            &:before {
-              content: '';
-              border: none;
-              border-top: 10px solid rgba(0, 0, 0, 0.13);
-              border-left: 9px solid transparent;
-              border-right: 9px solid transparent;
-              position: absolute;
-              bottom: -55px;
-              left: 5px;
-              z-index: 1;
-            }
-
-            &:after {
-              content: " ";
-              border: none;
-              border-top: 10px solid white;
-              border-left: 9px solid transparent;
-              border-right: 9px solid transparent;
-              position: absolute;
-              bottom: -53px;
-              left: 5px;
-              z-index: 3;
-            }
-
-            ul {
-              margin: 0;
-              padding: 0;
-              text-align: left;
-              background-color: #FFF;
-              box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
-              padding: 0.5em;
-              font-weight: normal;
-              border-radius: 5px;
-
-              span {
-                font-size: 0.9em;
-              }
-            }
-          }
-        }
+        /* tooltip のスタイルを読み込む */
+        @extend %tooltip;
       }
 
       &.section3 {
@@ -6581,6 +6594,9 @@ ul.naviBtn {
           overflow-y: scroll;
           height: calc(100vh - 293px);
 
+          /* tooltip のスタイルを読み込む */
+          @extend %tooltip;
+
           .set_action_item {
             position: relative;
             border: 1px solid #B7B7B7;
@@ -6701,6 +6717,21 @@ ul.naviBtn {
               }
             }
           }
+          .questionBalloon {
+            display: inline-block;
+            position: relative;
+            margin-left: 3.5px;
+            text-align: center;
+            vertical-align: middle;
+
+            .questionBtn {
+              border-radius: 20px;
+              width: 1.3em;
+              height: 1.3em;
+              font-size: 0.9em !important;
+              line-height: 1.2em;
+            }
+          }
         }
       }
 
@@ -6732,6 +6763,12 @@ ul.naviBtn {
         #tchatbotscenario_form_preview_body {
           overflow-y: scroll;
           height: calc(100vh - 296px);
+
+          .chatTalk {
+            li.details {
+              font-size: 12px;
+            }
+          }
         }
       }
     }
