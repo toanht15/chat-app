@@ -108,6 +108,10 @@ class ContractController extends AppController
       $companySaveData = [];
       $companySaveData['MCompany'] = $saveData['MCompany'];
       $companySaveData['MCompany']['id'] = $companyEditData['MCompany']['id'];
+      // 画面キャプチャ共有とリアルタイムモニタ表示は設定を引き継ぐ
+      $coreSetting = json_decode($companyEditData['MCompany']['core_settings'], TRUE);
+      $saveData['MCompany']['options']['laCoBrowse'] = $coreSetting['laCoBrowse'];
+      $saveData['MCompany']['options']['hideRealtimeMonitor'] = $coreSetting['hideRealtimeMonitor'];
       $companySaveData['MCompany']['core_settings'] = $this->getCoreSettingsFromContactTypesId($saveData['MCompany']['m_contact_types_id'], $saveData['MCompany']['options']);
       $this->MCompany->save($companySaveData,false);
 
