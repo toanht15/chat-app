@@ -1427,7 +1427,6 @@
       $this->log("BEGIN historyList : ".$this->getDateWithMilliSec(),LOG_DEBUG);
       $historyList = $this->paginate('THistory');
       $this->log("END historyList : ".$this->getDateWithMilliSec(),LOG_DEBUG);
-      $this->log($historyList,LOG_DEBUG);
       foreach($historyList as $key => $value){
         if(!empty($value['SpeechTime']['firstSpeechTime'])) {
           $key_id[$key] = $value['SpeechTime']['firstSpeechTime'];
