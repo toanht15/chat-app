@@ -920,7 +920,6 @@ class HistoriesController extends AppController {
     }
 
     if(isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) {
-      $this->log('入ってないことを確認',LOG_DEBUG);
       $joinToLandscapeData = [
           'type' => 'LEFT',
           'table' => 'm_landscape_data',

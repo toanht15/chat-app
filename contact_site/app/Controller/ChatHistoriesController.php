@@ -6,9 +6,6 @@
   class ChatHistoriesController extends AppController {
     public $helpers = ['Time'];
     public $uses = ['MUser', 'MCompany', 'MCustomer', 'TCampaign', 'THistory', 'THistoryChatLog', 'THistoryStayLog', 'THistoryShareDisplay', 'MLandscapeData'];
-    public $virtualFields = array(
-      'firstSpeechTime' => 'SpeechTime.firstSpeechTime',
-    );
     public $paginate = [
       'THistory' => [
         'limit' => 100,

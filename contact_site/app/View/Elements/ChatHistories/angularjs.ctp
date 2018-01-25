@@ -870,12 +870,9 @@ $(document).ready(function(){
   });
 
   $('.showBold').each(function(index){
-    console.log('チェック');
-    console.log(location.search);
     if((location.search.split("?")[1]) !== undefined && location.search.split("?")[1].match(/id/)) {
       if(location.search.split("?")[1].match(/edit/)) {
         var deleteNumber = location.search.split("?")[1].indexOf("&") -3;
-        console.log((location.search.split("?")[1]).substr(3,deleteNumber));
       }
       if ((location.search.split("?")[1]).substr(3,deleteNumber) == $(this)[0]['id']) {
         $(this).find('td').each(function(index){
