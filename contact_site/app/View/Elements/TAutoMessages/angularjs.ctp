@@ -65,6 +65,14 @@ sincloApp.controller('MainController', function($scope) {
             if(<?= $operatingHourData ?> == 2 && tmpId == 4) {
               return false;
             }
+            if(tmpId === "<?= C_AUTO_TRIGGER_STAY_PAGE ?>"
+              || tmpId === "<?= C_AUTO_TRIGGER_REFERRER ?>"
+              || tmpId === "<?= C_AUTO_TRIGGER_SPEECH_CONTENT ?>"
+              || tmpId === "<?= C_AUTO_TRIGGER_STAY_PAGE_OF_FIRST ?>"
+              || tmpId === "<?= C_AUTO_TRIGGER_STAY_PAGE_OF_PREVIOUS ?>") {
+              this.tmpList[tmpId].default['keyword_contains_enabled'] = true;
+              this.tmpList[tmpId].default['keyword_exclusions_enabled'] = false;
+            }
             this.setItemList[tmpId].push(angular.copy(this.tmpList[tmpId].default));
         }
     };
@@ -117,15 +125,38 @@ sincloApp.controller('MainController', function($scope) {
             'cv': Number(this.cv),
         };
         var keys = Object.keys(setList['conditions']);
-        if ("<?=C_AUTO_TRIGGER_DAY_TIME?>" in setList['conditions']) {
-            for(var i = 0; setList['conditions']["<?=C_AUTO_TRIGGER_DAY_TIME?>"].length > i; i++){
-                if ( 'timeSetting' in setList['conditions']["<?=C_AUTO_TRIGGER_DAY_TIME?>"][i] && Number(setList['conditions']["<?=C_AUTO_TRIGGER_DAY_TIME?>"][i].timeSetting) === 2 ) {
-                    delete setList['conditions']["<?=C_AUTO_TRIGGER_DAY_TIME?>"][i]['startTime'];
-                    delete setList['conditions']["<?=C_AUTO_TRIGGER_DAY_TIME?>"][i]['endTime'];
+        for (var i = 0; i < keys.length; i++) {
+          var target = String(keys[i]);
+          switch(target) {
+            case "<?=C_AUTO_TRIGGER_DAY_TIME?>":
+              for (var j = 0; setList['conditions'][target].length > j; j++) {
+                if ('timeSetting' in setList['conditions'][target][j] && Number(setList['conditions'][target][j].timeSetting) === 2) {
+                  delete setList['conditions'][target][j]['startTime'];
+                  delete setList['conditions'][target][j]['endTime'];
                 }
-            }
-
+              }
+              break;
+            case "<?=C_AUTO_TRIGGER_STAY_PAGE?>":
+            case "<?=C_AUTO_TRIGGER_REFERRER?>":
+            case "<?=C_AUTO_TRIGGER_SPEECH_CONTENT?>":
+            case "<?=C_AUTO_TRIGGER_STAY_PAGE_OF_FIRST?>":
+            case "<?=C_AUTO_TRIGGER_STAY_PAGE_OF_PREVIOUS?>":
+              for (var j = 0; setList['conditions'][target].length > j; j++) {
+                if(!setList['conditions'][target][j]['keyword_contains_enabled']) {
+                  setList['conditions'][target][j]['keyword_contains'] = "";
+                  setList['conditions'][target][j]['keyword_contains_type'] = "1";
+                }
+                if(!setList['conditions'][target][j]['keyword_exclusions_enabled']) {
+                  setList['conditions'][target][j]['keyword_exclusions'] = "";
+                  setList['conditions'][target][j]['keyword_exclusions_type'] = "1";
+                }
+                delete setList['conditions'][target][j]['keyword_contains_enabled'];
+                delete setList['conditions'][target][j]['keyword_exclusions_enabled'];
+              }
+              break;
+          }
         }
+
         $('#TAutoMessageActivity').val(JSON.stringify(setList));
         submitAct();
     };
@@ -702,14 +733,19 @@ sincloApp.directive('ngShowonhover',function() {
                     }
                 }
                 /* ページ・リファラー・発言内容・最初に訪れたページ・前のページ */
-                if ( 'keyword_contains' in form && 'keyword_exclusions' in form ) {
-                  if (String(key) === '<?=h(C_AUTO_TRIGGER_REFERRER)?>' && 'required' in form.keyword_contains.$error && 'required' in form.keyword_exclusions.$error) {
-                    messageList.push("URLはいずれかの指定が必要です。");
-                  } else if (String(key) === '<?=h(C_AUTO_TRIGGER_SPEECH_CONTENT)?>' && 'required' in form.keyword_contains.$error && 'required' in form.keyword_exclusions.$error) {
-                    messageList.push("発言内容はいずれかの指定が必要です。");
-                  }
-                  else if ('required' in form.keyword_contains.$error && 'required' in form.keyword_exclusions.$error) {
-                    messageList.push("キーワードはいずれかの指定が必要です。");
+                if ( 'keyword_contains' in form || 'keyword_exclusions' in form ) {
+                  if(_isContainsExclusionsErrorFound(form)) {
+                    switch(String(key)) {
+                      case '<?=h(C_AUTO_TRIGGER_REFERRER)?>':
+                        messageList.push("URLはいずれかの指定が必要です。");
+                        break;
+                      case '<?=h(C_AUTO_TRIGGER_SPEECH_CONTENT)?>':
+                        messageList.push("発言内容はいずれかの指定が必要です。");
+                        break;
+                      default:
+                        messageList.push("キーワードはいずれかの指定が必要です。");
+                        break;
+                    }
                   }
                 }
                 /* 曜日・日時 */
@@ -762,6 +798,14 @@ sincloApp.directive('ngShowonhover',function() {
                     element.textContent = "● " + messageList[i];
                     $("div.balloonContent").append(element);
                 }
+            };
+
+            var _isContainsExclusionsErrorFound = function(form) {
+              return (!'keyword_contains' in form && !('keyword_exclusions' in form))
+                || ('keyword_contains' in form && 'required' in form.keyword_contains.$error && !('keyword_exclusions' in form))
+                || ('keyword_exclusions' in form && 'required' in form.keyword_exclusions.$error && !('keyword_contains' in form))
+                || (('keyword_contains' in form && 'required' in form.keyword_contains.$error)
+                  && ('keyword_exclusions' in form && 'required' in form.keyword_exclusions.$error));
             };
         }
     };

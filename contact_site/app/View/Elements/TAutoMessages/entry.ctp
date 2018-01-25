@@ -130,7 +130,7 @@
                 <span class="greenBtn btn-shadow actBtn" ng-click="addOption(1)">選択肢を追加する</span>
                 <span class="greenBtn btn-shadow actBtn" ng-click="addOption(2)" id = "lastSpeechLabel">電話番号を追加する<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></span>
               </span>
-              <?=$this->Form->textarea('action', ['maxlength'=>300, 'cols' => 48, 'rows' => 15, 'ng-init' => 'decodeHtmlSpecialChar("'.h($this->data['TAutoMessage']['action']).'")', 'ng-model' => 'action'])?>
+              <?=$this->Form->textarea('action', ['maxlength'=>300, 'cols' => 48, 'rows' => 15, 'ng-init' => 'decodeHtmlSpecialChar("'.h(!empty($this->data['TAutoMessage']['action']) ? $this->data['TAutoMessage']['action'] : "").'")', 'ng-model' => 'action'])?>
               <?php if (!empty($errors['action'])) echo "<pre class='error-message'>" . h($errors['action'][0]) . "</pre>"; ?>
 
           </li>
