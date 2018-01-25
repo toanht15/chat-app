@@ -15,19 +15,20 @@
           <span class="require"><label>シナリオ名称</label></span>
           <?= $this->Form->input('name', [
             'type' => 'text',
-            'placeholder' => 'シナリオ名称',
+            'placeholder' => 'シナリオ名称を入力',
             'maxlength' => 50
           ]) ?>
         </li>
         <!-- メッセージ間隔 -->
         <li>
           <span class="require"><label>メッセージ間隔</label></span>
-          <?= $this->Form->input('messageIntervalTimeSec', [
+          <?= $this->ngForm->input('messageIntervalTimeSec', [
             'type' => 'text',
-            'placeholder' => 'メッセージ間隔',
-            'maxlength' => 2
+            'class' => 'tRight',
+            'maxlength' => 2,
+            'ng-model' => 'messageIntervalTimeSec'
           ]) ?>
-          秒
+            秒
         </li>
       </ul>
     </section>
@@ -44,7 +45,7 @@
         <li ng-repeat="(setActionId, setItem) in setActionList" id="action_{{setActionId}}" class="set_action_item">
           <h4>{{setActionId + 1}}．{{setItem.label}}</h4>
           <?= $this->element('TChatbotScenario/templates'); ?>
-          <a class="closeBtn redBtn" ng-click="main.removeItem(setActionId)"><?= $this->Html->image('close.png', array('alt' => '削除する', 'width' => 20, 'height' => 20, 'style' => 'margin: 0 auto')) ?></a>
+          <a class="btn-shadow redBtn closeBtn" ng-click="main.removeItem(setActionId)"><?= $this->Html->image('close.png', array('alt' => '削除する', 'width' => 20, 'height' => 20, 'style' => 'margin: 0 auto')) ?></a>
         </li>
         <!-- Tooltip -->
         <div id='hearingVariableNameTooltip' class="explainTooltip">
@@ -77,7 +78,7 @@
         </div>
       </ul>
     </section>
-    <section id="tchatbotscenario_form_preview">
+    <section id="tchatbotscenario_form_preview" ng-class="{middleSize: widgetSettings.widget_size_type == '2', largeSize: widgetSettings.widget_size_type == '3'}">
         <div class="p10x">
           <div id="start_simulator_button">
             <span class="btn-shadow blueBtn" ng-click="main.openSimulatorDialog()">シミュレーターを起動</span>

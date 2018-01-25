@@ -570,6 +570,7 @@ $config['chatbotScenarioActionList'] = [
   C_SCENARIO_ACTION_TEXT => [
     'label' => 'テキスト発言',
     'default' => [
+      'messageIntervalTimeSec' => '3',
       'message' => ''
     ]
   ],
@@ -577,6 +578,7 @@ $config['chatbotScenarioActionList'] = [
   C_SCENARIO_ACTION_HEARING => [
     'label' => 'ヒアリング',
     'default' => [
+      'messageIntervalTimeSec' => '3',
       'hearings' => [[
         'variableName' => '',
         'inputType' => '1',
@@ -595,6 +597,7 @@ $config['chatbotScenarioActionList'] = [
   C_SCENARIO_ACTION_SELECT_OPTION => [
     'label' => '選択肢',
     'default' => [
+      'messageIntervalTimeSec' => '3',
       'selection' => [
         'variableName' => '',
         'options' => ['']
@@ -605,6 +608,7 @@ $config['chatbotScenarioActionList'] = [
   C_SCENARIO_ACTION_SEND_MAIL => [
     'label' => 'メール送信',
     'default' => [
+      'messageIntervalTimeSec' => '3',
       'mailType' => 1
     ]
   ]

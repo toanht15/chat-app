@@ -814,7 +814,6 @@ ul.ulTab {
 
     icon-annotation {
       width: 16em;
-      height: 2.1em;
       display: none;
 
       &:before {
@@ -824,8 +823,8 @@ ul.ulTab {
         border-left: 9px solid transparent;
         border-right: 9px solid transparent;
         position: absolute;
-        bottom: -55px;
-        left: 5px;
+        bottom: -10px;
+        left: 9px;
         z-index: 1;
       }
 
@@ -836,8 +835,8 @@ ul.ulTab {
         border-left: 9px solid transparent;
         border-right: 9px solid transparent;
         position: absolute;
-        bottom: -53px;
-        left: 5px;
+        bottom: -8px;
+        left: 9px;
         z-index: 3;
       }
 
@@ -1470,7 +1469,7 @@ ul.naviBtn {
               border-radius: 15px;
               width: 1.25em;
               height: 1.25em;
-              padding: 0.1em 0.12em 0.1em 0.15em;
+              padding: 0.1em;
             }
           }
 
@@ -6561,7 +6560,7 @@ ul.naviBtn {
       /* チャットボットシナリオ設定(追加・更新): アクション */
       #tchatbotscenario_form_action {
         flex-grow: 2;
-        flex-basis: 50%;
+        flex-basis: 40%;
         border-left: 1px solid #B7B7B7;
         border-right: 1px solid #B7B7B7;
 
@@ -6619,7 +6618,7 @@ ul.naviBtn {
               right: -10px;
               width: 30px;
               height: 30px;
-              padding: 5px;
+              padding: 4px;
               float: left;
               margin-right: 5px;
               border-radius: 15px;
@@ -6627,14 +6626,41 @@ ul.naviBtn {
 
             .set_action_item_body {
               background-color: #ffffff;
-              padding: 12px;
+              padding: 1.5em;
 
-              > ul > li:not(:last-child) {
-                padding-bottom: 1em;
+              > ul {
+
+                > li {
+                  &:not(:last-child) {
+                    padding-bottom: 1em;
+                  }
+
+                  li {
+                    padding-bottom: 0.5em;
+                  }
+                }
               }
 
               > label {
                 margin: 0.5em;
+              }
+
+              span {
+                padding: 5px 0;
+              }
+
+              .btnBlock {
+                width: 5.5em;
+              }
+
+              input[type="text"],
+              textarea {
+                width: calc(100% - 5.5em);
+              }
+
+              input[type="checkbox"],
+              input[type="radio"] {
+                margin-left: 0;
               }
 
               ul {
@@ -6674,9 +6700,13 @@ ul.naviBtn {
                   border: none;
 
                   input[type="text"] {
-                    width: 90%;
+                    width: calc(100% - 3px);
                   }
                 }
+              }
+
+              div > label:last-of-type:not(:last-child) {
+                padding-bottom: 0.5em;
               }
 
               .btnBlock {
@@ -6694,7 +6724,12 @@ ul.naviBtn {
 
                 > span:first-child {
                   flex-basis: 11.5em;
+                  min-width: 11.5em;
                   white-space: nowrap;
+
+                  & + * {
+                    flex-grow: 1;
+                  }
                 }
 
                 > ul {
@@ -6706,30 +6741,37 @@ ul.naviBtn {
                 padding-left: 2em;
 
                 &:not(:first-child) {
-                  padding-top: 0.5em;
+                  padding-top: 1em;
                 }
 
                 li.styleFlexbox {
                   > span:first-child {
                     flex-basis: 9.5em;
+                    min-width: 9.5em;
                   }
                 }
               }
             }
           }
+          input[type="text"].frame,
+          select.frame {
+            border-radius: 4px !important;
+            border: 1px solid #909090 !important;
+            width: calc(100% - 3px);
+          }
           .questionBalloon {
             display: inline-block;
             position: relative;
-            margin-left: 3.5px;
+            margin-left: 11px;
             text-align: center;
-            vertical-align: middle;
 
             .questionBtn {
               border-radius: 20px;
               width: 1.3em;
               height: 1.3em;
-              font-size: 0.9em !important;
-              line-height: 1.2em;
+              font-size: 12px !important;
+              line-height: 12px;
+              padding: 0.1em;
             }
           }
         }
@@ -6738,8 +6780,16 @@ ul.naviBtn {
       /* チャットボットシナリオ設定(追加・更新): プレビュー */
       #tchatbotscenario_form_preview{
         flex-grow: 1;
-        min-width: 15em;
+        min-width: 285px;
         max-width: 285px;
+
+        &.middleSize {
+          max-width: 342.5px;
+        }
+
+        &.largeSize {
+          max-width: 400px;
+        }
 
         .blueBtn {
           background-color: #4bacc6;
