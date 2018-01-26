@@ -962,11 +962,11 @@ class HistoriesController extends AppController {
       }
       $chatStateList = $dbo2->buildStatement(
         [
-          'table' => "(SELECT t_histories_id,t_history_stay_logs_id,m_companies_id,message_type,created,message_read_flg, COUNT(*) AS count, ".$value."(achievement_flg) AS achievementFlg, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff,SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) cv,SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message, SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus,SUM(CASE WHEN message_type = 1 AND message_read_flg = 0 THEN 1 ELSE 0 END) unread, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech FROM t_history_chat_logs AS THistoryChatLog GROUP BY t_histories_id ORDER BY t_histories_id)",
+          'table' => "(SELECT t_histories_id,t_history_stay_logs_id,m_companies_id,message_type,notice_flg,created,message_read_flg, COUNT(*) AS count, ".$value."(achievement_flg) AS achievementFlg, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff,SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) cv,SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN notice_flg = 1 THEN 1 ELSE 0 END) notice,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message, SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus,SUM(CASE WHEN message_type = 1 AND message_read_flg = 0 THEN 1 ELSE 0 END) unread, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech FROM t_history_chat_logs AS THistoryChatLog GROUP BY t_histories_id ORDER BY t_histories_id)",
           'alias' => 'chat',
           'fields' => [
             'chat.*',
-            '( CASE  WHEN chat.cmp = 0 AND (chat.cus > 0 AND chat.unread > 0 AND chat.cus > chat.sry + chat.auto_speech) THEN "未入室" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry > 0 THEN "拒否" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry = 0 AND auto_speech > 0 THEN "自動返信" WHEN chat.cmp = 0 AND chat.cus = 0 AND chat.sry = 0 AND auto_speech = 0 AND auto_message > 0 THEN "自動返信" ELSE "" END ) AS type'
+            '( CASE  WHEN chat.cmp = 0 AND notice > 0 AND chat.cus > 0 THEN "未入室" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry > 0 THEN "拒否" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry = 0 AND auto_speech > 0 THEN "自動返信" WHEN chat.cmp = 0 AND chat.cus = 0 AND chat.sry = 0 AND auto_speech = 0 AND auto_message > 0 THEN "自動返信" ELSE "" END ) AS type'
           ],
           'conditions' => $chatLogCond
         ],
@@ -1012,7 +1012,9 @@ class HistoriesController extends AppController {
         $this->paginate['THistory']['joins'][] = $joinToLandscapeData;
       }
     }
+    $this->log('pagenate開始',LOG_DEBUG);
     $historyList = $this->paginate('THistory');
+    $this->log('pagenate終了',LOG_DEBUG);
 
     // TODO 良いやり方が無いか模索する
     $historyIdList = [];
@@ -1057,11 +1059,17 @@ class HistoriesController extends AppController {
     $this->set('historyList', $historyList);
     $this->set('stayList', $stayList);
     $this->set('mCustomerList', $mCustomerList);
+    $this->log('チャット担当者リスト開始',LOG_DEBUG);
     $this->set('chatUserList', $this->_getChatUser(array_keys($stayList))); // チャット担当者リスト
+    $this->log('チャット担当者リスト終了',LOG_DEBUG);
     $this->set('groupByChatChecked', $type);
+    $this->log('キャンペーン開始',LOG_DEBUG);
     $this->set('campaignList', $this->TCampaign->getList());
+    $this->log('キャンペーン終了',LOG_DEBUG);
+    $this->log('除外情報開始',LOG_DEBUG);
     /* 除外情報取得 */
     $this->set('excludeList', $this->MCompany->getExcludeList($this->userInfo['MCompany']['id']));
+    $this->log('除外情報終了',LOG_DEBUG);
   }
 
   /**
@@ -1516,11 +1524,11 @@ class HistoriesController extends AppController {
       }
       $chatStateList = $dbo2->buildStatement(
         [
-          'table' => "(SELECT t_histories_id,t_history_stay_logs_id,m_companies_id,message_type,created,message_read_flg, COUNT(*) AS count, ".$value."(achievement_flg) AS achievementFlg, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff,SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) cv,SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message, SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus,SUM(CASE WHEN message_type = 1 AND message_read_flg = 0 THEN 1 ELSE 0 END) unread, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech FROM t_history_chat_logs AS THistoryChatLog GROUP BY t_histories_id ORDER BY t_histories_id)",
+          'table' => "(SELECT t_histories_id,t_history_stay_logs_id,m_companies_id,message_type,notice_flg,created,message_read_flg, COUNT(*) AS count, ".$value."(achievement_flg) AS achievementFlg, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff,SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) cv,SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN notice_flg = 1 THEN 1 ELSE 0 END) notice,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message, SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus,SUM(CASE WHEN message_type = 1 AND message_read_flg = 0 THEN 1 ELSE 0 END) unread, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech FROM t_history_chat_logs AS THistoryChatLog GROUP BY t_histories_id ORDER BY t_histories_id)",
           'alias' => 'chat',
           'fields' => [
             'chat.*',
-            '( CASE  WHEN chat.cmp = 0 AND (chat.cus > 0 AND chat.unread > 0 AND chat.cus > chat.sry + chat.auto_speech) THEN "未入室" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry > 0 THEN "拒否" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry = 0 AND auto_speech > 0 THEN "自動返信" WHEN chat.cmp = 0 AND chat.cus = 0 AND chat.sry = 0 AND auto_speech = 0 AND auto_message > 0 THEN "自動返信" ELSE "" END ) AS type'
+            '( CASE  WHEN chat.cmp = 0 AND notice > 0 AND chat.cus > 0 THEN "未入室" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry > 0 THEN "拒否" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry = 0 AND auto_speech > 0 THEN "自動返信" WHEN chat.cmp = 0 AND chat.cus = 0 AND chat.sry = 0 AND auto_speech = 0 AND auto_message > 0 THEN "自動返信" ELSE "" END ) AS type'
           ],
           'conditions' => $chatLogCond
         ],
