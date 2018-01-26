@@ -701,7 +701,8 @@ div#sidebar{
     ul.formArea {
      padding: 0;
      margin-top:20px;
-      li { padding: 10px;
+      li {
+        padding: 10px;
         > span:first-child {
             width: 125px;
             display: block;
@@ -710,9 +711,11 @@ div#sidebar{
         .labelArea.fLeft {
           width: 125px;
         }
+
         span{
           font-weight:bold;
         }
+
         #MAgreementAdminPassword{
           margin-bottom:30px;
         }
@@ -780,6 +783,9 @@ div#sidebar{
         }
         span{
           font-weight:bold;
+        }
+        div.input {
+          margin-top: 4px;
         }
         #MAgreementAdminPassword{
           margin-bottom:30px;

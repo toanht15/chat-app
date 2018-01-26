@@ -130,7 +130,7 @@
                 <span class="greenBtn btn-shadow actBtn" ng-click="addOption(1)">選択肢を追加する</span>
                 <span class="greenBtn btn-shadow actBtn" ng-click="addOption(2)" id = "lastSpeechLabel">電話番号を追加する<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></span>
               </span>
-              <?=$this->Form->textarea('action', ['maxlength'=>300, 'cols' => 48, 'rows' => 15, 'ng-init' => 'decodeHtmlSpecialChar("'.h($this->data['TAutoMessage']['action']).'")', 'ng-model' => 'action'])?>
+              <?=$this->Form->textarea('action', ['maxlength'=>300, 'cols' => 48, 'rows' => 15, 'ng-init' => 'decodeHtmlSpecialChar("'.h(!empty($this->data['TAutoMessage']['action']) ? $this->data['TAutoMessage']['action'] : "").'")', 'ng-model' => 'action'])?>
               <?php if (!empty($errors['action'])) echo "<pre class='error-message'>" . h($errors['action'][0]) . "</pre>"; ?>
 
           </li>
@@ -255,19 +255,20 @@
               </span>
               <?php if (!empty($errors['to_address'])) echo "<pre class='error-message'>" . h($errors['to_address'][0]) . "</pre>"; ?>
             </div>
-            <li class="bt0 sendMailSettings" id="subjectBlock" style="display:none">
-              <span><label class="require">メールタイトル</label></span>
-              <span class="bt0"><?= $this->Form->input('main.subject', [
-                    'type' => 'text',
-                    'error' => false,
-                    'value' => (!empty($this->data['TAutoMessage']['subject'])) ? $this->data['TAutoMessage']['subject'] : "sincloから新着チャットが届きました"
-                ], [
-                    'entity' => 'subject'
-                ]); ?>
-              </span>
-              <?php if (!empty($errors['subject'])) echo "<pre class='error-message'>" . h($errors['subject'][0]) . "</pre>"; ?>
-            </li>
-            <li class="bt0 sendMailSettings" id="fromNameBlock" style="display:none">
+          </li>
+          <li class="bt0 sendMailSettings" id="subjectBlock" style="display:none">
+            <span><label class="require">メールタイトル</label></span>
+            <span class="bt0"><?= $this->Form->input('main.subject', [
+                  'type' => 'text',
+                  'error' => false,
+                  'value' => (!empty($this->data['TAutoMessage']['subject'])) ? $this->data['TAutoMessage']['subject'] : "sincloから新着チャットが届きました"
+              ], [
+                  'entity' => 'subject'
+              ]); ?>
+            </span>
+            <?php if (!empty($errors['subject'])) echo "<pre class='error-message'>" . h($errors['subject'][0]) . "</pre>"; ?>
+          </li>
+          <li class="bt0 sendMailSettings" id="fromNameBlock" style="display:none">
             <span><label class="require">差出人名</label></span>
             <span class="bt0"><?= $this->Form->input('main.from_name', [
                   'type' => 'text',
@@ -278,7 +279,6 @@
               ]); ?>
             </span>
             <?php if (!empty($errors['from_name'])) echo "<pre class='error-message'>" . h($errors['from_name'][0]) . "</pre>"; ?>
-            </li>
           </li>
           <!-- cv -->
 
@@ -305,7 +305,9 @@
       </div>
 
       <div id="tautomessages_action_simulator">
-        <?= $this->element('TAutoMessages/simulator'); ?>
+        <div>
+          <?= $this->element('TAutoMessages/simulator'); ?>
+        </div>
       </div><!-- /tautomessages_simulator -->
     </section>
 
@@ -325,5 +327,4 @@
           <a href="javascript:void(0)" onclick="removeAct(<?= $lastPage?>)" class="redBtn btn-shadow <?=$class?>">削除</a>
       </div>
     </section>
-  <?= $this->Form->end(); ?>
 </div>

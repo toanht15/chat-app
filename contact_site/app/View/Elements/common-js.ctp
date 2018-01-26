@@ -139,12 +139,17 @@
     setTimeout(function(){
       // 共通ツールチップの配置（内容はdata-textで指定する）
       $(".commontooltip").each(function(index){
+        // サイズ調整用
+        var debug = $(this).attr('data-debug');
         $(this).off('mouseenter').off('mouseleave');
         var self = this;
         this.addEventListener('mouseenter', function(e){
+
           var $this = $(self);
           var text = $this.attr('data-text');
           var baloonPosition = $this.attr('data-balloon-position'); // 吹き出しの＜の部分
+          var baloonWidth = $this.attr('data-balloon-width'); // 吹き出しの＜の部分
+          var textCenter = $this.attr('data-text-center'); // 吹き出しの＜の部分
           var contentPositionLeft = $this.attr('data-content-position-left') ? Number($this.attr('data-content-position-left')) : 0;
           var noleft = $this.attr('noleft');
           var operatingHours = $this.attr('operatingHours');
@@ -164,6 +169,15 @@
           if(brcount > 1){
             toppx = toppx+((brcount-1)*15);
           }
+
+          if(baloonWidth) {
+            $tooltip.css('width', baloonWidth + 'px');
+          }
+
+          if(textCenter) {
+            $tooltip.css('text-align', 'center');
+          }
+
           $('body').append($tooltip);// 要素の表示位置
           var offset = $this.offset();
 
@@ -203,9 +217,11 @@
           }
         }, true); //radioボタンのdisableに対応するためuseCaptureを利用
 
-        this.addEventListener('mouseleave',function(e){
-          $('body').find(".tooltips").remove();
-        }, true); //radioボタンのdisableに対応するためuseCaptureを利用
+        if(!debug) {
+          this.addEventListener('mouseleave',function(e){
+            $('body').find(".tooltips").remove();
+          }, true); //radioボタンのdisableに対応するためuseCaptureを利用
+        }
       });
     },1);
   }

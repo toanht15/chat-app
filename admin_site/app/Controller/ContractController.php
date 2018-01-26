@@ -108,7 +108,11 @@ class ContractController extends AppController
       $companySaveData = [];
       $companySaveData['MCompany'] = $saveData['MCompany'];
       $companySaveData['MCompany']['id'] = $companyEditData['MCompany']['id'];
-      $companySaveData['MCompany']['core_settings'] = $this->getCoreSettingsFromContactTypesId($saveData['MCompany']['m_contact_types_id']);
+      // 画面キャプチャ共有とリアルタイムモニタ表示は設定を引き継ぐ
+      $coreSetting = json_decode($companyEditData['MCompany']['core_settings'], TRUE);
+      $saveData['MCompany']['options']['laCoBrowse'] = !empty($coreSetting['laCoBrowse']) ? $coreSetting['laCoBrowse'] : false;
+      $saveData['MCompany']['options']['hideRealtimeMonitor'] = !empty($coreSetting['hideRealtimeMonitor']) ? $coreSetting['hideRealtimeMonitor'] : false;
+      $companySaveData['MCompany']['core_settings'] = $this->getCoreSettingsFromContactTypesId($saveData['MCompany']['m_contact_types_id'], $saveData['MCompany']['options']);
       $this->MCompany->save($companySaveData,false);
 
       if(empty($agreementEditData)) {
@@ -132,6 +136,9 @@ class ContractController extends AppController
       $this->TransactionManager->commit($transactions);
     } else {
       $editData = $this->MCompany->read(null, $id);
+      // オプションを別領域に設定
+      $editData['MCompany']['options']['refCompanyData'] = json_decode($editData['MCompany']['core_settings'],TRUE)['refCompanyData'];
+      // ここまで
       $agreementData = $this->MAgreements->find('first',[
         'conditions' => array(
           'm_companies_id' => $editData['MCompany']['id']
@@ -282,7 +289,7 @@ class ContractController extends AppController
         "company_key" => $companyKey,
         "m_contact_types_id" => $companyInfo['m_contact_types_id'],
         "limit_users" => $companyInfo['limit_users'],
-        "core_settings" => $this->getCoreSettingsFromContactTypesId($companyInfo['m_contact_types_id']),
+        "core_settings" => $this->getCoreSettingsFromContactTypesId($companyInfo['m_contact_types_id'], $companyInfo['options']),
         "trial_flg" => $companyInfo['trial_flg']
       ]);
       $this->MCompany->save();
@@ -485,7 +492,7 @@ class ContractController extends AppController
     return uniqid();
   }
 
-  private function getCoreSettingsFromContactTypesId($m_contact_types_id) {
+  private function getCoreSettingsFromContactTypesId($m_contact_types_id, $options) {
     $plan = "";
     switch($m_contact_types_id) {
       case C_CONTRACT_FULL_PLAN_ID:
@@ -503,7 +510,11 @@ class ContractController extends AppController
       default:
         throw Exception("不明なプランID: ".$m_contact_types_id);
     }
-    return $plan;
+    $planObj = json_decode($plan, TRUE);
+    foreach($options as $key => $enabled) {
+      $planObj[$key] = strcmp($enabled, "1") === 0;
+    }
+    return json_encode($planObj);
   }
 
   private function getWidgetSettingsFromContactTypesId($m_contact_types_id) {

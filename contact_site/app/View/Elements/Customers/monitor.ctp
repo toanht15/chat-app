@@ -3,9 +3,25 @@
     <div class="fLeft"><?= $this->Html->image('monitor_g.png', array('alt' => 'リアルタイムモニタ', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?></div>
     <h1>リアルタイムモニタ
 <?php if ( $widgetCheck ){ ?>
+  <?php if(strcmp($userInfo['permission_level'], C_AUTHORITY_NORMAL) !== 0): ?>
+    <?php if(isset($coreSettings[C_COMPANY_USE_OPERATOR_PRESENCE_VIEW]) && $coreSettings[C_COMPANY_USE_OPERATOR_PRESENCE_VIEW]): ?>
+    <span>（<a href="#" ng-click='showOperatorPresence()' class="commontooltip" data-text-center="true" data-balloon-width="210" data-balloon-position="48" data-text="オペレータステータス一覧を開く">待機中の人数：{{oprCnt}}人／離席中の人数：{{oprWaitCnt-oprCnt}}人</a>）</span>
+    <?php else: ?>
+      <span>（<span class="commontooltip underL" data-balloon-width='278' data-text="オペレータステータス確認機能は<br>スタンダードプランからご利用いただけます。">待機中の人数：{{oprCnt}}人／離席中の人数：{{oprWaitCnt-oprCnt}}人</span>）</span>
+    <?php endif; ?>
+  <?php else: ?>
     <span>（待機中の人数：{{oprCnt}}人／離席中の人数：{{oprWaitCnt-oprCnt}}人）</span>
+  <?php endif; ?>
 <?php } else { ?>
+  <?php if(strcmp($userInfo['permission_level'], C_AUTHORITY_NORMAL) !== 0): ?>
+    <?php if(isset($coreSettings[C_COMPANY_USE_OPERATOR_PRESENCE_VIEW]) && $coreSettings[C_COMPANY_USE_OPERATOR_PRESENCE_VIEW]): ?>
+      <span>（<a href="#" ng-click='showOperatorPresence()' class="commontooltip" data-text-center="true" data-balloon-width="210" data-balloon-position="48" data-text="オペレータステータス一覧を開く">待機中のオペレータ人数：{{oprWaitCnt}}人</a>）</span>
+    <?php else: ?>
+      <span>（<span  class="commontooltip underL" data-balloon-width='278' data-text="オペレータステータス確認機能は<br>スタンダードプランからご利用いただけます。">待機中のオペレータ人数：{{oprWaitCnt}}人</span>）</span>
+    <?php endif; ?>
+  <?php else: ?>
     <span>（待機中のオペレータ人数：{{oprWaitCnt}}人）</span>
+  <?php endif; ?>
 <?php } ?>
     </h1>
 </div>
@@ -54,7 +70,6 @@
         <!-- 機能 -->
     </div>
     <div>
-        <div id="statusMenuWrap">
         <ul id="color-bar-left" class="fLeft">
           <?php
           /*
@@ -76,14 +91,6 @@
           }
           ?>
         </ul>
-        <?php if($widgetCheck && strcmp($userInfo['permission_level'], C_AUTHORITY_NORMAL) !== 0): ?>
-          <div id="presenceMenuWrap">
-            <ul>
-              <li id='showOperatorPresenceBtn' class='blueBtn btn-shadow' ng-click='showOperatorPresence()'>オペレータステータス一覧を開く</li>
-            </ul>
-          </div>
-        </div>
-        <?php endif; ?>
         <?php if(empty($coreSettings[C_COMPANY_USE_HIDE_REALTIME_MONITOR]) || !$coreSettings[C_COMPANY_USE_HIDE_REALTIME_MONITOR] ): ?>
         <p class="tRight <?=$nowCntClass?>" ng-cloak>現在 <b>{{objCnt(monitorList)}}</b>名がサイト訪問中</p>
         <?php endif; ?>
