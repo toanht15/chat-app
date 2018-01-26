@@ -31,8 +31,8 @@
 #tchatbotscenario_form_preview_body a:hover { color: {{widgetSettings.main_color}}; }
 
 </style>
-<section ng-repeat="(setActionId, setItem) in setActionList">
-  <h4 class="actionTitle p10x">{{setActionId + 1}}．{{setItem.label}}</h4>
+<section ng-repeat="(setActionId, setItem) in setActionList" id="action{{setActionId}}_preview">
+  <h4 class="actionTitle"><a href="#action{{setActionId}}_setting">{{setActionId + 1}}．{{setItem.label}}</a></h4>
   <ul class="chatTalk details">
     <!-- メッセージ・選択肢 -->
     <div>

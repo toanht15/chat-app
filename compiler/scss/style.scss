@@ -6559,8 +6559,7 @@ ul.naviBtn {
 
       /* チャットボットシナリオ設定(追加・更新): アクション */
       #tchatbotscenario_form_action {
-        flex-grow: 2;
-        flex-basis: 40%;
+        flex-basis: 60%;
         border-left: 1px solid #B7B7B7;
         border-right: 1px solid #B7B7B7;
 
@@ -6608,8 +6607,21 @@ ul.naviBtn {
               background-color: $main-color;
               color: #ffffff;
               font-size: 15px;
-              padding: 6px;
+              padding: 0;
               margin: 0;
+
+              a {
+                display: block;
+                padding: 6px;
+                width: calc(100% - 30px);
+                text-decoration: none;
+                color: #ffffff;
+
+                &:hover {
+                  text-decoration: none;
+                  color: #ffffff;
+                }
+              }
             }
 
             .closeBtn {
@@ -6779,7 +6791,6 @@ ul.naviBtn {
 
       /* チャットボットシナリオ設定(追加・更新): プレビュー */
       #tchatbotscenario_form_preview{
-        flex-grow: 1;
         min-width: 285px;
         max-width: 285px;
 
@@ -6810,9 +6821,25 @@ ul.naviBtn {
           text-align: right;
         }
 
+        .actionTitle {
+          padding: 0;
+          margin: 0;
+        }
+
         #tchatbotscenario_form_preview_body {
           overflow-y: scroll;
           height: calc(100vh - 296px);
+
+          a {
+            display: block;
+            padding: 10px;
+            text-decoration: none;
+            color: #595959;
+
+            &:hover {
+              color: #595959;
+            }
+          }
 
           .chatTalk {
             li.details {

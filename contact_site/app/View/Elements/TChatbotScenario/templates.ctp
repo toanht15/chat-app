@@ -43,7 +43,7 @@
       </table>
     </li>
     <li class="styleFlexbox">
-      <span><label class="hearingErrorMessageLabel">入力エラー時の<wbr>返信メッセージ<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></label></span>
+      <span><label class="hearingErrorMessageLabel">入力エラー時の<br>返信メッセージ<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></label></span>
       <div>
         <textarea name="errorMessage" ng-model="setItem.errorMessage" cols="48" rows="4" placeholder="入力エラー時の返信メッセージを入力してください"></textarea>
       </div>

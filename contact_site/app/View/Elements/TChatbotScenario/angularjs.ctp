@@ -30,6 +30,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', function($scope, $
 
 
   // アクションの追加・削除を検知する
+  $scope.watchActionList = [];
   $scope.$watchCollection('setActionList', function() {
     $timeout(function() {
       $scope.$apply();
@@ -40,8 +41,12 @@ sincloApp.controller('MainController', ['$scope', '$timeout', function($scope, $
 
   // アクション内の変更を検知する
   $scope.watchSetActionList = function(action, index) {
-    $scope.$watch('setActionList[' + index + ']', function(newObject, oldObject) {
-      console.log('=== call func watchSetActionList::setActionList ===');
+    // watchの破棄
+    if(typeof $scope.watchActionList[index] !== 'undefined') {
+      $scope.watchActionList[index]();
+    }
+
+    $scope.watchActionList[index] = $scope.$watch('setActionList[' + index + ']', function(newObject, oldObject) {
       if(typeof newObject === 'undefined' || newObject == oldObject) return;
 
       // 送信メッセージ
@@ -101,7 +106,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', function($scope, $
     $timeout(function() {
       $scope.$apply();
     }).then(function() {
-      var targetElmList = $('#action_' + actionIndex).find('.itemListGroup tr');
+      var targetElmList = $('#action' + actionIndex + '_setting').find('.itemListGroup tr');
       var targetObjList = $scope.setActionList[actionIndex].hearings;
       self.controllListView(targetElmList, targetObjList)
     });
@@ -111,7 +116,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', function($scope, $
     $timeout(function() {
       $scope.$apply();
     }).then(function() {
-      var targetElmList = $('#action_' + actionIndex).find('.itemListGroup li');
+      var targetElmList = $('#action' + actionIndex + '_setting').find('.itemListGroup li');
       var targetObjList = $scope.setActionList[actionIndex].selection.options;
       self.controllListView(targetElmList, targetObjList);
     });
@@ -124,18 +129,18 @@ sincloApp.controller('MainController', ['$scope', '$timeout', function($scope, $
     $timeout(function() {
       $scope.$apply();
     }).then(function() {
-      var targetElmList = $('#action_' + actionIndex).find('.itemListGroup li');
+      var targetElmList = $('#action' + actionIndex + '_setting').find('.itemListGroup li');
       var targetObjList = $scope.setActionList[actionIndex].mailAddresses;
       self.controllListView(targetElmList, targetObjList, 5)
     });
   };
 
   this.controllMailSetting = function(actionIndex) {
-    var targetElmList = $('#action_' + actionIndex).find('.itemListGroup li');
+    var targetElmList = $('#action' + actionIndex + '_setting').find('.itemListGroup li');
     $timeout(function(){
       $scope.$apply();
     }).then(function() {
-      targetElmList = $('#action_' + actionIndex).find('.itemListGroup li');
+      targetElmList = $('#action' + actionIndex + '_setting').find('.itemListGroup li');
       var targetObjList = $scope.setActionList[actionIndex].mailAddresses;
       self.controllListView(targetElmList, targetObjList, 5);
     });
@@ -175,13 +180,13 @@ sincloApp.controller('MainController', ['$scope', '$timeout', function($scope, $
 
     if(actionType == <?= C_SCENARIO_ACTION_HEARING ?>) {
       targetObjList = $scope.setActionList[actionIndex].hearings;
-      selector = '#action_' + actionIndex + ' .itemListGroup tr';
+      selector = '#action' + actionIndex + '_setting .itemListGroup tr';
     } else if(actionType == <?= C_SCENARIO_ACTION_SELECT_OPTION ?>) {
       targetObjList = $scope.setActionList[actionIndex].selection.options;
-      selector = '#action_' + actionIndex + ' .itemListGroup li';
+      selector = '#action' + actionIndex + '_setting .itemListGroup li';
     } else if(actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?>) {
       targetObjList = $scope.setActionList[actionIndex].mailAddresses;
-      selector = '#action_' + actionIndex + ' .itemListGroup li';
+      selector = '#action' + actionIndex + '_setting .itemListGroup li';
       limitNum = 5;
     }
 
@@ -325,6 +330,35 @@ $(document).ready(function() {
     var parentClass = $(this).parent().parent().attr('class');
     var targetObj = $("#" + parentClass.replace(/Label/, "Tooltip"));
     targetObj.find('icon-annotation').css('display','none');
+  });
+
+  // 設定側のスクロールに応じて、プレビュー側をスクロールさせる
+  $(document).on('mouseenter', '.set_action_item', function() {
+    var id = this.id;
+    var selector = '#' + id.split('_')[0] + '_preview';
+    var box = $('#tchatbotscenario_form_preview_body');
+    var target = $(selector);
+    var targetY = target.position().top - box.position().top;
+
+    box.stop().animate({
+      scrollTop: box.scrollTop() + targetY
+    }, time);
+    return false;
+  });
+
+  // プレビュー側のタイトルクリックに応じて、設定側をスクロールさせる
+  var time = 500;
+  $(document).on('click', '#tchatbotscenario_form_preview_body a[href^=#]', function() {
+    var box = $('#tchatbotscenario_form_action_body');
+    var target = $(this.hash);
+    var targetY = target.position().top - box.position().top;
+
+    box.stop().animate({
+      scrollTop: box.scrollTop() + targetY - 19
+    }, time);
+
+    window.history.pushState(null, null, this.hash);
+    return false;
   });
 });
 
