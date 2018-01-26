@@ -2070,7 +2070,23 @@ ul.naviBtn {
           margin: 0 auto;
           background-color: #FFF;
           th {
+            position: relative;
             padding: 10px 20px;
+            i {
+              &.fa-sort {
+                color: #666666;
+              }
+              &.fa-sort-asc {
+                color: #6A80BE;
+              }
+              &.fa-sort-desc {
+                color: #6A80BE;
+              }
+              height: inherit;
+              font-size: 15px;
+              position: absolute;
+              right: 10px;
+            }
           }
 
           td {
@@ -2113,20 +2129,22 @@ ul.naviBtn {
                 min-width: 90px;
               }
               &.operatorStatus {
-                width: 13em;
+                width: 12em;
+                padding: 5px 20px;
+              }
+              .statusWrap {
+                display: flex;
+                align-items: center;
+              }
+              img.icon {
+                margin-right: 5px;
               }
               span {
                 &.presence-active {
                   color: #9bbb59;
-                  &::before {
-                    background-image: url('/img/avail_green.png');
-                  }
                 }
                 &.presence-inactive {
                   color: #d99694;
-                  &::before {
-                    background-image: url('/img/aux_red.png');
-                  }
                 }
                 &.presence-offline {
                   color: #b5b5b5;
