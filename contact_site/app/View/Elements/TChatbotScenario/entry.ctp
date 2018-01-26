@@ -1,4 +1,5 @@
 <?php echo $this->element('TChatbotScenario/angularjs'); ?>
+<?php echo $this->element('WidgetSimulator/simulatorService'); ?>
 
 <div ng-app="sincloApp" ng-controller="MainController as main" ng-cloak style="height: 100%;">
   <?=$this->Form->create('TChatbotScenario', ['url'=>['controller' =>'TChatbotScenario', 'action'=>'add'], 'novalidate' => true, 'id'=>'TChatbotScenarioEntryForm', 'name'=>'TChatbotScenarioEntryForm'])?>
@@ -78,7 +79,7 @@
         </div>
       </ul>
     </section>
-    <section id="tchatbotscenario_form_preview" ng-class="{middleSize: widgetSettings.widget_size_type == '2', largeSize: widgetSettings.widget_size_type == '3'}">
+    <section id="tchatbotscenario_form_preview" ng-class="{middleSize: simulator.get('widget_size_type') == '2', largeSize: simulator.get('widget_size_type') == '3'}">
         <div class="p10x">
           <div id="start_simulator_button">
             <span class="btn-shadow blueBtn" ng-click="main.openSimulatorDialog()">シミュレーターを起動</span>
@@ -110,9 +111,4 @@
   </section>
 
   <!-- シミュレーター -->
-
-  <!-- テンプレート -->
-  <div id="tchatbotscenario_action_templates" style="display: none;">
-    <?php echo $this->element('TChatbotScenario/templates'); ?>
-  </div>
-<div>
+</div>
