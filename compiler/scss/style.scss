@@ -2090,6 +2090,7 @@ ul.naviBtn {
           }
 
           td {
+            white-space: nowrap;
             text-align: center;
             padding: 10px 20px;
           }
@@ -2102,7 +2103,7 @@ ul.naviBtn {
           left: 10px;
           right: 10px;
           #statusHeader {
-            width: 13em;
+            width: 10em;
           }
         }
 
@@ -2129,14 +2130,15 @@ ul.naviBtn {
                 min-width: 90px;
               }
               &.operatorStatus {
-                width: 12em;
-                padding: 5px 20px;
+                width: 9em;
+                padding: 5px 10px;
               }
               .statusWrap {
                 display: flex;
                 align-items: center;
               }
               img.icon {
+                margin-left: 1em;
                 margin-right: 5px;
               }
               span {
