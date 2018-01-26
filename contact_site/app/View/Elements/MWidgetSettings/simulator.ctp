@@ -81,6 +81,10 @@
       height: 258px;
     }
 
+    #sincloBox.sp-preview.fullSize.simpleHeader #chatTalk {
+      height: 310px;
+    }
+
     #sincloBox.sp-preview.landscape {
       position: absolute;
       width: auto;

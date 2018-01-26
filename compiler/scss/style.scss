@@ -2008,7 +2008,8 @@ ul.naviBtn {
       z-index: $sub-sidebar-z-index - 1;
 
       font-size: 14px;
-      width: $content-width - 10em;
+      min-width: 20em;
+      max-width: 28em;
       min-height: 130px;
 
       background-color: #EFEFEF;
@@ -2046,9 +2047,12 @@ ul.naviBtn {
 
       #presenceViewContents {
         padding: 10px;
+        min-width: 260px;
+        max-width: 34.5em;
         max-height: 390px;
         position: relative;
         box-sizing: initial;
+        margin: 0 auto;
 
         #presenceTableWrap {
           overflow: hidden;
@@ -2061,11 +2065,28 @@ ul.naviBtn {
         }
 
         table {
-          width: 100%;
+          table-layout: fixed;
+          width: auto;
           margin: 0 auto;
           background-color: #FFF;
           th {
+            position: relative;
             padding: 10px 20px;
+            i {
+              &.fa-sort {
+                color: #666666;
+              }
+              &.fa-sort-asc {
+                color: #6A80BE;
+              }
+              &.fa-sort-desc {
+                color: #6A80BE;
+              }
+              height: inherit;
+              font-size: 15px;
+              position: absolute;
+              right: 10px;
+            }
           }
 
           td {
@@ -2080,6 +2101,9 @@ ul.naviBtn {
           z-index: 30;
           left: 10px;
           right: 10px;
+          #statusHeader {
+            width: 13em;
+          }
         }
 
         #presenceViewBodyScroll {
@@ -2099,6 +2123,22 @@ ul.naviBtn {
             width: auto;
             td {
               font-size: 13px;
+              &.displayName {
+                display: inline-block;
+                text-align: left;
+                min-width: 90px;
+              }
+              &.operatorStatus {
+                width: 12em;
+                padding: 5px 20px;
+              }
+              .statusWrap {
+                display: flex;
+                align-items: center;
+              }
+              img.icon {
+                margin-right: 5px;
+              }
               span {
                 &.presence-active {
                   color: #9bbb59;
