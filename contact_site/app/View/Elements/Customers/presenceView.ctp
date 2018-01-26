@@ -39,15 +39,15 @@
             <tr class="tableRow" ng-repeat="operator in operatorList | orderOperatorStatus : this">
               <td class="tableData operatorStatus">
                 <div class="statusWrap" ng-if="operator.status === 1">
-                  <?= $this->Html->image('avail_green.png', ['class' => 'icon', 'width' => 20, 'height' => 20]); ?>
+                  <i class="fa fa-check-circle presence-active icon" aria-hidden="true"></i>
                   <span class="presence-active">待機中</span>
                 </div>
                 <div class="statusWrap" ng-if="operator.status === 0">
-                  <?= $this->Html->image('aux_red.png', ['class' => 'icon', 'width' => 20, 'height' => 20]); ?>
+                  <i class="fa fa-minus-circle presence-inactive icon" aria-hidden="true"></i>
                   <span class="presence-inactive">離席中</span>
                 </div>
                 <div class="statusWrap" ng-if="isUndefined(operator.status)">
-                  <?= $this->Html->image('off_gray.png', ['class' => 'icon', 'width' => 20, 'height' => 20]); ?>
+                  <i class="fa fa-times-circle presence-offline icon" aria-hidden="true"></i>
                   <span class="presence-offline">オフライン</span>
                 </div>
               </td>
