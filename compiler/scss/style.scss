@@ -2008,7 +2008,8 @@ ul.naviBtn {
       z-index: $sub-sidebar-z-index - 1;
 
       font-size: 14px;
-      width: $content-width - 10em;
+      min-width: 20em;
+      max-width: 28em;
       min-height: 130px;
 
       background-color: #EFEFEF;
@@ -2046,9 +2047,12 @@ ul.naviBtn {
 
       #presenceViewContents {
         padding: 10px;
+        min-width: 260px;
+        max-width: 34.5em;
         max-height: 390px;
         position: relative;
         box-sizing: initial;
+        margin: 0 auto;
 
         #presenceTableWrap {
           overflow: hidden;
@@ -2061,7 +2065,8 @@ ul.naviBtn {
         }
 
         table {
-          width: 100%;
+          table-layout: fixed;
+          width: auto;
           margin: 0 auto;
           background-color: #FFF;
           th {
@@ -2080,6 +2085,9 @@ ul.naviBtn {
           z-index: 30;
           left: 10px;
           right: 10px;
+          #statusHeader {
+            width: 13em;
+          }
         }
 
         #presenceViewBodyScroll {
@@ -2099,12 +2107,26 @@ ul.naviBtn {
             width: auto;
             td {
               font-size: 13px;
+              &.displayName {
+                display: inline-block;
+                text-align: left;
+                min-width: 90px;
+              }
+              &.operatorStatus {
+                width: 13em;
+              }
               span {
                 &.presence-active {
                   color: #9bbb59;
+                  &::before {
+                    background-image: url('/img/avail_green.png');
+                  }
                 }
                 &.presence-inactive {
                   color: #d99694;
+                  &::before {
+                    background-image: url('/img/aux_red.png');
+                  }
                 }
                 &.presence-offline {
                   color: #b5b5b5;
