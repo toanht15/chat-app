@@ -36,8 +36,8 @@ class autoMessageHelper extends AppHelper {
 		'targetName' => [
 			'label' => '対象',
 			'dataList' => [
-				1 => "タイトル",
-				2 => "URL"
+        2 => "URL",
+				1 => "タイトル"
 			]
 		],
 		'stayPageCond' => [
