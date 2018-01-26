@@ -844,6 +844,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         setTimeout(function(){
           $("#operator_presence_pop").css("display", "block");
           $('#presenceTableWrap').css('height', $('#presenceViewheader').height() + $('#presenceViewBodyScroll').height() + 1 + "px");
+          setHeaderSizeOfPresenceView();
         }, 10);
       }
     };
@@ -3426,6 +3427,19 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var subContent = document.getElementById("presenceView");
       subContent.style.left = ((window.innerWidth-$("#sidebar-main").outerWidth()) - $("#presenceView").outerWidth())/2 + "px";
       subContent.style.top = window.innerHeight / 2 - 200 + "px";
+    }
+
+    // ポップアップをセンターに表示
+    function setHeaderSizeOfPresenceView(){
+      var displayTd = $('#presenceViewBody').find('td.displayName');
+      var displayMaxTdWidth = 0;
+      displayTd.each(function(index, val){
+        if(displayMaxTdWidth < $(val).outerWidth()) displayMaxTdWidth = $(val).outerWidth();
+      });
+      var statusTdWidth = displayTd.next('td').outerWidth();
+      $('#displayNameHeader').css("width", displayMaxTdWidth+'px');
+      $('td.displayName').css("width", displayMaxTdWidth+'px');
+      $('#statusHeader').css("width", statusTdWidth+'px');
     }
 
   }]);
