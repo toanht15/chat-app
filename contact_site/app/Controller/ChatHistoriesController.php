@@ -617,9 +617,9 @@
               $row['achievement'] = Configure::read('achievementType')[2].','.Configure::read('achievementType')[0];
             }
           }
-          if(!empty($stayList['noticeChatTime'][$history['THistoryChatLog2']['t_histories_id']])) {
+          if(!empty($history['NoticeChatTime']['created'])) {
             // 有人チャット受信日時
-              $row['pageCnt'] = date_format(date_create($stayList['noticeChatTime'][$history['THistoryChatLog2']['t_histories_id']]), "Y/m/d\nH:i:s");
+              $row['pageCnt'] = date_format(date_create($history['NoticeChatTime']['created']), "Y/m/d\nH:i:s");
           }
           else {
             $row['pageCnt'] = "";
