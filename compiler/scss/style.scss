@@ -42,7 +42,7 @@ h1 {
 
 s {
   text-decoration: none;
-  font-size: 0.8em;
+  font-size: 0.9em;
   color: #8f8f8f;
 }
 
@@ -5870,15 +5870,39 @@ ul.naviBtn {
                     flex-grow: 1;
                     max-width: 55.5em;
                     min-width: 17em;
+                    label {
+                      cursor: pointer;
+                      input {
+                        cursor: pointer;
+                      }
+                    }
                     .checkboxLabel {
                       padding: 0.5em 0;
                       display: block;
+                      &.last {
+                        padding: 0;
+                        &:checked {
+                          padding: 0 0 1em;
+                        }
+                      }
                     }
                     div {
                       padding: inherit;
                       border-top: inherit;
-                      div.wrap {
+                      &.containsSetting {
+                        padding-bottom: 0;
+                      }
+                      &.exclusionSetting {
+                        padding-bottom: 0;
+                      }
+                      &.wrap {
                         display: block;
+                        padding-bottom: 0.5em;
+                        .andLabel {
+                          display: flex;
+                          align-items: center;
+                          justify-content: center;
+                        }
                       }
                       &:not(.wrap) {
                         display: flex;
@@ -5888,15 +5912,18 @@ ul.naviBtn {
                     input[type="text"] {
                       flex-grow: 1;
                       min-width: 2em;
-                      margin-left: 1.75em;
+                      margin-left: 0.75em;
                     }
                     p {
                       margin: 0.5em 0 0;
                     }
                     s {
                       display: block;
-                      padding-top: 6px;
-                      margin-left: 2em;
+                      padding-top: 0;
+                      margin-left: 0.75em;
+                      &.bothKeyword {
+                        margin-left: 3em;
+                      }
                     }
                     select {
                       flex-basis: 12em;
@@ -6361,7 +6388,6 @@ ul.naviBtn {
         label {
           cursor: pointer;
           s {
-            font-size: 11px;
             margin-left: 0.8em;
           }
         }
@@ -6467,7 +6493,6 @@ ul.naviBtn {
         label {
           cursor: pointer;
           s {
-            font-size: 11px;
             margin-left: 0.8em;
           }
         }

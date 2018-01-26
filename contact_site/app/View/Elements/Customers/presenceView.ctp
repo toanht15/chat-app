@@ -67,7 +67,7 @@
       $('#statusHeader').addClass('mac');
     }
     if (navigator.userAgent.indexOf('Windows NT') > 0){
-      $('.displayNameSpace').css('padding-left', '1em');
+      $('.displayNameSpace').css('padding-left', '1.5em');
     }
   });
   //-->
