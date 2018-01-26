@@ -88,7 +88,7 @@
     <li class="styleFlexbox">
       <span><label class="hearingSelectVariableNameLabel">変数名<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></label></span>
       <div>
-        <input type="text">
+        <input type="text" ng-model="setItem.selection.variableName">
       </div>
     </li>
     <li class="styleFlexbox">
@@ -119,8 +119,8 @@
     <li class="styleFlexbox">
       <span><label>送信先メールアドレス</label></span>
       <ul class="itemListGroup">
-        <li ng-repeat="(listId, addressItem) in setItem.mailAddresses track by $index">
-          <input type="text" ng-model="addressItem">
+        <li ng-repeat="(listId, addressItem) in setItem.toAddress track by $index">
+          <input type="text" ng-model="setItem.toAddress[listId]">
           <div class="btnBlock">
             <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addActionItemList(setActionId, listId)')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.removeActionItemList(setActionId, listId)')) ?></a>
           </div>
@@ -130,13 +130,13 @@
     <li class="styleFlexbox">
       <span><label>メールタイトル</label></span>
       <div>
-        <input type="text">
+        <input type="text" ng-model="setItem.subject">
       </div>
     </li>
     <li class="styleFlexbox">
       <span><label>差出人名</label></span>
       <div>
-        <input type="text">
+        <input type="text" ng-model="setItem.fromName">
       </div>
     </li>
     <li class="styleFlexbox">
@@ -145,7 +145,7 @@
         <label class="styleBlock pointer"><input type="radio" name="action_{{setActionId}}_mail_type" value="1" ng-model="setItem.mailType" ng-init="setItem.mailType = setItem.default.mailType">メール内容をすべてメールする</label>
         <label class="styleBlock pointer"><input type="radio" name="action_{{setActionId}}_mail_type" value="2" ng-model="setItem.mailType" ng-init="setItem.mailType = setItem.default.mailType">変数の値のみメールする</label>
         <label class="styleBlock pointer"><input type="radio" name="action_{{setActionId}}_mail_type" value="3" ng-model="setItem.mailType" ng-init="setItem.mailType = setItem.default.mailType">メール本文をカスタマイズする</label>
-        <textarea ng-if="setItem.mailType == 3" cols="48" rows="4" placeholder="メール本文を入力してください"></textarea>
+        <textarea ng-if="setItem.mailType == 3" ng-model="setItem.template" cols="48" rows="4" placeholder="メール本文を入力してください"></textarea>
       </div>
     </li>
   </ul>

@@ -82,11 +82,24 @@ class TChatbotScenarioController extends AppController {
     $this->_viewElement();
   }
 
-  public function simulator() {
+  /**
+   * シミュレーション画面
+   * @return void
+   * */
+  public function remoteOpenSimulator() {
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
-    exit;
-    $this->render('/TChatbotScenario/simulator');
+    $this->_viewElement();
+
+    // $this->set('page', $this->request->data['index']);
+
+    if(!empty($this->request->data['json'])) {
+      $this->render('/TChatbotScenario/remoteOpenSimulator');
+    } else {
+      $this->response->statusCode(500); //Internal Server Error
+      return;
+    }
+    $this->render('/TChatbotScenario/remoteOpenSimulator');
   }
 
   /**

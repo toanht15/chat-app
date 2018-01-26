@@ -3,13 +3,14 @@
 
 var sincloApp = angular.module('sincloApp', ['ngSanitize', 'ui.validate']);
 
-sincloApp.controller('MainController', ['$scope', '$timeout', function($scope, $timeout) {
+sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService', function($scope, $timeout, SimulatorService) {
   //thisを変数にいれておく
   var self = this;
 
   this.actionList = <?php echo json_encode($chatbotScenarioActionList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.setActionList = [];
-  $scope.widgetSettings = getWidgetSettings();
+
+  $scope.simulator = SimulatorService;
 
   // メッセージ間隔は同一の設定を各アクションに設定しているため、テキスト発言からデフォルト値を取得する
   $scope.messageIntervalTimeSec = this.actionList[1].default.messageIntervalTimeSec;
@@ -51,11 +52,11 @@ sincloApp.controller('MainController', ['$scope', '$timeout', function($scope, $
 
       // 送信メッセージ
       if(typeof newObject.message !== 'undefined' && newObject.message !== '' && typeof newObject.selection === 'undefined') {
-        document.getElementById('action' + index + '_message').innerHTML = createMessage(newObject.message);
+        document.getElementById('action' + index + '_message').innerHTML = $scope.simulator.createMessage(newObject.message);
       }
       // エラーメッセージ
       if(typeof newObject.errorMessage !== 'undefined' && newObject.errorMessage !== '') {
-        document.getElementById('action' + index + '_error_message').innerHTML = createMessage(newObject.errorMessage);
+        document.getElementById('action' + index + '_error_message').innerHTML = $scope.simulator.createMessage(newObject.errorMessage);
       }
       // 確認メッセージ
       if(typeof newObject.confirmMessage !== 'undefined' && typeof newObject.success !== 'undefined' && typeof newObject.cancel !== 'undefined') {
@@ -67,7 +68,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', function($scope, $
           return string !== '';
         }).join('\n');
         if (message == '') return;
-        document.getElementById('action' + index + '_confirm_message').innerHTML = createMessage(message);
+        document.getElementById('action' + index + '_confirm_message').innerHTML = $scope.simulator.createMessage(message);
       }
       // 選択肢
       if(typeof newObject.message !== 'undefied' && typeof newObject.selection !== 'undefined') {
@@ -81,25 +82,63 @@ sincloApp.controller('MainController', ['$scope', '$timeout', function($scope, $
           return typeof string !== 'undefined' && string !== '';
         }).join('\n');
         if (message == '') return;
-        document.getElementById('action' + index + '_message').innerHTML = createMessage(message || '');
+        document.getElementById('action' + index + '_message').innerHTML = $scope.simulator.createMessage(message || '');
       }
     }, true);
   };
 
-  $scope.watchActionItemList = function(itemList) {
-      console.log('=== call fnc watchActionItemList ===');
-      console.log(itemList);
-  }
-
   // シミュレーターの起動
   this.openSimulatorDialog = function() {
     console.log("=== call func openSimulatorDialog ===");
+    // jsonデータ生成
+    var sendData = {"json": this.createJsonData()};
+    modalOpen.call(window, {}, 'p-show-gallary', 'シミュレーション', 'moment');
   };
 
   this.saveAct = function() {
     console.log('=== call func saveAct ===');
     // TODO: 保存ボタン押下時の処理
     submitAct();
+  };
+
+  // jsonデータ作る（保存時にも使えるように）
+  this.createJsonData = function() {
+    var setActionList = [];
+
+    // setActionList の内容をチェックする
+    // TODO:シミュレーション表示可能なものがない場合、エラーメッセージを出すなど
+    angular.forEach($scope.setActionList, function(originalAction, index) {
+      var action = angular.copy(originalAction);
+      action.messageIntervalTimeSec = $scope.messageIntervalTimeSec;
+      delete action.label;
+      delete action.default;
+
+      switch(parseInt(action.actionType, 10)) {
+        case <?= C_SCENARIO_ACTION_TEXT ?>:
+          action = adjustDataOftext(action);
+          break;
+        case <?= C_SCENARIO_ACTION_HEARING ?>:
+          action = adjustDataOfHearing(action);
+          break;
+        case <?= C_SCENARIO_ACTION_SELECT_OPTION ?>:
+          action = adjustDataOfSelectOption(action);
+          break;
+        case <?= C_SCENARIO_ACTION_SEND_MAIL ?>:
+          action = adjustDataOfSendMail(action);
+          break;
+        default:
+          break;
+      }
+
+      if(action !== null) {
+        setActionList.push(action);
+      };
+    });
+
+    if(setActionList.length < 1) {
+      // TODO: エラー処理？
+    }
+    return setActionList;
   };
 
   this.controllHearingSettingView = function(actionIndex) {
@@ -124,13 +163,13 @@ sincloApp.controller('MainController', ['$scope', '$timeout', function($scope, $
 
   // TODO: 初期化方法によってはこの処理を消して、 controllMailSetting へ統一する
   this.initMailSetting = function(actionIndex) {
-    $scope.setActionList[actionIndex].mailAddresses = [''];
+    $scope.setActionList[actionIndex].toAddress = [''];
 
     $timeout(function() {
       $scope.$apply();
     }).then(function() {
       var targetElmList = $('#action' + actionIndex + '_setting').find('.itemListGroup li');
-      var targetObjList = $scope.setActionList[actionIndex].mailAddresses;
+      var targetObjList = $scope.setActionList[actionIndex].toAddress;
       self.controllListView(targetElmList, targetObjList, 5)
     });
   };
@@ -141,7 +180,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', function($scope, $
       $scope.$apply();
     }).then(function() {
       targetElmList = $('#action' + actionIndex + '_setting').find('.itemListGroup li');
-      var targetObjList = $scope.setActionList[actionIndex].mailAddresses;
+      var targetObjList = $scope.setActionList[actionIndex].toAddress;
       self.controllListView(targetElmList, targetObjList, 5);
     });
   };
@@ -163,7 +202,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', function($scope, $
       this.controllSelectOptionSetting(actionIndex);
 
     } else if(actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?>) {
-      var target = $scope.setActionList[actionIndex].mailAddresses;
+      var target = $scope.setActionList[actionIndex].toAddress;
       if(target.length < 5) {
         target.push(angular.copy(''));
         this.controllMailSetting(actionIndex);
@@ -185,7 +224,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', function($scope, $
       targetObjList = $scope.setActionList[actionIndex].selection.options;
       selector = '#action' + actionIndex + '_setting .itemListGroup li';
     } else if(actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?>) {
-      targetObjList = $scope.setActionList[actionIndex].mailAddresses;
+      targetObjList = $scope.setActionList[actionIndex].toAddress;
       selector = '#action' + actionIndex + '_setting .itemListGroup li';
       limitNum = 5;
     }
@@ -235,81 +274,8 @@ sincloApp.controller('MainController', ['$scope', '$timeout', function($scope, $
     }
     return visible;
   };
-
-  $scope.makeFaintColor = function(){
-    var defColor = "#F1F5C8";
-    //仕様変更、常に高度な設定が当たっている状態とする
-    defColor = $scope.widgetSettings.re_background_color;
-//       if($scope.color_setting_type === '1'){
-//         defColor = $scope.re_background_color;
-//       }
-//       else{
-//         if ( $scope.main_color.indexOf("#") >= 0 ) {
-//           var code = $scope.main_color.substr(1), r,g,b;
-//           if (code.length === 3) {
-//             r = String(code.substr(0,1)) + String(code.substr(0,1));
-//             g = String(code.substr(1,1)) + String(code.substr(1,1));
-//             b = String(code.substr(2)) + String(code.substr(2));
-//           }
-//           else {
-//             r = String(code.substr(0,2));
-//             g = String(code.substr(2,2));
-//             b = String(code.substr(4));
-//           }
-//           var balloonR = String(Math.floor(255 - (255 - parseInt(r,16)) * 0.1));
-//           var balloonG = String(Math.floor(255 - (255 - parseInt(g,16)) * 0.1));
-//           var balloonB = String(Math.floor(255 - (255 - parseInt(b,16)) * 0.1));
-//           defColor = 'rgb(' + balloonR  + ', ' +  balloonG  + ', ' +  balloonB + ')';
-//         }
-//       }
-    return defColor;
-  };
-
-  $scope.getTalkBorderColor = function(chk){
-    var defColor = "#E8E7E0";
-    //仕様変更、常に高度な設定が当たっている状態とする
-    if(chk === 're'){
-      defColor = $scope.widgetSettings.re_border_color;
-    }
-    else{
-      defColor = $scope.widgetSettings.se_border_color;
-    }
-//       if($scope.color_setting_type === '1'){
-//         if(chk === 're'){
-//           defColor = $scope.re_border_color;
-//         }
-//         else{
-//           defColor = $scope.se_border_color;
-//         }
-//       }
-//       else{
-//         defColor = $scope.chat_talk_border_color;
-//       }
-    return defColor;
-  };
-
-  $scope.getSeBackgroundColor = function(){
-    var defColor = "#FFFFFF";
-    //仕様変更、常に高度な設定が当たっている状態とする
-    defColor = $scope.widgetSettings.se_background_color;
-//       if($scope.color_setting_type === '1'){
-//         defColor = $scope.se_background_color;
-//       }
-    return defColor;
-  };
 }]);
 
-function getWidgetSettings() {
-  var json = JSON.parse(document.getElementById('TChatbotScenarioWidgetSettings').value);
-  var widgetSettings = [];
-  for (var item in json) {
-    widgetSettings[item] = json[item];
-  }
-
-  // 担当者表示は企業名で固定する
-  widgetSettings.show_name = <?=C_WIDGET_SHOW_COMP?>;
-  return widgetSettings;
-}
 
 function submitAct() {
   $('TChatbotScenarioEntryForm').submit();
@@ -323,7 +289,7 @@ $(document).ready(function() {
     targetObj.find('icon-annotation').css('display','block');
     targetObj.css({
       top: ($(this).offset().top - targetObj.find('ul').outerHeight() - 70) + 'px',
-      left: $(this).offset().left - 69 + 'px'
+      left: $(this).offset().left - 70 + 'px'
     });
   });
   $(document).off('mouseleave','.questionBtn').on('mouseleave','.questionBtn', function(event){
@@ -362,50 +328,72 @@ $(document).ready(function() {
   });
 });
 
-function createMessage(val) {
-  var strings = val.split('\n');
-  var radioCnt = 1;
-  var linkReg = RegExp(/(http(s)?:\/\/[\w\-\.\/\?\=\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/);
-  var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
-  var htmlTagReg = RegExp(/<\/?("[^"]*"|'[^']*'|[^'">])*>/g)
-  var radioName = "sinclo-radio0";
-  var content = "";
+// テキスト発言のバリデーションチェック
+function adjustDataOftext(action) {
+  if (typeof action.message == 'undefined' || action.message == '') {
+    return null;
+  }
+  return action;
+}
 
-  for (var i = 0; strings.length > i; i++) {
-    var str = escape_html(strings[i]);
-
-    // リンク
-    var link = str.match(linkReg);
-    if ( link !== null ) {
-        var url = link[0];
-        var a = "<a href='" + url + "' target='_blank'>" + url + "</a>";
-        str = str.replace(url, a);
-    }
-    // ラジオボタン
-    var radio = str.indexOf('[]');
-    if ( radio > -1 ) {
-        var value = str.slice(radio+2);
-        var name = value.replace(htmlTagReg, '');
-        str = "<span class='sinclo-radio'><input type='radio' name='" + radioName + "' id='" + radioName + "-" + i + "' class='sinclo-chat-radio' value='" + name + "'>";
-        str += "<label for='" + radioName + "-" + i + "'>" + value + "</label></span>";
-    }
-    // 電話番号（スマホのみリンク化）
-    var tel = str.match(telnoTagReg);
-    if( tel !== null ) {
-      var telno = tel[1];
-      // if(isSmartphone) {
-      //   // リンクとして有効化
-      //   var a = "<a href='tel:" + telno + "'>" + telno + "</a>";
-      //   str = str.replace(tel[0], a);
-      // } else {
-        // ただの文字列にする
-        var span = "<span class='telno'>" + telno + "</span>";
-        str = str.replace(tel[0], span);
-      // }
-    }
-    content += str + "\n";
+// ヒアリングのバリデーションチェック
+function adjustDataOfHearing(action) {
+  if (typeof action.hearings === 'undefined' || typeof action.hearings.length < 1 ||
+    typeof action.errorMessage === 'undefined' || action.errorMessage === '' ||
+    (action.isConfirm && (typeof action.confirmMessage === 'undefined' || action.confirmMessage === '' || typeof action.success === 'undefined' || action.success === '' || typeof action.cancel === 'undefined' || action.cancel === ''))
+  ) {
+    return null;
   }
 
-  return content;
+  var hearings = [];
+  angular.forEach(action.hearings, function(item, index) {
+    if (typeof item.variableName !== 'undefined' && item.variableName !== '' && typeof item.message !== 'undefined' && item.message !== '') {
+      hearings.push(item);
+    }
+  });
+  if(hearings.length < 1) return null;
+  action.hearings = hearings;
+  return action;
+}
+
+// 選択肢のバリデーションチェック
+function adjustDataOfSelectOption(action) {
+  if (typeof action.message === 'undefined' || action.message === '' ||
+    typeof action.selection === 'undefined' || action.selection.options.length < 1 ||
+    typeof action.selection.variableName === 'undefined' || action.selection.variableName === ''
+  ) {
+    return null;
+  }
+
+  var options = [];
+  angular.forEach(action.selection.options, function(item, index) {
+    if (item !== '') {
+      options.push(item);
+    }
+  });
+  if(options.length < 1) return null;
+  action.options = options;
+  return action;
+}
+
+// メール送信のバリデーションチェック
+function adjustDataOfSendMail(action) {
+  if (typeof action.subject === 'undefined' || action.subject === '' ||
+    typeof action.fromName === 'undefined' || action.fromName === '' ||
+    typeof action.toAddress === 'undefined' || action.toAddress < 1 ||
+    (action.mailType == 3 && (typeof action.template === 'undefined' || action.template === ''))
+  ) {
+    return null;
+  }
+
+  var toAddress = [];
+  angular.forEach(action.toAddress, function(item, index) {
+    if (item !== '') {
+      toAddress.push(item);
+    }
+  });
+  if(toAddress.length < 1) return null;
+  action.toAddress = toAddress;
+  return action;
 }
 </script>
