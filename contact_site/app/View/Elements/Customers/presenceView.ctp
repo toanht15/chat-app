@@ -51,7 +51,7 @@
                   <span class="presence-offline">オフライン</span>
                 </div>
               </td>
-              <td class="tableData displayName">{{operator.display_name}}</td>
+              <td class="tableData displayName"><span class="displayNameSpace">{{operator.display_name}}</td>
             </tbody>
           </table>
         </div>
@@ -59,3 +59,16 @@
     </div>
   </div>
 </div>
+<script type="text/javascript">
+  <!--
+  // OS判定
+  $(function() {
+    if (navigator.userAgent.indexOf('Mac') > 0){
+      $('#statusHeader').addClass('mac');
+    }
+    if (navigator.userAgent.indexOf('Windows NT') > 0){
+      $('.displayNameSpace').css('padding-left', '1em');
+    }
+  });
+  //-->
+</script>
