@@ -850,18 +850,6 @@ $(document).ready(function(){
   var numberLines;
   $('.showBold').on('click', function(e){
     var getTopPosition  = $(".dataTables_scrollBody").scrollTop();
-    $('.showBold').each(function(index){
-      if((location.search.split("?")[1]) !== undefined && location.search.split("?")[1].match(/id/)) {
-        if ((location.search.split("?")[1]).substr(3) == $(this)[0]['id']) {
-          $(this).find('td').each(function(index){
-            if(index < 12) {
-              $(this).css("background-color", "#fff");
-              $(this).css("font-weight", "normal");
-            }
-          });
-        }
-      }
-    });
     if(prevBoldTarget != null) {
       /* すべていったん白にしてリセット */
       $(".showBold td").css("background-color", "#fff");
@@ -883,7 +871,10 @@ $(document).ready(function(){
 
   $('.showBold').each(function(index){
     if((location.search.split("?")[1]) !== undefined && location.search.split("?")[1].match(/id/)) {
-      if ((location.search.split("?")[1]).substr(3) == $(this)[0]['id']) {
+      if(location.search.split("?")[1].match(/edit/)) {
+        var deleteNumber = location.search.split("?")[1].indexOf("&") -3;
+      }
+      if ((location.search.split("?")[1]).substr(3,deleteNumber) == $(this)[0]['id']) {
         $(this).find('td').each(function(index){
           if(index < 12) {
             if(index == 0) {
