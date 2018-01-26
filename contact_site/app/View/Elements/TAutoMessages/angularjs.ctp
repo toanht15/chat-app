@@ -556,6 +556,8 @@ sincloApp.controller('MainController', function($scope) {
           break;
       }
       $scope.action = sendMessage.value;
+      // シミュレーター上のメッセージ表示更新
+      $scope.createMessage();
     }
 
     //位置調整
