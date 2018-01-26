@@ -16,13 +16,13 @@
         <table>
           <thead>
           <tr>
-            <th style="width: 60%" id="displayNameHeader" ng-click="changeDisplaySortMode()">
+            <th id="displayNameHeader" ng-click="changeDisplaySortMode()">
               表示名
               <i class="fa fa-sort" aria-hidden="true" ng-if="operatorListSortMode === 'status'"></i>
               <i class="fa fa-sort-asc" aria-hidden="true" ng-if="operatorListSortMode === 'displayName' && operatorListSortOrder === 'asc'"></i>
               <i class="fa fa-sort-desc" aria-hidden="true" ng-if="operatorListSortMode === 'displayName' && operatorListSortOrder === 'desc'"></i>
             </th>
-            <th style="width: 40%" id="statusHeader" ng-click="changeStatusSortMode()">
+            <th id="statusHeader" ng-click="changeStatusSortMode()">
               状態
               <i class="fa fa-sort" aria-hidden="true" ng-if="operatorListSortMode === 'displayName'"></i>
               <i class="fa fa-sort-asc" aria-hidden="true" ng-if="operatorListSortMode === 'status' && operatorListSortOrder === 'asc'"></i>
@@ -37,11 +37,20 @@
           <table>
             <tbody ng-cloak>
             <tr class="tableRow" ng-repeat="operator in operatorList | orderOperatorStatus : this">
-              <td class="tableData" style="width: 60%">{{operator.display_name}}</td>
-              <td class="tableData" style="width: 40%">
-                <span class="presence-active" ng-if="operator.status === 1">　　待機中</span>
-                <span class="presence-inactive" ng-if="operator.status === 0">　　離席中</span>
-                <span class="presence-offline" ng-if="isUndefined(operator.status)">　　オフライン</span>
+              <td class="tableData displayName">{{operator.display_name}}</td>
+              <td class="tableData operatorStatus">
+                <div class="statusWrap" ng-if="operator.status === 1">
+                  <?= $this->Html->image('avail_green.png', ['class' => 'icon', 'width' => 20, 'height' => 20]); ?>
+                  <span class="presence-active">待機中</span>
+                </div>
+                <div class="statusWrap" ng-if="operator.status === 0">
+                  <?= $this->Html->image('aux_red.png', ['class' => 'icon', 'width' => 20, 'height' => 20]); ?>
+                  <span class="presence-inactive">離席中</span>
+                </div>
+                <div class="statusWrap" ng-if="isUndefined(operator.status)">
+                  <?= $this->Html->image('off_gray.png', ['class' => 'icon', 'width' => 20, 'height' => 20]); ?>
+                  <span class="presence-offline">オフライン</span>
+                </div>
               </td>
             </tbody>
           </table>
