@@ -3608,7 +3608,7 @@ ul.naviBtn {
     }
   }
   @media screen and (min-width:1024px) and ( max-width:1279px) {
-    /*　画面サイズが768pxから1024pxまではここを読み込む　*/
+    /*　画面サイズが1024pxからはここを読み込む　*/
     font-size:9px;
     #history_list_side *{
       font-size:9px !important;
@@ -3664,7 +3664,7 @@ ul.naviBtn {
   }
 
   @media screen and (min-width:1280px) and ( max-width:1440px){
-    /*　画面サイズが1368pxからはここを読み込む　*/
+    /*　画面サイズが1280pxからはここを読み込む　*/
     font-size:10px;
     #history_list_side *{
       font-size:10px !important;
@@ -3703,7 +3703,7 @@ ul.naviBtn {
   }
 
   @media screen and (min-width:1441px){
-    /*　画面サイズが1368pxからはここを読み込む　*/
+    /*　画面サイズが1441pxからはここを読み込む　*/
     font-size:12px;
     #history_list_side *{
       font-size:11px !important;
