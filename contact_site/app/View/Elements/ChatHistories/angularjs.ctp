@@ -682,7 +682,6 @@ $(document).ready(function(){
 
   var outputCSVBtn = document.getElementById('outputCSV');
   outputCSVBtn.addEventListener('click', function(){
-    console.log('CSV原因探索1');
     if($(outputCSVBtn).hasClass('disabled')) return false;
     var thead = document.querySelector('#list_body thead');
     var tbody = document.querySelector('#list_body tbody');
@@ -702,7 +701,6 @@ $(document).ready(function(){
         noCsvData[a] = "";
       }
     }
-    console.log('CSV原因探索2');
     for(var i = 0; i < tbody.children.length; i++){
       var tr = tbody.children[i];
       var tdList = tr.children;
@@ -725,7 +723,6 @@ $(document).ready(function(){
     }
     document.getElementById('HistoryOutputData').value = JSON.stringify(data);
     document.getElementById('HistoryIndexForm').action = '<?=$this->Html->url(["controller"=>"ChatHistories", "action" => "outputCSVOfHistory"])?>';
-    console.log('CSV原因探索2');
     document.getElementById('HistoryIndexForm').submit();
   });
 

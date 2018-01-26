@@ -384,7 +384,7 @@ $(function(){
     splitterObj = $("#history_list_side").split({
       "orientation": "vertical",
       "limit": 50,
-      "position": "55%",
+      "position": "60%",
       onDrag: function(ev) {
         tableObj.columns.adjust();
       }
@@ -443,7 +443,7 @@ $(function(){
       var splitterObj = $("#history_list_side").split({
         "orientation": "vertical",
         //"limit": 500,
-        "position": "55%",
+        "position": "60%",
         onDrag: function(ev) {
           tableObj.columns.adjust();
         }
@@ -498,7 +498,7 @@ var onBeforeunloadHandler = function(e) {
 };
 
 // 元に戻す処理
-function reloadAct(historyId,screen){
+function reloadAct(historyId){
   changeFlg = false;
   if(changeFlg == false) {
     window.removeEventListener('beforeunload', onBeforeunloadHandler, false);
@@ -537,8 +537,6 @@ function openChatById(id) {
     dataType: 'html',
     success: function(html){
       var customerData = JSON.parse(html);
-      console.log('customerData');
-      console.log(customerData);
       document.getElementById("visitorsId").innerHTML= customerData.THistory.visitors_id;
       document.getElementById("ipAddress").innerHTML= "("+customerData.THistory.ip_address+")";
       if(customerData.LandscapeData != null) {
