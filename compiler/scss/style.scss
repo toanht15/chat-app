@@ -2803,20 +2803,20 @@ ul.naviBtn {
   }
   @media screen and (min-width:1024px) and ( max-width:1279px) {
     /*　画面サイズが768pxから1024pxまではここを読み込む　*/
-    font-size:10px;
+    font-size:9px;
     #history_list_side *{
-      font-size:10px !important;
+      font-size:9px !important;
       #searchPeriod {
         font-size: 1.1em !important;
       }
       .firstChatTime {
-        font-size:11px !important;
+        font-size:10px !important;
       }
       .largeCharacters {
-        font-size:11px !important;
+        font-size:10px !important;
       }
       .chatTypeName {
-        font-size:11px !important;
+        font-size:10px !important;
         font-weight: normal;
         color:#fff;
       }
@@ -2824,7 +2824,7 @@ ul.naviBtn {
         font-size: 1.1em !important;
       }
       #chatContent * {
-        font-size:11px !important;
+        font-size:10px !important;
         .fa-4x {
           font-size:4em !important;
         }
@@ -2859,7 +2859,46 @@ ul.naviBtn {
 
   @media screen and (min-width:1280px) and ( max-width:1440px){
     /*　画面サイズが1368pxからはここを読み込む　*/
-    font-size:11px;
+    font-size:10px;
+    #history_list_side *{
+      font-size:10px !important;
+      #searchPeriod {
+        font-size: 1.1em !important;
+      }
+      .firstChatTime {
+        font-size:11px !important;
+      }
+      .largeCharacters {
+        font-size:11px !important;
+      }
+      .chatTypeName {
+        font-size:11px !important;
+        font-weight: normal;
+        color:#fff;
+      }
+      #mainDatePeriod {
+        font-size: 1.1em !important;
+      }
+      #chatContent * {
+        font-size:11px !important;
+        .fa-4x {
+          font-size:4em !important;
+        }
+      }
+    }
+
+    #leftContents ul.tabStyle li {
+      width:18.5em;
+    }
+
+    #leftContents ul.tabStyle li.on {
+      width:18.5em;
+    }
+  }
+
+  @media screen and (min-width:1441px){
+    /*　画面サイズが1368pxからはここを読み込む　*/
+    font-size:12px;
     #history_list_side *{
       font-size:11px !important;
       #searchPeriod {
@@ -2872,7 +2911,7 @@ ul.naviBtn {
         font-size:12px !important;
       }
       .chatTypeName {
-        font-size:12px !important;
+        font-size: 12px !important;
         font-weight: normal;
         color:#fff;
       }
@@ -2887,197 +2926,6 @@ ul.naviBtn {
       }
     }
 
-    #leftContents ul.tabStyle li {
-      width:18.5em;
-    }
-
-    #leftContents ul.tabStyle li.on {
-      width:18.5em;
-    }
-  }
-
-  @media screen and (min-width:1441px) and ( max-width:2200px){
-    /*　画面サイズが1368pxからはここを読み込む　*/
-    font-size:12px;
-    #history_list_side *{
-      font-size:12px !important;
-      #searchPeriod {
-        font-size: 1.1em !important;
-      }
-      .firstChatTime {
-        font-size:13px !important;
-      }
-      .largeCharacters {
-        font-size:13px !important;
-      }
-      .chatTypeName {
-        font-size: 13px !important;
-        font-weight: normal;
-        color:#fff;
-      }
-      #mainDatePeriod {
-        font-size: 1.1em !important;
-      }
-      #chatContent * {
-        font-size:13px !important;
-        .fa-4x {
-          font-size:4em !important;
-        }
-      }
-    }
-
-    #leftContents ul.tabStyle li {
-      width:18.5em;
-    }
-
-    #leftContents ul.tabStyle li.on {
-      width:18.5em;
-    }
-  }
-
-  @media screen and (min-width:2200px) and ( max-width:2860px){
-    /*　画面サイズが1368pxからはここを読み込む　*/
-    font-size:15px;
-    #history_list_side *{
-      font-size:15px !important;
-      #searchPeriod {
-        font-size: 1.1em !important;
-      }
-      .firstChatTime {
-        font-size:16px !important;
-      }
-      .largeCharacters {
-        font-size:16px !important;
-      }
-      .chatTypeName {
-        font-size:16px !important;
-        font-weight: normal;
-        color:#fff;
-      }
-      #mainDatePeriod {
-        font-size: 1.1em !important;
-      }
-      #chatContent * {
-        font-size:16px !important;
-        .fa-4x {
-          font-size:4em !important;
-        }
-      }
-    }
-    #leftContents ul.tabStyle li {
-      width:18.5em;
-    }
-
-    #leftContents ul.tabStyle li.on {
-      width:18.5em;
-    }
-  }
-
-  @media screen and (min-width:2861px) and ( max-width:3360px){
-    /*　画面サイズが1368pxからはここを読み込む　*/
-    font-size:19px;
-    #history_list_side *{
-      font-size:19px !important;
-      #searchPeriod {
-        font-size: 1.1em !important;
-      }
-      .firstChatTime {
-        font-size:20px !important;
-      }
-      .largeCharacters {
-        font-size:20px !important;
-      }
-      .chatTypeName {
-        font-size:20px !important;
-        font-weight: normal;
-        color:#fff;
-      }
-      #mainDatePeriod {
-        font-size: 1.1em !important;
-      }
-      #chatContent * {
-        font-size:20px !important;
-        .fa-4x {
-          font-size:4em !important;
-        }
-      }
-    }
-    #leftContents ul.tabStyle li {
-      width:18.5em;
-    }
-
-    #leftContents ul.tabStyle li.on {
-      width:18.5em;
-    }
-  }
-
-  @media screen and (min-width:3361px) and ( max-width:4060px) {
-    /*　画面サイズが1368pxからはここを読み込む　*/
-    font-size:23px;
-    #history_list_side *{
-      font-size:23px !important;
-      #searchPeriod {
-        font-size: 1.1em !important;
-      }
-      .firstChatTime {
-        font-size:24px !important;
-      }
-      .chatTypeName {
-        font-size:24px !important;
-        font-weight: normal;
-        color:#fff;
-      }
-      .largeCharacters {
-        font-size:24px !important;
-      }
-      #mainDatePeriod {
-        font-size: 1.1em !important;
-      }
-      #chatContent * {
-        font-size:24px !important;
-        .fa-4x {
-          font-size:4em !important;
-        }
-      }
-    }
-    #leftContents ul.tabStyle li {
-      width:18.5em;
-    }
-
-    #leftContents ul.tabStyle li.on {
-      width:18.5em;
-    }
-  }
-
-  @media screen and (min-width:4061px) {
-    /*　画面サイズが1368pxからはここを読み込む　*/
-    font-size:35px;
-    #history_list_side *{
-      font-size:35px !important;
-      #searchPeriod {
-        font-size: 1.1em !important;
-      }
-      .firstChatTime {
-        font-size:36px !important;
-      }
-      .chatTypeName {
-        font-size:36px !important;
-        font-weight: normal;
-        color:#fff;
-      }
-      .largeCharacters {
-        font-size:36px !important;
-      }
-      #mainDatePeriod {
-        font-size: 1.1em !important;
-      }
-      #chatContent * {
-        font-size:36px !important;
-        .fa-4x {
-          font-size:4em !important;
-        }
-      }
-    }
     #leftContents ul.tabStyle li {
       width:18.5em;
     }
