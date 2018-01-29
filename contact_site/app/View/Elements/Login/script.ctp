@@ -13,5 +13,10 @@
   window.onload = function(){
     if (typeof MUserFormButton === 'undefined') return false;
     MUserFormButton.addEventListener('click', elmEv.submit.func);
+    $('#MUserPasswordInput').on('keyup', function(e){
+      if(e.keyCode === 13) {
+        elmEv.submit.func();
+      }
+    });
   };
 </script>

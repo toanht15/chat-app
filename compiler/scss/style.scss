@@ -2070,6 +2070,7 @@ ul.naviBtn {
           margin: 0 auto;
           background-color: #FFF;
           th {
+            min-width: 110px;
             position: relative;
             padding: 10px 20px;
             i {
@@ -2105,7 +2106,7 @@ ul.naviBtn {
           #statusHeader {
             width: 12em;
             &.mac {
-              width: 10em;
+              width: 104px;
             }
           }
         }
@@ -2130,19 +2131,19 @@ ul.naviBtn {
               &.displayName {
                 display: inline-block;
                 text-align: left;
-                min-width: 90px;
+                min-width: 110px;
               }
               &.operatorStatus {
-                width: 9em;
-                padding: 5px 10px;
+                width: 110px;
+                padding: 5px 5px;
               }
               .statusWrap {
                 display: flex;
                 align-items: center;
               }
               .icon {
-                margin-left: 0.5em;
-                margin-right: 7px;
+                margin-left: 5px;
+                margin-right: 5px;
                 font-size: 18px;
               }
               .presence-active {
