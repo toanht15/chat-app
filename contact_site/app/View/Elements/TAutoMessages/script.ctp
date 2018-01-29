@@ -423,7 +423,7 @@ var openSelectFile = function() {
       fileReader.onload = function (event) {
         var split = fileObj.name.split(".");
         var targetExtension = split[split.length-1];
-        if(targetExtension === "xlsx") {
+        if(targetExtension === "xlsm") {
           // event.target.result に読み込んだファイルの内容が入っています.
           // ドラッグ＆ドロップでファイルアップロードする場合は result の内容を Ajax でサーバに送信しましょう!
           loadData = event.target.result;

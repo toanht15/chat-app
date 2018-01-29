@@ -144,7 +144,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
     </ul>
   </div>
   <?php endif; ?>
-  <input type="file" id="selectFileInput" name="uploadFile" style="display:none "/>
+  <input type="file" id="selectFileInput" name="uploadFile" accept=".xlsm" style="display:none "/>
 
   <div id='tautomessages_list' class="p20x">
     <table style="table-layout: fixed;">

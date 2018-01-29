@@ -150,11 +150,11 @@ class AutoMessageExcelParserComponent extends ExcelParserComponent
   }
 
   private function isBOLrow($row) {
-    return strcmp($this->t($row['A']), self::CONTENT_BOL) === 0;
+    return strcmp($this->t($row['T']), self::CONTENT_BOL) === 0;
   }
 
   private function isEOLrow($row) {
-    return strcmp($this->t($row['A']), self::CONTENT_EOL) === 0;
+    return strcmp($this->t($row['T']), self::CONTENT_EOL) === 0;
   }
 
   private function t($str) {
