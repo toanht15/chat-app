@@ -594,7 +594,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     }
 
     $scope.isML = function(m) {
-       return ((m.isOwnProperty('lbcCode') && m.lbcCode === '10102363864'));
+       return ((m.hasOwnProperty('lbcCode') && m.lbcCode === '10102363864'));
     }
 
     $scope.ui = function(m){
@@ -2077,10 +2077,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           if ('responderId' in obj) {
             $scope.monitorList[tabId].responderId = obj.responderId;
           }
-          if ('orgName' in obj) {
+          if (($scope.isViewable() || !$scope.isML(obj)) && 'orgName' in obj) {
             $scope.monitorList[tabId].orgName = obj.orgName;
           }
-          if ('lbcCode' in obj) {
+          if (($scope.isViewable() || !$scope.isML(obj) && 'lbcCode' in obj) {
             $scope.monitorList[tabId].lbcCode = obj.lbcCode;
           }
         }
