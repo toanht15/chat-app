@@ -584,6 +584,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       if(contract.refCompanyData && 'orgName' in m && m.orgName !== '' && ($scope.isViewable() || !$scope.isML(m))) {
         showData.push('(' + m.ipAddress + ')'); // IPアドレス
       } else {
+        m.lbcCode = "";
+        m.orgName = "";
         showData.push(m.ipAddress); // IPアドレス
       }
       return showData.join("\n");
@@ -2080,7 +2082,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           if (($scope.isViewable() || !$scope.isML(obj)) && 'orgName' in obj) {
             $scope.monitorList[tabId].orgName = obj.orgName;
           }
-          if (($scope.isViewable() || !$scope.isML(obj) && 'lbcCode' in obj) {
+          if (($scope.isViewable() || !$scope.isML(obj)) && 'lbcCode' in obj) {
             $scope.monitorList[tabId].lbcCode = obj.lbcCode;
           }
         }
