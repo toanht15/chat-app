@@ -1701,6 +1701,12 @@ var socket, // socket.io
           //ヘッダ非表示（シンプル表示）
           common.abridgementTypehide();
           common.widgetHandler.saveShownFlg();
+          // テキストエリアの表示非表示
+          if(!storage.l.get("textareaOpend") || storage.l.get("textareaOpend")  === "open") {
+            sinclo.displayTextarea();
+          } else if(storage.l.get("textareaOpend")  === "close") {
+            sinclo.hideTextarea();
+          }
           var dataOpenflg = sinclo.widget.condifiton.get();
           //最小化時と最大化時の状態を取得
           var abridgementType = common.getAbridgementType();
