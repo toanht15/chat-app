@@ -337,7 +337,11 @@ class HistoriesController extends AppController {
         if ( $row['ip'] !== "" ){
           $row['ip'] .= "\n";
         }
-        if ((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && !empty($history['LandscapeData']['org_name'])) {
+        if ((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA])
+            && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA])
+            && !empty($history['LandscapeData']['org_name'])
+            && ($this->isViewableMLCompanyInfo() || !LandscapeComponent::isMLLbcCode($history['LandscapeData']['lbc_code']))
+        ) {
           $row['ip'] .= $history['LandscapeData']['org_name'];
         } else {
           $row['ip'] .= $history['THistory']['ip_address'];
@@ -449,7 +453,10 @@ class HistoriesController extends AppController {
         if ( $row['ip'] !== "" ){
           $row['ip'] .= "\n";
         }
-        if ((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && !empty($val['LandscapeData']['org_name'])) {
+        if ((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA])
+            && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA])
+          && !empty($val['LandscapeData']['org_name'])
+          && ($this->isViewableMLCompanyInfo() || !LandscapeComponent::isMLLbcCode($val['LandscapeData']['lbc_code']))) {
           $row['ip'] .= $val['LandscapeData']['org_name'];
         } else {
           $row['ip'] .= $val['THistory']['ip_address'];
