@@ -23,7 +23,7 @@ class MSecuritySettingsController extends AppController
 
   public function beforeFilter() {
     parent::beforeFilter();
-    $this->set('title_for_layout', 'ファイル送信設定');
+    $this->set('title_for_layout', 'セキュリティ設定');
   }
 
   /**
