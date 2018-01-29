@@ -95,14 +95,15 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
       <div id="importBtnAreaWrap">
         <div id="importBtnArea">
         <?= $this->Html->link(
-          '発言内容Excelインポート',
+          '発言内容をエクセルで編集する',
           'javascript:void(0)',
           array('escape' => false,
-            'class'=>'btn-shadow'.($coreSettings[C_COMPANY_USE_IMPORT_EXCEL_AUTO_MESSAGE] ? " skyBlueBtn" : " grayBtn disabled commontooltip"),
+            'class'=>'btn-shadow'.($coreSettings[C_COMPANY_USE_IMPORT_EXCEL_AUTO_MESSAGE] ? " skyBlueBtn  commontooltip" : " grayBtn disabled"),
             'id' => 'importExcelBtn',
             'disabled' => !$coreSettings[C_COMPANY_USE_IMPORT_EXCEL_AUTO_MESSAGE],
-            'data-text' => $coreSettings[C_COMPANY_USE_IMPORT_EXCEL_AUTO_MESSAGE] ? "" : "こちらの機能はスタンダードプラン<br>からご利用いただけます。",
-            'data-balloon-position' => '75'
+            'data-text' => $coreSettings[C_COMPANY_USE_IMPORT_EXCEL_AUTO_MESSAGE] ? "発言内容の設定をエクセルファイルにて編集しインポートすることが可能です。<br>インポートしたデータは現在の設定に追加されます。<br>（上書きや洗い替えではないため、現在登録されている設定は残ります。）" : "こちらの機能はスタンダードプラン<br>からご利用いただけます。",
+            'data-balloon-position' => '75',
+            'data-balloon-width' => '460'
           ));
         ?>
         </div>
@@ -132,13 +133,13 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
   <div id="autoMessageLayerMenu">
     <ul>
       <li class="t-link">
-        <a href="javascript:void(0)" onclick="window.open('<?= $this->Html->url(['controller' => 'TAutoMessages', 'action' => 'downloadTemplate']) ?>')">
-          テンプレートファイルをダウンロードする
+        <a href="javascript:void(0)" onclick="openSelectFile()">
+          編集したファイルをインポートする
         </a>
       </li>
       <li class="t-link">
-        <a href="javascript:void(0)" onclick="openSelectFile()">
-          テンプレートファイルをインポートする
+        <a href="javascript:void(0)" onclick="window.open('<?= $this->Html->url(['controller' => 'TAutoMessages', 'action' => 'downloadTemplate']) ?>')">
+          テンプレートファイルをダウンロードする
         </a>
       </li>
     </ul>

@@ -62,7 +62,7 @@ class AutoMessageExcelParserComponent extends ExcelParserComponent
       if($isNextContent) {
         // データ取得処理
         if($this->isEOLrow($row)) break; // EOL行であればbreak
-        if(empty($row[self::ROW_NAME])) continue;
+        if(empty($row[self::ROW_NAME]) || $this->isSampleDataRow($index)) continue; // 名称が空であればその行は読み込まない
         // バリデーションは呼び出し元で実行すること
         $errors = $this->rowValidate($row);
         if(!empty($errors)) {
@@ -155,6 +155,10 @@ class AutoMessageExcelParserComponent extends ExcelParserComponent
 
   private function isEOLrow($row) {
     return strcmp($this->t($row['T']), self::CONTENT_EOL) === 0;
+  }
+
+  private function isSampleDataRow($index) {
+    return strcmp($index, 9) === 0 || strcmp($index, 10) === 0;
   }
 
   private function t($str) {
