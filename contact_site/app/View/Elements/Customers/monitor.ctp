@@ -81,11 +81,11 @@
             $nowCntClass = "m20t";
             echo '<li id="opStatus">現在のステータス</li>';
             if ( $opStatus ) {
-              echo "<li id='operatorStatus' class='opWait'><span>待機中</span></li>";
+              echo "<li id='operatorStatus' class='opWait'><i class=\"fa fa-2x fa-check-circle\" aria-hidden=\"true\"></i><span>待機中</span></li>";
               echo "<li id='changeOpStatus' ng-click='chgOpStatus()' data-status='" . $opStatus. "' class='redBtn btn-shadow'>離席中にする</li>";
             }
             else {
-              echo "<li id='operatorStatus' class='opStop'><span>離席中</span></li>";
+              echo "<li id='operatorStatus' class='opStop'><i class=\"fa fa-2x fa-minus-circle\" aria-hidden=\"true\"></i><span>離席中</span></li>";
               echo "<li id='changeOpStatus' ng-click='chgOpStatus()' data-status='" . $opStatus. "' class='blueBtn btn-shadow'>待機中にする</li>";
             }
           }

@@ -42,7 +42,7 @@ h1 {
 
 s {
   text-decoration: none;
-  font-size: 0.8em;
+  font-size: 0.9em;
   color: #8f8f8f;
 }
 
@@ -1224,10 +1224,11 @@ ul.naviBtn {
 
         &#operatorStatus {
             font-size: 15px;
+            display: flex;
             span {
               width: 4em;
-              display: block;
-              margin-left: 1.8em;
+              display: inline-block;
+              margin-left: 0.2em;
               text-align: left;
               padding: 0.3em 0;
               font-weight: bold;
@@ -1241,23 +1242,22 @@ ul.naviBtn {
               color: $stop-color;
             }
 
-            &.opWait:before {
-              background-image: url('/img/avail_green.png');
+            &.opWait i {
+              position: initial;
+              font-size: 30px;
+              &:before {
+                float: left;
+              }
+              color: $wait-color;
             }
-            &.opStop:before {
-              background-image: url('/img/aux_red.png');
-            }
-            &:before {
-              content: " ";
-              display: block;
-              width: 1.8em;
-              height: 1.8em;
-              float: left;
-              background-size: 1.8em;
-              background-repeat: no-repeat;
-              background-position: 1px 0px;
-              margin: 2px 0px 0 1px;
-              font-size: 22px !important;
+
+            &.opStop i {
+              position: initial;
+              font-size: 30px;
+              &:before {
+                float: left;
+              }
+              color: $stop-color;
             }
         }
 
@@ -2090,6 +2090,7 @@ ul.naviBtn {
           }
 
           td {
+            white-space: nowrap;
             text-align: center;
             padding: 10px 20px;
           }
@@ -2102,7 +2103,10 @@ ul.naviBtn {
           left: 10px;
           right: 10px;
           #statusHeader {
-            width: 13em;
+            width: 12em;
+            &.mac {
+              width: 10em;
+            }
           }
         }
 
@@ -2129,26 +2133,26 @@ ul.naviBtn {
                 min-width: 90px;
               }
               &.operatorStatus {
-                width: 12em;
-                padding: 5px 20px;
+                width: 9em;
+                padding: 5px 10px;
               }
               .statusWrap {
                 display: flex;
                 align-items: center;
               }
-              img.icon {
-                margin-right: 5px;
+              .icon {
+                margin-left: 0.5em;
+                margin-right: 7px;
+                font-size: 18px;
               }
-              span {
-                &.presence-active {
-                  color: #9bbb59;
-                }
-                &.presence-inactive {
-                  color: #d99694;
-                }
-                &.presence-offline {
-                  color: #b5b5b5;
-                }
+              .presence-active {
+                color: #9bbb59;
+              }
+              .presence-inactive {
+                color: #d99694;
+              }
+              .presence-offline {
+                color: #b5b5b5;
               }
             }
           }
@@ -5866,15 +5870,39 @@ ul.naviBtn {
                     flex-grow: 1;
                     max-width: 55.5em;
                     min-width: 17em;
+                    label {
+                      cursor: pointer;
+                      input {
+                        cursor: pointer;
+                      }
+                    }
                     .checkboxLabel {
                       padding: 0.5em 0;
                       display: block;
+                      &.last {
+                        padding: 0;
+                        &:checked {
+                          padding: 0 0 1em;
+                        }
+                      }
                     }
                     div {
                       padding: inherit;
                       border-top: inherit;
-                      div.wrap {
+                      &.containsSetting {
+                        padding-bottom: 0;
+                      }
+                      &.exclusionSetting {
+                        padding-bottom: 0;
+                      }
+                      &.wrap {
                         display: block;
+                        padding-bottom: 0.5em;
+                        .andLabel {
+                          display: flex;
+                          align-items: center;
+                          justify-content: center;
+                        }
                       }
                       &:not(.wrap) {
                         display: flex;
@@ -5884,15 +5912,18 @@ ul.naviBtn {
                     input[type="text"] {
                       flex-grow: 1;
                       min-width: 2em;
-                      margin-left: 1.75em;
+                      margin-left: 0.75em;
                     }
                     p {
                       margin: 0.5em 0 0;
                     }
                     s {
                       display: block;
-                      padding-top: 6px;
-                      margin-left: 2em;
+                      padding-top: 0;
+                      margin-left: 0.75em;
+                      &.bothKeyword {
+                        margin-left: 3em;
+                      }
                     }
                     select {
                       flex-basis: 12em;
@@ -6357,7 +6388,6 @@ ul.naviBtn {
         label {
           cursor: pointer;
           s {
-            font-size: 11px;
             margin-left: 0.8em;
           }
         }
@@ -6463,7 +6493,6 @@ ul.naviBtn {
         label {
           cursor: pointer;
           s {
-            font-size: 11px;
             margin-left: 0.8em;
           }
         }

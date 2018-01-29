@@ -447,7 +447,7 @@ $config['outMessageTriggerList'] = [
         'createLimit' => [C_COINCIDENT => 1, C_SOME_EITHER => 1],
         'key' => 'stay_page',
         'default' => [
-            "targetName" => 1,
+            "targetName" => 2,
             "keyword_contains" => "",
             "keyword_contains_type" => "1",
             "keyword_exclusions" => "",
@@ -499,7 +499,7 @@ $config['outMessageTriggerList'] = [
       'createLimit' => [C_COINCIDENT => 1, C_SOME_EITHER => 1],
       'key' => 'stay_page_of_first',
       'default' => [
-          "targetName" => 1,
+          "targetName" => 2,
           "keyword_contains" => "",
           "keyword_contains_type" => "1",
           "keyword_exclusions" => "",
@@ -513,7 +513,7 @@ $config['outMessageTriggerList'] = [
       'createLimit' => [C_COINCIDENT => 1, C_SOME_EITHER => 1],
       'key' => 'stay_page_of_previous',
       'default' => [
-          "targetName" => 1,
+          "targetName" => 2,
           "keyword_contains" => "",
           "keyword_contains_type" => "1",
           "keyword_exclusions" => "",

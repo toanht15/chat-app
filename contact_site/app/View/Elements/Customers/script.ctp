@@ -66,10 +66,12 @@ if ( window.hasOwnProperty('io') ) {
       if (status == "<?=C_OPERATOR_ACTIVE?>") {
         opState.data('status', <?=C_OPERATOR_ACTIVE?>).prop("class", "redBtn btn-shadow").text('離席中にする');
         $('#operatorStatus').prop("class", "opWait").children('span').text('待機中');
+        $('#operatorStatus').find("i").removeClass("fa-minus-circle").addClass('fa-check-circle');
       }
       else {
         opState.data('status', <?=C_OPERATOR_PASSIVE?>).prop("class", "blueBtn btn-shadow").text('待機中にする');
         $('#operatorStatus').prop("class", "opStop").children('span').text('離席中');
+        $('#operatorStatus').find("i").removeClass("fa-check-circle").addClass('fa-minus-circle');
       }
     };
 
