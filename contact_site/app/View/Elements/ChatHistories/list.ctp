@@ -248,11 +248,11 @@
             <icon class="questionBtn">？</icon>
           </div></th>
           <th style = "min-width:33px;" id = "achievement">成果</th>
-          <th style = "min-width:70px;" id = "manualReceivingLabel">有人チャット<br>受信日時<div class="questionBalloon questionBalloonPosition13">
+          <th style = "min-width:79px;" id = "manualReceivingLabel">有人チャット<br>受信日時<div class="questionBalloon questionBalloonPosition13">
             <icon class="questionBtn">？</icon>
             </div></th>
         <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
-          <th style = "min-width:70px;" id="lastSpeechLabel">最終発言後<br>離脱時間<div class="questionBalloon questionBalloonPosition13">
+          <th style = "min-width:71px;" id="lastSpeechLabel">最終発言後<br>離脱時間<div class="questionBalloon questionBalloonPosition13">
               <icon class="questionBtn">？</icon>
             </div></th>
            <th style = "width:6%;display:none;" id = "responsible">担当者</th>
