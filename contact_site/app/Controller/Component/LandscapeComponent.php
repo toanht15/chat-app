@@ -29,6 +29,8 @@ class LandscapeComponent extends Component
   const STATUS_OK = '200';
   const STATUS_ERR = '401';
 
+  const ML_LBC_CODE = '10102363864';
+
   private $format;
   private $charset;
   private $ip;
@@ -92,6 +94,10 @@ class LandscapeComponent extends Component
     $this->setParams($ip, $lbcCode);
     $this->executeFindData();
     return $this->convertDataToArray();
+  }
+
+  public static function isMLLbcCode($lbcCode) {
+    return strcmp($lbcCode, self::ML_LBC_CODE) === 0;
   }
 
   private function setParams($ip, $lbcCode) {

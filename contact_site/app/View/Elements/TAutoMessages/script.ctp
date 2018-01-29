@@ -423,11 +423,11 @@ var openSelectFile = function() {
       fileReader.onload = function (event) {
         var split = fileObj.name.split(".");
         var targetExtension = split[split.length-1];
-        if(targetExtension === "xlsx") {
+        if(targetExtension === "xlsm") {
           // event.target.result に読み込んだファイルの内容が入っています.
           // ドラッグ＆ドロップでファイルアップロードする場合は result の内容を Ajax でサーバに送信しましょう!
           loadData = event.target.result;
-          _showConfirmDialog("<div class='confirm'>指定されたファイル【" + fileObj.name + "】をアップロードします。<br>よろしいですか？</div>");
+          _showConfirmDialog("<div class='confirm'>指定されたファイル【" + fileObj.name + "】をインポートします。<br>よろしいですか？</div>");
         } else {
           _showConfirmDialog("<div class='confirm'>指定されたファイル【" + fileObj.name + "】は対応していません。</div>");
           $('#popupCloseBtn').css('display', 'block');
@@ -463,7 +463,7 @@ var uploadFile = function(fileObj, loadFile) {
   fd.append("file", blob, fileObj.name);
 
   $('#popup-title').html('インポート処理中');
-  $('#popup-main').html('<div class="confirm">アップロード中（0％）</div>');
+  $('#popup-main').html('<div class="confirm">インポート中（0％）</div>');
   $('#popup-button').css('display', 'none');
   popupEvent.resize();
 
@@ -480,7 +480,7 @@ var uploadFile = function(fileObj, loadFile) {
       if(XHR.upload){
         XHR.upload.addEventListener('progress',function(e){
           var uploadProgress = parseInt(e.loaded/e.total*10000)/100;
-          $('#popup-main').html('<div class="confirm">アップロード中（' + uploadProgress + '％）</div>');
+          $('#popup-main').html('<div class="confirm">インポート中（' + uploadProgress + '％）</div>');
           if(uploadProgress === 100) {
             $('#popup-main').html('<div class="confirm">インポート処理中です。しばらくお待ち下さい。</div>');
           }
@@ -504,7 +504,7 @@ var uploadFile = function(fileObj, loadFile) {
       });
       popupEvent.resize();
     } else {
-      var html = '<p id="importErrorMessage">インポート時にエラーが発生ました。<br>以下のエラー内容を確認してください。</p>';
+      var html = '<p id="importErrorMessage">インポート中にエラーが発生したのでインポートをキャンセルします。<br>以下のエラー内容を確認してください。</p>';
       html += '<div id="errorListScroll">';
       html += '  <div id="errorList">';
       if(typeof(data.errorMessages) === 'object') {

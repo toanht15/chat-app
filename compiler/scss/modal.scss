@@ -814,6 +814,10 @@
             line-height: 3em;
             text-align: center;
           }
+          #importErrorMessage {
+            margin-top: 0;
+            line-height: 3em;
+          }
           #errorListScroll {
             border-radius: 5px !important;
             border: 1px solid #909090 !important;

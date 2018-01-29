@@ -581,13 +581,21 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     $scope.ip = function(m){
       var showData = [];
-      if(contract.refCompanyData && 'orgName' in m && m.orgName !== '') {
+      if(contract.refCompanyData && 'orgName' in m && m.orgName !== '' && ($scope.isViewable() || !$scope.isML(m))) {
         showData.push('(' + m.ipAddress + ')'); // IPアドレス
       } else {
         showData.push(m.ipAddress); // IPアドレス
       }
       return showData.join("\n");
     };
+
+    $scope.isViewable = function() {
+      return <?= var_export($viewableMLCompanyInfo, TRUE) ?>;
+    }
+
+    $scope.isML = function(m) {
+       return ((m.isOwnProperty('lbcCode') && m.lbcCode === '10102363864'));
+    }
 
     $scope.ui = function(m){
       var showData = [];

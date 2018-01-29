@@ -62,7 +62,7 @@ class AutoMessageExcelParserComponent extends ExcelParserComponent
       if($isNextContent) {
         // データ取得処理
         if($this->isEOLrow($row)) break; // EOL行であればbreak
-        if(empty($row[self::ROW_NAME])) continue;
+        if(empty($row[self::ROW_NAME]) || $this->isSampleDataRow($index)) continue; // 名称が空であればその行は読み込まない
         // バリデーションは呼び出し元で実行すること
         $errors = $this->rowValidate($row);
         if(!empty($errors)) {
@@ -150,11 +150,15 @@ class AutoMessageExcelParserComponent extends ExcelParserComponent
   }
 
   private function isBOLrow($row) {
-    return strcmp($this->t($row['A']), self::CONTENT_BOL) === 0;
+    return strcmp($this->t($row['T']), self::CONTENT_BOL) === 0;
   }
 
   private function isEOLrow($row) {
-    return strcmp($this->t($row['A']), self::CONTENT_EOL) === 0;
+    return strcmp($this->t($row['T']), self::CONTENT_EOL) === 0;
+  }
+
+  private function isSampleDataRow($index) {
+    return strcmp($index, 9) === 0 || strcmp($index, 10) === 0;
   }
 
   private function t($str) {
@@ -218,7 +222,7 @@ class AutoMessageExcelParserComponent extends ExcelParserComponent
       $this->addError($errors, self::ROW_TRIGGER_CONDITION,'１回のみ有効／何度でも有効 のいずれかの指定のみ可能です');
     }
     if(empty($data[self::ROW_MESSAGE])) {
-      $this->addError($errors, self::ROW_MESSAGE,'メッセージの指定は必須です。');
+      $this->addError($errors, self::ROW_MESSAGE,'メッセージの指定は必須です');
     }
     if(empty($this->triggerFreeInputMap[$data[self::ROW_FREE_INPUT]])) {
       $this->addError($errors, self::ROW_KEYWORD_CONDITION,'ON（自由入力可）／OFF（自由入力不可） のいずれかの指定のみ可能です');
@@ -248,16 +252,16 @@ class AutoMessageExcelParserComponent extends ExcelParserComponent
       $this->addError($errors, self::ROW_MAIL_ADDRESS_5,'メールアドレスのみ指定可能です');
     }
     if($this->isSendMailFlgActive($data) && empty($data[self::ROW_MAIL_TITLE])) {
-      $this->addError($errors, self::ROW_MAIL_TITLE,'メールタイトルの指定は必須です。');
+      $this->addError($errors, self::ROW_MAIL_TITLE,'メールタイトルの指定は必須です');
     }
     if($this->isSendMailFlgActive($data) && !Validation::maxLength($data[self::ROW_MAIL_TITLE], 100)) {
-      $this->addError($errors, self::ROW_MAIL_TITLE,'メールタイトルは１００文字以内で設定してください。');
+      $this->addError($errors, self::ROW_MAIL_TITLE,'メールタイトルは１００文字以内で設定してください');
     }
     if($this->isSendMailFlgActive($data) && empty($data[self::ROW_MAIL_FROM_NAME])) {
-      $this->addError($errors, self::ROW_MAIL_FROM_NAME,'差出人名の指定は必須です。');
+      $this->addError($errors, self::ROW_MAIL_FROM_NAME,'差出人名の指定は必須です');
     }
     if($this->isSendMailFlgActive($data) && !Validation::maxLength($data[self::ROW_MAIL_FROM_NAME], 100)) {
-      $this->addError($errors, self::ROW_MAIL_FROM_NAME,'差出人名は１００文字以内で設定してください。');
+      $this->addError($errors, self::ROW_MAIL_FROM_NAME,'差出人名は１００文字以内で設定してください');
     }
     return $errors;
   }

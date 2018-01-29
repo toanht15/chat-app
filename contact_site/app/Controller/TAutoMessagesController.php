@@ -13,7 +13,7 @@
 App::uses('AutoMessageException','Lib/Error');
 
 class TAutoMessagesController extends AppController {
-  const TEMPLATE_FILE_NAME = "template.xlsx";
+  const TEMPLATE_FILE_NAME = "template.xlsm";
 
   public $uses = ['TransactionManager', 'TAutoMessage','MOperatingHour', 'MMailTransmissionSetting', 'MMailTemplate', 'MWidgetSetting'];
   public $components = ['AutoMessageExcelParser'];

@@ -5,6 +5,7 @@
    */
   class ChatHistoriesController extends AppController {
     public $helpers = ['Time'];
+    public $components = ['Landscape'];
     public $uses = ['MUser', 'MCompany', 'MCustomer', 'TCampaign', 'THistory', 'THistoryChatLog', 'THistoryStayLog', 'THistoryShareDisplay', 'MLandscapeData'];
     public $paginate = [
       'THistory' => [
@@ -582,7 +583,11 @@
           if ( $row['ip'] !== "" ){
             $row['ip'] .= "\n";
           }
-          if ((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && !empty($history['LandscapeData']['org_name'])) {
+          if ((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA])
+              && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA])
+            && !empty($history['LandscapeData']['org_name'])
+            && ($this->isViewableMLCompanyInfo() || !LandscapeComponent::isMLLbcCode($history['LandscapeData']['lbc_code']))
+          ) {
             $row['ip'] .= $history['LandscapeData']['org_name'];
           } else {
              $row['ip'] .= $history['THistory']['ip_address'];
@@ -710,7 +715,11 @@
           if ( $row['ip'] !== "" ){
             $row['ip'] .= "\n";
           }
-          if ((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && !empty($val['LandscapeData']['org_name'])) {
+          if ((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA])
+              && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA])
+              && !empty($val['LandscapeData']['org_name'])
+              && ($this->isViewableMLCompanyInfo() || !LandscapeComponent::isMLLbcCode($history['LandscapeData']['lbc_code']))
+          ) {
             $row['ip'] .= $val['LandscapeData']['org_name'];
             $row['ip'] .= "\n";
             $row['ip'] .= '('.$val['THistory']['ip_address'].')';
