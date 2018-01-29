@@ -3446,8 +3446,12 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       displayTd.each(function(index, val){
         if(displayMaxTdWidth < $(val).outerWidth()) displayMaxTdWidth = $(val).outerWidth();
       });
+      var displayNameHeaderWidth = displayMaxTdWidth;
+      if(!$('#displayNameHeader').hasClass('mac')) {
+        displayNameHeaderWidth += 18;
+      }
       var statusTdWidth = displayTd.next('td').outerWidth();
-      $('#displayNameHeader').css("width", displayMaxTdWidth+'px');
+      $('#displayNameHeader').css("width", displayNameHeaderWidth+'px');
       $('td.displayName').css("width", displayMaxTdWidth+'px');
       $('#statusHeader').css("width", statusTdWidth+'px');
     }
