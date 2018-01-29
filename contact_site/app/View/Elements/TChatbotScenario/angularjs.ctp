@@ -3,14 +3,18 @@
 
 var sincloApp = angular.module('sincloApp', ['ngSanitize', 'ui.validate']);
 
-sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService', function($scope, $timeout, SimulatorService) {
+sincloApp.factory('SharedSetActionListService', function() {
+  return [];
+})
+.controller('MainController', ['$scope', '$timeout', 'SharedSetActionListService', 'SimulatorService', function($scope, $timeout, SharedSetActionListService, SimulatorService) {
   //thisを変数にいれておく
   var self = this;
 
   this.actionList = <?php echo json_encode($chatbotScenarioActionList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
-  $scope.setActionList = [];
+  $scope.setActionList = SharedSetActionListService;
 
-  $scope.simulator = SimulatorService;
+  $scope.widget = SimulatorService;
+  $scope.widget.settings = getWidgetSettings();
 
   // メッセージ間隔は同一の設定を各アクションに設定しているため、テキスト発言からデフォルト値を取得する
   $scope.messageIntervalTimeSec = this.actionList[1].default.messageIntervalTimeSec;
@@ -52,11 +56,11 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
       // 送信メッセージ
       if(typeof newObject.message !== 'undefined' && newObject.message !== '' && typeof newObject.selection === 'undefined') {
-        document.getElementById('action' + index + '_message').innerHTML = $scope.simulator.createMessage(newObject.message);
+        document.getElementById('action' + index + '_message').innerHTML = $scope.widget.createMessage(newObject.message);
       }
       // エラーメッセージ
       if(typeof newObject.errorMessage !== 'undefined' && newObject.errorMessage !== '') {
-        document.getElementById('action' + index + '_error_message').innerHTML = $scope.simulator.createMessage(newObject.errorMessage);
+        document.getElementById('action' + index + '_error_message').innerHTML = $scope.widget.createMessage(newObject.errorMessage);
       }
       // 確認メッセージ
       if(typeof newObject.confirmMessage !== 'undefined' && typeof newObject.success !== 'undefined' && typeof newObject.cancel !== 'undefined') {
@@ -68,7 +72,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
           return string !== '';
         }).join('\n');
         if (message == '') return;
-        document.getElementById('action' + index + '_confirm_message').innerHTML = $scope.simulator.createMessage(message);
+        document.getElementById('action' + index + '_confirm_message').innerHTML = $scope.widget.createMessage(message);
       }
       // 選択肢
       if(typeof newObject.message !== 'undefied' && typeof newObject.selection !== 'undefined') {
@@ -82,17 +86,20 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
           return typeof string !== 'undefined' && string !== '';
         }).join('\n');
         if (message == '') return;
-        document.getElementById('action' + index + '_message').innerHTML = $scope.simulator.createMessage(message || '');
+        document.getElementById('action' + index + '_message').innerHTML = $scope.widget.createMessage(message || '');
       }
     }, true);
   };
 
   // シミュレーターの起動
-  this.openSimulatorDialog = function() {
-    console.log("=== call func openSimulatorDialog ===");
-    // jsonデータ生成
-    var sendData = {"json": this.createJsonData()};
-    modalOpen.call(window, {}, 'p-show-gallary', 'シミュレーション', 'moment');
+  this.openSimulator = function() {
+    var contentElm = $('#content');
+    var targetElm = $('#tchatbotscenario_simulator_wrapper');
+    targetElm.css({
+      top:  '50px',
+      left: ($(contentElm).outerWidth() - $(targetElm).outerWidth()) / 2 + 'px'
+    });
+    targetElm.show();
   };
 
   this.saveAct = function() {
@@ -274,8 +281,33 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     }
     return visible;
   };
+}])
+.controller('SimulatorController', ['$scope', 'SharedSetActionListService', 'SimulatorService', function($scope, SharedSetActionListService, SimulatorService) {
+  //thisを変数にいれておく
+  var self = this;
+  $scope.setActionList = SharedSetActionListService;
+
+  $scope.widget = SimulatorService;
+  $scope.widget.settings = getWidgetSettings();
+
+  this.close = function() {
+    $('#tchatbotscenario_simulator_wrapper').hide();
+  }
+
+  this.clear = function() {
+    console.log("=== call func SimulatorController::clear ===");
+  }
 }]);
 
+function getWidgetSettings() {
+  var json = JSON.parse(document.getElementById('TChatbotScenarioWidgetSettings').value);
+  var widgetSettings = [];
+  for (var item in json) {
+    widgetSettings[item] = json[item];
+  }
+  widgetSettings.show_name = <?=C_WIDGET_SHOW_COMP?>; // 表示名を企業名に固定する
+  return widgetSettings;
+}
 
 function submitAct() {
   $('TChatbotScenarioEntryForm').submit();

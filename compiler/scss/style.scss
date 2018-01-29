@@ -806,64 +806,6 @@ ul.ulTab {
 
 }
 
-/* tooltip */
-%tooltip {
-  .explainTooltip {
-    z-index: 10;
-    position: absolute;
-
-    icon-annotation {
-      width: 16em;
-      display: none;
-
-      &:before {
-        content: "";
-        border: none;
-        border-top: 10px solid rgba(0, 0, 0, 0.13);
-        border-left: 9px solid transparent;
-        border-right: 9px solid transparent;
-        position: absolute;
-        bottom: -10px;
-        left: 9px;
-        z-index: 1;
-      }
-
-      &:after {
-        content: " ";
-        border: none;
-        border-top: 10px solid white;
-        border-left: 9px solid transparent;
-        border-right: 9px solid transparent;
-        position: absolute;
-        bottom: -8px;
-        left: 9px;
-        z-index: 3;
-      }
-
-      ul {
-        margin: 0;
-        padding: 0;
-        text-align: left;
-        background-color: #FFF;
-        box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
-        padding: 0.5em;
-        font-weight: normal;
-        border-radius: 5px;
-
-        img {
-          margin-bottom: -0.2em;
-          width:1em;
-          height:1em;
-        }
-
-        span {
-          font-size: 0.9em;
-        }
-      }
-    }
-  }
-}
-
 /* ヘッダー */
 
 #sys-icon {
@@ -6148,8 +6090,60 @@ ul.naviBtn {
           }
         }
 
-        /* tooltip のスタイルを読み込む */
-        @extend %tooltip;
+        .explainTooltip {
+          z-index: 10;
+          position: absolute;
+
+          icon-annotation {
+            width: 16em;
+            display: none;
+
+            &:before {
+              content: "";
+              border: none;
+              border-top: 10px solid rgba(0, 0, 0, 0.13);
+              border-left: 9px solid transparent;
+              border-right: 9px solid transparent;
+              position: absolute;
+              bottom: -10px;
+              left: 9px;
+              z-index: 1;
+            }
+
+            &:after {
+              content: " ";
+              border: none;
+              border-top: 10px solid white;
+              border-left: 9px solid transparent;
+              border-right: 9px solid transparent;
+              position: absolute;
+              bottom: -8px;
+              left: 9px;
+              z-index: 3;
+            }
+
+            ul {
+              margin: 0;
+              padding: 0;
+              text-align: left;
+              background-color: #FFF;
+              box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+              padding: 0.5em;
+              font-weight: normal;
+              border-radius: 5px;
+
+              img {
+                margin-bottom: -0.2em;
+                width:1em;
+                height:1em;
+              }
+
+              span {
+                font-size: 0.9em;
+              }
+            }
+          }
+        }
       }
 
       &.section3 {
@@ -6592,8 +6586,60 @@ ul.naviBtn {
           overflow-y: scroll;
           height: calc(100vh - 293px);
 
-          /* tooltip のスタイルを読み込む */
-          @extend %tooltip;
+          .explainTooltip {
+            z-index: 10;
+            position: absolute;
+
+            icon-annotation {
+              width: 16em;
+              display: none;
+
+              &:before {
+                content: "";
+                border: none;
+                border-top: 10px solid rgba(0, 0, 0, 0.13);
+                border-left: 9px solid transparent;
+                border-right: 9px solid transparent;
+                position: absolute;
+                bottom: -10px;
+                left: 9px;
+                z-index: 1;
+              }
+
+              &:after {
+                content: " ";
+                border: none;
+                border-top: 10px solid white;
+                border-left: 9px solid transparent;
+                border-right: 9px solid transparent;
+                position: absolute;
+                bottom: -8px;
+                left: 9px;
+                z-index: 3;
+              }
+
+              ul {
+                margin: 0;
+                padding: 0;
+                text-align: left;
+                background-color: #FFF;
+                box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+                padding: 0.5em;
+                font-weight: normal;
+                border-radius: 5px;
+
+                img {
+                  margin-bottom: -0.2em;
+                  width:1em;
+                  height:1em;
+                }
+
+                span {
+                  font-size: 0.9em;
+                }
+              }
+            }
+          }
 
           .set_action_item {
             position: relative;
@@ -6845,6 +6891,58 @@ ul.naviBtn {
               font-size: 12px;
             }
           }
+        }
+      }
+    }
+
+    #tchatbotscenario_simulator_wrapper {
+      position: absolute;
+      left: 0;
+      top: 0;
+      background-color: #FFFFFF;
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+
+      #simulator_popup_header {
+        h2 {
+          font-size: 15px;
+          padding: 0.5em;
+          margin: 0;
+          background-color: $main-color;
+          color: #FFFFFF;
+          display: block;
+          cursor: move;
+        }
+
+        div {
+          position: absolute;
+          top: 0;
+          right: 0;
+          padding: 0.4em;
+
+          .closeBtn {
+            position: initial;
+            top: initial;
+            right: initial;
+            margin: 0;
+            width: 25px;
+            height: 25px;
+            padding: 1.5px;
+            border-radius: 50px;
+          }
+        }
+      }
+
+      #simulator_popup_body {
+        padding: 14px;
+      }
+
+      #simulator_popup_footer {
+        display: flex;
+        justify-content: space-around;
+        padding: 0px 14px 14px 14px;
+
+        a {
+          width: 75px;
         }
       }
     }
