@@ -3447,7 +3447,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         if(displayMaxTdWidth < $(val).outerWidth()) displayMaxTdWidth = $(val).outerWidth();
       });
       var displayNameHeaderWidth = displayMaxTdWidth;
-      if(!$('#displayNameHeader').hasClass('mac')) {
+      if(!$('#statusHeader').hasClass('mac')) {
         displayNameHeaderWidth += 18;
       }
       var statusTdWidth = displayTd.next('td').outerWidth();
