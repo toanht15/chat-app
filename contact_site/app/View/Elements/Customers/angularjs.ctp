@@ -594,7 +594,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     }
 
     $scope.isML = function(m) {
-       return ((m.isOwnProperty('lbcCode') && m.lbcCode === '10102363864'));
+       return ((m.hasOwnProperty('lbcCode') && m.lbcCode === '10102363864'));
     }
 
     $scope.ui = function(m){
