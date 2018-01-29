@@ -565,6 +565,7 @@ class CustomersController extends AppController {
     $this->set('tabStatusList', Configure::read('tabStatusList'));
     $this->set('tabStatusStrList', Configure::read('tabStatusStrList'));
     $this->set('tabStatusNotificationMessageList', Configure::read('tabStatusNotificationMessageList'));
+    $this->set('viewableMLCompanyInfo', $this->isViewableMLCompanyInfo());
     $achievementType = Configure::read('achievementType');
     unset($achievementType[0]);
     $this->set('achievementType', $achievementType);
