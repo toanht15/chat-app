@@ -86,6 +86,7 @@
               sinclo.chatApi.showUnreadCnt();
               sinclo.chatApi.scDown();
             }
+            sinclo.chatApi.lockPageScroll();
           }
           else {
             //最小化時ボタン表示
@@ -101,6 +102,7 @@
             }
             height = this.header.offsetHeight;
             sinclo.widget.condifiton.set(false, true);
+            sinclo.chatApi.unlockPageScroll();
           }
             elm.animate({
               height: height + "px"
@@ -1706,6 +1708,43 @@
             .off("click", "input[name^='sinclo-radio']");
           $("input[name^='sinclo-radio']").prop('disabled', true);
         },
+        targetTextarea: null,
+        lockPageScroll: function() {
+          if(!check.smartphone()) return false;
+          if(!sinclo.chatApi.targetTextarea) {
+            sinclo.chatApi.targetTextarea = document.getElementById('chatTalk');
+          }
+          window.addEventListener('touchmove', sinclo.chatApi.lockPageScrollHandler);
+          sinclo.chatApi.targetTextarea.addEventListener('scroll', sinclo.chatApi.unlockPageScrollHandler);
+        },
+        unlockPageScroll: function() {
+          if(!check.smartphone()) return false;
+          if(!sinclo.chatApi.targetTextarea) {
+            sinclo.chatApi.targetTextarea = document.getElementById('chatTalk');
+          }
+          window.removeEventListener('touchmove', sinclo.chatApi.lockPageScrollHandler);
+          sinclo.chatApi.targetTextarea.removeEventListener('scroll', sinclo.chatApi.unlockPageScrollHandler);
+        },
+        lockPageScrollHandler: function(event) {
+          if ($(event.target).parents("#chatTalk").get(0) === sinclo.chatApi.targetTextarea
+            && sinclo.chatApi.targetTextarea.scrollTop !== 0
+            && sinclo.chatApi.targetTextarea.scrollTop + sinclo.chatApi.targetTextarea.clientHeight < sinclo.chatApi.targetTextarea.scrollHeight) {
+            console.log("a");
+            event.stopPropagation();
+          }
+          else {
+            console.log("b");
+            event.preventDefault();
+          }
+        },
+        unlockPageScrollHandler: function(event) {
+          if (sinclo.chatApi.targetTextarea.scrollTop === 0) {
+            sinclo.chatApi.targetTextarea.scrollTop = 1;
+          }
+          else if (sinclo.chatApi.targetTextarea.scrollTop + sinclo.chatApi.targetTextarea.clientHeight === sinclo.chatApi.targetTextarea.scrollHeight) {
+            sinclo.chatApi.targetTextarea.scrollTop = sinclo.chatApi.targetTextarea.scrollTop - 1;
+          }
+        },
         widgetOpen: function(){
           console.log("chatApi.widgetOpen start");
           this.beforeWidgetOpen();
@@ -1995,14 +2034,14 @@
           this.scDownTimer = setTimeout(function(){
           var chatTalk = document.getElementById('chatTalk');
             $('#sincloBox #chatTalk').animate({
-              scrollTop: chatTalk.scrollHeight - chatTalk.clientHeight
+              scrollTop: (chatTalk.scrollHeight - chatTalk.clientHeight - 10)
           }, 300);
           }, 500);
         },
         scDownImmediate: function(){
           var chatTalk = document.getElementById('chatTalk');
           $('#sincloBox #chatTalk').animate({
-            scrollTop: chatTalk.scrollHeight - chatTalk.clientHeight
+            scrollTop: chatTalk.scrollHeight - chatTalk.clientHeight - 10
           }, 300);
         },
         isNotifyOpened: false,
