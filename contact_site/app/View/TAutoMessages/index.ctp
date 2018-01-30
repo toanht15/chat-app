@@ -137,6 +137,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
           編集したファイルをインポートする
         </a>
       </li>
+      <hr class="separator">
       <li class="t-link">
         <a href="javascript:void(0)" onclick="window.open('<?= $this->Html->url(['controller' => 'TAutoMessages', 'action' => 'downloadTemplate']) ?>')">
           テンプレートをダウンロードする
