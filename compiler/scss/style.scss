@@ -1243,7 +1243,7 @@ ul.naviBtn {
             }
 
             &.opWait i {
-              position: initial;
+              position: static;
               font-size: 30px;
               &:before {
                 float: left;
@@ -1252,7 +1252,7 @@ ul.naviBtn {
             }
 
             &.opStop i {
-              position: initial;
+              position: static;
               font-size: 30px;
               &:before {
                 float: left;
@@ -5462,13 +5462,25 @@ ul.naviBtn {
       box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
       padding: 5px 0px !important;
       background: #fff;
+      position: relative;
+      hr.separator {
+        margin-top: 0.1em;
+        margin-bottom: 0.1em;
+        display: block;
+        width: 95%;
+        height: 1px;
+        background-color: #EDEDED;
+        border: 0;  /*デフォルトデザインでは線がある場合があるので、消しておく。*/
+        &.indent {
+          width: 384px;
+          position: relative;
+          left: -5px;
+        }
+      }
       li.t-link {
         padding: 0px 0px 0px;
         width: 100%;
         height: 100%;
-        &:first-child {
-          border-bottom: 1px solid #ccc;
-        }
         a:hover {
           background-color: #C3D69B;
           color: #fff;
