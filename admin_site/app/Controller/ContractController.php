@@ -67,6 +67,7 @@ class ContractController extends AppController
   }
 
   public function add() {
+    Configure::write('debug', 0);
     if($this->isOverAllUserCountLimit()) {
       $this->set('overLimitMessage', 'アカウントの登録上限数を超過しているため、新規に企業キーを登録できません。');
       return;
@@ -75,6 +76,8 @@ class ContractController extends AppController
     $this->set('title_for_layout', 'サイトキー登録');
 
     if( $this->request->is('post') ) {
+      $this->autoRender = false;
+      $this->layout = "ajax";
       $this->log($this->data, LOG_DEBUG);
       $data = $this->getParams();
 
@@ -83,6 +86,11 @@ class ContractController extends AppController
       } catch(Exception $e) {
         $this->log("Exception Occured : ".$e->getMessage(), LOG_WARNING);
         $this->log($e->getTraceAsString(),LOG_WARNING);
+        $this->response->statusCode(400);
+        return json_encode([
+          'success' => false,
+          'message' => $e->getMessage()
+        ], JSON_UNESCAPED_UNICODE);
       }
     }
   }
@@ -364,7 +372,7 @@ class ContractController extends AppController
     $this->MUser->create();
     $this->MUser->set($tmpData);
     if(!$this->MUser->validates()) {
-      throw new Exception("MUser validation error");
+      throw new Exception(json_encode($this->MUser->validationErrors, JSON_UNESCAPED_UNICODE));
     }
     $this->MUser->save();
   }

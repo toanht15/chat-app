@@ -1,18 +1,32 @@
 <script type="text/javascript">
 var topPosition = 0;
+var beforeSelected = 0;
 $(function(){
   function onIpFilterEnableSettingChange(){
     if ( $("#MSecuritySettingsIpFilterEnabled0").prop("checked") ) { // 同時対応数上限を利用する場合
-      $("#ip_white_filter_settings_area").addClass("hidden");
-      $("#ip_black_filter_settings_area").addClass("hidden");
+      $("#ip_white_filter_settings_area").slideUp("fast");
+      $("#ip_black_filter_settings_area").slideUp("fast");
+      beforeSelected = 0;
     }
     else if($("#MSecuritySettingsIpFilterEnabled1").prop("checked")) { // 同時対応数上限を利用しない場合
-      $("#ip_white_filter_settings_area").removeClass("hidden");
-      $("#ip_black_filter_settings_area").addClass("hidden");
+      if(beforeSelected === 0) {
+        $("#ip_white_filter_settings_area").slideDown("fast");
+        $("#ip_black_filter_settings_area").hide();
+      } else {
+        $("#ip_black_filter_settings_area").hide();
+        $("#ip_white_filter_settings_area").fadeIn();
+      }
+      beforeSelected = 1;
     }
     else if($("#MSecuritySettingsIpFilterEnabled2").prop("checked")) { // 同時対応数上限を利用しない場合
-      $("#ip_white_filter_settings_area").addClass("hidden");
-      $("#ip_black_filter_settings_area").removeClass("hidden");
+      if(beforeSelected === 0) {
+        $("#ip_black_filter_settings_area").slideDown("fast");
+        $("#ip_white_filter_settings_area").hide();
+      } else {
+        $("#ip_white_filter_settings_area").hide();
+        $("#ip_black_filter_settings_area").fadeIn();
+      }
+      beforeSelected = 2;
     }
   }
 

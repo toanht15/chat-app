@@ -1397,6 +1397,7 @@
       if ( check.smartphone() ) {
         // 縦の場合
         if ( $(window).height() > $(window).width() ) {
+          var widgetWidth = 0;
           if(window.sincloInfo.widget.spMaximizeSizeType === 2) {
             widgetWidth = $(window).width();
             ratio = widgetWidth * (1/285);
@@ -1427,6 +1428,7 @@
       //スマホの場合
       if ( check.smartphone() ) {
         // 縦の場合
+        var widgetWidth = 0;
         if ( $(window).height() > $(window).width() ) {
           document.getElementById("flexBoxHeight").style.display = 'none';
           ratio = widgetWidth * (1/285);
