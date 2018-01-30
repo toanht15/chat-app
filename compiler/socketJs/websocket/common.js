@@ -975,7 +975,7 @@ var socket, // socket.io
       if ( check.smartphone() ) {
         // TODO 関数化
         if(widget.spMaximizeSizeType === 2) {
-          widgetWidth = $(window).width() - 5 ;
+          widgetWidth = $(window).width();
         } else {
           widgetWidth = $(window).width() - 20 ;
         }
