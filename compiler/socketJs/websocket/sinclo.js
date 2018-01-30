@@ -1396,11 +1396,12 @@
       //スマホの場合
       if ( check.smartphone() ) {
         // 縦の場合
+        var widgetWidth = 0,
+            ratio = 0;
         if ( $(window).height() > $(window).width() ) {
-          var widgetWidth = 0;
+          widgetWidth = $(window).width();
+          ratio = widgetWidth * (1/285);
           if(window.sincloInfo.widget.spMaximizeSizeType === 2) {
-            widgetWidth = $(window).width();
-            ratio = widgetWidth * (1/285);
             var fullHeight = (window.innerHeight - $('#sincloBox #widgetHeader').height() - $('#flexBoxHeight').height() - $('#sincloBox #widgetDescription').height() - $('#sincloBox #fotter').height() - (5.5 * ratio));
             console.log(fullHeight);
             document.getElementById("chatTalk").style.height = fullHeight + 'px';
@@ -1428,19 +1429,21 @@
       //スマホの場合
       if ( check.smartphone() ) {
         // 縦の場合
-        var widgetWidth = 0;
+        var widgetWidth = 0,
+            ratio = 0;
+        document.getElementById("flexBoxHeight").style.display = 'none';
         if ( $(window).height() > $(window).width() ) {
-          document.getElementById("flexBoxHeight").style.display = 'none';
-          ratio = widgetWidth * (1/285);
           console.log("ratio : " + ratio);
           if(window.sincloInfo.widget.spMaximizeSizeType === 2) {
             widgetWidth = $(window).width();
+            ratio = widgetWidth * (1/285);
             var fullHeight = (window.innerHeight - $('#sincloBox #widgetHeader').height() - $('#sincloBox #widgetDescription').height() - $('#sincloBox #fotter').height() + 3*ratio);
             console.log(fullHeight);
             document.getElementById("chatTalk").style.height = fullHeight + 'px';
             document.getElementById("sincloBox").style.height = window.innerHeight + 'px';
           } else {
             widgetWidth = $(window).width() - 20;
+            ratio = widgetWidth * (1/285);
             document.getElementById("chatTalk").style.height = (194 * ratio) + (60*ratio) + 'px';
           }
         }
