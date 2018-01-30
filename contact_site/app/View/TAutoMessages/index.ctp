@@ -139,7 +139,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
       </li>
       <li class="t-link">
         <a href="javascript:void(0)" onclick="window.open('<?= $this->Html->url(['controller' => 'TAutoMessages', 'action' => 'downloadTemplate']) ?>')">
-          テンプレートファイルをダウンロードする
+          テンプレートをダウンロードする
         </a>
       </li>
     </ul>
