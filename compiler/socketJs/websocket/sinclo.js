@@ -1405,7 +1405,6 @@
             var fullHeight = (window.innerHeight - $('#sincloBox #widgetHeader').height() - $('#flexBoxHeight').height() - $('#sincloBox #widgetDescription').height() - $('#sincloBox #fotter').height() - (5.5 * ratio));
             console.log(fullHeight);
             document.getElementById("chatTalk").style.height = fullHeight + 'px';
-            document.getElementById("sincloBox").style.height = window.innerHeight + 'px';
           } else {
             widgetWidth = $(window).width() - 20;
             ratio = widgetWidth * (1/285);
@@ -1434,13 +1433,13 @@
         document.getElementById("flexBoxHeight").style.display = 'none';
         if ( $(window).height() > $(window).width() ) {
           console.log("ratio : " + ratio);
+
           if(window.sincloInfo.widget.spMaximizeSizeType === 2) {
             widgetWidth = $(window).width();
             ratio = widgetWidth * (1/285);
             var fullHeight = (window.innerHeight - $('#sincloBox #widgetHeader').height() - $('#sincloBox #widgetDescription').height() - $('#sincloBox #fotter').height() + 3*ratio);
             console.log(fullHeight);
             document.getElementById("chatTalk").style.height = fullHeight + 'px';
-            document.getElementById("sincloBox").style.height = window.innerHeight + 'px';
           } else {
             widgetWidth = $(window).width() - 20;
             ratio = widgetWidth * (1/285);
