@@ -299,6 +299,7 @@ class TAutoMessagesController extends AppController {
 
       //オートメッセージ　営業時間を4番目に入れたので並び替え処理
       $changeEditData = json_decode($value['TAutoMessage']['activity'], true);
+      $changeEditData['conditions'] = array_reverse($changeEditData['conditions'], true);
 
       foreach($changeEditData['conditions'] as $key => $val){
         if($key >= 4) {
@@ -311,6 +312,13 @@ class TAutoMessagesController extends AppController {
         if($key === 11) {
           unset($changeEditData['conditions'][11]);
           $changeEditData['conditions'][4] = json_decode($value['TAutoMessage']['activity'], true)['conditions'][10];
+        }
+        if($key === C_AUTO_TRIGGER_STAY_PAGE
+          || $key === C_AUTO_TRIGGER_REFERRER
+          || $key === C_AUTO_TRIGGER_SPEECH_CONTENT
+          || $key === C_AUTO_TRIGGER_STAY_PAGE_OF_FIRST
+          || $key === C_AUTO_TRIGGER_STAY_PAGE_OF_PREVIOUS) {
+          $changeEditData = $this->convertOldIFData($key, $val, $changeEditData, $key);;
         }
       }
 
