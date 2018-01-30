@@ -6076,6 +6076,14 @@ ul.naviBtn {
           flex-basis: auto;
           display: relative;
           margin-left: 20px;
+          height: 461px;
+
+          &.middleSize {
+            height: 541px;
+          }
+          &.largeSize {
+            height: 631px;
+          }
 
           > div {
             position: absolute;

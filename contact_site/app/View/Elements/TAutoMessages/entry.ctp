@@ -304,7 +304,7 @@
         </ul>
       </div>
 
-      <div id="tautomessages_action_simulator">
+      <div id="tautomessages_action_simulator" ng-class="{middleSize: widgetSizeTypeToggle === '2', largeSize: widgetSizeTypeToggle === '3'}">
         <div>
           <?= $this->element('TAutoMessages/simulator'); ?>
         </div>
