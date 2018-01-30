@@ -98,7 +98,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
           '発言内容をエクセルで編集する',
           'javascript:void(0)',
           array('escape' => false,
-            'class'=>'btn-shadow'.($coreSettings[C_COMPANY_USE_IMPORT_EXCEL_AUTO_MESSAGE] ? " skyBlueBtn  commontooltip" : " grayBtn disabled"),
+            'class'=>'btn-shadow'.($coreSettings[C_COMPANY_USE_IMPORT_EXCEL_AUTO_MESSAGE] ? " skyBlueBtn  commontooltip" : " grayBtn disabled commontooltip"),
             'id' => 'importExcelBtn',
             'disabled' => !$coreSettings[C_COMPANY_USE_IMPORT_EXCEL_AUTO_MESSAGE],
             'data-text' => $coreSettings[C_COMPANY_USE_IMPORT_EXCEL_AUTO_MESSAGE] ? "発言内容の設定をエクセルファイルにて<br>編集しインポートすることが可能です。<br>インポートしたデータは現在の設定に追加されます。<br>（上書きや洗い替えではないため、<br>現在登録されている設定は残ります。）" : "こちらの機能はスタンダードプラン<br>からご利用いただけます。",
@@ -139,7 +139,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
       </li>
       <li class="t-link">
         <a href="javascript:void(0)" onclick="window.open('<?= $this->Html->url(['controller' => 'TAutoMessages', 'action' => 'downloadTemplate']) ?>')">
-          テンプレートファイルをダウンロードする
+          テンプレートをダウンロードする
         </a>
       </li>
     </ul>
