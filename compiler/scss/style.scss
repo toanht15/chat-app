@@ -6505,7 +6505,6 @@ ul.naviBtn {
   }
   #ip_white_filter_settings_area, #ip_black_filter_settings_area {
     height: 31em;
-    transition: height 300ms linear;
     overflow: hidden;
     margin-left: 1.5em;
     pre {
@@ -6542,9 +6541,6 @@ ul.naviBtn {
       &.disabled {
         background-color: rgb(204, 204, 204);
       }
-    }
-    &.hidden {
-      height: 0;
     }
     .error-message {
       margin-top: 1em;
