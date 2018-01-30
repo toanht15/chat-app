@@ -1243,7 +1243,7 @@ ul.naviBtn {
             }
 
             &.opWait i {
-              position: initial;
+              position: static;
               font-size: 30px;
               &:before {
                 float: left;
@@ -1252,7 +1252,7 @@ ul.naviBtn {
             }
 
             &.opStop i {
-              position: initial;
+              position: static;
               font-size: 30px;
               &:before {
                 float: left;
