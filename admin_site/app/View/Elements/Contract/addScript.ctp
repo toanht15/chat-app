@@ -11,7 +11,8 @@ function saveAct(){
       location.href = "<?= $this->Html->url('/Contract/index') ?>"
     },1000);
   }).fail(function(data){
-
+    var obj = JSON.parse(data.responseText);
+    alert(obj.message);
   });
 }
 

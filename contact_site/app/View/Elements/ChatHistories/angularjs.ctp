@@ -87,6 +87,25 @@
 
     $scope.setDetailMode = function(mode) {
       $scope.switchDetailMode = mode;
+      //チャット内容タブをクリックした際、過去のチャット情報を取得
+      if(mode == 1) {
+        $scope.chatLogList = [];
+        $.ajax({
+          type: 'GET',
+          url: "<?= $this->Html->url(array('controller' => 'ChatHistories', 'action' => 'remoteGetChatList')) ?>",
+          cache: false,
+          data: {
+            userId: $('#visitorsId').text()
+          },
+          dataType: 'json',
+          success: function(json){
+            $scope.chatLogList = json;
+            angular.element("message-list-descript").attr("class", "on");
+            $scope.$apply();
+            addTooltipEvent();
+          }
+        });
+      }
     }
 
     $scope.judgeShowChatContent = function() {
@@ -128,21 +147,26 @@
               $scope.chatLogMessageList = [];
               //$scope.$apply();
               angular.element("message-list-descript").attr("class", "off");
-              $.ajax({
-                type: 'GET',
-                url: "<?= $this->Html->url(array('controller' => 'ChatHistories', 'action' => 'remoteGetChatList')) ?>",
-                cache: false,
-                data: {
-                  userId: $('#visitorsId').text()
-                },
-                dataType: 'json',
-                success: function(json){
-                  $scope.chatLogList = json;
-                  angular.element("message-list-descript").attr("class", "on");
-                  $scope.$apply();
-                  addTooltipEvent();
-                }
-              });
+              $scope.$apply();
+              addTooltipEvent();
+              //過去のチャットを表示数場合
+              if($('#showChatTab .on').text() == '過去のチャット' && $('.switch .on').text().trim() != '詳細情報') {
+                $.ajax({
+                  type: 'GET',
+                  url: "<?= $this->Html->url(array('controller' => 'ChatHistories', 'action' => 'remoteGetChatList')) ?>",
+                  cache: false,
+                  data: {
+                    userId: $('#visitorsId').text()
+                  },
+                  dataType: 'json',
+                  success: function(json){
+                    $scope.chatLogList = json;
+                    angular.element("message-list-descript").attr("class", "on");
+                    $scope.$apply();
+                    addTooltipEvent();
+                  }
+                });
+              }
             }
           }
         });

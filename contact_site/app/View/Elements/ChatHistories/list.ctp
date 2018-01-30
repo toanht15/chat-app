@@ -500,16 +500,18 @@
               <dt>IPアドレス</dt>
               <dd id = "LandscapeData">
               <?php if(isset($coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $coreSettings[C_COMPANY_REF_COMPANY_DATA]): ?>
-                    <?php if(!empty($defaultHistoryList['LandscapeData']['org_name']) && !empty($defaultHistoryList['LandscapeData']['lbc_code'])): ?>
-                        <a href="javascript:void(0)" class="underL" onclick="openCompanyDetailInfo('<?=$defaultHistoryList['LandscapeData']['lbc_code']?>')">
-                        <span id = "Landscape"><?=h($defaultHistoryList['LandscapeData']['org_name'])?></span></a>
-                    <?php elseif(!empty($defaultHistoryList['LandscapeData']['org_name'])): ?>
-                        <p><?=h($defaultHistoryList['LandscapeData']['org_name'])?></p><?='\n'?>
-                    <?php elseif(empty($defaultHistoryList['LandscapeData']['org_name'])): ?>
-                      <span id = "Landscape"></span>
-                    <?php endif; ?>
-                  <?php endif; ?>
-                  <span id= "ipAddress">{{ ip('<?=h($defaultHistoryList['THistory']['ip_address'])?>', <?php echo !empty($defaultHistoryList['LandscapeData']['org_name']) ? 'true' : 'false' ?>) }}</span></dd>
+                <?php if(!empty($defaultHistoryList['LandscapeData']['org_name']) && !empty($defaultHistoryList['LandscapeData']['lbc_code'])): ?>
+                    <a href="javascript:void(0)" class="underL" onclick="openCompanyDetailInfo('<?=$defaultHistoryList['LandscapeData']['lbc_code']?>')">
+                    <span id = "Landscape"><?=h($defaultHistoryList['LandscapeData']['org_name'])?></span></a>
+                <?php elseif(!empty($defaultHistoryList['LandscapeData']['org_name'])): ?>
+                    <p><?=h($defaultHistoryList['LandscapeData']['org_name'])?></p><?='\n'?>
+                <?php elseif(empty($defaultHistoryList['LandscapeData']['org_name'])): ?>
+                  <span id = "Landscape"></span>
+                <?php endif; ?>
+              <?php else: ?>
+                <?php $defaultHistoryList['THistory']['ip_address'] = '('.$defaultHistoryList['THistory']['ip_address'].')' ?>
+              <?php endif; ?>
+              <span id= "ipAddress">{{ ip('<?=h($defaultHistoryList['THistory']['ip_address'])?>', <?php echo !empty($defaultHistoryList['LandscapeData']['org_name']) ? 'true' : 'false' ?>) }}</span></dd>
             </li>
             <li>
               <dt>訪問回数</dt>
