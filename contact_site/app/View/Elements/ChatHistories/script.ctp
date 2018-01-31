@@ -527,10 +527,14 @@ function openChatDeleteDialog(id,historyId,message,created){
   });
 }
 
+var jqxhr;
 //ユーザー情報表示変更
 function openChatById(id) {
   clearChatAndPersonalInfo();
-  $.ajax({
+  if (jqxhr) {
+    jqxhr.abort();
+  }
+  jqxhr = $.ajax({
     type: 'GET',
     url: "<?= $this->Html->url(array('controller' => 'ChatHistories', 'action' => 'getCustomerInfo')) ?>",
     data: {
