@@ -158,7 +158,7 @@ class AutoMessageExcelParserComponent extends ExcelParserComponent
   }
 
   private function isSampleDataRow($index) {
-    return strcmp($index, 9) === 0 || strcmp($index, 10) === 0;
+    return strcmp($index, 10) === 0 || strcmp($index, 11) === 0;
   }
 
   private function t($str) {
