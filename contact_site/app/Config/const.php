@@ -423,7 +423,7 @@ $config['outMessageTriggerList'] = [
         'key' => 'visit_cnt',
         'default' => [
             "visitCnt" => "",
-            "visitCntCond" => 1
+            "visitCntCond" => 2
         ]
     ],
     // 発言内容
@@ -437,8 +437,8 @@ $config['outMessageTriggerList'] = [
             "keyword_exclusions" => "",
             "keyword_exclusions_type" => "1",
             "speechContentCond" => "1",
-            "triggerTimeSec" => 3,
-            "speechTriggerCond" => "1"
+            "triggerTimeSec" => 2,
+            "speechTriggerCond" => "2"
         ]
     ],
     // ページ

@@ -215,7 +215,7 @@ class AutoMessageExcelParserComponent extends ExcelParserComponent
     if(empty($this->keywordConditionMap[$data[self::ROW_KEYWORD_CONDITION]])) {
       $this->addError($errors, self::ROW_KEYWORD_CONDITION,'完全一致／部分一致 のいずれかの指定のみ可能です');
     }
-    if(!Validation::range($data[self::ROW_TRIGGER_TIME_SEC], 1, 60)) {
+    if(!Validation::range($data[self::ROW_TRIGGER_TIME_SEC], 0, 61)) {
       $this->addError($errors, self::ROW_TRIGGER_TIME_SEC,'1から60までの数値指定のみ可能です');
     }
     if(empty($this->triggerConditionMap[$data[self::ROW_TRIGGER_CONDITION]])) {
