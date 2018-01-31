@@ -841,7 +841,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       });
     };
 
-    $scope.showOperatorPresence = function() {
+    $scope.showOperatorPresence = function(event) {
+      // デフォルトの挙動は抑止する
+      event.preventDefault();
       // ポップアップを閉じる
       if ( $scope.presenceMainClass !== "" ) {
         $("#operator_presence_pop").css("display", "none");
