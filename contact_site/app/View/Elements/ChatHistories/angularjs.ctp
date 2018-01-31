@@ -117,16 +117,21 @@
     };
 
     // 顧客の詳細情報を取得する
+    var jqxhr;
     $scope.getOldChat = function(historyId, oldFlg){
       if(oldFlg == false) {
         changeHistoryId = historyId;
+      }
+      //矢印を連続で押したときの処理
+      if (jqxhr) {
+        jqxhr.abort();
       }
       $scope.chatLogMessageList = [];
       $scope.messageList = [];
       $timeout(function(){
         $scope.$apply();
       }).then(function(){
-        $.ajax({
+         jqxhr = $.ajax({
           type: "GET",
           url: "<?=$this->Html->url(['controller'=>'ChatHistories', 'action' => 'getOldChat'])?>",
           data: {
@@ -141,6 +146,7 @@
               addTooltipEvent();
             }
             else {
+              jqxhr.abort();
               $scope.messageList = json;
 
               $scope.chatLogList = [];
