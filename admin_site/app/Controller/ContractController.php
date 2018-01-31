@@ -537,6 +537,8 @@ class ContractController extends AppController
         break;
       case C_CONTRACT_SCREEN_SHARING_ID:
         $val = array_merge($val, $widgetConfiguration['common'], $widgetConfiguration['sharing']);
+        // シェアリングプランはウィジェットサイズは小にする
+        $val['widgetSizeType'] = "1";
         break;
       case C_CONTRACT_CHAT_BASIC_PLAN_ID:
         $val = array_merge($val, $widgetConfiguration['common'], $widgetConfiguration['chat']);
