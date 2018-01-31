@@ -3,15 +3,12 @@
 
 var sincloApp = angular.module('sincloApp', ['ngSanitize', 'ui.validate']);
 
-sincloApp.factory('SharedSetActionListService', function() {
-  return [];
-})
-.controller('MainController', ['$scope', '$timeout', 'SharedSetActionListService', 'SimulatorService', function($scope, $timeout, SharedSetActionListService, SimulatorService) {
+sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService', function($scope, $timeout, SimulatorService) {
   //thisを変数にいれておく
   var self = this;
 
   this.actionList = <?php echo json_encode($chatbotScenarioActionList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
-  $scope.setActionList = SharedSetActionListService;
+  $scope.setActionList = [];
 
   $scope.widget = SimulatorService;
   $scope.widget.settings = getWidgetSettings();
@@ -32,7 +29,6 @@ sincloApp.factory('SharedSetActionListService', function() {
   this.removeItem = function(setActionId) {
     $scope.setActionList.splice(setActionId, 1);
   };
-
 
   // アクションの追加・削除を検知する
   $scope.watchActionList = [];
@@ -93,13 +89,8 @@ sincloApp.factory('SharedSetActionListService', function() {
 
   // シミュレーターの起動
   this.openSimulator = function() {
-    var contentElm = $('#content');
-    var targetElm = $('#tchatbotscenario_simulator_wrapper');
-    targetElm.css({
-      top:  '50px',
-      left: ($(contentElm).outerWidth() - $(targetElm).outerWidth()) / 2 + 'px'
-    });
-    targetElm.show();
+    var data = this.createJsonData();
+    $scope.$broadcast('openSimulator', data);
   };
 
   this.saveAct = function() {
@@ -282,20 +273,94 @@ sincloApp.factory('SharedSetActionListService', function() {
     return visible;
   };
 }])
-.controller('SimulatorController', ['$scope', 'SharedSetActionListService', 'SimulatorService', function($scope, SharedSetActionListService, SimulatorService) {
+.controller('DialogController', ['$scope', '$timeout', 'SimulatorService', function($scope, $timeout, SimulatorService) {
   //thisを変数にいれておく
   var self = this;
-  $scope.setActionList = SharedSetActionListService;
+  $scope.setActionList = [];
+
+  $scope.actionIndex = 0;
+  $scope.actionIntervalTimeSec = 0;
 
   $scope.widget = SimulatorService;
   $scope.widget.settings = getWidgetSettings();
 
-  this.close = function() {
+  // シミュレーションの起動(ダイアログ表示)
+  $scope.$on('openSimulator', function(event, setActionList) {
+    $scope.setActionList = setActionList;
+
+    console.log('===== DialogController::openSimulator =====');
+    $('#tchatbotscenario_simulator_wrapper').show();
+
+    $timeout(function() {
+      $scope.$apply();
+    }).then(function() {
+      document.querySelectorAll('#simulator_popup > :not(style)').forEach(elm => console.log(elm.offsetHeight))
+
+      $('#simulator_popup').css({
+        width: $('#sincloBox').outerWidth() + 28 + 'px',
+        height: $('#sincloBox').outerHeight() + 101 + 'px'
+      });
+      $scope.actionInit();
+    }, 0);
+  });
+
+  // シミュレーションの終了(ダイアログ非表示)
+  $scope.closeSimulator = function() {
+    $scope.actionStop();
     $('#tchatbotscenario_simulator_wrapper').hide();
+  };
+
+  // アクションの開始
+  $scope.actionInit = function() {
+    console.log('=== DialogController::actionInit ===');
+    $scope.actionIndex = 0;
+
+    // シミュレーション上のメッセージをクリアする
+    $scope.$broadcast('removeMessage');
+
+    // 全てのアクションに同一の時間を設定しているため、最初の設定値を取得する
+    var time = $scope.setActionList[0].messageIntervalTimeSec;
+    $scope.simulatorTimer = setInterval($scope.testAction, parseInt(time, 10) * 1000);
   }
 
-  this.clear = function() {
-    console.log("=== call func SimulatorController::clear ===");
+  // アクションの停止
+  $scope.actionStop = function() {
+    console.log('=== DialogController::actionStop ===');
+    clearInterval($scope.simulatorTimer);
+    $scope.$broadcast('switchSimulatorChatTextArea', "1");
+  }
+
+  // アクションのクリア(アクションを最初から実行し直す)
+  $scope.actionClear = function() {
+    console.log('=== DialogController::actionClear ===');
+    $scope.actionStop();
+    $scope.actionInit();
+  };
+
+  $scope.testAction = function() {
+    console.log('=== DialogController::testAction ===');
+    if (typeof $scope.setActionList[$scope.actionIndex] !== 'undefined') {
+      console.log($scope.setActionList[$scope.actionIndex]);
+
+      // テキスト追加
+      $scope.$broadcast('addReMessage', $scope.setActionList[$scope.actionIndex].message);
+
+      // 自由入力エリアの表示切替
+      $scope.$broadcast('switchSimulatorChatTextArea', $scope.setActionList[$scope.actionIndex].chatTextArea);
+
+      // 次のアクションへ
+      $scope.actionIndex++;
+    } else {
+      console.log('!!stop!!');
+      $scope.actionStop();
+    }
+  }
+
+  this.getText = function(param) {
+    // 送信メッセージ
+    if (param.actionType === <?= C_SCENARIO_ACTION_TEXT ?>) {
+      return param.message;
+    }
   }
 }]);
 
