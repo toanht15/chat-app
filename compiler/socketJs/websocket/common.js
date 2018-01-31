@@ -975,7 +975,7 @@ var socket, // socket.io
       if ( check.smartphone() ) {
         // TODO 関数化
         if(widget.spMaximizeSizeType === 2) {
-          widgetWidth = $(window).width() - 5 ;
+          widgetWidth = $(window).width();
         } else {
           widgetWidth = $(window).width() - 20 ;
         }
@@ -1701,12 +1701,19 @@ var socket, // socket.io
           //ヘッダ非表示（シンプル表示）
           common.abridgementTypehide();
           common.widgetHandler.saveShownFlg();
+          // テキストエリアの表示非表示
+          if(!storage.l.get("textareaOpend") || storage.l.get("textareaOpend")  === "open") {
+            sinclo.displayTextarea();
+          } else if(storage.l.get("textareaOpend")  === "close") {
+            sinclo.hideTextarea();
+          }
           var dataOpenflg = sinclo.widget.condifiton.get();
           //最小化時と最大化時の状態を取得
           var abridgementType = common.getAbridgementType();
           //ウィジェットの再生成処理呼び出しでなければ最小化表示設定で呼び出す
           if(!reCreateWidget && dataOpenflg === "false") {
             sinclo.widget.condifiton.set(false, true);
+            sinclo.chatApi.unlockPageScroll();
             //ログ書き込み用にメッセージ送信
             emit("sendWidgetShown",{widget:true});
             //最小化
@@ -1757,6 +1764,7 @@ var socket, // socket.io
               }
               //最小化時ボタン表示
               common.whenMinimizedBtnShow();
+              sinclo.chatApi.unlockPageScroll();
             }
             else{
               console.log("saidaika");
@@ -1771,6 +1779,7 @@ var socket, // socket.io
               }
               //最大化時ボタン表示
               common.whenMaximizedBtnShow();
+              sinclo.chatApi.lockPageScroll();
             }
           }
         }

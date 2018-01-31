@@ -581,13 +581,23 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     $scope.ip = function(m){
       var showData = [];
-      if(contract.refCompanyData && 'orgName' in m && m.orgName !== '') {
+      if(contract.refCompanyData && 'orgName' in m && m.orgName !== '' && ($scope.isViewable() || !$scope.isML(m))) {
         showData.push('(' + m.ipAddress + ')'); // IPアドレス
       } else {
+        m.lbcCode = "";
+        m.orgName = "";
         showData.push(m.ipAddress); // IPアドレス
       }
       return showData.join("\n");
     };
+
+    $scope.isViewable = function() {
+      return <?= var_export($viewableMLCompanyInfo, TRUE) ?>;
+    }
+
+    $scope.isML = function(m) {
+       return ((m.hasOwnProperty('lbcCode') && m.lbcCode === '10102363864'));
+    }
 
     $scope.ui = function(m){
       var showData = [];
@@ -2069,10 +2079,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           if ('responderId' in obj) {
             $scope.monitorList[tabId].responderId = obj.responderId;
           }
-          if ('orgName' in obj) {
+          if (($scope.isViewable() || !$scope.isML(obj)) && 'orgName' in obj) {
             $scope.monitorList[tabId].orgName = obj.orgName;
           }
-          if ('lbcCode' in obj) {
+          if (($scope.isViewable() || !$scope.isML(obj)) && 'lbcCode' in obj) {
             $scope.monitorList[tabId].lbcCode = obj.lbcCode;
           }
         }
@@ -3436,8 +3446,12 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       displayTd.each(function(index, val){
         if(displayMaxTdWidth < $(val).outerWidth()) displayMaxTdWidth = $(val).outerWidth();
       });
+      var displayNameHeaderWidth = displayMaxTdWidth;
+      if(!$('#statusHeader').hasClass('mac')) {
+        displayNameHeaderWidth += 18;
+      }
       var statusTdWidth = displayTd.next('td').outerWidth();
-      $('#displayNameHeader').css("width", displayMaxTdWidth+'px');
+      $('#displayNameHeader').css("width", displayNameHeaderWidth+'px');
       $('td.displayName').css("width", displayMaxTdWidth+'px');
       $('#statusHeader').css("width", statusTdWidth+'px');
     }

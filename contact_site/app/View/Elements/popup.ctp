@@ -298,7 +298,7 @@
           };
           break;
         case 'p-auto-importexcel-upload':
-          var uploadBtn = _button("アップロード");
+          var uploadBtn = _button("インポート");
           uploadBtn.id = "uploadExcelBtn";
           uploadBtn.onclick = function () {
             popupEvent.uploadBtnClicked();

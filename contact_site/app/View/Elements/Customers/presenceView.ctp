@@ -17,13 +17,13 @@
           <thead>
           <tr>
             <th id="statusHeader" ng-click="changeStatusSortMode()">
-              状態
+              ステータス
               <i class="fa fa-sort" aria-hidden="true" ng-if="operatorListSortMode === 'displayName'"></i>
               <i class="fa fa-sort-asc" aria-hidden="true" ng-if="operatorListSortMode === 'status' && operatorListSortOrder === 'asc'"></i>
               <i class="fa fa-sort-desc" aria-hidden="true" ng-if="operatorListSortMode === 'status' && operatorListSortOrder === 'desc'"></i>
             </th>
             <th id="displayNameHeader" ng-click="changeDisplaySortMode()">
-              表示名
+              オペレータ
               <i class="fa fa-sort" aria-hidden="true" ng-if="operatorListSortMode === 'status'"></i>
               <i class="fa fa-sort-asc" aria-hidden="true" ng-if="operatorListSortMode === 'displayName' && operatorListSortOrder === 'asc'"></i>
               <i class="fa fa-sort-desc" aria-hidden="true" ng-if="operatorListSortMode === 'displayName' && operatorListSortOrder === 'desc'"></i>
@@ -67,7 +67,7 @@
       $('#statusHeader').addClass('mac');
     }
     if (navigator.userAgent.indexOf('Windows NT') > 0){
-      $('.displayNameSpace').css('padding-left', '1.5em');
+      $('.displayNameSpace').css('padding-left', '0.5em');
     }
   });
   //-->

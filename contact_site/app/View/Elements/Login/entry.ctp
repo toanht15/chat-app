@@ -13,7 +13,7 @@
 } else {
 echo $this->Form->create('MUser', array('url' => '/Login/login', 'id' => 'MUserIndexForm'));
 echo $this->Form->input('mail_address', array('label' => false, 'placeholder' => 'Mail Address'));
-echo $this->Form->input('password', array('label' => false, 'placeholder' => 'Password'));
+echo $this->Form->input('password', array('label' => false, 'placeholder' => 'Password', 'id' => 'MUserPasswordInput'));
 echo $this->Html->link('Sign In','javascript:void(0)', array('id' => 'MUserFormButton'));
 echo $this->Form->end();
 }
