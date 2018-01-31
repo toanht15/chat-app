@@ -103,7 +103,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
             'disabled' => !$coreSettings[C_COMPANY_USE_IMPORT_EXCEL_AUTO_MESSAGE],
             'data-text' => $coreSettings[C_COMPANY_USE_IMPORT_EXCEL_AUTO_MESSAGE] ? "発言内容の設定をエクセルファイルにて編集しインポートすることが可能です。<br>インポートしたデータは現在の設定に追加されます。<br>（上書きや洗い替えではないため、現在登録されている設定は残ります。）" : "こちらの機能はスタンダードプラン<br>からご利用いただけます。",
             'data-balloon-position' => '50',
-            'data-balloon-width' => $coreSettings[C_COMPANY_USE_IMPORT_EXCEL_AUTO_MESSAGE] ? '320' : ''
+            'data-balloon-width' => $coreSettings[C_COMPANY_USE_IMPORT_EXCEL_AUTO_MESSAGE] ? '460' : ''
           ));
         ?>
         </div>
