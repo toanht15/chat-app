@@ -2,10 +2,8 @@
 'use strict';
 
 sincloApp.factory('SimulatorService', function() {
-  //thisを変数にいれておく
-  var self = this;
 
-  var widget = {
+  return {
     _settings: {},
     _showWidgetType: 1,
     _openFlg: true,
@@ -415,8 +413,6 @@ sincloApp.factory('SimulatorService', function() {
       return content;
     }
   };
-
-  return widget;
 });
 
 </script>
