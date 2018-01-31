@@ -1243,7 +1243,7 @@ ul.naviBtn {
             }
 
             &.opWait i {
-              position: initial;
+              position: static;
               font-size: 30px;
               &:before {
                 float: left;
@@ -1252,7 +1252,7 @@ ul.naviBtn {
             }
 
             &.opStop i {
-              position: initial;
+              position: static;
               font-size: 30px;
               &:before {
                 float: left;
@@ -2070,6 +2070,7 @@ ul.naviBtn {
           margin: 0 auto;
           background-color: #FFF;
           th {
+            min-width: 110px;
             position: relative;
             padding: 10px 20px;
             i {
@@ -2092,7 +2093,7 @@ ul.naviBtn {
           td {
             white-space: nowrap;
             text-align: center;
-            padding: 10px 20px;
+            padding: 10px 10px;
           }
         }
 
@@ -2103,10 +2104,7 @@ ul.naviBtn {
           left: 10px;
           right: 10px;
           #statusHeader {
-            width: 12em;
-            &.mac {
-              width: 10em;
-            }
+            width: 104px;
           }
         }
 
@@ -2130,19 +2128,19 @@ ul.naviBtn {
               &.displayName {
                 display: inline-block;
                 text-align: left;
-                min-width: 90px;
+                min-width: 170px;
               }
               &.operatorStatus {
-                width: 9em;
-                padding: 5px 10px;
+                width: 110px;
+                padding: 5px 5px;
               }
               .statusWrap {
                 display: flex;
                 align-items: center;
               }
               .icon {
-                margin-left: 0.5em;
-                margin-right: 7px;
+                margin-left: 5px;
+                margin-right: 5px;
                 font-size: 18px;
               }
               .presence-active {
@@ -5440,7 +5438,7 @@ ul.naviBtn {
           display: table-cell;
           vertical-align: middle;
           #importExcelBtn {
-            width: 14em;
+            width: 17em;
             height: 2em;
             padding: 0.25em 0.5em;
             text-align: center;
@@ -5464,6 +5462,21 @@ ul.naviBtn {
       box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
       padding: 5px 0px !important;
       background: #fff;
+      position: relative;
+      hr.separator {
+        margin-top: 0.1em;
+        margin-bottom: 0.1em;
+        display: block;
+        width: 95%;
+        height: 1px;
+        background-color: #EDEDED;
+        border: 0;  /*デフォルトデザインでは線がある場合があるので、消しておく。*/
+        &.indent {
+          width: 384px;
+          position: relative;
+          left: -5px;
+        }
+      }
       li.t-link {
         padding: 0px 0px 0px;
         width: 100%;
@@ -6023,8 +6036,7 @@ ul.naviBtn {
               height: 100px;
               background-size: 100%;
               background-repeat: no-repeat;
-              float: left;
-              margin: 130px 3em;
+              margin: 130px 2.5em;
             }
 
             > div {
@@ -6076,6 +6088,14 @@ ul.naviBtn {
           flex-basis: auto;
           display: relative;
           margin-left: 20px;
+          height: 461px;
+
+          &.middleSize {
+            height: 541px;
+          }
+          &.largeSize {
+            height: 631px;
+          }
 
           > div {
             position: absolute;
@@ -6452,6 +6472,9 @@ ul.naviBtn {
     .content {
       font-size: 12px;
       margin-left: 1em;
+      ul {
+        margin-top: 0.5em;
+      }
     }
     #ip_filter_enable_select_area {
       label {
@@ -6501,7 +6524,6 @@ ul.naviBtn {
   }
   #ip_white_filter_settings_area, #ip_black_filter_settings_area {
     height: 31em;
-    transition: height 200ms linear;
     overflow: hidden;
     margin-left: 1.5em;
     pre {
@@ -6538,9 +6560,6 @@ ul.naviBtn {
       &.disabled {
         background-color: rgb(204, 204, 204);
       }
-    }
-    &.hidden {
-      height: 0;
     }
     .error-message {
       margin-top: 1em;

@@ -179,7 +179,7 @@ if ( window.hasOwnProperty('io') ) {
   function changePositionOfPresenseView(){
     // スクロールを使用するか
     var subCon = document.getElementById('presenceView');
-    // 詳細画面が表示されている場合
+    // オペレータステータス一覧が表示されていたら
     if ( document.getElementById('operator_presence_pop').style.display === "block" ) {
 
       /* position-top */

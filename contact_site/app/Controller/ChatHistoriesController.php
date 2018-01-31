@@ -5,6 +5,7 @@
    */
   class ChatHistoriesController extends AppController {
     public $helpers = ['Time'];
+    public $components = ['Landscape'];
     public $uses = ['MUser', 'MCompany', 'MCustomer', 'TCampaign', 'THistory', 'THistoryChatLog', 'THistoryStayLog', 'THistoryShareDisplay', 'MLandscapeData'];
     public $paginate = [
       'THistory' => [
@@ -75,7 +76,9 @@
       $this->_searchProcessing(3);
       // 成果の名称リスト
       $this->set('achievementType', Configure::read('achievementType'));
-      $this->_setList($isChat);
+      if(!$this->request->is('ajax')) {
+        $this->_setList($isChat);
+      }
     }
 
     public function getCustomerInfo() {
@@ -582,7 +585,11 @@
           if ( $row['ip'] !== "" ){
             $row['ip'] .= "\n";
           }
-          if ((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && !empty($history['LandscapeData']['org_name'])) {
+          if ((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA])
+              && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA])
+            && !empty($history['LandscapeData']['org_name'])
+            && ($this->isViewableMLCompanyInfo() || !LandscapeComponent::isMLLbcCode($history['LandscapeData']['lbc_code']))
+          ) {
             $row['ip'] .= $history['LandscapeData']['org_name'];
           } else {
              $row['ip'] .= $history['THistory']['ip_address'];
@@ -710,10 +717,12 @@
           if ( $row['ip'] !== "" ){
             $row['ip'] .= "\n";
           }
-          if ((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && !empty($val['LandscapeData']['org_name'])) {
+          if ((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA])
+              && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA])
+              && !empty($val['LandscapeData']['org_name'])
+              && ($this->isViewableMLCompanyInfo() || !LandscapeComponent::isMLLbcCode($val['LandscapeData']['lbc_code']))
+          ) {
             $row['ip'] .= $val['LandscapeData']['org_name'];
-            $row['ip'] .= "\n";
-            $row['ip'] .= '('.$val['THistory']['ip_address'].')';
           } else {
             $row['ip'] .= $val['THistory']['ip_address'];
           }
@@ -1102,12 +1111,18 @@
           //会社名が入っている場合
           if((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && (isset($data['History']['company_name']) && $data['History']['company_name'] !== "")) {
             //会社名がランドスケープテーブルに登録されている場合
-            $companyData = $this->MLandscapeData->find('all', [
+            $companyConditions = [
               'fields' => 'lbc_code,ip_address,org_name',
               'conditions' => [
                 'MLandscapeData.org_name LIKE' => '%'. $data['History']['company_name'].'%'
               ]
-            ]);
+            ];
+            // MLの企業情報を閲覧できない企業であれば
+            if(!$this->isViewableMLCompanyInfo()) {
+              $companyConditions['conditions']['NOT']['MLandscapeData.lbc_code'] = LandscapeComponent::ML_LBC_CODE;
+            }
+            $companyData = $this->MLandscapeData->find('all', $companyConditions);
+
             if(!empty($companyData)) {
               $ipAddressList = [];
               foreach($companyData as $k => $v) {
@@ -1225,6 +1240,10 @@
                 'LandscapeData.ip_address = THistory.ip_address',
             ],
         ];
+        // MLの企業情報を閲覧できない企業であれば
+        if(!$this->isViewableMLCompanyInfo()) {
+          $joinToLandscapeData['conditions']['NOT']['LandscapeData.lbc_code'] = LandscapeComponent::ML_LBC_CODE;
+        }
       }
 
       // 3) チャットに関する検索条件

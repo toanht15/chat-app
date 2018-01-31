@@ -82,6 +82,9 @@ class AppController extends Controller {
 
   private $secretKey = 'x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK';
 
+  // メディアリンクの企業情報を閲覧可能なcompany_keyのリスト
+  private $viewableMLCompanyInfoList = ['medialink','59f6e3aa713de'];
+
   public function beforeFilter(){
 
     // プロトコルチェック(本番のみ)
@@ -343,6 +346,11 @@ class AppController extends Controller {
     // 表示名
     $ret = str_replace("{!user}", $this->userInfo['display_name'], $ret);
     return $ret;
+  }
+
+  public function isViewableMLCompanyInfo() {
+    if(empty($this->userInfo)) return false;
+    return in_array($this->userInfo['MCompany']['company_key'], $this->viewableMLCompanyInfoList);
   }
 
   /**
