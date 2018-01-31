@@ -3434,9 +3434,12 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     // ポップアップをセンターに表示
     function setPositionOfPresenceView(){
-      var subContent = document.getElementById("presenceView");
-      subContent.style.left = ((window.innerWidth-$("#sidebar-main").outerWidth()) - $("#presenceView").outerWidth())/2 + "px";
-      subContent.style.top = window.innerHeight / 2 - 200 + "px";
+      var subContent = document.getElementById("presenceView"),
+          // リンクの位置を取得
+          showPopupLinkObj = $('#showOperatorPresenceLink'),
+          showPopupLinkOffset = showPopupLinkObj.offset();
+      subContent.style.left = showPopupLinkOffset.left + "px";
+      subContent.style.top =  showPopupLinkOffset.top + showPopupLinkObj.height() + 10 + "px";
     }
 
     // ポップアップをセンターに表示
