@@ -2038,14 +2038,14 @@
           this.scDownTimer = setTimeout(function(){
           var chatTalk = document.getElementById('chatTalk');
             $('#sincloBox #chatTalk').animate({
-              scrollTop: (chatTalk.scrollHeight - chatTalk.clientHeight - 10)
+              scrollTop: (chatTalk.scrollHeight - chatTalk.clientHeight - 2)
           }, 300);
           }, 500);
         },
         scDownImmediate: function(){
           var chatTalk = document.getElementById('chatTalk');
           $('#sincloBox #chatTalk').animate({
-            scrollTop: chatTalk.scrollHeight - chatTalk.clientHeight - 10
+            scrollTop: chatTalk.scrollHeight - chatTalk.clientHeight - 2
           }, 300);
         },
         isNotifyOpened: false,
