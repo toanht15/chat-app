@@ -895,7 +895,7 @@ class TAutoMessagesController extends AppController {
       'conditions' => ['TAutoMessage.del_flg != ' => 1, 'm_companies_id' => $this->userInfo['MCompany']['id']]
     ]);
 
-    $page = floor((intval($count[0]['count']) + 100) / 100);
+    $page = floor((intval($count[0]['count']) + 99) / 100);
 
     return $page >= 1 ? $page : 1;
   }
