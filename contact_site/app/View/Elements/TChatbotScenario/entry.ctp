@@ -1,4 +1,5 @@
 <?php echo $this->element('TChatbotScenario/angularjs'); ?>
+<?php echo $this->element('TChatbotScenario/localStorageService'); ?>
 <?php echo $this->element('WidgetSimulator/simulatorService'); ?>
 
 <div ng-app="sincloApp" ng-controller="MainController as main" ng-cloak style="height: 100%;">

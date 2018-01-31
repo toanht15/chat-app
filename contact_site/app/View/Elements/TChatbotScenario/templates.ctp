@@ -27,12 +27,7 @@
           <tr ng-repeat="(listId, hearingItem) in setItem.hearings track by $index">
             <td><input type="text" ng-model="hearingItem.variableName" class="frame"></td>
             <td>
-              <select ng-model="hearingItem.inputType" ng-init="hearingItem.inputType = hearingItem.inputType" class="frame">
-                <option value="1">@text</option>
-                <option value="2">@number</option>
-                <option value="3">@email</option>
-                <option value="4">@tel_number</option>
-              </select>
+              <select ng-model="hearingItem.inputType" ng-init="hearingItem.inputType = hearingItem.inputType" ng-options="index as type.label for (index, type) in inputTypeList" class="frame"></select>
             </td>
             <td class="message"><input type="text" ng-model="hearingItem.message" class="frame"></td>
             <td class="btnBlock">
