@@ -1732,9 +1732,10 @@ io.sockets.on('connection', function (socket) {
         var chunkSize = 100;
         var keyLength = Object.keys(customerList[res.siteKey]).length;
         Object.keys(customerList[res.siteKey]).forEach(function(key){
-          var splitedKey = key.split("_");
-          if (splitedKey.length === 3 && isset(splitedKey[2])) {
-            if(!io.sockets.connected[splitedKey[2]]) {
+          var splitedKey = key.split("/#");
+          if (splitedKey.length === 2 && isset(splitedKey[1])) {
+            var targetSocketId = "/#" + splitedKey[1]
+            if(!io.sockets.connected[targetSocketId]) {
               var targetTabId = customerList[res.siteKey][key].tabId;
               console.log("【" + res.siteKey + "】 customerList key : " + key + " client is not exist. deleting. targetTabId : " + targetTabId);
               if(targetTabId && targetTabId !== "") {
@@ -3149,8 +3150,8 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
           }
           var targetSocketId = "";
           if(isset(targetObj) && isset(targetKey)) {
-            var splited = targetKey.split("_");
-            targetSocketId = splited[2];
+            var splited = targetKey.split("/#");
+            targetSocketId = "/#" + splited[1];
           }
           var sendData = {
             inCustomerList: isset(targetObj),
