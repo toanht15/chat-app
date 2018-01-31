@@ -3599,6 +3599,12 @@ var socket, // socket.io
       }
       popup.remove();
     });
+
+    // 存在チェックレスポンス用
+    socket.on("checkExists", function(d) {
+      var obj = common.jParse(d);
+      emit('resCheckExists', obj);
+    });
   };
 
   $.ajaxSetup({
