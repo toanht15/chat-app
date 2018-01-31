@@ -76,7 +76,9 @@
       $this->_searchProcessing(3);
       // 成果の名称リスト
       $this->set('achievementType', Configure::read('achievementType'));
-      $this->_setList($isChat);
+      if(!$this->request->is('ajax')) {
+        $this->_setList($isChat);
+      }
     }
 
     public function getCustomerInfo() {

@@ -197,6 +197,7 @@
           var isOverWidth = (leftCoordinate + ttSize.width + 40) > $(window).outerWidth();
           if(isOverWidth) {
             leftCoordinate = (offset.left + size.width)  - ttSize.width;
+            baloonPosition = 75;
           }
 
           // 要素の上に横中央で配置
