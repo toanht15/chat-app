@@ -1,10 +1,3 @@
-<?php
-//
-$fileTypeAreaHiddenClass = "";
-if ( !(!empty($this->data['MFileTransferSetting']['type']) && strcmp($this->data['MFileTransferSetting']['type'],C_FILE_TRANSFER_SETTING_TYPE_EXTEND) === 0) ) {
-  $fileTypeAreaHiddenClass = "hidden";
-}
-?>
 <?php echo $this->element('MSecuritySettings/script'); ?>
 <div id='msecuritysettings_idx' class="card-shadow">
 
@@ -45,7 +38,7 @@ if ( !(!empty($this->data['MFileTransferSetting']['type']) && strcmp($this->data
             <?php if (!empty($errors['active_flg'])) echo "<li class='error-message'>" . h($errors['active_flg'][0]) . "</li>"; ?>
           </li>
         </ul>
-        <div id="ip_white_filter_settings_area" class="<?=$fileTypeAreaHiddenClass?>">
+        <div id="ip_white_filter_settings_area" style="display:none">
         <pre>
 接続を許可する接続元IPアドレスを指定します。
 
@@ -64,7 +57,7 @@ if ( !(!empty($this->data['MFileTransferSetting']['type']) && strcmp($this->data
           <?php if (!empty($errors['allow_extensions'])) echo "<li class='error-message'>" . h($errors['allow_extensions'][0]) . "</li>"; ?>
           <?php if (!empty($errors['ips'])) echo "<li class='error-message'>" . h($errors['ips'][0]) . "</li>"; ?>
         </div>
-        <div id="ip_black_filter_settings_area" class="<?=$fileTypeAreaHiddenClass?>">
+        <div id="ip_black_filter_settings_area" style="display:none">
         <pre>
 接続を制限（拒否）する接続元IPアドレスを指定します。
 
