@@ -495,8 +495,6 @@
         'joins' =>  $returnData['joinList'],
         'conditions' => $returnData['conditions']
       ]);
-      $this->log('historyList',LOG_DEBUG);
-      $this->log($historyList,LOG_DEBUG);
       foreach($historyList as $key => $value){
         if(!empty($value['SpeechTime']['firstSpeechTime'])) {
           $key_id[$key] = $value['SpeechTime']['firstSpeechTime'];
