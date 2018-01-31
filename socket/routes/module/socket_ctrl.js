@@ -3134,8 +3134,54 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
           console.log("customerList : " + JSON.stringify(customerList[obj.targetKey]));
           console.log("End --------------------------------------------------------");
           break;
+        case 8: // confirm tabId user is exists? socket.emit('settingReload', JSON.stringify({type:8, accessId:"", ipAddress:"", targetKey: "demo", siteKey: "master"}));
+          var keys = isset(customerList[obj.targetKey]) ? Object.keys(customerList[obj.targetKey]) : [];
+          var targetObj = null;
+          var targetKey = "";
+          if(keys && keys.length > 0) {
+            keys.some(function(key) {
+              if(key.indexOf(obj.accessId + "_" + obj.ipAddress) >= 0) {
+                targetKey = key;
+                targetObj = customerList[obj.targetKey][key];
+                return true;
+              }
+            });
+          }
+          var targetSocketId = "";
+          if(isset(targetObj) && isset(targetKey)) {
+            var splited = targetKey.split("_");
+            targetSocketId = splited[2];
+          }
+          var sendData = {
+            inCustomerList: isset(targetObj),
+            sincloCoreExists: isset(sincloCore[obj.targetKey]),
+            sincloCoreDataExists: isset(sincloCore[obj.targetKey][(isset(targetObj) ? (isset(targetObj['tabId']) ? targetObj['tabId'] : "") : "")]),
+            connectListExists: isset(targetObj) && isset(connectList),
+            inConnectList: isset(targetObj) && isset(connectList) && (Object.keys(connectList).indexOf(targetSocketId) !== -1),
+            customerListExists: isset(customerList) && isset(customerList[obj.targetKey]),
+            socketIdIsFound: isset(targetSocketId),
+            socketConnected: isset(targetSocketId) && isset(io.sockets.connected[targetSocketId]),
+            inSocketsList: isset(targetSocketId) && isset(io.sockets.sockets) && (Object.keys(io.sockets.sockets).indexOf(targetSocketId) !== 1)
+          };
+          console.log("send data : " + JSON.stringify(sendData));
+          emit.toMine('userExistsResult', sendData, socket);
+          if(isset(targetObj) && isset(targetObj['tabId'])) {
+            emit.toUser('checkExists', {siteKey: obj.targetKey, tabId: targetObj['tabId'], returnTo: socket.id}, getSessionId(obj.targetKey, targetObj['tabId'], 'sessionId'));
+          } else {
+            console.log("checkExists NOT sent.");
+          }
+          break;
         default:
       }
+    }
+  });
+
+  socket.on('resCheckExists', function (data) {
+    var obj = JSON.parse(data);
+    if(isset(obj['returnTo'])) {
+      emit.toUser('resCheckExists', obj, obj['returnTo']);
+    } else {
+      console.log("resCheckExists NOT sent");
     }
   });
 
