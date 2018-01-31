@@ -146,7 +146,6 @@
               addTooltipEvent();
             }
             else {
-              jqxhr.abort();
               $scope.messageList = json;
 
               $scope.chatLogList = [];
