@@ -75,12 +75,12 @@ class EditNoticeDataMakerShell extends AppShell {
             }
             //次のメッセージのt_hisotries_idチェック
             else if(!empty($chatLogIdData[$key + 1]) && $chatLogIdData[$key + 1]['THistoryChatLog']['t_histories_id'] != $val['THistoryChatLog']['t_histories_id'])  {
-              if($chatLogIdData[$key - 1]['THistoryChatLog']['message_type'] != 1 && $check != 'true') {
+              if(!empty($chatLogIdData[$key - 1]) && $chatLogIdData[$key - 1]['THistoryChatLog']['message_type'] != 1 && $check != 'true') {
                 $logsIdList[] = $val['THistoryChatLog']['id'];
               }
             }
             else if(empty($chatLogIdData[$key + 1]))  {
-              if($chatLogIdData[$key - 1]['THistoryChatLog']['message_type'] != 1 && $check != 'true') {
+              if(!empty($chatLogIdData[$key - 1]) && $chatLogIdData[$key - 1]['THistoryChatLog']['message_type'] != 1 && $check != 'true') {
                 $logsIdList[] = $val['THistoryChatLog']['id'];
               }
             }

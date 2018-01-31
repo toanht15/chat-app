@@ -507,6 +507,7 @@
                     <p><?=h($defaultHistoryList['LandscapeData']['org_name'])?></p><?='\n'?>
                 <?php elseif(empty($defaultHistoryList['LandscapeData']['org_name'])): ?>
                   <span id = "Landscape"></span>
+                  <?php $defaultHistoryList['THistory']['ip_address'] = '('.$defaultHistoryList['THistory']['ip_address'].')' ?>
                 <?php endif; ?>
               <?php else: ?>
                 <?php $defaultHistoryList['THistory']['ip_address'] = '('.$defaultHistoryList['THistory']['ip_address'].')' ?>
