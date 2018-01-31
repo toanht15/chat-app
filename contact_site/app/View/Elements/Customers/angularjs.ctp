@@ -841,7 +841,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       });
     };
 
-    $scope.showOperatorPresence = function() {
+    $scope.showOperatorPresence = function(event) {
+      // デフォルトの挙動は抑止する
+      event.preventDefault();
       // ポップアップを閉じる
       if ( $scope.presenceMainClass !== "" ) {
         $("#operator_presence_pop").css("display", "none");
@@ -3434,9 +3436,12 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     // ポップアップをセンターに表示
     function setPositionOfPresenceView(){
-      var subContent = document.getElementById("presenceView");
-      subContent.style.left = ((window.innerWidth-$("#sidebar-main").outerWidth()) - $("#presenceView").outerWidth())/2 + "px";
-      subContent.style.top = window.innerHeight / 2 - 200 + "px";
+      var subContent = document.getElementById("presenceView"),
+          // リンクの位置を取得
+          showPopupLinkObj = $('#showOperatorPresenceLink'),
+          showPopupLinkOffset = showPopupLinkObj.offset();
+      subContent.style.left = showPopupLinkOffset.left + "px";
+      subContent.style.top =  showPopupLinkOffset.top + showPopupLinkObj.height() + 10 + "px";
     }
 
     // ポップアップをセンターに表示
@@ -3567,22 +3572,25 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       for(var objectKey in input) {
         array.push(input[objectKey]);
       }
-      var sortAsc = (atr.match(/^-{1}-{2}/) === null);
+      var sortAsc = (atr.match(/^-{1}-{2}-{3}/) === null);
       var splitedOrder = atr.split("-").slice(1);
       var attribute1 =  splitedOrder[0];
       var attribute2 =  splitedOrder[1];
+      var attribute3 = splitedOrder[2];
       array.sort(function(a, b){
-        // 未読あり > 未読ありの対応中 > 対応中 > 何もない
+        // 未読あり > 未読ありの対応中 > 対応中　＝　画面共有／資料共有対応中 > 何もない
         var a1 = (isNaN(parseInt(a[attribute1]))) ? 0 : 10000,
             b1 = (isNaN(parseInt(b[attribute1]))) ? 0 : 10000,
             a2 = (isNaN(parseInt(a[attribute2]))) ? 0 : 10,
             b2 = (isNaN(parseInt(b[attribute2]))) ? 0 : 10,
-            calc = Math.abs(a1 - a2) - Math.abs(b1 - b2);
+            a3 = (isNaN(parseInt(a[attribute3]))) ? 0 : 10,
+            b3 = (isNaN(parseInt(b[attribute3]))) ? 0 : 10,
+            calc = Math.abs(a1 - a2 - a3) - Math.abs(b1 - b2 - b3);
         if(calc > 0) {
           return -1;
         } else if (calc < 0) {
           return 1;
-        } else if(a1 === 0 && b1 === 0 && a2 === 0 && b2 === 0) {
+        } else if(a1 === 0 && b1 === 0 && a2 === 0 && b2 === 0 && a3 === 0 && b3 === 0) {
           // 各優先順位でステータス（ウィジェットオープン　＞　ウィジェット最小化　＞　ウィジェット非表示　＞　非アクティブ）で並び替え
           var astatus = (isNaN(parseInt(a['status']))) ? 0 : parseInt(a['status']),
               bstatus = (isNaN(parseInt(b['status']))) ? 0 : parseInt(b['status']);
