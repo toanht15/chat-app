@@ -83,7 +83,7 @@ var actBtnShow = function(){
     }
     //document.getElementById("history_csv_btn").addEventListener('click', openCopyDialog, false);
     //削除ボタン有効
-    if(authorityDelete == 1) {
+    if(authorityDelete == 1 && document.getElementById("history_dustbox_btn") != null ) {
       document.getElementById("history_dustbox_btn").className="btn-shadow disOffredBtn";
       document.getElementById("history_dustbox_btn").addEventListener('click', openDeleteDialog, false);
     }
@@ -120,7 +120,7 @@ var actBtnShow = function(){
     }
     //document.getElementById("tautomessages_copy_btn").removeEventListener('click', openCopyDialog, false);
     //削除ボタン無効
-    if(authorityDelete == 1) {
+    if(authorityDelete == 1 && document.getElementById("history_dustbox_btn") != null) {
       document.getElementById("history_dustbox_btn").className="btn-shadow disOffgrayBtn";
       document.getElementById("history_dustbox_btn").removeEventListener('click', openDeleteDialog, false);
     }
@@ -274,7 +274,9 @@ $(function(){
       selectedList.push(Number(list[i].value));
       document.getElementById("selectTab"+Number(list[i].value)).checked = false;
     }
-    document.getElementById("history_dustbox_btn").className="btn-shadow disOffgrayBtn";
+    if(document.getElementById("history_dustbox_btn") != null) {
+      document.getElementById("history_dustbox_btn").className="btn-shadow disOffgrayBtn";
+    }
     document.getElementById("history_csv_btn").className="btn-shadow disOffgrayBtn";
     $("#btnSet").css('display', 'none');
     //横並びの場合
