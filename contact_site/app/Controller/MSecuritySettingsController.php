@@ -12,15 +12,6 @@ class MSecuritySettingsController extends AppController
 {
   public $uses = ['MIpFilterSetting'];
 
-  private $defaultAllowExtensions = array(
-    'pdf',
-    'ppt',
-    'pptx',
-    'jpg',
-    'png',
-    'gif'
-  );
-
   public function beforeFilter() {
     parent::beforeFilter();
     $this->set('title_for_layout', 'セキュリティ設定');
@@ -36,17 +27,6 @@ class MSecuritySettingsController extends AppController
       $this->renderView();
     }
     $this->set('typeSelect', Configure::read('securityEnableLoginIpFilterSetting'));
-  }
-
-  public function getAllowExtensions() {
-    $default = $this->defaultAllowExtensions;
-    $myData = $this->MIpFilterSetting->find('first', array("condition" => array('MIpFilterSetting.m_companies_id' => $this->userInfo['MCompany']['id'])));
-    if(!empty($myData) && strcmp($myData['MIpFilterSetting']['type'], C_FILE_TRANSFER_SETTING_TYPE_EXTEND) === 0) {
-      // 拡張設定利用中であれば拡張する
-      $myExtensions = explode(',',$myData['MIpFilterSetting']['allow_extensions']);
-      $default = array_merge($default, $myExtensions);
-    }
-    return array_values(array_unique($default));
   }
 
   private function upsert() {
@@ -103,7 +83,7 @@ class MSecuritySettingsController extends AppController
   private function update() {
     try {
       $updateData = $this->MIpFilterSetting->find('first', array(
-          "condition" => array( 'm_companies_id' => $this->userInfo['MCompany']['id'])
+          "conditions" => array( 'm_companies_id' => $this->userInfo['MCompany']['id'])
       ));
       if ($updateData['MIpFilterSetting']['m_companies_id'] !== $this->userInfo['MCompany']['id']) {
         throw new Exception('不正な更新処理です。');
