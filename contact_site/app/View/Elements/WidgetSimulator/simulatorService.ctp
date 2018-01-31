@@ -364,15 +364,17 @@ sincloApp.factory('SimulatorService', function() {
       return res;
     },
     // 表示用HTMLへの変換
-    createMessage: function(val) {
+    createMessage: function(val, prefix) {
       if (val === '') return;
+      prefix =  (typeof prefix !== 'undefined' && prefix !== '') ? prefix + '-' : '';
+      var messageIndex = $('#chatTalk > div:not([style*="display: none;"])').length;
 
       var strings = val.split('\n');
       var radioCnt = 1;
       var linkReg = RegExp(/(http(s)?:\/\/[\w\-\.\/\?\=\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/);
       var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
       var htmlTagReg = RegExp(/<\/?("[^"]*"|'[^']*'|[^'">])*>/g)
-      var radioName = "sinclo-radio0";
+      var radioName = prefix + "sinclo-radio" + messageIndex;
       var content = "";
 
       for (var i = 0; strings.length > i; i++) {

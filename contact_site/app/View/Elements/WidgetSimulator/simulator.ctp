@@ -12,14 +12,14 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
     .showType4.largeSize{
       width: 400px;
     }
-    #tautomessages_idx #tautomessages_form #tautomessages_action_simulator section .ulTab li {
+    #widget_simulator_wrapper section .ulTab li {
       display: block;
     }
-    #tautomessages_idx #tautomessages_form #tautomessages_action_simulator section ul#chatTalk li {
+    #widget_simulator_wrapper section ul#chatTalk li {
       word-break: break-all;
       white-space: pre-wrap;
     }
-    #tautomessages_idx #tautomessages_form #tautomessages_action_simulator section ul#chatTalk li.boxType {
+    #widget_simulator_wrapper section ul#chatTalk li.boxType {
       display: block;
     }
 </style>
@@ -337,14 +337,14 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
   <!-- chat_message_copy 0 stayt -->
           <div id="messageBox" class="messageBox details" ng-if="widget.settings['chat_message_copy'] == '1'" ng-class="{ notNoneWidgetOutsideBorder:widget.settings['widget_outside_border_none'] === ''||widget.settings['widget_outside_border_none'] === false, notNone:widget.settings['widget_inside_border_none'] === ''||widget.settings['widget_inside_border_none'] === false }" style="user-select: none; -moz-user-select: none; -webkit-user-select: none; -ms-user-select: none;">
             <textarea name="sincloChat" id="sincloChatMessage" class="details" ng-class="{ notNone:widget.message_box_border_none === ''||widget.message_box_border_none === false}" placeholder="メッセージを入力してください&#13;&#10;{{widget.settings['chat_area_placeholder_pc']}}"></textarea>
-            <a id="sincloChatSendBtn" class="notSelect details" ng-class="{ middleSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '2',largeSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '3'}" ng-click="isVisitorSendMessage && visitorSendMessage()"><span class="details">送信</span></a>
+            <a id="sincloChatSendBtn" class="notSelect details" ng-class="{ middleSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '2',largeSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '3'}" ng-click="canVisitorSendMessage && visitorSendMessage()"><span class="details">送信</span></a>
           </div>
   <!-- chat_message_copy 0 end -->
 
   <!-- chat_message_copy 1 stayt -->
           <div id="messageBox" class="messageBox details" ng-if="widget.settings['chat_message_copy'] == '0'" ng-class="{ notNoneWidgetOutsideBorder:widget.widget_outside_border_none === ''||widget.widget_outside_border_none === false, notNone:widget.widget_inside_border_none === ''||widget.widget_inside_border_none === false }">
             <textarea name="sincloChat" id="sincloChatMessage" class="details" ng-class="{ notNone:widget.message_box_border_none === ''||widget.message_box_border_none === false}" placeholder="メッセージを入力してください&#13;&#10;{{widget.settings['chat_area_placeholder_pc']}}"></textarea>
-            <a id="sincloChatSendBtn" class="notSelect details" ng-class="{ middleSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '2',largeSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '3'}" ng-click="isVisitorSendMessage && visitorSendMessage()"><span class="details">送信</span></a>
+            <a id="sincloChatSendBtn" class="notSelect details" ng-class="{ middleSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '2',largeSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '3'}" ng-click="canVisitorSendMessage && visitorSendMessage()"><span class="details">送信</span></a>
           </div>
   <!-- chat_message_copy 1 end -->
 
@@ -531,7 +531,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
 
           <div id="messageBox" class="messageBox details" ng-class="{ notNoneWidgetOutsideBorder:widget.widget_outside_border_none === ''||widget.widget_outside_border_none === false, notNone:widget.widget_inside_border_none === ''||widget.widget_inside_border_none === false }">
             <textarea name="sincloChat" id="sincloChatMessage" class="details" ng-class="{ notNone:widget.message_box_border_none === ''||widget.message_box_border_none === false}" placeholder="メッセージを入力してください{{widget.settings['chat_area_placeholder_sp']}}"></textarea>
-            <a id="sincloChatSendBtn" class="notSelect details" ng-click="isVisitorSendMessage && visitorSendMessage()"><span class="details">送信</span></a>
+            <a id="sincloChatSendBtn" class="notSelect details" ng-click="canVisitorSendMessage && visitorSendMessage()"><span class="details">送信</span></a>
           </div>
         </section>
       </div>
@@ -542,6 +542,6 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
   </section>
 
   <?= $this->Form->input('isTabDisplay', ['type' => 'hidden', 'value' => $isTabDisplay]); ?>
-  <?= $this->Form->input('isVisitorSendMessage', ['type' => 'hidden', 'value' => $isVisitorSendMessage]); ?>
+  <?= $this->Form->input('canVisitorSendMessage', ['type' => 'hidden', 'value' => $canVisitorSendMessage]); ?>
 
 </div>

@@ -7,7 +7,7 @@
       </div>
     </div>
     <div id="simulator_popup_body">
-      <?= $this->element('WidgetSimulator/simulator', ['isTabDisplay' => false, 'isVisitorSendMessage' => true]); ?>
+      <?= $this->element('WidgetSimulator/simulator', ['isTabDisplay' => false, 'canVisitorSendMessage' => true]); ?>
     </div>
     <div id="simulator_popup_footer">
       <a class="textBtn greenBtn btn-shadow" ng-click="actionClear()">クリア</a>

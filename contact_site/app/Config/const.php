@@ -136,6 +136,9 @@ define('C_MATCH_RULE_IMAGE_FILE', '/.(png|jpg|jpeg)$/i');
 define('C_MATCH_RULE_NUM_1', '/^(100|[0-9]{1,2})$/');
 define('C_MATCH_RULE_NUM_2', '/^(100|[1-9][0-9]|[1-9]{1})$/');
 define('C_MATCH_RULE_NUM_3', '/^(60|[1-5][0-9]|[1-9]{1})$/');
+define('C_MATCH_RULE_TEXT', '/.+/'); // 1文字以上のテキスト
+define('C_MATCH_RULE_NUMBER', '/[0-9]+/');  // 1文字以上の数字
+define('C_MATCH_RULE_EMAIL', '/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/'); // メールアドレス http://emailregex.com/
 
 // メッセージ種別
 define('C_MESSAGE_TYPE_SUCCESS', 1); // 処理成功
@@ -178,11 +181,17 @@ define('C_AUTO_CV_DISABLED', 2); // cv登録しない
 define('C_AUTO_WIDGET_TEXTAREA_OPEN', 1); // 自由入力可
 define('C_AUTO_WIDGET_TEXTAREA_CLOSE', 2); // 自由入力不可
 
-// チャットボットシナリオ設定－アクションリスト
+// シナリオ設定－アクション種別コード
 define('C_SCENARIO_ACTION_TEXT', 1); // テキスト発言
 define('C_SCENARIO_ACTION_HEARING', 2); // ヒアリング
 define('C_SCENARIO_ACTION_SELECT_OPTION', 3); // 選択肢
 define('C_SCENARIO_ACTION_SEND_MAIL', 4); // メール送信
+
+// シナリオ設定(ヒアリング)－入力タイプ種別コード
+define('C_SCENARIO_INPUT_TYPE_TEXT', 1);
+define('C_SCENARIO_INPUT_TYPE_NUMBER', 2);
+define('C_SCENARIO_INPUT_TYPE_EMAIL', 3);
+define('C_SCENARIO_INPUT_TYPE_TEL', 4);
 
 // する/しない設定
 define('C_SELECT_CAN', 1); // する
@@ -565,6 +574,7 @@ $config['outMessageCvType'] = [
     C_AUTO_CV_DISABLED => "しない"
 ];
 
+/* シナリオ設定 - アクション種別 */
 $config['chatbotScenarioActionList'] = [
   // テキスト発言
   C_SCENARIO_ACTION_TEXT => [
@@ -615,6 +625,26 @@ $config['chatbotScenarioActionList'] = [
       'messageIntervalTimeSec' => '3',
       'mailType' => 1
     ]
+  ]
+];
+
+/* シナリオ設定 - ヒアリング入力タイプ */
+$config['chatbotScenarioInputType'] = [
+  C_SCENARIO_INPUT_TYPE_TEXT => [
+    'label' => '@text',
+    'rule' => C_MATCH_RULE_TEXT
+  ],
+  C_SCENARIO_INPUT_TYPE_NUMBER => [
+    'label' => '@number',
+    'rule' => C_MATCH_RULE_NUMBER
+  ],
+  C_SCENARIO_INPUT_TYPE_EMAIL => [
+    'label' => '@email',
+    'rule' => C_MATCH_RULE_EMAIL
+  ],
+  C_SCENARIO_INPUT_TYPE_TEL => [
+    'label' => '@tel_number',
+    'rule' => C_MATCH_RULE_TEL
   ]
 ];
 

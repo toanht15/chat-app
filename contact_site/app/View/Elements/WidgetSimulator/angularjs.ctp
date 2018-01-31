@@ -7,16 +7,15 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
   $scope.simulatorSettings = SimulatorService;
 
   $scope.isTabDisplay = document.getElementById('isTabDisplay').value || true;
-  $scope.isVisitorSendMessage = document.getElementById('isVisitorSendMessage').value || false;
+  $scope.canVisitorSendMessage = document.getElementById('canVisitorSendMessage').value || false;
 
   /**
    * addReMessage
    * 企業側メッセージの追加
    * @param String message 追加するメッセージ
    */
-  $scope.$on('addReMessage', function(event, message) {
-    console.log("=== SimulatorController::addReMessage ===");
-    $scope.addMessage('re', message);
+  $scope.$on('addReMessage', function(event, message, prefix) {
+    $scope.addMessage('re', message, prefix);
   });
 
   /**
@@ -26,7 +25,6 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
    */
   $scope.$on('addSeMessage', function(event, message) {
     console.log("=== SimulatorController::addSeMessage ===");
-
   });
 
   /**
@@ -34,30 +32,45 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
    * メッセージの消去
    */
   $scope.$on('removeMessage', function(event) {
-    var elms = document.querySelectorAll('#chatTalk div:nth-child(n+3)');
-    [...elms].forEach(elm => {
+    var elms = $('#chatTalk div:nth-child(n+3)');
+    angular.forEach(elms, function(elm) {
       document.querySelector('#chatTalk').removeChild(elm);
     });
   });
 
   $scope.visitorSendMessage = function() {
-    $scope.addMessage('se', $('#sincloChatMessage').val())
+    var message = $('#sincloChatMessage').val()
+    if (typeof message === 'undefined' || message === '') {
+      return;
+    }
+
+    $scope.addMessage('se', message);
     $('#sincloChatMessage').val('');
+    $scope.$emit('receiveVistorMessage', message)
   };
 
-  $scope.addMessage = function(type, message) {
+  $scope.addMessage = function(type, message, prefix) {
     // ベースとなる要素をクローンし、メッセージを挿入する
     if (type === 're') {
       var divElm = document.querySelector('#chatTalk div:not(.liRight)').cloneNode(true);
     } else {
       var divElm = document.querySelector('#chatTalk div.liRight').cloneNode(true);
     }
-    var formattedMessage = $scope.simulatorSettings.createMessage(message);
+    var formattedMessage = $scope.simulatorSettings.createMessage(message, prefix);
     divElm.querySelector('li .details:not(.cName)').innerHTML = formattedMessage;
 
     // 要素を追加する
     document.getElementById('chatTalk').appendChild(divElm);
     $('#chatTalk div:last-child').show();
+
+    // 高さ調整
+    $timeout(function() {
+      var target = $('#chatTalk');
+      var time = 500;
+      target.stop().animate({
+        scrollTop: target.get(0).scrollHeight - target.outerHeight()
+      }, time);
+    }, 0);
   }
 
   /**
@@ -99,7 +112,25 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
       document.getElementById('messageBox').style.display = "none";
       document.getElementById('chatTalk').style.height = chatTalkHeight + messageBoxHeight + "px";
     }
+
+    // 高さ調整
+    var target = $('#chatTalk');
+    var time = 500;
+    target.stop().animate({
+      scrollTop: target.get(0).scrollHeight - target.outerHeight()
+    }, time);
   });
 
+  // ラジオボタンの選択
+  $(document).on('click', '#chatTalk input[type="radio"]', function() {
+    // メッセージ送信が有効な場合、$emitでイベントを送信する
+    if ($scope.canVisitorSendMessage) {
+      var prefix = $(this).attr('id').replace(/-sinclo-radio[0-9a-z-]+$/i, '');
+      var message = $(this).val().replace(/^\s/, '');
+      $scope.addMessage('se', message)
+      $scope.$emit('receiveVistorMessage', message, prefix)
+    }
+  });
 }]);
+
 </script>

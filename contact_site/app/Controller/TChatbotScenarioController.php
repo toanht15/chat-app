@@ -40,6 +40,7 @@ class TChatbotScenarioController extends AppController {
     parent::beforeFilter();
     $this->set('title_for_layout', 'シナリオ設定');
     $this->chatbotScenarioActionList = Configure::read('chatbotScenarioActionList');
+    $this->chatbotScenarioInputType = Configure::read('chatbotScenarioInputType');
   }
 
   /**
@@ -97,8 +98,10 @@ class TChatbotScenarioController extends AppController {
    * @return void
    * */
   private function _viewElement() {
-    // アクションリスト
+    // アクション種別
     $this->set('chatbotScenarioActionList', $this->chatbotScenarioActionList);
+    // 入力タイプ種別
+    $this->set('chatbotScenarioInputType', $this->chatbotScenarioInputType);
     // 最後に表示していたページ番号
     if(!empty($this->request->query['lastpage'])){
       $this->set('lastPage', $this->request->query['lastpage']);
