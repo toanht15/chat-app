@@ -495,6 +495,8 @@
         'joins' =>  $returnData['joinList'],
         'conditions' => $returnData['conditions']
       ]);
+      $this->log('historyList',LOG_DEBUG);
+      $this->log($historyList,LOG_DEBUG);
       foreach($historyList as $key => $value){
         if(!empty($value['SpeechTime']['firstSpeechTime'])) {
           $key_id[$key] = $value['SpeechTime']['firstSpeechTime'];
@@ -553,8 +555,6 @@
 
         if ((isset($history['THistoryChatLog2']['type']) && isset($infoData['History']['chat_type']) &&
           $history['THistoryChatLog2']['type'] === Configure::read('chatType')[$infoData['History']['chat_type']]) || empty($infoData['History']['chat_type'])) {
-        if((!empty($infoData['History']['campaign']) && $infoData['History']['campaign'] == $campaignParam) || empty($infoData['History']['campaign'])) {
-        $row = [];
         if($history['THistoryChatLog2']['type'] == "自動返信") {
           $history['THistoryChatLog2']['type'] = "Auto";
         }
@@ -639,7 +639,6 @@
         }
 
         $csv[] = $row;
-      }
       }
     }
       $this->_outputCSV($name, $csv);
@@ -1322,13 +1321,14 @@
         // キャンペーンに関する検索条件
         if ( isset($data['History']['campaign']) && $data['History']['campaign'] !== "") {
           $campaignList = $this->TCampaign->getList();
-          $campaignParam = "";
+          $campaignParam = [];
+          $tmp = "";
           foreach($campaignList as $k => $v){
-            if ( strpos($data['History']['campaign'], $v) !== false ) {
-              if ( $campaignParam !== "" ) {
-                $campaignParam .= "\n";
-              }
-              $campaignParam .= h($k);
+            if($data['History']['campaign'] == $v) {
+              $tmp = $k;
+            }
+            if ( strpos($tmp, $k) !== false ) {
+              $campaignParam[] = h($k);
             }
           }
           $historyIdData = $this->THistoryChatLog->find('all', [
@@ -1348,20 +1348,39 @@
             $idList[] = $val['THistoryChatLog']['t_histories_id'];
           }
           $stayLogs = $this->THistoryStayLog->getDataSource();
-          $campaignData = $stayLogs->buildStatement(
-            [
-              'table' => $stayLogs->fullTableName($this->THistoryStayLog),
-              'alias' => 'stayLogs',
-              'fields' => [
-                'stayLogs.*'
+          if(count($campaignParam) == 1) {
+            $campaignData = $stayLogs->buildStatement(
+              [
+                'table' => $stayLogs->fullTableName($this->THistoryStayLog),
+                'alias' => 'stayLogs',
+                'fields' => [
+                  'stayLogs.*'
+                ],
+                'conditions' =>[
+                  't_histories_id' => $idList,
+                  'url LIKE' => '%?%'.$campaignParam[0].'%'
+                ],
               ],
-              'conditions' =>[
-                't_histories_id' => $idList,
-                'url LIKE' => '%?'.$campaignParam.'%'
+              $this->THistoryStayLog
+            );
+          }
+          else {
+            $campaignData = $stayLogs->buildStatement(
+              [
+                'table' => $stayLogs->fullTableName($this->THistoryStayLog),
+                'alias' => 'stayLogs',
+                'fields' => [
+                  'stayLogs.*'
+                ],
+                'conditions' =>[
+                  't_histories_id' => $idList,
+                  'url LIKE' => '%?'.$tmp.'%'
+                ],
               ],
-            ],
-            $this->THistoryStayLog
-          );
+              $this->THistoryStayLog
+            );
+          }
+
           $joinToCampaign = [
             'type' => "INNER",
             'table' => "({$campaignData})",
@@ -2288,13 +2307,14 @@
         // キャンペーンに関する検索条件
         if ( isset($data['History']['campaign']) && $data['History']['campaign'] !== "") {
           $campaignList = $this->TCampaign->getList();
-          $campaignParam = "";
+          $campaignParam = [];
+          $tmp = "";
           foreach($campaignList as $k => $v){
-            if ( strpos($data['History']['campaign'], $v) !== false ) {
-              if ( $campaignParam !== "" ) {
-                $campaignParam .= "\n";
-              }
-              $campaignParam .= h($k);
+            if($data['History']['campaign'] == $v) {
+              $tmp = $k;
+            }
+            if ( strpos($tmp, $k) !== false ) {
+              $campaignParam[] = h($k);
             }
           }
           $historyIdData = $this->THistoryChatLog->find('all', [
@@ -2314,20 +2334,38 @@
             $idList[] = $val['THistoryChatLog']['t_histories_id'];
           }
           $stayLogs = $this->THistoryStayLog->getDataSource();
-          $campaignData = $stayLogs->buildStatement(
-            [
-              'table' => $stayLogs->fullTableName($this->THistoryStayLog),
-              'alias' => 'stayLogs',
-              'fields' => [
-                'stayLogs.*'
+          if(count($campaignParam) == 1) {
+            $campaignData = $stayLogs->buildStatement(
+              [
+                'table' => $stayLogs->fullTableName($this->THistoryStayLog),
+                'alias' => 'stayLogs',
+                'fields' => [
+                  'stayLogs.*'
+                ],
+                'conditions' =>[
+                  't_histories_id' => $idList,
+                  'url LIKE' => '%?%'.$campaignParam[0].'%'
+                ],
               ],
-              'conditions' =>[
-                't_histories_id' => $idList,
-                'url LIKE' => '%?'.$campaignParam.'%'
+              $this->THistoryStayLog
+            );
+          }
+          else {
+            $campaignData = $stayLogs->buildStatement(
+              [
+                'table' => $stayLogs->fullTableName($this->THistoryStayLog),
+                'alias' => 'stayLogs',
+                'fields' => [
+                  'stayLogs.*'
+                ],
+                'conditions' =>[
+                  't_histories_id' => $idList,
+                  'url LIKE' => '%?'.$tmp.'%'
+                ],
               ],
-            ],
-            $this->THistoryStayLog
-          );
+              $this->THistoryStayLog
+            );
+          }
           $joinToCampaign = [
             'type' => "INNER",
             'table' => "({$campaignData})",

@@ -265,11 +265,9 @@
         /* キャンペーン名の取得 */
         $campaignParam = "";
         $tmp = mb_strstr($stayList[$history['THistory']['id']]['THistoryStayLog']['firstURL'], '?');
-        $tmp = str_replace('?', '', $tmp);
         if ( $tmp !== "" ) {
           foreach($campaignList as $k => $v){
-            //if ( strpos($tmp, $k) !== false ) {
-            if ( $tmp === $k ) {
+            if ( strpos($tmp, $k) !== false ) {
               if ( $campaignParam !== "" ) {
                 $campaignParam .= "\n";
               }
