@@ -266,7 +266,6 @@
         $campaignParam = "";
         $tmp = mb_strstr($stayList[$history['THistory']['id']]['THistoryStayLog']['firstURL'], '?');
         $tmp = str_replace('?', '', $tmp);
-        $this->log($tmp,LOG_DEBUG);
         if ( $tmp !== "" ) {
           foreach($campaignList as $k => $v){
             //if ( strpos($tmp, $k) !== false ) {
@@ -539,7 +538,6 @@
           </li>
           <li>
             <dt>チャット送信ページ</dt>
-            <?php $this->log('detailChatPagesData',LOG_DEBUG); $this->log($forChatSendingPageList[$defaultHistoryList['THistoryChatLog']['t_history_stay_logs_id']],LOG_DEBUG); ?>
             <dd id = "chatSending">
             <a href = "<?=h($forChatSendingPageList[$defaultHistoryList['THistoryChatLog']['t_history_stay_logs_id']]['THistoryStayLog']['url'])?>" target = "landing">
             <span id = "chatSendingPage"><?= $forChatSendingPageList[$defaultHistoryList['THistoryChatLog']['t_history_stay_logs_id']]['THistoryStayLog']['title'] ?></span></a></dd>
