@@ -2854,9 +2854,10 @@
 
             // 含まない方
             var splitedExclusions = exclusions.replace(/　/g, " ").split(" ");
+            var exclusionResult = false;
             for(var i=0; i < splitedExclusions.length; i++) {
               if(splitedExclusions[i] === "") {
-                result = true;
+                exclusionResult = true;
                 continue;
               }
               var preg = "";
@@ -2867,17 +2868,30 @@
                   // アスタリスクを許容し、それ以外の文字は文字列として扱う
                     .replace(/[-\/\\^$+?.()|[\]{}]/g, '\\$&').replace(/\*/g, ".*");
                   preg = new RegExp("^" + word + "$");
-                  result = !preg.test(val);
+                  exclusionResult = preg.test(val);
                   break;
                 case 2: // 部分一致
                   word = splitedExclusions[i].replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
                   preg = new RegExp(word);
-                  result = !preg.test(val);
+                  exclusionResult = preg.test(val);
                   break;
               }
-              if((result && typeObj.exclusionsType === 2)) { // いずれかを含まない
+
+              if(!exclusionResult && typeObj.exclusionsType === 1) { // すべて含む
+                // 1つでも含んでいなかったら対象外条件は成立しないので、ウィジェットは出す
+                result = true;
                 break;
-              } else if((!result && typeObj.exclusionsType === 1)) { // すべて含まない
+              } else if(exclusionResult && typeObj.exclusionsType === 1 && i === splitedExclusions.length - 1) { // すべて含む
+                // 最後まで含んでいる状態であれば対象外条件が成立するので、ウィジェットは出さない
+                result = false;
+                break;
+              } else if(!exclusionResult && typeObj.exclusionsType === 2) { // いずれかを含む
+                // 1つでも含んでいなかったら対象外条件が成立するので、ウィジェットは出さない
+                result = false;
+                break;
+              } else if(exclusionResult && typeObj.exclusionsType === 2 && i === splitedExclusions.length - 1) { // いずれかを含む
+                // 最後まで含んでいる状態であれば対象外条件は成立しないので、ウィジェットは出す
+                result = true;
                 break;
               }
             }
