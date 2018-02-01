@@ -2857,24 +2857,28 @@
             var exclusionResult = false;
             for(var i=0; i < splitedExclusions.length; i++) {
               if(splitedExclusions[i] === "") {
-                exclusionResult = true;
+                if (splitedExclusions.length > 1 && i === splitedExclusions.length - 1) {
+                  result = typeObj.exclusionsType === 1 ? false : true;
+                  break;
+                }
                 continue;
-              }
-              var preg = "";
-              var word = "";
-              switch(Number(typeObj.wordType)) {
-                case 1: // 完全一致
-                  word = splitedExclusions[i]
-                  // アスタリスクを許容し、それ以外の文字は文字列として扱う
-                    .replace(/[-\/\\^$+?.()|[\]{}]/g, '\\$&').replace(/\*/g, ".*");
-                  preg = new RegExp("^" + word + "$");
-                  exclusionResult = preg.test(val);
-                  break;
-                case 2: // 部分一致
-                  word = splitedExclusions[i].replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-                  preg = new RegExp(word);
-                  exclusionResult = preg.test(val);
-                  break;
+              } else {
+                var preg = "";
+                var word = "";
+                switch(Number(typeObj.wordType)) {
+                  case 1: // 完全一致
+                    word = splitedExclusions[i]
+                    // アスタリスクを許容し、それ以外の文字は文字列として扱う
+                      .replace(/[-\/\\^$+?.()|[\]{}]/g, '\\$&').replace(/\*/g, ".*");
+                    preg = new RegExp("^" + word + "$");
+                    exclusionResult = preg.test(val);
+                    break;
+                  case 2: // 部分一致
+                    word = splitedExclusions[i].replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+                    preg = new RegExp(word);
+                    exclusionResult = preg.test(val);
+                    break;
+                }
               }
 
               if(!exclusionResult && typeObj.exclusionsType === 1) { // すべて含む
@@ -2885,12 +2889,12 @@
                 // 最後まで含んでいる状態であれば対象外条件が成立するので、ウィジェットは出さない
                 result = false;
                 break;
-              } else if(!exclusionResult && typeObj.exclusionsType === 2) { // いずれかを含む
-                // 1つでも含んでいなかったら対象外条件が成立するので、ウィジェットは出さない
+              } else if(exclusionResult && typeObj.exclusionsType === 2) { // いずれかを含む
+                // 1つでも含んでいたら対象外条件が成立するので、ウィジェットは出さない
                 result = false;
                 break;
-              } else if(exclusionResult && typeObj.exclusionsType === 2 && i === splitedExclusions.length - 1) { // いずれかを含む
-                // 最後まで含んでいる状態であれば対象外条件は成立しないので、ウィジェットは出す
+              } else if(!exclusionResult && typeObj.exclusionsType === 2 && i === splitedExclusions.length - 1) { // いずれかを含む
+                // 最後まで含んでいない状態であれば対象外条件は成立しないので、ウィジェットは出す
                 result = true;
                 break;
               }
