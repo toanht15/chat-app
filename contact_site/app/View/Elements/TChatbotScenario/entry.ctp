@@ -5,9 +5,8 @@
 <div ng-app="sincloApp" ng-controller="MainController as main" ng-cloak style="height: 100%;">
   <?=$this->Form->create('TChatbotScenario', ['url'=>['controller' =>'TChatbotScenario', 'action'=>'add'], 'novalidate' => true, 'id'=>'TChatbotScenarioEntryForm', 'name'=>'TChatbotScenarioEntryForm'])?>
     <?php $this->Form->inputDefaults(['label'=>false, 'div' => false, 'error' => false, 'legend' => false ]);?>
-    <?=$this->Form->input('widgetSettings', ['type' => 'hidden','value' => json_encode($this->data['widgetSettings'])],[
-        'entity' => ''
-    ])?>
+    <?=$this->ngForm->input('activity', ['type'=>'hidden'])?>
+    <?=$this->Form->input('widgetSettings', ['type' => 'hidden','value' => json_encode($this->data['widgetSettings'])])?>
 
     <section id="tchatbotscenario_form_basic_settings" class="p10x">
       <h3 class="tchatbotscenario_form_subtitle">基本設定</h3>

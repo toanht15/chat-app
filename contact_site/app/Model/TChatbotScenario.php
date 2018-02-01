@@ -21,18 +21,26 @@ class TChatbotScenario extends AppModel {
       'checkActivity' => [
         'rule' => 'checkActivity',
         'allowEmpty' => false,
-        'message' => 'アクションを設定してください'
+        'message' => 'シナリオを設定してください'
+      ]
+    ],
+    'action' => [
+      'notBlank' => [
+        'rule' => 'notBlank',
+        'allowEmpty' => false,
+        'message' => 'メッセージ間隔を入力してください'
       ]
     ]
   ];
 
   /**
-   * アクションのバリデーションチェック
+   * シナリオのバリデーションチェック
    * @param object $json アクション情報
    * @return boolean チェック結果
    */
   public function checkActivity($json){
     // TODO: 追加・更新時のバリデーションチェックを追加する
+    // $activity = json_decode($json['activity'], true);
     return true;
   }
 }

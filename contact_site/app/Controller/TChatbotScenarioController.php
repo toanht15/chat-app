@@ -2,11 +2,12 @@
 /**
  * TChatbotScenarioController controller.
  * シナリオ設定
+ * @property TransactionManager $TransactionManager
  * @property TChatbotScenario $TChatbotScenario
  * @property MWidgetSetting $MWidgetSetting
  */
 class TChatbotScenarioController extends AppController {
-  public $uses = ['TChatbotScenario', 'MWidgetSetting'];
+  public $uses = ['TransactionManager', 'TChatbotScenario', 'TAutoMessages', 'MWidgetSetting'];
   public $paginate = [
     'TChatbotScenario' => [
       'limit' => 100,
@@ -14,8 +15,21 @@ class TChatbotScenarioController extends AppController {
           'TChatbotScenario.sort' => 'asc',
           'TChatbotScenario.id' => 'asc'
       ],
-      'fields' => ['TChatbotScenario.*'],
+      'fields' => ['TChatbotScenario.*', 'TAutoMessage.id', 'TAutoMessage.name'],
       'conditions' => ['TChatbotScenario.del_flg != ' => 1],
+      'joins' => [[
+        'type' => 'LEFT',
+        'table' => 't_auto_messages',
+        'alias' => 'TAutoMessage',
+        'order' => [
+          'TAutoMessage.sort' => 'asc',
+          'TAutoMessage.id' => 'asc'
+        ],
+        'conditions' => [
+          'TChatbotScenario.id = TAutoMessage.t_chatbot_scenario_id',
+          'TAutoMessage.del_flg != ' => 1
+        ]
+      ]],
       'recursive' => -1
     ]
   ];
@@ -51,7 +65,27 @@ class TChatbotScenarioController extends AppController {
     $this->paginate['TChatbotScenario']['conditions']['TChatbotScenario.m_companies_id'] = $this->userInfo['MCompany']['id'];
     $data = $this->paginate('TChatbotScenario');
 
-    $this->set('settingList', $data);
+    // オートメッセージ関係でデータを加工する
+    $formattedList = [];
+    foreach($data as $item) {
+      // 同一のシナリオ設定情報が存在するか
+      $updateKey = 0;
+      foreach($formattedList as $key => $fomattedItem) {
+        if ($fomattedItem['TChatbotScenario']['id'] === $item['TChatbotScenario']['id']) {
+          $updateKey = $key;
+        }
+      }
+
+      if ($updateKey === 0) {
+        $formattedItem['TChatbotScenario'] = $item['TChatbotScenario'];
+        $formattedItem['TAutoMessage'][0] = $item['TAutoMessage'];
+        $formattedList[] = $formattedItem;
+      } else {
+        $formattedList[$updateKey]['TAutoMessage'][] = $item['TAutoMessage'];
+      }
+    }
+
+    $this->set('settingList', $formattedList);
     $this->_viewElement();
   }
 
@@ -85,12 +119,215 @@ class TChatbotScenarioController extends AppController {
 
   /**
    * 保存機能
-   * @param array $inputData
+   * @param array $saveData
    * @return void
    * */
   private function _entry($saveData) {
-    exit;
-    // TODO: シナリオ設定を保存する
+    $nextPage = '1';
+    $transactions = null;
+    try {
+      $transactions = $this->TransactionManager->begin();
+      $nextPage = $this->_entryProcess($saveData);;
+      $this->TransactionManager->commitTransaction($transactions);
+      $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
+      $this->redirect('/TChatbotScenario/index/page:'.$nextPage);
+    } catch(Exception $e) {
+      $this->TransactionManager->rollbackTransaction($transactions);
+      $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
+    }
+  }
+
+  /**
+   * 保存機能
+   * トランザクションはこのメソッドの呼び出し元で管理している。（TransactionManager）
+   * @param array $saveData
+   * @return {String}
+   * */
+  private function _entryProcess($saveData) {
+    $errors = [];
+    $saveData['TChatbotScenario']['m_companies_id'] = $this->userInfo['MCompany']['id'];
+    if(array_key_exists ('lastPage',$saveData)){
+      $nextPage = $saveData['lastPage'];
+    }
+    else{
+      $nextPage = '1';
+    }
+
+    if ( empty($saveData['TChatbotScenario']['id']) ) {
+      //新規追加
+      $this->TChatbotScenario->create();
+
+      // 設定するsort順を算出する
+      $params = [
+          'fields' => [
+              'TChatbotScenario.sort'
+          ],
+          'conditions' => [
+              'TChatbotScenario.m_companies_id' => $this->userInfo['MCompany']['id']
+             // 'TChatbotScenario.del_flg != ' => 1
+          ],
+          'order' => [
+              'TChatbotScenario.sort' => 'desc',
+              'TChatbotScenario.id' => 'desc'
+          ],
+          'limit' => 1,
+          'recursive' => -1
+      ];
+      $lastData = $this->TChatbotScenario->find('first', $params);
+      if($lastData){
+        if($lastData['TChatbotScenario']['sort'] === '0'
+            || $lastData['TChatbotScenario']['sort'] === 0
+            || $lastData['TChatbotScenario']['sort'] === null){
+          //ソート順が登録されていなかったらソート順をセットする
+          if(! $this->remoteSetSort()){
+            $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
+            throw new Exception('ソート順が設定できませんでした。');
+            // throw new AutoMessageException('ソート順が設定できませんでした。');
+          }
+          //もう一度ソートの最大値を取り直す
+          $lastData = $this->TChatbotScenario->find('first', $params);
+        }
+      }
+      $nextSort = 1;
+      if (!empty($lastData)) {
+        $nextSort = intval($lastData['TChatbotScenario']['sort']) + 1;
+      }
+      $saveData['TChatbotScenario']['sort'] = $nextSort;
+    }
+
+    $this->TChatbotScenario->set($saveData);
+
+    $validate = $this->TChatbotScenario->validates();
+    $errors = $this->TChatbotScenario->validationErrors;
+
+    // その他のチェック
+    if ( !empty($saveData['TChatbotScenario']) ) {
+      $activity = json_decode($saveData['TChatbotScenario']['activity']);
+
+      /* 項目ごとの設定数上限チェック */
+      // $tmpMessage = "%sの場合、『%s』は%d個まで設定可能です";
+      //
+      // foreach((array)$activity->conditions as $key => $val) {
+      //   $setting = $this->outMessageTriggerList[$key];
+      //   if ( !isset($setting['createLimit'][$activity->conditionType]) ) continue;
+      //   if ( count($val) > intval($setting['createLimit'][$activity->conditionType]) ) {
+      //     $validate = false;
+      //     $errors['triggers'][$setting['key']] = sprintf($tmpMessage, $this->outMessageIfType[$activity->conditionType], $setting['label'], $setting['createLimit'][$activity->conditionType]);
+      //   }
+      // }
+    }
+
+    if ($validate) {
+      //オートメッセージ　営業時間を4番目に入れたので並び替え処理
+      // $changeEditData = json_decode($saveData['TChatbotScenario']['activity'],true);
+      // foreach($changeEditData['conditions'] as $key => $val){
+      //   if($key === 4) {
+      //     unset($changeEditData['conditions'][4]);
+      //     $changeEditData['conditions'][10] = json_decode($saveData['TChatbotScenario']['activity'],true)['conditions'][4];
+      //   }
+      //   if($key >= 5) {
+      //     unset($changeEditData['conditions'][$key]);
+      //     $changeEditData['conditions'][$key-1] = json_decode($saveData['TChatbotScenario']['activity'],true)['conditions'][$key];
+      //   }
+      // }
+      // $changeEditData = json_encode($changeEditData);
+      // $saveData['TChatbotScenario']['activity'] = $changeEditData;
+      if( $this->TChatbotScenario->save($saveData,false) ) {
+      }
+    }
+    else {
+      $exception = new Exception('バリデーションエラー');
+      $exception->setErrors($errors);
+      $exception->setLastPage($nextPage);
+      throw $exception;
+    }
+
+    $count = $this->TChatbotScenario->find('first',[
+      'fields' => ['count(*) as count'],
+      'conditions' => ['TChatbotScenario.del_flg != ' => 1, 'm_companies_id' => $this->userInfo['MCompany']['id']]
+    ]);
+
+    $page = floor((intval($count[0]['count']) + 99) / 100);
+
+    return $page >= 1 ? $page : 1;
+  }
+
+  /**
+   * メール送信設定の保存機能
+   * トランザクションはこのメソッドの先祖で管理している。（TransactionManager）
+   * @param array $saveData
+   * @return {Void}
+   * */
+  private function _entryProcessForMessage($saveData) {
+    // TAutoMessageで使われていた処理をそのまま移しただけなので、必要に応じて修正
+    // メール送信設定の値を抜く
+    $toAddresses = '';
+    $subject = '';
+    $fromName = '';
+    $templateId = 0;
+    if(!empty($saveData['main']['send_mail_flg']) && intval($saveData['main']['send_mail_flg']) === C_CHECK_ON) {
+      $this->request->data['TAutoMessage']['send_mail_flg'] = intval($saveData['main']['send_mail_flg']);
+      $saveData['TAutoMessage']['send_mail_flg'] = intval($saveData['main']['send_mail_flg']);
+      foreach($saveData['main'] as $k => $v) {
+        if(preg_match('/mail_address_[1-5]/', $k)) {
+          $this->request->data['TAutoMessage'][$k] = $v;
+          if(!empty($v)) {
+            if($toAddresses !== '') {
+              $toAddresses .= ',';
+            }
+            $toAddresses .= $v;
+          }
+        }
+        if(strpos($k, 'subject') === 0) {
+          $this->request->data['TAutoMessage']['subject'] = $v;
+          $subject = $v;
+        }
+        if(strpos($k, 'from_name') === 0) {
+          $this->request->data['TAutoMessage']['from_name'] = $v;
+          $fromName = $v;
+        }
+      }
+      if(empty($saveData['TAutoMessage']['m_mail_transmission_settings_id'])) {
+        $this->MMailTransmissionSetting->create();
+      } else {
+        $this->MMailTransmissionSetting->read(null, $saveData['TAutoMessage']['m_mail_transmission_settings_id']);
+      }
+      $this->MMailTransmissionSetting->set([
+          'm_companies_id' => $this->userInfo['MCompany']['id'],
+          'from_name' => $fromName,
+          'to_address' => $toAddresses,
+          'subject' => $subject
+      ]);
+      $validate = $this->MMailTransmissionSetting->validates();
+      $errors = $this->MMailTransmissionSetting->validationErrors;
+      if(empty($errors)){
+        $this->MMailTransmissionSetting->save();
+        if(empty($saveData['TAutoMessage']['m_mail_transmission_settings_id'])) {
+          $saveData['TAutoMessage']['m_mail_transmission_settings_id'] = $this->MMailTransmissionSetting->getLastInsertId();
+        }
+        if(empty($saveData['TAutoMessage']['m_mail_template_id'])) {
+          $templateData = $this->MMailTemplate->find('first',[
+              'conditions' => [
+                  'm_companies_id' => $this->userInfo['MCompany']['id'],
+                  'mail_type_cd' => 'AM001'
+              ]
+          ]);
+          if(!empty($templateData)) {
+            $saveData['TAutoMessage']['m_mail_template_id'] = $templateData['MMailTemplate']['id'];
+          }
+        }
+      } else {
+        $exception = new AutoMessageException('バリデーションエラー');
+        $exception->setErrors($errors);
+        $exception->setLastPage($nextPage);
+        throw $exception;
+      }
+    } else {
+      $saveData['main']['send_mail_flg'] = 0;
+      $saveData['main']['m_mail_transmission_settings_id'] = 0;
+      $saveData['main']['m_mail_template_id'] = 0;
+      $saveData['TAutoMessage']['send_mail_flg'] = 0;
+    }
   }
 
   /**
