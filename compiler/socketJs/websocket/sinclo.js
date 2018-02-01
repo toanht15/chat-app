@@ -1400,6 +1400,7 @@
       }, 500);
     },
     displayTextarea : function(){
+      if(!document.getElementById("flexBoxHeight")) return;
       $(window).off('resize', sinclo.displayTextarea).off('resize', sinclo.hideTextarea).on('resize', sinclo.displayTextarea);
       document.getElementById("flexBoxHeight").style.display = '';
       if(chatTalk.clientHeight == 269 || chatTalk.clientHeight == 359 || chatTalk.clientHeight == 449) {
@@ -1432,6 +1433,7 @@
       }
     },
     hideTextarea : function(){
+      if(!document.getElementById("flexBoxHeight")) return;
       $(window).off('resize', sinclo.displayTextarea).off('resize', sinclo.hideTextarea).on('resize', sinclo.hideTextarea);
       if(chatTalk.clientHeight == 194 || chatTalk.clientHeight == 284 || chatTalk.clientHeight == 374) {
         document.getElementById("flexBoxHeight").style.display = 'none';
