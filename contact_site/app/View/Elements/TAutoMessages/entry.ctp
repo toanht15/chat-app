@@ -92,9 +92,7 @@
       </ul>
       <?=$this->ngForm->input('activity', ['type'=>'hidden'])?>
       <?=$this->ngForm->input('widget.showTab', ['type' => 'hidden'], ['entity' => 'widget.showTab']) ?>
-      <?=$this->Form->input('widgetSettings', ['type' => 'hidden','value' => json_encode($this->data['widgetSettings'])],[
-          'entity' => ''
-      ])?>
+      <?=$this->ngForm->input('widgetSettings', ['type' => 'hidden','value' => json_encode($this->data['widgetSettings'])])?>
     </section>
 
     <h3>３．実行設定</h3>
@@ -104,9 +102,29 @@
           <!-- アクション -->
           <li>
             <span class="require"><label>アクション</label></span>
-            <?= $this->Form->input('action_type', array('type' => 'select', 'options' => $outMessageActionType, 'default' => C_AUTO_ACTION_TYPE_SENDMESSAGE)) ?>
+            <?= $this->ngForm->input('action_type', [
+              'type' => 'select',
+              'options' => $outMessageActionType
+            ], [
+              'entity' => 'actionType',
+              'default' => (!empty($this->data['TAutoMessage']['action_type'])) ? $this->data['TAutoMessage']['action_type'] : C_AUTO_ACTION_TYPE_SENDMESSAGE
+            ]); ?>
           </li>
           <!-- アクション -->
+
+          <!-- シナリオ選択 -->
+          <li ng-show="action_type == <?= C_AUTO_ACTION_TYPE_SELECTSCENARIO ?>" class="bt0">
+            <span class="require"><label>シナリオ</label></span>
+            <?= $this->Form->input('t_chatbot_scenario_id', [
+              'type' => 'select',
+              'options' => $this->data['chatbotScenario'],
+              'empty' => 'シナリオを選択してください'
+            ], [
+              'default' => (!empty($this->data['TAutoMessage']['t_chatbot_scenario_id'])) ? $this->data['TAutoMessage']['t_chatbot_scenario_id'] : ''
+            ]) ?>
+            <?php if (!empty($errors['t_chatbot_scenario_id'])) echo "<pre class='error-message'>" . h($errors['t_chatbot_scenario_id'][0]) . "</pre>"; ?>
+          </li>
+          <!-- シナリオ選択 -->
 
           <!-- ウィジェット -->
           <li class="bt0">

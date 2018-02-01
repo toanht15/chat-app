@@ -1,8 +1,8 @@
 <?php echo $this->Html->script("jquery-ui.min.js"); ?>
 <?php echo $this->element('TChatbotScenario/script'); ?>
 <?php
-// $params = $this->Paginator->params();
-// $prevCnt = ($params['page'] - 1) * $params['limit'];
+$params = $this->Paginator->params();
+$prevCnt = ($params['page'] - 1) * $params['limit'];
 ?>
 <div id='tchatbotscenario_idx' class="card-shadow">
 
@@ -103,29 +103,34 @@
       <?php foreach((array)$settingList as $key => $val): ?>
         <?php
         $id = "";
-        if ($val['TAutoMessage']['id']) {
-          $id = $val['TAutoMessage']['id'];
+        if ($val['TChatbotScenario']['id']) {
+          $id = $val['TChatbotScenario']['id'];
         }
         $class = "";
-        if ($val['TAutoMessage']['active_flg']) {
-          $class = "bgGrey";
-        }
         $activity = "";
-        if ($val['TAutoMessage']['activity']) {
-          $activity = json_decode($val['TAutoMessage']['activity'],true);
+        if ($val['TChatbotScenario']['activity']) {
+          $activity = json_decode($val['TChatbotScenario']['activity'],true);
         }
         $activity_detail = "";
-        switch($val['TAutoMessage']['action_type']) {
-          case C_AUTO_ACTION_TYPE_SENDMESSAGE:
-            if ( !empty($activity['message']) ) {
-              $allActionList[$id] = [
-                'type' => $val['TAutoMessage']['action_type'],
-                'detail' => $activity['message']
-              ];
-              $activity_detail = "<span class='actionValueLabel'>メッセージ</span><span class='actionValue'>" . h($activity['message']) . "</span>";
-            }
-            break;
+
+        // 呼び出し元のオートメッセージ設定の名称を抜き出す
+        $callerList = [];
+        foreach($val['TAutoMessage'] as $key => $caller) {
+          $callerList[] = $caller['id'] ? $caller['name'] : '(未設定)';
         }
+        $activity_detail = implode(', ', $callerList);
+        // if ($val['TAutoMessage'])
+        // switch($val['TChatbotScenario']['action_type']) {
+        //   case C_AUTO_ACTION_TYPE_SENDMESSAGE:
+        //     if ( !empty($activity['message']) ) {
+        //       $allActionList[$id] = [
+        //         'type' => $val['TChatbotScenario']['action_type'],
+        //         'detail' => $activity['message']
+        //       ];
+        //       $activity_detail = "<span class='actionValueLabel'>メッセージ</span><span class='actionValue'>" . h($activity['message']) . "</span>";
+        //     }
+        //     break;
+        // }
         $conditionType = "";
         if (!empty($activity['conditionType'])) {
           if(!empty($outMessageIfType[$activity['conditionType']])){
@@ -135,7 +140,7 @@
 
         $conditions = "";
         if (!empty($activity['conditions'])) {
-          $condList = $this->AutoMessage->setAutoMessage($activity['conditions']);
+          $condList = $this->AutoMessage->seTChatbotScenario($activity['conditions']);
           $allCondList[$id] = $condList;
           $conditions = implode($condList, ", ");
         }
@@ -144,60 +149,16 @@
 <!--
         <tr class="<?=$class?>" data-id="<?=h($id)?>" onclick="openEdit(<?= $id ?>)">
  -->
-        <tr class="pointer <?=$class?>" data-sort="<?=$val['TAutoMessage']['sort']?>" data-id="<?=h($id)?>" onclick="openEdit(<?= $id ?>)">
+        <tr class="pointer <?=$class?>" data-sort="<?=$val['TChatbotScenario']['sort']?>" data-id="<?=h($id)?>" onclick="openEdit(<?= $id ?>)">
           <td class="tCenter" onclick="event.stopPropagation();" width=" 5%">
             <input type="checkbox" name="selectTab" id="selectTab<?=h($id)?>" value="<?=h($id)?>">
             <label for="selectTab<?=h($id)?>"></label>
           </td>
           <td class="tCenter" width=" 5%"><?=$no?></td>
-          <td class="tCenter" width="20%"><?= $val['TAutoMessage']['name']; ?></td>
-          <td class="targetBalloon" width="29%">
-            <span class="conditionTypeLabel m10b">条件</span><span class="m10b actionValue"><?=h($conditionType)?></span>
-            <span class="conditionValueLabel m10b">設定</span><span class="m10b actionValue"><?=h($conditions)?></span>
-          </td>
+          <td class="tCenter" width="20%"><?= $val['TChatbotScenario']['name']; ?></td>
           <td class="p10x" width="29%">
-            <span class="actionTypeLabel m10b">対象</span><span class="m10b actionValue"><?=h($outMessageActionType[$val['TAutoMessage']['action_type']])?></span>
-            <?=$activity_detail?>
+            <?= $activity_detail; ?>
           </td>
-          <td class="p10x tCenter" style="font-size: 1em; font-weight: bold;" width=" 5%">
-            <?php
-              if(isset($activity['chatTextarea']) && $activity['chatTextarea'] === 2) {
-                echo '<span class="m10b">OFF</span>';
-              } else {
-                echo '<span class="m10b">ON</span>';
-              }
-            ?>
-          </td>
-          <td class="p10x tCenter" style="font-size: 2em;" width=" 4%">
-            <?php
-            if(isset($activity['cv']) && $activity['cv'] === 1) {
-              echo '<span class="m10b"><i class="fa fa-check" aria-hidden="true" style="color:#9BD6D1;"></i></span>';
-            } else {
-              echo '<span class="m10b"></span>';
-            }
-            ?>
-          </td>
-          <td class="p10x tCenter" style="font-size: 2em;" width=" 4%">
-            <?php
-            if(isset($val['TAutoMessage']['send_mail_flg']) && $val['TAutoMessage']['send_mail_flg']) {
-              echo '<span class="m10b"><i class="fa fa-check" aria-hidden="true" style="color:#9BD6D1;"></i></span>';
-            } else {
-              echo '<span class="m10b"></span>';
-            }
-            ?>
-          </td>
-<!--
-          <td class="p10x lineCtrl">
-            <div>
-              <?php if ($val['TAutoMessage']['active_flg']) { ?>
-                <a href="javascript:void(0)" class="btn-shadow redBtn fLeft m10r10l" onclick="event.stopPropagation(); isActive(true, '<?=$id?>')"><img src="/img/inactive.png" alt="無効" width="30" height="30"></a>
-              <?php } else { ?>
-                <a href="javascript:void(0)" class="btn-shadow greenBtn fLeft m10r10l" onclick="event.stopPropagation(); isActive(false, '<?=$id?>')"><img src="/img/check.png" alt="有効" width="30" height="30"></a>
-              <?php } ?>
-              <a href="javascript:void(0)" class="btn-shadow redBtn fRight m10r" onclick="event.stopPropagation(); removeAct('<?=$no?>', '<?=$id?>')"><img src="/img/trash.png" alt="削除" width="30" height="30"></a>
-            </div>
-          </td>
- -->
         </tr>
       <?php endforeach; ?>
       <?php if ( count($settingList) === 0 ) : ?>
@@ -205,17 +166,5 @@
       <?php endif; ?>
       </tbody>
     </table>
-    <div id="balloons">
-      <?php foreach((array)$allCondList as $id => $condList): ?>
-        <ul id="balloon_cond_<?=h($id)?>">
-          <?php foreach((array)$condList as $val): ?>
-            <li><?=h($val)?></li>
-          <?php endforeach;?>
-        </ul>
-        <ul id="balloon_act_<?=h($id)?>">
-          <li><?=$this->htmlEx->makeChatView($allActionList[$id]['detail'])?></li>
-        </ul>
-      <?php endforeach;?>
-    </div>
   </div>
 </div>

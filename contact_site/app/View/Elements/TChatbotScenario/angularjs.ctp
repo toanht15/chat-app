@@ -96,7 +96,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
   this.saveAct = function() {
     console.log('=== call func saveAct ===');
-    // TODO: 保存ボタン押下時の処理
+    $('#TChatbotScenarioActivity').val(JSON.stringify(this.createJsonData()));
     submitAct();
   };
 
@@ -476,7 +476,8 @@ function getWidgetSettings() {
 }
 
 function submitAct() {
-  $('TChatbotScenarioEntryForm').submit();
+  console.log("=== call func submitAct ===");
+  $('#TChatbotScenarioEntryForm').submit();
 }
 
 $(document).ready(function() {
