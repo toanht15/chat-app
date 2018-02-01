@@ -585,12 +585,12 @@
           }
           if ((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA])
               && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA])
-            && !empty($history['LandscapeData']['org_name'])
-            && ($this->isViewableMLCompanyInfo() || !LandscapeComponent::isMLLbcCode($history['LandscapeData']['lbc_code']))
+              && !empty($history['LandscapeData']['org_name'])
+              && ($this->isViewableMLCompanyInfo() || !LandscapeComponent::isMLLbcCode($history['LandscapeData']['lbc_code']))
           ) {
-            $row['ip'] .= $history['LandscapeData']['org_name'];
+            $row['ip'] = $history['LandscapeData']['org_name'];
           } else {
-             $row['ip'] .= $history['THistory']['ip_address'];
+            $row['ip'] = $history['THistory']['ip_address'];
           }
         }
         // 訪問ユーザ
