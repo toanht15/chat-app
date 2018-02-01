@@ -119,8 +119,8 @@ class autoMessageHelper extends AppHelper {
   ];
 
   public $exclusionsList = [
-      1 => "をすべて含まない",
-      2 => "のいずれかを含まない"
+      1 => "をすべて含む",
+      2 => "のいずれかを含む"
   ];
 
 	/** *
