@@ -64,6 +64,18 @@
               //ヘッダ表示（通常表示）
               common.abridgementTypeShow();
             }
+
+            //自由入力エリアが閉まっているか空いているかチェック
+            var textareaOpend = storage.l.get('textareaOpend');
+            //チャットのテキストエリア表示
+            if( textareaOpend == 'close') {
+              sinclo.hideTextarea();
+            }
+            //チャットのテキストエリア非表示
+            else {
+              sinclo.displayTextarea();
+            }
+
             sinclo.widget.condifiton.set(true, true);
             if ( check.smartphone() && window.sincloInfo.contract.chat && (window.screen.availHeight < window.screen.availWidth) ) {
               //スマホ横
