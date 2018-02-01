@@ -263,7 +263,7 @@ class autoMessageHelper extends AppHelper {
                     $this->labelList[$itemId],
                     $this->dataList['targetName']['dataList'][$v['targetName']],
                     $v['keyword_exclusions'],
-                    $this->containsList[intval($v['keyword_exclusions_type'])],
+                    $this->exclusionsList[intval($v['keyword_exclusions_type'])],
                     "",
                     $this->dataList['stayPageCond']['dataList'][$v['stayPageCond']]
                 );
@@ -339,7 +339,7 @@ class autoMessageHelper extends AppHelper {
                 $retList[] = sprintf(
                     $this->labelList[$itemId],
                     $v['keyword_exclusions'],
-                    $this->containsList[intval($v['keyword_exclusions_type'])],
+                    $this->exclusionsList[intval($v['keyword_exclusions_type'])],
                     "",
                     $this->dataList['referrerCond']['dataList'][$v['referrerCond']]
                 );
@@ -390,7 +390,7 @@ class autoMessageHelper extends AppHelper {
                 $retList[] = sprintf(
                     $this->labelList[$itemId],
                     $v['keyword_exclusions'],
-                    $this->containsList[intval($v['keyword_exclusions_type'])],
+                    $this->exclusionsList[intval($v['keyword_exclusions_type'])],
                     "",
                     $this->dataList['speechContentCond']['dataList'][$v['speechContentCond']]
                 );
@@ -430,7 +430,7 @@ class autoMessageHelper extends AppHelper {
                     $this->labelList[$itemId],
                     $this->dataList['targetName']['dataList'][$v['targetName']],
                     $v['keyword_exclusions'],
-                    $this->containsList[intval($v['keyword_exclusions_type'])],
+                    $this->exclusionsList[intval($v['keyword_exclusions_type'])],
                     "",
                     $this->dataList['stayPageCond']['dataList'][$v['stayPageCond']]
                 );
@@ -468,7 +468,7 @@ class autoMessageHelper extends AppHelper {
                     $this->labelList[$itemId],
                     $this->dataList['targetName']['dataList'][$v['targetName']],
                     $v['keyword_exclusions'],
-                    $this->containsList[intval($v['keyword_exclusions_type'])],
+                    $this->exclusionsList[intval($v['keyword_exclusions_type'])],
                     "",
                     $this->dataList['stayPageCond']['dataList'][$v['stayPageCond']]
                 );
