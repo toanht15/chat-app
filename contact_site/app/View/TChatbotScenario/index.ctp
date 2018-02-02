@@ -106,57 +106,24 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
         if ($val['TChatbotScenario']['id']) {
           $id = $val['TChatbotScenario']['id'];
         }
-        $class = "";
-        $activity = "";
-        if ($val['TChatbotScenario']['activity']) {
-          $activity = json_decode($val['TChatbotScenario']['activity'],true);
-        }
-        $activity_detail = "";
 
         // 呼び出し元のオートメッセージ設定の名称を抜き出す
         $callerList = [];
-        foreach($val['TAutoMessage'] as $key => $caller) {
+        foreach($val['TAutoMessage'] as $caller) {
           $callerList[] = $caller['id'] ? $caller['name'] : '(未設定)';
         }
         $activity_detail = implode(', ', $callerList);
-        // if ($val['TAutoMessage'])
-        // switch($val['TChatbotScenario']['action_type']) {
-        //   case C_AUTO_ACTION_TYPE_SENDMESSAGE:
-        //     if ( !empty($activity['message']) ) {
-        //       $allActionList[$id] = [
-        //         'type' => $val['TChatbotScenario']['action_type'],
-        //         'detail' => $activity['message']
-        //       ];
-        //       $activity_detail = "<span class='actionValueLabel'>メッセージ</span><span class='actionValue'>" . h($activity['message']) . "</span>";
-        //     }
-        //     break;
-        // }
-        $conditionType = "";
-        if (!empty($activity['conditionType'])) {
-          if(!empty($outMessageIfType[$activity['conditionType']])){
-            $conditionType = $outMessageIfType[$activity['conditionType']];
-          }
-        }
 
-        $conditions = "";
-        if (!empty($activity['conditions'])) {
-          $condList = $this->AutoMessage->seTChatbotScenario($activity['conditions']);
-          $allCondList[$id] = $condList;
-          $conditions = implode($condList, ", ");
-        }
         $no = $prevCnt + h($key+1);
         ?>
-<!--
-        <tr class="<?=$class?>" data-id="<?=h($id)?>" onclick="openEdit(<?= $id ?>)">
- -->
-        <tr class="pointer <?=$class?>" data-sort="<?=$val['TChatbotScenario']['sort']?>" data-id="<?=h($id)?>" onclick="openEdit(<?= $id ?>)">
+        <tr class="pointer" data-sort="<?=$val['TChatbotScenario']['sort']?>" data-id="<?=h($id)?>" onclick="openEdit(<?= $id ?>)">
           <td class="tCenter" onclick="event.stopPropagation();" width=" 5%">
             <input type="checkbox" name="selectTab" id="selectTab<?=h($id)?>" value="<?=h($id)?>">
             <label for="selectTab<?=h($id)?>"></label>
           </td>
           <td class="tCenter" width=" 5%"><?=$no?></td>
-          <td class="tCenter" width="20%"><?= $val['TChatbotScenario']['name']; ?></td>
-          <td class="p10x" width="29%">
+          <td class="tCenter" width="45%"><?= $val['TChatbotScenario']['name']; ?></td>
+          <td class="p10x" width="45%">
             <?= $activity_detail; ?>
           </td>
         </tr>

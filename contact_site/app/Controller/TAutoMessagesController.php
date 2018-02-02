@@ -381,6 +381,7 @@ class TAutoMessagesController extends AppController {
       $saveData['TAutoMessage']['send_mail_flg'] = $value['TAutoMessage']['send_mail_flg'];
       $saveData['TAutoMessage']['m_mail_transmission_settings_id'] = $value['TAutoMessage']['m_mail_transmission_settings_id'];
       $saveData['TAutoMessage']['m_mail_template_id'] = $value['TAutoMessage']['m_mail_template_id'];
+      $saveData['TAutoMessage']['t_chatbot_scenario_id'] = $value['TAutoMessage']['t_chatbot_scenario_id'];
       $saveData['TAutoMessage']['del_flg'] = $value['TAutoMessage']['del_flg'];
 
       $this->TAutoMessage->set($saveData);

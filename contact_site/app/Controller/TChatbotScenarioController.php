@@ -65,7 +65,7 @@ class TChatbotScenarioController extends AppController {
     $this->paginate['TChatbotScenario']['conditions']['TChatbotScenario.m_companies_id'] = $this->userInfo['MCompany']['id'];
     $data = $this->paginate('TChatbotScenario');
 
-    // オートメッセージ関係でデータを加工する
+    // シナリオの紐付の関係でデータを加工する
     $formattedList = [];
     foreach($data as $item) {
       // 同一のシナリオ設定情報が存在するか
@@ -116,6 +116,317 @@ class TChatbotScenarioController extends AppController {
     $this->request->data['widgetSettings'] = $this->_getWidgetSettings();
     $this->_viewElement();
   }
+
+  /* *
+   * 削除
+   * @return void
+   * */
+  public function remoteDelete() {
+    Configure::write('debug', 0);
+    $this->autoRender = FALSE;
+    $this->layout = 'ajax';
+    $id = (isset($this->request->data['id'])) ? $this->request->data['id'] : "";
+    $ret = $this->TChatbotScenario->find('first', [
+      'fields' => 'TChatbotScenario.*',
+      'conditions' => [
+        'TChatbotScenario.del_flg' => 0,
+        'TChatbotScenario.id' => $id,
+        'TChatbotScenario.m_companies_id' => $this->userInfo['MCompany']['id']
+      ],
+      'recursive' => -1
+    ]);
+    if ( count($ret) === 1 ) {
+      if ( $this->TChatbotScenario->logicalDelete($id) ) {
+        $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
+      }
+      else {
+        $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
+      }
+    }
+  }
+
+  public function chkRemoteDelete(){
+    Configure::write('debug', 0);
+    $this->autoRender = FALSE;
+    $this->layout = 'ajax';
+
+    $selectedList = $this->request->data['selectedList'];
+    $this->TChatbotScenario->begin();
+    $res = true;
+    foreach($selectedList as $key => $val){
+      $id = (isset($val)) ? $val: "";
+      $ret = $this->TChatbotScenario->find('first', [
+          'fields' => 'TChatbotScenario.*',
+          'conditions' => [
+              'TChatbotScenario.del_flg' => 0,
+              'TChatbotScenario.id' => $id,
+              'TChatbotScenario.m_companies_id' => $this->userInfo['MCompany']['id']
+          ],
+          'recursive' => -1
+      ]);
+      if ( count($ret) === 1 ) {
+        if (! $this->TChatbotScenario->delete($val) ) {
+          $res = false;
+        }
+      }
+    }
+    if($res){
+      $this->TChatbotScenario->commit();
+      $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
+    }
+    else {
+      $this->TChatbotScenario->rollback();
+      $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
+    }
+  }
+
+  /* *
+   * コピー処理
+   * @return void
+   * */
+   public function remoteCopyEntryForm() {
+     Configure::write('debug', 0);
+     $this->autoRender = FALSE;
+     $this->layout = 'ajax';
+     $selectedList = $this->request->data['selectedList'];
+     // コピー元のシナリオリスト取得
+     foreach($selectedList as $value){
+       $copyData[] = $this->TChatbotScenario->read(null, $value);
+     }
+     $errorMessage = [];
+     // コピー元のシナリオリストの数だけ繰り返し
+     $res = true;
+     foreach($copyData as $value){
+       $this->TChatbotScenario->create();
+       $saveData = [];
+       $params = [
+           'fields' => [
+               'TChatbotScenario.sort'
+           ],
+           'conditions' => [
+               'TChatbotScenario.m_companies_id' => $this->userInfo['MCompany']['id']
+               // 'TChatbotScenario.del_flg != ' => 1
+           ],
+           'order' => [
+               'TChatbotScenario.sort' => 'desc',
+               'TChatbotScenario.id' => 'desc'
+           ],
+           'limit' => 1,
+           'recursive' => -1
+       ];
+       $lastData = $this->TChatbotScenario->find('first', $params);
+       if($lastData['TChatbotScenario']['sort'] === '0'
+           || $lastData['TChatbotScenario']['sort'] === 0
+           || $lastData['TChatbotScenario']['sort'] === null){
+             // ソート順が登録されていなかったらソート順をセットする
+             if(! $this->remoteSetSort()){
+               $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
+               return false;
+             }
+             // もう一度ソートの最大値を取り直す
+             $lastData = $this->TChatbotScenario->find('first', $params);
+       }
+       $nextSort = 1;
+       if (!empty($lastData)) {
+         $nextSort = intval($lastData['TChatbotScenario']['sort']) + 1;
+       }
+
+       // $mailTransmissionData = $this->MMailTransmissionSetting->findById($value['TChatbotScenario']['m_mail_transmission_settings_id']);
+       // if(!empty($mailTransmissionData)) {
+       //   $this->MMailTransmissionSetting->create();
+       //   $mailTransmissionData['MMailTransmissionSetting']['id'] = null;
+       //   $this->MMailTransmissionSetting->set($mailTransmissionData);
+       //   $this->MMailTransmissionSetting->begin();
+       //   $result = $this->MMailTransmissionSetting->save();
+       //   $value['TChatbotScenario']['m_mail_transmission_settings_id'] = $this->MMailTransmissionSetting->getLastInsertId();
+       // }
+
+       $saveData['TChatbotScenario']['sort'] = $nextSort;
+       $saveData['TChatbotScenario']['m_companies_id'] = $value['TChatbotScenario']['m_companies_id'];
+       $saveData['TChatbotScenario']['name'] = $value['TChatbotScenario']['name'].'コピー';
+       $saveData['TChatbotScenario']['activity'] = $value['TChatbotScenario']['activity'];
+       $saveData['TChatbotScenario']['del_flg'] = $value['TChatbotScenario']['del_flg'];
+
+       $this->TChatbotScenario->set($saveData);
+       $this->TChatbotScenario->begin();
+
+       // バリデーションチェックでエラーが出た場合
+       if($res){
+         if(!$this->TChatbotScenario->validates()) {
+           $res = false;
+           $errorMessage = $this->TChatbotScenario->validationErrors;
+           // $this->MMailTransmissionSetting->rollback();
+           $this->TChatbotScenario->rollback();
+         } else
+         if( $this->TChatbotScenario->save($saveData,false) ) {
+           // $this->MMailTransmissionSetting->commit();
+           $this->TChatbotScenario->commit();
+           $this->Session->delete('dstoken');
+           $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
+         }
+       }
+     }
+   }
+
+  /**
+   * シナリオ設定ソート順更新
+   *
+   * */
+  public function remoteSaveSort(){
+    Configure::write('debug', 2);
+    $this->autoRender = FALSE;
+    $this->layout = 'ajax';
+    if ( !$this->request->is('ajax') ) return false;
+    if ( !empty($this->params->data['list']) ) {
+      $this->TChatbotScenario->begin();
+      $list = $this->params->data['list'];
+      $sortNoList = $this->params->data['sortNolist'];
+      sort($sortNoList);
+      $this->log($list,LOG_DEBUG);
+      /* 現在の並び順を取得 */
+      $params = $this->paginate['TChatbotScenario'];
+      $params['fields'] = [
+          'TChatbotScenario.id',
+          'TChatbotScenario.sort'
+      ];
+      $params['conditions']['TChatbotScenario.m_companies_id'] = $this->userInfo['MCompany']['id'];
+      unset($params['limit']);
+      $prevSort = $this->TChatbotScenario->find('list', $params);
+      // 新しくソート順を設定したため、空で来ることがある
+      $reset_flg = false;
+      foreach($prevSort as $key => $val){
+        // 設定されていない値'0'が一つでも入っていたらsortをリセット
+        if($val === '0' || $val === 0 || $val === null){
+          $reset_flg = true;
+        }
+      }
+      if($reset_flg){
+        // ソート順のリセットはID順とする
+        // $i = 1;
+        // foreach($prevSort as $key => $val){
+        //   $prevSort[$key] = strval($i);
+        //   $i++;
+        // }
+        // ソート順が登録されていなかったらソート順をセットする
+        if(! $this->remoteSetSort()){
+          $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
+          return false;
+        }
+        $prevSort = $this->TChatbotScenario->find('list', $params);
+        // この時$sortNoListは空なので作成する
+        if(empty($sortNoList)){
+          for ($i = 0; count($list) > $i; $i++) {
+            $id = $list[$i];
+            $sortNoList[] = $prevSort[$id];
+          }
+          sort($sortNoList);
+        }
+      }
+      // $prevSortKeys = am($prevSort);
+      // $this->log($prevSortKeys,LOG_DEBUG);
+      /* アップデート分の並び順を設定 */
+      $ret = true;
+      for ($i = 0; count($list) > $i; $i++) {
+        $id = $list[$i];
+        if ( isset($prevSort[$id]) ) {
+          $saveData = [
+              'TChatbotScenario' => [
+                  'id' => $id,
+                  'sort' => $sortNoList[$i]
+              ]
+          ];
+          if (!$this->TChatbotScenario->validates()) {
+            $ret = false;
+            break;
+          }
+          if (!$this->TChatbotScenario->save($saveData)) {
+            $ret = false;
+            break;
+          }
+        } else {
+          // 送信されたシナリオ設定と現在DBに存在するシナリオ設定に差がある場合
+          $this->TChatbotScenario->rollback();
+          $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.configChanged'));
+          return;
+        }
+      }
+      if ($ret) {
+        $this->TChatbotScenario->commit();
+        $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
+      }
+      else {
+        $this->TChatbotScenario->rollback();
+        $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.saveFailed'));
+      }
+    }
+   }
+
+   /**
+   * シナリオ設定ソート順を現在のID順でセット
+   *
+   * */
+   public function remoteSetSort(){
+     $this->TChatbotScenario->begin();
+     /* 現在の並び順を取得 */
+     $this->paginate['TChatbotScenario']['conditions']['TChatbotScenario.m_companies_id'] = $this->userInfo['MCompany']['id'];
+     $params = [
+         'fields' => [
+             'TChatbotScenario.sort'
+         ],
+         'conditions' => [
+             'TChatbotScenario.m_companies_id' => $this->userInfo['MCompany']['id']
+            // 'TChatbotScenario.del_flg != ' => 1
+         ],
+         'order' => [
+             'TChatbotScenario.sort' => 'asc',
+             'TChatbotScenario.id' => 'asc'
+         ],
+         'limit' => 1,
+         'recursive' => -1
+     ];
+     $params['fields'] = [
+         'TChatbotScenario.id',
+         'TChatbotScenario.sort'
+     ];
+     unset($params['limit']);
+     $prevSort = $this->TChatbotScenario->find('list', $params);
+     // ソート順のリセットはID順とする
+     $i = 1;
+     foreach($prevSort as $key => $val){
+       $prevSort[$key] = strval($i);
+       $i++;
+     }
+     $prevSortKeys = am($prevSort);
+     $this->log($prevSortKeys,LOG_DEBUG);
+     $i = 0;
+     $ret = true;
+     foreach($prevSort as $key => $val){
+       $id = $key;
+       $saveData = [
+           'TChatbotScenario' => [
+               'id' => $id,
+               'sort' => $prevSortKeys[$i]
+           ]
+       ];
+       if (!$this->TChatbotScenario->validates()) {
+         $ret = false;
+         break;
+       }
+       if (!$this->TChatbotScenario->save($saveData)) {
+         $ret = false;
+         break;
+       }
+       $i++;
+     }
+     if ($ret) {
+       $this->TChatbotScenario->commit();
+       return true;
+     }
+     else {
+       $this->TChatbotScenario->rollback();
+       return false;
+     }
+   }
 
   /**
    * 保存機能
@@ -218,20 +529,6 @@ class TChatbotScenarioController extends AppController {
     }
 
     if ($validate) {
-      //オートメッセージ　営業時間を4番目に入れたので並び替え処理
-      // $changeEditData = json_decode($saveData['TChatbotScenario']['activity'],true);
-      // foreach($changeEditData['conditions'] as $key => $val){
-      //   if($key === 4) {
-      //     unset($changeEditData['conditions'][4]);
-      //     $changeEditData['conditions'][10] = json_decode($saveData['TChatbotScenario']['activity'],true)['conditions'][4];
-      //   }
-      //   if($key >= 5) {
-      //     unset($changeEditData['conditions'][$key]);
-      //     $changeEditData['conditions'][$key-1] = json_decode($saveData['TChatbotScenario']['activity'],true)['conditions'][$key];
-      //   }
-      // }
-      // $changeEditData = json_encode($changeEditData);
-      // $saveData['TChatbotScenario']['activity'] = $changeEditData;
       if( $this->TChatbotScenario->save($saveData,false) ) {
       }
     }
