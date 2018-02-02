@@ -122,12 +122,12 @@
       if(oldFlg == false) {
         changeHistoryId = historyId;
       }
+      $scope.chatLogMessageList = [];
+      $scope.messageList = [];
       //矢印を連続で押したときの処理
       if (jqxhr) {
         jqxhr.abort();
       }
-      $scope.chatLogMessageList = [];
-      $scope.messageList = [];
       $timeout(function(){
         $scope.$apply();
       }).then(function(){
@@ -147,7 +147,6 @@
             }
             else {
               $scope.messageList = json;
-
               $scope.chatLogList = [];
               $scope.chatLogMessageList = [];
               //$scope.$apply();

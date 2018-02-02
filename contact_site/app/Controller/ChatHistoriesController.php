@@ -234,6 +234,8 @@
         if ( !empty($tHistoryData['THistory']['visitors_id']) ) {
           $mCusData = $this->MCustomer->getCustomerInfoForVisitorId($this->userInfo['MCompany']['id'], $tHistoryData['THistory']['visitors_id']);
         }
+        $this->log('infoList',LOG_DEBUG);
+        $this->log($mCusData,LOG_DEBUG);
 
         $this->log("BEGIN 閲覧ページ数 : ".$this->getDateWithMilliSec(),LOG_DEBUG);
         $pageCount = $this->THistoryStayLog->find('all', [
@@ -1060,6 +1062,52 @@
         $data = $this->Session->read('Thistory');
         /* ○ 検索処理 */
 
+        /* 顧客情報に関する検索条件 会社名、名前、電話、メール検索 */
+        if((isset($data['History']['company_name']) && $data['History']['company_name'] !== "") || (isset($data['History']['customer_name']) && $data['History']['customer_name'] !== "") || (isset($data['History']['telephone_number']) && $data['History']['telephone_number'] !== "") || (isset($data['History']['mail_address']) && $data['History']['mail_address'] !== "") ) {
+          //会社名が入っている場合
+          if((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && (isset($data['History']['company_name']) && $data['History']['company_name'] !== "")) {
+            //会社名がランドスケープテーブルに登録されている場合
+            $companyConditions = [
+              'fields' => 'lbc_code,ip_address,org_name',
+              'conditions' => [
+                'MLandscapeData.org_name LIKE' => '%'. $data['History']['company_name'].'%'
+              ]
+            ];
+            // MLの企業情報を閲覧できない企業であれば
+            if(!$this->isViewableMLCompanyInfo()) {
+              $companyConditions['conditions']['NOT']['MLandscapeData.lbc_code'] = LandscapeComponent::ML_LBC_CODE;
+            }
+            $companyData = $this->MLandscapeData->find('all', $companyConditions);
+
+            if(!empty($companyData)) {
+              $visitorsIds = $this->_searchCustomer($data['History']);
+              $chatCond['visitors_id'] = $visitorsIds;
+
+              $ipAddressList = [];
+              foreach($companyData as $k => $v) {
+                $ipAddressList[] = $v['MLandscapeData']['ip_address'];
+              }
+              $this->paginate['THistory']['conditions'] = array(
+                'THistory.m_companies_id' => $this->userInfo['MCompany']['id'],
+                'OR' => array(
+                  'THistory.ip_address' => $ipAddressList,
+                  'THistory.visitors_id' => $visitorsIds
+                )
+              );
+            }
+            else {
+              $visitorsIds = $this->_searchCustomer($data['History']);
+              $this->paginate['THistory']['conditions']['THistory.visitors_id'] = $visitorsIds;
+              $chatCond['visitors_id'] = $visitorsIds;
+            }
+          }
+          else {
+            $visitorsIds = $this->_searchCustomer($data['History']);
+            $this->paginate['THistory']['conditions']['THistory.visitors_id'] = $visitorsIds;
+            $chatCond['visitors_id'] = $visitorsIds;
+          }
+        }
+
         //種別
         //Autoの場合
         if(isset($data['History']['chat_type']) && $data['History']['chat_type'] !== "") {
@@ -1101,43 +1149,6 @@
         //終了日
         if(!empty($data['History']['finish_day'] )) {
           $this->paginate['THistory']['conditions']['THistory.access_date <='] = $data['History']['finish_day'].' 23:59:59';
-        }
-
-        /* 顧客情報に関する検索条件 会社名、名前、電話、メール検索 */
-        if((isset($data['History']['company_name']) && $data['History']['company_name'] !== "") || (isset($data['History']['customer_name']) && $data['History']['customer_name'] !== "") || (isset($data['History']['telephone_number']) && $data['History']['telephone_number'] !== "") || (isset($data['History']['mail_address']) && $data['History']['mail_address'] !== "") ) {
-          //会社名が入っている場合
-          if((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && (isset($data['History']['company_name']) && $data['History']['company_name'] !== "")) {
-            //会社名がランドスケープテーブルに登録されている場合
-            $companyConditions = [
-              'fields' => 'lbc_code,ip_address,org_name',
-              'conditions' => [
-                'MLandscapeData.org_name LIKE' => '%'. $data['History']['company_name'].'%'
-              ]
-            ];
-            // MLの企業情報を閲覧できない企業であれば
-            if(!$this->isViewableMLCompanyInfo()) {
-              $companyConditions['conditions']['NOT']['MLandscapeData.lbc_code'] = LandscapeComponent::ML_LBC_CODE;
-            }
-            $companyData = $this->MLandscapeData->find('all', $companyConditions);
-
-            if(!empty($companyData)) {
-              $ipAddressList = [];
-              foreach($companyData as $k => $v) {
-                $ipAddressList[] = $v['MLandscapeData']['ip_address'];
-              }
-              $this->paginate['THistory']['conditions']['THistory.ip_address'] = $ipAddressList;
-            }
-            else {
-              $visitorsIds = $this->_searchCustomer($data['History']);
-              $this->paginate['THistory']['conditions']['THistory.visitors_id'] = $visitorsIds;
-              $chatCond['visitors_id'] = $visitorsIds;
-            }
-          }
-          else {
-            $visitorsIds = $this->_searchCustomer($data['History']);
-            $this->paginate['THistory']['conditions']['THistory.visitors_id'] = $visitorsIds;
-            $chatCond['visitors_id'] = $visitorsIds;
-          }
         }
 
         // 担当者に関する検索条件
@@ -2050,6 +2061,51 @@
       $type = $this->Session->read('authenticity');
       $data = $this->Session->read('Thistory');
 
+
+      /* 顧客情報に関する検索条件 会社名、名前、電話、メール検索 */
+      if((isset($data['History']['company_name']) && $data['History']['company_name'] !== "") || (isset($data['History']['customer_name']) && $data['History']['customer_name'] !== "") || (isset($data['History']['telephone_number']) && $data['History']['telephone_number'] !== "") || (isset($data['History']['mail_address']) && $data['History']['mail_address'] !== "") ) {
+        //会社名が入っている場合
+        if((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && (isset($data['History']['company_name']) && $data['History']['company_name'] !== "")) {
+          //会社名がランドスケープテーブルに登録されている場合
+          $companyData = $this->MLandscapeData->find('all', [
+            'fields' => 'lbc_code,ip_address,org_name',
+            'conditions' => [
+              'MLandscapeData.org_name LIKE' => '%'. $data['History']['company_name'].'%'
+            ]
+          ]);
+          if(!empty($companyData)) {
+            $visitorsIds = $this->_searchCustomer($data['History']);
+            $chatCond['visitors_id'] = $visitorsIds;
+
+            $ipAddressList = [];
+            foreach($companyData as $k => $v) {
+              $ipAddressList[] = $v['MLandscapeData']['ip_address'];
+            }
+            $conditions[] = [
+              'THistory.m_companies_id' => $this->userInfo['MCompany']['id'],
+              'OR' => [
+                'THistory.ip_address' => $ipAddressList,
+                'THistory.visitors_id' => $visitorsIds
+              ]
+            ];
+          }
+          else {
+            $visitorsIds = $this->_searchCustomer($data['History']);
+            $conditions[] = [
+              'THistory.visitors_id' => $visitorsIds
+            ];
+            $chatCond['visitors_id'] = $visitorsIds;
+          }
+        }
+        else {
+          $visitorsIds = $this->_searchCustomer($data['History']);
+          $conditions[] = [
+            'THistory.visitors_id' => $visitorsIds
+          ];
+          $chatCond['visitors_id'] = $visitorsIds;
+        }
+      }
+
       //種別
       if(isset($data['History']['chat_type']) && $data['History']['chat_type'] !== "") {
         $this->set('chatType', Configure::read('chatType'));
@@ -2095,43 +2151,6 @@
           'THistory.access_date <=' => $data['History']['finish_day'].' 23:59:59',
           'THistory.m_companies_id' => $this->userInfo['MCompany']['id']
         ];
-      }
-
-      /* 顧客情報に関する検索条件 会社名、名前、電話、メール検索 */
-      if((isset($data['History']['company_name']) && $data['History']['company_name'] !== "") || (isset($data['History']['customer_name']) && $data['History']['customer_name'] !== "") || (isset($data['History']['telephone_number']) && $data['History']['telephone_number'] !== "") || (isset($data['History']['mail_address']) && $data['History']['mail_address'] !== "") ) {
-        //会社名が入っている場合
-        if((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && (isset($data['History']['company_name']) && $data['History']['company_name'] !== "")) {
-          //会社名がランドスケープテーブルに登録されている場合
-          $companyData = $this->MLandscapeData->find('all', [
-            'fields' => 'lbc_code,ip_address,org_name',
-            'conditions' => [
-              'MLandscapeData.org_name LIKE' => '%'. $data['History']['company_name'].'%'
-            ]
-          ]);
-          if(!empty($companyData)) {
-            $ipAddressList = [];
-            foreach($companyData as $k => $v) {
-              $ipAddressList[] = $v['MLandscapeData']['ip_address'];
-            }
-            $conditions[] = [
-              'THistory.ip_address' =>  $ipAddressList
-            ];
-          }
-          else {
-            $visitorsIds = $this->_searchCustomer($data['History']);
-            $conditions[] = [
-              'THistory.visitors_id' => $visitorsIds
-            ];
-            $chatCond['visitors_id'] = $visitorsIds;
-          }
-        }
-        else {
-          $visitorsIds = $this->_searchCustomer($data['History']);
-          $conditions[] = [
-            'THistory.visitors_id' => $visitorsIds
-          ];
-          $chatCond['visitors_id'] = $visitorsIds;
-        }
       }
 
       $joinType = 'INNER';
