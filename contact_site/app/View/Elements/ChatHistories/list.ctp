@@ -336,14 +336,15 @@
                  endif; ?>
               <?php if(isset($coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $coreSettings[C_COMPANY_REF_COMPANY_DATA]) { ?>
                 <?php if(!empty($history['LandscapeData']['org_name']) && !empty($history['LandscapeData']['lbc_code'])): ?>
-                    <div style = "padding-top:1px;"><a href="javascript:void(0)" style ="font-weight:bold;" class="underL largeCharacters" onclick="openCompanyDetailInfo('<?=$history['LandscapeData']['lbc_code']?>')"><?=h($history['LandscapeData']['org_name'])?></a>
+                    <li style = "white-space: nowrap;overflow: hidden;"><div style = "padding-top:1px;margin-top:3px;"><a href="javascript:void(0)" style ="font-weight:bold;" class="underL largeCharacters" onclick="openCompanyDetailInfo('<?=$history['LandscapeData']['lbc_code']?>')"><?=h($history['LandscapeData']['org_name'])?></a></div></li>
                 <?php elseif(!empty($history['LandscapeData']['org_name'])): ?>
-                    <p><?=h($history['LandscapeData']['org_name'])?></p><?='\n'?>
+                   <li style = "white-space: nowrap;overflow: hidden;"> <p><?=h($history['LandscapeData']['org_name'])?></p></li><?='\n'?>
                 <?php elseif(empty($history['LandscapeData']['org_name'])): ?>
                 <li style = "white-space: nowrap;overflow: hidden;"><div class = "largeCharacters" style = "padding-top:1px;font-weight:bold;margin-top:3px;">{{ ip('<?=h($history['THistory']['ip_address'])?>', <?php echo !empty($history['LandscapeData']['org_name']) ? 'true' : 'false' ?>) }}</div></li>
                 <?php endif; ?>
               <?php } else { ?>
-              <li style = "white-space: nowrap;overflow: hidden;"><div class = "largeCharacters" style = "padding-top:1px;font-weight:bold;margin-top:3px;">{{ ip('<?=h($history['THistory']['ip_address'])?>', <?php echo !empty($history['LandscapeData']['org_name']) ? 'true' : 'false' ?>) }}</div></li>
+              <li style = "white-space: nowrap;overflow: hidden;"><div class = "largeCharacters" style = "padding-top:1px;font-weight:bold;margin-top:3st
+              px;">{{ ip('<?=h($history['THistory']['ip_address'])?>', <?php echo !empty($history['LandscapeData']['org_name']) ? 'true' : 'false' ?>) }}</div></li>
               <?php } ?>
               <li style = "white-space: nowrap;overflow: hidden;"><div style = "padding-top:1px;" class = "largeCharacters">{{ ui('<?=h($history['THistory']['ip_address'])?>','<?=$visitorsId?>') }}</div></li></td>
               <td class="tCenter eachKind" style = "width:5%;display:none;">
