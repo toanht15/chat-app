@@ -994,7 +994,7 @@ var socket, // socket.io
         /* 縦の場合 */
         if ( $(window).height() > $(window).width() ) {
           if(widget.spMaximizeSizeType === 2) {
-            html += '#sincloBox { width: ' + ($(window).width()) + 'px; right: 0!important; }';
+            html += '#sincloBox { width: ' + ($(window).width()) + 'px; right: 0px; }';
           } else {
             html += '#sincloBox { width: ' + widgetWidth + 'px; }';
           }

@@ -64,6 +64,18 @@
               //ヘッダ表示（通常表示）
               common.abridgementTypeShow();
             }
+
+            //自由入力エリアが閉まっているか空いているかチェック
+            var textareaOpend = storage.l.get('textareaOpend');
+            //チャットのテキストエリア表示
+            if( textareaOpend == 'close') {
+              sinclo.hideTextarea();
+            }
+            //チャットのテキストエリア非表示
+            else {
+              sinclo.displayTextarea();
+            }
+
             sinclo.widget.condifiton.set(true, true);
             if ( check.smartphone() && window.sincloInfo.contract.chat && (window.screen.availHeight < window.screen.availWidth) ) {
               //スマホ横
@@ -1388,6 +1400,7 @@
       }, 500);
     },
     displayTextarea : function(){
+      if(!document.getElementById("flexBoxHeight")) return;
       $(window).off('resize', sinclo.displayTextarea).off('resize', sinclo.hideTextarea).on('resize', sinclo.displayTextarea);
       document.getElementById("flexBoxHeight").style.display = '';
       if(chatTalk.clientHeight == 269 || chatTalk.clientHeight == 359 || chatTalk.clientHeight == 449) {
@@ -1420,6 +1433,7 @@
       }
     },
     hideTextarea : function(){
+      if(!document.getElementById("flexBoxHeight")) return;
       $(window).off('resize', sinclo.displayTextarea).off('resize', sinclo.hideTextarea).on('resize', sinclo.hideTextarea);
       if(chatTalk.clientHeight == 194 || chatTalk.clientHeight == 284 || chatTalk.clientHeight == 374) {
         document.getElementById("flexBoxHeight").style.display = 'none';
@@ -2809,7 +2823,28 @@
             var result = false;
 
             // 含む方
-            var splitedContains = contains.replace(/　/g, " ").split(" ");
+            // var splitedContains = contains.replace(/　/g, " ").split(" ");
+            var splitedContains = [];
+            contains.split('"').forEach(function(currentValue, index, array){
+              if(array.length > 1) {
+                if(index !== 0 && index % 2 === 1) {
+                  // 偶数個：そのまま文字列で扱う
+                  if(currentValue !== "") {
+                    splitedContains.push(currentValue);
+                  }
+                } else {
+                  if(currentValue) {
+                    var trimValue = currentValue.trim(),
+                      splitValue = trimValue.replace(/　/g, " ").split(" ");
+                    splitedContains = splitedContains.concat($.grep(splitValue, function(e){return e !== "";}));
+                  }
+                }
+              } else {
+                var trimValue = currentValue.trim(),
+                  splitValue = trimValue.replace(/　/g, " ").split(" ");
+                splitedContains = splitedContains.concat($.grep(splitValue, function(e){return e !== "";}));
+              }
+            });
             for(var i=0; i < splitedContains.length; i++) {
               if(splitedContains[i] === "") {
                 result = true;
@@ -2841,31 +2876,69 @@
             if(!result) return false; // 含む方と含まない方はAND条件なので、ここでダメならマッチエラーを返す
 
             // 含まない方
-            var splitedExclusions = exclusions.replace(/　/g, " ").split(" ");
+            var splitedExclusions = [];
+            exclusions.split('"').forEach(function(currentValue, index, array){
+              if(array.length > 1) {
+                if(index !== 0 && index % 2 === 1) {
+                  // 偶数個：そのまま文字列で扱う
+                  if(currentValue !== "") {
+                    splitedExclusions.push(currentValue);
+                  }
+                } else {
+                  if(currentValue) {
+                    var trimValue = currentValue.trim(),
+                      splitValue = trimValue.replace(/　/g, " ").split(" ");
+                    splitedExclusions = splitedExclusions.concat($.grep(splitValue, function(e){return e !== "";}));
+                  }
+                }
+              } else {
+                var trimValue = currentValue.trim(),
+                  splitValue = trimValue.replace(/　/g, " ").split(" ");
+                splitedExclusions = splitedExclusions.concat($.grep(splitValue, function(e){return e !== "";}));
+              }
+            });
+            var exclusionResult = false;
             for(var i=0; i < splitedExclusions.length; i++) {
               if(splitedExclusions[i] === "") {
-                result = true;
+                if (splitedExclusions.length > 1 && i === splitedExclusions.length - 1) {
+                  result = typeObj.exclusionsType === 1 ? false : true;
+                  break;
+                }
                 continue;
+              } else {
+                var preg = "";
+                var word = "";
+                switch(Number(typeObj.wordType)) {
+                  case 1: // 完全一致
+                    word = splitedExclusions[i]
+                    // アスタリスクを許容し、それ以外の文字は文字列として扱う
+                      .replace(/[-\/\\^$+?.()|[\]{}]/g, '\\$&').replace(/\*/g, ".*");
+                    preg = new RegExp("^" + word + "$");
+                    exclusionResult = preg.test(val);
+                    break;
+                  case 2: // 部分一致
+                    word = splitedExclusions[i].replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+                    preg = new RegExp(word);
+                    exclusionResult = preg.test(val);
+                    break;
+                }
               }
-              var preg = "";
-              var word = "";
-              switch(Number(typeObj.wordType)) {
-                case 1: // 完全一致
-                  word = splitedExclusions[i]
-                  // アスタリスクを許容し、それ以外の文字は文字列として扱う
-                    .replace(/[-\/\\^$+?.()|[\]{}]/g, '\\$&').replace(/\*/g, ".*");
-                  preg = new RegExp("^" + word + "$");
-                  result = !preg.test(val);
-                  break;
-                case 2: // 部分一致
-                  word = splitedExclusions[i].replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-                  preg = new RegExp(word);
-                  result = !preg.test(val);
-                  break;
-              }
-              if((result && typeObj.exclusionsType === 2)) { // いずれかを含まない
+
+              if(!exclusionResult && typeObj.exclusionsType === 1) { // すべて含む
+                // 1つでも含んでいなかったら対象外条件は成立しないので、ウィジェットは出す
+                result = true;
                 break;
-              } else if((!result && typeObj.exclusionsType === 1)) { // すべて含まない
+              } else if(exclusionResult && typeObj.exclusionsType === 1 && i === splitedExclusions.length - 1) { // すべて含む
+                // 最後まで含んでいる状態であれば対象外条件が成立するので、ウィジェットは出さない
+                result = false;
+                break;
+              } else if(exclusionResult && typeObj.exclusionsType === 2) { // いずれかを含む
+                // 1つでも含んでいたら対象外条件が成立するので、ウィジェットは出さない
+                result = false;
+                break;
+              } else if(!exclusionResult && typeObj.exclusionsType === 2 && i === splitedExclusions.length - 1) { // いずれかを含む
+                // 最後まで含んでいない状態であれば対象外条件は成立しないので、ウィジェットは出す
+                result = true;
                 break;
               }
             }

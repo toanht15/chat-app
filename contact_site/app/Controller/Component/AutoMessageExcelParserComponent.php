@@ -121,18 +121,18 @@ class AutoMessageExcelParserComponent extends ExcelParserComponent
     ];
 
     $this->exclusionsTypeMap = [
-        'すべて含まない' => 1,
-        'いずれかを含まない' => 2
+        'すべて含む' => 1,
+        'いずれかを含む' => 2
     ];
 
     $this->keywordConditionMap = [
-      '完全一致' => 1,
-      '部分一致' => 2
+      '完全一致' => "1",
+      '部分一致' => "2"
     ];
 
     $this->triggerConditionMap = [
-      "１回のみ有効" => 1,
-      "何度でも有効" => 2
+      "１回のみ有効" => "1",
+      "何度でも有効" => "2"
     ];
 
     $this->triggerFreeInputMap = [
@@ -210,7 +210,7 @@ class AutoMessageExcelParserComponent extends ExcelParserComponent
       $this->addError($errors, self::ROW_CONTAINS_TYPE,'すべて含む／いずれかを含む のいずれかの指定のみ可能です');
     }
     if(empty($this->exclusionsTypeMap[$data[self::ROW_EXCLUSIONS_TYPE]])) {
-      $this->addError($errors, self::ROW_EXCLUSIONS_TYPE,'すべて含まない／いずれかを含まない のいずれかの指定のみ可能です');
+      $this->addError($errors, self::ROW_EXCLUSIONS_TYPE,'すべて含む／いずれかを含む のいずれかの指定のみ可能です');
     }
     if(empty($this->keywordConditionMap[$data[self::ROW_KEYWORD_CONDITION]])) {
       $this->addError($errors, self::ROW_KEYWORD_CONDITION,'完全一致／部分一致 のいずれかの指定のみ可能です');
