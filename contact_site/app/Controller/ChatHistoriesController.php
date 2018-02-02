@@ -234,8 +234,6 @@
         if ( !empty($tHistoryData['THistory']['visitors_id']) ) {
           $mCusData = $this->MCustomer->getCustomerInfoForVisitorId($this->userInfo['MCompany']['id'], $tHistoryData['THistory']['visitors_id']);
         }
-        $this->log('infoList',LOG_DEBUG);
-        $this->log($mCusData,LOG_DEBUG);
 
         $this->log("BEGIN 閲覧ページ数 : ".$this->getDateWithMilliSec(),LOG_DEBUG);
         $pageCount = $this->THistoryStayLog->find('all', [
