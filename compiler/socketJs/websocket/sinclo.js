@@ -2823,7 +2823,28 @@
             var result = false;
 
             // 含む方
-            var splitedContains = contains.replace(/　/g, " ").split(" ");
+            // var splitedContains = contains.replace(/　/g, " ").split(" ");
+            var splitedContains = [];
+            contains.split('"').forEach(function(currentValue, index, array){
+              if(array.length > 1) {
+                if(index !== 0 && index % 2 === 1) {
+                  // 偶数個：そのまま文字列で扱う
+                  if(currentValue !== "") {
+                    splitedContains.push(currentValue);
+                  }
+                } else {
+                  if(currentValue) {
+                    var trimValue = currentValue.trim(),
+                      splitValue = trimValue.replace(/　/g, " ").split(" ");
+                    splitedContains = splitedContains.concat($.grep(splitValue, function(e){return e !== "";}));
+                  }
+                }
+              } else {
+                var trimValue = currentValue.trim(),
+                  splitValue = trimValue.replace(/　/g, " ").split(" ");
+                splitedContains = splitedContains.concat($.grep(splitValue, function(e){return e !== "";}));
+              }
+            });
             for(var i=0; i < splitedContains.length; i++) {
               if(splitedContains[i] === "") {
                 result = true;
@@ -2855,7 +2876,27 @@
             if(!result) return false; // 含む方と含まない方はAND条件なので、ここでダメならマッチエラーを返す
 
             // 含まない方
-            var splitedExclusions = exclusions.replace(/　/g, " ").split(" ");
+            var splitedExclusions = [];
+            exclusions.split('"').forEach(function(currentValue, index, array){
+              if(array.length > 1) {
+                if(index !== 0 && index % 2 === 1) {
+                  // 偶数個：そのまま文字列で扱う
+                  if(currentValue !== "") {
+                    splitedExclusions.push(currentValue);
+                  }
+                } else {
+                  if(currentValue) {
+                    var trimValue = currentValue.trim(),
+                      splitValue = trimValue.replace(/　/g, " ").split(" ");
+                    splitedExclusions = splitedExclusions.concat($.grep(splitValue, function(e){return e !== "";}));
+                  }
+                }
+              } else {
+                var trimValue = currentValue.trim(),
+                  splitValue = trimValue.replace(/　/g, " ").split(" ");
+                splitedExclusions = splitedExclusions.concat($.grep(splitValue, function(e){return e !== "";}));
+              }
+            });
             var exclusionResult = false;
             for(var i=0; i < splitedExclusions.length; i++) {
               if(splitedExclusions[i] === "") {
