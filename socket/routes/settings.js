@@ -412,11 +412,11 @@ router.get("/", function(req, res, next) {
                                     keyword_exclusions: "",
                                     keyword_exclusions_type: "1",
                                     speechContentCond: "1",
-                                    tirggerTimeSec: 3,
+                                    triggerTimeSec: 3,
                                     speechTriggerCond: "1"
                                   };
                                   newSettings.speechContentCond = condition[value].speechContentCond;
-                                  newSettings.tirggerTimeSec = condition[value].tirggerTimeSec;
+                                  newSettings.triggerTimeSec = condition[value].triggerTimeSec;
                                   newSettings.speechTriggerCond = condition[value].speechTriggerCond;
                                   switch(Number(condition[value].speechContentCond)) {
                                     case 1:
