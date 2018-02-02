@@ -124,6 +124,15 @@
                                 $("#lastSpeechLabel").css('width','');
                                 $("#achievement").css('width','');
                                 $("#chatHistory").css('height','100%');
+                                $(".info").css('width',$("#info").outerWidth());
+                                console.log(parseInt($(".eachInfo").css('width')));
+                                if(parseInt($(".eachInfo").css('width')) < 382) {
+                                  $(".eachInfo").css('width',$("#info").innerWidth());
+                                  $(".info").css('width',$("#info").innerWidth());
+                                }
+                                else {
+                                  $(".eachInfo").css('width',"");
+                                }
                             }
                             panel_1.find('.splitter_panel').eq(0).height(self.height());
                             panel_2.find('.splitter_panel').eq(0).height(self.height());

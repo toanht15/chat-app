@@ -235,7 +235,7 @@
   <table class = "scroll" id = "chatTable">
       <thead>
         <tr>
-          <th style = "width:2%"><input type="checkbox" name="allCheck" id="allCheck"><label for="allCheck"></label></th>
+          <th style = "width:2%" id = "check" width = "3%"><input type="checkbox" name="allCheck" id="allCheck"><label for="allCheck"></label></th>
           <th width = "3%" id = "info" style = "width:20%">情報</th>
           <th width = "3%" id = "kind" style = "width:5%; display:none;">種別</th>
           <th id = "firstTimeReceivingLabel" style = "width:5%;display:none;min-width:79px;">初回チャット<br>受信日時<div class="questionBalloon questionBalloonPosition13">
@@ -243,7 +243,7 @@
           </div></th>
           <th style = "width:5%;display:none;" id = "ip">IPアドレス</th>
           <th style = "width:5%;display:none;" id = "visitor">訪問ユーザ</th>
-          <th style = "width:3%">キャンペーン</th>
+          <th class = "campaign" style = "width:3%">キャンペーン</th>
           <th id = "sendChatPageLabel" style = "width:13%">チャット送信ページ<div class="questionBalloon questionBalloonPosition8">
             <icon class="questionBtn">？</icon>
           </div></th>
@@ -294,118 +294,122 @@
           }
         }
         ?>
-        <tr id = "<?=h($history['THistory']['id'])?>" ng-click="getOldChat('<?=h($history['THistory']['id'])?>', false)" onclick="openChatById('<?=h($history['THistory']['id'])?>');" class = "showBold" style="height:50px;">
-          <td class="tCenter" onclick="event.stopPropagation();" width=" 3%" style = "width:6%">
-            <input type="checkbox" name="selectTab" id="selectTab<?=h($history['THistory']['id'])?>" value="<?=h($history['THistory']['id'])?>">
-            <label for="selectTab<?=h($history['THistory']['id'])?>"></label>
-          </td>
-          <td style = "width:38%; padding-left:10px;" class = "eachInfo">
-            <?php if( is_numeric($history['THistoryChatLog']['count']) ): ?>
-              <div class = "firstChatTime">
-                <?php if (!empty($history['SpeechTime']['firstSpeechTime']) && date('Y/m/d') == date_format(date_create($history['SpeechTime']['firstSpeechTime']), "Y/m/d")){ ?>
-                 <?=date_format(date_create($history['SpeechTime']['firstSpeechTime']), "H:i")?>
-                <?php }
-                else if(!empty($history['SpeechTime']['firstSpeechTime']) && date('Y/m/d') != date_format(date_create($history['SpeechTime']['firstSpeechTime']), "Y/m/d")) {
-                  $firstSpeechTimeMonth = date_format(date_create($history['SpeechTime']['firstSpeechTime']), "m月");
-                  $firstSpeechTimeDay = date_format(date_create($history['SpeechTime']['firstSpeechTime']), "d日"); ?>
-                  <?=ltrim($firstSpeechTimeMonth, '0').ltrim($firstSpeechTimeDay, '0');?>
-                <?php } ?>
-              </div>
-              <div class = "info">
-              <div>
+        <?php
+        if ((isset($history['THistoryChatLog']['type']) && isset($data['History']['chat_type']) && isset($chatType) &&
+        $history['THistoryChatLog']['type'] === $chatType[$data['History']['chat_type']]) || empty($chatType)) { ?>
+          <tr id = "<?=h($history['THistory']['id'])?>" ng-click="getOldChat('<?=h($history['THistory']['id'])?>', false)" onclick="openChatById('<?=h($history['THistory']['id'])?>');" class = "showBold" style="height:72px !important;">
+            <td class="tCenter checkBox" onclick="event.stopPropagation();" style = "width:6%">
+              <input type="checkbox" name="selectTab" id="selectTab<?=h($history['THistory']['id'])?>" value="<?=h($history['THistory']['id'])?>">
+              <label for="selectTab<?=h($history['THistory']['id'])?>"></label>
+            </td>
+            <td style = "width:35%; padding-left:10px;" class = "eachInfo">
+            <div class = "info">
+              <?php if( is_numeric($history['THistoryChatLog']['count']) ): ?>
+                <div class = "firstChatTime" style = "height:60px;">
+                  <?php if (!empty($history['SpeechTime']['firstSpeechTime']) && date('Y/m/d') == date_format(date_create($history['SpeechTime']['firstSpeechTime']), "Y/m/d")){ ?>
+                   <?=date_format(date_create($history['SpeechTime']['firstSpeechTime']), "H:i")?>
+                  <?php }
+                  else if(!empty($history['SpeechTime']['firstSpeechTime']) && date('Y/m/d') != date_format(date_create($history['SpeechTime']['firstSpeechTime']), "Y/m/d")) {
+                    $firstSpeechTimeMonth = date_format(date_create($history['SpeechTime']['firstSpeechTime']), "m月");
+                    $firstSpeechTimeDay = date_format(date_create($history['SpeechTime']['firstSpeechTime']), "d日"); ?>
+                    <?=ltrim($firstSpeechTimeMonth, '0').ltrim($firstSpeechTimeDay, '0');?>
+                  <?php } ?>
+                </div>
+                  <?php
+                   if ((!empty($history['THistoryChatLog']['type']) && $history['THistoryChatLog']['type'] == "自動返信")
+                    || ($history['THistoryChatLog']['cmp'] == 0 && $history['THistoryChatLog']['sry'] == 0 && $history['THistoryChatLog']['cus'] == 0)) { ?>
+                    <li class = "largeCharacters" style = "color:#4bacc6; font-weight:bold;display: flex;overflow: hidden;white-space: nowrap;"><div class ="chatTypeName" style = "border: 1px solid #4bacc6;background-color:#4bacc6;border-radius:4px;padding:1px 3px;">Auto</div><div class = "largeCharacters enter" style ="margin-left:3px;color:#4bacc6"><?php if (isset($chatUserList[$history['THistory']['id']])) { echo '('.$chatUserList[$history['THistory']['id']].')'; } ?></div></li>
+                  <?php
+                  }
+                  else if(!empty($history['THistoryChatLog']['type']) && $history['THistoryChatLog']['type'] == "拒否") { ?>
+                    <li class = "largeCharacters" style = "color:#a6a6a6; font-weight:bold;display: flex;overflow: hidden;white-space: nowrap;"><div class ="chatTypeName" style = "border: 1px solid #a6a6a6;background-color:#a6a6a6;border-radius:4px;padding:1px 3px;">Sorry</div></li>
+                  <?php
+                  }
+                  else if($history['THistoryChatLog']['type'] == "") { ?>
+                    <li class = "largeCharacters" style = "color:#9bbb59; font-weight:bold;display: flex;overflow: hidden;white-space: nowrap;"><div class ="chatTypeName" style = "border: 1px solid #9bbb59;background-color:#9bbb59;border-radius:4px;padding:1px 3px;width: 52px !important;">Manual</div><div class = "largeCharacters enter" style ="margin-left:3px;color:#9bbb59;">(<?php if (isset($chatUserList[$history['THistory']['id']])) { echo $chatUserList[$history['THistory']['id']]; } ?>)</span></div></span>
+                  <?php
+                  }
+                  else if($history['THistoryChatLog']['type'] == "未入室") { ?>
+                    <li class = "largeCharacters" style = "color:#f79646; font-weight:bold;display: flex;overflow: hidden;white-space: nowrap;"><div class ="chatTypeName" style = "border: 1px solid #f79646;background-color:#f79646;border-radius:4px;padding:1px 3px;">NoEntry</div><div class = "largeCharacters" style ="margin-left:3px;color:#f79646">(＊未入室)</div></li>
+                  <?php
+                    }
+                 endif; ?>
+              <?php if(isset($coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $coreSettings[C_COMPANY_REF_COMPANY_DATA]) { ?>
+                <?php if(!empty($history['LandscapeData']['org_name']) && !empty($history['LandscapeData']['lbc_code'])): ?>
+                    <li style = "white-space: nowrap;overflow: hidden;"><div style = "padding-top:1px;margin-top:3px;"><a href="javascript:void(0)" style ="font-weight:bold;" class="underL largeCharacters" onclick="openCompanyDetailInfo('<?=$history['LandscapeData']['lbc_code']?>')"><?=h($history['LandscapeData']['org_name'])?></a></div></li>
+                <?php elseif(!empty($history['LandscapeData']['org_name'])): ?>
+                   <li style = "white-space: nowrap;overflow: hidden;"> <p><?=h($history['LandscapeData']['org_name'])?></p></li><?='\n'?>
+                <?php elseif(empty($history['LandscapeData']['org_name'])): ?>
+                <li style = "white-space: nowrap;overflow: hidden;"><div class = "largeCharacters" style = "padding-top:1px;font-weight:bold;margin-top:3px;">{{ ip('<?=h($history['THistory']['ip_address'])?>', <?php echo !empty($history['LandscapeData']['org_name']) ? 'true' : 'false' ?>) }}</div></li>
+                <?php endif; ?>
+              <?php } else { ?>
+              <li style = "white-space: nowrap;overflow: hidden;"><div class = "largeCharacters" style = "padding-top:1px;font-weight:bold;margin-top:3st
+              px;">{{ ip('<?=h($history['THistory']['ip_address'])?>', <?php echo !empty($history['LandscapeData']['org_name']) ? 'true' : 'false' ?>) }}</div></li>
+              <?php } ?>
+              <li style = "white-space: nowrap;overflow: hidden;"><div style = "padding-top:1px;" class = "largeCharacters">{{ ui('<?=h($history['THistory']['ip_address'])?>','<?=$visitorsId?>') }}</div></li></td>
+              <td class="tCenter eachKind" style = "width:5%;display:none;">
+              <?php if( is_numeric($history['THistoryChatLog']['count']) ): ?>
                 <?php
                  if ((!empty($history['THistoryChatLog']['type']) && $history['THistoryChatLog']['type'] == "自動返信")
                   || ($history['THistoryChatLog']['cmp'] == 0 && $history['THistoryChatLog']['sry'] == 0 && $history['THistoryChatLog']['cus'] == 0)) { ?>
-                  <span class = "largeCharacters" style = "color:#4bacc6; font-weight:bold;"><span class ="chatTypeName" style = "border: 1px solid #4bacc6;background-color:#4bacc6;border-radius:4px;padding:1px 3px;">Auto</span><span class = "largeCharacters" style ="margin-left:3px;color:#4bacc6"><?php if (isset($chatUserList[$history['THistory']['id']])) { echo '('.$chatUserList[$history['THistory']['id']].')'; } ?></span></span>
+                  <span style = "color:#4bacc6; font-weight:bold;">Auto</span>
                 <?php
                 }
                 else if(!empty($history['THistoryChatLog']['type']) && $history['THistoryChatLog']['type'] == "拒否") { ?>
-                  <span class = "largeCharacters" style = "color:#a6a6a6; font-weight:bold;"><span class ="chatTypeName" style = "border: 1px solid #a6a6a6;background-color:#a6a6a6;border-radius:4px;padding:1px 3px;">Sorry</span></span>
+                  <span style = "color:#a6a6a6; font-weight:bold;">Sorry</span>
                 <?php
                 }
                 else if($history['THistoryChatLog']['type'] == "") { ?>
-                  <span class = "largeCharacters" style = "color:#9bbb59; font-weight:bold;"><span class ="chatTypeName" style = "border: 1px solid #9bbb59;background-color:#9bbb59;border-radius:4px;padding:1px 3px;">Manual</span><span class = "largeCharacters" style ="margin-left:3px;color:#9bbb59">(<?php if (isset($chatUserList[$history['THistory']['id']])) { echo $chatUserList[$history['THistory']['id']]; } ?>)</span></span>
+                  <span style = "color:#9bbb59; font-weight:bold;">Manual</span>
                 <?php
                 }
                 else if($history['THistoryChatLog']['type'] == "未入室") { ?>
-                  <span class = "largeCharacters" style = "color:#f79646; font-weight:bold;"><span class ="chatTypeName" style = "border: 1px solid #f79646;background-color:#f79646;border-radius:4px;padding:1px 3px;">NoEntry</span><span class = "largeCharacters" style ="margin-left:3px;color:#f79646">(＊未入室)</span></span>
+                  <span style = "color:#f79646; font-weight:bold;">NoEntry</span>
                 <?php
                   }
-               endif; ?></div>
-            <?php if(isset($coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $coreSettings[C_COMPANY_REF_COMPANY_DATA]) { ?>
-              <?php if(!empty($history['LandscapeData']['org_name']) && !empty($history['LandscapeData']['lbc_code'])): ?>
-                  <div style = "padding-top:1px;"><a href="javascript:void(0)" style ="font-weight:bold;" class="underL largeCharacters" onclick="openCompanyDetailInfo('<?=$history['LandscapeData']['lbc_code']?>')"><?=h($history['LandscapeData']['org_name'])?></a>
-              <?php elseif(!empty($history['LandscapeData']['org_name'])): ?>
-                  <p><?=h($history['LandscapeData']['org_name'])?></p><?='\n'?>
-              <?php elseif(empty($history['LandscapeData']['org_name'])): ?>
-              <div class = "largeCharacters" style = "padding-top:1px;font-weight:bold;">{{ ip('<?=h($history['THistory']['ip_address'])?>', <?php echo !empty($history['LandscapeData']['org_name']) ? 'true' : 'false' ?>) }}</div>
-              <?php endif; ?>
-            <?php } else { ?>
-            <div class = "largeCharacters" style = "padding-top:1px;font-weight:bold;">{{ ip('<?=h($history['THistory']['ip_address'])?>', <?php echo !empty($history['LandscapeData']['org_name']) ? 'true' : 'false' ?>) }}</div>
-            <?php } ?>
-            <div style = "padding-top:1px;" class = "largeCharacters">{{ ui('<?=h($history['THistory']['ip_address'])?>','<?=$visitorsId?>') }}</div></div></td>
-            <td class="tCenter eachKind" style = "width:5%;display:none;">
-            <?php if( is_numeric($history['THistoryChatLog']['count']) ): ?>
-              <?php
-               if ((!empty($history['THistoryChatLog']['type']) && $history['THistoryChatLog']['type'] == "自動返信")
-                || ($history['THistoryChatLog']['cmp'] == 0 && $history['THistoryChatLog']['sry'] == 0 && $history['THistoryChatLog']['cus'] == 0)) { ?>
-                <span style = "color:#4bacc6; font-weight:bold;">Auto</span>
-              <?php
-              }
-              else if(!empty($history['THistoryChatLog']['type']) && $history['THistoryChatLog']['type'] == "拒否") { ?>
-                <span style = "color:#a6a6a6; font-weight:bold;">Sorry</span>
-              <?php
-              }
-              else if($history['THistoryChatLog']['type'] == "") { ?>
-                <span style = "color:#9bbb59; font-weight:bold;">Manual</span>
-              <?php
-              }
-              else if($history['THistoryChatLog']['type'] == "未入室") { ?>
-                <span style = "color:#f79646; font-weight:bold;">NoEntry</span>
-              <?php
-                }
-             endif; ?>
-          </td>
-          <td class="tRight pre eachFirstSpeechTime" style = "width:5%;display:none;"><?php if (!empty($history['SpeechTime']['firstSpeechTime'])){ ?><?=date_format(date_create($history['SpeechTime']['firstSpeechTime']), "Y/m/d\nH:i:s")?><?php } ?></td>
-          <td class="tLeft ip-address eachIpAddress" style = "width:10%;display:none;">
-            <?php if(isset($coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $coreSettings[C_COMPANY_REF_COMPANY_DATA]): ?>
-              <?php if(!empty($history['LandscapeData']['org_name']) && !empty($history['LandscapeData']['lbc_code'])): ?>
-                  <a href="javascript:void(0)" class="underL" onclick="openCompanyDetailInfo('<?=$history['LandscapeData']['lbc_code']?>')"><?=h($history['LandscapeData']['org_name'])?></a><br>
-              <?php elseif(!empty($history['LandscapeData']['org_name'])): ?>
-                  <p><?=h($history['LandscapeData']['org_name'])?></p><?='\n'?>
-              <?php endif; ?>
-            <?php endif; ?>
-            {{ ip('<?=h($history['THistory']['ip_address'])?>', <?php echo !empty($history['LandscapeData']['org_name']) ? 'true' : 'false' ?>) }}
-          </td>
-          <td class="tLeft pre eachVisitor" style = "width:10%;display:none;">{{ ui('<?=h($history['THistory']['ip_address'])?>', '<?=$visitorsId?>') }}</td>
-          <?php ?>
-          <td class="tCenter pre" style = "width:10%"><?=$campaignParam?></td>
-          <td class="pre" style = "font-size:11px;padding:8px 5px !important;width:32%;"><a href = "<?=h($forChatSendingPageList[$history['THistoryChatLog']['t_history_stay_logs_id']]['THistoryStayLog']['url'])?>" target = "landing"><?= $forChatSendingPageList[$history['THistoryChatLog']['t_history_stay_logs_id']]['THistoryStayLog']['title'] ?></a></td>
-          <td class="tCenter" style = "width:5%"><?php
-            if($history['THistoryChatLog']['eff'] == 0 || $history['THistoryChatLog']['cv'] == 0 ) {
-              if (isset($history['THistoryChatLog']['achievementFlg'])){
-                echo !empty($achievementType[h($history['THistoryChatLog']['achievementFlg'])]) ? $achievementType[h($history['THistoryChatLog']['achievementFlg'])] : "";
-              }
-            }
-            else if ($history['THistoryChatLog']['eff'] != 0 && $history['THistoryChatLog']['cv'] != 0) {
-              if (isset($history['THistoryChatLog']['achievementFlg'])){
-                echo $achievementType[2].nl2br("\n").$achievementType[0];
-              }
-            }
-          ?></td>
-          <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
-            <td class="tRight pre" style = "width:5%;"><?php if (!empty($history['NoticeChatTime']['created'])){ ?><?=date_format(date_create($history['NoticeChatTime']['created']), "Y/m/d\nH:i:s")?><?php } ?>
+               endif; ?>
             </td>
-            <td class="tCenter" style = "width:4%;"><?php
-            if ($history['SpeechTime']['SpeechTime']
-              && $history['THistory']['access_date'] !== $history['THistory']['out_date']
-              && strtotime($history['SpeechTime']['SpeechTime']) <= strtotime($history['THistory']['out_date'])){
-              echo $this->htmlEx->calcTime($history['SpeechTime']['SpeechTime'], $history['THistory']['out_date']);
-            }
-          ?></td>
-          <td class="tCenter pre responsible" style = "width:10%;display:none;"><?php if (isset($chatUserList[$history['THistory']['id']])) { echo $chatUserList[$history['THistory']['id']]; } ?></td>
-        <?php endif; ?>
-        </tr>
+            <td class="tRight pre eachFirstSpeechTime" style = "width:5%;display:none;"><?php if (!empty($history['SpeechTime']['firstSpeechTime'])){ ?><?=date_format(date_create($history['SpeechTime']['firstSpeechTime']), "Y/m/d\nH:i:s")?><?php } ?></td>
+            <td class="tLeft ip-address eachIpAddress" style = "width:10%;display:none;">
+              <?php if(isset($coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $coreSettings[C_COMPANY_REF_COMPANY_DATA]): ?>
+                <?php if(!empty($history['LandscapeData']['org_name']) && !empty($history['LandscapeData']['lbc_code'])): ?>
+                    <a href="javascript:void(0)" class="underL" onclick="openCompanyDetailInfo('<?=$history['LandscapeData']['lbc_code']?>')"><?=h($history['LandscapeData']['org_name'])?></a><br>
+                <?php elseif(!empty($history['LandscapeData']['org_name'])): ?>
+                    <p><?=h($history['LandscapeData']['org_name'])?></p><?='\n'?>
+                <?php endif; ?>
+              <?php endif; ?>
+              {{ ip('<?=h($history['THistory']['ip_address'])?>', <?php echo !empty($history['LandscapeData']['org_name']) ? 'true' : 'false' ?>) }}
+            </td>
+            <td class="tLeft pre eachVisitor" style = "width:10%;display:none;">{{ ui('<?=h($history['THistory']['ip_address'])?>', '<?=$visitorsId?>') }}</td>
+            <?php ?>
+            <td class="tCenter pre campaignInfo" style = "width:10%"><?=$campaignParam?></td>
+            <td class="pre" style = "font-size:11px;padding:8px 5px !important;width:32%;"><a href = "<?=h($forChatSendingPageList[$history['THistoryChatLog']['t_history_stay_logs_id']]['THistoryStayLog']['url'])?>" target = "landing"><?= $forChatSendingPageList[$history['THistoryChatLog']['t_history_stay_logs_id']]['THistoryStayLog']['title'] ?></a></td>
+            <td class="tCenter" style = "width:5%"><?php
+              if($history['THistoryChatLog']['eff'] == 0 || $history['THistoryChatLog']['cv'] == 0 ) {
+                if (isset($history['THistoryChatLog']['achievementFlg'])){
+                  echo !empty($achievementType[h($history['THistoryChatLog']['achievementFlg'])]) ? $achievementType[h($history['THistoryChatLog']['achievementFlg'])] : "";
+                }
+              }
+              else if ($history['THistoryChatLog']['eff'] != 0 && $history['THistoryChatLog']['cv'] != 0) {
+                if (isset($history['THistoryChatLog']['achievementFlg'])){
+                  echo $achievementType[2].nl2br("\n").$achievementType[0];
+                }
+              }
+            ?></td>
+            <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
+              <td class="tRight pre" style = "width:5%;"><?php if (!empty($history['NoticeChatTime']['created'])){ ?><?=date_format(date_create($history['NoticeChatTime']['created']), "Y/m/d\nH:i:s")?><?php } ?>
+              </td>
+              <td class="tCenter" style = "width:4%;"><?php
+              if ($history['SpeechTime']['SpeechTime']
+                && $history['THistory']['access_date'] !== $history['THistory']['out_date']
+                && strtotime($history['SpeechTime']['SpeechTime']) <= strtotime($history['THistory']['out_date'])){
+                echo $this->htmlEx->calcTime($history['SpeechTime']['SpeechTime'], $history['THistory']['out_date']);
+              }
+            ?></td>
+            <td class="tCenter pre responsible" style = "width:10%;display:none;"><?php if (isset($chatUserList[$history['THistory']['id']])) { echo $chatUserList[$history['THistory']['id']]; } ?></td>
+          <?php endif; ?>
+          </tr>
+        <?php } ?>
       <?php endforeach; ?>
     </tbody>
   </table>
@@ -561,20 +565,21 @@
         <?php if(!empty($defaultHistoryList) && !empty($tHistoryCountData)) { ?>
           <ul>
             <li>
+            <?php $this->log('mCusData',LOG_DEBUG); $this->log($mCusData,LOG_DEBUG); ?>
               <label for="ng-customer-company">会社名</label>
-              <input type="text"  data-key='company' class="infoData" id="ng-customer-company" value ="<?= !empty($mCusData) ? $mCusData['informations']['company'] : "" ?>" ng-blur="saveCusInfo('company', customData)"  placeholder="会社名を追加" />
+              <input type="text"  data-key='company' class="infoData" id="ng-customer-company" value ="<?= !empty($mCusData['informations']['company']) ? $mCusData['informations']['company'] : "" ?>" ng-blur="saveCusInfo('company', customData)"  placeholder="会社名を追加" />
             </li>
             <li>
               <label for="ng-customer-name">名前</label>
-              <input type="text" data-key='name' class = "infoData" id="ng-customer-name" value ="<?= !empty($mCusData) ? $mCusData['informations']['name'] : "" ?>" ng-blur="saveCusInfo('name', customData)" placeholder="名前を追加">
+              <input type="text" data-key='name' class = "infoData" id="ng-customer-name" value ="<?= !empty($mCusData['informations']['name']) ? $mCusData['informations']['name'] : "" ?>" ng-blur="saveCusInfo('name', customData)" placeholder="名前を追加">
             </li>
             <li>
               <label for="ng-customer-tel">電話番号</label>
-              <input type="text" data-key='tel' class = "infoData" id="ng-customer-tel" value ="<?= !empty($mCusData) ? $mCusData['informations']['tel'] : "" ?>" ng-blur="saveCusInfo('tel', customData)"  placeholder="電話番号を追加" />
+              <input type="text" data-key='tel' class = "infoData" id="ng-customer-tel" value ="<?= !empty($mCusData['informations']['tel']) ? $mCusData['informations']['tel'] : "" ?>" ng-blur="saveCusInfo('tel', customData)"  placeholder="電話番号を追加" />
             </li>
             <li>
               <label for="ng-customer-mail">メールアドレス</label>
-              <input type="text" data-key='mail' class = "infoData" id="ng-customer-mail" value ="<?= !empty($mCusData) ? $mCusData['informations']['mail'] : "" ?>" ng-blur="saveCusInfo('mail', customData)" placeholder="メールアドレスを追加" />
+              <input type="text" data-key='mail' class = "infoData" id="ng-customer-mail" value ="<?= !empty($mCusData['informations']['mail']) ? $mCusData['informations']['mail'] : "" ?>" ng-blur="saveCusInfo('mail', customData)" placeholder="メールアドレスを追加" />
             </li>
             <li>
               <label for="ng-customer-memo" style = "width:60% !important">メモ</label>
