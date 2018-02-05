@@ -97,7 +97,6 @@
             },
             position: (function() {
                 if (settings.orientation == 'vertical') {
-                  console.log('heyhey');
                     return function(n, silent) {
                         if (n === undefined) {
                             return position;
@@ -126,11 +125,8 @@
                                 $("#achievement").css('width','');
                                 $("#chatHistory").css('height','100%');
                                 var userAgent = window.navigator.userAgent.toLowerCase();
-                                console.log('widthチェック');
-                                console.log(window.navigator.userAgent.toLowerCase());
                                 if(parseInt($(".eachInfo").css('width')) < 386 && parseInt($(".eachInfo").css('width')) != 35) {
                                   if(userAgent.indexOf('msie') != -1 ||  userAgent.indexOf('trident') != -1)  {
-                                    console.log('入ってる');
                                     $(".eachInfo").css('width',$("#info").innerWidth()-20);
                                     $(".info").css('width',$("#info").innerWidth()-20);
                                     $(".campaignInfo").css('width',$("#campaign").innerWidth()+ 10);
@@ -156,7 +152,6 @@
                             self.trigger('splitter.resize');
                             self.find('.splitter_panel').trigger('splitter.resize');
                         }
-                        console.log('huu');
                         return self;
                     };
                 } else if (settings.orientation == 'horizontal') {
