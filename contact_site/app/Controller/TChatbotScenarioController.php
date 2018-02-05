@@ -96,10 +96,42 @@ class TChatbotScenarioController extends AppController {
    * 更新画面
    * @return void
    * */
-  public function edit() {
+  public function edit($id=null) {
     if ( $this->request->is('put') ) {
       $this->_entry($this->request->data);
     }
+    else {
+      // 確実なデータを取得するために企業IDを指定する形とする
+      $editData = $this->TChatbotScenario->coFind("all", [
+        'conditions' => [
+          'TChatbotScenario.id' => $id
+        ]
+      ]);
+
+      if (empty($editData) || (!empty($editData) && empty($editData[0]))) {
+        $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.notFoundId'));
+        $this->redirect('/TChatbotScenario/index');
+      }
+
+      $activity = json_decode($editData[0]['TChatbotScenario']['activity'], true);
+      foreach ($activity as $key => &$action) {
+        if ($action['actionType'] == C_SCENARIO_ACTION_SEND_MAIL) {
+          // メール送信設定の取得
+          $mailTransmissionData = $this->MMailTransmissionSetting->findById($action['mMailTransmissionId']);
+          $action['toAddress'] = explode(',', $mailTransmissionData['MMailTransmissionSetting']['to_address']);
+          $action['subject'] = $mailTransmissionData['MMailTransmissionSetting']['subject'];
+          $action['fromName'] = $mailTransmissionData['MMailTransmissionSetting']['from_name'];
+          // メールテンプレートの取得
+          $mailTemplateData = $this->MMailTemplate->findById($action['mMailTemplateId']);
+          if ($action['mailType'] == C_SCENARIO_MAIL_TYPE_CUSTOMIZE) {
+            $action['template'] = $mailTemplateData['MMailTemplate']['template'];
+          }
+          var_dump($mailTemplateData);
+        }
+      }
+      $editData[0]['TChatbotScenario']['activity'] = json_encode($activity);
+    }
+    $this->request->data['TChatbotScenario'] = $editData[0]['TChatbotScenario'];
 
     // プレビュー・シミュレーター表示用ウィジェット設定の取得
     $this->request->data['widgetSettings'] = $this->_getWidgetSettings();
@@ -562,8 +594,7 @@ class TChatbotScenarioController extends AppController {
     if(empty($saveData->mMailTransmissionId)) {
       $this->MMailTransmissionSetting->create();
     } else {
-      // TODO: 更新時に処理を確認する
-      // $this->MMailTransmissionSetting->read(null, $saveData->m_mail_transmission_settings_id);
+      $this->MMailTransmissionSetting->read(null, $saveData->mMailTransmissionId);
     }
     $this->MMailTransmissionSetting->set([
       'm_companies_id' => $this->userInfo['MCompany']['id'],
@@ -629,8 +660,7 @@ sinclo@medialink-ml.co.jp
     if(empty($saveData->mMailTemplateId)) {
       $this->MMailTemplate->create();
     } else {
-      // TODO: 更新時に処理を確認する
-      // $this->MMailTemplate->read(null, $saveData->m_mail_template_id);
+      $this->MMailTemplate->read(null, $saveData->mMailTemplateId);
     }
     $this->MMailTemplate->set([
       'm_companies_id' => $this->userInfo['MCompany']['id'],
