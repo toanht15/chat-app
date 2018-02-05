@@ -243,7 +243,7 @@
           </div></th>
           <th style = "width:5%;display:none;" id = "ip">IPアドレス</th>
           <th style = "width:5%;display:none;" id = "visitor">訪問ユーザ</th>
-          <th class = "campaign" style = "width:3%">キャンペーン</th>
+          <th id = "campaign" style = "width:3%" >キャンペーン</th>
           <th id = "sendChatPageLabel" style = "width:13%">チャット送信ページ<div class="questionBalloon questionBalloonPosition8">
             <icon class="questionBtn">？</icon>
           </div></th>
@@ -297,7 +297,7 @@
         <?php
         if ((isset($history['THistoryChatLog']['type']) && isset($data['History']['chat_type']) && isset($chatType) &&
         $history['THistoryChatLog']['type'] === $chatType[$data['History']['chat_type']]) || empty($chatType)) { ?>
-          <tr id = "<?=h($history['THistory']['id'])?>" ng-click="getOldChat('<?=h($history['THistory']['id'])?>', false)" onclick="openChatById('<?=h($history['THistory']['id'])?>');" class = "showBold" style="height:72px !important;">
+          <tr class = "trHeight" id = "<?=h($history['THistory']['id'])?>" ng-click="getOldChat('<?=h($history['THistory']['id'])?>', false)" onclick="openChatById('<?=h($history['THistory']['id'])?>');" class = "showBold" style="height:72px !important;">
             <td class="tCenter checkBox" onclick="event.stopPropagation();" style = "width:6%">
               <input type="checkbox" name="selectTab" id="selectTab<?=h($history['THistory']['id'])?>" value="<?=h($history['THistory']['id'])?>">
               <label for="selectTab<?=h($history['THistory']['id'])?>"></label>
@@ -382,7 +382,7 @@
             </td>
             <td class="tLeft pre eachVisitor" style = "width:10%;display:none;">{{ ui('<?=h($history['THistory']['ip_address'])?>', '<?=$visitorsId?>') }}</td>
             <?php ?>
-            <td class="tCenter pre campaignInfo" style = "width:10%"><?=$campaignParam?></td>
+            <td class="tCenter pre" style = "width:10%"><div class = "campaignInfo"><?=$campaignParam?></div></td>
             <td class="pre" style = "font-size:11px;padding:8px 5px !important;width:32%;"><a href = "<?=h($forChatSendingPageList[$history['THistoryChatLog']['t_history_stay_logs_id']]['THistoryStayLog']['url'])?>" target = "landing"><?= $forChatSendingPageList[$history['THistoryChatLog']['t_history_stay_logs_id']]['THistoryStayLog']['title'] ?></a></td>
             <td class="tCenter" style = "width:5%"><?php
               if($history['THistoryChatLog']['eff'] == 0 || $history['THistoryChatLog']['cv'] == 0 ) {
