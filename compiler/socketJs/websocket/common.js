@@ -3377,7 +3377,8 @@ var socket, // socket.io
         sinclo.trigger.flg = true;
         var emitData = userInfo.getSendList();
         emitData.widget = window.sincloInfo.widgetDisplay;
-        emit('connectSuccess', {confirm: false, reconnect: true, widget: window.sincloInfo.widgetDisplay}, function(ev){
+        var tmpAutoMessages = sinclo.chatApi.autoMessages.get(true);
+        emit('connectSuccess', {confirm: false, reconnect: true, tmpAutoMessages: tmpAutoMessages, widget: window.sincloInfo.widgetDisplay}, function(ev){
           emit('customerInfo', emitData);
         });
         common.widgetHandler.show();
