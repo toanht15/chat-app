@@ -239,6 +239,7 @@ $(function(){
         $(".info").css('width',$("#info").outerWidth());
         $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 170);
         $(".dataTables_scrollHeadInner").css('width',$(".dataTables_scrollHead").outerWidth() - 17);
+        $("#chatHistory").css('height','100%');
         if($("#style")[0] != null) {
           $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - (170 + parseInt($("#style").css('height'))));
         }

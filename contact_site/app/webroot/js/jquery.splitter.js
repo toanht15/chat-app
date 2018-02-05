@@ -97,6 +97,7 @@
             },
             position: (function() {
                 if (settings.orientation == 'vertical') {
+                  console.log('heyhey');
                     return function(n, silent) {
                         if (n === undefined) {
                             return position;
@@ -124,14 +125,28 @@
                                 $("#lastSpeechLabel").css('width','');
                                 $("#achievement").css('width','');
                                 $("#chatHistory").css('height','100%');
-                                $(".info").css('width',$("#info").outerWidth());
-                                console.log(parseInt($(".eachInfo").css('width')));
-                                if(parseInt($(".eachInfo").css('width')) < 382) {
-                                  $(".eachInfo").css('width',$("#info").innerWidth());
-                                  $(".info").css('width',$("#info").innerWidth());
+                                var userAgent = window.navigator.userAgent.toLowerCase();
+                                console.log('widthチェック');
+                                console.log(window.navigator.userAgent.toLowerCase());
+                                if(parseInt($(".eachInfo").css('width')) < 386 && parseInt($(".eachInfo").css('width')) != 35) {
+                                  if(userAgent.indexOf('msie') != -1 ||  userAgent.indexOf('trident') != -1)  {
+                                    console.log('入ってる');
+                                    $(".eachInfo").css('width',$("#info").innerWidth()-20);
+                                    $(".info").css('width',$("#info").innerWidth()-20);
+                                    $(".campaignInfo").css('width',$("#campaign").innerWidth()+ 10);
+                                  }
+                                  else {
+                                    $(".eachInfo").css('width',$("#info").innerWidth());
+                                    $(".info").css('width',$("#info").innerWidth());
+                                  }
                                 }
                                 else {
-                                  $(".eachInfo").css('width',"");
+                                  if(userAgent.indexOf('msie') != -1 ||  userAgent.indexOf('trident') != -1)  {
+                                    $(".info").css('width',$("#info").innerWidth() - 30);
+                                  }
+                                  else {
+                                    $(".info").css('width',$("#info").innerWidth());
+                                  }
                                 }
                             }
                             panel_1.find('.splitter_panel').eq(0).height(self.height());
@@ -141,6 +156,7 @@
                             self.trigger('splitter.resize');
                             self.find('.splitter_panel').trigger('splitter.resize');
                         }
+                        console.log('huu');
                         return self;
                     };
                 } else if (settings.orientation == 'horizontal') {
