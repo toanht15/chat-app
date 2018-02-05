@@ -2044,6 +2044,10 @@
             }
             sinclo.chatApi.createMessage(cs, val, name);
         },
+        clearChatMessages: function() {
+          var chatTalk = document.getElementsByTagName("sinclo-chat")[0];
+          while (chatTalk.firstChild) chatTalk.removeChild(chatTalk.firstChild);
+        },
         scDownTimer: null,
         scDown: function(){
           if ( this.scDownTimer ) {
