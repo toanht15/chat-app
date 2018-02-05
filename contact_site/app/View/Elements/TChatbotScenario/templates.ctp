@@ -137,10 +137,8 @@
     <li class="styleFlexbox">
       <span><label>メール本文タイプ</label></span>
       <div>
-        <label class="styleBlock pointer"><input type="radio" name="action_{{setActionId}}_mail_type" value="1" ng-model="setItem.mailType" ng-init="setItem.mailType = setItem.default.mailType">メール内容をすべてメールする</label>
-        <label class="styleBlock pointer"><input type="radio" name="action_{{setActionId}}_mail_type" value="2" ng-model="setItem.mailType" ng-init="setItem.mailType = setItem.default.mailType">変数の値のみメールする</label>
-        <label class="styleBlock pointer"><input type="radio" name="action_{{setActionId}}_mail_type" value="3" ng-model="setItem.mailType" ng-init="setItem.mailType = setItem.default.mailType">メール本文をカスタマイズする</label>
-        <textarea ng-if="setItem.mailType == 3" ng-model="setItem.template" cols="48" rows="4" placeholder="メール本文を入力してください"></textarea>
+        <label ng-repeat="(key, item) in sendMailTypeList" class="styleBlock pointer"><input type="radio" name="action_{{setActionId}}_mail_type" value="{{key}}" ng-model="setItem.mailType" ng-init="setItem.mailType = setItem.default.mailType">{{item}}</label>
+        <textarea ng-if="setItem.mailType == <?= C_SCENARIO_MAIL_TYPE_CUSTOMIZE ?>" ng-model="setItem.template" cols="48" rows="4" placeholder="メール本文を入力してください"></textarea>
       </div>
     </li>
   </ul>
