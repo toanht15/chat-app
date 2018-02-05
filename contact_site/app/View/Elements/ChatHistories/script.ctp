@@ -210,7 +210,6 @@ $(function(){
   var calcHeaderHeight = function() {
     return $('#history_menu').outerHeight() + $('div.btnSet').outerHeight() + $('label[for="g_chat"]').outerHeight() + $('.dataTables_scrollHead').outerHeight();
   };
-
   var tableObj = null;
   $(window).on('load', function() {
     document.getElementById("history_body_side").style.display = "block";
@@ -227,7 +226,7 @@ $(function(){
       responsive:true,
       scrollX: false,
       scrollY: true,
-      scrollCollapse: true,
+      scrollCollapse: false,
       paging: false,
       info: false,
       ordering: false,
@@ -235,13 +234,11 @@ $(function(){
         { width: 120, targets: 0 }
       ]
     });
-
     tableObj.on('draw', function(){
       if(<?= $screenFlg ?> == 1) {
         $(".info").css('width',$("#info").outerWidth());
         $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 170);
         $(".dataTables_scrollHeadInner").css('width',$(".dataTables_scrollHead").outerWidth() - 17);
-        $("#chatHistory").css('height','100%');
         if($("#style")[0] != null) {
           $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - (170 + parseInt($("#style").css('height'))));
         }
@@ -355,6 +352,7 @@ $(function(){
     document.getElementById('ip').style.display = "";
     document.getElementById('visitor').style.display = "";
     document.getElementById('responsible').style.display = "";
+    $("#info").css('width','0px');
     $(".eachInfo").css('display','none');
     $(".eachKind").css('display','');
     $(".eachFirstSpeechTime").css('display','');
@@ -365,6 +363,7 @@ $(function(){
     $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
     //$("#chatHistory").css('height',$("#history_body_side").outerHeight() - 170);
     $("#chatHistory").css('height','100%');
+    $(".trHeight").css('height','50px');
     $(".deleteChat").attr('data-balloon-position',45);
 
     $.ajax({
@@ -410,6 +409,7 @@ $(function(){
     $(".eachIpAddress").css('display','none');
     $(".eachVisitor").css('display','none');
     $(".responsible").css('display','none');
+    $(".trHeight").css('height','72px');
 
     $("#chatContent").css('height', $("#detail").outerHeight() - 105);
     $("#customerInfoScrollArea").css('height', $("#detail").outerHeight() - 39);
@@ -437,7 +437,7 @@ $(function(){
     else {
       $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 220);
     }
-    $(".info").css('width',$("#info").outerWidth());
+     $(".info").css('width',$("#info").outerWidth());
     screenMode = 1;
     changeScreenMode = 1;
  });
@@ -457,10 +457,9 @@ $(function(){
       document.getElementById('verticalToggleMenu').style.display = "block";
       $("#chatContent").css('height', $("#detail").outerHeight() - 105);
       $("#customerInfoScrollArea").css('height', $("#detail").outerHeight() - 39);
-      //$("#chatHistory").css('height',window.innerHeight - 355);
       $("#chatHistory").css('height','100%');
       $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 170);
-      $(".info").css('width',$("#info").outerWidth());;
+      $(".trHeight").css('height','72px');
     }
     //縦並びの場合$this.attr('data-balloon-position');
     if(<?= $screenFlg ?> == 2) {
@@ -491,6 +490,7 @@ $(function(){
       $("#chatContent").css('height', $("#detail").outerHeight() - 65);
       $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
       $("#chatHistory").css('height','100%');
+      $(".trHeight").css('height','50px');
     }
 
     setTimeout(function(){
