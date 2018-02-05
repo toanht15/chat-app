@@ -107,12 +107,8 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
           $id = $val['TChatbotScenario']['id'];
         }
 
-        // 呼び出し元のオートメッセージ設定の名称を抜き出す
-        $callerList = [];
-        foreach($val['TAutoMessage'] as $caller) {
-          $callerList[] = $caller['id'] ? $caller['name'] : '(未設定)';
-        }
-        $activity_detail = implode(', ', $callerList);
+        // 呼び出し元情報
+        $callerInfo = count($val['TAutoMessage']) > 0 ? implode(', ', $val['TAutoMessage']) : '（未設定）';
 
         $no = $prevCnt + h($key+1);
         ?>
@@ -124,7 +120,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
           <td class="tCenter" width=" 5%"><?=$no?></td>
           <td class="tCenter" width="45%"><?= $val['TChatbotScenario']['name']; ?></td>
           <td class="p10x" width="45%">
-            <?= $activity_detail; ?>
+            <?= $callerInfo; ?>
           </td>
         </tr>
       <?php endforeach; ?>

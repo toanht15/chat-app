@@ -194,6 +194,10 @@ define('C_SCENARIO_INPUT_TYPE_NUMBER', 2);
 define('C_SCENARIO_INPUT_TYPE_EMAIL', 3);
 define('C_SCENARIO_INPUT_TYPE_TEL', 4);
 
+define('C_SCENARIO_MAIL_TYPE_ALL_MESSAGE', 1);
+define('C_SCENARIO_MAIL_TYPE_VARIABLES', 2);
+define('C_SCENARIO_MAIL_TYPE_CUSTOMIZE', 3);
+
 // する/しない設定
 define('C_SELECT_CAN', 1); // する
 define('C_SELECT_CAN_NOT', 2); // しない
@@ -625,7 +629,7 @@ $config['chatbotScenarioActionList'] = [
     'chatTextArea' => '2',
     'default' => [
       'messageIntervalTimeSec' => '3',
-      'mailType' => 1
+      'mailType' => C_SCENARIO_MAIL_TYPE_ALL_MESSAGE
     ]
   ]
 ];
@@ -648,6 +652,13 @@ $config['chatbotScenarioInputType'] = [
     'label' => '@tel_number',
     'rule' => C_MATCH_RULE_TEL
   ]
+];
+
+/* シナリオ設定 - メール送信タイプ */
+$config['chatbotScenarioSendMailType'] = [
+  C_SCENARIO_MAIL_TYPE_ALL_MESSAGE => 'メール内容をすべてメールする',
+  C_SCENARIO_MAIL_TYPE_VARIABLES => '変数の値のみメールする',
+  C_SCENARIO_MAIL_TYPE_CUSTOMIZE => 'メール本文をカスタマイズする'
 ];
 
 /* 成果種別 */
