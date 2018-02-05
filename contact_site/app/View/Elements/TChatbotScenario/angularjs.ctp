@@ -8,7 +8,11 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   var self = this;
 
   this.actionList = <?php echo json_encode($chatbotScenarioActionList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
-  $scope.setActionList = [];
+
+  // アクション設定の取得・初期化
+  var setActivity = <?= !empty($this->data['TChatbotScenario']['activity']) ? json_encode($this->data['TChatbotScenario']['activity'], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) : "{}" ?>;
+  var setActionListTmp = (typeof(setActivity) === "string") ? JSON.parse(setActivity) : [];
+  $scope.setActionList = setActionListTmp;
 
   $scope.inputTypeList = <?php echo json_encode($chatbotScenarioInputType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.sendMailTypeList = <?php echo json_encode($chatbotScenarioSendMailType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
@@ -50,7 +54,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     }
 
     $scope.watchActionList[index] = $scope.$watch('setActionList[' + index + ']', function(newObject, oldObject) {
-      if(typeof newObject === 'undefined' || newObject == oldObject) return;
+      if(typeof newObject === 'undefined') return;
 
       // 送信メッセージ
       if(typeof newObject.message !== 'undefined' && newObject.message !== '' && typeof newObject.selection === 'undefined') {
@@ -161,9 +165,8 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     });
   };
 
-  // TODO: 初期化方法によってはこの処理を消して、 controllMailSetting へ統一する
   this.initMailSetting = function(actionStep) {
-    $scope.setActionList[actionStep].toAddress = [''];
+    $scope.setActionList[actionStep].toAddress = $scope.setActionList[actionStep].toAddress || [''];
 
     $timeout(function() {
       $scope.$apply();

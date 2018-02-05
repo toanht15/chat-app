@@ -115,7 +115,7 @@
       <span><label>送信先メールアドレス</label></span>
       <ul class="itemListGroup">
         <li ng-repeat="(listId, addressItem) in setItem.toAddress track by $index">
-          <input type="text" ng-model="setItem.toAddress[listId]">
+          <input type="text" ng-model="setItem.toAddress[listId]" ng-init="setItem.toAddress[listId] = setItem.toAddress[listId]" default="">
           <div class="btnBlock">
             <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addActionItemList(setActionId, listId)')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.removeActionItemList(setActionId, listId)')) ?></a>
           </div>
@@ -137,7 +137,7 @@
     <li class="styleFlexbox">
       <span><label>メール本文タイプ</label></span>
       <div>
-        <label ng-repeat="(key, item) in sendMailTypeList" class="styleBlock pointer"><input type="radio" name="action_{{setActionId}}_mail_type" value="{{key}}" ng-model="setItem.mailType" ng-init="setItem.mailType = setItem.default.mailType">{{item}}</label>
+        <label ng-repeat="(key, item) in sendMailTypeList" class="styleBlock pointer"><input type="radio" name="action_{{setActionId}}_mail_type" value="{{key}}" ng-model="setItem.mailType" ng-init="setItem.mailType = setItem.mailType" default="setItem.default.mailType">{{item}}</label>
         <textarea ng-if="setItem.mailType == <?= C_SCENARIO_MAIL_TYPE_CUSTOMIZE ?>" ng-model="setItem.template" cols="48" rows="4" placeholder="メール本文を入力してください"></textarea>
       </div>
     </li>
