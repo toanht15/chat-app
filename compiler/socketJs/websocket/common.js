@@ -3594,8 +3594,10 @@ var socket, // socket.io
       if(!sinclo.chatApi.inactiveCloseFlg) {
         var sincloBox = document.getElementById('sincloBox');
         if ( sincloBox ) {
-          //sincloBox.parentNode.removeChild(sincloBox);
           common.widgetHandler.hide();
+          if(window.sincloInfo.contract.chat && document.getElementsByTagName("sinclo-chat")[0]) {
+            sinclo.chatApi.clearChatMessages();
+          }
         }
       }
       popup.remove();
