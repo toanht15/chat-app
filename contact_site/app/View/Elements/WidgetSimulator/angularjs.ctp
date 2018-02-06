@@ -6,8 +6,8 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
   var self = this;
   $scope.simulatorSettings = SimulatorService;
 
-  $scope.isTabDisplay = document.getElementById('isTabDisplay').value || true;
-  $scope.canVisitorSendMessage = document.getElementById('canVisitorSendMessage').value || false;
+  $scope.isTabDisplay = document.getElementById('TChatbotScenarioIsTabDisplay').value || true;
+  $scope.canVisitorSendMessage = document.getElementById('TChatbotScenarioCanVisitorSendMessage').value || false;
 
   /**
    * addReMessage
