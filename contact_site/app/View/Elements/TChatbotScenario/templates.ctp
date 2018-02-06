@@ -4,7 +4,7 @@
     <li class="styleFlexbox">
       <span><label>発言内容</label></span>
       <div>
-        <textarea name="message" ng-model="setItem.message" cols="48" rows="4" placeholder="メッセージを入力してください" required></textarea>
+        <textarea name="message" ng-model="setItem.message" cols="48" rows="4" placeholder="メッセージを入力してください" ng-required="true"></textarea>
       </div>
     </li>
   </ul>

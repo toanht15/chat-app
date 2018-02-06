@@ -133,8 +133,8 @@ class TChatbotScenarioController extends AppController {
         }
       }
       $editData[0]['TChatbotScenario']['activity'] = json_encode($activity);
+      $this->request->data['TChatbotScenario'] = $editData[0]['TChatbotScenario'];
     }
-    $this->request->data['TChatbotScenario'] = $editData[0]['TChatbotScenario'];
 
     // プレビュー・シミュレーター表示用ウィジェット設定の取得
     $this->request->data['widgetSettings'] = $this->_getWidgetSettings();

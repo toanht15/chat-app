@@ -6522,6 +6522,10 @@ ul.naviBtn {
         padding-left: 5px;
       }
 
+      .error-message {
+        margin: 0;
+      }
+
       /* チャットボットシナリオ設定(追加・更新): 基本設定 */
       #tchatbotscenario_form_basic_settings {
         flex-grow: 1;
@@ -6585,6 +6589,12 @@ ul.naviBtn {
           background-color: #f9f9f9;
           overflow-y: scroll;
           height: calc(100vh - 293px);
+          padding: 0 20px;
+
+          .error-message {
+            padding: 20px;
+            text-align: center;
+          }
 
           .explainTooltip {
             z-index: 10;
@@ -6644,10 +6654,7 @@ ul.naviBtn {
           .set_action_item {
             position: relative;
             border: 1px solid #B7B7B7;
-
-            &:not(:last-child) {
-              margin-bottom: 20px;
-            }
+            margin-top: 20px;
 
             h4 {
               background-color: $main-color;
@@ -6666,6 +6673,23 @@ ul.naviBtn {
                 &:hover {
                   text-decoration: none;
                   color: #ffffff;
+                }
+              }
+              i {
+                display: inline-block;
+                vertical-align: text-top;
+                margin-left: 10px;
+                background-size: 12px;
+                background-repeat: no-repeat;
+                border-radius: 15px;
+                background-position: 1px;
+
+                &.error {
+                  background-image: url("/img/exclamation_mark.png");
+                  background-color: #D69B9B;
+                  width: 15px;
+                  height: 15px;
+
                 }
               }
             }
