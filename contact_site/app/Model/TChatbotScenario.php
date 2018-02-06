@@ -11,24 +11,30 @@ class TChatbotScenario extends AppModel {
 
   public $validate = [
     'name' => [
-      'maxLength' => [
-        'rule' => ['maxLength', 50],
-        'allowEmpty' => false,
-        'message' => '名称を５０文字以内で入力してください'
-      ]
+      'rule' => ['maxLength', 50],
+      'required' => true,
+      'allowEmpty' => false,
+      'message' => '名称を５０文字以内で入力してください'
     ],
     'activity' => [
       'checkActivity' => [
         'rule' => 'checkActivity',
+        'required' => true,
         'allowEmpty' => false,
         'message' => 'シナリオを設定してください'
       ]
     ],
-    'action' => [
+    'messageIntervalTimeSec' => [
       'notBlank' => [
         'rule' => 'notBlank',
+        'required' => true,
         'allowEmpty' => false,
-        'message' => 'メッセージ間隔を入力してください'
+        'message' => 'メッセージ間隔を入力してください',
+      ],
+      'alphaNumeric' => [
+        'rule' => 'numeric',
+        'required' => true,
+        'message' => '数字で入力してください'
       ]
     ]
   ];
@@ -39,8 +45,54 @@ class TChatbotScenario extends AppModel {
    * @return boolean チェック結果
    */
   public function checkActivity($json){
-    // TODO: 追加・更新時のバリデーションチェックを追加する
-    // $activity = json_decode($json['activity'], true);
+    $activity = json_decode($json['activity'], true);
+    if (count($activity) === 0) {
+      return false;
+    }
+
+    foreach ($activity as $key => $action) {
+      if ($action['actionType'] == C_SCENARIO_ACTION_TEXT) {
+        // テキスト入力
+        if (empty($action['message'])) {
+          return false;
+        }
+      } else
+      if ($action['actionType'] == C_SCENARIO_ACTION_HEARING) {
+        // ヒアリング
+        foreach ($action['hearings'] as $key => $item) {
+          if (empty($item['valiableName']) || empty($item['message'])) {
+            return false;
+          }
+        }
+        if (empty($action['errorMessage'])) {
+          return false;
+        }
+        if ($action['isConfirm'] && (empty($action['confirmMessage'] || empty($action['succes'] || empty($action['cancel']))))) {
+          return false;
+        }
+      } else
+      if ($action['actionType'] == C_SCENARIO_ACTION_SELECT_OPTION) {
+        // 選択肢
+        foreach ($action['selection']['options'] as $key => $item) {
+          if (empty($item)) {
+            return false;
+          }
+        }
+      } else
+      if ($action['actionType'] == C_SCENARIO_ACTION_SEND_MAIL) {
+        $this->log($action);
+        // メール送信
+        foreach ($action['toAddress'] as $key => $item) {
+          if (empty($item)) {
+            return false;
+          }
+        }
+        if (empty($action['subject'] || empty($action['fromName']))) {
+          return false;
+        }
+      }
+    }
+
     return true;
   }
 }

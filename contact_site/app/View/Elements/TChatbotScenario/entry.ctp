@@ -19,6 +19,7 @@
           'placeholder' => 'シナリオ名称を入力',
           'maxlength' => 50
         ]) ?>
+        <?php if (!empty($errors['name'])) echo "<span class='error-message'>" . h($errors['name'][0]) . "</span>"; ?>
       </li>
       <!-- メッセージ間隔 -->
       <li>
@@ -26,10 +27,11 @@
         <?= $this->ngForm->input('messageIntervalTimeSec', [
           'type' => 'text',
           'class' => 'tRight',
-          'maxlength' => 2,
-          'ng-model' => 'messageIntervalTimeSec'
+          'maxlength' => 3,
+          'ng-model' => 'messageIntervalTimeSec',
+          'after' => '秒'
         ]) ?>
-          秒
+          <?php if (!empty($errors['messageIntervalTimeSec'])) echo "<li class='error-message'>" . h($errors['messageIntervalTimeSec'][0]) . "</li>"; ?>
       </li>
     </ul>
   </section>
@@ -41,13 +43,14 @@
         <a ng-repeat="(key, item) in actionList" ng-click="main.addItem(key)" class="greenBtn btn-shadow">{{item.label}}</a>
       </div>
     </div>
-    <ul id="tchatbotscenario_form_action_body" class="p20x">
+    <ul id="tchatbotscenario_form_action_body">
       <!-- アクション設定一覧 -->
       <li ng-repeat="(setActionId, setItem) in setActionList" id="action{{setActionId}}_setting" class="set_action_item">
-        <h4><a href="#action{{setActionId}}_preview">{{setActionId + 1}}．{{actionList[setItem.actionType].label}}</a></h4>
+        <h4><a href="#action{{setActionId}}_preview">{{setActionId + 1}}．{{actionList[setItem.actionType].label}} <i class="error" ng-if="!setItem.$valid"></i></a></h4>
         <?= $this->element('TChatbotScenario/templates'); ?>
         <a class="btn-shadow redBtn closeBtn" ng-click="main.removeItem(setActionId)"><?= $this->Html->image('close.png', array('alt' => '削除する', 'width' => 20, 'height' => 20, 'style' => 'margin: 0 auto')) ?></a>
       </li>
+      <li class="error-message" ng-if="setActionList.length <= 0">アクションを上のリストから選択し、設定してください</li>
       <!-- Tooltip -->
       <div id='hearingVariableNameTooltip' class="explainTooltip">
         <icon-annotation>

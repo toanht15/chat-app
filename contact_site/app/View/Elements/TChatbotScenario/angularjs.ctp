@@ -19,8 +19,10 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   $scope.widget = SimulatorService;
   $scope.widget.settings = getWidgetSettings();
 
-  // メッセージ間隔は同一の設定を各アクションに設定しているため、テキスト発言からデフォルト値を取得する
-  $scope.messageIntervalTimeSec = $scope.actionList[1].default.messageIntervalTimeSec;
+  // メッセージ間隔は同一の設定を各アクションに設定しているため、状態に応じて取得先を変更する
+  $scope.messageIntervalTimeSec = "<?= !empty($this->data['TChatbotScenario']['messageIntervalTimeSec']) ? $this->data['TChatbotScenario']['messageIntervalTimeSec'] : '' ?>"
+    || (typeof $scope.setActionList[0] !== 'undefined' ? $scope.setActionList[0].messageIntervalTimeSec : '')
+    || $scope.actionList[1].default.messageIntervalTimeSec;
 
   // アクションの追加
   this.addItem = function(actionType) {
@@ -49,23 +51,58 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   // アクション内の変更を検知する
   $scope.watchSetActionList = function(action, index) {
     // watchの破棄
-    if(typeof $scope.watchActionList[index] !== 'undefined') {
+    if (typeof $scope.watchActionList[index] !== 'undefined') {
       $scope.watchActionList[index]();
     }
 
     $scope.watchActionList[index] = $scope.$watch('setActionList[' + index + ']', function(newObject, oldObject) {
-      if(typeof newObject === 'undefined') return;
+      if (typeof newObject === 'undefined') return;
+
+      // 各アクションのバリデーション
+      if (newObject.actionType == <?= C_SCENARIO_ACTION_TEXT ?>) {
+        // 送信メッセージ
+        newObject.$valid = !!newObject.message;
+      } else
+      if (newObject.actionType == <?= C_SCENARIO_ACTION_HEARING ?> ) {
+        // ヒアリング
+        newObject.$valid = newObject.hearings.some(function(obj) {
+          return !!obj.variableName && !!obj.message;
+        });
+        newObject.$valid = newObject.$valid && !!newObject.errorMessage;
+        if (newObject.isConfirm) {
+          newObject.$valid = newObject.$valid && !!newObject.confirmMessage && !!newObject.success && !!newObject.cancel;
+        }
+      } else
+      if (newObject.actionType == <?= C_SCENARIO_ACTION_SELECT_OPTION ?>) {
+        // 選択肢
+        newObject.$valid = newObject.selection.options.some(function(obj) {
+          return !!obj;
+        });
+        newObject.$valid = newObject.$valid && !!newObject.selection.variableName;
+        newObject.$valid = newObject.$valid && !!newObject.message;
+      } else
+      if (newObject.actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?>) {
+        // 送信メール
+        newObject.$valid = newObject.toAddress.some(function(obj) {
+          return !!obj;
+        });
+        newObject.$valid = newObject.$valid && !!newObject.subject;
+        newObject.$valid = newObject.$valid && !!newObject.fromName;
+        if (newObject.mailType == <?= C_SCENARIO_MAIL_TYPE_CUSTOMIZE ?>) {
+          newObject.$valid = newObject.$valid && !!newObject.template;
+        }
+      }
 
       // 送信メッセージ
-      if(typeof newObject.message !== 'undefined' && newObject.message !== '' && typeof newObject.selection === 'undefined') {
+      if (typeof newObject.message !== 'undefined' && newObject.message !== '' && typeof newObject.selection === 'undefined') {
         document.getElementById('action' + index + '_message').innerHTML = $scope.widget.createMessage(newObject.message);
       }
       // エラーメッセージ
-      if(typeof newObject.errorMessage !== 'undefined' && newObject.errorMessage !== '') {
+      if (typeof newObject.errorMessage !== 'undefined' && newObject.errorMessage !== '') {
         document.getElementById('action' + index + '_error_message').innerHTML = $scope.widget.createMessage(newObject.errorMessage);
       }
       // 確認メッセージ
-      if(typeof newObject.confirmMessage !== 'undefined' && typeof newObject.success !== 'undefined' && typeof newObject.cancel !== 'undefined') {
+      if (typeof newObject.confirmMessage !== 'undefined' && typeof newObject.success !== 'undefined' && typeof newObject.cancel !== 'undefined') {
         var confirmMessage = newObject.confirmMessage;
         var successMessage = newObject.success !== '' ? '[] ' + newObject.success : '';
         var cancelMessage = newObject.cancel !== '' ? '[] ' + newObject.cancel : '';
@@ -77,7 +114,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         document.getElementById('action' + index + '_confirm_message').innerHTML = $scope.widget.createMessage(message, 'preview' + index);
       }
       // 選択肢
-      if(typeof newObject.message !== 'undefied' && typeof newObject.selection !== 'undefined') {
+      if (typeof newObject.message !== 'undefied' && typeof newObject.selection !== 'undefined') {
         var messageList = [newObject.message];
         angular.forEach(newObject.selection.options, function(option) {
           if (option == '') return;
@@ -99,7 +136,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   };
 
   this.saveAct = function() {
+    console.log("===== MainController::saveAct =====");
     $('#TChatbotScenarioActivity').val(this.createJsonData());
+    console.log($('#TChatbotScenarioActivity').val());
     submitAct();
   };
 
@@ -132,12 +171,12 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
           break;
       }
 
-      if(action !== null) {
+      if (action !== null) {
         setActionList.push(action);
       };
     });
 
-    if(setActionList.length < 1) {
+    if (setActionList.length < 1) {
       // TODO: エラー処理？
     }
     return JSON.stringify(setActionList);
@@ -190,21 +229,21 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   this.addActionItemList = function(actionStep, listIndex) {
     var actionType = $scope.setActionList[actionStep].actionType;
 
-    if(actionType == <?= C_SCENARIO_ACTION_HEARING ?>) {
+    if (actionType == <?= C_SCENARIO_ACTION_HEARING ?>) {
       var src = $scope.actionList[actionType].default.hearings[0];
       var target = $scope.setActionList[actionStep].hearings;
       target.push(angular.copy(src));
       this.controllHearingSettingView(actionStep);
 
-    } else if(actionType == <?= C_SCENARIO_ACTION_SELECT_OPTION ?>) {
+    } else if (actionType == <?= C_SCENARIO_ACTION_SELECT_OPTION ?>) {
       var src = $scope.actionList[actionType].default.selection.options[0];
       var target = $scope.setActionList[actionStep].selection.options;
       target.push(angular.copy(src));
       this.controllSelectOptionSetting(actionStep);
 
-    } else if(actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?>) {
+    } else if (actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?>) {
       var target = $scope.setActionList[actionStep].toAddress;
-      if(target.length < 5) {
+      if (target.length < 5) {
         target.push(angular.copy(''));
         this.controllMailSetting(actionStep);
       }
@@ -218,19 +257,19 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     var selector = "";
     var limitNum = 0;
 
-    if(actionType == <?= C_SCENARIO_ACTION_HEARING ?>) {
+    if (actionType == <?= C_SCENARIO_ACTION_HEARING ?>) {
       targetObjList = $scope.setActionList[actionStep].hearings;
       selector = '#action' + actionStep + '_setting .itemListGroup tr';
-    } else if(actionType == <?= C_SCENARIO_ACTION_SELECT_OPTION ?>) {
+    } else if (actionType == <?= C_SCENARIO_ACTION_SELECT_OPTION ?>) {
       targetObjList = $scope.setActionList[actionStep].selection.options;
       selector = '#action' + actionStep + '_setting .itemListGroup li';
-    } else if(actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?>) {
+    } else if (actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?>) {
       targetObjList = $scope.setActionList[actionStep].toAddress;
       selector = '#action' + actionStep + '_setting .itemListGroup li';
       limitNum = 5;
     }
 
-    if(targetObjList !== "" && selector !== "") {
+    if (targetObjList !== "" && selector !== "") {
       targetObjList.splice(listIndex, 1);
 
       // 表示更新
@@ -244,18 +283,18 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
   // ヒアリング、選択肢、メール送信のリスト表示の更新処理
   this.controllListView = function(targetElmList, targetObjList, limitNum) {
-    if(typeof limitNum === 'undefined') {
+    if (typeof limitNum === 'undefined') {
       limitNum = 0;
     }
     var elmNum = targetElmList.length;
     var objNum = targetObjList.length;
 
     angular.forEach(targetElmList, function(targetElm, index) {
-      if(index == elmNum-1) {
+      if (index == elmNum-1) {
         $(targetElm).find('.btnBlock .disOffgreenBtn').show();
-        if(index == 0) {
+        if (index == 0) {
           $(targetElm).find('.btnBlock .deleteBtn').hide();
-        } else if(index == limitNum-1) {
+        } else if (index == limitNum-1) {
           $(targetElm).find('.btnBlock .disOffgreenBtn').hide();
         }
       } else {
@@ -268,7 +307,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   // 選択肢が、プレビュー表示可能かを返す
   this.visibleSelectOptionSetting = function(param) {
     var visible = false;
-    if(typeof param.selection !== 'undefined' && typeof param.selection.options !== 'undefined') {
+    if (typeof param.selection !== 'undefined' && typeof param.selection.options !== 'undefined') {
       angular.forEach(param.selection.options, function(option) {
         visible = visible || option != '';
       });
@@ -429,20 +468,20 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   }
 
   $scope.doHearingAction = function(actionDetail) {
-    if(!$scope.hearingInputResult) {
+    if (!$scope.hearingInputResult) {
       var message = $scope.replaceVariable(actionDetail.errorMessage);
       $scope.$broadcast('addReMessage', message, 'action' + $scope.actionStep);
       $scope.$broadcast('switchSimulatorChatTextArea', actionDetail.chatTextArea);
       $scope.hearingInputResult = true;
       $scope.doAction();
     } else
-    if($scope.hearingIndex < actionDetail.hearings.length) {
+    if ($scope.hearingIndex < actionDetail.hearings.length) {
       // 質問する
       var message = actionDetail.hearings[$scope.hearingIndex].message;
       $scope.$broadcast('addReMessage', message, 'action' + $scope.actionStep);
       $scope.$broadcast('switchSimulatorChatTextArea', actionDetail.chatTextArea);
     } else
-    if(actionDetail.isConfirm && ($scope.hearingIndex === actionDetail.hearings.length)) {
+    if (actionDetail.isConfirm && ($scope.hearingIndex === actionDetail.hearings.length)) {
       var messageList = [$scope.replaceVariable(actionDetail.confirmMessage), '[] ' + actionDetail.success, '[] ' + actionDetail.cancel];
       var message = messageList.filter( function(string) {
         return string !== '';
@@ -569,7 +608,7 @@ function adjustDataOfHearing(action) {
       hearings.push(item);
     }
   });
-  if(hearings.length < 1) return null;
+  if (hearings.length < 1) return null;
   action.hearings = hearings;
   return action;
 }
@@ -589,7 +628,7 @@ function adjustDataOfSelectOption(action) {
       options.push(item);
     }
   });
-  if(options.length < 1) return null;
+  if (options.length < 1) return null;
   action.selection.options = options;
   return action;
 }
@@ -610,7 +649,7 @@ function adjustDataOfSendMail(action) {
       toAddress.push(item);
     }
   });
-  if(toAddress.length < 1) return null;
+  if (toAddress.length < 1) return null;
   action.toAddress = toAddress;
   return action;
 }
