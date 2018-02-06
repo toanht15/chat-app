@@ -7,7 +7,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   //thisを変数にいれておく
   var self = this;
 
-  this.actionList = <?php echo json_encode($chatbotScenarioActionList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
+  $scope.actionList = <?php echo json_encode($chatbotScenarioActionList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
 
   // アクション設定の取得・初期化
   var setActivity = <?= !empty($this->data['TChatbotScenario']['activity']) ? json_encode($this->data['TChatbotScenario']['activity'], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) : "{}" ?>;
@@ -20,12 +20,12 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   $scope.widget.settings = getWidgetSettings();
 
   // メッセージ間隔は同一の設定を各アクションに設定しているため、テキスト発言からデフォルト値を取得する
-  $scope.messageIntervalTimeSec = this.actionList[1].default.messageIntervalTimeSec;
+  $scope.messageIntervalTimeSec = $scope.actionList[1].default.messageIntervalTimeSec;
 
   // アクションの追加
   this.addItem = function(actionType) {
-    if (actionType in this.actionList) {
-      var item = this.actionList[actionType];
+    if (actionType in $scope.actionList) {
+      var item = $scope.actionList[actionType];
       item.actionType = actionType;
       $scope.setActionList.push(angular.copy(angular.merge(item, item.default)));
     }
@@ -95,17 +95,15 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
   // シミュレーターの起動
   this.openSimulator = function() {
-    var data = this.createJsonData();
-    $scope.$broadcast('openSimulator', data);
+    $scope.$broadcast('openSimulator', this.createJsonData());
   };
 
   this.saveAct = function() {
-    console.log('=== call func saveAct ===');
-    $('#TChatbotScenarioActivity').val(JSON.stringify(this.createJsonData()));
+    $('#TChatbotScenarioActivity').val(this.createJsonData());
     submitAct();
   };
 
-  // jsonデータ作る（保存時にも使えるように）
+  // jsonデータ作る
   this.createJsonData = function() {
     var setActionList = [];
 
@@ -142,7 +140,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     if(setActionList.length < 1) {
       // TODO: エラー処理？
     }
-    return setActionList;
+    return JSON.stringify(setActionList);
   };
 
   this.controllHearingSettingView = function(actionStep) {
@@ -193,13 +191,13 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     var actionType = $scope.setActionList[actionStep].actionType;
 
     if(actionType == <?= C_SCENARIO_ACTION_HEARING ?>) {
-      var src = $scope.setActionList[actionStep].default.hearings[0];
+      var src = $scope.actionList[actionType].default.hearings[0];
       var target = $scope.setActionList[actionStep].hearings;
       target.push(angular.copy(src));
       this.controllHearingSettingView(actionStep);
 
     } else if(actionType == <?= C_SCENARIO_ACTION_SELECT_OPTION ?>) {
-      var src = $scope.setActionList[actionStep].default.selection.options[0];
+      var src = $scope.actionList[actionType].default.selection.options[0];
       var target = $scope.setActionList[actionStep].selection.options;
       target.push(angular.copy(src));
       this.controllSelectOptionSetting(actionStep);
@@ -295,7 +293,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
   // シミュレーションの起動(ダイアログ表示)
   $scope.$on('openSimulator', function(event, setActionList) {
-    $scope.setActionList = setActionList;
+    $scope.setActionList = JSON.parse(setActionList);
     $('#tchatbotscenario_simulator_wrapper').show();
     $timeout(function() {
       $scope.$apply();
@@ -476,6 +474,24 @@ function getWidgetSettings() {
   }
   widgetSettings.show_name = <?=C_WIDGET_SHOW_COMP?>; // 表示名を企業名に固定する
   return widgetSettings;
+}
+
+function removeAct(lastPage){
+    modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', 'シナリオ設定', 'moment');
+    popupEvent.closePopup = function(){
+        $.ajax({
+            type: 'post',
+            data: {
+                id: document.getElementById('TChatbotScenarioId').value
+            },
+            cache: false,
+            url: "<?= $this->Html->url('/TChatbotScenario/remoteDelete') ?>",
+            success: function(){
+                var url = "<?= $this->Html->url('/TChatbotScenario/index') ?>";
+                location.href = url + "/page:" + lastPage;
+            }
+        });
+    };
 }
 
 function submitAct() {

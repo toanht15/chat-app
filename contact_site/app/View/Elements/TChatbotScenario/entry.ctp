@@ -4,7 +4,7 @@
 
 <div ng-app="sincloApp" ng-controller="MainController as main" ng-cloak style="height: 100%;" id="tchatbotscenario_form">
   <?php $this->Form->inputDefaults(['label'=>false, 'div' => false, 'error' => false, 'legend' => false ]);?>
-  <?=$this->ngForm->input('activity', ['type'=>'hidden'])?>
+  <input type="hidden" name="data[TChatbotScenario][activity]" id="TChatbotScenarioActivity">
   <input type="hidden" name="lastPage" value="<?= $lastPage?>">
   <?=$this->Form->input('widgetSettings', ['type' => 'hidden','value' => json_encode($this->data['widgetSettings'])])?>
 
@@ -38,13 +38,13 @@
       <h3>アクションを追加する</h3>
       <div id="tchatbotscenario_form_action_menulist">
         <!-- アクション追加ボタン -->
-        <a ng-repeat="(key, item) in main.actionList" ng-click="main.addItem(key)" class="greenBtn btn-shadow">{{item.label}}</a>
+        <a ng-repeat="(key, item) in actionList" ng-click="main.addItem(key)" class="greenBtn btn-shadow">{{item.label}}</a>
       </div>
     </div>
     <ul id="tchatbotscenario_form_action_body" class="p20x">
       <!-- アクション設定一覧 -->
       <li ng-repeat="(setActionId, setItem) in setActionList" id="action{{setActionId}}_setting" class="set_action_item">
-        <h4><a href="#action{{setActionId}}_preview">{{setActionId + 1}}．{{main.actionList[setItem.actionType].label}}</a></h4>
+        <h4><a href="#action{{setActionId}}_preview">{{setActionId + 1}}．{{actionList[setItem.actionType].label}}</a></h4>
         <?= $this->element('TChatbotScenario/templates'); ?>
         <a class="btn-shadow redBtn closeBtn" ng-click="main.removeItem(setActionId)"><?= $this->Html->image('close.png', array('alt' => '削除する', 'width' => 20, 'height' => 20, 'style' => 'margin: 0 auto')) ?></a>
       </li>

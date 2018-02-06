@@ -117,16 +117,19 @@ class TChatbotScenarioController extends AppController {
       foreach ($activity as $key => &$action) {
         if ($action['actionType'] == C_SCENARIO_ACTION_SEND_MAIL) {
           // メール送信設定の取得
-          $mailTransmissionData = $this->MMailTransmissionSetting->findById($action['mMailTransmissionId']);
-          $action['toAddress'] = explode(',', $mailTransmissionData['MMailTransmissionSetting']['to_address']);
-          $action['subject'] = $mailTransmissionData['MMailTransmissionSetting']['subject'];
-          $action['fromName'] = $mailTransmissionData['MMailTransmissionSetting']['from_name'];
-          // メールテンプレートの取得
-          $mailTemplateData = $this->MMailTemplate->findById($action['mMailTemplateId']);
-          if ($action['mailType'] == C_SCENARIO_MAIL_TYPE_CUSTOMIZE) {
-            $action['template'] = $mailTemplateData['MMailTemplate']['template'];
+          if (!empty($action['mMailTransmissionId'])) {
+            $mailTransmissionData = $this->MMailTransmissionSetting->findById($action['mMailTransmissionId']);
+            $action['toAddress'] = explode(',', $mailTransmissionData['MMailTransmissionSetting']['to_address']);
+            $action['subject'] = $mailTransmissionData['MMailTransmissionSetting']['subject'];
+            $action['fromName'] = $mailTransmissionData['MMailTransmissionSetting']['from_name'];
           }
-          var_dump($mailTemplateData);
+          // メールテンプレートの取得
+          if (!empty($action['mMailTemplateId'])) {
+            $mailTemplateData = $this->MMailTemplate->findById($action['mMailTemplateId']);
+            if ($action['mailType'] == C_SCENARIO_MAIL_TYPE_CUSTOMIZE) {
+              $action['template'] = $mailTemplateData['MMailTemplate']['template'];
+            }
+          }
         }
       }
       $editData[0]['TChatbotScenario']['activity'] = json_encode($activity);
@@ -142,6 +145,30 @@ class TChatbotScenarioController extends AppController {
    * 削除
    * @return void
    * */
+   public function remoteDelete(){
+     Configure::write('debug', 0);
+     $this->autoRender = FALSE;
+     $this->layout = 'ajax';
+     $id = (isset($this->request->data['id'])) ? $this->request->data['id'] : "";
+     $ret = $this->TChatbotScenario->find('first', [
+       'fields' => 'TChatbotScenario.*',
+       'conditions' => [
+         'TChatbotScenario.del_flg' => 0,
+         'TChatbotScenario.id' => $id,
+         'TChatbotScenario.m_companies_id' => $this->userInfo['MCompany']['id']
+       ],
+       'recursive' => -1
+     ]);
+     if ( count($ret) === 1 ) {
+       if ( $this->TChatbotScenario->logicalDelete($id) ) {
+         $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
+       }
+       else {
+         $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
+       }
+     }
+   }
+
   public function chkRemoteDelete(){
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
