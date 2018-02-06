@@ -370,7 +370,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
   // アクションの開始
   $scope.actionInit = function() {
-    console.log($scope.setActionList);
     $scope.actionStep = 0;
 
     // シミュレーション上のメッセージをクリアする

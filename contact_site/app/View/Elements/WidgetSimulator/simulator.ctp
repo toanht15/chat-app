@@ -24,7 +24,6 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
     }
 </style>
 
-<!-- <div ng-controller="SimulatorController as simulator" ng-cloak id="widget_simulator_wrapper" style="height: 100%;"> -->
 <div ng-controller="SimulatorController as simulator" ng-cloak id="widget_simulator_wrapper" style="height: 100%;">
 
   <div ng-if='isTabDisplay'>
@@ -268,7 +267,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
       </style>
       <!-- 画像 -->
       <span id="mainImage" class="widgetOpener" ng-hide="widget.spHeaderLightToggle() || widget.mainImageToggle !== '1'">
-        <img src="{{widget.settings['main_image']}}" err-src="<?=$gallaryPath?>chat_sample_picture.png" width="62" height="70" alt="チャット画像">
+        <img ng-src="{{widget.settings['main_image']}}" err-src="<?=$gallaryPath?>chat_sample_picture.png" width="62" height="70" alt="チャット画像">
       </span>
       <!-- 画像 -->
       <div>
