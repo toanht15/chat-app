@@ -57,6 +57,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
     $scope.watchActionList[index] = $scope.$watch('setActionList[' + index + ']', function(newObject, oldObject) {
       if (typeof newObject === 'undefined') return;
+      console.log($scope.itemForm);
 
       // 各アクションのバリデーション
       if (newObject.actionType == <?= C_SCENARIO_ACTION_TEXT ?>) {
@@ -314,6 +315,25 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     }
     return visible;
   };
+
+  $(".sortable").sortable({
+    axis: "y",
+    tolerance: "pointer",
+    containment: "parent",
+    handle: '.handle',
+    cursor: 'move',
+    revert: 100,
+    stop: function() {
+      // 並び替えの後処理(番号の振り直し、プレビュー更新)
+      var elms = Array.from(document.querySelectorAll('#tchatbotscenario_form_action_body > li'));
+      $scope.$apply(function() {
+        $scope.setActionList = elms.map(function(elm) {
+          var id = elm.id.replace(/action([0-9]+)_setting/, '$1');
+          return $scope.setActionList[id];
+        });
+      });
+    }
+  });
 }])
 .controller('DialogController', ['$scope', '$timeout', 'SimulatorService', 'LocalStorageService', function($scope, $timeout, SimulatorService, LocalStorageService) {
   //thisを変数にいれておく

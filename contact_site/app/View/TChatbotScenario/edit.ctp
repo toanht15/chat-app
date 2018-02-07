@@ -1,3 +1,4 @@
+<?php echo $this->Html->script("jquery-ui.min.js"); ?>
 <div id='tchatbotscenario_idx' class="card-shadow">
 
 <div id='tchatbotscenario_add_title'>
