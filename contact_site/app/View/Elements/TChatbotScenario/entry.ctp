@@ -46,41 +46,41 @@
     <ul id="tchatbotscenario_form_action_body" class="sortable">
       <!-- アクション設定一覧 -->
       <li ng-repeat="(setActionId, setItem) in setActionList" id="action{{setActionId}}_setting" class="set_action_item">
-        <h4><a href="#action{{setActionId}}_preview" class="handle">{{setActionId + 1}}．{{actionList[setItem.actionType].label}} <i class="error" ng-if="!setItem.$valid"></i></a></h4>
+        <h4 class="handle"><a href="#action{{setActionId}}_preview">{{setActionId + 1}}．{{actionList[setItem.actionType].label}} <i class="error" ng-if="!setItem.$valid"></i></a></h4>
         <?= $this->element('TChatbotScenario/templates'); ?>
         <a class="btn-shadow redBtn closeBtn" ng-click="main.removeItem(setActionId)"><?= $this->Html->image('close.png', array('alt' => '削除する', 'width' => 20, 'height' => 20, 'style' => 'margin: 0 auto')) ?></a>
       </li>
       <li class="error-message" ng-if="setActionList.length <= 0">アクションを上のリストから選択し、設定してください</li>
       <!-- Tooltip -->
-      <div id='hearingVariableNameTooltip' class="explainTooltip">
-        <icon-annotation>
-          <ul>
-            <li><span>チャットボットから投げかけた質問の回答を保存し、｛｛変数名｝｝としてメッセージ内で利用することができるようになります</span></li>
-          </ul>
-        </icon-annotation>
-      </div>
-      <div id='hearingVariableTypeTooltip' class="explainTooltip">
-        <icon-annotation>
-          <ul>
-            <li><span>サイト訪問者が入力した回答が適切か、整合性チェックを行うことができるようになります</span></li>
-          </ul>
-        </icon-annotation>
-      </div>
-      <div id='hearingErrorMessageTooltip' class="explainTooltip">
-        <icon-annotation>
-          <ul>
-            <li><span>サイト訪問者が入力した回答が不正な内容の場合に、返信するメッセージになります</span></li>
-          </ul>
-        </icon-annotation>
-      </div>
-      <div id='hearingSelectVariableNameTooltip' class="explainTooltip">
-        <icon-annotation>
-          <ul>
-            <li><span>チャットボットから投げかけた質問の回答を保存し、｛｛変数名｝｝としてメッセージ内で利用することができるようになります</span></li>
-          </ul>
-        </icon-annotation>
-      </div>
     </ul>
+    <div id='hearingVariableNameTooltip' class="explainTooltip">
+      <icon-annotation>
+        <ul>
+          <li><span>チャットボットから投げかけた質問の回答を保存し、｛｛変数名｝｝としてメッセージ内で利用することができるようになります</span></li>
+        </ul>
+      </icon-annotation>
+    </div>
+    <div id='hearingVariableTypeTooltip' class="explainTooltip">
+      <icon-annotation>
+        <ul>
+          <li><span>サイト訪問者が入力した回答が適切か、整合性チェックを行うことができるようになります</span></li>
+        </ul>
+      </icon-annotation>
+    </div>
+    <div id='hearingErrorMessageTooltip' class="explainTooltip">
+      <icon-annotation>
+        <ul>
+          <li><span>サイト訪問者が入力した回答が不正な内容の場合に、返信するメッセージになります</span></li>
+        </ul>
+      </icon-annotation>
+    </div>
+    <div id='hearingSelectVariableNameTooltip' class="explainTooltip">
+      <icon-annotation>
+        <ul>
+          <li><span>チャットボットから投げかけた質問の回答を保存し、｛｛変数名｝｝としてメッセージ内で利用することができるようになります</span></li>
+        </ul>
+      </icon-annotation>
+    </div>
   </section>
   <section id="tchatbotscenario_form_preview" ng-class="{middleSize: widget.settings['widget_size_type'] == '2', largeSize: widget.settings['widget_size_type'] == '3'}">
       <div class="p10x">
