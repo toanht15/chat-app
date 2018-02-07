@@ -342,12 +342,6 @@ class TChatbotScenarioController extends AppController {
         }
       }
       if($reset_flg){
-        // ソート順のリセットはID順とする
-        // $i = 1;
-        // foreach($prevSort as $key => $val){
-        //   $prevSort[$key] = strval($i);
-        //   $i++;
-        // }
         // ソート順が登録されていなかったらソート順をセットする
         if(! $this->remoteSetSort()){
           $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
@@ -363,8 +357,6 @@ class TChatbotScenarioController extends AppController {
           sort($sortNoList);
         }
       }
-      // $prevSortKeys = am($prevSort);
-      // $this->log($prevSortKeys,LOG_DEBUG);
       /* アップデート分の並び順を設定 */
       $ret = true;
       for ($i = 0; count($list) > $i; $i++) {
@@ -416,7 +408,6 @@ class TChatbotScenarioController extends AppController {
          ],
          'conditions' => [
              'TChatbotScenario.m_companies_id' => $this->userInfo['MCompany']['id']
-            // 'TChatbotScenario.del_flg != ' => 1
          ],
          'order' => [
              'TChatbotScenario.sort' => 'asc',
@@ -574,8 +565,6 @@ class TChatbotScenarioController extends AppController {
     $validate = $this->TChatbotScenario->validates();
     $errors = $this->TChatbotScenario->validationErrors;
 
-    // TODO: アクションの詳細はこの辺りでチェックする
-
     if ($validate) {
       if( $this->TChatbotScenario->save($saveData,false) ) {
       }
@@ -593,7 +582,6 @@ class TChatbotScenarioController extends AppController {
     ]);
 
     $page = floor((intval($count[0]['count']) + 99) / 100);
-
     return $page >= 1 ? $page : 1;
   }
 

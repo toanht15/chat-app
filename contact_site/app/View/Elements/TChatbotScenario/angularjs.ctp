@@ -57,15 +57,12 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
     $scope.watchActionList[index] = $scope.$watch('setActionList[' + index + ']', function(newObject, oldObject) {
       if (typeof newObject === 'undefined') return;
-      console.log($scope.itemForm);
 
       // 各アクションのバリデーション
       if (newObject.actionType == <?= C_SCENARIO_ACTION_TEXT ?>) {
-        // 送信メッセージ
         newObject.$valid = !!newObject.message;
       } else
       if (newObject.actionType == <?= C_SCENARIO_ACTION_HEARING ?> ) {
-        // ヒアリング
         newObject.$valid = newObject.hearings.some(function(obj) {
           return !!obj.variableName && !!obj.message;
         });
@@ -75,7 +72,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         }
       } else
       if (newObject.actionType == <?= C_SCENARIO_ACTION_SELECT_OPTION ?>) {
-        // 選択肢
         newObject.$valid = newObject.selection.options.some(function(obj) {
           return !!obj;
         });
@@ -83,7 +79,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         newObject.$valid = newObject.$valid && !!newObject.message;
       } else
       if (newObject.actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?>) {
-        // 送信メール
         newObject.$valid = newObject.toAddress.some(function(obj) {
           return !!obj;
         });
@@ -137,9 +132,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   };
 
   this.saveAct = function() {
-    console.log("===== MainController::saveAct =====");
     $('#TChatbotScenarioActivity').val(this.createJsonData());
-    console.log($('#TChatbotScenarioActivity').val());
     submitAct();
   };
 
@@ -148,12 +141,12 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     var setActionList = [];
 
     // setActionList の内容をチェックする
-    // TODO:シミュレーション表示可能なものがない場合、エラーメッセージを出すなど
     angular.forEach($scope.setActionList, function(originalAction, index) {
       var action = angular.copy(originalAction);
       action.messageIntervalTimeSec = $scope.messageIntervalTimeSec;
       delete action.label;
       delete action.default;
+      delete action.$valid;
 
       switch(parseInt(action.actionType, 10)) {
         case <?= C_SCENARIO_ACTION_TEXT ?>:
@@ -168,18 +161,12 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         case <?= C_SCENARIO_ACTION_SEND_MAIL ?>:
           action = adjustDataOfSendMail(action);
           break;
-        default:
-          break;
       }
 
       if (action !== null) {
         setActionList.push(action);
       };
     });
-
-    if (setActionList.length < 1) {
-      // TODO: エラー処理？
-    }
     return JSON.stringify(setActionList);
   };
 
@@ -205,7 +192,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
   this.initMailSetting = function(actionStep) {
     $scope.setActionList[actionStep].toAddress = $scope.setActionList[actionStep].toAddress || [''];
-
     $timeout(function() {
       $scope.$apply();
     }).then(function() {
@@ -367,7 +353,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
   // シミュレーションで受け付けた受信メッセージ
   $scope.$on('receiveVistorMessage', function(event, message, prefix) {
-    console.log("=== DialogController::receiveVistorMessage ===");
     $scope.actionStep = (typeof prefix !== 'undefined' && prefix !== '') ? parseInt(prefix.replace(/action/, ''), 10) : $scope.actionStep;
 
     if (typeof $scope.setActionList[$scope.actionStep] === 'undefined') {
@@ -393,6 +378,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
               $scope.actionStep++;
           }
         } else {
+          // 入力エラー
           $scope.hearingInputResult = false;
         }
       } else
@@ -441,13 +427,11 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
   // アクションのクリア(アクションを最初から実行し直す)
   $scope.actionClear = function() {
-    console.log('=== DialogController::actionClear ===');
     $scope.actionStop();
     $scope.actionInit();
   };
 
   $scope.doAction = function() {
-    console.log('=== DialogController::doAction ===');
     if (typeof $scope.setActionList[$scope.actionStep] !== 'undefined' && typeof $scope.setActionList[$scope.actionStep].actionType !== 'undefined') {
       var time = $scope.setActionList[$scope.actionStep].messageIntervalTimeSec;
 
@@ -510,7 +494,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       $scope.$broadcast('addReMessage', message, 'action' + $scope.actionStep);
       $scope.$broadcast('switchSimulatorChatTextArea', actionDetail.chatTextArea);
     } else {
-      // えーっと
+      // 次のアクションへ移行する
       $scope.hearingIndex = 0;
       $scope.actionStep++;
       $scope.doAction();
@@ -536,25 +520,24 @@ function getWidgetSettings() {
 }
 
 function removeAct(lastPage){
-    modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', 'シナリオ設定', 'moment');
-    popupEvent.closePopup = function(){
-        $.ajax({
-            type: 'post',
-            data: {
-                id: document.getElementById('TChatbotScenarioId').value
-            },
-            cache: false,
-            url: "<?= $this->Html->url('/TChatbotScenario/remoteDelete') ?>",
-            success: function(){
-                var url = "<?= $this->Html->url('/TChatbotScenario/index') ?>";
-                location.href = url + "/page:" + lastPage;
-            }
-        });
-    };
+  modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', 'シナリオ設定', 'moment');
+  popupEvent.closePopup = function(){
+    $.ajax({
+      type: 'post',
+      data: {
+        id: document.getElementById('TChatbotScenarioId').value
+      },
+      cache: false,
+      url: "<?= $this->Html->url('/TChatbotScenario/remoteDelete') ?>",
+      success: function(){
+        var url = "<?= $this->Html->url('/TChatbotScenario/index') ?>";
+        location.href = url + "/page:" + lastPage;
+      }
+    });
+  };
 }
 
 function submitAct() {
-  console.log("=== call func submitAct ===");
   $('#TChatbotScenarioEntryForm').submit();
 }
 
