@@ -1584,8 +1584,12 @@ class HistoriesController extends AppController {
           'THistoryChatLog2.t_histories_id = THistory.id'
         ]
       ];
+
       // チャットのみ表示との切り替え（担当者検索の場合、強制的にINNER）
       if ( strcmp($type, 'true') === 0 && !(!empty($data['THistoryChatLog']) && !empty(array_filter($data['THistoryChatLog']))) ) {
+        $joinToChat['type'] = "LEFT";
+      }
+      else if(empty($type)) {
         $joinToChat['type'] = "LEFT";
       }
       else {
