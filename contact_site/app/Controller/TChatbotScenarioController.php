@@ -290,21 +290,19 @@ class TChatbotScenarioController extends AppController {
       $this->TChatbotScenario->begin();
 
       // バリデーションチェックでエラーが出た場合
-      if($res){
-        if(!$this->TChatbotScenario->validates()) {
-          $res = false;
-          $errorMessage = $this->TChatbotScenario->validationErrors;
-          $this->MMailTransmissionSetting->rollback();
-          $this->MMailTemplate->rollback();
-          $this->TChatbotScenario->rollback();
-        } else
-        if( $this->TChatbotScenario->save($saveData,false) ) {
-          $this->MMailTransmissionSetting->commit();
-          $this->MMailTemplate->commit();
-          $this->TChatbotScenario->commit();
-          $this->Session->delete('dstoken');
-          $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
-        }
+      if(!$this->TChatbotScenario->validates()) {
+        $res = false;
+        $errorMessage = $this->TChatbotScenario->validationErrors;
+        $this->MMailTransmissionSetting->rollback();
+        $this->MMailTemplate->rollback();
+        $this->TChatbotScenario->rollback();
+      } else
+      if( $this->TChatbotScenario->save($saveData,false) ) {
+        $this->MMailTransmissionSetting->commit();
+        $this->MMailTemplate->commit();
+        $this->TChatbotScenario->commit();
+        $this->Session->delete('dstoken');
+        $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
       }
     }
   }
