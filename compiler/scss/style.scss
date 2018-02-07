@@ -6609,6 +6609,10 @@ ul.naviBtn {
             border: 1px solid #B7B7B7;
             margin-top: 20px;
 
+            &:last-child {
+              margin-bottom: 20px;
+            }
+
             h4 {
               background-color: $main-color;
               color: #ffffff;
