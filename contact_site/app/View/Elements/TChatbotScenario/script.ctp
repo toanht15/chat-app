@@ -62,7 +62,7 @@ var actBtnShow = function(){
 //シナリオ設定の削除
 function openConfirmDialog(){
   //チェックボックスのチェック状態の取得
-  var list = Array.from(document.querySelectorAll('#tchatbotscenario_list input[name^="selectTab"]:checked'));
+  var list = Array.prototype.slice.call(document.querySelectorAll('#tchatbotscenario_list input[name^="selectTab"]:checked'), 0);
   var selectedList = list.map(function(elm) {
     return Number(elm.value);
   });
@@ -103,7 +103,7 @@ function openConfirmDialog(){
 
 //シナリオコピー処理
 function openCopyDialog(){
-  var list = Array.from(document.querySelectorAll('#tchatbotscenario_list input[name^="selectTab"]:checked'));
+  var list = Array.prototype.slice.call(document.querySelectorAll('#tchatbotscenario_list input[name^="selectTab"]:checked'), 0);
   var selectedList = list.map(function(elm) {
     return Number(elm.value);
   });
@@ -240,7 +240,7 @@ var saveToggleSort = toExecutableOnce(function(){
 
 // ソートタブの準備
 var getSort = function(){
-  var scenarioList = Array.from(document.querySelectorAll("#tchatbotscenario_list .sortable tr"));
+  var scenarioList = Array.prototype.slice.call(document.querySelectorAll("#tchatbotscenario_list .sortable tr"), 0);
   var sortlist = scenarioList.map(function(elm) {
     return elm.dataset.id;
   }).filter(function(elm) {
@@ -250,7 +250,7 @@ var getSort = function(){
 };
 
 var getSortNo = function(){
-  var scenarioList = Array.from(document.querySelectorAll("#tchatbotscenario_list .sortable tr"));
+  var scenarioList = Array.prototype.slice.call(document.querySelectorAll("#tchatbotscenario_list .sortable tr"), 0);
   var sortlist = scenarioList.map(function(elm) {
     return elm.dataset.sort;
   }).filter(function(elm) {

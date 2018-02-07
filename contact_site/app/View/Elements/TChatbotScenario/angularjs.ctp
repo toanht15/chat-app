@@ -311,7 +311,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     revert: 100,
     stop: function() {
       // 並び替えの後処理(番号の振り直し、プレビュー更新)
-      var elms = Array.from(document.querySelectorAll('#tchatbotscenario_form_action_body > li'));
+      var elms = Array.prototype.slice.call(document.querySelectorAll('#tchatbotscenario_form_action_body > li'), 0);
       $scope.$apply(function() {
         $scope.setActionList = elms.map(function(elm) {
           var id = elm.id.replace(/action([0-9]+)_setting/, '$1');
