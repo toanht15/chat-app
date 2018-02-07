@@ -7,6 +7,7 @@ document.body.onload = function(){
       tolerance: "pointer",
       containment: "parent",
       cursor: 'move',
+      cancel: '.sortable .cancel',
       revert: 100
     });
     $(".sortable").sortable("disable");
@@ -26,6 +27,7 @@ document.body.onload = function(){
 // リストの全選択・選択解除
 var setAllCheck = function() {
   $('#tchatbotscenario_list input[name="selectTab"]').prop('checked', this.checked);
+  document.querySelector('#tchatbotscenario_list input[name="allCheck"]').checked = this.checked;
   actBtnShow();
 }
 
@@ -33,7 +35,9 @@ var setAllCheck = function() {
 var allCheckCtrl = function(){
   // 全て選択されている場合
   var allCheck = document.querySelector('#tchatbotscenario_list input[name="allCheck"]');
-  allCheck.checked = !document.querySelector('#tchatbotscenario_list input[name="selectTab"]:not(:checked)');
+  if (!!document.querySelector('#tchatbotscenario_list input[name="selectTab"]')) {
+    allCheck.checked = !document.querySelector('#tchatbotscenario_list input[name="selectTab"]:not(:checked)');
+  }
 }
 
 // コピー・削除ボタンの有効・無効切り替え
@@ -54,7 +58,6 @@ var actBtnShow = function(){
     copyBtn.removeEventListener('click', openCopyDialog, false);
     dustBtn.className="btn-shadow disOffgrayBtn";
     dustBtn.removeEventListener('click', openConfirmDialog, false);
-    $('#allCheck').prop('checked', false);
   }
   allCheckCtrl();
 };
