@@ -64,7 +64,10 @@ class TChatbotScenario extends AppModel {
         if (empty($action['errorMessage'])) {
           return false;
         }
-        if ($action['isConfirm'] && (empty($action['confirmMessage'] || empty($action['succes'] || empty($action['cancel']))))) {
+        if ($action['isConfirm'] == 1 && (empty($action['confirmMessage'] || empty($action['succes'] || empty($action['cancel']))))) {
+          return false;
+        }
+        if ($action['cv'] == 1 && empty($action['cvCondition'])) {
           return false;
         }
       } else
@@ -78,12 +81,7 @@ class TChatbotScenario extends AppModel {
       } else
       if ($action['actionType'] == C_SCENARIO_ACTION_SEND_MAIL) {
         // メール送信
-        foreach ($action['toAddress'] as $key => $item) {
-          if (empty($item)) {
-            return false;
-          }
-        }
-        if (empty($action['subject'] || empty($action['fromName']))) {
+        if (empty($action['mailType'])) {
           return false;
         }
       }

@@ -616,6 +616,8 @@ function adjustDataOfHearing(action) {
   });
   if (hearings.length < 1) return null;
   action.hearings = hearings;
+  action.isConfirm = action.isConfirm ? '1' : '2';
+  action.cv = action.cv ? '1' : '2';
   return action;
 }
 
