@@ -3,10 +3,12 @@
  * MWidgetSettingsController controller.
  * ウィジェット設定マスタ
  */
+require '/var/www/sinclo/contact_site/app/Vendor/vendor/autoload.php';
+
+use Intervention\Image\ImageManagerStatic as Image;
 class MWidgetSettingsController extends AppController {
   public $uses = ['MWidgetSetting','MOperatingHour'];
   public $helpers = ['ngForm'];
-
   public $coreSettings = null;
   public $styleSetting = [
     'common' => [
@@ -32,7 +34,9 @@ class MWidgetSettingsController extends AppController {
    * @return void
    * */
   public function index() {
-
+    Image::configure(['driver' => 'imagick']);
+    $img = Image::make('/img/Penguins.jpg?1517909330');
+    //$image->resize('/img/Penguins.jpg?1517909330', 60, 60, true);
     if ( $this->request->is('post') ) {
       $errors = $this->_update($this->request->data);
       if ( empty($errors) ) {
@@ -765,5 +769,72 @@ class MWidgetSettingsController extends AppController {
     }
     return $d;
   }
+
+/*$app->post('/cropper', function(Request $request){
+
+  $str =  str_random(7);
+
+  $crop =  value(function() use ($request, $str) {*/
+  public function trimming() {
+    Configure::write('debug', 0);
+    $this->autoRender = FALSE;
+    $this->layout = 'ajax';
+
+    $this->log('入ってるかチェック',LOG_DEBUG);
+    $this->log($this->request->data,LOG_DEBUG);
+    $request = $this->request->data['image'];
+    $str = str_random(7);
+     // Laravelの場合は public_path()ヘルパー関数、Facadeが使えます
+     $image = Image::make('../public/img/art.jpg')
+             ->crop(
+                    $request->get('width'),
+                    $request->get('height'),
+                    $request->get('x'),
+                    $request->get('y')
+                  )
+             ->resize(256,256) // 256 * 256にリサイズ
+             // 画像の保存
+             ->save('../public/img/'. $str . '.jpg')
+             ->resize(128,128) //サムネイル用にリサイズ
+             ->save('../public/img/'. $str . '_t' . '.jpg');
+      // \File::delete('Your image File);
+      $this->log('ここまで来てない？',LOG_DEBUG);
+      $this->log($image,LOG_DEBUG);
+      return $image ?: false;
+      }
+
+  public function remoteTimmingInfo() {
+    Configure::write('debug', 0);
+    $this->autoRender = FALSE;
+    $this->layout = 'ajax';
+    $this->render('/Elements/MWidgetSettings/remoteTimmingInfo');
+  }
+
+  public function cropper() {
+    header ('Content-Type: image/png');
+    Configure::write('debug', 0);
+    $this->autoRender = FALSE;
+    $this->layout = 'ajax';
+    $this->log('入った',LOG_DEBUG);
+    $file1 = "/img/company_g.png?1490169962";                            //　元画像ファイル
+    $file2 = "/img/company_g.png?1490169963";                                //　画像保存先
+    $this->log('画像チェック12',LOG_DEBUG);
+    $this->log($file1 ,LOG_DEBUG);
+    $img = imagecreatefromjpeg($file1);                            //　元画像
+    $this->log('画像チェック2',LOG_DEBUG);
+    $w = array(100, 120);                                    //　切り出し開始位置,サイズ（横）
+    $h = array(110, 100);                                    //　切り出し開始位置,サイズ（縦）
+    $out = ImageCreateTrueColor($w[1], $h[1]);                        //　画像を生成
+    ImageCopyResampled($out, $img, 0, 0, $w[0], $h[0], $w[1], $h[1], $w[1], $h[1]);        //　サイズ変更・コピー
+    ImageJPEG($out, $file2);                                //　画像表示
+    ImageDestroy($img);
+    ImageDestroy($out);
+    $this->log('画像チェック',LOG_DEBUG);
+    $this->log($out,LOG_DEBUG);
+    $this->log($file2,LOG_DEBUG);
+
+  }
+
+
 
 }

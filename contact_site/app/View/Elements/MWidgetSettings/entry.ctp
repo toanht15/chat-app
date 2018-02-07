@@ -898,12 +898,15 @@ $headerNo = 1;
               <div id="imageSelectBtns" ng-class="{chooseImg: showChooseImg()}">
 
                 <div id="picDiv">
-                  <img ng-src="{{main_image}}" err-src="<?=C_PATH_WIDGET_GALLERY_IMG?>chat_sample_picture.png" ng-style="{'background-color': main_color}" width="62" height="70" alt="チャットに設定している画像">
+                  <img id = "trim" ng-src="{{main_image}}" err-src="<?=C_PATH_WIDGET_GALLERY_IMG?>chat_sample_picture.png" ng-style="{'background-color': main_color}" width="62" height="70" alt="チャットに設定している画像">
                 </div>
                 <div id="picChooseDiv">
                   <div class="greenBtn btn-shadow" ng-click="showGallary()">ギャラリーから選択</div>
                   <div class="greenBtn btn-shadow" id="fileTagWrap"><?php echo $this->Form->file('uploadImage'); ?>画像をアップロード</div>
-
+                  <div class="greenBtn btn-shadow" onclick = "openTrimmingDialog()"　id = "trimming">画像をトリミング</div>
+                  <?php if(isset($file2) && !empty($file2)) { ?>
+                    <img src="<?php echo $file2 ?>"><br>
+                  <?php } ?>
                 </div>
               </div>
               <?php if ($this->Form->isFieldError('main_image')) echo $this->Form->error('main_image', null, ['ng-if'=>'mainImageToggle=="1"']); ?>
