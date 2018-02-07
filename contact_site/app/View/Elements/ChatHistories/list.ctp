@@ -343,10 +343,10 @@
                 <li style = "white-space: nowrap;overflow: hidden;"><div class = "largeCharacters" style = "padding-top:1px;font-weight:bold;margin-top:3px;">{{ ip('<?=h($history['THistory']['ip_address'])?>', <?php echo !empty($history['LandscapeData']['org_name']) ? 'true' : 'false' ?>) }}</div></li>
                 <?php endif; ?>
               <?php } else { ?>
-              <li style = "white-space: nowrap;overflow: hidden;"><div class = "largeCharacters" style = "padding-top:1px;font-weight:bold;margin-top:3st
-              px;">{{ ip('<?=h($history['THistory']['ip_address'])?>', <?php echo !empty($history['LandscapeData']['org_name']) ? 'true' : 'false' ?>) }}</div></li>
+              <li style = "white-space: nowrap;overflow: hidden;"><div class = "largeCharacters" style = "padding-top:1px;font-weight:bold;margin-top:3px;">
+              {{ ip('<?=h($history['THistory']['ip_address'])?>', <?php echo !empty($history['LandscapeData']['org_name']) ? 'true' : 'false' ?>) }}</div></li>
               <?php } ?>
-              <li style = "white-space: nowrap;overflow: hidden;"><div style = "padding-top:1px;" class = "largeCharacters">{{ ui('<?=h($history['THistory']['ip_address'])?>','<?=$visitorsId?>') }}</div></li></td>
+              <li style = "white-space: nowrap;overflow: hidden;height:20px;"><div style = "padding-top:1px;" class = "largeCharacters">{{ ui('<?=h($history['THistory']['ip_address'])?>','<?=$visitorsId?>') }}</div></li></td>
               <td class="tCenter eachKind" style = "width:5%;display:none;">
               <?php if( is_numeric($history['THistoryChatLog']['count']) ): ?>
                 <?php
