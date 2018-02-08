@@ -330,12 +330,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   $scope.setActionList = [];
   $scope.inputTypeList = <?php echo json_encode($chatbotScenarioInputType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
 
-  $scope.actionStep = 0;
-  $scope.hearingIndex = 0;
-  $scope.actionIntervalTimeSec = 0;
-  $scope.actionTimer;
-  $scope.hearingInputResult = true;
-
   $scope.widget = SimulatorService;
   $scope.widget.settings = getWidgetSettings();
 
@@ -417,6 +411,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   // アクションの開始
   $scope.actionInit = function() {
     $scope.actionStep = 0;
+    $scope.hearingIndex = 0;
+    $scope.actionTimer;
+    $scope.hearingInputResult = true;
 
     // シミュレーション上のメッセージをクリアする
     $scope.$broadcast('removeMessage');
