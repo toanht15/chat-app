@@ -376,7 +376,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
           // 次のアクション
           $scope.hearingIndex++;
           if (typeof actionDetail.hearings[$scope.hearingIndex] === 'undefined' &&
-            !(actionDetail.isConfirm && ($scope.hearingIndex === actionDetail.hearings.length))) {
+            !(actionDetail.isConfirm === '1' && ($scope.hearingIndex === actionDetail.hearings.length))) {
               $scope.hearingIndex = 0;
               $scope.actionStep++;
           }
@@ -385,14 +385,14 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
           $scope.hearingInputResult = false;
         }
       } else
-      if (actionDetail.isConfirm && ($scope.hearingIndex === actionDetail.hearings.length) && actionDetail.cancel === message) {
+      if (actionDetail.isConfirm === '1' && ($scope.hearingIndex === actionDetail.hearings.length) && actionDetail.cancel === message) {
         // 最初から入力し直し
         $scope.hearingIndex = 0;
       } else {
         // 次のアクション
         $scope.hearingIndex++;
         if (typeof actionDetail.hearings[$scope.hearingIndex] === 'undefined' &&
-          !(actionDetail.isConfirm && ($scope.hearingIndex === actionDetail.hearings.length))) {
+          !(actionDetail.isConfirm === '1' && ($scope.hearingIndex === actionDetail.hearings.length))) {
             $scope.hearingIndex = 0;
             $scope.actionStep++;
           }
