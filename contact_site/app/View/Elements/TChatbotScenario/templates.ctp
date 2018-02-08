@@ -17,8 +17,8 @@
       <table cellspacing="5">
         <thead>
           <tr>
-            <th class="hearingVariableNameLabel">変数名<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></th>
-            <th class="hearingVariableTypeLabel">タイプ<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></th>
+            <th class="hearingVariableNameLabel">変数名<div class="questionBalloon"><icon class="questionBtn" data-tooltip="チャットボットから投げかけた質問の回答を保存し、｛｛変数名｝｝としてメッセージ内で利用することができるようになります">?</icon></div></th>
+            <th class="hearingVariableTypeLabel">タイプ<div class="questionBalloon"><icon class="questionBtn" data-tooltip="サイト訪問者が入力した回答が適切か、整合性チェックを行うことができるようになります">?</icon></div></th>
             <th class="hearingVariableQuestionLabel">質問内容</th>
             <th class="hearginVariableBtnGroupLabel"></th>
           </tr>
@@ -38,7 +38,7 @@
       </table>
     </li>
     <li class="styleFlexbox">
-      <span><label class="hearingErrorMessageLabel">入力エラー時の<br>返信メッセージ<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></label></span>
+      <span><label class="hearingErrorMessageLabel">入力エラー時の<br>返信メッセージ<div class="questionBalloon"><icon class="questionBtn" data-tooltip="サイト訪問者が入力した回答が不正な内容の場合に、返信するメッセージになります">?</icon></div></label></span>
       <div>
         <textarea name="errorMessage" ng-model="setItem.errorMessage" cols="48" rows="4" placeholder="入力エラー時の返信メッセージを入力してください"></textarea>
       </div>
@@ -53,13 +53,13 @@
           </div>
         </li>
         <li class="styleFlexbox">
-          <span><label>選択肢（OK）<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></label></span>
+          <span><label>選択肢（OK）<div class="questionBalloon"><icon class="questionBtn" data-tooltip="すべての項目が正常に入力されたことを確認する選択肢です">?</icon></div></label></span>
           <div>
             <input type="text" name="success" ng-model="setItem.success">
           </div>
         </li>
         <li class="styleFlexbox">
-          <span><label>選択肢（NG）<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></label></span>
+          <span><label>選択肢（NG）<div class="questionBalloon"><icon class="questionBtn" data-tooltip="項目が正常に入力されず、ヒアリングを先頭から実施し直す選択肢です">?</icon></div></label></span>
           <div>
             <input type="text" name="cancel" ng-model="setItem.cancel">
           </div>
@@ -81,7 +81,7 @@
 <div ng-if="setItem.actionType == 3" class="set_action_item_body action_select_option" ng-init="main.controllSelectOptionSetting(setActionId)">
   <ul>
     <li class="styleFlexbox">
-      <span><label class="hearingSelectVariableNameLabel">変数名<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></label></span>
+      <span><label class="hearingSelectVariableNameLabel">変数名<div class="questionBalloon"><icon class="questionBtn" data-tooltip="チャットボットから投げかけた質問の回答を保存し、｛｛変数名｝｝としてメッセージ内で利用することができるようになります">?</icon></div></label></span>
       <div>
         <input type="text" ng-model="setItem.selection.variableName">
       </div>

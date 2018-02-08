@@ -53,31 +53,10 @@
       <li class="error-message" ng-if="setActionList.length <= 0">アクションを上のリストから選択し、設定してください</li>
       <!-- Tooltip -->
     </ul>
-    <div id='hearingVariableNameTooltip' class="explainTooltip">
+    <div class="explainTooltip">
       <icon-annotation>
         <ul>
-          <li><span>チャットボットから投げかけた質問の回答を保存し、｛｛変数名｝｝としてメッセージ内で利用することができるようになります</span></li>
-        </ul>
-      </icon-annotation>
-    </div>
-    <div id='hearingVariableTypeTooltip' class="explainTooltip">
-      <icon-annotation>
-        <ul>
-          <li><span>サイト訪問者が入力した回答が適切か、整合性チェックを行うことができるようになります</span></li>
-        </ul>
-      </icon-annotation>
-    </div>
-    <div id='hearingErrorMessageTooltip' class="explainTooltip">
-      <icon-annotation>
-        <ul>
-          <li><span>サイト訪問者が入力した回答が不正な内容の場合に、返信するメッセージになります</span></li>
-        </ul>
-      </icon-annotation>
-    </div>
-    <div id='hearingSelectVariableNameTooltip' class="explainTooltip">
-      <icon-annotation>
-        <ul>
-          <li><span>チャットボットから投げかけた質問の回答を保存し、｛｛変数名｝｝としてメッセージ内で利用することができるようになります</span></li>
+          <li><span class="detail"></span></li>
         </ul>
       </icon-annotation>
     </div>

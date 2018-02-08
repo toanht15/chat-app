@@ -544,8 +544,8 @@ function submitAct() {
 $(document).ready(function() {
   // ツールチップの表示制御
   $(document).off('mouseenter','.questionBtn').on('mouseenter','.questionBtn', function(event){
-    var parentClass = $(this).parent().parent().attr('class');
-    var targetObj = $("#" + parentClass.replace(/Label/, "Tooltip"));
+    var targetObj = $('.explainTooltip');
+    targetObj.find('icon-annotation .detail').text($(this).data('tooltip'));
     targetObj.find('icon-annotation').css('display','block');
     targetObj.css({
       top: ($(this).offset().top - targetObj.find('ul').outerHeight() - 70) + 'px',
@@ -553,9 +553,7 @@ $(document).ready(function() {
     });
   });
   $(document).off('mouseleave','.questionBtn').on('mouseleave','.questionBtn', function(event){
-    var parentClass = $(this).parent().parent().attr('class');
-    var targetObj = $("#" + parentClass.replace(/Label/, "Tooltip"));
-    targetObj.find('icon-annotation').css('display','none');
+    $('.explainTooltip').find('icon-annotation').css('display','none');
   });
 
   // 設定側のスクロールに応じて、プレビュー側をスクロールさせる
@@ -580,7 +578,7 @@ $(document).ready(function() {
     var targetY = target.position().top - box.position().top;
 
     box.stop().animate({
-      scrollTop: box.scrollTop() + targetY - 19
+      scrollTop: box.scrollTop() + targetY
     }, time);
 
     window.history.pushState(null, null, this.hash);
