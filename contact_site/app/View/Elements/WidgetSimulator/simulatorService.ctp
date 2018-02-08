@@ -46,6 +46,12 @@ sincloApp.factory('SimulatorService', function() {
     get timeTextToggle() {
       return this._settings['display_time_flg'];
     },
+    get chat_area_placeholder_pc() {
+      return Number(this._settings['chat_trigger']) === 1 ? '（Shift+Enterで改行/Enterで送信）' : '';
+    },
+    get chat_area_placeholder_sp() {
+      return Number(this._settings['chat_trigger']) === 1 ? '（改行で送信）' : '';
+    },
     // パラメータ取得(設定の有無)
     get widget_outside_border_none() {
       return this._settings['widget_border_color'] === 'なし';

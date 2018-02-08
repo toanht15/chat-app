@@ -52,9 +52,9 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
   $scope.addMessage = function(type, message, prefix) {
     // ベースとなる要素をクローンし、メッセージを挿入する
     if (type === 're') {
-      var divElm = document.querySelector('#chatTalk div:not(.liRight)').cloneNode(true);
+      var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
     } else {
-      var divElm = document.querySelector('#chatTalk div.liRight').cloneNode(true);
+      var divElm = document.querySelector('#chatTalk div > li.sinclo_se.chat_right').parentNode.cloneNode(true);
     }
     var formattedMessage = $scope.simulatorSettings.createMessage(message, prefix);
     divElm.querySelector('li .details:not(.cName)').innerHTML = formattedMessage;
