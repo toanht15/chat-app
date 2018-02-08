@@ -40,7 +40,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
 
   $scope.visitorSendMessage = function() {
     var message = $('#sincloChatMessage').val()
-    if (typeof message === 'undefined' || message === '') {
+    if (typeof message === 'undefined' || message.trim() === '') {
       return;
     }
 
