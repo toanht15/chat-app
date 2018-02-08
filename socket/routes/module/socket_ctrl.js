@@ -1444,26 +1444,32 @@ io.sockets.on('connection', function (socket) {
                           }
                           //営業時間内の場合
                           if( Date.parse(new Date(date + publicHolidayData[i].start)) <= dateParse && dateParse < Date.parse(new Date(date + endTime)) ) {
-                            // チャット上限数をみる
-                            if ( scList.hasOwnProperty(d.siteKey) ) {
-                              var userIds = Object.keys(scList[d.siteKey].user);
-                              if ( userIds.length !== 0 ) {
-                                for (var i3 = 0; i3 < userIds.length; i3++) {
-                                  if ( Number(scList[d.siteKey].user[userIds[i]]) === Number(scList[d.siteKey].cnt[userIds[i]]) ) continue;
-                                  ret = true;
-                                  break;
-                                }
-                                //上限数を超えている場合
-                                if(ret != true) {
-                                  ret = false;
-                                  message = wating_call_sorry_message;
+                            //オペレータが待機している場合
+                            if ( (rows[0].display_type === 2 && getOperatorCnt(d.siteKey) > 0) ||
+                            (rows[0].display_type === 1 && getOperatorCnt(d.siteKey) > 0) ||
+                            (rows[0].display_type === 4 && getOperatorCnt(d.siteKey) > 0)
+                            ) {
+                              // チャット上限数をみる
+                              if ( scList.hasOwnProperty(d.siteKey) ) {
+                                var userIds = Object.keys(scList[d.siteKey].user);
+                                if ( userIds.length !== 0 ) {
+                                  for (var i3 = 0; i3 < userIds.length; i3++) {
+                                    if ( Number(scList[d.siteKey].user[userIds[i]]) === Number(scList[d.siteKey].cnt[userIds[i]]) ) continue;
+                                    ret = true;
+                                    break;
+                                  }
+                                  //上限数を超えている場合
+                                  if(ret != true) {
+                                    ret = false;
+                                    message = wating_call_sorry_message;
+                                  }
                                 }
                               }
-                              //待機中のオペレータがいない場合
-                              else {
-                                ret = false;
-                                message = no_standby_sorry_message;
-                              }
+                            }
+                            //待機中のオペレータがいない場合
+                            else {
+                              ret = false;
+                              message = no_standby_sorry_message;
                             }
                           }
                           //営業時間外の場合
@@ -1499,26 +1505,32 @@ io.sockets.on('connection', function (socket) {
                         //営業時間内の場合
                         if( Date.parse(new Date(date + timeData[i].start)) <= dateParse && dateParse < Date.parse(new Date(date + endTime)) ) {
                           check = true;
-                          // チャット上限数をみる
-                          if ( scList.hasOwnProperty(d.siteKey) ) {
-                            var userIds = Object.keys(scList[d.siteKey].user);
-                            if ( userIds.length !== 0 ) {
-                              for (var i2 = 0; i2 < userIds.length; i2++) {
-                                if ( Number(scList[d.siteKey].user[userIds[i]]) === Number(scList[d.siteKey].cnt[userIds[i]]) ) continue;
-                                ret = true;
-                                break;
-                              }
-                              //上限数を超えている場合
-                              if(ret != true) {
-                                ret = false;
-                                message = wating_call_sorry_message;
+                          //オペレータが待機している場合
+                          if ( (rows[0].display_type === 2 && getOperatorCnt(d.siteKey) > 0) ||
+                          (rows[0].display_type === 1 && getOperatorCnt(d.siteKey) > 0) ||
+                          (rows[0].display_type === 4 && getOperatorCnt(d.siteKey) > 0)
+                          ) {
+                            // チャット上限数をみる
+                            if ( scList.hasOwnProperty(d.siteKey) ) {
+                              var userIds = Object.keys(scList[d.siteKey].user);
+                              if ( userIds.length !== 0 ) {
+                                for (var i2 = 0; i2 < userIds.length; i2++) {
+                                  if ( Number(scList[d.siteKey].user[userIds[i]]) === Number(scList[d.siteKey].cnt[userIds[i]]) ) continue;
+                                  ret = true;
+                                  break;
+                                }
+                                //上限数を超えている場合
+                                if(ret != true) {
+                                  ret = false;
+                                  message = wating_call_sorry_message;
+                                }
                               }
                             }
-                            //待機中のオペレータがいない場合
-                            else {
-                              ret = false;
-                              message = no_standby_sorry_message;
-                            }
+                          }
+                          //待機中のオペレータがいない場合
+                          else {
+                            ret = false;
+                            message = no_standby_sorry_message;
                           }
                         }
                       }
@@ -1532,26 +1544,32 @@ io.sockets.on('connection', function (socket) {
                 }
                 //営業時間設定を利用しない場合
                 else {
-                  // チャット上限数をみる
-                  if ( scList.hasOwnProperty(d.siteKey) ) {
-                    var userIds = Object.keys(scList[d.siteKey].user);
-                    if ( userIds.length !== 0 ) {
-                      for (var i = 0; i < userIds.length; i++) {
-                        if ( Number(scList[d.siteKey].user[userIds[i]]) === Number(scList[d.siteKey].cnt[userIds[i]]) ) continue;
-                        ret = true;
-                        break;
-                      }
-                      //上限数を超えている場合
-                      if(ret != true) {
-                        ret = false;
-                        message = wating_call_sorry_message;
+                  //オペレータが待機している場合
+                  if ( (rows[0].display_type === 2 && getOperatorCnt(d.siteKey) > 0) ||
+                  (rows[0].display_type === 1 && getOperatorCnt(d.siteKey) > 0) ||
+                  (rows[0].display_type === 4 && getOperatorCnt(d.siteKey) > 0)
+                  ) {
+                    // チャット上限数をみる
+                    if ( scList.hasOwnProperty(d.siteKey) ) {
+                      var userIds = Object.keys(scList[d.siteKey].user);
+                      if ( userIds.length !== 0 ) {
+                        for (var i = 0; i < userIds.length; i++) {
+                          if ( Number(scList[d.siteKey].user[userIds[i]]) === Number(scList[d.siteKey].cnt[userIds[i]]) ) continue;
+                          ret = true;
+                          break;
+                        }
+                        //上限数を超えている場合
+                        if(ret != true) {
+                          ret = false;
+                          message = wating_call_sorry_message;
+                        }
                       }
                     }
-                    //待機中のオペレータがいない場合
-                    else {
-                      ret = false;
-                      message = no_standby_sorry_message;
-                    }
+                  }
+                  //待機中のオペレータがいない場合
+                  else {
+                    ret = false;
+                    message = no_standby_sorry_message;
                   }
                 }
               }
