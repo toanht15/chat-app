@@ -73,6 +73,8 @@ class HistoriesController extends AppController {
       $this->Session->write('authenticity',$this->params->query['isChat']);
     }
     $isChat = $this->Session->read('authenticity');
+    $this->log('type(アクセス履歴一覧)',LOG_DEBUG);
+    $this->log($isChat,LOG_DEBUG);
     $this->_searchProcessing(3);
     // 成果の名称リスト
     $this->set('achievementType', Configure::read('achievementType'));
@@ -1036,9 +1038,7 @@ class HistoriesController extends AppController {
         $this->paginate['THistory']['joins'][] = $joinToLandscapeData;
       }
     }
-    $this->log('pagenate開始',LOG_DEBUG);
     $historyList = $this->paginate('THistory');
-    $this->log('pagenate終了',LOG_DEBUG);
 
     // TODO 良いやり方が無いか模索する
     $historyIdList = [];
@@ -1381,6 +1381,8 @@ class HistoriesController extends AppController {
       $this->Session->write('authenticity',$this->params->query['isChat']);
     }
     $type = $this->Session->read('authenticity');
+    $this->log('type(csv)',LOG_DEBUG);
+    $this->log($type,LOG_DEBUG);
     $data = $this->Session->read('Thistory');
 
     /* 顧客情報に関する検索条件 会社名、名前、電話、メール検索 */
@@ -1585,6 +1587,8 @@ class HistoriesController extends AppController {
         ]
       ];
 
+      $this->log('type(join直前)',LOG_DEBUG);
+      $this->log($type,LOG_DEBUG);
       // チャットのみ表示との切り替え（担当者検索の場合、強制的にINNER）
       if ( strcmp($type, 'true') === 0 && !(!empty($data['THistoryChatLog']) && !empty(array_filter($data['THistoryChatLog']))) ) {
         $joinToChat['type'] = "LEFT";
