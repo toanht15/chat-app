@@ -3377,7 +3377,8 @@ var socket, // socket.io
         sinclo.trigger.flg = true;
         var emitData = userInfo.getSendList();
         emitData.widget = window.sincloInfo.widgetDisplay;
-        emit('connectSuccess', {confirm: false, reconnect: true, widget: window.sincloInfo.widgetDisplay}, function(ev){
+        var tmpAutoMessages = sinclo.chatApi.autoMessages.get(true);
+        emit('connectSuccess', {confirm: false, reconnect: true, tmpAutoMessages: tmpAutoMessages, widget: window.sincloInfo.widgetDisplay}, function(ev){
           emit('customerInfo', emitData);
         });
         common.widgetHandler.show();
@@ -3593,8 +3594,10 @@ var socket, // socket.io
       if(!sinclo.chatApi.inactiveCloseFlg) {
         var sincloBox = document.getElementById('sincloBox');
         if ( sincloBox ) {
-          //sincloBox.parentNode.removeChild(sincloBox);
           common.widgetHandler.hide();
+          if(window.sincloInfo.contract.chat && document.getElementsByTagName("sinclo-chat")[0]) {
+            sinclo.chatApi.clearChatMessages();
+          }
         }
       }
       popup.remove();

@@ -801,19 +801,6 @@ class HistoriesController extends AppController {
       $data = $this->Session->read('Thistory');
       /* ○ 検索処理 */
 
-      //ipアドレス
-      if(isset($data['History']['ip_address']) && $data['History']['ip_address'] !== "") {
-        $this->paginate['THistory']['conditions']['THistory.ip_address LIKE'] = '%'.$data['History']['ip_address'].'%';
-      }
-      //開始日
-      if(!empty($data['History']['start_day'])) {
-        $this->paginate['THistory']['conditions']['THistory.access_date >='] = $data['History']['start_day'].' 00:00:00';
-      }
-      //終了日
-      if(!empty($data['History']['finish_day'] )) {
-        $this->paginate['THistory']['conditions']['THistory.access_date <='] = $data['History']['finish_day'].' 23:59:59';
-      }
-
       /* 顧客情報に関する検索条件 会社名、名前、電話、メール検索 */
       if((isset($data['History']['company_name']) && $data['History']['company_name'] !== "") || (isset($data['History']['customer_name']) && $data['History']['customer_name'] !== "") || (isset($data['History']['telephone_number']) && $data['History']['telephone_number'] !== "") || (isset($data['History']['mail_address']) && $data['History']['mail_address'] !== "") ) {
         //会社名が入っている場合
@@ -826,11 +813,20 @@ class HistoriesController extends AppController {
             ]
           ]);
           if(!empty($companyData)) {
+            $visitorsIds = $this->_searchCustomer($data['History']);
+            $chatCond['visitors_id'] = $visitorsIds;
+
             $ipAddressList = [];
             foreach($companyData as $k => $v) {
               $ipAddressList[] = $v['MLandscapeData']['ip_address'];
             }
-            $this->paginate['THistory']['conditions']['THistory.ip_address'] = $ipAddressList;
+            $this->paginate['THistory']['conditions'] = array(
+              'THistory.m_companies_id' => $this->userInfo['MCompany']['id'],
+              'OR' => array(
+                'THistory.ip_address' => $ipAddressList,
+                'THistory.visitors_id' => $visitorsIds
+              )
+            );
           }
           else {
             $visitorsIds = $this->_searchCustomer($data['History']);
@@ -844,6 +840,20 @@ class HistoriesController extends AppController {
           $chatCond['visitors_id'] = $visitorsIds;
         }
       }
+
+      //ipアドレス
+      if(isset($data['History']['ip_address']) && $data['History']['ip_address'] !== "") {
+        $this->paginate['THistory']['conditions']['THistory.ip_address LIKE'] = '%'.$data['History']['ip_address'].'%';
+      }
+      //開始日
+      if(!empty($data['History']['start_day'])) {
+        $this->paginate['THistory']['conditions']['THistory.access_date >='] = $data['History']['start_day'].' 00:00:00';
+      }
+      //終了日
+      if(!empty($data['History']['finish_day'] )) {
+        $this->paginate['THistory']['conditions']['THistory.access_date <='] = $data['History']['finish_day'].' 23:59:59';
+      }
+
       // 担当者に関する検索条件
       $joinType = 'LEFT';
       if ( isset($data['THistoryChatLog']['responsible_name']) && $data['THistoryChatLog']['responsible_name'] !== "" ) {
@@ -1026,9 +1036,7 @@ class HistoriesController extends AppController {
         $this->paginate['THistory']['joins'][] = $joinToLandscapeData;
       }
     }
-    $this->log('pagenate開始',LOG_DEBUG);
     $historyList = $this->paginate('THistory');
-    $this->log('pagenate終了',LOG_DEBUG);
 
     // TODO 良いやり方が無いか模索する
     $historyIdList = [];
@@ -1073,17 +1081,11 @@ class HistoriesController extends AppController {
     $this->set('historyList', $historyList);
     $this->set('stayList', $stayList);
     $this->set('mCustomerList', $mCustomerList);
-    $this->log('チャット担当者リスト開始',LOG_DEBUG);
     $this->set('chatUserList', $this->_getChatUser(array_keys($stayList))); // チャット担当者リスト
-    $this->log('チャット担当者リスト終了',LOG_DEBUG);
     $this->set('groupByChatChecked', $type);
-    $this->log('キャンペーン開始',LOG_DEBUG);
     $this->set('campaignList', $this->TCampaign->getList());
-    $this->log('キャンペーン終了',LOG_DEBUG);
-    $this->log('除外情報開始',LOG_DEBUG);
     /* 除外情報取得 */
     $this->set('excludeList', $this->MCompany->getExcludeList($this->userInfo['MCompany']['id']));
-    $this->log('除外情報終了',LOG_DEBUG);
   }
 
   /**
@@ -1373,6 +1375,56 @@ class HistoriesController extends AppController {
     $type = $this->Session->read('authenticity');
     $data = $this->Session->read('Thistory');
 
+    /* 顧客情報に関する検索条件 会社名、名前、電話、メール検索 */
+    if((isset($data['History']['company_name']) && $data['History']['company_name'] !== "") || (isset($data['History']['customer_name']) && $data['History']['customer_name'] !== "") || (isset($data['History']['telephone_number']) && $data['History']['telephone_number'] !== "") || (isset($data['History']['mail_address']) && $data['History']['mail_address'] !== "") ) {
+      //会社名が入っている場合
+      if((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && (isset($data['History']['company_name']) && $data['History']['company_name'] !== "")) {
+        //会社名がランドスケープテーブルに登録されている場合
+        $companyConditions = [
+          'fields' => 'lbc_code,ip_address,org_name',
+          'conditions' => [
+            'MLandscapeData.org_name LIKE' => '%'. $data['History']['company_name'].'%'
+          ]
+        ];
+        // MLの企業情報を閲覧できない企業であれば
+        if(!$this->isViewableMLCompanyInfo()) {
+          $companyConditions['conditions']['NOT']['MLandscapeData.lbc_code'] = LandscapeComponent::ML_LBC_CODE;
+        }
+        $companyData = $this->MLandscapeData->find('all', $companyConditions);
+
+        if(!empty($companyData)) {
+          $visitorsIds = $this->_searchCustomer($data['History']);
+          $chatCond['visitors_id'] = $visitorsIds;
+
+          $ipAddressList = [];
+          foreach($companyData as $k => $v) {
+            $ipAddressList[] = $v['MLandscapeData']['ip_address'];
+          }
+          $conditions[] = [
+            'THistory.m_companies_id' => $this->userInfo['MCompany']['id'],
+            'OR' => [
+              'THistory.ip_address' => $ipAddressList,
+              'THistory.visitors_id' => $visitorsIds
+            ]
+          ];
+        }
+        else {
+            $visitorsIds = $this->_searchCustomer($data['History']);
+            $conditions[] = [
+              'THistory.visitors_id'=> $visitorsIds
+            ];
+            $chatCond['visitors_id'] = $visitorsIds;
+          }
+        }
+      else {
+        $visitorsIds = $this->_searchCustomer($data['History']);
+        $conditions[] = [
+          'THistory.visitors_id'=> $visitorsIds
+        ];
+        $chatCond['visitors_id'] = $visitorsIds;
+      }
+    }
+
     if(isset($data['History']['ip_address']) && $data['History']['ip_address'] !== "") {
       $conditions[] = [
         'THistory.ip_address LIKE' => '%'.$data['History']['ip_address'].'%',
@@ -1392,49 +1444,6 @@ class HistoriesController extends AppController {
         'THistory.access_date <=' => $data['History']['finish_day'].' 23:59:59',
         'THistory.m_companies_id' => $this->userInfo['MCompany']['id']
       ];
-    }
-
-    /* 顧客情報に関する検索条件 会社名、名前、電話、メール検索 */
-    if((isset($data['History']['company_name']) && $data['History']['company_name'] !== "") || (isset($data['History']['customer_name']) && $data['History']['customer_name'] !== "") || (isset($data['History']['telephone_number']) && $data['History']['telephone_number'] !== "") || (isset($data['History']['mail_address']) && $data['History']['mail_address'] !== "") ) {
-      //会社名が入っている場合
-      if((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && (isset($data['History']['company_name']) && $data['History']['company_name'] !== "")) {
-        //会社名がランドスケープテーブルに登録されている場合
-        $companyConditions = [
-          'fields' => 'lbc_code,ip_address,org_name',
-          'conditions' => [
-            'MLandscapeData.org_name LIKE' => '%'. $data['History']['company_name'].'%'
-          ]
-        ];
-        // MLの企業情報を閲覧できない企業であれば
-        if(!$this->isViewableMLCompanyInfo()) {
-          $companyConditions['conditions']['NOT']['MLandscapeData.lbc_code'] = LandscapeComponent::ML_LBC_CODE;
-        }
-        $companyData = $this->MLandscapeData->find('all', $companyConditions);
-
-        if(!empty($companyData)) {
-          $ipAddressList = [];
-          foreach($companyData as $k => $v) {
-            $ipAddressList[] = $v['MLandscapeData']['ip_address'];
-          }
-          $conditions[] = [
-            'THistory.ip_address' =>  $ipAddressList
-          ];
-        }
-        else {
-          $visitorsIds = $this->_searchCustomer($data['History']);
-          $conditions[] = [
-            'THistory.visitors_id' => $visitorsIds
-          ];
-          $chatCond['visitors_id'] = $visitorsIds;
-        }
-      }
-      else {
-        $visitorsIds = $this->_searchCustomer($data['History']);
-        $conditions[] = [
-          'THistory.visitors_id' => $visitorsIds
-        ];
-        $chatCond['visitors_id'] = $visitorsIds;
-      }
     }
 
     $joinType = 'LEFT';
@@ -1567,8 +1576,12 @@ class HistoriesController extends AppController {
           'THistoryChatLog2.t_histories_id = THistory.id'
         ]
       ];
+
       // チャットのみ表示との切り替え（担当者検索の場合、強制的にINNER）
       if ( strcmp($type, 'true') === 0 && !(!empty($data['THistoryChatLog']) && !empty(array_filter($data['THistoryChatLog']))) ) {
+        $joinToChat['type'] = "LEFT";
+      }
+      else if(empty($type)) {
         $joinToChat['type'] = "LEFT";
       }
       else {
