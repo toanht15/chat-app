@@ -147,11 +147,15 @@ var CompanyFunctionManager = function() {
       monitorPollingMode : 'monitorPollingMode'
     },
     set : function(companyKey, coreSettings) {
-      if(typeof(coreSettings) === 'string') {
-        _list[companyKey] = JSON.parse(coreSettings);
-      } else {
-        // object
-        _list[companyKey] = coreSettings;
+      try {
+        if (typeof(coreSettings) === 'string') {
+          _list[companyKey] = JSON.parse(coreSettings);
+        } else {
+          // object
+          _list[companyKey] = coreSettings;
+        }
+      } catch(e) {
+        console.log("Error while set functionList companyKey : " + companyKey);
       }
     },
     isEnabled : function(companyKey, funcName) {
@@ -1666,7 +1670,7 @@ io.sockets.on('connection', function (socket) {
     getInformations: function (visitorId, siteKey, callback) {
       pool.query('SELECT informations FROM m_customers WHERE m_companies_id = ? AND visitors_id = ? LIMIT 1;', [companyList[siteKey], visitorId], function(err, row) {
         if ( err !== null && err !== '' ) callback([]); // DB接続断対応
-        if(isset(row[0].informations)) {
+        if(isset(row) && isset(row[0]) && isset(row[0].informations)) {
           callback(JSON.parse(row[0].informations));
         } else {
           callback([]);
@@ -2143,7 +2147,7 @@ io.sockets.on('connection', function (socket) {
   // アクティブ状態を送る
   socket.on("sendTabInfo", function(d){
     var obj = JSON.parse(d);
-    if(functionManager.isEnabled(obj.siteKey, functionManager.keyList.monitorPollingMode)) {
+    if(!functionManager.isEnabled(obj.siteKey, functionManager.keyList.monitorPollingMode)) {
       emit.toCompany('retTabInfo', d, obj.siteKey);
     }
 
