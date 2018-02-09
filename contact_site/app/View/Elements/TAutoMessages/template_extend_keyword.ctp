@@ -10,7 +10,11 @@
           <option value="2">のいずれかを含む</option>
         </select>
       </div>
-      <s>※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
+      <s style="margin-top:0.4em">※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
+      <?php if(strcmp($label, 'URL') !== 0): ?>
+        <s style="color:#F57E7E;" >※スペース（空白）を含むキーワードを設定する場合はキーワード全体をダブルクォーテーション（"）で囲んでください。</s>
+        <s style="color:#F57E7E;" >（例："山田 花子"）</s>
+      <?php endif; ?>
     </div>
     <label class="checkboxLabel"><input type="checkbox" class="last" ng-model="setItem.keyword_exclusions_enabled" ng-init="setItem.keyword_exclusions_enabled ? setItem.keyword_exclusions_enabled = setItem.keyword_exclusions_enabled : setItem.keyword_exclusions_enabled = (setItem.keyword_exclusions !== '')"/>対象外とするキーワードを設定する</label>
     <div class="wrap" ng-if="setItem.keyword_exclusions_enabled">
@@ -22,7 +26,11 @@
           <option value="2">のいずれかを含む</option>
         </select>
       </div>
-      <s ng-class="{bothKeyword:setItem.keyword_contains_enabled && setItem.keyword_exclusions_enabled}">※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
+      <s style="margin-top:0.4em" ng-class="{bothKeyword:setItem.keyword_contains_enabled && setItem.keyword_exclusions_enabled}">※複数キーワードを指定する場合はスペースで区切って入力して下さい。</s>
+      <?php if(strcmp($label, 'URL') !== 0): ?>
+        <s style="color:#F57E7E;" ng-class="{bothKeyword:setItem.keyword_contains_enabled && setItem.keyword_exclusions_enabled}">※スペース（空白）を含むキーワードを設定する場合はキーワード全体をダブルクォーテーション（"）で囲んでください。</s>
+        <s style="color:#F57E7E;" ng-class="{bothKeyword:setItem.keyword_contains_enabled && setItem.keyword_exclusions_enabled}">（例："山田 花子"）</s>
+      <?php endif; ?>
     </div>
   </div>
 </li>

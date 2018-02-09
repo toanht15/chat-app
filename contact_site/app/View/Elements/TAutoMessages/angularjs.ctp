@@ -573,6 +573,38 @@ sincloApp.controller('MainController', function($scope) {
       $('#TAutoMessageAction').on('keydown keyup', function(e) {
         $scope.createMessage();
       });
+      $(document).on('keyup', 'input[name^="keyword_"]', function(e){
+        var val = $(this).val();
+        console.log(val);
+        if(val.replace(/".*?"/g, "").match(/.+\s+.+/)) {
+          if($(this).next('select').val() === "1") {
+            $(this).parents('li').next('li').find('input[value="1"]').prop("disabled", true).parents('label').css('color', '#CCCCCC');
+            $(this).parents('li').next('li').find('input[value="2"]').attr("checked", true);
+          } else {
+            $(this).parents('li').next('li').find('input[value="1"]').prop("disabled", false).parents('label').css('color', '#595959');
+          }
+        } else {
+          $(this).parents('li').next('li').find('input[value="1"]').prop("disabled", false).parents('label').css('color', '#595959');
+        }
+      });
+      $(document).on('change', '.searchKeywordContainsTypeSelect,.searchKeywordExclusionsTypeSelect', function(){
+        var target = $(this).parents('.keywordWrapper').find('input[name^="keyword_"]');
+        target.each(function(elm){
+          var val = $(this).val();
+          console.log(val);
+          if(val.replace(/".*?"/g, "").match(/.+\s+.+/)) {
+            if($(this).next('select').val() === "1") {
+              $(this).parents('li').next('li').find('input[value="1"]').prop("disabled", true).parents('label').css('color', '#CCCCCC');
+              $(this).parents('li').next('li').find('input[value="2"]').attr("checked", true);
+              return false;
+            } else {
+              $(this).parents('li').next('li').find('input[value="1"]').prop("disabled", false).parents('label').css('color', '#595959');
+            }
+          } else {
+            $(this).parents('li').next('li').find('input[value="1"]').prop("disabled", false).parents('label').css('color', '#595959');
+          }
+        });
+      });
       $scope.$watch('main.chat_textarea', function(value) {
         $scope.toggleChatTextareaView(value);
       });

@@ -124,6 +124,26 @@
                                 $("#lastSpeechLabel").css('width','');
                                 $("#achievement").css('width','');
                                 $("#chatHistory").css('height','100%');
+                                var userAgent = window.navigator.userAgent.toLowerCase();
+                                if(parseInt($(".eachInfo").css('width')) < 386 && parseInt($(".eachInfo").css('width')) != 35) {
+                                  if(userAgent.indexOf('msie') != -1 ||  userAgent.indexOf('trident') != -1)  {
+                                    $(".eachInfo").css('width',$("#info").innerWidth()-20);
+                                    $(".info").css('width',$("#info").innerWidth()-20);
+                                    $(".campaignInfo").css('width',$("#campaign").innerWidth()+ 10);
+                                  }
+                                  else {
+                                    $(".eachInfo").css('width',$("#info").innerWidth());
+                                    $(".info").css('width',$("#info").innerWidth());
+                                  }
+                                }
+                                else {
+                                  if(userAgent.indexOf('msie') != -1 ||  userAgent.indexOf('trident') != -1)  {
+                                    $(".info").css('width',$("#info").innerWidth() - 30);
+                                  }
+                                  else {
+                                    $(".info").css('width',$("#info").innerWidth());
+                                  }
+                                }
                             }
                             panel_1.find('.splitter_panel').eq(0).height(self.height());
                             panel_2.find('.splitter_panel').eq(0).height(self.height());
