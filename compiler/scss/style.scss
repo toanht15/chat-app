@@ -8799,3 +8799,112 @@ ul#anotherWindow_color-bar-right {
 .fa-chevron-left:before {
   content: "";
 }
+
+/* ## 問合せページ
+--------------------------------------------- */
+
+body.contact-page {
+  .site-header {
+    padding-top: 2.2rem;
+    padding-bottom: 2.2rem;
+
+    &.shrink {
+      padding-top: 1.4808rem;
+      padding-bottom: 1.4808rem;
+    }
+  }
+
+  input, select, textarea {
+    font-size: 1.4rem;
+    padding: .5rem;
+    border: .1rem solid #f0f1f2;
+  }
+
+  #ninja_forms_required_items, .nf-field-container {
+    margin-bottom: -.1rem;
+    border: solid 0.1rem #f0f1f2;
+    padding: 1rem 1.5rem;
+
+    &:before  {
+      content: '';
+      /*background-color: $lighter;*/
+      width: 34.5%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0%;
+    }
+  }
+
+  .html-container,
+  .submit-container {
+    border: 0;
+    padding: 0;
+    margin-top: 1.6rem;
+    &:before  {
+      background-color: #fff;
+    }
+  }
+
+  .submit-container,
+  .nf-error-msg {
+    text-align: center;
+  }
+
+  .button,
+  button,
+  input[type="button"],
+  input[type="reset"],
+  input[type="submit"] {
+     background-color: #828282;
+     border: 0;
+     border-radius: .4rem;;
+     color: #fff;
+     cursor: pointer;
+     font-family: "メイリオ",Meiryo,"ヒラギノ角ゴ Pro W3","Hiragino Kaku Gothic Pro","ＭＳ Ｐゴシック","MS PGothic",sans-serif;
+     font-size: 1.6rem;
+     font-weight: 700;
+     padding: 1em 2em;
+     text-decoration: none;
+     $white-space: nowrap;
+     display: inline-block;
+     width: auto;
+     height: auto;
+     line-height: 1;
+     box-shadow: inset 0 0 0 9rem rgba(#fff, 0), 0 0 0 -1rem rgba(#828282, 0);
+     &:hover {
+         color: #fff;
+     }
+     &.gray {
+         background-color: #b5b5b5;
+
+         &:hover {
+           background-color: darken(#828282, 20%);
+         }
+     }
+     +button,
+     +.button {
+         margin-top: 1em;
+         clear: both;
+     }
+  }
+
+  .label-left .nf-field-label {
+    text-align: left;
+    z-index: 1;
+
+    &:after  {
+      content: '';
+      width: 0;
+      height: 100%;
+      position: absolute;
+      border-right: .1rem solid #f0f1f2;
+      top: 0;
+      left: 34.5%;
+    }
+  }
+
+  .ninja-forms-req-symbol {
+    float: right;
+  }
+}

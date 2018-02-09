@@ -53,7 +53,7 @@ class ContractController extends AppController
   public function beforeFilter(){
     parent::beforeFilter();
     $this->set('title_for_layout', 'サイトキー管理');
-    $this->Auth->allow(['remoteSaveForm']);
+    $this->Auth->allow(['index','add','edit','remoteSaveForm']);
     header('Access-Control-Allow-Origin: *');
   }
 
@@ -78,19 +78,19 @@ class ContractController extends AppController
     if( $this->request->is('post') ) {
       $this->autoRender = false;
       $this->layout = "ajax";
-      $this->log($this->data, LOG_DEBUG);
       $data = $this->getParams();
+      $this->log($data, LOG_DEBUG);
 
       try {
         $this->processTransaction($data['MCompany'], $data['Contract'], $data['MAgreements']);
       } catch(Exception $e) {
-        $this->log("Exception Occured : ".$e->getMessage(), LOG_WARNING);
+        /*$this->log("Exception Occured : ".$e->getMessage(), LOG_WARNING);
         $this->log($e->getTraceAsString(),LOG_WARNING);
         $this->response->statusCode(400);
         return json_encode([
           'success' => false,
           'message' => $e->getMessage()
-        ], JSON_UNESCAPED_UNICODE);
+        ], JSON_UNESCAPED_UNICODE);*/
       }
     }
   }
@@ -314,6 +314,21 @@ class ContractController extends AppController
     $password = $this->generateRandomPassword(8);
 
     $this->MAgreements->create();
+    if(empty($agreementInfo['application_name'])) {
+      $agreementInfo['application_name'] = "";
+    }
+    if(empty($agreementInfo['application_department'])) {
+      $agreementInfo['application_department'] = "";
+    }
+    if(empty($agreementInfo['application_position'])) {
+      $agreementInfo['application_position'] = "";
+    }
+    if(empty($agreementInfo['installation_url'])) {
+      $agreementInfo['installation_url'] = "";
+    }
+    if(empty($agreementInfo['telephone_number'])) {
+      $agreementInfo['telephone_number'] = "";
+    }
     $this->MAgreements->set([
       'm_companies_id' => $addedCompanyInfo['id'],
       'application_day' => date("Y-m-d"), // FIXME（自動発行）
@@ -321,10 +336,19 @@ class ContractController extends AppController
       'trial_end_day' => $agreementInfo['trial_end_day'],
       'agreement_start_day' => $agreementInfo['agreement_start_day'],
       'agreement_end_day' => $agreementInfo['agreement_end_day'],
-      'admin_password' => $password
+      'application_department' => $agreementInfo['application_department'],
+      'application_position' => $agreementInfo['application_position'],
+      'application_name' => $agreementInfo['application_name'],
+      'installation_url' => $agreementInfo['installation_url'],
+      'admin_password' => $password,
+      'telephone_number' => $agreementInfo['telephone_number'],
     ]);
+    //if(!$this->MAgreements->validates()) {
+      // 画面に返す
+      //$errors = $this->MAgreements->validationErrors;
+      //return $errors;
+    //}
     $this->MAgreements->save();
-
     // スーパー管理者情報追加
     $tmpData = [
       "m_companies_id" => $addedCompanyInfo['id'],
@@ -337,12 +361,17 @@ class ContractController extends AppController
     $this->MUser->create();
     $this->MUser->set($tmpData);
     if(!$this->MUser->validates()) {
-      throw new Exception("MUser validation error");
+      $this->log('validation1!',LOG_DEBUG);
+      // 画面に返す
+      $errors = $this->MUser->validationErrors;
+      return $errors;
+      //throw new Exception("MUser validation error");
     }
-    $this->MUser->save();
+    $this->MAgreements->save();
   }
 
   private function createFirstAdministratorUser($m_companies_id, $userInfo) {
+    $errors = [];
     $tmpData = [
         "m_companies_id" => $m_companies_id,
         "user_name" => $userInfo["user_name"],
@@ -353,10 +382,22 @@ class ContractController extends AppController
     ];
     $this->MUser->create();
     $this->MUser->set($tmpData);
+    $this->log('MUser',LOG_DEBUG);
+    $this->log($tmpData,LOG_DEBUG);
     if(!$this->MUser->validates()) {
-      throw new Exception("MUser validation error");
+      $this->log('validation2!',LOG_DEBUG);
+      $this->MAgreements->rollback();
+      $this->MUser->rollback();
+      // 画面に返す
+      $errors = $this->MUser->validationErrors;
+      $this->log('errors',LOG_DEBUG);
+      $this->log($errors,LOG_DEBUG);
+      return $errors;
+      //throw new Exception("MUser validation error");
     }
-    $this->MUser->save();
+    else {
+      $this->MUser->save();
+    }
   }
 
   private function createSuperAdministratorUser($addedCompanyInfo, $userInfo) {
