@@ -423,6 +423,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     $scope.operatorList = <?= json_encode($userList) ?>;
     $scope.operatorListSortMode = 'status';
     $scope.operatorListSortOrder = 'desc';
+    $scope.pollingModeIntervalTimer = null;
 
     /* 資料検索 */
     $scope.tagList = {};
@@ -1147,10 +1148,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     }
 
     $scope.getCustomerInfoFromMonitor = function(m){
-      $scope.getCustomerInfo(m.userId, function(ret){
-        $scope.customerList[m.userId] = ret;
-        $scope.$apply();
-      });
+      $scope.customerList[m.userId] = m.customerInfo;
     };
 
     // 顧客の詳細情報を取得する
@@ -1962,6 +1960,15 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       $scope.oprWaitCnt = ( obj.userCnt < 1 ) ? 1 : obj.userCnt;
 
       $scope.reload(); // 整っているか確認
+
+      if(contract.monitorPollingMode) {
+        if($scope.pollingModeIntervalTimer) {
+          clearInterval($scope.pollingModeIntervalTimer);
+        }
+        $scope.pollingModeIntervalTimer = setInterval(function(e){
+          emit('getCustomerList',{});
+        }, <?= C_REALTIME_MONITOR_POLLING_MODE_INTERVAL_MSEC ?>);
+      }
     });
 
     socket.on('outCompanyUser', function (data) {
@@ -2378,6 +2385,12 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     socket.on("sendChatResult", function(d){
       var obj = JSON.parse(d),
           elm = document.getElementById('sendMessage');
+      if(obj.customerInfo) {
+        pushToList(obj.customerInfo);
+        if ('chat' in obj && String(obj.chat) === "<?=$muserId?>") {
+          pushToChatList(obj.tabId);
+        }
+      }
       if ( !(obj.tabId in $scope.monitorList) ) return false;
       if ( obj.ret ) {
         // 対象のタブを開いている場合
@@ -2418,7 +2431,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         if ( obj.tabId === chatApi.tabId && $scope.monitorList[obj.tabId].chat === myUserId && $("#sendMessage").is(":focus") ) {
             chatApi.isReadMessage($scope.monitorList[obj.tabId]);
         }
-
+        $timeout(function(){
+          console.log("HOGEEEEEEEEEEEEEEEEEEe");
+          $scope.$apply();
+        },100);
       }
       else {
         alert('メッセージの送信に失敗しました。');
