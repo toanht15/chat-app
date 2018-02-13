@@ -11,8 +11,13 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
   // アクション設定の取得・初期化
   var setActivity = <?= !empty($this->data['TChatbotScenario']['activity']) ? json_encode($this->data['TChatbotScenario']['activity'], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) : "{}" ?>;
-  var setActionListTmp = (typeof(setActivity) === "string") ? JSON.parse(setActivity) : [];
-  $scope.setActionList = setActionListTmp;
+  var setActionListTmp = (typeof(setActivity) === "string") ? JSON.parse(setActivity).scenarios : {};
+  $scope.setActionList = [];
+  for (var key in setActionListTmp) {
+    if (setActionListTmp.hasOwnProperty(key)) {
+      $scope.setActionList.push(setActionListTmp[key]);
+    }
+  }
 
   $scope.inputTypeList = <?php echo json_encode($chatbotScenarioInputType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.sendMailTypeList = <?php echo json_encode($chatbotScenarioSendMailType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
@@ -138,9 +143,11 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
   // jsonデータ作る
   this.createJsonData = function() {
-    var setActionList = [];
+    var activity = {};
+    activity.chatbotType = "1"; // 現在、複数タイプ存在しないため、固定で1を設定する
+    activity.scenarios = {};
 
-    // setActionList の内容をチェックする
+    // activity の内容をチェックする
     angular.forEach($scope.setActionList, function(originalAction, index) {
       var action = angular.copy(originalAction);
       action.messageIntervalTimeSec = $scope.messageIntervalTimeSec;
@@ -164,10 +171,10 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       }
 
       if (action !== null) {
-        setActionList.push(action);
+        activity.scenarios[index] = action;
       };
     });
-    return JSON.stringify(setActionList);
+    return JSON.stringify(activity);
   };
 
   this.controllHearingSettingView = function(actionStep) {
@@ -334,8 +341,10 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   $scope.widget.settings = getWidgetSettings();
 
   // シミュレーションの起動(ダイアログ表示)
-  $scope.$on('openSimulator', function(event, setActionList) {
-    $scope.setActionList = JSON.parse(setActionList);
+  $scope.$on('openSimulator', function(event, activity) {
+    var scenarios = JSON.parse(activity).scenarios;
+    console.log(scenarios);
+    $scope.setActionList = scenarios;
     $('#tchatbotscenario_simulator_wrapper').show();
     $timeout(function() {
       $scope.$apply();
