@@ -445,26 +445,34 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var isHideRealTimeMonitor = contract.hideRealtimeMonitor;
       var result = {}, targetField;
       targetField = ( Number($scope.fillterTypeId) === 2 ) ? 'ipAddress' : 'accessId';
-      if(isHideRealTimeMonitor && !contract.monitorPollingMode) {
+      if(isHideRealTimeMonitor) {
         if (forceResult) {
           $scope.searchResult = array;
           result = array;
         } else if ($scope.searchText.length >= 4 && $scope.searchText !== $scope.beforeInputValue) {
           $scope.searchProcess($scope.searchText, $scope.fillterTypeId);
-          $scope.monitorList = [];
-          $scope.chatList = [];
-          result = [];
+          if(!contract.monitorPollingMode) {
+            $scope.monitorList = [];
+            $scope.chatList = [];
+            result = [];
+          } else {
+            result = array;
+          }
         } else if ($scope.searchText.length >= 4 && $scope.searchResult.length > 0) {
           result = $scope.monitorList;
         } else if($scope.searchText.length < 4) {
-          $scope.searchResult = [];
-          if($scope.monitorList.length > 0) {
-            $scope.monitorList = [];
+          if(!contract.monitorPollingMode) {
+            $scope.searchResult = [];
+            if ($scope.monitorList.length > 0) {
+              $scope.monitorList = [];
+            }
+            if ($scope.chatList > 0) {
+              $scope.chatList = [];
+            }
+            result = [];
+          } else {
+            result = array;
           }
-          if($scope.chatList > 0) {
-            $scope.chatList = [];
-          }
-          result = [];
         }
       } else {
         if ( $scope.searchText ) {
@@ -2024,7 +2032,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         }
       });
       Object.keys($scope.monitorList).forEach(function(elm, index, arr){
-        if($scope.tmpMonitorList[elm]) {
+        if($scope.tmpMonitorList[elm] || (contract.hideRealtimeMonitor && $scope.searchText.length === 4)) {
           return;
         } else {
           delete $scope.monitorList[elm];
@@ -2422,12 +2430,13 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     socket.on("sendChatResult", function(d){
       var obj = JSON.parse(d),
           elm = document.getElementById('sendMessage');
-      if(obj.customerInfo) {
-        pushToList(obj.customerInfo);
-        if ('chat' in obj && String(obj.chat) === "<?=$muserId?>") {
-          pushToChatList(obj.tabId);
+      if(obj.customerInfo && obj.notifyToCompany) {
+        if(!(obj.tabId in $scope.monitorList)) {
+          pushToList(obj.customerInfo);
+          if ('chat' in obj && String(obj.chat) === "<?=$muserId?>") {
+            pushToChatList(obj.tabId);
+          }
         }
-        $scope.chatReceived = true;
       }
       if ( !(obj.tabId in $scope.monitorList) ) return false;
       if ( obj.ret ) {

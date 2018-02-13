@@ -422,29 +422,49 @@ function getConnectInfo(o){
   if ( isset(responderId) && isset(connectToken) ) {
     o.responderId = responderId;
     o.connectToken = connectToken;
+  } else {
+    delete o['connectToken'];
+    if(!isset(coBrowseConnectToken)) {
+      delete o['responderId'];
+    }
   }
   if ( isset(responderId) && isset(coBrowseConnectToken) ) {
     o.responderId = responderId;
     o.coBrowseConnectToken = coBrowseConnectToken;
+  } else {
+    delete o['coBrowseConnectToken'];
+    if(!isset(connectToken)) {
+      delete o['responderId'];
+    }
   }
   if( isset(chatUserId) ) {
     o.chat = chatUserId;
+  } else {
+    o.chat = null;
   }
   var docShareId = getSessionId(o.siteKey, o.tabId, 'docShareId');
   if ( isset(docShareId) ) {
     o.docShareId = docShareId;
+  } else {
+    delete o['docShareId'];
   }
   var sincloSessionId = getSessionId(o.siteKey, o.tabId, 'sincloSessionId');
   if ( isset(sincloSessionId) ) {
     o.sincloSessionId = sincloSessionId;
+  } else {
+    o.sincloSessionId = null;
   }
   var orgName = getSessionId(o.siteKey, o.tabId, 'orgName');
   if ( isset(orgName) ) {
     o.orgName = orgName;
+  } else {
+    o.orgName = "";
   }
   var lbcCode = getSessionId(o.siteKey, o.tabId, 'lbcCode');
   if ( isset(lbcCode) ) {
     o.lbcCode = lbcCode;
+  } else {
+    o.lbcCode = "";
   }
   return o;
 }
