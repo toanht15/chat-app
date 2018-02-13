@@ -66,8 +66,11 @@ class ContractController extends AppController
     $this->set('companyList', $this->paginate('MCompany'));
   }
 
-  public function add() {
+  public function add($data) {
+    $this->log('contrallのaddに入りました',LOG_DEBUG);
+    $this->log($data,LOG_DEBUG);
     Configure::write('debug', 0);
+
     if($this->isOverAllUserCountLimit()) {
       $this->set('overLimitMessage', 'アカウントの登録上限数を超過しているため、新規に企業キーを登録できません。');
       return;
@@ -79,18 +82,33 @@ class ContractController extends AppController
       $this->autoRender = false;
       $this->layout = "ajax";
       $data = $this->getParams();
-      $this->log($data, LOG_DEBUG);
 
       try {
         $this->processTransaction($data['MCompany'], $data['Contract'], $data['MAgreements']);
       } catch(Exception $e) {
-        /*$this->log("Exception Occured : ".$e->getMessage(), LOG_WARNING);
+        $this->log("Exception Occured : ".$e->getMessage(), LOG_WARNING);
         $this->log($e->getTraceAsString(),LOG_WARNING);
         $this->response->statusCode(400);
         return json_encode([
           'success' => false,
           'message' => $e->getMessage()
-        ], JSON_UNESCAPED_UNICODE);*/
+        ], JSON_UNESCAPED_UNICODE);
+      }
+    }
+    else {
+      $this->autoRender = false;
+      $this->layout = "ajax";
+
+      try {
+        $this->processTransaction($data['MCompany'], $data['Contract'], $data['MAgreements']);
+      } catch(Exception $e) {
+        $this->log("Exception Occured : ".$e->getMessage(), LOG_WARNING);
+        $this->log($e->getTraceAsString(),LOG_WARNING);
+        $this->response->statusCode(400);
+        return json_encode([
+          'success' => false,
+          'message' => $e->getMessage()
+        ], JSON_UNESCAPED_UNICODE);
       }
     }
   }
@@ -363,9 +381,9 @@ class ContractController extends AppController
     if(!$this->MUser->validates()) {
       $this->log('validation1!',LOG_DEBUG);
       // 画面に返す
-      $errors = $this->MUser->validationErrors;
-      return $errors;
-      //throw new Exception("MUser validation error");
+      //$errors = $this->MUser->validationErrors;
+      //return $errors;
+      throw new Exception("MUser validation error");
     }
     $this->MAgreements->save();
   }
@@ -392,8 +410,8 @@ class ContractController extends AppController
       $errors = $this->MUser->validationErrors;
       $this->log('errors',LOG_DEBUG);
       $this->log($errors,LOG_DEBUG);
-      return $errors;
-      //throw new Exception("MUser validation error");
+      //return $errors;
+      throw new Exception("MUser validation error");
     }
     else {
       $this->MUser->save();

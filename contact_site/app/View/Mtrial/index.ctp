@@ -17,8 +17,6 @@
     <script type="text/javascript">
 
     function saveAct(){
-      console.log('待て待て');
-      console.log($('#MCompanyCompanyName').val());
       if($('#MCompanyCompanyName').val() == "") {
         document.getElementById('companyName').style.display = "block";
       }
@@ -40,7 +38,7 @@
       }
       $.ajax({
         type: "POST",
-        url: 'http://admin.sinclo/Contract/add',
+        url: "<?= $this->Html->url('/Mtrial/add') ?>",
         data: $('#ContractAddForm').serialize()
       }).done(function(data){
         location.href = "<?= $this->Html->url('/Mtrial/thanks') ?>"
@@ -180,6 +178,57 @@ img.emoji {
 
 </nf-section></div>
     </div>
+</nf-field>
+<nf-field>
+    <div id="nf-field-12-container" class="nf-field-container firstname-container  label-left ">
+        <div class="nf-before-field"><nf-section>
+
+</nf-section></div>
+        <div class="nf-field"><div id="nf-field-12-wrap" class="field-wrap firstname-wrap" data-field-id="12">
+
+
+
+  <div class="nf-field-label"><label for="nf-field-12" class="">ビジネスモデル <span class="ninja-forms-req-symbol">*</span> </label></div>
+
+
+    <div class="nf-field-element">
+    <?php $this->log('businessModel',LOG_DEBUG); $this->log($businessModel,LOG_DEBUG); ?>
+    <?= $this->Form->input('main.condition_type', [
+            'type' => 'radio',
+            'options' => $businessModel,
+            //'before' => '<div class="radio">',
+            //'after' => '</div>',
+            //'separator' => '</div><div class="radio">',
+            'separator' => '<br>',
+            'error' => false,
+            'legend' => false,
+            'div' => false,
+            'label' => false
+          ],[
+            //'entity' => 'conditionType',
+            //'default' => (!empty($this->data['TAutoMessage']['condition_type'])) ? $this->data['TAutoMessage']['condition_type'] : C_COINCIDENT,
+          ]); ?>
+    <?php if ( $this->Form->isFieldError('businessModel') ) echo $this->Form->error('businessModel', null, array('wrap' => 'li')); ?>
+</div>
+
+
+  </div></div>
+  <div class="nf-after-field" id = "mailAddress" style = "display:none;">
+  <div class="nf-input-limit"></div>
+    <div id="nf-error-8" class="nf-error-wrap nf-error" role="alert">
+    <div class="nf-error-msg nf-error-required-error" id = "empty" style = "margin-bottom: -12px;display:none;">必須項目です</div>
+    <div class="nf-error-msg nf-error-required-error" id = "mailFormat" style = "margin-bottom: -12px;display:none;">有効なメールアドレスを入力してください</div>
+    </div>
+ </div>
+        <div class="nf-after-field"><nf-section>
+
+    <div class="nf-input-limit"></div>
+
+    <div id="nf-error-12" class="nf-error-wrap nf-error" role="alert"></div>
+
+
+</nf-section></div>
+    </div>
 </nf-field><nf-field>
     <div id="nf-field-12-container" class="nf-field-container firstname-container  label-left ">
         <div class="nf-before-field"><nf-section>
@@ -253,7 +302,7 @@ img.emoji {
 
 
     <div class="nf-field-element">
-    <?= $this->Form->input('MAgreements.application_position', array('div' => false, 'label' => false, 'maxlength' => 50,'type' => 'text','placeholder' => '（例）課長')) ?>
+    <?= $this->Form->input('MAgreements.application_position', array('div' => false, 'label' => false, 'maxlength' => 50,'type' => 'text','placeholder' => '（例）部長')) ?>
 </div>
 
 
@@ -277,12 +326,11 @@ img.emoji {
 
 
 
-  <div class="nf-field-label"><label for="nf-field-12" class="">メールアドレス <span class="ninja-forms-req-symbol">*</span> </label></div>
+  <div class="nf-field-label"><label for="nf-field-12" class="">会社用メールアドレス <span class="ninja-forms-req-symbol">*</span> </label></div>
 
 
     <div class="nf-field-element">
-    <?= $this->Form->input('Contract.user_mail_address', array('div' => false,'label' => false, 'maxlength' => 50,'placeholder' => '（例）メールアドレス')) ?>
-    <?php $this->log('画面側エラー',LOG_DEBUG); $this->log($this->Form->error('mail_address', null, array('wrap' => 'li')),LOG_DEBUG); ?>
+    <?= $this->Form->input('Contract.user_mail_address', array('div' => false,'label' => false, 'maxlength' => 50,'placeholder' => '（例）example@sinclo.jp')) ?>
     <?php if ( $this->Form->isFieldError('mail_address') ) echo $this->Form->error('mail_address', null, array('wrap' => 'li')); ?>
 </div>
 
@@ -357,6 +405,37 @@ img.emoji {
     <div class="nf-input-limit"></div>
 
     <div id="nf-error-14  " class="nf-error-wrap nf-error" role="alert"></div>
+
+
+</nf-section></div>
+    </div>
+</nf-field>
+<nf-field>
+    <div id="nf-field-13-container" class="nf-field-container phone-container  label-left  textbox-container">
+        <div class="nf-before-field"><nf-section>
+
+</nf-section></div>
+        <div class="nf-field"><div id="nf-field-13-wrap" class="field-wrap phone-wrap textbox-wrap" data-field-id="13">
+
+
+
+  <div class="nf-field-label"><label for="nf-field-13" class="">その他ご要望など </label></div>
+
+    <div class="nf-field-element">
+  <?= $this->Form->input('MAgreements.telephone_number', array('div' => false, 'label' => false, 'maxlength' => 50,'type' => 'textarea','placeholder' => 'その他ご要望などがあればご記入ください')) ?>
+</div>
+
+
+  </div></div>
+    <div class="nf-after-field" id = "phoneNumber" style = "display:none;">
+  <div class="nf-input-limit"></div>
+    <div id="nf-error-8" class="nf-error-wrap nf-error" role="alert"><div class="nf-error-msg nf-error-required-error" style = "margin-bottom: -12px;">必須項目です</div></div>
+ </div>
+        <div class="nf-after-field"><nf-section>
+
+    <div class="nf-input-limit"></div>
+
+    <div id="nf-error-13" class="nf-error-wrap nf-error" role="alert"></div>
 
 
 </nf-section></div>
