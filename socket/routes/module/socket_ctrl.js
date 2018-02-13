@@ -21,10 +21,7 @@ var errlogger = log4js.getLogger('error'); // エラー用のロガー取得
 var deblogger = log4js.getLogger('debug'); // デバッグ用のロガー取得
 
 //サーバインスタンス作成
-var io = require('socket.io')(process.env.WS_PORT,{
-    pingInterval: 5000,
-    pingTimeout: 10000
-    }),
+var io = require('socket.io')(process.env.WS_PORT),
     activeOperator = {}, // 待機中オペレーター
     sincloCore = {}, // socketIDの管理
     connectList = {}, // socketIDをキーとした管理
@@ -147,11 +144,15 @@ var CompanyFunctionManager = function() {
       monitorPollingMode : 'monitorPollingMode'
     },
     set : function(companyKey, coreSettings) {
-      if(typeof(coreSettings) === 'string') {
-        _list[companyKey] = JSON.parse(coreSettings);
-      } else {
-        // object
-        _list[companyKey] = coreSettings;
+      try {
+        if (typeof(coreSettings) === 'string') {
+          _list[companyKey] = JSON.parse(coreSettings);
+        } else {
+          // object
+          _list[companyKey] = coreSettings;
+        }
+      } catch(e) {
+        console.log("Error while set functionList companyKey : " + companyKey);
       }
     },
     isEnabled : function(companyKey, funcName) {
@@ -1666,7 +1667,7 @@ io.sockets.on('connection', function (socket) {
     getInformations: function (visitorId, siteKey, callback) {
       pool.query('SELECT informations FROM m_customers WHERE m_companies_id = ? AND visitors_id = ? LIMIT 1;', [companyList[siteKey], visitorId], function(err, row) {
         if ( err !== null && err !== '' ) callback([]); // DB接続断対応
-        if(isset(row[0].informations)) {
+        if(isset(row) && isset(row[0]) && isset(row[0].informations)) {
           callback(JSON.parse(row[0].informations));
         } else {
           callback([]);
@@ -1859,16 +1860,17 @@ io.sockets.on('connection', function (socket) {
   socket.on('getCustomerList', function(data){
     var obj = JSON.parse(data);
     if(isset(obj.siteKey)) {
+      emit.toMine('beginOfCustomerList', {}, socket);
       processReceiveAccessInfo(obj.siteKey, socket);
     }
   });
 
   function processReceiveAccessInfo(siteKey, socket) {
-    var arr = [];
     var counter = 0;
     var totalCounter = 0;
     var chunkSize = 100;
     var keyLength = Object.keys(customerList[siteKey]).length;
+    var arr = [keyLength];
     Object.keys(customerList[siteKey]).forEach(function (key) {
       var splitedKey = key.split("/#");
       if (splitedKey.length === 2 && isset(splitedKey[1])) {
@@ -1883,7 +1885,7 @@ io.sockets.on('connection', function (socket) {
 
           if (totalCounter === keyLength - 1) {
             emit.toMine("receiveAccessInfo", arr, socket);
-            arr = [];
+            arr = [keyLength];
           }
           totalCounter++;
           return;
@@ -1904,11 +1906,12 @@ io.sockets.on('connection', function (socket) {
             if (counter === chunkSize) {
               emit.toMine("receiveAccessInfo", arr, socket);
               counter = 0;
-              arr = [];
+              arr = [keyLength];
             }
             if (totalCounter === keyLength - 1) {
               emit.toMine("receiveAccessInfo", arr, socket);
-              arr = [];
+              emit.toMine('endOfCustomerList', {}, socket);
+              arr = [keyLength];
             }
             totalCounter++;
           });
@@ -1918,11 +1921,12 @@ io.sockets.on('connection', function (socket) {
           if (counter === chunkSize) {
             emit.toMine("receiveAccessInfo", arr, socket);
             counter = 0;
-            arr = [];
+            arr = [keyLength];
           }
           if (totalCounter === keyLength - 1) {
             emit.toMine("receiveAccessInfo", arr, socket);
-            arr = [];
+            emit.toMine('endOfCustomerList', {}, socket);
+            arr = [keyLength];
           }
           totalCounter++;
         }
@@ -1931,6 +1935,7 @@ io.sockets.on('connection', function (socket) {
 
     if(Object.keys(customerList[siteKey]).length === 0) {
       emit.toMine("receiveAccessInfo", arr, socket);
+      emit.toMine('endOfCustomerList', {}, socket);
     }
   }
 
@@ -2143,7 +2148,7 @@ io.sockets.on('connection', function (socket) {
   // アクティブ状態を送る
   socket.on("sendTabInfo", function(d){
     var obj = JSON.parse(d);
-    if(functionManager.isEnabled(obj.siteKey, functionManager.keyList.monitorPollingMode)) {
+    if(!functionManager.isEnabled(obj.siteKey, functionManager.keyList.monitorPollingMode)) {
       emit.toCompany('retTabInfo', d, obj.siteKey);
     }
 
@@ -2592,7 +2597,9 @@ io.sockets.on('connection', function (socket) {
       console.log("sendAutoChatMessage::sincloSession : " + chat.sincloSessionId + "is null.");
       return false;
     }
-    emit.toCompany('resAutoChatMessage', chat, chat.siteKey);
+    if(!functionManager.isEnabled(chat.siteKey, functionManager.keyList.monitorPollingMode)) {
+      emit.toCompany('resAutoChatMessage', chat, chat.siteKey);
+    }
     emit.toSameUser('resAutoChatMessage', chat, chat.siteKey, chat.sincloSessionId);
   });
 
