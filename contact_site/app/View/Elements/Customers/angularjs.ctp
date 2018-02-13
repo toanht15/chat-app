@@ -426,6 +426,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     $scope.operatorListSortOrder = 'desc';
     $scope.pollingModeIntervalTimer = null;
     $scope.chatReceived = false;
+    $scope.firstLoadMonitorList = true;
 
     /* 資料検索 */
     $scope.tagList = {};
@@ -1990,6 +1991,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     $scope.setReceiveAccessInfoTrigger = function() {
       if(contract.monitorPollingMode) {
+        if(window.loading.load && contract.monitorPollingMode && $scope.firstLoadMonitorList) {
+          window.loading.load.start();
+        }
         if($scope.pollingModeIntervalTimer) {
           clearTimeout($scope.pollingModeIntervalTimer);
         }
@@ -2007,20 +2011,40 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       $scope.refreshUserPresences();
     });
 
-
-
     socket.on('receiveAccessInfo', function (data) {
       var obj = JSON.parse(data);
-      Object.keys(obj).forEach(function (element, index, array){
-        if(index === 0) return; // サイト訪問者の総数を格納しているため無視
-        $scope.tmpMonitorList[obj[index].tabId] = obj[index];
-      });
+      if(contract.monitorPollingMode) {
+        Object.keys(obj).forEach(function (element, index, array) {
+          if (index === 0) return; // サイト訪問者の総数を格納しているため無視
+          $scope.tmpMonitorList[obj[index].tabId] = obj[index];
+        });
+      } else {
+        if(!contract.hideRealtimeMonitor) {
+          setTimeout(function(){
+            $scope.$apply(function(){
+              obj.forEach(function(elm, index, arr) {
+                if (index === 0) return; // サイト訪問者の総数を格納しているため無視
+                pushToList(elm);
+                if ('chat' in elm && String(elm.chat) === "<?=$muserId?>") {
+                  pushToChatList(elm.tabId);
+                }
+              });
+            });
+          }, 100);
+        }
+      }
     });
 
+    /**
+     * monitorPollingMode: trueのときに使用する
+     */
     socket.on('beginOfCustomerList', function(){
       $scope.tmpMonitorList = {};
     });
 
+    /**
+     * monitorPollingMode: trueのときに使用する
+     */
     socket.on('endOfCustomerList', function(){
       var tmpMonitorListArray = Object.keys($scope.tmpMonitorList).map(function(e){
         return $scope.tmpMonitorList[e];
@@ -2038,6 +2062,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           delete $scope.monitorList[elm];
         }
       });
+      if(window.loading.load && contract.monitorPollingMode && $scope.firstLoadMonitorList) {
+        window.loading.load.finish();
+        $scope.firstLoadMonitorList = false;
+      }
       $scope.setReceiveAccessInfoTrigger();
     });
 
