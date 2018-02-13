@@ -1936,7 +1936,9 @@ io.sockets.on('connection', function (socket) {
             }
             if (totalCounter === keyLength - 1) {
               emit.toMine("receiveAccessInfo", arr, socket);
-              emit.toMine('endOfCustomerList', {}, socket);
+              if(functionManager.isEnabled(siteKey, functionManager.keyList.monitorPollingMode)) {
+                emit.toMine('endOfCustomerList', {}, socket);
+              }
               arr = [keyLength];
             }
             totalCounter++;
@@ -1957,7 +1959,9 @@ io.sockets.on('connection', function (socket) {
           }
           if (totalCounter === keyLength - 1) {
             emit.toMine("receiveAccessInfo", arr, socket);
-            emit.toMine('endOfCustomerList', {}, socket);
+            if(functionManager.isEnabled(siteKey, functionManager.keyList.monitorPollingMode)) {
+              emit.toMine('endOfCustomerList', {}, socket);
+            }
             arr = [keyLength];
           }
           totalCounter++;
@@ -1967,7 +1971,9 @@ io.sockets.on('connection', function (socket) {
 
     if(Object.keys(customerList[siteKey]).length === 0) {
       emit.toMine("receiveAccessInfo", arr, socket);
-      emit.toMine('endOfCustomerList', {}, socket);
+      if(functionManager.isEnabled(siteKey, functionManager.keyList.monitorPollingMode)) {
+        emit.toMine('endOfCustomerList', {}, socket);
+      }
     }
   }
 
