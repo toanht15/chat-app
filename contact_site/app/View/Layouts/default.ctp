@@ -125,13 +125,16 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
     }
 
 ?>
+<script type="text/javascript">
+  <?php echo $this->element('loadScreen'); ?>
+</script>
 
 </head>
 <body>
   <div id="container">
     <div id="header">
       <?php if( strcmp($this->name, 'Login') !== 0 && strcmp($this->action, 'baseForAnotherWindow') !== 0
-      && strcmp($this->action, 'loadingHtml') !== 0 ) : ?>
+      && strcmp($this->action, 'loadingHtml') !== 0) : ?>
         <?= $this->element('navi') ?>
       <?php endif ;?>
     </div>

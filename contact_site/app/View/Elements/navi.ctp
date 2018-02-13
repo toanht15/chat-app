@@ -165,10 +165,10 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
     <div data-sidebar-type="history" class="hide">
       <?php if ($coreSettings[C_COMPANY_USE_CHAT]): ?>
         <div class="icon">
-          <?= $this->htmlEx->naviLink('チャット履歴', 'chat_setting.png', ['href' => ['controller' => 'ChatHistories', 'action' => 'clearSession']]) ?>
+          <?= $this->htmlEx->naviLink('チャット履歴', 'chat_setting.png', ['href' => ['controller' => 'ChatHistories', 'action' => 'clearSession'], 'onclick' => 'window.loading.load.start()']) ?>
         </div>
         <div class="icon">
-          <?= $this->htmlEx->naviLink('アクセス履歴', 'personal.png', ['href' => ['controller' => 'Histories', 'action' => 'clearSession']]) ?>
+          <?= $this->htmlEx->naviLink('アクセス履歴', 'personal.png', ['href' => ['controller' => 'Histories', 'action' => 'clearSession'], 'onclick' => 'window.loading.load.start()']) ?>
         </div>
       <?php endif; ?>
       </div>
