@@ -6877,10 +6877,20 @@ ul.naviBtn {
 
         &.middleSize {
           max-width: 342.5px;
+          font-size: 13px;
+
+          .cName {
+            font-size: 14px;
+          }
         }
 
         &.largeSize {
           max-width: 400px;
+          font-size: 13px;
+
+          .cName {
+            font-size: 14px;
+          }
         }
 
         .blueBtn {
