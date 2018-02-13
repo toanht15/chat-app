@@ -134,6 +134,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   // シミュレーターの起動
   this.openSimulator = function() {
     $scope.$broadcast('openSimulator', this.createJsonData());
+    $scope.$broadcast('switchSimulatorChatTextArea', '1');  // シミュレータ起動時、強制的に自由入力エリア：有効の状態で表示する
   };
 
   this.saveAct = function() {
