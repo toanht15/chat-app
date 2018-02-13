@@ -1,6 +1,6 @@
 <script type="text/javascript">
-<?= $this->element('TDocuments/loadScreen'); ?>
-
+var a = "<?php echo date('Y/m/d'); ?>";
+console.log(a);
 function timeChange()　{
   var chosenDateFormat = document.forms.StatisticsForChatForm.dateFormat;
 

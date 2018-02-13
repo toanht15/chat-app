@@ -16,7 +16,7 @@
 $naviElm = "";
 $contentStyle = "";
 if( strcmp($this->name, 'Login') !== 0 && strcmp($this->action, 'baseForAnotherWindow') !== 0
-  && strcmp($this->action, 'loadingHtml') !== 0) {
+  && strcmp($this->action, 'loadingHtml') !== 0 && strcmp($this->name, 'Mtrial') !== 0) {
   $naviElm = $this->element('navi');
   $contentStyle = "position: absolute; top: 60px; left: 60px; right: 0; bottom: 0";
 }
@@ -99,6 +99,7 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
     echo $this->Html->script("angular.validate.js");
     echo $this->Html->script("cidr2regex.js");
     echo $this->element("common-js");
+    echo $this->element('loadScreen');
     echo $this->Html->script("moment.min.js");
     if ( strcmp($this->name, 'Histories') === 0 || strcmp($this->name, 'ChatHistories') === 0) {
       echo $this->Html->script("daterangepicker.js");
@@ -131,7 +132,7 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
   <div id="container">
     <div id="header">
       <?php if( strcmp($this->name, 'Login') !== 0 && strcmp($this->action, 'baseForAnotherWindow') !== 0
-      && strcmp($this->action, 'loadingHtml') !== 0 ) : ?>
+      && strcmp($this->action, 'loadingHtml') !== 0 && strcmp($this->name, 'Mtrial') !== 0) : ?>
         <?= $this->element('navi') ?>
       <?php endif ;?>
     </div>
