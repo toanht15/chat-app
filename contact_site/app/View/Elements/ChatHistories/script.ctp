@@ -491,7 +491,7 @@ $(function(){
       $("#chatContent").css('height', $("#detail").outerHeight() - 65);
       $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
       $("#chatHistory").css('height','100%');
-      $(".trHeight").css('height','50px ');
+      $(".trHeight").css('height','50px');
     }
 
     setTimeout(function(){
@@ -548,8 +548,6 @@ function openChatById(id) {
     dataType: 'html',
     success: function(html){
       var customerData = JSON.parse(html);
-      console.log('customerData');
-      console.log(customerData);
       document.getElementById("visitorsId").innerHTML= customerData.THistory.visitors_id;
       document.getElementById("ipAddress").innerHTML= "("+customerData.THistory.ip_address+")";
       if(customerData.LandscapeData != null) {
