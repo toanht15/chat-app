@@ -69,10 +69,8 @@ class AppController extends Controller {
     if ( APP_MODE_DEV === false ) {
       $this->checkPort();
     }
-    $this->log('チェック',LOG_DEBUG);
     // 未ログインの場合は以降の処理を通さない
-    //if (!$this->Auth->user()) return false;
-    $this->log('チェック1',LOG_DEBUG);
+    if (!$this->Auth->user()) return false;
     // 通知メッセージをセット
     if ($this->Session->check('global.message')) {
       $this->set('alertMessage', $this->Session->read('global.message'));
@@ -86,7 +84,6 @@ class AppController extends Controller {
       $this->set('userInfo', $this->userInfo);
     }
 
-    $this->log('チェック2',LOG_DEBUG);
     // コンフィグに企業IDを設定
     //Configure::write('logged_company_id', $this->userInfo['MCompany']['id']);
 
