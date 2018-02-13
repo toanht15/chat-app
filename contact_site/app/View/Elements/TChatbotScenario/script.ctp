@@ -1,6 +1,5 @@
 <script type="text/javascript">
 document.body.onload = function(){
-  console.log('=== script onload ===');
   $(document).ready(function(){
     $(".sortable").sortable({
       axis: "y",
@@ -148,7 +147,6 @@ var toExecutableOnce = function(f){
 
 //シナリオ新規追加
 function openAdd(){
-  console.log('=== call func openAdd ===');
   //並べ替えチェックボックスがONのときはリンク無効とする
   if (!document.getElementById("sort").checked) {
     //現在のページ番号
