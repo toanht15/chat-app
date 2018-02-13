@@ -99,7 +99,6 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
     echo $this->Html->script("angular.validate.js");
     echo $this->Html->script("cidr2regex.js");
     echo $this->element("common-js");
-    echo $this->element('loadScreen');
     echo $this->Html->script("moment.min.js");
     if ( strcmp($this->name, 'Histories') === 0 || strcmp($this->name, 'ChatHistories') === 0) {
       echo $this->Html->script("daterangepicker.js");
@@ -126,6 +125,9 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
     }
 
 ?>
+<script type="text/javascript">
+  <?php echo $this->element('loadScreen'); ?>
+</script>
 
 </head>
 <body>
