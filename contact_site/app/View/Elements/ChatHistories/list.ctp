@@ -533,6 +533,13 @@
             <dd id = "campaignParam"><?=$userCampaignParam?></dd>
           </li>
           <li>
+          <li>
+            <dt>参照元URL</dt>
+            <dd id = "referrer">
+            <a href="<?=h($history['THistory']['referrer_url'])?>" target="history">
+            <span id = "referrerUrl"><?=h($history['THistory']['referrer_url']) ?></span></a></dd>
+          </li>
+          <li>
             <dt>ランディングページ</dt>
             <dd id = "landing">
             <a href = "<?=h($stayList[$defaultHistoryList['THistory']['id']]['THistoryStayLog']['firstURL'])?>" target = "landing">
