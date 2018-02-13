@@ -114,7 +114,7 @@ class TChatbotScenarioController extends AppController {
       }
 
       $activity = json_decode($editData[0]['TChatbotScenario']['activity'], true);
-      foreach ($activity as $key => &$action) {
+      foreach ($activity['scenarios'] as $key => &$action) {
         if ($action['actionType'] == C_SCENARIO_ACTION_SEND_MAIL) {
           // メール送信設定の取得
           if (!empty($action['mMailTransmissionId'])) {
@@ -254,8 +254,8 @@ class TChatbotScenarioController extends AppController {
       }
 
       // シナリオ設定の詳細
-      $activity = json_decode($value['TChatbotScenario']['activity']);
-      foreach ($activity as $key => &$action) {
+      $activity = json_decode($value['TChatbotScenario']['activity'], true);
+      foreach ($activity['scenarios'] as $key => &$action) {
         if ($action->actionType == C_SCENARIO_ACTION_SEND_MAIL) {
           // メール送信設定のコピー
           $mailTransmissionData = $this->MMailTransmissionSetting->findById($action->mMailTransmissionId);
@@ -547,18 +547,16 @@ class TChatbotScenarioController extends AppController {
 
     // その他のチェック
     if ( !empty($saveData['TChatbotScenario']) ) {
-      $activity = json_decode($saveData['TChatbotScenario']['activity']);
-      $scenarios = $activity->scenarios;
+      $activity = json_decode($saveData['TChatbotScenario']['activity'], true);
 
-      foreach($scenarios as $key => &$action) {
-        if ($action->actionType == C_SCENARIO_ACTION_SEND_MAIL) {
+      foreach($activity['scenarios'] as $key => &$action) {
+        if ($action['actionType'] == C_SCENARIO_ACTION_SEND_MAIL) {
           // メール送信設定の保存と、IDの取得
           $action = $this->_entryProcessForMessage($action);
         }
       }
     }
 
-    $activity->scenarios = $scenarios;
     $saveData['TChatbotScenario']['activity'] = json_encode($activity);
     $this->TChatbotScenario->set($saveData);
 
@@ -594,8 +592,8 @@ class TChatbotScenarioController extends AppController {
   private function _entryProcessForMessage($saveData) {
     // 送信先メールアドレス情報の値を、保存可能な形式に変換する
     $toAddresses = '';
-    if(count($saveData->toAddress)) {
-      foreach($saveData->toAddress as $address) {
+    if(count($saveData['toAddress'])) {
+      foreach($saveData['toAddress'] as $address) {
         if (!empty($address)) {
           if ($toAddresses !== '') {
             $toAddresses .= ',';
@@ -606,23 +604,23 @@ class TChatbotScenarioController extends AppController {
     }
 
     // メール送信設定の保存
-    if(empty($saveData->mMailTransmissionId)) {
+    if(empty($saveData['mMailTransmissionId'])) {
       $this->MMailTransmissionSetting->create();
     } else {
-      $this->MMailTransmissionSetting->read(null, $saveData->mMailTransmissionId);
+      $this->MMailTransmissionSetting->read(null, $saveData['mMailTransmissionId']);
     }
     $this->MMailTransmissionSetting->set([
       'm_companies_id' => $this->userInfo['MCompany']['id'],
-      'from_name' => $saveData->fromName,
+      'from_name' => $saveData['fromName'],
       'to_address' => $toAddresses,
-      'subject' => $saveData->subject
+      'subject' => $saveData['subject']
     ]);
     $validate = $this->MMailTransmissionSetting->validates();
     $errors = $this->MMailTransmissionSetting->validationErrors;
     if(empty($errors)){
       $this->MMailTransmissionSetting->save();
-      if(empty($saveData->mMailTransmissionId)) {
-        $saveData->mMailTransmissionId = $this->MMailTransmissionSetting->getLastInsertId();
+      if(empty($saveData['mMailTransmissionId'])) {
+        $saveData['mMailTransmissionId'] = $this->MMailTransmissionSetting->getLastInsertId();
       }
     } else {
       $exception = new ChatbotScenarioException('バリデーションエラー');
@@ -633,11 +631,11 @@ class TChatbotScenarioController extends AppController {
 
     // メールテンプレートの設定
     $template = '';
-    if ($saveData->mailType == C_SCENARIO_MAIL_TYPE_CUSTOMIZE) {
+    if ($saveData['mailType'] == C_SCENARIO_MAIL_TYPE_CUSTOMIZE) {
       // メール本文をカスタマイズする
-      $template = $saveData->template;
+      $template = $saveData['template'];
     } else
-    if ($saveData->mailType == C_SCENARIO_MAIL_TYPE_VARIABLES) {
+    if ($saveData['mailType'] == C_SCENARIO_MAIL_TYPE_VARIABLES) {
       // 変数の値のみメールする
       $template = "※このメールはお客様の設定によりsincloから自動送信されました。
 
@@ -672,10 +670,10 @@ sinclo@medialink-ml.co.jp
     }
 
     // メールテンプレート設定の保存
-    if(empty($saveData->mMailTemplateId)) {
+    if(empty($saveData['mMailTemplateId'])) {
       $this->MMailTemplate->create();
     } else {
-      $this->MMailTemplate->read(null, $saveData->mMailTemplateId);
+      $this->MMailTemplate->read(null, $saveData['mMailTemplateId']);
     }
     $this->MMailTemplate->set([
       'm_companies_id' => $this->userInfo['MCompany']['id'],
@@ -686,8 +684,8 @@ sinclo@medialink-ml.co.jp
     $errors = $this->MMailTemplate->validationErrors;
     if(empty($errors)) {
       $this->MMailTemplate->save();
-      if(empty($saveData->mMailTemplateId)) {
-        $saveData->mMailTemplateId = $this->MMailTemplate->getLastInsertId();
+      if(empty($saveData['mMailTemplateId'])) {
+        $saveData['mMailTemplateId'] = $this->MMailTemplate->getLastInsertId();
       }
     } else {
       $exception = new ChatbotScenarioException('バリデーションエラー');
