@@ -48,7 +48,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
                 'id'=>'tchatbotscenario_dustbox_btn',
                 'class' => 'btn-shadow disOffgrayBtn commontooltip',
                 'data-text' => '削除する',
-                'data-balloon-position' => '38',
+                'data-balloon-position' => '36',
                 'width' => 45,
                 'height' => 45)) ?>
           </a>
