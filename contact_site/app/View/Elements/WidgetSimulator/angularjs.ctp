@@ -86,9 +86,9 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
       case 1: // 表示タブ：通常
         // ウィジェットサイズごとにサイズを変更する
         if($scope.simulatorSettings.settings['widget_size_type'] == 2) {
-          chatTalkHeight = 274;
+          chatTalkHeight = 284;
         } else if($scope.simulatorSettings.settings['widget_size_type'] == 3) {
-          chatTalkHeight = 364;
+          chatTalkHeight = 374;
         }
         // プレミアムプラン以外の場合、高さを調整する
         <?php if ( !$coreSettings[C_COMPANY_USE_SYNCLO] && (!isset($coreSettings[C_COMPANY_USE_DOCUMENT]) || !$coreSettings[C_COMPANY_USE_DOCUMENT]) ): ?>
