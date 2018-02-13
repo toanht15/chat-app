@@ -41,11 +41,14 @@ class TChatbotScenario extends AppModel {
    */
   public function checkActivity($json){
     $activity = json_decode($json['activity'], true);
-    if (count($activity) === 0) {
+    if (empty($activity['chatbotType'])) {
       return false;
     }
 
-    foreach ($activity as $key => $action) {
+    if (count($activity['scenarios']) === 0) {
+      return false;
+    }
+    foreach ($activity['scenarios'] as $key => $action) {
       if ($action['actionType'] == C_SCENARIO_ACTION_TEXT) {
         // テキスト入力
         if (empty($action['message'])) {

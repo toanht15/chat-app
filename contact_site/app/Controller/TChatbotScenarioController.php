@@ -548,8 +548,9 @@ class TChatbotScenarioController extends AppController {
     // その他のチェック
     if ( !empty($saveData['TChatbotScenario']) ) {
       $activity = json_decode($saveData['TChatbotScenario']['activity']);
+      $scenarios = $activity->scenarios;
 
-      foreach($activity as $key => &$action) {
+      foreach($scenarios as $key => &$action) {
         if ($action->actionType == C_SCENARIO_ACTION_SEND_MAIL) {
           // メール送信設定の保存と、IDの取得
           $action = $this->_entryProcessForMessage($action);
@@ -557,6 +558,7 @@ class TChatbotScenarioController extends AppController {
       }
     }
 
+    $activity->scenarios = $scenarios;
     $saveData['TChatbotScenario']['activity'] = json_encode($activity);
     $this->TChatbotScenario->set($saveData);
 
