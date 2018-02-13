@@ -1991,7 +1991,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     $scope.setReceiveAccessInfoTrigger = function() {
       if(contract.monitorPollingMode) {
-        if(window.loading && contract.monitorPollingMode && $scope.firstLoadMonitorList) {
+        if(window.loading.load && contract.monitorPollingMode && $scope.firstLoadMonitorList) {
           window.loading.load.start();
         }
         if($scope.pollingModeIntervalTimer) {
@@ -2040,7 +2040,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           delete $scope.monitorList[elm];
         }
       });
-      if(window.loading && contract.monitorPollingMode && $scope.firstLoadMonitorList) {
+      if(window.loading.load && contract.monitorPollingMode && $scope.firstLoadMonitorList) {
         window.loading.load.finish();
         $scope.firstLoadMonitorList = false;
       }
