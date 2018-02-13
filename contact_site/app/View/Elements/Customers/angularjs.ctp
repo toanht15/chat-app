@@ -2023,6 +2023,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           setTimeout(function(){
             $scope.$apply(function(){
               obj.forEach(function(elm, index, arr) {
+                if (index === 0) return; // サイト訪問者の総数を格納しているため無視
                 pushToList(elm);
                 if ('chat' in elm && String(elm.chat) === "<?=$muserId?>") {
                   pushToChatList(elm.tabId);
