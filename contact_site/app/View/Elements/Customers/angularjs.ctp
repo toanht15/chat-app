@@ -3759,11 +3759,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             term = 60;
           }
 
-          if(!contract.monitorPollingMode) {
-            $timeout(function(e){
-              countUp();
-            }, term * 1000); // 60秒ごとに実行
-          }
+          $timeout(function(e){
+            countUp();
+          }, term * 1000); // 60秒ごとに実行
         }
         countUp();
       }
