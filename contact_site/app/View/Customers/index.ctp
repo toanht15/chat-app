@@ -2,6 +2,9 @@
 <?php echo $this->element('Customers/userAgentCheck') ?>
 <?php echo $this->element('Customers/script') ?>
 <?php echo $this->element('Customers/angularjs') ?>
+<script type="text/javascript">
+<?php echo $this->element('TDocuments/loadScreen') ?>
+</script>
 
 <section id='customer_idx' class="{{customerMainClass}}" ng-app="sincloApp" ng-controller="MainController">
 

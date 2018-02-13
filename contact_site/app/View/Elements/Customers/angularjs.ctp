@@ -426,6 +426,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     $scope.operatorListSortOrder = 'desc';
     $scope.pollingModeIntervalTimer = null;
     $scope.chatReceived = false;
+    $scope.firstLoadMonitorList = true;
 
     /* 資料検索 */
     $scope.tagList = {};
@@ -1990,6 +1991,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     $scope.setReceiveAccessInfoTrigger = function() {
       if(contract.monitorPollingMode) {
+        if(window.loading && contract.monitorPollingMode && $scope.firstLoadMonitorList) {
+          window.loading.load.start();
+        }
         if($scope.pollingModeIntervalTimer) {
           clearTimeout($scope.pollingModeIntervalTimer);
         }
@@ -2006,8 +2010,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       delete $scope.activeOperatorList[obj.userId];
       $scope.refreshUserPresences();
     });
-
-
 
     socket.on('receiveAccessInfo', function (data) {
       var obj = JSON.parse(data);
@@ -2038,6 +2040,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           delete $scope.monitorList[elm];
         }
       });
+      if(window.loading && contract.monitorPollingMode && $scope.firstLoadMonitorList) {
+        window.loading.load.finish();
+        $scope.firstLoadMonitorList = false;
+      }
       $scope.setReceiveAccessInfoTrigger();
     });
 
