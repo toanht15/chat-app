@@ -407,6 +407,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     $scope.oprWaitCnt = 0; // 総オペレーター人数
     $scope.labelHideList = <?php echo json_encode($labelHideList) ?>;
     $scope.monitorList = {};
+    $scope.tmpMonitorList = [];
     $scope.requestedCustomerList = [];
     $scope.customerList = {};
     $scope.messageList = [];
@@ -1851,6 +1852,20 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     function pushToList(obj){
 
+
+      if(contract.monitorPollingMode && $scope.monitorList[obj.tabId]
+         && ((!( 'referrer' in obj) || $scope.monitorList[obj.tabId].ref === $scope.trimToURL(obj.referrer))
+          && (!( 'connectToken' in obj) || $scope.monitorList[obj.tabId].connectToken === obj.connectToken)
+          && (!( 'responderId' in obj) || $scope.monitorList[obj.tabId].responderId === obj.responderId)
+          && (!( 'coBrowseConnectToken' in obj) || $scope.monitorList[obj.tabId].coBrowseConnectToken === obj.coBrowseConnectToken)
+          && (!( 'docShareId' in obj) || $scope.monitorList[obj.tabId].docShareId === obj.docShareId)
+          && (!( 'sincloSessionId' in obj) || $scope.monitorList[obj.tabId].sincloSessionId === obj.sincloSessionId)
+          && (!( 'status' in obj) || $scope.monitorList[obj.tabId].status === obj.status)
+        )
+      ) {
+        return;
+      }
+
       if ( 'ipAddress' in obj && 'ipAddress' in obj) {
         if (!$scope.checkToIP(obj.ipAddress)) return false;
       }
@@ -1961,15 +1976,19 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
       $scope.reload(); // 整っているか確認
 
+      $scope.setReceiveAccessInfoTrigger();
+    });
+
+    $scope.setReceiveAccessInfoTrigger = function() {
       if(contract.monitorPollingMode) {
         if($scope.pollingModeIntervalTimer) {
           clearInterval($scope.pollingModeIntervalTimer);
         }
-        $scope.pollingModeIntervalTimer = setInterval(function(e){
+        $scope.pollingModeIntervalTimer = setTimeout(function(e){
           emit('getCustomerList',{});
         }, <?= C_REALTIME_MONITOR_POLLING_MODE_INTERVAL_MSEC ?>);
       }
-    });
+    };
 
     socket.on('outCompanyUser', function (data) {
       var obj = JSON.parse(data);
@@ -1977,22 +1996,45 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       delete $scope.onlineOperatorList[obj.userId];
       delete $scope.activeOperatorList[obj.userId];
       $scope.refreshUserPresences();
-
     });
+
+
 
     socket.on('receiveAccessInfo', function (data) {
       if(!contract.hideRealtimeMonitor) {
-        setTimeout(function(){
-          $scope.$apply(function(){
-            var obj = JSON.parse(data);
-            obj.forEach(function(elm, index, arr) {
-              pushToList(elm);
-              if ('chat' in elm && String(elm.chat) === "<?=$muserId?>") {
-                pushToChatList(elm.tabId);
-              }
-            });
-          });
-        }, 100);
+        var obj = JSON.parse(data);
+        Object.keys(obj).forEach(function (element, index, array){
+          if(index === 0) return; // サイト訪問者の総数を格納しているため無視
+          $scope.tmpMonitorList[obj[index].tabId] = obj[index];
+        });
+      }
+    });
+
+    socket.on('beginOfCustomerList', function(){
+      if(!contract.hideRealtimeMonitor) {
+        $scope.tmpMonitorList = {};
+      }
+    });
+
+    socket.on('endOfCustomerList', function(){
+      if(!contract.hideRealtimeMonitor) {
+        var tmpMonitorListArray = Object.keys($scope.tmpMonitorList).map(function(e){
+          return $scope.tmpMonitorList[e];
+        });
+        tmpMonitorListArray.forEach(function (elm, index, arr) {
+          pushToList(elm);
+          if ('chat' in elm && String(elm.chat) === "<?=$muserId?>") {
+            pushToChatList(elm.tabId);
+          }
+        });
+        Object.keys($scope.monitorList).forEach(function(elm, index, arr){
+          if($scope.tmpMonitorList[elm]) {
+            return;
+          } else {
+            delete $scope.monitorList[elm];
+          }
+        });
+        $scope.setReceiveAccessInfoTrigger();
       }
     });
 
@@ -2431,10 +2473,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         if ( obj.tabId === chatApi.tabId && $scope.monitorList[obj.tabId].chat === myUserId && $("#sendMessage").is(":focus") ) {
             chatApi.isReadMessage($scope.monitorList[obj.tabId]);
         }
-        $timeout(function(){
-          console.log("HOGEEEEEEEEEEEEEEEEEEe");
-          $scope.$apply();
-        },100);
+
       }
       else {
         alert('メッセージの送信に失敗しました。');
@@ -3477,6 +3516,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       $('#statusHeader').css("width", statusTdWidth+'px');
     }
 
+    $scope.$watch('monitorList', function(newVal, oldVal){
+      console.log("monitorList is changed");
+    });
   }]);
 
   /**************************************************************
@@ -3682,12 +3724,18 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       restrict: "A",
       template: "{{stayTime}}",
       link: function(scope, attr, elem) {
+        console.log("call calStayTime link function.");
         scope.stayTime = scope.monitor.term;
         var term = 0;
 
         function countUp(){
+          console.log("call calStayTime link function => countUp()");
           // 存在しないユーザーなら、カウントを止める
-          if ( !scope.$parent || !scope.$parent.hasOwnProperty('monitorList') || (scope.$parent.hasOwnProperty('monitorList') && !scope.$parent.monitorList.hasOwnProperty(scope.monitor.tabId)) ) return false;
+          if ( !scope.$parent
+            || !scope.$parent.hasOwnProperty('monitorList')
+            || (scope.$parent.hasOwnProperty('monitorList') && !scope.$parent.monitorList.hasOwnProperty(scope.monitor.tabId))
+          ) return false;
+
           scope.monitor.term = Number(scope.monitor.term) + term;
           var hour = parseInt(scope.monitor.term / 3600),
               min = parseInt((scope.monitor.term / 60) % 60),
@@ -3711,9 +3759,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             term = 60;
           }
 
-          $timeout(function(e){
-            countUp();
-          }, term * 1000); // 60秒ごとに実行
+          if(!contract.monitorPollingMode) {
+            $timeout(function(e){
+              countUp();
+            }, term * 1000); // 60秒ごとに実行
+          }
         }
         countUp();
       }
