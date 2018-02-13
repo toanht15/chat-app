@@ -1,4 +1,3 @@
-<script type="text/javascript">
 var  loading; // 共通関数
 
 loading = {
@@ -389,4 +388,3 @@ loading = {
     }
   }
 };
-</script>
