@@ -536,8 +536,8 @@
           <li>
             <dt>参照元URL</dt>
             <dd id = "referrer">
-            <a href="<?=h($history['THistory']['referrer_url'])?>" target="history">
-            <span id = "referrerUrl"><?=h($history['THistory']['referrer_url']) ?></span></a></dd>
+            <a href="<?=h($defaultHistoryList['THistory']['referrer_url'])?>" target="history">
+            <span id = "referrerUrl"><?=h($defaultHistoryList['THistory']['referrer_url']) ?></span></a></dd>
           </li>
           <li>
             <dt>ランディングページ</dt>
