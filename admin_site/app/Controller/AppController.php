@@ -69,8 +69,10 @@ class AppController extends Controller {
     if ( APP_MODE_DEV === false ) {
       $this->checkPort();
     }
+
     // 未ログインの場合は以降の処理を通さない
     if (!$this->Auth->user()) return false;
+
     // 通知メッセージをセット
     if ($this->Session->check('global.message')) {
       $this->set('alertMessage', $this->Session->read('global.message'));
