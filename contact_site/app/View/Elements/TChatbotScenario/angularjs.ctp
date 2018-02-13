@@ -134,7 +134,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   // シミュレーターの起動
   this.openSimulator = function() {
     $scope.$broadcast('openSimulator', this.createJsonData());
-    $scope.$broadcast('switchSimulatorChatTextArea', '1');  // シミュレータ起動時、強制的に自由入力エリア：有効の状態で表示する
+    $scope.$broadcast('switchSimulatorChatTextArea', true);  // シミュレータ起動時、強制的に自由入力エリア：有効の状態で表示する
   };
 
   this.saveAct = function() {
@@ -344,7 +344,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   // シミュレーションの起動(ダイアログ表示)
   $scope.$on('openSimulator', function(event, activity) {
     var scenarios = JSON.parse(activity).scenarios;
-    console.log(scenarios);
     $scope.setActionList = scenarios;
     $('#tchatbotscenario_simulator_wrapper').show();
     $timeout(function() {
@@ -452,7 +451,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         if (actionDetail.actionType == <?= C_SCENARIO_ACTION_TEXT ?>) {
           // テキスト発言
           $scope.$broadcast('addReMessage', $scope.replaceVariable(actionDetail.message), 'action' + $scope.actionStep);
-          $scope.$broadcast('switchSimulatorChatTextArea', actionDetail.chatTextArea);
+          $scope.$broadcast('switchSimulatorChatTextArea', actionDetail.chatTextArea === '1');
           $scope.actionStep++;
           $scope.doAction();
         } else
@@ -467,11 +466,11 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
             messageList.push('[] ' + option);
           });
           $scope.$broadcast('addReMessage', messageList.join('\n'), 'action' + $scope.actionStep);
-          $scope.$broadcast('switchSimulatorChatTextArea', actionDetail.chatTextArea);
+          $scope.$broadcast('switchSimulatorChatTextArea', actionDetail.chatTextArea === '1');
         } else
         if (actionDetail.actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?>) {
           // メール送信
-          $scope.$broadcast('switchSimulatorChatTextArea', actionDetail.chatTextArea);
+          $scope.$broadcast('switchSimulatorChatTextArea', actionDetail.chatTextArea === '1');
           $scope.actionStep++;
           $scope.doAction();
         }
@@ -485,7 +484,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     if (!$scope.hearingInputResult) {
       var message = $scope.replaceVariable(actionDetail.errorMessage);
       $scope.$broadcast('addReMessage', message, 'action' + $scope.actionStep);
-      $scope.$broadcast('switchSimulatorChatTextArea', actionDetail.chatTextArea);
+      $scope.$broadcast('switchSimulatorChatTextArea', actionDetail.chatTextArea === '1');
       $scope.hearingInputResult = true;
       $scope.doAction();
     } else
@@ -493,7 +492,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       // 質問する
       var message = actionDetail.hearings[$scope.hearingIndex].message;
       $scope.$broadcast('addReMessage', message, 'action' + $scope.actionStep);
-      $scope.$broadcast('switchSimulatorChatTextArea', actionDetail.chatTextArea);
+      $scope.$broadcast('switchSimulatorChatTextArea', actionDetail.chatTextArea === '1');
     } else
     if (actionDetail.isConfirm && ($scope.hearingIndex === actionDetail.hearings.length)) {
       var messageList = [$scope.replaceVariable(actionDetail.confirmMessage), '[] ' + actionDetail.success, '[] ' + actionDetail.cancel];
@@ -502,7 +501,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       }).join('\n');
 
       $scope.$broadcast('addReMessage', message, 'action' + $scope.actionStep);
-      $scope.$broadcast('switchSimulatorChatTextArea', actionDetail.chatTextArea);
+      $scope.$broadcast('switchSimulatorChatTextArea', false); // 設定したOK/NG以外が入力されないよう、自由入力エリアを非表示とする
     } else {
       // 次のアクションへ移行する
       $scope.hearingIndex = 0;
