@@ -12,14 +12,12 @@ class TChatbotScenario extends AppModel {
   public $validate = [
     'name' => [
       'rule' => ['maxLength', 50],
-      'required' => true,
       'allowEmpty' => false,
       'message' => '名称を５０文字以内で入力してください'
     ],
     'activity' => [
       'checkActivity' => [
         'rule' => 'checkActivity',
-        'required' => true,
         'allowEmpty' => false,
         'message' => 'シナリオを設定してください'
       ]
