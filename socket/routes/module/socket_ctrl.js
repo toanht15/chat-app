@@ -1901,8 +1901,14 @@ io.sockets.on('connection', function (socket) {
           chatApi.getUnreadCnt(val, function (ret) {
             val['chatUnreadId'] = ret.chatUnreadId;
             val['chatUnreadCnt'] = ret.chatUnreadCnt ? ret.chatUnreadCnt : 0;
-            arr.push(val);
-            counter++;
+            if(functionManager.isEnabled(siteKey, functionManager.keyList.hideRealtimeMonitor)
+              && functionManager.isEnabled(siteKey, functionManager.keyList.monitorPollingMode)
+              && ((isset(val['chatUnreadCnt']) && val['chatUnreadCnt'] === 0) && !isset(val['responderId']) && !isset(val['chat']))) {
+              // 何もしない
+            } else {
+              arr.push(val);
+              counter++;
+            }
             if (counter === chunkSize) {
               emit.toMine("receiveAccessInfo", arr, socket);
               counter = 0;
@@ -1916,8 +1922,14 @@ io.sockets.on('connection', function (socket) {
             totalCounter++;
           });
         } else {
-          arr.push(val);
-          counter++;
+          if(functionManager.isEnabled(siteKey, functionManager.keyList.hideRealtimeMonitor)
+            && functionManager.isEnabled(siteKey, functionManager.keyList.monitorPollingMode)
+            && ((!isset(val['chatUnreadCnt']) || val['chatUnreadCnt'] === 0) && !isset(val['responderId']) && !isset(val['chat']))) {
+            // 何もしない
+          } else {
+            arr.push(val);
+            counter++;
+          }
           if (counter === chunkSize) {
             emit.toMine("receiveAccessInfo", arr, socket);
             counter = 0;
@@ -3307,6 +3319,15 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
           } else {
             console.log("checkExists NOT sent.");
           }
+          break;
+        case 9: // view all Obj count socket.emit('settingReload', JSON.stringify({type:79 targetKey: "demo", siteKey: "master"}));
+          console.log("getAllObj count --------------------------------------------------");
+          console.log("sincloCore : " + Object.keys(sincloCore[obj.targetKey]).length);
+          console.log("connectList : " + Object.keys(connectList).length);
+          console.log("c_connectList : " + Object.keys(c_connectList).length);
+          console.log("doc_connectList : " + Object.keys(doc_connectList).length);
+          console.log("customerList : " + Object.keys(customerList[obj.targetKey]).length);
+          console.log("End --------------------------------------------------------");
           break;
         default:
       }
