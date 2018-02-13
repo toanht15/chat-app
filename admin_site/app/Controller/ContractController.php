@@ -120,6 +120,7 @@ class ContractController extends AppController
       $coreSetting = json_decode($companyEditData['MCompany']['core_settings'], TRUE);
       $saveData['MCompany']['options']['laCoBrowse'] = !empty($coreSetting['laCoBrowse']) ? $coreSetting['laCoBrowse'] : false;
       $saveData['MCompany']['options']['hideRealtimeMonitor'] = !empty($coreSetting['hideRealtimeMonitor']) ? $coreSetting['hideRealtimeMonitor'] : false;
+      $saveData['MCompany']['options']['monitorPollingMode'] = !empty($coreSetting['monitorPollingMode']) ? $coreSetting['monitorPollingMode'] : false;
       $companySaveData['MCompany']['core_settings'] = $this->getCoreSettingsFromContactTypesId($saveData['MCompany']['m_contact_types_id'], $saveData['MCompany']['options']);
       $this->MCompany->save($companySaveData,false);
 
