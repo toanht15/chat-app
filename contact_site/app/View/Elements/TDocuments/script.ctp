@@ -35,7 +35,6 @@ function handleFileSelect(evt) {
   reader.readAsDataURL(file);
 }
 
-
 if (window.File && window.FileReader && window.FileList && window.Blob) {
   $(document).on('change', '#TDocumentFiles', function(e){
     handleFileSelect(e);
