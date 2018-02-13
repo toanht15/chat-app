@@ -491,7 +491,7 @@ $(function(){
       $("#chatContent").css('height', $("#detail").outerHeight() - 65);
       $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
       $("#chatHistory").css('height','100%');
-      $(".trHeight").css('height','50px');
+      $(".trHeight").css('height','50px ');
     }
 
     setTimeout(function(){
@@ -548,6 +548,8 @@ function openChatById(id) {
     dataType: 'html',
     success: function(html){
       var customerData = JSON.parse(html);
+      console.log('customerData');
+      console.log(customerData);
       document.getElementById("visitorsId").innerHTML= customerData.THistory.visitors_id;
       document.getElementById("ipAddress").innerHTML= "("+customerData.THistory.ip_address+")";
       if(customerData.LandscapeData != null) {
@@ -558,6 +560,13 @@ function openChatById(id) {
       document.getElementById("visitCounts").innerHTML= customerData.THistoryCount.cnt + "回";
       document.getElementById("platform").innerHTML= userAgentChk.pre(customerData.THistory.user_agent);
       document.getElementById("campaignParam").innerHTML= customerData.campaignParam;
+      if(customerData.THistory.referrer_url !== null) {
+        document.getElementById("referrerUrl").innerHTML = customerData.THistory.referrer_url;
+        $("#referrer a").attr("href", customerData.THistory.referrer_url);
+      }
+      else {
+        document.getElementById("referrerUrl").innerHTML= "";
+      }
       if(customerData.landingData !== null) {
         document.getElementById("landingPage").innerHTML= customerData.landingData.title;
         $("#landing a").attr("href", customerData.landingData.url);
@@ -627,6 +636,7 @@ function clearChatAndPersonalInfo() {
   document.getElementById("visitCounts").innerHTML= "";
   document.getElementById("platform").innerHTML= "";
   document.getElementById("campaignParam").innerHTML= "";
+  document.getElementById("referrerUrl").innerHTML= "";
   document.getElementById("landingPage").innerHTML= "";
   document.getElementById("chatSendingPage").innerHTML= "";
   document.getElementById("separationPage").innerHTML= "";
