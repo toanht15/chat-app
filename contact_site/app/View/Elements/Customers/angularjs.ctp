@@ -1852,7 +1852,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     function pushToList(obj){
 
-
       if(contract.monitorPollingMode && $scope.monitorList[obj.tabId]
          && ((!( 'referrer' in obj) || $scope.monitorList[obj.tabId].ref === $scope.trimToURL(obj.referrer))
           && (!( 'connectToken' in obj) || $scope.monitorList[obj.tabId].connectToken === obj.connectToken)
@@ -1860,6 +1859,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           && (!( 'coBrowseConnectToken' in obj) || $scope.monitorList[obj.tabId].coBrowseConnectToken === obj.coBrowseConnectToken)
           && (!( 'docShareId' in obj) || $scope.monitorList[obj.tabId].docShareId === obj.docShareId)
           && (!( 'sincloSessionId' in obj) || $scope.monitorList[obj.tabId].sincloSessionId === obj.sincloSessionId)
+          && (!( 'title' in obj) || $scope.monitorList[obj.tabId].title === obj.title
           && (!( 'status' in obj) || $scope.monitorList[obj.tabId].status === obj.status)
         )
       ) {
