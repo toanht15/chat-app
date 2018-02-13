@@ -1,6 +1,6 @@
 <script type="text/javascript">
 <?php if ( $this->action !== "index" ) : ?>
-/*function handleFileSelect(evt) {
+function handleFileSelect(evt) {
   $("slideframe").html('<div id="document_canvas"></div>');
   var files = evt.target.files; // FileList object
   if (files.length === 0) {
@@ -33,12 +33,12 @@
   })(file);
   // Read in the image file as a data URL.
   reader.readAsDataURL(file);
-}*/
+}
 
 
 if (window.File && window.FileReader && window.FileList && window.Blob) {
   $(document).on('change', '#TDocumentFiles', function(e){
-    //handleFileSelect(e);
+    handleFileSelect(e);
   })
 }
 
