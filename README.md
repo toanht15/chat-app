@@ -75,10 +75,11 @@ define('C_AWS_S3_BUCKET', 'XXXXXXXXXXXXXXXXXXX'); // AWSのBucket名
 
 ### マイグレーションのサブモジュールをダウンロード
 
-`sinclo/contact_site/`直下に移動し、下記コマンドでGitのサブモジュールをダウンロードする
+`sinclo`直下に移動し、下記コマンドでGitのサブモジュールをダウンロードする
 
 ```
-$ git submodule add git://github.com/CakeDC/migrations.git app/Plugin/Migrations
+$ cd /var/www/sinclo
+$ git submodule add git://github.com/CakeDC/migrations.git contact_site/app/Plugin/Migrations
 ```
 
 ### マイグレーション管理用のテーブルを作成
