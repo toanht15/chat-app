@@ -132,7 +132,7 @@
         a {
           width: 30px;
           height: 30px;
-          padding: 5px;
+          padding: 4px;
           float: left;
           margin-right: 5px;
           border-radius: 15px;
@@ -1256,6 +1256,24 @@
   width: 6em;
 }
 
+#tooltip_tchatbotscenario_add_btn.tooltips {
+  position: fixed;
+  left: 79px !important;
+  width: 6em;
+}
+
+#tooltip_tchatbotscenario_copy_btn.tooltips {
+  position: fixed;
+  left: 106px !important;
+  width: 9em;
+}
+
+#tooltip_tchatbotscenario_dustbox_btn.tooltips {
+  position: fixed;
+  left: 169px !important;
+  width: 6em;
+}
+
 #tooltip_history_csv_btn.tooltips {
   position: fixed;
   left: 73px !important;
@@ -1471,6 +1489,22 @@
   #chat_notifications_list{
     .t-link{
       padding: 20px 5px 5px;
+    }
+  }
+}
+
+/* チャットボットシナリオ設定レイアウト調整 */
+#tchatbotscenario_idx {
+  #tchatbotscenario_menu {
+    .btnSet {
+      position: relative;
+      top: 0px;
+      left: -3.5px;
+    }
+    .pointer {
+      position: absolute;
+      top: 138px;
+      left: 31px;
     }
   }
 }

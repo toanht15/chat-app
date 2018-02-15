@@ -158,6 +158,9 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
         <div class="icon">
           <?= $this->htmlEx->naviLink('チャット通知', 'notification.png', ['href' => ['controller' => 'MChatNotifications', 'action' => 'index']]) ?>
         </div>
+        <div class="icon">
+          <?= $this->htmlEx->naviLink('シナリオ設定', 'scenario_setting.png', ['href' => ['controller' => 'TChatbotScenario', 'action' => 'index']]) ?>
+        </div>
       </div>
     <?php endif; ?>
     <!-- /* チャット */ -->
