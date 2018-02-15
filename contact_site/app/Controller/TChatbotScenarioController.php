@@ -557,7 +557,7 @@ class TChatbotScenarioController extends AppController {
       }
     }
 
-    $saveData['TChatbotScenario']['activity'] = json_encode($activity);
+    $saveData['TChatbotScenario']['activity'] = json_encode($activity, JSON_FORCE_OBJECT);
     $this->TChatbotScenario->set($saveData);
 
     $validate = $this->TChatbotScenario->validates();
@@ -695,10 +695,10 @@ sinclo@medialink-ml.co.jp
     }
 
     // 保存済みの設定をオブジェクトから削除する
-    unset($saveData->fromName);
-    unset($saveData->toAddress);
-    unset($saveData->subject);
-    unset($saveData->template);
+    unset($saveData['fromName']);
+    unset($saveData['toAddress']);
+    unset($saveData['subject']);
+    unset($saveData['template']);
 
     return $saveData;
   }
