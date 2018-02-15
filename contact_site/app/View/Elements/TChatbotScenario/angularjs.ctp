@@ -1,7 +1,7 @@
 <script type="text/javascript">
 'use strict';
 
-var sincloApp = angular.module('sincloApp', ['ngSanitize', 'ui.validate']);
+var sincloApp = angular.module('sincloApp', ['ngSanitize', 'ui.validate', 'ui.sortable']);
 
 sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService', function($scope, $timeout, SimulatorService) {
   //thisを変数にいれておく
@@ -23,6 +23,17 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   $scope.sendMailTypeList = <?php echo json_encode($chatbotScenarioSendMailType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.widget = SimulatorService;
   $scope.widget.settings = getWidgetSettings();
+
+  // 設定一覧の並び替えオプション
+  $scope.sortableOptions = {
+    axis: "y",
+    tolerance: "pointer",
+    containment: "parent",
+    handle: '.handle',
+    cursor: 'move',
+    helper: 'clone',
+    revert: 100,
+  };
 
   // メッセージ間隔は同一の設定を各アクションに設定しているため、状態に応じて取得先を変更する
   $scope.messageIntervalTimeSec = "<?= !empty($this->data['TChatbotScenario']['messageIntervalTimeSec']) ? $this->data['TChatbotScenario']['messageIntervalTimeSec'] : '' ?>"
@@ -309,28 +320,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     }
     return visible;
   };
-
-  $(".sortable").sortable({
-    axis: "y",
-    tolerance: "pointer",
-    containment: "parent",
-    handle: '.handle',
-    cursor: 'move',
-    revert: 100,
-    stop: function() {
-      // 並び替えの後処理(番号の振り直し、プレビュー更新)
-      var elms = Array.prototype.slice.call(document.querySelectorAll('#tchatbotscenario_form_action_body > li'), 0);
-      $timeout(function() {
-        $scope.$apply();
-      }).then(function() {
-        $scope.setActionList = elms.map(function(elm) {
-          elm.style = '';
-          var id = elm.id.replace(/action([0-9]+)_setting/, '$1');
-          return $scope.setActionList[id];
-        });
-      });
-    }
-  });
 }])
 .controller('DialogController', ['$scope', '$timeout', 'SimulatorService', 'LocalStorageService', function($scope, $timeout, SimulatorService, LocalStorageService) {
   //thisを変数にいれておく
