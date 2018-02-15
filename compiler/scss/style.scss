@@ -6150,7 +6150,12 @@ ul.naviBtn {
         display: flex;
 
         #tautomessages_action_entry {
-          flex-basis: 60%;
+          flex-grow: 1;
+
+          &.showSimulator {
+            flex-grow: initial;
+            flex-basis: 60%;
+          }
         }
 
         #tautomessages_action_simulator {

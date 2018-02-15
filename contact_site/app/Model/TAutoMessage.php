@@ -26,8 +26,7 @@ class TAutoMessage extends AppModel {
     ],
     'action' => [
       'notBlank' => [
-        'rule' => 'notBlank',
-        'allowEmpty' => false,
+        'rule' => 'checkAction',
         'message' => 'メッセージを入力してください'
       ]
     ],
@@ -145,11 +144,24 @@ class TAutoMessage extends AppModel {
   }
 
   /**
+   * action_typeの設定状態を確認し、メッセージのバリデーションを行う
+   * @param  Array $param actionのパラメーター
+   * @return Boolean バリデーション結果
+   */
+  public function checkAction($param) {
+    if ($this->data['TAutoMessage']['action_type'] != C_AUTO_ACTION_TYPE_SENDMESSAGE) {
+      return true;
+    }
+
+    return !empty($param['action']);
+  }
+
+  /**
    * checkScenario
    * action_typeの設定状態を確認し、シナリオ設定のバリデーションを行う
    *
    * @param Array $param t_chatbot_scenario_idのパラメーター
-   * @return Boolean
+   * @return Boolean バリデーション結果
    */
   public function checkScenario($param) {
     if ($this->data['TAutoMessage']['action_type'] != C_AUTO_ACTION_TYPE_SELECTSCENARIO) {

@@ -97,7 +97,7 @@
 
     <h3>３．実行設定</h3>
     <section class="section3">
-      <div id="tautomessages_action_entry">
+      <div id="tautomessages_action_entry" ng-class="{showSimulator:  action_type == <?= C_AUTO_ACTION_TYPE_SENDMESSAGE ?>}">
         <ul class="settingList pl30">
           <!-- アクション -->
           <li>
@@ -142,7 +142,7 @@
           <!-- ウィジェット -->
 
           <!-- メッセージ -->
-          <li class="pl30 bt0">
+          <li ng-show="action_type == <?= C_AUTO_ACTION_TYPE_SENDMESSAGE ?>" class="pl30 bt0">
               <span>
                 <label class="require">メッセージ</label>
                 <span class="greenBtn btn-shadow actBtn" ng-click="addOption(1)">選択肢を追加する</span>
@@ -155,7 +155,7 @@
           <!-- メッセージ -->
 
           <!-- 自由入力エリア -->
-          <li class="bt0">
+          <li ng-show="action_type == <?= C_AUTO_ACTION_TYPE_SENDMESSAGE ?>" class="bt0">
             <span class="require"><label>自由入力エリア</label></span>
             <label class="pointer"><?= $this->ngForm->input('main.chat_textarea', [
               'type' => 'radio',
@@ -171,7 +171,7 @@
           <!-- 自由入力エリア -->
 
           <!-- cv -->
-          <li class="bt0">
+          <li ng-show="action_type == <?= C_AUTO_ACTION_TYPE_SENDMESSAGE ?>" class="bt0">
             <span class="require"><label>成果にCVとして登録する</label></span>
             <label style="cursor:pointer;" <?php echo ($coreSettings[C_COMPANY_USE_CV]) ? '' : 'class=commontooltip';?>
             <?php echo ($coreSettings[C_COMPANY_USE_CV]) ? '' : 'data-text=こちらの機能はスタンダードプランからご利用いただけます。';?>
@@ -191,7 +191,7 @@
           <!-- cv -->
 
           <!-- メール送信 -->
-          <li class="bt0" id="sendMailSettingCheckBox">
+          <li ng-show="action_type == <?= C_AUTO_ACTION_TYPE_SENDMESSAGE ?>" class="bt0" id="sendMailSettingCheckBox">
             <label style="display:inline-block; <?php echo $coreSettings[C_COMPANY_USE_AUTOMESSAGE_SEND_MAIL] ? '"' : 'color: #CCCCCC;" class="commontooltip" data-text="こちらの機能はスタンダードプラン<br>からご利用いただけます。" data-content-position-left="-33" data-balloon-position="5"'?> >
             <?= $this->Form->input('main.send_mail_flg', [
                   'type' => 'checkbox',
@@ -208,7 +208,7 @@
                 <input type="hidden" name="data[main][send_mail_flg]" value="0"/>
             <?php endif; ?>
           </li>
-          <li class="bt0 sendMailSettings" id="mailAddressSetting" style="display:none">
+          <li ng-show="action_type == <?= C_AUTO_ACTION_TYPE_SENDMESSAGE ?>" class="bt0 sendMailSettings" id="mailAddressSetting" style="display:none">
             <span><label class="require">送信先メールアドレス</label></span>
             <div id="fromMailAddressSettings">
               <span class="bt0 mailAddressBlock"><?= $this->Form->input('main.mail_address_1', [
@@ -274,7 +274,7 @@
               <?php if (!empty($errors['to_address'])) echo "<pre class='error-message'>" . h($errors['to_address'][0]) . "</pre>"; ?>
             </div>
           </li>
-          <li class="bt0 sendMailSettings" id="subjectBlock" style="display:none">
+          <li ng-show="action_type == <?= C_AUTO_ACTION_TYPE_SENDMESSAGE ?>" class="bt0 sendMailSettings" id="subjectBlock" style="display:none">
             <span><label class="require">メールタイトル</label></span>
             <span class="bt0"><?= $this->Form->input('main.subject', [
                   'type' => 'text',
@@ -286,7 +286,7 @@
             </span>
             <?php if (!empty($errors['subject'])) echo "<pre class='error-message'>" . h($errors['subject'][0]) . "</pre>"; ?>
           </li>
-          <li class="bt0 sendMailSettings" id="fromNameBlock" style="display:none">
+          <li ng-show="action_type == <?= C_AUTO_ACTION_TYPE_SENDMESSAGE ?>" class="bt0 sendMailSettings" id="fromNameBlock" style="display:none">
             <span><label class="require">差出人名</label></span>
             <span class="bt0"><?= $this->Form->input('main.from_name', [
                   'type' => 'text',
@@ -322,7 +322,7 @@
         </ul>
       </div>
 
-      <div id="tautomessages_action_simulator" ng-class="{middleSize: widgetSizeTypeToggle === '2', largeSize: widgetSizeTypeToggle === '3'}">
+      <div id="tautomessages_action_simulator" ng-show="action_type == <?= C_AUTO_ACTION_TYPE_SENDMESSAGE ?>" ng-class="{middleSize: widgetSizeTypeToggle === '2', largeSize: widgetSizeTypeToggle === '3'}">
         <div>
           <?= $this->element('TAutoMessages/simulator'); ?>
         </div>
