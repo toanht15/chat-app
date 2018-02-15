@@ -6872,11 +6872,12 @@ ul.naviBtn {
 
       /* チャットボットシナリオ設定(追加・更新): プレビュー */
       #tchatbotscenario_form_preview{
+        flex-basis: 285px;
         min-width: 285px;
-        max-width: 285px;
 
         &.middleSize {
-          max-width: 342.5px;
+          flex-basis: 342.5px;
+          min-width: 342.5px;
           font-size: 13px;
 
           .cName {
@@ -6885,7 +6886,8 @@ ul.naviBtn {
         }
 
         &.largeSize {
-          max-width: 400px;
+          flex-basis: 400px;
+          min-width: 400px;
           font-size: 13px;
 
           .cName {
