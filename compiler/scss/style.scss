@@ -6150,11 +6150,15 @@ ul.naviBtn {
         display: flex;
 
         #tautomessages_action_entry {
-          flex-grow: 1;
-
           &.showSimulator {
-            flex-grow: initial;
             flex-basis: 60%;
+          }
+          &:not(.showSimulator) {
+            flex-grow: 1;
+          }
+
+          #TAutoMessageTChatbotScenarioId {
+            padding: 5px;
           }
         }
 

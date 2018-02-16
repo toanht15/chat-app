@@ -1256,6 +1256,12 @@
   width: 6em;
 }
 
+#tooltip_tautomessage_select_scenario.tooltips::after {
+  position: relative;
+  top: 24px !important;
+  left: 20px !important;
+}
+
 #tooltip_tchatbotscenario_add_btn.tooltips {
   position: fixed;
   left: 79px !important;

@@ -115,13 +115,19 @@
           <!-- シナリオ選択 -->
           <li ng-show="action_type == <?= C_AUTO_ACTION_TYPE_SELECTSCENARIO ?>" class="bt0">
             <span class="require"><label>シナリオ</label></span>
-            <?= $this->Form->input('t_chatbot_scenario_id', [
-              'type' => 'select',
-              'options' => $this->data['chatbotScenario'],
-              'empty' => 'シナリオを選択してください'
-            ], [
-              'default' => (!empty($this->data['TAutoMessage']['t_chatbot_scenario_id'])) ? $this->data['TAutoMessage']['t_chatbot_scenario_id'] : ''
-            ]) ?>
+            <?php
+              $canSelectScenario = isset($coreSettings[C_COMPANY_USE_CHATBOT_SCENARIO]) && $coreSettings[C_COMPANY_USE_CHATBOT_SCENARIO];
+            ?>
+            <label id="tautomessage_select_scenario" style="display: inline-block;" <?php echo $canSelectScenario ? '' : 'class="commontooltip" data-text="こちらの機能はオプションの加入が必要です。" data-balloon-position="43"' ?>>
+              <?= $this->Form->input('t_chatbot_scenario_id', [
+                'type' => 'select',
+                'options' => $this->data['chatbotScenario'],
+                'empty' => 'シナリオを選択してください',
+                'disabled' => !$canSelectScenario,
+              ], [
+                'default' => (!empty($this->data['TAutoMessage']['t_chatbot_scenario_id'])) ? $this->data['TAutoMessage']['t_chatbot_scenario_id'] : ''
+              ]) ?>
+            </label>
             <?php if (!empty($errors['t_chatbot_scenario_id'])) echo "<pre class='error-message'>" . h($errors['t_chatbot_scenario_id'][0]) . "</pre>"; ?>
           </li>
           <!-- シナリオ選択 -->
