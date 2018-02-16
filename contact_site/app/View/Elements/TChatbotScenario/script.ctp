@@ -78,7 +78,7 @@ function openConfirmDialog(){
   if(countList >= current && index > 1){
     index = index - 1;
   }
-  modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', 'シナリオ設定', 'moment');
+  modalOpen.call(window, "削除します、よろしいですか？<br><br>（呼び出し元が設定されているシナリオは削除できません）", 'p-confirm', 'シナリオ設定', 'moment');
   popupEvent.closePopup = toExecutableOnce(function(){
     $.ajax({
       type: 'post',

@@ -176,21 +176,31 @@ class TChatbotScenarioController extends AppController {
 
     $selectedList = $this->request->data['selectedList'];
     $this->TChatbotScenario->begin();
-    $res = true;
+    $res = false;
     foreach($selectedList as $key => $val){
       $id = (isset($val)) ? $val: "";
+      // オートメッセージで設定済みのシナリオは削除対象から外す
       $ret = $this->TChatbotScenario->find('first', [
           'fields' => 'TChatbotScenario.*',
           'conditions' => [
               'TChatbotScenario.del_flg' => 0,
               'TChatbotScenario.id' => $id,
-              'TChatbotScenario.m_companies_id' => $this->userInfo['MCompany']['id']
+              'TChatbotScenario.m_companies_id' => $this->userInfo['MCompany']['id'],
+              'TAutoMessage.t_chatbot_scenario_id' => NULL
           ],
+          'joins' => [[
+            'type' => 'LEFT OUTER',
+            'table' => 't_auto_messages',
+            'alias' => 'TAutoMessage',
+            'conditions' => [
+              'TChatbotScenario.id = TAutoMessage.t_chatbot_scenario_id'
+            ]
+          ]],
           'recursive' => -1
       ]);
       if ( count($ret) === 1 ) {
-        if (! $this->TChatbotScenario->delete($val) ) {
-          $res = false;
+        if ($this->TChatbotScenario->delete($val) ) {
+          $res = true;
         }
       }
     }
