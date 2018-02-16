@@ -1695,11 +1695,11 @@
             })
             .on("click", "input[name^='sinclo-radio']", function(e){
               if(e) e.stopPropagation();
-              if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isWaitingInput()) {
-                sinclo.scenarioApi.triggerInputWaitComplete(e.target.value.trim());
-              }
               if ( !(window.sincloInfo.widget.hasOwnProperty('chatRadioBehavior') && window.sincloInfo.widget.chatRadioBehavior === 2) ) {
                 sinclo.chatApi.send(e.target.value.trim());
+              }
+              if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isWaitingInput()) {
+                sinclo.scenarioApi.triggerInputWaitComplete(e.target.value.trim());
               }
               else {
                 var textareaOpend = storage.l.get('textareaOpend');
@@ -2181,6 +2181,7 @@
               }
 
               var isScenarioMessage = false;
+              console.log("sinclo.scenarioApi.isProcessing() : " + sinclo.scenarioApi.isProcessing() + " sinclo.scenarioApi.isWaitingInput() : " + sinclo.scenarioApi.isWaitingInput())
               if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isWaitingInput()) {
                 sinclo.scenarioApi.triggerInputWaitComplete(value);
                 messageType = sinclo.scenarioApi.getCustomerMessageType();
@@ -3158,7 +3159,7 @@
             matchAllSpeechContent: function(msg, callback) {
               // FIXME マッチした処理が２回以上の場合、チャット送信処理も２回以上処理される
               var matched = false;
-              if((!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false") && this.speechContentRegEx.length > 0) {
+              if((!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false" || (!sinclo.scenarioApi.isProcessing() && !sinclo.scenarioApi.isWaitingInput())) && this.speechContentRegEx.length > 0) {
                 for (var index in this.speechContentRegEx) {
                   if(sinclo.chatApi.triggeredAutoSpeechExists(this.speechContentRegEx[index].id)) {
                     console.log("triggeredAutoSpeechExists. Ignored. id : " + this.speechContentRegEx[index].id);
@@ -3709,8 +3710,6 @@
             self._parent._handleChatTextArea(self._currentData.chatTextArea);
             self._parent._showMessage(self._currentData.actionType, messageBlock, function(){
               self._parent._waitingInput(function(inputVal){
-                console.log(inputVal === self._currentData.success);
-                console.log(inputVal);
                 self._parent._unWaitingInput();
                 self._parent._handleStoredMessage();
                 if(inputVal === self._currentData.success) {
