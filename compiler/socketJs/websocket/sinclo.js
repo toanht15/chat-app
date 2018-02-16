@@ -3362,11 +3362,13 @@
       _scenarioLength: 0,
       _currentScenario: {},
       _currentScenarioSeqNum: 0,
+      _storedVariableKeys: [],
       init: function(scenarioObj){
         this._scenarios = scenarioObj;
         this._scenarioLength = Object.keys(scenarioObj).length;
         this._currentScenario = this._scenarios["0"];
-        this._currentScenarioSeqNum = 1;
+        this._currentScenarioSeqNum = 0;
+        this._storedVariableKeys = [];
       },
       begin: function() {
         this._saveProcessingState(true);
@@ -3406,13 +3408,20 @@
             self._selection._process();
             break;
           case "4":
+            self._mail._init(self, self._currentScenario);
+            self._mail._process();
             break;
         }
       },
       _goToNextScenario: function() {
         var self = sinclo.scenarioApi;
+        if(self._currentScenarioSeqNum === self._scenarioLength-1) {
+          self._saveProcessingState(false);
+          return false;
+        }
         self._currentScenarioSeqNum++;
-        self._currentScenario = self._scenarios[String(self._currentScenarioSeqNum-1)];
+        self._currentScenario = self._scenarios[String(self._currentScenarioSeqNum)];
+        return true;
       },
       _showMessage: function(message) {
         var self = sinclo.scenarioApi;
@@ -3436,6 +3445,10 @@
         var obj = JSON.parse(json);
         obj[valKey] = value;
         storage.l.set(self._lKey.variables, JSON.stringify(obj));
+        // メール送信シナリオで利用するためシナリオで保存した変数は配列で保持する
+        if(self._storedVariableKeys.indexOf(valKey) === -1) {
+          self._storedVariableKeys.push(valKey);
+        }
       },
       _getSavedVariable: function(valKey) {
         var self = sinclo.scenarioApi;
@@ -3444,6 +3457,14 @@
         if(!json) json = "{}";
         var obj = JSON.parse(json);
         return obj[valKey] ? obj[valKey] : "";
+      },
+      _getAllTargetVariables: function() {
+        var self = sinclo.scenarioApi;
+        var resultSet = {};
+        self._storedVariableKeys.forEach(function(elm, index, array){
+          resultSet[elm] = self._getSavedVariable(elm);
+        });
+        return resultSet;
       },
       _getMessage: function() {
         var self = sinclo.scenarioApi;
@@ -3473,8 +3494,9 @@
         var self = sinclo.scenarioApi;
         this._doing(self._getIntervalTimeSec(), function() {
           self._showMessage(self._getMessage());
-          self._goToNextScenario();
-          self._process();
+          if(self._goToNextScenario()) {
+            self._process();
+          }
         });
       },
       _createSelectionMessage: function(headerMessage, selections) {
@@ -3535,8 +3557,9 @@
                   if(self._requireConfirm()) {
                     self._showConfirmMessage();
                   } else {
-                    self._parent._goToNextScenario();
-                    self._parent._process();
+                    if(self._parent._goToNextScenario()) {
+                      self._parent._process();
+                    }
                   }
                 }
               } else {
@@ -3580,8 +3603,9 @@
               console.log(inputVal);
               self._parent._unWaitingInput();
               if(inputVal === self._currentData.success) {
-                self._parent._goToNextScenario();
-                self._parent._process();
+                if(self._parent._goToNextScenario()) {
+                  self._parent._process();
+                }
               } else if (inputVal === self._currentData.cancel) {
                 self._parent._process();
               } else {
@@ -3604,10 +3628,35 @@
           self._parent._doing(self._parent._getIntervalTimeSec(), function(){
             self._parent._showMessage(messageBlock);
             self._parent._waitingInput(function(inputVal){
+              self._parent._unWaitingInput();
               self._parent._saveVariable(self._currentData.selection.variableName, inputVal);
-              self._parent._goToNextScenario();
-              self._parent._process();
+              if(self._parent._goToNextScenario()) {
+                self._parent._process();
+              }
             });
+          });
+        }
+      },
+      _mail: {
+        _parent: null,
+        _currentData: null,
+        _init: function(parent, currentScenario) {
+          this._parent = parent;
+          this._currentData = currentScenario;
+        },
+        _process: function() {
+          var self = sinclo.scenarioApi._mail;
+          var targetVariables = self._parent._getAllTargetVariables();
+          var sendData = {
+            mailType: self._currentData.mailType,
+            transmissionId: self._currentData.mMailTransmissionId,
+            templateId: self._currentData.mMailTemplateId,
+            variables: targetVariables
+          };
+          emit('processSendMail', sendData, function(ev) {
+            if(self._parent._goToNextScenario()) {
+              self._process();
+            }
           });
         }
       }

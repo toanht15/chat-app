@@ -11,11 +11,17 @@ class NotificationController extends AppController {
   const PARAM_AUTO_MESSAGE_ID = 'autoMessageId';
   const PARAM_LAST_CHAT_LOG_ID = 'lastChatLogId';
 
-  public $components = ['AutoMessageMailTemplate', 'MailSender', 'Auth'];
+  const PARAM_HISTORY_ID = 'userHistoryId';
+  const PARAM_MAIL_TYPE = 'mailType';
+  const PARAM_TRANSMISSION_ID = 'transmissionId';
+  const PARAM_TEMPLATE_ID = 'templateId';
+  const PARAM_VARIABLES = 'variables';
+
+  public $components = ['AutoMessageMailTemplate', 'ScenarioMailTemplate', 'MailSender', 'Auth'];
   public $uses = ['TAutoMessage','TCampaign', 'THistory', 'THistoryChatLog', 'THistoryStayLog', 'MLandscapeData', 'MMailTransmissionSetting', 'TMailTransmissionLog', 'MCompany'];
 
   public function beforeFilter() {
-    $this->Auth->allow('autoMessages');
+    $this->Auth->allow('autoMessages','scenario');
   }
 
   public function autoMessages() {
@@ -104,6 +110,88 @@ class NotificationController extends AppController {
     ));
   }
 
+  public function scenario() {
+    Configure::write('debug', 0);
+
+    $this->autoRender = false;
+    $this->layout = "ajax";
+
+    $jsonObj = $this->getRequestJSONData();
+    try {
+      $this->isValidAccessToken($jsonObj[self::PARAM_ACCESS_TOKEN]);
+      $targetChatLog = $this->getTargetChatLogByHistoryId($jsonObj[self::PARAM_HISTORY_ID]);
+      if(empty($targetChatLog)) {
+        throw new InvalidArgumentException('指定のHistoryId : '.$jsonObj[self::PARAM_HISTORY_ID].' のチャットログが存在しません');
+      }
+      $allChatLogs = $this->getAllChatLogsByEntity($targetChatLog);
+      $targetHistory = $this->getTargetHistoryById($targetChatLog['THistoryChatLog']['t_histories_id']);
+      $targetStayLog = $this->getTargetStayLogById($targetChatLog['THistoryChatLog']['t_history_stay_logs_id']);
+      $campaign = $this->getAllCampaign($targetHistory['THistory']['m_companies_id']);
+      $coreSettings = $this->getCoreSettingsById($targetHistory['THistory']['m_companies_id']);
+      $targetLandscapeData = null;
+      if(!empty($coreSettings) && array_key_exists(C_COMPANY_REF_COMPANY_DATA, $coreSettings) && $coreSettings[C_COMPANY_REF_COMPANY_DATA]) { //FIX : 企業マスタから取得必須
+        $targetLandscapeData = $this->getTargetLandScapeDataByIpAddress($targetHistory['THistory']['ip_address']);
+      }
+      $component = new ScenarioMailTemplateComponent();
+      $component->setSenarioRequiredData($jsonObj[self::PARAM_MAIL_TYPE], $jsonObj[self::PARAM_VARIABLES], $jsonObj[self::PARAM_TEMPLATE_ID], $allChatLogs, $targetStayLog, $campaign, $targetLandscapeData);
+      $component->createMessageBody();
+
+      $transmission = $this->getTransmissionConfigById($jsonObj[self::PARAM_TRANSMISSION_ID]);
+
+      // 送信前にログを生成
+      $this->TMailTransmissionLog->create();
+      $this->TMailTransmissionLog->set([
+        'm_companies_id' => $targetHistory['THistory']['m_companies_id'],
+        'mail_type_cd' => ScenarioMailTemplateComponent::MAIL_TYPE_CD,
+        'from_address' => MailSenderComponent::MAIL_SYSTEM_FROM_ADDRESS,
+        'from_name' => $transmission['MMailTransmissionSetting']['from_name'],
+        'to_address' => $transmission['MMailTransmissionSetting']['to_address'],
+        'subject' => $transmission['MMailTransmissionSetting']['subject'],
+        'body' => $component->getBody(),
+        'send_flg' => 0
+      ]);
+      $this->TMailTransmissionLog->save();
+      $lastInsertId = $this->TMailTransmissionLog->getLastInsertId();
+
+      $sender = new MailSenderComponent();
+      $sender->setFrom(MailSenderComponent::MAIL_SYSTEM_FROM_ADDRESS);
+      $sender->setFromName($transmission['MMailTransmissionSetting']['from_name']);
+      $sender->setTo($transmission['MMailTransmissionSetting']['to_address']);
+      $sender->setSubject($transmission['MMailTransmissionSetting']['subject']);
+      $sender->setBody($component->getBody());
+      $sender->send();
+
+      // 送信ログを作る
+      $now = new DateTime('now', new DateTimeZone('Asia/Tokyo'));
+      $this->TMailTransmissionLog->read(null, $lastInsertId);
+      $this->TMailTransmissionLog->set([
+        'send_flg' => 1,
+        'sent_datetime' => $now->format("Y/m/d H:i:s")
+      ]);
+      $this->TMailTransmissionLog->save();
+
+      // チャットログに送信履歴を付ける
+      $this->THistoryChatLog->read(null, $jsonObj[self::PARAM_LAST_CHAT_LOG_ID]);
+      $this->THistoryChatLog->set([
+        'send_mail_flg' => 1,
+        't_mail_transmission_logs_id' => $lastInsertId
+      ]);
+      $this->THistoryChatLog->save();
+
+    } catch(Exception $e) {
+      $this->log('【MAIL_SEND_ERROR】Notification/scenario呼び出し時にエラーが発生しました。 エラーメッセージ: '.$e->getMessage().' エラー番号 '.$e->getCode().' パラメータ: '.json_encode($jsonObj), 'mail-api-error');
+      $this->response->statusCode($e->getCode());
+      return json_encode(array(
+        'success' => false,
+        'errorCode' => $e->getCode()
+      ));
+    }
+    $this->response->statusCode(200);
+    return json_encode(array(
+      'success' => true
+    ));
+  }
+
   private function getTargetAutoMessageById($id) {
     return $this->TAutoMessage->findById($id);
   }
@@ -113,6 +201,10 @@ class NotificationController extends AppController {
    */
   private function getTargetChatLogById($id) {
     return $this->THistoryChatLog->findById($id);
+  }
+
+  private function getTargetChatLogByHistoryId($historyId) {
+    return $this->THistoryChatLog->findByTHistoriesId($historyId);
   }
 
   private function getAllChatLogsByEntity($chatLog) {

@@ -554,19 +554,71 @@ function sendMail(autoMessageId, lastChatLogId, callback) {
       response.on('data', callback);
       return;
     } else {
-      console.log('企業詳細情報取得時にエラーが返却されました。 errorCode : ' + response.statusCode);
+      console.log('オートメッセージ設定メール通知時にエラーが返却されました。 errorCode : ' + response.statusCode);
       callback(false);
       return;
     }
   });
 
   req.on('error', function(error) {
-    console.log('企業詳細情報取得時にHTTPレベルのエラーが発生しました。 message : ' + error.message);
+    console.log('オートメッセージ設定メール通知時にHTTPレベルのエラーが発生しました。 message : ' + error.message);
     callback(false);
     return;
   });
 
   req.write(JSON.stringify({"accessToken":"x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK", "autoMessageId":autoMessageId, "lastChatLogId":lastChatLogId}));
+  req.end();
+}
+
+function sendSenarioMail(obj, callback) {
+  //ヘッダーを定義
+  var headers = {
+    'Content-Type':'application/json'
+  };
+
+  //オプションを定義
+  var options = {
+    host: process.env.SEND_SCENARIO_MESSAGE_MAIL_API_HOST,
+    port: process.env.SEND_SCENARIO_MESSAGE_MAIL_API_PORT,
+    path: process.env.SEND_SCENARIO_MESSAGE_MAIL_API_PATH,
+    method: 'POST',
+    headers: headers,
+    json: true,
+    agent: false
+  };
+
+  if(process.env.DB_HOST === 'localhost') {
+    options.rejectUnauthorized = false;
+  }
+
+  //リクエスト送信
+  var req = http.request(options, function (response) {
+    if(response.statusCode === 200) {
+      response.setEncoding('utf8');
+      response.on('data', callback);
+      return;
+    } else {
+      console.log('シナリオメール送信時にエラーが返却されました。 errorCode : ' + response.statusCode);
+      callback(false);
+      return;
+    }
+  });
+
+  req.on('error', function(error) {
+    console.log('シナリオメール送信時にHTTPレベルのエラーが発生しました。 message : ' + error.message);
+    callback(false);
+    return;
+  });
+
+  var historyId = getSessionId(obj.siteKey, obj.tabId, "historyId");
+  req.write(JSON.stringify({
+    "accessToken":"x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK",
+    "userHistoryId": historyId,
+    "mailType": obj.mailType,
+    "transmissionId": obj.transmissionId,
+    "templateId": obj.templateId,
+    "variables": obj.variables
+  }));
   req.end();
 }
 
@@ -3052,6 +3104,13 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         }
         emit.toMine('resGetScenario', {activity: result}, socket);
       });
+  });
+
+  socket.on('processSendMail', function(data, ack){
+    var obj = JSON.parse(data);
+    sendSenarioMail(obj, function(result){
+      ack(result);
+    });
   });
 
   // ============================================

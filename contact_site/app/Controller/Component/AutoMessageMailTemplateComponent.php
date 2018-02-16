@@ -24,12 +24,12 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
 
   const MAIL_TYPE_CD = 'AM001';
 
-  private $templateId;
-  private $template;
-  private $chatLogs;
-  private $stayLog;
-  private $campaigns;
-  private $landscapeData;
+  protected $templateId;
+  protected $template;
+  protected $chatLogs;
+  protected $stayLog;
+  protected $campaigns;
+  protected $landscapeData;
 
   private $autoMessageBlock;
 
@@ -59,17 +59,17 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
     $this->body = str_replace(self::REPLACE_TARGET_AUTO_MESSAGE_BLOCK_DELIMITER, $this->autoMessageBlock, $this->template['MMailTemplate']['template']);
   }
 
-  private function readTemplate() {
+  protected function readTemplate() {
     $mailTemplate = ClassRegistry::init('MMailTemplate');
     $this->template = $mailTemplate->findById($this->templateId);
   }
 
-  private function prepareAutoMessageBlock() {
+  protected function prepareAutoMessageBlock() {
     $this->createMetaDataMessage();
     $this->createAutoMessages();
   }
 
-  private function createMetaDataMessage() {
+  protected function createMetaDataMessage() {
     $this->autoMessageBlock  = "チャット送信ページタイトル：".$this->stayLog['THistoryStayLog']['title']."\n";
     $this->autoMessageBlock .= "チャット送信ページＵＲＬ　：".$this->stayLog['THistoryStayLog']['url']."\n";
     $this->autoMessageBlock .= "キャンペーン　　　　　　　：".$this->concatCampaign($this->stayLog['THistoryStayLog']['url'])."\n";
@@ -78,13 +78,13 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
     }
   }
 
-  private function createAutoMessages() {
+  protected function createAutoMessages() {
     foreach($this->chatLogs as $k => $v) {
       $this->autoMessageBlock .= $this->generateMessageBlockStr($v['THistoryChatLog'], $v['MUser'])."\n";
     }
   }
 
-  private function concatCampaign($url) {
+  protected function concatCampaign($url) {
     $campaignParam = "";
     $tmp = mb_strstr($url, '?');
     if ( $tmp !== "" ) {
@@ -100,7 +100,7 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
     return $campaignParam;
   }
 
-  private function generateMessageBlockStr($chatLog, $user) {
+  protected function generateMessageBlockStr($chatLog, $user) {
     $message = "";
     switch($chatLog['message_type']) {
       case 1:
@@ -121,6 +121,9 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
       case 6:
         $message = $this->generateFileSendBlockStr($chatLog['created'],$chatLog['message']);
         break;
+      case 7:
+        $message = $this->generateScenarioMessageBlockStr($chatLog['created'],$chatLog['message']);
+        break;
       case 98:
         $message = $this->generateOperatorEnteredBlockStr($chatLog['created'],$user['display_name']);
         break;
@@ -133,59 +136,66 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
     return $message;
   }
 
-  private function generateConsumerMessageBlockStr($date, $content) {
+  protected function generateConsumerMessageBlockStr($date, $content) {
     $message = self::MESSAGE_SEPARATOR."\n";
     $message .= $this->createMessageBlockHeader($date, self::SEND_NAME_CONSUMER);
     $message .= $this->createMessageContent($content);
     return $message;
   }
 
-  private function generateOperatorMessageBlockStr($date, $operatorName, $content) {
+  protected function generateOperatorMessageBlockStr($date, $operatorName, $content) {
     $message = self::MESSAGE_SEPARATOR."\n";
     $message .= $this->createMessageBlockHeader($date, $operatorName);
     $message .= $this->createMessageContent($content);
     return $message;
   }
 
-  private function generateAutoMessageBlockStr($date, $content) {
+  protected function generateAutoMessageBlockStr($date, $content) {
     $message = self::MESSAGE_SEPARATOR."\n";
     $message .= $this->createMessageBlockHeader($date, self::SEND_NAME_AUTO_MESSAGE);
     $message .= $this->createMessageContent($content);
     return $message;
   }
 
-  private function generateFileSendBlockStr($date, $content) {
+  protected function generateFileSendBlockStr($date, $content) {
     $message = self::MESSAGE_SEPARATOR."\n";
     $message .= $this->createMessageBlockHeader($date, self::SEND_NAME_FILE_TRANSFER);
     $message .= $this->createFileTransferMessageContent($content);
     return $message;
   }
 
-  private function generateSorryMessageBlockStr($date, $content) {
+  protected function generateSorryMessageBlockStr($date, $content) {
     $message = self::MESSAGE_SEPARATOR."\n";
     $message .= $this->createMessageBlockHeader($date, self::SEND_NAME_SORRY_MESSAGE);
     $message .= $this->createMessageContent($content);
     return $message;
   }
 
-  private function generateAutoSpeechBlockStr($date, $content) {
+  protected function generateAutoSpeechBlockStr($date, $content) {
     $message = self::MESSAGE_SEPARATOR."\n";
     $message .= $this->createMessageBlockHeader($date, self::SEND_NAME_AUTO_SPEECH_MESSAGE);
     $message .= $this->createMessageContent($content);
     return $message;
   }
 
-  private function generateOperatorEnteredBlockStr($date, $operatorName) {
+  protected function generateOperatorEnteredBlockStr($date, $operatorName) {
     $message = self::MESSAGE_SEPARATOR."\n";
     $message .= '入室日時：'.date(self::DATETIME_FORMAT, strtotime($date))."\n";
     $message .= '入室者　：'.$operatorName."\n";
     return $message;
   }
 
-  private function generateOperatorLeavedBlockStr($date, $operatorName) {
+  protected function generateOperatorLeavedBlockStr($date, $operatorName) {
     $message = self::MESSAGE_SEPARATOR."\n";
     $message .= '退室日時：'.date(self::DATETIME_FORMAT, strtotime($date))."\n";
     $message .= '退室者　：'.$operatorName."\n";
+    return $message;
+  }
+
+  private function generateScenarioMessageBlockStr($date, $content) {
+    $message = self::MESSAGE_SEPARATOR."\n";
+    $message .= $this->createMessageBlockHeader($date, self::SEND_NAME_AUTO_SPEECH_MESSAGE);
+    $message .= $this->createMessageContent($content);
     return $message;
   }
 
@@ -194,7 +204,7 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
    * @param $name
    * @return string
    */
-  private function createMessageBlockHeader($date, $senderName) {
+  protected function createMessageBlockHeader($date, $senderName) {
     $message = "";
     $message .= '送信日時：' . date(self::DATETIME_FORMAT, strtotime($date))."\n";
     $message .= '送信者　：'.$senderName."\n";
@@ -202,7 +212,7 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
     return $message;
   }
 
-  private function createMessageContent($content) {
+  protected function createMessageContent($content) {
     $message = "";
     $lines = $this->explodeContentByLine($content);
     foreach($lines as $line) {
@@ -211,14 +221,14 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
     return $message;
   }
 
-  private function createFileTransferMessageContent($content) {
+  protected function createFileTransferMessageContent($content) {
     $message = "";
     $content = json_decode($content, TRUE);
     $message .= "　ファイル名【".$content['fileName']."】\n";
     return $message;
   }
 
-  private function explodeContentByLine($content) {
+  protected function explodeContentByLine($content) {
     return explode("\n", $content);
   }
 
