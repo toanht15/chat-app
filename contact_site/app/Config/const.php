@@ -656,7 +656,7 @@ $config['chatbotScenarioInputType'] = [
 
 /* シナリオ設定 - メール送信タイプ */
 $config['chatbotScenarioSendMailType'] = [
-  C_SCENARIO_MAIL_TYPE_ALL_MESSAGE => 'メール内容をすべてメールする',
+  C_SCENARIO_MAIL_TYPE_ALL_MESSAGE => 'チャット内容をすべてメールする',
   C_SCENARIO_MAIL_TYPE_VARIABLES => '変数の値のみメールする',
   C_SCENARIO_MAIL_TYPE_CUSTOMIZE => 'メール本文をカスタマイズする'
 ];
