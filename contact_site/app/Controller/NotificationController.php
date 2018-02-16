@@ -123,7 +123,7 @@ class NotificationController extends AppController {
       if(empty($targetChatLog)) {
         throw new InvalidArgumentException('指定のHistoryId : '.$jsonObj[self::PARAM_HISTORY_ID].' のチャットログが存在しません');
       }
-      $allChatLogs = $this->getAllChatLogsByEntity($targetChatLog);
+      $allChatLogs = $this->getAllChatLogsByEntityHistoryId($targetChatLog);
       $targetHistory = $this->getTargetHistoryById($targetChatLog['THistoryChatLog']['t_histories_id']);
       $targetStayLog = $this->getTargetStayLogById($targetChatLog['THistoryChatLog']['t_history_stay_logs_id']);
       $campaign = $this->getAllCampaign($targetHistory['THistory']['m_companies_id']);
@@ -221,6 +221,25 @@ class NotificationController extends AppController {
           'alias' => 'MUser',
           'fields' => ['id', 'display_name'],
           'conditions' => 'THistoryChatLog.m_users_id = MUser.id'
+      )
+      ),
+      'order' => array('THistoryChatLog.created')
+    ));
+  }
+
+  private function getAllChatLogsByEntityHistoryId($chatLog) {
+    return $this->THistoryChatLog->find('all', array(
+      'alias' => 'THistoryChatLog',
+      'fields' => array('THistoryChatLog.*','MUser.*'),
+      'conditions' => array('THistoryChatLog.m_companies_id' => $chatLog['THistoryChatLog']['m_companies_id'],
+        'THistoryChatLog.t_histories_id' => $chatLog['THistoryChatLog']['t_histories_id']
+      ),
+      'joins' => array(array(
+        'type' => 'LEFT',
+        'table' => 'm_users',
+        'alias' => 'MUser',
+        'fields' => ['id', 'display_name'],
+        'conditions' => 'THistoryChatLog.m_users_id = MUser.id'
       )
       ),
       'order' => array('THistoryChatLog.created')

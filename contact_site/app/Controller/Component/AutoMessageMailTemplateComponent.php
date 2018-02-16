@@ -10,11 +10,16 @@ App::uses('MailTemplateComponent', 'Controller/Component');
 
 class AutoMessageMailTemplateComponent extends MailTemplateComponent {
   const SEND_NAME_CONSUMER = '訪問者';
+  const SEND_NAME_CONSUMER_SCENARIO_HEARING = '訪問者（ヒアリング回答）';
+  const SEND_NAME_CONSUMER_SCENARIO_SELECTION = '訪問者（選択肢回答）';
   const SEND_NAME_OPERATOR = 'オペレータ';
   const SEND_NAME_AUTO_MESSAGE = '自動応答';
   const SEND_NAME_SORRY_MESSAGE = '自動応答（sorry）';
   const SEND_NAME_AUTO_SPEECH_MESSAGE = '自動返信';
   const SEND_NAME_FILE_TRANSFER = 'ファイル送信';
+  const SEND_NAME_SCENARIO_TEXT = 'シナリオメッセージ（テキスト発言）';
+  const SEND_NAME_SCENARIO_HEARING = 'シナリオメッセージ（ヒアリング）';
+  const SEND_NAME_SCENARIO_SELECTION = 'シナリオメッセージ（選択肢）';
 
   const REPLACE_TARGET_AUTO_MESSAGE_BLOCK_DELIMITER = '##AUTO_MESSAGE_BLOCK##';
 
@@ -124,6 +129,21 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
       case 7:
         $message = $this->generateScenarioMessageBlockStr($chatLog['created'],$chatLog['message']);
         break;
+      case 12:
+        $message = $this->generateConsumerScenarioHearingMessageBlockStr($chatLog['created'],$chatLog['message']);
+        break;
+      case 13:
+        $message = $this->generateConsumerScenarioSelectionMessageBlockStr($chatLog['created'],$chatLog['message']);
+        break;
+      case 21:
+        $message = $this->generateScenarioTextBlockStr($chatLog['created'],$chatLog['message']);
+        break;
+      case 22:
+        $message = $this->generateScenarioHearingBlockStr($chatLog['created'],$chatLog['message']);
+        break;
+      case 23:
+        $message = $this->generateScenarioSelectionBlockStr($chatLog['created'],$chatLog['message']);
+        break;
       case 98:
         $message = $this->generateOperatorEnteredBlockStr($chatLog['created'],$user['display_name']);
         break;
@@ -174,6 +194,41 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
   protected function generateAutoSpeechBlockStr($date, $content) {
     $message = self::MESSAGE_SEPARATOR."\n";
     $message .= $this->createMessageBlockHeader($date, self::SEND_NAME_AUTO_SPEECH_MESSAGE);
+    $message .= $this->createMessageContent($content);
+    return $message;
+  }
+
+  protected function generateConsumerScenarioHearingMessageBlockStr($date, $content) {
+    $message = self::MESSAGE_SEPARATOR."\n";
+    $message .= $this->createMessageBlockHeader($date, self::SEND_NAME_CONSUMER_SCENARIO_HEARING);
+    $message .= $this->createMessageContent($content);
+    return $message;
+  }
+
+  protected function generateConsumerScenarioSelectionMessageBlockStr($date, $content) {
+    $message = self::MESSAGE_SEPARATOR."\n";
+    $message .= $this->createMessageBlockHeader($date, self::SEND_NAME_CONSUMER_SCENARIO_SELECTION);
+    $message .= $this->createMessageContent($content);
+    return $message;
+  }
+
+  protected function generateScenarioTextBlockStr($date, $content) {
+    $message = self::MESSAGE_SEPARATOR."\n";
+    $message .= $this->createMessageBlockHeader($date, self::SEND_NAME_SCENARIO_TEXT);
+    $message .= $this->createMessageContent($content);
+    return $message;
+  }
+
+  protected function generateScenarioHearingBlockStr($date, $content) {
+    $message = self::MESSAGE_SEPARATOR."\n";
+    $message .= $this->createMessageBlockHeader($date, self::SEND_NAME_SCENARIO_HEARING);
+    $message .= $this->createMessageContent($content);
+    return $message;
+  }
+
+  protected function generateScenarioSelectionBlockStr($date, $content) {
+    $message = self::MESSAGE_SEPARATOR."\n";
+    $message .= $this->createMessageBlockHeader($date, self::SEND_NAME_SCENARIO_SELECTION);
     $message .= $this->createMessageContent($content);
     return $message;
   }

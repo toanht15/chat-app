@@ -478,6 +478,22 @@ function getIp(socket){
   return ip;
 }
 
+function getMessageTypeBySenarioActionType(type) {
+  var result = 3;
+  switch(Number(type)) {
+    case 1:
+      result = 21;
+      break;
+    case 2:
+      result = 22;
+      break;
+    case 3:
+      result = 23;
+      break;
+  }
+  return result;
+}
+
 // Landscapeの企業情報取得
 //requestをrequire
 var http = require('http');
@@ -949,12 +965,12 @@ io.sockets.on('connection', function (socket) {
           insertData.created = (('created' in d)) ? new Date(d.created) : new Date();
 
 
-          // オートメッセージの場合は既読
-          if (Number(insertData.message_type === 3) ) {
+          // オートメッセージとシナリオの場合は既読
+          if (Number(insertData.message_type === 3) || Number(insertData.message_type === 22) || Number(insertData.message_type === 23)) {
             insertData.message_read_flg = 1;
             insertData.message_request_flg = chatApi.cnst.requestFlg.noFlg;
             insertData.message_distinction = d.messageDistinction;
-          } else if(Number(insertData.message_type)  === 1 && d.hasOwnProperty('notifyToCompany') && !d.notifyToCompany) {
+          } else if((Number(insertData.message_type)  === 1 && d.hasOwnProperty('notifyToCompany') && !d.notifyToCompany) || Number(insertData.message_type)  === 12 || Number(insertData.message_type)  === 13) {
           // サイト訪問者からのチャットで通知しない場合は既読にする
             insertData.message_read_flg = 1;
             insertData.message_distinction = d.messageDistinction;
@@ -971,7 +987,8 @@ io.sockets.on('connection', function (socket) {
                 ret: true,
                 chatMessage: d.chatMessage,
                 siteKey: d.siteKey,
-                matchAutoSpeech: !d.notifyToCompany
+                matchAutoSpeech: !d.notifyToCompany,
+                isScenarioMessage: d.isScenarioMessage
               };
 
               // 担当者のいない消費者からのメッセージの場合
@@ -3110,6 +3127,39 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     var obj = JSON.parse(data);
     sendSenarioMail(obj, function(result){
       ack(result);
+    });
+  });
+
+  socket.on('storeScenarioMessage', function(data, ack){
+    var obj = JSON.parse(data);
+    //応対数検索、登録
+    getConversationCountUser(obj.userId,function(results) {
+      var messageDistinction;
+      if(results !== null){
+        //カウント数が取れなかったとき
+        if (Object.keys(results) && Object.keys(results).length === 0) {
+          messageDistinction = 1;
+        }
+        //カウント数が取れたとき
+        else {
+          messageDistinction = results[0].conversation_count;
+        }
+        obj.messages.forEach(function(elm, index, arr){
+          var ret = {
+            siteKey: obj.siteKey,
+            tabId: obj.tabId,
+            userId: obj.userId,
+            mUserId: null,
+            chatMessage: elm.message,
+            messageType: getMessageTypeBySenarioActionType(elm.type),
+            created: elm.created,
+            messageDistinction: messageDistinction,
+            achievementFlg: 0
+          };
+          chatApi.set(ret);
+        });
+      }
+      ack();
     });
   });
 

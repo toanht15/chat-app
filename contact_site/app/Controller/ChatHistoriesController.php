@@ -741,7 +741,7 @@
         //ブラウザ
         $row['browser'] = $this->_userAgentCheckBrowser($val);
         //送信元ページ
-        if($val['THistoryChatLog']['message_type'] == 1) {
+        if($val['THistoryChatLog']['message_type'] == 1 || $val['THistoryChatLog']['message_type'] == 12 || $val['THistoryChatLog']['message_type'] == 13) {
           $row['sourcePage'] = $val['THistoryStayLog']['url'];
         }
         else{
@@ -755,7 +755,7 @@
           $row['transmissionKind'] = '訪問者';
           $row['transmissionPerson'] = '';
         }
-        if($val['THistoryChatLog']['message_type'] == 2) {
+        if($val['THistoryChatLog'][' '] == 2) {
           $row['transmissionKind'] = 'オペレーター';
           $row['transmissionPerson'] = $val['MUser']['display_name']."さん";
         }
@@ -776,6 +776,26 @@
           $row['transmissionPerson'] = $val['MUser']['display_name']."さん";
           $json = json_decode($val['THistoryChatLog']['message'], TRUE);
           $val['THistoryChatLog']['message'] = $json['fileName']."\n".$this->prettyByte2Str($json['fileSize']);
+        }
+        if($val['THistoryChatLog']['message_type'] == 12) {
+          $row['transmissionKind'] = '訪問者（ヒアリング回答）';
+          $row['transmissionPerson'] = '';
+        }
+        if($val['THistoryChatLog']['message_type'] == 13) {
+         $row['transmissionKind'] = '訪問者（選択肢回答）';
+         $row['transmissionPerson'] = '';
+        }
+        if($val['THistoryChatLog']['message_type'] == 21) {
+         $row['transmissionKind'] = 'シナリオメッセージ（テキスト発言）';
+         $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
+        }
+        if($val['THistoryChatLog']['message_type'] == 22) {
+         $row['transmissionKind'] = 'シナリオメッセージ（ヒアリング）';
+         $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
+        }
+        if($val['THistoryChatLog']['message_type'] == 23) {
+         $row['transmissionKind'] = 'シナリオメッセージ（選択肢）';
+         $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
         }
         if($val['THistoryChatLog']['message_type'] == 98 || $val['THistoryChatLog']['message_type'] == 99) {
           $row['transmissionKind'] = '通知メッセージ';
@@ -892,7 +912,22 @@
                 $message = $json['fileName']."\n".$this->prettyByte2Str($json['fileSize']);
               }
               $row = $this->_setData($date, "ファイル送信", $val['MUser']['display_name'], $message);
-            break;
+              break;
+            case 12: // 訪問者（シナリオ：ヒアリング回答）
+              $row = $this->_setData($date, "訪問者（ヒアリング回答）", "", $message);
+              break;
+            case 13: // 訪問者（シナリオ：選択肢回答）
+              $row = $this->_setData($date, "訪問者（選択肢回答）", "", $message);
+              break;
+            case 21: // シナリオメッセージ（テキスト発言）
+              $row = $this->_setData($date, "シナリオメッセージ（テキスト発言）", $this->userInfo['MCompany']['company_name'], $message);
+              break;
+            case 22: // シナリオメッセージ（ヒアリング）
+              $row = $this->_setData($date, "シナリオメッセージ（ヒアリング）", $this->userInfo['MCompany']['company_name'], $message);
+              break;
+            case 23: // シナリオメッセージ（選択肢）
+              $row = $this->_setData($date, "シナリオメッセージ（選択肢）", $this->userInfo['MCompany']['company_name'], $message);
+              break;
             case 98: // 入室メッセージ
             case 99: // 退室メッセージ
               $row = $this->_setData($date, "通知メッセージ", "", " - ".$val['MUser']['display_name']."が".$message."しました - ");

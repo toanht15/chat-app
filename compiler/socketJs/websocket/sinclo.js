@@ -1182,11 +1182,14 @@
           sinclo.chatApi.call();
           userName = sinclo.chatApi.opUser;
         }
-        else if (obj.messageType === sinclo.chatApi.messageType.customer) {
+        else if (obj.messageType === sinclo.chatApi.messageType.customer || obj.messageType === sinclo.chatApi.messageType.scenario.customer.hearing || obj.messageType === sinclo.chatApi.messageType.scenario.customer.selection) {
           cn = "sinclo_se";
           elm.value = "";
         }
-        if (obj.messageType === sinclo.chatApi.messageType.auto || obj.messageType === sinclo.chatApi.messageType.autoSpeech) {
+        if (obj.messageType === sinclo.chatApi.messageType.auto || obj.messageType === sinclo.chatApi.messageType.autoSpeech
+            || obj.messageType === sinclo.chatApi.messageType.scenario.message.text
+            || obj.messageType === sinclo.chatApi.messageType.scenario.message.hearing
+            || obj.messageType === sinclo.chatApi.messageType.scenario.message.selection) {
           if(obj.tabId === userInfo.tabId) {
             this.chatApi.scDown();
             return false;
@@ -1542,14 +1545,25 @@
         unread: 0,
         opUser: "",
         messageType: {
-            customer: 1,
-            company: 2,
-            auto: 3,
-            sorry: 4,
-            autoSpeech: 5,
-            sendFile: 6,
-            start: 98,
-            end: 99
+          customer: 1,
+          company: 2,
+          auto: 3,
+          sorry: 4,
+          autoSpeech: 5,
+          sendFile: 6,
+          start: 98,
+          end: 99,
+          scenario: {
+            customer: {
+              hearing: 12,
+              selection: 13
+            },
+            message: {
+              text: 21,
+              hearing: 22,
+              selection: 23
+            }
+          }
         },
         autoMessages: {
           push: function(id, obj) {
@@ -1680,7 +1694,6 @@
               }
             })
             .on("click", "input[name^='sinclo-radio']", function(e){
-              alert('hoge! : ' + sinclo.scenarioApi.isProcessing()  + " " + sinclo.scenarioApi.isWaitingInput());
               if(e) e.stopPropagation();
               if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isWaitingInput()) {
                 sinclo.scenarioApi.triggerInputWaitComplete(e.target.value.trim());
@@ -2134,61 +2147,68 @@
           this.pushFlg = false;
         },
         send: function(value){
+          var messageType = sinclo.chatApi.messageType.customer;
           // 自動返信の処理中でなければ
           if(!sinclo.trigger.processing) {
             storage.s.set('chatAct', true); // オートメッセージを表示しない
           }
-          if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isWaitingInput()) {
-            sinclo.scenarioApi.triggerInputWaitComplete(value);
+
+          // タイマーが仕掛けられていたらリセット
+          if ( this.sendErrCatchTimer !== null ) {
+            clearTimeout(this.sendErrCatchTimer);
           }
 
-            // タイマーが仕掛けられていたらリセット
-            if ( this.sendErrCatchTimer !== null ) {
-              clearTimeout(this.sendErrCatchTimer);
+          // チャットの契約をしている場合
+          if ( window.sincloInfo.contract.chat ) {
+            var firstChatEmit = storage.s.get('chatEmit');
+            //チャットリクエスト件数でない
+            var noFlg = 0;
+            //チャットリクエスト件数である
+            var flg = 1;
+            var messageRequestFlg = noFlg;
+
+            //サイト訪問者がチャット送信した初回のタイミング
+            if ( !check.isset(firstChatEmit) ) {
+              if(typeof ga == "function"){
+                ga('send', 'event', 'sinclo', 'チャット送信', location.href);
+              }
+              messageRequestFlg = flg;
             }
 
-            // チャットの契約をしている場合
-            if ( window.sincloInfo.contract.chat ) {
-              var firstChatEmit = storage.s.get('chatEmit');
-              //チャットリクエスト件数でない
-              var noFlg = 0;
-              //チャットリクエスト件数である
-              var flg = 1;
-              var messageRequestFlg = noFlg;
-
-              //サイト訪問者がチャット送信した初回のタイミング
-              if ( !check.isset(firstChatEmit) ) {
-                if(typeof ga == "function"){
-                  ga('send', 'event', 'sinclo', 'チャット送信', location.href);
-                }
-                messageRequestFlg = flg;
+            sinclo.trigger.judge.matchAllSpeechContent(value, function(result){
+              if(result && (!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false")) {
+                storage.s.set('chatAct', false); // オートメッセージを表示しない
               }
 
-              sinclo.trigger.judge.matchAllSpeechContent(value, function(result){
-                if(result && (!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false")) {
-                  storage.s.set('chatAct', false); // オートメッセージを表示しない
-                }
+              var isScenarioMessage = false;
+              if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isWaitingInput()) {
+                sinclo.scenarioApi.triggerInputWaitComplete(value);
+                messageType = sinclo.scenarioApi.getCustomerMessageType();
+                // シナリオ中の返答はオペレータへの通知をしない
+                isScenarioMessage = true;
+              }
 
-                setTimeout(function(){
-                  emit('sendChat', {
-                    historyId: sinclo.chatApi.historyId,
-                    chatMessage:value,
-                    mUserId: null,
-                    messageType: sinclo.chatApi.messageType.customer,
-                    messageRequestFlg: messageRequestFlg,
-                    isAutoSpeech : result,
-                    notifyToCompany: !result
-                  });
-                }, 100);
-              });
+              setTimeout(function(){
+                emit('sendChat', {
+                  historyId: sinclo.chatApi.historyId,
+                  chatMessage: value,
+                  mUserId: null,
+                  messageType: messageType,
+                  messageRequestFlg: messageRequestFlg,
+                  isAutoSpeech : result,
+                  notifyToCompany: !result,
+                  isScenarioMessage: isScenarioMessage
+                });
+              }, 100);
+            });
 
-              storage.s.set('chatEmit', true) ;
-            }
+            storage.s.set('chatEmit', true) ;
+          }
 
-            // スマートフォンの場合、タイマーをセット。（メッセージ送信に失敗した場合にリロードを促す）
-            if ( check.smartphone() ) {
-              this.sendErrCatch();
-            }
+          // スマートフォンの場合、タイマーをセット。（メッセージ送信に失敗した場合にリロードを促す）
+          if ( check.smartphone() ) {
+            this.sendErrCatch();
+          }
 
         },
         observeType: { // 入力中監視処理
@@ -3347,13 +3367,15 @@
       _validation: {
         "1": '.+',
         "2": '[0-9]+',
-        "3": '/^(([^<>()\\[\\]\\\\.,;:\\s@"]+(\\.[^<>()\\[\\]\\\\.,;:\\s@"]+)*)|(".+"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$/',
-        "4": '/^\\+?(\\d|-)*$/'
+        "3": "^(([^<>()\\[\\]\\.,;:\\s@\"]+(\\.[^<>()\\[\\]\\.,;:\\s@\"]+)*)|(\".+\"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$",
+        "4": '^\\+?(\\d|-)*$'
       },
       _lKey: {
-        processing: "processingScenario",
+        processing: "s_processing",
         waitingInput: "s_waiting",
-        variables: "chatbotVariables"
+        variables: "s_variables",
+        messages: "s_messages",
+        allowSave: "s_allowSave"
       },
       _events: {
         inputCompleted: "sinclo:scenario:inputComplete"
@@ -3363,12 +3385,20 @@
       _currentScenario: {},
       _currentScenarioSeqNum: 0,
       _storedVariableKeys: [],
+      _sendCustomerMessageType: 1,
       init: function(scenarioObj){
         this._scenarios = scenarioObj;
         this._scenarioLength = Object.keys(scenarioObj).length;
         this._currentScenario = this._scenarios["0"];
         this._currentScenarioSeqNum = 0;
         this._storedVariableKeys = [];
+        this._sendCustomerMessageType = 1;
+        var self = this;
+        Object.keys(this._lKey).forEach(function(val, index, elm){
+          if(val !== "variables") {
+            storage.l.unset(self._lKey[val]);
+          }
+        });
       },
       begin: function() {
         this._saveProcessingState(true);
@@ -3393,6 +3423,10 @@
       triggerInputWaitComplete: function(text) {
         $(document).trigger(this._events.inputCompleted, [text]);
       },
+      getCustomerMessageType: function() {
+        var self = sinclo.scenarioApi;
+        return self._sendCustomerMessageType;
+      },
       _process: function() {
         var self = sinclo.scenarioApi;
         switch(self._currentScenario.actionType) {
@@ -3402,10 +3436,12 @@
           case "2":
             self._hearing._init(self, self._currentScenario);
             self._hearing._process();
+            self._sendCustomerMessageType = 12;
             break;
           case "3":
             self._selection._init(self, self._currentScenario);
             self._selection._process();
+            self._sendCustomerMessageType = 13;
             break;
           case "4":
             self._mail._init(self, self._currentScenario);
@@ -3433,20 +3469,27 @@
             break;
         }
       },
-      _showMessage: function(message) {
+      _showMessage: function(type, message, callback) {
         var self = sinclo.scenarioApi;
         message = self._replaceVariable(message);
         sinclo.chatApi.createMessage('sinclo_re', message, 'shinario');
         sinclo.chatApi.scDown();
         // ローカルに蓄積しておく
+        self._putScenarioMessage(type, message, callback);
       },
-      _storeMessageToDB: function(type, message) {
+      /**
+       * シナリオメッセージをDBに格納する
+       * @param array 配列で格納したメッセージ
+       * @property {number} type - シナリオメッセージのタイプ
+       * @property {string} message - シナリオメッセージ
+       * @param {function} callback - メッセージをDBに格納した後のコールバック関数
+       * @private
+       */
+      _storeMessageToDB: function(array, callback) {
         var self = sinclo.scenarioApi;
-        message = self._replaceVariable(message);
-        emit('storeScenarioMessage', {
-          type: type,
-          message: message
-        });
+        if(!callback) callback = function(){};
+
+        emit('storeScenarioMessage', {messages:array}, callback);
       },
       _saveProcessingState: function(isProcessing) {
         var self = sinclo.scenarioApi;
@@ -3455,6 +3498,47 @@
       _saveWaitingInputState: function(isWaitingInput) {
         var self = sinclo.scenarioApi;
         storage.l.set(self._lKey.waitingInput, isWaitingInput);
+      },
+      _putScenarioMessage: function(type, message, callback) {
+        var self = sinclo.scenarioApi,
+            storeObj = {
+              type: type,
+              message: message,
+              created: common.fullDateTime()
+            };
+        if(self._disallowSaveing()) {
+          var json = storage.l.get(self._lKey.messages);
+          var array = json ? JSON.parse(json) : [];
+          array.push(storeObj);
+          storage.l.set(self._lKey.messages, JSON.stringify(array));
+          callback();
+        } else {
+          self._storeMessageToDB([storeObj], callback);
+        }
+      },
+      _handleStoredMessage: function() {
+        var self = sinclo.scenarioApi;
+        if(self._disallowSaveing()) {
+          self._saveStoredMessage(function(){
+            self._unsetScenarioMessage();
+          });
+        }
+      },
+      _saveStoredMessage: function(callback) {
+        var self = sinclo.scenarioApi;
+        var json = storage.l.get(self._lKey.messages);
+        var array = json ? JSON.parse(json) : [];
+        self._storeMessageToDB(array,callback);
+      },
+      _unsetScenarioMessage: function() {
+        var self = sinclo.scenarioApi;
+        storage.l.unset(self._lKey.messages);
+        storage.l.set(self._events.allowSave, true);
+      },
+      _disallowSaveing: function() {
+        var self = sinclo.scenarioApi;
+        var flg = storage.l.get(self._events.allowSave);
+        return flg == null || flg === "false";
       },
       _saveVariable: function(valKey, value) {
         var self = sinclo.scenarioApi;
@@ -3513,15 +3597,16 @@
         var self = sinclo.scenarioApi;
         this._doing(self._getIntervalTimeSec(), function() {
           self._handleChatTextArea(self._currentScenario.chatTextArea);
-          self._showMessage(self._getMessage());
-          if(self._goToNextScenario()) {
-            self._process();
-          }
+          self._showMessage(self._currentScenario.actionType, self._getMessage(), function(){
+            if(self._goToNextScenario()) {
+              self._process();
+            }
+          });
         });
       },
       _createSelectionMessage: function(headerMessage, selections) {
-        var self = this;
-        var messageBlock = headerMessage + "\n";
+        var self = sinclo.scenarioApi;
+        var messageBlock = self._replaceVariable(headerMessage) + "\n";
         selections.forEach(function(elm, index, arr){
           messageBlock += "[] " + elm;
           if(index !== arr.length-1) {
@@ -3563,31 +3648,32 @@
         _execute: function(hearing) {
           var message = hearing.message;
           // クロージャー用
-          var self = this;
-          self._parent._doing(this._parent._getIntervalTimeSec(), function(){
+          var self = sinclo.scenarioApi._hearing;
+          self._parent._doing(self._parent._getIntervalTimeSec(), function(){
             self._parent._handleChatTextArea(self._currentData.chatTextArea);
-            self._parent._showMessage(message);
-            self._parent._waitingInput(function(inputVal){
-              self._parent._saveWaitingInputState(false);
-              self._parent._unWaitingInput();
-              if(self._parent._valid(hearing.inputType, inputVal)) {
-                self._parent._saveVariable();
-                if(self._goToNext()) {
-                  self._process();
-                } else {
-                  if(self._requireConfirm()) {
-                    self._showConfirmMessage();
+            self._parent._showMessage(self._currentData.actionType, message, function(){
+              self._parent._waitingInput(function(inputVal){
+                self._parent._unWaitingInput();
+                self._parent._handleStoredMessage();
+                if(self._parent._valid(hearing.inputType, inputVal)) {
+                  self._parent._saveVariable(hearing.variableName, inputVal);
+                  if(self._goToNext()) {
+                    self._process();
                   } else {
-                    if(self._parent._goToNextScenario()) {
-                      self._parent._process();
+                    if(self._requireConfirm()) {
+                      self._showConfirmMessage();
+                    } else {
+                      if(self._parent._goToNextScenario()) {
+                        self._parent._process();
+                      }
                     }
                   }
+                } else {
+                  self._showError();
                 }
-              } else {
-                self._showError();
-              }
+              });
+              self._parent._saveWaitingInputState(true);
             });
-            self._parent._saveWaitingInputState(true);
           });
         },
         _requireConfirm: function() {
@@ -3603,8 +3689,9 @@
           var errorMessage = self._currentData.errorMessage;
           self._parent._doing(self._parent._getIntervalTimeSec(), function(){
             self._parent._handleChatTextArea(self._currentData.chatTextArea);
-            self._parent._showMessage(errorMessage);
-            self._process();
+            self._parent._showMessage(self._currentData.actionType, errorMessage, function(){
+              self._process();
+            });
           });
         },
         _goToNext: function() {
@@ -3620,20 +3707,22 @@
           var messageBlock = self._parent._createSelectionMessage(self._currentData.confirmMessage, [self._currentData.success, self._currentData.cancel]);
           self._parent._doing(self._parent._getIntervalTimeSec(), function(){
             self._parent._handleChatTextArea(self._currentData.chatTextArea);
-            self._parent._showMessage(messageBlock);
-            self._parent._waitingInput(function(inputVal){
-              console.log(inputVal === self._currentData.success);
-              console.log(inputVal);
-              self._parent._unWaitingInput();
-              if(inputVal === self._currentData.success) {
-                if(self._parent._goToNextScenario()) {
+            self._parent._showMessage(self._currentData.actionType, messageBlock, function(){
+              self._parent._waitingInput(function(inputVal){
+                console.log(inputVal === self._currentData.success);
+                console.log(inputVal);
+                self._parent._unWaitingInput();
+                self._parent._handleStoredMessage();
+                if(inputVal === self._currentData.success) {
+                  if(self._parent._goToNextScenario()) {
+                    self._parent._process();
+                  }
+                } else if (inputVal === self._currentData.cancel) {
                   self._parent._process();
+                } else {
+                  self._showError();
                 }
-              } else if (inputVal === self._currentData.cancel) {
-                self._parent._process();
-              } else {
-                self._showError();
-              }
+              });
             });
           });
         }
@@ -3650,13 +3739,15 @@
           var messageBlock = self._parent._createSelectionMessage(self._currentData.message, self._currentData.selection.options);
           self._parent._doing(self._parent._getIntervalTimeSec(), function(){
             self._parent._handleChatTextArea(self._currentData.chatTextArea);
-            self._parent._showMessage(messageBlock);
-            self._parent._waitingInput(function(inputVal){
-              self._parent._unWaitingInput();
-              self._parent._saveVariable(self._currentData.selection.variableName, inputVal);
-              if(self._parent._goToNextScenario()) {
-                self._parent._process();
-              }
+            self._parent._showMessage(self._currentData.actionType, messageBlock, function(){
+              self._parent._waitingInput(function(inputVal){
+                self._parent._unWaitingInput();
+                self._parent._handleStoredMessage();
+                self._parent._saveVariable(self._currentData.selection.variableName, inputVal);
+                if(self._parent._goToNextScenario()) {
+                  self._parent._process();
+                }
+              });
             });
           });
         }
@@ -3677,6 +3768,7 @@
             templateId: self._currentData.mMailTemplateId,
             variables: targetVariables
           };
+
           emit('processSendMail', sendData, function(ev) {
             if(self._parent._goToNextScenario()) {
               self._process();

@@ -12,6 +12,8 @@ class ScenarioMailTemplateComponent extends AutoMessageMailTemplateComponent {
 
   const REPLACE_TARGET_SCENARIO_MESSAGE_BLOCK_DELIMITER = '##SCENARIO_ALL_MESSAGE_BLOCK##';
 
+  const REPLACE_TARGET_SCENARIO_VARIABLES_BLOCK_DELIMITER = '##SCENARIO_VARIABLES_BLOCK##';
+
   const MAIL_TYPE_CD = 'CS001';
 
   /**
@@ -40,7 +42,7 @@ class ScenarioMailTemplateComponent extends AutoMessageMailTemplateComponent {
   public function createMessageBody() {
     $this->readTemplate();
     $this->prepareScenarioMessageBlock();
-    $this->body = str_replace(self::REPLACE_TARGET_SCENARIO_MESSAGE_BLOCK_DELIMITER, $this->scenarioMessageBlock, $this->template['MMailTemplate']['template']);
+    $this->setScenarioMessageBlock();
   }
 
   private function prepareScenarioMessageBlock() {
@@ -52,6 +54,19 @@ class ScenarioMailTemplateComponent extends AutoMessageMailTemplateComponent {
       case "2":
         $this->createMetaDataMessage();
         $this->createVariablesMessageBlock();
+        break;
+      case "3":
+        break;
+    }
+  }
+
+  private function setScenarioMessageBlock() {
+    switch($this->type) {
+      case "1":
+        $this->body = str_replace(self::REPLACE_TARGET_SCENARIO_MESSAGE_BLOCK_DELIMITER, $this->scenarioMessageBlock, $this->template['MMailTemplate']['template']);
+        break;
+      case "2":
+        $this->body = str_replace(self::REPLACE_TARGET_SCENARIO_VARIABLES_BLOCK_DELIMITER, $this->scenarioMessageBlock, $this->template['MMailTemplate']['template']);
         break;
       case "3":
         break;
@@ -77,8 +92,9 @@ class ScenarioMailTemplateComponent extends AutoMessageMailTemplateComponent {
   }
 
   private function createVariablesMessageBlock() {
+    $this->scenarioMessageBlock .= self::MESSAGE_SEPARATOR;
     foreach($this->variables as $variableName => $value) {
-      $this->scenarioMessageBlock .= $variableName."：".$value;
+      $this->scenarioMessageBlock .= $variableName."：".$value."\n";
     }
   }
 }
