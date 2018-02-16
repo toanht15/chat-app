@@ -66,6 +66,17 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         sendFile: 6,
         start: 98,
         end: 99,
+        scenario: {
+          customer: {
+            hearing: 12,
+            selection: 13
+          },
+          message: {
+            text: 21,
+            hearing: 22,
+            selection: 23
+          }
+        }
       },
       init: function(sendPattern){
         this.sound = document.getElementById('sinclo-sound');
@@ -1461,6 +1472,46 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           li.style.cursor = "pointer";
           li.addEventListener("click", function(event){window.open(message.downloadUrl)});
         }
+      }// 消費者からのメッセージの場合
+      else if ( type === chatApi.messageType.scenario.customer.hearing) {
+        cn = "sinclo_re";
+        div.style.textAlign = 'left';
+        div.style.height = 'auto';
+        div.style.padding = '0';
+        li.className = cn;
+        content = $scope.createTextOfMessage(chat, message, {radio: false});
+      }
+      else if ( type === chatApi.messageType.scenario.customer.selection) {
+        cn = "sinclo_re";
+        div.style.textAlign = 'left';
+        div.style.height = 'auto';
+        div.style.padding = '0';
+        li.className = cn;
+        content = $scope.createTextOfMessage(chat, message, {radio: false});
+      }
+      else if ( type === chatApi.messageType.scenario.message.text ) {
+        cn = "sinclo_auto";
+        div.style.textAlign = 'right';
+        div.style.height = 'auto';
+        div.style.padding = '0';
+        content = "<span class='cName'>シナリオメッセージ(テキスト発言)</span>";
+        content += $scope.createTextOfMessage(chat, message);
+      }
+      else if ( type === chatApi.messageType.scenario.message.hearing ) {
+        cn = "sinclo_auto";
+        div.style.textAlign = 'right';
+        div.style.height = 'auto';
+        div.style.padding = '0';
+        content = "<span class='cName'>シナリオメッセージ(ヒアリング)</span>";
+        content += $scope.createTextOfMessage(chat, message);
+      }
+      else if ( type === chatApi.messageType.scenario.message.selection ) {
+        cn = "sinclo_auto";
+        div.style.textAlign = 'right';
+        div.style.height = 'auto';
+        div.style.padding = '0';
+        content = "<span class='cName'>シナリオメッセージ(選択肢)</span>";
+        content += $scope.createTextOfMessage(chat, message);
       }
       else  {
         cn = "sinclo_etc";
