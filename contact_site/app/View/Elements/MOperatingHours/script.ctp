@@ -1,5 +1,4 @@
 <script type="text/javascript">
-<?= $this->element('TDocuments/loadScreen'); ?>
 var changeFlg = false;
 function entryChange1(){
   radio = document.getElementsByName('data[MOperatingHour][type]');

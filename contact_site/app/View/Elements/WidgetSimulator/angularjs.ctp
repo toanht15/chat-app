@@ -9,6 +9,9 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
   $scope.isTabDisplay = document.getElementById('TChatbotScenarioIsTabDisplay').value || true;
   $scope.canVisitorSendMessage = document.getElementById('TChatbotScenarioCanVisitorSendMessage').value || false;
 
+  // 自由入力エリアの表示状態
+  $scope.isTextAreaOpen = true;
+
   /**
    * addReMessage
    * 企業側メッセージの追加
@@ -76,9 +79,20 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
   /**
    * switchChatTextAreaDisplay
    * シミュレーションの自由入力エリアの表示状態を切り替える
-   * @param String isTextAreaOpen 自由入力エリアの表示状態(1: 表示, 2:非表示）
+   * @param Boolean isTextAreaOpen 自由入力エリアの表示状態(true: 表示, false: 非表示）
    */
   $scope.$on('switchSimulatorChatTextArea', function(event, isTextAreaOpen) {
+    $scope.isTextAreaOpen = isTextAreaOpen;
+  });
+
+  // 自由入力エリアの表示制御
+  $scope.$watch('isTextAreaOpen', function() {
+    var msgBoxElm = document.getElementById('messageBox');
+    var chatTalkElm = document.getElementById('chatTalk');
+    if (msgBoxElm === null || chatTalkElm === null) {
+      return;
+    }
+
     var chatTalkHeight = 194;
     var messageBoxHeight = 75;
 
@@ -105,12 +119,12 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
         break;
     }
 
-    if (isTextAreaOpen === '1') {
-      document.getElementById('messageBox').style.display = "block";
-      document.getElementById('chatTalk').style.height = chatTalkHeight + "px";
+    if ($scope.isTextAreaOpen) {
+      msgBoxElm.style.display = "";
+      chatTalkElm.style.height = chatTalkHeight + "px";
     } else {
-      document.getElementById('messageBox').style.display = "none";
-      document.getElementById('chatTalk').style.height = chatTalkHeight + messageBoxHeight + "px";
+      msgBoxElm.style.display = "none";
+      chatTalkElm.style.height = chatTalkHeight + messageBoxHeight + "px";
     }
 
     // 高さ調整
@@ -123,12 +137,18 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
 
   // ラジオボタンの選択
   $(document).on('click', '#chatTalk input[type="radio"]', function() {
-    // メッセージ送信が有効な場合、$emitでイベントを送信する
+    // メッセージ送信が有効な場合
     if ($scope.canVisitorSendMessage) {
       var prefix = $(this).attr('id').replace(/-sinclo-radio[0-9a-z-]+$/i, '');
       var message = $(this).val().replace(/^\s/, '');
-      $scope.addMessage('se', message)
-      $scope.$emit('receiveVistorMessage', message, prefix)
+
+      // 自由入力エリアの表示状態によって、自由入力エリアへの入力・メッセージ送信の処理を行う
+      if ($scope.isTextAreaOpen) {
+        document.querySelector('#sincloChatMessage').value = message;
+      } else {
+        $scope.addMessage('se', message)
+        $scope.$emit('receiveVistorMessage', message, prefix)
+      }
     }
   });
 }]);

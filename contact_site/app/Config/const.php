@@ -60,7 +60,7 @@ define('C_COMPANY_USE_OPERATOR_PRESENCE_VIEW', 'operatorPresenceView'); // オ�
 define('C_COMPANY_USE_REALTIME_MONITOR_POLLING_MODE', 'monitorPollingMode'); // リアルタイムモニタの情報取得方法変更（ポーリング式）
 
 // リアルタイムモニタ - ポーリングモード定数
-define('C_REALTIME_MONITOR_POLLING_MODE_INTERVAL_MSEC', 300000);
+define('C_REALTIME_MONITOR_POLLING_MODE_INTERVAL_MSEC', 3000);
 
 // 簡易メッセージ入力機能種別
 define('C_DICTIONARY_TYPE_COMP', 1); // 企業で使用する

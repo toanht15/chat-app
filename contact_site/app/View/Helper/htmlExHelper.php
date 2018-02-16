@@ -35,6 +35,9 @@ class htmlExHelper extends AppHelper {
             }
             else {
                 $a = "href='" . $this->Html->url($urlOpt['href']) . "'";
+                if ( !empty($urlOpt['onclick']) ) {
+                 $a .= " onclick='" . h($urlOpt['onclick']) . "'";
+               }
             }
             if ( !empty($urlOpt['target']) ) {
                 $a .= " target='" . h((string)$urlOpt['target']) . "'";

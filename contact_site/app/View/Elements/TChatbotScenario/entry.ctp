@@ -43,7 +43,7 @@
         <a ng-repeat="(key, item) in actionList" ng-click="main.addItem(key)" class="greenBtn btn-shadow">{{item.label}}</a>
       </div>
     </div>
-    <ul id="tchatbotscenario_form_action_body" class="sortable">
+    <ul ui-sortable="sortableOptions" ng-model="setActionList" id="tchatbotscenario_form_action_body" class="sortable">
       <!-- アクション設定一覧 -->
       <li ng-repeat="(setActionId, setItem) in setActionList" id="action{{setActionId}}_setting" class="set_action_item">
         <h4 class="handle"><a href="#action{{setActionId}}_preview">{{setActionId + 1}}．{{actionList[setItem.actionType].label}} <i class="error" ng-if="!setItem.$valid"></i></a></h4>

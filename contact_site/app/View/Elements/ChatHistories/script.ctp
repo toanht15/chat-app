@@ -558,6 +558,13 @@ function openChatById(id) {
       document.getElementById("visitCounts").innerHTML= customerData.THistoryCount.cnt + "回";
       document.getElementById("platform").innerHTML= userAgentChk.pre(customerData.THistory.user_agent);
       document.getElementById("campaignParam").innerHTML= customerData.campaignParam;
+      if(customerData.THistory.referrer_url !== null) {
+        document.getElementById("referrerUrl").innerHTML = customerData.THistory.referrer_url;
+        $("#referrer a").attr("href", customerData.THistory.referrer_url);
+      }
+      else {
+        document.getElementById("referrerUrl").innerHTML= "";
+      }
       if(customerData.landingData !== null) {
         document.getElementById("landingPage").innerHTML= customerData.landingData.title;
         $("#landing a").attr("href", customerData.landingData.url);
@@ -627,6 +634,7 @@ function clearChatAndPersonalInfo() {
   document.getElementById("visitCounts").innerHTML= "";
   document.getElementById("platform").innerHTML= "";
   document.getElementById("campaignParam").innerHTML= "";
+  document.getElementById("referrerUrl").innerHTML= "";
   document.getElementById("landingPage").innerHTML= "";
   document.getElementById("chatSendingPage").innerHTML= "";
   document.getElementById("separationPage").innerHTML= "";

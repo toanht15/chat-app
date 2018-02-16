@@ -1,5 +1,4 @@
 <script type="text/javascript">
-<?= $this->element('TDocuments/loadScreen'); ?>
 <?php if ( $this->action !== "index" ) : ?>
 function handleFileSelect(evt) {
   $("slideframe").html('<div id="document_canvas"></div>');

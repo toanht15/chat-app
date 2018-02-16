@@ -3550,6 +3550,13 @@ var socket, // socket.io
       sinclo.sendChatResult(d);
     }); // socket-on: sendChatResult
 
+    // 新着チャット
+    socket.on('resGetScenario', function (d) {
+      var obj = common.jParse(d);
+      sinclo.scenarioApi.init(obj.activity.scenarios);
+      sinclo.scenarioApi.begin();
+    }); // socket-on: sendChatResult
+
     // チャット入力状況受信
     socket.on('receiveTypeCond', function (d) {
       sinclo.chatApi.createTypingMessage(d);
