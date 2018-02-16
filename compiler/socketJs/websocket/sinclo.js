@@ -3423,11 +3423,30 @@
         self._currentScenario = self._scenarios[String(self._currentScenarioSeqNum)];
         return true;
       },
+      _handleChatTextArea: function(type) {
+        switch(type) {
+          case "1":
+            sinclo.displayTextarea();
+            break;
+          case "2":
+            sinclo.hideTextarea();
+            break;
+        }
+      },
       _showMessage: function(message) {
         var self = sinclo.scenarioApi;
         message = self._replaceVariable(message);
         sinclo.chatApi.createMessage('sinclo_re', message, 'shinario');
         sinclo.chatApi.scDown();
+        // ローカルに蓄積しておく
+      },
+      _storeMessageToDB: function(type, message) {
+        var self = sinclo.scenarioApi;
+        message = self._replaceVariable(message);
+        emit('storeScenarioMessage', {
+          type: type,
+          message: message
+        });
       },
       _saveProcessingState: function(isProcessing) {
         var self = sinclo.scenarioApi;
@@ -3493,6 +3512,7 @@
         // クロージャー用
         var self = sinclo.scenarioApi;
         this._doing(self._getIntervalTimeSec(), function() {
+          self._handleChatTextArea(self._currentScenario.chatTextArea);
           self._showMessage(self._getMessage());
           if(self._goToNextScenario()) {
             self._process();
@@ -3545,6 +3565,7 @@
           // クロージャー用
           var self = this;
           self._parent._doing(this._parent._getIntervalTimeSec(), function(){
+            self._parent._handleChatTextArea(self._currentData.chatTextArea);
             self._parent._showMessage(message);
             self._parent._waitingInput(function(inputVal){
               self._parent._saveWaitingInputState(false);
@@ -3581,6 +3602,7 @@
           var self = sinclo.scenarioApi._hearing;
           var errorMessage = self._currentData.errorMessage;
           self._parent._doing(self._parent._getIntervalTimeSec(), function(){
+            self._parent._handleChatTextArea(self._currentData.chatTextArea);
             self._parent._showMessage(errorMessage);
             self._process();
           });
@@ -3597,6 +3619,7 @@
           var self = sinclo.scenarioApi._hearing;
           var messageBlock = self._parent._createSelectionMessage(self._currentData.confirmMessage, [self._currentData.success, self._currentData.cancel]);
           self._parent._doing(self._parent._getIntervalTimeSec(), function(){
+            self._parent._handleChatTextArea(self._currentData.chatTextArea);
             self._parent._showMessage(messageBlock);
             self._parent._waitingInput(function(inputVal){
               console.log(inputVal === self._currentData.success);
@@ -3626,6 +3649,7 @@
           var self = sinclo.scenarioApi._selection;
           var messageBlock = self._parent._createSelectionMessage(self._currentData.message, self._currentData.selection.options);
           self._parent._doing(self._parent._getIntervalTimeSec(), function(){
+            self._parent._handleChatTextArea(self._currentData.chatTextArea);
             self._parent._showMessage(messageBlock);
             self._parent._waitingInput(function(inputVal){
               self._parent._unWaitingInput();
