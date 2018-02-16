@@ -27,12 +27,14 @@ class TAutoMessage extends AppModel {
     'action' => [
       'notBlank' => [
         'rule' => 'checkAction',
+        'required' => true,
         'message' => 'メッセージを入力してください'
       ]
     ],
     't_chatbot_scenario_id' => [
       'notBlank' => [
         'rule' => 'checkScenario',
+        'required' => true,
         'message' => 'シナリオを選択してください'
       ]
     ]
