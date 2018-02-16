@@ -136,6 +136,15 @@ class TChatbotScenarioController extends AppController {
       $this->request->data['TChatbotScenario'] = $editData[0]['TChatbotScenario'];
     }
 
+    // 呼び出し元であるオートメッセージ情報を取得する
+    $autoMessage = $this->TAutoMessage->coFind('list', [
+      'conditions' => [
+        'TAutoMessage.del_flg != ' => 1,
+        'TAutoMessage.t_chatbot_scenario_id' => $id
+      ]
+    ]);
+    $this->request->data['TAutoMessage'] = $autoMessage;
+
     // プレビュー・シミュレーター表示用ウィジェット設定の取得
     $this->request->data['widgetSettings'] = $this->_getWidgetSettings();
     $this->_viewElement();
@@ -145,29 +154,38 @@ class TChatbotScenarioController extends AppController {
    * 削除
    * @return void
    * */
-   public function remoteDelete(){
-     Configure::write('debug', 0);
-     $this->autoRender = FALSE;
-     $this->layout = 'ajax';
-     $id = (isset($this->request->data['id'])) ? $this->request->data['id'] : "";
-     $ret = $this->TChatbotScenario->find('first', [
-       'fields' => 'TChatbotScenario.*',
-       'conditions' => [
-         'TChatbotScenario.del_flg' => 0,
-         'TChatbotScenario.id' => $id,
-         'TChatbotScenario.m_companies_id' => $this->userInfo['MCompany']['id']
-       ],
-       'recursive' => -1
-     ]);
-     if ( count($ret) === 1 ) {
-       if ( $this->TChatbotScenario->logicalDelete($id) ) {
-         $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
-       }
-       else {
-         $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
-       }
-     }
-   }
+  public function remoteDelete(){
+    Configure::write('debug', 0);
+    $this->autoRender = FALSE;
+    $this->layout = 'ajax';
+    $id = (isset($this->request->data['id'])) ? $this->request->data['id'] : "";
+    $ret = $this->TChatbotScenario->find('first', [
+      'fields' => 'TChatbotScenario.*',
+      'conditions' => [
+        'TChatbotScenario.del_flg' => 0,
+        'TChatbotScenario.id' => $id,
+        'TChatbotScenario.m_companies_id' => $this->userInfo['MCompany']['id'],
+        'TAutoMessage.t_chatbot_scenario_id' => NULL
+      ],
+      'joins' => [[
+        'type' => 'LEFT OUTER',
+        'table' => 't_auto_messages',
+        'alias' => 'TAutoMessage',
+        'conditions' => [
+          'TChatbotScenario.id = TAutoMessage.t_chatbot_scenario_id'
+        ]
+      ]],
+      'recursive' => -1
+    ]);
+    if ( count($ret) === 1 ) {
+      if ( $this->TChatbotScenario->logicalDelete($id) ) {
+        $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
+      }
+      else {
+        $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
+      }
+    }
+  }
 
   public function chkRemoteDelete(){
     Configure::write('debug', 0);
@@ -199,7 +217,7 @@ class TChatbotScenarioController extends AppController {
           'recursive' => -1
       ]);
       if ( count($ret) === 1 ) {
-        if ($this->TChatbotScenario->delete($val) ) {
+        if ($this->TChatbotScenario->logicalDelete($val) ) {
           $res = true;
         }
       }
