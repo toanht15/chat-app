@@ -580,6 +580,16 @@ $(document).ready(function() {
     window.history.pushState(null, null, this.hash);
     return false;
   });
+
+  // フォーカスされたアクションに応じて、関連するプレビューを強調表示する
+  $(document).on('focusin', '.set_action_item input, .set_action_item textarea', function() {
+    var previewId = $(this).parents('.set_action_item').attr('id').replace(/setting$/, 'preview');
+    $('.actionTitle').removeClass('active');
+    $('#' + previewId + ' .actionTitle').addClass('active');
+  }).on('focusout', '.set_action_item input, .set_action_item textarea', function() {
+    var previewId = $(this).parents('.set_action_item').attr('id').replace(/setting$/, 'preview');
+    $('#' + previewId + ' .actionTitle').removeClass('active');
+  });
 });
 
 // テキスト発言のバリデーションチェック

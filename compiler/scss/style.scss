@@ -6936,14 +6936,16 @@ ul.naviBtn {
           overflow-y: scroll;
           height: calc(100vh - 296px);
 
-          a {
-            display: block;
-            padding: 10px;
-            text-decoration: none;
-            color: #595959;
+          .actionTitle {
+            a {
+              display: block;
+              padding: 10px;
+              text-decoration: none;
+              color: inherit;
 
-            &:hover {
-              color: #595959;
+              &:hover {
+                color: inherit;
+              }
             }
           }
         }
