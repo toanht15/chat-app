@@ -447,7 +447,11 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
   $scope.doAction = function() {
     if (typeof $scope.setActionList[$scope.actionStep] !== 'undefined' && typeof $scope.setActionList[$scope.actionStep].actionType !== 'undefined') {
-      var time = $scope.setActionList[$scope.actionStep].messageIntervalTimeSec;
+      // メッセージ間隔(最初のアクション、メール送信の時にはメッセージ間隔は設定しない)
+      var time =  $scope.setActionList[$scope.actionStep].messageIntervalTimeSec;
+      if ($scope.setActionList[$scope.actionStep].actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?> || $scope.actionStep <= 0) {
+        time = 0;
+      }
 
       $timeout.cancel($scope.actionTimer);
       $scope.actionTimer = $timeout(function() {
@@ -609,7 +613,7 @@ $(document).ready(function() {
   });
 
   // 各アクションのキーイベントに応じて、プレビューのスクロール位置を調整する
-  $(document).on('keypress', '.set_action_item input, .set_action_item textarea', function() {
+  $(document).on('keydown, keyup', '.set_action_item input, .set_action_item textarea', function() {
     var previewId = $(this).parents('.set_action_item').attr('id').replace(/setting$/, 'preview');
     var box = $('#tchatbotscenario_form_preview_body');
     var target = $('#' + previewId);
