@@ -46,6 +46,24 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       var item = $scope.actionList[actionType];
       item.actionType = actionType;
       $scope.setActionList.push(angular.copy(angular.merge(item, item.default)));
+
+      // 表示位置調整
+      $timeout(function() {
+        var actionBox = $('#tchatbotscenario_form_preview_body');
+        var previewBox = $('#tchatbotscenario_form_action_body');
+
+        var time = 500
+        actionBox.stop().animate({
+          scrollTop: actionBox.scrollTop() + actionBox[0].scrollHeight
+        }, time);
+        previewBox.stop().animate({
+          scrollTop: previewBox.scrollTop() + previewBox[0].scrollHeight
+        }, time);
+
+        // フォーカス移動
+        var target = $('#tchatbotscenario_form_action_body .set_action_item:last-of-type');
+        target.find('input, textarea')[0].focus();
+      }, 0);
     }
   };
 
@@ -552,7 +570,9 @@ $(document).ready(function() {
     $('.explainTooltip').find('icon-annotation').css('display','none');
   });
 
+
   // 設定側のスクロールに応じて、プレビュー側をスクロールさせる
+  var time = 500;
   $(document).on('mouseenter', '.set_action_item', function() {
     var id = this.id;
     var selector = '#' + id.split('_')[0] + '_preview';
@@ -565,9 +585,7 @@ $(document).ready(function() {
     }, time);
     return false;
   });
-
   // プレビュー側のタイトルクリックに応じて、設定側をスクロールさせる
-  var time = 500;
   $(document).on('click', '#tchatbotscenario_form_preview_body a[href^=#]', function() {
     var box = $('#tchatbotscenario_form_action_body');
     var target = $(this.hash);
@@ -589,6 +607,18 @@ $(document).ready(function() {
   }).on('focusout', '.set_action_item input, .set_action_item textarea', function() {
     var previewId = $(this).parents('.set_action_item').attr('id').replace(/setting$/, 'preview');
     $('#' + previewId + ' .actionTitle').removeClass('active');
+  });
+
+  // 各アクションのキーイベントに応じて、プレビューのスクロール位置を調整する
+  $(document).on('keypress', '.set_action_item input, .set_action_item textarea', function() {
+    var previewId = $(this).parents('.set_action_item').attr('id').replace(/setting$/, 'preview');
+    var box = $('#tchatbotscenario_form_preview_body');
+    var target = $('#' + previewId);
+    var targetY = target.position().top - box.position().top;
+
+    box.stop().animate({
+      scrollTop: box.scrollTop() + targetY
+    }, time);
   });
 });
 
