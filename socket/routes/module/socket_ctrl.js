@@ -2145,7 +2145,7 @@ io.sockets.on('connection', function (socket) {
       sincloCore[obj.siteKey][obj.tabId] = {sincloSessionId: null, sessionId: null, subWindow: false, chatUnreadCnt: 0};
     }
     if ( isset(obj.sincloSessionId) && !isset(sincloCore[obj.siteKey][obj.sincloSessionId]) ) {
-      sincloCore[obj.siteKey][obj.sincloSessionId] = {sessionIds: {}, autoMessages: {}};
+      sincloCore[obj.siteKey][obj.sincloSessionId] = {sessionIds: {}, autoMessages: {}, scenario: {}};
     }
     if ('timeoutTimer' in sincloCore[obj.siteKey][obj.tabId]) {
       clearTimeout(sincloCore[obj.siteKey][obj.tabId].timeoutTimer);
@@ -3161,6 +3161,27 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       }
       ack();
     });
+  });
+
+  // 都度：チャットデータ取得(オートメッセージのみ)
+  socket.on("sendScenrioMessage", function(d){
+    console.log("jpgeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
+    var obj = JSON.parse(d);
+    var scenario = JSON.parse(JSON.stringify(obj));
+    scenario.created = new Date();
+    scenario.sort = fullDateTime(chat.created);
+
+    var sincloSession = sincloCore[chat.siteKey][chat.sincloSessionId];
+    if(isset(sincloSession) && isset(sincloSession.scenarioMessages)) {
+      sincloCore[chat.siteKey][chat.sincloSessionId].scenarioMessages[chat.scenarioId][chat.sequentialNum] = scenario;
+    } else {
+      console.log("sendScenarioMessage::sincloSession : " + scenario.sincloSessionId + "is null.");
+      return false;
+    }
+    if(!functionManager.isEnabled(scenario.siteKey, functionManager.keyList.monitorPollingMode)) {
+      emit.toCompany('resScenarioMessage', scenario, scenario.siteKey);
+    }
+    emit.toSameUser('resScenarioMesage', scenario, scenario.siteKey, scenario.sincloSessionId);
   });
 
   // ============================================
