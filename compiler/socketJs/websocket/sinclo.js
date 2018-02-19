@@ -3428,6 +3428,12 @@
         var obj = self._getBaseObj();
         return obj[key] ? obj[key] : self.defaultVal[key];
       },
+      unset: function(key) {
+        var self = sinclo.scenarioApi;
+        var obj = self._getBaseObj();
+        delete obj[key];
+        self._setBaseObj(obj);
+      },
       init: function(scenarioObj){
         var self = sinclo.scenarioApi;
         if(self.isProcessing()) {
@@ -3585,8 +3591,8 @@
       },
       _unsetScenarioMessage: function() {
         var self = sinclo.scenarioApi;
-        self.unset(self._lKey.messages); // FIXME
-        self.set(self._events.allowSave, true);
+        self.unset(self._lKey.messages);
+        self.set(self._lKey.allowSave, true);
       },
       _disallowSaveing: function() {
         var self = sinclo.scenarioApi;
