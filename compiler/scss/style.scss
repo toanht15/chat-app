@@ -6774,11 +6774,19 @@ ul.naviBtn {
               .styleFlexbox {
                 display: flex;
 
-                > span:first-child {
-                  flex-basis: 11.5em;
-                  min-width: 11.5em;
+                > .fb11em {
+                  flex-basis: 11em;
+                  min-width: 11em;
                   white-space: nowrap;
+                  & + * {
+                    flex-grow: 1;
+                  }
+                }
 
+                > .fb7em {
+                  flex-basis: 7em;
+                  min-width: 7em;
+                  white-space: nowrap;
                   & + * {
                     flex-grow: 1;
                   }
