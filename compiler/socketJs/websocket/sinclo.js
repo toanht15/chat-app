@@ -511,6 +511,7 @@
         storage.l.set('textareaOpend', 'open');
         storage.l.set('leaveFlg', 'false');
         storage.s.unset('amsg');
+        sinclo.scenarioApi.reset();
         userInfo.setPrevpage(true);
       }
 
@@ -1054,7 +1055,7 @@
         if ( !obj.chat.messages.hasOwnProperty(key) ) return false;
         var chat = obj.chat.messages[key], userName;
         if ( Number(chat.messageType) < 90 ) {
-          var cn = (Number(chat.messageType) === 1) ? "sinclo_se" : "sinclo_re";
+          var cn = (Number(chat.messageType) === 1 || Number(chat.messageType) === 12 || Number(chat.messageType) === 13) ? "sinclo_se" : "sinclo_re";
           if (Number(chat.messageReadFlg) === 0 && chat.messageType === sinclo.chatApi.messageType.company) {
               this.chatApi.unread++;
           }
@@ -1086,7 +1087,7 @@
           }
 
           // オートメッセージか、Sorryメッセージ、企業からのメッセージで表示名を使用しない場合
-          if ( Number(chat.messageType) === 3 || Number(chat.messageType) === 4 || (Number(chat.messageType) === 2 && window.sincloInfo.widget.showName !== 1) ) {
+          if ( Number(chat.messageType) === 3 || Number(chat.messageType) === 4 || Number(chat.messageType) === 21 || Number(chat.messageType) === 22 || Number(chat.messageType) === 23 || (Number(chat.messageType) === 2 && window.sincloInfo.widget.showName !== 1) ) {
             userName = window.sincloInfo.widget.subTitle;
           }
           else if ( Number(chat.messageType) === 2 ) {
@@ -1153,6 +1154,10 @@
       if ( !this.chatApi.online && !sinclo.trigger.flg ) {
         // オートメッセージ読み込み
         sinclo.trigger.init();
+      }
+      if(sinclo.scenarioApi.isProcessing()) {
+        sinclo.scenarioApi.init(null, null);
+        sinclo.scenarioApi.begin();
       }
       // 未読数
       sinclo.chatApi.showUnreadCnt();
@@ -2801,7 +2806,7 @@
                 }, 1);
             } else if(String(type) === "2") {
               console.log("SENARIO TRIGGERED!!!!!! " + scenarioId);
-              if(scenarioId) {
+              if(scenarioId && !sinclo.scenarioApi.isProcessing()) {
                 emit('getScenario', {"scenarioId": scenarioId});
               }
             }
@@ -3374,7 +3379,8 @@
         "4": '^\\+?(\\d|-)*$'
       },
       _lKey: {
-        senarioBase: "s_currentdata",
+        scenarioBase: "s_currentdata",
+        scenarioId: "s_id",
         processing: "s_processing",
         waitingInput: "s_waiting",
         variables: "s_variables",
@@ -3385,9 +3391,12 @@
         currentScenario: "s_currentScenario",
         currentScenarioSeqNum: "s_currentScenarioSeqNum",
         storedVariableKeys: "s_storedVariableKeys",
-        sendCustomerMessageType: "s_sendCustomerMessageType"
+        sendCustomerMessageType: "s_sendCustomerMessageType",
+        showSequenceSet: "s_showSequenceList",
+        scenarioMessageType: "s_scenarioMessageType"
       },
       defaultVal: {
+        "s_id": 0,
         "s_currentdata": {},
         "s_processing": {},
         "s_waiting": false,
@@ -3399,23 +3408,12 @@
         "s_currentScenario": 0,
         "s_currentScenarioSeqNum": 0,
         "s_storedVariableKeys": [],
-        "s_sendCustomerMessageType": 1
+        "s_sendCustomerMessageType": 1,
+        "s_showSequenceList": {},
+        "s_scenarioMessageType": 3
       },
       _events: {
         inputCompleted: "sinclo:scenario:inputComplete"
-      },
-      _getBaseObj: function() {
-        var self = sinclo.scenarioApi;
-        var json = storage.l.get(self._lKey.senarioBase);
-        return json ? JSON.parse(json) : {};
-      },
-      _setBaseObj: function(obj) {
-        var self = sinclo.scenarioApi;
-        storage.l.set(self._lKey.senarioBase, JSON.stringify(obj));
-      },
-      _unsetBaseObj: function() {
-        var self = sinclo.scenarioApi;
-        storage.l.unset(self._lKey.senarioBase);
       },
       set: function(key, data) {
         var self = sinclo.scenarioApi;
@@ -3434,12 +3432,17 @@
         delete obj[key];
         self._setBaseObj(obj);
       },
-      init: function(scenarioObj){
+      reset: function() {
+        var self = sinclo.scenarioApi;
+        self._unsetBaseObj();
+      },
+      init: function(id, scenarioObj){
         var self = sinclo.scenarioApi;
         if(self.isProcessing()) {
 
         } else {
           self._setBaseObj({});
+          self.set(self._lKey.scenarioId, id);
           self.set(self._lKey.scenarios, scenarioObj);
           self.set(self._lKey.scenarioLength, Object.keys(scenarioObj).length);
           self.set(self._lKey.currentScenario, scenarioObj["0"]);
@@ -3447,6 +3450,7 @@
           self.set(self._lKey.storedVariableKeys, []);
           self.set(self._lKey.sendCustomerMessageType, 1);
           self.set(self._lKey.allowSave, false);
+          self.set(self._lKey.showSequenceSet, {});
         }
       },
       begin: function() {
@@ -3460,6 +3464,7 @@
         if(value !== null && (value === "true" || value === true) ) {
           result = true;
         }
+        console.log("scenarioApi::isProcessing => " + result);
         return result;
       },
       isWaitingInput: function() {
@@ -3474,25 +3479,45 @@
       triggerInputWaitComplete: function(text) {
         $(document).trigger(this._events.inputCompleted, [text]);
       },
+      geScenarioMessageType: function() {
+        var self = sinclo.scenarioApi;
+        return self.get(this._lKey.sendCustomerMessageType);
+      },
       getCustomerMessageType: function() {
         var self = sinclo.scenarioApi;
         return self.get(this._lKey.sendCustomerMessageType);
+      },
+      _getBaseObj: function() {
+        var self = sinclo.scenarioApi;
+        var json = storage.l.get(self._lKey.scenarioBase);
+        return json ? JSON.parse(json) : {};
+      },
+      _setBaseObj: function(obj) {
+        var self = sinclo.scenarioApi;
+        storage.l.set(self._lKey.scenarioBase, JSON.stringify(obj));
+      },
+      _unsetBaseObj: function() {
+        var self = sinclo.scenarioApi;
+        storage.l.unset(self._lKey.scenarioBase);
       },
       _process: function() {
         var self = sinclo.scenarioApi;
         switch(self.get(self._lKey.currentScenario).actionType) {
           case "1":
             self._speakText();
+            self.set(self._lKey.scenarioMessageType, 21);
             break;
           case "2":
             self._hearing._init(self, self.get(self._lKey.currentScenario));
             self._hearing._process();
             self.set(self._lKey.sendCustomerMessageType, 12);
+            self.set(self._lKey.scenarioMessageType, 22);
             break;
           case "3":
             self._selection._init(self, self.get(self._lKey.currentScenario));
             self._selection._process();
-            self.get(self._lKey.sendCustomerMessageType, 13);
+            self.set(self._lKey.sendCustomerMessageType, 13);
+            self.set(self._lKey.scenarioMessageType, 23);
             break;
           case "4":
             self._mail._init(self, self.get(self._lKey.currentScenario));
@@ -3525,10 +3550,30 @@
       _showMessage: function(type, message, categoryNum, callback) {
         var self = sinclo.scenarioApi;
         message = self._replaceVariable(message);
-        sinclo.chatApi.createMessage('sinclo_re', message, 'shinario');
-        sinclo.chatApi.scDown();
-        // ローカルに蓄積しておく
-        self._putScenarioMessage(type, message, categoryNum, callback);
+        if(!self._isShownMessage(self.get(self._lKey.currentScenarioSeqNum), categoryNum)) {
+          sinclo.chatApi.createMessage('sinclo_re', message, 'shinario');
+          self._saveShownMessage(self.get(self._lKey.currentScenarioSeqNum), categoryNum);
+          sinclo.chatApi.scDown();
+          // ローカルに蓄積しておく
+          self._putScenarioMessage(type, message, categoryNum, callback);
+        } else {
+          callback();
+        }
+      },
+      _saveShownMessage: function(scenarioSeqNum, categoryNum) {
+        var self = sinclo.scenarioApi;
+        var data = self.get(self._lKey.showSequenceSet),
+          data = data ? data : {};
+        var arr = data[scenarioSeqNum] ? data[scenarioSeqNum] : [];
+        arr.push(categoryNum);
+        data[scenarioSeqNum] = arr;
+        self.set(self._lKey.showSequenceSet, data);
+      },
+      _isShownMessage: function(scenarioSeqNum, categoryNum) {
+        var self = sinclo.scenarioApi;
+        var data = self.get(self._lKey.showSequenceSet);
+        var arr = data[scenarioSeqNum] ? data[scenarioSeqNum] : [];
+        return arr.indexOf(categoryNum) !== -1;
       },
       /**
        * シナリオメッセージをDBに格納する
@@ -3555,19 +3600,21 @@
       _putScenarioMessage: function(type, message, categoryNum, callback) {
         var self = sinclo.scenarioApi,
             storeObj = {
+              scenarioId: self.get(self._lKey.scenarioId),
               type: type,
+              messageType: self.get(self._lKey.scenarioMessageType),
               sequenceNum: self.get(self._lKey.currentScenarioSeqNum),
               categoryNum: categoryNum,
-              message: message,
-              created: common.fullDateTime()
+              message: message
             };
         if(self._disallowSaveing()) {
-          var json = this.get(self._lKey.messages);
-          var array = json ? json : [];
-          array.push(storeObj);
-          this.set(self._lKey.messages, array);
-          self._pushScenarioMessage(storeObj);
-          callback();
+          self._pushScenarioMessage(storeObj, function(data){
+            var json = self.get(self._lKey.messages);
+            var array = json ? json : [];
+            array.push(data.data);
+            self.set(self._lKey.messages, array);
+            callback();
+          });
         } else {
           self._storeMessageToDB([storeObj], callback);
         }
@@ -3580,8 +3627,8 @@
           });
         }
       },
-      _pushScenarioMessage: function(targetObj) {
-        emit('sendScenarioMessage', targetObj);
+      _pushScenarioMessage: function(targetObj, callback) {
+        emit('sendScenarioMessage', targetObj, callback);
       },
       _saveStoredMessage: function(callback) {
         var self = sinclo.scenarioApi;
@@ -3697,7 +3744,7 @@
 
         _init: function(parent, currentScenario) {
           this._parent = parent;
-          this._setCurrentSeq(0);
+          this._setCurrentSeq(this._getCurrentSeq());
           this._setLength(this._parent.get(this._parent._lKey.currentScenario).hearings.length);
         },
         _setCurrentSeq : function(val) {
@@ -3708,7 +3755,8 @@
           var self = sinclo.scenarioApi._hearing;
           var json = self._parent.get(self._state.currentSeq);
           var obj = json ? json : 0;
-          return Number(obj);
+          console.log("scenarioApi::hearing::_getCurrentSeq => " + obj);
+          return obj;
         },
         _setLength : function(val) {
           var self = sinclo.scenarioApi._hearing;
@@ -3731,7 +3779,7 @@
           var self = sinclo.scenarioApi._hearing;
           self._parent._doing(self._parent._getIntervalTimeSec(), function(){
             self._parent._handleChatTextArea(self._parent.get(self._parent._lKey.currentScenario).chatTextArea);
-            self._parent._showMessage(self._parent.get(self._parent._lKey.currentScenario).actionType, message, self._parent.get(self._state.currentSeq), function(){
+            self._parent._showMessage(self._parent.get(self._parent._lKey.currentScenario).actionType, message, self._getCurrentSeq(), function(){
               self._parent._waitingInput(function(inputVal){
                 self._parent._unWaitingInput();
                 self._parent._handleStoredMessage();

@@ -3553,7 +3553,7 @@ var socket, // socket.io
     // 新着チャット
     socket.on('resGetScenario', function (d) {
       var obj = common.jParse(d);
-      sinclo.scenarioApi.init(obj.activity.scenarios);
+      sinclo.scenarioApi.init(obj.id, obj.activity.scenarios);
       sinclo.scenarioApi.begin();
     }); // socket-on: sendChatResult
 

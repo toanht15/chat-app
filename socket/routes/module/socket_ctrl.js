@@ -933,6 +933,24 @@ io.sockets.on('connection', function (socket) {
                 }
                 setList[fullDateTime(autoMessages[i].created) + '_'] = autoMessages[i];
               }
+              var scenarioMessages = [];
+              if(obj.sincloSessionId in sincloCore[obj.siteKey] && 'scenario' in sincloCore[obj.siteKey][obj.sincloSessionId] ) {
+                var scenariosObj = sincloCore[obj.siteKey][obj.sincloSessionId].scenario;
+                Object.keys(scenariosObj).forEach(function(scenarioId, index, arr){
+                  var scenarioObj = scenariosObj[Number(scenarioId)];
+                  Object.keys(scenarioObj).forEach(function(sequenceId, index2, arr2){
+                    var sequenceArray = scenarioObj[sequenceId];
+                    sequenceArray.forEach(function(scenario, idx, array){
+                      scenarioMessages.push(scenario);
+                    });
+                  });
+                });
+              }
+              for (var i = 0; i < scenarioMessages.length; i++) {
+                var date = scenarioMessages[i].created;
+                date = new Date(date);
+                setList[fullDateTime(scenarioMessages[i].created)] = scenarioMessages[i];
+              }
               chatData.messages = objectSort(setList);
               obj.chat = chatData;
               emit.toMine('chatMessageData', obj, socket);
@@ -1028,7 +1046,7 @@ io.sockets.on('connection', function (socket) {
                     ret: true,
                     message: d.chatMessage,
                     siteKey: d.siteKey,
-                    notifyToCompany: d.notifyToCompany
+                    notifyToCompany: d.isScenarioMessage ? !d.isScenarioMessage : d.notifyToCompany
                   };
                   if(functionManager.isEnabled(d.siteKey, functionManager.keyList.monitorPollingMode)) {
                     var sId = sincloCore[d.siteKey][d.tabId].sessionId;
@@ -1104,7 +1122,7 @@ io.sockets.on('connection', function (socket) {
                   ret: true,
                   message: d.chatMessage,
                   siteKey: d.siteKey,
-                  notifyToCompany: d.notifyToCompany
+                  notifyToCompany: d.isScenarioMessage ? !d.isScenarioMessage : d.notifyToCompany
                 };
 
                 if(functionManager.isEnabled(d.siteKey, functionManager.keyList.monitorPollingMode)) {
@@ -3119,7 +3137,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         if(row.length !== 0) {
           result = JSON.parse(row[0].activity);
         }
-        emit.toMine('resGetScenario', {activity: result}, socket);
+        emit.toMine('resGetScenario', {id: obj.scenarioId, activity: result}, socket);
       });
   });
 
@@ -3130,7 +3148,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     });
   });
 
-  socket.on('storeScenarioMessage', function(data, ack){
+  socket.on('storeScenarioMessage', function(data){
     var obj = JSON.parse(data);
     //応対数検索、登録
     getConversationCountUser(obj.userId,function(results) {
@@ -3145,6 +3163,18 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
           messageDistinction = results[0].conversation_count;
         }
         obj.messages.forEach(function(elm, index, arr){
+          if(!isset(elm.created)) {
+            elm.created = new Date();
+            elm.sort = fullDateTime(scenario.created);
+          }
+          var sincloSession = sincloCore[obj.siteKey][obj.sincloSessionId];
+          if(isset(sincloSession) && isset(sincloSession.scenario)) {
+            sincloCore[obj.siteKey][obj.sincloSessionId].scenario[elm.scenarioId] = {};
+            if(!isset(sincloCore[obj.siteKey][obj.sincloSessionId].scenario[elm.scenarioId][elm.sequenceNum])) {
+              sincloCore[obj.siteKey][obj.sincloSessionId].scenario[elm.scenarioId][elm.sequenceNum] = [];
+            }
+            sincloCore[obj.siteKey][obj.sincloSessionId].scenario[elm.scenarioId][elm.sequenceNum].push(elm);
+          }
           var ret = {
             siteKey: obj.siteKey,
             tabId: obj.tabId,
@@ -3153,27 +3183,31 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             chatMessage: elm.message,
             messageType: getMessageTypeBySenarioActionType(elm.type),
             created: elm.created,
+            sort: elm.sort,
             messageDistinction: messageDistinction,
             achievementFlg: 0
           };
           chatApi.set(ret);
         });
       }
-      ack();
     });
   });
 
   // 都度：チャットデータ取得(オートメッセージのみ)
-  socket.on("sendScenrioMessage", function(d){
+  socket.on("sendScenarioMessage", function(d, ack){
     console.log("jpgeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
     var obj = JSON.parse(d);
     var scenario = JSON.parse(JSON.stringify(obj));
     scenario.created = new Date();
-    scenario.sort = fullDateTime(chat.created);
+    scenario.sort = fullDateTime(scenario.created);
 
-    var sincloSession = sincloCore[chat.siteKey][chat.sincloSessionId];
-    if(isset(sincloSession) && isset(sincloSession.scenarioMessages)) {
-      sincloCore[chat.siteKey][chat.sincloSessionId].scenarioMessages[chat.scenarioId][chat.sequentialNum] = scenario;
+    var sincloSession = sincloCore[scenario.siteKey][scenario.sincloSessionId];
+    if(isset(sincloSession) && isset(sincloSession.scenario)) {
+      sincloCore[scenario.siteKey][scenario.sincloSessionId].scenario[scenario.scenarioId] = {};
+      if(!isset(sincloCore[scenario.siteKey][scenario.sincloSessionId].scenario[scenario.scenarioId][scenario.sequenceNum])) {
+        sincloCore[scenario.siteKey][scenario.sincloSessionId].scenario[scenario.scenarioId][scenario.sequenceNum] = [];
+      }
+      sincloCore[scenario.siteKey][scenario.sincloSessionId].scenario[scenario.scenarioId][scenario.sequenceNum].push(scenario);
     } else {
       console.log("sendScenarioMessage::sincloSession : " + scenario.sincloSessionId + "is null.");
       return false;
@@ -3182,6 +3216,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       emit.toCompany('resScenarioMessage', scenario, scenario.siteKey);
     }
     emit.toSameUser('resScenarioMesage', scenario, scenario.siteKey, scenario.sincloSessionId);
+    ack({data: scenario});
   });
 
   // ============================================
