@@ -6628,6 +6628,7 @@ ul.naviBtn {
               font-size: 15px;
               padding: 0;
               margin: 0;
+              cursor: move;
 
               a {
                 display: block;
@@ -6635,6 +6636,7 @@ ul.naviBtn {
                 width: calc(100% - 30px);
                 text-decoration: none;
                 color: #ffffff;
+                cursor: inherit;
 
                 &:hover {
                   text-decoration: none;
