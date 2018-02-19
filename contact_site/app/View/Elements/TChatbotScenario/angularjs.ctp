@@ -348,10 +348,8 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
   // シミュレーションで受け付けた受信メッセージ
   $scope.$on('receiveVistorMessage', function(event, message, prefix) {
-    $scope.actionStep = (typeof prefix !== 'undefined' && prefix !== '') ? parseInt(prefix.replace(/action/, ''), 10) : $scope.actionStep;
-
+    // 対応するアクションがない場合は何もしない
     if (typeof $scope.setActionList[$scope.actionStep] === 'undefined') {
-      // 対応するアクションがない場合は何もしない
       return;
     }
 

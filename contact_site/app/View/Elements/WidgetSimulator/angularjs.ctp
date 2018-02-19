@@ -153,6 +153,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     if ($scope.canVisitorSendMessage) {
       var prefix = $(this).attr('id').replace(/-sinclo-radio[0-9a-z-]+$/i, '');
       var message = $(this).val().replace(/^\s/, '');
+      var name = $(this).attr('name');
 
       // 自由入力エリアの表示状態によって、自由入力エリアへの入力・メッセージ送信の処理を行う
       if ($scope.isTextAreaOpen) {
@@ -161,6 +162,9 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
         $scope.addMessage('se', message)
         $scope.$emit('receiveVistorMessage', message, prefix)
       }
+
+      // ラジオボタンを非活性にする
+      $('input[name=' + name + '][type="radio"]').prop('disabled', true);
     }
   });
 }]);
