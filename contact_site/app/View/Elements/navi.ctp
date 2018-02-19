@@ -40,6 +40,9 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
 <!-- /* 上部カラーバー(ここから) */ -->
 <div id="color-bar" class="card-shadow">
     <ul id="color-bar-right" class="fRight">
+      <?php if(!empty($trialTime)) { ?>
+        <li class="fLeft"><p><?= h($trialTime) ?></p></li>
+      <?php } ?>
         <li class="fLeft"><p><?= h($userInfo['display_name']) ?>さん</p></li>
         <li class="fRight" id="logout" onclick='location.href = "/Login/logout"'><p>ログアウト</p></li>
     </ul>
@@ -91,6 +94,9 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
         </div>
         <div class="icon">
           <?= $this->htmlEx->naviLink('ヘルプ', 'manual.png', ['href' => 'https://info.sinclo.jp/manual/', 'target' => '_blank']) ?>
+        </div>
+        <div class="icon" onclick ='openTermsOfService()'>
+          <?= $this->htmlEx->naviLink('利用規約', 'Lock.png') ?>
         </div>
       </div>
     </div>
@@ -216,6 +222,19 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
       }
 
   });
+
+  //モーダル画面
+  function openTermsOfService(){
+    $.ajax({
+      type: 'post',
+      dataType: 'html',
+      cache: false,
+      url: "<?= $this->Html->url(['controller' => 'Mtrial', 'action' => 'remoteTermsOfService']) ?>",
+      success: function(html){
+        modalOpen.call(window, html, 'p-show-terms-of-service', '利用規約', 'moment');
+      }
+    });
+  }
 </script>
 <?php if(strcmp($_SERVER['SERVER_NAME'], '	sinclo.jp') === 0): ?>
 <script type='text/javascript' src='https://ws1.sinclo.jp/client/5a2e2a75cb7e3.js' data-hide='1'></script>

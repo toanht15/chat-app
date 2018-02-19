@@ -114,6 +114,10 @@
       */
       var close = this.elm.close;
       close.addEventListener('click', function () {
+        //無料トライアル画面
+        if(document.getElementById('top')　!= null) {
+          document.getElementById('top').style.overflow  = "scroll";
+        }
         return popupEvent.closeNoPopup();
       });
     },
@@ -198,6 +202,17 @@
             return popupEvent.closeNoPopup();
           };
           break;
+        case 'p-show-terms-of-service':
+          var closeBtn = _button("閉じる");
+          closeBtn.onclick = function () {
+            //無料トライアル画面
+            if(document.getElementById('top')　!= null) {
+              document.getElementById('top').style.overflow  = "scroll";
+            }
+            return popupEvent.closeNoPopup();
+          };
+
+          break;
         case 'p-cus-menu':
           var closeBtn = _button("設定");
           closeBtn.onclick = function () {
@@ -217,6 +232,7 @@
         case 'p-history-cus':
         case 'p-muser-entry':
         case 'p-tcampaign-entry':
+        case 'p-widget-trimming':
           var entryBtn = _button("保存");
           entryBtn.onclick = function () {
             return popupEvent.closePopup();

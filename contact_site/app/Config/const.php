@@ -296,6 +296,9 @@ define('C_CLOSE_BUTTON_SETTING_MODE_TYPE_HIDDEN', 2);//非表示
 //バナーテキスト初期値
 define('C_BANNER_TEXT', "チャットで相談");//バナー文言
 
+//トライアルフラグ
+define('C_TRIAL_FLG', 1);
+
 //ビジネスモデル
 define('C_FREE_B_TO_B', 1); // BtoB
 define('C_FREE_B_TO_C', 2); // BtoC
