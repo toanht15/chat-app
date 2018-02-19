@@ -33,7 +33,7 @@
 
 </style>
 <section ng-repeat="(setActionId, setItem) in setActionList" id="action{{setActionId}}_preview">
-  <h4 class="actionTitle"><a href="#action{{setActionId}}_setting">{{setActionId + 1}}．{{actionList[setItem.actionType].label}}</a></h4>
+  <h4 class="actionTitle">{{setActionId + 1}}．{{actionList[setItem.actionType].label}}</h4>
   <ul class="chatTalk details">
     <!-- メッセージ・選択肢 -->
     <div>

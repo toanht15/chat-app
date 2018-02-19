@@ -586,17 +586,16 @@ $(document).ready(function() {
     return false;
   });
   // プレビュー側のタイトルクリックに応じて、設定側をスクロールさせる
-  $(document).on('click', '#tchatbotscenario_form_preview_body a[href^=#]', function() {
+  $(document).on('click', '#tchatbotscenario_form_preview_body > section', function() {
     var box = $('#tchatbotscenario_form_action_body');
-    var target = $(this.hash);
+    var settingId = $(this).attr('id').replace(/preview$/, 'setting');
+    var target = $('#' + settingId);
     var targetY = target.position().top - box.position().top;
 
     box.stop().animate({
       scrollTop: box.scrollTop() + targetY
     }, time);
-
-    window.history.pushState(null, null, this.hash);
-    return false;
+    target.find('input, textarea')[0].focus();
   });
 
   // フォーカスされたアクションに応じて、関連するプレビューを強調表示する

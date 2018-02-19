@@ -6937,16 +6937,9 @@ ul.naviBtn {
           height: calc(100vh - 296px);
 
           .actionTitle {
-            a {
-              display: block;
-              padding: 10px;
-              text-decoration: none;
-              color: inherit;
-
-              &:hover {
-                color: inherit;
-              }
-            }
+            display: block;
+            padding: 10px;
+            cursor: pointer;
           }
         }
       }
