@@ -66,6 +66,17 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         sendFile: 6,
         start: 98,
         end: 99,
+        scenario: {
+          customer: {
+            hearing: 12,
+            selection: 13
+          },
+          message: {
+            text: 21,
+            hearing: 22,
+            selection: 23
+          }
+        }
       },
       init: function(sendPattern){
         this.sound = document.getElementById('sinclo-sound');
@@ -407,6 +418,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     $scope.oprWaitCnt = 0; // 総オペレーター人数
     $scope.labelHideList = <?php echo json_encode($labelHideList) ?>;
     $scope.monitorList = {};
+    $scope.tmpMonitorList = [];
     $scope.requestedCustomerList = [];
     $scope.customerList = {};
     $scope.messageList = [];
@@ -424,6 +436,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     $scope.operatorListSortMode = 'status';
     $scope.operatorListSortOrder = 'desc';
     $scope.pollingModeIntervalTimer = null;
+    $scope.chatReceived = false;
+    $scope.firstLoadMonitorList = true;
 
     /* 資料検索 */
     $scope.tagList = {};
@@ -449,20 +463,28 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           result = array;
         } else if ($scope.searchText.length >= 4 && $scope.searchText !== $scope.beforeInputValue) {
           $scope.searchProcess($scope.searchText, $scope.fillterTypeId);
-          $scope.monitorList = [];
-          $scope.chatList = [];
-          result = [];
+          if(!contract.monitorPollingMode) {
+            $scope.monitorList = [];
+            $scope.chatList = [];
+            result = [];
+          } else {
+            result = array;
+          }
         } else if ($scope.searchText.length >= 4 && $scope.searchResult.length > 0) {
           result = $scope.monitorList;
         } else if($scope.searchText.length < 4) {
-          $scope.searchResult = [];
-          if($scope.monitorList.length > 0) {
-            $scope.monitorList = [];
+          if(!contract.monitorPollingMode) {
+            $scope.searchResult = [];
+            if ($scope.monitorList.length > 0) {
+              $scope.monitorList = [];
+            }
+            if ($scope.chatList > 0) {
+              $scope.chatList = [];
+            }
+            result = [];
+          } else {
+            result = array;
           }
-          if($scope.chatList > 0) {
-            $scope.chatList = [];
-          }
-          result = [];
         }
       } else {
         if ( $scope.searchText ) {
@@ -475,7 +497,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
               }
             });
           }
-        } else if(isHideRealTimeMonitor) {
+        } else if(isHideRealTimeMonitor && !contract.monitorPollingMode) {
           // 検索状態じゃない場合で通常時リアルタイムモニタ非表示であれば非表示にする
         } else {
           result = array;
@@ -1450,6 +1472,46 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           li.style.cursor = "pointer";
           li.addEventListener("click", function(event){window.open(message.downloadUrl)});
         }
+      }// 消費者からのメッセージの場合
+      else if ( type === chatApi.messageType.scenario.customer.hearing) {
+        cn = "sinclo_re";
+        div.style.textAlign = 'left';
+        div.style.height = 'auto';
+        div.style.padding = '0';
+        li.className = cn;
+        content = $scope.createTextOfMessage(chat, message, {radio: false});
+      }
+      else if ( type === chatApi.messageType.scenario.customer.selection) {
+        cn = "sinclo_re";
+        div.style.textAlign = 'left';
+        div.style.height = 'auto';
+        div.style.padding = '0';
+        li.className = cn;
+        content = $scope.createTextOfMessage(chat, message, {radio: false});
+      }
+      else if ( type === chatApi.messageType.scenario.message.text ) {
+        cn = "sinclo_auto";
+        div.style.textAlign = 'right';
+        div.style.height = 'auto';
+        div.style.padding = '0';
+        content = "<span class='cName'>シナリオメッセージ(テキスト発言)</span>";
+        content += $scope.createTextOfMessage(chat, message);
+      }
+      else if ( type === chatApi.messageType.scenario.message.hearing ) {
+        cn = "sinclo_auto";
+        div.style.textAlign = 'right';
+        div.style.height = 'auto';
+        div.style.padding = '0';
+        content = "<span class='cName'>シナリオメッセージ(ヒアリング)</span>";
+        content += $scope.createTextOfMessage(chat, message);
+      }
+      else if ( type === chatApi.messageType.scenario.message.selection ) {
+        cn = "sinclo_auto";
+        div.style.textAlign = 'right';
+        div.style.height = 'auto';
+        div.style.padding = '0';
+        content = "<span class='cName'>シナリオメッセージ(選択肢)</span>";
+        content += $scope.createTextOfMessage(chat, message);
       }
       else  {
         cn = "sinclo_etc";
@@ -1851,6 +1913,20 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     function pushToList(obj){
 
+      if(contract.monitorPollingMode && $scope.monitorList[obj.tabId]
+         && ((!( 'referrer' in obj) || $scope.monitorList[obj.tabId].ref === $scope.trimToURL(obj.referrer))
+          && (!( 'connectToken' in obj) || $scope.monitorList[obj.tabId].connectToken === obj.connectToken)
+          && (!( 'responderId' in obj) || $scope.monitorList[obj.tabId].responderId === obj.responderId)
+          && (!( 'coBrowseConnectToken' in obj) || $scope.monitorList[obj.tabId].coBrowseConnectToken === obj.coBrowseConnectToken)
+          && (!( 'docShareId' in obj) || $scope.monitorList[obj.tabId].docShareId === obj.docShareId)
+          && (!( 'sincloSessionId' in obj) || $scope.monitorList[obj.tabId].sincloSessionId === obj.sincloSessionId)
+          && (!( 'title' in obj) || $scope.monitorList[obj.tabId].title === obj.title)
+          && (!( 'status' in obj) || $scope.monitorList[obj.tabId].status === obj.status)
+        )
+      ) {
+        return;
+      }
+
       if ( 'ipAddress' in obj && 'ipAddress' in obj) {
         if (!$scope.checkToIP(obj.ipAddress)) return false;
       }
@@ -1961,15 +2037,22 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
       $scope.reload(); // 整っているか確認
 
+      $scope.setReceiveAccessInfoTrigger();
+    });
+
+    $scope.setReceiveAccessInfoTrigger = function() {
       if(contract.monitorPollingMode) {
-        if($scope.pollingModeIntervalTimer) {
-          clearInterval($scope.pollingModeIntervalTimer);
+        if(window.loading.load && contract.monitorPollingMode && $scope.firstLoadMonitorList) {
+          window.loading.load.start();
         }
-        $scope.pollingModeIntervalTimer = setInterval(function(e){
+        if($scope.pollingModeIntervalTimer) {
+          clearTimeout($scope.pollingModeIntervalTimer);
+        }
+        $scope.pollingModeIntervalTimer = setTimeout(function(e){
           emit('getCustomerList',{});
         }, <?= C_REALTIME_MONITOR_POLLING_MODE_INTERVAL_MSEC ?>);
       }
-    });
+    };
 
     socket.on('outCompanyUser', function (data) {
       var obj = JSON.parse(data);
@@ -1977,23 +2060,64 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       delete $scope.onlineOperatorList[obj.userId];
       delete $scope.activeOperatorList[obj.userId];
       $scope.refreshUserPresences();
-
     });
 
     socket.on('receiveAccessInfo', function (data) {
-      if(!contract.hideRealtimeMonitor) {
-        setTimeout(function(){
-          $scope.$apply(function(){
-            var obj = JSON.parse(data);
-            obj.forEach(function(elm, index, arr) {
-              pushToList(elm);
-              if ('chat' in elm && String(elm.chat) === "<?=$muserId?>") {
-                pushToChatList(elm.tabId);
-              }
+      var obj = JSON.parse(data);
+      if(contract.monitorPollingMode) {
+        Object.keys(obj).forEach(function (element, index, array) {
+          if (index === 0) return; // サイト訪問者の総数を格納しているため無視
+          $scope.tmpMonitorList[obj[index].tabId] = obj[index];
+        });
+      } else {
+        if(!contract.hideRealtimeMonitor) {
+          setTimeout(function(){
+            $scope.$apply(function(){
+              obj.forEach(function(elm, index, arr) {
+                if (index === 0) return; // サイト訪問者の総数を格納しているため無視
+                pushToList(elm);
+                if ('chat' in elm && String(elm.chat) === "<?=$muserId?>") {
+                  pushToChatList(elm.tabId);
+                }
+              });
             });
-          });
-        }, 100);
+          }, 100);
+        }
       }
+    });
+
+    /**
+     * monitorPollingMode: trueのときに使用する
+     */
+    socket.on('beginOfCustomerList', function(){
+      $scope.tmpMonitorList = {};
+    });
+
+    /**
+     * monitorPollingMode: trueのときに使用する
+     */
+    socket.on('endOfCustomerList', function(){
+      var tmpMonitorListArray = Object.keys($scope.tmpMonitorList).map(function(e){
+        return $scope.tmpMonitorList[e];
+      });
+      tmpMonitorListArray.forEach(function (elm, index, arr) {
+        pushToList(elm);
+        if ('chat' in elm && String(elm.chat) === "<?=$muserId?>") {
+          pushToChatList(elm.tabId);
+        }
+      });
+      Object.keys($scope.monitorList).forEach(function(elm, index, arr){
+        if($scope.tmpMonitorList[elm] || (contract.hideRealtimeMonitor && $scope.searchText.length === 4)) {
+          return;
+        } else {
+          delete $scope.monitorList[elm];
+        }
+      });
+      if(window.loading.load && contract.monitorPollingMode && $scope.firstLoadMonitorList) {
+        window.loading.load.finish();
+        $scope.firstLoadMonitorList = false;
+      }
+      $scope.setReceiveAccessInfoTrigger();
     });
 
     socket.on('resAutoChatMessages', function(d){
@@ -2385,10 +2509,12 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     socket.on("sendChatResult", function(d){
       var obj = JSON.parse(d),
           elm = document.getElementById('sendMessage');
-      if(obj.customerInfo) {
-        pushToList(obj.customerInfo);
-        if ('chat' in obj && String(obj.chat) === "<?=$muserId?>") {
-          pushToChatList(obj.tabId);
+      if(obj.customerInfo && obj.notifyToCompany) {
+        if(!(obj.tabId in $scope.monitorList)) {
+          pushToList(obj.customerInfo);
+          if ('chat' in obj && String(obj.chat) === "<?=$muserId?>") {
+            pushToChatList(obj.tabId);
+          }
         }
       }
       if ( !(obj.tabId in $scope.monitorList) ) return false;
@@ -2431,10 +2557,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         if ( obj.tabId === chatApi.tabId && $scope.monitorList[obj.tabId].chat === myUserId && $("#sendMessage").is(":focus") ) {
             chatApi.isReadMessage($scope.monitorList[obj.tabId]);
         }
-        $timeout(function(){
-          console.log("HOGEEEEEEEEEEEEEEEEEEe");
-          $scope.$apply();
-        },100);
+
       }
       else {
         alert('メッセージの送信に失敗しました。');
@@ -3477,6 +3600,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       $('#statusHeader').css("width", statusTdWidth+'px');
     }
 
+    $scope.$watch('monitorList', function(newVal, oldVal){
+      console.log("monitorList is changed");
+    });
   }]);
 
   /**************************************************************
@@ -3682,12 +3808,18 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       restrict: "A",
       template: "{{stayTime}}",
       link: function(scope, attr, elem) {
+        console.log("call calStayTime link function.");
         scope.stayTime = scope.monitor.term;
         var term = 0;
 
         function countUp(){
+          console.log("call calStayTime link function => countUp()");
           // 存在しないユーザーなら、カウントを止める
-          if ( !scope.$parent || !scope.$parent.hasOwnProperty('monitorList') || (scope.$parent.hasOwnProperty('monitorList') && !scope.$parent.monitorList.hasOwnProperty(scope.monitor.tabId)) ) return false;
+          if ( !scope.$parent
+            || !scope.$parent.hasOwnProperty('monitorList')
+            || (scope.$parent.hasOwnProperty('monitorList') && !scope.$parent.monitorList.hasOwnProperty(scope.monitor.tabId))
+          ) return false;
+
           scope.monitor.term = Number(scope.monitor.term) + term;
           var hour = parseInt(scope.monitor.term / 3600),
               min = parseInt((scope.monitor.term / 60) % 60),
