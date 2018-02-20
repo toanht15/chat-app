@@ -140,24 +140,24 @@ class NotificationController extends AppController {
 
       // 送信前にログを生成
       $this->TMailTransmissionLog->create();
-      $this->TMailTransmissionLog->set([
+      $this->TMailTransmissionLog->set(array(
         'm_companies_id' => $targetHistory['THistory']['m_companies_id'],
         'mail_type_cd' => ScenarioMailTemplateComponent::MAIL_TYPE_CD,
         'from_address' => MailSenderComponent::MAIL_SYSTEM_FROM_ADDRESS,
-        'from_name' => $transmission['MMailTransmissionSetting']['from_name'],
-        'to_address' => $transmission['MMailTransmissionSetting']['to_address'],
-        'subject' => $transmission['MMailTransmissionSetting']['subject'],
+        'from_name' => $component->replaceVariables($transmission['MMailTransmissionSetting']['from_name']),
+        'to_address' => $component->replaceVariables($transmission['MMailTransmissionSetting']['to_address']),
+        'subject' => $component->replaceVariables($transmission['MMailTransmissionSetting']['subject']),
         'body' => $component->getBody(),
         'send_flg' => 0
-      ]);
+      ));
       $this->TMailTransmissionLog->save();
       $lastInsertId = $this->TMailTransmissionLog->getLastInsertId();
 
       $sender = new MailSenderComponent();
       $sender->setFrom(MailSenderComponent::MAIL_SYSTEM_FROM_ADDRESS);
-      $sender->setFromName($transmission['MMailTransmissionSetting']['from_name']);
-      $sender->setTo($transmission['MMailTransmissionSetting']['to_address']);
-      $sender->setSubject($transmission['MMailTransmissionSetting']['subject']);
+      $sender->setFromName($component->replaceVariables($transmission['MMailTransmissionSetting']['from_name']));
+      $sender->setTo($component->replaceVariables($transmission['MMailTransmissionSetting']['to_address']));
+      $sender->setSubject($component->replaceVariables($transmission['MMailTransmissionSetting']['subject']));
       $sender->setBody($component->getBody());
       $sender->send();
 

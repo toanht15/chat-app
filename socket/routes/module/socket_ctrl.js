@@ -3148,7 +3148,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     });
   });
 
-  socket.on('storeScenarioMessage', function(data){
+  socket.on('storeScenarioMessage', function(data, ack){
     var obj = JSON.parse(data);
     //応対数検索、登録
     getConversationCountUser(obj.userId,function(results) {
@@ -3190,6 +3190,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
           chatApi.set(ret);
         });
       }
+      ack();
     });
   });
 
