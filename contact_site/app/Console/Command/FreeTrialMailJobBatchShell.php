@@ -35,8 +35,13 @@ class FreeTrialMailJobBatchShell extends AppShell
     $this->log('TARGET schedule is '.$beginDate.' 〜 '.$endDate.' .', self::LOG_INFO);
     $schedules = $this->TSendSystemMailSchedule->find('all', array(
       'conditions' => array(
-        'sending_datetime >= ' => $beginDate,
-        'sending_datetime < ' => $endDate
+        'AND' => array(
+          'sending_datetime >= ' => $beginDate,
+          'sending_datetime < ' => $endDate
+        ),
+        'NOT' => array(
+          'send-mail_flg' => 1
+        )
       )
     ));
     if(empty($schedules)) {
