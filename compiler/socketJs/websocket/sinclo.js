@@ -1051,6 +1051,7 @@
       if ( obj.token !== common.token ) return false;
       this.chatApi.historyId = obj.chat.historyId;
       var keys = Object.keys(obj.chat.messages);
+      var prevMessageBlock = null;
       for (var key in obj.chat.messages) {
         if ( !obj.chat.messages.hasOwnProperty(key) ) return false;
         var chat = obj.chat.messages[key], userName;
@@ -1106,6 +1107,24 @@
             }
           } else {
             this.chatApi.createMessage(cn, chat.message, userName);
+          }
+          if((Number(chat.messageType) === 22 || Number(chat.messageType) === 23) && chat.message.match(/\[\]/) && prevMessageBlock === null) {
+            prevMessageBlock = $('sinclo-chat').find('div:last-child');
+          } else if(prevMessageBlock !== null) {
+            var name = prevMessageBlock.find('[type="radio"]').attr('name');
+            console.log("DISABLE RADIO NAME : " + name);
+            var targetLabel = prevMessageBlock.find('label')
+            var targetId = "";
+            targetLabel.each(function(index, val){
+              if(val.innerText.trim() === chat.message) {
+                targetId = $(val).attr('for');
+              }
+            });
+            if(targetId !== "") {
+              $('#' + targetId).prop('checked', true);
+            }
+            $('input[name=' + name + '][type="radio"]').prop('disabled', true).parent().css('opacity', 0.5);
+            prevMessageBlock = null;
           }
           this.chatApi.scDown();
         }
@@ -1726,15 +1745,15 @@
             })
             .on("click", "input[name^='sinclo-radio']", function(e){
               if(e) e.stopPropagation();
+              console.log("sinclo.scenarioApi.isProcessing() : " + sinclo.scenarioApi.isProcessing() + " sinclo.scenarioApi.isWaitingInput() : " + sinclo.scenarioApi.isWaitingInput());
+              if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isWaitingInput()) {
+                var name = $(this).attr('name');
+                console.log("DISABLE RADIO NAME : " + name);
+                $('input[name=' + name + '][type="radio"]').prop('disabled', true).parent().css('opacity', 0.5);
+              }
               if ( !(window.sincloInfo.widget.hasOwnProperty('chatRadioBehavior') && window.sincloInfo.widget.chatRadioBehavior === 2) ) {
                 sinclo.chatApi.send(e.target.value.trim());
-              }
-              if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isWaitingInput()) {
-                sinclo.scenarioApi.triggerInputWaitComplete(e.target.value.trim());
-                $(this).parents('.sinclo_re').find('input[type="radio"]').prop('disabled', true);
-                $(this).parents('.sinclo_re').find('label').css('opacity', 0.5);
-              }
-              else {
+              } else {
                 var textareaOpend = storage.l.get('textareaOpend');
                 //チャットのテキストエリアが閉まっているときは即時送信
                 if( textareaOpend == 'close') {
@@ -1749,7 +1768,7 @@
                 }
               }
             });
-          $("input[name^='sinclo-radio']").prop('disabled', false);
+            $("input[name^='sinclo-radio']").prop('disabled', false);
         },
         removeAllEvent: function() {
           if ( window.sincloInfo.contract.chat ) {
