@@ -196,6 +196,9 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
               $activity_detail = "<span class='actionValueLabel'>メッセージ</span><span class='actionValue'>" . h($activity['message']) . "</span>";
             }
             break;
+          case C_AUTO_ACTION_TYPE_SELECTSCENARIO:
+            $activity_detail = "<span class='actionValueLabel'>シナリオ</span><span class='actionValue'>" . h($val['TChatbotScenario']['name']) . "</span>";
+            break;
         }
         $conditionType = "";
         if (!empty($activity['conditionType'])) {

@@ -101,6 +101,59 @@ $(function(){
       $deletedUserDisplayName = $val['DeleteMUser']['display_name'];
       $isSendFile = true;
     }
+    else if ( strcmp($val['THistoryChatLog']['message_type'], 12) === 0 ) {
+      $className = "sinclo_re";
+      $id = $val['THistoryChatLog']['id'];
+      $historyId = $val['THistoryChatLog']['t_histories_id'];
+      $deleteMessage = str_replace(PHP_EOL, '', $val['THistoryChatLog']['message']);
+      $created = $val['THistoryChatLog']['created'];
+      $deleted = $val['THistoryChatLog']['deleted'];
+      $deletedUserDisplayName = $val['DeleteMUser']['display_name'];
+      $isSendFile = false;
+    }
+    else if ( strcmp($val['THistoryChatLog']['message_type'], 13) === 0 ) {
+      $className = "sinclo_re";
+      $id = $val['THistoryChatLog']['id'];
+      $historyId = $val['THistoryChatLog']['t_histories_id'];
+      $deleteMessage = str_replace(PHP_EOL, '', $val['THistoryChatLog']['message']);
+      $created = $val['THistoryChatLog']['created'];
+      $deleted = $val['THistoryChatLog']['deleted'];
+      $deletedUserDisplayName = $val['DeleteMUser']['display_name'];
+      $isSendFile = false;
+    }
+    else if ( strcmp($val['THistoryChatLog']['message_type'], 21) === 0 ) {
+      $className = "sinclo_auto";
+      $name = "シナリオメッセージ（テキスト発言）";
+      $id = $val['THistoryChatLog']['id'];
+      $historyId = $val['THistoryChatLog']['t_histories_id'];
+      $deleteMessage = str_replace(PHP_EOL, '', $val['THistoryChatLog']['message']);
+      $created = $val['THistoryChatLog']['created'];
+      $deleted = $val['THistoryChatLog']['deleted'];
+      $deletedUserDisplayName = $val['DeleteMUser']['display_name'];
+      $isSendFile = false;
+    }
+    else if ( strcmp($val['THistoryChatLog']['message_type'], 22) === 0 ) {
+      $className = "sinclo_auto";
+      $name = "シナリオメッセージ（ヒアリング）";
+      $id = $val['THistoryChatLog']['id'];
+      $historyId = $val['THistoryChatLog']['t_histories_id'];
+      $deleteMessage = str_replace(PHP_EOL, '', $val['THistoryChatLog']['message']);
+      $created = $val['THistoryChatLog']['created'];
+      $deleted = $val['THistoryChatLog']['deleted'];
+      $deletedUserDisplayName = $val['DeleteMUser']['display_name'];
+      $isSendFile = false;
+    }
+    else if (  strcmp($val['THistoryChatLog']['message_type'], 23) === 0  ) {
+      $className = "sinclo_auto";
+      $name = "シナリオメッセージ（選択肢）";
+      $id = $val['THistoryChatLog']['id'];
+      $historyId = $val['THistoryChatLog']['t_histories_id'];
+      $deleteMessage = str_replace(PHP_EOL, '', $val['THistoryChatLog']['message']);
+      $created = $val['THistoryChatLog']['created'];
+      $deleted = $val['THistoryChatLog']['deleted'];
+      $deletedUserDisplayName = $val['DeleteMUser']['display_name'];
+      $isSendFile = false;
+    }
     else if ( strcmp($val['THistoryChatLog']['message_type'], 98) === 0 ) {
       $className = "sinclo_etc";
       $message = "- ". $val['MUser']['display_name'] . "が入室しました -";
