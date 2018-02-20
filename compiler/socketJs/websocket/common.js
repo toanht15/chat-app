@@ -3545,9 +3545,21 @@ var socket, // socket.io
       sinclo.resAutoChatMessage(d);
     }); // socket-on: resAutoChatMessage
 
+    // オートメッセージ
+    socket.on('resScenarioMessage', function (d) {
+      sinclo.resScenarioMessage(d);
+    }); // socket-on: resScenarioMessage
+
     // 新着チャット
     socket.on('sendChatResult', function (d) {
       sinclo.sendChatResult(d);
+    }); // socket-on: sendChatResult
+
+    // 新着チャット
+    socket.on('resGetScenario', function (d) {
+      var obj = common.jParse(d);
+      sinclo.scenarioApi.init(obj.id, obj.activity.scenarios);
+      sinclo.scenarioApi.begin();
     }); // socket-on: sendChatResult
 
     // チャット入力状況受信
@@ -3707,7 +3719,8 @@ function emit(evName, data, callback){
   if (evName === "syncReady" || evName === "connectSuccess" || evName === "sendAccessInfo" || evName === "customerInfo") {
     data.title = common.title();
   }
-  if (evName === "connectSuccess" || evName === "sendWindowInfo" || evName === "sendAutoChat" || evName === "sendChat") {
+  if (evName === "connectSuccess" || evName === "sendWindowInfo" || evName === "sendAutoChat" || evName === "sendChat" ||
+  evName === "storeScenarioMessage") {
     data.userId = userInfo.userId;
   }
   if (   evName === "connectSuccess" || evName === "sendWindowInfo" || evName === "sendAutoChatMessages" ||
@@ -3750,7 +3763,7 @@ function emit(evName, data, callback){
       clearInterval(timer);
       data.tabId = userInfo.tabId; // タブの識別ID
       data.sincloSessionId = userInfo.sincloSessionId;
-      console.log("EMIT : " + evName + "data : " + JSON.stringify(data));
+      console.log("EMIT : " + evName + " data : " + JSON.stringify(data));
       socket.emit(evName, JSON.stringify(data), callback);
     }
   }, 100);

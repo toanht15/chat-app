@@ -75,10 +75,11 @@ define('C_AWS_S3_BUCKET', 'XXXXXXXXXXXXXXXXXXX'); // AWSのBucket名
 
 ### マイグレーションのサブモジュールをダウンロード
 
-`sinclo/contact_site/`直下に移動し、下記コマンドでGitのサブモジュールをダウンロードする
+`sinclo`直下に移動し、下記コマンドでGitのサブモジュールをダウンロードする
 
 ```
-$ git submodule add git://github.com/CakeDC/migrations.git app/Plugin/Migrations
+$ cd /var/www/sinclo
+$ git submodule add git://github.com/CakeDC/migrations.git contact_site/app/Plugin/Migrations
 ```
 
 ### マイグレーション管理用のテーブルを作成
@@ -104,3 +105,13 @@ $ ./migration run down
 こちらでは「fontawesome」を利用させて頂いております。
 アイコンを追加で試用したい場合は[こちら](http://fontawesome.io/)より確認、利用してください。
 ライセンスは *MITライセンス* になっております。
+
+### socket直下でnpm installしてnode ./bin/wwwしたらエラーが出たら
+```
+Error: ENOENT: no such file or directory, scandir '/var/www/sinclo/socket/node_modules/node-sass-middleware/node_modules/node-sass/vendor'
+```
+以下のようにする
+```
+$ npm install
+$ npm rebuild node-sass --unsafe-perm
+```

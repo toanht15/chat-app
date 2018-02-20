@@ -478,6 +478,22 @@ function getIp(socket){
   return ip;
 }
 
+function getMessageTypeBySenarioActionType(type) {
+  var result = 3;
+  switch(Number(type)) {
+    case 1:
+      result = 21;
+      break;
+    case 2:
+      result = 22;
+      break;
+    case 3:
+      result = 23;
+      break;
+  }
+  return result;
+}
+
 // Landscapeの企業情報取得
 //requestをrequire
 var http = require('http');
@@ -554,19 +570,71 @@ function sendMail(autoMessageId, lastChatLogId, callback) {
       response.on('data', callback);
       return;
     } else {
-      console.log('企業詳細情報取得時にエラーが返却されました。 errorCode : ' + response.statusCode);
+      console.log('オートメッセージ設定メール通知時にエラーが返却されました。 errorCode : ' + response.statusCode);
       callback(false);
       return;
     }
   });
 
   req.on('error', function(error) {
-    console.log('企業詳細情報取得時にHTTPレベルのエラーが発生しました。 message : ' + error.message);
+    console.log('オートメッセージ設定メール通知時にHTTPレベルのエラーが発生しました。 message : ' + error.message);
     callback(false);
     return;
   });
 
   req.write(JSON.stringify({"accessToken":"x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK", "autoMessageId":autoMessageId, "lastChatLogId":lastChatLogId}));
+  req.end();
+}
+
+function sendSenarioMail(obj, callback) {
+  //ヘッダーを定義
+  var headers = {
+    'Content-Type':'application/json'
+  };
+
+  //オプションを定義
+  var options = {
+    host: process.env.SEND_SCENARIO_MESSAGE_MAIL_API_HOST,
+    port: process.env.SEND_SCENARIO_MESSAGE_MAIL_API_PORT,
+    path: process.env.SEND_SCENARIO_MESSAGE_MAIL_API_PATH,
+    method: 'POST',
+    headers: headers,
+    json: true,
+    agent: false
+  };
+
+  if(process.env.DB_HOST === 'localhost') {
+    options.rejectUnauthorized = false;
+  }
+
+  //リクエスト送信
+  var req = http.request(options, function (response) {
+    if(response.statusCode === 200) {
+      response.setEncoding('utf8');
+      response.on('data', callback);
+      return;
+    } else {
+      console.log('シナリオメール送信時にエラーが返却されました。 errorCode : ' + response.statusCode);
+      callback(false);
+      return;
+    }
+  });
+
+  req.on('error', function(error) {
+    console.log('シナリオメール送信時にHTTPレベルのエラーが発生しました。 message : ' + error.message);
+    callback(false);
+    return;
+  });
+
+  var historyId = getSessionId(obj.siteKey, obj.tabId, "historyId");
+  req.write(JSON.stringify({
+    "accessToken":"x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK",
+    "userHistoryId": historyId,
+    "mailType": obj.mailType,
+    "transmissionId": obj.transmissionId,
+    "templateId": obj.templateId,
+    "variables": obj.variables
+  }));
   req.end();
 }
 
@@ -865,6 +933,24 @@ io.sockets.on('connection', function (socket) {
                 }
                 setList[fullDateTime(autoMessages[i].created) + '_'] = autoMessages[i];
               }
+              var scenarioMessages = [];
+              if(obj.sincloSessionId in sincloCore[obj.siteKey] && 'scenario' in sincloCore[obj.siteKey][obj.sincloSessionId] ) {
+                var scenariosObj = sincloCore[obj.siteKey][obj.sincloSessionId].scenario;
+                Object.keys(scenariosObj).forEach(function(scenarioId, index, arr){
+                  var scenarioObj = scenariosObj[Number(scenarioId)];
+                  Object.keys(scenarioObj).forEach(function(sequenceId, index2, arr2){
+                    var sequenceArray = scenarioObj[sequenceId];
+                    sequenceArray.forEach(function(scenario, idx, array){
+                      scenarioMessages.push(scenario);
+                    });
+                  });
+                });
+              }
+              for (var i = 0; i < scenarioMessages.length; i++) {
+                var date = scenarioMessages[i].created;
+                date = new Date(date);
+                setList[fullDateTime(scenarioMessages[i].created)] = scenarioMessages[i];
+              }
               chatData.messages = objectSort(setList);
               obj.chat = chatData;
               emit.toMine('chatMessageData', obj, socket);
@@ -897,12 +983,12 @@ io.sockets.on('connection', function (socket) {
           insertData.created = (('created' in d)) ? new Date(d.created) : new Date();
 
 
-          // オートメッセージの場合は既読
-          if (Number(insertData.message_type === 3) ) {
+          // オートメッセージとシナリオの場合は既読
+          if (Number(insertData.message_type === 3) || Number(insertData.message_type === 22) || Number(insertData.message_type === 23)) {
             insertData.message_read_flg = 1;
             insertData.message_request_flg = chatApi.cnst.requestFlg.noFlg;
             insertData.message_distinction = d.messageDistinction;
-          } else if(Number(insertData.message_type)  === 1 && d.hasOwnProperty('notifyToCompany') && !d.notifyToCompany) {
+          } else if((Number(insertData.message_type)  === 1 && d.hasOwnProperty('notifyToCompany') && !d.notifyToCompany) || Number(insertData.message_type)  === 12 || Number(insertData.message_type)  === 13) {
           // サイト訪問者からのチャットで通知しない場合は既読にする
             insertData.message_read_flg = 1;
             insertData.message_distinction = d.messageDistinction;
@@ -919,7 +1005,8 @@ io.sockets.on('connection', function (socket) {
                 ret: true,
                 chatMessage: d.chatMessage,
                 siteKey: d.siteKey,
-                matchAutoSpeech: !d.notifyToCompany
+                matchAutoSpeech: !d.notifyToCompany,
+                isScenarioMessage: d.isScenarioMessage
               };
 
               // 担当者のいない消費者からのメッセージの場合
@@ -959,7 +1046,7 @@ io.sockets.on('connection', function (socket) {
                     ret: true,
                     message: d.chatMessage,
                     siteKey: d.siteKey,
-                    notifyToCompany: d.notifyToCompany
+                    notifyToCompany: d.isScenarioMessage ? !d.isScenarioMessage : d.notifyToCompany
                   };
                   if(functionManager.isEnabled(d.siteKey, functionManager.keyList.monitorPollingMode)) {
                     var sId = sincloCore[d.siteKey][d.tabId].sessionId;
@@ -1035,7 +1122,7 @@ io.sockets.on('connection', function (socket) {
                   ret: true,
                   message: d.chatMessage,
                   siteKey: d.siteKey,
-                  notifyToCompany: d.notifyToCompany
+                  notifyToCompany: d.isScenarioMessage ? !d.isScenarioMessage : d.notifyToCompany
                 };
 
                 if(functionManager.isEnabled(d.siteKey, functionManager.keyList.monitorPollingMode)) {
@@ -2076,7 +2163,7 @@ io.sockets.on('connection', function (socket) {
       sincloCore[obj.siteKey][obj.tabId] = {sincloSessionId: null, sessionId: null, subWindow: false, chatUnreadCnt: 0};
     }
     if ( isset(obj.sincloSessionId) && !isset(sincloCore[obj.siteKey][obj.sincloSessionId]) ) {
-      sincloCore[obj.siteKey][obj.sincloSessionId] = {sessionIds: {}, autoMessages: {}};
+      sincloCore[obj.siteKey][obj.sincloSessionId] = {sessionIds: {}, autoMessages: {}, scenario: {}};
     }
     if ('timeoutTimer' in sincloCore[obj.siteKey][obj.tabId]) {
       clearTimeout(sincloCore[obj.siteKey][obj.tabId].timeoutTimer);
@@ -3033,6 +3120,102 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         }
       }
     }
+  });
+
+  // ============================================
+  //  シナリオイベントハンドラ
+  // ============================================
+  socket.on('getScenario', function(data){
+    var obj = JSON.parse(data);
+    var result = {};
+    pool.query('select activity from t_chatbot_scenarios where m_companies_id = ? and id = ?;', [companyList[obj.siteKey], obj.scenarioId],
+      function(err, row){
+        if ( err !== null && err !== '' ) {
+          emit.toMine('resGetSenario', result, socket);
+          return;
+        }
+        if(row.length !== 0) {
+          result = JSON.parse(row[0].activity);
+        }
+        emit.toMine('resGetScenario', {id: obj.scenarioId, activity: result}, socket);
+      });
+  });
+
+  socket.on('processSendMail', function(data, ack){
+    var obj = JSON.parse(data);
+    sendSenarioMail(obj, function(result){
+      ack(result);
+    });
+  });
+
+  socket.on('storeScenarioMessage', function(data){
+    var obj = JSON.parse(data);
+    //応対数検索、登録
+    getConversationCountUser(obj.userId,function(results) {
+      var messageDistinction;
+      if(results !== null){
+        //カウント数が取れなかったとき
+        if (Object.keys(results) && Object.keys(results).length === 0) {
+          messageDistinction = 1;
+        }
+        //カウント数が取れたとき
+        else {
+          messageDistinction = results[0].conversation_count;
+        }
+        obj.messages.forEach(function(elm, index, arr){
+          if(!isset(elm.created)) {
+            elm.created = new Date();
+            elm.sort = fullDateTime(elm.created);
+          }
+          var sincloSession = sincloCore[obj.siteKey][obj.sincloSessionId];
+          if(isset(sincloSession) && isset(sincloSession.scenario)) {
+            sincloCore[obj.siteKey][obj.sincloSessionId].scenario[elm.scenarioId] = {};
+            if(!isset(sincloCore[obj.siteKey][obj.sincloSessionId].scenario[elm.scenarioId][elm.sequenceNum])) {
+              sincloCore[obj.siteKey][obj.sincloSessionId].scenario[elm.scenarioId][elm.sequenceNum] = [];
+            }
+            sincloCore[obj.siteKey][obj.sincloSessionId].scenario[elm.scenarioId][elm.sequenceNum].push(elm);
+          }
+          var ret = {
+            siteKey: obj.siteKey,
+            tabId: obj.tabId,
+            userId: obj.userId,
+            mUserId: null,
+            chatMessage: elm.message,
+            messageType: getMessageTypeBySenarioActionType(elm.type),
+            created: elm.created,
+            sort: elm.sort,
+            messageDistinction: messageDistinction,
+            achievementFlg: 0
+          };
+          chatApi.set(ret);
+        });
+      }
+    });
+  });
+
+  // 都度：チャットデータ取得(オートメッセージのみ)
+  socket.on("sendScenarioMessage", function(d, ack){
+    var obj = JSON.parse(d);
+    var scenario = JSON.parse(JSON.stringify(obj));
+    scenario.created = new Date();
+    scenario.sort = fullDateTime(scenario.created);
+
+    var sincloSession = sincloCore[scenario.siteKey][scenario.sincloSessionId];
+    if(isset(sincloSession) && isset(sincloSession.scenario)) {
+      sincloCore[scenario.siteKey][scenario.sincloSessionId].scenario[scenario.scenarioId] = {};
+      if(!isset(sincloCore[scenario.siteKey][scenario.sincloSessionId].scenario[scenario.scenarioId][scenario.sequenceNum])) {
+        sincloCore[scenario.siteKey][scenario.sincloSessionId].scenario[scenario.scenarioId][scenario.sequenceNum] = [];
+      }
+      sincloCore[scenario.siteKey][scenario.sincloSessionId].scenario[scenario.scenarioId][scenario.sequenceNum].push(scenario);
+    } else {
+      console.log("sendScenarioMessage::sincloSession : " + scenario.sincloSessionId + "is null.");
+      return false;
+    }
+    if(!functionManager.isEnabled(scenario.siteKey, functionManager.keyList.monitorPollingMode)) {
+      emit.toCompany('resScenarioMessage', scenario, scenario.siteKey);
+    }
+    emit.toSameUser('resScenarioMessage', scenario, scenario.siteKey, scenario.sincloSessionId);
+    ack({data: scenario});
   });
 
   // ============================================
