@@ -9,7 +9,7 @@ class LoginController extends AppController {
 
   public function beforeFilter() {
     parent::beforeFilter();
-    //$this->Auth->allow(['index','login']);
+    $this->Auth->allow(['index','login']);
     $this->set('title_for_layout', 'ログイン');
   }
 
@@ -24,13 +24,11 @@ class LoginController extends AppController {
 
   public function login() {
     if ($this->request->is('post')) {
-    $this->log('入ってる1',LOG_DEBUG);
-      //if ($this->Auth->login()) {
-      $this->log('入ってる2',LOG_DEBUG);
-        //$userInfo = $this->Auth->user();
-        //parent::setUserInfo($userInfo);
+      if ($this->Auth->login()) {
+        $userInfo = $this->Auth->user();
+        parent::setUserInfo($userInfo);
         $this->redirect(['controller' => 'Contract', 'action' => 'index']);
-      //}
+      }
     }
     $this->render('index');
   }

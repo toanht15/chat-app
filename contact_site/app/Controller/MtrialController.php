@@ -5,7 +5,7 @@
  */
 App::uses('HttpSocket', 'Network/Http', 'Component', 'Controller', 'Utility/Validation');
 class MtrialController extends AppController {
-  const CONTRACT_ADD_URL = "http://admin.sinclo:81/Contract/add";
+  const CONTRACT_ADD_URL = "http://127.0.0.1:81/Contract/add";
   const ML_MAIL_ADDRESS= "cloud-service@medialink-ml.co.jp";
   const API_CALL_TIMEOUT = 5;
   const COMPANY_NAME = "##COMPANY_NAME##";
@@ -23,7 +23,7 @@ class MtrialController extends AppController {
 
   public function beforeFilter(){
     parent::beforeFilter();
-    //header("Access-Control-Allow-Origin: *");
+    $this->Auth->allow(['index','add','thanks']);
     $this->header('Access-Control-Allow-Origin: http://127.0.0.1:81/Contract/add');
     $this->set('title_for_layout', '無料トライアル登録画面');
   }
@@ -35,26 +35,17 @@ class MtrialController extends AppController {
   public function index() {
     $businessModel = Configure::read('businessModelType');
     $this->set('businessModel',$businessModel);
-    $this->set('errors','false');
   }
 
   public function add() {
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
     $data = $this->request->data;
-    $errors = 'false';
-    $this->log('data',LOG_DEBUG);
-    $this->log($data,LOG_DEBUG);
     $data['MUser']['mail_address'] = $data['Contract']['user_mail_address'];
     $this->MUser->set($data);
-    $this->log('validationチェック1',LOG_DEBUG);
+    //mailAddress validattionチェック
     if(!$this->MUser->validates()) {
-      $this->log('validationチェック2',LOG_DEBUG);
-      $errors = 'true';
-      $this->log('errors2222222',LOG_DEBUG);
-      $this->log($errors,LOG_DEBUG);
       $this->MUser->rollback();
-      //$this->response->statusCode(409); //CONFLICT
       return 'error';
     }
     $this->MUser->rollback();
@@ -65,8 +56,6 @@ class MtrialController extends AppController {
     $result = $socket->post(self::CONTRACT_ADD_URL,$data);
 
     $jobMailTemplateData = $this->MJobMailTemplate->find('all');
-    $this->log('バリデーション引っかかった場合2',LOG_DEBUG);
-    $this->log($jobMailTemplateData,LOG_DEBUG);
 
     $tmpData = [];
     foreach($jobMailTemplateData as $k => $v){
@@ -146,12 +135,16 @@ class MtrialController extends AppController {
     $sender->send();
   }
 
+  /* *
+   * サンクスページ
+   * @return void
+   * */
   public function thanks() {
 
   }
 
    /* *
-  * 検索画面
+  * 利用規約
   * @return void
   * */
   public function remoteTermsOfService() {

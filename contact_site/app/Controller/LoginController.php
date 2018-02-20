@@ -1,16 +1,29 @@
 <?php
 /**
- * CustomersController controller.
+ * LoginController controller.
  * ログイン機能
  */
 App::uses('SimplePasswordHasher', 'Controller/Component/Auth');
 class LoginController extends AppController {
+  const CONTRACT_ADD_URL = "http://admin.sinclo:81/Contract/add";
+  const ML_MAIL_ADDRESS= "cloud-service@medialink-ml.co.jp";
+  const API_CALL_TIMEOUT = 5;
+  const COMPANY_NAME = "##COMPANY_NAME##";
+  const USER_NAME = "##USER_NAME##";
+  const PASSWORD = "##PASSWORD##";
+  const BUSINESS_MODEL = "##BUSINESS_MODEL##";
+  const DEPARTMENT = "##DEPARTMENT##";
+  const POSITION = "##POSITION##";
+  const MAIL_ADDRESS = "##MAIL_ADDRESS##";
+  const PHONE_NUMBER = "##PHONE_NUMBER##";
+  const URL = "##URL##";
+  const OTHER = "##OTHER##";
   public $components = ['MailSender'];
-  public $uses = ['MUser','TLogin', 'MIpFilterSetting'];
+  public $uses = ['MUser','TLogin', 'MIpFilterSetting','MCompany','MAgreement','MSystemMailTemplate'];
 
   public function beforeFilter(){
     parent::beforeFilter();
-    $this->Auth->allow(['index', 'logout', 'loginCheck']);
+    $this->Auth->allow(['index', 'logout', 'loginCheck','editPassword']);
     $this->set('title_for_layout', 'ログイン');
 
     $notSupportBrowser = false;
@@ -32,11 +45,11 @@ class LoginController extends AppController {
 
   public function login() {
     if ($this->request->is('post')) {
+      $this->log($this->request->data,LOG_DEBUG);
       if ($this->Auth->login()) {
         //ログイン情報を送信
         $ipAddress = $this->request->clientIp(false);
         $userAgent = $this->request->header('User-Agent');
-
         if(!$this->isValidIpFilter($ipAddress, $this->Auth->user())) {
           $this->processLogout();
           $this->set('alertMessage', ['type'=>C_MESSAGE_TYPE_ERROR, 'text' => "この端末のIPアドレスからはログインできません"]);
@@ -44,9 +57,37 @@ class LoginController extends AppController {
           $this->render('index');
           return;
         }
-
         $userInfo = $this->_setRandStr($this->Auth->user());
         parent::setUserInfo($userInfo);
+        //トライアル期間中かチェック
+        $trialCompany = $this->MCompany->find('all', [
+          'fields' => '*',
+          'conditions' => [
+            'id' => $userInfo['MCompany']['id'],
+            'trial_flg' => C_TRIAL_FLG
+          ],
+        ]);
+        $mAgreementData = $this->MAgreement->find('all', [
+          'fields' => 'trial_end_day,admin_password',
+          'conditions' => [
+            'm_companies_id' => $userInfo['MCompany']['id']
+          ],
+        ]);
+        if(!empty($trialCompany)) {
+          //今日の日程
+          $today = date("Y/m/d");
+          //トライアル期間終了日
+          $trialEndDay = date("Y/m/d",strtotime($mAgreementData[0]['MAgreement']['trial_end_day']));
+          if(strtotime($today) > strtotime($trialEndDay)){
+            $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>"トライアル期間を過ぎています"]);
+            $this->render('index');
+            return;
+          }
+        }
+        if($mAgreementData[0]['MAgreement']['admin_password'] == $this->request->data['MUser']['password']) {
+          $this->log('一応入ってはいる！',LOG_DEBUG);
+          $this->redirect(['action' => 'editPassword']);
+        }
         $loginInfo['TLogin']['m_companies_id'] = $userInfo['MCompany']['id'];
         $loginInfo['TLogin']['m_users_id'] = $userInfo['id'];
         $loginInfo['TLogin']['ip_address'] = $ipAddress;
@@ -75,6 +116,121 @@ class LoginController extends AppController {
     }
     else {
       $this->redirect(['action' => 'index']);
+    }
+  }
+
+  public function editPassword(){
+    $this->log('ここまでは入ってくる',LOG_DEBUG);
+    if ( $this->request->is('post') ) {
+      $this->log('更新処理',LOG_DEBUG);
+      $this->log($this->request->data,LOG_DEBUG);
+      $inputData = $this->request->data;
+      $errors = [];
+      $this->MUser->validate = $this->MUser->updateValidate;
+
+      // パスワードチェックが問題なければ単独でバリデーションチェックのみ
+      $this->MUser->set($inputData);
+      $this->MUser->begin();
+
+      if ( $this->MUser->validates() ) {
+        $this->log('こっちに入っている1',LOG_DEBUG);
+        // バリデーションチェックが成功した場合
+        // 保存処理
+        if ( $this->MUser->save($inputData, false) ) {
+          $this->MUser->commit();
+          $agreementData = $this->MAgreement->find('all', [
+            'fields' => '*',
+            'conditions' => [
+              'm_companies_id' => $this->request->data['MUser']['m_companies_id']
+            ],
+          ]);
+          $agreementData = $agreementData[0];
+          $companyData = $this->MCompany->find('all', [
+            'fields' => '*',
+            'conditions' => [
+              'id' => $this->request->data['MUser']['m_companies_id']
+            ],
+          ]);
+          $companyData = $companyData[0];
+
+          $this->log('agreementData',LOG_DEBUG);
+          $this->log($agreementData,LOG_DEBUG);
+          $this->log('companyData',LOG_DEBUG);
+          $this->log($companyData,LOG_DEBUG);
+          $mailTemplateData = $this->MSystemMailTemplate->find('all');
+          $sender = new MailSenderComponent();
+          $sender->setFrom(MailSenderComponent::MAIL_SYSTEM_FROM_ADDRESS);
+          $sender->setFromName('sinclo(シンクロ)');
+          $sender->setTo('henmi0201@gmail.com');
+          $sender->setSubject($mailTemplateData[2]['MSystemMailTemplate']['subject']);
+          $mailBodyData = $mailTemplateData[2]['MSystemMailTemplate']['mail_body'];
+          $sender->setSubject($mailTemplateData[2]['MSystemMailTemplate']['subject']);
+          $mailBodyData = str_replace(self::COMPANY_NAME, $companyData['MCompany']['company_name'], $mailTemplateData[2]['MSystemMailTemplate']['mail_body']);
+          $mailBodyData = str_replace(self::USER_NAME, $agreementData['MAgreement']['application_name'], $mailBodyData);
+          if($agreementData['MAgreement']['business_model'] == 1) {
+            $agreementData['MAgreement']['business_model'] = 'BtoB';
+          }
+          if($agreementData['MAgreement']['business_model'] == 2) {
+            $agreementData['MAgreement']['business_model'] = 'BtoC';
+          }
+          if($agreementData['MAgreement']['business_model'] == 3) {
+            $agreementData['MAgreement']['business_model'] = 'どちらも';
+          }
+          $mailBodyData = str_replace(self::BUSINESS_MODEL, $agreementData['MAgreement']['business_model'], $mailBodyData);
+          if(!empty($agreementData['MAgreement']['application_department'])) {
+            $mailBodyData = str_replace(self::DEPARTMENT, $agreementData['MAgreement']['application_department'], $mailBodyData);
+          }
+          else {
+            $mailBodyData = str_replace(self::DEPARTMENT, "", $mailBodyData);
+          }
+          if(!empty($agreementData['MAgreement']['application_position'])) {
+            $mailBodyData = str_replace(self::POSITION, $agreementData['MAgreement']['application_position'], $mailBodyData);
+          }
+          else {
+            $mailBodyData = str_replace(self::POSITION, "", $mailBodyData);
+          }
+          $mailBodyData = str_replace(self::MAIL_ADDRESS, $inputData['MUser']['mail_address'], $mailBodyData);
+          $mailBodyData = str_replace(self::PHONE_NUMBER, $agreementData['MAgreement']['telephone_number'], $mailBodyData);
+          if(!empty($agreementData['MAgreement']['installation_url'])) {
+            $mailBodyData = str_replace(self::URL, $agreementData['MAgreement']['installation_url'], $mailBodyData);
+          }
+          else {
+            $mailBodyData = str_replace(self::URL, "", $mailBodyData);
+          }
+          if(!empty($agreementData['MAgreement']['note'])) {
+            $mailBodyData = str_replace(self::OTHER, $agreementData['MAgreement']['note'], $mailBodyData);
+          }
+          else {
+            $mailBodyData = str_replace(self::OTHER, "", $mailBodyData);
+          }
+          $sender->setBody($mailBodyData);
+          $sender->send();
+          $this->log('チェック',LOG_DEBUG);
+          $this->log($this->request->data,LOG_DEBUG);
+          $this->log('ほーいチェック',LOG_DEBUG);
+          $this->set('alertMessage', ['type' => C_MESSAGE_TYPE_SUCCESS, 'text' => Configure::read('message.const.saveSuccessful')]);
+          $this->redirect(['action' => 'index']);
+        }
+        if ( empty($errors) ) {
+          $this->set('alertMessage', ['type' => C_MESSAGE_TYPE_SUCCESS, 'text' => Configure::read('message.const.saveSuccessful')]);
+        }
+        else {
+          $this->set('alertMessage', ['type' => C_MESSAGE_TYPE_ERROR, 'text' => Configure::read('message.const.saveFailed')]);
+        }
+      }
+      else {
+        $this->log('こっちに入っている2',LOG_DEBUG);
+        $errors = $this->MUser->validationErrors;
+        return $errors;
+      }
+    }
+    else {
+      if(!empty($this->userInfo)) {
+        $this->data = $this->MUser->read(null, $this->userInfo['id']);
+        $this->log('thisData',LOG_DEBUG);
+        $this->log($this->data,LOG_DEBUG);
+      }
+      $this->Session->destroy();
     }
   }
 

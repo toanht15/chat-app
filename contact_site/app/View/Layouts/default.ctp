@@ -123,8 +123,15 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
       echo $this->Html->css('jquery.splitter.css');
       echo $this->Html->script("jquery.splitter.js");
     }
+    if ( strcmp($this->name, 'Mtrial') === 0 ) {
+      echo $this->Html->css('free-trial.css');
+    }
 
 ?>
+
+<script type="text/javascript">
+  <?php echo $this->element('loadScreen'); ?>
+</script>
 
 </head>
 <body>
