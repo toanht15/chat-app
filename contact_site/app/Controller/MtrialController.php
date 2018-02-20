@@ -49,6 +49,8 @@ class MtrialController extends AppController {
       return 'error';
     }
     $this->MUser->rollback();
+    $password = $this->generateRandomPassword(8);
+    $data['Contract']['user_password'] = $password;
 
     $socket = new HttpSocket(array(
       'timeout' => self::API_CALL_TIMEOUT
@@ -153,5 +155,14 @@ class MtrialController extends AppController {
     $this->layout = 'ajax';
 
     $this->render('/Elements/Mtrial/remoteTermsOfService');
+  }
+
+  private function generateRandomPassword($length) {
+    $str = array_merge(range('a', 'z'), range('0', '9'), range('A', 'Z'));
+    $r_str = null;
+    for ($i = 0; $i < $length; $i++) {
+      $r_str .= $str[rand(0, count($str) - 1)];
+    }
+    return $r_str;
   }
 }

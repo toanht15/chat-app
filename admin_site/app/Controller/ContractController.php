@@ -311,7 +311,12 @@ class ContractController extends AppController
   }
 
   private function createAgreementInfo($addedCompanyInfo, $companyInfo, $userInfo, $agreementInfo) {
-    $password = $this->generateRandomPassword(8);
+    if(!empty($userInfo['user_password'])) {
+      $password = $userInfo['user_password'];
+    }
+    else {
+      $password = $this->generateRandomPassword(8);
+    }
 
     $this->MAgreements->create();
     if(empty($agreementInfo['application_name'])) {
@@ -341,6 +346,15 @@ class ContractController extends AppController
     if(empty($agreementInfo['agreement_end_day'])) {
       $agreementInfo['agreement_end_day'] = "";
     }
+    if(empty($agreementInfo['trial_start_day'])) {
+      $agreementInfo['trial_start_day'] = "";
+    }
+    if(empty($agreementInfo['trial_end_day'])) {
+      $agreementInfo['trial_end_day'] = "";
+    }
+    if(empty($agreementInfo['business_model']) == 0) {
+      $agreementInfo['business_model'] = "";
+    }
     $this->MAgreements->set([
       'm_companies_id' => $addedCompanyInfo['id'],
       'business_model' => $agreementInfo['business_model'],
@@ -353,7 +367,7 @@ class ContractController extends AppController
       'application_position' => $agreementInfo['application_position'],
       'application_name' => $agreementInfo['application_name'],
       'installation_url' => $agreementInfo['installation_url'],
-      'admin_password' => $userInfo['user_password'],
+      'admin_password' => $password,
       'telephone_number' => $agreementInfo['telephone_number'],
       'note' => $agreementInfo['note'],
     ]);
