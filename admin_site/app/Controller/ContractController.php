@@ -382,11 +382,9 @@ class ContractController extends AppController
     ];
     $this->MUser->create();
     $this->MUser->set($tmpData);
-    $this->log('ここもチェーーっく2',LOG_DEBUG);
     if(!$this->MUser->validates()) {
       throw new Exception("MUser validation error");
     }
-    $this->log('ここもチェーーっく3',LOG_DEBUG);
     $this->MAgreements->save();
     $this->MUser->save();
   }
@@ -403,23 +401,18 @@ class ContractController extends AppController
     ];
     $this->MUser->create();
     $this->MUser->set($tmpData);
-    $this->log('ここもチェーーっく4',LOG_DEBUG);
-    $this->log($tmpData,LOG_DEBUG);
     if(!$this->MUser->validates()) {
-      $this->log('ここもチェーーっく5',LOG_DEBUG);
       $this->MAgreements->rollback();
       $this->MUser->rollback();
       throw new Exception($errors);
     }
     else {
-      $this->log('ここもチェーーっく6',LOG_DEBUG);
       $this->MUser->save();
     }
   }
 
   private function createSuperAdministratorUser($addedCompanyInfo, $userInfo) {
     $password = $this->generateRandomPassword(8);
-     $this->log('ここもチェーーっく6',LOG_DEBUG);
     $tmpData = [
       "m_companies_id" => $addedCompanyInfo['id'],
       "user_name" => 'MLAdmin',
@@ -430,11 +423,9 @@ class ContractController extends AppController
     ];
     $this->MUser->create();
     $this->MUser->set($tmpData);
-     $this->log('ここもチェーーっく7',LOG_DEBUG);
     if(!$this->MUser->validates()) {
       throw new Exception(json_encode($this->MUser->validationErrors, JSON_UNESCAPED_UNICODE));
     }
-     $this->log('ここもチェーーっく8',LOG_DEBUG);
     $this->MUser->save();
   }
 

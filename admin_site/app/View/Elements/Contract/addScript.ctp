@@ -1,8 +1,6 @@
 <script type = "text/javascript">
 function saveAct(){
   //document.getElementById('ContractAddForm').submit();
-  console.log('addForm');
-  console.log($('#ContractAddForm').attr('action'));
   $.ajax({
     type: "POST",
     url: $('#ContractAddForm').attr('action'),
