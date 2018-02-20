@@ -53,7 +53,7 @@ class ContractController extends AppController
   public function beforeFilter(){
     parent::beforeFilter();
     $this->set('title_for_layout', 'サイトキー管理');
-    $this->Auth->allow(['index','add','edit','remoteSaveForm']);
+    $this->Auth->allow(['add','remoteSaveForm']);
     header('Access-Control-Allow-Origin: *');
   }
 
@@ -68,7 +68,6 @@ class ContractController extends AppController
 
   public function add() {
     Configure::write('debug', 0);
-
     if($this->isOverAllUserCountLimit()) {
       $this->set('overLimitMessage', 'アカウントの登録上限数を超過しているため、新規に企業キーを登録できません。');
       return;
@@ -87,8 +86,6 @@ class ContractController extends AppController
         $this->log("Exception Occured : ".$e->getMessage(), LOG_WARNING);
         $this->log($e->getTraceAsString(),LOG_WARNING);
         $this->response->statusCode(400);
-        $this->log('エラー',LOG_DEBUG);
-        $this->log($e->getMessage(),LOG_DEBUG);
         return json_encode([
           'success' => false,
           'message' => $e->getMessage()
@@ -392,8 +389,6 @@ class ContractController extends AppController
     if(!$this->MUser->validates()) {
       $this->MAgreements->rollback();
       $this->MUser->rollback();
-      // 画面に返す
-      $errors = $this->MUser->validationErrors;
       throw new Exception($errors);
     }
     else {

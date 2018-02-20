@@ -1,8 +1,6 @@
 <script type = "text/javascript">
 function saveAct(){
   //document.getElementById('ContractAddForm').submit();
-  console.log('チェック');
-  console.log($('#MailTemplateSettingsAddForm').attr('action'));
   $.ajax({
     type: "POST",
     url: $('#MailTemplateSettingsAddForm').attr('action'),

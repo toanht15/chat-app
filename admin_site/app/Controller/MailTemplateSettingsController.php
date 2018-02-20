@@ -11,49 +11,11 @@ App::uses('Folder', 'Utility');
 App::uses('File', 'Utility');
 class MailTemplateSettingsController extends AppController
 {
-  public $uses = ['MCompany', 'MJobMailTemplate','MAgreements', 'MUser', 'MWidgetSetting', 'MChatSetting', 'TAutoMessages', 'TDictionaries', 'TDictionaryCategory', 'MMailTemplate', 'TransactionManager'];
-
-  public $paginate = [
-    'MCompany' => [
-      'order' => ['MCompany.id' => 'asc'],
-      'fields' => ['*'],
-      'limit' => 1000,
-      'joins' => [
-        [
-          'type' => 'left',
-          'table' => 'm_agreements',
-          'alias' => 'MAgreement',
-          'conditions' => [
-            'MAgreement.m_companies_id = MCompany.id',
-          ],
-        ],
-        [
-          'type' => 'left',
-          'table' => '(SELECT id,m_companies_id,mail_address,password FROM m_users WHERE del_flg != 1 AND permission_level = 99 GROUP BY m_companies_id)',
-          'alias' => 'AdminUser',
-          'conditions' => [
-            'AdminUser.m_companies_id = MCompany.id',
-          ],
-        ],
-        [
-          'type' => 'inner',
-          'table' => '(SELECT id,m_companies_id,mail_address,password,count(m_companies_id) AS user_account FROM  m_users WHERE del_flg != 1 AND permission_level != 99 GROUP BY m_companies_id)',
-          'alias' => 'MUser',
-          'conditions' => [
-            'MUser.m_companies_id = MCompany.id',
-          ],
-        ],
-      ],
-      'conditions' => [
-          'MCompany.del_flg != ' => 1,
-      ],
-    ]
-  ];
+  public $uses = ['MCompany', 'MJobMailTemplate','MAgreements', 'MUser', 'MMailTemplate', 'TransactionManager'];
 
   public function beforeFilter(){
     parent::beforeFilter();
     $this->set('title_for_layout', 'サイトキー管理');
-    $this->Auth->allow(['index','add','edit','remoteSaveForm','deleteMailInfo']);
     header('Access-Control-Allow-Origin: *');
   }
 
@@ -65,7 +27,6 @@ class MailTemplateSettingsController extends AppController
     $this->set('title_for_layout', 'サイトキー管理');
     $data = $this->MJobMailTemplate->find('all');
     $this->set('mailInfo', $data);
-    //$this->set('companyList', $this->paginate('MCompany'));
   }
 
   public function add() {
@@ -118,13 +79,9 @@ class MailTemplateSettingsController extends AppController
     $this->MJobMailTemplate->create();
     $this->MJobMailTemplate->set($tmpData);
     if(!$this->MJobMailTemplate->validates()) {
-      $this->log('validation2!',LOG_DEBUG);
       $this->MJobMailTemplate->rollback();
       // 画面に返す
       $errors = $this->MJobMailTemplate->validationErrors;
-      $this->log('errors',LOG_DEBUG);
-      $this->log($errors,LOG_DEBUG);
-      //return $errors;
       throw new Exception("MJobMailTemplate validation error");
     }
     else {

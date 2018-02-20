@@ -45,7 +45,6 @@ class LoginController extends AppController {
 
   public function login() {
     if ($this->request->is('post')) {
-      $this->log($this->request->data,LOG_DEBUG);
       if ($this->Auth->login()) {
         //ログイン情報を送信
         $ipAddress = $this->request->clientIp(false);
@@ -85,7 +84,6 @@ class LoginController extends AppController {
           }
         }
         if($mAgreementData[0]['MAgreement']['admin_password'] == $this->request->data['MUser']['password']) {
-          $this->log('一応入ってはいる！',LOG_DEBUG);
           $this->redirect(['action' => 'editPassword']);
         }
         $loginInfo['TLogin']['m_companies_id'] = $userInfo['MCompany']['id'];
@@ -120,10 +118,7 @@ class LoginController extends AppController {
   }
 
   public function editPassword(){
-    $this->log('ここまでは入ってくる',LOG_DEBUG);
     if ( $this->request->is('post') ) {
-      $this->log('更新処理',LOG_DEBUG);
-      $this->log($this->request->data,LOG_DEBUG);
       $inputData = $this->request->data;
       $errors = [];
       $this->MUser->validate = $this->MUser->updateValidate;
@@ -133,7 +128,6 @@ class LoginController extends AppController {
       $this->MUser->begin();
 
       if ( $this->MUser->validates() ) {
-        $this->log('こっちに入っている1',LOG_DEBUG);
         // バリデーションチェックが成功した場合
         // 保存処理
         if ( $this->MUser->save($inputData, false) ) {
@@ -152,11 +146,6 @@ class LoginController extends AppController {
             ],
           ]);
           $companyData = $companyData[0];
-
-          $this->log('agreementData',LOG_DEBUG);
-          $this->log($agreementData,LOG_DEBUG);
-          $this->log('companyData',LOG_DEBUG);
-          $this->log($companyData,LOG_DEBUG);
           $mailTemplateData = $this->MSystemMailTemplate->find('all');
           $sender = new MailSenderComponent();
           $sender->setFrom(MailSenderComponent::MAIL_SYSTEM_FROM_ADDRESS);
@@ -205,9 +194,6 @@ class LoginController extends AppController {
           }
           $sender->setBody($mailBodyData);
           $sender->send();
-          $this->log('チェック',LOG_DEBUG);
-          $this->log($this->request->data,LOG_DEBUG);
-          $this->log('ほーいチェック',LOG_DEBUG);
           $this->set('alertMessage', ['type' => C_MESSAGE_TYPE_SUCCESS, 'text' => Configure::read('message.const.saveSuccessful')]);
           $this->redirect(['action' => 'index']);
         }
@@ -219,7 +205,6 @@ class LoginController extends AppController {
         }
       }
       else {
-        $this->log('こっちに入っている2',LOG_DEBUG);
         $errors = $this->MUser->validationErrors;
         return $errors;
       }
@@ -227,8 +212,6 @@ class LoginController extends AppController {
     else {
       if(!empty($this->userInfo)) {
         $this->data = $this->MUser->read(null, $this->userInfo['id']);
-        $this->log('thisData',LOG_DEBUG);
-        $this->log($this->data,LOG_DEBUG);
       }
       $this->Session->destroy();
     }
