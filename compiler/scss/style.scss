@@ -1014,6 +1014,31 @@ ul#color-bar-right {
       box-shadow: 0 0 2px 2px rgb(232, 232, 232) inset;
     }
   }
+  .edit_form_area {
+    margin: 10px auto;
+    padding: 20px 0;
+    text-align: center;
+    input {
+      width: 100%;
+      border: none;
+      background-color: #FFF;
+      height: 40px;
+      margin-bottom: 15px;
+      border-radius: 5px;
+      box-shadow: 0 0 2px 2px rgb(232, 232, 232) inset;
+    }
+    label.control-label {
+      float:left;
+    }
+    .error-message {
+      padding: 0;
+      margin: -3px 0 15px 0;
+      color: #F57E7E;
+    }
+  }
+  #content-area-title {
+    text-align:center;
+  }
   #MUserFormButton {
     color: #FFFFFF;
     text-decoration: none;
@@ -9424,3 +9449,4 @@ ul#anotherWindow_color-bar-right {
 .fa-chevron-left:before {
   content: "";
 }
+

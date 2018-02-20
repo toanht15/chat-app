@@ -317,6 +317,14 @@ define('C_CLOSE_BUTTON_SETTING_MODE_TYPE_HIDDEN', 2);//非表示
 //バナーテキスト初期値
 define('C_BANNER_TEXT', "チャットで相談");//バナー文言
 
+//トライアルフラグ
+define('C_TRIAL_FLG', 1);
+
+//ビジネスモデル
+define('C_FREE_B_TO_B', 1); // BtoB
+define('C_FREE_B_TO_C', 2); // BtoC
+define('C_FREE_BOTH', 3); // BtoB,BtoCどちらも
+
 /* ユーザー権限（単体あり：C_AUTHORITY_%） */
 $config['Authority'] = [
     C_AUTHORITY_ADMIN => "管理者",
@@ -690,4 +698,11 @@ $config['securityEnableLoginIpFilterSetting'] = [
     0 => "利用しない", // FIXME 定数化
     1 => "ホワイトリスト登録する",
     2 => "ブラックリスト登録する"
+];
+
+/* 無料トライアル設定 － ビジネスモデル */
+$config['businessModelType'] = [
+    C_FREE_B_TO_B => "BtoB",
+    C_FREE_B_TO_C => "BtoC",
+    C_FREE_BOTH => "どちらも"
 ];
