@@ -82,10 +82,26 @@
       <?php
       $class = "";
       if ( empty($this->data['TChatbotScenario']['id']) ) {
-        $class = "vHidden";
+        $class = "redBtn vHidden";
+      } else
+      if (count($this->data['TAutoMessage']) >= 1) {
+        $class = "disOffgrayBtn disabled commontooltip";
+      } else {
+        $class = "redBtn";
       }
       ?>
-        <a href="javascript:void(0)" onclick="removeAct(<?= $lastPage?>)" class="redBtn btn-shadow <?=$class?>">削除</a>
+      <?= $this->Html->link(
+        '削除',
+        'javascript:void(0)',
+        array('escape' => false,
+        'class' => 'btn-shadow ' . $class,
+        'id' => 'tchatbotscenario_edit_remove_btn',
+        'onclick' => strpos($class, 'disabled') === false ? 'removeAct(' . $lastPage . ')' : '',
+        'disabled' => strpos($class, 'disabled') !== false,
+        'data-text' => strpos($class, 'disabled') !== false ? '呼び出し元が設定されているため、<br>削除できません' : '',
+        'data-balloon-position' => '50',
+        'data-balloon-width' =>  strpos($class, 'disOffgrayBtn') !== false ? '216' : ''
+      )) ?>
     </div>
   </section>
 

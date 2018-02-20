@@ -46,6 +46,24 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       var item = $scope.actionList[actionType];
       item.actionType = actionType;
       $scope.setActionList.push(angular.copy(angular.merge(item, item.default)));
+
+      // 表示位置調整
+      $timeout(function() {
+        var actionBox = $('#tchatbotscenario_form_preview_body');
+        var previewBox = $('#tchatbotscenario_form_action_body');
+
+        var time = 500
+        actionBox.stop().animate({
+          scrollTop: actionBox.scrollTop() + actionBox[0].scrollHeight
+        }, time);
+        previewBox.stop().animate({
+          scrollTop: previewBox.scrollTop() + previewBox[0].scrollHeight
+        }, time);
+
+        // フォーカス移動
+        var target = $('#tchatbotscenario_form_action_body .set_action_item:last-of-type');
+        target.find('input, textarea')[0].focus();
+      }, 0);
     }
   };
 
@@ -348,10 +366,8 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
   // シミュレーションで受け付けた受信メッセージ
   $scope.$on('receiveVistorMessage', function(event, message, prefix) {
-    $scope.actionStep = (typeof prefix !== 'undefined' && prefix !== '') ? parseInt(prefix.replace(/action/, ''), 10) : $scope.actionStep;
-
+    // 対応するアクションがない場合は何もしない
     if (typeof $scope.setActionList[$scope.actionStep] === 'undefined') {
-      // 対応するアクションがない場合は何もしない
       return;
     }
 
@@ -377,7 +393,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
           $scope.hearingInputResult = false;
         }
       } else
-      if (actionDetail.isConfirm === '1' && ($scope.hearingIndex === actionDetail.hearings.length) && actionDetail.cancel === message) {
+      if (actionDetail.isConfirm === '1' && ($scope.hearingIndex === actionDetail.hearings.length) && $scope.replaceVariable(actionDetail.cancel) === message) {
         // 最初から入力し直し
         $scope.hearingIndex = 0;
       } else {
@@ -415,7 +431,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
     // シミュレーション上のメッセージをクリアする
     $scope.$broadcast('removeMessage');
-    $scope.doAction($scope.setActionList[$scope.actionStep]);
+    $scope.doAction('0');
   }
 
   // アクションの停止
@@ -429,9 +445,17 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     $scope.actionInit();
   };
 
-  $scope.doAction = function() {
+  /**
+   * doAction アクションの実行
+   * @var String setTime 基本設定のメッセージ間隔に関わらず、メッセージ間隔を指定
+   */
+  $scope.doAction = function(setTime) {
     if (typeof $scope.setActionList[$scope.actionStep] !== 'undefined' && typeof $scope.setActionList[$scope.actionStep].actionType !== 'undefined') {
-      var time = $scope.setActionList[$scope.actionStep].messageIntervalTimeSec;
+      // メッセージ間隔
+      var time =  $scope.setActionList[$scope.actionStep].messageIntervalTimeSec;
+      if (!!setTime || $scope.setActionList[$scope.actionStep].actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?>) {
+        time = setTime || '0';
+      }
 
       $timeout.cancel($scope.actionTimer);
       $scope.actionTimer = $timeout(function() {
@@ -454,7 +478,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
           angular.forEach(actionDetail.selection.options, function(option) {
             messageList.push('[] ' + option);
           });
-          $scope.$broadcast('addReMessage', messageList.join('\n'), 'action' + $scope.actionStep);
+          $scope.$broadcast('addReMessage', $scope.replaceVariable(messageList.join('\n')), 'action' + $scope.actionStep);
           $scope.$broadcast('switchSimulatorChatTextArea', actionDetail.chatTextArea === '1');
         } else
         if (actionDetail.actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?>) {
@@ -471,8 +495,8 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
   $scope.doHearingAction = function(actionDetail) {
     if (!$scope.hearingInputResult) {
-      var message = $scope.replaceVariable(actionDetail.errorMessage);
-      $scope.$broadcast('addReMessage', message, 'action' + $scope.actionStep);
+      var message = actionDetail.errorMessage;
+      $scope.$broadcast('addReMessage', $scope.replaceVariable(message), 'action' + $scope.actionStep);
       $scope.$broadcast('switchSimulatorChatTextArea', actionDetail.chatTextArea === '1');
       $scope.hearingInputResult = true;
       $scope.doAction();
@@ -480,16 +504,17 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     if ($scope.hearingIndex < actionDetail.hearings.length) {
       // 質問する
       var message = actionDetail.hearings[$scope.hearingIndex].message;
-      $scope.$broadcast('addReMessage', message, 'action' + $scope.actionStep);
+      $scope.$broadcast('addReMessage', $scope.replaceVariable(message), 'action' + $scope.actionStep);
       $scope.$broadcast('switchSimulatorChatTextArea', actionDetail.chatTextArea === '1');
     } else
     if (actionDetail.isConfirm && ($scope.hearingIndex === actionDetail.hearings.length)) {
-      var messageList = [$scope.replaceVariable(actionDetail.confirmMessage), '[] ' + actionDetail.success, '[] ' + actionDetail.cancel];
+      // 確認メッセージ
+      var messageList = [actionDetail.confirmMessage, '[] ' + actionDetail.success, '[] ' + actionDetail.cancel];
       var message = messageList.filter( function(string) {
         return string !== '';
       }).join('\n');
 
-      $scope.$broadcast('addReMessage', message, 'action' + $scope.actionStep);
+      $scope.$broadcast('addReMessage', $scope.replaceVariable(message), 'action' + $scope.actionStep);
       $scope.$broadcast('switchSimulatorChatTextArea', false); // 設定したOK/NG以外が入力されないよう、自由入力エリアを非表示とする
     } else {
       // 次のアクションへ移行する
@@ -554,7 +579,9 @@ $(document).ready(function() {
     $('.explainTooltip').find('icon-annotation').css('display','none');
   });
 
+
   // 設定側のスクロールに応じて、プレビュー側をスクロールさせる
+  var time = 500;
   $(document).on('mouseenter', '.set_action_item', function() {
     var id = this.id;
     var selector = '#' + id.split('_')[0] + '_preview';
@@ -567,20 +594,39 @@ $(document).ready(function() {
     }, time);
     return false;
   });
-
   // プレビュー側のタイトルクリックに応じて、設定側をスクロールさせる
-  var time = 500;
-  $(document).on('click', '#tchatbotscenario_form_preview_body a[href^=#]', function() {
+  $(document).on('click', '#tchatbotscenario_form_preview_body > section', function() {
     var box = $('#tchatbotscenario_form_action_body');
-    var target = $(this.hash);
+    var settingId = $(this).attr('id').replace(/preview$/, 'setting');
+    var target = $('#' + settingId);
     var targetY = target.position().top - box.position().top;
 
     box.stop().animate({
       scrollTop: box.scrollTop() + targetY
     }, time);
+    target.find('input, textarea')[0].focus();
+  });
 
-    window.history.pushState(null, null, this.hash);
-    return false;
+  // フォーカスされたアクションに応じて、関連するプレビューを強調表示する
+  $(document).on('focusin', '.set_action_item input, .set_action_item textarea', function() {
+    var previewId = $(this).parents('.set_action_item').attr('id').replace(/setting$/, 'preview');
+    $('.actionTitle').removeClass('active');
+    $('#' + previewId + ' .actionTitle').addClass('active');
+  }).on('focusout', '.set_action_item input, .set_action_item textarea', function() {
+    var previewId = $(this).parents('.set_action_item').attr('id').replace(/setting$/, 'preview');
+    $('#' + previewId + ' .actionTitle').removeClass('active');
+  });
+
+  // 各アクションのキーイベントに応じて、プレビューのスクロール位置を調整する
+  $(document).on('keydown, keyup', '.set_action_item input, .set_action_item textarea', function() {
+    var previewId = $(this).parents('.set_action_item').attr('id').replace(/setting$/, 'preview');
+    var box = $('#tchatbotscenario_form_preview_body');
+    var target = $('#' + previewId);
+    var targetY = target.position().top - box.position().top;
+
+    box.stop().animate({
+      scrollTop: box.scrollTop() + targetY
+    }, time);
   });
 });
 

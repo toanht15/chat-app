@@ -1,6 +1,7 @@
 <style>
 #tchatbotscenario_form_preview_body { background-color: {{widget.settings['chat_talk_background_color']}}; }
 #tchatbotscenario_form_preview_body .actionTitle { margin: 0; background-color: #FFFFFF;}
+#tchatbotscenario_form_preview_body .actionTitle.active { color: {{widget.settings['string_color']}}; background-color: {{widget.settings['main_color']}};}
 
 #tchatbotscenario_form_preview_body .chatTalk { width: 100%; padding: 5px 5px 10px 5px; list-style-type: none; margin: 0px}
 #tchatbotscenario_form_preview_body .chatTalk li { border-radius: 5px; background-color: #FFF; margin: 5px 0 0; padding: 8px; line-height: 1.4; white-space: pre; color: {{widget.settings['message_text_color']}}; }
@@ -32,7 +33,7 @@
 
 </style>
 <section ng-repeat="(setActionId, setItem) in setActionList" id="action{{setActionId}}_preview">
-  <h4 class="actionTitle"><a href="#action{{setActionId}}_setting">{{setActionId + 1}}．{{actionList[setItem.actionType].label}}</a></h4>
+  <h4 class="actionTitle">{{setActionId + 1}}．{{actionList[setItem.actionType].label}}</h4>
   <ul class="chatTalk details">
     <!-- メッセージ・選択肢 -->
     <div>
