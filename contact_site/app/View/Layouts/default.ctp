@@ -124,7 +124,7 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
       echo $this->Html->script("jquery.splitter.js");
     }
     if ( strcmp($this->name, 'Mtrial') === 0 ) {
-      echo $this->Html->css('free-trial.css');
+      echo $this->Html->css('freeTrial.css');
     }
 
 ?>

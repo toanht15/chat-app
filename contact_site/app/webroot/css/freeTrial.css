@@ -1,6 +1,3 @@
-/* ## 問合せページ
---------------------------------------------- */
-
 html.fontawesome-i2svg-active {
   line-height: 1.15;
   -ms-text-size-adjust: 100%;
@@ -8,10 +5,10 @@ html.fontawesome-i2svg-active {
 }
 
 /*.fontawesome-i2svg-active {*/
-  body.contact-page {
-    margin: 0;
-  }
-  body.contact-page .site-header {
+body.contact-page {
+  margin: 0;
+}
+body.contact-page .site-header {
   padding-top: 22px;
   padding-top: 2.2rem;
   padding-bottom: 22px;
@@ -240,117 +237,119 @@ body.method-page hr {
   background-color: #b2d251
 }
 
-.site-container {
-  .site-header {
-    padding-top: 2.2rem;
-    padding-bottom: 2.2rem;
+.site-header {
+  padding-top: 2.2rem;
+  padding-bottom: 2.2rem;
+}
 
-    &.shrink {
-      padding-top: 1.4808rem;
-      padding-bottom: 1.4808rem;
-    }
+.shrink {
+   padding-top: 1.4808rem;
+   padding-bottom: 1.4808rem;
+}
+
+a img {
+  -webkit-transform: initial;
+  transform: initial;
+}
+
+input, select, textarea {
+  font-size: 1.4rem;
+  padding: .5rem;
+  border: .1rem solid #f0f1f2;
+}
+
+#ninja_forms_required_items, .eachRow {
+  margin-bottom: -.1rem;
+  border: solid 0.1rem #f0f1f2;
+  padding: 1rem 1.5rem;
+}
+
+#ninja_forms_required_items, .eachRow:before  {
+  content: '';
+  /*background-color: $lighter;*/
+  width: 34.5%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0%;
+}
+
+.html-container,
+.submit-container {
+  border: 0;
+  padding: 0;
+  margin-top: 1.6rem;
+  &:before  {
+    background-color: #fff;
   }
+}
 
-  a img {
-    -webkit-transform: initial;
-    transform: initial;
+.submit-container,
+.nf-error-msg {
+  text-align: center;
+}
+
+.button,
+button,
+input[type="button"],
+input[type="reset"],
+input[type="submit"] {
+   background-color: #828282;
+   border: 0;
+   border-radius: .4rem;;
+   color: #fff;
+   cursor: pointer;
+   font-family: "メイリオ",Meiryo,"ヒラギノ角ゴ Pro W3","Hiragino Kaku Gothic Pro","ＭＳ Ｐゴシック","MS PGothic",sans-serif;
+   font-size: 1.6rem;
+   font-weight: 700;
+   padding: 1em 2em;
+   text-decoration: none;
+   $white-space: nowrap;
+   display: inline-block;
+   width: auto;
+   height: auto;
+   line-height: 1;
+   box-shadow: inset 0 0 0 9rem rgba(#fff, 0), 0 0 0 -1rem rgba(#828282, 0);
   }
+ .button,
+button,
+input[type="button"],
+input[type="reset"],
+input[type="submit"] :hover{
+  color: #fff;
+}
+.gray {
+  background-color: #b5b5b5;
+}
+.gray:hover {
+  background-color: darken(#828282, 20%);
+}
+button,
+.button {
+  margin-top: 1em;
+  clear: both;
+}
 
-  input, select, textarea {
-    font-size: 1.4rem;
-    padding: .5rem;
-    border: .1rem solid #f0f1f2;
-  }
+.labelLeft .eachLabel {
+  text-align: left;
+  z-index: 1;
+}
 
-  #ninja_forms_required_items, .eachRow {
-    margin-bottom: -.1rem;
-    border: solid 0.1rem #f0f1f2;
-    padding: 1rem 1.5rem;
+.labelLeft .eachLabel:after  {
+  content: '';
+  width: 0;
+  height: 100%;
+  position: absolute;
+  border-right: .1rem solid #f0f1f2;
+  top: 0;
+  left: 34.5%;
+}
 
-    &:before  {
-      content: '';
-      /*background-color: $lighter;*/
-      width: 34.5%;
-      height: 100%;
-      position: absolute;
-      top: 0;
-      left: 0%;
-    }
-  }
+.ninja-forms-req-symbol {
+  float: right;
+}
 
-  .html-container,
-  .submit-container {
-    border: 0;
-    padding: 0;
-    margin-top: 1.6rem;
-    &:before  {
-      background-color: #fff;
-    }
-  }
-
-  .submit-container,
-  .nf-error-msg {
-    text-align: center;
-  }
-
-  .button,
-  button,
-  input[type="button"],
-  input[type="reset"],
-  input[type="submit"] {
-     background-color: #828282;
-     border: 0;
-     border-radius: .4rem;;
-     color: #fff;
-     cursor: pointer;
-     font-family: "メイリオ",Meiryo,"ヒラギノ角ゴ Pro W3","Hiragino Kaku Gothic Pro","ＭＳ Ｐゴシック","MS PGothic",sans-serif;
-     font-size: 1.6rem;
-     font-weight: 700;
-     padding: 1em 2em;
-     text-decoration: none;
-     $white-space: nowrap;
-     display: inline-block;
-     width: auto;
-     height: auto;
-     line-height: 1;
-     box-shadow: inset 0 0 0 9rem rgba(#fff, 0), 0 0 0 -1rem rgba(#828282, 0);
-     &:hover {
-         color: #fff;
-     }
-     &.gray {
-         background-color: #b5b5b5;
-
-         &:hover {
-           background-color: darken(#828282, 20%);
-         }
-     }
-     +button,
-     +.button {
-         margin-top: 1em;
-         clear: both;
-     }
-  }
-
-  .labelLeft .eachLabel {
-    text-align: left;
-    z-index: 1;
-
-    &:after  {
-      content: '';
-      width: 0;
-      height: 100%;
-      position: absolute;
-      border-right: .1rem solid #f0f1f2;
-      top: 0;
-      left: 34.5%;
-    }
-  }
-
-  .ninja-forms-req-symbol {
-    float: right;
-  }
-
-  article,
+article,
 aside,
 footer,
 header,
