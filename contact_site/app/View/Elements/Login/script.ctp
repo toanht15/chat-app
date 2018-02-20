@@ -19,4 +19,8 @@
       }
     });
   };
+  //初期パスワード変更
+  function saveAct(){
+    $('#MUserEditPasswordForm').submit();
+  }
 </script>
