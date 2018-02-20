@@ -135,12 +135,25 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     }, time);
   });
 
+  // 自由入力エリアのキーイベント
+  $(document).on('keypress', '#sincloChatMessage', function(e) {
+    // Enterキー
+    if (e.which === 13 && !e.shiftKey) {
+      // メッセージ送信、かつEnterキー押下で消費者側送信アクションが有効な場合
+      if ($scope.canVisitorSendMessage && $scope.simulatorSettings.settings['chat_trigger'] == <?= C_WIDGET_RADIO_CLICK_SEND ?>) {
+        $scope.visitorSendMessage();
+        return false;
+      }
+    }
+  });
+
   // ラジオボタンの選択
   $(document).on('click', '#chatTalk input[type="radio"]', function() {
     // メッセージ送信が有効な場合
     if ($scope.canVisitorSendMessage) {
       var prefix = $(this).attr('id').replace(/-sinclo-radio[0-9a-z-]+$/i, '');
       var message = $(this).val().replace(/^\s/, '');
+      var name = $(this).attr('name');
 
       // 自由入力エリアの表示状態によって、自由入力エリアへの入力・メッセージ送信の処理を行う
       if ($scope.isTextAreaOpen) {
@@ -149,6 +162,9 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
         $scope.addMessage('se', message)
         $scope.$emit('receiveVistorMessage', message, prefix)
       }
+
+      // ラジオボタンを非活性にする
+      $('input[name=' + name + '][type="radio"]').prop('disabled', true);
     }
   });
 }]);

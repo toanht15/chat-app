@@ -815,7 +815,7 @@ class TAutoMessagesController extends AppController {
     $subject = '';
     $fromName = '';
     $templateId = 0;
-    if(!empty($saveData['main']['send_mail_flg']) && intval($saveData['main']['send_mail_flg']) === C_CHECK_ON) {
+    if($saveData['TAutoMessage']['action_type'] == C_AUTO_ACTION_TYPE_SENDMESSAGE && !empty($saveData['main']['send_mail_flg']) && intval($saveData['main']['send_mail_flg']) === C_CHECK_ON) {
       $this->request->data['TAutoMessage']['send_mail_flg'] = intval($saveData['main']['send_mail_flg']);
       $saveData['TAutoMessage']['send_mail_flg'] = intval($saveData['main']['send_mail_flg']);
       foreach($saveData['main'] as $k => $v) {
