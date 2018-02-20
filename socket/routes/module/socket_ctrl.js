@@ -2755,6 +2755,11 @@ io.sockets.on('connection', function (socket) {
       obj.messages[i].messageType = chatApi.cnst.observeType.auto;
       setList[fullDateTime(Date.parse(created))] = obj.messages[i];
     }
+    for (var i = 0; i < obj.scenarios.length; i++) {
+      if(!isset(obj.scenarios[i]) || !isset(obj.scenarios[i].created)) continue;
+      var created = new Date(obj.scenarios[i].created);
+      setList[fullDateTime(Date.parse(created))] = obj.scenarios[i];
+    }
     var ret = {};
         ret.messages = objectSort(setList);
         ret.chatToken = obj.chatToken;
