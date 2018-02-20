@@ -120,6 +120,14 @@ CakeLog::config('apiLog', array(
     'rotate' => 10,
 ));
 
+CakeLog::config('batchLog', array(
+  'engine' => 'File',
+  'types' => array('batch-info', 'batch-error'),
+  'file' => 'batchLog',
+  'size' => '10MB',
+  'rotate' => 10,
+));
+
 if (!isset($_SERVER['SERVER_NAME'])) {
     $_SERVER['SERVER_NAME'] = php_uname("n");
 }
