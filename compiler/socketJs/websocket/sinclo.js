@@ -3846,6 +3846,7 @@
           self._parent._doing(self._parent._getIntervalTimeSec(), function () {
             self._parent._handleChatTextArea(self._parent.get(self._parent._lKey.currentScenario).chatTextArea);
             self._parent._showMessage(self._parent.get(self._parent._lKey.currentScenario).actionType, message, self._getCurrentSeq(), function () {
+              self._parent._saveWaitingInputState(true);
               self._parent._waitingInput(function (inputVal) {
                 self._parent._unWaitingInput();
                 self._parent._handleStoredMessage();
@@ -3860,7 +3861,6 @@
                   self._showError();
                 }
               });
-              self._parent._saveWaitingInputState(true);
             });
           });
         },
@@ -3975,11 +3975,10 @@
             variables: targetVariables
           };
 
-          emit('processSendMail', sendData, function(ev) {
-            if(self._parent._goToNextScenario()) {
-              self._process();
-            }
-          });
+          emit('processSendMail', sendData, function(ev) {});
+          if(self._parent._goToNextScenario()) {
+            self._parent._process();
+          }
         }
       }
     },
