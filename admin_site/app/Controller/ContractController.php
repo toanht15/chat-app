@@ -310,7 +310,12 @@ class ContractController extends AppController
   }
 
   private function createAgreementInfo($addedCompanyInfo, $companyInfo, $userInfo, $agreementInfo) {
-    $password = $this->generateRandomPassword(8);
+    if(!empty($userInfo['user_password'])) {
+      $password = $userInfo['user_password'];
+    }
+    else {
+      $password = $this->generateRandomPassword(8);
+    }
 
     $this->MAgreements->create();
     if(empty($agreementInfo['application_name'])) {
@@ -340,6 +345,15 @@ class ContractController extends AppController
     if(empty($agreementInfo['agreement_end_day'])) {
       $agreementInfo['agreement_end_day'] = "";
     }
+    if(empty($agreementInfo['trial_start_day'])) {
+      $agreementInfo['trial_start_day'] = "";
+    }
+    if(empty($agreementInfo['trial_end_day'])) {
+      $agreementInfo['trial_end_day'] = "";
+    }
+    if(empty($agreementInfo['business_model']) == 0) {
+      $agreementInfo['business_model'] = "";
+    }
     $this->MAgreements->set([
       'm_companies_id' => $addedCompanyInfo['id'],
       'business_model' => $agreementInfo['business_model'],
@@ -352,7 +366,7 @@ class ContractController extends AppController
       'application_position' => $agreementInfo['application_position'],
       'application_name' => $agreementInfo['application_name'],
       'installation_url' => $agreementInfo['installation_url'],
-      'admin_password' => $userInfo['user_password'],
+      'admin_password' => $password,
       'telephone_number' => $agreementInfo['telephone_number'],
       'note' => $agreementInfo['note'],
     ]);
@@ -367,9 +381,11 @@ class ContractController extends AppController
     ];
     $this->MUser->create();
     $this->MUser->set($tmpData);
+    $this->log('ここもチェーーっく2',LOG_DEBUG);
     if(!$this->MUser->validates()) {
       throw new Exception("MUser validation error");
     }
+    $this->log('ここもチェーーっく3',LOG_DEBUG);
     $this->MAgreements->save();
     $this->MUser->save();
   }
@@ -386,18 +402,23 @@ class ContractController extends AppController
     ];
     $this->MUser->create();
     $this->MUser->set($tmpData);
+    $this->log('ここもチェーーっく4',LOG_DEBUG);
+    $this->log($tmpData,LOG_DEBUG);
     if(!$this->MUser->validates()) {
+      $this->log('ここもチェーーっく5',LOG_DEBUG);
       $this->MAgreements->rollback();
       $this->MUser->rollback();
       throw new Exception($errors);
     }
     else {
+      $this->log('ここもチェーーっく6',LOG_DEBUG);
       $this->MUser->save();
     }
   }
 
   private function createSuperAdministratorUser($addedCompanyInfo, $userInfo) {
     $password = $this->generateRandomPassword(8);
+     $this->log('ここもチェーーっく6',LOG_DEBUG);
     $tmpData = [
       "m_companies_id" => $addedCompanyInfo['id'],
       "user_name" => 'MLAdmin',
@@ -408,9 +429,11 @@ class ContractController extends AppController
     ];
     $this->MUser->create();
     $this->MUser->set($tmpData);
+     $this->log('ここもチェーーっく7',LOG_DEBUG);
     if(!$this->MUser->validates()) {
       throw new Exception(json_encode($this->MUser->validationErrors, JSON_UNESCAPED_UNICODE));
     }
+     $this->log('ここもチェーーっく8',LOG_DEBUG);
     $this->MUser->save();
   }
 
