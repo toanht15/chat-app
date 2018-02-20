@@ -3165,7 +3165,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         obj.messages.forEach(function(elm, index, arr){
           if(!isset(elm.created)) {
             elm.created = new Date();
-            elm.sort = fullDateTime(scenario.created);
+            elm.sort = fullDateTime(elm.created);
           }
           var sincloSession = sincloCore[obj.siteKey][obj.sincloSessionId];
           if(isset(sincloSession) && isset(sincloSession.scenario)) {
@@ -3195,7 +3195,6 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
   // 都度：チャットデータ取得(オートメッセージのみ)
   socket.on("sendScenarioMessage", function(d, ack){
-    console.log("jpgeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
     var obj = JSON.parse(d);
     var scenario = JSON.parse(JSON.stringify(obj));
     scenario.created = new Date();
@@ -3215,7 +3214,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     if(!functionManager.isEnabled(scenario.siteKey, functionManager.keyList.monitorPollingMode)) {
       emit.toCompany('resScenarioMessage', scenario, scenario.siteKey);
     }
-    emit.toSameUser('resScenarioMesage', scenario, scenario.siteKey, scenario.sincloSessionId);
+    emit.toSameUser('resScenarioMessage', scenario, scenario.siteKey, scenario.sincloSessionId);
     ack({data: scenario});
   });
 

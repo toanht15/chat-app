@@ -3545,6 +3545,11 @@ var socket, // socket.io
       sinclo.resAutoChatMessage(d);
     }); // socket-on: resAutoChatMessage
 
+    // オートメッセージ
+    socket.on('resScenarioMessage', function (d) {
+      sinclo.resScenarioMessage(d);
+    }); // socket-on: resScenarioMessage
+
     // 新着チャット
     socket.on('sendChatResult', function (d) {
       sinclo.sendChatResult(d);

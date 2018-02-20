@@ -69,6 +69,7 @@ class ScenarioMailTemplateComponent extends AutoMessageMailTemplateComponent {
         $this->body = str_replace(self::REPLACE_TARGET_SCENARIO_VARIABLES_BLOCK_DELIMITER, $this->scenarioMessageBlock, $this->template['MMailTemplate']['template']);
         break;
       case "3":
+        $this->body = $this->replaceVariables($this->template['MMailTemplate']['template']);
         break;
     }
   }
@@ -92,9 +93,16 @@ class ScenarioMailTemplateComponent extends AutoMessageMailTemplateComponent {
   }
 
   private function createVariablesMessageBlock() {
-    $this->scenarioMessageBlock .= self::MESSAGE_SEPARATOR;
+    $this->scenarioMessageBlock .= self::MESSAGE_SEPARATOR."\n";
     foreach($this->variables as $variableName => $value) {
       $this->scenarioMessageBlock .= $variableName."：".$value."\n";
     }
+  }
+
+  private function replaceVariables($message) {
+    foreach($this->variables as $variable => $value) {
+      $message = preg_replace("/{{(".$variable.")\}}/", $value, $message);
+    }
+    return $message;
   }
 }
