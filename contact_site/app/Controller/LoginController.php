@@ -150,7 +150,7 @@ class LoginController extends AppController {
           $sender = new MailSenderComponent();
           $sender->setFrom(MailSenderComponent::MAIL_SYSTEM_FROM_ADDRESS);
           $sender->setFromName('sinclo(シンクロ)');
-          $sender->setTo('henmi0201@gmail.com');
+          $sender->setTo(self::ML_MAIL_ADDRESS);
           $sender->setSubject($mailTemplateData[2]['MSystemMailTemplate']['subject']);
           $mailBodyData = $mailTemplateData[2]['MSystemMailTemplate']['mail_body'];
           $sender->setSubject($mailTemplateData[2]['MSystemMailTemplate']['subject']);
