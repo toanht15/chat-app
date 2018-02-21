@@ -86,18 +86,42 @@ class TrialController extends AppController {
 
     $mailTemplateData = $this->MSystemMailTemplate->find('all');
 
+    $mailBodyData = str_replace(self::COMPANY_NAME, $data['MCompany']['company_name'], $mailTemplateData[0]['MSystemMailTemplate']['mail_body']);
+    $mailBodyData = str_replace(self::USER_NAME, $data['MAgreements']['application_name'], $mailBodyData);
+    $mailBodyData = str_replace(self::PASSWORD, $data['Contract']['user_password'], $mailBodyData);
+    $mailBodyData = str_replace(self::MAIL_ADDRESS, $data['Contract']['user_mail_address'], $mailBodyData);
+
+    // 送信前にログを生成
+    $this->TMailTransmissionLog->create();
+    $this->TMailTransmissionLog->set(array(
+      'm_companies_id' => 0, // システムメールなので0で登録
+      'mail_type_cd' => 'TL001',
+      'from_address' => MailSenderComponent::MAIL_SYSTEM_FROM_ADDRESS,
+      'from_name' => 'sinclo(シンクロ)',
+      'to_address' => $data['Contract']['user_mail_address'],
+      'subject' => $mailTemplateData[0]['MSystemMailTemplate']['subject'],
+      'body' => $mailBodyData,
+      'send_flg' => 0
+    ));
+    $this->TMailTransmissionLog->save();
+    $lastInsertId = $this->TMailTransmissionLog->getLastInsertId();
+
     //お客さん向け
     $sender = new MailSenderComponent();
     $sender->setFrom(MailSenderComponent::MAIL_SYSTEM_FROM_ADDRESS);
     $sender->setFromName('sinclo(シンクロ)');
     $sender->setTo($data['Contract']['user_mail_address']);
     $sender->setSubject($mailTemplateData[0]['MSystemMailTemplate']['subject']);
-    $mailBodyData = str_replace(self::COMPANY_NAME, $data['MCompany']['company_name'], $mailTemplateData[0]['MSystemMailTemplate']['mail_body']);
-    $mailBodyData = str_replace(self::USER_NAME, $data['MAgreements']['application_name'], $mailBodyData);
-    $mailBodyData = str_replace(self::PASSWORD, $data['Contract']['user_password'], $mailBodyData);
-    $mailBodyData = str_replace(self::MAIL_ADDRESS, $data['Contract']['user_mail_address'], $mailBodyData);
     $sender->setBody($mailBodyData);
     $sender->send();
+
+    $now = new DateTime('now', new DateTimeZone('Asia/Tokyo'));
+    $this->TMailTransmissionLog->read(null, $lastInsertId);
+    $this->TMailTransmissionLog->set([
+      'send_flg' => 1,
+      'sent_datetime' => $now->format("Y/m/d H:i:s")
+    ]);
+    $this->TMailTransmissionLog->save();
 
     //会社向け
     $sender = new MailSenderComponent();

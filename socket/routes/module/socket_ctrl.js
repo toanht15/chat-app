@@ -3437,7 +3437,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     }
   });
 
-  socket.on('settingReload', function (data) {
+  socket.on('settingReload', function (data, ack) {
     var obj = JSON.parse(data), targetKey;
     if ( isset(obj.type) && String(obj.siteKey) === "master") {
       switch (obj.type) {
@@ -3550,7 +3550,11 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
           console.log("End --------------------------------------------------------");
           break;
         default:
+          break;
       }
+    }
+    if(ack) {
+      ack();
     }
   });
 
