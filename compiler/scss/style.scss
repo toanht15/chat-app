@@ -6184,6 +6184,11 @@ ul.naviBtn {
 
           #TAutoMessageTChatbotScenarioId {
             padding: 5px;
+            &:disabled {
+              color: #CCCCCC;
+              border-color: #CCCCCC;
+              background-color: #FFFFFF;
+            }
           }
         }
 
@@ -9449,4 +9454,3 @@ ul#anotherWindow_color-bar-right {
 .fa-chevron-left:before {
   content: "";
 }
-
