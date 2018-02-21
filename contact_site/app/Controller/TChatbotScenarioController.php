@@ -283,7 +283,7 @@ class TChatbotScenarioController extends AppController {
 
       // シナリオ設定の詳細
       $activity = json_decode($value['TChatbotScenario']['activity']);
-      foreach ($activity['scenarios'] as $key => &$action) {
+      foreach ($activity->scenarios as $key => &$action) {
         if ($action->actionType == C_SCENARIO_ACTION_SEND_MAIL) {
           // メール送信設定のコピー
           $mailTransmissionData = $this->MMailTransmissionSetting->findById($action->mMailTransmissionId);
