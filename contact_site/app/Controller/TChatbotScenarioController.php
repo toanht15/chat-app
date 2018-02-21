@@ -283,6 +283,7 @@ class TChatbotScenarioController extends AppController {
 
       // シナリオ設定の詳細
       $activity = json_decode($value['TChatbotScenario']['activity']);
+      $transaction = $this->TransactionManager->begin();
       foreach ($activity->scenarios as $key => &$action) {
         if ($action->actionType == C_SCENARIO_ACTION_SEND_MAIL) {
           // メール送信設定のコピー
@@ -291,7 +292,6 @@ class TChatbotScenarioController extends AppController {
             $this->MMailTransmissionSetting->create();
             $mailTransmissionData['MMailTransmissionSetting']['id'] = null;
             $this->MMailTransmissionSetting->set($mailTransmissionData);
-            $this->MMailTransmissionSetting->begin();
             $result = $this->MMailTransmissionSetting->save();
             $action->mMailTransmissionId = $this->MMailTransmissionSetting->getLastInsertId();
           }
@@ -301,7 +301,6 @@ class TChatbotScenarioController extends AppController {
             $this->MMailTemplate->create();
             $mailTemplateData['MMailTemplate']['id'] = null;
             $this->MMailTemplate->set($mailTemplateData);
-            $this->MMailTemplate->begin();
             $result = $this->MMailTemplate->save();
             $action->mMailTemplateId = $this->MMailTemplate->getLastInsertId();
           }
@@ -313,24 +312,25 @@ class TChatbotScenarioController extends AppController {
       $saveData['TChatbotScenario']['name'] = $value['TChatbotScenario']['name'].'コピー';
       $saveData['TChatbotScenario']['activity'] = json_encode($activity);
       $saveData['TChatbotScenario']['del_flg'] = $value['TChatbotScenario']['del_flg'];
-
       $this->TChatbotScenario->set($saveData);
-      $this->TChatbotScenario->begin();
 
-      // バリデーションチェックでエラーが出た場合
-      if(!$this->TChatbotScenario->validates()) {
-        $res = false;
-        $errorMessage = $this->TChatbotScenario->validationErrors;
-        $this->MMailTransmissionSetting->rollback();
-        $this->MMailTemplate->rollback();
-        $this->TChatbotScenario->rollback();
-      } else
-      if( $this->TChatbotScenario->save($saveData,false) ) {
-        $this->MMailTransmissionSetting->commit();
-        $this->MMailTemplate->commit();
-        $this->TChatbotScenario->commit();
-        $this->Session->delete('dstoken');
-        $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
+      try {
+        // バリデーションチェックでエラーが出た場合
+        if (!$this->TChatbotScenario->validates()) {
+          $res = false;
+          $errorMessage = $this->TChatbotScenario->validationErrors;
+          $this->TransactionManager->rollbackTransaction($transaction);
+        } else
+        if ($this->TChatbotScenario->save($saveData,false)) {
+          $this->TransactionManager->commitTransaction($transaction);
+          $this->Session->delete('dstoken');
+          $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
+        }
+      } catch (Exception $e) {
+        if ($transaction) {
+          $this->TransactionManager->rollbackTransaction($transaction);
+        }
+        $this->log("Failed to copy scenario. => " . $e->getMessage, LOG_WARNING);
       }
     }
   }
