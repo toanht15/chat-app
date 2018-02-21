@@ -1,4 +1,4 @@
-var loading = {
+var load = {
   flg: false,
   ev: function(fc){
     if ( !this.flg ) {

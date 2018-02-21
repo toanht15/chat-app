@@ -1,10 +1,10 @@
 <?php
 /**
- * MtrialController controller.
+ * TrialController controller.
  * 無料トライアル登録画面
  */
 App::uses('HttpSocket', 'Network/Http', 'Component', 'Controller', 'Utility/Validation');
-class MtrialController extends AppController {
+class TrialController extends AppController {
   const CONTRACT_ADD_URL = "http://127.0.0.1:81/Contract/add";
   const ML_MAIL_ADDRESS= "cloud-service@medialink-ml.co.jp";
   const API_CALL_TIMEOUT = 5;
@@ -23,7 +23,7 @@ class MtrialController extends AppController {
 
   public function beforeFilter(){
     parent::beforeFilter();
-    $this->Auth->allow(['index','add','thanks']);
+    $this->Auth->allow(['index','add','thanks','remoteTermsOfService']);
     $this->header('Access-Control-Allow-Origin: http://127.0.0.1:81/Contract/add');
     $this->set('title_for_layout', '無料トライアル登録画面');
   }
@@ -48,7 +48,17 @@ class MtrialController extends AppController {
       $this->MUser->rollback();
       return 'error';
     }
-    $this->MUser->rollback();
+
+    $data['MCompany']['trial_flg'] = C_TRIAL_FLG;
+    $data['MCompany']['options']['refCompanyData'] = 1;
+    $data['MCompany']['m_contact_types_id'] = 1;
+    $data['MCompany']['limit_users'] = 3;
+    $data['MAgreements']['trial_start_day'] = date('Y-m-d');
+    $data['MAgreements']['trial_end_day'] = date('Y-m-d', strtotime('+13 day', time()));
+    $data['MAgreements']['agreement_start_day'] = '';
+    $data['MAgreements']['agreement_end_day'] = '';
+    $data['Contract']['user_name'] = 'テストユーザー';
+    $data['Contract']['user_display_name'] = 'テストユーザー';
     $password = $this->generateRandomPassword(8);
     $data['Contract']['user_password'] = $password;
 
@@ -154,7 +164,7 @@ class MtrialController extends AppController {
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
 
-    $this->render('/Elements/Mtrial/remoteTermsOfService');
+    $this->render('/Elements/Trial/remoteTermsOfService');
   }
 
   private function generateRandomPassword($length) {
