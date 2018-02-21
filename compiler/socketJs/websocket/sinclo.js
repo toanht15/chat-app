@@ -1392,8 +1392,8 @@
       }
 
       // 終了通知
-      var title = location.host + 'の内容';
-      var content = location.host + 'との画面共有を終了しました';
+      var title = (check.isset(window.sincloInfo.custom) && check.isset(window.sincloInfo.custom.shareBrowse.end.headerMessage)) ? window.sincloInfo.custom.shareBrowse.end.headerMessage : location.host + 'の内容';
+      var content = (check.isset(window.sincloInfo.custom) && check.isset(window.sincloInfo.custom.shareBrowse.end.content)) ? window.sincloInfo.custom.shareBrowse.end.content : location.host + 'との画面共有を終了しました';
       popup.ok = function(){
         this.remove();
       };
@@ -1433,8 +1433,8 @@
       }
 
       // 終了通知
-      var title = (check.isset(window.sincloInfo.custom) && check.isset(window.sincloInfo.custom.shareBrowse.end.headerMessage)) ? window.sincloInfo.custom.shareBrowse.end.headerMessage : location.host + 'の内容';
-      var content = (check.isset(window.sincloInfo.custom) && check.isset(window.sincloInfo.custom.shareBrowse.end.content)) ? window.sincloInfo.custom.shareBrowse.end.content : location.host + 'との画面共有を終了しました';
+      var title = (check.isset(window.sincloInfo.custom) && check.isset(window.sincloInfo.custom.shareCoBrowse.end.headerMessage)) ? window.sincloInfo.custom.shareCoBrowse.end.headerMessage : location.host + 'の内容';
+      var content = (check.isset(window.sincloInfo.custom) && check.isset(window.sincloInfo.custom.shareCoBrowse.end.content)) ? window.sincloInfo.custom.shareCoBrowse.end.content : location.host + 'との画面共有を終了しました';
       popup.ok = function(){
         laUtil.disconnect();
         this.remove();
