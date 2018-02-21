@@ -52,7 +52,7 @@ class AppController extends Controller {
   ];
 
   public $helpers = ['formEx'];
-  public $uses = ['MUser', 'MWidgetSetting'];
+  public $uses = ['MUser', 'MWidgetSetting','MCompany','MAgreement'];
 
   public $userInfo;
   public $coreSettings;
@@ -237,6 +237,33 @@ class AppController extends Controller {
           $this->redirect("/");
         }
         break;
+    }
+
+    $trialCompany = $this->MCompany->find('all', [
+      'fields' => '*',
+      'conditions' => [
+        'id' => $this->userInfo['MCompany']['id'],
+        'trial_flg' => C_TRIAL_FLG
+      ],
+    ]);
+    if(!empty($trialCompany)) {
+      $trialEndDay = $this->MAgreement->find('all', [
+        'fields' => 'trial_end_day',
+        'conditions' => [
+          'm_companies_id' => $this->userInfo['MCompany']['id']
+        ],
+      ]);
+      //今日の日程
+      $today = date("Y/m/d");
+      //トライアル期間終了日
+      $trialEndDay = date("Y/m/d",strtotime($trialEndDay[0]['MAgreement']['trial_end_day']));
+      if(strtotime($today) <= strtotime($trialEndDay)){
+        // 何秒離れているかを計算
+        $seconddiff = abs(strtotime($today) - strtotime($trialEndDay));
+        // 日数に変換
+        $daydiff = $seconddiff / (60 * 60 * 24) + 1;
+        $this->set('trialTime','トライアル期間終了まであと'.$daydiff.'日です');
+      }
     }
   }
 

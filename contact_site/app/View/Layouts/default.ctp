@@ -16,7 +16,7 @@
 $naviElm = "";
 $contentStyle = "";
 if( strcmp($this->name, 'Login') !== 0 && strcmp($this->action, 'baseForAnotherWindow') !== 0
-  && strcmp($this->action, 'loadingHtml') !== 0) {
+  && strcmp($this->action, 'loadingHtml') !== 0 && strcmp($this->name, 'Mtrial') !== 0) {
   $naviElm = $this->element('navi');
   $contentStyle = "position: absolute; top: 60px; left: 60px; right: 0; bottom: 0";
 }
@@ -123,8 +123,12 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
       echo $this->Html->css('jquery.splitter.css');
       echo $this->Html->script("jquery.splitter.js");
     }
+    if ( strcmp($this->name, 'Mtrial') === 0 ) {
+      echo $this->Html->css('freeTrial.css');
+    }
 
 ?>
+
 <script type="text/javascript">
   <?php echo $this->element('loadScreen'); ?>
 </script>
@@ -134,7 +138,7 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
   <div id="container">
     <div id="header">
       <?php if( strcmp($this->name, 'Login') !== 0 && strcmp($this->action, 'baseForAnotherWindow') !== 0
-      && strcmp($this->action, 'loadingHtml') !== 0) : ?>
+      && strcmp($this->action, 'loadingHtml') !== 0 && strcmp($this->name, 'Mtrial') !== 0) : ?>
         <?= $this->element('navi') ?>
       <?php endif ;?>
     </div>
