@@ -625,8 +625,8 @@
     getWindowInfo: function(obj) {
       if ( obj.tabId !== userInfo.tabId ) return false;
       if ( userInfo.accessType !== Number(cnst.access_type.guest) ) return false;
-      var title = location.host + 'の内容';
-      var content = location.host + 'が閲覧ページへのアクセスを求めています。<br>許可しますか';
+      var title = (check.isset(window.sincloInfo.custom) && check.isset(window.sincloInfo.custom.shareBrowse.begin.headerMessage)) ? window.sincloInfo.custom.shareBrowse.begin.headerMessage : location.host + 'の内容';
+      var content = (check.isset(window.sincloInfo.custom) && check.isset(window.sincloInfo.custom.shareBrowse.begin.content)) ? window.sincloInfo.custom.shareBrowse.begin.content : location.host + 'が閲覧ページへのアクセスを求めています。<br>許可しますか';
       popup.ok = function(){
         var sincloBox = document.getElementById("sincloBox");
         if( sincloBox ){
