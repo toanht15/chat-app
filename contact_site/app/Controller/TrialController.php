@@ -103,7 +103,7 @@ class TrialController extends AppController {
     $sender = new MailSenderComponent();
     $sender->setFrom(MailSenderComponent::MAIL_SYSTEM_FROM_ADDRESS);
     $sender->setFromName('sinclo(シンクロ)');
-    $sender->setTo(self::ML_MAIL_ADDRESS  );
+    $sender->setTo(self::ML_MAIL_ADDRESS);
     $sender->setSubject($mailTemplateData[1]['MSystemMailTemplate']['subject']);
     $mailBodyData = str_replace(self::COMPANY_NAME, $data['MCompany']['company_name'], $mailTemplateData[1]['MSystemMailTemplate']['mail_body']);
     $mailBodyData = str_replace(self::USER_NAME, $data['MAgreements']['application_name'], $mailBodyData);

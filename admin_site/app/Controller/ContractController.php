@@ -53,7 +53,7 @@ class ContractController extends AppController
   public function beforeFilter(){
     parent::beforeFilter();
     $this->set('title_for_layout', 'サイトキー管理');
-    $this->Auth->allow(['index','add','remoteSaveForm']);
+    $this->Auth->allow(['add','remoteSaveForm']);
     header('Access-Control-Allow-Origin: *');
   }
 
@@ -312,8 +312,6 @@ class ContractController extends AppController
 
   private function createAgreementInfo($addedCompanyInfo, $companyInfo, $userInfo, $agreementInfo) {
     $password = $this->generateRandomPassword(8);
-    $this->log('password',LOG_DEBUG);
-    $this->log($password,LOG_DEBUG);
 
     $this->MAgreements->create();
     if(empty($agreementInfo['application_name'])) {
@@ -388,8 +386,6 @@ class ContractController extends AppController
 
   private function createFirstAdministratorUser($m_companies_id, $userInfo) {
     $errors = [];
-    $this->log('userPassword',LOG_DEBUG);
-    $this->log($userInfo["user_password"],LOG_DEBUG);
     $tmpData = [
         "m_companies_id" => $m_companies_id,
         "user_name" => $userInfo["user_name"],
