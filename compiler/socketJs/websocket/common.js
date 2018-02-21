@@ -133,7 +133,7 @@ var socket, // socket.io
           navi = "",
           chat = this.chatWidgetTemplate(widget),
           call = this.widgetTemplate(widget),
-          fotter = '<p id="fotter">Powered by <a target="sinclo" href="https://sinclo.medialink-ml.co.jp/lp/?utm_medium=web-widget&utm_campaign=widget-referral">sinclo</a></p>';
+          fotter = (common.isset(window.sincloInfo.custom.widget.hideFotter) && window.sincloInfo.custom.widget.hideFotter) ? '' : '<p id="fotter">Powered by <a target="sinclo" href="https://sinclo.medialink-ml.co.jp/lp/?utm_medium=web-widget&utm_campaign=widget-referral">sinclo</a></p>';
       // フルプランのPCの場合
       if ( window.sincloInfo.contract.chat && (window.sincloInfo.contract.synclo || (window.sincloInfo.contract.hasOwnProperty('document') && window.sincloInfo.contract.document)) && !check.smartphone() ) {
         displaySet += navi + chat + call;
