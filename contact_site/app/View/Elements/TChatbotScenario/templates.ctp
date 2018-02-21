@@ -4,7 +4,7 @@
     <li class="styleFlexbox">
       <span class="fb7em"><label>発言内容</label></span>
       <div>
-        <textarea name="message" ng-model="setItem.message" cols="48" rows="4" placeholder="メッセージを入力してください" ng-required="true"></textarea>
+        <resize-textarea name="message" ng-model="setItem.message" cols="48" rows="4" placeholder="メッセージを入力してください" ng-required="true"></resize-textarea>
       </div>
     </li>
   </ul>
@@ -40,7 +40,7 @@
     <li class="styleFlexbox">
       <span class="fb11em"><label class="hearingErrorMessageLabel">入力エラー時の<br>返信メッセージ<div class="questionBalloon"><icon class="questionBtn" data-tooltip="サイト訪問者が入力した回答が不正な内容の場合に、返信するメッセージになります">?</icon></div></label></span>
       <div>
-        <textarea name="errorMessage" ng-model="setItem.errorMessage" cols="48" rows="4" placeholder="入力エラー時の返信メッセージを入力してください"></textarea>
+        <resize-textarea name="errorMessage" ng-model="setItem.errorMessage" cols="48" rows="4" placeholder="入力エラー時の返信メッセージを入力してください"></resize-textarea>
       </div>
     </li>
     <li>
@@ -49,7 +49,7 @@
         <li class="styleFlexbox">
           <span class="fb11em"><label>確認内容</label></span>
           <div>
-            <textarea name="confirmMessage" ng-model="setItem.confirmMessage" cols="48" rows="4" placeholder="確認内容のメッセージを入力してください"></textarea>
+            <resize-textarea name="confirmMessage" ng-model="setItem.confirmMessage" cols="48" rows="4" placeholder="確認内容のメッセージを入力してください"></resize-textarea>
           </div>
         </li>
         <li class="styleFlexbox">
@@ -89,7 +89,7 @@
     <li class="styleFlexbox">
       <span class="fb7em"><label>質問内容</label></span>
       <div>
-        <textarea name="message" ng-model="setItem.message" cols="48" rows="4" placeholder="質問内容のメッセージを入力してください"></textarea>
+        <resize-textarea name="message" ng-model="setItem.message" cols="48" rows="4" placeholder="質問内容のメッセージを入力してください"></resize-textarea>
       </div>
     </li>
     <li>
@@ -138,7 +138,7 @@
       <span class="fb11em"><label>メール本文タイプ</label></span>
       <div>
         <label ng-repeat="(key, item) in sendMailTypeList" class="styleBlock pointer"><input type="radio" name="action_{{setActionId}}_mail_type" value="{{key}}" ng-model="setItem.mailType" ng-init="setItem.mailType = setItem.mailType" default="setItem.default.mailType">{{item}}</label>
-        <textarea ng-if="setItem.mailType == <?= C_SCENARIO_MAIL_TYPE_CUSTOMIZE ?>" ng-model="setItem.template" cols="48" rows="4" placeholder="メール本文を入力してください"></textarea>
+        <resize-textarea ng-if="setItem.mailType == <?= C_SCENARIO_MAIL_TYPE_CUSTOMIZE ?>" ng-model="setItem.template" cols="48" rows="4" placeholder="メール本文を入力してください"></resize-textarea>
       </div>
     </li>
   </ul>
