@@ -232,7 +232,7 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
       type: 'post',
       dataType: 'html',
       cache: false,
-      url: "<?= $this->Html->url(['controller' => 'Mtrial', 'action' => 'remoteTermsOfService']) ?>",
+      url: "<?= $this->Html->url(['controller' => 'Trial', 'action' => 'remoteTermsOfService']) ?>",
       success: function(html){
         modalOpen.call(window, html, 'p-show-terms-of-service', '利用規約', 'moment');
       }
