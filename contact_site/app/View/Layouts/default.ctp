@@ -16,7 +16,7 @@
 $naviElm = "";
 $contentStyle = "";
 if( strcmp($this->name, 'Login') !== 0 && strcmp($this->action, 'baseForAnotherWindow') !== 0
-  && strcmp($this->action, 'loadingHtml') !== 0 && strcmp($this->name, 'Mtrial') !== 0) {
+  && strcmp($this->action, 'loadingHtml') !== 0 && strcmp($this->name, 'Trial') !== 0) {
   $naviElm = $this->element('navi');
   $contentStyle = "position: absolute; top: 60px; left: 60px; right: 0; bottom: 0";
 }
@@ -38,10 +38,10 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
 <?php }
 
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
-
   <?php echo $this->Html->charset(); ?>
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>
@@ -123,11 +123,16 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
       echo $this->Html->css('jquery.splitter.css');
       echo $this->Html->script("jquery.splitter.js");
     }
-    if ( strcmp($this->name, 'Mtrial') === 0 ) {
-      echo $this->Html->css('freeTrial.css');
-    }
-
-?>
+    if ( strcmp($this->name, 'Trial') === 0 ) {
+      echo $this->Html->css('freeTrial.css'); ?>
+      <!-- Google Tag Manager -->
+      <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+      })(window,document,'script','dataLayer','GTM-MS5ZND');</script>
+      <!-- End Google Tag Manager -->
+   <?php } ?>
 
 <script type="text/javascript">
   <?php echo $this->element('loadScreen'); ?>
@@ -135,10 +140,16 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
 
 </head>
 <body>
+  <?php if ( strcmp($this->name, 'Trial') === 0 ) { ?>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MS5ZND"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+  <?php } ?>
   <div id="container">
     <div id="header">
       <?php if( strcmp($this->name, 'Login') !== 0 && strcmp($this->action, 'baseForAnotherWindow') !== 0
-      && strcmp($this->action, 'loadingHtml') !== 0 && strcmp($this->name, 'Mtrial') !== 0) : ?>
+      && strcmp($this->action, 'loadingHtml') !== 0 && strcmp($this->name, 'Trial') !== 0) : ?>
         <?= $this->element('navi') ?>
       <?php endif ;?>
     </div>

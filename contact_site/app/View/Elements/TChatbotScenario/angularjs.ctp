@@ -530,7 +530,30 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       return LocalStorageService.getItem(name) || name;
     });
   }
-}]);
+}])
+.directive('resizeTextarea', function() {
+  return {
+    restrict: 'E',
+    replace: true,
+    template: '<textarea></textarea>',
+    link: function(scope, element, attrs) {
+      var elm = angular.element(element[0]);
+      var defaultHeight = element[0].scrollHeight;
+      var maxHeight = defaultHeight * 4;
+
+      var clearWatch = scope.$watch(attrs.ngModel, function(value) {
+        if (typeof value === 'undefined') {
+          return;
+        }
+        var textHeight = elm[0].scrollHeight;
+        if (textHeight > defaultHeight) {
+          elm[0].style.height = (textHeight > maxHeight ? maxHeight : textHeight) + 'px';
+        }
+        clearWatch();
+      });
+    }
+  };
+});
 
 function getWidgetSettings() {
   var json = JSON.parse(document.getElementById('TChatbotScenarioWidgetSettings').value);

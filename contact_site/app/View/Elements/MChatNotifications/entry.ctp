@@ -81,8 +81,8 @@
   <!-- /* 操作 */ -->
   <section>
       <div id="action_btn_area">
-          <?= $this->Html->link('戻る', ['controller'=>'MChatNotifications', 'action'=>'index'], ['onclick' => 'loading.ev(saveAct)', 'class' => 'greenBtn btn-shadow']) ?>
-          <?= $this->Html->link('保存', 'javascript:void(0)', ['onclick' => 'loading.ev(saveAct)', 'class' => 'greenBtn btn-shadow']) ?>
+          <?= $this->Html->link('戻る', ['controller'=>'MChatNotifications', 'action'=>'index'], ['onclick' => 'load.ev(saveAct)', 'class' => 'greenBtn btn-shadow']) ?>
+          <?= $this->Html->link('保存', 'javascript:void(0)', ['onclick' => 'load.ev(saveAct)', 'class' => 'greenBtn btn-shadow']) ?>
       </div>
   </section>
   <!-- /* 操作 */ -->
