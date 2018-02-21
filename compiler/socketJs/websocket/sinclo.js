@@ -2239,7 +2239,7 @@
 
               var isScenarioMessage = false;
               console.log("sinclo.scenarioApi.isProcessing() : " + sinclo.scenarioApi.isProcessing() + " sinclo.scenarioApi.isWaitingInput() : " + sinclo.scenarioApi.isWaitingInput())
-              if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isWaitingInput()) {
+              if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isWaitingInput() && (!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false")) {
                 sinclo.scenarioApi.triggerInputWaitComplete(value);
                 messageType = sinclo.scenarioApi.getCustomerMessageType();
                 // シナリオ中の返答はオペレータへの通知をしない
