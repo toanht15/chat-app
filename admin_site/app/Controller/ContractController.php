@@ -79,6 +79,8 @@ class ContractController extends AppController
       $this->autoRender = false;
       $this->layout = "ajax";
       $data = $this->getParams();
+      $this->log('data',LOG_DEBUG);
+      $this->log($data,LOG_DEBUG);
 
       try {
         $this->processTransaction($data['MCompany'], $data['Contract'], $data['MAgreements']);
