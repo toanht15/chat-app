@@ -693,7 +693,7 @@
     startCoBrowseOpen : function(obj) {
       if ( userInfo.accessType !== Number(cnst.access_type.guest) ) return false;
       var title = common.isset(window.sincloInfo.custom.shareCoBrowse.begin.headerMessage) ? window.sincloInfo.custom.shareCoBrowse.begin.headerMessage : location.host + 'の内容';
-      var content = common.isset(window.sincloInfo.custom.shareCoBrowse.begin.content) ? window.sincloInfo.custom.shareCoBrowse.end.content : location.host + 'が閲覧ページへのアクセスを求めています。<br>許可しますか';
+      var content = common.isset(window.sincloInfo.custom.shareCoBrowse.begin.content) ? window.sincloInfo.custom.shareCoBrowse.begin.content : location.host + 'が閲覧ページへのアクセスを求めています。<br>許可しますか';
       popup.ok = function() {
         var sincloBox = document.getElementById("sincloBox");
         if( sincloBox ){
