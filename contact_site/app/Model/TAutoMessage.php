@@ -40,6 +40,20 @@ class TAutoMessage extends AppModel {
     ]
   ];
 
+  /**
+   * checkBeforeValidates
+   * バリデーション実行前に、アクションタイプ別に不要なルールを削除する
+   * @param  String $actionType アクションタイプ
+   */
+  public function checkBeforeValidates($actionType) {
+    if ($actionType == C_AUTO_ACTION_TYPE_SENDMESSAGE) {
+      $this->validator()->remove('t_chatbot_scenario_id');
+    } else
+    if ($actionType == C_AUTO_ACTION_TYPE_SELECTSCENARIO) {
+      $this->validator()->remove('action');
+    }
+  }
+
   public function checkActivity($json){
     $activity = json_decode($json['activity'], true);
     $type = (!empty($activity['conditionType'])) ? $activity['conditionType'] : "";
