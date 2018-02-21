@@ -67,9 +67,16 @@ class LoginController extends AppController {
           ],
         ]);
         $mAgreementData = $this->MAgreement->find('all', [
-          'fields' => 'trial_end_day,admin_password',
+          'fields' => 'trial_end_day',
           'conditions' => [
             'm_companies_id' => $userInfo['MCompany']['id']
+          ],
+        ]);
+        $mUserData = $this->MUser->find('all', [
+          'fields' => 'change_password_flg',
+          'conditions' => [
+            'm_companies_id' => $userInfo['MCompany']['id'],
+            'mail_address' => $this->request->data['MUser']['mail_address']
           ],
         ]);
         if(!empty($trialCompany)) {
@@ -83,7 +90,7 @@ class LoginController extends AppController {
             return;
           }
         }
-        if($mAgreementData[0]['MAgreement']['admin_password'] == $this->request->data['MUser']['password']) {
+        if($mUserData[0]['MUser']['change_password_flg'] == C_NO_CHANGE_PASSWORD_FLG) {
           $this->redirect(['action' => 'editPassword']);
         }
         $loginInfo['TLogin']['m_companies_id'] = $userInfo['MCompany']['id'];
@@ -120,6 +127,7 @@ class LoginController extends AppController {
   public function editPassword(){
     if ( $this->request->is('post') ) {
       $inputData = $this->request->data;
+      $inputData['MUser']['change_password_flg'] = C_CHANGE_PASSWORD_FLG;
       $errors = [];
       $this->MUser->validate = $this->MUser->updateValidate;
 

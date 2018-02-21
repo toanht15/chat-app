@@ -1,8 +1,9 @@
 <div id="login_idx_bg"></div>
 <div id="login_idx">
-    <div id="content-area">
-      <div id = "content-area-title">初期パスワードを変更してください</div>
+    <div id="content-area-edit">
         <?= $this->element('Login/script') ?>
+        <?= $this->Html->image('sinclo_logo.png', array('alt' => 'アイコン', 'width' => 231, 'height' => 59, 'style'=>'margin: 30px auto 0 auto; display: block'))?>
+        <div id = "content-area-title" style = "margin-top: 30px;font-weight:bold;">初期パスワードを変更してください</div>
         <div class="edit_form_area">
           <?php if ($notSupportBrowser) { ?>
             <pre style="font-size: 13px">
