@@ -1289,6 +1289,17 @@ img.alignright {
 .wp-custom-header-video-button {
   display: none
 }
+@media (max-width: 767px) {
+  .breadcrumb{
+    font-size: 30px;
+  }
+  .site-inner {
+    font-size: 30px;
+  }
+  .eachElement input, .eachElement select, .eachElement textarea {
+    font-size: 30px;
+  }
+}
 .page-header {
   color: #fff;
   padding: 120px 0 60px;
@@ -1297,7 +1308,7 @@ img.alignright {
   background-size: auto;
   background-position: 45%;
   position: relative;
-  position: relative
+  background-repeat: no-repeat;
 }
 .page-header:before {
   content: '';
