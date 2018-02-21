@@ -654,8 +654,8 @@
     },
     startWindowSync: function(obj) {
       if ( userInfo.accessType !== Number(cnst.access_type.guest) ) return false;
-      var title = common.isset(window.sincloInfo.custom.shareBrowse.begin.headerMessage) ? window.sincloInfo.custom.shareBrowse.begin.headerMessage : location.host + 'の内容';
-      var content = common.isset(window.sincloInfo.custom.shareBrowse.begin.content) ? window.sincloInfo.custom.shareBrowse.begin.content : location.host + 'が閲覧ページへのアクセスを求めています。<br>許可しますか';
+      var title = (common.isset(window.sincloInfo.custom) && common.isset(window.sincloInfo.custom.shareBrowse.begin.headerMessage)) ? window.sincloInfo.custom.shareBrowse.begin.headerMessage : location.host + 'の内容';
+      var content = (common.isset(window.sincloInfo.custom) && common.isset(window.sincloInfo.custom.shareBrowse.begin.content)) ? window.sincloInfo.custom.shareBrowse.begin.content : location.host + 'が閲覧ページへのアクセスを求めています。<br>許可しますか';
       popup.ok = function(){
         userInfo.connectToken = obj.connectToken;
         browserInfo.resetPrevList();
@@ -692,8 +692,8 @@
     },
     startCoBrowseOpen : function(obj) {
       if ( userInfo.accessType !== Number(cnst.access_type.guest) ) return false;
-      var title = common.isset(window.sincloInfo.custom.shareCoBrowse.begin.headerMessage) ? window.sincloInfo.custom.shareCoBrowse.begin.headerMessage : location.host + 'の内容';
-      var content = common.isset(window.sincloInfo.custom.shareCoBrowse.begin.content) ? window.sincloInfo.custom.shareCoBrowse.begin.content : location.host + 'が閲覧ページへのアクセスを求めています。<br>許可しますか';
+      var title = (common.isset(window.sincloInfo.custom) && common.isset(window.sincloInfo.custom.shareCoBrowse.begin.headerMessage)) ? window.sincloInfo.custom.shareCoBrowse.begin.headerMessage : location.host + 'の内容';
+      var content = (common.isset(window.sincloInfo.custom) && common.isset(window.sincloInfo.custom.shareCoBrowse.begin.content)) ? window.sincloInfo.custom.shareCoBrowse.begin.content : location.host + 'が閲覧ページへのアクセスを求めています。<br>許可しますか';
       popup.ok = function() {
         var sincloBox = document.getElementById("sincloBox");
         if( sincloBox ){
@@ -731,8 +731,8 @@
         }
 
         // 終了通知
-        var title = common.isset(window.sincloInfo.custom.shareCoBrowse.end.headerMessage) ? window.sincloInfo.custom.shareCoBrowse.end.headerMessage : location.host + 'の内容';
-        var content = common.isset(window.sincloInfo.custom.shareCoBrowse.end.content) ? window.sincloInfo.custom.shareCoBrowse.end.content : location.host + 'との画面共有を終了しました';
+        var title = (common.isset(window.sincloInfo.custom) && common.isset(window.sincloInfo.custom.shareCoBrowse.end.headerMessage)) ? window.sincloInfo.custom.shareCoBrowse.end.headerMessage : location.host + 'の内容';
+        var content = (common.isset(window.sincloInfo.custom) && common.isset(window.sincloInfo.custom.shareCoBrowse.end.content)) ? window.sincloInfo.custom.shareCoBrowse.end.content : location.host + 'との画面共有を終了しました';
         popup.ok = function(){
           laUtil.disconnect();
           this.remove();
@@ -1342,8 +1342,8 @@
       sessionStorage.removeItem('doc');
 
       // 終了通知
-      var title = common.isset(window.sincloInfo.custom.shareDocument.begin.headerMessage) ? window.sincloInfo.custom.shareDocument.begin.headerMessage : location.host + 'の内容';
-      var content = common.isset(window.sincloInfo.custom.shareDocument.begin.content) ? window.sincloInfo.custom.shareDocument.begin.content : location.host + 'が資料共有を求めています。<br>許可しますか';
+      var title = (common.isset(window.sincloInfo.custom) && common.isset(window.sincloInfo.custom.shareDocument.begin.headerMessage)) ? window.sincloInfo.custom.shareDocument.begin.headerMessage : location.host + 'の内容';
+      var content = (common.isset(window.sincloInfo.custom) && common.isset(window.sincloInfo.custom.shareDocument.begin.content)) ? window.sincloInfo.custom.shareDocument.begin.content : location.host + 'が資料共有を求めています。<br>許可しますか';
       popup.ok = function(){
         var size = browserInfo.windowSize();
         var params = {
@@ -1364,8 +1364,8 @@
     },
     docDisconnect: function(){
       // 終了通知
-      var title = common.isset(window.sincloInfo.custom.shareDocument.end.headerMessage) ? window.sincloInfo.custom.shareDocument.end.headerMessage : location.host + 'の内容';
-      var content = common.isset(window.sincloInfo.custom.shareDocument.end.content) ? window.sincloInfo.custom.shareDocument.end.content : location.host + 'との資料共有を終了しました';
+      var title = (common.isset(window.sincloInfo.custom) && common.isset(window.sincloInfo.custom.shareDocument.end.headerMessage)) ? window.sincloInfo.custom.shareDocument.end.headerMessage : location.host + 'の内容';
+      var content = (common.isset(window.sincloInfo.custom) && common.isset(window.sincloInfo.custom.shareDocument.end.content)) ? window.sincloInfo.custom.shareDocument.end.content : location.host + 'との資料共有を終了しました';
       popup.ok = function(){
         this.remove();
       };
@@ -1433,8 +1433,8 @@
       }
 
       // 終了通知
-      var title = location.host + 'の内容';
-      var content = location.host + 'との画面共有を終了しました';
+      var title = (common.isset(window.sincloInfo.custom) && common.isset(window.sincloInfo.custom.shareBrowse.end.headerMessage)) ? window.sincloInfo.custom.shareBrowse.end.headerMessage : location.host + 'の内容';
+      var content = (common.isset(window.sincloInfo.custom) && common.isset(window.sincloInfo.custom.shareBrowse.end.content)) ? window.sincloInfo.custom.shareBrowse.end.content : location.host + 'との画面共有を終了しました';
       popup.ok = function(){
         laUtil.disconnect();
         this.remove();
