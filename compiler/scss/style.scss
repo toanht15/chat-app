@@ -6765,7 +6765,7 @@ ul.naviBtn {
                   border: none;
 
                   &.hearingVariableNameLabel {
-                    width: 30%;
+                    width: 13.5em;
                   }
                   &.hearingVariableTypeLabel {
                     width: 10em;
@@ -6774,7 +6774,7 @@ ul.naviBtn {
                     width: auto;
                   }
                   &.hearginVariableBtnGroupLabel {
-                    width: 6.5em;
+                    width: 4em;
                   }
 
                 }
@@ -6784,6 +6784,10 @@ ul.naviBtn {
                   input[type="text"] {
                     width: calc(100% - 3px);
                   }
+                  &.btnBlock {
+                    padding-left: 0;
+                  }
+
                 }
               }
 
