@@ -1025,7 +1025,7 @@ class HistoriesController extends AppController {
           'alias' => 'chat',
           'fields' => [
             'chat.*',
-            '( CASE  WHEN chat.cmp = 0 AND notice > 0 AND chat.cus > 0 THEN "未入室" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry > 0 THEN "拒否" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry = 0 AND auto_speech > 0 THEN "自動返信" WHEN chat.cmp = 0 AND chat.cus = 0 AND chat.sry = 0 AND auto_speech = 0 AND auto_message > 0 THEN "自動返信" WHEN chat.cmp = 0 AND chat.cus = 0 AND chat.sry = 0 AND auto_speech = 0 AND auto_message > 0 AND se_cus >= 0 AND se_auto >= 0 THEN "自動返信" ELSE "" END ) AS type'
+            '( CASE  WHEN chat.cmp = 0 AND notice > 0 AND chat.cus > 0 THEN "未入室" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry > 0 THEN "拒否" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry = 0 AND auto_speech > 0 THEN "自動返信" WHEN chat.cmp = 0 AND chat.cus = 0 AND chat.sry = 0 AND auto_speech = 0 AND auto_message > 0 THEN "自動返信" WHEN chat.cmp = 0 AND chat.cus >= 0 AND chat.sry = 0 AND auto_speech = 0 AND auto_message >= 0 AND (se_cus >= 0 AND se_auto >= 0) THEN "自動返信" ELSE "" END ) AS type'
           ],
           'conditions' => $chatLogCond
         ],
