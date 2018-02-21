@@ -1306,8 +1306,10 @@ img.alignright {
   padding: 12rem 0 6rem;
   text-align: center;
   background-size: auto;
-  background-position: 45%;
+  /*background-position-x: 72%;
+  background-position-y: 4%;*/
   position: relative;
+  background-color: #66bfcd52;
   background-repeat: no-repeat;
 }
 .page-header:before {
@@ -1327,6 +1329,7 @@ img.alignright {
   z-index: 1
 }
 .page-header h1 {
+  color: #fff;
   max-width: 1152px;
   margin: 0 auto;
   text-transform: uppercase
