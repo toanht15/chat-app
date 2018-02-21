@@ -939,9 +939,9 @@ io.sockets.on('connection', function (socket) {
                 Object.keys(scenariosObj).forEach(function(scenarioId, index, arr){
                   var scenarioObj = scenariosObj[Number(scenarioId)];
                   Object.keys(scenarioObj).forEach(function(sequenceId, index2, arr2){
-                    var sequenceArray = scenarioObj[sequenceId];
-                    sequenceArray.forEach(function(scenario, idx, array){
-                      scenarioMessages.push(scenario);
+                    var sequenceObj = scenarioObj[sequenceId];
+                    Object.keys(sequenceObj).forEach(function(categoryId, idx, array){
+                      scenarioMessages.push(sequenceObj[categoryId]);
                     });
                   });
                 });
@@ -949,7 +949,7 @@ io.sockets.on('connection', function (socket) {
               for (var i = 0; i < scenarioMessages.length; i++) {
                 var date = scenarioMessages[i].created;
                 date = new Date(date);
-                setList[fullDateTime(scenarioMessages[i].created)] = scenarioMessages[i];
+                setList[fullDateTime(date) + "_"] = scenarioMessages[i];
               }
               chatData.messages = objectSort(setList);
               obj.chat = chatData;
@@ -3172,13 +3172,16 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             elm.created = new Date();
             elm.sort = fullDateTime(elm.created);
           }
+          elm.applied = true;
           var sincloSession = sincloCore[obj.siteKey][obj.sincloSessionId];
           if(isset(sincloSession) && isset(sincloSession.scenario)) {
-            sincloCore[obj.siteKey][obj.sincloSessionId].scenario[elm.scenarioId] = {};
-            if(!isset(sincloCore[obj.siteKey][obj.sincloSessionId].scenario[elm.scenarioId][elm.sequenceNum])) {
-              sincloCore[obj.siteKey][obj.sincloSessionId].scenario[elm.scenarioId][elm.sequenceNum] = [];
+            if(!isset(sincloCore[obj.siteKey][obj.sincloSessionId].scenario[elm.scenarioId])) {
+              sincloCore[obj.siteKey][obj.sincloSessionId].scenario[elm.scenarioId] = {};
             }
-            sincloCore[obj.siteKey][obj.sincloSessionId].scenario[elm.scenarioId][elm.sequenceNum].push(elm);
+            if(!isset(sincloCore[obj.siteKey][obj.sincloSessionId].scenario[elm.scenarioId][elm.sequenceNum])) {
+              sincloCore[obj.siteKey][obj.sincloSessionId].scenario[elm.scenarioId][elm.sequenceNum] = {};
+            }
+            sincloCore[obj.siteKey][obj.sincloSessionId].scenario[elm.scenarioId][elm.sequenceNum][elm.categoryNum] = elm;
           }
           var ret = {
             siteKey: obj.siteKey,
@@ -3203,16 +3206,18 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   socket.on("sendScenarioMessage", function(d, ack){
     var obj = JSON.parse(d);
     var scenario = JSON.parse(JSON.stringify(obj));
-    scenario.created = new Date();
+    scenario.created = formatDateParse();
     scenario.sort = fullDateTime(scenario.created);
 
     var sincloSession = sincloCore[scenario.siteKey][scenario.sincloSessionId];
     if(isset(sincloSession) && isset(sincloSession.scenario)) {
-      sincloCore[scenario.siteKey][scenario.sincloSessionId].scenario[scenario.scenarioId] = {};
-      if(!isset(sincloCore[scenario.siteKey][scenario.sincloSessionId].scenario[scenario.scenarioId][scenario.sequenceNum])) {
-        sincloCore[scenario.siteKey][scenario.sincloSessionId].scenario[scenario.scenarioId][scenario.sequenceNum] = [];
+      if(!isset(sincloCore[scenario.siteKey][scenario.sincloSessionId].scenario[scenario.scenarioId])) {
+        sincloCore[scenario.siteKey][scenario.sincloSessionId].scenario[scenario.scenarioId] = {};
       }
-      sincloCore[scenario.siteKey][scenario.sincloSessionId].scenario[scenario.scenarioId][scenario.sequenceNum].push(scenario);
+      if(!isset(sincloCore[scenario.siteKey][scenario.sincloSessionId].scenario[scenario.scenarioId][scenario.sequenceNum])) {
+        sincloCore[scenario.siteKey][scenario.sincloSessionId].scenario[scenario.scenarioId][scenario.sequenceNum] = {};
+      }
+      sincloCore[scenario.siteKey][scenario.sincloSessionId].scenario[scenario.scenarioId][scenario.sequenceNum][scenario.categoryNum] = scenario;
     } else {
       console.log("sendScenarioMessage::sincloSession : " + scenario.sincloSessionId + "is null.");
       return false;
