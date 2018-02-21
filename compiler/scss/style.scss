@@ -6184,6 +6184,11 @@ ul.naviBtn {
 
           #TAutoMessageTChatbotScenarioId {
             padding: 5px;
+            &:disabled {
+              color: #CCCCCC;
+              border-color: #CCCCCC;
+              background-color: #FFFFFF;
+            }
           }
         }
 
@@ -6570,8 +6575,10 @@ ul.naviBtn {
 
       /* チャットボットシナリオ設定(追加・更新): 基本設定 */
       #tchatbotscenario_form_basic_settings {
+        max-width: 24em;
+        flex-basis: 24em;
         flex-grow: 1;
-        flex-basis: 35em;
+        flex-shrink: 2;
 
         ul {
           padding: 0.5em;
@@ -6600,8 +6607,9 @@ ul.naviBtn {
 
       /* チャットボットシナリオ設定(追加・更新): アクション */
       #tchatbotscenario_form_action {
+        flex-basis: 60em;
         flex-grow: 2;
-        flex-basis: 80em;
+        flex-shrink: 1;
         border-left: 1px solid #B7B7B7;
         border-right: 1px solid #B7B7B7;
 
@@ -6760,7 +6768,7 @@ ul.naviBtn {
                   border: none;
 
                   &.hearingVariableNameLabel {
-                    width: 30%;
+                    width: 13.5em;
                   }
                   &.hearingVariableTypeLabel {
                     width: 10em;
@@ -6769,7 +6777,7 @@ ul.naviBtn {
                     width: auto;
                   }
                   &.hearginVariableBtnGroupLabel {
-                    width: 6.5em;
+                    width: 4em;
                   }
 
                 }
@@ -6779,6 +6787,10 @@ ul.naviBtn {
                   input[type="text"] {
                     width: calc(100% - 3px);
                   }
+                  &.btnBlock {
+                    padding-left: 0;
+                  }
+
                 }
               }
 
@@ -9449,4 +9461,3 @@ ul#anotherWindow_color-bar-right {
 .fa-chevron-left:before {
   content: "";
 }
-
