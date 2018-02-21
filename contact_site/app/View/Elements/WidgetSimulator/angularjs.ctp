@@ -155,12 +155,14 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
       var message = $(this).val().replace(/^\s/, '');
       var name = $(this).attr('name');
 
-      // 自由入力エリアの表示状態によって、自由入力エリアへの入力・メッセージ送信の処理を行う
-      if ($scope.isTextAreaOpen) {
-        document.querySelector('#sincloChatMessage').value = message;
-      } else {
+      // ウィジェット設定とテキストエリアの表示状態により、選択された文字列の処理を変更する
+      if ($scope.simulatorSettings.settings['chat_radio_behavior'] == <?= C_WIDGET_RADIO_CLICK_SEND ?> || !$scope.isTextAreaOpen) {
+        // 即時送信
         $scope.addMessage('se', message)
         $scope.$emit('receiveVistorMessage', message, prefix)
+      } else {
+        // テキストエリアへの入力
+        document.querySelector('#sincloChatMessage').value = message;
       }
 
       // ラジオボタンを非活性にする
