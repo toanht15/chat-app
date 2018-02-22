@@ -336,7 +336,7 @@
                   <div class="eachRow submit-container  label-hidden  textbox-container">
                     <div class="wrap">
                       <div class="eachElement">
-                        <input id="submitButton" class="ninja-forms-field nf-element " type="button" value="〈 無料 〉トライアルを申し込む" onclick = "saveAct()">
+                        <input id="submitButton" class="ninja-forms-field nf-element " type="button" value="無料トライアルを申し込む" onclick = "saveAct()">
                       </div>
                     </div>
                   <div class="nf-after-field"></div>
