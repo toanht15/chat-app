@@ -3193,7 +3193,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             created: elm.created,
             sort: elm.sort,
             messageDistinction: messageDistinction,
-            achievementFlg: 0
+            achievementFlg: null
           };
           chatApi.set(ret);
         });
@@ -3202,12 +3202,28 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     });
   });
 
+  socket.on("addLastMessageToCV", function(d){
+    var obj = JSON.parse(d);
+    pool.query('select * from t_history_chat_logs where m_companies_id = ? and t_histories_id = ? and ((message_type >= 12 AND message_type <= 13) OR (message_type >= 21 AND message_type <= 24)) order by created desc limit 0,1;', [companyList[obj.siteKey], obj.historyId],
+      function(err, row){
+        if ( err !== null && err !== '' ) {
+          console.log("UPDATE lastMessage to cv is failed. historyId : " + obj.historyId);
+          return;
+        }
+        if(row.length !== 0) {
+          pool.query('update t_history_chat_logs set achievement_flg=0 where id = ?', [row[0].id], function(){
+
+          });
+        }
+      });
+  });
+
   // 都度：チャットデータ取得(オートメッセージのみ)
   socket.on("sendScenarioMessage", function(d, ack){
     var obj = JSON.parse(d);
     var scenario = JSON.parse(JSON.stringify(obj));
     scenario.created = formatDateParse();
-    scenario.sort = fullDateTime(scenario.created);
+    scenario.sort = fullDateTime(new Date(scenario.created));
 
     var sincloSession = sincloCore[scenario.siteKey][scenario.sincloSessionId];
     if(isset(sincloSession) && isset(sincloSession.scenario)) {
