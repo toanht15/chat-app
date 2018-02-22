@@ -77,9 +77,6 @@
         document.getElementById('registered').style.display = "block";
        }
       else {
-        socket.emit('settingReload', JSON.stringify({type:1, siteKey: "master"}),function(){
-          location.href = "<?= $this->Html->url('/Trial/thanks') ?>";
-        });
       }
     }).fail(function(data){
       var obj = JSON.parse(data.responseText);
