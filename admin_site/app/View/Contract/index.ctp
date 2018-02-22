@@ -63,6 +63,11 @@
                       echo '<p>【リアルタイムモニタ非表示】</p>';
                     }
                     break;
+                  case 'chatBotScenario':
+                    if($enabled) {
+                      echo '<p>【シナリオ設定】</p>';
+                    }
+                    break;
                 }
               }
             ?></td>
