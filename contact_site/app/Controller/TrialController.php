@@ -97,7 +97,7 @@ class TrialController extends AppController {
       'm_companies_id' => 0, // システムメールなので0で登録
       'mail_type_cd' => 'TL001',
       'from_address' => MailSenderComponent::MAIL_SYSTEM_FROM_ADDRESS,
-      'from_name' => 'sinclo(シンクロ)',
+      'from_name' => 'sinclo(メディアリンク株式会社)',
       'to_address' => $data['Contract']['user_mail_address'],
       'subject' => $mailTemplateData[0]['MSystemMailTemplate']['subject'],
       'body' => $mailBodyData,
@@ -108,8 +108,8 @@ class TrialController extends AppController {
 
     //お客さん向け
     $sender = new MailSenderComponent();
-    $sender->setFrom(MailSenderComponent::MAIL_SYSTEM_FROM_ADDRESS);
-    $sender->setFromName('sinclo(シンクロ)');
+    $sender->setFrom(self::ML_MAIL_ADDRESS);
+    $sender->setFromName('sinclo（シンクロ）');
     $sender->setTo($data['Contract']['user_mail_address']);
     $sender->setSubject($mailTemplateData[0]['MSystemMailTemplate']['subject']);
     $sender->setBody($mailBodyData);
@@ -125,8 +125,8 @@ class TrialController extends AppController {
 
     //会社向け
     $sender = new MailSenderComponent();
-    $sender->setFrom(MailSenderComponent::MAIL_SYSTEM_FROM_ADDRESS);
-    $sender->setFromName('sinclo(シンクロ)');
+    $sender->setFrom($data['Contract']['user_mail_address']);
+    $sender->setFromName($data['MCompany']['company_name'].'　'.$data['MAgreements']['application_name']);
     $sender->setTo(self::ML_MAIL_ADDRESS);
     $sender->setSubject($mailTemplateData[1]['MSystemMailTemplate']['subject']);
     $mailBodyData = str_replace(self::COMPANY_NAME, $data['MCompany']['company_name'], $mailTemplateData[1]['MSystemMailTemplate']['mail_body']);

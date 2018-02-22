@@ -40,7 +40,7 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
 <!-- /* 上部カラーバー(ここから) */ -->
 <div id="color-bar" class="card-shadow">
     <ul id="color-bar-right" class="fRight">
-      <?php if(!empty($trialTime)) { ?>
+      <?php if(!empty($trialTime) && $userInfo['permission_level'] != 99) { ?>
         <li class="fLeft"><p><?= h($trialTime) ?></p></li>
       <?php } ?>
         <li class="fLeft"><p><?= h($userInfo['display_name']) ?>さん</p></li>
