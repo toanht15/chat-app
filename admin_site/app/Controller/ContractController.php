@@ -151,6 +151,8 @@ class ContractController extends AppController
       $editData = $this->MCompany->read(null, $id);
       // オプションを別領域に設定
       $editData['MCompany']['options']['refCompanyData'] = json_decode($editData['MCompany']['core_settings'],TRUE)['refCompanyData'];
+      $editData['MCompany']['options']['chatbotScenario'] = json_decode($editData['MCompany']['core_settings'],TRUE)['chatbotScenario'];
+
       // ここまで
       $agreementData = $this->MAgreements->find('first',[
         'conditions' => array(
