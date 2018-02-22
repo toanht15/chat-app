@@ -6776,13 +6776,13 @@ ul.naviBtn {
                 background-repeat: no-repeat;
                 border-radius: 15px;
                 background-position: 1px;
+                cursor: pointer;
 
                 &.error {
                   background-image: url("/img/exclamation_mark.png");
                   background-color: #D69B9B;
                   width: 15px;
                   height: 15px;
-
                 }
               }
             }
