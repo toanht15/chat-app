@@ -115,6 +115,12 @@ class TChatbotScenarioController extends AppController {
 
       $activity = json_decode($editData[0]['TChatbotScenario']['activity']);
       foreach ($activity->scenarios as $key => &$action) {
+        if ($action->actionType == C_SCENARIO_ACTION_HEARING) {
+          foreach ($action->hearings as $key => &$param) {
+            // 自由入力エリアの許可状態のパラメーターがない場合、デフォルトで "1" を設定する
+            $param->allowInputLF = empty($param->allowInputLF) ? '1' : $param->allowInputLF;
+          }
+        }
         if ($action->actionType == C_SCENARIO_ACTION_SEND_MAIL) {
           // メール送信設定の取得
           if (!empty($action->mMailTransmissionId)) {
