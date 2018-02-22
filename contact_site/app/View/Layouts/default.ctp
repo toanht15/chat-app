@@ -155,11 +155,7 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
   <div id="container">
     <div id="header">
       <?php if( strcmp($this->name, 'Login') !== 0 && strcmp($this->action, 'baseForAnotherWindow') !== 0
-<<<<<<< HEAD
-      && strcmp($this->action, 'loadingHtml') !== 0) : ?>
-=======
       && strcmp($this->action, 'loadingHtml') !== 0 && strcmp($this->name, 'Trial') !== 0) : ?>
->>>>>>> origin/staging
         <?= $this->element('navi') ?>
       <?php endif ;?>
     </div>
