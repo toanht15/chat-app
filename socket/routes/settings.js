@@ -17,7 +17,7 @@ var getWidgetSettingSql  = "SELECT ws.*, com.core_settings, com.exclude_ips FROM
 
 var getTriggerListSql  = "SELECT am.* FROM t_auto_messages AS am ";
     getTriggerListSql += " INNER JOIN (SELECT * FROM m_companies WHERE company_key = ? AND del_flg = 0 ) AS com  ON ( com.id = am.m_companies_id )";
-    getTriggerListSql += " WHERE am.active_flg = 0 AND am.del_flg = 0 AND am.action_type IN (?);";
+    getTriggerListSql += " WHERE am.active_flg = 0 AND am.del_flg = 0 AND am.action_type IN (?,?);";
 
 /* GET home page. */
 router.get("/", function(req, res, next) {
@@ -274,6 +274,7 @@ router.get("/", function(req, res, next) {
                 // チャット
                 if (core_settings.hasOwnProperty('chat') && core_settings['chat']) {
                   actionTypeList.push('1');
+                  actionTypeList.push('2');
                 }
 
                 // 画面同期
@@ -287,7 +288,7 @@ router.get("/", function(req, res, next) {
                   sendData['widget']['display_time_flg'] = isNumeric(settings.displayTimeFlg);
                 }
 
-                pool.query(getTriggerListSql, [siteKey, actionTypeList.join(",")],
+                pool.query(getTriggerListSql, [siteKey, actionTypeList[0], actionTypeList[1]],
                   function(err, rows){
                     now = new Date();
                     nowDay = now.getDay();
@@ -516,7 +517,8 @@ router.get("/", function(req, res, next) {
                             "sitekey": siteKey,
                             "activity": activityObj,
                             "action_type": isNumeric(rows[i].action_type),
-                            "send_mail_flg": isNumeric(rows[i].send_mail_flg)
+                            "send_mail_flg": isNumeric(rows[i].send_mail_flg),
+                            "scenario_id": isNumeric(rows[i].t_chatbot_scenario_id)
                           });
                         }
                         res.send(sendData);

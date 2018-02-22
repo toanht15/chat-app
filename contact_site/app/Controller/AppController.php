@@ -52,7 +52,7 @@ class AppController extends Controller {
   ];
 
   public $helpers = ['formEx'];
-  public $uses = ['MUser', 'MWidgetSetting'];
+  public $uses = ['MUser', 'MWidgetSetting','MCompany','MAgreement'];
 
   public $userInfo;
   public $coreSettings;
@@ -77,7 +77,8 @@ class AppController extends Controller {
     C_COMPANY_USE_SEND_FILE => false, //ファイル送信
     C_COMPANY_USE_SECURITY_LOGIN_IP_FILTER => false, // セキュリティ設定（IP制限）
     C_COMPANY_USE_IMPORT_EXCEL_AUTO_MESSAGE => false, // オートメッセージExcelインポート
-    C_COMPANY_USE_OPERATOR_PRESENCE_VIEW => false // オペレータ在席状況確認
+    C_COMPANY_USE_OPERATOR_PRESENCE_VIEW => false, // オペレータ在席状況確認
+    C_COMPANY_USE_CHATBOT_SCENARIO => false, // シナリオ設定
   ];
 
   private $secretKey = 'x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK';
@@ -236,6 +237,33 @@ class AppController extends Controller {
           $this->redirect("/");
         }
         break;
+    }
+
+    $trialCompany = $this->MCompany->find('all', [
+      'fields' => '*',
+      'conditions' => [
+        'id' => $this->userInfo['MCompany']['id'],
+        'trial_flg' => C_TRIAL_FLG
+      ],
+    ]);
+    if(!empty($trialCompany)) {
+      $trialEndDay = $this->MAgreement->find('all', [
+        'fields' => 'trial_end_day',
+        'conditions' => [
+          'm_companies_id' => $this->userInfo['MCompany']['id']
+        ],
+      ]);
+      //今日の日程
+      $today = date("Y/m/d");
+      //トライアル期間終了日
+      $trialEndDay = date("Y/m/d",strtotime($trialEndDay[0]['MAgreement']['trial_end_day']));
+      if(strtotime($today) <= strtotime($trialEndDay)){
+        // 何秒離れているかを計算
+        $seconddiff = abs(strtotime($today) - strtotime($trialEndDay));
+        // 日数に変換
+        $daydiff = $seconddiff / (60 * 60 * 24) + 1;
+        $this->set('trialTime','トライアル期間終了まであと'.$daydiff.'日です');
+      }
     }
   }
 

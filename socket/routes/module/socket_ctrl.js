@@ -21,10 +21,7 @@ var errlogger = log4js.getLogger('error'); // エラー用のロガー取得
 var deblogger = log4js.getLogger('debug'); // デバッグ用のロガー取得
 
 //サーバインスタンス作成
-var io = require('socket.io')(process.env.WS_PORT,{
-    pingInterval: 5000,
-    pingTimeout: 10000
-    }),
+var io = require('socket.io')(process.env.WS_PORT),
     activeOperator = {}, // 待機中オペレーター
     sincloCore = {}, // socketIDの管理
     connectList = {}, // socketIDをキーとした管理
@@ -114,8 +111,61 @@ var LaSessionCounter = function() {
     }
   }
 };
-
 var laSessionCounter = new LaSessionCounter();
+
+/**
+ * 機能有無管理クラス
+ */
+var CompanyFunctionManager = function() {
+  var _list = {};
+
+  return {
+    keyList : {
+      chat : 'chat',
+      synclo : 'synclo',
+      document : 'document',
+      videochat : 'videochat',
+      laCoBrowse : 'laCoBrowse',
+      chatLimitation : 'chatLimitation',
+      exportHistory : 'exportHistory',
+      deleteHistory : 'deleteHistory',
+      statistics : 'statistics',
+      dictionaryCategory : 'dictionaryCategory',
+      hideRealtimeMonitor : 'hideRealtimeMonitor',
+      operatingHour : 'operatingHour',
+      refCompanyData : 'refCompanyData',
+      freeInput : 'freeInput',
+      cv : 'cv',
+      autoMessageSendMail : 'autoMessageSendMail',
+      sendFile : 'sendFile',
+      loginIpFilter : 'loginIpFilter',
+      importExcelAutoMessage : 'importExcelAutoMessage',
+      operatorPresenceView : 'operatorPresenceView',
+      monitorPollingMode : 'monitorPollingMode'
+    },
+    set : function(companyKey, coreSettings) {
+      try {
+        if (typeof(coreSettings) === 'string') {
+          _list[companyKey] = JSON.parse(coreSettings);
+        } else {
+          // object
+          _list[companyKey] = coreSettings;
+        }
+      } catch(e) {
+        console.log("Error while set functionList companyKey : " + companyKey);
+      }
+    },
+    isEnabled : function(companyKey, funcName) {
+      var result = false;
+      if(isset(_list[companyKey]) && isset(_list[companyKey][funcName])) {
+        result = _list[companyKey][funcName];
+      }
+      return result;
+    }
+  }
+}
+
+var functionManager = new CompanyFunctionManager();
 
 // ユーザーIDの新規作成
 function makeUserId(){
@@ -213,6 +263,7 @@ function getCompanyList(){
       var row = rows[key[i]];
       companyList[row.company_key] = row.id;
       laSessionCounter.setMaxCount(row.company_key, row.la_limit_users);
+      functionManager.set(row.company_key, row.core_settings);
       if(!(row.company_key in customerList)) {
         console.log("new customerList : " + row.company_key);
         customerList[row.company_key] = {};
@@ -371,29 +422,49 @@ function getConnectInfo(o){
   if ( isset(responderId) && isset(connectToken) ) {
     o.responderId = responderId;
     o.connectToken = connectToken;
+  } else {
+    delete o['connectToken'];
+    if(!isset(coBrowseConnectToken)) {
+      delete o['responderId'];
+    }
   }
   if ( isset(responderId) && isset(coBrowseConnectToken) ) {
     o.responderId = responderId;
     o.coBrowseConnectToken = coBrowseConnectToken;
+  } else {
+    delete o['coBrowseConnectToken'];
+    if(!isset(connectToken)) {
+      delete o['responderId'];
+    }
   }
   if( isset(chatUserId) ) {
     o.chat = chatUserId;
+  } else {
+    o.chat = null;
   }
   var docShareId = getSessionId(o.siteKey, o.tabId, 'docShareId');
   if ( isset(docShareId) ) {
     o.docShareId = docShareId;
+  } else {
+    delete o['docShareId'];
   }
   var sincloSessionId = getSessionId(o.siteKey, o.tabId, 'sincloSessionId');
   if ( isset(sincloSessionId) ) {
     o.sincloSessionId = sincloSessionId;
+  } else {
+    o.sincloSessionId = null;
   }
   var orgName = getSessionId(o.siteKey, o.tabId, 'orgName');
   if ( isset(orgName) ) {
     o.orgName = orgName;
+  } else {
+    o.orgName = "";
   }
   var lbcCode = getSessionId(o.siteKey, o.tabId, 'lbcCode');
   if ( isset(lbcCode) ) {
     o.lbcCode = lbcCode;
+  } else {
+    o.lbcCode = "";
   }
   return o;
 }
@@ -405,6 +476,22 @@ function getIp(socket){
     ip = socket.handshake.headers['x-forwarded-for'];
   }
   return ip;
+}
+
+function getMessageTypeBySenarioActionType(type) {
+  var result = 3;
+  switch(Number(type)) {
+    case 1:
+      result = 21;
+      break;
+    case 2:
+      result = 22;
+      break;
+    case 3:
+      result = 23;
+      break;
+  }
+  return result;
 }
 
 // Landscapeの企業情報取得
@@ -483,19 +570,71 @@ function sendMail(autoMessageId, lastChatLogId, callback) {
       response.on('data', callback);
       return;
     } else {
-      console.log('企業詳細情報取得時にエラーが返却されました。 errorCode : ' + response.statusCode);
+      console.log('オートメッセージ設定メール通知時にエラーが返却されました。 errorCode : ' + response.statusCode);
       callback(false);
       return;
     }
   });
 
   req.on('error', function(error) {
-    console.log('企業詳細情報取得時にHTTPレベルのエラーが発生しました。 message : ' + error.message);
+    console.log('オートメッセージ設定メール通知時にHTTPレベルのエラーが発生しました。 message : ' + error.message);
     callback(false);
     return;
   });
 
   req.write(JSON.stringify({"accessToken":"x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK", "autoMessageId":autoMessageId, "lastChatLogId":lastChatLogId}));
+  req.end();
+}
+
+function sendSenarioMail(obj, callback) {
+  //ヘッダーを定義
+  var headers = {
+    'Content-Type':'application/json'
+  };
+
+  //オプションを定義
+  var options = {
+    host: process.env.SEND_SCENARIO_MESSAGE_MAIL_API_HOST,
+    port: process.env.SEND_SCENARIO_MESSAGE_MAIL_API_PORT,
+    path: process.env.SEND_SCENARIO_MESSAGE_MAIL_API_PATH,
+    method: 'POST',
+    headers: headers,
+    json: true,
+    agent: false
+  };
+
+  if(process.env.DB_HOST === 'localhost') {
+    options.rejectUnauthorized = false;
+  }
+
+  //リクエスト送信
+  var req = http.request(options, function (response) {
+    if(response.statusCode === 200) {
+      response.setEncoding('utf8');
+      response.on('data', callback);
+      return;
+    } else {
+      console.log('シナリオメール送信時にエラーが返却されました。 errorCode : ' + response.statusCode);
+      callback(false);
+      return;
+    }
+  });
+
+  req.on('error', function(error) {
+    console.log('シナリオメール送信時にHTTPレベルのエラーが発生しました。 message : ' + error.message);
+    callback(false);
+    return;
+  });
+
+  var historyId = getSessionId(obj.siteKey, obj.tabId, "historyId");
+  req.write(JSON.stringify({
+    "accessToken":"x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK",
+    "userHistoryId": historyId,
+    "mailType": obj.mailType,
+    "transmissionId": obj.transmissionId,
+    "templateId": obj.templateId,
+    "variables": obj.variables
+  }));
   req.end();
 }
 
@@ -794,6 +933,24 @@ io.sockets.on('connection', function (socket) {
                 }
                 setList[fullDateTime(autoMessages[i].created) + '_'] = autoMessages[i];
               }
+              var scenarioMessages = [];
+              if(obj.sincloSessionId in sincloCore[obj.siteKey] && 'scenario' in sincloCore[obj.siteKey][obj.sincloSessionId] ) {
+                var scenariosObj = sincloCore[obj.siteKey][obj.sincloSessionId].scenario;
+                Object.keys(scenariosObj).forEach(function(scenarioId, index, arr){
+                  var scenarioObj = scenariosObj[Number(scenarioId)];
+                  Object.keys(scenarioObj).forEach(function(sequenceId, index2, arr2){
+                    var sequenceObj = scenarioObj[sequenceId];
+                    Object.keys(sequenceObj).forEach(function(categoryId, idx, array){
+                      scenarioMessages.push(sequenceObj[categoryId]);
+                    });
+                  });
+                });
+              }
+              for (var i = 0; i < scenarioMessages.length; i++) {
+                var date = scenarioMessages[i].created;
+                date = new Date(date);
+                setList[fullDateTime(date) + "_"] = scenarioMessages[i];
+              }
               chatData.messages = objectSort(setList);
               obj.chat = chatData;
               emit.toMine('chatMessageData', obj, socket);
@@ -826,12 +983,12 @@ io.sockets.on('connection', function (socket) {
           insertData.created = (('created' in d)) ? new Date(d.created) : new Date();
 
 
-          // オートメッセージの場合は既読
-          if (Number(insertData.message_type === 3) ) {
+          // オートメッセージとシナリオの場合は既読
+          if (Number(insertData.message_type === 3) || Number(insertData.message_type === 22) || Number(insertData.message_type === 23)) {
             insertData.message_read_flg = 1;
             insertData.message_request_flg = chatApi.cnst.requestFlg.noFlg;
             insertData.message_distinction = d.messageDistinction;
-          } else if(Number(insertData.message_type)  === 1 && d.hasOwnProperty('notifyToCompany') && !d.notifyToCompany) {
+          } else if((Number(insertData.message_type)  === 1 && d.hasOwnProperty('notifyToCompany') && !d.notifyToCompany) || Number(insertData.message_type)  === 12 || Number(insertData.message_type)  === 13) {
           // サイト訪問者からのチャットで通知しない場合は既読にする
             insertData.message_read_flg = 1;
             insertData.message_distinction = d.messageDistinction;
@@ -840,7 +997,6 @@ io.sockets.on('connection', function (socket) {
           pool.query('INSERT INTO t_history_chat_logs SET ?', insertData, function(error,results,fields){
             if ( !isset(error) ) {
               if ( !isset(sincloCore[d.siteKey][d.tabId].sessionId)) return false;
-              var sId = sincloCore[d.siteKey][d.tabId].sessionId;
               var sendData = {
                 tabId: d.tabId,
                 chatId: results.insertId,
@@ -849,7 +1005,8 @@ io.sockets.on('connection', function (socket) {
                 ret: true,
                 chatMessage: d.chatMessage,
                 siteKey: d.siteKey,
-                matchAutoSpeech: !d.notifyToCompany
+                matchAutoSpeech: !d.notifyToCompany,
+                isScenarioMessage: d.isScenarioMessage
               };
 
               // 担当者のいない消費者からのメッセージの場合
@@ -877,7 +1034,7 @@ io.sockets.on('connection', function (socket) {
                   }
                   if (Number(insertData.message_type) === 3) return false;
                   // 書き込みが成功したら企業側に結果を返す
-                  emit.toCompany('sendChatResult', {
+                  var sendChatData = {
                     tabId: d.tabId,
                     sincloSessionId: sincloSessionId,
                     opFlg: sendData.opFlg,
@@ -889,8 +1046,21 @@ io.sockets.on('connection', function (socket) {
                     ret: true,
                     message: d.chatMessage,
                     siteKey: d.siteKey,
-                    notifyToCompany: d.notifyToCompany
-                  }, d.siteKey);
+                    notifyToCompany: d.isScenarioMessage ? !d.isScenarioMessage : d.notifyToCompany
+                  };
+                  if(functionManager.isEnabled(d.siteKey, functionManager.keyList.monitorPollingMode)) {
+                    var sId = sincloCore[d.siteKey][d.tabId].sessionId;
+                    Object.keys(customerList[d.siteKey]).forEach(function(key){
+                      if(key.indexOf(sId) >= 0) {
+                        sendChatData.customerInfo = customerList[d.siteKey][key];
+                        chatApi.getUnreadCnt(sendChatData.customerInfo, function (ret) {
+                          sendChatData.customerInfo['chatUnreadId'] = ret.chatUnreadId;
+                          sendChatData.customerInfo['chatUnreadCnt'] = ret.chatUnreadCnt ? ret.chatUnreadCnt : 0;
+                          emit.toCompany('sendChatResult', sendChatData, d.siteKey);
+                        });
+                      }
+                    });
+                  }
 
                   if(d.messageType === 1 && insertData.message_read_flg != 1) {
                     sincloCore[d.siteKey][d.tabId].chatUnreadCnt++;
@@ -940,7 +1110,8 @@ io.sockets.on('connection', function (socket) {
                 }
                 if (Number(insertData.message_type) === 3) return false;
                 // 書き込みが成功したら企業側に結果を返す
-                emit.toCompany('sendChatResult', {
+
+                var sendChatData = {
                   tabId: d.tabId,
                   sincloSessionId: sincloSessionId,
                   chatId: results.insertId,
@@ -951,8 +1122,19 @@ io.sockets.on('connection', function (socket) {
                   ret: true,
                   message: d.chatMessage,
                   siteKey: d.siteKey,
-                  notifyToCompany: d.notifyToCompany
-                }, d.siteKey);
+                  notifyToCompany: d.isScenarioMessage ? !d.isScenarioMessage : d.notifyToCompany
+                };
+
+                if(functionManager.isEnabled(d.siteKey, functionManager.keyList.monitorPollingMode)) {
+                  var sId = sincloCore[d.siteKey][d.tabId].sessionId;
+                  Object.keys(customerList[d.siteKey]).forEach(function(key){
+                    if(key.indexOf(sId) >= 0) {
+                      sendChatData.customerInfo = customerList[d.siteKey][key];
+                    }
+                  });
+                }
+
+                emit.toCompany('sendChatResult', sendChatData, d.siteKey);
                 if(d.messageType === 1) {
                   sincloCore[d.siteKey][d.tabId].chatUnreadCnt++;
                 }
@@ -1444,26 +1626,32 @@ io.sockets.on('connection', function (socket) {
                           }
                           //営業時間内の場合
                           if( Date.parse(new Date(date + publicHolidayData[i].start)) <= dateParse && dateParse < Date.parse(new Date(date + endTime)) ) {
-                            // チャット上限数をみる
-                            if ( scList.hasOwnProperty(d.siteKey) ) {
-                              var userIds = Object.keys(scList[d.siteKey].user);
-                              if ( userIds.length !== 0 ) {
-                                for (var i3 = 0; i3 < userIds.length; i3++) {
-                                  if ( Number(scList[d.siteKey].user[userIds[i]]) === Number(scList[d.siteKey].cnt[userIds[i]]) ) continue;
-                                  ret = true;
-                                  break;
-                                }
-                                //上限数を超えている場合
-                                if(ret != true) {
-                                  ret = false;
-                                  message = wating_call_sorry_message;
+                            //オペレータが待機している場合
+                            if ( (rows[0].display_type === 2 && getOperatorCnt(d.siteKey) > 0) ||
+                            (rows[0].display_type === 1 && getOperatorCnt(d.siteKey) > 0) ||
+                            (rows[0].display_type === 4 && getOperatorCnt(d.siteKey) > 0)
+                            ) {
+                              // チャット上限数をみる
+                              if ( scList.hasOwnProperty(d.siteKey) ) {
+                                var userIds = Object.keys(scList[d.siteKey].user);
+                                if ( userIds.length !== 0 ) {
+                                  for (var i3 = 0; i3 < userIds.length; i3++) {
+                                    if ( Number(scList[d.siteKey].user[userIds[i]]) === Number(scList[d.siteKey].cnt[userIds[i]]) ) continue;
+                                    ret = true;
+                                    break;
+                                  }
+                                  //上限数を超えている場合
+                                  if(ret != true) {
+                                    ret = false;
+                                    message = wating_call_sorry_message;
+                                  }
                                 }
                               }
-                              //待機中のオペレータがいない場合
-                              else {
-                                ret = false;
-                                message = no_standby_sorry_message;
-                              }
+                            }
+                            //待機中のオペレータがいない場合
+                            else {
+                              ret = false;
+                              message = no_standby_sorry_message;
                             }
                           }
                           //営業時間外の場合
@@ -1499,26 +1687,32 @@ io.sockets.on('connection', function (socket) {
                         //営業時間内の場合
                         if( Date.parse(new Date(date + timeData[i].start)) <= dateParse && dateParse < Date.parse(new Date(date + endTime)) ) {
                           check = true;
-                          // チャット上限数をみる
-                          if ( scList.hasOwnProperty(d.siteKey) ) {
-                            var userIds = Object.keys(scList[d.siteKey].user);
-                            if ( userIds.length !== 0 ) {
-                              for (var i2 = 0; i2 < userIds.length; i2++) {
-                                if ( Number(scList[d.siteKey].user[userIds[i]]) === Number(scList[d.siteKey].cnt[userIds[i]]) ) continue;
-                                ret = true;
-                                break;
-                              }
-                              //上限数を超えている場合
-                              if(ret != true) {
-                                ret = false;
-                                message = wating_call_sorry_message;
+                          //オペレータが待機している場合
+                          if ( (rows[0].display_type === 2 && getOperatorCnt(d.siteKey) > 0) ||
+                          (rows[0].display_type === 1 && getOperatorCnt(d.siteKey) > 0) ||
+                          (rows[0].display_type === 4 && getOperatorCnt(d.siteKey) > 0)
+                          ) {
+                            // チャット上限数をみる
+                            if ( scList.hasOwnProperty(d.siteKey) ) {
+                              var userIds = Object.keys(scList[d.siteKey].user);
+                              if ( userIds.length !== 0 ) {
+                                for (var i2 = 0; i2 < userIds.length; i2++) {
+                                  if ( Number(scList[d.siteKey].user[userIds[i]]) === Number(scList[d.siteKey].cnt[userIds[i]]) ) continue;
+                                  ret = true;
+                                  break;
+                                }
+                                //上限数を超えている場合
+                                if(ret != true) {
+                                  ret = false;
+                                  message = wating_call_sorry_message;
+                                }
                               }
                             }
-                            //待機中のオペレータがいない場合
-                            else {
-                              ret = false;
-                              message = no_standby_sorry_message;
-                            }
+                          }
+                          //待機中のオペレータがいない場合
+                          else {
+                            ret = false;
+                            message = no_standby_sorry_message;
                           }
                         }
                       }
@@ -1532,26 +1726,32 @@ io.sockets.on('connection', function (socket) {
                 }
                 //営業時間設定を利用しない場合
                 else {
-                  // チャット上限数をみる
-                  if ( scList.hasOwnProperty(d.siteKey) ) {
-                    var userIds = Object.keys(scList[d.siteKey].user);
-                    if ( userIds.length !== 0 ) {
-                      for (var i = 0; i < userIds.length; i++) {
-                        if ( Number(scList[d.siteKey].user[userIds[i]]) === Number(scList[d.siteKey].cnt[userIds[i]]) ) continue;
-                        ret = true;
-                        break;
-                      }
-                      //上限数を超えている場合
-                      if(ret != true) {
-                        ret = false;
-                        message = wating_call_sorry_message;
+                  //オペレータが待機している場合
+                  if ( (rows[0].display_type === 2 && getOperatorCnt(d.siteKey) > 0) ||
+                  (rows[0].display_type === 1 && getOperatorCnt(d.siteKey) > 0) ||
+                  (rows[0].display_type === 4 && getOperatorCnt(d.siteKey) > 0)
+                  ) {
+                    // チャット上限数をみる
+                    if ( scList.hasOwnProperty(d.siteKey) ) {
+                      var userIds = Object.keys(scList[d.siteKey].user);
+                      if ( userIds.length !== 0 ) {
+                        for (var i = 0; i < userIds.length; i++) {
+                          if ( Number(scList[d.siteKey].user[userIds[i]]) === Number(scList[d.siteKey].cnt[userIds[i]]) ) continue;
+                          ret = true;
+                          break;
+                        }
+                        //上限数を超えている場合
+                        if(ret != true) {
+                          ret = false;
+                          message = wating_call_sorry_message;
+                        }
                       }
                     }
-                    //待機中のオペレータがいない場合
-                    else {
-                      ret = false;
-                      message = no_standby_sorry_message;
-                    }
+                  }
+                  //待機中のオペレータがいない場合
+                  else {
+                    ret = false;
+                    message = no_standby_sorry_message;
                   }
                 }
               }
@@ -1569,6 +1769,19 @@ io.sockets.on('connection', function (socket) {
     }
   };
 
+  // 顧客情報取得
+  var customerApi = {
+    getInformations: function (visitorId, siteKey, callback) {
+      pool.query('SELECT informations FROM m_customers WHERE m_companies_id = ? AND visitors_id = ? LIMIT 1;', [companyList[siteKey], visitorId], function(err, row) {
+        if ( err !== null && err !== '' ) callback([]); // DB接続断対応
+        if(isset(row) && isset(row[0]) && isset(row[0].informations)) {
+          callback(JSON.parse(row[0].informations));
+        } else {
+          callback([]);
+        }
+      });
+    }
+  };
 
   // 接続時
   socket.on('connected', function (r) {
@@ -1726,67 +1939,7 @@ io.sockets.on('connection', function (socket) {
         emit.toCompany('getAccessInfo', data, res.siteKey);
         // 消費者にアクセス情報要求
         //emit.toClient('getAccessInfo', send, res.siteKey);
-        var arr = [];
-        var counter = 0;
-        var totalCounter = 0;
-        var chunkSize = 100;
-        var keyLength = Object.keys(customerList[res.siteKey]).length;
-        Object.keys(customerList[res.siteKey]).forEach(function(key){
-          var splitedKey = key.split("/#");
-          if (splitedKey.length === 2 && isset(splitedKey[1])) {
-            var targetSocketId = "/#" + splitedKey[1]
-            if(!io.sockets.connected[targetSocketId]) {
-              var targetTabId = customerList[res.siteKey][key].tabId;
-              console.log("【" + res.siteKey + "】 customerList key : " + key + " client is not exist. deleting. targetTabId : " + targetTabId);
-              if(targetTabId && targetTabId !== "") {
-                emit.toCompany('unsetUser', {siteKey: res.siteKey, tabId: targetTabId}, res.siteKey);
-              }
-              delete customerList[res.siteKey][key];
-
-              if(totalCounter === keyLength-1) {
-                emit.toMine("receiveAccessInfo", arr, socket);
-                arr = [];
-              }
-              totalCounter++;
-              return;
-            }
-          }
-          var val = getConnectInfo(customerList[res.siteKey][key]);
-          if(val.time) {
-            val.term = timeCalculator(val);
-          }
-          if(isset(data.contract.chat) && data.contract.chat) {
-            chatApi.getUnreadCnt(val, function (ret) {
-              val['chatUnreadId'] = ret.chatUnreadId;
-              val['chatUnreadCnt'] = ret.chatUnreadCnt ? ret.chatUnreadCnt : 0;
-              arr.push(val);
-              counter++;
-              if (counter === chunkSize) {
-                emit.toMine("receiveAccessInfo", arr, socket);
-                counter = 0;
-                arr = [];
-              }
-              if(totalCounter === keyLength-1) {
-                emit.toMine("receiveAccessInfo", arr, socket);
-                arr = [];
-              }
-              totalCounter++;
-            });
-          } else {
-            arr.push(val);
-            counter++;
-            if (counter === chunkSize) {
-              emit.toMine("receiveAccessInfo", arr, socket);
-              counter = 0;
-              arr = [];
-            }
-            if(totalCounter === keyLength-1) {
-              emit.toMine("receiveAccessInfo", arr, socket);
-              arr = [];
-            }
-            totalCounter++;
-          }
-        });
+        processReceiveAccessInfo(res.siteKey, socket);
       }
       else {
         chatApi.widgetCheck(res, function(err, ret){
@@ -1810,6 +1963,106 @@ io.sockets.on('connection', function (socket) {
       }
     }
   });
+
+  socket.on('getCustomerList', function(data){
+    var obj = JSON.parse(data);
+    if(isset(obj.siteKey)) {
+      emit.toMine('beginOfCustomerList', {}, socket);
+      processReceiveAccessInfo(obj.siteKey, socket);
+    }
+  });
+
+  function processReceiveAccessInfo(siteKey, socket) {
+    var counter = 0;
+    var totalCounter = 0;
+    var chunkSize = 100;
+    var keyLength = Object.keys(customerList[siteKey]).length;
+    var arr = [keyLength];
+    Object.keys(customerList[siteKey]).forEach(function (key) {
+      var splitedKey = key.split("/#");
+      if (splitedKey.length === 2 && isset(splitedKey[1])) {
+        var targetSocketId = "/#" + splitedKey[1]
+        if (!io.sockets.connected[targetSocketId]) {
+          var targetTabId = customerList[siteKey][key].tabId;
+          console.log("【" + siteKey + "】 customerList key : " + key + " client is not exist. deleting. targetTabId : " + targetTabId);
+          if (targetTabId && targetTabId !== "") {
+            emit.toCompany('unsetUser', {siteKey: siteKey, tabId: targetTabId}, siteKey);
+          }
+          delete customerList[siteKey][key];
+
+          if (totalCounter === keyLength - 1) {
+            emit.toMine("receiveAccessInfo", arr, socket);
+            arr = [keyLength];
+          }
+          totalCounter++;
+          return;
+        }
+      }
+      var val = getConnectInfo(customerList[siteKey][key]);
+      if (val.time) {
+        val.term = timeCalculator(val);
+      }
+      customerApi.getInformations(val.userId, val.siteKey, function (information) {
+        val.customerInfo = information;
+        if (functionManager.isEnabled(siteKey, functionManager.keyList.chat)) {
+          chatApi.getUnreadCnt(val, function (ret) {
+            val['chatUnreadId'] = ret.chatUnreadId;
+            val['chatUnreadCnt'] = ret.chatUnreadCnt ? ret.chatUnreadCnt : 0;
+            if(functionManager.isEnabled(siteKey, functionManager.keyList.hideRealtimeMonitor)
+              && functionManager.isEnabled(siteKey, functionManager.keyList.monitorPollingMode)
+              && ((isset(val['chatUnreadCnt']) && val['chatUnreadCnt'] === 0) && !isset(val['responderId']) && !isset(val['chat']))) {
+              // 何もしない
+            } else {
+              arr.push(val);
+              counter++;
+            }
+            if (counter === chunkSize) {
+              emit.toMine("receiveAccessInfo", arr, socket);
+              counter = 0;
+              arr = [keyLength];
+            }
+            if (totalCounter === keyLength - 1) {
+              emit.toMine("receiveAccessInfo", arr, socket);
+              if(functionManager.isEnabled(siteKey, functionManager.keyList.monitorPollingMode)) {
+                emit.toMine('endOfCustomerList', {}, socket);
+              }
+              arr = [keyLength];
+            }
+            totalCounter++;
+          });
+        } else {
+          if(functionManager.isEnabled(siteKey, functionManager.keyList.hideRealtimeMonitor)
+            && functionManager.isEnabled(siteKey, functionManager.keyList.monitorPollingMode)
+            && ((!isset(val['chatUnreadCnt']) || val['chatUnreadCnt'] === 0) && !isset(val['responderId']) && !isset(val['chat']))) {
+            // 何もしない
+          } else {
+            arr.push(val);
+            counter++;
+          }
+          if (counter === chunkSize) {
+            emit.toMine("receiveAccessInfo", arr, socket);
+            counter = 0;
+            arr = [keyLength];
+          }
+          if (totalCounter === keyLength - 1) {
+            emit.toMine("receiveAccessInfo", arr, socket);
+            if(functionManager.isEnabled(siteKey, functionManager.keyList.monitorPollingMode)) {
+              emit.toMine('endOfCustomerList', {}, socket);
+            }
+            arr = [keyLength];
+          }
+          totalCounter++;
+        }
+      });
+    });
+
+    if(Object.keys(customerList[siteKey]).length === 0) {
+      emit.toMine("receiveAccessInfo", arr, socket);
+      if(functionManager.isEnabled(siteKey, functionManager.keyList.monitorPollingMode)) {
+        emit.toMine('endOfCustomerList', {}, socket);
+      }
+    }
+  }
 
   socket.on("connectedForSync", function (data) {
     // ページ表示開始時間
@@ -1849,7 +2102,7 @@ io.sockets.on('connection', function (socket) {
       obj.ipAddress = getIp(socket);
     }
 
-    if( ('contract' in obj) && ('hideRealtimeMonitor' in obj.contract) && obj.contract.hideRealtimeMonitor === true) {
+    if( functionManager.isEnabled(obj.siteKey, functionManager.keyList.hideRealtimeMonitor) || functionManager.isEnabled(obj.siteKey, functionManager.keyList.monitorPollingMode)) {
 
     } else {
       emit.toCompany("sendCustomerInfo", obj, obj.siteKey);
@@ -1857,7 +2110,7 @@ io.sockets.on('connection', function (socket) {
 
     customerList[obj.siteKey][obj.accessId + '_' + obj.ipAddress + '_' + socket.id] = obj;
 
-    if ( ('contract' in obj) && ('chat' in obj.contract) && obj.contract.chat === false) return false;
+    if ( (('contract' in obj) && ('chat' in obj.contract) && obj.contract.chat === false) || functionManager.isEnabled(obj.siteKey, functionManager.keyList.monitorPollingMode)) return false;
     chatApi.sendUnreadCnt("sendChatInfo", obj, false);
   });
 
@@ -1910,7 +2163,7 @@ io.sockets.on('connection', function (socket) {
       sincloCore[obj.siteKey][obj.tabId] = {sincloSessionId: null, sessionId: null, subWindow: false, chatUnreadCnt: 0};
     }
     if ( isset(obj.sincloSessionId) && !isset(sincloCore[obj.siteKey][obj.sincloSessionId]) ) {
-      sincloCore[obj.siteKey][obj.sincloSessionId] = {sessionIds: {}, autoMessages: {}};
+      sincloCore[obj.siteKey][obj.sincloSessionId] = {sessionIds: {}, autoMessages: {}, scenario: {}};
     }
     if ('timeoutTimer' in sincloCore[obj.siteKey][obj.tabId]) {
       clearTimeout(sincloCore[obj.siteKey][obj.tabId].timeoutTimer);
@@ -2001,7 +2254,9 @@ io.sockets.on('connection', function (socket) {
             customerList[obj.siteKey][obj.accessId + '_' + obj.ipAddress + '_' + socket.id]['lbcCode'] = obj.lbcCode;
           }
         }
-        emit.toCompany('syncNewInfo', obj, obj.siteKey);
+        if(!functionManager.isEnabled(obj.siteKey, functionManager.keyList.monitorPollingMode)) {
+          emit.toCompany('syncNewInfo', obj, obj.siteKey);
+        }
       });
     }
     if(ack) {
@@ -2011,12 +2266,16 @@ io.sockets.on('connection', function (socket) {
   // ウィジェットが生成されたことを企業側に通知する
   socket.on("syncReady", function(data){
     var obj = JSON.parse(data);
-    emit.toCompany('syncNewInfo', obj, obj.siteKey);
+    if(!functionManager.isEnabled(obj.siteKey, functionManager.keyList.monitorPollingMode)) {
+      emit.toCompany('syncNewInfo', obj, obj.siteKey);
+    }
   });
   // アクティブ状態を送る
   socket.on("sendTabInfo", function(d){
     var obj = JSON.parse(d);
-    emit.toCompany('retTabInfo', d, obj.siteKey);
+    if(!functionManager.isEnabled(obj.siteKey, functionManager.keyList.monitorPollingMode)) {
+      emit.toCompany('retTabInfo', d, obj.siteKey);
+    }
 
     // 画面同期中は同期フレーム本体に送る
     if ( ('connectToken' in obj) && isset(obj.connectToken) ) {
@@ -2463,7 +2722,9 @@ io.sockets.on('connection', function (socket) {
       console.log("sendAutoChatMessage::sincloSession : " + chat.sincloSessionId + "is null.");
       return false;
     }
-    emit.toCompany('resAutoChatMessage', chat, chat.siteKey);
+    if(!functionManager.isEnabled(chat.siteKey, functionManager.keyList.monitorPollingMode)) {
+      emit.toCompany('resAutoChatMessage', chat, chat.siteKey);
+    }
     emit.toSameUser('resAutoChatMessage', chat, chat.siteKey, chat.sincloSessionId);
   });
 
@@ -2493,6 +2754,11 @@ io.sockets.on('connection', function (socket) {
       var created = new Date(obj.messages[i].created);
       obj.messages[i].messageType = chatApi.cnst.observeType.auto;
       setList[fullDateTime(Date.parse(created))] = obj.messages[i];
+    }
+    for (var i = 0; i < obj.scenarios.length; i++) {
+      if(!isset(obj.scenarios[i]) || !isset(obj.scenarios[i].created)) continue;
+      var created = new Date(obj.scenarios[i].created);
+      setList[fullDateTime(Date.parse(created))] = obj.scenarios[i];
     }
     var ret = {};
         ret.messages = objectSort(setList);
@@ -2862,6 +3128,124 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   });
 
   // ============================================
+  //  シナリオイベントハンドラ
+  // ============================================
+  socket.on('getScenario', function(data){
+    var obj = JSON.parse(data);
+    var result = {};
+    pool.query('select activity from t_chatbot_scenarios where m_companies_id = ? and id = ?;', [companyList[obj.siteKey], obj.scenarioId],
+      function(err, row){
+        if ( err !== null && err !== '' ) {
+          emit.toMine('resGetSenario', result, socket);
+          return;
+        }
+        if(row.length !== 0) {
+          result = JSON.parse(row[0].activity);
+        }
+        emit.toMine('resGetScenario', {id: obj.scenarioId, activity: result}, socket);
+      });
+  });
+
+  socket.on('processSendMail', function(data, ack){
+    var obj = JSON.parse(data);
+    sendSenarioMail(obj, function(result){
+      ack(result);
+    });
+  });
+
+  socket.on('storeScenarioMessage', function(data, ack){
+    var obj = JSON.parse(data);
+    //応対数検索、登録
+    getConversationCountUser(obj.userId,function(results) {
+      var messageDistinction;
+      if(results !== null){
+        //カウント数が取れなかったとき
+        if (Object.keys(results) && Object.keys(results).length === 0) {
+          messageDistinction = 1;
+        }
+        //カウント数が取れたとき
+        else {
+          messageDistinction = results[0].conversation_count;
+        }
+        obj.messages.forEach(function(elm, index, arr){
+          if(!isset(elm.created)) {
+            elm.created = new Date();
+            elm.sort = fullDateTime(elm.created);
+          }
+          elm.applied = true;
+          var sincloSession = sincloCore[obj.siteKey][obj.sincloSessionId];
+          if(isset(sincloSession) && isset(sincloSession.scenario)) {
+            if(!isset(sincloCore[obj.siteKey][obj.sincloSessionId].scenario[elm.scenarioId])) {
+              sincloCore[obj.siteKey][obj.sincloSessionId].scenario[elm.scenarioId] = {};
+            }
+            if(!isset(sincloCore[obj.siteKey][obj.sincloSessionId].scenario[elm.scenarioId][elm.sequenceNum])) {
+              sincloCore[obj.siteKey][obj.sincloSessionId].scenario[elm.scenarioId][elm.sequenceNum] = {};
+            }
+            sincloCore[obj.siteKey][obj.sincloSessionId].scenario[elm.scenarioId][elm.sequenceNum][elm.categoryNum] = elm;
+          }
+          var ret = {
+            siteKey: obj.siteKey,
+            tabId: obj.tabId,
+            userId: obj.userId,
+            mUserId: null,
+            chatMessage: elm.message,
+            messageType: getMessageTypeBySenarioActionType(elm.type),
+            created: elm.created,
+            sort: elm.sort,
+            messageDistinction: messageDistinction,
+            achievementFlg: null
+          };
+          chatApi.set(ret);
+        });
+      }
+      ack();
+    });
+  });
+
+  socket.on("addLastMessageToCV", function(d){
+    var obj = JSON.parse(d);
+    pool.query('select * from t_history_chat_logs where m_companies_id = ? and t_histories_id = ? and ((message_type >= 12 AND message_type <= 13) OR (message_type >= 21 AND message_type <= 24)) order by created desc limit 0,1;', [companyList[obj.siteKey], obj.historyId],
+      function(err, row){
+        if ( err !== null && err !== '' ) {
+          console.log("UPDATE lastMessage to cv is failed. historyId : " + obj.historyId);
+          return;
+        }
+        if(row.length !== 0) {
+          pool.query('update t_history_chat_logs set achievement_flg=0 where id = ?', [row[0].id], function(){
+
+          });
+        }
+      });
+  });
+
+  // 都度：チャットデータ取得(オートメッセージのみ)
+  socket.on("sendScenarioMessage", function(d, ack){
+    var obj = JSON.parse(d);
+    var scenario = JSON.parse(JSON.stringify(obj));
+    scenario.created = formatDateParse();
+    scenario.sort = fullDateTime(new Date(scenario.created));
+
+    var sincloSession = sincloCore[scenario.siteKey][scenario.sincloSessionId];
+    if(isset(sincloSession) && isset(sincloSession.scenario)) {
+      if(!isset(sincloCore[scenario.siteKey][scenario.sincloSessionId].scenario[scenario.scenarioId])) {
+        sincloCore[scenario.siteKey][scenario.sincloSessionId].scenario[scenario.scenarioId] = {};
+      }
+      if(!isset(sincloCore[scenario.siteKey][scenario.sincloSessionId].scenario[scenario.scenarioId][scenario.sequenceNum])) {
+        sincloCore[scenario.siteKey][scenario.sincloSessionId].scenario[scenario.scenarioId][scenario.sequenceNum] = {};
+      }
+      sincloCore[scenario.siteKey][scenario.sincloSessionId].scenario[scenario.scenarioId][scenario.sequenceNum][scenario.categoryNum] = scenario;
+    } else {
+      console.log("sendScenarioMessage::sincloSession : " + scenario.sincloSessionId + "is null.");
+      return false;
+    }
+    if(!functionManager.isEnabled(scenario.siteKey, functionManager.keyList.monitorPollingMode)) {
+      emit.toCompany('resScenarioMessage', scenario, scenario.siteKey);
+    }
+    emit.toSameUser('resScenarioMessage', scenario, scenario.siteKey, scenario.sincloSessionId);
+    ack({data: scenario});
+  });
+
+  // ============================================
   //  画面キャプチャ共有イベントハンドラ
   // ============================================
 
@@ -3069,7 +3453,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     }
   });
 
-  socket.on('settingReload', function (data) {
+  socket.on('settingReload', function (data, ack) {
     var obj = JSON.parse(data), targetKey;
     if ( isset(obj.type) && String(obj.siteKey) === "master") {
       switch (obj.type) {
@@ -3172,8 +3556,21 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             console.log("checkExists NOT sent.");
           }
           break;
+        case 9: // view all Obj count socket.emit('settingReload', JSON.stringify({type:79 targetKey: "demo", siteKey: "master"}));
+          console.log("getAllObj count --------------------------------------------------");
+          console.log("sincloCore : " + Object.keys(sincloCore[obj.targetKey]).length);
+          console.log("connectList : " + Object.keys(connectList).length);
+          console.log("c_connectList : " + Object.keys(c_connectList).length);
+          console.log("doc_connectList : " + Object.keys(doc_connectList).length);
+          console.log("customerList : " + Object.keys(customerList[obj.targetKey]).length);
+          console.log("End --------------------------------------------------------");
+          break;
         default:
+          break;
       }
+    }
+    if(ack) {
+      ack();
     }
   });
 
@@ -3526,7 +3923,9 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
           if ( scList.hasOwnProperty(info.siteKey) ) {
             sendData.scInfo = scList[info.siteKey].cnt;
           }
-          emit.toCompany('unsetUser', sendData, info.siteKey);
+          if(!functionManager.isEnabled(info.siteKey, functionManager.keyList.monitorPollingMode)) {
+            emit.toCompany('unsetUser', sendData, info.siteKey);
+          }
 
           if(sincloSessionId) {
             if(isset(sincloCore[info.siteKey][sincloSessionId])

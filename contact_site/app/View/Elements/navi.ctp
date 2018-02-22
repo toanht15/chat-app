@@ -40,6 +40,9 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
 <!-- /* 上部カラーバー(ここから) */ -->
 <div id="color-bar" class="card-shadow">
     <ul id="color-bar-right" class="fRight">
+      <?php if(!empty($trialTime) && $userInfo['permission_level'] != 99) { ?>
+        <li class="fLeft"><p><?= h($trialTime) ?></p></li>
+      <?php } ?>
         <li class="fLeft"><p><?= h($userInfo['display_name']) ?>さん</p></li>
         <li class="fRight" id="logout" onclick='location.href = "/Login/logout"'><p>ログアウト</p></li>
     </ul>
@@ -146,6 +149,9 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
         <div class="icon">
           <?= $this->htmlEx->naviLink('ｵｰﾄﾒｯｾｰｼﾞ', 'auto_message.png', ['href' => ['controller' => 'TAutoMessages', 'action' => 'index']]) ?>
         </div>
+        <div class="icon">
+          <?= $this->htmlEx->naviLink('シナリオ設定', 'scenario_setting.png', ['href' => ['controller' => 'TChatbotScenario', 'action' => 'index']]) ?>
+        </div>
       <?php endif; ?>
         <div class="icon">
           <?= $this->htmlEx->naviLink('定型文', 'dictionary.png', ['href' => ['controller' => 'TDictionaries', 'action' => 'index']]) ?>
@@ -217,7 +223,7 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
 
   });
 </script>
-<?php if(strcmp($_SERVER['SERVER_NAME'], '	sinclo.jp') === 0): ?>
+<?php if(strcmp($_SERVER['SERVER_NAME'], '  sinclo.jp') === 0): ?>
 <script type='text/javascript' src='https://ws1.sinclo.jp/client/5a2e2a75cb7e3.js' data-hide='1'></script>
 <script>
   document.addEventListener('sinclo:connected', function(evt) {

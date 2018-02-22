@@ -53,7 +53,7 @@ class ContractController extends AppController
   public function beforeFilter(){
     parent::beforeFilter();
     $this->set('title_for_layout', 'サイトキー管理');
-    $this->Auth->allow(['remoteSaveForm']);
+    $this->Auth->allow(['add','remoteSaveForm']);
     header('Access-Control-Allow-Origin: *');
   }
 
@@ -78,11 +78,15 @@ class ContractController extends AppController
     if( $this->request->is('post') ) {
       $this->autoRender = false;
       $this->layout = "ajax";
-      $this->log($this->data, LOG_DEBUG);
       $data = $this->getParams();
 
       try {
-        $this->processTransaction($data['MCompany'], $data['Contract'], $data['MAgreements']);
+        $addedCompanyInfo = $this->processTransaction($data['MCompany'], $data['Contract'], $data['MAgreements']);
+        return ison_encode(array(
+          'success' => true,
+          'message' => "OK",
+          'newCompanyId' => $addedCompanyInfo['id']
+        ));
       } catch(Exception $e) {
         $this->log("Exception Occured : ".$e->getMessage(), LOG_WARNING);
         $this->log($e->getTraceAsString(),LOG_WARNING);
@@ -120,6 +124,7 @@ class ContractController extends AppController
       $coreSetting = json_decode($companyEditData['MCompany']['core_settings'], TRUE);
       $saveData['MCompany']['options']['laCoBrowse'] = !empty($coreSetting['laCoBrowse']) ? $coreSetting['laCoBrowse'] : false;
       $saveData['MCompany']['options']['hideRealtimeMonitor'] = !empty($coreSetting['hideRealtimeMonitor']) ? $coreSetting['hideRealtimeMonitor'] : false;
+      $saveData['MCompany']['options']['monitorPollingMode'] = !empty($coreSetting['monitorPollingMode']) ? $coreSetting['monitorPollingMode'] : false;
       $companySaveData['MCompany']['core_settings'] = $this->getCoreSettingsFromContactTypesId($saveData['MCompany']['m_contact_types_id'], $saveData['MCompany']['options']);
       $this->MCompany->save($companySaveData,false);
 
@@ -146,6 +151,8 @@ class ContractController extends AppController
       $editData = $this->MCompany->read(null, $id);
       // オプションを別領域に設定
       $editData['MCompany']['options']['refCompanyData'] = json_decode($editData['MCompany']['core_settings'],TRUE)['refCompanyData'];
+      $editData['MCompany']['options']['chatbotScenario'] = json_decode($editData['MCompany']['core_settings'],TRUE)['chatbotScenario'];
+
       // ここまで
       $agreementData = $this->MAgreements->find('first',[
         'conditions' => array(
@@ -209,7 +216,7 @@ class ContractController extends AppController
     try {
       $transaction = $this->TransactionManager->begin();
       $addedCompanyInfo = $this->createCompany($companyInfo);
-      $this->createAgreementInfo($addedCompanyInfo, $companyInfo, $agreementInfo);
+      $this->createAgreementInfo($addedCompanyInfo, $companyInfo,$userInfo,$agreementInfo);
       $this->createFirstAdministratorUser($addedCompanyInfo['id'], $userInfo);
       $this->addDefaultChatPersonalSettings($addedCompanyInfo['id'], $companyInfo);
       $this->addDefaultWidgetSettings($addedCompanyInfo['id'], $companyInfo);
@@ -222,6 +229,7 @@ class ContractController extends AppController
       throw $e;
     }
     $this->TransactionManager->commit($transaction);
+    return $addedCompanyInfo;
   }
 
   private function upgradeProcess($beforeContactTypeId, $afterContactTypeId, $targetCompanyId, $companyInfo) {
@@ -310,21 +318,59 @@ class ContractController extends AppController
     ];
   }
 
-  private function createAgreementInfo($addedCompanyInfo, $companyInfo, $agreementInfo) {
+  private function createAgreementInfo($addedCompanyInfo, $companyInfo, $userInfo, $agreementInfo) {
     $password = $this->generateRandomPassword(8);
 
     $this->MAgreements->create();
+    if(empty($agreementInfo['application_name'])) {
+      $agreementInfo['application_name'] = "";
+    }
+    if(empty($agreementInfo['application_department'])) {
+      $agreementInfo['application_department'] = "";
+    }
+    if(empty($agreementInfo['application_position'])) {
+      $agreementInfo['application_position'] = "";
+    }
+    if(empty($agreementInfo['installation_url'])) {
+      $agreementInfo['installation_url'] = "";
+    }
+    if(empty($agreementInfo['telephone_number'])) {
+      $agreementInfo['telephone_number'] = "";
+    }
+    if(empty($agreementInfo['business_model'])) {
+      $agreementInfo['business_model'] = "";
+    }
+    if(empty($agreementInfo['note'])) {
+      $agreementInfo['note'] = "";
+    }
+    if(empty($agreementInfo['agreement_start_day'])) {
+      $agreementInfo['agreement_start_day'] = "";
+    }
+    if(empty($agreementInfo['agreement_end_day'])) {
+      $agreementInfo['agreement_end_day'] = "";
+    }
+    if(empty($agreementInfo['trial_start_day'])) {
+      $agreementInfo['trial_start_day'] = "";
+    }
+    if(empty($agreementInfo['trial_end_day'])) {
+      $agreementInfo['trial_end_day'] = "";
+    }
     $this->MAgreements->set([
       'm_companies_id' => $addedCompanyInfo['id'],
+      'business_model' => $agreementInfo['business_model'],
       'application_day' => date("Y-m-d"), // FIXME（自動発行）
       'trial_start_day' => $agreementInfo['trial_start_day'],
       'trial_end_day' => $agreementInfo['trial_end_day'],
       'agreement_start_day' => $agreementInfo['agreement_start_day'],
       'agreement_end_day' => $agreementInfo['agreement_end_day'],
-      'admin_password' => $password
+      'application_department' => $agreementInfo['application_department'],
+      'application_position' => $agreementInfo['application_position'],
+      'application_name' => $agreementInfo['application_name'],
+      'installation_url' => $agreementInfo['installation_url'],
+      'admin_password' => $password,
+      'telephone_number' => $agreementInfo['telephone_number'],
+      'note' => $agreementInfo['note'],
     ]);
-    $this->MAgreements->save();
-
     // スーパー管理者情報追加
     $tmpData = [
       "m_companies_id" => $addedCompanyInfo['id'],
@@ -339,24 +385,31 @@ class ContractController extends AppController
     if(!$this->MUser->validates()) {
       throw new Exception("MUser validation error");
     }
+    $this->MAgreements->save();
     $this->MUser->save();
   }
 
   private function createFirstAdministratorUser($m_companies_id, $userInfo) {
+    $errors = [];
     $tmpData = [
         "m_companies_id" => $m_companies_id,
         "user_name" => $userInfo["user_name"],
         "display_name" => $userInfo["user_display_name"],
         "mail_address" => $userInfo["user_mail_address"],
+        "change_password_flg" => C_NO_CHANGE_PASSWORD_FLG,
         "permission_level" => C_AUTHORITY_ADMIN,
         "new_password" => $userInfo["user_password"]
     ];
     $this->MUser->create();
     $this->MUser->set($tmpData);
     if(!$this->MUser->validates()) {
-      throw new Exception("MUser validation error");
+      $this->MAgreements->rollback();
+      $this->MUser->rollback();
+      throw new Exception($errors);
     }
-    $this->MUser->save();
+    else {
+      $this->MUser->save();
+    }
   }
 
   private function createSuperAdministratorUser($addedCompanyInfo, $userInfo) {

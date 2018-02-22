@@ -23,13 +23,13 @@ define('C_AUTHORITY_SUPER', 99); // ML管理者
 
 //契約プラン
 // プレミアムプラン
-define('C_CONTRACT_FULL_PLAN',           "{\"chat\": true, \"synclo\": true, \"document\": true, \"statistics\": true, \"chatLimitation\": true, \"exportHistory\": true, \"deleteHistory\": true, \"dictionaryCategory\": true, \"laCoBrowse\": false, \"hideRealtimeMonitor\": false, \"operatingHour\": true, \"refCompanyData\": false, \"freeInput\": true, \"cv\": true, \"autoMessageSendMail\": true, \"sendFile\": true, \"loginIpFilter\": true, \"importExcelAutoMessage\": true, \"operatorPresenceView\": true}");
+define('C_CONTRACT_FULL_PLAN',           "{\"chat\": true, \"synclo\": true, \"document\": true, \"statistics\": true, \"chatLimitation\": true, \"exportHistory\": true, \"deleteHistory\": true, \"dictionaryCategory\": true, \"laCoBrowse\": false, \"hideRealtimeMonitor\": false, \"operatingHour\": true, \"refCompanyData\": false, \"freeInput\": true, \"cv\": true, \"autoMessageSendMail\": true, \"sendFile\": true, \"loginIpFilter\": true, \"importExcelAutoMessage\": true, \"operatorPresenceView\": true, \"monitorPollingMode\": false, \"chatbotScenario\": false}");
 // チャットベーシックプラン
-define('C_CONTRACT_CHAT_BASIC_PLAN',     "{\"chat\": true, \"synclo\": false, \"document\": false, \"statistics\": false, \"chatLimitation\": false, \"exportHistory\": false, \"deleteHistory\": false, \"dictionaryCategory\": false, \"laCoBrowse\": false, \"hideRealtimeMonitor\": false, \"operatingHour\": false, \"refCompanyData\": false, \"freeInput\": false, \"cv\": false, \"autoMessageSendMail\": false, \"sendFile\": false, \"loginIpFilter\": false, \"importExcelAutoMessage\": false, \"operatorPresenceView\": false}");
+define('C_CONTRACT_CHAT_BASIC_PLAN',     "{\"chat\": true, \"synclo\": false, \"document\": false, \"statistics\": false, \"chatLimitation\": false, \"exportHistory\": false, \"deleteHistory\": false, \"dictionaryCategory\": false, \"laCoBrowse\": false, \"hideRealtimeMonitor\": false, \"operatingHour\": false, \"refCompanyData\": false, \"freeInput\": false, \"cv\": false, \"autoMessageSendMail\": false, \"sendFile\": false, \"loginIpFilter\": false, \"importExcelAutoMessage\": false, \"operatorPresenceView\": false, \"monitorPollingMode\": false, \"chatbotScenario\": false}");
 // チャットスタンダードプラン
-define('C_CONTRACT_CHAT_PLAN',           "{\"chat\": true, \"synclo\": false, \"document\": false, \"statistics\": true, \"chatLimitation\": true, \"exportHistory\": true, \"deleteHistory\": true, \"dictionaryCategory\": true, \"laCoBrowse\": false, \"hideRealtimeMonitor\": false, \"operatingHour\": true, \"refCompanyData\": false, \"freeInput\": true, \"cv\": true, \"autoMessageSendMail\": true, \"sendFile\": true, \"loginIpFilter\": true, \"importExcelAutoMessage\": true, \"operatorPresenceView\": true}");
+define('C_CONTRACT_CHAT_PLAN',           "{\"chat\": true, \"synclo\": false, \"document\": false, \"statistics\": true, \"chatLimitation\": true, \"exportHistory\": true, \"deleteHistory\": true, \"dictionaryCategory\": true, \"laCoBrowse\": false, \"hideRealtimeMonitor\": false, \"operatingHour\": true, \"refCompanyData\": false, \"freeInput\": true, \"cv\": true, \"autoMessageSendMail\": true, \"sendFile\": true, \"loginIpFilter\": true, \"importExcelAutoMessage\": true, \"operatorPresenceView\": true, \"monitorPollingMode\": false, \"chatbotScenario\": false}");
 // 画面同期プラン
-define('C_CONTRACT_SCREEN_SHARING_PLAN', "{\"chat\": false, \"synclo\": true, \"document\": true, \"statistics\": false, \"chatLimitation\": false, \"exportHistory\": false, \"deleteHistory\": false, \"dictionaryCategory\": false, \"laCoBrowse\": false, \"hideRealtimeMonitor\": false, \"operatingHour\": true, \"refCompanyData\": false, \"freeInput\": false, \"cv\": false, \"autoMessageSendMail\": false, \"sendFile\": false, \"loginIpFilter\": true, \"importExcelAutoMessage\": false, \"operatorPresenceView\": true}");
+define('C_CONTRACT_SCREEN_SHARING_PLAN', "{\"chat\": false, \"synclo\": true, \"document\": true, \"statistics\": false, \"chatLimitation\": false, \"exportHistory\": false, \"deleteHistory\": false, \"dictionaryCategory\": false, \"laCoBrowse\": false, \"hideRealtimeMonitor\": false, \"operatingHour\": true, \"refCompanyData\": false, \"freeInput\": false, \"cv\": false, \"autoMessageSendMail\": false, \"sendFile\": false, \"loginIpFilter\": true, \"importExcelAutoMessage\": false, \"operatorPresenceView\": true, \"monitorPollingMode\": false, \"chatbotScenario\": false}");
 
 //契約プランID
 define('C_CONTRACT_FULL_PLAN_ID',"1");
@@ -40,6 +40,10 @@ define('C_CONTRACT_CHAT_BASIC_PLAN_ID',"4");
 //ML用アカウント
 define('C_MEDIALINK_ACCOUNT', "ML用アカウント"); // ML用アカウント
 define('C_MEDIALINK_PERMISSION_LEVEL', 99); // ML用パーミッション
+
+//初期パスワード変更フラグ
+define('C_NO_CHANGE_PASSWORD_FLG', 0); //変更してない
+define('C_CHANGE_PASSWORD_FLG', 1); //変更した
 
 //メールアドレス
 define('C_MAGREEMENT_MAIL_ADDRESS', "@ml.jp"); //mcompanyアドレス

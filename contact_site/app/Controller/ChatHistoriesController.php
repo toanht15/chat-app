@@ -741,7 +741,7 @@
         //ブラウザ
         $row['browser'] = $this->_userAgentCheckBrowser($val);
         //送信元ページ
-        if($val['THistoryChatLog']['message_type'] == 1) {
+        if($val['THistoryChatLog']['message_type'] == 1 || $val['THistoryChatLog']['message_type'] == 12 || $val['THistoryChatLog']['message_type'] == 13) {
           $row['sourcePage'] = $val['THistoryStayLog']['url'];
         }
         else{
@@ -755,7 +755,7 @@
           $row['transmissionKind'] = '訪問者';
           $row['transmissionPerson'] = '';
         }
-        if($val['THistoryChatLog']['message_type'] == 2) {
+        if($val['THistoryChatLog'][' '] == 2) {
           $row['transmissionKind'] = 'オペレーター';
           $row['transmissionPerson'] = $val['MUser']['display_name']."さん";
         }
@@ -776,6 +776,26 @@
           $row['transmissionPerson'] = $val['MUser']['display_name']."さん";
           $json = json_decode($val['THistoryChatLog']['message'], TRUE);
           $val['THistoryChatLog']['message'] = $json['fileName']."\n".$this->prettyByte2Str($json['fileSize']);
+        }
+        if($val['THistoryChatLog']['message_type'] == 12) {
+          $row['transmissionKind'] = '訪問者（ヒアリング回答）';
+          $row['transmissionPerson'] = '';
+        }
+        if($val['THistoryChatLog']['message_type'] == 13) {
+         $row['transmissionKind'] = '訪問者（選択肢回答）';
+         $row['transmissionPerson'] = '';
+        }
+        if($val['THistoryChatLog']['message_type'] == 21) {
+         $row['transmissionKind'] = 'シナリオメッセージ（テキスト発言）';
+         $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
+        }
+        if($val['THistoryChatLog']['message_type'] == 22) {
+         $row['transmissionKind'] = 'シナリオメッセージ（ヒアリング）';
+         $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
+        }
+        if($val['THistoryChatLog']['message_type'] == 23) {
+         $row['transmissionKind'] = 'シナリオメッセージ（選択肢）';
+         $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
         }
         if($val['THistoryChatLog']['message_type'] == 98 || $val['THistoryChatLog']['message_type'] == 99) {
           $row['transmissionKind'] = '通知メッセージ';
@@ -892,7 +912,22 @@
                 $message = $json['fileName']."\n".$this->prettyByte2Str($json['fileSize']);
               }
               $row = $this->_setData($date, "ファイル送信", $val['MUser']['display_name'], $message);
-            break;
+              break;
+            case 12: // 訪問者（シナリオ：ヒアリング回答）
+              $row = $this->_setData($date, "訪問者（ヒアリング回答）", "", $message);
+              break;
+            case 13: // 訪問者（シナリオ：選択肢回答）
+              $row = $this->_setData($date, "訪問者（選択肢回答）", "", $message);
+              break;
+            case 21: // シナリオメッセージ（テキスト発言）
+              $row = $this->_setData($date, "シナリオメッセージ（テキスト発言）", $this->userInfo['MCompany']['company_name'], $message);
+              break;
+            case 22: // シナリオメッセージ（ヒアリング）
+              $row = $this->_setData($date, "シナリオメッセージ（ヒアリング）", $this->userInfo['MCompany']['company_name'], $message);
+              break;
+            case 23: // シナリオメッセージ（選択肢）
+              $row = $this->_setData($date, "シナリオメッセージ（選択肢）", $this->userInfo['MCompany']['company_name'], $message);
+              break;
             case 98: // 入室メッセージ
             case 99: // 退室メッセージ
               $row = $this->_setData($date, "通知メッセージ", "", " - ".$val['MUser']['display_name']."が".$message."しました - ");
@@ -1283,11 +1318,11 @@
         }
         $chatStateList = $dbo2->buildStatement(
           [
-            'table' => "(SELECT t_histories_id,t_history_stay_logs_id,m_companies_id,message_type,notice_flg,created,message_read_flg, COUNT(*) AS count, ".$value."(achievement_flg) AS achievementFlg, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff,SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) cv,SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN notice_flg = 1 THEN 1 ELSE 0 END) notice,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message, SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus,SUM(CASE WHEN message_type = 1 AND message_read_flg = 0 THEN 1 ELSE 0 END) unread, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech FROM t_history_chat_logs AS THistoryChatLog GROUP BY t_histories_id ORDER BY t_histories_id)",
+            'table' => "(SELECT t_histories_id,t_history_stay_logs_id,m_companies_id,message_type,notice_flg,created,message_read_flg, COUNT(*) AS count, ".$value."(achievement_flg) AS achievementFlg, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff,SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) cv,SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN notice_flg = 1 THEN 1 ELSE 0 END) notice,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message,SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus,SUM(CASE WHEN message_type = 1 AND message_read_flg = 0 THEN 1 ELSE 0 END) unread, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech, SUM(CASE WHEN message_type >= 12 AND message_type <= 13 THEN 1 ELSE 0 END) se_cus, SUM(CASE WHEN message_type >= 21 AND message_type <= 24 THEN 1 ELSE 0 END) se_auto FROM t_history_chat_logs AS THistoryChatLog GROUP BY t_histories_id ORDER BY t_histories_id)",
             'alias' => 'chat',
             'fields' => [
               'chat.*',
-              '( CASE  WHEN chat.cmp = 0 AND notice > 0 AND chat.cus > 0 THEN "未入室" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry > 0 THEN "拒否" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry = 0 AND auto_speech > 0 THEN "自動返信" WHEN chat.cmp = 0 AND chat.cus = 0 AND chat.sry = 0 AND auto_speech = 0 AND auto_message > 0 THEN "自動返信" ELSE "" END ) AS type'
+              '( CASE  WHEN chat.cmp = 0 AND notice > 0 AND chat.cus > 0 THEN "未入室" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry > 0 THEN "拒否" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry = 0 AND auto_speech > 0 THEN "自動返信" WHEN chat.cmp = 0 AND chat.cus = 0 AND chat.sry = 0 AND auto_speech = 0 AND auto_message > 0 THEN "自動返信" WHEN chat.cmp = 0 AND chat.cus >= 0 AND chat.sry = 0 AND auto_speech = 0 AND auto_message >= 0 AND (se_cus >= 0 AND se_auto >= 0) THEN "自動返信" ELSE "" END ) AS type'
             ],
             'conditions' => $chatLogCond
           ],
@@ -1777,7 +1812,7 @@
           [
             'type' => 'INNER',
             'table' => '(SELECT * FROM t_history_chat_logs '.
-                 ' WHERE (m_users_id IS NOT NULL OR message_type = 5)'.
+                 ' WHERE (m_users_id IS NOT NULL OR message_type = 5 OR (message_type >= 21 AND message_type <= 24))'.
                  '   AND t_histories_id IN (' . implode(",", $historyList) .')'.
                  ' GROUP BY t_histories_id, m_users_id'.
                  ')',
@@ -1814,7 +1849,11 @@
         else {
           if($val['MUser']['display_name'] !== null) {
             $chat[$val['THistory']['id']] = $val['MUser']['display_name']."さん";
-          } else if (strcmp($val['THistoryChatLog']['message_type'], "5") === 0) {
+          } else if (strcmp($val['THistoryChatLog']['message_type'], "5") === 0
+            || strcmp($val['THistoryChatLog']['message_type'], "21") === 0
+            || strcmp($val['THistoryChatLog']['message_type'], "22") === 0
+            || strcmp($val['THistoryChatLog']['message_type'], "23") === 0
+            || strcmp($val['THistoryChatLog']['message_type'], "24") === 0) {
             $chat[$val['THistory']['id']] = self::LABEL_AUTO_SPEECH_OPERATOR;
           }
         }
@@ -2274,11 +2313,11 @@
       }
       $chatStateList = $dbo2->buildStatement(
         [
-          'table' => "(SELECT t_histories_id,t_history_stay_logs_id,m_companies_id,message_type,notice_flg,created,message_read_flg, COUNT(*) AS count, ".$value."(achievement_flg) AS achievementFlg, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff,SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) cv,SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN notice_flg = 1 THEN 1 ELSE 0 END) notice,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message, SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus,SUM(CASE WHEN message_type = 1 AND message_read_flg = 0 THEN 1 ELSE 0 END) unread, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech FROM t_history_chat_logs AS THistoryChatLog GROUP BY t_histories_id ORDER BY t_histories_id)",
+          'table' => "(SELECT t_histories_id,t_history_stay_logs_id,m_companies_id,message_type,notice_flg,created,message_read_flg, COUNT(*) AS count, ".$value."(achievement_flg) AS achievementFlg, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff,SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) cv,SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN notice_flg = 1 THEN 1 ELSE 0 END) notice,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message,SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus,SUM(CASE WHEN message_type = 1 AND message_read_flg = 0 THEN 1 ELSE 0 END) unread, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech, SUM(CASE WHEN message_type >= 12 AND message_type <= 13 THEN 1 ELSE 0 END) se_cus, SUM(CASE WHEN message_type >= 21 AND message_type <= 24 THEN 1 ELSE 0 END) se_auto FROM t_history_chat_logs AS THistoryChatLog GROUP BY t_histories_id ORDER BY t_histories_id)",
           'alias' => 'chat',
           'fields' => [
             'chat.*',
-            '( CASE  WHEN chat.cmp = 0 AND notice > 0 AND chat.cus > 0 THEN "未入室" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry > 0 THEN "拒否" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry = 0 AND auto_speech > 0 THEN "自動返信" WHEN chat.cmp = 0 AND chat.cus = 0 AND chat.sry = 0 AND auto_speech = 0 AND auto_message > 0 THEN "自動返信" ELSE "" END ) AS type'
+            '( CASE  WHEN chat.cmp = 0 AND notice > 0 AND chat.cus > 0 THEN "未入室" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry > 0 THEN "拒否" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry = 0 AND auto_speech > 0 THEN "自動返信" WHEN chat.cmp = 0 AND chat.cus = 0 AND chat.sry = 0 AND auto_speech = 0 AND auto_message > 0 THEN "自動返信" WHEN chat.cmp = 0 AND chat.cus = 0 AND chat.sry = 0 AND auto_speech = 0 AND auto_message > 0 AND se_cus >= 0 AND se_auto >= 0 THEN "自動返信" ELSE "" END ) AS type'
           ],
           'conditions' => $chatLogCond
         ],

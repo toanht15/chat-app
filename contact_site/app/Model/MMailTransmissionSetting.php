@@ -55,11 +55,12 @@ class MMailTransmissionSetting extends AppModel {
     foreach($toAddresses as $toAddress) {
       $explode = explode(',', $toAddress);
       foreach($explode as $mailAddress) {
-        $result = Validation::email($mailAddress);
-        if(!$result) break;
+        $valid = Validation::email($mailAddress);
+        $match = preg_match('/^{{.+}}$/', $mailAddress);  // 変数かチェック
+        if(!$valid && !$match) break;
       }
     }
-    return $result;
+    return $result || $match;
   }
 
   public function isNOTDuplicateEmails($toAddresses) {

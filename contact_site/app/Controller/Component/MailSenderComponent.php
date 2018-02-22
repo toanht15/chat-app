@@ -66,8 +66,7 @@ class MailSenderComponent extends Component
       'port' => C_AWS_SES_SMTP_PORT,
       'username' => C_AWS_SES_SMTP_USER_NAME,
       'password' => C_AWS_SES_SMTP_CREDENTIAL,
-      'transport' => 'Smtp',
-      'tls' => true
+      'transport' => 'Smtp'
     ]);
     $this->mailer->emailFormat(self::MAIL_FORMAT);
   }

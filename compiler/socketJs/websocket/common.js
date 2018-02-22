@@ -133,7 +133,7 @@ var socket, // socket.io
           navi = "",
           chat = this.chatWidgetTemplate(widget),
           call = this.widgetTemplate(widget),
-          fotter = '<p id="fotter">Powered by <a target="sinclo" href="https://sinclo.medialink-ml.co.jp/lp/?utm_medium=web-widget&utm_campaign=widget-referral">sinclo</a></p>';
+          fotter = (check.isset(window.sincloInfo.custom) && check.isset(window.sincloInfo.custom.widget.hideFotter) && window.sincloInfo.custom.widget.hideFotter) ? '' : '<p id="fotter">Powered by <a target="sinclo" href="https://sinclo.medialink-ml.co.jp/lp/?utm_medium=web-widget&utm_campaign=widget-referral">sinclo</a></p>';
       // フルプランのPCの場合
       if ( window.sincloInfo.contract.chat && (window.sincloInfo.contract.synclo || (window.sincloInfo.contract.hasOwnProperty('document') && window.sincloInfo.contract.document)) && !check.smartphone() ) {
         displaySet += navi + chat + call;
@@ -1480,7 +1480,7 @@ var socket, // socket.io
       html += '    <ul id="chatTalk"><sinclo-chat></sinclo-chat><sinclo-typing></sinclo-typing><sinclo-chat-receiver><span id="receiveMessage">テストメッセージです</span></sinclo-chat-receiver></ul>';
       html += '    <sinclo-chat-alert>通信が切断されました。<br>こちらをタップすると再接続します。</sinclo-chat-alert>';
       html += '    <sinclo-div class="flexBoxRow" id = "flexBoxHeight">';
-      html += '      <textarea name="sincloChat" id="sincloChatMessage" maxlength="300" placeholder=" ' + placeholder + ' "></textarea>';
+      html += '      <textarea name="sincloChat" id="sincloChatMessage" maxlength="1000" placeholder=" ' + placeholder + ' "></textarea>';
       html += '      <a id="sincloChatSendBtn" class="notSelect" onclick="sinclo.chatApi.push()">送信</a>';
       html += '    </sinclo-div>';
       if(!check.smartphone() && (window.sincloInfo.contract.synclo || (window.sincloInfo.contract.hasOwnProperty('document') && window.sincloInfo.contract.document))) {
@@ -3545,9 +3545,21 @@ var socket, // socket.io
       sinclo.resAutoChatMessage(d);
     }); // socket-on: resAutoChatMessage
 
+    // オートメッセージ
+    socket.on('resScenarioMessage', function (d) {
+      sinclo.resScenarioMessage(d);
+    }); // socket-on: resScenarioMessage
+
     // 新着チャット
     socket.on('sendChatResult', function (d) {
       sinclo.sendChatResult(d);
+    }); // socket-on: sendChatResult
+
+    // 新着チャット
+    socket.on('resGetScenario', function (d) {
+      var obj = common.jParse(d);
+      sinclo.scenarioApi.init(obj.id, obj.activity.scenarios);
+      sinclo.scenarioApi.begin();
     }); // socket-on: sendChatResult
 
     // チャット入力状況受信
@@ -3707,7 +3719,8 @@ function emit(evName, data, callback){
   if (evName === "syncReady" || evName === "connectSuccess" || evName === "sendAccessInfo" || evName === "customerInfo") {
     data.title = common.title();
   }
-  if (evName === "connectSuccess" || evName === "sendWindowInfo" || evName === "sendAutoChat" || evName === "sendChat") {
+  if (evName === "connectSuccess" || evName === "sendWindowInfo" || evName === "sendAutoChat" || evName === "sendChat" ||
+  evName === "storeScenarioMessage") {
     data.userId = userInfo.userId;
   }
   if (   evName === "connectSuccess" || evName === "sendWindowInfo" || evName === "sendAutoChatMessages" ||
@@ -3750,7 +3763,7 @@ function emit(evName, data, callback){
       clearInterval(timer);
       data.tabId = userInfo.tabId; // タブの識別ID
       data.sincloSessionId = userInfo.sincloSessionId;
-      console.log("EMIT : " + evName + "data : " + JSON.stringify(data));
+      console.log("EMIT : " + evName + " data : " + JSON.stringify(data));
       socket.emit(evName, JSON.stringify(data), callback);
     }
   }, 100);

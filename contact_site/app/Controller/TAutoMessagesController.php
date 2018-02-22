@@ -8,6 +8,7 @@
  * @property MMailTransmissionSetting $MMailTransmissionSetting
  * @property MMailTemplate $MMailTemplate
  * @property MWidgetSetting $MWidgetSetting
+ * @property TChatbotScenario $TChatbotScenario
  */
 
 App::uses('AutoMessageException','Lib/Error');
@@ -15,7 +16,7 @@ App::uses('AutoMessageException','Lib/Error');
 class TAutoMessagesController extends AppController {
   const TEMPLATE_FILE_NAME = "template.xlsm";
 
-  public $uses = ['TransactionManager', 'TAutoMessage','MOperatingHour', 'MMailTransmissionSetting', 'MMailTemplate', 'MWidgetSetting'];
+  public $uses = ['TransactionManager', 'TAutoMessage','MOperatingHour', 'MMailTransmissionSetting', 'MMailTemplate', 'MWidgetSetting', 'TChatbotScenario'];
   public $components = ['AutoMessageExcelParser'];
   public $helpers = ['AutoMessage'];
   public $paginate = [
@@ -25,8 +26,16 @@ class TAutoMessagesController extends AppController {
           'TAutoMessage.sort' => 'asc',
           'TAutoMessage.id' => 'asc'
       ],
-      'fields' => ['TAutoMessage.*'],
+      'fields' => ['TAutoMessage.*', 'TChatbotScenario.id', 'TChatbotScenario.name'],
       'conditions' => ['TAutoMessage.del_flg != ' => 1],
+      'joins' => [[
+        'type' => 'LEFT',
+        'table' => 't_chatbot_scenarios',
+        'alias' => 'TChatbotScenario',
+        'conditions' => [
+          'TAutoMessage.t_chatbot_scenario_id = TChatbotScenario.id'
+        ]
+      ]],
       'recursive' => -1
     ]
   ];
@@ -108,6 +117,19 @@ class TAutoMessagesController extends AppController {
     // シミュレーター表示用ウィジェット設定の取得
     $this->request->data['widgetSettings'] = $this->_getWidgetSettings();
 
+    // シナリオ設定の一覧を取得する
+    $chatbotScenario = $this->TChatbotScenario->coFind('list', [
+      'fields' => ['id', 'name'],
+      'order' => [
+        'TChatbotScenario.sort' => 'asc',
+        'TChatbotScenario.id' => 'asc'
+      ],
+      'conditions' => [
+        'TChatbotScenario.del_flg != ' => 1
+      ]
+    ]);
+    $this->request->data['chatbotScenario'] = $chatbotScenario;
+
     $this->_viewElement();
   }
 
@@ -179,6 +201,19 @@ class TAutoMessagesController extends AppController {
 
     // シミュレーター表示用ウィジェット設定の取得
     $this->request->data['widgetSettings'] = $this->_getWidgetSettings();
+
+    // シナリオ設定の一覧を取得する
+    $chatbotScenario = $this->TChatbotScenario->coFind('list', [
+      'fields' => ['id', 'name'],
+      'order' => [
+        'TChatbotScenario.sort' => 'asc',
+        'TChatbotScenario.id' => 'asc'
+      ],
+      'conditions' => [
+        'TChatbotScenario.del_flg != ' => 1
+      ]
+    ]);
+    $this->request->data['chatbotScenario'] = $chatbotScenario;
 
     $this->_viewElement();
   }
@@ -346,10 +381,14 @@ class TAutoMessagesController extends AppController {
       $saveData['TAutoMessage']['send_mail_flg'] = $value['TAutoMessage']['send_mail_flg'];
       $saveData['TAutoMessage']['m_mail_transmission_settings_id'] = $value['TAutoMessage']['m_mail_transmission_settings_id'];
       $saveData['TAutoMessage']['m_mail_template_id'] = $value['TAutoMessage']['m_mail_template_id'];
+      $saveData['TAutoMessage']['t_chatbot_scenario_id'] = $value['TAutoMessage']['t_chatbot_scenario_id'];
       $saveData['TAutoMessage']['del_flg'] = $value['TAutoMessage']['del_flg'];
 
       $this->TAutoMessage->set($saveData);
       $this->TAutoMessage->begin();
+
+      // action_typeごとに不要なバリデーションルールを削除する
+      $this->TAutoMessage->checkBeforeValidates($saveData['TAutoMessage']['action_type']);
 
       // バリデーションチェックでエラーが出た場合
       if($res){
@@ -779,7 +818,7 @@ class TAutoMessagesController extends AppController {
     $subject = '';
     $fromName = '';
     $templateId = 0;
-    if(!empty($saveData['main']['send_mail_flg']) && intval($saveData['main']['send_mail_flg']) === C_CHECK_ON) {
+    if($saveData['TAutoMessage']['action_type'] == C_AUTO_ACTION_TYPE_SENDMESSAGE && !empty($saveData['main']['send_mail_flg']) && intval($saveData['main']['send_mail_flg']) === C_CHECK_ON) {
       $this->request->data['TAutoMessage']['send_mail_flg'] = intval($saveData['main']['send_mail_flg']);
       $saveData['TAutoMessage']['send_mail_flg'] = intval($saveData['main']['send_mail_flg']);
       foreach($saveData['main'] as $k => $v) {
@@ -844,6 +883,9 @@ class TAutoMessagesController extends AppController {
     }
 
     $this->TAutoMessage->set($saveData);
+
+    // action_typeごとに不要なバリデーションルールを削除する
+    $this->TAutoMessage->checkBeforeValidates($saveData['TAutoMessage']['action_type']);
 
     $validate = $this->TAutoMessage->validates();
     $errors = $this->TAutoMessage->validationErrors;
