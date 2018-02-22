@@ -41,6 +41,10 @@ define('C_CONTRACT_CHAT_BASIC_PLAN_ID',"4");
 define('C_MEDIALINK_ACCOUNT', "ML用アカウント"); // ML用アカウント
 define('C_MEDIALINK_PERMISSION_LEVEL', 99); // ML用パーミッション
 
+//初期パスワード変更フラグ
+define('C_NO_CHANGE_PASSWORD_FLG', 0); //変更してない
+define('C_CHANGE_PASSWORD_FLG', 1); //変更した
+
 //メールアドレス
 define('C_MAGREEMENT_MAIL_ADDRESS', "@ml.jp"); //mcompanyアドレス
 

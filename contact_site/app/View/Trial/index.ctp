@@ -13,7 +13,7 @@
   });
   //モーダル画面
   function openTermsOfService(){
-    document.getElementById('trialTop').style.overflow  = "hidden";
+    $("html").css("overflow","hidden");
     $.ajax({
       type: 'post',
       dataType: 'html',
@@ -78,7 +78,6 @@
        }
       else {
         socket.emit('settingReload', JSON.stringify({type:1, siteKey: "master"}),function(){
-          alert("oke");
           location.href = "<?= $this->Html->url('/Trial/thanks') ?>";
         });
       }

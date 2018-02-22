@@ -3420,7 +3420,6 @@
      * シナリオAPI
      * =================================
      */
-    // FIXME 既に選択されたシナリオの選択肢を遡って選び直した場合のハンドリング
     scenarioApi: {
       _validation: {
         "1": '.+',
@@ -3851,6 +3850,11 @@
           currentSeq: "sh_currentSeq",
           length: "sh_length"
         },
+        _cvType: {
+          validOnce: "1",
+          validAll: "2",
+          confirmOK: "3"
+        },
 
         _init: function (parent, currentScenario) {
           this._parent = parent;
@@ -3905,6 +3909,10 @@
                 self._parent._unWaitingInput();
                 self._parent._handleStoredMessage();
                 if (self._parent._valid(hearing.inputType, inputVal)) {
+                  if(self._isTheFirst() && self._cvTypeIs(self._cvType.validOnce)) {
+                    // 一度OKの場合はCV
+                    emit('addLastMessageToCV', {historyId: sinclo.chatApi.historyId});
+                  }
                   self._parent._saveVariable(hearing.variableName, inputVal);
                   if (self._goToNext()) {
                     self._process();
@@ -3920,6 +3928,10 @@
         },
         _executeConfirm: function () {
           var self = sinclo.scenarioApi._hearing;
+          if(self._cvTypeIs(self._cvType.validAll)) {
+            // 全てOKの場合はCV
+            emit('addLastMessageToCV', {historyId: sinclo.chatApi.historyId});
+          }
           if (self._requireConfirm()) {
             self._showConfirmMessage();
           } else {
@@ -3968,6 +3980,19 @@
           var self = sinclo.scenarioApi._hearing;
           return self._getCurrentSeq() === self._getLength();
         },
+        _isTheFirst: function() {
+          var self = sinclo.scenarioApi._hearing;
+          return self._getCurrentSeq() === 0;
+        },
+        _cvTypeIs: function(type) {
+          var self = sinclo.scenarioApi._hearing;
+          if(!self._cvIsEnable()) return false;
+          return type === self._parent.get(self._parent._lKey.currentScenario).cvCondition;
+        },
+        _cvIsEnable: function() {
+          var self = sinclo.scenarioApi._hearing;
+          return self._parent.get(self._parent._lKey.currentScenario).cv === "1";
+        },
         _showConfirmMessage: function() {
           var self = sinclo.scenarioApi._hearing;
           var messageBlock = self._parent._createSelectionMessage(self._parent.get(self._parent._lKey.currentScenario).confirmMessage, [self._parent.get(self._parent._lKey.currentScenario).success, self._parent.get(self._parent._lKey.currentScenario).cancel]);
@@ -3979,6 +4004,10 @@
                 self._parent._handleStoredMessage();
                 console.log("inputVal : " + inputVal + " self._parent._lKey.currentScenario.success : " + self._parent.get(self._parent._lKey.currentScenario).success + " self._parent._lKey.currentScenario.cancel : " + self._parent.get(self._parent._lKey.currentScenario).cancel);
                 if(inputVal === self._parent.get(self._parent._lKey.currentScenario).success) {
+                  if(self._cvTypeIs(self._cvType.confirmOK)) {
+                    // OKを押したタイミングでCVを付ける
+                    emit('addLastMessageToCV', {historyId: sinclo.chatApi.historyId});
+                  }
                   if(self._parent._goToNextScenario()) {
                     self._parent._process();
                   }

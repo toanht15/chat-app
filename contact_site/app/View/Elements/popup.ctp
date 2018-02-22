@@ -115,8 +115,8 @@
       var close = this.elm.close;
       close.addEventListener('click', function () {
         //無料トライアル画面
-        if(document.getElementById('top')　!= null) {
-          document.getElementById('top').style.overflow  = "scroll";
+        if(document.getElementById('trialTop')　!= null) {
+          $("html").css("overflow","scroll");
         }
         return popupEvent.closeNoPopup();
       });
@@ -206,8 +206,8 @@
           var closeBtn = _button("閉じる");
           closeBtn.onclick = function () {
             //無料トライアル画面
-            if(document.getElementById('top')　!= null) {
-              document.getElementById('top').style.overflow  = "scroll";
+            if(document.getElementById('trialTop')　!= null) {
+              $("html").css("overflow","scroll");
             }
             return popupEvent.closeNoPopup();
           };

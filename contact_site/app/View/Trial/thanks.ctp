@@ -75,7 +75,7 @@
               <div class="entry-content" itemprop="text">
               <p style = "font-size:1.8rem;">sinclo無料トライアルにお申し込みいただき、誠にありがとうございます。<br><br>
               ご登録いただいたメールアドレスへログイン情報を送らせて頂きます。<br>
-              数日以内にメールが届かない場合はcloud-service@medialink-ml.co.jpまたは<br>チャットよりお問い合わせください。<br><br>
+              数日以内にメールが届かない場合は cloud-service@medialink-ml.co.jp または<br>チャットよりお問い合わせください。<br><br>
               今後ともsincloをよろしくお願いいたします。
               </p>
         </div>
