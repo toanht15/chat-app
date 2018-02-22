@@ -88,7 +88,7 @@ class AddCreateMJobMailTemplatesAndMSystemMailTemplatesAndTSendSystemMailSchedul
 	    $targetTable = 'MSystemMailTemplate';
       $MSystemMailTemplate = ClassRegistry::init($targetTable);
       $data[0][$targetTable]['mail_type_cd'] = "無料トライアル申し込み お客様向け";
-      $data[0][$targetTable]['subject'] = "【sinclo（シンクロ）】無料トライアル登録完了のお知らせ";
+      $data[0][$targetTable]['subject'] = "【sinclo】無料トライアル登録完了のお知らせ";
       $data[0][$targetTable]['mail_body'] = "##COMPANY_NAME##
  ##USER_NAME##様
  
@@ -173,9 +173,9 @@ class AddCreateMJobMailTemplatesAndMSystemMailTemplatesAndTSendSystemMailSchedul
  ■その他ご要望など
  ##OTHER##
  ";
-      $data[1][$targetTable]['mail_type_cd'] = "初期パスワード変更 会社向け";
-      $data[1][$targetTable]['subject'] = "【sinclo】初期パスワードの変更がありました";
-      $data[1][$targetTable]['mail_body'] = "関係者各位
+      $data[2][$targetTable]['mail_type_cd'] = "初期パスワード変更 会社向け";
+      $data[2][$targetTable]['subject'] = "【sinclo】初期パスワードの変更がありました";
+      $data[2][$targetTable]['mail_body'] = "関係者各位
  
  sincloの初期パスワードが変更されました
  
