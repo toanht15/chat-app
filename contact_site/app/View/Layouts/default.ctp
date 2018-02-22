@@ -129,7 +129,8 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
       echo $this->Html->script("jquery.splitter.js");
     }
     if ( strcmp($this->name, 'Trial') === 0 ) {
-      echo $this->Html->css('freeTrial.css'); ?>
+      echo $this->Html->css('freeTrial.css');
+      echo $this->Html->script(C_NODE_SERVER_ADDR.C_NODE_SERVER_WS_PORT."/socket.io/socket.io.js"); ?>
       <!-- Google Tag Manager -->
       <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
       new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
