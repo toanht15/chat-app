@@ -7,6 +7,7 @@ App::uses('HttpSocket', 'Network/Http', 'Component', 'Controller', 'Utility/Vali
 class TrialController extends AppController {
   const CONTRACT_ADD_URL = "http://127.0.0.1:81/Contract/add";
   const ML_MAIL_ADDRESS= "cloud-service@medialink-ml.co.jp";
+  const ML_MAIL_ADDRESS_AND_ALEX = "cloud-service@medialink-ml.co.jp,alexandre.mercier@medialink-ml.co.jp";
   const API_CALL_TIMEOUT = 5;
   const COMPANY_NAME = "##COMPANY_NAME##";
   const USER_NAME = "##USER_NAME##";
@@ -127,7 +128,7 @@ class TrialController extends AppController {
     $sender = new MailSenderComponent();
     $sender->setFrom($data['Contract']['user_mail_address']);
     $sender->setFromName($data['MCompany']['company_name'].'　'.$data['MAgreements']['application_name']);
-    $sender->setTo(self::ML_MAIL_ADDRESS);
+    $sender->setTo(self::ML_MAIL_ADDRESS_AND_ALEX);
     $sender->setSubject($mailTemplateData[1]['MSystemMailTemplate']['subject']);
     $mailBodyData = str_replace(self::COMPANY_NAME, $data['MCompany']['company_name'], $mailTemplateData[1]['MSystemMailTemplate']['mail_body']);
     $mailBodyData = str_replace(self::USER_NAME, $data['MAgreements']['application_name'], $mailBodyData);
@@ -169,6 +170,8 @@ class TrialController extends AppController {
     }
     $sender->setBody($mailBodyData);
     $sender->send();
+
+
   }
 
   /* *
