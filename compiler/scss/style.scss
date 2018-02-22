@@ -6863,6 +6863,9 @@ ul.naviBtn {
                   &.hearingVariableTypeLabel {
                     width: 10em;
                   }
+                  &.hearingVariableAllowLF {
+                    width: 4em;
+                  }
                   &.hearingVariableQuestionLabel {
                     width: auto;
                   }
@@ -6876,6 +6879,10 @@ ul.naviBtn {
 
                   input[type="text"] {
                     width: calc(100% - 3px);
+                  }
+                  input[type="checkbox"] {
+                    width: 100%;
+                    margin: 0 auto;
                   }
                   &.btnBlock {
                     padding-left: 0;

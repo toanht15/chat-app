@@ -613,7 +613,8 @@ $config['chatbotScenarioActionList'] = [
       'hearings' => [[
         'variableName' => '',
         'inputType' => '1',
-        'message' => ''
+        'message' => '',
+        'allowInputLF' => '1'
       ]],
       'errorMessage' => '',
       'isConfirm' => 2,

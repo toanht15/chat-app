@@ -563,6 +563,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
   $scope.doHearingAction = function(actionDetail) {
     if (!$scope.hearingInputResult) {
+      // エラーメッセージ
       var message = actionDetail.errorMessage;
       $scope.$broadcast('addReMessage', $scope.replaceVariable(message), 'action' + $scope.actionStep);
       $scope.$broadcast('switchSimulatorChatTextArea', actionDetail.chatTextArea === '1');
@@ -574,6 +575,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       var message = actionDetail.hearings[$scope.hearingIndex].message;
       $scope.$broadcast('addReMessage', $scope.replaceVariable(message), 'action' + $scope.actionStep);
       $scope.$broadcast('switchSimulatorChatTextArea', actionDetail.chatTextArea === '1');
+      $scope.$broadcast('allowInputLF', actionDetail.hearings[$scope.hearingIndex].allowInputLF);
     } else
     if (actionDetail.isConfirm && ($scope.hearingIndex === actionDetail.hearings.length)) {
       // 確認メッセージ
@@ -759,6 +761,7 @@ function adjustDataOfHearing(action, isCheckValidation) {
     var hearings = [];
     angular.forEach(action.hearings, function(item, index) {
       if (typeof item.variableName !== 'undefined' && item.variableName !== '' && typeof item.message !== 'undefined' && item.message !== '') {
+        item.allowInputLF = item.allowInputLF ? '1' : '2';
         hearings.push(item);
       }
     });

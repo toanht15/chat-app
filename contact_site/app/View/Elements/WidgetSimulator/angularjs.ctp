@@ -11,6 +11,8 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
 
   // 自由入力エリアの表示状態
   $scope.isTextAreaOpen = true;
+  // 自由入力エリアへの、改行入力の許可状態
+  $scope.allowInputLF = true;
 
   /**
    * addReMessage
@@ -80,10 +82,19 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
   /**
    * switchChatTextAreaDisplay
    * シミュレーションの自由入力エリアの表示状態を切り替える
-   * @param Boolean isTextAreaOpen 自由入力エリアの表示状態(true: 表示, false: 非表示）
+   * @param Boolean status 自由入力エリアの表示状態(true: 表示, false: 非表示）
    */
-  $scope.$on('switchSimulatorChatTextArea', function(event, isTextAreaOpen) {
-    $scope.isTextAreaOpen = isTextAreaOpen;
+  $scope.$on('switchSimulatorChatTextArea', function(event, status) {
+    $scope.isTextAreaOpen = status;
+  });
+
+  /**
+   * allowInputLF
+   * 自由入力エリアへの、改行入力の許可状態を切り替える
+   * @param Boolean status 改行入力の許可状態(true: 表示, false: 非表示)
+   */
+  $scope.$on('allowInputLF', function(event, status) {
+    $scope.allowInputLF = status == '1' ? true : false;
   });
 
   // 自由入力エリアの表示制御
@@ -140,9 +151,15 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
   $(document).on('keypress', '#sincloChatMessage', function(e) {
     // Enterキー
     if (e.which === 13 && !e.shiftKey) {
-      // メッセージ送信、かつEnterキー押下で消費者側送信アクションが有効な場合
+      // メッセージ送信、かつEnterキー押下で消費者側送信アクションが有効
       if ($scope.canVisitorSendMessage && $scope.simulatorSettings.settings['chat_trigger'] == <?= C_WIDGET_RADIO_CLICK_SEND ?>) {
         $scope.visitorSendMessage();
+        return false;
+      }
+    }
+    if (e.which === 13) {
+      // 改行が許可されていない
+      if (!$scope.allowInputLF) {
         return false;
       }
     }
@@ -168,6 +185,8 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
 
       // ラジオボタンを非活性にする
       $('input[name=' + name + '][type="radio"]').prop('disabled', true);
+      // 自由入力エリアへの、改行許可状態を戻す
+      $scope.allowInputLF = true;
     }
   });
 }]);
