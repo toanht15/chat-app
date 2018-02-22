@@ -17,7 +17,7 @@
       <table cellspacing="5">
         <thead>
           <tr>
-            <th class="hearingVariableNameLabel">変数名<div class="questionBalloon"><icon class="questionBtn" data-tooltip="チャットボットから投げかけた質問の回答を保存し、｛｛変数名｝｝としてメッセージ内で利用することができるようになります">?</icon></div></th>
+            <th class="hearingVariableNameLabel">変数名<div class="questionBalloon"><icon class="questionBtn" data-tooltip="チャットボットから投げかけた質問の回答を保存し、{&thinsp;{変数名}&thinsp;}としてメッセージ内で利用することができるようになります">?</icon></div></th>
             <th class="hearingVariableTypeLabel">タイプ<div class="questionBalloon"><icon class="questionBtn" data-tooltip="サイト訪問者が入力した回答が適切か、整合性チェックを行うことができるようになります">?</icon></div></th>
             <th class="hearingVariableQuestionLabel">質問内容</th>
             <th class="hearginVariableBtnGroupLabel"></th>
@@ -81,7 +81,7 @@
 <div ng-if="setItem.actionType == 3" class="set_action_item_body action_select_option" ng-init="main.controllSelectOptionSetting(setActionId)">
   <ul>
     <li class="styleFlexbox">
-      <span class="fb7em"><label class="hearingSelectVariableNameLabel">変数名<div class="questionBalloon"><icon class="questionBtn" data-tooltip="チャットボットから投げかけた質問の回答を保存し、｛｛変数名｝｝としてメッセージ内で利用することができるようになります">?</icon></div></label></span>
+      <span class="fb7em"><label class="hearingSelectVariableNameLabel">変数名<div class="questionBalloon"><icon class="questionBtn" data-tooltip="チャットボットから投げかけた質問の回答を保存し、{&thinsp;{変数名}&thinsp;}としてメッセージ内で利用することができるようになります">?</icon></div></label></span>
       <div>
         <input type="text" ng-model="setItem.selection.variableName">
       </div>
