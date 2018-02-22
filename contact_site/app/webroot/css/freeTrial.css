@@ -1289,6 +1289,34 @@ img.alignright {
 .wp-custom-header-video-button {
   display: none
 }
+@media (max-width: 767px) {
+  .breadcrumb{
+    font-size: 16px;
+  }
+  .site-inner {
+    font-size: 16px;
+  }
+  .eachElement input, .eachElement select, .eachElement textarea {
+    font-size: 16px;
+  }
+  #submitButton {
+    background-color: #e65298;
+    border: 0;
+    padding: 30px 120px;
+    padding: 3rem 5rem;
+    font-size: 24px;
+    font-size: 16px;
+    width: 100%;
+    text-align: center;
+  }
+  .page-header h1 {
+    color: #fff;
+    max-width: 1152px;
+    margin: 0 auto;
+    text-transform: uppercase;
+    font-size: 28px;
+  }
+}
 .page-header {
   color: #fff;
   padding: 120px 0 60px;
