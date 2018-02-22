@@ -311,12 +311,7 @@ class ContractController extends AppController
   }
 
   private function createAgreementInfo($addedCompanyInfo, $companyInfo, $userInfo, $agreementInfo) {
-    if(!empty($userInfo['user_password'])) {
-      $password = $userInfo['user_password'];
-    }
-    else {
-      $password = $this->generateRandomPassword(8);
-    }
+    $password = $this->generateRandomPassword(8);
 
     $this->MAgreements->create();
     if(empty($agreementInfo['application_name'])) {
@@ -396,6 +391,7 @@ class ContractController extends AppController
         "user_name" => $userInfo["user_name"],
         "display_name" => $userInfo["user_display_name"],
         "mail_address" => $userInfo["user_mail_address"],
+        "change_password_flg" => C_NO_CHANGE_PASSWORD_FLG,
         "permission_level" => C_AUTHORITY_ADMIN,
         "new_password" => $userInfo["user_password"]
     ];

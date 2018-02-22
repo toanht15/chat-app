@@ -95,9 +95,6 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
         <div class="icon">
           <?= $this->htmlEx->naviLink('ヘルプ', 'manual.png', ['href' => 'https://info.sinclo.jp/manual/', 'target' => '_blank']) ?>
         </div>
-        <div class="icon" onclick ='openTermsOfService()'>
-          <?= $this->htmlEx->naviLink('利用規約', 'Lock.png') ?>
-        </div>
       </div>
     </div>
   <div id="supportNumberArea" style="width:100%; color:#FFF; position: absolute; bottom: 5px; text-align: center;"></div>
@@ -225,19 +222,6 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
       }
 
   });
-
-  //モーダル画面
-  function openTermsOfService(){
-    $.ajax({
-      type: 'post',
-      dataType: 'html',
-      cache: false,
-      url: "<?= $this->Html->url(['controller' => 'Mtrial', 'action' => 'remoteTermsOfService']) ?>",
-      success: function(html){
-        modalOpen.call(window, html, 'p-show-terms-of-service', '利用規約', 'moment');
-      }
-    });
-  }
 </script>
 <?php if(strcmp($_SERVER['SERVER_NAME'], '  sinclo.jp') === 0): ?>
 <script type='text/javascript' src='https://ws1.sinclo.jp/client/5a2e2a75cb7e3.js' data-hide='1'></script>

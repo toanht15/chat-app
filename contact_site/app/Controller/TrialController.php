@@ -65,7 +65,7 @@ class TrialController extends AppController {
     $socket = new HttpSocket(array(
       'timeout' => self::API_CALL_TIMEOUT
     ));
-    $result = $socket->post(self::CONTRACT_ADD_URL,$data);
+    $result = $socket->post(self::CONTRACT_ADD_URL,$data,array('header' => array('X-Forwarded-Port' => 443)));
 
     $jobMailTemplateData = $this->MJobMailTemplate->find('all');
 

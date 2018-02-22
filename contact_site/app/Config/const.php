@@ -320,6 +320,10 @@ define('C_BANNER_TEXT', "チャットで相談");//バナー文言
 //トライアルフラグ
 define('C_TRIAL_FLG', 1);
 
+//初期パスワード変更フラグ
+define('C_NO_CHANGE_PASSWORD_FLG', 0); //変更してない
+define('C_CHANGE_PASSWORD_FLG', 1); //変更した
+
 //ビジネスモデル
 define('C_FREE_B_TO_B', 1); // BtoB
 define('C_FREE_B_TO_C', 2); // BtoC

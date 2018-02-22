@@ -44,6 +44,7 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
 <head>
   <?php echo $this->Html->charset(); ?>
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>
     <?php echo $this->fetch('title'); ?> | sinclo
   </title>

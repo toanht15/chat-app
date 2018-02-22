@@ -54,7 +54,7 @@
       </header>
 
       <section class="page-header" role="banner" style="background-image: url(/img/sinclo-form-bkg-lady.png)">
-        <div class="wrap" style = "margin-top:-103px;"><h1 itemprop="headline">お申し込み内容を送信しました</h1>
+        <div class="wrap" style = "margin-top:-103px;"><h1 itemprop="headline">無料トライアルを受付いたしました</h1>
         </div>
       </section>
 
@@ -66,16 +66,17 @@
                 <span itemprop="name" style="color: #b2d251;">sinclo HOME</span>
               </a>
             </span>
-            <span aria-label="breadcrumb separator">&gt;</span> お申し込み内容を送信しました
+            <span aria-label="breadcrumb separator">&gt;</span> 無料トライアルを受付いたしました
           </div>
         </div>
         <div class="content-sidebar-wrap" style = "height: 420px;padding:8rem !important">
           <main class="content" id="genesis-content">
             <article class="post-29 page type-page status-publish entry" itemscope="" itemtype="https://schema.org/CreativeWork">
               <div class="entry-content" itemprop="text">
-              <p>お申し込みありがとうございました。<br>
+              <p style = "font-size:1.8rem;">sinclo無料トライアルにお申し込みいただき、誠にありがとうございます。<br><br>
               ご登録いただいたメールアドレスへログイン情報を送らせて頂きます。<br>
-              数日以内にメールが届かない場合はcloud-service@medialink-ml.co.jpまたは<br>チャットよりお問い合わせください。
+              数日以内にメールが届かない場合はcloud-service@medialink-ml.co.jpまたは<br>チャットよりお問い合わせください。<br><br>
+              今後ともsincloをよろしくお願いいたします。
               </p>
         </div>
       </div>
