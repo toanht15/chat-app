@@ -527,7 +527,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   return {
     restrict: 'A',
     required: 'ngModel',
-    link: function(scope, element, attrs, ctrl) {
+    link: function(scope, element, attrs) {
       var elm = angular.element(element[0]);
 
       scope.$watch(attrs.ngModel, function(actionItem) {
@@ -576,7 +576,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
           var validOptions = actionItem.selection.options.some(function(obj) {
             return !!obj;
           });
-          if (!validVariables) {
+          if (!validOptions) {
             messageList.push('選択肢が未入力です')
           }
 
@@ -651,7 +651,7 @@ function submitAct() {
 }
 
 $(document).ready(function() {
-  // ツールチップの表示制御
+  // ツールチップの表示制御（ヘルプ）
   $(document).off('mouseenter','.questionBtn').on('mouseenter','.questionBtn', function(event){
     var targetObj = $('.explainTooltip');
     targetObj.find('icon-annotation .detail').text($(this).data('tooltip'));
@@ -660,11 +660,31 @@ $(document).ready(function() {
       top: ($(this).offset().top - targetObj.find('ul').outerHeight() - 70) + 'px',
       left: $(this).offset().left - 70 + 'px'
     });
-  });
-  $(document).off('mouseleave','.questionBtn').on('mouseleave','.questionBtn', function(event){
+  }).off('mouseleave','.questionBtn').on('mouseleave','.questionBtn', function(event){
     $('.explainTooltip').find('icon-annotation').css('display','none');
   });
 
+  // ツールチップの表示制御（エラーメッセージ）
+  $(document).off('mouseenter','.errorBtn').on('mouseenter','.errorBtn', function(event){
+    var targetObj = $('.errorBalloon');
+
+    var messages = this.dataset.tooltip.split('\n');
+    messages.map(function(message) {
+      var newElm = document.createElement('p');
+      newElm.textContent = message;
+      targetObj.first('.detail').append(newElm);
+    });
+
+    targetObj.css({
+      top: ($(this).offset().top - targetObj.outerHeight() - 70) + 'px',
+      left: $(this).offset().left - 70 + 'px',
+      display: 'block'
+    });
+  }).off('mouseleave','.errorBtn').on('mouseleave','.errorBtn', function(event) {
+    var targetObj = $('.errorBalloon');
+    targetObj.css('display', 'none');
+    targetObj.first('.detail').empty();
+  });
 
   // 設定側のスクロールに応じて、プレビュー側をスクロールさせる
   var time = 500;
