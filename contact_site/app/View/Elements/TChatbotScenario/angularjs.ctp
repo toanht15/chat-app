@@ -92,37 +92,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     $scope.watchActionList[index] = $scope.$watch('setActionList[' + index + ']', function(newObject, oldObject) {
       if (typeof newObject === 'undefined') return;
 
-      // 各アクションのバリデーション
-      if (newObject.actionType == <?= C_SCENARIO_ACTION_TEXT ?>) {
-        newObject.$valid = !!newObject.message;
-      } else
-      if (newObject.actionType == <?= C_SCENARIO_ACTION_HEARING ?> ) {
-        newObject.$valid = newObject.hearings.some(function(obj) {
-          return !!obj.variableName && !!obj.message;
-        });
-        newObject.$valid = newObject.$valid && !!newObject.errorMessage;
-        if (newObject.isConfirm) {
-          newObject.$valid = newObject.$valid && !!newObject.confirmMessage && !!newObject.success && !!newObject.cancel;
-        }
-      } else
-      if (newObject.actionType == <?= C_SCENARIO_ACTION_SELECT_OPTION ?>) {
-        newObject.$valid = newObject.selection.options.some(function(obj) {
-          return !!obj;
-        });
-        newObject.$valid = newObject.$valid && !!newObject.selection.variableName;
-        newObject.$valid = newObject.$valid && !!newObject.message;
-      } else
-      if (newObject.actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?>) {
-        newObject.$valid = newObject.toAddress.some(function(obj) {
-          return !!obj;
-        });
-        newObject.$valid = newObject.$valid && !!newObject.subject;
-        newObject.$valid = newObject.$valid && !!newObject.fromName;
-        if (newObject.mailType == <?= C_SCENARIO_MAIL_TYPE_CUSTOMIZE ?>) {
-          newObject.$valid = newObject.$valid && !!newObject.template;
-        }
-      }
-
       // 送信メッセージ
       if (typeof newObject.message !== 'undefined' && newObject.message !== '' && typeof newObject.selection === 'undefined') {
         document.getElementById('action' + index + '_message').innerHTML = $scope.widget.createMessage(newObject.message);
@@ -551,6 +520,100 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         }
         clearWatch();
       });
+    }
+  };
+})
+.directive('validateAction', function() {
+  return {
+    restrict: 'A',
+    required: 'ngModel',
+    link: function(scope, element, attrs, ctrl) {
+      var elm = angular.element(element[0]);
+
+      scope.$watch(attrs.ngModel, function(actionItem) {
+        var messageList = [];
+
+        if (actionItem.actionType == <?= C_SCENARIO_ACTION_TEXT ?>) {
+          if (!actionItem.message) {
+            messageList.push('発言内容が未入力です');
+          }
+
+        } else
+        if (actionItem.actionType == <?= C_SCENARIO_ACTION_HEARING ?>) {
+          var validVariables = actionItem.hearings.some(function(obj) {
+            return !!obj.variableName && !!obj.message;
+          });
+          if (!validVariables) {
+            messageList.push('変数名と質問内容が未入力です')
+          }
+
+          if (!actionItem.errorMessage) {
+            messageList.push('入力エラー時の返信メッセージが未入力です')
+          }
+
+          if (actionItem.isConfirm) {
+            if (!actionItem.confirmMessage) {
+              messageList.push('確認内容のメッセージが未入力です');
+            }
+            if (!actionItem.success) {
+              messageList.push('選択肢（OK）が未入力です');
+            }
+            if (!actionItem.cancel) {
+              messageList.push('選択肢（NG）が未入力です');
+            }
+          }
+
+        } else
+        if (actionItem.actionType == <?= C_SCENARIO_ACTION_SELECT_OPTION ?>) {
+          if (!actionItem.selection.variableName) {
+            messageList.push('変数名が未入力です');
+          }
+
+          if (!actionItem.message) {
+            messageList.push('質問内容が未入力です');
+          }
+
+          var validOptions = actionItem.selection.options.some(function(obj) {
+            return !!obj;
+          });
+          if (!validVariables) {
+            messageList.push('選択肢が未入力です')
+          }
+
+        } else
+        if (actionItem.actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?>) {
+          var validAddress = actionItem.toAddress.some(function(obj) {
+            return !!obj;
+          });
+          if (!validAddress) {
+            messageList.push('送信先メールアドレスが未入力です');
+          }
+
+          if (!actionItem.fromName) {
+            messageList.push('メールタイトルが未入力です');
+          }
+
+          if (!actionItem.subject) {
+            messageList.push('差出人名が未入力です');
+          }
+
+          if (actionItem.mailType == <?= C_SCENARIO_MAIL_TYPE_CUSTOMIZE ?> && !actionItem.template) {
+            messageList.push('メール本文が未入力です');
+          }
+        }
+        actionItem.$valid = messageList.length <= 0;
+
+        // エラーメッセージをツールチップに設定
+        if (!actionItem.$valid) {
+          setTimeout(function() {
+            var target = elm[0].querySelector('h4 > a > i');
+            target.dataset.tooltip = messageList.map(function(message) {
+              return '● ' + message;
+            }).join('\n');
+          }, 0);
+        }
+
+      }, true);
     }
   };
 });
