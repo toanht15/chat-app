@@ -7142,6 +7142,31 @@ ul.naviBtn {
           }
         }
       }
+
+      .errorBalloon {
+        display: none;
+        position: absolute;
+        background-color: #D69B9B;
+        padding: 0.5em;
+        text-align: left;
+
+        &::before {
+          content: '';
+          position: absolute;
+          border-top: 10px solid #D69B9B;
+          border-right: 9px solid transparent;
+          border-left: 9px solid transparent;
+          bottom: -9px;
+          left: 8px;
+          width: 0;
+          height: 0;
+        }
+
+        p {
+          color: white;
+          margin: 0;
+        }
+      }
     }
   }
 }
