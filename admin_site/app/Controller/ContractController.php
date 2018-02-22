@@ -81,7 +81,12 @@ class ContractController extends AppController
       $data = $this->getParams();
 
       try {
-        $this->processTransaction($data['MCompany'], $data['Contract'], $data['MAgreements']);
+        $addedCompanyInfo = $this->processTransaction($data['MCompany'], $data['Contract'], $data['MAgreements']);
+        return ison_encode(array(
+          'success' => true,
+          'message' => "OK",
+          'newCompanyId' => $addedCompanyInfo['id']
+        ));
       } catch(Exception $e) {
         $this->log("Exception Occured : ".$e->getMessage(), LOG_WARNING);
         $this->log($e->getTraceAsString(),LOG_WARNING);
@@ -222,6 +227,7 @@ class ContractController extends AppController
       throw $e;
     }
     $this->TransactionManager->commit($transaction);
+    return $addedCompanyInfo;
   }
 
   private function upgradeProcess($beforeContactTypeId, $afterContactTypeId, $targetCompanyId, $companyInfo) {
