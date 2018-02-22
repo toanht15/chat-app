@@ -78,7 +78,6 @@
        }
       else {
         socket.emit('settingReload', JSON.stringify({type:1, siteKey: "master"}),function(){
-          alert("oke");
           location.href = "<?= $this->Html->url('/Trial/thanks') ?>";
         });
       }
