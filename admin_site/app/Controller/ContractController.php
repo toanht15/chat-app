@@ -347,9 +347,6 @@ class ContractController extends AppController
     if(empty($agreementInfo['trial_end_day'])) {
       $agreementInfo['trial_end_day'] = "";
     }
-    if(empty($agreementInfo['business_model']) == 0) {
-      $agreementInfo['business_model'] = "";
-    }
     $this->MAgreements->set([
       'm_companies_id' => $addedCompanyInfo['id'],
       'business_model' => $agreementInfo['business_model'],

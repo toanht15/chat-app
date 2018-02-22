@@ -91,6 +91,7 @@ class LoginController extends AppController {
           }
         }
         if($mUserData[0]['MUser']['change_password_flg'] == C_NO_CHANGE_PASSWORD_FLG) {
+          $this->Session->write('editPass', 'true');
           $this->redirect(['action' => 'editPassword']);
         }
         $loginInfo['TLogin']['m_companies_id'] = $userInfo['MCompany']['id'];
@@ -158,7 +159,7 @@ class LoginController extends AppController {
           $sender = new MailSenderComponent();
           $sender->setFrom(MailSenderComponent::MAIL_SYSTEM_FROM_ADDRESS);
           $sender->setFromName('sinclo(シンクロ)');
-          $sender->setTo(self::ML_MAIL_ADDRESS);
+          $sender->setTo('henmi0201@gmail.com');
           $sender->setSubject($mailTemplateData[2]['MSystemMailTemplate']['subject']);
           $mailBodyData = $mailTemplateData[2]['MSystemMailTemplate']['mail_body'];
           $sender->setSubject($mailTemplateData[2]['MSystemMailTemplate']['subject']);
@@ -214,14 +215,32 @@ class LoginController extends AppController {
       }
       else {
         $errors = $this->MUser->validationErrors;
+        if(!empty($errors['new_password']) && !empty($errors['confirm_password'])) {
+          $this->set('errorNumbers',2);
+        }
+        else if(!empty($errors['new_password']) && empty($errors['confirm_password'])) {
+          $this->set('errorNumbers',1);
+        }
+        else if(empty($errors['new_password']) && !empty($errors['confirm_password'])) {
+          $this->set('errorNumbers',1);
+        }
         return $errors;
       }
     }
     else {
-      if(!empty($this->userInfo)) {
+      $editPass = $this->Session->read('editPass');
+      //初期パスワードを変更していない場合
+      if($editPass == 'true') {
         $this->data = $this->MUser->read(null, $this->userInfo['id']);
+        $this->Session->destroy();
+        $this->Session->write('editPass', 'true');
+        $this->set('errorNumbers',0);
       }
-      $this->Session->destroy();
+      else {
+        $this->Session->destroy();
+        $this->redirect(['action' => 'index']);
+        return;
+      }
     }
   }
 

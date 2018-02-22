@@ -41,6 +41,8 @@ class TrialController extends AppController {
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
     $data = $this->request->data;
+    $this->log('data',LOG_DEBUG);
+    $this->log($data,LOG_DEBUG);
     $data['MUser']['mail_address'] = $data['Contract']['user_mail_address'];
     $this->MUser->set($data);
     //mailAddress validattionチェック

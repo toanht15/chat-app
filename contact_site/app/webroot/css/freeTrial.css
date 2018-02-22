@@ -42,8 +42,8 @@ body #ninja_forms_required_items,
 body .eachRow {
   margin-bottom: -1px;
   margin-bottom: -.1rem;
-  border: solid 1px #b5b5b5;
   border: solid .1rem #b5b5b5;
+  border: solid 1px #b5b5b5;
   padding: 10px 15px;
   padding: 1rem 1.5rem
 }
@@ -1289,17 +1289,6 @@ img.alignright {
 .wp-custom-header-video-button {
   display: none
 }
-@media (max-width: 767px) {
-  .breadcrumb{
-    font-size: 30px;
-  }
-  .site-inner {
-    font-size: 30px;
-  }
-  .eachElement input, .eachElement select, .eachElement textarea {
-    font-size: 30px;
-  }
-}
 .page-header {
   color: #fff;
   padding: 120px 0 60px;
@@ -1309,6 +1298,7 @@ img.alignright {
   /*background-position-x: 72%;
   background-position-y: 4%;*/
   position: relative;
+  background-color: #c8e5ea;
   background-color: #66bfcd52;
   background-repeat: no-repeat;
 }
