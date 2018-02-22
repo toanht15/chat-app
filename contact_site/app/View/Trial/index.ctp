@@ -13,7 +13,7 @@
   });
   //モーダル画面
   function openTermsOfService(){
-    document.getElementById('trialTop').style.overflow  = "hidden";
+    $("html").css("overflow","hidden");
     $.ajax({
       type: 'post',
       dataType: 'html',
