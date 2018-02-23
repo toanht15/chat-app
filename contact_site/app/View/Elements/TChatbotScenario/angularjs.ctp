@@ -576,6 +576,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       $scope.$broadcast('addReMessage', $scope.replaceVariable(message), 'action' + $scope.actionStep);
       $scope.$broadcast('switchSimulatorChatTextArea', actionDetail.chatTextArea === '1');
       $scope.$broadcast('allowInputLF', actionDetail.hearings[$scope.hearingIndex].allowInputLF);
+      $scope.$broadcast('setPlaceholder', $scope.replaceVariable(message));
     } else
     if (actionDetail.isConfirm && ($scope.hearingIndex === actionDetail.hearings.length)) {
       // 確認メッセージ
