@@ -755,7 +755,7 @@
           $row['transmissionKind'] = '訪問者';
           $row['transmissionPerson'] = '';
         }
-        if($val['THistoryChatLog'][' '] == 2) {
+        if($val['THistoryChatLog']['message_type'] == 2) {
           $row['transmissionKind'] = 'オペレーター';
           $row['transmissionPerson'] = $val['MUser']['display_name']."さん";
         }
