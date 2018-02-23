@@ -27,7 +27,6 @@
     public function beforeFilter(){
       parent::beforeFilter();
       $ret = $this->MCompany->read(null, $this->userInfo['MCompany']['id']);
-      $this->Auth->allow(['index', 'logout', 'loginCheck','editPassword']);
       //20170913 仕様変更　除外IPアドレスを登録しても過去の履歴を表示する
       /*$orList = [];
       if ( !empty($ret['MCompany']['exclude_ips']) ) {
@@ -254,26 +253,21 @@
         $this->log("BEGIN キャンペーン : ".$this->getDateWithMilliSec(),LOG_DEBUG);
         $campaignList = $this->TCampaign->getList();
         $campaignParam = "";
-        $this->log('landingData',LOG_DEBUG);
-        $this->log($landingData,LOG_DEBUG);
-        if(!empty($landingData)) {
-          $tmp = mb_strstr($landingData[0]['landingPage']['url'], '?');
-          if ( $tmp !== "" ) {
-            foreach($campaignList as $k => $v){
-              if ( strpos($tmp, $k) !== false ) {
-                if ( $campaignParam !== "" ) {
-                  $campaignParam .= "\n";
-                }
-                $campaignParam .= h($v);
+        $tmp = mb_strstr($landingData[0]['landingPage']['url'], '?');
+        if ( $tmp !== "" ) {
+          foreach($campaignList as $k => $v){
+            if ( strpos($tmp, $k) !== false ) {
+              if ( $campaignParam !== "" ) {
+                $campaignParam .= "\n";
               }
+              $campaignParam .= h($v);
             }
           }
         }
         $this->log("END キャンペーン : ".$this->getDateWithMilliSec(),LOG_DEBUG);
+
         $data = am($tHistoryData, ['THistoryCount' => $tHistoryCountData[0]], $mCusData,['tHistoryChatSendingPageData' => $tHistoryChatSendingPageData[0]],['tHistoryChatLastPageData' => $tHistoryChatLastPageData[0]['LastSpeechSendPage']],['landingData' => $landingData[0]['landingPage']],$LandscapeData[0],['pageCount' => $pageCount[0]],['campaignParam' => $campaignParam]);
       }
-      $this->log('data',LOG_DEBUG);
-      $this->log($data,LOG_DEBUG);
       // 顧客情報のテンプレート
       $this->log("BEGIN 顧客情報 : ".$this->getDateWithMilliSec(),LOG_DEBUG);
       $this->set('infoList', $this->_getInfomationList());
