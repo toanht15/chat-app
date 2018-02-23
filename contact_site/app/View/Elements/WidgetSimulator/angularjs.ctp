@@ -35,6 +35,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
    * メッセージの消去
    */
   $scope.$on('removeMessage', function(event) {
+    document.querySelector('#sincloChatMessage').value = '';
     var elms = $('#chatTalk div:nth-child(n+3)');
     angular.forEach(elms, function(elm) {
       document.querySelector('#chatTalk').removeChild(elm);
