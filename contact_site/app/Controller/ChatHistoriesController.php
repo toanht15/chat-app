@@ -27,6 +27,7 @@
     public function beforeFilter(){
       parent::beforeFilter();
       $ret = $this->MCompany->read(null, $this->userInfo['MCompany']['id']);
+      $this->Auth->allow(['index', 'logout', 'loginCheck','editPassword']);
       //20170913 仕様変更　除外IPアドレスを登録しても過去の履歴を表示する
       /*$orList = [];
       if ( !empty($ret['MCompany']['exclude_ips']) ) {
@@ -253,22 +254,26 @@
         $this->log("BEGIN キャンペーン : ".$this->getDateWithMilliSec(),LOG_DEBUG);
         $campaignList = $this->TCampaign->getList();
         $campaignParam = "";
-        $tmp = mb_strstr($landingData[0]['landingPage']['url'], '?');
-        if ( $tmp !== "" ) {
-          foreach($campaignList as $k => $v){
-            if ( strpos($tmp, $k) !== false ) {
-              if ( $campaignParam !== "" ) {
-                $campaignParam .= "\n";
+        $this->log('landingData',LOG_DEBUG);
+        $this->log($landingData,LOG_DEBUG);
+        if(!empty($landingData)) {
+          $tmp = mb_strstr($landingData[0]['landingPage']['url'], '?');
+          if ( $tmp !== "" ) {
+            foreach($campaignList as $k => $v){
+              if ( strpos($tmp, $k) !== false ) {
+                if ( $campaignParam !== "" ) {
+                  $campaignParam .= "\n";
+                }
+                $campaignParam .= h($v);
               }
-              $campaignParam .= h($v);
             }
           }
         }
         $this->log("END キャンペーン : ".$this->getDateWithMilliSec(),LOG_DEBUG);
-
         $data = am($tHistoryData, ['THistoryCount' => $tHistoryCountData[0]], $mCusData,['tHistoryChatSendingPageData' => $tHistoryChatSendingPageData[0]],['tHistoryChatLastPageData' => $tHistoryChatLastPageData[0]['LastSpeechSendPage']],['landingData' => $landingData[0]['landingPage']],$LandscapeData[0],['pageCount' => $pageCount[0]],['campaignParam' => $campaignParam]);
       }
-      $this->set('data', $data);
+      $this->log('data',LOG_DEBUG);
+      $this->log($data,LOG_DEBUG);
       // 顧客情報のテンプレート
       $this->log("BEGIN 顧客情報 : ".$this->getDateWithMilliSec(),LOG_DEBUG);
       $this->set('infoList', $this->_getInfomationList());
@@ -665,16 +670,6 @@
           'THistoryChatLog.created'
          ]
       ]);
-      foreach($historyList as $key => $value){
-        if(!empty($value['SpeechTime']['firstSpeechTime'])) {
-          $key_id[$key] = $value['SpeechTime']['firstSpeechTime'];
-        }
-        else {
-          $key_id[$key] = $value['THistoryChatLog2']['created'];
-          $historyList[$key]['SpeechTime']['firstSpeechTime'] = $value['THistoryChatLog2']['created'];
-        }
-      }
-      array_multisort($key_id , SORT_DESC ,$historyList);
 
       //$historyListに担当者を追加
       $userList = $this->_userList($historyList);
@@ -755,7 +750,7 @@
           $row['transmissionKind'] = '訪問者';
           $row['transmissionPerson'] = '';
         }
-        if($val['THistoryChatLog'][' '] == 2) {
+        if($val['THistoryChatLog']['message_type'] == 2) {
           $row['transmissionKind'] = 'オペレーター';
           $row['transmissionPerson'] = $val['MUser']['display_name']."さん";
         }
@@ -1507,6 +1502,7 @@
       $this->log("BEGIN historyList : ".$this->getDateWithMilliSec(),LOG_DEBUG);
       $historyList = $this->paginate('THistory');
       $this->log("END historyList : ".$this->getDateWithMilliSec(),LOG_DEBUG);
+      //初回チャット受信日時順に並び替え
       foreach($historyList as $key => $value){
         if(!empty($value['SpeechTime']['firstSpeechTime'])) {
           $key_id[$key] = $value['SpeechTime']['firstSpeechTime'];
