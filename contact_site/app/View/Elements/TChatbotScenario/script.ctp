@@ -46,16 +46,20 @@ var actBtnShow = function(){
 
   if (!!document.querySelector('#tchatbotscenario_list input[name="selectTab"]:checked')) {
     // 一つでもチェックが入ったら、コピー・削除ボタンを有効にする
-    copyBtn.className="btn-shadow disOffgreenBtn";
+    copyBtn.classList.remove('disOffgrayBtn');
+    copyBtn.classList.add('disOffgreenBtn');
     copyBtn.addEventListener('click', openCopyDialog, false);
-    dustBtn.className="btn-shadow disOffredBtn";
+    dustBtn.classList.remove('disOffgrayBtn');
+    dustBtn.classList.add('disOffredBtn');
     dustBtn.addEventListener('click', openConfirmDialog, false);
   }
   else {
     // 一つもチェックが無かったら、コピー・削除ボタンを無効にする
-    copyBtn.className="btn-shadow disOffgrayBtn";
+    copyBtn.classList.remove('disOffgreenBtn');
+    copyBtn.classList.add('disOffgrayBtn');
     copyBtn.removeEventListener('click', openCopyDialog, false);
-    dustBtn.className="btn-shadow disOffgrayBtn";
+    dustBtn.classList.remove('disOffredBtn');
+    dustBtn.classList.add('disOffgrayBtn');
     dustBtn.removeEventListener('click', openConfirmDialog, false);
   }
   allCheckCtrl();
@@ -190,7 +194,9 @@ function toggleSort(){
 
     //各ボタン及び動作をモード中は動かなくする
     //シナリオ設定登録ボタン押下不可
-    document.getElementById('tchatbotscenario_add_btn').className="btn-shadow disOffgrayBtn";
+    var addBtn = document.getElementById('tchatbotscenario_add_btn');
+    addBtn.classList.remove('disOffgreenBtn');
+    addBtn.classList.add('disOffgrayBtn');
     //全て選択チェックボックス選択不可
     document.getElementById('allCheck').disabled = "disabled";
     //項目チェックボックス選択不可
