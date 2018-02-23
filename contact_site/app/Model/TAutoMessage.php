@@ -24,13 +24,6 @@ class TAutoMessage extends AppModel {
         'message' => '条件を設定してください'
       ]
     ],
-    'action' => [
-      'notBlank' => [
-        'rule' => 'checkAction',
-        'required' => true,
-        'message' => 'メッセージを入力してください'
-      ]
-    ],
     't_chatbot_scenario_id' => [
       'notBlank' => [
         'rule' => 'checkScenario',
@@ -48,9 +41,6 @@ class TAutoMessage extends AppModel {
   public function checkBeforeValidates($actionType) {
     if ($actionType == C_AUTO_ACTION_TYPE_SENDMESSAGE) {
       $this->validator()->remove('t_chatbot_scenario_id');
-    } else
-    if ($actionType == C_AUTO_ACTION_TYPE_SELECTSCENARIO) {
-      $this->validator()->remove('action');
     }
   }
 
