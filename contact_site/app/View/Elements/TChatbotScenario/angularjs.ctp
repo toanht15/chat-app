@@ -8,6 +8,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   var self = this;
 
   $scope.actionList = <?php echo json_encode($chatbotScenarioActionList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
+  $scope.changeFlg = false;
 
   // アクション設定の取得・初期化
   var setActivity = <?= !empty($this->data['TChatbotScenario']['activity']) ? json_encode($this->data['TChatbotScenario']['activity'], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) : "{}" ?>;
@@ -82,7 +83,13 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
   // アクションの追加・削除を検知する
   $scope.watchActionList = [];
-  $scope.$watchCollection('setActionList', function() {
+  $scope.$watchCollection('setActionList', function(newObject, oldObject) {
+
+    // 編集されたことを検知する
+    if (!$scope.changeFlg && newObject !== oldObject) {
+      $scope.changeFlg = true;
+    }
+
     $timeout(function() {
       $scope.$apply();
     }).then(function() {
@@ -99,6 +106,11 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
     $scope.watchActionList[index] = $scope.$watch('setActionList[' + index + ']', function(newObject, oldObject) {
       if (typeof newObject === 'undefined') return;
+
+      // 編集されたことを検知する
+      if (!$scope.changeFlg && newObject !== oldObject) {
+        $scope.changeFlg = true;
+      }
 
       // 送信メッセージ
       if (typeof newObject.message !== 'undefined' && newObject.message !== '' && typeof newObject.selection === 'undefined') {
@@ -315,6 +327,13 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     }
     return visible;
   };
+
+  // 変更を行っている場合、アラート表示を行う
+  $(window).on('beforeunload', function(e) {
+    if($scope.changeFlg) {
+      return '行った変更が保存されていない可能性があります。';
+    }
+  });
 }])
 .controller('DialogController', ['$scope', '$timeout', 'SimulatorService', 'LocalStorageService', function($scope, $timeout, SimulatorService, LocalStorageService) {
   //thisを変数にいれておく
