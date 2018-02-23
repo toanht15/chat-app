@@ -24,23 +24,28 @@ class TAutoMessage extends AppModel {
         'message' => '条件を設定してください'
       ]
     ],
-    't_chatbot_scenario_id' => [
+    'action' => [
       'notBlank' => [
-        'rule' => 'checkScenario',
-        'required' => true,
-        'message' => 'シナリオを選択してください'
+        'rule' => 'notBlank',
+        'allowEmpty' => false,
+        'message' => 'メッセージを入力してください'
       ]
     ]
   ];
 
   /**
    * checkBeforeValidates
-   * バリデーション実行前に、アクションタイプ別に不要なルールを削除する
+   * バリデーション実行前に、アクションタイプ別にルールを追加する
    * @param  String $actionType アクションタイプ
    */
   public function checkBeforeValidates($actionType) {
-    if ($actionType == C_AUTO_ACTION_TYPE_SENDMESSAGE) {
-      $this->validator()->remove('t_chatbot_scenario_id');
+    if ($actionType == C_AUTO_ACTION_TYPE_SELECTSCENARIO) {
+      $this->validator()->add('t_chatbot_scenario_id', 'checkScenario', [
+        'rule' => 'checkScenario',
+        'required' => true,
+        'message' => 'シナリオを選択してください'
+      ]);
+      $this->validator()->remove('action');
     }
   }
 
