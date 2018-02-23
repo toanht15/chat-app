@@ -79,12 +79,14 @@ var actBtnShow = function(){
     //一つでもチェックが入ったら
     //CSVボタン有効
     if(authorityCsv == 1) {
-      document.getElementById("history_csv_btn").className="btn-shadow disOffgreenBtn";
+      document.getElementById("history_csv_btn").classList.remove("disOffgrayBtn");
+      document.getElementById("history_csv_btn").classList.add("disOffgreenBtn");
     }
     //document.getElementById("history_csv_btn").addEventListener('click', openCopyDialog, false);
     //削除ボタン有効
     if(authorityDelete == 1 && document.getElementById("history_dustbox_btn") != null ) {
-      document.getElementById("history_dustbox_btn").className="btn-shadow disOffredBtn";
+      document.getElementById("history_dustbox_btn").classList.remove("disOffgrayBtn");
+      document.getElementById("history_dustbox_btn").classList.add("disOffredBtn");
       document.getElementById("history_dustbox_btn").addEventListener('click', openDeleteDialog, false);
     }
     if(authorityCsv == 1 || authorityDelete == 1) {
@@ -116,12 +118,14 @@ var actBtnShow = function(){
     //一つもチェックが無かったら
     //CSVボタン無効
     if(authorityCsv == 1) {
-      document.getElementById("history_csv_btn").className="btn-shadow disOffgrayBtn";
+      document.getElementById("history_csv_btn").classList.remove("disOffgreenBtn");
+      document.getElementById("history_csv_btn").classList.add("disOffgrayBtn");
     }
     //document.getElementById("tautomessages_copy_btn").removeEventListener('click', openCopyDialog, false);
     //削除ボタン無効
     if(authorityDelete == 1 && document.getElementById("history_dustbox_btn") != null) {
-      document.getElementById("history_dustbox_btn").className="btn-shadow disOffgrayBtn";
+      document.getElementById("history_dustbox_btn").classList.remove("disOffredBtn");
+      document.getElementById("history_dustbox_btn").classList.add("disOffgrayBtn");
       document.getElementById("history_dustbox_btn").removeEventListener('click', openDeleteDialog, false);
     }
     if(authorityCsv == 1 || authorityDelete == 1) {
@@ -275,9 +279,11 @@ $(function(){
       document.getElementById("selectTab"+Number(list[i].value)).checked = false;
     }
     if(document.getElementById("history_dustbox_btn") != null) {
-      document.getElementById("history_dustbox_btn").className="btn-shadow disOffgrayBtn";
+      document.getElementById("history_dustbox_btn").classList.remove("disOffredBtn");
+      document.getElementById("history_dustbox_btn").classList.add("disOffgrayBtn");
     }
-    document.getElementById("history_csv_btn").className="btn-shadow disOffgrayBtn";
+    document.getElementById("history_dustbox_btn").classList.remove("disOffgreenBtn");
+    document.getElementById("history_dustbox_btn").classList.add("disOffgrayBtn");
     $("#btnSet").css('display', 'none');
     //横並びの場合
     if(screenMode == 1) {

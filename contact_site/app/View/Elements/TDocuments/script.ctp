@@ -1115,13 +1115,15 @@ var actBtnShow = function(){
   if ( $('input[name="selectTab"]').is(":checked") ) {
     //一つでもチェックが入ったら
     //削除ボタン有効
-    document.getElementById("tdocument_dustbox_btn").className="btn-shadow disOffredBtn";
+    document.getElementById("tdocument_dustbox_btn").classList.remove("disOffgrayBtn");
+    document.getElementById("tdocument_dustbox_btn").classList.add("disOffredBtn");
     document.getElementById("tdocument_dustbox_btn").addEventListener('click', openConfirmDialog, false);
   }
   else {
     //一つもチェックが無かったら
     //削除ボタン無効
-    document.getElementById("tdocument_dustbox_btn").className="btn-shadow disOffgrayBtn";
+    document.getElementById("tdocument_dustbox_btn").classList.remove("disOffredBtn");
+    document.getElementById("tdocument_dustbox_btn").classList.add("disOffgrayBtn");
     document.getElementById("tdocument_dustbox_btn").removeEventListener('click', openConfirmDialog, false);
     $('#allCheck').prop('checked', false);
   }
@@ -1219,7 +1221,8 @@ function toggleSort(){
 
     //各ボタン及び動作をモード中は動かなくする
     //資料設定登録ボタン押下不可
-    document.getElementById('tdocument_add_btn').className="btn-shadow disOffgrayBtn";
+    document.getElementById("tdocument_add_btn").classList.remove("disOffgreenBtn");
+    document.getElementById("tdocument_add_btn").classList.add("disOffgrayBtn");
     //全て選択チェックボックス選択不可
     document.getElementById('allCheck').disabled = "disabled";
     //項目チェックボックス選択不可
