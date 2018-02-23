@@ -268,6 +268,7 @@
 
         $data = am($tHistoryData, ['THistoryCount' => $tHistoryCountData[0]], $mCusData,['tHistoryChatSendingPageData' => $tHistoryChatSendingPageData[0]],['tHistoryChatLastPageData' => $tHistoryChatLastPageData[0]['LastSpeechSendPage']],['landingData' => $landingData[0]['landingPage']],$LandscapeData[0],['pageCount' => $pageCount[0]],['campaignParam' => $campaignParam]);
       }
+      $this->set('data', $data);
       // 顧客情報のテンプレート
       $this->log("BEGIN 顧客情報 : ".$this->getDateWithMilliSec(),LOG_DEBUG);
       $this->set('infoList', $this->_getInfomationList());
