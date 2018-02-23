@@ -33,6 +33,14 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     cursor: 'move',
     helper: 'clone',
     revert: 100,
+    stop: function(event, ui) {
+      $scope.$apply();
+
+      var elms = event.target.querySelectorAll('li.set_action_item');
+      $scope.setActionList.forEach(function(actionItem, index) {
+        validateAction(elms[index], $scope.setActionList, actionItem);
+      });
+    }
   };
 
   // メッセージ間隔は同一の設定を各アクションに設定しているため、状態に応じて取得先を変更する
@@ -531,116 +539,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       var elm = angular.element(element[0]);
 
       scope.$watch(attrs.ngModel, function(actionItem) {
-        var messageList = [];
-
-        if (actionItem.actionType == <?= C_SCENARIO_ACTION_TEXT ?>) {
-          if (!actionItem.message) {
-            messageList.push('発言内容が未入力です');
-          }
-
-        } else
-        if (actionItem.actionType == <?= C_SCENARIO_ACTION_HEARING ?>) {
-          var validVariables = actionItem.hearings.some(function(obj) {
-            return !!obj.variableName && !!obj.message;
-          });
-          if (!validVariables) {
-            messageList.push('変数名と質問内容が未入力です')
-          }
-
-          if (!actionItem.errorMessage) {
-            messageList.push('入力エラー時の返信メッセージが未入力です')
-          }
-
-          if (actionItem.isConfirm) {
-            if (!actionItem.confirmMessage) {
-              messageList.push('確認内容のメッセージが未入力です');
-            }
-            if (!actionItem.success) {
-              messageList.push('選択肢（OK）が未入力です');
-            }
-            if (!actionItem.cancel) {
-              messageList.push('選択肢（NG）が未入力です');
-            }
-          }
-
-        } else
-        if (actionItem.actionType == <?= C_SCENARIO_ACTION_SELECT_OPTION ?>) {
-          if (!actionItem.selection.variableName) {
-            messageList.push('変数名が未入力です');
-          }
-
-          if (!actionItem.message) {
-            messageList.push('質問内容が未入力です');
-          }
-
-          var validOptions = actionItem.selection.options.some(function(obj) {
-            return !!obj;
-          });
-          if (!validOptions) {
-            messageList.push('選択肢が未入力です')
-          }
-
-        } else
-        if (actionItem.actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?>) {
-          var validAddress = actionItem.toAddress.some(function(obj) {
-            return !!obj;
-          });
-          if (!validAddress) {
-            messageList.push('送信先メールアドレスが未入力です');
-          }
-
-          if (!actionItem.fromName) {
-            messageList.push('メールタイトルが未入力です');
-          }
-
-          if (!actionItem.subject) {
-            messageList.push('差出人名が未入力です');
-          }
-
-          if (actionItem.mailType == <?= C_SCENARIO_MAIL_TYPE_CUSTOMIZE ?> && !actionItem.template) {
-            messageList.push('メール本文が未入力です');
-          }
-        }
-
-        // 使用されている変数名を抽出する
-        var setMessages = searchObj(actionItem, /^(?!\$).+$|^variableName$/i);
-        var usedVariableList = setMessages.map(function(string) {
-          return string.replace(/\n/mg, ' ');
-        }).join(' ').match(/{{[^}]+}}/g);
-
-        if (usedVariableList !== null && usedVariableList.length >= 1) {
-
-          scope.$parent.setActionList.every(function(action) {
-            // 設定されている変数名を抽出する
-            var definedVariableList = searchObj(action, /^variableName$/);
-
-            // 使用していない変数名を取り出す
-            usedVariableList = usedVariableList.filter(function(usedVariable) {
-              return !definedVariableList.includes(usedVariable.replace(/{{([^}]+)}}/, '$1'));
-            });
-
-            // 自分自身より後ろに設定されたアクションはチェックしない
-            return actionItem !== action;
-          });
-
-          usedVariableList.forEach(function(string) {
-            var variableName = string.replace(/{{([^}]+)}}/, '$1');
-            messageList.push('変数名 "' + variableName + '" がこのシナリオの中で設定されていません');
-          });
-        }
-
-        actionItem.$valid = messageList.length <= 0;
-
-        // エラーメッセージをツールチップに設定
-        if (!actionItem.$valid) {
-          setTimeout(function() {
-            var target = elm[0].querySelector('h4 > a > i');
-            target.dataset.tooltip = messageList.map(function(message) {
-              return '● ' + message;
-            }).join('\n');
-          }, 0);
-        }
-
+        validateAction(elm[0], scope.$parent.setActionList, actionItem);
       }, true);
     }
   };
@@ -835,6 +734,120 @@ function adjustDataOfSendMail(action) {
   return action;
 }
 
+// アクションのバリデーションとエラーメッセージの設定
+function validateAction(element, setActionList, actionItem) {
+  var messageList = [];
+
+  if (actionItem.actionType == <?= C_SCENARIO_ACTION_TEXT ?>) {
+    if (!actionItem.message) {
+      messageList.push('発言内容が未入力です');
+    }
+
+  } else
+  if (actionItem.actionType == <?= C_SCENARIO_ACTION_HEARING ?>) {
+    var validVariables = actionItem.hearings.some(function(obj) {
+      return !!obj.variableName && !!obj.message;
+    });
+    if (!validVariables) {
+      messageList.push('変数名と質問内容が未入力です')
+    }
+
+    if (!actionItem.errorMessage) {
+      messageList.push('入力エラー時の返信メッセージが未入力です')
+    }
+
+    if (actionItem.isConfirm) {
+      if (!actionItem.confirmMessage) {
+        messageList.push('確認内容のメッセージが未入力です');
+      }
+      if (!actionItem.success) {
+        messageList.push('選択肢（OK）が未入力です');
+      }
+      if (!actionItem.cancel) {
+        messageList.push('選択肢（NG）が未入力です');
+      }
+    }
+
+  } else
+  if (actionItem.actionType == <?= C_SCENARIO_ACTION_SELECT_OPTION ?>) {
+    if (!actionItem.selection.variableName) {
+      messageList.push('変数名が未入力です');
+    }
+
+    if (!actionItem.message) {
+      messageList.push('質問内容が未入力です');
+    }
+
+    var validOptions = actionItem.selection.options.some(function(obj) {
+      return !!obj;
+    });
+    if (!validOptions) {
+      messageList.push('選択肢が未入力です')
+    }
+
+  } else
+  if (actionItem.actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?>) {
+    var validAddress = actionItem.toAddress.some(function(obj) {
+      return !!obj;
+    });
+    if (!validAddress) {
+      messageList.push('送信先メールアドレスが未入力です');
+    }
+
+    if (!actionItem.fromName) {
+      messageList.push('メールタイトルが未入力です');
+    }
+
+    if (!actionItem.subject) {
+      messageList.push('差出人名が未入力です');
+    }
+
+    if (actionItem.mailType == <?= C_SCENARIO_MAIL_TYPE_CUSTOMIZE ?> && !actionItem.template) {
+      messageList.push('メール本文が未入力です');
+    }
+  }
+
+  // 使用されている変数名を抽出する
+  var setMessages = searchObj(actionItem, /^(?!\$).+$|^variableName$/i);
+  var usedVariableList = setMessages.map(function(string) {
+    return string.replace(/\n/mg, ' ');
+  }).join(' ').match(/{{[^}]+}}/g);
+
+  if (usedVariableList !== null && usedVariableList.length >= 1) {
+
+    setActionList.every(function(action) {
+      // 設定されている変数名を抽出する
+      var definedVariableList = searchObj(action, /^variableName$/);
+
+      // 使用していない変数名を取り出す
+      usedVariableList = usedVariableList.filter(function(usedVariable) {
+        return !definedVariableList.includes(usedVariable.replace(/{{([^}]+)}}/, '$1'));
+      });
+
+      // 自分自身より後ろに設定されたアクションはチェックしない
+      return actionItem !== action;
+    });
+
+    usedVariableList.forEach(function(string) {
+      var variableName = string.replace(/{{([^}]+)}}/, '$1');
+      messageList.push('変数名 "' + variableName + '" がこのアクションより前に設定されていません');
+    });
+  }
+
+  actionItem.$valid = messageList.length <= 0;
+
+  // エラーメッセージをツールチップに設定
+  if (!actionItem.$valid) {
+    setTimeout(function() {
+      var target = element.querySelector('h4 > a > i');
+      target.dataset.tooltip = messageList.map(function(message) {
+        return '● ' + message;
+      }).join('\n');
+    }, 0);
+  }
+}
+
+// オブジェクト内のプロパティを検索
 function searchObj (obj, regex) {
   var resultList = [];
   for (var key in obj) {
