@@ -82,7 +82,7 @@ class ContractController extends AppController
 
       try {
         $addedCompanyInfo = $this->processTransaction($data['MCompany'], $data['Contract'], $data['MAgreements']);
-        return ison_encode(array(
+        return json_encode(array(
           'success' => true,
           'message' => "OK",
           'newCompanyId' => $addedCompanyInfo['id']
