@@ -601,6 +601,34 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
             messageList.push('メール本文が未入力です');
           }
         }
+
+        // 使用されている変数名を抽出する
+        var setMessages = searchObj(actionItem, /^(?!\$).+$|^variableName$/i);
+        var usedVariableList = setMessages.map(function(string) {
+          return string.replace(/\n/mg, ' ');
+        }).join(' ').match(/{{[^}]+}}/g);
+
+        if (usedVariableList !== null && usedVariableList.length >= 1) {
+
+          scope.$parent.setActionList.every(function(action) {
+            // 設定されている変数名を抽出する
+            var definedVariableList = searchObj(action, /^variableName$/);
+
+            // 使用していない変数名を取り出す
+            usedVariableList = usedVariableList.filter(function(usedVariable) {
+              return !definedVariableList.includes(usedVariable.replace(/{{([^}]+)}}/, '$1'));
+            });
+
+            // 自分自身より後ろに設定されたアクションはチェックしない
+            return actionItem !== action;
+          });
+
+          usedVariableList.forEach(function(string) {
+            var variableName = string.replace(/{{([^}]+)}}/, '$1');
+            messageList.push('変数名 "' + variableName + '" がこのシナリオの中で設定されていません');
+          });
+        }
+
         actionItem.$valid = messageList.length <= 0;
 
         // エラーメッセージをツールチップに設定
@@ -805,5 +833,19 @@ function adjustDataOfSendMail(action) {
   if (toAddress.length < 1) return null;
   action.toAddress = toAddress;
   return action;
+}
+
+function searchObj (obj, regex) {
+  var resultList = [];
+  for (var key in obj) {
+    if (typeof obj[key] === 'object') {
+      resultList = resultList.concat(searchObj(obj[key], regex));
+    }
+
+    if (typeof obj[key] === 'string' && regex.test(key)) {
+      resultList.push(obj[key]);
+    }
+  }
+  return resultList;
 }
 </script>
