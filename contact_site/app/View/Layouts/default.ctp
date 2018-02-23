@@ -45,6 +45,10 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
   <?php echo $this->Html->charset(); ?>
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <?php if ( strcmp($this->name, 'Trial') === 0 && strcmp($this->action, 'thanks') === 0) { ?>
+    <meta name="robots" content="noindex">
+  <?php } ?>
+
   <title>
     <?php echo $this->fetch('title'); ?> | sinclo
   </title>

@@ -7,6 +7,7 @@ App::uses('HttpSocket', 'Network/Http', 'Component', 'Controller', 'Utility/Vali
 class TrialController extends AppController {
   const CONTRACT_ADD_URL = "http://127.0.0.1:81/Contract/add";
   const ML_MAIL_ADDRESS= "cloud-service@medialink-ml.co.jp";
+  const ML_MAIL_ADDRESS_AND_ALEX = "cloud-service@medialink-ml.co.jp,alexandre.mercier@medialink-ml.co.jp";
   const API_CALL_TIMEOUT = 5;
   const COMPANY_NAME = "##COMPANY_NAME##";
   const USER_NAME = "##USER_NAME##";
@@ -97,7 +98,7 @@ class TrialController extends AppController {
       'm_companies_id' => 0, // システムメールなので0で登録
       'mail_type_cd' => 'TL001',
       'from_address' => MailSenderComponent::MAIL_SYSTEM_FROM_ADDRESS,
-      'from_name' => 'sinclo(シンクロ)',
+      'from_name' => 'sinclo(メディアリンク株式会社)',
       'to_address' => $data['Contract']['user_mail_address'],
       'subject' => $mailTemplateData[0]['MSystemMailTemplate']['subject'],
       'body' => $mailBodyData,
@@ -108,8 +109,8 @@ class TrialController extends AppController {
 
     //お客さん向け
     $sender = new MailSenderComponent();
-    $sender->setFrom(MailSenderComponent::MAIL_SYSTEM_FROM_ADDRESS);
-    $sender->setFromName('sinclo(シンクロ)');
+    $sender->setFrom(self::ML_MAIL_ADDRESS);
+    $sender->setFromName('sinclo（シンクロ）');
     $sender->setTo($data['Contract']['user_mail_address']);
     $sender->setSubject($mailTemplateData[0]['MSystemMailTemplate']['subject']);
     $sender->setBody($mailBodyData);
@@ -125,9 +126,9 @@ class TrialController extends AppController {
 
     //会社向け
     $sender = new MailSenderComponent();
-    $sender->setFrom(MailSenderComponent::MAIL_SYSTEM_FROM_ADDRESS);
-    $sender->setFromName('sinclo(シンクロ)');
-    $sender->setTo(self::ML_MAIL_ADDRESS);
+    $sender->setFrom($data['Contract']['user_mail_address']);
+    $sender->setFromName($data['MCompany']['company_name'].'　'.$data['MAgreements']['application_name']);
+    $sender->setTo(self::ML_MAIL_ADDRESS_AND_ALEX);
     $sender->setSubject($mailTemplateData[1]['MSystemMailTemplate']['subject']);
     $mailBodyData = str_replace(self::COMPANY_NAME, $data['MCompany']['company_name'], $mailTemplateData[1]['MSystemMailTemplate']['mail_body']);
     $mailBodyData = str_replace(self::USER_NAME, $data['MAgreements']['application_name'], $mailBodyData);
@@ -169,6 +170,8 @@ class TrialController extends AppController {
     }
     $sender->setBody($mailBodyData);
     $sender->send();
+
+
   }
 
   /* *

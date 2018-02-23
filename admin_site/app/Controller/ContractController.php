@@ -82,7 +82,7 @@ class ContractController extends AppController
 
       try {
         $addedCompanyInfo = $this->processTransaction($data['MCompany'], $data['Contract'], $data['MAgreements']);
-        return ison_encode(array(
+        return json_encode(array(
           'success' => true,
           'message' => "OK",
           'newCompanyId' => $addedCompanyInfo['id']
@@ -151,6 +151,8 @@ class ContractController extends AppController
       $editData = $this->MCompany->read(null, $id);
       // オプションを別領域に設定
       $editData['MCompany']['options']['refCompanyData'] = json_decode($editData['MCompany']['core_settings'],TRUE)['refCompanyData'];
+      $editData['MCompany']['options']['chatbotScenario'] = json_decode($editData['MCompany']['core_settings'],TRUE)['chatbotScenario'];
+
       // ここまで
       $agreementData = $this->MAgreements->find('first',[
         'conditions' => array(
@@ -352,9 +354,6 @@ class ContractController extends AppController
     }
     if(empty($agreementInfo['trial_end_day'])) {
       $agreementInfo['trial_end_day'] = "";
-    }
-    if(empty($agreementInfo['business_model']) == 0) {
-      $agreementInfo['business_model'] = "";
     }
     $this->MAgreements->set([
       'm_companies_id' => $addedCompanyInfo['id'],

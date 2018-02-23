@@ -13,6 +13,9 @@ class FreeTrialMailJobBatchShell extends AppShell
   const LOG_INFO = 'batch-info';
   const LOG_ERROR = 'batch-error';
 
+  const FROM_ADDRESS = "cloud-service@medialink-ml.co.jp";
+  const FROM_NAME = "sinclo（シンクロ）";
+
   public $uses = array('TSendSystemMailSchedule');
 
 
@@ -54,6 +57,8 @@ class FreeTrialMailJobBatchShell extends AppShell
           $body = $schedule['TSendSystemMailSchedule']['mail_body'];
           $subject = $schedule['TSendSystemMailSchedule']['subject'];
           $this->log("Sending mail to ".$to." subject : ".$subject." JOB ID: ".$id, self::LOG_INFO);
+          $this->component->setFrom(self::FROM_ADDRESS);
+          $this->component->setFromName(self::FROM_NAME);
           $this->component->setTo($to);
           $this->component->setBody($body);
           $this->component->setSubject($subject);
