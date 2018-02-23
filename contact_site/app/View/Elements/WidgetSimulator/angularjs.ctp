@@ -44,17 +44,34 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     });
   });
 
+  /**
+   * visitorSendMessage
+   * サイト訪問者のメッセージ受信と、呼び出し元アクションへの通知
+   */
   $scope.visitorSendMessage = function() {
     var message = $('#sincloChatMessage').val()
     if (typeof message === 'undefined' || message.trim() === '') {
       return;
     }
 
+    // 自由入力エリアの改行許可状態を戻す
+    $scope.allowInputLF = true;
+
+    // placeholder を戻す
+    document.querySelector('#sincloChatMessage').placeholder = $scope.defaultPlaceholder;
+
     $scope.addMessage('se', message);
     $('#sincloChatMessage').val('');
     $scope.$emit('receiveVistorMessage', message)
   };
 
+  /**
+   * addMessage
+   * シミュレーター上へのメッセージ追加
+   * @param String type     企業側(re)・訪問者側(se)のメッセージタイプ
+   * @param String message  追加するメッセージ
+   * @param String prefix   ラジオボタンに付与するプレフィックス
+   */
   $scope.addMessage = function(type, message, prefix) {
     // ベースとなる要素をクローンし、メッセージを挿入する
     if (type === 're') {
@@ -80,6 +97,18 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
   }
 
   /**
+   * setPlaceholder
+   * プレースホルダの設定
+   * （サイト訪問者のメッセージ送信後に、プレースホルダの内容を戻す）
+   * @param String message プレースホルダに設定するメッセージ
+   */
+  $scope.$on('setPlaceholder', function(event, message) {
+    var elm = document.querySelector('#sincloChatMessage');
+    $scope.defaultPlaceholder = elm.placeholder;
+    elm.placeholder = message;
+  });
+
+  /**
    * switchChatTextAreaDisplay
    * シミュレーションの自由入力エリアの表示状態を切り替える
    * @param Boolean status 自由入力エリアの表示状態(true: 表示, false: 非表示）
@@ -90,14 +119,18 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
 
   /**
    * allowInputLF
-   * 自由入力エリアへの、改行入力の許可状態を切り替える
+   * 自由入力エリアの改行入力の許可状態を切り替える
+   * （サイト訪問者のメッセージ送信後に、状態を戻す）
    * @param Boolean status 改行入力の許可状態(true: 表示, false: 非表示)
    */
   $scope.$on('allowInputLF', function(event, status) {
     $scope.allowInputLF = status == '1' ? true : false;
   });
 
-  // 自由入力エリアの表示制御
+  /**
+   * isTextAreaOpen
+   * showWidgetTypeを元に自由入力エリアの表示を切り替える
+   */
   $scope.$watch('isTextAreaOpen', function() {
     var msgBoxElm = document.getElementById('messageBox');
     var chatTalkElm = document.getElementById('chatTalk');
@@ -185,8 +218,6 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
 
       // ラジオボタンを非活性にする
       $('input[name=' + name + '][type="radio"]').prop('disabled', true);
-      // 自由入力エリアへの、改行許可状態を戻す
-      $scope.allowInputLF = true;
     }
   });
 }]);
