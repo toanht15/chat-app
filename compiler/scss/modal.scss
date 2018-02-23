@@ -233,28 +233,56 @@
          }
       }
 
-      &.p-show-terms-of-service {
-         width: 580px;
-         font-size: 12px;
+      @media (max-width: 767px) {
+        &.p-show-terms-of-service {
+           width: 300px;
+           font-size: 12px;
 
-         div#popup-main {
-          text-align: center;
-          overflow-y: scroll;
-          height:500px; }
+          div#popup-main {
+           text-align: center;
+           overflow-y: scroll;
+           height:500px; }
 
-         div#popup-button {
-           display: flex;
-           flex-direction: row;
-           justify-content: space-around;
+          div#popup-button {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
 
-           a {
-             flex-basis: 140px;
-             height: 2em;
-             margin: 10px 5px 0px 5px;
-             padding: 0.25em 0;
-             font-size: 1.1em;
-           }
-         }
+            a {
+              flex-basis: 140px;
+              height: 2em;
+              margin: 10px 5px 0px 5px;
+              padding: 0.25em 0;
+              font-size: 1.1em;
+            }
+          }
+        }
+      }
+
+      @media (min-width: 768px) {
+        &.p-show-terms-of-service {
+           width: 580px;
+           font-size: 12px;
+
+          div#popup-main {
+           text-align: center;
+           overflow-y: scroll;
+           height:500px; }
+
+          div#popup-button {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+
+            a {
+              flex-basis: 140px;
+              height: 2em;
+              margin: 10px 5px 0px 5px;
+              padding: 0.25em 0;
+              font-size: 1.1em;
+            }
+          }
+        }
       }
 
       &.p-cus-select-sharing-mode {
