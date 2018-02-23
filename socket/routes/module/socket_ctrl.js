@@ -1060,6 +1060,8 @@ io.sockets.on('connection', function (socket) {
                         });
                       }
                     });
+                  } else {
+                    emit.toCompany('sendChatResult', sendChatData, d.siteKey);
                   }
 
                   if(d.messageType === 1 && insertData.message_read_flg != 1) {
