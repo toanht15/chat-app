@@ -9,6 +9,12 @@
         }
       }
     };
+    // 自身のページを履歴に追加
+    location.hash = "#loginPage";
+    // ページ戻り時にも自身のページを履歴に追加
+    $(window).on("hashchange", function(){
+      location.hash = "#loginPage";
+    });
   })();
   window.onload = function(){
     if (typeof MUserFormButton === 'undefined') return false;
