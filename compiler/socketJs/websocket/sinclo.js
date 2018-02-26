@@ -2914,7 +2914,7 @@
           },
           pregContainsAndExclsion: function(typeObj, contains, exclusions, val) {
             console.log("pregContainsAndExclsion type: " + JSON.stringify(typeObj) + " contains: " + contains + " exclusions: " + exclusions + " val: " + val);
-            var result = false;
+            var result = true;
 
             // 含む方
             // var splitedContains = contains.replace(/　/g, " ").split(" ");
@@ -3627,6 +3627,20 @@
             break;
         }
       },
+      _isTheFiestScenaroAndSequence: function() {
+        var self = sinclo.scenaroApi;
+        var result = false;
+        // 現在の実行シナリオが「テキスト発言」「選択肢」「メール送信」であればシナリオのシーケンス番号だけを見る
+        if(self.get(self._lKey.currentScenario).actionType === "1"
+        || self.get(self._lKey.currentScenario).actionType === "3"
+        || self.get(self._lKey.currentScenario).actionType === "4") {
+          result = self.get(self._lKey.currentScenarioSeqNum) === 0;
+        } else if(self.get(self._lKey.currentScenario).actionType === "2") {
+          // ヒアリングの場合は一番最初の問いかけかも見る
+          result = self.get(self._lKey.currentScenarioSeqNum) === 0 && self._hearing._isTheFirst();
+        }
+        return result;
+      },
       _goToNextScenario: function() {
         var self = sinclo.scenarioApi;
         if(Number(self.get(self._lKey.currentScenarioSeqNum)) === Number(self.get(self._lKey.scenarioLength))-1) {
@@ -3802,7 +3816,13 @@
         return Number(self.get(self._lKey.currentScenario).messageIntervalTimeSec);
       },
       _doing: function(intervalSec, callFunction) {
-        setTimeout(callFunction, intervalSec * 1000);
+        var self = sinclo.scenarioApi;
+        if(self._isTheFiestScenaroAndSequence()) {
+          // 一番最初のシナリオ開始は即時実行
+          callFunction();
+        } else {
+          setTimeout(callFunction, intervalSec * 1000);
+        }
       },
       _valid: function(typeStr, val) {
         var self = sinclo.scenarioApi;
