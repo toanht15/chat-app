@@ -574,9 +574,12 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       // 質問する
       var message = actionDetail.hearings[$scope.hearingIndex].message;
       $scope.$broadcast('addReMessage', $scope.replaceVariable(message), 'action' + $scope.actionStep);
+      // 設定切り替え
       $scope.$broadcast('switchSimulatorChatTextArea', actionDetail.chatTextArea === '1');
       $scope.$broadcast('allowInputLF', actionDetail.hearings[$scope.hearingIndex].allowInputLF);
       $scope.$broadcast('setPlaceholder', $scope.replaceVariable(message));
+      var strInputRule =$scope.inputTypeList[actionDetail.hearings[$scope.hearingIndex].inputType].inputRule;
+      $scope.$broadcast('setInputRule', strInputRule.replace(/^\/(.+)\/$/, "$1"));
     } else
     if (actionDetail.isConfirm && ($scope.hearingIndex === actionDetail.hearings.length)) {
       // 確認メッセージ
