@@ -183,14 +183,14 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
   // 自由入力エリアのキーイベント
   $(document).on('keypress', '#sincloChatMessage', function(e) {
     // Enterキー
-    if (e.which === 13 && !e.shiftKey) {
+    if (e.key === 'Enter' && !e.shiftKey) {
       // メッセージ送信、かつEnterキー押下で消費者側送信アクションが有効
       if ($scope.canVisitorSendMessage && $scope.simulatorSettings.settings['chat_trigger'] == <?= C_WIDGET_RADIO_CLICK_SEND ?>) {
         $scope.visitorSendMessage();
         return false;
       }
     }
-    if (e.which === 13) {
+    if (e.key === 'Enter') {
       // 改行が許可されていない
       if (!$scope.allowInputLF) {
         return false;
