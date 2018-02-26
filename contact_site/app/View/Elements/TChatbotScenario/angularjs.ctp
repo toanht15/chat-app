@@ -740,6 +740,17 @@ $(document).ready(function() {
       scrollTop: box.scrollTop() + targetY
     }, time);
   });
+
+  // アクション設定の高さ調整
+  var actionWrapperHeight = document.getElementById('tchatbotscenario_form_action').offsetHeight;
+  var actionHeaderHeight = document.getElementById('tchatbotscenario_form_action_header').offsetHeight;
+  $('#tchatbotscenario_form_action_body').css({height: actionWrapperHeight - actionHeaderHeight + 'px'});
+
+  $(window).resize(function() {
+    var actionWrapperHeight = document.getElementById('tchatbotscenario_form_action').offsetHeight;
+    var actionHeaderHeight = document.getElementById('tchatbotscenario_form_action_header').offsetHeight;
+    $('#tchatbotscenario_form_action_body').css({height: actionWrapperHeight - actionHeaderHeight + 'px'});
+  });
 });
 
 // テキスト発言のバリデーションチェック
