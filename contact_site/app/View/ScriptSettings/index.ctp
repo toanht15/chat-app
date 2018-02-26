@@ -32,7 +32,7 @@ $mainTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デモサイ
     <dl>
       <dt>（１）ウィジェット表示タグ</dt>
       <dd>
-        <pre>ウィジェットを表示したい通常のページ（フォーム以外のページ）に埋め込むタグです。</pre>
+        <pre>ウィジェットを表示するページに埋め込むタグです。</pre>
         <p>
           <?php $scriptName = "<script type='text/javascript' src='" . $fileName . "'></script>"; ?>
           <span class="copyBtn" data-clipboard-target="#normalTag"><?=$this->Html->image('clipboard.png', array('alt' =>'コピー', 'width' => 25, 'height' => 25)) ?></span>
@@ -41,16 +41,19 @@ $mainTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デモサイ
       </dd>
       <dt>（２）ウィジェット非表示タグ</dt>
       <dd>
-        <pre>ウィジェットは表示させずに画面共有の対象とする通常のページ（フォーム以外のページ）に埋め込むタグです。</pre>
+        <pre>ウィジェットを表示させたくないページに埋め込むタグです。
+※ウィジェットは表示させずに、リアルタイムモニタへの表示やアクセス履歴の対象としたいページや、画面共有の対象としたいページに本タグを埋め込んでください。</pre>
         <p>
           <?php $scriptName = "<script type='text/javascript' src='" . $fileName . "' data-hide='1'></script>"; ?>
           <span class="copyBtn" data-clipboard-target="#hideTag"><?=$this->Html->image('clipboard.png', array('alt' =>'コピー', 'width' => 25, 'height' => 25)) ?></span>
           <span class="copyArea"><?=$this->Form->input('hideTag', array('type' => 'text', 'value' => $scriptName, 'label' => false, 'div' => false ))?></span>
         </p>
       </dd>
+      <?php if($coreSettings[C_COMPANY_USE_SYNCLO] || $coreSettings[C_COMPANY_USE_DOCUMENT] || $coreSettings[C_COMPANY_USE_LA_CO_BROWSE]): ?>
       <dt>（３）フォーム用ウィジェット表示タグ</dt>
       <dd>
-        <pre>ウィジェットを表示したいフォーム系ページに埋め込むタグです。
+        <pre>フォーム代理入力するページ用のタグ（ウィジェット表示）
+画面共有を利用してフォームの代理入力を行うページに埋め込むタグです。（ウィジェット表示）
 ※本タグを埋め込んだページは、画面共有中に企業側からのsubmitボタン操作を無効にします。</pre>
         <p>
           <?php $scriptName = "<script type='text/javascript' src='" . $fileName . "' data-form='1'></script>"; ?>
@@ -60,8 +63,9 @@ $mainTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デモサイ
       </dd>
       <dt>（４）フォーム用ウィジェット非表示タグ</dt>
       <dd>
-        <pre>ウィジェットは表示させずに画面共有の対象とするフォーム系ページに埋め込むタグです。
-※本タグを埋め込んだページは、画面共有中に企業側からのsubmitボタン操作を無効にします</pre>
+        <pre>フォーム代理入力するページ用のタグ（ウィジェット非表示）
+画面共有を利用してフォームの代理入力を行うページに埋め込むタグです。（ウィジェット非表示）
+※本タグを埋め込んだページは、画面共有中に企業側からのsubmitボタン操作を無効にします。</pre>
         <p>
           <?php $scriptName = "<script type='text/javascript' src='" . $fileName . "' data-hide='1' data-form='1'></script>"; ?>
           <span class="copyBtn" data-clipboard-target="#formHideTag"><?=$this->Html->image('clipboard.png', array('alt' =>'コピー', 'width' => 25, 'height' => 25)) ?></span>
@@ -72,6 +76,7 @@ $mainTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デモサイ
     <pre style="color:red">注意：フォーム系ページの次のページ（submitボタンをクリックした後に遷移する「確認ページ」や「サンクスページ」）にはsincloタグは
 　　　埋め込まないでください。
     </pre>
+    <?php endif; ?>
   </section>
   <?php endif; ?>
   <h2><?= mb_convert_kana($headerNo, "N", "utf-8"); $headerNo++ ?>．デモサイト</h2>

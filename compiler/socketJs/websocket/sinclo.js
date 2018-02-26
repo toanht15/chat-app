@@ -2864,6 +2864,7 @@
                   sincloInfo.widgetDisplay = true;
                   common.widgetHandler.show();
                 }
+                var flg = sinclo.widget.condifiton.get();
                 if ( Number(cond.widgetOpen) === 1 && String(flg) === "false" ) {
                   console.log("シナリオ最大化処理");
                   sinclo.operatorInfo.ev();
@@ -4017,7 +4018,7 @@
         _cvTypeIs: function(type) {
           var self = sinclo.scenarioApi._hearing;
           if(!self._cvIsEnable()) return false;
-          return type === self._parent.get(self._parent._lKey.currentScenario).cvCondition;
+          return type === String(self._parent.get(self._parent._lKey.currentScenario).cvCondition);
         },
         _cvIsEnable: function() {
           var self = sinclo.scenarioApi._hearing;
