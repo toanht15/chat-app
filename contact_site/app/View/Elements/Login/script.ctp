@@ -20,7 +20,11 @@
     });
   };
   //初期パスワード変更
+  var isProcess = false;
   function saveAct(){
-    $('#MUserEditPasswordForm').submit();
+    if(!isProcess) {
+      isProcess = true;
+      $('#MUserEditPasswordForm').submit();
+    }
   }
 </script>
