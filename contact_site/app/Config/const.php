@@ -138,7 +138,7 @@ define('C_MATCH_RULE_NUM_1', '/^(100|[0-9]{1,2})$/');
 define('C_MATCH_RULE_NUM_2', '/^(100|[1-9][0-9]|[1-9]{1})$/');
 define('C_MATCH_RULE_NUM_3', '/^(60|[1-5][0-9]|[1-9]{1})$/');
 define('C_MATCH_RULE_TEXT', '/.+/'); // 1文字以上のテキスト
-define('C_MATCH_RULE_NUMBER', '/[0-9]+/');  // 1文字以上の数字
+define('C_MATCH_RULE_NUMBER', '/^\d+$/');  // 1文字以上の数字
 define('C_MATCH_RULE_EMAIL', '/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/'); // メールアドレス http://emailregex.com/
 
 // メッセージ種別
