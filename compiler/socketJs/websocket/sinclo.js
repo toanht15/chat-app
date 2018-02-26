@@ -2914,7 +2914,7 @@
           },
           pregContainsAndExclsion: function(typeObj, contains, exclusions, val) {
             console.log("pregContainsAndExclsion type: " + JSON.stringify(typeObj) + " contains: " + contains + " exclusions: " + exclusions + " val: " + val);
-            var result = false;
+            var result = true;
 
             // 含む方
             // var splitedContains = contains.replace(/　/g, " ").split(" ");
