@@ -199,6 +199,7 @@ define('C_SCENARIO_INPUT_TYPE_TEXT', 1);
 define('C_SCENARIO_INPUT_TYPE_NUMBER', 2);
 define('C_SCENARIO_INPUT_TYPE_EMAIL', 3);
 define('C_SCENARIO_INPUT_TYPE_TEL', 4);
+define('C_SCENARIO_INPUT_TYPE_CALL_SCENARIO', 5);
 
 /* シナリオ設定(ヒアリング) - 改行設定 */
 define('C_SCENARIO_INPUT_LF_TYPE_DISALLOW', 1);
@@ -661,6 +662,15 @@ $config['chatbotScenarioActionList'] = [
     'default' => [
       'messageIntervalTimeSec' => '2',
       'mailType' => C_SCENARIO_MAIL_TYPE_ALL_MESSAGE
+    ]
+  ],
+  // シナリオ呼び出し
+  C_SCENARIO_INPUT_TYPE_CALL_SCENARIO => [
+    'label' => 'シナリオ呼び出し',
+    'chatTextArea' => '2',
+    'default' => [
+      'messageIntervalTimeSec' => '2',
+      'scenarioId' => ''
     ]
   ]
 ];

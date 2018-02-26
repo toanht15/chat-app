@@ -20,6 +20,13 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     }
   }
 
+  // 登録済みシナリオ一覧
+  var scenarioJsonList = JSON.parse(document.getElementById('TChatbotScenarioScenarioList').value);
+  this.scenarioList = [];
+  for (var key in scenarioJsonList) {
+    this.scenarioList.push({'key': key, 'name': scenarioJsonList[key]});
+  }
+
   $scope.inputTypeList = <?php echo json_encode($chatbotScenarioInputType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.sendMailTypeList = <?php echo json_encode($chatbotScenarioSendMailType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.inputLFTypeList = <?php echo json_encode($chatbotScenarioInputLFType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
@@ -76,7 +83,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
         // フォーカス移動
         var target = $('#tchatbotscenario_form_action_body .set_action_item:last-of-type');
-        target.find('input, textarea')[0].focus();
+        target.find('input, textarea, select')[0].focus();
       }, 0);
     }
   };
@@ -743,7 +750,7 @@ $(document).ready(function() {
     box.stop().animate({
       scrollTop: box.scrollTop() + targetY
     }, time);
-    target.find('input, textarea')[0].focus();
+    target.find('input, textarea, select')[0].focus();
   });
 
   // フォーカスされたアクションに応じて、関連するプレビューを強調表示する
