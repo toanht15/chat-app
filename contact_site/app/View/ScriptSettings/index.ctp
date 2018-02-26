@@ -42,7 +42,8 @@ $mainTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デモサイ
       <dt>（２）ウィジェット非表示タグ</dt>
       <dd>
         <pre>ウィジェットを表示させたくないページに埋め込むタグです。
-※ウィジェットは表示させずに、リアルタイムモニタへの表示やアクセス履歴の対象としたいページや、画面共有の対象としたいページに本タグを埋め込んでください。</pre>
+※ウィジェットは表示させずに、リアルタイムモニタへの表示やアクセス履歴の対象としたいページや、
+画面共有の対象としたいページに本タグを埋め込んでください。</pre>
         <p>
           <?php $scriptName = "<script type='text/javascript' src='" . $fileName . "' data-hide='1'></script>"; ?>
           <span class="copyBtn" data-clipboard-target="#hideTag"><?=$this->Html->image('clipboard.png', array('alt' =>'コピー', 'width' => 25, 'height' => 25)) ?></span>
@@ -50,7 +51,8 @@ $mainTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デモサイ
         </p>
       </dd>
       <?php if($coreSettings[C_COMPANY_USE_SYNCLO] || $coreSettings[C_COMPANY_USE_DOCUMENT] || $coreSettings[C_COMPANY_USE_LA_CO_BROWSE]): ?>
-      <dt>（３）フォーム用ウィジェット表示タグ</dt>
+      <p class="separator">　以下は画面共有利用時に使用するタグです　</p>
+      <dt>（３）フォーム代理入力するページ用のタグ（ウィジェット表示）</dt>
       <dd>
         <pre>フォーム代理入力するページ用のタグ（ウィジェット表示）
 画面共有を利用してフォームの代理入力を行うページに埋め込むタグです。（ウィジェット表示）
@@ -61,7 +63,7 @@ $mainTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デモサイ
           <span class="copyArea"><?=$this->Form->input('formTag', array('type' => 'text', 'value' => $scriptName, 'label' => false, 'div' => false ))?></span>
         </p>
       </dd>
-      <dt>（４）フォーム用ウィジェット非表示タグ</dt>
+      <dt>（４）フォーム代理入力するページ用のタグ（ウィジェット非表示）</dt>
       <dd>
         <pre>フォーム代理入力するページ用のタグ（ウィジェット非表示）
 画面共有を利用してフォームの代理入力を行うページに埋め込むタグです。（ウィジェット非表示）
