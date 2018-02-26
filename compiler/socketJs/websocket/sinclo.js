@@ -3638,7 +3638,7 @@
         }
       },
       _isTheFiestScenaroAndSequence: function() {
-        var self = sinclo.scenaroApi;
+        var self = sinclo.scenarioApi;
         var result = false;
         // 現在の実行シナリオが「テキスト発言」「選択肢」「メール送信」であればシナリオのシーケンス番号だけを見る
         if(self.get(self._lKey.currentScenario).actionType === "1"
