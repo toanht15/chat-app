@@ -116,6 +116,11 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         $scope.changeFlg = true;
       }
 
+      // プレビューに要素がない場合、以降の処理は実行しない
+      if (document.getElementById('action' + index + '_preview') === null) {
+        return;
+      }
+
       // 送信メッセージ
       if (typeof newObject.message !== 'undefined' && newObject.message !== '' && typeof newObject.selection === 'undefined') {
         document.getElementById('action' + index + '_message').innerHTML = $scope.widget.createMessage(newObject.message);
