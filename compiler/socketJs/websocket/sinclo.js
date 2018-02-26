@@ -2858,6 +2858,16 @@
               console.log("SENARIO TRIGGERED!!!!!! " + scenarioId);
               if(scenarioId && !sinclo.scenarioApi.isProcessing()) {
                 emit('getScenario', {"scenarioId": scenarioId});
+                if(sincloInfo.widget.showTiming === 3) {
+                  console.log("シナリオ表示処理発動");
+                  // 初回オートメッセージ表示時にフラグを立てる
+                  sincloInfo.widgetDisplay = true;
+                  common.widgetHandler.show();
+                }
+                if ( Number(cond.widgetOpen) === 1 && String(flg) === "false" ) {
+                  console.log("シナリオ最大化処理");
+                  sinclo.operatorInfo.ev();
+                }
               }
             }
         },
