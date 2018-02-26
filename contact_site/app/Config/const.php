@@ -141,6 +141,11 @@ define('C_MATCH_RULE_TEXT', '/.+/'); // 1文字以上のテキスト
 define('C_MATCH_RULE_NUMBER', '/^\d+$/');  // 1文字以上の数字
 define('C_MATCH_RULE_EMAIL', '/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/'); // メールアドレス http://emailregex.com/
 
+define('C_MATCH_INPUT_RULE_ALL', '/./');  // 入力制限なし
+define('C_MATCH_INPUT_RULE_NUMBER', '/\d/');  // 数字入力
+define('C_MATCH_INPUT_RULE_EMAIL', '/[\w<>()[\]\\\.,;:@"]/'); // メールアドレス入力(半角英数記号入力)
+define('C_MATCH_INPUT_RULE_TEL', '/[\d+-]/'); // 電話番号入力（半角英数と一部記号入力）
+
 // メッセージ種別
 define('C_MESSAGE_TYPE_SUCCESS', 1); // 処理成功
 define('C_MESSAGE_TYPE_ERROR', 2); // 処理失敗
@@ -617,12 +622,12 @@ $config['chatbotScenarioActionList'] = [
         'allowInputLF' => '1'
       ]],
       'errorMessage' => '',
-      'isConfirm' => 2,
+      'isConfirm' => '2',
       'confirmMessage' => '',
       'success' => '',
       'cancel' => '',
-      'cv' => 2,
-      'cvCondition' => 1
+      'cv' => '2',
+      'cvCondition' => '1'
     ]
   ],
   // 選択肢
@@ -652,19 +657,23 @@ $config['chatbotScenarioActionList'] = [
 $config['chatbotScenarioInputType'] = [
   C_SCENARIO_INPUT_TYPE_TEXT => [
     'label' => '@text',
-    'rule' => C_MATCH_RULE_TEXT
+    'rule' => C_MATCH_RULE_TEXT,
+    'inputRule' => C_MATCH_INPUT_RULE_ALL
   ],
   C_SCENARIO_INPUT_TYPE_NUMBER => [
     'label' => '@number',
-    'rule' => C_MATCH_RULE_NUMBER
+    'rule' => C_MATCH_RULE_NUMBER,
+    'inputRule' => C_MATCH_INPUT_RULE_NUMBER
   ],
   C_SCENARIO_INPUT_TYPE_EMAIL => [
     'label' => '@email',
-    'rule' => C_MATCH_RULE_EMAIL
+    'rule' => C_MATCH_RULE_EMAIL,
+    'inputRule' => C_MATCH_INPUT_RULE_EMAIL
   ],
   C_SCENARIO_INPUT_TYPE_TEL => [
     'label' => '@tel_number',
-    'rule' => C_MATCH_RULE_TEL
+    'rule' => C_MATCH_RULE_TEL,
+    'inputRule' => C_MATCH_INPUT_RULE_TEL
   ]
 ];
 

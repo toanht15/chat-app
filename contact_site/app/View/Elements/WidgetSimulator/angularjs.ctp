@@ -13,6 +13,8 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
   $scope.isTextAreaOpen = true;
   // 自由入力エリアへの、改行入力の許可状態
   $scope.allowInputLF = true;
+  // 入力制御
+  $scope.inputRule = <?= C_MATCH_INPUT_RULE_ALL ?>;
 
   /**
    * addReMessage
@@ -56,9 +58,10 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
 
     // 自由入力エリアの改行許可状態を戻す
     $scope.allowInputLF = true;
-
     // placeholder を戻す
     document.querySelector('#sincloChatMessage').placeholder = $scope.defaultPlaceholder;
+    // 入力制限を戻す
+    $scope.inputRule = <?= C_MATCH_INPUT_RULE_ALL ?>;
 
     $scope.addMessage('se', message);
     $('#sincloChatMessage').val('');
@@ -125,6 +128,16 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
    */
   $scope.$on('allowInputLF', function(event, status) {
     $scope.allowInputLF = status == '1' ? true : false;
+  });
+
+  /**
+   * setInputRule
+   * 入力制限の設定
+   * （サイト訪問者のメッセージ送信後に、状態を戻す）
+   * @param Boolean rule 設定したい入力制限(正規表現)
+   */
+  $scope.$on('setInputRule', function(event, rule) {
+    $scope.inputRule = rule;
   });
 
   /**
@@ -195,6 +208,12 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
       if (!$scope.allowInputLF) {
         return false;
       }
+    }
+
+    // 入力制限
+    var regex = new RegExp($scope.inputRule);
+    if (!regex.test(e.key)) {
+      return false;
     }
   });
 
