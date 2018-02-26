@@ -16,8 +16,8 @@ sincloApp.factory('LocalStorageService', function() {
       localStorage.setItem('chatbotVariables', data);
     },
     load: function() {
-      var data = localStorage.getItem('chatbotVariables');
-      if(typeof storageData !== 'undefined' && storageData !== null && storageData === "") {
+      var storageData = localStorage.getItem('chatbotVariables');
+      if(typeof storageData !== 'undefined' && storageData !== null && storageData !== "") {
         this._data = JSON.parse(storageData);
       }
     },
