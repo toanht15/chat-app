@@ -2864,6 +2864,7 @@
                   sincloInfo.widgetDisplay = true;
                   common.widgetHandler.show();
                 }
+                var flg = sinclo.widget.condifiton.get();
                 if ( Number(cond.widgetOpen) === 1 && String(flg) === "false" ) {
                   console.log("シナリオ最大化処理");
                   sinclo.operatorInfo.ev();
