@@ -7,6 +7,7 @@
   <input type="hidden" name="data[TChatbotScenario][activity]" id="TChatbotScenarioActivity">
   <input type="hidden" name="lastPage" value="<?= $lastPage?>">
   <?=$this->Form->input('widgetSettings', ['type' => 'hidden','value' => json_encode($this->data['widgetSettings'])])?>
+  <?=$this->Form->input('scenarioList', ['type' => 'hidden','value' => json_encode($this->data['scenarioList'])])?>
 
   <section id="tchatbotscenario_form_basic_settings" class="p10x">
     <h3 class="tchatbotscenario_form_subtitle">基本設定</h3>
