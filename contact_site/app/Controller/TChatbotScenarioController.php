@@ -88,6 +88,19 @@ class TChatbotScenarioController extends AppController {
       $this->_entry($this->request->data);
     }
 
+    // シナリオ設定の一覧を取得する
+    $scenarioList = $this->TChatbotScenario->coFind('list', [
+      'fields' => ['id', 'name'],
+      'order' => [
+        'TChatbotScenario.sort' => 'asc',
+        'TChatbotScenario.id' => 'asc'
+      ],
+      'conditions' => [
+        'TChatbotScenario.del_flg != ' => 1
+      ]
+    ]);
+    $this->request->data['scenarioList'] = $scenarioList;
+
     // プレビュー・シミュレーター表示用ウィジェット設定の取得
     $this->request->data['widgetSettings'] = $this->_getWidgetSettings();
     $this->_viewElement();
@@ -157,6 +170,19 @@ class TChatbotScenarioController extends AppController {
       ]
     ]);
     $this->request->data['TAutoMessage'] = $autoMessage;
+
+    // シナリオ設定の一覧を取得する
+    $scenarioList = $this->TChatbotScenario->coFind('list', [
+      'fields' => ['id', 'name'],
+      'order' => [
+        'TChatbotScenario.sort' => 'asc',
+        'TChatbotScenario.id' => 'asc'
+      ],
+      'conditions' => [
+        'TChatbotScenario.del_flg != ' => 1
+      ]
+    ]);
+    $this->request->data['scenarioList'] = $scenarioList;
 
     $this->_viewElement();
   }

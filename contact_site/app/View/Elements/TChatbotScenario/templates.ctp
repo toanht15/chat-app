@@ -1,5 +1,5 @@
-<?php /* テキスト発言 | C_SCENARIO_ACTION_TEXT */ ?>
-<div ng-if="setItem.actionType == 1" class="set_action_item_body action_text">
+<?php /* テキスト発言 */ ?>
+<div ng-if="setItem.actionType == <?= C_SCENARIO_ACTION_TEXT ?>" class="set_action_item_body action_text">
   <ul>
     <li class="styleFlexbox">
       <span class="fb7em"><label>発言内容<span class="questionBalloon"><icon class="questionBtn" data-tooltip="チャットボットに発言させたいテキストメッセージを設定します。">?</icon></span></label></span>
@@ -10,8 +10,8 @@
   </ul>
 </div>
 
-<?php /* ヒアリング | C_SCENARIO_ACTION_HEARING */ ?>
-<div ng-if="setItem.actionType == 2" class="set_action_item_body action_hearing" ng-init="main.controllHearingSettingView(setActionId)">
+<?php /* ヒアリング */ ?>
+<div ng-if="setItem.actionType == <?= C_SCENARIO_ACTION_HEARING ?>" class="set_action_item_body action_hearing" ng-init="main.controllHearingSettingView(setActionId)">
   <ul>
     <li>
       <table cellspacing="5">
@@ -84,8 +84,8 @@
   </ul>
 </div>
 
-<?php /* 選択肢 | C_SCENARIO_ACTION_SELECT_OPTION */ ?>
-<div ng-if="setItem.actionType == 3" class="set_action_item_body action_select_option" ng-init="main.controllSelectOptionSetting(setActionId)">
+<?php /* 選択肢 */ ?>
+<div ng-if="setItem.actionType == <?= C_SCENARIO_ACTION_SELECT_OPTION ?>" class="set_action_item_body action_select_option" ng-init="main.controllSelectOptionSetting(setActionId)">
   <ul>
     <li class="styleFlexbox">
       <span class="fb7em"><label class="hearingSelectVariableNameLabel">変数名<span class="questionBalloon"><icon class="questionBtn" data-tooltip="変数名を設定します。ここで設定した変数名にサイト訪問者の選択した内容が保存されます。変数に保存された値（内容）は後続の処理（アクション）で、{&thinsp;{変数名}&thinsp;}と指定することで利用することが可能です。">?</icon></span></label></span>
@@ -115,8 +115,8 @@
   </ul>
 </div>
 
-<?php /* メール送信 | C_SCENARIO_ACTION_SEND_MAIL */ ?>
-<div ng-if="setItem.actionType == 4" class="set_action_item_body action_send_mail" ng-init="main.initMailSetting(setActionId)">
+<?php /* メール送信 */ ?>
+<div ng-if="setItem.actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?>" class="set_action_item_body action_send_mail" ng-init="main.initMailSetting(setActionId)">
   <ul>
     <li class="styleFlexbox">
       <span class="fb13em"><label>送信先メールアドレス<span class="questionBalloon"><icon class="questionBtn" data-tooltip="送信先のメールアドレスを設定します。（変数の利用も可能です）">?</icon></span></label></span>
@@ -146,6 +146,21 @@
       <div>
         <label ng-repeat="(key, item) in sendMailTypeList" class="styleBlock pointer"><input type="radio" name="action_{{setActionId}}_mail_type" value="{{key}}" ng-model="setItem.mailType" ng-init="setItem.mailType = setItem.mailType" default="setItem.default.mailType">{{item.label}}<span class="questionBalloon"><icon class="questionBtn" data-tooltip="{{item.tooltip}}">?</icon></span></label>
         <resize-textarea ng-if="setItem.mailType == <?= C_SCENARIO_MAIL_TYPE_CUSTOMIZE ?>" ng-model="setItem.template" cols="48" rows="4" placeholder="メール本文を入力してください"></resize-textarea>
+      </div>
+    </li>
+  </ul>
+</div>
+
+<?php /* シナリオ呼び出し */ ?>
+<div ng-if="setItem.actionType == <?= C_SCENARIO_INPUT_TYPE_CALL_SCENARIO ?>" class="set_action_item_body action_hearing">
+  <ul>
+    <li class="styleFlexbox">
+      <span class="fb7em"><label>シナリオ</label></span>
+      <div>
+        <select ng-model="setItem.scenarioId" ng-init="setItem.scenarioId">
+          <option value="">シナリオを選択してください</option>
+          <option ng-repeat="item in main.scenarioList" value="item.key">{{item.name}}</option>
+        </select>
       </div>
     </li>
   </ul>
