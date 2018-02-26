@@ -25,6 +25,10 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   $scope.widget = SimulatorService;
   $scope.widget.settings = getWidgetSettings();
 
+  // 一時保存データの読み込み
+  var scenarioId = document.getElementById('TChatbotScenarioId').value || 'tmp';
+  $scope.storageKey = 'scenario_' + scenarioId;
+
   // 設定一覧の並び替えオプション
   $scope.sortableOptions = {
     axis: "y",
@@ -151,17 +155,21 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
   // シミュレーターの起動
   this.openSimulator = function() {
-    $scope.$broadcast('openSimulator', this.createJsonData());
+    $scope.$broadcast('openSimulator', this.createJsonData(true));
     $scope.$broadcast('switchSimulatorChatTextArea', true);  // シミュレータ起動時、強制的に自由入力エリア：有効の状態で表示する
   };
 
   this.saveAct = function() {
-    $('#TChatbotScenarioActivity').val(this.createJsonData());
+    $('#TChatbotScenarioActivity').val(this.createJsonData(true));
     submitAct();
   };
 
-  // jsonデータ作る
-  this.createJsonData = function() {
+  /**
+   * createJsonData
+   * jsonデータを作る
+   * @param Boolean isCheckValidation アクションのバリデーションチェックを行うか
+   */
+  this.createJsonData = function(isCheckValidation) {
     var activity = {};
     activity.chatbotType = "1"; // 現在、複数タイプ存在しないため、固定で1を設定する
     activity.scenarios = {};
@@ -176,16 +184,16 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
       switch(parseInt(action.actionType, 10)) {
         case <?= C_SCENARIO_ACTION_TEXT ?>:
-          action = adjustDataOftext(action);
+          action = adjustDataOftext(action, isCheckValidation);
           break;
         case <?= C_SCENARIO_ACTION_HEARING ?>:
-          action = adjustDataOfHearing(action);
+          action = adjustDataOfHearing(action, isCheckValidation);
           break;
         case <?= C_SCENARIO_ACTION_SELECT_OPTION ?>:
-          action = adjustDataOfSelectOption(action);
+          action = adjustDataOfSelectOption(action, isCheckValidation);
           break;
         case <?= C_SCENARIO_ACTION_SEND_MAIL ?>:
-          action = adjustDataOfSendMail(action);
+          action = adjustDataOfSendMail(action, isCheckValidation);
           break;
       }
 
@@ -328,11 +336,34 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     return visible;
   };
 
-  // 変更を行っている場合、アラート表示を行う
-  $(window).on('beforeunload', function(e) {
-    if($scope.changeFlg) {
-      return '行った変更が保存されていない可能性があります。';
+  angular.element(window).on('load', function(e) {
+    var storageData = localStorage.getItem($scope.storageKey);
+    if (typeof storageData !== 'undefined' && storageData !== null && storageData !== '') {
+      if (window.confirm('一時保存されたシナリオがあります。\nデータを復旧しますか？')) {
+        $scope.setActionList = [];
+        angular.forEach(JSON.parse(storageData).scenarios, function(action) {
+          $scope.setActionList.push(action);
+        });
+        $scope.$apply();
+      } else {
+        localStorage.removeItem($scope.storageKey);
+      }
     }
+
+    // フォームからフォーカスが外れた際、localStorageに一時保存を行う
+    $(document).on('focusout', '.set_action_item input, .set_action_item textarea', function() {
+      if ($scope.changeFlg) {
+        var data = self.createJsonData(false);
+        localStorage.setItem($scope.storageKey, data);
+      }
+    });
+
+    // 変更を行っている場合、アラート表示を行う
+    $(window).on('beforeunload', function(e) {
+      if($scope.changeFlg) {
+        return '行った変更が保存されていない可能性があります。';
+      }
+    });
   });
 }])
 .controller('DialogController', ['$scope', '$timeout', 'SimulatorService', 'LocalStorageService', function($scope, $timeout, SimulatorService, LocalStorageService) {
@@ -683,73 +714,82 @@ $(document).ready(function() {
 });
 
 // テキスト発言のバリデーションチェック
-function adjustDataOftext(action) {
-  if (typeof action.message == 'undefined' || action.message == '') {
-    return null;
+function adjustDataOftext(action, isCheckValidation) {
+  if (isCheckValidation) {
+    if (typeof action.message == 'undefined' || action.message == '') {
+      return null;
+    }
   }
   return action;
 }
 
 // ヒアリングのバリデーションチェック
-function adjustDataOfHearing(action) {
-  if (typeof action.hearings === 'undefined' || typeof action.hearings.length < 1 ||
-    typeof action.errorMessage === 'undefined' || action.errorMessage === '' ||
-    (action.isConfirm && (typeof action.confirmMessage === 'undefined' || action.confirmMessage === '' || typeof action.success === 'undefined' || action.success === '' || typeof action.cancel === 'undefined' || action.cancel === ''))
-  ) {
-    return null;
-  }
-
-  var hearings = [];
-  angular.forEach(action.hearings, function(item, index) {
-    if (typeof item.variableName !== 'undefined' && item.variableName !== '' && typeof item.message !== 'undefined' && item.message !== '') {
-      hearings.push(item);
+function adjustDataOfHearing(action, isCheckValidation) {
+  if (isCheckValidation) {
+    if (typeof action.hearings === 'undefined' || typeof action.hearings.length < 1 ||
+      typeof action.errorMessage === 'undefined' || action.errorMessage === '' ||
+      (action.isConfirm && (typeof action.confirmMessage === 'undefined' || action.confirmMessage === '' || typeof action.success === 'undefined' || action.success === '' || typeof action.cancel === 'undefined' || action.cancel === ''))
+    ) {
+      return null;
     }
-  });
-  if (hearings.length < 1) return null;
-  action.hearings = hearings;
+
+    var hearings = [];
+    angular.forEach(action.hearings, function(item, index) {
+      if (typeof item.variableName !== 'undefined' && item.variableName !== '' && typeof item.message !== 'undefined' && item.message !== '') {
+        hearings.push(item);
+      }
+    });
+    if (hearings.length < 1) return null;
+    action.hearings = hearings;
+  }
   action.isConfirm = action.isConfirm ? '1' : '2';
   action.cv = action.cv ? '1' : '2';
   return action;
 }
 
 // 選択肢のバリデーションチェック
-function adjustDataOfSelectOption(action) {
-  if (typeof action.message === 'undefined' || action.message === '' ||
-    typeof action.selection === 'undefined' || action.selection.options.length < 1 ||
-    typeof action.selection.variableName === 'undefined' || action.selection.variableName === ''
-  ) {
-    return null;
-  }
-
-  var options = [];
-  angular.forEach(action.selection.options, function(item, index) {
-    if (item !== '') {
-      options.push(item);
+function adjustDataOfSelectOption(action, isCheckValidation) {
+  if (isCheckValidation) {
+    if (typeof action.message === 'undefined' || action.message === '' ||
+      typeof action.selection === 'undefined' || action.selection.options.length < 1 ||
+      typeof action.selection.variableName === 'undefined' || action.selection.variableName === ''
+    ) {
+      return null;
     }
-  });
-  if (options.length < 1) return null;
-  action.selection.options = options;
+
+    var options = [];
+    angular.forEach(action.selection.options, function(item, index) {
+      if (item !== '') {
+        options.push(item);
+      }
+    });
+    if (options.length < 1) return null;
+    action.selection.options = options;
+  }
   return action;
 }
 
 // メール送信のバリデーションチェック
-function adjustDataOfSendMail(action) {
-  if (typeof action.subject === 'undefined' || action.subject === '' ||
-    typeof action.fromName === 'undefined' || action.fromName === '' ||
-    typeof action.toAddress === 'undefined' || action.toAddress < 1 ||
-    (action.mailType == 3 && (typeof action.template === 'undefined' || action.template === ''))
-  ) {
-    return null;
+function adjustDataOfSendMail(action, isCheckValidation) {
+  if (isCheckValidation) {
+    if (typeof action.subject === 'undefined' || action.subject === '' ||
+      typeof action.fromName === 'undefined' || action.fromName === '' ||
+      typeof action.toAddress === 'undefined' || action.toAddress < 1 ||
+      (action.mailType == 3 && (typeof action.template === 'undefined' || action.template === ''))
+    ) {
+      return null;
+    }
+
+    var toAddress = [];
+    angular.forEach(action.toAddress, function(item, index) {
+      if (item !== '') {
+        toAddress.push(item);
+      }
+    });
+    if (toAddress.length < 1) return null;
+    action.toAddress = toAddress;
   }
 
-  var toAddress = [];
-  angular.forEach(action.toAddress, function(item, index) {
-    if (item !== '') {
-      toAddress.push(item);
-    }
-  });
-  if (toAddress.length < 1) return null;
-  action.toAddress = toAddress;
   return action;
 }
 
