@@ -6670,76 +6670,6 @@ ul.naviBtn {
           margin: 0;
         }
 
-        .questionBalloon {
-          display: inline-block;
-          margin-left: 6px;
-          text-align: center;
-
-          .questionBtn {
-            border-radius: 20px;
-            width: 1.3em;
-            height: 1.3em;
-            font-size: 12px !important;
-            line-height: 12px;
-            padding: 0.1em;
-          }
-        }
-
-        .explainTooltip {
-          z-index: 10;
-          position: absolute;
-
-          icon-annotation {
-            width: 16em;
-            display: none;
-
-            &:before {
-              content: "";
-              border: none;
-              border-top: 10px solid rgba(0, 0, 0, 0.13);
-              border-left: 9px solid transparent;
-              border-right: 9px solid transparent;
-              position: absolute;
-              bottom: -10px;
-              left: 9px;
-              z-index: 1;
-            }
-
-            &:after {
-              content: " ";
-              border: none;
-              border-top: 10px solid white;
-              border-left: 9px solid transparent;
-              border-right: 9px solid transparent;
-              position: absolute;
-              bottom: -8px;
-              left: 9px;
-              z-index: 3;
-            }
-
-            ul {
-              margin: 0;
-              padding: 0;
-              text-align: left;
-              background-color: #FFF;
-              box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
-              padding: 0.5em;
-              font-weight: normal;
-              border-radius: 5px;
-
-              img {
-                margin-bottom: -0.2em;
-                width:1em;
-                height:1em;
-              }
-
-              span {
-                font-size: 0.9em;
-              }
-            }
-          }
-        }
-
         /* チャットボットシナリオ設定(追加・更新): 基本設定 */
         #tchatbotscenario_form_basic_settings {
           height: 100%;
@@ -7206,6 +7136,76 @@ ul.naviBtn {
         p {
           color: white;
           margin: 0;
+        }
+      }
+    }
+  }
+
+  .questionBalloon {
+    display: inline-block;
+    margin-left: 6px;
+    text-align: center;
+
+    .questionBtn {
+      border-radius: 20px;
+      width: 1.3em;
+      height: 1.3em;
+      font-size: 12px !important;
+      line-height: 12px;
+      padding: 0.1em;
+    }
+  }
+
+  .explainTooltip {
+    z-index: 10;
+    position: absolute;
+
+    icon-annotation {
+      width: 16em;
+      display: none;
+
+      &:before {
+        content: "";
+        border: none;
+        border-top: 10px solid rgba(0, 0, 0, 0.13);
+        border-left: 9px solid transparent;
+        border-right: 9px solid transparent;
+        position: absolute;
+        bottom: -10px;
+        left: 9px;
+        z-index: 1;
+      }
+
+      &:after {
+        content: " ";
+        border: none;
+        border-top: 10px solid white;
+        border-left: 9px solid transparent;
+        border-right: 9px solid transparent;
+        position: absolute;
+        bottom: -8px;
+        left: 9px;
+        z-index: 3;
+      }
+
+      ul {
+        margin: 0;
+        padding: 0;
+        text-align: left;
+        background-color: #FFF;
+        box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+        padding: 0.5em;
+        font-weight: normal;
+        border-radius: 5px;
+
+        img {
+          margin-bottom: -0.2em;
+          width:1em;
+          height:1em;
+        }
+
+        span {
+          font-size: 0.9em;
         }
       }
     }
