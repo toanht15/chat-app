@@ -122,7 +122,7 @@
               height: height + "px"
             }, 'first');
         }
-        else{
+        else if(closeAct !== "true"){
           //バナー表示時の位置を設定
           $("#sincloBox").css("height","");
           sinclo.operatorInfo.bannerBottomLeftRight();
