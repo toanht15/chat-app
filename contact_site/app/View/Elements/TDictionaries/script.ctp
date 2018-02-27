@@ -173,11 +173,13 @@ function tabSort(){
     //カテゴリ名入力欄変更不可
     document.getElementById("input_category_value").disabled = "disabled";
     //定型文登録ボタン押下不可
-    document.getElementById('tdictionaries_add_btn'+index).className="btn-shadow disOffgrayBtn";
+    document.getElementById('tdictionaries_add_btn'+index).classList.remove("disOffgreenBtn");
+    document.getElementById('tdictionaries_add_btn'+index).classList.add("disOffgrayBtn");
     //定型文の並べ替えチェックボックスチェック不可
     document.getElementById('sort'+index).disabled = "disabled";
     //カテゴリメニューボタン押下不可
-    document.getElementById('tdictionaries_manu_btn'+index).className="btn-shadow disOffgrayBtn";
+    document.getElementById('tdictionaries_manu_btn'+index).classList.remove("disOffgreenBtn");
+    document.getElementById('tdictionaries_manu_btn'+index).classList.add("disOffgrayBtn");
     //全て選択チェックボックス選択不可
     document.getElementById('allCheck'+index).disabled = "disabled";
     //項目チェックボックス選択不可
@@ -293,11 +295,13 @@ function toggleSort(){
     //カテゴリ名入力欄変更不可
     document.getElementById("input_category_value").disabled = "disabled";
     //定型文登録ボタン押下不可
-    document.getElementById('tdictionaries_add_btn'+index).className="btn-shadow disOffgrayBtn";
+    document.getElementById('tdictionaries_add_btn'+index).classList.remove("disOffgreenBtn");
+    document.getElementById('tdictionaries_add_btn'+index).classList.add("disOffgrayBtn");
     //カテゴリの並べ替えチェックボックスチェック不可
     document.getElementById('tabsort').disabled = "disabled";
     //カテゴリメニューボタン押下不可
-    document.getElementById('tdictionaries_manu_btn'+index).className="btn-shadow disOffgrayBtn";
+    document.getElementById('tdictionaries_manu_btn'+index).classList.remove("disOffgreenBtn");
+    document.getElementById('tdictionaries_manu_btn'+index).classList.add("disOffgrayBtn");
     //全て選択チェックボックス選択不可
     document.getElementById('allCheck'+index).disabled = "disabled";
     //項目チェックボックス選択不可
@@ -424,23 +428,29 @@ var actBtnShow = function(){
   var stint_flg = document.getElementById("stint_flg").value;
   var select_tab_index = document.getElementById("select_tab_index").value;
   if ( $('input[name^="selectTab'+select_tab_index+'"]').is(":checked") ) {
-    document.getElementById("tdictionaries_copy_btn" + select_tab_index).className="btn-shadow disOffgreenBtn";
+    document.getElementById("tdictionaries_copy_btn" + select_tab_index).classList.remove("disOffgrayBtn");
+    document.getElementById("tdictionaries_copy_btn" + select_tab_index).classList.add("disOffgreenBtn");
     document.getElementById("tdictionaries_copy_btn" + select_tab_index).addEventListener('click', openCopyDialog, false);
     if(stint_flg != '0' && tabCount > 1){
-      document.getElementById("tdictionaries_move_btn" + select_tab_index).className="btn-shadow disOffgreenBtn";
+      document.getElementById("tdictionaries_move_btn" + select_tab_index).classList.remove("disOffgrayBtn");
+      document.getElementById("tdictionaries_move_btn" + select_tab_index).classList.add("disOffgreenBtn");
       document.getElementById("tdictionaries_move_btn" + select_tab_index).addEventListener('click', openMoveDialog, false);
     }
-    document.getElementById("tdictionaries_dustbox_btn" + select_tab_index).className="btn-shadow disOffredBtn";
+    document.getElementById("tdictionaries_dustbox_btn" + select_tab_index).classList.remove("disOffgrayBtn");
+    document.getElementById("tdictionaries_dustbox_btn" + select_tab_index).classList.add("disOffredBtn");
     document.getElementById("tdictionaries_dustbox_btn" + select_tab_index).addEventListener('click', openConfirmDialog, false);
   }
   else {
-    document.getElementById("tdictionaries_copy_btn" + select_tab_index).className="btn-shadow disOffgrayBtn";
+    document.getElementById("tdictionaries_copy_btn" + select_tab_index).classList.remove("disOffgreenBtn");
+    document.getElementById("tdictionaries_copy_btn" + select_tab_index).classList.add("disOffgrayBtn");
     document.getElementById("tdictionaries_copy_btn" + select_tab_index).removeEventListener('click', openCopyDialog, false);
     if(stint_flg != '0' && tabCount > 1){
-      document.getElementById("tdictionaries_move_btn" + select_tab_index).className="btn-shadow disOffgrayBtn";
+      document.getElementById("tdictionaries_move_btn" + select_tab_index).classList.remove("disOffgreenBtn");
+      document.getElementById("tdictionaries_move_btn" + select_tab_index).classList.add("disOffgrayBtn");
       document.getElementById("tdictionaries_move_btn" + select_tab_index).removeEventListener('click', openMoveDialog, false);
     }
-    document.getElementById("tdictionaries_dustbox_btn" + select_tab_index).className="btn-shadow disOffgrayBtn";
+    document.getElementById("tdictionaries_dustbox_btn" + select_tab_index).classList.remove("disOffredBtn");
+    document.getElementById("tdictionaries_dustbox_btn" + select_tab_index).classList.add("disOffgrayBtn");
     document.getElementById("tdictionaries_dustbox_btn" + select_tab_index).removeEventListener('click', openConfirmDialog, false);
   }
   allCheckCtrl();
@@ -471,14 +481,16 @@ $( function() {
       //定型文登録ボタン押下可
       var tdictionariesAddBtnList = document.querySelectorAll('[id^="tdictionaries_add_btn"]');
       for (var i = 0; i < tdictionariesAddBtnList.length; i++) {
-        tdictionariesAddBtnList[i].className="btn-shadow disOffgreenBtn";
+        tdictionariesAddBtnList[i].classList.remove("disOffgrayBtn");
+        tdictionariesAddBtnList[i].classList.add("disOffgreenBtn");
       }
       //カテゴリの並べ替えチェックボックスチェック可
       document.getElementById('tabsort').disabled = "";
       //カテゴリメニューボタン押下可
       var tdictionariesManuBtnList = document.querySelectorAll('[id^="tdictionaries_manu_btn"]');
       for (var i = 0; i < tdictionariesManuBtnList.length; i++) {
-        tdictionariesManuBtnList[i].className="btn-shadow disOffgreenBtn";
+        tdictionariesManuBtnList[i].classList.remove("disOffgrayBtn");
+        tdictionariesManuBtnList[i].classList.add("disOffgreenBtn");
       }
       //全て選択チェックボックス選択可
       //document.getElementById('allCheck'+index).disabled = "";
@@ -514,7 +526,8 @@ $( function() {
       document.getElementById('allCheck'+index).disabled = "";
     }
     if(stint_flg == '0'){
-      document.getElementById('gray_tdictionaries_manu_btn' + index).className="btn-shadow disOffgrayBtn";
+      document.getElementById('gray_tdictionaries_manu_btn' + index).classList.remove("disOffgreenBtn");
+      document.getElementById('gray_tdictionaries_manu_btn' + index).classList.add("disOffgrayBtn");
     }
     setWidth(event);
   });
@@ -529,7 +542,8 @@ $( function() {
     //プランメッセージ表示
     document.getElementById("stintMessage").style.display="";
     //カテゴリメニューボタン押下不可
-    document.getElementById('gray_tdictionaries_manu_btn'+index).className="btn-shadow disOffgrayBtn";
+    document.getElementById('gray_tdictionaries_manu_btn' + index).classList.remove("disOffgreenBtn");
+    document.getElementById('gray_tdictionaries_manu_btn' + index).classList.add("disOffgrayBtn");
     //カテゴリ並べ替えチェックボックスボタン押下不可
     document.getElementById("tabsort").disabled = "disabled";
   }
@@ -670,11 +684,13 @@ $( function() {
 function inputValue($this){
   if($this.value){
     document.getElementById("input_category_btn").disabled = "";
-    document.getElementById("input_category_btn").className= "disOffgreenBtn btn-shadow";
+    document.getElementById("input_category_btn").classList.remove("disOffgrayBtn");
+    document.getElementById("input_category_btn").classList.add("disOffgreenBtn");
   }
   else{
     document.getElementById("input_category_btn").disabled = "disabled";
-    document.getElementById("input_category_btn").className= "disOffgrayBtn btn-shadow";
+    document.getElementById("input_category_btn").classList.remove("disOffgreenBtn");
+    document.getElementById("input_category_btn").classList.add("disOffgrayBtn");
   }
 }
 
@@ -722,7 +738,8 @@ function saveCategoryEntryDialog(setting){
   }
   else{
     document.getElementById("input_category_btn").disabled = "disabled";
-    document.getElementById("input_category_btn").className= "disOffgrayBtn btn-shadow";
+    document.getElementById("input_category_btn").classList.remove("disOffgreenBtn");
+    document.getElementById("input_category_btn").classList.add("disOffgrayBtn");
   }
 }
 

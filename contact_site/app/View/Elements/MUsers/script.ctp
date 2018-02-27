@@ -87,18 +87,21 @@ var allCheckCtrl = function(){
 
 //有効/無効ボタンの表示/非表示
 var actBtnShow = function(){
+  var dustboxBtn = document.getElementById("m_users_dustbox_btn");
   // 選択中の場合
   if ( $('input[name="selectTab"]').is(":checked") ) {
     //一つでもチェックが入ったら
     //削除ボタン有効
-    document.getElementById("m_users_dustbox_btn").className="btn-shadow disOffredBtn";
-    document.getElementById("m_users_dustbox_btn").addEventListener('click', openConfirmDialog, false);
+    dustboxBtn.classList.remove('disOffgrayBtn');
+    dustboxBtn.classList.add('disOffredBtn');
+    dustboxBtn.addEventListener('click', openConfirmDialog, false);
   }
   else {
     //一つもチェックが無かったら
     //削除ボタン無効
-    document.getElementById("m_users_dustbox_btn").className="btn-shadow disOffgrayBtn";
-    document.getElementById("m_users_dustbox_btn").removeEventListener('click', openConfirmDialog, false);
+    dustboxBtn.classList.remove('disOffredBtn');
+    dustboxBtn.classList.add('disOffgrayBtn');
+    dustboxBtn.removeEventListener('click', openConfirmDialog, false);
     $('#allCheck').prop('checked', false);
   }
   allCheckCtrl();

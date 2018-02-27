@@ -71,32 +71,44 @@ var allCheckCtrl = function(){
 
 // 有効/無効ボタンの表示/非表示
 var actBtnShow = function(){
+  var copyBtn = document.getElementById("tautomessages_copy_btn");
+  var checkBtn = document.getElementById("tautomessages_check_btn");
+  var inactiveBtn = document.getElementById("tautomessages_inactive_btn");
+  var dustboxBtn = document.getElementById("tautomessages_dustbox_btn");
   // 選択中の場合
   if ( $('input[name="selectTab"]').is(":checked") ) {
     //一つでもチェックが入ったら
     //コピーボタン有効
-    document.getElementById("tautomessages_copy_btn").className="btn-shadow disOffgreenBtn";
-    document.getElementById("tautomessages_copy_btn").addEventListener('click', openCopyDialog, false);
+    copyBtn.classList.remove('disOffgrayBtn');
+    copyBtn.classList.add('disOffgreenBtn');
+    copyBtn.addEventListener('click', openCopyDialog, false);
     //有効にするボタン有効
-    document.getElementById("tautomessages_check_btn").className="btn-shadow disOffgreenBtn";
+    checkBtn.classList.remove('disOffgrayBtn');
+    checkBtn.classList.add('disOffgreenBtn');
     //無効にするボタン有効
-    document.getElementById("tautomessages_inactive_btn").className="btn-shadow disOffredBtn";
+    inactiveBtn.classList.remove('disOffgrayBtn');
+    inactiveBtn.classList.add('disOffredBtn');
     //削除ボタン有効
-    document.getElementById("tautomessages_dustbox_btn").className="btn-shadow disOffredBtn";
-    document.getElementById("tautomessages_dustbox_btn").addEventListener('click', openConfirmDialog, false);
+    dustboxBtn.classList.remove('disOffgrayBtn');
+    dustboxBtn.classList.add('disOffredBtn');
+    dustboxBtn.addEventListener('click', openConfirmDialog, false);
   }
   else {
     //一つもチェックが無かったら
     //コピーボタン無効
-    document.getElementById("tautomessages_copy_btn").className="btn-shadow disOffgrayBtn";
-    document.getElementById("tautomessages_copy_btn").removeEventListener('click', openCopyDialog, false);
+    copyBtn.classList.remove('disOffgreenBtn');
+    copyBtn.classList.add('disOffgrayBtn');
+    copyBtn.removeEventListener('click', openCopyDialog, false);
     //有効にするボタン無効
-    document.getElementById("tautomessages_check_btn").className="btn-shadow disOffgrayBtn";
+    checkBtn.classList.remove('disOffgreenBtn');
+    checkBtn.classList.add('disOffgrayBtn');
     //無効にするボタン無効
-    document.getElementById("tautomessages_inactive_btn").className="btn-shadow disOffgrayBtn";
+    inactiveBtn.classList.remove('disOffredBtn');
+    inactiveBtn.classList.add('disOffgrayBtn');
     //削除ボタン無効
-    document.getElementById("tautomessages_dustbox_btn").className="btn-shadow disOffgrayBtn";
-    document.getElementById("tautomessages_dustbox_btn").removeEventListener('click', openConfirmDialog, false);
+    dustboxBtn.classList.remove('disOffredBtn');
+    dustboxBtn.classList.add('disOffgrayBtn');
+    dustboxBtn.removeEventListener('click', openConfirmDialog, false);
     $('#allCheck').prop('checked', false);
   }
   allCheckCtrl();
@@ -341,7 +353,9 @@ function toggleSort(){
 
     //各ボタン及び動作をモード中は動かなくする
     //オートメッセージ設定登録ボタン押下不可
-    document.getElementById('tautomessages_add_btn').className="btn-shadow disOffgrayBtn";
+    var addBtn = document.getElementById('tautomessages_add_btn');
+    addBtn.classList.remove('disOffgreenBtn');
+    addBtn.classList.add('disOffgrayBtn');
     //全て選択チェックボックス選択不可
     document.getElementById('allCheck').disabled = "disabled";
     //項目チェックボックス選択不可

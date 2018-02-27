@@ -170,14 +170,6 @@ class NotificationController extends AppController {
       ]);
       $this->TMailTransmissionLog->save();
 
-      // チャットログに送信履歴を付ける
-      $this->THistoryChatLog->read(null, $jsonObj[self::PARAM_LAST_CHAT_LOG_ID]);
-      $this->THistoryChatLog->set([
-        'send_mail_flg' => 1,
-        't_mail_transmission_logs_id' => $lastInsertId
-      ]);
-      $this->THistoryChatLog->save();
-
     } catch(Exception $e) {
       $this->log('【MAIL_SEND_ERROR】Notification/scenario呼び出し時にエラーが発生しました。 エラーメッセージ: '.$e->getMessage().' エラー番号 '.$e->getCode().' パラメータ: '.json_encode($jsonObj), 'mail-api-error');
       $this->response->statusCode($e->getCode());

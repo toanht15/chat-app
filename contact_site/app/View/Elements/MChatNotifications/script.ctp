@@ -158,13 +158,15 @@ var actBtnShow = function(){
   if ( $('input[name="selectTab"]').is(":checked") ) {
     //一つでもチェックが入ったら
     //削除ボタン有効
-    document.getElementById("chat_notifications_dustbox_btn").className="btn-shadow disOffredBtn";
+    document.getElementById("chat_notifications_dustbox_btn").classList.remove("disOffgrayBtn");
+    document.getElementById("chat_notifications_dustbox_btn").classList.add("disOffredBtn");
     document.getElementById("chat_notifications_dustbox_btn").addEventListener('click', openConfirmDialog, false);
   }
   else {
     //一つもチェックが無かったら
     //削除ボタン無効
-    document.getElementById("chat_notifications_dustbox_btn").className="btn-shadow disOffgrayBtn";
+    document.getElementById("chat_notifications_dustbox_btn").classList.remove("disOffredBtn");
+    document.getElementById("chat_notifications_dustbox_btn").classList.add("disOffgrayBtn");
     document.getElementById("chat_notifications_dustbox_btn").removeEventListener('click', openConfirmDialog, false);
     $('#allCheck').prop('checked', false);
   }
