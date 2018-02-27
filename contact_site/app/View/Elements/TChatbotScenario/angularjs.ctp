@@ -523,7 +523,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
     // シミュレーション上のメッセージをクリアする
     $scope.$broadcast('removeMessage');
-    $scope.doAction('0');
+    $scope.doAction();
   }
 
   // アクションの停止
@@ -546,7 +546,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     if (typeof $scope.setActionList[$scope.actionStep] !== 'undefined' && typeof $scope.setActionList[$scope.actionStep].actionType !== 'undefined') {
       // メッセージ間隔
       var time =  $scope.setActionList[$scope.actionStep].messageIntervalTimeSec;
-      if (!!setTime || $scope.setActionList[$scope.actionStep].actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?>) {
+      if (!!setTime || $scope.actionStep === 0 || $scope.setActionList[$scope.actionStep].actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?> ||  $scope.setActionList[$scope.actionStep].actionType == <?= C_SCENARIO_ACTION_CALL_SCENARIO ?>) {
         time = setTime || '0';
       }
 
@@ -579,6 +579,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
           $scope.$broadcast('switchSimulatorChatTextArea', actionDetail.chatTextArea === '1');
           $scope.actionStep++;
           $scope.doAction();
+        } else
+        if (actionDetail.actionType == <?= C_SCENARIO_ACTION_CALL_SCENARIO ?>) {
+          self.getScenarioDetail(actionDetail.scenarioId);
         }
       }, parseInt(time, 10) * 1000);
     } else {
@@ -636,6 +639,52 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     return message.replace(/{{(.+?)\}}/g, function(param) {
       var name = param.replace(/^{{(.+)}}$/, '$1');
       return LocalStorageService.getItem(name) || name;
+    });
+  }
+
+  /**
+   * getScenarioDetail
+   * 呼び出し先のシナリオ詳細を取得する
+   * @param String scenarioId 呼び出し先シナリオID
+   */
+  this.getScenarioDetail = function(scenarioId) {
+    $.ajax({
+      url: "<?= $this->Html->url('/TChatbotScenario/remoteGetActionDetail') ?>",
+      type: 'post',
+      dataType: 'json',
+      data: {
+        id: scenarioId
+      },
+      cache:false,
+      timeout: 10000
+    }).done(function(data) {
+      try {
+        var scenarios = {};
+        var idx = 0;
+        var activity = JSON.parse(data['TChatbotScenario']['activity']);
+
+        // 取得したシナリオのアクション情報を、setActionList内に詰める
+        for (var key in $scope.setActionList) {
+          if (key == $scope.actionStep) {
+            for (var exKey in activity.scenarios) {
+              scenarios[idx++] = activity.scenarios[exKey];
+            }
+          } else {
+            scenarios[idx++] = $scope.setActionList[key];
+          }
+        }
+        $scope.setActionList = scenarios;
+      } catch(e) {
+        $scope.actionStep++;
+      }
+    }).fail(function(jqXHR, textStatus, errorThrown) {
+      // エラー情報を出力する
+      console.error(errorThrown);
+
+      $scope.actionStep++;
+    }).always(function() {
+      // アクションを実行する
+      $scope.doAction();
     });
   }
 }])
@@ -939,6 +988,11 @@ function validateAction(element, setActionList, actionItem) {
 
     if (actionItem.mailType == <?= C_SCENARIO_MAIL_TYPE_CUSTOMIZE ?> && !actionItem.template) {
       messageList.push('メール本文が未入力です');
+    }
+  } else
+  if (actionItem.actionType == <?= C_SCENARIO_ACTION_CALL_SCENARIO ?>) {
+    if (actionItem.scenarioId === '' || actionItem.scenarioId === null) {
+      messageList.push('シナリオを選択してください');
     }
   }
 

@@ -152,14 +152,13 @@
 </div>
 
 <?php /* シナリオ呼び出し */ ?>
-<div ng-if="setItem.actionType == <?= C_SCENARIO_INPUT_TYPE_CALL_SCENARIO ?>" class="set_action_item_body action_hearing">
+<div ng-if="setItem.actionType == <?= C_SCENARIO_ACTION_CALL_SCENARIO ?>" class="set_action_item_body action_hearing">
   <ul>
     <li class="styleFlexbox">
       <span class="fb7em"><label>シナリオ</label></span>
       <div>
-        <select ng-model="setItem.scenarioId" ng-init="setItem.scenarioId">
+        <select ng-model="setItem.scenarioId" ng-init="setItem.scenarioId" ng-options="item.key as item.name for item in main.scenarioList">
           <option value="">シナリオを選択してください</option>
-          <option ng-repeat="item in main.scenarioList" value="item.key">{{item.name}}</option>
         </select>
       </div>
     </li>
