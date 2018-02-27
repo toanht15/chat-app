@@ -313,7 +313,7 @@ class TChatbotScenarioController extends AppController {
         || $lastData['TChatbotScenario']['sort'] === 0
         || $lastData['TChatbotScenario']['sort'] === null){
         // ソート順が登録されていなかったらソート順をセットする
-        if(! $this->remoteSetSort()){
+        if(! $this->_remoteSetSort()){
           $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
           return false;
         }
@@ -413,7 +413,7 @@ class TChatbotScenarioController extends AppController {
       }
       if($reset_flg){
         // ソート順が登録されていなかったらソート順をセットする
-        if(! $this->remoteSetSort()){
+        if(! $this->_remoteSetSort()){
           $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
           return false;
         }
@@ -464,11 +464,45 @@ class TChatbotScenarioController extends AppController {
     }
    }
 
+  /**
+   * 呼び出し先のシナリオ詳細の取得(アクション：シナリオ呼び出し)
+   */
+  public function remoteGetActionDetail() {
+    Configure::write('debug', 0);
+    $this->autoRender = FALSE;
+    $this->layout = 'ajax';
+
+    // post, ajax以外の通信は弾く
+    if (!$this->request->is('post') || !$this->request->is('ajax')) {
+      return false;
+    }
+
+    try {
+      $id = (isset($this->request->data['id'])) ? $this->request->data['id']: '';
+      $ret = $this->TChatbotScenario->find('first', [
+        'fields' => ['id', 'activity'],
+        'conditions' => [
+          'TChatbotScenario.id' => $id,
+          'TChatbotScenario.del_flg' => 0,
+          'TChatbotScenario.m_companies_id' => $this->userInfo['MCompany']['id']
+        ]
+      ]);
+
+      if (count($ret) === 1) {
+        return json_encode($ret);
+      } else {
+        return false;
+      }
+    } catch (Exception $e) {
+      return false;
+    }
+  }
+
    /**
    * シナリオ設定ソート順を現在のID順でセット
    *
    * */
-   public function remoteSetSort(){
+   private function _remoteSetSort(){
      $this->TChatbotScenario->begin();
      /* 現在の並び順を取得 */
      $this->paginate['TChatbotScenario']['conditions']['TChatbotScenario.m_companies_id'] = $this->userInfo['MCompany']['id'];
@@ -597,7 +631,7 @@ class TChatbotScenarioController extends AppController {
             || $lastData['TChatbotScenario']['sort'] === 0
             || $lastData['TChatbotScenario']['sort'] === null){
           //ソート順が登録されていなかったらソート順をセットする
-          if(! $this->remoteSetSort()){
+          if(! $this->_remoteSetSort()){
             $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
             throw new ChatbotScenarioException('ソート順が設定できませんでした。');
           }

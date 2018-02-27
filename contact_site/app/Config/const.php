@@ -193,13 +193,13 @@ define('C_SCENARIO_ACTION_TEXT', 1); // テキスト発言
 define('C_SCENARIO_ACTION_HEARING', 2); // ヒアリング
 define('C_SCENARIO_ACTION_SELECT_OPTION', 3); // 選択肢
 define('C_SCENARIO_ACTION_SEND_MAIL', 4); // メール送信
+define('C_SCENARIO_ACTION_CALL_SCENARIO', 5);
 
 // シナリオ設定(ヒアリング)－入力タイプ種別コード
 define('C_SCENARIO_INPUT_TYPE_TEXT', 1);
 define('C_SCENARIO_INPUT_TYPE_NUMBER', 2);
 define('C_SCENARIO_INPUT_TYPE_EMAIL', 3);
 define('C_SCENARIO_INPUT_TYPE_TEL', 4);
-define('C_SCENARIO_INPUT_TYPE_CALL_SCENARIO', 5);
 
 /* シナリオ設定(ヒアリング) - 改行設定 */
 define('C_SCENARIO_INPUT_LF_TYPE_DISALLOW', 1);
@@ -665,7 +665,7 @@ $config['chatbotScenarioActionList'] = [
     ]
   ],
   // シナリオ呼び出し
-  C_SCENARIO_INPUT_TYPE_CALL_SCENARIO => [
+  C_SCENARIO_ACTION_CALL_SCENARIO=> [
     'label' => 'シナリオ呼び出し',
     'chatTextArea' => '2',
     'default' => [
