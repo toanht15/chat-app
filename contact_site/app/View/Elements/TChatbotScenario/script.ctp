@@ -7,7 +7,14 @@ document.body.onload = function(){
       containment: "parent",
       cursor: 'move',
       cancel: '.sortable .cancel',
-      revert: 100
+      revert: 100,
+      helper: function(event, ui) {
+        // ドラッグ時に、helperの要素が小さくならないようにする
+        ui.children().each(function() {
+          $(this).width($(this).width());
+        });
+        return ui;
+      }
     });
     $(".sortable").sortable("disable");
   });
