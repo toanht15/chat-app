@@ -50,7 +50,7 @@
         var bannerAct = storage.s.get('bannerAct');
         //非表示の状態
         var closeAct = storage.s.get('closeAct');
-        if(bannerAct !== "true" || closeAct !== "true"){
+        if(bannerAct !== "true" && closeAct !== "true"){
           //アニメーションさせる
           //最小化時と最大化時の状態を取得
           var abridgementType = common.getAbridgementType()
