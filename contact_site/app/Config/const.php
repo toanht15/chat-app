@@ -626,8 +626,7 @@ $config['chatbotScenarioActionList'] = [
       'confirmMessage' => '',
       'success' => '',
       'cancel' => '',
-      'cv' => '2',
-      'cvCondition' => '1'
+      'cv' => '2'
     ]
   ],
   // 選択肢
