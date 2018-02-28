@@ -82,6 +82,12 @@ class TChatbotScenario extends AppModel {
         if (empty($action['mailType'])) {
           return false;
         }
+      } else
+      if ($action['actionType'] == C_SCENARIO_ACTION_CALL_SCENARIO) {
+        // シナリオ呼び出し
+        if (empty($action['scenarioId'])) {
+          return false;
+        }
       }
     }
 

@@ -6647,6 +6647,32 @@ ul.naviBtn {
           cursor: pointer;
       }
     }
+
+    tr > td p {
+      margin: 0 0 5px;
+
+      .callerTypeLabel {
+        display: inline-block;
+        padding: 4px 2%;
+        margin-right: 8px;
+        border-radius: 5px;
+        width: 11em;
+        color: white;
+        font-weight: bold;
+        text-align: center;
+
+        &.typeAutoMessage {
+          background-color: #9BBBD6;
+        }
+        &.typeScenario {
+          background-color: #9BD6D1;
+        }
+
+        & + span {
+          line-height: 2;
+        }
+      }
+    }
   }
 
   /* チャットボットシナリオ設定(追加・更新) */
