@@ -244,6 +244,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         case <?= C_SCENARIO_ACTION_SEND_MAIL ?>:
           action = adjustDataOfSendMail(action, isCheckValidation);
           break;
+        case <?= C_SCENARIO_ACTION_CALL_SCENARIO ?>:
+          action = adjustDataOfCallScenario(action);
+          break;
       }
 
       if (action !== null) {
@@ -1049,5 +1052,13 @@ function searchObj (obj, regex) {
     }
   }
   return resultList;
+}
+
+// シナリオ呼び出しのバリデーションチェック
+function adjustDataOfCallScenario(action) {
+  if (typeof action.scenarioId == 'undefined' || action.scenarioId === '' || action.scenarioId === null) {
+    return null;
+  }
+  return action;
 }
 </script>
