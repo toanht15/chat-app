@@ -70,11 +70,6 @@
     </li>
     <li>
       <label class="pointer"><input type="checkbox" ng-model="setItem.cv" ng-init="setItem.cv = setItem.cv == 1">成果にCVとして登録する</label>
-      <div ng-if="setItem.cv == true" class="indentDown">
-        <label class="styleBlock pointer"><input type="radio" name="action_{{setActionId}}_cv_condition" value="1" ng-model="setItem.cvCondition">一部の項目でも正常に入力されたらCVとして登録する</label>
-        <label class="styleBlock pointer"><input type="radio" name="action_{{setActionId}}_cv_condition" value="2" ng-model="setItem.cvCondition">すべての項目が正常に入力された場合のみCVとして登録する</label>
-        <label class="styleBlock pointer"><input type="radio" name="action_{{setActionId}}_cv_condition" value="3" ng-model="setItem.cvCondition" ng-disabled="!setItem.isConfirm">入力確認にて選択肢（OK）が選択された場合のみCVとして登録する</label>
-      </div>
     </li>
   </ul>
 </div>
