@@ -85,7 +85,7 @@
       if ( empty($this->data['TChatbotScenario']['id']) ) {
         $class = "redBtn vHidden";
       } else
-      if (count($this->data['TAutoMessage']) >= 1) {
+      if (count($this->data['callerInfo']['TAutoMessage']) >= 1 || count($this->data['callerInfo']['TChatbotScenario']) >= 1) {
         $class = "disOffgrayBtn disabled commontooltip";
       } else {
         $class = "redBtn";

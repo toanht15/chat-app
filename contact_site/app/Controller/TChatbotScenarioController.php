@@ -59,20 +59,10 @@ class TChatbotScenarioController extends AppController {
     $this->paginate['TChatbotScenario']['conditions']['TChatbotScenario.m_companies_id'] = $this->userInfo['MCompany']['id'];
     $data = $this->paginate('TChatbotScenario');
 
-    // 呼び出し元であるオートメッセージ情報を取得する
+    // 呼び出し元情報を取得する
+    $scenarioList = $this->_findScenarioByActionType(C_SCENARIO_ACTION_CALL_SCENARIO);
     foreach($data as &$item) {
-      $autoMessage = $this->TAutoMessage->coFind('list', [
-        'fileds' => ['id', 'name'],
-        'order' => [
-          'TAutoMessage.sort' => 'asc',
-          'TAutoMessage.id' => 'asc'
-        ],
-        'conditions' => [
-          'TAutoMessage.del_flg != ' => 1,
-          'TAutoMessage.t_chatbot_scenario_id' => $item['TChatbotScenario']['id']
-        ]
-      ]);
-      $item['TAutoMessage'] = $autoMessage;
+      $item['callerInfo'] = $this->_getScenarioCallerInfo($item['TChatbotScenario']['id'], $scenarioList);
     }
 
     $this->set('settingList', $data);
@@ -162,14 +152,9 @@ class TChatbotScenarioController extends AppController {
       $this->request->data['TChatbotScenario'] = $editData[0]['TChatbotScenario'];
     }
 
-    // 呼び出し元であるオートメッセージ情報を取得する
-    $autoMessage = $this->TAutoMessage->coFind('list', [
-      'conditions' => [
-        'TAutoMessage.del_flg != ' => 1,
-        'TAutoMessage.t_chatbot_scenario_id' => $id
-      ]
-    ]);
-    $this->request->data['TAutoMessage'] = $autoMessage;
+    // 呼び出し元情報を取得する
+    $scenarioList = $this->_findScenarioByActionType(C_SCENARIO_ACTION_CALL_SCENARIO);
+    $this->request->data['callerInfo'] = $this->_getScenarioCallerInfo($id, $scenarioList);
 
     // シナリオ設定の一覧を取得する
     $scenarioList = $this->TChatbotScenario->coFind('list', [
@@ -1288,5 +1273,74 @@ sinclo@medialink-ml.co.jp
       }
     }
     return $d;
+  }
+
+  /**
+   * _getScenarioCallerInfo
+   * 呼び出し元情報を取得する
+   * @param  Int    $id           シナリオID
+   * @param  Array  $scenarioList アクション「シナリオ呼び出し」を含むシナリオ一覧
+   * @return Array                呼び出し元情報
+   */
+  private function _getScenarioCallerInfo($id, $scenarioList) {
+    $callerInfo = [];
+
+    // 呼び出し元オートメッセージ情報を取得する
+    $callerInfo['TAutoMessage'] = $this->TAutoMessage->coFind('list', [
+      'fileds' => ['id', 'name'],
+      'order' => [
+        'TAutoMessage.sort' => 'asc',
+        'TAutoMessage.id' => 'asc'
+      ],
+      'conditions' => [
+        'TAutoMessage.del_flg != ' => 1,
+        'TAutoMessage.t_chatbot_scenario_id' => $id,
+        'TAutoMessage.m_companies_id' => $this->userInfo['MCompany']['id']
+      ]
+    ]);
+
+    // 呼び出し元シナリオ情報を取得する
+    $matchScenarioNames = [];
+    $keyword = '"scenarioId":"'. $id . '"';
+    foreach ($scenarioList as $scenario) {
+      if (strpos($scenario['TChatbotScenario']['activity'], $keyword)) {
+        $matchScenarioNames[] = $scenario['TChatbotScenario']['name'];
+      }
+    }
+    $callerInfo['TChatbotScenario'] = $matchScenarioNames;
+
+    return $callerInfo;
+  }
+
+  /**
+   * _findScenarioByActionType
+   * 指定されたアクションタイプのシナリオ一覧を返す
+   * @param Integer $actionType アクションタイプ
+   * @return Array  シナリオ一覧
+   */
+  private function _findScenarioByActionType($actionType) {
+    $scenarioList = $this->TChatbotScenario->coFind('all', [
+      'fileds' => ['id', 'name'],
+      'order' => [
+        'TChatbotScenario.sort' => 'asc',
+        'TChatbotScenario.id' => 'asc'
+      ],
+      'conditions' => [
+        'TChatbotScenario.del_flg != ' => 1,
+        'TChatbotScenario.m_companies_id' => $this->userInfo['MCompany']['id']
+      ],
+      'recursive' => -1
+    ]);
+
+    // 指定されたアクションタイプのシナリオのみを抽出する
+    $filteredScenarioList = [];
+    $keyword = '"actionType":"'. $actionType . '"';
+    foreach ($scenarioList as $scenario) {
+      if (strpos($scenario['TChatbotScenario']['activity'], $keyword)) {
+        $filteredScenarioList[] = $scenario;
+      }
+    }
+
+    return $filteredScenarioList;
   }
 }
