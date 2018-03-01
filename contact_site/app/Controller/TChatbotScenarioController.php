@@ -193,12 +193,13 @@ class TChatbotScenarioController extends AppController {
     $this->layout = 'ajax';
 
     $selectedList = $this->request->data['selectedList'];
+    $deletedList = [];
     $this->TChatbotScenario->begin();
     $res = false;
     foreach($selectedList as $key => $val){
       $id = (isset($val)) ? $val: "";
       // オートメッセージで設定済みのシナリオは削除対象から外す
-      $ret = $this->TChatbotScenario->find('first', [
+      $linkedAutoMessages = $this->TChatbotScenario->find('first', [
           'fields' => 'TChatbotScenario.*',
           'conditions' => [
               'TChatbotScenario.del_flg' => 0,
@@ -216,8 +217,9 @@ class TChatbotScenarioController extends AppController {
           ]],
           'recursive' => -1
       ]);
-      if ( count($ret) === 1 ) {
+      if ( count($linkedAutoMessages) === 1 ) {
         if ($this->TChatbotScenario->logicalDelete($val) ) {
+          $deletedList[] = $id;
           $res = true;
         }
       }
@@ -230,6 +232,9 @@ class TChatbotScenarioController extends AppController {
       $this->TChatbotScenario->rollback();
       $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
     }
+
+    // 実際に削除したシナリオIDを返す
+    echo json_encode($deletedList);
   }
 
   /* *
