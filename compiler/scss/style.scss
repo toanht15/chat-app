@@ -5091,8 +5091,8 @@ ul.naviBtn {
     &:before {
       content: '';
       display: table-cell;
-      width: 243px;
-      background: linear-gradient(transparent 50%, currentColor 50%, currentColor calc(50% + 2px), transparent calc(50% + 2px));
+      width: 164px;
+      background: linear-gradient(transparent 50%, #B7B7B7 50%, #B7B7B7 calc(50% + 2px), transparent calc(50% + 2px));
       background-clip: padding;
     }
 

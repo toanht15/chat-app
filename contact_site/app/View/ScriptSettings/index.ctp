@@ -1,16 +1,24 @@
 <script src="https://cdn.jsdelivr.net/clipboard.js/1.5.3/clipboard.min.js"></script>
 <script>
   $(function () {
-  // クリップボードにコピーする
-  var clipboard = new Clipboard('.copyBtn');
-  clipboard.on('success', function(e) {
-    var self = e;
-    // コピーしたことが視覚的にわかりやすいように
-    // 少しゆとりを持って選択を解除する
-    window.setTimeout(function(){
-      self.clearSelection();
-    }, 300);
-  });
+    // クリップボードにコピーする
+    var clipboard = new Clipboard('.copyBtn');
+    clipboard.on('success', function(e) {
+      var self = e;
+      // コピーしたことが視覚的にわかりやすいように
+      // 少しゆとりを持って選択を解除する
+      window.setTimeout(function(){
+        self.clearSelection();
+      }, 300);
+    });
+
+    $('#showFormTag').on('click', function(e){
+      if($(this).prop('checked')) {
+        $('#formTagWrap').css('display','');
+      } else {
+        $('#formTagWrap').css('display','none');
+      }
+    });
   });
 </script>
 <?php
@@ -51,33 +59,33 @@ $mainTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デモサイ
         </p>
       </dd>
       <?php if($coreSettings[C_COMPANY_USE_SYNCLO] || $coreSettings[C_COMPANY_USE_DOCUMENT] || $coreSettings[C_COMPANY_USE_LA_CO_BROWSE]): ?>
-      <p class="separator">　以下は画面共有利用時に使用するタグです　</p>
+      <label for="showFormTag" style="cursor:pointer; margin-bottom: 1em; display:block;"><input type="checkbox" id="showFormTag"/>画面共有のフォーム代理入力を利用する</label>
+      <div id="formTagWrap" style="display:none;">
       <dt>（３）フォーム代理入力するページ用のタグ（ウィジェット表示）</dt>
-      <dd>
-        <pre>フォーム代理入力するページ用のタグ（ウィジェット表示）
-画面共有を利用してフォームの代理入力を行うページに埋め込むタグです。（ウィジェット表示）
+        <dd>
+          <pre>画面共有を利用してフォームの代理入力を行うページに埋め込むタグです。（ウィジェット表示）
 ※本タグを埋め込んだページは、画面共有中に企業側からのsubmitボタン操作を無効にします。</pre>
-        <p>
-          <?php $scriptName = "<script type='text/javascript' src='" . $fileName . "' data-form='1'></script>"; ?>
-          <span class="copyBtn" data-clipboard-target="#formTag"><?=$this->Html->image('clipboard.png', array('alt' =>'コピー', 'width' => 25, 'height' => 25)) ?></span>
-          <span class="copyArea"><?=$this->Form->input('formTag', array('type' => 'text', 'value' => $scriptName, 'label' => false, 'div' => false ))?></span>
-        </p>
-      </dd>
-      <dt>（４）フォーム代理入力するページ用のタグ（ウィジェット非表示）</dt>
-      <dd>
-        <pre>フォーム代理入力するページ用のタグ（ウィジェット非表示）
-画面共有を利用してフォームの代理入力を行うページに埋め込むタグです。（ウィジェット非表示）
+          <p>
+            <?php $scriptName = "<script type='text/javascript' src='" . $fileName . "' data-form='1'></script>"; ?>
+            <span class="copyBtn" data-clipboard-target="#formTag"><?=$this->Html->image('clipboard.png', array('alt' =>'コピー', 'width' => 25, 'height' => 25)) ?></span>
+            <span class="copyArea"><?=$this->Form->input('formTag', array('type' => 'text', 'value' => $scriptName, 'label' => false, 'div' => false ))?></span>
+          </p>
+        </dd>
+        <dt>（４）フォーム代理入力するページ用のタグ（ウィジェット非表示）</dt>
+        <dd>
+          <pre>画面共有を利用してフォームの代理入力を行うページに埋め込むタグです。（ウィジェット非表示）
 ※本タグを埋め込んだページは、画面共有中に企業側からのsubmitボタン操作を無効にします。</pre>
-        <p>
-          <?php $scriptName = "<script type='text/javascript' src='" . $fileName . "' data-hide='1' data-form='1'></script>"; ?>
-          <span class="copyBtn" data-clipboard-target="#formHideTag"><?=$this->Html->image('clipboard.png', array('alt' =>'コピー', 'width' => 25, 'height' => 25)) ?></span>
-          <span class="copyArea"><?=$this->Form->input('formHideTag', array('type' => 'text', 'value' => $scriptName, 'label' => false, 'div' => false ))?></span>
-        </p>
-      </dd>
-    </dl>
-    <pre style="color:red">注意：フォーム系ページの次のページ（submitボタンをクリックした後に遷移する「確認ページ」や「サンクスページ」）にはsincloタグは
+          <p>
+            <?php $scriptName = "<script type='text/javascript' src='" . $fileName . "' data-hide='1' data-form='1'></script>"; ?>
+            <span class="copyBtn" data-clipboard-target="#formHideTag"><?=$this->Html->image('clipboard.png', array('alt' =>'コピー', 'width' => 25, 'height' => 25)) ?></span>
+            <span class="copyArea"><?=$this->Form->input('formHideTag', array('type' => 'text', 'value' => $scriptName, 'label' => false, 'div' => false ))?></span>
+          </p>
+        </dd>
+        <pre style="color:red">注意：フォーム系ページの次のページ（submitボタンをクリックした後に遷移する「確認ページ」や「サンクスページ」）にはsincloタグは
 　　　埋め込まないでください。
-    </pre>
+        </pre>
+      </div>
+    </dl>
     <?php endif; ?>
   </section>
   <?php endif; ?>
