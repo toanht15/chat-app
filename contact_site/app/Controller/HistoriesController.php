@@ -343,7 +343,7 @@ class HistoriesController extends AppController {
         if ((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA])
             && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA])
             && !empty($history['LandscapeData']['org_name'])
-            && ($this->isViewableMLCompanyInfo() || !LandscapeComponent::isMLLbcCode($history['LandscapeData']['lbc_code']))
+            && ($this->isViewableMLCompanyInfo() || !LandscapeLbcAPIComponent::isMLLbcCode($history['LandscapeData']['lbc_code']))
         ) {
           $row['ip'] .= $history['LandscapeData']['org_name'];
         } else {
@@ -459,7 +459,7 @@ class HistoriesController extends AppController {
         if ((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA])
             && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA])
           && !empty($val['LandscapeData']['org_name'])
-          && ($this->isViewableMLCompanyInfo() || !LandscapeComponent::isMLLbcCode($val['LandscapeData']['lbc_code']))) {
+          && ($this->isViewableMLCompanyInfo() || !LandscapeLbcAPIComponent::isMLLbcCode($val['LandscapeData']['lbc_code']))) {
           $row['ip'] .= $val['LandscapeData']['org_name'];
         } else {
           $row['ip'] .= $val['THistory']['ip_address'];
@@ -986,7 +986,7 @@ class HistoriesController extends AppController {
       ];
       // MLの企業情報を閲覧できない企業であれば
       if(!$this->isViewableMLCompanyInfo()) {
-        $joinToLandscapeData['conditions']['NOT']['LandscapeData.lbc_code'] = LandscapeComponent::ML_LBC_CODE;
+        $joinToLandscapeData['conditions']['NOT']['LandscapeData.lbc_code'] = LandscapeLbcAPIComponent::ML_LBC_CODE;
       }
     }
 
@@ -1400,7 +1400,7 @@ class HistoriesController extends AppController {
       ];
       // MLの企業情報を閲覧できない企業であれば
       if(!$this->isViewableMLCompanyInfo()) {
-        $landscapeJoinListCondition['conditions']['NOT']['LandscapeData.lbc_code'] = LandscapeComponent::ML_LBC_CODE;
+        $landscapeJoinListCondition['conditions']['NOT']['LandscapeData.lbc_code'] = LandscapeLbcAPIComponent::ML_LBC_CODE;
       }
       $joinList[] = $landscapeJoinListCondition;
     }
@@ -1427,7 +1427,7 @@ class HistoriesController extends AppController {
         ];
         // MLの企業情報を閲覧できない企業であれば
         if(!$this->isViewableMLCompanyInfo()) {
-          $companyConditions['conditions']['NOT']['MLandscapeData.lbc_code'] = LandscapeComponent::ML_LBC_CODE;
+          $companyConditions['conditions']['NOT']['MLandscapeData.lbc_code'] = LandscapeLbcAPIComponent::ML_LBC_CODE;
         }
         $companyData = $this->MLandscapeData->find('all', $companyConditions);
 

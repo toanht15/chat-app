@@ -1,12 +1,12 @@
 <?php
-
-App::uses('HttpSocket', 'Network/Http', 'Component', 'Controller', 'Utility/Validation');
-
 /**
  * Class LandscapeComponent
  * @property \app\Model\MLandscapeData $MLandscapeData
  */
-class LandscapeComponent extends Component
+
+App::uses('LandscapeAPIComponent', 'Controller/Component');
+
+class LandscapeLbcAPIComponent extends LandscapeAPIComponent
 {
   const API_CALL_TIMEOUT = 5;
   const LANDSCAPE_DATA_EXPIRE_SEC = 60 * 60 * 24 * 90; // 90日
@@ -26,19 +26,14 @@ class LandscapeComponent extends Component
   const PARAM_CHARSET = 'charset';
   const PARAM_IPADDRESS = 'ipadr';
 
-  const STATUS_OK = '200';
-  const STATUS_ERR = '401';
-
   const ML_LBC_CODE = '10102363864';
 
   private $format;
   private $charset;
   private $ip;
   private $lbcCode;
-  private $parameter;
 
   private $dbData;
-  private $apiData;
 
   private $defaultOutputData = array(
     'lbcCode' => '',
@@ -87,6 +82,7 @@ class LandscapeComponent extends Component
   public function __construct($format = 'json', $charset = 'utf8') {
     $this->format = $format;
     $this->charset = $charset;
+    $this->apiUrl = self::LANDSCAPE_API_URL;
     $this->setDefaultParameters();
   }
 
@@ -202,15 +198,11 @@ class LandscapeComponent extends Component
   }
 
   private function findDataFromAPI() {
-    $socket = new HttpSocket(array(
-        'timeout' => self::API_CALL_TIMEOUT
-    ));
-    $result = $socket->get(self::LANDSCAPE_API_URL, $this->parameter);
-    $this->log('request param => '.var_export($this->parameter,TRUE), 'request');
-    $this->apiData = json_decode($result->body(), TRUE);
-    $this->log('response param => '.var_export($this->apiData,TRUE), 'response');
-    if(empty($this->apiData) || strcmp($this->apiData['result_code'], self::STATUS_ERR) === 0) {
-      throw new Exception('API呼び出し時にエラーを取得しました => body: '.$result->body(), 502);
+    $this->callApi();
+    $this->log('request param => ' . var_export($this->parameter, TRUE), 'request');
+    $this->log('response param => ' . var_export($this->apiData, TRUE), 'response');
+    if (empty($this->apiData) || strcmp($this->apiData['result_code'], LandscapeAPIComponent::STATUS_ERR) === 0) {
+      throw new Exception('API呼び出し時にエラーを取得しました => body: ' . $result->body(), 502);
     } else if (empty($this->apiData['lbc_code'])) {
       // データは無いが当該IPからアクセスされると何度もAPIをコールしてしまうためIPアドレスのみデータを入れる
       // throw new Exception('検索条件に該当するデータが存在しません => body: '.$result->body(), 404);
