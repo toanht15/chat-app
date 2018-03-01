@@ -92,7 +92,7 @@ function openConfirmDialog(){
       },
       url: "<?= $this->Html->url('/TChatbotScenario/chkRemoteDelete') ?>",
       success: function(data){
-        // 不要になった、シナリオの一時保存データを削除する
+        // 削除済みデータに紐付く、シナリオの一時保存データを削除する
         JSON.parse(data).forEach(function(param) {
           var storageKey = 'scenario_' + param;
           localStorage.removeItem(storageKey);
