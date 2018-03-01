@@ -96,7 +96,7 @@
         array('escape' => false,
         'class' => 'btn-shadow ' . $class,
         'id' => 'tchatbotscenario_edit_remove_btn',
-        'onclick' => strpos($class, 'disabled') === false ? 'removeAct(' . $lastPage . ')' : '',
+        'ng-click' => strpos($class, 'disabled') === false ? 'main.removeAct(' . $lastPage . ')' : '',
         'disabled' => strpos($class, 'disabled') !== false,
         'data-text' => strpos($class, 'disabled') !== false ? '呼び出し元が設定されているため、<br>削除できません' : '',
         'data-balloon-position' => '50',

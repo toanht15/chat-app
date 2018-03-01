@@ -91,7 +91,14 @@ function openConfirmDialog(){
         selectedList: selectedList
       },
       url: "<?= $this->Html->url('/TChatbotScenario/chkRemoteDelete') ?>",
-      success: function(){
+      success: function(data){
+        // 不要になった、シナリオの一時保存データを削除する
+        JSON.parse(data).forEach(function(param) {
+          var storageKey = 'scenario_' + param;
+          localStorage.removeItem(storageKey);
+        });
+
+        // ページ再読み込み
         $(".p-dictionary-del #popup-button a").prop("disabled", true);
         var url = "<?= $this->Html->url('/TChatbotScenario/index') ?>";
         location.href = url + "/page:" + index;

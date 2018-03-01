@@ -165,9 +165,45 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   };
 
   this.saveAct = function() {
-    $('#TChatbotScenarioActivity').val(this.createJsonData(true));
+    var validatedActivity = this.createJsonData(true);
+    var unvalidatedActivity = this.createJsonData(false);
+
+    // シナリオの新規追加、もしくは入力済みの項目が全て保存可能なとき、localStorageから一時保存データを削除する
+    if ($scope.storageKey === 'scenario_tmp' || validatedActivity === unvalidatedActivity) {
+      localStorage.removeItem($scope.storageKey);
+    }
+
+    // アラート表示を行わないように、フラグを戻す
+    $scope.changeFlg = false;
+
+    $('#TChatbotScenarioActivity').val(validatedActivity);
     submitAct();
   };
+
+  this.removeAct = function(lastPage){
+    // アラート表示を行わないように、フラグを戻す
+    $scope.changeFlg = false;
+
+    modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', 'シナリオ設定', 'moment');
+    popupEvent.closePopup = function(){
+      $.ajax({
+        type: 'post',
+        data: {
+          id: document.getElementById('TChatbotScenarioId').value
+        },
+        cache: false,
+        url: "<?= $this->Html->url('/TChatbotScenario/remoteDelete') ?>",
+        success: function(){
+          // 不要な一時保存データを削除する
+          localStorage.removeItem($scope.storageKey);
+
+          // 一覧ページへ遷移する
+          var url = "<?= $this->Html->url('/TChatbotScenario/index') ?>";
+          location.href = url + "/page:" + lastPage;
+        }
+      });
+    };
+  }
 
   /**
    * createJsonData
@@ -608,24 +644,6 @@ function getWidgetSettings() {
   }
   widgetSettings.show_name = <?=C_WIDGET_SHOW_COMP?>; // 表示名を企業名に固定する
   return widgetSettings;
-}
-
-function removeAct(lastPage){
-  modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', 'シナリオ設定', 'moment');
-  popupEvent.closePopup = function(){
-    $.ajax({
-      type: 'post',
-      data: {
-        id: document.getElementById('TChatbotScenarioId').value
-      },
-      cache: false,
-      url: "<?= $this->Html->url('/TChatbotScenario/remoteDelete') ?>",
-      success: function(){
-        var url = "<?= $this->Html->url('/TChatbotScenario/index') ?>";
-        location.href = url + "/page:" + lastPage;
-      }
-    });
-  };
 }
 
 function submitAct() {
