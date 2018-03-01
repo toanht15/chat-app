@@ -193,37 +193,39 @@ class TChatbotScenarioController extends AppController {
     $this->layout = 'ajax';
 
     $selectedList = $this->request->data['selectedList'];
-    $deletedList = [];
     $this->TChatbotScenario->begin();
     $res = false;
-    foreach($selectedList as $key => $val){
-      $id = (isset($val)) ? $val: "";
-      // オートメッセージで設定済みのシナリオは削除対象から外す
-      $linkedAutoMessages = $this->TChatbotScenario->find('first', [
-          'fields' => 'TChatbotScenario.*',
-          'conditions' => [
-              'TChatbotScenario.del_flg' => 0,
-              'TChatbotScenario.id' => $id,
-              'TChatbotScenario.m_companies_id' => $this->userInfo['MCompany']['id'],
-              'TAutoMessage.t_chatbot_scenario_id' => NULL
-          ],
-          'joins' => [[
-            'type' => 'LEFT OUTER',
+
+    // オートメッセージで連携済みのシナリオは削除対象から外す
+    $linkedList = $this->TChatbotScenario->find('list', [
+        'fields' => 'TChatbotScenario.id',
+        'conditions' => [
+            'TChatbotScenario.del_flg' => 0,
+            'TChatbotScenario.id' => $selectedList,
+            'TChatbotScenario.m_companies_id' => $this->userInfo['MCompany']['id']
+        ],
+        'joins' => [
+          [
+            'type' => 'INNER',
             'table' => 't_auto_messages',
             'alias' => 'TAutoMessage',
             'conditions' => [
               'TChatbotScenario.id = TAutoMessage.t_chatbot_scenario_id'
             ]
-          ]],
-          'recursive' => -1
-      ]);
-      if ( count($linkedAutoMessages) === 1 ) {
-        if ($this->TChatbotScenario->logicalDelete($val) ) {
-          $deletedList[] = $id;
-          $res = true;
-        }
+          ]
+        ],
+        'recursive' => -1
+    ]);
+    $targetList = array_diff($selectedList, $linkedList);
+
+    $deletedList = [];
+    foreach ($targetList as $id) {
+      if ($this->TChatbotScenario->logicalDelete($id)) {
+        $deletedList[] = $id;
+        $res = true;
       }
     }
+
     if($res){
       $this->TChatbotScenario->commit();
       $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
