@@ -40,8 +40,8 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
 <!-- /* 上部カラーバー(ここから) */ -->
 <div id="color-bar" class="card-shadow">
     <ul id="color-bar-right" class="fRight">
-      <?php if(!empty($trialTime) && $userInfo['permission_level'] != 99) { ?>
-        <li class="fLeft"><p><?= h($trialTime) ?></p></li>
+      <?php if(isset($trialTime)) { ?>
+        <li class="fLeft"><p style = "color: #c00000; font-weight:bold;margin-left: -265px !important;margin: 14px 0;"><?= 'トライアル期間終了まであと ' ?><span style = "color: #c00000; font-size: 19px;"><?= h($trialTime) ?></span><?= ' 日です'?></p></li>
       <?php } ?>
         <li class="fLeft"><p><?= h($userInfo['display_name']) ?>さん</p></li>
         <li class="fRight" id="logout" onclick='location.href = "/Login/logout"'><p>ログアウト</p></li>
