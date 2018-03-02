@@ -1754,7 +1754,7 @@
             .on("click", "input[name^='sinclo-radio']", function(e){
               if(e) e.stopPropagation();
               console.log("sinclo.scenarioApi.isProcessing() : " + sinclo.scenarioApi.isProcessing() + " sinclo.scenarioApi.isWaitingInput() : " + sinclo.scenarioApi.isWaitingInput());
-              if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isWaitingInput()) {
+              if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isWaitingInput() && (!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false")) {
                 var name = $(this).attr('name');
                 console.log("DISABLE RADIO NAME : " + name);
                 $('input[name=' + name + '][type="radio"]').prop('disabled', true).parent().css('opacity', 0.5);
