@@ -59,7 +59,7 @@ $mainTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デモサイ
         </p>
       </dd>
       <?php if($coreSettings[C_COMPANY_USE_SYNCLO] || $coreSettings[C_COMPANY_USE_DOCUMENT] || $coreSettings[C_COMPANY_USE_LA_CO_BROWSE]): ?>
-      <label for="showFormTag" style="cursor:pointer; margin-bottom: 1em; display:block;"><input type="checkbox" id="showFormTag"/>画面共有のフォーム代理入力を利用する</label>
+      <label for="showFormTag" style="cursor:pointer; margin-bottom: 1em; display:block; font-size: 1.2em"><input type="checkbox" id="showFormTag" style="position:relative; top:-1px"/>フォーム代理入力（画面共有機能）を利用する場合に対象ページに埋め込むタグ</label>
       <div id="formTagWrap" style="display:none;">
       <dt>（３）フォーム代理入力するページ用のタグ（ウィジェット表示）</dt>
         <dd>
