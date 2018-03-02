@@ -263,6 +263,8 @@ class AppController extends Controller {
         // 日数に変換
         $daydiff = $seconddiff / (60 * 60 * 24) + 1;
         $this->set('trialTime',$daydiff);
+      } else if(strtotime($today) > strtotime($trialEndDay)) {
+        $this->set('trialTime', 0);
       }
     }
   }
