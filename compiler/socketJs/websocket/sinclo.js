@@ -48,7 +48,9 @@
         var elm = $('#sincloBox');
         //実際にバナーではないか
         var bannerAct = storage.s.get('bannerAct');
-        if(bannerAct !== "true"){
+        //非表示の状態
+        var closeAct = storage.s.get('closeAct');
+        if(bannerAct !== "true" && closeAct !== "true"){
           //アニメーションさせる
           //最小化時と最大化時の状態を取得
           var abridgementType = common.getAbridgementType()
@@ -120,7 +122,7 @@
               height: height + "px"
             }, 'first');
         }
-        else{
+        else if(closeAct !== "true"){
           //バナー表示時の位置を設定
           $("#sincloBox").css("height","");
           sinclo.operatorInfo.bannerBottomLeftRight();
