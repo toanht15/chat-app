@@ -84,7 +84,7 @@ class LoginController extends AppController {
           $today = date("Y/m/d");
           //トライアル期間終了日
           $trialEndDay = date("Y/m/d",strtotime($mAgreementData[0]['MAgreement']['trial_end_day']));
-          if($userInfo['permission_level'] !== 99 && strtotime($today) > strtotime($trialEndDay)){
+          if($userInfo['permission_level'] != 99 && strtotime($today) > strtotime($trialEndDay)){
             $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>"トライアル期間を過ぎています"]);
             $this->render('index');
             return;
