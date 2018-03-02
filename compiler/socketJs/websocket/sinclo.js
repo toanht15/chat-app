@@ -1110,10 +1110,10 @@
             }
             // ファイル送信チャットが削除されている場合
             else if(chat.deleteFlg === 1) {
-              this.chatApi.createMessage(cn, chat.message, userName);
+              this.chatApi.createMessage(cn, chat.message, userName, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29))));
             }
           } else {
-            this.chatApi.createMessage(cn, chat.message, userName);
+            this.chatApi.createMessage(cn, chat.message, userName, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29))));
           }
           // シナリオ実行中であればラジオボタンを非活性にする。
           if((Number(chat.messageType) === 22 || Number(chat.messageType) === 23) && chat.message.match(/\[\]/) && prevMessageBlock === null) {
@@ -1951,10 +1951,13 @@
             }, 300);
           }
         },
-        createMessage: function(cs, val, cName){
+        createMessage: function(cs, val, cName, isScenarioMsg){
             var chatList = document.getElementsByTagName('sinclo-chat')[0];
             var div = document.createElement('div');
             var li = document.createElement('li');
+            if(isScenarioMsg) {
+              div.classList.add('sinclo-scenario-msg');
+            }
             div.appendChild(li);
             chatList.appendChild(div);
             var strings = val.split('\n');
@@ -3638,7 +3641,7 @@
       },
       _enablePreviousRadioButton: function() {
         var self = sinclo.scenarioApi;
-        var chatMessageBlock = $('sinclo-chat').find('div');
+        var chatMessageBlock = $('sinclo-chat').find('div:not(.sinclo-scenario-msg)');
         var length = self.get(self._lKey.previousChatMessageLength);
         for(var i=0; i < length; i++) {
           var name = $(chatMessageBlock[i]).find('[type="radio"]').attr('name');
