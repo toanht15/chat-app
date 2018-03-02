@@ -1115,6 +1115,7 @@
           } else {
             this.chatApi.createMessage(cn, chat.message, userName);
           }
+          // シナリオ実行中であればラジオボタンを非活性にする。
           if((Number(chat.messageType) === 22 || Number(chat.messageType) === 23) && chat.message.match(/\[\]/) && prevMessageBlock === null) {
             prevMessageBlock = $('sinclo-chat').find('div:last-child');
           } else if(prevMessageBlock !== null) {
@@ -3455,7 +3456,8 @@
         storedVariableKeys: "s_storedVariableKeys",
         sendCustomerMessageType: "s_sendCustomerMessageType",
         showSequenceSet: "s_showSequenceList",
-        scenarioMessageType: "s_scenarioMessageType"
+        scenarioMessageType: "s_scenarioMessageType",
+        previousChatMessageLength: "s_prevChatMessageLength"
       },
       defaultVal: {
         "s_id": 0,
@@ -3524,11 +3526,20 @@
           self.set(self._lKey.sendCustomerMessageType, 1);
           self.set(self._lKey.allowSave, false);
           self.set(self._lKey.showSequenceSet, {});
+          self.set(self._lKey.previousChatMessageLength, 0);
         }
       },
       begin: function() {
+        this._disablePreviousRadioButton();
         this._saveProcessingState(true);
         this._process();
+      },
+      _end: function() {
+        // シナリオ終了
+        var self = sinclo.scenarioApi;
+        self._saveProcessingState(false);
+        self._enablePreviousRadioButton();
+        self._unsetBaseObj();
       },
       isProcessing: function() {
         var self = sinclo.scenarioApi;
@@ -3610,6 +3621,30 @@
         array.push(messageObj);
         self.set(self._lKey.messages, array);
       },
+      _disablePreviousRadioButton: function() {
+        var self = sinclo.scenarioApi;
+        var chatMessageBlock = $('sinclo-chat').find('div');
+        var length = self.get(self._lKey.previousChatMessageLength);
+        if(!self.isProcessing()) {
+          // 初期状態
+          length = chatMessageBlock.length;
+          self.set(self._lKey.previousChatMessageLength, length);
+        }
+        console.log("current length: " + length);
+        for(var i=0; i < length; i++) {
+          var name = $(chatMessageBlock[i]).find('[type="radio"]').attr('name');
+          $('input[name=' + name + '][type="radio"]').prop('disabled', true).parent().css('opacity', 0.5);
+        }
+      },
+      _enablePreviousRadioButton: function() {
+        var self = sinclo.scenarioApi;
+        var chatMessageBlock = $('sinclo-chat').find('div');
+        var length = self.get(self._lKey.previousChatMessageLength);
+        for(var i=0; i < length; i++) {
+          var name = $(chatMessageBlock[i]).find('[type="radio"]').attr('name');
+          $('input[name=' + name + '][type="radio"]').prop('disabled', false).parent().css('opacity', 1);
+        }
+      },
       /**
        * 現在セットされているシナリオを実行する
        * @param forceFirst シナリオ内に複数の分岐のあるものの場合、一番最初から実行する
@@ -3657,9 +3692,7 @@
       _goToNextScenario: function() {
         var self = sinclo.scenarioApi;
         if(Number(self.get(self._lKey.currentScenarioSeqNum)) === Number(self.get(self._lKey.scenarioLength))-1) {
-          // シナリオ終了
-          self._saveProcessingState(false);
-          self._unsetBaseObj();
+          self._end();
           return false;
         }
         self.set(self._lKey.currentScenarioSeqNum, Number(self.get(self._lKey.currentScenarioSeqNum)) + 1);
