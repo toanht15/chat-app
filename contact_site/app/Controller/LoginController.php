@@ -79,7 +79,7 @@ class LoginController extends AppController {
             'mail_address' => $this->request->data['MUser']['mail_address']
           ],
         ]);
-        if(!empty($trialCompany)) {
+        if($userInfo['permission_level'] !== 99 && !empty($trialCompany)) {
           //今日の日程
           $today = date("Y/m/d");
           //トライアル期間終了日
