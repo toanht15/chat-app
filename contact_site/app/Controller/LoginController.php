@@ -79,12 +79,12 @@ class LoginController extends AppController {
             'mail_address' => $this->request->data['MUser']['mail_address']
           ],
         ]);
-        if($userInfo['permission_level'] !== 99 && !empty($trialCompany)) {
+        if(!empty($trialCompany)) {
           //今日の日程
           $today = date("Y/m/d");
           //トライアル期間終了日
           $trialEndDay = date("Y/m/d",strtotime($mAgreementData[0]['MAgreement']['trial_end_day']));
-          if(strtotime($today) > strtotime($trialEndDay)){
+          if($userInfo['permission_level'] !== 99 && strtotime($today) > strtotime($trialEndDay)){
             $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>"トライアル期間を過ぎています"]);
             $this->render('index');
             return;
