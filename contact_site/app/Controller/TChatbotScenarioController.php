@@ -49,6 +49,8 @@ class TChatbotScenarioController extends AppController {
     $this->chatbotScenarioInputType = Configure::read('chatbotScenarioInputType');
     $this->chatbotScenarioSendMailType = Configure::read('chatbotScenarioSendMailType');
     $this->chatbotScenarioInputLFType = Configure::read('chatbotScenarioInputLFType');
+    $this->chatbotScenarioApiMethodType = Configure::read('chatbotScenarioApiMethodType');
+    $this->chatbotScenarioApiResponseType = Configure::read('chatbotScenarioApiResponseType');
   }
 
   /**
@@ -807,6 +809,10 @@ sinclo@medialink-ml.co.jp
     $this->set('chatbotScenarioSendMailType', $this->chatbotScenarioSendMailType);
     // ヒアリング改行設定
     $this->set('chatbotScenarioInputLFType', $this->chatbotScenarioInputLFType);
+    // API通信メソッド種別
+    $this->set('chatbotScenarioApiMethodType', $this->chatbotScenarioApiMethodType);
+    // API通信レスポンス種別
+    $this->set('chatbotScenarioApiResponseType', $this->chatbotScenarioApiResponseType);
     // 最後に表示していたページ番号
     if(!empty($this->request->query['lastpage'])){
       $this->set('lastPage', $this->request->query['lastpage']);

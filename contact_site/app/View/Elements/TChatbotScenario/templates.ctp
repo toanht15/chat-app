@@ -106,7 +106,7 @@
           <div>
             <input type="text" ng-model="setItem.selection.options[listId]">
             <div class="btnBlock">
-              <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addActionItemList(setActionId, listId)')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.removeActionItemList(setActionId, listId)')) ?></a>
+              <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addActionItemList($event, listId)')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.removeActionItemList($event, listId)')) ?></a>
             </div>
           </div>
         </li>
@@ -124,7 +124,7 @@
         <li ng-repeat="(listId, addressItem) in setItem.toAddress track by $index">
           <input type="text" ng-model="setItem.toAddress[listId]" ng-init="setItem.toAddress[listId] = setItem.toAddress[listId]" default="">
           <div class="btnBlock">
-            <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addActionItemList(setActionId, listId)')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.removeActionItemList(setActionId, listId)')) ?></a>
+            <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addActionItemList($event, listId)')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.removeActionItemList($event, listId)')) ?></a>
           </div>
         </li>
       </ul>
@@ -152,7 +152,7 @@
 </div>
 
 <?php /* シナリオ呼び出し */ ?>
-<div ng-if="setItem.actionType == <?= C_SCENARIO_ACTION_CALL_SCENARIO ?>" class="set_action_item_body action_hearing">
+<div ng-if="setItem.actionType == <?= C_SCENARIO_ACTION_CALL_SCENARIO ?>" class="set_action_item_body action_call_scenario">
   <ul>
     <li class="styleFlexbox">
       <span class="fb7em"><label>シナリオ</label></span>
@@ -160,6 +160,82 @@
         <select ng-model="setItem.scenarioId" ng-init="setItem.scenarioId" ng-options="item.key as item.name for item in main.scenarioList">
           <option value="">シナリオを選択してください</option>
         </select>
+      </div>
+    </li>
+  </ul>
+</div>
+
+<?php /* 外部システム連携 */ ?>
+<div ng-if="setItem.actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API_CONNECTION ?>" class="set_action_item_body action_external_api_connection">
+  <ul>
+    <li class="styleFlexbox">
+      <span class="fb11em"><label>連携先URL</label></span>
+      <div>
+        <input ng-model="setItem.url" type="text" placeholder="外部連携先のURLを入力してください">
+      </div>
+    </li>
+    <li class="styleFlexbox">
+      <span class="fb11em"><label>メソッド種別</label></span>
+      <div>
+        <select ng-model="setItem.methodType" ng-init="setItem.methodType = setItem.methodType" ng-options="index as type for (index, type) in apiMethodType"></select>
+      </div>
+    </li>
+    <li class="styleFlexbox">
+      <span class="fb11em"><label>リクエストヘッダー</label></span>
+      <div>
+        <table cellspacing="5">
+          <thead>
+            <tr>
+              <th class="apiRequestHeaderNameLabel">名前</th>
+              <th class="apiRequestHeaderValueLabel">値</th>
+              <th class="apiRequestHeaderBtnGroupLabel"></th>
+            </tr>
+          </thead>
+          <tbody class="externalApiRequestHeader itemListGroup">
+            <tr ng-repeat="(listId, headerItem) in setItem.requestHeaders">
+              <td><input ng-model="headerItem.name" type="text" class="frame"></td>
+              <td><input ng-model="headerItem.value" type="text" class="frame"></td>
+              <td class="btnBlock">
+                <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addActionItemList($event, listId)')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.removeActionItemList($event, listId)')) ?></a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </li>
+    <li class="styleFlexbox">
+      <span class="fb11em"><label>リクエストボディ</label></span>
+      <div>
+        <resize-textarea ng-model="setItem.requestBody" cols="48" rows="4" placeholder="リクエストボディを設定してください"></resize-textarea>
+      </div>
+    </li>
+    <li class="styleFlexbox">
+      <span class="fb11em"><label>レスポンスタイプ</label></span>
+      <div>
+        <select ng-model="setItem.responseType" ng-init="setItem.responseType = setItem.responseType" ng-options="index as type for (index, type) in apiResponseType"></select>
+      </div>
+    </li>
+    <li class="styleFlexbox">
+      <span class="fb11em"><label>レスポンスボディ</label></span>
+      <div>
+        <table cellspacing="5">
+          <thead>
+            <tr>
+              <th class="apiResponseBodyVariableNameLabel">変数名</th>
+              <th class="apiResponseBodySourceKeyLabel">変換元キー名</th>
+              <th class="apiResponseBodyBtnGroupLabel"></th>
+            </tr>
+          </thead>
+          <tbody class="externalApiResponseBody itemListGroup">
+            <tr ng-repeat="(listId, bodyItem) in setItem.responseBodyMaps">
+              <td><input ng-model="bodyItem.variableName" type="text" class="frame"></td>
+              <td><input ng-model="bodyItem.sourceKey" type="text" class="frame"></td>
+              <td class="btnBlock">
+                <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addActionItemList($event, listId)')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.removeActionItemList($event, listId)')) ?></a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </li>
   </ul>
