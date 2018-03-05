@@ -542,6 +542,50 @@ function getCompanyInfoFromApi(ip, callback) {
   req.end();
 }
 
+function parseSignature(src, callback) {
+  //ヘッダーを定義
+  var headers = {
+    'Content-Type':'application/json'
+  };
+
+  //オプションを定義
+  var options = {
+    host: process.env.PARSE_SIGNATURE_API_HOST,
+    port: process.env.PARSE_SIGNATURE_API_PORT,
+    path: process.env.PARSE_SIGNATURE_API_PATH,
+    method: 'POST',
+    headers: headers,
+    json: true,
+    agent: false
+  };
+
+  if(process.env.DB_HOST === 'localhost') {
+    options.rejectUnauthorized = false;
+  }
+
+  //リクエスト送信
+  var req = http.request(options, function (response) {
+    if(response.statusCode === 200) {
+      response.setEncoding('utf8');
+      response.on('data', callback);
+      return;
+    } else {
+      console.log('企業詳細情報取得時にエラーが返却されました。 errorCode : ' + response.statusCode);
+      callback(false);
+      return;
+    }
+  });
+
+  req.on('error', function(error) {
+    console.log('企業詳細情報取得時にHTTPレベルのエラーが発生しました。 message : ' + error.message);
+    callback(false);
+    return;
+  });
+
+  req.write(JSON.stringify({"accessToken":"x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK", "targetText":src}));
+  req.end();
+}
+
 function sendMail(autoMessageId, lastChatLogId, callback) {
   //ヘッダーを定義
   var headers = {
@@ -3243,6 +3287,13 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     }
     emit.toSameUser('resScenarioMessage', scenario, scenario.siteKey, scenario.sincloSessionId);
     ack({data: scenario});
+  });
+
+  socket.on('sendParseSignature', function(data, ack){
+    var obj = JSON.parse(data);
+    parseSignature(obj.targetText, function(result){
+      ack(result);
+    });
   });
 
   // ============================================

@@ -3834,10 +3834,20 @@
       },
       _waitingInput: function(callback) {
         var self = sinclo.scenarioApi;
-        $(document).on(self._events.inputCompleted, function(e, inputVal){
-          callback(inputVal);
-        });
+        if(true) {
+          $(document).on(self._events.inputCompleted, function(e, inputVal) {
+            self._waitingParseSignature(inputVal, callback);
+          });
+        } else {
+          $(document).on(self._events.inputCompleted, function(e, inputVal){
+
+          });
+        }
         self._saveWaitingInputState(true);
+      },
+      _waitingParseSignature: function(text, callback) {
+        var self = sinclo.scenarioApi;
+        emit('sendParseSignature', {targetText: text}, callback);
       },
       _unWaitingInput: function() {
         var self = sinclo.scenarioApi;

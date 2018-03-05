@@ -71,7 +71,7 @@ class CompanyDataController extends AppController
       $targetText = !empty($jsonObj[self::PARAM_TARGET_TEXT]) ? $jsonObj[self::PARAM_TARGET_TEXT] : null;
       $component->setText($targetText);
       $component->execute();
-      $this->log($component->getData()->body, 'response');
+      $this->log('HOGE!! : '.var_export($component->getData(),TRUE), 'response');
     } catch(Exception $e) {
       $this->log('getDetailInfo呼び出し時にエラーが発生しました。 エラーメッセージ: '.$e->getMessage().' エラー番号 '.$e->getCode(), 'api-error');
       $this->response->statusCode($e->getCode());
@@ -83,11 +83,9 @@ class CompanyDataController extends AppController
     }
 
     $this->response->statusCode(200);
-    /*
     return json_encode(array(
       'success' => true,
-      'data' => $result
+      'data' => $component->getData()
     ));
-    */
   }
 }
