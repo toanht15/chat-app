@@ -30,6 +30,8 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   $scope.inputTypeList = <?php echo json_encode($chatbotScenarioInputType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.sendMailTypeList = <?php echo json_encode($chatbotScenarioSendMailType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.inputLFTypeList = <?php echo json_encode($chatbotScenarioInputLFType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
+  $scope.apiMethodType = <?php echo json_encode($chatbotScenarioApiMethodType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
+  $scope.apiResponseType = <?php echo json_encode($chatbotScenarioApiResponseType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.widget = SimulatorService;
   $scope.widget.settings = getWidgetSettings();
 
@@ -288,13 +290,28 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   };
 
   this.controllMailSetting = function(actionStep) {
-    var targetElmList = $('#action' + actionStep + '_setting').find('.itemListGroup li');
     $timeout(function(){
       $scope.$apply();
     }).then(function() {
-      targetElmList = $('#action' + actionStep + '_setting').find('.itemListGroup li');
+      var targetElmList = $('#action' + actionStep + '_setting').find('.itemListGroup li');
       var targetObjList = $scope.setActionList[actionStep].toAddress;
       self.controllListView($scope.setActionList[actionStep].actionType, targetElmList, targetObjList, 5);
+    });
+  };
+
+  this.controllExternalApiSetting = function(targetClassName, actionStep) {
+    $timeout(function(){
+      $scope.$apply();
+    }).then(function() {
+      if (/externalApiRequestHeader/.test(targetClassName)) {
+        var targetElmList = $('#action' + actionStep + '_setting').find('.itemListGroup.externalApiRequestHeader tr');
+        var targetObjList = $scope.setActionList[actionStep].requestHeaders;
+        self.controllListView(targetElmList, targetObjList);
+      } else {
+        targetElmList = $('#action' + actionStep + '_setting').find('.itemListGroup.externalApiResponseBody tr');
+        targetObjList = $scope.setActionList[actionStep].responseBodyMaps;
+        self.controllListView(targetElmList, targetObjList);
+      }
     });
   };
 
@@ -306,6 +323,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
    * @param Integer listIndex   ボタン押下されたリスト番号
    */
   this.addActionItemList = function(actionStep, listIndex) {
+    var targetActionId = $($event.target).parents('.set_action_item')[0].id;
+    var targetClassName = $($event.target).parents('.itemListGroup')[0].className;
+    var actionStep = targetActionId.replace(/action([0-9]+)_setting/, '$1');
     var actionType = $scope.setActionList[actionStep].actionType;
 
     if (actionType == <?= C_SCENARIO_ACTION_HEARING ?>) {
@@ -326,12 +346,27 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         target.push(angular.copy(''));
         this.controllMailSetting(actionStep);
       }
+
+    } else if (actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API_CONNECTION ?>) {
+      if (/externalApiRequestHeader/.test(targetClassName)) {
+        var src = $scope.actionList[actionType].default.requestHeaders[0];
+        var target = $scope.setActionList[actionStep].requestHeaders;
+      } else {
+        var src = $scope.actionList[actionType].default.responseBodyMaps[0];
+        var target = $scope.setActionList[actionStep].responseBodyMaps;
+      }
+      target.push(angular.copy(src));
+      this.controllExternalApiSetting(targetClassName, actionStep);
     }
   };
 
   // ヒアリング、選択肢、メール送信のリスト削除
-  this.removeActionItemList = function(actionStep, listIndex) {
+  this.removeActionItemList = function($event, listIndex) {
+    var targetActionId = $($event.target).parents('.set_action_item')[0].id;
+    var targetClassName = $($event.target).parents('.itemListGroup')[0].className;
+    var actionStep = targetActionId.replace(/action([0-9]+)_setting/, '$1');
     var actionType = $scope.setActionList[actionStep].actionType;
+
     var targetObjList = "";
     var selector = "";
     var limitNum = 0;
@@ -346,6 +381,14 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       targetObjList = $scope.setActionList[actionStep].toAddress;
       selector = '#action' + actionStep + '_setting .itemListGroup li';
       limitNum = 5;
+    } else if (actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API_CONNECTION ?>) {
+      if (/externalApiRequestHeader/.test(targetClassName)) {
+        targetObjList = $scope.setActionList[actionStep].requestHeaders;
+        selector = '#action' + actionStep + '_setting .itemListGroup.externalApiRequestHeader tr';
+      } else {
+        targetObjList = $scope.setActionList[actionStep].responseBodyMaps;
+        selector = '#action' + actionStep + '_setting .itemListGroup.externalApiResponseBody tr';
+      }
     }
 
     if (targetObjList !== "" && selector !== "") {

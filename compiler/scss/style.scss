@@ -6905,6 +6905,27 @@ ul.naviBtn {
                     text-align: center;
                     font-weight: normal;
                     border: none;
+
+                    // 外部システム連携、移動しないといけないスタイルたち
+                    &.apiRequestHeaderNameLabel {
+                      width: 40%;
+                    }
+                    &.apiRequestHeaderValueLabel {
+                      width: auto;
+                    }
+                    &.apiRequestHeaderBtnGroupLabel {
+                      width: 4em;
+                    }
+
+                    &.apiResponseBodyVariableNameLabel {
+                      width: 40%;
+                    }
+                    &.apiResponseBodySourceKeyLabel {
+                      width: auto;
+                    }
+                    &.apiResponseBodyBtnGroupLabel {
+                      width: 4em;
+                    }
                   }
 
                   tbody {
