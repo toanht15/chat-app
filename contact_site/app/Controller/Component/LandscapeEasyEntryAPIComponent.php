@@ -50,11 +50,45 @@ class LandscapeEasyEntryAPIComponent extends LandscapeAPIComponent
     $this->callApi();
     $this->log('request param => ' . var_export($this->parameter, TRUE), 'mail-request');
     $this->log('response param => ' . var_export($this->apiData, TRUE), 'mail-response');
-  }
+}
 
   /**
    * 以下の状態でデータが格納されているため、不要な文字列を排除してデータを取得する
-   * callback_get_info({"lbc_office_id":"","lbc_head_office_id":"","pref_code":"","city_code":"","addr":[],"cname":"","oname":"","pname":[],"pname_kana":[],"pname_kana2":[],"busho":"","yakushoku":"","zip":[],"tel":[],"fax":[],"ktai":[],"chokutsu":[],"daihyo":[],"mail":"","url":"https://contact.sinclo.local/ScriptSettings/testpage","extra":[],"unknown":[],"org_addr":[],"org_zip":[],"exist_cname":"","exist_addr":"","exist_zip":"","match_pref_addr":"","match_pref_zip":"","match_pref_tel":"","result_code":0})
+   * <code>
+   * callback_get_info({
+   *  "lbc_office_id":"",
+   *  "lbc_head_office_id":"",
+   *  "pref_code":"",
+   *  "city_code":"",
+   *  "addr":[],
+   *  "cname":"",
+   *  "oname":"",
+   *  "pname":[],
+   *  "pname_kana":[],
+   *  "pname_kana2":[],
+   *  "busho":"",
+   *  "yakushoku":"",
+   *  " zip":[],
+   *  "tel":[],
+   *  "fax":[],
+   *  "ktai":[],
+   *  "chokutsu":[],
+   *  "daihyo":[],
+   *  "mail":"",
+   *  "url":"https://contact.sinclo.local/ScriptSettings/testpage",
+   *  "extra":[],
+   *  "unknown":[],
+   *  "org_addr":[],
+   *  "org_zip":[],
+   *  "exist_cname":"",
+   *  "exist_addr":"",
+   *  "exist_zip":"",
+   *  "match_pref_addr":"",
+   *  "match_pref_zip":"",
+   *  "match_pref_tel":"",
+   *  "result_code":0
+   * })
+   * </code>
    * @return mixed
    */
   public function getData() {

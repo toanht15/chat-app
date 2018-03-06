@@ -3834,20 +3834,10 @@
       },
       _waitingInput: function(callback) {
         var self = sinclo.scenarioApi;
-        if(true) {
-          $(document).on(self._events.inputCompleted, function(e, inputVal) {
-            self._waitingParseSignature(inputVal, callback);
-          });
-        } else {
-          $(document).on(self._events.inputCompleted, function(e, inputVal){
-
-          });
-        }
+        $(document).on(self._events.inputCompleted, function(e, inputVal){
+          callback(inputVal);
+        });
         self._saveWaitingInputState(true);
-      },
-      _waitingParseSignature: function(text, callback) {
-        var self = sinclo.scenarioApi;
-        emit('sendParseSignature', {targetText: text}, callback);
       },
       _unWaitingInput: function() {
         var self = sinclo.scenarioApi;
@@ -3915,26 +3905,48 @@
             self._parent._handleChatTextArea(self._parent.get(self._parent._lKey.currentScenario).chatTextArea);
             self._parent._showMessage(self._parent.get(self._parent._lKey.currentScenario).actionType, message, self._getCurrentSeq(), self._parent.get(self._parent._lKey.currentScenario).chatTextArea, function () {
               self._parent._saveWaitingInputState(true);
-              self._parent._waitingInput(function (inputVal) {
-                self._parent._unWaitingInput();
-                self._parent._handleStoredMessage();
-                if (self._parent._valid(hearing.inputType, inputVal)) {
-                  if(self._isTheFirst() && self._cvTypeIs(self._cvType.validOnce)) {
-                    // 一度OKの場合はCV
-                    emit('addLastMessageToCV', {historyId: sinclo.chatApi.historyId});
-                  }
-                  self._parent._saveVariable(hearing.variableName, inputVal);
-                  if (self._goToNext()) {
-                    self._process();
-                  } else {
+              if(self._parent.get(self._parent._lKey.currentScenario).parseSignatureMode === 1) {
+                self._waitingSignatureInput(function (inputVal){
+                  self._parent._unWaitingInput();
+                  self._parent._handleStoredMessage();
+                  self._executeParseSignatureConfirm(inputVal);
+                });
+              } else {
+                self._parent._waitingInput(function (inputVal) {
+                  self._parent._unWaitingInput();
+                  self._parent._handleStoredMessage();
+                  if (self._parent.get(self._parent._lKey.currentScenario).parseSignatureMode) {
                     self._executeConfirm();
+                  } else {
+                    if (self._parent._valid(hearing.inputType, inputVal)) {
+                      if (self._isTheFirst() && self._cvTypeIs(self._cvType.validOnce)) {
+                        // 一度OKの場合はCV
+                        emit('addLastMessageToCV', {historyId: sinclo.chatApi.historyId});
+                      }
+                      self._parent._saveVariable(hearing.variableName, inputVal);
+                      if (self._goToNext()) {
+                        self._process();
+                      } else {
+                        self._executeConfirm();
+                      }
+                    } else {
+                      self._showError();
+                    }
                   }
-                } else {
-                  self._showError();
-                }
-              });
+                });
+              }
             });
           });
+        },
+        _waitingSignatureInput: function(callback) {
+          var self = sinclo.scenarioApi._hearing;
+          $(document).on(self._parent._events.inputCompleted, function(e, inputVal) {
+            self._waitingParseSignature(inputVal, callback);
+          });
+          self._saveWaitingInputState(true);
+        },
+        _waitingParseSignature: function(text, callback) {
+          emit('sendParseSignature', {targetText: text}, callback);
         },
         _executeConfirm: function () {
           var self = sinclo.scenarioApi._hearing;
@@ -3949,6 +3961,14 @@
               self._parent._process();
             }
           }
+        },
+        _executeParseSignatureConfirm: function (result) {
+          var self = sinclo.scenarioApi._hearing;
+          if(self._cvTypeIs(self._cvType.validAll)) {
+            // 全てOKの場合はCV
+            emit('addLastMessageToCV', {historyId: sinclo.chatApi.historyId});
+          }
+          self._showParseSignatureConfirmMessage(result);
         },
         _requireConfirm: function() {
           var self = sinclo.scenarioApi._hearing;
@@ -4029,6 +4049,84 @@
               });
             });
           });
+        },
+        _showParseSignatureConfirmMessage: function(result) {
+          var self = sinclo.scenarioApi._hearing;
+          var message = "こちらの内容でよろしいですか？" + "\n" + self._createSignatureMessage(result);
+          var messageBlock = self._parent._createSelectionMessage(message, ["はい", "いいえ"]);
+          self._parent._doing(self._parent._getIntervalTimeSec(), function(){
+            self._parent._handleChatTextArea("2"); // 確認ダイアログを出すときはOFF固定
+            self._parent._showMessage(self._parent.get(self._parent._lKey.currentScenario).actionType, messageBlock, self._parent.get(self._state.currentSeq) + 1, "2", function(){
+              self._parent._waitingInput(function(inputVal){
+                self._parent._unWaitingInput();
+                self._parent._handleStoredMessage();
+                console.log("inputVal : " + inputVal + " self._parent._lKey.currentScenario.success : " + self._parent.get(self._parent._lKey.currentScenario).success + " self._parent._lKey.currentScenario.cancel : " + self._parent.get(self._parent._lKey.currentScenario).cancel);
+                if(inputVal === "はい") {
+                  if(self._cvTypeIs(self._cvType.confirmOK)) {
+                    // OKを押したタイミングでCVを付ける
+                    emit('addLastMessageToCV', {historyId: sinclo.chatApi.historyId});
+                  }
+                  if(self._parent._goToNextScenario()) {
+                    self._parent._process();
+                  }
+                } else if (inputVal === "いいえ") {
+                  self._parent._process(true);
+                } else {
+                  self._showError();
+                }
+              });
+            });
+          });
+        },
+        _createSignatureMessage: function(result) {
+          var message = "";
+          var labelMap = {
+            "lbc_office_id"     :"",
+            "lbc_head_office_id":"",
+            "pref_code"         :"都道府県コード",
+            "city_code"         :"市区町村コード",
+            "addr"              :"住所",
+            "cname"             :"企業名",
+            "oname"             :"事業所名",
+            "pname"             :"姓名",
+            "pname_kana"        :"姓名カナ",
+            "pname_kana2"       :"姓名かな",
+            "busho"             :"部署名",
+            "yakushoku"         :"役職名",
+            "zip"               :"郵便番号",
+            "tel"               :"電話番号",
+            "fax"               :"FAX番号",
+            "ktai"              :"携帯番号",
+            "chokutsu"          :"直通番号",
+            "daihyo"            :"代表番号",
+            "mail"              :"メールアドレス",
+            "url"               :"URL",
+            "extra"             :"その他",
+            "unknown"           :"その他",
+            "org_addr"          :"住所",
+            "org_zip"           :"郵便番号",
+            "exist_cname"       :"企業名マスタ存在",
+            "exist_addr"        :"住所マスタ存在",
+            "exist_zip"         :"郵便番号マスタ存在",
+            "match_pref_add"    :"都道府県・住所一致",
+            "match_pref_zip"    :"都道府県・郵便番号一致",
+            "match_pref_tel"    :"都道府県・電話番号一致"
+          };
+          var obj = JSON.parse(result);
+          Object.keys(obj.data).forEach(function(elm, index, arr){
+            if(obj.data[elm] !== "") {
+              if(typeof (obj.data[elm]) === "string") {
+                message += labelMap[elm] + "：" + obj.data[elm] + "\n";
+              } else if  (typeof(obj.data[elm]) === "object") {
+                var concatStr = labelMap[elm] + "：";
+                for(var i=0; i < obj.data[elm].length; i++) {
+                  concatStr += obj.data[elm][i] + " ";
+                }
+                message += concatStr + "\n";
+              }
+            }
+          });
+          return message;
         }
       },
       _selection: {
