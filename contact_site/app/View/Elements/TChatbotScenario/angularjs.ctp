@@ -247,7 +247,10 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
           action = adjustDataOfSendMail(action, isCheckValidation);
           break;
         case <?= C_SCENARIO_ACTION_CALL_SCENARIO ?>:
-          action = adjustDataOfCallScenario(action);
+          action = adjustDataOfCallScenario(action, isCheckValidation);
+          break;
+        case <?= C_SCENARIO_ACTION_EXTERNAL_API_CONNECTION ?>:
+          action = adjustDataOfExternalApiConnection(action, isCheckValidation);
           break;
       }
 
@@ -278,17 +281,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     });
   };
 
-  this.initMailSetting = function(actionStep) {
-    $scope.setActionList[actionStep].toAddress = $scope.setActionList[actionStep].toAddress || [''];
-    $timeout(function() {
-      $scope.$apply();
-    }).then(function() {
-      var targetElmList = $('#action' + actionStep + '_setting').find('.itemListGroup li');
-      var targetObjList = $scope.setActionList[actionStep].toAddress;
-      self.controllListView($scope.setActionList[actionStep].actionType, targetElmList, targetObjList, 5)
-    });
-  };
-
   this.controllMailSetting = function(actionStep) {
     $timeout(function(){
       $scope.$apply();
@@ -299,19 +291,17 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     });
   };
 
-  this.controllExternalApiSetting = function(targetClassName, actionStep) {
+  this.controllExternalApiSetting = function( actionStep) {
     $timeout(function(){
       $scope.$apply();
     }).then(function() {
-      if (/externalApiRequestHeader/.test(targetClassName)) {
-        var targetElmList = $('#action' + actionStep + '_setting').find('.itemListGroup.externalApiRequestHeader tr');
-        var targetObjList = $scope.setActionList[actionStep].requestHeaders;
-        self.controllListView(targetElmList, targetObjList);
-      } else {
-        targetElmList = $('#action' + actionStep + '_setting').find('.itemListGroup.externalApiResponseBody tr');
-        targetObjList = $scope.setActionList[actionStep].responseBodyMaps;
-        self.controllListView(targetElmList, targetObjList);
-      }
+      var targetElmList = $('#action' + actionStep + '_setting').find('.itemListGroup.externalApiRequestHeader tr');
+      var targetObjList = $scope.setActionList[actionStep].requestHeaders;
+      self.controllListView(targetElmList, targetObjList);
+
+      targetElmList = $('#action' + actionStep + '_setting').find('.itemListGroup.externalApiResponseBody tr');
+      targetObjList = $scope.setActionList[actionStep].responseBodyMaps;
+      self.controllListView(targetElmList, targetObjList);
     });
   };
 
@@ -356,7 +346,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         var target = $scope.setActionList[actionStep].responseBodyMaps;
       }
       target.push(angular.copy(src));
-      this.controllExternalApiSetting(targetClassName, actionStep);
+      this.controllExternalApiSetting(actionStep);
     }
   };
 
@@ -590,16 +580,16 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
    */
   $scope.doAction = function(setTime) {
     if (typeof $scope.setActionList[$scope.actionStep] !== 'undefined' && typeof $scope.setActionList[$scope.actionStep].actionType !== 'undefined') {
+      var actionDetail = $scope.setActionList[$scope.actionStep];
+
       // メッセージ間隔
-      var time =  $scope.setActionList[$scope.actionStep].messageIntervalTimeSec;
-      if (!!setTime || $scope.actionStep === 0 || $scope.setActionList[$scope.actionStep].actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?> ||  $scope.setActionList[$scope.actionStep].actionType == <?= C_SCENARIO_ACTION_CALL_SCENARIO ?>) {
+      var time =  actionDetail.messageIntervalTimeSec;
+      if (!!setTime || $scope.actionStep === 0 || actionDetail.actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?> ||  actionDetail.actionType == <?= C_SCENARIO_ACTION_CALL_SCENARIO ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API_CONNECTION ?>) {
         time = setTime || '0';
       }
 
       $timeout.cancel($scope.actionTimer);
       $scope.actionTimer = $timeout(function() {
-        var actionDetail = $scope.setActionList[$scope.actionStep];
-
         if (actionDetail.actionType == <?= C_SCENARIO_ACTION_TEXT ?>) {
           // テキスト発言
           $scope.$broadcast('addReMessage', $scope.replaceVariable(actionDetail.message), 'action' + $scope.actionStep);
@@ -628,6 +618,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         } else
         if (actionDetail.actionType == <?= C_SCENARIO_ACTION_CALL_SCENARIO ?>) {
           self.getScenarioDetail(actionDetail.scenarioId);
+        } else
+        if (actionDetail.actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API_CONNECTION ?>) {
+          self.callExternalApi(actionDetail);
         }
       }, parseInt(time, 10) * 1000);
     } else {
@@ -701,7 +694,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       data: {
         id: scenarioId
       },
-      cache:false,
+      cache: false,
       timeout: 10000
     }).done(function(data) {
       try {
@@ -732,7 +725,30 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       // アクションを実行する
       $scope.doAction();
     });
-  }
+  };
+
+  // 外部システム連携のAPI実行(Controller呼び出し)
+  this.callExternalApi = function(actionDetail) {
+    $.ajax({
+      url: "<?= $this->Html->url('/Notification/callExternalApi') ?>",
+      type: 'post',
+      dataType: 'json',
+      data: {
+        apiParams: JSON.stringify(actionDetail)
+      },
+      cache: false,
+      timeout: 10000
+    }).done(function(data) {
+      data.result.forEach(function(param) {
+        LocalStorageService.setItem(param.variableName, param.value);
+      });
+    }).fail(function(error) {
+      console.error('Failed to call external API');
+    }).always(function() {
+      $scope.actionStep++;
+      $scope.doAction();
+    });
+  };
 }])
 .directive('resizeTextarea', function() {
   return {
@@ -964,6 +980,49 @@ function adjustDataOfSendMail(action, isCheckValidation) {
   return action;
 }
 
+// シナリオ呼び出しのバリデーションチェック
+function adjustDataOfCallScenario(action, isCheckValidation) {
+  if (isCheckValidation) {
+    if (typeof action.scenarioId == 'undefined' || action.scenarioId === '' || action.scenarioId === null) {
+      return null;
+    }
+  }
+
+  return action;
+}
+
+// 外部システム連携のバリデーションチェック
+function adjustDataOfExternalApiConnection(action, isCheckValidation) {
+  if (isCheckValidation) {
+    if (typeof action.url == 'undefined' || action.url == '') {
+      return null;
+    }
+
+    var requestHeaders = [];
+    angular.forEach(action.requestHeaders, function(item, index) {
+      if (typeof item.name !== 'undefined' && item.name !== '' && typeof item.value !== 'undefined' && item.value !== '') {
+        requestHeaders.push(item);
+      }
+    });
+    action.requestHeaders = requestHeaders;
+
+    if (action.methodType != <?= C_SCENARIO_METHOD_TYPE_POST ?>) {
+      delete action.requestBody;
+    }
+
+    var responseBodys = [];
+    angular.forEach(action.responseBodyMaps, function(item, index) {
+      if (typeof item.variableName !== 'undefined' && item.variableName !== '' && typeof item.sourceKey !== 'undefined' && item.sourceKey !== '') {
+        responseBodys.push(item);
+      }
+    });
+    if (responseBodys.length < 1) return null;
+    action.responseBodyMaps = responseBodys;
+  }
+
+  return action;
+}
+
 // アクションのバリデーションとエラーメッセージの設定
 function validateAction(element, setActionList, actionItem) {
   var messageList = [];
@@ -1035,10 +1094,24 @@ function validateAction(element, setActionList, actionItem) {
     if (actionItem.mailType == <?= C_SCENARIO_MAIL_TYPE_CUSTOMIZE ?> && !actionItem.template) {
       messageList.push('メール本文が未入力です');
     }
+
   } else
   if (actionItem.actionType == <?= C_SCENARIO_ACTION_CALL_SCENARIO ?>) {
     if (actionItem.scenarioId === '' || actionItem.scenarioId === null) {
       messageList.push('シナリオを選択してください');
+    }
+
+  } else
+  if (actionItem.actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API_CONNECTION ?>) {
+    if (!actionItem.url) {
+      messageList.push('連携先URLが未入力です');
+    }
+
+    var validResponseBody = actionItem.responseBodyMaps.some(function(obj) {
+      return !!obj.variableName && !!obj.sourceKey;
+    });
+    if (!validResponseBody) {
+      messageList.push('レスポンスボディ情報が未入力です')
     }
   }
 
@@ -1095,13 +1168,5 @@ function searchObj (obj, regex) {
     }
   }
   return resultList;
-}
-
-// シナリオ呼び出しのバリデーションチェック
-function adjustDataOfCallScenario(action) {
-  if (typeof action.scenarioId == 'undefined' || action.scenarioId === '' || action.scenarioId === null) {
-    return null;
-  }
-  return action;
 }
 </script>

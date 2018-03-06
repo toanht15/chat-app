@@ -6,6 +6,8 @@
  * Time: 11:51
  */
 
+App::uses('HttpSocket', 'Network/Http');
+
 class NotificationController extends AppController {
   const PARAM_ACCESS_TOKEN = 'accessToken';
   const PARAM_AUTO_MESSAGE_ID = 'autoMessageId';
@@ -21,7 +23,7 @@ class NotificationController extends AppController {
   public $uses = ['TAutoMessage','TCampaign', 'THistory', 'THistoryChatLog', 'THistoryStayLog', 'MLandscapeData', 'MMailTransmissionSetting', 'TMailTransmissionLog', 'MCompany'];
 
   public function beforeFilter() {
-    $this->Auth->allow('autoMessages','scenario');
+    $this->Auth->allow('autoMessages','scenario', 'callExternalApi');
   }
 
   public function autoMessages() {
@@ -184,6 +186,84 @@ class NotificationController extends AppController {
     ));
   }
 
+  /**
+   * callExternalApi
+   * 外部システム連携 API実行
+   * @return JSON APIの実行結果（変数名と、API実行により取得した値）
+   */
+  public function callExternalApi() {
+    Configure::write('debug', 0);
+    $apiMethodTypeList = Configure::read('chatbotScenarioApiMethodType');
+
+    $this->autoRender = false;
+    $this->layout = 'ajax';
+
+    try {
+      $apiParams = (isset($this->request->data['apiParams'])) ? $this->request->data['apiParams'] : '';
+      $settings = json_decode($apiParams);
+
+      // URI
+      $parsedUrl = parse_url($settings->url);
+
+      // リクエストヘッダー
+      $requestHeaders = [];
+      foreach ($settings->requestHeaders as $key => $param) {
+        if (!empty($param->name) && !empty($param->value)) {
+          $requestHeaders[$param->name] = $param->value;
+        }
+      }
+
+      // 実行
+      $HttpSocket = new HttpSocket();
+      $request = [
+        'method' => $apiMethodTypeList[$settings->methodType],
+        'uri' => [
+          'scheme' => $parsedUrl['scheme'],
+          'host' => $parsedUrl['host'],
+          'port' => $parsedUrl['port'],
+          'user' => $parsedUrl['user'],
+          'pass' => $parsedUrl['pass'],
+          'path' => $parsedUrl['path'],
+          'query' => $parsedUrl['query'],
+          'fragment' => $parsedUrl['fragment'],
+        ],
+        'body' => json_encode($settings->requestBody),
+        'header' => $requestHeaders
+      ];
+      $response = $HttpSocket->request($request);
+
+      // レスポンス
+      $responseBodyList = [];
+      if ($response->code == 200) {
+        $jsonData = json_decode($response->body(), true);
+        foreach ($settings->responseBodyMaps as $key => $param) {
+          $resultData = $this->array_key_exists_recursive($jsonData, $param->sourceKey);
+          $resultData = !is_null($resultData) ? $resultData : $param->variableName;
+          $responseBodyList[] = ['variableName' => $param->variableName, 'value' => $resultData];
+        }
+      } else {
+        $this->log('【EXTERNAL_API_ERROR】Notification/callExternalApi 外部API呼び出し時にエラーが発生しました。 エラー番号 '.$response->code.' パラメータ: '.json_encode($apiParams), 'external-api-error');
+        $this->response->statusCode($response->code);
+        return json_encode(array(
+          'success' => false,
+          'errorCode' => $response->code
+        ));
+      }
+    } catch(Exception $e) {
+      $this->log('【EXTERNAL_API_ERROR】Notification/callExternalApi呼び出し時にエラーが発生しました。 エラーメッセージ: '.$e->getMessage().' エラー番号 '.$e->getCode().' パラメータ: '.json_encode($apiParams), 'external-api-error');
+      $this->response->statusCode($e->getCode());
+      return json_encode(array(
+        'success' => false,
+        'errorCode' => $e->getCode()
+      ));
+    }
+    $this->response->statusCode(200);
+    return json_encode(array(
+      'success' => true,
+      'result' => $responseBodyList
+    ));
+  }
+
   private function getTargetAutoMessageById($id) {
     return $this->TAutoMessage->findById($id);
   }
@@ -271,5 +351,28 @@ class NotificationController extends AppController {
 
   private function getTransmissionConfigById($id) {
     return $this->MMailTransmissionSetting->findById($id);
+  }
+
+  /**
+   * array_key_exists_recursive
+   * 多次元配列中に指定したキーがあるか探索し、存在する場合はその値を返す
+   * @param  Array $targetArray   探索対象の配列
+   * @param  String $targetKey    検索したいキー
+   * @return String               検索結果の値
+   */
+  private function array_key_exists_recursive($targetArray, $targetKey) {
+    if (array_key_exists($targetKey, $targetArray)) {
+      return $targetArray[$targetKey];
+    }
+
+    foreach ($targetArray as $key => $value) {
+      if (is_array($value)) {
+        $resultValue = $this->array_key_exists_recursive($value, $targetKey);
+        if (!is_null($resultValue)) {
+          return $resultValue;
+        }
+      }
+    }
+    return;
   }
 }
