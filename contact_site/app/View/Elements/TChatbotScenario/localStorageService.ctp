@@ -25,7 +25,7 @@ sincloApp.factory('LocalStorageService', function() {
       return this._data[key];
     },
     setItem: function(key, value) {
-      this._data[key] = value;
+      this._data[key] = value.toString(); // 文字列に変換して LocalStorage に格納する
       this.save();
     }
   };

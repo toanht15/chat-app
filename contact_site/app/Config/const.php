@@ -193,7 +193,8 @@ define('C_SCENARIO_ACTION_TEXT', 1); // テキスト発言
 define('C_SCENARIO_ACTION_HEARING', 2); // ヒアリング
 define('C_SCENARIO_ACTION_SELECT_OPTION', 3); // 選択肢
 define('C_SCENARIO_ACTION_SEND_MAIL', 4); // メール送信
-define('C_SCENARIO_ACTION_CALL_SCENARIO', 5);
+define('C_SCENARIO_ACTION_CALL_SCENARIO', 5); // シナリオ呼び出し
+define('C_SCENARIO_ACTION_EXTERNAL_API_CONNECTION', 6); // 外部システム連携
 
 // シナリオ設定(ヒアリング)－入力タイプ種別コード
 define('C_SCENARIO_INPUT_TYPE_TEXT', 1);
@@ -205,13 +206,18 @@ define('C_SCENARIO_INPUT_TYPE_TEL', 4);
 define('C_SCENARIO_INPUT_LF_TYPE_DISALLOW', 1);
 define('C_SCENARIO_INPUT_LF_TYPE_ALLOW', 2);
 
+/* シナリオ設定(ヒアリング) - メッセージ送信設定 */
 define('C_SCENARIO_SEND_MESSAGE_BY_ENTER', 1);
 define('C_SCENARIO_SEND_MESSAGE_BY_BUTTON', 2);
 
-/* シナリオ設定 - メール送信タイプ */
+/* シナリオ設定(メール送信) - メール送信タイプ */
 define('C_SCENARIO_MAIL_TYPE_ALL_MESSAGE', 1);
 define('C_SCENARIO_MAIL_TYPE_VARIABLES', 2);
 define('C_SCENARIO_MAIL_TYPE_CUSTOMIZE', 3);
+
+/* シナリオ設定(外部システム連携) - メソッド種別 */
+define('C_SCENARIO_METHOD_TYPE_GET', 1);
+define('C_SCENARIO_METHOD_TYPE_POST', 2);
 
 // する/しない設定
 define('C_SELECT_CAN', 1); // する
@@ -613,9 +619,9 @@ $config['chatbotScenarioActionList'] = [
   C_SCENARIO_ACTION_TEXT => [
     'label' => 'テキスト発言',
     'tooltip' => 'チャットボットに発言させたいテキストメッセージを設定できるアクションです。',
-    'chatTextArea' => '2',
     'default' => [
       'messageIntervalTimeSec' => '2',
+      'chatTextArea' => '2',
       'message' => ''
     ]
   ],
@@ -623,9 +629,9 @@ $config['chatbotScenarioActionList'] = [
   C_SCENARIO_ACTION_HEARING => [
     'label' => 'ヒアリング',
     'tooltip' => 'チャットボットから投げかけたい質問（ヒアリング項目）を設定し、サイト訪問者からのテキスト入力を受け付けるアクションです。ヒアリング項目は複数設定することが可能です。',
-    'chatTextArea' => '1',
     'default' => [
       'messageIntervalTimeSec' => '2',
+      'chatTextArea' => '1',
       'hearings' => [[
         'variableName' => '',
         'inputType' => C_SCENARIO_INPUT_TYPE_TEXT,
@@ -645,9 +651,9 @@ $config['chatbotScenarioActionList'] = [
   C_SCENARIO_ACTION_SELECT_OPTION => [
     'label' => '選択肢',
     'tooltip' => 'チャットボットに発言させたい選択式（択一式）メッセージを設定できるアクションです。',
-    'chatTextArea' => '2',
     'default' => [
       'messageIntervalTimeSec' => '2',
+      'chatTextArea' => '2',
       'selection' => [
         'variableName' => '',
         'options' => ['']
@@ -658,19 +664,45 @@ $config['chatbotScenarioActionList'] = [
   C_SCENARIO_ACTION_SEND_MAIL => [
     'label' => 'メール送信',
     'tooltip' => 'メールを送信するアクションです。宛先、差出人名、メールタイトル、メール本文を自由に設定することが可能です。',
-    'chatTextArea' => '2',
     'default' => [
       'messageIntervalTimeSec' => '2',
+      'chatTextArea' => '2',
+      'toAddress' => [''],
       'mailType' => C_SCENARIO_MAIL_TYPE_ALL_MESSAGE
     ]
   ],
   // シナリオ呼び出し
-  C_SCENARIO_ACTION_CALL_SCENARIO=> [
+  C_SCENARIO_ACTION_CALL_SCENARIO => [
     'label' => 'シナリオ呼び出し',
-    'chatTextArea' => '2',
+    'tooltip' => 'シナリオを呼び出すアクションです。',
     'default' => [
       'messageIntervalTimeSec' => '2',
+      'chatTextArea' => '2',
       'scenarioId' => ''
+    ]
+  ],
+  // 外部システム連携
+  C_SCENARIO_ACTION_EXTERNAL_API_CONNECTION => [
+    'label' => '外部システム連携',
+    'tooltip' => '任意の値を設定して、APIの実行を行うアクションです。',
+    'default' => [
+      'messageIntervalTimeSec' => '2',
+      'chatTextArea' => '2',
+      'methodType' => '1',
+      'requestHeaders' => [[
+        'name' => '',
+        'value' => ''
+      ]],
+      'requestParameters' => [[
+        'name' => '',
+        'value' => ''
+      ]],
+      'requestBody' => '',
+      'responseType' => '0',
+      'responseBodyMaps' => [[
+        'sourceKey' => '',
+        'variableName' => ''
+      ]]
     ]
   ]
 ];
@@ -745,6 +777,17 @@ $config['chatbotScenarioSendMailType'] = [
     'label' => 'メール本文をカスタマイズする',
     'tooltip' => '自由にメール本文を編集することが可能です。（変数の利用も可能です）'
   ]
+];
+
+/* シナリオ設定 - 外部システム連携のメソッド種別 */
+$config['chatbotScenarioApiMethodType'] = [
+  C_SCENARIO_METHOD_TYPE_GET => 'GET',
+  C_SCENARIO_METHOD_TYPE_POST => 'POST'
+];
+
+/* シナリオ設定 - 外部システム連携のレスポンス種別 */
+$config['chatbotScenarioApiResponseType'] = [
+  0 => 'JSON'
 ];
 
 /* 成果種別 */
