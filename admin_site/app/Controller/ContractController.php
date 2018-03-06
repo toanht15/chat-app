@@ -212,7 +212,15 @@ class ContractController extends AppController
 
   }
 
-  private function processTransaction($companyInfo, $userInfo, $agreementInfo) {
+  /**
+   * Console/Command/ExcelImportShellからも呼び出すためpublicとなっている。
+   * @param $companyInfo
+   * @param $userInfo
+   * @param $agreementInfo
+   * @return 一番最後に追加した
+   * @throws Exception
+   */
+  public function processTransaction($companyInfo, $userInfo, $agreementInfo) {
     try {
       $transaction = $this->TransactionManager->begin();
       $addedCompanyInfo = $this->createCompany($companyInfo);
