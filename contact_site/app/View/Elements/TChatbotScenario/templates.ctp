@@ -116,7 +116,7 @@
 </div>
 
 <?php /* メール送信 */ ?>
-<div ng-if="setItem.actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?>" class="set_action_item_body action_send_mail" ng-init="main.initMailSetting(setActionId)">
+<div ng-if="setItem.actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?>" class="set_action_item_body action_send_mail" ng-init="main.controllMailSetting(setActionId)">
   <ul>
     <li class="styleFlexbox">
       <span class="fb13em"><label>送信先メールアドレス<span class="questionBalloon"><icon class="questionBtn" data-tooltip="送信先のメールアドレスを設定します。（変数の利用も可能です）">?</icon></span></label></span>
@@ -166,7 +166,7 @@
 </div>
 
 <?php /* 外部システム連携 */ ?>
-<div ng-if="setItem.actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API_CONNECTION ?>" class="set_action_item_body action_external_api_connection">
+<div ng-if="setItem.actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API_CONNECTION ?>" class="set_action_item_body action_external_api_connection" ng-init="main.controllExternalApiSetting(setActionId)">
   <ul>
     <li class="styleFlexbox">
       <span class="fb11em"><label>連携先URL</label></span>
@@ -203,7 +203,7 @@
         </table>
       </div>
     </li>
-    <li class="styleFlexbox">
+    <li class="styleFlexbox" ng-if="setItem.methodType == <?= C_SCENARIO_METHOD_TYPE_POST ?>">
       <span class="fb11em"><label>リクエストボディ</label></span>
       <div>
         <resize-textarea ng-model="setItem.requestBody" cols="48" rows="4" placeholder="リクエストボディを設定してください"></resize-textarea>
