@@ -168,7 +168,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
   this.saveAct = function() {
     $('#TChatbotScenarioActivity').val(this.createJsonData());
-    submitAct();
+    //submitAct();
   };
 
   // jsonデータ作る
@@ -190,7 +190,11 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
           action = adjustDataOftext(action);
           break;
         case <?= C_SCENARIO_ACTION_HEARING ?>:
-          action = adjustDataOfHearing(action);
+          if(action.parseSignatureMode) {
+            action = adjustDataOfHearingSignature(action);
+          } else {
+            action = adjustDataOfHearing(action);
+          }
           break;
         case <?= C_SCENARIO_ACTION_SELECT_OPTION ?>:
           action = adjustDataOfSelectOption(action);
@@ -678,6 +682,20 @@ function adjustDataOfHearing(action) {
   });
   if (hearings.length < 1) return null;
   action.hearings = hearings;
+  action.isConfirm = action.isConfirm ? '1' : '2';
+  action.cv = action.cv ? '1' : '2';
+  return action;
+}
+
+// ヒアリング（署名一括）のバリデーション
+function adjustDataOfHearingSignature(action) {
+  if (typeof action.hearingTarget === 'undefined' || typeof action.hearingTarget.length < 1 ||
+    typeof action.errorMessage === 'undefined' || action.errorMessage === '' ||
+    (action.isConfirm && (typeof action.confirmMessage === 'undefined' || action.confirmMessage === '' || typeof action.success === 'undefined' || action.success === '' || typeof action.cancel === 'undefined' || action.cancel === ''))
+  ) {
+    return null;
+  }
+
   action.isConfirm = action.isConfirm ? '1' : '2';
   action.cv = action.cv ? '1' : '2';
   return action;

@@ -1,3 +1,6 @@
+<?php
+  App::uses('LandscapeEasyEntryAPIUtil', 'Vendor/Util/Landscape');
+?>
 <?php /* テキスト発言 | C_SCENARIO_ACTION_TEXT */ ?>
 <div ng-if="setItem.actionType == 1" class="set_action_item_body action_text">
   <ul>
@@ -13,7 +16,8 @@
 <?php /* ヒアリング | C_SCENARIO_ACTION_HEARING */ ?>
 <div ng-if="setItem.actionType == 2" class="set_action_item_body action_hearing" ng-init="main.controllHearingSettingView(setActionId)">
   <ul>
-    <li>
+    <li><label for="hearingParseSignatureMode"><input type="checkbox" id="hearingParseSignatureMode" name="parseSignatureMode" ng-init="setItem.parseSignatureMode = false" ng-model="setItem.parseSignatureMode"/>署名による一括ヒアリング</label></li>
+    <li ng-if="setItem.parseSignatureMode === false">
       <table cellspacing="5">
         <thead>
           <tr>
@@ -36,6 +40,22 @@
           </tr>
         </tbody>
       </table>
+    </li>
+    <li class="styleFlexbox" ng-if="setItem.parseSignatureMode === true">
+      <span class="fb11em"><label class="hearingErrorMessageLabel">質問内容</label></span>
+      <input type="text" ng-model="setItem.message" class="frame">
+    </li>
+    <li class="styleFlexbox" ng-if="setItem.parseSignatureMode === true">
+      <span class="fb11em"><label class="hearingErrorMessageLabel">取得対象</label></span>
+      <div>
+        <?php
+          $util = new LandscapeEasyEntryAPIUtil();
+          $list = $util->getLabelMap();
+          foreach($list as $key => $label) {
+            echo '<label for="' . $key . '" style="cursor:pointer; margin-right: 5px;"><input type="checkbox" name="' . $key . '" ng-model="hearingTarget.'.$key.'"/>'.$label.'</label>';
+          }
+        ?>
+      </div>
     </li>
     <li class="styleFlexbox">
       <span class="fb11em"><label class="hearingErrorMessageLabel">入力エラー時の<br>返信メッセージ<div class="questionBalloon"><icon class="questionBtn" data-tooltip="サイト訪問者が入力した回答が不正な内容の場合に、返信するメッセージになります">?</icon></div></label></span>
