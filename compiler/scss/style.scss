@@ -6934,6 +6934,11 @@ ul.naviBtn {
                   .item_btn_block {
                     width: 4em;
                     padding-left: 0;
+                    vertical-align: bottom;
+                    padding-bottom: 0.5em;
+                    .btnBlock {
+                      padding-left: 0;
+                    }
                   }
                   .item_detail_settings {
                     padding: 0.5em;
