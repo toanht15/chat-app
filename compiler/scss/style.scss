@@ -6826,16 +6826,8 @@ ul.naviBtn {
                   }
                 }
 
-                > label {
-                  margin: 0.5em;
-                }
-
                 span {
                   padding: 5px 0;
-                }
-
-                .btnBlock {
-                  width: 5.5em;
                 }
 
                 input[type="text"],
@@ -6857,44 +6849,64 @@ ul.naviBtn {
                   padding: 3px 0 5px;
                 }
 
-                table {
+                &.action_hearing table {
                   width: 100%;
-                  table-layout: fixed;
 
-                  th {
+                  .item_name {
+                    width: 13.5em;
+                  }
+                  .item_type {
+                    width: 10em;
+                  }
+                  .item_message {
+                    width: auto;
+                  }
+                  .item_btn_block {
+                    width: 4em;
+                    padding-left: 0;
+                  }
+                  .item_detail_settings {
+                    padding: 0.5em;
+                  }
+
+                  thead th {
                     background-color: #ffffff;
                     text-align: center;
                     font-weight: normal;
                     border: none;
-
-                    &.hearingVariableNameLabel {
-                      width: 13.5em;
-                    }
-                    &.hearingVariableTypeLabel {
-                      width: 10em;
-                    }
-                    &.hearingVariableAllowLF {
-                      width: 4em;
-                    }
-                    &.hearingVariableQuestionLabel {
-                      width: auto;
-                    }
-                    &.hearginVariableBtnGroupLabel {
-                      width: 4em;
-                    }
                   }
-                  td {
-                    border: none;
 
-                    input[type="text"] {
-                      width: calc(100% - 3px);
+                  tbody {
+                    tr:nth-child(2n+2) {
+                      height: 5em;
                     }
-                    input[type="checkbox"] {
-                      width: 100%;
-                      margin: 0 auto;
-                    }
-                    &.btnBlock {
-                      padding-left: 0;
+
+                    td {
+                      border: none;
+                      vertical-align: top;
+
+                      input[type="text"] {
+                        border-radius: 4px !important;
+                        border: 1px solid #909090 !important;
+                        width: calc(100% - 3px);
+                      }
+
+                      textarea {
+                        width: calc(100% - 3px);
+                      }
+
+                      select {
+                        border-radius: 4px !important;
+                        border: 1px solid #909090 !important;
+                        width: calc(100% - 3px);
+                      }
+
+                      p {
+                        margin: 0 0 5px 0;
+                        label + label {
+                          margin-left: 1em;
+                        }
+                      }
                     }
                   }
                 }
@@ -6905,6 +6917,7 @@ ul.naviBtn {
 
                 .btnBlock {
                   display: inline-flex;
+                  width: 5.5em;
                   padding-left: 0.75em;
                   vertical-align: middle;
                 }
@@ -6954,12 +6967,6 @@ ul.naviBtn {
                   }
                 }
               }
-            }
-            input[type="text"].frame,
-            select.frame {
-              border-radius: 4px !important;
-              border: 1px solid #909090 !important;
-              width: calc(100% - 3px);
             }
             .questionBalloon {
               display: inline-block;

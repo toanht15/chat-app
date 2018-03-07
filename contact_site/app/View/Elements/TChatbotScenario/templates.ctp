@@ -17,23 +17,31 @@
       <table cellspacing="5">
         <thead>
           <tr>
-            <th class="hearingVariableNameLabel">変数名<div class="questionBalloon"><icon class="questionBtn" data-tooltip="チャットボットから投げかけた質問の回答を保存し、{&thinsp;{変数名}&thinsp;}としてメッセージ内で利用することができるようになります">?</icon></div></th>
-            <th class="hearingVariableTypeLabel">タイプ<div class="questionBalloon"><icon class="questionBtn" data-tooltip="サイト訪問者が入力した回答が適切か、整合性チェックを行うことができるようになります">?</icon></div></th>
-            <th class="hearingVariableAllowLF">改行<div class="questionBalloon"><icon class="questionBtn" data-tooltip="サイト訪問者が回答を入力するとき、改行を行うか制御できるようになります">?</icon></div></th>
-            <th class="hearingVariableQuestionLabel">質問内容</th>
-            <th class="hearginVariableBtnGroupLabel"></th>
+            <th class="item_name">変数名<div class="questionBalloon"><icon class="questionBtn" data-tooltip="チャットボットから投げかけた質問の回答を保存し、{&thinsp;{変数名}&thinsp;}としてメッセージ内で利用することができるようになります">?</icon></div></th>
+            <th class="item_type">タイプ<div class="questionBalloon"><icon class="questionBtn" data-tooltip="サイト訪問者が入力した回答が適切か、整合性チェックを行うことができるようになります">?</icon></div></th>
+            <th class="item_message">質問内容</th>
+            <th class="item_btn_block"></th>
           </tr>
         </thead>
         <tbody class="itemListGroup">
-          <tr ng-repeat="(listId, hearingItem) in setItem.hearings track by $index">
-            <td><input type="text" ng-model="hearingItem.variableName" class="frame"></td>
-            <td>
-              <select ng-model="hearingItem.inputType" ng-init="hearingItem.inputType = hearingItem.inputType" ng-options="index as type.label for (index, type) in inputTypeList" class="frame"></select>
+          <tr ng-repeat-start="(listId, hearingItem) in setItem.hearings track by $index">
+            <td class="item_name"><input type="text" ng-model="hearingItem.variableName"></td>
+            <td class="item_type">
+              <select ng-model="hearingItem.inputType" ng-init="hearingItem.inputType = hearingItem.inputType.toString()" ng-options="index as type.label for (index, type) in inputTypeList"></select>
             </td>
-            <td><input type="checkbox" ng-model="hearingItem.allowInputLF" ng-init="hearingItem.allowInputLF = hearingItem.allowInputLF == 1"></td>
-            <td class="message"><input type="text" ng-model="hearingItem.message" class="frame"></td>
-            <td class="btnBlock">
+            <td class="item_message" rowspan="2"><textarea ng-model="hearingItem.message" rows="4"></textarea></td>
+            <td class="item_btn_block btnBlock" rowspan="2">
               <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addActionItemList(setActionId, listId)')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.removeActionItemList(setActionId, listId)')) ?></a>
+            </td>
+          </tr>
+          <tr ng-repeat-end>
+            <td class="item_detail_settings" colspan="2">
+              <p>
+                <label ng-repeat="(key, item) in inputLFTypeList" class="pointer"><input type="radio" ng-model="hearingItem.inputLFType" ng-value="key">{{item.label}}</label>
+              </p>
+              <p ng-repeat="(key, item) in inputLFTypeList" ng-if="hearingItem.inputLFType == key" class="pointer">
+                <label ng-repeat="(detailKey, detailItem) in item.detail"><input type="radio" ng-model="hearingItem.sendMessageType" ng-value="detailKey">{{detailItem}}</label>
+              </p>
             </td>
           </tr>
         </tbody>

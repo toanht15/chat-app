@@ -200,6 +200,14 @@ define('C_SCENARIO_INPUT_TYPE_NUMBER', 2);
 define('C_SCENARIO_INPUT_TYPE_EMAIL', 3);
 define('C_SCENARIO_INPUT_TYPE_TEL', 4);
 
+/* シナリオ設定(ヒアリング) - 改行設定 */
+define('C_SCENARIO_INPUT_LF_TYPE_DISALLOW', 1);
+define('C_SCENARIO_INPUT_LF_TYPE_ALLOW', 2);
+
+define('C_SCENARIO_SEND_MESSAGE_BY_ENTER', 1);
+define('C_SCENARIO_SEND_MESSAGE_BY_BUTTON', 2);
+
+/* シナリオ設定 - メール送信タイプ */
 define('C_SCENARIO_MAIL_TYPE_ALL_MESSAGE', 1);
 define('C_SCENARIO_MAIL_TYPE_VARIABLES', 2);
 define('C_SCENARIO_MAIL_TYPE_CUSTOMIZE', 3);
@@ -617,9 +625,10 @@ $config['chatbotScenarioActionList'] = [
       'messageIntervalTimeSec' => '2',
       'hearings' => [[
         'variableName' => '',
-        'inputType' => '1',
+        'inputType' => C_SCENARIO_INPUT_TYPE_TEXT,
         'message' => '',
-        'allowInputLF' => '1'
+        'inputLFType' => C_SCENARIO_INPUT_LF_TYPE_DISALLOW,
+        'sendMessageType' => C_SCENARIO_SEND_MESSAGE_BY_BUTTON
       ]],
       'errorMessage' => '',
       'isConfirm' => '2',
@@ -673,6 +682,24 @@ $config['chatbotScenarioInputType'] = [
     'label' => '@tel_number',
     'rule' => C_MATCH_RULE_TEL,
     'inputRule' => C_MATCH_INPUT_RULE_TEL
+  ]
+];
+
+/* シナリオ設定(ヒアリング) - 改行設定 */
+$config['chatbotScenarioInputLFType'] = [
+  C_SCENARIO_INPUT_LF_TYPE_DISALLOW => [
+    'label' => '改行不可',
+    'detail' => [
+      C_SCENARIO_SEND_MESSAGE_BY_ENTER => 'Enterキーで送信',
+      C_SCENARIO_SEND_MESSAGE_BY_BUTTON => '送信ボタンで送信'
+    ]
+  ],
+  C_SCENARIO_INPUT_LF_TYPE_ALLOW => [
+    'label' => '改行可',
+    'detail' => [
+      C_SCENARIO_SEND_MESSAGE_BY_BUTTON => 'Enterキーで改行',
+      C_SCENARIO_SEND_MESSAGE_BY_ENTER => 'Enterキーで送信'
+    ]
   ]
 ];
 
