@@ -1253,7 +1253,7 @@
           if ( window.sincloInfo.contract.chat ) {
             //sorryメッセージを出した数
             //sorryメッセージ受信数はメッセージを送信した対象のタブでカウントする
-            if(typeof ga == "function" && obj.tabId !== userInfo.tabId){
+            if(typeof ga == "function" && obj.tabId === userInfo.tabId){
               ga('send', 'event', 'sinclo', 'チャット拒否', location.href);
             }
           }
