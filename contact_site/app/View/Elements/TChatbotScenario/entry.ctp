@@ -13,7 +13,7 @@
     <ul>
       <!-- シナリオ名称 -->
       <li>
-        <span class="require"><label>シナリオ名称</label></span>
+        <label>シナリオ名称<span class="questionBalloon"><icon class="questionBtn" data-tooltip="シナリオ名称に設定します。">?</icon></span></label>
         <?= $this->ngForm->input('name', [
           'type' => 'text',
           'placeholder' => 'シナリオ名称を入力',
@@ -23,7 +23,7 @@
       </li>
       <!-- メッセージ間隔 -->
       <li>
-        <span class="require"><label>メッセージ間隔</label></span>
+        <span><label>メッセージ間隔<span class="questionBalloon"><icon class="questionBtn" data-tooltip="各メッセージを送信する間隔（秒数）を設定します。">?</icon></span></label></span>
         <?= $this->ngForm->input('messageIntervalTimeSec', [
           'type' => 'text',
           'class' => 'tRight',
