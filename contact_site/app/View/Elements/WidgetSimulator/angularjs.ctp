@@ -11,8 +11,11 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
 
   // 自由入力エリアの表示状態
   $scope.isTextAreaOpen = true;
-  // 自由入力エリアへの、改行入力の許可状態
+  // 自由入力エリアの、改行入力の許可状態
   $scope.allowInputLF = true;
+  // 自由入力エリアの、Enterキーでのメッセージ送信状態
+  $scope.allowSendMessageByEnter = $scope.simulatorSettings.settings['chat_trigger'] == <?= C_WIDGET_SEND_ACT_PUSH_KEY ?>;
+  $scope.defaultallowSendMessageByEnter = $scope.allowSendMessageByEnter;
   // 入力制御
   $scope.inputRule = <?= C_MATCH_INPUT_RULE_ALL ?>;
 
@@ -27,7 +30,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
 
   /**
    * addSeMessage
-   * サイト訪問者側メッセージの追加
+   * サイト訪問者側メッセージの追加 TODO: 現在使用されていないため、仮実装状態
    * @param String message 追加するメッセージ
    */
   $scope.$on('addSeMessage', function(event, message) {
@@ -58,6 +61,8 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
 
     // 自由入力エリアの改行許可状態を戻す
     $scope.allowInputLF = true;
+    // キー押下によるメッセージの許可状態を戻す
+    $scope.allowSendMessageByEnter = $scope.defaultAllowSendMessageByEnter;
     // placeholder を戻す
     document.querySelector('#sincloChatMessage').placeholder = $scope.defaultPlaceholder;
     // 入力制限を戻す
@@ -124,10 +129,20 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
    * allowInputLF
    * 自由入力エリアの改行入力の許可状態を切り替える
    * （サイト訪問者のメッセージ送信後に、状態を戻す）
-   * @param Boolean status 改行入力の許可状態(true: 表示, false: 非表示)
+   * @param Boolean status 改行入力の許可状態
    */
   $scope.$on('allowInputLF', function(event, status) {
-    $scope.allowInputLF = status == '1' ? true : false;
+    $scope.allowInputLF = status === true;
+  });
+
+  /**
+   * allowSendMessageByEnter
+   * 自由入力エリアのEnterキー押下でメッセージ送信を行うかの許可状態を切り替える
+   * （サイト訪問者のメッセージ送信後に、状態を戻す）
+   * @param Boolean status キー押下によるメッセージの許可状態
+   */
+  $scope.$on('allowSendMessageByEnter', function(event, status) {
+    $scope.allowSendMessageByEnter = status === true;
   });
 
   /**
@@ -195,17 +210,17 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
 
   // 自由入力エリアのキーイベント
   $(document).on('keypress', '#sincloChatMessage', function(e) {
-    // Enterキー
-    if (e.key === 'Enter' && !e.shiftKey) {
-      // メッセージ送信、かつEnterキー押下で消費者側送信アクションが有効
-      if ($scope.canVisitorSendMessage && $scope.simulatorSettings.settings['chat_trigger'] == <?= C_WIDGET_RADIO_CLICK_SEND ?>) {
+    // Enterキー押下時
+    if (e.key === 'Enter' && !$scope.allowInputLF) {
+      // 改行不可、かつメッセージ送信が有効な場合
+      if ($scope.allowSendMessageByEnter) {
         $scope.visitorSendMessage();
-        return false;
       }
-    }
-    if (e.key === 'Enter') {
-      // 改行が許可されていない
-      if (!$scope.allowInputLF) {
+      return false;
+    } else if (e.key === 'Enter') {
+      // 改行可、かつメッセージ送信が有効な場合
+      if (!e.shiftKey && $scope.allowSendMessageByEnter) {
+        $scope.visitorSendMessage();
         return false;
       }
     }
