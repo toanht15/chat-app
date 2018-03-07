@@ -48,6 +48,7 @@ class TChatbotScenarioController extends AppController {
     $this->chatbotScenarioActionList = Configure::read('chatbotScenarioActionList');
     $this->chatbotScenarioInputType = Configure::read('chatbotScenarioInputType');
     $this->chatbotScenarioSendMailType = Configure::read('chatbotScenarioSendMailType');
+    $this->chatbotScenarioInputLFType = Configure::read('chatbotScenarioInputLFType');
   }
 
   /**
@@ -97,6 +98,9 @@ class TChatbotScenarioController extends AppController {
    * @return void
    * */
   public function edit($id=null) {
+    // プレビュー・シミュレーター表示用ウィジェット設定の取得
+    $this->request->data['widgetSettings'] = $this->_getWidgetSettings();
+
     if ( $this->request->is('put') ) {
       $this->_entry($this->request->data);
     }
@@ -117,8 +121,11 @@ class TChatbotScenarioController extends AppController {
       foreach ($activity->scenarios as $key => &$action) {
         if ($action->actionType == C_SCENARIO_ACTION_HEARING) {
           foreach ($action->hearings as $key => &$param) {
-            // 自由入力エリアの許可状態のパラメーターがない場合、デフォルトで "1" を設定する
-            $param->allowInputLF = empty($param->allowInputLF) ? '1' : $param->allowInputLF;
+            // 自由入力エリアの改行可・不可および送信設定の初期化(機能追加前に保存された設定への対応)
+            $param->inputLFType = empty($param->inputLFType) ? C_SCENARIO_INPUT_LF_TYPE_ALLOW : $param->inputLFType;
+            if (empty($param->sendMessageType)) {
+              $param->sendMessageType = $this->request->data['widgetSettings']['chat_trigger'] == C_WIDGET_SEND_ACT_PUSH_KEY ? C_SCENARIO_SEND_MESSAGE_BY_ENTER : C_SCENARIO_SEND_MESSAGE_BY_BUTTON;
+            }
           }
         }
         if ($action->actionType == C_SCENARIO_ACTION_SEND_MAIL) {
@@ -151,8 +158,6 @@ class TChatbotScenarioController extends AppController {
     ]);
     $this->request->data['TAutoMessage'] = $autoMessage;
 
-    // プレビュー・シミュレーター表示用ウィジェット設定の取得
-    $this->request->data['widgetSettings'] = $this->_getWidgetSettings();
     $this->_viewElement();
   }
 
@@ -755,6 +760,8 @@ sinclo@medialink-ml.co.jp
     $this->set('chatbotScenarioInputType', $this->chatbotScenarioInputType);
     // メール送信タイプ種別
     $this->set('chatbotScenarioSendMailType', $this->chatbotScenarioSendMailType);
+    // ヒアリング改行設定
+    $this->set('chatbotScenarioInputLFType', $this->chatbotScenarioInputLFType);
     // 最後に表示していたページ番号
     if(!empty($this->request->query['lastpage'])){
       $this->set('lastPage', $this->request->query['lastpage']);
