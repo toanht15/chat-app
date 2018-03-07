@@ -85,8 +85,8 @@ li {
   content: "";
   display: inline-block;
   position: absolute;
-  left: 50%;
-  top: 54px;
+  left: calc(50% - 10px);
+  bottom: -8px;
   box-sizing: border-box;
   height: 8px;
   border:10px solid transparent;

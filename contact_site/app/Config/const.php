@@ -611,6 +611,7 @@ $config['chatbotScenarioActionList'] = [
   // テキスト発言
   C_SCENARIO_ACTION_TEXT => [
     'label' => 'テキスト発言',
+    'tooltip' => 'チャットボットに発言させたいテキストメッセージを設定できるアクションです。',
     'chatTextArea' => '2',
     'default' => [
       'messageIntervalTimeSec' => '2',
@@ -620,6 +621,7 @@ $config['chatbotScenarioActionList'] = [
   // ヒアリング
   C_SCENARIO_ACTION_HEARING => [
     'label' => 'ヒアリング',
+    'tooltip' => 'チャットボットから投げかけたい質問（ヒアリング項目）を設定し、サイト訪問者からのテキスト入力を受け付けるアクションです。ヒアリング項目は複数設定することが可能です。',
     'chatTextArea' => '1',
     'default' => [
       'messageIntervalTimeSec' => '2',
@@ -641,6 +643,7 @@ $config['chatbotScenarioActionList'] = [
   // 選択肢
   C_SCENARIO_ACTION_SELECT_OPTION => [
     'label' => '選択肢',
+    'tooltip' => 'チャットボットに発言させたい選択式（択一式）メッセージを設定できるアクションです。',
     'chatTextArea' => '2',
     'default' => [
       'messageIntervalTimeSec' => '2',
@@ -653,6 +656,7 @@ $config['chatbotScenarioActionList'] = [
   // メール送信
   C_SCENARIO_ACTION_SEND_MAIL => [
     'label' => 'メール送信',
+    'tooltip' => 'メールを送信するアクションです。宛先、差出人名、メールタイトル、メール本文を自由に設定することが可能です。',
     'chatTextArea' => '2',
     'default' => [
       'messageIntervalTimeSec' => '2',
