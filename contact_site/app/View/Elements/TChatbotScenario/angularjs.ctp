@@ -288,14 +288,20 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     });
   };
 
-  // ヒアリング、選択肢、メール送信のリスト追加
+  /**
+   * addActionItemList
+   * ヒアリング、選択肢、メール送信のリスト追加
+   * （選択肢・メール送信ではリストの末尾に、ヒアリングではリストの任意の箇所に追加する）
+   * @param String  actionStep  アクション番号
+   * @param Integer listIndex   ボタン押下されたリスト番号
+   */
   this.addActionItemList = function(actionStep, listIndex) {
     var actionType = $scope.setActionList[actionStep].actionType;
 
     if (actionType == <?= C_SCENARIO_ACTION_HEARING ?>) {
       var src = $scope.actionList[actionType].default.hearings[0];
       var target = $scope.setActionList[actionStep].hearings;
-      target.push(angular.copy(src));
+      target.splice(listIndex+1, 0, angular.copy(src));
       this.controllHearingSettingView(actionStep);
 
     } else if (actionType == <?= C_SCENARIO_ACTION_SELECT_OPTION ?>) {
