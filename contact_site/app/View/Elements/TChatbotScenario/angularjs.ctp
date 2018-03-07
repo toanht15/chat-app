@@ -307,7 +307,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     } else if (actionType == <?= C_SCENARIO_ACTION_SELECT_OPTION ?>) {
       var src = $scope.actionList[actionType].default.selection.options[0];
       var target = $scope.setActionList[actionStep].selection.options;
-      target.push(angular.copy(src));
+      target.splice(listIndex+1, 0, angular.copy(src));
       this.controllSelectOptionSetting(actionStep);
 
     } else if (actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?>) {
@@ -373,7 +373,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         } else if (index == limitNum-1) {
           $(targetElm).find('.btnBlock .disOffgreenBtn').hide();
         }
-      } else if (actionType == <?= C_SCENARIO_ACTION_HEARING ?>) {
+      } else if (actionType == <?= C_SCENARIO_ACTION_HEARING ?> || actionType == <?= C_SCENARIO_ACTION_SELECT_OPTION ?>) {
         $(targetElm).find('.btnBlock .deleteBtn').show();
         $(targetElm).find('.btnBlock .disOffgreenBtn').show();
       } else {
