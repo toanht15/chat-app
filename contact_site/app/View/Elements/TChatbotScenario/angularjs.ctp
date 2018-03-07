@@ -525,8 +525,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   };
 
   /**
-   * doAction アクションの実行
-   * @var String setTime 基本設定のメッセージ間隔に関わらず、メッセージ間隔を指定
+   * doAction
+   * アクションの実行
+   * @param String setTime 基本設定のメッセージ間隔に関わらず、メッセージ間隔を指定
    */
   $scope.doAction = function(setTime) {
     if (typeof $scope.setActionList[$scope.actionStep] !== 'undefined' && typeof $scope.setActionList[$scope.actionStep].actionType !== 'undefined') {
@@ -572,6 +573,11 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     }
   }
 
+  /**
+   * doHearingAction
+   * ヒアリングアクションの実行
+   * @param Object actionDetail アクションの詳細
+   */
   $scope.doHearingAction = function(actionDetail) {
     if (!$scope.hearingInputResult) {
       // エラーメッセージ
@@ -582,14 +588,18 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       $scope.doAction();
     } else
     if ($scope.hearingIndex < actionDetail.hearings.length) {
+      var hearingDetail = actionDetail.hearings[$scope.hearingIndex];
       // 質問する
-      var message = actionDetail.hearings[$scope.hearingIndex].message;
+      var message = hearingDetail.message;
       $scope.$broadcast('addReMessage', $scope.replaceVariable(message), 'action' + $scope.actionStep);
       // 設定切り替え
       $scope.$broadcast('switchSimulatorChatTextArea', actionDetail.chatTextArea === '1');
-      $scope.$broadcast('allowInputLF', actionDetail.hearings[$scope.hearingIndex].allowInputLF);
       $scope.$broadcast('setPlaceholder', $scope.replaceVariable(message));
-      var strInputRule =$scope.inputTypeList[actionDetail.hearings[$scope.hearingIndex].inputType].inputRule;
+      var allowInputLF = hearingDetail.inputLFType == <?= C_SCENARIO_INPUT_LF_TYPE_ALLOW ?>;
+      $scope.$broadcast('allowInputLF', allowInputLF);
+      var allowSendMessageByEnter = hearingDetail.sendMessageType == <?= C_SCENARIO_SEND_MESSAGE_BY_ENTER ?>;
+      $scope.$broadcast('allowSendMessageByEnter', allowSendMessageByEnter);
+      var strInputRule =$scope.inputTypeList[hearingDetail.inputType].inputRule;
       $scope.$broadcast('setInputRule', strInputRule.replace(/^\/(.+)\/$/, "$1"));
     } else
     if (actionDetail.isConfirm && ($scope.hearingIndex === actionDetail.hearings.length)) {
@@ -787,7 +797,8 @@ function adjustDataOfHearing(action, isCheckValidation) {
     var hearings = [];
     angular.forEach(action.hearings, function(item, index) {
       if (typeof item.variableName !== 'undefined' && item.variableName !== '' && typeof item.message !== 'undefined' && item.message !== '') {
-        item.allowInputLF = item.allowInputLF ? '1' : '2';
+        item.inputLFType = item.inputLFType == 1 ? '1' : '2';
+        item.sendMessageType = item.sendMessageType == 1 ? '1' : '2';
         hearings.push(item);
       }
     });
