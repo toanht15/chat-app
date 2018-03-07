@@ -29,10 +29,7 @@
             <td class="item_type">
               <select ng-model="hearingItem.inputType" ng-init="hearingItem.inputType = hearingItem.inputType.toString()" ng-options="index as type.label for (index, type) in inputTypeList"></select>
             </td>
-            <td class="item_message" rowspan="2"><textarea ng-model="hearingItem.message" rows="4"></textarea></td>
-            <td class="item_btn_block btnBlock" rowspan="2">
-              <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addActionItemList(setActionId, listId)')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.removeActionItemList(setActionId, listId)')) ?></a>
-            </td>
+            <td class="item_message" rowspan="2"><textarea ng-model="hearingItem.message" rows="5"></textarea></td>
           </tr>
           <tr ng-repeat-end>
             <td class="item_detail_settings" colspan="2">
@@ -42,6 +39,11 @@
               <p ng-repeat="(key, item) in inputLFTypeList" ng-if="hearingItem.inputLFType == key" class="pointer">
                 <label ng-repeat="(detailKey, detailItem) in item.detail"><input type="radio" ng-model="hearingItem.sendMessageType" ng-value="detailKey">{{detailItem.label}}<span class="questionBalloon"><icon class="questionBtn" data-tooltip="{{detailItem.tooltip}}">?</icon></span></label>
               </p>
+            </td>
+            <td class="item_btn_block">
+              <div class="btnBlock">
+                <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addActionItemList(setActionId, listId)')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.removeActionItemList(setActionId, listId)')) ?></a>
+              </div>
             </td>
           </tr>
         </tbody>
