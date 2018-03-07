@@ -661,6 +661,50 @@ div#sidebar{
     width: 6em;
   }
 
+  .navyBtn {
+    background-color: $normal-color;
+    color: #FFF;
+    &:hover {
+      color: #FFF;
+      background-color: $normal-hover-color;
+    }
+  }
+
+  .grayBtn {
+    background-color: #DADADA;
+    border: 1px solid #DADADA;
+    color: white;
+  }
+
+  .tr180 {
+    transform: matrix(-1,0,0,1,0,0);
+  }
+
+  #paging {
+    margin-top: 9px;
+    float: right;
+    width: 120px;
+    display: inline-flex;
+    justify-content: space-around;
+    span {
+      border-radius: 2px;
+      border: 0px;
+      width: 30px;
+      height: 30px;
+      display: inline-block;
+      padding: 3px 0px 0px 2px;
+      img {
+        height: 24px;
+        width: 24px;
+        display: block;
+        padding: 0.5px;
+        &.reverse {
+
+        }
+      }
+    }
+  }
+
   i.fa.fa-home.fa-2x {
     color: $normal-color;
     margin-top: 6px;
@@ -668,6 +712,7 @@ div#sidebar{
 
   a#searchRefine {
     margin-top: 15px;
+    display: inline-block;
   }
 
   table {

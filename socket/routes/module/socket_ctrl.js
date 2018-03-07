@@ -1,3 +1,6 @@
+var express = require('express');
+var router = express.Router();
+
 var database = require('../database');
 var api = require('../api');
 var uuid = require('node-uuid');
@@ -272,6 +275,13 @@ function getCompanyList(){
   });
 }
 getCompanyList();
+
+router.get('/refreshCompanyList', function(req, res, next){
+  getCompanyList();
+  res.send("OK");
+  res.status(200);
+});
+module.exports = router;
 
 function _numPad(str){
   return ("0" + str).slice(-2);

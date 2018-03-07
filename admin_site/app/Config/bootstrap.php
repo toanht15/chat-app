@@ -114,6 +114,11 @@ CakeLog::config('refresh', array(
   'types' => array('info'),
   'file' => 'refresh'
 ));
+CakeLog::config('import', array(
+  'engine' => 'File',
+  'types' => array('info'),
+  'file' => 'import'
+));
 
 Configure::load("myConst");
 Configure::load("const");
