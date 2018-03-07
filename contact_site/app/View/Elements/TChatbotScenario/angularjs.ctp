@@ -687,7 +687,7 @@ $(document).ready(function() {
   // ツールチップの表示制御（ヘルプ）
   $(document).off('mouseenter','.questionBtn').on('mouseenter','.questionBtn', function(event){
     var targetObj = $('.explainTooltip');
-    targetObj.find('icon-annotation .detail').text($(this).data('tooltip'));
+    targetObj.find('icon-annotation .detail').html($(this).data('tooltip'));
     targetObj.find('icon-annotation').css('display','block');
     targetObj.css({
       top: ($(this).offset().top - targetObj.find('ul').outerHeight() - 70) + 'px',

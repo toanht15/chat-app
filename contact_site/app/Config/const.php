@@ -689,25 +689,48 @@ $config['chatbotScenarioInputType'] = [
 $config['chatbotScenarioInputLFType'] = [
   C_SCENARIO_INPUT_LF_TYPE_DISALLOW => [
     'label' => '改行不可',
+    'tooltip' => 'サイト訪問者の複数行入力を規制します。（改行できなくする）',
     'detail' => [
-      C_SCENARIO_SEND_MESSAGE_BY_ENTER => 'Enterキーで送信',
-      C_SCENARIO_SEND_MESSAGE_BY_BUTTON => '送信ボタンで送信'
+      C_SCENARIO_SEND_MESSAGE_BY_ENTER => [
+        'label' => 'Enterキーで送信',
+        'tooltip' => 'Enterキーにてメッセージを送信します。（「送信」ボタンクリックでもメッセージ送信可）'
+      ],
+      C_SCENARIO_SEND_MESSAGE_BY_BUTTON => [
+        'label' => '送信ボタンで送信',
+        'tooltip' => 'Enterキーを無効化し、メッセージ送信は「送信」ボタンのクリックのみとします。'
+      ]
     ]
   ],
   C_SCENARIO_INPUT_LF_TYPE_ALLOW => [
     'label' => '改行可',
+    'tooltip' => 'サイト訪問者の複数行入力を許可します。（改行を許可）',
     'detail' => [
-      C_SCENARIO_SEND_MESSAGE_BY_BUTTON => 'Enterキーで改行',
-      C_SCENARIO_SEND_MESSAGE_BY_ENTER => 'Enterキーで送信'
+      C_SCENARIO_SEND_MESSAGE_BY_BUTTON => [
+        'label' => 'Enterキーで改行',
+        'tooltip' => 'Enterキーにて改行します。（メッセージ送信は「送信」ボタンをクリック）'
+      ],
+      C_SCENARIO_SEND_MESSAGE_BY_ENTER => [
+        'label' => 'Enterキーで送信',
+        'tooltip' => 'Enterキーにてメッセージを送信します。（改行はShift+Enter）'
+      ]
     ]
   ]
 ];
 
 /* シナリオ設定 - メール送信タイプ */
 $config['chatbotScenarioSendMailType'] = [
-  C_SCENARIO_MAIL_TYPE_ALL_MESSAGE => 'チャット内容をすべてメールする',
-  C_SCENARIO_MAIL_TYPE_VARIABLES => '変数の値のみメールする',
-  C_SCENARIO_MAIL_TYPE_CUSTOMIZE => 'メール本文をカスタマイズする'
+  C_SCENARIO_MAIL_TYPE_ALL_MESSAGE => [
+    'label' => 'チャット内容をすべてメールする',
+    'tooltip' => 'それまでのすべてのチャットやり取り内容すべてをメールします。'
+  ],
+  C_SCENARIO_MAIL_TYPE_VARIABLES => [
+    'label' => '変数の値のみメールする',
+    'tooltip' => 'ヒアリングおよび選択肢にて入力（または選択）された内容をメールします。'
+  ],
+  C_SCENARIO_MAIL_TYPE_CUSTOMIZE => [
+    'label' => 'メール本文をカスタマイズする',
+    'tooltip' => '自由にメール本文を編集することが可能です。（変数の利用も可能です）'
+  ]
 ];
 
 /* 成果種別 */
