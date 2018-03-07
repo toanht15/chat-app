@@ -2,7 +2,7 @@
 <div ng-if="setItem.actionType == 1" class="set_action_item_body action_text">
   <ul>
     <li class="styleFlexbox">
-      <span class="fb7em"><label>発言内容</label></span>
+      <span class="fb7em"><label>発言内容<span class="questionBalloon"><icon class="questionBtn" data-tooltip="チャットボットに発言させたいテキストメッセージを設定します。">?</icon></span></label></span>
       <div>
         <resize-textarea name="message" ng-model="setItem.message" cols="48" rows="4" placeholder="メッセージを入力してください" ng-required="true"></resize-textarea>
       </div>
@@ -17,9 +17,9 @@
       <table cellspacing="5">
         <thead>
           <tr>
-            <th class="item_name">変数名<div class="questionBalloon"><icon class="questionBtn" data-tooltip="チャットボットから投げかけた質問の回答を保存し、{&thinsp;{変数名}&thinsp;}としてメッセージ内で利用することができるようになります">?</icon></div></th>
-            <th class="item_type">タイプ<div class="questionBalloon"><icon class="questionBtn" data-tooltip="サイト訪問者が入力した回答が適切か、整合性チェックを行うことができるようになります">?</icon></div></th>
-            <th class="item_message">質問内容</th>
+            <th class="item_name">変数名<span class="questionBalloon"><icon class="questionBtn" data-tooltip="変数名を設定します。ここで設定した変数名にサイト訪問者の回答内容が保存されます。変数に保存された値（内容）は後続の処理（アクション）で、{&thinsp;{変数名}&thinsp;}と指定することで利用することが可能です。<br><br>例）変数名：名前　⇒　{&thinsp;{名前}&thinsp;}様からのお問い合わせを受付いたしました。">?</icon></span></th>
+            <th class="item_type">タイプ<span class="questionBalloon"><icon class="questionBtn" data-tooltip="サイト訪問者が入力した回答が適切か、整合性チェックを行うことができます。入力内容が不適切だった場合（整合性チェックNGだった場合）は、「入力エラー時の返信メッセージ」に設定されたメッセージを自動送信後、再度ヒアリングを実施します。<br>＜タイプ＞<br>@text　　　　：制限なし<br>@number　　：数字のみ<br>@email　　　：メールアドレス形式のみ<br>@tel_number：数字とハイフンのみ">?</icon></span></th>
+            <th class="item_message">質問内容<span class="questionBalloon"><icon class="questionBtn" data-tooltip="チャットボットが自動送信する質問内容を設定します。<br><br>例）お名前を入力して下さい。">?</icon></span></th>
             <th class="item_btn_block"></th>
           </tr>
         </thead>
@@ -37,10 +37,10 @@
           <tr ng-repeat-end>
             <td class="item_detail_settings" colspan="2">
               <p>
-                <label ng-repeat="(key, item) in inputLFTypeList" class="pointer"><input type="radio" ng-model="hearingItem.inputLFType" ng-value="key">{{item.label}}</label>
+                <label ng-repeat="(key, item) in inputLFTypeList" class="pointer"><input type="radio" ng-model="hearingItem.inputLFType" ng-value="key">{{item.label}}<span class="questionBalloon"><icon class="questionBtn" data-tooltip="{{item.tooltip}}">?</icon></span></label>
               </p>
               <p ng-repeat="(key, item) in inputLFTypeList" ng-if="hearingItem.inputLFType == key" class="pointer">
-                <label ng-repeat="(detailKey, detailItem) in item.detail"><input type="radio" ng-model="hearingItem.sendMessageType" ng-value="detailKey">{{detailItem}}</label>
+                <label ng-repeat="(detailKey, detailItem) in item.detail"><input type="radio" ng-model="hearingItem.sendMessageType" ng-value="detailKey">{{detailItem.label}}<span class="questionBalloon"><icon class="questionBtn" data-tooltip="{{detailItem.tooltip}}">?</icon></span></label>
               </p>
             </td>
           </tr>
@@ -48,28 +48,28 @@
       </table>
     </li>
     <li class="styleFlexbox">
-      <span class="fb11em"><label class="hearingErrorMessageLabel">入力エラー時の<br>返信メッセージ<div class="questionBalloon"><icon class="questionBtn" data-tooltip="サイト訪問者が入力した回答が不正な内容の場合に、返信するメッセージになります">?</icon></div></label></span>
+      <span class="fb11em"><label class="hearingErrorMessageLabel">入力エラー時の<br>返信メッセージ<span class="questionBalloon"><icon class="questionBtn" data-tooltip="サイト訪問者の発言内容がタイプに当てはまらなかった場合（整合性チェックエラーの場合）に自動返信するメッセージを設定します。">?</icon></span></span>
       <div>
         <resize-textarea name="errorMessage" ng-model="setItem.errorMessage" cols="48" rows="4" placeholder="入力エラー時の返信メッセージを入力してください"></resize-textarea>
       </div>
     </li>
     <li>
-      <label class="pointer"><input type="checkbox" ng-model="setItem.isConfirm" ng-init="setItem.isConfirm = setItem.isConfirm == 1">入力内容の確認を行う</label>
+      <label class="pointer"><input type="checkbox" ng-model="setItem.isConfirm" ng-init="setItem.isConfirm = setItem.isConfirm == 1">入力内容の確認を行う<span class="questionBalloon"><icon class="questionBtn" data-tooltip="質問内容を全て聞き終えた後に、サイト訪問者に確認メッセージを送ることが出来ます。">?</icon></span></label>
       <ul ng-if="setItem.isConfirm == true" class="indentDown">
         <li class="styleFlexbox">
-          <span class="fb11em"><label>確認内容</label></span>
+          <span class="fb9em"><label>確認内容<span class="questionBalloon"><icon class="questionBtn" data-tooltip="確認メッセージとして送信するメッセージを設定します。<br><br>＜設定例＞<br>お名前　　　　：{&thinsp;{名前}&thinsp;}<br>電話番号　　　：{&thinsp;{電話番号}&thinsp;}<br>メールアドレス：{&thinsp;{メールアドレス}&thinsp;}<br>でよろしいでしょうか？">?</icon></span></label></span>
           <div>
             <resize-textarea name="confirmMessage" ng-model="setItem.confirmMessage" cols="48" rows="4" placeholder="確認内容のメッセージを入力してください"></resize-textarea>
           </div>
         </li>
         <li class="styleFlexbox">
-          <span class="fb11em"><label>選択肢（OK）<div class="questionBalloon"><icon class="questionBtn" data-tooltip="すべての項目が正常に入力されたことを確認する選択肢です">?</icon></div></label></span>
+          <span class="fb9em"><label>選択肢（OK）<span class="questionBalloon"><icon class="questionBtn" data-tooltip="OK（次のアクションを実行）の場合の選択肢の名称を設定します。">?</icon></span></label></span>
           <div>
             <input type="text" name="success" ng-model="setItem.success">
           </div>
         </li>
         <li class="styleFlexbox">
-          <span class="fb11em"><label>選択肢（NG）<div class="questionBalloon"><icon class="questionBtn" data-tooltip="項目が正常に入力されず、ヒアリングを先頭から実施し直す選択肢です">?</icon></div></label></span>
+          <span class="fb9em"><label>選択肢（NG）<span class="questionBalloon"><icon class="questionBtn" data-tooltip="NG（再入力）の場合の選択肢の名称を設定します。">?</icon></span></label></span>
           <div>
             <input type="text" name="cancel" ng-model="setItem.cancel">
           </div>
@@ -77,7 +77,7 @@
       </ul>
     </li>
     <li>
-      <label class="pointer"><input type="checkbox" ng-model="setItem.cv" ng-init="setItem.cv = setItem.cv == 1">成果にCVとして登録する</label>
+      <label class="pointer"><input type="checkbox" ng-model="setItem.cv" ng-init="setItem.cv = setItem.cv == 1">成果にCVとして登録する<span class="questionBalloon"><icon class="questionBtn" data-tooltip="チャット履歴の「成果」に「途中離脱」または「CV」として自動登録します。<br>【途中離脱】ヒアリング途中で終了した場合<br>【CV】全項目のヒアリングが完了した場合（入力内容の確認を行う場合は「OK」が選択された場合）">?</icon></span></label>
     </li>
   </ul>
 </div>
@@ -86,13 +86,13 @@
 <div ng-if="setItem.actionType == 3" class="set_action_item_body action_select_option" ng-init="main.controllSelectOptionSetting(setActionId)">
   <ul>
     <li class="styleFlexbox">
-      <span class="fb7em"><label class="hearingSelectVariableNameLabel">変数名<div class="questionBalloon"><icon class="questionBtn" data-tooltip="チャットボットから投げかけた質問の回答を保存し、{&thinsp;{変数名}&thinsp;}としてメッセージ内で利用することができるようになります">?</icon></div></label></span>
+      <span class="fb7em"><label class="hearingSelectVariableNameLabel">変数名<span class="questionBalloon"><icon class="questionBtn" data-tooltip="変数名を設定します。ここで設定した変数名にサイト訪問者の選択した内容が保存されます。変数に保存された値（内容）は後続の処理（アクション）で、{&thinsp;{変数名}&thinsp;}と指定することで利用することが可能です。">?</icon></span></label></span>
       <div>
         <input type="text" ng-model="setItem.selection.variableName">
       </div>
     </li>
     <li class="styleFlexbox">
-      <span class="fb7em"><label>質問内容</label></span>
+      <span class="fb7em"><label>質問内容<span class="questionBalloon"><icon class="questionBtn" data-tooltip="チャットボットが自動送信する質問内容を設定します。<br><br>例）お客様の性別を選択して下さい。">?</icon></span></label></span>
       <div>
         <resize-textarea name="message" ng-model="setItem.message" cols="48" rows="4" placeholder="質問内容のメッセージを入力してください"></resize-textarea>
       </div>
@@ -100,7 +100,7 @@
     <li>
       <ul class="itemListGroup">
         <li ng-repeat="(listId, optionItem) in setItem.selection.options track by $index" class="styleFlexbox" ng-init="options = setItem.selection.options">
-          <span class="fb7em"><label>選択肢 {{listId+1}}</label></span>
+          <span class="fb7em"><label>選択肢 {{listId+1}}<span class="questionBalloon"><icon class="questionBtn" data-tooltip="回答の選択肢を設定します。<br><br>例）選択肢１：男性<br>　　選択肢２：女性">?</icon></span></label></span>
           <div>
             <input type="text" ng-model="setItem.selection.options[listId]">
             <div class="btnBlock">
@@ -117,7 +117,7 @@
 <div ng-if="setItem.actionType == 4" class="set_action_item_body action_send_mail" ng-init="main.initMailSetting(setActionId)">
   <ul>
     <li class="styleFlexbox">
-      <span class="fb11em"><label>送信先メールアドレス</label></span>
+      <span class="fb13em"><label>送信先メールアドレス<span class="questionBalloon"><icon class="questionBtn" data-tooltip="送信先のメールアドレスを設定します。（変数の利用も可能です）">?</icon></span></label></span>
       <ul class="itemListGroup">
         <li ng-repeat="(listId, addressItem) in setItem.toAddress track by $index">
           <input type="text" ng-model="setItem.toAddress[listId]" ng-init="setItem.toAddress[listId] = setItem.toAddress[listId]" default="">
@@ -128,21 +128,21 @@
       </ul>
     </li>
     <li class="styleFlexbox">
-      <span class="fb11em"><label>メールタイトル</label></span>
+      <span class="fb13em"><label>メールタイトル<span class="questionBalloon"><icon class="questionBtn" data-tooltip="メールタイトルを設定します。（変数の利用も可能です）">?</icon></span></label></span>
       <div>
         <input type="text" ng-model="setItem.subject">
       </div>
     </li>
     <li class="styleFlexbox">
-      <span class="fb11em"><label>差出人名</label></span>
+      <span class="fb13em"><label>差出人名<span class="questionBalloon"><icon class="questionBtn" data-tooltip="差出人名を設定します。（変数の利用も可能です）">?</icon></span></label></span>
       <div>
         <input type="text" ng-model="setItem.fromName">
       </div>
     </li>
     <li class="styleFlexbox">
-      <span class="fb11em"><label>メール本文タイプ</label></span>
+      <span class="fb13em"><label>メール本文タイプ</label></span>
       <div>
-        <label ng-repeat="(key, item) in sendMailTypeList" class="styleBlock pointer"><input type="radio" name="action_{{setActionId}}_mail_type" value="{{key}}" ng-model="setItem.mailType" ng-init="setItem.mailType = setItem.mailType" default="setItem.default.mailType">{{item}}</label>
+        <label ng-repeat="(key, item) in sendMailTypeList" class="styleBlock pointer"><input type="radio" name="action_{{setActionId}}_mail_type" value="{{key}}" ng-model="setItem.mailType" ng-init="setItem.mailType = setItem.mailType" default="setItem.default.mailType">{{item.label}}<span class="questionBalloon"><icon class="questionBtn" data-tooltip="{{item.tooltip}}">?</icon></span></label>
         <resize-textarea ng-if="setItem.mailType == <?= C_SCENARIO_MAIL_TYPE_CUSTOMIZE ?>" ng-model="setItem.template" cols="48" rows="4" placeholder="メール本文を入力してください"></resize-textarea>
       </div>
     </li>
