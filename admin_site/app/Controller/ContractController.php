@@ -695,14 +695,14 @@ class ContractController extends AppController
   }
 
   private function isChatEnable($m_contact_types_id) {
-    return $m_contact_types_id === C_CONTRACT_FULL_PLAN_ID
-        || $m_contact_types_id === C_CONTRACT_CHAT_PLAN_ID
-        || $m_contact_types_id === C_CONTRACT_CHAT_BASIC_PLAN_ID;
+    return strcmp($m_contact_types_id, C_CONTRACT_FULL_PLAN_ID) === 0
+        || strcmp($m_contact_types_id, C_CONTRACT_CHAT_PLAN_ID) === 0
+        || strcmp($m_contact_types_id, C_CONTRACT_CHAT_BASIC_PLAN_ID) === 0;
   }
 
   private function isAdvancedChatEnable($m_contact_types_id) {
-    return $m_contact_types_id === C_CONTRACT_FULL_PLAN_ID
-        || $m_contact_types_id === C_CONTRACT_CHAT_PLAN_ID;
+    return strcmp($m_contact_types_id, C_CONTRACT_FULL_PLAN_ID) === 0
+        || strcmp($m_contact_types_id, C_CONTRACT_CHAT_PLAN_ID) === 0;
   }
 
   private function convertActivityToJSON($activity) {
