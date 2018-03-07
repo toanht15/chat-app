@@ -22,6 +22,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
   $scope.inputTypeList = <?php echo json_encode($chatbotScenarioInputType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.sendMailTypeList = <?php echo json_encode($chatbotScenarioSendMailType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
+  $scope.inputLFTypeList = <?php echo json_encode($chatbotScenarioInputLFType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.widget = SimulatorService;
   $scope.widget.settings = getWidgetSettings();
 
@@ -249,9 +250,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     $timeout(function() {
       $scope.$apply();
     }).then(function() {
-      var targetElmList = $('#action' + actionStep + '_setting').find('.itemListGroup tr');
+      var targetElmList = $('#action' + actionStep + '_setting').find('.itemListGroup tr:nth-child(2n+1)');
       var targetObjList = $scope.setActionList[actionStep].hearings;
-      self.controllListView(targetElmList, targetObjList)
+      self.controllListView($scope.setActionList[actionStep].actionType, targetElmList, targetObjList)
     });
   };
 
@@ -261,7 +262,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     }).then(function() {
       var targetElmList = $('#action' + actionStep + '_setting').find('.itemListGroup li');
       var targetObjList = $scope.setActionList[actionStep].selection.options;
-      self.controllListView(targetElmList, targetObjList);
+      self.controllListView($scope.setActionList[actionStep].actionType, targetElmList, targetObjList);
     });
   };
 
@@ -272,7 +273,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     }).then(function() {
       var targetElmList = $('#action' + actionStep + '_setting').find('.itemListGroup li');
       var targetObjList = $scope.setActionList[actionStep].toAddress;
-      self.controllListView(targetElmList, targetObjList, 5)
+      self.controllListView($scope.setActionList[actionStep].actionType, targetElmList, targetObjList, 5)
     });
   };
 
@@ -283,7 +284,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     }).then(function() {
       targetElmList = $('#action' + actionStep + '_setting').find('.itemListGroup li');
       var targetObjList = $scope.setActionList[actionStep].toAddress;
-      self.controllListView(targetElmList, targetObjList, 5);
+      self.controllListView($scope.setActionList[actionStep].actionType, targetElmList, targetObjList, 5);
     });
   };
 
@@ -321,7 +322,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
     if (actionType == <?= C_SCENARIO_ACTION_HEARING ?>) {
       targetObjList = $scope.setActionList[actionStep].hearings;
-      selector = '#action' + actionStep + '_setting .itemListGroup tr';
+      selector = '#action' + actionStep + '_setting .itemListGroup tr:nth-child(2n+1)';
     } else if (actionType == <?= C_SCENARIO_ACTION_SELECT_OPTION ?>) {
       targetObjList = $scope.setActionList[actionStep].selection.options;
       selector = '#action' + actionStep + '_setting .itemListGroup li';
@@ -338,13 +339,20 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       $timeout(function() {
         $scope.$apply();
       }).then(function() {
-        self.controllListView($(selector), targetObjList, limitNum)
+        self.controllListView(actionType, $(selector), targetObjList, limitNum)
       });
     }
   };
 
-  // ヒアリング、選択肢、メール送信のリスト表示の更新処理
-  this.controllListView = function(targetElmList, targetObjList, limitNum) {
+  /**
+   * controllListView
+   * 選択肢、ヒアリング、メール送信のリストに対して、追加・削除ボタンの表示状態を更新する
+   * @param String  actionType      アクション種別
+   * @param Object  targetElmList   対象のリスト要素(jQueryオブジェクト)
+   * @param Object  targetObjList   対象のリストオブジェクト
+   * @param Integer limitNum        リストの表示制限がある場合に、制限数を設定する(ない場合、リストの表示数は無制限となる)
+   */
+  this.controllListView = function(actionType, targetElmList, targetObjList, limitNum) {
     if (typeof limitNum === 'undefined') {
       limitNum = 0;
     }
@@ -359,6 +367,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         } else if (index == limitNum-1) {
           $(targetElm).find('.btnBlock .disOffgreenBtn').hide();
         }
+      } else if (actionType == <?= C_SCENARIO_ACTION_HEARING ?>) {
+        $(targetElm).find('.btnBlock .deleteBtn').show();
+        $(targetElm).find('.btnBlock .disOffgreenBtn').show();
       } else {
         $(targetElm).find('.btnBlock .deleteBtn').show();
         $(targetElm).find('.btnBlock .disOffgreenBtn').hide();
